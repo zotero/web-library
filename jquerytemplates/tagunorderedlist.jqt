@@ -1,0 +1,7 @@
+<script id="tagunorderedlistTemplate" type="text/x-jquery-tmpl">
+<ul id="${id}">
+    {{each(index, tag) tags}}
+        {{tmpl({tag:tag}) 'tagrowTemplate'}}
+    {{/each}}
+</ul>
+</script>

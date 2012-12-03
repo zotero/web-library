@@ -1,0 +1,17 @@
+<script id="itemrowTemplate" type="text/x-jquery-tmpl">
+    <tr data-itemKey='${item.itemKey}'>
+        {{if editmode}}
+            <td class="edit-checkbox-td" data-itemKey='${item.itemKey}'><input type='checkbox' class='itemlist-editmode-checkbox itemKey-checkbox' name='selectitem-${item.itemKey}' data-itemKey='${item.itemKey}' /></td>
+        {{/if}}
+        
+        {{each(index, field) displayFields}}
+            {{if field === 'title'}}
+            <td class='title' data-itemKey='${item.itemKey}'><a class='item-select-link' data-itemKey='${item.itemKey}' href='${Zotero.url.itemHref(item)}' title="${item.dataFields[field]}"><span class='sprite-icon sprite-treeitem-${item.itemTypeImageClass()} left'></span>${Zotero.ui.formatItemField(field, item, true)}</a></td>
+            {{else (field === 'dateAdded') || (field === 'dateModified') }}
+            <td class='${field}' data-itemKey='${item.itemKey}'><a class='item-select-link' data-itemKey='${item.itemKey}' href='${Zotero.url.itemHref(item)}' title="${item.dataFields[field]}">{{html Zotero.ui.formatItemDateField(field, item, true)}}</a></td>
+            {{else}}
+            <td class='${field}' data-itemKey='${item.itemKey}'><a class='item-select-link' data-itemKey='${item.itemKey}' href='${Zotero.url.itemHref(item)}' title="${item.dataFields[field]}">${Zotero.ui.formatItemField(field, item, true)}</a></td>
+            {{/if}}
+        {{/each}}
+    </tr>
+</script>

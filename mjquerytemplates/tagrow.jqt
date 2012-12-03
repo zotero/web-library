@@ -1,0 +1,5 @@
+<script id="tagrowTemplate" type="text/x-jquery-tmpl">
+<li class="tag-row" data-tagtitle="${tag.title}">
+    <a class='tag-link' title="${tag.title}" data-tagtitle="${tag.title}" href="${newurl}">${Zotero.ui.trimString(tag.title, 70)} {{if tag.numItems}}<span class="ui-li-count">${tag.numItems}</span>{{/if}}</a>
+</li>
+</script>

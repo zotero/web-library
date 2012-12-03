@@ -1,0 +1,108 @@
+<script id="itemdetailsTemplate" type="text/x-jquery-tmpl">
+    {{if (parentUrl)}}
+        <a href="${parentUrl}" class="ajax-link clickable item-select-link" data-itemKey='${item.parentKey}'>Parent Item</a>
+    {{/if}}
+    <h2>${item.title}</h2>
+    {{if (item.libraryType == 'user')}}
+        <span id="libraryUserID" title="${item.libraryID}"></span>
+    {{else (item.libraryType == 'group')}}
+        <span id="libraryGroupID" title="${item.libraryID}"></span>
+    {{/if}}
+    <table class="item-info-table" data-itemkey="${item.itemKey}">
+    {{if (item.libraryType == 'group')}}
+        <!-- Output user Creator for group library -->
+        <tr>
+            <th>Added by</th>
+            <td class="user-creator"><a href="${item.author['uri']}" class="user-link">${item.author['name']}</a></td>
+        </tr>
+    {{/if}}
+    
+    <!-- Output itemType -->
+    <tr>
+        <th>Item Type</th>
+        <td class="${item.itemType}">${item.typeMap[item.itemType]}</td>
+    </tr>
+
+    <!-- Output title -->
+    <tr>
+        <th>${item.fieldMap['title']}</th>
+        <td class="title">${item.title}</td>
+    </tr>
+
+    <!-- Output creators -->
+    {{each(index, creator) item.creators}}
+        {{if ((creator.name) || (creator.firstName) || (creator.lastName) )}}
+        <tr>
+            <th>${item.creatorMap[creator.creatorType]}</th>
+            <td class="${creator.creatorType}">
+            {{if (typeof creator['name'] === 'string')}}
+                ${creator['name']}
+            {{else}}
+                ${creator.lastName}, ${creator.firstName}
+            {{/if}}
+            </td>
+        </tr>
+        {{/if}}
+    {{/each}}
+    
+    <!-- Output fields -->
+    {{each(field, fieldValue) item.dataFields}}
+        {{if (field == 'url')}}
+        <tr>
+            <th>${Zotero.localizations.fieldMap[field]}</th>
+            <td class="${field}">
+                <a rel='nofollow' href='${fieldValue}'>${fieldValue}</a>
+            </td>
+        </tr>
+        {{else (Zotero.config.richTextFields[field])}}
+        <tr>
+            <th>${Zotero.localizations.fieldMap[field]}</th>
+            <td class="${$field}">
+                <textarea cols="40" rows="14" id="note-text" class="tinymce readonly">${item.apiObj.note}</textarea>
+            </td>
+        </tr>
+        {{else (field != 'itemType' && field != 'title' && field != 'mimeType' && field != 'linkMode' && field != 'charset' && field != 'md5' && field != 'mtime' && field != 'tags' && fieldValue != '')}}
+        <tr>
+            <th>${Zotero.localizations.fieldMap[field]}</th>
+            <td class="${field}">
+                ${Zotero.ui.formatItemField(field, item)}
+            </td>
+        </tr>
+        {{/if}}
+    {{/each}}
+    
+    
+    <!-- Output tags -->
+    <tr>
+        <th>Tags</th>
+        <td class="tags">
+        <ul class="item-details-tags-list">
+        {{each(index, tag) item.tags}}
+            <li><a class="tag-link" data-tagtitle="${tag}" href="">${tag}</a></li>
+        {{/each}}
+        </ul>
+        </td>
+    </tr>
+    
+    <!-- download link -->
+    {{if (item.attachmentDownloadLink != '')}}
+    <tr>
+        <th>Download</th>
+        <td>{{html item.attachmentDownloadLink}}</td>
+    </tr>
+    {{/if}}
+    </table>
+    
+    {{if item.itemType !== 'attachment' && item.itemType !== 'note'}}
+        <!-- attachments -->
+        <div class="item-attachments-container-div">
+            <div class="item-attachments-div">
+            </div>
+        </div>
+        {{if Zotero.config.librarySettings.allowEdit}}
+        <button id="upload-attachment-link">Upload Attachment</button>
+        {{/if}}
+        <div id="upload-attachment-dialog" title="Upload Attachment">
+        </div>
+    {{/if}}
+</script>

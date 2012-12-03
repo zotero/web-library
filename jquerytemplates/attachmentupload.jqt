@@ -1,0 +1,73 @@
+<script id="attachmentuploadTemplate" type="text/x-jquery-tmpl">
+    <form class="attachmentuploadForm zform" data-parentItemKey="${itemKey}">
+    <h2>Upload File</h2>
+    {{if Modernizr.draganddrop}}
+    <h3>Select a file for upload or drag and drop below</h3>
+    <input type="file" id="fileuploadinput" multiple style="">
+    <div id="fileuploaddroptarget">
+        <h3>Drop your file here</h3>
+        <h3 id="droppedfilename"></h3>
+        <div id="fileuploadspinner">
+        </div>
+    </div>
+    <div id="attachmentuploadfileinfo">
+        <table>
+            <tr>
+                <th>Title</th>
+                <td><input id="upload-file-title-input" type="text"></td>
+            </tr>
+            <tr>
+                <th>Size</th>
+                <td class="uploadfilesize"></td>
+            </tr>
+            <tr>
+                <th>Type</th>
+                <td class="uploadfiletype"></td>
+            </tr>
+            <tr>
+                <th>Upload</th>
+                <td class="uploadprogress"><meter min="0" max="100" value="0" id="uploadprogressmeter"></meter></td>
+            </tr>
+            <!--
+            <tr>
+                <th>MD5</th>
+                <td class="uploadfilemd5"></td>
+            </tr>
+            -->
+        </table>
+    </div>
+    {{else}}
+    <h3>Select a file for upload</h3>
+    <input type="file" id="fileuploadinput" multiple style="">
+    <div id="fileuploadspinner">
+    </div>
+    <div id="attachmentuploadfileinfo">
+        <table>
+            <tr>
+                <th>Title</th>
+                <td><input id="upload-file-title-input" type="text"></td>
+            </tr>
+            <tr>
+                <th>Size</th>
+                <td class="uploadfilesize"></td>
+            </tr>
+            <tr>
+                <th>Type</th>
+                <td class="uploadfiletype"></td>
+            </tr>
+            <!--
+            <tr>
+                <th>MD5</th>
+                <td class="uploadfilemd5"></td>
+            </tr>
+            -->
+            <tr>
+                <th>Upload</th>
+                <td class="uploadprogress"><meter min="0" max="100" value="0" id="uploadprogressmeter"></meter></td>
+            </tr>
+        </table>
+    </div>
+    
+    {{/if}}
+    </form>
+</script>

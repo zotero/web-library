@@ -1,0 +1,10 @@
+<script id="bothnavbarTemplate" type="text/x-jquery-tmpl">
+    <div data-role="navbar" class="content-pane-navbar z-navbar ui-bar">
+        <div data-role="controlgroup" data-type="horizontal">
+            <a data-icon="gear" data-role="button" class="collections-page-link zmlink">Collections</a>
+            <a data-icon="gear" data-role="button" class="tags-page-link zmlink">Tags</a>
+            <a data-icon="gear" data-role="button" class="items-pane-link zmlink">Items</a>
+            <a data-icon="gear" data-role="button" class="mobile-menu-button zmlink">Options</a>
+        </div>
+    </div>
+</script>

@@ -1,0 +1,8 @@
+<script id="sourcenavbarTemplate" type="text/x-jquery-tmpl">
+    <div data-role="navbar" class="content-pane-navbar z-navbar">
+        <ul>
+            <li><a class="collections-page-link">Collections</a></li>
+            <li><a class="tags-page-link">Tags</a></li>
+        </ul>
+    </div>
+</script>

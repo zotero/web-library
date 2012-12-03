@@ -1,0 +1,62 @@
+<script id="attachmentformTemplate" type="text/x-jquery-tmpl">
+    <form class="itemDetailForm zform" data-itemKey="${itemKey}">
+    <button type="submit" data-itemKey="${itemKey}" class="zform saveitembutton">Save</button>
+    <button type="button" data-itemKey="${itemKey}" class="zform cancelitemeditbutton">Cancel</button>
+    <h2>${item.title}</h2>
+    <table>
+    
+    <!-- Output itemType -->
+    <tr>
+        <th>${Zotero.localizations.fieldMap['itemType']}</th>
+        <td class="${item.itemType}">${Zotero.Item.prototype.typeMap[item.itemType]}</td>
+    </tr>
+    
+    <!-- Output title -->
+    <tr>
+        <th>${Zotero.localizations.fieldMap['title']}</th>
+        <td class="title">
+                {{tmpl({itemKey:itemKey, field:'title', fieldValue:item.title}) "datafieldTemplate"}}
+        </td>
+    </tr>
+    
+    <!-- Output fields -->
+    {{each(field, fieldValue) item}}
+        {{if (field == 'url')}}
+        <tr>
+            <th>${Zotero.localizations.fieldMap[field]}</th>
+            <td class="${field}">
+                <a rel='nofollow' href='${fieldValue}'>${fieldValue}</a>
+            </td>
+        </tr>
+        {{else (Zotero.config.richTextFields[field])}}
+        <tr>
+            <th>Note</th>
+            <td class="note-text">
+                <textarea data-itemKey="${itemKey}" cols="40" rows="14" id="note-text" class="tinymce default">${item.note}</textarea>
+            </td>
+        </tr>
+        {{else (field != 'itemType' && field != 'title' && field != 'mimeType' && field != 'linkMode' && field != 'charset' && fieldValue != '')}}
+        <tr>
+            <th>${Zotero.localizations.fieldMap[field]}</th>
+            <td class="${field}">
+                ${Zotero.ui.formatItemField(field, item)}
+            </td>
+        </tr>
+        {{/if}}
+    {{/each}}
+    
+    <!-- Output tags -->
+    <tr>
+        <th>Tags</th>
+        <td class="tags">
+        {{each(index, tag) item.tags}}
+            {{tmpl({index:index, itemKey:itemKey, tag:tag}) "itemtagTemplate"}}
+        {{/each}}
+        </td>
+    </tr>
+    
+    </table>
+    <button type="submit" data-itemKey="${itemKey}" class="zform saveitembutton">Save</button>
+    <button type="button" data-itemKey="${itemKey}" class="zform cancelitemeditbutton">Cancel</button>
+    </form>
+</script>

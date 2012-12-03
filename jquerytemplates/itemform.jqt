@@ -1,0 +1,77 @@
+<script id="itemformTemplate" type="text/x-jquery-tmpl">
+    <form class="itemDetailForm zform" data-itemKey="${itemKey}">
+    <button type="submit" data-itemKey="${itemKey}" class="zform saveitembutton">Save</button>
+    <button type="button" data-itemKey="${itemKey}" class="zform cancelitemeditbutton">Cancel</button>
+    <h2>${item.title}</h2>
+    <table>
+    
+    <!-- Output itemType -->
+    <tr>
+        <th>${Zotero.localizations.fieldMap['itemType']}</th>
+        <td class='itemType'>
+            <select id="itemTypeSelect" class="itemType" name="itemType" data-itemKey="${itemKey}">
+            {{each(itemType, localized) Zotero.localizations.typeMap}}
+                {{if itemType != 'note' && itemType != 'attachment'}}
+                <option label="${localized}" value="${itemType}" {{if itemType == item.itemType}}selected=1{{/if}}>${localized}</option>
+                {{/if}}
+            {{/each}}
+            </select>
+        </td>
+    </tr>
+
+    <!-- Output title -->
+    <tr>
+        <th>${Zotero.localizations.fieldMap['title']}</th>
+        <td class="title">
+                {{tmpl({itemKey:itemKey, field:'title', fieldValue:item.title}) "datafieldTemplate"}}
+        </td>
+    </tr>
+
+    <!-- Output creators -->
+    {{each(index, creator) item.creators}}
+        {{if (typeof creator['name'] === 'string')}}
+            {{tmpl({creatorTypes:creatorTypes, creator:creator, index:index}) "authorelementssingleTemplate"}}
+        {{else}}
+            {{tmpl({creatorTypes:creatorTypes, creator:creator, index:index}) "authorelementsdoubleTemplate"}}
+        {{/if}}
+    {{/each}}
+    
+    <!-- Output fields -->
+    {{each(field, fieldValue) item}}
+        {{if (field != 'itemType' && field != 'title' && field != 'creators' && field != 'tags' && field != 'notes' && field != 'linkMode' && field != 'mimeType' && field != 'charset')}}
+        <tr>
+            <th><label for="${field}">${Zotero.localizations.fieldMap[field]}</label></th>
+            <td class="${field}">
+                {{tmpl({itemKey:itemKey, field:field, fieldValue:fieldValue}) "datafieldTemplate"}}
+            </td>
+        </tr>
+        {{/if}}
+    {{/each}}
+    
+    <!-- Output tags -->
+    <tr>
+        <th>Tags</th>
+        <td class="tags">
+        {{each(index, tag) item.tags}}
+            {{tmpl({index:index, itemKey:itemKey, tag:tag}) "itemtagTemplate"}}
+        {{/each}}
+        </td>
+    </tr>
+    
+    <!-- Output notes if new item -->
+    <tr>
+    <th>Notes</th>
+        <td class="notes">
+        {{each(index, note) item.notes}}
+            <textarea cols="40" rows="14" name="note_${index}" id="note_${index}" class="tinymce"></textarea>
+        {{/each}}
+        <button type="button" class="add-note-button" data-itemKey="${itemKey}">Add Note</button>
+        </td>
+    </tr>
+    <tr>
+    
+    </table>
+    <button type="submit" data-itemKey="${itemKey}" class="zform saveitembutton">Save</button>
+    <button type="button" data-itemKey="${itemKey}" class="zform cancelitemeditbutton">Cancel</button>
+    </form>
+</script>

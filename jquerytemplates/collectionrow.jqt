@@ -1,0 +1,19 @@
+<script id="collectionrowTemplate" type="text/x-jquery-tmpl">
+    <li class="collection-row{{if (currentCollectionKey == collection.collectionKey)}} current-collection{{/if}}" data-collectionKey="${collection.collectionKey}">
+        <div class="folder-toggle">
+        <span class="sprite-placeholder sprite-icon-16 dui-icon left"></span>
+        <span class="sprite-icon sprite-treesource-collection left"></span>
+        </div>
+        <a href="${collection.websiteCollectionUrl()}" data-collectionKey="${collection.collectionKey}"
+            id="collection-${collection.collectionKey}" class="collection-select-link{{if (currentCollectionKey == collection.collectionKey)}} current-collection{{/if}}">
+            ${collection.title}
+        </a>
+        {{if collection.hasChildren}}
+            <ul>
+            {{each(index, scollection) collection.entries}}
+                {{tmpl({collection:scollection, currentCollectionKey:currentCollectionKey}) 'collectionrowTemplate'}}
+            {{/each}}
+            </ul>
+        {{/if}}
+    </li>
+</script>

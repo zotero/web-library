@@ -1,0 +1,26 @@
+<script id="collectionbuttonsTemplate" type="text/x-jquery-tmpl">
+    {{if Zotero.config.mobile}}
+        <div id="collection-buttons">
+            <a data-role="button" class="my-library" href="/${zoteroData.libUrlString}/items">My Library</a>
+            {{each(index, collection) collections}}
+                {{if collection.topLevel}}
+                    {{tmpl({collection:collection}) 'collectionbuttonTemplate'}}
+                {{/if}}
+            {{/each}}
+        </div>
+    {{else}}
+        <ul id="collection-list">
+            <li><h4>
+                <span class="img-library-icon"></span>
+                <span class="current-collection">
+                    <a class="my-library" href="/${zoteroData.libUrlString}/items">My Library</a>
+                </span>
+            </h4></li>
+            {{each(index, collection) collections}}
+                {{if collection.topLevel}}
+                    {{tmpl({collection:collection}) 'collectionrowTemplate'}}
+                {{/if}}
+            {{/each}}
+        </ul>
+    {{/if}}
+</script>

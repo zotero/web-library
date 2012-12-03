@@ -1,0 +1,58 @@
+<script id="itemnotedetailsTemplate" type="text/x-jquery-tmpl">
+    {{if (parentUrl)}}
+        <a href="${parentUrl}" class="ajax-link clickable item-select-link" data-itemKey='${item.parentKey}'>Parent Item</a>
+    {{/if}}
+    <h1>${item.title}</h1>
+    {{if (item.libraryType == 'user')}}
+        <span id="libraryUserID" title="${item.libraryID}"></span>
+    {{else (item.libraryType == 'group')}}
+        <span id="libraryGroupID" title="${item.libraryID}"></span>
+    {{/if}}
+    <table>
+    {{if (item.libraryType == 'group')}}
+        <!-- Output user Creator for group library -->
+        <tr>
+            <th>Creator</th>
+            <td class="user-creator">${item.author['name']}</td>
+        </tr>
+    {{/if}}
+    
+    <!-- Output itemType -->
+    <tr>
+        <th>Item Type</th>
+        <td class="${item.itemType}">${item.typeMap[item.itemType]}</td>
+    </tr>
+    
+    <!-- Output title -->
+    <tr>
+        <th>${item.fieldMap['title']}</th>
+        <td class="title">${item.title}</td>
+    </tr>
+
+    <!-- Output Note -->
+    <tr>
+        <th>Note</th>
+        <td class="note-text">
+            <textarea cols="40" rows="14" id="note-text" class="tinymce">${item.apiObj.note}</textarea>
+        </td>
+    </tr>
+    
+    <!-- Output tags -->
+    <tr>
+        <th>Tags</th>
+        <td class="tags">
+        {{each(index, tag) item.tags}}
+            ${tag},
+        {{/each}}
+        </td>
+    </tr>
+    </table>
+    
+    <!-- attachments -->
+    {{if (item.numChildren > 0)}}
+        <a class="show-attachments-link" data-itemKey="${item.itemKey}">Show ${item.numChildren} attachments</a>
+        <div class="item-attachments-div">
+            
+        </div>
+    {{/if}}
+</script>

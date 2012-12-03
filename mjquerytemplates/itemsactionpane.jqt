@@ -1,0 +1,13 @@
+<script id="itemsactionpaneTemplate" type="text/x-jquery-tmpl">
+<div id="action-panel-div" data-role="navbar">
+    <ul>
+        <li><a href="#" id="create-item-link" class="permission-edit" data-iconpos="top" data-icon="sprite-toolbar-item-add">Create</a></li>
+        <li><a href="#" class="add-to-collection-link permission-edit" data-iconpos="top" data-icon="sprite-folder_add_to">Add to</a></li>
+        <li><a href="#" class="remove-from-collection-link permission-edit" data-iconpos="top" data-icon="sprite-folder_remove_from">Remove</a></li>
+        <li><a href="#" class="move-to-trash-link permission-edit" data-iconpos="top" data-icon="sprite-trash">Trash</a></li>
+<!--        <li><a href="#" class="remove-from-trash-link permission-edit" data-iconpos="top" data-icon="sprite-trash">Remove from Trash</a></li> -->
+<!--        <li><a href="#" id="library-settings-link" data-iconpos="top" data-icon="sprite-timeline_marker">Sort</a></li> -->
+        <li><a href="#" id="cite-link" data-iconpos="top" data-icon="sprite-folder_go">Cite</a></li>
+    </ul>
+</div>
+</script>

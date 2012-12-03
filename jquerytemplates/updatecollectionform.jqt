@@ -1,0 +1,16 @@
+<script id="updatecollectionformTemplate" type="text/x-jquery-tmpl">
+    <div class="update-collection-div">
+        <form method="POST" class="zform">
+            <ol>
+                <li>
+                    <label for="updated-collection-title-input">New Collection Name</label>
+                    <input id="updated-collection-title-input">
+                </li>
+                <li>
+                    <label for="update-collection-parent-select">Parent Collection</label>
+                    {{tmpl({collections:ncollections, allowNoValue:true, id:'update-collection-parent-select', optionsOnly:false, noValueText:'None'}) 'choosecollectionformTemplate'}}
+                </li>
+            </ol>
+        </form>
+    </div>
+</script>

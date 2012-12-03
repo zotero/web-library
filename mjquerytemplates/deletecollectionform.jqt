@@ -1,0 +1,10 @@
+<script id="deletecollectionformTemplate" type="text/x-jquery-tmpl">
+<div id="delete-collection-dialog" data-title="Delete Collection" data-role="page" class="mobile-dialog">
+    <div data-role="header">
+        <h1>Delete Collection</h1>
+    </div>
+    <div class="delete-collection-div" data-role="content">
+        <p>Really delete collection "${collection.title}"?</p>
+    </div>
+</div>
+</script>

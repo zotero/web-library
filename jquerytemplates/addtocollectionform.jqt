@@ -1,0 +1,10 @@
+<script id="addtocollectionformTemplate" type="text/x-jquery-tmpl">
+    <div class="add-to-collection-div" data-role="content">
+        <form method="POST">
+            <div data-role="fieldcontain">
+            <label for="new-collection-parent">Collection</label>
+            {{tmpl({collections:ncollections, allowNoValue:false, id:'target-collection', optionsOnly:false}) 'choosecollectionformTemplate'}}
+            </div>
+        </form>
+    </div>
+</script>

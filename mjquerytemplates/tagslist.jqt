@@ -1,0 +1,12 @@
+<script id="tagslistTemplate" type="text/x-jquery-tmpl">
+    <input type="text" id="tag-filter-input" />
+    <label for="show-all-tags"><input type="checkbox" name="show-all-tags" id="show-all-tags" />Display all tags in this library</label>
+    <!--<label for="show-automatic"><input type="checkbox" name="show-automatic" id="show-automatic" />Show automatic</label>-->
+    <div id="tags-lists-container">
+    {{tmpl({tags:selectedTags, id:'selected-tags-list'}) 'tagunorderedlistTemplate'}}
+    {{tmpl({tags:tags, id:'tags-list', showMore:showMore}) 'tagunorderedlistTemplate'}}
+    {{if (tags.length == 0)}}
+        No Tags
+    {{/if}}
+    </div>
+</script>

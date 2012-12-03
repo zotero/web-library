@@ -1,0 +1,20 @@
+<script id="sortdialogTemplate" type="text/x-jquery-tmpl">
+<div id="sort-dialog" data-title="Sort Items By" data-role="page" class="mobile-dialog">
+    <div data-role="header">
+        <h1>Sort Items By</h1>
+    </div>
+    <div class="sort-dialog-content" data-role="content">
+        <form id="sort-dialog-form">
+            <select id="sortColumnSelect" class="column" name="column">
+            {{each(index, field) columnFields}}
+                <option label="${Zotero.localizations.fieldMap[field]}" value="${field}" {{if field == currentOrderField}}selected=1{{/if}}>${Zotero.localizations.fieldMap[field]}</option>
+            {{/each}}
+            </select>
+            <select id="sortOrderSelect">
+                <option label="Ascending" value="asc">Ascending</option>
+                <option label="Descending" value="desc">Descending</option>
+            </select>
+        </form>
+    </div>
+</div>
+</script>

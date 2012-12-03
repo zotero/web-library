@@ -1,0 +1,203 @@
+.sprite-icon {
+   background: url(../static/images/theme/zotero_icons_sprite.png) no-repeat top left; display:block; overflow:hidden;
+}
+
+.sprite-icon {
+    background-image: url(../static/images/theme/zotero_icons_sprite.png) !important;
+}
+
+.sprite-icon16 {
+    width:16px; height:16px;
+}
+
+/* placeholder with individual images not included in sprite yet */
+.ui-icon-sprite-folder_go, .sprite-toolbar-export{ width: 16px; height: 16px; background-image: url(../static/images/theme/zotero_icons/folder_go.png) !important; } 
+.ui-icon-sprite-text_list_bullets, .sprite-toolbar-cite{ width: 16px; height: 16px; background-image: url(../static/images/theme/zotero_icons/text_list_bullets.png) !important; } 
+
+
+/*special class for desktop ui-icon that doesn't get overwritten by mobile*/
+.dui-icon { width: 16px; height: 16px; background-image: url(../static/images/theme/jquery-ui/ui-icons_222222_256x240.png); background-repeat:no-repeat; display:block; overflow:hidden; }
+
+/*extra ui-icon classes for sprite images that go into jqm buttons*/
+.ui-icon-sprite-folder_edit, .sprite-toolbar-collection-edit{ background-position: -70px -858px; width: 16px; height: 16px; background-image: url(../static/images/theme/zotero_icons_sprite.png) !important; } 
+.ui-icon-sprite-folder_add, .sprite-toolbar-collection-add{ background-position: -70px -660px; width: 16px; height: 16px; background-image: url(../static/images/theme/zotero_icons_sprite.png) !important; } 
+.ui-icon-sprite-folder_delete{ background-position: -70px -792px; width: 16px; height: 16px; background-image: url(../static/images/theme/zotero_icons_sprite.png) !important; } 
+.ui-icon-sprite-page_edit{ background-position: -70px -1786px; width: 16px; height: 16px; background-image: url(../static/images/theme/zotero_icons_sprite.png) !important; } 
+.ui-icon-sprite-folder_add_to{ background-position: -70px -726px; width: 16px; height: 16px; background-image: url(../static/images/theme/zotero_icons_sprite.png) !important; } 
+.ui-icon-sprite-folder_remove_from{ background-position: -70px -924px; width: 16px; height: 16px; background-image: url(../static/images/theme/zotero_icons_sprite.png) !important; } 
+.ui-icon-sprite-toolbar-item-add{ background-position: -140px -1040px; width: 16px; height: 16px; background-image: url(../static/images/theme/zotero_icons_sprite.png) !important; } 
+.ui-icon-sprite-trash{ background-position: -140px -1436px; width: 16px; height: 16px; background-image: url(../static/images/theme/zotero_icons_sprite.png) !important; } 
+.ui-icon-sprite-trash_remove{ background-position: -140px -1502px; width: 16px; height: 16px; background-image: url(../static/images/theme/zotero_icons_sprite.png) !important; } 
+.ui-icon-sprite-cog{ background-position: -70px 0; width: 16px; height: 16px; background-image: url(../static/images/theme/zotero_icons_sprite.png) !important; } 
+.ui-icon-sprite-textfield-dual{ background-position: -140px -396px; width: 21px; height: 8px; background-image: url(../static/images/theme/zotero_icons_sprite.png) !important; } 
+.ui-icon-sprite-textfield-single{ background-position: -140px -454px; width: 21px; height: 8px; background-image: url(../static/images/theme/zotero_icons_sprite.png) !important; } 
+.ui-icon-sprite-plus{ background-position: -70px -1920px; width: 18px; height: 18px; background-image: url(../static/images/theme/zotero_icons_sprite.png) !important; } 
+.ui-icon-sprite-minus{ background-position: -70px -1718px; width: 18px; height: 18px; background-image: url(../static/images/theme/zotero_icons_sprite.png) !important; } 
+.ui-icon-sprite-citation-up{ background-position: 0 -1884px; width: 8px; height: 16px; background-image: url(../static/images/theme/zotero_icons_sprite.png) !important; } 
+.ui-icon-sprite-timeline_marker{ background-position: -140px -578px; width: 16px; height: 16px; background-image: url(../static/images/theme/zotero_icons_sprite.png) !important; } 
+
+
+
+.sprite-toolbar {}
+
+/* placeholder empty icon with same dimensions */
+.sprite-placeholder{ background-image:none !important; width: 16px; height: 16px; } 
+
+
+/* added duplicates for treeitem where no custom icon exists */
+.sprite-treeitem-document{ background-position: -211px -1188px; width: 16px; height: 16px; } 
+.sprite-treeitem-hearing{ background-position: -211px -1188px; width: 16px; height: 16px; } 
+.sprite-treeitem-dictionaryEntry{ background-position: -211px -1188px; width: 16px; height: 16px; } 
+.sprite-treeitem-encyclopediaArticle{ background-position: -211px -1188px; width: 16px; height: 16px; } 
+.sprite-treeitem-presentation{ background-position: -211px -1188px; width: 16px; height: 16px; } 
+.sprite-treeitem-patent{ background-position: -211px -1188px; width: 16px; height: 16px; } 
+.sprite-treeitem-instantMessage{ background-position: -211px -1188px; width: 16px; height: 16px; } 
+.sprite-treeitem-hearing{ background-position: -211px -1188px; width: 16px; height: 16px; } 
+.sprite-treeitem-case{ background-position: -211px -1188px; width: 16px; height: 16px; } 
+.sprite-treeitem-statute{ background-position: -211px -1188px; width: 16px; height: 16px; } 
+.sprite-treeitem-bill{ background-position: -211px -1188px; width: 16px; height: 16px; } 
+.sprite-treeitem{ background-position: -211px -1188px; width: 16px; height: 16px; } 
+
+/* sprites that need !important background to override jqueryui icon sprite */
+.sprite-folder_edit, .sprite-toolbar-collection-edit{ background-position: -70px -858px; width: 16px; height: 16px; background-image: url(../static/images/theme/zotero_icons_sprite.png) !important; } 
+.sprite-folder_add, .sprite-toolbar-collection-add{ background-position: -70px -660px; width: 16px; height: 16px; background-image: url(../static/images/theme/zotero_icons_sprite.png) !important; } 
+.sprite-folder_delete{ background-position: -70px -792px; width: 16px; height: 16px; background-image: url(../static/images/theme/zotero_icons_sprite.png) !important; } 
+.sprite-page_edit{ background-position: -70px -1786px; width: 16px; height: 16px; background-image: url(../static/images/theme/zotero_icons_sprite.png) !important; } 
+.sprite-folder_add_to{ background-position: -70px -726px; width: 16px; height: 16px; background-image: url(../static/images/theme/zotero_icons_sprite.png) !important; } 
+.sprite-folder_remove_from{ background-position: -70px -924px; width: 16px; height: 16px; background-image: url(../static/images/theme/zotero_icons_sprite.png) !important; } 
+.sprite-toolbar-item-add{ background-position: -140px -1040px; width: 16px; height: 16px; background-image: url(../static/images/theme/zotero_icons_sprite.png) !important; } 
+.sprite-trash{ background-position: -140px -1436px; width: 16px; height: 16px; background-image: url(../static/images/theme/zotero_icons_sprite.png) !important; } 
+.sprite-trash_remove{ background-position: -140px -1502px; width: 16px; height: 16px; background-image: url(../static/images/theme/zotero_icons_sprite.png) !important; } 
+.sprite-cog{ background-position: -70px 0; width: 16px; height: 16px; background-image: url(../static/images/theme/zotero_icons_sprite.png) !important; } 
+.sprite-textfield-dual{ background-position: -140px -396px; width: 21px; height: 8px; background-image: url(../static/images/theme/zotero_icons_sprite.png) !important; } 
+.sprite-textfield-single{ background-position: -140px -454px; width: 21px; height: 8px; background-image: url(../static/images/theme/zotero_icons_sprite.png) !important; } 
+.sprite-plus{ background-position: -70px -1920px; width: 18px; height: 18px; background-image: url(../static/images/theme/zotero_icons_sprite.png) !important; } 
+.sprite-minus{ background-position: -70px -1718px; width: 18px; height: 18px; background-image: url(../static/images/theme/zotero_icons_sprite.png) !important; } 
+.sprite-citation-up{ background-position: 0 -1884px; width: 8px; height: 16px; background-image: url(../static/images/theme/zotero_icons_sprite.png) !important; } 
+.sprite-timeline_marker{ background-position: -140px -578px; width: 16px; height: 16px; background-image: url(../static/images/theme/zotero_icons_sprite.png) !important; } 
+
+
+
+
+/* generated by spritegen */
+.sprite-accept{ background-position: 0 0; width: 16px; height: 16px; } 
+.sprite-annotate-add-selected{ background-position: 0 -66px; width: 16px; height: 16px; } 
+.sprite-annotate-add{ background-position: 0 -132px; width: 16px; height: 16px; } 
+.sprite-annotate-collapse, .sprite-treeitem-interview{ background-position: 0 -198px; width: 16px; height: 16px; } 
+.sprite-annotate-highlight-selected{ background-position: 0 -264px; width: 16px; height: 16px; } 
+.sprite-annotate-highlight{ background-position: 0 -330px; width: 16px; height: 16px; } 
+.sprite-annotate-unhighlight-selected{ background-position: 0 -396px; width: 16px; height: 16px; } 
+.sprite-annotate-unhighlight{ background-position: 0 -462px; width: 16px; height: 16px; } 
+.sprite-annotation-close{ background-position: 0 -528px; width: 10px; height: 10px; } 
+.sprite-annotation-grippy{ background-position: 0 -588px; width: 8px; height: 8px; } 
+.sprite-annotation-hidden{ background-position: 0 -646px; width: 16px; height: 16px; } 
+.sprite-annotation-hide{ background-position: 0 -712px; width: 10px; height: 10px; } 
+.sprite-annotation-move-selected{ background-position: 0 -772px; width: 10px; height: 10px; } 
+.sprite-annotation-move{ background-position: 0 -832px; width: 10px; height: 10px; } 
+.sprite-arrow-down{ background-position: 0 -892px; width: 11px; height: 6px; } 
+.sprite-arrow_refresh{ background-position: 0 -948px; width: 16px; height: 16px; } 
+.sprite-arrow_rotate_animated{ background-position: 0 -1014px; width: 20px; height: 20px; } 
+.sprite-arrow_rotate_error{ background-position: 0 -1084px; width: 20px; height: 20px; } 
+.sprite-arrow_rotate_static{ background-position: 0 -1154px; width: 20px; height: 20px; } 
+.sprite-attach{ background-position: 0 -1224px; width: 16px; height: 16px; } 
+.sprite-bell_error{ background-position: 0 -1290px; width: 16px; height: 16px; } 
+.sprite-cancel{ background-position: 0 -1356px; width: 16px; height: 16px; } 
+.sprite-citation-add-gray{ background-position: 0 -1422px; width: 16px; height: 16px; } 
+.sprite-citation-add{ background-position: 0 -1488px; width: 16px; height: 16px; } 
+.sprite-citation-delete-gray{ background-position: 0 -1554px; width: 16px; height: 16px; } 
+.sprite-citation-delete{ background-position: 0 -1620px; width: 16px; height: 16px; } 
+.sprite-citation-down-gray{ background-position: 0 -1686px; width: 8px; height: 16px; } 
+.sprite-citation-down{ background-position: 0 -1752px; width: 8px; height: 16px; } 
+.sprite-citation-up-gray{ background-position: 0 -1818px; width: 8px; height: 16px; } 
+.sprite-citation-up{ background-position: 0 -1884px; width: 8px; height: 16px; } 
+.sprite-cog{ background-position: -70px 0; width: 16px; height: 16px; } 
+.sprite-control_stop_blue{ background-position: -70px -66px; width: 16px; height: 16px; } 
+.sprite-cross{ background-position: -70px -132px; width: 16px; height: 16px; } 
+.sprite-drive_network{ background-position: -70px -198px; width: 16px; height: 16px; } 
+.sprite-error{ background-position: -70px -264px; width: 16px; height: 16px; } 
+.sprite-exclamation{ background-position: -70px -330px; width: 16px; height: 16px; } 
+.sprite-feed{ background-position: -70px -396px; width: 16px; height: 16px; } 
+.sprite-feed_add{ background-position: -70px -462px; width: 16px; height: 16px; } 
+.sprite-feed_delete{ background-position: -70px -528px; width: 16px; height: 16px; } 
+.sprite-feed_edit{ background-position: -70px -594px; width: 16px; height: 16px; } 
+.sprite-folder_add, .sprite-toolbar-collection-add{ background-position: -70px -660px; width: 16px; height: 16px; } 
+.sprite-folder_add_to{ background-position: -70px -726px; width: 16px; height: 16px; } 
+.sprite-folder_delete{ background-position: -70px -792px; width: 16px; height: 16px; } 
+.sprite-folder_edit, .sprite-toolbar-collection-edit{ background-position: -70px -858px; width: 16px; height: 16px; } 
+.sprite-folder_remove_from{ background-position: -70px -924px; width: 16px; height: 16px; } 
+.sprite-group, .sprite-treesource-groups{ background-position: -70px -990px; width: 16px; height: 16px; } 
+.sprite-group_add{ background-position: -70px -1056px; width: 16px; height: 16px; } 
+.sprite-group_delete{ background-position: -70px -1122px; width: 16px; height: 16px; } 
+.sprite-group_error{ background-position: -70px -1188px; width: 16px; height: 16px; } 
+.sprite-group_gear{ background-position: -70px -1254px; width: 16px; height: 16px; } 
+.sprite-locate-external-viewer{ background-position: -70px -1320px; width: 16px; height: 16px; } 
+.sprite-locate-internal-viewer, .sprite-rtfscan-accept{ background-position: -70px -1386px; width: 16px; height: 16px; } 
+.sprite-locate-library-lookup{ background-position: -70px -1452px; width: 16px; height: 16px; } 
+.sprite-locate-show-file{ background-position: -70px -1518px; width: 16px; height: 16px; } 
+.sprite-locate-view-online, .sprite-treesource-commons{ background-position: -70px -1584px; width: 16px; height: 16px; } 
+.sprite-minus-active{ background-position: -70px -1650px; width: 18px; height: 18px; } 
+.sprite-minus{ background-position: -70px -1718px; width: 18px; height: 18px; } 
+.sprite-page_edit{ background-position: -70px -1786px; width: 16px; height: 16px; } 
+.sprite-plus-active{ background-position: -70px -1852px; width: 18px; height: 18px; } 
+.sprite-plus{ background-position: -70px -1920px; width: 18px; height: 18px; } 
+.sprite-report_user{ background-position: -140px 0; width: 16px; height: 16px; } 
+.sprite-rtfscan-link, .sprite-treeitem-attachment-link{ background-position: -140px -66px; width: 16px; height: 16px; } 
+.sprite-tag-automatic{ background-position: -140px -132px; width: 16px; height: 16px; } 
+.sprite-tag-selector-menu{ background-position: -140px -198px; width: 16px; height: 16px; } 
+.sprite-tag-selector{ background-position: -140px -264px; width: 16px; height: 16px; } 
+.sprite-tag{ background-position: -140px -330px; width: 16px; height: 16px; } 
+.sprite-textfield-dual{ background-position: -140px -396px; width: 21px; height: 8px; } 
+.sprite-textfield-single{ background-position: -140px -454px; width: 21px; height: 8px; } 
+.sprite-tick{ background-position: -140px -512px; width: 16px; height: 16px; } 
+.sprite-timeline_marker{ background-position: -140px -578px; width: 16px; height: 16px; } 
+.sprite-toolbar-advanced-search{ background-position: -140px -644px; width: 16px; height: 16px; } 
+.sprite-toolbar-collection-edit-gray{ background-position: -140px -710px; width: 16px; height: 16px; } 
+.sprite-toolbar-fullscreen-bottom{ background-position: -140px -776px; width: 16px; height: 16px; } 
+.sprite-toolbar-fullscreen-top{ background-position: -140px -842px; width: 16px; height: 16px; } 
+.sprite-toolbar-go-arrow-disabled{ background-position: -140px -908px; width: 16px; height: 16px; } 
+.sprite-toolbar-go-arrow{ background-position: -140px -974px; width: 16px; height: 16px; } 
+.sprite-toolbar-item-add{ background-position: -140px -1040px; width: 16px; height: 16px; } 
+.sprite-toolbar-item-from-page{ background-position: -140px -1106px; width: 16px; height: 16px; } 
+.sprite-toolbar-link-add{ background-position: -140px -1172px; width: 16px; height: 16px; } 
+.sprite-toolbar-lookup{ background-position: -140px -1238px; width: 16px; height: 16px; } 
+.sprite-toolbar-note-add{ background-position: -140px -1304px; width: 16px; height: 16px; } 
+.sprite-toolbar-snapshot-add{ background-position: -140px -1370px; width: 16px; height: 16px; } 
+.sprite-trash{ background-position: -140px -1436px; width: 16px; height: 16px; } 
+.sprite-trash_remove{ background-position: -140px -1502px; width: 16px; height: 16px; } 
+.sprite-treeitem-artwork{ background-position: -140px -1568px; width: 16px; height: 16px; } 
+.sprite-treeitem-attachment-file{ background-position: -140px -1634px; width: 16px; height: 16px; } 
+.sprite-treeitem-attachment-pdf{ background-position: -140px -1700px; width: 17px; height: 17px; } 
+.sprite-treeitem-attachment-snapshot{ background-position: -140px -1767px; width: 16px; height: 16px; } 
+.sprite-treeitem-attachment-web-link{ background-position: -140px -1833px; width: 16px; height: 16px; } 
+.sprite-treeitem-audioRecording{ background-position: -140px -1899px; width: 16px; height: 16px; } 
+.sprite-treeitem-blogPost, .sprite-treeitem-magazineArticle{ background-position: -211px 0; width: 16px; height: 16px; } 
+.sprite-treeitem-book{ background-position: -211px -66px; width: 16px; height: 16px; } 
+.sprite-treeitem-bookSection{ background-position: -211px -132px; width: 16px; height: 16px; } 
+.sprite-treeitem-computerProgram{ background-position: -211px -198px; width: 16px; height: 16px; } 
+.sprite-treeitem-conferencePaper{ background-position: -211px -264px; width: 16px; height: 16px; } 
+.sprite-treeitem-email{ background-position: -211px -330px; width: 16px; height: 16px; } 
+.sprite-treeitem-film, .sprite-treeitem-videoRecording{ background-position: -211px -396px; width: 16px; height: 16px; } 
+.sprite-treeitem-forumPost, .sprite-treeitem-webpage{ background-position: -211px -462px; width: 16px; height: 16px; } 
+.sprite-treeitem-journalArticle{ background-position: -211px -528px; width: 16px; height: 16px; } 
+.sprite-treeitem-letter{ background-position: -211px -594px; width: 16px; height: 16px; } 
+.sprite-treeitem-manuscript{ background-position: -211px -660px; width: 16px; height: 16px; } 
+.sprite-treeitem-map{ background-position: -211px -726px; width: 16px; height: 16px; } 
+.sprite-treeitem-newspaperArticle{ background-position: -211px -792px; width: 16px; height: 16px; } 
+.sprite-treeitem-note{ background-position: -211px -858px; width: 16px; height: 16px; } 
+.sprite-treeitem-podcast{ background-position: -211px -924px; width: 16px; height: 16px; } 
+.sprite-treeitem-radioBroadcast{ background-position: -211px -990px; width: 16px; height: 16px; } 
+.sprite-treeitem-report, .sprite-treeitem-thesis{ background-position: -211px -1056px; width: 16px; height: 16px; } 
+.sprite-treeitem-tvBroadcast{ background-position: -211px -1122px; width: 16px; height: 16px; } 
+.sprite-treeitem{ background-position: -211px -1188px; width: 16px; height: 16px; } 
+.sprite-treesource-bucket{ background-position: -211px -1254px; width: 16px; height: 16px; } 
+.sprite-treesource-collection{ background-position: -211px -1320px; width: 16px; height: 16px; } 
+.sprite-treesource-library{ background-position: -211px -1386px; width: 16px; height: 16px; } 
+.sprite-treesource-search-virtual{ background-position: -211px -1452px; width: 16px; height: 16px; } 
+.sprite-treesource-search{ background-position: -211px -1518px; width: 16px; height: 16px; } 
+.sprite-treesource-share{ background-position: -211px -1584px; width: 16px; height: 16px; } 
+.sprite-treesource-trash-full{ background-position: -211px -1650px; width: 16px; height: 16px; } 
+.sprite-treesource-trash{ background-position: -211px -1716px; width: 16px; height: 16px; } 
+.sprite-zotero-z-16px-active{ background-position: -211px -1782px; width: 16px; height: 16px; } 
+.sprite-zotero-z-16px-hover{ background-position: -211px -1848px; width: 16px; height: 16px; } 
+.sprite-zotero-z-16px{ background-position: -211px -1914px; width: 16px; height: 16px; } 
+
