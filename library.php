@@ -1,12 +1,6 @@
 <!DOCTYPE html>
 <?include "config.php";?>
 <?
-$itemsPathString = '';
-$allowEdit = 1;
-$library_listShowFields = 'title,creator,year,numChildren';
-$baseUrl = 'http://localhostroot/www-library';
-$baseDomain = 'localhostroot/www-library';
-$staticPath = 'localhostroot/www-library/static';
 $messages = array();
 ?>
 <html lang="en" class="no-js"> 
