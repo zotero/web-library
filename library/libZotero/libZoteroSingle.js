@@ -49,9 +49,13 @@ var Zotero = {
     localizations: {},
     
     config: {librarySettings: {},
-             baseApiUrl: 'https://apidev.zotero.org',
-             baseWebsiteUrl: 'https://test.zotero.net',
-             baseFeedUrl: 'https://apidev.zotero.org',
+             baseApiUrl: 'https://api.zotero.org',
+             baseWebsiteUrl: 'https://zotero.org',
+             baseFeedUrl: 'https://api.zotero.org',
+             baseZoteroWebsiteUrl: 'https://www.zotero.org',
+             baseDownloadUrl: 'https://www.zotero.org',
+             proxyPath: '/proxyrequest',
+             ignoreLoggedInStatus: false,
              proxy: true,
              apiKey: '',
              ajax: 1,
@@ -397,7 +401,7 @@ Zotero.ajax.error = function(event, request, settings, exception){
     //Zotero.ui.jsNotificationMessage("Error requesting " + settings.url, 'error');
     //J("#js-message-list").append("<li>Error requesting " + settings.url + "</li>");
     Z.debug("Exception: " + exception);
-    //Z.exception = exception;
+    //Z.exception = exception;h
 };
 
 Zotero.ajax.errorCallback = function(jqxhr, textStatus, errorThrown){
@@ -434,8 +438,10 @@ Zotero.ajax.apiRequestUrl = function(params){
         }
     });
     
+    Z.debug("******************API REQUEST URL*********************");
+    Z.debug(JSON.stringify(params));
     if(!params.target) throw "No target defined for api request";
-    if(!(params.libraryType == 'user' || params.libraryType == 'group' || params.libraryType === '')) throw "Unexpected libraryType for api request" + params.libraryType;
+    if(!(params.libraryType == 'user' || params.libraryType == 'group' || params.libraryType === '')) throw "Unexpected libraryType for api request " + JSON.stringify(params);
     if((params.libraryType) && !(params.libraryID)) throw "No libraryID defined for api request";
     
     var base = Zotero.config.baseApiUrl;
@@ -558,8 +564,10 @@ Zotero.ajax.apiQueryString = function(passedParams, useConfigKey){
     });
     
     //take out itemKey if it is not a list
-    if(queryParams.hasOwnProperty('itemKey') && queryParams['itemKey'].indexOf(',') == -1){
-        delete queryParams['itemKey'];
+    if(passedParams.hasOwnProperty('target') && passedParams['target'] !== 'items'){
+        if(queryParams.hasOwnProperty('itemKey') && queryParams['itemKey'].indexOf(',') == -1){
+            delete queryParams['itemKey'];
+        }
     }
     
     //add each of the found queryParams onto array
@@ -585,7 +593,7 @@ Zotero.ajax.proxyWrapper = function(requestUrl, method){
         if(!method){
             method = 'GET';
         }
-        return "/proxyrequest?requestMethod=" + method + "&requestUrl=" + encodeURIComponent(requestUrl);
+        return Zotero.config.proxyPath + "?requestMethod=" + method + "&requestUrl=" + encodeURIComponent(requestUrl);
     }
     else{
         return requestUrl;
@@ -965,14 +973,23 @@ Zotero.Library.prototype.loadItems = function(config){
     var newConfig = J.extend({}, defaultConfig, config);
     newConfig.start = parseInt(newConfig.limit, 10) * (parseInt(newConfig.itemPage, 10) - 1);
     //Z.debug("newConfig");Z.debug(newConfig);
-    var urlconfig = J.extend({'target':'items', 'libraryType':this.type, 'libraryID':this.libraryID}, newConfig);
+    Z.debug("&&&&&&&&&&&&&&Building loadItems request url");
+    Z.debug("defaultConfig:");
+    Z.debug(JSON.stringify(defaultConfig));
+    Z.debug("config:");
+    Z.debug(JSON.stringify(config));
+    Z.debug("newConfig:");
+    Z.debug(JSON.stringify(newConfig));
+    var urlconfig = J.extend({'target':'items', 'libraryType':library.type, 'libraryID':library.libraryID}, newConfig);
+    Z.debug("urlconfig:");
+    Z.debug(JSON.stringify(urlconfig));
     var requestUrl = Zotero.ajax.apiRequestUrl(urlconfig) + Zotero.ajax.apiQueryString(urlconfig);
     Z.debug("loadItems requestUrl:");
     Z.debug(requestUrl);
     
     var callback = J.proxy(function(data, textStatus, XMLHttpRequest){
         Z.debug('loadItems proxied callback', 3);
-        var library = this;
+        //var library = this;
         var jFeedOb = J(data);
         var itemfeed = new Zotero.Feed(data);
         itemfeed.requestConfig = newConfig;
@@ -1616,7 +1633,7 @@ Zotero.Library.prototype.fetchGlobalItem = function(globalKey){
 Zotero.Library.prototype.fetchUserNames = function(userIDs){
     Z.debug("Zotero.Library.fetchUserNames", 3);
     var library = this;
-    var reqUrl = Zotero.config.baseWebsiteUrl + '/api/useraliases?userID=' + userIDs.join(',');
+    var reqUrl = Zotero.config.baseZoteroWebsiteUrl + '/api/useraliases?userID=' + userIDs.join(',');
     var jqxhr = J.getJSON(reqUrl, J.proxy(function(data, textStatus, jqXHR){
         Z.debug("fetchNames returned");
         Z.debug(JSON.stringify(data));
@@ -4192,7 +4209,7 @@ Zotero.url.attachmentDownloadLink = function(item){
         var tail = item.links['enclosure']['href'].substr(-4, 4);
         if(tail == 'view'){
             //snapshot: redirect to view
-            retString += '<a href="' + Zotero.config.baseWebsiteUrl + Zotero.config.nonparsedBaseUrl + '/' + item.itemKey + '/file/view' + '">' + 'View Snapshot</a>';
+            retString += '<a href="' + Zotero.config.baseZoteroWebsiteUrl + Zotero.config.nonparsedBaseUrl + '/' + item.itemKey + '/file/view' + '">' + 'View Snapshot</a>';
             
             //retString += '<form style="margin:0;" method="POST" action="' + item.links['enclosure']['href'] + '?key=' + Zotero.config.apiKey + '">(<input type="hidden" name="h" value="1" /><a href="#" onclick="parentNode.submit()">' + item.title + '</a>)</form>';
         }
@@ -4212,7 +4229,7 @@ Zotero.url.attachmentDownloadLink = function(item){
                 filesizeString = "" + (filesize / 1024).toFixed(1) + " KB";
             }
             Z.debug(enctype);
-            retString += '<a href="' + Zotero.config.baseWebsiteUrl + Zotero.config.nonparsedBaseUrl + '/' + item.itemKey + '/file' + '">';
+            retString += '<a href="' + Zotero.config.baseZoteroWebsiteUrl + Zotero.config.nonparsedBaseUrl + '/' + item.itemKey + '/file' + '">';
             if(enctype == 'undefined' || enctype === '' || typeof enctype == 'undefined'){
                 retString += filesizeString + '</a>';
             }
@@ -4228,7 +4245,7 @@ Zotero.url.attachmentDownloadLink = function(item){
 Zotero.url.attachmentDownloadUrl = function(item){
     var retString = '';
     if(item.links['enclosure']){
-        retString = Zotero.config.baseWebsiteUrl + Zotero.config.nonparsedBaseUrl + '/' + item.itemKey + '/file';
+        retString = Zotero.config.baseZoteroWebsiteUrl + Zotero.config.nonparsedBaseUrl + '/' + item.itemKey + '/file';
         var tail = item.links['enclosure']['href'].substr(-4, 4);
         if(tail == 'view'){
             //snapshot: redirect to view

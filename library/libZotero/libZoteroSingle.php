@@ -1675,6 +1675,14 @@ class Zotero_Item extends Zotero_Entry
         }
     }
     
+    public function attachmentIsSnapshot(){
+        if(!isset($this->links['enclosure'])) return false;
+        if(!isset($this->links['enclosure']['text/html'])) return false;
+        $tail = substr($this->links['enclosure']['text/html']['href'], -4);
+        if($tail == "view") return true;
+        return false;
+    }
+    
     public function json(){
         return json_encode($this->apiObject());
     }
@@ -3599,7 +3607,11 @@ class Zotero_Lib_Utils
     }
     
     public static function wrapDOIs($txt){
-        
+        $matches = array();
+        $doi = preg_match("(10\.[^\s\/]+\/[^\s]+)", $txt, $matches);
+        $m1 = htmlspecialchars($matches[0]);
+        $safetxt = htmlspecialchars($txt);
+        return "<a href=\"http://dx.doi.org/{$matches[0]}\" rel=\"nofollow\">{$safetxt}</a>";
     }
     
     public static function utilRequest($url, $method="GET", $body=NULL, $headers=array(), $basicauth=array() ) {
