@@ -1,8 +1,6 @@
 <script id="itemrowTemplate" type="text/x-jquery-tmpl">
     <tr data-itemKey='${item.itemKey}'>
-        {{if editmode}}
-            <td class="edit-checkbox-td" data-itemKey='${item.itemKey}'><input type='checkbox' class='itemlist-editmode-checkbox itemKey-checkbox' name='selectitem-${item.itemKey}' data-itemKey='${item.itemKey}' /></td>
-        {{/if}}
+        <td class="edit-checkbox-td" data-itemKey='${item.itemKey}'><input type='checkbox' class='itemlist-editmode-checkbox itemKey-checkbox' name='selectitem-${item.itemKey}' data-itemKey='${item.itemKey}' /></td>
         
         {{each(index, field) displayFields}}
             {{if field === 'title'}}

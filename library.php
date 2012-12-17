@@ -181,13 +181,12 @@ $messages = array();
                         <a href="#" class="remove-from-trash-link permission-edit">Remove from Trash</a>
                     </div>
                     <input type='checkbox' id='edit-checkbox' class="left" /><label for="edit-checkbox" class="left">Edit</label>
-                    
-                    <a href="#" id="cite-link" class="cite-link left">Cite</a>
-                    <a href="#" id="export-link" class="export-link left">Export</a>
                 </div>
           </div>
           <div id="library-settings-div" style="float:right;">
                 <a href="#" id="library-settings-link" class='right'>Library Settings</a>
+                <a href="#" id="cite-link" class="cite-link right">Cite</a>
+                <a href="#" id="export-link" class="export-link right">Export</a>
                 <div id="library-settings-dialog" title="Library Settings">
                 </div>
           </div>
@@ -311,10 +310,12 @@ $messages = array();
             var staticPath = "<?=$staticPath?>";
         </script>
         
-        <script type="text/javascript" charset="utf-8" src="<?=$baseUrl?>/_zoterowwwAll.bugly.js"></script>
+        <script type="text/javascript" charset="utf-8" src="<?=$baseUrl?>/js/_zoterowwwAll.bugly.js"></script>
         
         <script type="text/javascript" charset="utf-8">
             Zotero.prefs.server_javascript_enabled = true;
+            
+            Zotero.config = <?include "zoteroconfig.js";?>
         </script>
         
         <script type="text/javascript" charset="utf-8" src="<?=$baseUrl?>/library/tinymce3.5.5/tiny_mce/tiny_mce.js"></script>
