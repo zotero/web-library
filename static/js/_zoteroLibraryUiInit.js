@@ -63,7 +63,7 @@ Zotero.ui.init.fullLibrary = function(){
     Zotero.ui.init.tags();
     Zotero.ui.init.collections();
     Zotero.ui.init.items();
-    Zotero.ui.init.feed();
+    //Zotero.ui.init.feed();
     Zotero.ui.init.libraryTemplates();
 };
 
@@ -197,15 +197,6 @@ Zotero.ui.init.libraryControls = function(){
     J("create-collection-dialog").on('submit', ".new-collection-div form", function(e){
         e.preventDefault();
     });
-    /*
-    //not sure why I'm doing this, so comment out and see if it breaks
-    J( "button.create-collection-button").live('click', function(e){
-        e.preventDefault();
-    });
-    J("button.update-collection-button").live('click', function(e){
-        e.preventDefault();
-    });
-    */
    
     //set initial state of search input to url value
     if(Zotero.nav.getUrlVar('q')){
@@ -217,6 +208,22 @@ Zotero.ui.init.libraryControls = function(){
         context = zoterojsSearchContext;
     }
     
+    J("#header-search-query").val("");
+    J("#header-search-query").attr('placeholder', "Search Library");
+    
+    //set up search submit for library
+    J("#simple-search").live('submit', function(e){
+        e.preventDefault();
+        Zotero.nav.clearUrlVars(['collectionKey', 'tag', 'q']);
+        var query     = J("#header-search-query").val();
+        if(query !== "" || Zotero.nav.getUrlVar('q') ){
+            Zotero.nav.urlvars.pathVars['q'] = query;
+            Zotero.nav.pushState();
+        }
+        return false;
+    });
+    
+    //set up library search clear button
     if((context == 'library') || (context == 'grouplibrary')){
         var clearQuery = function(e){
             Z.debug("header search changed");
@@ -583,14 +590,6 @@ Zotero.ui.init.tagButtons = function(){
             primary: "sprite-plus"
         }
     });
-};
-
-Zotero.ui.init.feed = function(){
-    J("#export-section-title").bind('click', function(e){
-        e.preventDefault();
-        J("#export-list").slideToggle();
-    });
-    
 };
 
 //bind citation/bib links to launch citation dialog

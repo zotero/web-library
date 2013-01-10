@@ -1,9 +1,9 @@
 .sprite-icon {
-   background: url(../static/images/theme/zotero_icons_sprite.png) no-repeat top left; display:block; overflow:hidden;
+   background: url(../images/theme/zotero_icons_sprite.png) no-repeat top left; display:block; overflow:hidden;
 }
 
 .sprite-icon {
-    background-image: url(../static/images/theme/zotero_icons_sprite.png) !important;
+    background-image: url(../images/theme/zotero_icons_sprite.png) !important;
 }
 
 .sprite-icon16 {
@@ -11,30 +11,30 @@
 }
 
 /* placeholder with individual images not included in sprite yet */
-.ui-icon-sprite-folder_go, .sprite-toolbar-export{ width: 16px; height: 16px; background-image: url(../static/images/theme/zotero_icons/folder_go.png) !important; } 
-.ui-icon-sprite-text_list_bullets, .sprite-toolbar-cite{ width: 16px; height: 16px; background-image: url(../static/images/theme/zotero_icons/text_list_bullets.png) !important; } 
+.ui-icon-sprite-folder_go, .sprite-toolbar-export{ width: 16px; height: 16px; background-image: url(../images/theme/zotero_icons/folder_go.png) !important; } 
+.ui-icon-sprite-text_list_bullets, .sprite-toolbar-cite{ width: 16px; height: 16px; background-image: url(../images/theme/zotero_icons/text_list_bullets.png) !important; } 
 
 
 /*special class for desktop ui-icon that doesn't get overwritten by mobile*/
-.dui-icon { width: 16px; height: 16px; background-image: url(../static/images/theme/jquery-ui/ui-icons_222222_256x240.png); background-repeat:no-repeat; display:block; overflow:hidden; }
+.dui-icon { width: 16px; height: 16px; background-image: url(../images/theme/jquery-ui/ui-icons_222222_256x240.png); background-repeat:no-repeat; display:block; overflow:hidden; }
 
 /*extra ui-icon classes for sprite images that go into jqm buttons*/
-.ui-icon-sprite-folder_edit, .sprite-toolbar-collection-edit{ background-position: -70px -858px; width: 16px; height: 16px; background-image: url(../static/images/theme/zotero_icons_sprite.png) !important; } 
-.ui-icon-sprite-folder_add, .sprite-toolbar-collection-add{ background-position: -70px -660px; width: 16px; height: 16px; background-image: url(../static/images/theme/zotero_icons_sprite.png) !important; } 
-.ui-icon-sprite-folder_delete{ background-position: -70px -792px; width: 16px; height: 16px; background-image: url(../static/images/theme/zotero_icons_sprite.png) !important; } 
-.ui-icon-sprite-page_edit{ background-position: -70px -1786px; width: 16px; height: 16px; background-image: url(../static/images/theme/zotero_icons_sprite.png) !important; } 
-.ui-icon-sprite-folder_add_to{ background-position: -70px -726px; width: 16px; height: 16px; background-image: url(../static/images/theme/zotero_icons_sprite.png) !important; } 
-.ui-icon-sprite-folder_remove_from{ background-position: -70px -924px; width: 16px; height: 16px; background-image: url(../static/images/theme/zotero_icons_sprite.png) !important; } 
-.ui-icon-sprite-toolbar-item-add{ background-position: -140px -1040px; width: 16px; height: 16px; background-image: url(../static/images/theme/zotero_icons_sprite.png) !important; } 
-.ui-icon-sprite-trash{ background-position: -140px -1436px; width: 16px; height: 16px; background-image: url(../static/images/theme/zotero_icons_sprite.png) !important; } 
-.ui-icon-sprite-trash_remove{ background-position: -140px -1502px; width: 16px; height: 16px; background-image: url(../static/images/theme/zotero_icons_sprite.png) !important; } 
-.ui-icon-sprite-cog{ background-position: -70px 0; width: 16px; height: 16px; background-image: url(../static/images/theme/zotero_icons_sprite.png) !important; } 
-.ui-icon-sprite-textfield-dual{ background-position: -140px -396px; width: 21px; height: 8px; background-image: url(../static/images/theme/zotero_icons_sprite.png) !important; } 
-.ui-icon-sprite-textfield-single{ background-position: -140px -454px; width: 21px; height: 8px; background-image: url(../static/images/theme/zotero_icons_sprite.png) !important; } 
-.ui-icon-sprite-plus{ background-position: -70px -1920px; width: 18px; height: 18px; background-image: url(../static/images/theme/zotero_icons_sprite.png) !important; } 
-.ui-icon-sprite-minus{ background-position: -70px -1718px; width: 18px; height: 18px; background-image: url(../static/images/theme/zotero_icons_sprite.png) !important; } 
-.ui-icon-sprite-citation-up{ background-position: 0 -1884px; width: 8px; height: 16px; background-image: url(../static/images/theme/zotero_icons_sprite.png) !important; } 
-.ui-icon-sprite-timeline_marker{ background-position: -140px -578px; width: 16px; height: 16px; background-image: url(../static/images/theme/zotero_icons_sprite.png) !important; } 
+.ui-icon-sprite-folder_edit, .sprite-toolbar-collection-edit{ background-position: -70px -858px; width: 16px; height: 16px; background-image: url(../images/theme/zotero_icons_sprite.png) !important; } 
+.ui-icon-sprite-folder_add, .sprite-toolbar-collection-add{ background-position: -70px -660px; width: 16px; height: 16px; background-image: url(../images/theme/zotero_icons_sprite.png) !important; } 
+.ui-icon-sprite-folder_delete{ background-position: -70px -792px; width: 16px; height: 16px; background-image: url(../images/theme/zotero_icons_sprite.png) !important; } 
+.ui-icon-sprite-page_edit{ background-position: -70px -1786px; width: 16px; height: 16px; background-image: url(../images/theme/zotero_icons_sprite.png) !important; } 
+.ui-icon-sprite-folder_add_to{ background-position: -70px -726px; width: 16px; height: 16px; background-image: url(../images/theme/zotero_icons_sprite.png) !important; } 
+.ui-icon-sprite-folder_remove_from{ background-position: -70px -924px; width: 16px; height: 16px; background-image: url(../images/theme/zotero_icons_sprite.png) !important; } 
+.ui-icon-sprite-toolbar-item-add{ background-position: -140px -1040px; width: 16px; height: 16px; background-image: url(../images/theme/zotero_icons_sprite.png) !important; } 
+.ui-icon-sprite-trash{ background-position: -140px -1436px; width: 16px; height: 16px; background-image: url(../images/theme/zotero_icons_sprite.png) !important; } 
+.ui-icon-sprite-trash_remove{ background-position: -140px -1502px; width: 16px; height: 16px; background-image: url(../images/theme/zotero_icons_sprite.png) !important; } 
+.ui-icon-sprite-cog{ background-position: -70px 0; width: 16px; height: 16px; background-image: url(../images/theme/zotero_icons_sprite.png) !important; } 
+.ui-icon-sprite-textfield-dual{ background-position: -140px -396px; width: 21px; height: 8px; background-image: url(../images/theme/zotero_icons_sprite.png) !important; } 
+.ui-icon-sprite-textfield-single{ background-position: -140px -454px; width: 21px; height: 8px; background-image: url(../images/theme/zotero_icons_sprite.png) !important; } 
+.ui-icon-sprite-plus{ background-position: -70px -1920px; width: 18px; height: 18px; background-image: url(../images/theme/zotero_icons_sprite.png) !important; } 
+.ui-icon-sprite-minus{ background-position: -70px -1718px; width: 18px; height: 18px; background-image: url(../images/theme/zotero_icons_sprite.png) !important; } 
+.ui-icon-sprite-citation-up{ background-position: 0 -1884px; width: 8px; height: 16px; background-image: url(../images/theme/zotero_icons_sprite.png) !important; } 
+.ui-icon-sprite-timeline_marker{ background-position: -140px -578px; width: 16px; height: 16px; background-image: url(../images/theme/zotero_icons_sprite.png) !important; } 
 
 
 
@@ -59,22 +59,22 @@
 .sprite-treeitem{ background-position: -211px -1188px; width: 16px; height: 16px; } 
 
 /* sprites that need !important background to override jqueryui icon sprite */
-.sprite-folder_edit, .sprite-toolbar-collection-edit{ background-position: -70px -858px; width: 16px; height: 16px; background-image: url(../static/images/theme/zotero_icons_sprite.png) !important; } 
-.sprite-folder_add, .sprite-toolbar-collection-add{ background-position: -70px -660px; width: 16px; height: 16px; background-image: url(../static/images/theme/zotero_icons_sprite.png) !important; } 
-.sprite-folder_delete{ background-position: -70px -792px; width: 16px; height: 16px; background-image: url(../static/images/theme/zotero_icons_sprite.png) !important; } 
-.sprite-page_edit{ background-position: -70px -1786px; width: 16px; height: 16px; background-image: url(../static/images/theme/zotero_icons_sprite.png) !important; } 
-.sprite-folder_add_to{ background-position: -70px -726px; width: 16px; height: 16px; background-image: url(../static/images/theme/zotero_icons_sprite.png) !important; } 
-.sprite-folder_remove_from{ background-position: -70px -924px; width: 16px; height: 16px; background-image: url(../static/images/theme/zotero_icons_sprite.png) !important; } 
-.sprite-toolbar-item-add{ background-position: -140px -1040px; width: 16px; height: 16px; background-image: url(../static/images/theme/zotero_icons_sprite.png) !important; } 
-.sprite-trash{ background-position: -140px -1436px; width: 16px; height: 16px; background-image: url(../static/images/theme/zotero_icons_sprite.png) !important; } 
-.sprite-trash_remove{ background-position: -140px -1502px; width: 16px; height: 16px; background-image: url(../static/images/theme/zotero_icons_sprite.png) !important; } 
-.sprite-cog{ background-position: -70px 0; width: 16px; height: 16px; background-image: url(../static/images/theme/zotero_icons_sprite.png) !important; } 
-.sprite-textfield-dual{ background-position: -140px -396px; width: 21px; height: 8px; background-image: url(../static/images/theme/zotero_icons_sprite.png) !important; } 
-.sprite-textfield-single{ background-position: -140px -454px; width: 21px; height: 8px; background-image: url(../static/images/theme/zotero_icons_sprite.png) !important; } 
-.sprite-plus{ background-position: -70px -1920px; width: 18px; height: 18px; background-image: url(../static/images/theme/zotero_icons_sprite.png) !important; } 
-.sprite-minus{ background-position: -70px -1718px; width: 18px; height: 18px; background-image: url(../static/images/theme/zotero_icons_sprite.png) !important; } 
-.sprite-citation-up{ background-position: 0 -1884px; width: 8px; height: 16px; background-image: url(../static/images/theme/zotero_icons_sprite.png) !important; } 
-.sprite-timeline_marker{ background-position: -140px -578px; width: 16px; height: 16px; background-image: url(../static/images/theme/zotero_icons_sprite.png) !important; } 
+.sprite-folder_edit, .sprite-toolbar-collection-edit{ background-position: -70px -858px; width: 16px; height: 16px; background-image: url(../images/theme/zotero_icons_sprite.png) !important; } 
+.sprite-folder_add, .sprite-toolbar-collection-add{ background-position: -70px -660px; width: 16px; height: 16px; background-image: url(../images/theme/zotero_icons_sprite.png) !important; } 
+.sprite-folder_delete{ background-position: -70px -792px; width: 16px; height: 16px; background-image: url(../images/theme/zotero_icons_sprite.png) !important; } 
+.sprite-page_edit{ background-position: -70px -1786px; width: 16px; height: 16px; background-image: url(../images/theme/zotero_icons_sprite.png) !important; } 
+.sprite-folder_add_to{ background-position: -70px -726px; width: 16px; height: 16px; background-image: url(../images/theme/zotero_icons_sprite.png) !important; } 
+.sprite-folder_remove_from{ background-position: -70px -924px; width: 16px; height: 16px; background-image: url(../images/theme/zotero_icons_sprite.png) !important; } 
+.sprite-toolbar-item-add{ background-position: -140px -1040px; width: 16px; height: 16px; background-image: url(../images/theme/zotero_icons_sprite.png) !important; } 
+.sprite-trash{ background-position: -140px -1436px; width: 16px; height: 16px; background-image: url(../images/theme/zotero_icons_sprite.png) !important; } 
+.sprite-trash_remove{ background-position: -140px -1502px; width: 16px; height: 16px; background-image: url(../images/theme/zotero_icons_sprite.png) !important; } 
+.sprite-cog{ background-position: -70px 0; width: 16px; height: 16px; background-image: url(../images/theme/zotero_icons_sprite.png) !important; } 
+.sprite-textfield-dual{ background-position: -140px -396px; width: 21px; height: 8px; background-image: url(../images/theme/zotero_icons_sprite.png) !important; } 
+.sprite-textfield-single{ background-position: -140px -454px; width: 21px; height: 8px; background-image: url(../images/theme/zotero_icons_sprite.png) !important; } 
+.sprite-plus{ background-position: -70px -1920px; width: 18px; height: 18px; background-image: url(../images/theme/zotero_icons_sprite.png) !important; } 
+.sprite-minus{ background-position: -70px -1718px; width: 18px; height: 18px; background-image: url(../images/theme/zotero_icons_sprite.png) !important; } 
+.sprite-citation-up{ background-position: 0 -1884px; width: 8px; height: 16px; background-image: url(../images/theme/zotero_icons_sprite.png) !important; } 
+.sprite-timeline_marker{ background-position: -140px -578px; width: 16px; height: 16px; background-image: url(../images/theme/zotero_icons_sprite.png) !important; } 
 
 
 

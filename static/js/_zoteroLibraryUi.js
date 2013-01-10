@@ -95,7 +95,7 @@ Zotero.ui.ajaxErrorMessage = function(jqxhr){
     switch(jqxhr.status){
         case 403:
             //don't have permission to view
-            if(Zotero.config.loggedIn){
+            if(Zotero.config.loggedIn || Zotero.config.ignoreLoggedInStatus){
                 return "You do not have permission to view this library.";
             }
             else{
@@ -1221,6 +1221,10 @@ Zotero.ui.getAssociatedLibrary = function(el){
         var libraryID = loadConfig.libraryID;
         var libraryType = loadConfig.libraryType;
         var libraryUrlIdentifier = loadConfig.libraryUrlIdentifier;
+        if(!libraryID || !libraryType) {
+            Z.debug("Bad library data attempting to get associated library: libraryID " + libraryID + " libraryType " + libraryType, 1);
+            throw "Err";
+        }
         if(Zotero.libraries[Zotero.utils.libraryString(libraryType, libraryID)]){
             library = Zotero.libraries[Zotero.utils.libraryString(libraryType, libraryID, libraryUrlIdentifier)];
         }
@@ -1240,11 +1244,12 @@ Zotero.ui.getAssociatedLibrary = function(el){
  * @return {undefined}
  */
 Zotero.ui.showSpinner = function(el, type){
+    var spinnerUrl = Zotero.config.baseWebsiteUrl + '/static/images/theme/broken-circle-spinner.gif';
     if(!type){
-        J(el).html("<img class='spinner' src='/static/images/theme/broken-circle-spinner.gif'/>");
+        J(el).html("<img class='spinner' src='" + spinnerUrl + "'/>");
     }
     else if(type == 'horizontal'){
-        J(el).html("<img class='spinner' src='/static/images/theme/broken-circle-spinner.gif'/>");
+        J(el).html("<img class='spinner' src='" + spinnerUrl + "'/>");
     }
 };
 
@@ -1254,7 +1259,8 @@ Zotero.ui.showSpinner = function(el, type){
  * @return {undefined}
  */
 Zotero.ui.appendSpinner = function(el){
-    J(el).append("<img class='spinner' src='/static/images/theme/broken-circle-spinner.gif'/>");
+    var spinnerUrl = Zotero.config.baseWebsiteUrl + '/static/images/theme/broken-circle-spinner.gif';
+    J(el).append("<img class='spinner' src='" + spinnerUrl + "'/>");
 };
 
 //generate html for tags

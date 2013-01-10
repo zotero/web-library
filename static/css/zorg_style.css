@@ -1,0 +1,1050 @@
+/**
+ * Added because of iframe showing up on registration form, supposedly
+ * because of the ReCaptcha field.
+ */
+iframe[src="about:blank"]{
+    display:none;
+}
+
+.sticky-note ul {
+    list-style:none;
+    margin-left:0;
+    padding-left:0;
+}
+
+.sticky-note li {
+    margin-bottom:1em;
+}
+
+a#screencast-link {
+    display:block;
+}
+#screencast-link img {
+    max-width:100%;
+}
+
+/* Nuggets!!!!!! */
+
+.nugget-full {
+    margin-bottom: 1.42857143em;
+}
+
+.nugget-full img {
+    float:left;
+}
+.nugget-full .nugget-name {
+    font-size:1.42857143em;
+    font-weight:bold;
+    margin-bottom:0.5em;
+}
+
+.nugget-full .nugget-name a {
+    text-decoration:none;
+}
+
+.nugget-full .nugget-name,
+.nugget-full .nugget-affiliation,
+.nugget-full .action-links,
+.nugget-full dl {
+}
+
+.nugget-small img {
+    float:left;
+}
+
+.nugget-small .nugget-affiliation,
+.nugget-small .nugget-name {
+    margin-left: 60px;
+}
+
+.nugget-small .nugget-affiliation {
+    font-size: 0.785714286em;
+    color: #999;
+}
+
+#group-library-link-nav a {
+    font-weight:bold;
+}
+
+/* == Homepage, not logged in == */
+#zotero-banner {
+    font-size:115%;
+    float:left;
+    width: 65%;
+    margin-bottom: 40px;
+    line-height: 150%;
+}
+
+#download {
+    width: 31%;
+    float:right;
+    display:block;
+    text-decoration:none;
+    padding: 20px 0;
+    font-size: 1.8em;
+    font-weight:bold;
+    color: #fff;
+    border-radius: 10px;
+}
+
+#download:link,
+#download:visited {
+    border-color: #a00;
+    background-color: #a00;
+}
+
+#download:hover,
+#download:active {
+    border-color: #c00;
+    background-color: #c00;
+}
+#features {
+    clear:both;        
+    padding: 40px;
+    margin: 0 -40px;
+    border: 5px solid rgba(255,255,255, 0.5);
+    background:rgba(51,136,204,0.2);
+    border-width: 5px 0 0;
+}
+
+#features h3 {
+    font-size:1.5em;
+    text-align:center;
+}
+
+#features-tabs {
+    list-style:none;
+    text-align:center;
+    margin: 0 0 1em;
+    padding:0;
+    font-size:1.14285714em;
+    font-weight:bold;
+}
+
+#features-tabs li {
+    display:inline-block;
+    margin:0;
+}
+
+#features-tabs a {
+    text-decoration:none;
+    padding: 14px;
+    line-height: 40px;
+    position:relative;
+    vertical-align:middle;
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+}
+
+*:first-child+html #features-tabs li {
+    display:inline;
+}
+
+#features-tabs a:link,
+#features-tabs a:visited {
+    color:rgba(51,136,204,0.8);
+    background-color: transparent;
+}
+
+#features-tabs a:hover,
+#features-tabs a:active {
+    background:rgba(51,136,204,0.1);
+}
+
+#features-tabs a.selected {
+    background:rgba(51,136,204,0.2);
+}
+
+#features-tabs a img {
+    vertical-align:middle;
+}
+
+#features-lists {
+    max-width: 960px;
+    margin-left:auto;
+    margin-right:auto;
+}
+
+.feature h3 {
+    font-weight:bold;
+    margin-bottom:1em;
+}
+
+.feature img {
+    background-color:rgba(0,0,0,0.1);
+    padding: 5px;
+    margin-bottom: 10px;
+    float:left;
+    margin-right: 10px;
+}
+
+#features-lists .feature:nth-child(2n) img {
+    float:right;
+    margin-left: 10px;
+    margin-right:0;
+}
+
+#media {
+    padding: 40px 0;
+}
+
+#media h2 {
+    margin-top:0;
+}
+
+#media > div {
+    float:left;
+    width: 31%;
+    margin-right: 3%;
+    padding-bottom: 1em;
+}
+
+.news-list {
+    list-style:none;
+    margin:0;
+    padding:0;
+}
+
+#connect ul {
+    list-style:none;
+    line-height: 2;
+    margin:0;
+    padding:0;
+}
+
+#connect li {
+    margin-bottom:1em;
+}
+#connect a {
+    text-decoration:none;
+    font-weight:bold;
+}
+
+#connect a img {
+    vertical-align:middle;
+    margin-right: 8px;
+    opacity: 0.75;
+    width: 40px;
+    height: 40px;
+}
+
+#connect a:hover img,
+#connect a:active img {
+    opacity:1;
+}
+
+#get-involved {
+    margin-right: 0 !important;
+}
+
+/* == Homepage, logged in == */
+#download-logged-in {
+    float:right;
+    display:block;
+    margin-left: 5%;
+}
+
+#profile-widget .nugget-user {
+    float:left;
+    margin-right: 10px;
+}
+
+#profile-widget h1 {
+    margin-bottom:0.25em;
+}
+
+.home-widget {
+    background: rgba(0,0,0,0.035);
+    -moz-border-radius: 10px;
+    -webkit-border-radius:10px;
+    border-radius: 10px;
+    padding: 10px;
+    margin-bottom: 2em;
+    word-wrap: break-word;
+}
+
+#widgets-form,
+#news-feed-form {
+    float:left;
+    width: 48%;
+}
+
+#news-feed-form {
+    float:right;
+}
+.home-widget form li {
+    list-style:none;
+    padding-left:0;
+}
+
+.home-widget table,
+.home-widget p,
+.home-widget ul,
+.home-widget ol,
+.home-widget meter {
+    font-size: 0.857142857em;
+    margin: 1.66666667em 0;
+}
+
+.home-widget table {
+    margin: 1em 0;
+}
+
+.home-widget h2 {
+    margin:-10px -10px 0;
+    padding: 10px;
+    background: rgba(0,0,0,0.05);
+    -moz-border-radius: 10px 10px 0 0;
+    -webkit-border-radius:10px 10px 0 0;
+    border-radius: 10px 10px 0 0;
+    font-size:1em;
+    line-height:1em;
+}
+
+.home-widget-title .widget-title-text {
+    vertical-align:middle;
+}
+
+h2 .ui-button {
+    height: 1.4em !important;
+    width: 1.4em !important;
+    float:right;
+}
+
+.home-widget-edit {
+    margin: 0 -10px !important;
+    padding: 10px 10px 0;
+    background: rgba(0,0,0,0.05);
+}
+
+.home-widget-edit .widget-actions {
+    padding-bottom:1em;
+}
+.home-widget ul {
+    list-style:none;
+    padding-left:0;
+}
+
+.home-widget li {
+    padding: 8px 0;
+    border-bottom: 1px dotted rgba(0,0,0,0.1);
+}
+
+.home-widget li:last-child {
+    border:none;
+}
+
+.home-widget li img {
+    vertical-align:middle;
+    margin-right: 4px;
+}
+
+/* == Standalone Start Page == */
+.download-section {
+    /*background: rgba(51, 136, 204, 0.2);*/
+    background-color: #e6e6e6;
+    border-radius:10px;
+    -moz-border-radius:10px;
+    -webkit-border-radius:10px;
+    padding:5px;
+    margin-bottom:10px;
+}
+
+.download-section ul {
+    list-style:none;
+}
+
+.download-section li {
+    margin-bottom: 12px;
+}
+
+#recommended-client-download a.download-link,
+#firefox-section a.download-link {
+    display:block;
+    padding: 0;
+    height: 45px;
+    width: 236px;
+    line-height: 45px;
+    position: relative;
+    padding-left:64px;
+    margin-left:40px;
+}
+
+#recommended-connector-download a.download-link {
+    font-size: 13px;
+    margin-right: 10px;
+    opacity:0.5;
+    padding-top:0px;
+    padding-bottom:2px;
+    padding-left:5px;
+    padding-right:5px;
+}
+
+#recommended-connector-download a.recommended-download {
+    opacity:1.0;
+}
+
+#recommended-connector-download a.download-link:hover {
+    opacity:1.0;
+}
+
+
+/* == Download Page == */
+#recommended-client-download ul {
+    list-style:none;
+    
+}
+#recommended-connector-download ul {
+    list-style:none;
+    
+}
+
+#download-options ul {
+    list-style:none;
+}
+
+/* == Bookmarklet Page == */
+ul#bookmarklet-tabs li {
+/*    line-height:16px;*/
+    border-right: 1px solid #bbb;
+    padding-top: 8px;
+    padding-bottom: 10px;
+    cursor:pointer;
+    list-style-position:inside;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    border-top: 1px solid rgba(255,255,255,0);
+    border-bottom: 1px solid rgba(255,255,255,0);
+}
+
+ul#bookmarklet-tabs li.selected {
+    border-top: 1px solid #bbb;
+    border-bottom: 1px solid #bbb;
+    border-right: 0px;
+}
+
+#bookmarklet-div {
+    padding-left:10px;
+}
+
+/* == Zotero Plugins Page == */
+.plugin-section {
+    /*width:100%;*/
+    padding: 20px 5%;
+    margin-bottom:1em;
+    border-radius: 8px 8px 8px 8px;
+    border: 1px solid #A8B8D1;
+    box-shadow: 0 1px 3px rgba(58, 78, 103, 0.15) inset, 0 1px 0 rgba(255, 255, 255, 0.5);
+    -moz-box-shadow: 0 1px 3px rgba(58, 78, 103, 0.15) inset, 0 1px 0 rgba(255, 255, 255, 0.5);
+    -webkit-box-shadow: 0 1px 3px rgba(58, 78, 103, 0.15) inset, 0 1px 0 rgba(255, 255, 255, 0.5);
+    
+}
+
+div.plugin-nugget {
+    border-radius:10px;
+    border:1px solid black;
+    width:28%;
+    padding:5px;
+    margin:12px;
+    -webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.5);
+    -moz-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.5);
+    float:left;
+    background-image:-moz-linear-gradient(#FFFFFF, #ECF1F7);
+    background-image:-webkit-linear-gradient(#FFFFFF, #ECF1F7);
+}
+
+.plugin-author {
+    
+}
+
+.plugin-description {
+    
+}
+
+/* == User Pages == */
+#profile-picture {
+    float:left;
+    width: 50px;
+    margin-right: 8px;
+}
+
+#profile-picture img {
+    max-width: 100%;
+}
+
+/* == User CV == */
+div.csl-entry {
+    margin-bottom:1em;
+}
+
+/* == Login page == */
+#login fieldset {
+    display:block;
+    float: left;
+    width: 48%;
+}
+
+#login fieldset:not(:last-child) {
+    margin-right: 4%;
+}
+
+/* == Global search page == */
+#supportrefinementdiv label{
+    clear:both;
+}
+
+#support-submit, #people-submit, #group-submit {
+    margin-top:5px;
+}
+
+/* == Registration page == */
+#register #form-description {
+    float:right;
+    width: 48%;
+}
+
+#register form {
+    margin-right: 52%;
+}
+
+#register input[type=text] {
+    width: 50%;
+    min-width: 200px;
+}
+
+/* == Settings styles == */
+
+/* == People page == */
+
+#user-follow-list {
+    list-style:none;
+    padding-left:0;
+}
+
+.people-tiny-nuggets .nugget-user {
+    float:left;
+    margin-right: 5px;
+}
+
+.people-tiny-nuggets {
+    clear:both;
+}
+
+.minor-col h2 {
+    clear:both;
+}
+
+#people-discipline ul {
+    list-style:none;
+    margin-left:0;
+    padding-left:0;
+    font-weight:bold;
+    font-size: 0.857142857em;
+    float:left;
+    width: 48%;
+}
+
+#people-discipline ul.last {
+    float:right;
+}
+#people-discipline a {
+    display:block;
+    text-decoration:none;
+    border-bottom: 1px dotted #ccc;
+    padding: 5px;
+}
+
+#people-discipline a:hover,
+#people-discipline a:active {
+    background-color: rgba(51,136,204,0.2);
+}
+
+.people-in-disciplines {
+    list-style:none;
+    margin-left:0;
+    padding-left:0;
+}
+
+.people-in-disciplines li {
+    padding: 0 0 9px;
+    border-bottom: 1px dotted #ccc;
+    margin-bottom:10px;
+}
+
+.people-in-disciplines li:last-child {
+    border:none;
+    margin-bottom:0;
+}
+
+/* == Groups pages == */
+
+ul#groups {
+    list-style:none;
+    margin-left:0;
+    padding-left:0;
+}
+
+ul#groups > li {
+    margin-bottom: 1.42857143em;
+}
+
+ul#groups th {
+    width: 25%;
+}
+
+ul#group-invitations {
+    list-style:none;
+}
+
+a.group-image img {
+    padding:2px 4px;
+}
+
+div.nugget-group {
+    border-top:2px solid rgba(0,0,0,0.3);
+    padding-top: 8px;
+    padding-left: 4px;
+}
+
+/* New Group Form */
+.group-select {
+    border-radius: 10px;
+    width:27%;
+    float:left;
+    margin-right: 3%;
+    padding: 2%;
+    background-color: rgba(0,0,0,0.05);
+}
+
+.group-select:last-child {
+    margin-right:0;
+}
+
+.group-select h2 {
+    font-size:1em;
+    color: #333;
+    margin: 0 0 1em;
+}
+
+.group-select p,
+.group-select label {
+    font-size: 0.857142857em;
+}
+
+.group-select input,
+.group-select label {
+    display:inline;
+    font-weight:bold;
+}
+
+/* Messages Page */
+#contact-section { padding-top:100px}
+#contact-list { width:150px }
+#inbox-spinner {display:none}
+
+.message-row  {font-weight:bold;}
+.message-body { background-color:#FFF; padding:10px; display:none;}
+.read-message { background-color:#EAEAEA; font-weight:normal}
+
+.group-message-body {margin-left:5px; margin-top:10px; margin-bottom:10px; border-top:1px solid #ccc; border-bottom:1px solid #ccc; overflow:auto}
+.author-link {margin-right:30px; font-weight:bold}
+
+/* Admin Dashboard */
+.admin-message-type-emerg  {background-color:#3000ff;}
+.admin-message-type-alert  {background-color:#9300ae;}
+.admin-message-type-crit   {background-color:#d90042;}
+.admin-message-type-err    {background-color:#ff1009;}
+.admin-message-type-warn   {background-color:#fbd438;}
+.admin-message-type-notice {background-color:#84de40;}
+.admin-message-type-info   {background-color:#79d6aa;}
+.admin-message-type-debug  {background-color:#c0ecd8;}
+.admin-quicklink {width:100%; padding:5px; display:block; color:#FFF !important; text-align:center; font-size:14px; font-weight:bold;}
+.admin-message { padding:5px; position:relative; min-height:7px; margin-bottom:3px; }
+.admin-message-date { position:absolute; top:6px; right:15px; overflow:none; width:125px; text-align:right;}
+.admin-message-title { overflow:hidden; white-space:nowrap; width:435px; font-weight:bold; margin-bottom:2px; cursor: pointer;}
+.admin-message-body { background-color:#FFF; padding:10px; display:none;}
+.admin-trace {overflow: auto; white-space:nowrap; }
+.admin-value { font-family: monospace;}
+.admin-message-body tr {border-bottom:1px solid #eee;}
+.admin-message-body th { width:175px; }
+.admin-message-body th, .admin-message-body td { border:0px; padding:0px;}
+.admin-noresults {text-align:center; padding:100px;}
+.admin-search-form {margin:18px 0px;}
+.admin-pagination { text-align:center; position:relative; width:100%; margin:9px 0px;}
+.admin-pagination-next {position:absolute; right:0px; bottom:0px;}
+.admin-pagination-prev {position:absolute; left:0px; bottom:0px;}
+
+/* Admin User Storage */
+.checkout-notification {border:1px solid #ccc; margin-top:7px; background-color:#ddd}
+
+.Role_2 {background-color:#fcc}
+
+
+
+
+
+
+/* == Support styles == */
+#support .major-col {
+    float:right;
+}
+#support .minor-col {
+    float:left;
+}
+
+.dokuwiki .major-col {
+    width: 70%;
+}
+
+body.dokuwiki {
+    max-width:1920px;
+}
+
+body div.dokuwiki div.major-col {
+    font-size:0.9em;
+}
+
+.dokuwiki .minor-col {
+    width: 25%;
+}
+.bchead {display:none;}
+
+.dokuwiki div.plugin_translation {
+    float:none !important;
+    padding:0 !important;
+    margin-bottom:1em;
+}
+
+.plugin_translation span {
+    font-weight:bold;
+}
+
+.dokuwiki .bar .no {
+    border-bottom: 1px dotted #ccc;
+    padding: 10px 0;
+    display:block;
+}
+
+.dokuwiki .bar .button {
+    background-image: none;
+    background-color: transparent;
+    border: none;
+    text-shadow: none;
+    color: #900;
+    padding: 0;
+    margin: 0;
+    font-size: 1em;
+    border-radius: 0;
+    float:none;
+}
+
+.support-menu-section {
+    background-color: #eee;
+    border: 1px solid rgba(0,0,0,0.1);
+    border-width: 0 1px 1px;
+    padding: 10px;
+}
+
+#support-menu h2 {
+    font-size:0.857142857em;
+    margin:0;
+    border-bottom:none;
+}
+
+#support-menu ul {
+    font-size:0.857142857em;
+    padding-left:1.25em;
+}
+
+#support-menu h2:hover {
+    color: #38c;
+    cursor:pointer;
+}
+.support-menu-section:first-child {
+    border-radius: 10px 10px 0 0;
+    border-width: 1px;
+}
+
+.support-menu-section:last-child {
+    border-radius: 0 0 10px 10px;
+}
+
+.dokuwiki div.toc {
+    float:right;
+    border:1px solid #ccc;
+    padding: 10px;
+    margin-left: 10px;
+    margin-bottom:10px;
+    font-size:0.857142857em;
+    width: 20%;
+    border-radius:10px;
+    -moz-border-radius:10px;
+    -webkit-border-radius:10px;
+    background: #fff;
+}
+
+.dokuwiki div.toc ul {
+    padding-left:0.5em;
+}
+
+.dokuwiki .page-info,
+.dokuwiki .user-info {
+    font-size:0.857142857em;
+    color: #999;
+    margin: 1em 0;
+}
+
+.dokuwiki div.plugin_translation {
+    margin-top:1em;
+    border: 1px dotted #ccc;
+    border-width: 1px 0;
+    padding: 1em 0 !important;
+}
+
+.dokuwiki .page h1 {
+    border-bottom: 1px dotted #ccc;
+    padding-bottom: 0.5em;
+}
+.dokuwiki div.plugin_translation span,
+.dokuwiki div.plugin_translation ul {
+    display:block;
+    margin:0;
+    padding:0;
+    float:left;
+}
+
+.dokuwiki div.plugin_translation li {
+    float:none;
+    display:inline;
+}
+.dokuwiki div.plugin_translation ul li a.wikilink2:link, 
+.dokuwiki div.plugin_translation ul li a.wikilink2:hover, 
+.dokuwiki div.plugin_translation ul li a.wikilink2:active, 
+.dokuwiki div.plugin_translation ul li a.wikilink2:visited {
+    background: #fff;
+    color:#999 !important;
+    border-bottom: 1px dotted #ccc;
+}
+
+.dokuwiki div.plugin_translation ul li a.wikilink1:link, 
+.dokuwiki div.plugin_translation ul li a.wikilink1:hover, 
+.dokuwiki div.plugin_translation ul li a.wikilink1:active,
+.dokuwiki div.plugin_translation ul li a.wikilink1:visited {
+    background-color: #ddd;
+    color: #333 !important;
+    border-bottom:none;
+    
+}
+
+div.dokuwiki .media img.medialeft {
+    border:1px dotted #ccc;
+    padding: 4px;
+}
+
+div.dokuwiki div.secedit {
+    margin-bottom: 1em;
+}
+
+div.dokuwiki div.secedit input.button {
+    padding: 4px 8px;
+}
+
+.dokuwiki .centeralign {
+    text-align:left;
+}
+.dokuwiki div.li input {float:left !important; display:inline !important}
+/* indent different sections */
+div.dokuwiki div.level1 {margin-left: 3px;}
+div.dokuwiki div.level2 {margin-left: 13px;}
+
+/* margin-left modified by Dan S. */
+div.dokuwiki div.level3 {margin-left: 13px;}
+div.dokuwiki div.level4 {margin-left: 13px;}
+div.dokuwiki div.level5 {margin-left: 13px;}
+
+div.dokuwiki ul ul {
+    padding-left:20px;
+}
+
+div.dokuwiki form.btn_source div.no input[value="Show pagesource"]{
+    display:none;
+}
+/*
+.dokuwiki .page h2,
+.dokuwiki .page .level2 {
+    margin-left: 0em;
+}
+
+.dokuwiki .page h3,
+.dokuwiki .page .level3 {
+    margin-left: 1em;
+}
+*/
+/* == Forums styles == */
+#SearchPage input, #PostPage input, #CommentsPage input {
+    display:inline-block;
+}
+/*
+#SearchPage input[type=button],
+#SearchPage input[type=submit],
+#PostPage input[type=button],
+#PostPage input[type=submit],
+#CommentsPage input[type=button],
+#CommentsPage input[type=submit] {    border-color:#555;
+    border-color:#555;
+    background-color: #DDD;
+}*/
+#Panel {
+    margin-right:25px;
+}
+/*
+#Session {
+    margin-bottom:1em;
+}
+
+#Categories,
+#Categories ul,
+#Comments,
+#Discussions,
+#Discussions ul {
+    list-style:none;
+    padding-left:0;
+    margin-left:0;
+}
+
+.Category,
+.Comment,
+.Discussion {
+    padding:1em;
+}
+
+.Category:not(:last-child),
+.Comment:not(:last-child),
+.Discussion:not(:last-child) {
+    border-bottom:1px solid #ccc;
+}
+
+.CategoryOptions,
+.CategoryName span,
+.CategoryDescription span,
+.CommentHeader span,
+.DiscussionTopic span,
+.DiscussionType {display:none;}
+
+.CategoryDescription,
+.DiscussionDescription,
+.DiscussionComments {
+    font-size:0.857142857em;
+    color: #777;
+}
+
+.CategoryName,
+.DiscussionTopic {
+    font-size:1.14285714em;
+    font-weight:bold;
+}
+
+.Discussion .DiscussionCategory {
+    display:none;
+}
+
+.DiscussionComments {
+    margin-bottom:1em;
+}
+
+.UnRead,
+.NewComments {
+    background-color: rgba(51,136,204,0.1);
+}
+
+.DiscussionStarted,
+.DiscussionLastComment,
+.DiscussionActive {
+    display:inline;
+    font-size: 0.857142857em;
+}
+.DiscussionStarted:after,
+.DiscussionLastComment:after {
+    content: " · ";
+    padding: 0 4px;
+    color: #999;
+}
+
+.PageInfo {
+    border: 2px solid #ddd;
+    border-width: 2px 0 1px;
+    line-height:2;
+    vertical-align:middle;
+}
+.PageInfo p {
+    float:right;
+    width: 25%;
+    text-align:right;
+    font-size: 0.857142857em;
+    color: #999;
+    font-weight:bold;
+    margin:0;
+    line-height:2;
+}
+
+.PageListEmpty {
+    display:none;
+}
+
+.PageList {
+    font-size: 0.857142857em;
+    list-style:none;
+    margin:0;
+    padding:0;
+    float:left;
+    width: 70%;
+    color: #999;
+    font-weight:bold;
+    line-height:2;
+}
+
+.PageList li {
+    display:inline;
+    margin: 0 4px;
+}
+
+.PageList a {
+}
+
+#Comments {
+    border-top: 1px solid #ddd;
+    margin-top:0;
+}
+.CommentHeader ul {
+    list-style:none;
+    padding-left:0;
+    margin-left:0;
+    padding-bottom:1em;
+}
+
+.CommentHeader li {
+    display:inline;
+    font-size: 1em;
+    font-weight:bold;
+    vertical-align:middle;
+}
+
+.CommentHeader a {
+    text-decoration:none;
+}
+.CommentHeader li.comment-time {
+    color: #999;
+    font-weight:normal;
+}
+
+.CommentHeader li.comment-time:before {
+    content: " · ";
+    color: #ccc;
+}
+.Comment blockquote {
+    color: #999;
+    font-style:italic;
+}
+*/
+

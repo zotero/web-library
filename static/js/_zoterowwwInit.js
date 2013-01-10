@@ -13,7 +13,7 @@ jQuery(document).ready(function() {
     Zotero.init();
 });
 
-Zotero.prefs = {
+Zotero.defaultPrefs = {
     debug_level: 3, //lower level is higher priority
     debug_log: true,
     debug_mock: false,
@@ -21,11 +21,15 @@ Zotero.prefs = {
     library_listShowFields: ['title', 'creator', 'dateModified']
 };
 
+Zotero.prefs = {};
+
 Zotero.init = function(){
     Z.debug("Zotero init", 3);
 
     //base init to setup tagline and search bar
-    Zotero.pages.base.init();
+    if(Zotero.pages){
+        Zotero.pages.base.init();
+    }
     
     //run page specific init
     if(undefined !== window.zoterojsClass){
@@ -56,7 +60,17 @@ Zotero.init = function(){
         store = sessionStorage;
     }
     Zotero.cache = new Zotero.Cache(store);
-
+    Zotero.store = store;
+    Zotero.prefs = J.extend({}, Zotero.defaultPrefs, Zotero.prefs, Zotero.utils.getStoredPrefs());
+    /*
+    Zotero.prefs = new Zotero.Prefs(store);
+    J.each(Zotero.defaultPrefs, function(key, val){
+        if(Zotero.prefs.getPref(key) === null){
+            Zotero.prefs.setPref(key, val);
+        }
+    });
+    */
+    
     //get localized item constants if not stored in localstorage
     var locale = "en-US";
     if(zoteroData.locale){
@@ -76,8 +90,14 @@ Zotero.init = function(){
         if(zoteroData.library_showAllTags){
             Zotero.prefs.library_showAllTags = zoteroData.library_showAllTags;
         }
-        if(zoteroData.library_defaultSort){
-            var defaultSort = zoteroData.library_defaultSort.split(',');
+        if(zoteroData.library_defaultSort || Zotero.prefs.library_defaultSort){
+            var defaultSort;
+            if(zoteroData.library_defaultSort){
+                defaultSort = zoteroData.library_defaultSort.split(',');
+            }
+            else {
+                defaultSort = Zotero.prefs.library_defaultSort.split(',');
+            }
             if(defaultSort[0]){
                 Zotero.config.userDefaultApiArgs['order'] = defaultSort[0];
             }

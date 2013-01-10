@@ -317,7 +317,7 @@ Zotero.ui.callbacks.exportItems = function(e){
     var itemKeys = Zotero.ui.getSelectedItemKeys(J("#edit-mode-items-form"));
     var requestedFormat = J(this).data('exportformat');
     var exportConfig = J.extend(urlconfig, {'format':requestedFormat});
-    Z.debug(exportConfig);
+    
     //build link to export file with selected items
     var itemKeyString = itemKeys.join(',');
     if(itemKeyString !== ''){

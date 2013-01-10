@@ -107,6 +107,7 @@ Zotero.pages = {
                 });
             }
             else if(context != 'forums') {
+                /*
                 J("#simple-search").live('submit', function(e){
                     e.preventDefault();
                     Zotero.nav.clearUrlVars(['collectionKey', 'tag', 'q']);
@@ -117,6 +118,7 @@ Zotero.pages = {
                     }
                     return false;
                 });
+                */
             }
         },
         

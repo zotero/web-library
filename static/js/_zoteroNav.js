@@ -117,7 +117,7 @@ Zotero.nav.parseUrlVars = function(){
 };
 
 Zotero.nav.parsePathVars = function(pathname){
-    Z.debug('Zotero.nav.parsePathVars');
+    Z.debug('Zotero.nav.parsePathVars', 3);
     //parse variables out of library urls
     //:userslug/items/:itemKey/*
     //:userslug/items/collection/:collectionKey
@@ -132,17 +132,17 @@ Zotero.nav.parsePathVars = function(pathname){
     var re = new RegExp(".*" + basePath + "\/?");
     var replaced = pathname.replace(re, '');
     
-    Z.debug(replaced);
+    Z.debug(replaced, 4);
     split_replaced = replaced.split('/');
     
-    Z.debug(split_replaced);
+    Z.debug(split_replaced, 4);
     var pathVars = {};
     for(var i=0; i<(split_replaced.length-1); i = i+2){
         var pathVar = pathVars[split_replaced[i]];
-        Z.debug('pathVar: ' + pathVar);
+        Z.debug('pathVar: ' + pathVar, 4);
         //if var already present change to array and/or push
         if(pathVar){
-            Z.debug("pathVar already has value");
+            Z.debug("pathVar already has value", 4);
             if(pathVar instanceof Array){
                 pathVar.push(decodeURIComponent(split_replaced[i+1]));
             }
@@ -154,12 +154,12 @@ Zotero.nav.parsePathVars = function(pathname){
         }
         //otherwise just set the value in the object
         else{
-            Z.debug("pathVar does not have value");
+            Z.debug("pathVar does not have value", 4);
             pathVar = decodeURIComponent(split_replaced[i+1]);
         }
         pathVars[split_replaced[i]] = pathVar;
     }
-    Z.debug(pathVars);
+    Z.debug(pathVars, 4);
     return pathVars;
 };
 
@@ -517,18 +517,6 @@ Zotero.nav.ignoreStateChange = function(){
     }, 500);
 
     return;
-};
-
-Zotero.nav.proxyWrapper = function(requestUrl, method){
-    if(Zotero.config.proxy){
-        if(!method){
-            method = 'GET';
-        }
-        return "/proxyrequest?requestMethod=" + method + "&requestUrl=" + encodeURIComponent(requestUrl);
-    }
-    else{
-        return requestUrl;
-    }
 };
 
 //set error handler

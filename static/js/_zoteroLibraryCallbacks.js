@@ -376,19 +376,7 @@ Zotero.callbacks.loadCollections = function(el){
     //short circuit if widget is already loaded or loading
     if((jel.data('loaded') || (library.collections.loading)) && (!library.collections.dirty) ) {
         Z.debug("collections already loaded and clean", 3);
-        if((!library.collections.loaded) && jel.data('loaded')) {
-            try{
-                var preloadedCollections = JSON.parse(decodeURIComponent(jel.attr('data-collections')));
-                library.collections.loadDataObjects(preloadedCollections);
-            }
-            catch(err){
-                Z.ui.jsNotificationMessage("error parsing library data", 'error');
-                Z.debug("error parsing library data - collections");
-                throw err;
-            }
-        }
-        //jel.empty();
-        //Zotero.ui.displayCollections(el, library.collections);
+        
         Zotero.ui.highlightCurrentCollection();
         Zotero.ui.nestHideCollectionTree(el);
         Zotero.nav.doneLoading(el);
@@ -430,7 +418,7 @@ Zotero.callbacks.loadFeedLink = function(el){
     
     var library = Zotero.ui.getAssociatedLibrary(el);
     var loadConfig = jel.data('loadconfig');
-    library.libraryLabel = loadConfig.libraryLabel;
+    library.libraryLabel = decodeURIComponent(loadConfig.libraryLabel);
     
     var effectiveUrlVars = ['itemPage', 'tag', 'collectionKey', 'order', 'sort', 'q'];
     var urlConfigVals = {};
