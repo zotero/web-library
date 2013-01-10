@@ -16,13 +16,16 @@ $messages = array();
         <link rel="shortcut icon" type="image/ico" href="/favicon.ico" />
         
         <!-- css -->
-        <link rel="stylesheet" href="<?=$baseUrl?>/css/style.css"
+        <link rel="stylesheet" href="<?=$staticPath?>/css/theme_style.css" 
             type="text/css" media="screen" charset="utf-8"/>
-        <link rel="stylesheet" href="<?=$baseUrl?>/css/zotero_icons_sprite.css"
+        <link rel="stylesheet" href="<?=$staticPath?>/css/library_style.css" 
             type="text/css" media="screen" charset="utf-8"/>
-        <link rel="stylesheet" href="<?=$baseUrl?>/css/jquery-ui-1.8.12.custom.css"
+        
+        <link rel="stylesheet" href="<?=$staticPath?>/css/zotero_icons_sprite.css"
             type="text/css" media="screen" charset="utf-8"/>
-        <script src="<?=$baseUrl?>/library/modernizr/modernizr-1.7.min.js"></script>
+        <link rel="stylesheet" href="<?=$staticPath?>/css/jquery-ui-1.8.12.custom.css"
+            type="text/css" media="screen" charset="utf-8"/>
+        <script src="<?=$staticPath?>/library/modernizr/modernizr-1.7.min.js"></script>
         
     </head>
     <body class="library">
@@ -30,7 +33,7 @@ $messages = array();
         <header role="banner" class="container">
             <div class="center container">
                 <h1 id="logohead">
-                    <a href="/"><img src="<?=$baseUrl?>/static/images/theme/zotero.png" alt="Zotero"></a>
+                    <a href="/"><img src="<?=$staticPath?>/images/theme/zotero.png" alt="Zotero"></a>
                 </h1>
             <div id="navbar" class="container">
                 <form action="<?=$baseDomain?>/search/" class="zform" id="simple-search">
@@ -71,10 +74,8 @@ $messages = array();
             <!-- Output content -->
 <div id="library">
     <div class="minor-col">
-        <?$collectionListConfig = array('userslug'=>$librarySlug, 
-                                        'target'=>'collections',
+        <?$collectionListConfig = array('target'=>'collections',
                                         'libraryID'=>$libraryID, 
-                                        'userID'=>$libraryID, 
                                         'libraryType'=>$libraryType, 
                                         'libraryUrlIdentifier'=>$librarySlug
                                         );
@@ -110,13 +111,11 @@ $messages = array();
         
         <!-- tags browser section -->
         <h3 id="tags-list-label" class="clickable">Tags</h3>
-        <?$tagsListConfig = array('userslug'=>$librarySlug, 
-                                        'target'=>'tags',
-                                        'libraryID'=>$libraryID, 
-                                        'userID'=>$libraryID, 
-                                        'libraryType'=>$libraryType, 
-                                        'libraryUrlIdentifier'=>$librarySlug
-                                        );
+        <?$tagsListConfig = array('target'=>'tags',
+                                    'libraryID'=>$libraryID, 
+                                    'libraryType'=>$libraryType, 
+                                    'libraryUrlIdentifier'=>$librarySlug
+                                    );
         ?>
         <div id="tags-list-div" class="ajaxload" 
             data-prefunction="showSpinnerSection"
@@ -162,8 +161,7 @@ $messages = array();
         <div id="items-pane" class="ajaxload"
             data-function="chooseItemPane"
             >
-        <?$controlpanelLoadConfig = array('userslug'=>$librarySlug, 
-                                   'libraryID'=>$libraryID,
+        <?$controlpanelLoadConfig = array('libraryID'=>$libraryID,
                                    'libraryType'=>$libraryType,
                                    'libraryUrlIdentifier'=>$librarySlug
                                    );
@@ -195,8 +193,7 @@ $messages = array();
         </div>
         
         <?
-        $itemsLoadConfig = array('userslug'=>$librarySlug, 
-                                   'libraryID'=>$libraryID,
+        $itemsLoadConfig = array('libraryID'=>$libraryID,
                                    'libraryType'=>$libraryType,
                                    'libraryUrlIdentifier'=>$librarySlug,
                                    'target'=>'items',
@@ -237,9 +234,7 @@ $messages = array();
                       locale: "<?=$locales[0]?>",
                       allowEdit: <?=$allowEdit?>,
                       javascriptEnabled: 1,
-                      library_listShowFields: "<?=$library_listShowFields?>",
-                      library_showAllTags: 1,
-                      library_defaultSort: "title",
+                      library_showAllTags: 1
                       };
     var zoterojsSearchContext = "library";
 </script>
@@ -294,11 +289,11 @@ $messages = array();
                 </p>
         </div>
         </footer>
-        <script type="text/javascript" charset="utf-8" src="<?=$baseUrl?>/library/jquery/jquery-all.js"></script>
-        <script type="text/javascript" charset="utf-8" src="<?=$baseUrl?>/library/globalize/globalize.js"></script>
+        <script type="text/javascript" charset="utf-8" src="<?=$staticPath?>/library/jquery/jquery-all.js"></script>
+        <script type="text/javascript" charset="utf-8" src="<?=$staticPath?>/library/globalize/globalize.js"></script>
         <?foreach($locales as $localeStr):?>
             <?if($localeStr != 'en'):?>
-            <script type="text/javascript" charset="utf-8" src="<?=$baseUrl?>/library/globalize/cultures/globalize.culture.<?=str_replace('_', '-', $localeStr)?>.js"></script>
+            <script type="text/javascript" charset="utf-8" src="<?=$staticPath?>/library/globalize/cultures/globalize.culture.<?=str_replace('_', '-', $localeStr)?>.js"></script>
             <?endif;?>
         <?endforeach;?>
         <script type="text/javascript" charset="utf-8">
@@ -310,7 +305,7 @@ $messages = array();
             var staticPath = "<?=$staticPath?>";
         </script>
         
-        <script type="text/javascript" charset="utf-8" src="<?=$baseUrl?>/js/_zoterowwwAll.bugly.js"></script>
+        <script type="text/javascript" charset="utf-8" src="<?=$staticPath?>/js/_zoterowwwAll.bugly.js"></script>
         
         <script type="text/javascript" charset="utf-8">
             Zotero.prefs.server_javascript_enabled = true;
@@ -318,6 +313,6 @@ $messages = array();
             Zotero.config = <?include "zoteroconfig.js";?>
         </script>
         
-        <script type="text/javascript" charset="utf-8" src="<?=$baseUrl?>/library/tinymce3.5.5/tiny_mce/tiny_mce.js"></script>
+        <script type="text/javascript" charset="utf-8" src="<?=$staticPath?>/library/tinymce3.5.5/tiny_mce/tiny_mce.js"></script>
     </body>
 </html>
