@@ -1,7 +1,7 @@
 <?php
 require_once './config.php'; //library credentials
 
-require_once './library/libZotero/libZoteroSingle.php';
+require_once '../library/libZotero/libZoteroSingle.php';
 $library = new Zotero_Library($libraryType, $libraryID, $librarySlug, $apiKey);
 $library->setCacheTtl(0);
 
@@ -78,7 +78,7 @@ elseif($item->hasFile()) {
             <div id='leave-frame-div' style="float:right;">
                 <a id="leave-frame-link" href='#'>Leave Frame</a>
             </div>
-            <img src="/static/images/theme/zotero_theme/zotero-z-24px.png" style="float:left">
+            <img src="<?=$staticPath?>/images/theme/zotero_theme/zotero-z-24px.png" style="float:left">
             <div style="text-align:center;">
             You are viewing a Zotero snapshot. 
             <a href="<?=$returnLibraryUrl;?>">Return to Zotero Library</a>

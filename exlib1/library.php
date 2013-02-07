@@ -6,7 +6,6 @@ $messages = array();
 <html lang="en" class="no-js"> 
     <head> 
         <meta charset="utf-8" />
-        <meta name="verify-v1" content="IwMu0wZAlDVdRyYXR2iE6fy68J75yL4ZExOpoyPDHdw="/>
         <meta name="keywords" content="Zotero, research, tool, firefox, extension"/>
         <meta name="description" content="Zotero is a powerful, easy-to-use research tool that 
                                           helps you gather, organize, and analyze sources and then 
@@ -36,7 +35,7 @@ $messages = array();
                     <a href="/"><img src="<?=$staticPath?>/images/theme/zotero.png" alt="Zotero"></a>
                 </h1>
             <div id="navbar" class="container">
-                <form action="<?=$baseDomain?>/search/" class="zform" id="simple-search">
+                <form action="<?=$baseDomain?>/search/" class="zform zsearch" id="library-search">
                     <div>
                         <input type="text" name="q" size="20" id="header-search-query"/>
                         <button class="button clear-field-button" type="reset"><span class="ui-icon ui-icon-circle-close">&nbsp;</span></button>
@@ -48,23 +47,6 @@ $messages = array();
         </header>
         <div id="content">
             <div class="center container">
-            <!-- Output the breadcrumb if it's set -->
-            <div id="breadcrumbs">
-            </div>
-            
-            <!-- Output any stored messages -->
-            <? foreach($messages as $messageType=>$messages): ?>
-                <? if (count($messages)): ?>
-                    <div id="<?=$messageType?>" class="messages">
-                        <ul>
-                        <? foreach($messages as $message): ?>
-                            <li><?=$message?></li>
-                        <? endforeach; ?>
-                        </ul>
-                    </div>
-                <? endif; ?>
-            <? endforeach; ?>
-            
             <!-- hidden area for possible JS messages -->
             <div id="js-message">
                 <ul id="js-message-list">
@@ -120,7 +102,6 @@ $messages = array();
         <div id="tags-list-div" class="ajaxload" 
             data-prefunction="showSpinnerSection"
             data-function="loadTags"
-            data-loaded="<?=$tagsPreloaded;?>"
             data-loadconfig='<?=json_encode($tagsListConfig);?>'
             >
               <input type="text" id="tag-filter-input" placeholder="Filter Tags" />
@@ -203,7 +184,6 @@ $messages = array();
         ?>
         <div id="library-items-div" class="ajaxload" 
             data-function="loadItems"
-            data-preloaded="<?=$itemsPreloaded?>"
             data-loadconfig='<?=json_encode($itemsLoadConfig);?>'
             >
         </div> <!--library items div -->
@@ -214,7 +194,6 @@ $messages = array();
         ?>
         <div id="item-details-div" class="ajaxload"
             data-function="loadItem"
-            data-preloaded="<?=$itemPreloaded?>"
             data-loadconfig='<?=json_encode($itemLoadConfig)?>'
             >
         </div>
@@ -228,9 +207,9 @@ $messages = array();
     var zoteroData = {itemsPathString: "<?=$itemsPathString?>",
                       libraryUserID: "<?=$libraryID?>",
                       libraryPublish: 1,
-                  <?if(!empty($apiKey)):?>
+                  <?/*if(!empty($apiKey)):?>
                       apiKey: "<?=$apiKey?>",
-                  <?endif;?>
+                  <?endif;*/?>
                       locale: "<?=$locales[0]?>",
                       allowEdit: <?=$allowEdit?>,
                       javascriptEnabled: 1,
@@ -238,37 +217,37 @@ $messages = array();
                       };
     var zoterojsSearchContext = "library";
 </script>
-<?include 'jquerytemplates/tagrow.jqt';?>
-<?include 'jquerytemplates/tagslist.jqt';?>
-<?include 'jquerytemplates/collectionlist.jqt';?>
-<?include 'jquerytemplates/collectionrow.jqt';?>
-<?include 'jquerytemplates/itemrow.jqt';?>
-<?include 'jquerytemplates/itemstable.jqt';?>
-<?include 'jquerytemplates/itempagination.jqt';?>
-<?include 'jquerytemplates/itemdetails.jqt';?>
-<?include 'jquerytemplates/itemnotedetails.jqt';?>
-<?include 'jquerytemplates/itemform.jqt';?>
-<?include 'jquerytemplates/citeitemform.jqt';?>
-<?include 'jquerytemplates/attachmentform.jqt';?>
-<?include 'jquerytemplates/attachmentupload.jqt';?>
-<?include 'jquerytemplates/datafield.jqt';?>
-<?include 'jquerytemplates/editnoteform.jqt';?>
-<?include 'jquerytemplates/itemtag.jqt';?>
-<?include 'jquerytemplates/itemtypeselect.jqt';?>
-<?include 'jquerytemplates/authorelementssingle.jqt';?>
-<?include 'jquerytemplates/authorelementsdouble.jqt';?>
-<?include 'jquerytemplates/childitems.jqt';?>
-<?include 'jquerytemplates/editcollectionbuttons.jqt';?>
-<?include 'jquerytemplates/choosecollectionform.jqt';?>
-<?include 'jquerytemplates/breadcrumbs.jqt';?>
-<?include 'jquerytemplates/breadcrumbstitle.jqt';?>
-<?include 'jquerytemplates/newcollectionform.jqt';?>
-<?include 'jquerytemplates/updatecollectionform.jqt';?>
-<?include 'jquerytemplates/deletecollectionform.jqt';?>
-<?include 'jquerytemplates/tagunorderedlist.jqt';?>
-<?include 'jquerytemplates/librarysettings.jqt';?>
-<?include 'jquerytemplates/addtocollectionform.jqt';?>
-<?include 'jquerytemplates/exportformats.jqt';?>
+<?include '../jquerytemplates/tagrow.jqt';?>
+<?include '../jquerytemplates/tagslist.jqt';?>
+<?include '../jquerytemplates/collectionlist.jqt';?>
+<?include '../jquerytemplates/collectionrow.jqt';?>
+<?include '../jquerytemplates/itemrow.jqt';?>
+<?include '../jquerytemplates/itemstable.jqt';?>
+<?include '../jquerytemplates/itempagination.jqt';?>
+<?include '../jquerytemplates/itemdetails.jqt';?>
+<?include '../jquerytemplates/itemnotedetails.jqt';?>
+<?include '../jquerytemplates/itemform.jqt';?>
+<?include '../jquerytemplates/citeitemform.jqt';?>
+<?include '../jquerytemplates/attachmentform.jqt';?>
+<?include '../jquerytemplates/attachmentupload.jqt';?>
+<?include '../jquerytemplates/datafield.jqt';?>
+<?include '../jquerytemplates/editnoteform.jqt';?>
+<?include '../jquerytemplates/itemtag.jqt';?>
+<?include '../jquerytemplates/itemtypeselect.jqt';?>
+<?include '../jquerytemplates/authorelementssingle.jqt';?>
+<?include '../jquerytemplates/authorelementsdouble.jqt';?>
+<?include '../jquerytemplates/childitems.jqt';?>
+<?include '../jquerytemplates/editcollectionbuttons.jqt';?>
+<?include '../jquerytemplates/choosecollectionform.jqt';?>
+<?include '../jquerytemplates/breadcrumbs.jqt';?>
+<?include '../jquerytemplates/breadcrumbstitle.jqt';?>
+<?include '../jquerytemplates/newcollectionform.jqt';?>
+<?include '../jquerytemplates/updatecollectionform.jqt';?>
+<?include '../jquerytemplates/deletecollectionform.jqt';?>
+<?include '../jquerytemplates/tagunorderedlist.jqt';?>
+<?include '../jquerytemplates/librarysettings.jqt';?>
+<?include '../jquerytemplates/addtocollectionform.jqt';?>
+<?include '../jquerytemplates/exportformats.jqt';?>
 
             </div>
         </div>

@@ -2,16 +2,25 @@
 
 require_once './config.php'; //library credentials
 
-require_once './libZoteroSingle.php';
+require_once '../library/libZotero/libZoteroSingle.php';
 $library = new Zotero_Library($libraryType, $libraryID, $librarySlug, $apiKey);
 
 
 $requestUrl         = isset($_GET["requestUrl"]) ? $_GET["requestUrl"] : false;
-$requestQueryParams = isset($_GET['requestQueryParams']) ? $_GET['requestQueryParams'] : false;
 
 //limit requestUrl to zotero.org
 if(strpos($requestUrl, 'zotero.org') === false){
     die;
+}
+
+//optionally add api key to request here so JS does not need a copy
+if(isset($addKeyAtProxy) && $addKeyAtProxy === true){
+    if(strpos($requestUrl, '?') !== false){
+        $requestUrl .= "&key=$apiKey";
+    }
+    else {
+        $requestUrl .= "?key=$apiKey";
+    }
 }
 
 //act as transparent proxy until JS lib can make requests directly to api
@@ -20,11 +29,7 @@ $requestMethod = $_SERVER['REQUEST_METHOD'];
 //raw body of the request
 $rawbody = @file_get_contents('php://input');
 
-$passedIfMatch = getHeader('If-Match');
-$headers = array();
-if($passedIfMatch){
-    $headers['If-Match'] = $passedIfMatch;
-}
+$headers = apache_request_headers();
 
 $response = $library->proxyHttpRequest($requestUrl, strtoupper($requestMethod), $rawbody, $headers);
 
