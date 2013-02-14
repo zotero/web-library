@@ -306,11 +306,9 @@ Zotero.ui.displayItemsWidget = function(el, config, loadedItems){
     var editmode = false;
     var jel = J(el);
     
-    var titleParts = feed.title.split('/');
     var displayFields = Zotero.prefs.library_listShowFields;
     
-    var itemsTableData = {titleParts:titleParts,
-                           displayFields:displayFields,
+    var itemsTableData = {displayFields:displayFields,
                            items:loadedItems.itemsArray,
                            editmode:editmode,
                            order: order,
@@ -337,7 +335,6 @@ Zotero.ui.displayItemsFull = function(el, config, loadedItems){
     var feed = loadedItems.feed;
     var filledConfig = J.extend({}, Zotero.config.defaultApiArgs, Zotero.config.userDefaultApiArgs, config);
 
-    var titleParts = feed.title.split('/');
     var displayFields = Zotero.prefs.library_listShowFields;
     if(loadedItems.library.libraryType != 'group'){
         displayFields = J.grep(displayFields, function(el, ind){
@@ -350,8 +347,7 @@ Zotero.ui.displayItemsFull = function(el, config, loadedItems){
     }
     var editmode = (Zotero.config.librarySettings.allowEdit ? true : false);
     
-    var itemsTableData = {titleParts:titleParts,
-                           displayFields:displayFields,
+    var itemsTableData = {displayFields:displayFields,
                            items:loadedItems.itemsArray,
                            editmode:editmode,
                            order: filledConfig['order'],
@@ -641,12 +637,10 @@ Zotero.ui.loadItemDetail = function(item, el){
     Z.debug("Zotero.ui.loadItemDetail", 3);
     var jel = J(el);
     jel.empty();
-    //Z.debug(item, 4);
     var parentUrl = false;
-    if(item.parentKey){
-        parentUrl = item.owningLibrary.websiteUrl({itemKey:item.parentKey});
+    if(item.parentItemKey){
+        parentUrl = item.owningLibrary.websiteUrl({itemKey:item.parentItemKey});
     }
-    Z.debug(1);
     if(item.itemType == "note"){
         Z.debug("note item", 3);
         J.tmpl('itemnotedetailsTemplate', {item:item, parentUrl:parentUrl}).appendTo(jel);
@@ -655,7 +649,6 @@ Zotero.ui.loadItemDetail = function(item, el){
         Z.debug("non-note item", 3);
         J.tmpl('itemdetailsTemplate', {item:item, parentUrl:parentUrl}).appendTo(jel).trigger('create');
     }
-    Z.debug(2);
     Zotero.ui.init.tinyMce('readonly');
     Zotero.ui.init.editButton();
     Zotero.ui.init.detailButtons();

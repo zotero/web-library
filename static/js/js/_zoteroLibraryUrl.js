@@ -16,28 +16,21 @@ Zotero.url.itemHref = function(item){
 };
 
 Zotero.url.attachmentDownloadLink = function(item){
-    var linkString = '';
-    var enctype, enc, filesize, filesizeString;
-    var downloadHref = '';
+    var retString = '';
     if(item.links['enclosure']){
-        if(Zotero.config.directDownloads){
-            downloadHref = Zotero.url.apiDownloadUrl(item);
-        }
-        else {
-            downloadHref = Zotero.url.wwwDownloadUrl(item);
-        }
-        
         var tail = item.links['enclosure']['href'].substr(-4, 4);
         if(tail == 'view'){
             //snapshot: redirect to view
-            linkString += '<a href="' + downloadHref + '">' + 'View Snapshot</a>';
+            retString += '<a href="' + Zotero.config.baseWebsiteUrl + Zotero.config.nonparsedBaseUrl + '/' + item.itemKey + '/file/view' + '">' + 'View Snapshot</a>';
+            
+            //retString += '<form style="margin:0;" method="POST" action="' + item.links['enclosure']['href'] + '?key=' + Zotero.config.apiKey + '">(<input type="hidden" name="h" value="1" /><a href="#" onclick="parentNode.submit()">' + item.title + '</a>)</form>';
         }
         else{
             //file: offer download
-            enctype = Zotero.utils.translateMimeType(item.links['enclosure'].type);
-            enc = item.links['enclosure'];
-            filesize = parseInt(enc['length'], 10);
-            filesizeString = "" + filesize + " B";
+            var enctype = Zotero.utils.translateMimeType(item.links['enclosure'].type);
+            var enc = item.links['enclosure'];
+            var filesize = parseInt(enc['length'], 10);
+            var filesizeString = "" + filesize + " B";
             if(filesize > 1073741824){
                 filesizeString = "" + (filesize / 1073741824).toFixed(1) + " GB";
             }
@@ -48,69 +41,30 @@ Zotero.url.attachmentDownloadLink = function(item){
                 filesizeString = "" + (filesize / 1024).toFixed(1) + " KB";
             }
             Z.debug(enctype);
-            linkString += '<a href="' + downloadHref + '">';
+            retString += '<a href="' + Zotero.config.baseWebsiteUrl + Zotero.config.nonparsedBaseUrl + '/' + item.itemKey + '/file' + '">';
             
             if((enctype == 'undefined') || (enctype === '') || (typeof enctype == 'undefined')){
-                linkString += filesizeString + '</a>';
+                retString += filesizeString + '</a>';
             }
             else{
-                linkString += enctype + ', ' + filesizeString + '</a>';
+                retString += enctype + ', ' + filesizeString + '</a>';
             }
             
-            return linkString;
-        }
-    }
-    return linkString;
-};
-
-Zotero.url.attachmentDownloadUrl = function(item){
-    var retString = '';
-    if(item.links['enclosure']){
-        if(Zotero.config.directDownloads){
-            return Zotero.url.apiDownloadUrl(item);
-        }
-        else {
-            return Zotero.url.wwwDownloadUrl(item);
-        }
-    }
-    else if(item.linkMode == 2 || item.linkMode == 3){
-        if(item.apiObj['url']){
-            retString = item.apiObj['url'];
+            return retString;
         }
     }
     return retString;
 };
 
-Zotero.url.wwwDownloadUrl = function(item){
-    var urlString = '';
+Zotero.url.attachmentDownloadUrl = function(item){
+    var retString = '';
     if(item.links['enclosure']){
-        if(Zotero.config.proxyDownloads){
-            return Zotero.config.baseDownloadUrl + "?itemkey=" + item.itemKey;
-        }
-        
-        if(Zotero.config.directDownloads){
-            return Zotero.url.apiDownloadUrl(item);
-        }
-        
-        urlString = Zotero.config.baseWebsiteUrl + Zotero.config.nonparsedBaseUrl + '/' + item.itemKey + '/file';
+        retString = Zotero.config.baseWebsiteUrl + Zotero.config.nonparsedBaseUrl + '/' + item.itemKey + '/file';
         var tail = item.links['enclosure']['href'].substr(-4, 4);
         if(tail == 'view'){
             //snapshot: redirect to view
-            urlString += '/view';
+            retString += '/view';
         }
-    }
-    else if(item.linkMode == 2 || item.linkMode == 3){
-        if(item.apiObj['url']){
-            urlString = item.apiObj['url'];
-        }
-    }
-    return urlString;
-};
-
-Zotero.url.apiDownloadUrl = function(item){
-    var retString = '';
-    if(item.links['enclosure']){
-        retString = item.links['enclosure']['href'];
     }
     else if(item.linkMode == 2 || item.linkMode == 3){
         if(item.apiObj['url']){
@@ -151,7 +105,7 @@ Zotero.url.attachmentFileDetails = function(item){
 };
 
 Zotero.url.exportUrls = function(config){
-    Z.debug("Zotero.url.exportUrls", 3);
+    Z.debug("Zotero.url.exportUrls");
     var exportUrls = {};
     var exportConfig = {};
     J.each(Zotero.config.exportFormats, function(index, format){
@@ -184,7 +138,7 @@ Zotero.url.requestReadApiKeyUrl = function(libraryType, libraryID, redirect){
     else if(libraryType == 'user'){
         qparams['library_access'] = 1;
         qparams['notes_access'] = 1;
-        qparams['redirect'] = redirect;
+        qparams['keyredirect'] = redirect;
     }
     
     queryParamsArray = [];

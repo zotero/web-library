@@ -217,6 +217,11 @@ class Zotero_Entry
      */
     public $author = array();
     
+    /**
+     * @var int
+     */
+    public $version = 0;
+    
     public $contentArray = array();
     
     /**
@@ -260,11 +265,12 @@ class Zotero_Entry
           }
       }
       
+      $this->version = $entryNode->getElementsByTagNameNS('http://zotero.org/ns/api', 'version')->item(0)->nodeValue;
     }
     
     public function getContentType($entryNode){
       $contentNode = $entryNode->getElementsByTagName('content')->item(0);
-      if($contentNode) return $contentNode->getAttribute('type') || $contentNode->getAttribute('zapi:type');
+      if($contentNode) return $contentNode->getAttribute('type') || $contentNode->getAttributeNS('http://zotero.org/ns/api', 'type');
       else return false;
     }
     
@@ -277,6 +283,11 @@ class Zotero_Entry
   */
 class Zotero_Collection extends Zotero_Entry
 {
+    /**
+     * @var int
+     */
+    public $collectionVersion = 0;
+    
     /**
      * @var int
      */
@@ -307,27 +318,35 @@ class Zotero_Collection extends Zotero_Entry
             return;
         }
         parent::__construct($entryNode);
-        // Extract the collectionKey
-        $this->collectionKey = $entryNode->getElementsByTagNameNS('*', 'key')->item(0)->nodeValue;
+        
+        $this->name = $this->title; //collection name is the Entry title
+        
+        //parse zapi tags
+        $this->collectionKey = $entryNode->getElementsByTagNameNS('http://zotero.org/ns/api', 'key')->item(0)->nodeValue;
+        $this->collectionVersion = $entryNode->getElementsByTagNameNS('http://zotero.org/ns/api', 'version')->item(0)->nodeValue;
         $this->numCollections = $entryNode->getElementsByTagName('numCollections')->item(0)->nodeValue;
         $this->numItems = $entryNode->getElementsByTagName('numItems')->item(0)->nodeValue;
         
         $contentNode = $entryNode->getElementsByTagName('content')->item(0);
-        $contentType = parent::getContentType($entryNode);
-        if($contentType == 'application/json'){
-            $this->contentArray = json_decode($contentNode->nodeValue, true);
-            $this->etag = $contentNode->getAttribute('etag');
-            $this->parentCollectionKey = $this->contentArray['parent'];
-            $this->name = $this->contentArray['name'];
+        if($contentNode){
+            $contentType = $contentNode->getAttribute('type');
+            if($contentType == 'application/json'){
+                $this->pristine = $contentNode->nodeValue;
+                $this->contentArray = json_decode($contentNode->nodeValue, true);
+                $this->parentCollectionKey = $this->contentArray['parentCollection'];
+                $this->name = $this->contentArray['name'];
+            }
+            elseif($contentType == 'xhtml'){
+                //$this->parseXhtmlContent($contentNode);
+            }
         }
-        elseif($contentType == 'xhtml'){
-            //$this->parseXhtmlContent($contentNode);
-        }
-        
     }
     
     public function collectionJson(){
-        return json_encode(array('name'=>$collection->name, 'parent'=>$collection->parentCollectionKey));
+        $newJson = json_decode($this->pristine, true);
+        $newJson['name'] = $this->name;
+        $newJson['parentCollection'] = $this->parentCollectionKey;
+        return json_encode($newJson);
     }
     
     public function dataObject() {
@@ -1206,12 +1225,22 @@ class Zotero_Item extends Zotero_Entry
     /**
      * @var int
      */
+    public $itemVersion = 0;
+    
+    /**
+     * @var int
+     */
     public $itemKey = '';
 
     /**
      * @var string
      */
     public $itemType = null;
+    
+    /**
+     * @var string
+     */
+    public $year = '';
     
     /**
      * @var string
@@ -1236,7 +1265,7 @@ class Zotero_Item extends Zotero_Entry
     /**
      * @var string
      */
-    public $parentKey = '';
+    public $parentItemKey = '';
     
     /**
      * @var array
@@ -1281,6 +1310,8 @@ class Zotero_Item extends Zotero_Entry
     public $subContents = array();
     
     public $apiObject = array();
+    
+    public $pristine = null;
     
     /**
      * @var array
@@ -1485,7 +1516,7 @@ class Zotero_Item extends Zotero_Entry
         parent::__construct($entryNode);
         
         //check if we have multiple subcontent nodes
-        $subcontentNodes = $entryNode->getElementsByTagNameNS("*", "subcontent");
+        $subcontentNodes = $entryNode->getElementsByTagNameNS("http://zotero.org/ns/api", "subcontent");
         
         //save raw Content node in case we need it
         if($entryNode->getElementsByTagName("content")->length > 0){
@@ -1494,35 +1525,43 @@ class Zotero_Item extends Zotero_Entry
             $this->content = $d->saveXml($this->contentNode);
         }
         
-        
-        // Extract the itemId and itemType
-        $this->itemKey = $entryNode->getElementsByTagNameNS('*', 'key')->item(0)->nodeValue;
-        $this->itemType = $entryNode->getElementsByTagNameNS('*', 'itemType')->item(0)->nodeValue;
-        
-        // Look for numChildren node
-        $numChildrenNode = $entryNode->getElementsByTagNameNS('*', "numChildren")->item(0);
-        if($numChildrenNode){
-            $this->numChildren = $numChildrenNode->nodeValue;
-        }
-        
+        // Extract the zapi elements: object key, version, itemType, year, numChildren, numTags
+        $this->itemKey = $entryNode->getElementsByTagNameNS('http://zotero.org/ns/api', 'key')->item(0)->nodeValue;
+        $this->itemVersion = $entryNode->getElementsByTagNameNS('http://zotero.org/ns/api', 'version')->item(0)->nodeValue;
+        $this->itemType = $entryNode->getElementsByTagNameNS('http://zotero.org/ns/api', 'itemType')->item(0)->nodeValue;
         // Look for numTags node
-        $numTagsNode = $entryNode->getElementsByTagNameNS('*', "numTags")->item(0);
+        // this may be always present in v2 api
+        $numTagsNode = $entryNode->getElementsByTagNameNS('http://zotero.org/ns/api', "numTags")->item(0);
         if($numTagsNode){
             $this->numTags = $numTagsNode->nodeValue;
         }
         
-        $creatorSummaryNode = $entryNode->getElementsByTagNameNS('*', "creatorSummary")->item(0);
+        // Look for year node
+        $yearNode = $entryNode->getElementsByTagNameNS('http://zotero.org/ns/api', "year")->item(0);
+        if($yearNode){
+            $this->year = $yearNode->nodeValue;
+        }
+        
+        // Look for numChildren node
+        $numChildrenNode = $entryNode->getElementsByTagNameNS('http://zotero.org/ns/api', "numChildren")->item(0);
+        if($numChildrenNode){
+            $this->numChildren = $numChildrenNode->nodeValue;
+        }
+        
+        // Look for creatorSummary node - only present if there are non-empty creators
+        $creatorSummaryNode = $entryNode->getElementsByTagNameNS('http://zotero.org/ns/api', "creatorSummary")->item(0);
         if($creatorSummaryNode){
             $this->creatorSummary = $creatorSummaryNode->nodeValue;
         }
         
+        // pull out and parse various subcontent nodes, or parse the single content node
         if($subcontentNodes->length > 0){
             for($i = 0; $i < $subcontentNodes->length; $i++){
                 $scnode = $subcontentNodes->item($i);
-                $type = $scnode->getAttribute('zapi:type');
+                $type = $scnode->getAttributeNS('http://zotero.org/ns/api', 'type');
                 if($type == 'application/json' || $type == 'json'){
                     $this->apiObject = json_decode($scnode->nodeValue, true);
-                    $this->etag = $scnode->getAttribute('zapi:etag');
+                    $this->etag = $scnode->getAttributeNS('http://zotero.org/ns/api', 'etag');
                     if(isset($this->apiObject['creators'])){
                         $this->creators = $this->apiObject['creators'];
                     }
@@ -1538,7 +1577,7 @@ class Zotero_Item extends Zotero_Entry
                 $contentString = '';
                 $childNodes = $scnode->childNodes;
                 foreach($childNodes as $childNode){
-                    $contentString .= $bibNode->ownerDocument->saveXML($childNode);
+                    $contentString .= $childNode->ownerDocument->saveXML($childNode);
                 }
                 $this->subContents[$type] = $contentString;
             }
@@ -1546,11 +1585,12 @@ class Zotero_Item extends Zotero_Entry
         else{
             $contentNode = $entryNode->getElementsByTagName('content')->item(0);
             $contentType = $contentNode->getAttribute('type');
-            $zType = $contentNode->getAttribute('zapi:type');
+            $zType = $contentNode->getAttributeNS('http://zotero.org/ns/api', 'type');
             
             if($contentType == 'application/json' || $contentType == 'json' || $zType == 'json'){
+                $this->pristine = $contentNode->nodeValue;
                 $this->apiObject = json_decode($contentNode->nodeValue, true);
-                $this->etag = $contentNode->getAttribute('zapi:etag');
+                
                 if(isset($this->apiObject['creators'])){
                     $this->creators = $this->apiObject['creators'];
                 }
@@ -1562,9 +1602,14 @@ class Zotero_Item extends Zotero_Entry
                 $bibNode = $contentNode->getElementsByTagName('div')->item(0);
                 $this->bibContent = $bibNode->ownerDocument->saveXML($bibNode);
             }
-            else{
-                //didn't find a content type we deal with
+            
+            $contentString = '';
+            $childNodes = $contentNode->childNodes;
+            foreach($childNodes as $childNode){
+                $contentString .= $childNode->ownerDocument->saveXML($childNode);
             }
+            $this->subContents[$zType] = $contentString;
+            
         }
         
         if(isset($this->links['up'])){
@@ -1572,11 +1617,11 @@ class Zotero_Item extends Zotero_Entry
             $matches = array();
             preg_match("/items\/([A-Z0-9]{8})/", $parentLink, $matches);
             if(count($matches) == 2){
-                $this->parentKey = $matches[1];
+                $this->parentItemKey = $matches[1];
             }
         }
         else{
-            $this->parentKey = false;
+            $this->parentItemKey = false;
         }
     }
     
@@ -1783,6 +1828,7 @@ class Zotero_Group extends Zotero_Entry
      * @var int
      */
     public $owner;
+    public $ownerID;
     
     /**
      * @var string
@@ -1874,6 +1920,7 @@ class Zotero_Group extends Zotero_Entry
             //$this->etag = $contentNode->getAttribute('etag');
             $this->name = $this->apiObject['name'];
             $this->ownerID = $this->apiObject['owner'];
+            $this->owner = $this->ownerID;
             $this->groupType = $this->apiObject['type'];
             $this->description = $this->apiObject['description'];
             $this->url = $this->apiObject['url'];
@@ -1901,7 +1948,7 @@ class Zotero_Group extends Zotero_Entry
             $this->memberIDs = array();
         }
         
-        $this->numItems = $entryNode->getElementsByTagNameNS('*', 'numItems')->item(0)->nodeValue;
+        $this->numItems = $entryNode->getElementsByTagNameNS('http://zotero.org/ns/api', 'numItems')->item(0)->nodeValue;
         
         $contentNodes = $entryNode->getElementsByTagName("content");
         if($contentNodes->length > 0){
@@ -1914,7 +1961,7 @@ class Zotero_Group extends Zotero_Entry
                 $this->owner = $this->ownerID;
                 $this->type = $jsonObject['type'];
                 $this->groupType = $this->type;
-                $this->description = urldecode($jsonObject['description']);
+                $this->description = $jsonObject['description'];
                 $this->url = $jsonObject['url'];
                 $this->hasImage = isset($jsonObject['hasImage']) ? $jsonObject['hasImage'] : 0;
                 $this->libraryEnabled = $jsonObject['libraryEnabled'];
@@ -1946,8 +1993,8 @@ class Zotero_Group extends Zotero_Entry
                 
                 $description = $entryNode->getElementsByTagName("description")->item(0);
                 if($description) {
-                    $this->properties['description'] = urldecode($description->nodeValue);
-                    $this->description = urldecode($description->nodeValue);
+                    $this->properties['description'] = $description->nodeValue;
+                    $this->description = $description->nodeValue;
                 }
                 
                 $url = $entryNode->getElementsByTagName("url")->item(0);
@@ -1976,8 +2023,8 @@ class Zotero_Group extends Zotero_Entry
         }
         
         //get groupID from zapi:groupID if available
-        if($entryNode->getElementsByTagNameNS('*', 'groupID')->length > 0){
-            $this->groupID = $entryNode->getElementsByTagNameNS('*', 'groupID')->item(0)->nodeValue;
+        if($entryNode->getElementsByTagNameNS('http://zotero.org/ns/api', 'groupID')->length > 0){
+            $this->groupID = $entryNode->getElementsByTagNameNS('http://zotero.org/ns/api', 'groupID')->item(0)->nodeValue;
             $this->id = $this->groupID;
         }
         else{
@@ -2014,7 +2061,7 @@ class Zotero_Group extends Zotero_Entry
     {
         $doc = new DOMDocument();
         $el = $doc->appendChild(new DOMElement('group'));
-        $el->appendChild(new DOMElement('description', urlencode($this->description)));
+        $el->appendChild(new DOMElement('description', $this->description));
         $el->appendChild(new DOMElement('url', $this->url));
         if($this->groupID){
             $el->setAttribute('id', $this->groupID);
@@ -2125,7 +2172,7 @@ class Zotero_Tag extends Zotero_Entry
             return;
         }
         
-        $numItems = $entryNode->getElementsByTagNameNS('*', "numItems")->item(0);
+        $numItems = $entryNode->getElementsByTagNameNS('http://zotero.org/ns/api', "numItems")->item(0);
         if($numItems) {
             $this->numItems = (int)$numItems->nodeValue;
         }
@@ -2202,6 +2249,7 @@ class Zotero_Creator
 }
 
 define('LIBZOTERO_DEBUG', 0);
+define('ZOTERO_API_VERSION', 2);
 function libZoteroDebug($m){
     if(LIBZOTERO_DEBUG){
         echo $m;
@@ -2216,9 +2264,9 @@ function libZoteroDebug($m){
  */
 class Zotero_Library
 {
-    const ZOTERO_URI = 'https://apidev.zotero.org';
+    const ZOTERO_URI = 'https://api.zotero.org';
     const ZOTERO_WWW_URI = 'http://www.zotero.org';
-    const ZOTERO_WWW_API_URI = 'http://test.zotero.net/api';
+    const ZOTERO_WWW_API_URI = 'http://www.zotero.org/api';
     protected $_apiKey = '';
     protected $_ch = null;
     protected $_followRedirects = true;
@@ -2231,6 +2279,7 @@ class Zotero_Library
     public $collections = null;
     public $dirty = null;
     public $useLibraryAsContainer = true;
+    public $libraryVersion = 0;
     protected $_lastResponse = null;
     protected $_lastFeed = null;
     protected $_cacheResponses = false;
@@ -2248,7 +2297,7 @@ class Zotero_Library
      * @param string $cachettl cache time to live in seconds, cache disabled if 0
      * @return Zotero_Library
      */
-    public function __construct($libraryType = null, $libraryID = 'me', $libraryUrlIdentifier = null, $apiKey = null, $baseWebsiteUrl="http://www.zotero.org", $cachettl=0)
+    public function __construct($libraryType = null, $libraryID = null, $libraryUrlIdentifier = null, $apiKey = null, $baseWebsiteUrl="http://www.zotero.org", $cachettl=0)
     {
         $this->_apiKey = $apiKey;
         if (extension_loaded('curl')) {
@@ -2324,6 +2373,11 @@ class Zotero_Library
         libZoteroDebug( "url being requested: " . $url . "\n\n");
         $ch = curl_init();
         $httpHeaders = array();
+        //set api version - allowed to be overridden by passed in value
+        if(!isset($headers['Zotero-API-Version'])){
+            $headers['Zotero-API-Version'] = ZOTERO_API_VERSION;
+        }
+        
         foreach($headers as $key=>$val){
             $httpHeaders[] = "$key: $val";
         }
@@ -2404,7 +2458,7 @@ class Zotero_Library
                 'responseBody'=>$responseBody,
                 'responseInfo'=>$responseInfo,
             );
-            if($this->_cacheResponses){
+            if($this->_cacheResponses && !($zresponse->isError()) ){
                 apc_store($url, $saveCached, $this->_cachettl);
             }
         }
@@ -3487,6 +3541,7 @@ class Zotero_Library
         }
         $aparams = array('target'=>'userGroups', 'userID'=>$userID, 'content'=>'json', 'order'=>'title');
         $reqUrl = $this->apiRequestUrl($aparams) . $this->apiQueryString($aparams);
+        
         $response = $this->_request($reqUrl, 'GET');
         if($response->isError()){
             libZoteroDebug( $response->getStatus() );
@@ -3581,9 +3636,9 @@ class Zotero_Library
  */
 class Zotero_Lib_Utils
 {
-    const ZOTERO_URI = 'https://apidev.zotero.org';
+    const ZOTERO_URI = 'https://api.zotero.org';
     const ZOTERO_WWW_URI = 'http://www.zotero.org';
-    const ZOTERO_WWW_API_URI = 'http://test.zotero.net/api';
+    const ZOTERO_WWW_API_URI = 'http://www.zotero.org/api';
     
     public static function wrapLinks($txt, $nofollow=false){
         //extremely ugly wrapping of urls in html

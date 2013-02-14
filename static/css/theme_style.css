@@ -515,7 +515,7 @@ header .center {
     box-shadow:0 -1px 1px rgba(0,0,0,0.1);
 }
 
-#simple-search {
+.zsearch {
     float:right;
     text-align:right;
     clear:right;
@@ -523,25 +523,25 @@ header .center {
     margin:0;
 }
 
-#simple-search input {
+.zsearch input {
     display:inline;
     margin:0;
     vertical-align:middle;
 }
 
-#simple-search .button {
+.zsearch .button {
     background-color: #aaa !important;
     border-color: #aaa !important;
     vertical-align:middle;
 }
 
-#simple-search input {
+.zsearch input {
     font-size:0.95em;
     font: -webkit-small-control
     
 }
 
-#simple-search .clear-field-button {
+.zsearch .clear-field-button {
     border: none;
     background: none !important;
     margin-left:-35px;
@@ -549,7 +549,7 @@ header .center {
     opacity:0.3;
 }
 
-#simple-search .clear-field-button:hover {
+.zsearch .clear-field-button:hover {
     border-color: #aaa !important;
     opacity:0.8;
 }

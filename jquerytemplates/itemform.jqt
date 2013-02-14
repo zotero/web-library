@@ -38,7 +38,7 @@
     
     <!-- Output fields -->
     {{each(field, fieldValue) item}}
-        {{if (field != 'itemType' && field != 'title' && field != 'creators' && field != 'tags' && field != 'notes' && field != 'linkMode' && field != 'mimeType' && field != 'charset')}}
+        {{if (field != 'itemType' && field != 'title' && field != 'creators' && field != 'tags' && field != 'notes' && field != 'linkMode' && field != 'mimeType' && field != 'charset' && field != 'relations' && field != 'collections' && field != 'itemVersion' && field != 'itemKey')}}
         <tr>
             <th><label for="${field}">${Zotero.localizations.fieldMap[field]}</label></th>
             <td class="${field}">

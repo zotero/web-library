@@ -1,6 +1,6 @@
 <script id="itemdetailsTemplate" type="text/x-jquery-tmpl">
     {{if (parentUrl)}}
-        <a href="${parentUrl}" class="ajax-link clickable item-select-link" data-itemKey='${item.parentKey}'>Parent Item</a>
+        <a href="${parentUrl}" class="ajax-link clickable item-select-link" data-itemKey='${item.parentItemKey}'>Parent Item</a>
     {{/if}}
     <h2>${item.title}</h2>
     {{if (item.libraryType == 'user')}}
@@ -58,12 +58,12 @@
         <tr>
             <th>${Zotero.localizations.fieldMap[field]}</th>
             <td class="${$field}">
-                <textarea cols="40" rows="14" id="note-text" class="tinymce readonly">${item.apiObj.note}</textarea>
+                <textarea cols="40" rows="14" id="note-text" class="tinymce readonly">${item.apiObj[field]}</textarea>
             </td>
         </tr>
-        {{else (field != 'itemType' && field != 'title' && field != 'mimeType' && field != 'linkMode' && field != 'charset' && field != 'md5' && field != 'mtime' && field != 'tags' && fieldValue != '')}}
+        {{else ( (J.inArray(field, item.hideFields) == -1) && (item.fieldMap.hasOwnProperty(field)) && fieldValue != '' && field != 'itemType' && field != 'title') }}
         <tr>
-            <th>${Zotero.localizations.fieldMap[field]}</th>
+            <th>${Zotero.localizations.fieldMap[field] || field}</th>
             <td class="${field}">
                 ${Zotero.ui.formatItemField(field, item)}
             </td>
@@ -85,10 +85,10 @@
     </tr>
     
     <!-- download link -->
-    {{if (item.attachmentDownloadLink != '')}}
+    {{if (item.attachmentDownloadUrl != '')}}
     <tr>
         <th>Download</th>
-        <td>{{html item.attachmentDownloadLink}}</td>
+        <td>{{html Zotero.url.attachmentDownloadLink(item)}}</td>
     </tr>
     {{/if}}
     </table>
@@ -102,6 +102,11 @@
         {{if Zotero.config.librarySettings.allowEdit}}
         <button id="upload-attachment-link">Upload Attachment</button>
         {{/if}}
+        <div id="upload-attachment-dialog" title="Upload Attachment">
+        </div>
+    {{/if}}
+    {{if item.itemType === 'attachment' && Zotero.config.librarySettings.allowEdit}}
+        <button id="upload-attachment-link">Upload New Copy</button>
         <div id="upload-attachment-dialog" title="Upload Attachment">
         </div>
     {{/if}}

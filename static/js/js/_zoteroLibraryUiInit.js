@@ -63,7 +63,7 @@ Zotero.ui.init.fullLibrary = function(){
     Zotero.ui.init.tags();
     Zotero.ui.init.collections();
     Zotero.ui.init.items();
-    //Zotero.ui.init.feed();
+    Zotero.ui.init.feed();
     Zotero.ui.init.libraryTemplates();
 };
 
@@ -197,6 +197,15 @@ Zotero.ui.init.libraryControls = function(){
     J("create-collection-dialog").on('submit', ".new-collection-div form", function(e){
         e.preventDefault();
     });
+    /*
+    //not sure why I'm doing this, so comment out and see if it breaks
+    J( "button.create-collection-button").live('click', function(e){
+        e.preventDefault();
+    });
+    J("button.update-collection-button").live('click', function(e){
+        e.preventDefault();
+    });
+    */
    
     //set initial state of search input to url value
     if(Zotero.nav.getUrlVar('q')){
@@ -212,7 +221,7 @@ Zotero.ui.init.libraryControls = function(){
     J("#header-search-query").attr('placeholder', "Search Library");
     
     //set up search submit for library
-    J("#library-search").on('submit', function(e){
+    J("#simple-search").live('submit', function(e){
         e.preventDefault();
         Zotero.nav.clearUrlVars(['collectionKey', 'tag', 'q']);
         var query     = J("#header-search-query").val();
@@ -237,7 +246,7 @@ Zotero.ui.init.libraryControls = function(){
                 Zotero.nav.pushState();
             }
         };
-        J("#library-search button.clear-field-button").on('click', clearQuery);
+        J("#simple-search button.clear-field-button").on('click', clearQuery);
     }
 };
 
@@ -592,6 +601,14 @@ Zotero.ui.init.tagButtons = function(){
     });
 };
 
+Zotero.ui.init.feed = function(){
+    J("#export-section-title").bind('click', function(e){
+        e.preventDefault();
+        J("#export-list").slideToggle();
+    });
+    
+};
+
 //bind citation/bib links to launch citation dialog
 /*Zotero.ui.init.citation = function(){
     Z.debug("Zotero.ui.init.citation");
@@ -645,7 +662,7 @@ Zotero.ui.init.tinyMce = function(type, autofocus, elements){
     
     if(autofocus){
         tmceConfig.init_instance_callback = function(inst){
-            Z.debug("inited " + inst.editorId);
+            console.log("inited " + inst.editorId);
             inst.focus();
         };
     }

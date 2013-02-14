@@ -22,8 +22,8 @@ Zotero.ui.saveItemCallback = function(e){
         Z.debug(item, 3);
     }
     Zotero.ui.updateItemFromForm(item, J(this).closest("form"));
+    Zotero.ui.saveItem(item, J(this).closest("form"));
     library.dirty = true;
-    Zotero.ui.showSpinner(J(this).closest(".ajaxload"));
     return false;
 };
 

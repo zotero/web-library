@@ -14,9 +14,9 @@ Zotero.ui.updateItemFromForm = function(item, formEl){
     var itemKey = '';
     if(item.itemKey) itemKey = item.itemKey;
     //update current representation of the item with form values
-    J.each(item.contentRows, function(i, row){
+    J.each(item.apiObj, function(field, value){
         var selector, inputValue, noteElID;
-        if(row.field == 'note'){
+        if(field == 'note'){
             selector = "textarea[data-itemKey='" + itemKey + "'].tinymce";
             Z.debug(selector, 4);
             noteElID = J(selector).attr('id');
@@ -24,12 +24,12 @@ Zotero.ui.updateItemFromForm = function(item, formEl){
             inputValue = tinyMCE.get(noteElID).getContent();
         }
         else{
-            selector = "[data-itemKey='" + itemKey + "'][name='" + row.field + "']";
+            selector = "[data-itemKey='" + itemKey + "'][name='" + field + "']";
             inputValue = base.find(selector).val();
         }
+        
         if(typeof inputValue !== 'undefined'){
-            row.fieldValue = inputValue;//base.find(selector).val();
-            item.apiObj[row.field] = inputValue;//base.find(selector).val();
+            item.apiObj[field] = inputValue;//base.find(selector).val();
         }
     });
     var creators = [];
@@ -77,22 +77,25 @@ Zotero.ui.updateItemFromForm = function(item, formEl){
         var noteid = J(el).attr('id');
         var noteContent = tinyMCE.get(noteid).getContent();
         Z.debug(noteContent, 3);
-        notes.push({itemType:'note', 'note': noteContent});
+        notes.push({itemType:'note', 'note': noteContent, parentItem: item.itemKey});
     });
-    item.apiObj.notes = notes;
     
+    item.notes = notes;
     item.apiObj.creators = creators;
     item.apiObj.tags = tags;
+    
+};
+
+Zotero.ui.saveItem = function(item) {
     //var requestData = JSON.stringify(item.apiObj);
     Z.debug("pre writeItem debug", 4);
     Z.debug(item, 4);
     //show spinner before making ajax write call
-    Zotero.ui.showSpinner(J(formEl).closest('.ajaxload'));
     var jqxhr = item.writeItem();
     jqxhr.done(J.proxy(function(newItemKey){
         Z.debug("item write finished", 3);
         delete Zotero.nav.urlvars.pathVars['action'];
-        if(itemKey === ''){
+        if(item.itemKey === ''){
             //newly created item, add to collection if collectionkey in url
             var collectionKey = Zotero.nav.getUrlVar('collectionKey');
             if(collectionKey){
@@ -109,6 +112,7 @@ Zotero.ui.updateItemFromForm = function(item, formEl){
     //update list of tags we have if new ones added
     Z.debug('adding new tags to library tags', 3);
     var libTags = library.tags;
+    var tags = item.apiObj.tags;
     J.each(tags, function(index, tagOb){
         var tagString = tagOb.tag;
         if(!libTags.tagObjects.hasOwnProperty(tagString)){
@@ -269,4 +273,12 @@ Zotero.ui.getAssociatedLibrary = function(el){
         jel.data('zoterolibrary', library);
     }
     return library;
+};
+
+/**
+ * Scroll to the top of the window
+ * @return {undefined}
+ */
+Zotero.ui.scrollToTop = function(){
+    window.scrollBy(0, -5000);
 };

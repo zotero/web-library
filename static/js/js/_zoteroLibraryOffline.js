@@ -274,6 +274,153 @@ Zotero.offline.initializeOffline = function(){
     });
 };
 
+Zotero.offline.loadAllItems = function(library){
+    Z.debug("Zotero.offline.loadAllItems", 3);
+    var itemsCacheConfig = {libraryType:library.libraryType, libraryID:library.libraryID, target:'allitems'};
+    
+    var haveCachedItems = library.loadCachedItems();
+    if(haveCachedItems){
+        //if we have cached items, display what we think the current view is right now
+        //we'll update it after we make sure we're synced too
+        displayParams = Zotero.nav.getUrlVars();
+        library.buildItemDisplayView(displayParams);
+    }
+    //we need modified itemKeys regardless, so load them
+    var itemKeysDeferred = library.fetchItemKeysModified();
+    itemKeysDeferred.done(J.proxy(function(data, keysjqxhr){
+        Z.debug("Got back itemKeys ordered by modified", 3);
+        var itemKeys = J.trim(data).split("\n");
+        library.itemKeys = itemKeys;
+        
+        if(haveCachedItems === 0 && itemKeys.length > 0) haveCachedItems = false; //explicitly set to false if no items when there are itemkeys
+        if(haveCachedItems !== false){
+            Z.debug("have cached items", 3);
+            //pull items that we don't have at all
+            var missingItemKeys = library.findMissingItems(itemKeys);
+            var missingItemsDeferred = library.loadItemsFromKeysParallel(missingItemKeys);
+            
+            //pull modified keys
+            var modifiedItemsDeferred = library.loadModifiedItems(itemKeys);
+            
+            //when all the deferreds are done, build the list to display
+            //TODO: we may want to short circuit if there are alot of things to wait for
+            J.when(missingItemsDeferred, modifiedItemsDeferred).then(J.proxy(function(){
+                Z.debug("Building new items list to display", 3);
+                displayParams = Zotero.nav.getUrlVars();
+                library.buildItemDisplayView(displayParams);
+                Zotero.cache.save(itemsCacheConfig, library.items.dump());
+                
+                //update item pane display based on url
+                Zotero.callbacks.chooseItemPane(J("#items-pane"));
+                Zotero.ui.displayItemOrTemplate(library);
+            }));
+        }
+        else{
+            //pull all itemKeys
+            var loadAllItemsDeferred = library.loadItemsFromKeysParallel(itemKeys);
+            loadAllItemsDeferred.done(J.proxy(function(){
+                var displayParams = Zotero.nav.getUrlVars();
+                Z.debug(displayParams);
+                library.buildItemDisplayView(displayParams);
+                Zotero.cache.save(itemsCacheConfig, library.items.dump());
+            }, this ) );
+        }
+    }, this ) );
+    
+    
+};
+
+Zotero.offline.loadAllCollections = function(library){
+    Z.debug("Zotero.offline.loadAllCollections", 3);
+    var collectionsCacheConfig = {libraryType:library.libraryType, libraryID:library.libraryID, target:'allcollections'};
+    var collectionMembersConfig = {libraryType:library.libraryType, libraryID:library.libraryID, target:'collectionmembers'};
+    
+    /* ---- load collections ---- */
+    //get Zotero.Library object if already bound to element
+    Zotero.ui.updateCollectionButtons();
+    
+    var haveCachedCollections = library.loadCachedCollections();
+    var clist = J('#collection-list-container');
+    //Zotero.ui.showSpinner(clist);
+    if(haveCachedCollections){
+        Z.debug("haveCachedCollections", 3);
+        
+        clist.empty();
+        Zotero.ui.displayCollections(clist, library.collections);
+        Zotero.ui.nestHideCollectionTree(clist);
+        Zotero.ui.highlightCurrentCollection();
+        
+        //even if we have collections cached, make sure we look for collection membership info
+        var collectionMembershipD = library.loadCollectionMembership(library.collections.collectionsArray);
+        collectionMembershipD.done(J.proxy(function(){
+            Zotero.cache.save(collectionsCacheConfig, library.collections.dump());
+        }, this));
+    }
+    else {
+        Z.debug("dont have collections - load them", 3);
+        //empty contents and show spinner while loading ajax
+        var d = library.loadCollections();
+        d.done(J.proxy(function(){
+            clist.empty();
+            Zotero.ui.displayCollections(clist, library.collections);
+            Zotero.ui.highlightCurrentCollection();
+            Zotero.ui.nestHideCollectionTree(clist);
+            
+            Zotero.cache.save(collectionsCacheConfig, library.collections.dump());
+            
+            var collectionMembershipD = library.loadCollectionMembership(library.collections.collectionsArray);
+            collectionMembershipD.done(J.proxy(function(){
+                Zotero.cache.save(collectionsCacheConfig, library.collections.dump());
+            }, this));
+        }, this));
+        
+        d.fail(J.proxy(function(jqxhr, textStatus, errorThrown){
+            var elementMessage = Zotero.ui.ajaxErrorMessage(jqxhr);
+            jel.html("<p>" + elementMessage + "</p>");
+        }));
+    }
+    
+};
+
+Zotero.offline.loadAllTags = function(library){
+    Z.debug("Zotero.offline.loadAllTags", 3);
+    var tagsCacheConfig = {libraryType:library.libraryType, libraryID:library.libraryID, target:'alltags'};
+    
+    /* ----- load tags ----- */
+    var tagsEl = J("#tags-list-container");
+    var loadTagsDeferred = library.loadAllTags({});
+    
+    // put the selected tags into an array
+    var selectedTags = Zotero.nav.getUrlVar('tag');
+    if(!J.isArray(selectedTags)){
+        if(selectedTags) {
+            selectedTags = [selectedTags];
+        }
+        else {
+            selectedTags = [];
+        }
+    }
+    
+    loadTagsDeferred.done(J.proxy(function(tags){
+        Z.debug("finished loadAllTags", 3);
+        tagsEl.find('div.loading').empty();
+        Z.debug(tags, 5);
+        library.tags.loaded = true;
+        library.tags.loadedConfig = {};
+        tagsEl.children('.loading').empty();
+        var plainList = library.tags.plainTagsList(library.tags.tagsArray);
+        Zotero.ui.displayTagsFiltered(tagsEl, library.tags, plainList, selectedTags);
+        Zotero.nav.doneLoading(tagsEl);
+    }, this));
+    
+    loadTagsDeferred.fail(J.proxy(function(jqxhr, textStatus, errorThrown){
+        var elementMessage = Zotero.ui.ajaxErrorMessage(jqxhr);
+        jel.html("<p>" + elementMessage + "</p>");
+    }));
+    J("#library").addClass("loaded");
+    
+};
+
 Zotero.offline.loadMetaInfo = function(library){
     Z.debug("Zotero.offline.loadMetaInfo", 3);
     /* ----- load item templates ----- */

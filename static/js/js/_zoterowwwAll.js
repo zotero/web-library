@@ -52,20 +52,11 @@ var Zotero = {
              baseApiUrl: 'https://apidev.zotero.org',
              baseWebsiteUrl: 'https://test.zotero.net',
              baseFeedUrl: 'https://apidev.zotero.org',
-             baseZoteroWebsiteUrl: 'https://test.zotero.net',
-             baseDownloadUrl: 'https://test.zotero.net',
-             directDownloads: true,
-             proxyPath: '/proxyrequest',
-             ignoreLoggedInStatus: false,
-             storePrefsRemote: true,
-             sessionAuth: false,
              proxy: true,
              apiKey: '',
              ajax: 1,
-             apiVersion: 2,
              locale: 'en-US',
              cacheStoreType: 'localStorage',
-             preloadCachedLibrary: true,
              mobile:0,
              sortOrdering: {
                  'dateAdded': 'desc',
@@ -142,13 +133,11 @@ var Zotero = {
     
     cacheFeeds: {},
     
-    defaultPrefs: {
-        debug_level: 3, //lower level is higher priority
+    prefs: {
+        debug_level: 1, //lower level is higher priority
         debug_log: true,
         debug_mock: false
     },
-    
-    prefs: {},
     
     state: {},
     
@@ -162,7 +151,7 @@ var Zotero = {
             //'tag': /^[^#]*$/,
             'libraryID': /^[0-9]+$/,
             'libraryType': /^(user|group|)$/,
-            'target': /^(items?|collections?|tags|children|deleted)$/,
+            'target': /^(items?|collections?|tags|children)$/,
             'targetModifier': /^(top|file|file\/view)$/,
             
             //get params
@@ -178,20 +167,20 @@ var Zotero = {
             'tag': /^.*$/,
             'tagType': /^(0|1)$/,
             'key': /^\S*/,
-            'format': /^(atom|bib|keys|versions|bibtex|bookmarks|mods|refer|rdf_bibliontology|rdf_dc|rdf_zotero|ris|wikipedia)$/,
+            'format': /^(atom|bib|keys|bibtex|bookmarks|mods|refer|rdf_bibliontology|rdf_dc|rdf_zotero|ris|wikipedia)$/,
             'style': /^\S*$/,
             'linkwrap': /^(0|1)*$/
         },
         
         validate: function(arg, type){
-            Z.debug("Zotero.validate", 4);
+            Z.debug("Zotero.validate");
             if(arg === ''){
                 return null;
             }
             else if(arg === null){
                 return true;
             }
-            Z.debug(arg + " " + type, 4);
+            Z.debug(arg + " " + type);
             var patterns = this.patterns;
             
             if(patterns.hasOwnProperty(type)){
@@ -207,7 +196,7 @@ var Zotero = {
     enableLogging: function(){
         Zotero._logEnabled++;
         if(Zotero._logEnabled > 0){
-            //Zotero.prefs.debug_log = true;
+            Zotero.prefs.debug_log = true;
         }
     },
     
@@ -215,7 +204,7 @@ var Zotero = {
         Zotero._logEnabled--;
         if(Zotero._logEnabled <= 0){
             Zotero._logEnabled = 0;
-            //Zotero.prefs.debug_log = false;
+            Zotero.prefs.debug_log = false;
         }
     },
     
@@ -230,19 +219,9 @@ var Zotero = {
         else{
             store = {};
         }
-        Zotero.store = store;
         
         Zotero.cache = new Zotero.Cache(store);
-        //populate prefs with defaults, then override with stored prefs
-        Zotero.prefs = J.extend({}, Zotero.defaultPrefs, Zotero.prefs, Zotero.utils.getStoredPrefs());
-        /*
-        Zotero.prefs = new Zotero.Prefs(store);
-        J.each(Zotero.defaultPrefs, function(key, val){
-            if(Zotero.prefs.getPref(key) === null){
-                Zotero.prefs.setPref(key);
-            }
-        });
-        */
+        
         //get localized item constants if not stored in localstorage
         var locale = 'en-US';
         if(Zotero.config.locale){
@@ -351,54 +330,14 @@ Zotero.Cache.prototype.clear = function(){
     }
 };
 
-Zotero.PrefManager = function(store){
-    this.store = store;
-};
-
-Zotero.PrefManager.prototype.setPref = function(key, val){
-    var prefs = this.store["userpreferences"];
-    if(typeof prefs === "undefined"){
-        prefs = {};
-    }
-    prefs[key] = val;
-    this.store["userpreferences"] = prefs;
-};
-
-Zotero.PrefManager.prototype.setPrefs = function(prefs){
-    if(typeof(prefs) != "object") {
-        throw "Preferences must be an object";
-    }
-    this.store["userpreferences"] = prefs;
-};
-
-Zotero.PrefManager.prototype.getPrefs = function(){
-    var prefs = this.store["userpreferences"];
-    if(typeof prefs === "undefined") {
-        return {};
-    }
-    return prefs;
-};
-
-Zotero.PrefManager.prototype.getPref = function(key){
-    var prefs = this.store["userpreferences"];
-    if(typeof prefs === "undefined"){
-        return null;
-    }
-    return prefs["key"];
-};
-
 //make a request to the Zotero api and get back a deferred
 Zotero.apiRequest = function(url, method, body, headers){
-    Z.debug("Zotero.apiRequest ==== " + url, 4);
+    Z.debug("Zotero.apiRequest", 3);
     if(typeof method == 'undefined'){
         method = 'GET';
     }
     if(typeof headers == 'undefined'){
         headers = {};
-    }
-    
-    if(Zotero.config.apiVersion){
-        headers['Zotero-API-Version'] = Zotero.config.apiVersion;
     }
     
     var settings = {type: method,
@@ -451,35 +390,6 @@ Zotero.loadLibrary = function(params){
     return library;
 };
 
-Zotero.ajaxRequest = function(url, type, options){
-    Z.debug("Zotero.ajaxRequest ==== " + url, 2);
-    var defaultOptions = {
-        type: "GET",
-        headers:{},
-        cache:false,
-        error: Zotero.ajax.errorCallback
-    };
-    var reqOptions = J.extend({}, defaultOptions, options);
-    if(type){
-        reqOptions.type = type;
-    }
-    
-    if(Zotero.config.apiVersion){
-        reqOptions.headers['Zotero-API-Version'] = Zotero.config.apiVersion;
-    }
-    
-    var urlstring;
-    if(typeof url === "object"){
-        urlstring = Zotero.ajax.apiRequestUrl(url) + Zotero.ajax.apiQueryString(url);
-    }
-    else if(typeof url === "string"){
-        urlstring = url;
-    }
-    Z.debug("library.ajaxRequest urlstring " + urlstring);
-    var reqUrl = Zotero.ajax.proxyWrapper(urlstring, type);
-    return J.ajax(reqUrl, reqOptions);
-};
-
 var Z = Zotero;
 
 
@@ -504,8 +414,8 @@ Zotero.ajax.activeRequests = [];
  * Requires {target:items|collections|tags, libraryType:user|group, libraryID:<>}
  */
 Zotero.ajax.apiRequestUrl = function(params){
-    Z.debug("Zotero.ajax.apiRequestUrl", 4);
-    Z.debug(params, 4);
+    //Z.debug("Zotero.ajax.apiRequestUrl", 3);
+    //Z.debug(params, 3);
     J.each(params, function(key, val){
         //should probably figure out exactly why I'm doing this, is it just to make sure no hashes snuck in?
         //if so the new validation below takes care of that instead
@@ -519,12 +429,13 @@ Zotero.ajax.apiRequestUrl = function(params){
             //warn on invalid parameter and drop from params that will be used
             Zotero.warn("API argument failed validation: " + key + " cannot be " + val);
             Zotero.warn(params);
+            console.trace();
             delete params[key];
         }
     });
     
     if(!params.target) throw "No target defined for api request";
-    if(!(params.libraryType == 'user' || params.libraryType == 'group' || params.libraryType === '')) throw "Unexpected libraryType for api request " + JSON.stringify(params);
+    if(!(params.libraryType == 'user' || params.libraryType == 'group' || params.libraryType === '')) throw "Unexpected libraryType for api request" + params.libraryType;
     if((params.libraryType) && !(params.libraryID)) throw "No libraryID defined for api request";
     
     var base = Zotero.config.baseApiUrl;
@@ -536,9 +447,6 @@ Zotero.ajax.apiRequestUrl = function(params){
             if(params.collectionKey == 'trash'){
                 url += '/items/trash';
                 return url;
-            }
-            else if(params.collectionKey.indexOf(',') !== -1){
-                
             }
             else{
                 url += '/collections/' + params.collectionKey;
@@ -572,17 +480,12 @@ Zotero.ajax.apiRequestUrl = function(params){
         case 'children':
             url += '/items/' + params.itemKey + '/children';
             break;
-        case 'deleted':
-            url += '/deleted';
-            break;
         default:
             return false;
     }
     switch(params.targetModifier){
         case 'top':
-            if(!params.collectionKey){
-                url += '/top';
-            }
+            url += '/top';
             break;
         case 'file':
             url += '/file';
@@ -596,8 +499,8 @@ Zotero.ajax.apiRequestUrl = function(params){
 };
 
 Zotero.ajax.apiQueryString = function(passedParams, useConfigKey){
-    Z.debug("Zotero.ajax.apiQueryString", 4);
-    Z.debug(passedParams, 4);
+    Z.debug("Zotero.ajax.apiQueryString");
+    Z.debug(passedParams);
     if(useConfigKey === null || typeof useConfigKey === 'undefined'){
         useConfigKey = true;
     }
@@ -614,11 +517,7 @@ Zotero.ajax.apiQueryString = function(passedParams, useConfigKey){
     if(passedParams.hasOwnProperty('order') && passedParams['order'] == 'year'){
         passedParams['order'] = 'date';
     }
-    if(useConfigKey && Zotero.config.sessionAuth) {
-        var sessionKey = Zotero.utils.readCookie("zotero_www_session_v2");
-        passedParams['session'] = sessionKey;
-    }
-    else if(useConfigKey && Zotero.config.apiKey){
+    if(useConfigKey && Zotero.config.apiKey){
         passedParams['key'] = Zotero.config.apiKey;
     }
     
@@ -628,7 +527,7 @@ Zotero.ajax.apiQueryString = function(passedParams, useConfigKey){
         passedParams['sort'] = 'asc';
     }
     
-    Z.debug(passedParams, 4);
+    Z.debug(passedParams);
     
     var queryString = '?';
     var queryParamsArray = [];
@@ -642,17 +541,13 @@ Zotero.ajax.apiQueryString = function(passedParams, useConfigKey){
                              'fq',
                              'itemType',
                              'itemKey',
-                             'collectionKey',
-                             'searchKey',
                              'locale',
                              'tag',
                              'tagType',
                              'key',
                              'style',
                              'linkMode',
-                             'linkwrap',
-                             'session',
-                             'newer'
+                             'linkwrap'
                              ];
     //build simple api query parameters object
     var queryParams = {};
@@ -663,17 +558,8 @@ Zotero.ajax.apiQueryString = function(passedParams, useConfigKey){
     });
     
     //take out itemKey if it is not a list
-    if(passedParams.hasOwnProperty('target') && passedParams['target'] !== 'items'){
-        if(queryParams.hasOwnProperty('itemKey') && queryParams['itemKey'].indexOf(',') == -1){
-            delete queryParams['itemKey'];
-        }
-    }
-    
-    //take out collectionKey if it is not a list
-    if(passedParams.hasOwnProperty('target') && passedParams['target'] !== 'collections'){
-        if(queryParams.hasOwnProperty('collectionKey') && queryParams['collectionKey'].indexOf(',') === -1){
-            delete queryParams['collectionKey'];
-        }
+    if(queryParams.hasOwnProperty('itemKey') && queryParams['itemKey'].indexOf(',') == -1){
+        delete queryParams['itemKey'];
     }
     
     //add each of the found queryParams onto array
@@ -699,7 +585,7 @@ Zotero.ajax.proxyWrapper = function(requestUrl, method){
         if(!method){
             method = 'GET';
         }
-        return Zotero.config.proxyPath + "?requestMethod=" + method + "&requestUrl=" + encodeURIComponent(requestUrl);
+        return "/proxyrequest?requestMethod=" + method + "&requestUrl=" + encodeURIComponent(requestUrl);
     }
     else{
         return requestUrl;
@@ -733,7 +619,6 @@ Zotero.Feed = function(data){
 
 Zotero.Feed.prototype.parseXmlFeed = function(data){
     var fel = J(data).find("feed");
-    this.zoteroLastModifiedVersion = null;
     this.title = fel.children('title').first().text();
     this.id = fel.children('id').first().text();
     this.totalResults = fel.find('zapi\\:totalResults').first().text();
@@ -774,11 +659,6 @@ Zotero.Library = function(type, libraryID, libraryUrlIdentifier, apiKey){
     Z.debug("Zotero.Library constructor", 3);
     Z.debug(libraryUrlIdentifier, 4);
     this.instance = "Zotero.Library";
-    this.libraryVersion = 0;
-    this.syncState = {
-        earliestVersion: null,
-        latestVersion: null
-    };
     this._apiKey = apiKey || false;
     
     this.libraryBaseWebsiteUrl = Zotero.config.baseWebsiteUrl + '/';
@@ -794,12 +674,8 @@ Zotero.Library = function(type, libraryID, libraryUrlIdentifier, apiKey){
     this.collections = new Zotero.Collections();
     this.collections.libraryUrlIdentifier = this.libraryUrlIdentifier;
     this.collections.owningLibrary = this;
-    this.tags = new Zotero.Tags();
-    this.searches = new Zotero.Searches();
-    this.searches.owningLibrary = this;
-    this.deleted = new Zotero.Deleted();
-    this.deleted.owningLibrary = this;
     
+    this.tags = new Zotero.Tags();
     
     if(!type){
         //return early if library not specified
@@ -809,22 +685,13 @@ Zotero.Library = function(type, libraryID, libraryUrlIdentifier, apiKey){
     this.type = type;
     this.libraryType = type;
     this.libraryID = libraryID;
-    this.libraryString = Zotero.utils.libraryString(this.libraryType, this.libraryID);
+    this.libraryString = Zotero.utils.libraryString(this.type, this.libraryID);
     this.libraryUrlIdentifier = libraryUrlIdentifier;
     
     //object to hold user aliases for displaying real names
     this.usernames = {};
     
-    if(Zotero.config.preloadCachedLibrary === true){
-        Zotero.prefs.log_level = 5;
-        this.loadCachedItems();
-        this.loadCachedCollections();
-        this.loadCachedTags();
-        Z.debug("Library.items.itemsVersion: " + this.items.itemsVersion, 3);
-        Z.debug("Library.collections.collectionsVersion: " + this.collections.collectionsVersion, 3);
-        Z.debug("Library.tags.tagsVersion: " + this.tags.tagsVersion, 3);
-        Zotero.prefs.log_level = 3;
-    }
+    this.cachedTags = this.getCachedTags();
     
     this.dirty = false;
     
@@ -879,58 +746,25 @@ Zotero.Library.prototype.displayableColumns = ['title',
 Zotero.Library.prototype.groupOnlyColumns = ['addedBy'
                                              /*'modifiedBy'*/];
 
-//this does not handle accented characters correctly
 Zotero.Library.prototype.sortByTitleCompare = function(a, b){
     //Z.debug("compare by key: " + a + " < " + b + " ?", 4);
-    if(a.title.toLocaleLowerCase() == b.title.toLocaleLowerCase()){
+    if(a.title.toLowerCase() == b.title.toLowerCase()){
         return 0;
     }
-    if(a.title.toLocaleLowerCase() < b.title.toLocaleLowerCase()){
+    if(a.title.toLowerCase() < b.title.toLowerCase()){
         return -1;
     }
     return 1;
 };
 
 Zotero.Library.prototype.sortLower = function(a, b){
-    if(a.toLocaleLowerCase() == b.toLocaleLowerCase()){
+    if(a.toLowerCase() == b.toLowerCase()){
         return 0;
     }
-    if(a.toLocaleLowerCase() < b.toLocaleLowerCase()){
+    if(a.toLowerCase() < b.toLowerCase()){
         return -1;
     }
     return 1;
-};
-
-//Zotero library wrapper around jQuery ajax that returns a jQuery promise
-//@url String url to request or object for input to apiRequestUrl and query string
-//@type request method
-//@options jquery options that are not the default for Zotero requests
-Zotero.Library.prototype.ajaxRequest = function(url, type, options){
-    var defaultOptions = {
-        type: "GET",
-        headers:{},
-        cache:false,
-        error: Zotero.ajax.errorCallback
-    };
-    var reqOptions = J.extend({}, defaultOptions, options);
-    if(type){
-        reqOptions.type = type;
-    }
-    
-    if(Zotero.config.apiVersion){
-        reqOptions.headers['Zotero-API-Version'] = Zotero.config.apiVersion;
-    }
-    
-    var urlstring;
-    if(typeof url === "object"){
-        urlstring = Zotero.ajax.apiRequestUrl(url) + Zotero.ajax.apiQueryString(url);
-    }
-    else if(typeof url === "string"){
-        urlstring = url;
-    }
-    Z.debug("library.ajaxRequest urlstring " + urlstring);
-    var reqUrl = Zotero.ajax.proxyWrapper(urlstring, type);
-    return J.ajax(reqUrl, reqOptions);
 };
 
 Zotero.Library.prototype.websiteUrl = function(urlvars){
@@ -957,15 +791,12 @@ Zotero.Library.prototype.loadCollections = function(config){
     if(!config){
         config = {};
     }
-    var urlconfig = J.extend(true, {'target':'collections', 'libraryType':library.libraryType, 'libraryID':library.libraryID, 'content':'json', limit:'100'}, config);
+    var urlconfig = J.extend(true, {'target':'collections', 'libraryType':this.type, 'libraryID':this.libraryID, 'content':'json', limit:'100'}, config);
     var requestUrl = Zotero.ajax.apiRequestUrl(urlconfig) + Zotero.ajax.apiQueryString(urlconfig);
     
-    var callback = J.proxy(function(data, textStatus, coljqxhr){
+    var callback = J.proxy(function(data, textStatus, XMLHttpRequest){
         Z.debug('loadCollections proxied callback', 3);
-        var modifiedVersion = coljqxhr.getResponseHeader("Last-Modified-Version");
-        Z.debug("1 Collections Last-Modified-Version: " + modifiedVersion, 3);
-        Zotero.utils.updateSyncState(library.collections, modifiedVersion);
-        
+        var library = this;
         var feed = new Zotero.Feed(data);
         feed.requestConfig = urlconfig;
         var collections = library.collections;
@@ -993,7 +824,7 @@ Zotero.Library.prototype.loadCollections = function(config){
             //Nest collections as entries of parent collections
             J.each(collections.collectionsArray, function(index, obj) {
                 if(obj.instance === "Zotero.Collection"){
-                    if(obj.nestCollection(collections.collectionObjects)){
+                    if(obj.nestCollection(collections)){
                         Z.debug(obj.key + ":" + obj.title + " nested in parent.", 4);
                     }
                 }
@@ -1001,14 +832,8 @@ Zotero.Library.prototype.loadCollections = function(config){
             collections.assignDepths(0, collections.collectionsArray);
             
             Z.debug("resolving loadCollections deferred", 3);
-            Zotero.utils.updateSyncedVersion(library.collections, 'collectionsVersion');
-            Z.debug("New collectionsVersion: " + collections.syncState.earliestVersion, 3);
             collections.dirty = false;
             collections.loaded = true;
-            //save collections to cache before resolving
-            Z.debug("collections all loaded - saving to cache before resolving deferred", 3);
-            Z.debug("collectionsVersion: " + library.collections.collectionsVersion, 3);
-            library.saveCachedCollections();
             deferred.resolve(collections);
         }
     }, this);
@@ -1049,7 +874,7 @@ Zotero.Library.prototype.fetchNext = function(feed, config){
         newConfig.start = nextLinkConfig.start;
         newConfig.limit = nextLinkConfig.limit;
         var requestUrl = Zotero.ajax.apiRequestUrl(newConfig) + Zotero.ajax.apiQueryString(newConfig);
-        var nextPromise = Zotero.ajaxRequest(requestUrl, 'GET');
+        var nextPromise = Zotero.apiRequest(requestUrl, 'GET');
         return nextPromise;
     }
     else{
@@ -1063,10 +888,10 @@ Zotero.Library.prototype.fetchCollections = function(config){
     if(!config){
         config = {};
     }
-    var urlconfig = J.extend(true, {'target':'collections', 'libraryType':library.libraryType, 'libraryID':library.libraryID, 'content':'json', limit:'100'}, config);
+    var urlconfig = J.extend(true, {'target':'collections', 'libraryType':this.type, 'libraryID':this.libraryID, 'content':'json', limit:'100'}, config);
     var requestUrl = Zotero.ajax.apiRequestUrl(urlconfig) + Zotero.ajax.apiQueryString(urlconfig);
     
-    var d = Zotero.ajaxRequest(requestUrl, 'GET');
+    var d = Zotero.apiRequest(requestUrl, 'GET');
     
     //var deferred = new J.Deferred();
     
@@ -1084,7 +909,13 @@ Zotero.Library.prototype.fetchItemKeys = function(config){
     var urlconfig = J.extend(true, {'target':'items', 'libraryType':this.libraryType, 'libraryID':this.libraryID, 'format':'keys'}, config);
     var requestUrl = Zotero.ajax.apiRequestUrl(urlconfig) + Zotero.ajax.apiQueryString(urlconfig);
     
-    var jqxhr = library.ajaxRequest(requestUrl);
+    var jqxhr = J.ajax(Zotero.ajax.proxyWrapper(requestUrl, 'GET'),
+        {type: "GET",
+         headers:{},
+         cache:false,
+         error: Zotero.ajax.errorCallback
+        }
+    );
     
     return jqxhr;
 };
@@ -1133,13 +964,14 @@ Zotero.Library.prototype.loadItems = function(config){
     var newConfig = J.extend({}, defaultConfig, config);
     newConfig.start = parseInt(newConfig.limit, 10) * (parseInt(newConfig.itemPage, 10) - 1);
     //Z.debug("newConfig");Z.debug(newConfig);
-    
-    var urlconfig = J.extend({'target':'items', 'libraryType':library.libraryType, 'libraryID':library.libraryID}, newConfig);
+    var urlconfig = J.extend({'target':'items', 'libraryType':this.type, 'libraryID':this.libraryID}, newConfig);
     var requestUrl = Zotero.ajax.apiRequestUrl(urlconfig) + Zotero.ajax.apiQueryString(urlconfig);
+    Z.debug("loadItems requestUrl:");
+    Z.debug(requestUrl);
     
     var callback = J.proxy(function(data, textStatus, XMLHttpRequest){
         Z.debug('loadItems proxied callback', 3);
-        //var library = this;
+        var library = this;
         var jFeedOb = J(data);
         var itemfeed = new Zotero.Feed(data);
         itemfeed.requestConfig = newConfig;
@@ -1164,7 +996,13 @@ Zotero.Library.prototype.loadItems = function(config){
         return deferred;
     }
     else{
-        var jqxhr = library.ajaxRequest(requestUrl);
+        var jqxhr = J.ajax(Zotero.ajax.proxyWrapper(requestUrl, 'GET'),
+            {type: "GET",
+             headers:{},
+             cache:false,
+             error: Zotero.ajax.errorCallback
+            }
+        );
         jqxhr.done(callback);
         jqxhr.fail(function(){deferred.reject.apply(null, arguments);}).fail(Zotero.error);
         Zotero.ajax.activeRequests.push(jqxhr);
@@ -1191,19 +1029,19 @@ Zotero.Library.prototype.loadItemsSimple = function(config){
     var deferred = new J.Deferred();
     
     var defaultConfig = {target:'items',
-                         //targetModifier: 'top',
-                         //itemPage: 1,
-                         //limit: 25,
+                         targetModifier: 'top',
+                         itemPage: 1,
+                         limit: 25,
                          content: 'json',
-                         //order: Zotero.config.defaultSortColumn,
-                         //sort: Zotero.config.defaultSortOrder
+                         order: Zotero.config.defaultSortColumn,
+                         sort: Zotero.config.defaultSortOrder
                      };
     
     //Build config object that should be displayed next and compare to currently displayed
     var newConfig = J.extend({}, defaultConfig, config);
-    //newConfig.start = parseInt(newConfig.limit, 10) * (parseInt(newConfig.itemPage, 10) - 1);
+    newConfig.start = parseInt(newConfig.limit, 10) * (parseInt(newConfig.itemPage, 10) - 1);
     //Z.debug("newConfig");Z.debug(newConfig);
-    var urlconfig = J.extend({'target':'items', 'libraryType':library.libraryType, 'libraryID':library.libraryID}, newConfig);
+    var urlconfig = J.extend({'target':'items', 'libraryType':this.type, 'libraryID':this.libraryID}, newConfig);
     var requestUrl = Zotero.ajax.apiRequestUrl(urlconfig) + Zotero.ajax.apiQueryString(urlconfig);
     Z.debug("loadItems requestUrl:");
     Z.debug(requestUrl);
@@ -1228,7 +1066,13 @@ Zotero.Library.prototype.loadItemsSimple = function(config){
         deferred.resolve({itemsArray:loadedItemsArray, feed:itemfeed, library:library});
     }, this);
     
-    var jqxhr = library.ajaxRequest(requestUrl);
+    var jqxhr = J.ajax(Zotero.ajax.proxyWrapper(requestUrl, 'GET'),
+        {type: "GET",
+         headers:{},
+         cache:false,
+         error: Zotero.ajax.errorCallback
+        }
+    );
     jqxhr.done(callback);
     jqxhr.fail(function(){deferred.reject.apply(null, arguments);}).fail(Zotero.error);
     Zotero.ajax.activeRequests.push(jqxhr);
@@ -1241,70 +1085,36 @@ Zotero.Library.prototype.loadItemsSimple = function(config){
     return deferred;
 };
 
-//added so the request is always completed rather than checking if it should be
-//important for parallel requests that may load more than what we just want to see right now
-Zotero.Library.prototype.loadCollectionsSimple = function(config){
-    Z.debug("Zotero.Library.loadCollections", 3);
-    Z.debug(config);
-    var library = this;
-    if(!config){
-        config = {};
-    }
-    
-    var deferred = new J.Deferred();
-    var defaultConfig = {target:'collections',
-                         content: 'json',
-                         libraryType: library.libraryType,
-                         libraryID: library.libraryID
-                     };
-    
-    //Build config object that should be displayed next and compare to currently displayed
-    var urlconfig = J.extend({}, defaultConfig, config);
-    var requestUrl = Zotero.ajax.apiRequestUrl(urlconfig) + Zotero.ajax.apiQueryString(urlconfig);
-    
-    var callback = J.proxy(function(data, textStatus, XMLHttpRequest){
-        Z.debug('loadCollections proxied callback', 3);
-        var collectionsfeed = new Zotero.Feed(data);
-        collectionsfeed.requestConfig = urlconfig;
-        //clear out display items
-        var collectionsAdded = library.collections.addCollectionsFromFeed(collectionsfeed);
-        for (var i = 0; i < collectionsAdded.length; i++) {
-            collectionsAdded[i].associateWithLibrary(library);
-        }
-    }, this);
-    
-    var jqxhr = library.ajaxRequest(requestUrl);
-    jqxhr.done(callback);
-    jqxhr.fail(function(){deferred.reject.apply(null, arguments);}).fail(Zotero.error);
-    Zotero.ajax.activeRequests.push(jqxhr);
-    
-    return deferred;
-};
-
 Zotero.Library.prototype.loadItem = function(itemKey) {
     Z.debug("Zotero.Library.loadItem", 3);
-    var library = this;
     if(!config){
         var config = {content:'json'};
     }
     
     var deferred = new J.Deferred();
-    var urlconfig = {'target':'item', 'libraryType':library.libraryType, 'libraryID':library.libraryID, 'itemKey':itemKey, 'content':'json'};
+    var urlconfig = {'target':'item', 'libraryType':this.type, 'libraryID':this.libraryID, 'itemKey':itemKey, 'content':'json'};
     var requestUrl = Zotero.ajax.apiRequestUrl(urlconfig) + Zotero.ajax.apiQueryString(urlconfig);
+    var library = this;
     
     var callback = J.proxy(function(data, textStatus, XMLHttpRequest){
         var resultOb = J(data);
         var entry = J(data).find("entry").eq(0);
         var item = new Zotero.Item();
-        item.libraryType = library.libraryType;
-        item.libraryID = library.libraryID;
+        item.libraryType = this.type;
+        item.libraryID = this.libraryID;
         item.parseXmlItem(entry);
         item.owningLibrary = library;
-        library.items.itemObjects[item.itemKey] = item;
+        this.items.itemObjects[item.itemKey] = item;
         deferred.resolve(item);
     }, this);
     
-    var jqxhr = library.ajaxRequest(requestUrl);
+    var jqxhr = J.ajax(Zotero.ajax.proxyWrapper(requestUrl, 'GET'),
+        {type: "GET",
+         headers:{},
+         cache:false,
+         error: Zotero.ajax.errorCallback
+        }
+    );
     
     jqxhr.done(callback);
     jqxhr.fail(function(){deferred.reject.apply(null, arguments);}).fail(Zotero.error);
@@ -1319,164 +1129,10 @@ Zotero.Library.prototype.loadItem = function(itemKey) {
     return deferred;
 };
 
-Zotero.Library.prototype.synchronize = function(){
-    //get updated group metadata if applicable
-    //  (this is an individual library method, so only necessary if this is
-    //  a group library and we want to keep info about it)
-    //sync library data
-    //  get updated collections versions newer than current library version
-    //  get updated searches versions newer than current library version
-    //  get updated item versions newer than current library version
-    //
-};
-
-Zotero.Library.prototype.loadUpdatedItems = function(){
-    var library = this;
-    var d = new J.Deferred();
-    //we need modified itemKeys regardless, so load them
-    var itemVersionsDeferred = library.updatedVersions("items", library.items.itemsVersion);
-    itemVersionsDeferred.done(J.proxy(function(data, textStatus, versionsjqxhr){
-        Z.debug("itemVersionsDeferred resolved", 3);
-        var updatedVersion = versionsjqxhr.getResponseHeader("Last-Modified-Version");
-        Z.debug("items Last-Modified-Version: " + updatedVersion, 3);
-        Zotero.utils.updateSyncState(library.items, updatedVersion);
-        
-        var itemVersions = data;
-        library.itemVersions = itemVersions;
-        var itemKeys = [];
-        J.each(itemVersions, function(key, val){
-            itemKeys.push(key);
-        });
-        var loadAllItemsDeferred = library.loadItemsFromKeysParallel(itemKeys);
-        loadAllItemsDeferred.done(J.proxy(function(){
-            Z.debug("loadAllItemsDeferred resolved", 3);
-            Zotero.utils.updateSyncedVersion(library.items, 'itemsVersion');
-            
-            var displayParams = Zotero.nav.getUrlVars();
-            Z.debug(displayParams);
-            library.buildItemDisplayView(displayParams);
-            //save updated items to the cache
-            library.saveCachedItems();
-            d.resolve();
-        }, this ) );
-    }, this ) );
-};
-
-Zotero.Library.prototype.loadUpdatedCollections = function(){
-    Z.debug("Zotero.Library.loadUpdatedCollections", 3);
-    var library = this;
-    var d = new J.Deferred();
-    //we need modified collectionKeys regardless, so load them
-    var collectionVersionsDeferred = library.updatedVersions("collections", library.collections.collectionsVersion);
-    collectionVersionsDeferred.done(J.proxy(function(data, textStatus, keysjqxhr){
-        Z.debug("collectionVersionsDeferred finished", 3);
-        var updatedVersion = keysjqxhr.getResponseHeader("Last-Modified-Version");
-        Z.debug("2 Collections Last-Modified-Version: " + updatedVersion, 3);
-        Zotero.utils.updateSyncState(library.collections.syncState, updatedVersion);
-        
-        var collectionVersions = data;
-        library.collectionVersions = collectionVersions;
-        var collectionKeys = [];
-        J.each(collectionVersions, function(key, val){
-            collectionKeys.push(key);
-        });
-        if(collectionKeys.length === 0){
-            d.resolve();
-        }
-        else {
-            var loadAllCollectionsDeferred = library.loadCollectionsFromKeysParallel(collectionKeys);
-            loadAllCollectionsDeferred.done(J.proxy(function(data, textStatus, lacd){
-                Z.debug("All updated collections loaded", 3);
-                Zotero.utils.updateSyncedVersion(library.collections, 'collectionsVersion');
-                
-                var displayParams = Zotero.nav.getUrlVars();
-                //save updated collections to cache
-                Z.debug("loadUpdatedCollections complete - saving collections to cache before resolving", 3);
-                Z.debug("collectionsVersion: " + library.collections.collectionsVersion, 3);
-                library.saveCachedCollections();
-                //TODO: Display collections from here?
-                d.resolve();
-            }, this ) );
-        }
-    }, this ) );
-    
-    return d;
-};
-
-Zotero.Library.prototype.loadUpdatedTags = function(){
-    Z.debug("Zotero.Library.loadUpdatedTags", 3);
-    var library = this;
-    Z.debug("tagsVersion: " + library.tags.tagsVersion, 3);
-    loadAllTagsJqxhr = library.loadAllTags({newer:library.tags.tagsVersion}, false);
-    
-    var callback = J.proxy(function(){
-        if(library.deleted.deletedData.tags.length > 0 ){
-            library.tags.removeTags(library.deleted.deletedData.tags);
-        }
-    }, this);
-    
-    var deletedJqxhr = library.getDeleted(library.libraryVersion);
-    deletedJqxhr.done(callback);
-    
-    return J.when(loadAllTagsJqxhr, deletedJqxhr);
-};
-
-Zotero.Library.prototype.getDeleted = function(version) {
-    var library = this;
-    var callback = J.proxy(function(data, status, jqxhr){
-        library.deleted.deletedData = data;
-        var responseModifiedVersion = jqxhr.getResponseHeader("Last-Modified-Version");
-        Z.debug("Deleted Last-Modified-Version:" + responseModifiedVersion, 3);
-        library.deleted.deletedVersion = responseModifiedVersion;
-        library.deleted.newerVersion = version;
-    }, this);
-    
-    var urlconf = {target:'deleted',
-                   libraryType:library.libraryType,
-                   libraryID:library.libraryID,
-                   newer:version
-               };
-    jqxhr = library.ajaxRequest(urlconf, 'GET', {success: callback});
-    
-    return jqxhr;
-};
-
-Zotero.Library.prototype.processDeletions = function(deletions){
-    var library = this;
-    //process deleted collections
-    J.each(deletions.collections, function(ind, val){
-        var localCollection = library.collections.getCollection(val);
-        if(localCollection !== false){
-            //still have object locally
-            if(localCollection.synced === true){
-                //our collection is not modified, so delete it as the server thinks we should
-                library.collections.deleteCollection(val);
-            }
-            else {
-                //TODO: conflict resolution
-            }
-        }
-    });
-    
-    //process deleted items
-    J.each(deletions.items, function(ind, val){
-        var localItem = library.items.getItem(val);
-        if(localItem !== false){
-            //still have object locally
-            if(localItem.synced === true){
-                //our collection is not modified, so delete it as the server thinks we should
-                library.items.deleteItem(val);
-            }
-        }
-    });
-    
-};
-
 Zotero.Library.prototype.loadFullBib = function(itemKeys, style){
-    var library = this;
     var itemKeyString = itemKeys.join(',');
     var deferred = new J.Deferred();
-    var urlconfig = {'target':'items', 'libraryType':library.libraryType, 'libraryID':library.libraryID, 'itemKey':itemKeyString, 'format':'bib', 'linkwrap':'1'};
+    var urlconfig = {'target':'items', 'libraryType':this.type, 'libraryID':this.libraryID, 'itemKey':itemKeyString, 'format':'bib', 'linkwrap':'1'};
     if(itemKeys.length == 1){
         urlconfig.target = 'item';
     }
@@ -1485,13 +1141,20 @@ Zotero.Library.prototype.loadFullBib = function(itemKeys, style){
     }
 
     var requestUrl = Zotero.ajax.apiRequestUrl(urlconfig) + Zotero.ajax.apiQueryString(urlconfig);
+    var library = this;
     
     var callback = J.proxy(function(data, textStatus, XMLHttpRequest){
         var bib = data;
         deferred.resolve(data);
     }, this);
     
-    var jqxhr = library.ajaxRequest(requestUrl);
+    var jqxhr = J.ajax(Zotero.ajax.proxyWrapper(requestUrl, 'GET'),
+        {type: "GET",
+         headers:{},
+         cache:false,
+         error: Zotero.ajax.errorCallback
+        }
+    );
     
     jqxhr.done(callback);
     jqxhr.fail(function(){deferred.reject.apply(null, arguments);}).fail(Zotero.error);
@@ -1507,25 +1170,36 @@ Zotero.Library.prototype.loadFullBib = function(itemKeys, style){
 
 Zotero.Library.prototype.loadItemBib = function(itemKey, style) {
     Z.debug("Zotero.Library.loadItem", 3);
-    var library = this;
+
     var deferred = new J.Deferred();
-    var urlconfig = {'target':'item', 'libraryType':library.libraryType, 'libraryID':library.libraryID, 'itemKey':itemKey, 'content':'bib'};
+    var urlconfig = {'target':'item', 'libraryType':this.type, 'libraryID':this.libraryID, 'itemKey':itemKey, 'content':'bib'};
     if(style){
         urlconfig['style'] = style;
     }
 
     var requestUrl = Zotero.ajax.apiRequestUrl(urlconfig) + Zotero.ajax.apiQueryString(urlconfig);
+    var library = this;
     
     var callback = J.proxy(function(data, textStatus, XMLHttpRequest){
         var resultOb = J(data);
         var entry = J(data).find("entry").eq(0);
         var item = new Zotero.Item();
+        //item.libraryType = this.type;
+        //item.libraryID = this.libraryID;
         item.parseXmlItem(entry);
+        //item.owningLibrary = library;
+        //this.items.itemObjects[item.itemKey] = item;
         var bibContent = item.bibContent;
         deferred.resolve(bibContent);
     }, this);
     
-    var jqxhr = library.ajaxRequest(requestUrl);
+    var jqxhr = J.ajax(Zotero.ajax.proxyWrapper(requestUrl, 'GET'),
+        {type: "GET",
+         headers:{},
+         cache:false,
+         error: Zotero.ajax.errorCallback
+        }
+    );
     
     jqxhr.done(callback);
     jqxhr.fail(function(){deferred.reject.apply(null, arguments);}).fail(Zotero.error);
@@ -1549,15 +1223,24 @@ Zotero.Library.prototype.fetchTags = function(config){
                          content: 'json'
                      };
     var newConfig = J.extend({}, defaultConfig, config);
-    var urlconfig = J.extend({'target':'tags', 'libraryType':this.libraryType, 'libraryID':this.libraryID}, newConfig);
+    var urlconfig = J.extend({'target':'tags', 'libraryType':this.type, 'libraryID':this.libraryID}, newConfig);
+    var requestUrl = Zotero.ajax.apiRequestUrl(urlconfig) + Zotero.ajax.apiQueryString(urlconfig);
     
-    var jqxhr = Zotero.ajaxRequest(urlconfig);
+    var jqxhr = J.ajax(Zotero.ajax.proxyWrapper(requestUrl, 'GET'),
+        {type: "GET",
+         headers:{},
+         cache:false,
+         error: Zotero.ajax.errorCallback
+        }
+    );
     
     return jqxhr;
 };
 
 Zotero.Library.prototype.loadTags = function(config){
     Z.debug("Zotero.Library.loadTags", 3);
+    Z.debug("passed in config:", 4);
+    Z.debug(config, 4);
     var library = this;
     
     var deferred = new J.Deferred();
@@ -1570,11 +1253,9 @@ Zotero.Library.prototype.loadTags = function(config){
         delete config.collectionKey;
     }
     
-    var callback = J.proxy(function(data, textStatus, jqxhr){
+    var callback = J.proxy(function(data, textStatus, XMLHttpRequest){
         Z.debug('loadTags proxied callback', 3);
-        var modifiedVersion = jqxhr.getResponseHeader("Last-Modified-Version");
-        Z.debug("fetchTags Last-Modified-Version: " + modifiedVersion, 3);
-        Zotero.utils.updateSyncState(library.tags, modifiedVersion);
+        //var library = this;
         var tagsfeed = new Zotero.Feed(data);
         tagsfeed.requestConfig = config;
         var tags = library.tags;
@@ -1603,47 +1284,22 @@ Zotero.Library.prototype.loadTags = function(config){
     return deferred;
 };
 
-Zotero.Library.prototype.loadCachedTags = function(){
-    //test to see if we have tagss in cache - TODO:expire or force-reload faster than session storage
-    var library = this;
-    var cacheConfig = {libraryType:this.libraryType, libraryID:this.libraryID, target:'alltags'};
-    var tagsDump = Zotero.cache.load(cacheConfig);
-    if(tagsDump !== null){
-        Z.debug("Tags dump present in cache - loading", 3);
-        library.tags.loadDump(tagsDump);
-        library.tags.loaded = true;
-        return true;
-    }
-    else{
-        return false;
-    }
-};
-
-Zotero.Library.prototype.saveCachedTags = function(){
-    var library = this;
-    var cacheConfig = {libraryType:library.libraryType, libraryID:library.libraryID, target:'alltags'};
-    Zotero.cache.save(cacheConfig, library.tags.dump());
-    return;
+Zotero.Library.prototype.getCachedTags = function(){
+    var tagsCacheParams = {libraryType:this.libraryType, libraryID:this.libraryID, target:'alltags'};
+    var cachedTags = Zotero.cache.load(tagsCacheParams);
+    return cachedTags;
 };
 
 Zotero.Library.prototype.loadAllTags = function(config, checkCached){
     Z.debug("Zotero.Library.loadAllTags", 3);
-    Z.debug(config);
-    var library = this;
     if(typeof checkCached == 'undefined'){
         checkCached = true; //default to using the cache
     }
-    if(typeof config == 'undefined'){
+    if(!config){
         config = {};
     }
     
     var deferred = new J.Deferred();
-    
-    //make the first action for finished loading be to save tags to cache
-    deferred.done(J.proxy(function(){
-        Zotero.debug("loadAllTags deferred resolved - saving to cache.", 3);
-        library.saveCachedTags();
-    }, this));
     
     var defaultConfig = {target:'tags',
                          content: 'json',
@@ -1655,16 +1311,17 @@ Zotero.Library.prototype.loadAllTags = function(config, checkCached){
     //Build config object that should be displayed next and compare to currently displayed
     var newConfig = J.extend({}, defaultConfig, config);
     
-    var urlconfig = J.extend({'target':'tags', 'libraryType':library.libraryType, 'libraryID':library.libraryID}, newConfig);
+    var urlconfig = J.extend({'target':'tags', 'libraryType':this.type, 'libraryID':this.libraryID}, newConfig);
     var requestUrl = Zotero.ajax.apiRequestUrl(urlconfig) + Zotero.ajax.apiQueryString(urlconfig);
+    var library = this;
     var tags = library.tags;
     
     //check if already loaded tags are okay to use
-    var loadedConfig = J.extend({'target':'tags', 'libraryType':library.libraryType, 'libraryID':library.libraryID}, defaultConfig, tags.loadedConfig);
+    var loadedConfig = J.extend({'target':'tags', 'libraryType':this.type, 'libraryID':this.libraryID}, defaultConfig, tags.loadedConfig);
     var loadedConfigRequestUrl = tags.loadedRequestUrl; //Zotero.ajax.apiRequestUrl(loadedConfig) + Zotero.ajax.apiQueryString(loadedConfig);
     Z.debug("requestUrl: " + requestUrl, 4);
     Z.debug('loadedConfigRequestUrl: ' + loadedConfigRequestUrl, 4);
-    if(tags.loaded && checkCached){
+    if(tags.loaded && (loadedConfigRequestUrl == requestUrl) && checkCached){
         //tags already has the same information we're looking for
         Z.debug("tags already loaded - publishing and resolving deferred", 3);
         deferred.resolve(tags);
@@ -1673,6 +1330,7 @@ Zotero.Library.prototype.loadAllTags = function(config, checkCached){
     else{
         Z.debug("tags not loaded", 3);
         //clear library before reloading all the tags
+        tags.clear();
         Z.debug("in loadAllTags: tags:", 3);
         Z.debug(tags, 4);
     }
@@ -1705,7 +1363,6 @@ Zotero.Library.prototype.loadAllTags = function(config, checkCached){
         }
         else{
             Z.debug("no next in tags link", 3);
-            Zotero.utils.updateSyncedVersion(tags, 'tagsVersion');
             tags.tagsArray.sort(library.sortByTitleCompare);
             plainList = Zotero.Tags.prototype.plainTagsList(tags.tagsArray);
             plainList.sort(Zotero.Library.prototype.sortLower);
@@ -1720,9 +1377,37 @@ Zotero.Library.prototype.loadAllTags = function(config, checkCached){
         }
     }, this);
     
-    var lDeferred = library.loadTags(urlconfig);
-    Zotero.ajax.activeRequests.push(lDeferred);
-    lDeferred.done(continueLoadingCallback);
+    //test to see if we have alltags in cache - TODO:expire or force-reload faster than session storage
+    var cacheConfig = {libraryType:library.libraryType, libraryID:library.libraryID, target:'alltags'};
+    var alltagsObjects = Zotero.cache.load(cacheConfig);
+    if(alltagsObjects !== null && checkCached){
+        library.tags.tagObjects = alltagsObjects;
+        J.each(alltagsObjects, function(key, val){
+            library.tags.tagsArray.push(val);
+        });
+        tags.tagsArray.sort(library.sortByTitleCompare);
+        var plainList = Zotero.Tags.prototype.plainTagsList(tags.tagsArray);
+        plainList.sort(Zotero.Library.prototype.sortLower);
+        tags.plainList = plainList;
+        Z.debug("resolving loadTags deferred", 3);
+        library.tagsLoaded = true;
+        library.tags.loaded = true;
+        tags.loadedConfig = config;
+        tags.loadedRequestUrl = requestUrl;
+        
+        deferred.resolve(tags);
+    }
+    else{
+        var lDeferred = library.loadTags(urlconfig);
+        Zotero.ajax.activeRequests.push(lDeferred);
+        lDeferred.done(continueLoadingCallback);
+    }
+    
+    deferred.done(J.proxy(function(){
+        var library = this;
+        var cacheConfig = {libraryType:library.libraryType, libraryID:library.libraryID, target:'alltags'};
+        Zotero.cache.save(cacheConfig, tags.tagObjects);
+    }, this));
     
     return deferred;
 };
@@ -1747,15 +1432,18 @@ Zotero.Library.prototype.parseFeedObject = function (data) {
     return feed;
 };
 
-Zotero.Library.prototype.addCollection = function(name, parentCollection){
-    var library = this;
-    var config = {'target':'collections', 'libraryType':library.libraryType, 'libraryID':library.libraryID};
+Zotero.Library.prototype.addCollection = function(name, parent){
+    var config = {'target':'collections', 'libraryType':this.type, 'libraryID':this.libraryID};
     var requestUrl = Zotero.ajax.apiRequestUrl(config) + Zotero.ajax.apiQueryString(config);
-    var requestData = JSON.stringify({name:name, parentCollection:parentCollection});
+    var requestData = JSON.stringify({name:name, parent:parent});
     
-    var jqxhr = library.ajaxRequest(requestUrl, "POST",
+    var jqxhr = J.ajax(Zotero.ajax.proxyWrapper(requestUrl, 'POST'),
         {data: requestData,
-         processData: false
+         type: "POST",
+         processData: false,
+         headers:{},
+         cache:false,
+         error: Zotero.ajax.errorCallback
         }
     );
     
@@ -1791,16 +1479,17 @@ Zotero.Library.prototype.deleteItem = function(itemKey){
     Z.debug("Zotero.Library.trashItem", 3);
     if(!itemKey) return false;
     
-    var library = this;
-    var config = {'target':'item', 'libraryType':library.libraryType, 'libraryID':library.libraryID, 'itemKey':itemKey};
+    var config = {'target':'item', 'libraryType':this.type, 'libraryID':this.libraryID, 'itemKey':itemKey};
     var requestUrl = Zotero.ajax.apiRequestUrl(config) + Zotero.ajax.apiQueryString(config);
     var item = this.items.getItem(itemKey);
     
     var etag = item.etag;
-    var jqxhr = library.ajaxRequest(requestUrl, "DELETE",
+    var jqxhr = J.ajax(Zotero.ajax.proxyWrapper(requestUrl, 'DELETE'),
         {type: "DELETE",
          processData: false,
-         headers:{"If-Match":etag}
+         headers:{"If-Match":etag},
+         cache:false,
+         error: Zotero.ajax.errorCallback
         }
     );
     Zotero.ajax.activeRequests.push(jqxhr);
@@ -1810,13 +1499,18 @@ Zotero.Library.prototype.deleteItem = function(itemKey){
 
 Zotero.Library.prototype.addNote = function(itemKey, note){
     Z.debug('Zotero.Library.prototype.addNote', 3);
-    var library = this;
-    var config = {'target':'children', 'libraryType':library.libraryType, 'libraryID':library.libraryID, 'itemKey':itemKey};
+    var config = {'target':'children', 'libraryType':this.type, 'libraryID':this.libraryID, 'itemKey':itemKey};
     
     var requestUrl = Zotero.ajax.apiRequestUrl(config) + Zotero.ajax.apiQueryString(config);
     var item = this.items.getItem(itemKey);
     
-    var jqxhr = library.ajaxRequest(requestUrl, "POST", {processData: false});
+    var jqxhr = J.ajax(Zotero.ajax.proxyWrapper(requestUrl, 'POST'),
+        {type: "POST",
+         processData: false,
+         cache:false,
+         error: Zotero.ajax.errorCallback
+        }
+    );
     Zotero.ajax.activeRequests.push(jqxhr);
     
     return jqxhr;
@@ -1853,8 +1547,14 @@ Zotero.Library.prototype.fetchGlobalItems = function(config){
         deferred.resolve(data);
     }, this);
     
-    var jqxhr = library.ajaxRequest(requestUrl, "GET", {dataType:'json'});
-    
+    var jqxhr = J.ajax(Zotero.ajax.proxyWrapper(requestUrl, 'GET'),
+        {type: "GET",
+         headers:{},
+         cache:false,
+         dataType:'json',
+         error: Zotero.ajax.errorCallback
+        }
+    );
     jqxhr.done(callback);
     jqxhr.fail(function(){deferred.reject.apply(null, arguments);}).fail(Zotero.error);
     Zotero.ajax.activeRequests.push(jqxhr);
@@ -1892,8 +1592,14 @@ Zotero.Library.prototype.fetchGlobalItem = function(globalKey){
         deferred.resolve(data);
     }, this);
     
-    var jqxhr = library.ajaxRequest(requestUrl, "GET", {dataType:"json"});
-    
+    var jqxhr = J.ajax(Zotero.ajax.proxyWrapper(requestUrl, 'GET'),
+        {type: "GET",
+         headers:{},
+         cache:false,
+         dataType:'json',
+         error: Zotero.ajax.errorCallback
+        }
+    );
     jqxhr.done(callback);
     jqxhr.fail(function(){deferred.reject.apply(null, arguments);}).fail(Zotero.error);
     Zotero.ajax.activeRequests.push(jqxhr);
@@ -1909,7 +1615,7 @@ Zotero.Library.prototype.fetchGlobalItem = function(globalKey){
 Zotero.Library.prototype.fetchUserNames = function(userIDs){
     Z.debug("Zotero.Library.fetchUserNames", 3);
     var library = this;
-    var reqUrl = Zotero.config.baseZoteroWebsiteUrl + '/api/useraliases?userID=' + userIDs.join(',');
+    var reqUrl = Zotero.config.baseWebsiteUrl + '/api/useraliases?userID=' + userIDs.join(',');
     var jqxhr = J.getJSON(reqUrl, J.proxy(function(data, textStatus, jqXHR){
         Z.debug("fetchNames returned");
         Z.debug(JSON.stringify(data));
@@ -1927,101 +1633,22 @@ Zotero.Library.prototype.fetchUserNames = function(userIDs){
 
 /*METHODS FOR WORKING WITH THE ENTIRE LIBRARY -- NOT FOR GENERAL USE */
 
-//sync pull:
-//upload changed data
-// get updatedVersions for collections
-// get updatedVersions for searches
-// get upatedVersions for items
-// (sanity check versions we have for individual objects?)
-// loadCollectionsFromKeysParallel
-// loadSearchesFromKeysParallel
-// loadItemsFromKeysParallel
-// process updated objects:
-//      ...
-// getDeletedData
-// process deleted
-// checkConcurrentUpdates (compare Last-Modified-Version from collections?newer request to one from /deleted request)
-
-Zotero.Library.prototype.pullUpdated = function(){
-    Z.debug("Zotero.Library.pullUpdated", 3);
-    var library = this;
-    Z.debug("libraryVersion:" + library.libraryVersion, 4);
-    Z.debug("collectionsVersion:" + library.collections.collectionsVersion, 4);
-    //Z.debug("searchesVersion:" + library.searches.searchesVersion, 4);
-    Z.debug("itemsVersion:" + library.items.itemsVersion, 4);
-    
-    var updatedCollectionVersionsD = library.updatedVersions('collections', library.collections.collectionsVersion);
-    //var updatedSearchesVersionsD = library.updatedVersions('searches', library.searches.searchesVersion);
-    var updatedItemsVersionsD = library.updatedVersions('items', library.items.itemsVersion);
-    
-    //pull all the collections we need to update
-    updatedCollectionVersionsD.done(J.proxy(function(data, textStatus, XMLHttpRequest){
-        var collectionVersions;
-        if(typeof data == "string"){
-            collectionVersions = JSON.parse(data);
-        }
-        else {
-            collectionVersions = data;
-        }
-        
-        var collectionKeys = Object.keys(collectionVersions);
-        Z.debug("updatedCollectionKeys:", 4);
-        Z.debug(collectionKeys, 4);
-        var updatedCollectionsD = library.loadCollectionsFromKeysParallel(collectionKeys);
-    }, this) );
-    
-    //pull all the collections we need to update
-    updatedItemVersionsD.done(J.proxy(function(data, textStatus, XMLHttpRequest){
-        var itemVersions;
-        if(typeof data == "string"){
-            itemVersions = JSON.parse(data);
-        }
-        else {
-            itemVersions = data;
-        }
-        
-        var itemKeys = Object.keys(itemVersions);
-        Z.debug("updatedItemKeys:", 4);
-        Z.debug(itemKeys, 4);
-        var updatedItemsD = library.loadItemsFromKeysParallel(itemKeys);
-    }, this) );
-    
-    
-};
-
-Zotero.Library.prototype.updatedVersions = function(target, version){
-    var library = this;
-    if(typeof target === "undefined"){
-        target = "items";
-    }
-    if(typeof version === "undefined" || (version === null) ){
-        version = library.libraryVersion;
-    }
-    var urlconf = {target: target,
-                   format: 'versions',
-                   libraryType: library.libraryType,
-                   libraryID: library.libraryID,
-                   newer: version
-               };
-    jqxhr = library.ajaxRequest(urlconf);
-    return jqxhr;
-};
-
 Zotero.Library.prototype.fetchItemKeysModified = function(){
     return this.fetchItemKeys({'order': 'dateModified'});
 };
 
 Zotero.Library.prototype.loadCachedItems = function(){
-    Zotero.debug("Zotero.Library.loadCachedItems", 3);
+    Z.debug("Zotero.Library.loadCachedItems", 3);
     //test to see if we have items in cache - TODO:expire or force-reload faster than session storage
     var library = this;
     var cacheConfig = {libraryType:library.libraryType, libraryID:library.libraryID, target:'allitems'};
-    var itemsDump = Zotero.cache.load(cacheConfig);
-    if(itemsDump !== null){
-        Zotero.debug("Items dump present in cache - loading items", 3);
-        library.items.loadDump(itemsDump);
-        library.items.loaded = true;
-        return true;
+    var allitemsObjects = Zotero.cache.load(cacheConfig);
+    var itemsCount;
+    if(allitemsObjects !== null){
+        Z.debug("Apparently have allItemObjects - loadingDump");
+        //Z.debug(allitemsObjects);
+        library.items.loadDump(allitemsObjects);
+        return allitemsObjects.itemsArray.length;
     }
     else{
         return false;
@@ -2041,31 +1668,6 @@ Zotero.Library.prototype.saveCachedItems = function(){
 Zotero.Library.prototype.loadItemsFromKeysParallel = function(keys){
     Zotero.debug("Zotero.Library.loadItemsFromKeysParallel", 3);
     var library = this;
-    var d = library.loadFromKeysParallel(keys, "items");
-    d.done(function(){J.publish('loadItemsFromKeysParallelDone');});
-    return d;
-};
-
-//keys is an array of collectionKeys from this library that we need to download
-Zotero.Library.prototype.loadCollectionsFromKeysParallel = function(keys){
-    Zotero.debug("Zotero.Library.loadCollectionsFromKeysParallel", 3);
-    var library = this;
-    var d = library.loadFromKeysParallel(keys, "collections");
-    return d;
-};
-
-//keys is an array of searchKeys from this library that we need to download
-Zotero.Library.prototype.loadSeachesFromKeysParallel = function(keys){
-    Zotero.debug("Zotero.Library.loadSearchesFromKeysParallel", 3);
-    var library = this;
-    var d = library.loadFromKeysParallel(keys, "searches");
-    return d;
-};
-
-Zotero.Library.prototype.loadFromKeysParallel = function(keys, objectType){
-    Zotero.debug("Zotero.Library.loadFromKeysParallel", 3);
-    if(!objectType) objectType = 'items';
-    var library = this;
     var keyslices = [];
     while(keys.length > 0){
         keyslices.push(keys.splice(0, 50));
@@ -2075,24 +1677,15 @@ Zotero.Library.prototype.loadFromKeysParallel = function(keys, objectType){
     var xhrs = [];
     J.each(keyslices, function(ind, keyslice){
         var keystring = keyslice.join(',');
-        var xhr;
-        switch (objectType) {
-            case "items":
-                xhr = library.loadItemsSimple({'targetModifier':null, 'itemKey':keystring, 'limit':50} );
-                break;
-            case "collections":
-                xhr = library.loadCollectionsSimple({'targetModifier':null, 'collectionKey':keystring, 'limit':50} );
-                break;
-            case "searches":
-                xhr = library.loadSearchesSimple({'searchKey':keystring, 'limit':50});
-                break;
-        }
-        xhrs.push(xhr );
+        xhrs.push(library.loadItemsSimple({'targetModifier':null, 'itemKey':keystring, 'limit':50} ) );
     });
     
-    J.when(xhrs).then(J.proxy(function(){
-        Z.debug("All parallel requests returned - resolving deferred", 3);
+    Z.debug("loadItems XHRs to be resolved:");
+    Z.debug(xhrs);
+    J.when.apply(null, xhrs).then(J.proxy(function(){
+        Z.debug("All parallel item requests returned - resolving deferred and publishing loadItemsFromKeysParallelDone", 3);
         deferred.resolve(true);
+        J.publish('loadItemsFromKeysParallelDone');
     }, this) );
     
     return deferred;
@@ -2103,23 +1696,15 @@ Zotero.Library.prototype.loadCachedCollections = function(){
     //test to see if we have collections in cache - TODO:expire or force-reload faster than session storage
     var library = this;
     var cacheConfig = {libraryType:library.libraryType, libraryID:library.libraryID, target:'allcollections'};
-    var collectionsDump = Zotero.cache.load(cacheConfig);
-    if(collectionsDump !== null){
-        Z.debug("Collections dump present in cache - loading collections", 4);
-        library.collections.loadDump(collectionsDump);
-        library.collections.loaded = true;
+    var allcollectionObjects = Zotero.cache.load(cacheConfig);
+    if(allcollectionObjects !== null){
+        Z.debug("Apparently have allcollectionObjects - loadingDump");
+        library.collections.loadDump(allcollectionObjects);
         return true;
     }
     else{
         return false;
     }
-};
-
-Zotero.Library.prototype.saveCachedCollections = function(){
-    var library = this;
-    var cacheConfig = {libraryType:library.libraryType, libraryID:library.libraryID, target:'allcollections'};
-    Zotero.cache.save(cacheConfig, library.collections.dump());
-    return;
 };
 
 //download the itemkey lists for every collection
@@ -2129,8 +1714,8 @@ Zotero.Library.prototype.loadCollectionMembership = function(collections){
     var deferred = new J.Deferred();
     var neededCollections = [];
     for(var i = 0; i < collections.length; i++){
-        if(collections.collectionObjects[i].itemKeys === false){
-            neededCollections.push(collections.collectionObjects[i]);
+        if(collections[i].itemKeys === false){
+            neededCollections.push(collections[i]);
         }
     }
     
@@ -2311,7 +1896,7 @@ Zotero.Library.prototype.buildItemDisplayView = function(params){
     var item;
     J.each(itemKeys, function(ind, val){
         item = library.items.getItem(val);
-        if(item && (!item.parentItemKey)) {
+        if(item && (!item.parentKey)) {
             library.items.displayItemsArray.push(item);
         }
     });
@@ -2427,14 +2012,14 @@ Zotero.Library.prototype.saveFileOffline = function(item){
                 }
                 catch(e){
                     Z.debug("Caught in filer.write");
-                    Z.debug(e);
+                    console.log(e);
                 }
             }, this) );
         }
         }
         catch(e){
             Z.debug("Caught inside binary xhr onload");
-            Z.debug(e);
+            console.log(e);
         }
     };
     xhr.send();
@@ -2457,7 +2042,7 @@ Zotero.Library.prototype.saveFileOffline = function(item){
     }
     catch(e){
         Z.debug("Caught in Z.Library.saveFileOffline");
-        Z.debug(e);
+        console.log(e);
     }
 };
 
@@ -2524,13 +2109,11 @@ Zotero.Library.prototype.saveCollectionFilesOffline = function(collectionKey){
 
 Zotero.Entry = function(){
     this.instance = "Zotero.Entry";
-    this.version = 0;
 };
 
 Zotero.Entry.prototype.dumpEntry = function(){
     var dump = {};
     var dataProperties = [
-        'version',
         'title',
         'author',
         'id',
@@ -2548,7 +2131,6 @@ Zotero.Entry.prototype.dumpEntry = function(){
 
 Zotero.Entry.prototype.loadDumpEntry = function(dump){
     var dataProperties = [
-        'version',
         'title',
         'author',
         'id',
@@ -2568,7 +2150,6 @@ Zotero.Entry.prototype.dump = Zotero.Entry.prototype.dumpEntry;
 
 Zotero.Entry.prototype.parseXmlEntry = function(eel){
     Z.debug("Zotero.Entry.parseXmlEntry", 4);
-    this.version = eel.children("zapi\\:version").text();
     this.title = eel.children("title").text();
     
     this.author = {};
@@ -2607,15 +2188,9 @@ Zotero.Entry.prototype.associateWithLibrary = function(library){
 Zotero.Collections = function(feed){
     var collections = this;
     this.instance = "Zotero.Collections";
-    this.collectionsVersion = 0;
-    this.syncState = {
-        earliestVersion: null,
-        latestVersion: null
-    };
     this.collectionsArray = [];
     this.dirty = false;
     this.loaded = false;
-    this.collectionObjects = {};
     
     if(typeof feed == 'undefined'){
         return;
@@ -2628,7 +2203,6 @@ Zotero.Collections = function(feed){
 Zotero.Collections.prototype.dump = function(){
     var dump = {};
     dump.instance = "Zotero.Collections";
-    dump.collectionsVersion = this.collectionsVersion;
     dump.collectionsArray = [];
     for (var i = 0; i < this.collectionsArray.length; i++) {
         dump.collectionsArray.push(this.collectionsArray[i].dump());
@@ -2641,7 +2215,6 @@ Zotero.Collections.prototype.dump = function(){
 
 Zotero.Collections.prototype.loadDump = function(dump){
     var collections = this;
-    this.collectionsVersion = dump.collectionsVersion;
     this.dirty = dump.dirty;
     this.loaded = dump.loaded;
     
@@ -2657,7 +2230,7 @@ Zotero.Collections.prototype.loadDump = function(dump){
     J.each(this.collectionsArray, function(index, obj) {
         if(obj.instance === "Zotero.Collection"){
             if(obj.nestCollection(collections)){
-                Z.debug(obj.collectionKey + ":" + obj.title + " nested in parent.", 4);
+                Z.debug(obj.key + ":" + obj.title + " nested in parent.", 4);
             }
         }
     });
@@ -2668,10 +2241,8 @@ Zotero.Collections.prototype.loadDump = function(dump){
 
 //take Collection XML and insert a Collection object
 Zotero.Collections.prototype.addCollection = function(collection){
-    Zotero.debug("Zotero.Collections.addCollection", 4);
-    Zotero.debug(collection.collectionKey, 4);
     this.collectionsArray.push(collection);
-    this.collectionObjects[collection.collectionKey] = collection;
+    this[collection.key] = collection;
     if(this.owningLibrary){
         collection.associateWithLibrary(this.owningLibrary);
     }
@@ -2707,17 +2278,16 @@ Zotero.Collections.prototype.assignDepths = function(depth, cArray){
         J.each(children, function(index, col){
             col.nestingDepth = depth;
             if(col.hasChildren){
-                insertchildren((depth + 1), col.children);
+                insertchildren((depth + 1), col.entries);
             }
         });
     };
     J.each(this.collectionsArray, function(index, collection){
-        Z.debug("index:" + index + " collectionKey:" + collection.collectionKey,4);
         if(collection.topLevel){
             collection.nestingDepth = 1;
             if(collection.hasChildren){
-                Z.debug(collection.children, 4);
-                insertchildren(2, collection.children);
+                //Z.debug(collection.entries);
+                insertchildren(2, collection.entries);
             }
         }
     });
@@ -2730,7 +2300,7 @@ Zotero.Collections.prototype.nestedOrderingArray = function(){
         J.each(children, function(index, col){
             a.push(col);
             if(col.hasChildren){
-                insertchildren(a, col.children);
+                insertchildren(a, col.entries);
             }
         });
     };
@@ -2738,7 +2308,7 @@ Zotero.Collections.prototype.nestedOrderingArray = function(){
         if(collection.topLevel){
             nested.push(collection);
             if(collection.hasChildren){
-                insertchildren(nested, collection.children);
+                insertchildren(nested, collection.entries);
             }
         }
     });
@@ -2760,8 +2330,8 @@ Zotero.Collections.prototype.loadDataObjects = function(collectionsArray){
         collection.libraryType = library.type;
         collection.libraryID = library.libraryID;
         collection.owningLibrary = library;
-        collections.collectionObjects[collection.collectionKey] = collection;
-        collections.collectionsArray.push(collection);
+        library.collections[collection.collectionKey] = collection;
+        library.collections.collectionsArray.push(collection);
     });
     
     collections.collectionsArray.sort(collections.sortByTitleCompare);
@@ -2769,7 +2339,7 @@ Zotero.Collections.prototype.loadDataObjects = function(collectionsArray){
     J.each(collections.collectionsArray, function(index, obj) {
         if(obj.instance === "Zotero.Collection"){
             if(obj.nestCollection(collections)){
-                Z.debug(obj.collectionKey + ":" + obj.title + " nested in parent.", 4);
+                Z.debug(obj.key + ":" + obj.title + " nested in parent.", 4);
             }
         }
     });
@@ -2779,34 +2349,19 @@ Zotero.Collections.prototype.loadDataObjects = function(collectionsArray){
 };
 
 Zotero.Collections.prototype.getCollection = function(key){
-    if(this.collectionObjects.hasOwnProperty(key)){
-        return this.collectionObjects[key];
+    if(this.hasOwnProperty(key)){
+        return this[key];
     }
     else{
         return false;
     }
 };
-
-Zotero.Collections.prototype.remoteDeleteCollection = function(key){
-    var collections = this;
-    if(collections.collectionObjects.hasOwnProperty(key) && collections.collectionObjects[key].synced === true){
-        delete collections.collectionObjects[key];
-        return true;
-    }
-    return false;
-};
 Zotero.Items = function(feed){
     //represent items as array for ordering purposes
-    this.itemsVersion = 0;
-    this.syncState = {
-        earliestVersion: null,
-        latestVersion: null
-    };
     this.displayItemsArray = [];
     this.displayItemsUrl = '';
     this.itemObjects = {};
-    this.unsyncedItemKeys = [];
-    this.newUnsyncedItems = [];
+    this.unsyncedItemObjects = {};
     
     if(typeof feed != 'undefined'){
         this.addItemsFromFeed(feed);
@@ -2814,14 +2369,10 @@ Zotero.Items = function(feed){
 };
 
 Zotero.Items.prototype.dump = function(){
-    Z.debug("Zotero.Items.dump", 3);
-    var items = this;
     var dump = {};
     dump.instance = "Zotero.Items.dump";
-    dump.itemsVersion = this.itemsVersion;
     dump.itemsArray = [];
-    J.each(items.itemObjects, function(key, val){
-        Z.debug("dumping item " + key + " : " + val.itemKey, 3);
+    J.each(this.itemObjects, function(key, val){
         dump.itemsArray.push(val.dump());
     });
     return dump;
@@ -2829,18 +2380,17 @@ Zotero.Items.prototype.dump = function(){
 
 Zotero.Items.prototype.loadDump = function(dump){
     Z.debug("-------------------------------Zotero.Items.loadDump", 3);
-    this.itemsVersion = dump.itemsVersion;
     var items = this;
     var itemKeys = [];
     for (var i = 0; i < dump.itemsArray.length; i++) {
         var item = new Zotero.Item();
         item.loadDump(dump.itemsArray[i]);
-        items.addItem(item);
+        this.addItem(item);
         itemKeys.push(item.itemKey);
     }
     
-    if(items.owningLibrary){
-        items.owningLibrary.itemKeys = itemKeys;
+    if(this.owningLibrary){
+        this.owningLibrary.itemKeys = itemKeys;
     }
     
     //add child itemKeys to parent items to make getChildren work locally
@@ -2924,98 +2474,8 @@ Zotero.Items.prototype.keysNotInItems = function(keys){
     return notPresent;
 };
 
-Zotero.Items.prototype.remoteDeleteItem = function(key){
-    var items = this;
-    if(items.itemObjects.hasOwnProperty(key) && items.itemObjects[key].synced === true){
-        delete items.itemObjects[key];
-        return true;
-    }
-    return false;
-};
-
-Zotero.Items.prototype.findItems = function(config){
-    var items = this;
-    var matchingItems = [];
-    J.each(items.itemObjects, function(i, item){
-        if(config.collectionKey && (J.inArray(config.collectionKey, item.apiObj.collections === -1) )){
-            return;
-        }
-        matchingItems.push(items.itemObjects[i]);
-    });
-    return matchingItems;
-};
-
-Zotero.Items.prototype.writeNewUnsyncedItems = function(){
-    var items = this;
-    var library = items.owningLibrary;
-    var urlConfig = {target:'items', libraryType:library.libraryType, libraryID:library.libraryID};
-    var writeUrl = Zotero.ajax.apiRequestUrl(urlConfig) + Zotero.ajax.apiQueryString(urlConfig);
-    var writeData = {};
-    writeData.items = [];
-    for(var i = 0; i < items.newUnsyncedItems.length; i++){
-        writeData.items.push(items.newUnsyncedItems[i].apiObj);
-    }
-    
-    //make request to api to write items
-    var jqxhr = Zotero.ajaxRequest(writeUrl, 'POST', {data:writeData});
-    //process success or failure responses for each item
-    var processResponses = J.proxy(function(data, statusCode, jqxhr){
-        if(jqxhr.status !== 200){
-            //request atomically failed, nothing went through
-        }
-        else {
-            //request went through and was processed
-            //must check response body to know if writes failed for any reason
-            var updatedVersion = jqxhr.getResponseHeader("Last-Modified-Version");
-            if(typeof data !== 'object'){
-                //unexpected response from server
-            }
-            var failedIndices = {};
-            if(data.hasOwnProperty('success')){
-                //add itemkeys to any successful creations
-                J.each(data.success, function(key, val){
-                    var index = parseInt(key, 10);
-                    var objectKey = val;
-                    var item = items.newUnsyncedItems[index];
-                    
-                    item.updateItemKey(objectKey);
-                    item.itemVersion = updatedVersion;
-                    item.synced = true;
-                    items.addItem(item);
-                });
-            }
-            if(data.hasOwnProperty('unchanged') ){
-                J.each(data.unchanged, function(key, val){
-                    
-                });
-            }
-            if(data.hasOwnProperty('failed') ){
-                J.each(data.failed, function(key, val){
-                    failedIndices[key] = true;
-                    Z.debug("ItemWrite failed: " + val.key + " : http " + val.code + " : " + val.message);
-                });
-            }
-            
-            //remove all but failed writes from newUnsyncedItems
-            var newnewUnsyncedItems = [];
-            J.each(items.newUnsyncedItems, function(i, v){
-                if(failedIndices.hasOwnProperty(i)){
-                    newnewUnsyncedItems.push(v);
-                }
-            });
-            items.newUnsyncedItems = newnewUnsyncedItems;
-        }
-    }, this);
-    jqxhr.done(processResponses);
-    return jqxhr;
-};
 Zotero.Tags = function(feed){
     //represent collections as array for ordering purposes
-    this.tagsVersion = 0;
-    this.syncState = {
-        earliestVersion: null,
-        latestVersion: null
-    };
     this.displayTagsArray = [];
     this.displayTagsUrl = '';
     this.tagObjects = {};
@@ -3027,7 +2487,6 @@ Zotero.Tags = function(feed){
 
 Zotero.Tags.prototype.dump = function(){
     var dump = {};
-    dump.tagsVersion = this.tagsVersion;
     dump.tagsArray = [];
     for (var i = 0; i < this.tagsArray.length; i++) {
         dump.tagsArray.push(this.tagsArray[i].dump());
@@ -3037,7 +2496,6 @@ Zotero.Tags.prototype.dump = function(){
 };
 
 Zotero.Tags.prototype.loadDump = function(dump){
-    this.tagsVersion = dump.tagsVersion;
     this.displayTagsUrl = dump.displayTagsUrl;
     for (var i = 0; i < dump.tagsArray.length; i++) {
         var tag = new Zotero.Tag();
@@ -3057,20 +2515,6 @@ Zotero.Tags.prototype.addTag = function(tag){
     }
 };
 
-Zotero.Tags.prototype.removeTag = function(tagname){
-    var tags = this;
-    delete tags.tagObjects[tagname];
-    tags.updateSecondaryData();
-};
-
-Zotero.Tags.prototype.removeTags = function(tagnames){
-    var tags = this;
-    J.each(tagnames, function(i, tagname){
-        delete tags.tagObjects[tagname];
-    });
-    tags.updateSecondaryData();
-};
-
 Zotero.Tags.prototype.plainTagsList = function(tagsArray){
     Z.debug("Zotero.Tags.plainTagsList", 3);
     var plainList = [];
@@ -3082,9 +2526,6 @@ Zotero.Tags.prototype.plainTagsList = function(tagsArray){
 
 Zotero.Tags.prototype.clear = function(){
     Z.debug("Zotero.Tags.clear", 3);
-    this.tagsVersion = 0;
-    this.syncState.earliestVersion = null;
-    this.syncState.latestVersion = null;
     this.displayTagsArray = [];
     this.displayTagsUrl = '';
     this.tagObjects = {};
@@ -3115,32 +2556,10 @@ Zotero.Tags.prototype.addTagsFromFeed = function(feed){
     });
     return tagsAdded;
 };
-Zotero.Searches = function(){
-    this.searchObjects = {};
-    this.syncState = {
-        earliestVersion: null,
-        latestVersion: null
-    };
-};
-Zotero.Deleted = function(data){
-    this.instance = "Zotero.Deleted";
-    if(typeof data === 'string'){
-        this.deletedData = JSON.parse(data);
-    }
-    else {
-        this.deletedData = data;
-    }
-    this.deletedVersion = 0;
-    this.newerVersion = 0;
-};
 Zotero.Collection = function(entryEl){
     this.instance = "Zotero.Collection";
     this.libraryUrlIdentifier = '';
     this.itemKeys = false;
-    this.collectionVersion = 0;
-    this.synced = false;
-    this.pristine = null;
-    this.children = [];
     if(typeof entryEl != 'undefined'){
         this.parseXmlCollection(entryEl);
     }
@@ -3150,18 +2569,14 @@ Zotero.Collection.prototype = new Zotero.Entry();
 Zotero.Collection.prototype.instance = "Zotero.Collection";
 
 Zotero.Collection.prototype.dump = function(){
-    Zotero.debug("Zotero.Collection.dump", 4);
     var dump = this.dumpEntry();
     var dataProperties = [
-        'collectionVersion',
         'collectionKey',
-        'synced',
-        'pristine',
+        'key',
         'numItems',
         'numCollections',
         'name',
-        'parentCollection',
-        'relations',
+        'parent',
         'topLevel',
         'websiteCollectionLink',
         'hasChildren',
@@ -3175,18 +2590,14 @@ Zotero.Collection.prototype.dump = function(){
 };
 
 Zotero.Collection.prototype.loadDump = function(dump){
-    Zotero.debug("Zotero.Collection.loaddump", 4);
     this.loadDumpEntry(dump);
     var dataProperties = [
-        'collectionVersion',
         'collectionKey',
-        'synced',
-        'pristine',
+        'key',
         'numItems',
         'numCollections',
         'name',
-        'parentCollection',
-        'relations',
+        'parent',
         'topLevel',
         'websiteCollectionLink',
         'hasChildren',
@@ -3203,6 +2614,7 @@ Zotero.Collection.prototype.loadObject = function(ob){
     this.collectionKey = ob.collectionKey;
     this.dateAdded = ob.dateAdded;
     this.dateModified = ob.dateUpdated;
+    this.key = this.collectionKey;
     this['links'] = ob['links'];
     this['title'] = ob['title'];
     this['name'] = ob['title'];
@@ -3216,10 +2628,11 @@ Zotero.Collection.prototype.loadObject = function(ob){
 Zotero.Collection.prototype.parseXmlCollection = function(cel) {
     this.parseXmlEntry(cel);
     
-    this['name'] = cel.find("title").text();
     this.collectionKey = cel.find("zapi\\:key, key").text();
     this.numItems = parseInt(cel.find("zapi\\:numItems, numItems").text(), 10);
     this.numCollections = parseInt(cel.find("zapi\\:numCollections, numCollections").text(), 10);
+    this.key = this.collectionKey;
+    this['name'] = cel.find("title").text();
     this.dateAdded = this.published;//cel.find("published").text();
     this.dateModified = this.updated;//cel.find("updated").text();
     var linksArray = [];
@@ -3229,7 +2642,7 @@ Zotero.Collection.prototype.parseXmlCollection = function(cel) {
         linksArray.push({'rel':link.attr('rel'), 'type':link.attr('type'), 'href':link.attr('href')});
     });
     
-    this.parent = false;
+    this.parent = null;
     this.topLevel = true;
     var collection = this;
     
@@ -3237,33 +2650,41 @@ Zotero.Collection.prototype.parseXmlCollection = function(cel) {
     this.hasChildren = (this.numCollections) ? true : false;
     
     //parse the JSON content block
-    var contentEl = cel.find('content').first(); //possibly we should test to make sure it is application/json or zotero json
-    if(contentEl){
-        this.pristine = JSON.parse(cel.find('content').first().text());
-        var j = JSON.parse(cel.find('content').first().text());
-        this['name'] = j['name'];
-        this['parentCollection'] = j['parentCollection'];
-        if(this['parentCollection']){
-            this.topLevel = false;
-        }
-        this.collectionKey = j.collectionKey;
-        this.collectionVersion = j.collectionVersion;
-        this.name = j.name;
-        this.relations = j.relations;
-        
-        this.etag = cel.find("content").attr('zapi:etag');
-        this.synced = true;
+    var contentEl = cel.find('content'); //possibly we should test to make sure it is application/json or zotero json
+    
+    var j = JSON.parse(cel.find('content').first().text());
+    this['name'] = j['name'];
+    this['parent'] = j['parent'];
+    if(this['parent']){
+        this.topLevel = false;
     }
+    this.etag = contentEl.attr('zapi:etag');
+};
+
+Zotero.Collection.prototype.parseJsonXmlCollection = function(cel){
+    this.parseXmlCollection(cel);
+    var j = JSON.parse(cel.find("content").text());
+    this['name'] = j['name'];
+    this.parent = j.parent;
+    if(this.parent){
+        this.topLevel = false;
+    }
+    this.etag = cel.find("content").attr('zapi:etag');
 };
 
 Zotero.Collection.prototype.nestCollection = function(collectionList) {
     Z.debug("Zotero.Collection.nestCollection", 4);
-    if(this.parentCollection !== false){
-        var parentKey = this.parentCollection;
+    if(this.parent !== null){
+        var parentKey = this.parent;
         if(typeof(collectionList[parentKey]) !== 'undefined'){
-            Z.debug("Pushing " + this.collectionKey + "(" + this.title + ") onto children of parent " + parentKey + "(" + collectionList[parentKey].title + ")", 4);
+            Z.debug("Pushing " + this.key + "(" + this.title + ") onto entries of parent " + parentKey + "(" + collectionList[parentKey].title + ")", 4);
             var parentOb = collectionList[parentKey];
-            parentOb.children.push(this);
+            if(typeof(parentOb.entries) === 'undefined'){
+                parentOb.entries = [this];
+            }
+            else {
+                parentOb.entries.push(this);
+            }
             parentOb.hasChildren = true;
             this.topLevel = false;
             return true;
@@ -3279,15 +2700,20 @@ Zotero.Collection.prototype.addItems = function(itemKeys){
     var requestUrl = Zotero.ajax.apiRequestUrl(config) + Zotero.ajax.apiQueryString(config);
     var requestData = itemKeys.join(' ');
     
-    var jqxhr = Zotero.ajaxRequest(requestUrl, 'POST',
+    var jqxhr = J.ajax(Zotero.ajax.proxyWrapper(requestUrl, 'POST'),
         {data: requestData,
-         processData: false
+         type: "POST",
+         processData: false,
+         headers:{},
+         cache:false,
+         error: Zotero.ajax.errorCallback
         }
     );
     
     Zotero.ajax.activeRequests.push(jqxhr);
     
     return jqxhr;
+    //J.publish('Collection.addItems', [this.key, itemKeys, jqxhr]);
 };
 
 Zotero.Collection.prototype.getMemberItemKeys = function(){
@@ -3298,7 +2724,14 @@ Zotero.Collection.prototype.getMemberItemKeys = function(){
     var requestUrl = Zotero.ajax.apiRequestUrl(config) + Zotero.ajax.apiQueryString(config);
     var deferred = new J.Deferred();
     
-    var jqxhr = Zotero.ajaxRequest(requestUrl, 'GET', {processData: false} );
+    var jqxhr = J.ajax(Zotero.ajax.proxyWrapper(requestUrl, 'GET'),
+        {type: "GET",
+         processData: false,
+         headers:{},
+         cache:false,
+         error: Zotero.ajax.errorCallback
+        }
+    );
     
     jqxhr.done(J.proxy(function(data, textStatus, XMLHttpRequest){
         Z.debug('getMemberItemKeys proxied callback', 3);
@@ -3317,9 +2750,12 @@ Zotero.Collection.prototype.removeItem = function(itemKey){
     var config = {'target':'item', 'libraryType':this.libraryType, 'libraryID':this.libraryID, 'collectionKey':this.collectionKey, 'itemKey':itemKey};
     var requestUrl = Zotero.ajax.apiRequestUrl(config) + Zotero.ajax.apiQueryString(config);
     
-    var jqxhr = Zotero.ajaxRequest(requestUrl, 'DELETE',
-        {processData: false,
-         cache:false
+    var jqxhr = J.ajax(Zotero.ajax.proxyWrapper(requestUrl, 'DELETE'),
+        {type: "DELETE",
+         processData: false,
+         headers:{},
+         cache:false,
+         error: Zotero.ajax.errorCallback
         }
     );
     Zotero.ajax.activeRequests.push(jqxhr);
@@ -3330,17 +2766,19 @@ Zotero.Collection.prototype.removeItem = function(itemKey){
 
 Zotero.Collection.prototype.update = function(name, parentKey){
     if(!parentKey) parentKey = false;
-    var config = {'target':'collection', 'libraryType':this.libraryType, 'libraryID':this.libraryID, 'collectionKey':this.collectionKey};
+    var config = {'target':'collection', 'libraryType':this.libraryType, 'libraryID':this.libraryID, 'collectionKey':this.key};
     var requestUrl = Zotero.ajax.apiRequestUrl(config) + Zotero.ajax.apiQueryString(config);
-    var requestData = JSON.stringify({'name':name, 'parentCollection':parentKey});
+    var requestData = JSON.stringify({'name':name, 'parent':parentKey});
     
-    var jqxhr = Zotero.ajaxRequest(requestUrl, 'PUT',
+    var jqxhr = J.ajax(Zotero.ajax.proxyWrapper(requestUrl, 'PUT'),
         {data: requestData,
+         type: "PUT",
          processData: false,
          headers:{
              'If-Match': this.etag
          },
-         cache:false
+         cache:false,
+         error: Zotero.ajax.errorCallback
         }
     );
     
@@ -3352,15 +2790,17 @@ Zotero.Collection.prototype.update = function(name, parentKey){
 
 Zotero.Collection.prototype.remove = function(){
     Z.debug("Zotero.Collection.delete", 3);
-    var config = {'target':'collection', 'libraryType':this.libraryType, 'libraryID':this.libraryID, 'collectionKey':this.collectionKey};
+    var config = {'target':'collection', 'libraryType':this.libraryType, 'libraryID':this.libraryID, 'collectionKey':this.key};
     var requestUrl = Zotero.ajax.apiRequestUrl(config) + Zotero.ajax.apiQueryString(config);
     
-    var jqxhr = Zotero.ajaxRequest(requestUrl, 'DELETE',
-        {processData: false,
+    var jqxhr = J.ajax(Zotero.ajax.proxyWrapper(requestUrl, 'DELETE'),
+        {type: "DELETE",
+         processData: false,
          headers:{
              'If-Match': this.etag
          },
-         cache:false
+         cache:false,
+         error: Zotero.ajax.errorCallback
         }
     );
     Zotero.ajax.activeRequests.push(jqxhr);
@@ -3370,10 +2810,7 @@ Zotero.Collection.prototype.remove = function(){
 };
 Zotero.Item = function(entryEl){
     this.instance = "Zotero.Item";
-    this.itemVersion = 0;
-    this.synced = false;
     this.apiObj = {};
-    this.pristine = null;
     this.dataFields = {};
     this.childItemKeys = [];
     if(typeof entryEl != 'undefined'){
@@ -3386,22 +2823,20 @@ Zotero.Item.prototype = new Zotero.Entry();
 Zotero.Item.prototype.dump = function(){
     var dump = this.dumpEntry();
     var dataProperties = [
-        'itemVersion',
         'itemKey',
-        'synced',
-        'pristine',
         'itemType',
         'creatorSummary',
         'year',
         'numChildren',
         'numTags',
-        'parentItemKey',
+        'parentKey',
         'etag',
+        'contentRows',
         'apiObj',
         'mimeType',
         'translatedMimeType',
         'linkMode',
-        'attachmentDownloadUrl'
+        'attachmentDownloadLink'
     ];
     for (var i = 0; i < dataProperties.length; i++) {
         dump[dataProperties[i]] = this[dataProperties[i]];
@@ -3412,22 +2847,20 @@ Zotero.Item.prototype.dump = function(){
 Zotero.Item.prototype.loadDump = function(dump){
     this.loadDumpEntry(dump);
     var dataProperties = [
-        'itemVersion',
         'itemKey',
-        'synced',
-        'pristine',
         'itemType',
         'creatorSummary',
         'year',
         'numChildren',
         'numTags',
-        'parentItemKey',
+        'parentKey',
         'etag',
+        'contentRows',
         'apiObj',
         'mimeType',
         'translatedMimeType',
         'linkMode',
-        'attachmentDownloadUrl'
+        'attachmentDownloadLink'
     ];
     for (var i = 0; i < dataProperties.length; i++) {
         this[dataProperties[i]] = dump[dataProperties[i]];
@@ -3444,7 +2877,6 @@ Zotero.Item.prototype.loadObject = function(ob) {
     }
     this.title = ob.title;
     this.itemKey = ob.itemKey;
-    this.pristine = ob.pristine;
     this.itemType = ob.itemType;
     this.creatorSummary = ob.creatorSummary;
     this.numChildren = ob.numChildren;
@@ -3478,7 +2910,13 @@ Zotero.Item.prototype.parseXmlItem = function (iel) {
         this.numChildren = 0;
     }
     
-    this.parentItemKey = false;
+    this.parentKey = false;
+    //set parent if can find up link in entry
+    if(this.links['up']){
+        var parentLink = this.links['up']['href'];
+        var re = new RegExp("items\/([A-Z0-9]{8})");
+        this.parentKey = re.exec(parentLink)[1];
+    }
     
     //parse content block
     var contentEl = iel.children("content");
@@ -3519,18 +2957,27 @@ Zotero.Item.prototype.parseContentBlock = function(contentEl){
 };
 
 Zotero.Item.prototype.parseXmlItemContent = function (cel) {
+    var contentRows = [];
     var dataFields = {};
     cel.find("div > table").children("tr").each(function(){
-        dataFields[J(this).attr("class")] = J(this).children("td").text();
+        contentRows.push({
+            field : J(this).attr("class"),
+            fieldMapped : J(this).children("th").text(),
+            fieldValue : J(this).children("td").text()
+        });
+    });
+    this.contentRows = contentRows;
+    J.each(contentRows, function(index, value){
+        dataFields[value.field] = value.fieldValue;
     });
     this.dataFields = dataFields;
 };
 
 Zotero.Item.prototype.parseJsonItemContent = function (cel) {
-    var item = this;
-    item.etag = cel.attr('zapi:etag');
+    this.etag = cel.attr('zapi:etag');
     var dataFields = JSON.parse(cel.text());
-    item.pristine = JSON.parse(cel.text());
+    var contentRows = [];
+    var item = this;
     J.each(dataFields, function(index, value){
         if(index == 'tags'){
             item.tags = value;
@@ -3542,29 +2989,30 @@ Zotero.Item.prototype.parseJsonItemContent = function (cel) {
             item.attachments = value;
         }
         else{
+            contentRows.push({
+                field: index,
+                fieldMapped: item.fieldMap[index],
+                fieldValue: value
+            });
             item.dataFields[index] = value;
         }
     });
-    item.apiObj = dataFields;
-    item.itemVersion = dataFields.itemVersion;
-    item.parentItemKey = dataFields.parentItem;
+    this.contentRows = contentRows;
+    this.apiObj = dataFields;
     
     if(this.dataFields['itemType'] == 'attachment'){
-        item.mimeType = this.dataFields['contentType'];
-        item.translatedMimeType = Zotero.utils.translateMimeType(this.mimeType);
+        this.mimeType = this.dataFields['contentType'];
+        this.translatedMimeType = Zotero.utils.translateMimeType(this.mimeType);
     }
     if(this.dataFields.hasOwnProperty('linkMode')){
-        item.linkMode = this.dataFields['linkMode'];
+        this.linkMode = this.dataFields['linkMode'];
     }
     
-    this.attachmentDownloadUrl = Zotero.url.attachmentDownloadUrl(this);
-    
-    item.synced = true;
+    this.attachmentDownloadLink = Zotero.url.attachmentDownloadLink(this);
 };
 
 Zotero.Item.prototype.initEmpty = function(itemType, linkMode){
     this.etag = '';
-    this.itemVersion = 0;
     var item = this;
     var deferred = new J.Deferred();
     var d = this.getItemTemplate(itemType, linkMode);
@@ -3572,8 +3020,8 @@ Zotero.Item.prototype.initEmpty = function(itemType, linkMode){
     var callback = J.proxy(function(template){
         this.itemType = template.itemType;
         this.itemKey = '';
-        this.pristine = J.extend({}, template);
         var dataFields = template;
+        var contentRows = [];
         J.each(dataFields, function(index, value){
             if(index == 'tags'){
                 item.tags = value;
@@ -3581,7 +3029,15 @@ Zotero.Item.prototype.initEmpty = function(itemType, linkMode){
             else if(index == 'creators'){
                 item.creators = value;
             }
+            else{
+                contentRows.push({
+                    field: index,
+                    fieldMapped: item.fieldMap[index],
+                    fieldValue: value
+                });
+            }
         });
+        this.contentRows = contentRows;
         this.apiObj = dataFields;
         deferred.resolve(item);
     }, this);
@@ -3591,113 +3047,160 @@ Zotero.Item.prototype.initEmpty = function(itemType, linkMode){
     return deferred;
 };
 
-Zotero.Item.prototype.updateItemKey = function(itemKey){
-    var item = this;
-    item.itemKey = itemKey;
-    item.apiObj.itemKey = itemKey;
-    item.pristine.itemKey = itemKey;
-    return item;
-};
-
-/*
- * Write updated information for the item to the api and potentially
- * create new child notes (or attachments?) of this item
- */
 Zotero.Item.prototype.writeItem = function(){
     Z.debug("Zotero.Item.writeItem", 3);
     var target = 'item';
     var item = this;
     var newItem = true;
+    var newChildItem = false;
     var childrenConfig, newChildrenRequestUrl, requestData, jqxhr;
     
-    if(item.itemKey){
+    if(this.itemKey){
         newItem = false;
-        separateChildRequests = true;
     }
-    if(newItem && item.parentItemKey){
-        item.apiObj.parentItem = item.parentItemKey;
-        target = 'items';
+    if(newItem && this.parentItemKey){
+        newChildItem = true;
+        target = "children";
     }
     
-    //we're always writing to /items since this will now work for single or multi item requests
-    //to update or create new items
-    var config = {'target':target, 'libraryType':item.libraryType, 'libraryID':item.libraryID, 'content':'json'};
+    var config = {'target':target, 'libraryType':this.libraryType, 'libraryID':this.libraryID, 'itemKey':this.itemKey, 'content':'json'};
+    if(newChildItem){
+        config.itemKey = this.parentItemKey;
+    }
+    
     var requestUrl = Zotero.ajax.apiRequestUrl(config) + Zotero.ajax.apiQueryString(config);
+    if(!newItem){
+        childrenConfig = {'target':'children', 'libraryType':this.libraryType, 'libraryID':this.libraryID, 'itemKey':this.itemKey, 'content':'json'};
+        newChildrenRequestUrl = Zotero.ajax.apiRequestUrl(childrenConfig) + Zotero.ajax.apiQueryString(childrenConfig);
+    }
+    
+    //add empty creators if we don't have any so we don't get an error
+    if(!this.apiObj.hasOwnProperty('creators')){
+        this.apiObj.creators = [];
+    }
+    
+    //add empty attachments if we don't have any so we don't get an error
+    if(!this.apiObj.hasOwnProperty('attachments')){
+        this.apiObj.attachments = [];
+    }
     
     //remove any creators that have no names
-    if(item.apiObj.creators){
-        var newCreatorsArray = this.apiObj.creators.filter(function(c){
-            if(c.name || c.firstName || c.lastName){
-                return true;
-            }
-            return false;
-        });
-        this.apiObj.creators = newCreatorsArray;
-    }
+    var newCreatorsArray = this.apiObj.creators.filter(function(c){
+        if(c.name || c.firstName || c.lastName){
+            return true;
+        }
+        return false;
+    });
+    this.apiObj.creators = newCreatorsArray;
     
     //update item with server response if successful
     var successCallback = J.proxy(function(data, successcode, jqXhr){
         Z.debug("writeItem successCallback", 3);
-        Z.debug("successCode: " + successcode);
-        //make sure writes were actually successful and
-        //update the itemKey for the parent
-        if(data.success && data.success["0"]){
-            item.updateItemKey(data.success["0"]);
+        var entryEl = J(data).find("entry");
+        this.parseXmlItem(entryEl);
+    }, this);
+    
+    var childSuccessCallback = J.proxy(function(data, successcode, jqXhr){
+        Z.debug("writeItem childSuccessCallback", 3);
+        if(item.numChildren){
+            item.numChildren++;
+        }
+        else {
+            item.numChildren = 1;
+            J.publish("hasFirstChild", [item.itemKey]);
         }
     }, this);
     
-    //copy apiObj, extend with pristine to make sure required fields are present
-    //and remove unwriteable fields(?)
-    var writeApiObj = J.extend({}, item.pristine, item.apiObj);
+    //copy apiObj and remove unwriteable fields
+    var writeApiObj = J.extend({}, this.apiObj);
+    //delete writeApiObj['linkMode'];
+    delete writeApiObj['mimeType'];
+    delete writeApiObj['charset'];
+    //delete writeApiObj['contentType'];
+    delete writeApiObj['filename'];
+    delete writeApiObj['md5'];
+    delete writeApiObj['mtime'];
+    delete writeApiObj['zip'];
+    
+    //TODO: don't do this
+    writeApiObj['attachments'] = [];
+    
+    var requests = [];
     
     if(!newItem){
         Z.debug("have itemKey, making PUT writeItem request", 3);
         
-        //make notes requests separately in multi-item write request
-        var notes = item.notes;
-        var multiwriteDataObject = {items: [].concat(writeApiObj, notes) };
+        //take notes out of apiObj and make them separate children requests
+        var notes = this.apiObj.notes;
+        delete this.apiObj.notes;
+        delete writeApiObj.notes;
         
-        requestData = JSON.stringify(multiwriteDataObject);
-        jqxhr = Zotero.ajaxRequest(requestUrl, 'POST',
+        //take attachments out
+        delete writeApiObj.attachments;
+        
+        //make request to update item
+        requestData = JSON.stringify(writeApiObj);
+        jqxhr = J.ajax(Zotero.ajax.proxyWrapper(requestUrl, 'PUT'),
             {data: requestData,
+             type: "PUT",
              processData: false,
-             headers:{
-                //'If-Unmodified-Since-Version': item.itemVersion,
-                'Content-Type': 'application/json'
-            },
-             success: successCallback
+             headers:{'If-Match': this.etag, 'Content-Type': 'application/json'},
+             success: successCallback,
+             cache:false,
+             error: Zotero.ajax.errorCallback
             }
         );
+        requests.push(jqxhr);
+        
+        //make requests to add new children if we have any
+        if(J.isArray(notes) && notes.length){
+            Z.debug("have child notes for existing item - making separate requests to create children", 3);
+            var noteItemsObj = {items:notes};
+            Z.debug("new child notes on existing item", 3);
+            Z.debug(noteItemsObj, 4);
+            requestData = JSON.stringify(noteItemsObj);
+            jqxhr = J.ajax(Zotero.ajax.proxyWrapper(newChildrenRequestUrl, 'POST'),
+                {data: requestData,
+                 type: "POST",
+                 processData: false,
+                 headers:{'Content-Type': 'application/json'},
+                 success: childSuccessCallback,
+                 cache:false,
+                 error: Zotero.ajax.errorCallback
+                }
+            );
+            requests.push(jqxhr);
+        }
     }
     else{
         Z.debug("have no itemKey, making POST writeItem request", 3);
-        //parent item doesn't exist yet, create all items by embedding in single item create
-        writeApiObj.notes = item.notes;
         requestData = JSON.stringify({items:[writeApiObj]});
-        jqxhr = Zotero.ajaxRequest(requestUrl, 'POST',
+        jqxhr = J.ajax(Zotero.ajax.proxyWrapper(requestUrl, 'POST'),
             {data: requestData,
+             type: "POST",
              processData: false,
-             headers:{
-                'Content-Type': 'application/json'
-                //'Zotero-Write-Token': 'asdf'
-            },
-             success: successCallback
+             headers:{'Content-Type': 'application/json'},
+             success: successCallback,
+             cache:false,
+             error: Zotero.ajax.errorCallback
             }
         );
+        requests.push(jqxhr);
     }
     
-    return jqxhr;
-};
-
-Zotero.Item.prototype.writePatch = function(){
+    J.each(requests, function(){
+        Zotero.ajax.activeRequests.push(this);
+    });
     
+    return J.when.apply(J, requests);
+//    J.publish("itemWriteRequest", [this, jqxhr]);
 };
 
 Zotero.Item.prototype.getChildren = function(library){
     Z.debug("Zotero.Item.getChildren", 3);
     var deferred = J.Deferred();
     //short circuit if has item has no children
-    if(!(this.numChildren)){//} || (this.parentItemKey !== false)){
+    if(!(this.numChildren) || (this.parentKey !== false)){
         deferred.resolve([]);
         return deferred;
     }
@@ -3717,7 +3220,14 @@ Zotero.Item.prototype.getChildren = function(library){
         deferred.resolve(childItems);
     }, this);
     
-    var jqxhr = Zotero.ajaxRequest(requestUrl);
+    var jqxhr = J.ajax(Zotero.ajax.proxyWrapper(requestUrl, 'GET'),
+        {type: "GET",
+         processData: false,
+         headers:{},
+         cache:false,
+         error: Zotero.ajax.errorCallback
+        }
+    );
     jqxhr.done(callback);
     jqxhr.fail(function(){deferred.reject.apply(null, arguments);});//.fail(Zotero.ui.ajaxErrorMessage);
     
@@ -3854,11 +3364,14 @@ Zotero.Item.prototype.getUploadAuthorization = function(fileinfo, oldmd5){
         headers['If-None-Match'] = '*';
     }
 
-    var jqxhr = Zotero.ajaxRequest(requestUrl, 'POST',
-            {
-                processData: true,
-                data:fileinfo,
-                headers:headers
+    var jqxhr = J.ajax(Zotero.ajax.proxyWrapper(requestUrl, 'POST'),
+            {type: "POST",
+             processData: true,
+             data:fileinfo,
+             headers:headers,
+             //success: callback,
+             cache:false,
+             error: Zotero.ajax.errorCallback
             }
         );
     
@@ -3878,11 +3391,13 @@ Zotero.Item.prototype.registerUpload = function(uploadKey, oldmd5){
         headers = {"If-Match": oldmd5};
     }
     
-    var jqxhr = Zotero.ajaxRequest(requestUrl, 'POST',
+    var jqxhr = J.ajax(Zotero.ajax.proxyWrapper(requestUrl, 'POST'),
             {
+                type: "POST",
                 processData: true,
                 data:{upload: uploadKey},
-                headers: headers
+                headers: headers,
+                cache:false
             });
     return jqxhr;
 };
@@ -4166,21 +3681,6 @@ Zotero.Item.prototype.creatorMap = {
     "podcaster"      : "Podcaster"
 };
 
-Zotero.Item.prototype.hideFields = [
-    "mimeType",
-    "linkMode",
-    "charset",
-    "md5",
-    "mtime",
-    "itemVersion",
-    "itemKey",
-    "collections",
-    "relations",
-    "parentItem",
-    "contentType",
-    "filename"
-];
-
 Zotero.localizations.creatorMap = Zotero.Item.prototype.creatorMap;
 
 Zotero.Item.prototype.itemTypeImageSrc = {
@@ -4356,10 +3856,6 @@ Zotero.Tag.prototype.getLinkParams = function () {
     this.linktagsparams = deparamed;
     return deparamed;
 };
-Zotero.Search = function(){
-    this.instance = "Zotero.Search";
-    this.searchObject = {};
-};
 Zotero.Group = function () {this.instance = "Zotero.Group";};
 Zotero.Group.prototype = new Zotero.Entry();
 Zotero.Group.prototype.loadObject = function(ob){
@@ -4490,55 +3986,15 @@ Zotero.utils = {
     
     setUserPref: function(name, value){
         Z.debug('Zotero.utils.updateUserPrefs', 3);
-        var prefs;
-        if(typeof Zotero.store.userpreferences === "undefined") {
-            Z.debug("userpreferences not stored yet");
-            prefs = {};
-            prefs[name] = value;
-            Zotero.store.userpreferences = JSON.stringify(prefs);
-        }
-        else {
-            Z.debug("userpreferences exists already");
-            prefs = JSON.parse(Zotero.store.userpreferences);
-            prefs[name] = value;
-            Zotero.store.userpreferences = JSON.stringify(prefs);
-        }
+        var postob = {'varname': name,
+                      'varvalue': value
+                     };
+        var jqxhr = J.get("/user/setuserpref", postob);
         
-        if(Zotero.config.storePrefsRemote){
-            var postob = {'varname': name,
-                          'varvalue': value
-                         };
-            var jqxhr = J.get("/user/setuserpref", postob);
-            
-            jqxhr.done(J.proxy(function(){
-                Z.debug('userpref set:' + name + " : " + value, 3);
-            }), this);
-            return jqxhr;
-        }
-        else {
-            return true;
-        }
-    },
-    
-    getStoredPrefs: function(){
-        Z.debug('Zotero.utils.getStoredPrefs', 3);
-        if(typeof Zotero.store === "undefined" || typeof Zotero.store.userpreferences === "undefined") {
-            return {};
-        }
-        else {
-            return JSON.parse(Zotero.store.userpreferences);
-        }
-    },
-    
-    saveStoredPrefs: function(prefs){
-        Z.debug('Zotero.utils.saveStoredPrefs', 3);
-        if(typeof Zotero.store === "undefined") {
-            return false;
-        }
-        else {
-            Zotero.store.userpreferences = JSON.stringify(prefs);
-            return true;
-        }
+        jqxhr.done(J.proxy(function(){
+            Z.debug('userpref set:' + name + " : " + value, 3);
+        }), this);
+        return jqxhr;
     },
     
     libraryString: function(type, libraryID){
@@ -4588,17 +4044,6 @@ Zotero.utils = {
         return date;
     },
     
-    readCookie: function(name) {
-        var nameEQ = name + "=";
-        var ca = document.cookie.split(';');
-        for(var i=0;i < ca.length;i++) {
-            var c = ca[i];
-            while (c.charAt(0)==' ') c = c.substring(1,c.length);
-            if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length,c.length);
-        }
-        return null;
-    },
-    
     compareObs: function(ob1, ob2, checkVars){
         var loopOn = checkVars;
         var useIndex = false;
@@ -4628,34 +4073,7 @@ Zotero.utils = {
         });
         return differences;
     },
-    
-    updateSyncState: function(container, version) {
-        Z.debug("updateSyncState: " + version, 3);
-        if(!container.hasOwnProperty('syncState')) return;
-        if(container.syncState.earliestVersion === null){
-            container.syncState.earliestVersion = version;
-        }
-        if(container.syncState.latestVersion === null){
-            container.syncState.latestVersion = version;
-        }
-        if(version < container.syncState.earliestVersion){
-            container.syncState.earliestVersion = version;
-        }
-        if(version > container.syncState.latestVersion){
-            container.syncState.latestVersion = version;
-        }
-    },
-    
-    updateSyncedVersion: function(container, versionField) {
-        if(container.syncState.earliestVersion !== null &&
-            (container.syncState.earliestVersion == container.syncState.latestVersion) ){
-            container[versionField] = container.syncState.latestVersion;
-            container.synced = true;
-        }
-        else if(container.syncState.earliestVersion !== null) {
-            container[versionField] = container.syncState.earliestVersion;
-        }
-    },
+
     /**
      * Translate common mimetypes to user friendly versions
      *
@@ -4773,7 +4191,7 @@ Zotero.url.attachmentDownloadLink = function(item){
         var tail = item.links['enclosure']['href'].substr(-4, 4);
         if(tail == 'view'){
             //snapshot: redirect to view
-            retString += '<a href="' + Zotero.config.baseZoteroWebsiteUrl + Zotero.config.nonparsedBaseUrl + '/' + item.itemKey + '/file/view' + '">' + 'View Snapshot</a>';
+            retString += '<a href="' + Zotero.config.baseWebsiteUrl + Zotero.config.nonparsedBaseUrl + '/' + item.itemKey + '/file/view' + '">' + 'View Snapshot</a>';
             
             //retString += '<form style="margin:0;" method="POST" action="' + item.links['enclosure']['href'] + '?key=' + Zotero.config.apiKey + '">(<input type="hidden" name="h" value="1" /><a href="#" onclick="parentNode.submit()">' + item.title + '</a>)</form>';
         }
@@ -4793,7 +4211,7 @@ Zotero.url.attachmentDownloadLink = function(item){
                 filesizeString = "" + (filesize / 1024).toFixed(1) + " KB";
             }
             Z.debug(enctype);
-            retString += '<a href="' + Zotero.config.baseZoteroWebsiteUrl + Zotero.config.nonparsedBaseUrl + '/' + item.itemKey + '/file' + '">';
+            retString += '<a href="' + Zotero.config.baseWebsiteUrl + Zotero.config.nonparsedBaseUrl + '/' + item.itemKey + '/file' + '">';
             if(enctype == 'undefined' || enctype === '' || typeof enctype == 'undefined'){
                 retString += filesizeString + '</a>';
             }
@@ -4809,17 +4227,11 @@ Zotero.url.attachmentDownloadLink = function(item){
 Zotero.url.attachmentDownloadUrl = function(item){
     var retString = '';
     if(item.links['enclosure']){
-        if(Zotero.config.directDownloads){
-            retString = Zotero.config.baseZoteroWebsiteUrl + Zotero.config.nonparsedBaseUrl + '/' + item.itemKey + '/file';
-            var tail = item.links['enclosure']['href'].substr(-4, 4);
-            if(tail == 'view'){
-                //snapshot: redirect to view
-                retString += '/view';
-            }
-        }
-        else {
-            //we have a proxy for downloads at baseDownloadUrl so just pass an itemkey to that
-            retString = Zotero.config.baseDownloadUrl + '?itemkey=' + item.itemKey;
+        retString = Zotero.config.baseWebsiteUrl + Zotero.config.nonparsedBaseUrl + '/' + item.itemKey + '/file';
+        var tail = item.links['enclosure']['href'].substr(-4, 4);
+        if(tail == 'view'){
+            //snapshot: redirect to view
+            retString += '/view';
         }
     }
     else if(item.linkMode == 2 || item.linkMode == 3){
@@ -4999,100 +4411,6 @@ Zotero.Filestorage.prototype.handleError = function(e){
     Zotero.debug("----------------Filestorage Error encountered", 2);
     Zotero.debug(e, 2);
 };
-Zotero.Idb = function(){
-    var indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB || window.msIndexedDB;
-    this.indexedDB = indexedDB;
-    // Now we can open our database
-    var request = indexedDB.open("Zotero");
-    request.onerror = function(e){
-        Zotero.debug("ERROR OPENING INDEXED DB", 1);
-    };
-    request.onupgradeneeded = function(event){
-        var db = event.target.result;
-        Zotero.Idb.db = db;
-        // Create an objectStore to hold information about our customers. We're
-        // going to use "ssn" as our key path because it's guaranteed to be
-        // unique.
-        var itemStore = db.createObjectStore("items", { keyPath: "itemKey" });
-        var collectionStore = db.createObjectStore("collections", { keyPath: "itemKey" });
-        var tagStore = db.createObjectStore("tags", { keyPath: "itemKey" });
-        
-        // Create an index to search customers by name. We may have duplicates
-        // so we can't use a unique index.
-        itemStore.createIndex("itemKey", "itemKey", { unique: false });
-        itemStore.createIndex("itemType", "itemType", { unique: false });
-        itemStore.createIndex("parentKey", "parentKey", { unique: false });
-        itemStore.createIndex("libraryKey", "libraryKey", { unique: false });
-        
-        collectionStore.createIndex("name", "name", { unique: false });
-        collectionStore.createIndex("title", "title", { unique: false });
-        collectionStore.createIndex("collectionKey", "collectionKey", { unique: false });
-        collectionStore.createIndex("parentCollectionKey", "parentCollectionKey", { unique: false });
-        collectionStore.createIndex("libraryKey", "libraryKey", { unique: false });
-        
-        tagStore.createIndex("name", "name", { unique: false });
-        tagStore.createIndex("title", "title", { unique: false });
-        tagStore.createIndex("libraryKey", "libraryKey", { unique: false });
-        
-        //Zotero.Idb.itemStore = itemStore;
-        //Zotero.Idb.collectionStore = collectionStore;
-        //Zotero.Idb.tagStore = tagStore;
-        
-        /*
-        // Store values in the newly created objectStore.
-        for (var i in customerData) {
-            objectStore.add(customerData[i]);
-        }
-         */
-    };
-};
-
-Zotero.Idb.addItems = function(items){
-    var transaction = Zotero.Idb.db.transaction(["items"], IDBTransaction.READ_WRITE);
-    
-    transaction.oncomplete = function(event){
-        Zotero.debug("Add Items transaction completed.", 3);
-    };
-    
-    transaction.onerror = function(event){
-        Zotero.debug("Add Items transaction failed.", 1);
-        
-    };
-    
-    var itemStore = transaction.objectStore("items");
-    var reqSuccess = function(event){
-        Zotero.debug("Added Item " + event.target.result, 4);
-    };
-    for (var i in items) {
-        var request = itemStore.add(items[i]);
-        request.onsuccess = reqSuccess;
-    }
-};
-
-Zotero.Idb.getItem = function(itemKey, callback){
-    Zotero.Idb.db.transaction("items").objectStore("items").get(itemKey).onsuccess = function(event) {
-        callback(null, event.target.result);
-    };
-};
-
-Zotero.Idb.getAllItems = function(callback){
-    var items = [];
-    var objectStore = Zotero.Idb.db.transaction('items').objectStore('items');
-    
-    objectStore.openCursor().onsuccess = function(event) {
-        var cursor = event.target.result;
-        if (cursor) {
-            items.push(cursor.value);
-            cursor.continue();
-        }
-        else {
-            callback(null, items);
-        }
-    };
-};
-
-
-
 
 
 
@@ -5112,7 +4430,7 @@ jQuery(document).ready(function() {
     Zotero.init();
 });
 
-Zotero.defaultPrefs = {
+Zotero.prefs = {
     debug_level: 3, //lower level is higher priority
     debug_log: true,
     debug_mock: false,
@@ -5120,15 +4438,11 @@ Zotero.defaultPrefs = {
     library_listShowFields: ['title', 'creator', 'dateModified']
 };
 
-Zotero.prefs = {};
-
 Zotero.init = function(){
     Z.debug("Zotero init", 3);
 
     //base init to setup tagline and search bar
-    if(Zotero.pages){
-        Zotero.pages.base.init();
-    }
+    Zotero.pages.base.init();
     
     //run page specific init
     if(undefined !== window.zoterojsClass){
@@ -5159,17 +4473,7 @@ Zotero.init = function(){
         store = sessionStorage;
     }
     Zotero.cache = new Zotero.Cache(store);
-    Zotero.store = store;
-    Zotero.prefs = J.extend({}, Zotero.defaultPrefs, Zotero.prefs, Zotero.utils.getStoredPrefs());
-    /*
-    Zotero.prefs = new Zotero.Prefs(store);
-    J.each(Zotero.defaultPrefs, function(key, val){
-        if(Zotero.prefs.getPref(key) === null){
-            Zotero.prefs.setPref(key, val);
-        }
-    });
-    */
-    
+
     //get localized item constants if not stored in localstorage
     var locale = "en-US";
     if(zoteroData.locale){
@@ -5189,14 +4493,8 @@ Zotero.init = function(){
         if(zoteroData.library_showAllTags){
             Zotero.prefs.library_showAllTags = zoteroData.library_showAllTags;
         }
-        if(zoteroData.library_defaultSort || Zotero.prefs.library_defaultSort){
-            var defaultSort;
-            if(zoteroData.library_defaultSort){
-                defaultSort = zoteroData.library_defaultSort.split(',');
-            }
-            else {
-                defaultSort = Zotero.prefs.library_defaultSort.split(',');
-            }
+        if(zoteroData.library_defaultSort){
+            var defaultSort = zoteroData.library_defaultSort.split(',');
             if(defaultSort[0]){
                 Zotero.config.userDefaultApiArgs['order'] = defaultSort[0];
             }
@@ -5433,7 +4731,7 @@ Zotero.nav.parseUrlVars = function(){
 };
 
 Zotero.nav.parsePathVars = function(pathname){
-    Z.debug('Zotero.nav.parsePathVars', 3);
+    Z.debug('Zotero.nav.parsePathVars');
     //parse variables out of library urls
     //:userslug/items/:itemKey/*
     //:userslug/items/collection/:collectionKey
@@ -5448,17 +4746,17 @@ Zotero.nav.parsePathVars = function(pathname){
     var re = new RegExp(".*" + basePath + "\/?");
     var replaced = pathname.replace(re, '');
     
-    Z.debug(replaced, 4);
+    Z.debug(replaced);
     split_replaced = replaced.split('/');
     
-    Z.debug(split_replaced, 4);
+    Z.debug(split_replaced);
     var pathVars = {};
     for(var i=0; i<(split_replaced.length-1); i = i+2){
         var pathVar = pathVars[split_replaced[i]];
-        Z.debug('pathVar: ' + pathVar, 4);
+        Z.debug('pathVar: ' + pathVar);
         //if var already present change to array and/or push
         if(pathVar){
-            Z.debug("pathVar already has value", 4);
+            Z.debug("pathVar already has value");
             if(pathVar instanceof Array){
                 pathVar.push(decodeURIComponent(split_replaced[i+1]));
             }
@@ -5470,12 +4768,12 @@ Zotero.nav.parsePathVars = function(pathname){
         }
         //otherwise just set the value in the object
         else{
-            Z.debug("pathVar does not have value", 4);
+            Z.debug("pathVar does not have value");
             pathVar = decodeURIComponent(split_replaced[i+1]);
         }
         pathVars[split_replaced[i]] = pathVar;
     }
-    Z.debug(pathVars, 4);
+    Z.debug(pathVars);
     return pathVars;
 };
 
@@ -7551,6 +6849,57 @@ Zotero.callbacks.chooseItemPane = function(el){
     }
 };
 
+/**
+ * Ajaxload library widget
+ * @param  {Dom Element} el Ajaxload element
+ * @return {undefined}
+ */
+Zotero.callbacks.loadLibraryWidget = function(el){
+    Z.debug("Zotero.callbacks.loadLibraryWidget", 3);
+    var jel = J(el);
+    var library = Zotero.ui.getAssociatedLibrary(el);
+    
+    var effectiveUrlVars = ['itemPage', 'tag', 'collectionKey', 'order', 'sort', 'q'];
+    
+    var defaultConfig = {target:'items',
+                         targetModifier: 'top',
+                         itemPage: 1,
+                         limit: 25,
+                         content: 'json'
+                     };
+    
+    //Build config object that should be displayed next and compare to currently displayed
+    var newConfig = J.extend({}, defaultConfig);
+    newConfig.start = parseInt(newConfig.limit, 10) * (parseInt(newConfig.itemPage, 10) - 1);
+    
+    if(!newConfig.sort){
+        newConfig.sort = Zotero.config.sortOrdering[newConfig.order];
+    }
+    
+    //don't pass top if we are searching for tags (or query?)
+    if(newConfig.tag || newConfig.q){
+        delete newConfig.targetModifier;
+    }
+    
+    //clear contents and show spinner while loading
+    Zotero.ui.showSpinner(el, 'horizontal');
+    
+    var d = library.loadItems(newConfig);
+    
+    d.done(J.proxy(function(loadedItems){
+        J(el).empty();
+        Zotero.ui.displayItemsWidget(el, newConfig, loadedItems);
+        J("<a href='#' class='home-widget-library-toggle-more-link clickable'>More</a>").appendTo(J(el));
+        J(el).find("tr").slice(4).hide();
+    }, this));
+    
+    d.fail(J.proxy(function(jqxhr, textStatus, errorThrown){
+        var elementMessage = Zotero.ui.ajaxErrorMessage(jqxhr);
+        jel.html("<p>" + elementMessage + "</p>");
+    }));
+    
+};
+
 Zotero.callbacks.rejectIfPending = function(el){
     var pendingDeferred = J(el).data('pendingDeferred');
     if(pendingDeferred && pendingDeferred.hasOwnProperty('reject')){
@@ -7569,100 +6918,6 @@ Zotero.callbacks.loadItems = function(el){
     Zotero.callbacks.rejectIfPending(el);
     var jel = J(el);
     
-    var library = Zotero.ui.getAssociatedLibrary(el);
-    
-    var effectiveUrlVars = ['itemPage', 'tag', 'collectionKey', 'order', 'sort', 'q'];
-    var urlConfigVals = {};
-    J.each(effectiveUrlVars, function(index, value){
-        var t = Zotero.nav.getUrlVar(value);
-        if(t){
-            urlConfigVals[value] = t;
-        }
-    });
-    
-    var defaultConfig = {target:'items',
-                         targetModifier: 'top',
-                         itemPage: 1,
-                         limit: 25,
-                         content: 'json'
-                     };
-    
-    //Build config object that should be displayed next and compare to currently displayed
-    var newConfig = J.extend({}, defaultConfig, Zotero.config.userDefaultApiArgs, urlConfigVals);
-    newConfig['collectionKey'] = urlConfigVals['collectionKey'];//always override collectionKey, even with absence of collectionKey
-    newConfig.start = parseInt(newConfig.limit, 10) * (parseInt(newConfig.itemPage, 10) - 1);
-    
-    //don't allow ordering by addedBy if user library
-    if( (newConfig.order == "addedBy") && (library.libraryType == 'user') ){
-        newConfig.order = 'title';
-    }
-    
-    if(!newConfig.sort){
-        newConfig.sort = Zotero.config.sortOrdering[newConfig.order];
-    }
-    
-    //don't pass top if we are searching for tags (or query?)
-    if(newConfig.tag || newConfig.q){
-        delete newConfig.targetModifier;
-    }
-    
-    //clear contents and show spinner while loading
-    Zotero.ui.showSpinner(el, 'horizontal');
-    
-    var d = library.loadItems(newConfig);
-    
-    d.done(J.proxy(function(loadedItems){
-        J(el).empty();
-        Zotero.ui.displayItemsFull(el, newConfig, loadedItems);
-        //set currentConfig on element when done displaying
-        //J(el).data('currentconfig', newConfig);
-    }, this));
-    
-    d.fail(J.proxy(function(jqxhr, textStatus, errorThrown){
-        var elementMessage = Zotero.ui.ajaxErrorMessage(jqxhr);
-        jel.html("<p>" + elementMessage + "</p>");
-    }));
-    
-    //associate promise with el so we can cancel on later loads
-    jel.data('pendingDeferred', d);
-};
-
-/**
- * Ajaxload items list
- * @param  {Dom Element} el Ajaxload element
- * @return {undefined}
- */
-Zotero.callbacks.syncItems = function(el){
-    Z.debug("Zotero.callbacks.syncItems", 3);
-    Zotero.callbacks.rejectIfPending(el);
-    var jel = J(el);
-    
-    var library = Zotero.ui.getAssociatedLibrary(el);
-    
-    //clear contents and show spinner while loading
-    Zotero.ui.showSpinner(el, 'horizontal');
-    
-    var d = library.loadItems(newConfig);
-    
-    d.done(J.proxy(function(loadedItems){
-        J(el).empty();
-        Zotero.ui.displayItemsFull(el, newConfig, loadedItems);
-        //set currentConfig on element when done displaying
-        //J(el).data('currentconfig', newConfig);
-    }, this));
-    
-    d.fail(J.proxy(function(jqxhr, textStatus, errorThrown){
-        var elementMessage = Zotero.ui.ajaxErrorMessage(jqxhr);
-        jel.html("<p>" + elementMessage + "</p>");
-    }));
-    
-    //associate promise with el so we can cancel on later loads
-    jel.data('pendingDeferred', d);
-};
-
-Zotero.callbacks.localItems = function(el){
-    Z.debug("Zotero.callbacks.syncItems", 3);
-    var jel = J(el);
     var library = Zotero.ui.getAssociatedLibrary(el);
     
     var effectiveUrlVars = ['itemPage', 'tag', 'collectionKey', 'order', 'sort', 'q'];
@@ -7702,10 +6957,23 @@ Zotero.callbacks.localItems = function(el){
     
     //clear contents and show spinner while loading
     Zotero.ui.showSpinner(el, 'horizontal');
-    library.items.displayItemsArray = library.items.findItems(newConfig);
-    J(el).empty();
-    Zotero.ui.displayItemsFullLocal(J("#library-items-div"), {}, library);
     
+    var d = library.loadItems(newConfig);
+    
+    d.done(J.proxy(function(loadedItems){
+        J(el).empty();
+        Zotero.ui.displayItemsFull(el, newConfig, loadedItems);
+        //set currentConfig on element when done displaying
+        //J(el).data('currentconfig', newConfig);
+    }, this));
+    
+    d.fail(J.proxy(function(jqxhr, textStatus, errorThrown){
+        var elementMessage = Zotero.ui.ajaxErrorMessage(jqxhr);
+        jel.html("<p>" + elementMessage + "</p>");
+    }));
+    
+    //associate promise with el so we can cancel on later loads
+    jel.data('pendingDeferred', d);
 };
 
 /**
@@ -7720,8 +6988,7 @@ Zotero.callbacks.loadItem = function(el){
     var library = Zotero.ui.getAssociatedLibrary(el);
     var d;
     //clear contents and show spinner while loading
-    jel.empty();
-    //Zotero.ui.showSpinner(el);
+    Zotero.ui.showSpinner(el);
     
     //if we're  creating a new item: let user choose itemType if we don't have a value
     //yet, otherwise create a new item and initialize it as an empty item of that type
@@ -7750,7 +7017,6 @@ Zotero.callbacks.loadItem = function(el){
     //if it is not a new item handled above we must have an itemKey
     var itemKey = Zotero.nav.getUrlVar('itemKey');
     if(!itemKey){
-        J(el).empty();
         return false;
     }
     
@@ -7814,12 +7080,11 @@ Zotero.callbacks.loadTags = function(el, checkCached){
     
     //get Zotero.Library object if already bound to element
     var library = Zotero.ui.getAssociatedLibrary(el);
-    //clear tags if we're explicitly not using cached tags
-    if(checkCached === false){
-        library.tags.clear();
-    }
+    
+    var defaultConfig = {};
     
     var collectionKey = Zotero.nav.getUrlVar('collectionKey') || jel.attr("data-collectionKey");
+    
     var showAllTags = jel.find('#show-all-tags').filter(':checked').length;
     //var showAuto = jel.children('#show-automatic').filter(':checked').length;
     
@@ -7837,12 +7102,12 @@ Zotero.callbacks.loadTags = function(el, checkCached){
     var newConfig;
     //api doesn't support tags filtered by tag yet, so don't include selectedTags in configs
     if(showAllTags){
-        newConfig = {};
-        //newConfig = J.extend({}, {newer: library.tags.tagsVersion});
+        //newConfig = J.extend({}, defaultConfig, {tag:selectedTags});
+        newConfig = J.extend({}, defaultConfig);
     }
     else{
-        newConfig = J.extend({}, {collectionKey:collectionKey});
-        //newConfig = J.extend({}, {collectionKey:collectionKey, newer: library.tags.tagsVersion});
+        //newConfig = J.extend({}, defaultConfig, {collectionKey:collectionKey, tag:selectedTags});
+        newConfig = J.extend({}, defaultConfig, {collectionKey:collectionKey});
     }
     
     Zotero.ui.showSpinner(J(el).find('div.loading'));
@@ -7864,94 +7129,10 @@ Zotero.callbacks.loadTags = function(el, checkCached){
     
     d.done(J.proxy(function(tags){
         Z.debug("finished loadAllTags", 3);
-        library.tags.tagsVersion = library.tags.syncState.earliestVersion;
-        if(library.tags.syncState.earliestVersion == library.tags.syncState.latestVersion){
-            library.tags.synced = true;
-        }
-        else {
-            //TODO: fetch tags ?newer=tagsVersion
-        }
         J(el).find('div.loading').empty();
         Z.debug(tags, 5);
         library.tags.loaded = true;
         library.tags.loadedConfig = newConfig;
-        J(el).children('.loading').empty();
-        var plainList = library.tags.plainTagsList(library.tags.tagsArray);
-        Zotero.ui.displayTagsFiltered(el, library.tags, plainList, selectedTags);
-        Zotero.nav.doneLoading(el);
-    }, this));
-    
-    d.fail(J.proxy(function(jqxhr, textStatus, errorThrown){
-        var elementMessage = Zotero.ui.ajaxErrorMessage(jqxhr);
-        jel.html("<p>" + elementMessage + "</p>");
-    }));
-    
-    return;
-};
-
-Zotero.callbacks.syncTags = function(el, checkCached){
-    Z.debug('Zotero.callbacks.syncTags', 3);
-    Zotero.nav.flagLoading(el);
-    var jel = J(el);
-    if(typeof checkCached == 'undefined'){
-        checkCached = true; //default to using the cache
-    }
-    
-    //get Zotero.Library object if already bound to element
-    var library = Zotero.ui.getAssociatedLibrary(el);
-    //clear tags if we're explicitly not using cached tags
-    if(checkCached === false){
-        library.tags.clear();
-    }
-    
-    // put the selected tags into an array
-    var selectedTags = Zotero.nav.getUrlVar('tag');
-    if(!J.isArray(selectedTags)){
-        if(selectedTags) {
-            selectedTags = [selectedTags];
-        }
-        else {
-            selectedTags = [];
-        }
-    }
-    
-    //sync tags if loaded from cache but not synced
-    if(library.tags.loaded && (!library.tags.synced)){
-        Z.debug("tags loaded but not synced - loading updated", 3);
-        var syncD = library.loadUpdatedTags();
-        syncD.done(J.proxy(function(){
-            Zotero.nav.doneLoading(el);
-            J(el).children('.loading').empty();
-            var plainList = library.tags.plainTagsList(library.tags.tagsArray);
-            Zotero.ui.displayTagsFiltered(el, library.tags, plainList, selectedTags);
-            Zotero.nav.doneLoading(el);
-        }, this) );
-        return;
-    }
-    else if(library.tags.loaded){
-        J(el).children('.loading').empty();
-        var plainList = library.tags.plainTagsList(library.tags.tagsArray);
-        Zotero.ui.displayTagsFiltered(el, library.tags, plainList, selectedTags);
-        Zotero.nav.doneLoading(el);
-        return;
-    }
-    
-    //load all tags if we don't have any cached
-    Zotero.ui.showSpinner(J(el).find('div.loading'));
-    var d = library.loadAllTags({}, checkCached);
-    d.done(J.proxy(function(tags){
-        Z.debug("finished loadAllTags", 3);
-        library.tags.tagsVersion = library.tags.syncState.earliestVersion;
-        if(library.tags.syncState.earliestVersion == library.tags.syncState.latestVersion){
-            library.tags.synced = true;
-        }
-        else {
-            //TODO: fetch tags ?newer=tagsVersion
-        }
-        J(el).find('div.loading').empty();
-        Z.debug(tags, 5);
-        library.tags.loaded = true;
-        //library.tags.loadedConfig = newConfig;
         J(el).children('.loading').empty();
         var plainList = library.tags.plainTagsList(library.tags.tagsArray);
         Zotero.ui.displayTagsFiltered(el, library.tags, plainList, selectedTags);
@@ -7981,70 +7162,6 @@ Zotero.callbacks.appendPreloader = function(el){
  * @param  {Dom Element} el Ajaxload element
  * @return {undefined}
  */
-Zotero.callbacks.syncCollections = function(el){
-    Z.debug("Zotero.callbacks.syncCollections", 3);
-    //mark widget as loading
-    //get library associated with widget (which includes loading cached data if configured)
-    //do UI updates that always need to happen on pushState
-    //if loaded but not synced
-    //  loadUpdated
-    //      when done - redisplay widget
-    //
-    Zotero.nav.flagLoading(el);
-    var jel = J(el);
-    
-    //get Zotero.Library object if already bound to element
-    var library = Zotero.ui.getAssociatedLibrary(el);
-    var clist = jel.find('#collection-list-container');
-    
-    //perform actions that should always happen on pushStates
-    Zotero.ui.updateCollectionButtons();
-    
-    //sync collections if loaded from cache but not synced
-    if(library.collections.loaded && (!library.collections.synced)){
-        Z.debug("collections loaded but not synced - loading updated", 3);
-        var syncD = library.loadUpdatedCollections();
-        syncD.done(J.proxy(function(){
-            Zotero.nav.doneLoading(el);
-            clist.empty();
-            Zotero.ui.displayCollections(clist, library.collections);
-            Zotero.ui.nestHideCollectionTree(clist);
-            Zotero.ui.highlightCurrentCollection();
-        }, this) );
-        return;
-    }
-    else if(library.collections.loaded){
-        Zotero.ui.displayCollections(clist, library.collections);
-        Zotero.ui.nestHideCollectionTree(clist);
-        Zotero.ui.highlightCurrentCollection();
-        return;
-    }
-    
-    //if no cached or loaded data, load collections from the api
-    var d = library.loadCollections();
-    d.done(J.proxy(function(){
-        Zotero.nav.doneLoading(el);
-        clist.empty();
-        Zotero.ui.displayCollections(clist, library.collections);
-        Zotero.ui.nestHideCollectionTree(clist);
-        Zotero.ui.highlightCurrentCollection();
-        jel.data('loaded', true);
-        Zotero.nav.doneLoading(el);
-    }, this));
-    
-    d.fail(J.proxy(function(jqxhr, textStatus, errorThrown){
-        var elementMessage = Zotero.ui.ajaxErrorMessage(jqxhr);
-        jel.html("<p>" + elementMessage + "</p>");
-    }));
-    
-    return;
-};
-
-/**
- * Ajaxload library collections
- * @param  {Dom Element} el Ajaxload element
- * @return {undefined}
- */
 Zotero.callbacks.loadCollections = function(el){
     Z.debug("Zotero.callbacks.loadCollections", 3);
     Zotero.nav.flagLoading(el);
@@ -8052,8 +7169,11 @@ Zotero.callbacks.loadCollections = function(el){
     
     //get Zotero.Library object if already bound to element
     var library = Zotero.ui.getAssociatedLibrary(el);
+    var mode = Zotero.nav.getUrlVar('mode') || 'view';
     
     Zotero.ui.updateCollectionButtons();
+    //set default mode on dom element if not set
+    if(!jel.data('mode')) jel.data('mode', 'view');
     
     //short circuit if widget is already loaded or loading
     if((jel.data('loaded') || (library.collections.loading)) && (!library.collections.dirty) ) {
@@ -8077,6 +7197,7 @@ Zotero.callbacks.loadCollections = function(el){
         Zotero.ui.nestHideCollectionTree(clist);
         Zotero.ui.highlightCurrentCollection();
         jel.data('loaded', true);
+        jel.data('mode', mode);
         Zotero.nav.doneLoading(el);
     }, this));
     
@@ -8292,12 +7413,660 @@ Zotero.callbacks.selectMobilePage = function(el){
             //Zotero.nav.updateStatePageID(page);
         }
     }
+    else{
+        //show the first mobile page in the dom
+        /*
+        var defaultPageID = J("[data-role='page']").first().attr('id');
+        Zotero.nav.ignoreStateChange();
+        Zotero.ui.mobile.changePage('#' + defaultPageID, {'changeHash':false});
+        */
+        
+        /*
+        Z.debug('no page set, set the current page');
+        //if(!s.hasOwnProperty('_zpageID'));
+        var activePageID = J.mobile.activePage.attr('id') || '';
+        Zotero.nav.updateStatePageID(activePageID);
+        */
+    }
     Zotero.ui.createOnActivePage();
     return;
 };
 
 
 
+
+/**
+ * compatibility function between jqueryUI and jqueryMobile dialog functions
+ * @param  {DOMNode} el      Dom element that will become the dialog
+ * @param  {object} options Options object passed to either jqueryUI or jqueryMobile
+ * @return {undefined}
+ */
+Zotero.ui.dialog = function(el, options){
+    Z.debug("Zotero.ui.dialog", 3);
+    J(el).dialog(options);
+    Z.debug("exiting Zotero.ui.dialog", 3);
+};
+
+/**
+ * compatibility function between jqueryUI and jqueryMobile to close a dialog
+ * @param  {Dom Element} el Dialog element
+ * @return {undefined}
+ */
+Zotero.ui.closeDialog = function(el){
+    J(el).dialog('close');
+};
+
+/**
+ * Update the disabled state of library control toolbar buttons depending on context
+ * @return {undefined}
+ */
+Zotero.ui.updateDisabledControlButtons = function(){
+    Z.debug("Zotero.ui.updateDisabledControlButtons", 3);
+    J(".move-to-trash-link").prop('title', 'Move to Trash');
+    
+    J("#create-item-link").button('option', 'disabled', false);
+    if((J(".itemlist-editmode-checkbox:checked").length === 0) && (!Zotero.nav.getUrlVar('itemKey')) ){
+        J(".add-to-collection-link").button('option', 'disabled', true).removeClass("ui-state-hover");
+        J(".remove-from-collection-link").button('option', 'disabled', true).removeClass("ui-state-hover");
+        J(".move-to-trash-link").button('option', 'disabled', true).removeClass("ui-state-hover");
+        J(".remove-from-trash-link").button('option', 'disabled', true).removeClass("ui-state-hover");
+        
+        J("#cite-link").button('option', 'disabled', true);
+        J("#export-link").button('option', 'disabled', true);
+    }
+    else{
+        J(".add-to-collection-link").button('option', 'disabled', false).removeClass("ui-state-hover");
+        J(".remove-from-collection-link").button('option', 'disabled', false).removeClass("ui-state-hover");
+        J(".move-to-trash-link").button('option', 'disabled', false).removeClass("ui-state-hover");
+        if(Zotero.nav.getUrlVar('collectionKey') == 'trash'){
+            J(".remove-from-trash-link").button('option', 'disabled', false).removeClass("ui-state-hover");
+        }
+        J("#cite-link").button('option', 'disabled', false);
+        J("#export-link").button('option', 'disabled', false);
+    }
+    //only show remove from collection button if inside a collection
+    if(!Zotero.nav.getUrlVar("collectionKey")){
+        J(".remove-from-collection-link").button('option', 'disabled', true).removeClass("ui-state-hover");
+    }
+    //disable create item button if in trash
+    else if(Zotero.nav.getUrlVar('collectionKey') == 'trash'){
+        J("#create-item-link").button('option', 'disabled', true).removeClass('ui-state-hover');
+        J(".add-to-collection-link").button('option', 'disabled', true).removeClass("ui-state-hover");
+        J(".remove-from-collection-link").button('option', 'disabled', true).removeClass("ui-state-hover");
+        J(".move-to-trash-link").prop('title', 'Permanently Delete');
+    }
+    Zotero.ui.init.editButton();
+};
+
+/**
+ * Display a JS notification message to the user
+ * @param  {string} message Notification message
+ * @param  {string} type    confirm, notice, or error
+ * @param  {int} timeout seconds to display notification
+ * @return {undefined}
+ */
+Zotero.ui.jsNotificationMessage = function(message, type, timeout){
+    Z.debug("notificationMessage: " + type + " : " + message, 3);
+    if(Zotero.config.suppressErrorNotifications) return;
+    if(!timeout){
+        timeout = 5;
+    }
+    J("#js-message-list").append("<li class='jsNotificationMessage-" + type + "' >" + message + "</li>").children("li").delay(parseInt(timeout, 10) * 1000).slideUp().delay(300).queue(function(){
+        J(this).remove();
+    });
+};
+
+/**
+ * Display an error message on ajax failure
+ * @param  {jQuery XHR Promise} jqxhr jqxhr returned from jquery.ajax
+ * @return {undefined}
+ */
+Zotero.ui.ajaxErrorMessage = function(jqxhr){
+    Z.debug("Zotero.ui.ajaxErrorMessage", 3);
+    if(typeof jqxhr == 'undefined'){
+        Z.debug('ajaxErrorMessage called with undefined argument');
+        return '';
+    }
+    Z.debug(jqxhr, 3);
+    switch(jqxhr.status){
+        case 403:
+            //don't have permission to view
+            if(Zotero.config.loggedIn || Zotero.config.ignoreLoggedInStatus){
+                return "You do not have permission to view this library.";
+            }
+            else{
+                Zotero.config.suppressErrorNotifications = true;
+                window.location = "/user/login";
+                return "";
+            }
+            break;
+        case 404:
+            Zotero.ui.jsNotificationMessage("A requested resource could not be found.", 'error');
+            break;
+        case 400:
+            Zotero.ui.jsNotificationMessage("Bad Request", 'error');
+            break;
+        case 405:
+            Zotero.ui.jsNotificationMessage("Method not allowed", 'error');
+            break;
+        case 412:
+            Zotero.ui.jsNotificationMessage("Precondition failed", 'error');
+            break;
+        case 500:
+            Zotero.ui.jsNotificationMessage("Something went wrong but we're not sure what.", 'error');
+            break;
+        case 501:
+            Zotero.ui.jsNotificationMessage("We can't do that yet.", 'error');
+            break;
+        case 503:
+            Zotero.ui.jsNotificationMessage("We've gone away for a little while. Please try again in a few minutes.", 'error');
+            break;
+        default:
+            Z.debug("jqxhr status did not match any expected case");
+            Z.debug(jqxhr.status);
+            //Zotero.ui.jsNotificationMessage("An error occurred performing the requested action.", 'error');
+    }
+    return '';
+};
+
+/**
+ * Scroll to the top of the window
+ * @return {undefined}
+ */
+Zotero.ui.scrollToTop = function(){
+    window.scrollBy(0, -5000);
+};
+
+/**
+ * get a list of the itemKeys for items checked off in a form to know what items to operate on
+ * if a single item is being displayed the form selections will be overridden
+ * otherwise this function returns the data-itemkey values associated with input.itemKey-checkbox:checked
+ * @param  {Form element} form Form DOM Element to pull itemkey values from
+ * @return {array}
+ */
+Zotero.ui.getSelectedItemKeys = function(form){
+    Z.debug("Zotero.ui.getSelectedItemKeys", 3);
+    var itemKeys = [];
+    var curItemKey = Zotero.nav.getUrlVar('itemKey');
+    if(curItemKey){
+        itemKeys.push(curItemKey);
+    }
+    else{
+        if(J(form).length){
+            J(form).find("input.itemKey-checkbox:checked").each(function(index, val){
+                itemKeys.push(J(val).data('itemkey'));
+            });
+        }
+        else {
+            J("input.itemKey-checkbox:checked").each(function(index, val){
+                itemKeys.push(J(val).data('itemkey'));
+            });
+        }
+    }
+    return itemKeys;
+};
+
+Zotero.ui.getAllFormItemKeys = function(form){
+    Z.debug("Zotero.ui.getSelectedItemKeys", 3);
+    var itemKeys = [];
+    var curItemKey = Zotero.nav.getUrlVar('itemKey');
+    if(curItemKey){
+        itemKeys.push(curItemKey);
+    }
+    else{
+        J(form).find("input.itemKey-checkbox").each(function(index, val){
+            itemKeys.push(J(val).data('itemkey'));
+        });
+    }
+    return itemKeys;
+};
+
+/**
+ * Callback that will initialize an item save based on new values in an item edit form
+ * @param  {event} e DOM Event triggering callback
+ * @return {boolean}
+ */
+Zotero.ui.saveItemCallback = function(e){
+    Z.debug("saveitemlink clicked", 3);
+    e.preventDefault();
+    Zotero.ui.scrollToTop();
+    var library = Zotero.ui.getAssociatedLibrary(J(this).closest(".ajaxload"));
+    //get our current representation of the item
+    var itemKey = J(this).attr('data-itemKey');
+    var item;
+    if(itemKey){
+        item = library.items.getItem(itemKey);
+        Z.debug("itemKey " + itemKey + ' : ', 3);
+    }
+    else{
+        item = J("#item-details-div").data('newitem');
+        Z.debug("newItem : itemTemplate selected from form", 3);
+        Z.debug(item, 3);
+    }
+    Zotero.ui.updateItemFromForm(item, J(this).closest("form"));
+    library.dirty = true;
+    Zotero.ui.showSpinner(J(this).closest(".ajaxload"));
+    return false;
+};
+
+/**
+ * Add selected items to collection
+ * @param {string} collectionKey collectionKey of collection items will be added to
+ * @param {Zotero_Library} library       Zotero library to operate on
+ */
+Zotero.ui.addToCollection = function(collectionKey, library){
+    Z.debug("add-to-collection clicked", 3);
+    var itemKeys = Zotero.ui.getSelectedItemKeys(J("#edit-mode-items-form"));
+    //var library = Zotero.ui.getAssociatedLibrary(J(this).closest('div.ajaxload'));
+    if(!collectionKey){
+        Zotero.ui.jsNotificationMessage("No collection selected", 'error');
+        return false;
+    }
+    if(itemKeys.length === 0){
+        Zotero.ui.jsNotificationMessage("No items selected", 'notice');
+        return false;
+    }
+    Z.debug(itemKeys, 4);
+    Z.debug(collectionKey, 4);
+    Z.debug(library.collections[collectionKey], 4);
+    var response = library.collections[collectionKey].addItems(itemKeys);
+    library.dirty = true;
+    J.when(response).then(function(){
+        //Zotero.nav.forceReload = true;//delete Zotero.nav.urlvars.pathVars['mode'];
+        Zotero.nav.pushState(true);
+    });
+    return false;
+};
+
+/**
+ * Conditionally show the control panel
+ * @param  {Dom El} el control panel element
+ * @return {undefined}
+ */
+Zotero.ui.showControlPanel = function(el){
+    Z.debug("Zotero.ui.showControlPanel", 3);
+    var jel = J(el);
+    var mode = Zotero.nav.getUrlVar('mode') || 'view';
+    
+    if(Zotero.config.librarySettings.allowEdit === 0){
+        J(".permission-edit").hide();
+        J("#control-panel").hide();
+    }
+};
+
+/**
+ * Get an item's children and display summary info
+ * @param  {DOM Element} el      element to insert into
+ * @param  {string} itemKey key of parent item
+ * @return {undefined}
+ */
+Zotero.ui.showChildren = function(el, itemKey){
+    Z.debug('Zotero.ui.showChildren', 3);
+    var library = Zotero.ui.getAssociatedLibrary(J(el).closest("div.ajaxload"));
+    var item = library.items.getItem(itemKey);
+    var attachmentsDiv = J(el).find(".item-attachments-div");
+    Zotero.ui.showSpinner(attachmentsDiv);
+    
+    var childItemsPromise = item.getChildren(library);
+    
+    childItemsPromise.done(function(childItems){
+        J.tmpl('childitemsTemplate', {childItems:childItems}).appendTo(J(".item-attachments-div").empty());
+    });
+    
+    Zotero.ui.createOnActivePage(el);
+};
+
+/**
+ * Add creator field to item edit form
+ * @param {DOM Button} button Add creator button clicked
+ */
+Zotero.ui.addCreator = function(button){
+    Z.debug("Zotero.ui.addCreator", 3);
+    var itemKey = J(button).data('itemkey');
+    var itemType = J(button).closest('form').find('select.itemType').val();
+    var lastcreatorid = J("input[id^='creator_']:last").attr('id');
+    var creatornum = 0;
+    if(lastcreatorid){
+        creatornum = parseInt(lastcreatorid.substr(8), 10);
+    }
+    var newindex = creatornum + 1;
+    var jel = J("input[id^='creator_']:last").closest('tr');
+    J.tmpl('authorelementsdoubleTemplate', {index:newindex,
+                                            creator:{firstName:'', lastName:''},
+                                            creatorTypes:Zotero.Item.prototype.creatorTypes[itemType]
+                                            }).insertAfter(jel);
+    
+    Zotero.ui.init.creatorFieldButtons();
+    
+    Zotero.ui.createOnActivePage(jel);
+};
+
+/**
+ * Remove a creator from an edit item form
+ * @param  {Dom Button} button Remove creator button that was clicked
+ * @return {undefined}
+ */
+Zotero.ui.removeCreator = function(button){
+    Z.debug("Zotero.ui.removeCreator", 3);
+    J(button).closest('tr').remove();
+    
+    Zotero.ui.createOnActivePage(button);
+};
+
+/**
+ * Add a note field to an editItem Form
+ * @param {Dom Button} button Add note button that was clicked
+ */
+Zotero.ui.addNote = function(button){
+    Z.debug("Zotero.ui.addNote", 3);
+    //var itemKey = J(button).data('itemkey');
+    var notenum = 0;
+    var lastNoteID = J("textarea[name^='note_']:last").attr('name');
+    if(lastNoteID){
+        notenum = parseInt(lastNoteID.substr(5), 10);
+    }
+    
+    var newindex = notenum + 1;
+    var newNoteID = "note_" + newindex;
+    var jel;
+    if(Zotero.config.mobile){
+        jel = J("td.notes").append('<textarea cols="40" rows="24" name="' + newNoteID + '" id="' + newNoteID + '" class="tinymce default"></textarea>');
+    }
+    else{
+        jel = J("td.notes button.add-note-button").before('<textarea cols="40" rows="24" name="' + newNoteID + '" id="' + newNoteID + '" class="tinymce default"></textarea>');
+    }
+    
+    Z.debug("new note ID:" + newNoteID, 4);
+    
+    Zotero.ui.init.tinyMce('default', true, newNoteID);
+    
+    Zotero.ui.createOnActivePage(button);
+};
+
+/**
+ * Update a Zotero_Item object from the current values of an edit item form
+ * @param  {Zotero_Item} item   Zotero item to update
+ * @param  {Dom Form} formEl edit item form to take values from
+ * @return {bool}
+ */
+Zotero.ui.updateItemFromForm = function(item, formEl){
+    Z.debug("Zotero.ui.updateItemFromForm", 3);
+    var base = J(formEl);
+    base.closest('.ajaxload').data('ignoreformstorage', true);
+    var library = Zotero.ui.getAssociatedLibrary(base.closest('.ajaxload'));
+    
+    var itemKey = '';
+    if(item.itemKey) itemKey = item.itemKey;
+    //update current representation of the item with form values
+    J.each(item.contentRows, function(i, row){
+        var selector, inputValue, noteElID;
+        if(row.field == 'note'){
+            selector = "textarea[data-itemKey='" + itemKey + "'].tinymce";
+            Z.debug(selector, 4);
+            noteElID = J(selector).attr('id');
+            Z.debug(noteElID, 4);
+            inputValue = tinyMCE.get(noteElID).getContent();
+        }
+        else{
+            selector = "[data-itemKey='" + itemKey + "'][name='" + row.field + "']";
+            inputValue = base.find(selector).val();
+        }
+        if(typeof inputValue !== 'undefined'){
+            row.fieldValue = inputValue;//base.find(selector).val();
+            item.apiObj[row.field] = inputValue;//base.find(selector).val();
+        }
+    });
+    var creators = [];
+    base.find("tr.creator").each(function(index, el){
+        var name, creator, firstName, lastName;
+        var trindex = parseInt(J(el).attr('id').substr(8), 10);
+        var creatorType = J(el).find("select[id$='creatorType']").val();
+        if(J(el).hasClass('singleCreator')){
+            name = J(el).find("input[id$='_name']");
+            if(!name.val()){
+                //can't submit authors with empty names
+                return true;
+            }
+            creator = {creatorType: creatorType,
+                            name: name.val()
+                        };
+        }
+        else if(J(el).hasClass('doubleCreator')){
+            firstName = J(el).find("input[id$='_firstName']").val();
+            lastName = J(el).find("input[id$='_lastName']").val();
+            if((firstName === '') && (lastName === '')){
+                return true;
+            }
+            creator = {creatorType: creatorType,
+                            firstName: firstName,
+                            lastName: lastName
+                            };
+        }
+        creators.push(creator);
+    });
+    
+    var tags = [];
+    base.find("input[id^='tag_']").each(function(index, el){
+        if(J(el).val() !== ''){
+            tags.push({tag: J(el).val()});
+        }
+    });
+    
+    //grab all the notes from the form and add to item
+    //in the case of new items we can add notes in the creation request
+    //in the case of existing items we need to post notes to /children, but we still
+    //have that interface here for consistency
+    var notes = [];
+    base.find("textarea[name^='note_']").each(function(index, el){
+        var noteid = J(el).attr('id');
+        var noteContent = tinyMCE.get(noteid).getContent();
+        Z.debug(noteContent, 3);
+        notes.push({itemType:'note', 'note': noteContent});
+    });
+    item.apiObj.notes = notes;
+    
+    item.apiObj.creators = creators;
+    item.apiObj.tags = tags;
+    //var requestData = JSON.stringify(item.apiObj);
+    Z.debug("pre writeItem debug", 4);
+    Z.debug(item, 4);
+    //show spinner before making ajax write call
+    Zotero.ui.showSpinner(J(formEl).closest('.ajaxload'));
+    var jqxhr = item.writeItem();
+    jqxhr.done(J.proxy(function(newItemKey){
+        Z.debug("item write finished", 3);
+        delete Zotero.nav.urlvars.pathVars['action'];
+        if(itemKey === ''){
+            //newly created item, add to collection if collectionkey in url
+            var collectionKey = Zotero.nav.getUrlVar('collectionKey');
+            if(collectionKey){
+                var collection = library.collections[collectionKey];
+                collection.addItems([item.itemKey]);
+                library.dirty = true;
+            }
+            Zotero.nav.urlvars.pathVars['itemKey'] = item.itemKey;
+        }
+        Zotero.nav.clearUrlVars(['itemKey', 'collectionKey']);
+        Zotero.nav.pushState(true);
+    }, this));
+    
+    //update list of tags we have if new ones added
+    Z.debug('adding new tags to library tags', 3);
+    var libTags = library.tags;
+    J.each(tags, function(index, tagOb){
+        var tagString = tagOb.tag;
+        if(!libTags.tagObjects.hasOwnProperty(tagString)){
+            var tag = new Zotero.Tag();
+            tag.title = tagString;
+            tag.numItems = 1;
+            tag.urlencodedtag = encodeURIComponent(tag.title);
+            libTags.tagObjects[tagString] = tag;
+            libTags.updateSecondaryData();
+        }
+    });
+};
+
+/**
+ * Load the template for a new item
+ * @param  {Zotero_Item} item Item template to load
+ * @return {undefined}
+ */
+Zotero.ui.loadNewItemTemplate = function(item){
+    Z.debug("Zotero.ui.loadNewItemTemplate", 3);
+    Z.debug(item, 3);
+    var d = Zotero.Item.prototype.getCreatorTypes(item.itemType);
+    d.done(function(itemCreatorTypes){
+        var jel = J("#item-details-div").empty();
+        if(item.itemType == 'note'){
+            var parentKey = Zotero.nav.getUrlVar('parentKey');
+            if(parentKey){
+                item.parentKey = parentKey;
+            }
+            J.tmpl('editnoteformTemplate', {item:item,
+                                         itemKey:item.itemKey
+                                         }).appendTo(jel);
+            
+            Zotero.ui.init.tinyMce('default');
+        }
+        else {
+            J.tmpl('itemformTemplate', {item:item.apiObj,
+                                        libraryUserID:zoteroData.libraryUserID,
+                                        itemKey:item.itemKey,
+                                        creatorTypes:itemCreatorTypes
+                                        }
+                                        ).appendTo(jel);
+            if(item.apiObj.tags.length === 0){
+                Zotero.ui.addTag(false);
+            }
+            Zotero.ui.init.creatorFieldButtons();
+            Zotero.ui.init.tagButtons();
+            Zotero.ui.init.editButton();
+        }
+        jel.data('newitem', item);
+        
+        //load data from previously rendered form if available
+        Zotero.ui.loadFormData(jel);
+        
+        Zotero.ui.createOnActivePage(jel);
+    });
+};
+
+/**
+ * Temporarily store the data in a form so it can be reloaded
+ * @return {undefined}
+ */
+Zotero.ui.saveFormData = function(){
+    Z.debug("saveFormData", 3);
+    J(".ajaxload").each(function(){
+        var formInputs = J(this).find('input');
+        J(this).data('tempformstorage', formInputs);
+    });
+};
+
+/**
+ * Reload previously saved form data
+ * @param  {Dom Element} el DOM Form to restore data to
+ * @return {undefined}
+ */
+Zotero.ui.loadFormData = function(el){
+    Z.debug("loadFormData", 3);
+    var formData = J(el).data('tempformstorage');
+    if(J(el).data("ignoreformstorage")){
+        Z.debug("ignoring stored form data", 3);
+        J(el).removeData('tempFormStorage');
+        J(el).removeData('ignoreFormStorage');
+        return;
+    }
+    Z.debug('formData: ', 4);
+    Z.debug(formData, 4);
+    if(formData){
+        formData.each(function(index){
+            var idstring = '#' + J(this).attr('id');
+            Z.debug('idstring:' + idstring, 4);
+            if(J(idstring).length){
+                Z.debug('setting value of ' + idstring, 4);
+                J(idstring).val(J(this).val());
+            }
+        });
+    }
+};
+
+/**
+ * Add a tag field to an edit item form
+ * @param {bool} focus Whether to focus the newly added tag field
+ */
+Zotero.ui.addTag = function(focus) {
+    Z.debug("Zotero.ui.addTag", 3);
+    if(typeof focus == 'undefined'){
+        focus = true;
+    }
+    var tagnum = 0;
+    var lastTagID = J("input[id^='tag_']:last").attr('id');
+    if(lastTagID){
+        tagnum = parseInt(lastTagID.substr(4), 10);
+    }
+    
+    var newindex = tagnum + 1;
+    var jel = J("td.tags");
+    J.tmpl('itemtagTemplate', {index:newindex}).appendTo(jel);
+    
+    J("input.taginput").autocomplete({
+        source:function(request, callback){
+            var library = Zotero.ui.getAssociatedLibrary(J(this.element.context).closest(".ajaxload"));
+            var matchingTagStrings = Zotero.utils.prependAutocomplete(request.term, library.tags.plainList);
+            callback(matchingTagStrings);
+        },
+        select: function(e, ui){
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            var value = ui.item.value;
+            Zotero.ui.addTag();
+        }
+    });
+    
+    if(focus){
+        J("input.taginput").last().focus();
+    }
+    
+    Zotero.ui.init.tagButtons();
+    
+    Zotero.ui.createOnActivePage(jel);
+};
+
+/**
+ * Remove a tag field from an edit item form
+ * @param  {DOM Element} el Tag field to remove
+ * @return {undefined}
+ */
+Zotero.ui.removeTag = function(el) {
+    Z.debug("Zotero.ui.removeTag", 3);
+    J(el).closest('.edit-tag-div').remove();
+    
+    Zotero.ui.createOnActivePage(el);
+};
+
+/**
+ * Get the class for an itemType to display an appropriate icon
+ * @param  {Zotero_Item} item Zotero item to get the class for
+ * @return {string}
+ */
+Zotero.ui.itemTypeClass = function(item) {
+    var itemTypeClass = item.itemType;
+    if (item.itemType == 'attachment') {
+        if (item.mimeType == 'application/pdf') {
+            itemTypeClass += '-pdf';
+        }
+        else {
+            switch (item.linkMode) {
+                case 0: itemTypeClass += '-file'; break;
+                case 1: itemTypeClass += '-file'; break;
+                case 2: itemTypeClass += '-snapshot'; break;
+                case 3: itemTypeClass += '-web-link'; break;
+            }
+        }
+    }
+    return "img-" + itemTypeClass;
+};
 
 /**
  * Bine collection links to take appropriate action instead of following link
@@ -8392,7 +8161,7 @@ Zotero.ui.bindCollectionLinks = function(){
 };
 
 /**
- * Bind item links to take appropriate action instead of following link
+ * Bine item links to take appropriate action instead of following link
  * @return {undefined}
  */
 Zotero.ui.bindItemLinks = function(){
@@ -8436,89 +8205,597 @@ Zotero.ui.bindTagLinks = function(){
     });
 };
 
-
-
+//generate the full html for the nested collections list
+/**
+ * generate the full html for the nested collections list
+ * @param  {Dom Element} el          Element to display collections in
+ * @param  {Zotero_Collections} collections Zotero_Collections to display
+ * @return {undefined}
+ */
+Zotero.ui.displayCollections = function(el, collections){
+    Z.debug("Zotero.ui.displayCollections", 3);
+    Z.debug("library Identifier " + collections.libraryUrlIdentifier, 4);
+    var jel = J(el);
+    var currentCollectionKey = Zotero.nav.getUrlVar('collectionKey') || '';
+    var trash = collections.owningLibrary.libraryType == 'user' ? true : false;
+    //var ncollections = collections.nestedOrderingArray();
+    J.tmpl('collectionlistTemplate', {collections:collections.collectionsArray,
+                                        libUrlIdentifier:collections.libraryUrlIdentifier,
+                                        currentCollectionKey: currentCollectionKey,
+                                        trash: trash
+                                        //ncollections: ncollections
+                                    }
+                                    ).appendTo(jel);
+    
+    
+    Zotero.ui.createOnActivePage(el);
+    
+};
 
 /**
- * Callback that will initialize an item save based on new values in an item edit form
- * @param  {event} e DOM Event triggering callback
- * @return {boolean}
+ * Nest the collection tree and hide/show appropriate nodes
+ * @param  {Dom Element} el             Container element
+ * @param  {boolean} expandSelected Show or hide the currently selected collection
+ * @return {undefined}
  */
-Zotero.ui.saveItemCallback = function(e){
-    Z.debug("saveitemlink clicked", 3);
-    e.preventDefault();
-    Zotero.ui.scrollToTop();
-    var library = Zotero.ui.getAssociatedLibrary(J(this).closest(".ajaxload"));
-    //get our current representation of the item
-    var itemKey = J(this).attr('data-itemKey');
-    var item;
-    if(itemKey){
-        item = library.items.getItem(itemKey);
-        Z.debug("itemKey " + itemKey + ' : ', 3);
+Zotero.ui.nestHideCollectionTree = function(el, expandSelected){
+    if(typeof expandSelected == 'undefined'){
+        expandSelected = true;
+    }
+    //nest and hide collection tree
+    var jel = J(el);
+    jel.find("#collection-list ul").hide().siblings(".folder-toggle")
+                                        .children(".sprite-placeholder")
+                                        .removeClass("sprite-placeholder")
+                                        .addClass("ui-icon-triangle-1-e");
+    jel.find(".current-collection").parents("ul").show();
+    jel.find("#collection-list li.current-collection").children('ul').show();
+    //start all twisties in closed position
+    jel.find(".ui-icon-triangle-1-s").removeClass("ui-icon-triangle-1-s").addClass("ui-icon-triangle-1-e");
+    //show opened twisties as expanded
+    jel.find("li.current-collection").parentsUntil("#collection-list").children('div.folder-toggle').find(".ui-icon-triangle-1-e")
+                                                .removeClass("ui-icon-triangle-1-e")
+                                                .addClass("ui-icon-triangle-1-s");
+    
+    
+    if(expandSelected === false){
+        jel.find("#collection-list li.current-collection").children('ul').hide();
+        jel.find("#collection-list li.current-collection").find(".ui-icon-triangle-1-s")
+                                                    .removeClass("ui-icon-triangle-1-s")
+                                                    .addClass("ui-icon-triangle-1-e");
+        jel.find(".current-collection").data('expanded', false);
     }
     else{
-        item = J("#item-details-div").data('newitem');
-        Z.debug("newItem : itemTemplate selected from form", 3);
-        Z.debug(item, 3);
+        jel.find("li.current-collection").children('div.folder-toggle').find(".ui-icon-triangle-1-e")
+                                                .removeClass("ui-icon-triangle-1-e")
+                                                .addClass("ui-icon-triangle-1-s");
+                                                
+        jel.find(".current-collection").data('expanded', true);
     }
-    Zotero.ui.updateItemFromForm(item, J(this).closest("form"));
-    Zotero.ui.saveItem(item, J(this).closest("form"));
-    library.dirty = true;
-    return false;
+    
+    Zotero.ui.createOnActivePage(el);
 };
 
 /**
- * Add selected items to collection
- * @param {string} collectionKey collectionKey of collection items will be added to
- * @param {Zotero_Library} library       Zotero library to operate on
+ * Highlight the currently selected collection
+ * @return {undefined}
  */
-Zotero.ui.addToCollection = function(collectionKey, library){
-    Z.debug("add-to-collection clicked", 3);
-    var itemKeys = Zotero.ui.getSelectedItemKeys(J("#edit-mode-items-form"));
-    //var library = Zotero.ui.getAssociatedLibrary(J(this).closest('div.ajaxload'));
-    if(!collectionKey){
-        Zotero.ui.jsNotificationMessage("No collection selected", 'error');
-        return false;
+Zotero.ui.highlightCurrentCollection = function(){
+    Z.debug("Zotero.ui.highlightCurrentCollection", 3);
+    var collectionKey = Zotero.nav.getUrlVar('collectionKey');
+    //unhighlight currently highlighted
+    J("a.current-collection").closest("li").removeClass("current-collection");
+    J("a.current-collection").removeClass("current-collection");
+    
+    if(collectionKey){
+        //has collection selected, highlight it
+        J("a[data-collectionKey='" + collectionKey + "']").addClass("current-collection");
+        J("a[data-collectionKey='" + collectionKey + "']").closest('li').addClass("current-collection");
     }
-    if(itemKeys.length === 0){
-        Zotero.ui.jsNotificationMessage("No items selected", 'notice');
-        return false;
+    else{
+        J("a.my-library").addClass("current-collection");
+        J("a.my-library").closest('li').addClass("current-collection");
     }
-    Z.debug(itemKeys, 4);
-    Z.debug(collectionKey, 4);
-    Z.debug(library.collections[collectionKey], 4);
-    var response = library.collections[collectionKey].addItems(itemKeys);
-    library.dirty = true;
-    J.when(response).then(function(){
-        //Zotero.nav.forceReload = true;//delete Zotero.nav.urlvars.pathVars['mode'];
-        Zotero.nav.pushState(true);
+};
+
+/**
+ * Update enabled/disabled for collection buttons based on context
+ * @return {undefined}
+ */
+Zotero.ui.updateCollectionButtons = function(){
+    var editCollectionsButtonsList = J(".edit-collections-buttons-list");
+    editCollectionsButtonsList.buttonset().show();
+    
+    //enable modify and delete only if collection is selected
+    J("#edit-collections-buttons-div").buttonset();
+    
+    J(".create-collection-link").button('option', 'icons', {primary:'sprite-toolbar-collection-add'}).button('option', 'text', false);
+    J(".update-collection-link").button('option', 'icons', {primary:'sprite-toolbar-collection-edit'}).button('option', 'text', false);
+    J(".delete-collection-link").button('option', 'icons', {primary:'sprite-folder_delete'}).button('option', 'text', false);
+    
+    if(Zotero.nav.getUrlVar("collectionKey")){
+        J(".update-collection-link").button('enable');
+        J(".delete-collection-link").button('enable');
+    }
+    else{
+        J(".update-collection-link").button().button('disable');
+        J(".delete-collection-link").button().button('disable');
+    }
+};
+
+/**
+ * Display an items widget (for logged in homepage)
+ * @param  {Dom Element} el          Container
+ * @param  {object} config      items config
+ * @param  {array} loadedItems loaded items array
+ * @return {undefined}
+ */
+Zotero.ui.displayItemsWidget = function(el, config, loadedItems){
+    Z.debug("Zotero.ui.displayItemsWidget", 3);
+    Z.debug(config, 4);
+    //Z.debug(loadedItems, 4);
+    //figure out pagination values
+    var itemPage = parseInt(Zotero.nav.getUrlVar('itemPage'), 10) || 1;
+    var feed = loadedItems.feed;
+    var start = parseInt(config.start, 10) || 0;
+    var limit = parseInt(config.limit, 10) || 25;
+    var order = config.order || Zotero.config.userDefaultApiArgs.order;
+    var sort = config.sort || Zotero.config.sortOrdering[order] || 'asc';
+    var editmode = false;
+    var jel = J(el);
+    
+    var titleParts = feed.title.split('/');
+    var displayFields = Zotero.prefs.library_listShowFields;
+    
+    var itemsTableData = {titleParts:titleParts,
+                           displayFields:displayFields,
+                           items:loadedItems.itemsArray,
+                           editmode:editmode,
+                           order: order,
+                           sort: sort,
+                           library: loadedItems.library
+                        };
+    Zotero.ui.insertItemsTable(el, itemsTableData);
+    
+};
+
+/**
+ * Display the full library items section
+ * @param  {Dom Element} el          Container
+ * @param  {object} config      items config
+ * @param  {array} loadedItems loaded items array
+ * @return {undefined}
+ */
+Zotero.ui.displayItemsFull = function(el, config, loadedItems){
+    Z.debug("Zotero.ui.displayItemsFull", 3);
+    Z.debug(config, 4);
+    //Z.debug(loadedItems, 4);
+    
+    var jel = J(el);
+    var feed = loadedItems.feed;
+    var filledConfig = J.extend({}, Zotero.config.defaultApiArgs, Zotero.config.userDefaultApiArgs, config);
+
+    var titleParts = feed.title.split('/');
+    var displayFields = Zotero.prefs.library_listShowFields;
+    if(loadedItems.library.libraryType != 'group'){
+        displayFields = J.grep(displayFields, function(el, ind){
+            return J.inArray(el, Zotero.Library.prototype.groupOnlyColumns) == (-1);
+        });
+        /*
+        displayFields = displayFields.filter(function(el, ind, array){
+            return J.inArray(el, Zotero.Library.prototype.groupOnlyColumns) == (-1);
+        });*/
+    }
+    var editmode = (Zotero.config.librarySettings.allowEdit ? true : false);
+    
+    var itemsTableData = {titleParts:titleParts,
+                           displayFields:displayFields,
+                           items:loadedItems.itemsArray,
+                           editmode:editmode,
+                           order: filledConfig['order'],
+                           sort: filledConfig['sort'],
+                           library:loadedItems.library
+                        };
+    Z.debug(jel, 4);
+    Zotero.ui.insertItemsTable(jel, itemsTableData);
+    
+    if(Zotero.config.mobile){
+        Zotero.ui.createOnActivePage(el);
+        return;
+    }
+    
+    var pagination = Zotero.ui.createPagination(loadedItems.feed, 'itemPage', filledConfig);
+    var paginationData = {feed:feed, pagination:pagination};
+    var itemPage = pagination.page;
+    Zotero.ui.insertItemsPagination(el, paginationData);
+    Z.debug(jel, 4);
+    
+    //bind pagination links
+    var lel = J(el);
+    J("#start-item-link").click(function(e){
+        e.preventDefault();
+        Zotero.nav.urlvars.pathVars['itemPage'] = '';
+        Zotero.nav.pushState();
     });
-    return false;
+    J("#prev-item-link").click(function(e){
+        e.preventDefault();
+        var newItemPage = itemPage - 1;
+        Zotero.nav.urlvars.pathVars['itemPage'] = newItemPage;
+        Zotero.nav.pushState();
+    });
+    J("#next-item-link").click(function(e){
+        e.preventDefault();
+        var newItemPage = itemPage + 1;
+        Zotero.nav.urlvars.pathVars['itemPage'] = newItemPage;
+        Zotero.nav.pushState();
+    });
+    J("#last-item-link").click(function(e){
+        e.preventDefault();
+        Z.debug("last-item-link clickbind", 4);
+        var lasthref = '';
+        J.each(feed.links, function(ind, link){
+            if(link.rel === "last"){
+                lasthref = link.href;
+                return false;
+            }
+        });
+        Z.debug(lasthref, 4);
+        var laststart = J.deparam.querystring(lasthref).start;
+        Z.debug("laststart:" + laststart, 4);
+        var lastItemPage = (parseInt(laststart, 10) / limit) + 1;
+        Zotero.nav.urlvars.pathVars['itemPage'] = lastItemPage;
+        Zotero.nav.pushState();
+    });
+    
+    Zotero.ui.updateDisabledControlButtons();
+    
+    Zotero.ui.libraryBreadcrumbs();
+    
+    Zotero.ui.createOnActivePage(el);
 };
-
 
 /**
- * compatibility function between jqueryUI and jqueryMobile dialog functions
- * @param  {DOMNode} el      Dom element that will become the dialog
- * @param  {object} options Options object passed to either jqueryUI or jqueryMobile
- * @return {undefined}
+ * Build a pagination object necessary to figure out ranges and links
+ * @param  {Zotero_Feed} feed    feed object being paginated
+ * @param  {string} pageVar page variable used in url
+ * @param  {object} config  config used to fetch feed being paginated
+ * @return {object}
  */
-Zotero.ui.dialog = function(el, options){
-    Z.debug("Zotero.ui.dialog", 3);
-    J(el).dialog(options);
-    Z.debug("exiting Zotero.ui.dialog", 3);
+Zotero.ui.createPagination = function(feed, pageVar, config){
+    
+    //set relevant config vars to find pagination values
+    var page = parseInt(Zotero.nav.getUrlVar(pageVar), 10) || 1;
+    var start = parseInt(config.start, 10) || 0;
+    var limit = parseInt(config.limit, 10) || 25;
+    var totalResults = parseInt(feed.totalResults, 10);
+    
+    //figure out pagination values
+    var lastDisplayed = start + limit;
+    var prevPageNum = (page - 1);
+    var nextPageNum = (page + 1);
+    var lastPageNum = feed.lastPage;
+    
+    //build pagination object
+    var pagination = {page:page};
+    pagination.showFirstLink = start > 0;
+    pagination.showPrevLink = start > 0;
+    pagination.showNextLink = totalResults > lastDisplayed;
+    pagination.showLastLink = totalResults > (lastDisplayed );
+    
+    var mutateOb = {};
+    pagination.firstLink = Zotero.nav.mutateUrl(mutateOb, [pageVar]);
+    mutateOb[pageVar] = page - 1;
+    pagination.prevLink = Zotero.nav.mutateUrl(mutateOb, []);
+    mutateOb[pageVar] = page + 1;
+    pagination.nextLink = Zotero.nav.mutateUrl(mutateOb, []);
+    mutateOb[pageVar] = feed.lastPage;
+    pagination.lastLink = Zotero.nav.mutateUrl(mutateOb, []);
+    
+    pagination.start = start;
+    pagination.lastDisplayed = Math.min(lastDisplayed, totalResults);
+    pagination.total = totalResults;
+    
+    Z.debug("last displayed:" + lastDisplayed + " totalResults:" + feed.totalResults, 4);
+    return pagination;
 };
 
 /**
- * compatibility function between jqueryUI and jqueryMobile to close a dialog
- * @param  {Dom Element} el Dialog element
+ * Render and insert items table html into a container
+ * @param  {Dom Element} el   Container
+ * @param  {object} data Data object to pass to itemstableTemplate partial
  * @return {undefined}
  */
-Zotero.ui.closeDialog = function(el){
-    J(el).dialog('close');
+Zotero.ui.insertItemsTable = function(el, data){
+    Z.debug("Zotero.ui.insertItemsTable", 3);
+    Z.debug(data, 4);
+    var a = J.tmpl('itemstableTemplate', data).appendTo(J(el));
+    
+    //need to test for inside initialized page or error is thrown
+    if(Zotero.config.mobile && J(el).closest('.ui-page').length){
+        //J(el).trigger('create');
+        if(!(J(el).find('#field-list').hasClass('ui-listview'))) {
+            J(el).find('#field-list').listview();
+        }
+        else{
+            //J(el).find('#field-list').listview('refresh');
+            J(el).find('#field-list').trigger('refresh');
+        }
+    }
+    
 };
 
+/**
+ * Render and insert the items pagination block into a container
+ * @param  {Dom Element} el   Container
+ * @param  {object} data Data object to pass to itempaginationTemplate partial
+ * @return {undefined}
+ */
+Zotero.ui.insertItemsPagination = function(el, data){
+    J.tmpl('itempaginationTemplate', data).appendTo(J(el));
+    Zotero.ui.init.paginationButtons(data.pagination);
+};
 
+/**
+ * Display and initialize an edit item form
+ * @param  {Dom Element} el   Container
+ * @param  {Zotero_Item} item Zotero Item object to associate with form
+ * @return {undefined}
+ */
+Zotero.ui.editItemForm = function(el, item){
+    Z.debug("Zotero.ui.editItemForm", 3);
+    Z.debug(item, 4);
+    var jel = J(el);
+    if(item.itemType == 'note'){
+        Z.debug("editItemForm - note", 3);
+        jel.empty();
+        J.tmpl('editnoteformTemplate', {item:item,
+                                         itemKey:item.itemKey
+                                         }).appendTo(jel);
+                                         
+        Zotero.ui.init.tinyMce('default');
+        Zotero.ui.init.editButton();
+    }
+    else if(item.itemType == "attachment"){
+        Z.debug("item is attachment", 4);
+        jel.empty();
+        var mode = Zotero.nav.getUrlVar('mode');
+        J.tmpl('attachmentformTemplate', {item:item.apiObj,
+                                    itemKey:item.itemKey,
+                                    creatorTypes:[],
+                                    mode:mode
+                                    }).appendTo(jel);
+        
+        //add empty tag if no tags yet
+        if(item.apiObj.tags.length === 0){
+            Zotero.ui.addTag(false);
+        }
+        if(Zotero.config.mobile){
+            Zotero.ui.init.editButton();
+            J(el).trigger('create');
+        }
+        else{
+            Zotero.ui.init.creatorFieldButtons();
+            Zotero.ui.init.tagButtons();
+            Zotero.ui.init.editButton();
+        }
+        Zotero.ui.init.tinyMce();
+        
+    }
+    else{
+        var p = item.getCreatorTypes(item.apiObj.itemType);
+        p.done(J.proxy(function(){
+            Z.debug("getCreatorTypes callback", 3);
+            jel.empty();
+            var mode = Zotero.nav.getUrlVar('mode');
+            if(item.creators.length === 0){
+                item.creators.push({creatorType: item.creatorTypes[item.itemType][0],
+                                    first: '',
+                                    last: ''
+                                    });
+                item.apiObj.creators = item.creators;
+            }
+            J.tmpl('itemformTemplate', {item:item.apiObj,
+                                        itemKey:item.itemKey,
+                                        creatorTypes:Zotero.Item.prototype.creatorTypes[item.apiObj.itemType],
+                                        mode:mode
+                                        }).appendTo(jel);
+            
+            //add empty tag if no tags yet
+            if(item.apiObj.tags.length === 0){
+                Zotero.ui.addTag(false);
+            }
+            if(Zotero.config.mobile){
+                Zotero.ui.init.editButton();
+                J(el).trigger('create');
+            }
+            else{
+                Zotero.ui.init.creatorFieldButtons();
+                Zotero.ui.init.tagButtons();
+                Zotero.ui.init.editButton();
+            }
+        }, this));
+    }
+    
+    //add autocomplete to existing tag fields
+    J("input.taginput").autocomplete({
+        source:function(request, callback){
+            var library = Zotero.ui.getAssociatedLibrary(J(this.element.context).closest(".ajaxload"));
+            var matchingTagStrings = Zotero.utils.prependAutocomplete(request.term, library.tags.plainList);
+            callback(matchingTagStrings);
+        },
+        select: function(e, ui){
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            var value = ui.item.value;
+            Zotero.ui.addTag();
+        }
+    });
+};
+
+/**
+ * Get the Zotero Library associated with an element (generally a .ajaxload element)
+ * @param  {Dom Element} el Dom element
+ * @return {Zotero_Library}
+ */
+Zotero.ui.getAssociatedLibrary = function(el){
+    Z.debug("Zotero.ui.getAssociatedLibrary", 3);
+    var jel;
+    if(typeof el == 'undefined'){
+        jel = J("#library-items-div");
+    }
+    else {
+        jel = J(el);
+        if(jel.length === 0){
+            jel = J("#library-items-div");
+        }
+    }
+    
+    //get Zotero.Library object if already bound to element
+    var library = jel.data('zoterolibrary');
+    if(!library){
+        var loadConfig = jel.data('loadconfig');
+        var libraryID = loadConfig.libraryID;
+        var libraryType = loadConfig.libraryType;
+        var libraryUrlIdentifier = loadConfig.libraryUrlIdentifier;
+        if(!libraryID || !libraryType) {
+            Z.debug("Bad library data attempting to get associated library: libraryID " + libraryID + " libraryType " + libraryType, 1);
+            throw "Err";
+        }
+        if(Zotero.libraries[Zotero.utils.libraryString(libraryType, libraryID)]){
+            library = Zotero.libraries[Zotero.utils.libraryString(libraryType, libraryID, libraryUrlIdentifier)];
+        }
+        else{
+            library = new Zotero.Library(libraryType, libraryID, libraryUrlIdentifier);
+            Zotero.libraries[Zotero.utils.libraryString(libraryType, libraryID)] = library;
+        }
+        jel.data('zoterolibrary', library);
+    }
+    return library;
+};
+
+/**
+ * Empty conatiner and show preloader spinner
+ * @param  {Dom Element} el   container
+ * @param  {string} type type of preloader to show
+ * @return {undefined}
+ */
+Zotero.ui.showSpinner = function(el, type){
+    var spinnerUrl = Zotero.config.baseWebsiteUrl + '/static/images/theme/broken-circle-spinner.gif';
+    if(!type){
+        J(el).html("<img class='spinner' src='" + spinnerUrl + "'/>");
+    }
+    else if(type == 'horizontal'){
+        J(el).html("<img class='spinner' src='" + spinnerUrl + "'/>");
+    }
+};
+
+/**
+ * Append a preloader spinner to an element
+ * @param  {Dom Element} el container
+ * @return {undefined}
+ */
+Zotero.ui.appendSpinner = function(el){
+    var spinnerUrl = Zotero.config.baseWebsiteUrl + '/static/images/theme/broken-circle-spinner.gif';
+    J(el).append("<img class='spinner' src='" + spinnerUrl + "'/>");
+};
+
+//generate html for tags
+/**
+ * Display filtered list of tags
+ * @param  {Dom element} el                 Container
+ * @param  {Zotero_Tags} libtags            Zotero_Tags object
+ * @param  {array} matchedTagStrings  tags that matched the filter string
+ * @param  {array} selectedTagStrings tags that are currently selected
+ * @return {undefined}
+ */
+Zotero.ui.displayTagsFiltered = function(el, libtags, matchedTagStrings, selectedTagStrings){
+    Zotero.debug("Zotero.ui.displayTagsFiltered");
+    Z.debug(selectedTagStrings, 4);
+    var curPreString = J("#tag-filter-input").val();
+    var jel = J(el);
+    var showMore = jel.data('showmore');
+    if(!showMore){
+        showMore = false;
+    }
+    
+    //jel.empty();
+    var filteredTags = [];
+    var selectedTags = [];
+    J.each(matchedTagStrings, function(index, matchedString){
+        if(libtags.tagObjects[matchedString] && (J.inArray(matchedString, selectedTagStrings) == (-1))) {
+            filteredTags.push(libtags.tagObjects[matchedString]);
+        }
+    });
+    J.each(selectedTagStrings, function(index, selectedString){
+        if(libtags.tagObjects[selectedString]){
+            selectedTags.push(libtags.tagObjects[selectedString]);
+        }
+    });
+    
+    //Z.debug('filteredTags:');
+    //Z.debug(filteredTags);
+    //Z.debug('selectedTags:');
+    //Z.debug(selectedTags);
+    
+    var passTags;
+    if(!showMore){
+        passTags = filteredTags.slice(0, 25);
+        J("#show-more-tags-link").show();
+        J("#show-less-tags-link").hide();
+    }
+    else{
+        passTags = filteredTags;
+        J("#show-more-tags-link").hide();
+        J("#show-less-tags-link").show();
+    }
+    
+    var tagListEl = J("#tags-list").empty();
+    J("#selected-tags-list").replaceWith(J.tmpl('tagunorderedlistTemplate', {tags:selectedTags, id:'selected-tags-list'}));
+    J("#tags-list").replaceWith(J.tmpl('tagunorderedlistTemplate', {tags:passTags, id:'tags-list'}));
+    
+};
+
+/**
+ * Render and display full item details into an element
+ * @param  {Zotero_Item} item Zotero Item to display
+ * @param  {Dom Element} el   Container
+ * @return {undefined}
+ */
+Zotero.ui.loadItemDetail = function(item, el){
+    Z.debug("Zotero.ui.loadItemDetail", 3);
+    var jel = J(el);
+    jel.empty();
+    //Z.debug(item, 4);
+    var parentUrl = false;
+    if(item.parentKey){
+        parentUrl = item.owningLibrary.websiteUrl({itemKey:item.parentKey});
+    }
+    Z.debug(1);
+    if(item.itemType == "note"){
+        Z.debug("note item", 3);
+        J.tmpl('itemnotedetailsTemplate', {item:item, parentUrl:parentUrl}).appendTo(jel);
+    }
+    else{
+        Z.debug("non-note item", 3);
+        J.tmpl('itemdetailsTemplate', {item:item, parentUrl:parentUrl}).appendTo(jel).trigger('create');
+    }
+    Z.debug(2);
+    Zotero.ui.init.tinyMce('readonly');
+    Zotero.ui.init.editButton();
+    Zotero.ui.init.detailButtons();
+    
+    Zotero.ui.libraryBreadcrumbs();
+    
+    try{
+        //trigger event for Zotero translator detection
+        var ev = document.createEvent('HTMLEvents');
+        ev.initEvent('ZoteroItemUpdated', true, true);
+        document.dispatchEvent(ev);
+    }
+    catch(e){
+        Zotero.debug("Error triggering ZoteroItemUpdated event");
+    }
+};
 
 /**
  * Format an item field for display
@@ -8579,10 +8856,17 @@ Zotero.ui.formatItemField = function(field, item, trim){
             if(typeof(item[field]) !== "undefined"){
                 formattedString = item[field];
             }
-            else if(item.apiObj){
-                if(item.apiObj[field]){
-                    formattedString = item.apiObj[field];
+            else if(item.apiObject){
+                if(item.apiObject[field]){
+                    formattedString = item.apiObject[field];
                 }
+            }
+            else if(item.contentRows){
+                J.each(item.contentRows, function(rowI, row){
+                    if(row.field === field){
+                        formattedString = row.fieldValue;
+                    }
+                });
             }
     }
     if(trim && (trimLength > 0) && (formattedString.length > trimLength) ) {
@@ -8671,6 +8955,27 @@ Zotero.ui.formatItemContentRow = function(contentRow){
     }
 };
 
+Zotero.ui.userGroupsDisplay = function(groups){
+    var html = '';
+    J.each(groups.groupsArray, function(index, group){
+        html += Zotero.ui.groupNugget(group);
+    });
+    return html;
+};
+
+Zotero.ui.groupTypeMap = {'Private': 'Private',
+                   'PublicOpen': 'Public, Open Membership',
+                   'PublicClosed': 'Public, Closed Membership'};
+                   
+Zotero.ui.groupAccessMap = {
+                    'all'     : {'members' : 'Anyone can view, only members can edit',
+                                       'admins'  : 'Anyone can view, only admins can edit'},
+                    'members' : {'members' : 'Only members can view and edit',
+                                       'admins'  : 'Only members can view, only admins can edit'},
+                    'admins'  : {'members' : 'Only admins can view, only members can edit',
+                                       'admins'  : 'Only admins can view and edit'}
+                    };
+
 Zotero.ui.groupUrl = function(group, route){
     var groupBase;
     if(group.groupType == 'Private'){
@@ -8696,6 +9001,84 @@ Zotero.ui.groupUrl = function(group, route){
             return groupIDBase + '/settings/members';
     }
 };
+
+/**
+ * Update the page's breadcrumbs based on the current state
+ * @param  {Zotero_Library} library current Zotero Library
+ * @param  {object} config  Current config object being displayed
+ * @return {undefined}
+ */
+Zotero.ui.libraryBreadcrumbs = function(library, config){
+    Z.debug('Zotero.ui.libraryBreadcrumbs', 3);
+    try{
+    var breadcrumbs;
+    if(!library){
+        library = Zotero.ui.getAssociatedLibrary(J("#feed-link-div"));
+    }
+    if(!config){
+        config = Zotero.nav.getUrlVars();
+    }
+    Z.debug(config, 4);
+    if(library.libraryType == 'user'){
+        breadcrumbs = [{label:'Home', path:'/'},
+                           {label:'People', path:'/people'},
+                           {label:(library.libraryLabel || library.libraryUrlIdentifier), path:'/' + library.libraryUrlIdentifier},
+                           {label:'Library', path:'/' + library.libraryUrlIdentifier + '/items'}];
+    }
+    else{
+        breadcrumbs = [{label:'Home', path:'/'},
+                           {label:'Groups', path:'/groups'},
+                           {label:(library.libraryLabel || library.libraryUrlIdentifier), path:'/groups/' + library.libraryUrlIdentifier},
+                           {label:'Library', path:'/groups/' + library.libraryUrlIdentifier + '/items'}];
+    }
+    if(config.collectionKey){
+        Z.debug("have collectionKey", 4);
+        if(library.collections[config.collectionKey]){
+            breadcrumbs.push({label:library.collections[config.collectionKey]['name'], path:Zotero.nav.buildUrl({collectionKey:config.collectionKey})});
+        }
+    }
+    if(config.itemKey){
+        Z.debug("have itemKey", 4);
+        breadcrumbs.push({label:library.items.getItem(config.itemKey).title, path:Zotero.nav.buildUrl({collectionKey:config.collectionKey, itemKey:config.itemKey})});
+    }
+    Z.debug(breadcrumbs, 4);
+    J("#breadcrumbs").empty();
+    J.tmpl('breadcrumbsTemplate', {breadcrumbs:breadcrumbs}).appendTo(J("#breadcrumbs"));
+    var newtitle = J.tmpl('breadcrumbstitleTemplate', {breadcrumbs:breadcrumbs}).text();
+    Zotero.nav.updateStateTitle(newtitle);
+    Z.debug("done with breadcrumbs", 4);
+    }
+    catch(e){
+        Zotero.debug("Error loading breadcrumbs", 2);
+    }
+    
+};
+
+/**
+ * trigger create on actively displayed page (placeholder version of mobile function which actually does something)
+ * @param  {Dom Element} el Active page element
+ * @return {undefined}
+ */
+Zotero.ui.createOnActivePage = function(el){
+    
+};
+
+/**
+ * Trigger a ZoteroItemUpdated event on the document for zotero translators
+ * @return {undefined}
+ */
+Zotero.ui.zoteroItemUpdated = function(){
+    try{
+        //trigger event for Zotero translator detection
+        var ev = document.createEvent('HTMLEvents');
+        ev.initEvent('ZoteroItemUpdated', true, true);
+        document.dispatchEvent(ev);
+    }
+    catch(e){
+        Zotero.debug("Error triggering ZoteroItemUpdated event");
+    }
+};
+
 
 
 Zotero.ui.init = {};
@@ -8763,7 +9146,7 @@ Zotero.ui.init.fullLibrary = function(){
     Zotero.ui.init.tags();
     Zotero.ui.init.collections();
     Zotero.ui.init.items();
-    //Zotero.ui.init.feed();
+    Zotero.ui.init.feed();
     Zotero.ui.init.libraryTemplates();
 };
 
@@ -8897,6 +9280,15 @@ Zotero.ui.init.libraryControls = function(){
     J("create-collection-dialog").on('submit', ".new-collection-div form", function(e){
         e.preventDefault();
     });
+    /*
+    //not sure why I'm doing this, so comment out and see if it breaks
+    J( "button.create-collection-button").live('click', function(e){
+        e.preventDefault();
+    });
+    J("button.update-collection-button").live('click', function(e){
+        e.preventDefault();
+    });
+    */
    
     //set initial state of search input to url value
     if(Zotero.nav.getUrlVar('q')){
@@ -8912,7 +9304,7 @@ Zotero.ui.init.libraryControls = function(){
     J("#header-search-query").attr('placeholder', "Search Library");
     
     //set up search submit for library
-    J("#library-search").on('submit', function(e){
+    J("#simple-search").live('submit', function(e){
         e.preventDefault();
         Zotero.nav.clearUrlVars(['collectionKey', 'tag', 'q']);
         var query     = J("#header-search-query").val();
@@ -8937,7 +9329,7 @@ Zotero.ui.init.libraryControls = function(){
                 Zotero.nav.pushState();
             }
         };
-        J("#library-search button.clear-field-button").on('click', clearQuery);
+        J("#simple-search button.clear-field-button").on('click', clearQuery);
     }
 };
 
@@ -9292,6 +9684,14 @@ Zotero.ui.init.tagButtons = function(){
     });
 };
 
+Zotero.ui.init.feed = function(){
+    J("#export-section-title").bind('click', function(e){
+        e.preventDefault();
+        J("#export-list").slideToggle();
+    });
+    
+};
+
 //bind citation/bib links to launch citation dialog
 /*Zotero.ui.init.citation = function(){
     Z.debug("Zotero.ui.init.citation");
@@ -9345,7 +9745,7 @@ Zotero.ui.init.tinyMce = function(type, autofocus, elements){
     
     if(autofocus){
         tmceConfig.init_instance_callback = function(inst){
-            Z.debug("inited " + inst.editorId);
+            console.log("inited " + inst.editorId);
             inst.focus();
         };
     }
@@ -9400,1244 +9800,6 @@ Zotero.ui.init.libraryTemplates = function(){
     J('#addtocollectionformTemplate').template('addtocollectionformTemplate');
     J('#exportformatsTemplate').template('exportformatsTemplate');
     
-};
-
-
-
-
-/**
- * Update a Zotero_Item object from the current values of an edit item form
- * @param  {Zotero_Item} item   Zotero item to update
- * @param  {Dom Form} formEl edit item form to take values from
- * @return {bool}
- */
-Zotero.ui.updateItemFromForm = function(item, formEl){
-    Z.debug("Zotero.ui.updateItemFromForm", 3);
-    var base = J(formEl);
-    base.closest('.ajaxload').data('ignoreformstorage', true);
-    var library = Zotero.ui.getAssociatedLibrary(base.closest('.ajaxload'));
-    
-    var itemKey = '';
-    if(item.itemKey) itemKey = item.itemKey;
-    //update current representation of the item with form values
-    J.each(item.apiObj, function(field, value){
-        var selector, inputValue, noteElID;
-        if(field == 'note'){
-            selector = "textarea[data-itemKey='" + itemKey + "'].tinymce";
-            Z.debug(selector, 4);
-            noteElID = J(selector).attr('id');
-            Z.debug(noteElID, 4);
-            inputValue = tinyMCE.get(noteElID).getContent();
-        }
-        else{
-            selector = "[data-itemKey='" + itemKey + "'][name='" + field + "']";
-            inputValue = base.find(selector).val();
-        }
-        
-        if(typeof inputValue !== 'undefined'){
-            item.apiObj[field] = inputValue;//base.find(selector).val();
-        }
-    });
-    var creators = [];
-    base.find("tr.creator").each(function(index, el){
-        var name, creator, firstName, lastName;
-        var trindex = parseInt(J(el).attr('id').substr(8), 10);
-        var creatorType = J(el).find("select[id$='creatorType']").val();
-        if(J(el).hasClass('singleCreator')){
-            name = J(el).find("input[id$='_name']");
-            if(!name.val()){
-                //can't submit authors with empty names
-                return true;
-            }
-            creator = {creatorType: creatorType,
-                            name: name.val()
-                        };
-        }
-        else if(J(el).hasClass('doubleCreator')){
-            firstName = J(el).find("input[id$='_firstName']").val();
-            lastName = J(el).find("input[id$='_lastName']").val();
-            if((firstName === '') && (lastName === '')){
-                return true;
-            }
-            creator = {creatorType: creatorType,
-                            firstName: firstName,
-                            lastName: lastName
-                            };
-        }
-        creators.push(creator);
-    });
-    
-    var tags = [];
-    base.find("input[id^='tag_']").each(function(index, el){
-        if(J(el).val() !== ''){
-            tags.push({tag: J(el).val()});
-        }
-    });
-    
-    //grab all the notes from the form and add to item
-    //in the case of new items we can add notes in the creation request
-    //in the case of existing items we need to post notes to /children, but we still
-    //have that interface here for consistency
-    var notes = [];
-    base.find("textarea[name^='note_']").each(function(index, el){
-        var noteid = J(el).attr('id');
-        var noteContent = tinyMCE.get(noteid).getContent();
-        Z.debug(noteContent, 3);
-        notes.push({itemType:'note', 'note': noteContent, parentItem: item.itemKey});
-    });
-    
-    item.notes = notes;
-    item.apiObj.creators = creators;
-    item.apiObj.tags = tags;
-    
-};
-
-Zotero.ui.saveItem = function(item) {
-    //var requestData = JSON.stringify(item.apiObj);
-    Z.debug("pre writeItem debug", 4);
-    Z.debug(item, 4);
-    //show spinner before making ajax write call
-    var jqxhr = item.writeItem();
-    jqxhr.done(J.proxy(function(newItemKey){
-        Z.debug("item write finished", 3);
-        delete Zotero.nav.urlvars.pathVars['action'];
-        if(item.itemKey === ''){
-            //newly created item, add to collection if collectionkey in url
-            var collectionKey = Zotero.nav.getUrlVar('collectionKey');
-            if(collectionKey){
-                var collection = library.collections[collectionKey];
-                collection.addItems([item.itemKey]);
-                library.dirty = true;
-            }
-            Zotero.nav.urlvars.pathVars['itemKey'] = item.itemKey;
-        }
-        Zotero.nav.clearUrlVars(['itemKey', 'collectionKey']);
-        Zotero.nav.pushState(true);
-    }, this));
-    
-    //update list of tags we have if new ones added
-    Z.debug('adding new tags to library tags', 3);
-    var libTags = library.tags;
-    var tags = item.apiObj.tags;
-    J.each(tags, function(index, tagOb){
-        var tagString = tagOb.tag;
-        if(!libTags.tagObjects.hasOwnProperty(tagString)){
-            var tag = new Zotero.Tag();
-            tag.title = tagString;
-            tag.numItems = 1;
-            tag.urlencodedtag = encodeURIComponent(tag.title);
-            libTags.tagObjects[tagString] = tag;
-            libTags.updateSecondaryData();
-        }
-    });
-};
-
-/**
- * Temporarily store the data in a form so it can be reloaded
- * @return {undefined}
- */
-Zotero.ui.saveFormData = function(){
-    Z.debug("saveFormData", 3);
-    J(".ajaxload").each(function(){
-        var formInputs = J(this).find('input');
-        J(this).data('tempformstorage', formInputs);
-    });
-};
-
-/**
- * Reload previously saved form data
- * @param  {Dom Element} el DOM Form to restore data to
- * @return {undefined}
- */
-Zotero.ui.loadFormData = function(el){
-    Z.debug("loadFormData", 3);
-    var formData = J(el).data('tempformstorage');
-    if(J(el).data("ignoreformstorage")){
-        Z.debug("ignoring stored form data", 3);
-        J(el).removeData('tempFormStorage');
-        J(el).removeData('ignoreFormStorage');
-        return;
-    }
-    Z.debug('formData: ', 4);
-    Z.debug(formData, 4);
-    if(formData){
-        formData.each(function(index){
-            var idstring = '#' + J(this).attr('id');
-            Z.debug('idstring:' + idstring, 4);
-            if(J(idstring).length){
-                Z.debug('setting value of ' + idstring, 4);
-                J(idstring).val(J(this).val());
-            }
-        });
-    }
-};
-
-/**
- * Get the class for an itemType to display an appropriate icon
- * @param  {Zotero_Item} item Zotero item to get the class for
- * @return {string}
- */
-Zotero.ui.itemTypeClass = function(item) {
-    var itemTypeClass = item.itemType;
-    if (item.itemType == 'attachment') {
-        if (item.mimeType == 'application/pdf') {
-            itemTypeClass += '-pdf';
-        }
-        else {
-            switch (item.linkMode) {
-                case 0: itemTypeClass += '-file'; break;
-                case 1: itemTypeClass += '-file'; break;
-                case 2: itemTypeClass += '-snapshot'; break;
-                case 3: itemTypeClass += '-web-link'; break;
-            }
-        }
-    }
-    return "img-" + itemTypeClass;
-};
-
-/**
- * Build a pagination object necessary to figure out ranges and links
- * @param  {Zotero_Feed} feed    feed object being paginated
- * @param  {string} pageVar page variable used in url
- * @param  {object} config  config used to fetch feed being paginated
- * @return {object}
- */
-Zotero.ui.createPagination = function(feed, pageVar, config){
-    
-    //set relevant config vars to find pagination values
-    var page = parseInt(Zotero.nav.getUrlVar(pageVar), 10) || 1;
-    var start = parseInt(config.start, 10) || 0;
-    var limit = parseInt(config.limit, 10) || 25;
-    var totalResults = parseInt(feed.totalResults, 10);
-    
-    //figure out pagination values
-    var lastDisplayed = start + limit;
-    var prevPageNum = (page - 1);
-    var nextPageNum = (page + 1);
-    var lastPageNum = feed.lastPage;
-    
-    //build pagination object
-    var pagination = {page:page};
-    pagination.showFirstLink = start > 0;
-    pagination.showPrevLink = start > 0;
-    pagination.showNextLink = totalResults > lastDisplayed;
-    pagination.showLastLink = totalResults > (lastDisplayed );
-    
-    var mutateOb = {};
-    pagination.firstLink = Zotero.nav.mutateUrl(mutateOb, [pageVar]);
-    mutateOb[pageVar] = page - 1;
-    pagination.prevLink = Zotero.nav.mutateUrl(mutateOb, []);
-    mutateOb[pageVar] = page + 1;
-    pagination.nextLink = Zotero.nav.mutateUrl(mutateOb, []);
-    mutateOb[pageVar] = feed.lastPage;
-    pagination.lastLink = Zotero.nav.mutateUrl(mutateOb, []);
-    
-    pagination.start = start;
-    pagination.lastDisplayed = Math.min(lastDisplayed, totalResults);
-    pagination.total = totalResults;
-    
-    Z.debug("last displayed:" + lastDisplayed + " totalResults:" + feed.totalResults, 4);
-    return pagination;
-};
-
-/**
- * Get the Zotero Library associated with an element (generally a .ajaxload element)
- * @param  {Dom Element} el Dom element
- * @return {Zotero_Library}
- */
-Zotero.ui.getAssociatedLibrary = function(el){
-    Z.debug("Zotero.ui.getAssociatedLibrary", 3);
-    var jel;
-    if(typeof el == 'undefined'){
-        jel = J("#library-items-div");
-    }
-    else {
-        jel = J(el);
-        if(jel.length === 0){
-            jel = J("#library-items-div");
-        }
-    }
-    
-    //get Zotero.Library object if already bound to element
-    var library = jel.data('zoterolibrary');
-    if(!library){
-        var loadConfig = jel.data('loadconfig');
-        var libraryID = loadConfig.libraryID;
-        var libraryType = loadConfig.libraryType;
-        var libraryUrlIdentifier = loadConfig.libraryUrlIdentifier;
-        if(!libraryID || !libraryType) {
-            Z.debug("Bad library data attempting to get associated library: libraryID " + libraryID + " libraryType " + libraryType, 1);
-            throw "Err";
-        }
-        if(Zotero.libraries[Zotero.utils.libraryString(libraryType, libraryID)]){
-            library = Zotero.libraries[Zotero.utils.libraryString(libraryType, libraryID, libraryUrlIdentifier)];
-        }
-        else{
-            library = new Zotero.Library(libraryType, libraryID, libraryUrlIdentifier);
-            Zotero.libraries[Zotero.utils.libraryString(libraryType, libraryID)] = library;
-        }
-        jel.data('zoterolibrary', library);
-    }
-    return library;
-};
-
-/**
- * Scroll to the top of the window
- * @return {undefined}
- */
-Zotero.ui.scrollToTop = function(){
-    window.scrollBy(0, -5000);
-};
-
-
-
-/**
- * get a list of the itemKeys for items checked off in a form to know what items to operate on
- * if a single item is being displayed the form selections will be overridden
- * otherwise this function returns the data-itemkey values associated with input.itemKey-checkbox:checked
- * @param  {Form element} form Form DOM Element to pull itemkey values from
- * @return {array}
- */
-Zotero.ui.getSelectedItemKeys = function(form){
-    Z.debug("Zotero.ui.getSelectedItemKeys", 3);
-    var itemKeys = [];
-    var curItemKey = Zotero.nav.getUrlVar('itemKey');
-    if(curItemKey){
-        itemKeys.push(curItemKey);
-    }
-    else{
-        if(J(form).length){
-            J(form).find("input.itemKey-checkbox:checked").each(function(index, val){
-                itemKeys.push(J(val).data('itemkey'));
-            });
-        }
-        else {
-            J("input.itemKey-checkbox:checked").each(function(index, val){
-                itemKeys.push(J(val).data('itemkey'));
-            });
-        }
-    }
-    return itemKeys;
-};
-
-Zotero.ui.getAllFormItemKeys = function(form){
-    Z.debug("Zotero.ui.getSelectedItemKeys", 3);
-    var itemKeys = [];
-    var curItemKey = Zotero.nav.getUrlVar('itemKey');
-    if(curItemKey){
-        itemKeys.push(curItemKey);
-    }
-    else{
-        J(form).find("input.itemKey-checkbox").each(function(index, val){
-            itemKeys.push(J(val).data('itemkey'));
-        });
-    }
-    return itemKeys;
-};
-
-
-
-/**
- * Display a JS notification message to the user
- * @param  {string} message Notification message
- * @param  {string} type    confirm, notice, or error
- * @param  {int} timeout seconds to display notification
- * @return {undefined}
- */
-Zotero.ui.jsNotificationMessage = function(message, type, timeout){
-    Z.debug("notificationMessage: " + type + " : " + message, 3);
-    if(Zotero.config.suppressErrorNotifications) return;
-    if(!timeout){
-        timeout = 5;
-    }
-    J("#js-message-list").append("<li class='jsNotificationMessage-" + type + "' >" + message + "</li>").children("li").delay(parseInt(timeout, 10) * 1000).slideUp().delay(300).queue(function(){
-        J(this).remove();
-    });
-};
-
-/**
- * Display an error message on ajax failure
- * @param  {jQuery XHR Promise} jqxhr jqxhr returned from jquery.ajax
- * @return {undefined}
- */
-Zotero.ui.ajaxErrorMessage = function(jqxhr){
-    Z.debug("Zotero.ui.ajaxErrorMessage", 3);
-    if(typeof jqxhr == 'undefined'){
-        Z.debug('ajaxErrorMessage called with undefined argument');
-        return '';
-    }
-    Z.debug(jqxhr, 3);
-    switch(jqxhr.status){
-        case 403:
-            //don't have permission to view
-            if(Zotero.config.loggedIn || Zotero.config.ignoreLoggedInStatus){
-                return "You do not have permission to view this library.";
-            }
-            else{
-                Zotero.config.suppressErrorNotifications = true;
-                window.location = "/user/login";
-                return "";
-            }
-            break;
-        case 404:
-            Zotero.ui.jsNotificationMessage("A requested resource could not be found.", 'error');
-            break;
-        case 400:
-            Zotero.ui.jsNotificationMessage("Bad Request", 'error');
-            break;
-        case 405:
-            Zotero.ui.jsNotificationMessage("Method not allowed", 'error');
-            break;
-        case 412:
-            Zotero.ui.jsNotificationMessage("Precondition failed", 'error');
-            break;
-        case 500:
-            Zotero.ui.jsNotificationMessage("Something went wrong but we're not sure what.", 'error');
-            break;
-        case 501:
-            Zotero.ui.jsNotificationMessage("We can't do that yet.", 'error');
-            break;
-        case 503:
-            Zotero.ui.jsNotificationMessage("We've gone away for a little while. Please try again in a few minutes.", 'error');
-            break;
-        default:
-            Z.debug("jqxhr status did not match any expected case");
-            Z.debug(jqxhr.status);
-            //Zotero.ui.jsNotificationMessage("An error occurred performing the requested action.", 'error');
-    }
-    return '';
-};
-
-/**
- * Get an item's children and display summary info
- * @param  {DOM Element} el      element to insert into
- * @param  {string} itemKey key of parent item
- * @return {undefined}
- */
-Zotero.ui.showChildren = function(el, itemKey){
-    Z.debug('Zotero.ui.showChildren', 3);
-    var library = Zotero.ui.getAssociatedLibrary(J(el).closest("div.ajaxload"));
-    var item = library.items.getItem(itemKey);
-    var attachmentsDiv = J(el).find(".item-attachments-div");
-    Zotero.ui.showSpinner(attachmentsDiv);
-    
-    var childItemsPromise = item.getChildren(library);
-    
-    childItemsPromise.done(function(childItems){
-        J.tmpl('childitemsTemplate', {childItems:childItems}).appendTo(J(".item-attachments-div").empty());
-    });
-    
-    Zotero.ui.createOnActivePage(el);
-};
-
-/**
- * Add creator field to item edit form
- * @param {DOM Button} button Add creator button clicked
- */
-Zotero.ui.addCreator = function(button){
-    Z.debug("Zotero.ui.addCreator", 3);
-    var itemKey = J(button).data('itemkey');
-    var itemType = J(button).closest('form').find('select.itemType').val();
-    var lastcreatorid = J("input[id^='creator_']:last").attr('id');
-    var creatornum = 0;
-    if(lastcreatorid){
-        creatornum = parseInt(lastcreatorid.substr(8), 10);
-    }
-    var newindex = creatornum + 1;
-    var jel = J("input[id^='creator_']:last").closest('tr');
-    J.tmpl('authorelementsdoubleTemplate', {index:newindex,
-                                            creator:{firstName:'', lastName:''},
-                                            creatorTypes:Zotero.Item.prototype.creatorTypes[itemType]
-                                            }).insertAfter(jel);
-    
-    Zotero.ui.init.creatorFieldButtons();
-    
-    Zotero.ui.createOnActivePage(jel);
-};
-
-/**
- * Remove a creator from an edit item form
- * @param  {Dom Button} button Remove creator button that was clicked
- * @return {undefined}
- */
-Zotero.ui.removeCreator = function(button){
-    Z.debug("Zotero.ui.removeCreator", 3);
-    J(button).closest('tr').remove();
-    
-    Zotero.ui.createOnActivePage(button);
-};
-
-/**
- * Add a note field to an editItem Form
- * @param {Dom Button} button Add note button that was clicked
- */
-Zotero.ui.addNote = function(button){
-    Z.debug("Zotero.ui.addNote", 3);
-    //var itemKey = J(button).data('itemkey');
-    var notenum = 0;
-    var lastNoteID = J("textarea[name^='note_']:last").attr('name');
-    if(lastNoteID){
-        notenum = parseInt(lastNoteID.substr(5), 10);
-    }
-    
-    var newindex = notenum + 1;
-    var newNoteID = "note_" + newindex;
-    var jel;
-    if(Zotero.config.mobile){
-        jel = J("td.notes").append('<textarea cols="40" rows="24" name="' + newNoteID + '" id="' + newNoteID + '" class="tinymce default"></textarea>');
-    }
-    else{
-        jel = J("td.notes button.add-note-button").before('<textarea cols="40" rows="24" name="' + newNoteID + '" id="' + newNoteID + '" class="tinymce default"></textarea>');
-    }
-    
-    Z.debug("new note ID:" + newNoteID, 4);
-    
-    Zotero.ui.init.tinyMce('default', true, newNoteID);
-    
-    Zotero.ui.createOnActivePage(button);
-};
-
-/**
- * Load the template for a new item
- * @param  {Zotero_Item} item Item template to load
- * @return {undefined}
- */
-Zotero.ui.loadNewItemTemplate = function(item){
-    Z.debug("Zotero.ui.loadNewItemTemplate", 3);
-    Z.debug(item, 3);
-    var d = Zotero.Item.prototype.getCreatorTypes(item.itemType);
-    d.done(function(itemCreatorTypes){
-        var jel = J("#item-details-div").empty();
-        if(item.itemType == 'note'){
-            var parentKey = Zotero.nav.getUrlVar('parentKey');
-            if(parentKey){
-                item.parentKey = parentKey;
-            }
-            J.tmpl('editnoteformTemplate', {item:item,
-                                         itemKey:item.itemKey
-                                         }).appendTo(jel);
-            
-            Zotero.ui.init.tinyMce('default');
-        }
-        else {
-            J.tmpl('itemformTemplate', {item:item.apiObj,
-                                        libraryUserID:zoteroData.libraryUserID,
-                                        itemKey:item.itemKey,
-                                        creatorTypes:itemCreatorTypes
-                                        }
-                                        ).appendTo(jel);
-            if(item.apiObj.tags.length === 0){
-                Zotero.ui.addTag(false);
-            }
-            Zotero.ui.init.creatorFieldButtons();
-            Zotero.ui.init.tagButtons();
-            Zotero.ui.init.editButton();
-        }
-        jel.data('newitem', item);
-        
-        //load data from previously rendered form if available
-        Zotero.ui.loadFormData(jel);
-        
-        Zotero.ui.createOnActivePage(jel);
-    });
-};
-
-/**
- * Add a tag field to an edit item form
- * @param {bool} focus Whether to focus the newly added tag field
- */
-Zotero.ui.addTag = function(focus) {
-    Z.debug("Zotero.ui.addTag", 3);
-    if(typeof focus == 'undefined'){
-        focus = true;
-    }
-    var tagnum = 0;
-    var lastTagID = J("input[id^='tag_']:last").attr('id');
-    if(lastTagID){
-        tagnum = parseInt(lastTagID.substr(4), 10);
-    }
-    
-    var newindex = tagnum + 1;
-    var jel = J("td.tags");
-    J.tmpl('itemtagTemplate', {index:newindex}).appendTo(jel);
-    
-    J("input.taginput").autocomplete({
-        source:function(request, callback){
-            var library = Zotero.ui.getAssociatedLibrary(J(this.element.context).closest(".ajaxload"));
-            var matchingTagStrings = Zotero.utils.prependAutocomplete(request.term, library.tags.plainList);
-            callback(matchingTagStrings);
-        },
-        select: function(e, ui){
-            e.preventDefault();
-            e.stopImmediatePropagation();
-            var value = ui.item.value;
-            Zotero.ui.addTag();
-        }
-    });
-    
-    if(focus){
-        J("input.taginput").last().focus();
-    }
-    
-    Zotero.ui.init.tagButtons();
-    
-    Zotero.ui.createOnActivePage(jel);
-};
-
-/**
- * Remove a tag field from an edit item form
- * @param  {DOM Element} el Tag field to remove
- * @return {undefined}
- */
-Zotero.ui.removeTag = function(el) {
-    Z.debug("Zotero.ui.removeTag", 3);
-    J(el).closest('.edit-tag-div').remove();
-    
-    Zotero.ui.createOnActivePage(el);
-};
-
-//generate the full html for the nested collections list
-/**
- * generate the full html for the nested collections list
- * @param  {Dom Element} el          Element to display collections in
- * @param  {Zotero_Collections} collections Zotero_Collections to display
- * @return {undefined}
- */
-Zotero.ui.displayCollections = function(el, collections){
-    Z.debug("Zotero.ui.displayCollections", 3);
-    Z.debug("library Identifier " + collections.libraryUrlIdentifier, 4);
-    var jel = J(el);
-    var currentCollectionKey = Zotero.nav.getUrlVar('collectionKey') || '';
-    var trash = collections.owningLibrary.libraryType == 'user' ? true : false;
-    //var ncollections = collections.nestedOrderingArray();
-    J.tmpl('collectionlistTemplate', {collections:collections.collectionsArray,
-                                        libUrlIdentifier:collections.libraryUrlIdentifier,
-                                        currentCollectionKey: currentCollectionKey,
-                                        trash: trash
-                                        //ncollections: ncollections
-                                    }
-                                    ).appendTo(jel);
-    
-    
-    Zotero.ui.createOnActivePage(el);
-    
-};
-
-/**
- * Display an items widget (for logged in homepage)
- * @param  {Dom Element} el          Container
- * @param  {object} config      items config
- * @param  {array} loadedItems loaded items array
- * @return {undefined}
- */
-Zotero.ui.displayItemsWidget = function(el, config, loadedItems){
-    Z.debug("Zotero.ui.displayItemsWidget", 3);
-    Z.debug(config, 4);
-    //Z.debug(loadedItems, 4);
-    //figure out pagination values
-    var itemPage = parseInt(Zotero.nav.getUrlVar('itemPage'), 10) || 1;
-    var feed = loadedItems.feed;
-    var start = parseInt(config.start, 10) || 0;
-    var limit = parseInt(config.limit, 10) || 25;
-    var order = config.order || Zotero.config.userDefaultApiArgs.order;
-    var sort = config.sort || Zotero.config.sortOrdering[order] || 'asc';
-    var editmode = false;
-    var jel = J(el);
-    
-    var displayFields = Zotero.prefs.library_listShowFields;
-    
-    var itemsTableData = {displayFields:displayFields,
-                           items:loadedItems.itemsArray,
-                           editmode:editmode,
-                           order: order,
-                           sort: sort,
-                           library: loadedItems.library
-                        };
-    Zotero.ui.insertItemsTable(el, itemsTableData);
-    
-};
-
-/**
- * Display the full library items section
- * @param  {Dom Element} el          Container
- * @param  {object} config      items config
- * @param  {array} loadedItems loaded items array
- * @return {undefined}
- */
-Zotero.ui.displayItemsFull = function(el, config, loadedItems){
-    Z.debug("Zotero.ui.displayItemsFull", 3);
-    Z.debug(config, 4);
-    //Z.debug(loadedItems, 4);
-    
-    var jel = J(el);
-    var feed = loadedItems.feed;
-    var filledConfig = J.extend({}, Zotero.config.defaultApiArgs, Zotero.config.userDefaultApiArgs, config);
-
-    var displayFields = Zotero.prefs.library_listShowFields;
-    if(loadedItems.library.libraryType != 'group'){
-        displayFields = J.grep(displayFields, function(el, ind){
-            return J.inArray(el, Zotero.Library.prototype.groupOnlyColumns) == (-1);
-        });
-        /*
-        displayFields = displayFields.filter(function(el, ind, array){
-            return J.inArray(el, Zotero.Library.prototype.groupOnlyColumns) == (-1);
-        });*/
-    }
-    var editmode = (Zotero.config.librarySettings.allowEdit ? true : false);
-    
-    var itemsTableData = {displayFields:displayFields,
-                           items:loadedItems.itemsArray,
-                           editmode:editmode,
-                           order: filledConfig['order'],
-                           sort: filledConfig['sort'],
-                           library:loadedItems.library
-                        };
-    Z.debug(jel, 4);
-    Zotero.ui.insertItemsTable(jel, itemsTableData);
-    
-    if(Zotero.config.mobile){
-        Zotero.ui.createOnActivePage(el);
-        return;
-    }
-    
-    var pagination = Zotero.ui.createPagination(loadedItems.feed, 'itemPage', filledConfig);
-    var paginationData = {feed:feed, pagination:pagination};
-    var itemPage = pagination.page;
-    Zotero.ui.insertItemsPagination(el, paginationData);
-    Z.debug(jel, 4);
-    
-    //bind pagination links
-    var lel = J(el);
-    J("#start-item-link").click(function(e){
-        e.preventDefault();
-        Zotero.nav.urlvars.pathVars['itemPage'] = '';
-        Zotero.nav.pushState();
-    });
-    J("#prev-item-link").click(function(e){
-        e.preventDefault();
-        var newItemPage = itemPage - 1;
-        Zotero.nav.urlvars.pathVars['itemPage'] = newItemPage;
-        Zotero.nav.pushState();
-    });
-    J("#next-item-link").click(function(e){
-        e.preventDefault();
-        var newItemPage = itemPage + 1;
-        Zotero.nav.urlvars.pathVars['itemPage'] = newItemPage;
-        Zotero.nav.pushState();
-    });
-    J("#last-item-link").click(function(e){
-        e.preventDefault();
-        Z.debug("last-item-link clickbind", 4);
-        var lasthref = '';
-        J.each(feed.links, function(ind, link){
-            if(link.rel === "last"){
-                lasthref = link.href;
-                return false;
-            }
-        });
-        Z.debug(lasthref, 4);
-        var laststart = J.deparam.querystring(lasthref).start;
-        Z.debug("laststart:" + laststart, 4);
-        var lastItemPage = (parseInt(laststart, 10) / limit) + 1;
-        Zotero.nav.urlvars.pathVars['itemPage'] = lastItemPage;
-        Zotero.nav.pushState();
-    });
-    
-    Zotero.ui.updateDisabledControlButtons();
-    
-    Zotero.ui.libraryBreadcrumbs();
-    
-    Zotero.ui.createOnActivePage(el);
-};
-
-/**
- * Render and insert items table html into a container
- * @param  {Dom Element} el   Container
- * @param  {object} data Data object to pass to itemstableTemplate partial
- * @return {undefined}
- */
-Zotero.ui.insertItemsTable = function(el, data){
-    Z.debug("Zotero.ui.insertItemsTable", 3);
-    Z.debug(data, 4);
-    var a = J.tmpl('itemstableTemplate', data).appendTo(J(el));
-    
-    //need to test for inside initialized page or error is thrown
-    if(Zotero.config.mobile && J(el).closest('.ui-page').length){
-        //J(el).trigger('create');
-        if(!(J(el).find('#field-list').hasClass('ui-listview'))) {
-            J(el).find('#field-list').listview();
-        }
-        else{
-            //J(el).find('#field-list').listview('refresh');
-            J(el).find('#field-list').trigger('refresh');
-        }
-    }
-    
-};
-
-/**
- * Render and insert the items pagination block into a container
- * @param  {Dom Element} el   Container
- * @param  {object} data Data object to pass to itempaginationTemplate partial
- * @return {undefined}
- */
-Zotero.ui.insertItemsPagination = function(el, data){
-    J.tmpl('itempaginationTemplate', data).appendTo(J(el));
-    Zotero.ui.init.paginationButtons(data.pagination);
-};
-
-/**
- * Display and initialize an edit item form
- * @param  {Dom Element} el   Container
- * @param  {Zotero_Item} item Zotero Item object to associate with form
- * @return {undefined}
- */
-Zotero.ui.editItemForm = function(el, item){
-    Z.debug("Zotero.ui.editItemForm", 3);
-    Z.debug(item, 4);
-    var jel = J(el);
-    if(item.itemType == 'note'){
-        Z.debug("editItemForm - note", 3);
-        jel.empty();
-        J.tmpl('editnoteformTemplate', {item:item,
-                                         itemKey:item.itemKey
-                                         }).appendTo(jel);
-                                         
-        Zotero.ui.init.tinyMce('default');
-        Zotero.ui.init.editButton();
-    }
-    else if(item.itemType == "attachment"){
-        Z.debug("item is attachment", 4);
-        jel.empty();
-        var mode = Zotero.nav.getUrlVar('mode');
-        J.tmpl('attachmentformTemplate', {item:item.apiObj,
-                                    itemKey:item.itemKey,
-                                    creatorTypes:[],
-                                    mode:mode
-                                    }).appendTo(jel);
-        
-        //add empty tag if no tags yet
-        if(item.apiObj.tags.length === 0){
-            Zotero.ui.addTag(false);
-        }
-        if(Zotero.config.mobile){
-            Zotero.ui.init.editButton();
-            J(el).trigger('create');
-        }
-        else{
-            Zotero.ui.init.creatorFieldButtons();
-            Zotero.ui.init.tagButtons();
-            Zotero.ui.init.editButton();
-        }
-        Zotero.ui.init.tinyMce();
-        
-    }
-    else{
-        var p = item.getCreatorTypes(item.apiObj.itemType);
-        p.done(J.proxy(function(){
-            Z.debug("getCreatorTypes callback", 3);
-            jel.empty();
-            var mode = Zotero.nav.getUrlVar('mode');
-            if(item.creators.length === 0){
-                item.creators.push({creatorType: item.creatorTypes[item.itemType][0],
-                                    first: '',
-                                    last: ''
-                                    });
-                item.apiObj.creators = item.creators;
-            }
-            J.tmpl('itemformTemplate', {item:item.apiObj,
-                                        itemKey:item.itemKey,
-                                        creatorTypes:Zotero.Item.prototype.creatorTypes[item.apiObj.itemType],
-                                        mode:mode
-                                        }).appendTo(jel);
-            
-            //add empty tag if no tags yet
-            if(item.apiObj.tags.length === 0){
-                Zotero.ui.addTag(false);
-            }
-            if(Zotero.config.mobile){
-                Zotero.ui.init.editButton();
-                J(el).trigger('create');
-            }
-            else{
-                Zotero.ui.init.creatorFieldButtons();
-                Zotero.ui.init.tagButtons();
-                Zotero.ui.init.editButton();
-            }
-        }, this));
-    }
-    
-    //add autocomplete to existing tag fields
-    J("input.taginput").autocomplete({
-        source:function(request, callback){
-            var library = Zotero.ui.getAssociatedLibrary(J(this.element.context).closest(".ajaxload"));
-            var matchingTagStrings = Zotero.utils.prependAutocomplete(request.term, library.tags.plainList);
-            callback(matchingTagStrings);
-        },
-        select: function(e, ui){
-            e.preventDefault();
-            e.stopImmediatePropagation();
-            var value = ui.item.value;
-            Zotero.ui.addTag();
-        }
-    });
-};
-
-/**
- * Empty conatiner and show preloader spinner
- * @param  {Dom Element} el   container
- * @param  {string} type type of preloader to show
- * @return {undefined}
- */
-Zotero.ui.showSpinner = function(el, type){
-    var spinnerUrl = Zotero.config.baseWebsiteUrl + '/static/images/theme/broken-circle-spinner.gif';
-    if(!type){
-        J(el).html("<img class='spinner' src='" + spinnerUrl + "'/>");
-    }
-    else if(type == 'horizontal'){
-        J(el).html("<img class='spinner' src='" + spinnerUrl + "'/>");
-    }
-};
-
-/**
- * Append a preloader spinner to an element
- * @param  {Dom Element} el container
- * @return {undefined}
- */
-Zotero.ui.appendSpinner = function(el){
-    var spinnerUrl = Zotero.config.baseWebsiteUrl + '/static/images/theme/broken-circle-spinner.gif';
-    J(el).append("<img class='spinner' src='" + spinnerUrl + "'/>");
-};
-
-//generate html for tags
-/**
- * Display filtered list of tags
- * @param  {Dom element} el                 Container
- * @param  {Zotero_Tags} libtags            Zotero_Tags object
- * @param  {array} matchedTagStrings  tags that matched the filter string
- * @param  {array} selectedTagStrings tags that are currently selected
- * @return {undefined}
- */
-Zotero.ui.displayTagsFiltered = function(el, libtags, matchedTagStrings, selectedTagStrings){
-    Zotero.debug("Zotero.ui.displayTagsFiltered");
-    Z.debug(selectedTagStrings, 4);
-    var curPreString = J("#tag-filter-input").val();
-    var jel = J(el);
-    var showMore = jel.data('showmore');
-    if(!showMore){
-        showMore = false;
-    }
-    
-    //jel.empty();
-    var filteredTags = [];
-    var selectedTags = [];
-    J.each(matchedTagStrings, function(index, matchedString){
-        if(libtags.tagObjects[matchedString] && (J.inArray(matchedString, selectedTagStrings) == (-1))) {
-            filteredTags.push(libtags.tagObjects[matchedString]);
-        }
-    });
-    J.each(selectedTagStrings, function(index, selectedString){
-        if(libtags.tagObjects[selectedString]){
-            selectedTags.push(libtags.tagObjects[selectedString]);
-        }
-    });
-    
-    //Z.debug('filteredTags:');
-    //Z.debug(filteredTags);
-    //Z.debug('selectedTags:');
-    //Z.debug(selectedTags);
-    
-    var passTags;
-    if(!showMore){
-        passTags = filteredTags.slice(0, 25);
-        J("#show-more-tags-link").show();
-        J("#show-less-tags-link").hide();
-    }
-    else{
-        passTags = filteredTags;
-        J("#show-more-tags-link").hide();
-        J("#show-less-tags-link").show();
-    }
-    
-    var tagListEl = J("#tags-list").empty();
-    J("#selected-tags-list").replaceWith(J.tmpl('tagunorderedlistTemplate', {tags:selectedTags, id:'selected-tags-list'}));
-    J("#tags-list").replaceWith(J.tmpl('tagunorderedlistTemplate', {tags:passTags, id:'tags-list'}));
-    
-};
-
-/**
- * Render and display full item details into an element
- * @param  {Zotero_Item} item Zotero Item to display
- * @param  {Dom Element} el   Container
- * @return {undefined}
- */
-Zotero.ui.loadItemDetail = function(item, el){
-    Z.debug("Zotero.ui.loadItemDetail", 3);
-    var jel = J(el);
-    jel.empty();
-    var parentUrl = false;
-    if(item.parentItemKey){
-        parentUrl = item.owningLibrary.websiteUrl({itemKey:item.parentItemKey});
-    }
-    if(item.itemType == "note"){
-        Z.debug("note item", 3);
-        J.tmpl('itemnotedetailsTemplate', {item:item, parentUrl:parentUrl}).appendTo(jel);
-    }
-    else{
-        Z.debug("non-note item", 3);
-        J.tmpl('itemdetailsTemplate', {item:item, parentUrl:parentUrl}).appendTo(jel).trigger('create');
-    }
-    Zotero.ui.init.tinyMce('readonly');
-    Zotero.ui.init.editButton();
-    Zotero.ui.init.detailButtons();
-    
-    Zotero.ui.libraryBreadcrumbs();
-    
-    try{
-        //trigger event for Zotero translator detection
-        var ev = document.createEvent('HTMLEvents');
-        ev.initEvent('ZoteroItemUpdated', true, true);
-        document.dispatchEvent(ev);
-    }
-    catch(e){
-        Zotero.debug("Error triggering ZoteroItemUpdated event");
-    }
-};
-
-Zotero.ui.userGroupsDisplay = function(groups){
-    var html = '';
-    J.each(groups.groupsArray, function(index, group){
-        html += Zotero.ui.groupNugget(group);
-    });
-    return html;
-};
-
-/**
- * Update the page's breadcrumbs based on the current state
- * @param  {Zotero_Library} library current Zotero Library
- * @param  {object} config  Current config object being displayed
- * @return {undefined}
- */
-Zotero.ui.libraryBreadcrumbs = function(library, config){
-    Z.debug('Zotero.ui.libraryBreadcrumbs', 3);
-    try{
-    var breadcrumbs;
-    if(!library){
-        library = Zotero.ui.getAssociatedLibrary(J("#feed-link-div"));
-    }
-    if(!config){
-        config = Zotero.nav.getUrlVars();
-    }
-    Z.debug(config, 4);
-    if(library.libraryType == 'user'){
-        breadcrumbs = [{label:'Home', path:'/'},
-                           {label:'People', path:'/people'},
-                           {label:(library.libraryLabel || library.libraryUrlIdentifier), path:'/' + library.libraryUrlIdentifier},
-                           {label:'Library', path:'/' + library.libraryUrlIdentifier + '/items'}];
-    }
-    else{
-        breadcrumbs = [{label:'Home', path:'/'},
-                           {label:'Groups', path:'/groups'},
-                           {label:(library.libraryLabel || library.libraryUrlIdentifier), path:'/groups/' + library.libraryUrlIdentifier},
-                           {label:'Library', path:'/groups/' + library.libraryUrlIdentifier + '/items'}];
-    }
-    if(config.collectionKey){
-        Z.debug("have collectionKey", 4);
-        if(library.collections[config.collectionKey]){
-            breadcrumbs.push({label:library.collections[config.collectionKey]['name'], path:Zotero.nav.buildUrl({collectionKey:config.collectionKey})});
-        }
-    }
-    if(config.itemKey){
-        Z.debug("have itemKey", 4);
-        breadcrumbs.push({label:library.items.getItem(config.itemKey).title, path:Zotero.nav.buildUrl({collectionKey:config.collectionKey, itemKey:config.itemKey})});
-    }
-    Z.debug(breadcrumbs, 4);
-    J("#breadcrumbs").empty();
-    J.tmpl('breadcrumbsTemplate', {breadcrumbs:breadcrumbs}).appendTo(J("#breadcrumbs"));
-    var newtitle = J.tmpl('breadcrumbstitleTemplate', {breadcrumbs:breadcrumbs}).text();
-    Zotero.nav.updateStateTitle(newtitle);
-    Z.debug("done with breadcrumbs", 4);
-    }
-    catch(e){
-        Zotero.debug("Error loading breadcrumbs", 2);
-    }
-    
-};
-
-
-
-/**
- * Update the disabled state of library control toolbar buttons depending on context
- * @return {undefined}
- */
-Zotero.ui.updateDisabledControlButtons = function(){
-    Z.debug("Zotero.ui.updateDisabledControlButtons", 3);
-    J(".move-to-trash-link").prop('title', 'Move to Trash');
-    
-    J("#create-item-link").button('option', 'disabled', false);
-    if((J(".itemlist-editmode-checkbox:checked").length === 0) && (!Zotero.nav.getUrlVar('itemKey')) ){
-        J(".add-to-collection-link").button('option', 'disabled', true).removeClass("ui-state-hover");
-        J(".remove-from-collection-link").button('option', 'disabled', true).removeClass("ui-state-hover");
-        J(".move-to-trash-link").button('option', 'disabled', true).removeClass("ui-state-hover");
-        J(".remove-from-trash-link").button('option', 'disabled', true).removeClass("ui-state-hover");
-        
-        J("#cite-link").button('option', 'disabled', true);
-        J("#export-link").button('option', 'disabled', true);
-    }
-    else{
-        J(".add-to-collection-link").button('option', 'disabled', false).removeClass("ui-state-hover");
-        J(".remove-from-collection-link").button('option', 'disabled', false).removeClass("ui-state-hover");
-        J(".move-to-trash-link").button('option', 'disabled', false).removeClass("ui-state-hover");
-        if(Zotero.nav.getUrlVar('collectionKey') == 'trash'){
-            J(".remove-from-trash-link").button('option', 'disabled', false).removeClass("ui-state-hover");
-        }
-        J("#cite-link").button('option', 'disabled', false);
-        J("#export-link").button('option', 'disabled', false);
-    }
-    //only show remove from collection button if inside a collection
-    if(!Zotero.nav.getUrlVar("collectionKey")){
-        J(".remove-from-collection-link").button('option', 'disabled', true).removeClass("ui-state-hover");
-    }
-    //disable create item button if in trash
-    else if(Zotero.nav.getUrlVar('collectionKey') == 'trash'){
-        J("#create-item-link").button('option', 'disabled', true).removeClass('ui-state-hover');
-        J(".add-to-collection-link").button('option', 'disabled', true).removeClass("ui-state-hover");
-        J(".remove-from-collection-link").button('option', 'disabled', true).removeClass("ui-state-hover");
-        J(".move-to-trash-link").prop('title', 'Permanently Delete');
-    }
-    Zotero.ui.init.editButton();
-};
-
-/**
- * Conditionally show the control panel
- * @param  {Dom El} el control panel element
- * @return {undefined}
- */
-Zotero.ui.showControlPanel = function(el){
-    Z.debug("Zotero.ui.showControlPanel", 3);
-    var jel = J(el);
-    var mode = Zotero.nav.getUrlVar('mode') || 'view';
-    
-    if(Zotero.config.librarySettings.allowEdit === 0){
-        J(".permission-edit").hide();
-        J("#control-panel").hide();
-    }
-};
-
-/**
- * Nest the collection tree and hide/show appropriate nodes
- * @param  {Dom Element} el             Container element
- * @param  {boolean} expandSelected Show or hide the currently selected collection
- * @return {undefined}
- */
-Zotero.ui.nestHideCollectionTree = function(el, expandSelected){
-    if(typeof expandSelected == 'undefined'){
-        expandSelected = true;
-    }
-    //nest and hide collection tree
-    var jel = J(el);
-    jel.find("#collection-list ul").hide().siblings(".folder-toggle")
-                                        .children(".sprite-placeholder")
-                                        .removeClass("sprite-placeholder")
-                                        .addClass("ui-icon-triangle-1-e");
-    jel.find(".current-collection").parents("ul").show();
-    jel.find("#collection-list li.current-collection").children('ul').show();
-    //start all twisties in closed position
-    jel.find(".ui-icon-triangle-1-s").removeClass("ui-icon-triangle-1-s").addClass("ui-icon-triangle-1-e");
-    //show opened twisties as expanded
-    jel.find("li.current-collection").parentsUntil("#collection-list").children('div.folder-toggle').find(".ui-icon-triangle-1-e")
-                                                .removeClass("ui-icon-triangle-1-e")
-                                                .addClass("ui-icon-triangle-1-s");
-    
-    
-    if(expandSelected === false){
-        jel.find("#collection-list li.current-collection").children('ul').hide();
-        jel.find("#collection-list li.current-collection").find(".ui-icon-triangle-1-s")
-                                                    .removeClass("ui-icon-triangle-1-s")
-                                                    .addClass("ui-icon-triangle-1-e");
-        jel.find(".current-collection").data('expanded', false);
-    }
-    else{
-        jel.find("li.current-collection").children('div.folder-toggle').find(".ui-icon-triangle-1-e")
-                                                .removeClass("ui-icon-triangle-1-e")
-                                                .addClass("ui-icon-triangle-1-s");
-                                                
-        jel.find(".current-collection").data('expanded', true);
-    }
-    
-    Zotero.ui.createOnActivePage(el);
-};
-
-/**
- * Highlight the currently selected collection
- * @return {undefined}
- */
-Zotero.ui.highlightCurrentCollection = function(){
-    Z.debug("Zotero.ui.highlightCurrentCollection", 3);
-    var collectionKey = Zotero.nav.getUrlVar('collectionKey');
-    //unhighlight currently highlighted
-    J("a.current-collection").closest("li").removeClass("current-collection");
-    J("a.current-collection").removeClass("current-collection");
-    
-    if(collectionKey){
-        //has collection selected, highlight it
-        J("a[data-collectionKey='" + collectionKey + "']").addClass("current-collection");
-        J("a[data-collectionKey='" + collectionKey + "']").closest('li').addClass("current-collection");
-    }
-    else{
-        J("a.my-library").addClass("current-collection");
-        J("a.my-library").closest('li').addClass("current-collection");
-    }
-};
-
-/**
- * Update enabled/disabled for collection buttons based on context
- * @return {undefined}
- */
-Zotero.ui.updateCollectionButtons = function(){
-    var editCollectionsButtonsList = J(".edit-collections-buttons-list");
-    editCollectionsButtonsList.buttonset().show();
-    
-    //enable modify and delete only if collection is selected
-    J("#edit-collections-buttons-div").buttonset();
-    
-    J(".create-collection-link").button('option', 'icons', {primary:'sprite-toolbar-collection-add'}).button('option', 'text', false);
-    J(".update-collection-link").button('option', 'icons', {primary:'sprite-toolbar-collection-edit'}).button('option', 'text', false);
-    J(".delete-collection-link").button('option', 'icons', {primary:'sprite-folder_delete'}).button('option', 'text', false);
-    
-    if(Zotero.nav.getUrlVar("collectionKey")){
-        J(".update-collection-link").button('enable');
-        J(".delete-collection-link").button('enable');
-    }
-    else{
-        J(".update-collection-link").button().button('disable');
-        J(".delete-collection-link").button().button('disable');
-    }
-};
-
-/**
- * trigger create on actively displayed page (placeholder version of mobile function which actually does something)
- * @param  {Dom Element} el Active page element
- * @return {undefined}
- */
-Zotero.ui.createOnActivePage = function(el){
-    
-};
-
-/**
- * Trigger a ZoteroItemUpdated event on the document for zotero translators
- * @return {undefined}
- */
-Zotero.ui.zoteroItemUpdated = function(){
-    try{
-        //trigger event for Zotero translator detection
-        var ev = document.createEvent('HTMLEvents');
-        ev.initEvent('ZoteroItemUpdated', true, true);
-        document.dispatchEvent(ev);
-    }
-    catch(e){
-        Zotero.debug("Error triggering ZoteroItemUpdated event");
-    }
 };
 
 
@@ -10740,7 +9902,7 @@ Zotero.ui.callbacks.updateCollection =  function(e){
     
     var currentCollectionKey = Zotero.nav.getUrlVar('collectionKey');
     var currentCollection = library.collections[currentCollectionKey];
-    var currentParentCollectionKey = currentCollection.parentCollectionKey;
+    var currentParentCollectionKey = currentCollection.parent;
     J("#update-collection-parent-select").val(currentParentCollectionKey);
     J("#updated-collection-title-input").val(library.collections[currentCollectionKey].title);
     
@@ -10960,8 +10122,7 @@ Zotero.ui.callbacks.exportItems = function(e){
     var urlconfig = J("#feed-link-div").data('urlconfig');
     var itemKeys = Zotero.ui.getSelectedItemKeys(J("#edit-mode-items-form"));
     var requestedFormat = J(this).data('exportformat');
-    //override start and limit since we're just looking for itemKeys directly
-    var exportConfig = J.extend(urlconfig, {'format':requestedFormat, start:'0', limit:null});
+    var exportConfig = J.extend(urlconfig, {'format':requestedFormat});
     
     //build link to export file with selected items
     var itemKeyString = itemKeys.join(',');
@@ -11011,11 +10172,10 @@ Zotero.ui.callbacks.uploadAttachment = function(e){
             
             item.title = J("#upload-file-title-input").val();
             item.apiObj['title'] = item.title;
-            item.apiObj['parentItem'] = item.parentItemKey;
-            Z.debug("new title: " + item.apiObj['title']);
+            console.log("new title: " + item.apiObj['title']);
             
             var jqxhr = item.writeItem();
-            jqxhr.done(J.proxy(function(){
+            jqxhr.done(J.proxy(function(newItemKey){
                 //get upload authorization for the actual file
                 var userSetFilename = J("#upload-file-title-input").val() || fileInfo.filename;
                 var uploadAuth = item.getUploadAuthorization({md5:fileInfo.md5, filename:userSetFilename, filesize:fileInfo.filesize, mtime:fileInfo.mtime, contentType:fileInfo.contentType, params:1});
@@ -11036,27 +10196,25 @@ Zotero.ui.callbacks.uploadAttachment = function(e){
                         var filedata = J("#attachmentuploadfileinfo").data('fileInfo').reader.result;
                         var file = J("#attachmentuploadfileinfo").data('file');
                         var fullUpload = Zotero.file.uploadFile(upAuthOb, file);
-                        fullUpload.onload = J.proxy(function(e){
-                            //if(e.status == 200){
-                                Z.debug("fullUpload done", 3);
-                                var regUpload = item.registerUpload(upAuthOb.uploadKey);
-                                regUpload.done(function(){
-                                    Zotero.ui.closeDialog(J("#upload-attachment-dialog"));
-                                    //add to parent's children counter
-                                    parentItem.numChildren++;
-                                    //TODO: refresh attachments on item page (just pushstate?)
-                                    Zotero.nav.pushState(true);
-                                }).fail(function(jqxhr, textStatus, e){
-                                    Z.debug("Upload registration failed - " + textStatus, 3);
-                                    Zotero.ui.jsNotificationMessage("Error registering upload", 'error');
-                                    if(jqxhr.status == 412){
-                                        Z.debug("412 Precondition Failed on upload registration", 3);
-                                        Zotero.ui.jsNotificationMessage("The file has changed remotely", 'error');
-                                    }
-                                    Zotero.ui.closeDialog(J("#upload-attachment-dialog"));
-                                });
-                            //}
-                        }, this);
+                        fullUpload.done(function(){
+                            Z.debug("fullUpload done", 3);
+                            var regUpload = item.registerUpload(upAuthOb.uploadKey);
+                            regUpload.done(function(){
+                                Zotero.ui.closeDialog(J("#upload-attachment-dialog"));
+                                //add to parent's children counter
+                                parentItem.numChildren++;
+                                //TODO: refresh attachments on item page (just pushstate?)
+                                Zotero.nav.pushState(true);
+                            }).fail(function(jqxhr, textStatus, e){
+                                Z.debug("Upload registration failed - " + textStatus, 3);
+                                Zotero.ui.jsNotificationMessage("Error registering upload", 'error');
+                                if(jqxhr.status == 412){
+                                    Z.debug("412 Precondition Failed on upload registration", 3);
+                                    Zotero.ui.jsNotificationMessage("The file has changed remotely", 'error');
+                                }
+                                Zotero.ui.closeDialog(J("#upload-attachment-dialog"));
+                            });
+                        });
                         fullUpload.upload.onprogress = function(e){
                             Z.debug('fullUpload.upload.onprogress');
                             var percentLoaded = Math.round((e.loaded / e.total) * 100);
@@ -11460,28 +10618,21 @@ Zotero.url.itemHref = function(item){
 };
 
 Zotero.url.attachmentDownloadLink = function(item){
-    var linkString = '';
-    var enctype, enc, filesize, filesizeString;
-    var downloadHref = '';
+    var retString = '';
     if(item.links['enclosure']){
-        if(Zotero.config.directDownloads){
-            downloadHref = Zotero.url.apiDownloadUrl(item);
-        }
-        else {
-            downloadHref = Zotero.url.wwwDownloadUrl(item);
-        }
-        
         var tail = item.links['enclosure']['href'].substr(-4, 4);
         if(tail == 'view'){
             //snapshot: redirect to view
-            linkString += '<a href="' + downloadHref + '">' + 'View Snapshot</a>';
+            retString += '<a href="' + Zotero.config.baseWebsiteUrl + Zotero.config.nonparsedBaseUrl + '/' + item.itemKey + '/file/view' + '">' + 'View Snapshot</a>';
+            
+            //retString += '<form style="margin:0;" method="POST" action="' + item.links['enclosure']['href'] + '?key=' + Zotero.config.apiKey + '">(<input type="hidden" name="h" value="1" /><a href="#" onclick="parentNode.submit()">' + item.title + '</a>)</form>';
         }
         else{
             //file: offer download
-            enctype = Zotero.utils.translateMimeType(item.links['enclosure'].type);
-            enc = item.links['enclosure'];
-            filesize = parseInt(enc['length'], 10);
-            filesizeString = "" + filesize + " B";
+            var enctype = Zotero.utils.translateMimeType(item.links['enclosure'].type);
+            var enc = item.links['enclosure'];
+            var filesize = parseInt(enc['length'], 10);
+            var filesizeString = "" + filesize + " B";
             if(filesize > 1073741824){
                 filesizeString = "" + (filesize / 1073741824).toFixed(1) + " GB";
             }
@@ -11492,69 +10643,30 @@ Zotero.url.attachmentDownloadLink = function(item){
                 filesizeString = "" + (filesize / 1024).toFixed(1) + " KB";
             }
             Z.debug(enctype);
-            linkString += '<a href="' + downloadHref + '">';
+            retString += '<a href="' + Zotero.config.baseWebsiteUrl + Zotero.config.nonparsedBaseUrl + '/' + item.itemKey + '/file' + '">';
             
             if((enctype == 'undefined') || (enctype === '') || (typeof enctype == 'undefined')){
-                linkString += filesizeString + '</a>';
+                retString += filesizeString + '</a>';
             }
             else{
-                linkString += enctype + ', ' + filesizeString + '</a>';
+                retString += enctype + ', ' + filesizeString + '</a>';
             }
             
-            return linkString;
-        }
-    }
-    return linkString;
-};
-
-Zotero.url.attachmentDownloadUrl = function(item){
-    var retString = '';
-    if(item.links['enclosure']){
-        if(Zotero.config.directDownloads){
-            return Zotero.url.apiDownloadUrl(item);
-        }
-        else {
-            return Zotero.url.wwwDownloadUrl(item);
-        }
-    }
-    else if(item.linkMode == 2 || item.linkMode == 3){
-        if(item.apiObj['url']){
-            retString = item.apiObj['url'];
+            return retString;
         }
     }
     return retString;
 };
 
-Zotero.url.wwwDownloadUrl = function(item){
-    var urlString = '';
+Zotero.url.attachmentDownloadUrl = function(item){
+    var retString = '';
     if(item.links['enclosure']){
-        if(Zotero.config.proxyDownloads){
-            return Zotero.config.baseDownloadUrl + "?itemkey=" + item.itemKey;
-        }
-        
-        if(Zotero.config.directDownloads){
-            return Zotero.url.apiDownloadUrl(item);
-        }
-        
-        urlString = Zotero.config.baseWebsiteUrl + Zotero.config.nonparsedBaseUrl + '/' + item.itemKey + '/file';
+        retString = Zotero.config.baseWebsiteUrl + Zotero.config.nonparsedBaseUrl + '/' + item.itemKey + '/file';
         var tail = item.links['enclosure']['href'].substr(-4, 4);
         if(tail == 'view'){
             //snapshot: redirect to view
-            urlString += '/view';
+            retString += '/view';
         }
-    }
-    else if(item.linkMode == 2 || item.linkMode == 3){
-        if(item.apiObj['url']){
-            urlString = item.apiObj['url'];
-        }
-    }
-    return urlString;
-};
-
-Zotero.url.apiDownloadUrl = function(item){
-    var retString = '';
-    if(item.links['enclosure']){
-        retString = item.links['enclosure']['href'];
     }
     else if(item.linkMode == 2 || item.linkMode == 3){
         if(item.apiObj['url']){
@@ -11595,7 +10707,7 @@ Zotero.url.attachmentFileDetails = function(item){
 };
 
 Zotero.url.exportUrls = function(config){
-    Z.debug("Zotero.url.exportUrls", 3);
+    Z.debug("Zotero.url.exportUrls");
     var exportUrls = {};
     var exportConfig = {};
     J.each(Zotero.config.exportFormats, function(index, format){
@@ -11628,7 +10740,7 @@ Zotero.url.requestReadApiKeyUrl = function(libraryType, libraryID, redirect){
     else if(libraryType == 'user'){
         qparams['library_access'] = 1;
         qparams['notes_access'] = 1;
-        qparams['redirect'] = redirect;
+        qparams['keyredirect'] = redirect;
     }
     
     queryParamsArray = [];
@@ -11917,6 +11029,153 @@ Zotero.offline.initializeOffline = function(){
         
         Zotero.offline.loadMetaInfo(library);
     });
+};
+
+Zotero.offline.loadAllItems = function(library){
+    Z.debug("Zotero.offline.loadAllItems", 3);
+    var itemsCacheConfig = {libraryType:library.libraryType, libraryID:library.libraryID, target:'allitems'};
+    
+    var haveCachedItems = library.loadCachedItems();
+    if(haveCachedItems){
+        //if we have cached items, display what we think the current view is right now
+        //we'll update it after we make sure we're synced too
+        displayParams = Zotero.nav.getUrlVars();
+        library.buildItemDisplayView(displayParams);
+    }
+    //we need modified itemKeys regardless, so load them
+    var itemKeysDeferred = library.fetchItemKeysModified();
+    itemKeysDeferred.done(J.proxy(function(data, keysjqxhr){
+        Z.debug("Got back itemKeys ordered by modified", 3);
+        var itemKeys = J.trim(data).split("\n");
+        library.itemKeys = itemKeys;
+        
+        if(haveCachedItems === 0 && itemKeys.length > 0) haveCachedItems = false; //explicitly set to false if no items when there are itemkeys
+        if(haveCachedItems !== false){
+            Z.debug("have cached items", 3);
+            //pull items that we don't have at all
+            var missingItemKeys = library.findMissingItems(itemKeys);
+            var missingItemsDeferred = library.loadItemsFromKeysParallel(missingItemKeys);
+            
+            //pull modified keys
+            var modifiedItemsDeferred = library.loadModifiedItems(itemKeys);
+            
+            //when all the deferreds are done, build the list to display
+            //TODO: we may want to short circuit if there are alot of things to wait for
+            J.when(missingItemsDeferred, modifiedItemsDeferred).then(J.proxy(function(){
+                Z.debug("Building new items list to display", 3);
+                displayParams = Zotero.nav.getUrlVars();
+                library.buildItemDisplayView(displayParams);
+                Zotero.cache.save(itemsCacheConfig, library.items.dump());
+                
+                //update item pane display based on url
+                Zotero.callbacks.chooseItemPane(J("#items-pane"));
+                Zotero.ui.displayItemOrTemplate(library);
+            }));
+        }
+        else{
+            //pull all itemKeys
+            var loadAllItemsDeferred = library.loadItemsFromKeysParallel(itemKeys);
+            loadAllItemsDeferred.done(J.proxy(function(){
+                var displayParams = Zotero.nav.getUrlVars();
+                Z.debug(displayParams);
+                library.buildItemDisplayView(displayParams);
+                Zotero.cache.save(itemsCacheConfig, library.items.dump());
+            }, this ) );
+        }
+    }, this ) );
+    
+    
+};
+
+Zotero.offline.loadAllCollections = function(library){
+    Z.debug("Zotero.offline.loadAllCollections", 3);
+    var collectionsCacheConfig = {libraryType:library.libraryType, libraryID:library.libraryID, target:'allcollections'};
+    var collectionMembersConfig = {libraryType:library.libraryType, libraryID:library.libraryID, target:'collectionmembers'};
+    
+    /* ---- load collections ---- */
+    //get Zotero.Library object if already bound to element
+    Zotero.ui.updateCollectionButtons();
+    
+    var haveCachedCollections = library.loadCachedCollections();
+    var clist = J('#collection-list-container');
+    //Zotero.ui.showSpinner(clist);
+    if(haveCachedCollections){
+        Z.debug("haveCachedCollections", 3);
+        
+        clist.empty();
+        Zotero.ui.displayCollections(clist, library.collections);
+        Zotero.ui.nestHideCollectionTree(clist);
+        Zotero.ui.highlightCurrentCollection();
+        
+        //even if we have collections cached, make sure we look for collection membership info
+        var collectionMembershipD = library.loadCollectionMembership(library.collections.collectionsArray);
+        collectionMembershipD.done(J.proxy(function(){
+            Zotero.cache.save(collectionsCacheConfig, library.collections.dump());
+        }, this));
+    }
+    else {
+        Z.debug("dont have collections - load them", 3);
+        //empty contents and show spinner while loading ajax
+        var d = library.loadCollections();
+        d.done(J.proxy(function(){
+            clist.empty();
+            Zotero.ui.displayCollections(clist, library.collections);
+            Zotero.ui.highlightCurrentCollection();
+            Zotero.ui.nestHideCollectionTree(clist);
+            
+            Zotero.cache.save(collectionsCacheConfig, library.collections.dump());
+            
+            var collectionMembershipD = library.loadCollectionMembership(library.collections.collectionsArray);
+            collectionMembershipD.done(J.proxy(function(){
+                Zotero.cache.save(collectionsCacheConfig, library.collections.dump());
+            }, this));
+        }, this));
+        
+        d.fail(J.proxy(function(jqxhr, textStatus, errorThrown){
+            var elementMessage = Zotero.ui.ajaxErrorMessage(jqxhr);
+            jel.html("<p>" + elementMessage + "</p>");
+        }));
+    }
+    
+};
+
+Zotero.offline.loadAllTags = function(library){
+    Z.debug("Zotero.offline.loadAllTags", 3);
+    var tagsCacheConfig = {libraryType:library.libraryType, libraryID:library.libraryID, target:'alltags'};
+    
+    /* ----- load tags ----- */
+    var tagsEl = J("#tags-list-container");
+    var loadTagsDeferred = library.loadAllTags({});
+    
+    // put the selected tags into an array
+    var selectedTags = Zotero.nav.getUrlVar('tag');
+    if(!J.isArray(selectedTags)){
+        if(selectedTags) {
+            selectedTags = [selectedTags];
+        }
+        else {
+            selectedTags = [];
+        }
+    }
+    
+    loadTagsDeferred.done(J.proxy(function(tags){
+        Z.debug("finished loadAllTags", 3);
+        tagsEl.find('div.loading').empty();
+        Z.debug(tags, 5);
+        library.tags.loaded = true;
+        library.tags.loadedConfig = {};
+        tagsEl.children('.loading').empty();
+        var plainList = library.tags.plainTagsList(library.tags.tagsArray);
+        Zotero.ui.displayTagsFiltered(tagsEl, library.tags, plainList, selectedTags);
+        Zotero.nav.doneLoading(tagsEl);
+    }, this));
+    
+    loadTagsDeferred.fail(J.proxy(function(jqxhr, textStatus, errorThrown){
+        var elementMessage = Zotero.ui.ajaxErrorMessage(jqxhr);
+        jel.html("<p>" + elementMessage + "</p>");
+    }));
+    J("#library").addClass("loaded");
+    
 };
 
 Zotero.offline.loadMetaInfo = function(library){

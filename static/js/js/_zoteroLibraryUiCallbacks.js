@@ -96,7 +96,7 @@ Zotero.ui.callbacks.updateCollection =  function(e){
     
     var currentCollectionKey = Zotero.nav.getUrlVar('collectionKey');
     var currentCollection = library.collections[currentCollectionKey];
-    var currentParentCollectionKey = currentCollection.parentCollectionKey;
+    var currentParentCollectionKey = currentCollection.parent;
     J("#update-collection-parent-select").val(currentParentCollectionKey);
     J("#updated-collection-title-input").val(library.collections[currentCollectionKey].title);
     
@@ -316,8 +316,7 @@ Zotero.ui.callbacks.exportItems = function(e){
     var urlconfig = J("#feed-link-div").data('urlconfig');
     var itemKeys = Zotero.ui.getSelectedItemKeys(J("#edit-mode-items-form"));
     var requestedFormat = J(this).data('exportformat');
-    //override start and limit since we're just looking for itemKeys directly
-    var exportConfig = J.extend(urlconfig, {'format':requestedFormat, start:'0', limit:null});
+    var exportConfig = J.extend(urlconfig, {'format':requestedFormat});
     
     //build link to export file with selected items
     var itemKeyString = itemKeys.join(',');
@@ -367,11 +366,10 @@ Zotero.ui.callbacks.uploadAttachment = function(e){
             
             item.title = J("#upload-file-title-input").val();
             item.apiObj['title'] = item.title;
-            item.apiObj['parentItem'] = item.parentItemKey;
-            Z.debug("new title: " + item.apiObj['title']);
+            console.log("new title: " + item.apiObj['title']);
             
             var jqxhr = item.writeItem();
-            jqxhr.done(J.proxy(function(){
+            jqxhr.done(J.proxy(function(newItemKey){
                 //get upload authorization for the actual file
                 var userSetFilename = J("#upload-file-title-input").val() || fileInfo.filename;
                 var uploadAuth = item.getUploadAuthorization({md5:fileInfo.md5, filename:userSetFilename, filesize:fileInfo.filesize, mtime:fileInfo.mtime, contentType:fileInfo.contentType, params:1});
@@ -392,27 +390,25 @@ Zotero.ui.callbacks.uploadAttachment = function(e){
                         var filedata = J("#attachmentuploadfileinfo").data('fileInfo').reader.result;
                         var file = J("#attachmentuploadfileinfo").data('file');
                         var fullUpload = Zotero.file.uploadFile(upAuthOb, file);
-                        fullUpload.onload = J.proxy(function(e){
-                            //if(e.status == 200){
-                                Z.debug("fullUpload done", 3);
-                                var regUpload = item.registerUpload(upAuthOb.uploadKey);
-                                regUpload.done(function(){
-                                    Zotero.ui.closeDialog(J("#upload-attachment-dialog"));
-                                    //add to parent's children counter
-                                    parentItem.numChildren++;
-                                    //TODO: refresh attachments on item page (just pushstate?)
-                                    Zotero.nav.pushState(true);
-                                }).fail(function(jqxhr, textStatus, e){
-                                    Z.debug("Upload registration failed - " + textStatus, 3);
-                                    Zotero.ui.jsNotificationMessage("Error registering upload", 'error');
-                                    if(jqxhr.status == 412){
-                                        Z.debug("412 Precondition Failed on upload registration", 3);
-                                        Zotero.ui.jsNotificationMessage("The file has changed remotely", 'error');
-                                    }
-                                    Zotero.ui.closeDialog(J("#upload-attachment-dialog"));
-                                });
-                            //}
-                        }, this);
+                        fullUpload.done(function(){
+                            Z.debug("fullUpload done", 3);
+                            var regUpload = item.registerUpload(upAuthOb.uploadKey);
+                            regUpload.done(function(){
+                                Zotero.ui.closeDialog(J("#upload-attachment-dialog"));
+                                //add to parent's children counter
+                                parentItem.numChildren++;
+                                //TODO: refresh attachments on item page (just pushstate?)
+                                Zotero.nav.pushState(true);
+                            }).fail(function(jqxhr, textStatus, e){
+                                Z.debug("Upload registration failed - " + textStatus, 3);
+                                Zotero.ui.jsNotificationMessage("Error registering upload", 'error');
+                                if(jqxhr.status == 412){
+                                    Z.debug("412 Precondition Failed on upload registration", 3);
+                                    Zotero.ui.jsNotificationMessage("The file has changed remotely", 'error');
+                                }
+                                Zotero.ui.closeDialog(J("#upload-attachment-dialog"));
+                            });
+                        });
                         fullUpload.upload.onprogress = function(e){
                             Z.debug('fullUpload.upload.onprogress');
                             var percentLoaded = Math.round((e.loaded / e.total) * 100);

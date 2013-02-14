@@ -58,17 +58,10 @@ Zotero.ui.formatItemField = function(field, item, trim){
             if(typeof(item[field]) !== "undefined"){
                 formattedString = item[field];
             }
-            else if(item.apiObject){
-                if(item.apiObject[field]){
-                    formattedString = item.apiObject[field];
+            else if(item.apiObj){
+                if(item.apiObj[field]){
+                    formattedString = item.apiObj[field];
                 }
-            }
-            else if(item.contentRows){
-                J.each(item.contentRows, function(rowI, row){
-                    if(row.field === field){
-                        formattedString = row.fieldValue;
-                    }
-                });
             }
     }
     if(trim && (trimLength > 0) && (formattedString.length > trimLength) ) {

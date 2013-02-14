@@ -1,5 +1,4 @@
 <script id="itemstableTemplate" type="text/x-jquery-tmpl">
-    <!--<h2>${titleParts[titleParts.length-1]}</h2>-->
     <form id="edit-mode-items-form" method='POST'>
     <table id='field-table'>
         <thead>

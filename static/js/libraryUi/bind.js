@@ -92,7 +92,7 @@ Zotero.ui.bindCollectionLinks = function(){
 };
 
 /**
- * Bine item links to take appropriate action instead of following link
+ * Bind item links to take appropriate action instead of following link
  * @return {undefined}
  */
 Zotero.ui.bindItemLinks = function(){

@@ -1,6 +1,6 @@
 <script id="itemnotedetailsTemplate" type="text/x-jquery-tmpl">
     {{if (parentUrl)}}
-        <a href="${parentUrl}" class="ajax-link clickable item-select-link" data-itemKey='${item.parentKey}'>Parent Item</a>
+        <a href="${parentUrl}" class="ajax-link clickable item-select-link" data-itemKey='${item.parentItemKey}'>Parent Item</a>
     {{/if}}
     {{if (item.libraryType == 'user')}}
         <span id="libraryUserID" title="${item.libraryID}"></span>

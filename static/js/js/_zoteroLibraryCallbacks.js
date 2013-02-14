@@ -47,6 +47,57 @@ Zotero.callbacks.chooseItemPane = function(el){
     }
 };
 
+/**
+ * Ajaxload library widget
+ * @param  {Dom Element} el Ajaxload element
+ * @return {undefined}
+ */
+Zotero.callbacks.loadLibraryWidget = function(el){
+    Z.debug("Zotero.callbacks.loadLibraryWidget", 3);
+    var jel = J(el);
+    var library = Zotero.ui.getAssociatedLibrary(el);
+    
+    var effectiveUrlVars = ['itemPage', 'tag', 'collectionKey', 'order', 'sort', 'q'];
+    
+    var defaultConfig = {target:'items',
+                         targetModifier: 'top',
+                         itemPage: 1,
+                         limit: 25,
+                         content: 'json'
+                     };
+    
+    //Build config object that should be displayed next and compare to currently displayed
+    var newConfig = J.extend({}, defaultConfig);
+    newConfig.start = parseInt(newConfig.limit, 10) * (parseInt(newConfig.itemPage, 10) - 1);
+    
+    if(!newConfig.sort){
+        newConfig.sort = Zotero.config.sortOrdering[newConfig.order];
+    }
+    
+    //don't pass top if we are searching for tags (or query?)
+    if(newConfig.tag || newConfig.q){
+        delete newConfig.targetModifier;
+    }
+    
+    //clear contents and show spinner while loading
+    Zotero.ui.showSpinner(el, 'horizontal');
+    
+    var d = library.loadItems(newConfig);
+    
+    d.done(J.proxy(function(loadedItems){
+        J(el).empty();
+        Zotero.ui.displayItemsWidget(el, newConfig, loadedItems);
+        J("<a href='#' class='home-widget-library-toggle-more-link clickable'>More</a>").appendTo(J(el));
+        J(el).find("tr").slice(4).hide();
+    }, this));
+    
+    d.fail(J.proxy(function(jqxhr, textStatus, errorThrown){
+        var elementMessage = Zotero.ui.ajaxErrorMessage(jqxhr);
+        jel.html("<p>" + elementMessage + "</p>");
+    }));
+    
+};
+
 Zotero.callbacks.rejectIfPending = function(el){
     var pendingDeferred = J(el).data('pendingDeferred');
     if(pendingDeferred && pendingDeferred.hasOwnProperty('reject')){
@@ -65,100 +116,6 @@ Zotero.callbacks.loadItems = function(el){
     Zotero.callbacks.rejectIfPending(el);
     var jel = J(el);
     
-    var library = Zotero.ui.getAssociatedLibrary(el);
-    
-    var effectiveUrlVars = ['itemPage', 'tag', 'collectionKey', 'order', 'sort', 'q'];
-    var urlConfigVals = {};
-    J.each(effectiveUrlVars, function(index, value){
-        var t = Zotero.nav.getUrlVar(value);
-        if(t){
-            urlConfigVals[value] = t;
-        }
-    });
-    
-    var defaultConfig = {target:'items',
-                         targetModifier: 'top',
-                         itemPage: 1,
-                         limit: 25,
-                         content: 'json'
-                     };
-    
-    //Build config object that should be displayed next and compare to currently displayed
-    var newConfig = J.extend({}, defaultConfig, Zotero.config.userDefaultApiArgs, urlConfigVals);
-    newConfig['collectionKey'] = urlConfigVals['collectionKey'];//always override collectionKey, even with absence of collectionKey
-    newConfig.start = parseInt(newConfig.limit, 10) * (parseInt(newConfig.itemPage, 10) - 1);
-    
-    //don't allow ordering by addedBy if user library
-    if( (newConfig.order == "addedBy") && (library.libraryType == 'user') ){
-        newConfig.order = 'title';
-    }
-    
-    if(!newConfig.sort){
-        newConfig.sort = Zotero.config.sortOrdering[newConfig.order];
-    }
-    
-    //don't pass top if we are searching for tags (or query?)
-    if(newConfig.tag || newConfig.q){
-        delete newConfig.targetModifier;
-    }
-    
-    //clear contents and show spinner while loading
-    Zotero.ui.showSpinner(el, 'horizontal');
-    
-    var d = library.loadItems(newConfig);
-    
-    d.done(J.proxy(function(loadedItems){
-        J(el).empty();
-        Zotero.ui.displayItemsFull(el, newConfig, loadedItems);
-        //set currentConfig on element when done displaying
-        //J(el).data('currentconfig', newConfig);
-    }, this));
-    
-    d.fail(J.proxy(function(jqxhr, textStatus, errorThrown){
-        var elementMessage = Zotero.ui.ajaxErrorMessage(jqxhr);
-        jel.html("<p>" + elementMessage + "</p>");
-    }));
-    
-    //associate promise with el so we can cancel on later loads
-    jel.data('pendingDeferred', d);
-};
-
-/**
- * Ajaxload items list
- * @param  {Dom Element} el Ajaxload element
- * @return {undefined}
- */
-Zotero.callbacks.syncItems = function(el){
-    Z.debug("Zotero.callbacks.syncItems", 3);
-    Zotero.callbacks.rejectIfPending(el);
-    var jel = J(el);
-    
-    var library = Zotero.ui.getAssociatedLibrary(el);
-    
-    //clear contents and show spinner while loading
-    Zotero.ui.showSpinner(el, 'horizontal');
-    
-    var d = library.loadItems(newConfig);
-    
-    d.done(J.proxy(function(loadedItems){
-        J(el).empty();
-        Zotero.ui.displayItemsFull(el, newConfig, loadedItems);
-        //set currentConfig on element when done displaying
-        //J(el).data('currentconfig', newConfig);
-    }, this));
-    
-    d.fail(J.proxy(function(jqxhr, textStatus, errorThrown){
-        var elementMessage = Zotero.ui.ajaxErrorMessage(jqxhr);
-        jel.html("<p>" + elementMessage + "</p>");
-    }));
-    
-    //associate promise with el so we can cancel on later loads
-    jel.data('pendingDeferred', d);
-};
-
-Zotero.callbacks.localItems = function(el){
-    Z.debug("Zotero.callbacks.syncItems", 3);
-    var jel = J(el);
     var library = Zotero.ui.getAssociatedLibrary(el);
     
     var effectiveUrlVars = ['itemPage', 'tag', 'collectionKey', 'order', 'sort', 'q'];
@@ -198,10 +155,23 @@ Zotero.callbacks.localItems = function(el){
     
     //clear contents and show spinner while loading
     Zotero.ui.showSpinner(el, 'horizontal');
-    library.items.displayItemsArray = library.items.findItems(newConfig);
-    J(el).empty();
-    Zotero.ui.displayItemsFullLocal(J("#library-items-div"), {}, library);
     
+    var d = library.loadItems(newConfig);
+    
+    d.done(J.proxy(function(loadedItems){
+        J(el).empty();
+        Zotero.ui.displayItemsFull(el, newConfig, loadedItems);
+        //set currentConfig on element when done displaying
+        //J(el).data('currentconfig', newConfig);
+    }, this));
+    
+    d.fail(J.proxy(function(jqxhr, textStatus, errorThrown){
+        var elementMessage = Zotero.ui.ajaxErrorMessage(jqxhr);
+        jel.html("<p>" + elementMessage + "</p>");
+    }));
+    
+    //associate promise with el so we can cancel on later loads
+    jel.data('pendingDeferred', d);
 };
 
 /**
@@ -216,8 +186,7 @@ Zotero.callbacks.loadItem = function(el){
     var library = Zotero.ui.getAssociatedLibrary(el);
     var d;
     //clear contents and show spinner while loading
-    jel.empty();
-    //Zotero.ui.showSpinner(el);
+    Zotero.ui.showSpinner(el);
     
     //if we're  creating a new item: let user choose itemType if we don't have a value
     //yet, otherwise create a new item and initialize it as an empty item of that type
@@ -246,7 +215,6 @@ Zotero.callbacks.loadItem = function(el){
     //if it is not a new item handled above we must have an itemKey
     var itemKey = Zotero.nav.getUrlVar('itemKey');
     if(!itemKey){
-        J(el).empty();
         return false;
     }
     
@@ -310,12 +278,11 @@ Zotero.callbacks.loadTags = function(el, checkCached){
     
     //get Zotero.Library object if already bound to element
     var library = Zotero.ui.getAssociatedLibrary(el);
-    //clear tags if we're explicitly not using cached tags
-    if(checkCached === false){
-        library.tags.clear();
-    }
+    
+    var defaultConfig = {};
     
     var collectionKey = Zotero.nav.getUrlVar('collectionKey') || jel.attr("data-collectionKey");
+    
     var showAllTags = jel.find('#show-all-tags').filter(':checked').length;
     //var showAuto = jel.children('#show-automatic').filter(':checked').length;
     
@@ -333,12 +300,12 @@ Zotero.callbacks.loadTags = function(el, checkCached){
     var newConfig;
     //api doesn't support tags filtered by tag yet, so don't include selectedTags in configs
     if(showAllTags){
-        newConfig = {};
-        //newConfig = J.extend({}, {newer: library.tags.tagsVersion});
+        //newConfig = J.extend({}, defaultConfig, {tag:selectedTags});
+        newConfig = J.extend({}, defaultConfig);
     }
     else{
-        newConfig = J.extend({}, {collectionKey:collectionKey});
-        //newConfig = J.extend({}, {collectionKey:collectionKey, newer: library.tags.tagsVersion});
+        //newConfig = J.extend({}, defaultConfig, {collectionKey:collectionKey, tag:selectedTags});
+        newConfig = J.extend({}, defaultConfig, {collectionKey:collectionKey});
     }
     
     Zotero.ui.showSpinner(J(el).find('div.loading'));
@@ -360,94 +327,10 @@ Zotero.callbacks.loadTags = function(el, checkCached){
     
     d.done(J.proxy(function(tags){
         Z.debug("finished loadAllTags", 3);
-        library.tags.tagsVersion = library.tags.syncState.earliestVersion;
-        if(library.tags.syncState.earliestVersion == library.tags.syncState.latestVersion){
-            library.tags.synced = true;
-        }
-        else {
-            //TODO: fetch tags ?newer=tagsVersion
-        }
         J(el).find('div.loading').empty();
         Z.debug(tags, 5);
         library.tags.loaded = true;
         library.tags.loadedConfig = newConfig;
-        J(el).children('.loading').empty();
-        var plainList = library.tags.plainTagsList(library.tags.tagsArray);
-        Zotero.ui.displayTagsFiltered(el, library.tags, plainList, selectedTags);
-        Zotero.nav.doneLoading(el);
-    }, this));
-    
-    d.fail(J.proxy(function(jqxhr, textStatus, errorThrown){
-        var elementMessage = Zotero.ui.ajaxErrorMessage(jqxhr);
-        jel.html("<p>" + elementMessage + "</p>");
-    }));
-    
-    return;
-};
-
-Zotero.callbacks.syncTags = function(el, checkCached){
-    Z.debug('Zotero.callbacks.syncTags', 3);
-    Zotero.nav.flagLoading(el);
-    var jel = J(el);
-    if(typeof checkCached == 'undefined'){
-        checkCached = true; //default to using the cache
-    }
-    
-    //get Zotero.Library object if already bound to element
-    var library = Zotero.ui.getAssociatedLibrary(el);
-    //clear tags if we're explicitly not using cached tags
-    if(checkCached === false){
-        library.tags.clear();
-    }
-    
-    // put the selected tags into an array
-    var selectedTags = Zotero.nav.getUrlVar('tag');
-    if(!J.isArray(selectedTags)){
-        if(selectedTags) {
-            selectedTags = [selectedTags];
-        }
-        else {
-            selectedTags = [];
-        }
-    }
-    
-    //sync tags if loaded from cache but not synced
-    if(library.tags.loaded && (!library.tags.synced)){
-        Z.debug("tags loaded but not synced - loading updated", 3);
-        var syncD = library.loadUpdatedTags();
-        syncD.done(J.proxy(function(){
-            Zotero.nav.doneLoading(el);
-            J(el).children('.loading').empty();
-            var plainList = library.tags.plainTagsList(library.tags.tagsArray);
-            Zotero.ui.displayTagsFiltered(el, library.tags, plainList, selectedTags);
-            Zotero.nav.doneLoading(el);
-        }, this) );
-        return;
-    }
-    else if(library.tags.loaded){
-        J(el).children('.loading').empty();
-        var plainList = library.tags.plainTagsList(library.tags.tagsArray);
-        Zotero.ui.displayTagsFiltered(el, library.tags, plainList, selectedTags);
-        Zotero.nav.doneLoading(el);
-        return;
-    }
-    
-    //load all tags if we don't have any cached
-    Zotero.ui.showSpinner(J(el).find('div.loading'));
-    var d = library.loadAllTags({}, checkCached);
-    d.done(J.proxy(function(tags){
-        Z.debug("finished loadAllTags", 3);
-        library.tags.tagsVersion = library.tags.syncState.earliestVersion;
-        if(library.tags.syncState.earliestVersion == library.tags.syncState.latestVersion){
-            library.tags.synced = true;
-        }
-        else {
-            //TODO: fetch tags ?newer=tagsVersion
-        }
-        J(el).find('div.loading').empty();
-        Z.debug(tags, 5);
-        library.tags.loaded = true;
-        //library.tags.loadedConfig = newConfig;
         J(el).children('.loading').empty();
         var plainList = library.tags.plainTagsList(library.tags.tagsArray);
         Zotero.ui.displayTagsFiltered(el, library.tags, plainList, selectedTags);
@@ -477,70 +360,6 @@ Zotero.callbacks.appendPreloader = function(el){
  * @param  {Dom Element} el Ajaxload element
  * @return {undefined}
  */
-Zotero.callbacks.syncCollections = function(el){
-    Z.debug("Zotero.callbacks.syncCollections", 3);
-    //mark widget as loading
-    //get library associated with widget (which includes loading cached data if configured)
-    //do UI updates that always need to happen on pushState
-    //if loaded but not synced
-    //  loadUpdated
-    //      when done - redisplay widget
-    //
-    Zotero.nav.flagLoading(el);
-    var jel = J(el);
-    
-    //get Zotero.Library object if already bound to element
-    var library = Zotero.ui.getAssociatedLibrary(el);
-    var clist = jel.find('#collection-list-container');
-    
-    //perform actions that should always happen on pushStates
-    Zotero.ui.updateCollectionButtons();
-    
-    //sync collections if loaded from cache but not synced
-    if(library.collections.loaded && (!library.collections.synced)){
-        Z.debug("collections loaded but not synced - loading updated", 3);
-        var syncD = library.loadUpdatedCollections();
-        syncD.done(J.proxy(function(){
-            Zotero.nav.doneLoading(el);
-            clist.empty();
-            Zotero.ui.displayCollections(clist, library.collections);
-            Zotero.ui.nestHideCollectionTree(clist);
-            Zotero.ui.highlightCurrentCollection();
-        }, this) );
-        return;
-    }
-    else if(library.collections.loaded){
-        Zotero.ui.displayCollections(clist, library.collections);
-        Zotero.ui.nestHideCollectionTree(clist);
-        Zotero.ui.highlightCurrentCollection();
-        return;
-    }
-    
-    //if no cached or loaded data, load collections from the api
-    var d = library.loadCollections();
-    d.done(J.proxy(function(){
-        Zotero.nav.doneLoading(el);
-        clist.empty();
-        Zotero.ui.displayCollections(clist, library.collections);
-        Zotero.ui.nestHideCollectionTree(clist);
-        Zotero.ui.highlightCurrentCollection();
-        jel.data('loaded', true);
-        Zotero.nav.doneLoading(el);
-    }, this));
-    
-    d.fail(J.proxy(function(jqxhr, textStatus, errorThrown){
-        var elementMessage = Zotero.ui.ajaxErrorMessage(jqxhr);
-        jel.html("<p>" + elementMessage + "</p>");
-    }));
-    
-    return;
-};
-
-/**
- * Ajaxload library collections
- * @param  {Dom Element} el Ajaxload element
- * @return {undefined}
- */
 Zotero.callbacks.loadCollections = function(el){
     Z.debug("Zotero.callbacks.loadCollections", 3);
     Zotero.nav.flagLoading(el);
@@ -548,8 +367,11 @@ Zotero.callbacks.loadCollections = function(el){
     
     //get Zotero.Library object if already bound to element
     var library = Zotero.ui.getAssociatedLibrary(el);
+    var mode = Zotero.nav.getUrlVar('mode') || 'view';
     
     Zotero.ui.updateCollectionButtons();
+    //set default mode on dom element if not set
+    if(!jel.data('mode')) jel.data('mode', 'view');
     
     //short circuit if widget is already loaded or loading
     if((jel.data('loaded') || (library.collections.loading)) && (!library.collections.dirty) ) {
@@ -573,6 +395,7 @@ Zotero.callbacks.loadCollections = function(el){
         Zotero.ui.nestHideCollectionTree(clist);
         Zotero.ui.highlightCurrentCollection();
         jel.data('loaded', true);
+        jel.data('mode', mode);
         Zotero.nav.doneLoading(el);
     }, this));
     
@@ -787,6 +610,21 @@ Zotero.callbacks.selectMobilePage = function(el){
             Zotero.ui.mobile.changePage('#' + page, {'changeHash':false});
             //Zotero.nav.updateStatePageID(page);
         }
+    }
+    else{
+        //show the first mobile page in the dom
+        /*
+        var defaultPageID = J("[data-role='page']").first().attr('id');
+        Zotero.nav.ignoreStateChange();
+        Zotero.ui.mobile.changePage('#' + defaultPageID, {'changeHash':false});
+        */
+        
+        /*
+        Z.debug('no page set, set the current page');
+        //if(!s.hasOwnProperty('_zpageID'));
+        var activePageID = J.mobile.activePage.attr('id') || '';
+        Zotero.nav.updateStatePageID(activePageID);
+        */
     }
     Zotero.ui.createOnActivePage();
     return;
