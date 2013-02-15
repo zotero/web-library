@@ -393,7 +393,7 @@ Zotero.ui.callbacks.uploadAttachment = function(e){
                         var file = J("#attachmentuploadfileinfo").data('file');
                         var fullUpload = Zotero.file.uploadFile(upAuthOb, file);
                         fullUpload.onload = J.proxy(function(e){
-                            //if(e.status == 200){
+                            //if(fullUpload.readyState == 4 && (fullUpload.status == 201) ){
                                 Z.debug("fullUpload done", 3);
                                 var regUpload = item.registerUpload(upAuthOb.uploadKey);
                                 regUpload.done(function(){

@@ -7977,7 +7977,95 @@ Zotero.ui.init.tagButtons = function() {
     });
 };
 
+Zotero.ui.init.rte = function(type, autofocus, elements) {
+    if (!type) {
+        type = "default";
+    }
+    var ckconfig = {};
+    ckconfig.toolbarGroups = [ {
+        name: "clipboard",
+        groups: [ "clipboard", "undo" ]
+    }, {
+        name: "links"
+    }, {
+        name: "insert"
+    }, {
+        name: "forms"
+    }, {
+        name: "tools"
+    }, {
+        name: "document",
+        groups: [ "mode", "document", "doctools" ]
+    }, {
+        name: "others"
+    }, "/", {
+        name: "basicstyles",
+        groups: [ "basicstyles", "cleanup" ]
+    }, {
+        name: "paragraph",
+        groups: [ "list", "indent", "blocks", "align" ]
+    }, {
+        name: "styles"
+    }, {
+        name: "colors"
+    }, {
+        name: "about"
+    } ];
+    var nolinksckconfig = {};
+    nolinksckconfig.toolbarGroups = [ {
+        name: "clipboard",
+        groups: [ "clipboard", "undo" ]
+    }, {
+        name: "editing",
+        groups: [ "find", "selection" ]
+    }, {
+        name: "insert"
+    }, {
+        name: "forms"
+    }, {
+        name: "tools"
+    }, {
+        name: "document",
+        groups: [ "mode", "document", "doctools" ]
+    }, {
+        name: "others"
+    }, "/", {
+        name: "basicstyles",
+        groups: [ "basicstyles", "cleanup" ]
+    }, {
+        name: "paragraph",
+        groups: [ "list", "indent", "blocks", "align" ]
+    }, {
+        name: "styles"
+    }, {
+        name: "colors"
+    }, {
+        name: "about"
+    } ];
+    var readonlyckconfig = {};
+    readonlyckconfig.toolbarGroups = [];
+    readonlyckconfig.readOnly = true;
+    var config;
+    if (type == "nolinks") {
+        config = J.extend(true, {}, nolinksckconfig);
+    } else if (type == "readonly") {
+        config = J.extend(true, {}, readonlyckconfig);
+    } else {
+        config = J.extend(true, {}, ckconfig);
+    }
+    if (autofocus) {
+        config.startupFocus = true;
+    }
+    J("textarea.tinymce").each(function(ind, el) {
+        var editor = CKEDITOR.replace(el, config);
+    });
+};
+
 Zotero.ui.init.tinyMce = function(type, autofocus, elements) {
+    if (Zotero.config.rte == "ckeditor") {
+        Zotero.ui.init.rte(type, autofocus, elements);
+        return;
+    }
     if (!type) {
         type = "default";
     }

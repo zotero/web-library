@@ -9308,7 +9308,86 @@ Zotero.ui.init.tagButtons = function(){
     J("#item-details-div").on('click', '#show-citation-link', launchCiteDialog);
 };
  */
+
+Zotero.ui.init.rte = function(type, autofocus, elements){
+    if(!type) { type = 'default'; }
+    
+    var ckconfig = {};
+    ckconfig.toolbarGroups = [
+        { name: 'clipboard',   groups: [ 'clipboard', 'undo' ] },
+        //{ name: 'editing',     groups: [ 'find', 'selection' ] },
+        { name: 'links' },
+        { name: 'insert' },
+        { name: 'forms' },
+        { name: 'tools' },
+        { name: 'document',    groups: [ 'mode', 'document', 'doctools' ] },
+        { name: 'others' },
+        '/',
+        { name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ] },
+        { name: 'paragraph',   groups: [ 'list', 'indent', 'blocks', 'align' ] },
+        { name: 'styles' },
+        { name: 'colors' },
+        { name: 'about' }
+    ];
+    
+    var nolinksckconfig = {};
+    nolinksckconfig.toolbarGroups = [
+        { name: 'clipboard',   groups: [ 'clipboard', 'undo' ] },
+        { name: 'editing',     groups: [ 'find', 'selection' ] },
+        { name: 'insert' },
+        { name: 'forms' },
+        { name: 'tools' },
+        { name: 'document',    groups: [ 'mode', 'document', 'doctools' ] },
+        { name: 'others' },
+        '/',
+        { name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ] },
+        { name: 'paragraph',   groups: [ 'list', 'indent', 'blocks', 'align' ] },
+        { name: 'styles' },
+        { name: 'colors' },
+        { name: 'about' }
+    ];
+    var readonlyckconfig = {};
+    readonlyckconfig.toolbarGroups = [];
+    readonlyckconfig.readOnly = true;
+    
+    var config;
+    if(type == 'nolinks'){
+        config = J.extend(true, {}, nolinksckconfig);
+    }
+    else if(type == 'readonly'){
+        config = J.extend(true, {}, readonlyckconfig);
+    }
+    else {
+        config = J.extend(true, {}, ckconfig);
+    }
+    if(autofocus){
+        config.startupFocus = true;
+    }
+    
+    J("textarea.tinymce").each(function(ind, el){
+        var editor = CKEDITOR.replace(el, config );
+        /*
+        editor.dataProcessor.htmlFilter.addRules(
+        {
+            elements :
+            {
+                a : function( element )
+                {
+                    if ( !element.attributes.rel )
+                        element.attributes.rel = 'nofollow';
+                }
+            }
+        });
+        */
+    });
+};
+
 Zotero.ui.init.tinyMce = function(type, autofocus, elements){
+    if(Zotero.config.rte == 'ckeditor'){
+        Zotero.ui.init.rte(type, autofocus, elements);
+        return;
+    }
+    
     if(!type){
         type = 'default';
     }
@@ -11037,7 +11116,7 @@ Zotero.ui.callbacks.uploadAttachment = function(e){
                         var file = J("#attachmentuploadfileinfo").data('file');
                         var fullUpload = Zotero.file.uploadFile(upAuthOb, file);
                         fullUpload.onload = J.proxy(function(e){
-                            //if(e.status == 200){
+                            //if(fullUpload.readyState == 4 && (fullUpload.status == 201) ){
                                 Z.debug("fullUpload done", 3);
                                 var regUpload = item.registerUpload(upAuthOb.uploadKey);
                                 regUpload.done(function(){

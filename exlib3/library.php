@@ -287,6 +287,7 @@ $messages = array();
             </script>
             
             <script type="text/javascript" charset="utf-8" src="<?=$staticPath?>/library/tinymce3.5.5/tiny_mce/tiny_mce.js"></script>
+            <script type="text/javascript" charset="utf-8" src="<?=$staticPath?>/library/ckeditor/ckeditor.js"></script>
         </div><!--/content -->
     </body>
 </html>
