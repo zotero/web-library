@@ -12,6 +12,9 @@ Installation
 2. Use one of the example library directories and modify config.php and zoteroconfig.js
    Required settings that likely need to be changed in config.php:
    * Everything except $librarySlug and $displayName
+   * itemsPathString is the full url path to library.php
+   * baseUrl is the full url to the install directory, eg 'http://localhost/www-library';
+   * staticPath is the full url to static subdirectory of install, or alternate location you move static files to
    Required settings that likely need to be changed in zoteroconfig.js:
    * baseDownloadUrl (full url path to download.php if proxyDownloads is true)
    * baseUrl (full url path to the install directory)
