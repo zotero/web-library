@@ -518,6 +518,7 @@ form.zsearch {
 .body-flex-container {
     display: -webkit-flex;
     display: flex;
+    display: -moz-flex;
     /*width: 100%;*/
     flex-direction:column;
     justify-content:flex-start; /*this is the default, just here for clarity*/
@@ -525,6 +526,9 @@ form.zsearch {
     -webkit-flex-direction:column;
     -webkit-justify-content:flex-start; /*this is the default, just here for clarity*/
     -webkit-align-items:stretch; /*header and itemPanes stretch horizontally*/
+    -moz-flex-direction:column;
+    -moz-justify-content:flex-start;
+    -moz-align-items:stretch;
 }
 
 .header-flex-container {
@@ -532,10 +536,13 @@ form.zsearch {
     display: flex;
     justify-content:space-between;
     -webkit-justify-content:space-between;
+    -moz-justify-content:space-between;
     
     flex:initial; /* don't grow the header */
+    -moz-flex:initial; /* don't grow the header */
     -webkit-flex:initial;
     flex-basis:35px; /* don't grow the header */
+    -moz-flex-basis:35px; /* don't grow the header */
     -webkit-flex-basis:initial;
     background: #333;
     padding:0 10px;
@@ -545,6 +552,7 @@ form.zsearch {
 }
 #control-panel {
     flex:30%;
+    -moz-flex:30%;
     -webkit-flex:30%;
     padding-top:5px;
     text-align: center;
@@ -554,7 +562,9 @@ form.zsearch {
 #control-panel.control-panel-flex-container { /*#control-panel*/
     display:-webkit-flex;
     display: flex;
+    display: -moz-flex;
     flex:30%;
+    -moz-flex:30%;
     -webkit-flex:30%;
     padding-top:5px;
     text-align: center;
@@ -565,6 +575,7 @@ form.zsearch {
     /*display:block;*/
     /*width:300px;*/
     flex:30%;
+    -moz-flex:30%;
     -webkit-flex:30%;
     text-align: center;
 }
@@ -574,6 +585,7 @@ form.zsearch {
     padding-top:5px;
     /*width:300px;*/
     flex:30%;
+    -moz-flex:30%;
     -webkit-flex:30%;
     text-align:center;
 }
@@ -581,6 +593,7 @@ form.zsearch {
 #library {
     max-height:100%;
     flex-basis:500px;
+    -moz-flex-basis:500px;
     -webkit-flex-basis:500px;
 }
 /* Main body flex container */
@@ -593,10 +606,13 @@ form.zsearch {
 .library-flex-container {
     display: -webkit-flex;
     display: flex;
+    display: -moz-flex;
     /*width: 100%;*/
     flex-direction:column;
+    -moz-flex-direction:column;
     -webkit-flex-direction:column;
     align-items:stretch;
+    -moz-align-items:stretch;
     -webkit-align-items:stretch;
 }
 
@@ -604,10 +620,13 @@ form.zsearch {
 .item-pane-flex-container {
     display: -webkit-flex;
     display: flex;
+    display:-moz-flex;
     /*width: 100%;*/
     align-items: stretch;
+    -moz-align-items: stretch;
     -webkit-align-items: stretch;
     justify-content:space-between;
+    -moz-justify-content:space-between;
     -webkit-justify-content:space-between;
     height:100%;
 }
@@ -615,6 +634,7 @@ form.zsearch {
     margin: 5px;
     -webkit-flex: 1;
     flex: 1;
+    -moz-flex: 1;
 }
 
 
@@ -637,8 +657,10 @@ form.zsearch {
 .left-drawer-flex-container {
     display: -webkit-flex;
     display: flex;
+    display: -moz-flex;
     width: 100%;
     align-items: stretch;
+    -moz-align-items: stretch;
     -webkit-align-items: stretch;
 }
 .left-drawer-flex-item {
@@ -656,6 +678,9 @@ form.zsearch {
     animation-duration: 1s;
     animation-name: slidein;
     animation-fill-mode: forwards;
+    -moz-animation-duration: 1s;
+    -moz-animation-name: slidein;
+    -moz-animation-fill-mode: forwards;
     -webkit-animation-duration: 1s;
     -webkit-animation-name: slidein;
     -webkit-animation-fill-mode: forwards;
@@ -665,6 +690,9 @@ form.zsearch {
     animation-duration: 1s;
     animation-name: slideout;
     animation-fill-mode: backwards;
+    -moz-animation-duration: 1s;
+    -moz-animation-name: slideout;
+    -moz-animation-fill-mode: backwards;
     -webkit-animation-duration: 1s;
     -webkit-animation-name: slideout;
     -webkit-animation-fill-mode: backwards;
@@ -681,6 +709,26 @@ form.zsearch {
 }
 
 @keyframes slideout {
+  from {
+    left: -0px;
+  }
+ 
+  to {
+    left: -370px;
+  }
+}
+
+@-moz-keyframes slidein {
+  from {
+    left: -370px;
+  }
+ 
+  to {
+    left: 0px;
+  }
+}
+
+@-moz-keyframes slideout {
   from {
     left: -0px;
   }
