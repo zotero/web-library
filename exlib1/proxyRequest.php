@@ -29,8 +29,25 @@ $requestMethod = $_SERVER['REQUEST_METHOD'];
 //raw body of the request
 $rawbody = @file_get_contents('php://input');
 
-$headers = apache_request_headers();
-
+$relevantHeaders = array("If-Modified-Since", 
+                         "If-Modified-Since-Version", 
+                         "Last-Modified", 
+                         "Last-Modified-Version", 
+                         "If-Unmodified-Since-Version", 
+                         "Zotero-Write-Token",
+                         "If-Match",
+                         "Zotero-API-Version",
+                         "Backoff",
+                         "Retry-After",
+                         "Content-Type"
+                          );
+$aheaders = apache_request_headers();
+$headers = array();
+foreach($aheaders as $key=>$val){
+    if(in_array($key, $relevantHeaders)){
+        $headers[$key] = $val;
+    }
+}
 $response = $library->proxyHttpRequest($requestUrl, strtoupper($requestMethod), $rawbody, $headers);
 
 //take the http response we got and send all of it along
@@ -48,7 +65,7 @@ foreach($httpHeaders as $key=>$val){
 }
 
 echo $response->getBody();
-
+/*
 //getHeader function from Zend_Controller_Request_Http
 function getHeader($header){
     // Try to get it from the $_SERVER array first
@@ -146,3 +163,4 @@ function proper_parse_str($str) {
     # return result array
     return $arr;
 }
+*/
