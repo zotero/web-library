@@ -46,6 +46,14 @@ body.library {
     margin-right: 5px;
 }
 
+#field-table thead:first-child, .edit-checkbox-td {
+    text-align: center;
+}
+
+#field-table thead:first-child input, .edit-checkbox-td input {
+    display: inline-block;
+}
+
 .item-select-link {
     position: relative;
 }
@@ -155,12 +163,12 @@ td.tags * {
 #item-pagination-div .back-item-pagination {
     float:left;
     padding-left:0px;
-    margin-top:0px;
+    margin: 0;
 }
 
 #item-pagination-div .forward-item-pagination {
     float:right;
-    margin-top:0px;
+    margin: 0px 7px 0 0;
 }
 
 
@@ -181,6 +189,7 @@ td.tags * {
 /* == Item Details == */
 ul#notes-and-attachments {
     list-style:none;
+    padding-left: 0;
 }
 
 ul#notes-and-attachments li {
@@ -209,6 +218,11 @@ ul#notes-and-attachments li {
 
 /* == Library styles == */
 
+#library {
+    overflow: auto;
+    padding-bottom: 16px;
+}
+
 ul.item-pagination {
     padding-left:0;
     margin-left:0;
@@ -231,11 +245,15 @@ ul.item-pagination {
     display:inline !important;
 }
 
+#tags-list-div {
+    overflow: auto;
+}
+
 #tags-list,
 #selected-tags-list {
     list-style:none;
     margin:1em 0;
-    padding-left:0;
+    padding: 0;
     font-weight:normal;
     /*font-size: 0.857142857em;*/
     font-size: 0.8em;
@@ -289,17 +307,20 @@ label[for='show-all-tags']{
 }
 
 #tag-filter-input {
-    margin-bottom:25px;
+    margin-bottom: 16px;
 }
 
 #more-tags-links {
     clear: both;
+    margin-bottom: 16px;
 }
 
 #tag-lists-container {
 /*    overflow:scroll;
     max-height:300px;
     */
+    overflow: auto;
+    margin-bottom: 16px;
 }
 
 td.tags ul {
@@ -341,8 +362,8 @@ td.tags li:not(:last-child):after {
     display:block;
     text-decoration:none;
     border-bottom: 1px dotted #ccc;
-    padding: 5px;
     color: #16B;
+    padding: 5px;
 }
 
 #collection-list a:hover,
@@ -359,6 +380,10 @@ td.tags li:not(:last-child):after {
 
 #collection-list span{
     margin-top:6px;
+}
+
+#collection-list > li > span {
+    margin-left: 5px;
 }
 
 #library-items-div table {
