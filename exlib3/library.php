@@ -12,7 +12,10 @@ $messages = array();
                                           share the results of your research."/>
         
         <title>Zotero Library</title>
-        <link rel="shortcut icon" type="image/ico" href="/favicon.ico" />
+        <link rel="shortcut icon" type="image/png" sizes="16x16" href="<?=$staticPath?>/images/theme/zotero_theme/zotero_16.png" />
+        <link rel="shortcut icon" type="image/png" sizes="48x48" href="<?=$staticPath?>/images/theme/zotero_theme/zotero_48.png" />
+        <link rel="apple-touch-icon" type="image/png" href="<?=$staticPath?>/images/theme/zotero_theme/zotero_48.png" />
+        <link rel="apple-touch-icon-precomposed" type="image/png" href="<?=$staticPath?>/images/theme/zotero_theme/zotero_48.png" />
         
         <!-- css -->
         <link rel="stylesheet" href="<?=$staticPath?>/css/theme_style3.css" 

@@ -468,11 +468,11 @@ td.tags li:not(:last-child):after {
 }
 
 #library-items-div {
-    overflow-y: auto;
+    overflow-y: scroll;
 }
 
 #item-details-div {
-    overflow-y:auto;
+    overflow-y:scroll;
 }
 
 /* ZSearch */
