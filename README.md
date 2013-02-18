@@ -10,17 +10,11 @@ Installation
 
 1. Clone git repository into target web directory
 2. Use one of the example library directories and modify config.php and zoteroconfig.js
-   Required settings that likely need to be changed in config.php:
-   * Everything except $librarySlug and $displayName
-   * itemsPathString is the full url path to library.php
-   * baseUrl is the full url to the install directory, eg 'http://localhost/www-library';
-   * staticPath is the full url to static subdirectory of install, or alternate location you move static files to
-   Required settings that likely need to be changed in zoteroconfig.js:
-   * baseDownloadUrl (full url path to download.php if proxyDownloads is true)
-   * baseUrl (full url path to the install directory)
-   * staticPath (full url to static subdirectory of install, or alternate location you move static files to )
-   * baseDomain (base domain for install, eg "example.com")
-   * proxyPath (full url path to proxyRequest.php)
+   Required settings that likely need to be changed in config.php and zoteroconfig.js:
+   * itemsPathString (full url path to the library base, eg "/root/sub/www-library/exlib1" or "/root/sub/www-library/exlib1/library.php")
+   * staticPath (full url path to static subdirectory of install, or alternate location you move static files to, eg "/root/sub/www-library/static")
+   * proxyPath (full url path to proxyRequest.php, eg "/root/sub/www-library/exlib1/proxyRequest.php")
+   * baseDownloadUrl (full url path to download.php if proxyDownloads is true, eg "/root/sub/www-library/exlib1/download.php")
 3. (optional) Move config.php somewhere not publicly accessible (but readable by apache/php), and change the references in library.php, proxyRequest.php and download.php
 
 Requirements
