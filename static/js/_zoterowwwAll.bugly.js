@@ -5127,9 +5127,9 @@ Zotero.nav.pushState = function(force, state) {
     if (Zotero.nav.replacePush === true) {
         Zotero.nav.replacePush = false;
         Zotero.nav.ignoreStateChange();
-        History.replaceState(s, Zotero.config.startPageTitle, url);
+        History.replaceState(s, document.title, url);
     } else {
-        History.pushState(s, Zotero.config.startPageTitle, url);
+        History.pushState(s, document.title, url);
     }
     if (force) {
         Zotero.nav.urlChangeCallback({
@@ -5139,7 +5139,6 @@ Zotero.nav.pushState = function(force, state) {
             }
         });
     }
-    document.title = Zotero.config.startPageTitle;
     Zotero.debug("leaving pushstate", 3);
 };
 
@@ -8926,15 +8925,19 @@ Zotero.ui.userGroupsDisplay = function(groups) {
 Zotero.ui.libraryBreadcrumbs = function(library, config) {
     Z.debug("Zotero.ui.libraryBreadcrumbs", 3);
     try {
-        var breadcrumbs;
+        var breadcrumbs = [];
         if (!library) {
             library = Zotero.ui.getAssociatedLibrary(J("#feed-link-div"));
         }
         if (!config) {
             config = Zotero.nav.getUrlVars();
         }
-        Z.debug(config, 4);
-        if (library.libraryType == "user") {
+        Z.debug(config, 2);
+        if (Zotero.config.breadcrumbsBase) {
+            J.each(Zotero.config.breadcrumbsBase, function(ind, crumb) {
+                breadcrumbs.push(crumb);
+            });
+        } else if (library.libraryType == "user") {
             breadcrumbs = [ {
                 label: "Home",
                 path: "/"
@@ -8996,6 +8999,7 @@ Zotero.ui.libraryBreadcrumbs = function(library, config) {
         Z.debug("done with breadcrumbs", 4);
     } catch (e) {
         Zotero.debug("Error loading breadcrumbs", 2);
+        Zotero.debug(e);
     }
 };
 

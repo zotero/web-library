@@ -237,42 +237,25 @@ Zotero.nav.pushState = function(force, state){
     if(state){
         s = state;
     }
-    /*else{
-        s = curState;
-    }*/
-
+    
     urlvars = Zotero.nav.urlvars.pathVars;
     
-    //Z.debug(urlvars, 4);
     var url = Zotero.nav.buildUrl(urlvars, false);
-    //push the state onto our page stack so we know something changed even if the url didn't
-    /*
-    if(Zotero.config.mobile){
-        var activePageID = J.mobile.activePage.attr('id');
-        if(typeof activePageID == 'undefined'){
-            activePageID = null;
-        }
-        Zotero.nav.updateStatePageID(activePageID);
-        s['_zprevPageID'] = activePageID;
-    }
-    Z.debug("2");
-    Zotero.state.ignoreStatechange = false;
-    */
+    
     //actually push state and manually call urlChangeCallback if specified
     if(Zotero.nav.replacePush === true){
         Zotero.nav.replacePush = false;
         Zotero.nav.ignoreStateChange();
-        History.replaceState(s, Zotero.config.startPageTitle, url);
+        History.replaceState(s, document.title, url);
     }
     else{
-        History.pushState(s, Zotero.config.startPageTitle, url);
+        History.pushState(s, document.title, url);
     }
 
     if(force){
         Zotero.nav.urlChangeCallback({type:'popstate', originalEvent:{state:urlvars}} );
     }
 
-    document.title = Zotero.config.startPageTitle;
     Zotero.debug("leaving pushstate", 3);
 };
 

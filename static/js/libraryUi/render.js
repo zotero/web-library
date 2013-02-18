@@ -683,25 +683,30 @@ Zotero.ui.userGroupsDisplay = function(groups){
 Zotero.ui.libraryBreadcrumbs = function(library, config){
     Z.debug('Zotero.ui.libraryBreadcrumbs', 3);
     try{
-    var breadcrumbs;
+    var breadcrumbs = [];
     if(!library){
         library = Zotero.ui.getAssociatedLibrary(J("#feed-link-div"));
     }
     if(!config){
         config = Zotero.nav.getUrlVars();
     }
-    Z.debug(config, 4);
-    if(library.libraryType == 'user'){
+    Z.debug(config, 2);
+    if(Zotero.config.breadcrumbsBase){
+        J.each(Zotero.config.breadcrumbsBase, function(ind, crumb){
+            breadcrumbs.push(crumb);
+        });
+    }
+    else if(library.libraryType == 'user'){
         breadcrumbs = [{label:'Home', path:'/'},
-                           {label:'People', path:'/people'},
-                           {label:(library.libraryLabel || library.libraryUrlIdentifier), path:'/' + library.libraryUrlIdentifier},
-                           {label:'Library', path:'/' + library.libraryUrlIdentifier + '/items'}];
+                       {label:'People', path:'/people'},
+                       {label:(library.libraryLabel || library.libraryUrlIdentifier), path:'/' + library.libraryUrlIdentifier},
+                       {label:'Library', path:'/' + library.libraryUrlIdentifier + '/items'}];
     }
     else{
         breadcrumbs = [{label:'Home', path:'/'},
-                           {label:'Groups', path:'/groups'},
-                           {label:(library.libraryLabel || library.libraryUrlIdentifier), path:'/groups/' + library.libraryUrlIdentifier},
-                           {label:'Library', path:'/groups/' + library.libraryUrlIdentifier + '/items'}];
+                       {label:'Groups', path:'/groups'},
+                       {label:(library.libraryLabel || library.libraryUrlIdentifier), path:'/groups/' + library.libraryUrlIdentifier},
+                       {label:'Library', path:'/groups/' + library.libraryUrlIdentifier + '/items'}];
     }
     if(config.collectionKey){
         Z.debug("have collectionKey", 4);
@@ -722,6 +727,6 @@ Zotero.ui.libraryBreadcrumbs = function(library, config){
     }
     catch(e){
         Zotero.debug("Error loading breadcrumbs", 2);
+        Zotero.debug(e);
     }
-    
 };
