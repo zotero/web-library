@@ -35,7 +35,7 @@
                     <a href="/"><img src="<?=$staticPath?>/images/theme/zotero.png" alt="Zotero"></a>
                 </h1>
             <div id="navbar" class="container">
-                <form action="<?=$baseDomain?>/search/" class="zform zsearch" id="library-search">
+                <form action="search" class="zform zsearch" id="library-search">
                     <div>
                         <input type="text" name="q" size="20" id="header-search-query"/>
                         <button class="button clear-field-button" type="reset"><span class="ui-icon ui-icon-circle-close">&nbsp;</span></button>
@@ -253,7 +253,7 @@
         </div>
         <footer>
             <div class="center container">
-                    <img id="chnm-logo" src="<?=$baseUrl?>/static/images/theme/rrchnmlogo-gray.png" alt="Zotero">
+                    <img id="chnm-logo" src="<?=$staticUrl?>/static/images/theme/rrchnmlogo-gray.png" alt="Zotero">
                 <nav role="secondary">                 
                     <ul>
                     </ul>
@@ -279,8 +279,8 @@
             if(typeof zoteroData == 'undefined'){
                 var zoteroData = {};
             }
-            var baseURL = "<?=$baseUrl?>";
-            var baseDomain = "<?=$baseDomain?>";
+            var baseURL = "";
+            var baseDomain = "";
             var staticPath = "<?=$staticPath?>";
         </script>
         

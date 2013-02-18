@@ -364,8 +364,8 @@
         else{
             zoteroData.mobile = 1;
         }
-        var baseURL = "<?=$baseUrl?>";
-        var baseDomain = "<?=$baseDomain?>";
+        var baseURL = "";
+        var baseDomain = "";
         var staticPath = "<?=$staticPath?>";
         
         $(document).bind("mobileinit", function(){

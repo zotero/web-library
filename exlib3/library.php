@@ -58,7 +58,7 @@ $messages = array();
                 </div>
             </div>
             <div id="library-search-div">
-                <form action="<?=$baseDomain?>/search/" class="zform zsearch" id="library-search">
+                <form action="/search/" class="zform zsearch" id="library-search">
                     <div>
                         <input type="text" name="q" size="20" id="header-search-query"/>
                         <button class="button clear-field-button" type="reset"><span class="ui-icon ui-icon-circle-close">&nbsp;</span></button>
@@ -260,8 +260,8 @@ $messages = array();
                 if(typeof zoteroData == 'undefined'){
                     var zoteroData = {};
                 }
-                var baseURL = "<?=$baseUrl?>";
-                var baseDomain = "<?=$baseDomain?>";
+                var baseURL = "";
+                var baseDomain = "";
                 var staticPath = "<?=$staticPath?>";
             </script>
             
