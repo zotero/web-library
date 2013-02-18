@@ -1,10 +1,7 @@
 <!DOCTYPE html>
 <?include "config.php";?>
-<?
-$messages = array();
-?>
 <html lang="en" class="no-js"> 
-    <head> 
+    <head>
         <meta charset="utf-8" />
         <meta name="keywords" content="Zotero, research, tool, firefox, extension"/>
         <meta name="description" content="Zotero is a powerful, easy-to-use research tool that 
@@ -12,7 +9,10 @@ $messages = array();
                                           share the results of your research."/>
         
         <title>Zotero Library</title>
-        <link rel="shortcut icon" type="image/ico" href="/favicon.ico" />
+        <link rel="shortcut icon" type="image/png" sizes="48x48" href="<?=$staticPath?>/images/theme/zotero_theme/zotero_48.png" />
+        <link rel="shortcut icon" type="image/png" sizes="16x16" href="<?=$staticPath?>/images/theme/zotero_theme/zotero_16.png" />
+        <link rel="apple-touch-icon" type="image/png" href="<?=$staticPath?>/images/theme/zotero_theme/zotero_48.png" />
+        <link rel="apple-touch-icon-precomposed" type="image/png" href="<?=$staticPath?>/images/theme/zotero_theme/zotero_48.png" />
         
         <!-- css -->
         <link rel="stylesheet" href="<?=$staticPath?>/css/theme_style.css" 
