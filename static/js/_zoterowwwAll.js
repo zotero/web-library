@@ -3020,6 +3020,7 @@ Zotero.Tags = function(feed){
     this.displayTagsUrl = '';
     this.tagObjects = {};
     this.tagsArray = [];
+    this.loaded = false;
     if(typeof feed != 'undefined'){
         this.addTagsFromFeed(feed);
     }
@@ -5863,7 +5864,6 @@ J("#js-message").ajaxError(Zotero.nav.error);
  * @since      Class available since Release 0.6.1
  */
 Zotero.pages = {
-
     baseURL:    baseURL,
     staticPath: staticPath,
     baseDomain: baseDomain,
@@ -11430,8 +11430,8 @@ Zotero.ui.callbacks.librarySettings = function(e){
         J("#library-settings-form").find('input:checked').each(function(){
             showFields.push(J(this).val());
         });
-        var stringShowFields = showFields.join(',');
-        Zotero.utils.setUserPref('library_listShowFields', stringShowFields);
+        
+        Zotero.utils.setUserPref('library_listShowFields', showFields);
         Zotero.prefs.library_listShowFields = showFields;
         Zotero.callbacks.loadItems(J("#library-items-div"));
         //J("#library-settings-dialog").dialog("close");

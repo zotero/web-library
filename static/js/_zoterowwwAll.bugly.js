@@ -2939,6 +2939,7 @@ Zotero.Tags = function(feed) {
     this.displayTagsUrl = "";
     this.tagObjects = {};
     this.tagsArray = [];
+    this.loaded = false;
     if (typeof feed != "undefined") {
         this.addTagsFromFeed(feed);
     }
@@ -9665,8 +9666,7 @@ Zotero.ui.callbacks.librarySettings = function(e) {
         J("#library-settings-form").find("input:checked").each(function() {
             showFields.push(J(this).val());
         });
-        var stringShowFields = showFields.join(",");
-        Zotero.utils.setUserPref("library_listShowFields", stringShowFields);
+        Zotero.utils.setUserPref("library_listShowFields", showFields);
         Zotero.prefs.library_listShowFields = showFields;
         Zotero.callbacks.loadItems(J("#library-items-div"));
         Zotero.ui.closeDialog(J("#library-settings-dialog"));

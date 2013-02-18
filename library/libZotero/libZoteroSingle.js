@@ -3020,6 +3020,7 @@ Zotero.Tags = function(feed){
     this.displayTagsUrl = '';
     this.tagObjects = {};
     this.tagsArray = [];
+    this.loaded = false;
     if(typeof feed != 'undefined'){
         this.addTagsFromFeed(feed);
     }
