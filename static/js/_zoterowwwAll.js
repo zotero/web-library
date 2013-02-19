@@ -5847,6 +5847,7 @@ J("#js-message").ajaxError(Zotero.nav.error);
  * @since      Class available since Release 0.6.1
  */
 Zotero.pages = {
+
     baseURL:    baseURL,
     staticPath: staticPath,
     baseDomain: baseDomain,
@@ -11103,15 +11104,19 @@ Zotero.ui.callbacks.uploadAttachment = function(e){
                         var filedata = J("#attachmentuploadfileinfo").data('fileInfo').reader.result;
                         var file = J("#attachmentuploadfileinfo").data('file');
                         var fullUpload = Zotero.file.uploadFile(upAuthOb, file);
-                        fullUpload.onload = J.proxy(function(e){
-                            //if(fullUpload.readyState == 4 && (fullUpload.status == 201) ){
-                                Z.debug("fullUpload done", 3);
+                        fullUpload.onreadystatechange = J.proxy(function(e){
+                            Z.debug("fullupload readyState: " + fullUpload.readyState, 3);
+                            Z.debug("fullupload status: " + fullUpload.status, 3);
+                            //if we know that CORS is allowed, check that the request is done and that it was successful
+                            //otherwise just wait until it's finished and assume success
+                            if( (Zotero.config.CORSallowed === false && fullUpload.readyState == 4) ||
+                                (fullUpload.readyState == 4 && fullUpload.status == 201) ){
+                                Z.debug("fullUpload done - registering upload", 3);
                                 var regUpload = item.registerUpload(upAuthOb.uploadKey);
                                 regUpload.done(function(){
                                     Zotero.ui.closeDialog(J("#upload-attachment-dialog"));
                                     //add to parent's children counter
                                     parentItem.numChildren++;
-                                    //TODO: refresh attachments on item page (just pushstate?)
                                     Zotero.nav.pushState(true);
                                 }).fail(function(jqxhr, textStatus, e){
                                     Z.debug("Upload registration failed - " + textStatus, 3);
@@ -11122,7 +11127,7 @@ Zotero.ui.callbacks.uploadAttachment = function(e){
                                     }
                                     Zotero.ui.closeDialog(J("#upload-attachment-dialog"));
                                 });
-                            //}
+                            }
                         }, this);
                         fullUpload.upload.onprogress = function(e){
                             Z.debug('fullUpload.upload.onprogress');

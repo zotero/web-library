@@ -9427,22 +9427,26 @@ Zotero.ui.callbacks.uploadAttachment = function(e) {
                         var filedata = J("#attachmentuploadfileinfo").data("fileInfo").reader.result;
                         var file = J("#attachmentuploadfileinfo").data("file");
                         var fullUpload = Zotero.file.uploadFile(upAuthOb, file);
-                        fullUpload.onload = J.proxy(function(e) {
-                            Z.debug("fullUpload done", 3);
-                            var regUpload = item.registerUpload(upAuthOb.uploadKey);
-                            regUpload.done(function() {
-                                Zotero.ui.closeDialog(J("#upload-attachment-dialog"));
-                                parentItem.numChildren++;
-                                Zotero.nav.pushState(true);
-                            }).fail(function(jqxhr, textStatus, e) {
-                                Z.debug("Upload registration failed - " + textStatus, 3);
-                                Zotero.ui.jsNotificationMessage("Error registering upload", "error");
-                                if (jqxhr.status == 412) {
-                                    Z.debug("412 Precondition Failed on upload registration", 3);
-                                    Zotero.ui.jsNotificationMessage("The file has changed remotely", "error");
-                                }
-                                Zotero.ui.closeDialog(J("#upload-attachment-dialog"));
-                            });
+                        fullUpload.onreadystatechange = J.proxy(function(e) {
+                            Z.debug("fullupload readyState: " + fullUpload.readyState, 3);
+                            Z.debug("fullupload status: " + fullUpload.status, 3);
+                            if (Zotero.config.CORSallowed === false && fullUpload.readyState == 4 || fullUpload.readyState == 4 && fullUpload.status == 201) {
+                                Z.debug("fullUpload done - registering upload", 3);
+                                var regUpload = item.registerUpload(upAuthOb.uploadKey);
+                                regUpload.done(function() {
+                                    Zotero.ui.closeDialog(J("#upload-attachment-dialog"));
+                                    parentItem.numChildren++;
+                                    Zotero.nav.pushState(true);
+                                }).fail(function(jqxhr, textStatus, e) {
+                                    Z.debug("Upload registration failed - " + textStatus, 3);
+                                    Zotero.ui.jsNotificationMessage("Error registering upload", "error");
+                                    if (jqxhr.status == 412) {
+                                        Z.debug("412 Precondition Failed on upload registration", 3);
+                                        Zotero.ui.jsNotificationMessage("The file has changed remotely", "error");
+                                    }
+                                    Zotero.ui.closeDialog(J("#upload-attachment-dialog"));
+                                });
+                            }
                         }, this);
                         fullUpload.upload.onprogress = function(e) {
                             Z.debug("fullUpload.upload.onprogress");
