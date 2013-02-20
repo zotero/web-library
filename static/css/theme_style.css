@@ -183,6 +183,8 @@ label,
 input,
 select {
     display:block;
+    max-width: 100%;
+    margin: 0;
 }
 input[type=text],
 input[type=password] {
@@ -194,8 +196,8 @@ input[type=password] {
 
 label input[type=checkbox],
 label input[type=radio] {
-    float:left;
-    margin-left:0;
+    display: inline-block;
+    margin: 0 10px 0 0;
 }
 
 form .hint,
@@ -530,8 +532,6 @@ header .center {
 }
 
 .zsearch .button {
-    background-color: #aaa !important;
-    border-color: #aaa !important;
     vertical-align:middle;
 }
 
@@ -557,7 +557,7 @@ header .center {
 /* == Content == */
 #content .center {
     background: #fff;
-    padding: 16px 40px 0;
+    padding: 16px 40px;
     -webkit-box-shadow: 0 5px 10px rgba(0,0,0,0.5);
     -moz-box-shadow: 0 5px 10px rgba(0,0,0,0.5);
     box-shadow: 0 5px 10px rgba(0,0,0,0.5);
