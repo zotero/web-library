@@ -208,10 +208,14 @@ ul#notes-and-attachments li {
     text-shadow:none;
 }
 
+.cite-item-div form {
+    margin: 10px 0 20px;
+}
+
 #cite-box-div {
     border:1px solid #d5d5d5;
-    margin:5px;
-    padding:3px;
+    margin: 0 0 10px 0;
+    padding:10px;
     height:300px;
     overflow: auto;
 }
@@ -463,13 +467,26 @@ td.tags li:not(:last-child):after {
 }
 
 /* Attachment Upload */
+
+#fileuploadinput {
+    font-size: 16px;
+    line-height: 100%;
+    margin: 0 0 20px 0;
+    width: 100%;
+}
 #fileuploaddroptarget {
     padding-top:50px;
-    border: 1px solid black;
+    border: 0;
+    background-color: #e7e7e7;
     height:200px;
     text-align:center;
+    margin: 0 0 20px 0;
 }
 
 #fileuploaddroptarget h3 {
+}
+
+#uploadprogressmeter {
+    margin: 0;
 }
 
