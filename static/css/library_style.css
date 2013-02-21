@@ -11,6 +11,11 @@ body.library {
 
 /* == User Library == */
 
+#library {
+    float: left;
+    padding-bottom: 16px;
+}
+
 #library a {
     text-decoration: none;
 }
@@ -294,11 +299,6 @@ ul#notes-and-attachments li {
 
 /* == Library styles == */
 
-#library {
-    overflow: auto;
-    padding-bottom: 16px;
-}
-
 ul.item-pagination {
     padding-left:0;
     margin-left:0;
@@ -321,14 +321,10 @@ ul.item-pagination {
     display:inline !important;
 }
 
-#tags-list-div {
-    overflow: auto;
-}
-
 #tags-list,
 #selected-tags-list {
     list-style:none;
-    margin:1em 0;
+    margin: 0;
     padding: 0;
     font-weight:normal;
     /*font-size: 0.857142857em;*/
@@ -423,6 +419,10 @@ td.tags li:not(:last-child):after {
 
 #collection-list-container {
     clear: both;
+}
+
+#collection-list-div {
+    margin-bottom: 40px;
 }
 
 #collection-edit-div {
