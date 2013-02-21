@@ -10,12 +10,21 @@ body.library {
 }
 
 /* == User Library == */
+
+#library a {
+    text-decoration: none;
+}
+
 #library .minor-col{
     float:left;
 }
 
 #library .major-col{
     float:right;
+}
+
+#library td, #library th {
+    border-bottom: 1px solid #e7e7e7;
 }
 
 #collection-list-div ul {
@@ -217,6 +226,39 @@ td.tags * {
 }
 
 /* == Item Details == */
+
+.item-info-table th {
+    width: 15%;
+}
+
+#item-details-div button.zform{
+    float: right;
+    margin: 0 0 0 10px;
+}
+
+.itemDetailForm table {
+    margin-bottom: 20px;
+}
+.itemDetailForm td, .itemDetailForm th {
+    padding: 10px 4px;
+}
+
+.itemDetailForm td > *, .itemDetailForm th > * {
+    margin: 0;
+}
+
+.itemDetailForm td > input[type=text], .itemDetailForm textarea {
+    width:80%;
+    font-size: 1em;
+    border-radius: 4px;
+    border: 1px solid #e7e7e7;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    box-sizing: border-box;
+    padding: 5px;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+}
+
 ul#notes-and-attachments {
     list-style:none;
     padding-left: 0;
@@ -298,19 +340,19 @@ ul.item-pagination {
     /*display:block;*/
     text-decoration:none;
     /*border-bottom: 1px dotted #ccc;*/
-    padding: 5px;
+    padding: 5px 7px;
     color: #16B;
-    
-    border:1px solid #ccc;
-    border-radius:10px;
-    margin:5px 0px 5px 2px;
+    background-color: #eee;
+    border-radius: 3px;
+    margin:5px 5px 0 0;
+    display: inline-block;
 }
 
 #tags-list li,
 #selected-tags-list li {
     display:list-item;
     float:left;
-    margin-bottom:8px;
+    margin-bottom:0;
 }
 /*
 #tags-list a span,
@@ -347,6 +389,11 @@ label[for='show-all-tags']{
 #more-tags-links {
     clear: both;
     margin-bottom: 16px;
+}
+
+#more-tags-links a:not(:last-of-type):after {
+    content: " · ";
+    display: inline;
 }
 
 #tag-lists-container {
@@ -394,7 +441,7 @@ td.tags li:not(:last-child):after {
 #collection-list a {
     display:block;
     text-decoration:none;
-    border-bottom: 1px dotted #ccc;
+    border-bottom: 1px solid #e7e7e7;
     color: #16B;
     padding: 5px;
 }
@@ -478,36 +525,6 @@ td.tags li:not(:last-child):after {
 }
 
 #export-list {
-}
-
-/*item details*/
-
-#item-details-div button.zform{
-    float: right;
-    margin: 0 0 0 10px;
-}
-
-.itemDetailForm table {
-    margin-bottom: 20px;
-}
-.itemDetailForm td, .itemDetailForm th {
-    padding: 10px 4px;
-}
-
-.itemDetailForm td > *, .itemDetailForm th > * {
-    margin: 0;
-}
-
-.itemDetailForm td > input[type=text], .itemDetailForm textarea {
-    width:80%;
-    font-size: 1em;
-    border-radius: 4px;
-    border: 1px solid #e7e7e7;
-    border: 1px solid rgba(0, 0, 0, 0.2);
-    box-sizing: border-box;
-    padding: 5px;
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
 }
 
 .tags div:last-of-type > * { margin-bottom: 0; }
