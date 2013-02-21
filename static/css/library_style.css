@@ -42,6 +42,11 @@ body.library {
     margin-left: 1em;
 }
 
+#library-items-div {
+    float: left;
+    width: 100%;
+}
+
 #library-items-div th {
     border-bottom: 2px solid rgba(0,0,0,0.2);
     text-align: center;
