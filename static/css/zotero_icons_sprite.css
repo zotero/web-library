@@ -29,7 +29,7 @@
 .ui-icon-sprite-trash{ background-position: -140px -1436px; width: 16px; height: 16px; background-image: url(../images/theme/zotero_icons_sprite.png) !important; } 
 .ui-icon-sprite-trash_remove{ background-position: -140px -1502px; width: 16px; height: 16px; background-image: url(../images/theme/zotero_icons_sprite.png) !important; } 
 .ui-icon-sprite-cog{ background-position: -70px 0; width: 16px; height: 16px; background-image: url(../images/theme/zotero_icons_sprite.png) !important; } 
-.ui-icon-sprite-textfield-dual{ background-position: -140px -396px; width: 21px; height: 8px; background-image: url(../images/theme/zotero_icons_sprite.png) !important; } 
+.ui-icon-sprite-textfield-dual{ background-position: -140px -390px; width: 21px; height: 8px; background-image: url(../images/theme/zotero_icons_sprite.png) !important; } 
 .ui-icon-sprite-textfield-single{ background-position: -140px -454px; width: 21px; height: 8px; background-image: url(../images/theme/zotero_icons_sprite.png) !important; } 
 .ui-icon-sprite-plus{ background-position: -70px -1920px; width: 18px; height: 18px; background-image: url(../images/theme/zotero_icons_sprite.png) !important; } 
 .ui-icon-sprite-minus{ background-position: -70px -1718px; width: 18px; height: 18px; background-image: url(../images/theme/zotero_icons_sprite.png) !important; } 
@@ -147,7 +147,7 @@
 .sprite-tag-selector{ background-position: -140px -264px; width: 16px; height: 16px; } 
 .sprite-tag{ background-position: -140px -330px; width: 16px; height: 16px; } 
 .sprite-textfield-dual{ background-position: -140px -396px; width: 21px; height: 8px; } 
-.sprite-textfield-single{ background-position: -140px -454px; width: 21px; height: 8px; } 
+.sprite-textfield-single{ background-position: -140px -450px; width: 21px; height: 8px; } 
 .sprite-tick{ background-position: -140px -512px; width: 16px; height: 16px; } 
 .sprite-timeline_marker{ background-position: -140px -578px; width: 16px; height: 16px; } 
 .sprite-toolbar-advanced-search{ background-position: -140px -644px; width: 16px; height: 16px; } 
