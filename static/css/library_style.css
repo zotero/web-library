@@ -52,6 +52,7 @@ body.library {
 
 #field-table thead:first-child input, .edit-checkbox-td input {
     display: inline-block;
+    margin-bottom: 0;
 }
 
 .item-select-link {
@@ -111,7 +112,7 @@ span.localized-date-span {
 
 .creator-input-div {
     margin:0;
-    line-height:1.4em;
+    line-height: 1.5em;
 }
 
 .creator-input-div input {
@@ -128,12 +129,37 @@ span.localized-date-span {
 }
 
 td.creator * {
-    margin:0 2px .25em;
+    margin: 0;
+    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+}
+
+.creator-input-div span,
+.creator-input-div a,
+.add-remove-tag-container a {
+    margin: 0 0 0 5px;
+    height: 27px;
+    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+}
+
+.add-remove-creator-buttons-container.ui-buttonset {
+    margin-left: 1px;
+}
+
+.add-note-button {
+  margin-top: 20px
 }
 
 .edit-tag-div {
     margin:0;
     line-height:1.4em;
+}
+
+.edit-tag-div:last-child a {
+    margin-bottom: 0;
 }
 
 .edit-tag-div input {
@@ -147,7 +173,7 @@ td.creator * {
 }
 
 td.tags * {
-    margin:0 2px .25em;
+    margin:0 2px 5px;
 }
 
 #library-settings-div {
@@ -174,6 +200,10 @@ td.tags * {
 
 #item-pagintation-div a.paginator{
     display:inline-block;
+}
+
+.notes > span > table {
+    margin: 0 0 20px 0 !important;
 }
 /*
 #item-pagination-div li:not(:last-child):after{
@@ -337,7 +367,6 @@ td.tags li {
 }
 td.tags a {
     text-decoration:none;
-    border-bottom: 1px dotted #aaa;
 }
 
 td.tags li:not(:last-child):after {
@@ -419,6 +448,12 @@ td.tags li:not(:last-child):after {
     margin-top:1em;
 }
 
+/* == Create Item == */
+
+#itemType {
+  
+}
+
 /*export section*/
 #export-formats-div {
 /*    border:1px solid rgba(0,0,0,0.3);
@@ -446,9 +481,36 @@ td.tags li:not(:last-child):after {
 }
 
 /*item details*/
-.itemDetailForm td > input[type=text] {
-    width:80%;
+
+#item-details-div button.zform{
+    float: right;
+    margin: 0 0 0 10px;
 }
+
+.itemDetailForm table {
+    margin-bottom: 20px;
+}
+.itemDetailForm td, .itemDetailForm th {
+    padding: 10px 4px;
+}
+
+.itemDetailForm td > *, .itemDetailForm th > * {
+    margin: 0;
+}
+
+.itemDetailForm td > input[type=text], .itemDetailForm textarea {
+    width:80%;
+    font-size: 1em;
+    border-radius: 4px;
+    border: 1px solid #e7e7e7;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    box-sizing: border-box;
+    padding: 5px;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+}
+
+.tags div:last-of-type > * { margin-bottom: 0; }
 
 #feed-link-div.ajaxload {
     margin-top:5px;
