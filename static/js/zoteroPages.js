@@ -41,7 +41,7 @@ Zotero.pages = {
             
             //set up support page expandos
             J(".support-menu-expand-section").hide();
-            J(".support-menu-section h2").live('click', function(){
+            J(".support-menu-section").on('click', "h2", function(){
                 J(this).siblings('.support-menu-expand-section').slideToggle();
             });
             
@@ -95,7 +95,7 @@ Zotero.pages = {
             J("#header-search-query").val("");
             J("#header-search-query").attr('placeholder', label);//.inputLabel(label, {color:"#aaa"});
             if(context != 'library' && context != 'grouplibrary' && context != 'forums'){
-                J("#simple-search").live('submit', function(e){
+                J("#simple-search").on('submit', function(e){
                     e.preventDefault();
                     var searchUrl = Zotero.pages.baseDomain + "/search/#type/" + context;
                     var query     = J("#header-search-query").val();
@@ -107,18 +107,6 @@ Zotero.pages = {
                 });
             }
             else if(context != 'forums') {
-                /*
-                J("#simple-search").live('submit', function(e){
-                    e.preventDefault();
-                    Zotero.nav.clearUrlVars(['collectionKey', 'tag', 'q']);
-                    var query     = J("#header-search-query").val();
-                    if(query !== "" || Zotero.nav.getUrlVar('q') ){
-                        Zotero.nav.urlvars.pathVars['q'] = query;
-                        Zotero.nav.pushState();
-                    }
-                    return false;
-                });
-                */
             }
         },
         
@@ -170,7 +158,7 @@ Zotero.pages = {
             J(".cv-delete").button('option', 'icons', {primary:'sprite-trash'}).button('option', 'text', false);
             
             // Delete the cv section when the delete link is clicked
-            J("#cv-sections .cv-delete").live("click", function(e){
+            J("#cv-sections").on("click", ".cv-delete", function(e){
                 if(confirm ("Are you sure you want to delete this section")){
                     J(this).closest("li").remove();
                     //Zotero.pages.settings_cv.hideMoveLinks();
@@ -179,7 +167,7 @@ Zotero.pages = {
             });
             
             // Add a new cv section when the add button is clicked
-            J("#cv-sections .cv-insert-section").live("click", function(e){
+            J("#cv-sections").on("click", ".cv-insert-section", function(e){
                 // Make sure the template textarea isn't a tiny mce instance
                 //tinyMCE.execCommand('mceRemoveControl', true, "template");
                 
@@ -208,7 +196,7 @@ Zotero.pages = {
             });
             
             // Add a new cv collection when the add button is clicked
-            J("#cv-sections .cv-insert-collection").live("click", function(e){
+            J("#cv-sections").on("click", ".cv-insert-collection", function(e){
                 // Get the number of sections that exist before adding a new one
                 sectionCount  = J("#cv-sections li").length;
                 
@@ -235,7 +223,7 @@ Zotero.pages = {
             });
             
             // Move the section down when the down link is clicked
-            J("#cv-sections .cv-move-down").live("click", function(e){
+            J("#cv-sections").on("click", ".cv-move-down", function(e){
                 if(J(this).closest('li').find("textarea").length > 0){
                     // Get the id of this section's textarea so we can disable the tinymce control before the move
                     textareaId = J(this).closest('li').find("textarea")[0].id;
@@ -256,7 +244,7 @@ Zotero.pages = {
             });
             
             // Move the section up when the up link is clicked
-            J("#cv-sections .cv-move-up").live("click", function(e){
+            J("#cv-sections").on("click", ".cv-move-up", function(e){
                 if(J(this).closest('li').find("textarea").length > 0){
                     // Get the id of this section's textarea so we can disable the tinymce control before the move
                     textareaId = J(this).closest('li').find("textarea")[0].id;
@@ -821,12 +809,12 @@ Zotero.pages = {
             
             //handle more/less toggling widget links
             J(".zoteroLibraryWidget").each(function(){J(this).find("tr").slice(4).hide();});
-            J(".home-widget-library-toggle-more-link").live("click", function(e){
+            J(".home-widget-library-toggle-more-link").on("click", function(e){
                 e.preventDefault();
                 J(this).closest(".zoteroLibraryWidget").find("tr").slice(4).show();
                 J(this).replaceWith("<a href='#' class='home-widget-library-toggle-less-link clickable'>Less</a>");
             });
-            J(".home-widget-library-toggle-less-link").live("click", function(e){
+            J(".home-widget-library-toggle-less-link").on("click", function(e){
                 e.preventDefault();
                 J(this).closest(".zoteroLibraryWidget").find("tr").slice(4).hide();
                 J(this).replaceWith("<a href='#' class='home-widget-library-toggle-more-link clickable'>More</a>");
