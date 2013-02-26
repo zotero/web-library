@@ -41,12 +41,14 @@ Zotero.ui.callbacks.createCollection = function(e){
     J("#new-collection-parent").val(currentCollectionKey);
     
     var createFunction = J.proxy(function(){
-        var parentCollectionKey = J("#new-collection-parent").val();
-        //var selectedCollectionKey = J("a.current-collection").data("collectionkey") || '';
-        var newCollectionTitle = J("input#new-collection-title-input").val() || "Untitled";
+        var newCollection = new Zotero.Collection();
+        newCollection.parentCollectionKey = J("#new-collection-parent").val();
+        newCollection.name = J("input#new-collection-title-input").val() || "Untitled";
+        
         var library = Zotero.ui.getAssociatedLibrary(J(this).closest('div.ajaxload'));
         
-        var d = library.addCollection(newCollectionTitle, parentCollectionKey);
+        //var d = library.addCollection(newCollectionTitle, parentCollectionKey);
+        var d = library.addCollection(newCollection);
         d.done(J.proxy(function(){
             //Zotero.nav.forceReload = true;//delete Zotero.nav.urlvars.pathVars['mode'];
             library.collections.dirty = true;
@@ -58,6 +60,7 @@ Zotero.ui.callbacks.createCollection = function(e){
     
     Zotero.ui.dialog(J('#create-collection-dialog'), {
         modal:true,
+        minWidth: 300,
         buttons: {
             'Create': createFunction,
             'Cancel': function(){
@@ -123,6 +126,7 @@ Zotero.ui.callbacks.updateCollection =  function(e){
     
     Zotero.ui.dialog(J("#modify-collection-dialog"), {
         modal:true,
+        minWidth: 300,
         buttons: {
             'Save': saveFunction,
             'Cancel': function(){
@@ -188,6 +192,7 @@ Zotero.ui.callbacks.deleteCollection =  function(e){
     
     Zotero.ui.dialog(J("#delete-collection-dialog"), {
         modal:true,
+        minWidth: 300,
         buttons: {
             'Delete': deleteFunction,
             'Cancel': function(){
@@ -250,27 +255,26 @@ Zotero.ui.callbacks.citeItems = function(e){
         });
     };
     
-    var width = J("#cite-item-select").width() + 150;
+    Z.debug('cite item select width ' + J("#cite-item-select").width() );
+    var dropdownWidth = J("#cite-item-select").width();
+    dropdownWidth = dropdownWidth > 200 ? dropdownWidth : 200;
+    
+    var width = dropdownWidth + 150;
     if(!Zotero.config.mobile){
-        width = J("#cite-item-select").width() + 300;
+        width = dropdownWidth + 300;
     }
     //J("#cite-item-dialog").dialog('option', 'width', width);
-    
+    Z.debug("showing cite-item dialog");
+    Z.debug("width: " + width);
     Zotero.ui.dialog(J("#cite-item-dialog"), {
         modal:true,
-        /*buttons: {
-            'Show Citation': citeFunction,
-            'Cancel': function(){
-                Zotero.ui.closeDialog(J("#cite-item-dialog"));
-                //J("#create-collection-dialog").dialog("close");
-            }
-        },*/
+        minWidth: 300,
         width: width
     });
     
     J("#cite-item-select").on('change', citeFunction);
     
-    Z.debug("done with Zotero.ui.callbacks.citeItems");
+    Z.debug("done with Zotero.ui.callbacks.citeItems", 3);
     return false;
 };
 
@@ -295,6 +299,7 @@ Zotero.ui.callbacks.showExportDialog = function(e){
     
     Zotero.ui.dialog(J("#export-dialog"), {
         modal:true,
+        minWidth: 300,
         buttons: {
             'Cancel': function(){
                 Zotero.ui.closeDialog(J("#export-dialog"));
@@ -468,14 +473,15 @@ Zotero.ui.callbacks.uploadAttachment = function(e){
     
     Zotero.ui.dialog(J("#upload-attachment-dialog"), {
         modal:true,
+        minWidth: 300,
+        width:350,
         buttons: {
             'Upload': uploadFunction,
             'Cancel': function(){
                 Zotero.ui.closeDialog(J("#upload-attachment-dialog"));
                 //J("#create-collection-dialog").dialog("close");
             }
-        },
-        width:350
+        }
     });
     
     var width = J("#fileuploadinput").width() + 50;
@@ -536,48 +542,45 @@ Zotero.ui.callbacks.uploadAttachment = function(e){
 Zotero.ui.callbacks.moveToTrash =  function(e){
     e.preventDefault();
     Z.debug('move-to-trash clicked', 3);
-    var itemKeys = [];
-    if(Zotero.nav.getUrlVar('itemKey')){
-        //item pane, just trash this item
-        itemKeys = [Zotero.nav.getUrlVar('itemKey')];
-    }
-    else{
-        itemKeys = Zotero.ui.getSelectedItemKeys(J("#edit-mode-items-form"));
-    }
     
-    Z.debug(itemKeys, 3);
+    var itemKeys = Zotero.ui.getSelectedItemKeys(J("#edit-mode-items-form"));
+    Z.debug(itemKeys, 4);
     
     var library = Zotero.ui.getAssociatedLibrary(J(this).closest('div.ajaxload'));
-    var responses = [];
+    var response;
+    
+    var trashingItems = library.items.getItems(itemKeys);
+    var deletingItems = []; //potentially deleting instead of trashing
     
     //show spinner before making the possibly many the ajax requests
     Zotero.ui.showSpinner(J('#library-items-div'));
     
     if(Zotero.nav.getUrlVar('collectionKey') == 'trash'){
         //items already in trash. delete them
-        J.each(itemKeys, function(index, itemKey){
-            //make sure item is really trashed already
-            var i = library.items.getItem(itemKey);
-            if(i.apiObj.deleted == 1){
-                var response = library.deleteItem(itemKey);
-                responses.push(response);
+        var i;
+        for(i = 0; i < trashingItems.length; i++ ){
+            var item = trashingItems[i];
+            if(item.get('deleted')){
+                //item is already in trash, schedule for actual deletion
+                deletingItems.push(item);
             }
-        });
+        }
+        
+        //make request to permanently delete items
+        response = library.items.deleteItems(deletingItems);
     }
     else{
-        J.each(itemKeys, function(index, itemKey){
-            var response = library.trashItem(itemKey);
-            responses.push(response);
-        });
+        //items are not in trash already so just add them to it
+        response = library.items.trashItems(trashingItems);
     }
+    
     library.dirty = true;
-    J.when.apply(J, responses).then(function(){
-        //Zotero.nav.forceReload = true;//delete Zotero.nav.urlvars.pathVars['mode'];
+    response.always(function(){
         Zotero.nav.clearUrlVars(['collectionKey', 'tag', 'q']);
-        //delete Zotero.nav.urlvars.pathVars['itemKey'];
         Zotero.nav.pushState(true);
     });
-    return false;
+    
+    return false; //stop event bubbling
 };
 
 /**
@@ -588,39 +591,24 @@ Zotero.ui.callbacks.moveToTrash =  function(e){
  */
 Zotero.ui.callbacks.removeFromTrash =  function(e){
     Z.debug('remove-from-trash clicked', 3);
-    var itemKeys = [];
-    if(Zotero.nav.getUrlVar('itemKey')){
-        //item pane, just trash this item
-        itemKeys = [Zotero.nav.getUrlVar('itemKey')];
-    }
-    else{
-        itemKeys = Zotero.ui.getSelectedItemKeys(J("#edit-mode-items-form"));
-    }
-    
+    var itemKeys = Zotero.ui.getSelectedItemKeys(J("#edit-mode-items-form"));
     Z.debug(itemKeys, 4);
     
     var library = Zotero.ui.getAssociatedLibrary(J(this).closest('div.ajaxload'));
-    var responses = [];
+    
+    var untrashingItems = library.items.getItems(itemKeys);
     
     //show spinner before making the possibly many the ajax requests
     Zotero.ui.showSpinner(J('#library-items-div'));
     
-    J.each(itemKeys, function(index, itemKey){
-        //make sure item is really trashed already
-        var i = library.items.getItem(itemKey);
-        if(i.apiObj.deleted == 1){
-            var response = library.untrashItem(itemKey);
-            responses.push(response);
-        }
-    });
+    var response = library.items.untrashItems(untrashingItems);
     
     library.dirty = true;
-    J.when.apply(J, responses).then(function(){
-        //Zotero.nav.forceReload = true;//delete Zotero.nav.urlvars.pathVars['mode'];
+    response.always(function(){
         Zotero.nav.clearUrlVars(['collectionKey', 'tag', 'q']);
-        //delete Zotero.nav.urlvars.pathVars['itemKey'];
         Zotero.nav.pushState(true);
     });
+    
     return false;
 };
 
@@ -674,6 +662,7 @@ Zotero.ui.callbacks.addToCollection =  function(e){
     
     Zotero.ui.dialog(J("#add-to-collection-dialog"), {
         modal:true,
+        minWidth: 300,
         buttons: {
             'Add': addToFunction,
             'Cancel': function(){
@@ -791,6 +780,7 @@ Zotero.ui.callbacks.sortBy = function(e){
     
     Zotero.ui.dialog(J("#sort-dialog"), {
         modal:true,
+        minWidth: 300,
         buttons: {
             'Save': submitFunction,
             'Cancel': function(){
