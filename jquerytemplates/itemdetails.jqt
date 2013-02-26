@@ -46,7 +46,7 @@
     {{/each}}
     
     <!-- Output fields -->
-    {{each(field, fieldValue) item.dataFields}}
+    {{each(field, fieldValue) item.apiObj}}
         {{if (field == 'url')}}
         <tr>
             <th>${Zotero.localizations.fieldMap[field]}</th>

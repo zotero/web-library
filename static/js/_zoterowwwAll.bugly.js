@@ -2137,6 +2137,7 @@ Zotero.Library.prototype.loadFromKeysParallel = function(keys, objectType) {
         switch (objectType) {
           case "items":
             xhr = library.loadItemsSimple({
+                target: "items",
                 targetModifier: null,
                 itemKey: keystring,
                 limit: 50
@@ -2144,6 +2145,7 @@ Zotero.Library.prototype.loadFromKeysParallel = function(keys, objectType) {
             break;
           case "collections":
             xhr = library.loadCollectionsSimple({
+                target: "collections",
                 targetModifier: null,
                 collectionKey: keystring,
                 limit: 50
@@ -2151,6 +2153,7 @@ Zotero.Library.prototype.loadFromKeysParallel = function(keys, objectType) {
             break;
           case "searches":
             xhr = library.loadSearchesSimple({
+                target: "searches",
                 searchKey: keystring,
                 limit: 50
             });
@@ -4160,6 +4163,9 @@ Zotero.Item.prototype.set = function(key, val) {
         item.itemType = val;
         break;
       case "linkMode":
+        break;
+      case "deleted":
+        item.apiObj.deleted = val;
         break;
       case "parentItem":
       case "parentItemKey":
@@ -9761,7 +9767,7 @@ Zotero.ui.callbacks.moveToTrash = function(e) {
     e.preventDefault();
     Z.debug("move-to-trash clicked", 3);
     var itemKeys = Zotero.ui.getSelectedItemKeys(J("#edit-mode-items-form"));
-    Z.debug(itemKeys, 4);
+    Z.debug(itemKeys, 3);
     var library = Zotero.ui.getAssociatedLibrary(J(this).closest("div.ajaxload"));
     var response;
     var trashingItems = library.items.getItems(itemKeys);

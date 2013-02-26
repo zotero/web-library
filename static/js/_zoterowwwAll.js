@@ -2096,13 +2096,13 @@ Zotero.Library.prototype.loadFromKeysParallel = function(keys, objectType){
         var xhr;
         switch (objectType) {
             case "items":
-                xhr = library.loadItemsSimple({'targetModifier':null, 'itemKey':keystring, 'limit':50} );
+                xhr = library.loadItemsSimple({'target':'items', 'targetModifier':null, 'itemKey':keystring, 'limit':50} );
                 break;
             case "collections":
-                xhr = library.loadCollectionsSimple({'targetModifier':null, 'collectionKey':keystring, 'limit':50} );
+                xhr = library.loadCollectionsSimple({'target':'collections', 'targetModifier':null, 'collectionKey':keystring, 'limit':50} );
                 break;
             case "searches":
-                xhr = library.loadSearchesSimple({'searchKey':keystring, 'limit':50});
+                xhr = library.loadSearchesSimple({'target':'searches', 'searchKey':keystring, 'limit':50});
                 break;
         }
         xhrs.push(xhr );
@@ -4413,6 +4413,9 @@ Zotero.Item.prototype.set = function(key, val){
             //TODO: translate api object to new item type
             break;
         case "linkMode":
+            break;
+        case "deleted":
+            item.apiObj.deleted = val;
             break;
         case "parentItem":
         case "parentItemKey":
@@ -11508,7 +11511,7 @@ Zotero.ui.callbacks.moveToTrash =  function(e){
     Z.debug('move-to-trash clicked', 3);
     
     var itemKeys = Zotero.ui.getSelectedItemKeys(J("#edit-mode-items-form"));
-    Z.debug(itemKeys, 4);
+    Z.debug(itemKeys, 3);
     
     var library = Zotero.ui.getAssociatedLibrary(J(this).closest('div.ajaxload'));
     var response;
