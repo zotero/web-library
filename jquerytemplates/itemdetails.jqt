@@ -54,6 +54,13 @@
                 <a rel='nofollow' href='${fieldValue}'>${fieldValue}</a>
             </td>
         </tr>
+        {{else (field == 'DOI')}}
+        <tr>
+            <th>${Zotero.localizations.fieldMap[field]}</th>
+            <td class="${field}">
+                <a rel='nofollow' href='http://dx.doi.org/${fieldValue}'>${fieldValue}</a>
+            </td>
+        </tr>
         {{else (Zotero.config.richTextFields[field])}}
         <tr>
             <th>${Zotero.localizations.fieldMap[field]}</th>
