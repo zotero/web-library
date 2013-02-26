@@ -76,8 +76,12 @@ Zotero.ui.updateItemFromForm = function(item, formEl){
     base.find("textarea[name^='note_']").each(function(index, el){
         var noteid = J(el).attr('id');
         var noteContent = tinyMCE.get(noteid).getContent();
-        Z.debug(noteContent, 3);
-        notes.push({itemType:'note', 'note': noteContent, parentItem: item.itemKey});
+        
+        var noteItem = new Zotero.Item();
+        noteItem.initEmptyNote();
+        noteItem.set('note', noteContent);
+        noteItem.setParent(item.itemKey);
+        notes.push(noteItem);
     });
     
     item.notes = notes;
