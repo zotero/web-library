@@ -10,7 +10,7 @@ Zotero.ui.getSelectedItemKeys = function(form){
     Z.debug("Zotero.ui.getSelectedItemKeys", 3);
     var itemKeys = [];
     var curItemKey = Zotero.nav.getUrlVar('itemKey');
-    if(curItemKey){
+    if(curItemKey && (Zotero.config.preferUrlItem !== false) ){
         itemKeys.push(curItemKey);
     }
     else{
