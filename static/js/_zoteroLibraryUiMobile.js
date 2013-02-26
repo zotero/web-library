@@ -24,7 +24,7 @@ Zotero.ui.mobile.showMenu = function(el){
 Zotero.ui.init.mobile = function(){
     Z.debug("Zotero.ui.initMobile", 3);
     
-    J("a[data-rel='zback']").live('click', function(e){
+    J(document).on('click', "a[data-rel='zback']", function(e){
         Z.debug("zback button clicked", 3);
         e.preventDefault();
         Zotero.nav.replacePush = false; //disable dialog's forward replace push when exiting with back
@@ -34,7 +34,7 @@ Zotero.ui.init.mobile = function(){
     });
     
     //cancel default action for dialog close buttons
-    J("div[role='dialog'] a[href='#']").live('click', function(e){
+    J(document).on('click', "div[role='dialog'] a[href='#']", function(e){
         Z.debug("dialog close button clicked", 3);
         e.preventDefault();
         Zotero.nav.replacePush = false; //disable dialog's forward replace push when exiting with back
@@ -45,7 +45,7 @@ Zotero.ui.init.mobile = function(){
     });
     
     //bind title link button to nav dialog
-    J(".title-link").live('click', function(e){
+    J(document).on('click', ".title-link", function(e){
         Z.debug("title link clicked");
         Zotero.ui.dialog(J("#zmobile-nav-dialog"), {'changeHash':false, 'role':'dialog'});
         //Zotero.ui.mobile.changePage(J("#zmobile-nav-dialog"), {'changeHash':false, 'role':'dialog'}, true);
@@ -59,21 +59,21 @@ Zotero.ui.init.mobile = function(){
 Zotero.ui.mobile.initLibrary = function(){
     Z.debug("Zotero.ui.mobile.initLibrary", 3);
     //bind the separate page links for library without changing the hash
-    J(".collections-page-link").live('click', function(e){
+    J(document).on('click', ".collections-page-link", function(e){
         Zotero.nav.ignoreStateChange();
         Zotero.ui.mobile.changePage("#library-collections-page", {'changeHash':false}, true);
         J("#library-collections-page").trigger('create');
         return false;
     });
     
-    J(".tags-page-link").live('click', function(e){
+    J(document).on('click', ".tags-page-link", function(e){
         Zotero.nav.ignoreStateChange();
         Zotero.ui.mobile.changePage("#library-tags-page", {'changeHash':false}, true);
         J("#library-tags-page").trigger('create');
         return false;
     });
     
-    J(".items-page-link").live('click', function(e){
+    J(document).on('click', ".items-page-link", function(e){
         if(Zotero.nav.getUrlVar('itemKey')){
             Zotero.nav.unsetUrlVar('itemKey');
             Zotero.nav.pushState();
@@ -91,17 +91,17 @@ Zotero.ui.mobile.initLibrary = function(){
         Z.debug("loadCollectionsDone callback", 4);
     });
     
-    J("#clear-q-link").live('click', function(e){
+    J(document).on('click', "#clear-q-link", function(e){
         Zotero.nav.unsetUrlVar('q');
         Zotero.nav.pushState();
     });
     
-    J("#clear-collection-link").live('click', function(e){
+    J(document).on('click', "#clear-collection-link", function(e){
         Zotero.nav.unsetUrlVar('collectionKey');
         Zotero.nav.pushState();
     });
     
-    J(".tag-filter-button").live('click', function(e){
+    J(document).on('click', ".tag-filter-button", function(e){
         var tag = J(this).data('tag');
         Zotero.nav.toggleTag(tag);
         Zotero.nav.pushState();
@@ -358,13 +358,13 @@ Zotero.ui.filterGuide = function(el, filters){
 Zotero.ui.init.libraryControls = function(){
     Z.debug("Zotero.ui.initControls", 3);
     //show actions link
-    J("#zmobile-edit-link").live('click', Zotero.ui.callbacks.toggleEdit);
+    J(document).on('click', "#zmobile-edit-link", Zotero.ui.callbacks.toggleEdit);
     
     //set up control panel buttons
     //insert the hidden library preferences and set callbacks
     J("#library-settings-form").hide();
     //Z.config.librarySettingsInit = false;
-    J("#sort-by-link").live('click', Zotero.ui.callbacks.sortBy);
+    J(document).on('click', "#sort-by-link", Zotero.ui.callbacks.sortBy);
     
     //set up addToCollection button to update list when collections are loaded
     J.subscribe("loadCollectionsDone", function(collections){
@@ -373,7 +373,7 @@ Zotero.ui.init.libraryControls = function(){
     });
     
     //init itemkey-checkbox to enable/disable buttons that require something being selected
-    J("input.itemKey-checkbox").live('change', function(e){
+    J(document).on('change', "input.itemKey-checkbox", function(e){
         //Z.debug("itemkey checkbox clicked", 3);
         var checked = J(this).prop('checked');
         //replace list item with new themed list item since JQM can't update individual item theme changes
@@ -400,31 +400,30 @@ Zotero.ui.init.libraryControls = function(){
     Zotero.ui.updateDisabledControlButtons();
     
     //bind all control buttons to their callback functions
-    //J("#edit-checkbox").live('change', Zotero.ui.callbacks.toggleEdit);
-    J(".create-collection-link").live('click', Zotero.ui.callbacks.createCollection);
-    J(".update-collection-link").live('click', Zotero.ui.callbacks.updateCollection);
-    J(".delete-collection-link").live('click', Zotero.ui.callbacks.deleteCollection);
-    J(".add-to-collection-link").live('click', Zotero.ui.callbacks.addToCollection);
-    J("#create-item-link").live('click', Zotero.ui.callbacks.createItem);
-    J(".remove-from-collection-link").live('click', Zotero.ui.callbacks.removeFromCollection);
-    J(".move-to-trash-link").live('click', Zotero.ui.callbacks.moveToTrash);
-    J(".remove-from-trash-link").live('click', Zotero.ui.callbacks.removeFromTrash);
-    J("#cite-link").live('click', Zotero.ui.callbacks.citeItems);
+    J(document).on('click', ".create-collection-link", Zotero.ui.callbacks.createCollection);
+    J(document).on('click', ".update-collection-link", Zotero.ui.callbacks.updateCollection);
+    J(document).on('click', ".delete-collection-link", Zotero.ui.callbacks.deleteCollection);
+    J(document).on('click', ".add-to-collection-link", Zotero.ui.callbacks.addToCollection);
+    J(document).on('click', "#create-item-link", Zotero.ui.callbacks.createItem);
+    J(document).on('click', ".remove-from-collection-link", Zotero.ui.callbacks.removeFromCollection);
+    J(document).on('click', ".move-to-trash-link", Zotero.ui.callbacks.moveToTrash);
+    J(document).on('click', ".remove-from-trash-link", Zotero.ui.callbacks.removeFromTrash);
+    J(document).on('click', "#cite-link", Zotero.ui.callbacks.citeItems);
     
     //disable default actions for dialog form submissions
-    J(".delete-collection-div form").live('submit', function(e){
+    J(document).on('submit', ".delete-collection-div form", function(e){
         e.preventDefault();
     });
-    J(".update-collection-div form").live('submit', function(e){
+    J(document).on('submit', ".update-collection-div form", function(e){
         e.preventDefault();
     });
-    J(".new-collection-div form").live('submit', function(e){
+    J(document).on('submit', ".new-collection-div form", function(e){
         e.preventDefault();
     });
-    J("button.create-collection-button").live('click', function(e){
+    J(document).on('click', "button.create-collection-button", function(e){
         e.preventDefault();
     });
-    J("button.update-collection-button").live('click', function(e){
+    J(document).on('click', "button.update-collection-button", function(e){
         e.preventDefault();
     });
     
@@ -451,7 +450,7 @@ Zotero.ui.init.libraryControls = function(){
                 Zotero.nav.pushState();
             }
         };
-        J("#simple-search button.clear-field-button").live('click', clearQuery);
+        J(document).on('click', "#simple-search button.clear-field-button", clearQuery);
     }
 };
 
@@ -552,7 +551,7 @@ Zotero.ui.collectionsActionPane = function(el, show){
 Zotero.ui.bindItemLinks = function(){
     Z.debug("Zotero.ui.bindItemLinks", 3);
     
-    J("div#items-pane a.item-select-link").live('click', function(e){
+    J(document).on('click', "div#items-pane a.item-select-link", function(e){
         e.preventDefault();
         e.stopImmediatePropagation();
         Z.debug("item-select-link clicked", 3);
@@ -574,7 +573,7 @@ Zotero.ui.bindItemLinks = function(){
         Zotero.nav.pushState();
         //Zotero.callbacks.loadItem(el, 'user', itemKey);
     });
-    J("div#items-pane td[data-itemkey]:not(.edit-checkbox-td)").live('click', function(e){
+    J(document).on('click', "div#items-pane td[data-itemkey]:not(.edit-checkbox-td)", function(e){
         e.preventDefault();
         Z.debug("item-select-td clicked", 3);
         var itemKey = J(this).attr('data-itemKey');

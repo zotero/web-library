@@ -503,4 +503,4 @@ Zotero.nav.ignoreStateChange = function(){
 };
 
 //set error handler
-J("#js-message").ajaxError(Zotero.nav.error);
+J(document).ajaxError(Zotero.nav.error);
