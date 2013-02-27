@@ -1,0 +1,97 @@
+.ui-widget { font-family: "Lucida Grande", sans-serif; }
+
+.ui-widget-header .ui-icon {
+    background-image: url(../images/theme/jquery-ui/ui-icons_888888_256x240.png)
+}
+
+.ui-widget-overlay {
+    background: #333;
+}
+
+.ui-dialog {
+    box-shadow: 0px 0px 50px #5F5F5F;
+        -webkit-box-shadow: 0px 0px 50px #5F5F5F;
+        -moz-box-shadow: 0px 0px 50px #5F5F5F;
+        -o-box-shadow: 0px 0px 50px #5F5F5F;
+    padding: 0;
+}
+
+.ui-dialog .ui-dialog-titlebar {
+    padding: 1em;
+    border-bottom: 1px solid #e7e7e7;
+}
+
+.ui-dialog .ui-dialog-content {
+    overflow: visible;
+    padding: 1em;
+}
+
+.ui-dialog form {
+    margin-bottom: 0;
+}
+
+.ui-dialog .ui-dialog-buttonpane {
+    text-align: left;
+    border-top: 1px solid #F1F1F1;
+    background: #FAFAFA;
+    padding: 1em;
+    margin-top: 0;
+}
+
+.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset {
+    float: none;
+}
+
+.ui-dialog-buttonpane .ui-widget.ui-button-text-only {
+    background: #e7e7e7;
+    border: 1px solid #DADADA;
+}
+
+.ui-dialog-buttonset .ui-widget.ui-button-text-only.ui-state-hover {
+    background: #d5e7f5;
+    border: 1px solid #c2cfd8;
+    color: #16B;
+}
+
+.ui-button {
+    font-family: "Lucida Grande", sans-serif;
+    display: inline-block;
+    color: #888;
+    padding: .5em 1em;
+    font-size: 12px;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.ui-buttonset .ui-button {
+    margin-right: 0;
+    float: left;
+    margin-left: -1px;
+    border-left: 1px solid #DADADA;
+}
+
+.ui-buttonset .ui-button:first-of-type {
+    margin-left: 0;
+}
+
+.edit-tag-div .ui-buttonset .ui-button {
+    border-left: 1px solid #D0D0D0;
+}
+
+.ui-widget-header {
+    background: #f1f1f1;
+    border-radius: 4px 4px 0 0;
+    border: 0;
+    color: #888;
+}
+
+.ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default {
+    border: 1px solid #E7E7E7;
+    border: 1px solid rgba(0,0,0,.1);
+    background: #F1F1F1;
+    background: rgba(0,0,0,.05);
+}
+
+.sprite-minus {
+    background-position: -72px -1718px;
+}
