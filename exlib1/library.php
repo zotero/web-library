@@ -24,6 +24,8 @@
             type="text/css" media="screen" charset="utf-8"/>
         <link rel="stylesheet" href="<?=$staticPath?>/css/jquery-ui-1.8.12.custom.css"
             type="text/css" media="screen" charset="utf-8"/>
+        <link rel="stylesheet" href="<?=$staticPath?>/css/jquery-ui-overrides.css"
+            type="text/css" media="screen" charset="utf-8"/>
         <script src="<?=$staticPath?>/library/modernizr/modernizr-1.7.min.js"></script>
         
     </head>

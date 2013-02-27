@@ -162,6 +162,7 @@ td.creator * {
     box-sizing: border-box;
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
+    float: left;
 }
 
 .add-remove-creator-buttons-container.ui-buttonset {
@@ -183,6 +184,7 @@ td.creator * {
 
 .edit-tag-div input {
     float:left;
+    margin-right: 10px;
 }
 .edit-tag-div span {
     float:left;
@@ -191,18 +193,26 @@ td.creator * {
     clear:left;
 }
 
-td.tags * {
-    margin:0 2px 5px;
-}
-
 #library-settings-div {
 }
 
-#item-pagination-div li{
-    display:inline-block;
+#item-pagination-div li {
+    float: left;
+    margin-left: -1px;
+    list-style-type: none;
 }
+
+#item-pagination-div li a {
+    border-left: 1px solid #dadada;
+}
+
+#item-pagination-div li:first-of-type {
+    margin-left: 0;
+}
+
 #item-pagination-div {
     text-align:center;
+    overflow: auto;
 }
 
 #item-pagination-div .back-item-pagination {
@@ -279,7 +289,7 @@ ul#notes-and-attachments li {
 }
 
 #upload-attachment-link {
-    margin-bottom:3px;
+    margin: 2em 0;
 }
 
 #cite-item-link {
