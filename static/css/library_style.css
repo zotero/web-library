@@ -198,6 +198,7 @@ td.creator * {
 #item-pagination-div li {
     float: left;
     margin-left: -1px;
+    list-style-type: none;
 }
 
 #item-pagination-div li a {

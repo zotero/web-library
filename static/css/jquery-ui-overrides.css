@@ -47,20 +47,28 @@
     border: 1px solid #DADADA;
 }
 
+.ui-state-default.ui-state-hover,
 .ui-dialog-buttonset .ui-widget.ui-button-text-only.ui-state-hover {
     background: #d5e7f5;
     border: 1px solid #c2cfd8;
     color: #16B;
 }
 
+.ui-state-hover .ui-icon, .ui-state-focus .ui-icon {
+    background-image: url(../images/theme/jquery-ui/ui-icons_1166bb_256x240.png);
+}
+
 .ui-button {
     font-family: "Lucida Grande", sans-serif;
     display: inline-block;
-    color: #888;
     padding: .5em 1em;
+    text-transform: uppercase;
+}
+
+.ui-state-default.ui-button {
     font-size: 12px;
     font-weight: bold;
-    text-transform: uppercase;
+    color: #888;
 }
 
 .ui-buttonset .ui-button {
@@ -83,6 +91,19 @@
     border-radius: 4px 4px 0 0;
     border: 0;
     color: #888;
+}
+
+.ui-widget-header .ui-state-hover {
+    border: 1px solid #888;
+    background: #CCC;
+}
+
+.ui-widget-header .ui-state-hover .ui-icon {
+    background-image: url(../images/theme/jquery-ui/ui-icons_888888_256x240.png);
+}
+
+.ui-dialog .ui-dialog-titlebar-close {
+    right: 15px;
 }
 
 .ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default {
