@@ -4273,7 +4273,8 @@ Zotero.Item.prototype.hideFields = [
     "relations",
     "parentItem",
     "contentType",
-    "filename"
+    "filename",
+    "tags"
 ];
 
 Zotero.localizations.creatorMap = Zotero.Item.prototype.creatorMap;
@@ -10335,7 +10336,7 @@ Zotero.ui.loadNewItemTemplate = function(item){
             Zotero.ui.init.tinyMce('default');
         }
         else {
-            J.tmpl('itemformTemplate', {item:item.apiObj,
+            J.tmpl('itemformTemplate', {item:item,
                                         libraryUserID:zoteroData.libraryUserID,
                                         itemKey:item.itemKey,
                                         creatorTypes:itemCreatorTypes
@@ -10625,7 +10626,7 @@ Zotero.ui.editItemForm = function(el, item){
         Z.debug("item is attachment", 4);
         jel.empty();
         var mode = Zotero.nav.getUrlVar('mode');
-        J.tmpl('attachmentformTemplate', {item:item.apiObj,
+        J.tmpl('attachmentformTemplate', {item:item,
                                     itemKey:item.itemKey,
                                     creatorTypes:[],
                                     mode:mode
@@ -10660,10 +10661,9 @@ Zotero.ui.editItemForm = function(el, item){
                                     });
                 item.apiObj.creators = item.creators;
             }
-            J.tmpl('itemformTemplate', {item:item.apiObj,
+            J.tmpl('itemformTemplate', {item:item,
                                         itemKey:item.itemKey,
-                                        creatorTypes:Zotero.Item.prototype.creatorTypes[item.apiObj.itemType],
-                                        mode:mode
+                                        creatorTypes:Zotero.Item.prototype.creatorTypes[item.apiObj.itemType]
                                         }).appendTo(jel);
             
             //add empty tag if no tags yet
@@ -11119,7 +11119,6 @@ Zotero.ui.callbacks.createCollection = function(e){
             Zotero.nav.pushState(true);
         }, this));
         Zotero.ui.closeDialog(J("#create-collection-dialog"));
-        //J("#create-collection-dialog").dialog("close");
     },this);
     
     Zotero.ui.dialog(J('#create-collection-dialog'), {
@@ -11129,12 +11128,10 @@ Zotero.ui.callbacks.createCollection = function(e){
             'Create': createFunction,
             'Cancel': function(){
                 Zotero.ui.closeDialog(J("#create-collection-dialog"));
-                //J("#create-collection-dialog").dialog("close");
             }
         }
     });
-    //Zotero.ui.dialog(J("#create-collection-dialog"));
-    //J("#create-collection-dialog").dialog();
+    
     var width = J("#new-collection-parent").width() + 50;
     J("#create-collection-dialog").dialog('option', 'width', width);
     return false;
@@ -11182,10 +11179,8 @@ Zotero.ui.callbacks.updateCollection =  function(e){
             library.collections.dirty = true;
             Zotero.nav.pushState(true);
             Zotero.ui.closeDialog(J("#modify-collection-dialog"));
-            //J("#modify-collection-dialog").dialog("close");
         }, this));
         Zotero.ui.closeDialog(J("#modify-collection-dialog"));
-        //J("#modify-collection-dialog").dialog("close");
     }, this);
     
     Zotero.ui.dialog(J("#modify-collection-dialog"), {
@@ -11195,7 +11190,6 @@ Zotero.ui.callbacks.updateCollection =  function(e){
             'Save': saveFunction,
             'Cancel': function(){
                 Zotero.ui.closeDialog(J("#modify-collection-dialog"));
-                //J("#create-collection-dialog").dialog("close");
             }
         }
     });
@@ -11250,7 +11244,6 @@ Zotero.ui.callbacks.deleteCollection =  function(e){
         }, this));
         
         Zotero.ui.closeDialog(J("#delete-collection-dialog"));
-        //J("#delete-collection-dialog").dialog("close");
         return false;
     }, this);
     
@@ -11261,7 +11254,6 @@ Zotero.ui.callbacks.deleteCollection =  function(e){
             'Delete': deleteFunction,
             'Cancel': function(){
                 Zotero.ui.closeDialog(J("#delete-collection-dialog"));
-                //J("#create-collection-dialog").dialog("close");
             }
         }
     });
@@ -11327,7 +11319,7 @@ Zotero.ui.callbacks.citeItems = function(e){
     if(!Zotero.config.mobile){
         width = dropdownWidth + 300;
     }
-    //J("#cite-item-dialog").dialog('option', 'width', width);
+    
     Z.debug("showing cite-item dialog");
     Z.debug("width: " + width);
     Zotero.ui.dialog(J("#cite-item-dialog"), {
@@ -11367,7 +11359,6 @@ Zotero.ui.callbacks.showExportDialog = function(e){
         buttons: {
             'Cancel': function(){
                 Zotero.ui.closeDialog(J("#export-dialog"));
-                //J("#create-collection-dialog").dialog("close");
             }
         }
     });
@@ -11503,7 +11494,6 @@ Zotero.ui.callbacks.uploadAttachment = function(e){
             'Upload': uploadFunction,
             'Cancel': function(){
                 Zotero.ui.closeDialog(J("#upload-attachment-dialog"));
-                //J("#create-collection-dialog").dialog("close");
             }
         }
     });

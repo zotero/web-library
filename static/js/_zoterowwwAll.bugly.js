@@ -4058,7 +4058,7 @@ Zotero.Item.prototype.creatorMap = {
     podcaster: "Podcaster"
 };
 
-Zotero.Item.prototype.hideFields = [ "mimeType", "linkMode", "charset", "md5", "mtime", "itemVersion", "itemKey", "collections", "relations", "parentItem", "contentType", "filename" ];
+Zotero.Item.prototype.hideFields = [ "mimeType", "linkMode", "charset", "md5", "mtime", "itemVersion", "itemKey", "collections", "relations", "parentItem", "contentType", "filename", "tags" ];
 
 Zotero.localizations.creatorMap = Zotero.Item.prototype.creatorMap;
 
@@ -8864,7 +8864,7 @@ Zotero.ui.loadNewItemTemplate = function(item) {
             Zotero.ui.init.tinyMce("default");
         } else {
             J.tmpl("itemformTemplate", {
-                item: item.apiObj,
+                item: item,
                 libraryUserID: zoteroData.libraryUserID,
                 itemKey: item.itemKey,
                 creatorTypes: itemCreatorTypes
@@ -9072,7 +9072,7 @@ Zotero.ui.editItemForm = function(el, item) {
         jel.empty();
         var mode = Zotero.nav.getUrlVar("mode");
         J.tmpl("attachmentformTemplate", {
-            item: item.apiObj,
+            item: item,
             itemKey: item.itemKey,
             creatorTypes: [],
             mode: mode
@@ -9104,10 +9104,9 @@ Zotero.ui.editItemForm = function(el, item) {
                 item.apiObj.creators = item.creators;
             }
             J.tmpl("itemformTemplate", {
-                item: item.apiObj,
+                item: item,
                 itemKey: item.itemKey,
-                creatorTypes: Zotero.Item.prototype.creatorTypes[item.apiObj.itemType],
-                mode: mode
+                creatorTypes: Zotero.Item.prototype.creatorTypes[item.apiObj.itemType]
             }).appendTo(jel);
             if (item.apiObj.tags.length === 0) {
                 Zotero.ui.addTag(false);

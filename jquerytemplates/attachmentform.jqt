@@ -20,7 +20,7 @@
     </tr>
     
     <!-- Output fields -->
-    {{each(field, fieldValue) item}}
+    {{each(field, fieldValue) item.apiObj}}
         {{if (field == 'url')}}
         <tr>
             <th>${Zotero.localizations.fieldMap[field]}</th>
@@ -35,7 +35,7 @@
                 <textarea data-itemKey="${itemKey}" cols="40" rows="14" id="note-text" class="tinymce default">${item.note}</textarea>
             </td>
         </tr>
-        {{else (field != 'itemType' && field != 'title' && field != 'mimeType' && field != 'linkMode' && field != 'charset' && fieldValue != '')}}
+        {{else (J.inArray(field, item.hideFields) == -1) && (item.fieldMap.hasOwnProperty(field)) && fieldValue != '' && field != 'itemType' && field != 'title' }}
         <tr>
             <th>${Zotero.localizations.fieldMap[field]}</th>
             <td class="${field}">
@@ -49,7 +49,7 @@
     <tr>
         <th>Tags</th>
         <td class="tags">
-        {{each(index, tag) item.tags}}
+        {{each(index, tag) item.apiObj.tags}}
             {{tmpl({index:index, itemKey:itemKey, tag:tag}) "itemtagTemplate"}}
         {{/each}}
         </td>

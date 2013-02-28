@@ -84,8 +84,8 @@
         <th>Tags</th>
         <td class="tags">
         <ul class="item-details-tags-list">
-        {{each(index, tag) item.tags}}
-            <li><a class="tag-link" data-tagtitle="${tag}" href="">${tag}</a></li>
+        {{each(index, tag) item.apiObj.tags}}
+            <li><a class="tag-link" data-tagtitle="${item.apiObj.tags[index].tag}" href="">${item.apiObj.tags[index].tag}</a></li>
         {{/each}}
         </ul>
         </td>

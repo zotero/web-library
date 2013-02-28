@@ -4273,7 +4273,8 @@ Zotero.Item.prototype.hideFields = [
     "relations",
     "parentItem",
     "contentType",
-    "filename"
+    "filename",
+    "tags"
 ];
 
 Zotero.localizations.creatorMap = Zotero.Item.prototype.creatorMap;

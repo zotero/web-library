@@ -182,7 +182,7 @@ Zotero.ui.loadNewItemTemplate = function(item){
             Zotero.ui.init.tinyMce('default');
         }
         else {
-            J.tmpl('itemformTemplate', {item:item.apiObj,
+            J.tmpl('itemformTemplate', {item:item,
                                         libraryUserID:zoteroData.libraryUserID,
                                         itemKey:item.itemKey,
                                         creatorTypes:itemCreatorTypes
@@ -472,7 +472,7 @@ Zotero.ui.editItemForm = function(el, item){
         Z.debug("item is attachment", 4);
         jel.empty();
         var mode = Zotero.nav.getUrlVar('mode');
-        J.tmpl('attachmentformTemplate', {item:item.apiObj,
+        J.tmpl('attachmentformTemplate', {item:item,
                                     itemKey:item.itemKey,
                                     creatorTypes:[],
                                     mode:mode
@@ -507,10 +507,9 @@ Zotero.ui.editItemForm = function(el, item){
                                     });
                 item.apiObj.creators = item.creators;
             }
-            J.tmpl('itemformTemplate', {item:item.apiObj,
+            J.tmpl('itemformTemplate', {item:item,
                                         itemKey:item.itemKey,
-                                        creatorTypes:Zotero.Item.prototype.creatorTypes[item.apiObj.itemType],
-                                        mode:mode
+                                        creatorTypes:Zotero.Item.prototype.creatorTypes[item.apiObj.itemType]
                                         }).appendTo(jel);
             
             //add empty tag if no tags yet
