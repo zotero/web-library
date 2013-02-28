@@ -1808,22 +1808,6 @@ Zotero.Library.prototype.deleteItems = function(itemKeys){
     Z.debug("Zotero.Library.deleteItems", 3);
     var library = this;
     return library.items.deleteItems(itemKeys);
-    /*
-    if(!itemKeys) return false;
-    itemKeyString = itemKeys.join(',');
-    
-    var config = {'target':'items', 'libraryType':library.libraryType, 'libraryID':library.libraryID, 'itemKey':itemKeyString};
-    var requestUrl = Zotero.ajax.apiRequestUrl(config) + Zotero.ajax.apiQueryString(config);
-    
-    var jqxhr = library.ajaxRequest(requestUrl, "DELETE",
-        {processData: false,
-         headers:{"If-Unmodified-Since-Version":library.libraryVersion}
-        }
-    );
-    Zotero.ajax.activeRequests.push(jqxhr);
-    
-    return jqxhr;
-    */
 };
 
 Zotero.Library.prototype.addNote = function(itemKey, note){
@@ -3604,7 +3588,7 @@ Zotero.Item.prototype.loadObject = function(ob) {
     this.linkMode = ob.linkMode;
     this.mimeType = ob.mimeType;
     this.links = ob.links;
-    this.apiObj = ob.apiObject;
+    this.apiObj = ob.apiObj;
     this.dateAdded = ob.dateAdded;
     this.published = this.dateAdded;
     this.dateModified = ob.dateModified;
@@ -3690,6 +3674,8 @@ Zotero.Item.prototype.parseJsonItemContent = function (cel) {
         item.linkMode = item.apiObj.linkMode;
     }
     
+    item.creators = item.apiObj.creators;
+    
     this.attachmentDownloadUrl = Zotero.url.attachmentDownloadUrl(this);
     
     item.synced = true;
@@ -3702,21 +3688,7 @@ Zotero.Item.prototype.initEmpty = function(itemType, linkMode){
     var d = this.getItemTemplate(itemType, linkMode);
     
     var callback = J.proxy(function(template){
-        this.itemType = template.itemType;
-        this.itemKey = '';
-        this.pristine = J.extend({}, template);
-        /*
-        var dataFields = template;
-        J.each(dataFields, function(index, value){
-            if(index == 'tags'){
-                item.tags = value;
-            }
-            else if(index == 'creators'){
-                item.creators = value;
-            }
-        });
-        */
-        this.apiObj = template;
+        item.initEmptyFromTemplate(template);
         deferred.resolve(item);
     }, this);
     
@@ -3731,10 +3703,19 @@ Zotero.Item.prototype.initEmptyNote = function(){
     var item = this;
     var noteTemplate = {"itemType":"note","note":"","tags":[],"collections":[],"relations":{}};
     
-    item.itemType = noteTemplate.itemType;
+    item.initEmptyFromTemplate(noteTemplate);
+    
+    return item;
+};
+
+Zotero.Item.prototype.initEmptyFromTemplate = function(template){
+    var item = this;
+    item.itemVersion = 0;
+    
+    item.itemType = template.itemType;
     item.itemKey = '';
-    item.pristine = J.extend({}, noteTemplate);
-    item.apiObj = noteTemplate;
+    item.pristine = J.extend({}, template);
+    item.apiObj = template;
     
     return item;
 };
@@ -3947,28 +3928,24 @@ Zotero.Item.prototype.getItemTemplate = function (itemType, linkMode) {
     return deferred;
 };
 
-Zotero.Item.prototype.getUploadAuthorization = function(fileinfo, oldmd5){
+Zotero.Item.prototype.getUploadAuthorization = function(fileinfo){
     //fileInfo: md5, filename, filesize, mtime, zip, contentType, charset
     Z.debug("Zotero.Item.getUploadAuthorization", 3);
+    var item = this;
+    
     var config = {'target':'item', 'targetModifier':'file', 'libraryType':this.libraryType, 'libraryID':this.libraryID, 'itemKey':this.itemKey};
     var fileconfig = J.extend({}, config);
-    /*var uploadQueryString = '?';
-    J.each(fileinfo, function(ind, val){
-        uploadQueryString += ind + '=' + val + '&';
-    });
-    */
     var requestUrl = Zotero.ajax.apiRequestUrl(config) + Zotero.ajax.apiQueryString(config);// uploadQueryString;
     
-    //var deferred = new J.Deferred();
-    
     var headers = {};
+    var oldmd5 = item.get('md5');
     if(oldmd5){
         headers['If-Match'] = oldmd5;
     }
     else{
         headers['If-None-Match'] = '*';
     }
-
+    
     var jqxhr = Zotero.ajaxRequest(requestUrl, 'POST',
             {
                 processData: true,
@@ -3981,16 +3958,19 @@ Zotero.Item.prototype.getUploadAuthorization = function(fileinfo, oldmd5){
     return jqxhr;
 };
 
-Zotero.Item.prototype.registerUpload = function(uploadKey, oldmd5){
+Zotero.Item.prototype.registerUpload = function(uploadKey){
     Z.debug("Zotero.Item.registerUpload", 3);
+    var item = this;
     var config = {'target':'item', 'targetModifier':'file', 'libraryType':this.libraryType, 'libraryID':this.libraryID, 'itemKey':this.itemKey};
     var requestUrl = Zotero.ajax.apiRequestUrl(config) + Zotero.ajax.apiQueryString(config);
     
-    if(!oldmd5){
-        headers = {"If-None-Match": "*"};
+    var headers = {};
+    var oldmd5 = item.get('md5');
+    if(oldmd5){
+        headers['If-Match'] = oldmd5;
     }
     else{
-        headers = {"If-Match": oldmd5};
+        headers['If-None-Match'] = '*';
     }
     
     var jqxhr = Zotero.ajaxRequest(requestUrl, 'POST',
@@ -4421,7 +4401,7 @@ Zotero.Item.prototype.set = function(key, val){
         case "parentItemKey":
             if( val === '' ){ val = false; }
             item.parentItemKey = val;
-            item.apiObject.parentItem = val;
+            item.apiObj.parentItem = val;
             break;
     }
     
@@ -4468,6 +4448,123 @@ Zotero.Item.prototype.removeFromCollection = function(collectionKey){
     return;
 };
 
+Zotero.Item.prototype.uploadChildAttachment = function(childItem, fileInfo, fileblob, progressCallback){
+    /*
+     * write child item so that it exists
+     * get upload authorization for actual file
+     * perform full upload
+     */
+    var item = this;
+    var uploadChildAttachmentD = new J.Deferred();
+    
+    if(!item.owningLibrary){
+        throw "Item must be associated with a library";
+    }
+    
+    //make sure childItem has parent set
+    childItem.set('parentItem', item.itemKey);
+    childItem.associateWithLibrary(item.owningLibrary);
+    var childWriteD = childItem.writeItem();
+    childWriteD.done(J.proxy(function(data, textStatus, jqxhr){
+        //successful attachmentItemWrite
+        item.numChildren++;
+        var childUploadD = childItem.uploadFile(fileInfo, fileblob, progressCallback);
+        childUploadD.done(J.proxy(function(success){
+            uploadChildAttachmentD.resolve(success);
+        }, this) ).fail(J.proxy(function(failure){
+            uploadChildAttachmentD.reject(failure);
+        }, this) );
+        
+    })).fail(function(jqxhr, textStatus, errorThrown){
+        //failure during attachmentItem write
+        uploadChildAttachmentD.reject({
+            "message":"Failure during attachmentItem write.",
+            "code": jqxhr.status,
+            "serverMessage": jqxhr.responseText
+        });
+    });
+    
+    return uploadChildAttachmentD;
+};
+
+Zotero.Item.prototype.uploadFile = function(fileInfo, fileblob, progressCallback){
+    var item = this;
+    var uploadFileD = new J.Deferred();
+    
+    var uploadAuthFileData = {
+        md5:fileInfo.md5,
+        filename: item.get('title'),
+        filesize: fileInfo.filesize,
+        mtime:fileInfo.mtime,
+        contentType:fileInfo.contentType,
+        params:1
+    };
+    if(fileInfo.contentType === ""){
+        uploadAuthFileData.contentType = "application/octet-stream";
+    }
+    var uploadAuth = item.getUploadAuthorization(uploadAuthFileData);
+    uploadAuth.done(J.proxy(function(data, textStatus, jqxhr){
+        Z.debug("uploadAuth callback", 3);
+        var upAuthOb;
+        Z.debug(data, 4);
+        if(typeof data == "string"){upAuthOb = JSON.parse(data);}
+        else{upAuthOb = data;}
+        if(upAuthOb.exists == 1){
+            uploadFileD.resolve({'message':"File Exists"});
+        }
+        else{
+            //var filedata = J("#attachmentuploadfileinfo").data('fileInfo').reader.result;
+            var fullUpload = Zotero.file.uploadFile(upAuthOb, fileblob);
+            fullUpload.onreadystatechange = J.proxy(function(e){
+                Z.debug("fullupload readyState: " + fullUpload.readyState, 3);
+                Z.debug("fullupload status: " + fullUpload.status, 3);
+                //if we know that CORS is allowed, check that the request is done and that it was successful
+                //otherwise just wait until it's finished and assume success
+                if(fullUpload.readyState == 4){
+                    //Upload is done, whether successful or not
+                    if(fullUpload.status == 201 || Zotero.config.CORSallowed === false){
+                        //upload was successful and we know it, or upload is complete and we have no way of
+                        //knowing if it was successful because of same origin policy, so we'll assume it was
+                        var regUpload = item.registerUpload(upAuthOb.uploadKey);
+                        regUpload.done(function(){
+                            uploadFileD.resolve({'message': 'Upload Successful'});
+                        }).fail(function(jqxhr, textStatus, e){
+                            var failure = {'message': 'Failed registering upload.'};
+                            if(jqxhr.status == 412){
+                                failure.code = 412;
+                                failure.serverMessage = jqxhr.responseText;
+                            }
+                            uploadFileD.reject(failure);
+                        });
+                    }
+                    else {
+                        //we should be able to tell if upload was successful, and it was not
+                        uploadFileD.reject({
+                            "message": "Failure uploading file.",
+                            "code": jqxhr.status,
+                            "serverMessage": jqxhr.responseText
+                        });
+                    }
+                }
+            }, this);
+            //pass on progress events to the progress callback if it was set
+            fullUpload.upload.onprogress = function(e){
+                if(typeof progressCallback == 'function'){
+                    progressCallback(e);
+                }
+            };
+        }
+    }, this) ).fail(function(jqxhr, textStatus, errorThrown){
+        //Failure during upload authorization
+        uploadFileD.reject({
+            "message":"Failure during upload authorization.",
+            "code": jqxhr.status,
+            "serverMessage": jqxhr.responseText
+        });
+    });
+    
+    return uploadFileD;
+};
 Zotero.Tag = function (entry) {
     this.instance = "Zotero.Tag";
     if(typeof entry != 'undefined'){
@@ -11315,129 +11412,89 @@ Zotero.ui.callbacks.uploadAttachment = function(e){
     }
     
     
-    var uploadFunction = function(){
+    var uploadFunction = J.proxy(function(){
         Z.debug("uploadFunction", 3);
+        //callback for when everything in the upload form is filled
+        //grab file blob
+        //grab file data given by user
+        //create or modify attachment item
+        //Item.uploadExistingFile or uploadChildAttachment
+        
         var fileInfo = J("#attachmentuploadfileinfo").data('fileInfo');
+        var file = J("#attachmentuploadfileinfo").data('file');
+        var specifiedTitle = J("#upload-file-title-input").val();
+        
+        var progressCallback = function(e){
+            Z.debug('fullUpload.upload.onprogress');
+            var percentLoaded = Math.round((e.loaded / e.total) * 100);
+            Z.debug("Upload progress event:" + e.loaded + " / " + e.total + " : " + percentLoaded + "%");
+            J("#uploadprogressmeter").val(percentLoaded);
+        };
+        
+        var uploadSuccess = function(){
+            Zotero.ui.closeDialog(J("#upload-attachment-dialog"));
+            Zotero.nav.pushState(true);
+        };
+        
+        var uploadFailure = function(failure){
+            Z.debug("Upload failed", 3);
+            Z.debug(JSON.stringify(failure));
+            Zotero.ui.jsNotificationMessage("There was a problem uploading your file.", 'error');
+            switch(failure.code){
+                case 400:
+                    break;
+                case 403:
+                    Zotero.ui.jsNotificationMessage("You do not have permission to edit files", 'error');
+                    break;
+                case 409:
+                    Zotero.ui.jsNotificationMessage("The library is currently locked. Please try again in a few minutes.", 'error');
+                    break;
+                case 412:
+                    Zotero.ui.jsNotificationMessage("File conflict. Remote file has changed", 'error');
+                    break;
+                case 413:
+                    Zotero.ui.jsNotificationMessage("Requested upload would exceed storage quota.", 'error');
+                    break;
+                case 428:
+                    Zotero.ui.jsNotificationMessage("Precondition required error", 'error');
+                    break;
+                case 429:
+                    Zotero.ui.jsNotificationMessage("Too many uploads pending. Please try again in a few minutes", 'error');
+                    break;
+            }
+            Zotero.ui.closeDialog(J("#upload-attachment-dialog"));
+        };
         
         //show spinner while working on upload
         Zotero.ui.showSpinner(J('#fileuploadspinner'));
         
-        //get template item
-        //create attachment item
-        var parentItemKey = Zotero.nav.getUrlVar('itemKey');
-        var parentItem = library.items.getItem(parentItemKey);
-        var item = new Zotero.Item();
-        item.owningLibrary = library;
-        item.libraryType = library.type;
-        item.libraryID = library.libraryID;
-        item.parentItemKey = parentItemKey;
+        //upload new copy of file if we're modifying an attachment
+        //create child and upload file if we're modifying a top level item
+        var itemKey = Zotero.nav.getUrlVar('itemKey');
+        var item = library.items.getItem(itemKey);
         
-        var templateItemDeferred = item.initEmpty('attachment', 'imported_file');
-        templateItemDeferred.done(function(item){
-            Z.debug("templateItemDeferred callback");
-            //create child attachment item
+        if(!item.get("parentItem")){
+            //get template item
+            var childItem = new Zotero.Item();
+            childItem.associateWithLibrary(library);
+            var templateItemDeferred = childItem.initEmpty('attachment', 'imported_file');
             
-            item.title = J("#upload-file-title-input").val();
-            item.apiObj['title'] = item.title;
-            item.apiObj['parentItem'] = item.parentItemKey;
-            Z.debug("new title: " + item.apiObj['title']);
-            
-            var jqxhr = item.writeItem();
-            jqxhr.done(J.proxy(function(){
-                //get upload authorization for the actual file
-                var userSetFilename = J("#upload-file-title-input").val() || fileInfo.filename;
-                var uploadAuth = item.getUploadAuthorization({md5:fileInfo.md5, filename:userSetFilename, filesize:fileInfo.filesize, mtime:fileInfo.mtime, contentType:fileInfo.contentType, params:1});
-                uploadAuth.done(function(data, textStatus, XMLHttpRequest){
-                    Z.debug("uploadAuth callback", 3);
-                    var upAuthOb;
-                    Z.debug(data, 4);
-                    if(typeof data == "string"){upAuthOb = JSON.parse(data);}
-                    else{upAuthOb = data;}
-                    if(upAuthOb.exists == 1){
-                        Zotero.ui.closeDialog(J("#upload-attachment-dialog"));
-                        //add to parent's children counter
-                        parentItem.numChildren++;
-                        //TODO: refresh attachments on item page (just pushstate?)
-                        Zotero.nav.pushState(true);
-                    }
-                    else{
-                        var filedata = J("#attachmentuploadfileinfo").data('fileInfo').reader.result;
-                        var file = J("#attachmentuploadfileinfo").data('file');
-                        var fullUpload = Zotero.file.uploadFile(upAuthOb, file);
-                        fullUpload.onreadystatechange = J.proxy(function(e){
-                            Z.debug("fullupload readyState: " + fullUpload.readyState, 3);
-                            Z.debug("fullupload status: " + fullUpload.status, 3);
-                            //if we know that CORS is allowed, check that the request is done and that it was successful
-                            //otherwise just wait until it's finished and assume success
-                            if( (Zotero.config.CORSallowed === false && fullUpload.readyState == 4) ||
-                                (fullUpload.readyState == 4 && fullUpload.status == 201) ){
-                                Z.debug("fullUpload done - registering upload", 3);
-                                var regUpload = item.registerUpload(upAuthOb.uploadKey);
-                                regUpload.done(function(){
-                                    Zotero.ui.closeDialog(J("#upload-attachment-dialog"));
-                                    //add to parent's children counter
-                                    parentItem.numChildren++;
-                                    Zotero.nav.pushState(true);
-                                }).fail(function(jqxhr, textStatus, e){
-                                    Z.debug("Upload registration failed - " + textStatus, 3);
-                                    Zotero.ui.jsNotificationMessage("Error registering upload", 'error');
-                                    if(jqxhr.status == 412){
-                                        Z.debug("412 Precondition Failed on upload registration", 3);
-                                        Zotero.ui.jsNotificationMessage("The file has changed remotely", 'error');
-                                    }
-                                    Zotero.ui.closeDialog(J("#upload-attachment-dialog"));
-                                });
-                            }
-                        }, this);
-                        fullUpload.upload.onprogress = function(e){
-                            Z.debug('fullUpload.upload.onprogress');
-                            var percentLoaded = Math.round((e.loaded / e.total) * 100);
-                            //setProgress(percentLoaded, percentLoaded == 100 ? 'Finalizing.' : 'Uploading.');
-                            Z.debug("Upload progress event:" + e.loaded + " / " + e.total + " : " + percentLoaded + "%");
-                            J("#uploadprogressmeter").val(percentLoaded);
-                        };
-                    }
-                }).fail(function(jqxhr, textStatus, e){
-                    Z.debug("Upload authorization failed - " + textStatus, 3);
-                    Zotero.ui.jsNotificationMessage("Error getting upload authorization", 'error');
-                    switch(jqxhr.status){
-                        case 400:
-                            Z.debug("400 Bad request on upload authorization");
-                            Z.debug(jqxhr.responseText);
-                            break;
-                        case 403:
-                            Z.debug("403 Access denied uploading attachment", 3);
-                            Zotero.ui.jsNotificationMessage("You do not have permission to edit files", 'error');
-                            break;
-                        case 409:
-                            Z.debug("409 Library locked uploading attachment", 3);
-                            Zotero.ui.jsNotificationMessage("The library is currently locked. Please try again in a few minutes.", 'error');
-                            break;
-                        case 412:
-                            //shouldn't happen here in full upload
-                            Z.debug("412 Precondition failed uploading attachment", 3);
-                            Zotero.ui.jsNotificationMessage("File conflict. Remote file has changed", 'error');
-                            break;
-                        case 413:
-                            Z.debug("413 Too large uploading attachment", 3);
-                            Zotero.ui.jsNotificationMessage("Requested upload would exceed storage quota.", 'error');
-                            break;
-                        case 428:
-                            Z.debug("428 Precondition failed uploading attachment", 3);
-                            Zotero.ui.jsNotificationMessage("Precondition required error", 'error');
-                            break;
-                        case 429:
-                            Z.debug("429 Too many requests uploading attachment", 3);
-                            Zotero.ui.jsNotificationMessage("Too many uploads pending. Please try again in a few minutes", 'error');
-                            break;
-                        
-                    }
-                    Zotero.ui.closeDialog(J("#upload-attachment-dialog"));
-                });
-            }));
-        });
-    };
-    
+            templateItemDeferred.done(J.proxy(function(childItem){
+                Z.debug("templateItemDeferred callback");
+                childItem.set('title', specifiedTitle);
+                
+                var uploadChildD = item.uploadChildAttachment(childItem, fileInfo, file, progressCallback);
+                
+                uploadChildD.done(uploadSuccess).fail(uploadFailure);
+            }, this) );
+        }
+        else if(item.get('itemType') == 'attachment' && item.get("linkMode") == 'imported_file') {
+            var uploadD = item.uploadFile(fileInfo, file, progressCallback);
+            uploadD.done(uploadSuccess).fail(uploadFailure);
+        }
+        
+    }, this);
+
     Zotero.ui.dialog(J("#upload-attachment-dialog"), {
         modal:true,
         minWidth: 300,
@@ -11483,6 +11540,8 @@ Zotero.ui.callbacks.uploadAttachment = function(e){
         Z.debug("fileuploaddroptarget drop callback", 3);
         je.stopPropagation();
         je.preventDefault();
+        //clear file input so drag/drop and input don't show conflicting information
+        J("#fileuploadinput").val('');
         var e = je.originalEvent;
         var dt = e.dataTransfer;
         var files = dt.files;
