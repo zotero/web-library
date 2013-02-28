@@ -11,8 +11,8 @@
 }
 
 /* placeholder with individual images not included in sprite yet */
-.ui-icon-sprite-folder_go, .sprite-toolbar-export{ width: 16px; height: 16px; background-image: url(../images/theme/zotero_icons/folder_go.png) !important; } 
-.ui-icon-sprite-text_list_bullets, .sprite-toolbar-cite{ width: 16px; height: 16px; background-image: url(../images/theme/zotero_icons/text_list_bullets.png) !important; } 
+.ui-icon-sprite-folder_go, .sprite-toolbar-export{ width: 16px; height: 16px; background-image: url(../images/theme/zotero_icons/folder_go.png) !important; background-position:0;} 
+.ui-icon-sprite-text_list_bullets, .sprite-toolbar-cite{ width: 16px; height: 16px; background-image: url(../images/theme/zotero_icons/text_list_bullets.png) !important; background-position:0;} 
 
 
 /*special class for desktop ui-icon that doesn't get overwritten by mobile*/
