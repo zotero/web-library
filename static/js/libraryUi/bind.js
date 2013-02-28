@@ -100,6 +100,7 @@ Zotero.ui.bindItemLinks = function(){
     
     J("div#items-pane").on('click', "a.item-select-link", function(e){
         e.preventDefault();
+        e.stopImmediatePropagation();
         Z.debug("item-select-link clicked", 3);
         var itemKey = J(this).attr('data-itemKey');
         Z.debug("click " + itemKey, 4);
