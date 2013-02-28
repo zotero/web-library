@@ -5820,13 +5820,13 @@ Zotero.pages = {
             J("#cv-submit").click(function(e) {
                 J("#cv-sections li").each(function(i) {
                     var heading;
-                    if (J(this).attr("class") == "cv-freetext") {
+                    if (J(this).hasClass("cv-freetext")) {
                         heading = J(this).children(".cv-heading").attr("name", "cv_" + (i + 1) + "_heading");
                         if (heading.val() == "Enter a section name") {
                             heading.val("");
                         }
                         J(this).children(".cv-text").attr("name", "cv_" + (i + 1) + "_text");
-                    } else if (J(this).attr("class") == "cv-collection") {
+                    } else if (J(this).hasClass("cv-collection")) {
                         heading = J(this).children(".cv-heading").attr("name", "cv_" + (i + 1) + "_heading");
                         if (heading.val() == "Enter a section name") {
                             heading.val("");
@@ -5873,14 +5873,14 @@ Zotero.pages = {
     },
     settings_privacy: {
         init: function() {
-            if (!J("input#privacy_publishLibrary").attr("checked")) {
-                J("input#privacy_publishNotes").attr("disabled", "disabled");
+            if (!J("input#privacy_publishLibrary").prop("checked")) {
+                J("input#privacy_publishNotes").prop("disabled", true);
             }
             J("input#privacy_publishLibrary").bind("change", function() {
-                if (!J("input#privacy_publishLibrary").attr("checked")) {
-                    J("input#privacy_publishNotes").removeAttr("checked").attr("disabled", "disabled");
+                if (!J("input#privacy_publishLibrary").prop("checked")) {
+                    J("input#privacy_publishNotes").prop("checked", false).prop("disabled", true);
                 } else {
-                    J("input#privacy_publishNotes").removeAttr("disabled");
+                    J("input#privacy_publishNotes").prop("disabled", false);
                 }
             });
         }
@@ -6468,7 +6468,7 @@ Zotero.pages = {
                     messageIDs: messageIDs
                 }, function(data) {
                     if (data.success === true) {
-                        J("input[type=checkbox]").attr("checked", false);
+                        J("input[type=checkbox]").prop("checked", false);
                         checked = false;
                         rows.addClass("read-message");
                         J("#message-spinner").hide();
@@ -6483,7 +6483,7 @@ Zotero.pages = {
                     messageIDs: messageIDs
                 }, function(data) {
                     if (data.success === true) {
-                        J("input[type=checkbox]").attr("checked", false);
+                        J("input[type=checkbox]").prop("checked", false);
                         checked = false;
                         rows.removeClass("read-message");
                         J("#message-spinner").hide();
@@ -6507,7 +6507,7 @@ Zotero.pages = {
                 messageIDs: messageIDs
             }, function(data) {
                 if (data.success === true) {
-                    J("input[type=checkbox]").attr("checked", false);
+                    J("input[type=checkbox]").prop("checked", false);
                     checked = false;
                     rows.hide();
                     J("#message-spinner").hide();
