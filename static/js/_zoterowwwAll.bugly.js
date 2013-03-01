@@ -9429,6 +9429,7 @@ Zotero.ui.callbacks.createCollection = function(e) {
     Zotero.ui.dialog(J("#create-collection-dialog"), {
         modal: true,
         minWidth: 300,
+        draggable: false,
         buttons: {
             Create: createFunction,
             Cancel: function() {
@@ -9482,6 +9483,7 @@ Zotero.ui.callbacks.updateCollection = function(e) {
     Zotero.ui.dialog(J("#modify-collection-dialog"), {
         modal: true,
         minWidth: 300,
+        draggable: false,
         buttons: {
             Save: saveFunction,
             Cancel: function() {
@@ -9534,6 +9536,7 @@ Zotero.ui.callbacks.deleteCollection = function(e) {
     Zotero.ui.dialog(J("#delete-collection-dialog"), {
         modal: true,
         minWidth: 300,
+        draggable: false,
         buttons: {
             Delete: deleteFunction,
             Cancel: function() {
@@ -9600,6 +9603,15 @@ Zotero.ui.callbacks.citeItems = function(e) {
     Zotero.ui.dialog(J("#cite-item-dialog"), {
         modal: true,
         minWidth: 300,
+        draggable: false,
+        open: function() {
+            var dropdownWidth = J("#cite-item-select").width();
+            var width = dropdownWidth + 150;
+            if (!Zotero.config.mobile) {
+                width = dropdownWidth + 300;
+            }
+            J("#cite-item-dialog").dialog("option", "width", width);
+        },
         width: width
     });
     J("#cite-item-select").on("change", citeFunction);
@@ -9622,6 +9634,7 @@ Zotero.ui.callbacks.showExportDialog = function(e) {
     Zotero.ui.dialog(J("#export-dialog"), {
         modal: true,
         minWidth: 300,
+        draggable: false,
         buttons: {
             Cancel: function() {
                 Zotero.ui.closeDialog(J("#export-dialog"));
@@ -9727,6 +9740,7 @@ Zotero.ui.callbacks.uploadAttachment = function(e) {
         modal: true,
         minWidth: 300,
         width: 350,
+        draggable: false,
         buttons: {
             Upload: uploadFunction,
             Cancel: function() {
@@ -9862,6 +9876,7 @@ Zotero.ui.callbacks.addToCollection = function(e) {
     Zotero.ui.dialog(J("#add-to-collection-dialog"), {
         modal: true,
         minWidth: 300,
+        draggable: false,
         buttons: {
             Add: addToFunction,
             Cancel: function() {
@@ -9898,6 +9913,7 @@ Zotero.ui.callbacks.librarySettings = function(e) {
     }, this);
     Zotero.ui.dialog(J("#library-settings-dialog"), {
         modal: true,
+        draggable: false,
         buttons: {
             Save: submitFunction,
             Cancel: function() {
@@ -9948,6 +9964,7 @@ Zotero.ui.callbacks.sortBy = function(e) {
     Zotero.ui.dialog(J("#sort-dialog"), {
         modal: true,
         minWidth: 300,
+        draggable: false,
         buttons: {
             Save: submitFunction,
             Cancel: function() {
