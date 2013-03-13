@@ -265,7 +265,7 @@ class Zotero_Entry
           }
       }
       
-      $this->version = $entryNode->getElementsByTagNameNS('http://zotero.org/ns/api', 'version')->item(0)->nodeValue;
+      //$this->version = $entryNode->getElementsByTagNameNS('http://zotero.org/ns/api', 'version')->item(0)->nodeValue;
     }
     
     public function getContentType($entryNode){
@@ -472,6 +472,7 @@ class Zotero_Collections
 class Zotero_Items
 {
     public $itemObjects = array();
+    public $owningLibrary;
     
     //get an item from this container of items by itemKey
     public function getItem($itemKey) {
@@ -532,6 +533,41 @@ class Zotero_Items
             }
         }
         return $children;
+    }
+    
+    public function writeItem($item){
+        if(is_string($item)){
+            $itemKey = $item;
+            $item = $this->items->getItem($itemKey);
+        }
+        $updateItemJson = json_encode($item->writeApiObject());
+        $etag = $item->etag;
+        
+        $aparams = array('target'=>'item', 'itemKey'=>$item->itemKey);
+        $reqUrl = $this->apiRequestUrl($aparams) . $this->apiQueryString($aparams);
+        $response = $this->_request($reqUrl, 'PUT', $updateItemJson, array('If-Match'=>$etag));
+        return $response;
+    
+    }
+    
+    public function writeItems($items){
+        
+    }
+    
+    public function deleteItem($item){
+        
+    }
+    
+    public function deleteItems($items){
+        
+    }
+    
+    public function trashItem($item){
+        
+    }
+    
+    public function trashItems($items){
+        
     }
 }
 
@@ -1519,12 +1555,13 @@ class Zotero_Item extends Zotero_Entry
         $subcontentNodes = $entryNode->getElementsByTagNameNS("http://zotero.org/ns/api", "subcontent");
         
         //save raw Content node in case we need it
+        /*
         if($entryNode->getElementsByTagName("content")->length > 0){
             $d = $entryNode->ownerDocument;
             $this->contentNode = $entryNode->getElementsByTagName("content")->item(0);
             $this->content = $d->saveXml($this->contentNode);
         }
-        
+        */
         // Extract the zapi elements: object key, version, itemType, year, numChildren, numTags
         $this->itemKey = $entryNode->getElementsByTagNameNS('http://zotero.org/ns/api', 'key')->item(0)->nodeValue;
         $this->itemVersion = $entryNode->getElementsByTagNameNS('http://zotero.org/ns/api', 'version')->item(0)->nodeValue;
@@ -1558,60 +1595,16 @@ class Zotero_Item extends Zotero_Entry
         if($subcontentNodes->length > 0){
             for($i = 0; $i < $subcontentNodes->length; $i++){
                 $scnode = $subcontentNodes->item($i);
-                $type = $scnode->getAttributeNS('http://zotero.org/ns/api', 'type');
-                if($type == 'application/json' || $type == 'json'){
-                    $this->apiObject = json_decode($scnode->nodeValue, true);
-                    $this->etag = $scnode->getAttributeNS('http://zotero.org/ns/api', 'etag');
-                    if(isset($this->apiObject['creators'])){
-                        $this->creators = $this->apiObject['creators'];
-                    }
-                    else{
-                        $this->creators = array();
-                    }
-                }
-                elseif($type == 'bib'){
-                    $bibNode = $scnode->getElementsByTagName('div')->item(0);
-                    $this->bibContent = $bibNode->ownerDocument->saveXML($bibNode);
-                }
-                
-                $contentString = '';
-                $childNodes = $scnode->childNodes;
-                foreach($childNodes as $childNode){
-                    $contentString .= $childNode->ownerDocument->saveXML($childNode);
-                }
-                $this->subContents[$type] = $contentString;
+                $this->parseContentNode($scnode);
             }
         }
         else{
             $contentNode = $entryNode->getElementsByTagName('content')->item(0);
-            $contentType = $contentNode->getAttribute('type');
-            $zType = $contentNode->getAttributeNS('http://zotero.org/ns/api', 'type');
-            
-            if($contentType == 'application/json' || $contentType == 'json' || $zType == 'json'){
-                $this->pristine = $contentNode->nodeValue;
-                $this->apiObject = json_decode($contentNode->nodeValue, true);
-                
-                if(isset($this->apiObject['creators'])){
-                    $this->creators = $this->apiObject['creators'];
-                }
-                else{
-                    $this->creators = array();
-                }
-            }
-            elseif($contentType == 'bib' || $zType == 'bib'){
-                $bibNode = $contentNode->getElementsByTagName('div')->item(0);
-                $this->bibContent = $bibNode->ownerDocument->saveXML($bibNode);
-            }
-            
-            $contentString = '';
-            $childNodes = $contentNode->childNodes;
-            foreach($childNodes as $childNode){
-                $contentString .= $childNode->ownerDocument->saveXML($childNode);
-            }
-            $this->subContents[$zType] = $contentString;
-            
+            $this->parseContentNode($contentNode);
         }
         
+        //don't parse 'up' link, just depend on parentItem in json
+        /*
         if(isset($this->links['up'])){
             $parentLink = $this->links['up']['application/atom+xml']['href'];
             $matches = array();
@@ -1623,39 +1616,106 @@ class Zotero_Item extends Zotero_Entry
         else{
             $this->parentItemKey = false;
         }
+        */
+    }
+    
+    public function parseContentNode($node){
+        $type = $node->getAttributeNS('http://zotero.org/ns/api', 'type');
+        if($type == 'application/json' || $type == 'json'){
+            $this->pristine = json_decode($node->nodeValue, true);
+            $this->apiObject = json_decode($node->nodeValue, true);
+            $this->apiObj = &$this->apiObject;
+            if(isset($this->apiObject['creators'])){
+                $this->creators = $this->apiObject['creators'];
+            }
+            else{
+                $this->creators = array();
+            }
+            $this->itemVersion = isset($this->apiObject['itemVersion']) ? $this->apiObject['itemVersion'] : 0;
+            $this->parentItemKey = isset($this->apiObject['parentItem']) ? $this->apiObject['parentItem'] : false;
+            
+            if($this->itemType == 'attachment'){
+                $this->mimeType = $this->apiObject['contentType'];
+                $this->translatedMimeType = Zotero_Lib_Utils::translateMimeType($this->mimeType);
+            }
+            if(array_key_exists('linkMode', $this->apiObject)){
+                $this->linkMode = $this->apiObject['linkMode'];
+            }
+            $this->synced = true;
+        }
+        elseif($type == 'bib'){
+            $bibNode = $node->getElementsByTagName('div')->item(0);
+            $this->bibContent = $bibNode->ownerDocument->saveXML($bibNode);
+        }
+        
+        $contentString = '';
+        $childNodes = $node->childNodes;
+        foreach($childNodes as $childNode){
+            $contentString .= $childNode->ownerDocument->saveXML($childNode);
+        }
+        $this->subContents[$type] = $contentString;
+    }
+    
+    public function initItemFromTemplate($template){
+        $this->itemVersion = 0;
+        
+        $this->itemType = $template['itemType'];
+        $this->itemKey = '';
+        $this->pristine = $template;
+        $this->apiObject = $template;
     }
     
     public function get($key){
-        if($key == 'tags'){
-            if(isset($this->apiObject['tags'])){
-                return $this->apiObject['tags'];
-            }
+        switch($key){
+            case 'title':
+                return $this->title;
+            case 'creatorSummary':
+                return $this->creatorSummary;
+            case 'year':
+                return $this->year;
         }
-        elseif($key == 'creators'){
-            //special case
-            if(isset($this->apiObject['creators'])){
-                return $this->apiObject['creators'];
-            }
+        
+        if(array_key_exists($key, $this->apiObject)){
+            return $this->apiObject[$key];
         }
-        else{
-            if(isset($this->apiObject[$key])){
-                return $this->apiObject[$key];
-            }
-            else{
-                return null;
-            }
+        
+        if(property_exists($this, $key)){
+            return $this->$key;
         }
     }
     
     public function set($key, $val){
-        if($key == 'creators' || $key == 'tags'){
-            //TODO: special case empty value and correctly in arrays
+        if(array_key_exists($key, $this->apiObject)){
             $this->apiObject[$key] = $val;
         }
-        else{
-            //if(in_array($key, array_keys($this->fieldMap))) {
-                $this->apiObject[$key] = $val;
-            //}
+        
+        switch($key){
+            case "itemKey":
+                $this->itemKey = $val;
+                $this->apiObject['itemKey'] = $val;
+                break;
+            case "itemVersion":
+                $this->itemVersion = $val;
+                $this->apiObject["itemVersion"] = $val;
+                break;
+            case "title":
+                $this->title = $val;
+                break;
+            case "itemType":
+                $this->itemType = $val;
+                //TODO: translate api object to new item type
+                break;
+            case "linkMode":
+                break;
+            case "deleted":
+                $this->apiObject["deleted"] = $val;
+                break;
+            case "parentItem":
+            case "parentItemKey":
+                if( $val === '' ){ $val = false; }
+                $this->parentItemKey = $val;
+                $this->apiObject["parentItem"] = $val;
+                break;
         }
     }
     
@@ -1665,22 +1725,7 @@ class Zotero_Item extends Zotero_Entry
     }
     
     public function updateItemObject(){
-        $updateItem = $this->apiObject;
-        //remove notes as they can't be in update json
-        unset($updateItem['notes']);
-        $newCreatorsArray = array();
-        foreach($updateItem['creators'] as $creator){
-            if($creator['creatorType']){
-                if(empty($creator['name']) && empty($creator['firstName']) && empty($creator['lastName'])){
-                    continue;
-                }
-                else{
-                    $newCreatorsArray[] = $creator;
-                }
-            }
-        }
-        $updateItem['creators'] = $newCreatorsArray;
-        return $updateItem;
+        return $this->writeApiObject();
     }
     
     public function newItemObject(){
@@ -1731,7 +1776,7 @@ class Zotero_Item extends Zotero_Entry
     public function json(){
         return json_encode($this->apiObject());
     }
-    
+    /*
     public function fullItemJSON(){
         return json_encode($this->fullItemArray());
     }
@@ -1764,7 +1809,7 @@ class Zotero_Item extends Zotero_Entry
         $jsonItem['apiObject'] = $this->apiObject;
         return $jsonItem;
     }
-    
+    */
     public function formatItemField($field){
         switch($field){
             case "title":
@@ -1798,6 +1843,48 @@ class Zotero_Item extends Zotero_Entry
     public function compareItem($otherItem){
         $diff = array_diff_assoc($this->apiObject, $otherItem->apiObject);
         return $diff;
+    }
+    
+    public function addToCollection($collection){
+        
+    }
+    
+    public function removeFromCollection($collection){
+        
+    }
+    
+    public function uploadFile(){
+        
+    }
+    
+    public function uploadChildAttachment(){
+        
+    }
+    
+    public function writeApiObject(){
+        $updateItem = array_merge($this->pristine, $this->apiObject);
+        /*
+        $updateItem = $this->apiObject;
+        //remove notes as they can't be in update json
+        unset($updateItem['notes']);
+        $newCreatorsArray = array();
+        foreach($updateItem['creators'] as $creator){
+            if($creator['creatorType']){
+                if(empty($creator['name']) && empty($creator['firstName']) && empty($creator['lastName'])){
+                    continue;
+                }
+                else{
+                    $newCreatorsArray[] = $creator;
+                }
+            }
+        }
+        $updateItem['creators'] = $newCreatorsArray;
+        */
+        return $updateItem;
+    }
+    
+    public function writePatch(){
+        
     }
 }
 
@@ -2267,7 +2354,7 @@ class Zotero_Library
     const ZOTERO_URI = 'https://api.zotero.org';
     const ZOTERO_WWW_URI = 'http://www.zotero.org';
     const ZOTERO_WWW_API_URI = 'http://www.zotero.org/api';
-    protected $_apiKey = '';
+    public $_apiKey = '';
     protected $_ch = null;
     protected $_followRedirects = true;
     public $libraryType = null;
@@ -2318,7 +2405,9 @@ class Zotero_Library
         $this->libraryBaseWebsiteUrl .= $this->libraryUrlIdentifier . '/items';
         
         $this->items = new Zotero_Items();
+        $this->items->owningLibrary = $this;
         $this->collections = new Zotero_Collections();
+        $this->collections->owningLibrary = $this;
         $this->collections->libraryUrlIdentifier = $this->libraryUrlIdentifier;
         
         $this->dirty = false;
@@ -2577,7 +2666,7 @@ class Zotero_Library
                 $url .= '/items';
                 break;
             case 'item':
-                if($params['itemKey']){
+                if(!empty($params['itemKey'])){
                     $url .= '/items/' . $params['itemKey'];
                 }
                 else{
@@ -2612,6 +2701,9 @@ class Zotero_Library
                 break;
             case 'cv':
                 $url .= '/cv';
+                break;
+            case 'deleted':
+                $url .= '/deleted';
                 break;
             default:
                 return false;
@@ -2690,6 +2782,7 @@ class Zotero_Library
         }
         
         $queryString = '?';
+        ksort($queryParams);
         $queryParamsArray = array();
         foreach($queryParams as $index=>$value){
             if(is_array($value)){
@@ -2732,6 +2825,7 @@ class Zotero_Library
      * @return null
      */
     public function fetchAllCollections($params = array()){
+        //return $this->collections->fetchAllCollections($params);
         $aparams = array_merge(array('target'=>'collections', 'content'=>'json', 'limit'=>100), array('key'=>$this->_apiKey), $params);
         $reqUrl = $this->apiRequestUrl($aparams) . $this->apiQueryString($aparams);
         do{
@@ -2895,7 +2989,7 @@ class Zotero_Library
         $reqUrl = $this->apiRequestUrl($aparams) . $this->apiQueryString($aparams);
         libZoteroDebug( "\n" );
         libZoteroDebug( $reqUrl . "\n" );
-        //die;
+        
         $response = $this->_request($reqUrl);
         if($response->isError()){
             throw new Exception("Error fetching items");
@@ -3443,7 +3537,7 @@ class Zotero_Library
      * @param array $params list of parameters defining the request
      * @return array $tags
      */
-    public function fetchTags($params){
+    public function fetchTags($params = array()){
         $aparams = array_merge(array('target'=>'tags', 'content'=>'json', 'limit'=>50), $params);
         $reqUrl = $this->apiRequestUrl($aparams) . $this->apiQueryString($aparams);
         
@@ -3796,6 +3890,93 @@ class Zotero_Lib_Utils
         return $queryString;
     }
     
+    public static function translateMimeType($mimeType)
+    {
+        switch ($mimeType) {
+            case 'text/html':
+                return 'html';
+            
+            case 'application/pdf':
+            case 'application/x-pdf':
+            case 'application/acrobat':
+            case 'applications/vnd.pdf':
+            case 'text/pdf':
+            case 'text/x-pdf':
+                return 'pdf';
+            
+            case 'image/jpg':
+            case 'image/jpeg':
+                return 'jpg';
+            
+            case 'image/gif':
+                return 'gif';
+            
+            case 'application/msword':
+            case 'application/doc':
+            case 'application/vnd.msword':
+            case 'application/vnd.ms-word':
+            case 'application/winword':
+            case 'application/word':
+            case 'application/x-msw6':
+            case 'application/x-msword':
+                return 'doc';
+            
+            case 'application/vnd.oasis.opendocument.text':
+            case 'application/x-vnd.oasis.opendocument.text':
+                return 'odt';
+            
+            case 'video/flv':
+            case 'video/x-flv':
+                return 'flv';
+            
+            case 'image/tif':
+            case 'image/tiff':
+            case 'image/tif':
+            case 'image/x-tif':
+            case 'image/tiff':
+            case 'image/x-tiff':
+            case 'application/tif':
+            case 'application/x-tif':
+            case 'application/tiff':
+            case 'application/x-tiff':
+                return 'tiff';
+            
+            case 'application/zip':
+            case 'application/x-zip':
+            case 'application/x-zip-compressed':
+            case 'application/x-compress':
+            case 'application/x-compressed':
+            case 'multipart/x-zip':
+                return 'zip';
+                
+            case 'video/quicktime':
+            case 'video/x-quicktime':
+                return 'mov';
+                
+            case 'video/avi':
+            case 'video/msvideo':
+            case 'video/x-msvideo':
+                return 'avi';
+                
+            case 'audio/wav':
+            case 'audio/x-wav':
+            case 'audio/wave':
+                return 'wav';
+                
+            case 'audio/aiff':
+            case 'audio/x-aiff':
+            case 'sound/aiff':
+                return 'aiff';
+            
+            case 'text/plain':
+                return 'plain text';
+            case 'application/rtf':
+                return 'rtf';
+                
+            default:
+                return $mimeType;
+        }
+    }
 }
 
 

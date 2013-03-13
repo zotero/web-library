@@ -42,3 +42,40 @@ Zotero.ui.getAllFormItemKeys = function(form){
     }
     return itemKeys;
 };
+
+Zotero.ui.getRte = function(el){
+    Z.debug("getRte", 3);
+    Z.debug(el);
+    switch(Zotero.config.rte){
+        case "ckeditor":
+            //var elid = "#" + el;
+            //var edname = J(elid).attr('id');
+            //Z.debug("EdName: " + edname, 3);
+            return CKEDITOR.instances[el].getData();
+        default:
+            return tinyMCE.get(el).getContent();
+    }
+};
+
+Zotero.ui.updateRte = function(el){
+    switch(Zotero.config.rte){
+        case "ckeditor":
+            var elid = "#" + el;
+            data = CKEDITOR.instances[el].getData();
+            J(elid).val(data);
+            break;
+        default:
+            tinyMCE.updateContent(el);
+    }
+};
+
+Zotero.ui.deactivateRte = function(el){
+    switch(Zotero.config.rte){
+        case "ckeditor":
+            var elid = "#" + el;
+            data = CKEDITOR.instances[el].destroy();
+            break;
+        default:
+            tinymce.execCommand('mceRemoveControl', true, el);
+    }
+};

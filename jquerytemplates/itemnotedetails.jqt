@@ -26,7 +26,7 @@
     <tr>
         <th>Note</th>
         <td class="note-text">
-            <textarea cols="40" rows="14" id="note-text" class="tinymce readonly">${item.apiObj.note}</textarea>
+            <textarea cols="40" rows="14" name="note-text" id="note-text" class="rte readonly">${item.apiObj.note}</textarea>
         </td>
     </tr>
     

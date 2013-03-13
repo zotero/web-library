@@ -146,15 +146,15 @@ Zotero.ui.addNote = function(button){
     var newNoteID = "note_" + newindex;
     var jel;
     if(Zotero.config.mobile){
-        jel = J("td.notes").append('<textarea cols="40" rows="24" name="' + newNoteID + '" id="' + newNoteID + '" class="tinymce default"></textarea>');
+        jel = J("td.notes").append('<textarea cols="40" rows="24" name="' + newNoteID + '" id="' + newNoteID + '" class="rte default"></textarea>');
     }
     else{
-        jel = J("td.notes button.add-note-button").before('<textarea cols="40" rows="24" name="' + newNoteID + '" id="' + newNoteID + '" class="tinymce default"></textarea>');
+        jel = J("td.notes button.add-note-button").before('<textarea cols="40" rows="24" name="' + newNoteID + '" id="' + newNoteID + '" class="rte default"></textarea>');
     }
     
     Z.debug("new note ID:" + newNoteID, 4);
     
-    Zotero.ui.init.tinyMce('default', true, newNoteID);
+    Zotero.ui.init.rte('default', true, newNoteID);
     
     Zotero.ui.createOnActivePage(button);
 };
@@ -179,7 +179,7 @@ Zotero.ui.loadNewItemTemplate = function(item){
                                          itemKey:item.itemKey
                                          }).appendTo(jel);
             
-            Zotero.ui.init.tinyMce('default');
+            Zotero.ui.init.rte('default');
         }
         else {
             J.tmpl('itemformTemplate', {item:item,
@@ -465,7 +465,7 @@ Zotero.ui.editItemForm = function(el, item){
                                          itemKey:item.itemKey
                                          }).appendTo(jel);
                                          
-        Zotero.ui.init.tinyMce('default');
+        Zotero.ui.init.rte('default');
         Zotero.ui.init.editButton();
     }
     else if(item.itemType == "attachment"){
@@ -491,7 +491,7 @@ Zotero.ui.editItemForm = function(el, item){
             Zotero.ui.init.tagButtons();
             Zotero.ui.init.editButton();
         }
-        Zotero.ui.init.tinyMce();
+        Zotero.ui.init.rte();
         
     }
     else{
@@ -648,7 +648,7 @@ Zotero.ui.loadItemDetail = function(item, el){
         Z.debug("non-note item", 3);
         J.tmpl('itemdetailsTemplate', {item:item, parentUrl:parentUrl}).appendTo(jel).trigger('create');
     }
-    Zotero.ui.init.tinyMce('readonly');
+    Zotero.ui.init.rte('readonly');
     Zotero.ui.init.editButton();
     Zotero.ui.init.detailButtons();
     

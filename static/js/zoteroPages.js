@@ -168,20 +168,17 @@ Zotero.pages = {
             
             // Add a new cv section when the add button is clicked
             J("#cv-sections").on("click", ".cv-insert-section", function(e){
-                // Make sure the template textarea isn't a tiny mce instance
-                //tinyMCE.execCommand('mceRemoveControl', true, "template");
-                
                 // Get the number of sections that exist before adding a new one
                 sectionCount  = J("#cv-sections li").length;
                 
                 // Clone the template html
                 newSection    = J("#cv-section-template li").clone(true);
                 
-                // The new textarea needs a unique id for tinymce to work
+                // The new textarea needs a unique id for rte to work
                 newTextareaID = "cv_" + (sectionCount + 1) + "_text";
-                newSection.children("textarea").attr("id", newTextareaID).addClass('tinymce').addClass('nolinks');
+                newSection.children("textarea").attr("id", newTextareaID).addClass('rte').addClass('nolinks');
                 
-                // Insert the new section into the dom and activate tinymce control
+                // Insert the new section into the dom and activate rte control
                 J(this).closest("li").after(newSection);
                 
                 J(".cv-section-actions").buttonset();
@@ -189,7 +186,7 @@ Zotero.pages = {
                 J(".cv-move-down").button('option', 'icons', {primary:'ui-icon-circle-arrow-s'}).button('option', 'text', false);
                 J(".cv-delete").button('option', 'icons', {primary:'sprite-trash'}).button('option', 'text', false);
                 
-                tinyMCE.execCommand('mceAddControl', true, newTextareaID);
+                Zotero.ui.init.rte('default', false, newTextareaID);
                 
                 //Zotero.pages.settings_cv.hideMoveLinks();
                 return false;
@@ -203,7 +200,7 @@ Zotero.pages = {
                 // Clone the template html
                 newSection    = J("#cv-collection-template li").clone(true);
                 
-                // The new textarea needs a unique id for tinymce to work
+                // The new textarea needs a unique id for rte to work
                 newcollectionKey = "cv_" + (sectionCount + 1) + "_collection";
                 newHeadingID    = "cv_" + (sectionCount + 1) + "_heading";
                 newSection.children("select").attr("id", newcollectionKey);
@@ -225,15 +222,15 @@ Zotero.pages = {
             // Move the section down when the down link is clicked
             J("#cv-sections").on("click", ".cv-move-down", function(e){
                 if(J(this).closest('li').find("textarea").length > 0){
-                    // Get the id of this section's textarea so we can disable the tinymce control before the move
-                    textareaId = J(this).closest('li').find("textarea")[0].id;
-                    Z.debug('textareaId:' + textareaId);
-                    var editor = tinymce.get(textareaId);
-                    editor.save();
-                    tinymce.execCommand('mceRemoveControl', true, textareaId);
-                    // Move the section and reenable the tinymce control
+                    // Get the id of this section's textarea so we can disable the rte control before the move
+                    textareaID = J(this).closest('li').find("textarea")[0].id;
+                    Z.debug('textareaID:' + textareaID, 3);
+                    Zotero.ui.updateRte(textareaID);
+                    Zotero.ui.deactivateRte(textareaID);
+                    
+                    // Move the section and reenable the rte control
                     J(this).closest("li").next().after(J(this).closest("li"));
-                    tinymce.execCommand('mceAddControl', true, textareaId);
+                    Zotero.init.rte('default', false, textareaID);
                 }
                 else {
                     J(this).closest("li").next().after(J(this).closest("li"));
@@ -246,17 +243,15 @@ Zotero.pages = {
             // Move the section up when the up link is clicked
             J("#cv-sections").on("click", ".cv-move-up", function(e){
                 if(J(this).closest('li').find("textarea").length > 0){
-                    // Get the id of this section's textarea so we can disable the tinymce control before the move
-                    textareaId = J(this).closest('li').find("textarea")[0].id;
-                    Z.debug('textareaId:' + textareaId);
-                    var editor = tinymce.get(textareaId);
-                    editor.save();
+                    // Get the id of this section's textarea so we can disable the rte control before the move
+                    textareaID = J(this).closest('li').find("textarea")[0].id;
+                    Z.debug('textareaID:' + textareaID, 3);
+                    Zotero.ui.updateRte(textareaID);
+                    Zotero.ui.deactivateRte(textareaID);
                     
-                    tinymce.execCommand('mceRemoveControl', true, textareaId);
-                    
-                    // Move the section and reenable the tinymce control
+                    // Move the section and reenable the rte control
                     J(this).closest("li").prev().before(J(this).closest("li"));
-                    tinymce.execCommand('mceAddControl', true, textareaId);
+                    Zotero.init.rte('default', false, textareaID);
                 }
                 else {
                     J(this).closest("li").prev().before(J(this).closest("li"));
@@ -289,8 +284,8 @@ Zotero.pages = {
             // Hide unusable move links
             //this.hideMoveLinks();
             
-            //init existing tinymce on first load
-            Zotero.ui.init.tinyMce('nolinks');
+            //init existing rte on first load
+            Zotero.ui.init.rte('nolinks');
             
             // Add some helper text over the section name
             J("li input").inputLabel("Enter a section name", {color:"#d5d5d5"});
@@ -346,7 +341,7 @@ Zotero.pages = {
     
     settings_profile: {
         init: function(){
-            Zotero.ui.init.tinyMce('nolinks');
+            Zotero.ui.init.rte('nolinks');
         }
     },
     
@@ -531,10 +526,8 @@ Zotero.pages = {
     
     group_settings: {
         init: function(){
-            Zotero.ui.init.tinyMce('nolinks');
+            Zotero.ui.init.rte('nolinks');
             
-            //tinyMCE.execCommand('mceAddControl', true, "description");
-            //J("#settings_submit").bind("click", function(){ tinyMCE.execCommand('mceRemoveControl', true, 'description');});
             J("#deleteForm").submit(function(){
                 if(confirm("This will permanently delete this group, including any items in the group library")){
                     J("#confirm_delete").val('confirmed');
@@ -628,7 +621,7 @@ Zotero.pages = {
                     return false;
                 }
             });
-            Zotero.ui.init.tinyMce('nolinks');
+            Zotero.ui.init.rte('nolinks');
         },
         
         joinGroup: function(){
@@ -1166,15 +1159,13 @@ Zotero.pages = {
             J("#contact-list").click(function(){
                 J("#messageRecipient").val(J("#contact-list").val().join(", "));
             });
-            Zotero.ui.init.tinyMce('nolinks');
+            Zotero.ui.init.rte('nolinks');
         }
     },
     
     group_compose: {
         init: function(){
-            //tinyMCE.execCommand('mceAddControl', true, "messageBody");
-            //J("#submit").bind("click", function(){ tinyMCE.execCommand('mceRemoveControl', true, 'messageBody');});
-            Zotero.ui.init.tinyMce('nolinks');
+            Zotero.ui.init.rte('nolinks');
         }
     },
     

@@ -34,18 +34,18 @@ Zotero.ui.init.library = function(){
     Z.debug("Zotero.ui.init.library", 3);
     Zotero.ui.init.fullLibrary();
     
-    //initialize tinyMCE for textareas marked as tinyMce
-    var hasTinyNoLinks = J('textarea.tinymce').filter('.nolinks').length;
-    var hasTinyReadOnly = J('textarea.tinymce').filter('.readonly').length;
-    var hasTinyDefault = J('textarea.tinymce').not('.nolinks').not('.readonly').length;
-    if(hasTinyNoLinks){
-        Zotero.ui.init.tinyMce('nolinks');
+    //initialize RTE for textareas if marked
+    var hasRTENoLinks = J('textarea.rte').filter('.nolinks').length;
+    var hasRTEReadOnly = J('textarea.rte').filter('.readonly').length;
+    var hasRTEDefault = J('textarea.rte').not('.nolinks').not('.readonly').length;
+    if(hasRTENoLinks){
+        Zotero.ui.init.rte('nolinks');
     }
-    if(hasTinyReadOnly){
-        Zotero.ui.init.tinyMce('readonly');
+    if(hasRTEReadOnly){
+        Zotero.ui.init.rte('readonly');
     }
-    if(hasTinyDefault){
-        Zotero.ui.init.tinyMce('default');
+    if(hasRTEDefault){
+        Zotero.ui.init.rte('default');
     }
     
 };
@@ -592,24 +592,17 @@ Zotero.ui.init.tagButtons = function(){
     });
 };
 
-//bind citation/bib links to launch citation dialog
-/*Zotero.ui.init.citation = function(){
-    Z.debug("Zotero.ui.init.citation");
-    var launchCiteDialog = function(e){
-        var library = Zotero.ui.getAssociatedLibrary(J(this));
-        
-        var itemKeys = Zotero.ui.getSelectedItemKeys(J("#edit-mode-items-form"));
-        if(itemKeys.length === 0){
-            itemKeys = Zotero.ui.getALlFormItemKeys(J("#edit-mode-items-form"));
-        }
-        
-        var d = library.loadItemsBib(itemKey);
-    };
-    J("#item-details-div").on('click', '#show-citation-link', launchCiteDialog);
-};
- */
-
 Zotero.ui.init.rte = function(type, autofocus, elements){
+    if(Zotero.config.rte == 'ckeditor'){
+        Zotero.ui.init.ckeditor(type, autofocus, elements);
+        return;
+    }
+    else {
+        Zotero.ui.init.tinyMce(type, autofocus, elements);
+    }
+};
+
+Zotero.ui.init.ckeditor = function(type, autofocus, elements){
     if(!type) { type = 'default'; }
     
     var ckconfig = {};
@@ -664,30 +657,12 @@ Zotero.ui.init.rte = function(type, autofocus, elements){
         config.startupFocus = true;
     }
     
-    J("textarea.tinymce").each(function(ind, el){
+    J("textarea.rte").each(function(ind, el){
         var editor = CKEDITOR.replace(el, config );
-        /*
-        editor.dataProcessor.htmlFilter.addRules(
-        {
-            elements :
-            {
-                a : function( element )
-                {
-                    if ( !element.attributes.rel )
-                        element.attributes.rel = 'nofollow';
-                }
-            }
-        });
-        */
     });
 };
 
 Zotero.ui.init.tinyMce = function(type, autofocus, elements){
-    if(Zotero.config.rte == 'ckeditor'){
-        Zotero.ui.init.rte(type, autofocus, elements);
-        return;
-    }
-    
     if(!type){
         type = 'default';
     }
@@ -698,8 +673,6 @@ Zotero.ui.init.tinyMce = function(type, autofocus, elements){
     else{
         elements = '';
     }
-    
-    Z.debug("tinyMce config of type: " + type, 3);
     
     var tmceConfig = {
         //script_url : '/static/library/tinymce_jquery/jscripts/tiny_mce/tiny_mce.js',

@@ -13,15 +13,23 @@ Zotero.ui.updateItemFromForm = function(item, formEl){
     
     var itemKey = '';
     if(item.itemKey) itemKey = item.itemKey;
+    else {
+        //new item - associate with library and add to collection if appropriate
+        item.associateWithLibrary(library);
+        var collectionKey = Zotero.nav.getUrlVar('collectionKey');
+        if(collectionKey){
+            item.addToCollection(collectionKey);
+        }
+    }
     //update current representation of the item with form values
     J.each(item.apiObj, function(field, value){
         var selector, inputValue, noteElID;
         if(field == 'note'){
-            selector = "textarea[data-itemKey='" + itemKey + "'].tinymce";
+            selector = "textarea[data-itemKey='" + itemKey + "'].rte";
             Z.debug(selector, 4);
             noteElID = J(selector).attr('id');
             Z.debug(noteElID, 4);
-            inputValue = tinyMCE.get(noteElID).getContent();
+            inputValue = Zotero.ui.getRte(noteElID);
         }
         else{
             selector = "[data-itemKey='" + itemKey + "'][name='" + field + "']";
@@ -75,9 +83,10 @@ Zotero.ui.updateItemFromForm = function(item, formEl){
     var notes = [];
     base.find("textarea[name^='note_']").each(function(index, el){
         var noteid = J(el).attr('id');
-        var noteContent = tinyMCE.get(noteid).getContent();
+        var noteContent = Zotero.ui.getRte(noteid);
         
         var noteItem = new Zotero.Item();
+        noteItem.associateWithLibrary(library);
         noteItem.initEmptyNote();
         noteItem.set('note', noteContent);
         noteItem.setParent(item.itemKey);
@@ -95,20 +104,18 @@ Zotero.ui.saveItem = function(item) {
     Z.debug("pre writeItem debug", 4);
     Z.debug(item, 4);
     //show spinner before making ajax write call
+    var library = item.owningLibrary;
     var jqxhr = item.writeItem();
-    jqxhr.done(J.proxy(function(newItemKey){
+    jqxhr.done(J.proxy(function(writtenItems){
         Z.debug("item write finished", 3);
-        delete Zotero.nav.urlvars.pathVars['action'];
-        if(item.itemKey === ''){
-            //newly created item, add to collection if collectionkey in url
-            var collectionKey = Zotero.nav.getUrlVar('collectionKey');
-            if(collectionKey){
-                var collection = library.collections[collectionKey];
-                collection.addItems([item.itemKey]);
-                library.dirty = true;
-            }
-            Zotero.nav.urlvars.pathVars['itemKey'] = item.itemKey;
+        //check for errors, update nav
+        if(item.writeFailure){
+            
         }
+        
+        delete Zotero.nav.urlvars.pathVars['action'];
+        Zotero.nav.urlvars.pathVars['itemKey'] = item.itemKey;
+        
         Zotero.nav.clearUrlVars(['itemKey', 'collectionKey']);
         Zotero.nav.pushState(true);
     }, this));

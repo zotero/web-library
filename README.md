@@ -25,5 +25,8 @@ Requirements
 * PHP 5.3.6
 * PHP cURL
 * htaccess with rewrite allowed (For pointing to index.php from any urls in the directory. Without this, reloading or linking to a page other than the base library, eg /baselibrary/itemKey/ASDF1234 will fail)
+* PHP proxying only works if your PHP installation supports the apache_request_headers function http://www.php.net/manual/en/function.apache-request-headers.php
+* Response caching uses PHP's APC http://php.net/manual/en/book.apc.php
+
 
 Works best with "modern" browsers.

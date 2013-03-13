@@ -28,6 +28,10 @@ body.library {
     float:right;
 }
 
+#items-pane {
+    min-width:600px;
+}
+
 #library td, #library th {
     border-bottom: 1px solid #e7e7e7;
 }

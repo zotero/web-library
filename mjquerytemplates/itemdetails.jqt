@@ -58,7 +58,7 @@
         <tr>
             <th>${Zotero.localizations.fieldMap[field]}</th>
             <td class="${$field}">
-                <textarea cols="40" rows="14" id="note-text" class="tinymce readonly">${item.apiObj.note}</textarea>
+                <textarea cols="40" rows="14" name="note-text" id="note-text" class="rte readonly">${item.apiObj.note}</textarea>
             </td>
         </tr>
         {{else (field != 'itemType' && field != 'title' && field != 'mimeType' && field != 'linkMode' && field != 'charset' && field != 'md5' && field != 'mtime' && field != 'tags' && fieldValue != '')}}

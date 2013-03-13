@@ -1,5 +1,0 @@
-<script id="itemnoteTemplate" type="text/x-jquery-tmpl">
-<li>
-<textarea cols="40" rows="14" name="note_${index}" id="note_${index}" class="tinymce readonly"></textarea>
-</li>
-</script>

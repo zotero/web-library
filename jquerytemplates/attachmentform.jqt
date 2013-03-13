@@ -32,7 +32,7 @@
         <tr>
             <th>Note</th>
             <td class="note-text">
-                <textarea data-itemKey="${itemKey}" cols="40" rows="14" id="note-text" class="tinymce default">${item.note}</textarea>
+                <textarea data-itemKey="${itemKey}" cols="40" rows="14" name="note-text" id="note-text" class="rte default">${item.note}</textarea>
             </td>
         </tr>
         {{else (J.inArray(field, item.hideFields) == -1) && (item.fieldMap.hasOwnProperty(field)) && fieldValue != '' && field != 'itemType' && field != 'title' }}
