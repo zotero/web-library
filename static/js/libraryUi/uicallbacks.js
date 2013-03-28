@@ -96,16 +96,16 @@ Zotero.ui.callbacks.updateCollection =  function(e){
     }
     
     var currentCollectionKey = Zotero.nav.getUrlVar('collectionKey');
-    var currentCollection = library.collections[currentCollectionKey];
+    var currentCollection = library.collections.getCollection(currentCollectionKey);
     var currentParentCollectionKey = currentCollection.parentCollectionKey;
     J("#update-collection-parent-select").val(currentParentCollectionKey);
-    J("#updated-collection-title-input").val(library.collections[currentCollectionKey].title);
+    J("#updated-collection-title-input").val(currentCollection.get("title"));
     
     var saveFunction = J.proxy(function(){
         var newCollectionTitle = J("input#updated-collection-title-input").val() || "Untitled";
         var newParentCollectionKey = J("#update-collection-parent-select").val();
         
-        var collection =  currentCollection;//library.collections[collectionKey];
+        var collection =  currentCollection;
         if(!collection){
             Zotero.ui.jsNotificationMessage("Selected collection not found", 'error');
             return false;
@@ -151,7 +151,7 @@ Zotero.ui.callbacks.deleteCollection =  function(e){
     
     var library = Zotero.ui.getAssociatedLibrary(J(this).closest(".ajaxload"));
     var currentCollectionKey = Zotero.nav.getUrlVar('collectionKey');
-    var currentCollection = library.collections[currentCollectionKey];
+    var currentCollection = library.collections.getCollection(currentCollectionKey);
     var dialogEl = J("#delete-collection-dialog").empty();
     
     J("#delete-collection-dialog").empty().append("");
@@ -588,7 +588,7 @@ Zotero.ui.callbacks.removeFromCollection = function(e){
     var itemKeys = Zotero.ui.getSelectedItemKeys(J("#edit-mode-items-form"));
     var library = Zotero.ui.getAssociatedLibrary(J(this).closest('div.ajaxload'));
     var collectionKey = Zotero.nav.getUrlVar('collectionKey');
-    var collection = library.collections[collectionKey];
+    var collection = library.collections.getCollection(collectionKey);
     var responses = [];
     J.each(itemKeys, function(index, itemKey){
         var response = collection.removeItem(itemKey);

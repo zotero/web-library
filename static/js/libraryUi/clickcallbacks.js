@@ -46,8 +46,7 @@ Zotero.ui.addToCollection = function(collectionKey, library){
     }
     Z.debug(itemKeys, 4);
     Z.debug(collectionKey, 4);
-    Z.debug(library.collections[collectionKey], 4);
-    var response = library.collections[collectionKey].addItems(itemKeys);
+    var response = library.collections.getCollection(collectionKey).addItems(itemKeys);
     library.dirty = true;
     J.when(response).then(function(){
         //Zotero.nav.forceReload = true;//delete Zotero.nav.urlvars.pathVars['mode'];

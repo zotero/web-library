@@ -152,8 +152,6 @@ Zotero.ui.addNote = function(button){
         jel = J("td.notes button.add-note-button").before('<textarea cols="40" rows="24" name="' + newNoteID + '" id="' + newNoteID + '" class="rte default"></textarea>');
     }
     
-    Z.debug("new note ID:" + newNoteID, 4);
-    
     Zotero.ui.init.rte('default', true, newNoteID);
     
     Zotero.ui.createOnActivePage(button);
@@ -709,8 +707,9 @@ Zotero.ui.libraryBreadcrumbs = function(library, config){
     }
     if(config.collectionKey){
         Z.debug("have collectionKey", 4);
-        if(library.collections[config.collectionKey]){
-            breadcrumbs.push({label:library.collections[config.collectionKey]['name'], path:Zotero.nav.buildUrl({collectionKey:config.collectionKey})});
+        curCollection = library.collections.getCollection(config.collectionKey);
+        if( curCollection ){
+            breadcrumbs.push({label:curCollection.get('name'), path:Zotero.nav.buildUrl({collectionKey:config.collectionKey})});
         }
     }
     if(config.itemKey){
