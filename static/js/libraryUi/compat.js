@@ -16,5 +16,5 @@ Zotero.ui.dialog = function(el, options){
  * @return {undefined}
  */
 Zotero.ui.closeDialog = function(el){
-    J(el).dialog('destroy');
+    J(el).dialog('close');
 };
