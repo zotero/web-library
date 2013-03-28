@@ -255,7 +255,7 @@
         </div>
         <footer>
             <div class="center container">
-                    <img id="chnm-logo" src="<?=$staticUrl?>/static/images/theme/rrchnmlogo-gray.png" alt="Zotero">
+                    <img id="chnm-logo" src="<?=$staticPath?>/images/theme/rrchnmlogo-gray.png" alt="Zotero">
                 <nav role="secondary">                 
                     <ul>
                     </ul>
