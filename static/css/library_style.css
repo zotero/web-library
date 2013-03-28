@@ -261,6 +261,7 @@ td.creator * {
 }
 
 .itemDetailForm table {
+    margin-top: 15px;
     margin-bottom: 20px;
 }
 .itemDetailForm td, .itemDetailForm th {
