@@ -658,7 +658,10 @@ Zotero.ui.init.ckeditor = function(type, autofocus, elements){
     }
     
     J("textarea.rte").each(function(ind, el){
-        var editor = CKEDITOR.replace(el, config );
+        var edName = J(el).attr('name');
+        if(!CKEDITOR.instances[edName]){
+            var editor = CKEDITOR.replace(el, config );
+        }
     });
 };
 
