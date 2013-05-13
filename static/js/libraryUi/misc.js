@@ -266,24 +266,65 @@ Zotero.ui.getAssociatedLibrary = function(el){
     //get Zotero.Library object if already bound to element
     var library = jel.data('zoterolibrary');
     if(!library){
-        var loadConfig = jel.data('loadconfig');
-        var libraryID = loadConfig.libraryID;
-        var libraryType = loadConfig.libraryType;
-        var libraryUrlIdentifier = loadConfig.libraryUrlIdentifier;
-        if(!libraryID || !libraryType) {
-            Z.debug("Bad library data attempting to get associated library: libraryID " + libraryID + " libraryType " + libraryType, 1);
-            throw "Err";
+        //try getting it from a libraryString included on DOM element
+        var libString = J(el).data('library');
+        if(libString && Zotero.libraries.hasOwnProperty(libString)){
+            library = Zotero.libraries[libString];
         }
-        if(Zotero.libraries[Zotero.utils.libraryString(libraryType, libraryID)]){
-            library = Zotero.libraries[Zotero.utils.libraryString(libraryType, libraryID, libraryUrlIdentifier)];
-        }
-        else{
-            library = new Zotero.Library(libraryType, libraryID, libraryUrlIdentifier);
-            Zotero.libraries[Zotero.utils.libraryString(libraryType, libraryID)] = library;
+        else {
+            var loadConfig = jel.data('loadconfig');
+            var libraryID = loadConfig.libraryID;
+            var libraryType = loadConfig.libraryType;
+            var libraryUrlIdentifier = loadConfig.libraryUrlIdentifier;
+            if(!libraryID || !libraryType) {
+                Z.debug("Bad library data attempting to get associated library: libraryID " + libraryID + " libraryType " + libraryType, 1);
+                throw "Err";
+            }
+            if(Zotero.libraries[Zotero.utils.libraryString(libraryType, libraryID)]){
+                library = Zotero.libraries[Zotero.utils.libraryString(libraryType, libraryID, libraryUrlIdentifier)];
+            }
+            else{
+                library = new Zotero.Library(libraryType, libraryID, libraryUrlIdentifier);
+                Zotero.libraries[Zotero.utils.libraryString(libraryType, libraryID)] = library;
+            }
         }
         jel.data('zoterolibrary', library);
     }
     return library;
+};
+
+Zotero.ui.getEventLibrary = function(e){
+    var tel = J(e.data.triggeringElement);
+    var libString = tel.data('library');
+    if(Zotero.libraries.hasOwnProperty(libString)){
+        return Zotero.libraries[libString];
+    }
+    
+    var libConfig = Zotero.ui.parseLibString(libString);
+    library = new Zotero.Library(libConfig.libraryType, libConfig.libraryID, '');
+    Zotero.libraries[Zotero.utils.libraryString(libraryType, libraryID)] = library;
+};
+
+Zotero.ui.parseLibString = function(s){
+    var libraryType, libraryID;
+    if(s[0] == "u"){
+        libraryType = "user";
+    }
+    else {
+        libraryType = "group";
+    }
+    libraryID = s.slice(1);
+    return {libraryType:libraryType, libraryID:libraryID};
+};
+
+/**
+ * Get the highest priority variable named key set from various configs
+ * @param  {[type]} key [description]
+ * @return {[type]}     [description]
+ */
+Zotero.ui.getPrioritizedVariable = function(key, defaultVal){
+    var val = Zotero.nav.getUrlVar(key) || Zotero.config.userDefaultApiArgs[key] || Zotero.config.defaultApiArgs || defaultVal;
+    return val;
 };
 
 /**

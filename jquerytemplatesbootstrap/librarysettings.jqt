@@ -1,0 +1,7 @@
+<script id="librarysettingsTemplate" type="text/x-jquery-tmpl">
+    <form id="library-settings-form">
+    {{each(index, field) columnFields}}
+        <label for="display-column-field-${field}"><input type="checkbox" name="display-column-field" value="${field}" id="display-column-field-${field}" />${Zotero.localizations.fieldMap[field] || field}</label>
+    {{/each}}
+    </form>
+</script>

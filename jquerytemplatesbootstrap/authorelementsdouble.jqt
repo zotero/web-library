@@ -1,0 +1,22 @@
+<script id="authorelementsdoubleTemplate" type="text/x-jquery-tmpl">
+    <tr class="creator doubleCreator" id="creator_${index}">
+        <th>
+            <select id="creator_${index}_creatorType" name="creator_${index}_creatorType">
+                {{each(i, c) creatorTypes}}
+                    <option label="${c.localized}" value="${c.creatorType}" {{if c.creatorType == creator.creatorType}}selected='1'{{/if}}>${c.localized}</option>
+                {{/each}}
+            </select>
+        </th>
+        <td class="creator">
+            <div class="creator-input-div doubleCreator" >
+                <input type="text" value="${creator.lastName}" id="creator_${index}_lastName" name="creator_${index}_lastName"><span class="creator-separator">, </span>
+                <input type="text" value="${creator.firstName}" id="creator_${index}_firstName" name="creator_${index}_firstName">
+                <button class="switch-single-field-creator-link btn eventfultrigger" data-triggers="switchSingleCreatorField">Single Field</button>
+                <span class="add-remove-creator-buttons-container">
+                    <button class="remove-creator-link btn eventfultrigger" data-triggers="removeCreator">Remove</button>
+                    <button class="add-creator-link btn eventfultrigger" data-triggers="addCreator">Add</button>
+                </span>
+            </div>
+        </td>
+    </tr>
+</script>

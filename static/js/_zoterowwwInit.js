@@ -133,27 +133,7 @@ Zotero.init = function(){
     
     //J(window).bind('statechange', Zotero.nav.urlChangeCallback);
     // Bind to StateChange Event
-    History.Adapter.bind(window,'statechange',function(){ // Note: We are using statechange instead of popstate
-        //debugger;
-        if(Zotero.nav._ignoreStateChange > 0){
-            Zotero.nav._ignoreStateChange--;
-            Zotero.nav.urlAlwaysCallback();
-            Z.debug("Statechange ignored " + Zotero.nav._ignoreStateChange, 3);
-        }
-        else{
-            Zotero.nav.urlChangeCallback();
-        }
-        /*
-        if((typeof Zotero.state.ignoreStatechange != 'undefined') && (Zotero.state.ignoreStatechange === true)){
-            Zotero.state.ignoreStatechange = false;
-        }
-        else{
-            Zotero.nav.urlChangeCallback();
-        }
-        */
-        //var State = History.getState(); // Note: We are using History.getState() instead of event.state
-        //History.log(State.data, State.title, State.url);
-    });
+    History.Adapter.bind(window,'statechange', Zotero.nav.stateChangeCallback); // Note: We are using statechange instead of popstate
     
     //call urlChangeCallback on first load since some browsers don't popstate onload
     Zotero.nav.urlChangeCallback();

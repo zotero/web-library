@@ -10,7 +10,6 @@ Zotero.ui.mobile.showMenu = function(el){
     J('#dialogPanel').show();
     
     //TODO:change dialog to the correct menu for the context
-    //Zotero.nav.replaceState(false, {mobilePage: activePageID});
     
     Zotero.ui.mobile.changePage(J('#menu-dialog'), {transition:'slidedown',
                                                     changeHash:false,
@@ -221,7 +220,6 @@ Zotero.ui.closeDialog = function(el){
     Zotero.nav.replacePush = false;
     History.back();
     
-    //Zotero.state.ignoreStatechange = false;
     //var lastPage = J.mobile.urlHistory.getPrev()['pageUrl'];
     //Zotero.ui.mobile.changePage(lastPage, {'changeHash':false, 'reverse':true, 'transition':'pop'});
     Z.debug("done with closeDialog", 3);
@@ -346,7 +344,7 @@ Zotero.ui.filterGuide = function(el, filters){
     Z.debug(order);
     Z.debug(sort);
     if(filters['collectionKey']){
-        var collection = library.collections[filters['collectionKey']];
+        var collection = library.collections.getCollection(filters['collectionKey']);
         data.collection = collection;
     }
     

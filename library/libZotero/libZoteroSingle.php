@@ -231,6 +231,19 @@ class Zotero_Entry
     
     public function __construct($entryNode)
     {
+      if(!($entryNode instanceof DOMNode)){
+          if(is_string($entryNode)){
+            $doc = new DOMDocument();
+            $doc->loadXml($entryNode);
+            $entryNodes = $doc->getElementsByTagName("entry");
+            if($entryNodes->length){
+              $entryNode = $entryNodes->item(0);
+            }
+            else {
+              return null;
+            }
+          }
+      }
       $parseFields = array('title', 'id', 'dateAdded', 'dateUpdated', 'author');
       $this->title       = $entryNode->getElementsByTagName("title")->item(0)->nodeValue;
       $this->id          = $entryNode->getElementsByTagName("id")->item(0)->nodeValue;
@@ -264,8 +277,6 @@ class Zotero_Entry
                                           );
           }
       }
-      
-      //$this->version = $entryNode->getElementsByTagNameNS('http://zotero.org/ns/api', 'version')->item(0)->nodeValue;
     }
     
     public function getContentType($entryNode){
@@ -274,6 +285,11 @@ class Zotero_Entry
       else return false;
     }
     
+    public function associateWithLibrary($library){
+        $this->libraryType = $library->libraryType;
+        $this->libraryID = $library->libraryID;
+        $this->owningLibrary = $library;
+    }
 }
  /**
   * Representation of a Zotero Collection
@@ -310,9 +326,13 @@ class Zotero_Collection extends Zotero_Entry
      */
     public $parentCollectionKey = false;
     
+    public $apiObject = array();
+    
+    public $pristine = array();
+    
     public $childKeys = array();
     
-    public function __construct($entryNode)
+    public function __construct($entryNode, $library=null)
     {
         if(!$entryNode){
             return;
@@ -331,22 +351,87 @@ class Zotero_Collection extends Zotero_Entry
         if($contentNode){
             $contentType = $contentNode->getAttribute('type');
             if($contentType == 'application/json'){
-                $this->pristine = $contentNode->nodeValue;
-                $this->contentArray = json_decode($contentNode->nodeValue, true);
-                $this->parentCollectionKey = $this->contentArray['parentCollection'];
-                $this->name = $this->contentArray['name'];
+                $this->pristine = json_decode($contentNode->nodeValue);
+                $this->apiObject = json_decode($contentNode->nodeValue, true);
+                $this->parentCollectionKey = $this->apiObject['parentCollection'];
+                $this->name = $this->apiObject['name'];
             }
             elseif($contentType == 'xhtml'){
                 //$this->parseXhtmlContent($contentNode);
             }
         }
+        
+        if($library !== null){
+            $this->associateWithLibrary($library);
+        }
+    }
+    
+    public function get($key){
+        switch($key){
+            case 'title':
+            case 'name':
+                return $this->name;
+            case 'collectionKey':
+            case 'key':
+                return $this->collectionKey;
+            case 'parentCollection':
+            case 'parentCollectionKey':
+                return $this->parentCollectionKey;
+            case 'collectionVersion':
+            case 'version':
+                return $this->collectionVersion;
+        }
+        
+        if(array_key_exists($key, $this->apiObject)){
+            return $this->apiObject[$key];
+        }
+        
+        if(property_exists($this, $key)){
+            return $this->$key;
+        }
+        return null;
+    }
+    
+    public function set($key, $val){
+        switch($key){
+            case 'title':
+            case 'name':
+                $this->name = $val;
+                $this->apiObject['name'] = $val;
+                break;
+            case 'collectionKey':
+            case 'key':
+                $this->collectionKey = $val;
+                $this->apiObject['collectionKey'] = $val;
+                break;
+            case 'parentCollection':
+            case 'parentCollectionKey':
+                $this->parentCollectionKey = $val;
+                $this->apiObject['parentCollection'] = $val;
+                break;
+            case 'collectionVersion':
+            case 'version':
+                $this->collectionVersion = $val;
+                $this->apiObject['collectionVersion'] = $val;
+                break;
+        }
+        
+        if(array_key_exists($key, $this->apiObject)){
+            $this->apiObject[$key] = $val;
+        }
+        
+        if(property_exists($this, $key)){
+            $this->$key = $val;
+        }
     }
     
     public function collectionJson(){
-        $newJson = json_decode($this->pristine, true);
-        $newJson['name'] = $this->name;
-        $newJson['parentCollection'] = $this->parentCollectionKey;
-        return json_encode($newJson);
+        return json_encode($this->writeApiObject());
+    }
+    
+    public function writeApiObject() {
+        $updateItem = array_merge($this->pristine, $this->apiObject);
+        return $updateItem;
     }
     
     public function dataObject() {
@@ -460,6 +545,146 @@ class Zotero_Collections
         
         return json_encode($collections);
     }
+    
+    public function writeCollection($collection){
+        $cols = $this->writeCollections(array($collection));
+        if($cols === false){
+            return false;
+        }
+        return $cols[0];
+    }
+    
+    public function writeCollections($collections){
+        $writeCollections = array();
+        
+        foreach($collections as $collection){
+            $collectionKey = $collection->get('collectionKey');
+            if($collectionKey == ""){
+                $newCollectionKey = Zotero_Lib_Utils::getKey();
+                $collection->set('collectionKey', $newCollectionKey);
+                $collection->set('collectionVersion', 0);
+            }
+            $writeCollections[] = $collection;
+        }
+        
+        $config = array('target'=>'collections', 'libraryType'=>$this->owningLibrary->libraryType, 'libraryID'=>$this->owningLibrary->libraryID, 'content'=>'json');
+        $requestUrl = $this->owningLibrary->apiRequestString($config);
+        
+        $chunks = array_chunk($writeCollections, 50);
+        foreach($chunks as $chunk){
+            $writeArray = array();
+            foreach($chunk as $collection){
+                $writeArray[] = $collection->writeApiObject();
+            }
+            $requestData = json_encode(array('collections'=>$writeArray));
+            
+            $writeResponse = $this->owningLibrary->_request($requestUrl, 'POST', $requestData, array('Content-Type'=> 'application/json'));
+            if($writeResponse->isError()){
+                foreach($chunk as $collection){
+                    $collection->writeFailure = array('code'=>$writeResponse->getStatus(), 'message'=>$writeResponse->getBody());
+                }
+            }
+            else {
+                Zotero_Lib_Utils::UpdateObjectsFromWriteResponse($chunk, $writeResponse);
+            }
+        }
+        return $writeCollections;
+    }
+    
+    public function writeUpdatedCollection($collection){
+        $this->writeCollections(array($collection));
+        return $collection;
+    }
+    
+    /**
+     * Load all collections in the library into the collections container
+     *
+     * @param array $params list of parameters limiting the request
+     * @return null
+     */
+    public function fetchAllCollections($params = array()){
+        $aparams = array_merge(array('target'=>'collections', 'content'=>'json', 'limit'=>100), $params);
+        $reqUrl = $this->owningLibrary->apiRequestString($aparams);
+        do{
+            $response = $this->owningLibrary->_request($reqUrl);
+            if($response->isError()){
+                throw new Exception("Error fetching collections");
+            }
+            
+            $feed = new Zotero_Feed($response->getRawBody());
+            $this->addCollectionsFromFeed($feed);
+            
+            if(isset($feed->links['next'])){
+                $nextUrl = $feed->links['next']['href'];
+                $parsedNextUrl = parse_url($nextUrl);
+                $parsedNextUrl['query'] = $this->owningLibrary->apiQueryString($this->parseQueryString($parsedNextUrl['query']) );
+                $reqUrl = $parsedNextUrl['scheme'] . '://' . $parsedNextUrl['host'] . $parsedNextUrl['path'] . $parsedNextUrl['query'];
+            }
+            else{
+                $reqUrl = false;
+            }
+        } while($reqUrl);
+        
+        $this->loaded = true;
+        return $this->orderedArray;
+    }
+    
+    /**
+     * Load 1 request worth of collections in the library into the collections container
+     *
+     * @param array $params list of parameters limiting the request
+     * @return null
+     */
+    public function fetchCollections($params = array()){
+        $aparams = array_merge(array('target'=>'collections', 'content'=>'json', 'limit'=>100), $params);
+        $reqUrl = $this->owningLibrary->apiRequestString($aparams);
+        $response = $this->owningLibrary->_request($reqUrl);
+        if($response->isError()){
+            return false;
+            throw new Exception("Error fetching collections");
+        }
+        
+        $feed = new Zotero_Feed($response->getRawBody());
+        $this->owningLibrary->_lastFeed = $feed;
+        $addedCollections = $this->addCollectionsFromFeed($feed);
+        
+        if(isset($feed->links['next'])){
+            $nextUrl = $feed->links['next']['href'];
+            $parsedNextUrl = parse_url($nextUrl);
+            $parsedNextUrl['query'] = $this->apiQueryString($this->parseQueryString($parsedNextUrl['query']) );
+            $reqUrl = $parsedNextUrl['scheme'] . '://' . $parsedNextUrl['host'] . $parsedNextUrl['path'] . $parsedNextUrl['query'];
+        }
+        else{
+            $reqUrl = false;
+        }
+        return $addedCollections;
+    }
+    
+    /**
+     * Load a single collection by collectionKey
+     *
+     * @param string $collectionKey
+     * @return Zotero_Collection
+     */
+    public function fetchCollection($collectionKey){
+        $aparams = array('target'=>'collection', 'content'=>'json', 'collectionKey'=>$collectionKey);
+        $reqUrl = $this->owningLibrary->apiRequestString($aparams);
+        
+        $response = $this->owningLibrary->_request($reqUrl, 'GET');
+        if($response->isError()){
+            return false;
+            throw new Exception("Error fetching collection");
+        }
+        
+        $entry = Zotero_Lib_Utils::getFirstEntryNode($response->getRawBody());
+        if($entry == null){
+            return false;
+        }
+        $collection = new Zotero_Collection($entry, $this);
+        $this->addCollection($collection);
+        return $collection;
+    }
+    
 }
 
 
@@ -473,6 +698,7 @@ class Zotero_Items
 {
     public $itemObjects = array();
     public $owningLibrary;
+    public $itemsVersion = 0;
     
     //get an item from this container of items by itemKey
     public function getItem($itemKey) {
@@ -486,6 +712,9 @@ class Zotero_Items
     public function addItem($item) {
         $itemKey = $item->itemKey;
         $this->itemObjects[$itemKey] = $item;
+        if($this->owningLibrary){
+            $item->associateWithLibrary($this->owningLibrary);
+        }
     }
     
     //add items to this container from a Zotero_Feed object
@@ -536,38 +765,105 @@ class Zotero_Items
     }
     
     public function writeItem($item){
-        if(is_string($item)){
-            $itemKey = $item;
-            $item = $this->items->getItem($itemKey);
-        }
-        $updateItemJson = json_encode($item->writeApiObject());
-        $etag = $item->etag;
-        
-        $aparams = array('target'=>'item', 'itemKey'=>$item->itemKey);
-        $reqUrl = $this->apiRequestUrl($aparams) . $this->apiQueryString($aparams);
-        $response = $this->_request($reqUrl, 'PUT', $updateItemJson, array('If-Match'=>$etag));
-        return $response;
-    
+        return $this->writeItems(array($item));
     }
     
+    //accept an array of `Zotero_Item`s
     public function writeItems($items){
+        $writeItems = array();
         
-    }
-    
-    public function deleteItem($item){
+        foreach($items as $item){
+            $itemKey = $item->get('itemKey');
+            if($itemKey == ""){
+                $newItemKey = Zotero_Lib_Utils::getKey();
+                $item->set('itemKey', $newItemKey);
+                $item->set('itemVersion', 0);
+            }
+            $writeItems[] = $item;
+            
+            //add separate note items if this item has any
+            $itemNotes = $item->get('notes');
+            if($itemNotes && (count($itemNotes) > 0) ){
+                foreach($itemNotes as $note){
+                    $note->set('parentItem', $item->get('itemKey'));
+                    $note->set('itemKey', Zotero_Lib_Utils::getKey());
+                    $note->set('itemVersion', 0);
+                    $writeItems[] = $note;
+                }
+            }
+        }
         
-    }
-    
-    public function deleteItems($items){
-        
+        $config = array('target'=>'items', 'libraryType'=>$this->owningLibrary->libraryType, 'libraryID'=>$this->owningLibrary->libraryID, 'content'=>'json');
+        $requestUrl = $this->owningLibrary->apiRequestString($config);
+        $chunks = array_chunk($writeItems, 50);
+        foreach($chunks as $chunk){
+            $writeArray = array();
+            foreach($chunk as $item){
+                $writeArray[] = $item->writeApiObject();
+            }
+            $requestData = json_encode(array('items'=>$writeArray));
+            
+            $writeResponse = $this->owningLibrary->_request($requestUrl, 'POST', $requestData, array('Content-Type'=> 'application/json'));
+            if($writeResponse->isError()){
+                foreach($chunk as $item){
+                    $item->writeFailure = array('code'=>$writeResponse->getStatus(), 'message'=>$writeResponse->getBody());
+                }
+            }
+            else {
+                Zotero_Lib_Utils::UpdateObjectsFromWriteResponse($chunk, $writeResponse);
+            }
+        }
+        return $writeItems;
     }
     
     public function trashItem($item){
-        
+        $item->trashItem();
+        return $item->save();
     }
     
     public function trashItems($items){
+        foreach($items as $item){
+            $item->trashItem();
+        }
+        return $this->writeItems($items);
+    }
+    
+    public function deleteItem($item){
+        $aparams = array('target'=>'item', 'itemKey'=>$item->itemKey);
+        $reqUrl = $this->owningLibrary->apiRequestString($aparams);
+        $response = $this->owningLibrary->_request($reqUrl, 'DELETE', null, array('If-Unmodified-Since-Version'=>$item->itemVersion));
+        return $response;
+    }
+    
+    //delete multiple items
+    //modified version we submit to the api falls back from explicit argument, to $items->itemsVersion
+    //if set and non-zero, to the max itemVersion of items passed for deletion
+    public function deleteItems($items, $version=null){
+        if(count($items) > 50){
+            throw new Exception("Too many items to delete");
+        }
+        $itemKeys = array();
+        $latestItemVersion = 0;
+        foreach($items as $item){
+            array_push($itemKeys, $item->get('itemKey'));
+            $v = $item->get('version');
+            if($v > $latestItemVersion){
+                $latestItemVersion = $v;
+            }
+        }
+        if($version === null){
+            if($this->itemsVersion !== 0){
+                $version = $this->itemsVersion;
+            }
+            else {
+                $version = $latestItemVersion;
+            }
+        }
         
+        $aparams = array('target'=>'items', 'itemKey'=>$itemKeys);
+        $reqUrl = $this->owningLibrary->apiRequestString($aparams);
+        $response = $this->owningLibrary->_request($reqUrl, 'DELETE', null, array('If-Unmodified-Since-Version'=>$version));
+        return $response;
     }
 }
 
@@ -1249,6 +1545,181 @@ class libZotero_Http_Response
     }
 }
 
+class Zotero_Cite {
+    private static $citePaperJournalArticleURL = false;
+
+    //
+    // Ported from cite.js in the Zotero client
+    //
+    
+    /**
+     * Mappings for names
+     * Note that this is the reverse of the text variable map, since all mappings should be one to one
+     * and it makes the code cleaner
+     */
+    private static $zoteroNameMap = array(
+        "author" => "author",
+        "editor" => "editor",
+        "bookAuthor" => "container-author",
+        "composer" => "composer",
+        "interviewer" => "interviewer",
+        "recipient" => "recipient",
+        "seriesEditor" => "collection-editor",
+        "translator" => "translator"
+    );
+    
+    /**
+     * Mappings for text variables
+     */
+    private static $zoteroFieldMap = array(
+        "title" => array("title"),
+        "container-title" => array("publicationTitle",  "reporter", "code"), /* reporter and code should move to SQL mapping tables */
+        "collection-title" => array("seriesTitle", "series"),
+        "collection-number" => array("seriesNumber"),
+        "publisher" => array("publisher", "distributor"), /* distributor should move to SQL mapping tables */
+        "publisher-place" => array("place"),
+        "authority" => array("court"),
+        "page" => array("pages"),
+        "volume" => array("volume"),
+        "issue" => array("issue"),
+        "number-of-volumes" => array("numberOfVolumes"),
+        "number-of-pages" => array("numPages"),
+        "edition" => array("edition"),
+        "version" => array("version"),
+        "section" => array("section"),
+        "genre" => array("type", "artworkSize"), /* artworkSize should move to SQL mapping tables, or added as a CSL variable */
+        "medium" => array("medium", "system"),
+        "archive" => array("archive"),
+        "archive_location" => array("archiveLocation"),
+        "event" => array("meetingName", "conferenceName"), /* these should be mapped to the same base field in SQL mapping tables */
+        "event-place" => array("place"),
+        "abstract" => array("abstractNote"),
+        "URL" => array("url"),
+        "DOI" => array("DOI"),
+        "ISBN" => array("ISBN"),
+        "call-number" => array("callNumber"),
+        "note" => array("extra"),
+        "number" => array("number"),
+        "references" => array("history"),
+        "shortTitle" => array("shortTitle"),
+        "journalAbbreviation" => array("journalAbbreviation"),
+        "language" => array("language")
+    );
+    
+    private static $zoteroDateMap = array(
+        "issued" => "date",
+        "accessed" => "accessDate"
+    );
+    
+    private static $zoteroTypeMap = array(
+        'book' => "book",
+        'bookSection' => "chapter",
+        'journalArticle' => "article-journal",
+        'magazineArticle' => "article-magazine",
+        'newspaperArticle' => "article-newspaper",
+        'thesis' => "thesis",
+        'encyclopediaArticle' => "entry-encyclopedia",
+        'dictionaryEntry' => "entry-dictionary",
+        'conferencePaper' => "paper-conference",
+        'letter' => "personal_communication",
+        'manuscript' => "manuscript",
+        'interview' => "interview",
+        'film' => "motion_picture",
+        'artwork' => "graphic",
+        'webpage' => "webpage",
+        'report' => "report",
+        'bill' => "bill",
+        'case' => "legal_case",
+        'hearing' => "bill",                // ??
+        'patent' => "patent",
+        'statute' => "bill",                // ??
+        'email' => "personal_communication",
+        'map' => "map",
+        'blogPost' => "webpage",
+        'instantMessage' => "personal_communication",
+        'forumPost' => "webpage",
+        'audioRecording' => "song",     // ??
+        'presentation' => "speech",
+        'videoRecording' => "motion_picture",
+        'tvBroadcast' => "broadcast",
+        'radioBroadcast' => "broadcast",
+        'podcast' => "song",            // ??
+        'computerProgram' => "book"     // ??
+    );
+    
+    private static $quotedRegexp = '/^".+"$/';
+    
+    public static function convertItem($zoteroItem) {
+        if (!$zoteroItem) {
+            throw new Exception("Zotero item not provided");
+        }
+        
+        // don't return URL or accessed information for journal articles if a
+        // pages field exists
+        $itemType = $zoteroItem->get("itemType");//Zotero_ItemTypes::getName($zoteroItem->itemTypeID);
+        $cslType = isset(self::$zoteroTypeMap[$itemType]) ? self::$zoteroTypeMap[$itemType] : false;
+        if (!$cslType) $cslType = "article";
+        $ignoreURL = (($zoteroItem->get("accessDate") || $zoteroItem->get("url")) &&
+                in_array($itemType, array("journalArticle", "newspaperArticle", "magazineArticle"))
+                && $zoteroItem->get("pages")
+                && self::$citePaperJournalArticleURL);
+        
+        $cslItem = array(
+            'id' => $zoteroItem->owningLibrary->libraryID . "/" . $zoteroItem->get("key"),
+            'type' => $cslType
+        );
+        
+        // get all text variables (there must be a better way)
+        // TODO: does citeproc-js permit short forms?
+        foreach (self::$zoteroFieldMap as $variable=>$fields) {
+            if ($variable == "URL" && $ignoreURL) continue;
+            
+            foreach($fields as $field) {
+                $value = $zoteroItem->get($field);
+                if ($value !== "" && $value !== null) {
+                    // Strip enclosing quotes
+                    if (preg_match(self::$quotedRegexp, $value)) {
+                        $value = substr($value, 1, strlen($value)-2);
+                    }
+                    $cslItem[$variable] = $value;
+                    break;
+                }
+            }
+        }
+        
+        // separate name variables
+        $creators = $zoteroItem->get('creators');
+        foreach ($creators as $creator) {
+            $creatorType = $creator['creatorType'];// isset(self::$zoteroNameMap[$creatorType]) ? self::$zoteroNameMap[$creatorType] : false;
+            if (!$creatorType) continue;
+            
+            if(isset($creator["name"])){
+                $nameObj = array('literal' => $creator['name']);
+            }
+            else {
+                $nameObj = array('family' => $creator['lastName'], 'given' => $creator['firstName']);
+            }
+            
+            if (isset($cslItem[$creatorType])) {
+                $cslItem[$creatorType][] = $nameObj;
+            }
+            else {
+                $cslItem[$creatorType] = array($nameObj);
+            }
+        }
+        
+        // get date variables
+        foreach (self::$zoteroDateMap as $key=>$val) {
+            $date = $zoteroItem->get($val);
+            if ($date) {
+                $cslItem[$key] = array("raw" => $date);
+            }
+        }
+        
+        return $cslItem;
+    }
+}
+
  /**
   * Representation of a Zotero Item
   * 
@@ -1267,7 +1738,12 @@ class Zotero_Item extends Zotero_Entry
      * @var int
      */
     public $itemKey = '';
-
+    
+    /**
+     * @var Zotero_Library
+     */
+    public $owningLibrary = null;
+    
     /**
      * @var string
      */
@@ -1321,7 +1797,7 @@ class Zotero_Item extends Zotero_Entry
     /**
      * @var string
      */
-    public $note = null;
+    public $notes = array();
     
     /**
      * @var int Represents the relationship of the child to the parent. 0:file, 1:file, 2:snapshot, 3:web-link
@@ -1336,6 +1812,8 @@ class Zotero_Item extends Zotero_Entry
     public $parsedJson = null;
     public $etag = '';
     
+    public $writeFailure = null;
+    
     /**
      * @var string content node of response useful if formatted bib request and we need to use the raw content
      */
@@ -1345,7 +1823,7 @@ class Zotero_Item extends Zotero_Entry
     
     public $subContents = array();
     
-    public $apiObject = array();
+    public $apiObject = array('itemType'=>null, 'tags'=>array(), 'collections'=>array(), 'relations'=>array());
     
     public $pristine = null;
     
@@ -1537,7 +2015,7 @@ class Zotero_Item extends Zotero_Entry
     );
     
     
-    public function __construct($entryNode=null)
+    public function __construct($entryNode=null, $library=null)
     {
         if(!$entryNode){
             return;
@@ -1554,14 +2032,6 @@ class Zotero_Item extends Zotero_Entry
         //check if we have multiple subcontent nodes
         $subcontentNodes = $entryNode->getElementsByTagNameNS("http://zotero.org/ns/api", "subcontent");
         
-        //save raw Content node in case we need it
-        /*
-        if($entryNode->getElementsByTagName("content")->length > 0){
-            $d = $entryNode->ownerDocument;
-            $this->contentNode = $entryNode->getElementsByTagName("content")->item(0);
-            $this->content = $d->saveXml($this->contentNode);
-        }
-        */
         // Extract the zapi elements: object key, version, itemType, year, numChildren, numTags
         $this->itemKey = $entryNode->getElementsByTagNameNS('http://zotero.org/ns/api', 'key')->item(0)->nodeValue;
         $this->itemVersion = $entryNode->getElementsByTagNameNS('http://zotero.org/ns/api', 'version')->item(0)->nodeValue;
@@ -1603,20 +2073,9 @@ class Zotero_Item extends Zotero_Entry
             $this->parseContentNode($contentNode);
         }
         
-        //don't parse 'up' link, just depend on parentItem in json
-        /*
-        if(isset($this->links['up'])){
-            $parentLink = $this->links['up']['application/atom+xml']['href'];
-            $matches = array();
-            preg_match("/items\/([A-Z0-9]{8})/", $parentLink, $matches);
-            if(count($matches) == 2){
-                $this->parentItemKey = $matches[1];
-            }
+        if($library !== null){
+            $this->associateWithLibrary($library);
         }
-        else{
-            $this->parentItemKey = false;
-        }
-        */
     }
     
     public function parseContentNode($node){
@@ -1667,12 +2126,21 @@ class Zotero_Item extends Zotero_Entry
     
     public function get($key){
         switch($key){
+            case 'key':
+            case 'itemKey':
+                return $this->itemKey;
+            case 'itemVersion':
+            case 'version':
+                return $this->itemVersion;
             case 'title':
                 return $this->title;
             case 'creatorSummary':
                 return $this->creatorSummary;
             case 'year':
                 return $this->year;
+            case 'parentItem':
+            case 'parentItemKey':
+                return $this->parentItemKey;
         }
         
         if(array_key_exists($key, $this->apiObject)){
@@ -1682,6 +2150,7 @@ class Zotero_Item extends Zotero_Entry
         if(property_exists($this, $key)){
             return $this->$key;
         }
+        return null;
     }
     
     public function set($key, $val){
@@ -1691,10 +2160,12 @@ class Zotero_Item extends Zotero_Entry
         
         switch($key){
             case "itemKey":
+            case "key":
                 $this->itemKey = $val;
                 $this->apiObject['itemKey'] = $val;
                 break;
             case "itemVersion":
+            case "version":
                 $this->itemVersion = $val;
                 $this->apiObject["itemVersion"] = $val;
                 break;
@@ -1706,11 +2177,13 @@ class Zotero_Item extends Zotero_Entry
                 //TODO: translate api object to new item type
                 break;
             case "linkMode":
+                //TODO: something here?
                 break;
             case "deleted":
                 $this->apiObject["deleted"] = $val;
                 break;
             case "parentItem":
+            case "parentKey":
             case "parentItemKey":
                 if( $val === '' ){ $val = false; }
                 $this->parentItemKey = $val;
@@ -1776,40 +2249,7 @@ class Zotero_Item extends Zotero_Entry
     public function json(){
         return json_encode($this->apiObject());
     }
-    /*
-    public function fullItemJSON(){
-        return json_encode($this->fullItemArray());
-    }
     
-    public function fullItemArray(){
-        $jsonItem = array();
-        
-        //inherited from Entry
-        $jsonItem['title'] = $this->title;
-        $jsonItem['dateAdded'] = $this->dateAdded;
-        $jsonItem['dateUpdated'] = $this->dateUpdated;
-        $jsonItem['id'] = $this->id;
-        
-        $jsonItem['links'] = $this->links;
-        
-        //Item specific vars
-        $jsonItem['itemKey'] = $this->itemKey;
-        $jsonItem['itemType'] = $this->itemType;
-        $jsonItem['creatorSummary'] = $this->creatorSummary;
-        $jsonItem['numChildren'] = $this->numChildren;
-        $jsonItem['numTags'] = $this->numTags;
-        
-        $jsonItem['creators'] = $this->creators;
-        $jsonItem['createdByUserID'] = $this->createdByUserID;
-        $jsonItem['lastModifiedByUserID'] = $this->lastModifiedByUserID;
-        $jsonItem['note'] = $this->note;
-        $jsonItem['linkMode'] = $this->linkMode;
-        $jsonItem['mimeType'] = $this->mimeType;
-        
-        $jsonItem['apiObject'] = $this->apiObject;
-        return $jsonItem;
-    }
-    */
     public function formatItemField($field){
         switch($field){
             case "title":
@@ -1846,11 +2286,83 @@ class Zotero_Item extends Zotero_Entry
     }
     
     public function addToCollection($collection){
+        if(is_string($collection)){
+            $collectionKey = $collection;
+        }
+        else {
+            $collectionKey = $collection->get('collectionKey');
+        }
         
+        $memberCollectionKeys = $this->get('collections');
+        if(!is_array($memberCollectionKeys)){
+            $memberCollectionKeys = array($collectionKey);
+            $this->set('collections', $memberCollectionKeys);
+        }
+        else {
+            if(!in_array($collectionKey, $memberCollectionKeys)) {
+                $memberCollectionKeys[] = $collectionKey;
+                $this->set('collections', $memberCollectionKeys);
+            }
+        }
     }
     
     public function removeFromCollection($collection){
+        if(is_string($collection)){
+            $collectionKey = $collection;
+        }
+        else {
+            $collectionKey = $collection->get('collectionKey');
+        }
         
+        $memberCollectionKeys = $this->get('collections');
+        if(!is_array($memberCollectionKeys)){
+            $memberCollectionKeys = array($collectionKey);
+            $this->set('collections', $memberCollectionKeys);
+        }
+        else {
+            $ind = array_search($collectionKey, $memberCollectionKeys);
+            if($ind !== false){
+                array_splice($memberCollectionKeys, $ind, 1);
+                $this->set('collections', $memberCollectionKeys);
+            }
+        }
+    }
+    
+    public function addTag($newtagname, $type=null){
+        $itemTags = $this->get('tags');
+        //assumes we'll get an array
+        foreach($itemTags as $tag){
+            if(is_string($tag) && $tag == $newtagname){
+                return;
+            }
+            elseif(is_array($tag) && isset($tag['tag']) && $tag['tag'] == $newtagname) {
+                return;
+            }
+        }
+        if($type !== null){
+            $itemTags[] = array('tag'=>$newtagname, 'type'=>$type);
+        }
+        else {
+            $itemTags[] = array('tag'=>$newtagname);
+        }
+        $this->set('tags', $itemTags);
+    }
+    
+    public function removeTag($rmtagname){
+        $itemTags = $this->get('tags');
+        //assumes we'll get an array
+        foreach($itemTags as $ind=>$tag){
+            if( (is_string($tag) && $tag == $rmtagname) ||
+                (is_array($tag) && isset($tag['tag']) && $tag['tag'] == $rmtagname) ){
+                array_splice($itemTags, $ind, 1);
+                $this->set('tags', $itemTags);
+                return;
+            }
+        }
+    }
+    
+    public function addNote($noteItem){
+        $this->notes[] = $noteItem;
     }
     
     public function uploadFile(){
@@ -1863,28 +2375,64 @@ class Zotero_Item extends Zotero_Entry
     
     public function writeApiObject(){
         $updateItem = array_merge($this->pristine, $this->apiObject);
-        /*
-        $updateItem = $this->apiObject;
-        //remove notes as they can't be in update json
-        unset($updateItem['notes']);
-        $newCreatorsArray = array();
+        if(empty($updateItem['creators'])){
+            return $updateItem;
+        }
+        
+        $newCreators = array();
         foreach($updateItem['creators'] as $creator){
-            if($creator['creatorType']){
-                if(empty($creator['name']) && empty($creator['firstName']) && empty($creator['lastName'])){
-                    continue;
-                }
-                else{
-                    $newCreatorsArray[] = $creator;
-                }
+            if(empty($creator['name']) && empty($creator['firstName']) && empty($creator['lastName'])){
+                continue;
+            }
+            else {
+                $newCreators[] = $creator;
             }
         }
-        $updateItem['creators'] = $newCreatorsArray;
-        */
+        $updateItem['creators'] = $newCreators;
         return $updateItem;
     }
     
     public function writePatch(){
         
+    }
+    
+    public function trashItem(){
+        $this->set('deleted', 1);
+    }
+    
+    public function untrashItem(){
+        $this->set('deleted', 0);
+    }
+    
+    public function save() {
+        return $this->owningLibrary->items->writeItems(array($this));
+    }
+    
+    public function getChildren(){
+        //short circuit if has item has no children
+        if(!($this->numChildren)){//} || (this.parentItemKey !== false)){
+            return array();
+        }
+        
+        $config = array('target'=>'children', 'libraryType'=>$this->owningLibrary->libraryType, 'libraryID'=>$this->owningLibrary->libraryID, 'itemKey'=>$this->itemKey, 'content'=>'json');
+        $requestUrl = $this->owningLibrary->apiRequestString($config);
+        
+        $response = $this->owningLibrary->_request($requestUrl, 'GET');
+        
+        //load response into item objects
+        $fetchedItems = array();
+        if($response->isError()){
+            return false;
+            throw new Exception("Error fetching items");
+        }
+        
+        $feed = new Zotero_Feed($response->getRawBody());
+        $fetchedItems = $this->owningLibrary->items->addItemsFromFeed($feed);
+        return $fetchedItems;
+    }
+    
+    public function getCSLItem(){
+        return Zotero_Cite::convertItem($this);
     }
 }
 
@@ -1926,11 +2474,6 @@ class Zotero_Group extends Zotero_Entry
      * @var string
      */
     public $name;
-    
-    /**
-     * @var bool
-     */
-    public $libraryEnabled;
     
     /**
      * @var string
@@ -2011,7 +2554,6 @@ class Zotero_Group extends Zotero_Entry
             $this->groupType = $this->apiObject['type'];
             $this->description = $this->apiObject['description'];
             $this->url = $this->apiObject['url'];
-            $this->libraryEnabled = $this->apiObject['libraryEnabled'];
             $this->libraryEditing = $this->apiObject['libraryEditing'];
             $this->libraryReading = $this->apiObject['libraryReading'];
             $this->fileEditing = $this->apiObject['fileEditing'];
@@ -2051,7 +2593,6 @@ class Zotero_Group extends Zotero_Entry
                 $this->description = $jsonObject['description'];
                 $this->url = $jsonObject['url'];
                 $this->hasImage = isset($jsonObject['hasImage']) ? $jsonObject['hasImage'] : 0;
-                $this->libraryEnabled = $jsonObject['libraryEnabled'];
                 $this->libraryEditing = $jsonObject['libraryEditing'];
                 $this->memberIDs = isset($jsonObject['members']) ? $jsonObject['members'] : array();
                 $this->members = $this->memberIDs;
@@ -2155,8 +2696,7 @@ class Zotero_Group extends Zotero_Entry
         }
         $el->setAttribute('owner', $this->ownerID);
         $el->setAttribute('type', $this->type);
-        $el->setAttribute('name', $this->name);// str_replace('&#039;', '&apos;', htmlspecialchars($this->name, ENT_QUOTES)));
-        $el->setAttribute('libraryEnabled', $this->libraryEnabled);
+        $el->setAttribute('name', $this->name);
         $el->setAttribute('libraryEditing', $this->libraryEditing);
         $el->setAttribute('libraryReading', $this->libraryReading);
         $el->setAttribute('fileEditing', $this->fileEditing);
@@ -2171,7 +2711,6 @@ class Zotero_Group extends Zotero_Entry
         $properties['owner'] = $this->owner;
         $properties['type'] = $this->type;
         $properties['name'] = $this->name;
-        $properties['libraryEnabled'] = $this->libraryEnabled;
         $properties['libraryEditing'] = $this->libraryEditing;
         $properties['libraryReading'] = $this->libraryReading;
         $properties['fileEditing'] = $this->fileEditing;
@@ -2199,7 +2738,6 @@ class Zotero_Group extends Zotero_Entry
         $jsonItem->adminIDs = $this->adminIDs;
         $jsonItem->type = $this->type;
         $jsonItem->name = $this->name;
-        $jsonItem->libraryEnabled = $this->libraryEnabled;
         $jsonItem->libraryEditing = $this->libraryEditing;
         $jsonItem->libraryReading = $this->libraryReading;
         $jsonItem->hasImage = $this->hadImage;
@@ -2266,6 +2804,36 @@ class Zotero_Tag extends Zotero_Entry
         
         $tagElements = $entryNode->getElementsByTagName("tag");
         $tagElement = $tagElements->item(0);
+        
+        $contentNode = $entryNode->getElementsByTagName('content')->item(0);
+        if($contentNode){
+            $contentType = $contentNode->getAttribute('type');
+            if($contentType == 'application/json'){
+                $this->pristine = json_decode($contentNode->nodeValue, true);
+                $this->apiObject = json_decode($contentNode->nodeValue, true);
+            }
+            elseif($contentType == 'xhtml'){
+                //$this->parseXhtmlContent($contentNode);
+            }
+        }
+    }
+    
+    public function get($key) {
+        switch($key){
+            case "tag":
+            case "name":
+            case "title":
+                return $this->name;
+        }
+        
+        if(array_key_exists($key, $this->apiObject)){
+            return $this->apiObject[$key];
+        }
+        
+        if(property_exists($this, $key)){
+            return $this->$key;
+        }
+        return null;
     }
     
     public function dataObject() {
@@ -2387,9 +2955,7 @@ class Zotero_Library
     public function __construct($libraryType = null, $libraryID = null, $libraryUrlIdentifier = null, $apiKey = null, $baseWebsiteUrl="http://www.zotero.org", $cachettl=0)
     {
         $this->_apiKey = $apiKey;
-        if (extension_loaded('curl')) {
-            //$this->_ch = curl_init();
-        } else {
+        if (!extension_loaded('curl')) {
             throw new Exception("You need cURL");
         }
         
@@ -2528,8 +3094,6 @@ class Zotero_Library
         if(!$gotCached){
             $responseBody = curl_exec($ch);
             $responseInfo = curl_getinfo($ch);
-            //libZoteroDebug( "{$method} url:" . $url . "\n");
-            //libZoteroDebug( "%%%%%" . $responseBody . "%%%%%\n\n");
             $zresponse = libZotero_Http_Response::fromString($responseBody);
             
             //Zend Response does not parse out the multiple sets of headers returned when curl automatically follows
@@ -2696,9 +3260,6 @@ class Zotero_Library
             case 'groups':
                 $url = $base . '/groups';
                 break;
-            case 'trash':
-                $url .= '/items/trash';
-                break;
             case 'cv':
                 $url .= '/cv';
                 break;
@@ -2730,7 +3291,6 @@ class Zotero_Library
                     break;
             }
         }
-        //print "apiRequestUrl: " . $url . "\n";
         return $url;
     }
     
@@ -2797,8 +3357,11 @@ class Zotero_Library
             }
         }
         $queryString .= implode('&', $queryParamsArray);
-        //print "apiQueryString: " . $queryString . "\n";
         return $queryString;
+    }
+    
+    public function apiRequestString($params = array(), $base = Zotero_Library::ZOTERO_URI) {
+        return $this->apiRequestUrl($params) . $this->apiQueryString($params);
     }
     
     /**
@@ -2825,32 +3388,7 @@ class Zotero_Library
      * @return null
      */
     public function fetchAllCollections($params = array()){
-        //return $this->collections->fetchAllCollections($params);
-        $aparams = array_merge(array('target'=>'collections', 'content'=>'json', 'limit'=>100), array('key'=>$this->_apiKey), $params);
-        $reqUrl = $this->apiRequestUrl($aparams) . $this->apiQueryString($aparams);
-        do{
-            $response = $this->_request($reqUrl);
-            if($response->isError()){
-                throw new Exception("Error fetching collections");
-            }
-            $body = $response->getRawBody();
-            $doc = new DOMDocument();
-            $doc->loadXml($body);
-            $feed = new Zotero_Feed($doc);
-            $this->collections->addCollectionsFromFeed($feed);
-            
-            if(isset($feed->links['next'])){
-                $nextUrl = $feed->links['next']['href'];
-                $parsedNextUrl = parse_url($nextUrl);
-                $parsedNextUrl['query'] = $this->apiQueryString(array_merge(array('key'=>$this->_apiKey), $this->parseQueryString($parsedNextUrl['query']) ) );
-                $reqUrl = $parsedNextUrl['scheme'] . '://' . $parsedNextUrl['host'] . $parsedNextUrl['path'] . $parsedNextUrl['query'];
-            }
-            else{
-                $reqUrl = false;
-            }
-        } while($reqUrl);
-        
-        $this->collections->loaded = true;
+        return $this->collections->fetchAllCollections($params);
     }
     
     /**
@@ -2860,30 +3398,7 @@ class Zotero_Library
      * @return null
      */
     public function fetchCollections($params = array()){
-        $aparams = array_merge(array('target'=>'collections', 'content'=>'json', 'limit'=>100), array('key'=>$this->_apiKey), $params);
-        $reqUrl = $this->apiRequestUrl($aparams) . $this->apiQueryString($aparams);
-        $response = $this->_request($reqUrl);
-        if($response->isError()){
-            return false;
-            throw new Exception("Error fetching collections");
-        }
-        $body = $response->getRawBody();
-        $doc = new DOMDocument();
-        $doc->loadXml($body);
-        $feed = new Zotero_Feed($doc);
-        $this->_lastFeed = $feed;
-        $addedCollections = $this->collections->addCollectionsFromFeed($feed);
-        
-        if(isset($feed->links['next'])){
-            $nextUrl = $feed->links['next']['href'];
-            $parsedNextUrl = parse_url($nextUrl);
-            $parsedNextUrl['query'] = $this->apiQueryString(array_merge(array('key'=>$this->_apiKey), $this->parseQueryString($parsedNextUrl['query']) ) );
-            $reqUrl = $parsedNextUrl['scheme'] . '://' . $parsedNextUrl['host'] . $parsedNextUrl['path'] . $parsedNextUrl['query'];
-        }
-        else{
-            $reqUrl = false;
-        }
-        return $addedCollections;
+        return $this->collections->fetchCollections($params);
     }
     
     /**
@@ -2893,29 +3408,7 @@ class Zotero_Library
      * @return Zotero_Collection
      */
     public function fetchCollection($collectionKey){
-        $aparams = array('target'=>'collection', 'content'=>'json', 'collectionKey'=>$collectionKey);
-        $reqUrl = $this->apiRequestUrl($aparams) . $this->apiQueryString($aparams);
-        
-        $response = $this->_request($reqUrl, 'GET');
-        if($response->isError()){
-            return false;
-            throw new Exception("Error fetching collection");
-        }
-        
-        $body = $response->getRawBody();
-        $doc = new DOMDocument();
-        $doc->loadXml($body);
-        $entries = $doc->getElementsByTagName("entry");
-        if(!$entries->length){
-            return false;
-            throw new Exception("no collection with specified key found");
-        }
-        else{
-            $entry = $entries->item(0);
-            $collection = new Zotero_Collection($entry);
-            $this->collections->addCollection($collection);
-            return $collection;
-        }
+        return $this->collections->fetchCollection($collectionKey);
     }
     
     /**
@@ -2938,7 +3431,7 @@ class Zotero_Library
     public function fetchItemKeys($params=array()){
         $fetchedKeys = array();
         $aparams = array_merge(array('target'=>'items', 'format'=>'keys'), array('key'=>$this->_apiKey), $params);
-        $reqUrl = $this->apiRequestUrl($aparams) . $this->apiQueryString($aparams);
+        $reqUrl = $this->apiRequestString($aparams);
         
         $response = $this->_request($reqUrl);
         if($response->isError()){
@@ -2958,8 +3451,8 @@ class Zotero_Library
      */
     public function fetchTrashedItems($params=array()){
         $fetchedItems = array();
-        $aparams = array_merge(array('target'=>'trash', 'content'=>'json'), array('key'=>$this->_apiKey), $params);
-        $reqUrl = $this->apiRequestUrl($aparams) . $this->apiQueryString($aparams);
+        $aparams = array_merge(array('content'=>'json'), array('key'=>$this->_apiKey), $params, array('collectionKey'=>'trash'));
+        $reqUrl = $this->apiRequestString($aparams);
         libZoteroDebug( "\n");
         libZoteroDebug( $reqUrl . "\n" );
         //die;
@@ -2967,10 +3460,8 @@ class Zotero_Library
         if($response->isError()){
             throw new Exception("Error fetching items");
         }
-        $body = $response->getRawBody();
-        $doc = new DOMDocument();
-        $doc->loadXml($body);
-        $feed = new Zotero_Feed($doc);
+        
+        $feed = new Zotero_Feed($response->getRawBody());
         $this->_lastFeed = $feed;
         $fetchedItems = $this->items->addItemsFromFeed($feed);
         
@@ -2986,18 +3477,15 @@ class Zotero_Library
     public function fetchItems($params = array()){
         $fetchedItems = array();
         $aparams = array_merge(array('target'=>'items', 'content'=>'json'), array('key'=>$this->_apiKey), $params);
-        $reqUrl = $this->apiRequestUrl($aparams) . $this->apiQueryString($aparams);
-        libZoteroDebug( "\n" );
+        $reqUrl = $this->apiRequestString($aparams);
         libZoteroDebug( $reqUrl . "\n" );
         
         $response = $this->_request($reqUrl);
         if($response->isError()){
             throw new Exception("Error fetching items");
         }
-        $body = $response->getRawBody();
-        $doc = new DOMDocument();
-        $doc->loadXml($body);
-        $feed = new Zotero_Feed($doc);
+        
+        $feed = new Zotero_Feed($response->getRawBody());
         $this->_lastFeed = $feed;
         $fetchedItems = $this->items->addItemsFromFeed($feed);
         
@@ -3046,9 +3534,9 @@ class Zotero_Library
      * @param string $itemKey
      * @return Zotero_Item
      */
-    public function fetchItem($itemKey){
-        $aparams = array('target'=>'item', 'content'=>'json', 'itemKey'=>$itemKey);
-        $reqUrl = $this->apiRequestUrl($aparams) . $this->apiQueryString($aparams);
+    public function fetchItem($itemKey, $params=array()){
+        $aparams = array_merge(array('target'=>'item', 'content'=>'json', 'itemKey'=>$itemKey), $params);
+        $reqUrl = $this->apiRequestString($aparams);
         
         $response = $this->_request($reqUrl, 'GET');
         if($response->isError()){
@@ -3056,20 +3544,11 @@ class Zotero_Library
             throw new Exception("Error fetching items");
         }
         
-        $body = $response->getRawBody();
-        $doc = new DOMDocument();
-        $doc->loadXml($body);
-        $entries = $doc->getElementsByTagName("entry");
-        if(!$entries->length){
-            return false;
-            throw new Exception("no item with specified key found");
-        }
-        else{
-            $entry = $entries->item(0);
-            $item = new Zotero_Item($entry);
-            $this->items->addItem($item);
-            return $item;
-        }
+        $entry = Zotero_Lib_Utils::getFirstEntryNode($response->getRawBody());
+        if($entry == null) return false;
+        $item = new Zotero_Item($entry, $this);
+        $this->items->addItem($item);
+        return $item;
     }
     
     /**
@@ -3084,7 +3563,7 @@ class Zotero_Library
         if($style){
             $aparams['style'] = $style;
         }
-        $reqUrl = $this->apiRequestUrl($aparams) . $this->apiQueryString($aparams);
+        $reqUrl = $this->apiRequestString($aparams);
         
         $response = $this->_request($reqUrl, 'GET');
         if($response->isError()){
@@ -3092,20 +3571,11 @@ class Zotero_Library
             throw new Exception("Error fetching items");
         }
         
-        $body = $response->getRawBody();
-        $doc = new DOMDocument();
-        $doc->loadXml($body);
-        $entries = $doc->getElementsByTagName("entry");
-        if(!$entries->length){
-            return false;
-            throw new Exception("no item with specified key found");
-        }
-        else{
-            $entry = $entries->item(0);
-            $item = new Zotero_Item($entry);
-            $this->items->addItem($item);
-            return $item;
-        }
+        $entry = Zotero_Lib_Utils::getFirstEntryNode($response->getRawBody());
+        if($entry == null) return false;
+        $item = new Zotero_Item($entry, $this);
+        $this->items->addItem($item);
+        return $item;
     }
 
     /**
@@ -3116,7 +3586,7 @@ class Zotero_Library
      */
     public function itemDownloadLink($itemKey){
         $aparams = array('target'=>'item', 'itemKey'=>$itemKey, 'targetModifier'=>'file');
-        return $this->apiRequestUrl($aparams) . $this->apiQueryString($aparams);
+        return $this->apiRequestString($aparams);
     }
     
     /**
@@ -3126,23 +3596,16 @@ class Zotero_Library
      * @return Zotero_Response
      */
     public function writeUpdatedItem($item){
-        if(is_string($item)){
-            $itemKey = $item;
-            $item = $this->items->getItem($itemKey);
+        if($item->owningLibrary == null) {
+            $item->associateWithLibrary($this);
         }
-        $updateItemJson = json_encode($item->updateItemObject());
-        $etag = $item->etag;
-        
-        $aparams = array('target'=>'item', 'itemKey'=>$item->itemKey);
-        $reqUrl = $this->apiRequestUrl($aparams) . $this->apiQueryString($aparams);
-        $response = $this->_request($reqUrl, 'PUT', $updateItemJson, array('If-Match'=>$etag));
-        return $response;
+        return $this->items->writeItem($item);
     }
     
     public function uploadNewAttachedFile($item, $fileContents, $fileinfo=array()){
         //get upload authorization
         $aparams = array('target'=>'item', 'targetModifier'=>'file', 'itemKey'=>$item->itemKey);
-        $reqUrl = $this->apiRequestUrl($aparams) . $this->apiQueryString($aparams);
+        $reqUrl = $this->apiRequestString($aparams);
         $postData = "md5={$fileinfo['md5']}&filename={$fileinfo['filename']}&filesize={$fileinfo['filesize']}&mtime={$fileinfo['mtime']}";
         //$postData = $fileinfo;
         libZoteroDebug("uploadNewAttachedFile postData: $postData");
@@ -3209,29 +3672,7 @@ class Zotero_Library
      * @return Zotero_Response
      */
     public function createItem($item){
-        $createItemObject = $item->newItemObject();
-        //unset variables the api won't accept
-        unset($createItemObject['mimeType']);
-        unset($createItemObject['charset']);
-        unset($createItemObject['contentType']);
-        unset($createItemObject['filename']);
-        unset($createItemObject['md5']);
-        unset($createItemObject['mtime']);
-        unset($createItemObject['zip']);
-        
-        $createItemJson = json_encode(array('items'=>array($createItemObject)));;
-        libZoteroDebug("create item json: " . $createItemJson);
-        //libZoteroDebug( $createItemJson );die;
-        $aparams = array('target'=>'items');
-        //alter if item is a child
-        if($item->parentKey){
-            $aparams['itemKey'] = $item->parentKey;
-            $aparams['target'] = 'item';
-            $aparams['targetModifier'] = 'children';
-        }
-        $reqUrl = $this->apiRequestUrl($aparams) . $this->apiQueryString($aparams);
-        $response = $this->_request($reqUrl, 'POST', $createItemJson);
-        return $response;
+        $this->items->writeItems(array($item));
     }
     
     /**
@@ -3241,21 +3682,21 @@ class Zotero_Library
      * @return Zotero_Item
      */
     public function getTemplateItem($itemType, $linkMode=null){
-        $newItem = new Zotero_Item();
+        $newItem = new Zotero_Item(null, $this);
         $aparams = array('target'=>'itemTemplate', 'itemType'=>$itemType);
         if($linkMode){
             $aparams['linkMode'] = $linkMode;
         }
         
-        $reqUrl = $this->apiRequestUrl($aparams) . $this->apiQueryString($aparams);
+        $reqUrl = $this->apiRequestString($aparams);
         libZoteroDebug($reqUrl);
         $response = $this->_request($reqUrl);
         if($response->isError()){
-            throw new Exception("Error with api");
+            throw new Exception("API error retrieving item template - {$response->getStatus()} : {$response->getRawBody()}");
         }
         libZoteroDebug($response->getRawBody());
         $itemTemplate = json_decode($response->getRawBody(), true);
-        $newItem->apiObject = $itemTemplate;
+        $newItem->initItemFromTemplate($itemTemplate);
         return $newItem;
     }
     
@@ -3264,24 +3705,32 @@ class Zotero_Library
      *
      * @param Zotero_Item $parentItem the item the notes are to be children of
      * @param Zotero_Item|array $noteItem the note item or items
-     * @return Zotero_Response
+     * @return array of Zotero_Item
      */
     public function addNotes($parentItem, $noteItem){
-        $aparams = array('target'=>'children', 'itemKey'=>$parentItem->itemKey);
-        $reqUrl = $this->apiRequestUrl($aparams) . $this->apiQueryString($aparams);
+        $aparams = array('target'=>'items');
+        $reqUrl = $this->apiRequestString($aparams);
+        $noteWriteItems = array();
         if(!is_array($noteItem)){
-            $noteJson = json_encode(array('items'=>array($noteItem->newItemObject())));
+            if(get_class($noteItem) == "Zotero_Item"){
+                $noteWriteItems[] = $noteItem;
+            }
+            else {
+                throw new Exception("Unexpected note item type");
+            }
         }
         else{
-            $notesArray = array();
             foreach($noteItem as $nitem){
-                $notesArray[] = $nitem->newItemObject();
+                $noteWriteItems[] = $nitem;
             }
-            $noteJson = json_encode(array('items'=>$notesArray));
         }
         
-        $response = $this->_request($reqUrl, 'POST', $noteJson);
-        return $response;
+        //set parentItem for all notes
+        $parentItemKey = $parentItem->get("itemKey");
+        foreach($noteWriteItems as $nitem){
+            $nitem->set("parentItem", $parentItemKey);
+        }
+        return $this->items->writeItems($noteWriteItems);
     }
     
     /**
@@ -3292,15 +3741,10 @@ class Zotero_Library
      * @return Zotero_Response
      */
     public function createCollection($name, $parent = false){
-        $collection = new Zotero_Collection();
-        $collection->name = $name;
-        $collection->parentCollectionKey = $parent;
-        $json = $collection->collectionJson();
-        
-        $aparams = array('target'=>'collections');
-        $reqUrl = $this->apiRequestUrl($aparams) . $this->apiQueryString($aparams);
-        $response = $this->_request($reqUrl, 'POST', $json);
-        return $response;
+        $collection = new Zotero_Collection(null, $this);
+        $collection->set('name', $name);
+        $collection->set('parentCollectionKey', $parent);
+        return $this->collections->writeCollection($collection);
     }
     
     /**
@@ -3311,8 +3755,8 @@ class Zotero_Library
      */
     public function removeCollection($collection){
         $aparams = array('target'=>'collection', 'collectionKey'=>$collection->collectionKey);
-        $reqUrl = $this->apiRequestUrl($aparams) . $this->apiQueryString($aparams);
-        $response = $this->_request($reqUrl, 'DELETE', null, array('If-Match'=>$collection->etag));
+        $reqUrl = $this->apiRequestString($aparams);
+        $response = $this->_request($reqUrl, 'DELETE', null, array('If-Unmodified-Since-Version'=>$collection->get('collectionVersion')));
         return $response;
     }
     
@@ -3324,16 +3768,11 @@ class Zotero_Library
      * @return Zotero_Response
      */
     public function addItemsToCollection($collection, $items){
-        $aparams = array('target'=>'items', 'collectionKey'=>$collection->collectionKey);
-        $itemKeysString = '';
         foreach($items as $item){
-            $itemKeysString .= $item->itemKey;
+            $item->addToCollection($collection);
         }
-        $itemKeysString = trim($itemKeysString);
-        
-        $reqUrl = $this->apiRequestUrl($aparams) . $this->apiQueryString($aparams);
-        $response = $this->_request($reqUrl, 'POST', $itemKeysString);
-        return $response;
+        $updatedItems = $this->items->writeItems($items);
+        return $updatedItems;
     }
     
     /**
@@ -3344,14 +3783,11 @@ class Zotero_Library
      * @return array $removedItemKeys list of itemKeys successfully removed
      */
     public function removeItemsFromCollection($collection, $items){
-        $removedItemKeys = array();
         foreach($items as $item){
-            $response = $this->removeItemFromCollection($collection, $item);
-            if(!$response->isError()){
-                $removedItemKeys[] = $item->itemKey;
-            }
+            $item->removeFromCollection($collection);
         }
-        return $removedItemKeys;
+        $updatedItems = $this->items->writeItems($items);
+        return $updatedItems;
     }
     
     /**
@@ -3362,10 +3798,8 @@ class Zotero_Library
      * @return Zotero_Response
      */
     public function removeItemFromCollection($collection, $item){
-        $aparams = array('target'=>'items', 'collectionKey'=>$collection->collectionKey);
-        $reqUrl = $this->apiRequestUrl($aparams) . $this->apiQueryString($aparams);
-        $response = $this->_request($reqUrl, 'DELETE', null, array('If-Match'=>$collection->etag));
-        return $response;
+        $item->removeFromCollection($collection);
+        return $this->items->writeItems(array($item));
     }
     
     /**
@@ -3375,12 +3809,7 @@ class Zotero_Library
      * @return Zotero_Response
      */
     public function writeUpdatedCollection($collection){
-        $json = $collection->collectionJson();
-        
-        $aparams = array('target'=>'collection', 'collectionKey'=>$collection->collectionKey);
-        $reqUrl = $this->apiRequestUrl($aparams) . $this->apiQueryString($aparams);
-        $response = $this->_request($reqUrl, 'PUT', $json, array('If-Match'=>$collection->etag));
-        return $response;
+        return $this->collections->writeUpdatedCollection($collection);
     }
     
     /**
@@ -3390,10 +3819,11 @@ class Zotero_Library
      * @return Zotero_Response
      */
     public function deleteItem($item){
-        $aparams = array('target'=>'item', 'itemKey'=>$item->itemKey);
-        $reqUrl = $this->apiRequestUrl($aparams) . $this->apiQueryString($aparams);
-        $response = $this->_request($reqUrl, 'DELETE', null, array('If-Match'=>$item->etag));
-        return $response;
+        $this->items->deleteItem($item);
+    }
+    
+    public function deleteItems($items, $version=null){
+        $this->items->deleteItems($items, $version);
     }
     
     /**
@@ -3403,8 +3833,7 @@ class Zotero_Library
      * @return Zotero_Response
      */
     public function trashItem($item){
-        $item->set('deleted', 1);
-        $this->writeUpdatedItem($item);
+        return $item->trashItem();
     }
     
     /**
@@ -3414,8 +3843,14 @@ class Zotero_Library
      * @return array $fetchedItems
      */
     public function fetchItemChildren($item){
-        $aparams = array('target'=>'children', 'itemKey'=>$item->itemKey, 'content'=>'json');
-        $reqUrl = $this->apiRequestUrl($aparams) . $this->apiQueryString($aparams);
+        if(is_string($item)){
+            $itemKey = $item;
+        }
+        else {
+            $itemKey = $item->itemKey;
+        }
+        $aparams = array('target'=>'children', 'itemKey'=>$itemKey, 'content'=>'json');
+        $reqUrl = $this->apiRequestString($aparams);
         $response = $this->_request($reqUrl, 'GET');
         
         //load response into item objects
@@ -3424,10 +3859,9 @@ class Zotero_Library
             return false;
             throw new Exception("Error fetching items");
         }
-        $body = $response->getRawBody();
-        $doc = new DOMDocument();
-        $doc->loadXml($body);
-        $feed = new Zotero_Feed($doc);
+        
+        $feed = new Zotero_Feed($response->getRawBody());
+        
         $this->_lastFeed = $feed;
         $fetchedItems = $this->items->addItemsFromFeed($feed);
         return $fetchedItems;
@@ -3502,7 +3936,7 @@ class Zotero_Library
      */
     public function fetchAllTags($params){
         $aparams = array_merge(array('target'=>'tags', 'content'=>'json', 'limit'=>50), $params);
-        $reqUrl = $this->apiRequestUrl($aparams) . $this->apiQueryString($aparams);
+        $reqUrl = $this->apiRequestString($aparams);
         do{
             $response = $this->_request($reqUrl, 'GET');
             if($response->isError()){
@@ -3539,7 +3973,7 @@ class Zotero_Library
      */
     public function fetchTags($params = array()){
         $aparams = array_merge(array('target'=>'tags', 'content'=>'json', 'limit'=>50), $params);
-        $reqUrl = $this->apiRequestUrl($aparams) . $this->apiQueryString($aparams);
+        $reqUrl = $this->apiRequestString($aparams);
         
         $response = $this->_request($reqUrl, 'GET');
         if($response->isError()){
@@ -3547,10 +3981,8 @@ class Zotero_Library
             libZoteroDebug( $response->getBody() );
             return false;
         }
-        $doc = new DOMDocument();
-        $doc->loadXml($response->getBody());
-        $feed = new Zotero_Feed($doc);
-        $entries = $doc->getElementsByTagName('entry');
+        
+        $entries = Zotero_Lib_Utils::getEntryNodes($response->getRawBody());
         $tags = array();
         foreach($entries as $entry){
             $tag = new Zotero_Tag($entry);
@@ -3599,27 +4031,7 @@ class Zotero_Library
      * @return array $keyPermissions
      */
     public function parseKey($keyNode){
-        $key = array();
-        $keyPerms = array("library"=>"0", "notes"=>"0", "write"=>"0", 'groups'=>array());
-        
-        $accessEls = $keyNode->getElementsByTagName('access');
-        foreach($accessEls as $access){
-            if($libraryAccess = $access->getAttribute("library")){
-                $keyPerms['library'] = $libraryAccess;
-            }
-            if($notesAccess = $access->getAttribute("notes")){
-                $keyPerms['notes'] = $notesAccess;
-            }
-            if($groupAccess = $access->getAttribute("group")){
-                $groupPermission = $access->getAttribute("write") == '1' ? 'write' : 'read';
-                $keyPerms['groups'][$groupAccess] = $groupPermission;
-            }
-            elseif($writeAccess = $access->getAttribute("write")) {
-                $keyPerms['write'] = $writeAccess;
-            }
-            
-        }
-        return $keyPerms;
+        return Zotero_Lib_Utils::parseKey($keyNode);
     }
     
     
@@ -3634,7 +4046,7 @@ class Zotero_Library
             $userID = $this->libraryID;
         }
         $aparams = array('target'=>'userGroups', 'userID'=>$userID, 'content'=>'json', 'order'=>'title');
-        $reqUrl = $this->apiRequestUrl($aparams) . $this->apiQueryString($aparams);
+        $reqUrl = $this->apiRequestString($aparams);
         
         $response = $this->_request($reqUrl, 'GET');
         if($response->isError()){
@@ -3643,9 +4055,7 @@ class Zotero_Library
             return false;
         }
         
-        $doc = new DOMDocument();
-        $doc->loadXml($response->getBody());
-        $entries = $doc->getElementsByTagName('entry');
+        $entries = Zotero_Lib_Utils::getEntryNodes($response->getRawBody());
         $groups = array();
         foreach($entries as $entry){
             $group = new Zotero_Group($entry);
@@ -3662,15 +4072,13 @@ class Zotero_Library
     public function fetchRecentGroups(){
         return array();
         $aparams = array('target'=>'groups', 'limit'=>'10', 'content'=>'json', 'order'=>'dateAdded', 'sort'=>'desc', 'fq'=>'-GroupType:Private');
-        $reqUrl = $this->apiRequestUrl($aparams) . $this->apiQueryString($aparams);
+        $reqUrl = $this->apiRequestString($aparams);
         $response = $this->_request($reqUrl, 'GET');
         if($response->isError()){
             return false;
         }
         
-        $doc = new DOMDocument();
-        $doc->loadXml($response->getBody());
-        $entries = $doc->getElementsByTagName('entry');
+        $entries = Zotero_Lib_Utils::getEntryNodes($response->getRawBody());
         $groups = array();
         foreach($entries as $entry){
             $group = new Zotero_Group($entry);
@@ -3690,7 +4098,7 @@ class Zotero_Library
             $userID = $this->libraryID;
         }
         $aparams = array('target'=>'cv', 'libraryType'=>'user', 'libraryID'=>$userID, 'linkwrap'=>'1');
-        $reqUrl = $this->apiRequestUrl($aparams) . $this->apiQueryString($aparams);
+        $reqUrl = $this->apiRequestString($aparams);
         
         $response = $this->_request($reqUrl, 'GET');
         if($response->isError()){
@@ -3734,6 +4142,102 @@ class Zotero_Lib_Utils
     const ZOTERO_WWW_URI = 'http://www.zotero.org';
     const ZOTERO_WWW_API_URI = 'http://www.zotero.org/api';
     
+    public static function randomString($len=0, $chars=null) {
+        if ($chars === null) {
+            $chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+        }
+        if ($len==0) {
+            $len = 8;
+        }
+        $randomstring = '';
+        for ($i = 0; $i < $len; $i++) {
+            $rnum = rand(0, strlen($chars) - 1);
+            $randomstring .= $chars[$rnum];
+        }
+        return $randomstring;
+    }
+    
+    public static function getKey() {
+        $baseString = "23456789ABCDEFGHIJKMNPQRSTUVWXZ";
+        return Zotero_Lib_Utils::randomString(8, $baseString);
+    }
+    
+    //update items appropriately based on response to multi-write request
+    //for success:
+    //  update objectKey if item doesn't have one yet (newly created item)
+    //  update itemVersion to response's Last-Modified-Version header
+    //  mark as synced
+    //for unchanged:
+    //  don't need to do anything? itemVersion should remain the same?
+    //  mark as synced if not already?
+    //for failed:
+    //  do something. flag as error? display some message to user?
+    public static function updateObjectsFromWriteResponse($objectsArray, $response){
+        $data = json_decode($response->getRawBody(), true);
+        if($response->getStatus() == 200){
+            $newLastModifiedVersion = $response->getHeader("Last-Modified-Version");
+            if(isset($data['success'])){
+                foreach($data['success'] as $ind=>$key){
+                    $i = intval($ind);
+                    $object = $objectsArray[$i];
+                    
+                    $objectKey = $object->get('key');
+                    if($objectKey != '' && $objectKey != $key){
+                        throw new Exception("Item key mismatch in multi-write request");
+                    }
+                    if($objectKey == ''){
+                        $object->set('key', $key);
+                    }
+                    $object->set('version', $newLastModifiedVersion);
+                    $object->synced = true;
+                    $object->writeFailure = false;
+                }
+            }
+            if(isset($data['failed'])){
+                foreach($data['failed'] as $ind=>$val){
+                    $i = intval($ind);
+                    $object = $objectsArray[$i];
+                    $object->writeFailure = $val;
+                }
+            }
+        }
+        elseif($response->getStatus() == 204){
+            $objectsArray[0]->synced = true;
+        }
+    }
+    
+    public static function parseKey($keynode){
+        $key = array();
+        $keyPerms = array("library"=>"0", "notes"=>"0", "write"=>"0", 'groups'=>array());
+        
+        $accessEls = $keyNode->getElementsByTagName('access');
+        foreach($accessEls as $access){
+            if($libraryAccess = $access->getAttribute("library")){
+                $keyPerms['library'] = $libraryAccess;
+            }
+            if($notesAccess = $access->getAttribute("notes")){
+                $keyPerms['notes'] = $notesAccess;
+            }
+            if($groupAccess = $access->getAttribute("group")){
+                $groupPermission = $access->getAttribute("write") == '1' ? 'write' : 'read';
+                $keyPerms['groups'][$groupAccess] = $groupPermission;
+            }
+            elseif($writeAccess = $access->getAttribute("write")) {
+                $keyPerms['write'] = $writeAccess;
+            }
+            
+        }
+        return $keyPerms;
+    }
+    
+    public static function libraryString($type, $libraryID){
+        $lstring = '';
+        if($type == 'user') $lstring = 'u';
+        elseif($type == 'group') $lstring = 'g';
+        $lstring += $libraryID;
+        return $lstring;
+    }
+    
     public static function wrapLinks($txt, $nofollow=false){
         //extremely ugly wrapping of urls in html
         if($nofollow){
@@ -3761,6 +4265,25 @@ class Zotero_Lib_Utils
         $m1 = htmlspecialchars($matches[0]);
         $safetxt = htmlspecialchars($txt);
         return "<a href=\"http://dx.doi.org/{$matches[0]}\" rel=\"nofollow\">{$safetxt}</a>";
+    }
+    
+    public static function getFirstEntryNode($body){
+        $doc = new DOMDocument();
+        $doc->loadXml($body);
+        $entryNodes = $doc->getElementsByTagName("entry");
+        if($entryNodes->length){
+            return $entryNodes->item(0);
+        }
+        else {
+            return null;
+        }
+    }
+    
+    public static function getEntryNodes($body){
+        $doc = new DOMDocument();
+        $doc->loadXml($body);
+        $entryNodes = $doc->getElementsByTagName("entry");
+        return $entryNodes;
     }
     
     public static function utilRequest($url, $method="GET", $body=NULL, $headers=array(), $basicauth=array() ) {

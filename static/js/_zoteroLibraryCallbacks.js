@@ -226,7 +226,7 @@ Zotero.callbacks.loadItem = function(el){
         var itemType = Zotero.nav.getUrlVar('itemType');
         if(!itemType){
             jel.empty();
-            J("#itemtypeselectTemplate").tmpl({itemTypes:Zotero.localizations.typeMap}).appendTo(jel);
+            J("#itemtypeselectTemplate").tmpl({itemTypes:Zotero.localizations.typeMap.sort()}).appendTo(jel);
             return;
         }
         else{
@@ -504,15 +504,14 @@ Zotero.callbacks.syncCollections = function(el){
             Zotero.nav.doneLoading(el);
             clist.empty();
             Zotero.ui.displayCollections(clist, library.collections);
-            Zotero.ui.nestHideCollectionTree(clist);
             Zotero.ui.highlightCurrentCollection();
+            Zotero.ui.nestHideCollectionTree(clist);
         }, this) );
         return;
     }
     else if(library.collections.loaded){
-        Zotero.ui.displayCollections(clist, library.collections);
-        Zotero.ui.nestHideCollectionTree(clist);
         Zotero.ui.highlightCurrentCollection();
+        Zotero.ui.nestHideCollectionTree(clist);
         return;
     }
     
@@ -522,8 +521,8 @@ Zotero.callbacks.syncCollections = function(el){
         Zotero.nav.doneLoading(el);
         clist.empty();
         Zotero.ui.displayCollections(clist, library.collections);
-        Zotero.ui.nestHideCollectionTree(clist);
         Zotero.ui.highlightCurrentCollection();
+        Zotero.ui.nestHideCollectionTree(clist);
         jel.data('loaded', true);
         Zotero.nav.doneLoading(el);
     }, this));
@@ -570,8 +569,8 @@ Zotero.callbacks.loadCollections = function(el){
         Zotero.nav.doneLoading(el);
         clist.empty();
         Zotero.ui.displayCollections(clist, library.collections);
-        Zotero.ui.nestHideCollectionTree(clist);
         Zotero.ui.highlightCurrentCollection();
+        Zotero.ui.nestHideCollectionTree(clist);
         jel.data('loaded', true);
         Zotero.nav.doneLoading(el);
     }, this));
@@ -657,18 +656,17 @@ Zotero.callbacks.loadFeedLink = function(el){
 Zotero.callbacks.loadUserGroups = function(el){
     Z.debug("Zotero.callbacks.loadUserGroups", 3);
     var jel = J(el);
+    var library = Zotero.ui.getAssociatedLibrary(el);
+    var loadConfig = jel.data('loadconfig');
+    var userid = loadConfig.libraryID;
     
-    var config = {};
-    config.userslug = jel.attr("data-userslug");
-    config.target = jel.attr("data-target");
-    //config.start = jel.attr("data-start");
-    //config.limit = jel.attr("data-limit");
-    config.content = jel.attr("data-content");
-    config.raw = "1";
+    var groups = library.groups.fetchUserGroups(userid, library._apiKey);
     
-    Zotero.ajax.loadUserGroups(el, config);
+    groups.done(J.proxy(function(fetchedGroups){
+        Zotero.ui.displayGroupNuggets(el, fetchedGroups);
+    }), this);
 };
-
+/*
 Zotero.callbacks.userGroupsLoaded = function(el){
     Z.debug("Zotero.callbacks.userGroupsLoaded", 3);
     var jel = J(el);
@@ -678,7 +676,7 @@ Zotero.callbacks.userGroupsLoaded = function(el){
     var groupshtml = Zotero.ui.userGroupsDisplay(groups);
     jel.html(groupshtml);
 };
-
+*/
 /**
  * Ajaxload run z.org search
  * @param  {Dom Element} el Ajaxload element
@@ -792,3 +790,41 @@ Zotero.callbacks.selectMobilePage = function(el){
     return;
 };
 
+
+/* EVENTFUL CALLBACKS */
+Zotero.callbacks.watchState = function(el){
+    Z.debug("Zotero.callbacks.watchState", 3);
+    Zotero.nav.flagLoading(el);
+    var jel = J(el);
+    
+    //get Zotero.Library object if already bound to element
+    var library = Zotero.ui.getAssociatedLibrary(el);
+    
+    var effectiveUrlVars = ['itemPage', 'tag', 'collectionKey', 'order', 'sort', 'q'];
+    var urlConfigVals = {};
+    
+    var changedVars = Zotero.nav.diffState(Zotero.nav.prevState);
+    J.each(changedVars, function(ind, val){
+        var e;
+        switch(val){
+            case "itemKey":
+                e = J.Event("selectedItemChanged");
+                J("#library").trigger(e);
+                break;
+            case "collectionKey":
+                e = J.Event("selectedCollectionChanged");
+                J("#library").trigger(e);
+                break;
+            case "order":
+            case "sort":
+        }
+    });
+};
+
+Zotero.callbacks.collectionsWidget = function(el){
+    J("#library").on('collectionsChanged', function(e, library){
+        Zotero.ui.updateCollectionButtons();
+        Zotero.ui.highlightCurrentCollection();
+        Zotero.ui.nestHideCollectionTree(el);
+    });
+};

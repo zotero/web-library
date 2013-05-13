@@ -1,0 +1,23 @@
+<script id="collectionlistTemplate" type="text/x-jquery-tmpl">
+    <ul id="collection-list">
+        <li>
+            <span class="sprite-icon sprite-treesource-library"></span>
+                <a class="my-library" data-collectionKey="" href="/${libUrlIdentifier}/items">Library</a>
+        </li>
+        {{each(index, collection) collections}}
+            {{if collection.topLevel}}
+                {{tmpl({collection:collection, currentCollectionKey:currentCollectionKey}) 'collectionrowTemplate'}}
+            {{/if}}
+        {{/each}}
+        <li class="collection-row{{if (currentCollectionKey == 'trash')}} current-collection{{/if}}" data-collectionKey="trash">
+        <div class="folder-toggle">
+        <span class="sprite-placeholder sprite-icon-16 left dui-icon"></span>
+        <span class="sprite-icon sprite-treesource-trash left"></span>
+        </div>
+        <a href="" data-collectionKey="trash"
+            id="collection-trash" class="collection-select-link{{if (currentCollectionKey == "trash")}} current-collection{{/if}}">
+            Trash
+        </a>
+        </li>
+    </ul>
+</script>

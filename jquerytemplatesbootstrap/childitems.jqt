@@ -1,0 +1,23 @@
+<script id="childitemsTemplate" type="text/x-jquery-tmpl">
+    {{if childItems.length}}
+    <h4>Notes and Attachments</h4>
+    <ul id="notes-and-attachments">
+    {{each(index, item) childItems}}
+        <li>
+            {{if item.itemType == 'note'}}
+                <span class='sprite-icon sprite-treeitem-${item.itemTypeImageClass()} left'></span>
+                <a class='item-select-link' data-itemKey='${item.itemKey}' href='${Zotero.url.itemHref(item)}' title='${item.dataFields['title']}'>${item.title}</a>
+            {{else Zotero.url.attachmentDownloadUrl(item)=='' }}
+                <span class='sprite-icon sprite-treeitem-${item.itemTypeImageClass()} left'></span>
+                ${item.title}
+                (<a class='item-select-link' data-itemKey='${item.itemKey}' href='${Zotero.url.itemHref(item)}' title='${item.dataFields['title']}'>Attachment Details</a>)
+            {{else}}
+                <span class='sprite-icon sprite-treeitem-${item.itemTypeImageClass()} left'></span>
+                <a class='itemdownloadlink' href="${Zotero.url.attachmentDownloadUrl(item)}">${item.title} ${Zotero.url.attachmentFileDetails(item)}</a>
+                (<a class='item-select-link' data-itemKey='${item.itemKey}' href='${Zotero.url.itemHref(item)}' title='${item.dataFields['title']}'>Attachment Details</a>)
+            {{/if}}
+        </li>
+    {{/each}}
+    </ul>
+    {{/if}}
+</script>

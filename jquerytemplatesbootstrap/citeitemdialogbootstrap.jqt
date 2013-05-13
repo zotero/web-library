@@ -1,0 +1,33 @@
+<script id="citeitemdialogTemplate" type="text/x-jquery-tmpl">
+<div id="cite-item-dialog" class="modal hide" role="dialog" title="Cite">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="myModalLabel">Cite Items</h3>
+    </div>
+    <div class="cite-item-div" data-role="content">
+        <form method="GET">
+            <select class='cite-item-select' id='cite-item-select'>
+                <option value=''>Select Style</option>
+                <option value='apsa'>American Political Science Association</option>
+                <option value='apa'>American Psychological Association</option>
+                <option value='asa'>American Sociological Association</option>
+                <option value='chicago-author-date'>Chicago Manual of Style (Author-Date format)</option>
+                <option value='chicago-fullnote-bibliography'>Chicago Manual of Style (Full Note with Bibliography)</option>
+                <option value='chicago-note-bibliography'>Chicago Manual of Style (Note with Bibliography)</option>
+                <option value='harvard1'>Harvard Reference format 1</option>
+                <option value='ieee'>IEEE</option>
+                <option value='mhra'>Modern Humanities Research Association</option>
+                <option value='mla'>Modern Language Association</option>
+                <option value='nlm'>National Library of Medicine</option>
+                <option value='nature'>Nature</option>
+                <option value='vancouver'>Vancouver</option>
+            </select>
+        </form>
+        <div id="cite-box-div">
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+    </div>
+</div>
+</script>

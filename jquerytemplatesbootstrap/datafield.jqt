@@ -1,0 +1,9 @@
+<script id="datafieldTemplate" type="text/x-jquery-tmpl">
+    {{if Zotero.config.largeFields[field]}}
+        <textarea cols="40" rows="7" data-itemKey="${itemKey}" name='${field}' id='${field}'>${fieldValue}</textarea>
+    {{else (Zotero.config.richTextFields[field])}}
+        <textarea cols="40" rows="14" data-itemKey="${itemKey}" name='${field}' id='${field}' class="rte default">${fieldValue}</textarea>
+    {{else}}
+        <input type='text' data-itemKey="${itemKey}" name='${field}' id='${field}' value='${fieldValue}'>
+    {{/if}}
+</script>

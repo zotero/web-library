@@ -1,0 +1,26 @@
+<script id="updatecollectiondialogTemplate" type="text/x-jquery-tmpl">
+<div id="update-collection-dialog" class="modal hide" role="dialog" title="Update Collection">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="myModalLabel">Update Collection</h3>
+    </div>
+    <div class="update-collection-div">
+        <form method="POST" class="zform">
+            <ol>
+                <li>
+                    <label for="updated-collection-title-input">New Collection Name</label>
+                    <input id="updated-collection-title-input">
+                </li>
+                <li>
+                    <label for="update-collection-parent-select">Parent Collection</label>
+                    {{tmpl({collections:ncollections, allowNoValue:true, id:'update-collection-parent-select', optionsOnly:false, noValueText:'None'}) 'choosecollectionformTemplate'}}
+                </li>
+            </ol>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+        <button class="btn btn-primary updateButton">Update</button>
+    </div>
+</div>
+</script>

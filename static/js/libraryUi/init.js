@@ -1,4 +1,5 @@
 Zotero.ui.init = {};
+Zotero.ui.widgets = {};
 
 //initialize ui
 Zotero.ui.init.all = function(){
@@ -61,25 +62,114 @@ Zotero.ui.init.fullLibrary = function(){
     }
     Zotero.ui.init.libraryControls();
     Zotero.ui.init.tags();
-    Zotero.ui.init.collections();
+    //Zotero.ui.init.collections();
     Zotero.ui.init.items();
     //Zotero.ui.init.feed();
     Zotero.ui.init.libraryTemplates();
+    
+    Zotero.eventful.initWidgets();
 };
 
 //initialize the library control buttons
 Zotero.ui.init.libraryControls = function(){
     Z.debug("Zotero.ui.initControls", 3);
     //set up control panel buttons
-    /*
-    var editCollectionsButtonsList = J(".edit-collections-buttons-div");
-    if(!Zotero.config.mobile){
-        editCollectionsButtonsList.buttonset().show();
+    
+    if(Zotero.config.jqueryui){
+        Zotero.ui.init.jqueryui();
     }
-    else{
-        editCollectionsButtonsList.controlgroup().show();
+    
+    //insert the hidden library preferences and set callbacks
+    J("#library-settings-form").hide();
+    //Z.config.librarySettingsInit = false;
+    J("#control-panel-container").on('click', '#library-settings-link', Zotero.ui.callbacks.librarySettings);
+    
+    //set up addToCollection button to update list when collections are loaded
+    J.subscribe("loadCollectionsDone", function(collections){
+        Z.debug("loadCollectionsDone callback", 4);
+    });
+    
+    //check/uncheck all boxes in items table when master checkbox is toggled
+    J('#library-items-div').on('change', ".itemlist-editmode-checkbox.all-checkbox", function(e){
+        J(".itemlist-editmode-checkbox").prop('checked', J(".itemlist-editmode-checkbox.all-checkbox").prop('checked'));
+        Zotero.ui.updateDisabledControlButtons();
+        Zotero.ui.eventful.trigger("selectedItemsChanged");
+    });
+    
+    //init itemkey-checkbox to enable/disable buttons that require something being selected
+    J('#library-items-div').on('change', "input.itemKey-checkbox", function(e){
+        Zotero.ui.updateDisabledControlButtons();
+        Zotero.ui.eventful.trigger("selectedItemsChanged");
+    });
+    
+    //first run to initialize enabled/disabled state of contextually relevant control buttons
+    Zotero.ui.updateDisabledControlButtons();
+    
+    //bind all control buttons to their callback functions
+    if(!Zotero.config.eventful){
+        J("#control-panel-container").on('change', "#edit-checkbox", Zotero.ui.callbacks.toggleEdit);
+        J("#collection-list-div").on('click', ".create-collection-link", Zotero.ui.callbacks.createCollection);
+        J("#collection-list-div").on('click', ".update-collection-link", Zotero.ui.callbacks.updateCollection);
+        J("#collection-list-div").on('click', ".delete-collection-link", Zotero.ui.callbacks.deleteCollection);
+        J("#control-panel-container").on('click', ".add-to-collection-link", Zotero.ui.callbacks.addToCollection);
+        J("#control-panel-container").on('click', "#create-item-link", Zotero.ui.callbacks.createItem);
+        J("#control-panel-container").on('click', ".remove-from-collection-link", Zotero.ui.callbacks.removeFromCollection);
+        J("#control-panel-container").on('click', ".move-to-trash-link", Zotero.ui.callbacks.moveToTrash);
+        J("#control-panel-container").on('click', ".remove-from-trash-link", Zotero.ui.callbacks.removeFromTrash);
+        J("#item-details-div").on('click', ".move-to-trash-link", Zotero.ui.callbacks.moveToTrash);
     }
-    */
+    
+    //disable default actions for dialog form submissions
+    J("delete-collection-dialog").on('submit', ".delete-collection-div form", function(e){
+        e.preventDefault();
+    });
+    J("update-collection-dialog").on('submit', ".update-collection-div form", function(e){
+        e.preventDefault();
+    });
+    J("create-collection-dialog").on('submit', ".new-collection-div form", function(e){
+        e.preventDefault();
+    });
+    
+    //set initial state of search input to url value
+    if(Zotero.nav.getUrlVar('q')){
+        J("#header-search-query").val(Zotero.nav.getUrlVar('q'));
+    }
+    //clear libary query param when field cleared
+    var context = 'support';
+    if(undefined !== window.zoterojsSearchContext){
+        context = zoterojsSearchContext;
+    }
+    
+    J("#header-search-query").val("");
+    J("#header-search-query").attr('placeholder', "Search Library");
+    
+    //set up search submit for library
+    J("#library-search").on('submit', function(e){
+        e.preventDefault();
+        Zotero.nav.clearUrlVars(['collectionKey', 'tag', 'q']);
+        var query     = J("#header-search-query").val();
+        if(query !== "" || Zotero.nav.getUrlVar('q') ){
+            Zotero.nav.urlvars.pathVars['q'] = query;
+            Zotero.nav.pushState();
+        }
+        return false;
+    });
+    
+    //set up library search clear button
+    if((context == 'library') || (context == 'grouplibrary')){
+        var clearQuery = function(e){
+            J("#header-search-query").val('');
+            if(Zotero.nav.getUrlVar('q')){
+                Zotero.nav.setUrlVar('q', '');
+                Zotero.nav.pushState();
+            }
+        };
+        J("#library-search button.clear-field-button").on('click', clearQuery);
+    }
+};
+
+Zotero.ui.init.jqueryui = function(){
+    Z.debug("Zotero.ui.init.jqueryui", 3);
     //make edit toolbar buttons and menus
     J("#create-item-link").button({
         text:false,
@@ -150,136 +240,49 @@ Zotero.ui.init.libraryControls = function(){
             primary: "sprite-timeline_marker"
         }
     });
-    
-    //insert the hidden library preferences and set callbacks
-    J("#library-settings-form").hide();
-    //Z.config.librarySettingsInit = false;
-    J("#control-panel-container").on('click', '#library-settings-link', Zotero.ui.callbacks.librarySettings);
-    
-    //set up addToCollection button to update list when collections are loaded
-    J.subscribe("loadCollectionsDone", function(collections){
-        Z.debug("loadCollectionsDone callback", 4);
-    });
-    
-    //check/uncheck all boxes in items table when master checkbox is toggled
-    J('#library-items-div').on('change', ".itemlist-editmode-checkbox.all-checkbox", function(e){
-        J(".itemlist-editmode-checkbox").prop('checked', J(".itemlist-editmode-checkbox.all-checkbox").prop('checked'));
-        Zotero.ui.updateDisabledControlButtons();
-    });
-    
-    //init itemkey-checkbox to enable/disable buttons that require something being selected
-    J('#library-items-div').on('change', "input.itemKey-checkbox", function(e){
-        Zotero.ui.updateDisabledControlButtons();
-    });
-    
-    //first run to initialize enabled/disabled state of contextually relevant control buttons
-    Zotero.ui.updateDisabledControlButtons();
-    
-    //bind all control buttons to their callback functions
-    J("#control-panel-container").on('change', "#edit-checkbox", Zotero.ui.callbacks.toggleEdit);
-    J("#collection-list-div").on('click', ".create-collection-link", Zotero.ui.callbacks.createCollection);
-    J("#collection-list-div").on('click', ".update-collection-link", Zotero.ui.callbacks.updateCollection);
-    J("#collection-list-div").on('click', ".delete-collection-link", Zotero.ui.callbacks.deleteCollection);
-    J("#control-panel-container").on('click', ".add-to-collection-link", Zotero.ui.callbacks.addToCollection);
-    J("#control-panel-container").on('click', "#create-item-link", Zotero.ui.callbacks.createItem);
-    J("#control-panel-container").on('click', ".remove-from-collection-link", Zotero.ui.callbacks.removeFromCollection);
-    J("#control-panel-container").on('click', ".move-to-trash-link", Zotero.ui.callbacks.moveToTrash);
-    J("#control-panel-container").on('click', ".remove-from-trash-link", Zotero.ui.callbacks.removeFromTrash);
-    J("#item-details-div").on('click', ".move-to-trash-link", Zotero.ui.callbacks.moveToTrash);
-    
-    //disable default actions for dialog form submissions
-    J("delete-collection-dialog").on('submit', ".delete-collection-div form", function(e){
-        e.preventDefault();
-    });
-    J("update-collection-dialog").on('submit', ".update-collection-div form", function(e){
-        e.preventDefault();
-    });
-    J("create-collection-dialog").on('submit', ".new-collection-div form", function(e){
-        e.preventDefault();
-    });
-   
-    //set initial state of search input to url value
-    if(Zotero.nav.getUrlVar('q')){
-        J("#header-search-query").val(Zotero.nav.getUrlVar('q'));
-    }
-    //clear libary query param when field cleared
-    var context = 'support';
-    if(undefined !== window.zoterojsSearchContext){
-        context = zoterojsSearchContext;
-    }
-    
-    J("#header-search-query").val("");
-    J("#header-search-query").attr('placeholder', "Search Library");
-    
-    //set up search submit for library
-    J("#library-search").on('submit', function(e){
-        e.preventDefault();
-        Zotero.nav.clearUrlVars(['collectionKey', 'tag', 'q']);
-        var query     = J("#header-search-query").val();
-        if(query !== "" || Zotero.nav.getUrlVar('q') ){
-            Zotero.nav.urlvars.pathVars['q'] = query;
-            Zotero.nav.pushState();
-        }
-        return false;
-    });
-    
-    //set up library search clear button
-    if((context == 'library') || (context == 'grouplibrary')){
-        var clearQuery = function(e){
-            Z.debug("header search changed");
-            Z.debug(e);
-            Z.debug('-' + J('#header-search-query').val());
-            J("#header-search-query").val('');
-            Z.debug("q is now empty");
-            if(Zotero.nav.getUrlVar('q')){
-                Z.debug("q in url is set");
-                Zotero.nav.setUrlVar('q', '');
-                Zotero.nav.pushState();
-            }
-        };
-        J("#library-search button.clear-field-button").on('click', clearQuery);
-    }
-};
 
+};
 //initialize pagination buttons
 Zotero.ui.init.paginationButtons = function(pagination){
-    J("#item-pagination-div .back-item-pagination").buttonset();
-    J("#item-pagination-div .forward-item-pagination").buttonset();
-    J("#start-item-link").button({
-        text:false,
-        icons: {
-            primary: "ui-icon-seek-first"
+    if(Zotero.config.jqueryui){
+        J("#item-pagination-div .back-item-pagination").buttonset();
+        J("#item-pagination-div .forward-item-pagination").buttonset();
+        J("#start-item-link").button({
+            text:false,
+            icons: {
+                primary: "ui-icon-seek-first"
+            }
+        });
+        J("#prev-item-link").button({
+            text:false,
+            icons: {
+                primary: "ui-icon-triangle-1-w"
+            }
+        });
+        J("#next-item-link").button({
+            text:false,
+            icons: {
+                primary: "ui-icon-triangle-1-e"
+            }
+        });
+        J("#last-item-link").button({
+            text:false,
+            icons: {
+                primary: "ui-icon-seek-end"
+            }
+        });
+        if(pagination.showFirstLink === false) {
+            J("#start-item-link").button('option', 'disabled', true);
         }
-    });
-    J("#prev-item-link").button({
-        text:false,
-        icons: {
-            primary: "ui-icon-triangle-1-w"
+        if(pagination.showPrevLink === false) {
+            J("#prev-item-link").button('option', 'disabled', true);
         }
-    });
-    J("#next-item-link").button({
-        text:false,
-        icons: {
-            primary: "ui-icon-triangle-1-e"
+        if(pagination.showNextLink === false) {
+            J("#next-item-link").button('option', 'disabled', true);
         }
-    });
-    J("#last-item-link").button({
-        text:false,
-        icons: {
-            primary: "ui-icon-seek-end"
+        if(pagination.showLastLink === false) {
+            J("#last-item-link").button('option', 'disabled', true);
         }
-    });
-    if(pagination.showFirstLink === false) {
-        J("#start-item-link").button('option', 'disabled', true);
-    }
-    if(pagination.showPrevLink === false) {
-        J("#prev-item-link").button('option', 'disabled', true);
-    }
-    if(pagination.showNextLink === false) {
-        J("#next-item-link").button('option', 'disabled', true);
-    }
-    if(pagination.showLastLink === false) {
-        J("#last-item-link").button('option', 'disabled', true);
     }
 };
 

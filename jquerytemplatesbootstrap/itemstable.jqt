@@ -1,0 +1,30 @@
+<script id="itemstableTemplate" type="text/x-jquery-tmpl">
+    <form id="edit-mode-items-form" method='POST'>
+    <table id='field-table'>
+        <thead>
+            <tr>
+                <th><input type='checkbox' class='itemlist-editmode-checkbox all-checkbox' name='selectall' /></th>
+                {{each(index, field) displayFields}}
+                <th class="field-table-header {{if J.inArray(field, Zotero.Library.prototype.sortableColumns) >= 0}} clickable {{/if}} {{if (field == order)}} selected-order sort-${sort}{{/if}}" data-columnField="${field}">${Zotero.Item.prototype.fieldMap[field] || field}
+                    {{if (field==order)}}
+                        {{if sort=='desc'}}
+                            <span class="ui-icon right ui-icon-triangle-1-s"></span>
+                        {{else}}
+                            <span class="ui-icon right ui-icon-triangle-1-n"></span>
+                        {{/if}}
+                    {{/if}}
+                </th>
+                {{/each}}
+            </tr>
+        </thead>
+        <tbody>
+            {{each(index, item) items}}
+                {{tmpl({displayFields:displayFields, item:item, editmode:editmode}) 'itemrowTemplate'}}
+            {{/each}}
+        </tbody>
+    </table>
+    {{if (items.length == 0)}}
+        <div class="no-results-message">No Items Found</div>
+    {{/if}}
+    </form>
+</script>

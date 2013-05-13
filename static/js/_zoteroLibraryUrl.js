@@ -197,3 +197,34 @@ Zotero.url.requestReadApiKeyUrl = function(libraryType, libraryID, redirect){
     
     return apiKeyBase + queryString;
 };
+
+Zotero.url.groupViewUrl = function(group){
+    if(group.get("type") == "Private"){
+        return Zotero.config.baseWebsiteUrl + "/groups/" + group.get("groupID");
+    }
+    else {
+        return Zotero.config.baseWebsiteUrl + "/groups/" + Zotero.utils.slugify(group.get("name"));
+    }
+};
+
+Zotero.url.groupLibraryUrl = function(group){
+    if(group.get("type") == "Private"){
+        return Zotero.config.baseWebsiteUrl + "/groups/" + group.get("groupID") + "/items";
+    }
+    else {
+        return Zotero.config.baseWebsiteUrl + "/groups/" + Zotero.utils.slugify(group.get("name")) + "/items";
+    }
+};
+
+Zotero.url.groupSettingsUrl = function(group){
+    return Zotero.config.baseWebsiteUrl + "/groups/" + group.get("groupID") + "/settings";
+};
+
+Zotero.url.groupMemberSettingsUrl = function(group){
+    return Zotero.config.baseWebsiteUrl + "/groups/" + group.get("groupID") + "/settings/members";
+};
+
+Zotero.url.groupLibrarySettingsUrl = function(group){
+    return Zotero.config.baseWebsiteUrl + "/groups/" + group.get("groupID") + "/settings/library";
+};
+

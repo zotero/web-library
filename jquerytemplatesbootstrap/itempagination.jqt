@@ -1,0 +1,23 @@
+<script id="itempaginationTemplate" type="text/x-jquery-tmpl">
+<div id='item-pagination-div' class="pagination">
+    <ul class='back-item-pagination'>
+        <li {{if !pagination.showFirstLink}}class='disabled'{{/if}}>
+        <a class='paginator' id='start-item-link' href='${pagination.firstLink}'>First</a>
+        </li>
+        <li {{if !pagination.showPrevLink}}class='disabled'{{/if}}>
+        <a class='paginator {{if !pagination.showPrevLink}}disabled{{/if}}' id='prev-item-link' href='${pagination.prevLink}'>Previous</a>
+        </li>
+    </ul>
+    {{if pagination.total > 0}}
+    <span style="text-align:center;">${(pagination.start + 1)} to ${pagination.lastDisplayed} of ${pagination.total}</span>
+    {{/if}}
+    <ul class='forward-item-pagination'>
+        <li {{if !pagination.showNextLink}}class='disabled'{{/if}}>
+        <a class='paginator {{if !pagination.showNextLink}}disabled{{/if}}' id='next-item-link' href='${pagination.nextLink}'>Next</a>
+        </li>
+        <li {{if !pagination.showLastLink}}class='disabled'{{/if}}>
+        <a class='paginator {{if !pagination.showLastLink}}disabled{{/if}}' id='last-item-link' href='${pagination.lastLink}'>Last</a>
+        </li>
+    </ul>
+</div>
+</script>

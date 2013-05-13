@@ -80,6 +80,7 @@ dd {
     margin-left:0;
 }
 /* -- Forms -- */
+/*
 form {
     margin-bottom: 1.6em;
 }
@@ -142,7 +143,7 @@ form textarea {
 form fieldset#fieldset-grouptype {
     border-bottom: 2px solid rgba(0,0,0,0.2);
 }
-
+*/
 meter {
     width:100%;
 }
@@ -192,7 +193,7 @@ form:after,
     font-size: 0.857142857em;
 }
 
-
+/*
 input[type=submit],
 input[type=button],
 button,
@@ -290,7 +291,7 @@ input.button:active {
 .button img {
     vertical-align:middle;
 }
-
+*/
 .action-links {
     margin-bottom:1.42857143em;
 }

@@ -1,0 +1,19 @@
+<script id="globalitemdetailsTemplate" type="text/x-jquery-tmpl">
+    <h2>${globalItem.title}</h2>
+    <span class="globalItemKey" id="${globalItem.key}" title="${globalItem.title}"></span>
+    <table class="item-info-table" data-itemkey="${globalItem.itemKey}">
+    <!-- Output itemType -->
+    <tr>
+        <th>Item Type</th>
+        <td class="${globalItem.itemType}">${globalItem.itemType}</td>
+    </tr>
+    
+    <!-- Output title -->
+    <tr>
+        <th>Title</th>
+        <td class="title"><a href="${globalItem.htmlURL}">${globalItem.title}</a></td>
+    </tr>
+    
+    <!-- Output fields -->
+    
+</script>
