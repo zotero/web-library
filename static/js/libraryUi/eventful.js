@@ -1,11 +1,6 @@
 Zotero.widgets = {};
 Zotero.ui.eventful = {};
 
-Zotero.ui.eventful.init = function(){
-    Zotero.ui.eventful.initTagsList();
-    Zotero.ui.eventful.initCollectionsList();
-};
-
 Zotero.ui.eventful.trigger = function(eventtype, data){
     Zotero.debug("Triggering eventful " + eventtype, 3);
     if(!data){
@@ -46,6 +41,8 @@ Zotero.eventful.eventMap = {
 };
 
 Zotero.eventful.initWidgets = function(){
+    Zotero.nav.parsePathVars();
+    
     J(".eventfulwidget").each(function(ind, el){
         var fnName = J(el).data("function");
         if(Zotero.eventful.init.hasOwnProperty(fnName)){
@@ -84,8 +81,10 @@ Zotero.eventful.initTriggers = function(el){
     }
     //initialize elements that have data-triggers info to trigger that event
     var triggerOnEvent = function(event){
+        Z.debug("triggerOnEvent", 3);
         event.preventDefault();
         eventName = J(event.delegateTarget).data("triggers");
+        Z.debug("eventName: " + eventName);
         Zotero.ui.eventful.trigger(eventName, {triggeringElement:event.currentTarget});
     };
     
@@ -93,13 +92,19 @@ Zotero.eventful.initTriggers = function(el){
         var ev = J(el).data("event");
         var libString = J(el).data("library") || "";
         
+        Z.debug("binding " + ev + " trigger with " + libString + " on " + J(el).tagName);
         if(ev){
-            J(el).on(ev + "." + libString, triggerOnEvent);
+            //J(el).on(ev + "." + libString, triggerOnEvent);
+            J(el).on(ev, triggerOnEvent);
         }
         else {
             //default to triggering on click
-            J(el).on("click" + "." + libString, triggerOnEvent);
+            //J(el).on("click" + "." + libString, triggerOnEvent);
+            J(el).on("click", triggerOnEvent);
         }
     });
-    
+    /*
+    J(".eventfultrigger").bind('click', function(e){
+        Z.debug("eventfultrigger click");
+    });*/
 };

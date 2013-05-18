@@ -6,75 +6,6 @@ if(!Zotero.ui.widgets){
     Zotero.ui.widgets = {};
 }
 
-//initialize ui
-Zotero.ui.init.all = function(){
-    J("#content").on('click', 'a.ajax-link', function(){
-        Z.debug("ajax-link clicked with href " + J(this).attr('href'), 3);
-        Z.debug("pathname " + this.pathname, 4);
-        var pathvars = Zotero.nav.parsePathVars(this.pathname);
-        Zotero.nav.urlvars.pathVars = pathvars;
-        Zotero.nav.pushState();
-        return false;
-    });
-    
-    if(Zotero.config.mobile){
-        Zotero.ui.init.mobile();
-    }
-    
-    //run UI initialization based on what page we're on
-    Z.debug("ui init based on page", 3);
-    switch(Zotero.config.pageClass){
-        case "my_library":
-        case "user_library":
-        case "group_library":
-            Zotero.ui.init.library();
-            Zotero.ui.bindItemLinks();
-            Zotero.ui.bindCollectionLinks();
-            Zotero.ui.bindTagLinks();
-            break;
-        case "default":
-    }
-};
-
-Zotero.ui.init.library = function(){
-    Z.debug("Zotero.ui.init.library", 3);
-    Zotero.ui.init.fullLibrary();
-    
-    //initialize RTE for textareas if marked
-    var hasRTENoLinks = J('textarea.rte').filter('.nolinks').length;
-    var hasRTEReadOnly = J('textarea.rte').filter('.readonly').length;
-    var hasRTEDefault = J('textarea.rte').not('.nolinks').not('.readonly').length;
-    if(hasRTENoLinks){
-        Zotero.ui.init.rte('nolinks');
-    }
-    if(hasRTEReadOnly){
-        Zotero.ui.init.rte('readonly');
-    }
-    if(hasRTEDefault){
-        Zotero.ui.init.rte('default');
-    }
-    
-};
-
-//initialize all the widgets that make up the library
-Zotero.ui.init.fullLibrary = function(){
-    Z.debug('Zotero.ui.initFullLibrary', 3);
-    
-    if(J("#library").hasClass('ajaxload')){
-        //full synced library - handle differently
-        Zotero.ui.init.offlineLibrary();
-        return;
-    }
-    Zotero.ui.init.libraryControls();
-    Zotero.ui.init.tags();
-    //Zotero.ui.init.collections();
-    Zotero.ui.init.items();
-    //Zotero.ui.init.feed();
-    Zotero.ui.init.libraryTemplates();
-    
-    Zotero.eventful.initWidgets();
-};
-
 //initialize the library control buttons
 Zotero.ui.init.libraryControls = function(){
     Z.debug("Zotero.ui.initControls", 3);
@@ -129,6 +60,9 @@ Zotero.ui.init.libraryControls = function(){
         };
         J("#library-search button.clear-field-button").on('click', clearQuery);
     }
+};
+
+Zotero.ui.init.jqueryui = function(){
 };
 
 //initialize pagination buttons
@@ -197,6 +131,29 @@ Zotero.ui.init.items = function(){
     */
 };
 
+Zotero.ui.init.creatorFieldButtons = function(){
+};
+Zotero.ui.init.editButton = function(){
+    Z.debug("Zotero.ui.init.editButton", 3);
+    var editEl = J("#edit-checkbox");
+    if(Zotero.nav.getUrlVar('mode') == 'edit'){
+        editEl.addClass('active');
+    }
+    else{
+        editEl.removeClass('active');
+    }
+    
+    if(!Zotero.nav.getUrlVar('itemKey')){
+        editEl.addClass("disabled");
+    }
+    else{
+        editEl.removeClass("disabled");
+    }
+};
+Zotero.ui.init.detailButtons = function(){
+};
+Zotero.ui.init.tagButtons = function(){};
+
 Zotero.ui.removeTag = function(e){
     var el = e.currentTarget;
     Z.debug("Zotero.ui.removeTag", 3);
@@ -234,188 +191,6 @@ Zotero.ui.removeCreator = function(e){
     Zotero.ui.createOnActivePage(button);
 };
 
-Zotero.ui.init.editButton = function(){
-    Z.debug("Zotero.ui.init.editButton", 3);
-    var editEl = J("#edit-checkbox");
-    if(Zotero.nav.getUrlVar('mode') == 'edit'){
-        editEl.addClass('active');
-    }
-    else{
-        editEl.removeClass('active');
-    }
-    
-    if(!Zotero.nav.getUrlVar('itemKey')){
-        editEl.addClass("disabled");
-    }
-    else{
-        editEl.removeClass("disabled");
-    }
-};
-
-Zotero.ui.init.rte = function(type, autofocus, elements){
-    if(Zotero.config.rte == 'ckeditor'){
-        Zotero.ui.init.ckeditor(type, autofocus, elements);
-        return;
-    }
-    else {
-        Zotero.ui.init.tinyMce(type, autofocus, elements);
-    }
-};
-
-Zotero.ui.init.ckeditor = function(type, autofocus, elements){
-    if(!type) { type = 'default'; }
-    
-    var ckconfig = {};
-    ckconfig.toolbarGroups = [
-        { name: 'clipboard',   groups: [ 'clipboard', 'undo' ] },
-        //{ name: 'editing',     groups: [ 'find', 'selection' ] },
-        { name: 'links' },
-        { name: 'insert' },
-        { name: 'forms' },
-        { name: 'tools' },
-        { name: 'document',    groups: [ 'mode', 'document', 'doctools' ] },
-        { name: 'others' },
-        '/',
-        { name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ] },
-        { name: 'paragraph',   groups: [ 'list', 'indent', 'blocks', 'align' ] },
-        { name: 'styles' },
-        { name: 'colors' },
-        { name: 'about' }
-    ];
-    
-    var nolinksckconfig = {};
-    nolinksckconfig.toolbarGroups = [
-        { name: 'clipboard',   groups: [ 'clipboard', 'undo' ] },
-        { name: 'editing',     groups: [ 'find', 'selection' ] },
-        { name: 'insert' },
-        { name: 'forms' },
-        { name: 'tools' },
-        { name: 'document',    groups: [ 'mode', 'document', 'doctools' ] },
-        { name: 'others' },
-        '/',
-        { name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ] },
-        { name: 'paragraph',   groups: [ 'list', 'indent', 'blocks', 'align' ] },
-        { name: 'styles' },
-        { name: 'colors' },
-        { name: 'about' }
-    ];
-    var readonlyckconfig = {};
-    readonlyckconfig.toolbarGroups = [];
-    readonlyckconfig.readOnly = true;
-    
-    var config;
-    if(type == 'nolinks'){
-        config = J.extend(true, {}, nolinksckconfig);
-    }
-    else if(type == 'readonly'){
-        config = J.extend(true, {}, readonlyckconfig);
-    }
-    else {
-        config = J.extend(true, {}, ckconfig);
-    }
-    if(autofocus){
-        config.startupFocus = true;
-    }
-    
-    J("textarea.rte").each(function(ind, el){
-        var edName = J(el).attr('name');
-        if(!CKEDITOR.instances[edName]){
-            var editor = CKEDITOR.replace(el, config );
-        }
-    });
-};
-
-Zotero.ui.init.tinyMce = function(type, autofocus, elements){
-    if(!type){
-        type = 'default';
-    }
-    var mode = 'specific_textareas';
-    if(elements){
-        mode = 'exact';
-    }
-    else{
-        elements = '';
-    }
-    
-    var tmceConfig = {
-        //script_url : '/static/library/tinymce_jquery/jscripts/tiny_mce/tiny_mce.js',
-        mode : mode,
-        elements:elements,
-        theme: "advanced",
-        //plugins : "pagebreak,style,layer,table,save,advhr,advimage,advlink,emotions,iespell,inlinepopups,insertdatetime,preview,media,searchreplace,print,contextmenu,paste,directionality,fullscreen,visualchars,nonbreaking,xhtmlxtras,template",
-        //plugins : "pagebreak,style,layer,table,advhr,advimage,advlink,preview,searchreplace,paste",
-        
-        theme_advanced_toolbar_location : "top",
-        theme_advanced_buttons1 : "bold,italic,underline,strikethrough,separator,sub,sup,separator,forecolorpicker,backcolorpicker,separator,blockquote,separator,link,unlink",
-        theme_advanced_buttons2 : "formatselect,separator,justifyleft,justifycenter,justifyright,separator,bullist,numlist,outdent,indent,separator,removeformat,code,",
-        theme_advanced_buttons3 : "",
-        theme_advanced_toolbar_align : "left",
-        theme_advanced_statusbar_location: 'bottom',
-        theme_advanced_resizing: true,
-        relative_urls: false,
-        //width: '500',
-        //height: '300',
-        editor_selector: 'default'
-    };
-    
-    if(autofocus){
-        tmceConfig.init_instance_callback = function(inst){
-            Z.debug("inited " + inst.editorId);
-            inst.focus();
-        };
-    }
-    
-    if(type != 'nolinks'){
-        tmceConfig.theme_advanced_buttons1 += ',link';
-    }
-    
-    if(type == 'nolinks'){
-        tmceConfig.editor_selector = 'nolinks';
-    }
-    
-    if(type == 'readonly'){
-        tmceConfig.readonly = 1;
-        tmceConfig.editor_selector = 'readonly';
-    }
-    
-    tinymce.init(tmceConfig);
-    return tmceConfig;
-};
-
-Zotero.ui.init.libraryTemplates = function(){
-    J('#tagrowTemplate').template('tagrowTemplate');
-    J('#tagslistTemplate').template('tagslistTemplate');
-    J('#collectionlistTemplate').template('collectionlistTemplate');
-    J('#collectionrowTemplate').template('collectionrowTemplate');
-    J('#itemrowTemplate').template('itemrowTemplate');
-    J('#itemstableTemplate').template('itemstableTemplate');
-    J('#itempaginationTemplate').template('itempaginationTemplate');
-    J('#itemdetailsTemplate').template('itemdetailsTemplate');
-    J('#itemnotedetailsTemplate').template('itemnotedetailsTemplate');
-    J('#itemformTemplate').template('itemformTemplate');
-    J('#citeitemformTemplate').template('citeitemformTemplate');
-    J('#attachmentformTemplate').template('attachmentformTemplate');
-    J('#attachmentuploadTemplate').template('attachmentuploadTemplate');
-    J('#datafieldTemplate').template('datafieldTemplate');
-    J('#editnoteformTemplate').template('editnoteformTemplate');
-    J('#itemtagTemplate').template('itemtagTemplate');
-    J('#itemtypeselectTemplate').template('itemtypeselectTemplate');
-    J('#authorelementssingleTemplate').template('authorelementssingleTemplate');
-    J('#authorelementsdoubleTemplate').template('authorelementsdoubleTemplate');
-    J('#childitemsTemplate').template('childitemsTemplate');
-    J('#editcollectionbuttonsTemplate').template('editcollectionbuttonsTemplate');
-    J('#choosecollectionformTemplate').template('choosecollectionformTemplate');
-    J('#breadcrumbsTemplate').template('breadcrumbsTemplate');
-    J('#breadcrumbstitleTemplate').template('breadcrumbstitleTemplate');
-    J('#newcollectionformTemplate').template('newcollectionformTemplate');
-    J('#updatecollectionformTemplate').template('updatecollectionformTemplate');
-    J('#deletecollectionformTemplate').template('deletecollectionformTemplate');
-    J('#tagunorderedlistTemplate').template('tagunorderedlistTemplate');
-    J('#librarysettingsTemplate').template('librarysettingsTemplate');
-    J('#addtocollectionformTemplate').template('addtocollectionformTemplate');
-    J('#exportformatsTemplate').template('exportformatsTemplate');
-    
-};
 
 
 //bootstrap version of updateCollectionButtons

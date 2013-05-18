@@ -23,22 +23,22 @@
         </fieldset>
     </li>
 {{else (Zotero.config.ajax==1)}}
-    <tr class="creator doubleCreator" id="creator_${index}">
+    <tr class="creator doubleCreator" id="creator_${index}" data-creatorindex="${index}">
         <th>
-            <select id="creator_${index}_creatorType" name="creator_${index}_creatorType">
+            <select id="creator_${index}_creatorType" name="creator_${index}_creatorType" data-creatorindex="${index}">
                 {{each(i, c) creatorTypes}}
                     <option label="${c.localized}" value="${c.creatorType}" {{if c.creatorType == creator.creatorType}}selected='1'{{/if}}>${c.localized}</option>
                 {{/each}}
             </select>
         </th>
-        <td class="creator">
-            <div class="creator-input-div doubleCreator" >
-                <input type="text" value="${creator.lastName}" id="creator_${index}_lastName" name="creator_${index}_lastName"><span class="creator-separator">, </span>
-                <input type="text" value="${creator.firstName}" id="creator_${index}_firstName" name="creator_${index}_firstName">
+        <td class="creator" data-creatorindex="${index}">
+            <div class="creator-input-div doubleCreator" data-creatorindex="${index}">
+                <input type="text" class="creator-last-name" value="${creator.lastName}" id="creator_${index}_lastName" name="creator_${index}_lastName" data-creatorindex="${index}"><span class="creator-separator">, </span>
+                <input type="text" class="creator-first-name" value="${creator.firstName}" id="creator_${index}_firstName" name="creator_${index}_firstName" data-creatorindex="${index}">
                 <a class="switch-single-field-creator-link clickable">Single Field</a>
                 <span class="add-remove-creator-buttons-container">
-                    <a class="remove-creator-link clickable">Remove</a>
-                    <a class="add-creator-link clickable">Add</a>
+                    <a class="remove-creator-link clickable" data-creatorindex="${index}">Remove</a>
+                    <a class="add-creator-link clickable" data-creatorindex="${index}">Add</a>
                 </span>
             </div>
         </td>

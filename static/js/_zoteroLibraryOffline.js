@@ -78,7 +78,7 @@ Zotero.ui.init.offlineLibrary = function(){
     J.subscribe("collectionsUpdated", function(){
         Z.debug("collectionsUpdated triggered", 3);
         var library = Zotero.ui.getAssociatedLibrary(J("#library"));
-        Zotero.ui.displayCollections(J("#collection-list-container"), library.collections.collectionsArray);
+        Zotero.ui.renderCollectionList(J("#collection-list-container"), library.collections.collectionsArray);
     });
     J.subscribe("tagsUpdated", function(){
         Z.debug("tagsUpdated triggered", 3);

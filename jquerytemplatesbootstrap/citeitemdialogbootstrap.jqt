@@ -1,8 +1,8 @@
 <script id="citeitemdialogTemplate" type="text/x-jquery-tmpl">
-<div id="cite-item-dialog" class="modal hide" role="dialog" title="Cite">
+<div id="cite-item-dialog" class="cite-item-dialog modal hide" role="dialog" title="Cite">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-        <h3 id="myModalLabel">Cite Items</h3>
+        <h3>Cite Items</h3>
     </div>
     <div class="cite-item-div" data-role="content">
         <form method="GET">
@@ -23,7 +23,7 @@
                 <option value='vancouver'>Vancouver</option>
             </select>
         </form>
-        <div id="cite-box-div">
+        <div id="cite-box-div" class="cite-box-div">
         </div>
     </div>
     <div class="modal-footer">

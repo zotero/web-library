@@ -41,14 +41,13 @@ Zotero.init = function(){
         }
     }
     
-    Zotero.nav.parseUrlVars();
+    Zotero.loadConfig(zoteroData);
     
     if(typeof zoteroData == 'undefined'){
         zoteroData = {};
     }
     
-    //----
-    Zotero.loadConfig(zoteroData);
+    Zotero.nav.parseUrlVars();
     
     
     Zotero.config.startPageTitle = document.title;

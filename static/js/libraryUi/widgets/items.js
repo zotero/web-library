@@ -1,9 +1,11 @@
 Zotero.ui.widgets.items = {};
 
 Zotero.ui.widgets.items.init = function(el){
-    
     Zotero.ui.eventful.listen("displayedItemsChanged", Zotero.ui.widgets.items.loadItemsCallback, {widgetEl: el});
-
+    
+    //set up sorting on header clicks
+    var container = J(el);
+    container.on('click', ".field-table-header", Zotero.ui.callbacks.resortItems);
 };
 
 Zotero.ui.widgets.items.loadItemsCallback = function(event){
@@ -16,6 +18,30 @@ Zotero.ui.widgets.items.loadItemsCallback = function(event){
     
     var library = Zotero.ui.getAssociatedLibrary(el);
     
+    var newConfig = Zotero.ui.getItemsConfig(library);
+    
+    //clear contents and show spinner while loading
+    Zotero.ui.showSpinner(el, 'horizontal');
+    
+    var d = library.loadItems(newConfig);
+    
+    d.done(J.proxy(function(loadedItems){
+        J(el).empty();
+        Zotero.ui.displayItemsFull(el, newConfig, loadedItems);
+        //set currentConfig on element when done displaying
+        //J(el).data('currentconfig', newConfig);
+    }, this));
+    
+    d.fail(J.proxy(function(jqxhr, textStatus, errorThrown){
+        var elementMessage = Zotero.ui.ajaxErrorMessage(jqxhr);
+        jel.html("<p>" + elementMessage + "</p>");
+    }));
+    
+    //associate promise with el so we can cancel on later loads
+    jel.data('pendingDeferred', d);
+};
+
+Zotero.ui.getItemsConfig = function(library){
     var effectiveUrlVars = ['itemPage', 'tag', 'collectionKey', 'order', 'sort', 'q'];
     var urlConfigVals = {};
     J.each(effectiveUrlVars, function(index, value){
@@ -25,7 +51,9 @@ Zotero.ui.widgets.items.loadItemsCallback = function(event){
         }
     });
     
-    var defaultConfig = {target:'items',
+    var defaultConfig = {libraryID: library.libraryID,
+                         libraryType: library.libraryType,
+                         target:'items',
                          targetModifier: 'top',
                          itemPage: 1,
                          limit: 25,
@@ -51,27 +79,8 @@ Zotero.ui.widgets.items.loadItemsCallback = function(event){
         delete newConfig.targetModifier;
     }
     
-    //clear contents and show spinner while loading
-    Zotero.ui.showSpinner(el, 'horizontal');
-    
-    var d = library.loadItems(newConfig);
-    
-    d.done(J.proxy(function(loadedItems){
-        J(el).empty();
-        Zotero.ui.displayItemsFull(el, newConfig, loadedItems);
-        //set currentConfig on element when done displaying
-        //J(el).data('currentconfig', newConfig);
-    }, this));
-    
-    d.fail(J.proxy(function(jqxhr, textStatus, errorThrown){
-        var elementMessage = Zotero.ui.ajaxErrorMessage(jqxhr);
-        jel.html("<p>" + elementMessage + "</p>");
-    }));
-    
-    //associate promise with el so we can cancel on later loads
-    jel.data('pendingDeferred', d);
+    return newConfig;
 };
-
 
 /**
  * Display an items widget (for logged in homepage)

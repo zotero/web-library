@@ -1,14 +1,14 @@
 <script id="addtocollectiondialogTemplate" type="text/x-jquery-tmpl">
-<div id="add-to-collection-dialog" class="modal hide" role="dialog" title="Add to Collection">
+<div id="add-to-collection-dialog" class="add-to-collection-dialog modal hide" role="dialog" title="Add to Collection">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-        <h3 id="myModalLabel">Add To Collection</h3>
+        <h3>Add To Collection</h3>
     </div>
     <div class="add-to-collection-div modal-body" data-role="content">
         <form method="POST">
             <div data-role="fieldcontain">
             <label for="new-collection-parent">Collection</label>
-            {{tmpl({collections:ncollections, allowNoValue:false, id:'target-collection', optionsOnly:false}) 'choosecollectionformTemplate'}}
+            {{tmpl({collections:ncollections, allowNoValue:false, selectclass:'target-collection', optionsOnly:false}) 'choosecollectionformTemplate'}}
             </div>
         </form>
     </div>

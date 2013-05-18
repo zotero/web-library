@@ -503,7 +503,7 @@ Zotero.callbacks.syncCollections = function(el){
         syncD.done(J.proxy(function(){
             Zotero.nav.doneLoading(el);
             clist.empty();
-            Zotero.ui.displayCollections(clist, library.collections);
+            Zotero.ui.renderCollectionList(clist, library.collections);
             Zotero.ui.highlightCurrentCollection();
             Zotero.ui.nestHideCollectionTree(clist);
         }, this) );
@@ -520,7 +520,7 @@ Zotero.callbacks.syncCollections = function(el){
     d.done(J.proxy(function(){
         Zotero.nav.doneLoading(el);
         clist.empty();
-        Zotero.ui.displayCollections(clist, library.collections);
+        Zotero.ui.renderCollectionList(clist, library.collections);
         Zotero.ui.highlightCurrentCollection();
         Zotero.ui.nestHideCollectionTree(clist);
         jel.data('loaded', true);
@@ -568,7 +568,7 @@ Zotero.callbacks.loadCollections = function(el){
     d.done(J.proxy(function(){
         Zotero.nav.doneLoading(el);
         clist.empty();
-        Zotero.ui.displayCollections(clist, library.collections);
+        Zotero.ui.renderCollectionList(clist, library.collections);
         Zotero.ui.highlightCurrentCollection();
         Zotero.ui.nestHideCollectionTree(clist);
         jel.data('loaded', true);

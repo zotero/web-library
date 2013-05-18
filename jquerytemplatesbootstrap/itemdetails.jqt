@@ -65,7 +65,7 @@
         <tr>
             <th>${Zotero.localizations.fieldMap[field]}</th>
             <td class="${$field}">
-                <textarea cols="40" rows="14" name="note-text" id="note-text" class="rte readonly">${item.apiObj[field]}</textarea>
+                <textarea cols="40" rows="14" name="field" class="rte readonly">${item.apiObj[field]}</textarea>
             </td>
         </tr>
         {{else ( (J.inArray(field, item.hideFields) == -1) && (item.fieldMap.hasOwnProperty(field)) && fieldValue != '' && field != 'itemType' && field != 'title') }}
@@ -107,14 +107,10 @@
             </div>
         </div>
         {{if Zotero.config.librarySettings.allowEdit}}
-        <button id="upload-attachment-link">Upload Attachment</button>
+        <button type="button" id="upload-attachment-link" class="btn upload-attachment-button eventfultrigger" data-triggers="uploadAttachment">Upload Attachment</button>
         {{/if}}
-        <div id="upload-attachment-dialog" title="Upload Attachment">
-        </div>
     {{/if}}
     {{if item.itemType === 'attachment' && Zotero.config.librarySettings.allowEdit}}
-        <button id="upload-attachment-link">Upload New Copy</button>
-        <div id="upload-attachment-dialog" title="Upload Attachment">
-        </div>
+        <button type="button" id="upload-attachment-link" class="btn upload-attachment-button eventfultrigger" data-triggers="uploadAttachment">Upload New Copy</button>
     {{/if}}
 </script>

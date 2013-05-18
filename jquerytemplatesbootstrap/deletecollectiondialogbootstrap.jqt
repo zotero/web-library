@@ -1,8 +1,8 @@
 <script id="deletecollectiondialogTemplate" type="text/x-jquery-tmpl">
-<div id="delete-collection-dialog" class="modal hide" role="dialog" title="Delete Collection">
+<div id="delete-collection-dialog" class="delete-collection-dialog modal hide" role="dialog" title="Delete Collection">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-        <h3 id="myModalLabel">Delete Collection</h3>
+        <h3>Delete Collection</h3>
     </div>
     <div class="delete-collection-div">
         <p>Really delete collection "${collection.title}"?</p>

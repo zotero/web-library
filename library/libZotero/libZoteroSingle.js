@@ -3545,10 +3545,12 @@ Zotero.Item.prototype.cslItem = function(){
             zoteroItem.get("pages") &&
             zoteroItem.citePaperJournalArticleURL);
     
-    cslItem = {
-        'id': zoteroItem.owningLibrary.libraryID + "/" + zoteroItem.get("itemKey"),
-        'type': cslType
-    };
+    cslItem = {'type': cslType};
+    if(zoteroItem.owningLibrary){
+        cslItem['id'] = zoteroItem.owningLibrary.libraryID + "/" + zoteroItem.get("itemKey");
+    } else {
+        cslItem['id'] = Zotero.utils.getKey();
+    }
     
     // get all text variables (there must be a better way)
     // TODO: does citeproc-js permit short forms?

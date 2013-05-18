@@ -48,6 +48,7 @@
         {{/if}}
     {{/each}}
     
+    {{if saveable !== false}}
     <!-- Output tags -->
     <tr>
         <th>Tags</th>
@@ -69,9 +70,11 @@
         </td>
     </tr>
     <tr>
+    {{/if}}
     
     </table>
-    <button type="submit" data-itemKey="${itemKey}" class="zform saveitembutton btn eventfultrigger" data-triggers="saveItem">Save</button>
+    {{if saveable !== false}}<button type="submit" data-itemKey="${itemKey}" class="zform saveitembutton btn eventfultrigger" data-triggers="saveItem">Save</button>{{/if}}
+    {{if citable}}<button type="button" class="zform directciteitembutton btn">Cite</button>{{/if}}
     <button type="button" data-itemKey="${itemKey}" class="zform cancelitemeditbutton btn eventfultrigger" data-triggers="cancelItemEdit">Cancel</button>
     </form>
 </script>

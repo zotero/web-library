@@ -6,17 +6,17 @@ Zotero.ui.widgets.controlPanel.init = function(el){
     Zotero.ui.eventful.listen("controlPanelContextChange selectedItemsChanged", Zotero.ui.updateDisabledControlButtons);
     Zotero.ui.eventful.listen("selectedCollectionChanged", Zotero.ui.updateCollectionButtons);
     
-    Zotero.ui.eventful.listen("addToCollection", Zotero.ui.callbacks.addToCollection);
+    //Zotero.ui.eventful.listen("addToCollection", Zotero.ui.callbacks.addToCollection);
     Zotero.ui.eventful.listen("removeFromCollection", Zotero.ui.callbacks.removeFromCollection);
     Zotero.ui.eventful.listen("moveToTrash", Zotero.ui.callbacks.moveToTrash);
     Zotero.ui.eventful.listen("removeFromTrash", Zotero.ui.callbacks.removeFromTrash);
-    Zotero.ui.eventful.listen("createCollection", Zotero.ui.callbacks.createCollection);
-    Zotero.ui.eventful.listen("updateCollection", Zotero.ui.callbacks.updateCollection);
-    Zotero.ui.eventful.listen("deleteCollection", Zotero.ui.callbacks.deleteCollection);
+    //Zotero.ui.eventful.listen("createCollection", Zotero.ui.callbacks.createCollection);
+    //Zotero.ui.eventful.listen("updateCollection", Zotero.ui.callbacks.updateCollection);
+    //Zotero.ui.eventful.listen("deleteCollection", Zotero.ui.callbacks.deleteCollection);
     Zotero.ui.eventful.listen("toggleEdit", Zotero.ui.callbacks.toggleEdit);
-    Zotero.ui.eventful.listen("librarySettings", Zotero.ui.callbacks.librarySettings);
-    Zotero.ui.eventful.listen("citeItems", Zotero.ui.callbacks.citeItems);
-    Zotero.ui.eventful.listen("exportItems", Zotero.ui.callbacks.showExportDialog);
+    //Zotero.ui.eventful.listen("librarySettings", Zotero.ui.callbacks.librarySettings);
+    //Zotero.ui.eventful.listen("citeItems", Zotero.ui.callbacks.citeItems);
+    //Zotero.ui.eventful.listen("exportItems", Zotero.ui.callbacks.showExportDialog);
 };
 
 Zotero.ui.widgets.controlPanel.updateDisabledControlButtons = function(){
@@ -90,16 +90,29 @@ Zotero.ui.widgets.controlPanel.createItemDropdown = function(el){
  */
 Zotero.ui.callbacks.toggleEdit =  function(e){
     Z.debug("edit checkbox toggled", 3);
-    if(J(this).prop('checked')){
-        Z.debug("has val: " + J(this).val());
-        Zotero.nav.urlvars.pathVars['mode'] = 'edit';
+    if(Zotero.config.jqueryui === false){
+        var curMode = Zotero.nav.getUrlVar('mode');
+        if(curMode != "edit"){
+            Zotero.nav.urlvars.pathVars['mode'] = 'edit';
+        }
+        else{
+            delete Zotero.nav.urlvars.pathVars['mode'];
+        }
+        Zotero.nav.pushState();
+        return false;
     }
-    else{
-        Z.debug("removing edit mode", 3);
-        delete Zotero.nav.urlvars.pathVars['mode'];
+    else {
+        if(J(this).prop('checked')){
+            Z.debug("has val: " + J(this).val());
+            Zotero.nav.urlvars.pathVars['mode'] = 'edit';
+        }
+        else{
+            Z.debug("removing edit mode", 3);
+            delete Zotero.nav.urlvars.pathVars['mode'];
+        }
+        Zotero.nav.pushState();
+        return false;
     }
-    Zotero.nav.pushState();
-    return false;
 };
 
 

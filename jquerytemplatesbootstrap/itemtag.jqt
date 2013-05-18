@@ -2,8 +2,8 @@
     <div class="edit-tag-div">
         <input type='text' data-itemKey="${itemKey}" name='tag_${index}' id='tag_${index}' value='${tag}' class='taginput left'>
         <span class="add-remove-tag-container">
-            <button class="remove-tag-link left btn eventfultrigger" data-triggers="removeTag">Remove</button>
-            <button class="add-tag-link left btn eventfultrigger" data-triggers="removeTag">Add</button>
+            <button type="button" class="remove-tag-link left btn eventfultrigger" data-triggers="removeTag">Remove</button>
+            <button type="button" class="add-tag-link left btn eventfultrigger" data-triggers="removeTag">Add</button>
         </span>
     </div>
 </script>

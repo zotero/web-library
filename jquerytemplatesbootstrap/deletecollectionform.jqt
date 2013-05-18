@@ -1,5 +1,0 @@
-<script id="deletecollectionformTemplate" type="text/x-jquery-tmpl">
-    <div class="delete-collection-div">
-        <p>Really delete collection "${collection.title}"?</p>
-    </div>
-</script>
