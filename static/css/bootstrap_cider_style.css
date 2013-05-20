@@ -1,0 +1,153 @@
+.left {
+    float:left;
+}
+
+.right {
+    float:right;
+}
+
+.sprite-icon {
+    float: left;
+    margin-right: 5px;
+}
+
+span.localized-date-span {
+    white-space: nowrap;
+    display: inline-block;
+}
+
+#control-panel form{
+    margin-bottom:0;
+}
+
+#create-item-buttonset {
+    width:35px;
+    display:inline;
+}
+#control-panel-edit-div {
+    display:inline;
+}
+
+.creator-input-div {
+    margin:0;
+    line-height:1.4em;
+}
+
+.creator-input-div input {
+    float:left;
+}
+.creator-input-div span.creator-separator {
+    float:left;
+    margin-top:.42857143em;
+    margin-right: 4px;
+}
+
+.itemDetailForm input {
+    margin-right:2px;
+}
+
+td.creator * {
+    margin:0 2px .25em;
+}
+
+.edit-tag-div {
+    margin:0;
+    line-height:1.4em;
+}
+
+.edit-tag-div input {
+    float:left;
+}
+.edit-tag-div span {
+    float:left;
+}
+.taginput{
+    clear:left;
+}
+
+/* == Item Details == */
+ul#notes-and-attachments {
+    list-style:none;
+}
+
+ul#notes-and-attachments li {
+    margin-top: 5px;
+}
+
+.ui-button-text {
+    text-shadow:none;
+}
+
+#cite-box-div {
+    border:1px solid #d5d5d5;
+    margin:5px;
+    padding:3px;
+    height:300px;
+    overflow: auto;
+}
+
+
+#tag-filter-input,
+#show-all-tags-label {
+    margin-bottom:1em;
+    display:block;
+}
+
+/*item details*/
+.itemDetailForm td > input[type=text] {
+    width:80%;
+}
+
+
+/* == Item Details == */
+
+.item-info-table th {
+    width: 15%;
+}
+
+#item-details-div button.zform{
+    float: right;
+    margin: 0 0 0 10px;
+}
+
+.itemDetailForm table {
+    margin-bottom: 20px;
+}
+.itemDetailForm td, .itemDetailForm th {
+    padding: 10px 4px;
+}
+
+.itemDetailForm td > *, .itemDetailForm th > * {
+    margin: 0;
+}
+
+.itemDetailForm td > input[type=text], .itemDetailForm textarea {
+    width:80%;
+    font-size: 1em;
+    border-radius: 4px;
+    border: 1px solid #e7e7e7;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    padding: 5px;
+    /*box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;*/
+}
+
+
+td.tags ul.item-details-tags-list {
+    list-style:none;
+    padding:0;
+    margin:0;
+}
+td.tags ul.item-details-tags-list li {
+    display:inline-block;
+}
+td.tags a {
+    text-decoration:none;
+}
+
+td.tags ul.item-details-tags-list li:not(:last-child):after {
+    content: " · ";
+    color: rgba(0,0,0,0.5);
+}
+

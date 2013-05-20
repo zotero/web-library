@@ -4,7 +4,7 @@
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
         <h3>Library Settings</h3>
     </div>
-    <div class="modal-content">
+    <div class="modal-body">
         <form id="library-settings-form" class="library-settings-form">
         {{each(index, field) columnFields}}
             <label for="display-column-field-${field}"><input type="checkbox" name="display-column-field" value="${field}" id="display-column-field-${field}" class="display-column-field-${field}" />${Zotero.localizations.fieldMap[field] || field}</label>

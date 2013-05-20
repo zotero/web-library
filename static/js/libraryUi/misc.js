@@ -107,6 +107,7 @@ Zotero.ui.updateItemFromForm = function(item, formEl){
     Z.debug("Zotero.ui.updateItemFromForm", 3);
     var base = J(formEl);
     base.closest('.ajaxload, .eventfulwidget').data('ignoreformstorage', true);
+    var library = Zotero.ui.getAssociatedLibrary(base);
     
     var itemKey = '';
     if(item.itemKey) itemKey = item.itemKey;

@@ -2,9 +2,9 @@
 <div id="update-collection-dialog" class="update-collection-dialog modal hide" role="dialog" title="Update Collection">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-        <h3 id="myModalLabel">Update Collection</h3>
+        <h3>Update Collection</h3>
     </div>
-    <div class="update-collection-div">
+    <div class="update-collection-div modal-body">
         <form method="POST" class="zform">
             <ol>
                 <li>

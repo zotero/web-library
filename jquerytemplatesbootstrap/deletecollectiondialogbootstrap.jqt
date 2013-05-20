@@ -4,7 +4,7 @@
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
         <h3>Delete Collection</h3>
     </div>
-    <div class="delete-collection-div">
+    <div class="delete-collection-div modal-body">
         <p>Really delete collection "${collection.title}"?</p>
     </div>
     <div class="modal-footer">

@@ -8716,6 +8716,7 @@ Zotero.ui.updateItemFromForm = function(item, formEl) {
     Z.debug("Zotero.ui.updateItemFromForm", 3);
     var base = J(formEl);
     base.closest(".ajaxload, .eventfulwidget").data("ignoreformstorage", true);
+    var library = Zotero.ui.getAssociatedLibrary(base);
     var itemKey = "";
     if (item.itemKey) itemKey = item.itemKey; else {
         if (library) {
@@ -11719,6 +11720,7 @@ Zotero.ui.widgets.citeItemDialog = {};
 
 Zotero.ui.widgets.citeItemDialog.init = function(el) {
     Z.debug("citeItemDialog widget init", 3);
+    Zotero.ui.widgets.citeItemDialog.getAvailableStyles();
     Zotero.ui.eventful.listen("citeItems", Zotero.ui.widgets.citeItemDialog.show, {
         widgetEl: el
     });
@@ -11740,12 +11742,19 @@ Zotero.ui.widgets.citeItemDialog.show = function(e) {
         library = Zotero.ui.getAssociatedLibrary(triggeringEl);
     }
     var widgetEl = J(e.data["widgetEl"]).empty();
-    J("#citeitemdialogTemplate").tmpl({}).appendTo(widgetEl);
+    J("#citeitemdialogTemplate").tmpl({
+        freeStyleInput: true
+    }).appendTo(widgetEl);
     var dialogEl = widgetEl.find(".cite-item-dialog");
     var citeFunction = function() {
         Z.debug("citeFunction", 3);
-        Zotero.ui.showSpinner(dialogEl.find(".cite-box-div"));
         var style = dialogEl.find(".cite-item-select").val();
+        var freeStyle = dialogEl.find("input.free-text-style-input").val();
+        Z.debug("freeStyle value: " + freeStyle);
+        if (J.inArray(freeStyle, Zotero.styleList) !== -1) {
+            Z.debug("usying free style " + freeStyle);
+            style = freeStyle;
+        }
         if (!hasIndependentItems) {
             var itemKeys = Zotero.ui.getSelectedItemKeys(J("#edit-mode-items-form"));
             if (itemKeys.length === 0) {
@@ -11771,14 +11780,29 @@ Zotero.ui.widgets.citeItemDialog.show = function(e) {
         }
     };
     dialogEl.find(".cite-item-select").on("change", citeFunction);
+    dialogEl.find("input.free-text-style-input").on("change", citeFunction);
+    Zotero.ui.widgets.citeItemDialog.getAvailableStyles();
+    dialogEl.find("input.free-text-style-input").typeahead({
+        source: Zotero.styleList
+    });
     Zotero.ui.dialog(dialogEl, {});
     return false;
+};
+
+Zotero.ui.widgets.citeItemDialog.getAvailableStyles = function() {
+    if (!Zotero.styleList) {
+        Zotero.styleList = [];
+        J.getJSON(Zotero.config.styleListUrl, function(data, textStatus, jqxhr) {
+            Zotero.styleList = data;
+        });
+    }
 };
 
 Zotero.ui.widgets.citeItemDialog.directCite = function(cslItems, style) {
     var data = {};
     data.items = cslItems;
-    return J.post(Zotero.ajax.proxyWrapper("http://127.0.0.1:8085/?linkwrap=1&style=" + style, "POST"), JSON.stringify(data));
+    var url = Zotero.config.citationEndpoint + "?linkwrap=1&style=" + style;
+    return J.post(url, JSON.stringify(data));
 };
 
 Zotero.ui.widgets.citeItemDialog.buildBibString = function(bib) {

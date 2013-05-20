@@ -4,8 +4,8 @@
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
         <h3>Cite Items</h3>
     </div>
-    <div class="cite-item-div" data-role="content">
-        <form method="GET">
+    <div class="cite-item-div modal-body" data-role="content">
+        <form>
             <select class='cite-item-select' id='cite-item-select'>
                 <option value=''>Select Style</option>
                 <option value='apsa'>American Political Science Association</option>
@@ -22,6 +22,9 @@
                 <option value='nature'>Nature</option>
                 <option value='vancouver'>Vancouver</option>
             </select>
+            {{if freeStyleInput}}
+            <input type="text" class="free-text-style-input" />
+            {{/if}}
         </form>
         <div id="cite-box-div" class="cite-box-div">
         </div>
