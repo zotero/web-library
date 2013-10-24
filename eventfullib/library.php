@@ -8,8 +8,8 @@ ini_set('display_errors', 1);
 
 $messages = array();
 ?>
-<html lang="en" class="no-js"> 
-    <head> 
+<html lang="en" class="no-js">
+    <head>
         <title>Zotero Library</title>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -24,10 +24,10 @@ $messages = array();
         <link rel="apple-touch-icon-precomposed" type="image/png" href="<?=$staticPath?>/images/theme/zotero_theme/zotero_48.png" />
         
         <!-- css -->
-        <link rel=stylesheet href="./bootstrap/css/bootstrap.min.css">
-        <link rel=stylesheet href="./bootstrap/css/bootstrap-responsive.min.css">
+        <link rel=stylesheet href="<?=$staticPath?>/bootstrap/css/bootstrap.min.css">
+        <link rel=stylesheet href="<?=$staticPath?>/bootstrap/css/bootstrap-responsive.min.css">
         <script type="text/javascript" charset="utf-8" src="<?=$staticPath?>/library/jquery/jquery-all.js"></script>
-        <script src="./bootstrap/js/bootstrap.min.js"></script>
+        <script src="<?=$staticPath?>/bootstrap/js/bootstrap.min.js"></script>
         
         <link rel="stylesheet" href="<?=$staticPath?>/css/theme_style3.css" 
             type="text/css" media="screen" charset="utf-8"/>
@@ -91,42 +91,42 @@ $messages = array();
                                 <button class="create-item-button btn dropdown-toggle eventfultrigger" data-toggle="dropdown" data-library='<?=$libraryString?>' data-triggers="createItem" title="New Item"><i class="icon-item-add"></i></button>
                                 <ul class="dropdown-menu" role="menu" style="max-height:300px; overflow:auto;">
                                     <!-- dropdown menu links -->
-                                    <li><a href="#" class="eventfultrigger" data-triggers="newitem" data-itemtype="artwork">Artwork</a></li>
-                                    <li><a href="#" class="eventfultrigger" data-triggers="newitem" data-itemtype="attachment">Attachment</a></li>          
-                                    <li><a href="#" class="eventfultrigger" data-triggers="newitem" data-itemtype="audioRecording">Audio Recording</a></li>          
-                                    <li><a href="#" class="eventfultrigger" data-triggers="newitem" data-itemtype="bill">Bill</a></li>          
-                                    <li><a href="#" class="eventfultrigger" data-triggers="newitem" data-itemtype="blogPost">Blog Post</a></li>          
-                                    <li><a href="#" class="eventfultrigger" data-triggers="newitem" data-itemtype="book">Book</a></li>          
-                                    <li><a href="#" class="eventfultrigger" data-triggers="newitem" data-itemtype="bookSection">Book Section</a></li>          
-                                    <li><a href="#" class="eventfultrigger" data-triggers="newitem" data-itemtype="case">Case</a></li>          
-                                    <li><a href="#" class="eventfultrigger" data-triggers="newitem" data-itemtype="computerProgram">Computer Program</a></li>          
-                                    <li><a href="#" class="eventfultrigger" data-triggers="newitem" data-itemtype="conferencePaper">Conference Paper</a></li>          
-                                    <li><a href="#" class="eventfultrigger" data-triggers="newitem" data-itemtype="dictionaryEntry">Dictionary Entry</a></li>          
-                                    <li><a href="#" class="eventfultrigger" data-triggers="newitem" data-itemtype="document">Document</a></li>          
-                                    <li><a href="#" class="eventfultrigger" data-triggers="newitem" data-itemtype="email">E-mail</a></li>          
-                                    <li><a href="#" class="eventfultrigger" data-triggers="newitem" data-itemtype="encyclopediaArticle">Encyclopedia Article</a></li>          
-                                    <li><a href="#" class="eventfultrigger" data-triggers="newitem" data-itemtype="film">Film</a></li>          
-                                    <li><a href="#" class="eventfultrigger" data-triggers="newitem" data-itemtype="forumPost">Forum Post</a></li>          
-                                    <li><a href="#" class="eventfultrigger" data-triggers="newitem" data-itemtype="hearing">Hearing</a></li>          
-                                    <li><a href="#" class="eventfultrigger" data-triggers="newitem" data-itemtype="instantMessage">Instant Message</a></li>          
-                                    <li><a href="#" class="eventfultrigger" data-triggers="newitem" data-itemtype="interview">Interview</a></li>          
-                                    <li><a href="#" class="eventfultrigger" data-triggers="newitem" data-itemtype="journalArticle">Journal Article</a></li>          
-                                    <li><a href="#" class="eventfultrigger" data-triggers="newitem" data-itemtype="letter">Letter</a></li>          
-                                    <li><a href="#" class="eventfultrigger" data-triggers="newitem" data-itemtype="magazineArticle">Magazine Article</a></li>          
-                                    <li><a href="#" class="eventfultrigger" data-triggers="newitem" data-itemtype="manuscript">Manuscript</a></li>          
-                                    <li><a href="#" class="eventfultrigger" data-triggers="newitem" data-itemtype="map">Map</a></li>          
-                                    <li><a href="#" class="eventfultrigger" data-triggers="newitem" data-itemtype="newspaperArticle">Newspaper Article</a></li>          
-                                    <li><a href="#" class="eventfultrigger" data-triggers="newitem" data-itemtype="note">Note</a></li>          
-                                    <li><a href="#" class="eventfultrigger" data-triggers="newitem" data-itemtype="patent">Patent</a></li>          
-                                    <li><a href="#" class="eventfultrigger" data-triggers="newitem" data-itemtype="podcast">Podcast</a></li>          
-                                    <li><a href="#" class="eventfultrigger" data-triggers="newitem" data-itemtype="presentation">Presentation</a></li>          
-                                    <li><a href="#" class="eventfultrigger" data-triggers="newitem" data-itemtype="radioBroadcast">Radio Broadcast</a></li>          
-                                    <li><a href="#" class="eventfultrigger" data-triggers="newitem" data-itemtype="report">Report</a></li>          
-                                    <li><a href="#" class="eventfultrigger" data-triggers="newitem" data-itemtype="statute">Statute</a></li>          
-                                    <li><a href="#" class="eventfultrigger" data-triggers="newitem" data-itemtype="thesis">Thesis</a></li>          
-                                    <li><a href="#" class="eventfultrigger" data-triggers="newitem" data-itemtype="tvBroadcast">TV Broadcast</a></li>          
-                                    <li><a href="#" class="eventfultrigger" data-triggers="newitem" data-itemtype="videoRecording">Video Recording</a></li>          
-                                    <li><a href="#" class="eventfultrigger" data-triggers="newitem" data-itemtype="webpage">Web Page</a></li>      
+                                    <li><a href="#" class="eventfultrigger" data-triggers="newItem" data-itemtype="artwork">Artwork</a></li>
+                                    <li><a href="#" class="eventfultrigger" data-triggers="newItem" data-itemtype="attachment">Attachment</a></li>          
+                                    <li><a href="#" class="eventfultrigger" data-triggers="newItem" data-itemtype="audioRecording">Audio Recording</a></li>          
+                                    <li><a href="#" class="eventfultrigger" data-triggers="newItem" data-itemtype="bill">Bill</a></li>          
+                                    <li><a href="#" class="eventfultrigger" data-triggers="newItem" data-itemtype="blogPost">Blog Post</a></li>          
+                                    <li><a href="#" class="eventfultrigger" data-triggers="newItem" data-itemtype="book">Book</a></li>          
+                                    <li><a href="#" class="eventfultrigger" data-triggers="newItem" data-itemtype="bookSection">Book Section</a></li>          
+                                    <li><a href="#" class="eventfultrigger" data-triggers="newItem" data-itemtype="case">Case</a></li>          
+                                    <li><a href="#" class="eventfultrigger" data-triggers="newItem" data-itemtype="computerProgram">Computer Program</a></li>          
+                                    <li><a href="#" class="eventfultrigger" data-triggers="newItem" data-itemtype="conferencePaper">Conference Paper</a></li>          
+                                    <li><a href="#" class="eventfultrigger" data-triggers="newItem" data-itemtype="dictionaryEntry">Dictionary Entry</a></li>          
+                                    <li><a href="#" class="eventfultrigger" data-triggers="newItem" data-itemtype="document">Document</a></li>          
+                                    <li><a href="#" class="eventfultrigger" data-triggers="newItem" data-itemtype="email">E-mail</a></li>          
+                                    <li><a href="#" class="eventfultrigger" data-triggers="newItem" data-itemtype="encyclopediaArticle">Encyclopedia Article</a></li>          
+                                    <li><a href="#" class="eventfultrigger" data-triggers="newItem" data-itemtype="film">Film</a></li>          
+                                    <li><a href="#" class="eventfultrigger" data-triggers="newItem" data-itemtype="forumPost">Forum Post</a></li>          
+                                    <li><a href="#" class="eventfultrigger" data-triggers="newItem" data-itemtype="hearing">Hearing</a></li>          
+                                    <li><a href="#" class="eventfultrigger" data-triggers="newItem" data-itemtype="instantMessage">Instant Message</a></li>          
+                                    <li><a href="#" class="eventfultrigger" data-triggers="newItem" data-itemtype="interview">Interview</a></li>          
+                                    <li><a href="#" class="eventfultrigger" data-triggers="newItem" data-itemtype="journalArticle">Journal Article</a></li>          
+                                    <li><a href="#" class="eventfultrigger" data-triggers="newItem" data-itemtype="letter">Letter</a></li>          
+                                    <li><a href="#" class="eventfultrigger" data-triggers="newItem" data-itemtype="magazineArticle">Magazine Article</a></li>          
+                                    <li><a href="#" class="eventfultrigger" data-triggers="newItem" data-itemtype="manuscript">Manuscript</a></li>          
+                                    <li><a href="#" class="eventfultrigger" data-triggers="newItem" data-itemtype="map">Map</a></li>          
+                                    <li><a href="#" class="eventfultrigger" data-triggers="newItem" data-itemtype="newspaperArticle">Newspaper Article</a></li>          
+                                    <li><a href="#" class="eventfultrigger" data-triggers="newItem" data-itemtype="note">Note</a></li>          
+                                    <li><a href="#" class="eventfultrigger" data-triggers="newItem" data-itemtype="patent">Patent</a></li>          
+                                    <li><a href="#" class="eventfultrigger" data-triggers="newItem" data-itemtype="podcast">Podcast</a></li>          
+                                    <li><a href="#" class="eventfultrigger" data-triggers="newItem" data-itemtype="presentation">Presentation</a></li>          
+                                    <li><a href="#" class="eventfultrigger" data-triggers="newItem" data-itemtype="radioBroadcast">Radio Broadcast</a></li>          
+                                    <li><a href="#" class="eventfultrigger" data-triggers="newItem" data-itemtype="report">Report</a></li>          
+                                    <li><a href="#" class="eventfultrigger" data-triggers="newItem" data-itemtype="statute">Statute</a></li>          
+                                    <li><a href="#" class="eventfultrigger" data-triggers="newItem" data-itemtype="thesis">Thesis</a></li>          
+                                    <li><a href="#" class="eventfultrigger" data-triggers="newItem" data-itemtype="tvBroadcast">TV Broadcast</a></li>          
+                                    <li><a href="#" class="eventfultrigger" data-triggers="newItem" data-itemtype="videoRecording">Video Recording</a></li>          
+                                    <li><a href="#" class="eventfultrigger" data-triggers="newItem" data-itemtype="webpage">Web Page</a></li>      
                                 </ul>
                             </div>
                             <div class="btn-group">
@@ -136,7 +136,7 @@ $messages = array();
                                 <button class="remove-from-trash-button btn eventfultrigger" data-library='<?=$libraryString?>' data-triggers="removeFromTrash" title="Remove from Trash"><i class="icon-trash_remove"></i></button>
                             </div>
                             <div class="btn-group">
-                                <button id="edit-checkbox" type="button" class="btn eventfultrigger" data-library='<?=$libraryString?>' data-toggle="button" data-triggers="toggleEdit" title="Edit"><i class="icon-page_edit"></i></button>
+                                <button type="button" class="toggle-edit-button btn eventfultrigger" data-library='<?=$libraryString?>' data-toggle="button" data-triggers="toggleEdit" title="Edit"><i class="icon-page_edit"></i></button>
                             </div>
                         </div>
                         <form action="/search/" class="navbar-search pull-right zform zsearch" id="library-search">
@@ -167,75 +167,73 @@ $messages = array();
             <!-- Output content -->
             <div class="left-drawer left-drawer-flex-container left-drawer-show" id="left-drawer">
                 <div class="left-drawer-flex-content left-drawer-flex-item">
-                    <div id="collection-list-div" class="eventfulwidget" 
+                    <div id="collection-list-div" class="collection-list eventfulwidget" 
                         data-widget="collections"
                         data-function='syncCollections'
                         data-loadconfig='<?=json_encode($libraryConfig);?>'
                         >
-                        <div id="collection-edit-div">
-                        <span class="ui-button sprite-placeholder"></span>
-                        <div id="edit-collections-buttons-div" class="left">
-                            <div class="btn-group">
-                                <button class="create-collection-button btn eventfultrigger" data-library='<?=$libraryString?>' data-triggers="createCollection" title="New Collection"><i class="icon-toolbar-collection-add"></i></button>
-                                <button class="update-collection-button btn eventfultrigger" data-library='<?=$libraryString?>' data-triggers="updateCollection" title="Change Collection"><i class="icon-toolbar-collection-edit"></i></button>
-                                <button class="delete-collection-button btn eventfultrigger" data-library='<?=$libraryString?>' data-triggers="deleteCollection" title="Delete Collection"><i class="icon-toolbar-collection-delete"></i></button>
+                        <div id="collection-edit-div" class="collection-edit-div">
+                            <span class="ui-button sprite-placeholder"></span>
+                            <div id="edit-collections-buttons-div" class="edit-collections-buttons-div left">
+                                <div class="btn-group">
+                                    <button class="create-collection-button btn eventfultrigger" data-library='<?=$libraryString?>' data-triggers="createCollection" title="New Collection"><i class="icon-toolbar-collection-add"></i></button>
+                                    <button class="update-collection-button btn eventfultrigger" data-library='<?=$libraryString?>' data-triggers="updateCollection" title="Change Collection"><i class="icon-toolbar-collection-edit"></i></button>
+                                    <button class="delete-collection-button btn eventfultrigger" data-library='<?=$libraryString?>' data-triggers="deleteCollection" title="Delete Collection"><i class="icon-toolbar-collection-delete"></i></button>
+                                </div>
+                            </div>
+                            <div id="create-collection-dialog" class="eventfulwidget" data-widget="createCollectionDialog" title="Create Collection">
+                            </div>
+                            <div id="update-collection-dialog" class="eventfulwidget" data-widget="updateCollectionDialog" title="Edit Collection">
+                            </div>
+                            <div id="delete-collection-dialog" class="eventfulwidget" data-widget="deleteCollectionDialog" title="Delete Collection">
+                            </div>
+                            <div id="add-to-collection-dialog" class="eventfulwidget" data-widget="addToCollectionDialog" title="Add to Collection" role="dialog">
+                            </div>
+                            <div id="cite-item-dialog" class="eventfulwidget" data-widget="citeItemDialog" title="Cite Items">
+                            </div>
+                            <div id="upload-dialog" class="eventfulwidget" data-widget="uploadDialog" title="Upload Attachment">
+                            </div>
+                            <div id="export-dialog" class="eventfulwidget" data-widget="exportItemsDialog" title="Export" title="Export">
+                                <div class="export-formats-div" style="display:none;">
+                                  <div class="export-list">
+                                  </div>
+                                </div>
+                            </div>
+                            <div id="library-settings-dialog" class="eventfulwidget" data-widget="librarysettingsdialog" title="Library Settings" title="Library Settings">
                             </div>
                         </div>
-                        <div id="create-collection-dialog" title="Create Collection">
-                        </div>
-                        <div id="update-collection-dialog" title="Edit Collection">
-                        </div>
-                        <div id="delete-collection-dialog" title="Delete Collection">
-                        </div>
-                        <div id="add-to-collection-dialog" class="modal hide" role="dialog" title="Add to Collection">
-                        </div>
-                        <div id="cite-item-dialog" title="Cite Item">
-                        </div>
-                        <div id="export-dialog" title="Export">
-                        </div>
-                        <div id="library-settings-dialog" title="Library Settings">
-                        </div>
-                        
-                        </div>
-                        <div id="collection-list-container">
+                        <div id="collection-list-container" class="collection-list-container">
                         </div>
                     </div><!-- collection list div -->
                     
                     <!-- tags browser section -->
-                    <h3 id="tags-list-label" class="clickable">Tags</h3>
-                    <div id="tags-list-div" class="eventfulwidget" 
+                    <h3 id="tags-list-label">Tags</h3>
+                    <div id="tags-list-div" class="tags-list-div eventfulwidget" 
                         data-widget="tags"
                         data-prefunction="showSpinnerSection"
                         data-function="syncTags"
                         data-loadconfig='<?=json_encode($libraryConfig);?>'
                         >
-                          <input type="text" id="tag-filter-input" placeholder="Filter Tags" />
-                          <div id="tag-lists-container">
-                            <ul id="selected-tags-list">
+                          <input type="text" id="tag-filter-input" class="tag-filter-input" placeholder="Filter Tags" />
+                          <div id="tag-lists-container" class="tag-lists-container">
+                            <ul id="selected-tags-list" class="selected-tags-list">
                             </ul>
-                            <ul id="tags-list">
+                            <ul id="tags-list" class="tags-list">
                             </ul>
                             <div class="loading"></div>
                           </div>
-                          <div id="more-tags-links">
+                          <div id="more-tags-links" class="more-tags-links">
                             <button class="btn eventfultrigger" data-library='<?=$libraryString?>' data-triggers="showMoreTags" id='show-more-tags-link' >More</a>
                             <button class="btn eventfultrigger" data-library='<?=$libraryString?>' data-triggers="showFewerTags" id='show-fewer-tags-link'>Fewer</a>
                             <button class="btn eventfultrigger" data-library='<?=$libraryString?>' data-triggers="tagsDirty" id='refresh-tags-link'>Refresh</a>
                           </div>
                     </div>
                     <!-- Library Links -->
-                    <div id="feed-link-div" class="eventfulwidget" 
+                    <div id="feed-link-div" class="feed-link-div eventfulwidget" 
                         data-widget="feedlink"
                         data-function="loadFeedLink"
                         data-loadconfig='<?=json_encode($libraryConfig);?>'>
                         <a href="" type="application/atom+xml" rel="alternate" class="feed-link"><span class="sprite-icon sprite-feed"></span>Subscribe to this feed</a><br />
-                    </div>
-                    <div id="export-formats-div" style="display:none;">
-                      <div id="export-formats-heading">
-                        <h3 id="export-section-title"><a href="#">Export</a></h3>
-                      </div>
-                      <div id="export-list">
-                      </div>
                     </div>
                 </div><!-- /left-drawer-flex-content left-drawer-flex-item -->
                 <div id="left-drawer-flex-grabber" class="left-drawer-flex-grabber left-drawer-flex-item">
@@ -250,19 +248,25 @@ $messages = array();
                     <ul id="js-message-list">
                     </ul>
                 </div>
-                <div id="items-pane" class="eventfulwidget">
-                    <div id="library-items-div" class="eventfulwidget item-pane-flex-item" 
+                <div id="items-pane" class="items-pane eventfulwidget">
+                    <div id="library-items-div" class="library-items-div eventfulwidget"
                         data-widget="items"
                         data-function="loadItems"
                         data-loadconfig='<?=json_encode($libraryConfig);?>'
                         >
                     </div> <!--library items div -->
-                    <div id="item-details-div" class="eventfulwidget item-pane-flex-item"
+                    <div id="item-details-div" class="item-details-div eventfulwidget"
                         data-widget="item"
                         data-function="loadItem"
                         data-loadconfig='<?=json_encode($libraryConfig)?>'
                         >
                     </div>
+                    <div class="new-item-widget eventfulwidget"
+                        data-widget="newItem"
+                        data-loadconfig='<?=json_encode($libraryConfig)?>'
+                        >
+                    </div>
+
                 </div> <!-- items pane -->
             </div>
             
@@ -306,6 +310,7 @@ $messages = array();
             <?include '../jquerytemplatesbootstrap/newcollectiondialogbootstrap.jqt';?>
             <?include '../jquerytemplatesbootstrap/updatecollectiondialogbootstrap.jqt';?>
             <?include '../jquerytemplatesbootstrap/deletecollectiondialogbootstrap.jqt';?>
+            <?include '../jquerytemplatesbootstrap/exportitemsdialog.jqt';?>
             <?include '../jquerytemplatesbootstrap/tagunorderedlist.jqt';?>
             <?include '../jquerytemplatesbootstrap/librarysettingsdialogbootstrap.jqt';?>
             <?include '../jquerytemplatesbootstrap/addtocollectiondialogbootstrap.jqt';?>
@@ -350,6 +355,7 @@ $messages = array();
             </script>
             <script type="text/javascript" charset="utf-8">
                 Zotero.prefs.server_javascript_enabled = true;
+                Zotero.prefs.debug_level = 1;
                 
                 Zotero.config = <?include "zoteroconfig.js";?>
             </script>

@@ -66,7 +66,8 @@ Zotero.eventful.initWidgets = function(){
     //trigger events that should happen for widgets on pageload
     //mostly things that cause us to pull from the API or display something
     //for the first time
-    Zotero.ui.eventful.trigger("tagsDirty");
+    
+    //Zotero.ui.eventful.trigger("tagsDirty"); //removed to be called on indexedDB load instead
     Zotero.ui.eventful.trigger("displayedItemsChanged");
     Zotero.ui.eventful.trigger("displayedItemChanged");
 };
@@ -92,12 +93,14 @@ Zotero.eventful.initTriggers = function(el){
         var ev = J(el).data("event");
         var libString = J(el).data("library") || "";
         
-        Z.debug("binding " + ev + " trigger with " + libString + " on " + J(el).tagName);
+        Z.debug("binding eventfultrigger", 4);
         if(ev){
+            Z.debug("binding " + ev + " trigger with " + libString + " on " + el.tagName, 4);
             //J(el).on(ev + "." + libString, triggerOnEvent);
             J(el).on(ev, triggerOnEvent);
         }
         else {
+            //Z.debug("binding click trigger with on " + el.tagName, 5);
             //default to triggering on click
             //J(el).on("click" + "." + libString, triggerOnEvent);
             J(el).on("click", triggerOnEvent);

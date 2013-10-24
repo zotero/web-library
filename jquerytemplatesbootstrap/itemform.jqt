@@ -10,9 +10,9 @@
         <th>${Zotero.localizations.fieldMap['itemType']}</th>
         <td class='itemType'>
             <select id="itemTypeSelect" class="itemType" name="itemType" data-itemKey="${itemKey}">
-            {{each(itemType, localized) Zotero.localizations.typeMap}}
+            {{each(index, itemType) itemTypes}}
                 {{if itemType != 'note' && itemType != 'attachment'}}
-                <option label="${localized}" value="${itemType}" {{if itemType == item.itemType}}selected=1{{/if}}>${localized}</option>
+                <option label="${Zotero.localizations.typeMap[itemType]}" value="${itemType}" {{if itemType == item.itemType}}selected=1{{/if}}>${Zotero.localizations.typeMap[itemType]}</option>
                 {{/if}}
             {{/each}}
             </select>

@@ -1,8 +1,8 @@
 Zotero.ui.widgets.tags = {};
 
 Zotero.ui.widgets.tags.init = function(el){
-    
     Zotero.ui.eventful.listen("tagsDirty", Zotero.ui.widgets.tags.syncTagsCallback, {widgetEl: el});
+    Zotero.ui.eventful.listen("cachedDataLoaded", Zotero.ui.widgets.tags.syncTagsCallback, {widgetEl: el});
     Zotero.ui.eventful.listen("libraryTagsUpdated selectedTagsChanged", Zotero.ui.widgets.tags.rerenderTags, {widgetEl: el});
     
     //initialize binds for widget
@@ -28,7 +28,7 @@ Zotero.ui.widgets.tags.init = function(el){
 };
 
 Zotero.ui.widgets.tags.syncTagsCallback = function(event){
-    Z.debug('Zotero eventful syncTagsCallback', 3);
+    Z.debug('Zotero eventful syncTagsCallback', 1);
     var widgetEl = event.data.widgetEl;
     var el = widgetEl;
     var checkCached = event.data.checkCached;
@@ -53,6 +53,11 @@ Zotero.ui.widgets.tags.syncTagsCallback = function(event){
         syncD.done(J.proxy(function(){
             Zotero.nav.doneLoading(el);
             Zotero.ui.eventful.trigger("libraryTagsUpdated");
+        }, this) );
+        syncD.fail(J.proxy(function(){
+            //sync failed, but we still have some local data, so show that
+            Zotero.ui.eventful.trigger("libraryTagsUpdated");
+            Zotero.nav.doneLoading(el);
         }, this) );
         return;
     }

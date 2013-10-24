@@ -4,10 +4,14 @@ Zotero.ui.widgets.collections.init = function(el){
     Z.debug("collections widget init", 3);
     
     Zotero.ui.eventful.listen("collectionsDirty", Zotero.ui.widgets.collections.syncCollectionsCallback, {widgetEl: el});
+    Zotero.ui.eventful.listen("syncCollections", Zotero.ui.widgets.collections.syncCollectionsCallback, {widgetEl: el});
+    Zotero.ui.eventful.listen("syncLibrary", Zotero.ui.widgets.collections.syncCollectionsCallback, {widgetEl: el});
     Zotero.ui.eventful.listen("libraryCollectionsUpdated", Zotero.ui.widgets.collections.rerenderCollections, {widgetEl: el});
     Zotero.ui.eventful.listen("selectedCollectionChanged", Zotero.ui.widgets.collections.updateSelectedCollection, {widgetEl: el});
     
-    Zotero.ui.eventful.trigger("collectionsDirty");
+    Zotero.ui.eventful.listen("cachedDataLoaded", Zotero.ui.widgets.collections.syncCollectionsCallback, {widgetEl: el});
+
+    //Zotero.ui.eventful.trigger("collectionsDirty");
 };
 
 Zotero.ui.widgets.collections.updateCollectionButtons = function(el){
@@ -21,6 +25,7 @@ Zotero.ui.widgets.collections.rerenderCollections = function(event){
     var jel = J(el);
     
     var library = Zotero.ui.getAssociatedLibrary(el);
+    library.collections.collectionsArray.sort(library.collections.sortByTitleCompare);
     var collectionListEl = jel.find('#collection-list-container');
     collectionListEl.empty();
     Zotero.ui.renderCollectionList(collectionListEl, library.collections);
@@ -57,12 +62,17 @@ Zotero.ui.widgets.collections.syncCollectionsCallback = function(event) {
             Zotero.nav.doneLoading(el);
             Zotero.ui.eventful.trigger("libraryCollectionsUpdated");
         }, this) );
+        syncD.fail(J.proxy(function(){
+            //sync failed, but we already had some data, so show that
+            Zotero.ui.eventful.trigger("libraryCollectionsUpdated");
+        }));
         return;
     }
     else if(library.collections.loaded){
+        Zotero.ui.eventful.trigger("libraryCollectionsUpdated");
         return;
     }
-    
+
     //if no cached or loaded data, load collections from the api
     var d = library.loadCollections();
     d.done(J.proxy(function(){
@@ -75,6 +85,7 @@ Zotero.ui.widgets.collections.syncCollectionsCallback = function(event) {
     d.fail(J.proxy(function(jqxhr, textStatus, errorThrown){
         var elementMessage = Zotero.ui.ajaxErrorMessage(jqxhr);
         jel.html("<p>" + elementMessage + "</p>");
+        Zotero.ui.eventful.trigger("libraryCollectionsUpdated");
     }));
     
     return;

@@ -6,7 +6,7 @@ Zotero.ui.widgets.feedlink.init = function(el){
 
 Zotero.ui.widgets.feedlink.recalcFeedlink = function(e){
     Z.debug('Zotero eventful loadFeedLinkCallback', 3);
-    var widgetEl = event.data.widgetEl;
+    var widgetEl = e.data.widgetEl;
     var el = widgetEl;
     
     var jel = J(el);

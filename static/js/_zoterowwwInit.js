@@ -47,6 +47,10 @@ Zotero.init = function(){
         zoteroData = {};
     }
     
+    if(window.nonZendPage === true){
+        return;
+    }
+    
     Zotero.nav.parseUrlVars();
     
     

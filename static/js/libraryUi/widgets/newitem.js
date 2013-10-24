@@ -33,6 +33,15 @@ Zotero.ui.unassociatedItemForm = function(el, item){
     Z.debug("Zotero.ui.unassociatedItem", 3);
     Z.debug(item, 3);
     var container = J(el);
+    
+    //make alphabetical itemTypes list
+    var itemTypes = [];
+    J.each(Zotero.Item.prototype.typeMap, function(key, val){
+        itemTypes.push(key);
+    });
+    itemTypes.sort();
+    Z.debug(itemTypes);
+    
     var d = Zotero.Item.prototype.getCreatorTypes(item.itemType);
     d.done(J.proxy(function(itemCreatorTypes){
         container.empty();
@@ -51,6 +60,7 @@ Zotero.ui.unassociatedItemForm = function(el, item){
             J.tmpl('itemformTemplate', {item:item,
                                         itemKey:item.itemKey,
                                         creatorTypes:itemCreatorTypes,
+                                        itemTypes: itemTypes,
                                         citable:true,
                                         saveable:false
                                         }

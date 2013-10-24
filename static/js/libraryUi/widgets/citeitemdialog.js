@@ -29,15 +29,20 @@ Zotero.ui.widgets.citeItemDialog.show = function(e){
     J("#citeitemdialogTemplate").tmpl({freeStyleInput:true}).appendTo(widgetEl);
     var dialogEl = widgetEl.find(".cite-item-dialog");
     
-    var citeFunction = function(){
+    var citeFunction = function(e){
         Z.debug("citeFunction", 3);
         //Zotero.ui.showSpinner(dialogEl.find(".cite-box-div"));
-        var style = dialogEl.find(".cite-item-select").val();
-        var freeStyle = dialogEl.find("input.free-text-style-input").val();
-        Z.debug("freeStyle value: " + freeStyle);
-        if(J.inArray(freeStyle, Zotero.styleList) !== -1){
-            Z.debug("usying free style " + freeStyle);
-            style = freeStyle;
+        var triggeringElement = J(e.currentTarget);
+        var style = '';
+        if(triggeringElement.is(".cite-item-select, input.free-text-style-input")){
+            style = triggeringElement.val();
+        }
+        else{
+            style = dialogEl.find(".cite-item-select").val();
+            var freeStyle = dialogEl.find("input.free-text-style-input").val();
+            if(J.inArray(freeStyle, Zotero.styleList) !== -1){
+                style = freeStyle;
+            }
         }
         
         if(!hasIndependentItems){
@@ -58,8 +63,6 @@ Zotero.ui.widgets.citeItemDialog.show = function(e){
                 dialogEl.find(".cite-box-div").html(bibContent);
             }, this) );
             directPromise.done(function(data, textStatus, jqxhr){
-                Z.debug(data);
-                Z.debug(textStatus);
                 var bib = JSON.parse(data);
                 var bibString = Zotero.ui.widgets.citeItemDialog.buildBibString(bib);
                 dialogEl.find(".cite-box-div").html(bibString);
