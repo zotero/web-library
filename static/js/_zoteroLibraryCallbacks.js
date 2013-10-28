@@ -226,7 +226,7 @@ Zotero.callbacks.loadItem = function(el){
         var itemType = Zotero.nav.getUrlVar('itemType');
         if(!itemType){
             jel.empty();
-            J("#itemtypeselectTemplate").tmpl({itemTypes:Zotero.localizations.typeMap.sort()}).appendTo(jel);
+            jel.html( J("#itemtypeselectTemplate").render({itemTypes:Zotero.localizations.typeMap.sort()}) );
             return;
         }
         else{
@@ -642,7 +642,7 @@ Zotero.callbacks.loadFeedLink = function(el){
     
     //get list of export urls and link them
     var exportUrls = Zotero.url.exportUrls(urlconfig);
-    J("#export-list").empty().append(J("#exportformatsTemplate").tmpl({exportUrls:exportUrls}));
+    J("#export-list").empty().append(J("#exportformatsTemplate").render({exportUrls:exportUrls}));
     J("#export-list").data('urlconfig', urlconfig);
     //hide export list until requested
     J("#export-list").hide();

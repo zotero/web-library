@@ -1,17 +1,17 @@
-<script id="globalitemdetailsTemplate" type="text/x-jquery-tmpl">
-    <h2>${globalItem.title}</h2>
-    <span class="globalItemKey" id="${globalItem.key}" title="${globalItem.title}"></span>
-    <table class="item-info-table" data-itemkey="${globalItem.itemKey}">
+<script id="globalitemdetailsTemplate" type="text/x-jsrender">
+    <h2>{{>globalItem.title}}</h2>
+    <span class="globalItemKey" id="{{attr:globalItem.key}}" title="{{attr:globalItem.title}}"></span>
+    <table class="item-info-table" data-itemkey="{{attr:globalItem.itemKey}}">
     <!-- Output itemType -->
     <tr>
         <th>Item Type</th>
-        <td class="${globalItem.itemType}">${globalItem.itemType}</td>
+        <td class="{{attr:globalItem.itemType}}">{{>globalItem.itemType}}</td>
     </tr>
     
     <!-- Output title -->
     <tr>
         <th>Title</th>
-        <td class="title"><a href="${globalItem.htmlURL}">${globalItem.title}</a></td>
+        <td class="title"><a href="{{url:globalItem.htmlURL}}">{{>globalItem.title}}</a></td>
     </tr>
     
     <!-- Output fields -->

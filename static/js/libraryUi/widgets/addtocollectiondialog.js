@@ -13,7 +13,7 @@ Zotero.ui.widgets.addToCollectionDialog.show = function(e){
     var ncollections = library.collections.nestedOrderingArray();
     
     var widgetEl = J(e.data['widgetEl']).empty();
-    J("#addtocollectiondialogTemplate").tmpl({ncollections:ncollections}).appendTo(widgetEl);
+    widgetEl.html( J("#addtocollectiondialogTemplate").render({ncollections:ncollections}) );
     var dialogEl = widgetEl.find(".add-to-collection-dialog");
     
     var addToFunction = J.proxy(function(){

@@ -50,21 +50,21 @@ Zotero.ui.unassociatedItemForm = function(el, item){
             if(parentKey){
                 item.parentKey = parentKey;
             }
-            J.tmpl('editnoteformTemplate', {item:item,
+            container.append( J('#editnoteformTemplate').render({item:item,
                                          itemKey:item.itemKey
-                                         }).appendTo(container);
+                                         }) );
             
             Zotero.ui.init.rte('default');
         }
         else {
-            J.tmpl('itemformTemplate', {item:item,
+            container.append(J('#itemformTemplate').render( {item:item,
                                         itemKey:item.itemKey,
                                         creatorTypes:itemCreatorTypes,
                                         itemTypes: itemTypes,
                                         citable:true,
                                         saveable:false
                                         }
-                                        ).appendTo(container);
+                                        ) );
             if(item.apiObj.tags.length === 0){
                 Zotero.ui.addTag(container, false);
             }

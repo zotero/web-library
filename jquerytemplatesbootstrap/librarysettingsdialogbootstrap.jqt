@@ -1,4 +1,4 @@
-<script id="librarysettingsdialogTemplate" type="text/x-jquery-tmpl">
+<script id="librarysettingsdialogTemplate" type="text/x-jsrender">
 <div id="library-settings-dialog" class="library-settings-dialog modal hide" role="dialog" title="Library Settings">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
@@ -6,9 +6,9 @@
     </div>
     <div class="modal-body">
         <form id="library-settings-form" class="library-settings-form">
-        {{each(index, field) columnFields}}
-            <label for="display-column-field-${field}"><input type="checkbox" name="display-column-field" value="${field}" id="display-column-field-${field}" class="display-column-field-${field}" />${Zotero.localizations.fieldMap[field] || field}</label>
-        {{/each}}
+        {{for columnFields}}
+            <label for="display-column-field-{{attr:#data}}"><input type="checkbox" name="display-column-field" value="{{attr:#data}}" id="display-column-field-{{attr:#data}}" class="display-column-field-{{attr:#data}}" />{{>~fieldMap[#data] || #data}}</label>
+        {{/for}}
         </form>
     </div>
     <div class="modal-footer">

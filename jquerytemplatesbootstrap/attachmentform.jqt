@@ -1,49 +1,49 @@
-<script id="attachmentformTemplate" type="text/x-jquery-tmpl">
-    <form class="itemDetailForm zform" data-itemKey="${itemKey}">
-    <button type="submit" data-itemKey="${itemKey}" class="zform saveitembutton">Save</button>
-    <button type="button" data-itemKey="${itemKey}" class="zform cancelitemeditbutton">Cancel</button>
-    <h2>${item.title}</h2>
+<script id="attachmentformTemplate" type="text/x-jsrender">
+    <form class="itemDetailForm zform" data-itemKey="{{attr:itemKey}}">
+    <button type="submit" data-itemKey="{{attr:itemKey}}" class="zform saveitembutton">Save</button>
+    <button type="button" data-itemKey="{{attr:itemKey}}" class="zform cancelitemeditbutton">Cancel</button>
+    <h2>{{>item.title}}</h2>
     <table>
     
     <!-- Output itemType -->
     <tr>
-        <th>${Zotero.localizations.fieldMap['itemType']}</th>
-        <td class="${item.itemType}">${Zotero.Item.prototype.typeMap[item.itemType]}</td>
+        <th>{{>~zoteroFieldMap['itemType']}}</th>
+        <td class="{{attr:item.itemType}}">{{>~Zotero.Item.prototype.typeMap[item.itemType]}}</td>
     </tr>
     
     <!-- Output title -->
     <tr>
-        <th>${Zotero.localizations.fieldMap['title']}</th>
+        <th>{{>~zoteroFieldMap['title']}}</th>
         <td class="title">
                 {{tmpl({itemKey:itemKey, field:'title', fieldValue:item.title}) "datafieldTemplate"}}
         </td>
     </tr>
     
     <!-- Output fields -->
-    {{each(field, fieldValue) item.apiObj}}
-        {{if (field == 'url')}}
+    {{for ~getFields(item.apiObj)(field, fieldValue) item.apiObj}}
+        {{if (key == 'url')}}
         <tr>
-            <th>${Zotero.localizations.fieldMap[field]}</th>
-            <td class="${field}">
-                <a rel='nofollow' href='${fieldValue}'>${fieldValue}</a>
+            <th>{{>~zoteroFieldMap[key]}}</th>
+            <td class="{{attr:key}}">
+                <a rel='nofollow' href='{{url:value}}'>{{>value}}</a>
             </td>
         </tr>
-        {{else (Zotero.config.richTextFields[field])}}
+        {{else (~Zotero.config.richTextFields[key])}}
         <tr>
             <th>Note</th>
             <td class="note-text">
-                <textarea data-itemKey="${itemKey}" cols="40" rows="14" name="note-text" id="note-text" class="rte default">${item.note}</textarea>
+                <textarea data-itemKey="{{attr:itemKey}}" cols="40" rows="14" name="note-text" id="note-text" class="rte default">{{>item.note}}</textarea>
             </td>
         </tr>
-        {{else (J.inArray(field, item.hideFields) == -1) && (item.fieldMap.hasOwnProperty(field)) && fieldValue != '' && field != 'itemType' && field != 'title' }}
+        {{else (J.inArray(key, item.hideFields) == -1) && (item.fieldMap.hasOwnProperty(key)) && value != '' && key != 'itemType' && key != 'title' }}
         <tr>
-            <th>${Zotero.localizations.fieldMap[field]}</th>
-            <td class="${field}">
-                ${Zotero.ui.formatItemField(field, item)}
+            <th>{{>~zoteroFieldMap[key]}}</th>
+            <td class="{{attr:key}}">
+                {{>~formatItemField(key, item)}}
             </td>
         </tr>
         {{/if}}
-    {{/each}}
+    {{/for}}
     
     <!-- Output tags -->
     <tr>
@@ -56,7 +56,7 @@
     </tr>
     
     </table>
-    <button type="submit" data-itemKey="${itemKey}" class="zform saveitembutton">Save</button>
-    <button type="button" data-itemKey="${itemKey}" class="zform cancelitemeditbutton">Cancel</button>
+    <button type="submit" data-itemKey="{{attr:itemKey}}" class="zform saveitembutton">Save</button>
+    <button type="button" data-itemKey="{{attr:itemKey}}" class="zform cancelitemeditbutton">Cancel</button>
     </form>
 </script>

@@ -1,4 +1,4 @@
-<script id="tagslistTemplate" type="text/x-jquery-tmpl">
+<script id="tagslistTemplate" type="text/x-jsrender">
     <input type="text" id="tag-filter-input" />
     <label for="show-all-tags"><input type="checkbox" name="show-all-tags" id="show-all-tags" class="eventfultrigger" data-library='<?=$libraryString?>' data-triggers='toggleAllTags' />Display all tags in this library</label>
     <!--<label for="show-automatic"><input type="checkbox" name="show-automatic" id="show-automatic" />Show automatic</label>-->

@@ -1,4 +1,4 @@
-<script id="exportitemsdialogTemplate" type="text/x-jquery-tmpl">
+<script id="exportitemsdialogTemplate" type="text/x-jsrender">
 <div id="export-items-dialog" class="export-items-dialog modal hide" role="dialog" title="Library Settings">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>

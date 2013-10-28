@@ -1,19 +1,20 @@
-<script id="authorelementssingleTemplate" type="text/x-jquery-tmpl">
-    <tr class="creator singleCreator" id="creator_${index}" data-creatorindex="${index}">
+<script id="authorelementssingleTemplate" type="text/x-jsrender">
+    <tr class="creator singleCreator" id="creator_{{attr:~index}}" data-creatorindex="{{attr:~index}}">
         <th>
-            <select class="creator-type-select" id="creator_${index}_creatorType" name="creator_${index}_creatorType" data-creatorindex="${index}">
-                {{each(i, c) creatorTypes}}
-                    <option label="${c.localized}" value="${c.creatorType}" {{if c.creatorType == creator.creatorType}}selected='1'{{/if}}>${c.localized}</option>
-                {{/each}}
+            <select class="creator-type-select" id="creator_{{attr:~index}}_creatorType" name="creator_{{attr:~index}}_creatorType" data-creatorindex="{{attr:~index}}">
+                {{for ~creatorTypes ~creator=#data}}
+                    {{:creatorType}} - {{:localized}}
+                    <option label="{{attr:localized}}" value="{{attr:creatorType}}" {{if (creatorType == ~creator.creatorType)}}selected='1'{{/if}}>{{>localized}}</option>
+                {{/for}}
             </select>
         </th>
-        <td class="creator" id="creator_${index}" data-creatorindex="${index}">
-            <div class="creator-input-div singleCreator" id="creator_${index}" data-creatorindex="${index}">
-                <input type="text" class="creator-name" value="${creator.name}" id="creator_${index}_name" name="creator_${index}_name" data-creatorindex="${index}">
+        <td class="creator" id="creator_{{attr:~index}}" data-creatorindex="{{attr:~index}}">
+            <div class="creator-input-div singleCreator" id="creator_{{attr:~index}}" data-creatorindex="{{attr:~index}}">
+                <input type="text" class="creator-name" value="{{attr:name}}" id="creator_{{attr:~index}}_name" name="creator_{{attr:~index}}_name" data-creatorindex="{{attr:~index}}">
                 <button type="button" class="switch-two-field-creator-link btn" data-triggers='switchTwoFieldCreator'>Two Fields</button>
                 <span class="add-remove-creator-buttons-container">
-                    <button type="button" class="remove-creator-link btn" data-triggers="removeCreator" data-creatorindex="${index}">Remove</button>
-                    <button type="button" class="add-creator-link btn" data-triggers="addCreator" data-creatorindex="${index}">Add</button>
+                    <button type="button" class="remove-creator-link btn" data-triggers="removeCreator" data-creatorindex="{{attr:~index}}">Remove</button>
+                    <button type="button" class="add-creator-link btn" data-triggers="addCreator" data-creatorindex="{{attr:~index}}">Add</button>
                 </span>
             </div>
         </td>

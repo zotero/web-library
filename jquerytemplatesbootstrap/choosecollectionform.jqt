@@ -1,14 +1,14 @@
-<script id="choosecollectionformTemplate" type="text/x-jquery-tmpl">
-    {{if !optionsOnly}}
-    <select class='collectionKey-select{{if selectclass}} ${selectclass}{{/if}}' {{if id}}id='${id}'{{/if}}>
+<script id="choosecollectionformTemplate" type="text/x-jsrender">
+    {{if !~optionsOnly}}
+    <select class='collectionKey-select{{if selectclass}} {{attr:selectclass}}{{/if}}' {{if id}}id='{{attr:id}}'{{/if}}>
     {{/if}}
-        {{if allowNoValue}}
-            <option value='' {{if noValueClass}}class=${noValueClass}{{/if}}>${noValueText || "None"}</option>
+        {{if ~allowNoValue}}
+            <option value='' {{if ~noValueClass}}class="{{attr:~noValueClass}}"{{/if}}>{{>~noValueText || "None"}}</option>
         {{/if}}
-        {{each(index, collection) collections}}
-            <option value='${collection.collectionKey}'>${Array(collection.nestingDepth).join('-')}${collection.title}</option>
-        {{/each}}
-    {{if !optionsOnly}}
+        {{for ncollections}}
+            <option value='{{attr:collectionKey}}'>{{!-- TODO:FIX >Array(nestingDepth).join('-') --}}{{>title}}</option>
+        {{/for}}
+    {{if !~optionsOnly}}
     </select>
     {{/if}}
 </script>

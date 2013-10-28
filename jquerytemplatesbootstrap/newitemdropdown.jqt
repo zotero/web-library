@@ -1,8 +1,8 @@
-<script id="newitemdropdownTemplate" type="text/x-jquery-tmpl">
+<script id="newitemdropdownTemplate" type="text/x-jsrender">
 <ul class="dropdown-menu" role="menu" style="max-height:300px; overflow:auto;">
     <!-- dropdown menu links -->
-    {{each(index, itemType) itemTypes}}
-    <li><a href="#" class="eventfultrigger" data-triggers="newitem" data-itemtype="${itemType}">${Zotero.Item.prototype.typeMap[itemType]}</a></li>
-    {{/each}}
+    {{for itemTypes}}
+    <li><a href="#" class="eventfultrigger" data-triggers="newitem" data-itemtype="{{attr:#data}}">{{>~Zotero.Item.prototype.typeMap[#data]}}</a></li>
+    {{/for}}
 </ul>
 </script>

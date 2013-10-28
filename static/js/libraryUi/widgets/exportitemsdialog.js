@@ -14,7 +14,7 @@ Zotero.ui.widgets.exportItemsDialog.show = function(e){
     widgetEl.find(".export-items-dialog").remove();
     
     //get library and build dialog
-    J("#exportitemsdialogTemplate").tmpl({}).appendTo(widgetEl);
+    widgetEl.append( J("#exportitemsdialogTemplate").render({}) );
     var dialogEl = widgetEl.find(".export-items-dialog");
     dialogEl.find(".modal-content").empty().append(widgetEl.find(".export-list").contents().clone() );
     
@@ -32,7 +32,7 @@ Zotero.ui.widgets.exportItemsDialog.updateExportLinks = function(e){
     var urlconfig = Zotero.ui.getItemsConfig(library);
     
     var exportUrls = Zotero.url.exportUrls(urlconfig);
-    widgetEl.find(".export-list").empty().append(J("#exportformatsTemplate").tmpl({exportUrls:exportUrls}));
+    widgetEl.find(".export-list").empty().append( J("#exportformatsTemplate").render({exportUrls:exportUrls}) );
     widgetEl.find(".export-list").data('urlconfig', urlconfig);
     //hide export list until requested
     widgetEl.find(".export-list").hide();

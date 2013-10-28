@@ -1,30 +1,30 @@
-<script id="editnoteformTemplate" type="text/x-jquery-tmpl">
+<script id="editnoteformTemplate" type="text/x-jsrender">
     {{if (item.libraryType == 'user')}}
-        <span id="libraryUserID" title="${item.libraryID}"></span>
+        <span id="libraryUserID" title="{{attr:item.libraryID}}"></span>
     {{else (item.libraryType == 'group')}}
-        <span id="libraryGroupID" title="${item.libraryID}"></span>
+        <span id="libraryGroupID" title="{{attr:item.libraryID}}"></span>
     {{/if}}
-    <form class="itemDetailForm zform" data-itemKey="${itemKey}">
+    <form class="itemDetailForm zform" data-itemKey="{{attr:itemKey}}">
     <table>
     {{if (false) }}
         <!-- Output user Creator for group library -->
         <tr>
             <th>Creator</th>
-            <td class="user-creator" data-itemKey="${itemKey}">${item.author['name']}</td>
+            <td class="user-creator" data-itemKey="{{attr:itemKey}}">{{>item.author['name']}}</td>
         </tr>
     {{/if}}
     
     <!-- Output title -->
     <tr>
-        <th>${item.fieldMap['title']}</th>
-        <td class="title" data-itemKey="${itemKey}">${item.title}</td>
+        <th>{{>item.fieldMap['title']}}</th>
+        <td class="title" data-itemKey="{{attr:itemKey}}">{{>item.title}}</td>
     </tr>
 
     <!-- Output Note -->
     <tr>
         <th>Note</th>
         <td class="note-text">
-            <textarea cols="40" rows="14" name="note-text" id="note-text" class="rte default" data-itemKey="${itemKey}">${item.apiObj.note}</textarea>
+            <textarea cols="40" rows="14" name="note-text" id="note-text" class="rte default" data-itemKey="{{attr:itemKey}}">{{>item.apiObj.note}}</textarea>
         </td>
     </tr>
     
@@ -32,7 +32,7 @@
     <tr>
         <th>Tags</th>
         <td class="tags">
-        <div style="display:block; clear:both;"><button type='button' class="add-tag-button" data-itemKey="${itemKey}">Add Tag</button></div>
+        <div style="display:block; clear:both;"><button type='button' class="add-tag-button" data-itemKey="{{attr:itemKey}}">Add Tag</button></div>
         {{each(index, tag) item.tags}}
             {{tmpl({index:index, itemKey:itemKey, tag:tag}) "itemtagTemplate"}}
         {{/each}}
@@ -41,13 +41,13 @@
     
     <tr>
         <th></th>
-        <td><button type='submit' data-itemKey="${itemKey}" class="zform saveitembutton">Save</button></td>
+        <td><button type='submit' data-itemKey="{{attr:itemKey}}" class="zform saveitembutton">Save</button></td>
     </tr>
     </table>
     
     <!-- attachments -->
     {{if (item.numChildren > 0)}}
-        <a class="show-attachments-link" data-itemKey="${item.itemKey}">Show ${item.numChildren} attachments</a>
+        <a class="show-attachments-link" data-itemKey="{{attr:item.itemKey}}">Show {{>item.numChildren}} attachments</a>
         <div class="item-attachments-div">
             
         </div>

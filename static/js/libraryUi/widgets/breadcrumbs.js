@@ -50,9 +50,9 @@ Zotero.ui.libraryBreadcrumbs = function(library, config){
         breadcrumbs.push({label:library.items.getItem(config.itemKey).title, path:Zotero.nav.buildUrl({collectionKey:config.collectionKey, itemKey:config.itemKey})});
     }
     Z.debug(breadcrumbs, 4);
-    J("#breadcrumbs").empty();
-    J.tmpl('breadcrumbsTemplate', {breadcrumbs:breadcrumbs}).appendTo(J("#breadcrumbs"));
-    var newtitle = J.tmpl('breadcrumbstitleTemplate', {breadcrumbs:breadcrumbs}).text();
+    widgetEl = J("#breadcrumbs").empty();
+    widgetEl.html( J('#breadcrumbsTemplate').render({breadcrumbs:breadcrumbs}) );
+    var newtitle = J('#breadcrumbstitleTemplate', {breadcrumbs:breadcrumbs}).text();
     Zotero.nav.updateStateTitle(newtitle);
     Z.debug("done with breadcrumbs", 4);
     }

@@ -1,34 +1,34 @@
-<script id="groupnuggetTemplate" type="text/x-jquery-tmpl">
+<script id="groupnuggetTemplate" type="text/x-jsrender">
 <div class="nugget-group">
     <div class="nugget-full">
         {{if (group.hasImage)}}
-            <a href="${groupViewUrl}" class="group-image">
-                <img src="${groupImageUrl}" alt="" />
+            <a href="{{url:groupViewUrl}}" class="group-image">
+                <img src="{{url:groupImageUrl}}" alt="" />
             </a>
         {{/if}}
         <div class="nugget-name">
-            <a href="${groupViewUrl}">${group.name}</a>
+            <a href="{{url:groupViewUrl}}">{{>group.name}}</a>
         </div>
         <nav id="group-library-link-nav" class="action-links">
             <ul>
             <!-- Group library link -->
             {{if groupLibraryViewable}}
-                <li><a href="${groupLibraryUrl}">Group Library</a></li>
+                <li><a href="{{url:groupLibraryUrl}}">Group Library</a></li>
             {{/if}}
         </nav>
         {{if groupManageable}}
         <nav class="action-links">
             <!-- Manage link -->
-            <li><a href="${groupSettingsUrl}">Manage Profile</a></li>
-            <li><a href="${groupMemberSettingsUrl}">Manage Members</a></li>
-            <li><a href="${groupLibrarySettingsUrl}">Manage Library</a></li>
+            <li><a href="{{url:groupSettingsUrl}}">Manage Profile</a></li>
+            <li><a href="{{url:groupMemberSettingsUrl}}">Manage Members</a></li>
+            <li><a href="{{url:groupLibrarySettingsUrl}}">Manage Library</a></li>
         </nav>
         {{/if}}
         <table class="nugget-profile">
             <!-- Member Count -->
             <tr>
                 <th scope="row">Members</th>
-                <td>${memberCount}</td>
+                <td>{{>memberCount}}</td>
             </tr>
             <!-- Description -->
             {{if group.description}}
@@ -40,16 +40,16 @@
             <!-- Group Type -->
             <tr>
                 <th scope="row">Group Type</th>
-                <td>${Zotero.Group.prototype.typeMap[group["type"]]}</td>
+                <td>{{>~Zotero.Group.prototype.typeMap[group["type"]]}}</td>
             </tr>
             <!-- Group Library -->
             <tr>
                 <th scope="row">Group Library</th>
                 <td>
                     {{if (group["type"] == 'Private' && group.libraryReading == "all")}}
-                        ${Zotero.Group.prototype.accessMap['members'][group.libraryEditing]}
+                        {{>~Zotero.Group.prototype.accessMap['members'][group.libraryEditing]}}
                     {{else}}
-                        ${Zotero.Group.prototype.accessMap[group.libraryReading][group.libraryEditing]}
+                        {{>~Zotero.Group.prototype.accessMap[group.libraryReading][group.libraryEditing]}}
                     {{/if}}
                 </td>
             </tr>

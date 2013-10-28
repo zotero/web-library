@@ -1,4 +1,4 @@
-<script id="controlpanelTemplate" type="text/x-jquery-tmpl">
+<script id="controlpanelTemplate" type="text/x-jsrender">
     <div id="controlpanel-edit-div">
         <a href="" class="create-collection-link clickable">Create Collection</a>
         <a href="" class="create-subcollection-link clickable">Create SubCollection</a>

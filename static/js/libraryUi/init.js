@@ -679,6 +679,40 @@ Zotero.ui.init.tinyMce = function(type, autofocus, elements){
 };
 
 Zotero.ui.init.libraryTemplates = function(){
+    J.views.helpers({
+        Zotero: Zotero,
+        J: J,
+        Modernizr: Modernizr,
+        displayFields: Zotero.prefs.library_listShowFields,
+        zoteroFieldMap: Zotero.localizations.fieldMap,
+        formatItemField: Zotero.ui.formatItemField,
+        formatItemDateField: Zotero.ui.formatItemDateField,
+        trimString: Zotero.ui.trimString,
+        displayInDetails: function(field, item) {
+            if( ( (J.inArray(field, item.hideFields) == -1) && (item.fieldMap.hasOwnProperty(field))) &&
+                (J.inArray(field, ['itemType', 'title', 'creators', 'notes']) == -1)) {
+                return true;
+            }
+            return false;
+        },
+        getFields: function(object) {
+            var key, value,
+                fieldsArray = [];
+            for (key in object) {
+                if (object.hasOwnProperty(key)) {
+                    value = object[key];
+                    // For each property/field add an object to the array, with key and value
+                    fieldsArray.push({
+                        key: key,
+                        value: value
+                    });
+                }
+            }
+            // Return the array, to be rendered using {{for ~getFields(object)}}
+            return fieldsArray;
+        },
+    });
+    /*
     J('#tagrowTemplate').template('tagrowTemplate');
     J('#tagslistTemplate').template('tagslistTemplate');
     J('#collectionlistTemplate').template('collectionlistTemplate');
@@ -710,6 +744,6 @@ Zotero.ui.init.libraryTemplates = function(){
     J('#librarysettingsTemplate').template('librarysettingsTemplate');
     J('#addtocollectionformTemplate').template('addtocollectionformTemplate');
     J('#exportformatsTemplate').template('exportformatsTemplate');
-    
+    */
 };
 

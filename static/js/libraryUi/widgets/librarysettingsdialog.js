@@ -10,7 +10,10 @@ Zotero.ui.widgets.librarysettingsdialog.show = function(e){
     var triggeringEl = J(e.triggeringElement);
     
     var widgetEl = J(e.data['widgetEl']).empty();
-    J("#librarysettingsdialogTemplate").tmpl({'columnFields':Zotero.Library.prototype.displayableColumns}).appendTo(widgetEl);
+    widgetEl.html( J("#librarysettingsdialogTemplate").render({'columnFields': Zotero.Library.prototype.displayableColumns},
+                                                               {'fieldMap': Zotero.localizations.fieldMap,
+                                                               'topString' : 'Top String'
+                                                                } ));
     var dialogEl = widgetEl.find(".library-settings-dialog");
     
     dialogEl.find(".display-column-field-title").prop('checked', true).prop('disabled', true);

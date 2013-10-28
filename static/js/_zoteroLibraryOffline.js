@@ -168,7 +168,7 @@ Zotero.ui.showChildrenLocal = function(el, itemKey){
     var childItemKeys = item.childItemKeys;
     var childItems = library.items.getItems(childItemKeys);
     
-    J("#childitemsTemplate").tmpl({childItems:childItems}).appendTo(J(".item-attachments-div").empty());
+    J(".item-attachments-div").html( J("#childitemsTemplate").render({childItems:childItems}) );
     
     Zotero.ui.createOnActivePage(el);
 };
@@ -193,7 +193,7 @@ Zotero.ui.displayItemOrTemplate = function(library){
         var itemType = Zotero.nav.getUrlVar('itemType');
         if(!itemType){
             J("#item-details-div").empty();
-            J("#itemtypeselectTemplate").tmpl({itemTypes:Zotero.localizations.typeMap}).appendTo(J("#item-details-div"));
+            J("#item-details-div").html( J("#itemtypeselectTemplate").render({itemTypes:Zotero.localizations.typeMap}) );
             return;
         }
         else{

@@ -1,20 +1,20 @@
-<script id="authorelementsdoubleTemplate" type="text/x-jquery-tmpl">
-    <tr class="creator doubleCreator" id="creator_${index}" data-creatorindex="${index}">
+<script id="authorelementsdoubleTemplate" type="text/x-jsrender">
+    <tr class="creator doubleCreator" id="creator_{{attr:~index}}" data-creatorindex="{{attr:~index}}">
         <th>
-            <select class="creator-type-select" id="creator_${index}_creatorType" name="creator_${index}_creatorType" data-creatorindex="${index}">
-                {{each(i, c) creatorTypes}}
-                    <option label="${c.localized}" value="${c.creatorType}" {{if c.creatorType == creator.creatorType}}selected='1'{{/if}}>${c.localized}</option>
-                {{/each}}
+            <select class="creator-type-select" id="creator_{{attr:~index}}_creatorType" name="creator_{{attr:~index}}_creatorType" data-creatorindex="{{attr:~index}}">
+                {{for ~creatorTypes ~creator=~creator}}
+                    <option label="{{attr:localized}}" value="{{attr:creatorType}}" {{if (creatorType == ~creator.creatorType)}}selected='1'{{/if}}>{{>localized}}</option>
+                {{/for}}
             </select>
         </th>
-        <td class="creator" data-creatorindex="${index}">
-            <div class="creator-input-div doubleCreator" data-creatorindex="${index}">
-                <input type="text" class="creator-last-name" value="${creator.lastName}" id="creator_${index}_lastName" name="creator_${index}_lastName" data-creatorindex="${index}"><span class="creator-separator">, </span>
-                <input type="text" class="creator-first-name" value="${creator.firstName}" id="creator_${index}_firstName" name="creator_${index}_firstName" data-creatorindex="${index}">
-                <button type="button" class="switch-single-field-creator-link btn eventfultrigger" data-triggers="switchSingleFieldCreator" data-creatorindex="${index}">Single Field</button>
+        <td class="creator" data-creatorindex="{{attr:~index}}">
+            <div class="creator-input-div doubleCreator" data-creatorindex="{{attr:~index}}">
+                <input type="text" class="creator-last-name" value="{{attr:lastName}}" id="creator_{{attr:~index}}_lastName" name="creator_{{attr:~index}}_lastName" data-creatorindex="{{attr:~index}}"><span class="creator-separator">, </span>
+                <input type="text" class="creator-first-name" value="{{attr:firstName}}" id="creator_{{attr:~index}}_firstName" name="creator_{{attr:~index}}_firstName" data-creatorindex="{{attr:~index}}">
+                <button type="button" class="switch-single-field-creator-link btn eventfultrigger" data-triggers="switchSingleFieldCreator" data-creatorindex="{{attr:~index}}">Single Field</button>
                 <span class="add-remove-creator-buttons-container">
-                    <button type="button" class="remove-creator-link btn eventfultrigger" data-triggers="removeCreator" data-creatorindex="${index}">Remove</button>
-                    <button type="button" class="add-creator-link btn eventfultrigger" data-triggers="addCreator" data-creatorindex="${index}">Add</button>
+                    <button type="button" class="remove-creator-link btn eventfultrigger" data-triggers="removeCreator" data-creatorindex="{{attr:~index}}">Remove</button>
+                    <button type="button" class="add-creator-link btn eventfultrigger" data-triggers="addCreator" data-creatorindex="{{attr:~index}}">Add</button>
                 </span>
             </div>
         </td>

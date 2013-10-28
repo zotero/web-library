@@ -25,9 +25,11 @@ Zotero.ui.widgets.collections.rerenderCollections = function(event){
     var jel = J(el);
     
     var library = Zotero.ui.getAssociatedLibrary(el);
+    Z.debug(library);
     library.collections.collectionsArray.sort(library.collections.sortByTitleCompare);
     var collectionListEl = jel.find('#collection-list-container');
     collectionListEl.empty();
+    Z.debug("Collections count: " + library.collections.collectionsArray.length);
     Zotero.ui.renderCollectionList(collectionListEl, library.collections);
     Zotero.ui.eventful.trigger("selectedCollectionChanged");
 };
@@ -56,7 +58,7 @@ Zotero.ui.widgets.collections.syncCollectionsCallback = function(event) {
     
     //sync collections if loaded from cache but not synced
     if(library.collections.loaded && (!library.collections.synced)){
-        Z.debug("collections loaded but not synced - loading updated", 3);
+        Z.debug("collections loaded but not synced - loading updated", 1);
         var syncD = library.loadUpdatedCollections();
         syncD.done(J.proxy(function(){
             Zotero.nav.doneLoading(el);
@@ -83,9 +85,10 @@ Zotero.ui.widgets.collections.syncCollectionsCallback = function(event) {
     }, this));
     
     d.fail(J.proxy(function(jqxhr, textStatus, errorThrown){
+        Z.debug("FAILED SYNC COLLECTIONS REQUEST");
         var elementMessage = Zotero.ui.ajaxErrorMessage(jqxhr);
         jel.html("<p>" + elementMessage + "</p>");
-        Zotero.ui.eventful.trigger("libraryCollectionsUpdated");
+        //Zotero.ui.eventful.trigger("libraryCollectionsUpdated");
     }));
     
     return;
@@ -143,19 +146,19 @@ Zotero.ui.updateCollectionButtons = function(el){
  * @return {undefined}
  */
 Zotero.ui.renderCollectionList = function(el, collections){
-    Z.debug("Zotero.ui.renderCollectionList", 3);
-    Z.debug("library Identifier " + collections.libraryUrlIdentifier, 4);
+    Z.debug("Zotero.ui.renderCollectionList", 1);
+    Z.debug("library Identifier " + collections.libraryUrlIdentifier, 1);
     var jel = J(el);
     var currentCollectionKey = Zotero.nav.getUrlVar('collectionKey') || '';
     var trash = collections.owningLibrary.libraryType == 'user' ? true : false;
     //var ncollections = collections.nestedOrderingArray();
-    J.tmpl('collectionlistTemplate', {collections:collections.collectionsArray,
+    jel.append( J('#collectionlistTemplate').render({collections:collections.collectionsArray,
                                         libUrlIdentifier:collections.libraryUrlIdentifier,
                                         currentCollectionKey: currentCollectionKey,
                                         trash: trash
                                         //ncollections: ncollections
                                     }
-                                    ).appendTo(jel);
+                                    ) );
     
     
     Zotero.ui.createOnActivePage(el);

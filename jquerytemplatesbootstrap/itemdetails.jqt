@@ -1,82 +1,82 @@
-<script id="itemdetailsTemplate" type="text/x-jquery-tmpl">
+<script id="itemdetailsTemplate" type="text/x-jsrender">
     {{if (parentUrl)}}
-        <a href="${parentUrl}" class="ajax-link clickable item-select-link" data-itemKey='${item.parentItemKey}'>Parent Item</a>
+        <a href="{{url:parentUrl}}" class="ajax-link clickable item-select-link" data-itemKey='{{attr:item.parentItemKey}}'>Parent Item</a>
     {{/if}}
-    <h2>${item.title}</h2>
+    <h2>{{>item.title}}</h2>
     {{if (item.libraryType == 'user')}}
-        <span id="libraryUserID" title="${item.libraryID}"></span>
+        <span id="libraryUserID" title="{{attr:item.libraryID}}"></span>
     {{else (item.libraryType == 'group')}}
-        <span id="libraryGroupID" title="${item.libraryID}"></span>
+        <span id="libraryGroupID" title="{{attr:item.libraryID}}"></span>
     {{/if}}
-    <table class="item-info-table" data-itemkey="${item.itemKey}">
+    <table class="item-info-table" data-itemkey="{{attr:item.itemKey}}">
     {{if (item.libraryType == 'group')}}
         <!-- Output user Creator for group library -->
         <tr>
             <th>Added by</th>
-            <td class="user-creator"><a href="${item.author['uri']}" class="user-link">${item.author['name']}</a></td>
+            <td class="user-creator"><a href="{{url:item.author['uri']}}" class="user-link">{{>item.author['name']}}</a></td>
         </tr>
     {{/if}}
     
     <!-- Output itemType -->
     <tr>
         <th>Item Type</th>
-        <td class="${item.itemType}">${item.typeMap[item.itemType]}</td>
+        <td class="{{attr:item.itemType}}">{{>item.typeMap[item.itemType]}}</td>
     </tr>
 
     <!-- Output title -->
     <tr>
-        <th>${item.fieldMap['title']}</th>
-        <td class="title">${item.title}</td>
+        <th>{{>item.fieldMap['title']}}</th>
+        <td class="title">{{>item.title}}</td>
     </tr>
 
     <!-- Output creators -->
-    {{each(index, creator) item.creators}}
-        {{if ((creator.name) || (creator.firstName) || (creator.lastName) )}}
+    {{for item.creators ~item=item}}
+        {{if ((#data.name) || (#data.firstName) || (#data.lastName) )}}
         <tr>
-            <th>${item.creatorMap[creator.creatorType]}</th>
-            <td class="${creator.creatorType}">
-            {{if (typeof creator['name'] === 'string')}}
-                ${creator['name']}
+            <th>{{>~item.creatorMap[#data.creatorType]}}</th>
+            <td class="{{attr:#data.creatorType}}">
+            {{if name }}
+                {{>#data['name']}}
             {{else}}
-                ${creator.lastName}, ${creator.firstName}
+                {{>#data.lastName}}, {{>#data.firstName}}
             {{/if}}
             </td>
         </tr>
         {{/if}}
-    {{/each}}
+    {{/for}}
     
     <!-- Output fields -->
-    {{each(field, fieldValue) item.apiObj}}
-        {{if (field == 'url')}}
+    {{for ~getFields(item.apiObj) ~item=item}}
+        {{if (key == 'url')}}
         <tr>
-            <th>${Zotero.localizations.fieldMap[field]}</th>
-            <td class="${field}">
-                <a rel='nofollow' href='${fieldValue}'>${fieldValue}</a>
+            <th>{{>~zoteroFieldMap[key]}}</th>
+            <td class="{{attr:key}}">
+                <a rel='nofollow' href='{{url:value}}'>{{>value}}</a>
             </td>
         </tr>
-        {{else (field == 'DOI')}}
+        {{else (key == 'DOI')}}
         <tr>
-            <th>${Zotero.localizations.fieldMap[field]}</th>
-            <td class="${field}">
-                <a rel='nofollow' href='http://dx.doi.org/${fieldValue}'>${fieldValue}</a>
+            <th>{{>~zoteroFieldMap[key]}}</th>
+            <td class="{{attr:key}}">
+                <a rel='nofollow' href='http://dx.doi.org/{{url:value}}'>{{>value}}</a>
             </td>
         </tr>
-        {{else (Zotero.config.richTextFields[field])}}
+        {{else (~Zotero.config.richTextFields[key])}}
         <tr>
-            <th>${Zotero.localizations.fieldMap[field]}</th>
-            <td class="${$field}">
-                <textarea cols="40" rows="14" name="field" class="rte readonly">${item.apiObj[field]}</textarea>
+            <th>{{>~zoteroFieldMap[key]}}</th>
+            <td class="{{attr:key}}">
+                <textarea cols="40" rows="14" name="{{attr:key}}" class="rte readonly">{{>~item.apiObj[key]}}</textarea>
             </td>
         </tr>
-        {{else ( (J.inArray(field, item.hideFields) == -1) && (item.fieldMap.hasOwnProperty(field)) && fieldValue != '' && field != 'itemType' && field != 'title') }}
+        {{else ( (~J.inArray(key, ~item.hideFields) == -1) && (~item.fieldMap.hasOwnProperty(key)) && value != '' && key != 'itemType' && key != 'title') }}
         <tr>
-            <th>${Zotero.localizations.fieldMap[field] || field}</th>
-            <td class="${field}">
-                ${Zotero.ui.formatItemField(field, item)}
+            <th>{{>~zoteroFieldMap[key] || key}}</th>
+            <td class="{{attr:key}}">
+                {{>~formatItemField(key, ~item)}}
             </td>
         </tr>
         {{/if}}
-    {{/each}}
+    {{/for}}
     
     
     <!-- Output tags -->
@@ -84,9 +84,9 @@
         <th>Tags</th>
         <td class="tags">
         <ul class="item-details-tags-list">
-        {{each(index, tag) item.apiObj.tags}}
-            <li><a class="tag-link" data-tagtitle="${item.apiObj.tags[index].tag}" href="">${item.apiObj.tags[index].tag}</a></li>
-        {{/each}}
+        {{for item.apiObj.tags}}
+            <li><a class="tag-link" data-tagtitle="{{attr:tag}}" href="">{{>tag}}</a></li>
+        {{/for}}
         </ul>
         </td>
     </tr>
@@ -95,7 +95,7 @@
     {{if (item.attachmentDownloadUrl != '')}}
     <tr>
         <th>Download</th>
-        <td>{{html Zotero.url.attachmentDownloadLink(item)}}</td>
+        <td>{{> ~Zotero.url.attachmentDownloadLink(item)}}</td>
     </tr>
     {{/if}}
     </table>
@@ -106,11 +106,11 @@
             <div class="item-attachments-div">
             </div>
         </div>
-        {{if Zotero.config.librarySettings.allowEdit}}
+        {{if ~Zotero.config.librarySettings.allowEdit}}
         <button type="button" id="upload-attachment-link" class="btn upload-attachment-button eventfultrigger" data-triggers="uploadAttachment">Upload Attachment</button>
         {{/if}}
     {{/if}}
-    {{if item.itemType === 'attachment' && Zotero.config.librarySettings.allowEdit}}
+    {{if item.itemType === 'attachment' && ~Zotero.config.librarySettings.allowEdit}}
         <button type="button" id="upload-attachment-link" class="btn upload-attachment-button eventfultrigger" data-triggers="uploadAttachment">Upload New Copy</button>
     {{/if}}
 </script>

@@ -1,12 +1,12 @@
-Zotero.ui.widgets.updatecollectiondialog = {};
+Zotero.ui.widgets.updateCollectionDialog = {};
 
-Zotero.ui.widgets.updatecollectiondialog.init = function(el){
+Zotero.ui.widgets.updateCollectionDialog.init = function(el){
     Z.debug("updatecollectionsdialog widget init", 3);
-    Zotero.ui.eventful.listen("updateCollection", Zotero.ui.widgets.updatecollectiondialog.show, {widgetEl: el});
+    Zotero.ui.eventful.listen("updateCollection", Zotero.ui.widgets.updateCollectionDialog.show, {widgetEl: el});
 };
 
-Zotero.ui.widgets.updatecollectiondialog.show = function(e){
-    Z.debug("updatecollectiondialog.show", 3);
+Zotero.ui.widgets.updateCollectionDialog.show = function(e){
+    Z.debug("updateCollectionDialog.show", 1);
     
     var triggeringEl = J(e.triggeringElement);
     var library = Zotero.ui.getAssociatedLibrary(triggeringEl);
@@ -14,7 +14,7 @@ Zotero.ui.widgets.updatecollectiondialog.show = function(e){
     
     var widgetEl = J(e.data['widgetEl']).empty();
     
-    J("#updatecollectiondialogTemplate").tmpl({ncollections:ncollections}).appendTo(widgetEl);
+    widgetEl.html( J("#updatecollectiondialogTemplate").render({ncollections:ncollections}) );
     var dialogEl = widgetEl.find(".update-collection-dialog");
     
     var currentCollectionKey = Zotero.nav.getUrlVar('collectionKey');

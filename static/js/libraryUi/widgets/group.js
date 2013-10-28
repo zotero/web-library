@@ -30,7 +30,7 @@ Zotero.ui.displayGroupNuggets = function(el, groups){
         if(userID && (userID == group.apiObj.owner || (J.inArray(userID, group.apiObj.admins) != -1 ))) {
             groupManageable = true;
         }
-        J('#groupnuggetTemplate').tmpl({
+        jel.append( J('#groupnuggetTemplate').render({
             group:group.apiObj,
             groupViewUrl:Zotero.url.groupViewUrl(group),
             groupLibraryUrl:Zotero.url.groupLibraryUrl(group),
@@ -38,7 +38,7 @@ Zotero.ui.displayGroupNuggets = function(el, groups){
             groupLibrarySettings:Zotero.url.groupLibrarySettingsUrl(group),
             memberCount:memberCount,
             groupManageable: groupManageable
-        }).appendTo(jel);
+        }) );
     });
 };
 

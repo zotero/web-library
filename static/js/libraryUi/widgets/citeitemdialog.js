@@ -26,7 +26,7 @@ Zotero.ui.widgets.citeItemDialog.show = function(e){
     }
     
     var widgetEl = J(e.data['widgetEl']).empty();
-    J("#citeitemdialogTemplate").tmpl({freeStyleInput:true}).appendTo(widgetEl);
+    widgetEl.html( J("#citeitemdialogTemplate").render({freeStyleInput:true}) );
     var dialogEl = widgetEl.find(".cite-item-dialog");
     
     var citeFunction = function(e){

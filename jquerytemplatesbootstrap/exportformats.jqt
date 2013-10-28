@@ -1,9 +1,9 @@
-<script id="exportformatsTemplate" type="text/x-jquery-tmpl">
+<script id="exportformatsTemplate" type="text/x-jsrender">
     <ul id="export-formats-ul">
-    {{each(format, url) exportUrls}}
+    {{for ~getFields(exportUrls)}}
         <li>
-            <a href="${url}" target="_blank" class="export-link" data-exportformat="${format}">${format}</a>
+            <a href="{{url:value}}" target="_blank" class="export-link" data-exportformat="{{attr:key}}">{{>key}}</a>
         </li>
-    {{/each}}
+    {{/for}}
     </ul>
 </script>

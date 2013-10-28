@@ -14,7 +14,7 @@ Zotero.ui.widgets.deleteCollectionDialog.show = function(e){
     var currentCollection = library.collections.getCollection(currentCollectionKey);
     
     var widgetEl = J(e.data['widgetEl']).empty();
-    J("#deletecollectiondialogTemplate").tmpl({collection:currentCollection}).appendTo(widgetEl);
+    widgetEl.html( J("#deletecollectiondialogTemplate").render({collection:currentCollection}) );
     var dialogEl = widgetEl.find(".delete-collection-dialog");
     
     var deleteFunction = J.proxy(function(){

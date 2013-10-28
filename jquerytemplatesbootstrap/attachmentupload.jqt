@@ -1,12 +1,12 @@
-<script id="attachmentuploadTemplate" type="text/x-jquery-tmpl">
+<script id="attachmentuploadTemplate" type="text/x-jsrender">
 <div id="upload-attachment-dialog" class="upload-attachment-dialog modal hide" role="dialog" title="Upload Attachment">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
         <h3>Upload Attachment</h3>
     </div>
     <div class="upload-attachment-div" data-role="content">
-        <form class="attachmentuploadForm zform" data-parentItemKey="${itemKey}">
-        {{if Modernizr.draganddrop}}
+        <form class="attachmentuploadForm zform" data-parentItemKey="{{attr:itemKey}}">
+        {{if ~Modernizr.draganddrop}}
         <h3>Select a file for upload or drag and drop below</h3>
         <input type="file" id="fileuploadinput" class="fileuploadinput" multiple style="">
         <div id="fileuploaddroptarget" class="fileuploaddroptarget">

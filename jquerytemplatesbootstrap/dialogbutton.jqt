@@ -1,3 +1,3 @@
-<script id="dialogbuttonTemplate" type="text/x-jquery-tmpl">
-    <button class="dialogbutton" data-role="button">${title}</button>
+<script id="dialogbuttonTemplate" type="text/x-jsrender">
+    <button class="dialogbutton" data-role="button">{{>title}}</button>
 </script>

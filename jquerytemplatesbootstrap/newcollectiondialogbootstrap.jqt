@@ -1,4 +1,4 @@
-<script id="newcollectiondialogTemplate" type="text/x-jquery-tmpl">
+<script id="newcollectiondialogTemplate" type="text/x-jsrender">
 <div id="create-collection-dialog" class="create-collection-dialog modal hide" role="dialog" title="Create Collection">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
@@ -12,7 +12,7 @@
             </div>
             <div data-role="fieldcontain">
             <label for="new-collection-parent">Parent Collection</label>
-            {{tmpl({collections:ncollections, allowNoValue:true, selectclass:'new-collection-parent', optionsOnly:false, noValueText:'None'}) 'choosecollectionformTemplate'}}
+            {{include ~allowNoValue=true ~selectclass='new-collection-parent' ~optionsOnly=false ~noValueText='None' tmpl='#choosecollectionformTemplate' /}}
             </div>
         </form>
     </div>

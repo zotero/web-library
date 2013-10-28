@@ -12,7 +12,7 @@ Zotero.ui.widgets.uploadDialog.show = function(e){
     var library = Zotero.ui.getAssociatedLibrary(triggeringEl);
     var widgetEl = J(e.data['widgetEl']).empty();
     
-    J("#attachmentuploadTemplate").tmpl({}).appendTo(widgetEl);
+    widgetEl.html( J("#attachmentuploadTemplate").render({}) );
     var dialogEl = widgetEl.find(".upload-attachment-dialog");
     
     var uploadFunction = J.proxy(function(){

@@ -173,10 +173,10 @@ Zotero.ui.addCreator = function(e){
     }
     var newindex = creatornum + 1;
     var jel = J("input[id^='creator_']:last").closest('tr');
-    J.tmpl('authorelementsdoubleTemplate', {index:newindex,
+    jel.after( J('#authorelementsdoubleTemplate').render({index:newindex,
                                             creator:{firstName:'', lastName:''},
                                             creatorTypes:Zotero.Item.prototype.creatorTypes[itemType]
-                                            }).insertAfter(jel);
+                                            }) );
     
     Zotero.ui.init.creatorFieldButtons();
     

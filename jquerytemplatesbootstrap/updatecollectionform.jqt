@@ -1,4 +1,4 @@
-<script id="updatecollectionformTemplate" type="text/x-jquery-tmpl">
+<script id="updatecollectionformTemplate" type="text/x-jsrender">
     <div class="update-collection-div">
         <form method="POST" class="zform">
             <ol>

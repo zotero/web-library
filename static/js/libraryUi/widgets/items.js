@@ -107,7 +107,6 @@ Zotero.ui.displayItemsWidget = function(el, config, loadedItems){
     
     var itemsTableData = {displayFields:displayFields,
                            items:loadedItems.itemsArray,
-                           editmode:editmode,
                            order: order,
                            sort: sort,
                            library: loadedItems.library
@@ -218,7 +217,7 @@ Zotero.ui.displayItemsFull = function(el, config, loadedItems){
 Zotero.ui.insertItemsTable = function(el, data){
     Z.debug("Zotero.ui.insertItemsTable", 3);
     Z.debug(data, 4);
-    var a = J.tmpl('itemstableTemplate', data).appendTo(J(el));
+    var a = J(el).append( J('#itemstableTemplate').render(data) );
     
     //need to test for inside initialized page or error is thrown
     if(Zotero.config.mobile && J(el).closest('.ui-page').length){
@@ -241,7 +240,7 @@ Zotero.ui.insertItemsTable = function(el, data){
  * @return {undefined}
  */
 Zotero.ui.insertItemsPagination = function(el, data){
-    J.tmpl('itempaginationTemplate', data).appendTo(J(el));
+    J(el).append( J('#itempaginationTemplate').render(data) );
     Zotero.ui.init.paginationButtons(data.pagination);
 };
 
@@ -329,7 +328,7 @@ Zotero.ui.callbacks.sortBy = function(e){
     var currentOrderSort = Zotero.ui.getPrioritizedVariable('sort', 'asc');// Zotero.nav.getUrlVar('sort') || Zotero.config.sortOrdering[currentOrderField] || 'asc';
     
     var dialogEl = J("#sort-dialog");
-    J("#sortdialogTemplate").tmpl({'columnFields':Zotero.Library.prototype.displayableColumns, currentOrderField:currentOrderField}).replaceAll(dialogEl);
+    dialogEl.replaceWith( J("#sortdialogTemplate").render({'columnFields':Zotero.Library.prototype.displayableColumns, currentOrderField:currentOrderField}) );
     
     var submitFunction = J.proxy(function(){
         Z.debug("Zotero.ui.callbacks.sortBy submit callback");

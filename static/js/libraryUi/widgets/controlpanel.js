@@ -79,7 +79,7 @@ Zotero.ui.widgets.controlPanel.createItemDropdown = function(el){
     //render dropdown into widget
     menuEl = J(el).find(".createitemmenu.dropdown-menu");
     menuEl.empty();
-    J(el).find("#newitemdropdownTemplate").tmpl({itemTypes:itemTypes}).replaceAll(menuEl);
+    menuEl.replaceWith( J(el).find("#newitemdropdownTemplate").render({itemTypes:itemTypes}) );
     //J(el).find(".create-item-button").dropdown();
 };
 
@@ -142,10 +142,10 @@ Zotero.ui.callbacks.citeItems = function(e){
     var library = Zotero.ui.getAssociatedLibrary();
     var dialogEl = J("#cite-item-dialog").empty();
     if(Zotero.config.mobile){
-        J("#citeitemformTemplate").tmpl({}).replaceAll(dialogEl);
+        dialogEl.replaceWith( J("#citeitemformTemplate").render({}) );
     }
     else{
-        J("#citeitemformTemplate").tmpl({}).appendTo(dialogEl);
+        dialogEl.append(J("#citeitemformTemplate").render({}) );
     }
     
     
@@ -205,11 +205,9 @@ Zotero.ui.callbacks.showExportDialog = function(e){
     var library = Zotero.ui.getAssociatedLibrary(J("#feed-link-div"));
     var dialogEl = J("#export-dialog").empty();
     if(Zotero.config.mobile){
-        //J("#exportTemplate").tmpl({}).replaceAll(dialogEl);
         J("#export-dialog").empty().append(J("#export-list").contents().clone() );
     }
     else{
-        //J("#exportTemplate").tmpl({}).appendTo(dialogEl);
         J("#export-dialog").empty().append(J("#export-list").contents().clone() );
     }
     
@@ -367,7 +365,7 @@ Zotero.ui.callbacks.addToCollection =  function(e){
     var library = Zotero.ui.getAssociatedLibrary();
     var dialogEl = J("#add-to-collection-dialog").empty();
     Z.debug(library.collections.ncollections, 4);
-    J("#addtocollectionformTemplate").tmpl({ncollections:library.collections.nestedOrderingArray()}).appendTo(dialogEl);
+    dialogEl.html( J("#addtocollectionformTemplate").render({ncollections:library.collections.nestedOrderingArray()}) );
     
     var addToFunction = J.proxy(function(){
         Z.debug("add-to-collection-select changed", 3);
@@ -406,7 +404,7 @@ Zotero.ui.callbacks.librarySettings = function(e){
     e.preventDefault();
     //if(Z.config.librarySettingsInit == false){
     var dialogEl = J("#library-settings-dialog").empty();
-    J("#librarysettingsTemplate").tmpl({'columnFields':Zotero.Library.prototype.displayableColumns}).appendTo(dialogEl);
+    dialogEl.html( J("#librarysettingsTemplate").render({'columnFields':Zotero.Library.prototype.displayableColumns}) );
     
     J("#display-column-field-title").prop('checked', true).prop('disabled', true);
     J.each(Zotero.prefs.library_listShowFields, function(index, value){

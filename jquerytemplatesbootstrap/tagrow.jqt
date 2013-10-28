@@ -1,5 +1,5 @@
-<script id="tagrowTemplate" type="text/x-jquery-tmpl">
-<li class="tag-row" data-tagtitle="${tag.title}">
-    <a class='tag-link' title="${tag.title} {{if tag.numItems}}(${tag.numItems}){{/if}}" data-tagtitle="${tag.title}" href="${newurl}">${Zotero.ui.trimString(tag.title, 12)}</a>
+<script id="tagrowTemplate" type="text/x-jsrender">
+<li class="tag-row" data-tagtitle="{{attr:title}}">
+    <a class='tag-link' title="{{attr:title}} {{if numItems}}({{attr:numItems}}){{/if}}" data-tagtitle="{{attr:title}}" href="{{url:newurl}}">{{>~trimString(title, 12)}}</a>
 </li>
 </script>

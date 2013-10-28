@@ -1,5 +1,5 @@
-<script id="pageheaderTemplate" type="text/x-jquery-tmpl">
+<script id="pageheaderTemplate" type="text/x-jsrender">
 <div data-role="header">
-    <h1>${title}</h1>
+    <h1>{{>title}}</h1>
 </div><!-- /header -->
 </script>

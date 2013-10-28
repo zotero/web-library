@@ -1,11 +1,11 @@
-<script id="collectionbuttonTemplate" type="text/x-jquery-tmpl">
-    {{if Zotero.config.mobile}}
-        {{if !collection.hasChildren}}
-            <a data-role="button" href="${collection.collectionLink}" class="collection-select-link" id="collection-select-link-${collection.collectionKey}">${collection.title}</a>
-        {{else collection.hasChildren}}
+<script id="collectionbuttonTemplate" type="text/x-jsrender">
+    {{if ~Zotero.config.mobile}}
+        {{if !hasChildren}}
+            <a data-role="button" href="{{url:collectionLink}}" class="collection-select-link" id="collection-select-link-{{attr:collectionKey}}">{{>title}}</a>
+        {{else hasChildren}}
             <div data-role="controlgroup">
-            <a data-role="button" href="${collection.collectionLink}" class="collection-select-link" id="collection-select-link-${collection.collectionKey}">${collection.title}</a>
-            <a data-role="button" data-icon="arrow-d" data-iconpos="bottom" href="#" class="collection-expand-link" id="collection-expand-link-${collection.collectionKey}"></a>
+            <a data-role="button" href="{{url:collectionLink}}" class="collection-select-link" id="collection-select-link-{{attr:collectionKey}}">{{>title}}</a>
+            <a data-role="button" data-icon="arrow-d" data-iconpos="bottom" href="#" class="collection-expand-link" id="collection-expand-link-{{attr:collectionKey}}"></a>
             </div>
         {{/if}}
     {{else}}

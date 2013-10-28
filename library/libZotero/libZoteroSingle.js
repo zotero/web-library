@@ -1089,15 +1089,15 @@ Zotero.Library.prototype.loadUpdatedItems = function(){
 };
 
 Zotero.Library.prototype.loadUpdatedCollections = function(){
-    Z.debug("Zotero.Library.loadUpdatedCollections", 3);
+    Z.debug("Zotero.Library.loadUpdatedCollections", 1);
     var library = this;
     var d = new J.Deferred();
     //we need modified collectionKeys regardless, so load them
     var collectionVersionsDeferred = library.updatedVersions("collections", library.collections.collectionsVersion);
     collectionVersionsDeferred.done(J.proxy(function(data, textStatus, keysjqxhr){
-        Z.debug("collectionVersionsDeferred finished", 3);
+        Z.debug("collectionVersionsDeferred finished", 1);
         var updatedVersion = keysjqxhr.getResponseHeader("Last-Modified-Version");
-        Z.debug("2 Collections Last-Modified-Version: " + updatedVersion, 3);
+        Z.debug("2 Collections Last-Modified-Version: " + updatedVersion, 1);
         Zotero.utils.updateSyncState(library.collections.syncState, updatedVersion);
         
         var collectionVersions = data;
@@ -1107,6 +1107,7 @@ Zotero.Library.prototype.loadUpdatedCollections = function(){
             collectionKeys.push(key);
         });
         if(collectionKeys.length === 0){
+            Z.debug("No collectionKeys need updating. resolving");
             d.resolve();
         }
         else {
@@ -1117,8 +1118,8 @@ Zotero.Library.prototype.loadUpdatedCollections = function(){
                 
                 var displayParams = Zotero.nav.getUrlVars();
                 //save updated collections to cache
-                Z.debug("loadUpdatedCollections complete - saving collections to cache before resolving", 3);
-                Z.debug("collectionsVersion: " + library.collections.collectionsVersion, 3);
+                Z.debug("loadUpdatedCollections complete - saving collections to cache before resolving", 1);
+                Z.debug("collectionsVersion: " + library.collections.collectionsVersion, 1);
                 library.saveCachedCollections();
                 //TODO: Display collections from here?
                 d.resolve();
@@ -1127,6 +1128,7 @@ Zotero.Library.prototype.loadUpdatedCollections = function(){
     }, this ) );
     
     collectionVersionsDeferred.fail(J.proxy(function(){
+        Z.debug("collectionVersions failed. rejecting deferred.", 1);
         d.reject();
     }, this) );
     
@@ -1390,7 +1392,7 @@ Zotero.Library.prototype.loadItemsFromKeysParallel = function(keys){
 
 //keys is an array of collectionKeys from this library that we need to download
 Zotero.Library.prototype.loadCollectionsFromKeysParallel = function(keys){
-    Zotero.debug("Zotero.Library.loadCollectionsFromKeysParallel", 3);
+    Zotero.debug("Zotero.Library.loadCollectionsFromKeysParallel", 1);
     var library = this;
     var d = library.loadFromKeysParallel(keys, "collections");
     return d;
@@ -1405,7 +1407,7 @@ Zotero.Library.prototype.loadSeachesFromKeysParallel = function(keys){
 };
 
 Zotero.Library.prototype.loadFromKeysParallel = function(keys, objectType){
-    Zotero.debug("Zotero.Library.loadFromKeysParallel", 3);
+    Zotero.debug("Zotero.Library.loadFromKeysParallel", 1);
     if(!objectType) objectType = 'items';
     var library = this;
     var keyslices = [];
@@ -1432,8 +1434,8 @@ Zotero.Library.prototype.loadFromKeysParallel = function(keys, objectType){
         xhrs.push(xhr );
     });
     
-    J.when(xhrs).then(J.proxy(function(){
-        Z.debug("All parallel requests returned - resolving deferred", 3);
+    J.when.apply(this, xhrs).then(J.proxy(function(){
+        Z.debug("All parallel requests returned - resolving deferred", 1);
         deferred.resolve(true);
     }, this) );
     
@@ -5617,7 +5619,7 @@ Zotero.Library.prototype.fetchCollections = function(config){
 //added so the request is always completed rather than checking if it should be
 //important for parallel requests that may load more than what we just want to see right now
 Zotero.Library.prototype.loadCollectionsSimple = function(config){
-    Z.debug("Zotero.Library.loadCollections", 3);
+    Z.debug("Zotero.Library.loadCollections", 1);
     Z.debug(config);
     var library = this;
     if(!config){
@@ -5636,7 +5638,7 @@ Zotero.Library.prototype.loadCollectionsSimple = function(config){
     var requestUrl = Zotero.ajax.apiRequestString(urlconfig);
     
     var callback = J.proxy(function(data, textStatus, xhr){
-        Z.debug('loadCollections proxied callback', 3);
+        Z.debug('loadCollectionsSimple proxied callback', 1);
         var collectionsfeed = new Zotero.Feed(data, xhr);
         collectionsfeed.requestConfig = urlconfig;
         //clear out display items
@@ -5644,7 +5646,8 @@ Zotero.Library.prototype.loadCollectionsSimple = function(config){
         for (var i = 0; i < collectionsAdded.length; i++) {
             collectionsAdded[i].associateWithLibrary(library);
         }
-        Zotero.trigger("collectionsChanged", library);
+        deferred.resolve(collectionsAdded);
+        //Zotero.trigger("collectionsChanged", library);
     }, this);
     
     var jqxhr = library.ajaxRequest(requestUrl);

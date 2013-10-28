@@ -14,7 +14,7 @@ Zotero.ui.widgets.createCollectionDialog.show = function(e){
     
     var widgetEl = J(e.data['widgetEl']).empty();
     
-    J("#newcollectiondialogTemplate").tmpl({ncollections:ncollections}).appendTo(widgetEl);
+    widgetEl.html( J("#newcollectiondialogTemplate").render({ncollections:ncollections}) );
     var dialogEl = widgetEl.find(".create-collection-dialog");
     
     var currentCollectionKey = Zotero.nav.getUrlVar('collectionKey');
