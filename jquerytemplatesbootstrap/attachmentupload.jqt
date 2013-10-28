@@ -1,85 +1,89 @@
 <script id="attachmentuploadTemplate" type="text/x-jsrender">
-<div id="upload-attachment-dialog" class="upload-attachment-dialog modal hide" role="dialog" title="Upload Attachment">
-    <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-        <h3>Upload Attachment</h3>
-    </div>
-    <div class="upload-attachment-div" data-role="content">
-        <form class="attachmentuploadForm zform" data-parentItemKey="{{attr:itemKey}}">
-        {{if ~Modernizr.draganddrop}}
-        <h3>Select a file for upload or drag and drop below</h3>
-        <input type="file" id="fileuploadinput" class="fileuploadinput" multiple style="">
-        <div id="fileuploaddroptarget" class="fileuploaddroptarget">
-            <h3>Drop your file here</h3>
-            <h3 id="droppedfilename" class="droppedfilename"></h3>
-            <div id="fileuploadspinner" class="fileuploadspinner">
+<div id="upload-attachment-dialog" class="upload-attachment-dialog modal" role="dialog" title="Upload Attachment">
+    <div  class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h3>Upload Attachment</h3>
+            </div>
+            <div class="upload-attachment-div" data-role="content">
+                <form class="attachmentuploadForm zform" data-parentItemKey="{{attr:itemKey}}">
+                {{if ~Modernizr.draganddrop}}
+                <h3>Select a file for upload or drag and drop below</h3>
+                <input type="file" id="fileuploadinput" class="fileuploadinput" multiple style="">
+                <div id="fileuploaddroptarget" class="fileuploaddroptarget">
+                    <h3>Drop your file here</h3>
+                    <h3 id="droppedfilename" class="droppedfilename"></h3>
+                    <div id="fileuploadspinner" class="fileuploadspinner">
+                    </div>
+                </div>
+                <div id="attachmentuploadfileinfo" class="attachmentuploadfileinfo">
+                    <table>
+                        <tr>
+                            <th>Title</th>
+                            <td><input id="upload-file-title-input" class="upload-file-title-input" type="text"></td>
+                        </tr>
+                        <tr>
+                            <th>Size</th>
+                            <td class="uploadfilesize"></td>
+                        </tr>
+                        <tr>
+                            <th>Type</th>
+                            <td class="uploadfiletype"></td>
+                        </tr>
+                        <tr>
+                            <th>Upload</th>
+                            <td class="uploadprogress"><meter min="0" max="100" value="0" id="uploadprogressmeter"></meter></td>
+                        </tr>
+                        <!--
+                        <tr>
+                            <th>MD5</th>
+                            <td class="uploadfilemd5"></td>
+                        </tr>
+                        -->
+                    </table>
+                </div>
+                {{else}}
+                <h3>Select a file for upload</h3>
+                <input type="file" id="fileuploadinput" class="fileuploadinput" multiple style="">
+                <div id="fileuploadspinner" class="fileuploadspinner">
+                </div>
+                <div id="attachmentuploadfileinfo" class="attachmentuploadfileinfo">
+                    <table>
+                        <tr>
+                            <th>Title</th>
+                            <td><input id="upload-file-title-input" class="upload-file-title-input" type="text"></td>
+                        </tr>
+                        <tr>
+                            <th>Size</th>
+                            <td class="uploadfilesize"></td>
+                        </tr>
+                        <tr>
+                            <th>Type</th>
+                            <td class="uploadfiletype"></td>
+                        </tr>
+                        <!--
+                        <tr>
+                            <th>MD5</th>
+                            <td class="uploadfilemd5"></td>
+                        </tr>
+                        -->
+                        <tr>
+                            <th>Upload</th>
+                            <td class="uploadprogress"><meter min="0" max="100" value="0" id="uploadprogressmeter"></meter></td>
+                        </tr>
+                    </table>
+                </div>
+                
+                {{/if}}
+                </form>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+                <button type="button" class="btn btn-primary uploadButton">Upload</button>
             </div>
         </div>
-        <div id="attachmentuploadfileinfo" class="attachmentuploadfileinfo">
-            <table>
-                <tr>
-                    <th>Title</th>
-                    <td><input id="upload-file-title-input" class="upload-file-title-input" type="text"></td>
-                </tr>
-                <tr>
-                    <th>Size</th>
-                    <td class="uploadfilesize"></td>
-                </tr>
-                <tr>
-                    <th>Type</th>
-                    <td class="uploadfiletype"></td>
-                </tr>
-                <tr>
-                    <th>Upload</th>
-                    <td class="uploadprogress"><meter min="0" max="100" value="0" id="uploadprogressmeter"></meter></td>
-                </tr>
-                <!--
-                <tr>
-                    <th>MD5</th>
-                    <td class="uploadfilemd5"></td>
-                </tr>
-                -->
-            </table>
-        </div>
-        {{else}}
-        <h3>Select a file for upload</h3>
-        <input type="file" id="fileuploadinput" class="fileuploadinput" multiple style="">
-        <div id="fileuploadspinner" class="fileuploadspinner">
-        </div>
-        <div id="attachmentuploadfileinfo" class="attachmentuploadfileinfo">
-            <table>
-                <tr>
-                    <th>Title</th>
-                    <td><input id="upload-file-title-input" class="upload-file-title-input" type="text"></td>
-                </tr>
-                <tr>
-                    <th>Size</th>
-                    <td class="uploadfilesize"></td>
-                </tr>
-                <tr>
-                    <th>Type</th>
-                    <td class="uploadfiletype"></td>
-                </tr>
-                <!--
-                <tr>
-                    <th>MD5</th>
-                    <td class="uploadfilemd5"></td>
-                </tr>
-                -->
-                <tr>
-                    <th>Upload</th>
-                    <td class="uploadprogress"><meter min="0" max="100" value="0" id="uploadprogressmeter"></meter></td>
-                </tr>
-            </table>
-        </div>
-        
-        {{/if}}
-        </form>
-
-    </div>
-    <div class="modal-footer">
-        <button type="button" class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-        <button type="button" class="btn btn-primary uploadButton">Upload</button>
     </div>
 </div>
 

@@ -12,29 +12,6 @@ Reds
     #700    : Darker Red (a:visited)
 */
 
-body {
-    background-color: #e6e6e6;
-    color: #444;
-    font:87.5%/1.42857143em "Lucida Grande", Verdana, sans-serif; 
-    margin:0;
-    padding: 0;
-}
-
-h1 {
-    line-height: 1.5em;
-}
-
-h2 {
-    color: #666;
-}
-
-a:link {color: #38c;}
-a:visited {color: #38c;}
-a:hover {color: #369;}
-a:active {color: #333;}
-
-a img {border:none;}
-
 ul.plain-list {list-style:none;}
 
 /* Table defaults */
@@ -190,7 +167,6 @@ form:after,
 }
 
 .paginationControl {
-    font-size: 0.857142857em;
 }
 
 /*
@@ -313,7 +289,6 @@ input.button:active {
 /* == Content == */
 #breadcrumbs,
 .action-links {
-    font-size:0.857142857em;
 }
 
 

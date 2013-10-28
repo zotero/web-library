@@ -1,5 +1,5 @@
 <script id="itemformTemplate" type="text/x-jsrender">
-    <form class="itemDetailForm zform" data-itemKey="{{attr:itemKey}}">
+    <form class="itemDetailForm zform" data-itemKey="{{attr:itemKey}}" role="form">
     <button type="submit" data-itemKey="{{attr:itemKey}}" class="zform saveitembutton btn eventfultrigger" data-triggers="saveItem">Save</button>
     <button type="button" data-itemKey="{{attr:itemKey}}" class="zform cancelitemeditbutton btn eventfultrigger" data-triggers="cancelItemEdit">Cancel</button>
     <h2>{{>item.title}}</h2>

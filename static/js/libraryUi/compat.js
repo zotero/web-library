@@ -6,7 +6,8 @@
  */
 Zotero.ui.dialog = function(el, options){
     Z.debug("Zotero.ui.dialog", 3);
-    J(el).dialog(options);
+    //J(el).dialog(options);
+    J(el).modal(options);
     Z.debug("exiting Zotero.ui.dialog", 3);
 };
 

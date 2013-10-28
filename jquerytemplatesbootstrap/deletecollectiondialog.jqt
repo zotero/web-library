@@ -1,16 +1,17 @@
-<script id="exportitemsdialogTemplate" type="text/x-jsrender">
-<div id="export-items-dialog" class="export-items-dialog modal " role="dialog" title="Library Settings">
+<script id="deletecollectiondialogTemplate" type="text/x-jsrender">
+<div id="delete-collection-dialog" class="delete-collection-dialog modal " role="dialog" title="Delete Collection">
     <div  class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                <h3>Export</h3>
+                <h3>Delete Collection</h3>
             </div>
-            <div class="modal-content modal-body">
-                
+            <div class="delete-collection-div modal-body">
+                <p>Really delete collection "{{>collection.title}}"?</p>
             </div>
             <div class="modal-footer">
                 <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+                <button class="btn btn-primary deleteButton">Delete</button>
             </div>
         </div>
     </div>
