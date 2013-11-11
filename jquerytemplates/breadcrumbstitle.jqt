@@ -1,3 +1,0 @@
-<script id="breadcrumbstitleTemplate" type="text/x-jquery-tmpl">
-    {{each(index, crumb) breadcrumbs}}{{if crumb.label == 'Home'}}Zotero | {{else}}${crumb.label}{{if (index < (breadcrumbs.length - 1))}} > {{/if}}{{/if}}{{/each}}
-</script>

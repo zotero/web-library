@@ -1,9 +1,0 @@
-<script id="exportformatsTemplate" type="text/x-jquery-tmpl">
-    <ul id="export-formats-ul">
-    {{each(format, url) exportUrls}}
-        <li>
-            <a href="${url}" target="_blank" class="export-link" data-exportformat="${format}">${format}</a>
-        </li>
-    {{/each}}
-    </ul>
-</script>
