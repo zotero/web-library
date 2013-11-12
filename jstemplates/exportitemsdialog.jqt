@@ -6,7 +6,7 @@
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
                 <h3>Export</h3>
             </div>
-            <div class="modal-content modal-body">
+            <div class="modal-body" data-role="content">
                 
             </div>
             <div class="modal-footer">
