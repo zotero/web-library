@@ -6,65 +6,6 @@ if(!Zotero.ui.widgets){
     Zotero.ui.widgets = {};
 }
 
-//initialize the library control buttons
-Zotero.ui.init.libraryControls = function(){
-    Z.debug("Zotero.ui.initControls", 3);
-    //set up control panel buttons
-    
-    
-    //check/uncheck all boxes in items table when master checkbox is toggled
-    J('#library-items-div').on('change', ".itemlist-editmode-checkbox.all-checkbox", function(e){
-        J(".itemlist-editmode-checkbox").prop('checked', J(".itemlist-editmode-checkbox.all-checkbox").prop('checked'));
-        Zotero.ui.eventful.trigger("selectedItemsChanged");
-    });
-    
-    //init itemkey-checkbox to enable/disable buttons that require something being selected
-    J('#library-items-div').on('change', "input.itemKey-checkbox", function(e){
-        Zotero.ui.eventful.trigger("selectedItemsChanged");
-    });
-    
-    
-    //set initial state of search input to url value
-    if(Zotero.nav.getUrlVar('q')){
-        J("#header-search-query").val(Zotero.nav.getUrlVar('q'));
-    }
-    //clear libary query param when field cleared
-    var context = 'support';
-    if(undefined !== window.zoterojsSearchContext){
-        context = zoterojsSearchContext;
-    }
-    
-    J("#header-search-query").val("");
-    //J("#header-search-query").attr('placeholder', "Search Library");
-    
-    //set up search submit for library
-    J("#library-search").on('submit', function(e){
-        e.preventDefault();
-        Zotero.nav.clearUrlVars(['collectionKey', 'tag', 'q']);
-        var query     = J("#header-search-query").val();
-        if(query !== "" || Zotero.nav.getUrlVar('q') ){
-            Zotero.nav.urlvars.pathVars['q'] = query;
-            Zotero.nav.pushState();
-        }
-        return false;
-    });
-    
-    //set up library search clear button
-    if((context == 'library') || (context == 'grouplibrary')){
-        var clearQuery = function(e){
-            J("#header-search-query").val('');
-            if(Zotero.nav.getUrlVar('q')){
-                Zotero.nav.setUrlVar('q', '');
-                Zotero.nav.pushState();
-            }
-        };
-        J("#library-search button.clear-field-button").on('click', clearQuery);
-    }
-};
-
-Zotero.ui.init.jqueryui = function(){
-};
-
 //initialize pagination buttons
 Zotero.ui.init.paginationButtons = function(pagination){
 };

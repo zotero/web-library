@@ -6,6 +6,21 @@ Zotero.ui.widgets.items.init = function(el){
     //set up sorting on header clicks
     var container = J(el);
     container.on('click', ".field-table-header", Zotero.ui.callbacks.resortItems);
+    
+    //check/uncheck all boxes in items table when master checkbox is toggled
+    container.on('change', ".itemlist-editmode-checkbox.all-checkbox", function(e){
+        J(".itemlist-editmode-checkbox").prop('checked', J(".itemlist-editmode-checkbox.all-checkbox").prop('checked'));
+        Zotero.ui.updateDisabledControlButtons();
+        Zotero.ui.eventful.trigger("selectedItemsChanged");
+    });
+    
+    //init itemkey-checkbox to enable/disable buttons that require something being selected
+    container.on('change', "input.itemKey-checkbox", function(e){
+        Zotero.ui.updateDisabledControlButtons();
+        Zotero.ui.eventful.trigger("selectedItemsChanged");
+    });
+    
+    
 };
 
 Zotero.ui.widgets.items.loadItemsCallback = function(event){

@@ -17,11 +17,45 @@ Zotero.ui.widgets.controlPanel.init = function(el){
     //Zotero.ui.eventful.listen("librarySettings", Zotero.ui.callbacks.librarySettings);
     //Zotero.ui.eventful.listen("citeItems", Zotero.ui.callbacks.citeItems);
     //Zotero.ui.eventful.listen("exportItems", Zotero.ui.callbacks.showExportDialog);
+    Zotero.ui.eventful.listen('clearLibraryQuery', Zotero.ui.clearLibraryQuery);
+    
+    var container = J(el);
+    //set initial state of search input to url value
+    if(Zotero.nav.getUrlVar('q')){
+        container.find("#header-search-query").val(Zotero.nav.getUrlVar('q'));
+    }
+    
+    //clear libary query param when field cleared
+    var context = 'support';
+    if(undefined !== window.zoterojsSearchContext){
+        context = zoterojsSearchContext;
+    }
+    
+    //set up search submit for library
+    container.on('submit', "#library-search", function(e){
+        e.preventDefault();
+        Zotero.nav.clearUrlVars(['collectionKey', 'tag', 'q']);
+        var query     = J("#header-search-query").val();
+        if(query !== "" || Zotero.nav.getUrlVar('q') ){
+            Zotero.nav.urlvars.pathVars['q'] = query;
+            Zotero.nav.pushState();
+        }
+        return false;
+    });
+    
 };
 
 Zotero.ui.widgets.controlPanel.updateDisabledControlButtons = function(){
     Zotero.ui.updateDisabledControlButtons();
 };
+
+Zotero.ui.clearLibraryQuery = function(){
+    if(Zotero.nav.getUrlVar('q')){
+        Zotero.nav.setUrlVar('q', '');
+        Zotero.nav.pushState();
+    }
+    return;
+}
 
 /**
  * Update the disabled state of library control toolbar buttons depending on context
@@ -90,29 +124,27 @@ Zotero.ui.widgets.controlPanel.createItemDropdown = function(el){
  */
 Zotero.ui.callbacks.toggleEdit =  function(e){
     Z.debug("edit checkbox toggled", 3);
-    if(Zotero.config.jqueryui === false){
-        var curMode = Zotero.nav.getUrlVar('mode');
-        if(curMode != "edit"){
-            Zotero.nav.urlvars.pathVars['mode'] = 'edit';
-        }
-        else{
-            delete Zotero.nav.urlvars.pathVars['mode'];
-        }
-        Zotero.nav.pushState();
-        return false;
+    var curMode = Zotero.nav.getUrlVar('mode');
+    if(curMode != "edit"){
+        Zotero.nav.urlvars.pathVars['mode'] = 'edit';
     }
-    else {
-        if(J(this).prop('checked')){
-            Z.debug("has val: " + J(this).val());
-            Zotero.nav.urlvars.pathVars['mode'] = 'edit';
-        }
-        else{
-            Z.debug("removing edit mode", 3);
-            delete Zotero.nav.urlvars.pathVars['mode'];
-        }
-        Zotero.nav.pushState();
-        return false;
+    else{
+        delete Zotero.nav.urlvars.pathVars['mode'];
     }
+    Zotero.nav.pushState();
+    return false;
+    /*
+    if(J(this).prop('checked')){
+        Z.debug("has val: " + J(this).val());
+        Zotero.nav.urlvars.pathVars['mode'] = 'edit';
+    }
+    else{
+        Z.debug("removing edit mode", 3);
+        delete Zotero.nav.urlvars.pathVars['mode'];
+    }
+    Zotero.nav.pushState();
+    return false;
+    */
 };
 
 
@@ -135,7 +167,7 @@ Zotero.ui.callbacks.createItem = function(e){
 };
 
 Zotero.ui.callbacks.citeItems = function(e){
-    Z.debug("cite-item-link clicked", 3);
+    Z.debug("Zotero.ui.callbacks.citeItems", 3);
     e.preventDefault();
     
     //get library and build dialog
@@ -227,7 +259,7 @@ Zotero.ui.callbacks.showExportDialog = function(e){
 };
 
 Zotero.ui.callbacks.exportItems = function(e){
-    Z.debug("cite-item-link clicked", 3);
+    Z.debug("Zotero.ui.callbacks.exportItems", 3);
     e.preventDefault();
     
     //get library

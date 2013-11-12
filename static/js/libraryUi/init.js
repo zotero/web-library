@@ -61,190 +61,17 @@ Zotero.ui.init.fullLibrary = function(){
         Zotero.ui.init.offlineLibrary();
         return;
     }
-    Zotero.ui.init.libraryControls();
-    Zotero.ui.init.tags();
-    Zotero.ui.init.items();
     Zotero.ui.init.libraryTemplates();
     
     Zotero.eventful.initWidgets();
 };
 
-//initialize the library control buttons
-Zotero.ui.init.libraryControls = function(){
-    Z.debug("Zotero.ui.initControls", 3);
-    //set up control panel buttons
-    
-    if(Zotero.config.jqueryui !== false){
-        Zotero.ui.init.jqueryui();
-    }
-    
-    if(Zotero.config.jqueryui !== false){
-        //insert the hidden library preferences and set callbacks
-        J("#library-settings-form").hide();
-        J("#control-panel-container").on('click', '#library-settings-link', Zotero.ui.callbacks.librarySettings);
-        
-        //first run to initialize enabled/disabled state of contextually relevant control buttons
-        Zotero.ui.updateDisabledControlButtons();
-        
-        //disable default actions for dialog form submissions
-        J("delete-collection-dialog").on('submit', ".delete-collection-div form", function(e){
-            e.preventDefault();
-        });
-        J("update-collection-dialog").on('submit', ".update-collection-div form", function(e){
-            e.preventDefault();
-        });
-        J("create-collection-dialog").on('submit', ".new-collection-div form", function(e){
-            e.preventDefault();
-        });
-    }
-    
-    //check/uncheck all boxes in items table when master checkbox is toggled
-    J('#library-items-div').on('change', ".itemlist-editmode-checkbox.all-checkbox", function(e){
-        J(".itemlist-editmode-checkbox").prop('checked', J(".itemlist-editmode-checkbox.all-checkbox").prop('checked'));
-        Zotero.ui.updateDisabledControlButtons();
-        Zotero.ui.eventful.trigger("selectedItemsChanged");
-    });
-    
-    //init itemkey-checkbox to enable/disable buttons that require something being selected
-    J('#library-items-div').on('change', "input.itemKey-checkbox", function(e){
-        Zotero.ui.updateDisabledControlButtons();
-        Zotero.ui.eventful.trigger("selectedItemsChanged");
-    });
-    
-    
-    //bind all control buttons to their callback functions
-    if(!Zotero.config.eventful){
-        J("#control-panel-container").on('change', "#edit-checkbox", Zotero.ui.callbacks.toggleEdit);
-        J("#collection-list-div").on('click', ".create-collection-link", Zotero.ui.callbacks.createCollection);
-        J("#collection-list-div").on('click', ".update-collection-link", Zotero.ui.callbacks.updateCollection);
-        J("#collection-list-div").on('click', ".delete-collection-link", Zotero.ui.callbacks.deleteCollection);
-        J("#control-panel-container").on('click', ".add-to-collection-link", Zotero.ui.callbacks.addToCollection);
-        J("#control-panel-container").on('click', "#create-item-link", Zotero.ui.callbacks.createItem);
-        J("#control-panel-container").on('click', ".remove-from-collection-link", Zotero.ui.callbacks.removeFromCollection);
-        J("#control-panel-container").on('click', ".move-to-trash-link", Zotero.ui.callbacks.moveToTrash);
-        J("#control-panel-container").on('click', ".remove-from-trash-link", Zotero.ui.callbacks.removeFromTrash);
-        J("#item-details-div").on('click', ".move-to-trash-link", Zotero.ui.callbacks.moveToTrash);
-    }
-    
-    
-    //set initial state of search input to url value
-    if(Zotero.nav.getUrlVar('q')){
-        J("#header-search-query").val(Zotero.nav.getUrlVar('q'));
-    }
-    //clear libary query param when field cleared
-    var context = 'support';
-    if(undefined !== window.zoterojsSearchContext){
-        context = zoterojsSearchContext;
-    }
-    
-    J("#header-search-query").val("");
-    J("#header-search-query").attr('placeholder', "Search Library");
-    
-    //set up search submit for library
-    J("#library-search").on('submit', function(e){
-        e.preventDefault();
-        Zotero.nav.clearUrlVars(['collectionKey', 'tag', 'q']);
-        var query     = J("#header-search-query").val();
-        if(query !== "" || Zotero.nav.getUrlVar('q') ){
-            Zotero.nav.urlvars.pathVars['q'] = query;
-            Zotero.nav.pushState();
-        }
-        return false;
-    });
-    
-    //set up library search clear button
-    if((context == 'library') || (context == 'grouplibrary')){
-        var clearQuery = function(e){
-            J("#header-search-query").val('');
-            if(Zotero.nav.getUrlVar('q')){
-                Zotero.nav.setUrlVar('q', '');
-                Zotero.nav.pushState();
-            }
-        };
-        J("#library-search button.clear-field-button").on('click', clearQuery);
-    }
-};
-
-Zotero.ui.init.jqueryui = function(){
-    Z.debug("Zotero.ui.init.jqueryui", 3);
-    //make edit toolbar buttons and menus
-    J("#create-item-link").button({
-        text:false,
-        icons: {
-            primary: "sprite-toolbar-item-add"
-        }
-    });
-    J("#edit-collections-link").button({
-        text:false,
-        icons: {
-            primary: "sprite-folder_edit",
-            secondary: "ui-icon-triangle-1-s"
-        }
-    });
-    
-    J("#move-item-links-buttonset").buttonset();
-    
-    J(".add-to-collection-link").button({
-        text:false,
-        icons: {
-            primary: "sprite-folder_add_to"
-        }
-    });
-    J(".remove-from-collection-link").button({
-        text:false,
-        icons: {
-            primary: "sprite-folder_remove_from"
-        }
-    });
-    J(".move-to-trash-link").button({
-        text:false,
-        icons: {
-            primary: "sprite-trash"
-        }
-    });
-    J(".remove-from-trash-link").button({
-        text:false,
-        icons: {
-            primary: "sprite-trash_remove"
-        }
-    });
-    
-    J("#edit-checkbox").button({
-        text:false,
-        icons: {
-            primary: "sprite-page_edit"
-        }
-    });
-    
-    J("#cite-link").button({
-        text:false,
-        icons: {
-            primary: "sprite-toolbar-cite"
-        }
-    });
-    
-    J("#export-link").button({
-        text:false,
-        icons: {
-            primary: "sprite-toolbar-export"
-        }
-    });
-    
-    
-    J("#library-settings-link").button({
-        text:false,
-        icons: {
-            primary: "sprite-timeline_marker"
-        }
-    });
-
-};
 //initialize pagination buttons
 Zotero.ui.init.paginationButtons = function(pagination){
     if(Zotero.config.jqueryui === false){
         return;
     }
-    
+    /*
     J("#item-pagination-div .back-item-pagination").buttonset();
     J("#item-pagination-div .forward-item-pagination").buttonset();
     J("#start-item-link").button({
@@ -283,170 +110,11 @@ Zotero.ui.init.paginationButtons = function(pagination){
     if(pagination.showLastLink === false) {
         J("#last-item-link").button('option', 'disabled', true);
     }
-};
-
-Zotero.ui.init.collections = function(){
-    Z.debug("Zotero.ui.initCollections", 3);
-};
-
-//initialize tags widget and related library features
-Zotero.ui.init.tags = function(){
-    Z.debug("Zotero.ui.initTags", 3);
-    //send pref to website when showAllTags is toggled
-    J("#tags-list-div").on('click', "#show-all-tags", function(e){
-        var show = J(this).prop('checked') ? true : false;
-        Z.debug("showAllTags is " + show, 4);
-        Zotero.utils.setUserPref('library_showAllTags', show);
-        Zotero.callbacks.loadTags(J("#tags-list-div"));
-    });
-    
-    J("#tags-list-div").on('click', "#show-more-tags-link", function(e){
-        e.preventDefault();
-        var jel = J(this).closest('#tags-list-div');
-        jel.data('showmore', true);
-        Zotero.callbacks.loadTags(jel);
-    });
-    J("#tags-list-div").on('click', "#show-less-tags-link", function(e){
-        e.preventDefault();
-        var jel = J(this).closest('#tags-list-div');
-        jel.data('showmore', false);
-        Zotero.callbacks.loadTags(jel);
-    });
-    
-    //add tag to item and stop event propogation when tag is selected
-    //from autocomplete on an item
-    J("#tags-list-div").on('keydown', ".taginput", function(e){
-        if ( e.keyCode === J.ui.keyCode.ENTER ){
-            e.preventDefault();
-            if(J(this).val() !== ''){
-                Zotero.ui.addTag();
-                e.stopImmediatePropagation();
-            }
-        }
-    });
-    
-    //bind tag autocomplete filter in tag widget
-    J("#tags-list-div").on('keyup', "#tag-filter-input", function(e){
-        Z.debug(J('#tag-filter-input').val(), 3);
-        Z.debug("value:" + J('#tag-filter-input').val(), 4);
-        var library = Zotero.ui.getAssociatedLibrary(J('#tag-filter-input').closest('.ajaxload'));
-        var libraryTagsPlainList = library.tags.plainList;
-        var matchingTagStrings = Zotero.utils.matchAnyAutocomplete(J('#tag-filter-input').val(), libraryTagsPlainList);
-        Zotero.ui.displayTagsFiltered(J('#tags-list-div'), library.tags, matchingTagStrings, []);
-        Z.debug(matchingTagStrings, 4);
-    });
-    
-    //bind refresh link to pull down fresh set of tags until there is a better way to
-    //check for updated/removed tags in API
-    J("#tags-list-div").on('click', '#refresh-tags-link', function(e){
-        e.preventDefault();
-        var library = Zotero.ui.getAssociatedLibrary(J('#tag-filter-input').closest('.ajaxload'));
-        Zotero.callbacks.loadTags(J("#tags-list-div"), false);
-        return false;
-    });
-};
-
-//initialize items widget and related features
-Zotero.ui.init.items = function(){
-    Z.debug("Zotero.ui.initItems", 3);
-    if(Zotero.config.eventful){
-        /*
-        J("#item-details-div").on('click', ".saveitembutton", Zotero.ui.saveItemCallback);
-        J("#item-details-div").on('submit', ".itemDetailForm", Zotero.ui.saveItemCallback);
-        J("#item-details-div").on('click', ".cancelitemeditbutton", Zotero.ui.callbacks.cancelItemEdit);
-        J("#item-details-div").on('click', ".itemTypeSelectButton", Zotero.ui.callbacks.selectItemType);
-            
-        J("#item-details-div").on('keydown', ".itemDetailForm input", Zotero.ui.callbacks.itemFormKeydown);
-        
-        J("#item-details-div").on('click', ".add-tag-link", Zotero.ui.addTag);
-        J("#item-details-div").on('click', ".remove-tag-link", Zotero.ui.removeTag);
-        J("#item-details-div").on('click', ".add-creator-link", Zotero.ui.addCreator);
-        J("#item-details-div").on('click', ".remove-creator-link", Zotero.ui.removeCreator);
-        
-        J("#item-details-div").on('click', ".switch-two-field-creator-link", Zotero.ui.callbacks.switchTwoFieldCreators);
-        J("#item-details-div").on('click', ".switch-single-field-creator-link", Zotero.ui.callbacks.switchSingleFieldCreator);
-        J("#item-details-div").on('click', ".add-note-button", Zotero.ui.callbacks.addNote);
-        
-        //set up sorting on header clicks
-        J("#library-items-div").on('click', ".field-table-header", Zotero.ui.callbacks.resortItems);
-        
-        //bind attachment upload link
-        J("#item-details-div").on('click', "#upload-attachment-link", Zotero.ui.callbacks.uploadAttachment);
-        */
-        return;
-    }
-    J("#item-details-div").on('click', ".saveitembutton", Zotero.ui.saveItemCallback);
-    J("#item-details-div").on('submit', ".itemDetailForm", Zotero.ui.saveItemCallback);
-    J("#item-details-div").on('click', ".cancelitemeditbutton", function(){
-        Zotero.nav.clearUrlVars(['itemKey', 'collectionKey', 'tag', 'q']);
-        Zotero.nav.pushState();
-    });
-    
-    J("#item-details-div").on('click', ".itemTypeSelectButton", function(){
-        Z.debug("itemTypeSelectButton clicked", 3);
-        var itemType = J("#itemType").val();
-        Zotero.nav.urlvars.pathVars['itemType'] = itemType;
-        Zotero.nav.pushState();
-        return false;
-    });
-    J("#item-details-div").on('change', ".itemDetailForm #itemTypeSelect", function(){
-        Z.debug("itemTypeSelect changed", 3);
-        var itemType = J(this).val();
-        Zotero.nav.urlvars.pathVars['itemType'] = itemType;
-        Zotero.nav.pushState();
-    });
-    
-    
-    J("#item-details-div").on('keydown', ".itemDetailForm input", function(e){
-        if ( e.keyCode === J.ui.keyCode.ENTER ){
-            e.preventDefault();
-            var nextEligibleSiblings = J(this).nextAll("input, button, textarea, select");
-            if(nextEligibleSiblings.length){
-                nextEligibleSiblings.first().focus();
-            }
-            else{
-                J(this).closest("tr").nextAll().find("input, button, textarea, select").first().focus();
-            }
-        }
-    });
-    
-    J("#item-details-div").on('click', ".add-tag-button", Zotero.ui.addTag);
-    J("#item-details-div").on('click', ".add-tag-link", Zotero.ui.addTag);
-    J("#item-details-div").on('click', ".remove-tag-link", Zotero.ui.removeTag);
-    J("#item-details-div").on('click', ".add-creator-link", Zotero.ui.addCreator);
-    J("#item-details-div").on('click', ".remove-creator-link", Zotero.ui.removeCreator);
-    
-    var itemDetailsDiv = J("#item-details-div");
-    itemDetailsDiv.on('click', ".switch-two-field-creator-link", Zotero.ui.callbacks.switchTwoFieldCreators);
-    itemDetailsDiv.on('click', ".switch-single-field-creator-link", Zotero.ui.callbacks.switchSingleFieldCreator);
-    itemDetailsDiv.on('click', ".add-note-button", Zotero.ui.addNote);
-    
-    
-    //set up sorting on header clicks
-    J("#library-items-div").on('click', ".field-table-header", Zotero.ui.callbacks.resortItems);
-    
-    //bind cite item link
-    J("#item-details-div").on('click', "#cite-item-link", Zotero.ui.callbacks.citeItems);
-    J("#build-bibliography-link").on('click', Zotero.ui.callbacks.citeItems);
-    J("#cite-link").on('click', Zotero.ui.callbacks.citeItems);
-    
-    //bind export links
-    J("#export-formats-div").on('click', ".export-link", Zotero.ui.callbacks.exportItems);
-    J("#export-link").on('click', Zotero.ui.callbacks.showExportDialog);
-    
-    J("#export-dialog").on('click', '.export-link', Zotero.ui.callbacks.exportItems);
-    
-    //bind attachment upload link
-    J("#item-details-div").on('click', "#upload-attachment-link", Zotero.ui.callbacks.uploadAttachment);
-    
-    //subscribe to event for item getting its first child so we can re-run getChildren
-    J.subscribe('hasFirstChild', function(itemKey){
-        var jel = J('#item-details-div');
-        Zotero.ui.showChildren(jel, itemKey);
-    });
+    */
 };
 
 Zotero.ui.init.creatorFieldButtons = function(){
+    /*
     if(Zotero.config.mobile){
         Zotero.ui.createOnActivePage(J("tr.creator"));
         return;
@@ -481,9 +149,11 @@ Zotero.ui.init.creatorFieldButtons = function(){
             primary: "sprite-plus"
         }
     });
+*/
 };
 
 Zotero.ui.init.editButton = function(){
+    /*
     Z.debug("Zotero.ui.init.editButton", 3);
     var editEl = J("#edit-checkbox");
     if(Zotero.config.jqueryui === false){
@@ -516,36 +186,7 @@ Zotero.ui.init.editButton = function(){
     else{
         editEl.button('option', 'disabled', false);
     }
-};
-
-Zotero.ui.init.detailButtons = function(){
-    Z.debug("Zotero.ui.init.detailButtons", 3);
-    if(Zotero.config.jqueryui === false){
-        return;
-    }
-    
-    J("#upload-attachment-link").button();
-    J("#cite-item-link").button();
-};
-
-Zotero.ui.init.tagButtons = function(){
-    if(Zotero.config.jqueryui === false){
-        return;
-    }
-    
-    J(".add-remove-tag-container").buttonset();
-    J(".remove-tag-link").button({
-        text:false,
-        icons: {
-            primary: "sprite-minus"
-        }
-    });
-    J(".add-tag-link").button({
-        text:false,
-        icons: {
-            primary: "sprite-plus"
-        }
-    });
+    */
 };
 
 Zotero.ui.init.rte = function(type, autofocus, elements){

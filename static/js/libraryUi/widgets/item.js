@@ -5,7 +5,7 @@ Zotero.ui.widgets.item.init = function(el){
     
     //watch buttons on item field from widget DOM element
     var container = J(el);
-    
+    /*
     container.on('click', ".saveitembutton", Zotero.ui.saveItemCallback);
     container.on('submit', ".itemDetailForm", Zotero.ui.saveItemCallback);
     container.on('click', ".cancelitemeditbutton", Zotero.ui.callbacks.cancelItemEdit);
@@ -21,11 +21,12 @@ Zotero.ui.widgets.item.init = function(el){
     container.on('click', ".switch-two-field-creator-link", Zotero.ui.callbacks.switchTwoFieldCreators);
     container.on('click', ".switch-single-field-creator-link", Zotero.ui.callbacks.switchSingleFieldCreator);
     container.on('click', ".add-note-button", Zotero.ui.addNote);
-    
+    */
     //bind attachment upload link
     container.on('click', "#upload-attachment-link", function(){
         Zotero.ui.eventful.trigger("uploadAttachment");
     });
+    
 };
 
 Zotero.ui.widgets.item.loadItemCallback = function(event){
