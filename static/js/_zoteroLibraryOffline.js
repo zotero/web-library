@@ -60,7 +60,6 @@ Zotero.callbacks.loadFullLibrary = function(el){
 Zotero.ui.init.offlineLibrary = function(){
     Z.debug("Zotero.ui.init.offlineLibrary", 3);
     
-    Zotero.ui.init.libraryControls();
     Zotero.ui.init.tags();
     Zotero.ui.init.collections();
     Zotero.ui.init.items();

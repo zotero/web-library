@@ -756,6 +756,7 @@ Zotero.callbacks.actionPanel = function(el){
  * @param  {Dom Element} el Ajaxload element
  * @return {undefined}
  */
+ /*
 Zotero.callbacks.selectMobilePage = function(el){
     Z.debug("Zotero.callbacks.selectMobilePage", 3);
     //don't switch to a dialog if this is the first load rather than a history event
@@ -763,7 +764,7 @@ Zotero.callbacks.selectMobilePage = function(el){
         Z.debug("first mobile pageload - ignoring page history's page", 3);
         Zotero.state.mobilePageFirstLoad = false;
         var activePageID = J.mobile.activePage.attr('id') || '';
-        Zotero.nav.updateStatePageID(activePageID);
+        //Zotero.nav.updateStatePageID(activePageID);
         return;
     }
     else if(Zotero.state.mobileBackButtonClicked){
@@ -789,7 +790,7 @@ Zotero.callbacks.selectMobilePage = function(el){
     Zotero.ui.createOnActivePage();
     return;
 };
-
+*/
 
 /* EVENTFUL CALLBACKS */
 Zotero.callbacks.watchState = function(el){
@@ -803,7 +804,7 @@ Zotero.callbacks.watchState = function(el){
     var effectiveUrlVars = ['itemPage', 'tag', 'collectionKey', 'order', 'sort', 'q'];
     var urlConfigVals = {};
     
-    var changedVars = Zotero.nav.diffState(Zotero.nav.prevState);
+    var changedVars = Zotero.nav.diffState(Zotero.nav.prevHref, Zotero.nav.currentHref);
     J.each(changedVars, function(ind, val){
         var e;
         switch(val){

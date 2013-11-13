@@ -136,7 +136,12 @@ Zotero.init = function(){
     
     //J(window).bind('statechange', Zotero.nav.urlChangeCallback);
     // Bind to StateChange Event
-    History.Adapter.bind(window,'statechange', Zotero.nav.stateChangeCallback); // Note: We are using statechange instead of popstate
+    //History.Adapter.bind(window,'statechange', Zotero.nav.stateChangeCallback); // Note: We are using statechange instead of popstate
+    window.onpopstate = function(){
+        Z.debug("popstate");
+        J(window).trigger('statechange');
+    };
+    J(window).on('statechange', Zotero.nav.stateChangeCallback);
     
     //call urlChangeCallback on first load since some browsers don't popstate onload
     Zotero.nav.urlChangeCallback();

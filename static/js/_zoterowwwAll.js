@@ -5072,7 +5072,8 @@ Zotero.Idb.Library.prototype.init = function(){
 Zotero.Idb.Library.prototype.deleteDB = function(){
     var idbLibrary = this;
     idbLibrary.db.close();
-    var deleteRequest = idbLibrary.indexedDB.deleteDatabase(idbLibrary.libraryString);
+    var deleteRequest = idbLibrary.indexedDB.deleteDatabase("Zotero_" + idbLibrary.libraryString);
+    Z.debug("deleting idb: " + "Zotero_" + idbLibrary.libraryString);
     deleteRequest.onerror = function(){
         Z.debug("Error deleting indexedDB");
     }
@@ -6760,7 +6761,12 @@ Zotero.init = function(){
     
     //J(window).bind('statechange', Zotero.nav.urlChangeCallback);
     // Bind to StateChange Event
-    History.Adapter.bind(window,'statechange', Zotero.nav.stateChangeCallback); // Note: We are using statechange instead of popstate
+    //History.Adapter.bind(window,'statechange', Zotero.nav.stateChangeCallback); // Note: We are using statechange instead of popstate
+    window.onpopstate = function(){
+        Z.debug("popstate");
+        J(window).trigger('statechange');
+    };
+    J(window).on('statechange', Zotero.nav.stateChangeCallback);
     
     //call urlChangeCallback on first load since some browsers don't popstate onload
     Zotero.nav.urlChangeCallback();
@@ -6835,13 +6841,18 @@ Zotero.nav.urlvars = {q:{},
 Zotero.nav.replacePush = false;
 
 Zotero.nav.startUrl = '';
+//keep track of where we came from
+//update prevHref before history.pushState so we know what changed
+//update curHref when we get a popState event
+//difference between those two is what we need to look at to know what we should update
 Zotero.nav.currentHref = '';
-Zotero.nav.prevState = {};
+Zotero.nav.prevHref = '';
 
 //state holder that will keep "current" state separate from History so we can check for updates on popstate
 //"current" here amounts to the state actually represented in the loaded page, so it will be updated after
 //events fire for a browser state change
 Zotero.nav.curState = {};
+Zotero.nav.prevState = {};
 
 Zotero.nav.pushTag = function(newtag){
     Z.debug('Zotero.nav.pushTag', 3);
@@ -6948,14 +6959,15 @@ Zotero.nav.parseUrlVars = function(){
 
 Zotero.nav.parsePathVars = function(pathname){
     Z.debug('Zotero.nav.parsePathVars', 3);
+    var history = window.history;
     //parse variables out of library urls
     //:userslug/items/:itemKey/*
     //:userslug/items/collection/:collectionKey
     //groups/:groupidentifier/items/:itemKey/*
     //groups/:groupidentifier/items/collection/:collectionKey/*
     if(!pathname){
-        var state = History.getState();
-        pathname = state.cleanUrl;//window.location.pathname
+        var state = history.state;// History.getState();
+        pathname = window.location.pathname
     }
     var basePath = Zotero.config.nonparsedBaseUrl;
     var split_replaced = [];
@@ -7061,11 +7073,11 @@ Zotero.nav.mutateUrl = function(addvars, removevars){
 
 Zotero.nav.pushState = function(force, state){
     Z.debug('Zotero.nav.pushState', 3);
-    var History = window.History;
+    var history = window.history;
     
     Zotero.ui.saveFormData();
-    var curState = History.getState();
-    Zotero.nav.prevState = curState;
+    //make prevHref the current location before we change it
+    Zotero.nav.prevHref = window.location.href;
     
     //selectively add state to hint where to go
     var s = {};
@@ -7076,26 +7088,33 @@ Zotero.nav.pushState = function(force, state){
     urlvars = Zotero.nav.urlvars.pathVars;
     
     var url = Zotero.nav.buildUrl(urlvars, false);
-    
+    Z.debug("about to push url: " + url, 3);
     //actually push state and manually call urlChangeCallback if specified
     if(Zotero.nav.replacePush === true){
+        Z.debug("Zotero.nav.pushState - replacePush", 3);
         Zotero.nav.replacePush = false;
         Zotero.nav.ignoreStateChange();
-        History.replaceState(s, document.title, url);
+        history.replaceState(s, document.title, url);
     }
     else{
-        History.pushState(s, document.title, url);
+        Z.debug("Zotero.nav.pushState - pushState", 3);
+        history.pushState(s, document.title, url);
+        J(window).trigger('popstate');
     }
-
+    
     if(force){
         Zotero.nav.urlChangeCallback({type:'popstate', originalEvent:{state:urlvars}} );
     }
-
+    
+    //trigger popstate so statechange gets called
     Zotero.debug("leaving pushstate", 3);
 };
 
 Zotero.nav.replaceState = function(force, state){
     Z.debug("Zotero.nav.replaceState", 3);
+    var history = window.history;
+    //TODO: figure out what correct behaviour for prevHref/curHref is here
+    //I guess probably to just update current and leave prev alone.
     Zotero.ui.saveFormData();
     
     if(typeof force == 'undefined'){
@@ -7115,7 +7134,8 @@ Zotero.nav.replaceState = function(force, state){
     //ignore the statechange event History.js will fire even though we're replacing, unless forced
     Zotero.state.ignoreStatechange = true;
     Zotero.nav.ignoreStateChange();
-    History.replaceState(s, null, url);
+    history.replaceState(s, null, url);
+    Zotero.nav.currentHref = window.location.href;
 };
 
 Zotero.nav.updateStateTitle = function(title){
@@ -7123,20 +7143,21 @@ Zotero.nav.updateStateTitle = function(title){
     
     document.title = title;
 };
-
+/*
 Zotero.nav.updateStatePageID = function(pageID){
     Z.debug("Zotero.nav.updateStatePageID " + pageID, 3);
-    var curState = History.getState();
+    var history = window.history;
+    var curState = history.state;
     var state = curState.data;
     if(pageID === null || pageID === undefined){
         pageID = '';
     }
     state['_zpageID'] = pageID;
     
-    History.replaceState(state, curState.title, curState.url);
+    history.replaceState(state, curState.title, curState.url);
     Zotero.state.ignoreStatechange = false;
 };
-
+*/
 Zotero.nav.getUrlVar = function(key){
     if(Zotero.nav.urlvars.pathVars.hasOwnProperty(key) && (Zotero.nav.urlvars.pathVars[key] !== '')){
         return Zotero.nav.urlvars.pathVars[key];
@@ -7195,13 +7216,15 @@ Zotero.nav.updateFragment = function(updatedVars){
     J.bbq.pushState(updatedVars, 0);
 };
 
-Zotero.nav.urlChangeCallback = function(event, state){
+Zotero.nav.urlChangeCallback = function(event){
     //Zotero.enableLogging();
     Z.debug("////////////////////urlChangeCallback//////////////////", 3);
-    Zotero.nav.prevState = Zotero.nav.curState;
+    //var state = event.state;
+    var history = window.history;
+    Zotero.nav.prevHref = Zotero.nav.currentHref;
+    
     Z.debug("new href, updating href and processing urlchange", 3);
-    Zotero.nav.currentHref = History.getState().cleanUrl;
-    var curStateVars = History.getState().data;
+    Zotero.nav.currentHref = window.location.href;// History.getState().cleanUrl;
     
     //reparse url to set vars in Z.ajax
     Zotero.nav.parseUrlVars();
@@ -7234,11 +7257,12 @@ Zotero.nav.urlChangeCallback = function(event, state){
     
     //check for changed variables in the url and fire events for them
     Z.debug("Checking changed variables", 3);
-    var changedVars = Zotero.nav.diffState(Zotero.nav.prevState);
+    var changedVars = Zotero.nav.diffState(Zotero.nav.prevHref, Zotero.nav.curHref);
     Z.debug(changedVars);
     var widgetEvents = {};
     J.each(changedVars, function(ind, val){
         var eventString = val + "Changed";
+        Z.debug(eventString);
         //map var events to widget events
         if(Zotero.eventful.eventMap.hasOwnProperty(eventString)){
             J.each(Zotero.eventful.eventMap[eventString], function(ind, val){
@@ -7254,7 +7278,10 @@ Zotero.nav.urlChangeCallback = function(event, state){
     });
     
     //events taken care of, so update curState
-    Zotero.nav.curState = History.getState();
+    //TODO: this used to be down here for a reason - figure out if still relevant or setting at top
+    //is fine?
+    //Zotero.nav.curState = history.state;// History.getState();
+    //Zotero.nav.currentHref = window.location.href;
     Z.debug("<<<<<<<<<<<<<<<<<<<<<<<<urlChangeCallback Done>>>>>>>>>>>>>>>>>>>>>", 3);
 };
 
@@ -7327,17 +7354,11 @@ Zotero.nav.ignoreStateChange = function(){
     return;
 };
 
-Zotero.nav.diffState = function(prevState, state){
+Zotero.nav.diffState = function(prevHref, curHref){
     Z.debug("Zotero.nav.diffState", 3);
     //check what has changed when a new state is pushed
-    if(!state){
-        state = Zotero.nav.getUrlVars();
-    }
-    
-    var prevStateVars = J.extend(true, {}, Zotero.nav.parsePathVars(prevState.cleanUrl) );
-    
-    Z.debug(JSON.stringify(prevStateVars) );
-    Z.debug(JSON.stringify(state) );
+    var prevVars = J.extend({}, Zotero.nav.parsePathVars(prevHref) );
+    var curVars = J.extend({}, Zotero.nav.parsePathVars(curHref) );
     
     var monitoredVars = ['start',
                          'limit',
@@ -7363,8 +7384,8 @@ Zotero.nav.diffState = function(prevState, state){
                          ];
     var changedVars = [];
     J.each(monitoredVars, function(ind, val){
-        if(prevStateVars.hasOwnProperty(val) || state.hasOwnProperty(val)){
-            if(prevStateVars[val] != state[val]){
+        if(prevVars.hasOwnProperty(val) || curVars.hasOwnProperty(val)){
+            if(prevVars[val] != curVars[val]){
                 changedVars.push(val);
             }
         }
@@ -7373,16 +7394,16 @@ Zotero.nav.diffState = function(prevState, state){
     return changedVars;
 };
 
-//function bound to state changes from History.js (and hopefully in the future to generic popstate when
-//we get rid of History.js)
-Zotero.nav.stateChangeCallback = function(){
+//function bound to history state changes that we trigger on pushState and popstate
+Zotero.nav.stateChangeCallback = function(event){
+    Z.debug("stateChangeCallback");
     if(Zotero.nav._ignoreStateChange > 0){
         Zotero.nav._ignoreStateChange--;
         Zotero.nav.urlAlwaysCallback();
         Z.debug("Statechange ignored " + Zotero.nav._ignoreStateChange, 3);
     }
     else{
-        Zotero.nav.urlChangeCallback();
+        Zotero.nav.urlChangeCallback(event);
     }
 };
 
@@ -8148,6 +8169,7 @@ Zotero.callbacks.actionPanel = function(el){
  * @param  {Dom Element} el Ajaxload element
  * @return {undefined}
  */
+ /*
 Zotero.callbacks.selectMobilePage = function(el){
     Z.debug("Zotero.callbacks.selectMobilePage", 3);
     //don't switch to a dialog if this is the first load rather than a history event
@@ -8155,7 +8177,7 @@ Zotero.callbacks.selectMobilePage = function(el){
         Z.debug("first mobile pageload - ignoring page history's page", 3);
         Zotero.state.mobilePageFirstLoad = false;
         var activePageID = J.mobile.activePage.attr('id') || '';
-        Zotero.nav.updateStatePageID(activePageID);
+        //Zotero.nav.updateStatePageID(activePageID);
         return;
     }
     else if(Zotero.state.mobileBackButtonClicked){
@@ -8181,7 +8203,7 @@ Zotero.callbacks.selectMobilePage = function(el){
     Zotero.ui.createOnActivePage();
     return;
 };
-
+*/
 
 /* EVENTFUL CALLBACKS */
 Zotero.callbacks.watchState = function(el){
@@ -8195,7 +8217,7 @@ Zotero.callbacks.watchState = function(el){
     var effectiveUrlVars = ['itemPage', 'tag', 'collectionKey', 'order', 'sort', 'q'];
     var urlConfigVals = {};
     
-    var changedVars = Zotero.nav.diffState(Zotero.nav.prevState);
+    var changedVars = Zotero.nav.diffState(Zotero.nav.prevHref, Zotero.nav.currentHref);
     J.each(changedVars, function(ind, val){
         var e;
         switch(val){
@@ -8606,190 +8628,17 @@ Zotero.ui.init.fullLibrary = function(){
         Zotero.ui.init.offlineLibrary();
         return;
     }
-    Zotero.ui.init.libraryControls();
-    Zotero.ui.init.tags();
-    Zotero.ui.init.items();
     Zotero.ui.init.libraryTemplates();
     
     Zotero.eventful.initWidgets();
 };
 
-//initialize the library control buttons
-Zotero.ui.init.libraryControls = function(){
-    Z.debug("Zotero.ui.initControls", 3);
-    //set up control panel buttons
-    
-    if(Zotero.config.jqueryui !== false){
-        Zotero.ui.init.jqueryui();
-    }
-    
-    if(Zotero.config.jqueryui !== false){
-        //insert the hidden library preferences and set callbacks
-        J("#library-settings-form").hide();
-        J("#control-panel-container").on('click', '#library-settings-link', Zotero.ui.callbacks.librarySettings);
-        
-        //first run to initialize enabled/disabled state of contextually relevant control buttons
-        Zotero.ui.updateDisabledControlButtons();
-        
-        //disable default actions for dialog form submissions
-        J("delete-collection-dialog").on('submit', ".delete-collection-div form", function(e){
-            e.preventDefault();
-        });
-        J("update-collection-dialog").on('submit', ".update-collection-div form", function(e){
-            e.preventDefault();
-        });
-        J("create-collection-dialog").on('submit', ".new-collection-div form", function(e){
-            e.preventDefault();
-        });
-    }
-    
-    //check/uncheck all boxes in items table when master checkbox is toggled
-    J('#library-items-div').on('change', ".itemlist-editmode-checkbox.all-checkbox", function(e){
-        J(".itemlist-editmode-checkbox").prop('checked', J(".itemlist-editmode-checkbox.all-checkbox").prop('checked'));
-        Zotero.ui.updateDisabledControlButtons();
-        Zotero.ui.eventful.trigger("selectedItemsChanged");
-    });
-    
-    //init itemkey-checkbox to enable/disable buttons that require something being selected
-    J('#library-items-div').on('change', "input.itemKey-checkbox", function(e){
-        Zotero.ui.updateDisabledControlButtons();
-        Zotero.ui.eventful.trigger("selectedItemsChanged");
-    });
-    
-    
-    //bind all control buttons to their callback functions
-    if(!Zotero.config.eventful){
-        J("#control-panel-container").on('change', "#edit-checkbox", Zotero.ui.callbacks.toggleEdit);
-        J("#collection-list-div").on('click', ".create-collection-link", Zotero.ui.callbacks.createCollection);
-        J("#collection-list-div").on('click', ".update-collection-link", Zotero.ui.callbacks.updateCollection);
-        J("#collection-list-div").on('click', ".delete-collection-link", Zotero.ui.callbacks.deleteCollection);
-        J("#control-panel-container").on('click', ".add-to-collection-link", Zotero.ui.callbacks.addToCollection);
-        J("#control-panel-container").on('click', "#create-item-link", Zotero.ui.callbacks.createItem);
-        J("#control-panel-container").on('click', ".remove-from-collection-link", Zotero.ui.callbacks.removeFromCollection);
-        J("#control-panel-container").on('click', ".move-to-trash-link", Zotero.ui.callbacks.moveToTrash);
-        J("#control-panel-container").on('click', ".remove-from-trash-link", Zotero.ui.callbacks.removeFromTrash);
-        J("#item-details-div").on('click', ".move-to-trash-link", Zotero.ui.callbacks.moveToTrash);
-    }
-    
-    
-    //set initial state of search input to url value
-    if(Zotero.nav.getUrlVar('q')){
-        J("#header-search-query").val(Zotero.nav.getUrlVar('q'));
-    }
-    //clear libary query param when field cleared
-    var context = 'support';
-    if(undefined !== window.zoterojsSearchContext){
-        context = zoterojsSearchContext;
-    }
-    
-    J("#header-search-query").val("");
-    J("#header-search-query").attr('placeholder', "Search Library");
-    
-    //set up search submit for library
-    J("#library-search").on('submit', function(e){
-        e.preventDefault();
-        Zotero.nav.clearUrlVars(['collectionKey', 'tag', 'q']);
-        var query     = J("#header-search-query").val();
-        if(query !== "" || Zotero.nav.getUrlVar('q') ){
-            Zotero.nav.urlvars.pathVars['q'] = query;
-            Zotero.nav.pushState();
-        }
-        return false;
-    });
-    
-    //set up library search clear button
-    if((context == 'library') || (context == 'grouplibrary')){
-        var clearQuery = function(e){
-            J("#header-search-query").val('');
-            if(Zotero.nav.getUrlVar('q')){
-                Zotero.nav.setUrlVar('q', '');
-                Zotero.nav.pushState();
-            }
-        };
-        J("#library-search button.clear-field-button").on('click', clearQuery);
-    }
-};
-
-Zotero.ui.init.jqueryui = function(){
-    Z.debug("Zotero.ui.init.jqueryui", 3);
-    //make edit toolbar buttons and menus
-    J("#create-item-link").button({
-        text:false,
-        icons: {
-            primary: "sprite-toolbar-item-add"
-        }
-    });
-    J("#edit-collections-link").button({
-        text:false,
-        icons: {
-            primary: "sprite-folder_edit",
-            secondary: "ui-icon-triangle-1-s"
-        }
-    });
-    
-    J("#move-item-links-buttonset").buttonset();
-    
-    J(".add-to-collection-link").button({
-        text:false,
-        icons: {
-            primary: "sprite-folder_add_to"
-        }
-    });
-    J(".remove-from-collection-link").button({
-        text:false,
-        icons: {
-            primary: "sprite-folder_remove_from"
-        }
-    });
-    J(".move-to-trash-link").button({
-        text:false,
-        icons: {
-            primary: "sprite-trash"
-        }
-    });
-    J(".remove-from-trash-link").button({
-        text:false,
-        icons: {
-            primary: "sprite-trash_remove"
-        }
-    });
-    
-    J("#edit-checkbox").button({
-        text:false,
-        icons: {
-            primary: "sprite-page_edit"
-        }
-    });
-    
-    J("#cite-link").button({
-        text:false,
-        icons: {
-            primary: "sprite-toolbar-cite"
-        }
-    });
-    
-    J("#export-link").button({
-        text:false,
-        icons: {
-            primary: "sprite-toolbar-export"
-        }
-    });
-    
-    
-    J("#library-settings-link").button({
-        text:false,
-        icons: {
-            primary: "sprite-timeline_marker"
-        }
-    });
-
-};
 //initialize pagination buttons
 Zotero.ui.init.paginationButtons = function(pagination){
     if(Zotero.config.jqueryui === false){
         return;
     }
-    
+    /*
     J("#item-pagination-div .back-item-pagination").buttonset();
     J("#item-pagination-div .forward-item-pagination").buttonset();
     J("#start-item-link").button({
@@ -8828,170 +8677,11 @@ Zotero.ui.init.paginationButtons = function(pagination){
     if(pagination.showLastLink === false) {
         J("#last-item-link").button('option', 'disabled', true);
     }
-};
-
-Zotero.ui.init.collections = function(){
-    Z.debug("Zotero.ui.initCollections", 3);
-};
-
-//initialize tags widget and related library features
-Zotero.ui.init.tags = function(){
-    Z.debug("Zotero.ui.initTags", 3);
-    //send pref to website when showAllTags is toggled
-    J("#tags-list-div").on('click', "#show-all-tags", function(e){
-        var show = J(this).prop('checked') ? true : false;
-        Z.debug("showAllTags is " + show, 4);
-        Zotero.utils.setUserPref('library_showAllTags', show);
-        Zotero.callbacks.loadTags(J("#tags-list-div"));
-    });
-    
-    J("#tags-list-div").on('click', "#show-more-tags-link", function(e){
-        e.preventDefault();
-        var jel = J(this).closest('#tags-list-div');
-        jel.data('showmore', true);
-        Zotero.callbacks.loadTags(jel);
-    });
-    J("#tags-list-div").on('click', "#show-less-tags-link", function(e){
-        e.preventDefault();
-        var jel = J(this).closest('#tags-list-div');
-        jel.data('showmore', false);
-        Zotero.callbacks.loadTags(jel);
-    });
-    
-    //add tag to item and stop event propogation when tag is selected
-    //from autocomplete on an item
-    J("#tags-list-div").on('keydown', ".taginput", function(e){
-        if ( e.keyCode === J.ui.keyCode.ENTER ){
-            e.preventDefault();
-            if(J(this).val() !== ''){
-                Zotero.ui.addTag();
-                e.stopImmediatePropagation();
-            }
-        }
-    });
-    
-    //bind tag autocomplete filter in tag widget
-    J("#tags-list-div").on('keyup', "#tag-filter-input", function(e){
-        Z.debug(J('#tag-filter-input').val(), 3);
-        Z.debug("value:" + J('#tag-filter-input').val(), 4);
-        var library = Zotero.ui.getAssociatedLibrary(J('#tag-filter-input').closest('.ajaxload'));
-        var libraryTagsPlainList = library.tags.plainList;
-        var matchingTagStrings = Zotero.utils.matchAnyAutocomplete(J('#tag-filter-input').val(), libraryTagsPlainList);
-        Zotero.ui.displayTagsFiltered(J('#tags-list-div'), library.tags, matchingTagStrings, []);
-        Z.debug(matchingTagStrings, 4);
-    });
-    
-    //bind refresh link to pull down fresh set of tags until there is a better way to
-    //check for updated/removed tags in API
-    J("#tags-list-div").on('click', '#refresh-tags-link', function(e){
-        e.preventDefault();
-        var library = Zotero.ui.getAssociatedLibrary(J('#tag-filter-input').closest('.ajaxload'));
-        Zotero.callbacks.loadTags(J("#tags-list-div"), false);
-        return false;
-    });
-};
-
-//initialize items widget and related features
-Zotero.ui.init.items = function(){
-    Z.debug("Zotero.ui.initItems", 3);
-    if(Zotero.config.eventful){
-        /*
-        J("#item-details-div").on('click', ".saveitembutton", Zotero.ui.saveItemCallback);
-        J("#item-details-div").on('submit', ".itemDetailForm", Zotero.ui.saveItemCallback);
-        J("#item-details-div").on('click', ".cancelitemeditbutton", Zotero.ui.callbacks.cancelItemEdit);
-        J("#item-details-div").on('click', ".itemTypeSelectButton", Zotero.ui.callbacks.selectItemType);
-            
-        J("#item-details-div").on('keydown', ".itemDetailForm input", Zotero.ui.callbacks.itemFormKeydown);
-        
-        J("#item-details-div").on('click', ".add-tag-link", Zotero.ui.addTag);
-        J("#item-details-div").on('click', ".remove-tag-link", Zotero.ui.removeTag);
-        J("#item-details-div").on('click', ".add-creator-link", Zotero.ui.addCreator);
-        J("#item-details-div").on('click', ".remove-creator-link", Zotero.ui.removeCreator);
-        
-        J("#item-details-div").on('click', ".switch-two-field-creator-link", Zotero.ui.callbacks.switchTwoFieldCreators);
-        J("#item-details-div").on('click', ".switch-single-field-creator-link", Zotero.ui.callbacks.switchSingleFieldCreator);
-        J("#item-details-div").on('click', ".add-note-button", Zotero.ui.callbacks.addNote);
-        
-        //set up sorting on header clicks
-        J("#library-items-div").on('click', ".field-table-header", Zotero.ui.callbacks.resortItems);
-        
-        //bind attachment upload link
-        J("#item-details-div").on('click', "#upload-attachment-link", Zotero.ui.callbacks.uploadAttachment);
-        */
-        return;
-    }
-    J("#item-details-div").on('click', ".saveitembutton", Zotero.ui.saveItemCallback);
-    J("#item-details-div").on('submit', ".itemDetailForm", Zotero.ui.saveItemCallback);
-    J("#item-details-div").on('click', ".cancelitemeditbutton", function(){
-        Zotero.nav.clearUrlVars(['itemKey', 'collectionKey', 'tag', 'q']);
-        Zotero.nav.pushState();
-    });
-    
-    J("#item-details-div").on('click', ".itemTypeSelectButton", function(){
-        Z.debug("itemTypeSelectButton clicked", 3);
-        var itemType = J("#itemType").val();
-        Zotero.nav.urlvars.pathVars['itemType'] = itemType;
-        Zotero.nav.pushState();
-        return false;
-    });
-    J("#item-details-div").on('change', ".itemDetailForm #itemTypeSelect", function(){
-        Z.debug("itemTypeSelect changed", 3);
-        var itemType = J(this).val();
-        Zotero.nav.urlvars.pathVars['itemType'] = itemType;
-        Zotero.nav.pushState();
-    });
-    
-    
-    J("#item-details-div").on('keydown', ".itemDetailForm input", function(e){
-        if ( e.keyCode === J.ui.keyCode.ENTER ){
-            e.preventDefault();
-            var nextEligibleSiblings = J(this).nextAll("input, button, textarea, select");
-            if(nextEligibleSiblings.length){
-                nextEligibleSiblings.first().focus();
-            }
-            else{
-                J(this).closest("tr").nextAll().find("input, button, textarea, select").first().focus();
-            }
-        }
-    });
-    
-    J("#item-details-div").on('click', ".add-tag-button", Zotero.ui.addTag);
-    J("#item-details-div").on('click', ".add-tag-link", Zotero.ui.addTag);
-    J("#item-details-div").on('click', ".remove-tag-link", Zotero.ui.removeTag);
-    J("#item-details-div").on('click', ".add-creator-link", Zotero.ui.addCreator);
-    J("#item-details-div").on('click', ".remove-creator-link", Zotero.ui.removeCreator);
-    
-    var itemDetailsDiv = J("#item-details-div");
-    itemDetailsDiv.on('click', ".switch-two-field-creator-link", Zotero.ui.callbacks.switchTwoFieldCreators);
-    itemDetailsDiv.on('click', ".switch-single-field-creator-link", Zotero.ui.callbacks.switchSingleFieldCreator);
-    itemDetailsDiv.on('click', ".add-note-button", Zotero.ui.addNote);
-    
-    
-    //set up sorting on header clicks
-    J("#library-items-div").on('click', ".field-table-header", Zotero.ui.callbacks.resortItems);
-    
-    //bind cite item link
-    J("#item-details-div").on('click', "#cite-item-link", Zotero.ui.callbacks.citeItems);
-    J("#build-bibliography-link").on('click', Zotero.ui.callbacks.citeItems);
-    J("#cite-link").on('click', Zotero.ui.callbacks.citeItems);
-    
-    //bind export links
-    J("#export-formats-div").on('click', ".export-link", Zotero.ui.callbacks.exportItems);
-    J("#export-link").on('click', Zotero.ui.callbacks.showExportDialog);
-    
-    J("#export-dialog").on('click', '.export-link', Zotero.ui.callbacks.exportItems);
-    
-    //bind attachment upload link
-    J("#item-details-div").on('click', "#upload-attachment-link", Zotero.ui.callbacks.uploadAttachment);
-    
-    //subscribe to event for item getting its first child so we can re-run getChildren
-    J.subscribe('hasFirstChild', function(itemKey){
-        var jel = J('#item-details-div');
-        Zotero.ui.showChildren(jel, itemKey);
-    });
+    */
 };
 
 Zotero.ui.init.creatorFieldButtons = function(){
+    /*
     if(Zotero.config.mobile){
         Zotero.ui.createOnActivePage(J("tr.creator"));
         return;
@@ -9026,9 +8716,11 @@ Zotero.ui.init.creatorFieldButtons = function(){
             primary: "sprite-plus"
         }
     });
+*/
 };
 
 Zotero.ui.init.editButton = function(){
+    /*
     Z.debug("Zotero.ui.init.editButton", 3);
     var editEl = J("#edit-checkbox");
     if(Zotero.config.jqueryui === false){
@@ -9061,36 +8753,7 @@ Zotero.ui.init.editButton = function(){
     else{
         editEl.button('option', 'disabled', false);
     }
-};
-
-Zotero.ui.init.detailButtons = function(){
-    Z.debug("Zotero.ui.init.detailButtons", 3);
-    if(Zotero.config.jqueryui === false){
-        return;
-    }
-    
-    J("#upload-attachment-link").button();
-    J("#cite-item-link").button();
-};
-
-Zotero.ui.init.tagButtons = function(){
-    if(Zotero.config.jqueryui === false){
-        return;
-    }
-    
-    J(".add-remove-tag-container").buttonset();
-    J(".remove-tag-link").button({
-        text:false,
-        icons: {
-            primary: "sprite-minus"
-        }
-    });
-    J(".add-tag-link").button({
-        text:false,
-        icons: {
-            primary: "sprite-plus"
-        }
-    });
+    */
 };
 
 Zotero.ui.init.rte = function(type, autofocus, elements){
@@ -10678,11 +10341,45 @@ Zotero.ui.widgets.controlPanel.init = function(el){
     //Zotero.ui.eventful.listen("librarySettings", Zotero.ui.callbacks.librarySettings);
     //Zotero.ui.eventful.listen("citeItems", Zotero.ui.callbacks.citeItems);
     //Zotero.ui.eventful.listen("exportItems", Zotero.ui.callbacks.showExportDialog);
+    Zotero.ui.eventful.listen('clearLibraryQuery', Zotero.ui.clearLibraryQuery);
+    
+    var container = J(el);
+    //set initial state of search input to url value
+    if(Zotero.nav.getUrlVar('q')){
+        container.find("#header-search-query").val(Zotero.nav.getUrlVar('q'));
+    }
+    
+    //clear libary query param when field cleared
+    var context = 'support';
+    if(undefined !== window.zoterojsSearchContext){
+        context = zoterojsSearchContext;
+    }
+    
+    //set up search submit for library
+    container.on('submit', "#library-search", function(e){
+        e.preventDefault();
+        Zotero.nav.clearUrlVars(['collectionKey', 'tag', 'q']);
+        var query     = J("#header-search-query").val();
+        if(query !== "" || Zotero.nav.getUrlVar('q') ){
+            Zotero.nav.urlvars.pathVars['q'] = query;
+            Zotero.nav.pushState();
+        }
+        return false;
+    });
+    
 };
 
 Zotero.ui.widgets.controlPanel.updateDisabledControlButtons = function(){
     Zotero.ui.updateDisabledControlButtons();
 };
+
+Zotero.ui.clearLibraryQuery = function(){
+    if(Zotero.nav.getUrlVar('q')){
+        Zotero.nav.setUrlVar('q', '');
+        Zotero.nav.pushState();
+    }
+    return;
+}
 
 /**
  * Update the disabled state of library control toolbar buttons depending on context
@@ -10751,29 +10448,27 @@ Zotero.ui.widgets.controlPanel.createItemDropdown = function(el){
  */
 Zotero.ui.callbacks.toggleEdit =  function(e){
     Z.debug("edit checkbox toggled", 3);
-    if(Zotero.config.jqueryui === false){
-        var curMode = Zotero.nav.getUrlVar('mode');
-        if(curMode != "edit"){
-            Zotero.nav.urlvars.pathVars['mode'] = 'edit';
-        }
-        else{
-            delete Zotero.nav.urlvars.pathVars['mode'];
-        }
-        Zotero.nav.pushState();
-        return false;
+    var curMode = Zotero.nav.getUrlVar('mode');
+    if(curMode != "edit"){
+        Zotero.nav.urlvars.pathVars['mode'] = 'edit';
     }
-    else {
-        if(J(this).prop('checked')){
-            Z.debug("has val: " + J(this).val());
-            Zotero.nav.urlvars.pathVars['mode'] = 'edit';
-        }
-        else{
-            Z.debug("removing edit mode", 3);
-            delete Zotero.nav.urlvars.pathVars['mode'];
-        }
-        Zotero.nav.pushState();
-        return false;
+    else{
+        delete Zotero.nav.urlvars.pathVars['mode'];
     }
+    Zotero.nav.pushState();
+    return false;
+    /*
+    if(J(this).prop('checked')){
+        Z.debug("has val: " + J(this).val());
+        Zotero.nav.urlvars.pathVars['mode'] = 'edit';
+    }
+    else{
+        Z.debug("removing edit mode", 3);
+        delete Zotero.nav.urlvars.pathVars['mode'];
+    }
+    Zotero.nav.pushState();
+    return false;
+    */
 };
 
 
@@ -10796,7 +10491,7 @@ Zotero.ui.callbacks.createItem = function(e){
 };
 
 Zotero.ui.callbacks.citeItems = function(e){
-    Z.debug("cite-item-link clicked", 3);
+    Z.debug("Zotero.ui.callbacks.citeItems", 3);
     e.preventDefault();
     
     //get library and build dialog
@@ -10888,7 +10583,7 @@ Zotero.ui.callbacks.showExportDialog = function(e){
 };
 
 Zotero.ui.callbacks.exportItems = function(e){
-    Z.debug("cite-item-link clicked", 3);
+    Z.debug("Zotero.ui.callbacks.exportItems", 3);
     e.preventDefault();
     
     //get library
@@ -11208,7 +10903,7 @@ Zotero.ui.widgets.exportItemsDialog = {};
 
 Zotero.ui.widgets.exportItemsDialog.init = function(el){
     Z.debug("exportItemDialog widget init", 3);
-    Zotero.ui.eventful.listen("exportItems", Zotero.ui.widgets.exportItemsDialog.show, {widgetEl: el});
+    Zotero.ui.eventful.listen("exportItemsDialog", Zotero.ui.widgets.exportItemsDialog.show, {widgetEl: el});
     Zotero.ui.eventful.listen("displayedItemsChanged", Zotero.ui.widgets.exportItemsDialog.updateExportLinks, {widgetEl: el});
 };
 
@@ -11216,13 +10911,12 @@ Zotero.ui.widgets.exportItemsDialog.show = function(e){
     Z.debug("exportitemdialog.show", 3);
     var triggeringEl = J(e.triggeringElement);
     var library = Zotero.ui.getAssociatedLibrary(triggeringEl);
-    var widgetEl = J(e.data['widgetEl']);
-    widgetEl.find(".export-items-dialog").remove();
+    var widgetEl = J(e.data['widgetEl']).empty();
+    widgetEl.html( J("#exportitemsdialogTemplate").render({}) );
+    var dialogEl = widgetEl.find(".export-items-dialog");
     
     //get library and build dialog
-    widgetEl.append( J("#exportitemsdialogTemplate").render({}) );
-    var dialogEl = widgetEl.find(".export-items-dialog");
-    dialogEl.find(".modal-content").empty().append(widgetEl.find(".export-list").contents().clone() );
+    dialogEl.find(".modal-body").empty().append(widgetEl.find(".export-list").contents().clone() );
     
     Zotero.ui.dialog(dialogEl, {});
     
@@ -11330,7 +11024,7 @@ Zotero.ui.widgets.item.init = function(el){
     
     //watch buttons on item field from widget DOM element
     var container = J(el);
-    
+    /*
     container.on('click', ".saveitembutton", Zotero.ui.saveItemCallback);
     container.on('submit', ".itemDetailForm", Zotero.ui.saveItemCallback);
     container.on('click', ".cancelitemeditbutton", Zotero.ui.callbacks.cancelItemEdit);
@@ -11346,11 +11040,12 @@ Zotero.ui.widgets.item.init = function(el){
     container.on('click', ".switch-two-field-creator-link", Zotero.ui.callbacks.switchTwoFieldCreators);
     container.on('click', ".switch-single-field-creator-link", Zotero.ui.callbacks.switchSingleFieldCreator);
     container.on('click', ".add-note-button", Zotero.ui.addNote);
-    
+    */
     //bind attachment upload link
     container.on('click', "#upload-attachment-link", function(){
         Zotero.ui.eventful.trigger("uploadAttachment");
     });
+    
 };
 
 Zotero.ui.widgets.item.loadItemCallback = function(event){
@@ -12108,6 +11803,21 @@ Zotero.ui.widgets.items.init = function(el){
     //set up sorting on header clicks
     var container = J(el);
     container.on('click', ".field-table-header", Zotero.ui.callbacks.resortItems);
+    
+    //check/uncheck all boxes in items table when master checkbox is toggled
+    container.on('change', ".itemlist-editmode-checkbox.all-checkbox", function(e){
+        J(".itemlist-editmode-checkbox").prop('checked', J(".itemlist-editmode-checkbox.all-checkbox").prop('checked'));
+        Zotero.ui.updateDisabledControlButtons();
+        Zotero.ui.eventful.trigger("selectedItemsChanged");
+    });
+    
+    //init itemkey-checkbox to enable/disable buttons that require something being selected
+    container.on('change', "input.itemKey-checkbox", function(e){
+        Zotero.ui.updateDisabledControlButtons();
+        Zotero.ui.eventful.trigger("selectedItemsChanged");
+    });
+    
+    
 };
 
 Zotero.ui.widgets.items.loadItemsCallback = function(event){
@@ -12490,6 +12200,70 @@ Zotero.ui.callbacks.sortBy = function(e){
 };
 
 
+Zotero.ui.widgets.itemContainer = {};
+
+Zotero.ui.widgets.itemContainer.init = function(el){
+    var container = J(el);
+    
+    //TODO: this should basically all be event based rather than callbacks
+    
+    Zotero.ui.eventful.listen("saveItem", Zotero.ui.widgets.saveItemCallback);
+    Zotero.ui.eventful.listen("cancelItemEdit", Zotero.ui.widgets.saveItemCallback);
+    Zotero.ui.eventful.listen("addTag", Zotero.ui.addTag);
+    Zotero.ui.eventful.listen("removeTag", Zotero.ui.removeTag);
+    Zotero.ui.eventful.listen("addCreator", Zotero.ui.addCreator);
+    Zotero.ui.eventful.listen("removeCreator", Zotero.ui.removeCreator);
+    Zotero.ui.eventful.listen("switchSingleFieldCreator", Zotero.ui.widgets.switchSingleFieldCreator);
+    Zotero.ui.eventful.listen("switchTwoFieldCreator", Zotero.ui.widgets.switchTwoFieldCreators);
+    Zotero.ui.eventful.listen("addNote", Zotero.ui.addNote);
+    
+    Zotero.ui.eventful.listen("changeItemSorting", Zotero.ui.resortItems);
+    Zotero.ui.eventful.listen("citeItems", Zotero.ui.callbacks.citeItems);
+    Zotero.ui.eventful.listen("exportItems", Zotero.ui.callbacks.exportItems);
+    Zotero.ui.eventful.listen("uploadAttachment", Zotero.ui.callbacks.uploadAttachment);
+    
+    
+    container.on('click', "#item-details-div .itemTypeSelectButton", function(){
+        Z.debug("itemTypeSelectButton clicked", 3);
+        var itemType = J("#itemType").val();
+        Zotero.nav.urlvars.pathVars['itemType'] = itemType;
+        Zotero.nav.pushState();
+        return false;
+    });
+    container.on('change', "#item-details-div .itemDetailForm #itemTypeSelect", function(){
+        Z.debug("itemTypeSelect changed", 3);
+        var itemType = J(this).val();
+        Zotero.nav.urlvars.pathVars['itemType'] = itemType;
+        Zotero.nav.pushState();
+    });
+    
+    
+    container.on('keydown', "#item-details-div .itemDetailForm input", function(e){
+        if ( e.keyCode === J.ui.keyCode.ENTER ){
+            e.preventDefault();
+            var nextEligibleSiblings = J(this).nextAll("input, button, textarea, select");
+            if(nextEligibleSiblings.length){
+                nextEligibleSiblings.first().focus();
+            }
+            else{
+                J(this).closest("tr").nextAll().find("input, button, textarea, select").first().focus();
+            }
+        }
+    });
+    
+    //subscribe to event for item getting its first child so we can re-run getChildren
+    J.subscribe('hasFirstChild', function(itemKey){
+        var jel = J('#item-details-div');
+        Zotero.ui.showChildren(jel, itemKey);
+    });
+};
+
+Zotero.ui.cancelItemEdit = function(e){
+    Zotero.nav.clearUrlVars(['itemKey', 'collectionKey', 'tag', 'q']);
+    Zotero.nav.pushState();
+};
+
+
 Zotero.ui.widgets.librarysettingsdialog = {};
 
 Zotero.ui.widgets.librarysettingsdialog.init = function(el){
@@ -12755,15 +12529,18 @@ Zotero.ui.widgets.tags.init = function(el){
     Zotero.ui.eventful.listen("cachedDataLoaded", Zotero.ui.widgets.tags.syncTagsCallback, {widgetEl: el});
     Zotero.ui.eventful.listen("libraryTagsUpdated selectedTagsChanged", Zotero.ui.widgets.tags.rerenderTags, {widgetEl: el});
     
+    var container = J(el);
+    
     //initialize binds for widget
     //send pref to website when showAllTags is toggled
-    J(el).on('click', "#show-all-tags", Zotero.ui.showAllTags);
-    J(el).on('click', "#show-more-tags-link", Zotero.ui.showMoreTags);
-    J(el).on('click', "#show-fewer-tags-link", Zotero.ui.showFewerTags);
+    container.on('click', "#show-all-tags", Zotero.ui.showAllTags);
+    container.on('click', "#show-more-tags-link", Zotero.ui.showMoreTags);
+    container.on('click', "#show-fewer-tags-link", Zotero.ui.showFewerTags);
     
+    //TODO: make sure tag autocomplete works when editing items
     //add tag to item and stop event propogation when tag is selected
     //from autocomplete on an item
-    J(el).on('keydown', ".taginput", function(e){
+    container.on('keydown', ".taginput", function(e){
         if ( e.keyCode === J.ui.keyCode.ENTER ){
             e.preventDefault();
             if(J(this).val() !== ''){
@@ -12774,7 +12551,50 @@ Zotero.ui.widgets.tags.init = function(el){
     });
     
     //bind tag autocomplete filter in tag widget
-    J(el).on('keyup', "#tag-filter-input", Zotero.ui.callbacks.filterTags);
+    container.on('keyup', "#tag-filter-input", Zotero.ui.callbacks.filterTags);
+    
+    
+    //send pref to website when showAllTags is toggled
+    container.on('click', "#show-all-tags", function(e){
+        var show = J(this).prop('checked') ? true : false;
+        Z.debug("showAllTags is " + show, 4);
+        Zotero.utils.setUserPref('library_showAllTags', show);
+        Zotero.callbacks.loadTags(J("#tags-list-div"));
+    });
+    
+    container.on('click', "#show-more-tags-link", function(e){
+        e.preventDefault();
+        var jel = J(this).closest('#tags-list-div');
+        jel.data('showmore', true);
+        Zotero.callbacks.loadTags(jel);
+    });
+    container.on('click', "#show-less-tags-link", function(e){
+        e.preventDefault();
+        var jel = J(this).closest('#tags-list-div');
+        jel.data('showmore', false);
+        Zotero.callbacks.loadTags(jel);
+    });
+    
+    
+    //bind tag autocomplete filter in tag widget
+    container.on('keyup', "#tag-filter-input", function(e){
+        Z.debug(J('#tag-filter-input').val(), 3);
+        Z.debug("value:" + J('#tag-filter-input').val(), 4);
+        var library = Zotero.ui.getAssociatedLibrary(J('#tag-filter-input').closest('.ajaxload'));
+        var libraryTagsPlainList = library.tags.plainList;
+        var matchingTagStrings = Zotero.utils.matchAnyAutocomplete(J('#tag-filter-input').val(), libraryTagsPlainList);
+        Zotero.ui.displayTagsFiltered(J('#tags-list-div'), library.tags, matchingTagStrings, []);
+        Z.debug(matchingTagStrings, 4);
+    });
+    
+    //bind refresh link to pull down fresh set of tags until there is a better way to
+    //check for updated/removed tags in API
+    container.on('click', '#refresh-tags-link', function(e){
+        e.preventDefault();
+        var library = Zotero.ui.getAssociatedLibrary(J('#tag-filter-input').closest('.ajaxload'));
+        Zotero.callbacks.loadTags(J("#tags-list-div"), false);
+        return false;
+    });
 };
 
 Zotero.ui.widgets.tags.syncTagsCallback = function(event){
@@ -13471,7 +13291,6 @@ Zotero.callbacks.loadFullLibrary = function(el){
 Zotero.ui.init.offlineLibrary = function(){
     Z.debug("Zotero.ui.init.offlineLibrary", 3);
     
-    Zotero.ui.init.libraryControls();
     Zotero.ui.init.tags();
     Zotero.ui.init.collections();
     Zotero.ui.init.items();
