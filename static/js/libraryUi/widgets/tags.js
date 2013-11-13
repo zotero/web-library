@@ -17,7 +17,7 @@ Zotero.ui.widgets.tags.init = function(el){
     //add tag to item and stop event propogation when tag is selected
     //from autocomplete on an item
     container.on('keydown', ".taginput", function(e){
-        if ( e.keyCode === J.ui.keyCode.ENTER ){
+        if ( e.keyCode === Zotero.ui.keyCode.ENTER ){
             e.preventDefault();
             if(J(this).val() !== ''){
                 Zotero.ui.addTag();

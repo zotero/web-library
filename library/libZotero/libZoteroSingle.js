@@ -57,7 +57,27 @@ var J = jQuery.noConflict();
 var Zotero = {
     ajax: {},
     callbacks: {},
-    ui: {callbacks:{}},
+    ui: {
+        callbacks: {},
+        keyCode: {
+            BACKSPACE: 8,
+            COMMA: 188,
+            DELETE: 46,
+            DOWN: 40,
+            END: 35,
+            ENTER: 13,
+            ESCAPE: 27,
+            HOME: 36,
+            LEFT: 37,
+            PAGE_DOWN: 34,
+            PAGE_UP: 33,
+            PERIOD: 190,
+            RIGHT: 39,
+            SPACE: 32,
+            TAB: 9,
+            UP: 38
+        },
+    },
     url: {},
     utils: {},
     offline: {},
@@ -464,9 +484,14 @@ Zotero.ajaxRequest = function(url, type, options){
 };
 
 Zotero.trigger = function(eventType, library){
+    var zoteroEventTarget = Zotero.eventfulTarget;
+    if(!zoteroEventTarget){
+        zoteroEventTarget = J('#library');
+    }
+    
     var e = J.Event(eventType);
     e.library = library;
-    J("#library").trigger(e);
+    zoteroEventTarget.trigger(e);
 };
 
 var Z = Zotero;
@@ -2165,6 +2190,7 @@ Zotero.Items.prototype.writeItems = function(itemsArray){
         Z.debug("writeItem successCallback", 3);
         Z.debug("successCode: " + jqXhr.status, 4);
         Zotero.utils.updateObjectsFromWriteResponse(writeItems, jqXhr);
+        //TODO: save updated item to idb?
         returnItems = returnItems.concat(writeItems);
         writeItemsDeferred.resolve(returnItems);
         Zotero.trigger("itemsChanged", library);
@@ -5072,7 +5098,8 @@ Zotero.Idb.Library.prototype.init = function(){
 Zotero.Idb.Library.prototype.deleteDB = function(){
     var idbLibrary = this;
     idbLibrary.db.close();
-    var deleteRequest = idbLibrary.indexedDB.deleteDatabase(idbLibrary.libraryString);
+    var deleteRequest = idbLibrary.indexedDB.deleteDatabase("Zotero_" + idbLibrary.libraryString);
+    Z.debug("deleting idb: " + "Zotero_" + idbLibrary.libraryString);
     deleteRequest.onerror = function(){
         Z.debug("Error deleting indexedDB");
     }

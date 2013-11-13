@@ -1059,7 +1059,25 @@ var Zotero = {
     ajax: {},
     callbacks: {},
     ui: {
-        callbacks: {}
+        callbacks: {},
+        keyCode: {
+            BACKSPACE: 8,
+            COMMA: 188,
+            DELETE: 46,
+            DOWN: 40,
+            END: 35,
+            ENTER: 13,
+            ESCAPE: 27,
+            HOME: 36,
+            LEFT: 37,
+            PAGE_DOWN: 34,
+            PAGE_UP: 33,
+            PERIOD: 190,
+            RIGHT: 39,
+            SPACE: 32,
+            TAB: 9,
+            UP: 38
+        }
     },
     url: {},
     utils: {},
@@ -1372,9 +1390,13 @@ Zotero.ajaxRequest = function(url, type, options) {
 };
 
 Zotero.trigger = function(eventType, library) {
+    var zoteroEventTarget = Zotero.eventfulTarget;
+    if (!zoteroEventTarget) {
+        zoteroEventTarget = J("#library");
+    }
     var e = J.Event(eventType);
     e.library = library;
-    J("#library").trigger(e);
+    zoteroEventTarget.trigger(e);
 };
 
 var Z = Zotero;
@@ -9073,7 +9095,7 @@ Zotero.ui.widgets.citeItemDialog.show = function(e) {
     dialogEl.find("input.free-text-style-input").on("change", citeFunction);
     Zotero.ui.widgets.citeItemDialog.getAvailableStyles();
     dialogEl.find("input.free-text-style-input").typeahead({
-        source: Zotero.styleList
+        local: Zotero.styleList
     });
     Zotero.ui.dialog(dialogEl, {});
     return false;
@@ -10082,7 +10104,6 @@ Zotero.ui.loadNewItemTemplate = function(item) {
                 Zotero.ui.addTag(jel, false);
             }
             Zotero.ui.init.creatorFieldButtons();
-            Zotero.ui.init.tagButtons();
             Zotero.ui.init.editButton();
         }
         jel.data("newitem", item);
@@ -10111,7 +10132,8 @@ Zotero.ui.addTag = function(e, focus) {
         var library = Zotero.ui.getAssociatedLibrary(widgetEl);
         if (library) {
             widgetEl.find("input.taginput").typeahead({
-                source: library.tags.plainList
+                name: "tags",
+                local: library.tags.plainList
             });
         }
     } else {
@@ -10134,7 +10156,6 @@ Zotero.ui.addTag = function(e, focus) {
     if (focus) {
         J("input.taginput").last().focus();
     }
-    Zotero.ui.init.tagButtons();
     Zotero.ui.createOnActivePage(jel);
 };
 
@@ -10180,7 +10201,6 @@ Zotero.ui.editItemForm = function(el, item) {
             J(el).trigger("create");
         } else {
             Zotero.ui.init.creatorFieldButtons();
-            Zotero.ui.init.tagButtons();
             Zotero.ui.init.editButton();
         }
         Zotero.ui.init.rte();
@@ -10215,7 +10235,6 @@ Zotero.ui.editItemForm = function(el, item) {
                 J(el).trigger("create");
             } else {
                 Zotero.ui.init.creatorFieldButtons();
-                Zotero.ui.init.tagButtons();
                 Zotero.ui.init.editButton();
             }
         }, this));
@@ -10223,7 +10242,8 @@ Zotero.ui.editItemForm = function(el, item) {
     if (Zotero.config.jqueryui === false) {
         var library = Zotero.ui.getAssociatedLibrary();
         J("input.taginput").typeahead({
-            source: library.tags.plainList
+            name: "tags",
+            local: library.tags.plainList
         });
     } else {
         J("input.taginput").autocomplete({
@@ -10267,7 +10287,6 @@ Zotero.ui.loadItemDetail = function(item, el) {
     }
     Zotero.ui.init.rte("readonly");
     Zotero.ui.init.editButton();
-    Zotero.ui.init.detailButtons();
     Zotero.ui.libraryBreadcrumbs();
     try {
         var ev = document.createEvent("HTMLEvents");
@@ -10502,7 +10521,7 @@ Zotero.ui.callbacks.selectItemType = function(e) {
 };
 
 Zotero.ui.callbacks.itemFormKeydown = function(e) {
-    if (e.keyCode === J.ui.keyCode.ENTER) {
+    if (e.keyCode === Zotero.ui.keyCode.ENTER) {
         e.preventDefault();
         var nextEligibleSiblings = J(this).nextAll("input, button, textarea, select");
         if (nextEligibleSiblings.length) {
@@ -10834,7 +10853,7 @@ Zotero.ui.widgets.itemContainer.init = function(el) {
         Zotero.nav.pushState();
     });
     container.on("keydown", "#item-details-div .itemDetailForm input", function(e) {
-        if (e.keyCode === J.ui.keyCode.ENTER) {
+        if (e.keyCode === Zotero.ui.keyCode.ENTER) {
             e.preventDefault();
             var nextEligibleSiblings = J(this).nextAll("input, button, textarea, select");
             if (nextEligibleSiblings.length) {
@@ -10965,7 +10984,6 @@ Zotero.ui.unassociatedItemForm = function(el, item) {
                 Zotero.ui.addTag(container, false);
             }
             Zotero.ui.init.creatorFieldButtons();
-            Zotero.ui.init.tagButtons();
             Zotero.ui.init.editButton();
         }
         container.find(".directciteitembutton").bind("click", J.proxy(function(e) {
@@ -11090,7 +11108,7 @@ Zotero.ui.widgets.tags.init = function(el) {
     container.on("click", "#show-more-tags-link", Zotero.ui.showMoreTags);
     container.on("click", "#show-fewer-tags-link", Zotero.ui.showFewerTags);
     container.on("keydown", ".taginput", function(e) {
-        if (e.keyCode === J.ui.keyCode.ENTER) {
+        if (e.keyCode === Zotero.ui.keyCode.ENTER) {
             e.preventDefault();
             if (J(this).val() !== "") {
                 Zotero.ui.addTag();

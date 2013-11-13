@@ -69,7 +69,7 @@ Zotero.ui.unassociatedItemForm = function(el, item){
                 Zotero.ui.addTag(container, false);
             }
             Zotero.ui.init.creatorFieldButtons();
-            Zotero.ui.init.tagButtons();
+            //Zotero.ui.init.tagButtons();
             Zotero.ui.init.editButton();
         }
         

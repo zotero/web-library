@@ -27,6 +27,7 @@ $messages = array();
         <link rel="stylesheet" media="screen" href="<?=$staticPath?>/bootstrap/css/bootstrap-theme.min.css">
         <script type="text/javascript" charset="utf-8" src="<?=$staticPath?>/library/jquery/jquery-all.js"></script>
         <script src="<?=$staticPath?>/bootstrap/js/bootstrap.min.js"></script>
+        <script src="<?=$staticPath?>/library/typeahead/typeahead.js"></script>
         
         <link rel="stylesheet" href="<?=$staticPath?>/css/theme_style3.css" 
             type="text/css" media="screen" charset="utf-8"/>
@@ -51,7 +52,7 @@ $messages = array();
             data-loadconfig='<?=json_encode($libraryConfig)?>'>
         </span>
         <!-- Header -->
-        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+        <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
                     <span class="sr-only">Toggle navigation</span>
@@ -115,11 +116,11 @@ $messages = array();
                         <button class="move-to-trash-button btn btn-default navbar-btn eventfultrigger" data-library='<?=$libraryString?>' data-triggers="moveToTrash" title="Move to Trash"><span class="glyphicon icon-trash"></span></button>
                         <button class="remove-from-trash-button btn btn-default navbar-btn eventfultrigger" data-library='<?=$libraryString?>' data-triggers="removeFromTrash" title="Remove from Trash"><span class="glyphicon icon-trash_remove"></span></button>
                     </div>
-                    <div class="btn-group">
-                        <button type="button" class="toggle-edit-button btn btn-default navbar-btn eventfultrigger" data-library='<?=$libraryString?>' data-toggle="button" data-triggers="toggleEdit" title="Edit"><span class="glyphicon icon-page_edit"></span></button>
+                    <div class="btn-group" data-toggle="button">
+                        <checkbox type="button" class="toggle-edit-button btn btn-default navbar-btn eventfultrigger" data-library='<?=$libraryString?>' data-triggers="toggleEdit" title="Edit"><span class="glyphicon icon-page_edit"></span></button>
                     </div>
                 </div>
-                <div class="btn-toolbar pull-right">
+                <div class="btn-toolbar pull-right" style="max-width:350px;">
                     <form action="/search/" class="navbar-form zsearch" id="library-search" role="search">
                         <div class="input-group">
                             <div class="input-group-btn">
@@ -131,7 +132,7 @@ $messages = array();
                             </div><!-- /btn-group -->
                             <input type="text" name="q" id="header-search-query" class="search-query form-control" placeholder="Search Library"/>
                             <span class="input-group-btn">
-                                <button class="btn btn-default" type="button"><span class="glyphicon glyphicon-remove"></span></button>
+                                <button class="btn btn-default eventfultrigger" data-triggers="clearLibraryQuery" type="button"><span class="glyphicon glyphicon-remove"></span></button>
                             </span>
                         </div>
                     </form>
@@ -146,7 +147,7 @@ $messages = array();
                             <!-- dropdown menu links -->
                             <li><a href="#" class="eventfultrigger" data-library='<?=$libraryString?>' data-triggers="librarySettings">Library Settings</a></li>
                             <li><a href="#" class="cite-button eventfultrigger" data-library='<?=$libraryString?>' data-triggers="citeItems">Cite</a></li>
-                            <li><a href="#" class="export-button eventfultrigger" data-library='<?=$libraryString?>' data-triggers="exportItems">Export</a></li>
+                            <li><a href="#" class="export-button eventfultrigger" data-library='<?=$libraryString?>' data-triggers="exportItemsDialog">Export</a></li>
                             <li class="divider"></li>
                             <li><a href="#" class="eventfultrigger" data-library='<?=$libraryString?>' data-triggers="syncLibary">Sync</a></li>
                         </ul>
@@ -184,10 +185,6 @@ $messages = array();
                         <div id="upload-dialog" class="eventfulwidget" data-widget="uploadDialog" title="Upload Attachment">
                         </div>
                         <div id="export-dialog" class="eventfulwidget" data-widget="exportItemsDialog" title="Export" title="Export">
-                            <div class="export-formats-div" style="display:none;">
-                              <div class="export-list">
-                              </div>
-                            </div>
                         </div>
                         <div id="library-settings-dialog" class="eventfulwidget" data-widget="librarysettingsdialog" title="Library Settings" title="Library Settings">
                         </div>
@@ -238,7 +235,8 @@ $messages = array();
                         </div>
                     </div>
                 </div>
-                <div id="items-pane" class="items-pane eventfulwidget row">
+                <div id="items-pane" class="items-pane eventfulwidget row"
+                    data-widget="itemContainer">
                     <div id="library-items-div" class="library-items-div eventfulwidget col-md-6"
                         data-widget="items"
                         data-function="loadItems"

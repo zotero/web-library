@@ -57,7 +57,27 @@ var J = jQuery.noConflict();
 var Zotero = {
     ajax: {},
     callbacks: {},
-    ui: {callbacks:{}},
+    ui: {
+        callbacks: {},
+        keyCode: {
+            BACKSPACE: 8,
+            COMMA: 188,
+            DELETE: 46,
+            DOWN: 40,
+            END: 35,
+            ENTER: 13,
+            ESCAPE: 27,
+            HOME: 36,
+            LEFT: 37,
+            PAGE_DOWN: 34,
+            PAGE_UP: 33,
+            PERIOD: 190,
+            RIGHT: 39,
+            SPACE: 32,
+            TAB: 9,
+            UP: 38
+        },
+    },
     url: {},
     utils: {},
     offline: {},
@@ -464,9 +484,14 @@ Zotero.ajaxRequest = function(url, type, options){
 };
 
 Zotero.trigger = function(eventType, library){
+    var zoteroEventTarget = Zotero.eventfulTarget;
+    if(!zoteroEventTarget){
+        zoteroEventTarget = J('#library');
+    }
+    
     var e = J.Event(eventType);
     e.library = library;
-    J("#library").trigger(e);
+    zoteroEventTarget.trigger(e);
 };
 
 var Z = Zotero;
@@ -2165,6 +2190,7 @@ Zotero.Items.prototype.writeItems = function(itemsArray){
         Z.debug("writeItem successCallback", 3);
         Z.debug("successCode: " + jqXhr.status, 4);
         Zotero.utils.updateObjectsFromWriteResponse(writeItems, jqXhr);
+        //TODO: save updated item to idb?
         returnItems = returnItems.concat(writeItems);
         writeItemsDeferred.resolve(returnItems);
         Zotero.trigger("itemsChanged", library);
@@ -9957,7 +9983,7 @@ Zotero.ui.widgets.citeItemDialog.show = function(e){
     dialogEl.find("input.free-text-style-input").on('change', citeFunction);
     
     Zotero.ui.widgets.citeItemDialog.getAvailableStyles();
-    dialogEl.find("input.free-text-style-input").typeahead({source:Zotero.styleList});
+    dialogEl.find("input.free-text-style-input").typeahead({local:Zotero.styleList});
     
     Zotero.ui.dialog(dialogEl, {});
     
@@ -11264,7 +11290,7 @@ Zotero.ui.loadNewItemTemplate = function(item){
                 Zotero.ui.addTag(jel, false);
             }
             Zotero.ui.init.creatorFieldButtons();
-            Zotero.ui.init.tagButtons();
+            //Zotero.ui.init.tagButtons();
             Zotero.ui.init.editButton();
         }
         jel.data('newitem', item);
@@ -11299,7 +11325,7 @@ Zotero.ui.addTag = function(e, focus) {
     if(Zotero.config.jqueryui === false){
         var library = Zotero.ui.getAssociatedLibrary(widgetEl);
         if(library){
-            widgetEl.find("input.taginput").typeahead({source:library.tags.plainList});
+            widgetEl.find("input.taginput").typeahead({name: 'tags', local:library.tags.plainList});
         }
     }
     else {
@@ -11324,7 +11350,7 @@ Zotero.ui.addTag = function(e, focus) {
         J("input.taginput").last().focus();
     }
     
-    Zotero.ui.init.tagButtons();
+    //Zotero.ui.init.tagButtons();
     
     Zotero.ui.createOnActivePage(jel);
 };
@@ -11390,7 +11416,7 @@ Zotero.ui.editItemForm = function(el, item){
         }
         else{
             Zotero.ui.init.creatorFieldButtons();
-            Zotero.ui.init.tagButtons();
+            //Zotero.ui.init.tagButtons();
             Zotero.ui.init.editButton();
         }
         Zotero.ui.init.rte();
@@ -11428,7 +11454,7 @@ Zotero.ui.editItemForm = function(el, item){
             }
             else{
                 Zotero.ui.init.creatorFieldButtons();
-                Zotero.ui.init.tagButtons();
+                //Zotero.ui.init.tagButtons();
                 Zotero.ui.init.editButton();
             }
         }, this));
@@ -11438,7 +11464,7 @@ Zotero.ui.editItemForm = function(el, item){
     if(Zotero.config.jqueryui === false){
         //add autocomplete to existing tag fields
         var library = Zotero.ui.getAssociatedLibrary();
-        J("input.taginput").typeahead({source:library.tags.plainList});
+        J("input.taginput").typeahead({name: 'tags', local:library.tags.plainList});
     }
     else{
         J("input.taginput").autocomplete({
@@ -11483,7 +11509,6 @@ Zotero.ui.loadItemDetail = function(item, el){
     }
     Zotero.ui.init.rte('readonly');
     Zotero.ui.init.editButton();
-    Zotero.ui.init.detailButtons();
     
     Zotero.ui.libraryBreadcrumbs();
     
@@ -11780,7 +11805,7 @@ Zotero.ui.callbacks.selectItemType = function(e){
 };
 
 Zotero.ui.callbacks.itemFormKeydown = function(e){
-    if ( e.keyCode === J.ui.keyCode.ENTER ){
+    if ( e.keyCode === Zotero.ui.keyCode.ENTER ){
         e.preventDefault();
         var nextEligibleSiblings = J(this).nextAll("input, button, textarea, select");
         if(nextEligibleSiblings.length){
@@ -12239,7 +12264,7 @@ Zotero.ui.widgets.itemContainer.init = function(el){
     
     
     container.on('keydown', "#item-details-div .itemDetailForm input", function(e){
-        if ( e.keyCode === J.ui.keyCode.ENTER ){
+        if ( e.keyCode === Zotero.ui.keyCode.ENTER ){
             e.preventDefault();
             var nextEligibleSiblings = J(this).nextAll("input, button, textarea, select");
             if(nextEligibleSiblings.length){
@@ -12379,7 +12404,7 @@ Zotero.ui.unassociatedItemForm = function(el, item){
                 Zotero.ui.addTag(container, false);
             }
             Zotero.ui.init.creatorFieldButtons();
-            Zotero.ui.init.tagButtons();
+            //Zotero.ui.init.tagButtons();
             Zotero.ui.init.editButton();
         }
         
@@ -12541,7 +12566,7 @@ Zotero.ui.widgets.tags.init = function(el){
     //add tag to item and stop event propogation when tag is selected
     //from autocomplete on an item
     container.on('keydown', ".taginput", function(e){
-        if ( e.keyCode === J.ui.keyCode.ENTER ){
+        if ( e.keyCode === Zotero.ui.keyCode.ENTER ){
             e.preventDefault();
             if(J(this).val() !== ''){
                 Zotero.ui.addTag();

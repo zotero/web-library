@@ -37,7 +37,7 @@ Zotero.ui.widgets.itemContainer.init = function(el){
     
     
     container.on('keydown', "#item-details-div .itemDetailForm input", function(e){
-        if ( e.keyCode === J.ui.keyCode.ENTER ){
+        if ( e.keyCode === Zotero.ui.keyCode.ENTER ){
             e.preventDefault();
             var nextEligibleSiblings = J(this).nextAll("input, button, textarea, select");
             if(nextEligibleSiblings.length){

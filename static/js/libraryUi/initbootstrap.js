@@ -91,9 +91,6 @@ Zotero.ui.init.editButton = function(){
         editEl.removeClass("disabled");
     }
 };
-Zotero.ui.init.detailButtons = function(){
-};
-Zotero.ui.init.tagButtons = function(){};
 
 Zotero.ui.removeTag = function(e){
     var el = e.currentTarget;
