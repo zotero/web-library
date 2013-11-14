@@ -210,9 +210,9 @@ $messages = array();
                         <div class="loading"></div>
                       </div>
                       <div id="more-tags-links" class="more-tags-links">
-                        <button class="btn eventfultrigger" data-library='<?=$libraryString?>' data-triggers="showMoreTags" id='show-more-tags-link' >More</a>
-                        <button class="btn eventfultrigger" data-library='<?=$libraryString?>' data-triggers="showFewerTags" id='show-fewer-tags-link'>Fewer</a>
-                        <button class="btn eventfultrigger" data-library='<?=$libraryString?>' data-triggers="tagsDirty" id='refresh-tags-link'>Refresh</a>
+                        <button class="btn btn-default eventfultrigger" data-library='<?=$libraryString?>' data-triggers="showMoreTags" id='show-more-tags-link' >More</a>
+                        <button class="btn btn-default eventfultrigger" data-library='<?=$libraryString?>' data-triggers="showFewerTags" id='show-fewer-tags-link'>Fewer</a>
+                        <button class="btn btn-default eventfultrigger" data-library='<?=$libraryString?>' data-triggers="tagsDirty" id='refresh-tags-link'>Refresh</a>
                       </div>
                 </div>
                 <!-- Library Links -->

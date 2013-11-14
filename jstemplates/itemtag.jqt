@@ -2,8 +2,8 @@
     <div class="edit-tag-div">
         <input type='text' data-itemKey="{{attr:~itemKey}}" name='tag_{{attr:~index}}' id='tag_{{attr:~index}}' value='{{attr:tag}}' class='taginput left'>
         <span class="add-remove-tag-container">
-            <button type="button" class="remove-tag-link left btn eventfultrigger" data-triggers="removeTag">Remove</button>
-            <button type="button" class="add-tag-link left btn eventfultrigger" data-triggers="removeTag">Add</button>
+            <button type="button" class="remove-tag-link left btn btn-default eventfultrigger" data-triggers="removeTag">Remove</button>
+            <button type="button" class="add-tag-link left btn btn-default eventfultrigger" data-triggers="removeTag">Add</button>
         </span>
     </div>
 </script>
