@@ -107,6 +107,9 @@ Zotero.ui.getItemsConfig = function(library){
 Zotero.ui.displayItemsWidget = function(el, config, loadedItems){
     Z.debug("Zotero.ui.displayItemsWidget", 3);
     Z.debug(config, 4);
+    var jel = J(el);
+    var library = Zotero.ui.getAssociatedLibrary(jel);
+    
     //Z.debug(loadedItems, 4);
     //figure out pagination values
     var itemPage = parseInt(Zotero.nav.getUrlVar('itemPage'), 10) || 1;
@@ -116,9 +119,8 @@ Zotero.ui.displayItemsWidget = function(el, config, loadedItems){
     var order = config.order || Zotero.config.userDefaultApiArgs.order;
     var sort = config.sort || Zotero.config.sortOrdering[order] || 'asc';
     var editmode = false;
-    var jel = J(el);
     
-    var displayFields = Zotero.prefs.library_listShowFields;
+    var displayFields = library.preferences.getPref('library_listShowFields');
     
     var itemsTableData = {displayFields:displayFields,
                            items:loadedItems.itemsArray,
@@ -143,10 +145,11 @@ Zotero.ui.displayItemsFull = function(el, config, loadedItems){
     //Z.debug(loadedItems, 4);
     
     var jel = J(el);
+    var library = Zotero.ui.getAssociatedLibrary(jel);
+    
     var feed = loadedItems.feed;
     var filledConfig = J.extend({}, Zotero.config.defaultApiArgs, Zotero.config.userDefaultApiArgs, config);
-
-    var displayFields = Zotero.prefs.library_listShowFields;
+    var displayFields = library.preferences.getPref('library_listShowFields');
     if(loadedItems.library.libraryType != 'group'){
         displayFields = J.grep(displayFields, function(el, ind){
             return J.inArray(el, Zotero.Library.prototype.groupOnlyColumns) == (-1);
@@ -323,6 +326,7 @@ Zotero.ui.callbacks.resortItems = function(e){
     Zotero.nav.urlvars.pathVars['sort'] = newOrderSort;
     Zotero.nav.pushState();
     
+    //TODO: update to use Zotero.Preferences?
     //set new order as preference and save it to use www prefs
     Zotero.config.userDefaultApiArgs.sort = newOrderSort;
     Zotero.config.userDefaultApiArgs.order = newOrderField;
@@ -380,6 +384,7 @@ Zotero.ui.callbacks.sortBy = function(e){
         Zotero.nav.urlvars.pathVars['sort'] = newOrderSort;
         Zotero.nav.pushState();
         
+        //TODO: update to use Zotero.Preferences?
         //set new order as preference and save it to use www prefs
         Zotero.config.userDefaultApiArgs.sort = newOrderSort;
         Zotero.config.userDefaultApiArgs.order = newOrderField;

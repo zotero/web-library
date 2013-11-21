@@ -154,7 +154,11 @@ var Zotero = {
         if(typeof(level) !== "number"){
             level = 1;
         }
-        if(Zotero.prefs.debug_log && (level <= Zotero.prefs.debug_level)){
+        if(Zotero.preferences === undefined){
+            console.log(debugstring);
+            return;
+        }
+        if(Zotero.preferences.getPref('debug_log') && (level <= Zotero.preferences.getPref('debug_level')) ) {
             console.log(debugstring);
         }
     },
@@ -181,14 +185,6 @@ var Zotero = {
     
     cacheFeeds: {},
     
-    defaultPrefs: {
-        debug_level: 3, //lower level is higher priority
-        debug_log: true,
-        debug_mock: false
-    },
-    
-    prefs: {},
-    
     state: {},
     
     libraries: {},
@@ -201,7 +197,7 @@ var Zotero = {
             //'tag': /^[^#]*$/,
             'libraryID': /^[0-9]+$/,
             'libraryType': /^(user|group|)$/,
-            'target': /^(items?|collections?|tags|children|deleted|userGroups)$/,
+            'target': /^(items?|collections?|tags|children|deleted|userGroups|key)$/,
             'targetModifier': /^(top|file|file\/view)$/,
             
             //get params
@@ -246,7 +242,7 @@ var Zotero = {
     enableLogging: function(){
         Zotero._logEnabled++;
         if(Zotero._logEnabled > 0){
-            //Zotero.prefs.debug_log = true;
+            //TODO: enable debug_log?
         }
     },
     
@@ -254,7 +250,7 @@ var Zotero = {
         Zotero._logEnabled--;
         if(Zotero._logEnabled <= 0){
             Zotero._logEnabled = 0;
-            //Zotero.prefs.debug_log = false;
+            //TODO: disable debug_log?
         }
     },
     
@@ -272,16 +268,10 @@ var Zotero = {
         Zotero.store = store;
         
         Zotero.cache = new Zotero.Cache(store);
-        //populate prefs with defaults, then override with stored prefs
-        Zotero.prefs = J.extend({}, Zotero.defaultPrefs, Zotero.prefs, Zotero.utils.getStoredPrefs());
-        /*
-        Zotero.prefs = new Zotero.Prefs(store);
-        J.each(Zotero.defaultPrefs, function(key, val){
-            if(Zotero.prefs.getPref(key) === null){
-                Zotero.prefs.setPref(key);
-            }
-        });
-        */
+        
+        //initialize global preferences object
+        Zotero.preferences = new Zotero.Preferences(Zotero.store, 'global');
+        
         //get localized item constants if not stored in localstorage
         var locale = 'en-US';
         if(Zotero.config.locale){
@@ -586,6 +576,9 @@ Zotero.ajax.apiRequestUrl = function(params){
         case 'children':
             url += '/items/' + params.itemKey + '/children';
             break;
+        case 'key':
+            url = base + '/users/' + params.libraryID + '/keys/' + params.apiKey;
+            break;
         case 'deleted':
             url += '/deleted';
             break;
@@ -873,7 +866,7 @@ Zotero.Library = function(type, libraryID, libraryUrlIdentifier, apiKey){
 
                     Z.debug("Triggering cachedDataLoaded");
                     Zotero.ui.eventful.trigger('cachedDataLoaded');
-                    Zotero.prefs.log_level = 3;
+                    Zotero.preferences.setPref('log_level', 3);
                 }, this));
             }
             else {
@@ -884,7 +877,7 @@ Zotero.Library = function(type, libraryID, libraryUrlIdentifier, apiKey){
     }
     
     if(Zotero.config.preloadCachedLibrary === true){
-        Zotero.prefs.log_level = 5;
+        Zotero.preferences.setPref('log_level', 5);
         if(Zotero.config.useIndexedDB === true){
             //noop
         }
@@ -898,7 +891,7 @@ Zotero.Library = function(type, libraryID, libraryUrlIdentifier, apiKey){
             Z.debug("Library.tags.tagsVersion: " + library.tags.tagsVersion, 3);
             */
         }
-        Zotero.prefs.log_level = 3;
+        Zotero.preferences.setPref('log_level', 3);
     }
     
     library.dirty = false;
@@ -4405,7 +4398,7 @@ Zotero.utils = {
         });
         return satisfy;
     },
-    
+    /*
     setUserPref: function(name, value){
         Z.debug('Zotero.utils.updateUserPrefs', 3);
         var prefs;
@@ -4458,7 +4451,7 @@ Zotero.utils = {
             return true;
         }
     },
-    
+    */
     libraryString: function(type, libraryID){
         var lstring = '';
         if(type == 'user') lstring = 'u';
@@ -4677,61 +4670,60 @@ Zotero.utils = {
      * @return array $keyPermissions
      */
     getKeyPermissions: function(userID, key) {
-        //TODO: convert php to JS
-        /*
-        if(userID === null){
-            userID = $this->libraryID;
-        }
-        if($key == false){
-            if($this->_apiKey == '') {
-                false;
-            }
-            $key = $this->_apiKey;
-        }
-        
-        $reqUrl = $this->apiRequestUrl(array('target'=>'key', 'apiKey'=>$key, 'userID'=>$userID));
-        $response = $this->_request($reqUrl, 'GET');
-        if($response->isError()){
+        if(!userID){
             return false;
         }
-        $body = $response->getBody();
-        $doc = new DOMDocument();
-        $doc->loadXml($body);
-        $keyNode = $doc->getElementsByTagName('key')->item(0);
-        $keyPerms = $this->parseKey($keyNode);
-        return $keyPerms;
-        */
+        
+        if(!key){
+            return false;
+        }
+        
+        var urlconfig = {'target':'key', 'libraryType':'user', 'libraryID':userID, 'apiKey':key};
+        var requestUrl = Zotero.ajax.apiRequestString(urlconfig);
+        var deferred = new J.Deferred();
+        
+        var callback = J.proxy(function(data, textStatus, XMLHttpRequest){
+            var keyNode = J(data).find('key');
+            var keyObject = Zotero.utils.parseKey(keyNode);
+            deferred.resolve(keyObject);
+        }, this);
+        
+        var jqxhr = Zotero.ajaxRequest(requestUrl);
+        
+        jqxhr.done(callback);
+        jqxhr.fail(function(){deferred.reject.apply(null, arguments);}).fail(Zotero.error);
+        
+        Zotero.ajax.activeRequests.push(jqxhr);
+        
+        return deferred;
     },
     
     /**
      * Parse a key response into an array
      *
-     * @param $keyNode DOMNode from key response
+     * @param keyNode jQuery Dom collection from key response
      * @return array $keyPermissions
      */
-    parseKey: function(keynode){
-        /*var key = array();
-        var keyPerms = ["library":"0", "notes":"0", "write":"0", 'groups':[]);*/
-        //TODO: convert php to JS
-        /*
-        var accessEls = keyNode->getElementsByTagName('access');
-        foreach($accessEls as $access){
-            if($libraryAccess = $access->getAttribute("library")){
-                $keyPerms['library'] = $libraryAccess;
+    parseKey: function(keyNode){
+        var key = [];
+        var keyPerms = {"library":"0", "notes":"0", "write":"0", 'groups':{}};
+        var accessEls = keyNode.find('access');
+        accessEls.each(function(){
+            var access = J(this);
+            if(access.attr('library')){
+                keyPerms['library'] = access.attr('library');
             }
-            if($notesAccess = $access->getAttribute("notes")){
-                $keyPerms['notes'] = $notesAccess;
+            if(access.attr('notes')){
+                keyPerms['notes'] = access.attr('notes');
             }
-            if($groupAccess = $access->getAttribute("group")){
-                $groupPermission = $access->getAttribute("write") == '1' ? 'write' : 'read';
-                $keyPerms['groups'][$groupAccess] = $groupPermission;
+            if(access.attr('group')){
+                var groupPermission = access.attr('write') == '1' ? 'write' : 'read';
+                keyPerms['groups'][access.attr('group')] = groupPermission;
             }
-            elseif($writeAccess = $access->getAttribute("write")) {
-                $keyPerms['write'] = $writeAccess;
+            else if(access.attr('write')){
+                keyPerms['write'] = access.attr('write');
             }
-            
-        }
-        */
+        });
         return keyPerms;
     }
     
@@ -5099,7 +5091,6 @@ Zotero.Idb.Library.prototype.deleteDB = function(){
     var idbLibrary = this;
     idbLibrary.db.close();
     var deleteRequest = idbLibrary.indexedDB.deleteDatabase("Zotero_" + idbLibrary.libraryString);
-    Z.debug("deleting idb: " + "Zotero_" + idbLibrary.libraryString);
     deleteRequest.onerror = function(){
         Z.debug("Error deleting indexedDB");
     }
@@ -6591,7 +6582,12 @@ Zotero.Preferences = function(store, idString) {
     this.store = store;
     this.idString = idString;
     this.preferencesObject = {};
-    this.defaults = {};
+    this.defaults = {
+        debug_level: 3, //lower level is higher priority
+        debug_log: true,
+        debug_mock: false,
+        library_listShowFields: ['title', 'creator', 'dateModified'],
+    };
     this.load();
 };
 
@@ -6669,10 +6665,8 @@ Zotero.defaultPrefs = {
     debug_log: true,
     debug_mock: false,
     javascript_enabled: false,
-    library_listShowFields: ['title', 'creator', 'dateModified']
+    library_listShowFields: ['title', 'creator', 'dateModified'],
 };
-
-Zotero.prefs = {};
 
 Zotero.init = function(){
     Z.debug("Zotero init", 3);
@@ -6715,15 +6709,9 @@ Zotero.init = function(){
     }
     Zotero.cache = new Zotero.Cache(store);
     Zotero.store = store;
-    Zotero.prefs = J.extend({}, Zotero.defaultPrefs, Zotero.prefs, Zotero.utils.getStoredPrefs());
-    /*
-    Zotero.prefs = new Zotero.Prefs(store);
-    J.each(Zotero.defaultPrefs, function(key, val){
-        if(Zotero.prefs.getPref(key) === null){
-            Zotero.prefs.setPref(key, val);
-        }
-    });
-    */
+    //initialize global preferences object
+    Zotero.preferences = new Zotero.Preferences(Zotero.store, 'global');
+    Zotero.preferences.defaults = J.extend({}, Zotero.preferences.defaults, Zotero.config.defaultPrefs);
     
     //get localized item constants if not stored in localstorage
     var locale = "en-US";
@@ -6737,30 +6725,6 @@ Zotero.init = function(){
         Zotero.config.librarySettings.libraryUserSlug = zoteroData.libraryUserSlug;
         Zotero.config.librarySettings.libraryUserID = zoteroData.libraryUserID;
         Zotero.config.librarySettings.allowEdit = zoteroData.allowEdit;
-        
-        if(zoteroData.library_listShowFields){
-            Zotero.prefs.library_listShowFields = zoteroData.library_listShowFields.split(',');
-        }
-        if(zoteroData.library_showAllTags){
-            Zotero.prefs.library_showAllTags = zoteroData.library_showAllTags;
-        }
-        if(zoteroData.library_defaultSort || Zotero.prefs.library_defaultSort){
-            var defaultSort;
-            if(zoteroData.library_defaultSort){
-                defaultSort = zoteroData.library_defaultSort.split(',');
-            }
-            else {
-                defaultSort = Zotero.prefs.library_defaultSort.split(',');
-            }
-            if(defaultSort[0]){
-                Zotero.config.userDefaultApiArgs['order'] = defaultSort[0];
-            }
-            if(defaultSort[1]){
-                Zotero.config.userDefaultApiArgs['sort'] = defaultSort[1];
-            }
-            Zotero.config.defaultSortColumn = Zotero.config.userDefaultApiArgs['sort'];
-            if(Zotero.config.defaultSortColumn == 'undefined') Zotero.config.defaultSortColumn = 'title';
-        }
         
         //load general data if on library page
         if(Zotero.config.pageClass == 'user_library' || Zotero.config.pageClass == 'group_library' || Zotero.config.pageClass == 'my_library'){
@@ -6779,9 +6743,9 @@ Zotero.init = function(){
         Zotero.config.proxy = false;
     }
     
-    if(Zotero.prefs.server_javascript_enabled === false){
+    if(Zotero.preferences.getPref('server_javascript_enabled') === false){
         //Zotero.utils.setUserPref('javascript_enabled', '1');
-        Zotero.prefs.javascript_enabled = true;
+        Zotero.preferences.setPref('server_javascript_enabled') = true;
         document.cookie = "zoterojsenabled=1; expires=; path=/";
     }
     
@@ -6799,7 +6763,7 @@ Zotero.init = function(){
     
 };
 
-//set up Zotero config and prefs based on passed in object
+//set up Zotero config and preferences based on passed in object
 Zotero.loadConfig = function(config){
     //set up user config defaults
     Zotero.config.userDefaultApiArgs = J.extend({}, Zotero.config.defaultApiArgs);
@@ -8917,7 +8881,6 @@ Zotero.ui.init.libraryTemplates = function(){
         Zotero: Zotero,
         J: J,
         Modernizr: Modernizr,
-        displayFields: Zotero.prefs.library_listShowFields,
         zoteroFieldMap: Zotero.localizations.fieldMap,
         formatItemField: Zotero.ui.formatItemField,
         formatItemDateField: Zotero.ui.formatItemDateField,
@@ -10786,10 +10749,12 @@ Zotero.ui.callbacks.librarySettings = function(e){
     e.preventDefault();
     //if(Z.config.librarySettingsInit == false){
     var dialogEl = J("#library-settings-dialog").empty();
+    var library = Zotero.ui.getAssociatedLibrary(dialogEl);
     dialogEl.html( J("#librarysettingsTemplate").render({'columnFields':Zotero.Library.prototype.displayableColumns}) );
     
     J("#display-column-field-title").prop('checked', true).prop('disabled', true);
-    J.each(Zotero.prefs.library_listShowFields, function(index, value){
+    var listShowFields = library.preferences.getPref('library_listShowFields');
+    J.each(listShowFields, function(index, value){
         var idstring = '#display-column-field-' + value;
         J(idstring).prop('checked', true);
     });
@@ -10801,7 +10766,9 @@ Zotero.ui.callbacks.librarySettings = function(e){
         });
         
         Zotero.utils.setUserPref('library_listShowFields', showFields);
-        Zotero.prefs.library_listShowFields = showFields;
+        library.preferences.setPref('library_listShowFields', showFields);
+        
+        //TODO: switch to event, which one to just re-render but not reload items?
         Zotero.callbacks.loadItems(J("#library-items-div"));
         
         Zotero.ui.closeDialog(J("#library-settings-dialog"));
@@ -11929,6 +11896,9 @@ Zotero.ui.getItemsConfig = function(library){
 Zotero.ui.displayItemsWidget = function(el, config, loadedItems){
     Z.debug("Zotero.ui.displayItemsWidget", 3);
     Z.debug(config, 4);
+    var jel = J(el);
+    var library = Zotero.ui.getAssociatedLibrary(jel);
+    
     //Z.debug(loadedItems, 4);
     //figure out pagination values
     var itemPage = parseInt(Zotero.nav.getUrlVar('itemPage'), 10) || 1;
@@ -11938,9 +11908,8 @@ Zotero.ui.displayItemsWidget = function(el, config, loadedItems){
     var order = config.order || Zotero.config.userDefaultApiArgs.order;
     var sort = config.sort || Zotero.config.sortOrdering[order] || 'asc';
     var editmode = false;
-    var jel = J(el);
     
-    var displayFields = Zotero.prefs.library_listShowFields;
+    var displayFields = library.preferences.getPref('library_listShowFields');
     
     var itemsTableData = {displayFields:displayFields,
                            items:loadedItems.itemsArray,
@@ -11965,10 +11934,13 @@ Zotero.ui.displayItemsFull = function(el, config, loadedItems){
     //Z.debug(loadedItems, 4);
     
     var jel = J(el);
+    var library = Zotero.ui.getAssociatedLibrary(jel);
+    
     var feed = loadedItems.feed;
     var filledConfig = J.extend({}, Zotero.config.defaultApiArgs, Zotero.config.userDefaultApiArgs, config);
-
-    var displayFields = Zotero.prefs.library_listShowFields;
+    Z.debug(filledConfig);
+    var displayFields = library.preferences.getPref('library_listShowFields');
+    Z.debug(displayFields);
     if(loadedItems.library.libraryType != 'group'){
         displayFields = J.grep(displayFields, function(el, ind){
             return J.inArray(el, Zotero.Library.prototype.groupOnlyColumns) == (-1);
@@ -12145,6 +12117,7 @@ Zotero.ui.callbacks.resortItems = function(e){
     Zotero.nav.urlvars.pathVars['sort'] = newOrderSort;
     Zotero.nav.pushState();
     
+    //TODO: update to use Zotero.Preferences?
     //set new order as preference and save it to use www prefs
     Zotero.config.userDefaultApiArgs.sort = newOrderSort;
     Zotero.config.userDefaultApiArgs.order = newOrderField;
@@ -12202,6 +12175,7 @@ Zotero.ui.callbacks.sortBy = function(e){
         Zotero.nav.urlvars.pathVars['sort'] = newOrderSort;
         Zotero.nav.pushState();
         
+        //TODO: update to use Zotero.Preferences?
         //set new order as preference and save it to use www prefs
         Zotero.config.userDefaultApiArgs.sort = newOrderSort;
         Zotero.config.userDefaultApiArgs.order = newOrderField;
@@ -12308,7 +12282,11 @@ Zotero.ui.widgets.librarysettingsdialog.show = function(e){
     var dialogEl = widgetEl.find(".library-settings-dialog");
     
     dialogEl.find(".display-column-field-title").prop('checked', true).prop('disabled', true);
-    J.each(Zotero.prefs.library_listShowFields, function(index, value){
+    
+    var library = Zotero.ui.getAssociatedLibrary(triggeringEl);
+    var library_listShowFields = library.preferences.getPref('library_listShowFields');
+    //var library_listShowFields = Zotero.preferences.getPref('library_listShowFields');
+    J.each(library_listShowFields, function(index, value){
         var classstring = '.display-column-field-' + value;
         dialogEl.find(classstring).prop('checked', true);
     });
@@ -12319,10 +12297,12 @@ Zotero.ui.widgets.librarysettingsdialog.show = function(e){
             showFields.push(J(this).val());
         });
         
-        Zotero.utils.setUserPref('library_listShowFields', showFields);
-        Zotero.prefs.library_listShowFields = showFields;
+        library.preferences.setPref('library_listShowFields', showFields);
+        library.preferences.persist();
+        Zotero.preferences.setPref('library_listShowFields', showFields);
+        Zotero.preferences.persist();
+        
         Zotero.ui.eventful.trigger("displayedItemsChanged");
-        //Zotero.callbacks.loadItems(J("#library-items-div"));
         
         Zotero.ui.closeDialog(dialogEl);
     }, this);
@@ -13374,7 +13354,7 @@ Zotero.ui.displayItemsFullLocal = function(el, config, library){
     var filledConfig = J.extend({}, Zotero.config.defaultApiArgs, Zotero.config.userDefaultApiArgs, config);
     
     var titleParts = ['', '', ''];
-    var displayFields = Zotero.prefs.library_listShowFields;
+    var displayFields = library.preferences.getPref('library_listShowFields');
     if(library.libraryType != 'group'){
         displayFields = J.grep(displayFields, function(el, ind){
             return J.inArray(el, Zotero.Library.prototype.groupOnlyColumns) == (-1);

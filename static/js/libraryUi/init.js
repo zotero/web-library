@@ -324,7 +324,6 @@ Zotero.ui.init.libraryTemplates = function(){
         Zotero: Zotero,
         J: J,
         Modernizr: Modernizr,
-        displayFields: Zotero.prefs.library_listShowFields,
         zoteroFieldMap: Zotero.localizations.fieldMap,
         formatItemField: Zotero.ui.formatItemField,
         formatItemDateField: Zotero.ui.formatItemDateField,

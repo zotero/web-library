@@ -118,7 +118,7 @@ Zotero.ui.displayItemsFullLocal = function(el, config, library){
     var filledConfig = J.extend({}, Zotero.config.defaultApiArgs, Zotero.config.userDefaultApiArgs, config);
     
     var titleParts = ['', '', ''];
-    var displayFields = Zotero.prefs.library_listShowFields;
+    var displayFields = library.preferences.getPref('library_listShowFields');
     if(library.libraryType != 'group'){
         displayFields = J.grep(displayFields, function(el, ind){
             return J.inArray(el, Zotero.Library.prototype.groupOnlyColumns) == (-1);

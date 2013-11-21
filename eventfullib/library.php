@@ -321,9 +321,6 @@ $messages = array();
             
             <script type="text/javascript" charset="utf-8" src="<?=$staticPath?>/js/_zoterowwwAll.bugly.js"></script>
             <script type="text/javascript" charset="utf-8">
-                Zotero.prefs.server_javascript_enabled = true;
-                Zotero.prefs.debug_level = 3;
-                
                 Zotero.config = <?include "zoteroconfig.js";?>
             </script>
             

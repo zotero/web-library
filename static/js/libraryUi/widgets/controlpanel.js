@@ -436,10 +436,12 @@ Zotero.ui.callbacks.librarySettings = function(e){
     e.preventDefault();
     //if(Z.config.librarySettingsInit == false){
     var dialogEl = J("#library-settings-dialog").empty();
+    var library = Zotero.ui.getAssociatedLibrary(dialogEl);
     dialogEl.html( J("#librarysettingsTemplate").render({'columnFields':Zotero.Library.prototype.displayableColumns}) );
     
     J("#display-column-field-title").prop('checked', true).prop('disabled', true);
-    J.each(Zotero.prefs.library_listShowFields, function(index, value){
+    var listShowFields = library.preferences.getPref('library_listShowFields');
+    J.each(listShowFields, function(index, value){
         var idstring = '#display-column-field-' + value;
         J(idstring).prop('checked', true);
     });
@@ -451,7 +453,9 @@ Zotero.ui.callbacks.librarySettings = function(e){
         });
         
         Zotero.utils.setUserPref('library_listShowFields', showFields);
-        Zotero.prefs.library_listShowFields = showFields;
+        library.preferences.setPref('library_listShowFields', showFields);
+        
+        //TODO: switch to event, which one to just re-render but not reload items?
         Zotero.callbacks.loadItems(J("#library-items-div"));
         
         Zotero.ui.closeDialog(J("#library-settings-dialog"));

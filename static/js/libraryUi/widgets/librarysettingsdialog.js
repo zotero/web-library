@@ -17,7 +17,11 @@ Zotero.ui.widgets.librarysettingsdialog.show = function(e){
     var dialogEl = widgetEl.find(".library-settings-dialog");
     
     dialogEl.find(".display-column-field-title").prop('checked', true).prop('disabled', true);
-    J.each(Zotero.prefs.library_listShowFields, function(index, value){
+    
+    var library = Zotero.ui.getAssociatedLibrary(triggeringEl);
+    var library_listShowFields = library.preferences.getPref('library_listShowFields');
+    //var library_listShowFields = Zotero.preferences.getPref('library_listShowFields');
+    J.each(library_listShowFields, function(index, value){
         var classstring = '.display-column-field-' + value;
         dialogEl.find(classstring).prop('checked', true);
     });
@@ -28,10 +32,12 @@ Zotero.ui.widgets.librarysettingsdialog.show = function(e){
             showFields.push(J(this).val());
         });
         
-        Zotero.utils.setUserPref('library_listShowFields', showFields);
-        Zotero.prefs.library_listShowFields = showFields;
+        library.preferences.setPref('library_listShowFields', showFields);
+        library.preferences.persist();
+        Zotero.preferences.setPref('library_listShowFields', showFields);
+        Zotero.preferences.persist();
+        
         Zotero.ui.eventful.trigger("displayedItemsChanged");
-        //Zotero.callbacks.loadItems(J("#library-items-div"));
         
         Zotero.ui.closeDialog(dialogEl);
     }, this);
