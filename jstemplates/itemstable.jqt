@@ -19,7 +19,7 @@
             </tr>
         </thead>
         <tbody>
-            {{for items tmpl='#itemrowTemplate' /}}
+            {{for items tmpl='#itemrowTemplate' ~displayFields=displayFields /}}
         </tbody>
     </table>
     {{if (items.length == 0)}}

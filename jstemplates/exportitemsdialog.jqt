@@ -7,10 +7,12 @@
                 <h3>Export</h3>
             </div>
             <div class="modal-body" data-role="content">
+                <div class="export-list">
                 
+                </div>
             </div>
             <div class="modal-footer">
-                <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+                <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">Close</button>
             </div>
         </div>
     </div>

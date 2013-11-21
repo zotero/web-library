@@ -10908,15 +10908,17 @@ Zotero.ui.widgets.exportItemsDialog.show = function(e){
     widgetEl.html( J("#exportitemsdialogTemplate").render({}) );
     var dialogEl = widgetEl.find(".export-items-dialog");
     
-    //get library and build dialog
-    dialogEl.find(".modal-body").empty().append(widgetEl.find(".export-list").contents().clone() );
+    //Zotero.ui.eventful.trigger('displayedItemsChanged');
+    dialogEl.find(".modal-body").empty().append(J(".export-list").contents().clone() );
     
+    //get library and build dialog
     Zotero.ui.dialog(dialogEl, {});
     
     return false;
 };
 
 Zotero.ui.widgets.exportItemsDialog.updateExportLinks = function(e){
+    Z.debug('exportItemsDialog.updateExportLinks', 3);
     //get list of export urls and link them
     var triggeringEl = J(e.triggeringElement);
     var library = Zotero.ui.getAssociatedLibrary(triggeringEl);
@@ -10925,10 +10927,12 @@ Zotero.ui.widgets.exportItemsDialog.updateExportLinks = function(e){
     var urlconfig = Zotero.ui.getItemsConfig(library);
     
     var exportUrls = Zotero.url.exportUrls(urlconfig);
-    widgetEl.find(".export-list").empty().append( J("#exportformatsTemplate").render({exportUrls:exportUrls}) );
-    widgetEl.find(".export-list").data('urlconfig', urlconfig);
+    //widgetEl.find(".export-list").empty().append( J("#exportformatsTemplate").render({exportUrls:exportUrls}) );
+    //widgetEl.find(".export-list").data('urlconfig', urlconfig);
+    J(".export-list").empty().append( J("#exportformatsTemplate").render({exportUrls:exportUrls, exportFormatsMap: Zotero.config.exportFormatsMap}) );
+    J(".export-list").data('urlconfig', urlconfig);
     //hide export list until requested
-    widgetEl.find(".export-list").hide();
+    J(".export-list").hide();
 };
 
 
@@ -11938,9 +11942,7 @@ Zotero.ui.displayItemsFull = function(el, config, loadedItems){
     
     var feed = loadedItems.feed;
     var filledConfig = J.extend({}, Zotero.config.defaultApiArgs, Zotero.config.userDefaultApiArgs, config);
-    Z.debug(filledConfig);
     var displayFields = library.preferences.getPref('library_listShowFields');
-    Z.debug(displayFields);
     if(loadedItems.library.libraryType != 'group'){
         displayFields = J.grep(displayFields, function(el, ind){
             return J.inArray(el, Zotero.Library.prototype.groupOnlyColumns) == (-1);

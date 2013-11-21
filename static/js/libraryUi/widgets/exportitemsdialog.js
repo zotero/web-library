@@ -14,15 +14,17 @@ Zotero.ui.widgets.exportItemsDialog.show = function(e){
     widgetEl.html( J("#exportitemsdialogTemplate").render({}) );
     var dialogEl = widgetEl.find(".export-items-dialog");
     
-    //get library and build dialog
-    dialogEl.find(".modal-body").empty().append(widgetEl.find(".export-list").contents().clone() );
+    //Zotero.ui.eventful.trigger('displayedItemsChanged');
+    dialogEl.find(".modal-body").empty().append(J(".export-list").contents().clone() );
     
+    //get library and build dialog
     Zotero.ui.dialog(dialogEl, {});
     
     return false;
 };
 
 Zotero.ui.widgets.exportItemsDialog.updateExportLinks = function(e){
+    Z.debug('exportItemsDialog.updateExportLinks', 3);
     //get list of export urls and link them
     var triggeringEl = J(e.triggeringElement);
     var library = Zotero.ui.getAssociatedLibrary(triggeringEl);
@@ -31,8 +33,10 @@ Zotero.ui.widgets.exportItemsDialog.updateExportLinks = function(e){
     var urlconfig = Zotero.ui.getItemsConfig(library);
     
     var exportUrls = Zotero.url.exportUrls(urlconfig);
-    widgetEl.find(".export-list").empty().append( J("#exportformatsTemplate").render({exportUrls:exportUrls}) );
-    widgetEl.find(".export-list").data('urlconfig', urlconfig);
+    //widgetEl.find(".export-list").empty().append( J("#exportformatsTemplate").render({exportUrls:exportUrls}) );
+    //widgetEl.find(".export-list").data('urlconfig', urlconfig);
+    J(".export-list").empty().append( J("#exportformatsTemplate").render({exportUrls:exportUrls, exportFormatsMap: Zotero.config.exportFormatsMap}) );
+    J(".export-list").data('urlconfig', urlconfig);
     //hide export list until requested
-    widgetEl.find(".export-list").hide();
+    J(".export-list").hide();
 };
