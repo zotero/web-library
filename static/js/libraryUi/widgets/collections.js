@@ -272,28 +272,29 @@ Zotero.ui.nestHideCollectionTree = function(el, expandSelected){
     jel.find("#collection-list ul").hide().siblings(".folder-toggle")
                                         .children(".sprite-placeholder")
                                         .removeClass("sprite-placeholder")
-                                        .addClass("ui-icon-triangle-1-e");
+                                        .addClass('glyphicon')
+                                        .addClass("glyphicon-chevron-right");
     jel.find(".current-collection").parents("ul").show();
     jel.find("#collection-list li.current-collection").children('ul').show();
     //start all twisties in closed position
-    jel.find(".ui-icon-triangle-1-s").removeClass("ui-icon-triangle-1-s").addClass("ui-icon-triangle-1-e");
+    jel.find(".glyphicon-chevron-down").removeClass("glyphicon-chevron-down").addClass("glyphicon-chevron-right");
     //show opened twisties as expanded
-    jel.find("li.current-collection").parentsUntil("#collection-list").children('div.folder-toggle').find(".ui-icon-triangle-1-e")
-                                                .removeClass("ui-icon-triangle-1-e")
-                                                .addClass("ui-icon-triangle-1-s");
+    jel.find("li.current-collection").parentsUntil("#collection-list").children('div.folder-toggle').find(".glyphicon-chevron-right")
+                                                .removeClass("glyphicon-chevron-right")
+                                                .addClass("glyphicon-chevron-down");
     
     
     if(expandSelected === false){
         jel.find("#collection-list li.current-collection").children('ul').hide();
-        jel.find("#collection-list li.current-collection").find(".ui-icon-triangle-1-s")
-                                                    .removeClass("ui-icon-triangle-1-s")
-                                                    .addClass("ui-icon-triangle-1-e");
+        jel.find("#collection-list li.current-collection").find(".glyphicon-chevron-down")
+                                                    .removeClass("glyphicon-chevron-down")
+                                                    .addClass("glyphicon-chevron-right");
         jel.find(".current-collection").data('expanded', false);
     }
     else{
-        jel.find("li.current-collection").children('div.folder-toggle').find(".ui-icon-triangle-1-e")
-                                                .removeClass("ui-icon-triangle-1-e")
-                                                .addClass("ui-icon-triangle-1-s");
+        jel.find("li.current-collection").children('div.folder-toggle').find(".glyphicon-chevron-right")
+                                                .removeClass("glyphicon-chevron-right")
+                                                .addClass("glyphicon-chevron-down");
                                                 
         jel.find(".current-collection").data('expanded', true);
     }
