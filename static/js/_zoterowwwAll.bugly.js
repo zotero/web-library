@@ -1130,6 +1130,17 @@ var Zotero = {
             title: 60
         },
         exportFormats: [ "bibtex", "bookmarks", "mods", "refer", "rdf_bibliontology", "rdf_dc", "rdf_zotero", "ris", "wikipedia" ],
+        exportFormatsMap: {
+            bibtex: "BibTeX",
+            bookmarks: "Bookmarks",
+            mods: "MODS",
+            refer: "Refer/BibIX",
+            rdf_bibliontology: "Bibliontology RDF",
+            rdf_dc: "Unqualified Dublin Core RDF",
+            rdf_zotero: "Zotero RDF",
+            ris: "RIS",
+            wikipedia: "Wikipedia Citation Templates"
+        },
         defaultApiArgs: {
             order: "title",
             sort: "asc",
@@ -6578,7 +6589,8 @@ Zotero.Preferences = function(store, idString) {
         debug_level: 3,
         debug_log: true,
         debug_mock: false,
-        library_listShowFields: [ "title", "creator", "dateModified" ]
+        library_listShowFields: [ "title", "creator", "dateModified" ],
+        itemsPerPage: 25
     };
     this.load();
 };
@@ -9327,17 +9339,17 @@ Zotero.ui.nestHideCollectionTree = function(el, expandSelected) {
         expandSelected = true;
     }
     var jel = J(el);
-    jel.find("#collection-list ul").hide().siblings(".folder-toggle").children(".sprite-placeholder").removeClass("sprite-placeholder").addClass("ui-icon-triangle-1-e");
+    jel.find("#collection-list ul").hide().siblings(".folder-toggle").children(".sprite-placeholder").removeClass("sprite-placeholder").addClass("glyphicon").addClass("glyphicon-chevron-right");
     jel.find(".current-collection").parents("ul").show();
     jel.find("#collection-list li.current-collection").children("ul").show();
-    jel.find(".ui-icon-triangle-1-s").removeClass("ui-icon-triangle-1-s").addClass("ui-icon-triangle-1-e");
-    jel.find("li.current-collection").parentsUntil("#collection-list").children("div.folder-toggle").find(".ui-icon-triangle-1-e").removeClass("ui-icon-triangle-1-e").addClass("ui-icon-triangle-1-s");
+    jel.find(".glyphicon-chevron-down").removeClass("glyphicon-chevron-down").addClass("glyphicon-chevron-right");
+    jel.find("li.current-collection").parentsUntil("#collection-list").children("div.folder-toggle").find(".glyphicon-chevron-right").removeClass("glyphicon-chevron-right").addClass("glyphicon-chevron-down");
     if (expandSelected === false) {
         jel.find("#collection-list li.current-collection").children("ul").hide();
-        jel.find("#collection-list li.current-collection").find(".ui-icon-triangle-1-s").removeClass("ui-icon-triangle-1-s").addClass("ui-icon-triangle-1-e");
+        jel.find("#collection-list li.current-collection").find(".glyphicon-chevron-down").removeClass("glyphicon-chevron-down").addClass("glyphicon-chevron-right");
         jel.find(".current-collection").data("expanded", false);
     } else {
-        jel.find("li.current-collection").children("div.folder-toggle").find(".ui-icon-triangle-1-e").removeClass("ui-icon-triangle-1-e").addClass("ui-icon-triangle-1-s");
+        jel.find("li.current-collection").children("div.folder-toggle").find(".glyphicon-chevron-right").removeClass("glyphicon-chevron-right").addClass("glyphicon-chevron-down");
         jel.find(".current-collection").data("expanded", true);
     }
     Zotero.ui.createOnActivePage(el);
@@ -10549,6 +10561,7 @@ Zotero.ui.widgets.items.loadItemsCallback = function(event) {
     var jel = J(el);
     var library = Zotero.ui.getAssociatedLibrary(el);
     var newConfig = Zotero.ui.getItemsConfig(library);
+    Z.debug(newConfig);
     Zotero.ui.showSpinner(el, "horizontal");
     var d = library.loadItems(newConfig);
     d.done(J.proxy(function(loadedItems) {
@@ -10577,10 +10590,13 @@ Zotero.ui.getItemsConfig = function(library) {
         target: "items",
         targetModifier: "top",
         itemPage: 1,
-        limit: 25,
+        limit: library.preferences.getPref("itemsPerPage"),
         content: "json"
     };
-    var newConfig = J.extend({}, defaultConfig, Zotero.config.userDefaultApiArgs, urlConfigVals);
+    var userPreferencesApiArgs = {
+        limit: library.preferences.getPref("itemsPerPage")
+    };
+    var newConfig = J.extend({}, defaultConfig, Zotero.config.userDefaultApiArgs, userPreferencesApiArgs, urlConfigVals);
     newConfig["collectionKey"] = urlConfigVals["collectionKey"];
     newConfig.start = parseInt(newConfig.limit, 10) * (parseInt(newConfig.itemPage, 10) - 1);
     if (newConfig.order == "addedBy" && library.libraryType == "user") {
@@ -10603,7 +10619,7 @@ Zotero.ui.displayItemsWidget = function(el, config, loadedItems) {
     var itemPage = parseInt(Zotero.nav.getUrlVar("itemPage"), 10) || 1;
     var feed = loadedItems.feed;
     var start = parseInt(config.start, 10) || 0;
-    var limit = parseInt(config.limit, 10) || 25;
+    var limit = parseInt(config.limit, 10) || library.preferences.getPref("itemsPerPage");
     var order = config.order || Zotero.config.userDefaultApiArgs.order;
     var sort = config.sort || Zotero.config.sortOrdering[order] || "asc";
     var editmode = false;
@@ -10888,8 +10904,8 @@ Zotero.ui.widgets.librarysettingsdialog.show = function(e) {
     var dialogEl = widgetEl.find(".library-settings-dialog");
     dialogEl.find(".display-column-field-title").prop("checked", true).prop("disabled", true);
     var library = Zotero.ui.getAssociatedLibrary(triggeringEl);
-    var library_listShowFields = library.preferences.getPref("library_listShowFields");
-    J.each(library_listShowFields, function(index, value) {
+    var listShowFields = library.preferences.getPref("library_listShowFields");
+    J.each(listShowFields, function(index, value) {
         var classstring = ".display-column-field-" + value;
         dialogEl.find(classstring).prop("checked", true);
     });
@@ -10898,9 +10914,12 @@ Zotero.ui.widgets.librarysettingsdialog.show = function(e) {
         dialogEl.find(".library-settings-form").find("input:checked").each(function() {
             showFields.push(J(this).val());
         });
+        var itemsPerPage = parseInt(dialogEl.find("#items-per-page").val(), 10);
         library.preferences.setPref("library_listShowFields", showFields);
+        library.preferences.setPref("itemsPerPage", itemsPerPage);
         library.preferences.persist();
         Zotero.preferences.setPref("library_listShowFields", showFields);
+        Zotero.preferences.setPref("itemsPerPage", itemsPerPage);
         Zotero.preferences.persist();
         Zotero.ui.eventful.trigger("displayedItemsChanged");
         Zotero.ui.closeDialog(dialogEl);

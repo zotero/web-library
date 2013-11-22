@@ -19,9 +19,9 @@ Zotero.ui.widgets.librarysettingsdialog.show = function(e){
     dialogEl.find(".display-column-field-title").prop('checked', true).prop('disabled', true);
     
     var library = Zotero.ui.getAssociatedLibrary(triggeringEl);
-    var library_listShowFields = library.preferences.getPref('library_listShowFields');
-    //var library_listShowFields = Zotero.preferences.getPref('library_listShowFields');
-    J.each(library_listShowFields, function(index, value){
+    var listShowFields = library.preferences.getPref('library_listShowFields');
+    //var listShowFields = Zotero.preferences.getPref('library_listShowFields');
+    J.each(listShowFields, function(index, value){
         var classstring = '.display-column-field-' + value;
         dialogEl.find(classstring).prop('checked', true);
     });
@@ -32,9 +32,13 @@ Zotero.ui.widgets.librarysettingsdialog.show = function(e){
             showFields.push(J(this).val());
         });
         
+        var itemsPerPage = parseInt(dialogEl.find("#items-per-page").val(), 10);
+        
         library.preferences.setPref('library_listShowFields', showFields);
+        library.preferences.setPref('itemsPerPage', itemsPerPage);
         library.preferences.persist();
         Zotero.preferences.setPref('library_listShowFields', showFields);
+        Zotero.preferences.setPref('itemsPerPage', itemsPerPage);
         Zotero.preferences.persist();
         
         Zotero.ui.eventful.trigger("displayedItemsChanged");

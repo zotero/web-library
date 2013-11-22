@@ -127,16 +127,27 @@ var Zotero = {
              },
              maxFieldSummaryLength: {title:60},
              exportFormats: [
-                "bibtex",
-                "bookmarks",
-                "mods",
-                "refer",
-                "rdf_bibliontology",
-                "rdf_dc",
-                "rdf_zotero",
-                "ris",
-                "wikipedia"
+                'bibtex',
+                'bookmarks',
+                'mods',
+                'refer',
+                'rdf_bibliontology',
+                'rdf_dc',
+                'rdf_zotero',
+                'ris',
+                'wikipedia'
                 ],
+            exportFormatsMap: {
+                'bibtex': 'BibTeX',
+                'bookmarks': 'Bookmarks',
+                'mods': 'MODS',
+                'refer': 'Refer/BibIX',
+                'rdf_bibliontology': 'Bibliontology RDF',
+                'rdf_dc': 'Unqualified Dublin Core RDF',
+                'rdf_zotero': 'Zotero RDF',
+                'ris': 'RIS',
+                'wikipedia': 'Wikipedia Citation Templates',
+            },
             defaultApiArgs: {
                 'order': 'title',
                 'sort': 'asc',
@@ -4398,60 +4409,7 @@ Zotero.utils = {
         });
         return satisfy;
     },
-    /*
-    setUserPref: function(name, value){
-        Z.debug('Zotero.utils.updateUserPrefs', 3);
-        var prefs;
-        if(typeof Zotero.store.userpreferences === "undefined") {
-            Z.debug("userpreferences not stored yet");
-            prefs = {};
-            prefs[name] = value;
-            Zotero.store.userpreferences = JSON.stringify(prefs);
-        }
-        else {
-            Z.debug("userpreferences exists already");
-            prefs = JSON.parse(Zotero.store.userpreferences);
-            prefs[name] = value;
-            Zotero.store.userpreferences = JSON.stringify(prefs);
-        }
-        
-        if(Zotero.config.storePrefsRemote){
-            var postob = {'varname': name,
-                          'varvalue': value
-                         };
-            var jqxhr = J.get("/user/setuserpref", postob);
-            
-            jqxhr.done(J.proxy(function(){
-                Z.debug('userpref set:' + name + " : " + value, 3);
-            }), this);
-            return jqxhr;
-        }
-        else {
-            return true;
-        }
-    },
     
-    getStoredPrefs: function(){
-        Z.debug('Zotero.utils.getStoredPrefs', 3);
-        if(typeof Zotero.store === "undefined" || typeof Zotero.store.userpreferences === "undefined") {
-            return {};
-        }
-        else {
-            return JSON.parse(Zotero.store.userpreferences);
-        }
-    },
-    
-    saveStoredPrefs: function(prefs){
-        Z.debug('Zotero.utils.saveStoredPrefs', 3);
-        if(typeof Zotero.store === "undefined") {
-            return false;
-        }
-        else {
-            Zotero.store.userpreferences = JSON.stringify(prefs);
-            return true;
-        }
-    },
-    */
     libraryString: function(type, libraryID){
         var lstring = '';
         if(type == 'user') lstring = 'u';
@@ -6587,6 +6545,7 @@ Zotero.Preferences = function(store, idString) {
         debug_log: true,
         debug_mock: false,
         library_listShowFields: ['title', 'creator', 'dateModified'],
+        itemsPerPage: 25,
     };
     this.load();
 };

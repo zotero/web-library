@@ -34,7 +34,7 @@ Zotero.ui.widgets.items.loadItemsCallback = function(event){
     var library = Zotero.ui.getAssociatedLibrary(el);
     
     var newConfig = Zotero.ui.getItemsConfig(library);
-    
+    Z.debug(newConfig);
     //clear contents and show spinner while loading
     Zotero.ui.showSpinner(el, 'horizontal');
     
@@ -71,12 +71,16 @@ Zotero.ui.getItemsConfig = function(library){
                          target:'items',
                          targetModifier: 'top',
                          itemPage: 1,
-                         limit: 25,
+                         limit: library.preferences.getPref('itemsPerPage'),
                          content: 'json'
                      };
     
+    var userPreferencesApiArgs = {
+        limit: library.preferences.getPref('itemsPerPage'),
+    };
+    
     //Build config object that should be displayed next and compare to currently displayed
-    var newConfig = J.extend({}, defaultConfig, Zotero.config.userDefaultApiArgs, urlConfigVals);
+    var newConfig = J.extend({}, defaultConfig, Zotero.config.userDefaultApiArgs, userPreferencesApiArgs, urlConfigVals);
     newConfig['collectionKey'] = urlConfigVals['collectionKey'];//always override collectionKey, even with absence of collectionKey
     newConfig.start = parseInt(newConfig.limit, 10) * (parseInt(newConfig.itemPage, 10) - 1);
     
@@ -115,7 +119,7 @@ Zotero.ui.displayItemsWidget = function(el, config, loadedItems){
     var itemPage = parseInt(Zotero.nav.getUrlVar('itemPage'), 10) || 1;
     var feed = loadedItems.feed;
     var start = parseInt(config.start, 10) || 0;
-    var limit = parseInt(config.limit, 10) || 25;
+    var limit = parseInt(config.limit, 10) || library.preferences.getPref('itemsPerPage');
     var order = config.order || Zotero.config.userDefaultApiArgs.order;
     var sort = config.sort || Zotero.config.sortOrdering[order] || 'asc';
     var editmode = false;
