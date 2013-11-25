@@ -370,19 +370,25 @@ Zotero.ui.callbacks.removeFromCollection = function(e){
     var itemKeys = Zotero.ui.getSelectedItemKeys(J("#edit-mode-items-form"));
     var library = Zotero.ui.getAssociatedLibrary(J(this).closest('div.ajaxload'));
     var collectionKey = Zotero.nav.getUrlVar('collectionKey');
-    var collection = library.collections.getCollection(collectionKey);
+    
+    var modifiedItems = [];
     var responses = [];
     J.each(itemKeys, function(index, itemKey){
-        var response = collection.removeItem(itemKey);
-        responses.push(response);
+        var item = library.items.getItem(itemKey);
+        item.removeFromCollection(collectionKey);
+        modifiedItems.push(item);
     });
+    
+    var itemWriteDeferred = library.items.writeItems(modifiedItems);
     library.dirty = true;
-    J.when.apply(this, responses).then(function(){
+    
+    itemWriteDeferred.done(function(){
         Z.debug('removal responses finished. forcing reload', 3);
-        //Zotero.nav.forceReload = true;//delete Zotero.nav.urlvars.pathVars['mode'];
         Zotero.nav.clearUrlVars(['collectionKey', 'tag']);
         Zotero.nav.pushState(true);
+        Zotero.ui.eventful.trigger("displayedItemsChanged");
     });
+    
     return false;
 };
 
@@ -394,7 +400,7 @@ Zotero.ui.callbacks.removeFromCollection = function(e){
 Zotero.ui.callbacks.addToCollection =  function(e){
     Z.debug("add-to-collection-link clicked", 3);
     e.preventDefault();
-    var library = Zotero.ui.getAssociatedLibrary();
+    var library = Zotero.ui.getEventLibrary();
     var dialogEl = J("#add-to-collection-dialog").empty();
     Z.debug(library.collections.ncollections, 4);
     dialogEl.html( J("#addtocollectionformTemplate").render({ncollections:library.collections.nestedOrderingArray()}) );
