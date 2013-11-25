@@ -18,13 +18,15 @@ Zotero.ui.widgets.librarysettingsdialog.show = function(e){
     
     dialogEl.find(".display-column-field-title").prop('checked', true).prop('disabled', true);
     
-    var library = Zotero.ui.getAssociatedLibrary(triggeringEl);
+    var library = Zotero.ui.getEventLibrary(e);
     var listShowFields = library.preferences.getPref('library_listShowFields');
+    var itemsPerPage = library.preferences.getPref('itemsPerPage');
     //var listShowFields = Zotero.preferences.getPref('library_listShowFields');
     J.each(listShowFields, function(index, value){
         var classstring = '.display-column-field-' + value;
         dialogEl.find(classstring).prop('checked', true);
     });
+    J("#items-per-page").val(itemsPerPage);
     
     var submitFunction = J.proxy(function(){
         var showFields = [];
