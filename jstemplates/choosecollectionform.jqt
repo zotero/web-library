@@ -1,12 +1,12 @@
 <script id="choosecollectionformTemplate" type="text/x-jsrender">
     {{if !~optionsOnly}}
-    <select class='collectionKey-select{{if selectclass}} {{attr:selectclass}}{{/if}}' {{if id}}id='{{attr:id}}'{{/if}}>
+    <select class='collectionKey-select{{if ~selectclass}} {{attr:~selectclass}}{{/if}} form-control' {{if id}}id='{{attr:id}}'{{/if}}>
     {{/if}}
         {{if ~allowNoValue}}
             <option value='' {{if ~noValueClass}}class="{{attr:~noValueClass}}"{{/if}}>{{>~noValueText || "None"}}</option>
         {{/if}}
         {{for ncollections}}
-            <option value='{{attr:collectionKey}}'>{{!-- TODO:FIX >Array(nestingDepth).join('-') --}}{{>title}}</option>
+            <option value='{{attr:collectionKey}}'>{{>~multiplyChar('-', nestingDepth)}}{{>title}}</option>
         {{/for}}
     {{if !~optionsOnly}}
     </select>

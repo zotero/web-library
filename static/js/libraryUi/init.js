@@ -328,6 +328,9 @@ Zotero.ui.init.libraryTemplates = function(){
         formatItemField: Zotero.ui.formatItemField,
         formatItemDateField: Zotero.ui.formatItemDateField,
         trimString: Zotero.ui.trimString,
+        multiplyChar: function(char, num) {
+            return Array(num).join(char);
+        },
         displayInDetails: function(field, item) {
             if( ( (J.inArray(field, item.hideFields) == -1) && (item.fieldMap.hasOwnProperty(field))) &&
                 (J.inArray(field, ['itemType', 'title', 'creators', 'notes']) == -1)) {

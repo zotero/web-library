@@ -165,7 +165,7 @@ Zotero.ui.callbacks.createItem = function(e){
     Zotero.nav.pushState();
     return false;
 };
-
+/*
 Zotero.ui.callbacks.citeItems = function(e){
     Z.debug("Zotero.ui.callbacks.citeItems", 3);
     e.preventDefault();
@@ -279,7 +279,7 @@ Zotero.ui.callbacks.exportItems = function(e){
     var exportUrl = Zotero.ajax.apiRequestUrl(exportConfig) + Zotero.ajax.apiQueryString(exportConfig);
     window.open(exportUrl, '_blank');
 };
-
+*/
 
 /**
  * Move currently displayed single item or currently checked list of items
@@ -393,50 +393,11 @@ Zotero.ui.callbacks.removeFromCollection = function(e){
 };
 
 /**
- * Add currently displaying item or currently selected items to a chosen collection
- * @param {event} e click event
- * @return {boolean}
- */
-Zotero.ui.callbacks.addToCollection =  function(e){
-    Z.debug("add-to-collection-link clicked", 3);
-    e.preventDefault();
-    var library = Zotero.ui.getEventLibrary();
-    var dialogEl = J("#add-to-collection-dialog").empty();
-    Z.debug(library.collections.ncollections, 4);
-    dialogEl.html( J("#addtocollectionformTemplate").render({ncollections:library.collections.nestedOrderingArray()}) );
-    
-    var addToFunction = J.proxy(function(){
-        Z.debug("add-to-collection-select changed", 3);
-        var targetCollection = J("#target-collection").val();
-        Z.debug("move to: " + targetCollection, 4);
-        Zotero.ui.addToCollection(targetCollection, library);
-        Zotero.ui.closeDialog(J("#add-to-collection-dialog"));
-        return false;
-    }, this);
-    
-    Zotero.ui.dialog(J("#add-to-collection-dialog"), {
-        modal:true,
-        minWidth: 300,
-        draggable: false,
-        buttons: {
-            'Add': addToFunction,
-            'Cancel': function(){
-                J("#add-to-collection-dialog").dialog("close");
-            }
-        }
-    });
-    
-    var width = J("#target-collection").width() + 50;
-    //J("#add-to-collection-dialog").dialog('option', 'width', width);
-    
-    return false;
-};
-
-/**
  * Launch library settings dialog (currently just row selection)
  * @param  {event} e click event
  * @return {boolean}
  */
+ /*
 Zotero.ui.callbacks.librarySettings = function(e){
     Z.debug("library-settings-link clicked", 3);
     e.preventDefault();
@@ -478,7 +439,7 @@ Zotero.ui.callbacks.librarySettings = function(e){
         }
     });
 };
-
+*/
 
 /**
  * Conditionally show the control panel

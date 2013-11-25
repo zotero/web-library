@@ -18,7 +18,7 @@ Zotero.ui.widgets.addToCollectionDialog.show = function(e){
     
     var addToFunction = J.proxy(function(){
         Z.debug("add-to-collection-select changed", 3);
-        var targetCollection = dialogEl.find(".target-collection").val();
+        var targetCollection = dialogEl.find(".collectionKey-select").val();
         Z.debug("move to: " + targetCollection, 4);
         Zotero.ui.addToCollection(targetCollection, library);
         Zotero.ui.closeDialog(dialogEl);
@@ -52,7 +52,7 @@ Zotero.ui.addToCollection = function(collectionKey, library){
     var response = library.collections.getCollection(collectionKey).addItems(itemKeys);
     library.dirty = true;
     J.when(response).then(function(){
-        Zotero.nav.pushState(true);
+        Zotero.ui.jsNotificationMessage("Items added to collection", 'success');
     });
     return false;
 };

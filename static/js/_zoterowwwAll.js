@@ -3591,7 +3591,7 @@ Zotero.Item.prototype.removeFromCollection = function(collectionKey){
     if(index != -1){
         item.apiObj.collections.splice(index, 1);
     }
-    return;
+    return item;
 };
 
 Zotero.Item.prototype.uploadChildAttachment = function(childItem, fileInfo, fileblob, progressCallback){
@@ -8353,21 +8353,6 @@ Zotero.callbacks.collectionsWidget = function(el){
 };
 
 
-/*
-Eventful usecases:
-button/link/random dom node inside a widget triggers event
-    it is associated with the containing widget and has no outside dependencies
-    it is associated with the containing widget but has outside dependencies also
-    it only has outside dependencies and the event has nothing to do with the containing 
-    widget except for being fired from inside it
-ongoing process triggers event
-    underlying Zotero library triggers event, may effect multiple or no widgets
-    
-server tells page to trigger event
-
-*/
-
-
 Zotero.widgets = {};
 Zotero.ui.eventful = {};
 
@@ -9022,6 +9007,9 @@ Zotero.ui.init.libraryTemplates = function(){
         formatItemField: Zotero.ui.formatItemField,
         formatItemDateField: Zotero.ui.formatItemDateField,
         trimString: Zotero.ui.trimString,
+        multiplyChar: function(char, num) {
+            return Array(num).join(char);
+        },
         displayInDetails: function(field, item) {
             if( ( (J.inArray(field, item.hideFields) == -1) && (item.fieldMap.hasOwnProperty(field))) &&
                 (J.inArray(field, ['itemType', 'title', 'creators', 'notes']) == -1)) {
@@ -9674,13 +9662,27 @@ Zotero.ui.jsNotificationMessage = function(message, type, timeout){
     if(!timeout){
         timeout = 5;
     }
-    J("#js-message").append("<div class='alert alert-danger'>" + message + "</div>").children("div").delay(parseInt(timeout, 10) * 1000).slideUp().delay(300).queue(function(){
+    var alertType = "alert-info";
+    if(type){
+        switch(type){
+            case 'error':
+                alertType = 'alert-danger';
+                break;
+            case 'success':
+                alertType = 'alert-success';
+                break;
+            case 'info':
+                alertType = 'alert-info';
+                break;
+            case 'warning':
+                alertType = 'alert-warning';
+                break;
+        }
+    }
+    
+    J("#js-message").append("<div class='alert " + alertType + "'>" + message + "</div>").children("div").delay(parseInt(timeout, 10) * 1000).slideUp().delay(300).queue(function(){
         J(this).remove();
     });
-    /*
-    J("#js-message-list").append("<li class='jsNotificationMessage-" + type + "' >" + message + "</li>").children("li").delay(parseInt(timeout, 10) * 1000).slideUp().delay(300).queue(function(){
-        J(this).remove();
-    });*/
 };
 
 /**
@@ -9875,7 +9877,7 @@ Zotero.ui.widgets.addToCollectionDialog.show = function(e){
     
     var addToFunction = J.proxy(function(){
         Z.debug("add-to-collection-select changed", 3);
-        var targetCollection = dialogEl.find(".target-collection").val();
+        var targetCollection = dialogEl.find(".collectionKey-select").val();
         Z.debug("move to: " + targetCollection, 4);
         Zotero.ui.addToCollection(targetCollection, library);
         Zotero.ui.closeDialog(dialogEl);
@@ -9909,7 +9911,7 @@ Zotero.ui.addToCollection = function(collectionKey, library){
     var response = library.collections.getCollection(collectionKey).addItems(itemKeys);
     library.dirty = true;
     J.when(response).then(function(){
-        Zotero.nav.pushState(true);
+        Zotero.ui.jsNotificationMessage("Items added to collection", 'success');
     });
     return false;
 };
@@ -10630,7 +10632,7 @@ Zotero.ui.callbacks.createItem = function(e){
     Zotero.nav.pushState();
     return false;
 };
-
+/*
 Zotero.ui.callbacks.citeItems = function(e){
     Z.debug("Zotero.ui.callbacks.citeItems", 3);
     e.preventDefault();
@@ -10744,7 +10746,7 @@ Zotero.ui.callbacks.exportItems = function(e){
     var exportUrl = Zotero.ajax.apiRequestUrl(exportConfig) + Zotero.ajax.apiQueryString(exportConfig);
     window.open(exportUrl, '_blank');
 };
-
+*/
 
 /**
  * Move currently displayed single item or currently checked list of items
@@ -10835,58 +10837,24 @@ Zotero.ui.callbacks.removeFromCollection = function(e){
     var itemKeys = Zotero.ui.getSelectedItemKeys(J("#edit-mode-items-form"));
     var library = Zotero.ui.getAssociatedLibrary(J(this).closest('div.ajaxload'));
     var collectionKey = Zotero.nav.getUrlVar('collectionKey');
-    var collection = library.collections.getCollection(collectionKey);
+    
+    var modifiedItems = [];
     var responses = [];
     J.each(itemKeys, function(index, itemKey){
-        var response = collection.removeItem(itemKey);
-        responses.push(response);
+        var item = library.items.getItem(itemKey);
+        item.removeFromCollection(collectionKey);
+        modifiedItems.push(item);
     });
+    
+    var itemWriteDeferred = library.items.writeItems(modifiedItems);
     library.dirty = true;
-    J.when.apply(this, responses).then(function(){
+    
+    itemWriteDeferred.done(function(){
         Z.debug('removal responses finished. forcing reload', 3);
-        //Zotero.nav.forceReload = true;//delete Zotero.nav.urlvars.pathVars['mode'];
         Zotero.nav.clearUrlVars(['collectionKey', 'tag']);
         Zotero.nav.pushState(true);
+        Zotero.ui.eventful.trigger("displayedItemsChanged");
     });
-    return false;
-};
-
-/**
- * Add currently displaying item or currently selected items to a chosen collection
- * @param {event} e click event
- * @return {boolean}
- */
-Zotero.ui.callbacks.addToCollection =  function(e){
-    Z.debug("add-to-collection-link clicked", 3);
-    e.preventDefault();
-    var library = Zotero.ui.getAssociatedLibrary();
-    var dialogEl = J("#add-to-collection-dialog").empty();
-    Z.debug(library.collections.ncollections, 4);
-    dialogEl.html( J("#addtocollectionformTemplate").render({ncollections:library.collections.nestedOrderingArray()}) );
-    
-    var addToFunction = J.proxy(function(){
-        Z.debug("add-to-collection-select changed", 3);
-        var targetCollection = J("#target-collection").val();
-        Z.debug("move to: " + targetCollection, 4);
-        Zotero.ui.addToCollection(targetCollection, library);
-        Zotero.ui.closeDialog(J("#add-to-collection-dialog"));
-        return false;
-    }, this);
-    
-    Zotero.ui.dialog(J("#add-to-collection-dialog"), {
-        modal:true,
-        minWidth: 300,
-        draggable: false,
-        buttons: {
-            'Add': addToFunction,
-            'Cancel': function(){
-                J("#add-to-collection-dialog").dialog("close");
-            }
-        }
-    });
-    
-    var width = J("#target-collection").width() + 50;
-    //J("#add-to-collection-dialog").dialog('option', 'width', width);
     
     return false;
 };
@@ -10896,6 +10864,7 @@ Zotero.ui.callbacks.addToCollection =  function(e){
  * @param  {event} e click event
  * @return {boolean}
  */
+ /*
 Zotero.ui.callbacks.librarySettings = function(e){
     Z.debug("library-settings-link clicked", 3);
     e.preventDefault();
@@ -10937,7 +10906,7 @@ Zotero.ui.callbacks.librarySettings = function(e){
         }
     });
 };
-
+*/
 
 /**
  * Conditionally show the control panel
@@ -11190,19 +11159,12 @@ Zotero.ui.widgets.item.init = function(el){
     container.on('click', ".switch-single-field-creator-link", Zotero.ui.callbacks.switchSingleFieldCreator);
     container.on('click', ".add-note-button", Zotero.ui.addNote);
     */
-    //bind attachment upload link
-    /*
-    container.on('click', "#upload-attachment-link", function(){
-        Zotero.ui.eventful.trigger("uploadAttachment");
-    });
-    */
 };
 
 Zotero.ui.widgets.item.loadItemCallback = function(event){
     Z.debug('Zotero eventful loadItemCallback', 3);
     var widgetEl = event.data.widgetEl;
     var el = widgetEl;
-    Z.debug(el);
     
     Z.debug("Zotero.callbacks.loadItem", 3);
     Zotero.callbacks.rejectIfPending(el);
@@ -11754,169 +11716,6 @@ Zotero.ui.callbacks.addNote = function(e){
     return false;
 };
 */
-/*
-Zotero.ui.callbacks.uploadAttachment = function(e){
-    Z.debug("uploadAttachment", 3);
-    e.preventDefault();
-    
-    var library = Zotero.ui.getAssociatedLibrary(J(this).closest(".ajaxload"));
-    var dialogEl = J("#upload-attachment-dialog").empty();
-    
-    if(Zotero.config.mobile){
-        dialogEl.replaceWith(J("#attachmentuploadTemplate").render({}) );
-    }
-    else{
-        dialogEl.append( J("#attachmentuploadTemplate").render({}) );
-    }
-    
-    
-    var uploadFunction = J.proxy(function(){
-        Z.debug("uploadFunction", 3);
-        //callback for when everything in the upload form is filled
-        //grab file blob
-        //grab file data given by user
-        //create or modify attachment item
-        //Item.uploadExistingFile or uploadChildAttachment
-        
-        var fileInfo = J("#attachmentuploadfileinfo").data('fileInfo');
-        var file = J("#attachmentuploadfileinfo").data('file');
-        var specifiedTitle = J("#upload-file-title-input").val();
-        
-        var progressCallback = function(e){
-            Z.debug('fullUpload.upload.onprogress');
-            var percentLoaded = Math.round((e.loaded / e.total) * 100);
-            Z.debug("Upload progress event:" + e.loaded + " / " + e.total + " : " + percentLoaded + "%");
-            J("#uploadprogressmeter").val(percentLoaded);
-        };
-        
-        var uploadSuccess = function(){
-            Zotero.ui.closeDialog(J("#upload-attachment-dialog"));
-            Zotero.nav.pushState(true);
-        };
-        
-        var uploadFailure = function(failure){
-            Z.debug("Upload failed", 3);
-            Z.debug(JSON.stringify(failure));
-            Zotero.ui.jsNotificationMessage("There was a problem uploading your file.", 'error');
-            switch(failure.code){
-                case 400:
-                    break;
-                case 403:
-                    Zotero.ui.jsNotificationMessage("You do not have permission to edit files", 'error');
-                    break;
-                case 409:
-                    Zotero.ui.jsNotificationMessage("The library is currently locked. Please try again in a few minutes.", 'error');
-                    break;
-                case 412:
-                    Zotero.ui.jsNotificationMessage("File conflict. Remote file has changed", 'error');
-                    break;
-                case 413:
-                    Zotero.ui.jsNotificationMessage("Requested upload would exceed storage quota.", 'error');
-                    break;
-                case 428:
-                    Zotero.ui.jsNotificationMessage("Precondition required error", 'error');
-                    break;
-                case 429:
-                    Zotero.ui.jsNotificationMessage("Too many uploads pending. Please try again in a few minutes", 'error');
-                    break;
-            }
-            Zotero.ui.closeDialog(J("#upload-attachment-dialog"));
-        };
-        
-        //show spinner while working on upload
-        Zotero.ui.showSpinner(J('#fileuploadspinner'));
-        
-        //upload new copy of file if we're modifying an attachment
-        //create child and upload file if we're modifying a top level item
-        var itemKey = Zotero.nav.getUrlVar('itemKey');
-        var item = library.items.getItem(itemKey);
-        
-        if(!item.get("parentItem")){
-            //get template item
-            var childItem = new Zotero.Item();
-            childItem.associateWithLibrary(library);
-            var templateItemDeferred = childItem.initEmpty('attachment', 'imported_file');
-            
-            templateItemDeferred.done(J.proxy(function(childItem){
-                Z.debug("templateItemDeferred callback");
-                childItem.set('title', specifiedTitle);
-                
-                var uploadChildD = item.uploadChildAttachment(childItem, fileInfo, file, progressCallback);
-                
-                uploadChildD.done(uploadSuccess).fail(uploadFailure);
-            }, this) );
-        }
-        else if(item.get('itemType') == 'attachment' && item.get("linkMode") == 'imported_file') {
-            var uploadD = item.uploadFile(fileInfo, file, progressCallback);
-            uploadD.done(uploadSuccess).fail(uploadFailure);
-        }
-        
-    }, this);
-
-    Zotero.ui.dialog(J("#upload-attachment-dialog"), {
-        modal:true,
-        minWidth: 300,
-        width:350,
-        draggable: false,
-        buttons: {
-            'Upload': uploadFunction,
-            'Cancel': function(){
-                Zotero.ui.closeDialog(J("#upload-attachment-dialog"));
-            }
-        }
-    });
-    
-    var width = J("#fileuploadinput").width() + 50;
-    J("#upload-attachment-dialog").dialog('option', 'width', width);
-    
-    var handleFiles = function(files){
-        Z.debug("attachmentUpload handleFiles", 3);
-        
-        if(typeof files == 'undefined' || files.length === 0){
-            return false;
-        }
-        var file = files[0];
-        J("#attachmentuploadfileinfo").data('file', file);
-        
-        var fileinfo = Zotero.file.getFileInfo(file, function(fileInfo){
-            J("#attachmentuploadfileinfo").data('fileInfo', fileInfo);
-            J("#upload-file-title-input").val(fileInfo.filename);
-            J("#attachmentuploadfileinfo .uploadfilesize").html(fileInfo.filesize);
-            J("#attachmentuploadfileinfo .uploadfiletype").html(fileInfo.contentType);
-            //J("#attachmentuploadfileinfo .uploadfilemd5").html(fileInfo.md5);
-            J("#droppedfilename").html(fileInfo.filename);
-        });
-        return;
-    };
-    
-    J("#fileuploaddroptarget").on('dragenter dragover', function(e){
-        e.stopPropagation();
-        e.preventDefault();
-    });
-    
-    J("#fileuploaddroptarget").on('drop', function(je){
-        Z.debug("fileuploaddroptarget drop callback", 3);
-        je.stopPropagation();
-        je.preventDefault();
-        //clear file input so drag/drop and input don't show conflicting information
-        J("#fileuploadinput").val('');
-        var e = je.originalEvent;
-        var dt = e.dataTransfer;
-        var files = dt.files;
-        handleFiles(files);
-    });
-    
-    J("#fileuploadinput").on('change', function(je){
-        Z.debug("fileuploaddroptarget callback 1");
-        je.stopPropagation();
-        je.preventDefault();
-        var files = J("#fileuploadinput").get(0).files;
-        handleFiles(files);
-    });
-    
-    return false;
-};
-*/
 
 Zotero.ui.callbacks.cancelItemEdit = function(e){
     Zotero.nav.clearUrlVars(['itemKey', 'collectionKey', 'tag', 'q']);
@@ -12388,7 +12187,6 @@ Zotero.ui.widgets.itemContainer.init = function(el){
     Zotero.ui.eventful.listen("changeItemSorting", Zotero.ui.resortItems);
     Zotero.ui.eventful.listen("citeItems", Zotero.ui.callbacks.citeItems);
     Zotero.ui.eventful.listen("exportItems", Zotero.ui.callbacks.exportItems);
-    //Zotero.ui.eventful.listen("uploadAttachment", Zotero.ui.callbacks.uploadAttachment);
     
     
     container.on('click', "#item-details-div .itemTypeSelectButton", function(){
