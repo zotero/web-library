@@ -3,6 +3,13 @@ body.library {
     margin:0;
 }
 
+#js-message {
+    position:fixed;
+    top:50px;
+    min-width:50%;
+    z-index: 50;
+}
+
 .feedlink {
     display:block;
     border:1px dotted #ccc;
