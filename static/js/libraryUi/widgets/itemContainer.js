@@ -18,7 +18,6 @@ Zotero.ui.widgets.itemContainer.init = function(el){
     Zotero.ui.eventful.listen("changeItemSorting", Zotero.ui.resortItems);
     Zotero.ui.eventful.listen("citeItems", Zotero.ui.callbacks.citeItems);
     Zotero.ui.eventful.listen("exportItems", Zotero.ui.callbacks.exportItems);
-    Zotero.ui.eventful.listen("uploadAttachment", Zotero.ui.callbacks.uploadAttachment);
     
     
     container.on('click', "#item-details-div .itemTypeSelectButton", function(){

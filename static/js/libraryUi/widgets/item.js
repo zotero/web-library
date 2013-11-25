@@ -22,11 +22,6 @@ Zotero.ui.widgets.item.init = function(el){
     container.on('click', ".switch-single-field-creator-link", Zotero.ui.callbacks.switchSingleFieldCreator);
     container.on('click', ".add-note-button", Zotero.ui.addNote);
     */
-    //bind attachment upload link
-    container.on('click', "#upload-attachment-link", function(){
-        Zotero.ui.eventful.trigger("uploadAttachment");
-    });
-    
 };
 
 Zotero.ui.widgets.item.loadItemCallback = function(event){
@@ -94,7 +89,13 @@ Zotero.ui.widgets.item.loadItemCallback = function(event){
         Z.debug("must fetch item from server", 3);
         d = library.loadItem(itemKey);
         jel.data('pendingDeferred', d);
-        var config = {'target':'item', 'libraryType':library.type, 'libraryID':library.libraryID, 'itemKey':itemKey, 'content':'json'};
+        var config = {
+            'target':'item',
+            'libraryType':library.type,
+            'libraryID':library.libraryID,
+            'itemKey':itemKey,
+            'content':'json'
+        };
         d.done(J.proxy(function(item){
             Z.debug("Library.loadItem done", 3);
             jel.empty();
@@ -108,8 +109,10 @@ Zotero.ui.widgets.item.loadItemCallback = function(event){
             }
             //set currentConfig on element when done displaying
             jel.data('currentconfig', config);
+            Zotero.eventful.initTriggers(J(widgetEl));
         }, this));
     }
+    Zotero.eventful.initTriggers(J(widgetEl));
 };
 
 /**
@@ -451,16 +454,17 @@ Zotero.ui.loadItemDetail = function(item, el){
     var jel = J(el);
     jel.empty();
     var parentUrl = false;
+    var library = item.owningLibrary
     if(item.parentItemKey){
-        parentUrl = item.owningLibrary.websiteUrl({itemKey:item.parentItemKey});
+        parentUrl = library.websiteUrl({itemKey:item.parentItemKey});
     }
     if(item.itemType == "note"){
         Z.debug("note item", 3);
-        jel.append( J('#itemnotedetailsTemplate').render({item:item, parentUrl:parentUrl}) );
+        jel.append( J('#itemnotedetailsTemplate').render({item:item, parentUrl:parentUrl, libraryString:library.libraryString}) );
     }
     else{
         Z.debug("non-note item", 3);
-        jel.append( J('#itemdetailsTemplate').render({item:item, parentUrl:parentUrl}) ).trigger('create');
+        jel.append( J('#itemdetailsTemplate').render({item:item, parentUrl:parentUrl, libraryString:library.libraryString}) ).trigger('create');
     }
     Zotero.ui.init.rte('readonly');
     Zotero.ui.init.editButton();
@@ -575,169 +579,6 @@ Zotero.ui.callbacks.addNote = function(e){
     return false;
 };
 */
-
-Zotero.ui.callbacks.uploadAttachment = function(e){
-    Z.debug("uploadAttachment", 3);
-    e.preventDefault();
-    
-    var library = Zotero.ui.getAssociatedLibrary(J(this).closest(".ajaxload"));
-    var dialogEl = J("#upload-attachment-dialog").empty();
-    
-    if(Zotero.config.mobile){
-        dialogEl.replaceWith(J("#attachmentuploadTemplate").render({}) );
-    }
-    else{
-        dialogEl.append( J("#attachmentuploadTemplate").render({}) );
-    }
-    
-    
-    var uploadFunction = J.proxy(function(){
-        Z.debug("uploadFunction", 3);
-        //callback for when everything in the upload form is filled
-        //grab file blob
-        //grab file data given by user
-        //create or modify attachment item
-        //Item.uploadExistingFile or uploadChildAttachment
-        
-        var fileInfo = J("#attachmentuploadfileinfo").data('fileInfo');
-        var file = J("#attachmentuploadfileinfo").data('file');
-        var specifiedTitle = J("#upload-file-title-input").val();
-        
-        var progressCallback = function(e){
-            Z.debug('fullUpload.upload.onprogress');
-            var percentLoaded = Math.round((e.loaded / e.total) * 100);
-            Z.debug("Upload progress event:" + e.loaded + " / " + e.total + " : " + percentLoaded + "%");
-            J("#uploadprogressmeter").val(percentLoaded);
-        };
-        
-        var uploadSuccess = function(){
-            Zotero.ui.closeDialog(J("#upload-attachment-dialog"));
-            Zotero.nav.pushState(true);
-        };
-        
-        var uploadFailure = function(failure){
-            Z.debug("Upload failed", 3);
-            Z.debug(JSON.stringify(failure));
-            Zotero.ui.jsNotificationMessage("There was a problem uploading your file.", 'error');
-            switch(failure.code){
-                case 400:
-                    break;
-                case 403:
-                    Zotero.ui.jsNotificationMessage("You do not have permission to edit files", 'error');
-                    break;
-                case 409:
-                    Zotero.ui.jsNotificationMessage("The library is currently locked. Please try again in a few minutes.", 'error');
-                    break;
-                case 412:
-                    Zotero.ui.jsNotificationMessage("File conflict. Remote file has changed", 'error');
-                    break;
-                case 413:
-                    Zotero.ui.jsNotificationMessage("Requested upload would exceed storage quota.", 'error');
-                    break;
-                case 428:
-                    Zotero.ui.jsNotificationMessage("Precondition required error", 'error');
-                    break;
-                case 429:
-                    Zotero.ui.jsNotificationMessage("Too many uploads pending. Please try again in a few minutes", 'error');
-                    break;
-            }
-            Zotero.ui.closeDialog(J("#upload-attachment-dialog"));
-        };
-        
-        //show spinner while working on upload
-        Zotero.ui.showSpinner(J('#fileuploadspinner'));
-        
-        //upload new copy of file if we're modifying an attachment
-        //create child and upload file if we're modifying a top level item
-        var itemKey = Zotero.nav.getUrlVar('itemKey');
-        var item = library.items.getItem(itemKey);
-        
-        if(!item.get("parentItem")){
-            //get template item
-            var childItem = new Zotero.Item();
-            childItem.associateWithLibrary(library);
-            var templateItemDeferred = childItem.initEmpty('attachment', 'imported_file');
-            
-            templateItemDeferred.done(J.proxy(function(childItem){
-                Z.debug("templateItemDeferred callback");
-                childItem.set('title', specifiedTitle);
-                
-                var uploadChildD = item.uploadChildAttachment(childItem, fileInfo, file, progressCallback);
-                
-                uploadChildD.done(uploadSuccess).fail(uploadFailure);
-            }, this) );
-        }
-        else if(item.get('itemType') == 'attachment' && item.get("linkMode") == 'imported_file') {
-            var uploadD = item.uploadFile(fileInfo, file, progressCallback);
-            uploadD.done(uploadSuccess).fail(uploadFailure);
-        }
-        
-    }, this);
-
-    Zotero.ui.dialog(J("#upload-attachment-dialog"), {
-        modal:true,
-        minWidth: 300,
-        width:350,
-        draggable: false,
-        buttons: {
-            'Upload': uploadFunction,
-            'Cancel': function(){
-                Zotero.ui.closeDialog(J("#upload-attachment-dialog"));
-            }
-        }
-    });
-    
-    var width = J("#fileuploadinput").width() + 50;
-    J("#upload-attachment-dialog").dialog('option', 'width', width);
-    
-    var handleFiles = function(files){
-        Z.debug("attachmentUpload handleFiles", 3);
-        
-        if(typeof files == 'undefined' || files.length === 0){
-            return false;
-        }
-        var file = files[0];
-        J("#attachmentuploadfileinfo").data('file', file);
-        
-        var fileinfo = Zotero.file.getFileInfo(file, function(fileInfo){
-            J("#attachmentuploadfileinfo").data('fileInfo', fileInfo);
-            J("#upload-file-title-input").val(fileInfo.filename);
-            J("#attachmentuploadfileinfo .uploadfilesize").html(fileInfo.filesize);
-            J("#attachmentuploadfileinfo .uploadfiletype").html(fileInfo.contentType);
-            //J("#attachmentuploadfileinfo .uploadfilemd5").html(fileInfo.md5);
-            J("#droppedfilename").html(fileInfo.filename);
-        });
-        return;
-    };
-    
-    J("#fileuploaddroptarget").on('dragenter dragover', function(e){
-        e.stopPropagation();
-        e.preventDefault();
-    });
-    
-    J("#fileuploaddroptarget").on('drop', function(je){
-        Z.debug("fileuploaddroptarget drop callback", 3);
-        je.stopPropagation();
-        je.preventDefault();
-        //clear file input so drag/drop and input don't show conflicting information
-        J("#fileuploadinput").val('');
-        var e = je.originalEvent;
-        var dt = e.dataTransfer;
-        var files = dt.files;
-        handleFiles(files);
-    });
-    
-    J("#fileuploadinput").on('change', function(je){
-        Z.debug("fileuploaddroptarget callback 1");
-        je.stopPropagation();
-        je.preventDefault();
-        var files = J("#fileuploadinput").get(0).files;
-        handleFiles(files);
-    });
-    
-    return false;
-};
-
 
 Zotero.ui.callbacks.cancelItemEdit = function(e){
     Zotero.nav.clearUrlVars(['itemKey', 'collectionKey', 'tag', 'q']);

@@ -3,10 +3,10 @@
     <div  class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                <h3>Upload Attachment</h3>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h3 class="modal-title">Upload Attachment</h3>
             </div>
-            <div class="upload-attachment-div" data-role="content">
+            <div class="upload-attachment-div modal-body" data-role="content">
                 <form class="attachmentuploadForm zform" data-parentItemKey="{{attr:itemKey}}">
                 {{if ~Modernizr.draganddrop}}
                 <h3>Select a file for upload or drag and drop below</h3>
@@ -18,10 +18,10 @@
                     </div>
                 </div>
                 <div id="attachmentuploadfileinfo" class="attachmentuploadfileinfo">
-                    <table>
+                    <table class="table">
                         <tr>
                             <th>Title</th>
-                            <td><input id="upload-file-title-input" class="upload-file-title-input" type="text"></td>
+                            <td><input id="upload-file-title-input" class="upload-file-title-input form-control" type="text"></td>
                         </tr>
                         <tr>
                             <th>Size</th>
@@ -49,10 +49,10 @@
                 <div id="fileuploadspinner" class="fileuploadspinner">
                 </div>
                 <div id="attachmentuploadfileinfo" class="attachmentuploadfileinfo">
-                    <table>
+                    <table class="table">
                         <tr>
                             <th>Title</th>
-                            <td><input id="upload-file-title-input" class="upload-file-title-input" type="text"></td>
+                            <td><input id="upload-file-title-input" class="upload-file-title-input form-control" type="text"></td>
                         </tr>
                         <tr>
                             <th>Size</th>
@@ -80,7 +80,7 @@
 
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true">Close</button>
                 <button type="button" class="btn btn-primary uploadButton">Upload</button>
             </div>
         </div>
