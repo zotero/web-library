@@ -2,14 +2,15 @@ Zotero.ui.widgets.uploadDialog = {};
 
 Zotero.ui.widgets.uploadDialog.init = function(el){
     Z.debug("uploaddialog widget init", 3);
-    Zotero.ui.eventful.listen("uploadAttachment", Zotero.ui.widgets.uploadDialog.show, {widgetEl: el});
+    var library = Zotero.ui.getAssociatedLibrary(el);
+    Zotero.ui.eventful.listen("uploadAttachment", Zotero.ui.widgets.uploadDialog.show, {widgetEl: el, library: library});
 };
 
 Zotero.ui.widgets.uploadDialog.show = function(e){
     Z.debug("uploadDialog.show", 3);
     
     var triggeringEl = J(e.triggeringElement);
-    var library = Zotero.ui.getAssociatedLibrary(triggeringEl);
+    var library = Zotero.ui.getEventLibrary(e);
     var widgetEl = J(e.data['widgetEl']).empty();
     
     widgetEl.html( J("#attachmentuploadTemplate").render({}) );
@@ -35,16 +36,18 @@ Zotero.ui.widgets.uploadDialog.show = function(e){
         };
         
         var uploadSuccess = function(){
+            Z.debug("uploadSuccess", 3);
             Zotero.ui.closeDialog(J("#upload-attachment-dialog"));
             Zotero.nav.pushState(true);
         };
         
         var uploadFailure = function(failure){
             Z.debug("Upload failed", 3);
-            Z.debug(JSON.stringify(failure));
+            Z.debug(failure, 3);
             Zotero.ui.jsNotificationMessage("There was a problem uploading your file.", 'error');
             switch(failure.code){
                 case 400:
+                    Zotero.ui.jsNotificationMessage("Bad Input. 400", 'error');
                     break;
                 case 403:
                     Zotero.ui.jsNotificationMessage("You do not have permission to edit files", 'error');
@@ -64,6 +67,8 @@ Zotero.ui.widgets.uploadDialog.show = function(e){
                 case 429:
                     Zotero.ui.jsNotificationMessage("Too many uploads pending. Please try again in a few minutes", 'error');
                     break;
+                default:
+                    Zotero.ui.jsNotificationMessage("Unknown error uploading file. " + failure.code, 'error');
             }
             Zotero.ui.closeDialog(J("#upload-attachment-dialog"));
         };
@@ -77,6 +82,7 @@ Zotero.ui.widgets.uploadDialog.show = function(e){
         var item = library.items.getItem(itemKey);
         
         if(!item.get("parentItem")){
+            Z.debug("no parentItem", 3);
             //get template item
             var childItem = new Zotero.Item();
             childItem.associateWithLibrary(library);
@@ -92,6 +98,7 @@ Zotero.ui.widgets.uploadDialog.show = function(e){
             }, this) );
         }
         else if(item.get('itemType') == 'attachment' && item.get("linkMode") == 'imported_file') {
+            Z.debug("imported_file attachment", 3);
             var uploadD = item.uploadFile(fileInfo, file, progressCallback);
             uploadD.done(uploadSuccess).fail(uploadFailure);
         }

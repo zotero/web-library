@@ -107,10 +107,10 @@
             </div>
         </div>
         {{if ~Zotero.config.librarySettings.allowUpload}}
-        <button type="button" id="upload-attachment-link" class="btn btn-default upload-attachment-button eventfultrigger" data-triggers="uploadAttachment">Upload Attachment</button>
+        <button type="button" id="upload-attachment-link" class="btn btn-default upload-attachment-button eventfultrigger" data-triggers="uploadAttachment" data-library="{{attr:libraryString}}">Upload Attachment</button>
         {{/if}}
     {{/if}}
     {{if item.itemType === 'attachment' && ~Zotero.config.librarySettings.allowUpload}}
-        <button type="button" id="upload-attachment-link" class="btn btn-default upload-attachment-button eventfultrigger" data-triggers="uploadAttachment">Upload New Copy</button>
+        <button type="button" id="upload-attachment-link" class="btn btn-default upload-attachment-button eventfultrigger" data-triggers="uploadAttachment" data-library="{{attr:libraryString}}">Upload New Copy</button>
     {{/if}}
 </script>
