@@ -6,17 +6,10 @@ Zotero.ui.widgets.controlPanel.init = function(el){
     Zotero.ui.eventful.listen("controlPanelContextChange selectedItemsChanged", Zotero.ui.updateDisabledControlButtons);
     Zotero.ui.eventful.listen("selectedCollectionChanged", Zotero.ui.updateCollectionButtons);
     
-    //Zotero.ui.eventful.listen("addToCollection", Zotero.ui.callbacks.addToCollection);
     Zotero.ui.eventful.listen("removeFromCollection", Zotero.ui.callbacks.removeFromCollection);
     Zotero.ui.eventful.listen("moveToTrash", Zotero.ui.callbacks.moveToTrash);
     Zotero.ui.eventful.listen("removeFromTrash", Zotero.ui.callbacks.removeFromTrash);
-    //Zotero.ui.eventful.listen("createCollection", Zotero.ui.callbacks.createCollection);
-    //Zotero.ui.eventful.listen("updateCollection", Zotero.ui.callbacks.updateCollection);
-    //Zotero.ui.eventful.listen("deleteCollection", Zotero.ui.callbacks.deleteCollection);
     Zotero.ui.eventful.listen("toggleEdit", Zotero.ui.callbacks.toggleEdit);
-    //Zotero.ui.eventful.listen("librarySettings", Zotero.ui.callbacks.librarySettings);
-    //Zotero.ui.eventful.listen("citeItems", Zotero.ui.callbacks.citeItems);
-    //Zotero.ui.eventful.listen("exportItems", Zotero.ui.callbacks.showExportDialog);
     Zotero.ui.eventful.listen('clearLibraryQuery', Zotero.ui.clearLibraryQuery);
     
     var container = J(el);
@@ -114,7 +107,6 @@ Zotero.ui.widgets.controlPanel.createItemDropdown = function(el){
     menuEl = J(el).find(".createitemmenu.dropdown-menu");
     menuEl.empty();
     menuEl.replaceWith( J(el).find("#newitemdropdownTemplate").render({itemTypes:itemTypes}) );
-    //J(el).find(".create-item-button").dropdown();
 };
 
 /**
@@ -133,20 +125,7 @@ Zotero.ui.callbacks.toggleEdit =  function(e){
     }
     Zotero.nav.pushState();
     return false;
-    /*
-    if(J(this).prop('checked')){
-        Z.debug("has val: " + J(this).val());
-        Zotero.nav.urlvars.pathVars['mode'] = 'edit';
-    }
-    else{
-        Z.debug("removing edit mode", 3);
-        delete Zotero.nav.urlvars.pathVars['mode'];
-    }
-    Zotero.nav.pushState();
-    return false;
-    */
 };
-
 
 /**
  * clear path vars and send to new item page with current collection when create-item-link clicked
@@ -165,121 +144,6 @@ Zotero.ui.callbacks.createItem = function(e){
     Zotero.nav.pushState();
     return false;
 };
-/*
-Zotero.ui.callbacks.citeItems = function(e){
-    Z.debug("Zotero.ui.callbacks.citeItems", 3);
-    e.preventDefault();
-    
-    //get library and build dialog
-    var library = Zotero.ui.getAssociatedLibrary();
-    var dialogEl = J("#cite-item-dialog").empty();
-    if(Zotero.config.mobile){
-        dialogEl.replaceWith( J("#citeitemformTemplate").render({}) );
-    }
-    else{
-        dialogEl.append(J("#citeitemformTemplate").render({}) );
-    }
-    
-    
-    var citeFunction = function(){
-        Z.debug("citeFunction", 3);
-        Zotero.ui.showSpinner(J("#cite-box-div"));
-        
-        var style = J("#cite-item-select").val();
-        Z.debug(style, 4);
-        var itemKeys = Zotero.ui.getSelectedItemKeys(J("#edit-mode-items-form"));
-        if(itemKeys.length === 0){
-            itemKeys = Zotero.ui.getAllFormItemKeys(J("#edit-mode-items-form"));
-        }
-        Z.debug(itemKeys, 4);
-        var d = library.loadFullBib(itemKeys, style);
-        d.done(function(bibContent){
-            J("#cite-box-div").html(bibContent);
-        });
-    };
-    
-    Z.debug('cite item select width ' + J("#cite-item-select").width() );
-    var dropdownWidth = J("#cite-item-select").width();
-    dropdownWidth = dropdownWidth > 200 ? dropdownWidth : 200;
-    
-    var width = dropdownWidth + 150;
-    if(!Zotero.config.mobile){
-        width = dropdownWidth + 300;
-    }
-    
-    Z.debug("showing cite-item dialog");
-    Z.debug("width: " + width);
-    Zotero.ui.dialog(J("#cite-item-dialog"), {
-        modal:true,
-        minWidth: 300,
-        draggable: false,
-        open: function(){
-            var dropdownWidth = J("#cite-item-select").width();
-            var width = dropdownWidth + 150;
-            if(!Zotero.config.mobile){
-                width = dropdownWidth + 300;
-            }
-            J("#cite-item-dialog").dialog('option', 'width', width);
-        },
-        width: width
-    });
-    
-    J("#cite-item-select").on('change', citeFunction);
-    
-    Z.debug("done with Zotero.ui.callbacks.citeItems", 3);
-    return false;
-};
-
-Zotero.ui.callbacks.showExportDialog = function(e){
-    Z.debug("export-link clicked", 3);
-    
-    //get library and build dialog
-    var library = Zotero.ui.getAssociatedLibrary(J("#feed-link-div"));
-    var dialogEl = J("#export-dialog").empty();
-    if(Zotero.config.mobile){
-        J("#export-dialog").empty().append(J("#export-list").contents().clone() );
-    }
-    else{
-        J("#export-dialog").empty().append(J("#export-list").contents().clone() );
-    }
-    
-    Zotero.ui.dialog(J("#export-dialog"), {
-        modal:true,
-        minWidth: 300,
-        draggable: false,
-        buttons: {
-            'Cancel': function(){
-                Zotero.ui.closeDialog(J("#export-dialog"));
-            }
-        }
-    });
-    
-    Z.debug("done with Zotero.ui.callbacks.exportItems");
-    return false;
-};
-
-Zotero.ui.callbacks.exportItems = function(e){
-    Z.debug("Zotero.ui.callbacks.exportItems", 3);
-    e.preventDefault();
-    
-    //get library
-    var library = Zotero.ui.getAssociatedLibrary(J("#feed-link-div"));
-    var urlconfig = J("#feed-link-div").data('urlconfig');
-    var itemKeys = Zotero.ui.getSelectedItemKeys(J("#edit-mode-items-form"));
-    var requestedFormat = J(this).data('exportformat');
-    //override start and limit since we're just looking for itemKeys directly
-    var exportConfig = J.extend(urlconfig, {'format':requestedFormat, start:'0', limit:null});
-    
-    //build link to export file with selected items
-    var itemKeyString = itemKeys.join(',');
-    if(itemKeyString !== ''){
-        exportConfig['itemKey'] = itemKeyString;
-    }
-    
-    var exportUrl = Zotero.ajax.apiRequestUrl(exportConfig) + Zotero.ajax.apiQueryString(exportConfig);
-    window.open(exportUrl, '_blank');
-};
-*/
 
 /**
  * Move currently displayed single item or currently checked list of items
@@ -391,55 +255,6 @@ Zotero.ui.callbacks.removeFromCollection = function(e){
     
     return false;
 };
-
-/**
- * Launch library settings dialog (currently just row selection)
- * @param  {event} e click event
- * @return {boolean}
- */
- /*
-Zotero.ui.callbacks.librarySettings = function(e){
-    Z.debug("library-settings-link clicked", 3);
-    e.preventDefault();
-    //if(Z.config.librarySettingsInit == false){
-    var dialogEl = J("#library-settings-dialog").empty();
-    var library = Zotero.ui.getAssociatedLibrary(dialogEl);
-    dialogEl.html( J("#librarysettingsTemplate").render({'columnFields':Zotero.Library.prototype.displayableColumns}) );
-    
-    J("#display-column-field-title").prop('checked', true).prop('disabled', true);
-    var listShowFields = library.preferences.getPref('library_listShowFields');
-    J.each(listShowFields, function(index, value){
-        var idstring = '#display-column-field-' + value;
-        J(idstring).prop('checked', true);
-    });
-    
-    var submitFunction = J.proxy(function(){
-        var showFields = [];
-        J("#library-settings-form").find('input:checked').each(function(){
-            showFields.push(J(this).val());
-        });
-        
-        Zotero.utils.setUserPref('library_listShowFields', showFields);
-        library.preferences.setPref('library_listShowFields', showFields);
-        
-        //TODO: switch to event, which one to just re-render but not reload items?
-        Zotero.callbacks.loadItems(J("#library-items-div"));
-        
-        Zotero.ui.closeDialog(J("#library-settings-dialog"));
-    }, this);
-    
-    Zotero.ui.dialog(J("#library-settings-dialog"), {
-        modal:true,
-        draggable: false,
-        buttons: {
-            'Save': submitFunction,
-            'Cancel': function(){
-                Zotero.ui.closeDialog(J("#library-settings-dialog"));
-            }
-        }
-    });
-};
-*/
 
 /**
  * Conditionally show the control panel
