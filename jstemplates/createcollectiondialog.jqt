@@ -1,4 +1,4 @@
-<script id="newcollectiondialogTemplate" type="text/x-jsrender">
+<script id="createcollectiondialogTemplate" type="text/x-jsrender">
 <div id="create-collection-dialog" class="create-collection-dialog modal " role="dialog" title="Create Collection" data-keyboard="true">
     <div  class="modal-dialog">
         <div class="modal-content">
@@ -10,7 +10,7 @@
                 <form method="POST">
                     <div data-role="fieldcontain">
                         <label for="new-collection-title-input">Collection Name</label>
-                        <input class="new-collection-title-input" type="text">
+                        <input class="new-collection-title-input form-control" type="text">
                     </div>
                     <div data-role="fieldcontain">
                     <label for="new-collection-parent">Parent Collection</label>
