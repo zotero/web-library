@@ -1,5 +1,5 @@
 <script id="exportitemsdialogTemplate" type="text/x-jsrender">
-<div id="export-items-dialog" class="export-items-dialog modal " role="dialog" title="Library Settings">
+<div id="export-items-dialog" class="export-items-dialog modal " role="dialog" title="Library Settings" data-keyboard="true">
     <div  class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">

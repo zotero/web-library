@@ -1,5 +1,5 @@
 <script id="librarysettingsdialogTemplate" type="text/x-jsrender">
-<div id="library-settings-dialog" class="modal library-settings-dialog" role="dialog" aria-hidden="true">
+<div id="library-settings-dialog" class="modal library-settings-dialog" role="dialog" aria-hidden="true" data-keyboard="true">
     <div  class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">

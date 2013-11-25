@@ -1,5 +1,5 @@
 <script id="addtocollectiondialogTemplate" type="text/x-jsrender">
-<div id="add-to-collection-dialog" class="add-to-collection-dialog modal " role="dialog" title="Add to Collection">
+<div id="add-to-collection-dialog" class="add-to-collection-dialog modal " role="dialog" aria-hidden="true" title="Add to Collection" data-keyboard="true">
     <div  class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">

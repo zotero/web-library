@@ -1,5 +1,5 @@
 <script id="newcollectiondialogTemplate" type="text/x-jsrender">
-<div id="create-collection-dialog" class="create-collection-dialog modal " role="dialog" title="Create Collection">
+<div id="create-collection-dialog" class="create-collection-dialog modal " role="dialog" title="Create Collection" data-keyboard="true">
     <div  class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">

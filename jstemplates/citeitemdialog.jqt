@@ -1,5 +1,5 @@
 <script id="citeitemdialogTemplate" type="text/x-jsrender">
-<div id="cite-item-dialog" class="cite-item-dialog modal " role="dialog" title="Cite">
+<div id="cite-item-dialog" class="cite-item-dialog modal " role="dialog" title="Cite" data-keyboard="true">
     <div  class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">

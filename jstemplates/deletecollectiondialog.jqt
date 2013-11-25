@@ -1,5 +1,5 @@
 <script id="deletecollectiondialogTemplate" type="text/x-jsrender">
-<div id="delete-collection-dialog" class="delete-collection-dialog modal " role="dialog" title="Delete Collection">
+<div id="delete-collection-dialog" class="delete-collection-dialog modal " role="dialog" title="Delete Collection" data-keyboard="true">
     <div  class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">

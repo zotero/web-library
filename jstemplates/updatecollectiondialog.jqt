@@ -1,5 +1,5 @@
 <script id="updatecollectiondialogTemplate" type="text/x-jsrender">
-<div id="update-collection-dialog" class="update-collection-dialog modal " role="dialog" title="Update Collection">
+<div id="update-collection-dialog" class="update-collection-dialog modal " role="dialog" title="Update Collection" data-keyboard="true">
     <div  class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">

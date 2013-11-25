@@ -1,5 +1,5 @@
 <script id="attachmentuploadTemplate" type="text/x-jsrender">
-<div id="upload-attachment-dialog" class="upload-attachment-dialog modal" role="dialog" title="Upload Attachment">
+<div id="upload-attachment-dialog" class="upload-attachment-dialog modal" role="dialog" title="Upload Attachment" data-keyboard="true">
     <div  class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
