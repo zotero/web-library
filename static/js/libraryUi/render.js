@@ -12,13 +12,27 @@ Zotero.ui.jsNotificationMessage = function(message, type, timeout){
     if(!timeout){
         timeout = 5;
     }
-    J("#js-message").append("<div class='alert alert-danger'>" + message + "</div>").children("div").delay(parseInt(timeout, 10) * 1000).slideUp().delay(300).queue(function(){
+    var alertType = "alert-info";
+    if(type){
+        switch(type){
+            case 'error':
+                alertType = 'alert-danger';
+                break;
+            case 'success':
+                alertType = 'alert-success';
+                break;
+            case 'info':
+                alertType = 'alert-info';
+                break;
+            case 'warning':
+                alertType = 'alert-warning';
+                break;
+        }
+    }
+    
+    J("#js-message").append("<div class='alert " + alertType + "'>" + message + "</div>").children("div").delay(parseInt(timeout, 10) * 1000).slideUp().delay(300).queue(function(){
         J(this).remove();
     });
-    /*
-    J("#js-message-list").append("<li class='jsNotificationMessage-" + type + "' >" + message + "</li>").children("li").delay(parseInt(timeout, 10) * 1000).slideUp().delay(300).queue(function(){
-        J(this).remove();
-    });*/
 };
 
 /**
