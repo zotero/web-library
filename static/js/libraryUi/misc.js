@@ -370,7 +370,7 @@ Zotero.ui.getAssociatedLibrary = function(el){
     }
     else {
         jel = J(el);
-        if(jel.length === 0){
+        if(jel.length === 0 || jel.is("#eventful") ){
             jel = J("#library-items-div");
             if(jel.length === 0){
                 Z.debug("No element passed and no default found for getAssociatedLibrary.");
@@ -415,7 +415,17 @@ Zotero.ui.getAssociatedLibrary = function(el){
 
 Zotero.ui.getEventLibrary = function(e){
     var tel = J(e.triggeringElement);
+    if(e.library){
+        return e.library;
+    }
+    if(e.data.library){
+        return e.data.library;
+    }
+    Z.debug(e);
     var libString = tel.data('library');
+    if(!libString){
+        throw "no library on event or libString on triggeringElement";
+    }
     if(Zotero.libraries.hasOwnProperty(libString)){
         return Zotero.libraries[libString];
     }

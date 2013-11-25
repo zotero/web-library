@@ -7,6 +7,9 @@ Zotero.ui.eventful.trigger = function(eventtype, data){
         data = {};
     }
     data.zeventful = true;
+    if(data.triggeringElement === null || data.triggeringElement === undefined){
+        data.triggeringElement = J("#eventful");
+    }
     var e = J.Event(eventtype, data);
     J("#eventful").trigger(e);
 };
