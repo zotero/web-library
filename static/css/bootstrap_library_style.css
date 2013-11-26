@@ -18,7 +18,6 @@ body.library {
 
 /* == User Library == */
 #library {
-    background: #eee;
     padding-top:55px;
 }
 
@@ -274,6 +273,7 @@ label[for='show-all-tags']{
 }
 
 #collection-list-container {
+    padding-top:5px;
     clear: both;
 }
 
@@ -595,4 +595,15 @@ td.tags ul.item-details-tags-list li:not(:last-child):after {
 
 .tt-suggestion p {
   margin: 0;
+}
+
+.dropdown-menu > li > a.selected {
+  background-color: rgba(51,136,204,0.2);
+}
+
+.dropdown-menu > li > a:hover,
+.dropdown-menu > li > a:focus {
+  text-decoration: none;
+  color: #262626;
+  background-color: rgba(51,136,204,0.4);
 }

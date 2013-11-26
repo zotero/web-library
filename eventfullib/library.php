@@ -48,7 +48,7 @@ $messages = array();
                                    'libraryString'=>$libraryString
                                    );
                                    ?>
-        <span class="zotero-library"
+        <span class="zotero-library" data-library='<?=$libraryString?>'
             data-loadconfig='<?=json_encode($libraryConfig)?>'>
         </span>
         <!-- Header -->
@@ -117,7 +117,7 @@ $messages = array();
                         <button class="remove-from-trash-button btn btn-default navbar-btn eventfultrigger" data-library='<?=$libraryString?>' data-triggers="removeFromTrash" title="Remove from Trash"><span class="glyphicon icon-trash_remove"></span></button>
                     </div>
                     <div class="btn-group" data-toggle="button">
-                        <checkbox type="button" class="toggle-edit-button btn btn-default navbar-btn eventfultrigger" data-library='<?=$libraryString?>' data-triggers="toggleEdit" title="Edit"><span class="glyphicon icon-page_edit"></span></button>
+                        <checkbox type="button" class="toggle-edit-button btn btn-default navbar-btn eventfultrigger" data-library='<?=$libraryString?>' data-triggers="toggleEdit" title="Edit"><span class="glyphicon glyphicon-edit"></span></button>
                     </div>
                 </div>
                 <div class="btn-toolbar pull-right" style="max-width:350px;">
@@ -125,14 +125,14 @@ $messages = array();
                         <div class="input-group">
                             <div class="input-group-btn">
                                 <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
-                                <ul class="dropdown-menu pull-right">
-                                    <li><a href="#">Simple</a></li>
-                                    <li><a href="#">Full Text</a></li>
+                                <ul class="dropdown-menu">
+                                    <li><a href="#" class="library-search-type-link selected" data-searchtype="simple">Title, Creator, Year</a></li>
+                                    <li><a href="#" class="library-search-type-link" data-searchtype="everything">Full Text</a></li>
                                 </ul>
                             </div><!-- /btn-group -->
-                            <input type="text" name="q" id="header-search-query" class="search-query form-control" placeholder="Search Library"/>
+                            <input type="text" name="q" id="header-search-query" class="search-query form-control" placeholder="Search Title, Creator, Year"/>
                             <span class="input-group-btn">
-                                <button class="btn btn-default eventfultrigger" data-triggers="clearLibraryQuery" type="button"><span class="glyphicon glyphicon-remove"></span></button>
+                                <button class="btn btn-default clear-field-button eventfultrigger" data-triggers="clearLibraryQuery" type="button"><span class="glyphicon glyphicon-remove"></span></button>
                             </span>
                         </div>
                     </form>
@@ -140,7 +140,7 @@ $messages = array();
                 <div class="btn-toolbar pull-right">
                     <div class="btn-group">
                         <button class="btn btn-default navbar-btn dropdown-toggle" data-toggle="dropdown" href="#">
-                            Settings
+                            <span class="glyphicon glyphicon-cog"></span>
                             <span class="caret"></span>
                         </button>
                         <ul class="dropdown-menu">
@@ -178,7 +178,7 @@ $messages = array();
                         </div>
                         <div id="delete-collection-dialog" class="eventfulwidget" data-widget="deleteCollectionDialog" title="Delete Collection">
                         </div>
-                        <div id="add-to-collection-dialog" class="eventfulwidget" data-widget="addToCollectionDialog" title="Add to Collection" role="dialog">
+                        <div id="add-to-collection-dialog" class="eventfulwidget" data-widget="addToCollectionDialog" title="Add to Collection">
                         </div>
                         <div id="cite-item-dialog" class="eventfulwidget" data-widget="citeItemDialog" title="Cite Items">
                         </div>
@@ -186,7 +186,7 @@ $messages = array();
                         </div>
                         <div id="export-dialog" class="eventfulwidget" data-widget="exportItemsDialog" title="Export" title="Export">
                         </div>
-                        <div id="library-settings-dialog" class="eventfulwidget" data-widget="librarysettingsdialog" title="Library Settings" title="Library Settings">
+                        <div id="library-settings-dialog" class="eventfulwidget" data-widget="librarysettingsdialog" title="Library Settings">
                         </div>
                     </div>
                     <div id="collection-list-container" class="collection-list-container">
@@ -222,6 +222,7 @@ $messages = array();
                     data-loadconfig='<?=json_encode($libraryConfig);?>'>
                     <a href="" type="application/atom+xml" rel="alternate" class="feed-link"><span class="sprite-icon sprite-feed"></span>Subscribe to this feed</a><br />
                 </div>
+                <div class="export-list" ></div>
             </div><!-- /collections column -->
             
             
@@ -294,7 +295,7 @@ $messages = array();
             <?include '../jstemplates/choosecollectionform.jqt';?>
             <?include '../jstemplates/breadcrumbs.jqt';?>
             <?include '../jstemplates/breadcrumbstitle.jqt';?>
-            <?include '../jstemplates/newcollectiondialog.jqt';?>
+            <?include '../jstemplates/createcollectiondialog.jqt';?>
             <?include '../jstemplates/updatecollectiondialog.jqt';?>
             <?include '../jstemplates/deletecollectiondialog.jqt';?>
             <?include '../jstemplates/exportitemsdialog.jqt';?>

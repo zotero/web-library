@@ -1,7 +1,7 @@
 <script id="collectionrowTemplate" type="text/x-jsrender">
     <li class="collection-row{{if (~currentCollectionKey == collectionKey)}} current-collection{{/if}}" data-collectionKey="{{attr:collectionKey}}">
         <div class="folder-toggle">
-        <span class="sprite-placeholder small-icon light-icon left"></span>
+        <span class="placeholder small-icon light-icon left"></span>
         <span class="sprite-icon sprite-treesource-collection left"></span>
         </div>
         <a href="{{url:websiteCollectionLink}}" data-collectionKey="{{attr:collectionKey}}"

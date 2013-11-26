@@ -49,7 +49,7 @@
 
 /* placeholder empty icon with same dimensions */
 .sprite-placeholder{ background-image:none !important; width: 16px; height: 16px; } 
-
+.placeholder {width:16px; height:16px;}
 
 /* added duplicates for treeitem where no custom icon exists */
 .sprite-treeitem-document{ background-position: -211px -1188px; width: 16px; height: 16px; } 

@@ -270,8 +270,7 @@ Zotero.ui.nestHideCollectionTree = function(el, expandSelected){
     //nest and hide collection tree
     var jel = J(el);
     jel.find("#collection-list ul").hide().siblings(".folder-toggle")
-                                        .children(".sprite-placeholder")
-                                        .removeClass("sprite-placeholder")
+                                        .children(".placeholder")
                                         .addClass('glyphicon')
                                         .addClass("glyphicon-chevron-right");
     jel.find(".current-collection").parents("ul").show();
