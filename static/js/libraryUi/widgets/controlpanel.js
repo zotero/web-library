@@ -24,16 +24,40 @@ Zotero.ui.widgets.controlPanel.init = function(el){
         context = zoterojsSearchContext;
     }
     
+    //set up search type links
+    container.on('click', ".library-search-type-link", function(e){
+        e.preventDefault();
+        var typeLinks = J(".library-search-type-link").removeClass('selected');
+        var selected = J(e.target);
+        var selectedType = selected.data('searchtype');
+        var searchInput = J("#header-search-query").data('searchtype', selectedType);
+        selected.addClass('selected');
+        if(selectedType == 'simple'){
+            searchInput.attr('placeholder', 'Search Title, Creator, Year');
+        }
+        else if(selectedType == 'everything'){
+            searchInput.attr('placeholder', 'Search Full Text');
+        }
+    });
+    
     //set up search submit for library
     container.on('submit', "#library-search", function(e){
         e.preventDefault();
-        Zotero.nav.clearUrlVars(['collectionKey', 'tag', 'q']);
+        Zotero.nav.clearUrlVars(['collectionKey', 'tag', 'q', 'qmode']);
         var query     = J("#header-search-query").val();
+        var searchType = J("#header-search-query").data('searchtype');
         if(query !== "" || Zotero.nav.getUrlVar('q') ){
             Zotero.nav.urlvars.pathVars['q'] = query;
+            if(searchType != "simple"){
+                Zotero.nav.urlvars.pathVars['qmode'] = searchType;
+            }
             Zotero.nav.pushState();
         }
         return false;
+    });
+    
+    container.on('click', '.clear-field-button', function(e){
+        J("#header-search-query").val("").focus();
     });
     
 };
@@ -43,10 +67,10 @@ Zotero.ui.widgets.controlPanel.updateDisabledControlButtons = function(){
 };
 
 Zotero.ui.clearLibraryQuery = function(){
-    if(Zotero.nav.getUrlVar('q')){
-        Zotero.nav.setUrlVar('q', '');
-        Zotero.nav.pushState();
-    }
+    Zotero.nav.unsetUrlVar('q');
+    Zotero.nav.unsetUrlVar('qmode');
+    
+    Zotero.nav.pushState();
     return;
 }
 
