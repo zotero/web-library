@@ -1,6 +1,6 @@
 <script id="itemformTemplate" type="text/x-jsrender">
-    <form class="itemDetailForm zform" data-itemKey="{{attr:itemKey}}" role="form">
-    <button type="submit" data-itemKey="{{attr:itemKey}}" class="zform saveitembutton btn btn-default eventfultrigger" data-triggers="saveItem">Save</button>
+    <form class="itemDetailForm zform" data-itemKey="{{attr:itemKey}}" {{if library}}data-library="{{attr:library.libraryString}}"{{/if}} role="form">
+    <button type="button" data-itemKey="{{attr:itemKey}}" {{if library}}data-library="{{attr:library.libraryString}}"{{/if}} class="zform saveitembutton btn btn-default eventfultrigger" data-triggers="saveItem">Save</button>
     <button type="button" data-itemKey="{{attr:itemKey}}" class="zform cancelitemeditbutton btn btn-default eventfultrigger" data-triggers="cancelItemEdit">Cancel</button>
     <h2>{{>item.title}}</h2>
     <table>
@@ -28,7 +28,7 @@
     </tr>
 
     <!-- Output creators -->
-    {{for ~creatorTypes=creatorTypes item.apiObj.creators }}
+    {{for item.apiObj.creators ~creatorTypes=creatorTypes}}
         {{if name ~creatorTypes=~creatorTypes ~index=#index ~creator=#data tmpl='#authorelementssingleTemplate' }}
         {{else ~creatorTypes=~creatorTypes ~index=#index ~creator=#data tmpl='#authorelementsdoubleTemplate' }}
         {{/if}}
@@ -72,7 +72,7 @@
     
     </table>
 
-    {{if saveable !== false}}<button type="submit" data-itemKey="{{attr:itemKey}}" class="zform saveitembutton btn btn-default eventfultrigger" data-triggers="saveItem">Save</button>{{/if}}
+    {{if saveable !== false}}<button type="button" data-itemKey="{{attr:itemKey}}" {{if library}}data-library="{{attr:library.libraryString}}"{{/if}} class="zform saveitembutton btn btn-default eventfultrigger" data-triggers="saveItem">Save</button>{{/if}}
     {{if citable}}<button type="button" class="zform directciteitembutton btn btn-default">Cite</button>{{/if}}
     <button type="button" data-itemKey="{{attr:itemKey}}" class="zform cancelitemeditbutton btn btn-default eventfultrigger" data-triggers="cancelItemEdit">Cancel</button>
     </form>

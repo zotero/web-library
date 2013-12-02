@@ -1,20 +1,25 @@
 <script id="authorelementssingleTemplate" type="text/x-jsrender">
-    <tr class="creator singleCreator" id="creator_{{attr:~index}}" data-creatorindex="{{attr:~index}}">
+    <tr class="creator singleCreator" id="creator_{{attr:index || ~index}}" data-creatorindex="{{attr:index || ~index}}">
         <th>
-            <select class="creator-type-select form-control" id="creator_{{attr:~index}}_creatorType" name="creator_{{attr:~index}}_creatorType" data-creatorindex="{{attr:~index}}">
-                {{for ~creatorTypes ~creator=#data}}
-                    {{:creatorType}} - {{:localized}}
-                    <option label="{{attr:localized}}" value="{{attr:creatorType}}" {{if (creatorType == ~creator.creatorType)}}selected='1'{{/if}}>{{>localized}}</option>
-                {{/for}}
+            <select class="creator-type-select form-control" id="creator_{{attr:index || ~index}}_creatorType" name="creator_{{attr:index || ~index}}_creatorType" data-creatorindex="{{attr:index || ~index}}">
+                {{if ~creatorTypes}}
+                    {{for ~creatorTypes ~creator=~creator}}
+                        <option label="{{attr:localized}}" value="{{attr:creatorType}}" {{if (creatorType == ~creator.creatorType)}}selected='1'{{/if}}>{{>localized}}</option>
+                    {{/for}}
+                {{else}}
+                    {{for creatorTypes ~creator=creator}}
+                        <option label="{{attr:localized}}" value="{{attr:creatorType}}" {{if (creatorType == ~creator.creatorType)}}selected='1'{{/if}}>{{>localized}}</option>
+                    {{/for}}
+                {{/if}}
             </select>
         </th>
-        <td class="creator" id="creator_{{attr:~index}}" data-creatorindex="{{attr:~index}}">
-            <div class="creator-input-div singleCreator" id="creator_{{attr:~index}}" data-creatorindex="{{attr:~index}}">
-                <input type="text" class="creator-name form-control" value="{{attr:name}}" id="creator_{{attr:~index}}_name" name="creator_{{attr:~index}}_name" data-creatorindex="{{attr:~index}}">
-                <button type="button" class="switch-two-field-creator-link btn btn-default" data-triggers='switchTwoFieldCreator'><span class="glyphicon sprite-textfield-dual"></span></button>
+        <td class="creator" id="creator_{{attr:index || ~index}}" data-creatorindex="{{attr:index || ~index}}">
+            <div class="creator-input-div singleCreator" id="creator_{{attr:index || ~index}}" data-creatorindex="{{attr:index || ~index}}">
+                <input type="text" class="creator-name form-control" value="{{attr:name}}" id="creator_{{attr:index || ~index}}_name" name="creator_{{attr:index || ~index}}_name" data-creatorindex="{{attr:index || ~index}}">
+                <button type="button" class="switch-two-field-creator-link btn btn-default eventfultrigger" data-triggers='switchTwoFieldCreator'><span class="glyphicon sprite-textfield-dual"></span></button>
                 <div class="add-remove-creator-buttons-container btn-group">
-                    <button type="button" class="remove-creator-link btn btn-default" data-triggers="removeCreator" data-creatorindex="{{attr:~index}}"><span class="glyphicon glyphicon-minus-sign"></span></button>
-                    <button type="button" class="add-creator-link btn btn-default" data-triggers="addCreator" data-creatorindex="{{attr:~index}}"><span class="glyphicon glyphicon-plus-sign"></span></button>
+                    <button type="button" class="remove-creator-link btn btn-default eventfultrigger" data-triggers="removeCreator" data-creatorindex="{{attr:index || ~index}}"><span class="glyphicon glyphicon-minus-sign"></span></button>
+                    <button type="button" class="add-creator-link btn btn-default eventfultrigger" data-triggers="addCreator" data-creatorindex="{{attr:index || ~index}}"><span class="glyphicon glyphicon-plus-sign"></span></button>
                 </span>
             </div>
         </td>

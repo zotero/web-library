@@ -2,26 +2,22 @@ Zotero.ui.widgets.item = {};
 
 Zotero.ui.widgets.item.init = function(el){
     Zotero.ui.eventful.listen("displayedItemChanged modeChanged", Zotero.ui.widgets.item.loadItemCallback, {widgetEl: el});
+    Zotero.ui.eventful.listen("saveItem", Zotero.ui.widgets.item.saveItemCallback, {widgetEl:el});
+    Zotero.ui.eventful.listen("cancelItemEdit", Zotero.ui.widgets.item.cancelItemEdit, {widgetEl:el});
+    Zotero.ui.eventful.listen("itemTypeChanged", Zotero.ui.widgets.item.itemTypeChanged, {widgetEl:el});
     
+    Zotero.ui.eventful.listen("addTag", Zotero.ui.widgets.item.addTag, {widgetEl:el});
+    Zotero.ui.eventful.listen("removeTag", Zotero.ui.widgets.item.removeTag, {widgetEl:el});
+    Zotero.ui.eventful.listen("addCreator", Zotero.ui.widgets.item.addCreator, {widgetEl:el});
+    Zotero.ui.eventful.listen("removeCreator", Zotero.ui.widgets.item.removeCreator, {widgetEl:el});
+    
+    Zotero.ui.eventful.listen("switchTwoFieldCreator", Zotero.ui.widgets.item.switchTwoFieldCreators, {widgetEl:el});
+    Zotero.ui.eventful.listen("switchSingleFieldCreator", Zotero.ui.widgets.item.switchSingleFieldCreator, {widgetEl:el});
+    Zotero.ui.eventful.listen("addNote", Zotero.ui.widgets.item.addNote, {widgetEl:el});
     //watch buttons on item field from widget DOM element
     var container = J(el);
-    /*
-    container.on('click', ".saveitembutton", Zotero.ui.saveItemCallback);
-    container.on('submit', ".itemDetailForm", Zotero.ui.saveItemCallback);
-    container.on('click', ".cancelitemeditbutton", Zotero.ui.callbacks.cancelItemEdit);
-    container.on('click', ".itemTypeSelectButton", Zotero.ui.callbacks.selectItemType);
     
-    container.on('keydown', ".itemDetailForm input", Zotero.ui.callbacks.itemFormKeydown);
-    
-    container.on('click', ".add-tag-link", Zotero.ui.addTag);
-    container.on('click', ".remove-tag-link", Zotero.ui.removeTag);
-    container.on('click', ".add-creator-link", Zotero.ui.addCreator);
-    container.on('click', ".remove-creator-link", Zotero.ui.removeCreator);
-    
-    container.on('click', ".switch-two-field-creator-link", Zotero.ui.callbacks.switchTwoFieldCreators);
-    container.on('click', ".switch-single-field-creator-link", Zotero.ui.callbacks.switchSingleFieldCreator);
-    container.on('click', ".add-note-button", Zotero.ui.addNote);
-    */
+    container.on('keydown', ".itemDetailForm input", Zotero.ui.widgets.item.itemFormKeydown);
 };
 
 Zotero.ui.widgets.item.loadItemCallback = function(event){
@@ -141,8 +137,8 @@ Zotero.ui.showChildren = function(el, itemKey){
  * Add creator field to item edit form
  * @param {DOM Button} button Add creator button clicked
  */
-Zotero.ui.addCreator = function(e){
-    var button = e.currentTarget;
+Zotero.ui.widgets.item.addCreator = function(e){
+    var button = e.triggeringElement;
     Z.debug("Zotero.ui.addCreator", 3);
     var itemKey = J(button).data('itemkey');
     var itemType = J(button).closest('form').find('select.itemType').val();
@@ -168,7 +164,7 @@ Zotero.ui.addCreator = function(e){
  * @param  {Dom Button} button Remove creator button that was clicked
  * @return {undefined}
  */
-Zotero.ui.removeCreator = function(e){
+Zotero.ui.widgets.item.removeCreator = function(e){
     var button = e.currentTarget;
     var widgetEl = Zotero.ui.parentWidgetEl(button);
     Z.debug("Zotero.ui.removeCreator", 3);
@@ -188,7 +184,7 @@ Zotero.ui.removeCreator = function(e){
  * Add a note field to an editItem Form
  * @param {Dom Button} button Add note button that was clicked
  */
-Zotero.ui.addNote = function(e){
+Zotero.ui.widgets.item.addNote = function(e){
     Z.debug("Zotero.ui.addNote", 3);
     var button = J(e.currentTarget);
     var container = button.closest("form");
@@ -237,6 +233,7 @@ Zotero.ui.loadNewItemTemplate = function(item){
             Zotero.ui.init.rte('default');
         }
         else {
+            //TODO: libraryUserID is for what?
             jel.append( J('#itemformTemplate').render( {item:item,
                                                         libraryUserID:zoteroData.libraryUserID,
                                                         itemKey:item.itemKey,
@@ -245,7 +242,7 @@ Zotero.ui.loadNewItemTemplate = function(item){
                                                         citable:false
                                                         } ) );
             if(item.apiObj.tags.length === 0){
-                Zotero.ui.addTag(jel, false);
+                Zotero.ui.widgets.item.addTag(jel, false);
             }
             Zotero.ui.init.creatorFieldButtons();
             //Zotero.ui.init.tagButtons();
@@ -264,8 +261,8 @@ Zotero.ui.loadNewItemTemplate = function(item){
  * Add a tag field to an edit item form
  * @param {bool} focus Whether to focus the newly added tag field
  */
-Zotero.ui.addTag = function(e, focus) {
-    Z.debug("Zotero.ui.addTag", 3);
+Zotero.ui.widgets.item.addTag = function(e, focus) {
+    Z.debug("Zotero.ui.widgets.item.addTag", 3);
     if(typeof focus == 'undefined'){
         focus = true;
     }
@@ -280,28 +277,13 @@ Zotero.ui.addTag = function(e, focus) {
     var jel = widgetEl.find("td.tags");
     jel.append( J('#itemtagTemplate').render({index:newindex}) );
     
-    if(Zotero.config.jqueryui === false){
-        var library = Zotero.ui.getAssociatedLibrary(widgetEl);
-        if(library){
-            widgetEl.find("input.taginput").typeahead({name: 'tags', local:library.tags.plainList});
+    var library = Zotero.ui.getAssociatedLibrary(widgetEl);
+    if(library){
+        var typeaheadSource = library.tags.plainList;
+        if(!typeaheadSource){
+            typeaheadSource = [];
         }
-    }
-    else {
-        widgetEl.find("input.taginput").autocomplete({
-            source:function(request, callback){
-                var library = Zotero.ui.getAssociatedLibrary(widgetEl);
-                if(library){
-                    var matchingTagStrings = Zotero.utils.prependAutocomplete(request.term, library.tags.plainList);
-                    callback(matchingTagStrings);
-                }
-            },
-            select: function(e, ui){
-                e.preventDefault();
-                e.stopImmediatePropagation();
-                var value = ui.item.value;
-                Zotero.ui.addTag(e);
-            }
-        });
+        widgetEl.find("input.taginput").typeahead({name: 'tags', local: typeaheadSource});
     }
     
     if(focus){
@@ -310,7 +292,7 @@ Zotero.ui.addTag = function(e, focus) {
     
     //Zotero.ui.init.tagButtons();
     
-    Zotero.ui.createOnActivePage(jel);
+    //Zotero.ui.createOnActivePage(jel);
 };
 
 /**
@@ -318,19 +300,19 @@ Zotero.ui.addTag = function(e, focus) {
  * @param  {DOM Element} el Tag field to remove
  * @return {undefined}
  */
-Zotero.ui.removeTag = function(e) {
+Zotero.ui.widgets.item.removeTag = function(e) {
     Z.debug("Zotero.ui.removeTag", 3);
     var el = e.currentTarget;
     var widgetEl = Zotero.ui.parentWidgetEl(el);
     //check to make sure there is another tag field available to use
     //if not add an empty one
     if(widgetEl.find("div.edit-tag-div").length === 1){
-        Zotero.ui.addTag(e);
+        Zotero.ui.widgets.item.addTag(e);
     }
     
     J(el).closest('.edit-tag-div').remove();
     
-    Zotero.ui.createOnActivePage(el);
+    //Zotero.ui.createOnActivePage(el);
 };
 
 
@@ -344,6 +326,7 @@ Zotero.ui.editItemForm = function(el, item){
     Z.debug("Zotero.ui.editItemForm", 3);
     Z.debug(item, 4);
     var jel = J(el);
+    var library = Zotero.ui.getAssociatedLibrary(el);
     if(item.itemType == 'note'){
         Z.debug("editItemForm - note", 3);
         jel.empty();
@@ -366,7 +349,7 @@ Zotero.ui.editItemForm = function(el, item){
         
         //add empty tag if no tags yet
         if(item.apiObj.tags.length === 0){
-            Zotero.ui.addTag(el, false);
+            Zotero.ui.widgets.item.addTag(el, false);
         }
         if(Zotero.config.mobile){
             Zotero.ui.init.editButton();
@@ -396,6 +379,7 @@ Zotero.ui.editItemForm = function(el, item){
             Z.debug("Rendering item form");
             Z.debug(Zotero.Item.prototype.creatorTypes[item.apiObj.itemType]);
             jel.append( J('#itemformTemplate').render({item:item,
+                                                    library:library,
                                                     itemKey:item.itemKey,
                                                     creatorTypes:Zotero.Item.prototype.creatorTypes[item.apiObj.itemType],
                                                     saveable: true,
@@ -404,7 +388,7 @@ Zotero.ui.editItemForm = function(el, item){
             
             //add empty tag if no tags yet
             if(item.apiObj.tags.length === 0){
-                Zotero.ui.addTag(el, false);
+                Zotero.ui.widgets.item.addTag(el, false);
             }
             if(Zotero.config.mobile){
                 Zotero.ui.init.editButton();
@@ -415,14 +399,18 @@ Zotero.ui.editItemForm = function(el, item){
                 //Zotero.ui.init.tagButtons();
                 Zotero.ui.init.editButton();
             }
+            Zotero.eventful.initTriggers(jel);
         }, this));
     }
     
     //add autocomplete to existing tag fields
     if(Zotero.config.jqueryui === false){
         //add autocomplete to existing tag fields
-        var library = Zotero.ui.getAssociatedLibrary();
-        J("input.taginput").typeahead({name: 'tags', local:library.tags.plainList});
+        var typeaheadSource = library.tags.plainList;
+        if(!typeaheadSource){
+            typeaheadSource = [];
+        }
+        J("input.taginput").typeahead({name: 'tags', local: typeaheadSource});
     }
     else{
         J("input.taginput").autocomplete({
@@ -435,11 +423,10 @@ Zotero.ui.editItemForm = function(el, item){
                 e.preventDefault();
                 e.stopImmediatePropagation();
                 var value = ui.item.value;
-                Zotero.ui.addTag(e);
+                Zotero.ui.widgets.item.addTag(e);
             }
         });
     }
-    
 };
 
 
@@ -488,13 +475,18 @@ Zotero.ui.loadItemDetail = function(item, el){
  * @param  {event} e DOM Event triggering callback
  * @return {boolean}
  */
-Zotero.ui.saveItemCallback = function(e){
-    Z.debug("saveitemlink clicked", 3);
+Zotero.ui.widgets.item.saveItemCallback = function(e){
+    Z.debug("widgets.item.saveItemCallback", 3);
     e.preventDefault();
+    var triggeringElement = J(e.triggeringElement);
+    var widgetEl = e.data.widgetEl;
+    var el = widgetEl;
+    
     Zotero.ui.scrollToTop();
-    var library = Zotero.ui.getAssociatedLibrary(J(this).closest(".ajaxload"));
+    var library = Zotero.ui.getEventLibrary(e);
     //get our current representation of the item
-    var itemKey = J(this).attr('data-itemKey');
+    var itemKey = triggeringElement.data('itemkey');
+    Z.debug("itemKey: " + itemKey, 3);
     var item;
     if(itemKey){
         item = library.items.getItem(itemKey);
@@ -505,21 +497,17 @@ Zotero.ui.saveItemCallback = function(e){
         Z.debug("newItem : itemTemplate selected from form", 3);
         Z.debug(item, 3);
     }
-    Zotero.ui.updateItemFromForm(item, J(this).closest("form"));
-    Zotero.ui.saveItem(item, J(this).closest("form"));
+    Zotero.ui.updateItemFromForm(item, triggeringElement.closest("form"));
+    Zotero.ui.saveItem(item, triggeringElement.closest("form"));
     library.dirty = true;
     return false;
 };
 
 
-Zotero.ui.callbacks.switchTwoFieldCreators = function(e){
+Zotero.ui.widgets.item.switchTwoFieldCreators = function(e){
     Z.debug("switch two field creator clicked");
-    var jel;
-    if(true){
-        jel = J(e.currentTarget);
-    } else {
-        jel = J(this);
-    }
+    var jel = J(e.triggeringElement);
+    var containingTable = jel.closest('table');
     
     var last, first;
     var name = jel.closest('tr.creator').find("input[id$='_name']").val();
@@ -535,25 +523,22 @@ Zotero.ui.callbacks.switchTwoFieldCreators = function(e){
     
     var itemType = jel.closest('form').find('select.itemType').val();
     var index = parseInt(jel.closest('tr.creator').attr('id').substr(8), 10);
+    var trIdString = '#creator_' + index;
     var creatorType = jel.closest('tr.creator').find("select#creator_" + index + "_creatorType").val();
-    jel.closest('tr').replaceWith( J('#authorelementsdoubleTemplate').render({index:index,
+    jel.closest('tr').replaceWith( J('#authorelementsdoubleTemplate').render({index:"" + index,
                                                 creator:{firstName:first, lastName:last, creatorType:creatorType},
                                                 creatorTypes:Zotero.Item.prototype.creatorTypes[itemType]
                                                 }));
     
     Zotero.ui.init.creatorFieldButtons();
+    Zotero.eventful.initTriggers(containingTable.find(trIdString));
     //Zotero.ui.createOnActivePage(J(this));
 };
 
-Zotero.ui.callbacks.switchSingleFieldCreator = function(e){
+Zotero.ui.widgets.item.switchSingleFieldCreator = function(e){
     Z.debug("switch single field clicked");
-    var jel;
-    //if(e.zeventful){
-    if(true){
-        jel = J(e.currentTarget);
-    } else {
-        jel = J(this);
-    }
+    var jel = J(e.triggeringElement);
+    var containingTable = jel.closest('table');
     
     var name;
     var firstName = jel.closest('div.creator-input-div').find("input[id$='_firstName']").val();
@@ -562,14 +547,16 @@ Zotero.ui.callbacks.switchSingleFieldCreator = function(e){
     
     var itemType = jel.closest('form').find('select.itemType').val();
     var index = parseInt(jel.closest('tr.creator').attr('id').substr(8), 10);
+    var trIdString = '#creator_' + index;
     var creatorType = jel.closest('tr.creator').find("select#creator_" + index + "_creatorType").val();
     jel.closest('tr').replaceWith( J('#authorelementssingleTemplate').render(
-                                        {index:index,
+                                        {index:""+index,
                                         creator:{name:name},
                                         creatorTypes:Zotero.Item.prototype.creatorTypes[itemType]
                                         }));
     
     Zotero.ui.init.creatorFieldButtons();
+    Zotero.eventful.initTriggers(containingTable.find(trIdString));
 };
 
 /*
@@ -580,12 +567,12 @@ Zotero.ui.callbacks.addNote = function(e){
 };
 */
 
-Zotero.ui.callbacks.cancelItemEdit = function(e){
+Zotero.ui.widgets.item.cancelItemEdit = function(e){
     Zotero.nav.clearUrlVars(['itemKey', 'collectionKey', 'tag', 'q']);
     Zotero.nav.pushState();
 };
 
-Zotero.ui.callbacks.selectItemType = function(e){
+Zotero.ui.widgets.item.selectItemType = function(e){
     Z.debug("itemTypeSelectButton clicked", 3);
     var jel;
     if(e.zeventful){
@@ -600,7 +587,7 @@ Zotero.ui.callbacks.selectItemType = function(e){
     return false;
 };
 
-Zotero.ui.callbacks.itemFormKeydown = function(e){
+Zotero.ui.widgets.item.itemFormKeydown = function(e){
     if ( e.keyCode === Zotero.ui.keyCode.ENTER ){
         e.preventDefault();
         var nextEligibleSiblings = J(this).nextAll("input, button, textarea, select");

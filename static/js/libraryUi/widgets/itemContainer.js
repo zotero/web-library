@@ -4,7 +4,7 @@ Zotero.ui.widgets.itemContainer.init = function(el){
     var container = J(el);
     
     //TODO: this should basically all be event based rather than callbacks
-    
+    /*
     Zotero.ui.eventful.listen("saveItem", Zotero.ui.widgets.saveItemCallback);
     Zotero.ui.eventful.listen("cancelItemEdit", Zotero.ui.widgets.saveItemCallback);
     Zotero.ui.eventful.listen("addTag", Zotero.ui.addTag);
@@ -14,7 +14,7 @@ Zotero.ui.widgets.itemContainer.init = function(el){
     Zotero.ui.eventful.listen("switchSingleFieldCreator", Zotero.ui.widgets.switchSingleFieldCreator);
     Zotero.ui.eventful.listen("switchTwoFieldCreator", Zotero.ui.widgets.switchTwoFieldCreators);
     Zotero.ui.eventful.listen("addNote", Zotero.ui.addNote);
-    
+    */
     Zotero.ui.eventful.listen("changeItemSorting", Zotero.ui.resortItems);
     Zotero.ui.eventful.listen("citeItems", Zotero.ui.callbacks.citeItems);
     Zotero.ui.eventful.listen("exportItems", Zotero.ui.callbacks.exportItems);

@@ -66,7 +66,7 @@ Zotero.ui.unassociatedItemForm = function(el, item){
                                         }
                                         ) );
             if(item.apiObj.tags.length === 0){
-                Zotero.ui.addTag(container, false);
+                Zotero.ui.widgets.item.addTag(container, false);
             }
             Zotero.ui.init.creatorFieldButtons();
             //Zotero.ui.init.tagButtons();
