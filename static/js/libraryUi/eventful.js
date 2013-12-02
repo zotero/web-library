@@ -93,6 +93,9 @@ Zotero.eventful.initTriggers = function(el){
     };
     
     J(el).find(".eventfultrigger").each(function(ind, el){
+        if(J(el).data('triggerbound')){
+            return;
+        }
         var ev = J(el).data("event");
         var libString = J(el).data("library") || "";
         
@@ -108,6 +111,7 @@ Zotero.eventful.initTriggers = function(el){
             //J(el).on("click" + "." + libString, triggerOnEvent);
             J(el).on("click", triggerOnEvent);
         }
+        J(el).data('triggerbound', true);
     });
     /*
     J(".eventfultrigger").bind('click', function(e){
