@@ -403,30 +403,12 @@ Zotero.ui.editItemForm = function(el, item){
         }, this));
     }
     
-    //add autocomplete to existing tag fields
-    if(Zotero.config.jqueryui === false){
-        //add autocomplete to existing tag fields
-        var typeaheadSource = library.tags.plainList;
-        if(!typeaheadSource){
-            typeaheadSource = [];
-        }
-        J("input.taginput").typeahead({name: 'tags', local: typeaheadSource});
+    //add autocomplete
+    var typeaheadSource = library.tags.plainList;
+    if(!typeaheadSource){
+        typeaheadSource = [];
     }
-    else{
-        J("input.taginput").autocomplete({
-            source:function(request, callback){
-                var library = Zotero.ui.getAssociatedLibrary(J(this.element.context).closest(".ajaxload"));
-                var matchingTagStrings = Zotero.utils.prependAutocomplete(request.term, library.tags.plainList);
-                callback(matchingTagStrings);
-            },
-            select: function(e, ui){
-                e.preventDefault();
-                e.stopImmediatePropagation();
-                var value = ui.item.value;
-                Zotero.ui.widgets.item.addTag(e);
-            }
-        });
-    }
+    J("input.taginput").typeahead({name: 'tags', local: typeaheadSource});
 };
 
 
