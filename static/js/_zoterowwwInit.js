@@ -30,7 +30,7 @@ Zotero.init = function(){
     }
     
     //run page specific init
-    if(undefined !== window.zoterojsClass){
+    if((undefined !== window.zoterojsClass) && (undefined !== Zotero.pages)){
         try{
             Zotero.pages[zoterojsClass].init();
         }
