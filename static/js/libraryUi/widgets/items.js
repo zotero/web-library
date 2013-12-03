@@ -225,8 +225,6 @@ Zotero.ui.displayItemsFull = function(el, config, loadedItems){
     
     Zotero.ui.updateDisabledControlButtons();
     
-    Zotero.ui.libraryBreadcrumbs();
-    
     Zotero.ui.createOnActivePage(el);
 };
 

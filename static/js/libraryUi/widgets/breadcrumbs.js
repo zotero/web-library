@@ -53,7 +53,9 @@ Zotero.ui.libraryBreadcrumbs = function(library, config){
     widgetEl = J("#breadcrumbs").empty();
     widgetEl.html( J('#breadcrumbsTemplate').render({breadcrumbs:breadcrumbs}) );
     var newtitle = J('#breadcrumbstitleTemplate', {breadcrumbs:breadcrumbs}).text();
-    Zotero.nav.updateStateTitle(newtitle);
+    if(newtitle){
+        Zotero.nav.updateStateTitle(newtitle);
+    }
     Z.debug("done with breadcrumbs", 4);
     }
     catch(e){
