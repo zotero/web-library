@@ -1,0 +1,3 @@
+[submodule "library/libZotero"]
+	path = library/libZotero
+	url = git@github.com:fcheslack/libZotero.git
