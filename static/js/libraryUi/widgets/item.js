@@ -5,6 +5,7 @@ Zotero.ui.widgets.item.init = function(el){
     Zotero.ui.eventful.listen("saveItem", Zotero.ui.widgets.item.saveItemCallback, {widgetEl:el});
     Zotero.ui.eventful.listen("cancelItemEdit", Zotero.ui.widgets.item.cancelItemEdit, {widgetEl:el});
     Zotero.ui.eventful.listen("itemTypeChanged", Zotero.ui.widgets.item.itemTypeChanged, {widgetEl:el});
+    Zotero.ui.eventful.listen("uploadSuccessful showChildren", Zotero.ui.widgets.item.showChildren, {widgetEl:el});
     
     Zotero.ui.eventful.listen("addTag", Zotero.ui.widgets.item.addTag, {widgetEl:el});
     Zotero.ui.eventful.listen("removeTag", Zotero.ui.widgets.item.removeTag, {widgetEl:el});
@@ -78,7 +79,7 @@ Zotero.ui.widgets.item.loadItemCallback = function(event){
         }
         else{
             Zotero.ui.loadItemDetail(item, jel);
-            Zotero.ui.showChildren(el, itemKey);
+            Zotero.ui.eventful.trigger('showChildren');
         }
     }
     else{
@@ -101,7 +102,7 @@ Zotero.ui.widgets.item.loadItemCallback = function(event){
             }
             else{
                 Zotero.ui.loadItemDetail(item, jel);
-                Zotero.ui.showChildren(el, itemKey);
+                Zotero.ui.eventful.trigger('showChildren');
             }
             //set currentConfig on element when done displaying
             jel.data('currentconfig', config);
@@ -117,11 +118,13 @@ Zotero.ui.widgets.item.loadItemCallback = function(event){
  * @param  {string} itemKey key of parent item
  * @return {undefined}
  */
-Zotero.ui.showChildren = function(el, itemKey){
-    Z.debug('Zotero.ui.showChildren', 3);
-    var library = Zotero.ui.getAssociatedLibrary(J(el).closest("div.ajaxload"));
+Zotero.ui.widgets.item.showChildren = function(e){
+    Z.debug('Zotero.ui.widgets.item.showChildren', 3);
+    var widgetEl = J(e.data.widgetEl);
+    var itemKey = widgetEl.data('itemkey');
+    var library = Zotero.ui.getAssociatedLibrary(widgetEl);
     var item = library.items.getItem(itemKey);
-    var attachmentsDiv = J(el).find(".item-attachments-div");
+    var attachmentsDiv = J(widgetEl).find(".item-attachments-div");
     Zotero.ui.showSpinner(attachmentsDiv);
     
     var childItemsPromise = item.getChildren(library);
@@ -129,8 +132,6 @@ Zotero.ui.showChildren = function(el, itemKey){
     childItemsPromise.done(function(childItems){
         J(".item-attachments-div").html( J('#childitemsTemplate').render({childItems:childItems}) );
     });
-    
-    Zotero.ui.createOnActivePage(el);
 };
 
 /**
@@ -438,8 +439,6 @@ Zotero.ui.loadItemDetail = function(item, el){
     Zotero.ui.init.rte('readonly');
     Zotero.ui.init.editButton();
     
-    Zotero.ui.libraryBreadcrumbs();
-    
     try{
         //trigger event for Zotero translator detection
         var ev = document.createEvent('HTMLEvents');
@@ -449,6 +448,8 @@ Zotero.ui.loadItemDetail = function(item, el){
     catch(e){
         Zotero.debug("Error triggering ZoteroItemUpdated event");
     }
+    
+    jel.data('itemkey', item.itemKey);
 };
 
 

@@ -38,6 +38,7 @@ Zotero.ui.widgets.uploadDialog.show = function(e){
         var uploadSuccess = function(){
             Z.debug("uploadSuccess", 3);
             Zotero.ui.closeDialog(J("#upload-attachment-dialog"));
+            Zotero.ui.eventful.trigger("uploadSuccessful");
             Zotero.nav.pushState(true);
         };
         
