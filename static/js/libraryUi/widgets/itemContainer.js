@@ -22,26 +22,6 @@ Zotero.ui.widgets.itemContainer.init = function(el){
         Zotero.nav.urlvars.pathVars['itemType'] = itemType;
         Zotero.nav.pushState();
     });
-    
-    
-    container.on('keydown', "#item-details-div .itemDetailForm input", function(e){
-        if ( e.keyCode === Zotero.ui.keyCode.ENTER ){
-            e.preventDefault();
-            var nextEligibleSiblings = J(this).nextAll("input, button, textarea, select");
-            if(nextEligibleSiblings.length){
-                nextEligibleSiblings.first().focus();
-            }
-            else{
-                J(this).closest("tr").nextAll().find("input, button, textarea, select").first().focus();
-            }
-        }
-    });
-    
-    //subscribe to event for item getting its first child so we can re-run getChildren
-    J.subscribe('hasFirstChild', function(itemKey){
-        var jel = J('#item-details-div');
-        Zotero.ui.showChildren(jel, itemKey);
-    });
 };
 
 Zotero.ui.cancelItemEdit = function(e){

@@ -119,19 +119,8 @@ td.creator * {
     margin:0 2px .25em;
 }
 
-.edit-tag-div {
-    margin:0;
-    line-height:1.4em;
-}
-
 .edit-tag-div input {
     float:left;
-}
-.edit-tag-div span {
-    float:left;
-}
-.taginput{
-    clear:left;
 }
 
 #item-pagination-div li{
@@ -546,7 +535,7 @@ td.tags ul.item-details-tags-list li:not(:last-child):after {
     color: rgba(0,0,0,0.5);
 }
 
-
+/* ==== Twitter Typeahead ==== */
 .twitter-typeahead .tt-query,
 .twitter-typeahead .tt-hint {
   margin-bottom: 0;
@@ -607,3 +596,4 @@ td.tags ul.item-details-tags-list li:not(:last-child):after {
   color: #262626;
   background-color: rgba(51,136,204,0.4);
 }
+/* ==== End Twitter Typeahead ==== */

@@ -1,6 +1,6 @@
 <script id="itemtagTemplate" type="text/x-jsrender">
     <div class="edit-tag-div">
-        <input type='text' data-itemKey="{{attr:~itemKey}}" name='tag_{{attr:~index}}' id='tag_{{attr:~index}}' value='{{attr:tag}}' class='taginput form-control'>
+        <input type='text' data-itemKey="{{attr:~itemKey}}" name='tag_{{attr:index || ~index}}' id='tag_{{attr:index || ~index}}' value='{{attr:tag}}' class='taginput form-control'>
         <div class="add-remove-tag-container btn-group">
             <button type="button" class="remove-tag-link btn btn-default eventfultrigger" data-triggers="removeTag"><span class="glyphicon glyphicon-minus-sign"></span></button>
             <button type="button" class="add-tag-link btn btn-default eventfultrigger" data-triggers="addTag"><span class="glyphicon glyphicon-plus-sign"></span></button>

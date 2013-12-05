@@ -16,15 +16,6 @@ Zotero.ui.widgets.tags.init = function(el){
     //TODO: make sure tag autocomplete works when editing items
     //add tag to item and stop event propogation when tag is selected
     //from autocomplete on an item
-    container.on('keydown', ".taginput", function(e){
-        if ( e.keyCode === Zotero.ui.keyCode.ENTER ){
-            e.preventDefault();
-            if(J(this).val() !== ''){
-                Zotero.ui.addTag();
-                e.stopImmediatePropagation();
-            }
-        }
-    });
     
     //bind tag autocomplete filter in tag widget
     container.on('keyup', "#tag-filter-input", Zotero.ui.callbacks.filterTags);
@@ -61,15 +52,6 @@ Zotero.ui.widgets.tags.init = function(el){
         var matchingTagStrings = Zotero.utils.matchAnyAutocomplete(J('#tag-filter-input').val(), libraryTagsPlainList);
         Zotero.ui.displayTagsFiltered(J('#tags-list-div'), library.tags, matchingTagStrings, []);
         Z.debug(matchingTagStrings, 4);
-    });
-    
-    //bind refresh link to pull down fresh set of tags until there is a better way to
-    //check for updated/removed tags in API
-    container.on('click', '#refresh-tags-link', function(e){
-        e.preventDefault();
-        var library = Zotero.ui.getAssociatedLibrary(J('#tag-filter-input').closest('.ajaxload'));
-        Zotero.callbacks.loadTags(J("#tags-list-div"), false);
-        return false;
     });
 };
 

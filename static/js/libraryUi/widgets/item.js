@@ -284,7 +284,7 @@ Zotero.ui.widgets.item.addTag = function(e, focus) {
         if(!typeaheadSource){
             typeaheadSource = [];
         }
-        widgetEl.find("input.taginput").typeahead({name: 'tags', local: typeaheadSource});
+        widgetEl.find("input.taginput").not('.tt-query').typeahead({name: 'tags', local: typeaheadSource});
     }
     
     if(focus){
@@ -409,7 +409,7 @@ Zotero.ui.editItemForm = function(el, item){
     if(!typeaheadSource){
         typeaheadSource = [];
     }
-    J("input.taginput").typeahead({name: 'tags', local: typeaheadSource});
+    jel.find("input.taginput").typeahead('destroy').typeahead({name: 'tags', local: typeaheadSource});
 };
 
 
@@ -573,6 +573,16 @@ Zotero.ui.widgets.item.selectItemType = function(e){
 Zotero.ui.widgets.item.itemFormKeydown = function(e){
     if ( e.keyCode === Zotero.ui.keyCode.ENTER ){
         e.preventDefault();
+        var triggeringEl = J(this);
+        if(triggeringEl.hasClass('taginput')){
+            if(triggeringEl.hasClass('tt-query')){
+                var val = triggeringEl.val();
+                triggeringEl.typeahead('setQuery', val);
+                triggeringEl.trigger('blur');
+            }
+            Zotero.ui.eventful.trigger("addTag");
+            return;
+        }
         var nextEligibleSiblings = J(this).nextAll("input, button, textarea, select");
         if(nextEligibleSiblings.length){
             nextEligibleSiblings.first().focus();
