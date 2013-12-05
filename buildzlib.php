@@ -5,6 +5,10 @@ $target = 'local';
 
 
 chdir(dirname(__FILE__));
+
+//build libZotero submodule
+echo shell_exec("./library/libZotero/build/build.php");
+
 echo "building Zotero www\n";
 echo getcwd() . "\n";
 //setup defaults and parse arguments
@@ -53,13 +57,9 @@ $jsRelPath = './static/js/';
 //concatenate php files into a single file to include
 //list of files to include
 $files = array(
-//"zoteroCommon.js",
 "_zoterowwwInit.js",
-//"_zoteroLibraryAjax.js",
 "_zoteroNav.js",
 //"zoteroPages.js",
-//"zoteroLibrary.js",
-//"_zoteroLibraryCache.js",
 "_zoteroLibraryCallbacks.js",
 "libraryUi/eventful.js",
 "libraryUi/bind.js",
@@ -93,9 +93,6 @@ $files = array(
 "libraryUi/widgets/updatecollectiondialog.js",
 "libraryUi/widgets/uploaddialog.js",
 
-//"_zoteroLibraryUi.js",
-//"_zoteroLibraryUiInit.js",
-//"_zoteroLibraryUiCallbacks.js",
 "_zoteroLibraryUrl.js",
 "_zoteroLibraryOffline.js"
 );
@@ -117,7 +114,7 @@ file_put_contents($jsRelPath . '_zoterowwwAll.js', $fullText);
 
 
 //replace strings in libZotero.php for zotero www
-$lzSinglePath = './library/libZotero/libZoteroSingle.php';
+$lzSinglePath = './library/libZotero/build/libZoteroSingle.php';
 $lzText = file_get_contents($lzSinglePath);
 foreach($replaceStrings as $from=>$to){
     $lzText = str_replace($from, $to, $lzText);
@@ -126,7 +123,7 @@ file_put_contents($lzSinglePath, $lzText);
 
 
 //replace strings in libZotero JS for zotero www
-$lzSinglePath = './library/libZotero/libZoteroSingle.js';
+$lzSinglePath = './library/libZotero/build/libZoteroSingle.js';
 $lzText = file_get_contents($lzSinglePath);
 foreach($replaceStrings as $from=>$to){
     $lzText = str_replace($from, $to, $lzText);
