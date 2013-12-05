@@ -18,7 +18,6 @@ Zotero.defaultPrefs = {
     debug_log: true,
     debug_mock: false,
     javascript_enabled: false,
-    library_listShowFields: ['title', 'creator', 'dateModified'],
 };
 
 Zotero.init = function(){
@@ -119,8 +118,6 @@ Zotero.init = function(){
 //set up Zotero config and preferences based on passed in object
 Zotero.loadConfig = function(config){
     //set up user config defaults
-    Zotero.config.userDefaultApiArgs = J.extend({}, Zotero.config.defaultApiArgs);
-    Zotero.config.userDefaultApiArgs['limit'] = 25;
     
     if(config.mobile){
         Zotero.config.mobile = true;

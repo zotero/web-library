@@ -76,11 +76,13 @@ Zotero.ui.getItemsConfig = function(library){
                      };
     
     var userPreferencesApiArgs = {
+        order: Zotero.preferences.getPref('order'),
+        sort: Zotero.preferences.getPref('sort'),
         limit: library.preferences.getPref('itemsPerPage'),
     };
     
     //Build config object that should be displayed next and compare to currently displayed
-    var newConfig = J.extend({}, defaultConfig, Zotero.config.userDefaultApiArgs, userPreferencesApiArgs, urlConfigVals);
+    var newConfig = J.extend({}, defaultConfig, userPreferencesApiArgs, urlConfigVals);
     newConfig['collectionKey'] = urlConfigVals['collectionKey'];//always override collectionKey, even with absence of collectionKey
     newConfig.start = parseInt(newConfig.limit, 10) * (parseInt(newConfig.itemPage, 10) - 1);
     
@@ -120,11 +122,11 @@ Zotero.ui.displayItemsWidget = function(el, config, loadedItems){
     var feed = loadedItems.feed;
     var start = parseInt(config.start, 10) || 0;
     var limit = parseInt(config.limit, 10) || library.preferences.getPref('itemsPerPage');
-    var order = config.order || Zotero.config.userDefaultApiArgs.order;
+    var order = config.order || Zotero.preferences.getPref('order');
     var sort = config.sort || Zotero.config.sortOrdering[order] || 'asc';
     var editmode = false;
     
-    var displayFields = library.preferences.getPref('library_listShowFields');
+    var displayFields = library.preferences.getPref('listDisplayedFields');
     
     var itemsTableData = {displayFields:displayFields,
                            items:loadedItems.itemsArray,
@@ -152,8 +154,8 @@ Zotero.ui.displayItemsFull = function(el, config, loadedItems){
     var library = Zotero.ui.getAssociatedLibrary(jel);
     
     var feed = loadedItems.feed;
-    var filledConfig = J.extend({}, Zotero.config.defaultApiArgs, Zotero.config.userDefaultApiArgs, config);
-    var displayFields = library.preferences.getPref('library_listShowFields');
+    var filledConfig = J.extend({}, Zotero.config.defaultApiArgs, config);
+    var displayFields = library.preferences.getPref('listDisplayedFields');
     if(loadedItems.library.libraryType != 'group'){
         displayFields = J.grep(displayFields, function(el, ind){
             return J.inArray(el, Zotero.Library.prototype.groupOnlyColumns) == (-1);
@@ -295,116 +297,44 @@ Zotero.ui.bindItemLinks = function(){
 
 Zotero.ui.callbacks.resortItems = function(e){
     Z.debug(".field-table-header clicked", 3);
-    var currentOrderField = Zotero.ui.getPrioritizedVariable('order', 'title');
-    var currentOrderSort = Zotero.ui.getPrioritizedVariable('sort', 'asc');// Zotero.nav.getUrlVar('sort') || Zotero.config.userDefaultApiArgs.sort || Zotero.config.sortOrdering[currentOrderField] || 'asc';
-    var newOrderField = J(e.currentTarget).data('columnfield');
-    Z.debug("New order field:" + newOrderField);
+    var library = Zotero.ui.getEventLibrary(e);
+    var currentSortField = Zotero.ui.getPrioritizedVariable('order', 'title');
+    var currentSortOrder = Zotero.ui.getPrioritizedVariable('sort', 'asc');
+    var newSortField = J(e.currentTarget).data('columnfield');
+    Z.debug("New order field:" + newSortField);
     Z.debug(e.currentTarget);
-    var newOrderSort = Zotero.config.sortOrdering[newOrderField];
+    var newSortOrder = Zotero.config.sortOrdering[newSortField];
     
     //only allow ordering by the fields we have
-    if(J.inArray(newOrderField, Zotero.Library.prototype.sortableColumns) == (-1)){
+    if(J.inArray(newSortField, Zotero.Library.prototype.sortableColumns) == (-1)){
         return false;
     }
     
     //change newSort away from the field default if that was already the current state
-    if(currentOrderField == newOrderField && currentOrderSort == newOrderSort){
-        if(newOrderSort == 'asc'){
-            newOrderSort = 'desc';
+    if(currentSortField == newSortField && currentSortOrder == newSortOrder){
+        if(newSortOrder == 'asc'){
+            newSortOrder = 'desc';
         }
         else{
-            newOrderSort = 'asc';
+            newSortOrder = 'asc';
         }
     }
     
     //problem if there was no sort column mapped to the header that got clicked
-    if(!newOrderField){
+    if(!newSortField){
         Zotero.ui.jsNotificationMessage("no order field mapped to column");
         return false;
     }
     
     //update the url with the new values
-    Zotero.nav.urlvars.pathVars['order'] = newOrderField;
-    Zotero.nav.urlvars.pathVars['sort'] = newOrderSort;
+    Zotero.nav.urlvars.pathVars['order'] = newSortField;
+    Zotero.nav.urlvars.pathVars['sort'] = newSortOrder;
     Zotero.nav.pushState();
     
     //TODO: update to use Zotero.Preferences?
     //set new order as preference and save it to use www prefs
-    Zotero.config.userDefaultApiArgs.sort = newOrderSort;
-    Zotero.config.userDefaultApiArgs.order = newOrderField;
-    Zotero.utils.setUserPref('library_defaultSort', newOrderField + ',' + newOrderSort);
-};
-
-
-/**
- * Change sort/order arguments when a table header is clicked
- * @param  {event} e click event
- * @return {boolean}
- */
-Zotero.ui.callbacks.sortBy = function(e){
-    Z.debug("sort by link clicked", 3);
-    e.preventDefault();
-    
-    var currentOrderField = Zotero.ui.getPrioritizedVariable('order', 'title');
-    var currentOrderSort = Zotero.ui.getPrioritizedVariable('sort', 'asc');// Zotero.nav.getUrlVar('sort') || Zotero.config.sortOrdering[currentOrderField] || 'asc';
-    
-    var dialogEl = J("#sort-dialog");
-    dialogEl.replaceWith( J("#sortdialogTemplate").render({'columnFields':Zotero.Library.prototype.displayableColumns, currentOrderField:currentOrderField}) );
-    
-    var submitFunction = J.proxy(function(){
-        Z.debug("Zotero.ui.callbacks.sortBy submit callback");
-        
-        var currentOrderField = Zotero.ui.getPrioritizedVariable('order', 'title');
-        var currentOrderSort = Zotero.ui.getPrioritizedVariable('sort', 'asc');//Zotero.nav.getUrlVar('sort') || Zotero.config.userDefaultApiArgs.sort || Zotero.config.sortOrdering[currentOrderField] || 'asc';
-        var newOrderField = J("#sortColumnSelect").val();
-        var newOrderSort = J("#sortOrderSelect").val() || Zotero.config.sortOrdering[newOrderField];
-        
-        
-        //only allow ordering by the fields we have
-        if(J.inArray(newOrderField, Zotero.Library.prototype.sortableColumns) == (-1)){
-            return false;
-        }
-        
-        //change newSort away from the field default if that was already the current state
-        if(currentOrderField == newOrderField && currentOrderSort == newOrderSort){
-            if(newOrderSort == 'asc'){
-                newOrderSort = 'desc';
-            }
-            else{
-                newOrderSort = 'asc';
-            }
-        }
-        
-        //problem if there was no sort column mapped to the header that got clicked
-        if(!newOrderField){
-            Zotero.ui.jsNotificationMessage("no order field mapped to column");
-            return false;
-        }
-        
-        //update the url with the new values
-        Zotero.nav.urlvars.pathVars['order'] = newOrderField;
-        Zotero.nav.urlvars.pathVars['sort'] = newOrderSort;
-        Zotero.nav.pushState();
-        
-        //TODO: update to use Zotero.Preferences?
-        //set new order as preference and save it to use www prefs
-        Zotero.config.userDefaultApiArgs.sort = newOrderSort;
-        Zotero.config.userDefaultApiArgs.order = newOrderField;
-        Zotero.utils.setUserPref('library_defaultSort', newOrderField + ',' + newOrderSort);
-        
-        Zotero.ui.closeDialog(J("#sort-dialog"));
-        
-    }, this);
-    
-    Zotero.ui.dialog(J("#sort-dialog"), {
-        modal:true,
-        minWidth: 300,
-        draggable: false,
-        buttons: {
-            'Save': submitFunction,
-            'Cancel': function(){
-                Zotero.ui.closeDialog(J("#sort-dialog"));
-            }
-        }
-    });
+    library.preferences.setPref('sortField', newSortField);
+    library.preferences.setPref('sortOrder', newSortOrder);
+    library.preferences.setPref('sort', newSortField);
+    library.preferences.setPref('order', newSortOrder);
 };

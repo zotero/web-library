@@ -453,7 +453,7 @@ Zotero.ui.parseLibString = function(s){
  * @return {[type]}     [description]
  */
 Zotero.ui.getPrioritizedVariable = function(key, defaultVal){
-    var val = Zotero.nav.getUrlVar(key) || Zotero.config.userDefaultApiArgs[key] || Zotero.config.defaultApiArgs || defaultVal;
+    var val = Zotero.nav.getUrlVar(key) || Zotero.preferences.getPref(key) || Zotero.config.defaultApiArgs || defaultVal;
     return val;
 };
 

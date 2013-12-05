@@ -44,7 +44,7 @@ Zotero.callbacks.loadFullLibrary = function(el){
         //build new itemkeys list based on new url
         Z.debug("Building new items list to display", 3);
         //displayParams = Zotero.nav.getUrlVars();
-        displayParams = J.extend({}, Zotero.config.defaultApiArgs, Zotero.config.userDefaultApiArgs, Zotero.nav.getUrlVars());
+        displayParams = J.extend({}, Zotero.config.defaultApiArgs, Zotero.nav.getUrlVars());
         
         Z.debug(displayParams);
         library.buildItemDisplayView(displayParams);
@@ -115,10 +115,10 @@ Zotero.ui.displayItemsFullLocal = function(el, config, library){
     Z.debug("Zotero.ui.displayItemsFullLocal", 3);
     Z.debug(config, 4);
     var jel = J(el);
-    var filledConfig = J.extend({}, Zotero.config.defaultApiArgs, Zotero.config.userDefaultApiArgs, config);
+    var filledConfig = J.extend({}, Zotero.config.defaultApiArgs, config);
     
     var titleParts = ['', '', ''];
-    var displayFields = library.preferences.getPref('library_listShowFields');
+    var displayFields = library.preferences.getPref('listDisplayedFields');
     if(library.libraryType != 'group'){
         displayFields = J.grep(displayFields, function(el, ind){
             return J.inArray(el, Zotero.Library.prototype.groupOnlyColumns) == (-1);
