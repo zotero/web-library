@@ -74,7 +74,7 @@ Zotero.ui.widgets.citeItemDialog.show = function(e){
     dialogEl.find("input.free-text-style-input").on('change', citeFunction);
     
     Zotero.ui.widgets.citeItemDialog.getAvailableStyles();
-    dialogEl.find("input.free-text-style-input").typeahead({local:Zotero.styleList});
+    dialogEl.find("input.free-text-style-input").typeahead({local:Zotero.styleList, limit:10});
     
     Zotero.ui.dialog(dialogEl, {});
     

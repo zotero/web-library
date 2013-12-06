@@ -105,7 +105,7 @@ $messages = array();
             </div><!--/.nav-collapse -->
         </div>
         
-        <div id="main-content">
+        <div id="main-content" class="col-xs-8 col-sm-offset-2">
             <div id="cite-item-dialog" class="cite-item-dialog eventfulwidget" data-widget="citeItemDialog" title="Cite Items">
             </div>
             

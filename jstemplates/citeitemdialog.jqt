@@ -8,7 +8,7 @@
             </div>
             <div class="cite-item-div modal-body" data-role="content">
                 <form>
-                    <select class='cite-item-select' id='cite-item-select'>
+                    <select class='cite-item-select form-control' id='cite-item-select'>
                         <option value=''>Select Style</option>
                         <option value='apsa'>American Political Science Association</option>
                         <option value='apa'>American Psychological Association</option>
@@ -25,14 +25,14 @@
                         <option value='vancouver'>Vancouver</option>
                     </select>
                     {{if freeStyleInput}}
-                    <input type="text" class="free-text-style-input" />
+                    <input type="text" class="free-text-style-input form-control" />
                     {{/if}}
                 </form>
                 <div id="cite-box-div" class="cite-box-div">
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+                <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">Close</button>
             </div>
         </div>
     </div>
