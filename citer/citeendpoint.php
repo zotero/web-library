@@ -4,12 +4,12 @@
  *  to the citation or translation server, then returns the response
  */
 require_once './config.php'; //endpoints
-require_once '../library/libZotero/libZoteroSingle.php';
+require_once '../library/libZotero/build/libZoteroSingle.php';
 
 
 $queryString = $_SERVER['QUERY_STRING'];
 
-$requestUrl = $citationEndpoint . $queryString;
+$requestUrl = $citationEndpoint . '?' . $queryString;
 $requestMethod = 'POST';
 
 //raw body of the request

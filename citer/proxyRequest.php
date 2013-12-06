@@ -2,7 +2,7 @@
 
 require_once './config.php'; //library credentials
 
-require_once '../library/libZotero/libZoteroSingle.php';
+require_once '../library/libZotero/build/libZoteroSingle.php';
 $library = new Zotero_Library($libraryType, $libraryID, $librarySlug, $apiKey);
 
 
