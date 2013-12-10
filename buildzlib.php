@@ -1,9 +1,6 @@
 #!/usr/bin/php
 <?php
 
-$target = 'local';
-
-
 chdir(dirname(__FILE__));
 
 //build libZotero submodule
@@ -11,46 +8,6 @@ echo shell_exec("./library/libZotero/build/build.php");
 
 echo "building Zotero www\n";
 echo getcwd() . "\n";
-//setup defaults and parse arguments
-if(in_array('staging', $argv)){
-    echo "building for staging\n";
-    $target = 'staging';
-}
-elseif(in_array('local', $argv)){
-    echo "building for local\n";
-    $target = 'local';
-}
-elseif(in_array('production', $argv)){
-    echo "building for production\n";
-    $target = 'production';
-}
-
-//replace strings for production in zoteroLibrary.js
-$replaceStrings = array();
-if($target == 'production'){
-    $replaceStrings = array(
-        "baseApiUrl: 'https://staging.zotero.net/api'" => "baseApiUrl: 'https://www.zotero.org/api'",
-        "baseWebsiteUrl: 'http://test.zotero.net'" => "baseWebsiteUrl: 'http://www.zotero.org'",
-        "proxy: true" => "proxy: false",
-        "debug_level: 3" => "debug_level: 1", 
-        "debug_log: true" => "debug_log: false"
-    );
-}
-elseif($target == 'staging'){
-    $replaceStrings = array(
-        "baseWebsiteUrl: 'http://test.zotero.net'" => "baseWebsiteUrl: 'http://staging.zotero.net'"
-    );
-}
-elseif($target == 'local'){
-    $replaceStrings = array(
-        "baseApiUrl: 'https://api.zotero.org'" => "baseApiUrl: 'https://apidev.zotero.org'",
-        "baseWebsiteUrl: 'http://zotero.org'" => "baseWebsiteUrl: 'http://test.zotero.net'",
-        "baseWebsiteUrl: 'https://zotero.org'" => "baseWebsiteUrl: 'https://test.zotero.net'",
-        "baseFeedUrl: 'https://api.zotero.org'" => "baseFeedUrl: 'https://apidev.zotero.org'",
-        "const ZOTERO_URI = 'https://api.zotero.org';" => "const ZOTERO_URI = 'https://apidev.zotero.org';",
-        "const ZOTERO_WWW_API_URI = 'http://www.zotero.org/api';" => "const ZOTERO_WWW_API_URI = 'http://test.zotero.net/api';"
-    );
-}
 
 //js path assuming execution from /config
 $jsRelPath = './static/js/';
@@ -101,13 +58,7 @@ $fullText = "";
 
 foreach($files as $file){
     $ftext = file_get_contents($jsRelPath . $file);
-    if($file == "zoteroCommon.js"){
-        foreach($replaceStrings as $from=>$to){
-            $ftext = str_replace($from, $to, $ftext);
-        }
-    }
-    $fullText .= "\n\n";
-    $fullText .= $ftext;
+    $fullText .= "\n\n" . $ftext;
 }
 
 file_put_contents($jsRelPath . '_zoterowwwAll.js', $fullText);
