@@ -40,7 +40,7 @@
         <tr>
             <th><label for="{{attr:key}}">{{>~zoteroFieldMap[key]}}</label></th>
             <td class="{{attr:key}}">
-                {{include ~itemKey=itemKey tmpl="#datafieldTemplate" /}}
+                {{include ~itemKey=~item.itemKey tmpl="#datafieldTemplate" /}}
             </td>
         </tr>
         {{/if}}
