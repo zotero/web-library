@@ -63,24 +63,9 @@ foreach($files as $file){
 
 file_put_contents($jsRelPath . '_zoterowwwAll.js', $fullText);
 
-
-//replace strings in libZotero.php for zotero www
-$lzSinglePath = './library/libZotero/build/libZoteroSingle.php';
-$lzText = file_get_contents($lzSinglePath);
-foreach($replaceStrings as $from=>$to){
-    $lzText = str_replace($from, $to, $lzText);
-}
-file_put_contents($lzSinglePath, $lzText);
-
-
 //replace strings in libZotero JS for zotero www
 $lzSinglePath = './library/libZotero/build/libZoteroSingle.js';
 $lzText = file_get_contents($lzSinglePath);
-foreach($replaceStrings as $from=>$to){
-    $lzText = str_replace($from, $to, $lzText);
-}
-file_put_contents($lzSinglePath, $lzText);
-
 
 //prepend libZotero JS to the rest of zotero www JS
 $allFullText = $lzText . "\n\n" . $fullText;
