@@ -7,104 +7,7 @@
  */
 Zotero.ui.updateItemFromForm = function(item, formEl){
     Z.debug("Zotero.ui.updateItemFromForm", 3);
-    var base = J(formEl);
-    base.closest('.ajaxload').data('ignoreformstorage', true);
-    var library = Zotero.ui.getAssociatedLibrary(formEl);
     
-    var itemKey = '';
-    if(item.itemKey) itemKey = item.itemKey;
-    else {
-        //new item - associate with library and add to collection if appropriate
-        if(library){
-            item.associateWithLibrary(library);
-        }
-        var collectionKey = Zotero.nav.getUrlVar('collectionKey');
-        if(collectionKey){
-            item.addToCollection(collectionKey);
-        }
-    }
-    //update current representation of the item with form values
-    J.each(item.apiObj, function(field, value){
-        var selector, inputValue, noteElID;
-        if(field == 'note'){
-            selector = "textarea[data-itemKey='" + itemKey + "'].rte";
-            Z.debug(selector, 4);
-            noteElID = J(selector).attr('id');
-            Z.debug(noteElID, 4);
-            inputValue = Zotero.ui.getRte(noteElID);
-        }
-        else{
-            selector = "[data-itemKey='" + itemKey + "'][name='" + field + "']";
-            inputValue = base.find(selector).val();
-        }
-        
-        if(typeof inputValue !== 'undefined'){
-            Z.debug("updating item " + field + ": " + inputValue);
-            item.set(field, inputValue);
-            //item.apiObj[field] = inputValue;//base.find(selector).val();
-        }
-    });
-    var creators = [];
-    base.find("tr.creator").each(function(index, el){
-        var name, creator, firstName, lastName;
-        var trindex = parseInt(J(el).attr('id').substr(8), 10);
-        var creatorType = J(el).find("select[id$='creatorType']").val();
-        if(J(el).hasClass('singleCreator')){
-            name = J(el).find("input[id$='_name']");
-            if(!name.val()){
-                //can't submit authors with empty names
-                return true;
-            }
-            creator = {creatorType: creatorType,
-                            name: name.val()
-                        };
-        }
-        else if(J(el).hasClass('doubleCreator')){
-            firstName = J(el).find("input[id$='_firstName']").val();
-            lastName = J(el).find("input[id$='_lastName']").val();
-            if((firstName === '') && (lastName === '')){
-                return true;
-            }
-            creator = {creatorType: creatorType,
-                            firstName: firstName,
-                            lastName: lastName
-                            };
-        }
-        creators.push(creator);
-    });
-    
-    var tags = [];
-    base.find("input[id^='tag_']").each(function(index, el){
-        if(J(el).val() !== ''){
-            tags.push({tag: J(el).val()});
-        }
-    });
-    
-    //grab all the notes from the form and add to item
-    //in the case of new items we can add notes in the creation request
-    //in the case of existing items we need to post notes to /children, but we still
-    //have that interface here for consistency
-    var notes = [];
-    base.find("textarea[name^='note_']").each(function(index, el){
-        var noteid = J(el).attr('id');
-        var noteContent = Zotero.ui.getRte(noteid);
-        
-        var noteItem = new Zotero.Item();
-        noteItem.associateWithLibrary(library);
-        noteItem.initEmptyNote();
-        noteItem.set('note', noteContent);
-        noteItem.setParent(item.itemKey);
-        notes.push(noteItem);
-    });
-    
-    item.notes = notes;
-    item.apiObj.creators = creators;
-    item.apiObj.tags = tags;
-    
-};
-
-Zotero.ui.updateItemFromForm = function(item, formEl){
-    Z.debug("Zotero.ui.updateItemFromForm", 3);
     var base = J(formEl);
     base.closest('.ajaxload, .eventfulwidget').data('ignoreformstorage', true);
     var library = Zotero.ui.getAssociatedLibrary(base);
@@ -418,7 +321,7 @@ Zotero.ui.getEventLibrary = function(e){
     if(e.library){
         return e.library;
     }
-    if(e.data.library){
+    if(e.data && e.data.library){
         return e.data.library;
     }
     Z.debug(e);
