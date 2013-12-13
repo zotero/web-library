@@ -2,10 +2,11 @@ Zotero.ui.widgets.items = {};
 
 Zotero.ui.widgets.items.init = function(el){
     Zotero.ui.eventful.listen("displayedItemsChanged", Zotero.ui.widgets.items.loadItemsCallback, {widgetEl: el});
+    Zotero.ui.eventful.listen("changeItemSorting", Zotero.ui.callbacks.resortItems, {widgetEl: el});
     
     //set up sorting on header clicks
     var container = J(el);
-    container.on('click', ".field-table-header", Zotero.ui.callbacks.resortItems);
+    //container.on('click', ".field-table-header", Zotero.ui.callbacks.resortItems);
     
     //check/uncheck all boxes in items table when master checkbox is toggled
     container.on('change', ".itemlist-editmode-checkbox.all-checkbox", function(e){
@@ -241,6 +242,8 @@ Zotero.ui.insertItemsTable = function(el, data){
     Z.debug(data, 4);
     var a = J(el).append( J('#itemstableTemplate').render(data) );
     
+    Zotero.eventful.initTriggers(J(el));
+    
     //need to test for inside initialized page or error is thrown
     if(Zotero.config.mobile && J(el).closest('.ui-page').length){
         //J(el).trigger('create');
@@ -297,10 +300,11 @@ Zotero.ui.bindItemLinks = function(){
 
 Zotero.ui.callbacks.resortItems = function(e){
     Z.debug(".field-table-header clicked", 3);
+    var triggeringElement = e.triggeringElement;
     var library = Zotero.ui.getEventLibrary(e);
     var currentSortField = Zotero.ui.getPrioritizedVariable('order', 'title');
     var currentSortOrder = Zotero.ui.getPrioritizedVariable('sort', 'asc');
-    var newSortField = J(e.currentTarget).data('columnfield');
+    var newSortField = J(e.triggeringElement).data('columnfield');
     Z.debug("New order field:" + newSortField);
     Z.debug(e.currentTarget);
     var newSortOrder = Zotero.config.sortOrdering[newSortField];

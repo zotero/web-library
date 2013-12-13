@@ -4,9 +4,9 @@
         <thead>
             <tr>
                 <th><input type='checkbox' class='itemlist-editmode-checkbox all-checkbox' name='selectall' /></th>
-                {{for displayFields ~order=order ~sort=sort}}
+                {{for displayFields ~order=order ~sort=sort ~library=library}}
                 <th data-triggers="changeItemSorting"
-                    class="field-table-header eventfultrigger {{if ~J.inArray(#data, ~Zotero.Library.prototype.sortableColumns) >= 0}} clickable {{/if}} {{if (#data == ~order)}} selected-order sort-{{attr:sort}}{{/if}}" data-columnField="{{attr:#data}}">{{>~Zotero.Item.prototype.fieldMap[#data] || #data}}
+                    class="field-table-header eventfultrigger {{if ~J.inArray(#data, ~Zotero.Library.prototype.sortableColumns) >= 0}} clickable {{/if}} {{if (#data == ~order)}} selected-order sort-{{attr:sort}}{{/if}}" data-columnField="{{attr:#data}}" data-library="{{attr:~library.libraryString}}">{{>~Zotero.Item.prototype.fieldMap[#data] || #data}}
                     {{if (#data == ~order) }}
                         {{if (~sort == 'desc') }}
                             <span class="glyphicon glyphicon-chevron-down pull-right"></span>
