@@ -49,6 +49,7 @@ $files = array(
 "libraryUi/widgets/tags.js",
 "libraryUi/widgets/updatecollectiondialog.js",
 "libraryUi/widgets/uploaddialog.js",
+"libraryUi/widgets/libraryPreloader.js",
 
 "_zoteroLibraryUrl.js",
 "_zoteroLibraryOffline.js"
