@@ -7,6 +7,7 @@ Zotero.ui.widgets.collections.init = function(el){
     Zotero.ui.eventful.listen("syncCollections", Zotero.ui.widgets.collections.syncCollectionsCallback, {widgetEl: el});
     Zotero.ui.eventful.listen("syncLibrary", Zotero.ui.widgets.collections.syncCollectionsCallback, {widgetEl: el});
     Zotero.ui.eventful.listen("libraryCollectionsUpdated", Zotero.ui.widgets.collections.rerenderCollections, {widgetEl: el});
+    Zotero.ui.eventful.listen("selectCollection", Zotero.ui.widgets.collections.selectCollection, {widgetEl: el});
     Zotero.ui.eventful.listen("selectedCollectionChanged", Zotero.ui.widgets.collections.updateSelectedCollection, {widgetEl: el});
     
     Zotero.ui.eventful.listen("cachedDataLoaded", Zotero.ui.widgets.collections.syncCollectionsCallback, {widgetEl: el});
@@ -32,6 +33,10 @@ Zotero.ui.widgets.collections.rerenderCollections = function(event){
     Z.debug("Collections count: " + library.collections.collectionsArray.length);
     Zotero.ui.renderCollectionList(collectionListEl, library.collections);
     Zotero.ui.eventful.trigger("selectedCollectionChanged");
+};
+
+Zotero.ui.widgets.collections.selectCollection = function(event){
+    
 };
 
 Zotero.ui.widgets.collections.updateSelectedCollection = function(event){
@@ -198,48 +203,24 @@ Zotero.ui.bindCollectionLinks = function(){
             Zotero.nav.clearUrlVars(['collectionKey', 'mode']);
             
             //change the mobile page if we didn't just expand a collection
-            if(Zotero.config.mobile && (Zotero.nav.getUrlVar('mode') != 'edit')){
-                collection = Zotero.ui.getAssociatedLibrary(J(this));
-                if(!collection.hasChildren){
-                    Z.debug("Changing page to items list because collection has no children", 4);
-                }
-            }
-            else{
+            if( !(Zotero.config.mobile && (Zotero.nav.getUrlVar('mode') != 'edit'))){
                 Zotero.nav.pushState();
             }
             
             //cancel action for expando link behaviour
             return false;
         }
+        Zotero.ui.eventful.trigger("selectCollection", {collectionKey: collectionKey});
         
         //Not currently selected collection
         Z.debug("click " + collectionKey, 4);
         Zotero.nav.clearUrlVars(['mode']);
         Zotero.nav.urlvars.pathVars['collectionKey'] = collectionKey;
         
-        //change the mobile page if we didn't just expand a collection
-        Z.debug("change mobile page if we didn't just expand a collection", 4);
-        Z.debug(J(this), 4);
-        if(Zotero.config.mobile){
-            Z.debug("is mobile", 4);
-            library = Zotero.ui.getAssociatedLibrary(J(this).closest('.ajaxload'));
-            collection = library.collections.getCollection(collectionKey);
-            if(!collection.hasChildren && (Zotero.nav.getUrlVar('mode') != 'edit')) {
-                Z.debug("Changing page to items list because collection has no children", 4);
-                //Zotero.ui.mobile.changePage('#library-items-page');
-                Zotero.ui.mobile.changePage("#library-items-page", {'changeHash':false});
-                //J("#library-items-page").trigger('create');
-            }
-            else{
-                Zotero.nav.pushState();
-            }
-        }
-        else{
-            Zotero.nav.pushState();
-        }
-        
+        Zotero.nav.pushState();
         return false;
     });
+
     J("#collection-list-div").on('click', "a.my-library", function(e){
         e.preventDefault();
         Zotero.nav.clearUrlVars(['mode']);
@@ -251,7 +232,6 @@ Zotero.ui.bindCollectionLinks = function(){
         return false;
     });
 };
-
 
 //FROM UPDATESTATE.JS
 //Rendering Code
