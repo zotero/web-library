@@ -262,7 +262,7 @@ $messages = array();
             <?$locales = array('en');// array_keys(Zend_Locale::getOrder());?>
             <script type="text/javascript" charset="utf-8">
                 var zoterojsClass = "user_library";
-                var zoteroData = {itemsPathString: "<?=$itemsPathString?>",
+                var zoteroData = {libraryPathString: "<?=$libraryPathString?>",
                                   libraryUserID: "<?=$libraryID?>",
                                   libraryPublish: 1,
                                   locale: "<?=$locales[0]?>",

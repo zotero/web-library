@@ -8,7 +8,7 @@ $addKeyAtProxy = true;//add @apiKey to requests at the php proxy so JS doesn't n
 $displayName = "";
 $libraryString = "u0"; //used as simple string ID for library, u or g for library type followed by libraryID
 
-$itemsPathString = '/web-library/example-library';
+$libraryPathString = '/web-library/example-library';
 $allowEdit = 1;
 $library_listShowFields = 'title,creator,year,numChildren';
 $staticPath = '/web-library/static';

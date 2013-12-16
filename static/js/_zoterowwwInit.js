@@ -132,15 +132,15 @@ Zotero.loadConfig = function(config){
         Zotero.config.pageClass = 'default';
     }
     
-    if(config.itemsPathString){
-        Zotero.config.librarySettings.itemsPathString = config.itemsPathString;
-        Zotero.config.nonparsedBaseUrl = config.itemsPathString;
+    if(config.libraryPathString){
+        Zotero.config.librarySettings.libraryPathString = config.libraryPathString;
+        Zotero.config.nonparsedBaseUrl = config.libraryPathString;
     }
     else if(config.nonparsedBaseUrl){
         Zotero.config.nonparsedBaseUrl = config.nonparsedBaseUrl;
     }
     else{
-        Zotero.config.librarySettings.itemsPathString = Zotero.config.baseWebsiteUrl ;
+        Zotero.config.librarySettings.libraryPathString = Zotero.config.baseWebsiteUrl ;
         Zotero.config.nonparsedBaseUrl = Zotero.config.baseWebsiteUrl;
     }
     if(config.locale){

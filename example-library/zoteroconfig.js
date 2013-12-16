@@ -8,6 +8,7 @@
     baseFeedUrl: 'https://api.zotero.org',
     baseZoteroWebsiteUrl: 'https://www.zotero.org',
     baseDownloadUrl: '/web-library/example-library/download.php',
+    libraryPathString: '/web-library/example-library',
     directDownloads: false,
     proxyDownloads: true,
     
