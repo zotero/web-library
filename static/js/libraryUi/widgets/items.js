@@ -21,6 +21,36 @@ Zotero.ui.widgets.items.init = function(el){
         Zotero.ui.eventful.trigger("selectedItemsChanged");
     });
     
+    container.on('click', "#start-item-link", function(e){
+        e.preventDefault();
+        Zotero.nav.urlvars.pathVars['itemPage'] = '';
+        Zotero.nav.pushState();
+    });
+    container.on('click', "#prev-item-link", function(e){
+        e.preventDefault();
+        var itemPage = Zotero.nav.getUrlVar('itemPage') || '1';
+        itemPage = parseInt(itemPage, 10);
+        var newItemPage = itemPage - 1;
+        Zotero.nav.urlvars.pathVars['itemPage'] = newItemPage;
+        Zotero.nav.pushState();
+    });
+    container.on('click', "#next-item-link", function(e){
+        e.preventDefault();
+        var itemPage = Zotero.nav.getUrlVar('itemPage') || '1';
+        itemPage = parseInt(itemPage, 10);
+        var newItemPage = itemPage + 1;
+        Zotero.nav.urlvars.pathVars['itemPage'] = newItemPage;
+        Zotero.nav.pushState();
+    });
+    container.on('click', "#last-item-link", function(e){
+        e.preventDefault();
+        Z.debug("last-item-link clickbind", 4);
+        var pagehref = J(e.currentTarget).attr('href');
+        var pathVars = Zotero.nav.parsePathVars(pagehref);
+        var lastItemPage = pathVars.itemPage;
+        Zotero.nav.urlvars.pathVars['itemPage'] = lastItemPage;
+        Zotero.nav.pushState();
+    });
     
 };
 
@@ -146,7 +176,7 @@ Zotero.ui.displayItemsWidget = function(el, config, loadedItems){
  * @param  {array} loadedItems loaded items array
  * @return {undefined}
  */
-Zotero.ui.displayItemsFull = function(el, config, loadedItems){
+Zotero.ui.displayItemsFull = function(el, config, loadedItems) {
     Z.debug("Zotero.ui.displayItemsFull", 3);
     Z.debug(config, 4);
     //Z.debug(loadedItems, 4);
@@ -188,43 +218,6 @@ Zotero.ui.displayItemsFull = function(el, config, loadedItems){
     var itemPage = pagination.page;
     Zotero.ui.insertItemsPagination(el, paginationData);
     Z.debug(jel, 4);
-    
-    //bind pagination links
-    var lel = J(el);
-    J("#start-item-link").click(function(e){
-        e.preventDefault();
-        Zotero.nav.urlvars.pathVars['itemPage'] = '';
-        Zotero.nav.pushState();
-    });
-    J("#prev-item-link").click(function(e){
-        e.preventDefault();
-        var newItemPage = itemPage - 1;
-        Zotero.nav.urlvars.pathVars['itemPage'] = newItemPage;
-        Zotero.nav.pushState();
-    });
-    J("#next-item-link").click(function(e){
-        e.preventDefault();
-        var newItemPage = itemPage + 1;
-        Zotero.nav.urlvars.pathVars['itemPage'] = newItemPage;
-        Zotero.nav.pushState();
-    });
-    J("#last-item-link").click(function(e){
-        e.preventDefault();
-        Z.debug("last-item-link clickbind", 4);
-        var lasthref = '';
-        J.each(feed.links, function(ind, link){
-            if(link.rel === "last"){
-                lasthref = link.href;
-                return false;
-            }
-        });
-        Z.debug(lasthref, 4);
-        var laststart = J.deparam.querystring(lasthref).start;
-        Z.debug("laststart:" + laststart, 4);
-        var lastItemPage = (parseInt(laststart, 10) / limit) + 1;
-        Zotero.nav.urlvars.pathVars['itemPage'] = lastItemPage;
-        Zotero.nav.pushState();
-    });
     
     Zotero.ui.updateDisabledControlButtons();
     
