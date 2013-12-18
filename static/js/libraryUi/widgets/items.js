@@ -178,16 +178,20 @@ Zotero.ui.displayItemsWidget = function(el, config, loadedItems){
  */
 Zotero.ui.displayItemsFull = function(el, config, loadedItems) {
     Z.debug("Zotero.ui.displayItemsFull", 3);
-    Z.debug(config, 4);
-    //Z.debug(loadedItems, 4);
     
     var jel = J(el);
     var library = Zotero.ui.getAssociatedLibrary(jel);
+    var itemsArray;
+    if(loadedItems.itemsArray){
+        itemsArray = loadedItems.itemsArray;
+    }
+    else {
+        itemsArray = library.displayItemsArray;
+    }
     
-    var feed = loadedItems.feed;
     var filledConfig = J.extend({}, Zotero.config.defaultApiArgs, config);
     var displayFields = library.preferences.getPref('listDisplayedFields');
-    if(loadedItems.library.libraryType != 'group'){
+    if(library.libraryType != 'group'){
         displayFields = J.grep(displayFields, function(el, ind){
             return J.inArray(el, Zotero.Library.prototype.groupOnlyColumns) == (-1);
         });
@@ -199,29 +203,24 @@ Zotero.ui.displayItemsFull = function(el, config, loadedItems) {
     var editmode = (Zotero.config.librarySettings.allowEdit ? true : false);
     
     var itemsTableData = {displayFields:displayFields,
-                           items:loadedItems.itemsArray,
+                           items:itemsArray,
                            editmode:editmode,
                            order: filledConfig['order'],
                            sort: filledConfig['sort'],
-                           library:loadedItems.library
+                           library:library
                         };
-    Z.debug(jel, 4);
+    
     Zotero.ui.insertItemsTable(jel, itemsTableData);
     
-    if(Zotero.config.mobile){
-        Zotero.ui.createOnActivePage(el);
-        return;
+    if(loadedItems.feed){
+        var feed = loadedItems.feed;
+        var pagination = Zotero.ui.createPagination(loadedItems.feed, 'itemPage', filledConfig);
+        var paginationData = {feed:feed, pagination:pagination};
+        var itemPage = pagination.page;
+        Zotero.ui.insertItemsPagination(el, paginationData);
     }
     
-    var pagination = Zotero.ui.createPagination(loadedItems.feed, 'itemPage', filledConfig);
-    var paginationData = {feed:feed, pagination:pagination};
-    var itemPage = pagination.page;
-    Zotero.ui.insertItemsPagination(el, paginationData);
-    Z.debug(jel, 4);
-    
     Zotero.ui.updateDisabledControlButtons();
-    
-    Zotero.ui.createOnActivePage(el);
 };
 
 /**
@@ -232,23 +231,9 @@ Zotero.ui.displayItemsFull = function(el, config, loadedItems) {
  */
 Zotero.ui.insertItemsTable = function(el, data){
     Z.debug("Zotero.ui.insertItemsTable", 3);
-    Z.debug(data, 4);
     var a = J(el).append( J('#itemstableTemplate').render(data) );
     
     Zotero.eventful.initTriggers(J(el));
-    
-    //need to test for inside initialized page or error is thrown
-    if(Zotero.config.mobile && J(el).closest('.ui-page').length){
-        //J(el).trigger('create');
-        if(!(J(el).find('#field-list').hasClass('ui-listview'))) {
-            J(el).find('#field-list').listview();
-        }
-        else{
-            //J(el).find('#field-list').listview('refresh');
-            J(el).find('#field-list').trigger('refresh');
-        }
-    }
-    
 };
 
 /**
@@ -298,9 +283,12 @@ Zotero.ui.callbacks.resortItems = function(e){
     var currentSortField = Zotero.ui.getPrioritizedVariable('order', 'title');
     var currentSortOrder = Zotero.ui.getPrioritizedVariable('sort', 'asc');
     var newSortField = J(e.triggeringElement).data('columnfield');
-    Z.debug("New order field:" + newSortField);
     Z.debug(e.currentTarget);
     var newSortOrder = Zotero.config.sortOrdering[newSortField];
+    Z.debug("curr order field:" + currentSortField, 3);
+    Z.debug("curr order sort:" + currentSortOrder, 3);
+    Z.debug("New order field:" + newSortField, 3);
+    Z.debug("New order sort:" + newSortOrder, 3);
     
     //only allow ordering by the fields we have
     if(J.inArray(newSortField, Zotero.Library.prototype.sortableColumns) == (-1)){
@@ -328,10 +316,11 @@ Zotero.ui.callbacks.resortItems = function(e){
     Zotero.nav.urlvars.pathVars['sort'] = newSortOrder;
     Zotero.nav.pushState();
     
-    //TODO: update to use Zotero.Preferences?
     //set new order as preference and save it to use www prefs
     library.preferences.setPref('sortField', newSortField);
     library.preferences.setPref('sortOrder', newSortOrder);
-    library.preferences.setPref('sort', newSortField);
-    library.preferences.setPref('order', newSortOrder);
+    library.preferences.setPref('order', newSortField);
+    library.preferences.setPref('sort', newSortOrder);
+    Zotero.preferences.setPref('order', newSortField);
+    Zotero.preferences.setPref('sort', newSortOrder);
 };
