@@ -3,20 +3,26 @@ Zotero.ui.widgets.syncedItems = {};
 Zotero.ui.widgets.syncedItems.init = function(el){
     Z.debug("syncedItems widget init", 3);
     
+    Zotero.ui.eventful.listen("changeItemSorting", Zotero.ui.callbacks.resortItems, {widgetEl: el});
+    
     //listen for local items dirty and push if we have a connection
     Zotero.ui.eventful.listen("localItemsChanged", Zotero.ui.widgets.syncedItems.syncItemsCallback, {widgetEl: el});
     //listen for request to update remote items
     Zotero.ui.eventful.listen("remoteItemsRequested", Zotero.ui.widgets.syncedItems.syncItemsCallback, {widgetEl: el});
     Zotero.ui.eventful.listen("syncLibrary", Zotero.ui.widgets.syncedItems.syncItemsCallback, {widgetEl: el});
     //listen for request to display different items
-    Zotero.ui.eventful.listen("displayedItemsChanged", Zotero.ui.widgets.syncedItems.updateDisplayedItems, {widgetEl: el});
     
-    Zotero.ui.eventful.trigger("remoteItemsRequested");
+    Zotero.ui.eventful.listen("displayedItemsChanged", Zotero.ui.widgets.syncedItems.updateDisplayedItems, {widgetEl: el});
+    Zotero.ui.eventful.listen("displayedItemsUpdated", Zotero.ui.widgets.syncedItems.displayItems, {widgetEl: el});
+    
+    Zotero.ui.eventful.listen("cachedDataLoaded", Zotero.ui.widgets.syncedItems.syncItemsCallback, {widgetEl: el});
+    //Zotero.ui.eventful.trigger("remoteItemsRequested");
     
     //set up sorting on header clicks
     var container = J(el);
-    container.on('click', ".field-table-header", Zotero.ui.callbacks.resortItemsLocal);
-
+    //container.on('click', ".field-table-header", Zotero.ui.callbacks.resortItemsLocal);
+    Zotero.ui.bindItemLinks();
+    
 };
 
 Zotero.ui.widgets.syncedItems.syncItemsCallback = function(event){
@@ -35,6 +41,7 @@ Zotero.ui.widgets.syncedItems.syncItemsCallback = function(event){
         syncD.done(J.proxy(function(){
             Zotero.nav.doneLoading(el);
             Zotero.ui.eventful.trigger("libraryItemsUpdated");
+            Zotero.ui.eventful.trigger("displayedItemsChanged");
         }, this) );
         return;
     }
@@ -67,12 +74,23 @@ Zotero.ui.widgets.syncedItems.syncItemsCallback = function(event){
 };
 
 Zotero.ui.widgets.syncedItems.updateDisplayedItems = function(event){
+    Z.debug("widgets.syncedItems.updateDisplayedItems", 3);
     //- determine what config applies that we need to find items for
     //- find the appropriate items in the store, presumably with indexedDB queries
     //- pull out x items that match (or since we have them locally anyway, just display them all)
+    var widgetEl = J(event.data.widgetEl);
+    var library = Zotero.ui.getAssociatedLibrary(widgetEl);
+    var newConfig = Zotero.ui.getItemsConfig(library);
     
-    //- render as if we just pulled the items from the API.
-    Zotero.ui.displayItemsFull(el, newConfig, loadedItems);
-    
+    var displayParams = Zotero.nav.getUrlVars();
+    library.buildItemDisplayView(displayParams); //displayedItemsUpdated triggered from here
 };
 
+Zotero.ui.widgets.syncedItems.displayItems = function(event){
+    var widgetEl = J(event.data.widgetEl);
+    var library = Zotero.ui.getAssociatedLibrary(widgetEl);
+    var newConfig = Zotero.ui.getItemsConfig(library);
+    
+    widgetEl.empty();
+    Zotero.ui.displayItemsFull(widgetEl, newConfig, {itemsArray:library.items.displayItemsArray, library:library});
+};
