@@ -1,15 +1,6 @@
+/*
 Zotero.url.itemHref = function(item){
     var href = '';
-    /*
-    J.each(item.links, function(index, link){
-        if(link.rel === "alternate"){
-            if(link.href){
-                href = link.href;
-            }
-        }
-    });
-    return href;
-    */
     var library = item.owningLibrary;
     href += library.libraryBaseWebsiteUrl + '/itemKey/' + item.itemKey;
     return href;
@@ -171,7 +162,7 @@ Zotero.url.snapshotViewLink = function(item){
         'itemKey': item.itemKey
     });
 };
-
+*/
 Zotero.url.requestReadApiKeyUrl = function(libraryType, libraryID, redirect){
     var apiKeyBase = Zotero.config.baseWebsiteUrl + '/settings/keys/new';
     apiKeyBase.replace('http', 'https');
