@@ -8,6 +8,8 @@ Zotero.ui.widgets.items.init = function(el){
     var container = J(el);
     //container.on('click', ".field-table-header", Zotero.ui.callbacks.resortItems);
     
+    Zotero.ui.bindItemLinks();
+    
     //check/uncheck all boxes in items table when master checkbox is toggled
     container.on('change', ".itemlist-editmode-checkbox.all-checkbox", function(e){
         J(".itemlist-editmode-checkbox").prop('checked', J(".itemlist-editmode-checkbox.all-checkbox").prop('checked'));

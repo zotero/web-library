@@ -13,6 +13,7 @@ Zotero.ui.widgets.collections.init = function(el){
     Zotero.ui.eventful.listen("cachedDataLoaded", Zotero.ui.widgets.collections.syncCollectionsCallback, {widgetEl: el});
 
     //Zotero.ui.eventful.trigger("collectionsDirty");
+    Zotero.ui.bindCollectionLinks();
 };
 
 Zotero.ui.widgets.collections.updateCollectionButtons = function(el){

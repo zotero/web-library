@@ -24,9 +24,6 @@ Zotero.ui.init.all = function(){
         case "user_library":
         case "group_library":
             Zotero.ui.init.library();
-            Zotero.ui.bindItemLinks();
-            Zotero.ui.bindCollectionLinks();
-            Zotero.ui.bindTagLinks();
             break;
         case "default":
     }

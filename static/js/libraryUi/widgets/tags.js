@@ -13,6 +13,7 @@ Zotero.ui.widgets.tags.init = function(el){
     container.on('click', "#show-more-tags-link", Zotero.ui.showMoreTags);
     container.on('click', "#show-fewer-tags-link", Zotero.ui.showFewerTags);
     
+    Zotero.ui.bindTagLinks();
     //TODO: make sure tag autocomplete works when editing items
     //add tag to item and stop event propogation when tag is selected
     //from autocomplete on an item
