@@ -70,6 +70,7 @@ Zotero.ui.clearLibraryQuery = function(){
     Zotero.nav.unsetUrlVar('q');
     Zotero.nav.unsetUrlVar('qmode');
     
+    J("#header-search-query").val("");
     Zotero.nav.pushState();
     return;
 }

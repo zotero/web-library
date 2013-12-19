@@ -213,7 +213,7 @@ ul.item-pagination {
     /*font-size: 0.857142857em;*/
     font-size: 0.8em;
 }
-
+/*
 #tags-list a,
 #selected-tags-list a {
     text-decoration:none;
@@ -248,7 +248,7 @@ ul.item-pagination {
     background-color: #fff09e;
     color: #900;
 }
-
+*/
 label[for='show-all-tags']{
     font-size: 0.8em;
 }
@@ -597,3 +597,27 @@ td.tags ul.item-details-tags-list li:not(:last-child):after {
   background-color: rgba(51,136,204,0.4);
 }
 /* ==== End Twitter Typeahead ==== */
+
+
+/* ==== filterGuide ==== */
+ul.filterguide-list {
+    list-style:none;
+    margin:0;
+    padding:0;
+}
+
+ul.filterguide-list li {
+    display:inline-block;
+}
+
+#filter-guide a {
+    text-decoration:none;
+    padding: 5px 7px;
+    color: #16B;
+    background-color: #eee;
+    border-radius: 3px;
+    margin:5px 5px 0 0;
+    display: inline-block;
+}
+
+/* ==== end filterGuide ==== */
