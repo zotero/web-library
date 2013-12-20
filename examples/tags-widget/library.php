@@ -140,7 +140,6 @@ $messages = array();
                 var baseURL = "";
                 var baseDomain = "";
                 var staticPath = "<?=$staticPath?>";
-                //indexedDB.deleteDatabase('Zotero_u10150');
             </script>
             
             <script type="text/javascript" charset="utf-8" src="<?=$staticPath?>/js/_zoterowwwAll.bugly.js"></script>

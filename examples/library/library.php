@@ -269,40 +269,40 @@ $messages = array();
                                   };
                 var zoterojsSearchContext = "library";
             </script>
-            <?include '../jstemplates/tagrow.jqt';?>
-            <?include '../jstemplates/tagslist.jqt';?>
-            <?include '../jstemplates/collectionlist.jqt';?>
-            <?include '../jstemplates/collectionrow.jqt';?>
-            <?include '../jstemplates/itemrow.jqt';?>
-            <?include '../jstemplates/itemstable.jqt';?>
-            <?include '../jstemplates/itempagination.jqt';?>
-            <?include '../jstemplates/itemdetails.jqt';?>
-            <?include '../jstemplates/itemnotedetails.jqt';?>
-            <?include '../jstemplates/itemform.jqt';?>
-            <?include '../jstemplates/citeitemdialog.jqt';?>
-            <?include '../jstemplates/attachmentform.jqt';?>
-            <?include '../jstemplates/attachmentupload.jqt';?>
-            <?include '../jstemplates/datafield.jqt';?>
-            <?include '../jstemplates/editnoteform.jqt';?>
-            <?include '../jstemplates/itemtag.jqt';?>
-            <?include '../jstemplates/itemtypeselect.jqt';?>
-            <?include '../jstemplates/authorelementssingle.jqt';?>
-            <?include '../jstemplates/authorelementsdouble.jqt';?>
-            <?include '../jstemplates/childitems.jqt';?>
-            <?include '../jstemplates/editcollectionbuttons.jqt';?>
-            <?include '../jstemplates/choosecollectionform.jqt';?>
-            <?include '../jstemplates/breadcrumbs.jqt';?>
-            <?include '../jstemplates/breadcrumbstitle.jqt';?>
-            <?include '../jstemplates/createcollectiondialog.jqt';?>
-            <?include '../jstemplates/updatecollectiondialog.jqt';?>
-            <?include '../jstemplates/deletecollectiondialog.jqt';?>
-            <?include '../jstemplates/exportitemsdialog.jqt';?>
-            <?include '../jstemplates/tagunorderedlist.jqt';?>
-            <?include '../jstemplates/librarysettingsdialog.jqt';?>
-            <?include '../jstemplates/addtocollectiondialog.jqt';?>
-            <?include '../jstemplates/exportformats.jqt';?>
-            <?include '../jstemplates/newitemdropdown.jqt';?>
-            <?include '../jstemplates/filterguide.jqt';?>
+            <?include '../../jstemplates/tagrow.jqt';?>
+            <?include '../../jstemplates/tagslist.jqt';?>
+            <?include '../../jstemplates/collectionlist.jqt';?>
+            <?include '../../jstemplates/collectionrow.jqt';?>
+            <?include '../../jstemplates/itemrow.jqt';?>
+            <?include '../../jstemplates/itemstable.jqt';?>
+            <?include '../../jstemplates/itempagination.jqt';?>
+            <?include '../../jstemplates/itemdetails.jqt';?>
+            <?include '../../jstemplates/itemnotedetails.jqt';?>
+            <?include '../../jstemplates/itemform.jqt';?>
+            <?include '../../jstemplates/citeitemdialog.jqt';?>
+            <?include '../../jstemplates/attachmentform.jqt';?>
+            <?include '../../jstemplates/attachmentupload.jqt';?>
+            <?include '../../jstemplates/datafield.jqt';?>
+            <?include '../../jstemplates/editnoteform.jqt';?>
+            <?include '../../jstemplates/itemtag.jqt';?>
+            <?include '../../jstemplates/itemtypeselect.jqt';?>
+            <?include '../../jstemplates/authorelementssingle.jqt';?>
+            <?include '../../jstemplates/authorelementsdouble.jqt';?>
+            <?include '../../jstemplates/childitems.jqt';?>
+            <?include '../../jstemplates/editcollectionbuttons.jqt';?>
+            <?include '../../jstemplates/choosecollectionform.jqt';?>
+            <?include '../../jstemplates/breadcrumbs.jqt';?>
+            <?include '../../jstemplates/breadcrumbstitle.jqt';?>
+            <?include '../../jstemplates/createcollectiondialog.jqt';?>
+            <?include '../../jstemplates/updatecollectiondialog.jqt';?>
+            <?include '../../jstemplates/deletecollectiondialog.jqt';?>
+            <?include '../../jstemplates/exportitemsdialog.jqt';?>
+            <?include '../../jstemplates/tagunorderedlist.jqt';?>
+            <?include '../../jstemplates/librarysettingsdialog.jqt';?>
+            <?include '../../jstemplates/addtocollectiondialog.jqt';?>
+            <?include '../../jstemplates/exportformats.jqt';?>
+            <?include '../../jstemplates/newitemdropdown.jqt';?>
+            <?include '../../jstemplates/filterguide.jqt';?>
             
             <script type="text/javascript" charset="utf-8" src="<?=$staticPath?>/library/globalize/globalize.js"></script>
             <?foreach($locales as $localeStr):?>
@@ -317,7 +317,6 @@ $messages = array();
                 var baseURL = "";
                 var baseDomain = "";
                 var staticPath = "<?=$staticPath?>";
-                //indexedDB.deleteDatabase('Zotero_u10150');
             </script>
             
             <script type="text/javascript" charset="utf-8" src="<?=$staticPath?>/js/_zoterowwwAll.bugly.js"></script>
