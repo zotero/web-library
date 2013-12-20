@@ -1,0 +1,7 @@
+RewriteEngine On
+
+#RewriteCond %{SCRIPT_FILENAME} !-f
+#RewriteCond %{SCRIPT_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !/proxyrequest.*
+RewriteCond %{REQUEST_FILENAME} !/download.php
+RewriteRule ^(.*)$ index.php

@@ -54,14 +54,6 @@ $messages = array();
         <!-- Header -->
         <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
             <div class="navbar-header">
-                <?/*
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                */?>
                 <a class="navbar-brand" href="#">Zotero</a>
             </div>
             <div class="eventfulwidget" id="control-panel"
@@ -237,11 +229,16 @@ $messages = array();
                         </div>
                     </div>
                 </div>
+                <div class="row">
+                    <div class="eventfulwidget col-12" id="filter-guide"
+                        data-widget="filterGuide"
+                        data-loadconfig='<?=json_encode($libraryConfig);?>'>
+                    </div>
+                </div>
                 <div id="items-pane" class="items-pane eventfulwidget row"
                     data-widget="itemContainer">
                     <div id="library-items-div" class="library-items-div eventfulwidget col-md-6"
-                        data-widget="items"
-                        data-function="loadItems"
+                        data-widget="syncedItems"
                         data-loadconfig='<?=json_encode($libraryConfig);?>'
                         >
                     </div> <!--library items div -->
@@ -305,6 +302,7 @@ $messages = array();
             <?include '../jstemplates/addtocollectiondialog.jqt';?>
             <?include '../jstemplates/exportformats.jqt';?>
             <?include '../jstemplates/newitemdropdown.jqt';?>
+            <?include '../jstemplates/filterguide.jqt';?>
             
             <script type="text/javascript" charset="utf-8" src="<?=$staticPath?>/library/globalize/globalize.js"></script>
             <?foreach($locales as $localeStr):?>
@@ -319,6 +317,7 @@ $messages = array();
                 var baseURL = "";
                 var baseDomain = "";
                 var staticPath = "<?=$staticPath?>";
+                //indexedDB.deleteDatabase('Zotero_u10150');
             </script>
             
             <script type="text/javascript" charset="utf-8" src="<?=$staticPath?>/js/_zoterowwwAll.bugly.js"></script>
