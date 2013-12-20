@@ -26,7 +26,7 @@ Zotero.ui.widgets.createCollectionDialog.show = function(e){
         newCollection.name = dialogEl.find("input.new-collection-title-input").val() || "Untitled";
         
         var d = library.addCollection(newCollection);
-        d.done(J.proxy(function(){
+        d.then(J.proxy(function(){
             library.collections.dirty = true;
             Zotero.nav.pushState(true);
         }, this));

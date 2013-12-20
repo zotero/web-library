@@ -38,7 +38,7 @@ Zotero.ui.widgets.syncedItems.syncItemsCallback = function(event){
     if(library.items.loaded && (!library.items.synced)){
         Z.debug("items loaded but not synced - loading updated", 3);
         var syncD = library.loadUpdatedItems();
-        syncD.done(J.proxy(function(){
+        syncD.then(J.proxy(function(){
             Zotero.nav.doneLoading(el);
             Zotero.ui.eventful.trigger("libraryItemsUpdated");
             Zotero.ui.eventful.trigger("displayedItemsChanged");
@@ -57,17 +57,18 @@ Zotero.ui.widgets.syncedItems.syncItemsCallback = function(event){
     //be acceptable.
     Z.debug("Syncing items for first time, this may take a while.");
     var d = library.loadUpdatedItems();
-    d.done(J.proxy(function(){
-        Zotero.nav.doneLoading(el);
-        jel.data('loaded', true);
-        Zotero.ui.eventful.trigger("libraryItemsUpdated");
-        Zotero.nav.doneLoading(el);
-    }, this));
-    
-    d.fail(J.proxy(function(jqxhr, textStatus, errorThrown){
-        var elementMessage = Zotero.ui.ajaxErrorMessage(jqxhr);
-        jel.html("<p>" + elementMessage + "</p>");
-    }));
+    d.then(
+        J.proxy(function(){
+            Zotero.nav.doneLoading(el);
+            jel.data('loaded', true);
+            Zotero.ui.eventful.trigger("libraryItemsUpdated");
+            Zotero.nav.doneLoading(el);
+        }, this),
+        J.proxy(function(jqxhr, textStatus, errorThrown){
+            var elementMessage = Zotero.ui.ajaxErrorMessage(jqxhr);
+            jel.html("<p>" + elementMessage + "</p>");
+        }, this)
+    );
     
     return;
     

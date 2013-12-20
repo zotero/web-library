@@ -121,7 +121,7 @@ Zotero.ui.saveItem = function(item) {
     //show spinner before making ajax write call
     var library = item.owningLibrary;
     var jqxhr = item.writeItem();
-    jqxhr.done(J.proxy(function(writtenItems){
+    jqxhr.then(J.proxy(function(writtenItems){
         Z.debug("item write finished", 3);
         //check for errors, update nav
         if(item.writeFailure){

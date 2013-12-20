@@ -51,12 +51,14 @@ Zotero.ui.widgets.item.loadItemCallback = function(event){
             newItem.libraryID = library.libraryID;
             d = newItem.initEmpty(itemType);
             jel.data('pendingDeferred', d);
-            d.done(J.proxy(function(item){
-                Zotero.ui.unassociatedItemForm(jel, item);
-            }, this) );
-            d.fail(function(jqxhr, textStatus, errorThrown){
-                Zotero.ui.jsNotificationMessage("Error loading item template", 'error');
-            });
+            d.then(
+                J.proxy(function(item){
+                    Zotero.ui.unassociatedItemForm(jel, item);
+                }, this),
+                function(jqxhr, textStatus, errorThrown){
+                    Zotero.ui.jsNotificationMessage("Error loading item template", 'error');
+                }
+            );
             return;
         }
     }
@@ -93,7 +95,7 @@ Zotero.ui.widgets.item.loadItemCallback = function(event){
             'itemKey':itemKey,
             'content':'json'
         };
-        d.done(J.proxy(function(item){
+        d.then(J.proxy(function(item){
             Z.debug("Library.loadItem done", 3);
             jel.empty();
             
@@ -129,7 +131,7 @@ Zotero.ui.widgets.item.showChildren = function(e){
     
     var childItemsPromise = item.getChildren(library);
     
-    childItemsPromise.done(function(childItems){
+    childItemsPromise.then(function(childItems){
         J(".item-attachments-div").html( J('#childitemsTemplate').render({childItems:childItems}) );
     });
 };
@@ -220,7 +222,7 @@ Zotero.ui.loadNewItemTemplate = function(item){
     Z.debug("Zotero.ui.loadNewItemTemplate", 3);
     Z.debug(item, 3);
     var d = Zotero.Item.prototype.getCreatorTypes(item.itemType);
-    d.done(function(itemCreatorTypes){
+    d.then(function(itemCreatorTypes){
         var jel = J("#item-details-div").empty();
         if(item.itemType == 'note'){
             var parentKey = Zotero.nav.getUrlVar('parentKey');
@@ -366,7 +368,7 @@ Zotero.ui.editItemForm = function(el, item){
     }
     else{
         var p = item.getCreatorTypes(item.apiObj.itemType);
-        p.done(J.proxy(function(){
+        p.then(J.proxy(function(){
             Z.debug("getCreatorTypes callback", 3);
             jel.empty();
             var mode = Zotero.nav.getUrlVar('mode');

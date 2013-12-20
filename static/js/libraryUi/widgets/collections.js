@@ -66,14 +66,16 @@ Zotero.ui.widgets.collections.syncCollectionsCallback = function(event) {
     if(library.collections.loaded && (!library.collections.synced)){
         Z.debug("collections loaded but not synced - loading updated", 1);
         var syncD = library.loadUpdatedCollections();
-        syncD.done(J.proxy(function(){
-            Zotero.nav.doneLoading(el);
-            Zotero.ui.eventful.trigger("libraryCollectionsUpdated");
-        }, this) );
-        syncD.fail(J.proxy(function(){
-            //sync failed, but we already had some data, so show that
-            Zotero.ui.eventful.trigger("libraryCollectionsUpdated");
-        }));
+        syncD.then(
+            J.proxy(function(){
+                Zotero.nav.doneLoading(el);
+                Zotero.ui.eventful.trigger("libraryCollectionsUpdated");
+            }, this),
+            function(){
+                //sync failed, but we already had some data, so show that
+                Zotero.ui.eventful.trigger("libraryCollectionsUpdated");
+            }
+        );
         return;
     }
     else if(library.collections.loaded){
@@ -83,19 +85,19 @@ Zotero.ui.widgets.collections.syncCollectionsCallback = function(event) {
 
     //if no cached or loaded data, load collections from the api
     var d = library.loadCollections();
-    d.done(J.proxy(function(){
-        Zotero.nav.doneLoading(el);
-        jel.data('loaded', true);
-        Zotero.ui.eventful.trigger("libraryCollectionsUpdated");
-        Zotero.nav.doneLoading(el);
-    }, this));
-    
-    d.fail(J.proxy(function(jqxhr, textStatus, errorThrown){
-        Z.debug("FAILED SYNC COLLECTIONS REQUEST");
-        var elementMessage = Zotero.ui.ajaxErrorMessage(jqxhr);
-        jel.html("<p>" + elementMessage + "</p>");
-        //Zotero.ui.eventful.trigger("libraryCollectionsUpdated");
-    }));
+    d.then(
+        J.proxy(function(){
+            Zotero.nav.doneLoading(el);
+            jel.data('loaded', true);
+            Zotero.ui.eventful.trigger("libraryCollectionsUpdated");
+            Zotero.nav.doneLoading(el);
+        }, this),
+        function(jqxhr, textStatus, errorThrown){
+            Z.debug("FAILED SYNC COLLECTIONS REQUEST");
+            var elementMessage = Zotero.ui.ajaxErrorMessage(jqxhr);
+            jel.html("<p>" + elementMessage + "</p>");
+        }
+    );
     
     return;
 };

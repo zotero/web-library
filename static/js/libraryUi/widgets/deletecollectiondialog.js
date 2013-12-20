@@ -25,7 +25,7 @@ Zotero.ui.widgets.deleteCollectionDialog.show = function(e){
             return false;
         }
         var d = collection.remove();
-        d.done(J.proxy(function(){
+        d.then(J.proxy(function(){
             delete Zotero.nav.urlvars.pathVars['collectionKey'];
             library.collections.dirty = true;
             Zotero.nav.pushState();

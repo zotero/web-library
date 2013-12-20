@@ -73,17 +73,16 @@ Zotero.ui.widgets.items.loadItemsCallback = function(event){
     
     var d = library.loadItems(newConfig);
     
-    d.done(J.proxy(function(loadedItems){
-        J(el).empty();
-        Zotero.ui.displayItemsFull(el, newConfig, loadedItems);
-        //set currentConfig on element when done displaying
-        //J(el).data('currentconfig', newConfig);
-    }, this));
-    
-    d.fail(J.proxy(function(jqxhr, textStatus, errorThrown){
-        var elementMessage = Zotero.ui.ajaxErrorMessage(jqxhr);
-        jel.html("<p>" + elementMessage + "</p>");
-    }));
+    d.then(
+        J.proxy(function(loadedItems){
+            J(el).empty();
+            Zotero.ui.displayItemsFull(el, newConfig, loadedItems);
+        }, this),
+        function(jqxhr, textStatus, errorThrown){
+            var elementMessage = Zotero.ui.ajaxErrorMessage(jqxhr);
+            jel.html("<p>" + elementMessage + "</p>");
+        }
+    );
     
     //associate promise with el so we can cancel on later loads
     jel.data('pendingDeferred', d);

@@ -19,12 +19,14 @@ Zotero.ui.widgets.newItem.freshitemcallback = function(e){
     
     var newItem = new Zotero.Item();
     var d = newItem.initEmpty(itemType);
-    d.done(J.proxy(function(item){
-        Zotero.ui.unassociatedItemForm(widgetEl, item);
-    }, this) );
-    d.fail(function(jqxhr, textStatus, errorThrown){
-        Zotero.ui.jsNotificationMessage("Error loading item template", 'error');
-    });
+    d.then(
+        J.proxy(function(item){
+            Zotero.ui.unassociatedItemForm(widgetEl, item);
+        }, this),
+        function(jqxhr, textStatus, errorThrown){
+            Zotero.ui.jsNotificationMessage("Error loading item template", 'error');
+        }
+    );
     
     return;
 };
@@ -43,7 +45,7 @@ Zotero.ui.unassociatedItemForm = function(el, item){
     Z.debug(itemTypes);
     
     var d = Zotero.Item.prototype.getCreatorTypes(item.itemType);
-    d.done(J.proxy(function(itemCreatorTypes){
+    d.then(J.proxy(function(itemCreatorTypes){
         container.empty();
         if(item.itemType == 'note'){
             var parentKey = Zotero.nav.getUrlVar('parentKey');
@@ -110,13 +112,15 @@ Zotero.ui.widgets.newItem.changeItemType = function(e){
     //newItem.libraryType = library.libraryType;
     //newItem.libraryID = library.libraryID;
     var d = newItem.initEmpty(itemType);
-    d.done(J.proxy(function(item){
-        Zotero.ui.translateItemType(oldItem, item);
-        Zotero.ui.unassociatedItemForm(widgetEl, item);
-    }, this) );
-    d.fail(function(jqxhr, textStatus, errorThrown){
-        Zotero.ui.jsNotificationMessage("Error loading item template", 'error');
-    });
+    d.then(
+        J.proxy(function(item){
+            Zotero.ui.translateItemType(oldItem, item);
+            Zotero.ui.unassociatedItemForm(widgetEl, item);
+        }, this),
+        function(jqxhr, textStatus, errorThrown){
+            Zotero.ui.jsNotificationMessage("Error loading item template", 'error');
+        }
+    );
     
     return;
 };

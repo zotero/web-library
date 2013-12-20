@@ -53,16 +53,16 @@ Zotero.ui.widgets.citeItemDialog.show = function(e){
             }
             Z.debug(itemKeys, 4);
             var d = library.loadFullBib(itemKeys, style);
-            d.done(J.proxy(function(bibContent){
+            d.then(J.proxy(function(bibContent){
                 dialogEl.find(".cite-box-div").html(bibContent);
             }, this) );
         }
         else {
             var directPromise = Zotero.ui.widgets.citeItemDialog.directCite(cslItems, style);
-            directPromise.done(J.proxy(function(bibContent){
+            directPromise.then(J.proxy(function(bibContent){
                 dialogEl.find(".cite-box-div").html(bibContent);
             }, this) );
-            directPromise.done(function(data, textStatus, jqxhr){
+            directPromise.then(function(data, textStatus, jqxhr){
                 var bib = JSON.parse(data);
                 var bibString = Zotero.ui.widgets.citeItemDialog.buildBibString(bib);
                 dialogEl.find(".cite-box-div").html(bibString);

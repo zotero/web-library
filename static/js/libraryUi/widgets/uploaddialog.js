@@ -89,19 +89,19 @@ Zotero.ui.widgets.uploadDialog.show = function(e){
             childItem.associateWithLibrary(library);
             var templateItemDeferred = childItem.initEmpty('attachment', 'imported_file');
             
-            templateItemDeferred.done(J.proxy(function(childItem){
+            templateItemDeferred.then(J.proxy(function(childItem){
                 Z.debug("templateItemDeferred callback");
                 childItem.set('title', specifiedTitle);
                 
                 var uploadChildD = item.uploadChildAttachment(childItem, fileInfo, file, progressCallback);
                 
-                uploadChildD.done(uploadSuccess).fail(uploadFailure);
+                uploadChildD.then(uploadSuccess, uploadFailure);
             }, this) );
         }
         else if(item.get('itemType') == 'attachment' && item.get("linkMode") == 'imported_file') {
             Z.debug("imported_file attachment", 3);
             var uploadD = item.uploadFile(fileInfo, file, progressCallback);
-            uploadD.done(uploadSuccess).fail(uploadFailure);
+            uploadD.then(uploadSuccess, uploadFailure);
         }
         
     }, this);

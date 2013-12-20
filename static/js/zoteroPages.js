@@ -1454,7 +1454,7 @@ Zotero.pages = {
                 e.stopImmediatePropagation();
                 var q = J("#itemQuery").val();
                 var globalSearchD = library.fetchGlobalItems({q:q});
-                globalSearchD.done(function(globalItems){
+                globalSearchD.then(function(globalItems){
                     Z.debug("globalItemSearch callback", 3);
                     Z.debug(globalItems);
                     J("#search-result-count").empty().append(globalItems.totalResults);

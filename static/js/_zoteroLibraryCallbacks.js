@@ -81,7 +81,7 @@ Zotero.callbacks.loadUserGroups = function(el){
     
     var groups = library.groups.fetchUserGroups(userid, library._apiKey);
     
-    groups.done(J.proxy(function(fetchedGroups){
+    groups.then(J.proxy(function(fetchedGroups){
         Zotero.ui.displayGroupNuggets(el, fetchedGroups);
     }), this);
 };

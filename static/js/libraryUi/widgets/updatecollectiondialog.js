@@ -33,7 +33,7 @@ Zotero.ui.widgets.updateCollectionDialog.show = function(e){
             return false;
         }
         var d = collection.update(newCollectionTitle, newParentCollectionKey);
-        d.done(J.proxy(function(){
+        d.then(J.proxy(function(){
             Zotero.ui.jsNotificationMessage("Collection Saved", 'confirm');
             library.collections.dirty = true;
             Zotero.nav.pushState(true);

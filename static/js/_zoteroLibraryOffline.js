@@ -177,7 +177,7 @@ Zotero.ui.localDownloadLink = function(item, el){
     if(item.links && item.links.enclosure){
         Z.debug("should have local file");
         var d = item.owningLibrary.filestorage.getSavedFileObjectUrl(item.itemKey);
-        d.done(function(url){
+        d.then(function(url){
             Z.debug("got item's object url - adding to table");
             J("table.item-info-table tbody").append("<tr><th>Local Copy</th><td><a href='" + url + "'>Open</a></td></tr>");
         });
@@ -201,8 +201,7 @@ Zotero.ui.displayItemOrTemplate = function(library){
             newItem.libraryID = library.libraryID;
             d = newItem.initEmpty(itemType);
             J("#item-details-div").data('pendingDeferred', d);
-            d.done(Zotero.ui.loadNewItemTemplate);
-            d.fail(function(jqxhr, textStatus, errorThrown){
+            d.then(Zotero.ui.loadNewItemTemplate, function(jqxhr, textStatus, errorThrown){
                 Zotero.ui.jsNotificationMessage("Error loading item template", 'error');
             });
         }
@@ -258,7 +257,7 @@ Zotero.offline.initializeOffline = function(){
         }, this) );
     }
     
-    libraryDataDeferred.done(function(userLibraryData){
+    libraryDataDeferred.then(function(userLibraryData){
         Zotero.debug("Got library data");
         Zotero.debug(userLibraryData);
         
