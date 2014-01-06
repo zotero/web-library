@@ -51,6 +51,7 @@ $files = array(
 "libraryUi/widgets/uploaddialog.js",
 "libraryUi/widgets/libraryPreloader.js",
 "libraryUi/widgets/filterGuide.js",
+"libraryUi/widgets/progressModal.js",
 
 "_zoteroLibraryUrl.js",
 "_zoteroLibraryOffline.js"
@@ -71,11 +72,11 @@ $lzText = file_get_contents($lzSinglePath);
 
 //prepend libZotero JS to the rest of zotero www JS
 $allFullText = $lzText . "\n\n" . $fullText;
-file_put_contents($jsRelPath . '_zoterowwwAll.js', $allFullText);
+file_put_contents($jsRelPath . '/compiled/_zoterowwwAll.js', $allFullText);
 
 //make beautiful uglified versions of JS
 //shell_exec("uglifyjs -b -o ../public/static/library/libZotero/libZoteroSingle.bugly.js ../public/static/library/libZotero/libZoteroSingle.js");
-shell_exec("uglifyjs -b -nm -ns -o {$jsRelPath}_zoterowwwAll.bugly.js {$jsRelPath}_zoterowwwAll.js");
+shell_exec("uglifyjs -b -nm -ns -o {$jsRelPath}/compiled/_zoterowwwAll.bugly.js {$jsRelPath}/compiled/_zoterowwwAll.js");
 
 //rewrite manifest file with random string in comment so it registers as modified
 //date_default_timezone_set('EST');

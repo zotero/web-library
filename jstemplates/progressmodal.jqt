@@ -1,0 +1,17 @@
+<script id="progressModalTemplate" type="text/x-jsrender">
+<div id="progress-modal-dialog" class="progress-modal-dialog modal " role="dialog" aria-hidden="true" data-keyboard="true">
+    <div  class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h3 class="modal-title">{{>progressTitle}}</h3>
+            </div>
+            <div class="progress-div modal-body" data-role="content" style="text-align:center;">
+                <progress value="0" max="100" style="width:70%;">0 %</progress>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+</script>
