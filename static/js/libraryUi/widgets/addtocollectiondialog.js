@@ -49,9 +49,9 @@ Zotero.ui.addToCollection = function(collectionKey, library){
     }
     Z.debug(itemKeys, 4);
     Z.debug(collectionKey, 4);
-    var response = library.collections.getCollection(collectionKey).addItems(itemKeys);
-    library.dirty = true;
-    J.when(response).then(function(){
+    library.collections.getCollection(collectionKey).addItems(itemKeys)
+    .then(function(response){
+        library.dirty = true;
         Zotero.ui.jsNotificationMessage("Items added to collection", 'success');
     });
     return false;

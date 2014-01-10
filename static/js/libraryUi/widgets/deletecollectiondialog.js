@@ -24,15 +24,14 @@ Zotero.ui.widgets.deleteCollectionDialog.show = function(e){
             Zotero.ui.jsNotificationMessage("Selected collection not found", 'error');
             return false;
         }
-        var d = collection.remove();
-        d.then(J.proxy(function(){
+        collection.remove()
+        .then(function(){
             delete Zotero.nav.urlvars.pathVars['collectionKey'];
             library.collections.dirty = true;
             Zotero.nav.pushState();
             Zotero.ui.jsNotificationMessage(collection.title + " removed", 'confirm');
-        }, this));
-        
-        Zotero.ui.closeDialog(dialogEl);
+            Zotero.ui.closeDialog(dialogEl);
+        });
         return false;
     }, this);
     

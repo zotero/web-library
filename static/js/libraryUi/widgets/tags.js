@@ -78,54 +78,48 @@ Zotero.ui.widgets.tags.syncTagsCallback = function(event){
     //sync tags if loaded from cache but not synced
     if(library.tags.loaded && (!library.tags.synced)){
         Z.debug("tags loaded but not synced - loading updated", 3);
-        var syncD = library.loadUpdatedTags();
-        syncD.then(
-            J.proxy(function(){
-                Zotero.nav.doneLoading(el);
-                Zotero.ui.eventful.trigger("libraryTagsUpdated");
-            }, this),
-            J.proxy(function(){
-                //sync failed, but we still have some local data, so show that
-                Zotero.ui.eventful.trigger("libraryTagsUpdated");
-                Zotero.nav.doneLoading(el);
-            }, this)
-        );
-        return;
+        return library.loadUpdatedTags()
+        .then(function(){
+            Zotero.nav.doneLoading(el);
+            Zotero.ui.eventful.trigger("libraryTagsUpdated");
+        },
+        function(){
+            //sync failed, but we still have some local data, so show that
+            Zotero.ui.eventful.trigger("libraryTagsUpdated");
+            Zotero.nav.doneLoading(el);
+        });
     }
     else if(library.tags.loaded){
         Zotero.ui.eventful.trigger("libraryTagsUpdated");
         Zotero.nav.doneLoading(el);
-        return;
+        return Promise.resolve();
     }
     
     //load all tags if we don't have any cached
     Zotero.ui.showSpinner(J(el).find('div.loading'));
-    var d = library.loadAllTags({}, checkCached);
-    d.then(
-        J.proxy(function(tags){
-            Z.debug("finished loadAllTags", 3);
-            library.tags.tagsVersion = library.tags.syncState.earliestVersion;
-            if(library.tags.syncState.earliestVersion == library.tags.syncState.latestVersion){
-                library.tags.synced = true;
-            }
-            else {
-                //TODO: fetch tags ?newer=tagsVersion
-            }
-            J(el).find('div.loading').empty();
-            Z.debug(tags, 5);
-            library.tags.loaded = true;
-            //library.tags.loadedConfig = newConfig;
-            J(el).children('.loading').empty();
-            Zotero.nav.doneLoading(el);
-            Zotero.ui.eventful.trigger("libraryTagsUpdated");
-        }, this),
-        J.proxy(function(jqxhr, textStatus, errorThrown){
-            var elementMessage = Zotero.ui.ajaxErrorMessage(jqxhr);
-            jel.html("<p>" + elementMessage + "</p>");
-        }, this)
-    );
     
-    return;
+    return library.loadAllTags({}, checkCached)
+    .then(function(tags){
+        Z.debug("finished loadAllTags", 3);
+        library.tags.tagsVersion = library.tags.syncState.earliestVersion;
+        if(library.tags.syncState.earliestVersion == library.tags.syncState.latestVersion){
+            library.tags.synced = true;
+        }
+        else {
+            //TODO: fetch tags ?newer=tagsVersion
+        }
+        J(el).find('div.loading').empty();
+        Z.debug(tags, 5);
+        library.tags.loaded = true;
+        //library.tags.loadedConfig = newConfig;
+        J(el).children('.loading').empty();
+        Zotero.nav.doneLoading(el);
+        Zotero.ui.eventful.trigger("libraryTagsUpdated");
+    },
+    function(response){
+        var elementMessage = Zotero.ui.ajaxErrorMessage(response.jqxhr);
+        jel.html("<p>" + elementMessage + "</p>");
+    });
 };
 
 Zotero.ui.widgets.tags.rerenderTags = function(event){

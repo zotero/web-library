@@ -16,7 +16,7 @@ Zotero.ui.widgets.uploadDialog.show = function(e){
     widgetEl.html( J("#attachmentuploadTemplate").render({}) );
     var dialogEl = widgetEl.find(".upload-attachment-dialog");
     
-    var uploadFunction = J.proxy(function(){
+    var uploadFunction = function(){
         Z.debug("uploadFunction", 3);
         //callback for when everything in the upload form is filled
         //grab file blob
@@ -87,24 +87,22 @@ Zotero.ui.widgets.uploadDialog.show = function(e){
             //get template item
             var childItem = new Zotero.Item();
             childItem.associateWithLibrary(library);
-            var templateItemDeferred = childItem.initEmpty('attachment', 'imported_file');
-            
-            templateItemDeferred.then(J.proxy(function(childItem){
+            childItem.initEmpty('attachment', 'imported_file')
+            .then(function(childItem){
                 Z.debug("templateItemDeferred callback");
                 childItem.set('title', specifiedTitle);
                 
-                var uploadChildD = item.uploadChildAttachment(childItem, fileInfo, file, progressCallback);
-                
-                uploadChildD.then(uploadSuccess, uploadFailure);
-            }, this) );
+                item.uploadChildAttachment(childItem, fileInfo, file, progressCallback)
+                .then(uploadSuccess, uploadFailure);
+            });
         }
         else if(item.get('itemType') == 'attachment' && item.get("linkMode") == 'imported_file') {
             Z.debug("imported_file attachment", 3);
-            var uploadD = item.uploadFile(fileInfo, file, progressCallback);
-            uploadD.then(uploadSuccess, uploadFailure);
+            item.uploadFile(fileInfo, file, progressCallback)
+            .then(uploadSuccess, uploadFailure);
         }
         
-    }, this);
+    };
 
     dialogEl.find('.uploadButton').on('click', uploadFunction);
     Zotero.ui.dialog(dialogEl, {});

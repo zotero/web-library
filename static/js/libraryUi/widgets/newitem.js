@@ -18,17 +18,14 @@ Zotero.ui.widgets.newItem.freshitemcallback = function(e){
     var itemType = triggeringEl.data("itemtype");
     
     var newItem = new Zotero.Item();
-    var d = newItem.initEmpty(itemType);
-    d.then(
-        J.proxy(function(item){
-            Zotero.ui.unassociatedItemForm(widgetEl, item);
-        }, this),
-        function(jqxhr, textStatus, errorThrown){
-            Zotero.ui.jsNotificationMessage("Error loading item template", 'error');
-        }
-    );
     
-    return;
+    return newItem.initEmpty(itemType)
+    .then(function(item){
+        Zotero.ui.unassociatedItemForm(widgetEl, item);
+    },
+    function(response){
+        Zotero.ui.jsNotificationMessage("Error loading item template", 'error');
+    });
 };
 
 Zotero.ui.unassociatedItemForm = function(el, item){
@@ -44,8 +41,8 @@ Zotero.ui.unassociatedItemForm = function(el, item){
     itemTypes.sort();
     Z.debug(itemTypes);
     
-    var d = Zotero.Item.prototype.getCreatorTypes(item.itemType);
-    d.then(J.proxy(function(itemCreatorTypes){
+    return Zotero.Item.prototype.getCreatorTypes(item.itemType)
+    .then(function(itemCreatorTypes){
         container.empty();
         if(item.itemType == 'note'){
             var parentKey = Zotero.nav.getUrlVar('parentKey');
@@ -95,7 +92,7 @@ Zotero.ui.unassociatedItemForm = function(el, item){
         Zotero.ui.loadFormData(container);
         
         Zotero.ui.createOnActivePage(container);
-    }, this) );
+    });
     
 };
 
@@ -111,18 +108,14 @@ Zotero.ui.widgets.newItem.changeItemType = function(e){
     var newItem = new Zotero.Item();
     //newItem.libraryType = library.libraryType;
     //newItem.libraryID = library.libraryID;
-    var d = newItem.initEmpty(itemType);
-    d.then(
-        J.proxy(function(item){
-            Zotero.ui.translateItemType(oldItem, item);
-            Zotero.ui.unassociatedItemForm(widgetEl, item);
-        }, this),
-        function(jqxhr, textStatus, errorThrown){
-            Zotero.ui.jsNotificationMessage("Error loading item template", 'error');
-        }
-    );
-    
-    return;
+    return newItem.initEmpty(itemType)
+    .then(function(item){
+        Zotero.ui.translateItemType(oldItem, item);
+        Zotero.ui.unassociatedItemForm(widgetEl, item);
+    },
+    function(response){
+        Zotero.ui.jsNotificationMessage("Error loading item template", 'error');
+    });
 };
 
 Zotero.ui.translateItemType = function(firstItem, newItem){

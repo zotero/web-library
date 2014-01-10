@@ -96,7 +96,7 @@ Zotero.ui.ajaxErrorMessage = function(jqxhr){
  * @return {undefined}
  */
 Zotero.ui.showSpinner = function(el, type){
-    var spinnerUrl = Zotero.config.baseWebsiteUrl + '/static/images/theme/broken-circle-spinner.gif';
+    var spinnerUrl = Zotero.config.baseWebsiteUrl + 'static/images/theme/broken-circle-spinner.gif';
     if(!type){
         J(el).html("<img class='spinner' src='" + spinnerUrl + "'/>");
     }
@@ -111,7 +111,7 @@ Zotero.ui.showSpinner = function(el, type){
  * @return {undefined}
  */
 Zotero.ui.appendSpinner = function(el){
-    var spinnerUrl = Zotero.config.baseWebsiteUrl + '/static/images/theme/broken-circle-spinner.gif';
+    var spinnerUrl = Zotero.config.baseWebsiteUrl + 'static/images/theme/broken-circle-spinner.gif';
     J(el).append("<img class='spinner' src='" + spinnerUrl + "'/>");
 };
 

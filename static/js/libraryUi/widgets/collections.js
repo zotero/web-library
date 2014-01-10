@@ -65,41 +65,34 @@ Zotero.ui.widgets.collections.syncCollectionsCallback = function(event) {
     //sync collections if loaded from cache but not synced
     if(library.collections.loaded && (!library.collections.synced)){
         Z.debug("collections loaded but not synced - loading updated", 1);
-        var syncD = library.loadUpdatedCollections();
-        syncD.then(
-            J.proxy(function(){
-                Zotero.nav.doneLoading(el);
-                Zotero.ui.eventful.trigger("libraryCollectionsUpdated");
-            }, this),
-            function(){
-                //sync failed, but we already had some data, so show that
-                Zotero.ui.eventful.trigger("libraryCollectionsUpdated");
-            }
-        );
-        return;
+        return library.loadUpdatedCollections()
+        .then(function(){
+            Zotero.nav.doneLoading(el);
+            Zotero.ui.eventful.trigger("libraryCollectionsUpdated");
+        },
+        function(){
+            //sync failed, but we already had some data, so show that
+            Zotero.ui.eventful.trigger("libraryCollectionsUpdated");
+        });
     }
     else if(library.collections.loaded){
         Zotero.ui.eventful.trigger("libraryCollectionsUpdated");
-        return;
+        return Promise.resolve();
     }
 
     //if no cached or loaded data, load collections from the api
-    var d = library.loadCollections();
-    d.then(
-        J.proxy(function(){
-            Zotero.nav.doneLoading(el);
-            jel.data('loaded', true);
-            Zotero.ui.eventful.trigger("libraryCollectionsUpdated");
-            Zotero.nav.doneLoading(el);
-        }, this),
-        function(jqxhr, textStatus, errorThrown){
-            Z.debug("FAILED SYNC COLLECTIONS REQUEST");
-            var elementMessage = Zotero.ui.ajaxErrorMessage(jqxhr);
-            jel.html("<p>" + elementMessage + "</p>");
-        }
-    );
-    
-    return;
+    return library.loadCollections()
+    .then(function(){
+        Zotero.nav.doneLoading(el);
+        jel.data('loaded', true);
+        Zotero.ui.eventful.trigger("libraryCollectionsUpdated");
+        Zotero.nav.doneLoading(el);
+    },
+    function(response){
+        Z.debug("FAILED SYNC COLLECTIONS REQUEST");
+        var elementMessage = Zotero.ui.ajaxErrorMessage(response.jqxhr);
+        jel.html("<p>" + elementMessage + "</p>");
+    });
 };
 
 /**

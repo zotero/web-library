@@ -71,18 +71,15 @@ Zotero.ui.widgets.items.loadItemsCallback = function(event){
     //clear contents and show spinner while loading
     Zotero.ui.showSpinner(el, 'horizontal');
     
-    var d = library.loadItems(newConfig);
-    
-    d.then(
-        J.proxy(function(loadedItems){
-            J(el).empty();
-            Zotero.ui.displayItemsFull(el, newConfig, loadedItems);
-        }, this),
-        function(jqxhr, textStatus, errorThrown){
-            var elementMessage = Zotero.ui.ajaxErrorMessage(jqxhr);
-            jel.html("<p>" + elementMessage + "</p>");
-        }
-    );
+    var p = library.loadItems(newConfig)
+    .then(function(loadedItems){
+        J(el).empty();
+        Zotero.ui.displayItemsFull(el, newConfig, loadedItems);
+    },
+    function(response){
+        var elementMessage = Zotero.ui.ajaxErrorMessage(response.jqxhr);
+        jel.html("<p>" + elementMessage + "</p>");
+    });
     
     //associate promise with el so we can cancel on later loads
     jel.data('pendingDeferred', d);
@@ -179,7 +176,7 @@ Zotero.ui.displayItemsWidget = function(el, config, loadedItems){
  */
 Zotero.ui.displayItemsFull = function(el, config, loadedItems) {
     Z.debug("Zotero.ui.displayItemsFull", 3);
-    
+    Z.debug(loadedItems);
     var jel = J(el);
     var library = Zotero.ui.getAssociatedLibrary(jel);
     var itemsArray;
@@ -232,6 +229,7 @@ Zotero.ui.displayItemsFull = function(el, config, loadedItems) {
  */
 Zotero.ui.insertItemsTable = function(el, data){
     Z.debug("Zotero.ui.insertItemsTable", 3);
+    Z.debug(data);
     var a = J(el).append( J('#itemstableTemplate').render(data) );
     
     Zotero.eventful.initTriggers(J(el));

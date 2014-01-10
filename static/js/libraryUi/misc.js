@@ -82,6 +82,7 @@ Zotero.ui.updateItemFromForm = function(item, formEl){
     item.notes = notes;
     item.apiObj.creators = creators;
     item.apiObj.tags = tags;
+    item.synced = false;
     
 };
 
@@ -120,8 +121,8 @@ Zotero.ui.saveItem = function(item) {
     Z.debug(item, 4);
     //show spinner before making ajax write call
     var library = item.owningLibrary;
-    var jqxhr = item.writeItem();
-    jqxhr.then(J.proxy(function(writtenItems){
+    item.writeItem()
+    .then(function(writtenItems){
         Z.debug("item write finished", 3);
         //check for errors, update nav
         if(item.writeFailure){
@@ -133,7 +134,7 @@ Zotero.ui.saveItem = function(item) {
         
         Zotero.nav.clearUrlVars(['itemKey', 'collectionKey']);
         Zotero.nav.pushState(true);
-    }, this));
+    });
     
     //update list of tags we have if new ones added
     Z.debug('adding new tags to library tags', 3);

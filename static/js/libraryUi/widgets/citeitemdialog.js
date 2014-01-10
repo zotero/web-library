@@ -52,21 +52,21 @@ Zotero.ui.widgets.citeItemDialog.show = function(e){
                 itemKeys = Zotero.ui.getAllFormItemKeys(J("#edit-mode-items-form"));
             }
             Z.debug(itemKeys, 4);
-            var d = library.loadFullBib(itemKeys, style);
-            d.then(J.proxy(function(bibContent){
+            library.loadFullBib(itemKeys, style)
+            .then(function(bibContent){
                 dialogEl.find(".cite-box-div").html(bibContent);
-            }, this) );
+            });
         }
         else {
-            var directPromise = Zotero.ui.widgets.citeItemDialog.directCite(cslItems, style);
-            directPromise.then(J.proxy(function(bibContent){
+            Zotero.ui.widgets.citeItemDialog.directCite(cslItems, style)
+            .then(function(bibContent){
                 dialogEl.find(".cite-box-div").html(bibContent);
-            }, this) );
-            directPromise.then(function(data, textStatus, jqxhr){
-                var bib = JSON.parse(data);
+            });
+            /*.then(function(response){
+                var bib = JSON.parse(response.data);
                 var bibString = Zotero.ui.widgets.citeItemDialog.buildBibString(bib);
                 dialogEl.find(".cite-box-div").html(bibString);
-            });
+            });*/
         }
     };
     
@@ -84,9 +84,9 @@ Zotero.ui.widgets.citeItemDialog.show = function(e){
 Zotero.ui.widgets.citeItemDialog.getAvailableStyles = function(){
     if(!Zotero.styleList){
         Zotero.styleList = [];
-        J.getJSON(Zotero.config.styleListUrl, function(data, textStatus, jqxhr){
+        J.getJSON(Zotero.config.styleListUrl, function(data){
             Zotero.styleList = data;
-        } );
+        });
     }
 };
 

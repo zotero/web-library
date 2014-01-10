@@ -37,16 +37,15 @@ Zotero.ui.widgets.syncedItems.syncItemsCallback = function(event){
     //sync items if loaded from cache but not synced
     if(library.items.loaded && (!library.items.synced)){
         Z.debug("items loaded but not synced - loading updated", 3);
-        var syncD = library.loadUpdatedItems();
-        syncD.then(J.proxy(function(){
+        return library.loadUpdatedItems()
+        .then(function(){
             Zotero.nav.doneLoading(el);
             Zotero.ui.eventful.trigger("libraryItemsUpdated");
             Zotero.ui.eventful.trigger("displayedItemsChanged");
-        }, this) );
-        return;
+        });
     }
     else if(library.items.loaded){
-        return;
+        return Promise.resolve();
     }
     
     //if no cached or loaded data, load items from the api
@@ -56,19 +55,17 @@ Zotero.ui.widgets.syncedItems.syncItemsCallback = function(event){
     //only be for apps or special request so just displaying the warning would
     //be acceptable.
     Z.debug("Syncing items for first time, this may take a while.");
-    var d = library.loadUpdatedItems();
-    d.then(
-        J.proxy(function(){
-            Zotero.nav.doneLoading(el);
-            jel.data('loaded', true);
-            Zotero.ui.eventful.trigger("libraryItemsUpdated");
-            Zotero.nav.doneLoading(el);
-        }, this),
-        J.proxy(function(jqxhr, textStatus, errorThrown){
-            var elementMessage = Zotero.ui.ajaxErrorMessage(jqxhr);
-            jel.html("<p>" + elementMessage + "</p>");
-        }, this)
-    );
+    library.loadUpdatedItems()
+    .then(function(response){
+        Zotero.nav.doneLoading(el);
+        jel.data('loaded', true);
+        Zotero.ui.eventful.trigger("libraryItemsUpdated");
+        Zotero.nav.doneLoading(el);
+    },
+    function(response){
+        var elementMessage = Zotero.ui.ajaxErrorMessage(response.jqxhr);
+        jel.html("<p>" + elementMessage + "</p>");
+    });
     
     return;
     

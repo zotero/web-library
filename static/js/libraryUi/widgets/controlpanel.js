@@ -268,10 +268,10 @@ Zotero.ui.callbacks.removeFromCollection = function(e){
         modifiedItems.push(item);
     });
     
-    var itemWriteDeferred = library.items.writeItems(modifiedItems);
     library.dirty = true;
     
-    itemWriteDeferred.then(function(){
+    library.items.writeItems(modifiedItems)
+    .then(function(){
         Z.debug('removal responses finished. forcing reload', 3);
         Zotero.nav.clearUrlVars(['collectionKey', 'tag']);
         Zotero.nav.pushState(true);

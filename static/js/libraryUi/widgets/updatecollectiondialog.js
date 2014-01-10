@@ -23,7 +23,7 @@ Zotero.ui.widgets.updateCollectionDialog.show = function(e){
     dialogEl.find(".update-collection-parent-select").val(currentParentCollectionKey);
     dialogEl.find(".updated-collection-title-input").val(currentCollection.get("title"));
     
-    var saveFunction = J.proxy(function(){
+    var saveFunction = function(){
         var newCollectionTitle = dialogEl.find("input.updated-collection-title-input").val() || "Untitled";
         var newParentCollectionKey = dialogEl.find(".update-collection-parent-select").val();
         
@@ -32,15 +32,14 @@ Zotero.ui.widgets.updateCollectionDialog.show = function(e){
             Zotero.ui.jsNotificationMessage("Selected collection not found", 'error');
             return false;
         }
-        var d = collection.update(newCollectionTitle, newParentCollectionKey);
-        d.then(J.proxy(function(){
+        collection.update(newCollectionTitle, newParentCollectionKey)
+        .then(function(response){
             Zotero.ui.jsNotificationMessage("Collection Saved", 'confirm');
             library.collections.dirty = true;
             Zotero.nav.pushState(true);
             Zotero.ui.closeDialog(dialogEl);
-        }, this));
-        Zotero.ui.closeDialog(dialogEl);
-    }, this);
+        });
+    };
     
     dialogEl.find(".updateButton").on('click', saveFunction);
     Zotero.ui.dialog(dialogEl,{});
