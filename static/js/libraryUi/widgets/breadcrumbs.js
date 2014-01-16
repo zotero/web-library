@@ -18,9 +18,9 @@ Zotero.ui.libraryBreadcrumbs = function(library, config){
         library = Zotero.ui.getAssociatedLibrary(J("#feed-link-div"));
     }
     if(!config){
-        config = Zotero.nav.getUrlVars();
+        config = Zotero.state.getUrlVars();
     }
-    Z.debug(config, 2);
+    
     if(Zotero.config.breadcrumbsBase){
         J.each(Zotero.config.breadcrumbsBase, function(ind, crumb){
             breadcrumbs.push(crumb);
@@ -42,25 +42,25 @@ Zotero.ui.libraryBreadcrumbs = function(library, config){
         Z.debug("have collectionKey", 4);
         curCollection = library.collections.getCollection(config.collectionKey);
         if( curCollection ){
-            breadcrumbs.push({label:curCollection.get('name'), path:Zotero.nav.buildUrl({collectionKey:config.collectionKey})});
+            breadcrumbs.push({label:curCollection.get('name'), path:Zotero.state.buildUrl({collectionKey:config.collectionKey})});
         }
     }
     if(config.itemKey){
         Z.debug("have itemKey", 4);
-        breadcrumbs.push({label:library.items.getItem(config.itemKey).title, path:Zotero.nav.buildUrl({collectionKey:config.collectionKey, itemKey:config.itemKey})});
+        breadcrumbs.push({label:library.items.getItem(config.itemKey).title, path:Zotero.state.buildUrl({collectionKey:config.collectionKey, itemKey:config.itemKey})});
     }
     Z.debug(breadcrumbs, 4);
     widgetEl = J("#breadcrumbs").empty();
     widgetEl.html( J('#breadcrumbsTemplate').render({breadcrumbs:breadcrumbs}) );
     var newtitle = J('#breadcrumbstitleTemplate', {breadcrumbs:breadcrumbs}).text();
     if(newtitle){
-        Zotero.nav.updateStateTitle(newtitle);
+        Zotero.state.updateStateTitle(newtitle);
     }
     Z.debug("done with breadcrumbs", 4);
     }
     catch(e){
         Zotero.debug("Error loading breadcrumbs", 2);
-        Zotero.debug(e);
+        Zotero.debug(e, 1);
     }
 };
 

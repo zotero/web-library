@@ -3,36 +3,53 @@ Zotero.ui.widgets.collections = {};
 Zotero.ui.widgets.collections.init = function(el){
     Z.debug("collections widget init", 3);
     
-    Zotero.ui.eventful.listen("collectionsDirty", Zotero.ui.widgets.collections.syncCollectionsCallback, {widgetEl: el});
-    Zotero.ui.eventful.listen("syncCollections", Zotero.ui.widgets.collections.syncCollectionsCallback, {widgetEl: el});
-    Zotero.ui.eventful.listen("syncLibrary", Zotero.ui.widgets.collections.syncCollectionsCallback, {widgetEl: el});
+    Zotero.ui.eventful.listen("collectionsDirty", Zotero.ui.widgets.collections.syncCollections, {widgetEl: el});
+    Zotero.ui.eventful.listen("syncCollections", Zotero.ui.widgets.collections.syncCollections, {widgetEl: el});
+    Zotero.ui.eventful.listen("syncLibrary", Zotero.ui.widgets.collections.syncCollections, {widgetEl: el});
+    Zotero.ui.eventful.listen("cachedDataLoaded", Zotero.ui.widgets.collections.syncCollections, {widgetEl: el});
+    
     Zotero.ui.eventful.listen("libraryCollectionsUpdated", Zotero.ui.widgets.collections.rerenderCollections, {widgetEl: el});
     Zotero.ui.eventful.listen("selectCollection", Zotero.ui.widgets.collections.selectCollection, {widgetEl: el});
     Zotero.ui.eventful.listen("selectedCollectionChanged", Zotero.ui.widgets.collections.updateSelectedCollection, {widgetEl: el});
     
-    Zotero.ui.eventful.listen("cachedDataLoaded", Zotero.ui.widgets.collections.syncCollectionsCallback, {widgetEl: el});
-
-    //Zotero.ui.eventful.trigger("collectionsDirty");
-    Zotero.ui.bindCollectionLinks();
+    Zotero.ui.widgets.collections.bindCollectionLinks(el);
 };
 
-Zotero.ui.widgets.collections.updateCollectionButtons = function(el){
-    Zotero.ui.updateCollectionButtons(el);
+Zotero.ui.widgets.collections.syncCollections = function(event) {
+    Zotero.debug("Zotero eventful syncCollectionsCallback", 3);
+    var widgetEl = J(event.data.widgetEl);
+    
+    //get Zotero.Library object if already bound to element
+    var library = Zotero.ui.getAssociatedLibrary(widgetEl);
+    if(event.libraryString != library.libraryString){
+        //Event was triggered for a different library
+        Z.debug("event associated with different library. bailing out of syncCollectionsCallback", 3);
+        return Promise.resolve();
+    }
+    
+    //sync collections if loaded from cache but not synced
+    return library.loadUpdatedCollections()
+    .then(function(){
+        Zotero.state.doneLoading(widgetEl);
+        Zotero.ui.eventful.trigger("libraryCollectionsUpdated");
+    },
+    function(){
+        //sync failed, but we already had some data, so show that
+        Zotero.ui.eventful.trigger("libraryCollectionsUpdated");
+        //TODO: display error as well
+    });
 };
+
 
 Zotero.ui.widgets.collections.rerenderCollections = function(event){
-    Zotero.debug("Zotero eventful rerenderCollections");
-    var widgetEl = event.data.widgetEl;
-    var el = widgetEl;
-    var jel = J(el);
+    Zotero.debug("Zotero eventful rerenderCollections", 3);
+    var widgetEl = J(event.data.widgetEl);
     
-    var library = Zotero.ui.getAssociatedLibrary(el);
-    Z.debug(library);
+    var library = Zotero.ui.getAssociatedLibrary(widgetEl);
     library.collections.collectionsArray.sort(library.collections.sortByTitleCompare);
-    var collectionListEl = jel.find('#collection-list-container');
+    var collectionListEl = widgetEl.find('#collection-list-container');
     collectionListEl.empty();
-    Z.debug("Collections count: " + library.collections.collectionsArray.length);
-    Zotero.ui.renderCollectionList(collectionListEl, library.collections);
+    Zotero.ui.widgets.collections.renderCollectionList(collectionListEl, library.collections);
     Zotero.ui.eventful.trigger("selectedCollectionChanged");
 };
 
@@ -41,101 +58,30 @@ Zotero.ui.widgets.collections.selectCollection = function(event){
 };
 
 Zotero.ui.widgets.collections.updateSelectedCollection = function(event){
-    Zotero.debug("Zotero eventful updateSelectedCollection");
-    var widgetEl = event.data.widgetEl;
-    var el = widgetEl;
-    var jel = J(el);
+    Zotero.debug("Zotero eventful updateSelectedCollection", 3);
+    var widgetEl = J(event.data.widgetEl);
+    var collectionListEl = widgetEl.find('.collection-list-container');
     
-    var collectionListEl = jel.find('.collection-list-container');
-    Zotero.ui.highlightCurrentCollection(widgetEl);
-    Zotero.ui.nestHideCollectionTree(collectionListEl);
-    Zotero.ui.updateCollectionButtons(widgetEl);
+    Zotero.ui.widgets.collections.highlightCurrentCollection(widgetEl);
+    Zotero.ui.widgets.collections.nestHideCollectionTree(collectionListEl);
+    Zotero.ui.widgets.collections.updateCollectionButtons(widgetEl);
     return;
 };
 
-Zotero.ui.widgets.collections.syncCollectionsCallback = function(event) {
-    Zotero.debug("Zotero eventful syncCollectionsCallback");
-    var widgetEl = event.data.widgetEl;
-    var el = widgetEl;
-    var jel = J(el);
+Zotero.ui.widgets.collections.updateCollectionButtons = function(el){
+    if(!el){
+        el = J("body");
+    }
+    jel = J(el);
     
-    //get Zotero.Library object if already bound to element
-    var library = Zotero.ui.getAssociatedLibrary(el);
-    
-    //sync collections if loaded from cache but not synced
-    if(library.collections.loaded && (!library.collections.synced)){
-        Z.debug("collections loaded but not synced - loading updated", 1);
-        return library.loadUpdatedCollections()
-        .then(function(){
-            Zotero.nav.doneLoading(el);
-            Zotero.ui.eventful.trigger("libraryCollectionsUpdated");
-        },
-        function(){
-            //sync failed, but we already had some data, so show that
-            Zotero.ui.eventful.trigger("libraryCollectionsUpdated");
-        });
+    //enable modify and delete only if collection is selected
+    if(Zotero.state.getUrlVar("collectionKey")){
+        jel.find(".update-collection-button").removeClass('disabled');
+        jel.find(".delete-collection-button").removeClass('disabled');
     }
-    else if(library.collections.loaded){
-        Zotero.ui.eventful.trigger("libraryCollectionsUpdated");
-        return Promise.resolve();
-    }
-
-    //if no cached or loaded data, load collections from the api
-    return library.loadCollections()
-    .then(function(){
-        Zotero.nav.doneLoading(el);
-        jel.data('loaded', true);
-        Zotero.ui.eventful.trigger("libraryCollectionsUpdated");
-        Zotero.nav.doneLoading(el);
-    },
-    function(response){
-        Z.debug("FAILED SYNC COLLECTIONS REQUEST");
-        var elementMessage = Zotero.ui.ajaxErrorMessage(response.jqxhr);
-        jel.html("<p>" + elementMessage + "</p>");
-    });
-};
-
-/**
- * jQueryUI version of updateCollectionButtons
- * Update enabled/disabled for collection buttons based on context
- * @return {undefined}
- */
-Zotero.ui.updateCollectionButtons = function(el){
-    if(Zotero.config.jqueryui === false){
-        if(!el){
-            el = J("body");
-        }
-        jel = J(el);
-        
-        //enable modify and delete only if collection is selected
-        if(Zotero.nav.getUrlVar("collectionKey")){
-            jel.find(".update-collection-button").removeClass('disabled');
-            jel.find(".delete-collection-button").removeClass('disabled');
-        }
-        else{
-            jel.find(".update-collection-button").addClass('disabled');
-            jel.find(".delete-collection-button").addClass('disabled');
-        }
-    }
-    else {
-        var editCollectionsButtonsList = J(".edit-collections-buttons-list");
-        editCollectionsButtonsList.buttonset().show();
-        
-        //enable modify and delete only if collection is selected
-        J("#edit-collections-buttons-div").buttonset();
-        
-        J(".create-collection-link").button('option', 'icons', {primary:'sprite-toolbar-collection-add'}).button('option', 'text', false);
-        J(".update-collection-link").button('option', 'icons', {primary:'sprite-toolbar-collection-edit'}).button('option', 'text', false);
-        J(".delete-collection-link").button('option', 'icons', {primary:'sprite-folder_delete'}).button('option', 'text', false);
-        
-        if(Zotero.nav.getUrlVar("collectionKey")){
-            J(".update-collection-link").button('enable');
-            J(".delete-collection-link").button('enable');
-        }
-        else{
-            J(".update-collection-link").button().button('disable');
-            J(".delete-collection-link").button().button('disable');
-        }
+    else{
+        jel.find(".update-collection-button").addClass('disabled');
+        jel.find(".delete-collection-button").addClass('disabled');
     }
 };
 
@@ -146,23 +92,19 @@ Zotero.ui.updateCollectionButtons = function(el){
  * @param  {Zotero_Collections} collections Zotero_Collections to display
  * @return {undefined}
  */
-Zotero.ui.renderCollectionList = function(el, collections){
-    Z.debug("Zotero.ui.renderCollectionList", 1);
-    Z.debug("library Identifier " + collections.libraryUrlIdentifier, 1);
-    var jel = J(el);
-    var currentCollectionKey = Zotero.nav.getUrlVar('collectionKey') || '';
+Zotero.ui.widgets.collections.renderCollectionList = function(el, collections){
+    Z.debug("Zotero.ui.renderCollectionList", 3);
+    var widgetEl = J(el);
+    var currentCollectionKey = Zotero.state.getUrlVar('collectionKey') || '';
     var trash = collections.owningLibrary.libraryType == 'user' ? true : false;
     //var ncollections = collections.nestedOrderingArray();
-    jel.append( J('#collectionlistTemplate').render({collections:collections.collectionsArray,
+    widgetEl.append( J('#collectionlistTemplate').render({collections:collections.collectionsArray,
                                         libUrlIdentifier:collections.libraryUrlIdentifier,
                                         currentCollectionKey: currentCollectionKey,
                                         trash: trash
                                         //ncollections: ncollections
                                     }
                                     ) );
-    
-    
-    Zotero.ui.createOnActivePage(el);
     
 };
 
@@ -171,16 +113,16 @@ Zotero.ui.renderCollectionList = function(el, collections){
  * Bind collection links to take appropriate action instead of following link
  * @return {boolean}
  */
-Zotero.ui.bindCollectionLinks = function(){
+Zotero.ui.widgets.collections.bindCollectionLinks = function(container){
     Z.debug("Zotero.ui.bindCollectionLinks", 3);
     
-    J("#collection-list-div").on('click', "div.folder-toggle", function(e){
+    J(container).on('click', "div.folder-toggle", function(e){
         e.preventDefault();
         J(this).siblings('.collection-select-link').click();
         return false;
     });
     
-    J("#collection-list-div").on('click', ".collection-select-link", function(e){
+    J(container).on('click', ".collection-select-link", function(e){
         Z.debug("collection-select-link clicked", 4);
         e.preventDefault();
         var collection, library;
@@ -189,18 +131,18 @@ Zotero.ui.bindCollectionLinks = function(){
         if(J(this).hasClass('current-collection')) {
             var expanded = J('.current-collection').data('expanded');
             if(expanded === true){
-                Zotero.ui.nestHideCollectionTree(J("#collection-list-container"), false);
+                Zotero.ui.widgets.collections.nestHideCollectionTree(J("#collection-list-container"), false);
             }
             else{
-                Zotero.ui.nestHideCollectionTree(J("#collection-list-container"), true);
+                Zotero.ui.widgets.collections.nestHideCollectionTree(J("#collection-list-container"), true);
             }
             
             //go back to items list
-            Zotero.nav.clearUrlVars(['collectionKey', 'mode']);
+            Zotero.state.clearUrlVars(['collectionKey', 'mode']);
             
             //change the mobile page if we didn't just expand a collection
-            if( !(Zotero.config.mobile && (Zotero.nav.getUrlVar('mode') != 'edit'))){
-                Zotero.nav.pushState();
+            if( !(Zotero.config.mobile && (Zotero.state.getUrlVar('mode') != 'edit'))){
+                Zotero.state.pushState();
             }
             
             //cancel action for expando link behaviour
@@ -210,21 +152,17 @@ Zotero.ui.bindCollectionLinks = function(){
         
         //Not currently selected collection
         Z.debug("click " + collectionKey, 4);
-        Zotero.nav.clearUrlVars(['mode']);
-        Zotero.nav.urlvars.pathVars['collectionKey'] = collectionKey;
+        Zotero.state.clearUrlVars(['mode']);
+        Zotero.state.pathVars['collectionKey'] = collectionKey;
         
-        Zotero.nav.pushState();
+        Zotero.state.pushState();
         return false;
     });
-
-    J("#collection-list-div").on('click', "a.my-library", function(e){
+    
+    J(container).on('click', "a.my-library", function(e){
         e.preventDefault();
-        Zotero.nav.clearUrlVars(['mode']);
-        if(Zotero.config.mobile){
-            Zotero.ui.mobile.changePage("#library-items-page", {'changeHash':false});
-        }
-        
-        Zotero.nav.pushState();
+        Zotero.state.clearUrlVars(['mode']);
+        Zotero.state.pushState();
         return false;
     });
 };
@@ -238,8 +176,8 @@ Zotero.ui.bindCollectionLinks = function(){
  * @param  {boolean} expandSelected Show or hide the currently selected collection
  * @return {undefined}
  */
-Zotero.ui.nestHideCollectionTree = function(el, expandSelected){
-    Z.debug("nestHideCollectionTree");
+Zotero.ui.widgets.collections.nestHideCollectionTree = function(el, expandSelected){
+    Z.debug("nestHideCollectionTree", 3);
     if(typeof expandSelected == 'undefined'){
         expandSelected = true;
     }
@@ -273,33 +211,31 @@ Zotero.ui.nestHideCollectionTree = function(el, expandSelected){
                                                 
         jel.find(".current-collection").data('expanded', true);
     }
-    
-    Zotero.ui.createOnActivePage(el);
 };
 
 /**
  * Highlight the currently selected collection
  * @return {undefined}
  */
-Zotero.ui.highlightCurrentCollection = function(el){
-    Z.debug("Zotero.ui.highlightCurrentCollection", 3);
-    if(!el){
-        el = J("body");
+Zotero.ui.widgets.collections.highlightCurrentCollection = function(widgetEl){
+    Z.debug("Zotero.ui.widgets.collections.highlightCurrentCollection", 3);
+    if(!widgetEl){
+        widgetEl = J("body");
     }
-    var jel = J(el);
-    var collectionKey = Zotero.nav.getUrlVar('collectionKey');
+    var widgetEl = J(widgetEl);
+    var collectionKey = Zotero.state.getUrlVar('collectionKey');
     //unhighlight currently highlighted
-    jel.find("a.current-collection").closest("li").removeClass("current-collection");
-    jel.find("a.current-collection").removeClass("current-collection");
+    widgetEl.find("a.current-collection").closest("li").removeClass("current-collection");
+    widgetEl.find("a.current-collection").removeClass("current-collection");
     
     if(collectionKey){
         //has collection selected, highlight it
-        jel.find("a[data-collectionKey='" + collectionKey + "']").addClass("current-collection");
-        jel.find("a[data-collectionKey='" + collectionKey + "']").closest('li').addClass("current-collection");
+        widgetEl.find("a[data-collectionKey='" + collectionKey + "']").addClass("current-collection");
+        widgetEl.find("a[data-collectionKey='" + collectionKey + "']").closest('li').addClass("current-collection");
     }
     else{
-        jel.find("a.my-library").addClass("current-collection");
-        jel.find("a.my-library").closest('li').addClass("current-collection");
+        widgetEl.find("a.my-library").addClass("current-collection");
+        widgetEl.find("a.my-library").closest('li').addClass("current-collection");
     }
 };
 

@@ -7,9 +7,9 @@ Zotero.ui.init.all = function(){
     J("#content").on('click', 'a.ajax-link', function(){
         Z.debug("ajax-link clicked with href " + J(this).attr('href'), 3);
         Z.debug("pathname " + this.pathname, 4);
-        var pathvars = Zotero.nav.parsePathVars(this.pathname);
-        Zotero.nav.urlvars.pathVars = pathvars;
-        Zotero.nav.pushState();
+        var pathvars = Zotero.state.parsePathVars(this.pathname);
+        Zotero.state.pathVars = pathvars;
+        Zotero.state.pushState();
         return false;
     });
     
@@ -63,127 +63,10 @@ Zotero.ui.init.fullLibrary = function(){
     Zotero.eventful.initWidgets();
 };
 
-//initialize pagination buttons
-Zotero.ui.init.paginationButtons = function(pagination){
-    if(Zotero.config.jqueryui === false){
-        return;
-    }
-    /*
-    J("#item-pagination-div .back-item-pagination").buttonset();
-    J("#item-pagination-div .forward-item-pagination").buttonset();
-    J("#start-item-link").button({
-        text:false,
-        icons: {
-            primary: "ui-icon-seek-first"
-        }
-    });
-    J("#prev-item-link").button({
-        text:false,
-        icons: {
-            primary: "ui-icon-triangle-1-w"
-        }
-    });
-    J("#next-item-link").button({
-        text:false,
-        icons: {
-            primary: "ui-icon-triangle-1-e"
-        }
-    });
-    J("#last-item-link").button({
-        text:false,
-        icons: {
-            primary: "ui-icon-seek-end"
-        }
-    });
-    if(pagination.showFirstLink === false) {
-        J("#start-item-link").button('option', 'disabled', true);
-    }
-    if(pagination.showPrevLink === false) {
-        J("#prev-item-link").button('option', 'disabled', true);
-    }
-    if(pagination.showNextLink === false) {
-        J("#next-item-link").button('option', 'disabled', true);
-    }
-    if(pagination.showLastLink === false) {
-        J("#last-item-link").button('option', 'disabled', true);
-    }
-    */
-};
-
 Zotero.ui.init.creatorFieldButtons = function(){
-    /*
-    if(Zotero.config.mobile){
-        Zotero.ui.createOnActivePage(J("tr.creator"));
-        return;
-    }
-    if(Zotero.config.jqueryui === false){
-        return;
-    }
-    
-    
-    J(".add-remove-creator-buttons-container").buttonset();
-    J("a.switch-single-field-creator-link").button({
-        text:false,
-        icons: {
-            primary: "sprite-textfield-single"
-        }
-    });
-    J("a.switch-two-field-creator-link").button({
-        text:false,
-        icons: {
-            primary: "sprite-textfield-dual"
-        }
-    });
-    J("a.remove-creator-link").button({
-        text:false,
-        icons: {
-            primary: "sprite-minus"
-        }
-    });
-    J("a.add-creator-link").button({
-        text:false,
-        icons: {
-            primary: "sprite-plus"
-        }
-    });
-*/
 };
 
 Zotero.ui.init.editButton = function(){
-    /*
-    Z.debug("Zotero.ui.init.editButton", 3);
-    var editEl = J("#edit-checkbox");
-    if(Zotero.config.jqueryui === false){
-        if(Zotero.nav.getUrlVar('mode') == 'edit'){
-            editEl.addClass('active');
-        }
-        else{
-            editEl.removeClass('active');
-        }
-
-        if(!Zotero.nav.getUrlVar('itemKey')){
-            editEl.addClass("disabled");
-        }
-        else{
-            editEl.removeClass("disabled");
-        }
-        return;
-    }
-    
-    if(Zotero.nav.getUrlVar('mode') == 'edit'){
-        editEl.prop('checked', true);
-    }
-    else{
-        editEl.prop('checked', false);
-    }
-    editEl.button('refresh');
-    if(!Zotero.nav.getUrlVar('itemKey')){
-        editEl.button('option', 'disabled', true);
-    }
-    else{
-        editEl.button('option', 'disabled', false);
-    }
-    */
 };
 
 Zotero.ui.init.rte = function(type, autofocus, elements){

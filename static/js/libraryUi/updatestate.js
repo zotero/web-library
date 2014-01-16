@@ -3,12 +3,13 @@
  * Update the disabled state of library control toolbar buttons depending on context
  * @return {undefined}
  */
+ /*
 Zotero.ui.updateDisabledControlButtons = function(){
     Z.debug("Zotero.ui.updateDisabledControlButtons", 3);
     J(".move-to-trash-link").prop('title', 'Move to Trash');
     
     J("#create-item-link").button('option', 'disabled', false);
-    if((J(".itemlist-editmode-checkbox:checked").length === 0) && (!Zotero.nav.getUrlVar('itemKey')) ){
+    if((J(".itemlist-editmode-checkbox:checked").length === 0) && (!Zotero.state.getUrlVar('itemKey')) ){
         J(".add-to-collection-link").button('option', 'disabled', true).removeClass("ui-state-hover");
         J(".remove-from-collection-link").button('option', 'disabled', true).removeClass("ui-state-hover");
         J(".move-to-trash-link").button('option', 'disabled', true).removeClass("ui-state-hover");
@@ -21,18 +22,18 @@ Zotero.ui.updateDisabledControlButtons = function(){
         J(".add-to-collection-link").button('option', 'disabled', false).removeClass("ui-state-hover");
         J(".remove-from-collection-link").button('option', 'disabled', false).removeClass("ui-state-hover");
         J(".move-to-trash-link").button('option', 'disabled', false).removeClass("ui-state-hover");
-        if(Zotero.nav.getUrlVar('collectionKey') == 'trash'){
+        if(Zotero.state.getUrlVar('collectionKey') == 'trash'){
             J(".remove-from-trash-link").button('option', 'disabled', false).removeClass("ui-state-hover");
         }
         J("#cite-link").button('option', 'disabled', false);
         J("#export-link").button('option', 'disabled', false);
     }
     //only show remove from collection button if inside a collection
-    if(!Zotero.nav.getUrlVar("collectionKey")){
+    if(!Zotero.state.getUrlVar("collectionKey")){
         J(".remove-from-collection-link").button('option', 'disabled', true).removeClass("ui-state-hover");
     }
     //disable create item button if in trash
-    else if(Zotero.nav.getUrlVar('collectionKey') == 'trash'){
+    else if(Zotero.state.getUrlVar('collectionKey') == 'trash'){
         J("#create-item-link").button('option', 'disabled', true).removeClass('ui-state-hover');
         J(".add-to-collection-link").button('option', 'disabled', true).removeClass("ui-state-hover");
         J(".remove-from-collection-link").button('option', 'disabled', true).removeClass("ui-state-hover");
@@ -40,17 +41,7 @@ Zotero.ui.updateDisabledControlButtons = function(){
     }
     Zotero.ui.init.editButton();
 };
-
-
-
-/**
- * trigger create on actively displayed page (placeholder version of mobile function which actually does something)
- * @param  {Dom Element} el Active page element
- * @return {undefined}
- */
-Zotero.ui.createOnActivePage = function(el){
-    
-};
+*/
 
 /**
  * Trigger a ZoteroItemUpdated event on the document for zotero translators

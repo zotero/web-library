@@ -29,9 +29,9 @@ Zotero.ui.widgets.uploadDialog.show = function(e){
         var specifiedTitle = dialogEl.find("#upload-file-title-input").val();
         
         var progressCallback = function(e){
-            Z.debug('fullUpload.upload.onprogress');
+            Z.debug('fullUpload.upload.onprogress', 3);
             var percentLoaded = Math.round((e.loaded / e.total) * 100);
-            Z.debug("Upload progress event:" + e.loaded + " / " + e.total + " : " + percentLoaded + "%");
+            Z.debug("Upload progress event:" + e.loaded + " / " + e.total + " : " + percentLoaded + "%", 3);
             J("#uploadprogressmeter").val(percentLoaded);
         };
         
@@ -39,7 +39,7 @@ Zotero.ui.widgets.uploadDialog.show = function(e){
             Z.debug("uploadSuccess", 3);
             Zotero.ui.closeDialog(J("#upload-attachment-dialog"));
             Zotero.ui.eventful.trigger("uploadSuccessful");
-            Zotero.nav.pushState(true);
+            Zotero.state.pushState(true);
         };
         
         var uploadFailure = function(failure){
@@ -79,7 +79,7 @@ Zotero.ui.widgets.uploadDialog.show = function(e){
         
         //upload new copy of file if we're modifying an attachment
         //create child and upload file if we're modifying a top level item
-        var itemKey = Zotero.nav.getUrlVar('itemKey');
+        var itemKey = Zotero.state.getUrlVar('itemKey');
         var item = library.items.getItem(itemKey);
         
         if(!item.get("parentItem")){
@@ -89,7 +89,7 @@ Zotero.ui.widgets.uploadDialog.show = function(e){
             childItem.associateWithLibrary(library);
             childItem.initEmpty('attachment', 'imported_file')
             .then(function(childItem){
-                Z.debug("templateItemDeferred callback");
+                Z.debug("templateItemDeferred callback", 3);
                 childItem.set('title', specifiedTitle);
                 
                 item.uploadChildAttachment(childItem, fileInfo, file, progressCallback)
@@ -145,7 +145,7 @@ Zotero.ui.widgets.uploadDialog.show = function(e){
     });
     
     dialogEl.find("#fileuploadinput").on('change', function(je){
-        Z.debug("fileuploaddroptarget callback 1");
+        Z.debug("fileuploaddroptarget callback 1", 3);
         je.stopPropagation();
         je.preventDefault();
         var files = J(this).get(0).files;

@@ -1,8 +1,8 @@
 Zotero.ui.widgets.tags = {};
 
 Zotero.ui.widgets.tags.init = function(el){
-    Zotero.ui.eventful.listen("tagsDirty", Zotero.ui.widgets.tags.syncTagsCallback, {widgetEl: el});
-    Zotero.ui.eventful.listen("cachedDataLoaded", Zotero.ui.widgets.tags.syncTagsCallback, {widgetEl: el});
+    Zotero.ui.eventful.listen("tagsDirty", Zotero.ui.widgets.tags.syncTags, {widgetEl: el});
+    Zotero.ui.eventful.listen("cachedDataLoaded", Zotero.ui.widgets.tags.syncTags, {widgetEl: el});
     Zotero.ui.eventful.listen("libraryTagsUpdated selectedTagsChanged", Zotero.ui.widgets.tags.rerenderTags, {widgetEl: el});
     
     var container = J(el);
@@ -19,7 +19,7 @@ Zotero.ui.widgets.tags.init = function(el){
     //from autocomplete on an item
     
     //bind tag autocomplete filter in tag widget
-    container.on('keyup', "#tag-filter-input", Zotero.ui.callbacks.filterTags);
+    container.on('keyup', "#tag-filter-input", Zotero.ui.widgets.tags.filterTags);
     
     
     //send pref to website when showAllTags is toggled
@@ -27,109 +27,65 @@ Zotero.ui.widgets.tags.init = function(el){
         var show = J(this).prop('checked') ? true : false;
         Z.debug("showAllTags is " + show, 4);
         Zotero.utils.setUserPref('library_showAllTags', show);
-        Zotero.callbacks.loadTags(J("#tags-list-div"));
+        Zotero.ui.eventful.trigger('libraryTagsUpdated');
     });
     
     container.on('click', "#show-more-tags-link", function(e){
         e.preventDefault();
         var jel = J(this).closest('#tags-list-div');
         jel.data('showmore', true);
-        Zotero.callbacks.loadTags(jel);
+        Zotero.ui.eventful.trigger('libraryTagsUpdated');
     });
     container.on('click', "#show-less-tags-link", function(e){
         e.preventDefault();
         var jel = J(this).closest('#tags-list-div');
         jel.data('showmore', false);
-        Zotero.callbacks.loadTags(jel);
+        Zotero.ui.eventful.trigger('libraryTagsUpdated');
     });
     
-    
-    //bind tag autocomplete filter in tag widget
-    container.on('keyup', "#tag-filter-input", function(e){
-        Z.debug(J('#tag-filter-input').val(), 3);
-        Z.debug("value:" + J('#tag-filter-input').val(), 4);
-        var library = Zotero.ui.getAssociatedLibrary(J('#tag-filter-input').closest('.ajaxload'));
-        var libraryTagsPlainList = library.tags.plainList;
-        var matchingTagStrings = Zotero.utils.matchAnyAutocomplete(J('#tag-filter-input').val(), libraryTagsPlainList);
-        Zotero.ui.displayTagsFiltered(J('#tags-list-div'), library.tags, matchingTagStrings, []);
-        Z.debug(matchingTagStrings, 4);
-    });
 };
 
-Zotero.ui.widgets.tags.syncTagsCallback = function(event){
-    Z.debug('Zotero eventful syncTagsCallback', 1);
-    var widgetEl = event.data.widgetEl;
-    var el = widgetEl;
+Zotero.ui.widgets.tags.syncTags = function(event){
+    Z.debug('Zotero eventful syncTags', 1);
+    var widgetEl = J(event.data.widgetEl);
     var checkCached = event.data.checkCached;
     if(checkCached !== false){
         checkCached = true; //default to using the cache
     }
     
-    Zotero.nav.flagLoading(el);
-    var jel = J(el);
+    Zotero.state.flagLoading(widgetEl);
+    Zotero.ui.showSpinner(widgetEl.find('div.loading'));
     
     //get Zotero.Library object if already bound to element
-    var library = Zotero.ui.getAssociatedLibrary(el);
+    var library = Zotero.ui.getAssociatedLibrary(widgetEl);
     //clear tags if we're explicitly not using cached tags
     if(checkCached === false){
         library.tags.clear();
     }
     
-    //sync tags if loaded from cache but not synced
-    if(library.tags.loaded && (!library.tags.synced)){
-        Z.debug("tags loaded but not synced - loading updated", 3);
-        return library.loadUpdatedTags()
-        .then(function(){
-            Zotero.nav.doneLoading(el);
-            Zotero.ui.eventful.trigger("libraryTagsUpdated");
-        },
-        function(){
-            //sync failed, but we still have some local data, so show that
-            Zotero.ui.eventful.trigger("libraryTagsUpdated");
-            Zotero.nav.doneLoading(el);
-        });
-    }
-    else if(library.tags.loaded){
-        Zotero.ui.eventful.trigger("libraryTagsUpdated");
-        Zotero.nav.doneLoading(el);
-        return Promise.resolve();
-    }
-    
-    //load all tags if we don't have any cached
-    Zotero.ui.showSpinner(J(el).find('div.loading'));
-    
-    return library.loadAllTags({}, checkCached)
-    .then(function(tags){
-        Z.debug("finished loadAllTags", 3);
-        library.tags.tagsVersion = library.tags.syncState.earliestVersion;
-        if(library.tags.syncState.earliestVersion == library.tags.syncState.latestVersion){
-            library.tags.synced = true;
-        }
-        else {
-            //TODO: fetch tags ?newer=tagsVersion
-        }
-        J(el).find('div.loading').empty();
-        Z.debug(tags, 5);
-        library.tags.loaded = true;
-        //library.tags.loadedConfig = newConfig;
-        J(el).children('.loading').empty();
-        Zotero.nav.doneLoading(el);
+    //cached tags are preloaded with library if the cache is enabled
+    //this function shouldn't be triggered until that has already been done
+    return library.loadUpdatedTags()
+    .then(function(){
+        Zotero.state.doneLoading(widgetEl);
+        widgetEl.find('.loading').empty();
         Zotero.ui.eventful.trigger("libraryTagsUpdated");
     },
-    function(response){
-        var elementMessage = Zotero.ui.ajaxErrorMessage(response.jqxhr);
-        jel.html("<p>" + elementMessage + "</p>");
+    function(){
+        //sync failed, but we still have some local data, so show that
+        Zotero.ui.eventful.trigger("libraryTagsUpdated");
+        Zotero.state.doneLoading(widgetEl);
+        widgetEl.children('.loading').empty();
+        //TODO: display error as well
     });
 };
 
 Zotero.ui.widgets.tags.rerenderTags = function(event){
-    Zotero.debug("Zotero eventful rerenderTags");
-    var widgetEl = event.data.widgetEl;
-    var el = widgetEl;
-    var jel = J(el);
+    Zotero.debug("Zotero eventful rerenderTags", 3);
+    var widgetEl = J(event.data.widgetEl);
     
     // put the selected tags into an array
-    var selectedTags = Zotero.nav.getUrlVar('tag');
+    var selectedTags = Zotero.state.getUrlVar('tag');
     if(!J.isArray(selectedTags)){
         if(selectedTags) {
             selectedTags = [selectedTags];
@@ -139,10 +95,10 @@ Zotero.ui.widgets.tags.rerenderTags = function(event){
         }
     }
     
-    jel.children(".loading").empty();
-    var library = Zotero.ui.getAssociatedLibrary(el);
+    widgetEl.children(".loading").empty();
+    var library = Zotero.ui.getAssociatedLibrary(widgetEl);
     var plainList = library.tags.plainTagsList(library.tags.tagsArray);
-    Zotero.ui.displayTagsFiltered(el, library.tags, plainList, selectedTags);
+    Zotero.ui.displayTagsFiltered(widgetEl, library.tags, plainList, selectedTags);
 };
 
 //generate html for tags
@@ -155,7 +111,7 @@ Zotero.ui.widgets.tags.rerenderTags = function(event){
  * @return {undefined}
  */
 Zotero.ui.displayTagsFiltered = function(el, libtags, matchedTagStrings, selectedTagStrings){
-    Zotero.debug("Zotero.ui.displayTagsFiltered");
+    Zotero.debug("Zotero.ui.displayTagsFiltered", 3);
     Z.debug(selectedTagStrings, 4);
     var curPreString = J("#tag-filter-input").val();
     var jel = J(el);
@@ -164,7 +120,6 @@ Zotero.ui.displayTagsFiltered = function(el, libtags, matchedTagStrings, selecte
         showMore = false;
     }
     
-    //jel.empty();
     var filteredTags = [];
     var selectedTags = [];
     J.each(matchedTagStrings, function(index, matchedString){
@@ -200,21 +155,21 @@ Zotero.ui.showAllTags = function(e){
     var show = J(this).prop('checked') ? true : false;
     Z.debug("showAllTags is " + show, 4);
     Zotero.utils.setUserPref('library_showAllTags', show);
-    Zotero.callbacks.loadTags(J("#tags-list-div"));
+    Zotero.ui.eventful.trigger('libraryTagsUpdated');
 };
 
 Zotero.ui.showMoreTags = function(e){
     e.preventDefault();
     var jel = J(this).closest('#tags-list-div');
     jel.data('showmore', true);
-    Zotero.callbacks.loadTags(jel);
+    Zotero.ui.eventful.trigger('libraryTagsUpdated');
 };
 
 Zotero.ui.showFewerTags = function(e){
     e.preventDefault();
     var jel = J(this).closest('#tags-list-div');
     jel.data('showmore', false);
-    Zotero.callbacks.loadTags(jel);
+    Zotero.ui.eventful.trigger('libraryTagsUpdated');
 };
 
 
@@ -222,24 +177,21 @@ Zotero.ui.showFewerTags = function(e){
  * Bind tag links to take appropriate action rather than following the link
  * @return {undefined}
  */
-Zotero.ui.bindTagLinks = function(){
+Zotero.ui.bindTagLinks = function(container){
     Z.debug("Zotero.ui.bindTagLinks", 3);
-    J("#tags-list-div, #items-pane").on('click', 'a.tag-link', function(e){
+    J(container).on('click', 'a.tag-link', function(e){
         e.preventDefault();
         J("#tag-filter-input").val('');
-        Z.debug("tag-link clicked", 4);
         var tagtitle = J(this).attr('data-tagtitle');
-        Zotero.nav.toggleTag(tagtitle);
-        Z.debug("click " + tagtitle, 4);
-        Zotero.nav.clearUrlVars(['tag', 'collectionKey']);
-        Zotero.nav.pushState();
+        Zotero.state.toggleTag(tagtitle);
+        Zotero.state.clearUrlVars(['tag', 'collectionKey']);
+        Zotero.state.pushState();
     });
 };
 
-
-Zotero.ui.callbacks.filterTags = function(e){
-    Z.debug("Zotero.ui.callbacks.filterTags");
-    var library = Zotero.ui.getAssociatedLibrary(J('#tag-filter-input').closest('.ajaxload'));
+Zotero.ui.widgets.tags.filterTags = function(e){
+    Z.debug("Zotero.ui.widgets.tags.filterTags", 3);
+    var library = Zotero.ui.getAssociatedLibrary(J('#tag-filter-input').closest('.eventfulwidget'));
     var libraryTagsPlainList = library.tags.plainList;
     var matchingTagStrings = Zotero.utils.matchAnyAutocomplete(J('#tag-filter-input').val(), libraryTagsPlainList);
     Zotero.ui.displayTagsFiltered(J('#tags-list-div'), library.tags, matchingTagStrings, []);

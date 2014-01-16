@@ -1,7 +1,5 @@
 Zotero.nav = {};
 
-Zotero.nav._ignoreStateChange = 0;
-
 Zotero.nav.urlvars = {q:{},
                        f:{},
                        pathVars:{},
@@ -62,15 +60,11 @@ Zotero.nav.popTag = function(oldtag){
 Zotero.nav.toggleTag = function(tagtitle){
     Z.debug('Zotero.nav.toggleTag', 3);
     if(!Zotero.nav.urlvars.pathVars['tag']){
-        Z.debug("Zotero.nav.urlvars.pathVars['tag'] evaluates false");
-        Z.debug(Zotero.nav.urlvars.pathVars);
         Zotero.nav.urlvars.pathVars['tag'] = [tagtitle];
         return;
     }
     else if(J.isArray(Zotero.nav.urlvars.pathVars['tag'])) {
-        Z.debug("pathVars tag is array");
         if(J.inArray(tagtitle, Zotero.nav.urlvars.pathVars['tag']) != (-1) ){
-            Z.debug("tag already present, removing", 3);
             var newTagArray = Zotero.nav.urlvars.pathVars['tag'].filter(function(element, index, array){
                 return element != tagtitle;
             });
@@ -78,7 +72,6 @@ Zotero.nav.toggleTag = function(tagtitle){
             return;
         }
         else{
-            Z.debug("pushing tag", 3);
             Zotero.nav.urlvars.pathVars['tag'].push(tagtitle);
             return;
         }
@@ -92,7 +85,6 @@ Zotero.nav.toggleTag = function(tagtitle){
         Zotero.nav.urlvars.pathVars['tag'] = [oldValue, tagtitle];
         return;
     }
-    Z.debug("reached end of toggleTag with no satisfaction");
 };
 
 Zotero.nav.unsetUrlVar = function(unset){
@@ -105,14 +97,12 @@ Zotero.nav.unsetUrlVar = function(unset){
 
 Zotero.nav.clearUrlVars = function(except){
     Z.debug("Zotero.nav.clearUrlVars", 3);
-    Z.debug(except);
     if(!except){
         except = [];
     }
     var pathVars = Zotero.nav.urlvars.pathVars;
     J.each(pathVars, function(key, value){
         if(J.inArray(key, except) == (-1)){
-            Z.debug(key + " not in except array - deleting from pathVars");
             delete(pathVars[key]);
         }
     });
@@ -263,7 +253,6 @@ Zotero.nav.pushState = function(force, state){
     if(Zotero.nav.replacePush === true){
         Z.debug("Zotero.nav.pushState - replacePush", 3);
         Zotero.nav.replacePush = false;
-        Zotero.nav.ignoreStateChange();
         history.replaceState(s, document.title, url);
     }
     else{
@@ -301,9 +290,6 @@ Zotero.nav.replaceState = function(force, state){
     
     var url = Zotero.nav.buildUrl(urlvars, false);
     
-    //ignore the statechange event History.js will fire even though we're replacing, unless forced
-    Zotero.state.ignoreStatechange = true;
-    Zotero.nav.ignoreStateChange();
     history.replaceState(s, null, url);
     Zotero.nav.currentHref = window.location.href;
 };
@@ -313,21 +299,7 @@ Zotero.nav.updateStateTitle = function(title){
     
     document.title = title;
 };
-/*
-Zotero.nav.updateStatePageID = function(pageID){
-    Z.debug("Zotero.nav.updateStatePageID " + pageID, 3);
-    var history = window.history;
-    var curState = history.state;
-    var state = curState.data;
-    if(pageID === null || pageID === undefined){
-        pageID = '';
-    }
-    state['_zpageID'] = pageID;
-    
-    history.replaceState(state, curState.title, curState.url);
-    Zotero.state.ignoreStatechange = false;
-};
-*/
+
 Zotero.nav.getUrlVar = function(key){
     if(Zotero.nav.urlvars.pathVars.hasOwnProperty(key) && (Zotero.nav.urlvars.pathVars[key] !== '')){
         return Zotero.nav.urlvars.pathVars[key];
@@ -399,40 +371,13 @@ Zotero.nav.urlChangeCallback = function(event){
     //reparse url to set vars in Z.ajax
     Zotero.nav.parseUrlVars();
     
-    //process each dynamic element on the page
-    J(".ajaxload").each(function(index, el){
-//        try{
-            Z.debug("ajaxload element found", 3);
-            Z.debug(J(el).attr('data-function'), 3);
-            //Z.debug(el);
-            //call preload function if set
-            var prefunctionName = J(el).data('prefunction');
-            if(prefunctionName){
-                Zotero.callbacks[prefunctionName](el);
-            }
-            //if still loading then set queued and wait for it to finish before starting again
-            if(J(el).data('loading')){
-                J(el).data('queuedWaiting', true);
-            }
-            else{
-                Zotero.nav.callbackAssignedFunction(el);
-            }
-/*        }
-        catch(e){
-            Z.debug("Couldn't call ajaxload specified function", 1);
-            Z.debug(e, 1);
-        }
-*/
-    });
-    
     //check for changed variables in the url and fire events for them
     Z.debug("Checking changed variables", 3);
     var changedVars = Zotero.nav.diffState(Zotero.nav.prevHref, Zotero.nav.curHref);
-    Z.debug(changedVars);
     var widgetEvents = {};
     J.each(changedVars, function(ind, val){
         var eventString = val + "Changed";
-        Z.debug(eventString);
+        Z.debug(eventString, 3);
         //map var events to widget events
         if(Zotero.eventful.eventMap.hasOwnProperty(eventString)){
             J.each(Zotero.eventful.eventMap[eventString], function(ind, val){
@@ -453,37 +398,6 @@ Zotero.nav.urlChangeCallback = function(event){
     //Zotero.nav.curState = history.state;// History.getState();
     //Zotero.nav.currentHref = window.location.href;
     Z.debug("<<<<<<<<<<<<<<<<<<<<<<<<urlChangeCallback Done>>>>>>>>>>>>>>>>>>>>>", 3);
-};
-
-Zotero.nav.urlAlwaysCallback = function(el){
-    Z.debug("_____________urlAlwaysCallback________________", 3);
-    
-    //reparse url to set vars in Z.ajax
-    Zotero.nav.parseUrlVars();
-    
-    //process each dynamic element on the page
-    J(".ajaxload.always").each(function(index, el){
-        try{
-            Z.debug("ajaxload element found", 3);
-            Z.debug(J(el).attr('data-function'), 3);
-            //call preload function if set
-            var prefunctionName = J(el).data('prefunction');
-            if(prefunctionName){
-                Zotero.callbacks[prefunctionName](el);
-            }
-            //if still loading then set queued and wait for it to finish before starting again
-            if(J(el).data('loading')){
-                J(el).data('queuedWaiting', true);
-            }
-            else{
-                Zotero.nav.callbackAssignedFunction(el);
-            }
-        }
-        catch(e){
-            Z.debug("Couldn't call ajaxload specified function", 1);
-            Z.debug(e, 1);
-        }
-    });
 };
 
 Zotero.nav.callbackAssignedFunction = function(el){
@@ -507,22 +421,6 @@ Zotero.nav.doneLoading = function(el){
 };
 
 Zotero.nav._ignoreTimer = null;
-
-Zotero.nav.ignoreStateChange = function(){
-    Z.debug("Zotero.nav.ignoreStateChange", 3);
-    if(Zotero.nav._ignoreTimer){
-        window.clearTimeout(Zotero.nav._ignoreTimer);
-    }
-    
-    Zotero.nav._ignoreStateChange++;
-    //zero semaphore automatically after .5 seconds
-    Zotero.nav._ignoreTimer = window.setTimeout(function(){
-        Z.debug("clear ignoreState semaphore", 3);
-        Zotero.nav._ignoreStateChange = 0;
-    }, 500);
-
-    return;
-};
 
 Zotero.nav.diffState = function(prevHref, curHref){
     Z.debug("Zotero.nav.diffState", 3);
@@ -566,15 +464,8 @@ Zotero.nav.diffState = function(prevHref, curHref){
 
 //function bound to history state changes that we trigger on pushState and popstate
 Zotero.nav.stateChangeCallback = function(event){
-    Z.debug("stateChangeCallback");
-    if(Zotero.nav._ignoreStateChange > 0){
-        Zotero.nav._ignoreStateChange--;
-        Zotero.nav.urlAlwaysCallback();
-        Z.debug("Statechange ignored " + Zotero.nav._ignoreStateChange, 3);
-    }
-    else{
-        Zotero.nav.urlChangeCallback(event);
-    }
+    Z.debug("stateChangeCallback", 3);
+    Zotero.nav.urlChangeCallback(event);
 };
 
 //set error handler

@@ -3,8 +3,8 @@ Zotero.ui.widgets.controlPanel = {};
 Zotero.ui.widgets.controlPanel.init = function(el){
     Z.debug("Zotero.eventful.init.controlPanel", 3);
     Zotero.ui.showControlPanel(el);
-    Zotero.ui.eventful.listen("controlPanelContextChange selectedItemsChanged", Zotero.ui.updateDisabledControlButtons);
-    Zotero.ui.eventful.listen("selectedCollectionChanged", Zotero.ui.updateCollectionButtons);
+    Zotero.ui.eventful.listen("controlPanelContextChange", Zotero.ui.updateDisabledControlButtons);
+    Zotero.ui.eventful.listen("selectedItemsChanged", Zotero.ui.widgets.controlPanel.selectedItemsChanged);
     
     Zotero.ui.eventful.listen("removeFromCollection", Zotero.ui.callbacks.removeFromCollection);
     Zotero.ui.eventful.listen("moveToTrash", Zotero.ui.callbacks.moveToTrash);
@@ -14,8 +14,8 @@ Zotero.ui.widgets.controlPanel.init = function(el){
     
     var container = J(el);
     //set initial state of search input to url value
-    if(Zotero.nav.getUrlVar('q')){
-        container.find("#header-search-query").val(Zotero.nav.getUrlVar('q'));
+    if(Zotero.state.getUrlVar('q')){
+        container.find("#header-search-query").val(Zotero.state.getUrlVar('q'));
     }
     
     //clear libary query param when field cleared
@@ -43,15 +43,15 @@ Zotero.ui.widgets.controlPanel.init = function(el){
     //set up search submit for library
     container.on('submit', "#library-search", function(e){
         e.preventDefault();
-        Zotero.nav.clearUrlVars(['collectionKey', 'tag', 'q', 'qmode']);
+        Zotero.state.clearUrlVars(['collectionKey', 'tag', 'q', 'qmode']);
         var query     = J("#header-search-query").val();
         var searchType = J("#header-search-query").data('searchtype');
-        if(query !== "" || Zotero.nav.getUrlVar('q') ){
-            Zotero.nav.urlvars.pathVars['q'] = query;
+        if(query !== "" || Zotero.state.getUrlVar('q') ){
+            Zotero.state.pathVars['q'] = query;
             if(searchType != "simple"){
-                Zotero.nav.urlvars.pathVars['qmode'] = searchType;
+                Zotero.state.pathVars['qmode'] = searchType;
             }
-            Zotero.nav.pushState();
+            Zotero.state.pushState();
         }
         return false;
     });
@@ -66,12 +66,21 @@ Zotero.ui.widgets.controlPanel.updateDisabledControlButtons = function(){
     Zotero.ui.updateDisabledControlButtons();
 };
 
+Zotero.ui.widgets.controlPanel.selectedItemsChanged = function(event){
+    Z.debug("Zotero.ui.widgets.controlPanel.selectedItemsChanged", 3);
+    var selectedItemKeys = event.selectedItemKeys;
+    if(!selectedItemKeys){
+        selectedItemKeys = [];
+    }
+    Zotero.ui.updateDisabledControlButtons(selectedItemKeys);
+};
+
 Zotero.ui.clearLibraryQuery = function(){
-    Zotero.nav.unsetUrlVar('q');
-    Zotero.nav.unsetUrlVar('qmode');
+    Zotero.state.unsetUrlVar('q');
+    Zotero.state.unsetUrlVar('qmode');
     
     J("#header-search-query").val("");
-    Zotero.nav.pushState();
+    Zotero.state.pushState();
     return;
 }
 
@@ -79,12 +88,16 @@ Zotero.ui.clearLibraryQuery = function(){
  * Update the disabled state of library control toolbar buttons depending on context
  * @return {undefined}
  */
-Zotero.ui.updateDisabledControlButtons = function(){
+Zotero.ui.updateDisabledControlButtons = function(selectedItemKeys){
     Z.debug("Zotero.ui.updateDisabledControlButtons", 3);
+    if(!selectedItemKeys){
+        selectedItemKeys = [];
+    }
+    
     J(".move-to-trash-button").prop('title', 'Move to Trash');
     
     J(".create-item-button").removeClass('disabled');
-    if((J(".itemlist-editmode-checkbox:checked").length === 0) && (!Zotero.nav.getUrlVar('itemKey')) ){
+    if((selectedItemKeys.length === 0) && (!Zotero.state.getUrlVar('itemKey')) ){
         //then there are 0 items selected by checkbox and no item details are being displayed
         //disable all buttons that require an item to operate on
         J(".add-to-collection-button").addClass('disabled');
@@ -100,18 +113,18 @@ Zotero.ui.updateDisabledControlButtons = function(){
         J(".add-to-collection-button").removeClass('disabled');
         J(".remove-from-collection-button").removeClass('disabled');
         J(".move-to-trash-button").removeClass('disabled');
-        if(Zotero.nav.getUrlVar('collectionKey') == 'trash'){
+        if(Zotero.state.getUrlVar('collectionKey') == 'trash'){
             J(".remove-from-trash-button").removeClass('disabled');
         }
         J(".cite-button").removeClass('disabled');
         J(".export-button").removeClass('disabled');
     }
     //only show remove from collection button if inside a collection
-    if(!Zotero.nav.getUrlVar("collectionKey")){
+    if(!Zotero.state.getUrlVar("collectionKey")){
         J(".remove-from-collection-button").addClass('disabled');
     }
     //disable create item button if in trash
-    else if(Zotero.nav.getUrlVar('collectionKey') == 'trash'){
+    else if(Zotero.state.getUrlVar('collectionKey') == 'trash'){
         J(".create-item-button").addClass('disabled');
         J(".add-to-collection-button").addClass('disabled');
         J(".remove-from-collection-button").addClass('disabled');
@@ -119,7 +132,7 @@ Zotero.ui.updateDisabledControlButtons = function(){
     }
     Zotero.ui.init.editButton();
 };
-
+/*
 Zotero.ui.widgets.controlPanel.createItemDropdown = function(el){
     Z.debug("Zotero.eventful.init.createItemDropdown", 3);
     //order itemTypes
@@ -133,7 +146,7 @@ Zotero.ui.widgets.controlPanel.createItemDropdown = function(el){
     menuEl.empty();
     menuEl.replaceWith( J(el).find("#newitemdropdownTemplate").render({itemTypes:itemTypes}) );
 };
-
+*/
 /**
  * Toggle library edit mode when edit button clicked
  * @param  {event} e click event
@@ -141,14 +154,14 @@ Zotero.ui.widgets.controlPanel.createItemDropdown = function(el){
  */
 Zotero.ui.callbacks.toggleEdit =  function(e){
     Z.debug("edit checkbox toggled", 3);
-    var curMode = Zotero.nav.getUrlVar('mode');
+    var curMode = Zotero.state.getUrlVar('mode');
     if(curMode != "edit"){
-        Zotero.nav.urlvars.pathVars['mode'] = 'edit';
+        Zotero.state.pathVars['mode'] = 'edit';
     }
     else{
-        delete Zotero.nav.urlvars.pathVars['mode'];
+        delete Zotero.state.pathVars['mode'];
     }
-    Zotero.nav.pushState();
+    Zotero.state.pushState();
     return false;
 };
 
@@ -159,14 +172,14 @@ Zotero.ui.callbacks.toggleEdit =  function(e){
  */
 Zotero.ui.callbacks.createItem = function(e){
     Z.debug("create-item-Link clicked", 3);
-    var collectionKey = Zotero.nav.getUrlVar('collectionKey');
+    var collectionKey = Zotero.state.getUrlVar('collectionKey');
     if(collectionKey){
-        Zotero.nav.urlvars.pathVars = {action:'newItem', mode:'edit', 'collectionKey':collectionKey};
+        Zotero.state.pathVars = {action:'newItem', mode:'edit', 'collectionKey':collectionKey};
     }
     else{
-        Zotero.nav.urlvars.pathVars = {action:'newItem', mode:'edit'};
+        Zotero.state.pathVars = {action:'newItem', mode:'edit'};
     }
-    Zotero.nav.pushState();
+    Zotero.state.pushState();
     return false;
 };
 
@@ -183,7 +196,7 @@ Zotero.ui.callbacks.moveToTrash =  function(e){
     var itemKeys = Zotero.ui.getSelectedItemKeys(J("#edit-mode-items-form"));
     Z.debug(itemKeys, 3);
     
-    var library = Zotero.ui.getAssociatedLibrary(J(this).closest('div.ajaxload'));
+    var library = Zotero.ui.getAssociatedLibrary(J(this).closest('div.eventfulwidget'));
     var response;
     
     var trashingItems = library.items.getItems(itemKeys);
@@ -192,7 +205,7 @@ Zotero.ui.callbacks.moveToTrash =  function(e){
     //show spinner before making the possibly many the ajax requests
     Zotero.ui.showSpinner(J('#library-items-div'));
     
-    if(Zotero.nav.getUrlVar('collectionKey') == 'trash'){
+    if(Zotero.state.getUrlVar('collectionKey') == 'trash'){
         //items already in trash. delete them
         var i;
         for(i = 0; i < trashingItems.length; i++ ){
@@ -212,9 +225,11 @@ Zotero.ui.callbacks.moveToTrash =  function(e){
     }
     
     library.dirty = true;
-    response.always(function(){
-        Zotero.nav.clearUrlVars(['collectionKey', 'tag', 'q']);
-        Zotero.nav.pushState(true);
+    response.catch(function(){
+        
+    }).then(function(){
+        Zotero.state.clearUrlVars(['collectionKey', 'tag', 'q']);
+        Zotero.state.pushState(true);
     });
     
     return false; //stop event bubbling
@@ -231,7 +246,7 @@ Zotero.ui.callbacks.removeFromTrash =  function(e){
     var itemKeys = Zotero.ui.getSelectedItemKeys(J("#edit-mode-items-form"));
     Z.debug(itemKeys, 4);
     
-    var library = Zotero.ui.getAssociatedLibrary(J(this).closest('div.ajaxload'));
+    var library = Zotero.ui.getAssociatedLibrary(J(this).closest('div.eventfulwidget'));
     
     var untrashingItems = library.items.getItems(itemKeys);
     
@@ -241,9 +256,13 @@ Zotero.ui.callbacks.removeFromTrash =  function(e){
     var response = library.items.untrashItems(untrashingItems);
     
     library.dirty = true;
-    response.always(function(){
-        Zotero.nav.clearUrlVars(['collectionKey', 'tag', 'q']);
-        Zotero.nav.pushState(true);
+    response.catch(function(){
+        
+    }).then(function(){
+        Z.debug("post-removeFromTrash always execute: clearUrlVars", 3);
+        Zotero.state.clearUrlVars(['collectionKey', 'tag', 'q']);
+        Zotero.state.pushState();
+        Zotero.ui.eventful.trigger("displayedItemsChanged");
     });
     
     return false;
@@ -257,8 +276,8 @@ Zotero.ui.callbacks.removeFromTrash =  function(e){
 Zotero.ui.callbacks.removeFromCollection = function(e){
     Z.debug('remove-from-collection clicked', 3);
     var itemKeys = Zotero.ui.getSelectedItemKeys(J("#edit-mode-items-form"));
-    var library = Zotero.ui.getAssociatedLibrary(J(this).closest('div.ajaxload'));
-    var collectionKey = Zotero.nav.getUrlVar('collectionKey');
+    var library = Zotero.ui.getAssociatedLibrary(J(this).closest('div.eventfulwidget'));
+    var collectionKey = Zotero.state.getUrlVar('collectionKey');
     
     var modifiedItems = [];
     var responses = [];
@@ -273,8 +292,8 @@ Zotero.ui.callbacks.removeFromCollection = function(e){
     library.items.writeItems(modifiedItems)
     .then(function(){
         Z.debug('removal responses finished. forcing reload', 3);
-        Zotero.nav.clearUrlVars(['collectionKey', 'tag']);
-        Zotero.nav.pushState(true);
+        Zotero.state.clearUrlVars(['collectionKey', 'tag']);
+        Zotero.state.pushState(true);
         Zotero.ui.eventful.trigger("displayedItemsChanged");
     });
     
@@ -289,7 +308,7 @@ Zotero.ui.callbacks.removeFromCollection = function(e){
 Zotero.ui.showControlPanel = function(el){
     Z.debug("Zotero.ui.showControlPanel", 3);
     var jel = J(el);
-    var mode = Zotero.nav.getUrlVar('mode') || 'view';
+    var mode = Zotero.state.getUrlVar('mode') || 'view';
     
     if(Zotero.config.librarySettings.allowEdit === 0){
         J(".permission-edit").hide();

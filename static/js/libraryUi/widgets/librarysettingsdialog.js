@@ -2,7 +2,7 @@ Zotero.ui.widgets.librarysettingsdialog = {};
 
 Zotero.ui.widgets.librarysettingsdialog.init = function(el){
     Z.debug("librarysettingsdialog widget init", 3);
-    Zotero.ui.eventful.listen("librarySettings", Zotero.ui.widgets.librarysettingsdialog.show, {widgetEl: el});
+    Zotero.ui.eventful.listen("librarySettingsDialog", Zotero.ui.widgets.librarysettingsdialog.show, {widgetEl: el});
 };
 
 Zotero.ui.widgets.librarysettingsdialog.show = function(e){

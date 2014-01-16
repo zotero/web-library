@@ -6,11 +6,11 @@ Zotero.ui.widgets.exportItemsDialog.init = function(el){
     Zotero.ui.eventful.listen("displayedItemsChanged", Zotero.ui.widgets.exportItemsDialog.updateExportLinks, {widgetEl: el});
 };
 
-Zotero.ui.widgets.exportItemsDialog.show = function(e){
+Zotero.ui.widgets.exportItemsDialog.show = function(evt){
     Z.debug("exportitemdialog.show", 3);
-    var triggeringEl = J(e.triggeringElement);
+    var triggeringEl = J(evt.triggeringElement);
     var library = Zotero.ui.getAssociatedLibrary(triggeringEl);
-    var widgetEl = J(e.data['widgetEl']).empty();
+    var widgetEl = J(evt.data.widgetEl).empty();
     widgetEl.html( J("#exportitemsdialogTemplate").render({}) );
     var dialogEl = widgetEl.find(".export-items-dialog");
     
@@ -27,8 +27,8 @@ Zotero.ui.widgets.exportItemsDialog.updateExportLinks = function(e){
     Z.debug('exportItemsDialog.updateExportLinks', 3);
     //get list of export urls and link them
     var triggeringEl = J(e.triggeringElement);
-    var library = Zotero.ui.getAssociatedLibrary(triggeringEl);
     var widgetEl = J(e.data['widgetEl']);
+    var library = Zotero.ui.getAssociatedLibrary(widgetEl);
     
     var urlconfig = Zotero.ui.getItemsConfig(library);
     

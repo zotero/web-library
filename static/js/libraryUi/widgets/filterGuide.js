@@ -41,15 +41,15 @@ Zotero.ui.widgets.filterGuide.clearFilter = function(event){
     var query = triggeringEl.data('query');
     
     if(collectionKey){
-        Zotero.nav.unsetUrlVar('collectionKey');
+        Zotero.state.unsetUrlVar('collectionKey');
     }
     if(tag){
-        Zotero.nav.toggleTag(tag);
+        Zotero.state.toggleTag(tag);
     }
     if(query){
         Zotero.ui.eventful.trigger('clearLibraryQuery');
         return;
         //Zotero.ui.clearLibraryQuery();
     }
-    Zotero.nav.pushState();
+    Zotero.state.pushState();
 };

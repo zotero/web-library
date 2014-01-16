@@ -9,7 +9,8 @@ jQuery(document).ready(function() {
      * each ajaxload callback is responsible for determining what changes need to be made and making them
      */
     
-    Z.debug('*&^*&^*&^*&^*&^*&^*&^*&^*&^ DOM READY *&^*&^*&^*&^*&^*&^*&^*&^*&^', 3);
+    Z.debug('===== DOM READY =====', 3);
+    Zotero.state = new Zotero.State();
     Zotero.init();
 });
 
@@ -48,7 +49,7 @@ Zotero.init = function(){
         return;
     }
     
-    Zotero.nav.parseUrlVars();
+    Zotero.state.parseUrlVars();
     
     
     Zotero.config.startPageTitle = document.title;
@@ -91,7 +92,7 @@ Zotero.init = function(){
     
     J.ajaxSettings.traditional = true;
     
-    if(Zotero.nav.getUrlVar('proxy') == 'false'){
+    if(Zotero.state.getUrlVar('proxy') == 'false'){
         Zotero.config.proxy = false;
     }
     
@@ -101,29 +102,23 @@ Zotero.init = function(){
         document.cookie = "zoterojsenabled=1; expires=; path=/";
     }
     
-    //J(window).bind('statechange', Zotero.nav.urlChangeCallback);
+    //J(window).bind('statechange', Zotero.state.urlChangeCallback);
     // Bind to StateChange Event
-    //History.Adapter.bind(window,'statechange', Zotero.nav.stateChangeCallback); // Note: We are using statechange instead of popstate
+    //History.Adapter.bind(window,'statechange', Zotero.state.stateChangeCallback); // Note: We are using statechange instead of popstate
     window.onpopstate = function(){
         Z.debug("popstate");
         J(window).trigger('statechange');
     };
-    J(window).on('statechange', Zotero.nav.stateChangeCallback);
+    J(window).on('statechange', J.proxy(Zotero.state.stateChangeCallback, Zotero.state));
     
     //call urlChangeCallback on first load since some browsers don't popstate onload
-    Zotero.nav.urlChangeCallback();
+    Zotero.state.urlChangeCallback();
     
 };
 
 //set up Zotero config and preferences based on passed in object
 Zotero.loadConfig = function(config){
     //set up user config defaults
-    
-    if(config.mobile){
-        Zotero.config.mobile = true;
-        //let selectMobilePage know this is an initial pageload
-        Zotero.state.mobilePageFirstLoad = true;
-    }
     
     if(typeof zoterojsClass !== 'undefined'){
         Zotero.config.pageClass = zoterojsClass;

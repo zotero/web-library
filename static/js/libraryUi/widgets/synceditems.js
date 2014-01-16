@@ -6,69 +6,91 @@ Zotero.ui.widgets.syncedItems.init = function(el){
     Zotero.ui.eventful.listen("changeItemSorting", Zotero.ui.callbacks.resortItems, {widgetEl: el});
     
     //listen for local items dirty and push if we have a connection
-    Zotero.ui.eventful.listen("localItemsChanged", Zotero.ui.widgets.syncedItems.syncItemsCallback, {widgetEl: el});
+    Zotero.ui.eventful.listen("localItemsChanged", Zotero.ui.widgets.syncedItems.syncItems, {widgetEl: el});
     //listen for request to update remote items
-    Zotero.ui.eventful.listen("remoteItemsRequested", Zotero.ui.widgets.syncedItems.syncItemsCallback, {widgetEl: el});
-    Zotero.ui.eventful.listen("syncLibrary", Zotero.ui.widgets.syncedItems.syncItemsCallback, {widgetEl: el});
+    Zotero.ui.eventful.listen("remoteItemsRequested", Zotero.ui.widgets.syncedItems.syncItems, {widgetEl: el});
+    Zotero.ui.eventful.listen("syncLibrary", Zotero.ui.widgets.syncedItems.syncItems, {widgetEl: el});
     //listen for request to display different items
     
     Zotero.ui.eventful.listen("displayedItemsChanged", Zotero.ui.widgets.syncedItems.updateDisplayedItems, {widgetEl: el});
     Zotero.ui.eventful.listen("displayedItemsUpdated", Zotero.ui.widgets.syncedItems.displayItems, {widgetEl: el});
     
-    Zotero.ui.eventful.listen("cachedDataLoaded", Zotero.ui.widgets.syncedItems.syncItemsCallback, {widgetEl: el});
+    Zotero.ui.eventful.listen("cachedDataLoaded", Zotero.ui.widgets.syncedItems.syncItems, {widgetEl: el});
     //Zotero.ui.eventful.trigger("remoteItemsRequested");
     
     //set up sorting on header clicks
     var container = J(el);
     //container.on('click', ".field-table-header", Zotero.ui.callbacks.resortItemsLocal);
+    
     Zotero.ui.bindItemLinks();
     
-};
-
-Zotero.ui.widgets.syncedItems.syncItemsCallback = function(event){
-    Zotero.debug("Zotero eventful syncItemsCallback");
-    var widgetEl = event.data.widgetEl;
-    var el = widgetEl;
-    var jel = J(el);
-    
-    //get Zotero.Library object if already bound to element
-    var library = Zotero.ui.getAssociatedLibrary(el);
-    
-    //sync items if loaded from cache but not synced
-    if(library.items.loaded && (!library.items.synced)){
-        Z.debug("items loaded but not synced - loading updated", 3);
-        return library.loadUpdatedItems()
-        .then(function(){
-            Zotero.nav.doneLoading(el);
-            Zotero.ui.eventful.trigger("libraryItemsUpdated");
-            Zotero.ui.eventful.trigger("displayedItemsChanged");
-        });
-    }
-    else if(library.items.loaded){
-        return Promise.resolve();
-    }
-    
-    //if no cached or loaded data, load items from the api
-    //Should display visible warning to user that this could take a while
-    //or we need to figure out how we want to start with just an online widget
-    //then change to the synced widget when we're ready. Perhaps synced should
-    //only be for apps or special request so just displaying the warning would
-    //be acceptable.
-    Z.debug("Syncing items for first time, this may take a while.");
-    library.loadUpdatedItems()
-    .then(function(response){
-        Zotero.nav.doneLoading(el);
-        jel.data('loaded', true);
-        Zotero.ui.eventful.trigger("libraryItemsUpdated");
-        Zotero.nav.doneLoading(el);
-    },
-    function(response){
-        var elementMessage = Zotero.ui.ajaxErrorMessage(response.jqxhr);
-        jel.html("<p>" + elementMessage + "</p>");
+    //check/uncheck all boxes in items table when master checkbox is toggled
+    container.on('change', ".itemlist-editmode-checkbox.all-checkbox", function(e){
+        J(".itemlist-editmode-checkbox").prop('checked', J(".itemlist-editmode-checkbox.all-checkbox").prop('checked'));
+        Zotero.ui.updateDisabledControlButtons();
+        Zotero.ui.eventful.trigger("selectedItemsChanged");
     });
     
-    return;
+    //init itemkey-checkbox to enable/disable buttons that require something being selected
+    container.on('change', "input.itemKey-checkbox", function(e){
+        Zotero.ui.updateDisabledControlButtons();
+        var selectedItemKeys = [];
+        J("input.itemKey-checkbox:checked").each(function(index, el){
+            selectedItemKeys.push(J(el).data('itemkey'));
+        });
+        Zotero.ui.eventful.trigger("selectedItemsChanged", {selectedItemKeys: selectedItemKeys});
+    });
     
+    Zotero.ui.widgets.syncedItems.bindPaginationLinks(container);
+};
+
+Zotero.ui.widgets.syncedItems.syncItems = function(event){
+    Zotero.debug("Zotero eventful syncItems", 3);
+    var widgetEl = J(event.data.widgetEl);
+    
+    //get Zotero.Library object if already bound to element
+    var library = Zotero.ui.getAssociatedLibrary(widgetEl);
+    
+    //sync items if loaded from cache but not synced
+    return library.loadUpdatedItems()
+    .then(function(){
+        Zotero.state.doneLoading(widgetEl);
+        Zotero.ui.eventful.trigger("libraryItemsUpdated");
+        Zotero.ui.eventful.trigger("displayedItemsChanged");
+    });
+};
+
+Zotero.ui.widgets.syncedItems.bindPaginationLinks = function(container){
+    container.on('click', "#start-item-link", function(e){
+        e.preventDefault();
+        Zotero.state.pathVars['itemPage'] = '';
+        Zotero.state.pushState();
+    });
+    container.on('click', "#prev-item-link", function(e){
+        e.preventDefault();
+        var itemPage = Zotero.state.getUrlVar('itemPage') || '1';
+        itemPage = parseInt(itemPage, 10);
+        var newItemPage = itemPage - 1;
+        Zotero.state.pathVars['itemPage'] = newItemPage;
+        Zotero.state.pushState();
+    });
+    container.on('click', "#next-item-link", function(e){
+        e.preventDefault();
+        var itemPage = Zotero.state.getUrlVar('itemPage') || '1';
+        itemPage = parseInt(itemPage, 10);
+        var newItemPage = itemPage + 1;
+        Zotero.state.pathVars['itemPage'] = newItemPage;
+        Zotero.state.pushState();
+    });
+    container.on('click', "#last-item-link", function(e){
+        e.preventDefault();
+        Z.debug("last-item-link clickbind", 4);
+        var pagehref = J(e.currentTarget).attr('href');
+        var pathVars = Zotero.state.parsePathVars(pagehref);
+        var lastItemPage = pathVars.itemPage;
+        Zotero.state.pathVars['itemPage'] = lastItemPage;
+        Zotero.state.pushState();
+    });
 };
 
 Zotero.ui.widgets.syncedItems.updateDisplayedItems = function(event){
@@ -80,7 +102,7 @@ Zotero.ui.widgets.syncedItems.updateDisplayedItems = function(event){
     var library = Zotero.ui.getAssociatedLibrary(widgetEl);
     var newConfig = Zotero.ui.getItemsConfig(library);
     
-    var displayParams = Zotero.nav.getUrlVars();
+    var displayParams = Zotero.state.getUrlVars();
     library.buildItemDisplayView(displayParams); //displayedItemsUpdated triggered from here
 };
 
@@ -90,5 +112,5 @@ Zotero.ui.widgets.syncedItems.displayItems = function(event){
     var newConfig = Zotero.ui.getItemsConfig(library);
     
     widgetEl.empty();
-    Zotero.ui.displayItemsFull(widgetEl, newConfig, {itemsArray:library.items.displayItemsArray, library:library});
+    Zotero.ui.displayItems(widgetEl, newConfig, {itemsArray:library.items.displayItemsArray, library:library});
 };

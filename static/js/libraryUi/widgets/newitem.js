@@ -5,6 +5,7 @@ Zotero.ui.widgets.newItem.init = function(el){
     var widgetEl = J(el);
     Zotero.ui.eventful.listen("newItem", Zotero.ui.widgets.newItem.freshitemcallback, {widgetEl: el});
     Zotero.ui.eventful.listen("itemTypeChanged", Zotero.ui.widgets.newItem.changeItemType, {widgetEl: el});
+    Zotero.ui.eventful.listen("createItem", Zotero.ui.widgets.item.saveItemCallback, {widgetEl: el});
     widgetEl.on('change', 'select.itemType', function(e){
         Zotero.ui.eventful.trigger('itemTypeChanged', {triggeringElement:el});
     });
@@ -25,6 +26,8 @@ Zotero.ui.widgets.newItem.freshitemcallback = function(e){
     },
     function(response){
         Zotero.ui.jsNotificationMessage("Error loading item template", 'error');
+        Z.debug(response);
+        Z.debug(response.jqxhr.statusCode);
     });
 };
 
@@ -32,6 +35,7 @@ Zotero.ui.unassociatedItemForm = function(el, item){
     Z.debug("Zotero.ui.unassociatedItem", 3);
     Z.debug(item, 3);
     var container = J(el);
+    var library = Zotero.ui.getAssociatedLibrary(el);
     
     //make alphabetical itemTypes list
     var itemTypes = [];
@@ -45,7 +49,7 @@ Zotero.ui.unassociatedItemForm = function(el, item){
     .then(function(itemCreatorTypes){
         container.empty();
         if(item.itemType == 'note'){
-            var parentKey = Zotero.nav.getUrlVar('parentKey');
+            var parentKey = Zotero.state.getUrlVar('parentKey');
             if(parentKey){
                 item.parentKey = parentKey;
             }
@@ -57,6 +61,7 @@ Zotero.ui.unassociatedItemForm = function(el, item){
         }
         else {
             container.append(J('#itemformTemplate').render( {item:item,
+                                        library: library,
                                         itemKey:item.itemKey,
                                         creatorTypes:itemCreatorTypes,
                                         itemTypes: itemTypes,
@@ -72,16 +77,16 @@ Zotero.ui.unassociatedItemForm = function(el, item){
             Zotero.ui.init.editButton();
         }
         
-        container.find(".directciteitembutton").bind('click', J.proxy(function(e){
+        container.find(".directciteitembutton").on('click', function(e){
             Zotero.ui.updateItemFromForm(item, container.find("form"));
             Zotero.ui.eventful.trigger('citeItems', {"zoteroItems": [item]});
-        }, this) );
-        
+        } );
+        /*
         container.on("click", "button.switch-two-field-creator-link", Zotero.ui.callbacks.switchTwoFieldCreators);
         container.on("click", "button.switch-single-field-creator-link", Zotero.ui.callbacks.switchSingleFieldCreator);
         container.on("click", "button.remove-creator-link", Zotero.ui.removeCreator);
         container.on("click", "button.add-creator-link", Zotero.ui.addCreator);
-        
+        */
         
         Z.debug("Setting newitem data on container");
         Z.debug(item);
@@ -91,7 +96,7 @@ Zotero.ui.unassociatedItemForm = function(el, item){
         //load data from previously rendered form if available
         Zotero.ui.loadFormData(container);
         
-        Zotero.ui.createOnActivePage(container);
+        Zotero.eventful.initTriggers(container);
     });
     
 };

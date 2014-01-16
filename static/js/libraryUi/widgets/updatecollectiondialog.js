@@ -2,22 +2,22 @@ Zotero.ui.widgets.updateCollectionDialog = {};
 
 Zotero.ui.widgets.updateCollectionDialog.init = function(el){
     Z.debug("updatecollectionsdialog widget init", 3);
-    Zotero.ui.eventful.listen("updateCollection", Zotero.ui.widgets.updateCollectionDialog.show, {widgetEl: el});
+    Zotero.ui.eventful.listen("updateCollectionDialog", Zotero.ui.widgets.updateCollectionDialog.show, {widgetEl: el});
 };
 
-Zotero.ui.widgets.updateCollectionDialog.show = function(e){
+Zotero.ui.widgets.updateCollectionDialog.show = function(evt){
     Z.debug("updateCollectionDialog.show", 1);
     
-    var triggeringEl = J(e.triggeringElement);
+    var triggeringEl = J(evt.triggeringElement);
     var library = Zotero.ui.getAssociatedLibrary(triggeringEl);
     var ncollections = library.collections.nestedOrderingArray();
     
-    var widgetEl = J(e.data['widgetEl']).empty();
+    var widgetEl = J(evt.data.widgetEl).empty();
     
     widgetEl.html( J("#updatecollectiondialogTemplate").render({ncollections:ncollections}) );
     var dialogEl = widgetEl.find(".update-collection-dialog");
     
-    var currentCollectionKey = Zotero.nav.getUrlVar('collectionKey');
+    var currentCollectionKey = Zotero.state.getUrlVar('collectionKey');
     var currentCollection = library.collections.getCollection(currentCollectionKey);
     var currentParentCollectionKey = currentCollection.parentCollectionKey;
     dialogEl.find(".update-collection-parent-select").val(currentParentCollectionKey);
@@ -36,7 +36,7 @@ Zotero.ui.widgets.updateCollectionDialog.show = function(e){
         .then(function(response){
             Zotero.ui.jsNotificationMessage("Collection Saved", 'confirm');
             library.collections.dirty = true;
-            Zotero.nav.pushState(true);
+            Zotero.state.pushState(true);
             Zotero.ui.closeDialog(dialogEl);
         });
     };

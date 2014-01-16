@@ -11,19 +11,21 @@ Zotero.ui.widgets.itemContainer.init = function(el){
     container.on('click', "#item-details-div .itemTypeSelectButton", function(){
         Z.debug("itemTypeSelectButton clicked", 3);
         var itemType = J("#itemType").val();
-        Zotero.nav.urlvars.pathVars['itemType'] = itemType;
-        Zotero.nav.pushState();
+        Zotero.state.pathVars['itemType'] = itemType;
+        Zotero.state.pushState();
         return false;
     });
     container.on('change', "#item-details-div .itemDetailForm #itemTypeSelect", function(){
         Z.debug("itemTypeSelect changed", 3);
         var itemType = J(this).val();
-        Zotero.nav.urlvars.pathVars['itemType'] = itemType;
-        Zotero.nav.pushState();
+        Zotero.state.pathVars['itemType'] = itemType;
+        Zotero.state.pushState();
     });
+    
+    Zotero.ui.bindTagLinks(container);
 };
 
 Zotero.ui.cancelItemEdit = function(e){
-    Zotero.nav.clearUrlVars(['itemKey', 'collectionKey', 'tag', 'q']);
-    Zotero.nav.pushState();
+    Zotero.state.clearUrlVars(['itemKey', 'collectionKey', 'tag', 'q']);
+    Zotero.state.pushState();
 };

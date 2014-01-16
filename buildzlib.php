@@ -15,7 +15,9 @@ $jsRelPath = './static/js/';
 //list of files to include
 $files = array(
 "_zoterowwwInit.js",
-"_zoteroNav.js",
+//"_zoteroNav.js",
+"State.js",
+"Delay.js",
 //"zoteroPages.js",
 "_zoteroLibraryCallbacks.js",
 "libraryUi/eventful.js",
@@ -52,9 +54,9 @@ $files = array(
 "libraryUi/widgets/libraryPreloader.js",
 "libraryUi/widgets/filterGuide.js",
 "libraryUi/widgets/progressModal.js",
-
+"libraryUi/widgets/groupsList.js",
 "_zoteroLibraryUrl.js",
-"_zoteroLibraryOffline.js"
+//"_zoteroLibraryOffline.js"
 );
 
 $fullText = "";
@@ -64,7 +66,7 @@ foreach($files as $file){
     $fullText .= "\n\n" . $ftext;
 }
 
-file_put_contents($jsRelPath . '_zoterowwwAll.js', $fullText);
+file_put_contents($jsRelPath . '/compiled/_zoterowwwAll.js', $fullText);
 
 //replace strings in libZotero JS for zotero www
 $lzSinglePath = './library/libZotero/build/libZoteroSingle.js';

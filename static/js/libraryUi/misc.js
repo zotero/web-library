@@ -9,7 +9,7 @@ Zotero.ui.updateItemFromForm = function(item, formEl){
     Z.debug("Zotero.ui.updateItemFromForm", 3);
     
     var base = J(formEl);
-    base.closest('.ajaxload, .eventfulwidget').data('ignoreformstorage', true);
+    base.closest('.eventfulwidget').data('ignoreformstorage', true);
     var library = Zotero.ui.getAssociatedLibrary(base);
     
     var itemKey = '';
@@ -19,7 +19,7 @@ Zotero.ui.updateItemFromForm = function(item, formEl){
         if(library){
             item.associateWithLibrary(library);
         }
-        var collectionKey = Zotero.nav.getUrlVar('collectionKey');
+        var collectionKey = Zotero.state.getUrlVar('collectionKey');
         if(collectionKey){
             item.addToCollection(collectionKey);
         }
@@ -129,11 +129,11 @@ Zotero.ui.saveItem = function(item) {
             
         }
         
-        delete Zotero.nav.urlvars.pathVars['action'];
-        Zotero.nav.urlvars.pathVars['itemKey'] = item.itemKey;
+        delete Zotero.state.pathVars['action'];
+        Zotero.state.pathVars['itemKey'] = item.itemKey;
         
-        Zotero.nav.clearUrlVars(['itemKey', 'collectionKey']);
-        Zotero.nav.pushState(true);
+        Zotero.state.clearUrlVars(['itemKey', 'collectionKey']);
+        Zotero.state.pushState(true);
     });
     
     //update list of tags we have if new ones added
@@ -159,7 +159,7 @@ Zotero.ui.saveItem = function(item) {
  */
 Zotero.ui.saveFormData = function(){
     Z.debug("saveFormData", 3);
-    J(".ajaxload").each(function(){
+    J(".eventfulwidget").each(function(){
         var formInputs = J(this).find('input');
         J(this).data('tempformstorage', formInputs);
     });
@@ -226,7 +226,7 @@ Zotero.ui.itemTypeClass = function(item) {
 Zotero.ui.createPagination = function(feed, pageVar, config){
     
     //set relevant config vars to find pagination values
-    var page = parseInt(Zotero.nav.getUrlVar(pageVar), 10) || 1;
+    var page = parseInt(Zotero.state.getUrlVar(pageVar), 10) || 1;
     var start = parseInt(config.start, 10) || 0;
     var limit = parseInt(config.limit, 10) || 25;
     var totalResults = parseInt(feed.totalResults, 10);
@@ -245,13 +245,13 @@ Zotero.ui.createPagination = function(feed, pageVar, config){
     pagination.showLastLink = totalResults > (lastDisplayed );
     
     var mutateOb = {};
-    pagination.firstLink = Zotero.nav.mutateUrl(mutateOb, [pageVar]);
+    pagination.firstLink = Zotero.state.mutateUrl(mutateOb, [pageVar]);
     mutateOb[pageVar] = page - 1;
-    pagination.prevLink = Zotero.nav.mutateUrl(mutateOb, []);
+    pagination.prevLink = Zotero.state.mutateUrl(mutateOb, []);
     mutateOb[pageVar] = page + 1;
-    pagination.nextLink = Zotero.nav.mutateUrl(mutateOb, []);
+    pagination.nextLink = Zotero.state.mutateUrl(mutateOb, []);
     mutateOb[pageVar] = feed.lastPage;
-    pagination.lastLink = Zotero.nav.mutateUrl(mutateOb, []);
+    pagination.lastLink = Zotero.state.mutateUrl(mutateOb, []);
     
     pagination.start = start;
     pagination.lastDisplayed = Math.min(lastDisplayed, totalResults);
@@ -262,7 +262,7 @@ Zotero.ui.createPagination = function(feed, pageVar, config){
 };
 
 /**
- * Get the Zotero Library associated with an element (generally a .ajaxload element)
+ * Get the Zotero Library associated with an element (generally a .eventfulwidget element)
  * @param  {Dom Element} el Dom element
  * @return {Zotero_Library}
  */
@@ -270,15 +270,15 @@ Zotero.ui.getAssociatedLibrary = function(el){
     Z.debug("Zotero.ui.getAssociatedLibrary", 3);
     var jel;
     if(typeof el == 'undefined'){
-        jel = J("#library-items-div");
+        jel = J(".zotero-library").first();
     }
     else {
         jel = J(el);
         if(jel.length === 0 || jel.is("#eventful") ){
-            jel = J("#library-items-div");
+            jel = J(".zotero-library").first();
             if(jel.length === 0){
                 Z.debug("No element passed and no default found for getAssociatedLibrary.");
-                throw "No element passed and no default found for getAssociatedLibrary.";
+                throw new Error("No element passed and no default found for getAssociatedLibrary.");
             }
         }
     }
@@ -288,6 +288,17 @@ Zotero.ui.getAssociatedLibrary = function(el){
     if(!library){
         //try getting it from a libraryString included on DOM element
         var libString = J(el).data('library');
+        if(libString){
+            if(Zotero.libraries.hasOwnProperty(libString)){
+                library = Zotero.libraries[libString];
+            }
+            else{
+                var libConfig = Zotero.utils.parseLibString(libString);
+                library = new Zotero.Library(libConfig.libraryType, libConfig.libraryID);
+                Zotero.libraries[libString] = library;
+            }
+        }
+        /*
         if(libString && Zotero.libraries.hasOwnProperty(libString)){
             library = Zotero.libraries[libString];
         }
@@ -298,7 +309,7 @@ Zotero.ui.getAssociatedLibrary = function(el){
             var libraryUrlIdentifier = loadConfig.libraryUrlIdentifier;
             if(!libraryID || !libraryType) {
                 Z.debug("Bad library data attempting to get associated library: libraryID " + libraryID + " libraryType " + libraryType, 1);
-                throw "Err";
+                throw new Error("Bad library data attempting to get associated library: libraryID " + libraryID + " libraryType " + libraryType);
             }
             if(Zotero.libraries[Zotero.utils.libraryString(libraryType, libraryID)]){
                 library = Zotero.libraries[Zotero.utils.libraryString(libraryType, libraryID, libraryUrlIdentifier)];
@@ -312,6 +323,7 @@ Zotero.ui.getAssociatedLibrary = function(el){
             var libData= Zotero.ui.parseLibString(libString);
             library = new Zotero.Library(libData.libraryType, libData.libraryID, "");
         }
+        */
         jel.data('zoterolibrary', library);
     }
     return library;
@@ -338,7 +350,7 @@ Zotero.ui.getEventLibrary = function(e){
     library = new Zotero.Library(libConfig.libraryType, libConfig.libraryID, '');
     Zotero.libraries[Zotero.utils.libraryString(libraryType, libraryID)] = library;
 };
-
+/*
 Zotero.ui.parseLibString = function(s){
     var libraryType, libraryID;
     if(s[0] == "u"){
@@ -350,14 +362,14 @@ Zotero.ui.parseLibString = function(s){
     libraryID = s.slice(1);
     return {libraryType:libraryType, libraryID:libraryID};
 };
-
+*/
 /**
  * Get the highest priority variable named key set from various configs
  * @param  {[type]} key [description]
  * @return {[type]}     [description]
  */
 Zotero.ui.getPrioritizedVariable = function(key, defaultVal){
-    var val = Zotero.nav.getUrlVar(key) || Zotero.preferences.getPref(key) || Zotero.config.defaultApiArgs[key] || defaultVal;
+    var val = Zotero.state.getUrlVar(key) || Zotero.preferences.getPref(key) || Zotero.config.defaultApiArgs[key] || defaultVal;
     return val;
 };
 
@@ -369,7 +381,7 @@ Zotero.ui.scrollToTop = function(){
     window.scrollBy(0, -5000);
 };
 
-//get the nearest ancestor that is either eventfulwidget or .ajaxload
+//get the nearest ancestor that is eventfulwidget
 Zotero.ui.parentWidgetEl = function(el){
     var matching;
     if(el.hasOwnProperty('data') && el.data.hasOwnProperty('widgetEl')){
@@ -377,7 +389,7 @@ Zotero.ui.parentWidgetEl = function(el){
         return J(el.data.widgetEl);
     } else if(el.hasOwnProperty('currentTarget')){
         Z.debug("event currentTarget set");
-        matching = J(el.currentTarget).closest(".eventfulwidget, .ajaxload");
+        matching = J(el.currentTarget).closest(".eventfulwidget");
         if(matching.length > 0){
             return matching.first();
         } else {
@@ -387,7 +399,7 @@ Zotero.ui.parentWidgetEl = function(el){
         }
     }
     
-    matching = J(el).closest(".eventfulwidget, .ajaxload");
+    matching = J(el).closest(".eventfulwidget");
     if(matching.length > 0){
         Z.debug("returning first closest widget");
         return matching.first();

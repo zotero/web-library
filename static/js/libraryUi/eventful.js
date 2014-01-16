@@ -18,19 +18,56 @@ Zotero.ui.eventful.listen = function(events, handler, data){
     J("#eventful").on(events, null, data, handler);
 };
 
-
 Zotero.eventful = {};
-Zotero.eventful.init = {};
 
 Zotero.eventful.events = [
-    "collectionsDirty",
+    "collectionsDirty", //collections have been updated and should be synced
+    "tagsChanged", //library.tags has been updated in some way
+    "displayedItemsChanged", //filters for items list have changed
+    "displayedItemChanged", //item selected for detailed view has changed
+    "selectedItemsChanged", //items selected by checkbox for action have changed
+    "showCitations", //request to show the citations for currently selected items
+    "showSettings", //request to show settings panel
+    "exportItems", //request to export currently selected items
+    "libraryTagsUpdated",
+    "uploadSuccessful",
+    "refreshGroups",
+    "clearLibraryQuery",
+    "libraryItemsUpdated",
+    "citeItems",
+    "itemTypeChanged",
+    "addTag",
+    "showChildren",
+    "selectCollection",
+    "selectedCollectionChanged",
+    "libraryCollectionsUpdated",
+    "loadItemsDone",
+    "collectionsChanged",
     "tagsChanged",
-    "displayedItemsChanged",
-    "displayedItemChanged",
-    "selectedItemsChanged",
-    "showCitations",
-    "showSettings",
-    "exportItems"
+    "itemsChanged",
+    "loadedCollectionsProcessed",
+    "deleteProgress",
+    "settingsLoaded",
+    "cachedDataLoaded",
+    //eventfultriggers:
+    "createItem",
+    "newItem",
+    "addToCollectionDialog",
+    "removeFromCollection",
+    "moveToTrash",
+    "removeFromTrash",
+    "toggleEdit",
+    "clearLibraryQuery",
+    "librarySettingsDialog",
+    "citeItems",
+    "exportItemsDialog",
+    "syncLibrary",
+    "createCollectionDialog",
+    "updateCollectionDialog",
+    "deleteCollectionDialog",
+    "showMoreTags",
+    "showFewerTags",
+    
 ];
 
 Zotero.eventful.eventMap = {
@@ -44,18 +81,13 @@ Zotero.eventful.eventMap = {
 };
 
 Zotero.eventful.initWidgets = function(){
-    Zotero.nav.parsePathVars();
+    Zotero.state.parsePathVars();
     
     J(".eventfulwidget").each(function(ind, el){
-        var fnName = J(el).data("function");
-        if(Zotero.eventful.init.hasOwnProperty(fnName)){
-            Z.debug("CALLING EVENTFUL INIT: " + fnName);
-            Zotero.eventful.init[fnName](el);
-        }
-        
         var widgetName = J(el).data("widget");
         if(widgetName && Zotero.ui.widgets[widgetName]){
             if(Zotero.ui.widgets[widgetName]['init']){
+                Z.debug("eventfulwidget init: " + widgetName, 3);
                 Zotero.ui.widgets[widgetName].init(el);
             }
         }
@@ -88,7 +120,7 @@ Zotero.eventful.initTriggers = function(el){
         Z.debug("triggerOnEvent", 3);
         event.preventDefault();
         eventName = J(event.delegateTarget).data("triggers");
-        Z.debug("eventName: " + eventName);
+        Z.debug("eventName: " + eventName, 3);
         Zotero.ui.eventful.trigger(eventName, {triggeringElement:event.currentTarget});
     };
     

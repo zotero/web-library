@@ -6,17 +6,17 @@ Zotero.ui.widgets.citeItemDialog.init = function(el){
     Zotero.ui.eventful.listen("citeItems", Zotero.ui.widgets.citeItemDialog.show, {widgetEl: el});
 };
 
-Zotero.ui.widgets.citeItemDialog.show = function(e){
+Zotero.ui.widgets.citeItemDialog.show = function(evt){
     Z.debug("citeItemDialog.show", 3);
-    var triggeringEl = J(e.triggeringElement);
+    var triggeringEl = J(evt.triggeringElement);
     var hasIndependentItems = false;
     var cslItems = [];
     var library;
     
     //check if event is carrying item data with it
-    if(e.hasOwnProperty("zoteroItems")){
+    if(evt.hasOwnProperty("zoteroItems")){
         hasIndependentItems = true;
-        J.each(e.zoteroItems, function(ind, item){
+        J.each(evt.zoteroItems, function(ind, item){
             var cslItem = item.cslItem();
             cslItems.push(cslItem);
         });
@@ -25,14 +25,14 @@ Zotero.ui.widgets.citeItemDialog.show = function(e){
         library = Zotero.ui.getAssociatedLibrary(triggeringEl);
     }
     
-    var widgetEl = J(e.data['widgetEl']).empty();
+    var widgetEl = J(evt.data.widgetEl).empty();
     widgetEl.html( J("#citeitemdialogTemplate").render({freeStyleInput:true}) );
     var dialogEl = widgetEl.find(".cite-item-dialog");
     
     var citeFunction = function(e){
         Z.debug("citeFunction", 3);
         //Zotero.ui.showSpinner(dialogEl.find(".cite-box-div"));
-        var triggeringElement = J(e.currentTarget);
+        var triggeringElement = J(evt.currentTarget);
         var style = '';
         if(triggeringElement.is(".cite-item-select, input.free-text-style-input")){
             style = triggeringElement.val();

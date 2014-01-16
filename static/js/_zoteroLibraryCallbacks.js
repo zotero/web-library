@@ -12,14 +12,14 @@ Zotero.callbacks.chooseItemPane = function(el){
     var itemDetail = J("#item-details-div");
     
     //test if itemKey present and load/display item if it is
-    var itemKey = Zotero.nav.getUrlVar('itemKey');
+    var itemKey = Zotero.state.getUrlVar('itemKey');
     Z.debug("showPane itemKey : " + itemKey, 3);
     
     if(itemKey){
         //Zotero.callbacks.loadItem(J("#item-details-div"), 'user', itemKey);
         showPane = 'detail';
     }
-    else if(Zotero.nav.getUrlVar('action') == 'newItem'){
+    else if(Zotero.state.getUrlVar('action') == 'newItem'){
         showPane = 'detail';
     }
     
@@ -131,12 +131,12 @@ Zotero.callbacks.runsearch = function(el){
  */
 Zotero.callbacks.loadFilterGuide = function(el){
     Z.debug("Zotero.callbacks.loadFilterGuide", 3);
-    var tag = Zotero.nav.getUrlVar('tag');
+    var tag = Zotero.state.getUrlVar('tag');
     if(typeof tag == 'string'){
         tag = [tag];
     }
-    var collectionKey = Zotero.nav.getUrlVar('collectionKey');
-    var q = Zotero.nav.getUrlVar('q');
+    var collectionKey = Zotero.state.getUrlVar('collectionKey');
+    var q = Zotero.state.getUrlVar('q');
     
     var filters = {tag: tag, collectionKey:collectionKey, q:q};
     Zotero.ui.filterGuide(el, filters);
@@ -149,7 +149,7 @@ Zotero.callbacks.loadFilterGuide = function(el){
  */
 Zotero.callbacks.actionPanel = function(el){
     Z.debug("Zotero.callbacks.actionPanel", 3);
-    var mode = Zotero.nav.getUrlVar('mode');
+    var mode = Zotero.state.getUrlVar('mode');
     var elid = J(el).attr('id');
     if(elid == 'collections-pane-edit-panel-div'){
         if(mode == 'edit'){
