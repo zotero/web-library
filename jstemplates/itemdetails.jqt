@@ -46,19 +46,19 @@
     {{/for}}
     
     <!-- Output fields -->
-    {{for ~getFields(item.apiObj) ~item=item}}
+    {{props item.apiObj ~item=item}}
         {{if (key == 'url')}}
         <tr>
             <th>{{>~zoteroFieldMap[key]}}</th>
             <td class="{{attr:key}}">
-                <a rel='nofollow' href='{{url:value}}'>{{>value}}</a>
+                <a rel='nofollow' href='{{url:prop}}'>{{>prop}}</a>
             </td>
         </tr>
         {{else (key == 'DOI')}}
         <tr>
             <th>{{>~zoteroFieldMap[key]}}</th>
             <td class="{{attr:key}}">
-                <a rel='nofollow' href='http://dx.doi.org/{{url:value}}'>{{>value}}</a>
+                <a rel='nofollow' href='http://dx.doi.org/{{url:prop}}'>{{>prop}}</a>
             </td>
         </tr>
         {{else (~Zotero.config.richTextFields[key])}}
@@ -68,7 +68,7 @@
                 <textarea cols="40" rows="14" name="{{attr:key}}" class="rte readonly">{{>~item.apiObj[key]}}</textarea>
             </td>
         </tr>
-        {{else ( (~J.inArray(key, ~item.hideFields) == -1) && (~item.fieldMap.hasOwnProperty(key)) && value != '' && key != 'itemType' && key != 'title') }}
+        {{else ( (~J.inArray(key, ~item.hideFields) == -1) && (~item.fieldMap.hasOwnProperty(key)) && prop != '' && key != 'itemType' && key != 'title') }}
         <tr>
             <th>{{>~zoteroFieldMap[key] || key}}</th>
             <td class="{{attr:key}}">
@@ -76,7 +76,7 @@
             </td>
         </tr>
         {{/if}}
-    {{/for}}
+    {{/props}}
     
     
     <!-- Output tags -->

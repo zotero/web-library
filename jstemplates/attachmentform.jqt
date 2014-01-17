@@ -20,12 +20,12 @@
     </tr>
     
     <!-- Output fields -->
-    {{for ~getFields(item.apiObj)(field, fieldValue) item.apiObj}}
+    {{props item.apiObj}}
         {{if (key == 'url')}}
         <tr>
             <th>{{>~zoteroFieldMap[key]}}</th>
             <td class="{{attr:key}}">
-                <a rel='nofollow' href='{{url:value}}'>{{>value}}</a>
+                <a rel='nofollow' href='{{url:prop}}'>{{>prop}}</a>
             </td>
         </tr>
         {{else (~Zotero.config.richTextFields[key])}}
@@ -35,7 +35,7 @@
                 <textarea data-itemKey="{{attr:itemKey}}" cols="40" rows="14" name="note-text" id="note-text" class="rte default">{{>item.note}}</textarea>
             </td>
         </tr>
-        {{else (J.inArray(key, item.hideFields) == -1) && (item.fieldMap.hasOwnProperty(key)) && value != '' && key != 'itemType' && key != 'title' }}
+        {{else (J.inArray(key, item.hideFields) == -1) && (item.fieldMap.hasOwnProperty(key)) && prop != '' && key != 'itemType' && key != 'title' }}
         <tr>
             <th>{{>~zoteroFieldMap[key]}}</th>
             <td class="{{attr:key}}">
@@ -43,7 +43,7 @@
             </td>
         </tr>
         {{/if}}
-    {{/for}}
+    {{/props}}
     
     <!-- Output tags -->
     <tr>

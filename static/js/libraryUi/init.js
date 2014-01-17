@@ -218,22 +218,6 @@ Zotero.ui.init.libraryTemplates = function(){
             }
             return false;
         },
-        getFields: function(object) {
-            var key, value,
-                fieldsArray = [];
-            for (key in object) {
-                if (object.hasOwnProperty(key)) {
-                    value = object[key];
-                    // For each property/field add an object to the array, with key and value
-                    fieldsArray.push({
-                        key: key,
-                        value: value
-                    });
-                }
-            }
-            // Return the array, to be rendered using {{for ~getFields(object)}}
-            return fieldsArray;
-        },
     });
     /*
     J('#tagrowTemplate').template('tagrowTemplate');

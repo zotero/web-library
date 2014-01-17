@@ -35,7 +35,7 @@
     {{/for}}
     
     <!-- Output fields -->
-    {{for ~getFields(item.apiObj) ~item=item }}
+    {{props item.apiObj ~item=item }}
         {{if ~displayInDetails(key, ~item) }}
         <tr>
             <th><label for="{{attr:key}}">{{>~zoteroFieldMap[key]}}</label></th>
@@ -44,7 +44,7 @@
             </td>
         </tr>
         {{/if}}
-    {{/for}}
+    {{/props}}
     
     {{if saveable !== false}}
     <!-- Output tags -->

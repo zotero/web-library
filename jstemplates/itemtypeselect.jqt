@@ -2,11 +2,11 @@
 	<form accept-charset="utf-8" method="get" class="zform" action=""><ol>
 		<li><label for="itemType" class="optional">Item Type</label>
 		<select name='itemType' id='itemType'>
-			{{for ~getFields(itemTypes)}}
+			{{props itemTypes}}
 				{{if key != 'attachment'}}
-				<option value='{{attr:key}}' label='{{attr:value}}'>{{>value}}</option>
+				<option value='{{attr:key}}' label='{{attr:prop}}'>{{>prop}}</option>
 				{{/if}}
-			{{/for}}
+			{{/props}}
 		</select>
 		<li>
 		<button name="submit" id="submit" type="submit" class="itemTypeSelectButton">Continue</button>
