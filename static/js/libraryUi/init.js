@@ -219,6 +219,11 @@ Zotero.ui.init.libraryTemplates = function(){
             return false;
         },
     });
+    J.views.tags({
+        'coloredTags': {
+            'template': "{{for ~Zotero.utils.matchColoredTags(~tag.tagCtx.args[0], ~tag.tagCtx.args[1]) tmpl='#coloredtagTemplate' /}}"
+        }
+    });
     /*
     J('#tagrowTemplate').template('tagrowTemplate');
     J('#tagslistTemplate').template('tagslistTemplate');

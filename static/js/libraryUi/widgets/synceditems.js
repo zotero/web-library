@@ -113,4 +113,6 @@ Zotero.ui.widgets.syncedItems.displayItems = function(event){
     
     widgetEl.empty();
     Zotero.ui.displayItems(widgetEl, newConfig, {itemsArray:library.items.displayItemsArray, library:library});
+    
+    Zotero.eventful.initTriggers();
 };

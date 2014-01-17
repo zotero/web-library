@@ -1,0 +1,3 @@
+<script id="coloredtagTemplate" type="text/x-jsrender">
+    <span class="glyphicon glyphicon-tag" style="color:{{:#data}}"></span>
+</script>

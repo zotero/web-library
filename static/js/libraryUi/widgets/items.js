@@ -166,9 +166,9 @@ Zotero.ui.widgets.items.displayItems = function(el, config, loadedItems) {
                            editmode:editmode,
                            order: filledConfig['order'],
                            sort: filledConfig['sort'],
-                           library:library
+                           library:library,
                         };
-    
+
     jel.append( J('#itemstableTemplate').render(itemsTableData) );
     
     if(loadedItems.feed){
@@ -180,6 +180,7 @@ Zotero.ui.widgets.items.displayItems = function(el, config, loadedItems) {
     }
     
     Zotero.ui.updateDisabledControlButtons();
+    Zotero.eventful.initTriggers();
 };
 
 /**
