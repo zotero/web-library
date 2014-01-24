@@ -2,15 +2,17 @@ Zotero.ui.widgets.controlPanel = {};
 
 Zotero.ui.widgets.controlPanel.init = function(el){
     Z.debug("Zotero.eventful.init.controlPanel", 3);
-    Zotero.ui.showControlPanel(el);
-    Zotero.ui.eventful.listen("controlPanelContextChange", Zotero.ui.updateDisabledControlButtons);
-    Zotero.ui.eventful.listen("selectedItemsChanged", Zotero.ui.widgets.controlPanel.selectedItemsChanged);
+    var library = Zotero.ui.getAssociatedLibrary(el);
     
-    Zotero.ui.eventful.listen("removeFromCollection", Zotero.ui.callbacks.removeFromCollection);
-    Zotero.ui.eventful.listen("moveToTrash", Zotero.ui.callbacks.moveToTrash);
-    Zotero.ui.eventful.listen("removeFromTrash", Zotero.ui.callbacks.removeFromTrash);
-    Zotero.ui.eventful.listen("toggleEdit", Zotero.ui.callbacks.toggleEdit);
-    Zotero.ui.eventful.listen('clearLibraryQuery', Zotero.ui.clearLibraryQuery);
+    Zotero.ui.showControlPanel(el);
+    library.listen("controlPanelContextChange", Zotero.ui.updateDisabledControlButtons, {widgetEl:el});
+    library.listen("selectedItemsChanged", Zotero.ui.widgets.controlPanel.selectedItemsChanged, {widgetEl:el});
+    
+    library.listen("removeFromCollection", Zotero.ui.callbacks.removeFromCollection, {widgetEl:el});
+    library.listen("moveToTrash", Zotero.ui.callbacks.moveToTrash), {widgetEl:el};
+    library.listen("removeFromTrash", Zotero.ui.callbacks.removeFromTrash, {widgetEl:el});
+    library.listen("toggleEdit", Zotero.ui.callbacks.toggleEdit, {widgetEl:el});
+    library.listen('clearLibraryQuery', Zotero.ui.clearLibraryQuery, {widgetEl:el});
     
     var container = J(el);
     //set initial state of search input to url value
@@ -189,14 +191,15 @@ Zotero.ui.callbacks.createItem = function(e){
  * @param  {event} e click event
  * @return {boolean}
  */
-Zotero.ui.callbacks.moveToTrash =  function(e){
-    e.preventDefault();
+Zotero.ui.callbacks.moveToTrash =  function(evt){
+    evt.preventDefault();
     Z.debug('move-to-trash clicked', 3);
     
-    var itemKeys = Zotero.ui.getSelectedItemKeys(J("#edit-mode-items-form"));
+    var itemKeys = Zotero.state.getSelectedItemKeys();
     Z.debug(itemKeys, 3);
     
-    var library = Zotero.ui.getAssociatedLibrary(J(this).closest('div.eventfulwidget'));
+    var triggeringEl = J(evt.triggeringElement);
+    var library = Zotero.ui.getAssociatedLibrary(triggeringEl);
     var response;
     
     var trashingItems = library.items.getItems(itemKeys);
@@ -230,6 +233,7 @@ Zotero.ui.callbacks.moveToTrash =  function(e){
     }).then(function(){
         Zotero.state.clearUrlVars(['collectionKey', 'tag', 'q']);
         Zotero.state.pushState(true);
+        library.trigger("displayedItemsChanged");
     });
     
     return false; //stop event bubbling
@@ -241,12 +245,14 @@ Zotero.ui.callbacks.moveToTrash =  function(e){
  * @param  {event} e click event
  * @return {boolean}
  */
-Zotero.ui.callbacks.removeFromTrash =  function(e){
+Zotero.ui.callbacks.removeFromTrash =  function(evt){
     Z.debug('remove-from-trash clicked', 3);
-    var itemKeys = Zotero.ui.getSelectedItemKeys(J("#edit-mode-items-form"));
+    var widgetEl = J(evt.data.widgetEl);
+    var itemKeys = Zotero.state.getSelectedItemKeys();
     Z.debug(itemKeys, 4);
     
-    var library = Zotero.ui.getAssociatedLibrary(J(this).closest('div.eventfulwidget'));
+    var triggeringEl = J(evt.triggeringElement);
+    var library = Zotero.ui.getAssociatedLibrary(triggeringEl);
     
     var untrashingItems = library.items.getItems(itemKeys);
     
@@ -262,7 +268,7 @@ Zotero.ui.callbacks.removeFromTrash =  function(e){
         Z.debug("post-removeFromTrash always execute: clearUrlVars", 3);
         Zotero.state.clearUrlVars(['collectionKey', 'tag', 'q']);
         Zotero.state.pushState();
-        Zotero.ui.eventful.trigger("displayedItemsChanged");
+        library.trigger("displayedItemsChanged");
     });
     
     return false;
@@ -273,10 +279,11 @@ Zotero.ui.callbacks.removeFromTrash =  function(e){
  * @param  {event} e click event
  * @return {boolean}
  */
-Zotero.ui.callbacks.removeFromCollection = function(e){
+Zotero.ui.callbacks.removeFromCollection = function(evt){
     Z.debug('remove-from-collection clicked', 3);
-    var itemKeys = Zotero.ui.getSelectedItemKeys(J("#edit-mode-items-form"));
-    var library = Zotero.ui.getAssociatedLibrary(J(this).closest('div.eventfulwidget'));
+    var triggeringEl = J(evt.triggeringElement);
+    var library = Zotero.ui.getAssociatedLibrary(triggeringEl);
+    var itemKeys = Zotero.state.getSelectedItemKeys();
     var collectionKey = Zotero.state.getUrlVar('collectionKey');
     
     var modifiedItems = [];
@@ -294,7 +301,7 @@ Zotero.ui.callbacks.removeFromCollection = function(e){
         Z.debug('removal responses finished. forcing reload', 3);
         Zotero.state.clearUrlVars(['collectionKey', 'tag']);
         Zotero.state.pushState(true);
-        Zotero.ui.eventful.trigger("displayedItemsChanged");
+        library.trigger("displayedItemsChanged");
     });
     
     return false;

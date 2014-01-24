@@ -2,9 +2,9 @@ Zotero.ui.widgets.progressModal = {};
 
 Zotero.ui.widgets.progressModal.init = function(el){
     Z.debug("progressModal widget init", 3);
-    Zotero.ui.eventful.listen("progressStart", Zotero.ui.widgets.progressModal.show, {widgetEl: el});
-    Zotero.ui.eventful.listen("progressUpdate", Zotero.ui.widgets.progressModal.update, {widgetEl: el});
-    Zotero.ui.eventful.listen("progressDone", Zotero.ui.widgets.progressModal.done, {widgetEl: el});
+    Zotero.listen("progressStart", Zotero.ui.widgets.progressModal.show, {widgetEl: el});
+    Zotero.listen("progressUpdate", Zotero.ui.widgets.progressModal.update, {widgetEl: el});
+    Zotero.listen("progressDone", Zotero.ui.widgets.progressModal.done, {widgetEl: el});
 };
 
 Zotero.ui.widgets.progressModal.show = function(e){

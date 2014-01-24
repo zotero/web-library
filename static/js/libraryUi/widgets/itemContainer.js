@@ -1,11 +1,12 @@
 Zotero.ui.widgets.itemContainer = {};
 
 Zotero.ui.widgets.itemContainer.init = function(el){
+    var library = Zotero.ui.getAssociatedLibrary(el);
     var container = J(el);
     
     //TODO: this should basically all be event based rather than callbacks
-    Zotero.ui.eventful.listen("citeItems", Zotero.ui.callbacks.citeItems);
-    Zotero.ui.eventful.listen("exportItems", Zotero.ui.callbacks.exportItems);
+    library.listen("citeItems", Zotero.ui.callbacks.citeItems);
+    library.listen("exportItems", Zotero.ui.callbacks.exportItems);
     
     
     container.on('click', "#item-details-div .itemTypeSelectButton", function(){

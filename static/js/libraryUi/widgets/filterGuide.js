@@ -2,8 +2,10 @@ Zotero.ui.widgets.filterGuide = {};
 
 Zotero.ui.widgets.filterGuide.init = function(el){
     Z.debug('widgets.filterGuide.init', 3);
-    Zotero.ui.eventful.listen("displayedItemsChanged", Zotero.ui.widgets.filterGuide.refreshFilters, {widgetEl: el});
-    Zotero.ui.eventful.listen("clearFilter", Zotero.ui.widgets.filterGuide.clearFilter, {widgetEl: el});
+    var library = Zotero.ui.getAssociatedLibrary(el);
+    
+    library.listen("displayedItemsChanged", Zotero.ui.widgets.filterGuide.refreshFilters, {widgetEl: el});
+    library.listen("clearFilter", Zotero.ui.widgets.filterGuide.clearFilter, {widgetEl: el});
 };
 
 Zotero.ui.widgets.filterGuide.refreshFilters = function(event){
@@ -25,6 +27,7 @@ Zotero.ui.widgets.filterGuide.refreshFilters = function(event){
         filterData['search'] = displayConfig['q'];
     }
     
+    filterData['library'] = library;
     jel.empty();
     jel.append( J('#filterguideTemplate').render(filterData) );
     Zotero.eventful.initTriggers(widgetEl);
@@ -47,7 +50,7 @@ Zotero.ui.widgets.filterGuide.clearFilter = function(event){
         Zotero.state.toggleTag(tag);
     }
     if(query){
-        Zotero.ui.eventful.trigger('clearLibraryQuery');
+        library.trigger('clearLibraryQuery');
         return;
         //Zotero.ui.clearLibraryQuery();
     }

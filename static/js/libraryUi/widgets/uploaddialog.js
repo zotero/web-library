@@ -3,7 +3,8 @@ Zotero.ui.widgets.uploadDialog = {};
 Zotero.ui.widgets.uploadDialog.init = function(el){
     Z.debug("uploaddialog widget init", 3);
     var library = Zotero.ui.getAssociatedLibrary(el);
-    Zotero.ui.eventful.listen("uploadAttachment", Zotero.ui.widgets.uploadDialog.show, {widgetEl: el, library: library});
+    
+    library.listen("uploadAttachment", Zotero.ui.widgets.uploadDialog.show, {widgetEl: el, library: library});
 };
 
 Zotero.ui.widgets.uploadDialog.show = function(e){
@@ -38,7 +39,7 @@ Zotero.ui.widgets.uploadDialog.show = function(e){
         var uploadSuccess = function(){
             Z.debug("uploadSuccess", 3);
             Zotero.ui.closeDialog(J("#upload-attachment-dialog"));
-            Zotero.ui.eventful.trigger("uploadSuccessful");
+            library.trigger("uploadSuccessful");
             Zotero.state.pushState(true);
         };
         

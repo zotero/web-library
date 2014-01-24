@@ -2,12 +2,14 @@ Zotero.ui.widgets.newItem = {};
 
 Zotero.ui.widgets.newItem.init = function(el){
     Z.debug("newItem eventfulwidget init", 3);
+    var library = Zotero.ui.getAssociatedLibrary(el);
+    
     var widgetEl = J(el);
-    Zotero.ui.eventful.listen("newItem", Zotero.ui.widgets.newItem.freshitemcallback, {widgetEl: el});
-    Zotero.ui.eventful.listen("itemTypeChanged", Zotero.ui.widgets.newItem.changeItemType, {widgetEl: el});
-    Zotero.ui.eventful.listen("createItem", Zotero.ui.widgets.item.saveItemCallback, {widgetEl: el});
+    library.listen("newItem", Zotero.ui.widgets.newItem.freshitemcallback, {widgetEl: el});
+    library.listen("itemTypeChanged", Zotero.ui.widgets.newItem.changeItemType, {widgetEl: el});
+    library.listen("createItem", Zotero.ui.widgets.item.saveItemCallback, {widgetEl: el});
     widgetEl.on('change', 'select.itemType', function(e){
-        Zotero.ui.eventful.trigger('itemTypeChanged', {triggeringElement:el});
+        library.trigger('itemTypeChanged', {triggeringElement:el});
     });
 };
 
@@ -79,7 +81,7 @@ Zotero.ui.unassociatedItemForm = function(el, item){
         
         container.find(".directciteitembutton").on('click', function(e){
             Zotero.ui.updateItemFromForm(item, container.find("form"));
-            Zotero.ui.eventful.trigger('citeItems', {"zoteroItems": [item]});
+            library.trigger('citeItems', {"zoteroItems": [item]});
         } );
         /*
         container.on("click", "button.switch-two-field-creator-link", Zotero.ui.callbacks.switchTwoFieldCreators);

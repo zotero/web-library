@@ -1,7 +1,8 @@
 Zotero.ui.widgets.breadcrumbs = {};
 
 Zotero.ui.widgets.breadcrumbs.init = function(el){
-    Zotero.ui.eventful.listen("displayedItemsChanged displayedItemChanged selectedCollectionChanged", Zotero.ui.libraryBreadcrumbs);
+    var library = Zotero.ui.getAssociatedLibrary(el);
+    library.listen("displayedItemsChanged displayedItemChanged selectedCollectionChanged", Zotero.ui.libraryBreadcrumbs);
 };
 
 /**

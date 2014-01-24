@@ -6,7 +6,7 @@
         </div>
         <a href="{{url:websiteCollectionLink}}" data-collectionKey="{{attr:collectionKey}}"
             id="collection-{{attr:collectionKey}}" class="collection-select-link{{if (~currentCollectionKey == collectionKey)}} current-collection{{/if}}">
-            {{>title}}
+            {{>apiObj.name}}
         </a>
         {{if hasChildren}}
             <ul>

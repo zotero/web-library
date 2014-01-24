@@ -2,7 +2,9 @@ Zotero.ui.widgets.deleteCollectionDialog = {};
 
 Zotero.ui.widgets.deleteCollectionDialog.init = function(el){
     Z.debug("deletecollectionsdialog widget init", 3);
-    Zotero.ui.eventful.listen("deleteCollectionDialog", Zotero.ui.widgets.deleteCollectionDialog.show, {widgetEl: el});
+    var library = Zotero.ui.getAssociatedLibrary(el);
+    
+    library.listen("deleteCollectionDialog", Zotero.ui.widgets.deleteCollectionDialog.show, {widgetEl: el});
 };
 
 Zotero.ui.widgets.deleteCollectionDialog.show = function(evt){
@@ -28,6 +30,7 @@ Zotero.ui.widgets.deleteCollectionDialog.show = function(evt){
         .then(function(){
             delete Zotero.state.pathVars['collectionKey'];
             library.collections.dirty = true;
+            library.collections.initSecondaryData();
             Zotero.state.pushState();
             Zotero.ui.jsNotificationMessage(collection.title + " removed", 'confirm');
             Zotero.ui.closeDialog(dialogEl);

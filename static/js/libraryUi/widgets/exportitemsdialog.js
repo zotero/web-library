@@ -2,8 +2,10 @@ Zotero.ui.widgets.exportItemsDialog = {};
 
 Zotero.ui.widgets.exportItemsDialog.init = function(el){
     Z.debug("exportItemDialog widget init", 3);
-    Zotero.ui.eventful.listen("exportItemsDialog", Zotero.ui.widgets.exportItemsDialog.show, {widgetEl: el});
-    Zotero.ui.eventful.listen("displayedItemsChanged", Zotero.ui.widgets.exportItemsDialog.updateExportLinks, {widgetEl: el});
+    var library = Zotero.ui.getAssociatedLibrary(el);
+    
+    library.listen("exportItemsDialog", Zotero.ui.widgets.exportItemsDialog.show, {widgetEl: el});
+    library.listen("displayedItemsChanged", Zotero.ui.widgets.exportItemsDialog.updateExportLinks, {widgetEl: el});
 };
 
 Zotero.ui.widgets.exportItemsDialog.show = function(evt){
@@ -14,7 +16,6 @@ Zotero.ui.widgets.exportItemsDialog.show = function(evt){
     widgetEl.html( J("#exportitemsdialogTemplate").render({}) );
     var dialogEl = widgetEl.find(".export-items-dialog");
     
-    //Zotero.ui.eventful.trigger('displayedItemsChanged');
     dialogEl.find(".modal-body").empty().append(J(".export-list").contents().clone() );
     
     //get library and build dialog

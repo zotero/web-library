@@ -204,6 +204,7 @@ ul.item-pagination {
     display:inline !important;
 }
 
+#colored-tags-list,
 #tags-list,
 #selected-tags-list {
     list-style:none;
@@ -452,6 +453,7 @@ ul.item-pagination {
     overflow: auto;
 }
 
+#colored-tags-list,
 #tags-list,
 #selected-tags-list {
     list-style:none;
@@ -461,6 +463,7 @@ ul.item-pagination {
     font-size: 0.8em;
 }
 
+#colored-tags-list a,
 #tags-list a,
 #selected-tags-list a {
     text-decoration:none;
@@ -472,6 +475,7 @@ ul.item-pagination {
     display: inline-block;
 }
 
+#colored-tags-list li,
 #tags-list li,
 #selected-tags-list li {
     display:list-item;

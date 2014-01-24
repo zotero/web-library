@@ -1,25 +1,28 @@
 Zotero.ui.widgets.item = {};
-
+//TODO: alot of this widget should probably be rewritten
 Zotero.ui.widgets.item.init = function(el){
-    Zotero.ui.eventful.listen("displayedItemChanged modeChanged", Zotero.ui.widgets.item.loadItemCallback, {widgetEl: el});
-    Zotero.ui.eventful.listen("newItem", Zotero.ui.widgets.item.loadItemCallback, {widgetEl: el, newItem:true});
-    Zotero.ui.eventful.listen("saveItem", Zotero.ui.widgets.item.saveItemCallback, {widgetEl:el});
-    Zotero.ui.eventful.listen("cancelItemEdit", Zotero.ui.widgets.item.cancelItemEdit, {widgetEl:el});
-    Zotero.ui.eventful.listen("itemTypeChanged", Zotero.ui.widgets.item.itemTypeChanged, {widgetEl:el});
-    Zotero.ui.eventful.listen("uploadSuccessful showChildren", Zotero.ui.widgets.item.showChildren, {widgetEl:el});
+    var library = Zotero.ui.getAssociatedLibrary(el);
     
-    Zotero.ui.eventful.listen("addTag", Zotero.ui.widgets.item.addTag, {widgetEl:el});
-    Zotero.ui.eventful.listen("removeTag", Zotero.ui.widgets.item.removeTag, {widgetEl:el});
-    Zotero.ui.eventful.listen("addCreator", Zotero.ui.widgets.item.addCreator, {widgetEl:el});
-    Zotero.ui.eventful.listen("removeCreator", Zotero.ui.widgets.item.removeCreator, {widgetEl:el});
+    library.listen("displayedItemChanged modeChanged", Zotero.ui.widgets.item.loadItemCallback, {widgetEl: el});
+    library.listen("newItem", Zotero.ui.widgets.item.loadItemCallback, {widgetEl: el, newItem:true});
+    library.listen("saveItem", Zotero.ui.widgets.item.saveItemCallback, {widgetEl:el});
+    library.listen("cancelItemEdit", Zotero.ui.widgets.item.cancelItemEdit, {widgetEl:el});
+    library.listen("itemTypeChanged", Zotero.ui.widgets.item.itemTypeChanged, {widgetEl:el});
+    library.listen("uploadSuccessful showChildren", Zotero.ui.widgets.item.showChildren, {widgetEl:el});
     
-    Zotero.ui.eventful.listen("switchTwoFieldCreator", Zotero.ui.widgets.item.switchTwoFieldCreators, {widgetEl:el});
-    Zotero.ui.eventful.listen("switchSingleFieldCreator", Zotero.ui.widgets.item.switchSingleFieldCreator, {widgetEl:el});
-    Zotero.ui.eventful.listen("addNote", Zotero.ui.widgets.item.addNote, {widgetEl:el});
+    library.listen("addTag", Zotero.ui.widgets.item.addTag, {widgetEl:el});
+    library.listen("removeTag", Zotero.ui.widgets.item.removeTag, {widgetEl:el});
+    library.listen("addCreator", Zotero.ui.widgets.item.addCreator, {widgetEl:el});
+    library.listen("removeCreator", Zotero.ui.widgets.item.removeCreator, {widgetEl:el});
+    
+    library.listen("switchTwoFieldCreator", Zotero.ui.widgets.item.switchTwoFieldCreators, {widgetEl:el});
+    library.listen("switchSingleFieldCreator", Zotero.ui.widgets.item.switchSingleFieldCreator, {widgetEl:el});
+    library.listen("addNote", Zotero.ui.widgets.item.addNote, {widgetEl:el});
     //watch buttons on item field from widget DOM element
     var container = J(el);
     
     container.on('keydown', ".itemDetailForm input", Zotero.ui.widgets.item.itemFormKeydown);
+    library.trigger("displayedItemChanged");
 };
 
 Zotero.ui.widgets.item.loadItemCallback = function(event){
@@ -76,7 +79,7 @@ Zotero.ui.widgets.item.loadItemCallback = function(event){
         }
         else{
             Zotero.ui.loadItemDetail(item, widgetEl);
-            Zotero.ui.eventful.trigger('showChildren');
+            library.trigger('showChildren');
         }
         Zotero.eventful.initTriggers(J(widgetEl));
         return Promise.resolve();
@@ -100,7 +103,7 @@ Zotero.ui.widgets.item.loadItemCallback = function(event){
             }
             else{
                 Zotero.ui.loadItemDetail(item, widgetEl);
-                Zotero.ui.eventful.trigger('showChildren');
+                library.trigger('showChildren');
             }
             //set currentConfig on element when done displaying
             widgetEl.data('currentconfig', config);
@@ -551,7 +554,7 @@ Zotero.ui.widgets.item.itemFormKeydown = function(e){
                 triggeringEl.typeahead('setQuery', val);
                 triggeringEl.trigger('blur');
             }
-            Zotero.ui.eventful.trigger("addTag");
+            Zotero.trigger("addTag");
             return;
         }
         var nextEligibleSiblings = J(this).nextAll("input, button, textarea, select");

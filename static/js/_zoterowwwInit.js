@@ -76,8 +76,12 @@ Zotero.init = function(){
     var libraryPage = J("body").hasClass('library');
     if(libraryPage){
         Zotero.config.librarySettings.libraryUserSlug = zoteroData.libraryUserSlug;
-        Zotero.config.librarySettings.libraryUserID = zoteroData.libraryUserID;
+        Zotero.config.librarySettings.libraryID = zoteroData.libraryID;
+        Zotero.config.librarySettings.libraryType = zoteroData.libraryType;
         Zotero.config.librarySettings.allowEdit = zoteroData.allowEdit;
+        
+        Zotero.state.libraryString = Zotero.utils.libraryString(zoteroData.libraryType, zoteroData.libraryID);
+        Zotero.state.filter = Zotero.state.libraryString;
         
         //load general data if on library page
         if(Zotero.config.pageClass == 'user_library' || Zotero.config.pageClass == 'group_library' || Zotero.config.pageClass == 'my_library'){

@@ -2,64 +2,60 @@ Zotero.ui.widgets.collections = {};
 
 Zotero.ui.widgets.collections.init = function(el){
     Z.debug("collections widget init", 3);
+    var library = Zotero.ui.getAssociatedLibrary(el);
     
-    Zotero.ui.eventful.listen("collectionsDirty", Zotero.ui.widgets.collections.syncCollections, {widgetEl: el});
-    Zotero.ui.eventful.listen("syncCollections", Zotero.ui.widgets.collections.syncCollections, {widgetEl: el});
-    Zotero.ui.eventful.listen("syncLibrary", Zotero.ui.widgets.collections.syncCollections, {widgetEl: el});
-    Zotero.ui.eventful.listen("cachedDataLoaded", Zotero.ui.widgets.collections.syncCollections, {widgetEl: el});
+    library.listen("collectionsDirty", Zotero.ui.widgets.collections.syncCollections, {widgetEl: el});
+    library.listen("syncCollections", Zotero.ui.widgets.collections.syncCollections, {widgetEl: el});
+    library.listen("syncLibrary", Zotero.ui.widgets.collections.syncCollections, {widgetEl: el});
+    library.listen("cachedDataLoaded", Zotero.ui.widgets.collections.syncCollections, {widgetEl: el});
     
-    Zotero.ui.eventful.listen("libraryCollectionsUpdated", Zotero.ui.widgets.collections.rerenderCollections, {widgetEl: el});
-    Zotero.ui.eventful.listen("selectCollection", Zotero.ui.widgets.collections.selectCollection, {widgetEl: el});
-    Zotero.ui.eventful.listen("selectedCollectionChanged", Zotero.ui.widgets.collections.updateSelectedCollection, {widgetEl: el});
+    library.listen("libraryCollectionsUpdated", Zotero.ui.widgets.collections.rerenderCollections, {widgetEl: el});
+    library.listen("selectCollection", Zotero.ui.widgets.collections.selectCollection, {widgetEl: el});
+    library.listen("selectedCollectionChanged", Zotero.ui.widgets.collections.updateSelectedCollection, {widgetEl: el});
     
     Zotero.ui.widgets.collections.bindCollectionLinks(el);
 };
 
-Zotero.ui.widgets.collections.syncCollections = function(event) {
+Zotero.ui.widgets.collections.syncCollections = function(evt) {
     Zotero.debug("Zotero eventful syncCollectionsCallback", 3);
-    var widgetEl = J(event.data.widgetEl);
+    var widgetEl = J(evt.data.widgetEl);
     
     //get Zotero.Library object if already bound to element
     var library = Zotero.ui.getAssociatedLibrary(widgetEl);
-    if(event.libraryString != library.libraryString){
-        //Event was triggered for a different library
-        Z.debug("event associated with different library. bailing out of syncCollectionsCallback", 3);
-        return Promise.resolve();
-    }
     
     //sync collections if loaded from cache but not synced
     return library.loadUpdatedCollections()
     .then(function(){
         Zotero.state.doneLoading(widgetEl);
-        Zotero.ui.eventful.trigger("libraryCollectionsUpdated");
+        library.trigger("libraryCollectionsUpdated");
     },
     function(){
         //sync failed, but we already had some data, so show that
-        Zotero.ui.eventful.trigger("libraryCollectionsUpdated");
+        library.trigger("libraryCollectionsUpdated");
         //TODO: display error as well
     });
 };
 
 
-Zotero.ui.widgets.collections.rerenderCollections = function(event){
-    Zotero.debug("Zotero eventful rerenderCollections", 3);
-    var widgetEl = J(event.data.widgetEl);
+Zotero.ui.widgets.collections.rerenderCollections = function(evt){
+    Zotero.debug("Zotero.ui.widgets.collections.rerenderCollections", 3);
+    var widgetEl = J(evt.data.widgetEl);
     
     var library = Zotero.ui.getAssociatedLibrary(widgetEl);
-    library.collections.collectionsArray.sort(library.collections.sortByTitleCompare);
     var collectionListEl = widgetEl.find('#collection-list-container');
     collectionListEl.empty();
     Zotero.ui.widgets.collections.renderCollectionList(collectionListEl, library.collections);
-    Zotero.ui.eventful.trigger("selectedCollectionChanged");
+    Z.debug("done rendering collections");
+    library.trigger("selectedCollectionChanged");
 };
 
-Zotero.ui.widgets.collections.selectCollection = function(event){
+Zotero.ui.widgets.collections.selectCollection = function(evt){
     
 };
 
-Zotero.ui.widgets.collections.updateSelectedCollection = function(event){
+Zotero.ui.widgets.collections.updateSelectedCollection = function(evt){
     Zotero.debug("Zotero eventful updateSelectedCollection", 3);
-    var widgetEl = J(event.data.widgetEl);
+    var widgetEl = J(evt.data.widgetEl);
     var collectionListEl = widgetEl.find('.collection-list-container');
     
     Zotero.ui.widgets.collections.highlightCurrentCollection(widgetEl);
@@ -115,6 +111,7 @@ Zotero.ui.widgets.collections.renderCollectionList = function(el, collections){
  */
 Zotero.ui.widgets.collections.bindCollectionLinks = function(container){
     Z.debug("Zotero.ui.bindCollectionLinks", 3);
+    var library = Zotero.ui.getAssociatedLibrary(container);
     
     J(container).on('click', "div.folder-toggle", function(e){
         e.preventDefault();
@@ -125,7 +122,6 @@ Zotero.ui.widgets.collections.bindCollectionLinks = function(container){
     J(container).on('click', ".collection-select-link", function(e){
         Z.debug("collection-select-link clicked", 4);
         e.preventDefault();
-        var collection, library;
         var collectionKey = J(this).attr('data-collectionkey');
         //if this is the currently selected collection, treat as expando link
         if(J(this).hasClass('current-collection')) {
@@ -148,7 +144,7 @@ Zotero.ui.widgets.collections.bindCollectionLinks = function(container){
             //cancel action for expando link behaviour
             return false;
         }
-        Zotero.ui.eventful.trigger("selectCollection", {collectionKey: collectionKey});
+        library.trigger("selectCollection", {collectionKey: collectionKey});
         
         //Not currently selected collection
         Z.debug("click " + collectionKey, 4);

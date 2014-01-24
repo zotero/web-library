@@ -6,7 +6,6 @@
         </li>
         {{for collections}}
             {{if #data.topLevel}}
-                {{!--TODO: child collection needs to access currentCollectionKey which used to be passed in --}}
                 {{for #data ~currentCollectionKey=currentCollectionKey tmpl='#collectionrowTemplate' /}}
             {{/if}}
         {{/for}}

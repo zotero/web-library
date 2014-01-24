@@ -2,7 +2,9 @@ Zotero.ui.widgets.librarysettingsdialog = {};
 
 Zotero.ui.widgets.librarysettingsdialog.init = function(el){
     Z.debug("librarysettingsdialog widget init", 3);
-    Zotero.ui.eventful.listen("librarySettingsDialog", Zotero.ui.widgets.librarysettingsdialog.show, {widgetEl: el});
+    var library = Zotero.ui.getAssociatedLibrary(el);
+    
+    library.listen("librarySettingsDialog", Zotero.ui.widgets.librarysettingsdialog.show, {widgetEl: el});
 };
 
 Zotero.ui.widgets.librarysettingsdialog.show = function(e){
@@ -43,7 +45,7 @@ Zotero.ui.widgets.librarysettingsdialog.show = function(e){
         Zotero.preferences.setPref('itemsPerPage', itemsPerPage);
         Zotero.preferences.persist();
         
-        Zotero.ui.eventful.trigger("displayedItemsChanged");
+        library.trigger("displayedItemsChanged");
         
         Zotero.ui.closeDialog(dialogEl);
     }, this);

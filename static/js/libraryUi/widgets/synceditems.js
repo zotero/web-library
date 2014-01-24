@@ -2,21 +2,21 @@ Zotero.ui.widgets.syncedItems = {};
 
 Zotero.ui.widgets.syncedItems.init = function(el){
     Z.debug("syncedItems widget init", 3);
+    var library = Zotero.ui.getAssociatedLibrary(el);
     
-    Zotero.ui.eventful.listen("changeItemSorting", Zotero.ui.callbacks.resortItems, {widgetEl: el});
+    library.listen("changeItemSorting", Zotero.ui.callbacks.resortItems, {widgetEl: el});
     
     //listen for local items dirty and push if we have a connection
-    Zotero.ui.eventful.listen("localItemsChanged", Zotero.ui.widgets.syncedItems.syncItems, {widgetEl: el});
+    library.listen("localItemsChanged", Zotero.ui.widgets.syncedItems.syncItems, {widgetEl: el});
     //listen for request to update remote items
-    Zotero.ui.eventful.listen("remoteItemsRequested", Zotero.ui.widgets.syncedItems.syncItems, {widgetEl: el});
-    Zotero.ui.eventful.listen("syncLibrary", Zotero.ui.widgets.syncedItems.syncItems, {widgetEl: el});
+    library.listen("remoteItemsRequested", Zotero.ui.widgets.syncedItems.syncItems, {widgetEl: el});
+    library.listen("syncLibrary", Zotero.ui.widgets.syncedItems.syncItems, {widgetEl: el});
     //listen for request to display different items
     
-    Zotero.ui.eventful.listen("displayedItemsChanged", Zotero.ui.widgets.syncedItems.updateDisplayedItems, {widgetEl: el});
-    Zotero.ui.eventful.listen("displayedItemsUpdated", Zotero.ui.widgets.syncedItems.displayItems, {widgetEl: el});
+    library.listen("displayedItemsChanged", Zotero.ui.widgets.syncedItems.updateDisplayedItems, {widgetEl: el});
+    library.listen("displayedItemsUpdated", Zotero.ui.widgets.syncedItems.displayItems, {widgetEl: el});
     
-    Zotero.ui.eventful.listen("cachedDataLoaded", Zotero.ui.widgets.syncedItems.syncItems, {widgetEl: el});
-    //Zotero.ui.eventful.trigger("remoteItemsRequested");
+    library.listen("cachedDataLoaded", Zotero.ui.widgets.syncedItems.syncItems, {widgetEl: el});
     
     //set up sorting on header clicks
     var container = J(el);
@@ -28,7 +28,7 @@ Zotero.ui.widgets.syncedItems.init = function(el){
     container.on('change', ".itemlist-editmode-checkbox.all-checkbox", function(e){
         J(".itemlist-editmode-checkbox").prop('checked', J(".itemlist-editmode-checkbox.all-checkbox").prop('checked'));
         Zotero.ui.updateDisabledControlButtons();
-        Zotero.ui.eventful.trigger("selectedItemsChanged");
+        library.trigger("selectedItemsChanged");
     });
     
     //init itemkey-checkbox to enable/disable buttons that require something being selected
@@ -38,7 +38,7 @@ Zotero.ui.widgets.syncedItems.init = function(el){
         J("input.itemKey-checkbox:checked").each(function(index, el){
             selectedItemKeys.push(J(el).data('itemkey'));
         });
-        Zotero.ui.eventful.trigger("selectedItemsChanged", {selectedItemKeys: selectedItemKeys});
+        library.trigger("selectedItemsChanged", {selectedItemKeys: selectedItemKeys});
     });
     
     Zotero.ui.widgets.syncedItems.bindPaginationLinks(container);
@@ -55,8 +55,8 @@ Zotero.ui.widgets.syncedItems.syncItems = function(event){
     return library.loadUpdatedItems()
     .then(function(){
         Zotero.state.doneLoading(widgetEl);
-        Zotero.ui.eventful.trigger("libraryItemsUpdated");
-        Zotero.ui.eventful.trigger("displayedItemsChanged");
+        library.trigger("libraryItemsUpdated");
+        library.trigger("displayedItemsChanged");
     });
 };
 

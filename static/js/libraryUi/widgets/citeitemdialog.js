@@ -2,8 +2,10 @@ Zotero.ui.widgets.citeItemDialog = {};
 
 Zotero.ui.widgets.citeItemDialog.init = function(el){
     Z.debug("citeItemDialog widget init", 3);
+    var library = Zotero.ui.getAssociatedLibrary(el);
+    
     Zotero.ui.widgets.citeItemDialog.getAvailableStyles();
-    Zotero.ui.eventful.listen("citeItems", Zotero.ui.widgets.citeItemDialog.show, {widgetEl: el});
+    library.listen("citeItems", Zotero.ui.widgets.citeItemDialog.show, {widgetEl: el});
 };
 
 Zotero.ui.widgets.citeItemDialog.show = function(evt){
@@ -47,7 +49,7 @@ Zotero.ui.widgets.citeItemDialog.show = function(evt){
         
         if(!hasIndependentItems){
             //get the selected item keys from the items widget
-            var itemKeys = Zotero.ui.getSelectedItemKeys(J("#edit-mode-items-form"));
+            var itemKeys = Zotero.state.getSelectedItemKeys();
             if(itemKeys.length === 0){
                 itemKeys = Zotero.ui.getAllFormItemKeys(J("#edit-mode-items-form"));
             }

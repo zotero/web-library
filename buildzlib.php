@@ -55,6 +55,7 @@ $files = array(
 "libraryUi/widgets/filterGuide.js",
 "libraryUi/widgets/progressModal.js",
 "libraryUi/widgets/groupsList.js",
+"libraryUi/widgets/sendToLibraryDialog.js",
 "_zoteroLibraryUrl.js",
 //"_zoteroLibraryOffline.js"
 );

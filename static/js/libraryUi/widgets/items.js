@@ -1,8 +1,10 @@
 Zotero.ui.widgets.items = {};
 
 Zotero.ui.widgets.items.init = function(el){
-    Zotero.ui.eventful.listen("displayedItemsChanged", Zotero.ui.widgets.items.loadItemsCallback, {widgetEl: el});
-    Zotero.ui.eventful.listen("changeItemSorting", Zotero.ui.callbacks.resortItems, {widgetEl: el});
+    var library = Zotero.ui.getAssociatedLibrary(el);
+    
+    library.listen("displayedItemsChanged", Zotero.ui.widgets.items.loadItemsCallback, {widgetEl: el});
+    library.listen("changeItemSorting", Zotero.ui.callbacks.resortItems, {widgetEl: el});
     
     //set up sorting on header clicks
     var container = J(el);
@@ -13,8 +15,13 @@ Zotero.ui.widgets.items.init = function(el){
     //check/uncheck all boxes in items table when master checkbox is toggled
     container.on('change', ".itemlist-editmode-checkbox.all-checkbox", function(e){
         J(".itemlist-editmode-checkbox").prop('checked', J(".itemlist-editmode-checkbox.all-checkbox").prop('checked'));
+        var selectedItemKeys = [];
+        J("input.itemKey-checkbox:checked").each(function(index, el){
+            selectedItemKeys.push(J(el).data('itemkey'));
+        });
         Zotero.ui.updateDisabledControlButtons();
-        Zotero.ui.eventful.trigger("selectedItemsChanged");
+        Zotero.state.selectedItemKeys = selectedItemKeys;
+        library.trigger("selectedItemsChanged", {selectedItemKeys: selectedItemKeys});
     });
     
     //init itemkey-checkbox to enable/disable buttons that require something being selected
@@ -24,7 +31,8 @@ Zotero.ui.widgets.items.init = function(el){
         J("input.itemKey-checkbox:checked").each(function(index, el){
             selectedItemKeys.push(J(el).data('itemkey'));
         });
-        Zotero.ui.eventful.trigger("selectedItemsChanged", {selectedItemKeys: selectedItemKeys});
+        Zotero.state.selectedItemKeys = selectedItemKeys;
+        library.trigger("selectedItemsChanged", {selectedItemKeys: selectedItemKeys});
     });
     
     container.on('click', "#start-item-link", function(e){
@@ -58,6 +66,7 @@ Zotero.ui.widgets.items.init = function(el){
         Zotero.state.pushState();
     });
     
+    library.trigger("displayedItemsChanged");
 };
 
 Zotero.ui.widgets.items.loadItemsCallback = function(event){

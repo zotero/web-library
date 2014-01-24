@@ -2,7 +2,9 @@ Zotero.ui.widgets.createCollectionDialog = {};
 
 Zotero.ui.widgets.createCollectionDialog.init = function(el){
     Z.debug("createcollectionsdialog widget init", 3);
-    Zotero.ui.eventful.listen("createCollectionDialog", Zotero.ui.widgets.createCollectionDialog.show, {widgetEl: el});
+    var library = Zotero.ui.getAssociatedLibrary(el);
+    
+    library.listen("createCollectionDialog", Zotero.ui.widgets.createCollectionDialog.show, {widgetEl: el});
 };
 
 Zotero.ui.widgets.createCollectionDialog.show = function(evt){
@@ -21,14 +23,16 @@ Zotero.ui.widgets.createCollectionDialog.show = function(evt){
     
     var createFunction = function(){
         var newCollection = new Zotero.Collection();
-        newCollection.parentCollectionKey = dialogEl.find(".new-collection-parent").val();
-        newCollection.name = dialogEl.find("input.new-collection-title-input").val() || "Untitled";
+        var parentKey = dialogEl.find(".new-collection-parent").val();
+        var name = dialogEl.find("input.new-collection-title-input").val() || "Untitled";
         
-        library.addCollection(newCollection)
-        .then(function(){
-            library.collections.dirty = true;
-            Zotero.state.pushState(true);
+        library.addCollection(name, parentKey)
+        .then(function(returnCollections){
+            library.collections.initSecondaryData();
+            library.trigger('libraryCollectionsUpdated');
+            Zotero.state.pushState();
             Zotero.ui.closeDialog(widgetEl.find(".create-collection-dialog"));
+            Zotero.ui.jsNotificationMessage("Collection Created", 'success');
         });
     };
     

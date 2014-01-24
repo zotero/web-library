@@ -1,7 +1,9 @@
 Zotero.ui.widgets.feedlink = {};
 
 Zotero.ui.widgets.feedlink.init = function(el){
-    Zotero.ui.eventful.listen("displayedItemsChanged", Zotero.ui.widgets.feedlink.recalcFeedlink, {widgetEl: el});
+    var library = Zotero.ui.getAssociatedLibrary(el);
+    
+    library.listen("displayedItemsChanged", Zotero.ui.widgets.feedlink.recalcFeedlink, {widgetEl: el});
 };
 
 Zotero.ui.widgets.feedlink.recalcFeedlink = function(evt){

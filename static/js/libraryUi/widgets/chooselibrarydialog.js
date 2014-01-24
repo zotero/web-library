@@ -2,7 +2,9 @@ Zotero.ui.widgets.chooseLibraryDialog = {};
 
 Zotero.ui.widgets.chooseLibraryDialog.init = function(el){
     Z.debug("chooselibrarydialog widget init", 3);
-    Zotero.ui.eventful.listen("chooseLibrary", Zotero.ui.widgets.chooseLibraryDialog.show, {widgetEl: el});
+    var library = Zotero.ui.getAssociatedLibrary(el);
+    
+    library.listen("chooseLibrary", Zotero.ui.widgets.chooseLibraryDialog.show, {widgetEl: el});
 };
 
 Zotero.ui.widgets.chooseLibraryDialog.show = function(e){

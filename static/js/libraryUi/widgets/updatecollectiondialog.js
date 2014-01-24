@@ -2,7 +2,9 @@ Zotero.ui.widgets.updateCollectionDialog = {};
 
 Zotero.ui.widgets.updateCollectionDialog.init = function(el){
     Z.debug("updatecollectionsdialog widget init", 3);
-    Zotero.ui.eventful.listen("updateCollectionDialog", Zotero.ui.widgets.updateCollectionDialog.show, {widgetEl: el});
+    var library = Zotero.ui.getAssociatedLibrary(el);
+    
+    library.listen("updateCollectionDialog", Zotero.ui.widgets.updateCollectionDialog.show, {widgetEl: el});
 };
 
 Zotero.ui.widgets.updateCollectionDialog.show = function(evt){
@@ -19,7 +21,7 @@ Zotero.ui.widgets.updateCollectionDialog.show = function(evt){
     
     var currentCollectionKey = Zotero.state.getUrlVar('collectionKey');
     var currentCollection = library.collections.getCollection(currentCollectionKey);
-    var currentParentCollectionKey = currentCollection.parentCollectionKey;
+    var currentParentCollectionKey = currentCollection.parentCollection;
     dialogEl.find(".update-collection-parent-select").val(currentParentCollectionKey);
     dialogEl.find(".updated-collection-title-input").val(currentCollection.get("title"));
     
@@ -36,6 +38,8 @@ Zotero.ui.widgets.updateCollectionDialog.show = function(evt){
         .then(function(response){
             Zotero.ui.jsNotificationMessage("Collection Saved", 'confirm');
             library.collections.dirty = true;
+            library.collections.initSecondaryData();
+            library.trigger('libraryCollectionsUpdated');
             Zotero.state.pushState(true);
             Zotero.ui.closeDialog(dialogEl);
         });

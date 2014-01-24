@@ -2,7 +2,9 @@ Zotero.ui.widgets.addToCollectionDialog = {};
 
 Zotero.ui.widgets.addToCollectionDialog.init = function(el){
     Z.debug("addtocollectionsdialog widget init", 3);
-    Zotero.ui.eventful.listen("addToCollectionDialog", Zotero.ui.widgets.addToCollectionDialog.show, {widgetEl: el});
+    var library = Zotero.ui.getAssociatedLibrary(el);
+    
+    library.listen("addToCollectionDialog", Zotero.ui.widgets.addToCollectionDialog.show, {widgetEl: el});
 };
 
 Zotero.ui.widgets.addToCollectionDialog.show = function(evt){
@@ -17,7 +19,7 @@ Zotero.ui.widgets.addToCollectionDialog.show = function(evt){
     var dialogEl = widgetEl.find(".add-to-collection-dialog");
     
     var addToFunction = function(){
-        Z.debug("add-to-collection-select changed", 3);
+        Z.debug("addToCollection callback", 3);
         var targetCollection = dialogEl.find(".collectionKey-select").val();
         Z.debug("move to: " + targetCollection, 4);
         Zotero.ui.addToCollection(targetCollection, library);
@@ -38,7 +40,7 @@ Zotero.ui.widgets.addToCollectionDialog.show = function(evt){
  */
 Zotero.ui.addToCollection = function(collectionKey, library){
     Z.debug("add-to-collection clicked", 3);
-    var itemKeys = Zotero.ui.getSelectedItemKeys();
+    var itemKeys = Zotero.state.getSelectedItemKeys();
     if(!collectionKey){
         Zotero.ui.jsNotificationMessage("No collection selected", 'error');
         return false;
