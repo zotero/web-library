@@ -19,6 +19,13 @@ Zotero.State = function(){
     
     //setting to determine if we modify the url or not
     this.useLocation = true;
+    
+    this.filter = null;
+    this.selectedItemKeys = [];
+};
+
+Zotero.State.prototype.getSelectedItemKeys = function(){
+    return this.selectedItemKeys;
 };
 
 Zotero.State.prototype.pushTag = function(newtag){
@@ -262,10 +269,11 @@ Zotero.State.prototype.pushState = function(force, newstate){
             history.pushState(s, document.title, url);
             J(window).trigger('popstate');
         }
-        
+        /*
         if(force){
             state.urlChangeCallback({type:'popstate', originalEvent:{state:urlvars}} );
         }
+        */
     }
     
     //trigger popstate so statechange gets called
@@ -399,12 +407,18 @@ Zotero.State.prototype.urlChangeCallback = function(event){
                 }
             });
         }
-        Zotero.ui.eventful.trigger(eventString);
+        Z.debug("State Filter: " + state.filter);
+        Zotero.trigger(eventString, {}, state.filter);
     });
+    //TODO: is this eventMap triggering necessary?
+    
     J.each(widgetEvents, function(ind, val){
-        Zotero.ui.eventful.trigger(ind);
+        Z.debug("State Filter: " + state.filter);
+        
+        Zotero.trigger(ind, {}, state.filter);
     });
     
+   
     //events taken care of, so update curState
     //TODO: this used to be down here for a reason - figure out if still relevant or setting at top
     //is fine?
