@@ -1,23 +1,4 @@
 Zotero.widgets = {};
-Zotero.ui.eventful = {};
-
-Zotero.ui.eventful.trigger = function(eventtype, data){
-    Zotero.debug("Triggering eventful " + eventtype, 3);
-    if(!data){
-        data = {};
-    }
-    data.zeventful = true;
-    if(data.triggeringElement === null || data.triggeringElement === undefined){
-        data.triggeringElement = J("#eventful");
-    }
-    var e = J.Event(eventtype, data);
-    J("#eventful").trigger(e);
-};
-
-Zotero.ui.eventful.listen = function(events, handler, data){
-    J("#eventful").on(events, null, data, handler);
-};
-
 Zotero.eventful = {};
 
 Zotero.eventful.events = [
@@ -101,10 +82,6 @@ Zotero.eventful.initWidgets = function(){
     //trigger events that should happen for widgets on pageload
     //mostly things that cause us to pull from the API or display something
     //for the first time
-    
-    //Zotero.ui.eventful.trigger("tagsDirty"); //removed to be called on indexedDB load instead
-    Zotero.ui.eventful.trigger("displayedItemsChanged");
-    Zotero.ui.eventful.trigger("displayedItemChanged");
 };
 
 //make html elements that are declared to trigger events trigger them
@@ -119,9 +96,13 @@ Zotero.eventful.initTriggers = function(el){
     var triggerOnEvent = function(event){
         Z.debug("triggerOnEvent", 3);
         event.preventDefault();
-        eventName = J(event.delegateTarget).data("triggers");
+        var jel = J(event.delegateTarget);
+        eventName = jel.data("triggers");
         Z.debug("eventName: " + eventName, 3);
-        Zotero.ui.eventful.trigger(eventName, {triggeringElement:event.currentTarget});
+        //var filter = jel.data('filter');
+        var filter = jel.data('library') || "";
+        
+        Zotero.trigger(eventName, {triggeringElement:event.currentTarget}, filter);
     };
     
     J(el).find(".eventfultrigger").each(function(ind, el){
@@ -129,11 +110,10 @@ Zotero.eventful.initTriggers = function(el){
             return;
         }
         var ev = J(el).data("event");
-        var libString = J(el).data("library") || "";
         
         Z.debug("binding eventfultrigger", 4);
         if(ev){
-            Z.debug("binding " + ev + " trigger with " + libString + " on " + el.tagName, 4);
+            Z.debug("binding " + ev + " on " + el.tagName, 4);
             //J(el).on(ev + "." + libString, triggerOnEvent);
             J(el).on(ev, triggerOnEvent);
         }
