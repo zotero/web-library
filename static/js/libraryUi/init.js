@@ -4,19 +4,6 @@ Zotero.ui.jqui = {};
 
 //initialize ui
 Zotero.ui.init.all = function(){
-    J("#content").on('click', 'a.ajax-link', function(){
-        Z.debug("ajax-link clicked with href " + J(this).attr('href'), 3);
-        Z.debug("pathname " + this.pathname, 4);
-        var pathvars = Zotero.state.parsePathVars(this.pathname);
-        Zotero.state.pathVars = pathvars;
-        Zotero.state.pushState();
-        return false;
-    });
-    
-    if(Zotero.config.mobile){
-        Zotero.ui.init.mobile();
-    }
-    
     //run UI initialization based on what page we're on
     Z.debug("ui init based on page", 3);
     switch(Zotero.config.pageClass){
@@ -52,21 +39,9 @@ Zotero.ui.init.library = function(){
 //initialize all the widgets that make up the library
 Zotero.ui.init.fullLibrary = function(){
     Z.debug('Zotero.ui.initFullLibrary', 3);
-    
-    if(J("#library").hasClass('ajaxload')){
-        //full synced library - handle differently
-        Zotero.ui.init.offlineLibrary();
-        return;
-    }
     Zotero.ui.init.libraryTemplates();
     
     Zotero.eventful.initWidgets();
-};
-
-Zotero.ui.init.creatorFieldButtons = function(){
-};
-
-Zotero.ui.init.editButton = function(){
 };
 
 Zotero.ui.init.rte = function(type, autofocus, elements){
