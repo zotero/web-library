@@ -74,9 +74,7 @@ Zotero.ui.unassociatedItemForm = function(el, item){
             if(item.apiObj.tags.length === 0){
                 Zotero.ui.widgets.item.addTag(container, false);
             }
-            Zotero.ui.init.creatorFieldButtons();
             //Zotero.ui.init.tagButtons();
-            Zotero.ui.init.editButton();
         }
         
         container.find(".directciteitembutton").on('click', function(e){

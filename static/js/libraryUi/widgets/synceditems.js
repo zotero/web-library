@@ -22,18 +22,18 @@ Zotero.ui.widgets.syncedItems.init = function(el){
     var container = J(el);
     //container.on('click', ".field-table-header", Zotero.ui.callbacks.resortItemsLocal);
     
-    Zotero.ui.bindItemLinks();
+    Zotero.state.bindItemLinks(container);
     
     //check/uncheck all boxes in items table when master checkbox is toggled
     container.on('change', ".itemlist-editmode-checkbox.all-checkbox", function(e){
         J(".itemlist-editmode-checkbox").prop('checked', J(".itemlist-editmode-checkbox.all-checkbox").prop('checked'));
-        Zotero.ui.updateDisabledControlButtons();
+        //library.trigger('controlPanelContextChange');
         library.trigger("selectedItemsChanged");
     });
     
     //init itemkey-checkbox to enable/disable buttons that require something being selected
     container.on('change', "input.itemKey-checkbox", function(e){
-        Zotero.ui.updateDisabledControlButtons();
+        //library.trigger('controlPanelContextChange');
         var selectedItemKeys = [];
         J("input.itemKey-checkbox:checked").each(function(index, el){
             selectedItemKeys.push(J(el).data('itemkey'));

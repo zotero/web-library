@@ -23,9 +23,10 @@ Zotero.ui.widgets.itemContainer.init = function(el){
         Zotero.state.pushState();
     });
     
-    Zotero.ui.bindTagLinks(container);
+    Zotero.state.bindTagLinks(container);
 };
 
+//TODO: this some other way, and probably trigger something so the item widget will reset
 Zotero.ui.cancelItemEdit = function(e){
     Zotero.state.clearUrlVars(['itemKey', 'collectionKey', 'tag', 'q']);
     Zotero.state.pushState();

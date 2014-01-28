@@ -5,14 +5,14 @@ Zotero.ui.widgets.controlPanel.init = function(el){
     var library = Zotero.ui.getAssociatedLibrary(el);
     
     Zotero.ui.showControlPanel(el);
-    library.listen("controlPanelContextChange", Zotero.ui.updateDisabledControlButtons, {widgetEl:el});
+    //library.listen("controlPanelContextChange", Zotero.ui.widgets.controlPanel.contextChanged, {widgetEl:el});
     library.listen("selectedItemsChanged", Zotero.ui.widgets.controlPanel.selectedItemsChanged, {widgetEl:el});
     
-    library.listen("removeFromCollection", Zotero.ui.callbacks.removeFromCollection, {widgetEl:el});
-    library.listen("moveToTrash", Zotero.ui.callbacks.moveToTrash), {widgetEl:el};
-    library.listen("removeFromTrash", Zotero.ui.callbacks.removeFromTrash, {widgetEl:el});
-    library.listen("toggleEdit", Zotero.ui.callbacks.toggleEdit, {widgetEl:el});
-    library.listen('clearLibraryQuery', Zotero.ui.clearLibraryQuery, {widgetEl:el});
+    library.listen("removeFromCollection", Zotero.ui.widgets.controlPanel.removeFromCollection, {widgetEl:el});
+    library.listen("moveToTrash", Zotero.ui.widgets.controlPanel.moveToTrash), {widgetEl:el};
+    library.listen("removeFromTrash", Zotero.ui.widgets.controlPanel.removeFromTrash, {widgetEl:el});
+    library.listen("toggleEdit", Zotero.ui.widgets.controlPanel.toggleEdit, {widgetEl:el});
+    library.listen('clearLibraryQuery', Zotero.ui.widgets.controlPanel.clearLibraryQuery, {widgetEl:el});
     
     var container = J(el);
     //set initial state of search input to url value
@@ -62,22 +62,24 @@ Zotero.ui.widgets.controlPanel.init = function(el){
         J("#header-search-query").val("").focus();
     });
     
+    Zotero.ui.widgets.controlPanel.updateDisabledControlButtons();
 };
 
-Zotero.ui.widgets.controlPanel.updateDisabledControlButtons = function(){
-    Zotero.ui.updateDisabledControlButtons();
+Zotero.ui.widgets.controlPanel.contextChanged = function(evt){
+    Zotero.ui.widgets.controlPanel.updateDisabledControlButtons();
 };
 
-Zotero.ui.widgets.controlPanel.selectedItemsChanged = function(event){
+Zotero.ui.widgets.controlPanel.selectedItemsChanged = function(evt){
     Z.debug("Zotero.ui.widgets.controlPanel.selectedItemsChanged", 3);
-    var selectedItemKeys = event.selectedItemKeys;
+    var selectedItemKeys = evt.selectedItemKeys;
     if(!selectedItemKeys){
         selectedItemKeys = [];
     }
-    Zotero.ui.updateDisabledControlButtons(selectedItemKeys);
+        
+    Zotero.ui.widgets.controlPanel.updateDisabledControlButtons(selectedItemKeys);
 };
 
-Zotero.ui.clearLibraryQuery = function(){
+Zotero.ui.widgets.controlPanel.clearLibraryQuery = function(){
     Zotero.state.unsetUrlVar('q');
     Zotero.state.unsetUrlVar('qmode');
     
@@ -90,8 +92,8 @@ Zotero.ui.clearLibraryQuery = function(){
  * Update the disabled state of library control toolbar buttons depending on context
  * @return {undefined}
  */
-Zotero.ui.updateDisabledControlButtons = function(selectedItemKeys){
-    Z.debug("Zotero.ui.updateDisabledControlButtons", 3);
+Zotero.ui.widgets.controlPanel.updateDisabledControlButtons = function(selectedItemKeys){
+    Z.debug("Zotero.ui.widgets.controlPanel.updateDisabledControlButtons", 3);
     if(!selectedItemKeys){
         selectedItemKeys = [];
     }
@@ -132,7 +134,6 @@ Zotero.ui.updateDisabledControlButtons = function(selectedItemKeys){
         J(".remove-from-collection-button").addClass('disabled');
         J(".move-to-trash-button").prop('title', 'Permanently Delete');
     }
-    Zotero.ui.init.editButton();
 };
 /*
 Zotero.ui.widgets.controlPanel.createItemDropdown = function(el){
@@ -154,7 +155,7 @@ Zotero.ui.widgets.controlPanel.createItemDropdown = function(el){
  * @param  {event} e click event
  * @return {boolean}
  */
-Zotero.ui.callbacks.toggleEdit =  function(e){
+Zotero.ui.widgets.controlPanel.toggleEdit =  function(e){
     Z.debug("edit checkbox toggled", 3);
     var curMode = Zotero.state.getUrlVar('mode');
     if(curMode != "edit"){
@@ -245,7 +246,7 @@ Zotero.ui.callbacks.moveToTrash =  function(evt){
  * @param  {event} e click event
  * @return {boolean}
  */
-Zotero.ui.callbacks.removeFromTrash =  function(evt){
+Zotero.ui.widgets.controlPanel.removeFromTrash =  function(evt){
     Z.debug('remove-from-trash clicked', 3);
     var widgetEl = J(evt.data.widgetEl);
     var itemKeys = Zotero.state.getSelectedItemKeys();
