@@ -24,6 +24,18 @@ Zotero.State = function(){
     this.selectedItemKeys = [];
 };
 
+Zotero.State.prototype.updateCurState = function(){
+    var state = this;
+    state.curState = J.extend({}, state.f, state.q, state.pathVars);
+    return;
+};
+
+Zotero.State.prototype.savePrevState = function(){
+    var state = this;
+    state.prevState = state.curState;
+    return;
+};
+
 Zotero.State.prototype.getSelectedItemKeys = function(){
     return this.selectedItemKeys;
 };
@@ -121,6 +133,7 @@ Zotero.State.prototype.clearUrlVars = function(except){
 Zotero.State.prototype.parseUrlVars = function(){
     Z.debug('Zotero.State.parseUrlVars', 3);
     var state = this;
+    if(!state.useLocation) return;
     state.q = J.deparam(J.param.querystring());
     state.f = state.parseFragmentVars(); // J.deparam(J.param.fragment()),
     state.pathVars = state.parsePathVars();
@@ -238,24 +251,21 @@ Zotero.State.prototype.mutateUrl = function(addvars, removevars){
     return url;
 };
 
-Zotero.State.prototype.pushState = function(force, newstate){
+Zotero.State.prototype.pushState = function(){
     Z.debug('Zotero.State.pushState', 3);
     var state = this;
     var history = window.history;
     
     Zotero.ui.saveFormData();
     //make prevHref the current location before we change it
-    state.prevHref = window.location.href;
+    state.prevHref = state.curHref;// window.location.href;
     
     //selectively add state to hint where to go
-    var s = {};
-    if(newstate){
-        s = newstate;
-    }
+    var s = J.extend({}, state.f, state.q, state.pathVars);
     
-    urlvars = state.pathVars;
-    
+    var urlvars = state.pathVars;
     var url = state.buildUrl(urlvars, false);
+    state.curHref = url;
     Z.debug("about to push url: " + url, 3);
     //actually push state and manually call urlChangeCallback if specified
     if(state.useLocation){
@@ -267,45 +277,36 @@ Zotero.State.prototype.pushState = function(force, newstate){
         else{
             Z.debug("Zotero.State.pushState - pushState", 3);
             history.pushState(s, document.title, url);
-            J(window).trigger('popstate');
+            state.stateChanged();
         }
-        /*
-        if(force){
-            state.urlChangeCallback({type:'popstate', originalEvent:{state:urlvars}} );
-        }
-        */
     }
-    
-    //trigger popstate so statechange gets called
+    else {
+        state.stateChanged();
+    }
     Zotero.debug("leaving pushstate", 3);
 };
 
-Zotero.State.prototype.replaceState = function(force, state){
+Zotero.State.prototype.replaceState = function(){
     Z.debug("Zotero.State.replaceState", 3);
     var state = this;
     var history = window.history;
     //TODO: figure out what correct behaviour for prevHref/curHref is here
     //I guess probably to just update current and leave prev alone.
     Zotero.ui.saveFormData();
-    
-    if(typeof force == 'undefined'){
-        force = false;
-    }
+    state.updateCurState();
     
     //selectively add state to hint where to go
-    var s = null;
-    if(state){
-        s = state;
-    }
-    
-    urlvars = state.pathVars;
-    
+    var s = J.extend({}, state.curState);
+    var urlvars = state.pathVars;
     var url = state.buildUrl(urlvars, false);
     
     if(state.useLocation){
         history.replaceState(s, null, url);
+        state.curHref = url;
     }
-    state.currentHref = window.location.href;
+    else {
+        state.curHref = url;
+    }
 };
 
 Zotero.State.prototype.updateStateTitle = function(title){
@@ -380,18 +381,25 @@ Zotero.State.prototype.updateFragment = function(updatedVars){
     J.bbq.pushState(updatedVars, 0);
 };
 
-Zotero.State.prototype.urlChangeCallback = function(event){
+Zotero.State.prototype.popstateCallback = function(evt){
     var state = this;
-    Z.debug("===== urlChangeCallback =====", 3);
+    Z.debug("===== popstateCallback =====", 3);
     var history = window.history;
-    state.prevHref = state.currentHref;
+    state.prevHref = state.curHref;
     
     Z.debug("new href, updating href and processing urlchange", 3);
-    state.currentHref = window.location.href;// History.getState().cleanUrl;
+    state.curHref = window.location.href;// History.getState().cleanUrl;
     
     //reparse url to set vars in Z.ajax
     state.parseUrlVars();
-    
+    state.stateChanged(evt);
+};
+
+Zotero.State.prototype.stateChanged = function(event){
+    var state = this;
+    Z.debug("stateChanged", 3);
+    state.savePrevState();
+    state.updateCurState();
     //check for changed variables in the url and fire events for them
     Z.debug("Checking changed variables", 3);
     var changedVars = state.diffState(state.prevHref, state.curHref);
@@ -407,47 +415,18 @@ Zotero.State.prototype.urlChangeCallback = function(event){
                 }
             });
         }
-        Z.debug("State Filter: " + state.filter);
+        Z.debug("State Filter: " + state.filter, 3);
         Zotero.trigger(eventString, {}, state.filter);
     });
     //TODO: is this eventMap triggering necessary?
     
     J.each(widgetEvents, function(ind, val){
-        Z.debug("State Filter: " + state.filter);
+        Z.debug("State Filter: " + state.filter, 3);
         
         Zotero.trigger(ind, {}, state.filter);
     });
     
-   
-    //events taken care of, so update curState
-    //TODO: this used to be down here for a reason - figure out if still relevant or setting at top
-    //is fine?
-    //state.curState = history.state;// History.getState();
-    //state.currentHref = window.location.href;
-    Z.debug("===== urlChangeCallback Done =====", 3);
-};
-
-Zotero.State.prototype.callbackAssignedFunction = function(el){
-    var state = this;
-    var functionName = J(el).data('function');
-    if(functionName){
-        Zotero.callbacks[functionName](el);
-    }
-};
-
-Zotero.State.prototype.flagLoading = function(el){
-    var state = this;
-    J(el).data('loading', true);
-};
-
-Zotero.State.prototype.doneLoading = function(el){
-    Z.debug("Zotero.State.doneLoading", 3);
-    var state = this;
-    J(el).data('loading', false);
-    if(J(el).data('queuedWaiting')){
-        J(el).data('queuedWaiting', false);
-        state.callbackAssignedFunction(el);
-    }
+    Z.debug("===== stateChanged Done =====", 3);
 };
 
 Zotero.State.prototype.diffState = function(prevHref, curHref){
@@ -491,10 +470,46 @@ Zotero.State.prototype.diffState = function(prevHref, curHref){
     return changedVars;
 };
 
-//function bound to history state changes that we trigger on pushState and popstate
-Zotero.State.prototype.stateChangeCallback = function(event){
-    Z.debug("stateChangeCallback", 3);
+/**
+ * Bind tag links to alter current state rather than following the link
+ * @return {undefined}
+ */
+Zotero.State.prototype.bindTagLinks = function(container){
     var state = this;
-    state.urlChangeCallback(event);
+    Z.debug("Zotero.State.bindTagLinks", 3);
+    J(container).on('click', 'a.tag-link', function(e){
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        //J("#tag-filter-input").val('');
+        var tagtitle = J(this).attr('data-tagtitle');
+        state.toggleTag(tagtitle);
+        state.clearUrlVars(['tag', 'collectionKey']);
+        state.pushState();
+    });
+
 };
 
+/**
+ * Bind item links to take alter current state instead of following link
+ * @return {undefined}
+ */
+Zotero.State.prototype.bindItemLinks = function(container){
+    Z.debug("Zotero.State.bindItemLinks", 3);
+    var state = this;
+    
+    J(container).on('click', "a.item-select-link", function(e){
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        Z.debug("item-select-link clicked", 3);
+        var itemKey = J(this).data('itemkey');
+        state.pathVars.itemKey = itemKey;
+        state.pushState();
+    });
+    J(container).on('click', 'td[data-itemkey]:not(.edit-checkbox-td)', function(e){
+        e.preventDefault();
+        Z.debug("item-select-td clicked", 3);
+        var itemKey = J(this).data('itemkey');
+        state.pathVars.itemKey = itemKey;
+        state.pushState();
+    });
+};

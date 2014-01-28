@@ -106,18 +106,16 @@ Zotero.init = function(){
         document.cookie = "zoterojsenabled=1; expires=; path=/";
     }
     
-    //J(window).bind('statechange', Zotero.state.urlChangeCallback);
-    // Bind to StateChange Event
-    //History.Adapter.bind(window,'statechange', Zotero.state.stateChangeCallback); // Note: We are using statechange instead of popstate
+    // Bind to popstate to update state when browser goes back
+    // only applicable if state is using location
     window.onpopstate = function(){
         Z.debug("popstate");
         J(window).trigger('statechange');
     };
-    J(window).on('statechange', J.proxy(Zotero.state.stateChangeCallback, Zotero.state));
+    J(window).on('statechange', J.proxy(Zotero.state.popstateCallback, Zotero.state));
     
-    //call urlChangeCallback on first load since some browsers don't popstate onload
-    Zotero.state.urlChangeCallback();
-    
+    //call popstateCallback on first load since some browsers don't popstate onload
+    Zotero.state.popstateCallback();
 };
 
 //set up Zotero config and preferences based on passed in object
