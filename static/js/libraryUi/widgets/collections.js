@@ -19,6 +19,13 @@ Zotero.ui.widgets.collections.init = function(el){
 Zotero.ui.widgets.collections.syncCollections = function(evt) {
     Zotero.debug("Zotero eventful syncCollectionsCallback", 3);
     var widgetEl = J(evt.data.widgetEl);
+    var loadingPromise = widgetEl.data('loadingPromise');
+    if(loadingPromise){
+        var p = widgetEl.data('loadingPromise');
+        return p.then(function(){
+            return Zotero.ui.widgets.collections.syncCollections(evt);
+        });
+    }
     
     //get Zotero.Library object if already bound to element
     var library = Zotero.ui.getAssociatedLibrary(widgetEl);
@@ -26,13 +33,14 @@ Zotero.ui.widgets.collections.syncCollections = function(evt) {
     //sync collections if loaded from cache but not synced
     return library.loadUpdatedCollections()
     .then(function(){
-        Zotero.state.doneLoading(widgetEl);
         library.trigger("libraryCollectionsUpdated");
     },
     function(){
         //sync failed, but we already had some data, so show that
         library.trigger("libraryCollectionsUpdated");
         //TODO: display error as well
+    }).then(function(){
+        widgetEl.removeData('loadingPromise');
     });
 };
 
