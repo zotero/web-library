@@ -1,5 +1,7 @@
 Zotero.ui.widgets.item = {};
 //TODO: alot of this widget should probably be rewritten
+//TODO: trigger showChildren with an extra itemID filter so quick clicks back and forth
+//between items don't overwrite with the wrong children?
 Zotero.ui.widgets.item.init = function(el){
     var library = Zotero.ui.getAssociatedLibrary(el);
     
@@ -31,16 +33,14 @@ Zotero.ui.widgets.item.loadItemCallback = function(event){
     var triggeringEl = J(event.triggeringElement);
     
     Z.debug("Zotero.callbacks.loadItem", 3);
-    Zotero.callbacks.rejectIfPending(widgetEl);
+    //Zotero.callbacks.rejectIfPending(widgetEl);
     var library = Zotero.ui.getAssociatedLibrary(widgetEl);
     var p;
     //clear contents and show spinner while loading
     widgetEl.empty();
     Zotero.ui.showSpinner(widgetEl);
     
-    //if we're  creating a new item: let user choose itemType if we don't have a value
-    //yet, otherwise create a new item and initialize it as an empty item of that type
-    //then once we have the template in the item render it as an item edit
+    //if this is a new item: initialize an empty item for the given itemtype
     if(event.data.newItem){
         var itemType = triggeringEl.data("itemtype");
         if(!itemType){
@@ -51,7 +51,7 @@ Zotero.ui.widgets.item.loadItemCallback = function(event){
         newItem.libraryID = library.libraryID;
         p = newItem.initEmpty(itemType)
         .then(function(item){
-            Zotero.ui.editItemForm(widgetEl, item);
+            Zotero.ui.widgets.item.editItemForm(widgetEl, item);
             widgetEl.data('newitem', item);
         },
         function(response){
@@ -63,26 +63,22 @@ Zotero.ui.widgets.item.loadItemCallback = function(event){
     }
     
     //if it is not a new item handled above we must have an itemKey
+    //or display something else that's not an item
     var itemKey = Zotero.state.getUrlVar('itemKey');
     if(!itemKey){
         Z.debug("No itemKey - " + itemKey, 3);
         widgetEl.empty();
+        //TODO: display information about library like client?
         return Promise.reject(new Error("No itemkey - " + itemKey));
     }
     
-    //get the item out of the library for display
+    //if we are showing an item, load it from local library of API
+    //then display it
     var item = library.items.getItem(itemKey);
+    var p;
     if(item){
         Z.debug("have item locally, loading details into ui", 3);
-        if(Zotero.state.getUrlVar('mode') == 'edit'){
-            Zotero.ui.editItemForm(widgetEl, item);
-        }
-        else{
-            Zotero.ui.loadItemDetail(item, widgetEl);
-            library.trigger('showChildren');
-        }
-        Zotero.eventful.initTriggers(J(widgetEl));
-        return Promise.resolve();
+        p = Promise.resolve(item);
     }
     else{
         Z.debug("must fetch item from server", 3);
@@ -93,25 +89,24 @@ Zotero.ui.widgets.item.loadItemCallback = function(event){
             'itemKey':itemKey,
             'content':'json'
         };
-        p = library.loadItem(itemKey)
-        .then(function(item){
-            Z.debug("Library.loadItem done", 3);
-            widgetEl.empty();
-            
-            if(Zotero.state.getUrlVar('mode') == 'edit'){
-                Zotero.ui.editItemForm(widgetEl, item);
-            }
-            else{
-                Zotero.ui.loadItemDetail(item, widgetEl);
-                library.trigger('showChildren');
-            }
-            //set currentConfig on element when done displaying
-            widgetEl.data('currentconfig', config);
-            Zotero.eventful.initTriggers(widgetEl);
-        });
-        widgetEl.data('pendingDeferred', p);
-        return p;
+        p = library.loadItem(itemKey);
     }
+    p.then(function(item){
+        Z.debug("Library.loadItem done", 3);
+        widgetEl.empty();
+        
+        if(Zotero.state.getUrlVar('mode') == 'edit'){
+            Zotero.ui.widgets.item.editItemForm(widgetEl, item);
+        }
+        else{
+            Zotero.ui.widgets.item.loadItemDetail(item, widgetEl);
+            library.trigger('showChildren');
+        }
+        //set currentConfig on element when done displaying
+        widgetEl.data('currentconfig', config);
+        Zotero.eventful.initTriggers(widgetEl);
+    });
+    return p;
 };
 
 /**
@@ -205,52 +200,6 @@ Zotero.ui.widgets.item.addNote = function(e){
 };
 
 /**
- * Load the template for a new item
- * @param  {Zotero_Item} item Item template to load
- * @return {undefined}
- */
- /*
-Zotero.ui.loadNewItemTemplate = function(item){
-    Z.debug("Zotero.ui.loadNewItemTemplate", 3);
-    Z.debug(item, 3);
-    return Zotero.Item.prototype.getCreatorTypes(item.itemType)
-    .then(function(itemCreatorTypes){
-        var jel = J("#item-details-div").empty();
-        if(item.itemType == 'note'){
-            var parentKey = Zotero.state.getUrlVar('parentKey');
-            if(parentKey){
-                item.parentKey = parentKey;
-            }
-            jel.append( J('#editnoteformTemplate').render({item:item,
-                                         itemKey:item.itemKey
-                                         }) );
-            
-            Zotero.ui.init.rte('default');
-        }
-        else {
-            //TODO: libraryUserID is for what?
-            jel.append( J('#itemformTemplate').render( {item:item,
-                                                        libraryUserID:zoteroData.libraryUserID,
-                                                        itemKey:item.itemKey,
-                                                        creatorTypes:itemCreatorTypes,
-                                                        saveable: true,
-                                                        citable:false
-                                                        } ) );
-            if(item.apiObj.tags.length === 0){
-                Zotero.ui.widgets.item.addTag(jel, false);
-            }
-            Zotero.ui.init.creatorFieldButtons();
-            //Zotero.ui.init.tagButtons();
-            Zotero.ui.init.editButton();
-        }
-        jel.data('newitem', item);
-        
-        //load data from previously rendered form if available
-        Zotero.ui.loadFormData(jel);
-    });
-};
-*/
-/**
  * Add a tag field to an edit item form
  * @param {bool} focus Whether to focus the newly added tag field
  */
@@ -309,24 +258,21 @@ Zotero.ui.widgets.item.removeTag = function(e) {
  * @param  {Zotero_Item} item Zotero Item object to associate with form
  * @return {undefined}
  */
-Zotero.ui.editItemForm = function(el, item){
-    Z.debug("Zotero.ui.editItemForm", 3);
+Zotero.ui.widgets.item.editItemForm = function(el, item){
+    Z.debug("Zotero.ui.widgets.item.editItemForm", 3);
     Z.debug(item, 4);
-    var jel = J(el);
+    var jel = J(el).empty();
     var library = Zotero.ui.getAssociatedLibrary(el);
     if(item.itemType == 'note'){
         Z.debug("editItemForm - note", 3);
-        jel.empty();
         jel.append( J('#editnoteformTemplate').render({item:item,
                                          itemKey:item.itemKey
                                          }) );
                                          
         Zotero.ui.init.rte('default');
-        Zotero.ui.init.editButton();
     }
     else if(item.itemType == "attachment"){
         Z.debug("item is attachment", 4);
-        jel.empty();
         var mode = Zotero.state.getUrlVar('mode');
         jel.append( J('#attachmentformTemplate').render({item:item,
                                     itemKey:item.itemKey,
@@ -338,15 +284,6 @@ Zotero.ui.editItemForm = function(el, item){
         if(item.apiObj.tags.length === 0){
             Zotero.ui.widgets.item.addTag(el, false);
         }
-        if(Zotero.config.mobile){
-            Zotero.ui.init.editButton();
-            J(el).trigger('create');
-        }
-        else{
-            Zotero.ui.init.creatorFieldButtons();
-            //Zotero.ui.init.tagButtons();
-            Zotero.ui.init.editButton();
-        }
         Zotero.ui.init.rte();
         
     }
@@ -354,7 +291,6 @@ Zotero.ui.editItemForm = function(el, item){
         item.getCreatorTypes(item.apiObj.itemType)
         .then(function(){
             Z.debug("getCreatorTypes done", 3);
-            jel.empty();
             if(item.creators.length === 0){
                 item.creators.push({creatorType: item.creatorTypes[item.itemType][0],
                                     first: '',
@@ -394,8 +330,8 @@ Zotero.ui.editItemForm = function(el, item){
  * @param  {Dom Element} el   Container
  * @return {undefined}
  */
-Zotero.ui.loadItemDetail = function(item, el){
-    Z.debug("Zotero.ui.loadItemDetail", 3);
+Zotero.ui.widgets.item.loadItemDetail = function(item, el){
+    Z.debug("Zotero.ui.widgets.item.loadItemDetail", 3);
     var jel = J(el);
     jel.empty();
     var parentUrl = false;
@@ -412,7 +348,6 @@ Zotero.ui.loadItemDetail = function(item, el){
         jel.append( J('#itemdetailsTemplate').render({item:item, parentUrl:parentUrl, libraryString:library.libraryString}) ).trigger('create');
     }
     Zotero.ui.init.rte('readonly');
-    Zotero.ui.init.editButton();
     
     try{
         //trigger event for Zotero translator detection
@@ -488,7 +423,6 @@ Zotero.ui.widgets.item.switchTwoFieldCreators = function(e){
                                                 creatorTypes:Zotero.Item.prototype.creatorTypes[itemType]
                                                 }));
     
-    Zotero.ui.init.creatorFieldButtons();
     Zotero.eventful.initTriggers(containingTable.find(trIdString));
 };
 
@@ -512,36 +446,12 @@ Zotero.ui.widgets.item.switchSingleFieldCreator = function(e){
                                         creatorTypes:Zotero.Item.prototype.creatorTypes[itemType]
                                         }));
     
-    Zotero.ui.init.creatorFieldButtons();
     Zotero.eventful.initTriggers(containingTable.find(trIdString));
 };
-
-/*
-Zotero.ui.callbacks.addNote = function(e){
-    Z.debug("add note button clicked", 3);
-    Zotero.ui.addNote(this);
-    return false;
-};
-*/
 
 Zotero.ui.widgets.item.cancelItemEdit = function(e){
     Zotero.state.clearUrlVars(['itemKey', 'collectionKey', 'tag', 'q']);
     Zotero.state.pushState();
-};
-
-Zotero.ui.widgets.item.selectItemType = function(e){
-    Z.debug("itemTypeSelectButton clicked", 3);
-    var jel;
-    if(e.zeventful){
-        jel = J(e.triggeringElement);
-    } else {
-        jel = J(this);
-    }
-    
-    var itemType = J("#itemType").val();
-    Zotero.state.pathVars['itemType'] = itemType;
-    Zotero.state.pushState();
-    return false;
 };
 
 Zotero.ui.widgets.item.itemFormKeydown = function(e){
