@@ -204,19 +204,6 @@
     });
 })(jQuery, this);
 
-(function($) {
-    var o = $({});
-    $.subscribe = function() {
-        o.on.apply(o, arguments);
-    };
-    $.unsubscribe = function() {
-        o.off.apply(o, arguments);
-    };
-    $.publish = function() {
-        o.trigger.apply(o, arguments);
-    };
-})(jQuery);
-
 !function() {
     var a, b, c, d;
     !function() {
@@ -1350,7 +1337,6 @@ var Zotero = {
         ajax: 1,
         apiVersion: 2,
         eventful: false,
-        jqueryui: true,
         locale: "en-US",
         cacheStoreType: "localStorage",
         preloadCachedLibrary: true,
@@ -6550,7 +6536,6 @@ Zotero.Library.prototype.loadAllTags = function(config, checkCached) {
             plainList.sort(Zotero.Library.prototype.sortLower);
             tags.plainList = plainList;
             Z.debug("done parsing one tags feed - checking for more.", 3);
-            J.publish("tags_page_loaded", [ tags ]);
             if (tags.hasNextLink) {
                 Z.debug("still has next link.", 3);
                 tags.tagsArray.sort(library.sortByTitleCompare);
@@ -7006,8 +6991,8 @@ Zotero.init = function() {
         Z.debug("popstate");
         J(window).trigger("statechange");
     };
-    J(window).on("statechange", J.proxy(Zotero.state.stateChangeCallback, Zotero.state));
-    Zotero.state.urlChangeCallback();
+    J(window).on("statechange", J.proxy(Zotero.state.popstateCallback, Zotero.state));
+    Zotero.state.popstateCallback();
 };
 
 Zotero.loadConfig = function(config) {
@@ -7055,6 +7040,18 @@ Zotero.State = function() {
     this.useLocation = true;
     this.filter = null;
     this.selectedItemKeys = [];
+};
+
+Zotero.State.prototype.updateCurState = function() {
+    var state = this;
+    state.curState = J.extend({}, state.f, state.q, state.pathVars);
+    return;
+};
+
+Zotero.State.prototype.savePrevState = function() {
+    var state = this;
+    state.prevState = state.curState;
+    return;
 };
 
 Zotero.State.prototype.getSelectedItemKeys = function() {
@@ -7146,6 +7143,7 @@ Zotero.State.prototype.clearUrlVars = function(except) {
 Zotero.State.prototype.parseUrlVars = function() {
     Z.debug("Zotero.State.parseUrlVars", 3);
     var state = this;
+    if (!state.useLocation) return;
     state.q = J.deparam(J.param.querystring());
     state.f = state.parseFragmentVars();
     state.pathVars = state.parsePathVars();
@@ -7241,18 +7239,16 @@ Zotero.State.prototype.mutateUrl = function(addvars, removevars) {
     return url;
 };
 
-Zotero.State.prototype.pushState = function(force, newstate) {
+Zotero.State.prototype.pushState = function() {
     Z.debug("Zotero.State.pushState", 3);
     var state = this;
     var history = window.history;
     Zotero.ui.saveFormData();
-    state.prevHref = window.location.href;
-    var s = {};
-    if (newstate) {
-        s = newstate;
-    }
-    urlvars = state.pathVars;
+    state.prevHref = state.curHref;
+    var s = J.extend({}, state.f, state.q, state.pathVars);
+    var urlvars = state.pathVars;
     var url = state.buildUrl(urlvars, false);
+    state.curHref = url;
     Z.debug("about to push url: " + url, 3);
     if (state.useLocation) {
         if (state.replacePush === true) {
@@ -7262,30 +7258,29 @@ Zotero.State.prototype.pushState = function(force, newstate) {
         } else {
             Z.debug("Zotero.State.pushState - pushState", 3);
             history.pushState(s, document.title, url);
-            J(window).trigger("popstate");
+            state.stateChanged();
         }
+    } else {
+        state.stateChanged();
     }
     Zotero.debug("leaving pushstate", 3);
 };
 
-Zotero.State.prototype.replaceState = function(force, state) {
+Zotero.State.prototype.replaceState = function() {
     Z.debug("Zotero.State.replaceState", 3);
     var state = this;
     var history = window.history;
     Zotero.ui.saveFormData();
-    if (typeof force == "undefined") {
-        force = false;
-    }
-    var s = null;
-    if (state) {
-        s = state;
-    }
-    urlvars = state.pathVars;
+    state.updateCurState();
+    var s = J.extend({}, state.curState);
+    var urlvars = state.pathVars;
     var url = state.buildUrl(urlvars, false);
     if (state.useLocation) {
         history.replaceState(s, null, url);
+        state.curHref = url;
+    } else {
+        state.curHref = url;
     }
-    state.currentHref = window.location.href;
 };
 
 Zotero.State.prototype.updateStateTitle = function(title) {
@@ -7352,14 +7347,22 @@ Zotero.State.prototype.updateFragment = function(updatedVars) {
     J.bbq.pushState(updatedVars, 0);
 };
 
-Zotero.State.prototype.urlChangeCallback = function(event) {
+Zotero.State.prototype.popstateCallback = function(evt) {
     var state = this;
-    Z.debug("===== urlChangeCallback =====", 3);
+    Z.debug("===== popstateCallback =====", 3);
     var history = window.history;
-    state.prevHref = state.currentHref;
+    state.prevHref = state.curHref;
     Z.debug("new href, updating href and processing urlchange", 3);
-    state.currentHref = window.location.href;
+    state.curHref = window.location.href;
     state.parseUrlVars();
+    state.stateChanged(evt);
+};
+
+Zotero.State.prototype.stateChanged = function(event) {
+    var state = this;
+    Z.debug("stateChanged", 3);
+    state.savePrevState();
+    state.updateCurState();
     Z.debug("Checking changed variables", 3);
     var changedVars = state.diffState(state.prevHref, state.curHref);
     var widgetEvents = {};
@@ -7373,37 +7376,14 @@ Zotero.State.prototype.urlChangeCallback = function(event) {
                 }
             });
         }
-        Z.debug("State Filter: " + state.filter);
+        Z.debug("State Filter: " + state.filter, 3);
         Zotero.trigger(eventString, {}, state.filter);
     });
     J.each(widgetEvents, function(ind, val) {
-        Z.debug("State Filter: " + state.filter);
+        Z.debug("State Filter: " + state.filter, 3);
         Zotero.trigger(ind, {}, state.filter);
     });
-    Z.debug("===== urlChangeCallback Done =====", 3);
-};
-
-Zotero.State.prototype.callbackAssignedFunction = function(el) {
-    var state = this;
-    var functionName = J(el).data("function");
-    if (functionName) {
-        Zotero.callbacks[functionName](el);
-    }
-};
-
-Zotero.State.prototype.flagLoading = function(el) {
-    var state = this;
-    J(el).data("loading", true);
-};
-
-Zotero.State.prototype.doneLoading = function(el) {
-    Z.debug("Zotero.State.doneLoading", 3);
-    var state = this;
-    J(el).data("loading", false);
-    if (J(el).data("queuedWaiting")) {
-        J(el).data("queuedWaiting", false);
-        state.callbackAssignedFunction(el);
-    }
+    Z.debug("===== stateChanged Done =====", 3);
 };
 
 Zotero.State.prototype.diffState = function(prevHref, curHref) {
@@ -7423,10 +7403,37 @@ Zotero.State.prototype.diffState = function(prevHref, curHref) {
     return changedVars;
 };
 
-Zotero.State.prototype.stateChangeCallback = function(event) {
-    Z.debug("stateChangeCallback", 3);
+Zotero.State.prototype.bindTagLinks = function(container) {
     var state = this;
-    state.urlChangeCallback(event);
+    Z.debug("Zotero.State.bindTagLinks", 3);
+    J(container).on("click", "a.tag-link", function(e) {
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        var tagtitle = J(this).attr("data-tagtitle");
+        state.toggleTag(tagtitle);
+        state.clearUrlVars([ "tag", "collectionKey" ]);
+        state.pushState();
+    });
+};
+
+Zotero.State.prototype.bindItemLinks = function(container) {
+    Z.debug("Zotero.State.bindItemLinks", 3);
+    var state = this;
+    J(container).on("click", "a.item-select-link", function(e) {
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        Z.debug("item-select-link clicked", 3);
+        var itemKey = J(this).data("itemkey");
+        state.pathVars.itemKey = itemKey;
+        state.pushState();
+    });
+    J(container).on("click", "td[data-itemkey]:not(.edit-checkbox-td)", function(e) {
+        e.preventDefault();
+        Z.debug("item-select-td clicked", 3);
+        var itemKey = J(this).data("itemkey");
+        state.pathVars.itemKey = itemKey;
+        state.pushState();
+    });
 };
 
 Zotero.Delay = function(mseconds) {
@@ -7435,127 +7442,6 @@ Zotero.Delay = function(mseconds) {
             resolve();
         }, mseconds);
     });
-};
-
-Zotero.callbacks = {};
-
-Zotero.callbacks.chooseItemPane = function(el) {
-    Z.debug("Zotero.callbacks.chooseItemPane", 3);
-    var showPane = "list";
-    var itemList = J("#library-items-div");
-    var itemDetail = J("#item-details-div");
-    var itemKey = Zotero.state.getUrlVar("itemKey");
-    Z.debug("showPane itemKey : " + itemKey, 3);
-    if (itemKey) {
-        showPane = "detail";
-    } else if (Zotero.state.getUrlVar("action") == "newItem") {
-        showPane = "detail";
-    }
-    if (showPane == "detail") {
-        Z.debug("item pane displaying detail", 3);
-        itemList.hide();
-        itemDetail.show();
-    } else if (showPane == "list") {
-        Z.debug("item pane displaying list", 3);
-        itemDetail.hide();
-        itemList.show();
-    }
-    if (Zotero.config.mobile) {
-        if (showPane == "detail") {
-            J("#items-pane-edit-panel-div").hide();
-            J("#filter-guide-div").hide();
-        } else if (showPane == "list") {
-            J("#items-pane-edit-panel-div").show();
-            J("#filter-guide-div").show();
-        }
-    }
-};
-
-Zotero.callbacks.rejectIfPending = function(el) {
-    var pendingDeferred = J(el).data("pendingDeferred");
-    if (pendingDeferred && pendingDeferred.hasOwnProperty("reject")) {
-        pendingDeferred.reject();
-        J(el).removeData("pendingDeferred");
-    }
-};
-
-Zotero.callbacks.showSpinnerSection = function(el) {
-    Z.debug("Zotero.callbacks.showSpinnerSection", 3);
-    Zotero.ui.showSpinner(J(el).children(".loading"));
-};
-
-Zotero.callbacks.appendPreloader = function(el) {
-    Z.debug("Zotero.callbacks.appendPreloader", 3);
-    Zotero.ui.appendSpinner(el);
-};
-
-Zotero.callbacks.loadUserGroups = function(el) {
-    Z.debug("Zotero.callbacks.loadUserGroups", 3);
-    var jel = J(el);
-    var library = Zotero.ui.getAssociatedLibrary(el);
-    var loadConfig = jel.data("loadconfig");
-    var userid = loadConfig.libraryID;
-    var groups = library.groups.fetchUserGroups(userid, library._apiKey);
-    groups.then(J.proxy(function(fetchedGroups) {
-        Zotero.ui.displayGroupNuggets(el, fetchedGroups);
-    }), this);
-};
-
-Zotero.callbacks.runsearch = function(el) {
-    Z.debug("Zotero.callbacks.runsearch", 3);
-    var params = Zotero.pages.search_index.parseSearchUrl();
-    if (!params.type) {
-        params.type = "support";
-    }
-    var sectionID = params.type;
-    if (sectionID != "people" && sectionID != "group") {
-        sectionID = "support";
-    }
-    Z.debug("search type: " + params.type, 4);
-    J(".search-section").not("[id=" + sectionID + "]").hide();
-    J(".search-section[id=" + sectionID + "]").show().find("input[name=q]").val(params.query);
-    J("#search-nav li").removeClass("selected");
-    J("#search-nav li." + params.type).addClass("selected");
-    zoterojsSearchContext = params.type;
-    if (params.query) {
-        Zotero.pages.search_index.runSearch(params);
-    }
-};
-
-Zotero.callbacks.loadFilterGuide = function(el) {
-    Z.debug("Zotero.callbacks.loadFilterGuide", 3);
-    var tag = Zotero.state.getUrlVar("tag");
-    if (typeof tag == "string") {
-        tag = [ tag ];
-    }
-    var collectionKey = Zotero.state.getUrlVar("collectionKey");
-    var q = Zotero.state.getUrlVar("q");
-    var filters = {
-        tag: tag,
-        collectionKey: collectionKey,
-        q: q
-    };
-    Zotero.ui.filterGuide(el, filters);
-};
-
-Zotero.callbacks.actionPanel = function(el) {
-    Z.debug("Zotero.callbacks.actionPanel", 3);
-    var mode = Zotero.state.getUrlVar("mode");
-    var elid = J(el).attr("id");
-    if (elid == "collections-pane-edit-panel-div") {
-        if (mode == "edit") {
-            Zotero.ui.collectionsActionPane(J("#collections-pane-edit-panel-div"), true);
-        } else {
-            Zotero.ui.collectionsActionPane(J("#collections-pane-edit-panel-div"), false);
-        }
-    } else if (elid == "items-pane-edit-panel-div") {
-        if (mode == "edit") {
-            Zotero.ui.itemsActionPane(J("#items-pane-edit-panel-div"));
-        } else {
-            Zotero.ui.itemsSearchActionPane(J("#items-pane-edit-panel-div"));
-        }
-        Zotero.ui.updateDisabledControlButtons();
-    }
 };
 
 Zotero.widgets = {};
@@ -7779,20 +7665,7 @@ Zotero.ui.init = {};
 
 Zotero.ui.widgets = {};
 
-Zotero.ui.jqui = {};
-
 Zotero.ui.init.all = function() {
-    J("#content").on("click", "a.ajax-link", function() {
-        Z.debug("ajax-link clicked with href " + J(this).attr("href"), 3);
-        Z.debug("pathname " + this.pathname, 4);
-        var pathvars = Zotero.state.parsePathVars(this.pathname);
-        Zotero.state.pathVars = pathvars;
-        Zotero.state.pushState();
-        return false;
-    });
-    if (Zotero.config.mobile) {
-        Zotero.ui.init.mobile();
-    }
     Z.debug("ui init based on page", 3);
     switch (Zotero.config.pageClass) {
       case "my_library":
@@ -7806,7 +7679,8 @@ Zotero.ui.init.all = function() {
 
 Zotero.ui.init.library = function() {
     Z.debug("Zotero.ui.init.library", 3);
-    Zotero.ui.init.fullLibrary();
+    Zotero.ui.init.libraryTemplates();
+    Zotero.eventful.initWidgets();
     var hasRTENoLinks = J("textarea.rte").filter(".nolinks").length;
     var hasRTEReadOnly = J("textarea.rte").filter(".readonly").length;
     var hasRTEDefault = J("textarea.rte").not(".nolinks").not(".readonly").length;
@@ -7820,20 +7694,6 @@ Zotero.ui.init.library = function() {
         Zotero.ui.init.rte("default");
     }
 };
-
-Zotero.ui.init.fullLibrary = function() {
-    Z.debug("Zotero.ui.initFullLibrary", 3);
-    if (J("#library").hasClass("ajaxload")) {
-        Zotero.ui.init.offlineLibrary();
-        return;
-    }
-    Zotero.ui.init.libraryTemplates();
-    Zotero.eventful.initWidgets();
-};
-
-Zotero.ui.init.creatorFieldButtons = function() {};
-
-Zotero.ui.init.editButton = function() {};
 
 Zotero.ui.init.rte = function(type, autofocus, elements) {
     if (Zotero.config.rte == "ckeditor") {
@@ -8782,12 +8642,20 @@ Zotero.ui.widgets.collections.init = function(el) {
 Zotero.ui.widgets.collections.syncCollections = function(evt) {
     Zotero.debug("Zotero eventful syncCollectionsCallback", 3);
     var widgetEl = J(evt.data.widgetEl);
+    var loadingPromise = widgetEl.data("loadingPromise");
+    if (loadingPromise) {
+        var p = widgetEl.data("loadingPromise");
+        return p.then(function() {
+            return Zotero.ui.widgets.collections.syncCollections(evt);
+        });
+    }
     var library = Zotero.ui.getAssociatedLibrary(widgetEl);
     return library.loadUpdatedCollections().then(function() {
-        Zotero.state.doneLoading(widgetEl);
         library.trigger("libraryCollectionsUpdated");
     }, function() {
         library.trigger("libraryCollectionsUpdated");
+    }).then(function() {
+        widgetEl.removeData("loadingPromise");
     });
 };
 
@@ -8861,9 +8729,6 @@ Zotero.ui.widgets.collections.bindCollectionLinks = function(container) {
                 Zotero.ui.widgets.collections.nestHideCollectionTree(J("#collection-list-container"), true);
             }
             Zotero.state.clearUrlVars([ "collectionKey", "mode" ]);
-            if (!(Zotero.config.mobile && Zotero.state.getUrlVar("mode") != "edit")) {
-                Zotero.state.pushState();
-            }
             return false;
         }
         library.trigger("selectCollection", {
@@ -8928,90 +8793,40 @@ Zotero.ui.widgets.controlPanel.init = function(el) {
     Z.debug("Zotero.eventful.init.controlPanel", 3);
     var library = Zotero.ui.getAssociatedLibrary(el);
     Zotero.ui.showControlPanel(el);
-    library.listen("controlPanelContextChange", Zotero.ui.updateDisabledControlButtons, {
-        widgetEl: el
-    });
     library.listen("selectedItemsChanged", Zotero.ui.widgets.controlPanel.selectedItemsChanged, {
         widgetEl: el
     });
-    library.listen("removeFromCollection", Zotero.ui.callbacks.removeFromCollection, {
+    library.listen("removeFromCollection", Zotero.ui.widgets.controlPanel.removeFromCollection, {
         widgetEl: el
     });
-    library.listen("moveToTrash", Zotero.ui.callbacks.moveToTrash), {
+    library.listen("moveToTrash", Zotero.ui.widgets.controlPanel.moveToTrash), {
         widgetEl: el
     };
-    library.listen("removeFromTrash", Zotero.ui.callbacks.removeFromTrash, {
+    library.listen("removeFromTrash", Zotero.ui.widgets.controlPanel.removeFromTrash, {
         widgetEl: el
     });
-    library.listen("toggleEdit", Zotero.ui.callbacks.toggleEdit, {
-        widgetEl: el
-    });
-    library.listen("clearLibraryQuery", Zotero.ui.clearLibraryQuery, {
+    library.listen("toggleEdit", Zotero.ui.widgets.controlPanel.toggleEdit, {
         widgetEl: el
     });
     var container = J(el);
-    if (Zotero.state.getUrlVar("q")) {
-        container.find("#header-search-query").val(Zotero.state.getUrlVar("q"));
-    }
-    var context = "support";
-    if (undefined !== window.zoterojsSearchContext) {
-        context = zoterojsSearchContext;
-    }
-    container.on("click", ".library-search-type-link", function(e) {
-        e.preventDefault();
-        var typeLinks = J(".library-search-type-link").removeClass("selected");
-        var selected = J(e.target);
-        var selectedType = selected.data("searchtype");
-        var searchInput = J("#header-search-query").data("searchtype", selectedType);
-        selected.addClass("selected");
-        if (selectedType == "simple") {
-            searchInput.attr("placeholder", "Search Title, Creator, Year");
-        } else if (selectedType == "everything") {
-            searchInput.attr("placeholder", "Search Full Text");
-        }
-    });
-    container.on("submit", "#library-search", function(e) {
-        e.preventDefault();
-        Zotero.state.clearUrlVars([ "collectionKey", "tag", "q", "qmode" ]);
-        var query = J("#header-search-query").val();
-        var searchType = J("#header-search-query").data("searchtype");
-        if (query !== "" || Zotero.state.getUrlVar("q")) {
-            Zotero.state.pathVars["q"] = query;
-            if (searchType != "simple") {
-                Zotero.state.pathVars["qmode"] = searchType;
-            }
-            Zotero.state.pushState();
-        }
-        return false;
-    });
-    container.on("click", ".clear-field-button", function(e) {
-        J("#header-search-query").val("").focus();
-    });
+    Zotero.ui.widgets.controlPanel.updateDisabledControlButtons();
 };
 
-Zotero.ui.widgets.controlPanel.updateDisabledControlButtons = function() {
-    Zotero.ui.updateDisabledControlButtons();
+Zotero.ui.widgets.controlPanel.contextChanged = function(evt) {
+    Zotero.ui.widgets.controlPanel.updateDisabledControlButtons();
 };
 
-Zotero.ui.widgets.controlPanel.selectedItemsChanged = function(event) {
+Zotero.ui.widgets.controlPanel.selectedItemsChanged = function(evt) {
     Z.debug("Zotero.ui.widgets.controlPanel.selectedItemsChanged", 3);
-    var selectedItemKeys = event.selectedItemKeys;
+    var selectedItemKeys = evt.selectedItemKeys;
     if (!selectedItemKeys) {
         selectedItemKeys = [];
     }
-    Zotero.ui.updateDisabledControlButtons(selectedItemKeys);
+    Zotero.ui.widgets.controlPanel.updateDisabledControlButtons(selectedItemKeys);
 };
 
-Zotero.ui.clearLibraryQuery = function() {
-    Zotero.state.unsetUrlVar("q");
-    Zotero.state.unsetUrlVar("qmode");
-    J("#header-search-query").val("");
-    Zotero.state.pushState();
-    return;
-};
-
-Zotero.ui.updateDisabledControlButtons = function(selectedItemKeys) {
-    Z.debug("Zotero.ui.updateDisabledControlButtons", 3);
+Zotero.ui.widgets.controlPanel.updateDisabledControlButtons = function(selectedItemKeys) {
+    Z.debug("Zotero.ui.widgets.controlPanel.updateDisabledControlButtons", 3);
     if (!selectedItemKeys) {
         selectedItemKeys = [];
     }
@@ -9042,10 +8857,9 @@ Zotero.ui.updateDisabledControlButtons = function(selectedItemKeys) {
         J(".remove-from-collection-button").addClass("disabled");
         J(".move-to-trash-button").prop("title", "Permanently Delete");
     }
-    Zotero.ui.init.editButton();
 };
 
-Zotero.ui.callbacks.toggleEdit = function(e) {
+Zotero.ui.widgets.controlPanel.toggleEdit = function(e) {
     Z.debug("edit checkbox toggled", 3);
     var curMode = Zotero.state.getUrlVar("mode");
     if (curMode != "edit") {
@@ -9108,7 +8922,7 @@ Zotero.ui.callbacks.moveToTrash = function(evt) {
     return false;
 };
 
-Zotero.ui.callbacks.removeFromTrash = function(evt) {
+Zotero.ui.widgets.controlPanel.removeFromTrash = function(evt) {
     Z.debug("remove-from-trash clicked", 3);
     var widgetEl = J(evt.data.widgetEl);
     var itemKeys = Zotero.state.getSelectedItemKeys();
@@ -9402,7 +9216,6 @@ Zotero.ui.widgets.item.loadItemCallback = function(event) {
     var widgetEl = J(event.data.widgetEl);
     var triggeringEl = J(event.triggeringElement);
     Z.debug("Zotero.callbacks.loadItem", 3);
-    Zotero.callbacks.rejectIfPending(widgetEl);
     var library = Zotero.ui.getAssociatedLibrary(widgetEl);
     var p;
     widgetEl.empty();
@@ -9416,7 +9229,7 @@ Zotero.ui.widgets.item.loadItemCallback = function(event) {
         newItem.libraryType = library.libraryType;
         newItem.libraryID = library.libraryID;
         p = newItem.initEmpty(itemType).then(function(item) {
-            Zotero.ui.editItemForm(widgetEl, item);
+            Zotero.ui.widgets.item.editItemForm(widgetEl, item);
             widgetEl.data("newitem", item);
         }, function(response) {
             Zotero.ui.jsNotificationMessage("Error loading item template", "error");
@@ -9431,16 +9244,10 @@ Zotero.ui.widgets.item.loadItemCallback = function(event) {
         return Promise.reject(new Error("No itemkey - " + itemKey));
     }
     var item = library.items.getItem(itemKey);
+    var p;
     if (item) {
         Z.debug("have item locally, loading details into ui", 3);
-        if (Zotero.state.getUrlVar("mode") == "edit") {
-            Zotero.ui.editItemForm(widgetEl, item);
-        } else {
-            Zotero.ui.loadItemDetail(item, widgetEl);
-            library.trigger("showChildren");
-        }
-        Zotero.eventful.initTriggers(J(widgetEl));
-        return Promise.resolve();
+        p = Promise.resolve(item);
     } else {
         Z.debug("must fetch item from server", 3);
         var config = {
@@ -9450,21 +9257,21 @@ Zotero.ui.widgets.item.loadItemCallback = function(event) {
             itemKey: itemKey,
             content: "json"
         };
-        p = library.loadItem(itemKey).then(function(item) {
-            Z.debug("Library.loadItem done", 3);
-            widgetEl.empty();
-            if (Zotero.state.getUrlVar("mode") == "edit") {
-                Zotero.ui.editItemForm(widgetEl, item);
-            } else {
-                Zotero.ui.loadItemDetail(item, widgetEl);
-                library.trigger("showChildren");
-            }
-            widgetEl.data("currentconfig", config);
-            Zotero.eventful.initTriggers(widgetEl);
-        });
-        widgetEl.data("pendingDeferred", p);
-        return p;
+        p = library.loadItem(itemKey);
     }
+    p.then(function(item) {
+        Z.debug("Library.loadItem done", 3);
+        widgetEl.empty();
+        if (Zotero.state.getUrlVar("mode") == "edit") {
+            Zotero.ui.widgets.item.editItemForm(widgetEl, item);
+        } else {
+            Zotero.ui.widgets.item.loadItemDetail(item, widgetEl);
+            library.trigger("showChildren");
+        }
+        widgetEl.data("currentconfig", config);
+        Zotero.eventful.initTriggers(widgetEl);
+    });
+    return p;
 };
 
 Zotero.ui.widgets.item.showChildren = function(e) {
@@ -9526,11 +9333,7 @@ Zotero.ui.widgets.item.addNote = function(e) {
     var newindex = notenum + 1;
     var newNoteID = "note_" + newindex;
     var jel;
-    if (Zotero.config.mobile) {
-        jel = container.find("td.notes").append('<textarea cols="40" rows="24" name="' + newNoteID + '" id="' + newNoteID + '" class="rte default note-text" data-noteindex="' + newNoteID + '"></textarea>');
-    } else {
-        jel = container.find("td.notes button.add-note-button").before('<textarea cols="40" rows="24" name="' + newNoteID + '" id="' + newNoteID + '" class="rte default note-text" data-noteindex="' + newNoteID + '"></textarea>');
-    }
+    jel = container.find("td.notes button.add-note-button").before('<textarea cols="40" rows="24" name="' + newNoteID + '" id="' + newNoteID + '" class="rte default note-text" data-noteindex="' + newNoteID + '"></textarea>');
     Zotero.ui.init.rte("default", true, newNoteID);
 };
 
@@ -9576,23 +9379,20 @@ Zotero.ui.widgets.item.removeTag = function(e) {
     J(el).closest(".edit-tag-div").remove();
 };
 
-Zotero.ui.editItemForm = function(el, item) {
-    Z.debug("Zotero.ui.editItemForm", 3);
+Zotero.ui.widgets.item.editItemForm = function(el, item) {
+    Z.debug("Zotero.ui.widgets.item.editItemForm", 3);
     Z.debug(item, 4);
-    var jel = J(el);
+    var jel = J(el).empty();
     var library = Zotero.ui.getAssociatedLibrary(el);
     if (item.itemType == "note") {
         Z.debug("editItemForm - note", 3);
-        jel.empty();
         jel.append(J("#editnoteformTemplate").render({
             item: item,
             itemKey: item.itemKey
         }));
         Zotero.ui.init.rte("default");
-        Zotero.ui.init.editButton();
     } else if (item.itemType == "attachment") {
         Z.debug("item is attachment", 4);
-        jel.empty();
         var mode = Zotero.state.getUrlVar("mode");
         jel.append(J("#attachmentformTemplate").render({
             item: item,
@@ -9603,18 +9403,10 @@ Zotero.ui.editItemForm = function(el, item) {
         if (item.apiObj.tags.length === 0) {
             Zotero.ui.widgets.item.addTag(el, false);
         }
-        if (Zotero.config.mobile) {
-            Zotero.ui.init.editButton();
-            J(el).trigger("create");
-        } else {
-            Zotero.ui.init.creatorFieldButtons();
-            Zotero.ui.init.editButton();
-        }
         Zotero.ui.init.rte();
     } else {
         item.getCreatorTypes(item.apiObj.itemType).then(function() {
             Z.debug("getCreatorTypes done", 3);
-            jel.empty();
             if (item.creators.length === 0) {
                 item.creators.push({
                     creatorType: item.creatorTypes[item.itemType][0],
@@ -9647,8 +9439,8 @@ Zotero.ui.editItemForm = function(el, item) {
     });
 };
 
-Zotero.ui.loadItemDetail = function(item, el) {
-    Z.debug("Zotero.ui.loadItemDetail", 3);
+Zotero.ui.widgets.item.loadItemDetail = function(item, el) {
+    Z.debug("Zotero.ui.widgets.item.loadItemDetail", 3);
     var jel = J(el);
     jel.empty();
     var parentUrl = false;
@@ -9674,7 +9466,6 @@ Zotero.ui.loadItemDetail = function(item, el) {
         })).trigger("create");
     }
     Zotero.ui.init.rte("readonly");
-    Zotero.ui.init.editButton();
     try {
         var ev = document.createEvent("HTMLEvents");
         ev.initEvent("ZoteroItemUpdated", true, true);
@@ -9737,7 +9528,6 @@ Zotero.ui.widgets.item.switchTwoFieldCreators = function(e) {
         },
         creatorTypes: Zotero.Item.prototype.creatorTypes[itemType]
     }));
-    Zotero.ui.init.creatorFieldButtons();
     Zotero.eventful.initTriggers(containingTable.find(trIdString));
 };
 
@@ -9760,27 +9550,12 @@ Zotero.ui.widgets.item.switchSingleFieldCreator = function(e) {
         },
         creatorTypes: Zotero.Item.prototype.creatorTypes[itemType]
     }));
-    Zotero.ui.init.creatorFieldButtons();
     Zotero.eventful.initTriggers(containingTable.find(trIdString));
 };
 
 Zotero.ui.widgets.item.cancelItemEdit = function(e) {
     Zotero.state.clearUrlVars([ "itemKey", "collectionKey", "tag", "q" ]);
     Zotero.state.pushState();
-};
-
-Zotero.ui.widgets.item.selectItemType = function(e) {
-    Z.debug("itemTypeSelectButton clicked", 3);
-    var jel;
-    if (e.zeventful) {
-        jel = J(e.triggeringElement);
-    } else {
-        jel = J(this);
-    }
-    var itemType = J("#itemType").val();
-    Zotero.state.pathVars["itemType"] = itemType;
-    Zotero.state.pushState();
-    return false;
 };
 
 Zotero.ui.widgets.item.itemFormKeydown = function(e) {
@@ -9816,21 +9591,19 @@ Zotero.ui.widgets.items.init = function(el) {
         widgetEl: el
     });
     var container = J(el);
-    Zotero.ui.bindItemLinks(container);
+    Zotero.state.bindItemLinks(container);
     container.on("change", ".itemlist-editmode-checkbox.all-checkbox", function(e) {
         J(".itemlist-editmode-checkbox").prop("checked", J(".itemlist-editmode-checkbox.all-checkbox").prop("checked"));
         var selectedItemKeys = [];
         J("input.itemKey-checkbox:checked").each(function(index, el) {
             selectedItemKeys.push(J(el).data("itemkey"));
         });
-        Zotero.ui.updateDisabledControlButtons();
         Zotero.state.selectedItemKeys = selectedItemKeys;
         library.trigger("selectedItemsChanged", {
             selectedItemKeys: selectedItemKeys
         });
     });
     container.on("change", "input.itemKey-checkbox", function(e) {
-        Zotero.ui.updateDisabledControlButtons();
         var selectedItemKeys = [];
         J("input.itemKey-checkbox:checked").each(function(index, el) {
             selectedItemKeys.push(J(el).data("itemkey"));
@@ -9876,7 +9649,6 @@ Zotero.ui.widgets.items.init = function(el) {
 Zotero.ui.widgets.items.loadItemsCallback = function(event) {
     Z.debug("Zotero eventful loadItemsCallback", 3);
     var widgetEl = J(event.data.widgetEl);
-    Zotero.callbacks.rejectIfPending(widgetEl);
     var library = Zotero.ui.getAssociatedLibrary(widgetEl);
     var newConfig = Zotero.ui.getItemsConfig(library);
     Zotero.ui.showSpinner(widgetEl, "horizontal");
@@ -9965,27 +9737,7 @@ Zotero.ui.widgets.items.displayItems = function(el, config, loadedItems) {
         var itemPage = pagination.page;
         jel.append(J("#itempaginationTemplate").render(paginationData));
     }
-    Zotero.ui.updateDisabledControlButtons();
     Zotero.eventful.initTriggers();
-};
-
-Zotero.ui.bindItemLinks = function(container) {
-    Z.debug("Zotero.ui.bindItemLinks", 3);
-    J(container).on("click", "a.item-select-link", function(e) {
-        e.preventDefault();
-        e.stopImmediatePropagation();
-        Z.debug("item-select-link clicked", 3);
-        var itemKey = J(this).data("itemkey");
-        Zotero.state.pathVars.itemKey = itemKey;
-        Zotero.state.pushState();
-    });
-    J(container).on("click", "td[data-itemkey]:not(.edit-checkbox-td)", function(e) {
-        e.preventDefault();
-        Z.debug("item-select-td clicked", 3);
-        var itemKey = J(this).data("itemkey");
-        Zotero.state.pathVars.itemKey = itemKey;
-        Zotero.state.pushState();
-    });
 };
 
 Zotero.ui.callbacks.resortItems = function(e) {
@@ -10045,7 +9797,7 @@ Zotero.ui.widgets.itemContainer.init = function(el) {
         Zotero.state.pathVars["itemType"] = itemType;
         Zotero.state.pushState();
     });
-    Zotero.ui.bindTagLinks(container);
+    Zotero.state.bindTagLinks(container);
 };
 
 Zotero.ui.cancelItemEdit = function(e) {
@@ -10176,8 +9928,6 @@ Zotero.ui.unassociatedItemForm = function(el, item) {
             if (item.apiObj.tags.length === 0) {
                 Zotero.ui.widgets.item.addTag(container, false);
             }
-            Zotero.ui.init.creatorFieldButtons();
-            Zotero.ui.init.editButton();
         }
         container.find(".directciteitembutton").on("click", function(e) {
             Zotero.ui.updateItemFromForm(item, container.find("form"));
@@ -10247,14 +9997,12 @@ Zotero.ui.widgets.syncedItems.init = function(el) {
         widgetEl: el
     });
     var container = J(el);
-    Zotero.ui.bindItemLinks();
+    Zotero.state.bindItemLinks(container);
     container.on("change", ".itemlist-editmode-checkbox.all-checkbox", function(e) {
         J(".itemlist-editmode-checkbox").prop("checked", J(".itemlist-editmode-checkbox.all-checkbox").prop("checked"));
-        Zotero.ui.updateDisabledControlButtons();
         library.trigger("selectedItemsChanged");
     });
     container.on("change", "input.itemKey-checkbox", function(e) {
-        Zotero.ui.updateDisabledControlButtons();
         var selectedItemKeys = [];
         J("input.itemKey-checkbox:checked").each(function(index, el) {
             selectedItemKeys.push(J(el).data("itemkey"));
@@ -10349,7 +10097,7 @@ Zotero.ui.widgets.tags.init = function(el) {
     container.on("click", "#show-all-tags", Zotero.ui.showAllTags);
     container.on("click", "#show-more-tags-link", Zotero.ui.showMoreTags);
     container.on("click", "#show-fewer-tags-link", Zotero.ui.showFewerTags);
-    Zotero.ui.bindTagLinks(container);
+    Zotero.state.bindTagLinks(container);
     container.on("keyup", "#tag-filter-input", Zotero.ui.widgets.tags.filterTags);
     container.on("click", "#show-all-tags", function(e) {
         var show = J(this).prop("checked") ? true : false;
@@ -10371,28 +10119,36 @@ Zotero.ui.widgets.tags.init = function(el) {
     });
 };
 
-Zotero.ui.widgets.tags.syncTags = function(event) {
+Zotero.ui.widgets.tags.syncTags = function(evt) {
     Z.debug("Zotero eventful syncTags", 1);
-    var widgetEl = J(event.data.widgetEl);
-    var checkCached = event.data.checkCached;
+    var widgetEl = J(evt.data.widgetEl);
+    var loadingPromise = widgetEl.data("loadingPromise");
+    if (loadingPromise) {
+        var p = widgetEl.data("loadingPromise");
+        return p.then(function() {
+            return Zotero.ui.widgets.tags.syncTags(evt);
+        });
+    }
+    var checkCached = evt.data.checkCached;
     if (checkCached !== false) {
         checkCached = true;
     }
-    Zotero.state.flagLoading(widgetEl);
     Zotero.ui.showSpinner(widgetEl.find("div.loading"));
     var library = Zotero.ui.getAssociatedLibrary(widgetEl);
     if (checkCached === false) {
         library.tags.clear();
     }
-    return library.loadUpdatedTags().then(function() {
-        Zotero.state.doneLoading(widgetEl);
+    loadingPromise = library.loadUpdatedTags().then(function() {
         widgetEl.find(".loading").empty();
         library.trigger("libraryTagsUpdated");
+        widgetEl.removeData("loadingPromise");
     }, function() {
         library.trigger("libraryTagsUpdated");
-        Zotero.state.doneLoading(widgetEl);
         widgetEl.children(".loading").empty();
+        widgetEl.removeData("loadingPromise");
     });
+    widgetEl.data("loadingPromise", loadingPromise);
+    return loadingPromise;
 };
 
 Zotero.ui.widgets.tags.rerenderTags = function(event) {
@@ -10419,6 +10175,7 @@ Zotero.ui.displayTagsFiltered = function(el, library, matchedTagStrings, selecte
     var jel = J(el);
     var libtags = library.tags;
     var tagColors = library.preferences.getPref("tagColors");
+    if (!tagColors) tagColors = [];
     var showMore = jel.data("showmore");
     if (!showMore) {
         showMore = false;
@@ -10488,18 +10245,6 @@ Zotero.ui.showFewerTags = function(e) {
     var jel = J(this).closest("#tags-list-div");
     jel.data("showmore", false);
     library.trigger("libraryTagsUpdated");
-};
-
-Zotero.ui.bindTagLinks = function(container) {
-    Z.debug("Zotero.ui.bindTagLinks", 3);
-    J(container).on("click", "a.tag-link", function(e) {
-        e.preventDefault();
-        J("#tag-filter-input").val("");
-        var tagtitle = J(this).attr("data-tagtitle");
-        Zotero.state.toggleTag(tagtitle);
-        Zotero.state.clearUrlVars([ "tag", "collectionKey" ]);
-        Zotero.state.pushState();
-    });
 };
 
 Zotero.ui.widgets.tags.filterTags = function(e) {
@@ -10895,6 +10640,111 @@ Zotero.ui.widgets.sendToLibraryDialog.show = function(evt) {
         Z.debug(err);
         Z.debug(err.message);
     });
+};
+
+Zotero.ui.widgets.searchbox = {};
+
+Zotero.ui.widgets.searchbox.init = function(el) {
+    Z.debug("Zotero.eventful.init.searchbox", 3);
+    var library = Zotero.ui.getAssociatedLibrary(el);
+    var container = J(el);
+    library.listen("clearLibraryQuery", Zotero.ui.widgets.searchbox.clearLibraryQuery, {
+        widgetEl: el
+    });
+    if (Zotero.state.getUrlVar("q")) {
+        container.find(".search-query").val(Zotero.state.getUrlVar("q"));
+    }
+    var context = "support";
+    if (undefined !== window.zoterojsSearchContext) {
+        context = zoterojsSearchContext;
+    }
+    container.on("click", ".library-search-type-link", function(e) {
+        e.preventDefault();
+        var typeLinks = J(".library-search-type-link").removeClass("selected");
+        var selected = J(e.target);
+        var selectedType = selected.data("searchtype");
+        var searchInput = container.find("input.search-query").data("searchtype", selectedType);
+        selected.addClass("selected");
+        if (selectedType == "simple") {
+            searchInput.attr("placeholder", "Search Title, Creator, Year");
+        } else if (selectedType == "everything") {
+            searchInput.attr("placeholder", "Search Full Text");
+        }
+    });
+    container.on("submit", "form.library-search", function(e) {
+        e.preventDefault();
+        Z.debug("library-search form submitted", 3);
+        Zotero.state.clearUrlVars([ "collectionKey", "tag", "q", "qmode" ]);
+        var query = container.find("input.search-query").val();
+        var searchType = container.find("input.search-query").data("searchtype");
+        if (query !== "" || Zotero.state.getUrlVar("q")) {
+            Zotero.state.pathVars["q"] = query;
+            if (searchType != "simple") {
+                Zotero.state.pathVars["qmode"] = searchType;
+            }
+            Zotero.state.pushState();
+        }
+        return false;
+    });
+    container.on("click", ".clear-field-button", function(e) {
+        J(".search-query").val("").focus();
+    });
+};
+
+Zotero.ui.widgets.searchbox.clearLibraryQuery = function() {
+    Zotero.state.unsetUrlVar("q");
+    Zotero.state.unsetUrlVar("qmode");
+    J(".search-query").val("");
+    Zotero.state.pushState();
+    return;
+};
+
+Zotero.ui.widgets.panelContainer = {};
+
+Zotero.ui.widgets.panelContainer.init = function(el) {
+    Z.debug("panelContainer widget init", 3);
+    var library = Zotero.ui.getAssociatedLibrary(el);
+    library.listen("displayedItemsChanged showItemsPanel", Zotero.ui.widgets.panelContainer.showPanel, {
+        widgetEl: el,
+        panelSelector: "#items-panel"
+    });
+    library.listen("showCollectionsPanel", Zotero.ui.widgets.panelContainer.showPanel, {
+        widgetEl: el,
+        panelSelector: "#collections-panel"
+    });
+    library.listen("showTagsPanel", Zotero.ui.widgets.panelContainer.showPanel, {
+        widgetEl: el,
+        panelSelector: "#tags-panel"
+    });
+    library.listen("showItemPanel displayedItemChanged", Zotero.ui.widgets.panelContainer.showPanel, {
+        widgetEl: el,
+        panelSelector: "#item-panel"
+    });
+    Zotero.ui.widgets.panelContainer.showPanel({
+        data: {
+            widgetEl: el,
+            panelSelector: "#items-panel"
+        }
+    });
+};
+
+Zotero.ui.widgets.panelContainer.showPanel = function(evt) {
+    Z.debug("panelContainer.showPanel", 3);
+    var widgetEl = J(evt.data.widgetEl);
+    widgetEl.find(".panelcontainer-panel").hide();
+    widgetEl.find(evt.data.panelSelector).show();
+    widgetEl.find("#panelcontainer-nav li").removeClass("active");
+    switch (evt.data.panelSelector) {
+      case "#collections-panel":
+        widgetEl.find("li.collections-nav").addClass("active");
+        break;
+      case "#tags-panel":
+        widgetEl.find("li.tags-nav").addClass("active");
+        break;
+      case "#items-panel":
+        widgetEl.find("li.items-nav").addClass("active");
+        break;
+    }
 };
 
 Zotero.url.requestReadApiKeyUrl = function(libraryType, libraryID, redirect) {

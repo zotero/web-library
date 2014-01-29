@@ -19,10 +19,10 @@ $files = array(
 "State.js",
 "Delay.js",
 //"zoteroPages.js",
-"_zoteroLibraryCallbacks.js",
+//"_zoteroLibraryCallbacks.js",
 "libraryUi/eventful.js",
-"libraryUi/bind.js",
-"libraryUi/clickcallbacks.js",
+//"libraryUi/bind.js",
+//"libraryUi/clickcallbacks.js",
 "libraryUi/compat.js",
 "libraryUi/format.js",
 "libraryUi/init.js",
@@ -56,6 +56,8 @@ $files = array(
 "libraryUi/widgets/progressModal.js",
 "libraryUi/widgets/groupsList.js",
 "libraryUi/widgets/sendToLibraryDialog.js",
+"libraryUi/widgets/searchbox.js",
+"libraryUi/widgets/panelContainer.js",
 "_zoteroLibraryUrl.js",
 //"_zoteroLibraryOffline.js"
 );

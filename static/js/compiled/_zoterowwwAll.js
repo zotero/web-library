@@ -7,41 +7,7 @@
  * http://benalman.com/about/license/
  */
 (function($,r){var h,n=Array.prototype.slice,t=decodeURIComponent,a=$.param,j,c,m,y,b=$.bbq=$.bbq||{},s,x,k,e=$.event.special,d="hashchange",B="querystring",F="fragment",z="elemUrlAttr",l="href",w="src",p=/^.*\?|#.*$/g,u,H,g,i,C,E={};function G(I){return typeof I==="string"}function D(J){var I=n.call(arguments,1);return function(){return J.apply(this,I.concat(n.call(arguments)))}}function o(I){return I.replace(H,"$2")}function q(I){return I.replace(/(?:^[^?#]*\?([^#]*).*$)?.*/,"$1")}function f(K,P,I,L,J){var R,O,N,Q,M;if(L!==h){N=I.match(K?H:/^([^#?]*)\??([^#]*)(#?.*)/);M=N[3]||"";if(J===2&&G(L)){O=L.replace(K?u:p,"")}else{Q=m(N[2]);L=G(L)?m[K?F:B](L):L;O=J===2?L:J===1?$.extend({},L,Q):$.extend({},Q,L);O=j(O);if(K){O=O.replace(g,t)}}R=N[1]+(K?C:O||!N[1]?"?":"")+O+M}else{R=P(I!==h?I:location.href)}return R}a[B]=D(f,0,q);a[F]=c=D(f,1,o);a.sorted=j=function(J,K){var I=[],L={};$.each(a(J,K).split("&"),function(P,M){var O=M.replace(/(?:%5B|=).*$/,""),N=L[O];if(!N){N=L[O]=[];I.push(O)}N.push(M)});return $.map(I.sort(),function(M){return L[M]}).join("&")};c.noEscape=function(J){J=J||"";var I=$.map(J.split(""),encodeURIComponent);g=new RegExp(I.join("|"),"g")};c.noEscape(",/");c.ajaxCrawlable=function(I){if(I!==h){if(I){u=/^.*(?:#!|#)/;H=/^([^#]*)(?:#!|#)?(.*)$/;C="#!"}else{u=/^.*#/;H=/^([^#]*)#?(.*)$/;C="#"}i=!!I}return i};c.ajaxCrawlable(0);$.deparam=m=function(L,I){var K={},J={"true":!0,"false":!1,"null":null};$.each(L.replace(/\+/g," ").split("&"),function(O,T){var N=T.split("="),S=t(N[0]),M,R=K,P=0,U=S.split("]["),Q=U.length-1;if(/\[/.test(U[0])&&/\]$/.test(U[Q])){U[Q]=U[Q].replace(/\]$/,"");U=U.shift().split("[").concat(U);Q=U.length-1}else{Q=0}if(N.length===2){M=t(N[1]);if(I){M=M&&!isNaN(M)?+M:M==="undefined"?h:J[M]!==h?J[M]:M}if(Q){for(;P<=Q;P++){S=U[P]===""?R.length:U[P];R=R[S]=P<Q?R[S]||(U[P+1]&&isNaN(U[P+1])?{}:[]):M}}else{if($.isArray(K[S])){K[S].push(M)}else{if(K[S]!==h){K[S]=[K[S],M]}else{K[S]=M}}}}else{if(S){K[S]=I?h:""}}});return K};function A(K,I,J){if(I===h||typeof I==="boolean"){J=I;I=a[K?F:B]()}else{I=G(I)?I.replace(K?u:p,""):I}return m(I,J)}m[B]=D(A,0);m[F]=y=D(A,1);$[z]||($[z]=function(I){return $.extend(E,I)})({a:l,base:l,iframe:w,img:w,input:w,form:"action",link:l,script:w});k=$[z];function v(L,J,K,I){if(!G(K)&&typeof K!=="object"){I=K;K=J;J=h}return this.each(function(){var O=$(this),M=J||k()[(this.nodeName||"").toLowerCase()]||"",N=M&&O.attr(M)||"";O.attr(M,a[L](N,K,I))})}$.fn[B]=D(v,B);$.fn[F]=D(v,F);b.pushState=s=function(L,I){if(G(L)&&/^#/.test(L)&&I===h){I=2}var K=L!==h,J=c(location.href,K?L:{},K?I:2);location.href=J};b.getState=x=function(I,J){return I===h||typeof I==="boolean"?y(I):y(J)[I]};b.removeState=function(I){var J={};if(I!==h){J=x();$.each($.isArray(I)?I:arguments,function(L,K){delete J[K]})}s(J,2)};e[d]=$.extend(e[d],{add:function(I){var K;function J(M){var L=M[F]=c();M.getState=function(N,O){return N===h||typeof N==="boolean"?m(L,N):m(L,O)[N]};K.apply(this,arguments)}if($.isFunction(I)){K=I;return J}else{K=I.handler;I.handler=J}}})})(jQuery,this);
-/*
- * jQuery hashchange event - v1.3 - 7/21/2010
- * http://benalman.com/projects/jquery-hashchange-plugin/
- * 
- * Copyright (c) 2010 "Cowboy" Ben Alman
- * Dual licensed under the MIT and GPL licenses.
- * http://benalman.com/about/license/
- */
-//(function($,e,b){var c="hashchange",h=document,f,g=$.event.special,i=h.documentMode,d="on"+c in e&&(i===b||i>7);function a(j){j=j||location.href;return"#"+j.replace(/^[^#]*#?(.*)$/,"$1")}$.fn[c]=function(j){return j?this.bind(c,j):this.trigger(c)};$.fn[c].delay=50;g[c]=$.extend(g[c],{setup:function(){if(d){return false}$(f.start)},teardown:function(){if(d){return false}$(f.stop)}});f=(function(){var j={},p,m=a(),k=function(q){return q},l=k,o=k;j.start=function(){p||n()};j.stop=function(){p&&clearTimeout(p);p=b};function n(){var r=a(),q=o(m);if(r!==m){l(m=r,q);$(e).trigger(c)}else{if(q!==m){location.href=location.href.replace(/#.*/,"")+q}}p=setTimeout(n,$.fn[c].delay)}!d&&(function(){var q,r;j.start=function(){if(!q){r=$.fn[c].src;r=r&&r+a();q=$('<iframe tabindex="-1" title="empty"/>').hide().one("load",function(){r||l(a());n()}).attr("src",r||"javascript:0").insertAfter("body")[0].contentWindow;h.onpropertychange=function(){try{if(event.propertyName==="title"){q.document.title=h.title}}catch(s){}}}};j.stop=k;o=function(){return a(q.location.href)};l=function(v,s){var u=q.document,t=$.fn[c].domain;if(v!==s){u.title=h.title;u.open();t&&u.write('<script>document.domain="'+t+'"<\/script>');u.close();q.location.hash=v}}})();return j})()})(jQuery,this);
-
-/*
- * jQuery Tiny Pub/Sub
- * https://github.com/cowboy/jquery-tiny-pubsub
- *
- * Copyright (c) 2013 "Cowboy" Ben Alman
- * Licensed under the MIT license.
- */
-
-(function($) {
-
-  var o = $({});
-
-  $.subscribe = function() {
-    o.on.apply(o, arguments);
-  };
-
-  $.unsubscribe = function() {
-    o.off.apply(o, arguments);
-  };
-
-  $.publish = function() {
-    o.trigger.apply(o, arguments);
-  };
-
-}(jQuery));!function(){var a,b,c,d;!function(){var e={},f={};a=function(a,b,c){e[a]={deps:b,callback:c}},d=c=b=function(a){function c(b){if("."!==b.charAt(0))return b;for(var c=b.split("/"),d=a.split("/").slice(0,-1),e=0,f=c.length;f>e;e++){var g=c[e];if(".."===g)d.pop();else{if("."===g)continue;d.push(g)}}return d.join("/")}if(d._eak_seen=e,f[a])return f[a];if(f[a]={},!e[a])throw new Error("Could not find module "+a);for(var g,h=e[a],i=h.deps,j=h.callback,k=[],l=0,m=i.length;m>l;l++)"exports"===i[l]?k.push(g={}):k.push(b(c(i[l])));var n=j.apply(this,k);return f[a]=g||n}}(),a("promise/all",["./utils","exports"],function(a,b){"use strict";function c(a){var b=this;if(!d(a))throw new TypeError("You must pass an array to all.");return new b(function(b,c){function d(a){return function(b){f(a,b)}}function f(a,c){h[a]=c,0===--i&&b(h)}var g,h=[],i=a.length;0===i&&b([]);for(var j=0;j<a.length;j++)g=a[j],g&&e(g.then)?g.then(d(j),c):f(j,g)})}var d=a.isArray,e=a.isFunction;b.all=c}),a("promise/asap",["exports"],function(a){"use strict";function b(){return function(){process.nextTick(e)}}function c(){var a=0,b=new i(e),c=document.createTextNode("");return b.observe(c,{characterData:!0}),function(){c.data=a=++a%2}}function d(){return function(){j.setTimeout(e,1)}}function e(){for(var a=0;a<k.length;a++){var b=k[a],c=b[0],d=b[1];c(d)}k=[]}function f(a,b){var c=k.push([a,b]);1===c&&g()}var g,h="undefined"!=typeof window?window:{},i=h.MutationObserver||h.WebKitMutationObserver,j="undefined"!=typeof global?global:this,k=[];g="undefined"!=typeof process&&"[object process]"==={}.toString.call(process)?b():i?c():d(),a.asap=f}),a("promise/cast",["exports"],function(a){"use strict";function b(a){if(a&&"object"==typeof a&&a.constructor===this)return a;var b=this;return new b(function(b){b(a)})}a.cast=b}),a("promise/config",["exports"],function(a){"use strict";function b(a,b){return 2!==arguments.length?c[a]:(c[a]=b,void 0)}var c={instrument:!1};a.config=c,a.configure=b}),a("promise/polyfill",["./promise","./utils","exports"],function(a,b,c){"use strict";function d(){var a="Promise"in window&&"cast"in window.Promise&&"resolve"in window.Promise&&"reject"in window.Promise&&"all"in window.Promise&&"race"in window.Promise&&function(){var a;return new window.Promise(function(b){a=b}),f(a)}();a||(window.Promise=e)}var e=a.Promise,f=b.isFunction;c.polyfill=d}),a("promise/promise",["./config","./utils","./cast","./all","./race","./resolve","./reject","./asap","exports"],function(a,b,c,d,e,f,g,h,i){"use strict";function j(a){if(!w(a))throw new TypeError("You must pass a resolver function as the first argument to the promise constructor");if(!(this instanceof j))throw new TypeError("Failed to construct 'Promise': Please use the 'new' operator, this object constructor cannot be called as a function.");this._subscribers=[],k(a,this)}function k(a,b){function c(a){p(b,a)}function d(a){r(b,a)}try{a(c,d)}catch(e){d(e)}}function l(a,b,c,d){var e,f,g,h,i=w(c);if(i)try{e=c(d),g=!0}catch(j){h=!0,f=j}else e=d,g=!0;o(b,e)||(i&&g?p(b,e):h?r(b,f):a===F?p(b,e):a===G&&r(b,e))}function m(a,b,c,d){var e=a._subscribers,f=e.length;e[f]=b,e[f+F]=c,e[f+G]=d}function n(a,b){for(var c,d,e=a._subscribers,f=a._detail,g=0;g<e.length;g+=3)c=e[g],d=e[g+b],l(b,c,d,f);a._subscribers=null}function o(a,b){var c,d=null;try{if(a===b)throw new TypeError("A promises callback cannot return that same promise.");if(v(b)&&(d=b.then,w(d)))return d.call(b,function(d){return c?!0:(c=!0,b!==d?p(a,d):q(a,d),void 0)},function(b){return c?!0:(c=!0,r(a,b),void 0)}),!0}catch(e){return c?!0:(r(a,e),!0)}return!1}function p(a,b){a===b?q(a,b):o(a,b)||q(a,b)}function q(a,b){a._state===D&&(a._state=E,a._detail=b,u.async(s,a))}function r(a,b){a._state===D&&(a._state=E,a._detail=b,u.async(t,a))}function s(a){n(a,a._state=F)}function t(a){n(a,a._state=G)}var u=a.config,v=(a.configure,b.objectOrFunction),w=b.isFunction,x=(b.now,c.cast),y=d.all,z=e.race,A=f.resolve,B=g.reject,C=h.asap;u.async=C;var D=void 0,E=0,F=1,G=2;j.prototype={constructor:j,_state:void 0,_detail:void 0,_subscribers:void 0,then:function(a,b){var c=this,d=new this.constructor(function(){});if(this._state){var e=arguments;u.async(function(){l(c._state,d,e[c._state-1],c._detail)})}else m(this,d,a,b);return d},"catch":function(a){return this.then(null,a)}},j.all=y,j.cast=x,j.race=z,j.resolve=A,j.reject=B,i.Promise=j}),a("promise/race",["./utils","exports"],function(a,b){"use strict";function c(a){var b=this;if(!d(a))throw new TypeError("You must pass an array to race.");return new b(function(b,c){for(var d,e=0;e<a.length;e++)d=a[e],d&&"function"==typeof d.then?d.then(b,c):b(d)})}var d=a.isArray;b.race=c}),a("promise/reject",["exports"],function(a){"use strict";function b(a){var b=this;return new b(function(b,c){c(a)})}a.reject=b}),a("promise/resolve",["exports"],function(a){"use strict";function b(a){var b=this;return new b(function(b){b(a)})}a.resolve=b}),a("promise/utils",["exports"],function(a){"use strict";function b(a){return c(a)||"object"==typeof a&&null!==a}function c(a){return"function"==typeof a}function d(a){return"[object Array]"===Object.prototype.toString.call(a)}var e=Date.now||function(){return(new Date).getTime()};a.objectOrFunction=b,a.isFunction=c,a.isArray=d,a.now=e}),b("promise/polyfill").polyfill()}();var SparkMD5=function(){function h(f,d,b,a,c,e){d=k(k(d,f),k(a,e));return k(d<<c|d>>>32-c,b)}function g(f,d,b,a,c,e,g){return h(d&b|~d&a,f,d,c,e,g)}function i(f,d,b,a,c,e,g){return h(d&a|b&~a,f,d,c,e,g)}function j(f,d,b,a,c,e,g){return h(b^(d|~a),f,d,c,e,g)}function l(f,d){var b=f[0],a=f[1],c=f[2],e=f[3],b=g(b,a,c,e,d[0],7,-680876936),e=g(e,b,a,c,d[1],12,-389564586),c=g(c,e,b,a,d[2],17,606105819),a=g(a,c,e,b,d[3],22,-1044525330),b=g(b,a,c,e,d[4],7,-176418897),e=g(e,b,a,c,d[5],12,1200080426),c=g(c,
+!function(){var a,b,c,d;!function(){var e={},f={};a=function(a,b,c){e[a]={deps:b,callback:c}},d=c=b=function(a){function c(b){if("."!==b.charAt(0))return b;for(var c=b.split("/"),d=a.split("/").slice(0,-1),e=0,f=c.length;f>e;e++){var g=c[e];if(".."===g)d.pop();else{if("."===g)continue;d.push(g)}}return d.join("/")}if(d._eak_seen=e,f[a])return f[a];if(f[a]={},!e[a])throw new Error("Could not find module "+a);for(var g,h=e[a],i=h.deps,j=h.callback,k=[],l=0,m=i.length;m>l;l++)"exports"===i[l]?k.push(g={}):k.push(b(c(i[l])));var n=j.apply(this,k);return f[a]=g||n}}(),a("promise/all",["./utils","exports"],function(a,b){"use strict";function c(a){var b=this;if(!d(a))throw new TypeError("You must pass an array to all.");return new b(function(b,c){function d(a){return function(b){f(a,b)}}function f(a,c){h[a]=c,0===--i&&b(h)}var g,h=[],i=a.length;0===i&&b([]);for(var j=0;j<a.length;j++)g=a[j],g&&e(g.then)?g.then(d(j),c):f(j,g)})}var d=a.isArray,e=a.isFunction;b.all=c}),a("promise/asap",["exports"],function(a){"use strict";function b(){return function(){process.nextTick(e)}}function c(){var a=0,b=new i(e),c=document.createTextNode("");return b.observe(c,{characterData:!0}),function(){c.data=a=++a%2}}function d(){return function(){j.setTimeout(e,1)}}function e(){for(var a=0;a<k.length;a++){var b=k[a],c=b[0],d=b[1];c(d)}k=[]}function f(a,b){var c=k.push([a,b]);1===c&&g()}var g,h="undefined"!=typeof window?window:{},i=h.MutationObserver||h.WebKitMutationObserver,j="undefined"!=typeof global?global:this,k=[];g="undefined"!=typeof process&&"[object process]"==={}.toString.call(process)?b():i?c():d(),a.asap=f}),a("promise/cast",["exports"],function(a){"use strict";function b(a){if(a&&"object"==typeof a&&a.constructor===this)return a;var b=this;return new b(function(b){b(a)})}a.cast=b}),a("promise/config",["exports"],function(a){"use strict";function b(a,b){return 2!==arguments.length?c[a]:(c[a]=b,void 0)}var c={instrument:!1};a.config=c,a.configure=b}),a("promise/polyfill",["./promise","./utils","exports"],function(a,b,c){"use strict";function d(){var a="Promise"in window&&"cast"in window.Promise&&"resolve"in window.Promise&&"reject"in window.Promise&&"all"in window.Promise&&"race"in window.Promise&&function(){var a;return new window.Promise(function(b){a=b}),f(a)}();a||(window.Promise=e)}var e=a.Promise,f=b.isFunction;c.polyfill=d}),a("promise/promise",["./config","./utils","./cast","./all","./race","./resolve","./reject","./asap","exports"],function(a,b,c,d,e,f,g,h,i){"use strict";function j(a){if(!w(a))throw new TypeError("You must pass a resolver function as the first argument to the promise constructor");if(!(this instanceof j))throw new TypeError("Failed to construct 'Promise': Please use the 'new' operator, this object constructor cannot be called as a function.");this._subscribers=[],k(a,this)}function k(a,b){function c(a){p(b,a)}function d(a){r(b,a)}try{a(c,d)}catch(e){d(e)}}function l(a,b,c,d){var e,f,g,h,i=w(c);if(i)try{e=c(d),g=!0}catch(j){h=!0,f=j}else e=d,g=!0;o(b,e)||(i&&g?p(b,e):h?r(b,f):a===F?p(b,e):a===G&&r(b,e))}function m(a,b,c,d){var e=a._subscribers,f=e.length;e[f]=b,e[f+F]=c,e[f+G]=d}function n(a,b){for(var c,d,e=a._subscribers,f=a._detail,g=0;g<e.length;g+=3)c=e[g],d=e[g+b],l(b,c,d,f);a._subscribers=null}function o(a,b){var c,d=null;try{if(a===b)throw new TypeError("A promises callback cannot return that same promise.");if(v(b)&&(d=b.then,w(d)))return d.call(b,function(d){return c?!0:(c=!0,b!==d?p(a,d):q(a,d),void 0)},function(b){return c?!0:(c=!0,r(a,b),void 0)}),!0}catch(e){return c?!0:(r(a,e),!0)}return!1}function p(a,b){a===b?q(a,b):o(a,b)||q(a,b)}function q(a,b){a._state===D&&(a._state=E,a._detail=b,u.async(s,a))}function r(a,b){a._state===D&&(a._state=E,a._detail=b,u.async(t,a))}function s(a){n(a,a._state=F)}function t(a){n(a,a._state=G)}var u=a.config,v=(a.configure,b.objectOrFunction),w=b.isFunction,x=(b.now,c.cast),y=d.all,z=e.race,A=f.resolve,B=g.reject,C=h.asap;u.async=C;var D=void 0,E=0,F=1,G=2;j.prototype={constructor:j,_state:void 0,_detail:void 0,_subscribers:void 0,then:function(a,b){var c=this,d=new this.constructor(function(){});if(this._state){var e=arguments;u.async(function(){l(c._state,d,e[c._state-1],c._detail)})}else m(this,d,a,b);return d},"catch":function(a){return this.then(null,a)}},j.all=y,j.cast=x,j.race=z,j.resolve=A,j.reject=B,i.Promise=j}),a("promise/race",["./utils","exports"],function(a,b){"use strict";function c(a){var b=this;if(!d(a))throw new TypeError("You must pass an array to race.");return new b(function(b,c){for(var d,e=0;e<a.length;e++)d=a[e],d&&"function"==typeof d.then?d.then(b,c):b(d)})}var d=a.isArray;b.race=c}),a("promise/reject",["exports"],function(a){"use strict";function b(a){var b=this;return new b(function(b,c){c(a)})}a.reject=b}),a("promise/resolve",["exports"],function(a){"use strict";function b(a){var b=this;return new b(function(b){b(a)})}a.resolve=b}),a("promise/utils",["exports"],function(a){"use strict";function b(a){return c(a)||"object"==typeof a&&null!==a}function c(a){return"function"==typeof a}function d(a){return"[object Array]"===Object.prototype.toString.call(a)}var e=Date.now||function(){return(new Date).getTime()};a.objectOrFunction=b,a.isFunction=c,a.isArray=d,a.now=e}),b("promise/polyfill").polyfill()}();var SparkMD5=function(){function h(f,d,b,a,c,e){d=k(k(d,f),k(a,e));return k(d<<c|d>>>32-c,b)}function g(f,d,b,a,c,e,g){return h(d&b|~d&a,f,d,c,e,g)}function i(f,d,b,a,c,e,g){return h(d&a|b&~a,f,d,c,e,g)}function j(f,d,b,a,c,e,g){return h(b^(d|~a),f,d,c,e,g)}function l(f,d){var b=f[0],a=f[1],c=f[2],e=f[3],b=g(b,a,c,e,d[0],7,-680876936),e=g(e,b,a,c,d[1],12,-389564586),c=g(c,e,b,a,d[2],17,606105819),a=g(a,c,e,b,d[3],22,-1044525330),b=g(b,a,c,e,d[4],7,-176418897),e=g(e,b,a,c,d[5],12,1200080426),c=g(c,
 e,b,a,d[6],17,-1473231341),a=g(a,c,e,b,d[7],22,-45705983),b=g(b,a,c,e,d[8],7,1770035416),e=g(e,b,a,c,d[9],12,-1958414417),c=g(c,e,b,a,d[10],17,-42063),a=g(a,c,e,b,d[11],22,-1990404162),b=g(b,a,c,e,d[12],7,1804603682),e=g(e,b,a,c,d[13],12,-40341101),c=g(c,e,b,a,d[14],17,-1502002290),a=g(a,c,e,b,d[15],22,1236535329),b=i(b,a,c,e,d[1],5,-165796510),e=i(e,b,a,c,d[6],9,-1069501632),c=i(c,e,b,a,d[11],14,643717713),a=i(a,c,e,b,d[0],20,-373897302),b=i(b,a,c,e,d[5],5,-701558691),e=i(e,b,a,c,d[10],9,38016083),
 c=i(c,e,b,a,d[15],14,-660478335),a=i(a,c,e,b,d[4],20,-405537848),b=i(b,a,c,e,d[9],5,568446438),e=i(e,b,a,c,d[14],9,-1019803690),c=i(c,e,b,a,d[3],14,-187363961),a=i(a,c,e,b,d[8],20,1163531501),b=i(b,a,c,e,d[13],5,-1444681467),e=i(e,b,a,c,d[2],9,-51403784),c=i(c,e,b,a,d[7],14,1735328473),a=i(a,c,e,b,d[12],20,-1926607734),b=h(a^c^e,b,a,d[5],4,-378558),e=h(b^a^c,e,b,d[8],11,-2022574463),c=h(e^b^a,c,e,d[11],16,1839030562),a=h(c^e^b,a,c,d[14],23,-35309556),b=h(a^c^e,b,a,d[1],4,-1530992060),e=h(b^a^c,e,
 b,d[4],11,1272893353),c=h(e^b^a,c,e,d[7],16,-155497632),a=h(c^e^b,a,c,d[10],23,-1094730640),b=h(a^c^e,b,a,d[13],4,681279174),e=h(b^a^c,e,b,d[0],11,-358537222),c=h(e^b^a,c,e,d[3],16,-722521979),a=h(c^e^b,a,c,d[6],23,76029189),b=h(a^c^e,b,a,d[9],4,-640364487),e=h(b^a^c,e,b,d[12],11,-421815835),c=h(e^b^a,c,e,d[15],16,530742520),a=h(c^e^b,a,c,d[2],23,-995338651),b=j(b,a,c,e,d[0],6,-198630844),e=j(e,b,a,c,d[7],10,1126891415),c=j(c,e,b,a,d[14],15,-1416354905),a=j(a,c,e,b,d[5],21,-57434055),b=j(b,a,c,e,
@@ -101,7 +67,6 @@ var Zotero = {
              ajax: 1,
              apiVersion: 2,
              eventful: false,
-             jqueryui: true,
              locale: 'en-US',
              cacheStoreType: 'localStorage',
              preloadCachedLibrary: true,
@@ -1389,9 +1354,8 @@ Zotero.Library.prototype.fetchUserNames = function(userIDs){
 /**
  * Duplicate existing Items from this library and save to foreignLibrary
  * with relationships indicating the ties. At time of writing, Zotero client
- * saves the relationship with either the source group of two group libraries
- * or the personal library. For now we're just going to save to the new items
- * since we're sure we can write to those.
+ * saves the relationship with either the destination group of two group
+ * libraries or the personal library.
  * @param  {Zotero.Item[]} items
  * @param  {Zotero.Library} foreignLibrary
  * @return {Promise.Zotero.Item[]} - newly created items
@@ -6341,8 +6305,6 @@ Zotero.Library.prototype.loadAllTags = function(config, checkCached){
             
             Z.debug("done parsing one tags feed - checking for more.", 3);
             
-            J.publish('tags_page_loaded', [tags]);
-            
             if(tags.hasNextLink){
                 Z.debug("still has next link.", 3);
                 tags.tagsArray.sort(library.sortByTitleCompare);
@@ -6889,18 +6851,16 @@ Zotero.init = function(){
         document.cookie = "zoterojsenabled=1; expires=; path=/";
     }
     
-    //J(window).bind('statechange', Zotero.state.urlChangeCallback);
-    // Bind to StateChange Event
-    //History.Adapter.bind(window,'statechange', Zotero.state.stateChangeCallback); // Note: We are using statechange instead of popstate
+    // Bind to popstate to update state when browser goes back
+    // only applicable if state is using location
     window.onpopstate = function(){
         Z.debug("popstate");
         J(window).trigger('statechange');
     };
-    J(window).on('statechange', J.proxy(Zotero.state.stateChangeCallback, Zotero.state));
+    J(window).on('statechange', J.proxy(Zotero.state.popstateCallback, Zotero.state));
     
-    //call urlChangeCallback on first load since some browsers don't popstate onload
-    Zotero.state.urlChangeCallback();
-    
+    //call popstateCallback on first load since some browsers don't popstate onload
+    Zotero.state.popstateCallback();
 };
 
 //set up Zotero config and preferences based on passed in object
@@ -6974,6 +6934,18 @@ Zotero.State = function(){
     
     this.filter = null;
     this.selectedItemKeys = [];
+};
+
+Zotero.State.prototype.updateCurState = function(){
+    var state = this;
+    state.curState = J.extend({}, state.f, state.q, state.pathVars);
+    return;
+};
+
+Zotero.State.prototype.savePrevState = function(){
+    var state = this;
+    state.prevState = state.curState;
+    return;
 };
 
 Zotero.State.prototype.getSelectedItemKeys = function(){
@@ -7073,6 +7045,7 @@ Zotero.State.prototype.clearUrlVars = function(except){
 Zotero.State.prototype.parseUrlVars = function(){
     Z.debug('Zotero.State.parseUrlVars', 3);
     var state = this;
+    if(!state.useLocation) return;
     state.q = J.deparam(J.param.querystring());
     state.f = state.parseFragmentVars(); // J.deparam(J.param.fragment()),
     state.pathVars = state.parsePathVars();
@@ -7190,24 +7163,21 @@ Zotero.State.prototype.mutateUrl = function(addvars, removevars){
     return url;
 };
 
-Zotero.State.prototype.pushState = function(force, newstate){
+Zotero.State.prototype.pushState = function(){
     Z.debug('Zotero.State.pushState', 3);
     var state = this;
     var history = window.history;
     
     Zotero.ui.saveFormData();
     //make prevHref the current location before we change it
-    state.prevHref = window.location.href;
+    state.prevHref = state.curHref;// window.location.href;
     
     //selectively add state to hint where to go
-    var s = {};
-    if(newstate){
-        s = newstate;
-    }
+    var s = J.extend({}, state.f, state.q, state.pathVars);
     
-    urlvars = state.pathVars;
-    
+    var urlvars = state.pathVars;
     var url = state.buildUrl(urlvars, false);
+    state.curHref = url;
     Z.debug("about to push url: " + url, 3);
     //actually push state and manually call urlChangeCallback if specified
     if(state.useLocation){
@@ -7219,45 +7189,36 @@ Zotero.State.prototype.pushState = function(force, newstate){
         else{
             Z.debug("Zotero.State.pushState - pushState", 3);
             history.pushState(s, document.title, url);
-            J(window).trigger('popstate');
+            state.stateChanged();
         }
-        /*
-        if(force){
-            state.urlChangeCallback({type:'popstate', originalEvent:{state:urlvars}} );
-        }
-        */
     }
-    
-    //trigger popstate so statechange gets called
+    else {
+        state.stateChanged();
+    }
     Zotero.debug("leaving pushstate", 3);
 };
 
-Zotero.State.prototype.replaceState = function(force, state){
+Zotero.State.prototype.replaceState = function(){
     Z.debug("Zotero.State.replaceState", 3);
     var state = this;
     var history = window.history;
     //TODO: figure out what correct behaviour for prevHref/curHref is here
     //I guess probably to just update current and leave prev alone.
     Zotero.ui.saveFormData();
-    
-    if(typeof force == 'undefined'){
-        force = false;
-    }
+    state.updateCurState();
     
     //selectively add state to hint where to go
-    var s = null;
-    if(state){
-        s = state;
-    }
-    
-    urlvars = state.pathVars;
-    
+    var s = J.extend({}, state.curState);
+    var urlvars = state.pathVars;
     var url = state.buildUrl(urlvars, false);
     
     if(state.useLocation){
         history.replaceState(s, null, url);
+        state.curHref = url;
     }
-    state.currentHref = window.location.href;
+    else {
+        state.curHref = url;
+    }
 };
 
 Zotero.State.prototype.updateStateTitle = function(title){
@@ -7332,18 +7293,25 @@ Zotero.State.prototype.updateFragment = function(updatedVars){
     J.bbq.pushState(updatedVars, 0);
 };
 
-Zotero.State.prototype.urlChangeCallback = function(event){
+Zotero.State.prototype.popstateCallback = function(evt){
     var state = this;
-    Z.debug("===== urlChangeCallback =====", 3);
+    Z.debug("===== popstateCallback =====", 3);
     var history = window.history;
-    state.prevHref = state.currentHref;
+    state.prevHref = state.curHref;
     
     Z.debug("new href, updating href and processing urlchange", 3);
-    state.currentHref = window.location.href;// History.getState().cleanUrl;
+    state.curHref = window.location.href;// History.getState().cleanUrl;
     
     //reparse url to set vars in Z.ajax
     state.parseUrlVars();
-    
+    state.stateChanged(evt);
+};
+
+Zotero.State.prototype.stateChanged = function(event){
+    var state = this;
+    Z.debug("stateChanged", 3);
+    state.savePrevState();
+    state.updateCurState();
     //check for changed variables in the url and fire events for them
     Z.debug("Checking changed variables", 3);
     var changedVars = state.diffState(state.prevHref, state.curHref);
@@ -7359,47 +7327,18 @@ Zotero.State.prototype.urlChangeCallback = function(event){
                 }
             });
         }
-        Z.debug("State Filter: " + state.filter);
+        Z.debug("State Filter: " + state.filter, 3);
         Zotero.trigger(eventString, {}, state.filter);
     });
     //TODO: is this eventMap triggering necessary?
     
     J.each(widgetEvents, function(ind, val){
-        Z.debug("State Filter: " + state.filter);
+        Z.debug("State Filter: " + state.filter, 3);
         
         Zotero.trigger(ind, {}, state.filter);
     });
     
-   
-    //events taken care of, so update curState
-    //TODO: this used to be down here for a reason - figure out if still relevant or setting at top
-    //is fine?
-    //state.curState = history.state;// History.getState();
-    //state.currentHref = window.location.href;
-    Z.debug("===== urlChangeCallback Done =====", 3);
-};
-
-Zotero.State.prototype.callbackAssignedFunction = function(el){
-    var state = this;
-    var functionName = J(el).data('function');
-    if(functionName){
-        Zotero.callbacks[functionName](el);
-    }
-};
-
-Zotero.State.prototype.flagLoading = function(el){
-    var state = this;
-    J(el).data('loading', true);
-};
-
-Zotero.State.prototype.doneLoading = function(el){
-    Z.debug("Zotero.State.doneLoading", 3);
-    var state = this;
-    J(el).data('loading', false);
-    if(J(el).data('queuedWaiting')){
-        J(el).data('queuedWaiting', false);
-        state.callbackAssignedFunction(el);
-    }
+    Z.debug("===== stateChanged Done =====", 3);
 };
 
 Zotero.State.prototype.diffState = function(prevHref, curHref){
@@ -7443,13 +7382,49 @@ Zotero.State.prototype.diffState = function(prevHref, curHref){
     return changedVars;
 };
 
-//function bound to history state changes that we trigger on pushState and popstate
-Zotero.State.prototype.stateChangeCallback = function(event){
-    Z.debug("stateChangeCallback", 3);
+/**
+ * Bind tag links to alter current state rather than following the link
+ * @return {undefined}
+ */
+Zotero.State.prototype.bindTagLinks = function(container){
     var state = this;
-    state.urlChangeCallback(event);
+    Z.debug("Zotero.State.bindTagLinks", 3);
+    J(container).on('click', 'a.tag-link', function(e){
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        //J("#tag-filter-input").val('');
+        var tagtitle = J(this).attr('data-tagtitle');
+        state.toggleTag(tagtitle);
+        state.clearUrlVars(['tag', 'collectionKey']);
+        state.pushState();
+    });
+
 };
 
+/**
+ * Bind item links to take alter current state instead of following link
+ * @return {undefined}
+ */
+Zotero.State.prototype.bindItemLinks = function(container){
+    Z.debug("Zotero.State.bindItemLinks", 3);
+    var state = this;
+    
+    J(container).on('click', "a.item-select-link", function(e){
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        Z.debug("item-select-link clicked", 3);
+        var itemKey = J(this).data('itemkey');
+        state.pathVars.itemKey = itemKey;
+        state.pushState();
+    });
+    J(container).on('click', 'td[data-itemkey]:not(.edit-checkbox-td)', function(e){
+        e.preventDefault();
+        Z.debug("item-select-td clicked", 3);
+        var itemKey = J(this).data('itemkey');
+        state.pathVars.itemKey = itemKey;
+        state.pushState();
+    });
+};
 
 
 //return a promise that will resolve after mseconds milliseconds
@@ -7459,179 +7434,6 @@ Zotero.Delay = function(mseconds){
             resolve();
         }, mseconds);
     });
-};
-
-
-Zotero.callbacks = {};
-
-/**
- * Choose between displaying items list and item details
- * @param  {Dom Element} el ajaxload element
- * @return {undefined}
- */
-Zotero.callbacks.chooseItemPane = function(el){
-    Z.debug("Zotero.callbacks.chooseItemPane", 3);
-    var showPane = 'list';
-    var itemList = J("#library-items-div");
-    var itemDetail = J("#item-details-div");
-    
-    //test if itemKey present and load/display item if it is
-    var itemKey = Zotero.state.getUrlVar('itemKey');
-    Z.debug("showPane itemKey : " + itemKey, 3);
-    
-    if(itemKey){
-        //Zotero.callbacks.loadItem(J("#item-details-div"), 'user', itemKey);
-        showPane = 'detail';
-    }
-    else if(Zotero.state.getUrlVar('action') == 'newItem'){
-        showPane = 'detail';
-    }
-    
-    if(showPane == 'detail'){
-        Z.debug("item pane displaying detail", 3);
-        itemList.hide();
-        itemDetail.show();
-    }
-    else if(showPane == 'list'){
-        Z.debug("item pane displaying list", 3);
-        itemDetail.hide();
-        itemList.show();
-    }
-    
-    if(Zotero.config.mobile){
-        //only show filter and search bars for list
-        if(showPane == 'detail'){
-            J("#items-pane-edit-panel-div").hide();
-            J("#filter-guide-div").hide();
-        }
-        else if(showPane == 'list'){
-            J("#items-pane-edit-panel-div").show();
-            J("#filter-guide-div").show();
-        }
-    }
-};
-
-Zotero.callbacks.rejectIfPending = function(el){
-    var pendingDeferred = J(el).data('pendingDeferred');
-    if(pendingDeferred && pendingDeferred.hasOwnProperty('reject')){
-        pendingDeferred.reject();
-        J(el).removeData('pendingDeferred');
-    }
-};
-
-
-Zotero.callbacks.showSpinnerSection = function(el){
-    Z.debug("Zotero.callbacks.showSpinnerSection", 3);
-    Zotero.ui.showSpinner(J(el).children('.loading'));
-};
-
-Zotero.callbacks.appendPreloader = function(el){
-    Z.debug("Zotero.callbacks.appendPreloader", 3);
-    Zotero.ui.appendSpinner(el);
-};
-
-
-/**
- * Ajaxload user groups
- * @param  {Dom Element} el Ajaxload element
- * @return {undefined}
- */
-Zotero.callbacks.loadUserGroups = function(el){
-    Z.debug("Zotero.callbacks.loadUserGroups", 3);
-    var jel = J(el);
-    var library = Zotero.ui.getAssociatedLibrary(el);
-    var loadConfig = jel.data('loadconfig');
-    var userid = loadConfig.libraryID;
-    
-    var groups = library.groups.fetchUserGroups(userid, library._apiKey);
-    
-    groups.then(J.proxy(function(fetchedGroups){
-        Zotero.ui.displayGroupNuggets(el, fetchedGroups);
-    }), this);
-};
-/*
-Zotero.callbacks.userGroupsLoaded = function(el){
-    Z.debug("Zotero.callbacks.userGroupsLoaded", 3);
-    var jel = J(el);
-    var groups = Zotero.groups;
-    groups.groupsArray.sort(groups.sortByTitleCompare);
-    
-    var groupshtml = Zotero.ui.userGroupsDisplay(groups);
-    jel.html(groupshtml);
-};
-*/
-/**
- * Ajaxload run z.org search
- * @param  {Dom Element} el Ajaxload element
- * @return {undefined}
- */
-Zotero.callbacks.runsearch = function(el){
-    Z.debug('Zotero.callbacks.runsearch', 3);
-    var params = Zotero.pages.search_index.parseSearchUrl();
-    
-    if(!params.type){
-        params.type = 'support';
-    }
-    var sectionID = params.type;
-    if(sectionID != 'people' && sectionID != 'group'){
-        sectionID = 'support';
-    }
-    Z.debug("search type: " + params.type, 4);
-    J(".search-section").not("[id=" + sectionID + "]").hide();
-    J(".search-section[id=" + sectionID + "]").show().find('input[name=q]').val(params.query);
-    J("#search-nav li").removeClass('selected');
-    J("#search-nav li." + params.type).addClass('selected');
-    zoterojsSearchContext = params.type;
-    
-    if(params.query){
-        Zotero.pages.search_index.runSearch(params);
-    }
-};
-
-/**
- * Ajaxload library filter display panels on mobile
- * @param  {Dom Element} el Ajaxload element
- * @return {undefined}
- */
-Zotero.callbacks.loadFilterGuide = function(el){
-    Z.debug("Zotero.callbacks.loadFilterGuide", 3);
-    var tag = Zotero.state.getUrlVar('tag');
-    if(typeof tag == 'string'){
-        tag = [tag];
-    }
-    var collectionKey = Zotero.state.getUrlVar('collectionKey');
-    var q = Zotero.state.getUrlVar('q');
-    
-    var filters = {tag: tag, collectionKey:collectionKey, q:q};
-    Zotero.ui.filterGuide(el, filters);
-};
-
-/**
- * Ajaxload library action panel
- * @param  {Dom Element} el Ajaxload element
- * @return {undefined}
- */
-Zotero.callbacks.actionPanel = function(el){
-    Z.debug("Zotero.callbacks.actionPanel", 3);
-    var mode = Zotero.state.getUrlVar('mode');
-    var elid = J(el).attr('id');
-    if(elid == 'collections-pane-edit-panel-div'){
-        if(mode == 'edit'){
-            Zotero.ui.collectionsActionPane(J("#collections-pane-edit-panel-div"), true);
-        }
-        else{
-            Zotero.ui.collectionsActionPane(J("#collections-pane-edit-panel-div"), false);
-        }
-    }
-    else if(elid == 'items-pane-edit-panel-div'){
-        if(mode == 'edit'){
-            Zotero.ui.itemsActionPane(J("#items-pane-edit-panel-div"));
-        }
-        else{
-            Zotero.ui.itemsSearchActionPane(J("#items-pane-edit-panel-div"));
-        }
-        Zotero.ui.updateDisabledControlButtons();
-    }
 };
 
 
@@ -7767,10 +7569,6 @@ Zotero.eventful.initTriggers = function(el){
         Z.debug("eventfultrigger click");
     });*/
 };
-
-
-
-
 
 
 /**
@@ -7977,23 +7775,9 @@ Zotero.ui.groupUrl = function(group, route){
 
 Zotero.ui.init = {};
 Zotero.ui.widgets = {};
-Zotero.ui.jqui = {};
 
 //initialize ui
 Zotero.ui.init.all = function(){
-    J("#content").on('click', 'a.ajax-link', function(){
-        Z.debug("ajax-link clicked with href " + J(this).attr('href'), 3);
-        Z.debug("pathname " + this.pathname, 4);
-        var pathvars = Zotero.state.parsePathVars(this.pathname);
-        Zotero.state.pathVars = pathvars;
-        Zotero.state.pushState();
-        return false;
-    });
-    
-    if(Zotero.config.mobile){
-        Zotero.ui.init.mobile();
-    }
-    
     //run UI initialization based on what page we're on
     Z.debug("ui init based on page", 3);
     switch(Zotero.config.pageClass){
@@ -8008,7 +7792,8 @@ Zotero.ui.init.all = function(){
 
 Zotero.ui.init.library = function(){
     Z.debug("Zotero.ui.init.library", 3);
-    Zotero.ui.init.fullLibrary();
+    Zotero.ui.init.libraryTemplates();
+    Zotero.eventful.initWidgets();
     
     //initialize RTE for textareas if marked
     var hasRTENoLinks = J('textarea.rte').filter('.nolinks').length;
@@ -8024,26 +7809,6 @@ Zotero.ui.init.library = function(){
         Zotero.ui.init.rte('default');
     }
     
-};
-
-//initialize all the widgets that make up the library
-Zotero.ui.init.fullLibrary = function(){
-    Z.debug('Zotero.ui.initFullLibrary', 3);
-    
-    if(J("#library").hasClass('ajaxload')){
-        //full synced library - handle differently
-        Zotero.ui.init.offlineLibrary();
-        return;
-    }
-    Zotero.ui.init.libraryTemplates();
-    
-    Zotero.eventful.initWidgets();
-};
-
-Zotero.ui.init.creatorFieldButtons = function(){
-};
-
-Zotero.ui.init.editButton = function(){
 };
 
 Zotero.ui.init.rte = function(type, autofocus, elements){
@@ -8852,51 +8617,6 @@ Zotero.ui.appendSpinner = function(el){
 
 
 
-
-/**
- * Update the disabled state of library control toolbar buttons depending on context
- * @return {undefined}
- */
- /*
-Zotero.ui.updateDisabledControlButtons = function(){
-    Z.debug("Zotero.ui.updateDisabledControlButtons", 3);
-    J(".move-to-trash-link").prop('title', 'Move to Trash');
-    
-    J("#create-item-link").button('option', 'disabled', false);
-    if((J(".itemlist-editmode-checkbox:checked").length === 0) && (!Zotero.state.getUrlVar('itemKey')) ){
-        J(".add-to-collection-link").button('option', 'disabled', true).removeClass("ui-state-hover");
-        J(".remove-from-collection-link").button('option', 'disabled', true).removeClass("ui-state-hover");
-        J(".move-to-trash-link").button('option', 'disabled', true).removeClass("ui-state-hover");
-        J(".remove-from-trash-link").button('option', 'disabled', true).removeClass("ui-state-hover");
-        
-        J("#cite-link").button('option', 'disabled', true);
-        J("#export-link").button('option', 'disabled', true);
-    }
-    else{
-        J(".add-to-collection-link").button('option', 'disabled', false).removeClass("ui-state-hover");
-        J(".remove-from-collection-link").button('option', 'disabled', false).removeClass("ui-state-hover");
-        J(".move-to-trash-link").button('option', 'disabled', false).removeClass("ui-state-hover");
-        if(Zotero.state.getUrlVar('collectionKey') == 'trash'){
-            J(".remove-from-trash-link").button('option', 'disabled', false).removeClass("ui-state-hover");
-        }
-        J("#cite-link").button('option', 'disabled', false);
-        J("#export-link").button('option', 'disabled', false);
-    }
-    //only show remove from collection button if inside a collection
-    if(!Zotero.state.getUrlVar("collectionKey")){
-        J(".remove-from-collection-link").button('option', 'disabled', true).removeClass("ui-state-hover");
-    }
-    //disable create item button if in trash
-    else if(Zotero.state.getUrlVar('collectionKey') == 'trash'){
-        J("#create-item-link").button('option', 'disabled', true).removeClass('ui-state-hover');
-        J(".add-to-collection-link").button('option', 'disabled', true).removeClass("ui-state-hover");
-        J(".remove-from-collection-link").button('option', 'disabled', true).removeClass("ui-state-hover");
-        J(".move-to-trash-link").prop('title', 'Permanently Delete');
-    }
-    Zotero.ui.init.editButton();
-};
-*/
-
 /**
  * Trigger a ZoteroItemUpdated event on the document for zotero translators
  * @return {undefined}
@@ -9237,6 +8957,13 @@ Zotero.ui.widgets.collections.init = function(el){
 Zotero.ui.widgets.collections.syncCollections = function(evt) {
     Zotero.debug("Zotero eventful syncCollectionsCallback", 3);
     var widgetEl = J(evt.data.widgetEl);
+    var loadingPromise = widgetEl.data('loadingPromise');
+    if(loadingPromise){
+        var p = widgetEl.data('loadingPromise');
+        return p.then(function(){
+            return Zotero.ui.widgets.collections.syncCollections(evt);
+        });
+    }
     
     //get Zotero.Library object if already bound to element
     var library = Zotero.ui.getAssociatedLibrary(widgetEl);
@@ -9244,13 +8971,14 @@ Zotero.ui.widgets.collections.syncCollections = function(evt) {
     //sync collections if loaded from cache but not synced
     return library.loadUpdatedCollections()
     .then(function(){
-        Zotero.state.doneLoading(widgetEl);
         library.trigger("libraryCollectionsUpdated");
     },
     function(){
         //sync failed, but we already had some data, so show that
         library.trigger("libraryCollectionsUpdated");
         //TODO: display error as well
+    }).then(function(){
+        widgetEl.removeData('loadingPromise');
     });
 };
 
@@ -9353,11 +9081,6 @@ Zotero.ui.widgets.collections.bindCollectionLinks = function(container){
             
             //go back to items list
             Zotero.state.clearUrlVars(['collectionKey', 'mode']);
-            
-            //change the mobile page if we didn't just expand a collection
-            if( !(Zotero.config.mobile && (Zotero.state.getUrlVar('mode') != 'edit'))){
-                Zotero.state.pushState();
-            }
             
             //cancel action for expando link behaviour
             return false;
@@ -9462,93 +9185,39 @@ Zotero.ui.widgets.controlPanel.init = function(el){
     var library = Zotero.ui.getAssociatedLibrary(el);
     
     Zotero.ui.showControlPanel(el);
-    library.listen("controlPanelContextChange", Zotero.ui.updateDisabledControlButtons, {widgetEl:el});
+    //library.listen("controlPanelContextChange", Zotero.ui.widgets.controlPanel.contextChanged, {widgetEl:el});
     library.listen("selectedItemsChanged", Zotero.ui.widgets.controlPanel.selectedItemsChanged, {widgetEl:el});
     
-    library.listen("removeFromCollection", Zotero.ui.callbacks.removeFromCollection, {widgetEl:el});
-    library.listen("moveToTrash", Zotero.ui.callbacks.moveToTrash), {widgetEl:el};
-    library.listen("removeFromTrash", Zotero.ui.callbacks.removeFromTrash, {widgetEl:el});
-    library.listen("toggleEdit", Zotero.ui.callbacks.toggleEdit, {widgetEl:el});
-    library.listen('clearLibraryQuery', Zotero.ui.clearLibraryQuery, {widgetEl:el});
+    library.listen("removeFromCollection", Zotero.ui.widgets.controlPanel.removeFromCollection, {widgetEl:el});
+    library.listen("moveToTrash", Zotero.ui.widgets.controlPanel.moveToTrash), {widgetEl:el};
+    library.listen("removeFromTrash", Zotero.ui.widgets.controlPanel.removeFromTrash, {widgetEl:el});
+    library.listen("toggleEdit", Zotero.ui.widgets.controlPanel.toggleEdit, {widgetEl:el});
     
     var container = J(el);
-    //set initial state of search input to url value
-    if(Zotero.state.getUrlVar('q')){
-        container.find("#header-search-query").val(Zotero.state.getUrlVar('q'));
-    }
     
-    //clear libary query param when field cleared
-    var context = 'support';
-    if(undefined !== window.zoterojsSearchContext){
-        context = zoterojsSearchContext;
-    }
-    
-    //set up search type links
-    container.on('click', ".library-search-type-link", function(e){
-        e.preventDefault();
-        var typeLinks = J(".library-search-type-link").removeClass('selected');
-        var selected = J(e.target);
-        var selectedType = selected.data('searchtype');
-        var searchInput = J("#header-search-query").data('searchtype', selectedType);
-        selected.addClass('selected');
-        if(selectedType == 'simple'){
-            searchInput.attr('placeholder', 'Search Title, Creator, Year');
-        }
-        else if(selectedType == 'everything'){
-            searchInput.attr('placeholder', 'Search Full Text');
-        }
-    });
-    
-    //set up search submit for library
-    container.on('submit', "#library-search", function(e){
-        e.preventDefault();
-        Zotero.state.clearUrlVars(['collectionKey', 'tag', 'q', 'qmode']);
-        var query     = J("#header-search-query").val();
-        var searchType = J("#header-search-query").data('searchtype');
-        if(query !== "" || Zotero.state.getUrlVar('q') ){
-            Zotero.state.pathVars['q'] = query;
-            if(searchType != "simple"){
-                Zotero.state.pathVars['qmode'] = searchType;
-            }
-            Zotero.state.pushState();
-        }
-        return false;
-    });
-    
-    container.on('click', '.clear-field-button', function(e){
-        J("#header-search-query").val("").focus();
-    });
-    
+    Zotero.ui.widgets.controlPanel.updateDisabledControlButtons();
 };
 
-Zotero.ui.widgets.controlPanel.updateDisabledControlButtons = function(){
-    Zotero.ui.updateDisabledControlButtons();
+Zotero.ui.widgets.controlPanel.contextChanged = function(evt){
+    Zotero.ui.widgets.controlPanel.updateDisabledControlButtons();
 };
 
-Zotero.ui.widgets.controlPanel.selectedItemsChanged = function(event){
+Zotero.ui.widgets.controlPanel.selectedItemsChanged = function(evt){
     Z.debug("Zotero.ui.widgets.controlPanel.selectedItemsChanged", 3);
-    var selectedItemKeys = event.selectedItemKeys;
+    var selectedItemKeys = evt.selectedItemKeys;
     if(!selectedItemKeys){
         selectedItemKeys = [];
     }
-    Zotero.ui.updateDisabledControlButtons(selectedItemKeys);
+        
+    Zotero.ui.widgets.controlPanel.updateDisabledControlButtons(selectedItemKeys);
 };
-
-Zotero.ui.clearLibraryQuery = function(){
-    Zotero.state.unsetUrlVar('q');
-    Zotero.state.unsetUrlVar('qmode');
-    
-    J("#header-search-query").val("");
-    Zotero.state.pushState();
-    return;
-}
 
 /**
  * Update the disabled state of library control toolbar buttons depending on context
  * @return {undefined}
  */
-Zotero.ui.updateDisabledControlButtons = function(selectedItemKeys){
-    Z.debug("Zotero.ui.updateDisabledControlButtons", 3);
+Zotero.ui.widgets.controlPanel.updateDisabledControlButtons = function(selectedItemKeys){
+    Z.debug("Zotero.ui.widgets.controlPanel.updateDisabledControlButtons", 3);
     if(!selectedItemKeys){
         selectedItemKeys = [];
     }
@@ -9589,7 +9258,6 @@ Zotero.ui.updateDisabledControlButtons = function(selectedItemKeys){
         J(".remove-from-collection-button").addClass('disabled');
         J(".move-to-trash-button").prop('title', 'Permanently Delete');
     }
-    Zotero.ui.init.editButton();
 };
 /*
 Zotero.ui.widgets.controlPanel.createItemDropdown = function(el){
@@ -9611,7 +9279,7 @@ Zotero.ui.widgets.controlPanel.createItemDropdown = function(el){
  * @param  {event} e click event
  * @return {boolean}
  */
-Zotero.ui.callbacks.toggleEdit =  function(e){
+Zotero.ui.widgets.controlPanel.toggleEdit =  function(e){
     Z.debug("edit checkbox toggled", 3);
     var curMode = Zotero.state.getUrlVar('mode');
     if(curMode != "edit"){
@@ -9702,7 +9370,7 @@ Zotero.ui.callbacks.moveToTrash =  function(evt){
  * @param  {event} e click event
  * @return {boolean}
  */
-Zotero.ui.callbacks.removeFromTrash =  function(evt){
+Zotero.ui.widgets.controlPanel.removeFromTrash =  function(evt){
     Z.debug('remove-from-trash clicked', 3);
     var widgetEl = J(evt.data.widgetEl);
     var itemKeys = Zotero.state.getSelectedItemKeys();
@@ -9811,7 +9479,6 @@ Zotero.ui.widgets.createCollectionDialog.show = function(evt){
         
         library.addCollection(name, parentKey)
         .then(function(returnCollections){
-            
             library.collections.initSecondaryData();
             library.trigger('libraryCollectionsUpdated');
             Zotero.state.pushState();
@@ -9997,7 +9664,9 @@ Zotero.ui.displayGroupNuggets = function(el, groups){
 
 
 Zotero.ui.widgets.item = {};
-
+//TODO: alot of this widget should probably be rewritten
+//TODO: trigger showChildren with an extra itemID filter so quick clicks back and forth
+//between items don't overwrite with the wrong children?
 Zotero.ui.widgets.item.init = function(el){
     var library = Zotero.ui.getAssociatedLibrary(el);
     
@@ -10029,16 +9698,14 @@ Zotero.ui.widgets.item.loadItemCallback = function(event){
     var triggeringEl = J(event.triggeringElement);
     
     Z.debug("Zotero.callbacks.loadItem", 3);
-    Zotero.callbacks.rejectIfPending(widgetEl);
+    //Zotero.callbacks.rejectIfPending(widgetEl);
     var library = Zotero.ui.getAssociatedLibrary(widgetEl);
     var p;
     //clear contents and show spinner while loading
     widgetEl.empty();
     Zotero.ui.showSpinner(widgetEl);
     
-    //if we're  creating a new item: let user choose itemType if we don't have a value
-    //yet, otherwise create a new item and initialize it as an empty item of that type
-    //then once we have the template in the item render it as an item edit
+    //if this is a new item: initialize an empty item for the given itemtype
     if(event.data.newItem){
         var itemType = triggeringEl.data("itemtype");
         if(!itemType){
@@ -10049,7 +9716,7 @@ Zotero.ui.widgets.item.loadItemCallback = function(event){
         newItem.libraryID = library.libraryID;
         p = newItem.initEmpty(itemType)
         .then(function(item){
-            Zotero.ui.editItemForm(widgetEl, item);
+            Zotero.ui.widgets.item.editItemForm(widgetEl, item);
             widgetEl.data('newitem', item);
         },
         function(response){
@@ -10061,26 +9728,22 @@ Zotero.ui.widgets.item.loadItemCallback = function(event){
     }
     
     //if it is not a new item handled above we must have an itemKey
+    //or display something else that's not an item
     var itemKey = Zotero.state.getUrlVar('itemKey');
     if(!itemKey){
         Z.debug("No itemKey - " + itemKey, 3);
         widgetEl.empty();
+        //TODO: display information about library like client?
         return Promise.reject(new Error("No itemkey - " + itemKey));
     }
     
-    //get the item out of the library for display
+    //if we are showing an item, load it from local library of API
+    //then display it
     var item = library.items.getItem(itemKey);
+    var p;
     if(item){
         Z.debug("have item locally, loading details into ui", 3);
-        if(Zotero.state.getUrlVar('mode') == 'edit'){
-            Zotero.ui.editItemForm(widgetEl, item);
-        }
-        else{
-            Zotero.ui.loadItemDetail(item, widgetEl);
-            library.trigger('showChildren');
-        }
-        Zotero.eventful.initTriggers(J(widgetEl));
-        return Promise.resolve();
+        p = Promise.resolve(item);
     }
     else{
         Z.debug("must fetch item from server", 3);
@@ -10091,25 +9754,24 @@ Zotero.ui.widgets.item.loadItemCallback = function(event){
             'itemKey':itemKey,
             'content':'json'
         };
-        p = library.loadItem(itemKey)
-        .then(function(item){
-            Z.debug("Library.loadItem done", 3);
-            widgetEl.empty();
-            
-            if(Zotero.state.getUrlVar('mode') == 'edit'){
-                Zotero.ui.editItemForm(widgetEl, item);
-            }
-            else{
-                Zotero.ui.loadItemDetail(item, widgetEl);
-                library.trigger('showChildren');
-            }
-            //set currentConfig on element when done displaying
-            widgetEl.data('currentconfig', config);
-            Zotero.eventful.initTriggers(widgetEl);
-        });
-        widgetEl.data('pendingDeferred', p);
-        return p;
+        p = library.loadItem(itemKey);
     }
+    p.then(function(item){
+        Z.debug("Library.loadItem done", 3);
+        widgetEl.empty();
+        
+        if(Zotero.state.getUrlVar('mode') == 'edit'){
+            Zotero.ui.widgets.item.editItemForm(widgetEl, item);
+        }
+        else{
+            Zotero.ui.widgets.item.loadItemDetail(item, widgetEl);
+            library.trigger('showChildren');
+        }
+        //set currentConfig on element when done displaying
+        widgetEl.data('currentconfig', config);
+        Zotero.eventful.initTriggers(widgetEl);
+    });
+    return p;
 };
 
 /**
@@ -10192,62 +9854,10 @@ Zotero.ui.widgets.item.addNote = function(e){
     var newindex = notenum + 1;
     var newNoteID = "note_" + newindex;
     var jel;
-    if(Zotero.config.mobile){
-        jel = container.find("td.notes").append('<textarea cols="40" rows="24" name="' + newNoteID + '" id="' + newNoteID + '" class="rte default note-text" data-noteindex="' + newNoteID + '"></textarea>');
-    }
-    else{
-        jel = container.find("td.notes button.add-note-button").before('<textarea cols="40" rows="24" name="' + newNoteID + '" id="' + newNoteID + '" class="rte default note-text" data-noteindex="' + newNoteID + '"></textarea>');
-    }
-    
+    jel = container.find("td.notes button.add-note-button").before('<textarea cols="40" rows="24" name="' + newNoteID + '" id="' + newNoteID + '" class="rte default note-text" data-noteindex="' + newNoteID + '"></textarea>');
     Zotero.ui.init.rte('default', true, newNoteID);
 };
 
-/**
- * Load the template for a new item
- * @param  {Zotero_Item} item Item template to load
- * @return {undefined}
- */
- /*
-Zotero.ui.loadNewItemTemplate = function(item){
-    Z.debug("Zotero.ui.loadNewItemTemplate", 3);
-    Z.debug(item, 3);
-    return Zotero.Item.prototype.getCreatorTypes(item.itemType)
-    .then(function(itemCreatorTypes){
-        var jel = J("#item-details-div").empty();
-        if(item.itemType == 'note'){
-            var parentKey = Zotero.state.getUrlVar('parentKey');
-            if(parentKey){
-                item.parentKey = parentKey;
-            }
-            jel.append( J('#editnoteformTemplate').render({item:item,
-                                         itemKey:item.itemKey
-                                         }) );
-            
-            Zotero.ui.init.rte('default');
-        }
-        else {
-            //TODO: libraryUserID is for what?
-            jel.append( J('#itemformTemplate').render( {item:item,
-                                                        libraryUserID:zoteroData.libraryUserID,
-                                                        itemKey:item.itemKey,
-                                                        creatorTypes:itemCreatorTypes,
-                                                        saveable: true,
-                                                        citable:false
-                                                        } ) );
-            if(item.apiObj.tags.length === 0){
-                Zotero.ui.widgets.item.addTag(jel, false);
-            }
-            Zotero.ui.init.creatorFieldButtons();
-            //Zotero.ui.init.tagButtons();
-            Zotero.ui.init.editButton();
-        }
-        jel.data('newitem', item);
-        
-        //load data from previously rendered form if available
-        Zotero.ui.loadFormData(jel);
-    });
-};
-*/
 /**
  * Add a tag field to an edit item form
  * @param {bool} focus Whether to focus the newly added tag field
@@ -10307,24 +9917,21 @@ Zotero.ui.widgets.item.removeTag = function(e) {
  * @param  {Zotero_Item} item Zotero Item object to associate with form
  * @return {undefined}
  */
-Zotero.ui.editItemForm = function(el, item){
-    Z.debug("Zotero.ui.editItemForm", 3);
+Zotero.ui.widgets.item.editItemForm = function(el, item){
+    Z.debug("Zotero.ui.widgets.item.editItemForm", 3);
     Z.debug(item, 4);
-    var jel = J(el);
+    var jel = J(el).empty();
     var library = Zotero.ui.getAssociatedLibrary(el);
     if(item.itemType == 'note'){
         Z.debug("editItemForm - note", 3);
-        jel.empty();
         jel.append( J('#editnoteformTemplate').render({item:item,
                                          itemKey:item.itemKey
                                          }) );
                                          
         Zotero.ui.init.rte('default');
-        Zotero.ui.init.editButton();
     }
     else if(item.itemType == "attachment"){
         Z.debug("item is attachment", 4);
-        jel.empty();
         var mode = Zotero.state.getUrlVar('mode');
         jel.append( J('#attachmentformTemplate').render({item:item,
                                     itemKey:item.itemKey,
@@ -10336,15 +9943,6 @@ Zotero.ui.editItemForm = function(el, item){
         if(item.apiObj.tags.length === 0){
             Zotero.ui.widgets.item.addTag(el, false);
         }
-        if(Zotero.config.mobile){
-            Zotero.ui.init.editButton();
-            J(el).trigger('create');
-        }
-        else{
-            Zotero.ui.init.creatorFieldButtons();
-            //Zotero.ui.init.tagButtons();
-            Zotero.ui.init.editButton();
-        }
         Zotero.ui.init.rte();
         
     }
@@ -10352,7 +9950,6 @@ Zotero.ui.editItemForm = function(el, item){
         item.getCreatorTypes(item.apiObj.itemType)
         .then(function(){
             Z.debug("getCreatorTypes done", 3);
-            jel.empty();
             if(item.creators.length === 0){
                 item.creators.push({creatorType: item.creatorTypes[item.itemType][0],
                                     first: '',
@@ -10392,8 +9989,8 @@ Zotero.ui.editItemForm = function(el, item){
  * @param  {Dom Element} el   Container
  * @return {undefined}
  */
-Zotero.ui.loadItemDetail = function(item, el){
-    Z.debug("Zotero.ui.loadItemDetail", 3);
+Zotero.ui.widgets.item.loadItemDetail = function(item, el){
+    Z.debug("Zotero.ui.widgets.item.loadItemDetail", 3);
     var jel = J(el);
     jel.empty();
     var parentUrl = false;
@@ -10410,7 +10007,6 @@ Zotero.ui.loadItemDetail = function(item, el){
         jel.append( J('#itemdetailsTemplate').render({item:item, parentUrl:parentUrl, libraryString:library.libraryString}) ).trigger('create');
     }
     Zotero.ui.init.rte('readonly');
-    Zotero.ui.init.editButton();
     
     try{
         //trigger event for Zotero translator detection
@@ -10486,7 +10082,6 @@ Zotero.ui.widgets.item.switchTwoFieldCreators = function(e){
                                                 creatorTypes:Zotero.Item.prototype.creatorTypes[itemType]
                                                 }));
     
-    Zotero.ui.init.creatorFieldButtons();
     Zotero.eventful.initTriggers(containingTable.find(trIdString));
 };
 
@@ -10510,36 +10105,12 @@ Zotero.ui.widgets.item.switchSingleFieldCreator = function(e){
                                         creatorTypes:Zotero.Item.prototype.creatorTypes[itemType]
                                         }));
     
-    Zotero.ui.init.creatorFieldButtons();
     Zotero.eventful.initTriggers(containingTable.find(trIdString));
 };
-
-/*
-Zotero.ui.callbacks.addNote = function(e){
-    Z.debug("add note button clicked", 3);
-    Zotero.ui.addNote(this);
-    return false;
-};
-*/
 
 Zotero.ui.widgets.item.cancelItemEdit = function(e){
     Zotero.state.clearUrlVars(['itemKey', 'collectionKey', 'tag', 'q']);
     Zotero.state.pushState();
-};
-
-Zotero.ui.widgets.item.selectItemType = function(e){
-    Z.debug("itemTypeSelectButton clicked", 3);
-    var jel;
-    if(e.zeventful){
-        jel = J(e.triggeringElement);
-    } else {
-        jel = J(this);
-    }
-    
-    var itemType = J("#itemType").val();
-    Zotero.state.pathVars['itemType'] = itemType;
-    Zotero.state.pushState();
-    return false;
 };
 
 Zotero.ui.widgets.item.itemFormKeydown = function(e){
@@ -10580,7 +10151,7 @@ Zotero.ui.widgets.items.init = function(el){
     var container = J(el);
     //container.on('click', ".field-table-header", Zotero.ui.callbacks.resortItems);
     
-    Zotero.ui.bindItemLinks(container);
+    Zotero.state.bindItemLinks(container);
     
     //check/uncheck all boxes in items table when master checkbox is toggled
     container.on('change', ".itemlist-editmode-checkbox.all-checkbox", function(e){
@@ -10589,14 +10160,14 @@ Zotero.ui.widgets.items.init = function(el){
         J("input.itemKey-checkbox:checked").each(function(index, el){
             selectedItemKeys.push(J(el).data('itemkey'));
         });
-        Zotero.ui.updateDisabledControlButtons();
+        //library.trigger('controlPanelContextChange');
         Zotero.state.selectedItemKeys = selectedItemKeys;
         library.trigger("selectedItemsChanged", {selectedItemKeys: selectedItemKeys});
     });
     
     //init itemkey-checkbox to enable/disable buttons that require something being selected
     container.on('change', "input.itemKey-checkbox", function(e){
-        Zotero.ui.updateDisabledControlButtons();
+        //library.trigger('controlPanelContextChange');
         var selectedItemKeys = [];
         J("input.itemKey-checkbox:checked").each(function(index, el){
             selectedItemKeys.push(J(el).data('itemkey'));
@@ -10642,7 +10213,7 @@ Zotero.ui.widgets.items.init = function(el){
 Zotero.ui.widgets.items.loadItemsCallback = function(event){
     Z.debug('Zotero eventful loadItemsCallback', 3);
     var widgetEl = J(event.data.widgetEl);
-    Zotero.callbacks.rejectIfPending(widgetEl);
+    //Zotero.callbacks.rejectIfPending(widgetEl);
     
     var library = Zotero.ui.getAssociatedLibrary(widgetEl);
     var newConfig = Zotero.ui.getItemsConfig(library);
@@ -10758,32 +10329,8 @@ Zotero.ui.widgets.items.displayItems = function(el, config, loadedItems) {
         jel.append( J('#itempaginationTemplate').render(paginationData) );
     }
     
-    Zotero.ui.updateDisabledControlButtons();
+    //library.trigger('controlPanelContextChange');
     Zotero.eventful.initTriggers();
-};
-
-/**
- * Bind item links to take appropriate action instead of following link
- * @return {undefined}
- */
-Zotero.ui.bindItemLinks = function(container){
-    Z.debug("Zotero.ui.bindItemLinks", 3);
-    
-    J(container).on('click', "a.item-select-link", function(e){
-        e.preventDefault();
-        e.stopImmediatePropagation();
-        Z.debug("item-select-link clicked", 3);
-        var itemKey = J(this).data('itemkey');
-        Zotero.state.pathVars.itemKey = itemKey;
-        Zotero.state.pushState();
-    });
-    J(container).on('click', 'td[data-itemkey]:not(.edit-checkbox-td)', function(e){
-        e.preventDefault();
-        Z.debug("item-select-td clicked", 3);
-        var itemKey = J(this).data('itemkey');
-        Zotero.state.pathVars.itemKey = itemKey;
-        Zotero.state.pushState();
-    });
 };
 
 Zotero.ui.callbacks.resortItems = function(e){
@@ -10861,9 +10408,10 @@ Zotero.ui.widgets.itemContainer.init = function(el){
         Zotero.state.pushState();
     });
     
-    Zotero.ui.bindTagLinks(container);
+    Zotero.state.bindTagLinks(container);
 };
 
+//TODO: this some other way, and probably trigger something so the item widget will reset
 Zotero.ui.cancelItemEdit = function(e){
     Zotero.state.clearUrlVars(['itemKey', 'collectionKey', 'tag', 'q']);
     Zotero.state.pushState();
@@ -11004,9 +10552,7 @@ Zotero.ui.unassociatedItemForm = function(el, item){
             if(item.apiObj.tags.length === 0){
                 Zotero.ui.widgets.item.addTag(container, false);
             }
-            Zotero.ui.init.creatorFieldButtons();
             //Zotero.ui.init.tagButtons();
-            Zotero.ui.init.editButton();
         }
         
         container.find(".directciteitembutton").on('click', function(e){
@@ -11090,18 +10636,18 @@ Zotero.ui.widgets.syncedItems.init = function(el){
     var container = J(el);
     //container.on('click', ".field-table-header", Zotero.ui.callbacks.resortItemsLocal);
     
-    Zotero.ui.bindItemLinks();
+    Zotero.state.bindItemLinks(container);
     
     //check/uncheck all boxes in items table when master checkbox is toggled
     container.on('change', ".itemlist-editmode-checkbox.all-checkbox", function(e){
         J(".itemlist-editmode-checkbox").prop('checked', J(".itemlist-editmode-checkbox.all-checkbox").prop('checked'));
-        Zotero.ui.updateDisabledControlButtons();
+        //library.trigger('controlPanelContextChange');
         library.trigger("selectedItemsChanged");
     });
     
     //init itemkey-checkbox to enable/disable buttons that require something being selected
     container.on('change', "input.itemKey-checkbox", function(e){
-        Zotero.ui.updateDisabledControlButtons();
+        //library.trigger('controlPanelContextChange');
         var selectedItemKeys = [];
         J("input.itemKey-checkbox:checked").each(function(index, el){
             selectedItemKeys.push(J(el).data('itemkey'));
@@ -11204,7 +10750,7 @@ Zotero.ui.widgets.tags.init = function(el){
     container.on('click', "#show-more-tags-link", Zotero.ui.showMoreTags);
     container.on('click', "#show-fewer-tags-link", Zotero.ui.showFewerTags);
     
-    Zotero.ui.bindTagLinks(container);
+    Zotero.state.bindTagLinks(container);
     //TODO: make sure tag autocomplete works when editing items
     //add tag to item and stop event propogation when tag is selected
     //from autocomplete on an item
@@ -11236,15 +10782,22 @@ Zotero.ui.widgets.tags.init = function(el){
     
 };
 
-Zotero.ui.widgets.tags.syncTags = function(event){
+Zotero.ui.widgets.tags.syncTags = function(evt){
     Z.debug('Zotero eventful syncTags', 1);
-    var widgetEl = J(event.data.widgetEl);
-    var checkCached = event.data.checkCached;
+    var widgetEl = J(evt.data.widgetEl);
+    var loadingPromise = widgetEl.data('loadingPromise');
+    if(loadingPromise){
+        var p = widgetEl.data('loadingPromise');
+        return p.then(function(){
+            return Zotero.ui.widgets.tags.syncTags(evt);
+        });
+    }
+    
+    var checkCached = evt.data.checkCached;
     if(checkCached !== false){
         checkCached = true; //default to using the cache
     }
     
-    Zotero.state.flagLoading(widgetEl);
     Zotero.ui.showSpinner(widgetEl.find('div.loading'));
     
     //get Zotero.Library object if already bound to element
@@ -11256,19 +10809,24 @@ Zotero.ui.widgets.tags.syncTags = function(event){
     
     //cached tags are preloaded with library if the cache is enabled
     //this function shouldn't be triggered until that has already been done
-    return library.loadUpdatedTags()
+    loadingPromise = library.loadUpdatedTags()
     .then(function(){
-        Zotero.state.doneLoading(widgetEl);
         widgetEl.find('.loading').empty();
         library.trigger("libraryTagsUpdated");
+        //remove loadingPromise
+        widgetEl.removeData('loadingPromise');
     },
     function(){
         //sync failed, but we still have some local data, so show that
         library.trigger("libraryTagsUpdated");
-        Zotero.state.doneLoading(widgetEl);
         widgetEl.children('.loading').empty();
+        //remove loadingPromise
+        widgetEl.removeData('loadingPromise');
         //TODO: display error as well
     });
+    
+    widgetEl.data('loadingPromise', loadingPromise);
+    return loadingPromise;
 };
 
 Zotero.ui.widgets.tags.rerenderTags = function(event){
@@ -11308,6 +10866,7 @@ Zotero.ui.displayTagsFiltered = function(el, library, matchedTagStrings, selecte
     var jel = J(el);
     var libtags = library.tags;
     var tagColors = library.preferences.getPref("tagColors");
+    if(!tagColors) tagColors = [];
     var showMore = jel.data('showmore');
     if(!showMore){
         showMore = false;
@@ -11377,23 +10936,6 @@ Zotero.ui.showFewerTags = function(e){
     var jel = J(this).closest('#tags-list-div');
     jel.data('showmore', false);
     library.trigger('libraryTagsUpdated');
-};
-
-
-/**
- * Bind tag links to take appropriate action rather than following the link
- * @return {undefined}
- */
-Zotero.ui.bindTagLinks = function(container){
-    Z.debug("Zotero.ui.bindTagLinks", 3);
-    J(container).on('click', 'a.tag-link', function(e){
-        e.preventDefault();
-        J("#tag-filter-input").val('');
-        var tagtitle = J(this).attr('data-tagtitle');
-        Zotero.state.toggleTag(tagtitle);
-        Zotero.state.clearUrlVars(['tag', 'collectionKey']);
-        Zotero.state.pushState();
-    });
 };
 
 Zotero.ui.widgets.tags.filterTags = function(e){
@@ -11855,6 +11397,112 @@ Zotero.ui.widgets.sendToLibraryDialog.send = function(evt){
     
 };
 */
+
+Zotero.ui.widgets.searchbox = {};
+
+Zotero.ui.widgets.searchbox.init = function(el){
+    Z.debug("Zotero.eventful.init.searchbox", 3);
+    var library = Zotero.ui.getAssociatedLibrary(el);
+    var container = J(el);
+    
+    library.listen('clearLibraryQuery', Zotero.ui.widgets.searchbox.clearLibraryQuery, {widgetEl:el});
+    
+    //set initial state of search input to url value
+    if(Zotero.state.getUrlVar('q')){
+        container.find(".search-query").val(Zotero.state.getUrlVar('q'));
+    }
+    
+    //clear libary query param when field cleared
+    var context = 'support';
+    if(undefined !== window.zoterojsSearchContext){
+        context = zoterojsSearchContext;
+    }
+    
+    //set up search type links
+    container.on('click', ".library-search-type-link", function(e){
+        e.preventDefault();
+        var typeLinks = J(".library-search-type-link").removeClass('selected');
+        var selected = J(e.target);
+        var selectedType = selected.data('searchtype');
+        var searchInput = container.find("input.search-query").data('searchtype', selectedType);
+        selected.addClass('selected');
+        if(selectedType == 'simple'){
+            searchInput.attr('placeholder', 'Search Title, Creator, Year');
+        }
+        else if(selectedType == 'everything'){
+            searchInput.attr('placeholder', 'Search Full Text');
+        }
+    });
+    
+    //set up search submit for library
+    container.on('submit', "form.library-search", function(e){
+        e.preventDefault();
+        Z.debug("library-search form submitted", 3);
+        Zotero.state.clearUrlVars(['collectionKey', 'tag', 'q', 'qmode']);
+        var query = container.find('input.search-query').val();
+        var searchType = container.find('input.search-query').data('searchtype');
+        if(query !== "" || Zotero.state.getUrlVar('q') ){
+            Zotero.state.pathVars['q'] = query;
+            if(searchType != "simple"){
+                Zotero.state.pathVars['qmode'] = searchType;
+            }
+            Zotero.state.pushState();
+        }
+        return false;
+    });
+    
+    container.on('click', '.clear-field-button', function(e){
+        J(".search-query").val("").focus();
+    });
+    
+};
+
+Zotero.ui.widgets.searchbox.clearLibraryQuery = function(){
+    Zotero.state.unsetUrlVar('q');
+    Zotero.state.unsetUrlVar('qmode');
+    
+    J(".search-query").val("");
+    Zotero.state.pushState();
+    return;
+}
+
+
+
+Zotero.ui.widgets.panelContainer = {};
+
+Zotero.ui.widgets.panelContainer.init = function(el){
+    Z.debug("panelContainer widget init", 3);
+    var library = Zotero.ui.getAssociatedLibrary(el);
+    
+    library.listen("displayedItemsChanged showItemsPanel", Zotero.ui.widgets.panelContainer.showPanel, {widgetEl: el, panelSelector:"#items-panel"});
+    library.listen("showCollectionsPanel", Zotero.ui.widgets.panelContainer.showPanel, {widgetEl: el, panelSelector:"#collections-panel"});
+    library.listen("showTagsPanel", Zotero.ui.widgets.panelContainer.showPanel, {widgetEl: el, panelSelector:"#tags-panel"});
+    library.listen("showItemPanel displayedItemChanged", Zotero.ui.widgets.panelContainer.showPanel, {widgetEl: el, panelSelector:"#item-panel"});
+    
+    Zotero.ui.widgets.panelContainer.showPanel({data: {widgetEl: el, panelSelector:"#items-panel"}});
+};
+
+Zotero.ui.widgets.panelContainer.showPanel = function(evt){
+    Z.debug("panelContainer.showPanel", 3);
+    var widgetEl = J(evt.data.widgetEl);
+    widgetEl.find(".panelcontainer-panel").hide();
+    widgetEl.find(evt.data.panelSelector).show();
+    
+    widgetEl.find('#panelcontainer-nav li').removeClass('active');
+    switch(evt.data.panelSelector){
+        case '#collections-panel':
+            widgetEl.find('li.collections-nav').addClass('active');
+            break;
+        case '#tags-panel':
+            widgetEl.find('li.tags-nav').addClass('active');
+            break;
+        case '#items-panel':
+            widgetEl.find('li.items-nav').addClass('active');
+            break;
+        
+    }
+};
+
 
 /*
 Zotero.url.itemHref = function(item){
