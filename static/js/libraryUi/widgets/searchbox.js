@@ -9,7 +9,7 @@ Zotero.ui.widgets.searchbox.init = function(el){
     
     //set initial state of search input to url value
     if(Zotero.state.getUrlVar('q')){
-        container.find("#header-search-query").val(Zotero.state.getUrlVar('q'));
+        container.find(".search-query").val(Zotero.state.getUrlVar('q'));
     }
     
     //clear libary query param when field cleared
@@ -24,7 +24,7 @@ Zotero.ui.widgets.searchbox.init = function(el){
         var typeLinks = J(".library-search-type-link").removeClass('selected');
         var selected = J(e.target);
         var selectedType = selected.data('searchtype');
-        var searchInput = J("#header-search-query").data('searchtype', selectedType);
+        var searchInput = container.find("input.search-query").data('searchtype', selectedType);
         selected.addClass('selected');
         if(selectedType == 'simple'){
             searchInput.attr('placeholder', 'Search Title, Creator, Year');
@@ -35,11 +35,12 @@ Zotero.ui.widgets.searchbox.init = function(el){
     });
     
     //set up search submit for library
-    container.on('submit', "#library-search", function(e){
+    container.on('submit', "form.library-search", function(e){
         e.preventDefault();
+        Z.debug("library-search form submitted", 3);
         Zotero.state.clearUrlVars(['collectionKey', 'tag', 'q', 'qmode']);
-        var query     = J("#header-search-query").val();
-        var searchType = J("#header-search-query").data('searchtype');
+        var query = container.find('input.search-query').val();
+        var searchType = container.find('input.search-query').data('searchtype');
         if(query !== "" || Zotero.state.getUrlVar('q') ){
             Zotero.state.pathVars['q'] = query;
             if(searchType != "simple"){
@@ -51,7 +52,7 @@ Zotero.ui.widgets.searchbox.init = function(el){
     });
     
     container.on('click', '.clear-field-button', function(e){
-        J("#header-search-query").val("").focus();
+        J(".search-query").val("").focus();
     });
     
 };
@@ -60,7 +61,7 @@ Zotero.ui.widgets.searchbox.clearLibraryQuery = function(){
     Zotero.state.unsetUrlVar('q');
     Zotero.state.unsetUrlVar('qmode');
     
-    J("#header-search-query").val("");
+    J(".search-query").val("");
     Zotero.state.pushState();
     return;
 }
