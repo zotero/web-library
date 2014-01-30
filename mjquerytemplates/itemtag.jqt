@@ -1,9 +1,0 @@
-<script id="itemtagTemplate" type="text/x-jquery-tmpl">
-    <div class="edit-tag-div">
-        <input type='text' data-itemKey="${itemKey}" name='tag_${index}' id='tag_${index}' value='${tag}' class='taginput left'>
-        <div data-role="controlgroup" data-type="horizontal" class="add-remove-tag-container" style="clear:both;">
-            <a class="remove-tag-link clickable left" data-role="button" data-mini="true" data-inline="true" data-icon="minus">Remove</a>
-            <a class="add-tag-link clickable left" data-role="button" data-mini="true" data-inline="true" data-icon="plus">Add</a>
-        </div>
-    </div>
-</script>

@@ -1,7 +1,0 @@
-<script id="itemstableTemplate" type="text/x-jquery-tmpl">
-    <ul id='field-list' data-role="listview">
-        {{each(index, item) items}}
-            {{tmpl({displayFields:displayFields, item:item, field:'title'}) 'itemrowTemplate'}}
-        {{/each}}
-    </ul>
-</script>

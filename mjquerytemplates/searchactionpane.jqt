@@ -1,8 +1,0 @@
-<script id="searchactionpaneTemplate" type="text/x-jquery-tmpl">
-    <div class="mobile-search-pane">
-    <form id="simple-search">
-    <input id="header-search-query" type="text" size="20" name="q" placeholder="Search Library">
-    <input class="button" type="submit" Value="Search">
-    </form>
-    </div>
-</script>

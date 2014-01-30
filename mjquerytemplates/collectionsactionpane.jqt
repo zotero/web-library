@@ -1,9 +1,0 @@
-<script id="collectionsactionpaneTemplate" type="text/x-jquery-tmpl">
-    <div id="edit-collections-buttons-div" data-role="navbar">
-      <ul>
-        <li><a href="#" class="create-collection-link permission-edit" data-iconpos="top" data-icon="sprite-folder_add">Create</a></li>
-        <li><a href="#" class="update-collection-link permission-edit" data-iconpos="top" data-icon="sprite-folder_edit">Edit</a></li>
-        <li><a href="#" class="delete-collection-link permission-edit" data-iconpos="top" data-icon="sprite-folder_delete">Delete</a></li>
-      </ul>
-    </div>
-</script>

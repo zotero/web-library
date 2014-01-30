@@ -1,5 +1,0 @@
-<script id="mainnavbarTemplate" type="text/x-jquery-tmpl">
-    <div data-role="navbar" class="content-pane-navbar z-navbar">
-        <a data-icon="gear" class="mobile-menu-button zmlink">Options</a>
-    </div>
-</script>

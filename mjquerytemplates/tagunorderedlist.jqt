@@ -1,7 +1,0 @@
-<script id="tagunorderedlistTemplate" type="text/x-jquery-tmpl">
-<ul data-role="listview" id="${id}" {{if id == 'selected-tags-list'}}data-theme="a"{{/if}}>
-    {{each(index, tag) tags}}
-        {{tmpl({tag:tag}) 'tagrowTemplate'}}
-    {{/each}}
-</ul>
-</script>
