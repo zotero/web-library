@@ -1,0 +1,23 @@
+<script id="singlecellitemrowTemplate" type="text/x-jsrender">
+    <tr data-itemKey='{{attr:itemKey}}'>
+        <td class="edit-checkbox-td" data-itemKey='{{attr:itemKey}}'><input type='checkbox' class='itemlist-editmode-checkbox itemKey-checkbox' name='selectitem-{{attr:itemKey}}' data-itemKey='{{attr:itemKey}}' /></td>
+        
+        <td class='single-cell-item' data-itemKey='{{attr:itemKey}}'>
+            <a class='item-select-link' data-itemKey='{{attr:itemKey}}' href='{{url:~Zotero.url.itemHref(#data)}}' title="{{attr:dataFields[#data]}}">
+            {{for ~displayFields ~item=#data ~library=~library}}
+                {{if #data === 'title'}}
+                    <span class='sprite-icon sprite-treeitem-{{attr:~item.itemTypeImageClass()}} left'></span>
+                    {{coloredTags ~library ~item.tagstrings /}}
+                    <h4>{{>~formatItemField(#data, ~item, true)}}</h4>
+                {{else (#data === 'dateAdded') || (#data === 'dateModified') }}
+                    <p title="{{attr:~item.dataFields[#data]}}">
+                        {{>~zoteroFieldMap[#data]}}:{{: ~formatItemDateField(#data, ~item, true)}}
+                    </p>
+                {{else}}
+                    <p title="{{attr:~item.dataFields[#data]}}">{{>~zoteroFieldMap[#data]}}:{{>~formatItemField(#data, ~item, true)}}</p>
+                {{/if}}
+            {{/for}}
+            </a>
+        </td>
+    </tr>
+</script>

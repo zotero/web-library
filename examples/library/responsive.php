@@ -165,7 +165,8 @@ $messages = array();
                 </div>
             </div>
             
-            <div id="collections-panel" class="panelcontainer-panel col-md-3 col-xs-12">
+            <div id="left-panel" class="panelcontainer-panelcontainer col-xs-12 col-sm-4 col-md-3">
+            <div id="collections-panel" class="panelcontainer-panel col-12">
                 <div id="collection-list-div" class="collection-list eventfulwidget" 
                     data-widget="collections" data-library='<?=$libraryString?>'>
                     <div id="collection-edit-div" class="collection-edit-div">
@@ -182,7 +183,7 @@ $messages = array();
                     </div>
                 </div><!-- collection list div -->
             </div><!-- /collections panel -->
-            <div id="tags-panel" class="panelcontainer-panel col-md-3 col-xs-12">
+            <div id="tags-panel" class="panelcontainer-panel col-12">
                 <!-- tags browser section -->
                 <div id="tags-list-div" class="tags-list-div eventfulwidget" 
                     data-widget="tags"
@@ -215,8 +216,11 @@ $messages = array();
                     data-library='<?=$libraryString?>'>
                 </div>
             </div><!-- /tags panel -->
+            </div><!-- /left-panel -->
             
-            <div id="items-panel" class="panelcontainer-panel col-md-6 col-xs-12">
+            
+            <div id="right-panel" class="panelcontainer-panelcontainer col-xs-12 col-sm-8 col-md-9">
+            <div id="items-panel" class="panelcontainer-panel col-sm-12 col-md-7">
                 <div class="eventfulwidget btn-toolbar row visible-xs" id="search-box"
                     data-widget='searchbox' data-library='<?=$libraryString?>' style="max-width:350px;">
                     <form action="/search/" class="navbar-form zsearch library-search" role="search">
@@ -247,15 +251,15 @@ $messages = array();
                 </div> <!--library items div -->
             </div><!-- /items panel -->
             
-            <div id="item-panel" class="panelcontainer-panel col-md-6 col-xs-12">
+            <div id="item-panel" class="panelcontainer-panel col-sm-12 col-md-5">
                 <div id="item-details-div" class="item-details-div eventfulwidget row"
                     data-widget="item"
                     data-library='<?=$libraryString?>'>
                 </div> <!-- items pane row -->
             </div><!-- /item panel -->
-            
+            </div><!-- /right-panel -->
             <!-- panelContainer nav footer -->
-            <nav id="panelcontainer-nav" class="navbar navbar-inverse navbar-fixed-bottom" role="navigation">
+            <nav id="panelcontainer-nav" class="navbar navbar-inverse navbar-fixed-bottom visible-xs" role="navigation">
                 <ul class="nav navbar-nav">
                     <li class="eventfultrigger collections-nav" data-library='<?=$libraryString?>' data-triggers="showCollectionsPanel"><a href="#">Collections</a></li>
                     <li class="eventfultrigger tags-nav" data-library='<?=$libraryString?>' data-triggers="showTagsPanel"><a href="#">Tags</a></li>
@@ -337,6 +341,7 @@ $messages = array();
             <?include '../../jstemplates/collectionlist.jqt';?>
             <?include '../../jstemplates/collectionrow.jqt';?>
             <?include '../../jstemplates/itemrow.jqt';?>
+            <?include '../../jstemplates/singlecellitemrow.jqt';?>
             <?include '../../jstemplates/itemstable.jqt';?>
             <?include '../../jstemplates/itempagination.jqt';?>
             <?include '../../jstemplates/itemdetails.jqt';?>

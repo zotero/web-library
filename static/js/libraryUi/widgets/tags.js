@@ -132,6 +132,7 @@ Zotero.ui.displayTagsFiltered = function(el, library, matchedTagStrings, selecte
     var jel = J(el);
     var libtags = library.tags;
     var tagColors = library.preferences.getPref("tagColors");
+    if(!tagColors) tagColors = [];
     var showMore = jel.data('showmore');
     if(!showMore){
         showMore = false;

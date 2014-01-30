@@ -1,5 +1,5 @@
 <script id="itemstableTemplate" type="text/x-jsrender">
-    <form id="edit-mode-items-form" method='POST'>
+    <form class="item-select-form hidden-xs" method='POST'>
     <table id='field-table' class='table'>
         <thead>
             <tr>
@@ -20,6 +20,30 @@
         </thead>
         <tbody>
             {{for items tmpl='#itemrowTemplate' ~displayFields=displayFields ~library=library /}}
+        </tbody>
+    </table>
+    {{if (items.length == 0)}}
+        <div class="no-results-message">No Items Found</div>
+    {{/if}}
+    </form>
+    
+    
+    <form class="item-select-form visible-xs" method='POST'>
+    <table id='field-table' class='table'>
+        <thead>
+            <tr>
+                <th><input type='checkbox' class='itemlist-editmode-checkbox all-checkbox' name='selectall' /></th>
+                <th>{{>~zoteroFieldMap[order]}}
+                    {{if (~sort == 'desc') }}
+                        <span class="glyphicon glyphicon-chevron-down pull-right"></span>
+                    {{else}}
+                        <span class="glyphicon glyphicon-chevron-up pull-right"></span>
+                    {{/if}}
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            {{for items tmpl='#singlecellitemrowTemplate' ~displayFields=displayFields ~library=library /}}
         </tbody>
     </table>
     {{if (items.length == 0)}}

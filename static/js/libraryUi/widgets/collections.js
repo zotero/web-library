@@ -144,11 +144,6 @@ Zotero.ui.widgets.collections.bindCollectionLinks = function(container){
             //go back to items list
             Zotero.state.clearUrlVars(['collectionKey', 'mode']);
             
-            //change the mobile page if we didn't just expand a collection
-            if( !(Zotero.config.mobile && (Zotero.state.getUrlVar('mode') != 'edit'))){
-                Zotero.state.pushState();
-            }
-            
             //cancel action for expando link behaviour
             return false;
         }

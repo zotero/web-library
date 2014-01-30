@@ -32,12 +32,10 @@ Zotero.pages = {
     base: {
 
         init: function(){
-            if((typeof Zotero != 'undefined' && !Zotero.config.librarySettings.mobile) || typeof Zotero == 'undefined'){
-                this.tagline();
-                this.setupSearch();
-                this.setupNav();
-                J("#sitenav .toggle").click(this.navMenu);
-            }
+            this.tagline();
+            this.setupSearch();
+            this.setupNav();
+            J("#sitenav .toggle").click(this.navMenu);
             
             //set up support page expandos
             J(".support-menu-expand-section").hide();

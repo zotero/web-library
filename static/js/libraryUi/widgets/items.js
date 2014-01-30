@@ -14,7 +14,8 @@ Zotero.ui.widgets.items.init = function(el){
     
     //check/uncheck all boxes in items table when master checkbox is toggled
     container.on('change', ".itemlist-editmode-checkbox.all-checkbox", function(e){
-        J(".itemlist-editmode-checkbox").prop('checked', J(".itemlist-editmode-checkbox.all-checkbox").prop('checked'));
+        var checkbox = J(this);
+        J(".itemlist-editmode-checkbox").prop('checked', checkbox.prop('checked'));
         var selectedItemKeys = [];
         J("input.itemKey-checkbox:checked").each(function(index, el){
             selectedItemKeys.push(J(el).data('itemkey'));

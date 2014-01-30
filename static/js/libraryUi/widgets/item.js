@@ -189,13 +189,7 @@ Zotero.ui.widgets.item.addNote = function(e){
     var newindex = notenum + 1;
     var newNoteID = "note_" + newindex;
     var jel;
-    if(Zotero.config.mobile){
-        jel = container.find("td.notes").append('<textarea cols="40" rows="24" name="' + newNoteID + '" id="' + newNoteID + '" class="rte default note-text" data-noteindex="' + newNoteID + '"></textarea>');
-    }
-    else{
-        jel = container.find("td.notes button.add-note-button").before('<textarea cols="40" rows="24" name="' + newNoteID + '" id="' + newNoteID + '" class="rte default note-text" data-noteindex="' + newNoteID + '"></textarea>');
-    }
-    
+    jel = container.find("td.notes button.add-note-button").before('<textarea cols="40" rows="24" name="' + newNoteID + '" id="' + newNoteID + '" class="rte default note-text" data-noteindex="' + newNoteID + '"></textarea>');
     Zotero.ui.init.rte('default', true, newNoteID);
 };
 
