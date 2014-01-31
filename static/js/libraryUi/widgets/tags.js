@@ -11,11 +11,6 @@ Zotero.ui.widgets.tags.init = function(el){
     var container = J(el);
     
     //initialize binds for widget
-    //send pref to website when showAllTags is toggled
-    container.on('click', "#show-all-tags", Zotero.ui.showAllTags);
-    container.on('click', "#show-more-tags-link", Zotero.ui.showMoreTags);
-    container.on('click', "#show-fewer-tags-link", Zotero.ui.showFewerTags);
-    
     Zotero.state.bindTagLinks(container);
     //TODO: make sure tag autocomplete works when editing items
     //add tag to item and stop event propogation when tag is selected
@@ -25,11 +20,13 @@ Zotero.ui.widgets.tags.init = function(el){
     container.on('keyup', "#tag-filter-input", Zotero.ui.widgets.tags.filterTags);
     
     
-    //send pref to website when showAllTags is toggled
-    container.on('click', "#show-all-tags", function(e){
+    //send pref to website when showAutomaticTags is toggled
+    container.on('click', "#show-automatic-tags", function(e){
         var show = J(this).prop('checked') ? true : false;
-        Z.debug("showAllTags is " + show, 4);
-        Zotero.utils.setUserPref('library_showAllTags', show);
+        Z.debug("showAutomaticTags is " + show, 4);
+        Zotero.preferences.setPref('showAutomaticTags', show);
+        Zotero.preferences.persist();
+        
         library.trigger('libraryTagsUpdated');
     });
     
@@ -39,7 +36,7 @@ Zotero.ui.widgets.tags.init = function(el){
         jel.data('showmore', true);
         library.trigger('libraryTagsUpdated');
     });
-    container.on('click', "#show-less-tags-link", function(e){
+    container.on('click', "#show-fewer-tags-link", function(e){
         e.preventDefault();
         var jel = J(this).closest('#tags-list-div');
         jel.data('showmore', false);
@@ -113,7 +110,7 @@ Zotero.ui.widgets.tags.rerenderTags = function(event){
     widgetEl.children(".loading").empty();
     var library = Zotero.ui.getAssociatedLibrary(widgetEl);
     var plainList = library.tags.plainTagsList(library.tags.tagsArray);
-    Zotero.ui.displayTagsFiltered(widgetEl, library, plainList, selectedTags);
+    Zotero.ui.widgets.tags.displayTagsFiltered(widgetEl, library, plainList, selectedTags);
 };
 
 //generate html for tags
@@ -125,8 +122,8 @@ Zotero.ui.widgets.tags.rerenderTags = function(event){
  * @param  {array} selectedTagStrings tags that are currently selected
  * @return {undefined}
  */
-Zotero.ui.displayTagsFiltered = function(el, library, matchedTagStrings, selectedTagStrings){
-    Zotero.debug("Zotero.ui.displayTagsFiltered", 3);
+Zotero.ui.widgets.tags.displayTagsFiltered = function(el, library, matchedTagStrings, selectedTagStrings){
+    Zotero.debug("Zotero.ui.widgets.tags.displayTagsFiltered", 3);
     Z.debug(selectedTagStrings, 4);
     var curPreString = J("#tag-filter-input").val();
     var jel = J(el);
@@ -183,33 +180,12 @@ Zotero.ui.displayTagsFiltered = function(el, library, matchedTagStrings, selecte
     
 };
 
-Zotero.ui.showAllTags = function(e){
-    var show = J(this).prop('checked') ? true : false;
-    Z.debug("showAllTags is " + show, 4);
-    Zotero.utils.setUserPref('library_showAllTags', show);
-    library.trigger('libraryTagsUpdated');
-};
-
-Zotero.ui.showMoreTags = function(e){
-    e.preventDefault();
-    var jel = J(this).closest('#tags-list-div');
-    jel.data('showmore', true);
-    library.trigger('libraryTagsUpdated');
-};
-
-Zotero.ui.showFewerTags = function(e){
-    e.preventDefault();
-    var jel = J(this).closest('#tags-list-div');
-    jel.data('showmore', false);
-    library.trigger('libraryTagsUpdated');
-};
-
 Zotero.ui.widgets.tags.filterTags = function(e){
     Z.debug("Zotero.ui.widgets.tags.filterTags", 3);
     var library = Zotero.ui.getAssociatedLibrary(J('#tag-filter-input').closest('.eventfulwidget'));
     var libraryTagsPlainList = library.tags.plainList;
     var matchingTagStrings = Zotero.utils.matchAnyAutocomplete(J('#tag-filter-input').val(), libraryTagsPlainList);
-    Zotero.ui.displayTagsFiltered(J('#tags-list-div'), library, matchingTagStrings, []);
+    Zotero.ui.widgets.tags.displayTagsFiltered(J('#tags-list-div'), library, matchingTagStrings, []);
     Z.debug(matchingTagStrings, 4);
 };
 

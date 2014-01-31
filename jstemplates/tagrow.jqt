@@ -1,5 +1,7 @@
 <script id="tagrowTemplate" type="text/x-jsrender">
+{{if ~showAutomatic || tagType===0}}
 <li class="tag-row" data-tagtitle="{{attr:title}}">
     <a class='tag-link' title="{{attr:name}} {{if numItems}}({{attr:numItems}}){{/if}}" data-tagtitle="{{attr:title}}" href="{{url:newurl}}">{{>~trimString(title, 12)}}</a>
 </li>
+{{/if}}
 </script>

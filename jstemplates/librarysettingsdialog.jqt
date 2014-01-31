@@ -16,6 +16,7 @@
                         </div>
                     {{/for}}
                 </fieldset>
+                
                 <label for="items-per-page">Items Per Page</label>
                 <select id="items-per-page" name="items-per-page" class="form-control">
                     <option value="25">25</option>
@@ -23,6 +24,14 @@
                     <option value="75">75</option>
                     <option value="100">100</option>
                 </select>
+                
+                <div class="checkbox">
+                    <label for="show-automatic-tags">
+                    <input type="checkbox" id="show-automatic-tags" name="show-automatic-tags" />
+                    Show Automatic Tags
+                    </label>
+                    <p class="help-block">Automatic tags are tags added automatically when a reference was imported, rather than by a user.</p>
+                </div>
                 </form>
             </div>
             <div class="modal-footer">
