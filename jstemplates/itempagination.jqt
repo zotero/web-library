@@ -1,17 +1,17 @@
 <script id="itempaginationTemplate" type="text/x-jsrender">
-<div id='item-pagination-div' class="pagination">
-    <ul class='back-item-pagination'>
+<div id='item-pagination-div'>
+    {{if pagination.total > 0}}
+    <p>
+    <span>{{>(pagination.start + 1)}} to {{>pagination.lastDisplayed}} of {{>pagination.total}}</span>
+    </p>
+    {{/if}}
+    <ul class='pagination'>
         <li {{if !pagination.showFirstLink}}class='disabled'{{/if}}>
         <a class='paginator' id='start-item-link' href='{{url:pagination.firstLink}}'>First</a>
         </li>
         <li {{if !pagination.showPrevLink}}class='disabled'{{/if}}>
         <a class='paginator {{if !pagination.showPrevLink}}disabled{{/if}}' id='prev-item-link' href='{{url:pagination.prevLink}}'>Previous</a>
         </li>
-    </ul>
-    {{if pagination.total > 0}}
-    <span style="text-align:center;">{{>(pagination.start + 1)}} to {{>pagination.lastDisplayed}} of {{>pagination.total}}</span>
-    {{/if}}
-    <ul class='forward-item-pagination'>
         <li {{if !pagination.showNextLink}}class='disabled'{{/if}}>
         <a class='paginator {{if !pagination.showNextLink}}disabled{{/if}}' id='next-item-link' href='{{url:pagination.nextLink}}'>Next</a>
         </li>
