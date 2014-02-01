@@ -1,0 +1,30 @@
+<script id="choosesortingdialogTemplate" type="text/x-jsrender">
+<div id="choose-sorting-dialog" class="choose-sorting-dialog modal " role="dialog" title="Sort Order" data-keyboard="true">
+    <div  class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h3>Sort Items By</h3>
+            </div>
+            <div class="choose-sorting-div modal-body" data-role="content">
+                <form class="form-horizontal" role="form">
+                    <select id="sort-column-select" class="sort-column-select form-control" name="sort-column-select">
+                    {{for ~Zotero.Library.prototype.sortableColumns }}
+                        <option label="{{attr:~zoteroFieldMap[#data]}}" value="{{:#data}}" {{if #data == currentOrderField}}selected=1{{/if}}>{{>~zoteroFieldMap[#data]}}</option>
+                    {{/for}}
+                    </select>
+                    
+                    <select id="sort-order-select" class="sort-order-select form-control" name="sort-order-select">
+                        <option label="Ascending" value="asc">Ascending</option>
+                        <option label="Descending" value="desc">Descending</option>
+                    </select>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+                <button class="btn btn-primary saveSortButton">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+</script>

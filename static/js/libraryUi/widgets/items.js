@@ -73,7 +73,6 @@ Zotero.ui.widgets.items.init = function(el){
 Zotero.ui.widgets.items.loadItemsCallback = function(event){
     Z.debug('Zotero eventful loadItemsCallback', 3);
     var widgetEl = J(event.data.widgetEl);
-    //Zotero.callbacks.rejectIfPending(widgetEl);
     
     var library = Zotero.ui.getAssociatedLibrary(widgetEl);
     var newConfig = Zotero.ui.getItemsConfig(library);
@@ -92,7 +91,8 @@ Zotero.ui.widgets.items.loadItemsCallback = function(event){
     });
     
     //associate promise with el so we can cancel on later loads
-    widgetEl.data('pendingDeferred', p);
+    widgetEl.data('loadingPromise', p);
+    return p;
 };
 
 Zotero.ui.getItemsConfig = function(library){
@@ -195,13 +195,25 @@ Zotero.ui.widgets.items.displayItems = function(el, config, loadedItems) {
 
 Zotero.ui.callbacks.resortItems = function(e){
     Z.debug(".field-table-header clicked", 3);
-    var triggeringElement = e.triggeringElement;
-    var library = Zotero.ui.getEventLibrary(e);
+    var widgetEl = J(e.data.widgetEl);
+    var library = Zotero.ui.getAssociatedLibrary(widgetEl);
     var currentSortField = Zotero.ui.getPrioritizedVariable('order', 'title');
     var currentSortOrder = Zotero.ui.getPrioritizedVariable('sort', 'asc');
-    var newSortField = J(e.triggeringElement).data('columnfield');
-    //Z.debug(e.currentTarget);
-    var newSortOrder = Zotero.config.sortOrdering[newSortField];
+    var newSortField;
+    var newSortOrder;
+    if(e.newSortField){
+        newSortField = e.newSortField;
+    }
+    else {
+        newSortField = J(e.triggeringElement).data('columnfield');
+    }
+    if(e.newSortOrder){
+        newSortOrder = e.newSortOrder;
+    }
+    else{
+        newSortOrder = Zotero.config.sortOrdering[newSortField];
+    }
+    
     Z.debug("curr order field:" + currentSortField, 3);
     Z.debug("curr order sort:" + currentSortOrder, 3);
     Z.debug("New order field:" + newSortField, 3);
@@ -213,7 +225,7 @@ Zotero.ui.callbacks.resortItems = function(e){
     }
     
     //change newSort away from the field default if that was already the current state
-    if(currentSortField == newSortField && currentSortOrder == newSortOrder){
+    if((!e.newSortOrder) && currentSortField == newSortField && currentSortOrder == newSortOrder){
         if(newSortOrder == 'asc'){
             newSortOrder = 'desc';
         }

@@ -58,6 +58,7 @@ $files = array(
 "libraryUi/widgets/sendToLibraryDialog.js",
 "libraryUi/widgets/searchbox.js",
 "libraryUi/widgets/panelContainer.js",
+"libraryUi/widgets/chooseSortingDialog.js",
 "_zoteroLibraryUrl.js",
 //"_zoteroLibraryOffline.js"
 );

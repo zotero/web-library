@@ -321,6 +321,12 @@ $messages = array();
                  data-library='<?=$libraryString?>'
                  title="Progress">
             </div>
+            <div id="choose-sorting-dialog"
+                 class="eventfulwidget"
+                 data-widget="chooseSortingDialog"
+                 data-library='<?=$libraryString?>'
+                 title="Sort Items By">
+            </div>
             <?$locales = array('en');// array_keys(Zend_Locale::getOrder());?>
             <script type="text/javascript" charset="utf-8">
                 var zoterojsClass = "user_library";
@@ -331,7 +337,6 @@ $messages = array();
                                   locale: "<?=$locales[0]?>",
                                   allowEdit: <?=$allowEdit?>,
                                   javascriptEnabled: 1,
-                                  library_showAllTags: 1,
                                   loggedInUserID: 0,
                                   };
                 var zoterojsSearchContext = "library";
@@ -376,6 +381,7 @@ $messages = array();
             <?include '../../jstemplates/coloredTag.jqt';?>
             <?include '../../jstemplates/coloredtaglist.jqt';?>
             <?include '../../jstemplates/sendToLibraryDialog.jqt';?>
+            <?include '../../jstemplates/choosesortingdialog.jqt';?>
             
             <script type="text/javascript" charset="utf-8" src="<?=$staticPath?>/library/globalize/globalize.js"></script>
             <?foreach($locales as $localeStr):?>

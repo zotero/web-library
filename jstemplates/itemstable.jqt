@@ -33,8 +33,9 @@
         <thead>
             <tr>
                 <th><input type='checkbox' class='itemlist-editmode-checkbox all-checkbox' name='selectall' /></th>
-                <th>{{>~zoteroFieldMap[order]}}
-                    {{if (~sort == 'desc') }}
+                <th class="eventfultrigger" data-library="{{attr:library.libraryString}}" data-triggers="chooseSortingDialog">
+                    {{>~zoteroFieldMap[order]}}
+                    {{if (sort == 'desc') }}
                         <span class="glyphicon glyphicon-chevron-down pull-right"></span>
                     {{else}}
                         <span class="glyphicon glyphicon-chevron-up pull-right"></span>
