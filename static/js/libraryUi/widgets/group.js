@@ -14,7 +14,7 @@ Zotero.ui.displayGroupNuggets = function(el, groups){
     J.each(groups, function(ind, group){
         Z.debug("Displaying group nugget");
         Z.debug(group);
-        var userID = zoteroData.loggedInUserID;
+        var userID = Zotero.config.loggedInUserID;
         var groupManageable = false;
         var memberCount = 1;
         if(group.apiObj.members) {

@@ -39,7 +39,14 @@ Zotero.init = function(){
         }
     }
     
-    Zotero.loadConfig(zoteroData);
+    if(typeof zoterojsClass == 'undefined'){
+        zoterojsClass = 'default';
+        Zotero.config.pageClass = 'default';
+    }
+    
+    if(typeof Globalize !== 'undefined'){
+        Globalize.culture(Zotero.config.locale);
+    }
     
     if(typeof zoteroData == 'undefined'){
         zoteroData = {};
@@ -75,11 +82,6 @@ Zotero.init = function(){
     //decide if we're on a library page and run library specific setup
     var libraryPage = J("body").hasClass('library');
     if(libraryPage){
-        Zotero.config.librarySettings.libraryUserSlug = zoteroData.libraryUserSlug;
-        Zotero.config.librarySettings.libraryID = zoteroData.libraryID;
-        Zotero.config.librarySettings.libraryType = zoteroData.libraryType;
-        Zotero.config.librarySettings.allowEdit = zoteroData.allowEdit;
-        
         Zotero.state.libraryString = Zotero.utils.libraryString(zoteroData.libraryType, zoteroData.libraryID);
         Zotero.state.filter = Zotero.state.libraryString;
         
@@ -117,49 +119,4 @@ Zotero.init = function(){
     //call popstateCallback on first load since some browsers don't popstate onload
     Zotero.state.popstateCallback();
 };
-
-//set up Zotero config and preferences based on passed in object
-Zotero.loadConfig = function(config){
-    //set up user config defaults
-    
-    if(typeof zoterojsClass !== 'undefined'){
-        Zotero.config.pageClass = zoterojsClass;
-    }
-    else{
-        Zotero.config.pageClass = 'default';
-    }
-    
-    if(config.libraryPathString){
-        Zotero.config.librarySettings.libraryPathString = config.libraryPathString;
-        Zotero.config.nonparsedBaseUrl = config.libraryPathString;
-    }
-    else if(config.nonparsedBaseUrl){
-        Zotero.config.nonparsedBaseUrl = config.nonparsedBaseUrl;
-    }
-    else{
-        Zotero.config.librarySettings.libraryPathString = Zotero.config.baseWebsiteUrl ;
-        Zotero.config.nonparsedBaseUrl = Zotero.config.baseWebsiteUrl;
-    }
-    if(config.locale){
-        Zotero.config.locale = config.locale;
-    }
-    
-    if(typeof Globalize !== 'undefined'){
-        Globalize.culture(Zotero.config.locale);
-    }
-    
-    if(config.apiKey){
-        Zotero.config.apiKey = config.apiKey;
-    }
-    
-    if(config.loggedInUserID){
-        Zotero.config.loggedInUserID = config.loggedInUserID;
-        Zotero.config.loggedIn = true;
-    }
-    else{
-        Zotero.config.loggedIn = false;
-    }
-    
-};
-
 

@@ -12,10 +12,10 @@ Zotero.ui.widgets.sendToLibraryDialog.show = function(evt){
     Zotero.debug("Zotero.ui.widgets.sendToLibraryDialog.show", 3);
     var widgetEl = J(evt.data.widgetEl);
     var library = Zotero.ui.getAssociatedLibrary(widgetEl);
-    if(!zoteroData['loggedInUserID']){
+    if(!Zotero.config.loggedIn){
         throw new Error("no logged in userID. Required for groupsList widget");
     }
-    var userID = zoteroData['loggedInUserID'];
+    var userID = Zotero.config.loggedInUserID;
     var personalLibraryString = 'u' + userID;
     
     var memberGroups = library.groups.fetchUserGroups(userID)

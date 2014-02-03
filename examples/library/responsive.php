@@ -328,19 +328,6 @@ $messages = array();
                  title="Sort Items By">
             </div>
             <?$locales = array('en');// array_keys(Zend_Locale::getOrder());?>
-            <script type="text/javascript" charset="utf-8">
-                var zoterojsClass = "user_library";
-                var zoteroData = {libraryPathString: "<?=$libraryPathString?>",
-                                  libraryType: "<?=$libraryType?>",
-                                  libraryID: "<?=$libraryID?>",
-                                  libraryPublish: 1,
-                                  locale: "<?=$locales[0]?>",
-                                  allowEdit: <?=$allowEdit?>,
-                                  javascriptEnabled: 1,
-                                  loggedInUserID: 0,
-                                  };
-                var zoterojsSearchContext = "library";
-            </script>
             <?include '../../jstemplates/tagrow.jqt';?>
             <?include '../../jstemplates/tagslist.jqt';?>
             <?include '../../jstemplates/collectionlist.jqt';?>
@@ -389,18 +376,38 @@ $messages = array();
                 <script type="text/javascript" charset="utf-8" src="<?=$staticPath?>/library/globalize/cultures/globalize.culture.<?=str_replace('_', '-', $localeStr)?>.js"></script>
                 <?endif;?>
             <?endforeach;?>
+            
+            <script type="text/javascript" charset="utf-8" src="<?=$staticPath?>/js/compiled/_zoterowwwAll.bugly.js"></script>
             <script type="text/javascript" charset="utf-8">
+                Zotero.config = <?include "zoteroconfig.js";?>
+            </script>
+            <script type="text/javascript" charset="utf-8">
+                if(!Zotero) Zotero = {};
+                if(!Zotero.config) Zotero.config = {};
+                
                 if(typeof zoteroData == 'undefined'){
                     var zoteroData = {};
                 }
                 var baseURL = "";
                 var baseDomain = "";
                 var staticPath = "<?=$staticPath?>";
-            </script>
-            
-            <script type="text/javascript" charset="utf-8" src="<?=$staticPath?>/js/compiled/_zoterowwwAll.bugly.js"></script>
-            <script type="text/javascript" charset="utf-8">
-                Zotero.config = <?include "zoteroconfig.js";?>
+                
+                var zoterojsClass = "user_library";
+                Zotero.config.pageClass = "user_library";
+                Zotero.config.librarySettings.libraryPathString = "<?=$libraryPathString?>";
+                Zotero.config.librarySettings.libraryType = "<?=$libraryType?>";
+                Zotero.config.librarySettings.libraryID = "<?=$libraryID?>";
+                Zotero.config.librarySettings.publish = 1;
+                Zotero.config.librarySettings.allowEdit = <?=$allowEdit?>;
+                Zotero.config.local = "<?=$locales[0]?>";
+                
+                Zotero.config.nonparsedBaseUrl = Zotero.config.librarySettings.libraryPathString;
+                
+                Zotero.config.loggedInUserID = 0;
+                Zotero.config.loggedIn = false;
+                Zotero.config.javascriptEnabled = 1;
+                
+                var zoterojsSearchContext = "library";
             </script>
             
             <script type="text/javascript" charset="utf-8" src="<?=$staticPath?>/library/ckeditor/ckeditor.js"></script>

@@ -14,10 +14,11 @@ Zotero.ui.widgets.groupsList.refresh = function(evt){
     Zotero.debug("Zotero.ui.widgets.groupsList.refresh", 3);
     var widgetEl = evt.data.widgetEl;
     var library = Zotero.ui.getAssociatedLibrary(widgetEl);
-    if(!zoteroData['loggedInUserID']){
+    if(!Zotero.config.loggedIn){
         throw new Error("no logged in userID. Required for groupsList widget");
     }
-    var memberGroups = library.groups.fetchUserGroups(zoteroData['loggedInUserID'])
+    var userID = Zotero.config.loggedInUserID;
+    var memberGroups = library.groups.fetchUserGroups(userID)
     .then(function(memberGroups){
         Zotero.ui.widgets.groupsList.render(widgetEl, memberGroups);
     });

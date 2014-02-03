@@ -51,7 +51,7 @@ Zotero.ui.widgets.citeItemDialog.show = function(evt){
             //get the selected item keys from the items widget
             var itemKeys = Zotero.state.getSelectedItemKeys();
             if(itemKeys.length === 0){
-                itemKeys = Zotero.ui.getAllFormItemKeys(J("#edit-mode-items-form"));
+                itemKeys = Zotero.state.getSelectedItemKeys();
             }
             Z.debug(itemKeys, 4);
             library.loadFullBib(itemKeys, style)

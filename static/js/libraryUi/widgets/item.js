@@ -31,11 +31,18 @@ Zotero.ui.widgets.item.loadItemCallback = function(event){
     Z.debug('Zotero eventful loadItemCallback', 3);
     var widgetEl = J(event.data.widgetEl);
     var triggeringEl = J(event.triggeringElement);
-    
+    var loadingPromise;
+    /*
+    var loadingPromise = widgetEl.data('loadingPromise');
+    if(loadingPromise){
+        var p = widgetEl.data('loadingPromise');
+        return p.then(function(){
+            return Zotero.ui.widgets.item.loadItemCallback(event);
+        });
+    }
+    */
     Z.debug("Zotero.callbacks.loadItem", 3);
-    //Zotero.callbacks.rejectIfPending(widgetEl);
     var library = Zotero.ui.getAssociatedLibrary(widgetEl);
-    var p;
     //clear contents and show spinner while loading
     widgetEl.empty();
     Zotero.ui.showSpinner(widgetEl);
@@ -49,7 +56,7 @@ Zotero.ui.widgets.item.loadItemCallback = function(event){
         var newItem = new Zotero.Item();
         newItem.libraryType = library.libraryType;
         newItem.libraryID = library.libraryID;
-        p = newItem.initEmpty(itemType)
+        var loadingPromise = newItem.initEmpty(itemType)
         .then(function(item){
             Zotero.ui.widgets.item.editItemForm(widgetEl, item);
             widgetEl.data('newitem', item);
@@ -57,9 +64,14 @@ Zotero.ui.widgets.item.loadItemCallback = function(event){
         function(response){
             Zotero.ui.jsNotificationMessage("Error loading item template", 'error');
         });
+        /*
+        .then(function(){
+            widgetEl.removeData('loadingPromise');
+        });
         
-        widgetEl.data('pendingDeferred', p);
-        return p;
+        widgetEl.data('loadingPromise', loadingPromise);
+        */
+        return loadingPromise;
     }
     
     //if it is not a new item handled above we must have an itemKey
@@ -75,10 +87,9 @@ Zotero.ui.widgets.item.loadItemCallback = function(event){
     //if we are showing an item, load it from local library of API
     //then display it
     var item = library.items.getItem(itemKey);
-    var p;
     if(item){
         Z.debug("have item locally, loading details into ui", 3);
-        p = Promise.resolve(item);
+        loadingPromise = Promise.resolve(item);
     }
     else{
         Z.debug("must fetch item from server", 3);
@@ -89,9 +100,9 @@ Zotero.ui.widgets.item.loadItemCallback = function(event){
             'itemKey':itemKey,
             'content':'json'
         };
-        p = library.loadItem(itemKey);
+        loadingPromise = library.loadItem(itemKey);
     }
-    p.then(function(item){
+    loadingPromise.then(function(item){
         Z.debug("Library.loadItem done", 3);
         widgetEl.empty();
         
@@ -106,7 +117,12 @@ Zotero.ui.widgets.item.loadItemCallback = function(event){
         widgetEl.data('currentconfig', config);
         Zotero.eventful.initTriggers(widgetEl);
     });
-    return p;
+    loadingPromise.catch().then(function(){
+        widgetEl.removeData('loadingPromise');
+    });
+    
+    widgetEl.data('loadingPromise', loadingPromise);
+    return loadingPromise;
 };
 
 /**

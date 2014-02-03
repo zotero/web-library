@@ -1,6 +1,5 @@
 Zotero.ui.init = {};
 Zotero.ui.widgets = {};
-Zotero.ui.jqui = {};
 
 //initialize ui
 Zotero.ui.init.all = function(){
@@ -18,7 +17,8 @@ Zotero.ui.init.all = function(){
 
 Zotero.ui.init.library = function(){
     Z.debug("Zotero.ui.init.library", 3);
-    Zotero.ui.init.fullLibrary();
+    Zotero.ui.init.libraryTemplates();
+    Zotero.eventful.initWidgets();
     
     //initialize RTE for textareas if marked
     var hasRTENoLinks = J('textarea.rte').filter('.nolinks').length;
@@ -34,14 +34,6 @@ Zotero.ui.init.library = function(){
         Zotero.ui.init.rte('default');
     }
     
-};
-
-//initialize all the widgets that make up the library
-Zotero.ui.init.fullLibrary = function(){
-    Z.debug('Zotero.ui.initFullLibrary', 3);
-    Zotero.ui.init.libraryTemplates();
-    
-    Zotero.eventful.initWidgets();
 };
 
 Zotero.ui.init.rte = function(type, autofocus, elements){

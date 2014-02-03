@@ -25,6 +25,8 @@ Zotero.ui.widgets.chooseSortingDialog.show = function(evt){
         var newSortField = dialogEl.find(".sort-column-select").val();
         var newSortOrder = dialogEl.find(".sort-order-select").val();
         library.trigger("changeItemSorting", {newSortField:newSortField, newSortOrder:newSortOrder});
+        Zotero.ui.closeDialog(dialogEl);
+        return false;
     };
     
     dialogEl.find(".saveSortButton").on('click', saveFunction);

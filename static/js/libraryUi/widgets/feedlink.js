@@ -19,7 +19,7 @@ Zotero.ui.widgets.feedlink.recalcFeedlink = function(evt){
     widgetEl.data('urlconfig', urlconfig);
     
     //feed link to either create a new key for private feeds or a public feed url
-    if((library.libraryType == 'user' && zoteroData.libraryPublish === 0) || (library.libraryType == 'group' && zoteroData.groupType == 'Private' ) ){
+    if(!Zotero.config.librarySettings.publish){
         J(".feed-link").attr('href', newkeyurl);
     }
     else{
