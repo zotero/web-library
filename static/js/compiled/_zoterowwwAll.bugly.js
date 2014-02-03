@@ -7004,7 +7004,8 @@ Zotero.init = function() {
     }
     var libraryPage = J("body").hasClass("library");
     if (libraryPage) {
-        Zotero.state.libraryString = Zotero.utils.libraryString(zoteroData.libraryType, zoteroData.libraryID);
+        Z.debug("libraryPage - adding libraryString and filter", 3);
+        Zotero.state.libraryString = Zotero.utils.libraryString(Zotero.config.librarySettings.libraryType, Zotero.config.librarySettings.libraryID);
         Zotero.state.filter = Zotero.state.libraryString;
         if (Zotero.config.pageClass == "user_library" || Zotero.config.pageClass == "group_library" || Zotero.config.pageClass == "my_library") {
             Zotero.Item.prototype.getItemTypes(locale);
@@ -7058,7 +7059,16 @@ Zotero.State.prototype.savePrevState = function() {
 };
 
 Zotero.State.prototype.getSelectedItemKeys = function() {
-    return this.selectedItemKeys;
+    var state = this;
+    var uniqueKeys = {};
+    var returnKeys = [];
+    J.each(state.selectedItemKeys, function(ind, val) {
+        uniqueKeys[val] = true;
+    });
+    J.each(uniqueKeys, function(key, val) {
+        returnKeys.push(key);
+    });
+    return returnKeys;
 };
 
 Zotero.State.prototype.pushTag = function(newtag) {

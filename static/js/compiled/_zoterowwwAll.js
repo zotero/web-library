@@ -6885,7 +6885,9 @@ Zotero.init = function(){
     //decide if we're on a library page and run library specific setup
     var libraryPage = J("body").hasClass('library');
     if(libraryPage){
-        Zotero.state.libraryString = Zotero.utils.libraryString(zoteroData.libraryType, zoteroData.libraryID);
+        Z.debug("libraryPage - adding libraryString and filter", 3);
+        Zotero.state.libraryString = Zotero.utils.libraryString(Zotero.config.librarySettings.libraryType,
+            Zotero.config.librarySettings.libraryID);
         Zotero.state.filter = Zotero.state.libraryString;
         
         //load general data if on library page
@@ -6964,7 +6966,19 @@ Zotero.State.prototype.savePrevState = function(){
 };
 
 Zotero.State.prototype.getSelectedItemKeys = function(){
-    return this.selectedItemKeys;
+    var state = this;
+    //filter actual selected itemKeys so we only return unique list
+    //necessary because of duplicate item checkboxes, some of which
+    //may be hidden
+    var uniqueKeys = {};
+    var returnKeys = [];
+    J.each(state.selectedItemKeys, function(ind, val){
+        uniqueKeys[val] = true;
+    });
+    J.each(uniqueKeys, function(key, val){
+        returnKeys.push(key);
+    });
+    return returnKeys;
 };
 
 Zotero.State.prototype.pushTag = function(newtag){

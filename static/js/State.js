@@ -37,7 +37,19 @@ Zotero.State.prototype.savePrevState = function(){
 };
 
 Zotero.State.prototype.getSelectedItemKeys = function(){
-    return this.selectedItemKeys;
+    var state = this;
+    //filter actual selected itemKeys so we only return unique list
+    //necessary because of duplicate item checkboxes, some of which
+    //may be hidden
+    var uniqueKeys = {};
+    var returnKeys = [];
+    J.each(state.selectedItemKeys, function(ind, val){
+        uniqueKeys[val] = true;
+    });
+    J.each(uniqueKeys, function(key, val){
+        returnKeys.push(key);
+    });
+    return returnKeys;
 };
 
 Zotero.State.prototype.pushTag = function(newtag){

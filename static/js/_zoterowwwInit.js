@@ -82,7 +82,9 @@ Zotero.init = function(){
     //decide if we're on a library page and run library specific setup
     var libraryPage = J("body").hasClass('library');
     if(libraryPage){
-        Zotero.state.libraryString = Zotero.utils.libraryString(zoteroData.libraryType, zoteroData.libraryID);
+        Z.debug("libraryPage - adding libraryString and filter", 3);
+        Zotero.state.libraryString = Zotero.utils.libraryString(Zotero.config.librarySettings.libraryType,
+            Zotero.config.librarySettings.libraryID);
         Zotero.state.filter = Zotero.state.libraryString;
         
         //load general data if on library page
