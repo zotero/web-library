@@ -32,16 +32,15 @@
     <tr>
         <th>Tags</th>
         <td class="tags">
-        <div style="display:block; clear:both;"><button type='button' class="add-tag-button" data-itemKey="{{attr:itemKey}}">Add Tag</button></div>
-        {{each(index, tag) item.tags}}
-            {{tmpl({index:index, itemKey:itemKey, tag:tag}) "itemtagTemplate"}}
-        {{/each}}
+        {{for item.apiObj.tags ~itemKey=itemKey }}
+            {{include ~index=#index tmpl="#itemtagTemplate" /}}
+        {{/for}}
         </td>
     </tr>
     
     <tr>
         <th></th>
-        <td><button type='submit' data-itemKey="{{attr:itemKey}}" class="zform saveitembutton">Save</button></td>
+        <td><button type='button' data-itemKey="{{attr:itemKey}}" {{if library}}data-library="{{attr:library.libraryString}}"{{/if}} class="zform saveitembutton btn btn-default eventfultrigger" data-triggers="saveItem">Save</button></td>
     </tr>
     </table>
     

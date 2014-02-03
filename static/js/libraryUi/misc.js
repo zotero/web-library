@@ -80,10 +80,12 @@ Zotero.ui.updateItemFromForm = function(item, formEl){
     });
     
     item.notes = notes;
-    item.apiObj.creators = creators;
+    if(creators.length){
+        item.apiObj.creators = creators;
+    }
     item.apiObj.tags = tags;
     item.synced = false;
-    
+    item.dirty = true;
 };
 
 Zotero.ui.creatorFromElement = function(el){
@@ -126,14 +128,17 @@ Zotero.ui.saveItem = function(item) {
         Z.debug("item write finished", 3);
         //check for errors, update nav
         if(item.writeFailure){
-            
+            Z.debug("Error writing item:" + item.writeFailure.message, 1);
+            Zotero.ui.jsNotificationMessage('Error writing item', 'error');
+            throw new Error("Error writing item:" + item.writeFailure.message);
         }
-        
-        delete Zotero.state.pathVars['action'];
-        Zotero.state.pathVars['itemKey'] = item.itemKey;
-        
-        Zotero.state.clearUrlVars(['itemKey', 'collectionKey']);
-        Zotero.state.pushState(true);
+        else{
+            Zotero.state.unsetUrlVar('action');
+            Zotero.state.pathVars['itemKey'] = item.itemKey;
+            
+            Zotero.state.clearUrlVars(['itemKey', 'collectionKey']);
+            Zotero.state.pushState();
+        }
     });
     
     //update list of tags we have if new ones added

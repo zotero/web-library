@@ -45,6 +45,7 @@ Zotero.ui.getAllFormItemKeys = function(container){
 
 Zotero.ui.getRte = function(el){
     Z.debug("getRte", 3);
+    Z.debug("getRte", 3);
     Z.debug(el);
     switch(Zotero.config.rte){
         case "ckeditor":
@@ -58,6 +59,7 @@ Zotero.ui.getRte = function(el){
 };
 
 Zotero.ui.updateRte = function(el){
+    Z.debug("updateRte", 3);
     switch(Zotero.config.rte){
         case "ckeditor":
             var elid = "#" + el;
@@ -70,12 +72,23 @@ Zotero.ui.updateRte = function(el){
 };
 
 Zotero.ui.deactivateRte = function(el){
+    Z.debug("deactivateRte", 3);
     switch(Zotero.config.rte){
         case "ckeditor":
-            var elid = "#" + el;
-            data = CKEDITOR.instances[el].destroy();
+            //var elid = "#" + el;
+            if(CKEDITOR.instances[el]){
+                Z.debug("deactivating " + el, 3);
+                data = CKEDITOR.instances[el].destroy();
+            }
             break;
         default:
             tinymce.execCommand('mceRemoveControl', true, el);
     }
+};
+
+Zotero.ui.cleanUpRte = function(container){
+    Z.debug("cleanUpRte", 3);
+    J(container).find("textarea.rte").each(function(ind, el){
+        Zotero.ui.deactivateRte(J(el).attr('name') );
+    });
 };

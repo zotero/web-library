@@ -3197,15 +3197,17 @@ Zotero.Items.prototype.writeItems = function(itemsArray) {
             rawChunkObjects[i].push(writeChunks[i][j].writeApiObj());
         }
     }
-    var writeItemsSuccessCallback = function(data, textStatus, jqXhr) {
+    var writeItemsSuccessCallback = function(response) {
         Z.debug("writeItem successCallback", 3);
-        Z.debug("successCode: " + jqXhr.status, 4);
-        Zotero.utils.updateObjectsFromWriteResponse(this.writeChunk, jqXhr);
+        Z.debug(response);
+        Z.debug("successCode: " + response.jqxhr.status, 3);
+        Zotero.utils.updateObjectsFromWriteResponse(this.writeChunk, response.jqxhr);
         this.library.idbLibrary.updateItems(this.writeChunk);
         this.returnItems = this.returnItems.concat(this.writeChunk);
         Zotero.trigger("itemsChanged", {
             library: this.library
         });
+        Z.debug("done with writeItemsSuccessCallback", 3);
     };
     Z.debug("items.itemsVersion: " + items.itemsVersion, 3);
     Z.debug("items.libraryVersion: " + items.libraryVersion, 3);
@@ -5091,7 +5093,7 @@ Zotero.utils = {
     },
     updateObjectsFromWriteResponse: function(objectsArray, responsexhr) {
         Z.debug("Zotero.utils.updateObjectsFromWriteResponse", 3);
-        Z.debug("statusCode: " + responsexhr.status);
+        Z.debug("statusCode: " + responsexhr.status, 3);
         Z.debug(responsexhr.responseText, 3);
         var data = JSON.parse(responsexhr.responseText);
         if (responsexhr.status == 200) {
@@ -5133,7 +5135,9 @@ Zotero.utils = {
                 });
             }
             if ("failed" in data) {
+                Z.debug("updating objects with failed writes", 3);
                 J.each(data.failed, function(ind, failure) {
+                    Z.debug("failed write " + ind + " - " + failure, 3);
                     var i = parseInt(ind, 10);
                     var object = objectsArray[i];
                     object.writeFailure = failure;
@@ -7796,7 +7800,9 @@ Zotero.ui.init.ckeditor = function(type, autofocus, elements) {
     if (autofocus) {
         config.startupFocus = true;
     }
+    Z.debug("initializing CK editors", 3);
     J("textarea.rte").each(function(ind, el) {
+        Z.debug("RTE textarea - " + ind + " - " + J(el).attr("name"), 3);
         var edName = J(el).attr("name");
         if (!CKEDITOR.instances[edName]) {
             var editor = CKEDITOR.replace(el, config);
@@ -7935,9 +7941,12 @@ Zotero.ui.updateItemFromForm = function(item, formEl) {
         notes.push(noteItem);
     });
     item.notes = notes;
-    item.apiObj.creators = creators;
+    if (creators.length) {
+        item.apiObj.creators = creators;
+    }
     item.apiObj.tags = tags;
     item.synced = false;
+    item.dirty = true;
 };
 
 Zotero.ui.creatorFromElement = function(el) {
@@ -7975,11 +7984,16 @@ Zotero.ui.saveItem = function(item) {
     var library = item.owningLibrary;
     item.writeItem().then(function(writtenItems) {
         Z.debug("item write finished", 3);
-        if (item.writeFailure) {}
-        delete Zotero.state.pathVars["action"];
-        Zotero.state.pathVars["itemKey"] = item.itemKey;
-        Zotero.state.clearUrlVars([ "itemKey", "collectionKey" ]);
-        Zotero.state.pushState(true);
+        if (item.writeFailure) {
+            Z.debug("Error writing item:" + item.writeFailure.message, 1);
+            Zotero.ui.jsNotificationMessage("Error writing item", "error");
+            throw new Error("Error writing item:" + item.writeFailure.message);
+        } else {
+            Zotero.state.unsetUrlVar("action");
+            Zotero.state.pathVars["itemKey"] = item.itemKey;
+            Zotero.state.clearUrlVars([ "itemKey", "collectionKey" ]);
+            Zotero.state.pushState();
+        }
     });
     Z.debug("adding new tags to library tags", 3);
     var libTags = library.tags;
@@ -8206,6 +8220,7 @@ Zotero.ui.getAllFormItemKeys = function(container) {
 
 Zotero.ui.getRte = function(el) {
     Z.debug("getRte", 3);
+    Z.debug("getRte", 3);
     Z.debug(el);
     switch (Zotero.config.rte) {
       case "ckeditor":
@@ -8216,6 +8231,7 @@ Zotero.ui.getRte = function(el) {
 };
 
 Zotero.ui.updateRte = function(el) {
+    Z.debug("updateRte", 3);
     switch (Zotero.config.rte) {
       case "ckeditor":
         var elid = "#" + el;
@@ -8228,14 +8244,24 @@ Zotero.ui.updateRte = function(el) {
 };
 
 Zotero.ui.deactivateRte = function(el) {
+    Z.debug("deactivateRte", 3);
     switch (Zotero.config.rte) {
       case "ckeditor":
-        var elid = "#" + el;
-        data = CKEDITOR.instances[el].destroy();
+        if (CKEDITOR.instances[el]) {
+            Z.debug("deactivating " + el, 3);
+            data = CKEDITOR.instances[el].destroy();
+        }
         break;
       default:
         tinymce.execCommand("mceRemoveControl", true, el);
     }
+};
+
+Zotero.ui.cleanUpRte = function(container) {
+    Z.debug("cleanUpRte", 3);
+    J(container).find("textarea.rte").each(function(ind, el) {
+        Zotero.ui.deactivateRte(J(el).attr("name"));
+    });
 };
 
 Zotero.ui.jsNotificationMessage = function(message, type, timeout) {
@@ -9229,6 +9255,7 @@ Zotero.ui.widgets.item.loadItemCallback = function(event) {
     var widgetEl = J(event.data.widgetEl);
     var triggeringEl = J(event.triggeringElement);
     var loadingPromise;
+    Zotero.ui.cleanUpRte(widgetEl);
     Z.debug("Zotero.callbacks.loadItem", 3);
     var library = Zotero.ui.getAssociatedLibrary(widgetEl);
     widgetEl.empty();
@@ -9403,14 +9430,19 @@ Zotero.ui.widgets.item.editItemForm = function(el, item) {
         Z.debug("editItemForm - note", 3);
         jel.append(J("#editnoteformTemplate").render({
             item: item,
+            library: library,
             itemKey: item.itemKey
         }));
+        if (item.apiObj.tags.length === 0) {
+            Zotero.ui.widgets.item.addTag(el, false);
+        }
         Zotero.ui.init.rte("default");
     } else if (item.itemType == "attachment") {
         Z.debug("item is attachment", 4);
         var mode = Zotero.state.getUrlVar("mode");
         jel.append(J("#attachmentformTemplate").render({
             item: item,
+            library: library,
             itemKey: item.itemKey,
             creatorTypes: [],
             mode: mode
@@ -9496,7 +9528,6 @@ Zotero.ui.widgets.item.saveItemCallback = function(e) {
     e.preventDefault();
     var triggeringElement = J(e.triggeringElement);
     var widgetEl = e.data.widgetEl;
-    var el = widgetEl;
     Zotero.ui.scrollToTop();
     var library = Zotero.ui.getEventLibrary(e);
     var itemKey = triggeringElement.data("itemkey");
@@ -9511,8 +9542,7 @@ Zotero.ui.widgets.item.saveItemCallback = function(e) {
         Z.debug(item, 3);
     }
     Zotero.ui.updateItemFromForm(item, triggeringElement.closest("form"));
-    Zotero.ui.saveItem(item, triggeringElement.closest("form"));
-    library.dirty = true;
+    Zotero.ui.saveItem(item);
     return false;
 };
 

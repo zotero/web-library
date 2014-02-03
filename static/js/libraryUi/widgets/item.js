@@ -32,6 +32,9 @@ Zotero.ui.widgets.item.loadItemCallback = function(event){
     var widgetEl = J(event.data.widgetEl);
     var triggeringEl = J(event.triggeringElement);
     var loadingPromise;
+    
+    //clean up RTEs before we end up removing their dom elements out from under them
+    Zotero.ui.cleanUpRte(widgetEl);
     /*
     var loadingPromise = widgetEl.data('loadingPromise');
     if(loadingPromise){
@@ -276,15 +279,21 @@ Zotero.ui.widgets.item.editItemForm = function(el, item){
     if(item.itemType == 'note'){
         Z.debug("editItemForm - note", 3);
         jel.append( J('#editnoteformTemplate').render({item:item,
-                                         itemKey:item.itemKey
-                                         }) );
-                                         
+                                                       library:library,
+                                                       itemKey:item.itemKey
+                                                     }) );
+        
+        //add empty tag if no tags yet
+        if(item.apiObj.tags.length === 0){
+            Zotero.ui.widgets.item.addTag(el, false);
+        }
         Zotero.ui.init.rte('default');
     }
     else if(item.itemType == "attachment"){
         Z.debug("item is attachment", 4);
         var mode = Zotero.state.getUrlVar('mode');
         jel.append( J('#attachmentformTemplate').render({item:item,
+                                    library:library,
                                     itemKey:item.itemKey,
                                     creatorTypes:[],
                                     mode:mode
@@ -383,7 +392,6 @@ Zotero.ui.widgets.item.saveItemCallback = function(e){
     e.preventDefault();
     var triggeringElement = J(e.triggeringElement);
     var widgetEl = e.data.widgetEl;
-    var el = widgetEl;
     
     Zotero.ui.scrollToTop();
     var library = Zotero.ui.getEventLibrary(e);
@@ -401,8 +409,7 @@ Zotero.ui.widgets.item.saveItemCallback = function(e){
         Z.debug(item, 3);
     }
     Zotero.ui.updateItemFromForm(item, triggeringElement.closest("form"));
-    Zotero.ui.saveItem(item, triggeringElement.closest("form"));
-    library.dirty = true;
+    Zotero.ui.saveItem(item);
     return false;
 };
 
