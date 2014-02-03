@@ -2,7 +2,7 @@
 <ul id="colored-tags-list">
     {{for tags}}
         <li class="tag-row" data-tagtitle="{{attr:title}}">
-            <a class='tag-link' title="{{attr:title}} {{if numItems}}({{attr:numItems}}){{/if}}" data-tagtitle="{{attr:title}}" href="{{url:newurl}}" {{if color}}style="background-color:{{attr:color}}"{{/if}}>{{>~trimString(title, 12)}}</a>
+            <a class='tag-link' title="{{attr:title}} {{if numItems}}({{attr:numItems}}){{/if}}" data-tagtitle="{{attr:title}}" href="{{url:newurl}}" {{if color}}style="color:{{attr:color}}; font-weight:bold;"{{/if}}>{{>~trimString(title, 12)}}</a>
         </li>
     {{/for}}
 </ul>
