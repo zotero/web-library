@@ -1332,7 +1332,7 @@ var Zotero = {
         storePrefsRemote: true,
         preferUrlItem: true,
         sessionAuth: false,
-        proxy: true,
+        proxy: false,
         apiKey: "",
         ajax: 1,
         apiVersion: 2,
@@ -2867,14 +2867,12 @@ Zotero.Collections.prototype.writeCollections = function(collectionsArray) {
     }
     var writeCollectionsSuccessCallback = function(response) {
         Z.debug("writeCollections successCallback", 3);
-        Z.debug("response:");
-        Z.debug(response);
-        Z.debug("context:");
-        Z.debug(this);
+        Z.debug(response, 3);
         Zotero.utils.updateObjectsFromWriteResponse(this.writeChunk, response.jqxhr);
+        if (Zotero.config.useIndexedDB) {
+            this.library.idbLibrary.updateCollections(this.writeChunk);
+        }
         returnCollections = returnCollections.concat(this.writeChunk);
-        Z.debug("returnCollections");
-        Z.debug(returnCollections);
     };
     Z.debug("collections.collectionsVersion: " + collections.collectionsVersion, 3);
     Z.debug("collections.libraryVersion: " + collections.libraryVersion, 3);
@@ -3199,10 +3197,12 @@ Zotero.Items.prototype.writeItems = function(itemsArray) {
     }
     var writeItemsSuccessCallback = function(response) {
         Z.debug("writeItem successCallback", 3);
-        Z.debug(response);
+        Z.debug(response, 3);
         Z.debug("successCode: " + response.jqxhr.status, 3);
         Zotero.utils.updateObjectsFromWriteResponse(this.writeChunk, response.jqxhr);
-        this.library.idbLibrary.updateItems(this.writeChunk);
+        if (Zotero.config.useIndexedDB) {
+            this.library.idbLibrary.updateItems(this.writeChunk);
+        }
         this.returnItems = this.returnItems.concat(this.writeChunk);
         Zotero.trigger("itemsChanged", {
             library: this.library
@@ -3447,7 +3447,7 @@ Zotero.Groups.prototype.fetchUserGroups = function(userID, apikey) {
     };
     if (apikey) {
         aparams["key"] = apikey;
-    } else {
+    } else if (groups.owningLibrary) {
         aparams["key"] = groups.owningLibrary._apiKey;
     }
     return Zotero.ajaxRequest(aparams).then(function(response) {
@@ -7692,12 +7692,12 @@ Zotero.ui.init.all = function() {
         break;
       case "default":
     }
+    Zotero.ui.init.libraryTemplates();
+    Zotero.eventful.initWidgets();
 };
 
 Zotero.ui.init.library = function() {
     Z.debug("Zotero.ui.init.library", 3);
-    Zotero.ui.init.libraryTemplates();
-    Zotero.eventful.initWidgets();
     var hasRTENoLinks = J("textarea.rte").filter(".nolinks").length;
     var hasRTEReadOnly = J("textarea.rte").filter(".readonly").length;
     var hasRTEDefault = J("textarea.rte").not(".nolinks").not(".readonly").length;
@@ -9163,7 +9163,17 @@ Zotero.ui.widgets.feedlink.recalcFeedlink = function(evt) {
 
 Zotero.ui.widgets.groups = {};
 
-Zotero.ui.userGroupsDisplay = function(groups) {
+Zotero.ui.widgets.groups.init = function(el) {
+    Z.debug("groups widget init", 3);
+    var groups = new Zotero.Groups;
+    if (Zotero.config.loggedIn && Zotero.config.loggedInUserID) {
+        var groupsPromise = groups.fetchUserGroups(Zotero.config.loggedInUserID, Zotero.config.apiKey).then(function(groups) {
+            Zotero.ui.widgets.groups.displayGroupNuggets(el, groups);
+        });
+    }
+};
+
+Zotero.ui.widgets.groups.userGroupsDisplay = function(groups) {
     var html = "";
     J.each(groups.groupsArray, function(index, group) {
         html += Zotero.ui.groupNugget(group);
@@ -9171,12 +9181,12 @@ Zotero.ui.userGroupsDisplay = function(groups) {
     return html;
 };
 
-Zotero.ui.displayGroupNuggets = function(el, groups) {
+Zotero.ui.widgets.groups.displayGroupNuggets = function(el, groups) {
+    Z.debug("Zotero.ui.widgets.groups.displayGroupNuggets", 3);
     var jel = J(el);
     jel.empty();
     J.each(groups, function(ind, group) {
         Z.debug("Displaying group nugget");
-        Z.debug(group);
         var userID = Zotero.config.loggedInUserID;
         var groupManageable = false;
         var memberCount = 1;
@@ -9189,7 +9199,7 @@ Zotero.ui.displayGroupNuggets = function(el, groups) {
         if (userID && (userID == group.apiObj.owner || J.inArray(userID, group.apiObj.admins) != -1)) {
             groupManageable = true;
         }
-        jel.append(J("#groupnuggetTemplate").render({
+        var tdata = {
             group: group.apiObj,
             groupViewUrl: Zotero.url.groupViewUrl(group),
             groupLibraryUrl: Zotero.url.groupLibraryUrl(group),
@@ -9197,7 +9207,8 @@ Zotero.ui.displayGroupNuggets = function(el, groups) {
             groupLibrarySettings: Zotero.url.groupLibrarySettingsUrl(group),
             memberCount: memberCount,
             groupManageable: groupManageable
-        }));
+        };
+        jel.append(J("#groupnuggetTemplate").render(tdata));
     });
 };
 

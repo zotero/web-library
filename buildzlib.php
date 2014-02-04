@@ -41,7 +41,7 @@ $files = array(
 "libraryUi/widgets/deletecollectiondialog.js",
 "libraryUi/widgets/exportitemsdialog.js",
 "libraryUi/widgets/feedlink.js",
-"libraryUi/widgets/group.js",
+"libraryUi/widgets/groups.js",
 "libraryUi/widgets/item.js",
 "libraryUi/widgets/items.js",
 "libraryUi/widgets/itemContainer.js",

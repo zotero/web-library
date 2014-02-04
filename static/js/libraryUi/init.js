@@ -13,12 +13,12 @@ Zotero.ui.init.all = function(){
             break;
         case "default":
     }
+    Zotero.ui.init.libraryTemplates();
+    Zotero.eventful.initWidgets();
 };
 
 Zotero.ui.init.library = function(){
     Z.debug("Zotero.ui.init.library", 3);
-    Zotero.ui.init.libraryTemplates();
-    Zotero.eventful.initWidgets();
     
     //initialize RTE for textareas if marked
     var hasRTENoLinks = J('textarea.rte').filter('.nolinks').length;
