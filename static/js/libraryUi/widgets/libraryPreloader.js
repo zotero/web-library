@@ -4,4 +4,8 @@ Zotero.ui.widgets.libraryPreloader = {};
 //in every other widget
 Zotero.ui.widgets.libraryPreloader.init = function(el){
     var library = Zotero.ui.getAssociatedLibrary(el);
+    library.loadSettings();
+    library.listen("deleteIdb", function(){
+        library.idbLibrary.deleteDB();
+    });
 };

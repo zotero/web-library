@@ -367,6 +367,18 @@ Zotero.ajaxRequest = function(url, type, options){
         cache:false,
         error: Zotero.ajax.errorCallback
     };
+    
+    var successCallback;
+    var failureCallback;
+    if(options && options.success){
+        successCallback = options.success;
+        delete options.success;
+    }
+    if(options && options.error){
+        failureCallback = options.error;
+        delete options.error;
+    }
+    
     var reqOptions = J.extend({}, defaultOptions, options);
     if(type){
         reqOptions.type = type;
@@ -401,6 +413,10 @@ Zotero.ajaxRequest = function(url, type, options){
             });
         });
     });
+    
+    if(successCallback || failureCallback){
+        ajaxpromise.then(successCallback, failureCallback);
+    }
     
     Zotero.ajax.activeRequests.push(ajaxpromise);
     return ajaxpromise;
@@ -968,8 +984,8 @@ Zotero.Library.prototype.ajaxRequest = function(url, type, options){
         cache:false,
     };
     
-    var successCallback = null;
-    var failureCallback = null;
+    var successCallback;
+    var failureCallback;
     if(options && options.success){
         successCallback = options.success;
         delete options.success;
@@ -9030,7 +9046,7 @@ Zotero.ui.widgets.collections.syncCollections = function(evt) {
     function(err){
         //sync failed, but we already had some data, so show that
         Z.debug("Error syncing collections");
-        Z.debug(error);
+        Z.debug(err);
         library.trigger("libraryCollectionsUpdated");
         //TODO: display error as well
     }).then(function(){
@@ -11261,6 +11277,10 @@ Zotero.ui.widgets.libraryPreloader = {};
 //in every other widget
 Zotero.ui.widgets.libraryPreloader.init = function(el){
     var library = Zotero.ui.getAssociatedLibrary(el);
+    library.loadSettings();
+    library.listen("deleteIdb", function(){
+        library.idbLibrary.deleteDB();
+    });
 };
 
 

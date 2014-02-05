@@ -35,8 +35,10 @@ Zotero.ui.widgets.collections.syncCollections = function(evt) {
     .then(function(){
         library.trigger("libraryCollectionsUpdated");
     },
-    function(){
+    function(err){
         //sync failed, but we already had some data, so show that
+        Z.debug("Error syncing collections");
+        Z.debug(err);
         library.trigger("libraryCollectionsUpdated");
         //TODO: display error as well
     }).then(function(){
