@@ -34,7 +34,7 @@
             {{if group.description}}
             <tr>
                 <th scope="row">Description</th> 
-                <td>{{html group.description}}</td>
+                <td>{{:group.description}}</td>
             </tr>
             {{/if}}
             <!-- Group Type -->
