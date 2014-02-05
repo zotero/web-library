@@ -1096,7 +1096,7 @@ Zotero.Library.prototype.loadUpdatedItems = function(){
         var itemKeys = [];
         J.each(itemVersions, function(key, val){
             var item = library.items.getItem(key);
-            if(item && (item.apiObj.itemKey != val)){
+            if((!item) || (item.apiObj.itemKey != val)){
                 itemKeys.push(key);
             }
         });
@@ -1128,14 +1128,14 @@ Zotero.Library.prototype.loadUpdatedCollections = function(){
         var updatedVersion = response.jqxhr.getResponseHeader("Last-Modified-Version");
         Z.debug("Collections Last-Modified-Version: " + updatedVersion, 3);
         //start the syncState version tracking. This should be the earliest version throughout
-        Zotero.utils.updateSyncState(library.collections.syncState, updatedVersion);
+        Zotero.utils.updateSyncState(library.collections, updatedVersion);
         
         var collectionVersions = response.data;
         library.collectionVersions = collectionVersions;
         var collectionKeys = [];
         J.each(collectionVersions, function(key, val){
             var c = library.collections.getCollection(key);
-            if(c && (c.apiObj.collectionVersion != val)){
+            if((!c) || (c.apiObj.collectionVersion != val)){
                 collectionKeys.push(key);
             }
         });
@@ -1144,6 +1144,7 @@ Zotero.Library.prototype.loadUpdatedCollections = function(){
             return;
         }
         else {
+            Z.debug("fetching collections by key", 3);
             return Promise.resolve(library.loadCollectionsFromKeys(collectionKeys))
             .then(function(){
                 var collections = library.collections;
@@ -4805,6 +4806,7 @@ Zotero.utils = {
     updateSyncState: function(container, version) {
         Z.debug("updateSyncState: " + version, 3);
         if(!container.hasOwnProperty('syncState')){
+            Z.debug("no syncState property");
             throw new Error("Attempt to update sync state of object with no syncState property");
         }
         if(container.syncState.earliestVersion === null){
@@ -4819,6 +4821,7 @@ Zotero.utils = {
         if(version > container.syncState.latestVersion){
             container.syncState.latestVersion = version;
         }
+        Z.debug("done updating sync state", 3);
     },
     
     updateSyncedVersion: function(container, versionField) {
@@ -9024,8 +9027,10 @@ Zotero.ui.widgets.collections.syncCollections = function(evt) {
     .then(function(){
         library.trigger("libraryCollectionsUpdated");
     },
-    function(){
+    function(err){
         //sync failed, but we already had some data, so show that
+        Z.debug("Error syncing collections");
+        Z.debug(error);
         library.trigger("libraryCollectionsUpdated");
         //TODO: display error as well
     }).then(function(){
@@ -9723,6 +9728,7 @@ Zotero.ui.widgets.groups.displayGroupNuggets = function(el, groups){
             memberCount:memberCount,
             groupManageable: groupManageable
         };
+        //Z.debug(tdata);
         jel.append( J('#groupnuggetTemplate').render(tdata) );
     });
 };

@@ -13,11 +13,13 @@ $messages = array();
         <title>Zotero Library</title>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="mobile-web-app-capable" content="yes">
         <meta name="keywords" content="Zotero, research, tool, firefox, extension"/>
         <meta name="description" content="Zotero is a powerful, easy-to-use research tool that 
                                           helps you gather, organize, and analyze sources and then 
                                           share the results of your research."/>
         
+        <link rel="shortcut icon" type="image/png" sizes="128x128" href="<?=$staticPath?>/images/theme/zotero_theme/zotero_128.png" />
         <link rel="shortcut icon" type="image/png" sizes="48x48" href="<?=$staticPath?>/images/theme/zotero_theme/zotero_48.png" />
         <link rel="apple-touch-icon" type="image/png" href="<?=$staticPath?>/images/theme/zotero_theme/zotero_48.png" />
         <link rel="apple-touch-icon-precomposed" type="image/png" href="<?=$staticPath?>/images/theme/zotero_theme/zotero_48.png" />
