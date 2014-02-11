@@ -10568,7 +10568,9 @@ Zotero.ui.widgets.uploadDialog.init = function(el) {
         widgetEl: el,
         library: library
     });
-    widgetEl.on("click", ".uploadButton", library.trigger("upload"));
+    widgetEl.on("click", ".uploadButton", function() {
+        library.trigger("upload");
+    });
 };
 
 Zotero.ui.widgets.uploadDialog.show = function(e) {
