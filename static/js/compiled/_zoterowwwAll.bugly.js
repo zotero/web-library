@@ -452,117 +452,301 @@
     }), b("promise/polyfill").polyfill();
 }();
 
-var SparkMD5 = function() {
-    function h(f, d, b, a, c, e) {
-        d = k(k(d, f), k(a, e));
-        return k(d << c | d >>> 32 - c, b);
-    }
-    function g(f, d, b, a, c, e, g) {
-        return h(d & b | ~d & a, f, d, c, e, g);
-    }
-    function i(f, d, b, a, c, e, g) {
-        return h(d & a | b & ~a, f, d, c, e, g);
-    }
-    function j(f, d, b, a, c, e, g) {
-        return h(b ^ (d | ~a), f, d, c, e, g);
-    }
-    function l(f, d) {
-        var b = f[0], a = f[1], c = f[2], e = f[3], b = g(b, a, c, e, d[0], 7, -680876936), e = g(e, b, a, c, d[1], 12, -389564586), c = g(c, e, b, a, d[2], 17, 606105819), a = g(a, c, e, b, d[3], 22, -1044525330), b = g(b, a, c, e, d[4], 7, -176418897), e = g(e, b, a, c, d[5], 12, 1200080426), c = g(c, e, b, a, d[6], 17, -1473231341), a = g(a, c, e, b, d[7], 22, -45705983), b = g(b, a, c, e, d[8], 7, 1770035416), e = g(e, b, a, c, d[9], 12, -1958414417), c = g(c, e, b, a, d[10], 17, -42063), a = g(a, c, e, b, d[11], 22, -1990404162), b = g(b, a, c, e, d[12], 7, 1804603682), e = g(e, b, a, c, d[13], 12, -40341101), c = g(c, e, b, a, d[14], 17, -1502002290), a = g(a, c, e, b, d[15], 22, 1236535329), b = i(b, a, c, e, d[1], 5, -165796510), e = i(e, b, a, c, d[6], 9, -1069501632), c = i(c, e, b, a, d[11], 14, 643717713), a = i(a, c, e, b, d[0], 20, -373897302), b = i(b, a, c, e, d[5], 5, -701558691), e = i(e, b, a, c, d[10], 9, 38016083), c = i(c, e, b, a, d[15], 14, -660478335), a = i(a, c, e, b, d[4], 20, -405537848), b = i(b, a, c, e, d[9], 5, 568446438), e = i(e, b, a, c, d[14], 9, -1019803690), c = i(c, e, b, a, d[3], 14, -187363961), a = i(a, c, e, b, d[8], 20, 1163531501), b = i(b, a, c, e, d[13], 5, -1444681467), e = i(e, b, a, c, d[2], 9, -51403784), c = i(c, e, b, a, d[7], 14, 1735328473), a = i(a, c, e, b, d[12], 20, -1926607734), b = h(a ^ c ^ e, b, a, d[5], 4, -378558), e = h(b ^ a ^ c, e, b, d[8], 11, -2022574463), c = h(e ^ b ^ a, c, e, d[11], 16, 1839030562), a = h(c ^ e ^ b, a, c, d[14], 23, -35309556), b = h(a ^ c ^ e, b, a, d[1], 4, -1530992060), e = h(b ^ a ^ c, e, b, d[4], 11, 1272893353), c = h(e ^ b ^ a, c, e, d[7], 16, -155497632), a = h(c ^ e ^ b, a, c, d[10], 23, -1094730640), b = h(a ^ c ^ e, b, a, d[13], 4, 681279174), e = h(b ^ a ^ c, e, b, d[0], 11, -358537222), c = h(e ^ b ^ a, c, e, d[3], 16, -722521979), a = h(c ^ e ^ b, a, c, d[6], 23, 76029189), b = h(a ^ c ^ e, b, a, d[9], 4, -640364487), e = h(b ^ a ^ c, e, b, d[12], 11, -421815835), c = h(e ^ b ^ a, c, e, d[15], 16, 530742520), a = h(c ^ e ^ b, a, c, d[2], 23, -995338651), b = j(b, a, c, e, d[0], 6, -198630844), e = j(e, b, a, c, d[7], 10, 1126891415), c = j(c, e, b, a, d[14], 15, -1416354905), a = j(a, c, e, b, d[5], 21, -57434055), b = j(b, a, c, e, d[12], 6, 1700485571), e = j(e, b, a, c, d[3], 10, -1894986606), c = j(c, e, b, a, d[10], 15, -1051523), a = j(a, c, e, b, d[1], 21, -2054922799), b = j(b, a, c, e, d[8], 6, 1873313359), e = j(e, b, a, c, d[15], 10, -30611744), c = j(c, e, b, a, d[6], 15, -1560198380), a = j(a, c, e, b, d[13], 21, 1309151649), b = j(b, a, c, e, d[4], 6, -145523070), e = j(e, b, a, c, d[11], 10, -1120210379), c = j(c, e, b, a, d[2], 15, 718787259), a = j(a, c, e, b, d[9], 21, -343485551);
-        f[0] = k(b, f[0]);
-        f[1] = k(a, f[1]);
-        f[2] = k(c, f[2]);
-        f[3] = k(e, f[3]);
-    }
-    function n(f) {
-        var d = [], b;
-        for (b = 0; 64 > b; b += 4) d[b >> 2] = f.charCodeAt(b) + (f.charCodeAt(b + 1) << 8) + (f.charCodeAt(b + 2) << 16) + (f.charCodeAt(b + 3) << 24);
-        return d;
-    }
-    function o(f) {
-        var d = f.length, b = [ 1732584193, -271733879, -1732584194, 271733878 ], a, c, e;
-        for (a = 64; a <= d; a += 64) l(b, n(f.substring(a - 64, a)));
-        f = f.substring(a - 64);
-        c = f.length;
-        e = [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ];
-        for (a = 0; a < c; a += 1) e[a >> 2] |= f.charCodeAt(a) << (a % 4 << 3);
-        e[a >> 2] |= 128 << (a % 4 << 3);
-        if (55 < a) {
-            l(b, e);
-            for (a = 0; 16 > a; a += 1) e[a] = 0;
-        }
-        e[14] = 8 * d;
-        l(b, e);
-        return b;
-    }
-    function m(f) {
-        var d;
-        for (d = 0; d < f.length; d += 1) {
-            for (var b = f, a = d, c = f[d], e = "", g = void 0, g = 0; 4 > g; g += 1) e += q[c >> 8 * g + 4 & 15] + q[c >> 8 * g & 15];
-            b[a] = e;
-        }
-        return f.join("");
-    }
-    var k = function(f, d) {
-        return f + d & 4294967295;
-    }, q = "0,1,2,3,4,5,6,7,8,9,a,b,c,d,e,f".split(",");
-    "5d41402abc4b2a76b9719d911017c592" !== m(o("hello")) && (k = function(f, d) {
-        var b = (f & 65535) + (d & 65535);
-        return (f >> 16) + (d >> 16) + (b >> 16) << 16 | b & 65535;
-    });
-    var p = function() {
-        this.append = function(f) {
-            /[\u0080-\uFFFF]/.test(f) && (f = unescape(encodeURIComponent(f)));
-            this.appendBinary(f);
-            return this;
-        };
-        this.appendBinary = function(f) {
-            var d = 64 - this._buff.length, b = this._buff + f.substr(0, d), a;
-            this._length += f.length;
-            if (64 <= b.length) {
-                l(this._state, n(b));
-                for (a = f.length - 64; d <= a; ) b = f.substr(d, 64), l(this._state, n(b)), d += 64;
-                this._buff = f.substr(d, 64);
-            } else this._buff = b;
-            return this;
-        };
-        this.end = function(f) {
-            var d = this._buff, b = d.length, a = [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ], c;
-            for (c = 0; c < b; c += 1) a[c >> 2] |= d.charCodeAt(c) << (c % 4 << 3);
-            a[c >> 2] |= 128 << (c % 4 << 3);
-            if (55 < c) {
-                l(this._state, a);
-                for (c = 0; 16 > c; c += 1) a[c] = 0;
+(function(a) {
+    if (typeof exports === "object") {
+        module.exports = a();
+    } else {
+        if (typeof define === "function" && define.amd) {
+            define(a);
+        } else {
+            var c;
+            try {
+                c = window;
+            } catch (b) {
+                c = self;
             }
-            a[14] = 8 * this._length;
-            l(this._state, a);
-            f = f ? this._state : m(this._state);
-            this.reset();
-            return f;
-        };
-        this.reset = function() {
-            this._buff = "";
-            this._length = 0;
-            this._state = [ 1732584193, -271733879, -1732584194, 271733878 ];
-            return this;
-        };
-        this.destroy = function() {
-            delete this._state;
-            delete this._buff;
-            delete this._length;
-        };
+            c.SparkMD5 = a();
+        }
+    }
+})(function(c) {
+    var e = function(s, r) {
+        return s + r & 4294967295;
+    }, n = function(z, v, u, r, y, w) {
+        v = e(e(v, z), e(r, w));
+        return e(v << y | v >>> 32 - y, u);
+    }, a = function(v, u, A, z, r, y, w) {
+        return n(u & A | ~u & z, v, u, r, y, w);
+    }, k = function(v, u, A, z, r, y, w) {
+        return n(u & z | A & ~z, v, u, r, y, w);
+    }, f = function(v, u, A, z, r, y, w) {
+        return n(u ^ A ^ z, v, u, r, y, w);
+    }, p = function(v, u, A, z, r, y, w) {
+        return n(A ^ (u | ~z), v, u, r, y, w);
+    }, d = function(s, u) {
+        var t = s[0], r = s[1], w = s[2], v = s[3];
+        t = a(t, r, w, v, u[0], 7, -680876936);
+        v = a(v, t, r, w, u[1], 12, -389564586);
+        w = a(w, v, t, r, u[2], 17, 606105819);
+        r = a(r, w, v, t, u[3], 22, -1044525330);
+        t = a(t, r, w, v, u[4], 7, -176418897);
+        v = a(v, t, r, w, u[5], 12, 1200080426);
+        w = a(w, v, t, r, u[6], 17, -1473231341);
+        r = a(r, w, v, t, u[7], 22, -45705983);
+        t = a(t, r, w, v, u[8], 7, 1770035416);
+        v = a(v, t, r, w, u[9], 12, -1958414417);
+        w = a(w, v, t, r, u[10], 17, -42063);
+        r = a(r, w, v, t, u[11], 22, -1990404162);
+        t = a(t, r, w, v, u[12], 7, 1804603682);
+        v = a(v, t, r, w, u[13], 12, -40341101);
+        w = a(w, v, t, r, u[14], 17, -1502002290);
+        r = a(r, w, v, t, u[15], 22, 1236535329);
+        t = k(t, r, w, v, u[1], 5, -165796510);
+        v = k(v, t, r, w, u[6], 9, -1069501632);
+        w = k(w, v, t, r, u[11], 14, 643717713);
+        r = k(r, w, v, t, u[0], 20, -373897302);
+        t = k(t, r, w, v, u[5], 5, -701558691);
+        v = k(v, t, r, w, u[10], 9, 38016083);
+        w = k(w, v, t, r, u[15], 14, -660478335);
+        r = k(r, w, v, t, u[4], 20, -405537848);
+        t = k(t, r, w, v, u[9], 5, 568446438);
+        v = k(v, t, r, w, u[14], 9, -1019803690);
+        w = k(w, v, t, r, u[3], 14, -187363961);
+        r = k(r, w, v, t, u[8], 20, 1163531501);
+        t = k(t, r, w, v, u[13], 5, -1444681467);
+        v = k(v, t, r, w, u[2], 9, -51403784);
+        w = k(w, v, t, r, u[7], 14, 1735328473);
+        r = k(r, w, v, t, u[12], 20, -1926607734);
+        t = f(t, r, w, v, u[5], 4, -378558);
+        v = f(v, t, r, w, u[8], 11, -2022574463);
+        w = f(w, v, t, r, u[11], 16, 1839030562);
+        r = f(r, w, v, t, u[14], 23, -35309556);
+        t = f(t, r, w, v, u[1], 4, -1530992060);
+        v = f(v, t, r, w, u[4], 11, 1272893353);
+        w = f(w, v, t, r, u[7], 16, -155497632);
+        r = f(r, w, v, t, u[10], 23, -1094730640);
+        t = f(t, r, w, v, u[13], 4, 681279174);
+        v = f(v, t, r, w, u[0], 11, -358537222);
+        w = f(w, v, t, r, u[3], 16, -722521979);
+        r = f(r, w, v, t, u[6], 23, 76029189);
+        t = f(t, r, w, v, u[9], 4, -640364487);
+        v = f(v, t, r, w, u[12], 11, -421815835);
+        w = f(w, v, t, r, u[15], 16, 530742520);
+        r = f(r, w, v, t, u[2], 23, -995338651);
+        t = p(t, r, w, v, u[0], 6, -198630844);
+        v = p(v, t, r, w, u[7], 10, 1126891415);
+        w = p(w, v, t, r, u[14], 15, -1416354905);
+        r = p(r, w, v, t, u[5], 21, -57434055);
+        t = p(t, r, w, v, u[12], 6, 1700485571);
+        v = p(v, t, r, w, u[3], 10, -1894986606);
+        w = p(w, v, t, r, u[10], 15, -1051523);
+        r = p(r, w, v, t, u[1], 21, -2054922799);
+        t = p(t, r, w, v, u[8], 6, 1873313359);
+        v = p(v, t, r, w, u[15], 10, -30611744);
+        w = p(w, v, t, r, u[6], 15, -1560198380);
+        r = p(r, w, v, t, u[13], 21, 1309151649);
+        t = p(t, r, w, v, u[4], 6, -145523070);
+        v = p(v, t, r, w, u[11], 10, -1120210379);
+        w = p(w, v, t, r, u[2], 15, 718787259);
+        r = p(r, w, v, t, u[9], 21, -343485551);
+        s[0] = e(t, s[0]);
+        s[1] = e(r, s[1]);
+        s[2] = e(w, s[2]);
+        s[3] = e(v, s[3]);
+    }, q = function(t) {
+        var u = [], r;
+        for (r = 0; r < 64; r += 4) {
+            u[r >> 2] = t.charCodeAt(r) + (t.charCodeAt(r + 1) << 8) + (t.charCodeAt(r + 2) << 16) + (t.charCodeAt(r + 3) << 24);
+        }
+        return u;
+    }, m = function(r) {
+        var t = [], s;
+        for (s = 0; s < 64; s += 4) {
+            t[s >> 2] = r[s] + (r[s + 1] << 8) + (r[s + 2] << 16) + (r[s + 3] << 24);
+        }
+        return t;
+    }, l = function(A) {
+        var u = A.length, r = [ 1732584193, -271733879, -1732584194, 271733878 ], w, t, z, x, y, v;
+        for (w = 64; w <= u; w += 64) {
+            d(r, q(A.substring(w - 64, w)));
+        }
+        A = A.substring(w - 64);
+        t = A.length;
+        z = [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ];
+        for (w = 0; w < t; w += 1) {
+            z[w >> 2] |= A.charCodeAt(w) << (w % 4 << 3);
+        }
+        z[w >> 2] |= 128 << (w % 4 << 3);
+        if (w > 55) {
+            d(r, z);
+            for (w = 0; w < 16; w += 1) {
+                z[w] = 0;
+            }
+        }
+        x = u * 8;
+        x = x.toString(16).match(/(.*?)(.{0,8})$/);
+        y = parseInt(x[2], 16);
+        v = parseInt(x[1], 16) || 0;
+        z[14] = y;
+        z[15] = v;
+        d(r, z);
+        return r;
+    }, o = function(z) {
+        var t = z.length, r = [ 1732584193, -271733879, -1732584194, 271733878 ], v, s, y, w, x, u;
+        for (v = 64; v <= t; v += 64) {
+            d(r, m(z.subarray(v - 64, v)));
+        }
+        z = v - 64 < t ? z.subarray(v - 64) : new Uint8Array(0);
+        s = z.length;
+        y = [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ];
+        for (v = 0; v < s; v += 1) {
+            y[v >> 2] |= z[v] << (v % 4 << 3);
+        }
+        y[v >> 2] |= 128 << (v % 4 << 3);
+        if (v > 55) {
+            d(r, y);
+            for (v = 0; v < 16; v += 1) {
+                y[v] = 0;
+            }
+        }
+        w = t * 8;
+        w = w.toString(16).match(/(.*?)(.{0,8})$/);
+        x = parseInt(w[2], 16);
+        u = parseInt(w[1], 16) || 0;
+        y[14] = x;
+        y[15] = u;
+        d(r, y);
+        return r;
+    }, j = [ "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f" ], h = function(u) {
+        var t = "", r;
+        for (r = 0; r < 4; r += 1) {
+            t += j[u >> r * 8 + 4 & 15] + j[u >> r * 8 & 15];
+        }
+        return t;
+    }, b = function(r) {
+        var s;
+        for (s = 0; s < r.length; s += 1) {
+            r[s] = h(r[s]);
+        }
+        return r.join("");
+    }, i = function(r) {
+        return b(l(r));
+    }, g = function() {
         this.reset();
     };
-    p.hash = function(f, d) {
-        /[\u0080-\uFFFF]/.test(f) && (f = unescape(encodeURIComponent(f)));
-        var b = o(f);
-        return d ? b : m(b);
+    if (i("hello") !== "5d41402abc4b2a76b9719d911017c592") {
+        e = function(r, u) {
+            var t = (r & 65535) + (u & 65535), s = (r >> 16) + (u >> 16) + (t >> 16);
+            return s << 16 | t & 65535;
+        };
+    }
+    g.prototype.append = function(r) {
+        if (/[\u0080-\uFFFF]/.test(r)) {
+            r = unescape(encodeURIComponent(r));
+        }
+        this.appendBinary(r);
+        return this;
     };
-    p.hashBinary = function(f, d) {
-        var b = o(f);
-        return d ? b : m(b);
+    g.prototype.appendBinary = function(t) {
+        this._buff += t;
+        this._length += t.length;
+        var s = this._buff.length, r;
+        for (r = 64; r <= s; r += 64) {
+            d(this._state, q(this._buff.substring(r - 64, r)));
+        }
+        this._buff = this._buff.substr(r - 64);
+        return this;
     };
-    return p;
-}();
+    g.prototype.end = function(t) {
+        var w = this._buff, v = w.length, u, s = [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ], r;
+        for (u = 0; u < v; u += 1) {
+            s[u >> 2] |= w.charCodeAt(u) << (u % 4 << 3);
+        }
+        this._finish(s, v);
+        r = !!t ? this._state : b(this._state);
+        this.reset();
+        return r;
+    };
+    g.prototype._finish = function(s, w) {
+        var u = w, t, v, r;
+        s[u >> 2] |= 128 << (u % 4 << 3);
+        if (u > 55) {
+            d(this._state, s);
+            for (u = 0; u < 16; u += 1) {
+                s[u] = 0;
+            }
+        }
+        t = this._length * 8;
+        t = t.toString(16).match(/(.*?)(.{0,8})$/);
+        v = parseInt(t[2], 16);
+        r = parseInt(t[1], 16) || 0;
+        s[14] = v;
+        s[15] = r;
+        d(this._state, s);
+    };
+    g.prototype.reset = function() {
+        this._buff = "";
+        this._length = 0;
+        this._state = [ 1732584193, -271733879, -1732584194, 271733878 ];
+        return this;
+    };
+    g.prototype.destroy = function() {
+        delete this._state;
+        delete this._buff;
+        delete this._length;
+    };
+    g.hash = function(t, r) {
+        if (/[\u0080-\uFFFF]/.test(t)) {
+            t = unescape(encodeURIComponent(t));
+        }
+        var s = l(t);
+        return !!r ? s : b(s);
+    };
+    g.hashBinary = function(s, r) {
+        var t = l(s);
+        return !!r ? t : b(t);
+    };
+    g.ArrayBuffer = function() {
+        this.reset();
+    };
+    g.ArrayBuffer.prototype.append = function(r) {
+        var u = this._concatArrayBuffer(this._buff, r), t = u.length, s;
+        this._length += r.byteLength;
+        for (s = 64; s <= t; s += 64) {
+            d(this._state, m(u.subarray(s - 64, s)));
+        }
+        this._buff = s - 64 < t ? u.subarray(s - 64) : new Uint8Array(0);
+        return this;
+    };
+    g.ArrayBuffer.prototype.end = function(t) {
+        var w = this._buff, v = w.length, s = [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ], u, r;
+        for (u = 0; u < v; u += 1) {
+            s[u >> 2] |= w[u] << (u % 4 << 3);
+        }
+        this._finish(s, v);
+        r = !!t ? this._state : b(this._state);
+        this.reset();
+        return r;
+    };
+    g.ArrayBuffer.prototype._finish = g.prototype._finish;
+    g.ArrayBuffer.prototype.reset = function() {
+        this._buff = new Uint8Array(0);
+        this._length = 0;
+        this._state = [ 1732584193, -271733879, -1732584194, 271733878 ];
+        return this;
+    };
+    g.ArrayBuffer.prototype.destroy = g.prototype.destroy;
+    g.ArrayBuffer.prototype._concatArrayBuffer = function(u, s) {
+        var t = u.length, r = new Uint8Array(t + s.byteLength);
+        r.set(u);
+        r.set(new Uint8Array(s), t);
+        return r;
+    };
+    g.ArrayBuffer.hash = function(r, s) {
+        var t = o(new Uint8Array(r));
+        return !!s ? t : b(t);
+    };
+    return g;
+});
 
 "use strict";
 
@@ -4352,7 +4536,7 @@ Zotero.Item.prototype.removeFromCollection = function(collectionKey) {
     return;
 };
 
-Zotero.Item.prototype.uploadChildAttachment = function(childItem, fileInfo, fileblob, progressCallback) {
+Zotero.Item.prototype.uploadChildAttachment = function(childItem, fileInfo, progressCallback) {
     var item = this;
     if (!item.owningLibrary) {
         return Promise.reject(new Error("Item must be associated with a library"));
@@ -4361,7 +4545,7 @@ Zotero.Item.prototype.uploadChildAttachment = function(childItem, fileInfo, file
     childItem.associateWithLibrary(item.owningLibrary);
     return childItem.writeItem().then(function(response) {
         item.numChildren++;
-        return childItem.uploadFile(fileInfo, fileblob, progressCallback);
+        return childItem.uploadFile(fileInfo, progressCallback);
     }, function(response) {
         return {
             message: "Failure during attachmentItem write.",
@@ -4371,7 +4555,7 @@ Zotero.Item.prototype.uploadChildAttachment = function(childItem, fileInfo, file
     });
 };
 
-Zotero.Item.prototype.uploadFile = function(fileInfo, fileblob, progressCallback) {
+Zotero.Item.prototype.uploadFile = function(fileInfo, progressCallback) {
     var item = this;
     var uploadAuthFileData = {
         md5: fileInfo.md5,
@@ -4397,48 +4581,22 @@ Zotero.Item.prototype.uploadFile = function(fileInfo, fileblob, progressCallback
                 message: "File Exists"
             };
         } else {
-            return new Promise(function(resolve, reject) {
-                var fullUpload = Zotero.file.uploadFile(upAuthOb, fileblob);
-                fullUpload.onreadystatechange = J.proxy(function(e) {
-                    Z.debug("fullupload readyState: " + fullUpload.readyState, 3);
-                    Z.debug("fullupload status: " + fullUpload.status, 3);
-                    if (fullUpload.readyState == 4) {
-                        if (fullUpload.status == 201 || Zotero.config.CORSallowed === false) {
-                            item.registerUpload(upAuthOb.uploadKey).then(function(response) {
-                                resolve({
-                                    message: "Upload Successful"
-                                });
-                            }, function(response) {
-                                var failure = {
-                                    message: "Failed registering upload."
-                                };
-                                if (response.jqxhr.status == 412) {
-                                    failure.code = 412;
-                                    failure.serverMessage = response.jqxhr.responseText;
-                                }
-                                reject(failure);
-                            });
-                        } else {
-                            reject({
-                                message: "Failure uploading file.",
-                                code: jqxhr.status,
-                                serverMessage: jqxhr.responseText
-                            });
-                        }
-                    }
-                }, this);
-                fullUpload.upload.onprogress = function(e) {
-                    if (typeof progressCallback == "function") {
-                        progressCallback(e);
-                    }
-                };
+            return Zotero.file.uploadFile(upAuthOb, fileInfo).then(function() {
+                return item.registerUpload(upAuthOb.uploadKey).then(function(response) {
+                    return {
+                        message: "Upload Successful"
+                    };
+                });
             });
         }
-    }, function(response) {
-        return {
-            message: "Failure during upload authorization.",
+    }).catch(function(response) {
+        Z.debug("Failure caught during upload", 3);
+        Z.debug(response, 3);
+        throw {
+            message: "Failure during upload.",
             code: response.jqxhr.status,
-            serverMessage: response.jqxhr.responseText
+            serverMessage: response.jqxhr.responseText,
+            response: response
         };
     });
 };
@@ -4691,6 +4849,8 @@ Zotero.Item.prototype.creatorMap = {
 };
 
 Zotero.Item.prototype.hideFields = [ "mimeType", "linkMode", "charset", "md5", "mtime", "itemVersion", "itemKey", "collections", "relations", "parentItem", "contentType", "filename", "tags" ];
+
+Zotero.Item.prototype.noEditFields = [ "accessDate", "modified", "filename" ];
 
 Zotero.localizations.creatorMap = Zotero.Item.prototype.creatorMap;
 
@@ -5556,42 +5716,63 @@ Zotero.url.relationUrl = function(libraryType, libraryID, itemKey) {
 
 Zotero.file = {};
 
-Zotero.file.getFileInfo = function(file, callback) {
+Zotero.file.getFileInfo = function(file) {
     if (typeof FileReader != "function") {
-        throw new Error("FileReader not supported");
+        return Promise.reject(new Error("FileReader not supported"));
     }
-    var fileInfo = {};
-    var reader = new FileReader;
-    reader.onload = function(e) {
-        Z.debug("Zotero.file.getFileInfo onloadFunc");
-        var result = e.target.result;
-        Zotero.debug(result);
-        var spark = new SparkMD5;
-        spark.appendBinary(result);
-        fileInfo.md5 = spark.end();
-        Z.debug("md5:" + fileInfo.md5, 4);
-        fileInfo.filename = file.name;
-        fileInfo.filesize = file.size;
-        fileInfo.mtime = Date.now();
-        fileInfo.contentType = file.type;
-        fileInfo.reader = reader;
-        callback(fileInfo);
-    };
-    reader.readAsBinaryString(file);
+    return new Promise(function(resolve, reject) {
+        var fileInfo = {};
+        var reader = new FileReader;
+        reader.onload = function(e) {
+            Z.debug("Zotero.file.getFileInfo onloadFunc", 3);
+            var result = e.target.result;
+            Zotero.debug(result, 3);
+            fileInfo.md5 = SparkMD5.ArrayBuffer.hash(result);
+            fileInfo.filename = file.name;
+            fileInfo.filesize = file.size;
+            fileInfo.mtime = Date.now();
+            fileInfo.contentType = file.type;
+            fileInfo.filedata = result;
+            resolve(fileInfo);
+        };
+        reader.readAsArrayBuffer(file);
+    });
 };
 
-Zotero.file.uploadFile = function(uploadInfo, file) {
+Zotero.file.uploadFile = function(uploadInfo, fileInfo) {
     Z.debug("Zotero.file.uploadFile", 3);
     Z.debug(uploadInfo, 4);
     var formData = new FormData;
     J.each(uploadInfo.params, function(index, val) {
         formData.append(index, val);
     });
-    formData.append("file", file);
+    var blobData = new Blob([ fileInfo.filedata ], {
+        type: fileInfo.contentType
+    });
+    formData.append("file", blobData);
     var xhr = new XMLHttpRequest;
     xhr.open("POST", uploadInfo.url, true);
-    xhr.send(formData);
-    return xhr;
+    return new Promise(function(resolve, reject) {
+        xhr.onload = function(evt) {
+            Z.debug("uploadFile onload event", 3);
+            if (this.status == 201) {
+                Z.debug("successful upload - 201", 3);
+                resolve();
+            } else {
+                Z.debug("uploadFile failed - " + xhr.status, 3);
+                reject({
+                    message: "Failure uploading file.",
+                    code: xhr.status,
+                    serverMessage: xhr.responseText
+                });
+            }
+        };
+        xhr.onprogress = function(evt) {
+            Z.debug("progress event");
+            Z.debug(evt);
+        };
+        xhr.send(formData);
+    });
 };
 
 Zotero.Idb = {};
@@ -6079,7 +6260,7 @@ Zotero.Idb.Library.prototype.getAllTags = function() {
     });
 };
 
-Zotero.Idb.Library.prototype.setFile = function(itemKey, file) {
+Zotero.Idb.Library.prototype.setFile = function(itemKey, fileData) {
     Z.debug("Zotero.Idb.Library.setFile", 3);
     var idbLibrary = this;
     return new Promise(function(resolve, reject) {
@@ -6094,9 +6275,9 @@ Zotero.Idb.Library.prototype.setFile = function(itemKey, file) {
         };
         var fileStore = transaction.objectStore("files");
         var reqSuccess = function(event) {
-            Zotero.debug("Set File" + event.target.result, 4);
+            Zotero.debug("Set File" + event.target.result, 3);
         };
-        var request = fileStore.put(file, key);
+        var request = fileStore.put(fileData, itemKey);
         request.onsuccess = reqSuccess;
     });
 };
@@ -6105,10 +6286,11 @@ Zotero.Idb.Library.prototype.getFile = function(itemKey) {
     Z.debug("Zotero.Idb.Library.getFile", 3);
     var idbLibrary = this;
     return new Promise(function(resolve, reject) {
-        var success = J.proxy(function(event) {
+        var success = function(event) {
+            Z.debug("done getting file");
             resolve(event.target.result);
-        }, this);
-        idbLibrary.db.transaction("items").objectStore([ "files" ], "readonly").get(itemKey).onsuccess = success;
+        };
+        idbLibrary.db.transaction([ "files" ], "readonly").objectStore("files").get(itemKey).onsuccess = success;
     });
 };
 
@@ -6983,6 +7165,9 @@ Zotero.defaultPrefs = {
 
 Zotero.init = function() {
     Z.debug("Zotero init", 3);
+    if (window.zoteroConfig) {
+        Zotero.config = J.extend({}, Zotero.config, window.zoteroConfig);
+    }
     if (Zotero.pages) {
         Zotero.pages.base.init();
     }
@@ -7088,6 +7273,9 @@ Zotero.State.prototype.getSelectedItemKeys = function() {
     J.each(uniqueKeys, function(key, val) {
         returnKeys.push(key);
     });
+    if (returnKeys.length == 0 && state.getUrlVar("itemKey")) {
+        returnKeys.push(state.getUrlVar("itemKey"));
+    }
     return returnKeys;
 };
 
@@ -7887,6 +8075,11 @@ Zotero.ui.init.libraryTemplates = function() {
                 return true;
             }
             return false;
+        },
+        nonEditable: function(field, item) {
+            if (J.inArray(field, item.noEditFields) !== -1) {
+                return true;
+            }
         }
     });
     J.views.tags({
@@ -8947,7 +9140,7 @@ Zotero.ui.callbacks.createItem = function(e) {
     return false;
 };
 
-Zotero.ui.callbacks.moveToTrash = function(evt) {
+Zotero.ui.widgets.controlPanel.moveToTrash = function(evt) {
     evt.preventDefault();
     Z.debug("move-to-trash clicked", 3);
     var itemKeys = Zotero.state.getSelectedItemKeys();
@@ -9354,9 +9547,11 @@ Zotero.ui.widgets.item.showChildren = function(e) {
     var attachmentsDiv = J(widgetEl).find(".item-attachments-div");
     Zotero.ui.showSpinner(attachmentsDiv);
     return item.getChildren(library).then(function(childItems) {
-        J(".item-attachments-div").html(J("#childitemsTemplate").render({
+        var container = widgetEl.find(".item-attachments-div");
+        container.html(J("#childitemsTemplate").render({
             childItems: childItems
         }));
+        Zotero.state.bindItemLinks(container);
     });
 };
 
@@ -9466,24 +9661,11 @@ Zotero.ui.widgets.item.editItemForm = function(el, item) {
             Zotero.ui.widgets.item.addTag(el, false);
         }
         Zotero.ui.init.rte("default");
-    } else if (item.itemType == "attachment") {
-        Z.debug("item is attachment", 4);
-        var mode = Zotero.state.getUrlVar("mode");
-        jel.append(J("#attachmentformTemplate").render({
-            item: item,
-            library: library,
-            itemKey: item.itemKey,
-            creatorTypes: [],
-            mode: mode
-        }));
-        if (item.apiObj.tags.length === 0) {
-            Zotero.ui.widgets.item.addTag(el, false);
-        }
-        Zotero.ui.init.rte();
     } else {
+        Z.debug("itemType: " + item.apiObj.itemType, 3);
         item.getCreatorTypes(item.apiObj.itemType).then(function() {
             Z.debug("getCreatorTypes done", 3);
-            if (item.creators.length === 0) {
+            if (item.creators && item.creators.length === 0) {
                 item.creators.push({
                     creatorType: item.creatorTypes[item.itemType][0],
                     first: "",
@@ -9495,14 +9677,13 @@ Zotero.ui.widgets.item.editItemForm = function(el, item) {
                 item: item,
                 library: library,
                 itemKey: item.itemKey,
-                creatorTypes: Zotero.Item.prototype.creatorTypes[item.apiObj.itemType],
-                saveable: true,
-                citable: false
+                creatorTypes: Zotero.Item.prototype.creatorTypes[item.apiObj.itemType]
             }));
             if (item.apiObj.tags.length === 0) {
                 Zotero.ui.widgets.item.addTag(el, false);
             }
             Zotero.eventful.initTriggers(jel);
+            Zotero.ui.init.rte();
         });
     }
     var typeaheadSource = library.tags.plainList;
@@ -10377,11 +10558,17 @@ Zotero.ui.widgets.uploadDialog = {};
 
 Zotero.ui.widgets.uploadDialog.init = function(el) {
     Z.debug("uploaddialog widget init", 3);
+    var widgetEl = J(el);
     var library = Zotero.ui.getAssociatedLibrary(el);
     library.listen("uploadAttachment", Zotero.ui.widgets.uploadDialog.show, {
         widgetEl: el,
         library: library
     });
+    library.listen("upload", Zotero.ui.widgets.uploadDialog.upload, {
+        widgetEl: el,
+        library: library
+    });
+    widgetEl.on("click", ".uploadButton", library.trigger("upload"));
 };
 
 Zotero.ui.widgets.uploadDialog.show = function(e) {
@@ -10391,72 +10578,6 @@ Zotero.ui.widgets.uploadDialog.show = function(e) {
     var widgetEl = J(e.data["widgetEl"]).empty();
     widgetEl.html(J("#attachmentuploadTemplate").render({}));
     var dialogEl = widgetEl.find(".upload-attachment-dialog");
-    var uploadFunction = function() {
-        Z.debug("uploadFunction", 3);
-        var fileInfo = dialogEl.find("#attachmentuploadfileinfo").data("fileInfo");
-        var file = dialogEl.find("#attachmentuploadfileinfo").data("file");
-        var specifiedTitle = dialogEl.find("#upload-file-title-input").val();
-        var progressCallback = function(e) {
-            Z.debug("fullUpload.upload.onprogress", 3);
-            var percentLoaded = Math.round(e.loaded / e.total * 100);
-            Z.debug("Upload progress event:" + e.loaded + " / " + e.total + " : " + percentLoaded + "%", 3);
-            J("#uploadprogressmeter").val(percentLoaded);
-        };
-        var uploadSuccess = function() {
-            Z.debug("uploadSuccess", 3);
-            Zotero.ui.closeDialog(J("#upload-attachment-dialog"));
-            library.trigger("uploadSuccessful");
-            Zotero.state.pushState(true);
-        };
-        var uploadFailure = function(failure) {
-            Z.debug("Upload failed", 3);
-            Z.debug(failure, 3);
-            Zotero.ui.jsNotificationMessage("There was a problem uploading your file.", "error");
-            switch (failure.code) {
-              case 400:
-                Zotero.ui.jsNotificationMessage("Bad Input. 400", "error");
-                break;
-              case 403:
-                Zotero.ui.jsNotificationMessage("You do not have permission to edit files", "error");
-                break;
-              case 409:
-                Zotero.ui.jsNotificationMessage("The library is currently locked. Please try again in a few minutes.", "error");
-                break;
-              case 412:
-                Zotero.ui.jsNotificationMessage("File conflict. Remote file has changed", "error");
-                break;
-              case 413:
-                Zotero.ui.jsNotificationMessage("Requested upload would exceed storage quota.", "error");
-                break;
-              case 428:
-                Zotero.ui.jsNotificationMessage("Precondition required error", "error");
-                break;
-              case 429:
-                Zotero.ui.jsNotificationMessage("Too many uploads pending. Please try again in a few minutes", "error");
-                break;
-              default:
-                Zotero.ui.jsNotificationMessage("Unknown error uploading file. " + failure.code, "error");
-            }
-            Zotero.ui.closeDialog(J("#upload-attachment-dialog"));
-        };
-        Zotero.ui.showSpinner(J("#fileuploadspinner"));
-        var itemKey = Zotero.state.getUrlVar("itemKey");
-        var item = library.items.getItem(itemKey);
-        if (!item.get("parentItem")) {
-            Z.debug("no parentItem", 3);
-            var childItem = new Zotero.Item;
-            childItem.associateWithLibrary(library);
-            childItem.initEmpty("attachment", "imported_file").then(function(childItem) {
-                Z.debug("templateItemDeferred callback", 3);
-                childItem.set("title", specifiedTitle);
-                item.uploadChildAttachment(childItem, fileInfo, file, progressCallback).then(uploadSuccess, uploadFailure);
-            });
-        } else if (item.get("itemType") == "attachment" && item.get("linkMode") == "imported_file") {
-            Z.debug("imported_file attachment", 3);
-            item.uploadFile(fileInfo, file, progressCallback).then(uploadSuccess, uploadFailure);
-        }
-    };
-    dialogEl.find(".uploadButton").on("click", uploadFunction);
     Zotero.ui.dialog(dialogEl, {});
     var handleFiles = function(files) {
         Z.debug("attachmentUpload handleFiles", 3);
@@ -10464,13 +10585,12 @@ Zotero.ui.widgets.uploadDialog.show = function(e) {
             return false;
         }
         var file = files[0];
-        J("#attachmentuploadfileinfo").data("file", file);
-        var fileinfo = Zotero.file.getFileInfo(file, function(fileInfo) {
-            J("#attachmentuploadfileinfo").data("fileInfo", fileInfo);
-            J("#upload-file-title-input").val(fileInfo.filename);
-            J("#attachmentuploadfileinfo .uploadfilesize").html(fileInfo.filesize);
-            J("#attachmentuploadfileinfo .uploadfiletype").html(fileInfo.contentType);
-            J("#droppedfilename").html(fileInfo.filename);
+        Zotero.file.getFileInfo(file).then(function(fileInfo) {
+            widgetEl.find(".attachmentuploadfileinfo").data("fileInfo", fileInfo);
+            widgetEl.find("input.upload-file-title-input").val(fileInfo.filename);
+            widgetEl.find("td.uploadfilesize").html(fileInfo.filesize);
+            widgetEl.find("td.uploadfiletype").html(fileInfo.contentType);
+            widgetEl.find(".droppedfilename").html(fileInfo.filename);
         });
         return;
     };
@@ -10482,7 +10602,7 @@ Zotero.ui.widgets.uploadDialog.show = function(e) {
         Z.debug("fileuploaddroptarget drop callback", 3);
         je.stopPropagation();
         je.preventDefault();
-        J("#fileuploadinput").val("");
+        widgetEl.find(".fileuploadinput").val("");
         var e = je.originalEvent;
         var dt = e.dataTransfer;
         var files = dt.files;
@@ -10495,7 +10615,76 @@ Zotero.ui.widgets.uploadDialog.show = function(e) {
         var files = J(this).get(0).files;
         handleFiles(files);
     });
-    return false;
+    Zotero.eventful.initTriggers(widgetEl);
+};
+
+Zotero.ui.widgets.uploadDialog.upload = function(evt) {
+    Z.debug("uploadFunction", 3);
+    var widgetEl = J(evt.data["widgetEl"]);
+    var library = evt.data["library"];
+    var dialogEl = widgetEl.find("div.upload-attachment-dialog");
+    var fileInfo = dialogEl.find("#attachmentuploadfileinfo").data("fileInfo");
+    var specifiedTitle = dialogEl.find("#upload-file-title-input").val();
+    var progressCallback = function(e) {
+        Z.debug("fullUpload.upload.onprogress", 3);
+        var percentLoaded = Math.round(e.loaded / e.total * 100);
+        Z.debug("Upload progress event:" + e.loaded + " / " + e.total + " : " + percentLoaded + "%", 3);
+        widgetEl.find("#uploadprogressmeter").val(percentLoaded);
+    };
+    Zotero.ui.showSpinner(widgetEl.find(".fileuploadspinner"));
+    var itemKey = Zotero.state.getUrlVar("itemKey");
+    var item = library.items.getItem(itemKey);
+    var uploadPromise;
+    if (!item.get("parentItem")) {
+        Z.debug("no parentItem", 3);
+        var childItem = new Zotero.Item;
+        childItem.associateWithLibrary(library);
+        uploadPromise = childItem.initEmpty("attachment", "imported_file").then(function(childItem) {
+            Z.debug("templateItemDeferred callback", 3);
+            childItem.set("title", specifiedTitle);
+            return item.uploadChildAttachment(childItem, fileInfo, progressCallback);
+        });
+    } else if (item.get("itemType") == "attachment" && item.get("linkMode") == "imported_file") {
+        Z.debug("imported_file attachment", 3);
+        uploadPromise = item.uploadFile(fileInfo, progressCallback);
+    }
+    uploadPromise.then(function() {
+        Z.debug("uploadSuccess", 3);
+        library.trigger("uploadSuccessful");
+    }).catch(Zotero.ui.widgets.uploadDialog.failureHandler).then(function() {
+        Zotero.ui.closeDialog(dialogEl);
+    });
+};
+
+Zotero.ui.widgets.uploadDialog.failureHandler = function(failure) {
+    Z.debug("Upload failed", 3);
+    Z.debug(failure, 3);
+    Zotero.ui.jsNotificationMessage("There was a problem uploading your file.", "error");
+    switch (failure.code) {
+      case 400:
+        Zotero.ui.jsNotificationMessage("Bad Input. 400", "error");
+        break;
+      case 403:
+        Zotero.ui.jsNotificationMessage("You do not have permission to edit files", "error");
+        break;
+      case 409:
+        Zotero.ui.jsNotificationMessage("The library is currently locked. Please try again in a few minutes.", "error");
+        break;
+      case 412:
+        Zotero.ui.jsNotificationMessage("File conflict. Remote file has changed", "error");
+        break;
+      case 413:
+        Zotero.ui.jsNotificationMessage("Requested upload would exceed storage quota.", "error");
+        break;
+      case 428:
+        Zotero.ui.jsNotificationMessage("Precondition required error", "error");
+        break;
+      case 429:
+        Zotero.ui.jsNotificationMessage("Too many uploads pending. Please try again in a few minutes", "error");
+        break;
+      default:
+        Zotero.ui.jsNotificationMessage("Unknown error uploading file. " + failure.code, "error");
+    }
 };
 
 Zotero.ui.widgets.libraryPreloader = {};
@@ -10901,6 +11090,103 @@ Zotero.ui.widgets.chooseSortingDialog.show = function(evt) {
     };
     dialogEl.find(".saveSortButton").on("click", saveFunction);
     Zotero.ui.dialog(dialogEl, {});
+};
+
+Zotero.ui.widgets.imagePreview = {};
+
+Zotero.ui.widgets.imagePreview.init = function(el) {
+    var library = Zotero.ui.getAssociatedLibrary(el);
+    library.listen("previewImage", Zotero.ui.widgets.imagePreview.show, {
+        widgetEl: el
+    });
+};
+
+Zotero.ui.widgets.imagePreview.show = function(evt) {};
+
+Zotero.ui.widgets.imageGrabber = {};
+
+Zotero.ui.widgets.imageGrabber.init = function(el) {
+    Z.debug("imageGrabber.init", 3);
+    var library = Zotero.ui.getAssociatedLibrary(el);
+    library.listen("grabImage", Zotero.ui.widgets.imageGrabber.grab, {
+        widgetEl: el
+    });
+    library.listen("previewImage", Zotero.ui.widgets.imageGrabber.previewImage, {
+        widgetEl: el
+    });
+    library.listen("previewStoredImage", Zotero.ui.widgets.imageGrabber.previewStoredImage, {
+        widgetEl: el
+    });
+    var displayAsImage = function(file) {
+        var imgURL = URL.createObjectURL(file);
+        J("#preview-image").attr("src", imgURL);
+    };
+    var inputEl = J("#capture").on("change", function() {
+        Z.debug("capture element changed. displaying image in preview");
+        library.trigger("previewImage");
+    });
+};
+
+Zotero.ui.widgets.imageGrabber.getFile = function(container) {
+    return container.find("#capture").get(0).files[0];
+};
+
+Zotero.ui.widgets.imageGrabber.previewImage = function(evt) {
+    Z.debug("imageGrabber.previewImage", 3);
+    var widgetEl = J(evt.data["widgetEl"]);
+    var file = Zotero.ui.widgets.imageGrabber.getFile(widgetEl);
+    var imgUrl = URL.createObjectURL(file);
+    widgetEl.find("#preview-image").attr("src", imgUrl);
+};
+
+Zotero.ui.widgets.imageGrabber.grab = function(evt) {
+    Z.debug("imageGrabber.grab", 3);
+    var widgetEl = J(evt.data["widgetEl"]);
+    var library = Zotero.ui.getAssociatedLibrary(widgetEl);
+    var file;
+    var fileInfo;
+    var childItem = new Zotero.Item;
+    childItem.associateWithLibrary(library);
+    childItem.initEmpty("attachment", "imported_file").then(function(childItem) {
+        Z.debug("templateItem callback", 3);
+        var title = widgetEl.find("#image-grabber-title").val();
+        if (!title) title = "Untitled";
+        childItem.set("title", title);
+        childItem.set("itemKey", Zotero.utils.getKey());
+        library.items.addItem(childItem);
+        return library.idbLibrary.addItems([ childItem ]);
+    }).then(function() {
+        Z.debug("added item to idb", 3);
+        file = Zotero.ui.widgets.imageGrabber.getFile(widgetEl);
+        return Zotero.file.getFileInfo(file);
+    }).then(function(fInfo) {
+        Z.debug("got fileInfo", 3);
+        fileInfo = fInfo;
+        var fileData = fileInfo;
+        return library.idbLibrary.setFile(childItem.get("itemKey"), fileData);
+    }).then(function() {
+        Z.debug("file saved to idb", 3);
+    });
+};
+
+Zotero.ui.widgets.imageGrabber.previewStoredImage = function(evt) {
+    Z.debug("imageGrabber.previewImage", 3);
+    var widgetEl = J(evt.data["widgetEl"]);
+    var library = Zotero.ui.getAssociatedLibrary(widgetEl);
+    var itemKey = evt.itemKey;
+    Z.debug("itemKey: " + itemKey);
+    var previewItem = library.items.getItem(itemKey);
+    var previewItemFile = library.idbLibrary.getFile(itemKey).then(function(fileData) {
+        Z.debug("got Image");
+        Z.debug(fileData);
+        var b = new Blob([ fileData.filedata ], {
+            type: fileData.contentType
+        });
+        var imgUrl = URL.createObjectURL(b);
+        Z.debug(imgUrl);
+        widgetEl.find("#preview-image").attr("src", imgUrl);
+        window.fileData = fileData;
+    });
 };
 
 Zotero.url.requestReadApiKeyUrl = function(libraryType, libraryID, redirect) {

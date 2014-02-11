@@ -7,15 +7,8 @@
  * http://benalman.com/about/license/
  */
 (function($,r){var h,n=Array.prototype.slice,t=decodeURIComponent,a=$.param,j,c,m,y,b=$.bbq=$.bbq||{},s,x,k,e=$.event.special,d="hashchange",B="querystring",F="fragment",z="elemUrlAttr",l="href",w="src",p=/^.*\?|#.*$/g,u,H,g,i,C,E={};function G(I){return typeof I==="string"}function D(J){var I=n.call(arguments,1);return function(){return J.apply(this,I.concat(n.call(arguments)))}}function o(I){return I.replace(H,"$2")}function q(I){return I.replace(/(?:^[^?#]*\?([^#]*).*$)?.*/,"$1")}function f(K,P,I,L,J){var R,O,N,Q,M;if(L!==h){N=I.match(K?H:/^([^#?]*)\??([^#]*)(#?.*)/);M=N[3]||"";if(J===2&&G(L)){O=L.replace(K?u:p,"")}else{Q=m(N[2]);L=G(L)?m[K?F:B](L):L;O=J===2?L:J===1?$.extend({},L,Q):$.extend({},Q,L);O=j(O);if(K){O=O.replace(g,t)}}R=N[1]+(K?C:O||!N[1]?"?":"")+O+M}else{R=P(I!==h?I:location.href)}return R}a[B]=D(f,0,q);a[F]=c=D(f,1,o);a.sorted=j=function(J,K){var I=[],L={};$.each(a(J,K).split("&"),function(P,M){var O=M.replace(/(?:%5B|=).*$/,""),N=L[O];if(!N){N=L[O]=[];I.push(O)}N.push(M)});return $.map(I.sort(),function(M){return L[M]}).join("&")};c.noEscape=function(J){J=J||"";var I=$.map(J.split(""),encodeURIComponent);g=new RegExp(I.join("|"),"g")};c.noEscape(",/");c.ajaxCrawlable=function(I){if(I!==h){if(I){u=/^.*(?:#!|#)/;H=/^([^#]*)(?:#!|#)?(.*)$/;C="#!"}else{u=/^.*#/;H=/^([^#]*)#?(.*)$/;C="#"}i=!!I}return i};c.ajaxCrawlable(0);$.deparam=m=function(L,I){var K={},J={"true":!0,"false":!1,"null":null};$.each(L.replace(/\+/g," ").split("&"),function(O,T){var N=T.split("="),S=t(N[0]),M,R=K,P=0,U=S.split("]["),Q=U.length-1;if(/\[/.test(U[0])&&/\]$/.test(U[Q])){U[Q]=U[Q].replace(/\]$/,"");U=U.shift().split("[").concat(U);Q=U.length-1}else{Q=0}if(N.length===2){M=t(N[1]);if(I){M=M&&!isNaN(M)?+M:M==="undefined"?h:J[M]!==h?J[M]:M}if(Q){for(;P<=Q;P++){S=U[P]===""?R.length:U[P];R=R[S]=P<Q?R[S]||(U[P+1]&&isNaN(U[P+1])?{}:[]):M}}else{if($.isArray(K[S])){K[S].push(M)}else{if(K[S]!==h){K[S]=[K[S],M]}else{K[S]=M}}}}else{if(S){K[S]=I?h:""}}});return K};function A(K,I,J){if(I===h||typeof I==="boolean"){J=I;I=a[K?F:B]()}else{I=G(I)?I.replace(K?u:p,""):I}return m(I,J)}m[B]=D(A,0);m[F]=y=D(A,1);$[z]||($[z]=function(I){return $.extend(E,I)})({a:l,base:l,iframe:w,img:w,input:w,form:"action",link:l,script:w});k=$[z];function v(L,J,K,I){if(!G(K)&&typeof K!=="object"){I=K;K=J;J=h}return this.each(function(){var O=$(this),M=J||k()[(this.nodeName||"").toLowerCase()]||"",N=M&&O.attr(M)||"";O.attr(M,a[L](N,K,I))})}$.fn[B]=D(v,B);$.fn[F]=D(v,F);b.pushState=s=function(L,I){if(G(L)&&/^#/.test(L)&&I===h){I=2}var K=L!==h,J=c(location.href,K?L:{},K?I:2);location.href=J};b.getState=x=function(I,J){return I===h||typeof I==="boolean"?y(I):y(J)[I]};b.removeState=function(I){var J={};if(I!==h){J=x();$.each($.isArray(I)?I:arguments,function(L,K){delete J[K]})}s(J,2)};e[d]=$.extend(e[d],{add:function(I){var K;function J(M){var L=M[F]=c();M.getState=function(N,O){return N===h||typeof N==="boolean"?m(L,N):m(L,O)[N]};K.apply(this,arguments)}if($.isFunction(I)){K=I;return J}else{K=I.handler;I.handler=J}}})})(jQuery,this);
-!function(){var a,b,c,d;!function(){var e={},f={};a=function(a,b,c){e[a]={deps:b,callback:c}},d=c=b=function(a){function c(b){if("."!==b.charAt(0))return b;for(var c=b.split("/"),d=a.split("/").slice(0,-1),e=0,f=c.length;f>e;e++){var g=c[e];if(".."===g)d.pop();else{if("."===g)continue;d.push(g)}}return d.join("/")}if(d._eak_seen=e,f[a])return f[a];if(f[a]={},!e[a])throw new Error("Could not find module "+a);for(var g,h=e[a],i=h.deps,j=h.callback,k=[],l=0,m=i.length;m>l;l++)"exports"===i[l]?k.push(g={}):k.push(b(c(i[l])));var n=j.apply(this,k);return f[a]=g||n}}(),a("promise/all",["./utils","exports"],function(a,b){"use strict";function c(a){var b=this;if(!d(a))throw new TypeError("You must pass an array to all.");return new b(function(b,c){function d(a){return function(b){f(a,b)}}function f(a,c){h[a]=c,0===--i&&b(h)}var g,h=[],i=a.length;0===i&&b([]);for(var j=0;j<a.length;j++)g=a[j],g&&e(g.then)?g.then(d(j),c):f(j,g)})}var d=a.isArray,e=a.isFunction;b.all=c}),a("promise/asap",["exports"],function(a){"use strict";function b(){return function(){process.nextTick(e)}}function c(){var a=0,b=new i(e),c=document.createTextNode("");return b.observe(c,{characterData:!0}),function(){c.data=a=++a%2}}function d(){return function(){j.setTimeout(e,1)}}function e(){for(var a=0;a<k.length;a++){var b=k[a],c=b[0],d=b[1];c(d)}k=[]}function f(a,b){var c=k.push([a,b]);1===c&&g()}var g,h="undefined"!=typeof window?window:{},i=h.MutationObserver||h.WebKitMutationObserver,j="undefined"!=typeof global?global:this,k=[];g="undefined"!=typeof process&&"[object process]"==={}.toString.call(process)?b():i?c():d(),a.asap=f}),a("promise/cast",["exports"],function(a){"use strict";function b(a){if(a&&"object"==typeof a&&a.constructor===this)return a;var b=this;return new b(function(b){b(a)})}a.cast=b}),a("promise/config",["exports"],function(a){"use strict";function b(a,b){return 2!==arguments.length?c[a]:(c[a]=b,void 0)}var c={instrument:!1};a.config=c,a.configure=b}),a("promise/polyfill",["./promise","./utils","exports"],function(a,b,c){"use strict";function d(){var a="Promise"in window&&"cast"in window.Promise&&"resolve"in window.Promise&&"reject"in window.Promise&&"all"in window.Promise&&"race"in window.Promise&&function(){var a;return new window.Promise(function(b){a=b}),f(a)}();a||(window.Promise=e)}var e=a.Promise,f=b.isFunction;c.polyfill=d}),a("promise/promise",["./config","./utils","./cast","./all","./race","./resolve","./reject","./asap","exports"],function(a,b,c,d,e,f,g,h,i){"use strict";function j(a){if(!w(a))throw new TypeError("You must pass a resolver function as the first argument to the promise constructor");if(!(this instanceof j))throw new TypeError("Failed to construct 'Promise': Please use the 'new' operator, this object constructor cannot be called as a function.");this._subscribers=[],k(a,this)}function k(a,b){function c(a){p(b,a)}function d(a){r(b,a)}try{a(c,d)}catch(e){d(e)}}function l(a,b,c,d){var e,f,g,h,i=w(c);if(i)try{e=c(d),g=!0}catch(j){h=!0,f=j}else e=d,g=!0;o(b,e)||(i&&g?p(b,e):h?r(b,f):a===F?p(b,e):a===G&&r(b,e))}function m(a,b,c,d){var e=a._subscribers,f=e.length;e[f]=b,e[f+F]=c,e[f+G]=d}function n(a,b){for(var c,d,e=a._subscribers,f=a._detail,g=0;g<e.length;g+=3)c=e[g],d=e[g+b],l(b,c,d,f);a._subscribers=null}function o(a,b){var c,d=null;try{if(a===b)throw new TypeError("A promises callback cannot return that same promise.");if(v(b)&&(d=b.then,w(d)))return d.call(b,function(d){return c?!0:(c=!0,b!==d?p(a,d):q(a,d),void 0)},function(b){return c?!0:(c=!0,r(a,b),void 0)}),!0}catch(e){return c?!0:(r(a,e),!0)}return!1}function p(a,b){a===b?q(a,b):o(a,b)||q(a,b)}function q(a,b){a._state===D&&(a._state=E,a._detail=b,u.async(s,a))}function r(a,b){a._state===D&&(a._state=E,a._detail=b,u.async(t,a))}function s(a){n(a,a._state=F)}function t(a){n(a,a._state=G)}var u=a.config,v=(a.configure,b.objectOrFunction),w=b.isFunction,x=(b.now,c.cast),y=d.all,z=e.race,A=f.resolve,B=g.reject,C=h.asap;u.async=C;var D=void 0,E=0,F=1,G=2;j.prototype={constructor:j,_state:void 0,_detail:void 0,_subscribers:void 0,then:function(a,b){var c=this,d=new this.constructor(function(){});if(this._state){var e=arguments;u.async(function(){l(c._state,d,e[c._state-1],c._detail)})}else m(this,d,a,b);return d},"catch":function(a){return this.then(null,a)}},j.all=y,j.cast=x,j.race=z,j.resolve=A,j.reject=B,i.Promise=j}),a("promise/race",["./utils","exports"],function(a,b){"use strict";function c(a){var b=this;if(!d(a))throw new TypeError("You must pass an array to race.");return new b(function(b,c){for(var d,e=0;e<a.length;e++)d=a[e],d&&"function"==typeof d.then?d.then(b,c):b(d)})}var d=a.isArray;b.race=c}),a("promise/reject",["exports"],function(a){"use strict";function b(a){var b=this;return new b(function(b,c){c(a)})}a.reject=b}),a("promise/resolve",["exports"],function(a){"use strict";function b(a){var b=this;return new b(function(b){b(a)})}a.resolve=b}),a("promise/utils",["exports"],function(a){"use strict";function b(a){return c(a)||"object"==typeof a&&null!==a}function c(a){return"function"==typeof a}function d(a){return"[object Array]"===Object.prototype.toString.call(a)}var e=Date.now||function(){return(new Date).getTime()};a.objectOrFunction=b,a.isFunction=c,a.isArray=d,a.now=e}),b("promise/polyfill").polyfill()}();var SparkMD5=function(){function h(f,d,b,a,c,e){d=k(k(d,f),k(a,e));return k(d<<c|d>>>32-c,b)}function g(f,d,b,a,c,e,g){return h(d&b|~d&a,f,d,c,e,g)}function i(f,d,b,a,c,e,g){return h(d&a|b&~a,f,d,c,e,g)}function j(f,d,b,a,c,e,g){return h(b^(d|~a),f,d,c,e,g)}function l(f,d){var b=f[0],a=f[1],c=f[2],e=f[3],b=g(b,a,c,e,d[0],7,-680876936),e=g(e,b,a,c,d[1],12,-389564586),c=g(c,e,b,a,d[2],17,606105819),a=g(a,c,e,b,d[3],22,-1044525330),b=g(b,a,c,e,d[4],7,-176418897),e=g(e,b,a,c,d[5],12,1200080426),c=g(c,
-e,b,a,d[6],17,-1473231341),a=g(a,c,e,b,d[7],22,-45705983),b=g(b,a,c,e,d[8],7,1770035416),e=g(e,b,a,c,d[9],12,-1958414417),c=g(c,e,b,a,d[10],17,-42063),a=g(a,c,e,b,d[11],22,-1990404162),b=g(b,a,c,e,d[12],7,1804603682),e=g(e,b,a,c,d[13],12,-40341101),c=g(c,e,b,a,d[14],17,-1502002290),a=g(a,c,e,b,d[15],22,1236535329),b=i(b,a,c,e,d[1],5,-165796510),e=i(e,b,a,c,d[6],9,-1069501632),c=i(c,e,b,a,d[11],14,643717713),a=i(a,c,e,b,d[0],20,-373897302),b=i(b,a,c,e,d[5],5,-701558691),e=i(e,b,a,c,d[10],9,38016083),
-c=i(c,e,b,a,d[15],14,-660478335),a=i(a,c,e,b,d[4],20,-405537848),b=i(b,a,c,e,d[9],5,568446438),e=i(e,b,a,c,d[14],9,-1019803690),c=i(c,e,b,a,d[3],14,-187363961),a=i(a,c,e,b,d[8],20,1163531501),b=i(b,a,c,e,d[13],5,-1444681467),e=i(e,b,a,c,d[2],9,-51403784),c=i(c,e,b,a,d[7],14,1735328473),a=i(a,c,e,b,d[12],20,-1926607734),b=h(a^c^e,b,a,d[5],4,-378558),e=h(b^a^c,e,b,d[8],11,-2022574463),c=h(e^b^a,c,e,d[11],16,1839030562),a=h(c^e^b,a,c,d[14],23,-35309556),b=h(a^c^e,b,a,d[1],4,-1530992060),e=h(b^a^c,e,
-b,d[4],11,1272893353),c=h(e^b^a,c,e,d[7],16,-155497632),a=h(c^e^b,a,c,d[10],23,-1094730640),b=h(a^c^e,b,a,d[13],4,681279174),e=h(b^a^c,e,b,d[0],11,-358537222),c=h(e^b^a,c,e,d[3],16,-722521979),a=h(c^e^b,a,c,d[6],23,76029189),b=h(a^c^e,b,a,d[9],4,-640364487),e=h(b^a^c,e,b,d[12],11,-421815835),c=h(e^b^a,c,e,d[15],16,530742520),a=h(c^e^b,a,c,d[2],23,-995338651),b=j(b,a,c,e,d[0],6,-198630844),e=j(e,b,a,c,d[7],10,1126891415),c=j(c,e,b,a,d[14],15,-1416354905),a=j(a,c,e,b,d[5],21,-57434055),b=j(b,a,c,e,
-d[12],6,1700485571),e=j(e,b,a,c,d[3],10,-1894986606),c=j(c,e,b,a,d[10],15,-1051523),a=j(a,c,e,b,d[1],21,-2054922799),b=j(b,a,c,e,d[8],6,1873313359),e=j(e,b,a,c,d[15],10,-30611744),c=j(c,e,b,a,d[6],15,-1560198380),a=j(a,c,e,b,d[13],21,1309151649),b=j(b,a,c,e,d[4],6,-145523070),e=j(e,b,a,c,d[11],10,-1120210379),c=j(c,e,b,a,d[2],15,718787259),a=j(a,c,e,b,d[9],21,-343485551);f[0]=k(b,f[0]);f[1]=k(a,f[1]);f[2]=k(c,f[2]);f[3]=k(e,f[3])}function n(f){var d=[],b;for(b=0;64>b;b+=4)d[b>>2]=f.charCodeAt(b)+
-(f.charCodeAt(b+1)<<8)+(f.charCodeAt(b+2)<<16)+(f.charCodeAt(b+3)<<24);return d}function o(f){var d=f.length,b=[1732584193,-271733879,-1732584194,271733878],a,c,e;for(a=64;a<=d;a+=64)l(b,n(f.substring(a-64,a)));f=f.substring(a-64);c=f.length;e=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];for(a=0;a<c;a+=1)e[a>>2]|=f.charCodeAt(a)<<(a%4<<3);e[a>>2]|=128<<(a%4<<3);if(55<a){l(b,e);for(a=0;16>a;a+=1)e[a]=0}e[14]=8*d;l(b,e);return b}function m(f){var d;for(d=0;d<f.length;d+=1){for(var b=f,a=d,c=f[d],e="",g=void 0,
-g=0;4>g;g+=1)e+=q[c>>8*g+4&15]+q[c>>8*g&15];b[a]=e}return f.join("")}var k=function(f,d){return f+d&4294967295},q="0,1,2,3,4,5,6,7,8,9,a,b,c,d,e,f".split(",");"5d41402abc4b2a76b9719d911017c592"!==m(o("hello"))&&(k=function(f,d){var b=(f&65535)+(d&65535);return(f>>16)+(d>>16)+(b>>16)<<16|b&65535});var p=function(){this.append=function(f){/[\u0080-\uFFFF]/.test(f)&&(f=unescape(encodeURIComponent(f)));this.appendBinary(f);return this};this.appendBinary=function(f){var d=64-this._buff.length,b=this._buff+
-f.substr(0,d),a;this._length+=f.length;if(64<=b.length){l(this._state,n(b));for(a=f.length-64;d<=a;)b=f.substr(d,64),l(this._state,n(b)),d+=64;this._buff=f.substr(d,64)}else this._buff=b;return this};this.end=function(f){var d=this._buff,b=d.length,a=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],c;for(c=0;c<b;c+=1)a[c>>2]|=d.charCodeAt(c)<<(c%4<<3);a[c>>2]|=128<<(c%4<<3);if(55<c){l(this._state,a);for(c=0;16>c;c+=1)a[c]=0}a[14]=8*this._length;l(this._state,a);f=f?this._state:m(this._state);this.reset();return f};
-this.reset=function(){this._buff="";this._length=0;this._state=[1732584193,-271733879,-1732584194,271733878];return this};this.destroy=function(){delete this._state;delete this._buff;delete this._length};this.reset()};p.hash=function(f,d){/[\u0080-\uFFFF]/.test(f)&&(f=unescape(encodeURIComponent(f)));var b=o(f);return d?b:m(b)};p.hashBinary=function(f,d){var b=o(f);return d?b:m(b)};return p}();/*! IndexedDBShim - v0.1.2 - 2013-07-11 */
+!function(){var a,b,c,d;!function(){var e={},f={};a=function(a,b,c){e[a]={deps:b,callback:c}},d=c=b=function(a){function c(b){if("."!==b.charAt(0))return b;for(var c=b.split("/"),d=a.split("/").slice(0,-1),e=0,f=c.length;f>e;e++){var g=c[e];if(".."===g)d.pop();else{if("."===g)continue;d.push(g)}}return d.join("/")}if(d._eak_seen=e,f[a])return f[a];if(f[a]={},!e[a])throw new Error("Could not find module "+a);for(var g,h=e[a],i=h.deps,j=h.callback,k=[],l=0,m=i.length;m>l;l++)"exports"===i[l]?k.push(g={}):k.push(b(c(i[l])));var n=j.apply(this,k);return f[a]=g||n}}(),a("promise/all",["./utils","exports"],function(a,b){"use strict";function c(a){var b=this;if(!d(a))throw new TypeError("You must pass an array to all.");return new b(function(b,c){function d(a){return function(b){f(a,b)}}function f(a,c){h[a]=c,0===--i&&b(h)}var g,h=[],i=a.length;0===i&&b([]);for(var j=0;j<a.length;j++)g=a[j],g&&e(g.then)?g.then(d(j),c):f(j,g)})}var d=a.isArray,e=a.isFunction;b.all=c}),a("promise/asap",["exports"],function(a){"use strict";function b(){return function(){process.nextTick(e)}}function c(){var a=0,b=new i(e),c=document.createTextNode("");return b.observe(c,{characterData:!0}),function(){c.data=a=++a%2}}function d(){return function(){j.setTimeout(e,1)}}function e(){for(var a=0;a<k.length;a++){var b=k[a],c=b[0],d=b[1];c(d)}k=[]}function f(a,b){var c=k.push([a,b]);1===c&&g()}var g,h="undefined"!=typeof window?window:{},i=h.MutationObserver||h.WebKitMutationObserver,j="undefined"!=typeof global?global:this,k=[];g="undefined"!=typeof process&&"[object process]"==={}.toString.call(process)?b():i?c():d(),a.asap=f}),a("promise/cast",["exports"],function(a){"use strict";function b(a){if(a&&"object"==typeof a&&a.constructor===this)return a;var b=this;return new b(function(b){b(a)})}a.cast=b}),a("promise/config",["exports"],function(a){"use strict";function b(a,b){return 2!==arguments.length?c[a]:(c[a]=b,void 0)}var c={instrument:!1};a.config=c,a.configure=b}),a("promise/polyfill",["./promise","./utils","exports"],function(a,b,c){"use strict";function d(){var a="Promise"in window&&"cast"in window.Promise&&"resolve"in window.Promise&&"reject"in window.Promise&&"all"in window.Promise&&"race"in window.Promise&&function(){var a;return new window.Promise(function(b){a=b}),f(a)}();a||(window.Promise=e)}var e=a.Promise,f=b.isFunction;c.polyfill=d}),a("promise/promise",["./config","./utils","./cast","./all","./race","./resolve","./reject","./asap","exports"],function(a,b,c,d,e,f,g,h,i){"use strict";function j(a){if(!w(a))throw new TypeError("You must pass a resolver function as the first argument to the promise constructor");if(!(this instanceof j))throw new TypeError("Failed to construct 'Promise': Please use the 'new' operator, this object constructor cannot be called as a function.");this._subscribers=[],k(a,this)}function k(a,b){function c(a){p(b,a)}function d(a){r(b,a)}try{a(c,d)}catch(e){d(e)}}function l(a,b,c,d){var e,f,g,h,i=w(c);if(i)try{e=c(d),g=!0}catch(j){h=!0,f=j}else e=d,g=!0;o(b,e)||(i&&g?p(b,e):h?r(b,f):a===F?p(b,e):a===G&&r(b,e))}function m(a,b,c,d){var e=a._subscribers,f=e.length;e[f]=b,e[f+F]=c,e[f+G]=d}function n(a,b){for(var c,d,e=a._subscribers,f=a._detail,g=0;g<e.length;g+=3)c=e[g],d=e[g+b],l(b,c,d,f);a._subscribers=null}function o(a,b){var c,d=null;try{if(a===b)throw new TypeError("A promises callback cannot return that same promise.");if(v(b)&&(d=b.then,w(d)))return d.call(b,function(d){return c?!0:(c=!0,b!==d?p(a,d):q(a,d),void 0)},function(b){return c?!0:(c=!0,r(a,b),void 0)}),!0}catch(e){return c?!0:(r(a,e),!0)}return!1}function p(a,b){a===b?q(a,b):o(a,b)||q(a,b)}function q(a,b){a._state===D&&(a._state=E,a._detail=b,u.async(s,a))}function r(a,b){a._state===D&&(a._state=E,a._detail=b,u.async(t,a))}function s(a){n(a,a._state=F)}function t(a){n(a,a._state=G)}var u=a.config,v=(a.configure,b.objectOrFunction),w=b.isFunction,x=(b.now,c.cast),y=d.all,z=e.race,A=f.resolve,B=g.reject,C=h.asap;u.async=C;var D=void 0,E=0,F=1,G=2;j.prototype={constructor:j,_state:void 0,_detail:void 0,_subscribers:void 0,then:function(a,b){var c=this,d=new this.constructor(function(){});if(this._state){var e=arguments;u.async(function(){l(c._state,d,e[c._state-1],c._detail)})}else m(this,d,a,b);return d},"catch":function(a){return this.then(null,a)}},j.all=y,j.cast=x,j.race=z,j.resolve=A,j.reject=B,i.Promise=j}),a("promise/race",["./utils","exports"],function(a,b){"use strict";function c(a){var b=this;if(!d(a))throw new TypeError("You must pass an array to race.");return new b(function(b,c){for(var d,e=0;e<a.length;e++)d=a[e],d&&"function"==typeof d.then?d.then(b,c):b(d)})}var d=a.isArray;b.race=c}),a("promise/reject",["exports"],function(a){"use strict";function b(a){var b=this;return new b(function(b,c){c(a)})}a.reject=b}),a("promise/resolve",["exports"],function(a){"use strict";function b(a){var b=this;return new b(function(b){b(a)})}a.resolve=b}),a("promise/utils",["exports"],function(a){"use strict";function b(a){return c(a)||"object"==typeof a&&null!==a}function c(a){return"function"==typeof a}function d(a){return"[object Array]"===Object.prototype.toString.call(a)}var e=Date.now||function(){return(new Date).getTime()};a.objectOrFunction=b,a.isFunction=c,a.isArray=d,a.now=e}),b("promise/polyfill").polyfill()}();(function(a){if(typeof exports==="object"){module.exports=a()}else{if(typeof define==="function"&&define.amd){define(a)}else{var c;try{c=window}catch(b){c=self}c.SparkMD5=a()}}}(function(c){var e=function(s,r){return(s+r)&4294967295},n=function(z,v,u,r,y,w){v=e(e(v,z),e(r,w));return e((v<<y)|(v>>>(32-y)),u)},a=function(v,u,A,z,r,y,w){return n((u&A)|((~u)&z),v,u,r,y,w)},k=function(v,u,A,z,r,y,w){return n((u&z)|(A&(~z)),v,u,r,y,w)},f=function(v,u,A,z,r,y,w){return n(u^A^z,v,u,r,y,w)},p=function(v,u,A,z,r,y,w){return n(A^(u|(~z)),v,u,r,y,w)},d=function(s,u){var t=s[0],r=s[1],w=s[2],v=s[3];t=a(t,r,w,v,u[0],7,-680876936);v=a(v,t,r,w,u[1],12,-389564586);w=a(w,v,t,r,u[2],17,606105819);r=a(r,w,v,t,u[3],22,-1044525330);t=a(t,r,w,v,u[4],7,-176418897);v=a(v,t,r,w,u[5],12,1200080426);w=a(w,v,t,r,u[6],17,-1473231341);r=a(r,w,v,t,u[7],22,-45705983);t=a(t,r,w,v,u[8],7,1770035416);v=a(v,t,r,w,u[9],12,-1958414417);w=a(w,v,t,r,u[10],17,-42063);r=a(r,w,v,t,u[11],22,-1990404162);t=a(t,r,w,v,u[12],7,1804603682);v=a(v,t,r,w,u[13],12,-40341101);w=a(w,v,t,r,u[14],17,-1502002290);r=a(r,w,v,t,u[15],22,1236535329);t=k(t,r,w,v,u[1],5,-165796510);v=k(v,t,r,w,u[6],9,-1069501632);w=k(w,v,t,r,u[11],14,643717713);r=k(r,w,v,t,u[0],20,-373897302);t=k(t,r,w,v,u[5],5,-701558691);v=k(v,t,r,w,u[10],9,38016083);w=k(w,v,t,r,u[15],14,-660478335);r=k(r,w,v,t,u[4],20,-405537848);t=k(t,r,w,v,u[9],5,568446438);v=k(v,t,r,w,u[14],9,-1019803690);w=k(w,v,t,r,u[3],14,-187363961);r=k(r,w,v,t,u[8],20,1163531501);t=k(t,r,w,v,u[13],5,-1444681467);v=k(v,t,r,w,u[2],9,-51403784);w=k(w,v,t,r,u[7],14,1735328473);r=k(r,w,v,t,u[12],20,-1926607734);t=f(t,r,w,v,u[5],4,-378558);v=f(v,t,r,w,u[8],11,-2022574463);w=f(w,v,t,r,u[11],16,1839030562);r=f(r,w,v,t,u[14],23,-35309556);t=f(t,r,w,v,u[1],4,-1530992060);v=f(v,t,r,w,u[4],11,1272893353);w=f(w,v,t,r,u[7],16,-155497632);r=f(r,w,v,t,u[10],23,-1094730640);t=f(t,r,w,v,u[13],4,681279174);v=f(v,t,r,w,u[0],11,-358537222);w=f(w,v,t,r,u[3],16,-722521979);r=f(r,w,v,t,u[6],23,76029189);t=f(t,r,w,v,u[9],4,-640364487);v=f(v,t,r,w,u[12],11,-421815835);w=f(w,v,t,r,u[15],16,530742520);r=f(r,w,v,t,u[2],23,-995338651);t=p(t,r,w,v,u[0],6,-198630844);v=p(v,t,r,w,u[7],10,1126891415);w=p(w,v,t,r,u[14],15,-1416354905);r=p(r,w,v,t,u[5],21,-57434055);t=p(t,r,w,v,u[12],6,1700485571);v=p(v,t,r,w,u[3],10,-1894986606);w=p(w,v,t,r,u[10],15,-1051523);r=p(r,w,v,t,u[1],21,-2054922799);t=p(t,r,w,v,u[8],6,1873313359);v=p(v,t,r,w,u[15],10,-30611744);w=p(w,v,t,r,u[6],15,-1560198380);r=p(r,w,v,t,u[13],21,1309151649);t=p(t,r,w,v,u[4],6,-145523070);v=p(v,t,r,w,u[11],10,-1120210379);w=p(w,v,t,r,u[2],15,718787259);r=p(r,w,v,t,u[9],21,-343485551);s[0]=e(t,s[0]);s[1]=e(r,s[1]);s[2]=e(w,s[2]);s[3]=e(v,s[3])},q=function(t){var u=[],r;for(r=0;r<64;r+=4){u[r>>2]=t.charCodeAt(r)+(t.charCodeAt(r+1)<<8)+(t.charCodeAt(r+2)<<16)+(t.charCodeAt(r+3)<<24)}return u},m=function(r){var t=[],s;for(s=0;s<64;s+=4){t[s>>2]=r[s]+(r[s+1]<<8)+(r[s+2]<<16)+(r[s+3]<<24)}return t},l=function(A){var u=A.length,r=[1732584193,-271733879,-1732584194,271733878],w,t,z,x,y,v;for(w=64;w<=u;w+=64){d(r,q(A.substring(w-64,w)))}A=A.substring(w-64);t=A.length;z=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];for(w=0;w<t;w+=1){z[w>>2]|=A.charCodeAt(w)<<((w%4)<<3)}z[w>>2]|=128<<((w%4)<<3);if(w>55){d(r,z);for(w=0;w<16;w+=1){z[w]=0}}x=u*8;x=x.toString(16).match(/(.*?)(.{0,8})$/);y=parseInt(x[2],16);v=parseInt(x[1],16)||0;z[14]=y;z[15]=v;d(r,z);return r},o=function(z){var t=z.length,r=[1732584193,-271733879,-1732584194,271733878],v,s,y,w,x,u;for(v=64;v<=t;v+=64){d(r,m(z.subarray(v-64,v)))}z=(v-64)<t?z.subarray(v-64):new Uint8Array(0);s=z.length;y=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];for(v=0;v<s;v+=1){y[v>>2]|=z[v]<<((v%4)<<3)}y[v>>2]|=128<<((v%4)<<3);if(v>55){d(r,y);for(v=0;v<16;v+=1){y[v]=0}}w=t*8;w=w.toString(16).match(/(.*?)(.{0,8})$/);x=parseInt(w[2],16);u=parseInt(w[1],16)||0;y[14]=x;y[15]=u;d(r,y);return r},j=["0","1","2","3","4","5","6","7","8","9","a","b","c","d","e","f"],h=function(u){var t="",r;for(r=0;r<4;r+=1){t+=j[(u>>(r*8+4))&15]+j[(u>>(r*8))&15]}return t},b=function(r){var s;for(s=0;s<r.length;s+=1){r[s]=h(r[s])}return r.join("")},i=function(r){return b(l(r))},g=function(){this.reset()};if(i("hello")!=="5d41402abc4b2a76b9719d911017c592"){e=function(r,u){var t=(r&65535)+(u&65535),s=(r>>16)+(u>>16)+(t>>16);return(s<<16)|(t&65535)}}g.prototype.append=function(r){if(/[\u0080-\uFFFF]/.test(r)){r=unescape(encodeURIComponent(r))}this.appendBinary(r);return this};g.prototype.appendBinary=function(t){this._buff+=t;this._length+=t.length;var s=this._buff.length,r;for(r=64;r<=s;r+=64){d(this._state,q(this._buff.substring(r-64,r)))}this._buff=this._buff.substr(r-64);return this};g.prototype.end=function(t){var w=this._buff,v=w.length,u,s=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],r;for(u=0;u<v;u+=1){s[u>>2]|=w.charCodeAt(u)<<((u%4)<<3)}this._finish(s,v);r=!!t?this._state:b(this._state);this.reset();return r};g.prototype._finish=function(s,w){var u=w,t,v,r;s[u>>2]|=128<<((u%4)<<3);if(u>55){d(this._state,s);for(u=0;u<16;u+=1){s[u]=0}}t=this._length*8;t=t.toString(16).match(/(.*?)(.{0,8})$/);v=parseInt(t[2],16);r=parseInt(t[1],16)||0;s[14]=v;s[15]=r;d(this._state,s)};g.prototype.reset=function(){this._buff="";this._length=0;this._state=[1732584193,-271733879,-1732584194,271733878];return this};g.prototype.destroy=function(){delete this._state;delete this._buff;delete this._length};g.hash=function(t,r){if(/[\u0080-\uFFFF]/.test(t)){t=unescape(encodeURIComponent(t))}var s=l(t);return !!r?s:b(s)};g.hashBinary=function(s,r){var t=l(s);return !!r?t:b(t)};g.ArrayBuffer=function(){this.reset()};g.ArrayBuffer.prototype.append=function(r){var u=this._concatArrayBuffer(this._buff,r),t=u.length,s;this._length+=r.byteLength;for(s=64;s<=t;s+=64){d(this._state,m(u.subarray(s-64,s)))}this._buff=(s-64)<t?u.subarray(s-64):new Uint8Array(0);return this};g.ArrayBuffer.prototype.end=function(t){var w=this._buff,v=w.length,s=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],u,r;for(u=0;u<v;u+=1){s[u>>2]|=w[u]<<((u%4)<<3)}this._finish(s,v);r=!!t?this._state:b(this._state);this.reset();return r};g.ArrayBuffer.prototype._finish=g.prototype._finish;g.ArrayBuffer.prototype.reset=function(){this._buff=new Uint8Array(0);this._length=0;this._state=[1732584193,-271733879,-1732584194,271733878];return this};g.ArrayBuffer.prototype.destroy=g.prototype.destroy;g.ArrayBuffer.prototype._concatArrayBuffer=function(u,s){var t=u.length,r=new Uint8Array(t+s.byteLength);r.set(u);r.set(new Uint8Array(s),t);return r};g.ArrayBuffer.hash=function(r,s){var t=o(new Uint8Array(r));return !!s?t:b(t)};return g}));
+/*! IndexedDBShim - v0.1.2 - 2013-07-11 */
 "use strict";var idbModules={};(function(e){function t(e,t,n,o){n.target=t,"function"==typeof t[e]&&t[e].apply(t,[n]),"function"==typeof o&&o()}function n(t,n,o){var i=new DOMException.constructor(0,n);throw i.name=t,i.message=n,e.DEBUG&&(console.log(t,n,o,i),console.trace&&console.trace()),i}var o=function(){this.length=0,this._items=[],Object.defineProperty&&Object.defineProperty(this,"_items",{enumerable:!1})};if(o.prototype={contains:function(e){return-1!==this._items.indexOf(e)},item:function(e){return this._items[e]},indexOf:function(e){return this._items.indexOf(e)},push:function(e){this._items.push(e),this.length+=1;for(var t=0;this._items.length>t;t++)this[t]=this._items[t]},splice:function(){this._items.splice.apply(this._items,arguments),this.length=this._items.length;for(var e in this)e===parseInt(e,10)+""&&delete this[e];for(e=0;this._items.length>e;e++)this[e]=this._items[e]}},Object.defineProperty)for(var i in{indexOf:!1,push:!1,splice:!1})Object.defineProperty(o.prototype,i,{enumerable:!1});e.util={throwDOMException:n,callback:t,quote:function(e){return"'"+e+"'"},StringList:o}})(idbModules),function(idbModules){var Sca=function(){return{decycle:function(object,callback){function checkForCompletion(){0===queuedObjects.length&&returnCallback(derezObj)}function readBlobAsDataURL(e,t){var n=new FileReader;n.onloadend=function(e){var n=e.target.result,o="blob";updateEncodedBlob(n,t,o)},n.readAsDataURL(e)}function updateEncodedBlob(dataURL,path,blobtype){var encoded=queuedObjects.indexOf(path);path=path.replace("$","derezObj"),eval(path+'.$enc="'+dataURL+'"'),eval(path+'.$type="'+blobtype+'"'),queuedObjects.splice(encoded,1),checkForCompletion()}function derez(e,t){var n,o,i;if(!("object"!=typeof e||null===e||e instanceof Boolean||e instanceof Date||e instanceof Number||e instanceof RegExp||e instanceof Blob||e instanceof String)){for(n=0;objects.length>n;n+=1)if(objects[n]===e)return{$ref:paths[n]};if(objects.push(e),paths.push(t),"[object Array]"===Object.prototype.toString.apply(e))for(i=[],n=0;e.length>n;n+=1)i[n]=derez(e[n],t+"["+n+"]");else{i={};for(o in e)Object.prototype.hasOwnProperty.call(e,o)&&(i[o]=derez(e[o],t+"["+JSON.stringify(o)+"]"))}return i}return e instanceof Blob?(queuedObjects.push(t),readBlobAsDataURL(e,t)):e instanceof Boolean?e={$type:"bool",$enc:""+e}:e instanceof Date?e={$type:"date",$enc:e.getTime()}:e instanceof Number?e={$type:"num",$enc:""+e}:e instanceof RegExp&&(e={$type:"regex",$enc:""+e}),e}var objects=[],paths=[],queuedObjects=[],returnCallback=callback,derezObj=derez(object,"$");checkForCompletion()},retrocycle:function retrocycle($){function dataURLToBlob(e){var t,n,o,i=";base64,";if(-1===e.indexOf(i))return n=e.split(","),t=n[0].split(":")[1],o=n[1],new Blob([o],{type:t});n=e.split(i),t=n[0].split(":")[1],o=window.atob(n[1]);for(var r=o.length,a=new Uint8Array(r),s=0;r>s;++s)a[s]=o.charCodeAt(s);return new Blob([a.buffer],{type:t})}function rez(value){var i,item,name,path;if(value&&"object"==typeof value)if("[object Array]"===Object.prototype.toString.apply(value))for(i=0;value.length>i;i+=1)item=value[i],item&&"object"==typeof item&&(path=item.$ref,value[i]="string"==typeof path&&px.test(path)?eval(path):rez(item));else if(void 0!==value.$type)switch(value.$type){case"blob":case"file":value=dataURLToBlob(value.$enc);break;case"bool":value=Boolean("true"===value.$enc);break;case"date":value=new Date(value.$enc);break;case"num":value=Number(value.$enc);break;case"regex":value=eval(value.$enc)}else for(name in value)"object"==typeof value[name]&&(item=value[name],item&&(path=item.$ref,value[name]="string"==typeof path&&px.test(path)?eval(path):rez(item)));return value}var px=/^\$(?:\[(?:\d+|\"(?:[^\\\"\u0000-\u001f]|\\([\\\"\/bfnrt]|u[0-9a-zA-Z]{4}))*\")\])*$/;return rez($),$},encode:function(e,t){function n(e){t(JSON.stringify(e))}this.decycle(e,n)},decode:function(e){return this.retrocycle(JSON.parse(e))}}}();idbModules.Sca=Sca}(idbModules),function(e){var t=["","number","string","boolean","object","undefined"],n=function(){return{encode:function(e){return t.indexOf(typeof e)+"-"+JSON.stringify(e)},decode:function(e){return e===void 0?void 0:JSON.parse(e.substring(2))}}},o={number:n("number"),"boolean":n(),object:n(),string:{encode:function(e){return t.indexOf("string")+"-"+e},decode:function(e){return""+e.substring(2)}},undefined:{encode:function(){return t.indexOf("undefined")+"-undefined"},decode:function(){return void 0}}},i=function(){return{encode:function(e){return o[typeof e].encode(e)},decode:function(e){return o[t[e.substring(0,1)]].decode(e)}}}();e.Key=i}(idbModules),function(e){var t=function(e,t){return{type:e,debug:t,bubbles:!1,cancelable:!1,eventPhase:0,timeStamp:new Date}};e.Event=t}(idbModules),function(e){var t=function(){this.onsuccess=this.onerror=this.result=this.error=this.source=this.transaction=null,this.readyState="pending"},n=function(){this.onblocked=this.onupgradeneeded=null};n.prototype=t,e.IDBRequest=t,e.IDBOpenRequest=n}(idbModules),function(e,t){var n=function(e,t,n,o){this.lower=e,this.upper=t,this.lowerOpen=n,this.upperOpen=o};n.only=function(e){return new n(e,e,!0,!0)},n.lowerBound=function(e,o){return new n(e,t,o,t)},n.upperBound=function(e){return new n(t,e,t,open)},n.bound=function(e,t,o,i){return new n(e,t,o,i)},e.IDBKeyRange=n}(idbModules),function(e,t){function n(n,o,i,r,a,s){this.__range=n,this.source=this.__idbObjectStore=i,this.__req=r,this.key=t,this.direction=o,this.__keyColumnName=a,this.__valueColumnName=s,this.source.transaction.__active||e.util.throwDOMException("TransactionInactiveError - The transaction this IDBObjectStore belongs to is not active."),this.__offset=-1,this.__lastKeyContinued=t,this["continue"]()}n.prototype.__find=function(n,o,i,r){var a=this,s=["SELECT * FROM ",e.util.quote(a.__idbObjectStore.name)],u=[];s.push("WHERE ",a.__keyColumnName," NOT NULL"),a.__range&&(a.__range.lower||a.__range.upper)&&(s.push("AND"),a.__range.lower&&(s.push(a.__keyColumnName+(a.__range.lowerOpen?" >":" >= ")+" ?"),u.push(e.Key.encode(a.__range.lower))),a.__range.lower&&a.__range.upper&&s.push("AND"),a.__range.upper&&(s.push(a.__keyColumnName+(a.__range.upperOpen?" < ":" <= ")+" ?"),u.push(e.Key.encode(a.__range.upper)))),n!==t&&(a.__lastKeyContinued=n,a.__offset=0),a.__lastKeyContinued!==t&&(s.push("AND "+a.__keyColumnName+" >= ?"),u.push(e.Key.encode(a.__lastKeyContinued))),s.push("ORDER BY ",a.__keyColumnName),s.push("LIMIT 1 OFFSET "+a.__offset),e.DEBUG&&console.log(s.join(" "),u),o.executeSql(s.join(" "),u,function(n,o){if(1===o.rows.length){var r=e.Key.decode(o.rows.item(0)[a.__keyColumnName]),s="value"===a.__valueColumnName?e.Sca.decode(o.rows.item(0)[a.__valueColumnName]):e.Key.decode(o.rows.item(0)[a.__valueColumnName]);i(r,s)}else e.DEBUG&&console.log("Reached end of cursors"),i(t,t)},function(t,n){e.DEBUG&&console.log("Could not execute Cursor.continue"),r(n)})},n.prototype["continue"]=function(e){var n=this;this.__idbObjectStore.transaction.__addToTransactionQueue(function(o,i,r,a){n.__offset++,n.__find(e,o,function(e,o){n.key=e,n.value=o,r(n.key!==t?n:t,n.__req)},function(e){a(e)})})},n.prototype.advance=function(n){0>=n&&e.util.throwDOMException("Type Error - Count is invalid - 0 or negative",n);var o=this;this.__idbObjectStore.transaction.__addToTransactionQueue(function(e,i,r,a){o.__offset+=n,o.__find(t,e,function(e,n){o.key=e,o.value=n,r(o.key!==t?o:t,o.__req)},function(e){a(e)})})},n.prototype.update=function(n){var o=this,i=this.__idbObjectStore.transaction.__createRequest(function(){});return e.Sca.encode(n,function(n){this.__idbObjectStore.__pushToQueue(i,function(i,r,a,s){o.__find(t,i,function(t){var r="UPDATE "+e.util.quote(o.__idbObjectStore.name)+" SET value = ? WHERE key = ?";e.DEBUG&&console.log(r,n,t),i.executeSql(r,[e.Sca.encode(n),e.Key.encode(t)],function(e,n){1===n.rowsAffected?a(t):s("No rowns with key found"+t)},function(e,t){s(t)})},function(e){s(e)})})}),i},n.prototype["delete"]=function(){var n=this;return this.__idbObjectStore.transaction.__addToTransactionQueue(function(o,i,r,a){n.__find(t,o,function(i){var s="DELETE FROM  "+e.util.quote(n.__idbObjectStore.name)+" WHERE key = ?";e.DEBUG&&console.log(s,i),o.executeSql(s,[e.Key.encode(i)],function(e,n){1===n.rowsAffected?r(t):a("No rowns with key found"+i)},function(e,t){a(t)})},function(e){a(e)})})},e.IDBCursor=n}(idbModules),function(idbModules,undefined){function IDBIndex(e,t){this.indexName=this.name=e,this.__idbObjectStore=this.objectStore=this.source=t;var n=t.__storeProps&&t.__storeProps.indexList;n&&(n=JSON.parse(n)),this.keyPath=n&&n[e]&&n[e].keyPath||e,["multiEntry","unique"].forEach(function(t){this[t]=!!(n&&n[e]&&n[e].optionalParams&&n[e].optionalParams[t])},this)}IDBIndex.prototype.__createIndex=function(indexName,keyPath,optionalParameters){var me=this,transaction=me.__idbObjectStore.transaction;transaction.__addToTransactionQueue(function(tx,args,success,failure){me.__idbObjectStore.__getStoreProps(tx,function(){function error(){idbModules.util.throwDOMException(0,"Could not create new index",arguments)}2!==transaction.mode&&idbModules.util.throwDOMException(0,"Invalid State error, not a version transaction",me.transaction);var idxList=JSON.parse(me.__idbObjectStore.__storeProps.indexList);idxList[indexName]!==undefined&&idbModules.util.throwDOMException(0,"Index already exists on store",idxList);var columnName=indexName;idxList[indexName]={columnName:columnName,keyPath:keyPath,optionalParams:optionalParameters},me.__idbObjectStore.__storeProps.indexList=JSON.stringify(idxList);var sql=["ALTER TABLE",idbModules.util.quote(me.__idbObjectStore.name),"ADD",columnName,"BLOB"].join(" ");idbModules.DEBUG&&console.log(sql),tx.executeSql(sql,[],function(tx,data){tx.executeSql("SELECT * FROM "+idbModules.util.quote(me.__idbObjectStore.name),[],function(tx,data){(function initIndexForRow(i){if(data.rows.length>i)try{var value=idbModules.Sca.decode(data.rows.item(i).value),indexKey=eval("value['"+keyPath+"']");tx.executeSql("UPDATE "+idbModules.util.quote(me.__idbObjectStore.name)+" set "+columnName+" = ? where key = ?",[idbModules.Key.encode(indexKey),data.rows.item(i).key],function(){initIndexForRow(i+1)},error)}catch(e){initIndexForRow(i+1)}else idbModules.DEBUG&&console.log("Updating the indexes in table",me.__idbObjectStore.__storeProps),tx.executeSql("UPDATE __sys__ set indexList = ? where name = ?",[me.__idbObjectStore.__storeProps.indexList,me.__idbObjectStore.name],function(){me.__idbObjectStore.__setReadyState("createIndex",!0),success(me)},error)})(0)},error)},error)},"createObjectStore")})},IDBIndex.prototype.openCursor=function(e,t){var n=new idbModules.IDBRequest;return new idbModules.IDBCursor(e,t,this.source,n,this.indexName,"value"),n},IDBIndex.prototype.openKeyCursor=function(e,t){var n=new idbModules.IDBRequest;return new idbModules.IDBCursor(e,t,this.source,n,this.indexName,"key"),n},IDBIndex.prototype.__fetchIndexData=function(e,t){var n=this;return n.__idbObjectStore.transaction.__addToTransactionQueue(function(o,i,r,a){var s=["SELECT * FROM ",idbModules.util.quote(n.__idbObjectStore.name)," WHERE",n.indexName,"NOT NULL"],u=[];e!==undefined&&(s.push("AND",n.indexName," = ?"),u.push(idbModules.Key.encode(e))),idbModules.DEBUG&&console.log("Trying to fetch data for Index",s.join(" "),u),o.executeSql(s.join(" "),u,function(e,n){var o;o="count"==typeof t?n.rows.length:0===n.rows.length?undefined:"key"===t?idbModules.Key.decode(n.rows.item(0).key):idbModules.Sca.decode(n.rows.item(0).value),r(o)},a)})},IDBIndex.prototype.get=function(e){return this.__fetchIndexData(e,"value")},IDBIndex.prototype.getKey=function(e){return this.__fetchIndexData(e,"key")},IDBIndex.prototype.count=function(e){return this.__fetchIndexData(e,"count")},idbModules.IDBIndex=IDBIndex}(idbModules),function(idbModules){var IDBObjectStore=function(e,t,n){this.name=e,this.transaction=t,this.__ready={},this.__setReadyState("createObjectStore",n===void 0?!0:n),this.indexNames=new idbModules.util.StringList};IDBObjectStore.prototype.__setReadyState=function(e,t){this.__ready[e]=t},IDBObjectStore.prototype.__waitForReady=function(e,t){var n=!0;if(t!==void 0)n=this.__ready[t]===void 0?!0:this.__ready[t];else for(var o in this.__ready)this.__ready[o]||(n=!1);if(n)e();else{idbModules.DEBUG&&console.log("Waiting for to be ready",t);var i=this;window.setTimeout(function(){i.__waitForReady(e,t)},100)}},IDBObjectStore.prototype.__getStoreProps=function(e,t,n){var o=this;this.__waitForReady(function(){o.__storeProps?(idbModules.DEBUG&&console.log("Store properties - cached",o.__storeProps),t(o.__storeProps)):e.executeSql("SELECT * FROM __sys__ where name = ?",[o.name],function(e,n){1!==n.rows.length?t():(o.__storeProps={name:n.rows.item(0).name,indexList:n.rows.item(0).indexList,autoInc:n.rows.item(0).autoInc,keyPath:n.rows.item(0).keyPath},idbModules.DEBUG&&console.log("Store properties",o.__storeProps),t(o.__storeProps))},function(){t()})},n)},IDBObjectStore.prototype.__deriveKey=function(tx,value,key,callback){function getNextAutoIncKey(){tx.executeSql("SELECT * FROM sqlite_sequence where name like ?",[me.name],function(e,t){1!==t.rows.length?callback(0):callback(t.rows.item(0).seq)},function(e,t){idbModules.util.throwDOMException(0,"Data Error - Could not get the auto increment value for key",t)})}var me=this;me.__getStoreProps(tx,function(props){if(props||idbModules.util.throwDOMException(0,"Data Error - Could not locate defination for this table",props),props.keyPath)if(key!==void 0&&idbModules.util.throwDOMException(0,"Data Error - The object store uses in-line keys and the key parameter was provided",props),value)try{var primaryKey=eval("value['"+props.keyPath+"']");primaryKey?callback(primaryKey):"true"===props.autoInc?getNextAutoIncKey():idbModules.util.throwDOMException(0,"Data Error - Could not eval key from keyPath")}catch(e){idbModules.util.throwDOMException(0,"Data Error - Could not eval key from keyPath",e)}else idbModules.util.throwDOMException(0,"Data Error - KeyPath was specified, but value was not");else key!==void 0?callback(key):"false"===props.autoInc?idbModules.util.throwDOMException(0,"Data Error - The object store uses out-of-line keys and has no key generator and the key parameter was not provided. ",props):getNextAutoIncKey()})},IDBObjectStore.prototype.__insertData=function(tx,value,primaryKey,success,error){var paramMap={};primaryKey!==void 0&&(paramMap.key=idbModules.Key.encode(primaryKey));var indexes=JSON.parse(this.__storeProps.indexList);for(var key in indexes)try{paramMap[indexes[key].columnName]=idbModules.Key.encode(eval("value['"+indexes[key].keyPath+"']"))}catch(e){error(e)}var sqlStart=["INSERT INTO ",idbModules.util.quote(this.name),"("],sqlEnd=[" VALUES ("],sqlValues=[];for(key in paramMap)sqlStart.push(key+","),sqlEnd.push("?,"),sqlValues.push(paramMap[key]);sqlStart.push("value )"),sqlEnd.push("?)"),sqlValues.push(value);var sql=sqlStart.join(" ")+sqlEnd.join(" ");idbModules.DEBUG&&console.log("SQL for adding",sql,sqlValues),tx.executeSql(sql,sqlValues,function(){success(primaryKey)},function(e,t){error(t)})},IDBObjectStore.prototype.add=function(e,t){var n=this,o=n.transaction.__createRequest(function(){});return idbModules.Sca.encode(e,function(i){n.transaction.__pushToQueue(o,function(o,r,a,s){n.__deriveKey(o,e,t,function(e){n.__insertData(o,i,e,a,s)})})}),o},IDBObjectStore.prototype.put=function(e,t){var n=this,o=n.transaction.__createRequest(function(){});return idbModules.Sca.encode(e,function(i){n.transaction.__pushToQueue(o,function(o,r,a,s){n.__deriveKey(o,e,t,function(e){var t="DELETE FROM "+idbModules.util.quote(n.name)+" where key = ?";o.executeSql(t,[idbModules.Key.encode(e)],function(t,o){idbModules.DEBUG&&console.log("Did the row with the",e,"exist? ",o.rowsAffected),n.__insertData(t,i,e,a,s)},function(e,t){s(t)})})})}),o},IDBObjectStore.prototype.get=function(e){var t=this;return t.transaction.__addToTransactionQueue(function(n,o,i,r){t.__waitForReady(function(){var o=idbModules.Key.encode(e);idbModules.DEBUG&&console.log("Fetching",t.name,o),n.executeSql("SELECT * FROM "+idbModules.util.quote(t.name)+" where key = ?",[o],function(e,t){idbModules.DEBUG&&console.log("Fetched data",t);try{if(0===t.rows.length)return i();i(idbModules.Sca.decode(t.rows.item(0).value))}catch(n){idbModules.DEBUG&&console.log(n),i(void 0)}},function(e,t){r(t)})})})},IDBObjectStore.prototype["delete"]=function(e){var t=this;return t.transaction.__addToTransactionQueue(function(n,o,i,r){t.__waitForReady(function(){var o=idbModules.Key.encode(e);idbModules.DEBUG&&console.log("Fetching",t.name,o),n.executeSql("DELETE FROM "+idbModules.util.quote(t.name)+" where key = ?",[o],function(e,t){idbModules.DEBUG&&console.log("Deleted from database",t.rowsAffected),i()},function(e,t){r(t)})})})},IDBObjectStore.prototype.clear=function(){var e=this;return e.transaction.__addToTransactionQueue(function(t,n,o,i){e.__waitForReady(function(){t.executeSql("DELETE FROM "+idbModules.util.quote(e.name),[],function(e,t){idbModules.DEBUG&&console.log("Cleared all records from database",t.rowsAffected),o()},function(e,t){i(t)})})})},IDBObjectStore.prototype.count=function(e){var t=this;return t.transaction.__addToTransactionQueue(function(n,o,i,r){t.__waitForReady(function(){var o="SELECT * FROM "+idbModules.util.quote(t.name)+(e!==void 0?" WHERE key = ?":""),a=[];e!==void 0&&a.push(idbModules.Key.encode(e)),n.executeSql(o,a,function(e,t){i(t.rows.length)},function(e,t){r(t)})})})},IDBObjectStore.prototype.openCursor=function(e,t){var n=new idbModules.IDBRequest;return new idbModules.IDBCursor(e,t,this,n,"key","value"),n},IDBObjectStore.prototype.index=function(e){var t=new idbModules.IDBIndex(e,this);return t},IDBObjectStore.prototype.createIndex=function(e,t,n){var o=this;n=n||{},o.__setReadyState("createIndex",!1);var i=new idbModules.IDBIndex(e,o);return o.__waitForReady(function(){i.__createIndex(e,t,n)},"createObjectStore"),o.indexNames.push(e),i},IDBObjectStore.prototype.deleteIndex=function(e){var t=new idbModules.IDBIndex(e,this,!1);return t.__deleteIndex(e),t},idbModules.IDBObjectStore=IDBObjectStore}(idbModules),function(e){var t=0,n=1,o=2,i=function(o,i,r){if("number"==typeof i)this.mode=i,2!==i&&e.DEBUG&&console.log("Mode should be a string, but was specified as ",i);else if("string"==typeof i)switch(i){case"readwrite":this.mode=n;break;case"readonly":this.mode=t;break;default:this.mode=t}this.storeNames="string"==typeof o?[o]:o;for(var a=0;this.storeNames.length>a;a++)r.objectStoreNames.contains(this.storeNames[a])||e.util.throwDOMException(0,"The operation failed because the requested database object could not be found. For example, an object store did not exist but was being opened.",this.storeNames[a]);this.__active=!0,this.__running=!1,this.__requests=[],this.__aborted=!1,this.db=r,this.error=null,this.onabort=this.onerror=this.oncomplete=null};i.prototype.__executeRequests=function(){if(this.__running&&this.mode!==o)return e.DEBUG&&console.log("Looks like the request set is already running",this.mode),void 0;this.__running=!0;var t=this;window.setTimeout(function(){2===t.mode||t.__active||e.util.throwDOMException(0,"A request was placed against a transaction which is currently not active, or which is finished",t.__active),t.db.__db.transaction(function(n){function o(t,n){n&&(a.req=n),a.req.readyState="done",a.req.result=t,delete a.req.error;var o=e.Event("success");e.util.callback("onsuccess",a.req,o),s++,r()}function i(){a.req.readyState="done",a.req.error="DOMError";var t=e.Event("error",arguments);e.util.callback("onerror",a.req,t),s++,r()}function r(){return s>=t.__requests.length?(t.__active=!1,t.__requests=[],void 0):(a=t.__requests[s],a.op(n,a.args,o,i),void 0)}t.__tx=n;var a=null,s=0;try{r()}catch(u){e.DEBUG&&console.log("An exception occured in transaction",arguments),"function"==typeof t.onerror&&t.onerror()}},function(){e.DEBUG&&console.log("An error in transaction",arguments),"function"==typeof t.onerror&&t.onerror()},function(){e.DEBUG&&console.log("Transaction completed",arguments),"function"==typeof t.oncomplete&&t.oncomplete()})},1)},i.prototype.__addToTransactionQueue=function(t,n){this.__active||this.mode===o||e.util.throwDOMException(0,"A request was placed against a transaction which is currently not active, or which is finished.",this.__mode);var i=this.__createRequest();return this.__pushToQueue(i,t,n),i},i.prototype.__createRequest=function(){var t=new e.IDBRequest;return t.source=this.db,t},i.prototype.__pushToQueue=function(e,t,n){this.__requests.push({op:t,args:n,req:e}),this.__executeRequests()},i.prototype.objectStore=function(t){return new e.IDBObjectStore(t,this)},i.prototype.abort=function(){!this.__active&&e.util.throwDOMException(0,"A request was placed against a transaction which is currently not active, or which is finished",this.__active)},i.prototype.READ_ONLY=0,i.prototype.READ_WRITE=1,i.prototype.VERSION_CHANGE=2,e.IDBTransaction=i}(idbModules),function(e){var t=function(t,n,o,i){this.__db=t,this.version=o,this.__storeProperties=i,this.objectStoreNames=new e.util.StringList;for(var r=0;i.rows.length>r;r++)this.objectStoreNames.push(i.rows.item(r).name);this.name=n,this.onabort=this.onerror=this.onversionchange=null};t.prototype.createObjectStore=function(t,n){var o=this;n=n||{},n.keyPath=n.keyPath||null;var i=new e.IDBObjectStore(t,o.__versionTransaction,!1),r=o.__versionTransaction;return r.__addToTransactionQueue(function(r,a,s){function u(){e.util.throwDOMException(0,"Could not create new object store",arguments)}o.__versionTransaction||e.util.throwDOMException(0,"Invalid State error",o.transaction);var c=["CREATE TABLE",e.util.quote(t),"(key BLOB",n.autoIncrement?", inc INTEGER PRIMARY KEY AUTOINCREMENT":"PRIMARY KEY",", value BLOB)"].join(" ");e.DEBUG&&console.log(c),r.executeSql(c,[],function(e){e.executeSql("INSERT INTO __sys__ VALUES (?,?,?,?)",[t,n.keyPath,n.autoIncrement?!0:!1,"{}"],function(){i.__setReadyState("createObjectStore",!0),s(i)},u)},u)}),o.objectStoreNames.push(t),i},t.prototype.deleteObjectStore=function(t){var n=function(){e.util.throwDOMException(0,"Could not delete ObjectStore",arguments)},o=this;!o.objectStoreNames.contains(t)&&n("Object Store does not exist"),o.objectStoreNames.splice(o.objectStoreNames.indexOf(t),1);var i=o.__versionTransaction;i.__addToTransactionQueue(function(){o.__versionTransaction||e.util.throwDOMException(0,"Invalid State error",o.transaction),o.__db.transaction(function(o){o.executeSql("SELECT * FROM __sys__ where name = ?",[t],function(o,i){i.rows.length>0&&o.executeSql("DROP TABLE "+e.util.quote(t),[],function(){o.executeSql("DELETE FROM __sys__ WHERE name = ?",[t],function(){},n)},n)})})})},t.prototype.close=function(){},t.prototype.transaction=function(t,n){var o=new e.IDBTransaction(t,n||1,this);return o},e.IDBDatabase=t}(idbModules),function(e){var t=4194304;if(window.openDatabase){var n=window.openDatabase("__sysdb__",1,"System Database",t);n.transaction(function(t){t.executeSql("SELECT * FROM dbVersions",[],function(){},function(){n.transaction(function(t){t.executeSql("CREATE TABLE IF NOT EXISTS dbVersions (name VARCHAR(255), version INT);",[],function(){},function(){e.util.throwDOMException("Could not create table __sysdb__ to save DB versions")})})})},function(){e.DEBUG&&console.log("Error in sysdb transaction - when selecting from dbVersions",arguments)});var o={open:function(o,i){function r(){if(!u){var t=e.Event("error",arguments);s.readyState="done",s.error="DOMError",e.util.callback("onerror",s,t),u=!0}}function a(a){var u=window.openDatabase(o,1,o,t);s.readyState="done",i===void 0&&(i=a||1),(0>=i||a>i)&&e.util.throwDOMException(0,"An attempt was made to open a database using a lower version than the existing version.",i),u.transaction(function(t){t.executeSql("CREATE TABLE IF NOT EXISTS __sys__ (name VARCHAR(255), keyPath VARCHAR(255), autoInc BOOLEAN, indexList BLOB)",[],function(){t.executeSql("SELECT * FROM __sys__",[],function(t,c){var d=e.Event("success");s.source=s.result=new e.IDBDatabase(u,o,i,c),i>a?n.transaction(function(t){t.executeSql("UPDATE dbVersions set version = ? where name = ?",[i,o],function(){var t=e.Event("upgradeneeded");t.oldVersion=a,t.newVersion=i,s.transaction=s.result.__versionTransaction=new e.IDBTransaction([],2,s.source),e.util.callback("onupgradeneeded",s,t,function(){var t=e.Event("success");e.util.callback("onsuccess",s,t)})},r)},r):e.util.callback("onsuccess",s,d)},r)},r)},r)}var s=new e.IDBOpenRequest,u=!1;return n.transaction(function(e){e.executeSql("SELECT * FROM dbVersions where name = ?",[o],function(e,t){0===t.rows.length?e.executeSql("INSERT INTO dbVersions VALUES (?,?)",[o,i||1],function(){a(0)},r):a(t.rows.item(0).version)},r)},r),s},deleteDatabase:function(o){function i(t){if(!s){a.readyState="done",a.error="DOMError";var n=e.Event("error");n.message=t,n.debug=arguments,e.util.callback("onerror",a,n),s=!0}}function r(){n.transaction(function(t){t.executeSql("DELETE FROM dbVersions where name = ? ",[o],function(){a.result=void 0;var t=e.Event("success");t.newVersion=null,t.oldVersion=u,e.util.callback("onsuccess",a,t)},i)},i)}var a=new e.IDBOpenRequest,s=!1,u=null;return n.transaction(function(n){n.executeSql("SELECT * FROM dbVersions where name = ?",[o],function(n,s){if(0===s.rows.length){a.result=void 0;var c=e.Event("success");return c.newVersion=null,c.oldVersion=u,e.util.callback("onsuccess",a,c),void 0}u=s.rows.item(0).version;var d=window.openDatabase(o,1,o,t);d.transaction(function(t){t.executeSql("SELECT * FROM __sys__",[],function(t,n){var o=n.rows;(function a(n){n>=o.length?t.executeSql("DROP TABLE __sys__",[],function(){r()},i):t.executeSql("DROP TABLE "+e.util.quote(o.item(n).name),[],function(){a(n+1)},function(){a(n+1)})})(0)},function(){r()})},i)})},i),a},cmp:function(t,n){return e.Key.encode(t)>e.Key.encode(n)?1:t===n?0:-1}};e.shimIndexedDB=o}}(idbModules),function(e,t){e.openDatabase!==void 0&&(e.shimIndexedDB=t.shimIndexedDB,e.shimIndexedDB&&(e.shimIndexedDB.__useShim=function(){e.indexedDB=t.shimIndexedDB,e.IDBDatabase=t.IDBDatabase,e.IDBTransaction=t.IDBTransaction,e.IDBCursor=t.IDBCursor,e.IDBKeyRange=t.IDBKeyRange},e.shimIndexedDB.__debug=function(e){t.DEBUG=e})),e.indexedDB=e.indexedDB||e.webkitIndexedDB||e.mozIndexedDB||e.oIndexedDB||e.msIndexedDB,e.indexedDB===void 0&&e.openDatabase!==void 0?e.shimIndexedDB.__useShim():(e.IDBDatabase=e.IDBDatabase||e.webkitIDBDatabase,e.IDBTransaction=e.IDBTransaction||e.webkitIDBTransaction,e.IDBCursor=e.IDBCursor||e.webkitIDBCursor,e.IDBKeyRange=e.IDBKeyRange||e.webkitIDBKeyRange,e.IDBTransaction||(e.IDBTransaction={}),e.IDBTransaction.READ_ONLY=e.IDBTransaction.READ_ONLY||"readonly",e.IDBTransaction.READ_WRITE=e.IDBTransaction.READ_WRITE||"readwrite")}(window,idbModules);
 //@ sourceMappingURL=http://nparashuram.com/IndexedDBShim/dist/IndexedDBShim.min.map'use strict';
 var J = jQuery.noConflict();
@@ -3728,7 +3721,7 @@ Zotero.Item.prototype.removeFromCollection = function(collectionKey){
     return;
 };
 
-Zotero.Item.prototype.uploadChildAttachment = function(childItem, fileInfo, fileblob, progressCallback){
+Zotero.Item.prototype.uploadChildAttachment = function(childItem, fileInfo, progressCallback){
     /*
      * write child item so that it exists
      * get upload authorization for actual file
@@ -3748,7 +3741,7 @@ Zotero.Item.prototype.uploadChildAttachment = function(childItem, fileInfo, file
     .then(function(response){
         //successful attachmentItemWrite
         item.numChildren++;
-        return childItem.uploadFile(fileInfo, fileblob, progressCallback)
+        return childItem.uploadFile(fileInfo, progressCallback)
     }, function(response){
         //failure during attachmentItem write
         return {
@@ -3759,7 +3752,7 @@ Zotero.Item.prototype.uploadChildAttachment = function(childItem, fileInfo, file
     });
 };
 
-Zotero.Item.prototype.uploadFile = function(fileInfo, fileblob, progressCallback){
+Zotero.Item.prototype.uploadFile = function(fileInfo, progressCallback){
     var item = this;
     
     var uploadAuthFileData = {
@@ -3783,56 +3776,24 @@ Zotero.Item.prototype.uploadFile = function(fileInfo, fileblob, progressCallback
             return {'message':"File Exists"};
         }
         else{
-            return new Promise(function(resolve, reject){
-                var fullUpload = Zotero.file.uploadFile(upAuthOb, fileblob);
-                fullUpload.onreadystatechange = J.proxy(function(e){
-                    Z.debug("fullupload readyState: " + fullUpload.readyState, 3);
-                    Z.debug("fullupload status: " + fullUpload.status, 3);
-                    //if we know that CORS is allowed, check that the request is done and that it was successful
-                    //otherwise just wait until it's finished and assume success
-                    if(fullUpload.readyState == 4){
-                        //Upload is done, whether successful or not
-                        if(fullUpload.status == 201 || Zotero.config.CORSallowed === false){
-                            //upload was successful and we know it, or upload is complete and we have no way of
-                            //knowing if it was successful because of same origin policy, so we'll assume it was
-                            item.registerUpload(upAuthOb.uploadKey)
-                            .then(function(response){
-                                resolve({'message': 'Upload Successful'});
-                            },
-                            function(response){
-                                var failure = {'message': 'Failed registering upload.'};
-                                if(response.jqxhr.status == 412){
-                                    failure.code = 412;
-                                    failure.serverMessage = response.jqxhr.responseText;
-                                }
-                                reject(failure);
-                            });
-                        }
-                        else {
-                            //we should be able to tell if upload was successful, and it was not
-                            reject({
-                                "message": "Failure uploading file.",
-                                "code": jqxhr.status,
-                                "serverMessage": jqxhr.responseText
-                            });
-                        }
-                    }
-                }, this);
-                //pass on progress events to the progress callback if it was set
-                fullUpload.upload.onprogress = function(e){
-                    if(typeof progressCallback == 'function'){
-                        progressCallback(e);
-                    }
-                };
+            //TODO: add progress
+            return Zotero.file.uploadFile(upAuthOb, fileInfo)
+            .then(function(){
+                //upload was successful: register it
+                return item.registerUpload(upAuthOb.uploadKey)
+                .then(function(response){
+                    return {'message': 'Upload Successful'};
+                });
             });
         }
-    },
-    function(response){
-        //Failure during upload authorization
-        return {
-            "message":"Failure during upload authorization.",
+    }).catch(function(response){
+        Z.debug("Failure caught during upload", 3);
+        Z.debug(response, 3);
+        throw {
+            "message":"Failure during upload.",
             "code": response.jqxhr.status,
-            "serverMessage": response.jqxhr.responseText
+            "serverMessage": response.jqxhr.responseText,
+            'response': response
         };
     });
 };
@@ -4104,6 +4065,12 @@ Zotero.Item.prototype.hideFields = [
     "contentType",
     "filename",
     "tags"
+];
+
+Zotero.Item.prototype.noEditFields = [
+    "accessDate",
+    "modified",
+    "filename"
 ];
 
 Zotero.localizations.creatorMap = Zotero.Item.prototype.creatorMap;
@@ -5120,35 +5087,34 @@ Zotero.url.relationUrl = function(libraryType, libraryID, itemKey){
 }
 Zotero.file = {};
 
-Zotero.file.getFileInfo = function(file, callback){
+Zotero.file.getFileInfo = function(file){
     //fileInfo: md5, filename, filesize, mtime, zip, contentType, charset
     if(typeof FileReader != 'function'){
-        throw new Error("FileReader not supported");
+        return Promise.reject(new Error("FileReader not supported"));
     }
     
-    var fileInfo = {};
-    var reader = new FileReader();
-    reader.onload = function(e){
-        Z.debug('Zotero.file.getFileInfo onloadFunc');
-        var result = e.target.result;
-        Zotero.debug(result);
-        var spark = new SparkMD5();
-        //fileInfo.md5 = MD5(result);
-        spark.appendBinary(result);
-        fileInfo.md5 = spark.end();
-        Z.debug("md5:" + fileInfo.md5, 4);
-        fileInfo.filename = file.name;
-        fileInfo.filesize = file.size;
-        fileInfo.mtime = Date.now();
-        fileInfo.contentType = file.type;
-        fileInfo.reader = reader;
-        callback(fileInfo);
-    };
-    
-    reader.readAsBinaryString(file);
+    return new Promise(function(resolve, reject){
+        var fileInfo = {};
+        var reader = new FileReader();
+        reader.onload = function(e){
+            Z.debug('Zotero.file.getFileInfo onloadFunc', 3);
+            var result = e.target.result;
+            Zotero.debug(result, 3);
+            fileInfo.md5 = SparkMD5.ArrayBuffer.hash(result);
+            fileInfo.filename = file.name;
+            fileInfo.filesize = file.size;
+            fileInfo.mtime = Date.now();
+            fileInfo.contentType = file.type;
+            //fileInfo.reader = reader;
+            fileInfo.filedata = result;
+            resolve(fileInfo);
+        };
+        
+        reader.readAsArrayBuffer(file);
+    });
 };
 
-Zotero.file.uploadFile = function(uploadInfo, file){
+Zotero.file.uploadFile = function(uploadInfo, fileInfo){
     Z.debug("Zotero.file.uploadFile", 3);
     Z.debug(uploadInfo, 4);
     
@@ -5157,15 +5123,38 @@ Zotero.file.uploadFile = function(uploadInfo, file){
         formData.append(index, val);
     });
     
-    formData.append('file', file);
+    var blobData = new Blob([fileInfo.filedata], {type : fileInfo.contentType});
+    formData.append('file', blobData);
     
     var xhr = new XMLHttpRequest();
     
     xhr.open('POST', uploadInfo.url, true);
     
-    xhr.send(formData);
-    return xhr;
-    //While s3 does not allow CORS this XHR will not have the normal status
+    return new Promise(function(resolve, reject){
+        xhr.onload = function(evt){
+            Z.debug('uploadFile onload event', 3);
+            if(this.status == 201){
+                Z.debug("successful upload - 201", 3);
+                resolve();
+            }
+            else {
+                Z.debug('uploadFile failed - ' + xhr.status, 3);
+                reject({
+                    "message": "Failure uploading file.",
+                    "code": xhr.status,
+                    "serverMessage": xhr.responseText
+                });
+            }
+        };
+        
+        xhr.onprogress = function(evt){
+            Z.debug('progress event');
+            Z.debug(evt);
+        };
+        xhr.send(formData);
+    });
+    
+    //If CORS is not enabled on s3 this XHR will not have the normal status
     //information, but will still fire readyStateChanges so you can tell
     //when the upload has finished (even if you can't tell if it was successful
     //from JS)
@@ -5723,7 +5712,7 @@ Zotero.Idb.Library.prototype.getAllTags = function(){
     });
 };
 
-Zotero.Idb.Library.prototype.setFile = function(itemKey, file){
+Zotero.Idb.Library.prototype.setFile = function(itemKey, fileData){
     Z.debug("Zotero.Idb.Library.setFile", 3);
     var idbLibrary = this;
     return new Promise(function(resolve, reject){
@@ -5741,9 +5730,9 @@ Zotero.Idb.Library.prototype.setFile = function(itemKey, file){
         
         var fileStore = transaction.objectStore("files");
         var reqSuccess = function(event){
-            Zotero.debug("Set File" + event.target.result, 4);
+            Zotero.debug("Set File" + event.target.result, 3);
         };
-        var request = fileStore.put(file, key);
+        var request = fileStore.put(fileData, itemKey);
         request.onsuccess = reqSuccess;
     });
 };
@@ -5756,10 +5745,11 @@ Zotero.Idb.Library.prototype.getFile = function(itemKey){
     Z.debug("Zotero.Idb.Library.getFile", 3);
     var idbLibrary = this;
     return new Promise(function(resolve, reject){
-        var success = J.proxy(function(event){
+        var success = function(event){
+            Z.debug("done getting file");
             resolve(event.target.result);
-        }, this);
-        idbLibrary.db.transaction("items").objectStore(["files"], "readonly").get(itemKey).onsuccess = success;
+        };
+        idbLibrary.db.transaction(["files"], "readonly").objectStore("files").get(itemKey).onsuccess = success;
     });
 };
 
@@ -6847,7 +6837,10 @@ Zotero.defaultPrefs = {
 
 Zotero.init = function(){
     Z.debug("Zotero init", 3);
-
+    
+    if(window.zoteroConfig){
+        Zotero.config = J.extend({}, Zotero.config, window.zoteroConfig);
+    }
     //base init to setup tagline and search bar
     if(Zotero.pages){
         Zotero.pages.base.init();
@@ -6999,6 +6992,9 @@ Zotero.State.prototype.getSelectedItemKeys = function(){
     J.each(uniqueKeys, function(key, val){
         returnKeys.push(key);
     });
+    if(returnKeys.length == 0 && state.getUrlVar('itemKey')){
+        returnKeys.push(state.getUrlVar('itemKey'));
+    }
     return returnKeys;
 };
 
@@ -8012,6 +8008,11 @@ Zotero.ui.init.libraryTemplates = function(){
             }
             return false;
         },
+        nonEditable: function(field, item) {
+            if( J.inArray(field, item.noEditFields) !== -1) {
+                return true;
+            }
+        },
     });
     J.views.tags({
         'coloredTags': {
@@ -8032,7 +8033,6 @@ Zotero.ui.init.libraryTemplates = function(){
     J('#citeitemformTemplate').template('citeitemformTemplate');
     J('#attachmentformTemplate').template('attachmentformTemplate');
     J('#attachmentuploadTemplate').template('attachmentuploadTemplate');
-    J('#datafieldTemplate').template('datafieldTemplate');
     J('#editnoteformTemplate').template('editnoteformTemplate');
     J('#itemtagTemplate').template('itemtagTemplate');
     J('#itemtypeselectTemplate').template('itemtypeselectTemplate');
@@ -9388,7 +9388,7 @@ Zotero.ui.callbacks.createItem = function(e){
  * @param  {event} e click event
  * @return {boolean}
  */
-Zotero.ui.callbacks.moveToTrash =  function(evt){
+Zotero.ui.widgets.controlPanel.moveToTrash =  function(evt){
     evt.preventDefault();
     Z.debug('move-to-trash clicked', 3);
     
@@ -9744,7 +9744,6 @@ Zotero.ui.widgets.groups.displayGroupNuggets = function(el, groups){
             memberCount:memberCount,
             groupManageable: groupManageable
         };
-        //Z.debug(tdata);
         jel.append( J('#groupnuggetTemplate').render(tdata) );
     });
 };
@@ -9898,7 +9897,9 @@ Zotero.ui.widgets.item.showChildren = function(e){
     
     return item.getChildren(library)
     .then(function(childItems){
-        J(".item-attachments-div").html( J('#childitemsTemplate').render({childItems:childItems}) );
+        var container = widgetEl.find(".item-attachments-div");
+        container.html( J('#childitemsTemplate').render({childItems:childItems}) );
+        Zotero.state.bindItemLinks(container);
     });
 };
 
@@ -10042,28 +10043,12 @@ Zotero.ui.widgets.item.editItemForm = function(el, item){
         }
         Zotero.ui.init.rte('default');
     }
-    else if(item.itemType == "attachment"){
-        Z.debug("item is attachment", 4);
-        var mode = Zotero.state.getUrlVar('mode');
-        jel.append( J('#attachmentformTemplate').render({item:item,
-                                    library:library,
-                                    itemKey:item.itemKey,
-                                    creatorTypes:[],
-                                    mode:mode
-                                    }) );
-        
-        //add empty tag if no tags yet
-        if(item.apiObj.tags.length === 0){
-            Zotero.ui.widgets.item.addTag(el, false);
-        }
-        Zotero.ui.init.rte();
-        
-    }
     else{
+        Z.debug("itemType: " + item.apiObj.itemType, 3);
         item.getCreatorTypes(item.apiObj.itemType)
         .then(function(){
             Z.debug("getCreatorTypes done", 3);
-            if(item.creators.length === 0){
+            if(item.creators && item.creators.length === 0){
                 item.creators.push({creatorType: item.creatorTypes[item.itemType][0],
                                     first: '',
                                     last: ''
@@ -10074,8 +10059,6 @@ Zotero.ui.widgets.item.editItemForm = function(el, item){
                                                     library:library,
                                                     itemKey:item.itemKey,
                                                     creatorTypes:Zotero.Item.prototype.creatorTypes[item.apiObj.itemType],
-                                                    saveable: true,
-                                                    citable: false
                                                     }) );
             
             //add empty tag if no tags yet
@@ -10084,6 +10067,7 @@ Zotero.ui.widgets.item.editItemForm = function(el, item){
             }
             
             Zotero.eventful.initTriggers(jel);
+            Zotero.ui.init.rte();
         });
     }
     
@@ -11116,9 +11100,13 @@ Zotero.ui.widgets.uploadDialog = {};
 
 Zotero.ui.widgets.uploadDialog.init = function(el){
     Z.debug("uploaddialog widget init", 3);
+    var widgetEl = J(el);
     var library = Zotero.ui.getAssociatedLibrary(el);
     
     library.listen("uploadAttachment", Zotero.ui.widgets.uploadDialog.show, {widgetEl: el, library: library});
+    library.listen("upload", Zotero.ui.widgets.uploadDialog.upload, {widgetEl: el, library: library});
+    
+    widgetEl.on('click', '.uploadButton', library.trigger('upload'));
 };
 
 Zotero.ui.widgets.uploadDialog.show = function(e){
@@ -11131,95 +11119,6 @@ Zotero.ui.widgets.uploadDialog.show = function(e){
     widgetEl.html( J("#attachmentuploadTemplate").render({}) );
     var dialogEl = widgetEl.find(".upload-attachment-dialog");
     
-    var uploadFunction = function(){
-        Z.debug("uploadFunction", 3);
-        //callback for when everything in the upload form is filled
-        //grab file blob
-        //grab file data given by user
-        //create or modify attachment item
-        //Item.uploadExistingFile or uploadChildAttachment
-        
-        var fileInfo = dialogEl.find("#attachmentuploadfileinfo").data('fileInfo');
-        var file = dialogEl.find("#attachmentuploadfileinfo").data('file');
-        var specifiedTitle = dialogEl.find("#upload-file-title-input").val();
-        
-        var progressCallback = function(e){
-            Z.debug('fullUpload.upload.onprogress', 3);
-            var percentLoaded = Math.round((e.loaded / e.total) * 100);
-            Z.debug("Upload progress event:" + e.loaded + " / " + e.total + " : " + percentLoaded + "%", 3);
-            J("#uploadprogressmeter").val(percentLoaded);
-        };
-        
-        var uploadSuccess = function(){
-            Z.debug("uploadSuccess", 3);
-            Zotero.ui.closeDialog(J("#upload-attachment-dialog"));
-            library.trigger("uploadSuccessful");
-            Zotero.state.pushState(true);
-        };
-        
-        var uploadFailure = function(failure){
-            Z.debug("Upload failed", 3);
-            Z.debug(failure, 3);
-            Zotero.ui.jsNotificationMessage("There was a problem uploading your file.", 'error');
-            switch(failure.code){
-                case 400:
-                    Zotero.ui.jsNotificationMessage("Bad Input. 400", 'error');
-                    break;
-                case 403:
-                    Zotero.ui.jsNotificationMessage("You do not have permission to edit files", 'error');
-                    break;
-                case 409:
-                    Zotero.ui.jsNotificationMessage("The library is currently locked. Please try again in a few minutes.", 'error');
-                    break;
-                case 412:
-                    Zotero.ui.jsNotificationMessage("File conflict. Remote file has changed", 'error');
-                    break;
-                case 413:
-                    Zotero.ui.jsNotificationMessage("Requested upload would exceed storage quota.", 'error');
-                    break;
-                case 428:
-                    Zotero.ui.jsNotificationMessage("Precondition required error", 'error');
-                    break;
-                case 429:
-                    Zotero.ui.jsNotificationMessage("Too many uploads pending. Please try again in a few minutes", 'error');
-                    break;
-                default:
-                    Zotero.ui.jsNotificationMessage("Unknown error uploading file. " + failure.code, 'error');
-            }
-            Zotero.ui.closeDialog(J("#upload-attachment-dialog"));
-        };
-        
-        //show spinner while working on upload
-        Zotero.ui.showSpinner(J('#fileuploadspinner'));
-        
-        //upload new copy of file if we're modifying an attachment
-        //create child and upload file if we're modifying a top level item
-        var itemKey = Zotero.state.getUrlVar('itemKey');
-        var item = library.items.getItem(itemKey);
-        
-        if(!item.get("parentItem")){
-            Z.debug("no parentItem", 3);
-            //get template item
-            var childItem = new Zotero.Item();
-            childItem.associateWithLibrary(library);
-            childItem.initEmpty('attachment', 'imported_file')
-            .then(function(childItem){
-                Z.debug("templateItemDeferred callback", 3);
-                childItem.set('title', specifiedTitle);
-                
-                item.uploadChildAttachment(childItem, fileInfo, file, progressCallback)
-                .then(uploadSuccess, uploadFailure);
-            });
-        }
-        else if(item.get('itemType') == 'attachment' && item.get("linkMode") == 'imported_file') {
-            Z.debug("imported_file attachment", 3);
-            item.uploadFile(fileInfo, file, progressCallback)
-            .then(uploadSuccess, uploadFailure);
-        }
-        
-    };
-
-    dialogEl.find('.uploadButton').on('click', uploadFunction);
     Zotero.ui.dialog(dialogEl, {});
     
     var handleFiles = function(files){
@@ -11229,15 +11128,15 @@ Zotero.ui.widgets.uploadDialog.show = function(e){
             return false;
         }
         var file = files[0];
-        J("#attachmentuploadfileinfo").data('file', file);
         
-        var fileinfo = Zotero.file.getFileInfo(file, function(fileInfo){
-            J("#attachmentuploadfileinfo").data('fileInfo', fileInfo);
-            J("#upload-file-title-input").val(fileInfo.filename);
-            J("#attachmentuploadfileinfo .uploadfilesize").html(fileInfo.filesize);
-            J("#attachmentuploadfileinfo .uploadfiletype").html(fileInfo.contentType);
-            //J("#attachmentuploadfileinfo .uploadfilemd5").html(fileInfo.md5);
-            J("#droppedfilename").html(fileInfo.filename);
+        Zotero.file.getFileInfo(file)
+        .then(function(fileInfo){
+            widgetEl.find(".attachmentuploadfileinfo").data('fileInfo', fileInfo);
+            widgetEl.find("input.upload-file-title-input").val(fileInfo.filename);
+            widgetEl.find("td.uploadfilesize").html(fileInfo.filesize);
+            widgetEl.find("td.uploadfiletype").html(fileInfo.contentType);
+            //widgetEl.find("#attachmentuploadfileinfo .uploadfilemd5").html(fileInfo.md5);
+            widgetEl.find(".droppedfilename").html(fileInfo.filename);
         });
         return;
     };
@@ -11252,7 +11151,7 @@ Zotero.ui.widgets.uploadDialog.show = function(e){
         je.stopPropagation();
         je.preventDefault();
         //clear file input so drag/drop and input don't show conflicting information
-        J("#fileuploadinput").val('');
+        widgetEl.find(".fileuploadinput").val('');
         var e = je.originalEvent;
         var dt = e.dataTransfer;
         var files = dt.files;
@@ -11267,7 +11166,97 @@ Zotero.ui.widgets.uploadDialog.show = function(e){
         handleFiles(files);
     });
     
-    return false;
+    Zotero.eventful.initTriggers(widgetEl);
+};
+
+Zotero.ui.widgets.uploadDialog.upload = function(evt){
+    Z.debug("uploadFunction", 3);
+    var widgetEl = J(evt.data['widgetEl']);
+    var library = evt.data['library'];
+    
+    //callback for when everything in the upload form is filled
+    //grab file blob
+    //grab file data given by user
+    //create or modify attachment item
+    //Item.uploadExistingFile or uploadChildAttachment
+    
+    var dialogEl = widgetEl.find('div.upload-attachment-dialog');
+    var fileInfo = dialogEl.find("#attachmentuploadfileinfo").data('fileInfo');
+    var specifiedTitle = dialogEl.find("#upload-file-title-input").val();
+    
+    var progressCallback = function(e){
+        Z.debug('fullUpload.upload.onprogress', 3);
+        var percentLoaded = Math.round((e.loaded / e.total) * 100);
+        Z.debug("Upload progress event:" + e.loaded + " / " + e.total + " : " + percentLoaded + "%", 3);
+        widgetEl.find("#uploadprogressmeter").val(percentLoaded);
+    };
+    
+    //show spinner while working on upload
+    Zotero.ui.showSpinner(widgetEl.find('.fileuploadspinner'));
+    
+    //upload new copy of file if we're modifying an attachment
+    //create child and upload file if we're modifying a top level item
+    var itemKey = Zotero.state.getUrlVar('itemKey');
+    var item = library.items.getItem(itemKey);
+    var uploadPromise;
+    
+    if(!item.get("parentItem")){
+        Z.debug("no parentItem", 3);
+        //get template item
+        var childItem = new Zotero.Item();
+        childItem.associateWithLibrary(library);
+        uploadPromise = childItem.initEmpty('attachment', 'imported_file')
+        .then(function(childItem){
+            Z.debug("templateItemDeferred callback", 3);
+            childItem.set('title', specifiedTitle);
+            
+            return item.uploadChildAttachment(childItem, fileInfo, progressCallback);
+        });
+    }
+    else if(item.get('itemType') == 'attachment' && item.get("linkMode") == 'imported_file') {
+        Z.debug("imported_file attachment", 3);
+        uploadPromise = item.uploadFile(fileInfo, progressCallback);
+    }
+    
+    uploadPromise.then(function(){
+        Z.debug("uploadSuccess", 3);
+        library.trigger("uploadSuccessful");
+    }).catch(Zotero.ui.widgets.uploadDialog.failureHandler)
+    .then(function(){
+        Zotero.ui.closeDialog(dialogEl);
+    });
+
+};
+
+Zotero.ui.widgets.uploadDialog.failureHandler = function(failure){
+    Z.debug("Upload failed", 3);
+    Z.debug(failure, 3);
+    Zotero.ui.jsNotificationMessage("There was a problem uploading your file.", 'error');
+    switch(failure.code){
+        case 400:
+            Zotero.ui.jsNotificationMessage("Bad Input. 400", 'error');
+            break;
+        case 403:
+            Zotero.ui.jsNotificationMessage("You do not have permission to edit files", 'error');
+            break;
+        case 409:
+            Zotero.ui.jsNotificationMessage("The library is currently locked. Please try again in a few minutes.", 'error');
+            break;
+        case 412:
+            Zotero.ui.jsNotificationMessage("File conflict. Remote file has changed", 'error');
+            break;
+        case 413:
+            Zotero.ui.jsNotificationMessage("Requested upload would exceed storage quota.", 'error');
+            break;
+        case 428:
+            Zotero.ui.jsNotificationMessage("Precondition required error", 'error');
+            break;
+        case 429:
+            Zotero.ui.jsNotificationMessage("Too many uploads pending. Please try again in a few minutes", 'error');
+            break;
+        default:
+            Zotero.ui.jsNotificationMessage("Unknown error uploading file. " + failure.code, 'error');
+    }
 };
 
 
@@ -11693,6 +11682,123 @@ Zotero.ui.widgets.chooseSortingDialog.show = function(evt){
     Zotero.ui.dialog(dialogEl, {});
 };
 
+
+
+Zotero.ui.widgets.imagePreview = {};
+
+//dedicated widget to preload library on init so we don't attempt to do that
+//in every other widget
+Zotero.ui.widgets.imagePreview.init = function(el){
+    var library = Zotero.ui.getAssociatedLibrary(el);
+    library.listen('previewImage', Zotero.ui.widgets.imagePreview.show, {widgetEl: el});
+};
+
+Zotero.ui.widgets.imagePreview.show = function(evt){
+    
+};
+
+
+Zotero.ui.widgets.imageGrabber = {};
+
+//dedicated widget to preload library on init so we don't attempt to do that
+//in every other widget
+Zotero.ui.widgets.imageGrabber.init = function(el){
+    Z.debug("imageGrabber.init", 3)
+    var library = Zotero.ui.getAssociatedLibrary(el);
+    library.listen('grabImage', Zotero.ui.widgets.imageGrabber.grab, {widgetEl: el});
+    library.listen('previewImage', Zotero.ui.widgets.imageGrabber.previewImage, {widgetEl: el});
+    library.listen('previewStoredImage', Zotero.ui.widgets.imageGrabber.previewStoredImage, {widgetEl: el});
+    
+    var displayAsImage = function(file){
+        var imgURL = URL.createObjectURL(file);
+        J("#preview-image").attr('src', imgURL);
+        
+    };
+    
+    var inputEl = J("#capture").on('change', function(){
+        Z.debug("capture element changed. displaying image in preview");
+        library.trigger('previewImage');
+        
+    });
+    
+    //callback for when everything in the upload form is filled
+    //grab file blob
+    //grab file data given by user
+    //create or modify attachment item
+    //Item.uploadExistingFile or uploadChildAttachment
+    
+};
+
+Zotero.ui.widgets.imageGrabber.getFile = function(container){
+    return container.find("#capture").get(0).files[0];
+};
+
+Zotero.ui.widgets.imageGrabber.previewImage = function(evt){
+    Z.debug('imageGrabber.previewImage', 3);
+    var widgetEl = J(evt.data['widgetEl']);
+    
+    var file = Zotero.ui.widgets.imageGrabber.getFile(widgetEl);
+    var imgUrl = URL.createObjectURL(file);
+    widgetEl.find('#preview-image').attr('src', imgUrl);
+    
+};
+
+Zotero.ui.widgets.imageGrabber.grab = function(evt){
+    Z.debug('imageGrabber.grab', 3);
+    var widgetEl = J(evt.data['widgetEl']);
+    var library = Zotero.ui.getAssociatedLibrary(widgetEl);
+    var file;
+    var fileInfo;
+    
+    var childItem = new Zotero.Item();
+    childItem.associateWithLibrary(library);
+    childItem.initEmpty('attachment', 'imported_file')
+    .then(function(childItem){
+        Z.debug("templateItem callback", 3);
+        var title = widgetEl.find('#image-grabber-title').val();
+        if(!title) title = "Untitled";
+        childItem.set('title', title);
+        childItem.set('itemKey', Zotero.utils.getKey());
+        library.items.addItem(childItem);
+        
+        return library.idbLibrary.addItems([childItem]);
+    }).then(function(){
+        Z.debug("added item to idb", 3);
+        file = Zotero.ui.widgets.imageGrabber.getFile(widgetEl);
+        return Zotero.file.getFileInfo(file);
+    }).then(function(fInfo){
+        Z.debug("got fileInfo", 3);
+        fileInfo = fInfo;
+        var fileData = fileInfo;
+        //fileData.file = file;
+        return library.idbLibrary.setFile(childItem.get('itemKey'), fileData);
+    }).then(function(){
+        Z.debug("file saved to idb", 3);
+    });
+};
+
+Zotero.ui.widgets.imageGrabber.previewStoredImage = function(evt){
+    Z.debug('imageGrabber.previewImage', 3);
+    var widgetEl = J(evt.data['widgetEl']);
+    var library = Zotero.ui.getAssociatedLibrary(widgetEl);
+    var itemKey = evt.itemKey;
+    Z.debug("itemKey: " + itemKey);
+    
+    var previewItem = library.items.getItem(itemKey);
+    var previewItemFile = library.idbLibrary.getFile(itemKey)
+    .then(function(fileData){
+        Z.debug("got Image");
+        Z.debug(fileData);
+        var b = new Blob([fileData.filedata], {type : fileData.contentType});
+        var imgUrl = URL.createObjectURL(b);
+        Z.debug(imgUrl);
+        widgetEl.find('#preview-image').attr('src', imgUrl);
+        window.fileData = fileData;
+    });
+    
+};
+
+//Zotero.ui.widgets.imageGrabber.
 
 
 /*

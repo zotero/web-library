@@ -2,9 +2,13 @@ Zotero.ui.widgets.uploadDialog = {};
 
 Zotero.ui.widgets.uploadDialog.init = function(el){
     Z.debug("uploaddialog widget init", 3);
+    var widgetEl = J(el);
     var library = Zotero.ui.getAssociatedLibrary(el);
     
     library.listen("uploadAttachment", Zotero.ui.widgets.uploadDialog.show, {widgetEl: el, library: library});
+    library.listen("upload", Zotero.ui.widgets.uploadDialog.upload, {widgetEl: el, library: library});
+    
+    widgetEl.on('click', '.uploadButton', library.trigger('upload'));
 };
 
 Zotero.ui.widgets.uploadDialog.show = function(e){
@@ -17,95 +21,6 @@ Zotero.ui.widgets.uploadDialog.show = function(e){
     widgetEl.html( J("#attachmentuploadTemplate").render({}) );
     var dialogEl = widgetEl.find(".upload-attachment-dialog");
     
-    var uploadFunction = function(){
-        Z.debug("uploadFunction", 3);
-        //callback for when everything in the upload form is filled
-        //grab file blob
-        //grab file data given by user
-        //create or modify attachment item
-        //Item.uploadExistingFile or uploadChildAttachment
-        
-        var fileInfo = dialogEl.find("#attachmentuploadfileinfo").data('fileInfo');
-        var file = dialogEl.find("#attachmentuploadfileinfo").data('file');
-        var specifiedTitle = dialogEl.find("#upload-file-title-input").val();
-        
-        var progressCallback = function(e){
-            Z.debug('fullUpload.upload.onprogress', 3);
-            var percentLoaded = Math.round((e.loaded / e.total) * 100);
-            Z.debug("Upload progress event:" + e.loaded + " / " + e.total + " : " + percentLoaded + "%", 3);
-            J("#uploadprogressmeter").val(percentLoaded);
-        };
-        
-        var uploadSuccess = function(){
-            Z.debug("uploadSuccess", 3);
-            Zotero.ui.closeDialog(J("#upload-attachment-dialog"));
-            library.trigger("uploadSuccessful");
-            Zotero.state.pushState(true);
-        };
-        
-        var uploadFailure = function(failure){
-            Z.debug("Upload failed", 3);
-            Z.debug(failure, 3);
-            Zotero.ui.jsNotificationMessage("There was a problem uploading your file.", 'error');
-            switch(failure.code){
-                case 400:
-                    Zotero.ui.jsNotificationMessage("Bad Input. 400", 'error');
-                    break;
-                case 403:
-                    Zotero.ui.jsNotificationMessage("You do not have permission to edit files", 'error');
-                    break;
-                case 409:
-                    Zotero.ui.jsNotificationMessage("The library is currently locked. Please try again in a few minutes.", 'error');
-                    break;
-                case 412:
-                    Zotero.ui.jsNotificationMessage("File conflict. Remote file has changed", 'error');
-                    break;
-                case 413:
-                    Zotero.ui.jsNotificationMessage("Requested upload would exceed storage quota.", 'error');
-                    break;
-                case 428:
-                    Zotero.ui.jsNotificationMessage("Precondition required error", 'error');
-                    break;
-                case 429:
-                    Zotero.ui.jsNotificationMessage("Too many uploads pending. Please try again in a few minutes", 'error');
-                    break;
-                default:
-                    Zotero.ui.jsNotificationMessage("Unknown error uploading file. " + failure.code, 'error');
-            }
-            Zotero.ui.closeDialog(J("#upload-attachment-dialog"));
-        };
-        
-        //show spinner while working on upload
-        Zotero.ui.showSpinner(J('#fileuploadspinner'));
-        
-        //upload new copy of file if we're modifying an attachment
-        //create child and upload file if we're modifying a top level item
-        var itemKey = Zotero.state.getUrlVar('itemKey');
-        var item = library.items.getItem(itemKey);
-        
-        if(!item.get("parentItem")){
-            Z.debug("no parentItem", 3);
-            //get template item
-            var childItem = new Zotero.Item();
-            childItem.associateWithLibrary(library);
-            childItem.initEmpty('attachment', 'imported_file')
-            .then(function(childItem){
-                Z.debug("templateItemDeferred callback", 3);
-                childItem.set('title', specifiedTitle);
-                
-                item.uploadChildAttachment(childItem, fileInfo, file, progressCallback)
-                .then(uploadSuccess, uploadFailure);
-            });
-        }
-        else if(item.get('itemType') == 'attachment' && item.get("linkMode") == 'imported_file') {
-            Z.debug("imported_file attachment", 3);
-            item.uploadFile(fileInfo, file, progressCallback)
-            .then(uploadSuccess, uploadFailure);
-        }
-        
-    };
-
-    dialogEl.find('.uploadButton').on('click', uploadFunction);
     Zotero.ui.dialog(dialogEl, {});
     
     var handleFiles = function(files){
@@ -115,15 +30,15 @@ Zotero.ui.widgets.uploadDialog.show = function(e){
             return false;
         }
         var file = files[0];
-        J("#attachmentuploadfileinfo").data('file', file);
         
-        var fileinfo = Zotero.file.getFileInfo(file, function(fileInfo){
-            J("#attachmentuploadfileinfo").data('fileInfo', fileInfo);
-            J("#upload-file-title-input").val(fileInfo.filename);
-            J("#attachmentuploadfileinfo .uploadfilesize").html(fileInfo.filesize);
-            J("#attachmentuploadfileinfo .uploadfiletype").html(fileInfo.contentType);
-            //J("#attachmentuploadfileinfo .uploadfilemd5").html(fileInfo.md5);
-            J("#droppedfilename").html(fileInfo.filename);
+        Zotero.file.getFileInfo(file)
+        .then(function(fileInfo){
+            widgetEl.find(".attachmentuploadfileinfo").data('fileInfo', fileInfo);
+            widgetEl.find("input.upload-file-title-input").val(fileInfo.filename);
+            widgetEl.find("td.uploadfilesize").html(fileInfo.filesize);
+            widgetEl.find("td.uploadfiletype").html(fileInfo.contentType);
+            //widgetEl.find("#attachmentuploadfileinfo .uploadfilemd5").html(fileInfo.md5);
+            widgetEl.find(".droppedfilename").html(fileInfo.filename);
         });
         return;
     };
@@ -138,7 +53,7 @@ Zotero.ui.widgets.uploadDialog.show = function(e){
         je.stopPropagation();
         je.preventDefault();
         //clear file input so drag/drop and input don't show conflicting information
-        J("#fileuploadinput").val('');
+        widgetEl.find(".fileuploadinput").val('');
         var e = je.originalEvent;
         var dt = e.dataTransfer;
         var files = dt.files;
@@ -153,5 +68,95 @@ Zotero.ui.widgets.uploadDialog.show = function(e){
         handleFiles(files);
     });
     
-    return false;
+    Zotero.eventful.initTriggers(widgetEl);
+};
+
+Zotero.ui.widgets.uploadDialog.upload = function(evt){
+    Z.debug("uploadFunction", 3);
+    var widgetEl = J(evt.data['widgetEl']);
+    var library = evt.data['library'];
+    
+    //callback for when everything in the upload form is filled
+    //grab file blob
+    //grab file data given by user
+    //create or modify attachment item
+    //Item.uploadExistingFile or uploadChildAttachment
+    
+    var dialogEl = widgetEl.find('div.upload-attachment-dialog');
+    var fileInfo = dialogEl.find("#attachmentuploadfileinfo").data('fileInfo');
+    var specifiedTitle = dialogEl.find("#upload-file-title-input").val();
+    
+    var progressCallback = function(e){
+        Z.debug('fullUpload.upload.onprogress', 3);
+        var percentLoaded = Math.round((e.loaded / e.total) * 100);
+        Z.debug("Upload progress event:" + e.loaded + " / " + e.total + " : " + percentLoaded + "%", 3);
+        widgetEl.find("#uploadprogressmeter").val(percentLoaded);
+    };
+    
+    //show spinner while working on upload
+    Zotero.ui.showSpinner(widgetEl.find('.fileuploadspinner'));
+    
+    //upload new copy of file if we're modifying an attachment
+    //create child and upload file if we're modifying a top level item
+    var itemKey = Zotero.state.getUrlVar('itemKey');
+    var item = library.items.getItem(itemKey);
+    var uploadPromise;
+    
+    if(!item.get("parentItem")){
+        Z.debug("no parentItem", 3);
+        //get template item
+        var childItem = new Zotero.Item();
+        childItem.associateWithLibrary(library);
+        uploadPromise = childItem.initEmpty('attachment', 'imported_file')
+        .then(function(childItem){
+            Z.debug("templateItemDeferred callback", 3);
+            childItem.set('title', specifiedTitle);
+            
+            return item.uploadChildAttachment(childItem, fileInfo, progressCallback);
+        });
+    }
+    else if(item.get('itemType') == 'attachment' && item.get("linkMode") == 'imported_file') {
+        Z.debug("imported_file attachment", 3);
+        uploadPromise = item.uploadFile(fileInfo, progressCallback);
+    }
+    
+    uploadPromise.then(function(){
+        Z.debug("uploadSuccess", 3);
+        library.trigger("uploadSuccessful");
+    }).catch(Zotero.ui.widgets.uploadDialog.failureHandler)
+    .then(function(){
+        Zotero.ui.closeDialog(dialogEl);
+    });
+
+};
+
+Zotero.ui.widgets.uploadDialog.failureHandler = function(failure){
+    Z.debug("Upload failed", 3);
+    Z.debug(failure, 3);
+    Zotero.ui.jsNotificationMessage("There was a problem uploading your file.", 'error');
+    switch(failure.code){
+        case 400:
+            Zotero.ui.jsNotificationMessage("Bad Input. 400", 'error');
+            break;
+        case 403:
+            Zotero.ui.jsNotificationMessage("You do not have permission to edit files", 'error');
+            break;
+        case 409:
+            Zotero.ui.jsNotificationMessage("The library is currently locked. Please try again in a few minutes.", 'error');
+            break;
+        case 412:
+            Zotero.ui.jsNotificationMessage("File conflict. Remote file has changed", 'error');
+            break;
+        case 413:
+            Zotero.ui.jsNotificationMessage("Requested upload would exceed storage quota.", 'error');
+            break;
+        case 428:
+            Zotero.ui.jsNotificationMessage("Precondition required error", 'error');
+            break;
+        case 429:
+            Zotero.ui.jsNotificationMessage("Too many uploads pending. Please try again in a few minutes", 'error');
+            break;
+        default:
+            Zotero.ui.jsNotificationMessage("Unknown error uploading file. " + failure.code, 'error');
+    }
 };
