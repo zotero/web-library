@@ -23,7 +23,10 @@ Zotero.defaultPrefs = {
 
 Zotero.init = function(){
     Z.debug("Zotero init", 3);
-
+    
+    if(window.zoteroConfig){
+        Zotero.config = J.extend({}, Zotero.config, window.zoteroConfig);
+    }
     //base init to setup tagline and search bar
     if(Zotero.pages){
         Zotero.pages.base.init();

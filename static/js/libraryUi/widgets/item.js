@@ -145,7 +145,9 @@ Zotero.ui.widgets.item.showChildren = function(e){
     
     return item.getChildren(library)
     .then(function(childItems){
-        J(".item-attachments-div").html( J('#childitemsTemplate').render({childItems:childItems}) );
+        var container = widgetEl.find(".item-attachments-div");
+        container.html( J('#childitemsTemplate').render({childItems:childItems}) );
+        Zotero.state.bindItemLinks(container);
     });
 };
 
@@ -289,28 +291,12 @@ Zotero.ui.widgets.item.editItemForm = function(el, item){
         }
         Zotero.ui.init.rte('default');
     }
-    else if(item.itemType == "attachment"){
-        Z.debug("item is attachment", 4);
-        var mode = Zotero.state.getUrlVar('mode');
-        jel.append( J('#attachmentformTemplate').render({item:item,
-                                    library:library,
-                                    itemKey:item.itemKey,
-                                    creatorTypes:[],
-                                    mode:mode
-                                    }) );
-        
-        //add empty tag if no tags yet
-        if(item.apiObj.tags.length === 0){
-            Zotero.ui.widgets.item.addTag(el, false);
-        }
-        Zotero.ui.init.rte();
-        
-    }
     else{
+        Z.debug("itemType: " + item.apiObj.itemType, 3);
         item.getCreatorTypes(item.apiObj.itemType)
         .then(function(){
             Z.debug("getCreatorTypes done", 3);
-            if(item.creators.length === 0){
+            if(item.creators && item.creators.length === 0){
                 item.creators.push({creatorType: item.creatorTypes[item.itemType][0],
                                     first: '',
                                     last: ''
@@ -321,8 +307,6 @@ Zotero.ui.widgets.item.editItemForm = function(el, item){
                                                     library:library,
                                                     itemKey:item.itemKey,
                                                     creatorTypes:Zotero.Item.prototype.creatorTypes[item.apiObj.itemType],
-                                                    saveable: true,
-                                                    citable: false
                                                     }) );
             
             //add empty tag if no tags yet
@@ -331,6 +315,7 @@ Zotero.ui.widgets.item.editItemForm = function(el, item){
             }
             
             Zotero.eventful.initTriggers(jel);
+            Zotero.ui.init.rte();
         });
     }
     

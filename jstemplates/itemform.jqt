@@ -6,6 +6,7 @@
     <table>
     
     <!-- Output itemType -->
+    {{if item.itemType != 'attachment' && item.itemType != 'note'}}
     <tr>
         <th>{{>~zoteroFieldMap['itemType']}}</th>
         <td class='itemType'>
@@ -18,7 +19,8 @@
             </select>
         </td>
     </tr>
-
+    {{/if}}
+    
     <!-- Output title -->
     <tr>
         <th>{{>~zoteroFieldMap['title']}}</th>
@@ -37,16 +39,24 @@
     <!-- Output fields -->
     {{props item.apiObj ~item=item }}
         {{if ~displayInDetails(key, ~item) }}
+        {{if !~nonEditable(key, ~item)}}
         <tr>
             <th><label for="{{attr:key}}">{{>~zoteroFieldMap[key]}}</label></th>
             <td class="{{attr:key}}">
                 {{include ~itemKey=~item.itemKey tmpl="#datafieldTemplate" /}}
             </td>
         </tr>
+        {{else}}
+        <tr>
+            <th>{{>~zoteroFieldMap[key] || key}}</th>
+            <td class="{{attr:key}}">
+                {{>~formatItemField(key, ~item)}}
+            </td>
+        </tr>
+        {{/if}}
         {{/if}}
     {{/props}}
     
-    {{if saveable !== false}}
     <!-- Output tags -->
     <tr>
         <th>Tags</th>
@@ -58,6 +68,7 @@
     </tr>
     
     <!-- Output notes if new item -->
+    {{if item.itemType != 'attachment'}}
     <tr>
     <th>Notes</th>
         <td class="notes">
@@ -72,8 +83,7 @@
     
     </table>
 
-    {{if saveable !== false}}<button type="button" data-itemKey="{{attr:itemKey}}" {{if library}}data-library="{{attr:library.libraryString}}"{{/if}} class="zform saveitembutton btn btn-default eventfultrigger" data-triggers="saveItem">Save</button>{{/if}}
-    {{if citable}}<button type="button" class="zform directciteitembutton btn btn-default">Cite</button>{{/if}}
+    <button type="button" data-itemKey="{{attr:itemKey}}" {{if library}}data-library="{{attr:library.libraryString}}"{{/if}} class="zform saveitembutton btn btn-default eventfultrigger" data-triggers="saveItem">Save</button>
     <button type="button" data-itemKey="{{attr:itemKey}}" class="zform cancelitemeditbutton btn btn-default eventfultrigger" data-triggers="cancelItemEdit">Cancel</button>
     </form>
 </script>

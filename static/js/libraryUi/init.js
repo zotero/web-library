@@ -187,6 +187,11 @@ Zotero.ui.init.libraryTemplates = function(){
             }
             return false;
         },
+        nonEditable: function(field, item) {
+            if( J.inArray(field, item.noEditFields) !== -1) {
+                return true;
+            }
+        },
     });
     J.views.tags({
         'coloredTags': {
@@ -207,7 +212,6 @@ Zotero.ui.init.libraryTemplates = function(){
     J('#citeitemformTemplate').template('citeitemformTemplate');
     J('#attachmentformTemplate').template('attachmentformTemplate');
     J('#attachmentuploadTemplate').template('attachmentuploadTemplate');
-    J('#datafieldTemplate').template('datafieldTemplate');
     J('#editnoteformTemplate').template('editnoteformTemplate');
     J('#itemtagTemplate').template('itemtagTemplate');
     J('#itemtypeselectTemplate').template('itemtypeselectTemplate');
