@@ -49,6 +49,9 @@ Zotero.State.prototype.getSelectedItemKeys = function(){
     J.each(uniqueKeys, function(key, val){
         returnKeys.push(key);
     });
+    if(returnKeys.length == 0 && state.getUrlVar('itemKey')){
+        returnKeys.push(state.getUrlVar('itemKey'));
+    }
     return returnKeys;
 };
 

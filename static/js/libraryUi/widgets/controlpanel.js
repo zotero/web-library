@@ -136,7 +136,7 @@ Zotero.ui.callbacks.createItem = function(e){
  * @param  {event} e click event
  * @return {boolean}
  */
-Zotero.ui.callbacks.moveToTrash =  function(evt){
+Zotero.ui.widgets.controlPanel.moveToTrash =  function(evt){
     evt.preventDefault();
     Z.debug('move-to-trash clicked', 3);
     
