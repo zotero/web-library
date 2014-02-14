@@ -2294,6 +2294,7 @@ Zotero.Library.prototype.sequentialRequests = function(requests) {
 Zotero.Library.prototype.websiteUrl = function(urlvars) {
     Z.debug("Zotero.library.websiteUrl", 3);
     Z.debug(urlvars, 4);
+    var library = this;
     var urlVarsArray = [];
     J.each(urlvars, function(index, value) {
         if (value === "") return;
@@ -2302,7 +2303,7 @@ Zotero.Library.prototype.websiteUrl = function(urlvars) {
     urlVarsArray.sort();
     Z.debug(urlVarsArray, 4);
     var pathVarsString = urlVarsArray.join("/");
-    return this.libraryBaseWebsiteUrl + "/" + pathVarsString;
+    return library.libraryBaseWebsiteUrl + "/" + pathVarsString;
 };
 
 Zotero.Library.prototype.synchronize = function() {};
@@ -2412,7 +2413,7 @@ Zotero.Library.prototype.getDeleted = function(version) {
         libraryID: library.libraryID,
         newer: version
     };
-    if (library.deleted.deletedVersion == version) {
+    if (version > library.deleted.newerVersion && version < library.deleted.deletedVersion) {
         Z.debug("deletedVersion matches requested: immediately resolving");
         return Promise.resolve(library.deleted.deletedData);
     }
@@ -3295,7 +3296,6 @@ Zotero.Items.prototype.deleteItems = function(deleteItems, version) {
         var headers = {
             "Content-Type": "application/json"
         };
-        headers["If-Unmodified-Since-Version"] = version;
         deletePromise.then(function() {
             return items.owningLibrary.ajaxRequest(config, "DELETE", {
                 processData: false,
@@ -4547,10 +4547,11 @@ Zotero.Item.prototype.uploadChildAttachment = function(childItem, fileInfo, prog
         item.numChildren++;
         return childItem.uploadFile(fileInfo, progressCallback);
     }, function(response) {
-        return {
+        throw {
             message: "Failure during attachmentItem write.",
             code: response.jqxhr.status,
-            serverMessage: response.jqxhr.responseText
+            serverMessage: response.jqxhr.responseText,
+            response: response
         };
     });
 };
@@ -5614,10 +5615,12 @@ Zotero.url.itemHref = function(item) {
 
 Zotero.url.attachmentDownloadLink = function(item) {
     var retString = "";
+    var downloadUrl = item.attachmentDownloadUrl;
+    var contentType = item.get("contentType");
     if (item.links && item.links["enclosure"]) {
         var tail = item.links["enclosure"]["href"].substr(-4, 4);
         if (tail == "view") {
-            retString += '<a href="' + Zotero.config.baseZoteroWebsiteUrl + Zotero.config.nonparsedBaseUrl + "/" + item.itemKey + "/file/view" + '">' + "View Snapshot</a>";
+            retString += '<a href="' + downloadUrl + '">' + "View Snapshot</a>";
         } else {
             var enctype = Zotero.utils.translateMimeType(item.links["enclosure"].type);
             var enc = item.links["enclosure"];
@@ -5647,11 +5650,7 @@ Zotero.url.attachmentDownloadUrl = function(item) {
     var retString = "";
     if (item.links && item.links["enclosure"]) {
         if (Zotero.config.directDownloads) {
-            retString = Zotero.config.baseZoteroWebsiteUrl + Zotero.config.nonparsedBaseUrl + "/" + item.itemKey + "/file";
-            var tail = item.links["enclosure"]["href"].substr(-4, 4);
-            if (tail == "view") {
-                retString += "/view";
-            }
+            retString = item.links["enclosure"]["href"];
         } else {
             retString = Zotero.config.baseDownloadUrl + "?itemkey=" + item.itemKey;
         }
@@ -6805,125 +6804,6 @@ Zotero.Library.prototype.loadAllTags = function(config, checkCached) {
         };
         resolve(library.loadTags(urlconfig).then(continueLoadingCallback));
     });
-};
-
-Zotero.Library.prototype.loadItemTemplates = function() {};
-
-Zotero.Library.prototype.loadCreatorTypes = function() {};
-
-Zotero.Library.prototype.saveFileOffline = function(item) {
-    try {
-        Z.debug("Zotero.Library.saveFileOffline", 3);
-        var library = this;
-        var deferred = new J.Deferred;
-        if (library.filestorage === false) {
-            return false;
-        }
-        var enclosureUrl;
-        var mimetype;
-        if (item.links && item.links["enclosure"]) {
-            enclosureUrl = item.links.enclosure.href;
-            mimetype = item.links.enclosure.type;
-        } else {
-            return false;
-        }
-        var reqUrl = enclosureUrl + Zotero.ajax.apiQueryString({});
-        Z.debug("reqUrl:" + reqUrl, 3);
-        var xhr = new XMLHttpRequest;
-        xhr.open("GET", Zotero.ajax.proxyWrapper(reqUrl, "GET"), true);
-        xhr.responseType = "blob";
-        xhr.onload = function(e) {
-            try {
-                if (this.status == 200) {
-                    Z.debug("Success downloading");
-                    var blob = this.response;
-                    library.filestorage.filer.write("/" + item.itemKey, {
-                        data: blob,
-                        type: mimetype
-                    }, J.proxy(function(fileEntry, fileWriter) {
-                        try {
-                            Z.debug("Success writing file");
-                            Z.debug("Saved file for item " + item.itemKey + " for offline use");
-                            Z.debug("Saving file object somewhere in Zotero namespace:");
-                            library.filestorage.filer.open(fileEntry, J.proxy(function(file) {
-                                try {
-                                    Z.debug("reading back filesystem stored file into object url");
-                                    deferred.resolve(true);
-                                } catch (e) {
-                                    Z.debug("Caught in filer.open");
-                                    Z.debug(e);
-                                }
-                            }, this));
-                        } catch (e) {
-                            Z.debug("Caught in filer.write");
-                            Z.debug(e);
-                        }
-                    }, this));
-                }
-            } catch (e) {
-                Z.debug("Caught inside binary xhr onload");
-                Z.debug(e);
-            }
-        };
-        xhr.send();
-        return deferred;
-    } catch (e) {
-        Z.debug("Caught in Z.Library.saveFileOffline");
-        Z.debug(e);
-    }
-};
-
-Zotero.Library.prototype.saveFileSetOffline = function(itemKeys) {
-    Z.debug("Zotero.Library.saveFileSetOffline", 3);
-    var library = this;
-    var ds = [];
-    var deferred = new J.Deferred;
-    var item;
-    var childItemKeys = [];
-    var checkedKeys = {};
-    J.each(itemKeys, function(ind, itemKey) {
-        if (checkedKeys.hasOwnProperty(itemKey)) {
-            return;
-        } else {
-            checkedKeys[itemKey] = 1;
-        }
-        item = library.items.getItem(itemKey);
-        if (item && item.links && item.links["enclosure"]) {
-            ds.push(library.saveFileOffline(item));
-        }
-        if (item.numChildren) {
-            J.each(item.childItemKeys, function(ind, val) {
-                childItemKeys.push(val);
-            });
-        }
-    });
-    J.each(childItemKeys, function(ind, itemKey) {
-        if (checkedKeys.hasOwnProperty(itemKey)) {
-            return;
-        } else {
-            checkedKeys[itemKey] = 1;
-        }
-        item = library.items.getItem(itemKey);
-        if (item && item.links && item.links["enclosure"]) {
-            ds.push(library.saveFileOffline(item));
-        }
-    });
-    J.when.apply(null, ds).then(J.proxy(function() {
-        var d = library.filestorage.listOfflineFiles();
-        d.then(J.proxy(function(localItemKeys) {
-            deferred.resolve();
-        }, this));
-    }));
-    return deferred;
-};
-
-Zotero.Library.prototype.saveCollectionFilesOffline = function(collectionKey) {
-    Zotero.debug("Zotero.Library.saveCollectionFilesOffline " + collectionKey, 3);
-    var library = this;
-    var collection = library.collections.getCollection(collectionKey);
-    var itemKeys = collection.itemKeys;
-    var d = Zotero.Library.prototype.saveFileSetOffline(itemKeys);
-    return d;
 };
 
 Zotero.Library.prototype.loadIndexedDBCache = function() {
@@ -9317,6 +9197,11 @@ Zotero.ui.widgets.exportItemsDialog.init = function(el) {
     library.listen("displayedItemsChanged", Zotero.ui.widgets.exportItemsDialog.updateExportLinks, {
         widgetEl: el
     });
+    Zotero.ui.widgets.exportItemsDialog.updateExportLinks({
+        data: {
+            widgetEl: el
+        }
+    });
 };
 
 Zotero.ui.widgets.exportItemsDialog.show = function(evt) {
@@ -9331,10 +9216,9 @@ Zotero.ui.widgets.exportItemsDialog.show = function(evt) {
     return false;
 };
 
-Zotero.ui.widgets.exportItemsDialog.updateExportLinks = function(e) {
+Zotero.ui.widgets.exportItemsDialog.updateExportLinks = function(evt) {
     Z.debug("exportItemsDialog.updateExportLinks", 3);
-    var triggeringEl = J(e.triggeringElement);
-    var widgetEl = J(e.data["widgetEl"]);
+    var widgetEl = J(evt.data["widgetEl"]);
     var library = Zotero.ui.getAssociatedLibrary(widgetEl);
     var urlconfig = Zotero.ui.getItemsConfig(library);
     var exportUrls = Zotero.url.exportUrls(urlconfig);
@@ -9342,7 +9226,6 @@ Zotero.ui.widgets.exportItemsDialog.updateExportLinks = function(e) {
         exportUrls: exportUrls,
         exportFormatsMap: Zotero.config.exportFormatsMap
     }));
-    J(".export-list").data("urlconfig", urlconfig);
     J(".export-list").hide();
 };
 
@@ -11189,6 +11072,97 @@ Zotero.ui.widgets.imageGrabber.previewStoredImage = function(evt) {
         widgetEl.find("#preview-image").attr("src", imgUrl);
         window.fileData = fileData;
     });
+};
+
+Zotero.ui.widgets.localItems = {};
+
+Zotero.ui.widgets.localItems.init = function(el) {
+    Z.debug("localItems widget init", 3);
+    var library = Zotero.ui.getAssociatedLibrary(el);
+    library.listen("changeItemSorting", Zotero.ui.callbacks.resortItems, {
+        widgetEl: el
+    });
+    library.listen("displayedItemsChanged", Zotero.ui.widgets.localItems.updateDisplayedItems, {
+        widgetEl: el
+    });
+    library.listen("displayedItemsUpdated", Zotero.ui.widgets.localItems.displayItems, {
+        widgetEl: el
+    });
+    library.listen("cachedDataLoaded", Zotero.ui.widgets.localItems.displayItems, {
+        widgetEl: el
+    });
+    var container = J(el);
+    Zotero.state.bindItemLinks(container);
+    container.on("change", ".itemlist-editmode-checkbox.all-checkbox", function(e) {
+        J(".itemlist-editmode-checkbox").prop("checked", J(".itemlist-editmode-checkbox.all-checkbox").prop("checked"));
+        library.trigger("selectedItemsChanged");
+    });
+    container.on("change", "input.itemKey-checkbox", function(e) {
+        var selectedItemKeys = [];
+        J("input.itemKey-checkbox:checked").each(function(index, el) {
+            selectedItemKeys.push(J(el).data("itemkey"));
+        });
+        library.trigger("selectedItemsChanged", {
+            selectedItemKeys: selectedItemKeys
+        });
+    });
+    Zotero.ui.widgets.localItems.bindPaginationLinks(container);
+    library.trigger("displayedItemsUpdated");
+};
+
+Zotero.ui.widgets.localItems.bindPaginationLinks = function(container) {
+    container.on("click", "#start-item-link", function(e) {
+        e.preventDefault();
+        Zotero.state.pathVars["itemPage"] = "";
+        Zotero.state.pushState();
+    });
+    container.on("click", "#prev-item-link", function(e) {
+        e.preventDefault();
+        var itemPage = Zotero.state.getUrlVar("itemPage") || "1";
+        itemPage = parseInt(itemPage, 10);
+        var newItemPage = itemPage - 1;
+        Zotero.state.pathVars["itemPage"] = newItemPage;
+        Zotero.state.pushState();
+    });
+    container.on("click", "#next-item-link", function(e) {
+        e.preventDefault();
+        var itemPage = Zotero.state.getUrlVar("itemPage") || "1";
+        itemPage = parseInt(itemPage, 10);
+        var newItemPage = itemPage + 1;
+        Zotero.state.pathVars["itemPage"] = newItemPage;
+        Zotero.state.pushState();
+    });
+    container.on("click", "#last-item-link", function(e) {
+        e.preventDefault();
+        Z.debug("last-item-link clickbind", 4);
+        var pagehref = J(e.currentTarget).attr("href");
+        var pathVars = Zotero.state.parsePathVars(pagehref);
+        var lastItemPage = pathVars.itemPage;
+        Zotero.state.pathVars["itemPage"] = lastItemPage;
+        Zotero.state.pushState();
+    });
+};
+
+Zotero.ui.widgets.localItems.updateDisplayedItems = function(event) {
+    Z.debug("widgets.localItems.updateDisplayedItems", 3);
+    var widgetEl = J(event.data.widgetEl);
+    var library = Zotero.ui.getAssociatedLibrary(widgetEl);
+    var newConfig = Zotero.ui.getItemsConfig(library);
+    var displayParams = Zotero.state.getUrlVars();
+    library.buildItemDisplayView(displayParams);
+};
+
+Zotero.ui.widgets.localItems.displayItems = function(event) {
+    Z.debug("displayItems");
+    var widgetEl = J(event.data.widgetEl);
+    var library = Zotero.ui.getAssociatedLibrary(widgetEl);
+    var newConfig = Zotero.ui.getItemsConfig(library);
+    widgetEl.empty();
+    Zotero.ui.widgets.items.displayItems(widgetEl, newConfig, {
+        itemsArray: library.items.displayItemsArray,
+        library: library
+    });
+    Zotero.eventful.initTriggers();
 };
 
 Zotero.url.requestReadApiKeyUrl = function(libraryType, libraryID, redirect) {

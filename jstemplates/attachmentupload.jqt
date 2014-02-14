@@ -10,7 +10,9 @@
                 <form class="attachmentuploadForm zform" data-parentItemKey="{{attr:itemKey}}">
                 {{if ~Modernizr.draganddrop}}
                 <h3>Select a file for upload or drag and drop below</h3>
-                <input type="file" id="fileuploadinput" class="fileuploadinput" multiple style="">
+                <span class="btn btn-default btn-file">
+                    Choose File<input type="file" id="fileuploadinput" class="fileuploadinput" multiple style="">
+                </span>
                 <div id="fileuploaddroptarget" class="fileuploaddroptarget">
                     <h3>Drop your file here</h3>
                     <h3 id="droppedfilename" class="droppedfilename"></h3>
@@ -45,7 +47,7 @@
                 </div>
                 {{else}}
                 <h3>Select a file for upload</h3>
-                <input type="file" id="fileuploadinput" class="fileuploadinput" multiple style="">
+                <input type="file" id="fileuploadinput" class="fileuploadinput form-control" multiple style="">
                 <div id="fileuploadspinner" class="fileuploadspinner">
                 </div>
                 <div id="attachmentuploadfileinfo" class="attachmentuploadfileinfo">

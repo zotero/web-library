@@ -49,45 +49,10 @@ tr:nth-child(2n) {
     background-color: rgba(0,0,0,0.05);
 }
 */
-/* -- Notifications -- */
-.messages { 
-    font-weight:bold; padding:18px 18px 3px 18px; text-align:center; margin:9px 0px;
-}
-
-.messages ul{
-    list-style:none;
-}
-
-#confirm {background:#CBF7CA;}
-#notice {background:#F0F079;}
-#error {background:#F7CBCA;}
-
-ul#js-message-list {
-    list-style:none;
-}
-
-li.jsNotificationMessage-confirm {
-    background-color:#CBF7CA;
-}
-li.jsNotificationMessage-notice {
-    background-color:#F7F7CA;
-}
-li.jsNotificationMessage-error {
-    background-color:#F7CBCA;
-}
-
 .clickable {
     cursor:pointer;
 }
 
-
-.left {
-    float:left;
-}
-
-.right {
-    float:right;
-}
 .spinner {
     display:block;
     clear:both;

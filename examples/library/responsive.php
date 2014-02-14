@@ -31,8 +31,6 @@ $messages = array();
         <script src="<?=$staticPath?>/bootstrap/js/bootstrap.min.js"></script>
         <script src="<?=$staticPath?>/library/typeahead/typeahead.js"></script>
         
-        <link rel="stylesheet" href="<?=$staticPath?>/css/theme_style3.css" 
-            type="text/css" media="screen" charset="utf-8"/>
         <link rel="stylesheet" href="<?=$staticPath?>/css/bootstrap_library_style.css" 
             type="text/css" media="screen" charset="utf-8"/>
         
@@ -77,6 +75,7 @@ $messages = array();
                             <li><a href="#" class="export-button eventfultrigger" data-library='<?=$libraryString?>' data-triggers="exportItemsDialog">Export</a></li>
                             <li class="divider"></li>
                             <li><a href="#" class="eventfultrigger" data-library='<?=$libraryString?>' data-triggers="syncLibary">Sync</a></li>
+                            <li><a href="#" class="eventfultrigger" data-library='<?=$libraryString?>' data-triggers="deleteIdb">Delete IDB</a></li>
                         </ul>
                     </div>
                     
@@ -129,7 +128,7 @@ $messages = array();
                         <button class="remove-from-trash-button btn btn-default navbar-btn eventfultrigger" data-library='<?=$libraryString?>' data-triggers="removeFromTrash" title="Remove from Trash"><span class="glyphicon icon-trash_remove"></span></button>
                     </div>
                     <div class="btn-group" data-toggle="button">
-                        <checkbox type="button" class="toggle-edit-button btn btn-default navbar-btn eventfultrigger" data-library='<?=$libraryString?>' data-triggers="toggleEdit" title="Edit"><span class="glyphicon glyphicon-edit"></span></button>
+                        <button type="button" class="toggle-edit-button btn btn-default navbar-btn eventfultrigger" data-library='<?=$libraryString?>' data-triggers="toggleEdit" title="Edit"><span class="glyphicon glyphicon-edit"></span></button>
                     </div>
                 </div>
             </div><!--/controlPanel -->
@@ -173,7 +172,7 @@ $messages = array();
                     data-widget="collections" data-library='<?=$libraryString?>'>
                     <div id="collection-edit-div" class="collection-edit-div">
                         <span class="ui-button sprite-placeholder"></span>
-                        <div id="edit-collections-buttons-div" class="edit-collections-buttons-div left">
+                        <div id="edit-collections-buttons-div" class="edit-collections-buttons-div pull-left">
                             <div class="btn-group">
                                 <button type="button" class="create-collection-button btn btn-default eventfultrigger" data-library='<?=$libraryString?>' data-triggers="createCollectionDialog" title="New Collection"><span class="glyphicon icon-toolbar-collection-add"></span></button>
                                 <button type="button" class="update-collection-button btn btn-default eventfultrigger" data-library='<?=$libraryString?>' data-triggers="updateCollectionDialog" title="Change Collection"><span class="glyphicon icon-toolbar-collection-edit"></span></button>
@@ -202,8 +201,8 @@ $messages = array();
                         <div class="loading"></div>
                       </div>
                       <div id="more-tags-links" class="more-tags-links">
-                        <button class="btn btn-default eventfultrigger" data-library='<?=$libraryString?>' data-triggers="showMoreTags" id='show-more-tags-link' >More</a>
-                        <button class="btn btn-default eventfultrigger" data-library='<?=$libraryString?>' data-triggers="showFewerTags" id='show-fewer-tags-link'>Fewer</a>
+                        <button type='button' class="btn btn-default eventfultrigger" data-library='<?=$libraryString?>' data-triggers="showMoreTags" id='show-more-tags-link' >More</button>
+                        <button type='button' class="btn btn-default eventfultrigger" data-library='<?=$libraryString?>' data-triggers="showFewerTags" id='show-fewer-tags-link'>Fewer</button>
                       </div>
                 </div>
                 <!-- Library Links -->
@@ -262,13 +261,20 @@ $messages = array();
             </div><!-- /right-panel -->
             <!-- panelContainer nav footer -->
             <nav id="panelcontainer-nav" class="navbar navbar-inverse navbar-fixed-bottom visible-xs" role="navigation">
-                <ul class="nav navbar-nav">
+                <div class="btn-group btn-group-justified">
+                    <a class="btn eventfultrigger collections-nav" data-library='<?=$libraryString?>' data-triggers="showCollectionsPanel">Collections</a>
+                    <a class="btn eventfultrigger tags-nav" data-library='<?=$libraryString?>' data-triggers="showTagsPanel">Tags</a>
+                    <a class="btn eventfultrigger items-nav" data-library='<?=$libraryString?>' data-triggers="showItemsPanel">Items</a>
+                </div>
+                <?/*
+                <ul class="nav nav-pills nav-justified">
                     <li class="eventfultrigger collections-nav" data-library='<?=$libraryString?>' data-triggers="showCollectionsPanel"><a href="#">Collections</a></li>
                     <li class="eventfultrigger tags-nav" data-library='<?=$libraryString?>' data-triggers="showTagsPanel"><a href="#">Tags</a></li>
                     <li class="eventfultrigger items-nav" data-library='<?=$libraryString?>' data-triggers="showItemsPanel"><a href="#">Items</a></li>
                 </ul>
+                */?>
             </nav>
-
+            
             <div id="create-collection-dialog"
                  class="eventfulwidget"
                  data-widget="createCollectionDialog"
