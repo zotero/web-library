@@ -6,7 +6,7 @@
             {{if #data === 'title'}}
             <td class='title' data-itemKey='{{attr:~item.itemKey}}'>
                 <a class='item-select-link' data-itemKey='{{attr:~item.itemKey}}' href='{{url:~Zotero.url.itemHref(~item)}}' title="{{attr:~item.dataFields[#field]}}">
-                    <span class='sprite-icon sprite-treeitem-{{attr:~item.itemTypeImageClass()}} left'></span>
+                    <span class='sprite-icon sprite-treeitem-{{attr:~item.itemTypeImageClass()}} pull-left'></span>
                     {{coloredTags ~library ~item.tagstrings /}}
                     {{>~formatItemField(#data, ~item, true)}}
                 </a>

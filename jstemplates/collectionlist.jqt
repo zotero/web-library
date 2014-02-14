@@ -11,8 +11,8 @@
         {{/for}}
         <li class="collection-row{{if (currentCollectionKey == 'trash')}} current-collection{{/if}}" data-collectionKey="trash">
         <div class="folder-toggle">
-        <span class="sprite-placeholder sprite-icon-16 left dui-icon"></span>
-        <span class="sprite-icon sprite-treesource-trash left"></span>
+        <span class="sprite-placeholder sprite-icon-16 pull-left dui-icon"></span>
+        <span class="sprite-icon sprite-treesource-trash pull-left"></span>
         </div>
         <a href="" data-collectionKey="trash"
             id="collection-trash" class="collection-select-link{{if (currentCollectionKey == "trash")}} current-collection{{/if}}">

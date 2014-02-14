@@ -20,7 +20,7 @@
     </tr>
     
     <!-- Output fields -->
-    {{props item.apiObj}}
+    {{props item.apiObj ~item=item}}
         {{if (key == 'url')}}
         <tr>
             <th>{{>~zoteroFieldMap[key]}}</th>
@@ -32,10 +32,10 @@
         <tr>
             <th>Note</th>
             <td class="note-text">
-                <textarea data-itemKey="{{attr:itemKey}}" cols="40" rows="14" name="note-text" id="note-text" class="rte default">{{>item.note}}</textarea>
+                <textarea data-itemKey="{{attr:itemKey}}" cols="40" rows="14" name="note-text" id="note-text" class="rte default">{{>~item.note}}</textarea>
             </td>
         </tr>
-        {{else (J.inArray(key, item.hideFields) == -1) && (item.fieldMap.hasOwnProperty(key)) && prop != '' && key != 'itemType' && key != 'title' }}
+        {{else (~J.inArray(key, ~item.hideFields) == -1) && (~item.fieldMap.hasOwnProperty(key)) && prop != '' && key != 'itemType' && key != 'title' }}
         <tr>
             <th>{{>~zoteroFieldMap[key]}}</th>
             <td class="{{attr:key}}">
@@ -49,9 +49,9 @@
     <tr>
         <th>Tags</th>
         <td class="tags">
-        {{each(index, tag) item.apiObj.tags}}
-            {{tmpl({index:index, itemKey:itemKey, tag:tag}) "itemtagTemplate"}}
-        {{/each}}
+        {{for item.apiObj.tags ~itemKey=itemKey }}
+            {{include ~index=#index tmpl="#itemtagTemplate" /}}
+        {{/for}}
         </td>
     </tr>
     

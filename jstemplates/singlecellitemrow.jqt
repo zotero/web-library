@@ -6,7 +6,7 @@
             <a class='item-select-link' data-itemKey='{{attr:itemKey}}' href='{{url:~Zotero.url.itemHref(#data)}}' title="{{attr:dataFields[#data]}}">
             {{for ~displayFields ~item=#data ~library=~library}}
                 {{if #data === 'title'}}
-                    <span class='sprite-icon sprite-treeitem-{{attr:~item.itemTypeImageClass()}} left'></span>
+                    <span class='sprite-icon sprite-treeitem-{{attr:~item.itemTypeImageClass()}} pull-left'></span>
                     {{coloredTags ~library ~item.tagstrings /}}
                     <h4>{{>~formatItemField(#data, ~item, true)}}</h4>
                 {{else (#data === 'dateAdded') || (#data === 'dateModified') }}

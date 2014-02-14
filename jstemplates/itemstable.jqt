@@ -1,6 +1,6 @@
 <script id="itemstableTemplate" type="text/x-jsrender">
     <form class="item-select-form hidden-xs" method='POST'>
-    <table id='field-table' class='table'>
+    <table id='field-table' class='table table-striped'>
         <thead>
             <tr>
                 <th><input type='checkbox' class='itemlist-editmode-checkbox all-checkbox' name='selectall' /></th>
