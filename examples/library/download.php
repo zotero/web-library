@@ -1,7 +1,7 @@
 <?php
 require_once './config.php'; //library credentials
 
-require_once '../library/libZotero/build/libZoteroSingle.php';
+require_once '../../library/libZotero/build/libZoteroSingle.php';
 $library = new Zotero_Library($libraryType, $libraryID, $librarySlug, $apiKey);
 $library->setCacheTtl(0);
 
@@ -48,6 +48,7 @@ elseif($item->hasFile()) {
     }
 }
 
+$returnLibraryUrl = $libraryPathString;
 ?>
 <!DOCTYPE html>
 <html lang="en" class="no-js" style="height:100%; margin:0; padding:0;"> 
@@ -78,7 +79,7 @@ elseif($item->hasFile()) {
             <div id='leave-frame-div' style="float:right;">
                 <a id="leave-frame-link" href='#'>Leave Frame</a>
             </div>
-            <img src="/static/images/theme/zotero_theme/zotero-z-24px.png" style="float:left">
+            <img src="<?=$staticPath?>/images/theme/zotero_theme/zotero32.png" style="float:left">
             <div style="text-align:center;">
             You are viewing a Zotero snapshot. 
             <a href="<?=$returnLibraryUrl;?>">Return to Zotero Library</a>
@@ -90,7 +91,6 @@ elseif($item->hasFile()) {
         </iframe>
         </div>
         
-        <script type="text/javascript" charset="utf-8" src="<?=$staticPath?>/library/jquery/jquery-1.7-ui-1.8.15-custom.min.js"></script>
         <script type="text/javascript" charset="utf-8">
             jQuery(document).ready(function() {
                 jQuery('#leave-frame-link').on('click', function(e){
