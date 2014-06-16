@@ -57,24 +57,15 @@ $messages = array();
             <!-- Output content -->
             <div class="col-md-3">
                 <div id="collection-list-div" class="collection-list eventfulwidget" 
-                    data-widget="collections"
-                    data-function='syncCollections'
-                    data-loadconfig='<?=json_encode($libraryConfig);?>'
-                    >
+                    data-widget="collections" data-library='<?=$libraryString?>'>
                     <div id="collection-edit-div" class="collection-edit-div">
                         <span class="ui-button sprite-placeholder"></span>
-                        <div id="edit-collections-buttons-div" class="edit-collections-buttons-div left">
+                        <div id="edit-collections-buttons-div" class="edit-collections-buttons-div pull-left">
                             <div class="btn-group">
-                                <button type="button" class="create-collection-button btn btn-default eventfultrigger" data-library='<?=$libraryString?>' data-triggers="createCollection" title="New Collection"><span class="glyphicon icon-toolbar-collection-add"></span></button>
-                                <button type="button" class="update-collection-button btn btn-default eventfultrigger" data-library='<?=$libraryString?>' data-triggers="updateCollection" title="Change Collection"><span class="glyphicon icon-toolbar-collection-edit"></span></button>
-                                <button type="button" class="delete-collection-button btn btn-default eventfultrigger" data-library='<?=$libraryString?>' data-triggers="deleteCollection" title="Delete Collection"><span class="glyphicon icon-toolbar-collection-delete"></span></button>
+                                <button type="button" class="create-collection-button btn btn-default eventfultrigger" data-library='<?=$libraryString?>' data-triggers="createCollectionDialog" title="New Collection"><span class="glyphicon icon-toolbar-collection-add"></span></button>
+                                <button type="button" class="update-collection-button btn btn-default eventfultrigger" data-library='<?=$libraryString?>' data-triggers="updateCollectionDialog" title="Change Collection"><span class="glyphicon icon-toolbar-collection-edit"></span></button>
+                                <button type="button" class="delete-collection-button btn btn-default eventfultrigger" data-library='<?=$libraryString?>' data-triggers="deleteCollectionDialog" title="Delete Collection"><span class="glyphicon icon-toolbar-collection-delete"></span></button>
                             </div>
-                        </div>
-                        <div id="create-collection-dialog" class="eventfulwidget" data-widget="createCollectionDialog" title="Create Collection">
-                        </div>
-                        <div id="update-collection-dialog" class="eventfulwidget" data-widget="updateCollectionDialog" title="Edit Collection">
-                        </div>
-                        <div id="delete-collection-dialog" class="eventfulwidget" data-widget="deleteCollectionDialog" title="Delete Collection">
                         </div>
                     </div>
                     <div id="collection-list-container" class="collection-list-container">
@@ -149,6 +140,8 @@ $messages = array();
                 <script type="text/javascript" charset="utf-8" src="<?=$staticPath?>/library/globalize/cultures/globalize.culture.<?=str_replace('_', '-', $localeStr)?>.js"></script>
                 <?endif;?>
             <?endforeach;?>
+            
+            <script type="text/javascript" charset="utf-8" src="<?=$staticPath?>/js/compiled/_zoterowwwAll.bugly.js"></script>
             <script type="text/javascript" charset="utf-8">
                 if(typeof zoteroData == 'undefined'){
                     var zoteroData = {};
@@ -158,19 +151,20 @@ $messages = array();
                 var staticPath = "<?=$staticPath?>";
             </script>
             
-            <script type="text/javascript" charset="utf-8" src="<?=$staticPath?>/js/_zoterowwwAll.bugly.js"></script>
             <script type="text/javascript" charset="utf-8">
                 Zotero.config = <?include "zoteroconfig.js";?>
             </script>
             
             <script type="text/javascript" charset="utf-8" src="<?=$staticPath?>/library/ckeditor/ckeditor.js"></script>
             <span id="eventful"></span>
+            <?/*
             <script type="text/javascript" charset="utf-8">
                 Zotero.ui.eventful.listen('selectCollection', function(e){
                     var collectionKey = e['collectionKey'];
                     alert("New collection selected: " + collectionKey);
                 });
             </script>
+            */?>
         </div><!--/library -->
     </body>
 </html>

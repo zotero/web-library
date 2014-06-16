@@ -1,7 +1,7 @@
 <script id="filterguideTemplate" type="text/x-jsrender">
     <ul class="filterguide-list">
         {{if collection}}
-            <li class="filterguide-entry"><a href="#" class="eventfultrigger" data-triggers="clearFilter" data-library="{{attr:library.libraryString}}" data-collectionkey="{{attr:collection.collectionKey}}"><span class="sprite-icon sprite-treesource-collection"></span>{{>collection['name']}}<span class="glyphicon glyphicon-remove"></a></li>
+            <li class="filterguide-entry"><a href="#" class="eventfultrigger" data-triggers="clearFilter" data-library="{{attr:library.libraryString}}" data-collectionkey="{{attr:collection.key}}"><span class="sprite-icon sprite-treesource-collection"></span>{{>collection.apiObj.data['name']}}<span class="glyphicon glyphicon-remove"></a></li>
         {{/if}}
         {{for tag ~library=library}}
             <li class="filterguide-entry"><a href="#" class="eventfultrigger" data-triggers="clearFilter" data-library="{{attr:~library.libraryString}}" data-tag="{{attr:#data}}"><span class="glyphicon glyphicon-tag"></span>{{>#data}}<span class="glyphicon glyphicon-remove"></a></li>

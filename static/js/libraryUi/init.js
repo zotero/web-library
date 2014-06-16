@@ -25,29 +25,30 @@ Zotero.ui.init.library = function(){
     var hasRTEReadOnly = J('textarea.rte').filter('.readonly').length;
     var hasRTEDefault = J('textarea.rte').not('.nolinks').not('.readonly').length;
     if(hasRTENoLinks){
-        Zotero.ui.init.rte('nolinks');
+        Zotero.ui.init.rte('nolinks', false, J('body'));
     }
     if(hasRTEReadOnly){
-        Zotero.ui.init.rte('readonly');
+        Zotero.ui.init.rte('readonly', false, J('body'));
     }
     if(hasRTEDefault){
-        Zotero.ui.init.rte('default');
+        Zotero.ui.init.rte('default', false, J('body'));
     }
     
 };
 
-Zotero.ui.init.rte = function(type, autofocus, elements){
+Zotero.ui.init.rte = function(type, autofocus, container){
     if(Zotero.config.rte == 'ckeditor'){
-        Zotero.ui.init.ckeditor(type, autofocus, elements);
+        Zotero.ui.init.ckeditor(type, autofocus, container);
         return;
     }
     else {
-        Zotero.ui.init.tinyMce(type, autofocus, elements);
+        Zotero.ui.init.tinyMce(type, autofocus, container);
     }
 };
 
-Zotero.ui.init.ckeditor = function(type, autofocus, elements){
+Zotero.ui.init.ckeditor = function(type, autofocus, container){
     if(!type) { type = 'default'; }
+    if(!container) { container = J('body');}
     
     var ckconfig = {};
     ckconfig.toolbarGroups = [
@@ -102,13 +103,24 @@ Zotero.ui.init.ckeditor = function(type, autofocus, elements){
     }
     
     Z.debug("initializing CK editors", 3);
-    J("textarea.rte").each(function(ind, el){
-        Z.debug("RTE textarea - " + ind + " - " + J(el).attr('name'), 3);
-        var edName = J(el).attr('name');
+    if(J(container).is('.rte')){
+        Z.debug("RTE textarea - " + ind + " - " + J(container).attr('name'), 3);
+        var edName = J(container).attr('name');
         if(!CKEDITOR.instances[edName]){
-            var editor = CKEDITOR.replace(el, config );
+            var editor = CKEDITOR.replace(J(container), config );
         }
-    });
+    }
+    else{
+        Z.debug("not a direct rte init");
+        Z.debug(container);
+        J(container).find("textarea.rte").each(function(ind, el){
+            Z.debug("RTE textarea - " + ind + " - " + J(el).attr('name'), 3);
+            var edName = J(el).attr('name');
+            if(!CKEDITOR.instances[edName]){
+                var editor = CKEDITOR.replace(el, config );
+            }
+        });
+    }
 };
 
 Zotero.ui.init.tinyMce = function(type, autofocus, elements){

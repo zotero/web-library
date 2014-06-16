@@ -71,15 +71,15 @@ $messages = array();
                     </div>
                 </div>
                 <div id="items-pane" class="items-pane eventfulwidget row"
-                    data-widget="itemContainer">
+                    data-widget="itemContainer"
+                    data-library='<?=$libraryString?>'>
                     <div id="library-items-div" class="library-items-div eventfulwidget col-md-6"
                         >
                     </div> <!--library items div -->
                     <div id="item-details-div" class="item-details-div eventfulwidget col-md-6"
                         data-widget="item"
                         data-function="loadItem"
-                        data-loadconfig='<?=json_encode($libraryConfig)?>'
-                        >
+                        data-library='<?=$libraryString?>'>
                     </div>
                     <div class="new-item-widget eventfulwidget col-md-6"
                         >
@@ -149,7 +149,7 @@ $messages = array();
                 var staticPath = "<?=$staticPath?>";
             </script>
             
-            <script type="text/javascript" charset="utf-8" src="<?=$staticPath?>/js/_zoterowwwAll.bugly.js"></script>
+            <script type="text/javascript" charset="utf-8" src="<?=$staticPath?>/js/compiled/_zoterowwwAll.bugly.js"></script>
             <script type="text/javascript" charset="utf-8">
                 Zotero.config = <?include "zoteroconfig.js";?>
             </script>
@@ -157,10 +157,12 @@ $messages = array();
             <script type="text/javascript" charset="utf-8" src="<?=$staticPath?>/library/ckeditor/ckeditor.js"></script>
             <span id="eventful"></span>
             <script type="text/javascript" charset="utf-8">
+            /*
                 Zotero.ui.eventful.listen('selectCollection', function(e){
                     var collectionKey = e['collectionKey'];
                     alert("New collection selected: " + collectionKey);
                 });
+*/
             </script>
         </div><!--/library -->
     </body>

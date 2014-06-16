@@ -37,3 +37,11 @@ For proxying requests:
 * PHP cURL
 * PHP proxying only works if your PHP installation supports the apache_request_headers function http://www.php.net/manual/en/function.apache-request-headers.php
 * Response caching uses PHP's APC http://php.net/manual/en/book.apc.php
+
+
+
+Design
+------
+The Zotero web library is built on top of libZotero as a group of relatively independent widgets. They interact by listening to and triggering events (with optional filters) on the Zotero object or individual Zotero.Library objects. State is maintained by a Zotero.State object that optionally stores variables in the url using pushState as well. With pushState enabled back/forward actions trigger events for the variables that have changed so widgets listening know to update.
+
+This design hopefully means that you can take individual widgets and re-use them in other contexts or in modified forms without observing side-effects. 

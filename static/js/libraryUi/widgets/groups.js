@@ -49,7 +49,8 @@ Zotero.ui.widgets.groups.displayGroupNuggets = function(el, groups){
             groupViewUrl:Zotero.url.groupViewUrl(group),
             groupLibraryUrl:Zotero.url.groupLibraryUrl(group),
             groupSettingsUrl:Zotero.url.groupSettingsUrl(group),
-            groupLibrarySettings:Zotero.url.groupLibrarySettingsUrl(group),
+            groupLibrarySettingsUrl:Zotero.url.groupLibrarySettingsUrl(group),
+            groupMemberSettingsUrl: Zotero.url.groupMemberSettingsUrl(group),
             memberCount:memberCount,
             groupManageable: groupManageable
         };

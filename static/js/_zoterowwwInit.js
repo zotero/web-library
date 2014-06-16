@@ -27,19 +27,23 @@ Zotero.init = function(){
     if(window.zoteroConfig){
         Zotero.config = J.extend({}, Zotero.config, window.zoteroConfig);
     }
+    //TODO: turn back on rewrite
+    //Zotero.state.rewriteAltUrl();
+    
     //base init to setup tagline and search bar
     if(Zotero.pages){
         Zotero.pages.base.init();
     }
     
     //run page specific init
-    if((undefined !== window.zoterojsClass) && (undefined !== Zotero.pages)){
-        try{
+    if((window.zoterojsClass) && (undefined !== Zotero.pages) && Zotero.pages[zoterojsClass]) {
+        //try{
             Zotero.pages[zoterojsClass].init();
-        }
+        /*}
         catch(err){
             Z.debug("Error running page specific init for " + zoterojsClass, 1);
-        }
+            Z.debug(err);
+        }*/
     }
     
     if(typeof zoterojsClass == 'undefined'){
@@ -84,7 +88,8 @@ Zotero.init = function(){
     
     //decide if we're on a library page and run library specific setup
     var libraryPage = J("body").hasClass('library');
-    if(libraryPage){
+    //if(libraryPage){
+    if(true){
         Z.debug("libraryPage - adding libraryString and filter", 3);
         Zotero.state.libraryString = Zotero.utils.libraryString(Zotero.config.librarySettings.libraryType,
             Zotero.config.librarySettings.libraryID);
@@ -107,11 +112,11 @@ Zotero.init = function(){
         Zotero.config.proxy = false;
     }
     
-    if(Zotero.preferences.getPref('server_javascript_enabled') === false){
+    //if(Zotero.preferences.getPref('server_javascript_enabled') === false){
         //Zotero.utils.setUserPref('javascript_enabled', '1');
-        Zotero.preferences.setPref('server_javascript_enabled') = true;
+        Zotero.preferences.setPref('server_javascript_enabled', true);
         document.cookie = "zoterojsenabled=1; expires=; path=/";
-    }
+    //}
     
     // Bind to popstate to update state when browser goes back
     // only applicable if state is using location

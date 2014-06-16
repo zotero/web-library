@@ -96,7 +96,7 @@ Zotero.ui.ajaxErrorMessage = function(jqxhr){
  * @return {undefined}
  */
 Zotero.ui.showSpinner = function(el, type){
-    var spinnerUrl = Zotero.config.baseWebsiteUrl + 'static/images/theme/broken-circle-spinner.gif';
+    var spinnerUrl = Zotero.config.baseWebsiteUrl + '/static/images/theme/broken-circle-spinner.gif';
     if(!type){
         J(el).html("<img class='spinner' src='" + spinnerUrl + "'/>");
     }

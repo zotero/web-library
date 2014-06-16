@@ -1,6 +1,7 @@
 Zotero.ui.widgets.items = {};
 
 Zotero.ui.widgets.items.init = function(el){
+    Z.debug("widgets.items.init");
     var library = Zotero.ui.getAssociatedLibrary(el);
     
     library.listen("displayedItemsChanged", Zotero.ui.widgets.items.loadItemsCallback, {widgetEl: el});
@@ -66,7 +67,7 @@ Zotero.ui.widgets.items.init = function(el){
         Zotero.state.pathVars['itemPage'] = lastItemPage;
         Zotero.state.pushState();
     });
-    
+    Z.debug("triggering displayedItemsChanged");
     library.trigger("displayedItemsChanged");
 };
 
@@ -111,7 +112,6 @@ Zotero.ui.getItemsConfig = function(library){
                          targetModifier: 'top',
                          itemPage: 1,
                          limit: library.preferences.getPref('itemsPerPage'),
-                         content: 'json'
                      };
     
     var userPreferencesApiArgs = {

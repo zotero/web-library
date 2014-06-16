@@ -1,36 +1,36 @@
 <script id="itemdetailsTemplate" type="text/x-jsrender">
     {{if (parentUrl)}}
-        <a href="{{url:parentUrl}}" class="ajax-link clickable item-select-link" data-itemKey='{{attr:item.parentItemKey}}'>Parent Item</a>
+        <a href="{{url:parentUrl}}" class="ajax-link clickable item-select-link" data-itemKey='{{attr:item.apiObj.data.parentItem}}'>Parent Item</a>
     {{/if}}
-    <h2>{{>item.title}}</h2>
-    {{if (item.libraryType == 'user')}}
-        <span id="libraryUserID" title="{{attr:item.libraryID}}"></span>
-    {{else (item.libraryType == 'group')}}
-        <span id="libraryGroupID" title="{{attr:item.libraryID}}"></span>
+    <h2>{{>item.apiObj.data.title}}</h2>
+    {{if (item.apiObj.library.type == 'user')}}
+        <span id="libraryUserID" title="{{attr:item.apiObj.library.id}}"></span>
+    {{else (item.apiObj.library.type == 'group')}}
+        <span id="libraryGroupID" title="{{attr:item.apiObj.library.id}}"></span>
     {{/if}}
-    <table class="item-info-table" data-itemkey="{{attr:item.itemKey}}">
-    {{if (item.libraryType == 'group')}}
+    <table class="item-info-table" data-itemkey="{{attr:item.key}}">
+    {{if (item.apiObj.library.type == 'group')}}
         <!-- Output user Creator for group library -->
         <tr>
             <th>Added by</th>
-            <td class="user-creator"><a href="{{url:item.author['uri']}}" class="user-link">{{>item.author['name']}}</a></td>
+            <td class="user-creator"><a href="{{url:item.apiObj.meta.createdByUser.links.href}}" class="user-link">{{>item.apiObj.meta.createdByUser.name}}</a></td>
         </tr>
     {{/if}}
     
     <!-- Output itemType -->
     <tr>
         <th>Item Type</th>
-        <td class="{{attr:item.itemType}}">{{>item.typeMap[item.itemType]}}</td>
+        <td class="{{attr:item.apiObj.data.itemType}}">{{>item.typeMap[item.apiObj.data.itemType]}}</td>
     </tr>
 
     <!-- Output title -->
     <tr>
         <th>{{>item.fieldMap['title']}}</th>
-        <td class="title">{{>item.title}}</td>
+        <td class="title">{{>item.apiObj.data.title}}</td>
     </tr>
 
     <!-- Output creators -->
-    {{for item.creators ~item=item}}
+    {{for item.apiObj.data.creators ~item=item}}
         {{if ((#data.name) || (#data.firstName) || (#data.lastName) )}}
         <tr>
             <th>{{>~item.creatorMap[#data.creatorType]}}</th>
@@ -46,7 +46,7 @@
     {{/for}}
     
     <!-- Output fields -->
-    {{props item.apiObj ~item=item}}
+    {{props item.apiObj.data ~item=item}}
         {{if (key == 'url')}}
         <tr>
             <th>{{>~zoteroFieldMap[key]}}</th>
@@ -65,7 +65,7 @@
         <tr>
             <th>{{>~zoteroFieldMap[key]}}</th>
             <td class="{{attr:key}}">
-                <textarea cols="40" rows="14" name="{{attr:key}}" class="rte readonly">{{>~item.apiObj[key]}}</textarea>
+                <textarea cols="40" rows="14" name="{{attr:key}}" class="rte readonly">{{>~item.apiObj.data[key]}}</textarea>
             </td>
         </tr>
         {{else ( (~J.inArray(key, ~item.hideFields) == -1) && (~item.fieldMap.hasOwnProperty(key)) && prop != '' && key != 'itemType' && key != 'title') }}
@@ -94,8 +94,8 @@
     <!-- download link -->
     {{if (item.attachmentDownloadUrl != '')}}
     <tr>
-        <th>Download</th>
-        <td>{{> ~Zotero.url.attachmentDownloadLink(item)}}</td>
+        <th>View</th>
+        <td>{{: ~Zotero.url.attachmentDownloadLink(item)}}</td>
     </tr>
     {{/if}}
     </table>

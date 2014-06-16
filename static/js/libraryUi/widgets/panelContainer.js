@@ -14,6 +14,9 @@ Zotero.ui.widgets.panelContainer.init = function(el){
     J(window).on('resize', function(){
         Zotero.ui.widgets.panelContainer.reflow({data: {widgetEl: el}} );
     });
+    J(el).on('click', '.single-cell-item', function(){
+        library.trigger('showItemPanel');
+    });
 };
 
 Zotero.ui.widgets.panelContainer.reflow = function(evt){

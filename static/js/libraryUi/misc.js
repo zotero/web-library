@@ -287,17 +287,21 @@ Zotero.ui.getAssociatedLibrary = function(el){
             }
         }
     }
-    
+    Z.debug("1");
     //get Zotero.Library object if already bound to element
     var library = jel.data('zoterolibrary');
     if(!library){
+        Z.debug(2);
         //try getting it from a libraryString included on DOM element
         var libString = J(el).data('library');
         if(libString){
+            Z.debug(3);
             if(Zotero.libraries.hasOwnProperty(libString)){
+                Z.debug(4);
                 library = Zotero.libraries[libString];
             }
             else{
+                Z.debug(5);
                 var libConfig = Zotero.utils.parseLibString(libString);
                 library = new Zotero.Library(libConfig.libraryType, libConfig.libraryID);
                 Zotero.libraries[libString] = library;
@@ -331,6 +335,7 @@ Zotero.ui.getAssociatedLibrary = function(el){
         */
         jel.data('zoterolibrary', library);
     }
+    Z.debug(6);
     return library;
 };
 

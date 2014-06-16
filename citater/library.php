@@ -56,49 +56,48 @@ $messages = array();
             </div>
             <div class="eventfulwidget" id="control-panel"
                     data-widget='controlPanel'
-                    data-function='controlPanel'>
+                    data-library='<?=$libraryString?>'>
                 <div class="btn-toolbar pull-left">
-                    <div class="btn-group create-item-dropdown eventfulwidget"
-                            data-function="createItemDropdown">
+                    <div class="btn-group create-item-dropdown">
                         <button type="button" class="create-item-button btn btn-default navbar-btn dropdown-toggle eventfultrigger" data-toggle="dropdown" data-library='<?=$libraryString?>' data-triggers="createItem" title="New Item"><span class="icon-item-add glyphicon"></span></button>
                         <ul class="dropdown-menu" role="menu" style="max-height:300px; overflow:auto;">
                             <!-- dropdown menu links -->
-                            <li><a href="#" class="eventfultrigger" data-triggers="newItem" data-itemtype="artwork">Artwork</a></li>
-                            <li><a href="#" class="eventfultrigger" data-triggers="newItem" data-itemtype="attachment">Attachment</a></li>          
-                            <li><a href="#" class="eventfultrigger" data-triggers="newItem" data-itemtype="audioRecording">Audio Recording</a></li>          
-                            <li><a href="#" class="eventfultrigger" data-triggers="newItem" data-itemtype="bill">Bill</a></li>          
-                            <li><a href="#" class="eventfultrigger" data-triggers="newItem" data-itemtype="blogPost">Blog Post</a></li>          
-                            <li><a href="#" class="eventfultrigger" data-triggers="newItem" data-itemtype="book">Book</a></li>          
-                            <li><a href="#" class="eventfultrigger" data-triggers="newItem" data-itemtype="bookSection">Book Section</a></li>          
-                            <li><a href="#" class="eventfultrigger" data-triggers="newItem" data-itemtype="case">Case</a></li>          
-                            <li><a href="#" class="eventfultrigger" data-triggers="newItem" data-itemtype="computerProgram">Computer Program</a></li>          
-                            <li><a href="#" class="eventfultrigger" data-triggers="newItem" data-itemtype="conferencePaper">Conference Paper</a></li>          
-                            <li><a href="#" class="eventfultrigger" data-triggers="newItem" data-itemtype="dictionaryEntry">Dictionary Entry</a></li>          
-                            <li><a href="#" class="eventfultrigger" data-triggers="newItem" data-itemtype="document">Document</a></li>          
-                            <li><a href="#" class="eventfultrigger" data-triggers="newItem" data-itemtype="email">E-mail</a></li>          
-                            <li><a href="#" class="eventfultrigger" data-triggers="newItem" data-itemtype="encyclopediaArticle">Encyclopedia Article</a></li>          
-                            <li><a href="#" class="eventfultrigger" data-triggers="newItem" data-itemtype="film">Film</a></li>          
-                            <li><a href="#" class="eventfultrigger" data-triggers="newItem" data-itemtype="forumPost">Forum Post</a></li>          
-                            <li><a href="#" class="eventfultrigger" data-triggers="newItem" data-itemtype="hearing">Hearing</a></li>          
-                            <li><a href="#" class="eventfultrigger" data-triggers="newItem" data-itemtype="instantMessage">Instant Message</a></li>          
-                            <li><a href="#" class="eventfultrigger" data-triggers="newItem" data-itemtype="interview">Interview</a></li>          
-                            <li><a href="#" class="eventfultrigger" data-triggers="newItem" data-itemtype="journalArticle">Journal Article</a></li>          
-                            <li><a href="#" class="eventfultrigger" data-triggers="newItem" data-itemtype="letter">Letter</a></li>          
-                            <li><a href="#" class="eventfultrigger" data-triggers="newItem" data-itemtype="magazineArticle">Magazine Article</a></li>          
-                            <li><a href="#" class="eventfultrigger" data-triggers="newItem" data-itemtype="manuscript">Manuscript</a></li>          
-                            <li><a href="#" class="eventfultrigger" data-triggers="newItem" data-itemtype="map">Map</a></li>          
-                            <li><a href="#" class="eventfultrigger" data-triggers="newItem" data-itemtype="newspaperArticle">Newspaper Article</a></li>          
-                            <li><a href="#" class="eventfultrigger" data-triggers="newItem" data-itemtype="note">Note</a></li>          
-                            <li><a href="#" class="eventfultrigger" data-triggers="newItem" data-itemtype="patent">Patent</a></li>          
-                            <li><a href="#" class="eventfultrigger" data-triggers="newItem" data-itemtype="podcast">Podcast</a></li>          
-                            <li><a href="#" class="eventfultrigger" data-triggers="newItem" data-itemtype="presentation">Presentation</a></li>          
-                            <li><a href="#" class="eventfultrigger" data-triggers="newItem" data-itemtype="radioBroadcast">Radio Broadcast</a></li>          
-                            <li><a href="#" class="eventfultrigger" data-triggers="newItem" data-itemtype="report">Report</a></li>          
-                            <li><a href="#" class="eventfultrigger" data-triggers="newItem" data-itemtype="statute">Statute</a></li>          
-                            <li><a href="#" class="eventfultrigger" data-triggers="newItem" data-itemtype="thesis">Thesis</a></li>          
-                            <li><a href="#" class="eventfultrigger" data-triggers="newItem" data-itemtype="tvBroadcast">TV Broadcast</a></li>          
-                            <li><a href="#" class="eventfultrigger" data-triggers="newItem" data-itemtype="videoRecording">Video Recording</a></li>          
-                            <li><a href="#" class="eventfultrigger" data-triggers="newItem" data-itemtype="webpage">Web Page</a></li>      
+                            <li><a href="#" class="eventfultrigger" data-triggers="newItem" data-library='<?=$libraryString?>' data-itemtype="artwork">Artwork</a></li>
+                            <li><a href="#" class="eventfultrigger" data-triggers="newItem" data-library='<?=$libraryString?>' data-itemtype="attachment">Attachment</a></li>          
+                            <li><a href="#" class="eventfultrigger" data-triggers="newItem" data-library='<?=$libraryString?>' data-itemtype="audioRecording">Audio Recording</a></li>          
+                            <li><a href="#" class="eventfultrigger" data-triggers="newItem" data-library='<?=$libraryString?>' data-itemtype="bill">Bill</a></li>          
+                            <li><a href="#" class="eventfultrigger" data-triggers="newItem" data-library='<?=$libraryString?>' data-itemtype="blogPost">Blog Post</a></li>          
+                            <li><a href="#" class="eventfultrigger" data-triggers="newItem" data-library='<?=$libraryString?>' data-itemtype="book">Book</a></li>          
+                            <li><a href="#" class="eventfultrigger" data-triggers="newItem" data-library='<?=$libraryString?>' data-itemtype="bookSection">Book Section</a></li>          
+                            <li><a href="#" class="eventfultrigger" data-triggers="newItem" data-library='<?=$libraryString?>' data-itemtype="case">Case</a></li>          
+                            <li><a href="#" class="eventfultrigger" data-triggers="newItem" data-library='<?=$libraryString?>' data-itemtype="computerProgram">Computer Program</a></li>          
+                            <li><a href="#" class="eventfultrigger" data-triggers="newItem" data-library='<?=$libraryString?>' data-itemtype="conferencePaper">Conference Paper</a></li>          
+                            <li><a href="#" class="eventfultrigger" data-triggers="newItem" data-library='<?=$libraryString?>' data-itemtype="dictionaryEntry">Dictionary Entry</a></li>          
+                            <li><a href="#" class="eventfultrigger" data-triggers="newItem" data-library='<?=$libraryString?>' data-itemtype="document">Document</a></li>          
+                            <li><a href="#" class="eventfultrigger" data-triggers="newItem" data-library='<?=$libraryString?>' data-itemtype="email">E-mail</a></li>          
+                            <li><a href="#" class="eventfultrigger" data-triggers="newItem" data-library='<?=$libraryString?>' data-itemtype="encyclopediaArticle">Encyclopedia Article</a></li>          
+                            <li><a href="#" class="eventfultrigger" data-triggers="newItem" data-library='<?=$libraryString?>' data-itemtype="film">Film</a></li>          
+                            <li><a href="#" class="eventfultrigger" data-triggers="newItem" data-library='<?=$libraryString?>' data-itemtype="forumPost">Forum Post</a></li>          
+                            <li><a href="#" class="eventfultrigger" data-triggers="newItem" data-library='<?=$libraryString?>' data-itemtype="hearing">Hearing</a></li>          
+                            <li><a href="#" class="eventfultrigger" data-triggers="newItem" data-library='<?=$libraryString?>' data-itemtype="instantMessage">Instant Message</a></li>          
+                            <li><a href="#" class="eventfultrigger" data-triggers="newItem" data-library='<?=$libraryString?>' data-itemtype="interview">Interview</a></li>          
+                            <li><a href="#" class="eventfultrigger" data-triggers="newItem" data-library='<?=$libraryString?>' data-itemtype="journalArticle">Journal Article</a></li>          
+                            <li><a href="#" class="eventfultrigger" data-triggers="newItem" data-library='<?=$libraryString?>' data-itemtype="letter">Letter</a></li>          
+                            <li><a href="#" class="eventfultrigger" data-triggers="newItem" data-library='<?=$libraryString?>' data-itemtype="magazineArticle">Magazine Article</a></li>          
+                            <li><a href="#" class="eventfultrigger" data-triggers="newItem" data-library='<?=$libraryString?>' data-itemtype="manuscript">Manuscript</a></li>          
+                            <li><a href="#" class="eventfultrigger" data-triggers="newItem" data-library='<?=$libraryString?>' data-itemtype="map">Map</a></li>          
+                            <li><a href="#" class="eventfultrigger" data-triggers="newItem" data-library='<?=$libraryString?>' data-itemtype="newspaperArticle">Newspaper Article</a></li>          
+                            <li><a href="#" class="eventfultrigger" data-triggers="newItem" data-library='<?=$libraryString?>' data-itemtype="note">Note</a></li>          
+                            <li><a href="#" class="eventfultrigger" data-triggers="newItem" data-library='<?=$libraryString?>' data-itemtype="patent">Patent</a></li>          
+                            <li><a href="#" class="eventfultrigger" data-triggers="newItem" data-library='<?=$libraryString?>' data-itemtype="podcast">Podcast</a></li>          
+                            <li><a href="#" class="eventfultrigger" data-triggers="newItem" data-library='<?=$libraryString?>' data-itemtype="presentation">Presentation</a></li>          
+                            <li><a href="#" class="eventfultrigger" data-triggers="newItem" data-library='<?=$libraryString?>' data-itemtype="radioBroadcast">Radio Broadcast</a></li>          
+                            <li><a href="#" class="eventfultrigger" data-triggers="newItem" data-library='<?=$libraryString?>' data-itemtype="report">Report</a></li>          
+                            <li><a href="#" class="eventfultrigger" data-triggers="newItem" data-library='<?=$libraryString?>' data-itemtype="statute">Statute</a></li>          
+                            <li><a href="#" class="eventfultrigger" data-triggers="newItem" data-library='<?=$libraryString?>' data-itemtype="thesis">Thesis</a></li>          
+                            <li><a href="#" class="eventfultrigger" data-triggers="newItem" data-library='<?=$libraryString?>' data-itemtype="tvBroadcast">TV Broadcast</a></li>          
+                            <li><a href="#" class="eventfultrigger" data-triggers="newItem" data-library='<?=$libraryString?>' data-itemtype="videoRecording">Video Recording</a></li>          
+                            <li><a href="#" class="eventfultrigger" data-triggers="newItem" data-library='<?=$libraryString?>' data-itemtype="webpage">Web Page</a></li>      
                         </ul>
                     </div>
                 </div>
@@ -106,17 +105,20 @@ $messages = array();
         </div>
         
         <div id="main-content" class="col-xs-8 col-sm-offset-2">
-            <div id="cite-item-dialog" class="cite-item-dialog eventfulwidget" data-widget="citeItemDialog" title="Cite Items">
+            <div id="cite-item-dialog" class="cite-item-dialog eventfulwidget"
+                data-widget="citeItemDialog"
+                data-library='<?=$libraryString?>'
+                title="Cite Items">
             </div>
             
             <div class="new-item-widget eventfulwidget"
                 data-widget="newItem"
-                >
+                data-library='<?=$libraryString?>'>
             </div>
 
             <?include '../jstemplates/itemdetails.jqt';?>
             <?include '../jstemplates/itemnotedetails.jqt';?>
-            <?include '../jstemplates/itemform.jqt';?>
+            <?include '../jstemplates/citeitemform.jqt';?>
             <?include '../jstemplates/citeitemdialog.jqt';?>
             <?include '../jstemplates/datafield.jqt';?>
             <?include '../jstemplates/editnoteform.jqt';?>
@@ -126,20 +128,36 @@ $messages = array();
             <?include '../jstemplates/authorelementsdouble.jqt';?>
             <?include '../jstemplates/newitemdropdown.jqt';?>
             
+            <script type="text/javascript" charset="utf-8" src="<?=$staticPath?>/js/compiled/_zoterowwwAll.bugly.js"></script>
             <script type="text/javascript" charset="utf-8">
-                var zoterojsClass = "user_library";
+                Zotero.config = <?include "zoteroconfig.js";?>
+            </script>
+            <script type="text/javascript" charset="utf-8">
+                if(!Zotero) Zotero = {};
+                if(!Zotero.config) Zotero.config = {};
+                
                 if(typeof zoteroData == 'undefined'){
                     var zoteroData = {};
                 }
                 var baseURL = "";
                 var baseDomain = "";
                 var staticPath = "<?=$staticPath?>";
-            </script>
-            <script type="text/javascript" charset="utf-8" src="<?=$staticPath?>/js/_zoterowwwAll.bugly.js"></script>
-            <script type="text/javascript" charset="utf-8">
-                //Zotero.prefs.server_javascript_enabled = true;
                 
-                Zotero.config = <?include "zoteroconfig.js";?>
+                var zoterojsClass = "user_library";
+                Zotero.config.pageClass = "user_library";
+                Zotero.config.librarySettings.libraryPathString = "<?=$libraryPathString?>";
+                Zotero.config.librarySettings.libraryType = "user";
+                Zotero.config.librarySettings.libraryID = "0";
+                Zotero.config.librarySettings.publish = 1;
+                Zotero.config.librarySettings.allowEdit = true;
+                
+                Zotero.config.nonparsedBaseUrl = Zotero.config.librarySettings.libraryPathString;
+                
+                Zotero.config.loggedInUserID = 0;
+                Zotero.config.loggedIn = false;
+                Zotero.config.javascriptEnabled = 1;
+                
+                var zoterojsSearchContext = "library";
             </script>
             
             <span id="eventful"></span>

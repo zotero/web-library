@@ -5,4 +5,4 @@ $staticPath = '/web-library/static';
 $libraryString = "u0";
 $citationEndpoint = "http://127.0.0.1:8085/";
 $translationEndpoint = "http://127.0.0.1:1969/";
-
+$libraryPathString='/web-library/citater';

@@ -24,6 +24,43 @@ Zotero.State = function(){
     this.selectedItemKeys = [];
 };
 
+Zotero.State.prototype.rewriteAltUrl = function(){
+    Z.debug("rewriteAltUrl");
+    var state = this;
+    var replace = false;
+    
+    var basePath = Zotero.config.nonparsedBaseUrl;
+    var pathname = window.location.pathname
+    var baseRE = new RegExp(".*" + basePath + "\/?");
+    var oldCollectionRE = /^.*\/collections?\/([A-Z0-9]{8})(?:\/[A-Z0-9]{8})?$/;
+    var oldItemRE = /^.*\/[A-Z0-9]{8}$/;
+    
+    switch(true){
+        case oldCollectionRE.test(pathname):
+            var matches = oldCollectionRE.exec(pathname);
+            var collectionKey = matches[1];
+            var itemKey = matches[2];
+            replace = true;
+            break;
+        case oldItemRE.test(pathname):
+            var matches = oldItemRE.exec(pathname);
+            var itemKey = matches[1];
+            replace = true;
+            break;
+    }
+    
+    if(collectionKey){
+        state.setUrlVar('collectionKey', collectionKey);
+    }
+    if(itemKey){
+        state.setUrlVar('itemKey', itemKey);
+    }
+    
+    if(replace){
+        state.replaceState();
+    }
+};
+
 Zotero.State.prototype.updateCurState = function(){
     var state = this;
     state.curState = J.extend({}, state.f, state.q, state.pathVars);
@@ -213,10 +250,11 @@ Zotero.State.prototype.parseFragmentVars = function(){
     return fragmentVars;
 };
 
-Zotero.State.prototype.buildUrl = function(urlvars, fragment){
+Zotero.State.prototype.buildUrl = function(urlvars, queryVars, fragmentVars){
     var state = this;
     //Z.debug("Zotero.State.buildUrl", 3);
-    if(typeof fragment === 'undefined') { fragment = false;}
+    if(typeof fragmentVars === 'undefined') { fragmentVars = false;}
+    if(typeof queryVars === 'undefined') { queryVars = false;}
     var basePath = Zotero.config.nonparsedBaseUrl + '/';
     
     var urlVarsArray = [];
@@ -233,9 +271,26 @@ Zotero.State.prototype.buildUrl = function(urlvars, fragment){
     });
     urlVarsArray.sort();
     
-    var pathVarsString = urlVarsArray.join('/');
+    var queryVarsArray = [];
+    J.each(queryVars, function(index, value){
+        if(!value) { return; }
+        else if(value instanceof Array){
+            J.each(value, function(i, v){
+                queryVarsArray.push(index + '=' + encodeURIComponent(v) );
+            });
+        }
+        else{
+            queryVarsArray.push(index + '=' + encodeURIComponent(value) );
+        }
+    });
+    queryVarsArray.sort();
     
-    var url = basePath + pathVarsString;
+    var pathVarsString = urlVarsArray.join('/');
+    var queryString = '';
+    if(queryVarsArray.length){
+        queryString = '?' + queryVarsArray.join("&");
+    }
+    var url = basePath + pathVarsString + queryString;
     
     return url;
 };
@@ -279,7 +334,8 @@ Zotero.State.prototype.pushState = function(){
     var s = J.extend({}, state.f, state.q, state.pathVars);
     
     var urlvars = state.pathVars;
-    var url = state.buildUrl(urlvars, false);
+    var queryVars = state.q;
+    var url = state.buildUrl(urlvars, queryVars, false);
     state.curHref = url;
     Z.debug("about to push url: " + url, 3);
     //actually push state and manually call urlChangeCallback if specified

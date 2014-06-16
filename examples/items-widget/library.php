@@ -50,7 +50,6 @@ $messages = array();
                                    ?>
         <span class="zotero-library eventfulwidget"
             data-library='<?=$libraryString?>'
-            data-loadconfig='<?=json_encode($libraryConfig)?>'
             data-widget="libraryPreloader">
         </span>
         <div id="library" class="row">
@@ -71,11 +70,11 @@ $messages = array();
                     </div>
                 </div>
                 <div id="items-pane" class="items-pane eventfulwidget row"
-                    data-widget="itemContainer">
+                    data-widget="itemContainer"
+                    data-library='<?=$libraryString?>'>
                     <div id="library-items-div" class="library-items-div eventfulwidget col-md-9"
-                        data-widget="syncedItems"
-                        data-loadconfig='<?=json_encode($libraryConfig);?>'
-                        >
+                        data-widget="items"
+                        data-library='<?=$libraryString?>'>
                     </div> <!--library items div -->
                 </div> <!-- items pane row -->
             </div><!-- /library-panel row -->
@@ -142,7 +141,7 @@ $messages = array();
                 var staticPath = "<?=$staticPath?>";
             </script>
             
-            <script type="text/javascript" charset="utf-8" src="<?=$staticPath?>/js/_zoterowwwAll.bugly.js"></script>
+            <script type="text/javascript" charset="utf-8" src="<?=$staticPath?>/js/compiled/_zoterowwwAll.bugly.js"></script>
             <script type="text/javascript" charset="utf-8">
                 Zotero.config = <?include "zoteroconfig.js";?>
             </script>
@@ -150,10 +149,12 @@ $messages = array();
             <script type="text/javascript" charset="utf-8" src="<?=$staticPath?>/library/ckeditor/ckeditor.js"></script>
             <span id="eventful"></span>
             <script type="text/javascript" charset="utf-8">
+                /*
                 Zotero.ui.eventful.listen('selectCollection', function(e){
                     var collectionKey = e['collectionKey'];
                     alert("New collection selected: " + collectionKey);
                 });
+*/
             </script>
         </div><!--/library -->
     </body>

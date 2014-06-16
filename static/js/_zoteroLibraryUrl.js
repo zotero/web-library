@@ -1,3 +1,13 @@
+
+Zotero.url.itemIsSnapshot = function(item){
+    if(item.apiObj.links['enclosure']){
+        var ftype = item.apiObj.links['enclosure'].type;
+        if(!item.apiObj.links['enclosure']['length'] && ftype == 'text/html'){
+            return true;
+        }
+    }
+    return false;
+};
 /*
 Zotero.url.itemHref = function(item){
     var href = '';
@@ -5,28 +15,20 @@ Zotero.url.itemHref = function(item){
     href += library.libraryBaseWebsiteUrl + '/itemKey/' + item.itemKey;
     return href;
 };
-
+*/
 Zotero.url.attachmentDownloadLink = function(item){
     var linkString = '';
     var enctype, enc, filesize, filesizeString;
-    var downloadHref = '';
-    if(item.links['enclosure']){
-        if(Zotero.config.directDownloads){
-            downloadHref = Zotero.url.apiDownloadUrl(item);
-        }
-        else {
-            downloadHref = Zotero.url.wwwDownloadUrl(item);
-        }
-        
-        var tail = item.links['enclosure']['href'].substr(-4, 4);
-        if(tail == 'view'){
+    var downloadHref = Zotero.url.attachmentDownloadUrl(item);
+    if(item.apiObj.links['enclosure']){
+        if(Zotero.url.itemIsSnapshot(item)) {
             //snapshot: redirect to view
-            linkString += '<a href="' + downloadHref + '">' + 'View Snapshot</a>';
+            retString += '<a href="' + downloadUrl + '">' + 'View Snapshot</a>';
         }
         else{
             //file: offer download
-            enctype = Zotero.utils.translateMimeType(item.links['enclosure'].type);
-            enc = item.links['enclosure'];
+            enctype = Zotero.utils.translateMimeType(item.apiObj.links['enclosure'].type);
+            enc = item.apiObj.links['enclosure'];
             filesize = parseInt(enc['length'], 10);
             filesizeString = "" + filesize + " B";
             if(filesize > 1073741824){
@@ -56,7 +58,7 @@ Zotero.url.attachmentDownloadLink = function(item){
 
 Zotero.url.attachmentDownloadUrl = function(item){
     var retString = '';
-    if(item.links['enclosure']){
+    if(item.apiObj.links['enclosure']){
         if(Zotero.config.directDownloads){
             return Zotero.url.apiDownloadUrl(item);
         }
@@ -74,7 +76,7 @@ Zotero.url.attachmentDownloadUrl = function(item){
 
 Zotero.url.wwwDownloadUrl = function(item){
     var urlString = '';
-    if(item.links['enclosure']){
+    if(item.apiObj.links['enclosure']){
         if(Zotero.config.proxyDownloads){
             return Zotero.config.baseDownloadUrl + "?itemkey=" + item.itemKey;
         }
@@ -84,9 +86,10 @@ Zotero.url.wwwDownloadUrl = function(item){
         }
         
         urlString = Zotero.config.baseWebsiteUrl + Zotero.config.nonparsedBaseUrl + '/' + item.itemKey + '/file';
-        var tail = item.links['enclosure']['href'].substr(-4, 4);
-        if(tail == 'view'){
+        if(Zotero.url.itemIsSnapshot(item)){
             //snapshot: redirect to view
+            urlString += '/viewsnapshot';
+        }else {
             urlString += '/view';
         }
     }
@@ -100,8 +103,8 @@ Zotero.url.wwwDownloadUrl = function(item){
 
 Zotero.url.apiDownloadUrl = function(item){
     var retString = '';
-    if(item.links['enclosure']){
-        retString = item.links['enclosure']['href'];
+    if(item.apiObj.links['enclosure']){
+        retString = item.apiObj.links['enclosure']['href'];
     }
     else if(item.linkMode == 2 || item.linkMode == 3){
         if(item.apiObj['url']){
@@ -113,9 +116,9 @@ Zotero.url.apiDownloadUrl = function(item){
 
 Zotero.url.attachmentFileDetails = function(item){
     //file: offer download
-    if(!item.links['enclosure']) return '';
-    var enctype = Zotero.utils.translateMimeType(item.links['enclosure'].type);
-    var enc = item.links['enclosure'];
+    if(!item.apiObj.links['enclosure']) return '';
+    var enctype = Zotero.utils.translateMimeType(item.apiObj.links['enclosure'].type);
+    var enc = item.apiObj.links['enclosure'];
     var filesizeString = '';
     if(enc['length']){
         var filesize = parseInt(enc['length'], 10);
@@ -162,7 +165,7 @@ Zotero.url.snapshotViewLink = function(item){
         'itemKey': item.itemKey
     });
 };
-*/
+
 Zotero.url.requestReadApiKeyUrl = function(libraryType, libraryID, redirect){
     var apiKeyBase = Zotero.config.baseWebsiteUrl + '/settings/keys/new';
     apiKeyBase.replace('http', 'https');

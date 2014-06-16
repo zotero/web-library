@@ -1,12 +1,12 @@
 <script id="collectionrowTemplate" type="text/x-jsrender">
-    <li class="collection-row{{if (~currentCollectionKey == collectionKey)}} current-collection{{/if}}" data-collectionKey="{{attr:collectionKey}}">
+    <li class="collection-row{{if (~currentCollectionKey == key)}} current-collection{{/if}}" data-collectionKey="{{attr:key}}">
         <div class="folder-toggle">
         <span class="placeholder small-icon light-icon pull-left"></span>
         <span class="sprite-icon sprite-treesource-collection pull-left"></span>
         </div>
-        <a href="{{url:websiteCollectionLink}}" data-collectionKey="{{attr:collectionKey}}"
-            id="collection-{{attr:collectionKey}}" class="collection-select-link{{if (~currentCollectionKey == collectionKey)}} current-collection{{/if}}">
-            {{>apiObj.name}}
+        <a href="{{url:websiteCollectionLink}}" data-collectionKey="{{attr:key}}"
+            id="collection-{{attr:key}}" class="collection-select-link{{if (~currentCollectionKey == key)}} current-collection{{/if}}">
+            {{>apiObj.data.name}}
         </a>
         {{if hasChildren}}
             <ul>

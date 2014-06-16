@@ -51,7 +51,7 @@ Zotero.ui.widgets.controlPanel.updateDisabledControlButtons = function(selectedI
         J(".add-to-collection-button").addClass('disabled');
         J(".remove-from-collection-button").addClass('disabled');
         J(".move-to-trash-button").addClass('disabled');
-        J(".remove-from-trash-button").addClass('disable');
+        J(".remove-from-trash-button").addClass('disabled');
         
         J(".cite-button").addClass('disabled');
         J(".export-button").addClass('disabled'); //TODO: should this really be disabled? not just export everything?

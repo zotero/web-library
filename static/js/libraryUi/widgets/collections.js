@@ -14,6 +14,7 @@ Zotero.ui.widgets.collections.init = function(el){
     library.listen("selectedCollectionChanged", Zotero.ui.widgets.collections.updateSelectedCollection, {widgetEl: el});
     
     Zotero.ui.widgets.collections.bindCollectionLinks(el);
+    library.trigger("cachedDataLoaded");
 };
 
 Zotero.ui.widgets.collections.syncCollections = function(evt) {

@@ -1,7 +1,11 @@
 <script id="groupslistTemplate" type="text/x-jsrender">
+{{if groups.length}}
 <ul class="groups-list">
     {{for groups}}
-        <li class="group" data-groupID="{{attr:groupID}}">{{>title}}</li>
+        <li class="group" data-groupID="{{attr:groupID}}"><a href="{{attr:~Zotero.url.groupViewUrl(#data)}}">{{>title}}</a></li>
     {{/for}}
 </ul>
+{{else}}
+No Groups
+{{/if}}
 </script>

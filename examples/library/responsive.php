@@ -125,7 +125,7 @@ $messages = array();
                         <button class="btn btn-default navbar-btn eventfultrigger add-to-collection-button" data-library='<?=$libraryString?>' data-triggers="addToCollectionDialog" title="Add to Collection"><span class="glyphicon icon-folder_add_to"></span></button>
                         <button class="remove-from-collection-button btn btn-default navbar-btn eventfultrigger" data-library='<?=$libraryString?>' data-triggers="removeFromCollection" title="Remove from Collection"><span class="glyphicon icon-folder_remove_from"></span></button>
                         <button class="move-to-trash-button btn btn-default navbar-btn eventfultrigger" data-library='<?=$libraryString?>' data-triggers="moveToTrash" title="Move to Trash"><span class="glyphicon icon-trash"></span></button>
-                        <button class="remove-from-trash-button btn btn-default navbar-btn eventfultrigger" data-library='<?=$libraryString?>' data-triggers="removeFromTrash" title="Remove from Trash"><span class="glyphicon icon-trash_remove"></span></button>
+                        <button class="remove-from-trash-button btn btn-default navbar-btn eventfultrigger" data-library='<?=$libraryString?>' data-triggers="removeFromTrash" title="Restore to Library"><span class="glyphicon icon-trash_remove"></span></button>
                     </div>
                     <div class="btn-group" data-toggle="button">
                         <button type="button" class="toggle-edit-button btn btn-default navbar-btn eventfultrigger" data-library='<?=$libraryString?>' data-triggers="toggleEdit" title="Edit"><span class="glyphicon glyphicon-edit"></span></button>

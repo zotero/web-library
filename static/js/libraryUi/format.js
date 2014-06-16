@@ -18,50 +18,45 @@ Zotero.ui.formatItemField = function(field, item, trim){
     }
     switch(field){
         case "itemType":
-            formattedString = Zotero.localizations.typeMap[item['itemType']];
+            formattedString = Zotero.localizations.typeMap[item.apiObj.data.itemType];
             break;
         case "dateModified":
-            if(!item['dateModified']){
+            if(!item.apiObj.data['dateModified']){
                 formattedString = '';
             }
-            date = Zotero.utils.parseApiDate(item['dateModified']);
+            date = Zotero.utils.parseApiDate(item.apiObj.data['dateModified']);
             if(date){
                 formattedString = Globalize.format(date, 'd') + ' ' + Globalize.format(date, 't');
             }
             else{
-                formattedString = item['dateModified'];
+                formattedString = item.apiObj.data['dateModified'];
             }
             formattedString = date.toLocaleString();
             break;
         case "dateAdded":
-            if(!item['dateAdded']){
+            if(!item.apiObj.data['dateAdded']){
                 formattedString = '';
             }
-            date = Zotero.utils.parseApiDate(item['dateAdded']);
+            date = Zotero.utils.parseApiDate(item.apiObj.data['dateAdded']);
             if(date){
                 formattedString = Globalize.format(date, 'd') + ' ' + Globalize.format(date, 't');
             }
             else{
-                formattedString = item['dateAdded'];
+                formattedString = item.apiObj.data['dateAdded'];
             }
             break;
         case "title":
-            formattedString = item.title;
+            formattedString = item.apiObj.data.title;
             break;
         case "creator":
-            formattedString = item.creatorSummary;
+            formattedString = item.apiObj.meta.creatorSummary;
             break;
         case "addedBy":
-            formattedString = item.author.name;
+            formattedString = item.apiObj.meta.createdByUser.name;
             break;
         default:
-            if(typeof(item[field]) !== "undefined"){
-                formattedString = item[field];
-            }
-            else if(item.apiObj){
-                if(item.apiObj[field]){
-                    formattedString = item.apiObj[field];
-                }
+            if(typeof(item.apiObj.data[field]) !== "undefined"){
+                formattedString = item.apiObj.data[field];
             }
     }
     if(trim && (trimLength > 0) && (formattedString.length > trimLength) ) {
@@ -102,27 +97,27 @@ Zotero.ui.formatItemDateField = function(field, item){
     var date;
     switch(field){
         case "dateModified":
-            if(!item['dateModified']){
+            if(!item.apiObj.data['dateModified']){
                 return '';
             }
-            date = Zotero.utils.parseApiDate(item['dateModified']);
+            date = Zotero.utils.parseApiDate(item.apiObj.data['dateModified']);
             if(date){
                 return "<span class='localized-date-span'>" + Globalize.format(date, 'd') + "</span> <span class='localized-date-span'>" + Globalize.format(date, 't') + "</span>";
             }
             else{
-                return item['dateModified'];
+                return item.apiObj.data['dateModified'];
             }
             return date.toLocaleString();
         case "dateAdded":
-            if(!item['dateAdded']){
+            if(!item.apiObj.data['dateAdded']){
                 return '';
             }
-            date = Zotero.utils.parseApiDate(item['dateAdded']);
+            date = Zotero.utils.parseApiDate(item.apiObj.data['dateAdded']);
             if(date){
                 return "<span class='localized-date-span'>" + Globalize.format(date, 'd') + "</span> <span class='localized-date-span'>" + Globalize.format(date, 't') + "</span>";
             }
             else{
-                return item['dateAdded'];
+                return item.apiObj.data['dateAdded'];
             }
             break;
     }

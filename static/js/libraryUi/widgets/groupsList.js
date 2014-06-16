@@ -14,11 +14,7 @@ Zotero.ui.widgets.groupsList.refresh = function(evt){
     Zotero.debug("Zotero.ui.widgets.groupsList.refresh", 3);
     var widgetEl = evt.data.widgetEl;
     var library = Zotero.ui.getAssociatedLibrary(widgetEl);
-    if(!Zotero.config.loggedIn){
-        throw new Error("no logged in userID. Required for groupsList widget");
-    }
-    var userID = Zotero.config.loggedInUserID;
-    var memberGroups = library.groups.fetchUserGroups(userID)
+    var memberGroups = library.groups.fetchUserGroups(library.libraryID)
     .then(function(memberGroups){
         Zotero.ui.widgets.groupsList.render(widgetEl, memberGroups);
     });
@@ -26,12 +22,6 @@ Zotero.ui.widgets.groupsList.refresh = function(evt){
 };
 
 Zotero.ui.widgets.groupsList.render = function(el, groups){
+    Z.debug("groupsList render", 3);
     J(el).empty().append( J("#groupslistTemplate").render({groups:groups}));
-};
-
-Zotero.ui.widgets.groupsList.sendToGroup = function(evt){
-    Zotero.debug("Zotero.ui.widgets.groupsList.sendToGroup", 3);
-    var widgetEl = evt.data.widgetEl;
-    var library = Zotero.ui.getAssociatedLibrary(widgetEl);
-    
 };

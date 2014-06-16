@@ -42,6 +42,7 @@ Zotero.ui.widgets.syncedItems.init = function(el){
     });
     
     Zotero.ui.widgets.syncedItems.bindPaginationLinks(container);
+    library.trigger("displayedItemsChanged");
 };
 
 Zotero.ui.widgets.syncedItems.syncItems = function(event){
