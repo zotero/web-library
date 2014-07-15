@@ -35,6 +35,7 @@ Zotero.ui.widgets.uploadDialog.show = function(e){
         
         Zotero.file.getFileInfo(file)
         .then(function(fileInfo){
+            Z.debug(fileInfo);
             widgetEl.find(".attachmentuploadfileinfo").data('fileInfo', fileInfo);
             widgetEl.find("input.upload-file-title-input").val(fileInfo.filename);
             widgetEl.find("td.uploadfilesize").html(fileInfo.filesize);

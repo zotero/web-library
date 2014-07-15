@@ -27,6 +27,7 @@ Zotero.ui.widgets.newItem.freshitemcallback = function(e){
         Zotero.ui.unassociatedItemForm(widgetEl, item);
     },
     function(response){
+        Z.error(response);
         Zotero.ui.jsNotificationMessage("Error loading item template", 'error');
         Z.debug(response);
         Z.debug(response.jqxhr.statusCode);
@@ -47,16 +48,16 @@ Zotero.ui.unassociatedItemForm = function(el, item){
     itemTypes.sort();
     Z.debug(itemTypes);
     
-    return Zotero.Item.prototype.getCreatorTypes(item.itemType)
+    return Zotero.Item.prototype.getCreatorTypes(item.apiObj.data.itemType)
     .then(function(itemCreatorTypes){
         container.empty();
-        if(item.itemType == 'note'){
+        if(item.apiObj.data.itemType == 'note'){
             var parentKey = Zotero.state.getUrlVar('parentKey');
             if(parentKey){
                 item.parentKey = parentKey;
             }
             container.append( J('#editnoteformTemplate').render({item:item,
-                                         itemKey:item.itemKey
+                                         itemKey:item.get('key')
                                          }) );
             
             Zotero.ui.init.rte('default');
@@ -64,7 +65,7 @@ Zotero.ui.unassociatedItemForm = function(el, item){
         else {
             container.append(J('#itemformTemplate').render( {item:item,
                                         library: library,
-                                        itemKey:item.itemKey,
+                                        itemKey:item.get('key'),
                                         creatorTypes:itemCreatorTypes,
                                         itemTypes: itemTypes,
                                         citable:true,
@@ -93,11 +94,8 @@ Zotero.ui.unassociatedItemForm = function(el, item){
         Z.debug(container);
         container.data('item', item);
         
-        //load data from previously rendered form if available
-        Zotero.ui.loadFormData(container);
-        
         Zotero.eventful.initTriggers(container);
-    });
+    }).catch(Zotero.catchPromiseError);
     
 };
 
@@ -119,6 +117,7 @@ Zotero.ui.widgets.newItem.changeItemType = function(e){
         Zotero.ui.unassociatedItemForm(widgetEl, item);
     },
     function(response){
+        Z.error(response);
         Zotero.ui.jsNotificationMessage("Error loading item template", 'error');
     });
 };

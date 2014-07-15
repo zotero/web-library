@@ -1,0 +1,13 @@
+<script id="inviteuserformTemplate" type="text/x-jsrender">
+<form class="inviteuserform" >
+    <div class="form-group">
+        <select name="groupID" id="groupID" class="form-control">
+        {{for groups}}
+            <option data-groupID="{{attr:apiObj.data.id}}" value="{{attr:apiObj.data.id}}">-{{>apiObj.data.name}}</option>
+        {{/for}}
+        </select>
+    </div>
+    
+    <button type="submit" class="btn btn-primary inviteuserbutton">Invite User To Group</button>
+</form>
+</script>

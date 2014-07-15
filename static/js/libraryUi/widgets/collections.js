@@ -14,7 +14,6 @@ Zotero.ui.widgets.collections.init = function(el){
     library.listen("selectedCollectionChanged", Zotero.ui.widgets.collections.updateSelectedCollection, {widgetEl: el});
     
     Zotero.ui.widgets.collections.bindCollectionLinks(el);
-    library.trigger("cachedDataLoaded");
 };
 
 Zotero.ui.widgets.collections.syncCollections = function(evt) {
@@ -38,10 +37,10 @@ Zotero.ui.widgets.collections.syncCollections = function(evt) {
     },
     function(err){
         //sync failed, but we already had some data, so show that
-        Z.debug("Error syncing collections");
-        Z.debug(err);
+        Z.error("Error syncing collections");
+        Z.error(err);
         library.trigger("libraryCollectionsUpdated");
-        //TODO: display error as well
+        Zotero.ui.jsNotificationMessage("Error syncing collections. Collections list may not be up to date", 'notice');
     }).then(function(){
         widgetEl.removeData('loadingPromise');
     });

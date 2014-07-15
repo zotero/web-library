@@ -16,6 +16,10 @@ Zotero.ui.widgets.controlPanel.init = function(el){
     var container = J(el);
     
     Zotero.ui.widgets.controlPanel.updateDisabledControlButtons();
+    //start edit button in correct state
+    if(Zotero.state.getUrlVar('mode') == 'edit'){
+        container.find('button.toggle-edit-button').addClass('active');
+    }
 };
 
 Zotero.ui.widgets.controlPanel.contextChanged = function(evt){
@@ -79,21 +83,7 @@ Zotero.ui.widgets.controlPanel.updateDisabledControlButtons = function(selectedI
         J(".move-to-trash-button").prop('title', 'Permanently Delete');
     }
 };
-/*
-Zotero.ui.widgets.controlPanel.createItemDropdown = function(el){
-    Z.debug("Zotero.eventful.init.createItemDropdown", 3);
-    //order itemTypes
-    var itemTypes = [];
-    J.each(Zotero.Item.prototype.typeMap, function(key, val){
-        itemTypes.push(key);
-    });
-    itemTypes.sort();
-    //render dropdown into widget
-    menuEl = J(el).find(".createitemmenu.dropdown-menu");
-    menuEl.empty();
-    menuEl.replaceWith( J(el).find("#newitemdropdownTemplate").render({itemTypes:itemTypes}) );
-};
-*/
+
 /**
  * Toggle library edit mode when edit button clicked
  * @param  {event} e click event
@@ -117,7 +107,7 @@ Zotero.ui.widgets.controlPanel.toggleEdit =  function(e){
  * @param  {event} e click event
  * @return {boolean}
  */
-Zotero.ui.callbacks.createItem = function(e){
+Zotero.ui.widgets.controlPanel.createItem = function(e){
     Z.debug("create-item-Link clicked", 3);
     var collectionKey = Zotero.state.getUrlVar('collectionKey');
     if(collectionKey){
@@ -152,7 +142,8 @@ Zotero.ui.widgets.controlPanel.moveToTrash =  function(evt){
     
     //show spinner before making the possibly many the ajax requests
     Zotero.ui.showSpinner(J('#library-items-div'));
-    
+    Z.debug('trashingItems:');
+    Z.debug(trashingItems);
     if(Zotero.state.getUrlVar('collectionKey') == 'trash'){
         //items already in trash. delete them
         var i;
@@ -174,12 +165,12 @@ Zotero.ui.widgets.controlPanel.moveToTrash =  function(evt){
     
     library.dirty = true;
     response.catch(function(){
-        
+        Z.error("Error trashing items");
     }).then(function(){
         Zotero.state.clearUrlVars(['collectionKey', 'tag', 'q']);
         Zotero.state.pushState(true);
         library.trigger("displayedItemsChanged");
-    });
+    }).catch(Zotero.catchPromiseError);
     
     return false; //stop event bubbling
 };
@@ -214,7 +205,7 @@ Zotero.ui.widgets.controlPanel.removeFromTrash =  function(evt){
         Zotero.state.clearUrlVars(['collectionKey', 'tag', 'q']);
         Zotero.state.pushState();
         library.trigger("displayedItemsChanged");
-    });
+    }).catch(Zotero.catchPromiseError);
     
     return false;
 };
@@ -224,7 +215,7 @@ Zotero.ui.widgets.controlPanel.removeFromTrash =  function(evt){
  * @param  {event} e click event
  * @return {boolean}
  */
-Zotero.ui.callbacks.removeFromCollection = function(evt){
+Zotero.ui.widgets.controlPanel.removeFromCollection = function(evt){
     Z.debug('remove-from-collection clicked', 3);
     var triggeringEl = J(evt.triggeringElement);
     var library = Zotero.ui.getAssociatedLibrary(triggeringEl);
@@ -247,7 +238,7 @@ Zotero.ui.callbacks.removeFromCollection = function(evt){
         Zotero.state.clearUrlVars(['collectionKey', 'tag']);
         Zotero.state.pushState(true);
         library.trigger("displayedItemsChanged");
-    });
+    }).catch(Zotero.catchPromiseError);
     
     return false;
 };

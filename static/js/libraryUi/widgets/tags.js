@@ -46,14 +46,14 @@ Zotero.ui.widgets.tags.init = function(el){
 };
 
 Zotero.ui.widgets.tags.syncTags = function(evt){
-    Z.debug('Zotero eventful syncTags', 1);
+    Z.debug('Zotero eventful syncTags', 3);
     var widgetEl = J(evt.data.widgetEl);
     var loadingPromise = widgetEl.data('loadingPromise');
     if(loadingPromise){
         var p = widgetEl.data('loadingPromise');
         return p.then(function(){
             return Zotero.ui.widgets.tags.syncTags(evt);
-        });
+        }).catch(Zotero.catchPromiseError);
     }
     
     var checkCached = evt.data.checkCached;
@@ -74,18 +74,22 @@ Zotero.ui.widgets.tags.syncTags = function(evt){
     //this function shouldn't be triggered until that has already been done
     loadingPromise = library.loadUpdatedTags()
     .then(function(){
+        Z.debug("syncTags done. clearing loading div");
         widgetEl.find('.loading').empty();
         library.trigger("libraryTagsUpdated");
         //remove loadingPromise
         widgetEl.removeData('loadingPromise');
     },
-    function(){
+    function(error){
+        Z.error("syncTags failed. showing local data and clearing loading div");
+        Z.error(error);
+        Z.error(error.get());
         //sync failed, but we still have some local data, so show that
         library.trigger("libraryTagsUpdated");
-        widgetEl.children('.loading').empty();
+        widgetEl.find('.loading').empty();
         //remove loadingPromise
         widgetEl.removeData('loadingPromise');
-        //TODO: display error as well
+        Zotero.ui.jsNotificationMessage("There was an error syncing tags. Some tags may not have been updated.", 'notice');
     });
     
     widgetEl.data('loadingPromise', loadingPromise);
@@ -134,7 +138,6 @@ Zotero.ui.widgets.tags.displayTagsFiltered = function(el, library, matchedTagStr
     if(!showMore){
         showMore = false;
     }
-    
     var coloredTags = [];
     var tagColorStrings = [];
     J.each(tagColors, function(index, tagColor){
@@ -150,6 +153,7 @@ Zotero.ui.widgets.tags.displayTagsFiltered = function(el, library, matchedTagStr
     var selectedTags = [];
     J.each(matchedTagStrings, function(index, matchedString){
         if(libtags.tagObjects[matchedString] && 
+            (libtags.tagObjects[matchedString].apiObj.meta.numItems > 0) &&
             (J.inArray(matchedString, selectedTagStrings) == (-1)) &&
             (J.inArray(matchedString, tagColorStrings) == (-1)) ) {
             filteredTags.push(libtags.tagObjects[matchedString]);
@@ -160,7 +164,6 @@ Zotero.ui.widgets.tags.displayTagsFiltered = function(el, library, matchedTagStr
             selectedTags.push(libtags.tagObjects[selectedString]);
         }
     });
-    
     var passTags;
     if(!showMore){
         passTags = filteredTags.slice(0, 25);
@@ -172,12 +175,10 @@ Zotero.ui.widgets.tags.displayTagsFiltered = function(el, library, matchedTagStr
         J("#show-more-tags-link").hide();
         J("#show-fewer-tags-link").show();
     }
-    
     var tagListEl = J("#tags-list").empty();
     J("#colored-tags-list").replaceWith(J('#coloredtaglistTemplate').render({tags:coloredTags}));
     J("#selected-tags-list").replaceWith(J('#tagunorderedlistTemplate').render({tags:selectedTags, id:'selected-tags-list'}));
     J("#tags-list").replaceWith(J('#tagunorderedlistTemplate').render({tags:passTags, id:'tags-list'}));
-    
 };
 
 Zotero.ui.widgets.tags.filterTags = function(e){

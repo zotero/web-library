@@ -6,7 +6,7 @@
             <option value='' {{if ~noValueClass}}class="{{attr:~noValueClass}}"{{/if}}>{{>~noValueText || "None"}}</option>
         {{/if}}
         {{for ncollections}}
-            <option value='{{attr:key}}'>{{>~multiplyChar('-', nestingDepth)}}{{>title}}</option>
+            <option value='{{attr:#data.get('key')}}'>{{>~multiplyChar('-', nestingDepth)}}{{>#data.get('name')}}</option>
         {{/for}}
     {{if !~optionsOnly}}
     </select>

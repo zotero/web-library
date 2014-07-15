@@ -15,6 +15,8 @@ Zotero.ui.widgets.addToCollectionDialog.show = function(evt){
     var ncollections = library.collections.nestedOrderingArray();
     
     var widgetEl = J(evt.data.widgetEl).empty();
+    Z.debug("ncollections:");
+    Z.debug(ncollections);
     widgetEl.html( J("#addtocollectiondialogTemplate").render({ncollections:ncollections}) );
     var dialogEl = widgetEl.find(".add-to-collection-dialog");
     
@@ -55,6 +57,6 @@ Zotero.ui.addToCollection = function(collectionKey, library){
     .then(function(response){
         library.dirty = true;
         Zotero.ui.jsNotificationMessage("Items added to collection", 'success');
-    });
+    }).catch(Zotero.catchPromiseError);
     return false;
 };

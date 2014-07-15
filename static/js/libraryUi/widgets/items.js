@@ -82,11 +82,16 @@ Zotero.ui.widgets.items.loadItemsCallback = function(event){
     Zotero.ui.showSpinner(widgetEl, 'horizontal');
     
     var p = library.loadItems(newConfig)
-    .then(function(loadedItems){
+    .then(function(response){
         widgetEl.empty();
-        Zotero.ui.widgets.items.displayItems(widgetEl, newConfig, loadedItems);
-    },
-    function(response){
+        if(!response.loadedItems){
+            Zotero.error("expected loadedItems on response not present");
+            throw("Expected response to have loadedItems");
+        }
+        var pagination = Zotero.ui.createPagination(response, 'itemPage', newConfig.start, newConfig.limit);
+        Zotero.ui.widgets.items.displayItems(widgetEl, newConfig, response.loadedItems, pagination);
+    }).catch(function(response){
+        Z.error(response);
         var elementMessage = Zotero.ui.ajaxErrorMessage(response.jqxhr);
         widgetEl.html("<p>" + elementMessage + "</p>");
     });
@@ -122,8 +127,6 @@ Zotero.ui.getItemsConfig = function(library){
     
     //Build config object that should be displayed next and compare to currently displayed
     var newConfig = J.extend({}, defaultConfig, userPreferencesApiArgs, urlConfigVals);
-    //TODO: figure out if this is still necessary
-    newConfig['collectionKey'] = urlConfigVals['collectionKey'];//always override collectionKey, even with absence of collectionKey
     newConfig.start = parseInt(newConfig.limit, 10) * (parseInt(newConfig.itemPage, 10) - 1);
     
     //don't allow ordering by addedBy if user library
@@ -150,17 +153,10 @@ Zotero.ui.getItemsConfig = function(library){
  * @param  {array} loadedItems loaded items array
  * @return {undefined}
  */
-Zotero.ui.widgets.items.displayItems = function(el, config, loadedItems) {
+Zotero.ui.widgets.items.displayItems = function(el, config, itemsArray, pagination) {
     Z.debug("Zotero.ui.widgets.displayItems", 3);
     var jel = J(el);
     var library = Zotero.ui.getAssociatedLibrary(jel);
-    var itemsArray;
-    if(loadedItems.itemsArray){
-        itemsArray = loadedItems.itemsArray;
-    }
-    else {
-        itemsArray = library.displayItemsArray;
-    }
     
     var filledConfig = J.extend({}, Zotero.config.defaultApiArgs, config);
     var displayFields = library.preferences.getPref('listDisplayedFields');
@@ -169,24 +165,20 @@ Zotero.ui.widgets.items.displayItems = function(el, config, loadedItems) {
             return J.inArray(el, Zotero.Library.prototype.groupOnlyColumns) == (-1);
         });
     }
-    var editmode = (Zotero.config.librarySettings.allowEdit ? true : false);
     
     var itemsTableData = {displayFields:displayFields,
                            items:itemsArray,
-                           editmode:editmode,
                            order: filledConfig['order'],
                            sort: filledConfig['sort'],
                            library:library,
                         };
 
+    Z.debug(itemsTableData);
+    Z.debug(pagination);
     jel.append( J('#itemstableTemplate').render(itemsTableData) );
     
-    if(loadedItems.feed){
-        var feed = loadedItems.feed;
-        var pagination = Zotero.ui.createPagination(loadedItems.feed, 'itemPage', filledConfig);
-        var paginationData = {feed:feed, pagination:pagination};
-        var itemPage = pagination.page;
-        jel.append( J('#itempaginationTemplate').render(paginationData) );
+    if(pagination){
+        jel.append( J('#itempaginationTemplate').render({pagination:pagination}) );
     }
     
     //library.trigger('controlPanelContextChange');

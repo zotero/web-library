@@ -12,7 +12,7 @@
                     <legend>Display Columns</legend>
                     {{for columnFields}}
                         <div class="checkbox">
-                            <label for="display-column-field-{{attr:#data}}"><input type="checkbox" name="display-column-field" value="{{attr:#data}}" id="display-column-field-{{attr:#data}}" class="display-column-field-{{attr:#data}}" />{{>~fieldMap[#data] || #data}}</label>
+                            <label for="display-column-field-{{attr:#data}}"><input type="checkbox" name="display-column-field" value="{{attr:#data}}" id="display-column-field-{{attr:#data}}" class="display-column-field-{{attr:#data}} display-column-field" />{{>~fieldMap[#data] || #data}}</label>
                         </div>
                     {{/for}}
                 </fieldset>

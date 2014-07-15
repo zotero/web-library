@@ -48,9 +48,8 @@ $messages = array();
                                    'libraryString'=>$libraryString
                                    );
                                    ?>
-        <span class="zotero-library"
+        <span class="eventfulwidget zotero-library"
               data-library='<?=$libraryString?>'
-              data-loadconfig='<?=json_encode($libraryConfig)?>'
               data-widget="libraryPreloader">
         </span>
         <!-- Header -->
@@ -126,6 +125,9 @@ $messages = array();
                         <button class="remove-from-collection-button btn btn-default navbar-btn eventfultrigger" data-library='<?=$libraryString?>' data-triggers="removeFromCollection" title="Remove from Collection"><span class="glyphicon icon-folder_remove_from"></span></button>
                         <button class="move-to-trash-button btn btn-default navbar-btn eventfultrigger" data-library='<?=$libraryString?>' data-triggers="moveToTrash" title="Move to Trash"><span class="glyphicon icon-trash"></span></button>
                         <button class="remove-from-trash-button btn btn-default navbar-btn eventfultrigger" data-library='<?=$libraryString?>' data-triggers="removeFromTrash" title="Restore to Library"><span class="glyphicon icon-trash_remove"></span></button>
+                    </div>
+                    <div class="btn-group">
+                        <button type="button" class="send-to-library-button btn btn-default navbar-btn eventfultrigger" data-library='<?=$libraryString?>' data-triggers="sendToLibraryDialog" title="Send to Library"><span class="glyphicon glyphicon-share"></span></button>
                     </div>
                     <div class="btn-group" data-toggle="button">
                         <button type="button" class="toggle-edit-button btn btn-default navbar-btn eventfultrigger" data-library='<?=$libraryString?>' data-triggers="toggleEdit" title="Edit"><span class="glyphicon glyphicon-edit"></span></button>

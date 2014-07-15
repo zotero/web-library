@@ -22,7 +22,7 @@ $files = array(
 "libraryUi/eventful.js",
 //"libraryUi/bind.js",
 //"libraryUi/clickcallbacks.js",
-"libraryUi/compat.js",
+//"libraryUi/compat.js",
 "libraryUi/format.js",
 "libraryUi/init.js",
 "libraryUi/misc.js",
@@ -66,7 +66,6 @@ $files = array(
 "libraryUi/widgets/siteSearch.js",
 "_zoteroLibraryUrl.js",
 "zoteroPages.js",
-//"_zoteroLibraryOffline.js"
 );
 
 $fullText = "";

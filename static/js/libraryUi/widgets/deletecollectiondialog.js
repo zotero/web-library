@@ -32,9 +32,9 @@ Zotero.ui.widgets.deleteCollectionDialog.show = function(evt){
             library.collections.dirty = true;
             library.collections.initSecondaryData();
             Zotero.state.pushState();
-            Zotero.ui.jsNotificationMessage(collection.title + " removed", 'confirm');
+            Zotero.ui.jsNotificationMessage(collection.get('title') + " removed", 'confirm');
             Zotero.ui.closeDialog(dialogEl);
-        });
+        }).catch(Zotero.catchPromiseError);
         return false;
     }, this);
     

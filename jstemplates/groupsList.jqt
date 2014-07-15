@@ -2,7 +2,7 @@
 {{if groups.length}}
 <ul class="groups-list">
     {{for groups}}
-        <li class="group" data-groupID="{{attr:groupID}}"><a href="{{attr:~Zotero.url.groupViewUrl(#data)}}">{{>title}}</a></li>
+        <li class="group" data-groupID="{{attr:groupID}}"><a href="{{attr:~Zotero.url.groupViewUrl(#data)}}">{{>#data.apiObj.data.name}}</a></li>
     {{/for}}
 </ul>
 {{else}}

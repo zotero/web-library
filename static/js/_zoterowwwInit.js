@@ -1,14 +1,15 @@
 var J = jQuery.noConflict();
 
 jQuery(document).ready(function() {
-    /* Elements that need to be loaded asynchronously have class .ajaxload
-     * within .ajaxload elements: config vars from original pageload are held in data-* attributes of the element
-     * current desired content of element will always be defined by data-* attributes overridded / supplemented by
-     * url variables (hash or querystring
-     * currently displayed content is defined by jQuery config object data attached to the element with key 'currentConfig'
-     * each ajaxload callback is responsible for determining what changes need to be made and making them
+    /* The Zotero web library is built on top of libZotero as a group of
+     * relatively independent widgets. They interact by listening to and
+     * triggering events (with optional filters) on the Zotero object or
+     * individual Zotero.Library objects. State is maintained by a
+     * Zotero.State object that optionally stores variables in the url
+     * using pushState as well. With pushState enabled back/forward
+     * actions trigger events for the variables that have changed so
+     * widgets listening know to update.
      */
-    
     Z.debug('===== DOM READY =====', 3);
     Zotero.state = new Zotero.State();
     Zotero.init();
@@ -27,8 +28,8 @@ Zotero.init = function(){
     if(window.zoteroConfig){
         Zotero.config = J.extend({}, Zotero.config, window.zoteroConfig);
     }
-    //TODO: turn back on rewrite
-    //Zotero.state.rewriteAltUrl();
+    
+    Zotero.state.rewriteAltUrl();
     
     //base init to setup tagline and search bar
     if(Zotero.pages){
@@ -37,13 +38,13 @@ Zotero.init = function(){
     
     //run page specific init
     if((window.zoterojsClass) && (undefined !== Zotero.pages) && Zotero.pages[zoterojsClass]) {
-        //try{
+        try{
             Zotero.pages[zoterojsClass].init();
-        /*}
+        }
         catch(err){
-            Z.debug("Error running page specific init for " + zoterojsClass, 1);
-            Z.debug(err);
-        }*/
+            Z.error("Error running page specific init for " + zoterojsClass);
+            Z.error(err);
+        }
     }
     
     if(typeof zoterojsClass == 'undefined'){
@@ -64,7 +65,6 @@ Zotero.init = function(){
     }
     
     Zotero.state.parseUrlVars();
-    
     
     Zotero.config.startPageTitle = document.title;
     var store;
@@ -121,7 +121,7 @@ Zotero.init = function(){
     // Bind to popstate to update state when browser goes back
     // only applicable if state is using location
     window.onpopstate = function(){
-        Z.debug("popstate");
+        Z.debug("popstate", 3);
         J(window).trigger('statechange');
     };
     J(window).on('statechange', J.proxy(Zotero.state.popstateCallback, Zotero.state));

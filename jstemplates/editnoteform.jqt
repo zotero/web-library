@@ -1,9 +1,4 @@
 <script id="editnoteformTemplate" type="text/x-jsrender">
-    {{if (item.libraryType == 'user')}}
-        <span id="libraryUserID" title="{{attr:item.libraryID}}"></span>
-    {{else (item.libraryType == 'group')}}
-        <span id="libraryGroupID" title="{{attr:item.libraryID}}"></span>
-    {{/if}}
     <form class="itemDetailForm zform" data-itemKey="{{attr:itemKey}}">
     <table>
     {{if (false) }}
@@ -17,14 +12,14 @@
     <!-- Output title -->
     <tr>
         <th>{{>item.fieldMap['title']}}</th>
-        <td class="title" data-itemKey="{{attr:itemKey}}">{{>item.title}}</td>
+        <td class="title" data-itemKey="{{attr:itemKey}}">{{>item.get('title')}}</td>
     </tr>
 
     <!-- Output Note -->
     <tr>
         <th>Note</th>
         <td class="note-text">
-            <textarea cols="40" rows="14" name="note-text" id="note-text" class="rte default" data-itemKey="{{attr:itemKey}}">{{>item.apiObj.note}}</textarea>
+            <textarea cols="40" rows="14" name="note-text" id="note-text" class="rte default" data-itemKey="{{attr:itemKey}}">{{>item.get('note')}}</textarea>
         </td>
     </tr>
     
@@ -32,7 +27,7 @@
     <tr>
         <th>Tags</th>
         <td class="tags">
-        {{for item.apiObj.tags ~itemKey=itemKey }}
+        {{for item.get('tags') ~itemKey=itemKey }}
             {{include ~index=#index tmpl="#itemtagTemplate" /}}
         {{/for}}
         </td>
@@ -45,8 +40,8 @@
     </table>
     
     <!-- attachments -->
-    {{if (item.numChildren > 0)}}
-        <a class="show-attachments-link" data-itemKey="{{attr:item.itemKey}}">Show {{>item.numChildren}} attachments</a>
+    {{if (item.get('numChildren') > 0)}}
+        <a class="show-attachments-link" data-itemKey="{{attr:item.apiObj.key}}">Show {{>item.get('numChildren')}} attachments</a>
         <div class="item-attachments-div">
             
         </div>

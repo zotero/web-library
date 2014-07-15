@@ -1,21 +1,4 @@
-
-Zotero.url.itemIsSnapshot = function(item){
-    if(item.apiObj.links['enclosure']){
-        var ftype = item.apiObj.links['enclosure'].type;
-        if(!item.apiObj.links['enclosure']['length'] && ftype == 'text/html'){
-            return true;
-        }
-    }
-    return false;
-};
 /*
-Zotero.url.itemHref = function(item){
-    var href = '';
-    var library = item.owningLibrary;
-    href += library.libraryBaseWebsiteUrl + '/itemKey/' + item.itemKey;
-    return href;
-};
-*/
 Zotero.url.attachmentDownloadLink = function(item){
     var linkString = '';
     var enctype, enc, filesize, filesizeString;
@@ -55,117 +38,7 @@ Zotero.url.attachmentDownloadLink = function(item){
     }
     return linkString;
 };
-
-Zotero.url.attachmentDownloadUrl = function(item){
-    var retString = '';
-    if(item.apiObj.links['enclosure']){
-        if(Zotero.config.directDownloads){
-            return Zotero.url.apiDownloadUrl(item);
-        }
-        else {
-            return Zotero.url.wwwDownloadUrl(item);
-        }
-    }
-    else if(item.linkMode == 2 || item.linkMode == 3){
-        if(item.apiObj['url']){
-            retString = item.apiObj['url'];
-        }
-    }
-    return retString;
-};
-
-Zotero.url.wwwDownloadUrl = function(item){
-    var urlString = '';
-    if(item.apiObj.links['enclosure']){
-        if(Zotero.config.proxyDownloads){
-            return Zotero.config.baseDownloadUrl + "?itemkey=" + item.itemKey;
-        }
-        
-        if(Zotero.config.directDownloads){
-            return Zotero.url.apiDownloadUrl(item);
-        }
-        
-        urlString = Zotero.config.baseWebsiteUrl + Zotero.config.nonparsedBaseUrl + '/' + item.itemKey + '/file';
-        if(Zotero.url.itemIsSnapshot(item)){
-            //snapshot: redirect to view
-            urlString += '/viewsnapshot';
-        }else {
-            urlString += '/view';
-        }
-    }
-    else if(item.linkMode == 2 || item.linkMode == 3){
-        if(item.apiObj['url']){
-            urlString = item.apiObj['url'];
-        }
-    }
-    return urlString;
-};
-
-Zotero.url.apiDownloadUrl = function(item){
-    var retString = '';
-    if(item.apiObj.links['enclosure']){
-        retString = item.apiObj.links['enclosure']['href'];
-    }
-    else if(item.linkMode == 2 || item.linkMode == 3){
-        if(item.apiObj['url']){
-            retString = item.apiObj['url'];
-        }
-    }
-    return retString;
-};
-
-Zotero.url.attachmentFileDetails = function(item){
-    //file: offer download
-    if(!item.apiObj.links['enclosure']) return '';
-    var enctype = Zotero.utils.translateMimeType(item.apiObj.links['enclosure'].type);
-    var enc = item.apiObj.links['enclosure'];
-    var filesizeString = '';
-    if(enc['length']){
-        var filesize = parseInt(enc['length'], 10);
-        filesizeString = "" + filesize + " B";
-        if(filesize > 1073741824){
-            filesizeString = "" + (filesize / 1073741824).toFixed(1) + " GB";
-        }
-        else if(filesize > 1048576){
-            filesizeString = "" + (filesize / 1048576).toFixed(1) + " MB";
-        }
-        else if(filesize > 1024){
-            filesizeString = "" + (filesize / 1024).toFixed(1) + " KB";
-        }
-        if((enctype == 'undefined') || (enctype === '') || (typeof enctype == 'undefined')){
-            return '(' + filesizeString + ')';
-        }
-        else{
-            return '(' + enctype + ', ' + filesizeString + ')';
-        }
-    }
-    else {
-        return '(' + enctype + ')';
-    }
-};
-
-Zotero.url.exportUrls = function(config){
-    Z.debug("Zotero.url.exportUrls", 3);
-    var exportUrls = {};
-    var exportConfig = {};
-    J.each(Zotero.config.exportFormats, function(index, format){
-        exportConfig = J.extend(config, {'format':format});
-        exportUrls[format] = Zotero.ajax.apiRequestUrl(exportConfig) + Zotero.ajax.apiQueryString({format:format, limit:'25'});
-    });
-    Z.debug(exportUrls);
-    return exportUrls;
-};
-
-Zotero.url.snapshotViewLink = function(item){
-    return Zotero.ajax.apiRequestUrl({
-        'target':'item',
-        'targetModifier':'viewsnapshot',
-        'libraryType': item.owningLibrary.libraryType,
-        'libraryID': item.owningLibrary.libraryID,
-        'itemKey': item.itemKey
-    });
-};
-
+*/
 Zotero.url.requestReadApiKeyUrl = function(libraryType, libraryID, redirect){
     var apiKeyBase = Zotero.config.baseWebsiteUrl + '/settings/keys/new';
     apiKeyBase.replace('http', 'https');
@@ -194,7 +67,7 @@ Zotero.url.requestReadApiKeyUrl = function(libraryType, libraryID, redirect){
 
 Zotero.url.groupViewUrl = function(group){
     if(group.get("type") == "Private"){
-        return Zotero.config.baseWebsiteUrl + "/groups/" + group.get("groupID");
+        return Zotero.config.baseWebsiteUrl + "/groups/" + group.get("id");
     }
     else {
         return Zotero.config.baseWebsiteUrl + "/groups/" + Zotero.utils.slugify(group.get("name"));
@@ -203,7 +76,7 @@ Zotero.url.groupViewUrl = function(group){
 
 Zotero.url.groupLibraryUrl = function(group){
     if(group.get("type") == "Private"){
-        return Zotero.config.baseWebsiteUrl + "/groups/" + group.get("groupID") + "/items";
+        return Zotero.config.baseWebsiteUrl + "/groups/" + group.get("id") + "/items";
     }
     else {
         return Zotero.config.baseWebsiteUrl + "/groups/" + Zotero.utils.slugify(group.get("name")) + "/items";
@@ -211,14 +84,14 @@ Zotero.url.groupLibraryUrl = function(group){
 };
 
 Zotero.url.groupSettingsUrl = function(group){
-    return Zotero.config.baseWebsiteUrl + "/groups/" + group.get("groupID") + "/settings";
+    return Zotero.config.baseWebsiteUrl + "/groups/" + group.get("id") + "/settings";
 };
 
 Zotero.url.groupMemberSettingsUrl = function(group){
-    return Zotero.config.baseWebsiteUrl + "/groups/" + group.get("groupID") + "/settings/members";
+    return Zotero.config.baseWebsiteUrl + "/groups/" + group.get("id") + "/settings/members";
 };
 
 Zotero.url.groupLibrarySettingsUrl = function(group){
-    return Zotero.config.baseWebsiteUrl + "/groups/" + group.get("groupID") + "/settings/library";
+    return Zotero.config.baseWebsiteUrl + "/groups/" + group.get("id") + "/settings/library";
 };
 

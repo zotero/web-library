@@ -20,9 +20,12 @@ Zotero.ui.widgets.item.init = function(el){
     library.listen("switchTwoFieldCreator", Zotero.ui.widgets.item.switchTwoFieldCreators, {widgetEl:el});
     library.listen("switchSingleFieldCreator", Zotero.ui.widgets.item.switchSingleFieldCreator, {widgetEl:el});
     library.listen("addNote", Zotero.ui.widgets.item.addNote, {widgetEl:el});
+    library.listen("tagsChanged", Zotero.ui.widgets.item.updateTypeahead, {widgetEl:el});
+    
     //watch buttons on item field from widget DOM element
     var container = J(el);
     
+    Zotero.state.bindTagLinks(container);
     container.on('keydown', ".itemDetailForm input", Zotero.ui.widgets.item.itemFormKeydown);
     library.trigger("displayedItemChanged");
 };
@@ -35,16 +38,7 @@ Zotero.ui.widgets.item.loadItemCallback = function(event){
     
     //clean up RTEs before we end up removing their dom elements out from under them
     Zotero.ui.cleanUpRte(widgetEl);
-    /*
-    var loadingPromise = widgetEl.data('loadingPromise');
-    if(loadingPromise){
-        var p = widgetEl.data('loadingPromise');
-        return p.then(function(){
-            return Zotero.ui.widgets.item.loadItemCallback(event);
-        });
-    }
-    */
-    Z.debug("Zotero.callbacks.loadItem", 3);
+    
     var library = Zotero.ui.getAssociatedLibrary(widgetEl);
     //clear contents and show spinner while loading
     widgetEl.empty();
@@ -65,6 +59,8 @@ Zotero.ui.widgets.item.loadItemCallback = function(event){
             widgetEl.data('newitem', item);
         },
         function(response){
+            Z.error("Error loading item template");
+            Z.error(response);
             Zotero.ui.jsNotificationMessage("Error loading item template", 'error');
         });
         /*
@@ -119,9 +115,12 @@ Zotero.ui.widgets.item.loadItemCallback = function(event){
         widgetEl.data('currentconfig', config);
         Zotero.eventful.initTriggers(widgetEl);
     });
-    loadingPromise.catch().then(function(){
+    loadingPromise.catch(function(err){
+        Z.error("loadItem promise failed");
+        Z.error(err);
+    }).then(function(){
         widgetEl.removeData('loadingPromise');
-    });
+    }).catch(Zotero.catchPromiseError);
     
     widgetEl.data('loadingPromise', loadingPromise);
     return loadingPromise;
@@ -153,7 +152,8 @@ Zotero.ui.widgets.item.showChildren = function(e){
         var container = widgetEl.find(".item-attachments-div");
         container.html( J('#childitemsTemplate').render({childItems:childItems}) );
         Zotero.state.bindItemLinks(container);
-    });
+    })
+    .catch(Zotero.catchPromiseError);
     Z.debug("fired getChildren");
     return p;
 };
@@ -174,10 +174,11 @@ Zotero.ui.widgets.item.addCreator = function(e){
     }
     var newindex = creatornum + 1;
     var jel = J("input[id^='creator_']:last").closest('tr');
-    jel.after( J('#authorelementsdoubleTemplate').render({index:newindex,
-                                            creator:{firstName:'', lastName:''},
-                                            creatorTypes:Zotero.Item.prototype.creatorTypes[itemType]
-                                            }) );
+    jel.after( J('#authorelementsdoubleTemplate').render({
+        index:newindex,
+        creator:{firstName:'', lastName:''},
+        creatorTypes:Zotero.Item.prototype.creatorTypes[itemType]
+    }) );
 };
 
 /**
@@ -243,11 +244,13 @@ Zotero.ui.widgets.item.addTag = function(e, focus) {
     
     var library = Zotero.ui.getAssociatedLibrary(widgetEl);
     if(library){
+        Z.debug('adding typeahead', 3);
         var typeaheadSource = library.tags.plainList;
         if(!typeaheadSource){
             typeaheadSource = [];
         }
-        widgetEl.find("input.taginput").not('.tt-query').typeahead({name: 'tags', local: typeaheadSource});
+        Z.debug(typeaheadSource);
+        widgetEl.find("input.taginput").not('.tt-query').typeahead({name: 'tags', local: library.tags.plainList});
     }
     
     if(focus){
@@ -285,45 +288,49 @@ Zotero.ui.widgets.item.editItemForm = function(el, item){
     Z.debug(item, 4);
     var jel = J(el).empty();
     var library = Zotero.ui.getAssociatedLibrary(el);
-    if(item.itemType == 'note'){
+    Z.debug(library);
+    if(item.apiObj.data.itemType == 'note'){
         Z.debug("editItemForm - note", 3);
-        jel.append( J('#editnoteformTemplate').render({item:item,
-                                                       library:library,
-                                                       itemKey:item.apiObj.key
-                                                     }) );
+        jel.append( J('#editnoteformTemplate').render({
+            item:item,
+            library:library,
+            itemKey:item.apiObj.key
+        }) );
         
         //add empty tag if no tags yet
-        if(item.apiObj.tags.length === 0){
+        Z.debug('possibly adding empty tag');
+        if(item.apiObj.data.tags.length === 0){
             Zotero.ui.widgets.item.addTag(el, false);
         }
         Zotero.ui.init.rte('default');
+        Zotero.eventful.initTriggers(jel);
     }
     else{
-        Z.debug("itemType: " + item.apiObj.itemType, 3);
-        item.getCreatorTypes(item.apiObj.itemType)
+        Z.debug("itemType: " + item.apiObj.data.itemType, 3);
+        item.getCreatorTypes(item.apiObj.data.itemType)
         .then(function(){
             Z.debug("getCreatorTypes done", 3);
-            if(item.creators && item.creators.length === 0){
-                item.creators.push({creatorType: item.creatorTypes[item.apiObj.data.itemType][0],
-                                    first: '',
-                                    last: ''
-                                    });
-                item.apiObj.creators = item.creators;
+            if(item.apiObj.data.creators.length == 0){
+                item.apiObj.data.creators.push({
+                    creatorType: '',
+                    firstName: '',
+                    lastName: ''
+                })
             }
-            jel.append( J('#itemformTemplate').render({item:item,
-                                                    library:library,
-                                                    itemKey:item.apiObj.key,
-                                                    creatorTypes:Zotero.Item.prototype.creatorTypes[item.apiObj.data.itemType],
-                                                    }) );
+            jel.append( J('#itemformTemplate').render({
+                item:item,
+                library:library,
+                itemKey:item.apiObj.key,
+                creatorTypes:Zotero.Item.prototype.creatorTypes[item.apiObj.data.itemType],
+            }) );
             
             //add empty tag if no tags yet
-            if(item.apiObj.tags.length === 0){
+            if(item.apiObj.data.tags.length === 0){
                 Zotero.ui.widgets.item.addTag(el, false);
             }
-            
             Zotero.eventful.initTriggers(jel);
             Zotero.ui.init.rte();
-        });
+        }).catch(Zotero.catchPromiseError);
     }
     
     //add autocomplete
@@ -331,7 +338,7 @@ Zotero.ui.widgets.item.editItemForm = function(el, item){
     if(!typeaheadSource){
         typeaheadSource = [];
     }
-    jel.find("input.taginput").typeahead('destroy').typeahead({name: 'tags', local: typeaheadSource});
+    jel.find("input.taginput").typeahead({name: 'tags', local: typeaheadSource});
 };
 
 
@@ -347,8 +354,8 @@ Zotero.ui.widgets.item.loadItemDetail = function(item, el){
     jel.empty();
     var parentUrl = false;
     var library = item.owningLibrary
-    if(item.parentItemKey){
-        parentUrl = library.websiteUrl({itemKey:item.parentItemKey});
+    if(item.apiObj.data.parentItem){
+        parentUrl = library.websiteUrl({itemKey:item.apiObj.data.parentItem});
     }
     if(item.apiObj.data.itemType == "note"){
         Z.debug("note item", 3);
@@ -367,9 +374,9 @@ Zotero.ui.widgets.item.loadItemDetail = function(item, el){
         document.dispatchEvent(ev);
     }
     catch(e){
-        Zotero.debug("Error triggering ZoteroItemUpdated event", 1);
+        Zotero.error("Error triggering ZoteroItemUpdated event");
     }
-    
+    Zotero.state.bindItemLinks(jel);
     jel.data('itemkey', item.apiObj.key);
 };
 
@@ -427,10 +434,11 @@ Zotero.ui.widgets.item.switchTwoFieldCreators = function(e){
     var index = parseInt(jel.closest('tr.creator').attr('id').substr(8), 10);
     var trIdString = '#creator_' + index;
     var creatorType = jel.closest('tr.creator').find("select#creator_" + index + "_creatorType").val();
-    jel.closest('tr').replaceWith( J('#authorelementsdoubleTemplate').render({index:"" + index,
-                                                creator:{firstName:first, lastName:last, creatorType:creatorType},
-                                                creatorTypes:Zotero.Item.prototype.creatorTypes[itemType]
-                                                }));
+    jel.closest('tr').replaceWith( J('#authorelementsdoubleTemplate').render({
+        index:"" + index,
+        creator:{firstName:first, lastName:last, creatorType:creatorType},
+        creatorTypes:Zotero.Item.prototype.creatorTypes[itemType]
+    }));
     
     Zotero.eventful.initTriggers(containingTable.find(trIdString));
 };
@@ -449,11 +457,11 @@ Zotero.ui.widgets.item.switchSingleFieldCreator = function(e){
     var index = parseInt(jel.closest('tr.creator').attr('id').substr(8), 10);
     var trIdString = '#creator_' + index;
     var creatorType = jel.closest('tr.creator').find("select#creator_" + index + "_creatorType").val();
-    jel.closest('tr').replaceWith( J('#authorelementssingleTemplate').render(
-                                        {index:""+index,
-                                        creator:{name:name},
-                                        creatorTypes:Zotero.Item.prototype.creatorTypes[itemType]
-                                        }));
+    jel.closest('tr').replaceWith( J('#authorelementssingleTemplate').render({
+        index:""+index,
+        creator:{name:name},
+        creatorTypes:Zotero.Item.prototype.creatorTypes[itemType]
+    }));
     
     Zotero.eventful.initTriggers(containingTable.find(trIdString));
 };
@@ -465,15 +473,19 @@ Zotero.ui.widgets.item.cancelItemEdit = function(e){
 
 Zotero.ui.widgets.item.itemFormKeydown = function(e){
     if ( e.keyCode === Zotero.ui.keyCode.ENTER ){
+        Z.debug(e);
         e.preventDefault();
         var triggeringEl = J(this);
         if(triggeringEl.hasClass('taginput')){
+            var library = Zotero.ui.getAssociatedLibrary(triggeringEl);
             if(triggeringEl.hasClass('tt-query')){
                 var val = triggeringEl.val();
                 triggeringEl.typeahead('setQuery', val);
                 triggeringEl.trigger('blur');
             }
-            Zotero.trigger("addTag");
+            if(library){
+                library.trigger("addTag");
+            }
             return;
         }
         var nextEligibleSiblings = J(this).nextAll("input, button, textarea, select");
@@ -484,6 +496,24 @@ Zotero.ui.widgets.item.itemFormKeydown = function(e){
             J(this).closest("tr").nextAll().find("input, button, textarea, select").first().focus();
         }
     }
+};
+
+Zotero.ui.widgets.item.updateTypeahead = function(event){
+    /*
+    Z.debug("updateTypeahead", 3);
+    var widgetEl = J(event.data.widgetEl);
+    var triggeringEl = J(event.triggeringElement);
+    var library = Zotero.ui.getAssociatedLibrary(widgetEl);
+    if(library){
+        Z.debug('adding typeahead', 3);
+        var typeaheadSource = library.tags.plainList;
+        if(!typeaheadSource){
+            typeaheadSource = [];
+        }
+        Z.debug(typeaheadSource);
+        widgetEl.find("input.taginput").typeahead('destroy').typeahead({name: 'tags', local: typeaheadSource});
+    }
+    */
 };
 
 

@@ -60,8 +60,8 @@ Zotero.ui.libraryBreadcrumbs = function(library, config){
     Z.debug("done with breadcrumbs", 4);
     }
     catch(e){
-        Zotero.debug("Error loading breadcrumbs", 2);
-        Zotero.debug(e, 1);
+        Zotero.error("Error loading breadcrumbs");
+        Zotero.error(e);
     }
 };
 

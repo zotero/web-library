@@ -99,7 +99,6 @@ Zotero.eventful.initTriggers = function(el){
         var jel = J(event.delegateTarget);
         eventName = jel.data("triggers");
         Z.debug("eventName: " + eventName, 3);
-        //var filter = jel.data('filter');
         var filter = jel.data('library') || "";
         
         Zotero.trigger(eventName, {triggeringElement:event.currentTarget}, filter);
@@ -111,22 +110,15 @@ Zotero.eventful.initTriggers = function(el){
         }
         var ev = J(el).data("event");
         
-        Z.debug("binding eventfultrigger", 4);
         if(ev){
-            Z.debug("binding " + ev + " on " + el.tagName, 4);
-            //J(el).on(ev + "." + libString, triggerOnEvent);
+            Z.debug("binding " + ev + " on " + el.tagName, 3);
             J(el).on(ev, triggerOnEvent);
         }
         else {
-            //Z.debug("binding click trigger with on " + el.tagName, 5);
+            //Z.debug("binding click trigger on " + el.tagName, 3);
             //default to triggering on click
-            //J(el).on("click" + "." + libString, triggerOnEvent);
             J(el).on("click", triggerOnEvent);
         }
         J(el).data('triggerbound', true);
     });
-    /*
-    J(".eventfultrigger").bind('click', function(e){
-        Z.debug("eventfultrigger click");
-    });*/
 };

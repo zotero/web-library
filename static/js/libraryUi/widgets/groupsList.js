@@ -17,7 +17,7 @@ Zotero.ui.widgets.groupsList.refresh = function(evt){
     var memberGroups = library.groups.fetchUserGroups(library.libraryID)
     .then(function(memberGroups){
         Zotero.ui.widgets.groupsList.render(widgetEl, memberGroups);
-    });
+    }).catch(Zotero.catchPromiseError);
     
 };
 

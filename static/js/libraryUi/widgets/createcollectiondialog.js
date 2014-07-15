@@ -33,7 +33,7 @@ Zotero.ui.widgets.createCollectionDialog.show = function(evt){
             Zotero.state.pushState();
             Zotero.ui.closeDialog(widgetEl.find(".create-collection-dialog"));
             Zotero.ui.jsNotificationMessage("Collection Created", 'success');
-        });
+        }).catch(Zotero.catchPromiseError);
     };
     
     dialogEl.find(".createButton").on('click', createFunction);

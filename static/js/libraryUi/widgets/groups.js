@@ -5,10 +5,12 @@ Zotero.ui.widgets.groups.init = function(el){
     //var library = Zotero.ui.getAssociatedLibrary(el);
     var groups = new Zotero.Groups();
     if(Zotero.config.loggedIn && Zotero.config.loggedInUserID){
+        Zotero.ui.showSpinner(J(el), 'horizontal');
         var groupsPromise = groups.fetchUserGroups(Zotero.config.loggedInUserID, Zotero.config.apiKey)
-        .then(function(groups){
+        .then(function(response){
+            var groups = response.fetchedGroups;
             Zotero.ui.widgets.groups.displayGroupNuggets(el, groups);
-        });
+        }).catch(Zotero.catchPromiseError);
     }
 }
 
@@ -22,6 +24,7 @@ Zotero.ui.widgets.groups.userGroupsDisplay = function(groups){
 
 Zotero.ui.widgets.groups.displayGroupNuggets = function(el, groups){
     Z.debug("Zotero.ui.widgets.groups.displayGroupNuggets", 3);
+    Z.debug(groups);
     var jel = J(el);
     jel.empty();
     J.each(groups, function(ind, group){
@@ -29,23 +32,20 @@ Zotero.ui.widgets.groups.displayGroupNuggets = function(el, groups){
         var userID = Zotero.config.loggedInUserID;
         var groupManageable = false;
         var memberCount = 1;
-        if(group.apiObj.members) {
-            memberCount += group.apiObj.members.length;
+        if(group.apiObj.data.members) {
+            memberCount += group.apiObj.data.members.length;
         }
-        if(group.apiObj.admins){
-            memberCount += group.apiObj.admins.length;
+        if(group.apiObj.data.admins){
+            memberCount += group.apiObj.data.admins.length;
         }
         
-        //Z.debug("UserID:" + userID);
-        //Z.debug("user is group owner: " + (userID == group.apiObj.owner) );
-        //Z.debug("User in admins: " + (J.inArray(userID, group.apiObj.admins)));
-        if(userID && (userID == group.apiObj.owner || (J.inArray(userID, group.apiObj.admins) != -1 ))) {
+        if(userID && (userID == group.apiObj.data.owner || (J.inArray(userID, group.apiObj.data.admins) != -1 ))) {
             groupManageable = true;
         }
         //Z.debug("manageable: " + groupManageable);
         
         var tdata = {
-            group:group.apiObj,
+            group:group,
             groupViewUrl:Zotero.url.groupViewUrl(group),
             groupLibraryUrl:Zotero.url.groupLibraryUrl(group),
             groupSettingsUrl:Zotero.url.groupSettingsUrl(group),

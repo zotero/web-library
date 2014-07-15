@@ -7,7 +7,7 @@
             {{for ~displayFields ~item=#data ~library=~library}}
                 {{if #data === 'title'}}
                     <span class='sprite-icon sprite-treeitem-{{attr:~item.itemTypeImageClass()}} pull-left'></span>
-                    {{coloredTags ~library ~item.tagstrings /}}
+                    {{coloredTags ~library ~item.apiObj._supplement.tagstrings /}}
                     <h4>{{>~formatItemField(#data, ~item, true)}}</h4>
                 {{else (#data === 'dateAdded') || (#data === 'dateModified') }}
                     <p title="{{attr:~item.dataFields[#data]}}">

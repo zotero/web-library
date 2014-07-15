@@ -18,6 +18,7 @@ Zotero.ui.init.all = function(){
 };
 
 Zotero.ui.init.library = function(){
+    /*
     Z.debug("Zotero.ui.init.library", 3);
     
     //initialize RTE for textareas if marked
@@ -33,10 +34,11 @@ Zotero.ui.init.library = function(){
     if(hasRTEDefault){
         Zotero.ui.init.rte('default', false, J('body'));
     }
-    
+    */
 };
 
 Zotero.ui.init.rte = function(type, autofocus, container){
+    Z.debug("init.rte", 3);
     if(Zotero.config.rte == 'ckeditor'){
         Zotero.ui.init.ckeditor(type, autofocus, container);
         return;
@@ -47,6 +49,7 @@ Zotero.ui.init.rte = function(type, autofocus, container){
 };
 
 Zotero.ui.init.ckeditor = function(type, autofocus, container){
+    Z.debug('init.ckeditor', 3);
     if(!type) { type = 'default'; }
     if(!container) { container = J('body');}
     
@@ -124,6 +127,7 @@ Zotero.ui.init.ckeditor = function(type, autofocus, container){
 };
 
 Zotero.ui.init.tinyMce = function(type, autofocus, elements){
+    Z.debug('init.tinyMce', 3);
     if(!type){
         type = 'default';
     }

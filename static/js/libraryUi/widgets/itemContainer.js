@@ -1,6 +1,7 @@
 Zotero.ui.widgets.itemContainer = {};
 
 Zotero.ui.widgets.itemContainer.init = function(el){
+    Z.debug('itemContainer init', 3);
     var library = Zotero.ui.getAssociatedLibrary(el);
     var container = J(el);
     
@@ -27,7 +28,9 @@ Zotero.ui.widgets.itemContainer.init = function(el){
 };
 
 //TODO: this some other way, and probably trigger something so the item widget will reset
+/*
 Zotero.ui.cancelItemEdit = function(e){
     Zotero.state.clearUrlVars(['itemKey', 'collectionKey', 'tag', 'q']);
     Zotero.state.pushState();
 };
+*/

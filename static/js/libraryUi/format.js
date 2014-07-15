@@ -46,17 +46,33 @@ Zotero.ui.formatItemField = function(field, item, trim){
             }
             break;
         case "title":
-            formattedString = item.apiObj.data.title;
+            formattedString = item.get('title');
             break;
         case "creator":
             formattedString = item.apiObj.meta.creatorSummary;
             break;
         case "addedBy":
-            formattedString = item.apiObj.meta.createdByUser.name;
+            if(item.apiObj.meta.createdByUser){
+                if(item.apiObj.meta.createdByUser.name != '') {
+                    formattedString = item.apiObj.meta.createdByUser.name;
+                }
+                else {
+                    formattedString = item.apiObj.meta.createdByUser.username;
+                }
+            }
             break;
+        case "modifiedBy":
+            if(item.apiObj.meta.lastModifiedByUser){
+                if(item.apiObj.meta.lastModifiedByUser.name != ''){
+                    formattedString = item.apiObj.meta.lastModifiedByUser.name;
+                }
+                else {
+                    formattedString = item.apiObj.meta.lastModifiedByUser.username;
+                }
+            }
         default:
             if(typeof(item.apiObj.data[field]) !== "undefined"){
-                formattedString = item.apiObj.data[field];
+                formattedString = item.get(field);
             }
     }
     if(trim && (trimLength > 0) && (formattedString.length > trimLength) ) {

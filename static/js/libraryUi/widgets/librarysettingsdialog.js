@@ -34,7 +34,7 @@ Zotero.ui.widgets.librarysettingsdialog.show = function(e){
     
     var submitFunction = J.proxy(function(){
         var showFields = [];
-        dialogEl.find(".library-settings-form").find('input:checked').each(function(){
+        dialogEl.find(".library-settings-form").find('input.display-column-field:checked').each(function(){
             showFields.push(J(this).val());
         });
         

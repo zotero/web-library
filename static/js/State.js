@@ -32,8 +32,8 @@ Zotero.State.prototype.rewriteAltUrl = function(){
     var basePath = Zotero.config.nonparsedBaseUrl;
     var pathname = window.location.pathname
     var baseRE = new RegExp(".*" + basePath + "\/?");
-    var oldCollectionRE = /^.*\/collections?\/([A-Z0-9]{8})(?:\/[A-Z0-9]{8})?$/;
-    var oldItemRE = /^.*\/[A-Z0-9]{8}$/;
+    var oldCollectionRE = /^.*\/items\/collections?\/([A-Z0-9]{8})(?:\/[A-Z0-9]{8})?$/;
+    var oldItemRE = /^.*\/items\/([A-Z0-9]{8})$/;
     
     switch(true){
         case oldCollectionRE.test(pathname):
@@ -326,7 +326,7 @@ Zotero.State.prototype.pushState = function(){
     var state = this;
     var history = window.history;
     
-    Zotero.ui.saveFormData();
+    //Zotero.ui.saveFormData();
     //make prevHref the current location before we change it
     state.prevHref = state.curHref;// window.location.href;
     
@@ -361,9 +361,8 @@ Zotero.State.prototype.replaceState = function(){
     Z.debug("Zotero.State.replaceState", 3);
     var state = this;
     var history = window.history;
-    //TODO: figure out what correct behaviour for prevHref/curHref is here
-    //I guess probably to just update current and leave prev alone.
-    Zotero.ui.saveFormData();
+    //update current and leave prev alone.
+    //Zotero.ui.saveFormData();
     state.updateCurState();
     
     //selectively add state to hint where to go
@@ -526,6 +525,7 @@ Zotero.State.prototype.diffState = function(prevHref, curHref){
                          'style',
                          'session',
                          'newer',
+                         'since',
                          'itemPage',
                          'mode'
                          ];

@@ -13,7 +13,7 @@
         <!-- Output user Creator for group library -->
         <tr>
             <th>Added by</th>
-            <td class="user-creator"><a href="{{url:item.apiObj.meta.createdByUser.links.href}}" class="user-link">{{>item.apiObj.meta.createdByUser.name}}</a></td>
+            <td class="user-creator"><a href="{{url:item.apiObj.meta.createdByUser.links.alternate.href}}" class="user-link">{{>item.apiObj.meta.createdByUser.name}}</a></td>
         </tr>
     {{/if}}
     
@@ -84,8 +84,8 @@
         <th>Tags</th>
         <td class="tags">
         <ul class="item-details-tags-list">
-        {{for item.apiObj.tags}}
-            <li><a class="tag-link" data-tagtitle="{{attr:tag}}" href="">{{>tag}}</a></li>
+        {{for item.apiObj.data.tags}}
+            <li><a class="tag-link" data-tagtitle="{{attr:#data.tag}}" href="">{{>#data.tag}}</a></li>
         {{/for}}
         </ul>
         </td>

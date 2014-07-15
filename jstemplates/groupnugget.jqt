@@ -7,7 +7,7 @@
             </a>
         {{/if}}
         <div class="nugget-name">
-            <a href="{{url:groupViewUrl}}">{{>group.name}}</a>
+            <a href="{{url:groupViewUrl}}">{{>group.apiObj.data.name}}</a>
         </div>
         <nav id="group-library-link-nav" class="action-links">
             <ul>
@@ -31,25 +31,25 @@
                 <td>{{>memberCount}}</td>
             </tr>
             <!-- Description -->
-            {{if group.description}}
+            {{if group.apiObj.data.description}}
             <tr>
                 <th scope="row">Description</th> 
-                <td>{{:group.description}}</td>
+                <td>{{:group.apiObj.data.description}}</td>
             </tr>
             {{/if}}
             <!-- Group Type -->
             <tr>
                 <th scope="row">Group Type</th>
-                <td>{{>~Zotero.Group.prototype.typeMap[group["type"]]}}</td>
+                <td>{{>~Zotero.Group.prototype.typeMap[group.apiObj.data.type]}}</td>
             </tr>
             <!-- Group Library -->
             <tr>
                 <th scope="row">Group Library</th>
                 <td>
-                    {{if (group["type"] == 'Private' && group.libraryReading == "all")}}
-                        {{>~Zotero.Group.prototype.accessMap['members'][group.libraryEditing]}}
+                    {{if (group.apiObj.data.type == 'Private' && group.apiObj.data.libraryReading == "all")}}
+                        {{>~Zotero.Group.prototype.accessMap['members'][group.apiObj.data.libraryEditing]}}
                     {{else}}
-                        {{>~Zotero.Group.prototype.accessMap[group.libraryReading][group.libraryEditing]}}
+                        {{>~Zotero.Group.prototype.accessMap[group.apiObj.data.libraryReading][group.apiObj.data.libraryEditing]}}
                     {{/if}}
                 </td>
             </tr>

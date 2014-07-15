@@ -19,14 +19,16 @@ Zotero.ui.widgets.sendToLibraryDialog.show = function(evt){
     var personalLibraryString = 'u' + userID;
     
     var memberGroups = library.groups.fetchUserGroups(userID)
-    .then(function(memberGroups){
-        Z.debug("got member groups");
+    .then(function(response){
+        Z.debug("got member groups", 3);
+        Z.debug(response);
+        var memberGroups = response.fetchedGroups;
         var writableLibraries = [{name:'My Library', libraryString:personalLibraryString}];
         for(var i = 0; i < memberGroups.length; i++){
             if(memberGroups[i].isWritable(userID)){
-                var libraryString = 'g' + memberGroups[i].groupID;
+                var libraryString = 'g' + memberGroups[i].get('id');
                 writableLibraries.push({
-                    name: memberGroups[i].apiObj.name,
+                    name: memberGroups[i].get('name'),
                     libraryString: libraryString,
                 });
             }
@@ -68,8 +70,8 @@ Zotero.ui.widgets.sendToLibraryDialog.show = function(evt){
         Zotero.ui.dialog(dialogEl, {});
         
     }).catch(function(err){
-        Z.debug(err);
-        Z.debug(err.message);
+        Z.error(err);
+        Z.error(err.message);
     });
     
 };

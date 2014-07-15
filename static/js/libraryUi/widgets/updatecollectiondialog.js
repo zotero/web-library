@@ -8,7 +8,7 @@ Zotero.ui.widgets.updateCollectionDialog.init = function(el){
 };
 
 Zotero.ui.widgets.updateCollectionDialog.show = function(evt){
-    Z.debug("updateCollectionDialog.show", 1);
+    Z.debug("updateCollectionDialog.show", 3);
     
     var triggeringEl = J(evt.triggeringElement);
     var library = Zotero.ui.getAssociatedLibrary(triggeringEl);
@@ -42,7 +42,7 @@ Zotero.ui.widgets.updateCollectionDialog.show = function(evt){
             library.trigger('libraryCollectionsUpdated');
             Zotero.state.pushState(true);
             Zotero.ui.closeDialog(dialogEl);
-        });
+        }).catch(Zotero.catchPromiseError);
     };
     
     dialogEl.find(".updateButton").on('click', saveFunction);

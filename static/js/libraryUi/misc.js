@@ -13,7 +13,7 @@ Zotero.ui.updateItemFromForm = function(item, formEl){
     var library = Zotero.ui.getAssociatedLibrary(base);
     
     var itemKey = '';
-    if(item.itemKey) itemKey = item.itemKey;
+    if(item.get('key')) itemKey = item.get('key');
     else {
         //new item - associate with library and add to collection if appropriate
         if(library){
@@ -25,17 +25,17 @@ Zotero.ui.updateItemFromForm = function(item, formEl){
         }
     }
     //update current representation of the item with form values
-    J.each(item.apiObj, function(field, value){
+    J.each(item.apiObj.data, function(field, value){
         var selector, inputValue, noteElID;
         if(field == 'note'){
-            selector = "textarea[data-itemKey='" + itemKey + "'].rte";
+            selector = "textarea[data-itemkey='" + itemKey + "'].rte";
             Z.debug(selector, 4);
             noteElID = base.find(selector).attr('id');
             Z.debug(noteElID, 4);
             inputValue = Zotero.ui.getRte(noteElID);
         }
         else{
-            selector = "[data-itemKey='" + itemKey + "'][name='" + field + "']";
+            selector = "[data-itemkey='" + itemKey + "'][name='" + field + "']";
             inputValue = base.find(selector).val();
         }
         
@@ -55,8 +55,9 @@ Zotero.ui.updateItemFromForm = function(item, formEl){
     
     var tags = [];
     base.find("input[id^='tag_']").each(function(index, el){
-        if(J(el).val() !== ''){
-            tags.push({tag: J(el).val()});
+        var tagString = J(el).val();
+        if(tagString !== ''){
+            tags.push({tag: tagString});
         }
     });
     
@@ -75,17 +76,18 @@ Zotero.ui.updateItemFromForm = function(item, formEl){
         }
         noteItem.initEmptyNote();
         noteItem.set('note', noteContent);
-        noteItem.setParent(item.itemKey);
+        noteItem.setParent(item.get('key'));
         notes.push(noteItem);
     });
     
     item.notes = notes;
     if(creators.length){
-        item.apiObj.creators = creators;
+        item.apiObj.data.creators = creators;
     }
-    item.apiObj.tags = tags;
+    item.apiObj.data.tags = tags;
     item.synced = false;
     item.dirty = true;
+    Z.debug(item);
 };
 
 Zotero.ui.creatorFromElement = function(el){
@@ -128,13 +130,13 @@ Zotero.ui.saveItem = function(item) {
         Z.debug("item write finished", 3);
         //check for errors, update nav
         if(item.writeFailure){
-            Z.debug("Error writing item:" + item.writeFailure.message, 1);
+            Z.error("Error writing item:" + item.writeFailure.message);
             Zotero.ui.jsNotificationMessage('Error writing item', 'error');
             throw new Error("Error writing item:" + item.writeFailure.message);
         }
         else{
             Zotero.state.unsetUrlVar('action');
-            Zotero.state.pathVars['itemKey'] = item.itemKey;
+            Zotero.state.pathVars['itemKey'] = item.get('key');
             
             Zotero.state.clearUrlVars(['itemKey', 'collectionKey']);
             Zotero.state.pushState();
@@ -144,24 +146,22 @@ Zotero.ui.saveItem = function(item) {
     //update list of tags we have if new ones added
     Z.debug('adding new tags to library tags', 3);
     var libTags = library.tags;
-    var tags = item.apiObj.tags;
+    var tags = item.apiObj.data.tags;
     J.each(tags, function(index, tagOb){
         var tagString = tagOb.tag;
         if(!libTags.tagObjects.hasOwnProperty(tagString)){
-            var tag = new Zotero.Tag();
-            tag.title = tagString;
-            tag.numItems = 1;
-            tag.urlencodedtag = encodeURIComponent(tag.title);
-            libTags.tagObjects[tagString] = tag;
-            libTags.updateSecondaryData();
+            var tag = new Zotero.Tag(tagOb);
+            libTags.addTag(tag);
         }
     });
+    libTags.updateSecondaryData();
 };
 
 /**
  * Temporarily store the data in a form so it can be reloaded
  * @return {undefined}
  */
+/*
 Zotero.ui.saveFormData = function(){
     Z.debug("saveFormData", 3);
     J(".eventfulwidget").each(function(){
@@ -169,12 +169,13 @@ Zotero.ui.saveFormData = function(){
         J(this).data('tempformstorage', formInputs);
     });
 };
-
+*/
 /**
  * Reload previously saved form data
  * @param  {Dom Element} el DOM Form to restore data to
  * @return {undefined}
  */
+/*
 Zotero.ui.loadFormData = function(el){
     Z.debug("loadFormData", 3);
     var formData = J(el).data('tempformstorage');
@@ -197,15 +198,15 @@ Zotero.ui.loadFormData = function(el){
         });
     }
 };
-
+*/
 /**
  * Get the class for an itemType to display an appropriate icon
  * @param  {Zotero_Item} item Zotero item to get the class for
  * @return {string}
  */
 Zotero.ui.itemTypeClass = function(item) {
-    var itemTypeClass = item.itemType;
-    if (item.itemType == 'attachment') {
+    var itemTypeClass = item.apiObj.data.itemType;
+    if (item.apiObj.data.itemType == 'attachment') {
         if (item.mimeType == 'application/pdf') {
             itemTypeClass += '-pdf';
         }
@@ -223,24 +224,25 @@ Zotero.ui.itemTypeClass = function(item) {
 
 /**
  * Build a pagination object necessary to figure out ranges and links
- * @param  {Zotero_Feed} feed    feed object being paginated
+ * @param  {ApiResponse} response    response object being paginated
  * @param  {string} pageVar page variable used in url
- * @param  {object} config  config used to fetch feed being paginated
+ * @param  {int} start  start index of response
+ * @param {int} limit   per page limit
  * @return {object}
  */
-Zotero.ui.createPagination = function(feed, pageVar, config){
-    
+Zotero.ui.createPagination = function(response, pageVar, start, limit){
     //set relevant config vars to find pagination values
+    if(typeof start === 'undefined') start = 0;
+    if(typeof limit === 'undefined') limit = 25;
     var page = parseInt(Zotero.state.getUrlVar(pageVar), 10) || 1;
-    var start = parseInt(config.start, 10) || 0;
-    var limit = parseInt(config.limit, 10) || 25;
-    var totalResults = parseInt(feed.totalResults, 10);
+    var totalResults = response.totalResults;
     
     //figure out pagination values
+    var lastPageStart = parseInt(J.deparam.querystring(response.parsedLinks.last).start, 10);
     var lastDisplayed = start + limit;
     var prevPageNum = (page - 1);
     var nextPageNum = (page + 1);
-    var lastPageNum = feed.lastPage;
+    var lastPageNum = (lastPageStart / limit) + 1;
     
     //build pagination object
     var pagination = {page:page};
@@ -249,20 +251,21 @@ Zotero.ui.createPagination = function(feed, pageVar, config){
     pagination.showNextLink = totalResults > lastDisplayed;
     pagination.showLastLink = totalResults > (lastDisplayed );
     
+    //construct the actual links by mutating the current url
     var mutateOb = {};
     pagination.firstLink = Zotero.state.mutateUrl(mutateOb, [pageVar]);
-    mutateOb[pageVar] = page - 1;
+    mutateOb[pageVar] = prevPageNum;
     pagination.prevLink = Zotero.state.mutateUrl(mutateOb, []);
-    mutateOb[pageVar] = page + 1;
+    mutateOb[pageVar] = nextPageNum;
     pagination.nextLink = Zotero.state.mutateUrl(mutateOb, []);
-    mutateOb[pageVar] = feed.lastPage;
+    mutateOb[pageVar] = lastPageNum;
     pagination.lastLink = Zotero.state.mutateUrl(mutateOb, []);
     
     pagination.start = start;
     pagination.lastDisplayed = Math.min(lastDisplayed, totalResults);
     pagination.total = totalResults;
     
-    Z.debug("last displayed:" + lastDisplayed + " totalResults:" + feed.totalResults, 4);
+    Z.debug("last displayed:" + lastDisplayed + " totalResults:" + response.totalResults, 4);
     return pagination;
 };
 
@@ -287,55 +290,38 @@ Zotero.ui.getAssociatedLibrary = function(el){
             }
         }
     }
-    Z.debug("1");
     //get Zotero.Library object if already bound to element
     var library = jel.data('zoterolibrary');
     if(!library){
-        Z.debug(2);
         //try getting it from a libraryString included on DOM element
         var libString = J(el).data('library');
         if(libString){
-            Z.debug(3);
-            if(Zotero.libraries.hasOwnProperty(libString)){
-                Z.debug(4);
-                library = Zotero.libraries[libString];
-            }
-            else{
-                Z.debug(5);
-                var libConfig = Zotero.utils.parseLibString(libString);
-                library = new Zotero.Library(libConfig.libraryType, libConfig.libraryID);
-                Zotero.libraries[libString] = library;
-            }
+            library = Zotero.ui.libStringLibrary(libString);
         }
-        /*
-        if(libString && Zotero.libraries.hasOwnProperty(libString)){
-            library = Zotero.libraries[libString];
-        }
-        else if(typeof jel.attr('data-loadconfig') != 'undefined') {
-            var loadConfig = jel.data('loadconfig');
-            var libraryID = loadConfig.libraryID;
-            var libraryType = loadConfig.libraryType;
-            var libraryUrlIdentifier = loadConfig.libraryUrlIdentifier;
-            if(!libraryID || !libraryType) {
-                Z.debug("Bad library data attempting to get associated library: libraryID " + libraryID + " libraryType " + libraryType, 1);
-                throw new Error("Bad library data attempting to get associated library: libraryID " + libraryID + " libraryType " + libraryType);
-            }
-            if(Zotero.libraries[Zotero.utils.libraryString(libraryType, libraryID)]){
-                library = Zotero.libraries[Zotero.utils.libraryString(libraryType, libraryID, libraryUrlIdentifier)];
-            }
-            else{
-                library = new Zotero.Library(libraryType, libraryID, libraryUrlIdentifier);
-                Zotero.libraries[Zotero.utils.libraryString(libraryType, libraryID)] = library;
-            }
-        }
-        else if(libString){
-            var libData= Zotero.ui.parseLibString(libString);
-            library = new Zotero.Library(libData.libraryType, libData.libraryID, "");
-        }
-        */
         jel.data('zoterolibrary', library);
     }
-    Z.debug(6);
+    //if we still don't have a library, look for the default library for the page
+    if(!library){
+        jel = J(".zotero-library").first();
+        var libString = jel.data('library');
+        if(libString){
+            library = Zotero.ui.libStringLibrary(libString);
+        }
+    }
+    if(!library){Z.error("No associated library found");}
+    return library;
+};
+
+Zotero.ui.libStringLibrary = function(libString){
+    var library;
+    if(Zotero.libraries.hasOwnProperty(libString)){
+        library = Zotero.libraries[libString];
+    }
+    else{
+        var libConfig = Zotero.utils.parseLibString(libString);
+        library = new Zotero.Library(libConfig.libraryType, libConfig.libraryID);
+        Zotero.libraries[libString] = library;
+    }
     return library;
 };
 

@@ -1,8 +1,8 @@
 <script id="coloredtaglistTemplate" type="text/x-jsrender">
 <ul id="colored-tags-list">
     {{for tags}}
-        <li class="tag-row" data-tagtitle="{{attr:title}}">
-            <a class='tag-link' title="{{attr:title}} {{if numItems}}({{attr:numItems}}){{/if}}" data-tagtitle="{{attr:title}}" href="{{url:newurl}}" {{if color}}style="color:{{attr:color}}; font-weight:bold;"{{/if}}>{{>~trimString(title, 12)}}</a>
+        <li class="tag-row" data-tagtitle="{{attr:apiObj.tag}}">
+            <a class='tag-link' title="{{attr:apiObj.tag}} {{if apiObj.meta.numItems}}({{attr:apiObj.meta.numItems}}){{/if}}" data-tagtitle="{{attr:apiObj.tag}}" href="{{url:newurl}}" {{if color}}style="color:{{attr:color}}; font-weight:bold;"{{/if}}>{{>~trimString(apiObj.tag, 12)}}</a>
         </li>
     {{/for}}
 </ul>

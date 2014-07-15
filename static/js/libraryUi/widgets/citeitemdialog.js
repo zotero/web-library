@@ -1,6 +1,7 @@
 Zotero.ui.widgets.citeItemDialog = {};
 
 Zotero.ui.widgets.citeItemDialog.init = function(el){
+    return;
     Z.debug("citeItemDialog widget init", 3);
     var library = Zotero.ui.getAssociatedLibrary(el);
     
@@ -57,13 +58,13 @@ Zotero.ui.widgets.citeItemDialog.show = function(evt){
             library.loadFullBib(itemKeys, style)
             .then(function(bibContent){
                 dialogEl.find(".cite-box-div").html(bibContent);
-            });
+            }).catch(Zotero.catchPromiseError);
         }
         else {
             Zotero.ui.widgets.citeItemDialog.directCite(cslItems, style)
             .then(function(bibContent){
                 dialogEl.find(".cite-box-div").html(bibContent);
-            });
+            }).catch(Zotero.catchPromiseError);
             /*.then(function(response){
                 var bib = JSON.parse(response.data);
                 var bibString = Zotero.ui.widgets.citeItemDialog.buildBibString(bib);
