@@ -19,6 +19,7 @@ Zotero.ui.widgets.collections.init = function(el){
 Zotero.ui.widgets.collections.syncCollections = function(evt) {
     Zotero.debug("Zotero eventful syncCollectionsCallback", 3);
     var widgetEl = J(evt.data.widgetEl);
+    Zotero.ui.showSpinner(J(widgetEl).find("#collection-list-container") );
     var loadingPromise = widgetEl.data('loadingPromise');
     if(loadingPromise){
         var p = widgetEl.data('loadingPromise');
