@@ -14,11 +14,11 @@ Zotero.ui.widgets.groupsList.refresh = function(evt){
     Zotero.debug("Zotero.ui.widgets.groupsList.refresh", 3);
     var widgetEl = evt.data.widgetEl;
     var library = Zotero.ui.getAssociatedLibrary(widgetEl);
+    Zotero.ui.showSpinner(widgetEl);
     var memberGroups = library.groups.fetchUserGroups(library.libraryID)
-    .then(function(memberGroups){
-        Zotero.ui.widgets.groupsList.render(widgetEl, memberGroups);
+    .then(function(response){
+        Zotero.ui.widgets.groupsList.render(widgetEl, response.fetchedGroups);
     }).catch(Zotero.catchPromiseError);
-    
 };
 
 Zotero.ui.widgets.groupsList.render = function(el, groups){

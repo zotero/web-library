@@ -13,7 +13,7 @@ Zotero.ui.widgets.recentItems.init = function(el){
     .then(function(response){
         Z.debug("got items in recentItems");
         widgetEl.empty();
-        Zotero.ui.widgets.items.displayItems(widgetEl, config, response);
+        Zotero.ui.widgets.items.displayItems(widgetEl, config, response.loadedItems);
     },
     function(response){
         Z.error(response);

@@ -6,8 +6,8 @@ Zotero.ui.widgets.inviteToGroup.init = function(el){
     var groups = new Zotero.Groups();
     if(Zotero.config.loggedIn && Zotero.config.loggedInUserID){
         var groupsPromise = groups.fetchUserGroups(Zotero.config.loggedInUserID, Zotero.config.apiKey)
-        .then(function(groups){
-            Zotero.ui.widgets.inviteToGroup.displayInviteForm(el, groups);
+        .then(function(response){
+            Zotero.ui.widgets.inviteToGroup.displayInviteForm(el, response.fetchedGroups);
         }).catch(Zotero.catchPromiseError);
     }
 }
