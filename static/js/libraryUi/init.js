@@ -15,6 +15,7 @@ Zotero.ui.init.all = function(){
     }
     Zotero.ui.init.libraryTemplates();
     Zotero.eventful.initWidgets();
+    Zotero.ui.init.rte()
 };
 
 Zotero.ui.init.library = function(){
