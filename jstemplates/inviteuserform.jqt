@@ -1,4 +1,5 @@
 <script id="inviteuserformTemplate" type="text/x-jsrender">
+{{if groups.length}}
 <form class="inviteuserform" >
     <div class="form-group">
         <select name="groupID" id="groupID" class="form-control">
@@ -10,4 +11,5 @@
     
     <button type="submit" class="btn btn-primary inviteuserbutton">Invite User To Group</button>
 </form>
+{{/if}}
 </script>
