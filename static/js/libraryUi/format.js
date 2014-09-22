@@ -10,6 +10,18 @@ Zotero.ui.formatItemField = function(field, item, trim){
     if(typeof trim == 'undefined'){
         trim = false;
     }
+    var intlOptions = {
+        year: "numeric",
+        month: "numeric",
+        day: "numeric",
+        hour: "numeric",
+        minute: "numeric",
+        second: "numeric",
+        hour12: false
+    };
+
+    var dateFormatter = new Intl.DateTimeFormat(undefined, intlOptions);
+
     var trimLength = 0;
     var formattedString = '';
     var date;
@@ -26,7 +38,7 @@ Zotero.ui.formatItemField = function(field, item, trim){
             }
             date = Zotero.utils.parseApiDate(item.apiObj.data['dateModified']);
             if(date){
-                formattedString = Globalize.format(date, 'd') + ' ' + Globalize.format(date, 't');
+                formattedString = dateFormatter.format(date);
             }
             else{
                 formattedString = item.apiObj.data['dateModified'];
@@ -39,7 +51,7 @@ Zotero.ui.formatItemField = function(field, item, trim){
             }
             date = Zotero.utils.parseApiDate(item.apiObj.data['dateAdded']);
             if(date){
-                formattedString = Globalize.format(date, 'd') + ' ' + Globalize.format(date, 't');
+                formattedString = dateFormatter.format(date);
             }
             else{
                 formattedString = item.apiObj.data['dateAdded'];
@@ -111,6 +123,21 @@ Zotero.ui.trimString = function(s, maxlen){
  */
 Zotero.ui.formatItemDateField = function(field, item){
     var date;
+    var timeOptions = {
+        hour: "numeric",
+        minute: "numeric",
+        second: "numeric",
+        hour12: false
+    };
+    var intlOptions = {
+        year: "numeric",
+        month: "numeric",
+        day: "numeric",
+        hour: "numeric",
+        minute: "numeric",
+        second: "numeric",
+        hour12: false
+    };
     switch(field){
         case "dateModified":
             if(!item.apiObj.data['dateModified']){
@@ -118,7 +145,7 @@ Zotero.ui.formatItemDateField = function(field, item){
             }
             date = Zotero.utils.parseApiDate(item.apiObj.data['dateModified']);
             if(date){
-                return "<span class='localized-date-span'>" + Globalize.format(date, 'd') + "</span> <span class='localized-date-span'>" + Globalize.format(date, 't') + "</span>";
+                return "<span class='localized-date-span'>" + new Intl.DateTimeFormat().format(date); + "</span> <span class='localized-date-span'>" + new Intl.DateTimeFormat(undefined, timeOptions).format(date); + "</span>";
             }
             else{
                 return item.apiObj.data['dateModified'];
@@ -130,7 +157,7 @@ Zotero.ui.formatItemDateField = function(field, item){
             }
             date = Zotero.utils.parseApiDate(item.apiObj.data['dateAdded']);
             if(date){
-                return "<span class='localized-date-span'>" + Globalize.format(date, 'd') + "</span> <span class='localized-date-span'>" + Globalize.format(date, 't') + "</span>";
+                return "<span class='localized-date-span'>" + new Intl.DateTimeFormat().format(date); + "</span> <span class='localized-date-span'>" + new Intl.DateTimeFormat(undefined, timeOptions).format(date); + "</span>";
             }
             else{
                 return item.apiObj.data['dateAdded'];
