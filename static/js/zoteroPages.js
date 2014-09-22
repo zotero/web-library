@@ -318,36 +318,7 @@ Zotero.pages = {
     settings_newkey: {
         init: function(){
             Z.debug("zoteroPages settings_newkey", 3);
-            if(!J("input[type='checkbox'][name='library_access']").prop("checked")){
-                J("input[name='notes_access']").prop("disabled","disabled");
-            }
-            J("input#library_access").bind("change", function(){
-                if(!J("input[type='checkbox'][name='library_access']").prop("checked")){
-                    J("input[name='notes_access']").prop("checked", false).prop("disabled", true);
-                    J("input[name='write_access']").prop('checked', false).prop('disabled', true);
-                }
-                else{
-                    J("input[name='notes_access']").prop("disabled", false);
-                    J("input[name='write_access']").prop('disabled', false);
-                }
-            });
-            J("input[name='name']").focus();
-            
-            if(!(J("input[type='checkbox'][name='individual_groups']").prop('checked'))) {
-                J(".individual_group_permission").closest('div.form-group').hide();
-            }
-            J("input[name='individual_groups']").bind('change', function(){
-                Z.debug("individual groups checkbox changed");
-                if(J("input[type='checkbox'][name='individual_groups']").prop('checked')){
-                    J(".individual_group_permission").closest('div.form-group').show();
-                }
-                else{
-                    J(".individual_group_permission").closest('div.form-group').hide();
-                }
-            });
-            
-            J('input').bind('change', Zotero.pages.settings_newoauthkey.updatePermissionsSummary);
-            Zotero.pages.settings_newoauthkey.updatePermissionsSummary();
+            Zotero.pages.settings_editkey.init();
         }
     },
     
@@ -415,17 +386,37 @@ Zotero.pages = {
     
     settings_editkey: {
         init: function(){
-            if(!J('#individual_groups').prop('checked')) {
-                J("#individual_groups").closest('li').nextAll().hide();
+            Z.debug("zoteroPages settings_editkey", 3);
+            if(!J("input[type='checkbox'][name='library_access']").prop("checked")){
+                J("input[name='notes_access']").prop("disabled","disabled");
             }
-            J("#individual_groups").bind('change', function(){
-                if(J('#individual_groups').prop('checked')){
-                    J("#individual_groups").closest('li').nextAll().show();
+            J("input#library_access").bind("change", function(){
+                if(!J("input[type='checkbox'][name='library_access']").prop("checked")){
+                    J("input[name='notes_access']").prop("checked", false).prop("disabled", true);
+                    J("input[name='write_access']").prop('checked', false).prop('disabled', true);
                 }
                 else{
-                    J("#individual_groups").closest('li').nextAll().hide();
+                    J("input[name='notes_access']").prop("disabled", false);
+                    J("input[name='write_access']").prop('disabled', false);
                 }
             });
+            J("input[name='name']").focus();
+            
+            if(!(J("input[type='checkbox'][name='individual_groups']").prop('checked'))) {
+                J(".individual_group_permission").closest('div.form-group').hide();
+            }
+            J("input[name='individual_groups']").bind('change', function(){
+                Z.debug("individual groups checkbox changed");
+                if(J("input[type='checkbox'][name='individual_groups']").prop('checked')){
+                    J(".individual_group_permission").closest('div.form-group').show();
+                }
+                else{
+                    J(".individual_group_permission").closest('div.form-group').hide();
+                }
+            });
+            
+            J('input').bind('change', Zotero.pages.settings_newoauthkey.updatePermissionsSummary);
+            Zotero.pages.settings_newoauthkey.updatePermissionsSummary();
         }
     },
     
