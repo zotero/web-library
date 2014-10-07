@@ -9,7 +9,7 @@
         <span id="libraryGroupID" title="{{attr:item.apiObj.library.id}}"></span>
     {{/if}}
     <table class="item-info-table" data-itemkey="{{attr:item.key}}">
-    {{if (item.apiObj.library.type == 'group')}}
+    {{if (item.apiObj.library.type == 'group') && (item.apiObj.meta.createdByUser)}}
         <!-- Output user Creator for group library -->
         <tr>
             <th>Added by</th>
