@@ -585,6 +585,10 @@ ul#groups {
     padding-left:0;
 }
 
+ul.groups-list {
+    list-style:none;
+}
+
 ul#groups > li {
     margin-bottom: 1.42857143em;
 }
