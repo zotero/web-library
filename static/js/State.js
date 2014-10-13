@@ -24,6 +24,7 @@ Zotero.State = function(){
     this.selectedItemKeys = [];
 };
 
+//rewrite old style urls to current urls
 Zotero.State.prototype.rewriteAltUrl = function(){
     Z.debug("rewriteAltUrl");
     var state = this;

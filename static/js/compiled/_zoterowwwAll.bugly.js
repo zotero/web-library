@@ -1,5 +1,5 @@
 (function(e, t) {
-    var r, o = Array.prototype.slice, i = decodeURIComponent, a = e.param, n, s, l, c, d = e.bbq = e.bbq || {}, u, p, g, f = e.event.special, m = "hashchange", b = "querystring", y = "fragment", h = "elemUrlAttr", v = "href", Z = "src", w = /^.*\?|#.*$/g, I, T, C, S, k, J = {};
+    var r, o = Array.prototype.slice, i = decodeURIComponent, a = e.param, n, s, l, c, u = e.bbq = e.bbq || {}, d, p, g, f = e.event.special, m = "hashchange", b = "querystring", y = "fragment", h = "elemUrlAttr", v = "href", Z = "src", w = /^.*\?|#.*$/g, I, T, C, S, k, J = {};
     function x(e) {
         return typeof e === "string";
     }
@@ -16,26 +16,26 @@
         return e.replace(/(?:^[^?#]*\?([^#]*).*$)?.*/, "$1");
     }
     function O(t, o, a, s, c) {
-        var d, u, p, g, f;
+        var u, d, p, g, f;
         if (s !== r) {
             p = a.match(t ? T : /^([^#?]*)\??([^#]*)(#?.*)/);
             f = p[3] || "";
             if (c === 2 && x(s)) {
-                u = s.replace(t ? I : w, "");
+                d = s.replace(t ? I : w, "");
             } else {
                 g = l(p[2]);
                 s = x(s) ? l[t ? y : b](s) : s;
-                u = c === 2 ? s : c === 1 ? e.extend({}, s, g) : e.extend({}, g, s);
-                u = n(u);
+                d = c === 2 ? s : c === 1 ? e.extend({}, s, g) : e.extend({}, g, s);
+                d = n(d);
                 if (t) {
-                    u = u.replace(C, i);
+                    d = d.replace(C, i);
                 }
             }
-            d = p[1] + (t ? k : u || !p[1] ? "?" : "") + u + f;
+            u = p[1] + (t ? k : d || !p[1] ? "?" : "") + d + f;
         } else {
-            d = o(a !== r ? a : location.href);
+            u = o(a !== r ? a : location.href);
         }
-        return d;
+        return u;
     }
     a[b] = D(O, 0, _);
     a[y] = s = D(O, 1, j);
@@ -82,7 +82,7 @@
             "null": null
         };
         e.each(t.replace(/\+/g, " ").split("&"), function(t, s) {
-            var l = s.split("="), c = i(l[0]), d, u = a, p = 0, g = c.split("]["), f = g.length - 1;
+            var l = s.split("="), c = i(l[0]), u, d = a, p = 0, g = c.split("]["), f = g.length - 1;
             if (/\[/.test(g[0]) && /\]$/.test(g[f])) {
                 g[f] = g[f].replace(/\]$/, "");
                 g = g.shift().split("[").concat(g);
@@ -91,23 +91,23 @@
                 f = 0;
             }
             if (l.length === 2) {
-                d = i(l[1]);
+                u = i(l[1]);
                 if (o) {
-                    d = d && !isNaN(d) ? +d : d === "undefined" ? r : n[d] !== r ? n[d] : d;
+                    u = u && !isNaN(u) ? +u : u === "undefined" ? r : n[u] !== r ? n[u] : u;
                 }
                 if (f) {
                     for (;p <= f; p++) {
-                        c = g[p] === "" ? u.length : g[p];
-                        u = u[c] = p < f ? u[c] || (g[p + 1] && isNaN(g[p + 1]) ? {} : []) : d;
+                        c = g[p] === "" ? d.length : g[p];
+                        d = d[c] = p < f ? d[c] || (g[p + 1] && isNaN(g[p + 1]) ? {} : []) : u;
                     }
                 } else {
                     if (e.isArray(a[c])) {
-                        a[c].push(d);
+                        a[c].push(u);
                     } else {
                         if (a[c] !== r) {
-                            a[c] = [ a[c], d ];
+                            a[c] = [ a[c], u ];
                         } else {
-                            a[c] = d;
+                            a[c] = u;
                         }
                     }
                 }
@@ -156,17 +156,17 @@
     }
     e.fn[b] = D(E, b);
     e.fn[y] = D(E, y);
-    d.pushState = u = function(e, t) {
+    u.pushState = d = function(e, t) {
         if (x(e) && /^#/.test(e) && t === r) {
             t = 2;
         }
         var o = e !== r, i = s(location.href, o ? e : {}, o ? t : 2);
         location.href = i;
     };
-    d.getState = p = function(e, t) {
+    u.getState = p = function(e, t) {
         return e === r || typeof e === "boolean" ? c(e) : c(t)[e];
     };
-    d.removeState = function(t) {
+    u.removeState = function(t) {
         var o = {};
         if (t !== r) {
             o = p();
@@ -174,7 +174,7 @@
                 delete o[t];
             });
         }
-        u(o, 2);
+        d(o, 2);
     };
     f[m] = e.extend(f[m], {
         add: function(t) {
@@ -220,8 +220,8 @@
             }
             if (o._eak_seen = i, a[e]) return a[e];
             if (a[e] = {}, !i[e]) throw new Error("Could not find module " + e);
-            for (var n, s = i[e], l = s.deps, c = s.callback, d = [], u = 0, p = l.length; p > u; u++) "exports" === l[u] ? d.push(n = {}) : d.push(t(r(l[u])));
-            var g = c.apply(this, d);
+            for (var n, s = i[e], l = s.deps, c = s.callback, u = [], d = 0, p = l.length; p > d; d++) "exports" === l[d] ? u.push(n = {}) : u.push(t(r(l[d])));
+            var g = c.apply(this, u);
             return a[e] = n || g;
         };
     }(), e("promise/all", [ "./utils", "exports" ], function(e, t) {
@@ -266,17 +266,17 @@
             };
         }
         function i() {
-            for (var e = 0; e < d.length; e++) {
-                var t = d[e], r = t[0], o = t[1];
+            for (var e = 0; e < u.length; e++) {
+                var t = u[e], r = t[0], o = t[1];
                 r(o);
             }
-            d = [];
+            u = [];
         }
         function a(e, t) {
-            var r = d.push([ e, t ]);
+            var r = u.push([ e, t ]);
             1 === r && n();
         }
-        var n, s = "undefined" != typeof window ? window : {}, l = s.MutationObserver || s.WebKitMutationObserver, c = "undefined" != typeof global ? global : this, d = [];
+        var n, s = "undefined" != typeof window ? window : {}, l = s.MutationObserver || s.WebKitMutationObserver, c = "undefined" != typeof global ? global : this, u = [];
         n = "undefined" != typeof process && "[object process]" === {}.toString.call(process) ? t() : l ? r() : o(), 
         e.asap = a;
     }), e("promise/cast", [ "exports" ], function(e) {
@@ -316,9 +316,9 @@
         function c(e) {
             if (!I(e)) throw new TypeError("You must pass a resolver function as the first argument to the promise constructor");
             if (!(this instanceof c)) throw new TypeError("Failed to construct 'Promise': Please use the 'new' operator, this object constructor cannot be called as a function.");
-            this._subscribers = [], d(e, this);
+            this._subscribers = [], u(e, this);
         }
-        function d(e, t) {
+        function u(e, t) {
             function r(e) {
                 m(t, e);
             }
@@ -331,7 +331,7 @@
                 o(i);
             }
         }
-        function u(e, t, r, o) {
+        function d(e, t, r, o) {
             var i, a, n, s, l = I(r);
             if (l) try {
                 i = r(o), n = !0;
@@ -346,7 +346,7 @@
         }
         function g(e, t) {
             for (var r, o, i = e._subscribers, a = e._detail, n = 0; n < i.length; n += 3) r = i[n], 
-            o = i[n + t], u(t, r, o, a);
+            o = i[n + t], d(t, r, o, a);
             e._subscribers = null;
         }
         function f(e, t) {
@@ -392,7 +392,7 @@
                 if (this._state) {
                     var i = arguments;
                     Z.async(function() {
-                        u(r._state, o, i[r._state - 1], r._detail);
+                        d(r._state, o, i[r._state - 1], r._detail);
                     });
                 } else p(this, o, e, t);
                 return o;
@@ -479,75 +479,75 @@
     }, n = function(e, t, o, i, a, n, s) {
         return r(o ^ (t | ~i), e, t, a, n, s);
     }, s = function(e, r) {
-        var s = e[0], l = e[1], c = e[2], d = e[3];
-        s = o(s, l, c, d, r[0], 7, -680876936);
-        d = o(d, s, l, c, r[1], 12, -389564586);
-        c = o(c, d, s, l, r[2], 17, 606105819);
-        l = o(l, c, d, s, r[3], 22, -1044525330);
-        s = o(s, l, c, d, r[4], 7, -176418897);
-        d = o(d, s, l, c, r[5], 12, 1200080426);
-        c = o(c, d, s, l, r[6], 17, -1473231341);
-        l = o(l, c, d, s, r[7], 22, -45705983);
-        s = o(s, l, c, d, r[8], 7, 1770035416);
-        d = o(d, s, l, c, r[9], 12, -1958414417);
-        c = o(c, d, s, l, r[10], 17, -42063);
-        l = o(l, c, d, s, r[11], 22, -1990404162);
-        s = o(s, l, c, d, r[12], 7, 1804603682);
-        d = o(d, s, l, c, r[13], 12, -40341101);
-        c = o(c, d, s, l, r[14], 17, -1502002290);
-        l = o(l, c, d, s, r[15], 22, 1236535329);
-        s = i(s, l, c, d, r[1], 5, -165796510);
-        d = i(d, s, l, c, r[6], 9, -1069501632);
-        c = i(c, d, s, l, r[11], 14, 643717713);
-        l = i(l, c, d, s, r[0], 20, -373897302);
-        s = i(s, l, c, d, r[5], 5, -701558691);
-        d = i(d, s, l, c, r[10], 9, 38016083);
-        c = i(c, d, s, l, r[15], 14, -660478335);
-        l = i(l, c, d, s, r[4], 20, -405537848);
-        s = i(s, l, c, d, r[9], 5, 568446438);
-        d = i(d, s, l, c, r[14], 9, -1019803690);
-        c = i(c, d, s, l, r[3], 14, -187363961);
-        l = i(l, c, d, s, r[8], 20, 1163531501);
-        s = i(s, l, c, d, r[13], 5, -1444681467);
-        d = i(d, s, l, c, r[2], 9, -51403784);
-        c = i(c, d, s, l, r[7], 14, 1735328473);
-        l = i(l, c, d, s, r[12], 20, -1926607734);
-        s = a(s, l, c, d, r[5], 4, -378558);
-        d = a(d, s, l, c, r[8], 11, -2022574463);
-        c = a(c, d, s, l, r[11], 16, 1839030562);
-        l = a(l, c, d, s, r[14], 23, -35309556);
-        s = a(s, l, c, d, r[1], 4, -1530992060);
-        d = a(d, s, l, c, r[4], 11, 1272893353);
-        c = a(c, d, s, l, r[7], 16, -155497632);
-        l = a(l, c, d, s, r[10], 23, -1094730640);
-        s = a(s, l, c, d, r[13], 4, 681279174);
-        d = a(d, s, l, c, r[0], 11, -358537222);
-        c = a(c, d, s, l, r[3], 16, -722521979);
-        l = a(l, c, d, s, r[6], 23, 76029189);
-        s = a(s, l, c, d, r[9], 4, -640364487);
-        d = a(d, s, l, c, r[12], 11, -421815835);
-        c = a(c, d, s, l, r[15], 16, 530742520);
-        l = a(l, c, d, s, r[2], 23, -995338651);
-        s = n(s, l, c, d, r[0], 6, -198630844);
-        d = n(d, s, l, c, r[7], 10, 1126891415);
-        c = n(c, d, s, l, r[14], 15, -1416354905);
-        l = n(l, c, d, s, r[5], 21, -57434055);
-        s = n(s, l, c, d, r[12], 6, 1700485571);
-        d = n(d, s, l, c, r[3], 10, -1894986606);
-        c = n(c, d, s, l, r[10], 15, -1051523);
-        l = n(l, c, d, s, r[1], 21, -2054922799);
-        s = n(s, l, c, d, r[8], 6, 1873313359);
-        d = n(d, s, l, c, r[15], 10, -30611744);
-        c = n(c, d, s, l, r[6], 15, -1560198380);
-        l = n(l, c, d, s, r[13], 21, 1309151649);
-        s = n(s, l, c, d, r[4], 6, -145523070);
-        d = n(d, s, l, c, r[11], 10, -1120210379);
-        c = n(c, d, s, l, r[2], 15, 718787259);
-        l = n(l, c, d, s, r[9], 21, -343485551);
+        var s = e[0], l = e[1], c = e[2], u = e[3];
+        s = o(s, l, c, u, r[0], 7, -680876936);
+        u = o(u, s, l, c, r[1], 12, -389564586);
+        c = o(c, u, s, l, r[2], 17, 606105819);
+        l = o(l, c, u, s, r[3], 22, -1044525330);
+        s = o(s, l, c, u, r[4], 7, -176418897);
+        u = o(u, s, l, c, r[5], 12, 1200080426);
+        c = o(c, u, s, l, r[6], 17, -1473231341);
+        l = o(l, c, u, s, r[7], 22, -45705983);
+        s = o(s, l, c, u, r[8], 7, 1770035416);
+        u = o(u, s, l, c, r[9], 12, -1958414417);
+        c = o(c, u, s, l, r[10], 17, -42063);
+        l = o(l, c, u, s, r[11], 22, -1990404162);
+        s = o(s, l, c, u, r[12], 7, 1804603682);
+        u = o(u, s, l, c, r[13], 12, -40341101);
+        c = o(c, u, s, l, r[14], 17, -1502002290);
+        l = o(l, c, u, s, r[15], 22, 1236535329);
+        s = i(s, l, c, u, r[1], 5, -165796510);
+        u = i(u, s, l, c, r[6], 9, -1069501632);
+        c = i(c, u, s, l, r[11], 14, 643717713);
+        l = i(l, c, u, s, r[0], 20, -373897302);
+        s = i(s, l, c, u, r[5], 5, -701558691);
+        u = i(u, s, l, c, r[10], 9, 38016083);
+        c = i(c, u, s, l, r[15], 14, -660478335);
+        l = i(l, c, u, s, r[4], 20, -405537848);
+        s = i(s, l, c, u, r[9], 5, 568446438);
+        u = i(u, s, l, c, r[14], 9, -1019803690);
+        c = i(c, u, s, l, r[3], 14, -187363961);
+        l = i(l, c, u, s, r[8], 20, 1163531501);
+        s = i(s, l, c, u, r[13], 5, -1444681467);
+        u = i(u, s, l, c, r[2], 9, -51403784);
+        c = i(c, u, s, l, r[7], 14, 1735328473);
+        l = i(l, c, u, s, r[12], 20, -1926607734);
+        s = a(s, l, c, u, r[5], 4, -378558);
+        u = a(u, s, l, c, r[8], 11, -2022574463);
+        c = a(c, u, s, l, r[11], 16, 1839030562);
+        l = a(l, c, u, s, r[14], 23, -35309556);
+        s = a(s, l, c, u, r[1], 4, -1530992060);
+        u = a(u, s, l, c, r[4], 11, 1272893353);
+        c = a(c, u, s, l, r[7], 16, -155497632);
+        l = a(l, c, u, s, r[10], 23, -1094730640);
+        s = a(s, l, c, u, r[13], 4, 681279174);
+        u = a(u, s, l, c, r[0], 11, -358537222);
+        c = a(c, u, s, l, r[3], 16, -722521979);
+        l = a(l, c, u, s, r[6], 23, 76029189);
+        s = a(s, l, c, u, r[9], 4, -640364487);
+        u = a(u, s, l, c, r[12], 11, -421815835);
+        c = a(c, u, s, l, r[15], 16, 530742520);
+        l = a(l, c, u, s, r[2], 23, -995338651);
+        s = n(s, l, c, u, r[0], 6, -198630844);
+        u = n(u, s, l, c, r[7], 10, 1126891415);
+        c = n(c, u, s, l, r[14], 15, -1416354905);
+        l = n(l, c, u, s, r[5], 21, -57434055);
+        s = n(s, l, c, u, r[12], 6, 1700485571);
+        u = n(u, s, l, c, r[3], 10, -1894986606);
+        c = n(c, u, s, l, r[10], 15, -1051523);
+        l = n(l, c, u, s, r[1], 21, -2054922799);
+        s = n(s, l, c, u, r[8], 6, 1873313359);
+        u = n(u, s, l, c, r[15], 10, -30611744);
+        c = n(c, u, s, l, r[6], 15, -1560198380);
+        l = n(l, c, u, s, r[13], 21, 1309151649);
+        s = n(s, l, c, u, r[4], 6, -145523070);
+        u = n(u, s, l, c, r[11], 10, -1120210379);
+        c = n(c, u, s, l, r[2], 15, 718787259);
+        l = n(l, c, u, s, r[9], 21, -343485551);
         e[0] = t(s, e[0]);
         e[1] = t(l, e[1]);
         e[2] = t(c, e[2]);
-        e[3] = t(d, e[3]);
+        e[3] = t(u, e[3]);
     }, l = function(e) {
         var t = [], r;
         for (r = 0; r < 64; r += 4) {
@@ -560,8 +560,8 @@
             t[r >> 2] = e[r] + (e[r + 1] << 8) + (e[r + 2] << 16) + (e[r + 3] << 24);
         }
         return t;
-    }, d = function(e) {
-        var t = e.length, r = [ 1732584193, -271733879, -1732584194, 271733878 ], o, i, a, n, c, d;
+    }, u = function(e) {
+        var t = e.length, r = [ 1732584193, -271733879, -1732584194, 271733878 ], o, i, a, n, c, u;
         for (o = 64; o <= t; o += 64) {
             s(r, l(e.substring(o - 64, o)));
         }
@@ -581,13 +581,13 @@
         n = t * 8;
         n = n.toString(16).match(/(.*?)(.{0,8})$/);
         c = parseInt(n[2], 16);
-        d = parseInt(n[1], 16) || 0;
+        u = parseInt(n[1], 16) || 0;
         a[14] = c;
-        a[15] = d;
+        a[15] = u;
         s(r, a);
         return r;
-    }, u = function(e) {
-        var t = e.length, r = [ 1732584193, -271733879, -1732584194, 271733878 ], o, i, a, n, l, d;
+    }, d = function(e) {
+        var t = e.length, r = [ 1732584193, -271733879, -1732584194, 271733878 ], o, i, a, n, l, u;
         for (o = 64; o <= t; o += 64) {
             s(r, c(e.subarray(o - 64, o)));
         }
@@ -607,9 +607,9 @@
         n = t * 8;
         n = n.toString(16).match(/(.*?)(.{0,8})$/);
         l = parseInt(n[2], 16);
-        d = parseInt(n[1], 16) || 0;
+        u = parseInt(n[1], 16) || 0;
         a[14] = l;
-        a[15] = d;
+        a[15] = u;
         s(r, a);
         return r;
     }, p = [ "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f" ], g = function(e) {
@@ -625,7 +625,7 @@
         }
         return e.join("");
     }, m = function(e) {
-        return f(d(e));
+        return f(u(e));
     }, b = function() {
         this.reset();
     };
@@ -694,11 +694,11 @@
         if (/[\u0080-\uFFFF]/.test(e)) {
             e = unescape(encodeURIComponent(e));
         }
-        var r = d(e);
+        var r = u(e);
         return !!t ? r : f(r);
     };
     b.hashBinary = function(e, t) {
-        var r = d(e);
+        var r = u(e);
         return !!t ? r : f(r);
     };
     b.ArrayBuffer = function() {
@@ -738,7 +738,7 @@
         return o;
     };
     b.ArrayBuffer.hash = function(e, t) {
-        var r = u(new Uint8Array(e));
+        var r = d(new Uint8Array(e));
         return !!t ? r : f(r);
     };
     return b;
@@ -1425,7 +1425,7 @@ var idbModules = {};
                     l.transaction(function(t) {
                         t.executeSql("CREATE TABLE IF NOT EXISTS __sys__ (name VARCHAR(255), keyPath VARCHAR(255), autoInc BOOLEAN, indexList BLOB)", [], function() {
                             t.executeSql("SELECT * FROM __sys__", [], function(t, c) {
-                                var d = e.Event("success");
+                                var u = e.Event("success");
                                 s.source = s.result = new e.IDBDatabase(l, o, i, c), i > n ? r.transaction(function(t) {
                                     t.executeSql("UPDATE dbVersions set version = ? where name = ?", [ i, o ], function() {
                                         var t = e.Event("upgradeneeded");
@@ -1435,7 +1435,7 @@ var idbModules = {};
                                             e.util.callback("onsuccess", s, t);
                                         });
                                     }, a);
-                                }, a) : e.util.callback("onsuccess", s, d);
+                                }, a) : e.util.callback("onsuccess", s, u);
                             }, a);
                         }, a);
                     }, a);
@@ -1476,8 +1476,8 @@ var idbModules = {};
                             void 0;
                         }
                         l = s.rows.item(0).version;
-                        var d = window.openDatabase(o, 1, o, t);
-                        d.transaction(function(t) {
+                        var u = window.openDatabase(o, 1, o, t);
+                        u.transaction(function(t) {
                             t.executeSql("SELECT * FROM __sys__", [], function(t, r) {
                                 var o = r.rows;
                                 (function n(r) {
@@ -3263,7 +3263,7 @@ Zotero.Collections.prototype.writeCollections = function(e) {
     var s = Zotero.ajax.apiRequestString(n);
     var l = t.chunkObjectsArray(e);
     var c = t.rawChunks(l);
-    var d = function(e) {
+    var u = function(e) {
         Z.debug("writeCollections successCallback", 3);
         Z.debug(e, 3);
         t.updateObjectsFromWriteResponse(this.writeChunk, e);
@@ -3274,23 +3274,23 @@ Zotero.Collections.prototype.writeCollections = function(e) {
     };
     Z.debug("collections.version: " + t.version, 3);
     Z.debug("collections.libraryVersion: " + t.libraryVersion, 3);
-    var u = [];
+    var d = [];
     for (a = 0; a < l.length; a++) {
         var p = {
             writeChunk: l[a],
             library: r
         };
         requestData = JSON.stringify(c[a]);
-        u.push({
+        d.push({
             url: s,
             type: "POST",
             data: requestData,
             processData: false,
             headers: {},
-            success: J.proxy(d, p)
+            success: J.proxy(u, p)
         });
     }
-    return r.sequentialRequests(u).then(function(e) {
+    return r.sequentialRequests(d).then(function(e) {
         Z.debug("Done with writeCollections sequentialRequests promise", 3);
         J.each(o, function(e, r) {
             t.addCollection(r);
@@ -3404,17 +3404,17 @@ Zotero.Items.prototype.deleteItems = function(e, t) {
     var l = [];
     for (var i = 0; i < n.length; i++) {
         var c = n[i].join(",");
-        var d = {
+        var u = {
             target: "items",
             libraryType: r.owningLibrary.libraryType,
             libraryID: r.owningLibrary.libraryID,
             itemKey: c
         };
-        var u = {
-            url: d,
+        var d = {
+            url: u,
             type: "DELETE"
         };
-        l.push(u);
+        l.push(d);
     }
     return Zotero.net.queueRequest(l);
 };
@@ -3493,7 +3493,7 @@ Zotero.Items.prototype.writeItems = function(e) {
     var s = Zotero.ajax.apiRequestString(n);
     var l = t.chunkObjectsArray(a);
     var c = t.rawChunks(l);
-    var d = function(e) {
+    var u = function(e) {
         Z.debug("writeItem successCallback", 3);
         t.updateObjectsFromWriteResponse(this.writeChunk, e);
         if (Zotero.config.useIndexedDB) {
@@ -3506,7 +3506,7 @@ Zotero.Items.prototype.writeItems = function(e) {
     };
     Z.debug("items.itemsVersion: " + t.itemsVersion, 3);
     Z.debug("items.libraryVersion: " + t.libraryVersion, 3);
-    var u = [];
+    var d = [];
     for (i = 0; i < l.length; i++) {
         var p = {
             writeChunk: l[i],
@@ -3514,15 +3514,15 @@ Zotero.Items.prototype.writeItems = function(e) {
             library: r
         };
         requestData = JSON.stringify(c[i]);
-        u.push({
+        d.push({
             url: s,
             type: "POST",
             data: requestData,
             processData: false,
-            success: J.proxy(d, p)
+            success: J.proxy(u, p)
         });
     }
-    return r.sequentialRequests(u).then(function(e) {
+    return r.sequentialRequests(d).then(function(e) {
         Z.debug("Done with writeItems sequentialRequests promise", 3);
         return o;
     });
@@ -5843,8 +5843,8 @@ Zotero.Idb.Library.prototype.filterItems = function(e, t) {
         }
         var l = "next";
         var c = IDBKeyRange.only(t);
-        var d = s.openKeyCursor(c, l);
-        d.onsuccess = J.proxy(function(e) {
+        var u = s.openKeyCursor(c, l);
+        u.onsuccess = J.proxy(function(e) {
             var t = e.target.result;
             if (t) {
                 a.push(t.primaryKey);
@@ -5854,7 +5854,7 @@ Zotero.Idb.Library.prototype.filterItems = function(e, t) {
                 o(a);
             }
         }, this);
-        d.onfailure = J.proxy(function(e) {
+        u.onfailure = J.proxy(function(e) {
             i();
         }, this);
     });
@@ -6896,9 +6896,9 @@ Zotero.State.prototype.parsePathVars = function(e) {
             if (c instanceof Array) {
                 c.push(decodeURIComponent(i[l + 1]));
             } else {
-                var d = [ c ];
-                d.push(decodeURIComponent(i[l + 1]));
-                c = d;
+                var u = [ c ];
+                u.push(decodeURIComponent(i[l + 1]));
+                c = u;
             }
         } else {
             c = decodeURIComponent(i[l + 1]);
@@ -6906,8 +6906,8 @@ Zotero.State.prototype.parsePathVars = function(e) {
         s[i[l]] = c;
     }
     if (s["itemkey"]) {
-        var u = s["itemkey"];
-        s["itemKey"] = u;
+        var d = s["itemkey"];
+        s["itemKey"] = d;
         delete s["itemkey"];
     }
     return s;
@@ -7265,57 +7265,64 @@ Zotero.ui.formatItemField = function(e, t, r) {
         second: "numeric",
         hour12: false
     };
-    var i = new Intl.DateTimeFormat(undefined, o);
-    var a = 0;
-    var n = "";
-    var s;
+    var i;
+    if (Intl) {
+        var a = new Intl.DateTimeFormat(undefined, o);
+        var i = a.format;
+    } else {
+        i = function(e) {
+            return e.toLocaleString();
+        };
+    }
+    var n = 0;
+    var s = "";
+    var l;
     if (Zotero.config.maxFieldSummaryLength[e]) {
-        a = Zotero.config.maxFieldSummaryLength[e];
+        n = Zotero.config.maxFieldSummaryLength[e];
     }
     switch (e) {
       case "itemType":
-        n = Zotero.localizations.typeMap[t.apiObj.data.itemType];
+        s = Zotero.localizations.typeMap[t.apiObj.data.itemType];
         break;
 
       case "dateModified":
         if (!t.apiObj.data["dateModified"]) {
-            n = "";
+            s = "";
         }
-        s = Zotero.utils.parseApiDate(t.apiObj.data["dateModified"]);
-        if (s) {
-            n = i.format(s);
+        l = Zotero.utils.parseApiDate(t.apiObj.data["dateModified"]);
+        if (l) {
+            s = i(l);
         } else {
-            n = t.apiObj.data["dateModified"];
+            s = t.apiObj.data["dateModified"];
         }
-        n = s.toLocaleString();
         break;
 
       case "dateAdded":
         if (!t.apiObj.data["dateAdded"]) {
-            n = "";
+            s = "";
         }
-        s = Zotero.utils.parseApiDate(t.apiObj.data["dateAdded"]);
-        if (s) {
-            n = i.format(s);
+        l = Zotero.utils.parseApiDate(t.apiObj.data["dateAdded"]);
+        if (l) {
+            s = i(l);
         } else {
-            n = t.apiObj.data["dateAdded"];
+            s = t.apiObj.data["dateAdded"];
         }
         break;
 
       case "title":
-        n = t.get("title");
+        s = t.get("title");
         break;
 
       case "creator":
-        n = t.apiObj.meta.creatorSummary;
+        s = t.apiObj.meta.creatorSummary;
         break;
 
       case "addedBy":
         if (t.apiObj.meta.createdByUser) {
             if (t.apiObj.meta.createdByUser.name != "") {
-                n = t.apiObj.meta.createdByUser.name;
+                s = t.apiObj.meta.createdByUser.name;
             } else {
-                n = t.apiObj.meta.createdByUser.username;
+                s = t.apiObj.meta.createdByUser.username;
             }
         }
         break;
@@ -7323,21 +7330,21 @@ Zotero.ui.formatItemField = function(e, t, r) {
       case "modifiedBy":
         if (t.apiObj.meta.lastModifiedByUser) {
             if (t.apiObj.meta.lastModifiedByUser.name != "") {
-                n = t.apiObj.meta.lastModifiedByUser.name;
+                s = t.apiObj.meta.lastModifiedByUser.name;
             } else {
-                n = t.apiObj.meta.lastModifiedByUser.username;
+                s = t.apiObj.meta.lastModifiedByUser.username;
             }
         }
 
       default:
         if (typeof t.apiObj.data[e] !== "undefined") {
-            n = t.get(e);
+            s = t.get(e);
         }
     }
-    if (r && a > 0 && n.length > a) {
-        return n.slice(0, a) + "…";
+    if (r && n > 0 && s.length > n) {
+        return s.slice(0, n) + "…";
     } else {
-        return n;
+        return s;
     }
 };
 
@@ -7371,6 +7378,21 @@ Zotero.ui.formatItemDateField = function(e, t) {
         second: "numeric",
         hour12: false
     };
+    var a;
+    var n;
+    if (Intl) {
+        var s = new Intl.DateTimeFormat(undefined, i);
+        a = s.format;
+        var l = new Intl.DateTimeFormat(undefined, o);
+        n = l.format;
+    } else {
+        a = function(e) {
+            return e.toLocaleDateString();
+        };
+        n = function(e) {
+            return e.toLocaleTimeString();
+        };
+    }
     switch (e) {
       case "dateModified":
         if (!t.apiObj.data["dateModified"]) {
@@ -7378,8 +7400,8 @@ Zotero.ui.formatItemDateField = function(e, t) {
         }
         r = Zotero.utils.parseApiDate(t.apiObj.data["dateModified"]);
         if (r) {
-            return "<span class='localized-date-span'>" + new Intl.DateTimeFormat().format(r);
-            +"</span> <span class='localized-date-span'>" + new Intl.DateTimeFormat(undefined, o).format(r);
+            return "<span class='localized-date-span'>" + a(r);
+            +"</span> <span class='localized-date-span'>" + n(r);
             +"</span>";
         } else {
             return t.apiObj.data["dateModified"];
@@ -7392,8 +7414,8 @@ Zotero.ui.formatItemDateField = function(e, t) {
         }
         r = Zotero.utils.parseApiDate(t.apiObj.data["dateAdded"]);
         if (r) {
-            return "<span class='localized-date-span'>" + new Intl.DateTimeFormat().format(r);
-            +"</span> <span class='localized-date-span'>" + new Intl.DateTimeFormat(undefined, o).format(r);
+            return "<span class='localized-date-span'>" + new a(r);
+            +"</span> <span class='localized-date-span'>" + new n(r);
             +"</span>";
         } else {
             return t.apiObj.data["dateAdded"];
@@ -7826,27 +7848,27 @@ Zotero.ui.createPagination = function(e, t, r, o) {
     var s = r + o;
     var l = i - 1;
     var c = i + 1;
-    var d = n / o + 1;
-    var u = {
+    var u = n / o + 1;
+    var d = {
         page: i
     };
-    u.showFirstLink = r > 0;
-    u.showPrevLink = r > 0;
-    u.showNextLink = a > s;
-    u.showLastLink = a > s;
+    d.showFirstLink = r > 0;
+    d.showPrevLink = r > 0;
+    d.showNextLink = a > s;
+    d.showLastLink = a > s;
     var p = {};
-    u.firstLink = Zotero.state.mutateUrl(p, [ t ]);
+    d.firstLink = Zotero.state.mutateUrl(p, [ t ]);
     p[t] = l;
-    u.prevLink = Zotero.state.mutateUrl(p, []);
+    d.prevLink = Zotero.state.mutateUrl(p, []);
     p[t] = c;
-    u.nextLink = Zotero.state.mutateUrl(p, []);
-    p[t] = d;
-    u.lastLink = Zotero.state.mutateUrl(p, []);
-    u.start = r;
-    u.lastDisplayed = Math.min(s, a);
-    u.total = a;
+    d.nextLink = Zotero.state.mutateUrl(p, []);
+    p[t] = u;
+    d.lastLink = Zotero.state.mutateUrl(p, []);
+    d.start = r;
+    d.lastDisplayed = Math.min(s, a);
+    d.total = a;
     Z.debug("last displayed:" + s + " totalResults:" + e.totalResults, 4);
-    return u;
+    return d;
 };
 
 Zotero.ui.getAssociatedLibrary = function(e) {
@@ -9472,13 +9494,13 @@ Zotero.ui.widgets.item.switchTwoFieldCreators = function(e) {
     var s = t.closest("form").find("select.itemType").val();
     var l = parseInt(t.closest("tr.creator").attr("id").substr(8), 10);
     var c = "#creator_" + l;
-    var d = t.closest("tr.creator").find("select#creator_" + l + "_creatorType").val();
+    var u = t.closest("tr.creator").find("select#creator_" + l + "_creatorType").val();
     t.closest("tr").replaceWith(J("#authorelementsdoubleTemplate").render({
         index: "" + l,
         creator: {
             firstName: i,
             lastName: o,
-            creatorType: d
+            creatorType: u
         },
         creatorTypes: Zotero.Item.prototype.creatorTypes[s]
     }));
@@ -10168,20 +10190,20 @@ Zotero.ui.widgets.tags.displayTagsFiltered = function(e, t, r, o) {
         l = false;
     }
     var c = [];
-    var d = [];
+    var u = [];
     J.each(s, function(e, t) {
-        d.push(t.name.toLowerCase());
+        u.push(t.name.toLowerCase());
         var r = n.getTag(t.name);
         if (r) {
             r.color = t.color;
             c.push(r);
         }
     });
-    var u = [];
+    var d = [];
     var p = [];
     J.each(r, function(e, t) {
-        if (n.tagObjects[t] && n.tagObjects[t].apiObj.meta.numItems > 0 && J.inArray(t, o) == -1 && J.inArray(t, d) == -1) {
-            u.push(n.tagObjects[t]);
+        if (n.tagObjects[t] && n.tagObjects[t].apiObj.meta.numItems > 0 && J.inArray(t, o) == -1 && J.inArray(t, u) == -1) {
+            d.push(n.tagObjects[t]);
         }
     });
     J.each(o, function(e, t) {
@@ -10191,11 +10213,11 @@ Zotero.ui.widgets.tags.displayTagsFiltered = function(e, t, r, o) {
     });
     var g;
     if (!l) {
-        g = u.slice(0, 25);
+        g = d.slice(0, 25);
         J("#show-more-tags-link").show();
         J("#show-fewer-tags-link").hide();
     } else {
-        g = u;
+        g = d;
         J("#show-more-tags-link").hide();
         J("#show-fewer-tags-link").show();
     }
@@ -10356,9 +10378,9 @@ Zotero.ui.widgets.uploadDialog.upload = function(e) {
     var c;
     if (!l.get("parentItem")) {
         Z.debug("no parentItem", 3);
-        var d = new Zotero.Item();
-        d.associateWithLibrary(r);
-        c = d.initEmpty("attachment", "imported_file").then(function(e) {
+        var u = new Zotero.Item();
+        u.associateWithLibrary(r);
+        c = u.initEmpty("attachment", "imported_file").then(function(e) {
             Z.debug("templateItemDeferred callback", 3);
             e.set("title", a);
             return l.uploadChildAttachment(e, i, n);
@@ -10567,7 +10589,7 @@ Zotero.ui.widgets.sendToLibraryDialog.show = function(e) {
             destinationLibraries: n
         }));
         var c = t.find(".send-to-library-dialog");
-        var d = function() {
+        var u = function() {
             Z.debug("sendToLibrary callback", 3);
             var e = c.find(".destination-library-select").val();
             Z.debug("move to: " + e, 3);
@@ -10590,7 +10612,7 @@ Zotero.ui.widgets.sendToLibraryDialog.show = function(e) {
             Zotero.ui.closeDialog(c);
             return false;
         };
-        c.find(".sendButton").on("click", d);
+        c.find(".sendButton").on("click", u);
         Zotero.ui.dialog(c, {});
     }).catch(function(e) {
         Z.error(e);
