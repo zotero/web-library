@@ -15,14 +15,9 @@ $jsRelPath = './static/js/';
 //list of files to include
 $files = array(
 "_zoterowwwInit.js",
-//"_zoteroNav.js",
 "State.js",
 "Delay.js",
-//"_zoteroLibraryCallbacks.js",
 "libraryUi/eventful.js",
-//"libraryUi/bind.js",
-//"libraryUi/clickcallbacks.js",
-//"libraryUi/compat.js",
 "libraryUi/format.js",
 "libraryUi/init.js",
 "libraryUi/misc.js",
@@ -88,12 +83,5 @@ file_put_contents($jsRelPath . '/compiled/_zoterowwwAll.js', $allFullText);
 //make beautiful uglified versions of JS
 //shell_exec("uglifyjs -b -o ../public/static/library/libZotero/libZoteroSingle.bugly.js ../public/static/library/libZotero/libZoteroSingle.js");
 shell_exec("uglifyjs -b -nm -ns -o {$jsRelPath}/compiled/_zoterowwwAll.bugly.js {$jsRelPath}/compiled/_zoterowwwAll.js");
-
-//rewrite manifest file with random string in comment so it registers as modified
-//date_default_timezone_set('EST');
-//$manifestPath = '../public/static/manifest/mylibrary.appcache';
-//$manifestcontent = file_get_contents($manifestPath);
-//$manifestcontent = preg_replace('/# randstring: .*/', '# randstring: ' . date('Y-m-d G:i:s'), $manifestcontent);
-//file_put_contents($manifestPath, $manifestcontent);
 
 ?>
