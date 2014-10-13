@@ -47,15 +47,6 @@ Zotero.init = function(){
         }
     }
     
-    if(typeof zoterojsClass == 'undefined'){
-        zoterojsClass = 'default';
-        Zotero.config.pageClass = 'default';
-    }
-    
-    if(typeof Globalize !== 'undefined'){
-        Globalize.culture(Zotero.config.locale);
-    }
-    
     if(typeof zoteroData == 'undefined'){
         zoteroData = {};
     }
@@ -86,22 +77,19 @@ Zotero.init = function(){
         locale = zoteroData.locale;
     }
     
-    //decide if we're on a library page and run library specific setup
-    var libraryPage = J("body").hasClass('library');
-    //if(libraryPage){
-    if(true){
-        Z.debug("libraryPage - adding libraryString and filter", 3);
+    //load general data if on library page
+    if(Zotero.config.pageClass == 'user_library' || Zotero.config.pageClass == 'group_library' || Zotero.config.pageClass == 'my_library'){
+        Z.debug("library page - ")
         Zotero.state.libraryString = Zotero.utils.libraryString(Zotero.config.librarySettings.libraryType,
-            Zotero.config.librarySettings.libraryID);
+        Zotero.config.librarySettings.libraryID);
         Zotero.state.filter = Zotero.state.libraryString;
         
-        //load general data if on library page
-        if(Zotero.config.pageClass == 'user_library' || Zotero.config.pageClass == 'group_library' || Zotero.config.pageClass == 'my_library'){
-            Zotero.Item.prototype.getItemTypes(locale);
-            Zotero.Item.prototype.getItemFields(locale);
-            Zotero.Item.prototype.getCreatorFields(locale);
-            Zotero.Item.prototype.getCreatorTypes();
-        }
+        Zotero.Item.prototype.getItemTypes(locale);
+        Zotero.Item.prototype.getItemFields(locale);
+        Zotero.Item.prototype.getCreatorFields(locale);
+        Zotero.Item.prototype.getCreatorTypes();
+    } else {
+        Z.debug("non-library page")
     }
     
     Zotero.ui.init.all();
@@ -111,12 +99,6 @@ Zotero.init = function(){
     if(Zotero.state.getUrlVar('proxy') == 'false'){
         Zotero.config.proxy = false;
     }
-    
-    //if(Zotero.preferences.getPref('server_javascript_enabled') === false){
-        //Zotero.utils.setUserPref('javascript_enabled', '1');
-        Zotero.preferences.setPref('server_javascript_enabled', true);
-        document.cookie = "zoterojsenabled=1; expires=; path=/";
-    //}
     
     // Bind to popstate to update state when browser goes back
     // only applicable if state is using location
