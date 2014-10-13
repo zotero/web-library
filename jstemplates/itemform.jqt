@@ -12,7 +12,7 @@
         <td class='itemType'>
             <select id="itemTypeSelect" class="itemType form-control" name="itemType" data-itemKey="{{attr:itemKey}}">
             {{for ~Zotero.Item.prototype.itemTypes ~item=item}}
-                {{if itemType != 'note' && itemType != 'attachment'}}
+                {{if #data != 'note' && #data != 'attachment'}}
                 <option label="{{attr:localized}}" value="{{attr:itemType}}" {{if itemType == ~item.get('itemType')}}selected=1{{/if}}>{{>localized}}</option>
                 {{/if}}
             {{/for}}
