@@ -1,33 +1,8 @@
 /**
- * JS code for Zotero's website
- *
- * LICENSE: This source file is subject to the GNU Affero General Public License
- * as published by the Free Software Foundation, either version 3 of the License,
- * or (at your option) any later version.
- *
- * @category  Zotero_WWW
- * @package   Zotero_WWW_Index
- * @copyright Copyright (c) 2008  Center for History and New Media (http://chnm.gmu.edu)
- * @license   http://www.gnu.org/licenses/agpl.html    GNU AGPL License
- * @version   $Id$
- * @since     0.0
- */
-
-/**
  * Zotero.Pages class containing page specific functions for the website. Loaded based on
  * the value of zoterojsClass
- *
- * @copyright  Copyright (c) 2008  Center for History and New Media (http://chnm.gmu.edu)
- * @license    http://www.gnu.org/licenses/agpl.html    GNU AGPL License
- * @since      Class available since Release 0.6.1
  */
 Zotero.pages = {
-    /*
-    baseURL:    baseURL,
-    staticPath: staticPath,
-    baseDomain: baseDomain,
-    staticLoadUrl: window.location.pathname,
-    */
     //base zotero js functions that will be used on every page
     base: {
 
@@ -95,7 +70,7 @@ Zotero.pages = {
             if(context != 'library' && context != 'grouplibrary' && context != 'forums'){
                 J("#simple-search").on('submit', function(e){
                     e.preventDefault();
-                    var searchUrl = Zotero.pages.baseDomain + "/search/#type/" + context;
+                    var searchUrl = Zotero.config.baseZoteroWebsiteUrl + "/search/#type/" + context;
                     var query     = J("#header-search-query").val();
                     if(query !== "" && query != label){
                         searchUrl = searchUrl + "/q/" + encodeURIComponent(query);
@@ -130,26 +105,6 @@ Zotero.pages = {
             }
         }
     },
-    /*
-    extension_style: {
-        init: function(){
-            var url = Zotero.pages.baseURL + "/extension/autocomplete/";
-            J("#styleSearch").autocomplete({
-                'url': url,
-                'matchContains':true,
-                'mustMatch': true,
-                'cacheLength': 1,
-                extraParams:{"type":"style"},
-                formatItem: function(resultRow, i, total, value) {
-                    return resultRow[0];
-                }
-            });
-            J("#styleSearch").autocomplete("result", function(event, data, formatted){
-                location.href = Zotero.pages.baseURL + "/extension/style/" + data[1];
-            });
-        }
-    },
-    */
     settings_cv: {
         init: function(){
             // Delete the cv section when the delete link is clicked
@@ -483,7 +438,7 @@ Zotero.pages = {
             
             //insert slug preview label
             J('input#name').after("<label id='slugpreview'>Group URL: " +
-                                      Zotero.pages.baseDomain + "/" + "groups/" +
+                                      Zotero.config.baseZoteroWebsiteUrl + "/" + "groups/" +
                                       Zotero.utils.slugify(J("input#name").val()) +
                                       "</label>");
             
@@ -495,10 +450,10 @@ Zotero.pages = {
             var groupType = J('input[name=group_type]:checked').val();
             // update slug preview text
             if(groupType == 'Private'){
-                J("#slugpreview").text("Group URL: " +Zotero.pages.baseDomain + "/" + "groups/<number>");
+                J("#slugpreview").text("Group URL: " +Zotero.config.baseZoteroWebsiteUrl + "/" + "groups/<number>");
             }
             else{
-                J("#slugpreview").text("Group URL: " +Zotero.pages.baseDomain + "/" + "groups/" +
+                J("#slugpreview").text("Group URL: " +Zotero.config.baseZoteroWebsiteUrl + "/" + "groups/" +
                 Zotero.utils.slugify(J("input#name").val()) );
             }
             
@@ -648,13 +603,13 @@ Zotero.pages = {
     user_register: {
         init: function(){
             //insert slug preview label
-            J('input#username').after("<label id='slugpreview'>Profile URL: " +
-                                      Zotero.pages.baseDomain + "/" +
-                                      Zotero.utils.slugify(J("input#username").val()) +
+            J("input[name='username'").after("<label id='slugpreview'>Profile URL: " +
+                                      Zotero.config.baseZoteroWebsiteUrl + "/" +
+                                      Zotero.utils.slugify(J("input[name='username']").val()) +
                                       "</label>");
 
             // When the value of the input box changes,
-            J("input#username").bind("keyup change", Zotero.pages.user_register.nameChange);
+            J("input[name='username'").bind("keyup change", Zotero.pages.user_register.nameChange);
             parent.checkUserSlugTimeout;
         },
         
@@ -663,8 +618,8 @@ Zotero.pages = {
             J("#slugpreview").css("color", "black");
             
             //create slug from username
-            parent.slug = Zotero.utils.slugify( J("input#username").val() );
-            J("#slugpreview").text( "Profile URL: " + Zotero.pages.baseDomain + "/" + parent.slug );
+            parent.slug = Zotero.utils.slugify( J("input[name='username']").val() );
+            J("#slugpreview").text( "Profile URL: " + Zotero.config.baseZoteroWebsiteUrl + "/" + parent.slug );
             
             //check slug with server after half-second
             clearTimeout(parent.checkUserSlugTimeout);
@@ -700,145 +655,6 @@ Zotero.pages = {
             });
         },
     },
-    /*
-    message_inbox: {
-        init: function(){
-            var selector = J("#selector");
-            
-            J("#selector").change(function(){
-                Z.debug("selector checkbox changed");
-                if(J("#selector").prop('checked') ){
-                    J("input[type=checkbox]").prop("checked", true);
-                }
-                else{
-                    J("input[type=checkbox]").prop("checked", false);
-                }
-            });
-            
-            J("input[type=checkbox][id!=selector]").change(function(){
-                Z.debug("non-selector checkbox changed");
-                if(J("input[id!=selector]:checked").length > 0){
-                    J("#selector").prop("checked", false);
-                }
-                else{
-                    J("#selector").prop("checked", true);
-                }
-            });
-            
-            J.each(zoteroData.messages, function(i, msg){
-                if(msg.read == 1){
-                    J("#message-row-" + msg.messageID).addClass("read-message");
-                }
-            });
-            
-            J("#read-button").click(function(){Zotero.pages.message_inbox.readStatus(true);});
-            J("#unread-button").click(function(){Zotero.pages.message_inbox.readStatus(false);});
-            J("#delete-button").click(function(){Zotero.pages.message_inbox.deleteMessage();});
-            
-        },
-        
-        //set all checked messages to read/unread
-        readStatus: function(read){
-            var messageIDs = "";
-            var rows = J([]);
-            J("#message-spinner").show();
-            
-            if(J("input[type=checkbox][id^=check-]:checked").length === 0){
-                return true;
-            }
-            J("input[type=checkbox][id^=check-]:checked").each(function(){
-                messageIDs += this.id.substr(6) + ",";
-                if(!rows) rows = J("#message-row-"+this.id.substr(6));
-                else rows = rows.add("#message-row-"+this.id.substr(6));
-            });
-            
-            if(read === true){
-                J.post("/message/read", {ajax:true, messageIDs:messageIDs }, function(data){
-                    if(data.success === true){
-                        J("input[type=checkbox]").prop("checked", false);
-                        checked = false;
-                        rows.addClass("read-message");
-                        J("#message-spinner").hide();
-                    }
-                    else {
-                        J("#message-spinner").hide();
-                        return false;
-                    }
-                }, "json");
-            }
-            else{
-                J.post("/message/unread", {ajax:true, messageIDs:messageIDs }, function(data){
-                    if(data.success === true){
-                        J("input[type=checkbox]").prop("checked", false);
-                        checked = false;
-                        rows.removeClass("read-message");
-                        J("#message-spinner").hide();
-                    }
-                    else {
-                        J("#message-spinner").hide();
-                        return false;
-                    }
-                }, "json");
-            }
-        },
-        
-        //delete all checked messages and hide them from the inbox view
-        deleteMessage: function(){
-            var messageIDs = "";
-            var rows = J([]);
-            J("#message-spinner").show();
-            
-            J("input[type=checkbox][id^=check-]:checked").each(function(){
-                messageIDs += this.id.substr(6) + ",";
-                if(!rows) rows = J("#message-row-"+this.id.substr(6));
-                else rows = rows.add("#message-row-"+this.id.substr(6));
-            });
-            
-            J.post("/message/delete", {ajax:true, messageIDs:messageIDs }, function(data){
-                if(data.success === true){
-                    J("input[type=checkbox]").prop("checked", false);
-                    checked = false;
-                    rows.hide();
-                    J("#message-spinner").hide();
-                }
-                else {
-                    J("#js-message").html("Error deleting messages");
-                    J("#message-spinner").hide();
-                    return false;
-                }
-            }, "json");
-        }
-    },
-    
-    message_view: {
-        init: function(){
-            if(zoteroData.read === 0){
-                var inboxLink = J('#login-links > a[href="/message/inbox"]');
-                inboxLink.html( inboxLink.html().replace(zoteroData.unreadCount, (zoteroData.unreadCount - 1)) );
-            }
-            
-            //delete message
-            J("#delete-button").click(function(){
-                if(confirm("Delete Message?")){
-                    J.post("/message/delete", {ajax:true, messageIDs: zoteroData.messageID }, function(data){
-                        if(data.success === true){
-                            window.location = "/message/inbox";
-                        }
-                    }, "json");
-                }
-            });
-        }
-    },
-    
-    message_compose: {
-        init: function(){
-            J("#contact-list").click(function(){
-                J("#messageRecipient").val(J("#contact-list").val().join(", "));
-            });
-            Zotero.ui.init.rte('nolinks');
-        }
-    },
-    */
     group_compose: {
         init: function(){
             Zotero.ui.init.rte('nolinks');
