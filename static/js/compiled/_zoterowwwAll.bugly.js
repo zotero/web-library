@@ -6663,13 +6663,6 @@ Zotero.init = function() {
             Z.error(e);
         }
     }
-    if (typeof zoterojsClass == "undefined") {
-        zoterojsClass = "default";
-        Zotero.config.pageClass = "default";
-    }
-    if (typeof Globalize !== "undefined") {
-        Globalize.culture(Zotero.config.locale);
-    }
     if (typeof zoteroData == "undefined") {
         zoteroData = {};
     }
@@ -6692,25 +6685,22 @@ Zotero.init = function() {
     if (zoteroData.locale) {
         r = zoteroData.locale;
     }
-    var o = J("body").hasClass("library");
-    if (true) {
-        Z.debug("libraryPage - adding libraryString and filter", 3);
+    if (Zotero.config.pageClass == "user_library" || Zotero.config.pageClass == "group_library" || Zotero.config.pageClass == "my_library") {
+        Z.debug("library page - ");
         Zotero.state.libraryString = Zotero.utils.libraryString(Zotero.config.librarySettings.libraryType, Zotero.config.librarySettings.libraryID);
         Zotero.state.filter = Zotero.state.libraryString;
-        if (Zotero.config.pageClass == "user_library" || Zotero.config.pageClass == "group_library" || Zotero.config.pageClass == "my_library") {
-            Zotero.Item.prototype.getItemTypes(r);
-            Zotero.Item.prototype.getItemFields(r);
-            Zotero.Item.prototype.getCreatorFields(r);
-            Zotero.Item.prototype.getCreatorTypes();
-        }
+        Zotero.Item.prototype.getItemTypes(r);
+        Zotero.Item.prototype.getItemFields(r);
+        Zotero.Item.prototype.getCreatorFields(r);
+        Zotero.Item.prototype.getCreatorTypes();
+    } else {
+        Z.debug("non-library page");
     }
     Zotero.ui.init.all();
     J.ajaxSettings.traditional = true;
     if (Zotero.state.getUrlVar("proxy") == "false") {
         Zotero.config.proxy = false;
     }
-    Zotero.preferences.setPref("server_javascript_enabled", true);
-    document.cookie = "zoterojsenabled=1; expires=; path=/";
     window.onpopstate = function() {
         Z.debug("popstate", 3);
         J(window).trigger("statechange");
@@ -7293,8 +7283,6 @@ Zotero.ui.formatItemField = function(e, t, r) {
         }
         s = Zotero.utils.parseApiDate(t.apiObj.data["dateModified"]);
         if (s) {
-            Z.debug("Intl formatting dateModified");
-            Z.debug(s);
             n = i.format(s);
         } else {
             n = t.apiObj.data["dateModified"];
@@ -7308,8 +7296,6 @@ Zotero.ui.formatItemField = function(e, t, r) {
         }
         s = Zotero.utils.parseApiDate(t.apiObj.data["dateAdded"]);
         if (s) {
-            Z.debug("Intl formatting dateAdded");
-            Z.debug(s);
             n = i.format(s);
         } else {
             n = t.apiObj.data["dateAdded"];
@@ -9048,7 +9034,6 @@ Zotero.ui.widgets.groupsList.refresh = function(e) {
     var r = Zotero.ui.getAssociatedLibrary(t);
     Zotero.ui.showSpinner(t);
     var o = r.groups.fetchUserGroups(r.libraryID).then(function(e) {
-        Z.debug("groupsList refresh response completed callback. rendering groupsList");
         Zotero.ui.widgets.groupsList.render(t, e.fetchedGroups);
     }).catch(Zotero.catchPromiseError);
 };
@@ -11258,7 +11243,7 @@ Zotero.pages = {
             if (e != "library" && e != "grouplibrary" && e != "forums") {
                 J("#simple-search").on("submit", function(r) {
                     r.preventDefault();
-                    var o = Zotero.pages.baseDomain + "/search/#type/" + e;
+                    var o = Zotero.config.baseZoteroWebsiteUrl + "/search/#type/" + e;
                     var i = J("#header-search-query").val();
                     if (i !== "" && i != t) {
                         o = o + "/q/" + encodeURIComponent(i);
@@ -11518,15 +11503,15 @@ Zotero.pages = {
                 e = setTimeout("Zotero.pages.group_new.nameChange()", 300);
             });
             J("input[name=group_type]").change(Zotero.pages.group_new.nameChange);
-            J("input#name").after("<label id='slugpreview'>Group URL: " + Zotero.pages.baseDomain + "/" + "groups/" + Zotero.utils.slugify(J("input#name").val()) + "</label>");
+            J("input#name").after("<label id='slugpreview'>Group URL: " + Zotero.config.baseZoteroWebsiteUrl + "/" + "groups/" + Zotero.utils.slugify(J("input#name").val()) + "</label>");
         },
         nameChange: function() {
             J("#slugpreview").css("color", "black");
             var e = J("input[name=group_type]:checked").val();
             if (e == "Private") {
-                J("#slugpreview").text("Group URL: " + Zotero.pages.baseDomain + "/" + "groups/<number>");
+                J("#slugpreview").text("Group URL: " + Zotero.config.baseZoteroWebsiteUrl + "/" + "groups/<number>");
             } else {
-                J("#slugpreview").text("Group URL: " + Zotero.pages.baseDomain + "/" + "groups/" + Zotero.utils.slugify(J("input#name").val()));
+                J("#slugpreview").text("Group URL: " + Zotero.config.baseZoteroWebsiteUrl + "/" + "groups/" + Zotero.utils.slugify(J("input#name").val()));
             }
             if (e != "Private") {
                 var t = J("input#name").val();
@@ -11644,14 +11629,14 @@ Zotero.pages = {
     },
     user_register: {
         init: function() {
-            J("input#username").after("<label id='slugpreview'>Profile URL: " + Zotero.pages.baseDomain + "/" + Zotero.utils.slugify(J("input#username").val()) + "</label>");
-            J("input#username").bind("keyup change", Zotero.pages.user_register.nameChange);
+            J("input[name='username'").after("<label id='slugpreview'>Profile URL: " + Zotero.config.baseZoteroWebsiteUrl + "/" + Zotero.utils.slugify(J("input[name='username']").val()) + "</label>");
+            J("input[name='username'").bind("keyup change", Zotero.pages.user_register.nameChange);
             parent.checkUserSlugTimeout;
         },
         nameChange: function() {
             J("#slugpreview").css("color", "black");
-            parent.slug = Zotero.utils.slugify(J("input#username").val());
-            J("#slugpreview").text("Profile URL: " + Zotero.pages.baseDomain + "/" + parent.slug);
+            parent.slug = Zotero.utils.slugify(J("input[name='username']").val());
+            J("#slugpreview").text("Profile URL: " + Zotero.config.baseZoteroWebsiteUrl + "/" + parent.slug);
             clearTimeout(parent.checkUserSlugTimeout);
             parent.checkUserSlugTimeout = setTimeout("Zotero.pages.user_register.checkSlug()", 500);
         },
