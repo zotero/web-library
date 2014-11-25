@@ -1,7 +1,7 @@
 <script id="collectionlistTemplate" type="text/x-jsrender">
     <ul id="collection-list">
         <li>
-            <span class="sprite-icon sprite-treesource-library"></span>
+            <span class="glyphicons fonticon inbox barefonticon"></span>
                 <a class="my-library" data-collectionKey="" href="/{{url:libUrlIdentifier}}/items">Library</a>
         </li>
         {{for collections}}
@@ -12,7 +12,7 @@
         <li class="collection-row{{if (currentCollectionKey == 'trash')}} current-collection{{/if}}" data-collectionKey="trash">
         <div class="folder-toggle">
         <span class="sprite-placeholder sprite-icon-16 pull-left dui-icon"></span>
-        <span class="sprite-icon sprite-treesource-trash pull-left"></span>
+        <span class="glyphicons fonticon bin barefonticon"></span>
         </div>
         <a href="" data-collectionKey="trash"
             id="collection-trash" class="collection-select-link{{if (currentCollectionKey == "trash")}} current-collection{{/if}}">

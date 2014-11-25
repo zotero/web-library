@@ -1,0 +1,33 @@
+<script id="cvsectionTemplate" type="text/x-jsrender">
+<div class="cv-{{:cvSectionType}} cv-section" id="cv-section_{{:cvSectionIndex}}">
+    <div class="cv-section-actions btn-group">
+        <button type="button" class="btn btn-default cv-move-up" title="Move Up"><span class="glyphicon glyphicon-arrow-up"></span></button>
+        <button type="button" class="btn btn-default cv-move-down" title="Move Down"><span class="glyphicon glyphicon-arrow-down"></span></button>
+        <button type="button" class="btn btn-default cv-delete" title="Remove Section"><span class="glyphicon glyphicon-remove"></span></button>
+    </div>
+    <div class="form-group">
+        <label>Heading:
+        <input type="text" class="cv-heading form-control" name="cv_{{:cvSectionIndex}}_heading" placeholder="Section Title"/> </label>
+    </div>
+    <div class="form-group">
+        {{if (#data.cvSectionType == "text") }}
+        <textarea id="cv_{{:cvSectionIndex}}_text" class="cv-text form-control rte nolinks" name="cv_{{:cvSectionIndex}}_text" rows="8" cols="40">
+            {{>cvSectionValue}}
+        </textarea>
+        {{else (#data.cvSectionType == "collection") }}
+        <label>Collection:
+        <select id="cv_{{:cvSectionIndex}}_collection" class="cv-collection form-control" name="cv_{{:cvSectionIndex}}_collection">
+            {{for collectionOptions ~cvEntry=cvEntry }}
+                <option value="{{#data.collectionKey}}"
+                {{if (#data.collectionKey==~cvEntry['value']) }}
+                    selected="selected"
+                {{/if}} >
+                {{>#data['label']}}
+                </option>
+            {{/for}}
+        </select></label>
+        {{/if}}
+    </div>
+</div>
+
+</script>

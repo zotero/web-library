@@ -12,9 +12,7 @@
         <nav id="group-library-link-nav" class="action-links">
             <ul>
             <!-- Group library link -->
-            {{if groupLibraryViewable}}
-                <li><a href="{{url:groupLibraryUrl}}">Group Library</a></li>
-            {{/if}}
+            <li><a href="{{url:groupLibraryUrl}}">Group Library</a></li>
         </nav>
         {{if groupManageable}}
         <nav class="action-links">

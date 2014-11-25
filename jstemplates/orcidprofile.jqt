@@ -1,0 +1,28 @@
+<script id="orcidprofileTemplate" type="text/x-jsrender">
+<div class="orcid-profile">
+    <div class="bio">
+        <h2>{{>#data['orcid-profile']['orcid-bio']['personal-details']['family-name']['value']}} {{>#data['orcid-profile']['orcid-bio']['personal-details']['given-names']['value']}}</h2>
+        {{>#data['orcid-profile']['orcid-bio']['biography']['value']}}
+    </div>
+    <div class="urls">
+        <ul>
+            {{for #data['orcid-profile']['orcid-bio']['researcher-urls']['researcher-url']}}
+                <li><a href="{{url:#data['url']['value']}}">{{>#data['url-name']['value']}}</a></li>
+            {{/for}}
+        </ul>
+    </div>
+    <div class="keywords">
+        <ul>
+            {{for #data['orcid-profile']['orcid-bio']['keywords']['keyword']}}
+                <li>{{>#data['value']}}</li>
+            {{/for}}
+        </ul>
+    </dvi>
+    <div class="external-identifiers">
+
+    </dvi>
+    <div class="orcid-activities">
+
+    </div>
+</div>
+</script>

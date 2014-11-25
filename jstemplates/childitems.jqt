@@ -5,14 +5,14 @@
     {{for childItems}}
         <li>
             {{if #data.apiObj.data.itemType == 'note'}}
-                <span class='sprite-icon sprite-treeitem-{{attr:#data.itemTypeImageClass()}} pull-left'></span>
+                <span class='fonticon barefonticon {{attr:#data.itemTypeIconClass()}}'></span>
                 <a class='item-select-link' data-itemKey='{{attr:#data.apiObj.key}}' href='{{url:~Zotero.url.itemHref(#data)}}' title='{{attr:#data.apiObj.data.title}}'>{{>#data.get('title')}}</a>
             {{else attachmentDownloadUrl == false }}
-                <span class='sprite-icon sprite-treeitem-{{attr:#data.itemTypeImageClass()}} pull-left'></span>
+                <span class='fonticon barefonticon {{attr:#data.itemTypeIconClass()}}'></span>
                 {{>#data.apiObj.data.title}}
                 (<a class='item-select-link' data-itemKey='{{attr:#data.apiObj.key}}' href='{{url:~Zotero.url.itemHref(#data)}}' title='{{attr:#data.apiObj.data.title}}'>Attachment Details</a>)
             {{else}}
-                <span class='sprite-icon sprite-treeitem-{{attr:#data.itemTypeImageClass()}} pull-left'></span>
+                <span class='fonticon barefonticon {{attr:#data.itemTypeIconClass()}}'></span>
                 <a class='itemdownloadlink' href="{{url:~Zotero.url.attachmentDownloadUrl(#data)}}">{{>#data.apiObj.data.title}} {{>~Zotero.url.attachmentFileDetails(#data)}}</a>
                 (<a class='item-select-link' data-itemKey='{{attr:#data.apiObj.key}}' href='{{url:~Zotero.url.itemHref(#data)}}' title='{{attr:#data.apiObj.data.title}}'>Attachment Details</a>)
             {{/if}}

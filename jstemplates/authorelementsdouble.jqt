@@ -15,12 +15,12 @@
         </th>
         <td class="creator" data-creatorindex="{{attr:index || ~index}}">
             <div class="creator-input-div doubleCreator" data-creatorindex="{{attr:index || ~index}}">
-                <input type="text" class="creator-last-name" value="{{attr:lastName}}" id="creator_{{attr:index || ~index}}_lastName" name="creator_{{attr:index || ~index}}_lastName" data-creatorindex="{{attr:index || ~index}}"><span class="creator-separator">, </span>
+                <input type="text" class="creator-last-name form-control" value="{{attr:lastName}}" id="creator_{{attr:index || ~index}}_lastName" name="creator_{{attr:index || ~index}}_lastName" data-creatorindex="{{attr:index || ~index}}"><span class="creator-separator">, </span>
                 <input type="text" class="creator-first-name form-control" value="{{attr:firstName}}" id="creator_{{attr:index || ~index}}_firstName" name="creator_{{attr:index || ~index}}_firstName" data-creatorindex="{{attr:index || ~index}}">
-                <button type="button" class="switch-single-field-creator-link btn btn-default eventfultrigger" data-triggers="switchSingleFieldCreator" data-creatorindex="{{attr:index || ~index}}"><span class="glyphicon sprite-textfield-single"></span></button>
+                <button type="button" class="switch-single-field-creator-link btn btn-default eventfultrigger" data-triggers="switchSingleFieldCreator" data-creatorindex="{{attr:index || ~index}}"><span class="fonticon sprite-textfield-single"></span></button>
                 <span class="add-remove-creator-buttons-container btn-group">
-                    <button type="button" class="remove-creator-link btn btn-default eventfultrigger" data-triggers="removeCreator" data-creatorindex="{{attr:index || ~index}}"><span class="glyphicon glyphicon-minus-sign"></span></button>
-                    <button type="button" class="add-creator-link btn btn-default eventfultrigger" data-triggers="addCreator" data-creatorindex="{{attr:index || ~index}}"><span class="glyphicon glyphicon-plus-sign"></span></button>
+                    <button type="button" class="remove-creator-link btn btn-default eventfultrigger" data-triggers="removeCreator" data-creatorindex="{{attr:index || ~index}}"><span class="glyphicons fonticon minus"></span></button>
+                    <button type="button" class="add-creator-link btn btn-default eventfultrigger" data-triggers="addCreator" data-creatorindex="{{attr:index || ~index}}"><span class="glyphicons fonticon plus"></span></button>
                 </span>
             </div>
         </td>
