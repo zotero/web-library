@@ -21,8 +21,8 @@ Zotero.ui.formatItemField = function(field, item, trim){
     };
 
     var formatDate;
-    if(Intl) {
-        var dateFormatter = new Intl.DateTimeFormat(undefined, intlOptions);
+    if(window.Intl) {
+        var dateFormatter = new window.Intl.DateTimeFormat(undefined, intlOptions);
         var formatDate = dateFormatter.format;
     } else {
         formatDate = function(date) {
@@ -148,10 +148,10 @@ Zotero.ui.formatItemDateField = function(field, item){
     
     var formatDate;
     var formatTime;
-    if(Intl) {
-        var dateFormatter = new Intl.DateTimeFormat(undefined, intlOptions);
+    if(window.Intl) {
+        var dateFormatter = new window.Intl.DateTimeFormat(undefined, intlOptions);
         formatDate = dateFormatter.format;
-        var timeFormatter = new Intl.DateTimeFormat(undefined, timeOptions);
+        var timeFormatter = new window.Intl.DateTimeFormat(undefined, timeOptions);
         formatTime = timeFormatter.format;
     } else {
         formatDate = function(date) {

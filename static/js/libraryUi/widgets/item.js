@@ -249,8 +249,28 @@ Zotero.ui.widgets.item.addTag = function(e, focus) {
         if(!typeaheadSource){
             typeaheadSource = [];
         }
-        Z.debug(typeaheadSource);
-        widgetEl.find("input.taginput").not('.tt-query').typeahead({name: 'tags', local: library.tags.plainList});
+        var ttEngine = new Bloodhound({
+            datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
+            queryTokenizer: Bloodhound.tokenizers.whitespace,
+            local: J.map(typeaheadSource, function(typeaheadSource) { return { value: typeaheadSource }; })
+        });
+        ttEngine.initialize();
+        widgetEl.find("input.taginput").typeahead('destroy');
+        widgetEl.find("input.taginput").typeahead(
+            {
+                hint: true,
+                highlight: true,
+                minLength: 1
+            },
+            {
+                name: 'tags',
+                displayKey: 'value',
+                source: ttEngine.ttAdapter()
+                //local: library.tags.plainList
+            }
+        );
+
+        //widgetEl.find("input.taginput").not('.tt-query').typeahead({name: 'tags', local: library.tags.plainList});
     }
     
     if(focus){
