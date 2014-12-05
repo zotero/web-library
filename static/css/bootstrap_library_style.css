@@ -5,8 +5,8 @@ body.library {
 }
 
 #library {
-    padding-top:55px;
-    padding-bottom:55px;
+    padding-top:5px;
+    padding-bottom:5px;
 }
 
 #js-message {
@@ -31,10 +31,47 @@ body.library {
     margin-top:3em;
     margin-bottom:2em;
 }
+.fonticon {
+    position: relative;
+    top: 1px;
+    display: inline-block;
+    -webkit-font-smoothing: antialiased;
+    font-style: normal;
+    font-weight: normal;
+    line-height: 1;
+    padding-left:0;
+}
+.fonticon:before{
+    font-size:16px;
+    color:#000;
+    font-style:normal;
+    font-weight:normal;
+    position:relative;
+    display:inline;
+    box-sizing:border-box;
+    margin-right:0;
+}
+.glyphicon:before{
+    font-size:16px;
+}
+/*allow tag colors to be set inline */
+.glyphicons.fonticon.tag:before{
+    color:inherit;
+}
+.glyphicons.fonticon.tag{
+    color:inherit;
+}
 
-.sprite-icon {
-    float: left;
-    margin-right: 5px;
+.barefonticon {
+    float:left;
+    margin-right:5px;
+}
+.noteyellow:before {
+    color:#D6D633;
+}
+
+.btn .fonticon{
+    margin-top:-5px;
 }
 
 .item-select-link {
@@ -82,11 +119,7 @@ span.localized-date-span {
 #library-items-div th:not(:last-child) {
     border-right:1px dotted rgba(0,0,0,0.2);
 }
-/*
-#library-items-div td * {
-    margin-bottom: 0;
-}
-*/
+
 #item-pagination-div {
     width: 100%;
     text-align: center;
@@ -118,10 +151,13 @@ span.localized-date-span {
 }
 
 /* == Item Details == */
+/*
 #item-details-div {
     overflow-y:auto;
 }
+*/
 /* edit form */
+/*
 .creator-input-div {
     margin:0;
     line-height:1.4em;
@@ -140,36 +176,32 @@ td.creator * {
     margin:0 2px .25em;
 }
 
-.edit-tag-div input {
-    float:left;
-}
-
 .itemDetailForm input {
     margin-right:2px;
 }
 
-/*.itemDetailForm td > input[type=text] {
-    width:80%;
-}*/
-
 .itemDetailForm table {
     margin-bottom: 20px;
 }
+*/
 .itemDetailForm td, .itemDetailForm th {
     padding: 10px 4px;
 }
-
+/*
 .itemDetailForm td > *, .itemDetailForm th > * {
     margin: 0;
 }
-
+*/
 .itemDetailForm td input[type=text], .itemDetailForm textarea {
     width:80%;
+    /*
     border-radius: 4px;
     border: 1px solid #e7e7e7;
     border: 1px solid rgba(0, 0, 0, 0.2);
+    */
     padding: 5px;
 }
+
 /* /edit form */
 
 /* display table */

@@ -1,3 +1,5 @@
 <script id="coloredtagTemplate" type="text/x-jsrender">
-    <span class="glyphicons fonticon tag" style="color:{{:#data}}"></span>
+	<span style="color:{{:#data}}">
+    	<span class="glyphicons fonticon tag"></span>
+	</span>
 </script>
