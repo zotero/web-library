@@ -181,7 +181,7 @@ Zotero.ui.formatItemDateField = function(field, item){
             }
             date = Zotero.utils.parseApiDate(item.apiObj.data['dateAdded']);
             if(date){
-                return "<span class='localized-date-span'>" + new formatDate(date); + "</span> <span class='localized-date-span'>" + new formatTime(date); + "</span>";
+                return "<span class='localized-date-span'>" + formatDate(date); + "</span> <span class='localized-date-span'>" + formatTime(date); + "</span>";
             }
             else{
                 return item.apiObj.data['dateAdded'];
