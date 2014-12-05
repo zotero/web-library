@@ -79,8 +79,15 @@ Zotero.ui.widgets.collections.updateCollectionButtons = function(el){
     if(!el){
         el = J("body");
     }
-    jel = J(el);
+    var jel = J(el);
     
+    //disable everything if we're not allowed to edit the library
+    if(!Zotero.config.librarySettings.allowEdit){
+        jel.find(".create-collection-button").addClass('disabled');
+        jel.find(".update-collection-button").addClass('disabled');
+        jel.find(".delete-collection-button").addClass('disabled');
+        return;
+    }
     //enable modify and delete only if collection is selected
     if(Zotero.state.getUrlVar("collectionKey")){
         jel.find(".update-collection-button").removeClass('disabled');
