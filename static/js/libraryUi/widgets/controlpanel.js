@@ -253,8 +253,7 @@ Zotero.ui.showControlPanel = function(el){
     var jel = J(el);
     var mode = Zotero.state.getUrlVar('mode') || 'view';
     
-    if(Zotero.config.librarySettings.allowEdit){
+    if(!Zotero.config.librarySettings.allowEdit){
         J(".permission-edit").hide();
-        J("#control-panel").hide();
     }
 };

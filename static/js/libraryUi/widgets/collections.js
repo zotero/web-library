@@ -83,6 +83,7 @@ Zotero.ui.widgets.collections.updateCollectionButtons = function(el){
     
     //disable everything if we're not allowed to edit the library
     if(!Zotero.config.librarySettings.allowEdit){
+        J(".permission-edit").hide();
         jel.find(".create-collection-button").addClass('disabled');
         jel.find(".update-collection-button").addClass('disabled');
         jel.find(".delete-collection-button").addClass('disabled');
