@@ -3284,9 +3284,18 @@ Zotero.Collections.prototype.writeCollections = function(e) {
         libraryID: t.owningLibrary.libraryID
     };
     var n = Zotero.ajax.apiRequestString(a);
-    var s = t.chunkObjectsArray(e);
-    var l = t.rawChunks(s);
-    var c = function(e) {
+    for (var i = 0; i < e.length; i++) {
+        var s = e[i];
+        var l = s.get("key");
+        if (l === "" || l === null) {
+            var c = Zotero.utils.getKey();
+            s.set("key", c);
+            s.set("version", 0);
+        }
+    }
+    var u = t.chunkObjectsArray(e);
+    var d = t.rawChunks(u);
+    var p = function(e) {
         Z.debug("writeCollections successCallback", 3);
         var t = this.library;
         var r = this.writeChunk;
@@ -3301,27 +3310,28 @@ Zotero.Collections.prototype.writeCollections = function(e) {
                 }
             }
         }
+        e.returnCollections = r;
         return e;
     };
     Z.debug("collections.version: " + t.version, 3);
     Z.debug("collections.libraryVersion: " + t.libraryVersion, 3);
-    var u = [];
-    for (i = 0; i < s.length; i++) {
-        var d = {
-            writeChunk: s[i],
+    var g = [];
+    for (i = 0; i < u.length; i++) {
+        var f = {
+            writeChunk: u[i],
             library: r
         };
-        requestData = JSON.stringify(l[i]);
-        u.push({
+        requestData = JSON.stringify(d[i]);
+        g.push({
             url: n,
             type: "POST",
             data: requestData,
             processData: false,
             headers: {},
-            success: J.proxy(c, d)
+            success: J.proxy(p, f)
         });
     }
-    return r.sequentialRequests(u).then(function(e) {
+    return r.sequentialRequests(g).then(function(e) {
         Z.debug("Done with writeCollections sequentialRequests promise", 3);
         t.initSecondaryData();
         J.each(e, function(e, t) {
@@ -9053,6 +9063,8 @@ Zotero.ui.widgets.createCollectionDialog.show = function(e) {
             Zotero.state.pushState();
             Zotero.ui.closeDialog(i.find(".create-collection-dialog"));
             Zotero.ui.jsNotificationMessage("Collection Created", "success");
+            Z.debug("returnCollection from responses:");
+            Z.debug(e[0].returnCollections);
         }).catch(function(e) {
             Zotero.ui.jsNotificationMessage("There was an error creating the collection.", "error");
             Zotero.ui.closeDialog(i.find(".create-collection-dialog"));
