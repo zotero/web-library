@@ -2567,7 +2567,6 @@ Zotero.Items.prototype.atomizeItems = function(itemsArray){
 Zotero.Items.prototype.writeItems = function(itemsArray){
     var items = this;
     var library = items.owningLibrary;
-    var returnItems = [];
     var i;
     var writeItems = items.atomizeItems(itemsArray);
     
@@ -2590,8 +2589,8 @@ Zotero.Items.prototype.writeItems = function(itemsArray){
             this.library.idbLibrary.updateItems(this.writeChunk);
         }
         
-        this.returnItems = this.returnItems.concat(this.writeChunk);
         Zotero.trigger("itemsChanged", {library:this.library});
+        response.returnItems = this.writeChunk;
         return response;
     };
     
@@ -2602,7 +2601,6 @@ Zotero.Items.prototype.writeItems = function(itemsArray){
     for(i = 0; i < writeChunks.length; i++){
         var successContext = {
             writeChunk: writeChunks[i],
-            returnItems: returnItems,
             library: library,
         };
         
@@ -2619,7 +2617,7 @@ Zotero.Items.prototype.writeItems = function(itemsArray){
     return library.sequentialRequests(requestObjects)
     .then(function(responses){
         Z.debug("Done with writeItems sequentialRequests promise", 3);
-        return returnItems;
+        return responses;
     });
 };
 
@@ -9036,8 +9034,6 @@ Zotero.ui.widgets.createCollectionDialog.show = function(evt){
             Zotero.state.pushState();
             Zotero.ui.closeDialog(widgetEl.find(".create-collection-dialog"));
             Zotero.ui.jsNotificationMessage("Collection Created", 'success');
-            Z.debug("returnCollection from responses:");
-            Z.debug(responses[0].returnCollections);
         }).catch(function(error){
             Zotero.ui.jsNotificationMessage("There was an error creating the collection.", "error");
             Zotero.ui.closeDialog(widgetEl.find(".create-collection-dialog"));
@@ -9820,6 +9816,7 @@ Zotero.ui.widgets.item.switchSingleFieldCreator = function(e){
 };
 
 Zotero.ui.widgets.item.cancelItemEdit = function(e){
+    Z.debug("Zotero.ui.widgets.item.cancelItemEdit", 3);
     Zotero.state.clearUrlVars(['itemKey', 'collectionKey', 'tag', 'q']);
     Zotero.state.pushState();
 };

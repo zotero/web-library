@@ -487,6 +487,7 @@ Zotero.ui.widgets.item.switchSingleFieldCreator = function(e){
 };
 
 Zotero.ui.widgets.item.cancelItemEdit = function(e){
+    Z.debug("Zotero.ui.widgets.item.cancelItemEdit", 3);
     Zotero.state.clearUrlVars(['itemKey', 'collectionKey', 'tag', 'q']);
     Zotero.state.pushState();
 };
