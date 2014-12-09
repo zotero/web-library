@@ -122,44 +122,42 @@ Zotero.pages = {
             });
             
             // Add a new cv section when the add button is clicked
-            J("#cv-sections").on("click", ".cv-insert-freetext", function(e){
+            J(".cv-insert-freetext").on("click", function(e){
                 // Get the number of sections that exist before adding a new one
-                sectionCount  = J("#cv-sections div.cv-section").length;
+                var sectionCount  = J("#cv-sections div.cv-section").length;
+                var newIndex = sectionCount + 1;
+                var newTextareaID = "cv_" + newIndex + "_text";
+
+                //render new section template into end of sections
+                J("#cv-sections").append( J('#cvsectionTemplate').render({
+                    cvSectionIndex: newIndex,
+                    cvSectionType: "text",
+                    cvEntry: {},
+                }) );
+
+                //activate RTE
+                Zotero.ui.init.rte('default', false, J("div.cv-section").last());
                 
-                // Clone the template html
-                newSection    = J("#cv-freetext-template div.cv-text").clone(true);
-                
-                // The new textarea needs a unique id for rte to work
-                newTextareaID = "cv_" + (sectionCount + 1) + "_text";
-                newSection.find("textarea").attr("id", newTextareaID);
-                
-                // Insert the new section into the dom and activate rte control
-                J(this).closest("div.cv-section").after(newSection);
-                
-                Zotero.ui.init.rte('default', false, newTextareaID);
-                
+                J("input.cv-heading").last().focus();
                 return false;
             });
             
             // Add a new cv collection when the add button is clicked
-            J("#cv-sections").on("click", ".cv-insert-collection", function(e){
+            J(".cv-insert-collection").on("click", function(e){
                 // Get the number of sections that exist before adding a new one
-                sectionCount  = J("#cv-sections div.cv-section").length;
+                var sectionCount  = J("#cv-sections div.cv-section").length;
+                var newIndex = sectionCount + 1;
                 
-                // Clone the template html
-                newSection    = J("#cv-collection-template div.cv-section").clone(true);
-                
-                // The new textarea needs a unique id for rte to work
-                newcollectionKey = "cv_" + (sectionCount + 1) + "_collection";
-                newHeadingID    = "cv_" + (sectionCount + 1) + "_heading";
-                newSection.find("select")
-                    .attr("id", newcollectionKey)
-                    .attr("name", newcollectionKey);
-                newSection.find(".cv-heading").attr("name", newHeadingID);
-                
-                // Insert the new section into the dom
-                J(this).closest("div.cv-section").after(newSection);
-                
+                //render new section template into end of sections
+                Z.debug(zoteroData.collectionOptions);
+                J("#cv-sections").append( J('#cvsectionTemplate').render({
+                    cvSectionIndex: newIndex,
+                    cvSectionType: "collection",
+                    collectionOptions: zoteroData.collectionOptions,
+                    cvEntry:{},
+                }) );
+
+                J("input.cv-heading").last().focus();
                 return false;
             });
             
@@ -171,7 +169,7 @@ Zotero.pages = {
                     
                     // Move the section and reenable the rte control
                     J(this).closest("div.cv-section").next().after(J(this).closest("div.cv-section"));
-                    Zotero.ui.init.rte('default', false, textareaID);
+                    Zotero.ui.init.rte('default', false);
                 }
                 else {
                     J(this).closest("div.cv-section").next().after(J(this).closest("div.cv-section"));
@@ -189,7 +187,7 @@ Zotero.pages = {
                     
                     // Move the section and reenable the rte control
                     J(this).closest("div.cv-section").prev().before(J(this).closest("div.cv-section"));
-                    Zotero.ui.init.rte('default', false, textareaID);
+                    Zotero.ui.init.rte('default', false);
                 }
                 else {
                     J(this).closest("div.cv-section").prev().before(J(this).closest("div.cv-section"));
@@ -476,6 +474,7 @@ Zotero.pages = {
     
     group_settings: {
         init: function(){
+            Zotero.debug("initializing group delete form");
             Zotero.ui.init.rte('nolinks');
             
             J("#deleteForm").submit(function(){
@@ -892,17 +891,17 @@ Zotero.pages = {
             var arch = (navigator.userAgent.indexOf('x86_64') != -1) ? 'x86_64' : 'x86';
             
             if(os == 'Windows'){
-                J('#standalone-windows-download-button').closest('li').clone().prependTo('#recommended-client-download > ul');
+                J('#standalone-windows-download-button').closest('li').clone().prependTo('#recommended-client-download ul');
             }
             else if(os == 'Mac'){
-                J('#standalone-mac-download-button').closest('li').clone().prependTo('#recommended-client-download > ul');
+                J('#standalone-mac-download-button').closest('li').clone().prependTo('#recommended-client-download ul');
             }
             else if(os == 'Linux'){
                 if(arch == 'x86_64'){
-                    J('#standalone-linux64-download-button').closest('li').clone().prependTo('#recommended-client-download > ul');
+                    J('#standalone-linux64-download-button').closest('li').clone().prependTo('#recommended-client-download ul');
                 }
                 else {
-                    J('#standalone-linux32-download-button').closest('li').clone().prependTo('#recommended-client-download > ul');
+                    J('#standalone-linux32-download-button').closest('li').clone().prependTo('#recommended-client-download ul');
                 }
             }
             else {
@@ -912,20 +911,19 @@ Zotero.pages = {
             J("#recommended-connector-download").show();
             switch(browsername){
                 case 'Chrome':
-                    //J('#chrome-connector-download-button').closest('li').clone().prependTo('#recommended-connector-download > ul');
-                    J('#chrome-connector-download-button').addClass('recommended-download').closest('li').detach().prependTo('#recommended-connector-download > ul');
+                    J('#chrome-connector-download-button').addClass('recommended-download').closest('li').detach().prependTo('#recommended-connector-download ul');
                     break;
                 case 'Safari':
-                    J('#safari-connector-download-button').addClass('recommended-download').closest('li').detach().prependTo('#recommended-connector-download > ul');
+                    J('#safari-connector-download-button').addClass('recommended-download').closest('li').detach().prependTo('#recommended-connector-download ul');
                     break;
                 case 'Firefox':
-                    J('#firefox-connector-download-button').addClass('recommended-download').closest('li').detach().prependTo('#recommended-connector-download > ul');
+                    J('#firefox-connector-download-button').addClass('recommended-download').closest('li').detach().prependTo('#recommended-connector-download ul');
                     break;
                 default:
-                    J('#connector-download-button').closest('li').clone().prependTo('#recommended-connector-download > ul');
+                    J('#connector-download-button').closest('li').clone().prependTo('#recommended-connector-download ul');
                     J('#other-connectors-p').hide();
             }
-            J('#recommended-download > ul').prepend('<li><p>Zotero Connectors allow you to save to Zotero directly from your web browser.</p></li>');
+            J('#recommended-download ul').prepend('<li><p>Zotero Connectors allow you to save to Zotero directly from your web browser.</p></li>');
         }
     },
     
