@@ -48,7 +48,8 @@ Zotero.eventful.events = [
     "deleteCollectionDialog",
     "showMoreTags",
     "showFewerTags",
-    
+    "indexedDBError",
+
 ];
 
 Zotero.eventful.eventMap = {
