@@ -27,13 +27,16 @@ Zotero.ui.widgets.createCollectionDialog.show = function(evt){
         var name = dialogEl.find("input.new-collection-title-input").val() || "Untitled";
         
         library.addCollection(name, parentKey)
-        .then(function(returnCollections){
+        .then(function(responses){
             library.collections.initSecondaryData();
             library.trigger('libraryCollectionsUpdated');
             Zotero.state.pushState();
             Zotero.ui.closeDialog(widgetEl.find(".create-collection-dialog"));
             Zotero.ui.jsNotificationMessage("Collection Created", 'success');
-        }).catch(Zotero.catchPromiseError);
+        }).catch(function(error){
+            Zotero.ui.jsNotificationMessage("There was an error creating the collection.", "error");
+            Zotero.ui.closeDialog(widgetEl.find(".create-collection-dialog"));
+        });
     };
     
     dialogEl.find(".createButton").on('click', createFunction);
