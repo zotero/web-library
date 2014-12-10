@@ -1,6 +1,6 @@
 <script id="editnoteformTemplate" type="text/x-jsrender">
     <form class="itemDetailForm zform" data-itemKey="{{attr:itemKey}}">
-    <table>
+    <table class="table">
     {{if (false) }}
         <!-- Output user Creator for group library -->
         <tr>

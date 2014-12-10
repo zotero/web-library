@@ -3,7 +3,7 @@
     <button type="button" data-itemKey="{{attr:itemKey}}" {{if library}}data-library="{{attr:library.libraryString}}"{{/if}} class="zform saveitembutton btn btn-default eventfultrigger" data-triggers="saveItem">Save</button>
     <button type="button" data-itemKey="{{attr:itemKey}}" class="zform cancelitemeditbutton btn btn-default eventfultrigger" data-triggers="cancelItemEdit">Cancel</button>
     <h2>{{>item.title}}</h2>
-    <table>
+    <table class="table">
     
     <!-- Output itemType -->
     {{if item.apiObj.data.itemType != 'attachment' && item.apiObj.data.itemType != 'note'}}

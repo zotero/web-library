@@ -22,7 +22,7 @@
             <li><a href="{{url:groupLibrarySettingsUrl}}">Manage Library</a></li>
         </nav>
         {{/if}}
-        <table class="nugget-profile">
+        <table class="nugget-profile table">
             <!-- Member Count -->
             <tr>
                 <th scope="row">Members</th>

@@ -2,7 +2,7 @@
     {{if (parentUrl)}}
         <a href="{{url:parentUrl}}" class="ajax-link clickable item-select-link" data-itemKey='{{attr:item.get("parentItem")}}'>Parent Item</a>
     {{/if}}
-    <table>
+    <table class="table">
     {{if (item.libraryType == 'group')}}
         <!-- Output user Creator for group library -->
         <tr>

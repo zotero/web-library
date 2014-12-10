@@ -3,7 +3,7 @@
     <button type="submit" data-itemKey="{{attr:itemKey}}" class="zform saveitembutton">Save</button>
     <button type="button" data-itemKey="{{attr:itemKey}}" class="zform cancelitemeditbutton">Cancel</button>
     <h2>{{>item.title}}</h2>
-    <table>
+    <table class="table">
     
     <!-- Output itemType -->
     <tr>
