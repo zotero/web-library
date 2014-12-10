@@ -46,6 +46,10 @@ Zotero.ui.widgets.item.loadItemCallback = function(event){
     
     //if this is a new item: initialize an empty item for the given itemtype
     if(event.data.newItem){
+        Zotero.state.clearUrlVars(['collectionKey']);
+        Zotero.state.setUrlVar('mode', 'edit');
+        Zotero.state.pushState();
+        
         var itemType = triggeringEl.data("itemtype");
         if(!itemType){
             itemType = 'document';

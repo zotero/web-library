@@ -9387,6 +9387,9 @@ Zotero.ui.widgets.item.loadItemCallback = function(e) {
     t.empty();
     Zotero.ui.showSpinner(t);
     if (e.data.newItem) {
+        Zotero.state.clearUrlVars([ "collectionKey" ]);
+        Zotero.state.setUrlVar("mode", "edit");
+        Zotero.state.pushState();
         var a = r.data("itemtype");
         if (!a) {
             a = "document";
