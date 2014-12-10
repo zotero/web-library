@@ -1838,7 +1838,7 @@ Zotero.ajaxRequest = function(e, t, r) {
         type: t
     };
     o = J.extend({}, o, r);
-    Z.debug(o);
+    Z.debug(o, 3);
     return Zotero.net.queueRequest(o);
 };
 
@@ -2456,6 +2456,7 @@ Zotero.Library = function(e, t, r, o) {
         }, function() {
             Zotero.config.useIndexedDB = false;
             i.trigger("indexedDBError");
+            i.trigger("cachedDataLoaded");
             Z.error("Error initializing indexedDB. Promise rejected.");
             throw new Error("Error initializing indexedDB. Promise rejected.");
         });
@@ -2501,7 +2502,7 @@ Zotero.Library.prototype.ajaxRequest = function(e, t, r) {
         type: t
     };
     o = J.extend({}, o, r);
-    Z.debug(o);
+    Z.debug(o, 3);
     return Zotero.net.queueRequest(o);
 };
 
@@ -3439,28 +3440,22 @@ Zotero.Items.prototype.deleteItems = function(e, t) {
         }
     }
     var n = r.chunkObjectsArray(o);
-    var s = function(e) {
-        var t = index / n.length;
-        Zotero.trigger("deleteProgress", {
-            progress: t
-        });
-    };
-    var l = [];
+    var s = [];
     for (var i = 0; i < n.length; i++) {
-        var c = n[i].join(",");
-        var u = {
+        var l = n[i].join(",");
+        var c = {
             target: "items",
             libraryType: r.owningLibrary.libraryType,
             libraryID: r.owningLibrary.libraryID,
-            itemKey: c
+            itemKey: l
         };
-        var d = {
-            url: u,
+        var u = {
+            url: c,
             type: "DELETE"
         };
-        l.push(d);
+        s.push(u);
     }
-    return Zotero.net.queueRequest(l);
+    return Zotero.net.queueRequest(s);
 };
 
 Zotero.Items.prototype.trashItems = function(e) {
@@ -6359,6 +6354,7 @@ Zotero.Library.prototype.processLoadedCollections = function(e) {
         library: t,
         collectionsAdded: r
     });
+    return e;
 };
 
 Zotero.Library.prototype.addCollection = function(e, t) {
@@ -6468,6 +6464,7 @@ Zotero.Library.prototype.processLoadedItems = function(e) {
         library: t,
         loadedItems: o
     });
+    return e;
 };
 
 Zotero.Library.prototype.loadItem = function(e) {

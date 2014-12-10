@@ -380,7 +380,7 @@ Zotero.ajaxRequest = function(url, type, options){
         type: type,
     };
     requestObject = J.extend({}, requestObject, options);
-    Z.debug(requestObject);
+    Z.debug(requestObject, 3);
     return Zotero.net.queueRequest(requestObject);
 };
 
@@ -1154,6 +1154,7 @@ Zotero.Library = function(type, libraryID, libraryUrlIdentifier, apiKey){
             //can't use indexedDB. Set to false in config and trigger error to notify user
             Zotero.config.useIndexedDB = false;
             library.trigger("indexedDBError");
+            library.trigger('cachedDataLoaded');
             Z.error("Error initializing indexedDB. Promise rejected.");
             throw new Error("Error initializing indexedDB. Promise rejected.");
         });
@@ -1259,7 +1260,7 @@ Zotero.Library.prototype.ajaxRequest = function(url, type, options){
         type: type,
     };
     requestObject = J.extend({}, requestObject, options);
-    Z.debug(requestObject);
+    Z.debug(requestObject, 3);
     return Zotero.net.queueRequest(requestObject);
 };
 
@@ -2471,12 +2472,13 @@ Zotero.Items.prototype.deleteItems = function(deleteItems, version){
     
     //split keys into chunks of 50 per request
     var deleteChunks = items.chunkObjectsArray(deleteKeys);
-    
+    /*
     var successCallback = function(response){
         var deleteProgress = index / deleteChunks.length;
         Zotero.trigger("deleteProgress", {'progress': deleteProgress});
+        return response;
     };
-    
+    */
     var requestObjects = [];
     for(var i = 0; i < deleteChunks.length; i++){
         var deleteKeysString = deleteChunks[i].join(',');
@@ -5677,6 +5679,7 @@ Zotero.Library.prototype.processLoadedCollections = function(response){
     library.collections.updateSyncState(response.lastModifiedVersion);
     
     Zotero.trigger("loadedCollectionsProcessed", {library:library, collectionsAdded:collectionsAdded});
+    return response;
 }
 
 //create+write a collection given a name and optional parentCollectionKey
@@ -5802,6 +5805,7 @@ Zotero.Library.prototype.processLoadedItems = function(response){
     library.items.updateSyncState(response.lastModifiedVersion);
     
     Zotero.trigger("itemsChanged", {library:library, loadedItems:loadedItemsArray});
+    return response;
 };
 
 Zotero.Library.prototype.loadItem = function(itemKey) {
