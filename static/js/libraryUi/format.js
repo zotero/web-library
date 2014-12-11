@@ -94,8 +94,12 @@ Zotero.ui.formatItemField = function(field, item, trim){
                 formattedString = item.get(field);
             }
     }
-    if(trim && (trimLength > 0) && (formattedString.length > trimLength) ) {
-        return formattedString.slice(0, trimLength) + '…';
+    if(typeof s == 'undefined'){
+        Z.error("formattedString for " + field + " undefined");
+        Z.error(item);
+    }
+    if(trim) {
+        return Zotero.ui.trimString(formattedString, trimLength);
     }
     else{
         return formattedString;
@@ -111,6 +115,10 @@ Zotero.ui.formatItemField = function(field, item, trim){
 Zotero.ui.trimString = function(s, maxlen){
     var trimLength = 35;
     var formattedString = s;
+    if(typeof s == 'undefined'){
+        Z.error("formattedString passed to trimString was undefined.");
+        return '';
+    }
     if(maxlen){
         trimLength = maxlen;
     }
