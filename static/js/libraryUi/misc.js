@@ -54,7 +54,7 @@ Zotero.ui.updateItemFromForm = function(item, formEl){
     });
     
     var tags = [];
-    base.find("input[id^='tag_']").each(function(index, el){
+    base.find("input.taginput").each(function(index, el){
         var tagString = J(el).val();
         if(tagString !== ''){
             tags.push({tag: tagString});
@@ -93,7 +93,6 @@ Zotero.ui.updateItemFromForm = function(item, formEl){
 Zotero.ui.creatorFromElement = function(el){
     var name, creator, firstName, lastName;
     var jel = J(el);
-    var trindex = parseInt(jel.data('creatorindex'), 10);//parseInt(jel.attr('id').substr(8), 10);
     var creatorType = jel.find("select.creator-type-select").val();
     if(jel.hasClass('singleCreator')){
         name = jel.find("input.creator-name");

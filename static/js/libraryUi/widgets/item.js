@@ -140,25 +140,17 @@ Zotero.ui.widgets.item.showChildren = function(e){
     Z.debug('Zotero.ui.widgets.item.showChildren', 3);
     var widgetEl = J(e.data.widgetEl);
     var itemKey = widgetEl.data('itemkey');
-    Z.debug("itemKey: " + itemKey);
     var library = Zotero.ui.getAssociatedLibrary(widgetEl);
-    Z.debug("got library");
-    Z.debug(library);
     var item = library.items.getItem(itemKey);
-    Z.debug('got item');
-    Z.debug(item);
     var attachmentsDiv = J(widgetEl).find(".item-attachments-div");
     Zotero.ui.showSpinner(attachmentsDiv);
-    Z.debug('getting children');
     var p = item.getChildren(library)
     .then(function(childItems){
-        Z.debug("got children");
         var container = widgetEl.find(".item-attachments-div");
         container.html( J('#childitemsTemplate').render({childItems:childItems}) );
         Zotero.state.bindItemLinks(container);
     })
     .catch(Zotero.catchPromiseError);
-    Z.debug("fired getChildren");
     return p;
 };
 
@@ -236,43 +228,12 @@ Zotero.ui.widgets.item.addTag = function(e, focus) {
         focus = true;
     }
     var widgetEl = Zotero.ui.parentWidgetEl(e);
-    var tagnum = 0;
-    var lastTagID = widgetEl.find("input[id^='tag_']:last").attr('id');
-    if(lastTagID){
-        tagnum = parseInt(lastTagID.substr(4), 10);
-    }
-    
-    var newindex = tagnum + 1;
     var jel = widgetEl.find("td.tags");
-    jel.append( J('#itemtagTemplate').render({index:newindex}) );
+    jel.append( J('#itemtagTemplate').render({'library':library}) );
     
     var library = Zotero.ui.getAssociatedLibrary(widgetEl);
     if(library){
-        Z.debug('adding typeahead', 3);
-        var typeaheadSource = library.tags.plainList;
-        if(!typeaheadSource){
-            typeaheadSource = [];
-        }
-        var ttEngine = new Bloodhound({
-            datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
-            queryTokenizer: Bloodhound.tokenizers.whitespace,
-            local: J.map(typeaheadSource, function(typeaheadSource) { return { value: typeaheadSource }; })
-        });
-        ttEngine.initialize();
-        widgetEl.find("input.taginput").typeahead('destroy');
-        widgetEl.find("input.taginput").typeahead(
-            {
-                hint: true,
-                highlight: true,
-                minLength: 1
-            },
-            {
-                name: 'tags',
-                displayKey: 'value',
-                source: ttEngine.ttAdapter()
-                //local: library.tags.plainList
-            }
-        );
+        Zotero.ui.widgets.item.addTagTypeahead(library, widgetEl);
 
         //widgetEl.find("input.taginput").not('.tt-query').typeahead({name: 'tags', local: library.tags.plainList});
     }
@@ -289,7 +250,7 @@ Zotero.ui.widgets.item.addTag = function(e, focus) {
  */
 Zotero.ui.widgets.item.removeTag = function(e) {
     Z.debug("Zotero.ui.removeTag", 3);
-    var el = e.currentTarget;
+    var el = e.triggeringElement;
     var widgetEl = Zotero.ui.parentWidgetEl(el);
     //check to make sure there is another tag field available to use
     //if not add an empty one
@@ -312,7 +273,6 @@ Zotero.ui.widgets.item.editItemForm = function(el, item){
     Z.debug(item, 4);
     var jel = J(el).empty();
     var library = Zotero.ui.getAssociatedLibrary(el);
-    Z.debug(library);
     if(item.apiObj.data.itemType == 'note'){
         Z.debug("editItemForm - note", 3);
         jel.append( J('#editnoteformTemplate').render({
@@ -322,7 +282,6 @@ Zotero.ui.widgets.item.editItemForm = function(el, item){
         }) );
         
         //add empty tag if no tags yet
-        Z.debug('possibly adding empty tag');
         if(item.apiObj.data.tags.length === 0){
             Zotero.ui.widgets.item.addTag(el, false);
         }
@@ -358,13 +317,36 @@ Zotero.ui.widgets.item.editItemForm = function(el, item){
     }
     
     //add autocomplete
+    Zotero.ui.widgets.item.addTagTypeahead(library, jel);
+};
+
+Zotero.ui.widgets.item.addTagTypeahead = function(library, widgetEl){
+    Z.debug('adding typeahead', 3);
     var typeaheadSource = library.tags.plainList;
     if(!typeaheadSource){
         typeaheadSource = [];
     }
-    jel.find("input.taginput").typeahead({name: 'tags', local: typeaheadSource});
+    var ttEngine = new Bloodhound({
+        datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
+        queryTokenizer: Bloodhound.tokenizers.whitespace,
+        local: J.map(typeaheadSource, function(typeaheadSource) { return { value: typeaheadSource }; })
+    });
+    ttEngine.initialize();
+    widgetEl.find("input.taginput").typeahead('destroy');
+    widgetEl.find("input.taginput").typeahead(
+        {
+            hint: true,
+            highlight: true,
+            minLength: 1
+        },
+        {
+            name: 'tags',
+            displayKey: 'value',
+            source: ttEngine.ttAdapter()
+            //local: library.tags.plainList
+        }
+    );
 };
-
 
 /**
  * Render and display full item details into an element
@@ -524,21 +506,13 @@ Zotero.ui.widgets.item.itemFormKeydown = function(e){
 };
 
 Zotero.ui.widgets.item.updateTypeahead = function(event){
-    /*
     Z.debug("updateTypeahead", 3);
     var widgetEl = J(event.data.widgetEl);
     var triggeringEl = J(event.triggeringElement);
     var library = Zotero.ui.getAssociatedLibrary(widgetEl);
     if(library){
-        Z.debug('adding typeahead', 3);
-        var typeaheadSource = library.tags.plainList;
-        if(!typeaheadSource){
-            typeaheadSource = [];
-        }
-        Z.debug(typeaheadSource);
-        widgetEl.find("input.taginput").typeahead('destroy').typeahead({name: 'tags', local: typeaheadSource});
+        Zotero.ui.widgets.item.addTagTypeahead(library, widgetEl);
     }
-    */
 };
 
 

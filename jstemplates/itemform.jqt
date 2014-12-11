@@ -61,10 +61,15 @@
     <tr>
         <th>Tags</th>
         <td class="tags">
-        {{for item.apiObj.data.tags ~itemKey=itemKey ~library=library tmpl="#itemtagTemplate" /}}
+            {{for item.apiObj.data.tags ~itemKey=itemKey ~library=library tmpl="#itemtagTemplate" /}}
         </td>
     </tr>
-    
+    <tr>
+        <th></th>
+        <td>
+            <button type="button" class="add-tag-link btn btn-default eventfultrigger" data-triggers="addTag" {{if library}}data-library="{{attr:library.libraryString}}"{{/if}}>Add Tag</button>
+        </td>
+    </tr>
     <!-- Output notes if new item -->
     {{if item.itemType != 'attachment'}}
     <tr>
