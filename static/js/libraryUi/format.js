@@ -68,7 +68,8 @@ Zotero.ui.formatItemField = function(field, item, trim){
             formattedString = item.get('title');
             break;
         case "creator":
-            formattedString = item.apiObj.meta.creatorSummary;
+        case "creatorSummary":
+            formattedString = item.get('creatorSummary');
             break;
         case "addedBy":
             if(item.apiObj.meta.createdByUser){
@@ -94,7 +95,7 @@ Zotero.ui.formatItemField = function(field, item, trim){
                 formattedString = item.get(field);
             }
     }
-    if(typeof s == 'undefined'){
+    if(typeof formattedString == 'undefined'){
         Z.error("formattedString for " + field + " undefined");
         Z.error(item);
     }
