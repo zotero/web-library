@@ -9,30 +9,39 @@
 Zotero.ui.jsNotificationMessage = function(message, type, timeout){
     Z.debug("notificationMessage: " + type + " : " + message, 3);
     if(Zotero.config.suppressErrorNotifications) return;
-    if(!timeout){
+    
+    if(!timeout && (timeout !== false)){
         timeout = 5;
     }
     var alertType = "alert-info";
     if(type){
         switch(type){
             case 'error':
+            case 'danger':
                 alertType = 'alert-danger';
+                timeout = false;
                 break;
             case 'success':
+            case 'confirm':
                 alertType = 'alert-success';
                 break;
             case 'info':
                 alertType = 'alert-info';
                 break;
             case 'warning':
+            case 'warn':
                 alertType = 'alert-warning';
                 break;
         }
     }
     
-    J("#js-message").append("<div class='alert " + alertType + "'>" + message + "</div>").children("div").delay(parseInt(timeout, 10) * 1000).slideUp().delay(300).queue(function(){
-        J(this).remove();
-    });
+    if(timeout){
+        J("#js-message").append("<div class='alert alert-dismissable " + alertType + "'><button type='button' class='close' data-dismiss='alert'><span aria-hidden='true'>&times;</span><span class='sr-only'>Close</span></button>" + message + "</div>").children("div").delay(parseInt(timeout, 10) * 1000).slideUp().delay(300).queue(function(){
+            J(this).remove();
+        });
+    } else {
+        J("#js-message").append("<div class='alert alert-dismissable " + alertType + "'><button type='button' class='close' data-dismiss='alert'><span aria-hidden='true'>&times;</span><span class='sr-only'>Close</span></button>" + message + "</div>");
+    }
 };
 
 /**
