@@ -163,12 +163,6 @@ Zotero.ui.widgets.item.addCreator = function(e){
     Z.debug("Zotero.ui.addCreator", 3);
     var itemKey = J(button).data('itemkey');
     var itemType = J(button).closest('form').find('select.itemType').val();
-    var lastcreatorid = J("input[id^='creator_']:last").attr('id');
-    var creatornum = 0;
-    if(lastcreatorid){
-        creatornum = parseInt(lastcreatorid.substr(8), 10);
-    }
-    var newindex = creatornum + 1;
     var jel = J("input[id^='creator_']:last").closest('tr');
     jel.after( J('#authorelementsdoubleTemplate').render({
         index:newindex,
