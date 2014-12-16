@@ -42,7 +42,6 @@ Zotero.ui.updateItemFromForm = function(item, formEl){
         if(typeof inputValue !== 'undefined'){
             Z.debug("updating item " + field + ": " + inputValue);
             item.set(field, inputValue);
-            //item.apiObj[field] = inputValue;//base.find(selector).val();
         }
     });
     var creators = [];

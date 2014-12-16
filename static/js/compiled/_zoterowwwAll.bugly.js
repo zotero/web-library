@@ -1,9 +1,9 @@
 (function(e, t) {
-    var r, o = Array.prototype.slice, i = decodeURIComponent, a = e.param, n, s, l, c, u = e.bbq = e.bbq || {}, d, p, g, f = e.event.special, m = "hashchange", b = "querystring", y = "fragment", h = "elemUrlAttr", v = "href", Z = "src", w = /^.*\?|#.*$/g, I, T, k, C, S, J = {};
-    function x(e) {
+    var r, o = Array.prototype.slice, i = decodeURIComponent, a = e.param, n, s, l, c, u = e.bbq = e.bbq || {}, d, p, g, f = e.event.special, m = "hashchange", b = "querystring", y = "fragment", h = "elemUrlAttr", v = "href", Z = "src", w = /^.*\?|#.*$/g, I, T, k, S, C, J = {};
+    function D(e) {
         return typeof e === "string";
     }
-    function D(e) {
+    function x(e) {
         var t = o.call(arguments, 1);
         return function() {
             return e.apply(this, t.concat(o.call(arguments)));
@@ -20,25 +20,25 @@
         if (s !== r) {
             p = a.match(t ? T : /^([^#?]*)\??([^#]*)(#?.*)/);
             f = p[3] || "";
-            if (c === 2 && x(s)) {
+            if (c === 2 && D(s)) {
                 d = s.replace(t ? I : w, "");
             } else {
                 g = l(p[2]);
-                s = x(s) ? l[t ? y : b](s) : s;
+                s = D(s) ? l[t ? y : b](s) : s;
                 d = c === 2 ? s : c === 1 ? e.extend({}, s, g) : e.extend({}, g, s);
                 d = n(d);
                 if (t) {
                     d = d.replace(k, i);
                 }
             }
-            u = p[1] + (t ? S : d || !p[1] ? "?" : "") + d + f;
+            u = p[1] + (t ? C : d || !p[1] ? "?" : "") + d + f;
         } else {
             u = o(a !== r ? a : location.href);
         }
         return u;
     }
-    a[b] = D(O, 0, _);
-    a[y] = s = D(O, 1, j);
+    a[b] = x(O, 0, _);
+    a[y] = s = x(O, 1, j);
     a.sorted = n = function(t, r) {
         var o = [], i = {};
         e.each(a(t, r).split("&"), function(e, t) {
@@ -64,15 +64,15 @@
             if (e) {
                 I = /^.*(?:#!|#)/;
                 T = /^([^#]*)(?:#!|#)?(.*)$/;
-                S = "#!";
+                C = "#!";
             } else {
                 I = /^.*#/;
                 T = /^([^#]*)#?(.*)$/;
-                S = "#";
+                C = "#";
             }
-            C = !!e;
+            S = !!e;
         }
-        return C;
+        return S;
     };
     s.ajaxCrawlable(0);
     e.deparam = l = function(t, o) {
@@ -124,12 +124,12 @@
             o = t;
             t = a[e ? y : b]();
         } else {
-            t = x(t) ? t.replace(e ? I : w, "") : t;
+            t = D(t) ? t.replace(e ? I : w, "") : t;
         }
         return l(t, o);
     }
-    l[b] = D(L, 0);
-    l[y] = c = D(L, 1);
+    l[b] = x(L, 0);
+    l[y] = c = x(L, 1);
     e[h] || (e[h] = function(t) {
         return e.extend(J, t);
     })({
@@ -144,7 +144,7 @@
     });
     g = e[h];
     function E(t, o, i, n) {
-        if (!x(i) && typeof i !== "object") {
+        if (!D(i) && typeof i !== "object") {
             n = i;
             i = o;
             o = r;
@@ -154,10 +154,10 @@
             r.attr(s, a[t](l, i, n));
         });
     }
-    e.fn[b] = D(E, b);
-    e.fn[y] = D(E, y);
+    e.fn[b] = x(E, b);
+    e.fn[y] = x(E, y);
     u.pushState = d = function(e, t) {
-        if (x(e) && /^#/.test(e) && t === r) {
+        if (D(e) && /^#/.test(e) && t === r) {
             t = 2;
         }
         var o = e !== r, i = s(location.href, o ? e : {}, o ? t : 2);
@@ -367,10 +367,10 @@
             e === t ? b(e, t) : f(e, t) || b(e, t);
         }
         function b(e, t) {
-            e._state === D && (e._state = j, e._detail = t, Z.async(h, e));
+            e._state === x && (e._state = j, e._detail = t, Z.async(h, e));
         }
         function y(e, t) {
-            e._state === D && (e._state = j, e._detail = t, Z.async(v, e));
+            e._state === x && (e._state = j, e._detail = t, Z.async(v, e));
         }
         function h(e) {
             g(e, e._state = _);
@@ -379,9 +379,9 @@
             g(e, e._state = O);
         }
         var Z = e.config, w = (e.configure, t.objectOrFunction), I = t.isFunction, T = (t.now, 
-        r.cast), k = o.all, C = i.race, S = a.resolve, J = n.reject, x = s.asap;
-        Z.async = x;
-        var D = void 0, j = 0, _ = 1, O = 2;
+        r.cast), k = o.all, S = i.race, C = a.resolve, J = n.reject, D = s.asap;
+        Z.async = D;
+        var x = void 0, j = 0, _ = 1, O = 2;
         c.prototype = {
             constructor: c,
             _state: void 0,
@@ -400,7 +400,7 @@
             "catch": function(e) {
                 return this.then(null, e);
             }
-        }, c.all = k, c.cast = T, c.race = C, c.resolve = S, c.reject = J, l.Promise = c;
+        }, c.all = k, c.cast = T, c.race = S, c.resolve = C, c.reject = J, l.Promise = c;
     }), e("promise/race", [ "./utils", "exports" ], function(e, t) {
         "use strict";
         function r(e) {
@@ -1553,7 +1553,7 @@ var Zotero = {
         baseFeedUrl: "https://api.zotero.org",
         baseZoteroWebsiteUrl: "https://www.zotero.org",
         baseDownloadUrl: "https://www.zotero.org",
-        debugLogEndpoint: "https://test.zotero.net/user/submitdebug",
+        debugLogEndpoint: "",
         storeDebug: true,
         directDownloads: true,
         proxyPath: "/proxyrequest",
@@ -2103,6 +2103,10 @@ Zotero.ApiObject = function() {
 Zotero.ApiObject.prototype.associateWithLibrary = function(e) {
     var t = this;
     t.owningLibrary = e;
+    if (typeof this.apiObj.library == "object") {
+        this.apiObj.library.type = e.type;
+        this.apiObj.library.id = e.libraryID;
+    }
     return t;
 };
 
@@ -2458,7 +2462,6 @@ Zotero.Library = function(e, t, r, o) {
             i.trigger("indexedDBError");
             i.trigger("cachedDataLoaded");
             Z.error("Error initializing indexedDB. Promise rejected.");
-            throw new Error("Error initializing indexedDB. Promise rejected.");
         });
     }
     i.dirty = false;
@@ -4596,9 +4599,9 @@ Zotero.Item.prototype.get = function(e) {
       case "title":
         var r = "";
         if (t.apiObj.data.itemType == "note") {
-            r = t.noteTitle(t.apiObj.data.note);
+            return t.noteTitle(t.apiObj.data.note);
         } else {
-            r = t.apiObj.data.title;
+            return t.apiObj.data.title;
         }
         if (r == "") {
             return "[Untitled]";
@@ -4606,7 +4609,12 @@ Zotero.Item.prototype.get = function(e) {
         return r;
 
       case "creatorSummary":
-        return t.apiObj.meta.creatorSummary;
+      case "creator":
+        if (typeof t.apiObj.meta.creatorSummary !== "undefined") {
+            return t.apiObj.meta.creatorSummary;
+        } else {
+            return "";
+        }
 
       case "year":
         if (t.parsedDate) {
@@ -7503,7 +7511,8 @@ Zotero.ui.formatItemField = function(e, t, r) {
         break;
 
       case "creator":
-        s = t.apiObj.meta.creatorSummary;
+      case "creatorSummary":
+        s = t.get("creatorSummary");
         break;
 
       case "addedBy":
@@ -7530,8 +7539,12 @@ Zotero.ui.formatItemField = function(e, t, r) {
             s = t.get(e);
         }
     }
-    if (r && n > 0 && s.length > n) {
-        return s.slice(0, n) + "…";
+    if (typeof s == "undefined") {
+        Z.error("formattedString for " + e + " undefined");
+        Z.error(t);
+    }
+    if (r) {
+        return Zotero.ui.trimString(s, n);
     } else {
         return s;
     }
@@ -7540,6 +7553,10 @@ Zotero.ui.formatItemField = function(e, t, r) {
 Zotero.ui.trimString = function(e, t) {
     var r = 35;
     var o = e;
+    if (typeof e == "undefined") {
+        Z.error("formattedString passed to trimString was undefined.");
+        return "";
+    }
     if (t) {
         r = t;
     }
@@ -7910,7 +7927,7 @@ Zotero.ui.updateItemFromForm = function(e, t) {
         }
     });
     var s = [];
-    r.find("input[id^='tag_']").each(function(e, t) {
+    r.find("input.taginput").each(function(e, t) {
         var r = J(t).val();
         if (r !== "") {
             s.push({
@@ -7944,15 +7961,14 @@ Zotero.ui.updateItemFromForm = function(e, t) {
 Zotero.ui.creatorFromElement = function(e) {
     var t, r, o, i;
     var a = J(e);
-    var n = parseInt(a.data("creatorindex"), 10);
-    var s = a.find("select.creator-type-select").val();
+    var n = a.find("select.creator-type-select").val();
     if (a.hasClass("singleCreator")) {
         t = a.find("input.creator-name");
         if (!t.val()) {
             return null;
         }
         r = {
-            creatorType: s,
+            creatorType: n,
             name: t.val()
         };
     } else if (a.hasClass("doubleCreator")) {
@@ -7962,7 +7978,7 @@ Zotero.ui.creatorFromElement = function(e) {
             return null;
         }
         r = {
-            creatorType: s,
+            creatorType: n,
             firstName: o,
             lastName: i
         };
@@ -8248,17 +8264,20 @@ Zotero.ui.cleanUpRte = function(e) {
 Zotero.ui.jsNotificationMessage = function(e, t, r) {
     Z.debug("notificationMessage: " + t + " : " + e, 3);
     if (Zotero.config.suppressErrorNotifications) return;
-    if (!r) {
+    if (!r && r !== false) {
         r = 5;
     }
     var o = "alert-info";
     if (t) {
         switch (t) {
           case "error":
+          case "danger":
             o = "alert-danger";
+            r = false;
             break;
 
           case "success":
+          case "confirm":
             o = "alert-success";
             break;
 
@@ -8267,13 +8286,18 @@ Zotero.ui.jsNotificationMessage = function(e, t, r) {
             break;
 
           case "warning":
+          case "warn":
             o = "alert-warning";
             break;
         }
     }
-    J("#js-message").append("<div class='alert " + o + "'>" + e + "</div>").children("div").delay(parseInt(r, 10) * 1e3).slideUp().delay(300).queue(function() {
-        J(this).remove();
-    });
+    if (r) {
+        J("#js-message").append("<div class='alert alert-dismissable " + o + "'><button type='button' class='close' data-dismiss='alert'><span aria-hidden='true'>&times;</span><span class='sr-only'>Close</span></button>" + e + "</div>").children("div").delay(parseInt(r, 10) * 1e3).slideUp().delay(300).queue(function() {
+            J(this).remove();
+        });
+    } else {
+        J("#js-message").append("<div class='alert alert-dismissable " + o + "'><button type='button' class='close' data-dismiss='alert'><span aria-hidden='true'>&times;</span><span class='sr-only'>Close</span></button>" + e + "</div>");
+    }
 };
 
 Zotero.ui.ajaxErrorMessage = function(e) {
@@ -8549,7 +8573,6 @@ Zotero.ui.widgets.chooseLibraryDialog.getAccessibleLibraries = function() {};
 Zotero.ui.widgets.citeItemDialog = {};
 
 Zotero.ui.widgets.citeItemDialog.init = function(e) {
-    return;
     Z.debug("citeItemDialog widget init", 3);
     var t = Zotero.ui.getAssociatedLibrary(e);
     Zotero.ui.widgets.citeItemDialog.getAvailableStyles();
@@ -8691,7 +8714,7 @@ Zotero.ui.widgets.collections.syncCollections = function(e) {
         Z.error("Error syncing collections");
         Z.error(e);
         i.trigger("libraryCollectionsUpdated");
-        Zotero.ui.jsNotificationMessage("Error syncing collections. Collections list may not be up to date", "notice");
+        Zotero.ui.jsNotificationMessage("Error syncing collections. Collections list may not be up to date", "error");
     }).then(function() {
         t.removeData("loadingPromise");
     });
@@ -9453,25 +9476,17 @@ Zotero.ui.widgets.item.showChildren = function(e) {
     Z.debug("Zotero.ui.widgets.item.showChildren", 3);
     var t = J(e.data.widgetEl);
     var r = t.data("itemkey");
-    Z.debug("itemKey: " + r);
     var o = Zotero.ui.getAssociatedLibrary(t);
-    Z.debug("got library");
-    Z.debug(o);
     var i = o.items.getItem(r);
-    Z.debug("got item");
-    Z.debug(i);
     var a = J(t).find(".item-attachments-div");
     Zotero.ui.showSpinner(a);
-    Z.debug("getting children");
     var n = i.getChildren(o).then(function(e) {
-        Z.debug("got children");
         var r = t.find(".item-attachments-div");
         r.html(J("#childitemsTemplate").render({
             childItems: e
         }));
         Zotero.state.bindItemLinks(r);
     }).catch(Zotero.catchPromiseError);
-    Z.debug("fired getChildren");
     return n;
 };
 
@@ -9480,15 +9495,9 @@ Zotero.ui.widgets.item.addCreator = function(e) {
     Z.debug("Zotero.ui.addCreator", 3);
     var r = J(t).data("itemkey");
     var o = J(t).closest("form").find("select.itemType").val();
-    var i = J("input[id^='creator_']:last").attr("id");
-    var a = 0;
-    if (i) {
-        a = parseInt(i.substr(8), 10);
-    }
-    var n = a + 1;
-    var s = J("input[id^='creator_']:last").closest("tr");
-    s.after(J("#authorelementsdoubleTemplate").render({
-        index: n,
+    var i = J("input[id^='creator_']:last").closest("tr");
+    i.after(J("#authorelementsdoubleTemplate").render({
+        index: newindex,
         creator: {
             firstName: "",
             lastName: ""
@@ -9529,43 +9538,13 @@ Zotero.ui.widgets.item.addTag = function(e, t) {
         t = true;
     }
     var r = Zotero.ui.parentWidgetEl(e);
-    var o = 0;
-    var i = r.find("input[id^='tag_']:last").attr("id");
-    if (i) {
-        o = parseInt(i.substr(4), 10);
-    }
-    var a = o + 1;
-    var n = r.find("td.tags");
-    n.append(J("#itemtagTemplate").render({
-        index: a
+    var o = r.find("td.tags");
+    o.append(J("#itemtagTemplate").render({
+        library: i
     }));
-    var s = Zotero.ui.getAssociatedLibrary(r);
-    if (s) {
-        Z.debug("adding typeahead", 3);
-        var l = s.tags.plainList;
-        if (!l) {
-            l = [];
-        }
-        var c = new Bloodhound({
-            datumTokenizer: Bloodhound.tokenizers.obj.whitespace("value"),
-            queryTokenizer: Bloodhound.tokenizers.whitespace,
-            local: J.map(l, function(e) {
-                return {
-                    value: e
-                };
-            })
-        });
-        c.initialize();
-        r.find("input.taginput").typeahead("destroy");
-        r.find("input.taginput").typeahead({
-            hint: true,
-            highlight: true,
-            minLength: 1
-        }, {
-            name: "tags",
-            displayKey: "value",
-            source: c.ttAdapter()
-        });
+    var i = Zotero.ui.getAssociatedLibrary(r);
+    if (i) {
+        Zotero.ui.widgets.item.addTagTypeahead(i, r);
     }
     if (t) {
         J("input.taginput").last().focus();
@@ -9574,7 +9553,7 @@ Zotero.ui.widgets.item.addTag = function(e, t) {
 
 Zotero.ui.widgets.item.removeTag = function(e) {
     Z.debug("Zotero.ui.removeTag", 3);
-    var t = e.currentTarget;
+    var t = e.triggeringElement;
     var r = Zotero.ui.parentWidgetEl(t);
     if (r.find("div.edit-tag-div").length === 1) {
         Zotero.ui.widgets.item.addTag(e);
@@ -9587,7 +9566,6 @@ Zotero.ui.widgets.item.editItemForm = function(e, t) {
     Z.debug(t, 4);
     var r = J(e).empty();
     var o = Zotero.ui.getAssociatedLibrary(e);
-    Z.debug(o);
     if (t.apiObj.data.itemType == "note") {
         Z.debug("editItemForm - note", 3);
         r.append(J("#editnoteformTemplate").render({
@@ -9595,7 +9573,6 @@ Zotero.ui.widgets.item.editItemForm = function(e, t) {
             library: o,
             itemKey: t.apiObj.key
         }));
-        Z.debug("possibly adding empty tag");
         if (t.apiObj.data.tags.length === 0) {
             Zotero.ui.widgets.item.addTag(e, false);
         }
@@ -9625,13 +9602,34 @@ Zotero.ui.widgets.item.editItemForm = function(e, t) {
             Zotero.ui.init.rte();
         }).catch(Zotero.catchPromiseError);
     }
-    var i = o.tags.plainList;
-    if (!i) {
-        i = [];
+    Zotero.ui.widgets.item.addTagTypeahead(o, r);
+};
+
+Zotero.ui.widgets.item.addTagTypeahead = function(e, t) {
+    Z.debug("adding typeahead", 3);
+    var r = e.tags.plainList;
+    if (!r) {
+        r = [];
     }
-    r.find("input.taginput").typeahead({
+    var o = new Bloodhound({
+        datumTokenizer: Bloodhound.tokenizers.obj.whitespace("value"),
+        queryTokenizer: Bloodhound.tokenizers.whitespace,
+        local: J.map(r, function(e) {
+            return {
+                value: e
+            };
+        })
+    });
+    o.initialize();
+    t.find("input.taginput").typeahead("destroy");
+    t.find("input.taginput").typeahead({
+        hint: true,
+        highlight: true,
+        minLength: 1
+    }, {
         name: "tags",
-        local: i
+        displayKey: "value",
+        source: o.ttAdapter()
     });
 };
 
@@ -9780,7 +9778,15 @@ Zotero.ui.widgets.item.itemFormKeydown = function(e) {
     }
 };
 
-Zotero.ui.widgets.item.updateTypeahead = function(e) {};
+Zotero.ui.widgets.item.updateTypeahead = function(e) {
+    Z.debug("updateTypeahead", 3);
+    var t = J(e.data.widgetEl);
+    var r = J(e.triggeringElement);
+    var o = Zotero.ui.getAssociatedLibrary(t);
+    if (o) {
+        Zotero.ui.widgets.item.addTagTypeahead(o, t);
+    }
+};
 
 Zotero.ui.widgets.items = {};
 
@@ -9867,8 +9873,7 @@ Zotero.ui.widgets.items.loadItemsCallback = function(e) {
         Zotero.ui.widgets.items.displayItems(t, o, e.loadedItems, r);
     }).catch(function(e) {
         Z.error(e);
-        var r = Zotero.ui.ajaxErrorMessage(e.jqxhr);
-        t.html("<p>" + r + "</p>");
+        t.html("<p>There was an error loading your items. Please try again in a few minutes.</p>");
     });
     t.data("loadingPromise", i);
     return i;
@@ -10344,7 +10349,7 @@ Zotero.ui.widgets.tags.init = function(e) {
 };
 
 Zotero.ui.widgets.tags.syncTags = function(e) {
-    Z.debug("Zotero eventful syncTags", 3);
+    Z.debug("Zotero.ui.widgets.tags.syncTags", 3);
     var t = J(e.data.widgetEl);
     var r = t.data("loadingPromise");
     if (r) {
@@ -10369,8 +10374,6 @@ Zotero.ui.widgets.tags.syncTags = function(e) {
         t.removeData("loadingPromise");
     }, function(e) {
         Z.error("syncTags failed. showing local data and clearing loading div");
-        Z.error(e);
-        Z.error(e.get());
         a.trigger("libraryTagsUpdated");
         t.find(".loading").empty();
         t.removeData("loadingPromise");
