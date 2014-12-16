@@ -2,7 +2,9 @@
     {{if (parentUrl)}}
         <a href="{{url:parentUrl}}" class="ajax-link clickable item-select-link" data-itemKey='{{attr:item.apiObj.data.parentItem}}'>Parent Item</a>
     {{/if}}
+    <!--
     <h2>{{>item.apiObj.data.title}}</h2>
+    -->
     {{if (item.apiObj.library.type == 'user')}}
         <span id="libraryUserID" title="{{attr:item.apiObj.library.id}}"></span>
     {{else (item.apiObj.library.type == 'group')}}
