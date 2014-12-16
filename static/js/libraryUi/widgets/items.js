@@ -92,8 +92,9 @@ Zotero.ui.widgets.items.loadItemsCallback = function(event){
         Zotero.ui.widgets.items.displayItems(widgetEl, newConfig, response.loadedItems, pagination);
     }).catch(function(response){
         Z.error(response);
-        var elementMessage = Zotero.ui.ajaxErrorMessage(response.jqxhr);
-        widgetEl.html("<p>" + elementMessage + "</p>");
+        widgetEl.html("<p>There was an error loading your items. Please try again in a few minutes.</p>");
+        //var elementMessage = Zotero.ui.ajaxErrorMessage(response.jqxhr);
+        //widgetEl.html("<p>" + elementMessage + "</p>");
     });
     
     //associate promise with el so we can cancel on later loads
