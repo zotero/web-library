@@ -46,7 +46,7 @@ Zotero.ui.widgets.tags.init = function(el){
 };
 
 Zotero.ui.widgets.tags.syncTags = function(evt){
-    Z.debug('Zotero eventful syncTags', 3);
+    Z.debug('Zotero.ui.widgets.tags.syncTags', 3);
     var widgetEl = J(evt.data.widgetEl);
     var loadingPromise = widgetEl.data('loadingPromise');
     if(loadingPromise){
@@ -82,8 +82,6 @@ Zotero.ui.widgets.tags.syncTags = function(evt){
     },
     function(error){
         Z.error("syncTags failed. showing local data and clearing loading div");
-        Z.error(error);
-        Z.error(error.get());
         //sync failed, but we still have some local data, so show that
         library.trigger("libraryTagsUpdated");
         widgetEl.find('.loading').empty();
