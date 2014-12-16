@@ -25,7 +25,7 @@
                         <option value='vancouver'>Vancouver</option>
                     </select>
                     {{if freeStyleInput}}
-                    <input type="text" class="free-text-style-input form-control" />
+                    <!--<input type="text" class="free-text-style-input form-control" placeholder="style" />-->
                     {{/if}}
                 </form>
                 <div id="cite-box-div" class="cite-box-div">

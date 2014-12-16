@@ -1,7 +1,6 @@
 Zotero.ui.widgets.citeItemDialog = {};
 
 Zotero.ui.widgets.citeItemDialog.init = function(el){
-    return;
     Z.debug("citeItemDialog widget init", 3);
     var library = Zotero.ui.getAssociatedLibrary(el);
     
