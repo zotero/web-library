@@ -124,5 +124,27 @@ Zotero.ui.appendSpinner = function(el){
     J(el).append("<img class='spinner' src='" + spinnerUrl + "'/>");
 };
 
+//Take a table that is present in the DOM, save the widths of the headers and the offset of the body,
+//set the widths of the columns explicitly, set the header to position:fixed, set the offset of the body explictly
+//this has the effect of fixed table headers with scrollable data
+Zotero.ui.fixTableHeaders = function(tableEl) {
+    var tel = J(tableEl);
+    var colWidths = [];
+    tel.find("thead th").each(function(ind, th){
+        var width = J(th).width();
+        colWidths.push(width);
+        J(th).width(width);
+    });
 
+    tel.find("tbody>tr:first>td").each(function(ind, td){
+        J(td).width(colWidths[ind]);
+    });
+
+    var bodyOffset = tel.find("thead").height();
+
+    tel.find("thead").css('position', 'fixed').css('margin-top', -bodyOffset).css('background-color', 'white').css('z-index', 10);
+    tel.find("tbody").css('margin-top', bodyOffset);
+    tel.css("margin-top", bodyOffset);
+
+};
 

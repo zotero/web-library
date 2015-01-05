@@ -184,6 +184,8 @@ Zotero.ui.widgets.items.displayItems = function(el, config, itemsArray, paginati
     
     //library.trigger('controlPanelContextChange');
     Zotero.eventful.initTriggers();
+
+    Zotero.ui.fixTableHeaders(J("#field-table"));
 };
 
 Zotero.ui.callbacks.resortItems = function(e){
