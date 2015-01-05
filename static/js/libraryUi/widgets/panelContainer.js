@@ -5,8 +5,7 @@ Zotero.ui.widgets.panelContainer.init = function(el){
     var library = Zotero.ui.getAssociatedLibrary(el);
     
     library.listen("displayedItemsChanged showItemsPanel", Zotero.ui.widgets.panelContainer.showPanel, {widgetEl: el, panelSelector:"#items-panel"});
-    library.listen("showCollectionsPanel", Zotero.ui.widgets.panelContainer.showPanel, {widgetEl: el, panelSelector:"#collections-panel"});
-    library.listen("showTagsPanel", Zotero.ui.widgets.panelContainer.showPanel, {widgetEl: el, panelSelector:"#tags-panel"});
+    library.listen("showFiltersPanel", Zotero.ui.widgets.panelContainer.showPanel, {widgetEl: el, panelSelector:"#left-panel"});
     library.listen("showItemPanel displayedItemChanged", Zotero.ui.widgets.panelContainer.showPanel, {widgetEl: el, panelSelector:"#item-panel"});
     Zotero.listen("reflow", Zotero.ui.widgets.panelContainer.reflow, {widgetEl: el});
     
@@ -68,12 +67,8 @@ Zotero.ui.widgets.panelContainer.showPanel = function(evt){
         case '#collections-panel':
             widgetEl.find('li.collections-nav').addClass('active');
             break;
-        case '#tags-panel':
-            widgetEl.find('li.tags-nav').addClass('active');
+        case '#left-panel':
+            widgetEl.find('li.filters-nav').addClass('active');
             break;
-        case '#items-panel':
-            widgetEl.find('li.items-nav').addClass('active');
-            break;
-        
     }
 };
