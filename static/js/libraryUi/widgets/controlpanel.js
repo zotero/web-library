@@ -7,6 +7,7 @@ Zotero.ui.widgets.controlPanel.init = function(el){
     Zotero.ui.showControlPanel(el);
     //library.listen("controlPanelContextChange", Zotero.ui.widgets.controlPanel.contextChanged, {widgetEl:el});
     library.listen("selectedItemsChanged", Zotero.ui.widgets.controlPanel.selectedItemsChanged, {widgetEl:el});
+    library.listen("selectedCollectionChanged", Zotero.ui.widgets.controlPanel.selectedItemsChanged, {widgetEl:el});
     
     library.listen("removeFromCollection", Zotero.ui.widgets.controlPanel.removeFromCollection, {widgetEl:el});
     library.listen("moveToTrash", Zotero.ui.widgets.controlPanel.moveToTrash), {widgetEl:el};
@@ -46,41 +47,59 @@ Zotero.ui.widgets.controlPanel.updateDisabledControlButtons = function(selectedI
         selectedItemKeys = [];
     }
     
-    J(".move-to-trash-button").prop('title', 'Move to Trash');
-    
+    //start with all menu items showing and enabled
+    J("ul.actions-menu li").show().removeClass("disabled");
     J(".create-item-button").removeClass('disabled');
+    
     if((selectedItemKeys.length === 0) && (!Zotero.state.getUrlVar('itemKey')) ){
         //then there are 0 items selected by checkbox and no item details are being displayed
-        //disable all buttons that require an item to operate on
-        J(".add-to-collection-button").addClass('disabled');
-        J(".remove-from-collection-button").addClass('disabled');
-        J(".move-to-trash-button").addClass('disabled');
-        J(".remove-from-trash-button").addClass('disabled');
-        
-        J(".cite-button").addClass('disabled');
-        J(".export-button").addClass('disabled'); //TODO: should this really be disabled? not just export everything?
+        //hide from the menu actions that require an item to operate on
+        J(".selected-item-action").hide();
+        /*
+        J(".add-to-collection-button").closest('li').hide();
+        J(".remove-from-collection-button").closest('li').hide();
+        J(".move-to-trash-button").closest('li').hide();
+        J(".remove-from-trash-button").closest('li').hide();
+        J(".permanently-delete-button").closest('li').hide();
+        */
+        //J(".cite-button").addClass('disabled');
+        //J(".export-button").addClass('disabled'); //TODO: should this really be disabled? not just export everything?
     }
     else{
         //something is selected for actions to apply to
-        J(".add-to-collection-button").removeClass('disabled');
-        J(".remove-from-collection-button").removeClass('disabled');
-        J(".move-to-trash-button").removeClass('disabled');
+        //switch what is shown based on the selected collection
+        /*
         if(Zotero.state.getUrlVar('collectionKey') == 'trash'){
-            J(".remove-from-trash-button").removeClass('disabled');
+            J(".move-to-trash-button").closest('li').hide();
+        } else {
+            J(".move-to-trash-button").closest('li').hide();
         }
-        J(".cite-button").removeClass('disabled');
-        J(".export-button").removeClass('disabled');
+        */
+        //J(".cite-button").closest('li').removeClass('disabled');
+        //J(".export-button").closest('li').removeClass('disabled');
     }
+    
     //only show remove from collection button if inside a collection
     if(!Zotero.state.getUrlVar("collectionKey")){
-        J(".remove-from-collection-button").addClass('disabled');
+        J(".selected-collection-action").hide();
+        /*
+        J(".remove-from-collection-button").closest('li').hide();
+        */
     }
     //disable create item button if in trash
-    else if(Zotero.state.getUrlVar('collectionKey') == 'trash'){
+    if(Zotero.state.getUrlVar('collectionKey') == 'trash'){
+        J(".selected-collection-action").hide();
+        J(".move-to-trash-button").hide();
         J(".create-item-button").addClass('disabled');
-        J(".add-to-collection-button").addClass('disabled');
-        J(".remove-from-collection-button").addClass('disabled');
-        J(".move-to-trash-button").prop('title', 'Permanently Delete');
+        /*
+        J(".add-to-collection-button").closest('li').addClass('disabled');
+        J(".remove-from-collection-button").closest('li').addClass('disabled');
+        */
+    }
+    if(Zotero.state.getUrlVar('collectionKey') != 'trash') {
+        //hide trash specific actions
+        J(".permanently-delete-button").closest('li').hide();
+        J(".remove-from-trash-button").closest('li').hide();
     }
 };
 
