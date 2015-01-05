@@ -18,31 +18,6 @@ Zotero.ui.widgets.tags.init = function(el){
     
     //bind tag autocomplete filter in tag widget
     container.on('keyup', "#tag-filter-input", Zotero.ui.widgets.tags.filterTags);
-    
-    
-    //send pref to website when showAutomaticTags is toggled
-    container.on('click', "#show-automatic-tags", function(e){
-        var show = J(this).prop('checked') ? true : false;
-        Z.debug("showAutomaticTags is " + show, 4);
-        Zotero.preferences.setPref('showAutomaticTags', show);
-        Zotero.preferences.persist();
-        
-        library.trigger('libraryTagsUpdated');
-    });
-    
-    container.on('click', "#show-more-tags-link", function(e){
-        e.preventDefault();
-        var jel = J(this).closest('#tags-list-div');
-        jel.data('showmore', true);
-        library.trigger('libraryTagsUpdated');
-    });
-    container.on('click', "#show-fewer-tags-link", function(e){
-        e.preventDefault();
-        var jel = J(this).closest('#tags-list-div');
-        jel.data('showmore', false);
-        library.trigger('libraryTagsUpdated');
-    });
-    
 };
 
 Zotero.ui.widgets.tags.syncTags = function(evt){
@@ -132,10 +107,6 @@ Zotero.ui.widgets.tags.displayTagsFiltered = function(el, library, matchedTagStr
     var libtags = library.tags;
     var tagColors = library.preferences.getPref("tagColors");
     if(!tagColors) tagColors = [];
-    var showMore = jel.data('showmore');
-    if(!showMore){
-        showMore = false;
-    }
     var coloredTags = [];
     var tagColorStrings = [];
     J.each(tagColors, function(index, tagColor){
@@ -162,21 +133,11 @@ Zotero.ui.widgets.tags.displayTagsFiltered = function(el, library, matchedTagStr
             selectedTags.push(libtags.tagObjects[selectedString]);
         }
     });
-    var passTags;
-    if(!showMore){
-        passTags = filteredTags.slice(0, 25);
-        J("#show-more-tags-link").show();
-        J("#show-fewer-tags-link").hide();
-    }
-    else{
-        passTags = filteredTags;
-        J("#show-more-tags-link").hide();
-        J("#show-fewer-tags-link").show();
-    }
+    
     var tagListEl = J("#tags-list").empty();
     J("#colored-tags-list").replaceWith(J('#coloredtaglistTemplate').render({tags:coloredTags}));
     J("#selected-tags-list").replaceWith(J('#tagunorderedlistTemplate').render({tags:selectedTags, id:'selected-tags-list'}));
-    J("#tags-list").replaceWith(J('#tagunorderedlistTemplate').render({tags:passTags, id:'tags-list'}));
+    J("#tags-list").replaceWith(J('#tagunorderedlistTemplate').render({tags:filteredTags, id:'tags-list'}));
 };
 
 Zotero.ui.widgets.tags.filterTags = function(e){
