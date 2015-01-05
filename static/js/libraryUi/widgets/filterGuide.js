@@ -6,6 +6,8 @@ Zotero.ui.widgets.filterGuide.init = function(el){
     
     library.listen("displayedItemsChanged", Zotero.ui.widgets.filterGuide.refreshFilters, {widgetEl: el});
     library.listen("displayedItemChanged", Zotero.ui.widgets.filterGuide.refreshFilters, {widgetEl: el});
+    library.listen("updateFilterGuide", Zotero.ui.widgets.filterGuide.refreshFilters, {widgetEl: el});
+    library.listen("libraryCollectionsUpdated", Zotero.ui.widgets.filterGuide.refreshFilters, {widgetEl: el});
     library.listen("clearFilter", Zotero.ui.widgets.filterGuide.clearFilter, {widgetEl: el});
 };
 
