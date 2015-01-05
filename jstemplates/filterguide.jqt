@@ -1,13 +1,13 @@
 <script id="filterguideTemplate" type="text/x-jsrender">
     <ul class="filterguide-list">
         {{if collection}}
-            <li class="filterguide-entry"><a href="#" class="eventfultrigger" data-triggers="clearFilter" data-library="{{attr:library.libraryString}}" data-collectionkey="{{attr:collection.key}}"><span class="glyphicon fonticon glyphicon-folder-close"></span>{{>collection.apiObj.data['name']}}<span class="glyphicons fonticon remove"></a></li>
+            <li class="filterguide-entry"><a href="#" class="eventfultrigger" data-triggers="clearFilter" data-library="{{attr:library.libraryString}}" data-collectionkey="{{attr:collection.key}}"><span class="glyphicons fonticon glyphicons-folder-open"></span><span class="filterguide-label">{{>collection.apiObj.data['name']}}</span><span class="glyphicons fonticon glyphicons-remove"></a></li>
         {{/if}}
         {{for tag ~library=library}}
-            <li class="filterguide-entry"><a href="#" class="eventfultrigger" data-triggers="clearFilter" data-library="{{attr:~library.libraryString}}" data-tag="{{attr:#data}}"><span class="glyphicons fonticon tag"></span>{{>#data}}<span class="glyphicons fonticon remove"></a></li>
+            <li class="filterguide-entry"><a href="#" class="eventfultrigger" data-triggers="clearFilter" data-library="{{attr:~library.libraryString}}" data-tag="{{attr:#data}}"><span class="glyphicons fonticon glyphicons-tag"></span><span class="filterguide-label">{{>#data}}</span><span class="glyphicons fonticon glyphicons-remove"></a></li>
         {{/for}}
         {{if search}}
-            <li class="filterguide-entry"><a href="#" class="eventfultrigger" data-triggers="clearFilter" data-library="{{attr:library.libraryString}}" data-query="{{attr:search}}"><span class="glyphicons fonticon search"></span>{{>search}}<span class="glyphicons fonticon remove"></a></li>
+            <li class="filterguide-entry"><a href="#" class="eventfultrigger" data-triggers="clearFilter" data-library="{{attr:library.libraryString}}" data-query="{{attr:search}}"><span class="glyphicons fonticon glyphicons-search"></span><span class="filterguide-label">{{>search}}</span><span class="glyphicons fonticon glyphicons-remove"></a></li>
         {{/if}}
     </ul>
 </script>
