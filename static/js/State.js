@@ -329,7 +329,7 @@ Zotero.State.prototype.pushState = function(){
     
     //Zotero.ui.saveFormData();
     //make prevHref the current location before we change it
-    state.prevHref = state.curHref;// window.location.href;
+    state.prevHref = state.curHref || window.location.href;
     
     //selectively add state to hint where to go
     var s = J.extend({}, state.f, state.q, state.pathVars);
@@ -506,7 +506,7 @@ Zotero.State.prototype.diffState = function(prevHref, curHref){
     //check what has changed when a new state is pushed
     var prevVars = J.extend({}, state.parsePathVars(prevHref) );
     var curVars = J.extend({}, state.parsePathVars(curHref) );
-    
+
     var monitoredVars = ['start',
                          'limit',
                          'order',
