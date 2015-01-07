@@ -102,16 +102,6 @@
     {{/if}}
     </table>
     
-    {{if item.itemType !== 'attachment' && item.itemType !== 'note'}}
-        <!-- attachments -->
-        <div class="item-attachments-container-div">
-            <div class="item-attachments-div">
-            </div>
-        </div>
-        {{if ~Zotero.config.librarySettings.allowUpload}}
-        <button type="button" id="upload-attachment-link" class="btn btn-default upload-attachment-button eventfultrigger" data-triggers="uploadAttachment" data-library="{{attr:libraryString}}">Upload Attachment</button>
-        {{/if}}
-    {{/if}}
     {{if item.itemType === 'attachment' && ~Zotero.config.librarySettings.allowUpload}}
         <button type="button" id="upload-attachment-link" class="btn btn-default upload-attachment-button eventfultrigger" data-triggers="uploadAttachment" data-library="{{attr:libraryString}}">Upload New Copy</button>
     {{/if}}

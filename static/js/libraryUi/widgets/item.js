@@ -137,6 +137,8 @@ Zotero.ui.widgets.item.loadItemCallback = function(event){
  * @return {undefined}
  */
 Zotero.ui.widgets.item.showChildren = function(e){
+    return;
+    /*
     Z.debug('Zotero.ui.widgets.item.showChildren', 3);
     var widgetEl = J(e.data.widgetEl);
     var itemKey = widgetEl.data('itemkey');
@@ -152,6 +154,7 @@ Zotero.ui.widgets.item.showChildren = function(e){
     })
     .catch(Zotero.catchPromiseError);
     return p;
+    */
 };
 
 /**
@@ -363,7 +366,7 @@ Zotero.ui.widgets.item.loadItemDetail = function(item, el){
     }
     else{
         Z.debug("non-note item", 3);
-        jel.append( J('#itemdetailsTemplate').render({item:item, parentUrl:parentUrl, libraryString:library.libraryString}) ).trigger('create');
+        jel.append( J('#itemdetailsTemplate').render({item:item, parentUrl:parentUrl, libraryString:library.libraryString}) );
     }
     Zotero.ui.init.rte('readonly');
     

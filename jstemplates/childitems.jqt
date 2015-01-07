@@ -1,6 +1,4 @@
 <script id="childitemsTemplate" type="text/x-jsrender">
-    {{if childItems.length}}
-    <h4>Notes and Attachments</h4>
     <ul id="notes-and-attachments">
     {{for childItems}}
         <li>
@@ -19,5 +17,4 @@
         </li>
     {{/for}}
     </ul>
-    {{/if}}
 </script>

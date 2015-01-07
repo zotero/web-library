@@ -1,6 +1,6 @@
 (function(e, t) {
-    var r, o = Array.prototype.slice, i = decodeURIComponent, a = e.param, n, s, l, c, u = e.bbq = e.bbq || {}, d, p, g, f = e.event.special, m = "hashchange", b = "querystring", y = "fragment", h = "elemUrlAttr", v = "href", Z = "src", w = /^.*\?|#.*$/g, I, T, k, S, C, J = {};
-    function D(e) {
+    var r, o = Array.prototype.slice, i = decodeURIComponent, a = e.param, n, s, l, c, d = e.bbq = e.bbq || {}, u, p, g, f = e.event.special, m = "hashchange", b = "querystring", y = "fragment", h = "elemUrlAttr", v = "href", Z = "src", w = /^.*\?|#.*$/g, I, T, C, S, k, J = {};
+    function j(e) {
         return typeof e === "string";
     }
     function x(e) {
@@ -9,36 +9,36 @@
             return e.apply(this, t.concat(o.call(arguments)));
         };
     }
-    function j(e) {
+    function D(e) {
         return e.replace(T, "$2");
     }
     function _(e) {
         return e.replace(/(?:^[^?#]*\?([^#]*).*$)?.*/, "$1");
     }
     function O(t, o, a, s, c) {
-        var u, d, p, g, f;
+        var d, u, p, g, f;
         if (s !== r) {
             p = a.match(t ? T : /^([^#?]*)\??([^#]*)(#?.*)/);
             f = p[3] || "";
-            if (c === 2 && D(s)) {
-                d = s.replace(t ? I : w, "");
+            if (c === 2 && j(s)) {
+                u = s.replace(t ? I : w, "");
             } else {
                 g = l(p[2]);
-                s = D(s) ? l[t ? y : b](s) : s;
-                d = c === 2 ? s : c === 1 ? e.extend({}, s, g) : e.extend({}, g, s);
-                d = n(d);
+                s = j(s) ? l[t ? y : b](s) : s;
+                u = c === 2 ? s : c === 1 ? e.extend({}, s, g) : e.extend({}, g, s);
+                u = n(u);
                 if (t) {
-                    d = d.replace(k, i);
+                    u = u.replace(C, i);
                 }
             }
-            u = p[1] + (t ? C : d || !p[1] ? "?" : "") + d + f;
+            d = p[1] + (t ? k : u || !p[1] ? "?" : "") + u + f;
         } else {
-            u = o(a !== r ? a : location.href);
+            d = o(a !== r ? a : location.href);
         }
-        return u;
+        return d;
     }
     a[b] = x(O, 0, _);
-    a[y] = s = x(O, 1, j);
+    a[y] = s = x(O, 1, D);
     a.sorted = n = function(t, r) {
         var o = [], i = {};
         e.each(a(t, r).split("&"), function(e, t) {
@@ -56,7 +56,7 @@
     s.noEscape = function(t) {
         t = t || "";
         var r = e.map(t.split(""), encodeURIComponent);
-        k = new RegExp(r.join("|"), "g");
+        C = new RegExp(r.join("|"), "g");
     };
     s.noEscape(",/");
     s.ajaxCrawlable = function(e) {
@@ -64,11 +64,11 @@
             if (e) {
                 I = /^.*(?:#!|#)/;
                 T = /^([^#]*)(?:#!|#)?(.*)$/;
-                C = "#!";
+                k = "#!";
             } else {
                 I = /^.*#/;
                 T = /^([^#]*)#?(.*)$/;
-                C = "#";
+                k = "#";
             }
             S = !!e;
         }
@@ -82,7 +82,7 @@
             "null": null
         };
         e.each(t.replace(/\+/g, " ").split("&"), function(t, s) {
-            var l = s.split("="), c = i(l[0]), u, d = a, p = 0, g = c.split("]["), f = g.length - 1;
+            var l = s.split("="), c = i(l[0]), d, u = a, p = 0, g = c.split("]["), f = g.length - 1;
             if (/\[/.test(g[0]) && /\]$/.test(g[f])) {
                 g[f] = g[f].replace(/\]$/, "");
                 g = g.shift().split("[").concat(g);
@@ -91,23 +91,23 @@
                 f = 0;
             }
             if (l.length === 2) {
-                u = i(l[1]);
+                d = i(l[1]);
                 if (o) {
-                    u = u && !isNaN(u) ? +u : u === "undefined" ? r : n[u] !== r ? n[u] : u;
+                    d = d && !isNaN(d) ? +d : d === "undefined" ? r : n[d] !== r ? n[d] : d;
                 }
                 if (f) {
                     for (;p <= f; p++) {
-                        c = g[p] === "" ? d.length : g[p];
-                        d = d[c] = p < f ? d[c] || (g[p + 1] && isNaN(g[p + 1]) ? {} : []) : u;
+                        c = g[p] === "" ? u.length : g[p];
+                        u = u[c] = p < f ? u[c] || (g[p + 1] && isNaN(g[p + 1]) ? {} : []) : d;
                     }
                 } else {
                     if (e.isArray(a[c])) {
-                        a[c].push(u);
+                        a[c].push(d);
                     } else {
                         if (a[c] !== r) {
-                            a[c] = [ a[c], u ];
+                            a[c] = [ a[c], d ];
                         } else {
-                            a[c] = u;
+                            a[c] = d;
                         }
                     }
                 }
@@ -124,7 +124,7 @@
             o = t;
             t = a[e ? y : b]();
         } else {
-            t = D(t) ? t.replace(e ? I : w, "") : t;
+            t = j(t) ? t.replace(e ? I : w, "") : t;
         }
         return l(t, o);
     }
@@ -144,7 +144,7 @@
     });
     g = e[h];
     function E(t, o, i, n) {
-        if (!D(i) && typeof i !== "object") {
+        if (!j(i) && typeof i !== "object") {
             n = i;
             i = o;
             o = r;
@@ -156,17 +156,17 @@
     }
     e.fn[b] = x(E, b);
     e.fn[y] = x(E, y);
-    u.pushState = d = function(e, t) {
-        if (D(e) && /^#/.test(e) && t === r) {
+    d.pushState = u = function(e, t) {
+        if (j(e) && /^#/.test(e) && t === r) {
             t = 2;
         }
         var o = e !== r, i = s(location.href, o ? e : {}, o ? t : 2);
         location.href = i;
     };
-    u.getState = p = function(e, t) {
+    d.getState = p = function(e, t) {
         return e === r || typeof e === "boolean" ? c(e) : c(t)[e];
     };
-    u.removeState = function(t) {
+    d.removeState = function(t) {
         var o = {};
         if (t !== r) {
             o = p();
@@ -174,7 +174,7 @@
                 delete o[t];
             });
         }
-        d(o, 2);
+        u(o, 2);
     };
     f[m] = e.extend(f[m], {
         add: function(t) {
@@ -220,8 +220,8 @@
             }
             if (o._eak_seen = i, a[e]) return a[e];
             if (a[e] = {}, !i[e]) throw new Error("Could not find module " + e);
-            for (var n, s = i[e], l = s.deps, c = s.callback, u = [], d = 0, p = l.length; p > d; d++) "exports" === l[d] ? u.push(n = {}) : u.push(t(r(l[d])));
-            var g = c.apply(this, u);
+            for (var n, s = i[e], l = s.deps, c = s.callback, d = [], u = 0, p = l.length; p > u; u++) "exports" === l[u] ? d.push(n = {}) : d.push(t(r(l[u])));
+            var g = c.apply(this, d);
             return a[e] = n || g;
         };
     }(), e("promise/all", [ "./utils", "exports" ], function(e, t) {
@@ -266,17 +266,17 @@
             };
         }
         function i() {
-            for (var e = 0; e < u.length; e++) {
-                var t = u[e], r = t[0], o = t[1];
+            for (var e = 0; e < d.length; e++) {
+                var t = d[e], r = t[0], o = t[1];
                 r(o);
             }
-            u = [];
+            d = [];
         }
         function a(e, t) {
-            var r = u.push([ e, t ]);
+            var r = d.push([ e, t ]);
             1 === r && n();
         }
-        var n, s = "undefined" != typeof window ? window : {}, l = s.MutationObserver || s.WebKitMutationObserver, c = "undefined" != typeof global ? global : this, u = [];
+        var n, s = "undefined" != typeof window ? window : {}, l = s.MutationObserver || s.WebKitMutationObserver, c = "undefined" != typeof global ? global : this, d = [];
         n = "undefined" != typeof process && "[object process]" === {}.toString.call(process) ? t() : l ? r() : o(), 
         e.asap = a;
     }), e("promise/cast", [ "exports" ], function(e) {
@@ -316,9 +316,9 @@
         function c(e) {
             if (!I(e)) throw new TypeError("You must pass a resolver function as the first argument to the promise constructor");
             if (!(this instanceof c)) throw new TypeError("Failed to construct 'Promise': Please use the 'new' operator, this object constructor cannot be called as a function.");
-            this._subscribers = [], u(e, this);
+            this._subscribers = [], d(e, this);
         }
-        function u(e, t) {
+        function d(e, t) {
             function r(e) {
                 m(t, e);
             }
@@ -331,7 +331,7 @@
                 o(i);
             }
         }
-        function d(e, t, r, o) {
+        function u(e, t, r, o) {
             var i, a, n, s, l = I(r);
             if (l) try {
                 i = r(o), n = !0;
@@ -346,7 +346,7 @@
         }
         function g(e, t) {
             for (var r, o, i = e._subscribers, a = e._detail, n = 0; n < i.length; n += 3) r = i[n], 
-            o = i[n + t], d(t, r, o, a);
+            o = i[n + t], u(t, r, o, a);
             e._subscribers = null;
         }
         function f(e, t) {
@@ -367,10 +367,10 @@
             e === t ? b(e, t) : f(e, t) || b(e, t);
         }
         function b(e, t) {
-            e._state === x && (e._state = j, e._detail = t, Z.async(h, e));
+            e._state === x && (e._state = D, e._detail = t, Z.async(h, e));
         }
         function y(e, t) {
-            e._state === x && (e._state = j, e._detail = t, Z.async(v, e));
+            e._state === x && (e._state = D, e._detail = t, Z.async(v, e));
         }
         function h(e) {
             g(e, e._state = _);
@@ -379,9 +379,9 @@
             g(e, e._state = O);
         }
         var Z = e.config, w = (e.configure, t.objectOrFunction), I = t.isFunction, T = (t.now, 
-        r.cast), k = o.all, S = i.race, C = a.resolve, J = n.reject, D = s.asap;
-        Z.async = D;
-        var x = void 0, j = 0, _ = 1, O = 2;
+        r.cast), C = o.all, S = i.race, k = a.resolve, J = n.reject, j = s.asap;
+        Z.async = j;
+        var x = void 0, D = 0, _ = 1, O = 2;
         c.prototype = {
             constructor: c,
             _state: void 0,
@@ -392,7 +392,7 @@
                 if (this._state) {
                     var i = arguments;
                     Z.async(function() {
-                        d(r._state, o, i[r._state - 1], r._detail);
+                        u(r._state, o, i[r._state - 1], r._detail);
                     });
                 } else p(this, o, e, t);
                 return o;
@@ -400,7 +400,7 @@
             "catch": function(e) {
                 return this.then(null, e);
             }
-        }, c.all = k, c.cast = T, c.race = S, c.resolve = C, c.reject = J, l.Promise = c;
+        }, c.all = C, c.cast = T, c.race = S, c.resolve = k, c.reject = J, l.Promise = c;
     }), e("promise/race", [ "./utils", "exports" ], function(e, t) {
         "use strict";
         function r(e) {
@@ -479,75 +479,75 @@
     }, n = function(e, t, o, i, a, n, s) {
         return r(o ^ (t | ~i), e, t, a, n, s);
     }, s = function(e, r) {
-        var s = e[0], l = e[1], c = e[2], u = e[3];
-        s = o(s, l, c, u, r[0], 7, -680876936);
-        u = o(u, s, l, c, r[1], 12, -389564586);
-        c = o(c, u, s, l, r[2], 17, 606105819);
-        l = o(l, c, u, s, r[3], 22, -1044525330);
-        s = o(s, l, c, u, r[4], 7, -176418897);
-        u = o(u, s, l, c, r[5], 12, 1200080426);
-        c = o(c, u, s, l, r[6], 17, -1473231341);
-        l = o(l, c, u, s, r[7], 22, -45705983);
-        s = o(s, l, c, u, r[8], 7, 1770035416);
-        u = o(u, s, l, c, r[9], 12, -1958414417);
-        c = o(c, u, s, l, r[10], 17, -42063);
-        l = o(l, c, u, s, r[11], 22, -1990404162);
-        s = o(s, l, c, u, r[12], 7, 1804603682);
-        u = o(u, s, l, c, r[13], 12, -40341101);
-        c = o(c, u, s, l, r[14], 17, -1502002290);
-        l = o(l, c, u, s, r[15], 22, 1236535329);
-        s = i(s, l, c, u, r[1], 5, -165796510);
-        u = i(u, s, l, c, r[6], 9, -1069501632);
-        c = i(c, u, s, l, r[11], 14, 643717713);
-        l = i(l, c, u, s, r[0], 20, -373897302);
-        s = i(s, l, c, u, r[5], 5, -701558691);
-        u = i(u, s, l, c, r[10], 9, 38016083);
-        c = i(c, u, s, l, r[15], 14, -660478335);
-        l = i(l, c, u, s, r[4], 20, -405537848);
-        s = i(s, l, c, u, r[9], 5, 568446438);
-        u = i(u, s, l, c, r[14], 9, -1019803690);
-        c = i(c, u, s, l, r[3], 14, -187363961);
-        l = i(l, c, u, s, r[8], 20, 1163531501);
-        s = i(s, l, c, u, r[13], 5, -1444681467);
-        u = i(u, s, l, c, r[2], 9, -51403784);
-        c = i(c, u, s, l, r[7], 14, 1735328473);
-        l = i(l, c, u, s, r[12], 20, -1926607734);
-        s = a(s, l, c, u, r[5], 4, -378558);
-        u = a(u, s, l, c, r[8], 11, -2022574463);
-        c = a(c, u, s, l, r[11], 16, 1839030562);
-        l = a(l, c, u, s, r[14], 23, -35309556);
-        s = a(s, l, c, u, r[1], 4, -1530992060);
-        u = a(u, s, l, c, r[4], 11, 1272893353);
-        c = a(c, u, s, l, r[7], 16, -155497632);
-        l = a(l, c, u, s, r[10], 23, -1094730640);
-        s = a(s, l, c, u, r[13], 4, 681279174);
-        u = a(u, s, l, c, r[0], 11, -358537222);
-        c = a(c, u, s, l, r[3], 16, -722521979);
-        l = a(l, c, u, s, r[6], 23, 76029189);
-        s = a(s, l, c, u, r[9], 4, -640364487);
-        u = a(u, s, l, c, r[12], 11, -421815835);
-        c = a(c, u, s, l, r[15], 16, 530742520);
-        l = a(l, c, u, s, r[2], 23, -995338651);
-        s = n(s, l, c, u, r[0], 6, -198630844);
-        u = n(u, s, l, c, r[7], 10, 1126891415);
-        c = n(c, u, s, l, r[14], 15, -1416354905);
-        l = n(l, c, u, s, r[5], 21, -57434055);
-        s = n(s, l, c, u, r[12], 6, 1700485571);
-        u = n(u, s, l, c, r[3], 10, -1894986606);
-        c = n(c, u, s, l, r[10], 15, -1051523);
-        l = n(l, c, u, s, r[1], 21, -2054922799);
-        s = n(s, l, c, u, r[8], 6, 1873313359);
-        u = n(u, s, l, c, r[15], 10, -30611744);
-        c = n(c, u, s, l, r[6], 15, -1560198380);
-        l = n(l, c, u, s, r[13], 21, 1309151649);
-        s = n(s, l, c, u, r[4], 6, -145523070);
-        u = n(u, s, l, c, r[11], 10, -1120210379);
-        c = n(c, u, s, l, r[2], 15, 718787259);
-        l = n(l, c, u, s, r[9], 21, -343485551);
+        var s = e[0], l = e[1], c = e[2], d = e[3];
+        s = o(s, l, c, d, r[0], 7, -680876936);
+        d = o(d, s, l, c, r[1], 12, -389564586);
+        c = o(c, d, s, l, r[2], 17, 606105819);
+        l = o(l, c, d, s, r[3], 22, -1044525330);
+        s = o(s, l, c, d, r[4], 7, -176418897);
+        d = o(d, s, l, c, r[5], 12, 1200080426);
+        c = o(c, d, s, l, r[6], 17, -1473231341);
+        l = o(l, c, d, s, r[7], 22, -45705983);
+        s = o(s, l, c, d, r[8], 7, 1770035416);
+        d = o(d, s, l, c, r[9], 12, -1958414417);
+        c = o(c, d, s, l, r[10], 17, -42063);
+        l = o(l, c, d, s, r[11], 22, -1990404162);
+        s = o(s, l, c, d, r[12], 7, 1804603682);
+        d = o(d, s, l, c, r[13], 12, -40341101);
+        c = o(c, d, s, l, r[14], 17, -1502002290);
+        l = o(l, c, d, s, r[15], 22, 1236535329);
+        s = i(s, l, c, d, r[1], 5, -165796510);
+        d = i(d, s, l, c, r[6], 9, -1069501632);
+        c = i(c, d, s, l, r[11], 14, 643717713);
+        l = i(l, c, d, s, r[0], 20, -373897302);
+        s = i(s, l, c, d, r[5], 5, -701558691);
+        d = i(d, s, l, c, r[10], 9, 38016083);
+        c = i(c, d, s, l, r[15], 14, -660478335);
+        l = i(l, c, d, s, r[4], 20, -405537848);
+        s = i(s, l, c, d, r[9], 5, 568446438);
+        d = i(d, s, l, c, r[14], 9, -1019803690);
+        c = i(c, d, s, l, r[3], 14, -187363961);
+        l = i(l, c, d, s, r[8], 20, 1163531501);
+        s = i(s, l, c, d, r[13], 5, -1444681467);
+        d = i(d, s, l, c, r[2], 9, -51403784);
+        c = i(c, d, s, l, r[7], 14, 1735328473);
+        l = i(l, c, d, s, r[12], 20, -1926607734);
+        s = a(s, l, c, d, r[5], 4, -378558);
+        d = a(d, s, l, c, r[8], 11, -2022574463);
+        c = a(c, d, s, l, r[11], 16, 1839030562);
+        l = a(l, c, d, s, r[14], 23, -35309556);
+        s = a(s, l, c, d, r[1], 4, -1530992060);
+        d = a(d, s, l, c, r[4], 11, 1272893353);
+        c = a(c, d, s, l, r[7], 16, -155497632);
+        l = a(l, c, d, s, r[10], 23, -1094730640);
+        s = a(s, l, c, d, r[13], 4, 681279174);
+        d = a(d, s, l, c, r[0], 11, -358537222);
+        c = a(c, d, s, l, r[3], 16, -722521979);
+        l = a(l, c, d, s, r[6], 23, 76029189);
+        s = a(s, l, c, d, r[9], 4, -640364487);
+        d = a(d, s, l, c, r[12], 11, -421815835);
+        c = a(c, d, s, l, r[15], 16, 530742520);
+        l = a(l, c, d, s, r[2], 23, -995338651);
+        s = n(s, l, c, d, r[0], 6, -198630844);
+        d = n(d, s, l, c, r[7], 10, 1126891415);
+        c = n(c, d, s, l, r[14], 15, -1416354905);
+        l = n(l, c, d, s, r[5], 21, -57434055);
+        s = n(s, l, c, d, r[12], 6, 1700485571);
+        d = n(d, s, l, c, r[3], 10, -1894986606);
+        c = n(c, d, s, l, r[10], 15, -1051523);
+        l = n(l, c, d, s, r[1], 21, -2054922799);
+        s = n(s, l, c, d, r[8], 6, 1873313359);
+        d = n(d, s, l, c, r[15], 10, -30611744);
+        c = n(c, d, s, l, r[6], 15, -1560198380);
+        l = n(l, c, d, s, r[13], 21, 1309151649);
+        s = n(s, l, c, d, r[4], 6, -145523070);
+        d = n(d, s, l, c, r[11], 10, -1120210379);
+        c = n(c, d, s, l, r[2], 15, 718787259);
+        l = n(l, c, d, s, r[9], 21, -343485551);
         e[0] = t(s, e[0]);
         e[1] = t(l, e[1]);
         e[2] = t(c, e[2]);
-        e[3] = t(u, e[3]);
+        e[3] = t(d, e[3]);
     }, l = function(e) {
         var t = [], r;
         for (r = 0; r < 64; r += 4) {
@@ -560,8 +560,8 @@
             t[r >> 2] = e[r] + (e[r + 1] << 8) + (e[r + 2] << 16) + (e[r + 3] << 24);
         }
         return t;
-    }, u = function(e) {
-        var t = e.length, r = [ 1732584193, -271733879, -1732584194, 271733878 ], o, i, a, n, c, u;
+    }, d = function(e) {
+        var t = e.length, r = [ 1732584193, -271733879, -1732584194, 271733878 ], o, i, a, n, c, d;
         for (o = 64; o <= t; o += 64) {
             s(r, l(e.substring(o - 64, o)));
         }
@@ -581,13 +581,13 @@
         n = t * 8;
         n = n.toString(16).match(/(.*?)(.{0,8})$/);
         c = parseInt(n[2], 16);
-        u = parseInt(n[1], 16) || 0;
+        d = parseInt(n[1], 16) || 0;
         a[14] = c;
-        a[15] = u;
+        a[15] = d;
         s(r, a);
         return r;
-    }, d = function(e) {
-        var t = e.length, r = [ 1732584193, -271733879, -1732584194, 271733878 ], o, i, a, n, l, u;
+    }, u = function(e) {
+        var t = e.length, r = [ 1732584193, -271733879, -1732584194, 271733878 ], o, i, a, n, l, d;
         for (o = 64; o <= t; o += 64) {
             s(r, c(e.subarray(o - 64, o)));
         }
@@ -607,9 +607,9 @@
         n = t * 8;
         n = n.toString(16).match(/(.*?)(.{0,8})$/);
         l = parseInt(n[2], 16);
-        u = parseInt(n[1], 16) || 0;
+        d = parseInt(n[1], 16) || 0;
         a[14] = l;
-        a[15] = u;
+        a[15] = d;
         s(r, a);
         return r;
     }, p = [ "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f" ], g = function(e) {
@@ -625,7 +625,7 @@
         }
         return e.join("");
     }, m = function(e) {
-        return f(u(e));
+        return f(d(e));
     }, b = function() {
         this.reset();
     };
@@ -694,11 +694,11 @@
         if (/[\u0080-\uFFFF]/.test(e)) {
             e = unescape(encodeURIComponent(e));
         }
-        var r = u(e);
+        var r = d(e);
         return !!t ? r : f(r);
     };
     b.hashBinary = function(e, t) {
-        var r = u(e);
+        var r = d(e);
         return !!t ? r : f(r);
     };
     b.ArrayBuffer = function() {
@@ -738,7 +738,7 @@
         return o;
     };
     b.ArrayBuffer.hash = function(e, t) {
-        var r = d(new Uint8Array(e));
+        var r = u(new Uint8Array(e));
         return !!t ? r : f(r);
     };
     return b;
@@ -1425,7 +1425,7 @@ var idbModules = {};
                     l.transaction(function(t) {
                         t.executeSql("CREATE TABLE IF NOT EXISTS __sys__ (name VARCHAR(255), keyPath VARCHAR(255), autoInc BOOLEAN, indexList BLOB)", [], function() {
                             t.executeSql("SELECT * FROM __sys__", [], function(t, c) {
-                                var u = e.Event("success");
+                                var d = e.Event("success");
                                 s.source = s.result = new e.IDBDatabase(l, o, i, c), i > n ? r.transaction(function(t) {
                                     t.executeSql("UPDATE dbVersions set version = ? where name = ?", [ i, o ], function() {
                                         var t = e.Event("upgradeneeded");
@@ -1435,7 +1435,7 @@ var idbModules = {};
                                             e.util.callback("onsuccess", s, t);
                                         });
                                     }, a);
-                                }, a) : e.util.callback("onsuccess", s, u);
+                                }, a) : e.util.callback("onsuccess", s, d);
                             }, a);
                         }, a);
                     }, a);
@@ -1476,8 +1476,8 @@ var idbModules = {};
                             void 0;
                         }
                         l = s.rows.item(0).version;
-                        var u = window.openDatabase(o, 1, o, t);
-                        u.transaction(function(t) {
+                        var d = window.openDatabase(o, 1, o, t);
+                        d.transaction(function(t) {
                             t.executeSql("SELECT * FROM __sys__", [], function(t, r) {
                                 var o = r.rows;
                                 (function n(r) {
@@ -2185,7 +2185,7 @@ Zotero.ApiResponse.prototype.parseResponse = function(e) {
 Zotero.Net = function() {
     this.deferredQueue = [];
     this.numRunning = 0;
-    this.numConcurrent = 1;
+    this.numConcurrent = 3;
     this.backingOff = false;
 };
 
@@ -2447,6 +2447,10 @@ Zotero.Library = function(e, t, r, o) {
                     Z.debug("Library Constructor: Library.items.itemsVersion: " + i.items.itemsVersion, 3);
                     Z.debug("Library Constructor: Library.collections.collectionsVersion: " + i.collections.collectionsVersion, 3);
                     Z.debug("Library Constructor: Library.tags.tagsVersion: " + i.tags.tagsVersion, 3);
+                    J.each(i.tags.tagObjects, function(e, t) {
+                        Z.debug("Library Constructor: tag.version:" + t.version);
+                        Z.debug("Library Constructor: tag.version:" + t.apiObj.version);
+                    });
                     Z.debug("Library Constructor: Triggering cachedDataLoaded", 3);
                     i.trigger("cachedDataLoaded");
                 }, function(e) {
@@ -3297,8 +3301,8 @@ Zotero.Collections.prototype.writeCollections = function(e) {
             s.set("version", 0);
         }
     }
-    var u = t.chunkObjectsArray(e);
-    var d = t.rawChunks(u);
+    var d = t.chunkObjectsArray(e);
+    var u = t.rawChunks(d);
     var p = function(e) {
         Z.debug("writeCollections successCallback", 3);
         var t = this.library;
@@ -3320,12 +3324,12 @@ Zotero.Collections.prototype.writeCollections = function(e) {
     Z.debug("collections.version: " + t.version, 3);
     Z.debug("collections.libraryVersion: " + t.libraryVersion, 3);
     var g = [];
-    for (i = 0; i < u.length; i++) {
+    for (i = 0; i < d.length; i++) {
         var f = {
-            writeChunk: u[i],
+            writeChunk: d[i],
             library: r
         };
-        requestData = JSON.stringify(d[i]);
+        requestData = JSON.stringify(u[i]);
         g.push({
             url: n,
             type: "POST",
@@ -3452,11 +3456,11 @@ Zotero.Items.prototype.deleteItems = function(e, t) {
             libraryID: r.owningLibrary.libraryID,
             itemKey: l
         };
-        var u = {
+        var d = {
             url: c,
             type: "DELETE"
         };
-        s.push(u);
+        s.push(d);
     }
     return Zotero.net.queueRequest(s);
 };
@@ -3548,22 +3552,22 @@ Zotero.Items.prototype.writeItems = function(e) {
     };
     Z.debug("items.itemsVersion: " + t.itemsVersion, 3);
     Z.debug("items.libraryVersion: " + t.libraryVersion, 3);
-    var u = [];
+    var d = [];
     for (o = 0; o < s.length; o++) {
-        var d = {
+        var u = {
             writeChunk: s[o],
             library: r
         };
         requestData = JSON.stringify(l[o]);
-        u.push({
+        d.push({
             url: n,
             type: "POST",
             data: requestData,
             processData: false,
-            success: J.proxy(c, d)
+            success: J.proxy(c, u)
         });
     }
-    return r.sequentialRequests(u).then(function(e) {
+    return r.sequentialRequests(d).then(function(e) {
         Z.debug("Done with writeItems sequentialRequests promise", 3);
         return e;
     });
@@ -3655,7 +3659,15 @@ Zotero.Tags.prototype.updateSecondaryData = function() {
 Zotero.Tags.prototype.updateTagsVersion = function(e) {
     var t = this;
     J.each(t.tagObjects, function(t, r) {
-        r.version = e;
+        r.set("version", e);
+    });
+};
+
+Zotero.Tags.prototype.rebuildTagsArray = function() {
+    var e = this;
+    e.tagsArray = [];
+    J.each(e.tagObjects, function(t, r) {
+        e.tagsArray.push(r);
     });
 };
 
@@ -4187,12 +4199,14 @@ Zotero.Item.prototype.getChildren = function(e) {
             return [];
         }
         var r = {
-            target: "children",
-            libraryType: t.apiObj.library.type,
-            libraryID: t.apiObj.library.id,
-            itemKey: t.key
+            url: {
+                target: "children",
+                libraryType: t.apiObj.library.type,
+                libraryID: t.apiObj.library.id,
+                itemKey: t.key
+            }
         };
-        return Zotero.ajaxRequest(r).then(function(t) {
+        return Zotero.net.queueRequest(r).then(function(t) {
             Z.debug("getChildren proxied callback", 4);
             var r = e.items;
             var o = r.addItemsFromJson(t.data);
@@ -4465,68 +4479,68 @@ Zotero.Item.prototype.itemTypeIconClass = function() {
             if (e.translatedMimeType == "pdf") {
                 return "fa-file-pdf-o";
             }
-            return "glyphicons file";
+            return "glyphicons glyphicons-file";
 
           case "imported_url":
             if (e.translatedMimeType == "pdf") {
                 return "fa-file-pdf-o";
             }
-            return "glyphicons file";
+            return "glyphicons glyphicons-file";
 
           case "linked_file":
-            return "glyphicons link";
+            return "glyphicons glyphicons-link";
 
           case "linked_url":
-            return "glyphicons link";
+            return "glyphicons glyphicons-link";
 
           default:
-            return "glyphicons paperclip";
+            return "glyphicons glyphicons-paperclip";
         }
 
       case "artwork":
-        return "glyphicons picture";
+        return "glyphicons glyphicons-picture";
 
       case "audioRecording":
-        return "glyphicons microphone";
+        return "glyphicons glyphicons-microphone";
 
       case "bill":
         return t;
 
       case "blogPost":
-        return "glyphicons blog";
+        return "glyphicons glyphicons-blog";
 
       case "book":
-        return "glyphicons book";
+        return "glyphicons glyphicons-book";
 
       case "bookSection":
-        return "glyphicons book_open";
+        return "glyphicons glyphicons-book-open";
 
       case "case":
         return t;
 
       case "computerProgram":
-        return "glyphicons floppy_disk";
+        return "glyphicons glyphicons-floppy-disk";
 
       case "conferencePaper":
         return t;
 
       case "dictionaryEntry":
-        return "glyphicons translate";
+        return "glyphicons glyphicons-translate";
 
       case "document":
-        return "glyphicons file";
+        return "glyphicons glyphicons-file";
 
       case "email":
-        return "glyphicons envelope";
+        return "glyphicons glyphicons-envelope";
 
       case "encyclopediaArticle":
-        return "glyphicons bookmark";
+        return "glyphicons glyphicons-bookmark";
 
       case "film":
-        return "glyphicons film";
+        return "glyphicons glyphicons-film";
 
       case "forumPost":
-        return "glyphicons bullhorn";
+        return "glyphicons glyphicons-bullhorn";
 
       case "hearing":
         return "fa-gavel";
@@ -4541,52 +4555,52 @@ Zotero.Item.prototype.itemTypeIconClass = function() {
         return "fa-file-text-o";
 
       case "letter":
-        return "glyphicons message_full";
+        return "glyphicons glyphicons-message-full";
 
       case "magazineArticle":
         return t;
 
       case "manuscript":
-        return "glyphicons pen";
+        return "glyphicons glyphicons-pen";
 
       case "map":
-        return "glyphicons google_maps";
+        return "glyphicons glyphicons-google-maps";
 
       case "newspaperArticle":
         return "fa-newspaper-o";
 
       case "note":
-        return "glyphicons notes noteyellow";
+        return "glyphicons glyphicons-notes noteyellow";
 
       case "patent":
-        return "glyphicons lightbulb";
+        return "glyphicons glyphicons-lightbulb";
 
       case "podcast":
-        return "glyphicons ipod";
+        return "glyphicons glyphicons-ipod";
 
       case "presentation":
-        return "glyphicons keynote";
+        return "glyphicons glyphicons-keynote";
 
       case "radioBroadcast":
-        return "glyphicons wifi_alt";
+        return "glyphicons glyphicons-wifi-alt";
 
       case "report":
-        return "glyphicons notes_2";
+        return "glyphicons glyphicons-notes-2";
 
       case "statue":
-        return "glyphicons bank";
+        return "glyphicons glyphicons-bank";
 
       case "thesis":
         return "fa-graduation-cap";
 
       case "tvBroadcast":
-        return "glyphicons display";
+        return "glyphicons glyphicons-display";
 
       case "videoRecording":
-        return "glyphicons facetime_video";
+        return "glyphicons glyphicons-facetime-video";
 
       case "webpage":
-        return "glyphicons embed_close";
+        return "glyphicons glyphicons-embed-close";
 
       default:
         return "glyphicons file";
@@ -4682,7 +4696,7 @@ Zotero.Item.prototype.noteTitle = function(e) {
     var t = 120;
     var r = J(e).text();
     var o = r.indexOf("\n");
-    if (o < t) {
+    if (o != -1 && o < t) {
         return r.substr(0, o);
     } else {
         return r.substr(0, t);
@@ -5229,6 +5243,24 @@ Zotero.Tag.prototype.tagComparer = function() {
             return 1;
         };
     }
+};
+
+Zotero.Tag.prototype.set = function(e, t) {
+    var r = this;
+    if (e in r.apiObj) {
+        r.apiObj[e] = t;
+    }
+    if (e in r.apiObj.meta) {
+        r.apiObj.meta[e] = t;
+    }
+    switch (e) {
+      case "tagVersion":
+      case "version":
+        r.version = t;
+        r.apiObj.version = t;
+        break;
+    }
+    return r;
 };
 
 Zotero.Search = function() {
@@ -6028,8 +6060,8 @@ Zotero.Idb.Library.prototype.filterItems = function(e, t) {
         }
         var l = "next";
         var c = IDBKeyRange.only(t);
-        var u = s.openKeyCursor(c, l);
-        u.onsuccess = J.proxy(function(e) {
+        var d = s.openKeyCursor(c, l);
+        d.onsuccess = J.proxy(function(e) {
             var t = e.target.result;
             if (t) {
                 a.push(t.primaryKey);
@@ -6039,7 +6071,7 @@ Zotero.Idb.Library.prototype.filterItems = function(e, t) {
                 o(a);
             }
         }, this);
-        u.onfailure = J.proxy(function(e) {
+        d.onfailure = J.proxy(function(e) {
             i();
         }, this);
     });
@@ -6431,13 +6463,12 @@ Zotero.Library.prototype.loadItems = function(e) {
     var r = {
         target: "items",
         targetModifier: "top",
-        itemPage: 1,
+        start: 0,
         limit: 25,
         order: Zotero.config.defaultSortColumn,
         sort: Zotero.config.defaultSortOrder
     };
     var o = J.extend({}, r, e);
-    o.start = parseInt(o.limit, 10) * (parseInt(o.itemPage, 10) - 1);
     var i = J.extend({
         target: "items",
         libraryType: t.libraryType,
@@ -6551,11 +6582,10 @@ Zotero.Library.prototype.fetchGlobalItems = function(e) {
     }
     var r = {
         target: "items",
-        itemPage: 1,
+        start: 0,
         limit: 25
     };
     var o = J.extend({}, r, e);
-    o.start = parseInt(o.limit, 10) * (parseInt(o.itemPage, 10) - 1);
     var i = J.extend({
         target: "items",
         libraryType: ""
@@ -6621,8 +6651,12 @@ Zotero.Library.prototype.loadTags = function(e) {
     t.tags.displayTagsArray = [];
     return t.fetchTags(e).then(function(e) {
         Z.debug("loadTags proxied callback", 3);
-        t.tags.updateSyncState(e.lastModifiedVersion);
-        var r = t.tags.addTagsFromJson(e.data);
+        var r = e.lastModifiedVersion;
+        Z.debug(r);
+        t.tags.updateSyncState(r);
+        var o = t.tags.addTagsFromJson(e.data);
+        t.tags.updateTagsVersion(r);
+        t.tags.rebuildTagsArray();
         if (e.parsedLinks.hasOwnProperty("next")) {
             t.tags.hasNextLink = true;
             t.tags.nextLink = e.parsedLinks["next"];
@@ -7093,9 +7127,9 @@ Zotero.State.prototype.parsePathVars = function(e) {
             if (c instanceof Array) {
                 c.push(decodeURIComponent(i[l + 1]));
             } else {
-                var u = [ c ];
-                u.push(decodeURIComponent(i[l + 1]));
-                c = u;
+                var d = [ c ];
+                d.push(decodeURIComponent(i[l + 1]));
+                c = d;
             }
         } else {
             c = decodeURIComponent(i[l + 1]);
@@ -7103,8 +7137,8 @@ Zotero.State.prototype.parsePathVars = function(e) {
         s[i[l]] = c;
     }
     if (s["itemkey"]) {
-        var d = s["itemkey"];
-        s["itemKey"] = d;
+        var u = s["itemkey"];
+        s["itemKey"] = u;
         delete s["itemkey"];
     }
     return s;
@@ -7188,7 +7222,7 @@ Zotero.State.prototype.pushState = function() {
     Z.debug("Zotero.State.pushState", 3);
     var e = this;
     var t = window.history;
-    e.prevHref = e.curHref;
+    e.prevHref = e.curHref || window.location.href;
     var r = J.extend({}, e.f, e.q, e.pathVars);
     var o = e.pathVars;
     var i = e.q;
@@ -8053,27 +8087,27 @@ Zotero.ui.createPagination = function(e, t, r, o) {
     var s = r + o;
     var l = i - 1;
     var c = i + 1;
-    var u = n / o + 1;
-    var d = {
+    var d = n / o + 1;
+    var u = {
         page: i
     };
-    d.showFirstLink = r > 0;
-    d.showPrevLink = r > 0;
-    d.showNextLink = a > s;
-    d.showLastLink = a > s;
+    u.showFirstLink = r > 0;
+    u.showPrevLink = r > 0;
+    u.showNextLink = a > s;
+    u.showLastLink = a > s;
     var p = {};
-    d.firstLink = Zotero.state.mutateUrl(p, [ t ]);
+    u.firstLink = Zotero.state.mutateUrl(p, [ t ]);
     p[t] = l;
-    d.prevLink = Zotero.state.mutateUrl(p, []);
+    u.prevLink = Zotero.state.mutateUrl(p, []);
     p[t] = c;
-    d.nextLink = Zotero.state.mutateUrl(p, []);
-    p[t] = u;
-    d.lastLink = Zotero.state.mutateUrl(p, []);
-    d.start = r;
-    d.lastDisplayed = Math.min(s, a);
-    d.total = a;
+    u.nextLink = Zotero.state.mutateUrl(p, []);
+    p[t] = d;
+    u.lastLink = Zotero.state.mutateUrl(p, []);
+    u.start = r;
+    u.lastDisplayed = Math.min(s, a);
+    u.total = a;
     Z.debug("last displayed:" + s + " totalResults:" + e.totalResults, 4);
-    return d;
+    return u;
 };
 
 Zotero.ui.getAssociatedLibrary = function(e) {
@@ -8365,6 +8399,23 @@ Zotero.ui.showSpinner = function(e, t) {
 Zotero.ui.appendSpinner = function(e) {
     var t = Zotero.config.baseWebsiteUrl + "static/images/theme/broken-circle-spinner.gif";
     J(e).append("<img class='spinner' src='" + t + "'/>");
+};
+
+Zotero.ui.fixTableHeaders = function(e) {
+    var t = J(e);
+    var r = [];
+    t.find("thead th").each(function(e, t) {
+        var o = J(t).width();
+        r.push(o);
+        J(t).width(o);
+    });
+    t.find("tbody>tr:first>td").each(function(e, t) {
+        J(t).width(r[e]);
+    });
+    var o = t.find("thead").height();
+    t.find("thead").css("position", "fixed").css("margin-top", -o).css("background-color", "white").css("z-index", 10);
+    t.find("tbody").css("margin-top", o);
+    t.css("margin-top", o);
 };
 
 Zotero.ui.zoteroItemUpdated = function() {
@@ -8864,6 +8915,9 @@ Zotero.ui.widgets.controlPanel.init = function(e) {
     t.listen("selectedItemsChanged", Zotero.ui.widgets.controlPanel.selectedItemsChanged, {
         widgetEl: e
     });
+    t.listen("selectedCollectionChanged", Zotero.ui.widgets.controlPanel.selectedItemsChanged, {
+        widgetEl: e
+    });
     t.listen("removeFromCollection", Zotero.ui.widgets.controlPanel.removeFromCollection, {
         widgetEl: e
     });
@@ -8901,32 +8955,22 @@ Zotero.ui.widgets.controlPanel.updateDisabledControlButtons = function(e) {
     if (!e) {
         e = [];
     }
-    J(".move-to-trash-button").prop("title", "Move to Trash");
+    J("ul.actions-menu li").show().removeClass("disabled");
     J(".create-item-button").removeClass("disabled");
     if (e.length === 0 && !Zotero.state.getUrlVar("itemKey")) {
-        J(".add-to-collection-button").addClass("disabled");
-        J(".remove-from-collection-button").addClass("disabled");
-        J(".move-to-trash-button").addClass("disabled");
-        J(".remove-from-trash-button").addClass("disabled");
-        J(".cite-button").addClass("disabled");
-        J(".export-button").addClass("disabled");
-    } else {
-        J(".add-to-collection-button").removeClass("disabled");
-        J(".remove-from-collection-button").removeClass("disabled");
-        J(".move-to-trash-button").removeClass("disabled");
-        if (Zotero.state.getUrlVar("collectionKey") == "trash") {
-            J(".remove-from-trash-button").removeClass("disabled");
-        }
-        J(".cite-button").removeClass("disabled");
-        J(".export-button").removeClass("disabled");
-    }
+        J(".selected-item-action").hide();
+    } else {}
     if (!Zotero.state.getUrlVar("collectionKey")) {
-        J(".remove-from-collection-button").addClass("disabled");
-    } else if (Zotero.state.getUrlVar("collectionKey") == "trash") {
+        J(".selected-collection-action").hide();
+    }
+    if (Zotero.state.getUrlVar("collectionKey") == "trash") {
+        J(".selected-collection-action").hide();
+        J(".move-to-trash-button").hide();
         J(".create-item-button").addClass("disabled");
-        J(".add-to-collection-button").addClass("disabled");
-        J(".remove-from-collection-button").addClass("disabled");
-        J(".move-to-trash-button").prop("title", "Permanently Delete");
+    }
+    if (Zotero.state.getUrlVar("collectionKey") != "trash") {
+        J(".permanently-delete-button").closest("li").hide();
+        J(".remove-from-trash-button").closest("li").hide();
     }
 };
 
@@ -9473,21 +9517,7 @@ Zotero.ui.widgets.item.loadItemCallback = function(e) {
 };
 
 Zotero.ui.widgets.item.showChildren = function(e) {
-    Z.debug("Zotero.ui.widgets.item.showChildren", 3);
-    var t = J(e.data.widgetEl);
-    var r = t.data("itemkey");
-    var o = Zotero.ui.getAssociatedLibrary(t);
-    var i = o.items.getItem(r);
-    var a = J(t).find(".item-attachments-div");
-    Zotero.ui.showSpinner(a);
-    var n = i.getChildren(o).then(function(e) {
-        var r = t.find(".item-attachments-div");
-        r.html(J("#childitemsTemplate").render({
-            childItems: e
-        }));
-        Zotero.state.bindItemLinks(r);
-    }).catch(Zotero.catchPromiseError);
-    return n;
+    return;
 };
 
 Zotero.ui.widgets.item.addCreator = function(e) {
@@ -9657,7 +9687,7 @@ Zotero.ui.widgets.item.loadItemDetail = function(e, t) {
             item: e,
             parentUrl: o,
             libraryString: i.libraryString
-        })).trigger("create");
+        }));
     }
     Zotero.ui.init.rte("readonly");
     try {
@@ -9711,13 +9741,13 @@ Zotero.ui.widgets.item.switchTwoFieldCreators = function(e) {
     var s = t.closest("form").find("select.itemType").val();
     var l = parseInt(t.closest("tr.creator").attr("id").substr(8), 10);
     var c = "#creator_" + l;
-    var u = t.closest("tr.creator").find("select#creator_" + l + "_creatorType").val();
+    var d = t.closest("tr.creator").find("select#creator_" + l + "_creatorType").val();
     t.closest("tr").replaceWith(J("#authorelementsdoubleTemplate").render({
         index: "" + l,
         creator: {
             firstName: i,
             lastName: o,
-            creatorType: u
+            creatorType: d
         },
         creatorTypes: Zotero.Item.prototype.creatorTypes[s]
     }));
@@ -9796,6 +9826,9 @@ Zotero.ui.widgets.items.init = function(e) {
     t.listen("displayedItemsChanged", Zotero.ui.widgets.items.loadItemsCallback, {
         widgetEl: e
     });
+    t.listen("loadMoreItems", Zotero.ui.widgets.items.loadMoreItems, {
+        widgetEl: e
+    });
     t.listen("changeItemSorting", Zotero.ui.callbacks.resortItems, {
         widgetEl: e
     });
@@ -9823,35 +9856,10 @@ Zotero.ui.widgets.items.init = function(e) {
             selectedItemKeys: r
         });
     });
-    r.on("click", "#start-item-link", function(e) {
-        e.preventDefault();
-        Zotero.state.pathVars["itemPage"] = "";
-        Zotero.state.pushState();
-    });
-    r.on("click", "#prev-item-link", function(e) {
-        e.preventDefault();
-        var t = Zotero.state.getUrlVar("itemPage") || "1";
-        t = parseInt(t, 10);
-        var r = t - 1;
-        Zotero.state.pathVars["itemPage"] = r;
-        Zotero.state.pushState();
-    });
-    r.on("click", "#next-item-link", function(e) {
-        e.preventDefault();
-        var t = Zotero.state.getUrlVar("itemPage") || "1";
-        t = parseInt(t, 10);
-        var r = t + 1;
-        Zotero.state.pathVars["itemPage"] = r;
-        Zotero.state.pushState();
-    });
-    r.on("click", "#last-item-link", function(e) {
-        e.preventDefault();
-        Z.debug("last-item-link clickbind", 4);
-        var t = J(e.currentTarget).attr("href");
-        var r = Zotero.state.parsePathVars(t);
-        var o = r.itemPage;
-        Zotero.state.pathVars["itemPage"] = o;
-        Zotero.state.pushState();
+    r.closest("#items-panel").on("scroll", function(e) {
+        if (Zotero.ui.widgets.items.scrollAtBottom(J(this))) {
+            t.trigger("loadMoreItems");
+        } else {}
     });
     Z.debug("triggering displayedItemsChanged");
     t.trigger("displayedItemsChanged");
@@ -9879,8 +9887,37 @@ Zotero.ui.widgets.items.loadItemsCallback = function(e) {
     return i;
 };
 
+Zotero.ui.widgets.items.loadMoreItems = function(e) {
+    Z.debug("loadMoreItems", 3);
+    var t = J(e.data.widgetEl);
+    if (t.data("moreloading")) {
+        return;
+    }
+    t.data("moreloading", true);
+    var r = Zotero.ui.getAssociatedLibrary(t);
+    var o = Zotero.ui.getItemsConfig(r);
+    var i = t.find("table.wide-items-table tbody>tr").length;
+    Z.debug("newStart:" + i);
+    o.start = i;
+    Zotero.ui.showSpinner(t.find(".items-spinner").show(), "horizontal");
+    var a = r.loadItems(o).then(function(e) {
+        if (!e.loadedItems) {
+            Zotero.error("expected loadedItems on response not present");
+            throw "Expected response to have loadedItems";
+        }
+        Zotero.ui.widgets.items.displayMoreItems(t, e.loadedItems);
+        t.removeData("moreloading");
+        t.find(".items-spinner").hide();
+    }).catch(function(e) {
+        Z.error(e);
+        t.append("<p>There was an error loading your items. Please try again in a few minutes.</p>");
+        t.removeData("moreloading");
+        t.find(".items-spinner").hide();
+    });
+};
+
 Zotero.ui.getItemsConfig = function(e) {
-    var t = [ "itemPage", "tag", "collectionKey", "order", "sort", "q" ];
+    var t = [ "tag", "collectionKey", "order", "sort", "q" ];
     var r = {};
     J.each(t, function(e, t) {
         var o = Zotero.state.getUrlVar(t);
@@ -9893,7 +9930,6 @@ Zotero.ui.getItemsConfig = function(e) {
         libraryType: e.libraryType,
         target: "items",
         targetModifier: "top",
-        itemPage: 1,
         limit: e.preferences.getPref("itemsPerPage")
     };
     var i = {
@@ -9902,7 +9938,6 @@ Zotero.ui.getItemsConfig = function(e) {
         limit: e.preferences.getPref("itemsPerPage")
     };
     var a = J.extend({}, o, i, r);
-    a.start = parseInt(a.limit, 10) * (parseInt(a.itemPage, 10) - 1);
     if (a.order == "addedBy" && e.libraryType == "user") {
         a.order = "title";
     }
@@ -9933,15 +9968,32 @@ Zotero.ui.widgets.items.displayItems = function(e, t, r, o) {
         sort: n["sort"],
         library: a
     };
-    Z.debug(l);
-    Z.debug(o);
     i.append(J("#itemstableTemplate").render(l));
-    if (o) {
-        i.append(J("#itempaginationTemplate").render({
-            pagination: o
-        }));
-    }
     Zotero.eventful.initTriggers();
+    Zotero.ui.fixTableHeaders(J("#field-table"));
+};
+
+Zotero.ui.widgets.items.displayMoreItems = function(e, t) {
+    Z.debug("Zotero.ui.widgets.displayItems", 3);
+    var r = J(e);
+    var o = Zotero.ui.getAssociatedLibrary(r);
+    var i = o.preferences.getPref("listDisplayedFields");
+    if (o.libraryType != "group") {
+        i = J.grep(i, function(e, t) {
+            return J.inArray(e, Zotero.Library.prototype.groupOnlyColumns) == -1;
+        });
+    }
+    var a = {
+        displayFields: i,
+        items: t,
+        library: o
+    };
+    var n = J("#itemrowsetTemplate").render(a);
+    var s = J("#singlecellitemrowsetTemplate").render(a);
+    r.find("table.wide-items-table tbody").append(n);
+    r.find("table.narrow-items-table tbody").append(s);
+    Zotero.eventful.initTriggers();
+    Zotero.ui.fixTableHeaders(J("#field-table"));
 };
 
 Zotero.ui.callbacks.resortItems = function(e) {
@@ -9962,10 +10014,6 @@ Zotero.ui.callbacks.resortItems = function(e) {
     } else {
         n = Zotero.config.sortOrdering[a];
     }
-    Z.debug("curr order field:" + o, 3);
-    Z.debug("curr order sort:" + i, 3);
-    Z.debug("New order field:" + a, 3);
-    Z.debug("New order sort:" + n, 3);
     if (J.inArray(a, Zotero.Library.prototype.sortableColumns) == -1) {
         return false;
     }
@@ -9989,6 +10037,13 @@ Zotero.ui.callbacks.resortItems = function(e) {
     r.preferences.setPref("sort", n);
     Zotero.preferences.setPref("order", a);
     Zotero.preferences.setPref("sort", n);
+};
+
+Zotero.ui.widgets.items.scrollAtBottom = function(e) {
+    if (J(e).scrollTop() + J(e).innerHeight() >= J(e)[0].scrollHeight) {
+        return true;
+    }
+    return false;
 };
 
 Zotero.ui.widgets.recentItems = {};
@@ -10035,6 +10090,39 @@ Zotero.ui.widgets.itemContainer.init = function(e) {
         Zotero.state.pushState();
     });
     Zotero.state.bindTagLinks(r);
+};
+
+Zotero.ui.widgets.itemChildren = {};
+
+Zotero.ui.widgets.itemChildren.init = function(e) {
+    Z.debug("itemChildren init", 3);
+    var t = Zotero.ui.getAssociatedLibrary(e);
+    var r = J(e);
+    t.listen("displayedItemChanged uploadSuccessful showChildren", Zotero.ui.widgets.itemChildren.refreshChildren, {
+        widgetEl: e
+    });
+};
+
+Zotero.ui.widgets.itemChildren.refreshChildren = function(e) {
+    Z.debug("Zotero.ui.widgets.item.showChildren", 3);
+    var t = J(e.data.widgetEl);
+    var r = Zotero.ui.getAssociatedLibrary(t);
+    var o = Zotero.state.getUrlVar("itemKey");
+    if (!o) {
+        Z.debug("No itemKey - " + o, 3);
+        t.empty();
+        return Promise.reject(new Error("No itemkey - " + o));
+    }
+    var i = r.items.getItem(o);
+    Zotero.ui.showSpinner(t);
+    var a = i.getChildren(r).then(function(e) {
+        var r = t;
+        r.html(J("#childitemsTemplate").render({
+            childItems: e
+        }));
+        Zotero.state.bindItemLinks(r);
+    }).catch(Zotero.catchPromiseError);
+    return a;
 };
 
 Zotero.ui.widgets.librarysettingsdialog = {};
@@ -10327,25 +10415,6 @@ Zotero.ui.widgets.tags.init = function(e) {
     var r = J(e);
     Zotero.state.bindTagLinks(r);
     r.on("keyup", "#tag-filter-input", Zotero.ui.widgets.tags.filterTags);
-    r.on("click", "#show-automatic-tags", function(e) {
-        var r = J(this).prop("checked") ? true : false;
-        Z.debug("showAutomaticTags is " + r, 4);
-        Zotero.preferences.setPref("showAutomaticTags", r);
-        Zotero.preferences.persist();
-        t.trigger("libraryTagsUpdated");
-    });
-    r.on("click", "#show-more-tags-link", function(e) {
-        e.preventDefault();
-        var r = J(this).closest("#tags-list-div");
-        r.data("showmore", true);
-        t.trigger("libraryTagsUpdated");
-    });
-    r.on("click", "#show-fewer-tags-link", function(e) {
-        e.preventDefault();
-        var r = J(this).closest("#tags-list-div");
-        r.data("showmore", false);
-        t.trigger("libraryTagsUpdated");
-    });
 };
 
 Zotero.ui.widgets.tags.syncTags = function(e) {
@@ -10408,52 +10477,38 @@ Zotero.ui.widgets.tags.displayTagsFiltered = function(e, t, r, o) {
     var n = t.tags;
     var s = t.preferences.getPref("tagColors");
     if (!s) s = [];
-    var l = a.data("showmore");
-    if (!l) {
-        l = false;
-    }
+    var l = [];
     var c = [];
-    var u = [];
     J.each(s, function(e, t) {
-        u.push(t.name.toLowerCase());
+        c.push(t.name.toLowerCase());
         var r = n.getTag(t.name);
         if (r) {
             r.color = t.color;
-            c.push(r);
+            l.push(r);
         }
     });
     var d = [];
-    var p = [];
+    var u = [];
     J.each(r, function(e, t) {
-        if (n.tagObjects[t] && n.tagObjects[t].apiObj.meta.numItems > 0 && J.inArray(t, o) == -1 && J.inArray(t, u) == -1) {
+        if (n.tagObjects[t] && n.tagObjects[t].apiObj.meta.numItems > 0 && J.inArray(t, o) == -1 && J.inArray(t, c) == -1) {
             d.push(n.tagObjects[t]);
         }
     });
     J.each(o, function(e, t) {
         if (n.tagObjects[t]) {
-            p.push(n.tagObjects[t]);
+            u.push(n.tagObjects[t]);
         }
     });
-    var g;
-    if (!l) {
-        g = d.slice(0, 25);
-        J("#show-more-tags-link").show();
-        J("#show-fewer-tags-link").hide();
-    } else {
-        g = d;
-        J("#show-more-tags-link").hide();
-        J("#show-fewer-tags-link").show();
-    }
-    var f = J("#tags-list").empty();
+    var p = J("#tags-list").empty();
     J("#colored-tags-list").replaceWith(J("#coloredtaglistTemplate").render({
-        tags: c
+        tags: l
     }));
     J("#selected-tags-list").replaceWith(J("#tagunorderedlistTemplate").render({
-        tags: p,
+        tags: u,
         id: "selected-tags-list"
     }));
     J("#tags-list").replaceWith(J("#tagunorderedlistTemplate").render({
-        tags: g,
+        tags: d,
         id: "tags-list"
     }));
 };
@@ -10601,9 +10656,9 @@ Zotero.ui.widgets.uploadDialog.upload = function(e) {
     var c;
     if (!l.get("parentItem")) {
         Z.debug("no parentItem", 3);
-        var u = new Zotero.Item();
-        u.associateWithLibrary(r);
-        c = u.initEmpty("attachment", "imported_file").then(function(e) {
+        var d = new Zotero.Item();
+        d.associateWithLibrary(r);
+        c = d.initEmpty("attachment", "imported_file").then(function(e) {
             Z.debug("templateItemDeferred callback", 3);
             e.set("title", a);
             return l.uploadChildAttachment(e, i, n);
@@ -10681,6 +10736,12 @@ Zotero.ui.widgets.filterGuide.init = function(e) {
         widgetEl: e
     });
     t.listen("displayedItemChanged", Zotero.ui.widgets.filterGuide.refreshFilters, {
+        widgetEl: e
+    });
+    t.listen("updateFilterGuide", Zotero.ui.widgets.filterGuide.refreshFilters, {
+        widgetEl: e
+    });
+    t.listen("libraryCollectionsUpdated", Zotero.ui.widgets.filterGuide.refreshFilters, {
         widgetEl: e
     });
     t.listen("clearFilter", Zotero.ui.widgets.filterGuide.clearFilter, {
@@ -10815,7 +10876,7 @@ Zotero.ui.widgets.sendToLibraryDialog.show = function(e) {
             destinationLibraries: n
         }));
         var c = t.find(".send-to-library-dialog");
-        var u = function() {
+        var d = function() {
             Z.debug("sendToLibrary callback", 3);
             var e = c.find(".destination-library-select").val();
             Z.debug("move to: " + e, 3);
@@ -10838,7 +10899,7 @@ Zotero.ui.widgets.sendToLibraryDialog.show = function(e) {
             Zotero.ui.closeDialog(c);
             return false;
         };
-        c.find(".sendButton").on("click", u);
+        c.find(".sendButton").on("click", d);
         Zotero.ui.dialog(c, {});
     }).catch(function(e) {
         Z.error(e);
@@ -10912,13 +10973,9 @@ Zotero.ui.widgets.panelContainer.init = function(e) {
         widgetEl: e,
         panelSelector: "#items-panel"
     });
-    t.listen("showCollectionsPanel", Zotero.ui.widgets.panelContainer.showPanel, {
+    t.listen("showFiltersPanel", Zotero.ui.widgets.panelContainer.showPanel, {
         widgetEl: e,
-        panelSelector: "#collections-panel"
-    });
-    t.listen("showTagsPanel", Zotero.ui.widgets.panelContainer.showPanel, {
-        widgetEl: e,
-        panelSelector: "#tags-panel"
+        panelSelector: "#left-panel"
     });
     t.listen("showItemPanel displayedItemChanged", Zotero.ui.widgets.panelContainer.showPanel, {
         widgetEl: e,
@@ -10997,12 +11054,8 @@ Zotero.ui.widgets.panelContainer.showPanel = function(e) {
         t.find("li.collections-nav").addClass("active");
         break;
 
-      case "#tags-panel":
-        t.find("li.tags-nav").addClass("active");
-        break;
-
-      case "#items-panel":
-        t.find("li.items-nav").addClass("active");
+      case "#left-panel":
+        t.find("li.filters-nav").addClass("active");
         break;
     }
 };

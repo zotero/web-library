@@ -42,6 +42,7 @@ $files = array(
 "libraryUi/widgets/items.js",
 "libraryUi/widgets/recentItems.js",
 "libraryUi/widgets/itemContainer.js",
+"libraryUi/widgets/itemChildren.js",
 "libraryUi/widgets/librarysettingsdialog.js",
 "libraryUi/widgets/newitem.js",
 "libraryUi/widgets/synceditems.js",
@@ -59,6 +60,7 @@ $files = array(
 "libraryUi/widgets/imageGrabber.js",
 "libraryUi/widgets/localItems.js",
 "libraryUi/widgets/siteSearch.js",
+//"libraryUi/widgets/orcidProfile.js",
 "_zoteroLibraryUrl.js",
 "zoteroPages.js",
 );
