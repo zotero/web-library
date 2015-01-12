@@ -12,9 +12,7 @@
                 {{if (parentUrl)}}
                     <a href="{{url:parentUrl}}" class="ajax-link clickable item-select-link" data-itemKey='{{attr:item.apiObj.data.parentItem}}'>Parent Item</a>
                 {{/if}}
-                <!--
-                <h2>{{>item.apiObj.data.title}}</h2>
-                -->
+                
                 {{if (item.apiObj.library.type == 'user')}}
                     <span id="libraryUserID" title="{{attr:item.apiObj.library.id}}"></span>
                 {{else (item.apiObj.library.type == 'group')}}
@@ -32,7 +30,9 @@
                 <!-- Output itemType -->
                 <tr>
                     <th>Item Type</th>
-                    <td class="{{attr:item.apiObj.data.itemType}}">{{>item.typeMap[item.apiObj.data.itemType]}}</td>
+                    <td class="itemType {{attr:item.apiObj.data.itemType}}">
+                        <span class="editable-item-field eventfultrigger" tabindex="0" data-triggers="edit-item-field" data-event="focus" data-library="{{attr:libraryString}}" data-itemfield="itemType" data-itemkey="{{attr:item.get('key')}}">{{>item.typeMap[item.apiObj.data.itemType]}}</span>
+                    </td>
                 </tr>
 
                 <!-- Output title -->
@@ -65,21 +65,35 @@
                     <tr>
                         <th><a rel='nofollow' href='{{url:prop}}'>{{>~zoteroFieldMap[key]}}</a></th>
                         <td class="{{attr:key}}">
-                            <span class="editable-item-field eventfultrigger" tabindex="0" data-triggers="edit-item-field" data-event="focus" data-library="{{attr:~libraryString}}" data-itemfield="{{attr:key}}" data-itemkey="{{attr:~item.get('key')}}">{{>prop}}</span>
+                            <span class="editable-item-field eventfultrigger" tabindex="0" data-triggers="edit-item-field" data-event="focus" data-library="{{attr:~libraryString}}" data-itemfield="{{attr:key}}" data-itemkey="{{attr:~item.get('key')}}">
+                                {{if prop == ''}}
+                                    <div class="empty-field-placeholder"></div>
+                                {{else}}
+                                    {{>prop}}
+                                {{/if}}
+                            </span>
                         </td>
                     </tr>
                     {{else (key == 'DOI')}}
                     <tr>
                         <th><a rel='nofollow' href='http://dx.doi.org/{{url:prop}}'>{{>~zoteroFieldMap[key]}}</a></th>
                         <td class="{{attr:key}}">
-                            <span class="editable-item-field eventfultrigger" tabindex="0" data-triggers="edit-item-field" data-event="focus" data-library="{{attr:~libraryString}}" data-itemfield="{{attr:key}}" data-itemkey="{{attr:~item.get('key')}}">{{>prop}}</span>
+                            <span class="editable-item-field eventfultrigger" tabindex="0" data-triggers="edit-item-field" data-event="focus" data-library="{{attr:~libraryString}}" data-itemfield="{{attr:key}}" data-itemkey="{{attr:~item.get('key')}}">
+                                {{if prop == ''}}
+                                    <div class="empty-field-placeholder"></div>
+                                {{else}}
+                                    {{>prop}}
+                                {{/if}}
+                            </span>
                         </td>
                     </tr>
                     {{else (~Zotero.config.richTextFields[key])}}
                     <tr>
                         <th>{{>~zoteroFieldMap[key]}}</th>
                         <td class="{{attr:key}}">
-                            <span class="editable-item-field eventfultrigger" tabindex="0" data-triggers="edit-item-field" data-event="focus" data-library="{{attr:~libraryString}}" data-itemfield="{{attr:key}}" data-itemkey="{{attr:~item.get('key')}}"><textarea cols="40" rows="14" name="{{attr:key}}" class="rte readonly">{{>~item.apiObj.data[key]}}</textarea></span>
+                            <span class="editable-item-field eventfultrigger" tabindex="0" data-triggers="edit-item-field" data-event="focus" data-library="{{attr:~libraryString}}" data-itemfield="{{attr:key}}" data-itemkey="{{attr:~item.get('key')}}">
+                                <textarea cols="40" rows="14" name="{{attr:key}}" class="rte readonly">{{>~item.apiObj.data[key]}}</textarea>
+                            </span>
                         </td>
                     </tr>
                     {{else ( (~J.inArray(key, ~item.hideFields) == -1) && (~item.fieldMap.hasOwnProperty(key)) && key != 'itemType' && key != 'title') }}
@@ -116,7 +130,7 @@
             <div id="item-tags-panel" role="tabpanel" class="item-tags-div tab-pane">
                 <ul class="item-tags-list">
                     {{for item.apiObj.data.tags}}
-                        <li class="editable-item-tag">{{>#data.tag}}</li>
+                        <li><span class="editable-item-tag">{{>#data.tag}}</span></li>
                     {{/for}}
                 </ul>
 

@@ -7,8 +7,8 @@ Zotero.ui.widgets.item.init = function(el){
     
     library.listen("displayedItemChanged modeChanged", Zotero.ui.widgets.item.loadItemCallback, {widgetEl: el});
     //library.listen("newItem", Zotero.ui.widgets.item.loadItemCallback, {widgetEl: el, newItem:true});
-    library.listen("saveItem", Zotero.ui.widgets.item.saveItemCallback, {widgetEl:el});
-    library.listen("cancelItemEdit", Zotero.ui.widgets.item.cancelItemEdit, {widgetEl:el});
+    //library.listen("saveItem", Zotero.ui.widgets.item.saveItemCallback, {widgetEl:el});
+    //library.listen("cancelItemEdit", Zotero.ui.widgets.item.cancelItemEdit, {widgetEl:el});
     library.listen("itemTypeChanged", Zotero.ui.widgets.item.itemTypeChanged, {widgetEl:el});
     library.listen("uploadSuccessful showChildren", Zotero.ui.widgets.item.showChildren, {widgetEl:el});
     
@@ -417,18 +417,11 @@ Zotero.ui.widgets.item.clickToEdit = function(e){
     Z.debug("widgets.item.clickToEdit", 3);
     var triggeringElement = J(e.triggeringElement);
     var widgetEl = J(e.data.widgetEl);
-    Z.debug(triggeringElement);
-    Z.debug(widgetEl);
     var library = Zotero.ui.getAssociatedLibrary(e.data.widgetEl);
-    Z.debug(library);
     var itemField = triggeringElement.data('itemfield');
     var itemKey = triggeringElement.data('itemkey');
     var item = library.items.getItem(itemKey);
     var fieldValue = item.get(itemField);
-
-    Z.debug(itemKey);
-    Z.debug(itemField);
-    Z.debug(fieldValue);
 
     triggeringElement.replaceWith(J("#datafieldTemplate").render({
         key: itemField,

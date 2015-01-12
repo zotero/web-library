@@ -1,5 +1,13 @@
 <script id="datafieldTemplate" type="text/x-jsrender">
-    {{if ~Zotero.config.largeFields[key]}}
+    {{if key == 'itemType'}}
+    	<select id="itemTypeSelect" class="itemType form-control" name="itemType" data-itemKey="{{attr:itemKey}}">
+        {{for ~Zotero.Item.prototype.itemTypes ~value=value}}
+            {{if #data != 'note' && #data != 'attachment'}}
+            <option label="{{attr:localized}}" value="{{attr:itemType}}" {{if itemType == ~value}}selected=1{{/if}}>{{>localized}}</option>
+            {{/if}}
+        {{/for}}
+        </select>
+    {{else ~Zotero.config.largeFields[key]}}
         <textarea class="form-control" data-itemKey="{{attr:itemKey}}" name='{{attr:key}}' id='{{attr:key}}'>{{>value}}</textarea>
     {{else (~Zotero.config.richTextFields[key])}}
         <textarea cols="40" rows="14" data-itemKey="{{attr:itemKey}}" name='{{attr:key}}' id='{{attr:key}}' class="rte default">{{>value}}</textarea>
