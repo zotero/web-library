@@ -20,6 +20,7 @@ Zotero.ui.widgets.panelContainer.init = function(el){
 
 Zotero.ui.widgets.panelContainer.reflow = function(evt){
     Zotero.ui.widgets.panelContainer.showPanel({data: {widgetEl: evt.data.widgetEl, panelSelector:"#items-panel"}});
+    Zotero.ui.fixTableHeaders(J("#field-table"));
 };
 
 Zotero.ui.widgets.panelContainer.showPanel = function(evt){
