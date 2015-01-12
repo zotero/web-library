@@ -1,0 +1,9 @@
+<script id="datafieldspanTemplate" type="text/x-jsrender">
+    {{if ~Zotero.config.largeFields[key]}}
+        <span class="editable-item-field eventfultrigger" tabindex="0" data-triggers="edit-item-field"  data-event="focus" data-library="{{attr:libraryString}}" data-itemfield="{{attr:key}}" data-itemkey="{{attr:item.get('key')}}">{{>~formatItemField(key, item)}}</span>
+    {{else (~Zotero.config.richTextFields[key])}}
+        <span class="editable-item-field eventfultrigger" tabindex="0" data-triggers="edit-item-field" data-event="focus" data-library="{{attr:libraryString}}" data-itemfield="{{attr:key}}" data-itemkey="{{attr:item.get('key')}}"><textarea cols="40" rows="14" name="{{attr:key}}" class="rte readonly">{{>value}}</textarea></span>
+    {{else}}
+        <span class="editable-item-field eventfultrigger" tabindex="0" data-triggers="edit-item-field"  data-event="focus" data-library="{{attr:libraryString}}" data-itemfield="{{attr:key}}" data-itemkey="{{attr:item.get('key')}}">{{>~formatItemField(key, item)}}</span>
+    {{/if}}
+</script>

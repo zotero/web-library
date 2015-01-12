@@ -123,7 +123,7 @@ Zotero.ui.saveItem = function(item) {
     Z.debug(item, 4);
     //show spinner before making ajax write call
     var library = item.owningLibrary;
-    item.writeItem()
+    var writeResponse = item.writeItem()
     .then(function(writtenItems){
         Z.debug("item write finished", 3);
         //check for errors, update nav
@@ -131,13 +131,6 @@ Zotero.ui.saveItem = function(item) {
             Z.error("Error writing item:" + item.writeFailure.message);
             Zotero.ui.jsNotificationMessage('Error writing item', 'error');
             throw new Error("Error writing item:" + item.writeFailure.message);
-        }
-        else{
-            Zotero.state.unsetUrlVar('action');
-            Zotero.state.pathVars['itemKey'] = item.get('key');
-            
-            Zotero.state.clearUrlVars(['itemKey', 'collectionKey']);
-            Zotero.state.pushState();
         }
     });
     
@@ -153,6 +146,8 @@ Zotero.ui.saveItem = function(item) {
         }
     });
     libTags.updateSecondaryData();
+
+    return writeResponse;
 };
 
 /**
