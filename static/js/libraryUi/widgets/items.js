@@ -5,8 +5,10 @@ Zotero.ui.widgets.items.init = function(el){
     var library = Zotero.ui.getAssociatedLibrary(el);
     
     library.listen("displayedItemsChanged", Zotero.ui.widgets.items.loadItemsCallback, {widgetEl: el});
+    library.listen("displayedItemChanged", Zotero.ui.widgets.items.updateSelected, {widgetEl: el});
     library.listen("loadMoreItems", Zotero.ui.widgets.items.loadMoreItems, {widgetEl: el});
     library.listen("changeItemSorting", Zotero.ui.callbacks.resortItems, {widgetEl: el});
+
     
     //set up sorting on header clicks
     var container = J(el);
@@ -22,9 +24,10 @@ Zotero.ui.widgets.items.init = function(el){
         J("input.itemKey-checkbox:checked").each(function(index, el){
             selectedItemKeys.push(J(el).data('itemkey'));
         });
-        //library.trigger('controlPanelContextChange');
         Zotero.state.selectedItemKeys = selectedItemKeys;
         library.trigger("selectedItemsChanged", {selectedItemKeys: selectedItemKeys});
+
+        Zotero.ui.widgets.items.highlightSelected();
     });
     
     //init itemkey-checkbox to enable/disable buttons that require something being selected
@@ -36,54 +39,39 @@ Zotero.ui.widgets.items.init = function(el){
         });
         Zotero.state.selectedItemKeys = selectedItemKeys;
         library.trigger("selectedItemsChanged", {selectedItemKeys: selectedItemKeys});
+
+        Zotero.ui.widgets.items.highlightSelected();
     });
-    
-    /*
-    container.on('click', "#start-item-link", function(e){
-        e.preventDefault();
-        Zotero.state.pathVars['itemPage'] = '';
-        Zotero.state.pushState();
-    });
-    container.on('click', "#prev-item-link", function(e){
-        e.preventDefault();
-        var itemPage = Zotero.state.getUrlVar('itemPage') || '1';
-        itemPage = parseInt(itemPage, 10);
-        var newItemPage = itemPage - 1;
-        Zotero.state.pathVars['itemPage'] = newItemPage;
-        Zotero.state.pushState();
-    });
-    container.on('click', "#next-item-link", function(e){
-        e.preventDefault();
-        var itemPage = Zotero.state.getUrlVar('itemPage') || '1';
-        itemPage = parseInt(itemPage, 10);
-        var newItemPage = itemPage + 1;
-        Zotero.state.pathVars['itemPage'] = newItemPage;
-        Zotero.state.pushState();
-    });
-    container.on('click', "#last-item-link", function(e){
-        e.preventDefault();
-        Z.debug("last-item-link clickbind", 4);
-        var pagehref = J(e.currentTarget).attr('href');
-        var pathVars = Zotero.state.parsePathVars(pagehref);
-        var lastItemPage = pathVars.itemPage;
-        Zotero.state.pathVars['itemPage'] = lastItemPage;
-        Zotero.state.pushState();
-    });
-    */
    
     //monitor scroll position of items pane for infinite scrolling
     container.closest("#items-panel").on('scroll', function(e){
-        //Z.debug("scroll fired on monitored items widget");
         if(Zotero.ui.widgets.items.scrollAtBottom(J(this))){
-            //Z.debug("scroll is at bottom: firing event");
             library.trigger("loadMoreItems");
-        } else {
-            //Z.debug("Scroll is not at bottom, not firing");
         }
     });
 
-    Z.debug("triggering displayedItemsChanged");
     library.trigger("displayedItemsChanged");
+};
+
+Zotero.ui.widgets.items.updateSelected = function(event){
+    Z.debug('Zotero eventful updateSelected', 3);
+    var widgetEl = J(event.data.widgetEl);
+    var library = Zotero.ui.getAssociatedLibrary(widgetEl);
+    var selectedItemKey = Zotero.state.getUrlVar('itemKey');
+    Zotero.state.selectedItemKeys = [selectedItemKey];
+    var checkboxName = 'selectitem-' + selectedItemKey;
+    
+    //uncheck all checkboxes, then check the one that is newly displayed
+    J(".itemlist-editmode-checkbox").prop('checked', false);
+    J('[name="' + checkboxName + '"]').prop('checked', true);
+
+    Zotero.ui.widgets.items.highlightSelected();
+};
+
+Zotero.ui.widgets.items.highlightSelected = function(){
+    //highlight only checked rows
+    J(".itemlist-editmode-checkbox").closest("tr").removeClass("highlighed");
+    J(".itemlist-editmode-checkbox:checked").closest("tr").addClass("highlighed");
 };
 
 Zotero.ui.widgets.items.loadItemsCallback = function(event){
@@ -237,6 +225,7 @@ Zotero.ui.widgets.items.displayItems = function(el, config, itemsArray, paginati
     Zotero.eventful.initTriggers();
 
     Zotero.ui.fixTableHeaders(J("#field-table"));
+    library.trigger("displayedItemChanged");
 };
 
 Zotero.ui.widgets.items.displayMoreItems = function(el, itemsArray) {
