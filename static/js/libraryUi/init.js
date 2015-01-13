@@ -222,7 +222,6 @@ Zotero.ui.init.libraryTemplates = function(){
     J('#collectionrowTemplate').template('collectionrowTemplate');
     J('#itemrowTemplate').template('itemrowTemplate');
     J('#itemstableTemplate').template('itemstableTemplate');
-    J('#itempaginationTemplate').template('itempaginationTemplate');
     J('#itemdetailsTemplate').template('itemdetailsTemplate');
     J('#itemnotedetailsTemplate').template('itemnotedetailsTemplate');
     J('#itemformTemplate').template('itemformTemplate');

@@ -91,8 +91,8 @@ Zotero.ui.widgets.items.loadItemsCallback = function(event){
             Zotero.error("expected loadedItems on response not present");
             throw("Expected response to have loadedItems");
         }
-        var pagination = Zotero.ui.createPagination(response, 'itemPage', newConfig.start, newConfig.limit);
-        Zotero.ui.widgets.items.displayItems(widgetEl, newConfig, response.loadedItems, pagination);
+        library.items.totalResults = response.totalResults;
+        Zotero.ui.widgets.items.displayItems(widgetEl, newConfig, response.loadedItems);
     }).catch(function(response){
         Z.error(response);
         widgetEl.html("<p>There was an error loading your items. Please try again in a few minutes.</p>");
@@ -193,7 +193,7 @@ Zotero.ui.getItemsConfig = function(library){
  * @param  {array} loadedItems loaded items array
  * @return {undefined}
  */
-Zotero.ui.widgets.items.displayItems = function(el, config, itemsArray, pagination) {
+Zotero.ui.widgets.items.displayItems = function(el, config, itemsArray) {
     Z.debug("Zotero.ui.widgets.displayItems", 3);
     var jel = J(el);
     var library = Zotero.ui.getAssociatedLibrary(jel);
@@ -213,14 +213,8 @@ Zotero.ui.widgets.items.displayItems = function(el, config, itemsArray, paginati
                            library:library,
                         };
 
-    //Z.debug(itemsTableData);
-    //Z.debug(pagination);
     jel.append( J('#itemstableTemplate').render(itemsTableData) );
-    /*
-    if(pagination){
-        jel.append( J('#itempaginationTemplate').render({pagination:pagination}) );
-    }
-    */
+    
     //library.trigger('controlPanelContextChange');
     Zotero.eventful.initTriggers();
 

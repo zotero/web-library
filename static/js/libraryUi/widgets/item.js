@@ -6,9 +6,6 @@ Zotero.ui.widgets.item.init = function(el){
     var library = Zotero.ui.getAssociatedLibrary(el);
     
     library.listen("displayedItemChanged modeChanged", Zotero.ui.widgets.item.loadItemCallback, {widgetEl: el});
-    //library.listen("newItem", Zotero.ui.widgets.item.loadItemCallback, {widgetEl: el, newItem:true});
-    //library.listen("saveItem", Zotero.ui.widgets.item.saveItemCallback, {widgetEl:el});
-    //library.listen("cancelItemEdit", Zotero.ui.widgets.item.cancelItemEdit, {widgetEl:el});
     library.listen("itemTypeChanged", Zotero.ui.widgets.item.itemTypeChanged, {widgetEl:el});
     library.listen("uploadSuccessful showChildren", Zotero.ui.widgets.item.showChildren, {widgetEl:el});
     
@@ -71,13 +68,12 @@ Zotero.ui.widgets.item.loadItemCallback = function(event){
     itemInfoPanel.empty();
     Zotero.ui.showSpinner(itemInfoPanel);
     
-    //if it is not a new item handled above we must have an itemKey
-    //or display something else that's not an item
+    //get the key of the item we need to display, or display library stats
     var itemKey = Zotero.state.getUrlVar('itemKey');
     if(!itemKey){
         Z.debug("No itemKey - " + itemKey, 3);
         itemInfoPanel.empty();
-        //TODO: display information about library like client?
+        Zotero.ui.widgets.item.displayStats(library, widgetEl);
         return Promise.reject(new Error("No itemkey - " + itemKey));
     }
     
@@ -284,6 +280,16 @@ Zotero.ui.widgets.item.loadItemDetail = function(item, el){
         Zotero.error("Error triggering ZoteroItemUpdated event");
     }
     jel.data('itemkey', item.apiObj.key);
+};
+
+//get stats from library.items and display them in the item info pane when we
+//don't have a selected item to show
+Zotero.ui.widgets.item.displayStats = function(library, widgetEl) {
+    Z.debug("Zotero.ui.widgets.item.displayStats", 3);
+    var totalResults = library.items.totalResults;
+    if(totalResults){
+        J(widgetEl).html("<p class='item-count'>" + totalResults + " items in this view</p>");
+    }
 };
 
 

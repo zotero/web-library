@@ -216,53 +216,6 @@ Zotero.ui.itemTypeClass = function(item) {
 };
 
 /**
- * Build a pagination object necessary to figure out ranges and links
- * @param  {ApiResponse} response    response object being paginated
- * @param  {string} pageVar page variable used in url
- * @param  {int} start  start index of response
- * @param {int} limit   per page limit
- * @return {object}
- */
-Zotero.ui.createPagination = function(response, pageVar, start, limit){
-    //set relevant config vars to find pagination values
-    if(typeof start === 'undefined') start = 0;
-    if(typeof limit === 'undefined') limit = 25;
-    var page = parseInt(Zotero.state.getUrlVar(pageVar), 10) || 1;
-    var totalResults = response.totalResults;
-    
-    //figure out pagination values
-    var lastPageStart = parseInt(J.deparam.querystring(response.parsedLinks.last).start, 10);
-    var lastDisplayed = start + limit;
-    var prevPageNum = (page - 1);
-    var nextPageNum = (page + 1);
-    var lastPageNum = (lastPageStart / limit) + 1;
-    
-    //build pagination object
-    var pagination = {page:page};
-    pagination.showFirstLink = start > 0;
-    pagination.showPrevLink = start > 0;
-    pagination.showNextLink = totalResults > lastDisplayed;
-    pagination.showLastLink = totalResults > (lastDisplayed );
-    
-    //construct the actual links by mutating the current url
-    var mutateOb = {};
-    pagination.firstLink = Zotero.state.mutateUrl(mutateOb, [pageVar]);
-    mutateOb[pageVar] = prevPageNum;
-    pagination.prevLink = Zotero.state.mutateUrl(mutateOb, []);
-    mutateOb[pageVar] = nextPageNum;
-    pagination.nextLink = Zotero.state.mutateUrl(mutateOb, []);
-    mutateOb[pageVar] = lastPageNum;
-    pagination.lastLink = Zotero.state.mutateUrl(mutateOb, []);
-    
-    pagination.start = start;
-    pagination.lastDisplayed = Math.min(lastDisplayed, totalResults);
-    pagination.total = totalResults;
-    
-    Z.debug("last displayed:" + lastDisplayed + " totalResults:" + response.totalResults, 4);
-    return pagination;
-};
-
-/**
  * Get the Zotero Library associated with an element (generally a .eventfulwidget element)
  * @param  {Dom Element} el Dom element
  * @return {Zotero_Library}
