@@ -44,20 +44,13 @@
                 </tr>
 
                 <!-- Output creators -->
-                {{for item.apiObj.data.creators ~item=item}}
-                    {{if ((#data.name) || (#data.firstName) || (#data.lastName) )}}
-                    <tr>
-                        <th>{{>~item.creatorMap[#data.creatorType]}}</th>
-                        <td class="{{attr:#data.creatorType}}">
-                        {{if name }}
-                            {{>#data['name']}}
-                        {{else}}
-                            {{>#data.lastName}}, {{>#data.firstName}}
-                        {{/if}}
-                        </td>
-                    </tr>
-                    {{/if}}
-                {{/for}}
+                {{if item.apiObj.data.creators.length}}
+                    {{for item.apiObj.data.creators ~item=item ~libraryString=libraryString}}
+                        {{for #data ~item=~item ~libraryString=~libraryString ~creatorIndex=#index tmpl="#creatorrowTemplate" /}}
+                    {{/for}}
+                {{else}}
+                    {{for #data ~item=item ~libraryString=libraryString ~creatorIndex="0" tmpl="#creatorrowTemplate" /}}
+                {{/if}}
                 
                 <!-- Output fields -->
                 {{props item.apiObj.data ~item=item ~libraryString=libraryString}}

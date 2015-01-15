@@ -7,6 +7,19 @@
             {{/if}}
         {{/for}}
         </select>
+    {{else key == 'creatorType'}}
+        <select class="creator-type-select form-control" name="creatorType" data-creatorindex="{{attr:creatorIndex}}" data-itemKey="{{attr:itemKey}}">
+            {{for creatorTypes ~creator=creator}}
+                <option label="{{attr:localized}}" value="{{attr:creatorType}}" >{{>localized}}</option>
+            {{/for}}
+        </select>
+    {{else key == 'name' || key == 'firstName' || key == "lastName"}}
+        <input type="text" class="creator-{{attr:key}} form-control"
+            value="{{attr:value}}"
+            id="{{attr:key}}"
+            name="{{attr:key}}"
+            data-creatorindex="{{attr:creatorIndex}}"
+            data-itemKey="{{attr:itemKey}}">
     {{else ~Zotero.config.largeFields[key]}}
         <textarea class="form-control" data-itemKey="{{attr:itemKey}}" name='{{attr:key}}' id='{{attr:key}}'>{{>value}}</textarea>
     {{else (~Zotero.config.richTextFields[key])}}

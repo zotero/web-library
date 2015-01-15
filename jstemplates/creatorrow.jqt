@@ -1,0 +1,94 @@
+<script id="creatorrowTemplate" type="text/x-jsrender">
+<tr class="creator-row" data-creatorindex="{{attr:~creatorIndex}}">
+    <th>
+        <span class="editable-creator-field eventfultrigger"
+            tabindex="0"
+            data-creatorindex="{{attr:~creatorIndex}}"
+            data-triggers="edit-creator-field"
+            data-event="focus"
+            data-library="{{attr:~libraryString}}"
+            data-itemfield="creatorType"
+            data-itemkey="{{attr:~item.get('key')}}"
+            data-value="{{if creatorType}}{{attr:creatorType}}{{else}}{{attr:~item.creatorTypes[~item.get('itemType')][0].creatorType}}{{/if}}">
+            {{>~item.creatorMap[~item.creatorTypes[~item.get('itemType')][0].creatorType]}}
+        </span>
+    </th>
+    <td class="{{attr:#data.creatorType}}">
+    {{if name !== undefined }}
+        <span class="editable-creator-field eventfultrigger"
+            tabindex="0"
+            data-creatorindex="{{attr:~creatorIndex}}"
+            data-triggers="edit-creator-field"
+            data-event="focus"
+            data-library="{{attr:~libraryString}}"
+            data-itemfield="name"
+            data-itemkey="{{attr:~item.get('key')}}"
+            data-value="{{attr:#data.name}}">
+            {{if name}}
+                {{>name}}
+            {{else}}
+                (full name)
+            {{/if}}
+        </span>
+    {{else}}
+        <span class="editable-creator-field eventfultrigger"
+            tabindex="0"
+            data-creatorindex="{{attr:~creatorIndex}}"
+            data-triggers="edit-creator-field"
+            data-event="focus"
+            data-library="{{attr:~libraryString}}"
+            data-itemfield="lastName"
+            data-itemkey="{{attr:~item.get('key')}}"
+            data-value="{{attr:#data.lastName}}">
+            {{if lastName}}
+                {{>lastName}}
+            {{else}}
+                (last)
+            {{/if}}
+        </span>, 
+        <span class="editable-creator-field eventfultrigger"
+            tabindex="0"
+            data-creatorindex="{{attr:~creatorIndex}}"
+            data-triggers="edit-creator-field"
+            data-event="focus"
+            data-library="{{attr:~libraryString}}"
+            data-itemfield="firstName"
+            data-itemkey="{{attr:~item.get('key')}}"
+            data-value="{{attr:#data.firstName}}">
+            {{if firstName}}
+                {{>firstName}}
+            {{else}}
+                (first)
+            {{/if}}
+        </span>
+    {{/if}}
+    <div class="btn-toolbar" role="toolbar">
+        <div class="btn-group">
+            <button type="button"
+                class="switch-two-field-creator-link btn btn-default eventfultrigger"
+                data-triggers="switchCreatorFields"
+                data-itemkey="{{attr:~item.get('key')}}"
+                data-library="{{attr:~libraryString}}"
+                data-creatorindex="{{attr:~creatorIndex}}"><span class="fonticon glyphicons glyphicons-unchecked"></span>
+            </button>
+        </div>
+        <div class="btn-group">
+            <button type="button"
+                class="btn btn-default eventfultrigger"
+                data-triggers="removeCreator"
+                data-itemkey="{{attr:~item.get('key')}}"
+                data-library="{{attr:~libraryString}}"
+                data-creatorindex="{{attr:~creatorIndex}}"><span class="fonticon glyphicons glyphicons-minus"></span>
+            </button>
+            <button type="button"
+                class="btn btn-default eventfultrigger"
+                data-triggers="addCreator"
+                data-itemkey="{{attr:~item.get('key')}}"
+                data-library="{{attr:~libraryString}}"
+                data-creatorindex="{{attr:~creatorIndex}}"><span class="fonticon glyphicons glyphicons-plus"></span>
+            </button>
+        </div>
+    </div>
+    </td>
+</tr>
+</script>

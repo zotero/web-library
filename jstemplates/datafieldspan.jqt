@@ -1,5 +1,21 @@
 <script id="datafieldspanTemplate" type="text/x-jsrender">
-    {{if ~Zotero.config.largeFields[key]}}
+    {{if key == "creatorType"}}
+        <span class="editable-creator-field eventfultrigger" tabindex="0" data-creatorindex="{{attr:creatorIndex}}" data-triggers="edit-creator-field" data-event="focus" data-library="{{attr:libraryString}}" data-itemfield="creatorType" data-itemkey="{{attr:item.get('key')}}" data-value="{{attr:value}}">
+            {{>item.creatorMap[value]}}
+        </span>
+    {{else (key == "name" || key == "firstName" || key == "lastName")}}
+        <span class="editable-creator-field eventfultrigger" tabindex="0" data-creatorindex="{{attr:creatorIndex}}" data-triggers="edit-creator-field" data-event="focus" data-library="{{attr:libraryString}}" data-itemfield="{{attr:key}}" data-itemkey="{{attr:item.get('key')}}" data-value="{{attr:value}}">
+            {{if value}}
+                {{>value}}
+            {{else key == "name"}}
+                (full name)
+            {{else key == "firstName"}}
+                (first)
+            {{else key == "lastName"}}
+                (last)
+            {{/if}}
+        </span>
+    {{else ~Zotero.config.largeFields[key]}}
         <span class="editable-item-field eventfultrigger" tabindex="0" data-triggers="edit-item-field"  data-event="focus" data-library="{{attr:libraryString}}" data-itemfield="{{attr:key}}" data-itemkey="{{attr:item.get('key')}}">{{>~formatItemField(key, item)}}</span>
     {{else (~Zotero.config.richTextFields[key])}}
         <span class="editable-item-field eventfultrigger" tabindex="0" data-triggers="edit-item-field" data-event="focus" data-library="{{attr:libraryString}}" data-itemfield="{{attr:key}}" data-itemkey="{{attr:item.get('key')}}"><textarea cols="40" rows="14" name="{{attr:key}}" class="rte readonly">{{>value}}</textarea></span>

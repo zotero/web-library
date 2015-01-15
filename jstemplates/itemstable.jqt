@@ -10,9 +10,9 @@
                     class="field-table-header eventfultrigger {{if ~J.inArray(#data, ~Zotero.Library.prototype.sortableColumns) >= 0}} clickable {{/if}} {{if (#data == ~order)}} selected-order sort-{{attr:sort}}{{/if}}" data-columnField="{{attr:#data}}" data-library="{{attr:~library.libraryString}}">{{>~Zotero.Item.prototype.fieldMap[#data] || #data}}
                     {{if (#data == ~order) }}
                         {{if (~sort == 'desc') }}
-                            <span class="glyphicons fonticon chevron-down pull-right"></span>
+                            <span class="glyphicons fonticon glyphicons-chevron-down pull-right"></span>
                         {{else}}
-                            <span class="glyphicons fonticon chevron-up pull-right"></span>
+                            <span class="glyphicons fonticon glyphicons-chevron-up pull-right"></span>
                         {{/if}}
                     {{/if}}
                 </th>

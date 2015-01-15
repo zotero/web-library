@@ -1,21 +1,20 @@
 Zotero.ui.widgets.item = {};
-//TODO: alot of this widget should probably be rewritten
 //TODO: trigger showChildren with an extra itemID filter so quick clicks back and forth
 //between items don't overwrite with the wrong children?
 Zotero.ui.widgets.item.init = function(el){
     var library = Zotero.ui.getAssociatedLibrary(el);
     
-    library.listen("displayedItemChanged modeChanged", Zotero.ui.widgets.item.loadItemCallback, {widgetEl: el});
+    library.listen("displayedItemChanged modeChanged", Zotero.ui.widgets.item.loadItem, {widgetEl: el});
     library.listen("itemTypeChanged", Zotero.ui.widgets.item.itemTypeChanged, {widgetEl:el});
-    library.listen("uploadSuccessful showChildren", Zotero.ui.widgets.item.showChildren, {widgetEl:el});
+    library.listen("uploadSuccessful", Zotero.ui.widgets.item.refreshChildren, {widgetEl:el});
     
     library.listen("addTag", Zotero.ui.widgets.item.addTag, {widgetEl:el});
     library.listen("removeTag", Zotero.ui.widgets.item.removeTag, {widgetEl:el});
     library.listen("addCreator", Zotero.ui.widgets.item.addCreator, {widgetEl:el});
     library.listen("removeCreator", Zotero.ui.widgets.item.removeCreator, {widgetEl:el});
     
-    library.listen("switchTwoFieldCreator", Zotero.ui.widgets.item.switchTwoFieldCreators, {widgetEl:el});
-    library.listen("switchSingleFieldCreator", Zotero.ui.widgets.item.switchSingleFieldCreator, {widgetEl:el});
+    library.listen("switchCreatorFields", Zotero.ui.widgets.item.switchCreatorFields, {widgetEl:el});
+    
     library.listen("addNote", Zotero.ui.widgets.item.addNote, {widgetEl:el});
     library.listen("tagsChanged", Zotero.ui.widgets.item.updateTypeahead, {widgetEl:el});
 
@@ -23,6 +22,7 @@ Zotero.ui.widgets.item.init = function(el){
     
     
     library.listen("edit-item-field", Zotero.ui.widgets.item.clickToEdit, {widgetEl:el});
+    library.listen("edit-creator-field", Zotero.ui.widgets.item.clickToEdit, {widgetEl:el});
     
     //watch buttons on item field from widget DOM element
     var container = J(el);
@@ -34,27 +34,40 @@ Zotero.ui.widgets.item.init = function(el){
         Z.debug("blurred");
         var input = J(this);
         var itemKey = input.data('itemkey');
-        Z.debug(itemKey);
         var item = library.items.getItem(itemKey);
-        Z.debug(item);
         var updatedField = input.attr('name');
         var updatedValue = input.val();
-        Zotero.ui.widgets.item.updateItemField(library, itemKey, updatedField, updatedValue);
-        input.replaceWith(J("#datafieldspanTemplate").render({
+        var creatorIndex = input.data('creatorindex');
+        Z.debug(updatedField);
+        Z.debug(updatedValue);
+        var templateData = {
             item:item,
             key: updatedField,
             value: updatedValue,
             itemKey: itemKey,
-            libraryString: library.libraryString
-        }));
+            libraryString: library.libraryString,
+            creatorIndex: creatorIndex,
+        };
+
+        if(creatorIndex !== undefined){
+            input.replaceWith(J("#datafieldspanTemplate").render(templateData));
+            var row = J("tr.creator-row[data-creatorindex='" + creatorIndex + "']");
+            var updatedCreator = Zotero.ui.widgets.item.creatorFromRow(row);
+            Zotero.ui.widgets.item.updateItemCreatorField(library, itemKey, updatedCreator, creatorIndex);
+        }
+        else {
+            Zotero.ui.widgets.item.updateItemField(library, itemKey, updatedField, updatedValue);
+            input.replaceWith(J("#datafieldspanTemplate").render(templateData));
+        }
+
         Zotero.eventful.initTriggers(container);
     });
 
     library.trigger("displayedItemChanged");
 };
 
-Zotero.ui.widgets.item.loadItemCallback = function(event){
-    Z.debug('Zotero eventful loadItemCallback', 3);
+Zotero.ui.widgets.item.loadItem = function(event){
+    Z.debug('Zotero eventful loadItem', 3);
     var widgetEl = J(event.data.widgetEl);
     var itemInfoPanel = widgetEl.find('#item-info-panel');
     var triggeringEl = J(event.triggeringElement);
@@ -79,10 +92,10 @@ Zotero.ui.widgets.item.loadItemCallback = function(event){
     
     //if we are showing an item, load it from local library of API
     //then display it
-    var item = library.items.getItem(itemKey);
-    if(item){
+    var loadedItem = library.items.getItem(itemKey);
+    if(loadedItem){
         Z.debug("have item locally, loading details into ui", 3);
-        loadingPromise = Promise.resolve(item);
+        loadingPromise = Promise.resolve(loadedItem);
     }
     else{
         Z.debug("must fetch item from server", 3);
@@ -95,13 +108,13 @@ Zotero.ui.widgets.item.loadItemCallback = function(event){
         loadingPromise = library.loadItem(itemKey);
     }
     loadingPromise.then(function(item){
-        Z.debug("Library.loadItem done", 3);
+        loadedItem = item;
+    }).then(function(){
+        return loadedItem.getCreatorTypes(loadedItem.get('itemType'));
+    }).then(function(creatorTypes){
         itemInfoPanel.empty();
-        Zotero.ui.widgets.item.loadItemDetail(item, widgetEl);
-        
+        Zotero.ui.widgets.item.loadItemDetail(loadedItem, widgetEl);
         library.trigger('showChildren');
-        //set currentConfig on element when done displaying
-        widgetEl.data('currentconfig', config);
         Zotero.eventful.initTriggers(widgetEl);
     });
     loadingPromise.catch(function(err){
@@ -120,16 +133,21 @@ Zotero.ui.widgets.item.loadItemCallback = function(event){
  * @param {DOM Button} button Add creator button clicked
  */
 Zotero.ui.widgets.item.addCreator = function(e){
-    var button = e.triggeringElement;
-    Z.debug("Zotero.ui.addCreator", 3);
-    var itemKey = J(button).data('itemkey');
-    var itemType = J(button).closest('form').find('select.itemType').val();
-    var jel = J("input[id^='creator_']:last").closest('tr');
-    jel.after( J('#authorelementsdoubleTemplate').render({
-        index:newindex,
-        creator:{firstName:'', lastName:''},
-        creatorTypes:Zotero.Item.prototype.creatorTypes[itemType]
-    }) );
+    Z.debug("widgets.item.addCreator", 3);
+    var triggeringElement = J(e.triggeringElement);
+    var widgetEl = J(e.data.widgetEl);
+    var library = Zotero.ui.getAssociatedLibrary(e.data.widgetEl);
+    var itemKey = triggeringElement.data('itemkey');
+    var item = library.items.getItem(itemKey);
+    var newCreatorIndex = item.get('creators').length;
+    
+    widgetEl.find("tr.creator-row").last().after(J("#creatorrowTemplate").render({}, {
+        creatorIndex: newCreatorIndex,
+        libraryString: library.libraryString,
+        item: item,
+    }));
+
+    Zotero.eventful.initTriggers(widgetEl);
 };
 
 /**
@@ -138,17 +156,33 @@ Zotero.ui.widgets.item.addCreator = function(e){
  * @return {undefined}
  */
 Zotero.ui.widgets.item.removeCreator = function(e){
-    var button = e.currentTarget;
-    var widgetEl = Zotero.ui.parentWidgetEl(button);
-    Z.debug("Zotero.ui.removeCreator", 3);
-    //check to make sure there is another creator field available to use
-    //if not add an empty one
-    if(widgetEl.find("tr.creator").length === 1){
-        Zotero.ui.addCreator(e);
-    }
+    Z.debug("widgets.item.removeCreator", 3);
+    var triggeringElement = J(e.triggeringElement);
+    var widgetEl = J(e.data.widgetEl);
+    var library = Zotero.ui.getAssociatedLibrary(e.data.widgetEl);
+    var itemKey = triggeringElement.data('itemkey');
+    var item = library.items.getItem(itemKey);
+    var creatorIndex = triggeringElement.data('creatorindex');
     
-    //remove the creator as requested
-    J(button).closest('tr').remove();
+    //empty specified creator from item and save
+    var creators = item.get('creators');
+    creators.splice(creatorIndex, 1);
+    Zotero.ui.saveItem(item);
+
+    //re-render creator rows so they are re-indexed
+    var oldRows = widgetEl.find("tr.creator-row");
+    var oldRowCount = oldRows.length;
+    for(var i = 0; i < creators.length; i++){
+        widgetEl.find("tr.creator-row").last().after(J("#creatorrowTemplate").render(creators[i], {
+            creatorIndex: i,
+            libraryString: library.libraryString,
+            item: item,
+        }));
+    }
+
+    oldRows.remove();
+
+    Zotero.eventful.initTriggers(widgetEl);
 };
 
 /**
@@ -300,7 +334,7 @@ Zotero.ui.widgets.item.displayStats = function(library, widgetEl) {
  * @return {undefined}
  */
 Zotero.ui.widgets.item.refreshChildren = function(e){
-    Z.debug('Zotero.ui.widgets.item.showChildren', 3);
+    Z.debug('Zotero.ui.widgets.item.refreshChildren', 3);
     var widgetEl = J(e.data.widgetEl);
     var childrenPanel = widgetEl.find("#item-children-panel");
     var library = Zotero.ui.getAssociatedLibrary(widgetEl);
@@ -323,60 +357,6 @@ Zotero.ui.widgets.item.refreshChildren = function(e){
     })
     .catch(Zotero.catchPromiseError);
     return p;
-};
-
-
-Zotero.ui.widgets.item.switchTwoFieldCreators = function(e){
-    Z.debug("switch two field creator clicked", 3);
-    var jel = J(e.triggeringElement);
-    var containingTable = jel.closest('table');
-    
-    var last, first;
-    var name = jel.closest('tr.creator').find("input[id$='_name']").val();
-    var split = name.split(' ');
-    if(split.length > 1){
-        last = split.splice(-1, 1)[0];
-        first = split.join(' ');
-    }
-    else{
-        last = name;
-        first = '';
-    }
-    
-    var itemType = jel.closest('form').find('select.itemType').val();
-    var index = parseInt(jel.closest('tr.creator').attr('id').substr(8), 10);
-    var trIdString = '#creator_' + index;
-    var creatorType = jel.closest('tr.creator').find("select#creator_" + index + "_creatorType").val();
-    jel.closest('tr').replaceWith( J('#authorelementsdoubleTemplate').render({
-        index:"" + index,
-        creator:{firstName:first, lastName:last, creatorType:creatorType},
-        creatorTypes:Zotero.Item.prototype.creatorTypes[itemType]
-    }));
-    
-    Zotero.eventful.initTriggers(containingTable.find(trIdString));
-};
-
-Zotero.ui.widgets.item.switchSingleFieldCreator = function(e){
-    Z.debug("switch single field clicked", 3);
-    var jel = J(e.triggeringElement);
-    var containingTable = jel.closest('table');
-    
-    var name;
-    var firstName = jel.closest('div.creator-input-div').find("input[id$='_firstName']").val();
-    var lastName = jel.closest('div.creator-input-div').find("input[id$='_lastName']").val();
-    name = firstName + " " + lastName;
-    
-    var itemType = jel.closest('form').find('select.itemType').val();
-    var index = parseInt(jel.closest('tr.creator').attr('id').substr(8), 10);
-    var trIdString = '#creator_' + index;
-    var creatorType = jel.closest('tr.creator').find("select#creator_" + index + "_creatorType").val();
-    jel.closest('tr').replaceWith( J('#authorelementssingleTemplate').render({
-        index:""+index,
-        creator:{name:name},
-        creatorTypes:Zotero.Item.prototype.creatorTypes[itemType]
-    }));
-    
-    Zotero.eventful.initTriggers(containingTable.find(trIdString));
 };
 
 Zotero.ui.widgets.item.itemFormKeydown = function(e){
@@ -426,17 +406,108 @@ Zotero.ui.widgets.item.clickToEdit = function(e){
     var library = Zotero.ui.getAssociatedLibrary(e.data.widgetEl);
     var itemField = triggeringElement.data('itemfield');
     var itemKey = triggeringElement.data('itemkey');
+    var creatorIndex = triggeringElement.data('creatorindex');
     var item = library.items.getItem(itemKey);
-    var fieldValue = item.get(itemField);
+    var creators = item.get('creators');
+    var fieldValue = "";
+    if(creatorIndex && creators[creatorIndex]){
+        fieldValue = creators[creatorIndex][itemField];
+    } else {
+        fieldValue = item.get(itemField);
+    }
 
     triggeringElement.replaceWith(J("#datafieldTemplate").render({
+        creatorTypes: item.creatorTypes[item.get('itemType')],
         key: itemField,
         value: fieldValue,
         itemKey: itemKey,
+        creatorIndex: creatorIndex,
         library:library,
+        item:item,
     }));
 
     widgetEl.find("#" + itemField).focus();
+}
+
+
+//switch an item field to a form input when clicked to edit (and is editable by the user)
+/*
+Zotero.ui.widgets.item.clickToEditCreator = function(e){
+    Z.debug("widgets.item.clickToEditCreator", 3);
+    var triggeringElement = J(e.triggeringElement);
+    var widgetEl = J(e.data.widgetEl);
+    var library = Zotero.ui.getAssociatedLibrary(e.data.widgetEl);
+    var itemField = triggeringElement.data('itemfield');
+    var itemKey = triggeringElement.data('itemkey');
+    var creatorIndex = triggeringElement.data('creatorindex');
+    var item = library.items.getItem(itemKey);
+    var creators = item.get('creators');
+    var fieldValue = "";
+    if(creators[creatorIndex]){
+        fieldValue = creators[creatorIndex][itemField];
+    }
+
+    triggeringElement.replaceWith(J("#datafieldTemplate").render({
+        creatorTypes: item.creatorTypes[item.get('itemType')],
+        key: itemField,
+        value: fieldValue,
+        itemKey: itemKey,
+        creatorIndex: creatorIndex,
+        //libraryString:library.libraryString,
+        item: item,
+    }));
+
+    widgetEl.find("#" + itemField).focus();
+}
+*/
+Zotero.ui.widgets.item.switchCreatorFields = function(e){
+    Z.debug("widgets.item.switchCreatorFields", 3);
+    var triggeringElement = J(e.triggeringElement);
+    var creatorIndex = triggeringElement.data('creatorindex');
+    var rowSelector = "tr.creator-row[data-creatorindex='" + creatorIndex + "']";
+    Z.debug(rowSelector);
+    var row = J(rowSelector);
+    var creator = Zotero.ui.widgets.item.creatorFromRow(row);
+    
+    var widgetEl = J(e.data.widgetEl);
+    var library = Zotero.ui.getAssociatedLibrary(e.data.widgetEl);
+    var itemField = triggeringElement.data('itemfield');
+    var itemKey = triggeringElement.data('itemkey');
+    var item = library.items.getItem(itemKey);
+    var updatedField;
+    var updatedValue;
+
+    if(creator.name !== undefined){
+        var split = creator.name.split(' ');
+        if(split.length > 1){
+            creator.lastName = split.splice(-1, 1)[0];
+            creator.firstName = split.join(' ');
+        }
+        else{
+            creator.lastName = creator.name;
+            creator.firstName = '';
+        }
+        delete creator.name;
+    } else {
+        if(creator.firstName == "" && creator.lastName == "") {
+            creator.name = "";
+        } else {
+            creator.name = creator.firstName + ' ' + creator.lastName;
+        }
+        delete creator.firstName;
+        delete creator.lastName;
+    }
+
+    var creators = item.get('creators');
+    creators[creatorIndex] = creator;
+    Zotero.ui.saveItem(item);
+
+    row.replaceWith(J("#creatorrowTemplate").render(creator, {
+        creatorIndex: creatorIndex,
+        libraryString: library.libraryString,
+        item: item,
+    }));
+    Zotero.eventful.initTriggers(widgetEl);
 }
 
 /**
@@ -456,4 +527,56 @@ Zotero.ui.widgets.item.updateItemField = function(library, itemKey, updatedField
         item.set(updatedField, updatedValue);
         Zotero.ui.saveItem(item);
     }
+};
+
+/**
+ * save an item after a creator field that was being edited has lost focus
+ * @param  {event} e DOM Event triggering callback
+ * @return {boolean}
+ */
+Zotero.ui.widgets.item.updateItemCreatorField = function(library, itemKey, updatedCreator, creatorIndex){
+    Z.debug("widgets.item.updateCreatorField", 3);
+    Z.debug("itemKey: " + itemKey, 3);
+    if(!itemKey){
+        throw new Error("Expected widget element to have itemKey data");
+    }
+    
+    var item = library.items.getItem(itemKey);
+    var creators = item.get('creators');
+    if(creators[creatorIndex]){
+        creators[creatorIndex] = updatedCreator;
+        Zotero.ui.saveItem(item);
+    } else {
+        //get full creator information from row of data, and add creator at index
+        var rowSelector = "tr.creator-row[data-creatorindex='" + creatorIndex + "']";
+        var row = J(rowSelector);
+        var creator = Zotero.ui.widgets.item.creatorFromRow(row);
+        creators[creatorIndex] = creator;
+        Zotero.ui.saveItem(item);
+    }
+};
+
+Zotero.ui.widgets.item.creatorFromRow = function(rowElement) {
+    Z.debug("widgets.item.creatorFromRow", 3);
+    var row = J(rowElement);
+    var creatorType = row.find("span[data-itemfield='creatorType']").data('value');
+    var name = row.find("span[data-itemfield='name']").data('value') || "";
+    var firstName = row.find("span[data-itemfield='firstName']").data('value') || "";
+    var lastName = row.find("span[data-itemfield='lastName']").data('value') || "";
+    
+    var creator = {
+        creatorType: creatorType,
+        name: name,
+        firstName: firstName,
+        lastName: lastName,
+    };
+    
+    if(creator['name'] != ""){
+        delete creator.firstName;
+        delete creator.lastName;
+    } else {
+        delete creator['name'];
+    }
+    
+    return creator;
 };

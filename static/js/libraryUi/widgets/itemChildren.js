@@ -1,4 +1,4 @@
-Zotero.ui.widgets.itemChildren = {};
+/*Zotero.ui.widgets.itemChildren = {};
 
 Zotero.ui.widgets.itemChildren.init = function(el){
     Z.debug('itemChildren init', 3);
@@ -7,13 +7,14 @@ Zotero.ui.widgets.itemChildren.init = function(el){
     
     library.listen("displayedItemChanged uploadSuccessful showChildren", Zotero.ui.widgets.itemChildren.refreshChildren, {widgetEl:el});
 };
-
+*/
 /**
  * Get an item's children and display summary info
  * @param  {DOM Element} el      element to insert into
  * @param  {string} itemKey key of parent item
  * @return {undefined}
  */
+/*
 Zotero.ui.widgets.itemChildren.refreshChildren = function(e){
     Z.debug('Zotero.ui.widgets.item.showChildren', 3);
     var widgetEl = J(e.data.widgetEl);
@@ -39,3 +40,4 @@ Zotero.ui.widgets.itemChildren.refreshChildren = function(e){
     return p;
 };
 
+*/
