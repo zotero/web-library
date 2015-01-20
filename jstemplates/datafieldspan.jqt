@@ -15,6 +15,8 @@
                 (last)
             {{/if}}
         </span>
+    {{else key == "tag"}}
+        <span class="editable-item-tag eventfultrigger" tabindex="0" data-tagindex="{{attr:tagIndex}}" data-triggers="edit-item-tag"  data-event="focus" data-library="{{attr:libraryString}}" data-itemfield="{{attr:key}}" data-value="{{attr:value}}" data-itemkey="{{attr:item.get('key')}}">{{>value}}</span>
     {{else ~Zotero.config.largeFields[key]}}
         <span class="editable-item-field eventfultrigger" tabindex="0" data-triggers="edit-item-field"  data-event="focus" data-library="{{attr:libraryString}}" data-itemfield="{{attr:key}}" data-itemkey="{{attr:item.get('key')}}">{{>~formatItemField(key, item)}}</span>
     {{else (~Zotero.config.richTextFields[key])}}

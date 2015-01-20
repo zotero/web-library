@@ -9,8 +9,13 @@
             data-library="{{attr:~libraryString}}"
             data-itemfield="creatorType"
             data-itemkey="{{attr:~item.get('key')}}"
-            data-value="{{if creatorType}}{{attr:creatorType}}{{else}}{{attr:~item.creatorTypes[~item.get('itemType')][0].creatorType}}{{/if}}">
-            {{>~item.creatorMap[~item.creatorTypes[~item.get('itemType')][0].creatorType]}}
+            {{if creatorType}}
+                data-value="{{attr:creatorType}}">
+                {{>~item.creatorMap[creatorType]}}
+            {{else}}
+                data-value="{{attr:~item.creatorTypes[~item.get('itemType')][0].creatorType}}">
+                {{>~item.creatorMap[~item.creatorTypes[~item.get('itemType')][0].creatorType]}}
+            {{/if}}
         </span>
     </th>
     <td class="{{attr:#data.creatorType}}">

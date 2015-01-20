@@ -5,7 +5,7 @@ Zotero.ui.widgets.items.init = function(el){
     var library = Zotero.ui.getAssociatedLibrary(el);
     
     library.listen("displayedItemsChanged", Zotero.ui.widgets.items.loadItemsCallback, {widgetEl: el});
-    library.listen("displayedItemChanged", Zotero.ui.widgets.items.updateSelected, {widgetEl: el});
+    library.listen("displayedItemChanged selectedItemsChanged", Zotero.ui.widgets.items.updateSelected, {widgetEl: el});
     library.listen("loadMoreItems", Zotero.ui.widgets.items.loadMoreItems, {widgetEl: el});
     library.listen("changeItemSorting", Zotero.ui.callbacks.resortItems, {widgetEl: el});
 
@@ -219,7 +219,7 @@ Zotero.ui.widgets.items.displayItems = function(el, config, itemsArray) {
     Zotero.eventful.initTriggers();
 
     Zotero.ui.fixTableHeaders(J("#field-table"));
-    library.trigger("displayedItemChanged");
+    library.trigger("selectedItemsChanged");
 };
 
 Zotero.ui.widgets.items.displayMoreItems = function(el, itemsArray) {
