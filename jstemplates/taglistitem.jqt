@@ -1,0 +1,14 @@
+<script id="taglistitemTemplate" type="text/x-jsrender">
+<li>
+    <span class="glyphicons fonticon glyphicons-tag"></span>
+    <span class="editable-item-tag eventfultrigger"
+        tabindex="0"
+        data-triggers="edit-item-field"
+        data-event="focus"
+        data-library="{{attr:~libraryString}}"
+        data-itemfield="tag"
+        data-value="{{attr:#data.tag}}"
+        data-itemkey="{{attr:~item.get('key')}}"
+        data-tagindex="{{attr:~tagIndex}}">{{>#data.tag}}</span>
+</li>
+</script>
