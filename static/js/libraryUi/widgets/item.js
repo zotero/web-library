@@ -452,6 +452,9 @@ Zotero.ui.widgets.item.updateTypeahead = function(event){
 //switch an item field to a form input when clicked to edit (and is editable by the user)
 Zotero.ui.widgets.item.clickToEdit = function(e){
     Z.debug("widgets.item.clickToEdit", 3);
+    if(!Zotero.config.librarySettings.allowEdit) {
+        return false;
+    }
     var triggeringElement = J(e.triggeringElement);
     var widgetEl = J(e.data.widgetEl);
     var library = Zotero.ui.getAssociatedLibrary(e.data.widgetEl);
@@ -481,7 +484,7 @@ Zotero.ui.widgets.item.clickToEdit = function(e){
         item:item,
     }));
 
-    //widgetEl.find("[name='" + itemField + "']").focus();
+    widgetEl.find("[name='" + itemField + "']").focus();
 }
 
 Zotero.ui.widgets.item.switchCreatorFields = function(e){
