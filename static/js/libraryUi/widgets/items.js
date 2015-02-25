@@ -5,7 +5,9 @@ Zotero.ui.widgets.items.init = function(el){
     var library = Zotero.ui.getAssociatedLibrary(el);
     
     library.listen("displayedItemsChanged", Zotero.ui.widgets.items.loadItemsCallback, {widgetEl: el});
-    library.listen("displayedItemChanged selectedItemsChanged", Zotero.ui.widgets.items.updateSelected, {widgetEl: el});
+    library.listen("displayedItemChanged", Zotero.ui.widgets.items.selectDisplayed, {widgetEl: el});
+    //library.listen("selectedItemsChanged", Zotero.ui.widgets.items.updateSelected, {widgetEl: el});
+    
     library.listen("loadMoreItems", Zotero.ui.widgets.items.loadMoreItems, {widgetEl: el});
     library.listen("changeItemSorting", Zotero.ui.callbacks.resortItems, {widgetEl: el});
 
@@ -28,11 +30,14 @@ Zotero.ui.widgets.items.init = function(el){
         library.trigger("selectedItemsChanged", {selectedItemKeys: selectedItemKeys});
 
         Zotero.ui.widgets.items.highlightSelected();
+        //if deselected all, reselect displayed item row
+        if(selectedItemKeys.length == 0){
+            library.trigger('displayedItemChanged');
+        }
     });
     
     //init itemkey-checkbox to enable/disable buttons that require something being selected
     container.on('change', "input.itemKey-checkbox", function(e){
-        //library.trigger('controlPanelContextChange');
         var selectedItemKeys = [];
         J("input.itemKey-checkbox:checked").each(function(index, el){
             selectedItemKeys.push(J(el).data('itemkey'));
@@ -53,8 +58,8 @@ Zotero.ui.widgets.items.init = function(el){
     library.trigger("displayedItemsChanged");
 };
 
-Zotero.ui.widgets.items.updateSelected = function(event){
-    Z.debug('Zotero eventful updateSelected', 3);
+Zotero.ui.widgets.items.selectDisplayed = function(event){
+    Z.debug('widgets.items.selectDisplayed', 3);
     var widgetEl = J(event.data.widgetEl);
     var library = Zotero.ui.getAssociatedLibrary(widgetEl);
     var selectedItemKey = Zotero.state.getUrlVar('itemKey');
@@ -219,7 +224,7 @@ Zotero.ui.widgets.items.displayItems = function(el, config, itemsArray) {
     Zotero.eventful.initTriggers();
 
     Zotero.ui.fixTableHeaders(J("#field-table"));
-    library.trigger("selectedItemsChanged");
+    library.trigger("displayedItemChanged");
 };
 
 Zotero.ui.widgets.items.displayMoreItems = function(el, itemsArray) {
