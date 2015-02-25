@@ -4,7 +4,7 @@ Zotero.ui.widgets.items.init = function(el){
     Z.debug("widgets.items.init");
     var library = Zotero.ui.getAssociatedLibrary(el);
     
-    library.listen("displayedItemsChanged", Zotero.ui.widgets.items.loadItemsCallback, {widgetEl: el});
+    library.listen("displayedItemsChanged", Zotero.ui.widgets.items.loadItems, {widgetEl: el});
     library.listen("displayedItemChanged", Zotero.ui.widgets.items.selectDisplayed, {widgetEl: el});
     //library.listen("selectedItemsChanged", Zotero.ui.widgets.items.updateSelected, {widgetEl: el});
     
@@ -58,6 +58,8 @@ Zotero.ui.widgets.items.init = function(el){
     library.trigger("displayedItemsChanged");
 };
 
+//select and highlight in the itemlist the item  that is displayed
+//in the item details widget
 Zotero.ui.widgets.items.selectDisplayed = function(event){
     Z.debug('widgets.items.selectDisplayed', 3);
     var widgetEl = J(event.data.widgetEl);
@@ -73,16 +75,16 @@ Zotero.ui.widgets.items.selectDisplayed = function(event){
     Zotero.ui.widgets.items.highlightSelected();
 };
 
+//highlight the rows that are currently selected
 Zotero.ui.widgets.items.highlightSelected = function(){
     //highlight only checked rows
     J(".itemlist-editmode-checkbox").closest("tr").removeClass("highlighed");
     J(".itemlist-editmode-checkbox:checked").closest("tr").addClass("highlighed");
 };
 
-Zotero.ui.widgets.items.loadItemsCallback = function(event){
-    Z.debug('Zotero eventful loadItemsCallback', 3);
+Zotero.ui.widgets.items.loadItems = function(event){
+    Z.debug('Zotero eventful loadItems', 3);
     var widgetEl = J(event.data.widgetEl);
-    
     var library = Zotero.ui.getAssociatedLibrary(widgetEl);
     var newConfig = Zotero.ui.getItemsConfig(library);
     
@@ -102,19 +104,20 @@ Zotero.ui.widgets.items.loadItemsCallback = function(event){
         Z.error(response);
         widgetEl.html("<p>There was an error loading your items. Please try again in a few minutes.</p>");
         //var elementMessage = Zotero.ui.ajaxErrorMessage(response.jqxhr);
-        //widgetEl.html("<p>" + elementMessage + "</p>");
     });
-    
-    //associate promise with el so we can cancel on later loads
-    widgetEl.data('loadingPromise', p);
     return p;
 };
 
+//load more items when the user has scrolled to the bottom of the current list
 Zotero.ui.widgets.items.loadMoreItems = function(event){
     Z.debug('loadMoreItems', 3);
     var widgetEl = J(event.data.widgetEl);
     //bail out if we're already fetching more items
     if(widgetEl.data('moreloading')){
+        return;
+    }
+    //bail out if we're done loading all items
+    if(widgetEl.data('all-items-loaded')){
         return;
     }
     widgetEl.data('moreloading', true);
@@ -137,6 +140,13 @@ Zotero.ui.widgets.items.loadMoreItems = function(event){
         Zotero.ui.widgets.items.displayMoreItems(widgetEl, response.loadedItems);
         widgetEl.removeData('moreloading');
         widgetEl.find('.items-spinner').hide();
+
+        //see if we're displaying as many items as there are in results
+        var itemsDisplayed = widgetEl.find("table.narrow-items-table tbody tr").length;
+        Z.debug("testing totalResults vs itemsDisplayed: " + response.totalResults, + " " + itemsDisplayed);
+        if(response.totalResults == itemsDisplayed) {
+            widgetEl.data('all-items-loaded', true);
+        }
     }).catch(function(response){
         Z.error(response);
         widgetEl.append("<p>There was an error loading your items. Please try again in a few minutes.</p>");
