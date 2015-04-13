@@ -41,7 +41,7 @@ Zotero.ui.widgets.collections.syncCollections = function(evt) {
         Z.error("Error syncing collections");
         Z.error(err);
         library.trigger("libraryCollectionsUpdated");
-        Zotero.ui.jsNotificationMessage("Error syncing collections. Collections list may not be up to date", 'error');
+        Zotero.ui.jsNotificationMessage("Error loading collections. Collections list may not be up to date", 'error');
     }).then(function(){
         widgetEl.removeData('loadingPromise');
     });

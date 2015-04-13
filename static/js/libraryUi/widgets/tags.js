@@ -62,7 +62,7 @@ Zotero.ui.widgets.tags.syncTags = function(evt){
         widgetEl.find('.loading').empty();
         //remove loadingPromise
         widgetEl.removeData('loadingPromise');
-        Zotero.ui.jsNotificationMessage("There was an error syncing tags. Some tags may not have been updated.", 'notice');
+        Zotero.ui.jsNotificationMessage("There was an error loading tags. Some tags may not have been updated.", 'notice');
     });
     
     widgetEl.data('loadingPromise', loadingPromise);
