@@ -29,6 +29,7 @@ Zotero.ui.widgets.item.init = function(el){
     var container = J(el);
     
     Zotero.state.bindTagLinks(container);
+    Zotero.state.bindItemLinks(container);
     
     //add a new tag when user presses enter in add-tag-input
     container.on('keydown', "input#add-tag-input", function(e){

@@ -1,16 +1,18 @@
 <script id="itemdetailsTemplate" type="text/x-jsrender">
     <div role="tabpanel">
         <!-- Nav tabs -->
+        {{if !item.isSupplementaryItem()}}
         <ul class="nav nav-tabs" role="tablist">
             <li role="presentation" class="active"><a href="#item-info-panel" aria-controls="item-info-panel" role="tab" data-toggle="tab">Info</a></li>
             <li role="presentation"><a href="#item-children-panel" aria-controls="item-children-panel" role="tab" data-toggle="tab">Children</a></li>
             <li role="presentation"><a href="#item-tags-panel" aria-controls="item-tags-panel" role="tab" data-toggle="tab">Tags</a></li>
         </ul>
+        {{/if}}
         <!-- Tab panes -->
         <div class="tab-content">
             <div id="item-info-panel" role="tabpanel" class="item-details-div eventfulwidget tab-pane active">
                 {{if (parentUrl)}}
-                    <a href="{{url:parentUrl}}" class="ajax-link clickable item-select-link" data-itemKey='{{attr:item.apiObj.data.parentItem}}'>Parent Item</a>
+                    <a href="{{url:parentUrl}}" class="item-select-link" data-itemKey='{{attr:item.apiObj.data.parentItem}}'>Parent Item</a>
                 {{/if}}
                 
                 {{if (item.apiObj.library.type == 'user')}}
@@ -43,13 +45,15 @@
                     </td>
                 </tr>
 
-                <!-- Output creators -->
-                {{if item.apiObj.data.creators.length}}
-                    {{for item.apiObj.data.creators ~item=item ~libraryString=libraryString}}
-                        {{for #data ~item=~item ~libraryString=~libraryString ~creatorIndex=#index tmpl="#creatorrowTemplate" /}}
-                    {{/for}}
-                {{else}}
-                    {{for #data ~item=item ~libraryString=libraryString ~creatorIndex="0" tmpl="#creatorrowTemplate" /}}
+                <!-- Output creators for non-children -->
+                {{if !item.isSupplementaryItem()}}
+                    {{if item.apiObj.data.creators.length > 0}}
+                        {{for item.apiObj.data.creators ~item=item ~libraryString=libraryString}}
+                            {{for #data ~item=~item ~libraryString=~libraryString ~creatorIndex=#index tmpl="#creatorrowTemplate" /}}
+                        {{/for}}
+                    {{else}}
+                        {{for #data ~item=item ~libraryString=libraryString ~creatorIndex="0" tmpl="#creatorrowTemplate" /}}
+                    {{/if}}
                 {{/if}}
                 
                 <!-- Output fields -->
