@@ -40,10 +40,10 @@ body.library {
     font-weight: normal;
     line-height: 1;
     padding-left:0;
+    color:#000;
 }
 .fonticon:before{
     font-size:16px;
-    color:#000;
     font-style:normal;
     font-weight:normal;
     position:relative;
