@@ -1,7 +1,0 @@
-<script id="edititemcollectionsbuttonsTemplate" type="text/x-jsrender">
-    <div class="edit-item-collections-buttons-div">
-        <button type='button' class="add-to-collection-link button">Add To Collection</button>
-        <button type='button' class="remove-from-collection-link button">Remove From Collection</button>
-        <button type='button' class="move-to-trash-link button">Move To Trash</button>
-    </div>
-</script>
