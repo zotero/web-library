@@ -71,6 +71,7 @@
         <div class="btn-group">
             <button type="button"
                 class="switch-two-field-creator-link btn btn-default eventfultrigger"
+                title="Toggle single field creator"
                 data-triggers="switchCreatorFields"
                 data-itemkey="{{attr:~item.get('key')}}"
                 data-library="{{attr:~libraryString}}"
