@@ -52,6 +52,7 @@ Zotero.ui.widgets.item.init = function(el){
                 libraryString: library.libraryString,
                 tagIndex: (itemTags.length - 1),
             }));
+            container.find('span.tag-count').html(itemTags.length);
         }
     });
     
