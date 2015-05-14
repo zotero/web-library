@@ -305,7 +305,7 @@ Zotero.pages = {
             if(writeAccess){
                 summary += "Access to read and modify your personal library.<br />";
             }
-            var allGroupAccess = J("input[name='all_groups']:checked").val();
+            var allGroupAccess = J("input[name='groups_all']:checked").val();
             switch(allGroupAccess){
                 case 'read':
                     summary += "Access to read any of your group libraries<br />";
@@ -598,17 +598,23 @@ Zotero.pages = {
             //TODO: lightbox?
         }
     },
+
+    groupdiscussion_view: {
+        init: function(){
+            
+        }
+    },
     
     user_register: {
         init: function(){
             //insert slug preview label
-            J("input[name='username'").after("<label id='slugpreview'>Profile URL: " +
+            J("input[name='username']").after("<label id='slugpreview'>Profile URL: " +
                                       Zotero.config.baseZoteroWebsiteUrl + "/" +
                                       Zotero.utils.slugify(J("input[name='username']").val()) +
                                       "</label>");
 
             // When the value of the input box changes,
-            J("input[name='username'").bind("keyup change", Zotero.pages.user_register.nameChange);
+            J("input[name='username']").bind("keyup change", Zotero.pages.user_register.nameChange);
             parent.checkUserSlugTimeout;
         },
         

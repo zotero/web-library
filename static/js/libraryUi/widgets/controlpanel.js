@@ -33,7 +33,7 @@ Zotero.ui.widgets.controlPanel.selectedItemsChanged = function(evt){
     if(!selectedItemKeys){
         selectedItemKeys = [];
     }
-        
+    
     Zotero.ui.widgets.controlPanel.updateDisabledControlButtons(selectedItemKeys);
 };
 

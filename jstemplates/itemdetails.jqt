@@ -127,11 +127,11 @@
             <div id="item-tags-panel" role="tabpanel" class="item-tags-div tab-pane">
                 <p><span class="tag-count">{{>item.get('tags').length}}</span> tags</p>
                 <button class="add-tag-button eventfultrigger btn btn-default" data-triggers="addTag" data-library="{{attr:libraryString}}" data-itemkey="{{attr:item.get('key')}}">Add Tag</button>
-                <ul class="item-tags-list">
+                <div class="item-tags-list">
                     {{for item.apiObj.data.tags ~item=item ~libraryString=libraryString }}
                         {{for #data ~item=~item ~libraryString=~libraryString ~tagIndex=#index tmpl="#taglistitemTemplate" /}}
                     {{/for}}
-                </ul>
+                </div>
                 <div class="add-tag-form form-horizontal" style="display:none;">
                     <div class="form-group">
                         <div class="col-xs-1">

@@ -43,7 +43,7 @@ Zotero.ui.widgets.item.init = function(el){
             var itemTags = item.get('tags');
             itemTags.push({tag:newTagString});
             Zotero.ui.saveItem(item);
-            container.find("ul.item-tags-list").append(J("#taglistitemTemplate").render({tag:newTagString},
+            container.find("div.item-tags-list").append(J("#taglistitemTemplate").render({tag:newTagString},
             {
                 item:item,
                 key: "tag",
@@ -53,6 +53,8 @@ Zotero.ui.widgets.item.init = function(el){
                 tagIndex: (itemTags.length - 1),
             }));
             container.find('span.tag-count').html(itemTags.length);
+            input.val('');
+            Zotero.eventful.initTriggers(container);
         }
     });
     
@@ -100,6 +102,7 @@ Zotero.ui.widgets.item.init = function(el){
             }
             
             Zotero.ui.saveItem(item);
+            input.typeahead('destroy');
             input.replaceWith(J("#datafieldspanTemplate").render(templateData));
         }
         else {
@@ -293,13 +296,30 @@ Zotero.ui.widgets.item.removeTag = function(e) {
     Z.debug("Zotero.ui.removeTag", 3);
     var el = e.triggeringElement;
     var widgetEl = Zotero.ui.parentWidgetEl(el);
+    var library = Zotero.ui.getAssociatedLibrary(widgetEl);
+    var tagRow = J(el).closest('.item-tag-row');
+    var tagSpan = tagRow.find('.editable-item-tag');
+    var itemKey = tagSpan.data('itemkey');
+    var item = library.items.getItem(itemKey);
+    var removeTagString = tagSpan.data('value');
+    //remove tag from item tags array
+    var newTags = [];
+    var oldTags = item.get('tags');
+    J.each(oldTags, function(ind, val){
+        if(val.tag != removeTagString){
+            Z.debug("leaving tag alone:" + val.tag);
+            newTags.push(val);
+        }
+    });
+
+    item.set('tags', newTags);
+    Zotero.ui.saveItem(item);
+    tagRow.remove();
     //check to make sure there is another tag field available to use
     //if not add an empty one
     if(widgetEl.find("div.edit-tag-div").length === 1){
         Zotero.ui.widgets.item.addTag(e);
     }
-    
-    J(el).closest('.edit-tag-div').remove();
 };
 
 Zotero.ui.widgets.item.addTagTypeahead = function(library, widgetEl){
@@ -316,6 +336,34 @@ Zotero.ui.widgets.item.addTagTypeahead = function(library, widgetEl){
     ttEngine.initialize();
     widgetEl.find("input.taginput").typeahead('destroy');
     widgetEl.find("input.taginput").typeahead(
+        {
+            hint: true,
+            highlight: true,
+            minLength: 1
+        },
+        {
+            name: 'tags',
+            displayKey: 'value',
+            source: ttEngine.ttAdapter()
+            //local: library.tags.plainList
+        }
+    );
+};
+
+Zotero.ui.widgets.item.addTagTypeaheadToInput = function(library, element){
+    Z.debug('adding typeahead', 3);
+    var typeaheadSource = library.tags.plainList;
+    if(!typeaheadSource){
+        typeaheadSource = [];
+    }
+    var ttEngine = new Bloodhound({
+        datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
+        queryTokenizer: Bloodhound.tokenizers.whitespace,
+        local: J.map(typeaheadSource, function(typeaheadSource) { return { value: typeaheadSource }; })
+    });
+    ttEngine.initialize();
+    J(element).typeahead('destroy');
+    J(element).typeahead(
         {
             hint: true,
             highlight: true,
@@ -486,7 +534,11 @@ Zotero.ui.widgets.item.clickToEdit = function(e){
         item:item,
     }));
 
-    widgetEl.find("[name='" + itemField + "']").focus();
+    var createdElement = widgetEl.find("[name='" + itemField + "']");
+    if(itemField == 'tag'){
+        Zotero.ui.widgets.item.addTagTypeaheadToInput(library, createdElement);
+    }
+    createdElement.focus();
 }
 
 Zotero.ui.widgets.item.switchCreatorFields = function(e){

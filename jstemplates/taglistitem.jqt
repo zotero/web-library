@@ -1,14 +1,21 @@
 <script id="taglistitemTemplate" type="text/x-jsrender">
-<li>
-    <span class="glyphicons fonticon glyphicons-tag"></span>
-    <span class="editable-item-tag eventfultrigger"
-        tabindex="0"
-        data-triggers="edit-item-field"
-        data-event="focus"
-        data-library="{{attr:~libraryString}}"
-        data-itemfield="tag"
-        data-value="{{attr:#data.tag}}"
-        data-itemkey="{{attr:~item.get('key')}}"
-        data-tagindex="{{attr:~tagIndex}}">{{>#data.tag}}</span>
-</li>
+    <div class="row item-tag-row">
+        <div class="col-xs-1">
+            <span class="glyphicons fonticon glyphicons-tag"></span>
+        </div>
+        <div class="col-xs-9">
+            <span class="editable-item-tag eventfultrigger"
+                tabindex="0"
+                data-triggers="edit-item-field"
+                data-event="focus"
+                data-library="{{attr:~libraryString}}"
+                data-itemfield="tag"
+                data-value="{{attr:#data.tag}}"
+                data-itemkey="{{attr:~item.get('key')}}"
+                data-tagindex="{{attr:~tagIndex}}">{{>#data.tag}}</span>
+        </div>
+        <div class="col-xs-2">
+            <button type="button" class="remove-tag-link btn btn-default eventfultrigger" data-triggers="removeTag" {{if ~libraryString}}data-library="{{attr:~libraryString}}"{{/if}}><span class="glyphicons fonticon glyphicons-minus"></span></button>
+        </div>
+    </div>
 </script>
