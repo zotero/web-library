@@ -1,0 +1,9 @@
+<script id="googlesearchresultTemplate" type="text/x-jsrender">
+<li class='support-result'>
+	<div class='support-result-title'>
+		<a href="{{:url}}">{{:title}}</a>
+	</div>
+	<div class='support-result-content'>{{:content}}</div>
+	<div class='support-result-url'>{{>url}}</div>
+</li>
+</script>

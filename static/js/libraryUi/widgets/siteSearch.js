@@ -26,7 +26,7 @@ Zotero.ui.widgets.siteSearch.init = function(el){
     if(query){
         Zotero.ui.widgets.siteSearch.search(searchType, query);
     }
-}
+};
 
 Zotero.ui.widgets.siteSearch.triggeredSearch = function(event){
     Z.debug("Zotero.ui.widgets.siteSearch.search", 3);
@@ -136,23 +136,23 @@ Zotero.ui.widgets.siteSearch.displayGoogleResults = function(type, query, page){
     // Check if we have any results and displays them if we do
     if (searcher.results && searcher.results.length > 0) {
         Z.debug("have results in searcher, displaying results");
-        for (var i in searcher.results) {
+        var i;
+        for (i in searcher.results) {
             var r = searcher.results[i];
-            J("#search-results").append("                                                                 \
-                <li class='support-result'>                                                                    \
-                  <div class='support-result-title'>                                                           \
-                    <a href='"+r.url+"'>"+r.title+"</a>                                                        \
-                  </div>                                                                                       \
-                  <div class='support-result-content'>"+r.content+"</div>                                      \
-                  <div class='support-result-url'>"+r.url.replace("http://", "")+"</div>                       \
-                </li>").show();
+            var url = r.url.replace("http://", "");
+
+            J("#search-results").append(J("#googlesearchresultTemplate").render({
+                'title': r.title,
+                'url': url,
+                'content': r.content
+            })).show();
         }
         
         // Display the number of results found
         J("#search-result-count").html("Found " + searcher.cursor.estimatedResultCount + " results");
         
         // Add pagination links
-        for (var i in searcher.cursor.pages){
+        for (i in searcher.cursor.pages){
             var p = searcher.cursor.pages[i];
             // If we're on the current page, output a number
             if (i == searcher.cursor.currentPageIndex) {
