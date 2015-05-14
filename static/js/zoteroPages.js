@@ -65,13 +65,13 @@ Zotero.pages = {
                 default              : label = "Search support";       break;
             }
             
-            J("#header-search-query").val("");
-            J("#header-search-query").attr('placeholder', label);//.inputLabel(label, {color:"#aaa"});
+            //J("#header-search-query").val("");
+            //J("#header-search-query").attr('placeholder', label);//.inputLabel(label, {color:"#aaa"});
             if(context != 'library' && context != 'grouplibrary' && context != 'forums'){
                 J("#simple-search").on('submit', function(e){
                     e.preventDefault();
                     var searchUrl = Zotero.config.baseZoteroWebsiteUrl + "/search/#type/" + context;
-                    var query     = J("#header-search-query").val();
+                    var query     = J(this).find("input[type='text']").val();
                     if(query !== "" && query != label){
                         searchUrl = searchUrl + "/q/" + encodeURIComponent(query);
                     }
@@ -100,7 +100,7 @@ Zotero.pages = {
             if(location.pathname == "/" && location.href.search("forums.") < 0){
                 tab = "home";
             }
-            if(tab != ""){
+            if(tab !== ""){
                 J(".primarynav").find("a." + tab).closest('li').addClass("active");
             }
         }
@@ -429,7 +429,7 @@ Zotero.pages = {
             // When the value of the input box changes,
             J("input#name").keyup(function(e){
                 clearTimeout(timeout);
-                timeout = setTimeout('Zotero.pages.group_new.nameChange()', 300);
+                timeout = setTimeout(Zotero.pages.group_new.nameChange, 300);
             });
             
             J("input[name=group_type]").change(Zotero.pages.group_new.nameChange);
@@ -615,7 +615,6 @@ Zotero.pages = {
 
             // When the value of the input box changes,
             J("input[name='username']").bind("keyup change", Zotero.pages.user_register.nameChange);
-            parent.checkUserSlugTimeout;
         },
         
         nameChange: function(){
@@ -628,7 +627,7 @@ Zotero.pages = {
             
             //check slug with server after half-second
             clearTimeout(parent.checkUserSlugTimeout);
-            parent.checkUserSlugTimeout = setTimeout('Zotero.pages.user_register.checkSlug()', 500);
+            parent.checkUserSlugTimeout = setTimeout(Zotero.pages.user_register.checkSlug, 500);
         },
         
         checkSlug: function(){

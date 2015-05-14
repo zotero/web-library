@@ -238,9 +238,10 @@ Zotero.ui.getAssociatedLibrary = function(el){
     }
     //get Zotero.Library object if already bound to element
     var library = jel.data('zoterolibrary');
+    var libString;
     if(!library){
         //try getting it from a libraryString included on DOM element
-        var libString = J(el).data('library');
+        libString = J(el).data('library');
         if(libString){
             library = Zotero.ui.libStringLibrary(libString);
         }
@@ -249,7 +250,7 @@ Zotero.ui.getAssociatedLibrary = function(el){
     //if we still don't have a library, look for the default library for the page
     if(!library){
         jel = J(".zotero-library").first();
-        var libString = jel.data('library');
+        libString = jel.data('library');
         if(libString){
             library = Zotero.ui.libStringLibrary(libString);
         }

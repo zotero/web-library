@@ -232,7 +232,7 @@ Zotero.ui.widgets.collections.highlightCurrentCollection = function(widgetEl){
     if(!widgetEl){
         widgetEl = J("body");
     }
-    var widgetEl = J(widgetEl);
+    widgetEl = J(widgetEl);
     var collectionKey = Zotero.state.getUrlVar('collectionKey');
     //unhighlight currently highlighted
     widgetEl.find("a.current-collection").closest("li").removeClass("current-collection");

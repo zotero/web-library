@@ -10,7 +10,7 @@ Zotero.ui.widgets.inviteToGroup.init = function(el){
             Zotero.ui.widgets.inviteToGroup.displayInviteForm(el, response.fetchedGroups);
         }).catch(Zotero.catchPromiseError);
     }
-}
+};
 
 Zotero.ui.widgets.inviteToGroup.displayInviteForm = function(el, groups){
     Z.debug("Zotero.ui.widgets.inviteToGroup.displayInviteForm", 3);

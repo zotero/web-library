@@ -11,5 +11,5 @@ Zotero.ui.widgets.libraryPreloader.init = function(el){
     });
     library.listen("indexedDBError", function(){
     	Zotero.ui.jsNotificationMessage("There was an error initializing your library. Some data may not load properly.", 'notice');
-    })
+    });
 };

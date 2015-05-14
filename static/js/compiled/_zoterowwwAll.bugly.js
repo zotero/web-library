@@ -6228,7 +6228,7 @@ Zotero.init = function() {
         r = zoteroData.locale;
     }
     if (Zotero.config.pageClass == "user_library" || Zotero.config.pageClass == "group_library" || Zotero.config.pageClass == "my_library") {
-        Z.debug("library page - ");
+        Z.debug("library page - ", 3);
         Zotero.state.libraryString = Zotero.utils.libraryString(Zotero.config.librarySettings.libraryType, Zotero.config.librarySettings.libraryID);
         Zotero.state.filter = Zotero.state.libraryString;
         Zotero.Item.prototype.getItemTypes(r);
@@ -6236,7 +6236,7 @@ Zotero.init = function() {
         Zotero.Item.prototype.getCreatorFields(r);
         Zotero.Item.prototype.getCreatorTypes();
     } else {
-        Z.debug("non-library page");
+        Z.debug("non-library page", 3);
     }
     Zotero.ui.init.all();
     J.ajaxSettings.traditional = true;
@@ -6270,32 +6270,35 @@ Zotero.State.prototype.rewriteAltUrl = function() {
     Z.debug("rewriteAltUrl");
     var e = this;
     var t = false;
-    var r = Zotero.config.nonparsedBaseUrl;
-    var o = window.location.pathname;
-    var i = new RegExp(".*" + r + "/?");
-    var a = /^.*\/items\/collections?\/([A-Z0-9]{8})(?:\/[A-Z0-9]{8})?$/;
-    var n = /^.*\/items\/([A-Z0-9]{8})$/;
+    var r = false;
+    var o = false;
+    var i = false;
+    var a = Zotero.config.nonparsedBaseUrl;
+    var n = window.location.pathname;
+    var s = new RegExp(".*" + a + "/?");
+    var l = /^.*\/items\/collections?\/([A-Z0-9]{8})(?:\/[A-Z0-9]{8})?$/;
+    var c = /^.*\/items\/([A-Z0-9]{8})$/;
     switch (true) {
-      case a.test(o):
-        var s = a.exec(o);
-        var l = s[1];
-        var c = s[2];
-        t = true;
+      case l.test(n):
+        t = l.exec(n);
+        o = t[1];
+        r = t[2];
+        i = true;
         break;
 
-      case n.test(o):
-        var s = n.exec(o);
-        var c = s[1];
-        t = true;
+      case c.test(n):
+        t = c.exec(n);
+        r = t[1];
+        i = true;
         break;
     }
-    if (l) {
-        e.setUrlVar("collectionKey", l);
+    if (o) {
+        e.setUrlVar("collectionKey", o);
     }
-    if (c) {
-        e.setUrlVar("itemKey", c);
+    if (r) {
+        e.setUrlVar("itemKey", r);
     }
-    if (t) {
+    if (i) {
         e.replaceState();
     }
 };
@@ -6322,7 +6325,7 @@ Zotero.State.prototype.getSelectedItemKeys = function() {
     J.each(t, function(e, t) {
         r.push(e);
     });
-    if (r.length == 0 && e.getUrlVar("itemKey")) {
+    if (r.length === 0 && e.getUrlVar("itemKey")) {
         r.push(e.getUrlVar("itemKey"));
     }
     return r;
@@ -6810,7 +6813,7 @@ Zotero.ui.formatItemField = function(e, t, r) {
     var i;
     if (window.Intl) {
         var a = new window.Intl.DateTimeFormat(undefined, o);
-        var i = a.format;
+        i = a.format;
     } else {
         i = function(e) {
             return e.toLocaleString();
@@ -6862,7 +6865,7 @@ Zotero.ui.formatItemField = function(e, t, r) {
 
       case "addedBy":
         if (t.apiObj.meta.createdByUser) {
-            if (t.apiObj.meta.createdByUser.name != "") {
+            if (t.apiObj.meta.createdByUser.name !== "") {
                 s = t.apiObj.meta.createdByUser.name;
             } else {
                 s = t.apiObj.meta.createdByUser.username;
@@ -6872,12 +6875,13 @@ Zotero.ui.formatItemField = function(e, t, r) {
 
       case "modifiedBy":
         if (t.apiObj.meta.lastModifiedByUser) {
-            if (t.apiObj.meta.lastModifiedByUser.name != "") {
+            if (t.apiObj.meta.lastModifiedByUser.name !== "") {
                 s = t.apiObj.meta.lastModifiedByUser.name;
             } else {
                 s = t.apiObj.meta.lastModifiedByUser.username;
             }
         }
+        break;
 
       default:
         if (typeof t.apiObj.data[e] !== "undefined") {
@@ -6951,9 +6955,7 @@ Zotero.ui.formatItemDateField = function(e, t) {
         }
         r = Zotero.utils.parseApiDate(t.apiObj.data["dateModified"]);
         if (r) {
-            return "<span class='localized-date-span'>" + a(r);
-            +"</span> <span class='localized-date-span'>" + n(r);
-            +"</span>";
+            return "<span class='localized-date-span'>" + a(r) + "</span> <span class='localized-date-span'>" + n(r) + "</span>";
         } else {
             return t.apiObj.data["dateModified"];
         }
@@ -6965,9 +6967,7 @@ Zotero.ui.formatItemDateField = function(e, t) {
         }
         r = Zotero.utils.parseApiDate(t.apiObj.data["dateAdded"]);
         if (r) {
-            return "<span class='localized-date-span'>" + a(r);
-            +"</span> <span class='localized-date-span'>" + n(r);
-            +"</span>";
+            return "<span class='localized-date-span'>" + a(r) + "</span> <span class='localized-date-span'>" + n(r) + "</span>";
         } else {
             return t.apiObj.data["dateAdded"];
         }
@@ -7401,8 +7401,9 @@ Zotero.ui.getAssociatedLibrary = function(e) {
         }
     }
     var r = t.data("zoterolibrary");
+    var o;
     if (!r) {
-        var o = J(e).data("library");
+        o = J(e).data("library");
         if (o) {
             r = Zotero.ui.libStringLibrary(o);
         }
@@ -7410,7 +7411,7 @@ Zotero.ui.getAssociatedLibrary = function(e) {
     }
     if (!r) {
         t = J(".zotero-library").first();
-        var o = t.data("library");
+        o = t.data("library");
         if (o) {
             r = Zotero.ui.libStringLibrary(o);
         }
@@ -8168,7 +8169,7 @@ Zotero.ui.widgets.collections.highlightCurrentCollection = function(e) {
     if (!e) {
         e = J("body");
     }
-    var e = J(e);
+    e = J(e);
     var t = Zotero.state.getUrlVar("collectionKey");
     e.find("a.current-collection").closest("li").removeClass("current-collection");
     e.find("a.current-collection").removeClass("current-collection");
@@ -8196,9 +8197,9 @@ Zotero.ui.widgets.controlPanel.init = function(e) {
     t.listen("removeFromCollection", Zotero.ui.widgets.controlPanel.removeFromCollection, {
         widgetEl: e
     });
-    t.listen("moveToTrash", Zotero.ui.widgets.controlPanel.moveToTrash), {
+    t.listen("moveToTrash", Zotero.ui.widgets.controlPanel.moveToTrash, {
         widgetEl: e
-    };
+    });
     t.listen("removeFromTrash", Zotero.ui.widgets.controlPanel.removeFromTrash, {
         widgetEl: e
     });
@@ -8591,7 +8592,7 @@ Zotero.ui.widgets.groups.displayGroupNuggets = function(e, t) {
     Z.debug("Zotero.ui.widgets.groups.displayGroupNuggets", 3);
     var r = J(e);
     r.empty();
-    if (t.length == 0) {
+    if (t.length === 0) {
         r.append("<p>You are not currently a member of any groups.</p>");
         J("#groups-blurb").removeClass("hidden");
     } else {
@@ -9202,7 +9203,7 @@ Zotero.ui.widgets.item.switchCreatorFields = function(e) {
         }
         delete a.name;
     } else {
-        if (a.firstName == "" && a.lastName == "") {
+        if (a.firstName === "" && a.lastName === "") {
             a.name = "";
         } else {
             a.name = a.firstName + " " + a.lastName;
@@ -9267,7 +9268,7 @@ Zotero.ui.widgets.item.creatorFromRow = function(e) {
         firstName: i,
         lastName: a
     };
-    if (n["name"] != "") {
+    if (n["name"] !== "") {
         delete n.firstName;
         delete n.lastName;
     } else {
@@ -9307,7 +9308,7 @@ Zotero.ui.widgets.items.init = function(e) {
             selectedItemKeys: o
         });
         Zotero.ui.widgets.items.highlightSelected();
-        if (o.length == 0) {
+        if (o.length === 0) {
             t.trigger("displayedItemChanged");
         }
     });
@@ -10859,17 +10860,23 @@ Zotero.ui.widgets.siteSearch.displayGoogleResults = function(e, t, r) {
     J("#search-spinner").hide();
     if (searcher.results && searcher.results.length > 0) {
         Z.debug("have results in searcher, displaying results");
-        for (var o in searcher.results) {
+        var o;
+        for (o in searcher.results) {
             var i = searcher.results[o];
-            J("#search-results").append("                                                                                 <li class='support-result'>                                                                                      <div class='support-result-title'>                                                                               <a href='" + i.url + "'>" + i.title + "</a>                                                                          </div>                                                                                                         <div class='support-result-content'>" + i.content + "</div>                                                        <div class='support-result-url'>" + i.url.replace("http://", "") + "</div>                                       </li>").show();
+            var a = i.url.replace("http://", "");
+            J("#search-results").append(J("#googlesearchresultTemplate").render({
+                title: i.title,
+                url: a,
+                content: i.content
+            })).show();
         }
         J("#search-result-count").html("Found " + searcher.cursor.estimatedResultCount + " results");
-        for (var o in searcher.cursor.pages) {
-            var a = searcher.cursor.pages[o];
+        for (o in searcher.cursor.pages) {
+            var n = searcher.cursor.pages[o];
             if (o == searcher.cursor.currentPageIndex) {
-                J("#search-pagination").append(a.label + " | ");
+                J("#search-pagination").append(n.label + " | ");
             } else {
-                J("#search-pagination").append("<a href='javascript:Zotero.ui.widgets.siteSearch.gotopage(" + o + ")'>" + a.label + "</a> | ");
+                J("#search-pagination").append("<a href='javascript:Zotero.ui.widgets.siteSearch.gotopage(" + o + ")'>" + n.label + "</a> | ");
             }
         }
     } else {
@@ -11116,13 +11123,11 @@ Zotero.pages = {
                 t = "Search support";
                 break;
             }
-            J("#header-search-query").val("");
-            J("#header-search-query").attr("placeholder", t);
             if (e != "library" && e != "grouplibrary" && e != "forums") {
                 J("#simple-search").on("submit", function(r) {
                     r.preventDefault();
                     var o = Zotero.config.baseZoteroWebsiteUrl + "/search/#type/" + e;
-                    var i = J("#header-search-query").val();
+                    var i = J(this).find("input[type='text']").val();
                     if (i !== "" && i != t) {
                         o = o + "/q/" + encodeURIComponent(i);
                     }
@@ -11142,7 +11147,7 @@ Zotero.pages = {
             if (location.pathname == "/" && location.href.search("forums.") < 0) {
                 e = "home";
             }
-            if (e != "") {
+            if (e !== "") {
                 J(".primarynav").find("a." + e).closest("li").addClass("active");
             }
         }
@@ -11385,7 +11390,7 @@ Zotero.pages = {
             var e;
             J("input#name").keyup(function(t) {
                 clearTimeout(e);
-                e = setTimeout("Zotero.pages.group_new.nameChange()", 300);
+                e = setTimeout(Zotero.pages.group_new.nameChange, 300);
             });
             J("input[name=group_type]").change(Zotero.pages.group_new.nameChange);
             J("input#name").after("<label id='slugpreview'>Group URL: " + Zotero.config.baseZoteroWebsiteUrl + "/" + "groups/" + Zotero.utils.slugify(J("input#name").val()) + "</label>");
@@ -11520,14 +11525,13 @@ Zotero.pages = {
         init: function() {
             J("input[name='username']").after("<label id='slugpreview'>Profile URL: " + Zotero.config.baseZoteroWebsiteUrl + "/" + Zotero.utils.slugify(J("input[name='username']").val()) + "</label>");
             J("input[name='username']").bind("keyup change", Zotero.pages.user_register.nameChange);
-            parent.checkUserSlugTimeout;
         },
         nameChange: function() {
             J("#slugpreview").css("color", "black");
             parent.slug = Zotero.utils.slugify(J("input[name='username']").val());
             J("#slugpreview").text("Profile URL: " + Zotero.config.baseZoteroWebsiteUrl + "/" + parent.slug);
             clearTimeout(parent.checkUserSlugTimeout);
-            parent.checkUserSlugTimeout = setTimeout("Zotero.pages.user_register.checkSlug()", 500);
+            parent.checkUserSlugTimeout = setTimeout(Zotero.pages.user_register.checkSlug, 500);
         },
         checkSlug: function() {
             J.getJSON(baseURL + "/user/checkslug", {

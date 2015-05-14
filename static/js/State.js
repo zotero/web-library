@@ -28,24 +28,28 @@ Zotero.State = function(){
 Zotero.State.prototype.rewriteAltUrl = function(){
     Z.debug("rewriteAltUrl");
     var state = this;
+    var matches = false;
+    var itemKey = false;
+    var collectionKey = false;
     var replace = false;
     
     var basePath = Zotero.config.nonparsedBaseUrl;
-    var pathname = window.location.pathname
+    var pathname = window.location.pathname;
     var baseRE = new RegExp(".*" + basePath + "\/?");
     var oldCollectionRE = /^.*\/items\/collections?\/([A-Z0-9]{8})(?:\/[A-Z0-9]{8})?$/;
     var oldItemRE = /^.*\/items\/([A-Z0-9]{8})$/;
+
     
     switch(true){
         case oldCollectionRE.test(pathname):
-            var matches = oldCollectionRE.exec(pathname);
-            var collectionKey = matches[1];
-            var itemKey = matches[2];
+            matches = oldCollectionRE.exec(pathname);
+            collectionKey = matches[1];
+            itemKey = matches[2];
             replace = true;
             break;
         case oldItemRE.test(pathname):
-            var matches = oldItemRE.exec(pathname);
-            var itemKey = matches[1];
+            matches = oldItemRE.exec(pathname);
+            itemKey = matches[1];
             replace = true;
             break;
     }
@@ -87,7 +91,7 @@ Zotero.State.prototype.getSelectedItemKeys = function(){
     J.each(uniqueKeys, function(key, val){
         returnKeys.push(key);
     });
-    if(returnKeys.length == 0 && state.getUrlVar('itemKey')){
+    if(returnKeys.length === 0 && state.getUrlVar('itemKey')){
         returnKeys.push(state.getUrlVar('itemKey'));
     }
     return returnKeys;
@@ -203,7 +207,7 @@ Zotero.State.prototype.parsePathVars = function(pathname){
     //groups/:groupidentifier/items/collection/:collectionKey/*
     if(!pathname){
         //var hstate = history.state;// History.getState();
-        pathname = window.location.pathname
+        pathname = window.location.pathname;
     }
     var basePath = Zotero.config.nonparsedBaseUrl;
     var split_replaced = [];

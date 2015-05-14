@@ -64,5 +64,5 @@ Zotero.ui.widgets.searchbox.clearLibraryQuery = function(){
     J(".search-query").val("");
     Zotero.state.pushState();
     return;
-}
+};
 

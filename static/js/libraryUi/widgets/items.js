@@ -31,7 +31,7 @@ Zotero.ui.widgets.items.init = function(el){
 
         Zotero.ui.widgets.items.highlightSelected();
         //if deselected all, reselect displayed item row
-        if(selectedItemKeys.length == 0){
+        if(selectedItemKeys.length === 0){
             library.trigger('displayedItemChanged');
         }
     });

@@ -79,7 +79,7 @@ Zotero.init = function(){
     
     //load general data if on library page
     if(Zotero.config.pageClass == 'user_library' || Zotero.config.pageClass == 'group_library' || Zotero.config.pageClass == 'my_library'){
-        Z.debug("library page - ")
+        Z.debug("library page - ", 3);
         Zotero.state.libraryString = Zotero.utils.libraryString(Zotero.config.librarySettings.libraryType,
         Zotero.config.librarySettings.libraryID);
         Zotero.state.filter = Zotero.state.libraryString;
@@ -89,7 +89,7 @@ Zotero.init = function(){
         Zotero.Item.prototype.getCreatorFields(locale);
         Zotero.Item.prototype.getCreatorTypes();
     } else {
-        Z.debug("non-library page")
+        Z.debug("non-library page", 3);
     }
     
     Zotero.ui.init.all();

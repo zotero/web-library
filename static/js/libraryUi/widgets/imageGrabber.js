@@ -3,7 +3,7 @@ Zotero.ui.widgets.imageGrabber = {};
 //dedicated widget to preload library on init so we don't attempt to do that
 //in every other widget
 Zotero.ui.widgets.imageGrabber.init = function(el){
-    Z.debug("imageGrabber.init", 3)
+    Z.debug("imageGrabber.init", 3);
     var library = Zotero.ui.getAssociatedLibrary(el);
     library.listen('grabImage', Zotero.ui.widgets.imageGrabber.grab, {widgetEl: el});
     library.listen('previewImage', Zotero.ui.widgets.imageGrabber.previewImage, {widgetEl: el});

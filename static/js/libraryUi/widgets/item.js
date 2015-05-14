@@ -390,7 +390,7 @@ Zotero.ui.widgets.item.loadItemDetail = function(item, el){
     itemInfoPanel = jel.find("#item-info-panel");
     itemInfoPanel.empty();
     var parentUrl = false;
-    var library = item.owningLibrary
+    var library = item.owningLibrary;
     if(item.apiObj.data.parentItem){
         parentUrl = library.websiteUrl({itemKey:item.apiObj.data.parentItem});
     }
@@ -539,7 +539,7 @@ Zotero.ui.widgets.item.clickToEdit = function(e){
         Zotero.ui.widgets.item.addTagTypeaheadToInput(library, createdElement);
     }
     createdElement.focus();
-}
+};
 
 Zotero.ui.widgets.item.switchCreatorFields = function(e){
     Z.debug("widgets.item.switchCreatorFields", 3);
@@ -570,7 +570,7 @@ Zotero.ui.widgets.item.switchCreatorFields = function(e){
         }
         delete creator.name;
     } else {
-        if(creator.firstName == "" && creator.lastName == "") {
+        if(creator.firstName === "" && creator.lastName === "") {
             creator.name = "";
         } else {
             creator.name = creator.firstName + ' ' + creator.lastName;
@@ -589,7 +589,7 @@ Zotero.ui.widgets.item.switchCreatorFields = function(e){
         item: item,
     }));
     Zotero.eventful.initTriggers(widgetEl);
-}
+};
 
 /**
  * save an item after a field that was being edited has lost focus
@@ -652,7 +652,7 @@ Zotero.ui.widgets.item.creatorFromRow = function(rowElement) {
         lastName: lastName,
     };
     
-    if(creator['name'] != ""){
+    if(creator['name'] !== ""){
         delete creator.firstName;
         delete creator.lastName;
     } else {

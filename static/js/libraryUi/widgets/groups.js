@@ -12,7 +12,7 @@ Zotero.ui.widgets.groups.init = function(el){
             Zotero.ui.widgets.groups.displayGroupNuggets(el, groups);
         }).catch(Zotero.catchPromiseError);
     }
-}
+};
 
 Zotero.ui.widgets.groups.userGroupsDisplay = function(groups){
     var html = '';
@@ -26,7 +26,7 @@ Zotero.ui.widgets.groups.displayGroupNuggets = function(el, groups){
     Z.debug("Zotero.ui.widgets.groups.displayGroupNuggets", 3);
     var jel = J(el);
     jel.empty();
-    if(groups.length == 0){
+    if(groups.length === 0){
         jel.append("<p>You are not currently a member of any groups.</p>");
         J("#groups-blurb").removeClass('hidden');
     } else {
