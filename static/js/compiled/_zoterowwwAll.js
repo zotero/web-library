@@ -10426,7 +10426,9 @@ Zotero.ui.widgets.items.displayItems = function(el, config, itemsArray) {
     //library.trigger('controlPanelContextChange');
     Zotero.eventful.initTriggers();
 
-    Zotero.ui.fixTableHeaders(J("#field-table"));
+    if(J("body").hasClass('lib-body')){
+        Zotero.ui.fixTableHeaders(J("#field-table"));
+    }
     library.trigger("displayedItemChanged");
 };
 
@@ -12071,16 +12073,6 @@ Zotero.ui.widgets.siteSearch.displayGoogleResults = function(type, query, page){
                 'url': url,
                 'content': r.content
             })).show();
-            /*
-            J("#search-results").append("\
-                <li class='support-result'>\
-                  <div class='support-result-title'>\
-                    <a href='"+r.url+"'>"+r.title+"</a>\
-                  </div>\
-                  <div class='support-result-content'>"+r.content+"</div>\
-                  <div class='support-result-url'>"+r.url.replace("http://", "")+"</div>\
-                </li>").show();
-*/
         }
         
         // Display the number of results found

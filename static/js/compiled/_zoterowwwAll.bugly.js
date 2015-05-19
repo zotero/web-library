@@ -9460,7 +9460,9 @@ Zotero.ui.widgets.items.displayItems = function(e, t, r) {
     };
     o.append(J("#itemstableTemplate").render(s));
     Zotero.eventful.initTriggers();
-    Zotero.ui.fixTableHeaders(J("#field-table"));
+    if (J("body").hasClass("lib-body")) {
+        Zotero.ui.fixTableHeaders(J("#field-table"));
+    }
     i.trigger("displayedItemChanged");
 };
 

@@ -233,7 +233,9 @@ Zotero.ui.widgets.items.displayItems = function(el, config, itemsArray) {
     //library.trigger('controlPanelContextChange');
     Zotero.eventful.initTriggers();
 
-    Zotero.ui.fixTableHeaders(J("#field-table"));
+    if(J("body").hasClass('lib-body')){
+        Zotero.ui.fixTableHeaders(J("#field-table"));
+    }
     library.trigger("displayedItemChanged");
 };
 
