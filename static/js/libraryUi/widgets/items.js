@@ -157,7 +157,7 @@ Zotero.ui.widgets.items.loadMoreItems = function(event){
 };
 
 Zotero.ui.getItemsConfig = function(library){
-    var effectiveUrlVars = ['tag', 'collectionKey', 'order', 'sort', 'q'];
+    var effectiveUrlVars = ['tag', 'collectionKey', 'order', 'sort', 'q', 'qmode'];
     var urlConfigVals = {};
     J.each(effectiveUrlVars, function(index, value){
         var t = Zotero.state.getUrlVar(value);
