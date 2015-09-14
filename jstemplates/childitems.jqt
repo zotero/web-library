@@ -18,6 +18,6 @@
     {{/for}}
     </ul>
     {{if ~Zotero.config.librarySettings.allowUpload}}
-        <button type="button" id="upload-attachment-link" class="btn btn-default upload-attachment-button eventfultrigger" data-triggers="uploadAttachment" data-library="{{attr:libraryString}}">Upload File</button>
+        <button type="button" id="upload-attachment-link" class="btn btn-primary upload-attachment-button eventfultrigger" data-triggers="uploadAttachment" data-library="{{attr:libraryString}}">Upload File</button>
     {{/if}}
 </script>
