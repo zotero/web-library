@@ -89,7 +89,7 @@
                         <th>{{>~zoteroFieldMap[key]}}</th>
                         <td class="{{attr:key}}">
                             <span class="editable-item-field eventfultrigger" tabindex="0" data-triggers="edit-item-field" data-event="focus" data-library="{{attr:~libraryString}}" data-itemfield="{{attr:key}}" data-itemkey="{{attr:~item.get('key')}}">
-                                <textarea cols="40" rows="14" name="{{attr:key}}" class="rte readonly">{{>~item.apiObj.data[key]}}</textarea>
+                                <textarea cols="40" rows="14" name="{{attr:key}}" class="rte">{{>~item.apiObj.data[key]}}</textarea>
                             </span>
                         </td>
                     </tr>

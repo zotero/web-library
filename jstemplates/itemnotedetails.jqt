@@ -21,7 +21,7 @@
     <tr>
         <th>Note</th>
         <td class="note-text">
-            <textarea cols="40" rows="14" name="note-text" id="note-text" class="rte readonly">{{>item.get('note')}}</textarea>
+            <textarea cols="40" rows="14" name="note-text" id="note-text" class="rte">{{>item.get('note')}}</textarea>
         </td>
     </tr>
     

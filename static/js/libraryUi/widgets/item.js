@@ -402,7 +402,12 @@ Zotero.ui.widgets.item.loadItemDetail = function(item, el){
         Z.debug("non-note item", 3);
         jel.empty().append( J('#itemdetailsTemplate').render({item:item, parentUrl:parentUrl, libraryString:library.libraryString}) );
     }
-    Zotero.ui.init.rte('readonly');
+
+    var rteType = "default"
+    if(!Zotero.config.librarySettings.allowEdit){
+        rteType = "readonly"
+    }
+    Zotero.ui.init.rte(rteType);
     
     try{
         //trigger event for Zotero translator detection
@@ -452,7 +457,11 @@ Zotero.ui.widgets.item.refreshChildren = function(e){
     var p = item.getChildren(library)
     .then(function(childItems){
         var container = childrenPanel;
-        container.html( J('#childitemsTemplate').render({childItems:childItems}) );
+        container.html( J('#childitemsTemplate').render({
+            childItems:childItems,
+            libraryString: library.libraryString
+        }) );
+        Zotero.eventful.initTriggers(container);
         Zotero.state.bindItemLinks(container);
     })
     .catch(Zotero.catchPromiseError);
