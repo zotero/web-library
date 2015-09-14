@@ -65,8 +65,39 @@ Zotero.pages = {
                 default              : label = "Search support";       break;
             }
             
+            if(context == "documentation" || context == "support"){
+                J("#simple-search").on('submit', function(e){
+                    e.preventDefault();
+                    var query     = J(this).find("input[type='text']").val();
+                    Z.pages.base.supportSearchRedirect(query);
+                });
+            }
+
+            /*
+            if(context == "forums"){
+                J("#simple-search").on('submit', function(e){
+                    e.preventDefault();
+                    var query     =  J(this).find("input[type='text']").val();
+                    Z.pages.base.forumSearchRedirect(query);
+                });
+            }
+            */
+            if(context == "people" || context == "group"){
+                J("#simple-search").on('submit', function(e){
+                    e.preventDefault();
+                    var searchUrl = Zotero.config.baseZoteroWebsiteUrl + "/search/#type/" + context;
+                    var query     = J(this).find("input[type='text']").val();
+                    if(query !== "" && query != label){
+                        searchUrl = searchUrl + "/q/" + encodeURIComponent(query);
+                    }
+                    location.href = searchUrl;
+                    return false;
+                });
+            }
+            
             //J("#header-search-query").val("");
             //J("#header-search-query").attr('placeholder', label);//.inputLabel(label, {color:"#aaa"});
+            /*
             if(context != 'library' && context != 'grouplibrary' && context != 'forums'){
                 J("#simple-search").on('submit', function(e){
                     e.preventDefault();
@@ -81,8 +112,23 @@ Zotero.pages = {
             }
             else if(context != 'forums') {
             }
+            */
         },
         
+        supportSearchRedirect: function(query) {
+            var q = encodeURIComponent(query + " site:www.zotero.org/support");
+            Z.debug(q);return;
+            var url = "https://duckduckgo.com/?q=" + q;
+            /*var url = "https://www.google.com/#q=" + q;*/
+            window.location = url;
+        },
+
+        forumSearchRedirect: function(query) {
+            var q = encodeURIComponent(query + " site:forums.zotero.org");
+            var url = "https://duckduckgo.com/?q=" + q;
+            /*var url = "https://www.google.com/#q=" + q;*/
+            window.location = url;
+        },
         /**
          * Select the right nav tab
          *
@@ -670,7 +716,7 @@ Zotero.pages = {
             flowplayer("intro-screencast", Zotero.pages.staticPath+"/library/flowplayer/flowplayer-3.1.1.swf");
         },
         */
-        
+        /*
         init: function(){
             //set up feature tour tab containers
             var tabContainers = J('div#features-lists > div');
@@ -723,6 +769,7 @@ Zotero.pages = {
             J('ul#features-tabs a').removeClass('selected').eq(Zotero.pages.index_index.tabCounter).addClass('selected');
 
         }
+        */
     },
     
     search_index: {
