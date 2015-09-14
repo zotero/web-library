@@ -396,7 +396,7 @@ Zotero.ui.widgets.item.loadItemDetail = function(item, el){
     }
     if(item.apiObj.data.itemType == "note"){
         Z.debug("note item", 3);
-        itemInfoPanel.append( J('#itemnotedetailsTemplate').render({item:item, parentUrl:parentUrl, libraryString:library.libraryString}) );
+        jel.empty().append( J('#itemnotedetailsTemplate').render({item:item, parentUrl:parentUrl, libraryString:library.libraryString}) );
     }
     else{
         Z.debug("non-note item", 3);

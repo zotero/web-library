@@ -3560,7 +3560,9 @@ Zotero.Item.prototype.registerUpload = function(uploadKey){
         'libraryID':item.owningLibrary.libraryID,
         'itemKey':item.key
     };
-    var headers = {};
+    var headers = {
+        'Content-Type': 'application/x-www-form-urlencoded'
+    };
     var oldmd5 = item.get('md5');
     if(oldmd5){
         headers['If-Match'] = oldmd5;
@@ -3956,7 +3958,7 @@ Zotero.Item.prototype.uploadChildAttachment = function(childItem, fileInfo, prog
         throw {
             "message":"Failure during attachmentItem write.",
             "code": response.status,
-            "serverMessage": response.rawResponse.responseText,
+            "serverMessage": response.jqxhr.responseText,
             "response": response
         };
     });
@@ -3992,7 +3994,18 @@ Zotero.Item.prototype.uploadFile = function(fileInfo, progressCallback){
                 //upload was successful: register it
                 return item.registerUpload(upAuthOb.uploadKey)
                 .then(function(response){
-                    return {'message': 'Upload Successful'};
+                    if(response.isError){
+                        var e = {
+                            "message":"Failed to register uploaded file.",
+                            "code": response.status,
+                            "serverMessage": response.jqxhr.responseText,
+                            'response': response
+                        }
+                        Z.error(e);
+                        throw e;
+                    } else {
+                        return {'message': 'Upload Successful'};
+                    }
                 });
             });
         }
@@ -4002,7 +4015,7 @@ Zotero.Item.prototype.uploadFile = function(fileInfo, progressCallback){
         throw {
             "message":"Failure during upload.",
             "code": response.status,
-            "serverMessage": response.rawResponse.responseText,
+            "serverMessage": response.jqxhr.responseText,
             'response': response
         };
     });
@@ -5008,7 +5021,7 @@ Zotero.url.apiDownloadUrl = function(item){
     return false;
 };
 
-Zotero.url.wwwDownloadUrl = function(item){
+Zotero.url.proxyDownloadUrl = function(item){
     var urlString = '';
     if(item.apiObj.links['enclosure']){
         if(Zotero.config.proxyDownloads){
@@ -5017,6 +5030,16 @@ Zotero.url.wwwDownloadUrl = function(item){
         else{
             return Zotero.url.apiDownloadUrl(item);
         }
+    }
+    else {
+        return false;
+    }
+};
+
+Zotero.url.wwwDownloadUrl = function(item){
+    var urlString = '';
+    if(item.apiObj.links['enclosure']){
+        return Zotero.config.baseZoteroWebsiteUrl + Zotero.config.librarySettings.libraryPathString + "/" + item.get('key') + "/file/view";
     }
     else {
         return false;
@@ -9924,13 +9947,18 @@ Zotero.ui.widgets.item.loadItemDetail = function(item, el){
     }
     if(item.apiObj.data.itemType == "note"){
         Z.debug("note item", 3);
-        itemInfoPanel.append( J('#itemnotedetailsTemplate').render({item:item, parentUrl:parentUrl, libraryString:library.libraryString}) );
+        jel.empty().append( J('#itemnotedetailsTemplate').render({item:item, parentUrl:parentUrl, libraryString:library.libraryString}) );
     }
     else{
         Z.debug("non-note item", 3);
         jel.empty().append( J('#itemdetailsTemplate').render({item:item, parentUrl:parentUrl, libraryString:library.libraryString}) );
     }
-    Zotero.ui.init.rte('readonly');
+
+    var rteType = "default"
+    if(!Zotero.config.librarySettings.allowEdit){
+        rteType = "readonly"
+    }
+    Zotero.ui.init.rte(rteType);
     
     try{
         //trigger event for Zotero translator detection
@@ -9980,7 +10008,11 @@ Zotero.ui.widgets.item.refreshChildren = function(e){
     var p = item.getChildren(library)
     .then(function(childItems){
         var container = childrenPanel;
-        container.html( J('#childitemsTemplate').render({childItems:childItems}) );
+        container.html( J('#childitemsTemplate').render({
+            childItems:childItems,
+            libraryString: library.libraryString
+        }) );
+        Zotero.eventful.initTriggers(container);
         Zotero.state.bindItemLinks(container);
     })
     .catch(Zotero.catchPromiseError);
@@ -10350,7 +10382,7 @@ Zotero.ui.widgets.items.loadMoreItems = function(event){
 };
 
 Zotero.ui.getItemsConfig = function(library){
-    var effectiveUrlVars = ['tag', 'collectionKey', 'order', 'sort', 'q'];
+    var effectiveUrlVars = ['tag', 'collectionKey', 'order', 'sort', 'q', 'qmode'];
     var urlConfigVals = {};
     J.each(effectiveUrlVars, function(index, value){
         var t = Zotero.state.getUrlVar(value);
@@ -11953,7 +11985,28 @@ Zotero.ui.widgets.siteSearch.init = function(el){
     if(query){
         Zotero.ui.widgets.siteSearch.search(searchType, query);
     }
+
+    //listen for newly activated tab
+    widgetEl.find('a[data-toggle="tab"]').on('shown.bs.tab', Zotero.ui.widgets.siteSearch.tabChange);
 };
+
+Zotero.ui.widgets.siteSearch.tabChange = function(e) {
+    Z.debug("search tab changed", 3);
+    //e.target // newly activated tab
+    //e.relatedTarget // previous active tab
+
+    //change state to the new searchType
+    var newQueryType = J(e.target).data('searchtype');
+    var query = Zotero.state.getUrlVar('q');
+    //put the query in the new query box
+    J('input[data-searchtype="' + newQueryType + '"]').val(query);
+
+    Zotero.state.setUrlVar('type', newQueryType);
+    Zotero.state.pushState();
+
+    var params = {type:newQueryType, query:query};
+    Zotero.ui.widgets.siteSearch.runSearch(params);
+}
 
 Zotero.ui.widgets.siteSearch.triggeredSearch = function(event){
     Z.debug("Zotero.ui.widgets.siteSearch.search", 3);
@@ -12027,7 +12080,7 @@ Zotero.ui.widgets.siteSearch.runSearch = function(params){
 
 Zotero.ui.widgets.siteSearch.fetchGoogleResults = function(params){
     Z.debug("Zotero.ui.widgets.siteSearch.fetchGoogleResults", 3);
-    Zotero.ui.widgets.siteSearch.clearResults();
+    Zotero.ui.widgets.siteSearch.clearResults(J("#site-search"));
     Zotero.ui.showSpinner(J("#search-spinner"));
     J("#search-spinner").show();
     // Create a new WebSearch object
@@ -12103,7 +12156,7 @@ Zotero.ui.widgets.siteSearch.clearResults = function(widgetEl){
 };
 
 Zotero.ui.widgets.siteSearch.gotopage = function(i){
-    Zotero.ui.widgets.siteSearch.clearResults();
+    Zotero.ui.widgets.siteSearch.clearResults(J("#site-search"));
     searcher.gotoPage(i);
 };
 
@@ -12195,6 +12248,7 @@ Zotero.ui.widgets.publications.init = function(el){
         'linkwrap': '1',
         'style': 'apa-annotated-bibliography',
     };
+    Zotero.ui.showSpinner(widgetEl, 'horizontal');
     var p = library.loadPublications(config)
     .then(function(response){
         Z.debug("got publications", 3);
@@ -12223,8 +12277,27 @@ Zotero.ui.widgets.publications.displayItems = function(el, config, itemsArray) {
             return J.inArray(el, Zotero.Library.prototype.groupOnlyColumns) == (-1);
         });
     }
+    var moreDisplayFields = [
+        'abstractNote',
+    ];
+    var publicationTypes = {
+        'book': [],
+        'dissertation': [],
+        'thesis': [],
+        'journalArticle': [],
+        'conferencePaper': [],
+        'bookSection': [],
+        'magazineArticle': [],
+        'newspaperArticle': [],
+        'presentation': [],
+        'report': [],
+        'blogPost': [],
+        'document': [],
+        'other': []
+    };
     //map child items to their parent keys so we can put download links in
     var childItems = {};
+    Z.debug("processing items");
     for(var i = 0; i < itemsArray.length; i++){
         var item = itemsArray[i];
         var parentKey = item.get("parentItem");
@@ -12232,17 +12305,35 @@ Zotero.ui.widgets.publications.displayItems = function(el, config, itemsArray) {
             Z.debug("has parentKey, adding item to childItems object " + parentKey);
             childItems[parentKey] = item;
         }
+        
+        for(var j = 0; j < moreDisplayFields.length; j++) {
+            if(item.get(moreDisplayFields[j])){
+                item.hasMore = true;
+            }
+        }
+        if(item.apiObj.data['creators'] && item.apiObj.data['creators'].length > 1){
+            item.hasMore = true;
+        }
+        var itemType = item.get('itemType');
+        Z.debug(itemType);
+        Z.debug(publicationTypes[itemType]);
+        
+        if(publicationTypes[itemType]){
+            Z.debug("inserting into appropriate array");
+            publicationTypes[itemType].push(item);
+        } else {
+            Z.debug("inserting into other")
+            publicationTypes['other'].push(item);
+        }
     }
-    
+    Z.debug("rendering publicationsData");
+    Z.debug(publicationTypes);
     var publicationsData = {'items':itemsArray,
                             'childItems': childItems,
                             'library':library,
-                            'displayFields': [
-                                'title',
-                                'creator',
-                                'abstract',
-                                'date',
-                            ],
+                            'moreDisplayFields': moreDisplayFields,
+                            'publicationTypes': publicationTypes,
+                            'displayName': Z.config.librarySettings.name
                             };
 
     jel.append( J('#publicationsTemplate').render(publicationsData) );
@@ -12416,8 +12507,39 @@ Zotero.pages = {
                 default              : label = "Search support";       break;
             }
             
+            if(context == "documentation" || context == "support"){
+                J("#simple-search").on('submit', function(e){
+                    e.preventDefault();
+                    var query     = J(this).find("input[type='text']").val();
+                    Z.pages.base.supportSearchRedirect(query);
+                });
+            }
+
+            /*
+            if(context == "forums"){
+                J("#simple-search").on('submit', function(e){
+                    e.preventDefault();
+                    var query     =  J(this).find("input[type='text']").val();
+                    Z.pages.base.forumSearchRedirect(query);
+                });
+            }
+            */
+            if(context == "people" || context == "group"){
+                J("#simple-search").on('submit', function(e){
+                    e.preventDefault();
+                    var searchUrl = Zotero.config.baseZoteroWebsiteUrl + "/search/#type/" + context;
+                    var query     = J(this).find("input[type='text']").val();
+                    if(query !== "" && query != label){
+                        searchUrl = searchUrl + "/q/" + encodeURIComponent(query);
+                    }
+                    location.href = searchUrl;
+                    return false;
+                });
+            }
+            
             //J("#header-search-query").val("");
             //J("#header-search-query").attr('placeholder', label);//.inputLabel(label, {color:"#aaa"});
+            /*
             if(context != 'library' && context != 'grouplibrary' && context != 'forums'){
                 J("#simple-search").on('submit', function(e){
                     e.preventDefault();
@@ -12432,8 +12554,23 @@ Zotero.pages = {
             }
             else if(context != 'forums') {
             }
+            */
         },
         
+        supportSearchRedirect: function(query) {
+            var q = encodeURIComponent(query + " site:www.zotero.org/support");
+            Z.debug(q);return;
+            var url = "https://duckduckgo.com/?q=" + q;
+            /*var url = "https://www.google.com/#q=" + q;*/
+            window.location = url;
+        },
+
+        forumSearchRedirect: function(query) {
+            var q = encodeURIComponent(query + " site:forums.zotero.org");
+            var url = "https://duckduckgo.com/?q=" + q;
+            /*var url = "https://www.google.com/#q=" + q;*/
+            window.location = url;
+        },
         /**
          * Select the right nav tab
          *
@@ -13021,7 +13158,7 @@ Zotero.pages = {
             flowplayer("intro-screencast", Zotero.pages.staticPath+"/library/flowplayer/flowplayer-3.1.1.swf");
         },
         */
-        
+        /*
         init: function(){
             //set up feature tour tab containers
             var tabContainers = J('div#features-lists > div');
@@ -13074,6 +13211,7 @@ Zotero.pages = {
             J('ul#features-tabs a').removeClass('selected').eq(Zotero.pages.index_index.tabCounter).addClass('selected');
 
         }
+        */
     },
     
     search_index: {

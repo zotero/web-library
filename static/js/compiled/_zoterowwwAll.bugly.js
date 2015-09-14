@@ -1,15 +1,15 @@
 (function(e, t) {
-    var r, o = Array.prototype.slice, i = decodeURIComponent, a = e.param, n, s, l, c, d = e.bbq = e.bbq || {}, u, g, p, f = e.event.special, m = "hashchange", b = "querystring", y = "fragment", h = "elemUrlAttr", Z = "href", v = "src", w = /^.*\?|#.*$/g, I, J, C, T, k, S = {};
+    var r, o = Array.prototype.slice, i = decodeURIComponent, a = e.param, n, s, l, c, d = e.bbq = e.bbq || {}, u, g, p, f = e.event.special, m = "hashchange", b = "querystring", y = "fragment", h = "elemUrlAttr", Z = "href", v = "src", w = /^.*\?|#.*$/g, I, J, T, C, k, S = {};
     function j(e) {
         return typeof e === "string";
     }
-    function x(e) {
+    function L(e) {
         var t = o.call(arguments, 1);
         return function() {
             return e.apply(this, t.concat(o.call(arguments)));
         };
     }
-    function L(e) {
+    function x(e) {
         return e.replace(J, "$2");
     }
     function D(e) {
@@ -28,7 +28,7 @@
                 u = c === 2 ? s : c === 1 ? e.extend({}, s, p) : e.extend({}, p, s);
                 u = n(u);
                 if (t) {
-                    u = u.replace(C, i);
+                    u = u.replace(T, i);
                 }
             }
             d = g[1] + (t ? k : u || !g[1] ? "?" : "") + u + f;
@@ -37,8 +37,8 @@
         }
         return d;
     }
-    a[b] = x(O, 0, D);
-    a[y] = s = x(O, 1, L);
+    a[b] = L(O, 0, D);
+    a[y] = s = L(O, 1, x);
     a.sorted = n = function(t, r) {
         var o = [], i = {};
         e.each(a(t, r).split("&"), function(e, t) {
@@ -56,7 +56,7 @@
     s.noEscape = function(t) {
         t = t || "";
         var r = e.map(t.split(""), encodeURIComponent);
-        C = new RegExp(r.join("|"), "g");
+        T = new RegExp(r.join("|"), "g");
     };
     s.noEscape(",/");
     s.ajaxCrawlable = function(e) {
@@ -70,9 +70,9 @@
                 J = /^([^#]*)#?(.*)$/;
                 k = "#";
             }
-            T = !!e;
+            C = !!e;
         }
-        return T;
+        return C;
     };
     s.ajaxCrawlable(0);
     e.deparam = l = function(t, o) {
@@ -128,8 +128,8 @@
         }
         return l(t, o);
     }
-    l[b] = x(A, 0);
-    l[y] = c = x(A, 1);
+    l[b] = L(A, 0);
+    l[y] = c = L(A, 1);
     e[h] || (e[h] = function(t) {
         return e.extend(S, t);
     })({
@@ -154,8 +154,8 @@
             r.attr(s, a[t](l, i, n));
         });
     }
-    e.fn[b] = x(E, b);
-    e.fn[y] = x(E, y);
+    e.fn[b] = L(E, b);
+    e.fn[y] = L(E, y);
     d.pushState = u = function(e, t) {
         if (j(e) && /^#/.test(e) && t === r) {
             t = 2;
@@ -367,10 +367,10 @@
             e === t ? b(e, t) : f(e, t) || b(e, t);
         }
         function b(e, t) {
-            e._state === x && (e._state = L, e._detail = t, v.async(h, e));
+            e._state === L && (e._state = x, e._detail = t, v.async(h, e));
         }
         function y(e, t) {
-            e._state === x && (e._state = L, e._detail = t, v.async(Z, e));
+            e._state === L && (e._state = x, e._detail = t, v.async(Z, e));
         }
         function h(e) {
             p(e, e._state = D);
@@ -379,9 +379,9 @@
             p(e, e._state = O);
         }
         var v = e.config, w = (e.configure, t.objectOrFunction), I = t.isFunction, J = (t.now, 
-        r.cast), C = o.all, T = i.race, k = a.resolve, S = n.reject, j = s.asap;
+        r.cast), T = o.all, C = i.race, k = a.resolve, S = n.reject, j = s.asap;
         v.async = j;
-        var x = void 0, L = 0, D = 1, O = 2;
+        var L = void 0, x = 0, D = 1, O = 2;
         c.prototype = {
             constructor: c,
             _state: void 0,
@@ -400,7 +400,7 @@
             "catch": function(e) {
                 return this.then(null, e);
             }
-        }, c.all = C, c.cast = J, c.race = T, c.resolve = k, c.reject = S, l.Promise = c;
+        }, c.all = T, c.cast = J, c.race = C, c.resolve = k, c.reject = S, l.Promise = c;
     }), e("promise/race", [ "./utils", "exports" ], function(e, t) {
         "use strict";
         function r(e) {
@@ -3618,7 +3618,9 @@ Zotero.Item.prototype.registerUpload = function(e) {
         libraryID: t.owningLibrary.libraryID,
         itemKey: t.key
     };
-    var o = {};
+    var o = {
+        "Content-Type": "application/x-www-form-urlencoded"
+    };
     var i = t.get("md5");
     if (i) {
         o["If-Match"] = i;
@@ -4022,7 +4024,7 @@ Zotero.Item.prototype.uploadChildAttachment = function(e, t, r) {
         throw {
             message: "Failure during attachmentItem write.",
             code: e.status,
-            serverMessage: e.rawResponse.responseText,
+            serverMessage: e.jqxhr.responseText,
             response: e
         };
     });
@@ -4057,9 +4059,20 @@ Zotero.Item.prototype.uploadFile = function(e, t) {
         } else {
             return Zotero.file.uploadFile(o, e).then(function() {
                 return r.registerUpload(o.uploadKey).then(function(e) {
-                    return {
-                        message: "Upload Successful"
-                    };
+                    if (e.isError) {
+                        var t = {
+                            message: "Failed to register uploaded file.",
+                            code: e.status,
+                            serverMessage: e.jqxhr.responseText,
+                            response: e
+                        };
+                        Z.error(t);
+                        throw t;
+                    } else {
+                        return {
+                            message: "Upload Successful"
+                        };
+                    }
                 });
             });
         }
@@ -4069,7 +4082,7 @@ Zotero.Item.prototype.uploadFile = function(e, t) {
         throw {
             message: "Failure during upload.",
             code: e.status,
-            serverMessage: e.rawResponse.responseText,
+            serverMessage: e.jqxhr.responseText,
             response: e
         };
     });
@@ -4991,7 +5004,7 @@ Zotero.url.apiDownloadUrl = function(e) {
     return false;
 };
 
-Zotero.url.wwwDownloadUrl = function(e) {
+Zotero.url.proxyDownloadUrl = function(e) {
     var t = "";
     if (e.apiObj.links["enclosure"]) {
         if (Zotero.config.proxyDownloads) {
@@ -4999,6 +5012,15 @@ Zotero.url.wwwDownloadUrl = function(e) {
         } else {
             return Zotero.url.apiDownloadUrl(e);
         }
+    } else {
+        return false;
+    }
+};
+
+Zotero.url.wwwDownloadUrl = function(e) {
+    var t = "";
+    if (e.apiObj.links["enclosure"]) {
+        return Zotero.config.baseZoteroWebsiteUrl + Zotero.config.librarySettings.libraryPathString + "/" + e.get("key") + "/file/view";
     } else {
         return false;
     }
@@ -9047,7 +9069,7 @@ Zotero.ui.widgets.item.loadItemDetail = function(e, t) {
     }
     if (e.apiObj.data.itemType == "note") {
         Z.debug("note item", 3);
-        itemInfoPanel.append(J("#itemnotedetailsTemplate").render({
+        r.empty().append(J("#itemnotedetailsTemplate").render({
             item: e,
             parentUrl: o,
             libraryString: i.libraryString
@@ -9060,12 +9082,16 @@ Zotero.ui.widgets.item.loadItemDetail = function(e, t) {
             libraryString: i.libraryString
         }));
     }
-    Zotero.ui.init.rte("readonly");
+    var a = "default";
+    if (!Zotero.config.librarySettings.allowEdit) {
+        a = "readonly";
+    }
+    Zotero.ui.init.rte(a);
     try {
-        var a = document.createEvent("HTMLEvents");
-        a.initEvent("ZoteroItemUpdated", true, true);
-        document.dispatchEvent(a);
-    } catch (n) {
+        var n = document.createEvent("HTMLEvents");
+        n.initEvent("ZoteroItemUpdated", true, true);
+        document.dispatchEvent(n);
+    } catch (s) {
         Zotero.error("Error triggering ZoteroItemUpdated event");
     }
     r.data("itemkey", e.apiObj.key);
@@ -9095,8 +9121,10 @@ Zotero.ui.widgets.item.refreshChildren = function(e) {
     var n = a.getChildren(o).then(function(e) {
         var t = r;
         t.html(J("#childitemsTemplate").render({
-            childItems: e
+            childItems: e,
+            libraryString: o.libraryString
         }));
+        Zotero.eventful.initTriggers(t);
         Zotero.state.bindItemLinks(t);
     }).catch(Zotero.catchPromiseError);
     return n;
@@ -9407,7 +9435,7 @@ Zotero.ui.widgets.items.loadMoreItems = function(e) {
 };
 
 Zotero.ui.getItemsConfig = function(e) {
-    var t = [ "tag", "collectionKey", "order", "sort", "q" ];
+    var t = [ "tag", "collectionKey", "order", "sort", "q", "qmode" ];
     var r = {};
     J.each(t, function(e, t) {
         var o = Zotero.state.getUrlVar(t);
@@ -10765,6 +10793,21 @@ Zotero.ui.widgets.siteSearch.init = function(e) {
     if (o) {
         Zotero.ui.widgets.siteSearch.search(r, o);
     }
+    t.find('a[data-toggle="tab"]').on("shown.bs.tab", Zotero.ui.widgets.siteSearch.tabChange);
+};
+
+Zotero.ui.widgets.siteSearch.tabChange = function(e) {
+    Z.debug("search tab changed", 3);
+    var t = J(e.target).data("searchtype");
+    var r = Zotero.state.getUrlVar("q");
+    J('input[data-searchtype="' + t + '"]').val(r);
+    Zotero.state.setUrlVar("type", t);
+    Zotero.state.pushState();
+    var o = {
+        type: t,
+        query: r
+    };
+    Zotero.ui.widgets.siteSearch.runSearch(o);
 };
 
 Zotero.ui.widgets.siteSearch.triggeredSearch = function(e) {
@@ -10833,7 +10876,7 @@ Zotero.ui.widgets.siteSearch.runSearch = function(e) {
 
 Zotero.ui.widgets.siteSearch.fetchGoogleResults = function(e) {
     Z.debug("Zotero.ui.widgets.siteSearch.fetchGoogleResults", 3);
-    Zotero.ui.widgets.siteSearch.clearResults();
+    Zotero.ui.widgets.siteSearch.clearResults(J("#site-search"));
     Zotero.ui.showSpinner(J("#search-spinner"));
     J("#search-spinner").show();
     searcher = new google.search.WebSearch();
@@ -10895,7 +10938,7 @@ Zotero.ui.widgets.siteSearch.clearResults = function(e) {
 };
 
 Zotero.ui.widgets.siteSearch.gotopage = function(e) {
-    Zotero.ui.widgets.siteSearch.clearResults();
+    Zotero.ui.widgets.siteSearch.clearResults(J("#site-search"));
     searcher.gotoPage(e);
 };
 
@@ -10977,6 +11020,7 @@ Zotero.ui.widgets.publications.init = function(e) {
         linkwrap: "1",
         style: "apa-annotated-bibliography"
     };
+    Zotero.ui.showSpinner(r, "horizontal");
     var a = t.loadPublications(i).then(function(e) {
         Z.debug("got publications", 3);
         r.empty();
@@ -11000,22 +11044,61 @@ Zotero.ui.widgets.publications.displayItems = function(e, t, r) {
             return J.inArray(e, Zotero.Library.prototype.groupOnlyColumns) == -1;
         });
     }
-    var s = {};
-    for (var l = 0; l < r.length; l++) {
-        var c = r[l];
-        var d = c.get("parentItem");
-        if (d) {
-            Z.debug("has parentKey, adding item to childItems object " + d);
-            s[d] = c;
+    var s = [ "abstractNote" ];
+    var l = {
+        book: [],
+        dissertation: [],
+        thesis: [],
+        journalArticle: [],
+        conferencePaper: [],
+        bookSection: [],
+        magazineArticle: [],
+        newspaperArticle: [],
+        presentation: [],
+        report: [],
+        blogPost: [],
+        document: [],
+        other: []
+    };
+    var c = {};
+    Z.debug("processing items");
+    for (var d = 0; d < r.length; d++) {
+        var u = r[d];
+        var g = u.get("parentItem");
+        if (g) {
+            Z.debug("has parentKey, adding item to childItems object " + g);
+            c[g] = u;
+        }
+        for (var p = 0; p < s.length; p++) {
+            if (u.get(s[p])) {
+                u.hasMore = true;
+            }
+        }
+        if (u.apiObj.data["creators"] && u.apiObj.data["creators"].length > 1) {
+            u.hasMore = true;
+        }
+        var f = u.get("itemType");
+        Z.debug(f);
+        Z.debug(l[f]);
+        if (l[f]) {
+            Z.debug("inserting into appropriate array");
+            l[f].push(u);
+        } else {
+            Z.debug("inserting into other");
+            l["other"].push(u);
         }
     }
-    var u = {
+    Z.debug("rendering publicationsData");
+    Z.debug(l);
+    var m = {
         items: r,
-        childItems: s,
+        childItems: c,
         library: i,
-        displayFields: [ "title", "creator", "abstract", "date" ]
+        moreDisplayFields: s,
+        publicationTypes: l,
+        displayName: Z.config.librarySettings.name
     };
-    o.append(J("#publicationsTemplate").render(u));
+    o.append(J("#publicationsTemplate").render(m));
 };
 
 Zotero.url.requestReadApiKeyUrl = function(e, t, r) {
@@ -11125,7 +11208,14 @@ Zotero.pages = {
                 t = "Search support";
                 break;
             }
-            if (e != "library" && e != "grouplibrary" && e != "forums") {
+            if (e == "documentation" || e == "support") {
+                J("#simple-search").on("submit", function(e) {
+                    e.preventDefault();
+                    var t = J(this).find("input[type='text']").val();
+                    Z.pages.base.supportSearchRedirect(t);
+                });
+            }
+            if (e == "people" || e == "group") {
                 J("#simple-search").on("submit", function(r) {
                     r.preventDefault();
                     var o = Zotero.config.baseZoteroWebsiteUrl + "/search/#type/" + e;
@@ -11136,7 +11226,19 @@ Zotero.pages = {
                     location.href = o;
                     return false;
                 });
-            } else if (e != "forums") {}
+            }
+        },
+        supportSearchRedirect: function(e) {
+            var t = encodeURIComponent(e + " site:www.zotero.org/support");
+            Z.debug(t);
+            return;
+            var r = "https://duckduckgo.com/?q=" + t;
+            window.location = r;
+        },
+        forumSearchRedirect: function(e) {
+            var t = encodeURIComponent(e + " site:forums.zotero.org");
+            var r = "https://duckduckgo.com/?q=" + t;
+            window.location = r;
         },
         setupNav: function() {
             var e = "";
@@ -11574,49 +11676,7 @@ Zotero.pages = {
             Zotero.ui.init.rte("nolinks");
         }
     },
-    index_index: {
-        init: function() {
-            var e = J("div#features-lists > div");
-            e.hide().filter(":first").show();
-            J("ul#features-tabs a").click(function() {
-                Zotero.pages.index_index.tabClick = true;
-                e.hide();
-                e.filter(this.hash).show();
-                J("ul#features-tabs a").removeClass("selected");
-                J(this).addClass("selected");
-                return false;
-            }).filter(":first").click();
-            Zotero.pages.index_index.tabCounter = 0;
-            Zotero.pages.index_index.tabClick = false;
-            J("#intro-screencast-small").click(function() {
-                J("#content").prepend("<div id='dimmer'><div id='intro-screencast-lightbox-div'><a href='/static/videos/zotero_1_5_cast.flv' id='intro-screencast-lightbox'></a><a id='close-lightbox-link'>close</a></div></div>");
-                Zotero.pages.index_index.player = flowplayer("intro-screencast-lightbox", Zotero.pages.staticPath + "/library/flowplayer/flowplayer-3.1.1.swf", {
-                    clip: {
-                        autoPlay: true
-                    }
-                });
-                J("#close-lightbox-link").click(function() {
-                    Zotero.pages.index_index.player.close();
-                    J("#dimmer").remove();
-                    J("#intro-screencast-lightbox-div").remove();
-                });
-                return false;
-            });
-        },
-        cycleTab: function() {
-            if (Zotero.pages.index_index.tabClick === false) {
-                setTimeout(Zotero.pages.index_index.cycleTab, 5e3);
-            } else {
-                return false;
-            }
-            Zotero.pages.index_index.tabCounter++;
-            Zotero.pages.index_index.tabCounter = Zotero.pages.index_index.tabCounter % 5;
-            var e = J("div#features-lists > div");
-            e.hide();
-            e.eq(Zotero.pages.index_index.tabCounter).show();
-            J("ul#features-tabs a").removeClass("selected").eq(Zotero.pages.index_index.tabCounter).addClass("selected");
-        }
-    },
+    index_index: {},
     search_index: {
         init: function() {}
     },
