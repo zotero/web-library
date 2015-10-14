@@ -17,7 +17,7 @@
                             </p>
                         {{else}}
                             {{if ~formatItemField(#data, ~item, true) != ''}}
-                            <p class="list-group-item-text" title="{{attr:~item.apiObj.data[#data]}}">{{>~zoteroFieldMap[#data]}}:{{>~formatItemField(#data, ~item, true)}}</p>
+                            <p class="list-group-item-text" title="{{attr:~item.apiObj.data[#data]}}">{{>~zoteroFieldMap[#data]}}: {{>~formatItemField(#data, ~item, true)}}</p>
                             {{/if}}
                         {{/if}}
                     {{/for}}

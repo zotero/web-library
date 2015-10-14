@@ -9,7 +9,6 @@
     baseZoteroWebsiteUrl: 'https://www.zotero.org',
     baseDownloadUrl: '/web-library/examples/library/download.php',
     libraryPathString: '/web-library/examples/library',
-    directDownloads: false,
     proxyDownloads: true,
     
     staticPath: '/web-library/static',
