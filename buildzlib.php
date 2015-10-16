@@ -9,6 +9,9 @@ echo shell_exec("./library/libZotero/build/build.php");
 echo "building Zotero www\n";
 echo getcwd() . "\n";
 
+echo "converting reactitems:";
+echo shell_exec("babel ./static/js/libraryUi/widgets/reactsrc --out-file ./static/js/libraryUi/widgets/reactbuild/reactwidgets.js");
+
 //js path assuming execution from /config
 $jsRelPath = './static/js/';
 //concatenate php files into a single file to include
@@ -33,6 +36,7 @@ $files = array(
 "libraryUi/widgets/controlpanel.js",
 "libraryUi/widgets/createcollectiondialog.js",
 "libraryUi/widgets/deletecollectiondialog.js",
+"libraryUi/widgets/createItemDialog.js",
 "libraryUi/widgets/exportitemsdialog.js",
 "libraryUi/widgets/feedlink.js",
 "libraryUi/widgets/groups.js",
@@ -61,6 +65,10 @@ $files = array(
 "libraryUi/widgets/localItems.js",
 "libraryUi/widgets/siteSearch.js",
 //"libraryUi/widgets/orcidProfile.js",
+"libraryUi/widgets/libraryDropdown.js",
+"libraryUi/widgets/publications.js",
+"libraryUi/widgets/reactbuild/reactwidgets.js",
+//"libraryUi/widgets/shareToDocs.js",
 "_zoteroLibraryUrl.js",
 "zoteroPages.js",
 );

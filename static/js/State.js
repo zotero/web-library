@@ -97,6 +97,25 @@ Zotero.State.prototype.getSelectedItemKeys = function(){
     return returnKeys;
 };
 
+//toggle the selected state of the passed item key
+Zotero.State.prototype.toggleItemSelected = function(itemKey){
+    var state = this;
+    var newselected = [];
+    var alreadySelected = false;
+    var selectedItemKeys = state.getSelectedItemKeys();
+    J.each(selectedItemKeys, function(ind, val){
+        if(val == itemKey){
+            alreadySelected = true;
+        } else {
+            newselected.push(val);
+        }
+    });
+    if(!alreadySelected){
+        newselected.push(itemKey);
+    }
+    state.selectedItemKeys = newselected;
+};
+
 Zotero.State.prototype.pushTag = function(newtag){
     Z.debug('Zotero.State.pushTag', 3);
     var state = this;
@@ -585,7 +604,12 @@ Zotero.State.prototype.bindItemLinks = function(container){
         e.preventDefault();
         Z.debug("item-select-td clicked", 3);
         var itemKey = J(this).data('itemkey');
-        state.pathVars.itemKey = itemKey;
-        state.pushState();
+        if(e.ctrlKey){
+            state.toggleItemSelected(itemKey);
+            Zotero.trigger("selectedItemsChanged");
+        } else {
+            state.pathVars.itemKey = itemKey;
+            state.pushState();
+        }
     });
 };
