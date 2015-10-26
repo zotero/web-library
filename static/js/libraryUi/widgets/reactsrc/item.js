@@ -65,7 +65,9 @@ Zotero.ui.widgets.reactitem.init = function(el){
 	});
 	
 	//blur field when user presses enter in item field input to trigger save
+	/*
 	container.on('keydown', ".item-field-control", function(e){
+		return;
 		e.stopImmediatePropagation();
 		if (e.keyCode === Zotero.ui.keyCode.ENTER){
 			J(this).blur();
@@ -73,6 +75,7 @@ Zotero.ui.widgets.reactitem.init = function(el){
 	});
 	
 	container.on('blur', '.item-field-control', function(e){
+		return;
 		Z.debug("blurred");
 		var input = J(this);
 		var itemKey = input.data('itemkey');
@@ -118,7 +121,7 @@ Zotero.ui.widgets.reactitem.init = function(el){
 
 		Zotero.eventful.initTriggers(container);
 	});
-
+	*/
 	library.trigger("displayedItemChanged");
 };
 
@@ -132,17 +135,12 @@ Zotero.ui.widgets.reactitem.loadItem = function(event){
 	Zotero.ui.cleanUpRte(widgetEl);
 	
 	var library = Zotero.ui.getAssociatedLibrary(widgetEl);
-	//clear contents and show spinner while loading
-	//itemInfoPanel.empty();
-	//Zotero.ui.showSpinner(itemInfoPanel);
 	
 	//get the key of the item we need to display, or display library stats
 	var itemKey = Zotero.state.getUrlVar('itemKey');
 	if(!itemKey){
 		Z.debug("No itemKey - " + itemKey, 3);
 		Zotero.ui.widgets.reactitem.reactInstance.setState({item:null});
-		//itemInfoPanel.empty();
-		//Zotero.ui.widgets.reactitem.displayStats(library, widgetEl);
 		return Promise.reject(new Error("No itemkey - " + itemKey));
 	}
 	
@@ -170,11 +168,18 @@ Zotero.ui.widgets.reactitem.loadItem = function(event){
 	}).then(function(){
 		return loadedItem.getCreatorTypes(loadedItem.get('itemType'));
 	}).then(function(creatorTypes){
-		Z.debug("setting state with loaded item, before triggering showChildren");
 		Zotero.ui.widgets.reactitem.reactInstance.setState({item:loadedItem, itemLoading:false});
-		Z.debug("set loaded item into state; triggering showChildren");
 		library.trigger('showChildren');
 		Zotero.eventful.initTriggers(widgetEl);
+		try{
+			//trigger event for Zotero translator detection
+			var ev = document.createEvent('HTMLEvents');
+			ev.initEvent('ZoteroItemUpdated', true, true);
+			document.dispatchEvent(ev);
+		}
+		catch(e){
+			Zotero.error("Error triggering ZoteroItemUpdated event");
+		}
 	});
 	loadingPromise.catch(function(err){
 		Z.error("loadItem promise failed");
@@ -191,6 +196,7 @@ Zotero.ui.widgets.reactitem.loadItem = function(event){
  * Add creator field to item edit form
  * @param {DOM Button} button Add creator button clicked
  */
+/*
 Zotero.ui.widgets.reactitem.addCreator = function(e){
 	Z.debug("widgets.item.addCreator", 3);
 	var triggeringElement = J(e.triggeringElement);
@@ -208,12 +214,13 @@ Zotero.ui.widgets.reactitem.addCreator = function(e){
 
 	Zotero.eventful.initTriggers(widgetEl);
 };
-
+*/
 /**
  * Remove a creator from an edit item form
  * @param  {Dom Button} button Remove creator button that was clicked
  * @return {undefined}
  */
+/*
 Zotero.ui.widgets.reactitem.removeCreator = function(e){
 	Z.debug("widgets.item.removeCreator", 3);
 	var triggeringElement = J(e.triggeringElement);
@@ -243,7 +250,7 @@ Zotero.ui.widgets.reactitem.removeCreator = function(e){
 
 	Zotero.eventful.initTriggers(widgetEl);
 };
-
+*/
 /**
  * Add a note field to an editItem Form
  * @param {Dom Button} button Add note button that was clicked
@@ -301,6 +308,7 @@ Zotero.ui.widgets.reactitem.addTag = function(e, focus) {
  * @param  {DOM Element} el Tag field to remove
  * @return {undefined}
  */
+/*
 Zotero.ui.widgets.reactitem.removeTag = function(e) {
 	Z.debug("Zotero.ui.removeTag", 3);
 	var el = e.triggeringElement;
@@ -330,7 +338,7 @@ Zotero.ui.widgets.reactitem.removeTag = function(e) {
 		Zotero.ui.widgets.reactitem.addTag(e);
 	}
 };
-
+*/
 Zotero.ui.widgets.reactitem.addTagTypeahead = function(library, widgetEl){
 	Z.debug('adding typeahead', 3);
 	var typeaheadSource = library.tags.plainList;
@@ -396,57 +404,14 @@ Zotero.ui.widgets.reactitem.addTagTypeaheadToInput = function(library, element){
 Zotero.ui.widgets.reactitem.loadItemDetail = function(item, el){
 	Z.debug("Zotero.ui.widgets.reactitem.loadItemDetail", 3);
 	var jel = J(el);
-	//itemInfoPanel = jel.find("#item-info-panel");
-	//itemInfoPanel.empty();
-	/*
-	var parentUrl = false;
-	var library = item.owningLibrary;
-	if(item.apiObj.data.parentItem){
-		parentUrl = library.websiteUrl({itemKey:item.apiObj.data.parentItem});
-	}
-	
-	Z.debug("setting state on item reactInstance");
-	Z.debug(item);
-	*/
-	/*
-	if(item.apiObj.data.itemType == "note"){
-		Z.debug("note item", 3);
-		jel.empty().append( J('#itemnotedetailsTemplate').render({item:item, parentUrl:parentUrl, libraryString:library.libraryString}) );
-	}
-	else{
-		Z.debug("non-note item", 3);
-		jel.empty().append( J('#itemdetailsTemplate').render({item:item, parentUrl:parentUrl, libraryString:library.libraryString}) );
-	}
-	*/
 	var rteType = "default"
 	if(!Zotero.config.librarySettings.allowEdit){
 		rteType = "readonly"
 	}
 	Zotero.ui.init.rte(rteType);
 	
-	try{
-		//trigger event for Zotero translator detection
-		var ev = document.createEvent('HTMLEvents');
-		ev.initEvent('ZoteroItemUpdated', true, true);
-		document.dispatchEvent(ev);
-	}
-	catch(e){
-		Zotero.error("Error triggering ZoteroItemUpdated event");
-	}
 	jel.data('itemkey', item.apiObj.key);
 };
-
-//get stats from library.items and display them in the item info pane when we
-//don't have a selected item to show
-/*
-Zotero.ui.widgets.reactitem.displayStats = function(library, widgetEl) {
-	Z.debug("Zotero.ui.widgets.reactitem.displayStats", 3);
-	var totalResults = library.items.totalResults;
-	if(totalResults){
-		J(widgetEl).html("<p class='item-count'>" + totalResults + " items in this view</p>");
-	}
-};
-*/
 
 /**
  * Get an item's children and display summary info
@@ -457,38 +422,28 @@ Zotero.ui.widgets.reactitem.displayStats = function(library, widgetEl) {
 Zotero.ui.widgets.reactitem.refreshChildren = function(e){
 	Z.debug('Zotero.ui.widgets.reactitem.refreshChildren', 3);
 	var widgetEl = J(e.data.widgetEl);
-	var childrenPanel = widgetEl.find("#item-children-panel");
 	var library = Zotero.ui.getAssociatedLibrary(widgetEl);
 	var itemKey = Zotero.state.getUrlVar('itemKey');
 	if(!itemKey){
 		Z.debug("No itemKey - " + itemKey, 3);
-		//widgetEl.empty();
-		//TODO: display information about library like client?
 		return Promise.reject(new Error("No itemkey - " + itemKey));
 	}
 	
 	var item = library.items.getItem(itemKey);
-	
 	Zotero.ui.widgets.reactitem.reactInstance.setState({loadingChildren:true});
-	//Zotero.ui.showSpinner(childrenPanel);
 	var p = item.getChildren(library)
 	.then(function(childItems){
-		var container = childrenPanel;
-		/*container.html( J('#childitemsTemplate').render({
-			childItems:childItems,
-			libraryString: library.libraryString
-		}) );*/
-		//Zotero.eventful.initTriggers(container);
-		Zotero.state.bindItemLinks(container);
+		//var container = childrenPanel;
 		Zotero.ui.widgets.reactitem.reactInstance.setState({childItems: childItems, loadingChildren:false});
+		//Zotero.state.bindItemLinks(container);
 	})
 	.catch(Zotero.catchPromiseError);
 	return p;
 };
 
-
+//when enter pressed in an item form, add a tag if it's a tag input
+//or advance to the next field/button if it's not
 Zotero.ui.widgets.reactitem.itemFormKeydown = function(e){
-	return;
 	if ( e.keyCode === Zotero.ui.keyCode.ENTER ){
 		Z.debug(e);
 		e.preventDefault();
@@ -529,6 +484,7 @@ Zotero.ui.widgets.reactitem.updateTypeahead = function(event){
 
 
 //switch an item field to a form input when clicked to edit (and is editable by the user)
+/*
 Zotero.ui.widgets.reactitem.clickToEdit = function(e){
 	return;
 	Z.debug("widgets.item.clickToEdit", 3);
@@ -570,9 +526,9 @@ Zotero.ui.widgets.reactitem.clickToEdit = function(e){
 	}
 	createdElement.focus();
 };
-
+*/
+/*
 Zotero.ui.widgets.reactitem.switchCreatorFields = function(e){
-	return;
 	Z.debug("widgets.item.switchCreatorFields", 3);
 	var triggeringElement = J(e.triggeringElement);
 	var creatorIndex = triggeringElement.data('creatorindex');
@@ -621,12 +577,13 @@ Zotero.ui.widgets.reactitem.switchCreatorFields = function(e){
 	}));
 	Zotero.eventful.initTriggers(widgetEl);
 };
-
+*/
 /**
  * save an item after a field that was being edited has lost focus
  * @param  {event} e DOM Event triggering callback
  * @return {boolean}
  */
+/*
 Zotero.ui.widgets.reactitem.updateItemField = function(library, itemKey, updatedField, updatedValue){
 	return;
 	Z.debug("widgets.item.updateItemField", 3);
@@ -641,12 +598,13 @@ Zotero.ui.widgets.reactitem.updateItemField = function(library, itemKey, updated
 		Zotero.ui.saveItem(item);
 	}
 };
-
+*/
 /**
  * save an item after a creator field that was being edited has lost focus
  * @param  {event} e DOM Event triggering callback
  * @return {boolean}
  */
+/*
 Zotero.ui.widgets.reactitem.updateItemCreatorField = function(library, itemKey, updatedCreator, creatorIndex){
 	return;
 	Z.debug("widgets.item.updateCreatorField", 3);
@@ -669,7 +627,8 @@ Zotero.ui.widgets.reactitem.updateItemCreatorField = function(library, itemKey, 
 		Zotero.ui.saveItem(item);
 	}
 };
-
+*/
+/*
 Zotero.ui.widgets.reactitem.creatorFromRow = function(rowElement) {
 	return;
 	Z.debug("widgets.item.creatorFromRow", 3);
@@ -695,6 +654,151 @@ Zotero.ui.widgets.reactitem.creatorFromRow = function(rowElement) {
 	
 	return creator;
 };
+*/
+
+Zotero.ui.editMatches = function(props, edit) {
+	Z.debug("Zotero.ui.editMatches");
+	Z.debug(props);
+	Z.debug(edit);
+	if(props === null || edit === null){
+		return false;
+	}
+	if(edit.field != props.field) {
+		return false;
+	}
+	//field is the same, make sure index matches if set
+	if(edit.creatorIndex != props.creatorIndex) {
+		return false;
+	}
+	if(props.tagIndex != edit.tagIndex) {
+		return false;
+	}
+	return true;
+};
+
+Zotero.ui.genericDisplayedFields = function(item) {
+	var genericDisplayedFields = Object.keys(item.apiObj.data).filter(function(field){
+		if(Zotero.Item.prototype.hideFields.indexOf(field) != -1) {
+			return false;
+		}
+		if(!item.fieldMap.hasOwnProperty(field)){
+			return false;
+		}
+		if(field == "title" || field == "creators" || field == "itemType"){
+			return false;
+		}
+		return true;
+	});
+	return genericDisplayedFields;
+};
+
+Zotero.ui.widgets.reactitem.editFields = function(item) {
+	var fields = [
+		{field:"itemType"},
+		{field:"title"}
+	];
+	var creators = item.get('creators');
+	creators.forEach(function(k, i) {
+		fields.push({field:"creatorType", creatorIndex:i});
+		if(k.name){
+			fields.push({field:"name", creatorIndex:i});
+		} else {
+			fields.push({field:"lastName", creatorIndex:i});
+			fields.push({field:"firstName", creatorIndex:i});
+		}
+	});
+	
+	var genericFields = Zotero.ui.genericDisplayedFields(item);
+	genericFields.forEach(function(k, i){
+		fields.push({field:k});
+	});
+};
+
+//take an edit object and return the edit object selecting the next field of the item
+Zotero.ui.widgets.reactitem.nextEditField = function(item, edit) {
+	if(!edit || !edit.field){
+		return null;
+	}
+	var editFields = Zotero.ui.widgets.reactitem.editFields(item);
+	var curFieldIndex;
+	for(var i = 0; i < editFields.length; i++){
+		if(editFields[i].field == edit.field){
+			if(editFields[i].creatorIndex == edit.creatorIndex){
+				curFieldIndex = i;
+			}
+		}
+	}
+	if(curFieldIndex == editFields.length){
+		return editFields[0];
+	} else {
+		return editFields[i+1];
+	}
+	/*
+	//special case if editing a creator
+	switch(edit.field) {
+		case "title":
+			return {
+				creatorIndex: 0,
+				field: "creatorType"
+			};
+			break;
+		case "creatorType":
+			var creators = item.get('creators');
+			var creator = creators[edit.creatorIndex];
+			if(creator.name){
+				return {
+					creatorIndex: edit.creatorIndex,
+					field: "name"
+				};
+			} else {
+				return {
+					creatorIndex: edit.creatorIndex,
+					field: "lastName"
+				};
+			}
+			break;
+		case "lastName":
+			return {
+				creatorIndex: edit.creatorIndex + 1,
+				field: "firstName"
+			};
+			break;
+		case "name":
+		case "firstName":
+			//move to next creator, or fields after creators
+			if(edit.creatorIndex < creators.length){
+				return {
+					creatorIndex: edit.creatorIndex + 1,
+					field:"creatorType"
+				}
+			} else {
+				//move to first field after creators
+				var genericDisplayedFields = Zotero.ui.genericDisplayedFields(item);
+				return {
+					field: genericDisplayedFields[0]
+				}
+			}
+			break;
+		default:
+			var genericDisplayedFields = Zotero.ui.genericDisplayedFields(item);
+			//if currently at the last field, go back up to title
+			if(genericDisplayedFields[genericDisplayedFields.length - 1] == edit.field){
+				return {
+					field:"title"
+				};
+			}
+			//otherwise, return the field at current edit field + 1
+			for(var i = 0; i < genericDisplayedFields.length; i++){
+				if(edit.field == genericDisplayedFields[i]){
+					return {
+						field:genericDisplayedFields[i + 1]
+					};
+				}
+			}
+	}
+	*/
+};
+
 /*
 var Item = React.createClass({
 	render: function() {
@@ -721,14 +825,16 @@ var Item = React.createClass({
 var CreatorRow = React.createClass({
 	getDefaultProps: function() {
 		return {
+			item:null,
+			library:null,
 			creator:{
 				creatorType: "author",
 				name: "",
 				firstName: "",
 				lastName: ""
 			},
-			libraryString: "",
 			creatorIndex: 0,
+			edit: null,
 		};
 	},
 	getInitialState: function() {
@@ -738,31 +844,57 @@ var CreatorRow = React.createClass({
 	},
 	render: function() {
 		Z.debug("CreatorRow render");
-		Z.debug(this.props.item);
-		Z.debug(this.props.creator);
-		//return null;
 		if(this.props.item == null){
 			return null;
 		}
-		var nameSpans = null;
+		var edit = this.props.edit;
+		var sharedProps = {
+			creatorIndex: this.props.creatorIndex,
+			item: this.props.item,
+			creator: this.props.creator,
+		};
 		
+		var nameSpans = null;
 		if(this.props.creator.name && this.props.creator.name != "") {
-			nameSpans = <NameSpan creatorIndex={this.props.creatorIndex} libraryString={this.props.libraryString} item={this.props.item} creator={this.props.creator} />
+			nameSpans = (
+				<NameField 
+					field="name"
+					creatorIndex={this.props.creatorIndex}
+					item={this.props.item}
+					creator={this.props.creator}
+					edit={edit}
+				/>
+			);
 		} else {
 			nameSpans = [
-				<LastNameSpan key="lastName" creatorIndex={this.props.creatorIndex} libraryString={this.props.libraryString} item={this.props.item} creator={this.props.creator} />,
+				(<NameField 
+					key="lastName"
+					field="lastName"
+					creatorIndex={this.props.creatorIndex}
+					item={this.props.item}
+					creator={this.props.creator}
+					edit={edit}
+				/>),
 				", ",
-				<FirstNameSpan key="firstName" creatorIndex={this.props.creatorIndex} libraryString={this.props.libraryString} item={this.props.item} creator={this.props.creator} />
+				(<NameField 
+					key="firstName"
+					field="firstName"
+					creatorIndex={this.props.creatorIndex}
+					item={this.props.item}
+					creator={this.props.creator}
+					edit={edit}
+				/>)
 			];
 		}
+		
 		return (
 			<tr className="creator-row" data-creatorindex={this.props.creatorIndex}>
-				<CreatorTypeHeader item={this.props.item} libraryString={this.props.libraryString} creatorIndex={this.props.creatorIndex} creator={this.props.creator} />
+				<CreatorTypeHeader item={this.props.item} creatorIndex={this.props.creatorIndex} creator={this.props.creator} edit={edit} />
 				<td className={this.state.creatorType}>
 					{nameSpans}
 					<div className="btn-toolbar" role="toolbar">
-						<ToggleCreatorFieldButton item={this.props.item} libraryString={this.props.libraryString} creatorIndex={this.props.creatorIndex} />
-						<AddRemoveCreatorFieldButtons item={this.props.item} libraryString={this.props.libraryString} creatorIndex={this.props.creatorIndex} />
+						<ToggleCreatorFieldButton item={this.props.item} creatorIndex={this.props.creatorIndex} />
+						<AddRemoveCreatorFieldButtons item={this.props.item} creatorIndex={this.props.creatorIndex} />
 					</div>
 				</td>
 			</tr>
@@ -775,126 +907,196 @@ var CreatorTypeHeader = React.createClass({
 		return {
 			item: null,
 			creatorIndex: 0,
-			libraryString: ""
+			edit:null
 		}
 	},
+	handleClick: function(evt) {
+		Zotero.ui.widgets.reactitem.reactInstance.setState({edit: {field: "creatorType", creatorIndex:this.props.creatorIndex}});
+	},
 	render: function() {
+		Z.debug("CreatorTypeHeader render");
 		var itemKey = this.props.item ? this.props.item.get('key') : "";
 		if(this.props.item == null){
 			return null;
 		}
-		return (
-			<th>
-				<span className="editable-creator-field eventfultrigger"
-					tabIndex="0"
-					data-creatorindex={this.props.creatorIndex}
-					data-triggers="edit-creator-field"
-					data-event="focus"
-					data-library={this.props.libraryString}
-					data-itemfield="creatorType"
-					data-itemkey={itemKey}
-					data-value={this.props.creator.creatorType}>
-						{this.props.item.creatorMap[this.props.creator.creatorType]}
+		
+		if(Zotero.ui.editMatches(this.props.edit, {creatorIndex:this.props.creatorIndex, field: "creatorType"})){
+			return (
+				<th>
+					<EditField item={this.props.item} field="creatorType" value={this.props.creator.creatorType} edit={this.props.edit} creatorIndex={this.props.creatorIndex} />
+				</th>
+			);
+		} else {
+			return (
+				<th>
+					<span className="editable-creator-field"
+						tabIndex="0"
+						onClick={this.handleClick}>
+							{this.props.item.creatorMap[this.props.creator.creatorType]}
+					</span>
+				</th>
+			);
+		}
+	}
+});
+
+var NameField = React.createClass({
+	getDefaultProps: function() {
+		return {
+			item: null,
+			creatorIndex: 0,
+			field:"name",
+			edit: null
+		}
+	},
+	editClickedField: function(evt) {
+		Z.ui.widgets.reactitem.reactInstance.setState({edit:{
+			field: this.props.field,
+			creatorIndex: this.props.creatorIndex
+		}});
+	},
+	handleChange: function(evt) {
+		//set field to new value
+		var item = this.props.item;
+		var creators = item.get('creators');
+		var creator = creators[this.props.creatorIndex];
+		creator[this.props.field] = evt.target.value;
+		Zotero.ui.widgets.reactitem.reactInstance.setState({item:item});
+	},
+	saveBlurredField: function(evt) {
+		var creators = this.props.item.get('creators');
+		var creator = creators[this.props.creatorIndex];
+		creator[this.props.field] = evt.target.value;
+		Zotero.ui.saveItem(this.props.item);
+		Z.ui.widgets.reactitem.reactInstance.setState({edit:null});
+	},
+	render: function() {
+		Z.debug("NameField render");
+		var focusEl = function(el) {
+			if (el != null) {
+				el.focus();
+			}
+		};
+		var field = this.props.field;
+		var val = this.props.creator[field];
+		var placeHolders = {
+			"name" : "(full name)",
+			"firstName" : "(first)",
+			"lastName" : "(last)"
+		};
+
+		var p = {
+			item: this.props.item,
+			field: field,
+			creatorIndex: this.props.creatorIndex,
+			value: val,
+			className: "editable-item-field",
+			tabIndex: 0,
+			edit: this.props.edit
+		};
+
+		if(!Zotero.ui.editMatches(this.props.edit, this.props)) {
+			p.onClick = this.editClickedField;
+			return (
+				<span {... p} >
+					{val != "" ? val : placeHolders[field]}
 				</span>
-			</th>
-		);
-	}
-});
-
-var NameSpan = React.createClass({
-	render: function() {
-		return (
-			<span className="editable-creator-field eventfultrigger"
-				tabIndex="0"
-				data-creatorindex={this.props.creatorIndex}
-				data-triggers="edit-creator-field"
-				data-event="focus"
-				data-library={this.props.libraryString}
-				data-itemfield="name"
-				data-itemkey={this.props.item.get('key')}
-				data-value={this.props.creator.name}>
-				{this.props.creator.name != "" ? this.props.creator.name : "(full name"}
-			</span>
-		);
-	}
-});
-
-var LastNameSpan = React.createClass({
-	render: function() {
-		return (
-			<span className="editable-creator-field eventfultrigger"
-				tabIndex="0"
-				data-creatorindex={this.props.creatorIndex}
-				data-triggers="edit-creator-field"
-				data-event="focus"
-				data-library={this.props.libraryString}
-				data-itemfield="lastName"
-				data-itemkey={this.props.item.get('key')}
-				data-value={this.props.creator.lastName}>
-				{this.props.creator.lastName != "" ? this.props.creator.lastName : "(last)"}
-			</span>
-		);
-	}
-});
-
-var FirstNameSpan = React.createClass({
-	render: function() {
-		return (
-			<span className="editable-creator-field eventfultrigger"
-				tabIndex="0"
-				data-creatorindex={this.props.creatorIndex}
-				data-triggers="edit-creator-field"
-				data-event="focus"
-				data-library={this.props.libraryString}
-				data-itemfield="firstName"
-				data-itemkey={this.props.item.get('key')}
-				data-value={this.props.creator.firstName}>
-				{this.props.creator.firstName != "" ? this.props.creator.firstName : "(first)"}
-			</span>
-		);
+			);
+		} else {
+			return (
+				<EditField {... p} />
+			);
+		}
 	}
 });
 
 var ToggleCreatorFieldButton = React.createClass({
 	render: function() {
+		Z.debug("ToggleCreatorFieldButton render");
 		return (
 			<div className="btn-group">
 				<button type="button"
-					className="switch-two-field-creator-link btn btn-default eventfultrigger"
+					className="switch-two-field-creator-link btn btn-default"
 					title="Toggle single field creator"
-					data-triggers="switchCreatorFields"
 					data-itemkey={this.props.item.get('key')}
-					data-library={this.props.libraryString}
-					data-creatorindex={this.props.creatorIndex}>
+					data-creatorindex={this.props.creatorIndex}
+					onClick={this.switchCreatorFields}>
 					<span className="fonticon glyphicons glyphicons-unchecked"></span>
 				</button>
 			</div>
 		);
+	},
+	switchCreatorFields: function(evt) {
+		Z.debug("CreatorRow switchCreatorFields");
+		var creatorIndex = this.props.creatorIndex;
+		var item = this.props.item;
+		var creators = item.get('creators');
+		var creator = creators[creatorIndex];
+
+		//split a single name creator into first/last, or combine first/last
+		//into a single name
+		if(creator.name !== undefined){
+			var split = creator.name.split(' ');
+			if(split.length > 1){
+				creator.lastName = split.splice(-1, 1)[0];
+				creator.firstName = split.join(' ');
+			}
+			else{
+				creator.lastName = creator.name;
+				creator.firstName = '';
+			}
+			delete creator.name;
+		} else {
+			if(creator.firstName === "" && creator.lastName === "") {
+				creator.name = "";
+			} else {
+				creator.name = creator.firstName + ' ' + creator.lastName;
+			}
+			delete creator.firstName;
+			delete creator.lastName;
+		}
+
+		creators[creatorIndex] = creator;
+		Zotero.ui.saveItem(item);
+		Zotero.ui.widgets.reactitem.reactInstance.setState({item:item});
 	}
 });
 
 var AddRemoveCreatorFieldButtons = React.createClass({
 	render: function() {
+		Z.debug("AddRemoveCreatorFieldButtons render");
 		return (
 			<div className="btn-group">
 				<button type="button"
 					className="btn btn-default eventfultrigger"
-					data-triggers="removeCreator"
 					data-itemkey={this.props.item.get('key')}
-					data-library={this.props.libraryString}
-					data-creatorindex={this.props.creatorIndex}>
+					data-creatorindex={this.props.creatorIndex}
+					onClick={this.removeCreator}>
 					<span className="fonticon glyphicons glyphicons-minus"></span>
 				</button>
 				<button type="button"
 					className="btn btn-default eventfultrigger"
-					data-triggers="addCreator"
 					data-itemkey={this.props.item.get('key')}
-					data-library={this.props.libraryString}
-					data-creatorindex={this.props.creatorIndex}>
+					data-creatorindex={this.props.creatorIndex}
+					onClick={this.addCreator}>
 					<span className="fonticon glyphicons glyphicons-plus"></span>
 				</button>
 			</div>
 		);
+	},
+	addCreator: function(evt) {
+		var item = this.props.item;
+		var creators = item.get('creators');
+		creators.push({creatorType:"author", firstName:"", lastName:""});
+		Zotero.ui.widgets.reactitem.reactInstance.setState({item:item});
+	},
+	removeCreator: function(evt) {
+		var creatorIndex = this.props.creatorIndex;
+		var item = this.props.item;
+		var creators = item.get('creators');
+		creators.splice(creatorIndex, 1);
+		//Zotero.ui.saveItem(item);
+		Zotero.ui.widgets.reactitem.reactInstance.setState({item:item});
 	}
 });
 
@@ -905,6 +1107,7 @@ var ItemNavTabs = React.createClass({
 		}
 	},
 	render: function() {
+		Z.debug("ItemNavTabs render");
 		if(this.props.item == null){
 			return null;
 		}
@@ -921,39 +1124,61 @@ var ItemNavTabs = React.createClass({
 	}
 });
 
-var GenericItemFieldRow = React.createClass({
+var ItemFieldRow = React.createClass({
+	handleClick: function() {
+		Zotero.ui.widgets.reactitem.reactInstance.setState({edit: {field: this.props.fieldName}});
+	},
+	getDefaultProps: function(){
+		return {
+			item:null,
+			edit:null
+		};
+	},
 	render: function() {
-		Z.debug()
-		var placeholderOrValue = this.props.val == "" ? (<div className="empty-field-placeholder"></div>) : Zotero.ui.formatItemField(this.props.fieldName, this.props.item);
-		if(this.props.fieldName == 'url'){
+		Z.debug("ItemFieldRow render");
+		var item = this.props.item;
+		var fieldName = this.props.fieldName;
+		var sharedSpanProps = {
+			item: this.props.item,
+			onClick: this.handleClick,
+			className: "editable-item-field",
+			tabIndex: 0,
+		};
+		var placeholderOrValue;
+		if(this.props.edit && this.props.edit.field == fieldName){
+			placeholderOrValue = <EditField item={item} field={fieldName} value={this.props.val} edit={this.props.edit} />
+		} else {
+			placeholderOrValue = this.props.val == "" ? (<div className="empty-field-placeholder"></div>) : Zotero.ui.formatItemField(fieldName, item);
+		}
+		if(fieldName == 'url'){
 			return (
 				<tr>
-					<th><a rel='nofollow' href={this.props.val}>{Zotero.Item.prototype.fieldMap[this.props.fieldName]}</a></th>
-					<td className={this.props.fieldName}>
-						<span className="editable-item-field eventfultrigger" tabIndex="0" data-triggers="edit-item-field" data-event="focus" data-library={this.props.libraryString} data-itemfield={this.props.fieldName} data-itemkey={this.props.item.get('key')}>
+					<th><a rel='nofollow' href={this.props.val}>{Zotero.Item.prototype.fieldMap[fieldName]}</a></th>
+					<td className={fieldName}>
+						<span {...sharedSpanProps} data-itemfield={fieldName} data-itemkey={item.get('key')}>
 							{placeholderOrValue}
 						</span>
 					</td>
 				</tr>
 			);
-		} else if(this.props.fieldName == 'DOI') {
+		} else if(fieldName == 'DOI') {
 			return (
 				<tr>
-					<th><a rel='nofollow' href={'http://dx.doi.org/' + this.props.val}>{Zotero.Item.prototype.fieldMap[this.props.fieldName]}</a></th>
-					<td className={this.props.fieldName}>
-						<span className="editable-item-field eventfultrigger" tabIndex="0" data-triggers="edit-item-field" data-event="focus" data-library={this.props.libraryString} data-itemfield={this.props.fieldName} data-itemkey={this.props.item.get('key')}>
+					<th><a rel='nofollow' href={'http://dx.doi.org/' + this.props.val}>{Zotero.Item.prototype.fieldMap[fieldName]}</a></th>
+					<td className={fieldName}>
+						<span {...sharedSpanProps} data-itemfield={fieldName} data-itemkey={item.get('key')}>
 							{placeholderOrValue}
 						</span>
 					</td>
 				</tr>
 			);
-		} else if(Zotero.config.richTextFields[this.props.fieldName]) {
+		} else if(Zotero.config.richTextFields[fieldName]) {
 			return (
 				<tr>
-					<th>{Zotero.Item.prototype.fieldMap[this.props.fieldName]}}</th>
-					<td className={this.props.fieldName}>
-						<span className="editable-item-field eventfultrigger" tabIndex="0" data-triggers="edit-item-field" data-event="focus" data-library={this.props.libraryString} data-itemfield={this.props.fieldName} data-itemkey={this.props.item.get('key')}>
-							<textarea cols="40" rows="14" name={this.props.fieldName} className="rte">{this.props.val}</textarea>
+					<th>{Zotero.Item.prototype.fieldMap[fieldName]}}</th>
+					<td className={fieldName}>
+						<span {...sharedSpanProps} data-itemfield={fieldName} data-itemkey={item.get('key')}>
+							<textarea cols="40" rows="14" name={fieldName} className="rte">{this.props.val}</textarea>
 						</span>
 					</td>
 				</tr>
@@ -961,9 +1186,9 @@ var GenericItemFieldRow = React.createClass({
 		} else {
 			return (
 				<tr>
-					<th>{Zotero.Item.prototype.fieldMap[this.props.fieldName] || this.props.fieldName}</th>
-					<td className={this.props.fieldName}>
-						<span className="editable-item-field eventfultrigger" tabIndex="0" data-triggers="edit-item-field"  data-event="focus" data-library={this.props.libraryString} data-itemfield={this.props.fieldName} data-itemkey={this.props.item.get('key')}>
+					<th>{Zotero.Item.prototype.fieldMap[fieldName] || fieldName}</th>
+					<td className={fieldName}>
+						<span {...sharedSpanProps} data-itemfield={fieldName} data-itemkey={item.get('key')}>
 							{placeholderOrValue}
 						</span>
 					</td>
@@ -973,14 +1198,156 @@ var GenericItemFieldRow = React.createClass({
 	}
 });
 
+//set onChange
+var EditField = React.createClass({
+	getDefaultProps: function() {
+		return {
+			item:null,
+			field:null,
+			value:null,
+			edit:null,
+		};
+	},
+	handleChange: function(evt) {
+		//set field to new value
+		var item = this.props.item;
+		switch(this.props.field) {
+			case "creatorType":
+			case "name":
+			case "firstName":
+			case "lastName":
+				var creators = item.get('creators');
+				var creator = creators[this.props.creatorIndex];
+				creator[this.props.field] = evt.target.value;
+				break;
+			default:
+				item.set(this.props.field, evt.target.value);
+		}
+		Zotero.ui.widgets.reactitem.reactInstance.setState({item:item});
+	},
+	handleBlur: function(evt) {
+		//save item, move edit to next field
+		Z.debug("handleBlur");
+		this.handleChange(evt);
+		Zotero.ui.widgets.reactitem.reactInstance.setState({edit:null});
+		//this.props.item.set(this.props.field, evt.target.value);
+		Zotero.ui.saveItem(this.props.item);
+	},
+	checkKey: function(evt) {
+		Z.debug("EditField checkKey");
+		evt.stopPropagation();
+		if (evt.keyCode === Zotero.ui.keyCode.ENTER){
+			Z.debug("EditField checkKey");
+			this.handleBlur(evt);
+			var nextEdit = Zotero.ui.widgets.reactitem.nextEditField(this.props.item, this.props.edit);
+			Zotero.ui.widgets.reactitem.reactInstance.setState({edit:nextEdit});
+		}
+	},
+	render: function(){
+		Z.debug("EditField render");
+		var item = this.props.item;
+		var focusEl = function(el) {
+			if (el != null) {
+				el.focus();
+			}
+		};
+		var sharedProps = {
+			className: ("form-control item-field-control " + this.props.field),
+			name: this.props.field,
+			value: this.props.value,
+			onChange: this.handleChange,
+			onKeyDown: this.checkKey,
+			onBlur: this.handleBlur,
+			ref: focusEl,
+			creatorindex: this.props.creatorIndex,
+			tagindex: this.props.tagIndex
+		};
+		
+		switch(this.props.field) {
+			case null:
+				return null;
+				break;
+			case 'itemType':
+				var itemTypeOptions = Zotero.Item.prototype.itemTypes.map(function(itemType){
+					return (
+						<option key={itemType.itemType}
+							label={itemType.localized}
+							value={itemType.itemType}>
+							{itemType.localized}
+						</option>
+					);
+				});
+				return (
+					<select {...sharedProps}>
+						{itemTypeOptions}
+					</select>
+				);
+				break;
+			case 'creatorType':
+				var creatorTypeOptions = item.creatorTypes[item.get('itemType')].map(function(creatorType){
+					return (
+						<option key={creatorType.creatorType}
+							label={creatorType.localized}
+							value={creatorType.creatorType}
+						>
+							{creatorType.localized}
+						</option>
+					);
+				});
+				return (
+					<select id="creatorType" {...sharedProps} data-creatorindex={this.props.creatorIndex}>
+						{creatorTypeOptions}
+					</select>
+				);
+				break;
+			/*
+			case 'name':
+			case 'firstName':
+			case 'lastName':
+				return (
+					<input type="text" {...sharedProps}
+						className={"form-control item-field-control creator-" + this.props.field}
+						data-creatorindex={this.props.creatorIndex}
+					/>
+				);
+				break;
+			*/
+			/*
+			case 'tag':
+				return (
+					<input type='text' {...sharedProps} />
+				);
+				break;
+			*/
+			default:
+				if(Zotero.config.largeFields[this.props.field]) {
+					return (
+						<textarea {...sharedProps}></textarea>
+					);
+				} else if (Zotero.config.richTextFields[this.props.field]) {
+					return (
+						<textarea {...sharedProps} className="rte default"></textarea>
+					);
+				} else {
+					//default single line input field
+					return (
+						<input type='text' {...sharedProps} />
+					);
+				}
+		}
+	}
+});
+
 var ItemInfoPanel = React.createClass({
 	getDefaultProps: function() {
 		return {
 			item: null,
-			loading: false
+			loading: false,
+			edit:null
 		};
 	},
 	render: function() {
+		Z.debug("ItemInfoPanel render");
 		var item = this.props.item;
 		Z.debug("ItemInfoPanel render: items.totalResults: " + this.props.library.items.totalResults);
 		var itemCountP = (
@@ -989,7 +1356,7 @@ var ItemInfoPanel = React.createClass({
 			</p>
 		);
 		
-		var libraryString = this.props.library.libraryString;
+		var edit = this.props.edit;
 		
 		if(item == null){
 			return (
@@ -999,9 +1366,9 @@ var ItemInfoPanel = React.createClass({
 				</div>
 			)
 		}
-
 		var itemKey = item.get('key');
 		var libraryType = item.owningLibrary.libraryType;
+		
 		var parentUrl = false;
 		if(item.get("parentItem")) {
 			parentUrl = this.props.library.websiteUrl({itemKey:item.get("parentItem")});
@@ -1024,38 +1391,33 @@ var ItemInfoPanel = React.createClass({
 				</tr>
 			);
 		}
-
+		
 		var creatorRows = [];
 		if(item.isSupplementaryItem()){
 			creatorRows = [];
 		} else if(item.get('creators').length > 0){
 			creatorRows = item.get('creators').map(function(creator, ind) {
 				return (
-					<CreatorRow key={ind} creator={creator} creatorIndex={ind} libraryString={libraryString} item={item} />
+					<CreatorRow key={ind} creator={creator} creatorIndex={ind} item={item} edit={edit} />
 				);
 			});
 		} else {
 			creatorRows = [
-				<CreatorRow key={0} creatorIndex={0} libraryString={libraryString} item={item} />
+				<CreatorRow key={0} creatorIndex={0} item={item} edit={edit} />
 			];
 		}
+		
 		var genericFieldRows = [];
 		//filter out fields we don't want to display or don't want to include as generic
-		var genericDisplayedFields = Object.keys(item.apiObj.data).filter(function(field){
-			if(Zotero.Item.prototype.hideFields.indexOf(field) != -1) {
-				return false;
-			}
-			if(!item.fieldMap.hasOwnProperty(field)){
-				return false;
-			}
-			if(field == "title" || field == "creators" || field == "itemType"){
-				return false;
-			}
-			return true;
-		});
+		var genericDisplayedFields = Zotero.ui.genericDisplayedFields(item);
 		genericDisplayedFields.forEach(function(key) {
-			genericFieldRows.push(<GenericItemFieldRow key={key} fieldName={key} item={item} val={item.apiObj.data[key]} libraryString={libraryString} />);
+			var editThis = false;
+			if(edit && key == edit.field) {
+				editThis = true;
+			}
+			genericFieldRows.push(<ItemFieldRow key={key} fieldName={key} item={item} val={item.apiObj.data[key]} edit={edit} />);
 		});
+
 		return (
 			<div id="item-info-panel" role="tabpanel" className="item-details-div eventfulwidget tab-pane active">
 				<LoadingSpinner loading={this.props.loading} />
@@ -1065,19 +1427,9 @@ var ItemInfoPanel = React.createClass({
 					<tbody>
 						{zoteroItemCreatorRow}
 						
-						<tr>
-							<th>Item Type</th>
-							<td className={"itemType " + item.get('itemType')}>
-								<span className="editable-item-field eventfultrigger" tabIndex="0" data-triggers="edit-item-field" data-event="focus" data-library={libraryString} data-itemfield="itemType" data-itemkey={item.get('key')}>{item.typeMap[item.get('itemType')]}</span>
-							</td>
-						</tr>
-
-						<tr>
-							<th>{item.fieldMap['title']}</th>
-							<td className="title">
-								<span className="editable-item-field eventfultrigger" tabIndex="0" data-triggers="edit-item-field" data-event="focus" data-library={libraryString} data-itemfield="title" data-itemkey={item.get('key')}>{Zotero.ui.formatItemField("title", item)}</span>
-							</td>
-						</tr>
+						<ItemFieldRow key="itemType" fieldName="itemType" item={item} val={item.get("itemType")} edit={edit} />);
+						
+						<ItemFieldRow key="title" fieldName="title" item={item} val={item.get("title")} edit={edit} />);
 
 						{creatorRows}
 						
@@ -1095,30 +1447,37 @@ var TagListRow = React.createClass({
 			tagIndex:0,
 			tag:{tag:""},
 			item:null,
-			library:null
+			library:null,
+			edit:null
 		};
 	},
+	removeTag: function(evt) {
+		var tag = this.props.tag.tag;
+		var item = this.props.item;
+		var tagIndex = this.props.tagIndex;
+
+		var tags = item.get('tags');
+		tags.splice(tagIndex, 1);
+		//Zotero.ui.saveItem(item);
+		Zotero.ui.widgets.reactitem.reactInstance.setState({item:item});
+	},
 	render: function() {
+		Z.debug("TagListRow render");
 		return (
 			<div className="row item-tag-row">
 				<div className="col-xs-1">
 					<span className="glyphicons fonticon glyphicons-tag"></span>
 				</div>
 				<div className="col-xs-9">
-					<span className="editable-item-tag eventfultrigger"
+					<span className="editable-item-tag"
 						tabIndex="0"
-						data-triggers="edit-item-field"
 						data-event="focus"
-						data-library={this.props.library.libraryString}
-						data-itemfield="tag"
-						data-value={this.props.tag.tag}
-						data-itemkey={this.props.item.get('key')}
-						data-tagindex={this.props.tagIndex} >
+						>
 						{this.props.tag.tag}
 					</span>
 				</div>
 				<div className="col-xs-2">
-					<button type="button" className="remove-tag-link btn btn-default eventfultrigger" data-triggers="removeTag" data-library={this.props.library.libraryString}>
+					<button type="button" className="remove-tag-link btn btn-default" onClick={this.removeTag} >
 						<span className="glyphicons fonticon glyphicons-minus"></span>
 					</button>
 				</div>
@@ -1129,6 +1488,7 @@ var TagListRow = React.createClass({
 
 var ItemTagsPanel = React.createClass({
 	render: function() {
+		Z.debug("ItemTagsPanel render");
 		var item = this.props.item;
 		var library = this.props.library;
 		if(item == null) {
@@ -1147,7 +1507,7 @@ var ItemTagsPanel = React.createClass({
 		return (
 			<div id="item-tags-panel" role="tabpanel" className="item-tags-div tab-pane">
 				<p><span className="tag-count">{item.get('tags').length}</span> tags</p>
-				<button className="add-tag-button eventfultrigger btn btn-default" data-triggers="addTag" data-library={this.props.libraryString} data-itemkey={item.get('key')}>Add Tag</button>
+				<button className="add-tag-button btn btn-default" data-itemkey={item.get('key')}>Add Tag</button>
 				
 				<div className="item-tags-list">
 					{tagRows}
@@ -1159,7 +1519,6 @@ var ItemTagsPanel = React.createClass({
 						</div>
 						<div className="col-xs-11">
 							<input type="text" id="add-tag-input" className="add-tag-input form-control"
-								data-library={this.props.library.libraryString}
 								data-itemfield="tag"
 								data-itemkey={item.get('key')}
 								/>
@@ -1178,20 +1537,22 @@ var ItemChildrenPanel = React.createClass({
 		}
 	},
 	render: function() {
+		Z.debug("ItemChildrenPanel render");
 		var childListEntries = this.props.childItems.map(function(item, ind){
 			var title = item.get('title');
 			var href = Zotero.url.itemHref(item);
 			var iconClass = item.itemTypeIconClass();
+			var key = item.get('key');
 			if(item.itemType == "note"){
 				return (
-					<li>
+					<li key={key}>
 						<span className={'fonticon barefonticon ' + iconClass}></span>
 						<a className='item-select-link' data-itemkey={item.get('key')} href={href} title={title}>{title}</a>
 					</li>
 				);
 			} else if(item.attachmentDownloadUrl == false) {
 				return (
-					<li>
+					<li key={key}>
 						<span className={'fonticon barefonticon ' + iconClass}></span>
 						{title}
 						(<a className='item-select-link' data-itemkey={item.get('key')} href={href} title={title}>Attachment Details</a>)
@@ -1200,7 +1561,7 @@ var ItemChildrenPanel = React.createClass({
 			} else {
 				var attachmentDownloadUrl = Zotero.url.attachmentDownloadUrl(item);
 				return (
-					<li>
+					<li key={key}>
 						<span className={'fonticon barefonticon ' + iconClass}></span>
 						<a className='itemdownloadlink' href={attachmentDownloadUrl}>{title} {Zotero.url.attachmentFileDetails(item)}</a>
 						(<a className='item-select-link' data-itemkey={item.get('key')} href={href} title={title}>Attachment Details</a>)
@@ -1213,7 +1574,7 @@ var ItemChildrenPanel = React.createClass({
 				<ul id="notes-and-attachments">
 					{childListEntries}
 				</ul>
-				<button type="button" id="upload-attachment-link" className="btn btn-primary upload-attachment-button eventfultrigger" data-triggers="uploadAttachment" data-library={this.props.library.libraryString} hidden={!Zotero.config.librarySettings.allowUpload}>Upload File</button>
+				<button type="button" id="upload-attachment-link" className="btn btn-primary upload-attachment-button eventfultrigger" data-triggers="uploadAttachment" hidden={!Zotero.config.librarySettings.allowUpload}>Upload File</button>
 			</div>
 		);
 	}
@@ -1221,9 +1582,15 @@ var ItemChildrenPanel = React.createClass({
 
 var ItemTabPanes = React.createClass({
 	render: function() {
+		Z.debug("ItemTabPanes render");
 		return (
 			<div className="tab-content">
-				<ItemInfoPanel library={this.props.library} item={this.props.item} loading={this.props.itemLoading} libraryItemsLoaded={this.props.libraryItemsLoaded} />
+				<ItemInfoPanel library={this.props.library}
+					item={this.props.item}
+					loading={this.props.itemLoading}
+					libraryItemsLoaded={this.props.libraryItemsLoaded} 
+					edit={this.props.edit}
+				/>
 				<ItemChildrenPanel library={this.props.library} childItems={this.props.childItems} loading={this.props.childrenLoading} />
 				<ItemTagsPanel library={this.props.library} item={this.props.item} />
 			</div>
@@ -1239,14 +1606,23 @@ var ItemDetails = React.createClass({
 			childItems: [],
 			itemLoading:false,
 			childrenLoading:false,
-			libraryItemsLoaded:false
+			libraryItemsLoaded:false,
+			edit: null
 		}
 	},
 	render: function() {
+		Z.debug("ItemDetails render");
 		return (
 			<div role="tabpanel">
 				<ItemNavTabs item={this.state.item} />
-				<ItemTabPanes item={this.state.item} library={this.props.library} childItems={this.state.childItems} itemLoading={this.state.itemLoading} childrenLoading={this.state.childrenLoading} libraryItemsLoaded={this.state.libraryItemsLoaded} />
+				<ItemTabPanes item={this.state.item} 
+					library={this.props.library}
+					childItems={this.state.childItems}
+					itemLoading={this.state.itemLoading}
+					childrenLoading={this.state.childrenLoading}
+					libraryItemsLoaded={this.state.libraryItemsLoaded}
+					edit={this.state.edit}
+				/>
 			</div>
 		);
 	}
