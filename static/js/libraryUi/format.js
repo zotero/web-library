@@ -92,7 +92,8 @@ Zotero.ui.formatItemField = function(field, item, trim){
             }
             break;
         default:
-            if(typeof(item.apiObj.data[field]) !== "undefined"){
+            var t = typeof(item.get(field));
+            if(typeof(t) !== "undefined") {
                 formattedString = item.get(field);
             }
     }
