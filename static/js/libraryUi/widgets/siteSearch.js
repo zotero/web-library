@@ -26,7 +26,28 @@ Zotero.ui.widgets.siteSearch.init = function(el){
     if(query){
         Zotero.ui.widgets.siteSearch.search(searchType, query);
     }
+
+    //listen for newly activated tab
+    widgetEl.find('a[data-toggle="tab"]').on('shown.bs.tab', Zotero.ui.widgets.siteSearch.tabChange);
 };
+
+Zotero.ui.widgets.siteSearch.tabChange = function(e) {
+    Z.debug("search tab changed", 3);
+    //e.target // newly activated tab
+    //e.relatedTarget // previous active tab
+
+    //change state to the new searchType
+    var newQueryType = J(e.target).data('searchtype');
+    var query = Zotero.state.getUrlVar('q');
+    //put the query in the new query box
+    J('input[data-searchtype="' + newQueryType + '"]').val(query);
+
+    Zotero.state.setUrlVar('type', newQueryType);
+    Zotero.state.pushState();
+
+    var params = {type:newQueryType, query:query};
+    Zotero.ui.widgets.siteSearch.runSearch(params);
+}
 
 Zotero.ui.widgets.siteSearch.triggeredSearch = function(event){
     Z.debug("Zotero.ui.widgets.siteSearch.search", 3);
@@ -100,7 +121,7 @@ Zotero.ui.widgets.siteSearch.runSearch = function(params){
 
 Zotero.ui.widgets.siteSearch.fetchGoogleResults = function(params){
     Z.debug("Zotero.ui.widgets.siteSearch.fetchGoogleResults", 3);
-    Zotero.ui.widgets.siteSearch.clearResults();
+    Zotero.ui.widgets.siteSearch.clearResults(J("#site-search"));
     Zotero.ui.showSpinner(J("#search-spinner"));
     J("#search-spinner").show();
     // Create a new WebSearch object
@@ -176,6 +197,6 @@ Zotero.ui.widgets.siteSearch.clearResults = function(widgetEl){
 };
 
 Zotero.ui.widgets.siteSearch.gotopage = function(i){
-    Zotero.ui.widgets.siteSearch.clearResults();
+    Zotero.ui.widgets.siteSearch.clearResults(J("#site-search"));
     searcher.gotoPage(i);
 };
