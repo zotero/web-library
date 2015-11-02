@@ -1,0 +1,76 @@
+<script id="publicationsTemplate" type="text/x-jsrender">
+    {{if !items.length}}
+        <p>This user has not yet added any publications to their Zotero library.</p>
+    {{/if}}
+    <div class="list-group" id="publications-list">
+        {{for items ~library=library ~moreDisplayFields=moreDisplayFields ~childItems=childItems}}
+            {{if !#data.get('parentItem')}}
+                <div class="list-group-item">
+                    <p><b class="list-group-item-heading">
+                        <a class="clickable" data-toggle="collapse" data-target="#publicationMore{{:#getIndex()}}" aria-expanded="false" aria-controls="publicationMore{{:#getIndex()}}">
+                        {{>~formatItemField("title", #data)}}
+                        </a>
+                    </b></p>
+                    {{if ~formatItemField('publicationTitle', #data) != ''}}
+                        <span title="publicationTitle">{{:~formatItemField('publicationTitle', #data)}}</span>{{if ~formatItemField('date', #data) != ''}}, {{>~formatItemField('date', #data)}}
+                        {{else #data.get('year')}}, {{: #data.get('year')}}
+                        {{/if}}
+                        
+                    {{else ~formatItemField('blogTitle', #data) != ''}}
+                        <span title="blogTitle">{{:~formatItemField('blogTitle', #data)}}</span>{{if ~formatItemField('date', #data) != ''}}, {{>~formatItemField('date', #data)}}
+                        {{else #data.get('year')}}, {{: #data.get('year')}}
+                        {{/if}}
+                        
+                    {{else ~formatItemField('websiteTitle', #data, true) != ''}}
+                        <span title="websiteTitle">{{:~formatItemField('websiteTitle', #data)}}</span>{{if ~formatItemField('date', #data) != ''}}, {{>~formatItemField('date', #data)}}
+                        {{else #data.get('year')}}, {{: #data.get('year')}}
+                        {{/if}}
+                        
+                    {{else}}
+                        {{if ~formatItemField('date', #data) != ''}}
+                            {{>~formatItemField('date', #data)}}
+                        {{else #data.get('year')}}
+                            {{: #data.get('year')}}
+                        {{/if}}
+                    {{/if}}
+                    {{if #data.hasMore}}
+                        <p><a class="clickable" data-toggle="collapse" data-target="#publicationMore{{:#getIndex()}}" aria-expanded="false" aria-controls="publicationMore{{:#getIndex()}}">...</a></p>
+                    {{/if}}
+                    <div class="collapse" id="publicationMore{{:#getIndex()}}">
+                        {{if #data.apiObj.data.creators.length > 1}}
+                            {{for #data.apiObj.data.creators ~item=#data}}
+                                <p>
+                                {{>~item.creatorMap[#data.creatorType]}}: 
+                                {{if #data.lastName}}
+                                    {{>#data.lastName}}, {{>#data.firstName}}
+                                {{else}}
+                                    {{>#data.name}}
+                                {{/if}}
+                                </p>
+                            {{/for}}
+                        {{/if}}
+                        {{for ~moreDisplayFields ~item=#data ~library=~library}}
+                            {{if #data === 'title' || #data === 'creator' || #data === 'date'}}
+                                <!-- noop -->
+                            {{else (#data === 'dateAdded') || (#data === 'dateModified') }}
+                                <p title="{{attr:~item.apiObj.data[#data]}}">
+                                    {{: ~formatItemDateField(#data, ~item)}}
+                                </p>
+                            {{else}}
+                                {{if ~formatItemField(#data, ~item) != ''}}
+                                <p title="{{attr:~item.apiObj.data[#data]}}">{{>~zoteroFieldMap[#data]}}: {{>~formatItemField(#data, ~item)}}</p>
+                                {{/if}}
+                            {{/if}}
+                        {{/for}}
+                        <!--{{:apiObj.bib}}-->
+                        {{if #data.get('numChildren') > 0}}
+                            {{if ~Zotero.url.attachmentDownloadUrl(~childItems[#data.get('key')])}}
+                                <a href="{{url:~Zotero.url.attachmentDownloadUrl(~childItems[#data.get('key')])}}">Download {{>#data.get('key')}}</a>
+                            {{/if}}
+                        {{/if}}
+                    </div>
+                </div>
+            {{/if}}
+        {{/for}}
+    </div>
+</script>
