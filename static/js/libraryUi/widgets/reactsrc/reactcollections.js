@@ -215,7 +215,7 @@ var Collections = React.createClass({
 			var currentCollection = collections.getCollection(currentCollectionKey);
 			var c = currentCollection;
 			while(true){
-				if(!c.topLevel){
+				if(c && !c.topLevel){
 					var parentCollectionKey = c.get('parentCollection');
 					c = collections.getCollection(parentCollectionKey);
 					currentCollectionPath.push(parentCollectionKey);
