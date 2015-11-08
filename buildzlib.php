@@ -60,6 +60,7 @@ $files = array(
 "libraryUi/widgets/imageGrabber.js",
 "libraryUi/widgets/localItems.js",
 "libraryUi/widgets/siteSearch.js",
+"libraryUi/widgets/publications.js",
 //"libraryUi/widgets/orcidProfile.js",
 "_zoteroLibraryUrl.js",
 "zoteroPages.js",
