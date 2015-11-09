@@ -183,7 +183,9 @@ var TrashRow = React.createClass({
 
 var Collections = React.createClass({
 	getDefaultProps: function() {
-		initialCollectionKey: null
+		return{
+			initialCollectionKey: null
+		}
 	},
 	getInitialState: function() {
 		return {
