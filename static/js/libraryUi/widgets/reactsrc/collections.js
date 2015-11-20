@@ -1,7 +1,6 @@
 Zotero.ui.widgets.reactcollections = {};
 
 Zotero.ui.widgets.reactcollections.init = function(el){
-	Z.debug("collections widget init", 3);
 	var library = Zotero.ui.getAssociatedLibrary(el);
 
 	var initialCollectionKey = Zotero.state.getUrlVar('collectionKey');
@@ -10,63 +9,7 @@ Zotero.ui.widgets.reactcollections.init = function(el){
 		document.getElementById('collection-list-div')
 	);
 	Zotero.ui.widgets.reactcollections.reactInstance = reactInstance;
-	
-	library.listen("collectionsDirty", Zotero.ui.widgets.reactcollections.syncCollections, {widgetEl: el});
-	//library.listen("syncCollections", Zotero.ui.widgets.reactcollections.syncCollections, {widgetEl: el});
-	//library.listen("syncLibrary", Zotero.ui.widgets.reactcollections.syncCollections, {widgetEl: el});
-	library.listen("cachedDataLoaded", Zotero.ui.widgets.reactcollections.syncCollections, {widgetEl: el});
-	
-	library.listen("libraryCollectionsUpdated", function(){
-		reactInstance.setState({collections:library.collections});
-	} );
-	//library.listen("selectCollection", Zotero.ui.widgets.reactcollections.selectCollection, {widgetEl: el});
-	//library.listen("selectedCollectionChanged", Zotero.ui.widgets.reactcollections.updateSelectedCollection, {widgetEl: el});
-	
-	//Zotero.ui.widgets.reactcollections.bindCollectionLinks(el);
 };
-
-Zotero.ui.widgets.reactcollections.syncCollections = function(evt) {
-	Zotero.debug("Zotero eventful syncCollectionsCallback", 3);
-	var widgetEl = J(evt.data.widgetEl);
-	//Zotero.ui.showSpinner(J(widgetEl).find("#collection-list-container") );
-	var loadingPromise = widgetEl.data('loadingPromise');
-	if(loadingPromise){
-		var p = widgetEl.data('loadingPromise');
-		return p.then(function(){
-			return Zotero.ui.widgets.reactcollections.syncCollections(evt);
-		});
-	}
-	
-	//get Zotero.Library object if already bound to element
-	var library = Zotero.ui.getAssociatedLibrary(widgetEl);
-	//update the widget as soon as we have the cached collections
-	Zotero.ui.widgets.reactcollections.reactInstance.setState({collections:library.collections});
-	
-	//sync collections if loaded from cache but not synced
-	return library.loadUpdatedCollections()
-	.then(function(){
-		library.trigger("libraryCollectionsUpdated");
-	},
-	function(err){
-		//sync failed, but we already had some data, so show that
-		Z.error("Error syncing collections");
-		Z.error(err);
-		library.trigger("libraryCollectionsUpdated");
-		Zotero.ui.jsNotificationMessage("Error loading collections. Collections list may not be up to date", 'error');
-	}).then(function(){
-		widgetEl.removeData('loadingPromise');
-	});
-};
-
-
-Zotero.ui.widgets.reactcollections.rerenderCollections = function(evt){
-	Zotero.debug("Zotero.ui.widgets.reactcollections.rerenderCollections", 3);
-	var widgetEl = J(evt.data.widgetEl);
-	var library = Zotero.ui.getAssociatedLibrary(widgetEl);
-	Zotero.ui.widgets.reactcollections.reactInstance.setState({collections:library.collections});
-	return;
-};
-
 
 var CollectionRow = React.createClass({
 	getDefaultProps: function(){
@@ -101,7 +44,7 @@ var CollectionRow = React.createClass({
 		
 	},
 	render: function() {
-		Z.debug("CollectionRow render");
+		//Z.debug("CollectionRow render");
 		if(this.props.collection == null){
 			return null;
 		}
@@ -182,6 +125,10 @@ var TrashRow = React.createClass({
 });
 
 var Collections = React.createClass({
+	componentWillMount: function() {
+		var reactInstance = this;
+		var library = this.props.library;
+	},
 	getDefaultProps: function() {
 		return{
 			initialCollectionKey: null
@@ -191,12 +138,55 @@ var Collections = React.createClass({
 		return {
 			collections: null,
 			currentCollectionKey:this.props.initialCollectionKey,
-			expandedCollections: {}
+			expandedCollections: {},
+			loading:false
 		};
+	},
+	componentWillMount: function() {
+		var reactInstance = this;
+		var library = this.props.library;
+		
+		library.listen("collectionsDirty", reactInstance.syncCollections, {});
+		library.listen("libraryCollectionsUpdated", function(){
+			reactInstance.setState({collections:library.collections});
+		}, {});
+		library.listen("cachedDataLoaded", reactInstance.syncCollections, {});
+	},
+	returnToLibrary: function(evt) {
+		evt.preventDefault();
+		this.setState({currentCollectionKey:null});
+		Zotero.state.clearUrlVars();
+        Zotero.state.pushState();
+	},
+	syncCollections: function(evt) {
+		Zotero.debug("react collections syncCollections", 3);
+		var reactInstance = this;
+		if(this.state.loading){
+			return;
+		}
+		var library = this.props.library;
+
+		//update the widget as soon as we have the cached collections
+		this.setState({collections:library.collections, loading:true});
+
+		//sync collections if loaded from cache but not synced
+		return library.loadUpdatedCollections()
+		.then(function(){
+			reactInstance.setState({collections:library.collections, loading:false});
+			library.trigger("libraryCollectionsUpdated");
+		},
+		function(err){
+			//sync failed, but we already had some data, so show that
+			Z.error("Error syncing collections");
+			Z.error(err);
+			reactInstance.setState({collections:library.collections, loading:false});
+			library.trigger("libraryCollectionsUpdated");
+			Zotero.ui.jsNotificationMessage("Error loading collections. Collections list may not be up to date", 'error');
+		});
 	},
 	render: function() {
 		Z.debug("Collections render");
-		Z.debug(this.state);
+		var library = this.props.library;
 		var collections = this.state.collections;
 		if(collections == null){
 			return null;
@@ -227,10 +217,7 @@ var Collections = React.createClass({
 				}
 			}
 		}
-		Z.debug("currentCollectionPath : expandedCollections");
-		Z.debug(currentCollectionPath);
-		Z.debug(expandedCollections);
-
+		
 		var collectionRows = [];
 		collectionsArray.forEach(function(collection, ind){
 			if(collection.topLevel){
@@ -243,12 +230,14 @@ var Collections = React.createClass({
 			}
 		});
 		
+		var libraryClassName = "my-library " + (currentCollectionKey == null ? "current-collection" : "");
 		return (
 			<div id="collection-list-container" className="collection-list-container">
+				{/*<LoadingSpinner loading={this.state.loading} />*/}
 				<ul id="collection-list">
 					<li>
 						<span className="glyphicons fonticon glyphicons-inbox barefonticon"></span>
-						<a className="my-library" href={"/" + libraryUrlIdentifier + "/items"}>Library</a>
+						<a onClick={this.returnToLibrary} className={libraryClassName} href={library.libraryBaseWebsiteUrl}>Library</a>
 					</li>
 					{collectionRows}
 					

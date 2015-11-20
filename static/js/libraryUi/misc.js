@@ -5,6 +5,7 @@
  * @param  {Dom Form} formEl edit item form to take values from
  * @return {bool}
  */
+/*
 Zotero.ui.updateItemFromForm = function(item, formEl){
     Z.debug("Zotero.ui.updateItemFromForm", 3);
     
@@ -88,7 +89,9 @@ Zotero.ui.updateItemFromForm = function(item, formEl){
     item.dirty = true;
     Z.debug(item);
 };
+*/
 
+/*
 Zotero.ui.creatorFromElement = function(el){
     var name, creator, firstName, lastName;
     var jel = J(el);
@@ -116,6 +119,7 @@ Zotero.ui.creatorFromElement = function(el){
     }
     return creator;
 };
+*/
 
 Zotero.ui.saveItem = function(item) {
     //var requestData = JSON.stringify(item.apiObj);

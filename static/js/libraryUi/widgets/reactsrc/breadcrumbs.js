@@ -6,8 +6,6 @@ Zotero.ui.widgets.reactbreadcrumbs.init = function(el){
 		<BreadCrumbs library={library} />,
 		document.getElementById('breadcrumbs')
 	);
-
-	library.listen("displayedItemsChanged displayedItemChanged selectedCollectionChanged", reactInstance.setState());
 };
 
 var BreadCrumb = React.createClass({
@@ -31,6 +29,14 @@ var BreadCrumb = React.createClass({
 });
 
 var BreadCrumbs = React.createClass({
+	componentWillMount: function() {
+		var reactInstance = this;
+		var library = this.props.library;
+
+		library.listen("displayedItemsChanged displayedItemChanged selectedCollectionChanged", function(){
+			reactInstance.forceUpdate()
+		});
+	},
 	getInitialProps: function(){
 		return {library:null};
 	},

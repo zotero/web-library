@@ -9,27 +9,6 @@ Zotero.ui.widgets.reacttags.init = function(el){
 		document.getElementById('tags-list-div')
 	);
 	Zotero.ui.widgets.reacttags.reactInstance = reactInstance;
-
-	var tagColors = library.preferences.getPref("tagColors");
-	var selectedTags = Zotero.state.getUrlVar('tag');
-	if(!J.isArray(selectedTags)){
-		if(selectedTags) {
-			selectedTags = [selectedTags];
-		}
-		else {
-			selectedTags = [];
-		}
-	}
-	
-	reactInstance.setState({tagColors: tagColors, selectedTags:selectedTags});
-	
-	library.listen("tagsDirty", reactInstance.syncTags, {});
-	library.listen("cachedDataLoaded", reactInstance.syncTags, {});
-	library.listen("tagsChanged libraryTagsUpdated selectedTagsChanged", function(evt){
-		reactInstance.setState({tags:library.tags});
-	}, {});
-	
-	var container = J(el);
 };
 
 var TagRow = React.createClass({
@@ -125,39 +104,64 @@ var Tags = React.createClass({
 			loading:false,
 		};
 	},
+	componentWillMount: function(evt) {
+		var reactInstance = this;
+		var library = this.props.library;
+		
+		var tagColors = library.preferences.getPref("tagColors");
+		var selectedTags = Zotero.state.getUrlVar('tag');
+		if(!J.isArray(selectedTags)){
+			if(selectedTags) {
+				selectedTags = [selectedTags];
+			}
+			else {
+				selectedTags = [];
+			}
+		}
+		
+		reactInstance.setState({tagColors: tagColors, selectedTags:selectedTags});
+		
+		library.listen("tagsDirty", reactInstance.syncTags, {});
+		library.listen("cachedDataLoaded", reactInstance.syncTags, {});
+		
+		library.listen("tagsChanged libraryTagsUpdated selectedTagsChanged", function(evt){
+			reactInstance.setState({tags:library.tags});
+		}, {});
+		
+	},
 	handleFilterChanged: function(evt) {
 		this.setState({tagFilter: evt.target.value});
 	},
 	syncTags: function(evt) {
 		Z.debug("Tags.syncTags");
+		var reactInstance = this;
 		if(this.state.loading){
 			return;
 		}
-		
 		var library = this.props.library;
 
 		//clear tags if we're explicitly not using cached tags
-		if(evt.data.checkCached === false){
+		if(evt.data && (evt.data.checkCached === false)){
 			library.tags.clear();
 		}
 		
-		Zotero.ui.widgets.reacttags.reactInstance.setState({tags:library.tags, loading:true});
+		reactInstance.setState({tags:library.tags, loading:true});
 		
 		//cached tags are preloaded with library if the cache is enabled
 		//this function shouldn't be triggered until that has already been done
 		loadingPromise = library.loadUpdatedTags()
 		.then(function(){
 			Z.debug("syncTags done. clearing loading div");
-			Zotero.ui.widgets.reacttags.reactInstance.setState({tags:library.tags, loading:false});
+			reactInstance.setState({tags:library.tags, loading:false});
 			return;
 		},
 		function(error){
 			Z.error("syncTags failed. showing local data and clearing loading div");
-			Zotero.ui.widgets.reacttags.reactInstance.setState({tags:library.tags, loading:false});
+			reactInstance.setState({tags:library.tags, loading:false});
 			Zotero.ui.jsNotificationMessage("There was an error loading tags. Some tags may not have been updated.", 'notice');
 		});
 		
-		return loadingPromise;
+		return;
 	},
 	render: function() {
 		var tags = this.state.tags;
@@ -174,6 +178,7 @@ var Tags = React.createClass({
 		var tagColorStrings = [];
 		var coloredTags = [];
 		tagColors.forEach(function(tagColor, index){
+			Z.debug("tagColor processing " + index);
 			tagColorStrings.push(tagColor.name.toLowerCase());
 			var coloredTag = tags.getTag(tagColor.name);
 			if(coloredTag){
@@ -181,7 +186,6 @@ var Tags = React.createClass({
 				coloredTags.push(coloredTag);
 			}
 		});
-
 		var filteredTags = [];
 		var selectedTags = [];
 
@@ -205,12 +209,14 @@ var Tags = React.createClass({
 		});
 
 		return (
-			<div>
-				<input type="text" id="tag-filter-input" className="tag-filter-input form-control" placeholder="Filter Tags" onChange={this.handleFilterChanged} />
-				<LoadingSpinner loading={this.state.loading} />
-				<TagList tags={selectedTags} id="selected-tags-list" />
-				<TagList tags={coloredTags} id="colored-tags-list" />
-				<TagList tags={filteredTags} id="tags-list" />
+			<div id="tags-list-div" className="tags-list-div">
+				<div>
+					<input type="text" id="tag-filter-input" className="tag-filter-input form-control" placeholder="Filter Tags" onChange={this.handleFilterChanged} />
+					<LoadingSpinner loading={this.state.loading} />
+					<TagList tags={selectedTags} id="selected-tags-list" />
+					<TagList tags={coloredTags} id="colored-tags-list" />
+					<TagList tags={filteredTags} id="tags-list" />
+				</div>
 			</div>
 		);
 	}

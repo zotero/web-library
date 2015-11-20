@@ -569,7 +569,9 @@ Zotero.State.prototype.diffState = function(prevHref, curHref){
  * Bind tag links to alter current state rather than following the link
  * @return {undefined}
  */
+/*
 Zotero.State.prototype.bindTagLinks = function(container){
+    return;
     var state = this;
     Z.debug("Zotero.State.bindTagLinks", 3);
     J(container).on('click', 'a.tag-link', function(e){
@@ -583,11 +585,12 @@ Zotero.State.prototype.bindTagLinks = function(container){
     });
 
 };
-
+*/
 /**
  * Bind item links to take alter current state instead of following link
  * @return {undefined}
  */
+/*
 Zotero.State.prototype.bindItemLinks = function(container){
     Z.debug("Zotero.State.bindItemLinks", 3);
     var state = this;
@@ -613,3 +616,4 @@ Zotero.State.prototype.bindItemLinks = function(container){
         }
     });
 };
+*/

@@ -401,7 +401,7 @@ Zotero.trigger = function(eventType, data, filter){
         J("#eventful").trigger(e);
     }
     catch(e){
-        Z.error("failed triggering");
+        Z.error("failed triggering:" + eventType);
         Z.error(e);
     }
 };
@@ -1630,6 +1630,8 @@ Zotero.Library.prototype.loadSettings = function() {
     });
 };
 
+//take an array of tags and return subset of tags that should be colored, along with
+//the colors they should be
 Zotero.Library.prototype.matchColoredTags = function(tags) {
     var library = this;
     var i;
@@ -2969,8 +2971,8 @@ Zotero.Collection.prototype.initSecondaryData = function() {
         collection.topLevel = true;
     }
     
-    if(Zotero.config.libraryPathString){
-        collection.websiteCollectionLink = Zotero.config.libraryPathString + 
+    if(Zotero.config.librarySettings.libraryPathString){
+        collection.websiteCollectionLink = Zotero.config.librarySettings.libraryPathString + 
         '/collectionKey/' + collection.apiObj.key;
     }
     else {
@@ -3062,6 +3064,9 @@ Zotero.Collection.prototype.update = function(name, parentKey){
         'collectionKey':collection.key
     };
     
+    collection.set('name', name);
+    collection.set('parentCollection', parentKey);
+    
     var writeObject = collection.writeApiObj();
     var requestData = JSON.stringify(writeObject);
     
@@ -3135,6 +3140,36 @@ Zotero.Collection.prototype.get = function(key){
     
     return null;
 };
+/*
+Zotero.Collection.prototype.get = function(key){
+    var collection = this;
+    switch(key) {
+        case 'title':
+        case 'name':
+            return collection.apiObj.data['name'];
+        case 'collectionKey':
+        case 'key':
+            return collection.apiObj.key;
+        case 'parentCollection':
+            return collection.apiObj.data['parentCollection'];
+        case 'collectionVersion':
+        case 'version':
+            return collection.apiObj.version;
+    }
+    
+    if(key in collection.apiObj.data){
+        return collection.apiObj.data[key];
+    }
+    else if(key in collection.apiObj.meta){
+        return collection.apiObj.meta[key];
+    }
+    else if(collection.hasOwnProperty(key)){
+        return collection[key];
+    }
+    
+    return null;
+};
+*/
 
 Zotero.Collection.prototype.set = function(key, val){
     var collection = this;
@@ -4956,7 +4991,7 @@ Zotero.utils = {
 //locally construct a url for the item on the current website
 Zotero.url.itemHref = function(item){
     var href = '';
-    href += Zotero.config.libraryPathString + '/itemKey/' + item.key;
+    href += Zotero.config.librarySettings.libraryPathString + '/itemKey/' + item.get('key');
     return href;
 };
 
@@ -5044,6 +5079,13 @@ Zotero.url.wwwDownloadUrl = function(item){
     else {
         return false;
     }
+};
+
+Zotero.url.publicationsDownloadUrl = function(item){
+    if(item.apiObj.links['enclosure']){
+        return item.apiObj.links['enclosure']['href'];
+    }
+    return false;
 };
 
 Zotero.url.attachmentFileDetails = function(item){
@@ -6583,6 +6625,25 @@ Zotero.State.prototype.getSelectedItemKeys = function(){
     return returnKeys;
 };
 
+//toggle the selected state of the passed item key
+Zotero.State.prototype.toggleItemSelected = function(itemKey){
+    var state = this;
+    var newselected = [];
+    var alreadySelected = false;
+    var selectedItemKeys = state.getSelectedItemKeys();
+    J.each(selectedItemKeys, function(ind, val){
+        if(val == itemKey){
+            alreadySelected = true;
+        } else {
+            newselected.push(val);
+        }
+    });
+    if(!alreadySelected){
+        newselected.push(itemKey);
+    }
+    state.selectedItemKeys = newselected;
+};
+
 Zotero.State.prototype.pushTag = function(newtag){
     Z.debug('Zotero.State.pushTag', 3);
     var state = this;
@@ -7036,7 +7097,9 @@ Zotero.State.prototype.diffState = function(prevHref, curHref){
  * Bind tag links to alter current state rather than following the link
  * @return {undefined}
  */
+/*
 Zotero.State.prototype.bindTagLinks = function(container){
+    return;
     var state = this;
     Z.debug("Zotero.State.bindTagLinks", 3);
     J(container).on('click', 'a.tag-link', function(e){
@@ -7050,11 +7113,12 @@ Zotero.State.prototype.bindTagLinks = function(container){
     });
 
 };
-
+*/
 /**
  * Bind item links to take alter current state instead of following link
  * @return {undefined}
  */
+/*
 Zotero.State.prototype.bindItemLinks = function(container){
     Z.debug("Zotero.State.bindItemLinks", 3);
     var state = this;
@@ -7071,11 +7135,16 @@ Zotero.State.prototype.bindItemLinks = function(container){
         e.preventDefault();
         Z.debug("item-select-td clicked", 3);
         var itemKey = J(this).data('itemkey');
-        state.pathVars.itemKey = itemKey;
-        state.pushState();
+        if(e.ctrlKey){
+            state.toggleItemSelected(itemKey);
+            Zotero.trigger("selectedItemsChanged");
+        } else {
+            state.pathVars.itemKey = itemKey;
+            state.pushState();
+        }
     });
 };
-
+*/
 
 //return a promise that will resolve after mseconds milliseconds
 Zotero.Delay = function(mseconds){
@@ -7308,7 +7377,8 @@ Zotero.ui.formatItemField = function(field, item, trim){
             }
             break;
         default:
-            if(typeof(item.apiObj.data[field]) !== "undefined"){
+            var t = typeof(item.get(field));
+            if(typeof(t) !== "undefined") {
                 formattedString = item.get(field);
             }
     }
@@ -7724,6 +7794,7 @@ Zotero.ui.init.libraryTemplates = function(){
  * @param  {Dom Form} formEl edit item form to take values from
  * @return {bool}
  */
+/*
 Zotero.ui.updateItemFromForm = function(item, formEl){
     Z.debug("Zotero.ui.updateItemFromForm", 3);
     
@@ -7807,7 +7878,9 @@ Zotero.ui.updateItemFromForm = function(item, formEl){
     item.dirty = true;
     Z.debug(item);
 };
+*/
 
+/*
 Zotero.ui.creatorFromElement = function(el){
     var name, creator, firstName, lastName;
     var jel = J(el);
@@ -7835,6 +7908,7 @@ Zotero.ui.creatorFromElement = function(el){
     }
     return creator;
 };
+*/
 
 Zotero.ui.saveItem = function(item) {
     //var requestData = JSON.stringify(item.apiObj);
@@ -8352,181 +8426,6 @@ Zotero.ui.closeDialog = function(el){
 
 
 
-Zotero.ui.widgets.addToCollectionDialog = {};
-
-Zotero.ui.widgets.addToCollectionDialog.init = function(el){
-    Z.debug("addtocollectionsdialog widget init", 3);
-    var library = Zotero.ui.getAssociatedLibrary(el);
-    
-    library.listen("addToCollectionDialog", Zotero.ui.widgets.addToCollectionDialog.show, {widgetEl: el});
-};
-
-Zotero.ui.widgets.addToCollectionDialog.show = function(evt){
-    Z.debug("addToCollectionDialog.show", 3);
-    
-    var triggeringEl = J(evt.triggeringElement);
-    var library = Zotero.ui.getAssociatedLibrary(triggeringEl);
-    var ncollections = library.collections.nestedOrderingArray();
-    
-    var widgetEl = J(evt.data.widgetEl).empty();
-    Z.debug("ncollections:");
-    Z.debug(ncollections);
-    widgetEl.html( J("#addtocollectiondialogTemplate").render({ncollections:ncollections}) );
-    var dialogEl = widgetEl.find(".add-to-collection-dialog");
-    
-    var addToFunction = function(){
-        Z.debug("addToCollection callback", 3);
-        var targetCollection = dialogEl.find(".collectionKey-select").val();
-        Z.debug("move to: " + targetCollection, 4);
-        Zotero.ui.addToCollection(targetCollection, library);
-        Zotero.ui.closeDialog(dialogEl);
-        return false;
-    };
-    
-    dialogEl.find(".addButton").on('click', addToFunction);
-    
-    Zotero.ui.dialog(dialogEl, {});
-    return false;
-};
-
-/**
- * Add selected items to collection
- * @param {string} collectionKey collectionKey of collection items will be added to
- * @param {Zotero_Library} library       Zotero library to operate on
- */
-Zotero.ui.addToCollection = function(collectionKey, library){
-    Z.debug("add-to-collection clicked", 3);
-    var itemKeys = Zotero.state.getSelectedItemKeys();
-    if(!collectionKey){
-        Zotero.ui.jsNotificationMessage("No collection selected", 'error');
-        return false;
-    }
-    if(itemKeys.length === 0){
-        Zotero.ui.jsNotificationMessage("No items selected", 'notice');
-        return false;
-    }
-    Z.debug(itemKeys, 4);
-    Z.debug(collectionKey, 4);
-    library.collections.getCollection(collectionKey).addItems(itemKeys)
-    .then(function(response){
-        library.dirty = true;
-        Zotero.ui.jsNotificationMessage("Items added to collection", 'success');
-    }).catch(Zotero.catchPromiseError);
-    return false;
-};
-
-
-Zotero.ui.widgets.breadcrumbs = {};
-
-Zotero.ui.widgets.breadcrumbs.init = function(el){
-    var library = Zotero.ui.getAssociatedLibrary(el);
-    library.listen("displayedItemsChanged displayedItemChanged selectedCollectionChanged", Zotero.ui.libraryBreadcrumbs);
-};
-
-/**
- * Update the page's breadcrumbs based on the current state
- * @param  {Zotero_Library} library current Zotero Library
- * @param  {object} config  Current config object being displayed
- * @return {undefined}
- */
-Zotero.ui.libraryBreadcrumbs = function(library, config){
-    Z.debug('Zotero.ui.libraryBreadcrumbs', 3);
-    try{
-    var breadcrumbs = [];
-    if(!library){
-        library = Zotero.ui.getAssociatedLibrary(J("#feed-link-div"));
-    }
-    if(!config){
-        config = Zotero.state.getUrlVars();
-    }
-    
-    if(Zotero.config.breadcrumbsBase){
-        J.each(Zotero.config.breadcrumbsBase, function(ind, crumb){
-            breadcrumbs.push(crumb);
-        });
-    }
-    else if(library.libraryType == 'user'){
-        breadcrumbs = [{label:'Home', path:'/'},
-                       {label:'People', path:'/people'},
-                       {label:(library.libraryLabel || library.libraryUrlIdentifier), path:'/' + library.libraryUrlIdentifier},
-                       {label:'Library', path:'/' + library.libraryUrlIdentifier + '/items'}];
-    }
-    else{
-        breadcrumbs = [{label:'Home', path:'/'},
-                       {label:'Groups', path:'/groups'},
-                       {label:(library.libraryLabel || library.libraryUrlIdentifier), path:'/groups/' + library.libraryUrlIdentifier},
-                       {label:'Library', path:'/groups/' + library.libraryUrlIdentifier + '/items'}];
-    }
-    if(config.collectionKey){
-        Z.debug("have collectionKey", 4);
-        curCollection = library.collections.getCollection(config.collectionKey);
-        if( curCollection ){
-            breadcrumbs.push({label:curCollection.get('name'), path:Zotero.state.buildUrl({collectionKey:config.collectionKey})});
-        }
-    }
-    if(config.itemKey){
-        Z.debug("have itemKey", 4);
-        breadcrumbs.push({label:library.items.getItem(config.itemKey).title, path:Zotero.state.buildUrl({collectionKey:config.collectionKey, itemKey:config.itemKey})});
-    }
-    Z.debug(breadcrumbs, 4);
-    widgetEl = J("#breadcrumbs").empty();
-    widgetEl.html( J('#breadcrumbsTemplate').render({breadcrumbs:breadcrumbs}) );
-    var newtitle = J('#breadcrumbstitleTemplate', {breadcrumbs:breadcrumbs}).text();
-    if(newtitle){
-        Zotero.state.updateStateTitle(newtitle);
-    }
-    Z.debug("done with breadcrumbs", 4);
-    }
-    catch(e){
-        Zotero.error("Error loading breadcrumbs");
-        Zotero.error(e);
-    }
-};
-
-
-
-Zotero.ui.widgets.chooseLibraryDialog = {};
-
-Zotero.ui.widgets.chooseLibraryDialog.init = function(el){
-    Z.debug("chooselibrarydialog widget init", 3);
-    var library = Zotero.ui.getAssociatedLibrary(el);
-    
-    library.listen("chooseLibrary", Zotero.ui.widgets.chooseLibraryDialog.show, {widgetEl: el});
-};
-
-Zotero.ui.widgets.chooseLibraryDialog.show = function(e){
-    Z.debug("chooseLibraryDialog.show", 3);
-    
-    var triggeringEl = J(e.triggeringElement);
-    var library = Zotero.ui.getAssociatedLibrary(triggeringEl);
-    var ncollections = library.collections.nestedOrderingArray();
-    
-    var widgetEl = J(e.data['widgetEl']).empty();
-    widgetEl( J("#addtocollectiondialogTemplate").render({ncollections:ncollections}) );
-    var dialogEl = widgetEl.find(".add-to-collection-dialog");
-    
-    var addToFunction = J.proxy(function(){
-        Z.debug("add-to-collection-select changed", 3);
-        var targetCollection = dialogEl.find(".target-collection").val();
-        Z.debug("move to: " + targetCollection, 4);
-        Zotero.ui.addToCollection(targetCollection, library);
-        Zotero.ui.closeDialog(dialogEl);
-        return false;
-    }, this);
-    
-    dialogEl.find(".addButton").on('click', addToFunction);
-    
-    Zotero.ui.dialog(dialogEl, {});
-    return false;
-};
-
-Zotero.ui.widgets.chooseLibraryDialog.getAccessibleLibraries = function() {
-    //TODO: everything
-    //just need to fetch userGroups for key, and see if there is write access
-};
-
-
-
 Zotero.ui.widgets.citeItemDialog = {};
 
 Zotero.ui.widgets.citeItemDialog.init = function(el){
@@ -8638,726 +8537,6 @@ Zotero.ui.widgets.citeItemDialog.buildBibString = function(bib){
     bibString += bibMeta.bibend;
     return bibString;
 };
-
-Zotero.ui.widgets.collections = {};
-
-Zotero.ui.widgets.collections.init = function(el){
-    Z.debug("collections widget init", 3);
-    var library = Zotero.ui.getAssociatedLibrary(el);
-    
-    library.listen("collectionsDirty", Zotero.ui.widgets.collections.syncCollections, {widgetEl: el});
-    library.listen("syncCollections", Zotero.ui.widgets.collections.syncCollections, {widgetEl: el});
-    library.listen("syncLibrary", Zotero.ui.widgets.collections.syncCollections, {widgetEl: el});
-    library.listen("cachedDataLoaded", Zotero.ui.widgets.collections.syncCollections, {widgetEl: el});
-    
-    library.listen("libraryCollectionsUpdated", Zotero.ui.widgets.collections.rerenderCollections, {widgetEl: el});
-    library.listen("selectCollection", Zotero.ui.widgets.collections.selectCollection, {widgetEl: el});
-    library.listen("selectedCollectionChanged", Zotero.ui.widgets.collections.updateSelectedCollection, {widgetEl: el});
-    
-    Zotero.ui.widgets.collections.bindCollectionLinks(el);
-};
-
-Zotero.ui.widgets.collections.syncCollections = function(evt) {
-    Zotero.debug("Zotero eventful syncCollectionsCallback", 3);
-    var widgetEl = J(evt.data.widgetEl);
-    Zotero.ui.showSpinner(J(widgetEl).find("#collection-list-container") );
-    var loadingPromise = widgetEl.data('loadingPromise');
-    if(loadingPromise){
-        var p = widgetEl.data('loadingPromise');
-        return p.then(function(){
-            return Zotero.ui.widgets.collections.syncCollections(evt);
-        });
-    }
-    
-    //get Zotero.Library object if already bound to element
-    var library = Zotero.ui.getAssociatedLibrary(widgetEl);
-    
-    //sync collections if loaded from cache but not synced
-    return library.loadUpdatedCollections()
-    .then(function(){
-        library.trigger("libraryCollectionsUpdated");
-    },
-    function(err){
-        //sync failed, but we already had some data, so show that
-        Z.error("Error syncing collections");
-        Z.error(err);
-        library.trigger("libraryCollectionsUpdated");
-        Zotero.ui.jsNotificationMessage("Error loading collections. Collections list may not be up to date", 'error');
-    }).then(function(){
-        widgetEl.removeData('loadingPromise');
-    });
-};
-
-
-Zotero.ui.widgets.collections.rerenderCollections = function(evt){
-    Zotero.debug("Zotero.ui.widgets.collections.rerenderCollections", 3);
-    var widgetEl = J(evt.data.widgetEl);
-    
-    var library = Zotero.ui.getAssociatedLibrary(widgetEl);
-    var collectionListEl = widgetEl.find('#collection-list-container');
-    collectionListEl.empty();
-    Zotero.ui.widgets.collections.renderCollectionList(collectionListEl, library.collections);
-    Z.debug("done rendering collections");
-    library.trigger("selectedCollectionChanged");
-};
-
-Zotero.ui.widgets.collections.selectCollection = function(evt){
-    
-};
-
-Zotero.ui.widgets.collections.updateSelectedCollection = function(evt){
-    Zotero.debug("Zotero eventful updateSelectedCollection", 3);
-    var widgetEl = J(evt.data.widgetEl);
-    var collectionListEl = widgetEl.find('.collection-list-container');
-    
-    Zotero.ui.widgets.collections.highlightCurrentCollection(widgetEl);
-    Zotero.ui.widgets.collections.nestHideCollectionTree(collectionListEl);
-    Zotero.ui.widgets.collections.updateCollectionButtons(widgetEl);
-    return;
-};
-
-Zotero.ui.widgets.collections.updateCollectionButtons = function(el){
-    if(!el){
-        el = J("body");
-    }
-    var jel = J(el);
-    
-    //disable everything if we're not allowed to edit the library
-    if(!Zotero.config.librarySettings.allowEdit){
-        J(".permission-edit").hide();
-        jel.find(".create-collection-button").addClass('disabled');
-        jel.find(".update-collection-button").addClass('disabled');
-        jel.find(".delete-collection-button").addClass('disabled');
-        return;
-    }
-    //enable modify and delete only if collection is selected
-    if(Zotero.state.getUrlVar("collectionKey")){
-        jel.find(".update-collection-button").removeClass('disabled');
-        jel.find(".delete-collection-button").removeClass('disabled');
-    }
-    else{
-        jel.find(".update-collection-button").addClass('disabled');
-        jel.find(".delete-collection-button").addClass('disabled');
-    }
-};
-
-//generate the full html for the nested collections list
-/**
- * generate the full html for the nested collections list
- * @param  {Dom Element} el          Element to display collections in
- * @param  {Zotero_Collections} collections Zotero_Collections to display
- * @return {undefined}
- */
-Zotero.ui.widgets.collections.renderCollectionList = function(el, collections){
-    Z.debug("Zotero.ui.renderCollectionList", 3);
-    var widgetEl = J(el);
-    var currentCollectionKey = Zotero.state.getUrlVar('collectionKey') || '';
-    var trash = collections.owningLibrary.libraryType == 'user' ? true : false;
-    //var ncollections = collections.nestedOrderingArray();
-    widgetEl.append( J('#collectionlistTemplate').render({collections:collections.collectionsArray,
-                                        libUrlIdentifier:collections.libraryUrlIdentifier,
-                                        currentCollectionKey: currentCollectionKey,
-                                        trash: trash
-                                        //ncollections: ncollections
-                                    }
-                                    ) );
-    
-};
-
-
-/**
- * Bind collection links to take appropriate action instead of following link
- * @return {boolean}
- */
-Zotero.ui.widgets.collections.bindCollectionLinks = function(container){
-    Z.debug("Zotero.ui.bindCollectionLinks", 3);
-    var library = Zotero.ui.getAssociatedLibrary(container);
-    
-    J(container).on('click', "div.folder-toggle", function(e){
-        e.preventDefault();
-        J(this).siblings('.collection-select-link').click();
-        return false;
-    });
-    
-    J(container).on('click', ".collection-select-link", function(e){
-        Z.debug("collection-select-link clicked", 4);
-        e.preventDefault();
-        var collectionKey = J(this).attr('data-collectionkey');
-        //if this is the currently selected collection, treat as expando link
-        if(J(this).hasClass('current-collection')) {
-            var expanded = J('.current-collection').data('expanded');
-            if(expanded === true){
-                Zotero.ui.widgets.collections.nestHideCollectionTree(J("#collection-list-container"), false);
-            }
-            else{
-                Zotero.ui.widgets.collections.nestHideCollectionTree(J("#collection-list-container"), true);
-            }
-            
-            //go back to items list
-            Zotero.state.clearUrlVars(['collectionKey', 'mode']);
-            
-            //cancel action for expando link behaviour
-            return false;
-        }
-        library.trigger("selectCollection", {collectionKey: collectionKey});
-        
-        //Not currently selected collection
-        Z.debug("click " + collectionKey, 4);
-        Zotero.state.clearUrlVars(['mode']);
-        Zotero.state.pathVars['collectionKey'] = collectionKey;
-        
-        Zotero.state.pushState();
-        return false;
-    });
-    
-    J(container).on('click', "a.my-library", function(e){
-        e.preventDefault();
-        Zotero.state.clearUrlVars(['mode']);
-        Zotero.state.pushState();
-        return false;
-    });
-};
-
-//FROM UPDATESTATE.JS
-//Rendering Code
-
-/**
- * Nest the collection tree and hide/show appropriate nodes
- * @param  {Dom Element} el             Container element
- * @param  {boolean} expandSelected Show or hide the currently selected collection
- * @return {undefined}
- */
-Zotero.ui.widgets.collections.nestHideCollectionTree = function(el, expandSelected){
-    Z.debug("nestHideCollectionTree", 3);
-    if(typeof expandSelected == 'undefined'){
-        expandSelected = true;
-    }
-    //nest and hide collection tree
-    var jel = J(el);
-    jel.find("#collection-list ul").hide().siblings(".folder-toggle")
-                                        .children(".placeholder")
-                                        .addClass('glyphicon')
-                                        .addClass("glyphicon-chevron-right");
-    jel.find(".current-collection").parents("ul").show();
-    jel.find("#collection-list li.current-collection").children('ul').show();
-    //start all twisties in closed position
-    jel.find(".glyphicon-chevron-down").removeClass("glyphicon-chevron-down").addClass("glyphicon-chevron-right");
-    //show opened twisties as expanded
-    jel.find("li.current-collection").parentsUntil("#collection-list").children('div.folder-toggle').find(".glyphicon-chevron-right")
-                                                .removeClass("glyphicon-chevron-right")
-                                                .addClass("glyphicon-chevron-down");
-    
-    
-    if(expandSelected === false){
-        jel.find("#collection-list li.current-collection").children('ul').hide();
-        jel.find("#collection-list li.current-collection").find(".glyphicon-chevron-down")
-                                                    .removeClass("glyphicon-chevron-down")
-                                                    .addClass("glyphicon-chevron-right");
-        jel.find(".current-collection").data('expanded', false);
-    }
-    else{
-        jel.find("li.current-collection").children('div.folder-toggle').find(".glyphicon-chevron-right")
-                                                .removeClass("glyphicon-chevron-right")
-                                                .addClass("glyphicon-chevron-down");
-                                                
-        jel.find(".current-collection").data('expanded', true);
-    }
-};
-
-/**
- * Highlight the currently selected collection
- * @return {undefined}
- */
-Zotero.ui.widgets.collections.highlightCurrentCollection = function(widgetEl){
-    Z.debug("Zotero.ui.widgets.collections.highlightCurrentCollection", 3);
-    if(!widgetEl){
-        widgetEl = J("body");
-    }
-    widgetEl = J(widgetEl);
-    var collectionKey = Zotero.state.getUrlVar('collectionKey');
-    //unhighlight currently highlighted
-    widgetEl.find("a.current-collection").closest("li").removeClass("current-collection");
-    widgetEl.find("a.current-collection").removeClass("current-collection");
-    
-    if(collectionKey){
-        //has collection selected, highlight it
-        widgetEl.find("a[data-collectionKey='" + collectionKey + "']").addClass("current-collection");
-        widgetEl.find("a[data-collectionKey='" + collectionKey + "']").closest('li').addClass("current-collection");
-    }
-    else{
-        widgetEl.find("a.my-library").addClass("current-collection");
-        widgetEl.find("a.my-library").closest('li').addClass("current-collection");
-    }
-};
-
-
-
-Zotero.ui.widgets.controlPanel = {};
-
-Zotero.ui.widgets.controlPanel.init = function(el){
-    Z.debug("Zotero.eventful.init.controlPanel", 3);
-    var library = Zotero.ui.getAssociatedLibrary(el);
-    
-    Zotero.ui.showControlPanel(el);
-    //library.listen("controlPanelContextChange", Zotero.ui.widgets.controlPanel.contextChanged, {widgetEl:el});
-    library.listen("selectedItemsChanged", Zotero.ui.widgets.controlPanel.selectedItemsChanged, {widgetEl:el});
-    library.listen("selectedCollectionChanged", Zotero.ui.widgets.controlPanel.selectedItemsChanged, {widgetEl:el});
-    
-    library.listen("removeFromCollection", Zotero.ui.widgets.controlPanel.removeFromCollection, {widgetEl:el});
-    library.listen("moveToTrash", Zotero.ui.widgets.controlPanel.moveToTrash, {widgetEl:el});
-    library.listen("removeFromTrash", Zotero.ui.widgets.controlPanel.removeFromTrash, {widgetEl:el});
-    library.listen("toggleEdit", Zotero.ui.widgets.controlPanel.toggleEdit, {widgetEl:el});
-    
-    var container = J(el);
-    
-    Zotero.ui.widgets.controlPanel.updateDisabledControlButtons();
-    //start edit button in correct state
-    if(Zotero.state.getUrlVar('mode') == 'edit'){
-        container.find('button.toggle-edit-button').addClass('active');
-    }
-};
-
-Zotero.ui.widgets.controlPanel.contextChanged = function(evt){
-    Zotero.ui.widgets.controlPanel.updateDisabledControlButtons();
-};
-
-Zotero.ui.widgets.controlPanel.selectedItemsChanged = function(evt){
-    Z.debug("Zotero.ui.widgets.controlPanel.selectedItemsChanged", 3);
-    var selectedItemKeys = evt.selectedItemKeys;
-    if(!selectedItemKeys){
-        selectedItemKeys = [];
-    }
-    
-    Zotero.ui.widgets.controlPanel.updateDisabledControlButtons(selectedItemKeys);
-};
-
-/**
- * Update the disabled state of library control toolbar buttons depending on context
- * @return {undefined}
- */
-Zotero.ui.widgets.controlPanel.updateDisabledControlButtons = function(selectedItemKeys){
-    Z.debug("Zotero.ui.widgets.controlPanel.updateDisabledControlButtons", 3);
-    if(!selectedItemKeys){
-        selectedItemKeys = [];
-    }
-    
-    //start with all menu items showing and enabled
-    J("ul.actions-menu li").show().removeClass("disabled");
-    J(".create-item-button").removeClass('disabled');
-    
-    if((selectedItemKeys.length === 0) && (!Zotero.state.getUrlVar('itemKey')) ){
-        //then there are 0 items selected by checkbox and no item details are being displayed
-        //hide from the menu actions that require an item to operate on
-        J(".selected-item-action").hide();
-        /*
-        J(".add-to-collection-button").closest('li').hide();
-        J(".remove-from-collection-button").closest('li').hide();
-        J(".move-to-trash-button").closest('li').hide();
-        J(".remove-from-trash-button").closest('li').hide();
-        J(".permanently-delete-button").closest('li').hide();
-        */
-        //J(".cite-button").addClass('disabled');
-        //J(".export-button").addClass('disabled'); //TODO: should this really be disabled? not just export everything?
-    }
-    else{
-        //something is selected for actions to apply to
-        //switch what is shown based on the selected collection
-        /*
-        if(Zotero.state.getUrlVar('collectionKey') == 'trash'){
-            J(".move-to-trash-button").closest('li').hide();
-        } else {
-            J(".move-to-trash-button").closest('li').hide();
-        }
-        */
-        //J(".cite-button").closest('li').removeClass('disabled');
-        //J(".export-button").closest('li').removeClass('disabled');
-    }
-    
-    //only show remove from collection button if inside a collection
-    if(!Zotero.state.getUrlVar("collectionKey")){
-        J(".selected-collection-action").hide();
-        /*
-        J(".remove-from-collection-button").closest('li').hide();
-        */
-    }
-    //disable create item button if in trash
-    if(Zotero.state.getUrlVar('collectionKey') == 'trash'){
-        J(".selected-collection-action").hide();
-        J(".move-to-trash-button").hide();
-        J(".create-item-button").addClass('disabled');
-        /*
-        J(".add-to-collection-button").closest('li').addClass('disabled');
-        J(".remove-from-collection-button").closest('li').addClass('disabled');
-        */
-    }
-    if(Zotero.state.getUrlVar('collectionKey') != 'trash') {
-        //hide trash specific actions
-        J(".permanently-delete-button").closest('li').hide();
-        J(".remove-from-trash-button").closest('li').hide();
-    }
-};
-
-/**
- * Toggle library edit mode when edit button clicked
- * @param  {event} e click event
- * @return {boolean}
- */
-Zotero.ui.widgets.controlPanel.toggleEdit =  function(e){
-    Z.debug("edit checkbox toggled", 3);
-    var curMode = Zotero.state.getUrlVar('mode');
-    if(curMode != "edit"){
-        Zotero.state.pathVars['mode'] = 'edit';
-    }
-    else{
-        delete Zotero.state.pathVars['mode'];
-    }
-    Zotero.state.pushState();
-    return false;
-};
-
-/**
- * clear path vars and send to new item page with current collection when create-item-link clicked
- * @param  {event} e click event
- * @return {boolean}
- */
-Zotero.ui.widgets.controlPanel.createItem = function(e){
-    Z.debug("create-item-Link clicked", 3);
-    var collectionKey = Zotero.state.getUrlVar('collectionKey');
-    if(collectionKey){
-        Zotero.state.pathVars = {action:'newItem', mode:'edit', 'collectionKey':collectionKey};
-    }
-    else{
-        Zotero.state.pathVars = {action:'newItem', mode:'edit'};
-    }
-    Zotero.state.pushState();
-    return false;
-};
-
-/**
- * Move currently displayed single item or currently checked list of items
- * to the trash when move-to-trash link clicked
- * @param  {event} e click event
- * @return {boolean}
- */
-Zotero.ui.widgets.controlPanel.moveToTrash =  function(evt){
-    evt.preventDefault();
-    Z.debug('move-to-trash clicked', 3);
-    
-    var itemKeys = Zotero.state.getSelectedItemKeys();
-    Z.debug(itemKeys, 3);
-    
-    var triggeringEl = J(evt.triggeringElement);
-    var library = Zotero.ui.getAssociatedLibrary(triggeringEl);
-    var response;
-    
-    var trashingItems = library.items.getItems(itemKeys);
-    var deletingItems = []; //potentially deleting instead of trashing
-    
-    //show spinner before making the possibly many the ajax requests
-    Zotero.ui.showSpinner(J('#library-items-div'));
-    Z.debug('trashingItems:');
-    Z.debug(trashingItems);
-    if(Zotero.state.getUrlVar('collectionKey') == 'trash'){
-        //items already in trash. delete them
-        var i;
-        for(i = 0; i < trashingItems.length; i++ ){
-            var item = trashingItems[i];
-            if(item.get('deleted')){
-                //item is already in trash, schedule for actual deletion
-                deletingItems.push(item);
-            }
-        }
-        
-        //make request to permanently delete items
-        response = library.items.deleteItems(deletingItems);
-    }
-    else{
-        //items are not in trash already so just add them to it
-        response = library.items.trashItems(trashingItems);
-    }
-    
-    library.dirty = true;
-    response.catch(function(){
-        Z.error("Error trashing items");
-    }).then(function(){
-        Zotero.state.clearUrlVars(['collectionKey', 'tag', 'q']);
-        Zotero.state.pushState(true);
-        library.trigger("displayedItemsChanged");
-    }).catch(Zotero.catchPromiseError);
-    
-    return false; //stop event bubbling
-};
-
-/**
- * Remove currently displayed single item or checked list of items from trash
- * when remove-from-trash link clicked
- * @param  {event} e click event
- * @return {boolean}
- */
-Zotero.ui.widgets.controlPanel.removeFromTrash =  function(evt){
-    Z.debug('remove-from-trash clicked', 3);
-    var widgetEl = J(evt.data.widgetEl);
-    var itemKeys = Zotero.state.getSelectedItemKeys();
-    Z.debug(itemKeys, 4);
-    
-    var triggeringEl = J(evt.triggeringElement);
-    var library = Zotero.ui.getAssociatedLibrary(triggeringEl);
-    
-    var untrashingItems = library.items.getItems(itemKeys);
-    
-    //show spinner before making the possibly many the ajax requests
-    Zotero.ui.showSpinner(J('#library-items-div'));
-    
-    var response = library.items.untrashItems(untrashingItems);
-    
-    library.dirty = true;
-    response.catch(function(){
-        
-    }).then(function(){
-        Z.debug("post-removeFromTrash always execute: clearUrlVars", 3);
-        Zotero.state.clearUrlVars(['collectionKey', 'tag', 'q']);
-        Zotero.state.pushState();
-        library.trigger("displayedItemsChanged");
-    }).catch(Zotero.catchPromiseError);
-    
-    return false;
-};
-
-/**
- * Remove currently displaying item or currently selected items from current collection
- * @param  {event} e click event
- * @return {boolean}
- */
-Zotero.ui.widgets.controlPanel.removeFromCollection = function(evt){
-    Z.debug('remove-from-collection clicked', 3);
-    var triggeringEl = J(evt.triggeringElement);
-    var library = Zotero.ui.getAssociatedLibrary(triggeringEl);
-    var itemKeys = Zotero.state.getSelectedItemKeys();
-    var collectionKey = Zotero.state.getUrlVar('collectionKey');
-    
-    var modifiedItems = [];
-    var responses = [];
-    J.each(itemKeys, function(index, itemKey){
-        var item = library.items.getItem(itemKey);
-        item.removeFromCollection(collectionKey);
-        modifiedItems.push(item);
-    });
-    
-    library.dirty = true;
-    
-    library.items.writeItems(modifiedItems)
-    .then(function(){
-        Z.debug('removal responses finished. forcing reload', 3);
-        Zotero.state.clearUrlVars(['collectionKey', 'tag']);
-        Zotero.state.pushState(true);
-        library.trigger("displayedItemsChanged");
-    }).catch(Zotero.catchPromiseError);
-    
-    return false;
-};
-
-/**
- * Conditionally show the control panel
- * @param  {Dom El} el control panel element
- * @return {undefined}
- */
-Zotero.ui.showControlPanel = function(el){
-    Z.debug("Zotero.ui.showControlPanel", 3);
-    var jel = J(el);
-    var mode = Zotero.state.getUrlVar('mode') || 'view';
-    
-    if(!Zotero.config.librarySettings.allowEdit){
-        J(".permission-edit").hide();
-    }
-};
-
-
-Zotero.ui.widgets.createCollectionDialog = {};
-
-Zotero.ui.widgets.createCollectionDialog.init = function(el){
-    Z.debug("createcollectionsdialog widget init", 3);
-    var library = Zotero.ui.getAssociatedLibrary(el);
-    
-    library.listen("createCollectionDialog", Zotero.ui.widgets.createCollectionDialog.show, {widgetEl: el});
-};
-
-Zotero.ui.widgets.createCollectionDialog.show = function(evt){
-    Z.debug("createCollectionDialog.show", 3);
-    
-    var triggeringEl = J(evt.triggeringElement);
-    var library = Zotero.ui.getAssociatedLibrary(triggeringEl);
-    var ncollections = library.collections.nestedOrderingArray();
-    var widgetEl = J(evt.data.widgetEl).empty();
-    
-    widgetEl.html( J("#createcollectiondialogTemplate").render({ncollections:ncollections}) );
-    var dialogEl = widgetEl.find(".create-collection-dialog");
-    
-    var currentCollectionKey = Zotero.state.getUrlVar('collectionKey');
-    dialogEl.find(".new-collection-parent").val(currentCollectionKey);
-    
-    var createFunction = function(){
-        var newCollection = new Zotero.Collection();
-        var parentKey = dialogEl.find(".new-collection-parent").val();
-        var name = dialogEl.find("input.new-collection-title-input").val() || "Untitled";
-        
-        library.addCollection(name, parentKey)
-        .then(function(responses){
-            library.collections.initSecondaryData();
-            library.trigger('libraryCollectionsUpdated');
-            Zotero.state.pushState();
-            Zotero.ui.closeDialog(widgetEl.find(".create-collection-dialog"));
-            Zotero.ui.jsNotificationMessage("Collection Created", 'success');
-        }).catch(function(error){
-            Zotero.ui.jsNotificationMessage("There was an error creating the collection.", "error");
-            Zotero.ui.closeDialog(widgetEl.find(".create-collection-dialog"));
-        });
-    };
-    
-    dialogEl.find(".createButton").on('click', createFunction);
-    Zotero.ui.dialog(dialogEl, {});
-};
-
-
-
-Zotero.ui.widgets.deleteCollectionDialog = {};
-
-Zotero.ui.widgets.deleteCollectionDialog.init = function(el){
-    Z.debug("deletecollectionsdialog widget init", 3);
-    var library = Zotero.ui.getAssociatedLibrary(el);
-    
-    library.listen("deleteCollectionDialog", Zotero.ui.widgets.deleteCollectionDialog.show, {widgetEl: el});
-};
-
-Zotero.ui.widgets.deleteCollectionDialog.show = function(evt){
-    Z.debug("deleteCollectionDialog.show", 3);
-    
-    var triggeringEl = J(evt.triggeringElement);
-    var library = Zotero.ui.getAssociatedLibrary(triggeringEl);
-    var currentCollectionKey = Zotero.state.getUrlVar('collectionKey');
-    var currentCollection = library.collections.getCollection(currentCollectionKey);
-    
-    var widgetEl = J(evt.data.widgetEl).empty();
-    widgetEl.html( J("#deletecollectiondialogTemplate").render({collection:currentCollection}) );
-    var dialogEl = widgetEl.find(".delete-collection-dialog");
-    
-    var deleteFunction = J.proxy(function(){
-        Z.debug("Zotero.ui.deleteSelectedCollection", 3);
-        var collection = currentCollection;
-        if(!collection){
-            Zotero.ui.jsNotificationMessage("Selected collection not found", 'error');
-            return false;
-        }
-        collection.remove()
-        .then(function(){
-            delete Zotero.state.pathVars['collectionKey'];
-            library.collections.dirty = true;
-            library.collections.initSecondaryData();
-            Zotero.state.pushState();
-            Zotero.ui.jsNotificationMessage(collection.get('title') + " removed", 'confirm');
-            Zotero.ui.closeDialog(dialogEl);
-        }).catch(Zotero.catchPromiseError);
-        return false;
-    }, this);
-    
-    dialogEl.find(".deleteButton").on('click', deleteFunction);
-    Zotero.ui.dialog(dialogEl, {});
-    
-    return false;
-};
-
-
-
-Zotero.ui.widgets.createItemDialog = {};
-
-Zotero.ui.widgets.createItemDialog.init = function(el){
-    Z.debug("createItemDialog widget init", 3);
-    var library = Zotero.ui.getAssociatedLibrary(el);
-    
-    library.listen("newItem", Zotero.ui.widgets.createItemDialog.show, {widgetEl: el});
-};
-
-Zotero.ui.widgets.createItemDialog.show = function(evt){
-    Z.debug("createItemDialog.show", 3);
-    
-    var triggeringEl = J(evt.triggeringElement);
-    var library = Zotero.ui.getAssociatedLibrary(triggeringEl);
-    var widgetEl = J(evt.data.widgetEl).empty();
-    var itemType = triggeringEl.data('itemtype');
-    var currentCollectionKey = Zotero.state.getUrlVar('collectionKey');
-    
-    widgetEl.html( J("#createitemdialogTemplate").render({}) );
-    var dialogEl = widgetEl.find(".create-item-dialog");
-    
-    var createFunction = function(){
-        var item = new Zotero.Item();
-        item.initEmpty(itemType).then(function(){
-            item.associateWithLibrary(library);
-            var title = dialogEl.find("input.new-item-title-input").val() || "Untitled";
-            item.set('title', title);
-            if(currentCollectionKey){
-                item.addToCollection(currentCollectionKey);
-            }
-            return Zotero.ui.saveItem(item);
-        }).then(function(responses){
-            var itemKey = item.get('key');
-            Zotero.state.setUrlVar('itemKey', itemKey);
-            Zotero.state.pushState();
-            Zotero.ui.closeDialog(widgetEl.find(".create-item-dialog"));
-        }).catch(function(error){
-            Zotero.error(error);
-            Zotero.ui.jsNotificationMessage("There was an error creating the item.", "error");
-            Zotero.ui.closeDialog(widgetEl.find(".create-item-dialog"));
-        });
-    };
-    
-    dialogEl.find(".createButton").on('click', createFunction);
-    Zotero.ui.dialog(dialogEl, {});
-};
-
-
-
-Zotero.ui.widgets.exportItemsDialog = {};
-
-Zotero.ui.widgets.exportItemsDialog.init = function(el){
-    Z.debug("exportItemDialog widget init", 3);
-    var library = Zotero.ui.getAssociatedLibrary(el);
-    
-    library.listen("exportItemsDialog", Zotero.ui.widgets.exportItemsDialog.show, {widgetEl: el});
-    library.listen("displayedItemsChanged", Zotero.ui.widgets.exportItemsDialog.updateExportLinks, {widgetEl: el});
-    
-    Zotero.ui.widgets.exportItemsDialog.updateExportLinks({data:{widgetEl: el}});
-};
-
-Zotero.ui.widgets.exportItemsDialog.show = function(evt){
-    Z.debug("exportitemdialog.show", 3);
-    var triggeringEl = J(evt.triggeringElement);
-    var library = Zotero.ui.getAssociatedLibrary(triggeringEl);
-    var widgetEl = J(evt.data.widgetEl).empty();
-    widgetEl.html( J("#exportitemsdialogTemplate").render({}) );
-    var dialogEl = widgetEl.find(".export-items-dialog");
-    
-    dialogEl.find(".modal-body").empty().append(J(".export-list").contents().clone() );
-    
-    //get library and build dialog
-    Zotero.ui.dialog(dialogEl, {});
-    
-    return false;
-};
-
-Zotero.ui.widgets.exportItemsDialog.updateExportLinks = function(evt){
-    Z.debug('exportItemsDialog.updateExportLinks', 3);
-    //get list of export urls and link them
-    var widgetEl = J(evt.data['widgetEl']);
-    var library = Zotero.ui.getAssociatedLibrary(widgetEl);
-    
-    var urlconfig = Zotero.ui.getItemsConfig(library);
-    
-    var exportUrls = Zotero.url.exportUrls(urlconfig);
-    J(".export-list").empty().append( J("#exportformatsTemplate").render({exportUrls:exportUrls, exportFormatsMap: Zotero.config.exportFormatsMap}) );
-    //hide export list until requested
-    J(".export-list").hide();
-};
-
 
 Zotero.ui.widgets.feedlink = {};
 
@@ -9549,1011 +8728,6 @@ Zotero.ui.widgets.inviteToGroup.displayInviteForm = function(el, groups){
 };
 
 
-Zotero.ui.widgets.item = {};
-//TODO: trigger showChildren with an extra itemID filter so quick clicks back and forth
-//between items don't overwrite with the wrong children?
-Zotero.ui.widgets.item.init = function(el){
-    var library = Zotero.ui.getAssociatedLibrary(el);
-    
-    library.listen("displayedItemChanged modeChanged", Zotero.ui.widgets.item.loadItem, {widgetEl: el});
-    library.listen("itemTypeChanged", Zotero.ui.widgets.item.itemTypeChanged, {widgetEl:el});
-    library.listen("uploadSuccessful", Zotero.ui.widgets.item.refreshChildren, {widgetEl:el});
-    
-    library.listen("addTag", Zotero.ui.widgets.item.addTag, {widgetEl:el});
-    library.listen("removeTag", Zotero.ui.widgets.item.removeTag, {widgetEl:el});
-    
-    library.listen("addCreator", Zotero.ui.widgets.item.addCreator, {widgetEl:el});
-    library.listen("removeCreator", Zotero.ui.widgets.item.removeCreator, {widgetEl:el});
-    
-    library.listen("switchCreatorFields", Zotero.ui.widgets.item.switchCreatorFields, {widgetEl:el});
-    
-    library.listen("addNote", Zotero.ui.widgets.item.addNote, {widgetEl:el});
-    library.listen("tagsChanged", Zotero.ui.widgets.item.updateTypeahead, {widgetEl:el});
-
-    library.listen("showChildren", Zotero.ui.widgets.item.refreshChildren, {widgetEl:el});
-    
-    
-    library.listen("edit-item-field edit-creator-field", Zotero.ui.widgets.item.clickToEdit, {widgetEl:el});
-    library.listen("edit-item-tag", Zotero.ui.widgets.item.clickToEdit, {widgetEl:el});
-    
-    //watch buttons on item field from widget DOM element
-    var container = J(el);
-    
-    Zotero.state.bindTagLinks(container);
-    Zotero.state.bindItemLinks(container);
-    
-    //add a new tag when user presses enter in add-tag-input
-    container.on('keydown', "input#add-tag-input", function(e){
-        Z.debug("add-tag-input keydown");
-        e.stopImmediatePropagation();
-        if (e.keyCode === Zotero.ui.keyCode.ENTER){
-            var input = J(this);
-            var itemKey = input.data('itemkey');
-            var item = library.items.getItem(itemKey);
-            var newTagString = input.val();
-            var itemTags = item.get('tags');
-            itemTags.push({tag:newTagString});
-            Zotero.ui.saveItem(item);
-            container.find("div.item-tags-list").append(J("#taglistitemTemplate").render({tag:newTagString},
-            {
-                item:item,
-                key: "tag",
-                value: newTagString,
-                itemKey: itemKey,
-                libraryString: library.libraryString,
-                tagIndex: (itemTags.length - 1),
-            }));
-            container.find('span.tag-count').html(itemTags.length);
-            input.val('');
-            Zotero.eventful.initTriggers(container);
-        }
-    });
-    
-    //blur field when user presses enter in item field input to trigger save
-    container.on('keydown', ".item-field-control", function(e){
-        e.stopImmediatePropagation();
-        if (e.keyCode === Zotero.ui.keyCode.ENTER){
-            J(this).blur();
-        }
-    });
-    
-    container.on('blur', '.item-field-control', function(e){
-        Z.debug("blurred");
-        var input = J(this);
-        var itemKey = input.data('itemkey');
-        var item = library.items.getItem(itemKey);
-        var updatedField = input.attr('name');
-        var updatedValue = input.val();
-        var creatorIndex = input.data('creatorindex');
-        var tagIndex = input.data('tagindex');
-        Z.debug(updatedField);
-        Z.debug(updatedValue);
-        var templateData = {
-            item:item,
-            key: updatedField,
-            value: updatedValue,
-            itemKey: itemKey,
-            libraryString: library.libraryString,
-            creatorIndex: creatorIndex,
-            tagIndex: tagIndex,
-        };
-
-        if(['name', 'firstName', 'lastName', 'creatorType'].indexOf(updatedField) != -1){
-            //creator field
-            input.replaceWith(J("#datafieldspanTemplate").render(templateData));
-            var row = J("tr.creator-row[data-creatorindex='" + creatorIndex + "']");
-            var updatedCreator = Zotero.ui.widgets.item.creatorFromRow(row);
-            Zotero.ui.widgets.item.updateItemCreatorField(library, itemKey, updatedCreator, creatorIndex);
-        } else if(updatedField == 'tag'){
-            var tags = item.get('tags');
-            if(tags[tagIndex]){
-                tags[tagIndex].tag = updatedValue;
-            } else {
-                tags[tagIndex] = {tag:updatedValue};
-            }
-            
-            Zotero.ui.saveItem(item);
-            input.typeahead('destroy');
-            input.replaceWith(J("#datafieldspanTemplate").render(templateData));
-        }
-        else {
-            Zotero.ui.widgets.item.updateItemField(library, itemKey, updatedField, updatedValue);
-            input.replaceWith(J("#datafieldspanTemplate").render(templateData));
-        }
-
-        Zotero.eventful.initTriggers(container);
-    });
-
-    library.trigger("displayedItemChanged");
-};
-
-Zotero.ui.widgets.item.loadItem = function(event){
-    Z.debug('Zotero eventful loadItem', 3);
-    var widgetEl = J(event.data.widgetEl);
-    var itemInfoPanel = widgetEl.find('#item-info-panel');
-    var triggeringEl = J(event.triggeringElement);
-    var loadingPromise;
-    
-    //clean up RTEs before we end up removing their dom elements out from under them
-    Zotero.ui.cleanUpRte(widgetEl);
-    
-    var library = Zotero.ui.getAssociatedLibrary(widgetEl);
-    //clear contents and show spinner while loading
-    itemInfoPanel.empty();
-    Zotero.ui.showSpinner(itemInfoPanel);
-    
-    //get the key of the item we need to display, or display library stats
-    var itemKey = Zotero.state.getUrlVar('itemKey');
-    if(!itemKey){
-        Z.debug("No itemKey - " + itemKey, 3);
-        itemInfoPanel.empty();
-        Zotero.ui.widgets.item.displayStats(library, widgetEl);
-        return Promise.reject(new Error("No itemkey - " + itemKey));
-    }
-    
-    //if we are showing an item, load it from local library of API
-    //then display it
-    var loadedItem = library.items.getItem(itemKey);
-    if(loadedItem){
-        Z.debug("have item locally, loading details into ui", 3);
-        loadingPromise = Promise.resolve(loadedItem);
-    }
-    else{
-        Z.debug("must fetch item from server", 3);
-        var config = {
-            'target':'item',
-            'libraryType':library.type,
-            'libraryID':library.libraryID,
-            'itemKey':itemKey
-        };
-        loadingPromise = library.loadItem(itemKey);
-    }
-    loadingPromise.then(function(item){
-        loadedItem = item;
-    }).then(function(){
-        return loadedItem.getCreatorTypes(loadedItem.get('itemType'));
-    }).then(function(creatorTypes){
-        itemInfoPanel.empty();
-        Zotero.ui.widgets.item.loadItemDetail(loadedItem, widgetEl);
-        library.trigger('showChildren');
-        Zotero.eventful.initTriggers(widgetEl);
-    });
-    loadingPromise.catch(function(err){
-        Z.error("loadItem promise failed");
-        Z.error(err);
-    }).then(function(){
-        widgetEl.removeData('loadingPromise');
-    }).catch(Zotero.catchPromiseError);
-    
-    widgetEl.data('loadingPromise', loadingPromise);
-    return loadingPromise;
-};
-
-/**
- * Add creator field to item edit form
- * @param {DOM Button} button Add creator button clicked
- */
-Zotero.ui.widgets.item.addCreator = function(e){
-    Z.debug("widgets.item.addCreator", 3);
-    var triggeringElement = J(e.triggeringElement);
-    var widgetEl = J(e.data.widgetEl);
-    var library = Zotero.ui.getAssociatedLibrary(e.data.widgetEl);
-    var itemKey = triggeringElement.data('itemkey');
-    var item = library.items.getItem(itemKey);
-    var newCreatorIndex = item.get('creators').length;
-    
-    widgetEl.find("tr.creator-row").last().after(J("#creatorrowTemplate").render({}, {
-        creatorIndex: newCreatorIndex,
-        libraryString: library.libraryString,
-        item: item,
-    }));
-
-    Zotero.eventful.initTriggers(widgetEl);
-};
-
-/**
- * Remove a creator from an edit item form
- * @param  {Dom Button} button Remove creator button that was clicked
- * @return {undefined}
- */
-Zotero.ui.widgets.item.removeCreator = function(e){
-    Z.debug("widgets.item.removeCreator", 3);
-    var triggeringElement = J(e.triggeringElement);
-    var widgetEl = J(e.data.widgetEl);
-    var library = Zotero.ui.getAssociatedLibrary(e.data.widgetEl);
-    var itemKey = triggeringElement.data('itemkey');
-    var item = library.items.getItem(itemKey);
-    var creatorIndex = triggeringElement.data('creatorindex');
-    
-    //empty specified creator from item and save
-    var creators = item.get('creators');
-    creators.splice(creatorIndex, 1);
-    Zotero.ui.saveItem(item);
-
-    //re-render creator rows so they are re-indexed
-    var oldRows = widgetEl.find("tr.creator-row");
-    var oldRowCount = oldRows.length;
-    for(var i = 0; i < creators.length; i++){
-        widgetEl.find("tr.creator-row").last().after(J("#creatorrowTemplate").render(creators[i], {
-            creatorIndex: i,
-            libraryString: library.libraryString,
-            item: item,
-        }));
-    }
-
-    oldRows.remove();
-
-    Zotero.eventful.initTriggers(widgetEl);
-};
-
-/**
- * Add a note field to an editItem Form
- * @param {Dom Button} button Add note button that was clicked
- */
-Zotero.ui.widgets.item.addNote = function(e){
-    Z.debug("Zotero.ui.addNote", 3);
-    var button = J(e.currentTarget);
-    var container = button.closest("form");
-    //var itemKey = J(button).data('itemkey');
-    var notenum = 0;
-    var lastNoteIndex = container.find("textarea.note-text:last").data('noteindex');
-    if(lastNoteIndex){
-        notenum = parseInt(lastNoteIndex, 10);
-    }
-    
-    var newindex = notenum + 1;
-    var newNoteID = "note_" + newindex;
-    var jel;
-    jel = container.find("td.notes button.add-note-button").before('<textarea cols="40" rows="24" name="' + newNoteID + '" id="' + newNoteID + '" class="rte default note-text" data-noteindex="' + newNoteID + '"></textarea>');
-    Zotero.ui.init.rte('default', true, newNoteID);
-};
-
-/**
- * Add a tag field to an edit item form
- * @param {bool} focus Whether to focus the newly added tag field
- */
-Zotero.ui.widgets.item.addTag = function(e, focus) {
-    Z.debug("Zotero.ui.widgets.item.addTag", 3);
-    var triggeringElement = J(e.triggeringElement);
-    var widgetEl = J(e.data.widgetEl);
-    widgetEl.find(".add-tag-form").show().find(".add-tag-input").focus();
-    /*
-    if(typeof focus == 'undefined'){
-        focus = true;
-    }
-    var widgetEl = Zotero.ui.parentWidgetEl(e);
-    var jel = widgetEl.find("td.tags");
-    jel.append( J('#itemtagTemplate').render({'library':library}) );
-    
-    var library = Zotero.ui.getAssociatedLibrary(widgetEl);
-    if(library){
-        Zotero.ui.widgets.item.addTagTypeahead(library, widgetEl);
-
-        //widgetEl.find("input.taginput").not('.tt-query').typeahead({name: 'tags', local: library.tags.plainList});
-    }
-    
-    if(focus){
-        J("input.taginput").last().focus();
-    }
-    */
-};
-
-/**
- * Remove a tag field from an edit item form
- * @param  {DOM Element} el Tag field to remove
- * @return {undefined}
- */
-Zotero.ui.widgets.item.removeTag = function(e) {
-    Z.debug("Zotero.ui.removeTag", 3);
-    var el = e.triggeringElement;
-    var widgetEl = Zotero.ui.parentWidgetEl(el);
-    var library = Zotero.ui.getAssociatedLibrary(widgetEl);
-    var tagRow = J(el).closest('.item-tag-row');
-    var tagSpan = tagRow.find('.editable-item-tag');
-    var itemKey = tagSpan.data('itemkey');
-    var item = library.items.getItem(itemKey);
-    var removeTagString = tagSpan.data('value');
-    //remove tag from item tags array
-    var newTags = [];
-    var oldTags = item.get('tags');
-    J.each(oldTags, function(ind, val){
-        if(val.tag != removeTagString){
-            Z.debug("leaving tag alone:" + val.tag);
-            newTags.push(val);
-        }
-    });
-
-    item.set('tags', newTags);
-    Zotero.ui.saveItem(item);
-    tagRow.remove();
-    //check to make sure there is another tag field available to use
-    //if not add an empty one
-    if(widgetEl.find("div.edit-tag-div").length === 1){
-        Zotero.ui.widgets.item.addTag(e);
-    }
-};
-
-Zotero.ui.widgets.item.addTagTypeahead = function(library, widgetEl){
-    Z.debug('adding typeahead', 3);
-    var typeaheadSource = library.tags.plainList;
-    if(!typeaheadSource){
-        typeaheadSource = [];
-    }
-    var ttEngine = new Bloodhound({
-        datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
-        queryTokenizer: Bloodhound.tokenizers.whitespace,
-        local: J.map(typeaheadSource, function(typeaheadSource) { return { value: typeaheadSource }; })
-    });
-    ttEngine.initialize();
-    widgetEl.find("input.taginput").typeahead('destroy');
-    widgetEl.find("input.taginput").typeahead(
-        {
-            hint: true,
-            highlight: true,
-            minLength: 1
-        },
-        {
-            name: 'tags',
-            displayKey: 'value',
-            source: ttEngine.ttAdapter()
-            //local: library.tags.plainList
-        }
-    );
-};
-
-Zotero.ui.widgets.item.addTagTypeaheadToInput = function(library, element){
-    Z.debug('adding typeahead', 3);
-    var typeaheadSource = library.tags.plainList;
-    if(!typeaheadSource){
-        typeaheadSource = [];
-    }
-    var ttEngine = new Bloodhound({
-        datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
-        queryTokenizer: Bloodhound.tokenizers.whitespace,
-        local: J.map(typeaheadSource, function(typeaheadSource) { return { value: typeaheadSource }; })
-    });
-    ttEngine.initialize();
-    J(element).typeahead('destroy');
-    J(element).typeahead(
-        {
-            hint: true,
-            highlight: true,
-            minLength: 1
-        },
-        {
-            name: 'tags',
-            displayKey: 'value',
-            source: ttEngine.ttAdapter()
-            //local: library.tags.plainList
-        }
-    );
-};
-
-/**
- * Render and display full item details into an element
- * @param  {Zotero_Item} item Zotero Item to display
- * @param  {Dom Element} el   Container
- * @return {undefined}
- */
-Zotero.ui.widgets.item.loadItemDetail = function(item, el){
-    Z.debug("Zotero.ui.widgets.item.loadItemDetail", 3);
-    var jel = J(el);
-    itemInfoPanel = jel.find("#item-info-panel");
-    itemInfoPanel.empty();
-    var parentUrl = false;
-    var library = item.owningLibrary;
-    if(item.apiObj.data.parentItem){
-        parentUrl = library.websiteUrl({itemKey:item.apiObj.data.parentItem});
-    }
-    if(item.apiObj.data.itemType == "note"){
-        Z.debug("note item", 3);
-        jel.empty().append( J('#itemnotedetailsTemplate').render({item:item, parentUrl:parentUrl, libraryString:library.libraryString}) );
-    }
-    else{
-        Z.debug("non-note item", 3);
-        jel.empty().append( J('#itemdetailsTemplate').render({item:item, parentUrl:parentUrl, libraryString:library.libraryString}) );
-    }
-
-    var rteType = "default"
-    if(!Zotero.config.librarySettings.allowEdit){
-        rteType = "readonly"
-    }
-    Zotero.ui.init.rte(rteType);
-    
-    try{
-        //trigger event for Zotero translator detection
-        var ev = document.createEvent('HTMLEvents');
-        ev.initEvent('ZoteroItemUpdated', true, true);
-        document.dispatchEvent(ev);
-    }
-    catch(e){
-        Zotero.error("Error triggering ZoteroItemUpdated event");
-    }
-    jel.data('itemkey', item.apiObj.key);
-};
-
-//get stats from library.items and display them in the item info pane when we
-//don't have a selected item to show
-Zotero.ui.widgets.item.displayStats = function(library, widgetEl) {
-    Z.debug("Zotero.ui.widgets.item.displayStats", 3);
-    var totalResults = library.items.totalResults;
-    if(totalResults){
-        J(widgetEl).html("<p class='item-count'>" + totalResults + " items in this view</p>");
-    }
-};
-
-
-/**
- * Get an item's children and display summary info
- * @param  {DOM Element} el      element to insert into
- * @param  {string} itemKey key of parent item
- * @return {undefined}
- */
-Zotero.ui.widgets.item.refreshChildren = function(e){
-    Z.debug('Zotero.ui.widgets.item.refreshChildren', 3);
-    var widgetEl = J(e.data.widgetEl);
-    var childrenPanel = widgetEl.find("#item-children-panel");
-    var library = Zotero.ui.getAssociatedLibrary(widgetEl);
-    var itemKey = Zotero.state.getUrlVar('itemKey');
-    if(!itemKey){
-        Z.debug("No itemKey - " + itemKey, 3);
-        widgetEl.empty();
-        //TODO: display information about library like client?
-        return Promise.reject(new Error("No itemkey - " + itemKey));
-    }
-    
-    var item = library.items.getItem(itemKey);
-    
-    Zotero.ui.showSpinner(childrenPanel);
-    var p = item.getChildren(library)
-    .then(function(childItems){
-        var container = childrenPanel;
-        container.html( J('#childitemsTemplate').render({
-            childItems:childItems,
-            libraryString: library.libraryString
-        }) );
-        Zotero.eventful.initTriggers(container);
-        Zotero.state.bindItemLinks(container);
-    })
-    .catch(Zotero.catchPromiseError);
-    return p;
-};
-
-
-Zotero.ui.widgets.item.itemFormKeydown = function(e){
-    if ( e.keyCode === Zotero.ui.keyCode.ENTER ){
-        Z.debug(e);
-        e.preventDefault();
-        var triggeringEl = J(this);
-        if(triggeringEl.hasClass('taginput')){
-            var library = Zotero.ui.getAssociatedLibrary(triggeringEl);
-            if(triggeringEl.hasClass('tt-query')){
-                var val = triggeringEl.val();
-                triggeringEl.typeahead('setQuery', val);
-                triggeringEl.trigger('blur');
-            }
-            if(library){
-                library.trigger("addTag");
-            }
-            return;
-        }
-        var nextEligibleSiblings = J(this).nextAll("input, button, textarea, select");
-        if(nextEligibleSiblings.length){
-            nextEligibleSiblings.first().focus();
-        }
-        else{
-            J(this).closest("tr").nextAll().find("input, button, textarea, select").first().focus();
-        }
-    }
-};
-
-Zotero.ui.widgets.item.updateTypeahead = function(event){
-    Z.debug("updateTypeahead", 3);
-    var widgetEl = J(event.data.widgetEl);
-    var triggeringEl = J(event.triggeringElement);
-    var library = Zotero.ui.getAssociatedLibrary(widgetEl);
-    if(library){
-        Zotero.ui.widgets.item.addTagTypeahead(library, widgetEl);
-    }
-};
-
-
-
-//switch an item field to a form input when clicked to edit (and is editable by the user)
-Zotero.ui.widgets.item.clickToEdit = function(e){
-    Z.debug("widgets.item.clickToEdit", 3);
-    if(!Zotero.config.librarySettings.allowEdit) {
-        return false;
-    }
-    var triggeringElement = J(e.triggeringElement);
-    var widgetEl = J(e.data.widgetEl);
-    var library = Zotero.ui.getAssociatedLibrary(e.data.widgetEl);
-    var itemField = triggeringElement.data('itemfield');
-    var itemKey = triggeringElement.data('itemkey');
-    var creatorIndex = triggeringElement.data('creatorindex');
-    var tagIndex = triggeringElement.data('tagindex');
-    var item = library.items.getItem(itemKey);
-    var creators = item.get('creators');
-    var fieldValue = "";
-    if(creatorIndex !== undefined && creators[creatorIndex]){
-        fieldValue = creators[creatorIndex][itemField];
-    } else if(itemField == 'tag'){
-        fieldValue = triggeringElement.data('value');
-    } else {
-        fieldValue = item.get(itemField);
-    }
-
-    triggeringElement.replaceWith(J("#datafieldTemplate").render({
-        creatorTypes: item.creatorTypes[item.get('itemType')],
-        key: itemField,
-        value: fieldValue,
-        itemKey: itemKey,
-        creatorIndex: creatorIndex,
-        tagIndex: tagIndex,
-        library:library,
-        item:item,
-    }));
-
-    var createdElement = widgetEl.find("[name='" + itemField + "']");
-    if(itemField == 'tag'){
-        Zotero.ui.widgets.item.addTagTypeaheadToInput(library, createdElement);
-    }
-    createdElement.focus();
-};
-
-Zotero.ui.widgets.item.switchCreatorFields = function(e){
-    Z.debug("widgets.item.switchCreatorFields", 3);
-    var triggeringElement = J(e.triggeringElement);
-    var creatorIndex = triggeringElement.data('creatorindex');
-    var rowSelector = "tr.creator-row[data-creatorindex='" + creatorIndex + "']";
-    Z.debug(rowSelector);
-    var row = J(rowSelector);
-    var creator = Zotero.ui.widgets.item.creatorFromRow(row);
-    
-    var widgetEl = J(e.data.widgetEl);
-    var library = Zotero.ui.getAssociatedLibrary(e.data.widgetEl);
-    var itemField = triggeringElement.data('itemfield');
-    var itemKey = triggeringElement.data('itemkey');
-    var item = library.items.getItem(itemKey);
-    var updatedField;
-    var updatedValue;
-
-    if(creator.name !== undefined){
-        var split = creator.name.split(' ');
-        if(split.length > 1){
-            creator.lastName = split.splice(-1, 1)[0];
-            creator.firstName = split.join(' ');
-        }
-        else{
-            creator.lastName = creator.name;
-            creator.firstName = '';
-        }
-        delete creator.name;
-    } else {
-        if(creator.firstName === "" && creator.lastName === "") {
-            creator.name = "";
-        } else {
-            creator.name = creator.firstName + ' ' + creator.lastName;
-        }
-        delete creator.firstName;
-        delete creator.lastName;
-    }
-
-    var creators = item.get('creators');
-    creators[creatorIndex] = creator;
-    Zotero.ui.saveItem(item);
-
-    row.replaceWith(J("#creatorrowTemplate").render(creator, {
-        creatorIndex: creatorIndex,
-        libraryString: library.libraryString,
-        item: item,
-    }));
-    Zotero.eventful.initTriggers(widgetEl);
-};
-
-/**
- * save an item after a field that was being edited has lost focus
- * @param  {event} e DOM Event triggering callback
- * @return {boolean}
- */
-Zotero.ui.widgets.item.updateItemField = function(library, itemKey, updatedField, updatedValue){
-    Z.debug("widgets.item.updateItemField", 3);
-    Z.debug("itemKey: " + itemKey, 3);
-    if(!itemKey){
-        throw new Error("Expected widget element to have itemKey data");
-    }
-    
-    var item = library.items.getItem(itemKey);
-    if(item.get(updatedField) != updatedValue){
-        item.set(updatedField, updatedValue);
-        Zotero.ui.saveItem(item);
-    }
-};
-
-/**
- * save an item after a creator field that was being edited has lost focus
- * @param  {event} e DOM Event triggering callback
- * @return {boolean}
- */
-Zotero.ui.widgets.item.updateItemCreatorField = function(library, itemKey, updatedCreator, creatorIndex){
-    Z.debug("widgets.item.updateCreatorField", 3);
-    Z.debug("itemKey: " + itemKey, 3);
-    if(!itemKey){
-        throw new Error("Expected widget element to have itemKey data");
-    }
-    
-    var item = library.items.getItem(itemKey);
-    var creators = item.get('creators');
-    if(creators[creatorIndex]){
-        creators[creatorIndex] = updatedCreator;
-        Zotero.ui.saveItem(item);
-    } else {
-        //get full creator information from row of data, and add creator at index
-        var rowSelector = "tr.creator-row[data-creatorindex='" + creatorIndex + "']";
-        var row = J(rowSelector);
-        var creator = Zotero.ui.widgets.item.creatorFromRow(row);
-        creators[creatorIndex] = creator;
-        Zotero.ui.saveItem(item);
-    }
-};
-
-Zotero.ui.widgets.item.creatorFromRow = function(rowElement) {
-    Z.debug("widgets.item.creatorFromRow", 3);
-    var row = J(rowElement);
-    var creatorType = row.find("span[data-itemfield='creatorType']").data('value');
-    var name = row.find("span[data-itemfield='name']").data('value') || "";
-    var firstName = row.find("span[data-itemfield='firstName']").data('value') || "";
-    var lastName = row.find("span[data-itemfield='lastName']").data('value') || "";
-    
-    var creator = {
-        creatorType: creatorType,
-        name: name,
-        firstName: firstName,
-        lastName: lastName,
-    };
-    
-    if(creator['name'] !== ""){
-        delete creator.firstName;
-        delete creator.lastName;
-    } else {
-        delete creator['name'];
-    }
-    
-    return creator;
-};
-
-
-Zotero.ui.widgets.items = {};
-
-Zotero.ui.widgets.items.init = function(el){
-    Z.debug("widgets.items.init");
-    var library = Zotero.ui.getAssociatedLibrary(el);
-    
-    library.listen("displayedItemsChanged", Zotero.ui.widgets.items.loadItems, {widgetEl: el});
-    library.listen("displayedItemChanged", Zotero.ui.widgets.items.selectDisplayed, {widgetEl: el});
-    //library.listen("selectedItemsChanged", Zotero.ui.widgets.items.updateSelected, {widgetEl: el});
-    
-    library.listen("loadMoreItems", Zotero.ui.widgets.items.loadMoreItems, {widgetEl: el});
-    library.listen("changeItemSorting", Zotero.ui.callbacks.resortItems, {widgetEl: el});
-
-    
-    //set up sorting on header clicks
-    var container = J(el);
-    //container.on('click', ".field-table-header", Zotero.ui.callbacks.resortItems);
-    
-    Zotero.state.bindItemLinks(container);
-    
-    //check/uncheck all boxes in items table when master checkbox is toggled
-    container.on('change', ".itemlist-editmode-checkbox.all-checkbox", function(e){
-        var checkbox = J(this);
-        J(".itemlist-editmode-checkbox").prop('checked', checkbox.prop('checked'));
-        var selectedItemKeys = [];
-        J("input.itemKey-checkbox:checked").each(function(index, el){
-            selectedItemKeys.push(J(el).data('itemkey'));
-        });
-        Zotero.state.selectedItemKeys = selectedItemKeys;
-        library.trigger("selectedItemsChanged", {selectedItemKeys: selectedItemKeys});
-
-        Zotero.ui.widgets.items.highlightSelected();
-        //if deselected all, reselect displayed item row
-        if(selectedItemKeys.length === 0){
-            library.trigger('displayedItemChanged');
-        }
-    });
-    
-    //init itemkey-checkbox to enable/disable buttons that require something being selected
-    container.on('change', "input.itemKey-checkbox", function(e){
-        var selectedItemKeys = [];
-        J("input.itemKey-checkbox:checked").each(function(index, el){
-            selectedItemKeys.push(J(el).data('itemkey'));
-        });
-        Zotero.state.selectedItemKeys = selectedItemKeys;
-        library.trigger("selectedItemsChanged", {selectedItemKeys: selectedItemKeys});
-
-        Zotero.ui.widgets.items.highlightSelected();
-    });
-   
-    //monitor scroll position of items pane for infinite scrolling
-    container.closest("#items-panel").on('scroll', function(e){
-        if(Zotero.ui.widgets.items.scrollAtBottom(J(this))){
-            library.trigger("loadMoreItems");
-        }
-    });
-
-    library.trigger("displayedItemsChanged");
-};
-
-//select and highlight in the itemlist the item  that is displayed
-//in the item details widget
-Zotero.ui.widgets.items.selectDisplayed = function(event){
-    Z.debug('widgets.items.selectDisplayed', 3);
-    var widgetEl = J(event.data.widgetEl);
-    var library = Zotero.ui.getAssociatedLibrary(widgetEl);
-    var selectedItemKey = Zotero.state.getUrlVar('itemKey');
-    Zotero.state.selectedItemKeys = [selectedItemKey];
-    var checkboxName = 'selectitem-' + selectedItemKey;
-    
-    //uncheck all checkboxes, then check the one that is newly displayed
-    J(".itemlist-editmode-checkbox").prop('checked', false);
-    J('[name="' + checkboxName + '"]').prop('checked', true);
-
-    Zotero.ui.widgets.items.highlightSelected();
-};
-
-//highlight the rows that are currently selected
-Zotero.ui.widgets.items.highlightSelected = function(){
-    //highlight only checked rows
-    J(".itemlist-editmode-checkbox").closest("tr").removeClass("highlighed");
-    J(".itemlist-editmode-checkbox:checked").closest("tr").addClass("highlighed");
-};
-
-Zotero.ui.widgets.items.loadItems = function(event){
-    Z.debug('Zotero eventful loadItems', 3);
-    var widgetEl = J(event.data.widgetEl);
-    var library = Zotero.ui.getAssociatedLibrary(widgetEl);
-    var newConfig = Zotero.ui.getItemsConfig(library);
-    
-    //clear contents and show spinner while loading
-    Zotero.ui.showSpinner(widgetEl, 'horizontal');
-    
-    var p = library.loadItems(newConfig)
-    .then(function(response){
-        widgetEl.empty();
-        if(!response.loadedItems){
-            Zotero.error("expected loadedItems on response not present");
-            throw("Expected response to have loadedItems");
-        }
-        library.items.totalResults = response.totalResults;
-        Zotero.ui.widgets.items.displayItems(widgetEl, newConfig, response.loadedItems);
-    }).catch(function(response){
-        Z.error(response);
-        widgetEl.html("<p>There was an error loading your items. Please try again in a few minutes.</p>");
-        //var elementMessage = Zotero.ui.ajaxErrorMessage(response.jqxhr);
-    });
-    return p;
-};
-
-//load more items when the user has scrolled to the bottom of the current list
-Zotero.ui.widgets.items.loadMoreItems = function(event){
-    Z.debug('loadMoreItems', 3);
-    var widgetEl = J(event.data.widgetEl);
-    //bail out if we're already fetching more items
-    if(widgetEl.data('moreloading')){
-        return;
-    }
-    //bail out if we're done loading all items
-    if(widgetEl.data('all-items-loaded')){
-        return;
-    }
-    widgetEl.data('moreloading', true);
-    
-    var library = Zotero.ui.getAssociatedLibrary(widgetEl);
-    var newConfig = Zotero.ui.getItemsConfig(library);
-    var newStart = widgetEl.find("table.wide-items-table tbody>tr").length;
-    Z.debug("newStart:" + newStart);
-    newConfig.start = newStart;
-
-    //show spinner before making request
-    Zotero.ui.showSpinner(widgetEl.find('.items-spinner').show(), 'horizontal');
-    
-    var p = library.loadItems(newConfig)
-    .then(function(response){
-        if(!response.loadedItems){
-            Zotero.error("expected loadedItems on response not present");
-            throw("Expected response to have loadedItems");
-        }
-        Zotero.ui.widgets.items.displayMoreItems(widgetEl, response.loadedItems);
-        widgetEl.removeData('moreloading');
-        widgetEl.find('.items-spinner').hide();
-
-        //see if we're displaying as many items as there are in results
-        var itemsDisplayed = widgetEl.find("table.narrow-items-table tbody tr").length;
-        Z.debug("testing totalResults vs itemsDisplayed: " + response.totalResults, + " " + itemsDisplayed);
-        if(response.totalResults == itemsDisplayed) {
-            widgetEl.data('all-items-loaded', true);
-        }
-    }).catch(function(response){
-        Z.error(response);
-        widgetEl.append("<p>There was an error loading your items. Please try again in a few minutes.</p>");
-        widgetEl.removeData('moreloading');
-        widgetEl.find('.items-spinner').hide();
-    });
-    
-};
-
-Zotero.ui.getItemsConfig = function(library){
-    var effectiveUrlVars = ['tag', 'collectionKey', 'order', 'sort', 'q', 'qmode'];
-    var urlConfigVals = {};
-    J.each(effectiveUrlVars, function(index, value){
-        var t = Zotero.state.getUrlVar(value);
-        if(t){
-            urlConfigVals[value] = t;
-        }
-    });
-    
-    var defaultConfig = {libraryID: library.libraryID,
-                         libraryType: library.libraryType,
-                         target:'items',
-                         targetModifier: 'top',
-                         //itemPage: 1,
-                         limit: library.preferences.getPref('itemsPerPage'),
-                     };
-    
-    var userPreferencesApiArgs = {
-        order: Zotero.preferences.getPref('order'),
-        sort: Zotero.preferences.getPref('sort'),
-        limit: library.preferences.getPref('itemsPerPage'),
-    };
-    
-    //Build config object that should be displayed next and compare to currently displayed
-    var newConfig = J.extend({}, defaultConfig, userPreferencesApiArgs, urlConfigVals);
-    //newConfig.start = parseInt(newConfig.limit, 10) * (parseInt(newConfig.itemPage, 10) - 1);
-    
-    //don't allow ordering by addedBy if user library
-    if( (newConfig.order == "addedBy") && (library.libraryType == 'user') ){
-        newConfig.order = 'title';
-    }
-    
-    if(!newConfig.sort){
-        newConfig.sort = Zotero.config.sortOrdering[newConfig.order];
-    }
-    
-    //don't pass top if we are searching for tags (or query?)
-    if(newConfig.tag || newConfig.q){
-        delete newConfig.targetModifier;
-    }
-    
-    return newConfig;
-};
-
-/**
- * Display the full library items section
- * @param  {Dom Element} el          Container
- * @param  {object} config      items config
- * @param  {array} loadedItems loaded items array
- * @return {undefined}
- */
-Zotero.ui.widgets.items.displayItems = function(el, config, itemsArray) {
-    Z.debug("Zotero.ui.widgets.displayItems", 3);
-    var jel = J(el);
-    var library = Zotero.ui.getAssociatedLibrary(jel);
-    
-    var filledConfig = J.extend({}, Zotero.config.defaultApiArgs, config);
-    var displayFields = library.preferences.getPref('listDisplayedFields');
-    if(library.libraryType != 'group'){
-        displayFields = J.grep(displayFields, function(el, ind){
-            return J.inArray(el, Zotero.Library.prototype.groupOnlyColumns) == (-1);
-        });
-    }
-    
-    var itemsTableData = {displayFields:displayFields,
-                           items:itemsArray,
-                           order: filledConfig['order'],
-                           sort: filledConfig['sort'],
-                           library:library,
-                        };
-
-    jel.append( J('#itemstableTemplate').render(itemsTableData) );
-    
-    //library.trigger('controlPanelContextChange');
-    Zotero.eventful.initTriggers();
-
-    if(J("body").hasClass('lib-body')){
-        Zotero.ui.fixTableHeaders(J("#field-table"));
-    }
-    library.trigger("displayedItemChanged");
-};
-
-Zotero.ui.widgets.items.displayMoreItems = function(el, itemsArray) {
-    Z.debug("Zotero.ui.widgets.displayItems", 3);
-    var jel = J(el);
-    var library = Zotero.ui.getAssociatedLibrary(jel);
-    
-    var displayFields = library.preferences.getPref('listDisplayedFields');
-    if(library.libraryType != 'group'){
-        displayFields = J.grep(displayFields, function(el, ind){
-            return J.inArray(el, Zotero.Library.prototype.groupOnlyColumns) == (-1);
-        });
-    }
-    
-    var itemsTableData = {displayFields:displayFields,
-                           items:itemsArray,
-                           library:library,
-                        };
-
-    var wideTableRows = J('#itemrowsetTemplate').render(itemsTableData);
-    var narrowTableRows = J('#singlecellitemrowsetTemplate').render(itemsTableData);
-    
-    jel.find("table.wide-items-table tbody").append(wideTableRows);
-    jel.find("table.narrow-items-table tbody").append(narrowTableRows);
-    
-    Zotero.eventful.initTriggers();
-    Zotero.ui.fixTableHeaders(J("#field-table"));
-};
-
-Zotero.ui.callbacks.resortItems = function(e){
-    Z.debug(".field-table-header clicked", 3);
-    var widgetEl = J(e.data.widgetEl);
-    var library = Zotero.ui.getAssociatedLibrary(widgetEl);
-    var currentSortField = Zotero.ui.getPrioritizedVariable('order', 'title');
-    var currentSortOrder = Zotero.ui.getPrioritizedVariable('sort', 'asc');
-    var newSortField;
-    var newSortOrder;
-    if(e.newSortField){
-        newSortField = e.newSortField;
-    }
-    else {
-        newSortField = J(e.triggeringElement).data('columnfield');
-    }
-    if(e.newSortOrder){
-        newSortOrder = e.newSortOrder;
-    }
-    else{
-        newSortOrder = Zotero.config.sortOrdering[newSortField];
-    }
-    
-    //only allow ordering by the fields we have
-    if(J.inArray(newSortField, Zotero.Library.prototype.sortableColumns) == (-1)){
-        return false;
-    }
-    
-    //change newSort away from the field default if that was already the current state
-    if((!e.newSortOrder) && currentSortField == newSortField && currentSortOrder == newSortOrder){
-        if(newSortOrder == 'asc'){
-            newSortOrder = 'desc';
-        }
-        else{
-            newSortOrder = 'asc';
-        }
-    }
-    
-    //problem if there was no sort column mapped to the header that got clicked
-    if(!newSortField){
-        Zotero.ui.jsNotificationMessage("no order field mapped to column");
-        return false;
-    }
-    
-    //update the url with the new values
-    Zotero.state.pathVars['order'] = newSortField;
-    Zotero.state.pathVars['sort'] = newSortOrder;
-    Zotero.state.pushState();
-    
-    //set new order as preference and save it to use www prefs
-    library.preferences.setPref('sortField', newSortField);
-    library.preferences.setPref('sortOrder', newSortOrder);
-    library.preferences.setPref('order', newSortField);
-    library.preferences.setPref('sort', newSortOrder);
-    Zotero.preferences.setPref('order', newSortField);
-    Zotero.preferences.setPref('sort', newSortOrder);
-};
-
-Zotero.ui.widgets.items.scrollAtBottom = function(el) {
-    if(J(el).scrollTop() + J(el).innerHeight() >= J(el)[0].scrollHeight){
-      return true;
-   }
-   return false;
-};
-
 Zotero.ui.widgets.recentItems = {};
 
 Zotero.ui.widgets.recentItems.init = function(el){
@@ -10615,50 +8789,6 @@ Zotero.ui.cancelItemEdit = function(e){
     Zotero.state.clearUrlVars(['itemKey', 'collectionKey', 'tag', 'q']);
     Zotero.state.pushState();
 };
-*/
-
-/*Zotero.ui.widgets.itemChildren = {};
-
-Zotero.ui.widgets.itemChildren.init = function(el){
-    Z.debug('itemChildren init', 3);
-    var library = Zotero.ui.getAssociatedLibrary(el);
-    var container = J(el);
-    
-    library.listen("displayedItemChanged uploadSuccessful showChildren", Zotero.ui.widgets.itemChildren.refreshChildren, {widgetEl:el});
-};
-*/
-/**
- * Get an item's children and display summary info
- * @param  {DOM Element} el      element to insert into
- * @param  {string} itemKey key of parent item
- * @return {undefined}
- */
-/*
-Zotero.ui.widgets.itemChildren.refreshChildren = function(e){
-    Z.debug('Zotero.ui.widgets.item.showChildren', 3);
-    var widgetEl = J(e.data.widgetEl);
-    var library = Zotero.ui.getAssociatedLibrary(widgetEl);
-    var itemKey = Zotero.state.getUrlVar('itemKey');
-    if(!itemKey){
-        Z.debug("No itemKey - " + itemKey, 3);
-        widgetEl.empty();
-        //TODO: display information about library like client?
-        return Promise.reject(new Error("No itemkey - " + itemKey));
-    }
-    
-    var item = library.items.getItem(itemKey);
-    
-    Zotero.ui.showSpinner(widgetEl);
-    var p = item.getChildren(library)
-    .then(function(childItems){
-        var container = widgetEl;
-        container.html( J('#childitemsTemplate').render({childItems:childItems}) );
-        Zotero.state.bindItemLinks(container);
-    })
-    .catch(Zotero.catchPromiseError);
-    return p;
-};
-
 */
 
 Zotero.ui.widgets.librarysettingsdialog = {};
@@ -10726,634 +8856,6 @@ Zotero.ui.widgets.librarysettingsdialog.show = function(e){
 
 
 
-Zotero.ui.widgets.newItem = {};
-
-Zotero.ui.widgets.newItem.init = function(el){
-    Z.debug("newItem eventfulwidget init", 3);
-    var library = Zotero.ui.getAssociatedLibrary(el);
-    
-    var widgetEl = J(el);
-    library.listen("newItem", Zotero.ui.widgets.newItem.freshitemcallback, {widgetEl: el});
-    library.listen("itemTypeChanged", Zotero.ui.widgets.newItem.changeItemType, {widgetEl: el});
-    library.listen("createItem", Zotero.ui.widgets.item.saveItemCallback, {widgetEl: el});
-    widgetEl.on('change', 'select.itemType', function(e){
-        library.trigger('itemTypeChanged', {triggeringElement:el});
-    });
-};
-
-Zotero.ui.widgets.newItem.freshitemcallback = function(e){
-    Z.debug('Zotero eventful new item', 3);
-    var widgetEl = e.data.widgetEl;
-    var el = widgetEl;
-    var triggeringEl = J(e.triggeringElement);
-    var itemType = triggeringEl.data("itemtype");
-    
-    var newItem = new Zotero.Item();
-    
-    return newItem.initEmpty(itemType)
-    .then(function(item){
-        Zotero.ui.unassociatedItemForm(widgetEl, item);
-    },
-    function(response){
-        Z.error(response);
-        Zotero.ui.jsNotificationMessage("Error loading item template", 'error');
-        Z.debug(response);
-        Z.debug(response.jqxhr.statusCode);
-    });
-};
-
-Zotero.ui.unassociatedItemForm = function(el, item){
-    Z.debug("Zotero.ui.unassociatedItem", 3);
-    Z.debug(item, 3);
-    var container = J(el);
-    var library = Zotero.ui.getAssociatedLibrary(el);
-    
-    //make alphabetical itemTypes list
-    var itemTypes = [];
-    J.each(Zotero.Item.prototype.typeMap, function(key, val){
-        itemTypes.push(key);
-    });
-    itemTypes.sort();
-    Z.debug(itemTypes);
-    
-    return Zotero.Item.prototype.getCreatorTypes(item.apiObj.data.itemType)
-    .then(function(itemCreatorTypes){
-        container.empty();
-        if(item.apiObj.data.itemType == 'note'){
-            var parentKey = Zotero.state.getUrlVar('parentKey');
-            if(parentKey){
-                item.parentKey = parentKey;
-            }
-            container.append( J('#editnoteformTemplate').render({item:item,
-                                         itemKey:item.get('key')
-                                         }) );
-            
-            Zotero.ui.init.rte('default');
-        }
-        else {
-            container.append(J('#itemformTemplate').render( {item:item,
-                                        library: library,
-                                        itemKey:item.get('key'),
-                                        creatorTypes:itemCreatorTypes,
-                                        itemTypes: itemTypes,
-                                        citable:true,
-                                        saveable:false
-                                        }
-                                        ) );
-            if(item.apiObj.tags.length === 0){
-                Zotero.ui.widgets.item.addTag(container, false);
-            }
-            //Zotero.ui.init.tagButtons();
-        }
-        
-        container.find(".directciteitembutton").on('click', function(e){
-            Zotero.ui.updateItemFromForm(item, container.find("form"));
-            library.trigger('citeItems', {"zoteroItems": [item]});
-        } );
-        /*
-        container.on("click", "button.switch-two-field-creator-link", Zotero.ui.callbacks.switchTwoFieldCreators);
-        container.on("click", "button.switch-single-field-creator-link", Zotero.ui.callbacks.switchSingleFieldCreator);
-        container.on("click", "button.remove-creator-link", Zotero.ui.removeCreator);
-        container.on("click", "button.add-creator-link", Zotero.ui.addCreator);
-        */
-        
-        Z.debug("Setting newitem data on container");
-        Z.debug(item);
-        Z.debug(container);
-        container.data('item', item);
-        
-        Zotero.eventful.initTriggers(container);
-    }).catch(Zotero.catchPromiseError);
-    
-};
-
-Zotero.ui.widgets.newItem.changeItemType = function(e){
-    var widgetEl = Zotero.ui.parentWidgetEl(e);
-    Z.debug(widgetEl.length);
-    var itemType = widgetEl.find("select.itemType").val();
-    Z.debug("newItemType:" + itemType);
-    
-    //TODO: save values from current item and put them into new item
-    var oldItem = widgetEl.data('item');
-    Zotero.ui.updateItemFromForm(oldItem, widgetEl.find("form"));
-    var newItem = new Zotero.Item();
-    //newItem.libraryType = library.libraryType;
-    //newItem.libraryID = library.libraryID;
-    return newItem.initEmpty(itemType)
-    .then(function(item){
-        Zotero.ui.translateItemType(oldItem, item);
-        Zotero.ui.unassociatedItemForm(widgetEl, item);
-    },
-    function(response){
-        Z.error(response);
-        Zotero.ui.jsNotificationMessage("Error loading item template", 'error');
-    });
-};
-
-Zotero.ui.translateItemType = function(firstItem, newItem){
-    Z.debug("Zotero.ui.translateItemType");
-    J.each(Zotero.Item.prototype.fieldMap, function(field, val){
-        if( (field != "itemType") && firstItem.apiObj.hasOwnProperty(field) && newItem.apiObj.hasOwnProperty(field)){
-            Z.debug("transferring value for " + field + ": " + firstItem.get(field));
-            newItem.set(field, firstItem.get(field));
-        }
-    });
-};
-
-
-Zotero.ui.widgets.syncedItems = {};
-
-Zotero.ui.widgets.syncedItems.init = function(el){
-    Z.debug("syncedItems widget init", 3);
-    var library = Zotero.ui.getAssociatedLibrary(el);
-    
-    library.listen("changeItemSorting", Zotero.ui.callbacks.resortItems, {widgetEl: el});
-    
-    //listen for local items dirty and push if we have a connection
-    library.listen("localItemsChanged", Zotero.ui.widgets.syncedItems.syncItems, {widgetEl: el});
-    //listen for request to update remote items
-    library.listen("remoteItemsRequested", Zotero.ui.widgets.syncedItems.syncItems, {widgetEl: el});
-    library.listen("syncLibrary", Zotero.ui.widgets.syncedItems.syncItems, {widgetEl: el});
-    //listen for request to display different items
-    
-    library.listen("displayedItemsChanged", Zotero.ui.widgets.syncedItems.updateDisplayedItems, {widgetEl: el});
-    //library.listen("displayedItemsUpdated", Zotero.ui.widgets.syncedItems.displayItems, {widgetEl: el});
-    
-    library.listen("cachedDataLoaded", Zotero.ui.widgets.syncedItems.syncItems, {widgetEl: el});
-    
-    //set up sorting on header clicks
-    var container = J(el);
-    //container.on('click', ".field-table-header", Zotero.ui.callbacks.resortItemsLocal);
-    
-    Zotero.state.bindItemLinks(container);
-    
-    //check/uncheck all boxes in items table when master checkbox is toggled
-    container.on('change', ".itemlist-editmode-checkbox.all-checkbox", function(e){
-        J(".itemlist-editmode-checkbox").prop('checked', J(".itemlist-editmode-checkbox.all-checkbox").prop('checked'));
-        //library.trigger('controlPanelContextChange');
-        library.trigger("selectedItemsChanged");
-    });
-    
-    //init itemkey-checkbox to enable/disable buttons that require something being selected
-    container.on('change', "input.itemKey-checkbox", function(e){
-        //library.trigger('controlPanelContextChange');
-        var selectedItemKeys = [];
-        J("input.itemKey-checkbox:checked").each(function(index, el){
-            selectedItemKeys.push(J(el).data('itemkey'));
-        });
-        library.trigger("selectedItemsChanged", {selectedItemKeys: selectedItemKeys});
-    });
-    
-    Zotero.ui.widgets.syncedItems.bindPaginationLinks(container);
-    library.trigger("displayedItemsChanged");
-};
-
-Zotero.ui.widgets.syncedItems.syncItems = function(event){
-    Zotero.debug("Zotero eventful syncItems", 3);
-    var widgetEl = J(event.data.widgetEl);
-    
-    //get Zotero.Library object if already bound to element
-    var library = Zotero.ui.getAssociatedLibrary(widgetEl);
-    
-    //sync items if loaded from cache but not synced
-    return library.loadUpdatedItems()
-    .then(function(){
-        //Zotero.state.doneLoading(widgetEl);
-        library.trigger("libraryItemsUpdated");
-        library.trigger("displayedItemsChanged");
-    }).catch(Zotero.catchPromiseError);
-};
-
-Zotero.ui.widgets.syncedItems.bindPaginationLinks = function(container){
-    container.on('click', "#start-item-link", function(e){
-        e.preventDefault();
-        Zotero.state.pathVars['itemPage'] = '';
-        Zotero.state.pushState();
-    });
-    container.on('click', "#prev-item-link", function(e){
-        e.preventDefault();
-        var itemPage = Zotero.state.getUrlVar('itemPage') || '1';
-        itemPage = parseInt(itemPage, 10);
-        var newItemPage = itemPage - 1;
-        Zotero.state.pathVars['itemPage'] = newItemPage;
-        Zotero.state.pushState();
-    });
-    container.on('click', "#next-item-link", function(e){
-        e.preventDefault();
-        var itemPage = Zotero.state.getUrlVar('itemPage') || '1';
-        itemPage = parseInt(itemPage, 10);
-        var newItemPage = itemPage + 1;
-        Zotero.state.pathVars['itemPage'] = newItemPage;
-        Zotero.state.pushState();
-    });
-    container.on('click', "#last-item-link", function(e){
-        e.preventDefault();
-        Z.debug("last-item-link clickbind", 4);
-        var pagehref = J(e.currentTarget).attr('href');
-        var pathVars = Zotero.state.parsePathVars(pagehref);
-        var lastItemPage = pathVars.itemPage;
-        Zotero.state.pathVars['itemPage'] = lastItemPage;
-        Zotero.state.pushState();
-    });
-};
-
-Zotero.ui.widgets.syncedItems.updateDisplayedItems = function(event){
-    Z.debug("widgets.syncedItems.updateDisplayedItems", 3);
-    //- determine what config applies that we need to find items for
-    //- find the appropriate items in the store, presumably with indexedDB queries
-    //- pull out x items that match (or since we have them locally anyway, just display them all)
-    var widgetEl = J(event.data.widgetEl);
-    var library = Zotero.ui.getAssociatedLibrary(widgetEl);
-    Z.debug(library);
-    var newConfig = Zotero.ui.getItemsConfig(library);
-    
-    var displayParams = Zotero.state.getUrlVars();
-    library.buildItemDisplayView(displayParams)
-    .then(function(displayItemsArray){
-        Z.debug('displayingItems in promise callback');
-        Z.debug(displayItemsArray);
-        widgetEl.empty();
-        Zotero.ui.widgets.items.displayItems(widgetEl, newConfig, displayItemsArray);
-        Zotero.eventful.initTriggers();    
-    }).catch(Zotero.catchPromiseError);
-};
-
-Zotero.ui.widgets.tags = {};
-
-Zotero.ui.widgets.tags.init = function(el){
-    Z.debug("tags widget init", 3);
-    var library = Zotero.ui.getAssociatedLibrary(el);
-    
-    library.listen("tagsDirty", Zotero.ui.widgets.tags.syncTags, {widgetEl: el});
-    library.listen("cachedDataLoaded", Zotero.ui.widgets.tags.syncTags, {widgetEl: el});
-    library.listen("tagsChanged libraryTagsUpdated selectedTagsChanged", Zotero.ui.widgets.tags.rerenderTags, {widgetEl: el});
-    
-    var container = J(el);
-    
-    //initialize binds for widget
-    Zotero.state.bindTagLinks(container);
-    //TODO: make sure tag autocomplete works when editing items
-    //add tag to item and stop event propogation when tag is selected
-    //from autocomplete on an item
-    
-    //bind tag autocomplete filter in tag widget
-    container.on('keyup', "#tag-filter-input", Zotero.ui.widgets.tags.filterTags);
-};
-
-Zotero.ui.widgets.tags.syncTags = function(evt){
-    Z.debug('Zotero.ui.widgets.tags.syncTags', 3);
-    var widgetEl = J(evt.data.widgetEl);
-    var loadingPromise = widgetEl.data('loadingPromise');
-    if(loadingPromise){
-        var p = widgetEl.data('loadingPromise');
-        return p.then(function(){
-            return Zotero.ui.widgets.tags.syncTags(evt);
-        }).catch(Zotero.catchPromiseError);
-    }
-    
-    var checkCached = evt.data.checkCached;
-    if(checkCached !== false){
-        checkCached = true; //default to using the cache
-    }
-    
-    Zotero.ui.showSpinner(widgetEl.find('div.loading'));
-    
-    //get Zotero.Library object if already bound to element
-    var library = Zotero.ui.getAssociatedLibrary(widgetEl);
-    //clear tags if we're explicitly not using cached tags
-    if(checkCached === false){
-        library.tags.clear();
-    }
-    
-    //cached tags are preloaded with library if the cache is enabled
-    //this function shouldn't be triggered until that has already been done
-    loadingPromise = library.loadUpdatedTags()
-    .then(function(){
-        Z.debug("syncTags done. clearing loading div");
-        widgetEl.find('.loading').empty();
-        library.trigger("libraryTagsUpdated");
-        //remove loadingPromise
-        widgetEl.removeData('loadingPromise');
-    },
-    function(error){
-        Z.error("syncTags failed. showing local data and clearing loading div");
-        //sync failed, but we still have some local data, so show that
-        library.trigger("libraryTagsUpdated");
-        widgetEl.find('.loading').empty();
-        //remove loadingPromise
-        widgetEl.removeData('loadingPromise');
-        Zotero.ui.jsNotificationMessage("There was an error loading tags. Some tags may not have been updated.", 'notice');
-    });
-    
-    widgetEl.data('loadingPromise', loadingPromise);
-    return loadingPromise;
-};
-
-Zotero.ui.widgets.tags.rerenderTags = function(event){
-    Zotero.debug("Zotero eventful rerenderTags", 3);
-    var widgetEl = J(event.data.widgetEl);
-    
-    // put the selected tags into an array
-    var selectedTags = Zotero.state.getUrlVar('tag');
-    if(!J.isArray(selectedTags)){
-        if(selectedTags) {
-            selectedTags = [selectedTags];
-        }
-        else {
-            selectedTags = [];
-        }
-    }
-    
-    widgetEl.children(".loading").empty();
-    var library = Zotero.ui.getAssociatedLibrary(widgetEl);
-    var plainList = library.tags.plainTagsList(library.tags.tagsArray);
-    Zotero.ui.widgets.tags.displayTagsFiltered(widgetEl, library, plainList, selectedTags);
-};
-
-//generate html for tags
-/**
- * Display filtered list of tags
- * @param  {Dom element} el                 Container
- * @param  {Zotero_Tags} libtags            Zotero_Tags object
- * @param  {array} matchedTagStrings  tags that matched the filter string
- * @param  {array} selectedTagStrings tags that are currently selected
- * @return {undefined}
- */
-Zotero.ui.widgets.tags.displayTagsFiltered = function(el, library, matchedTagStrings, selectedTagStrings){
-    Zotero.debug("Zotero.ui.widgets.tags.displayTagsFiltered", 3);
-    Z.debug(selectedTagStrings, 4);
-    var curPreString = J("#tag-filter-input").val();
-    var jel = J(el);
-    var libtags = library.tags;
-    var tagColors = library.preferences.getPref("tagColors");
-    if(!tagColors) tagColors = [];
-    var coloredTags = [];
-    var tagColorStrings = [];
-    J.each(tagColors, function(index, tagColor){
-        tagColorStrings.push(tagColor.name.toLowerCase());
-        var coloredTag = libtags.getTag(tagColor.name);
-        if(coloredTag){
-            coloredTag.color = tagColor.color;
-            coloredTags.push(coloredTag);
-        }
-    });
-    
-    var filteredTags = [];
-    var selectedTags = [];
-    J.each(matchedTagStrings, function(index, matchedString){
-        if(libtags.tagObjects[matchedString] && 
-            (libtags.tagObjects[matchedString].apiObj.meta.numItems > 0) &&
-            (J.inArray(matchedString, selectedTagStrings) == (-1)) &&
-            (J.inArray(matchedString, tagColorStrings) == (-1)) ) {
-            filteredTags.push(libtags.tagObjects[matchedString]);
-        }
-    });
-    J.each(selectedTagStrings, function(index, selectedString){
-        if(libtags.tagObjects[selectedString]){
-            selectedTags.push(libtags.tagObjects[selectedString]);
-        }
-    });
-    
-    var tagListEl = J("#tags-list").empty();
-    J("#colored-tags-list").replaceWith(J('#coloredtaglistTemplate').render({tags:coloredTags}));
-    J("#selected-tags-list").replaceWith(J('#tagunorderedlistTemplate').render({tags:selectedTags, id:'selected-tags-list'}));
-    J("#tags-list").replaceWith(J('#tagunorderedlistTemplate').render({tags:filteredTags, id:'tags-list'}));
-};
-
-Zotero.ui.widgets.tags.filterTags = function(e){
-    Z.debug("Zotero.ui.widgets.tags.filterTags", 3);
-    var library = Zotero.ui.getAssociatedLibrary(J('#tag-filter-input').closest('.eventfulwidget'));
-    var libraryTagsPlainList = library.tags.plainList;
-    var matchingTagStrings = Zotero.utils.matchAnyAutocomplete(J('#tag-filter-input').val(), libraryTagsPlainList);
-    Zotero.ui.widgets.tags.displayTagsFiltered(J('#tags-list-div'), library, matchingTagStrings, []);
-    Z.debug(matchingTagStrings, 4);
-};
-
-
-
-Zotero.ui.widgets.updateCollectionDialog = {};
-
-Zotero.ui.widgets.updateCollectionDialog.init = function(el){
-    Z.debug("updatecollectionsdialog widget init", 3);
-    var library = Zotero.ui.getAssociatedLibrary(el);
-    
-    library.listen("updateCollectionDialog", Zotero.ui.widgets.updateCollectionDialog.show, {widgetEl: el});
-};
-
-Zotero.ui.widgets.updateCollectionDialog.show = function(evt){
-    Z.debug("updateCollectionDialog.show", 3);
-    
-    var triggeringEl = J(evt.triggeringElement);
-    var library = Zotero.ui.getAssociatedLibrary(triggeringEl);
-    var ncollections = library.collections.nestedOrderingArray();
-    
-    var widgetEl = J(evt.data.widgetEl).empty();
-    
-    widgetEl.html( J("#updatecollectiondialogTemplate").render({ncollections:ncollections}) );
-    var dialogEl = widgetEl.find(".update-collection-dialog");
-    
-    var currentCollectionKey = Zotero.state.getUrlVar('collectionKey');
-    var currentCollection = library.collections.getCollection(currentCollectionKey);
-    var currentParentCollectionKey = currentCollection.parentCollection;
-    dialogEl.find(".update-collection-parent-select").val(currentParentCollectionKey);
-    dialogEl.find(".updated-collection-title-input").val(currentCollection.get("title"));
-    
-    var saveFunction = function(){
-        var newCollectionTitle = dialogEl.find("input.updated-collection-title-input").val() || "Untitled";
-        var newParentCollectionKey = dialogEl.find(".update-collection-parent-select").val();
-        
-        var collection =  currentCollection;
-        if(!collection){
-            Zotero.ui.jsNotificationMessage("Selected collection not found", 'error');
-            return false;
-        }
-        collection.update(newCollectionTitle, newParentCollectionKey)
-        .then(function(response){
-            Zotero.ui.jsNotificationMessage("Collection Saved", 'confirm');
-            library.collections.dirty = true;
-            library.collections.initSecondaryData();
-            library.trigger('libraryCollectionsUpdated');
-            Zotero.state.pushState(true);
-            Zotero.ui.closeDialog(dialogEl);
-        }).catch(Zotero.catchPromiseError);
-    };
-    
-    dialogEl.find(".updateButton").on('click', saveFunction);
-    Zotero.ui.dialog(dialogEl,{});
-    dialogEl.find(".updated-collection-title-input").select();
-    
-    return false;
-};
-
-
-
-Zotero.ui.widgets.uploadDialog = {};
-
-Zotero.ui.widgets.uploadDialog.init = function(el){
-    Z.debug("uploaddialog widget init", 3);
-    var widgetEl = J(el);
-    var library = Zotero.ui.getAssociatedLibrary(el);
-    
-    library.listen("uploadAttachment", Zotero.ui.widgets.uploadDialog.show, {widgetEl: el, library: library});
-    library.listen("upload", Zotero.ui.widgets.uploadDialog.upload, {widgetEl: el, library: library});
-    
-    widgetEl.on('click', '.uploadButton', function(){
-        library.trigger('upload');
-    });
-};
-
-Zotero.ui.widgets.uploadDialog.show = function(e){
-    Z.debug("uploadDialog.show", 3);
-    
-    var triggeringEl = J(e.triggeringElement);
-    var library = Zotero.ui.getEventLibrary(e);
-    var widgetEl = J(e.data['widgetEl']).empty();
-    
-    widgetEl.html( J("#attachmentuploadTemplate").render({}) );
-    var dialogEl = widgetEl.find(".upload-attachment-dialog");
-    
-    Zotero.ui.dialog(dialogEl, {});
-    
-    var handleFiles = function(files){
-        Z.debug("attachmentUpload handleFiles", 3);
-        
-        if(typeof files == 'undefined' || files.length === 0){
-            return false;
-        }
-        var file = files[0];
-        
-        Zotero.file.getFileInfo(file)
-        .then(function(fileInfo){
-            Z.debug(fileInfo);
-            widgetEl.find(".attachmentuploadfileinfo").data('fileInfo', fileInfo);
-            widgetEl.find("input.upload-file-title-input").val(fileInfo.filename);
-            widgetEl.find("td.uploadfilesize").html(fileInfo.filesize);
-            widgetEl.find("td.uploadfiletype").html(fileInfo.contentType);
-            //widgetEl.find("#attachmentuploadfileinfo .uploadfilemd5").html(fileInfo.md5);
-            widgetEl.find(".droppedfilename").html(fileInfo.filename);
-        });
-        return;
-    };
-    
-    dialogEl.find("#fileuploaddroptarget").on('dragenter dragover', function(e){
-        e.stopPropagation();
-        e.preventDefault();
-    });
-    
-    dialogEl.find("#fileuploaddroptarget").on('drop', function(je){
-        Z.debug("fileuploaddroptarget drop callback", 3);
-        je.stopPropagation();
-        je.preventDefault();
-        //clear file input so drag/drop and input don't show conflicting information
-        widgetEl.find(".fileuploadinput").val('');
-        var e = je.originalEvent;
-        var dt = e.dataTransfer;
-        var files = dt.files;
-        handleFiles(files);
-    });
-    
-    dialogEl.find("#fileuploadinput").on('change', function(je){
-        Z.debug("fileuploaddroptarget callback 1", 3);
-        je.stopPropagation();
-        je.preventDefault();
-        var files = J(this).get(0).files;
-        handleFiles(files);
-    });
-    
-    Zotero.eventful.initTriggers(widgetEl);
-};
-
-Zotero.ui.widgets.uploadDialog.upload = function(evt){
-    Z.debug("uploadFunction", 3);
-    var widgetEl = J(evt.data['widgetEl']);
-    var library = evt.data['library'];
-    
-    //callback for when everything in the upload form is filled
-    //grab file blob
-    //grab file data given by user
-    //create or modify attachment item
-    //Item.uploadExistingFile or uploadChildAttachment
-    
-    var dialogEl = widgetEl.find('div.upload-attachment-dialog');
-    var fileInfo = dialogEl.find("#attachmentuploadfileinfo").data('fileInfo');
-    var specifiedTitle = dialogEl.find("#upload-file-title-input").val();
-    
-    var progressCallback = function(e){
-        Z.debug('fullUpload.upload.onprogress', 3);
-        var percentLoaded = Math.round((e.loaded / e.total) * 100);
-        Z.debug("Upload progress event:" + e.loaded + " / " + e.total + " : " + percentLoaded + "%", 3);
-        widgetEl.find("#uploadprogressmeter").val(percentLoaded);
-    };
-    
-    //show spinner while working on upload
-    Zotero.ui.showSpinner(widgetEl.find('.fileuploadspinner'));
-    
-    //upload new copy of file if we're modifying an attachment
-    //create child and upload file if we're modifying a top level item
-    var itemKey = Zotero.state.getUrlVar('itemKey');
-    var item = library.items.getItem(itemKey);
-    var uploadPromise;
-    
-    if(!item.get("parentItem")){
-        Z.debug("no parentItem", 3);
-        //get template item
-        var childItem = new Zotero.Item();
-        childItem.associateWithLibrary(library);
-        uploadPromise = childItem.initEmpty('attachment', 'imported_file')
-        .then(function(childItem){
-            Z.debug("templateItemDeferred callback", 3);
-            childItem.set('title', specifiedTitle);
-            
-            return item.uploadChildAttachment(childItem, fileInfo, progressCallback);
-        });
-    }
-    else if(item.get('itemType') == 'attachment' && item.get("linkMode") == 'imported_file') {
-        Z.debug("imported_file attachment", 3);
-        uploadPromise = item.uploadFile(fileInfo, progressCallback);
-    }
-    
-    uploadPromise.then(function(){
-        Z.debug("uploadSuccess", 3);
-        library.trigger("uploadSuccessful");
-    }).catch(Zotero.ui.widgets.uploadDialog.failureHandler)
-    .then(function(){
-        Zotero.ui.closeDialog(dialogEl);
-    });
-
-};
-
-Zotero.ui.widgets.uploadDialog.failureHandler = function(failure){
-    Z.debug("Upload failed", 3);
-    Z.debug(failure, 3);
-    Zotero.ui.jsNotificationMessage("There was a problem uploading your file.", 'error');
-    switch(failure.code){
-        case 400:
-            Zotero.ui.jsNotificationMessage("Bad Input. 400", 'error');
-            break;
-        case 403:
-            Zotero.ui.jsNotificationMessage("You do not have permission to edit files", 'error');
-            break;
-        case 409:
-            Zotero.ui.jsNotificationMessage("The library is currently locked. Please try again in a few minutes.", 'error');
-            break;
-        case 412:
-            Zotero.ui.jsNotificationMessage("File conflict. Remote file has changed", 'error');
-            break;
-        case 413:
-            Zotero.ui.jsNotificationMessage("Requested upload would exceed storage quota.", 'error');
-            break;
-        case 428:
-            Zotero.ui.jsNotificationMessage("Precondition required error", 'error');
-            break;
-        case 429:
-            Zotero.ui.jsNotificationMessage("Too many uploads pending. Please try again in a few minutes", 'error');
-            break;
-        default:
-            Zotero.ui.jsNotificationMessage("Unknown error uploading file. " + failure.code, 'error');
-    }
-};
-
-
 Zotero.ui.widgets.libraryPreloader = {};
 
 //dedicated widget to preload library on init so we don't attempt to do that
@@ -11368,69 +8870,6 @@ Zotero.ui.widgets.libraryPreloader.init = function(el){
     library.listen("indexedDBError", function(){
     	Zotero.ui.jsNotificationMessage("There was an error initializing your library. Some data may not load properly.", 'notice');
     });
-};
-
-
-Zotero.ui.widgets.filterGuide = {};
-
-Zotero.ui.widgets.filterGuide.init = function(el){
-    Z.debug('widgets.filterGuide.init', 3);
-    var library = Zotero.ui.getAssociatedLibrary(el);
-    
-    library.listen("displayedItemsChanged", Zotero.ui.widgets.filterGuide.refreshFilters, {widgetEl: el});
-    library.listen("displayedItemChanged", Zotero.ui.widgets.filterGuide.refreshFilters, {widgetEl: el});
-    library.listen("updateFilterGuide", Zotero.ui.widgets.filterGuide.refreshFilters, {widgetEl: el});
-    library.listen("libraryCollectionsUpdated", Zotero.ui.widgets.filterGuide.refreshFilters, {widgetEl: el});
-    library.listen("clearFilter", Zotero.ui.widgets.filterGuide.clearFilter, {widgetEl: el});
-};
-
-Zotero.ui.widgets.filterGuide.refreshFilters = function(event){
-    Z.debug('widgets.filterGuide.refreshFilters', 3);
-    var widgetEl = event.data.widgetEl;
-    var el = widgetEl;
-    var jel = J(el);
-    var library = Zotero.ui.getAssociatedLibrary(el);
-    
-    var displayConfig = Zotero.ui.getItemsConfig(library);
-    var filterData = {};
-    if(displayConfig['collectionKey']){
-        filterData['collection'] = library.collections.getCollection(displayConfig['collectionKey']);
-    }
-    if(displayConfig['tag']){
-        filterData['tag'] = displayConfig['tag'];
-    }
-    if(displayConfig['q']){
-        filterData['search'] = displayConfig['q'];
-    }
-    
-    filterData['library'] = library;
-    jel.empty();
-    jel.append( J('#filterguideTemplate').render(filterData) );
-    Zotero.eventful.initTriggers(widgetEl);
-};
-
-Zotero.ui.widgets.filterGuide.clearFilter = function(event){
-    Z.debug('widgets.filterGuide.clearFilter', 3);
-    var widgetEl = J(event.data.widgetEl);
-    var triggeringEl = J(event.triggeringElement);
-    var library = Zotero.ui.getAssociatedLibrary(widgetEl);
-    
-    var collectionKey = triggeringEl.data('collectionkey');
-    var tag = triggeringEl.data('tag');
-    var query = triggeringEl.data('query');
-    
-    if(collectionKey){
-        Zotero.state.unsetUrlVar('collectionKey');
-    }
-    if(tag){
-        Zotero.state.toggleTag(tag);
-    }
-    if(query){
-        library.trigger('clearLibraryQuery');
-        return;
-        //Zotero.ui.clearLibraryQuery();
-    }
-    Zotero.state.pushState();
 };
 
 
@@ -11471,166 +8910,6 @@ Zotero.ui.widgets.progressModal.done = function(e){
     var dialogEl = widgetEl.find("#progress-modal-dialog");
     Zotero.ui.closeDialog(dialogEl);
 };
-
-
-Zotero.ui.widgets.sendToLibraryDialog = {};
-
-Zotero.ui.widgets.sendToLibraryDialog.init = function(el){
-    Z.debug("sendToLibraryDialog widget init", 3);
-    var library = Zotero.ui.getAssociatedLibrary(el);
-    
-    library.listen("sendToLibraryDialog", Zotero.ui.widgets.sendToLibraryDialog.show, {widgetEl: el});
-    
-};
-
-Zotero.ui.widgets.sendToLibraryDialog.show = function(evt){
-    Zotero.debug("Zotero.ui.widgets.sendToLibraryDialog.show", 3);
-    var widgetEl = J(evt.data.widgetEl);
-    var library = Zotero.ui.getAssociatedLibrary(widgetEl);
-    if(!Zotero.config.loggedIn){
-        throw new Error("no logged in userID. Required for groupsList widget");
-    }
-    var userID = Zotero.config.loggedInUserID;
-    var personalLibraryString = 'u' + userID;
-    
-    var memberGroups = library.groups.fetchUserGroups(userID)
-    .then(function(response){
-        Z.debug("got member groups", 3);
-        Z.debug(response);
-        var memberGroups = response.fetchedGroups;
-        var writableLibraries = [{name:'My Library', libraryString:personalLibraryString}];
-        for(var i = 0; i < memberGroups.length; i++){
-            if(memberGroups[i].isWritable(userID)){
-                var libraryString = 'g' + memberGroups[i].get('id');
-                writableLibraries.push({
-                    name: memberGroups[i].get('name'),
-                    libraryString: libraryString,
-                });
-            }
-        }
-        widgetEl.html( J("#sendToLibraryDialogTemplate").render({destinationLibraries: writableLibraries}) );
-        var dialogEl = widgetEl.find(".send-to-library-dialog");
-        
-        var sendFunction = function(){
-            Z.debug("sendToLibrary callback", 3);
-            //instantiate destination library
-            var targetLibrary = dialogEl.find(".destination-library-select").val();
-            Z.debug("move to: " + targetLibrary, 3);
-            var destLibConfig = Zotero.utils.parseLibString(targetLibrary);
-            destLibrary = new Zotero.Library(destLibConfig.libraryType, destLibConfig.libraryID);
-            Zotero.libraries[targetLibrary] = destLibrary;
-            
-            //get items to send
-            var itemKeys = Zotero.state.getSelectedItemKeys();
-            if(itemKeys.length === 0){
-                Zotero.ui.jsNotificationMessage("No items selected", 'notice');
-                Zotero.ui.closeDialog(dialogEl);
-                return false;
-            }
-            
-            var sendItems = library.items.getItems(itemKeys);
-            library.sendToLibrary(sendItems, destLibrary)
-            .then(function(foreignItems){
-                Zotero.ui.jsNotificationMessage("Items sent to other library", 'notice');
-            }).catch(function(response){
-                Z.debug(response);
-                Zotero.ui.jsNotificationMessage("Error sending items to other library", 'notice');
-            });
-            Zotero.ui.closeDialog(dialogEl);
-            return false;
-        };
-        
-        dialogEl.find(".sendButton").on('click', sendFunction);
-        
-        Zotero.ui.dialog(dialogEl, {});
-        
-    }).catch(function(err){
-        Z.error(err);
-        Z.error(err.message);
-    });
-    
-};
-/*
-Zotero.ui.widgets.sendToLibraryDialog.render = function(el, groups){
-    J(el).empty().append( J("#groupslistTemplate").render({groups:groups}));
-};
-
-Zotero.ui.widgets.sendToLibraryDialog.send = function(evt){
-    Zotero.debug("Zotero.ui.widgets.groupsList.sendToGroup", 3);
-    var widgetEl = evt.data.widgetEl;
-    var library = Zotero.ui.getAssociatedLibrary(widgetEl);
-    
-};
-*/
-
-Zotero.ui.widgets.searchbox = {};
-
-Zotero.ui.widgets.searchbox.init = function(el){
-    Z.debug("Zotero.eventful.init.searchbox", 3);
-    var library = Zotero.ui.getAssociatedLibrary(el);
-    var container = J(el);
-    
-    library.listen('clearLibraryQuery', Zotero.ui.widgets.searchbox.clearLibraryQuery, {widgetEl:el});
-    
-    //set initial state of search input to url value
-    if(Zotero.state.getUrlVar('q')){
-        container.find(".search-query").val(Zotero.state.getUrlVar('q'));
-    }
-    
-    //clear libary query param when field cleared
-    var context = 'support';
-    if(undefined !== window.zoterojsSearchContext){
-        context = zoterojsSearchContext;
-    }
-    
-    //set up search type links
-    container.on('click', ".library-search-type-link", function(e){
-        e.preventDefault();
-        var typeLinks = J(".library-search-type-link").removeClass('selected');
-        var selected = J(e.target);
-        var selectedType = selected.data('searchtype');
-        var searchInput = container.find("input.search-query").data('searchtype', selectedType);
-        selected.addClass('selected');
-        if(selectedType == 'simple'){
-            searchInput.attr('placeholder', 'Search Title, Creator, Year');
-        }
-        else if(selectedType == 'everything'){
-            searchInput.attr('placeholder', 'Search Full Text');
-        }
-    });
-    
-    //set up search submit for library
-    container.on('submit', "form.library-search", function(e){
-        e.preventDefault();
-        Z.debug("library-search form submitted", 3);
-        Zotero.state.clearUrlVars(['collectionKey', 'tag', 'q', 'qmode']);
-        var query = container.find('input.search-query').val();
-        var searchType = container.find('input.search-query').data('searchtype');
-        if(query !== "" || Zotero.state.getUrlVar('q') ){
-            Zotero.state.pathVars['q'] = query;
-            if(searchType != "simple"){
-                Zotero.state.pathVars['qmode'] = searchType;
-            }
-            Zotero.state.pushState();
-        }
-        return false;
-    });
-    
-    container.on('click', '.clear-field-button', function(e){
-        J(".search-query").val("").focus();
-    });
-    
-};
-
-Zotero.ui.widgets.searchbox.clearLibraryQuery = function(){
-    Zotero.state.unsetUrlVar('q');
-    Zotero.state.unsetUrlVar('qmode');
-    
-    J(".search-query").val("");
-    Zotero.state.pushState();
-    return;
-};
-
 
 
 Zotero.ui.widgets.panelContainer = {};
@@ -11985,28 +9264,7 @@ Zotero.ui.widgets.siteSearch.init = function(el){
     if(query){
         Zotero.ui.widgets.siteSearch.search(searchType, query);
     }
-
-    //listen for newly activated tab
-    widgetEl.find('a[data-toggle="tab"]').on('shown.bs.tab', Zotero.ui.widgets.siteSearch.tabChange);
 };
-
-Zotero.ui.widgets.siteSearch.tabChange = function(e) {
-    Z.debug("search tab changed", 3);
-    //e.target // newly activated tab
-    //e.relatedTarget // previous active tab
-
-    //change state to the new searchType
-    var newQueryType = J(e.target).data('searchtype');
-    var query = Zotero.state.getUrlVar('q');
-    //put the query in the new query box
-    J('input[data-searchtype="' + newQueryType + '"]').val(query);
-
-    Zotero.state.setUrlVar('type', newQueryType);
-    Zotero.state.pushState();
-
-    var params = {type:newQueryType, query:query};
-    Zotero.ui.widgets.siteSearch.runSearch(params);
-}
 
 Zotero.ui.widgets.siteSearch.triggeredSearch = function(event){
     Z.debug("Zotero.ui.widgets.siteSearch.search", 3);
@@ -12080,7 +9338,7 @@ Zotero.ui.widgets.siteSearch.runSearch = function(params){
 
 Zotero.ui.widgets.siteSearch.fetchGoogleResults = function(params){
     Z.debug("Zotero.ui.widgets.siteSearch.fetchGoogleResults", 3);
-    Zotero.ui.widgets.siteSearch.clearResults(J("#site-search"));
+    Zotero.ui.widgets.siteSearch.clearResults();
     Zotero.ui.showSpinner(J("#search-spinner"));
     J("#search-spinner").show();
     // Create a new WebSearch object
@@ -12156,76 +9414,8 @@ Zotero.ui.widgets.siteSearch.clearResults = function(widgetEl){
 };
 
 Zotero.ui.widgets.siteSearch.gotopage = function(i){
-    Zotero.ui.widgets.siteSearch.clearResults(J("#site-search"));
+    Zotero.ui.widgets.siteSearch.clearResults();
     searcher.gotoPage(i);
-};
-
-
-Zotero.ui.widgets.libraryDropdown = {};
-
-Zotero.ui.widgets.libraryDropdown.init = function(el){
-    Z.debug("libraryDropdown widget init", 3);
-    var library = Zotero.ui.getAssociatedLibrary(el);
-    var widgetEl = J(el);
-    var currentLibraryName = Zotero.config.librarySettings.name;
-    //set name of current library which we already have, before fetching the rest
-    widgetEl.find("span.current-library-name").text(currentLibraryName);
-
-    Zotero.listen("populateLibraryDropdown", Zotero.ui.widgets.libraryDropdown.populateDropdown, {widgetEl: el});
-};
-
-Zotero.ui.widgets.libraryDropdown.populateDropdown = function(evt){
-    Zotero.debug("Zotero.ui.widgets.libraryDropdown.populateDropdown", 3);
-    var widgetEl = J(evt.data.widgetEl);
-    if(widgetEl.data('loaded')){
-        return;
-    }
-
-    var library = Zotero.ui.getAssociatedLibrary(widgetEl);
-    if(!Zotero.config.loggedIn){
-        throw new Error("no logged in userID. Required for libraryDropdown widget");
-    }
-    var user = Zotero.config.loggedInUser;
-    var personalLibraryString = 'u' + user.userID;
-    var personalLibraryUrl = Zotero.url.userWebLibrary(user.slug);
-    var currentLibraryName = Zotero.config.librarySettings.name;
-    
-    var memberGroups = library.groups.fetchUserGroups(user.userID)
-    .then(function(response){
-        Z.debug("got member groups", 3);
-        var memberGroups = response.fetchedGroups;
-        var accessibleLibraries = [];
-        if(!(Zotero.config.librarySettings.libraryType == 'user' && Zotero.config.librarySettings.libraryID == user.userID)){
-            accessibleLibraries.push({
-                name:'My Library',
-                libraryString:personalLibraryString,
-                webUrl:personalLibraryUrl
-            });
-        }
-            
-        for(var i = 0; i < memberGroups.length; i++){
-            if(Zotero.config.librarySettings.libraryType == 'group' && memberGroups[i].get('id') == Zotero.config.librarySettings.libraryID){
-                continue;
-            }
-            var libraryString = 'g' + memberGroups[i].get('id');
-            accessibleLibraries.push({
-                name: memberGroups[i].get('name'),
-                libraryString: libraryString,
-                webUrl: Zotero.url.groupWebLibrary(memberGroups[i])
-            });
-        }
-        
-        widgetEl.html(J("#librarydropdownTemplate").render({
-            currentLibraryName:currentLibraryName,
-            accessibleLibraries: accessibleLibraries
-        }));
-
-        widgetEl.data('loaded', true);
-    }).catch(function(err){
-        Z.error(err);
-        Z.error(err.message);
-    });
-    
 };
 
 
@@ -12248,7 +9438,6 @@ Zotero.ui.widgets.publications.init = function(el){
         'linkwrap': '1',
         'style': 'apa-annotated-bibliography',
     };
-    Zotero.ui.showSpinner(widgetEl, 'horizontal');
     var p = library.loadPublications(config)
     .then(function(response){
         Z.debug("got publications", 3);
@@ -12277,27 +9466,8 @@ Zotero.ui.widgets.publications.displayItems = function(el, config, itemsArray) {
             return J.inArray(el, Zotero.Library.prototype.groupOnlyColumns) == (-1);
         });
     }
-    var moreDisplayFields = [
-        'abstractNote',
-    ];
-    var publicationTypes = {
-        'book': [],
-        'dissertation': [],
-        'thesis': [],
-        'journalArticle': [],
-        'conferencePaper': [],
-        'bookSection': [],
-        'magazineArticle': [],
-        'newspaperArticle': [],
-        'presentation': [],
-        'report': [],
-        'blogPost': [],
-        'document': [],
-        'other': []
-    };
     //map child items to their parent keys so we can put download links in
     var childItems = {};
-    Z.debug("processing items");
     for(var i = 0; i < itemsArray.length; i++){
         var item = itemsArray[i];
         var parentKey = item.get("parentItem");
@@ -12305,40 +9475,5830 @@ Zotero.ui.widgets.publications.displayItems = function(el, config, itemsArray) {
             Z.debug("has parentKey, adding item to childItems object " + parentKey);
             childItems[parentKey] = item;
         }
-        
-        for(var j = 0; j < moreDisplayFields.length; j++) {
-            if(item.get(moreDisplayFields[j])){
-                item.hasMore = true;
-            }
-        }
-        if(item.apiObj.data['creators'] && item.apiObj.data['creators'].length > 1){
-            item.hasMore = true;
-        }
-        var itemType = item.get('itemType');
-        Z.debug(itemType);
-        Z.debug(publicationTypes[itemType]);
-        
-        if(publicationTypes[itemType]){
-            Z.debug("inserting into appropriate array");
-            publicationTypes[itemType].push(item);
-        } else {
-            Z.debug("inserting into other")
-            publicationTypes['other'].push(item);
-        }
     }
-    Z.debug("rendering publicationsData");
-    Z.debug(publicationTypes);
+    
     var publicationsData = {'items':itemsArray,
                             'childItems': childItems,
                             'library':library,
-                            'moreDisplayFields': moreDisplayFields,
-                            'publicationTypes': publicationTypes,
-                            'displayName': Z.config.librarySettings.name
+                            'displayFields': [
+                                'title',
+                                'creator',
+                                'abstract',
+                                'date',
+                            ],
                             };
 
     jel.append( J('#publicationsTemplate').render(publicationsData) );
 };
 
+
+
+"use strict";
+
+Zotero.ui.widgets.reactaddToCollectionDialog = {};
+
+Zotero.ui.widgets.reactaddToCollectionDialog.init = function (el) {
+	Z.debug("addtocollectionsdialog widget init", 3);
+	var library = Zotero.ui.getAssociatedLibrary(el);
+	var reactInstance = ReactDOM.render(React.createElement(AddToCollectionDialog, { library: library }), document.getElementById('add-to-collection-dialog'));
+	Zotero.ui.widgets.reactaddToCollectionDialog.reactInstance = reactInstance;
+
+	library.listen("addToCollectionDialog", function () {
+		reactInstance.setState({});
+		reactInstance.openDialog();
+	}, {});
+};
+
+var AddToCollectionDialog = React.createClass({
+	displayName: "AddToCollectionDialog",
+
+	getInitialState: function getInitialState() {
+		return {
+			collectionKey: null
+		};
+	},
+	handleCollectionChange: function handleCollectionChange(evt) {
+		this.setState({ 'collectionKey': evt.target.value });
+	},
+	openDialog: function openDialog() {
+		//this.setState({open:true});
+		this.refs.modal.open();
+	},
+	closeDialog: function closeDialog(evt) {
+		//this.setState({open:false});
+		this.refs.modal.close();
+	},
+	addToCollection: function addToCollection(evt) {
+		Z.debug("add-to-collection clicked", 3);
+		var library = this.props.library;
+		var itemKeys = Zotero.state.getSelectedItemKeys();
+		var collectionKey = this.state.collectionKey;
+		if (!collectionKey) {
+			Zotero.ui.jsNotificationMessage("No collection selected", 'error');
+			return false;
+		}
+		if (itemKeys.length === 0) {
+			Zotero.ui.jsNotificationMessage("No items selected", 'notice');
+			return false;
+		}
+
+		library.collections.getCollection(collectionKey).addItems(itemKeys).then(function (response) {
+			library.dirty = true;
+			Zotero.ui.jsNotificationMessage("Items added to collection", 'success');
+		})["catch"](Zotero.catchPromiseError);
+		return false;
+	},
+	render: function render() {
+		var library = this.props.library;
+		var ncollections = library.collections.nestedOrderingArray();
+
+		var collectionOptions = ncollections.map(function (collection, index) {
+			return React.createElement(
+				"option",
+				{ key: collection.get('key'), value: collection.get('key') },
+				'-'.repeat(collection.nestingDepth),
+				" ",
+				collection.get('name')
+			);
+		});
+
+		return React.createElement(
+			BootstrapModalWrapper,
+			{ ref: "modal" },
+			React.createElement(
+				"div",
+				{ id: "add-to-collection-dialog", className: "add-to-collection-dialog", role: "dialog", title: "Add to Collection", "data-keyboard": "true" },
+				React.createElement(
+					"div",
+					{ className: "modal-dialog" },
+					React.createElement(
+						"div",
+						{ className: "modal-content" },
+						React.createElement(
+							"div",
+							{ className: "modal-header" },
+							React.createElement(
+								"button",
+								{ type: "button", className: "close", "data-dismiss": "modal", "aria-hidden": "true" },
+								"×"
+							),
+							React.createElement(
+								"h3",
+								null,
+								"Add To Collection"
+							)
+						),
+						React.createElement(
+							"div",
+							{ className: "add-to-collection-div modal-body", "data-role": "content" },
+							React.createElement(
+								"form",
+								{ method: "POST" },
+								React.createElement(
+									"div",
+									{ "data-role": "fieldcontain" },
+									React.createElement(
+										"label",
+										{ htmlFor: "new-collection-parent" },
+										"Collection"
+									),
+									React.createElement(
+										"select",
+										{ onChange: this.handleCollectionChange, className: "collectionKey-select target-collection form-control" },
+										collectionOptions
+									)
+								)
+							)
+						),
+						React.createElement(
+							"div",
+							{ className: "modal-footer" },
+							React.createElement(
+								"button",
+								{ onClick: this.closeDialog, className: "btn", "data-dismiss": "modal", "aria-hidden": "true" },
+								"Close"
+							),
+							React.createElement(
+								"button",
+								{ onClick: this.addToCollection, className: "btn btn-primary addButton" },
+								"Add"
+							)
+						)
+					)
+				)
+			)
+		);
+	}
+});
+
+var BootstrapModalWrapper = React.createClass({
+	displayName: "BootstrapModalWrapper",
+
+	// The following two methods are the only places we need to
+	// integrate Bootstrap or jQuery with the components lifecycle methods.
+	componentDidMount: function componentDidMount() {
+		// When the component is added, turn it into a modal
+		Z.debug("BootstrapModalWrapper componentDidMount");
+		J(this.refs.root).modal({ backdrop: 'static', keyboard: false, show: false });
+	},
+	componentWillUnmount: function componentWillUnmount() {
+		Z.debug("BootstrapModalWrapper componentWillUnmount");
+		J(this.refs.root).off('hidden', this.handleHidden);
+	},
+	close: function close() {
+		Z.debug("BootstrapModalWrapper close");
+		J(this.refs.root).modal('hide');
+	},
+	open: function open() {
+		Z.debug("BootstrapModalWrapper open");
+		J(this.refs.root).modal('show');
+	},
+	render: function render() {
+		return React.createElement(
+			"div",
+			{ className: "modal", ref: "root" },
+			this.props.children
+		);
+	}
+});
+"use strict";
+
+Zotero.ui.widgets.reactbreadcrumbs = {};
+
+Zotero.ui.widgets.reactbreadcrumbs.init = function (el) {
+	var library = Zotero.ui.getAssociatedLibrary(el);
+	var reactInstance = ReactDOM.render(React.createElement(BreadCrumbs, { library: library }), document.getElementById('breadcrumbs'));
+
+	library.listen("displayedItemsChanged displayedItemChanged selectedCollectionChanged", reactInstance.setState());
+};
+
+var BreadCrumb = React.createClass({
+	displayName: "BreadCrumb",
+
+	getInitialProps: function getInitialProps() {
+		return {
+			label: "",
+			path: ""
+		};
+	},
+	render: function render() {
+		if (this.props.path != "") {
+			return React.createElement(
+				"a",
+				{ href: this.props.path },
+				this.props.label
+			);
+		} else {
+			return this.props.label;
+		}
+	}
+});
+
+var BreadCrumbs = React.createClass({
+	displayName: "BreadCrumbs",
+
+	getInitialProps: function getInitialProps() {
+		return { library: null };
+	},
+	render: function render() {
+		var library = this.props.library;
+		if (library === null) {
+			return null;
+		}
+
+		var crumbs = [];
+		var config = Zotero.state.getUrlVars();
+		if (Zotero.config.breadcrumbsBase) {
+			Zotero.config.breadcrumbsBase.forEach(function (crumb) {
+				crumbs.push(crumb);
+			});
+		} else if (library.libraryType == 'user') {
+			crumbs = [{ label: 'Home', path: '/' }, { label: 'People', path: '/people' }, { label: library.libraryLabel || library.libraryUrlIdentifier, path: '/' + library.libraryUrlIdentifier }, { label: 'Library', path: '/' + library.libraryUrlIdentifier + '/items' }];
+		} else {
+			crumbs = [{ label: 'Home', path: '/' }, { label: 'Groups', path: '/groups' }, { label: library.libraryLabel || library.libraryUrlIdentifier, path: '/groups/' + library.libraryUrlIdentifier }, { label: 'Library', path: '/groups/' + library.libraryUrlIdentifier + '/items' }];
+		}
+
+		if (config.collectionKey) {
+			Z.debug("have collectionKey", 4);
+			curCollection = library.collections.getCollection(config.collectionKey);
+			if (curCollection) {
+				crumbs.push({ label: curCollection.get('name'), path: Zotero.state.buildUrl({ collectionKey: config.collectionKey }) });
+			}
+		}
+		if (config.itemKey) {
+			Z.debug("have itemKey", 4);
+			crumbs.push({ label: library.items.getItem(config.itemKey).title, path: Zotero.state.buildUrl({ collectionKey: config.collectionKey, itemKey: config.itemKey }) });
+		}
+
+		var crumbNodes = [];
+		var titleString = "";
+		crumbs.forEach(function (crumb, index) {
+			crumbNodes.push(React.createElement(BreadCrumb, { label: crumb.label, path: crumb.path }));
+			if (crumb.label == "Home") {
+				titleString += "Zotero | ";
+			} else {
+				titleString += crumb.label;
+			}
+			if (index < crumbs.length) {
+				crumbNodes.push(" > ");
+				titleString += " > ";
+			}
+		});
+
+		//set window title
+		if (titleString != "") {
+			Zotero.state.updateStateTitle(titleString);
+		}
+
+		return React.createElement(
+			"span",
+			null,
+			crumbNodes
+		);
+	}
+});
+'use strict';
+
+Zotero.ui.widgets.reactchooseSortingDialog = {};
+
+Zotero.ui.widgets.reactchooseSortingDialog.init = function (el) {
+	Z.debug("chooseSortingDialog widget init", 3);
+	var library = Zotero.ui.getAssociatedLibrary(el);
+	var reactInstance = ReactDOM.render(React.createElement(ChooseSortingDialog, { library: library }), document.getElementById('choose-sorting-dialog'));
+	Zotero.ui.widgets.reactchooseSortingDialog.reactInstance = reactInstance;
+
+	var currentSortField = Zotero.ui.getPrioritizedVariable('order', 'title');
+	var currentSortOrder = Zotero.ui.getPrioritizedVariable('sort', 'asc');
+	reactInstance.setState({
+		sortField: currentSortField,
+		sortOrder: currentSortOrder
+	});
+
+	library.listen("chooseSortingDialog", reactInstance.openDialog, {});
+};
+
+var ChooseSortingDialog = React.createClass({
+	displayName: 'ChooseSortingDialog',
+
+	getInitialState: function getInitialState() {
+		return {
+			sortField: "",
+			sortOrder: "asc"
+		};
+	},
+	handleFieldChange: function handleFieldChange(evt) {
+		this.setState({ sortField: evt.target.value });
+	},
+	handleOrderChange: function handleOrderChange(evt) {
+		this.setState({ sortOrder: evt.target.value });
+	},
+	saveSorting: function saveSorting() {
+		library.trigger("changeItemSorting", { newSortField: this.state.sortField, newSortOrder: this.state.sortOrder });
+		this.closeDialog();
+	},
+	openDialog: function openDialog() {
+		this.refs.modal.open();
+	},
+	closeDialog: function closeDialog(evt) {
+		this.refs.modal.close();
+	},
+	render: function render() {
+		var library = this.props.library;
+		var sortableOptions = library.sortableColumns.map(function (col) {
+			return React.createElement(
+				'option',
+				{ label: Zotero.localizations.fieldMap[col], value: col },
+				Zotero.localizations.fieldMap[col]
+			);
+		});
+
+		return React.createElement(
+			BootstrapModalWrapper,
+			{ ref: 'modal' },
+			React.createElement(
+				'div',
+				{ id: 'choose-sorting-dialog', className: 'choose-sorting-dialog', role: 'dialog', title: 'Sort Order', 'data-keyboard': 'true' },
+				React.createElement(
+					'div',
+					{ className: 'modal-dialog' },
+					React.createElement(
+						'div',
+						{ className: 'modal-content' },
+						React.createElement(
+							'div',
+							{ className: 'modal-header' },
+							React.createElement(
+								'button',
+								{ type: 'button', className: 'close', 'data-dismiss': 'modal', 'aria-hidden': 'true' },
+								'×'
+							),
+							React.createElement(
+								'h3',
+								null,
+								'Sort Items By'
+							)
+						),
+						React.createElement(
+							'div',
+							{ className: 'choose-sorting-div modal-body', 'data-role': 'content' },
+							React.createElement(
+								'form',
+								{ className: 'form-horizontal', role: 'form' },
+								React.createElement(
+									'select',
+									{ defaultValue: this.state.sortField, onChange: this.handleFieldChange, id: 'sort-column-select', className: 'sort-column-select form-control', name: 'sort-column-select' },
+									sortableOptions
+								),
+								React.createElement(
+									'select',
+									{ defaultValue: this.state.sortOrder, onChange: this.handleOrderChange, id: 'sort-order-select', className: 'sort-order-select form-control', name: 'sort-order-select' },
+									React.createElement(
+										'option',
+										{ label: 'Ascending', value: 'asc' },
+										'Ascending'
+									),
+									React.createElement(
+										'option',
+										{ label: 'Descending', value: 'desc' },
+										'Descending'
+									)
+								)
+							)
+						),
+						React.createElement(
+							'div',
+							{ className: 'modal-footer' },
+							React.createElement(
+								'button',
+								{ className: 'btn', 'data-dismiss': 'modal', 'aria-hidden': 'true' },
+								'Cancel'
+							),
+							React.createElement(
+								'button',
+								{ onClick: this.saveSorting, className: 'btn btn-primary saveSortButton' },
+								'Save'
+							)
+						)
+					)
+				)
+			)
+		);
+	}
+});
+"use strict";
+
+Zotero.ui.widgets.reactciteItemDialog = {};
+
+Zotero.ui.widgets.reactciteItemDialog.init = function (el) {
+	Z.debug("citeItemDialog widget init", 3);
+	var library = Zotero.ui.getAssociatedLibrary(el);
+	var reactInstance = ReactDOM.render(React.createElement(CiteItemDialog, { library: library }), document.getElementById('cite-item-dialog'));
+	Zotero.ui.widgets.reactaddToCollectionDialog.reactInstance = reactInstance;
+
+	reactInstance.getAvailableStyles();
+
+	//Zotero.ui.widgets.reactciteItemDialog.getAvailableStyles();
+	library.listen("citeItems", reactInstance.openDialog, {});
+};
+
+Zotero.ui.widgets.reactciteItemDialog.show = function (evt) {
+	Z.debug("citeItemDialog.show", 3);
+	var triggeringEl = J(evt.triggeringElement);
+	var hasIndependentItems = false;
+	var cslItems = [];
+	var library;
+
+	//check if event is carrying item data with it
+	if (evt.hasOwnProperty("zoteroItems")) {
+		hasIndependentItems = true;
+		J.each(evt.zoteroItems, function (ind, item) {
+			var cslItem = item.cslItem();
+			cslItems.push(cslItem);
+		});
+	} else {
+		library = Zotero.ui.getAssociatedLibrary(triggeringEl);
+	}
+
+	var widgetEl = J(evt.data.widgetEl).empty();
+	widgetEl.html(J("#citeitemdialogTemplate").render({ freeStyleInput: true }));
+	var dialogEl = widgetEl.find(".cite-item-dialog");
+
+	var citeFunction = function citeFunction(e) {
+		Z.debug("citeFunction", 3);
+		//Zotero.ui.showSpinner(dialogEl.find(".cite-box-div"));
+		var triggeringElement = J(evt.currentTarget);
+		var style = '';
+		if (triggeringElement.is(".cite-item-select, input.free-text-style-input")) {
+			style = triggeringElement.val();
+		} else {
+			style = dialogEl.find(".cite-item-select").val();
+			var freeStyle = dialogEl.find("input.free-text-style-input").val();
+			if (J.inArray(freeStyle, Zotero.styleList) !== -1) {
+				style = freeStyle;
+			}
+		}
+
+		if (!hasIndependentItems) {
+			//get the selected item keys from the items widget
+			var itemKeys = Zotero.state.getSelectedItemKeys();
+			if (itemKeys.length === 0) {
+				itemKeys = Zotero.state.getSelectedItemKeys();
+			}
+			Z.debug(itemKeys, 4);
+			library.loadFullBib(itemKeys, style).then(function (bibContent) {
+				dialogEl.find(".cite-box-div").html(bibContent);
+			})["catch"](Zotero.catchPromiseError);
+		} else {
+			Zotero.ui.widgets.reactciteItemDialog.directCite(cslItems, style).then(function (bibContent) {
+				dialogEl.find(".cite-box-div").html(bibContent);
+			})["catch"](Zotero.catchPromiseError);
+			/*.then(function(response){
+   	var bib = JSON.parse(response.data);
+   	var bibString = Zotero.ui.widgets.reactciteItemDialog.buildBibString(bib);
+   	dialogEl.find(".cite-box-div").html(bibString);
+   });*/
+		}
+	};
+
+	dialogEl.find(".cite-item-select").on('change', citeFunction);
+	//dialogEl.find("input.free-text-style-input").on('change', citeFunction);
+
+	Zotero.ui.widgets.reactciteItemDialog.getAvailableStyles();
+	//dialogEl.find("input.free-text-style-input").typeahead({local:Zotero.styleList, limit:10});
+
+	Zotero.ui.dialog(dialogEl, {});
+
+	return false;
+};
+
+Zotero.ui.widgets.reactciteItemDialog.getAvailableStyles = function () {
+	if (!Zotero.styleList) {
+		Zotero.styleList = [];
+		J.getJSON(Zotero.config.styleListUrl, function (data) {
+			Zotero.styleList = data;
+		});
+	}
+};
+
+Zotero.ui.widgets.reactciteItemDialog.directCite = function (cslItems, style) {
+	var data = {};
+	data.items = cslItems;
+	var url = Zotero.config.citationEndpoint + '?linkwrap=1&style=' + style;
+	return J.post(url, JSON.stringify(data));
+};
+
+Zotero.ui.widgets.reactciteItemDialog.buildBibString = function (bib) {
+	var bibMeta = bib.bibliography[0];
+	var bibEntries = bib.bibliography[1];
+	var bibString = bibMeta.bibstart;
+	for (var i = 0; i < bibEntries.length; i++) {
+		bibString += bibEntries[i];
+	}
+	bibString += bibMeta.bibend;
+	return bibString;
+};
+
+var CiteItemDialog = React.createClass({
+	displayName: "CiteItemDialog",
+
+	getDefaultProps: function getDefaultProps() {
+		return {
+			freeStyleInput: false
+		};
+	},
+	getInitialState: function getInitialState() {
+		return {
+			styles: [],
+			currentStyle: "",
+			citationString: ""
+		};
+	},
+	handleStyleChange: function handleStyleChange(evt) {
+		this.setState({ 'collectionKey': evt.target.value });
+	},
+	openDialog: function openDialog() {
+		//this.setState({open:true});
+		this.refs.modal.open();
+	},
+	closeDialog: function closeDialog(evt) {
+		//this.setState({open:false});
+		this.refs.modal.close();
+	},
+	cite: function cite(evt) {
+		Z.debug("citeFunction", 3);
+		var reactInstance = this;
+		var library = this.props.library;
+		var style = this.state.currentStyle;
+
+		//get the selected item keys from the items widget
+		var itemKeys = Zotero.state.getSelectedItemKeys();
+
+		library.loadFullBib(itemKeys, style).then(function (bibContent) {
+			reactInstance.setState({
+				citationString: bibContent
+			});
+			//dialogEl.find(".cite-box-div").html(bibContent);
+		})["catch"](Zotero.catchPromiseError);
+	},
+	getAvailableStyles: function getAvailableStyles() {
+		if (!Zotero.styleList) {
+			Zotero.styleList = [];
+			J.getJSON(Zotero.config.styleListUrl, function (data) {
+				Zotero.styleList = data;
+			});
+		}
+	},
+	directCite: function directCite(cslItems, style) {
+		var data = {};
+		data.items = cslItems;
+		var url = Zotero.config.citationEndpoint + '?linkwrap=1&style=' + style;
+		return J.post(url, JSON.stringify(data));
+	},
+	buildBibString: function buildBibString(bib) {
+		var bibMeta = bib.bibliography[0];
+		var bibEntries = bib.bibliography[1];
+		var bibString = bibMeta.bibstart;
+		for (var i = 0; i < bibEntries.length; i++) {
+			bibString += bibEntries[i];
+		}
+		bibString += bibMeta.bibend;
+		return bibString;
+	},
+	render: function render() {
+		var reactInstance = this;
+		var library = this.props.library;
+
+		var freeStyleInput = null;
+		if (this.props.freeStyleInput) {
+			freeStyleInput = React.createElement("input", { type: "text", className: "free-text-style-input form-control", placeholder: "style" });
+		}
+		var citationHtml = { "__html": this.state.citationString };
+
+		return React.createElement(
+			BootstrapModalWrapper,
+			{ ref: "modal" },
+			React.createElement(
+				"div",
+				{ id: "cite-item-dialog", className: "cite-item-dialog", role: "dialog", title: "Cite", "data-keyboard": "true" },
+				React.createElement(
+					"div",
+					{ className: "modal-dialog" },
+					React.createElement(
+						"div",
+						{ className: "modal-content" },
+						React.createElement(
+							"div",
+							{ className: "modal-header" },
+							React.createElement(
+								"button",
+								{ type: "button", className: "close", "data-dismiss": "modal", "aria-hidden": "true" },
+								"×"
+							),
+							React.createElement(
+								"h3",
+								null,
+								"Cite Items"
+							)
+						),
+						React.createElement(
+							"div",
+							{ className: "cite-item-div modal-body", "data-role": "content" },
+							React.createElement(
+								"form",
+								null,
+								React.createElement(
+									"select",
+									{ onChange: this.cite, className: "cite-item-select form-control", id: "cite-item-select" },
+									React.createElement(
+										"option",
+										{ value: "" },
+										"Select Style"
+									),
+									React.createElement(
+										"option",
+										{ value: "apsa" },
+										"American Political Science Association"
+									),
+									React.createElement(
+										"option",
+										{ value: "apa" },
+										"American Psychological Association"
+									),
+									React.createElement(
+										"option",
+										{ value: "asa" },
+										"American Sociological Association"
+									),
+									React.createElement(
+										"option",
+										{ value: "chicago-author-date" },
+										"Chicago Manual of Style (Author-Date format)"
+									),
+									React.createElement(
+										"option",
+										{ value: "chicago-fullnote-bibliography" },
+										"Chicago Manual of Style (Full Note with Bibliography)"
+									),
+									React.createElement(
+										"option",
+										{ value: "chicago-note-bibliography" },
+										"Chicago Manual of Style (Note with Bibliography)"
+									),
+									React.createElement(
+										"option",
+										{ value: "harvard1" },
+										"Harvard Reference format 1"
+									),
+									React.createElement(
+										"option",
+										{ value: "ieee" },
+										"IEEE"
+									),
+									React.createElement(
+										"option",
+										{ value: "mhra" },
+										"Modern Humanities Research Association"
+									),
+									React.createElement(
+										"option",
+										{ value: "mla" },
+										"Modern Language Association"
+									),
+									React.createElement(
+										"option",
+										{ value: "nlm" },
+										"National Library of Medicine"
+									),
+									React.createElement(
+										"option",
+										{ value: "nature" },
+										"Nature"
+									),
+									React.createElement(
+										"option",
+										{ value: "vancouver" },
+										"Vancouver"
+									)
+								),
+								freeStyleInput
+							),
+							React.createElement("div", { id: "cite-box-div", className: "cite-box-div", dangerouslySetInnerHTML: citationHtml })
+						),
+						React.createElement(
+							"div",
+							{ className: "modal-footer" },
+							React.createElement(
+								"button",
+								{ className: "btn btn-default", "data-dismiss": "modal", "aria-hidden": "true" },
+								"Close"
+							)
+						)
+					)
+				)
+			)
+		);
+	}
+});
+'use strict';
+
+Zotero.ui.widgets.reactcollections = {};
+
+Zotero.ui.widgets.reactcollections.init = function (el) {
+	var library = Zotero.ui.getAssociatedLibrary(el);
+
+	var initialCollectionKey = Zotero.state.getUrlVar('collectionKey');
+	var reactInstance = ReactDOM.render(React.createElement(Collections, { library: library, initialCollectionKey: initialCollectionKey }), document.getElementById('collection-list-div'));
+	Zotero.ui.widgets.reactcollections.reactInstance = reactInstance;
+};
+
+var CollectionRow = React.createClass({
+	displayName: 'CollectionRow',
+
+	getDefaultProps: function getDefaultProps() {
+		return {
+			collection: null,
+			selectedCollection: "",
+			depth: 0,
+			expandedCollections: {}
+		};
+	},
+	handleCollectionClick: function handleCollectionClick(evt) {
+		evt.preventDefault();
+		var collectionKey = this.props.collection.get('collectionKey');
+		//if current collect
+		Zotero.ui.widgets.reactcollections.reactInstance.setState({ currentCollectionKey: collectionKey });
+		Zotero.state.clearUrlVars(['mode']);
+		Zotero.state.pathVars['collectionKey'] = collectionKey;
+		Zotero.state.pushState();
+	},
+	handleTwistyClick: function handleTwistyClick(evt) {
+		Z.debug("handleTwistyClick");
+		//toggle expanded state for this collection
+		evt.preventDefault();
+		var collectionKey = this.props.collection.get('collectionKey');
+		var exp = this.props.expandedCollections;
+		if (exp[collectionKey]) {
+			delete exp[collectionKey];
+		} else {
+			exp[collectionKey] = true;
+		}
+		Zotero.ui.widgets.reactcollections.reactInstance.setState({ expandedCollections: exp });
+	},
+	render: function render() {
+		//Z.debug("CollectionRow render");
+		if (this.props.collection == null) {
+			return null;
+		}
+		var collection = this.props.collection;
+		var collectionKey = collection.get('key');
+		var selectedCollection = this.props.selectedCollection;
+		var expandedCollections = this.props.expandedCollections;
+		var expanded = expandedCollections[collectionKey] === true;
+		var isSelectedCollection = this.props.selectedCollection == collectionKey;
+
+		var childRows = [];
+		collection.children.forEach(function (collection, ind) {
+			childRows.push(React.createElement(CollectionRow, {
+				key: collection.get('key'),
+				collection: collection,
+				selectedCollection: selectedCollection,
+				expandedCollections: expandedCollections }));
+		});
+		var childrenList = null;
+		if (collection.hasChildren) {
+			childrenList = React.createElement(
+				'ul',
+				{ hidden: !expanded },
+				childRows
+			);
+		}
+
+		var placeholderClasses = "placeholder small-icon light-icon pull-left";
+		if (expandedCollections[collectionKey] === true) {
+			placeholderClasses += " glyphicon glyphicon-chevron-down clickable";
+		} else if (childRows.length > 0) {
+			placeholderClasses += " glyphicon glyphicon-chevron-right clickable";
+		}
+
+		return React.createElement(
+			'li',
+			{ className: 'collection-row' },
+			React.createElement(
+				'div',
+				{ className: 'folder-toggle' },
+				React.createElement('span', { className: placeholderClasses, onClick: this.handleTwistyClick }),
+				React.createElement('span', { className: 'fonticon glyphicons glyphicons-folder-open barefonticon' })
+			),
+			React.createElement(
+				'a',
+				{ href: collection.websiteCollectionLink, className: isSelectedCollection ? "current-collection" : "", onClick: this.handleCollectionClick },
+				collection.get('name')
+			),
+			childrenList
+		);
+	}
+});
+
+var TrashRow = React.createClass({
+	displayName: 'TrashRow',
+
+	getDefaultProps: function getDefaultProps() {
+		return {
+			collectionKey: "trash",
+			selectedCollection: ""
+		};
+	},
+	handleClick: function handleClick() {
+		Zotero.state.clearUrlVars(['mode']);
+		Zotero.state.pathVars['collectionKey'] = this.props.collectionKey;
+		Zotero.state.pushState();
+	},
+	render: function render() {
+		Z.debug("TrashRow render");
+		var className = this.props.selectedCollection == this.props.collectionKey ? "collection-row current-collection" : "collection-row";
+
+		return React.createElement(
+			'li',
+			{ className: className },
+			React.createElement(
+				'div',
+				{ className: 'folder-toggle' },
+				React.createElement('span', { className: 'sprite-placeholder sprite-icon-16 pull-left dui-icon' }),
+				React.createElement('span', { className: 'glyphicons fonticon glyphicons-bin barefonticon' })
+			),
+			'Trash'
+		);
+	}
+});
+
+var Collections = React.createClass({
+	displayName: 'Collections',
+
+	getDefaultProps: function getDefaultProps() {
+		return {
+			initialCollectionKey: null
+		};
+	},
+	getInitialState: function getInitialState() {
+		return {
+			collections: null,
+			currentCollectionKey: this.props.initialCollectionKey,
+			expandedCollections: {},
+			loading: false
+		};
+	},
+	componentWillMount: function componentWillMount() {
+		var reactInstance = this;
+		var library = this.props.library;
+
+		library.listen("collectionsDirty", reactInstance.syncCollections, {});
+		library.listen("libraryCollectionsUpdated", function () {
+			reactInstance.setState({ collections: library.collections });
+		}, {});
+		library.listen("cachedDataLoaded", reactInstance.syncCollections, {});
+	},
+	returnToLibrary: function returnToLibrary(evt) {
+		evt.preventDefault();
+		this.setState({ currentCollectionKey: null });
+		Zotero.state.clearUrlVars();
+		Zotero.state.pushState();
+	},
+	syncCollections: function syncCollections(evt) {
+		Zotero.debug("react collections syncCollections", 3);
+		var reactInstance = this;
+		if (this.state.loading) {
+			return;
+		}
+		var library = this.props.library;
+
+		//update the widget as soon as we have the cached collections
+		this.setState({ collections: library.collections, loading: true });
+
+		//sync collections if loaded from cache but not synced
+		return library.loadUpdatedCollections().then(function () {
+			reactInstance.setState({ collections: library.collections, loading: false });
+			library.trigger("libraryCollectionsUpdated");
+		}, function (err) {
+			//sync failed, but we already had some data, so show that
+			Z.error("Error syncing collections");
+			Z.error(err);
+			reactInstance.setState({ collections: library.collections, loading: false });
+			library.trigger("libraryCollectionsUpdated");
+			Zotero.ui.jsNotificationMessage("Error loading collections. Collections list may not be up to date", 'error');
+		});
+	},
+	render: function render() {
+		Z.debug("Collections render");
+		var library = this.props.library;
+		var collections = this.state.collections;
+		if (collections == null) {
+			return null;
+		}
+
+		var collectionsArray = this.state.collections.collectionsArray;
+		var currentCollectionKey = this.state.currentCollectionKey;
+		var libraryUrlIdentifier = "";
+		//var libraryUrlIdentifier = (collections == null ? "" : collections.libraryUrlIdentifier);
+
+		//Set of collections in an expanded state
+		var expandedCollections = this.state.expandedCollections;
+
+		//path from top level collection to currently selected collection, to ensure that we expand
+		//them all and the current collection is visible
+		var currentCollectionPath = [];
+		if (currentCollectionKey !== null) {
+			var currentCollection = collections.getCollection(currentCollectionKey);
+			var c = currentCollection;
+			while (true) {
+				if (c && !c.topLevel) {
+					var parentCollectionKey = c.get('parentCollection');
+					c = collections.getCollection(parentCollectionKey);
+					currentCollectionPath.push(parentCollectionKey);
+					expandedCollections[parentCollectionKey] = true;
+				} else {
+					break;
+				}
+			}
+		}
+
+		var collectionRows = [];
+		collectionsArray.forEach(function (collection, ind) {
+			if (collection.topLevel) {
+				collectionRows.push(React.createElement(CollectionRow, {
+					key: collection.get('key'),
+					collection: collection,
+					selectedCollection: currentCollectionKey,
+					expandedCollections: expandedCollections }));
+			}
+		});
+
+		var libraryClassName = "my-library " + (currentCollectionKey == null ? "current-collection" : "");
+		return React.createElement(
+			'div',
+			{ id: 'collection-list-container', className: 'collection-list-container' },
+			React.createElement(
+				'ul',
+				{ id: 'collection-list' },
+				React.createElement(
+					'li',
+					null,
+					React.createElement('span', { className: 'glyphicons fonticon glyphicons-inbox barefonticon' }),
+					React.createElement(
+						'a',
+						{ onClick: this.returnToLibrary, className: libraryClassName, href: library.libraryBaseWebsiteUrl },
+						'Library'
+					)
+				),
+				collectionRows
+			)
+		);
+	}
+});
+/*<LoadingSpinner loading={this.state.loading} />*/
+"use strict";
+
+Zotero.ui.widgets.reactcontrolPanel = {};
+
+Zotero.ui.widgets.reactcontrolPanel.init = function (el) {
+	Z.debug("Zotero.eventful.init.controlPanel", 3);
+	var library = Zotero.ui.getAssociatedLibrary(el);
+
+	var reactInstance = ReactDOM.render(React.createElement(ControlPanel, { library: library }), document.getElementById('control-panel'));
+	Zotero.ui.widgets.reactcontrolPanel.reactInstance = reactInstance;
+};
+
+var GroupsButton = React.createClass({
+	displayName: "GroupsButton",
+
+	render: function render() {
+		var groupsUrl = "/groups";
+		return React.createElement(
+			"a",
+			{ className: "btn btn-default navbar-btn navbar-left", href: groupsUrl, title: "Groups" },
+			React.createElement("span", { className: "glyphicons fonticon glyphicons-group" })
+		);
+	}
+});
+
+var LibraryDropdown = React.createClass({
+	displayName: "LibraryDropdown",
+
+	getDefaultProps: function getDefaultProps() {
+		return {
+			library: null,
+			user: false
+		};
+	},
+	getInitialState: function getInitialState() {
+		return {
+			accessibleLibraries: [],
+			loading: false,
+			loaded: false
+		};
+	},
+	populateDropdown: function populateDropdown() {
+		Z.debug("populateDropdown");
+		var reactInstance = this;
+		if (this.state.loading || this.state.loaded) {
+			return;
+		}
+
+		var library = this.props.library;
+		if (library == null) {
+			return;
+		}
+		if (!Zotero.config.loggedIn) {
+			throw new Error("no logged in userID. Required for libraryDropdown widget");
+		}
+
+		var user = Zotero.config.loggedInUser;
+		var personalLibraryString = 'u' + user.userID;
+		var personalLibraryUrl = Zotero.url.userWebLibrary(user.slug);
+		var currentLibraryName = Zotero.config.librarySettings.name;
+
+		this.setState({ loading: true });
+
+		var memberGroups = library.groups.fetchUserGroups(user.userID).then(function (response) {
+			Z.debug("got member groups", 3);
+			var memberGroups = response.fetchedGroups;
+			var accessibleLibraries = [];
+			if (!(Zotero.config.librarySettings.libraryType == 'user' && Zotero.config.librarySettings.libraryID == user.userID)) {
+				accessibleLibraries.push({
+					name: 'My Library',
+					libraryString: personalLibraryString,
+					webUrl: personalLibraryUrl
+				});
+			}
+
+			for (var i = 0; i < memberGroups.length; i++) {
+				if (Zotero.config.librarySettings.libraryType == 'group' && memberGroups[i].get('id') == Zotero.config.librarySettings.libraryID) {
+					continue;
+				}
+				var libraryString = 'g' + memberGroups[i].get('id');
+				accessibleLibraries.push({
+					name: memberGroups[i].get('name'),
+					libraryString: libraryString,
+					webUrl: Zotero.url.groupWebLibrary(memberGroups[i])
+				});
+			}
+
+			reactInstance.setState({ accessibleLibraries: accessibleLibraries, loading: false, loaded: true });
+		})["catch"](function (err) {
+			Z.error(err);
+			Z.error(err.message);
+		});
+	},
+	render: function render() {
+		if (this.props.user == false) {
+			return null;
+		}
+
+		var currentLibraryName = Zotero.config.librarySettings.name;
+
+		var accessibleLibraries = this.state.accessibleLibraries;
+		var libraryEntries = accessibleLibraries.map(function (lib) {
+			return React.createElement(
+				"li",
+				{ key: lib.libraryString },
+				React.createElement(
+					"a",
+					{ role: "menuitem", href: lib.webUrl },
+					lib.name
+				)
+			);
+		});
+
+		return React.createElement(
+			"div",
+			{ id: "library-dropdown", className: "eventfulwidget btn-group",
+				"data-widget": "libraryDropdown", "data-library": this.props.library.libraryString },
+			React.createElement(
+				"button",
+				{ className: "btn btn-default navbar-btn dropdown-toggle", onClick: this.populateDropdown, "data-toggle": "dropdown", href: "#", title: "Libraries" },
+				React.createElement("span", { className: "glyphicons fonticon glyphicons-inbox" }),
+				React.createElement(
+					"span",
+					{ className: "current-library-name" },
+					currentLibraryName
+				),
+				React.createElement("span", { className: "caret" })
+			),
+			React.createElement(
+				"ul",
+				{ className: "library-dropdown-list dropdown-menu actions-menu" },
+				React.createElement(
+					"li",
+					{ hidden: !this.state.loading },
+					React.createElement(
+						"a",
+						{ role: "menuitem", className: "clickable" },
+						"Loading..."
+					)
+				),
+				libraryEntries
+			)
+		);
+	}
+});
+
+var ActionsDropdown = React.createClass({
+	displayName: "ActionsDropdown",
+
+	getDefaultProps: function getDefaultProps() {
+		return {
+			itemSelected: false,
+			selectedCollection: false,
+			library: null
+		};
+	},
+	trashOrDeleteItems: function trashOrDeleteItems(evt) {
+		//move currently displayed item or list of selected items to trash
+		//or permanently delete items if already in trash
+		evt.preventDefault();
+		Z.debug('move-to-trash clicked', 3);
+
+		var library = this.props.library;
+		var itemKeys = Zotero.state.getSelectedItemKeys();
+		var response;
+		var trashingItems = library.items.getItems(itemKeys);
+		var deletingItems = []; //potentially deleting instead of trashing
+
+		//show spinner before making the possibly many the ajax requests
+		//Zotero.ui.showSpinner(J('#library-items-div'));
+
+		if (Zotero.state.getUrlVar('collectionKey') == 'trash') {
+			//items already in trash. delete them
+			var i;
+			for (i = 0; i < trashingItems.length; i++) {
+				var item = trashingItems[i];
+				if (item.get('deleted')) {
+					//item is already in trash, schedule for actual deletion
+					deletingItems.push(item);
+				}
+			}
+
+			//make request to permanently delete items
+			response = library.items.deleteItems(deletingItems);
+		} else {
+			//items are not in trash already so just add them to it
+			response = library.items.trashItems(trashingItems);
+		}
+
+		library.dirty = true;
+		response["catch"](function () {
+			Z.error("Error trashing items");
+		}).then(function () {
+			Zotero.state.clearUrlVars(['collectionKey', 'tag', 'q']);
+			Zotero.state.pushState(true);
+			library.trigger("displayedItemsChanged");
+		})["catch"](Zotero.catchPromiseError);
+
+		return false; //stop event bubbling
+	},
+	removeFromTrash: function removeFromTrash(evt) {
+		//Remove currently displayed single item or checked list of items from trash
+		//when remove-from-trash link clicked
+		Z.debug('remove-from-trash clicked', 3);
+		var library = this.props.library;
+		var itemKeys = Zotero.state.getSelectedItemKeys();
+
+		var untrashingItems = library.items.getItems(itemKeys);
+
+		//show spinner before making the possibly many the ajax requests
+		//Zotero.ui.showSpinner(J('#library-items-div'));
+
+		var response = library.items.untrashItems(untrashingItems);
+
+		library.dirty = true;
+		response["catch"](function () {}).then(function () {
+			Z.debug("post-removeFromTrash always execute: clearUrlVars", 3);
+			Zotero.state.clearUrlVars(['collectionKey', 'tag', 'q']);
+			Zotero.state.pushState();
+			library.trigger("displayedItemsChanged");
+		})["catch"](Zotero.catchPromiseError);
+
+		return false;
+	},
+	removeFromCollection: function removeFromCollection(evt) {
+		//Remove currently displayed single item or checked list of items from
+		//currently selected collection
+		Z.debug('remove-from-collection clicked', 3);
+		var library = this.props.library;
+		var itemKeys = Zotero.state.getSelectedItemKeys();
+		var collectionKey = Zotero.state.getUrlVar('collectionKey');
+
+		var modifiedItems = [];
+		var responses = [];
+		itemKeys.forEach(function (itemKey, index) {
+			var item = library.items.getItem(itemKey);
+			item.removeFromCollection(collectionKey);
+			modifiedItems.push(item);
+		});
+
+		library.dirty = true;
+
+		library.items.writeItems(modifiedItems).then(function () {
+			Z.debug('removal responses finished. forcing reload', 3);
+			Zotero.state.clearUrlVars(['collectionKey', 'tag']);
+			Zotero.state.pushState(true);
+			library.trigger("displayedItemsChanged");
+		})["catch"](Zotero.catchPromiseError);
+
+		return false;
+	},
+	render: function render() {
+		var library = this.props.library;
+		var itemSelected = this.props.itemSelected;
+		var selectedCollection = this.props.selectedCollection;
+		var collectionSelected = selectedCollection != false;
+
+		var showTrashActions = itemSelected && selectedCollection == "trash";
+		var showNonTrashActions = itemSelected && selectedCollection != "trash";
+
+		return React.createElement(
+			"div",
+			{ className: "btn-group" },
+			React.createElement(
+				"button",
+				{ className: "btn btn-default navbar-btn dropdown-toggle", "data-toggle": "dropdown", href: "#", title: "Actions" },
+				"Actions",
+				React.createElement("span", { className: "caret" })
+			),
+			React.createElement(
+				"ul",
+				{ className: "dropdown-menu actions-menu" },
+				React.createElement(
+					"li",
+					{ className: "permission-edit selected-item-action", hidden: !itemSelected },
+					React.createElement(
+						"a",
+						{ role: "menuitem", className: "eventfultrigger add-to-collection-button clickable", "data-library": library.libraryString, "data-triggers": "addToCollectionDialog", title: "Add to Collection" },
+						"Add to Collection"
+					)
+				),
+				React.createElement(
+					"li",
+					{ className: "permission-edit selected-item-action selected-collection-action", hidden: !(itemSelected && collectionSelected) },
+					React.createElement(
+						"a",
+						{ onClick: this.removeFromCollection, className: "remove-from-collection-button clickable", title: "Remove from Collection" },
+						"Remove from Collection"
+					)
+				),
+				React.createElement(
+					"li",
+					{ className: "permission-edit selected-item-action", hidden: !showNonTrashActions },
+					React.createElement(
+						"a",
+						{ onClick: this.trashOrDeleteItems, className: "move-to-trash-button clickable", title: "Move to Trash" },
+						"Move to Trash"
+					)
+				),
+				React.createElement(
+					"li",
+					{ className: "permission-edit selected-item-action", hidden: !showTrashActions },
+					React.createElement(
+						"a",
+						{ onClick: this.trashOrDeleteItems, className: "permanently-delete-button clickable", title: "Move to Trash" },
+						"Permanently Delete"
+					)
+				),
+				React.createElement(
+					"li",
+					{ className: "permission-edit selected-item-action", hidden: !showTrashActions },
+					React.createElement(
+						"a",
+						{ onClick: this.removeFromTrash, className: "remove-from-trash-button clickable", title: "Remove from Trash" },
+						"Remove from Trash"
+					)
+				),
+				React.createElement("li", { className: "divider permission-edit selected-item-action" }),
+				React.createElement(
+					"li",
+					{ className: "permission-edit" },
+					React.createElement(
+						"a",
+						{ className: "create-collection-button eventfultrigger clickable", "data-library": library.libraryString, "data-triggers": "createCollectionDialog", title: "New Collection" },
+						"Create Collection"
+					)
+				),
+				React.createElement(
+					"li",
+					{ className: "permission-edit", hidden: !collectionSelected },
+					React.createElement(
+						"a",
+						{ className: "update-collection-button eventfultrigger clickable", "data-library": library.libraryString, "data-triggers": "updateCollectionDialog", title: "Change Collection" },
+						"Rename Collection"
+					)
+				),
+				React.createElement(
+					"li",
+					{ className: "permission-edit", hidden: !collectionSelected },
+					React.createElement(
+						"a",
+						{ className: "delete-collection-button eventfultrigger clickable", "data-library": library.libraryString, "data-triggers": "deleteCollectionDialog", title: "Delete Collection" },
+						"Delete Collection"
+					)
+				),
+				React.createElement("li", { className: "divider permission-edit" }),
+				React.createElement(
+					"li",
+					null,
+					React.createElement(
+						"a",
+						{ href: "#", className: "eventfultrigger clickable", "data-library": library.libraryString, "data-triggers": "librarySettingsDialog" },
+						"Library Settings"
+					)
+				),
+				React.createElement(
+					"li",
+					null,
+					React.createElement(
+						"a",
+						{ href: "#", className: "cite-button eventfultrigger clickable", "data-library": library.libraryString, "data-triggers": "citeItems" },
+						"Cite"
+					)
+				),
+				React.createElement(
+					"li",
+					null,
+					React.createElement(
+						"a",
+						{ href: "#", className: "export-button eventfultrigger clickable", "data-library": library.libraryString, "data-triggers": "exportItemsDialog" },
+						"Export"
+					)
+				),
+				React.createElement("li", { className: "divider selected-item-action" }),
+				React.createElement(
+					"li",
+					{ className: "selected-item-action", hidden: !itemSelected },
+					React.createElement(
+						"a",
+						{ className: "send-to-library-button eventfultrigger clickable", "data-library": library.libraryString, "data-triggers": "sendToLibraryDialog", title: "Copy to Library" },
+						"Copy to Library"
+					)
+				),
+				React.createElement("li", { className: "divider" }),
+				React.createElement(
+					"li",
+					null,
+					React.createElement(
+						"a",
+						{ href: "#", className: "eventfultrigger clickable", "data-library": library.libraryString, "data-triggers": "syncLibary" },
+						"Sync"
+					)
+				),
+				React.createElement(
+					"li",
+					null,
+					React.createElement(
+						"a",
+						{ href: "#", className: "eventfultrigger clickable", "data-library": library.libraryString, "data-triggers": "deleteIdb" },
+						"Delete IDB"
+					)
+				)
+			)
+		);
+	}
+});
+
+var CreateItemDropdown = React.createClass({
+	displayName: "CreateItemDropdown",
+
+	getDefaultProps: function getDefaultProps() {
+		return {};
+	},
+	createItem: function createItem(evt) {
+		//clear path vars and send to new item page with current collection when create-item-link clicked
+		Z.debug("create-item-Link clicked", 3);
+		evt.preventDefault();
+		var library = this.props.library;
+		var itemType = J(evt.target).data('itemtype');
+		library.trigger("createItem", { itemType: itemType });
+		return false;
+	},
+	render: function render() {
+		var reactInstance = this;
+		var libraryString = "";
+		var itemTypes = Object.keys(Zotero.Item.prototype.typeMap);
+		itemTypes = itemTypes.sort();
+		var nodes = itemTypes.map(function (itemType, ind) {
+			return React.createElement(
+				"li",
+				{ key: itemType },
+				React.createElement(
+					"a",
+					{ onClick: reactInstance.createItem, href: "#", "data-itemtype": itemType },
+					Zotero.Item.prototype.typeMap[itemType]
+				)
+			);
+		});
+
+		var buttonClass = "create-item-button btn btn-default navbar-btn dropdown-toggle";
+		if (Zotero.state.getUrlVar('collectionKey') == 'trash') {
+			buttonClass += " disabled";
+		}
+
+		return React.createElement(
+			"div",
+			{ className: "btn-group create-item-dropdown permission-edit" },
+			React.createElement(
+				"button",
+				{ type: "button", className: buttonClass, "data-toggle": "dropdown", title: "New Item" },
+				React.createElement("span", { className: "glyphicons fonticon glyphicons-plus" })
+			),
+			React.createElement(
+				"ul",
+				{ className: "dropdown-menu", role: "menu", style: { maxHeight: "300px", overflow: "auto" } },
+				nodes
+			)
+		);
+	}
+});
+
+var ControlPanel = React.createClass({
+	displayName: "ControlPanel",
+
+	componentWillMount: function componentWillMount() {
+		reactInstance = this;
+		library = this.props.library;
+
+		reactInstance.setState({ user: Zotero.config.loggedInUser });
+
+		library.listen("selectedItemsChanged", function (evt) {
+			var selectedItemKeys = evt.selectedItemKeys;
+			reactInstance.setState({ selectedItems: selectedItemKeys });
+		}, {});
+
+		library.listen("selectedCollectionChanged", function (evt) {
+			var selectedCollection = Zotero.state.getUrlVar('collectionKey');
+			reactInstance.setState({ selectedCollection: selectedCollection });
+		}, {});
+	},
+	getDefaultProps: function getDefaultProps() {
+		return {};
+	},
+	getInitialState: function getInitialState() {
+		return {
+			user: false,
+			canEdit: false,
+			selectedItems: [],
+			selectedCollection: null
+		};
+	},
+	render: function render() {
+		return React.createElement(
+			"div",
+			{ id: "control-panel", className: "nav navbar-nav", role: "navigation" },
+			React.createElement(
+				"div",
+				{ className: "btn-toolbar navbar-left" },
+				React.createElement(GroupsButton, { library: this.props.library }),
+				React.createElement(LibraryDropdown, { user: this.state.user, library: this.props.library }),
+				React.createElement(ActionsDropdown, { library: this.props.library, itemSelected: this.state.selectedItems.length > 0, selectedCollection: this.state.selectedCollection }),
+				React.createElement(CreateItemDropdown, { library: this.props.library })
+			)
+		);
+	}
+});
+/*<li><a href="#" className="share-button eventfultrigger clickable" data-library={library.libraryString} data-triggers="shareToDocs">Share To Docs</a></li>*/
+"use strict";
+
+Zotero.ui.widgets.reactcreateCollectionDialog = {};
+
+Zotero.ui.widgets.reactcreateCollectionDialog.init = function (el) {
+	Z.debug("createcollectionsdialog widget init", 3);
+	var library = Zotero.ui.getAssociatedLibrary(el);
+	var reactInstance = ReactDOM.render(React.createElement(CreateCollectionDialog, { library: library }), document.getElementById('create-collection-dialog'));
+	Zotero.ui.widgets.reactaddToCollectionDialog.reactInstance = reactInstance;
+
+	library.listen("createCollectionDialog", function () {
+		reactInstance.forceUpdate();
+		reactInstance.openDialog();
+	}, {});
+};
+
+var CreateCollectionDialog = React.createClass({
+	displayName: "CreateCollectionDialog",
+
+	getInitialState: function getInitialState() {
+		return {
+			collectionName: "",
+			parentCollection: null
+		};
+	},
+	handleCollectionChange: function handleCollectionChange(evt) {
+		Z.debug(evt);
+		Z.debug(evt.target.value);
+		this.setState({ 'parentCollection': evt.target.value });
+	},
+	handleNameChange: function handleNameChange(evt) {
+		this.setState({ 'collectionName': evt.target.value });
+	},
+	openDialog: function openDialog() {
+		this.refs.modal.open();
+	},
+	closeDialog: function closeDialog(evt) {
+		this.refs.modal.close();
+	},
+	createCollection: function createCollection() {
+		Z.debug("react createCollection");
+		var reactInstance = this;
+		var library = this.props.library;
+		var parentKey = this.state.parentCollection;
+		var name = this.state.collectionName;
+		if (name == "") {
+			name = "Untitled";
+		}
+
+		library.addCollection(name, parentKey).then(function (responses) {
+			library.collections.initSecondaryData();
+			library.trigger('libraryCollectionsUpdated');
+			Zotero.state.pushState();
+			reactInstance.closeDialog();
+			Zotero.ui.jsNotificationMessage("Collection Created", 'success');
+		})["catch"](function (error) {
+			Zotero.ui.jsNotificationMessage("There was an error creating the collection.", "error");
+			reactInstance.closeDialog();
+		});
+	},
+	render: function render() {
+		var library = this.props.library;
+		var ncollections = library.collections.nestedOrderingArray();
+
+		var collectionOptions = ncollections.map(function (collection, index) {
+			return React.createElement(
+				"option",
+				{ key: collection.get('key'), value: collection.get('key') },
+				'-'.repeat(collection.nestingDepth),
+				" ",
+				collection.get('name')
+			);
+		});
+		collectionOptions.unshift(React.createElement(
+			"option",
+			{ key: "emptyvalue", value: "" },
+			"None"
+		));
+
+		return React.createElement(
+			BootstrapModalWrapper,
+			{ ref: "modal" },
+			React.createElement(
+				"div",
+				{ id: "create-collection-dialog", className: "create-collection-dialog", role: "dialog", title: "Create Collection", "data-keyboard": "true" },
+				React.createElement(
+					"div",
+					{ className: "modal-dialog" },
+					React.createElement(
+						"div",
+						{ className: "modal-content" },
+						React.createElement(
+							"div",
+							{ className: "modal-header" },
+							React.createElement(
+								"button",
+								{ type: "button", className: "close", "data-dismiss": "modal", "aria-hidden": "true" },
+								"×"
+							),
+							React.createElement(
+								"h3",
+								null,
+								"Create Collection"
+							)
+						),
+						React.createElement(
+							"div",
+							{ className: "new-collection-div modal-body", "data-role": "content" },
+							React.createElement(
+								"form",
+								{ method: "POST" },
+								React.createElement(
+									"div",
+									{ "data-role": "fieldcontain" },
+									React.createElement(
+										"label",
+										{ htmlFor: "new-collection-title-input" },
+										"Collection Name"
+									),
+									React.createElement("input", { onChange: this.handleNameChange, className: "new-collection-title-input form-control", type: "text" })
+								),
+								React.createElement(
+									"div",
+									{ "data-role": "fieldcontain" },
+									React.createElement(
+										"label",
+										{ htmlFor: "new-collection-parent" },
+										"Parent Collection"
+									),
+									React.createElement(
+										"select",
+										{ onChange: this.handleCollectionChange, className: "collectionKey-select new-collection-parent form-control", defaultValue: "" },
+										collectionOptions
+									)
+								)
+							)
+						),
+						React.createElement(
+							"div",
+							{ className: "modal-footer" },
+							React.createElement(
+								"button",
+								{ onClick: this.closeDialog, className: "btn", "data-dismiss": "modal", "aria-hidden": "true" },
+								"Close"
+							),
+							React.createElement(
+								"button",
+								{ onClick: this.createCollection, className: "btn btn-primary createButton" },
+								"Create"
+							)
+						)
+					)
+				)
+			)
+		);
+	}
+});
+"use strict";
+
+Zotero.ui.widgets.reactcreateItemDialog = {};
+
+Zotero.ui.widgets.reactcreateItemDialog.init = function (el) {
+	Z.debug("createItemDialog widget init", 3);
+	var library = Zotero.ui.getAssociatedLibrary(el);
+	var reactInstance = ReactDOM.render(React.createElement(CreateItemDialog, { library: library }), document.getElementById('create-item-dialog'));
+
+	library.listen("createItem", function (evt) {
+		Z.debug("Opening createItem dialog");
+		Z.debug(evt);
+		var itemType = evt.itemType;
+		Z.debug(itemType);
+		reactInstance.setState({ itemType: itemType });
+		reactInstance.openDialog();
+	}, {});
+};
+
+var CreateItemDialog = React.createClass({
+	displayName: "CreateItemDialog",
+
+	getInitialState: function getInitialState() {
+		return {
+			title: "",
+			itemType: "document"
+		};
+	},
+	handleTitleChange: function handleTitleChange(evt) {
+		this.setState({ 'title': evt.target.value });
+	},
+	createItem: function createItem() {
+		var reactInstance = this;
+		var library = this.props.library;
+		var itemType = this.state.itemType;
+		var currentCollectionKey = Zotero.state.getUrlVar('collectionKey');
+		var title = reactInstance.state.title;
+		if (title == "") {
+			title = "Untitled";
+		}
+
+		var item = new Zotero.Item();
+		item.initEmpty(itemType).then(function () {
+			item.associateWithLibrary(library);
+			item.set('title', title);
+			if (currentCollectionKey) {
+				item.addToCollection(currentCollectionKey);
+			}
+			return Zotero.ui.saveItem(item);
+		}).then(function (responses) {
+			var itemKey = item.get('key');
+			Zotero.state.setUrlVar('itemKey', itemKey);
+			Zotero.state.pushState();
+			reactInstance.closeDialog();
+		})["catch"](function (error) {
+			Zotero.error(error);
+			Zotero.ui.jsNotificationMessage("There was an error creating the item.", "error");
+			reactInstance.closeDialog();
+		});
+	},
+	openDialog: function openDialog() {
+		this.refs.modal.open();
+	},
+	closeDialog: function closeDialog(evt) {
+		this.refs.modal.close();
+	},
+	render: function render() {
+		return React.createElement(
+			BootstrapModalWrapper,
+			{ ref: "modal" },
+			React.createElement(
+				"div",
+				{ id: "create-item-dialog", className: "create-item-dialog", role: "dialog", title: "Create Item", "data-keyboard": "true" },
+				React.createElement(
+					"div",
+					{ className: "modal-dialog" },
+					React.createElement(
+						"div",
+						{ className: "modal-content" },
+						React.createElement(
+							"div",
+							{ className: "modal-header" },
+							React.createElement(
+								"button",
+								{ type: "button", className: "close", "data-dismiss": "modal", "aria-hidden": "true" },
+								"×"
+							),
+							React.createElement(
+								"h3",
+								null,
+								"Create Item"
+							)
+						),
+						React.createElement(
+							"div",
+							{ className: "new-item-div modal-body", "data-role": "content" },
+							React.createElement(
+								"form",
+								{ method: "POST" },
+								React.createElement(
+									"div",
+									{ "data-role": "fieldcontain" },
+									React.createElement(
+										"label",
+										{ htmlFor: "new-item-title-input" },
+										"Title"
+									),
+									React.createElement("input", { onChange: this.handleTitleChange, id: "new-item-title-input", className: "new-item-title-input form-control", type: "text" })
+								)
+							)
+						),
+						React.createElement(
+							"div",
+							{ className: "modal-footer" },
+							React.createElement(
+								"button",
+								{ className: "btn", "data-dismiss": "modal", "aria-hidden": "true" },
+								"Close"
+							),
+							React.createElement(
+								"button",
+								{ onClick: this.createItem, className: "btn btn-primary createButton" },
+								"Create"
+							)
+						)
+					)
+				)
+			)
+		);
+	}
+});
+"use strict";
+
+Zotero.ui.widgets.reactdeleteCollectionDialog = {};
+
+Zotero.ui.widgets.reactdeleteCollectionDialog.init = function (el) {
+	Z.debug("deletecollectionsdialog widget init", 3);
+	var library = Zotero.ui.getAssociatedLibrary(el);
+	var reactInstance = ReactDOM.render(React.createElement(DeleteCollectionDialog, { library: library }), document.getElementById('delete-collection-dialog'));
+
+	library.listen("deleteCollectionDialog", function () {
+		reactInstance.setState({ collectionKey: Zotero.state.getUrlVar("collectionKey") });
+		reactInstance.openDialog();
+	}, { widgetEl: el });
+};
+
+var DeleteCollectionDialog = React.createClass({
+	displayName: "DeleteCollectionDialog",
+
+	getInitialState: function getInitialState() {
+		return {
+			collectionKey: null
+		};
+	},
+	handleCollectionChange: function handleCollectionChange(evt) {
+		this.setState({ 'parentCollection': evt.target.value });
+	},
+	deleteCollection: function deleteCollection() {
+		Z.debug("DeleteCollectionDialog.deleteCollection", 3);
+		var reactInstance = this;
+		var library = this.props.library;
+		var collection = library.collections.getCollection(this.state.collectionKey);
+		if (!collection) {
+			Zotero.ui.jsNotificationMessage("Selected collection not found", 'error');
+			return false;
+		}
+		collection.remove().then(function () {
+			delete Zotero.state.pathVars['collectionKey'];
+			library.collections.dirty = true;
+			library.collections.initSecondaryData();
+			Zotero.state.pushState();
+			Zotero.ui.jsNotificationMessage(collection.get('title') + " removed", 'confirm');
+			reactInstance.closeDialog();
+		})["catch"](Zotero.catchPromiseError);
+		return false;
+	},
+	openDialog: function openDialog() {
+		if (!this.state.collectionKey) {
+			Z.error("DeleteCollectionDialog opened with no collectionKey");
+		}
+		this.refs.modal.open();
+	},
+	closeDialog: function closeDialog(evt) {
+		this.refs.modal.close();
+	},
+	render: function render() {
+		var library = this.props.library;
+		var collection = library.collections.getCollection(this.state.collectionKey);
+		if (!collection) {
+			return null;
+		}
+
+		return React.createElement(
+			BootstrapModalWrapper,
+			{ ref: "modal" },
+			React.createElement(
+				"div",
+				{ id: "delete-collection-dialog", className: "delete-collection-dialog", role: "dialog", title: "Delete Collection", "data-keyboard": "true" },
+				React.createElement(
+					"div",
+					{ className: "modal-dialog" },
+					React.createElement(
+						"div",
+						{ className: "modal-content" },
+						React.createElement(
+							"div",
+							{ className: "modal-header" },
+							React.createElement(
+								"button",
+								{ type: "button", className: "close", "data-dismiss": "modal", "aria-hidden": "true" },
+								"×"
+							),
+							React.createElement(
+								"h3",
+								null,
+								"Delete Collection"
+							)
+						),
+						React.createElement(
+							"div",
+							{ className: "delete-collection-div modal-body" },
+							React.createElement(
+								"p",
+								null,
+								"Really delete collection \"",
+								collection.get('title'),
+								"\"?"
+							)
+						),
+						React.createElement(
+							"div",
+							{ className: "modal-footer" },
+							React.createElement(
+								"button",
+								{ className: "btn", "data-dismiss": "modal", "aria-hidden": "true" },
+								"Close"
+							),
+							React.createElement(
+								"button",
+								{ onClick: this.deleteCollection, className: "btn btn-primary deleteButton" },
+								"Delete"
+							)
+						)
+					)
+				)
+			)
+		);
+	}
+});
+"use strict";
+
+Zotero.ui.widgets.reactexportItemsDialog = {};
+
+Zotero.ui.widgets.reactexportItemsDialog.init = function (el) {
+	Z.debug("exportItemDialog widget init", 3);
+	var library = Zotero.ui.getAssociatedLibrary(el);
+	var reactInstance = ReactDOM.render(React.createElement(ExportItemsDialog, { library: library }), document.getElementById('export-dialog'));
+
+	library.listen("exportItemsDialog", function () {
+		Z.debug("opening export dialog");
+		reactInstance.openDialog();
+	}, {});
+	library.listen("displayedItemsChanged", function () {
+		reactInstance.forceUpdate();
+	}, {});
+};
+
+var ExportItemsDialog = React.createClass({
+	displayName: "ExportItemsDialog",
+
+	getInitialState: function getInitialState() {
+		return {};
+	},
+	openDialog: function openDialog() {
+		this.refs.modal.open();
+	},
+	closeDialog: function closeDialog(evt) {
+		this.refs.modal.close();
+	},
+	render: function render() {
+		var library = this.props.library;
+		var urlconfig = Zotero.ui.getItemsConfig(library);
+		var exportUrls = Zotero.url.exportUrls(urlconfig);
+
+		var exportNodes = Object.keys(exportUrls).map(function (key) {
+			var exportUrl = exportUrls[key];
+			return React.createElement(
+				"li",
+				{ key: key },
+				React.createElement(
+					"a",
+					{ href: exportUrl, target: "_blank", className: "export-link", "data-exportformat": key },
+					Zotero.config.exportFormatsMap[key]
+				)
+			);
+		});
+
+		return React.createElement(
+			BootstrapModalWrapper,
+			{ ref: "modal" },
+			React.createElement(
+				"div",
+				{ id: "export-items-dialog", className: "export-items-dialog", role: "dialog", title: "Library Settings", "data-keyboard": "true" },
+				React.createElement(
+					"div",
+					{ className: "modal-dialog" },
+					React.createElement(
+						"div",
+						{ className: "modal-content" },
+						React.createElement(
+							"div",
+							{ className: "modal-header" },
+							React.createElement(
+								"button",
+								{ type: "button", className: "close", "data-dismiss": "modal", "aria-hidden": "true" },
+								"×"
+							),
+							React.createElement(
+								"h3",
+								null,
+								"Export"
+							)
+						),
+						React.createElement(
+							"div",
+							{ className: "modal-body", "data-role": "content" },
+							React.createElement(
+								"div",
+								{ className: "export-list" },
+								React.createElement(
+									"ul",
+									{ id: "export-formats-ul" },
+									exportNodes
+								)
+							)
+						),
+						React.createElement(
+							"div",
+							{ className: "modal-footer" },
+							React.createElement(
+								"button",
+								{ className: "btn btn-default", "data-dismiss": "modal", "aria-hidden": "true" },
+								"Close"
+							)
+						)
+					)
+				)
+			)
+		);
+	}
+});
+'use strict';
+
+Zotero.ui.widgets.reactfilterGuide = {};
+
+Zotero.ui.widgets.reactfilterGuide.init = function (el) {
+	Z.debug('widgets.filterGuide.init', 3);
+	var library = Zotero.ui.getAssociatedLibrary(el);
+	var reactInstance = ReactDOM.render(React.createElement(FilterGuide, { library: library }), document.getElementById('filter-guide'));
+
+	library.listen("displayedItemsChanged", reactInstance.refreshFilters, {});
+	library.listen("displayedItemChanged", reactInstance.refreshFilters, {});
+	library.listen("updateFilterGuide", reactInstance.refreshFilters, {});
+	library.listen("selectedCollectionChanged", reactInstance.refreshFilters, {});
+	library.listen("cachedDataLoaded", reactInstance.refreshFilters, {});
+	library.listen("libraryCollectionsUpdated", reactInstance.refreshFilters, {});
+};
+
+var FilterGuide = React.createClass({
+	displayName: 'FilterGuide',
+
+	getInitialState: function getInitialState() {
+		return {
+			collectionKey: "",
+			tags: [],
+			query: ""
+		};
+	},
+	refreshFilters: function refreshFilters(evt) {
+		var library = this.props.library;
+		var displayConfig = Zotero.ui.getItemsConfig(library);
+		this.setState({
+			collectionKey: displayConfig['collectionKey'],
+			tags: displayConfig['tag'],
+			query: displayConfig['q']
+		});
+	},
+	clearFilter: function clearFilter(evt) {
+		evt.preventDefault();
+		Z.debug('widgets.filterGuide.clearFilter', 3);
+		var library = this.props.library;
+		var target = J(evt.currentTarget);
+		var collectionKey = target.data('collectionkey');
+		var tag = target.data('tag');
+		var query = target.data('query');
+		if (collectionKey) {
+			Zotero.state.unsetUrlVar('collectionKey');
+			this.setState({ collectionKey: "" });
+		}
+		if (tag) {
+			Zotero.state.toggleTag(tag);
+			this.setState({ tags: Zotero.state.getUrlVar('tag') });
+		}
+		if (query) {
+			library.trigger('clearLibraryQuery');
+			this.setState({ query: "" });
+			return;
+		}
+		Zotero.state.pushState();
+	},
+	render: function render() {
+		var library = this.props.library;
+		var collectionNodes = null;
+		var tagNodes = null;
+		var searchNodes = null;
+
+		if (this.state.collectionKey != "") {
+			var collection = library.collections.getCollection(this.state.collectionKey);
+			if (collection) {
+				collectionNodes = React.createElement(
+					'li',
+					{ className: 'filterguide-entry' },
+					React.createElement(
+						'a',
+						{ onClick: this.clearFilter, href: '#', 'data-collectionkey': this.state.collectionKey },
+						React.createElement('span', { className: 'glyphicons fonticon glyphicons-folder-open' }),
+						React.createElement(
+							'span',
+							{ className: 'filterguide-label' },
+							collection.get('name')
+						),
+						React.createElement('span', { className: 'glyphicons fonticon glyphicons-remove' })
+					)
+				);
+			}
+		}
+		if (this.state.tags) {
+			tagNodes = this.state.tags.map(function (tag) {
+				return React.createElement(
+					'li',
+					{ className: 'filterguide-entry' },
+					React.createElement(
+						'a',
+						{ onClick: this.clearFilter, href: '#', 'data-tag': tag },
+						React.createElement('span', { className: 'glyphicons fonticon glyphicons-tag' }),
+						React.createElement(
+							'span',
+							{ className: 'filterguide-label' },
+							tag
+						),
+						React.createElement('span', { className: 'glyphicons fonticon glyphicons-remove' })
+					)
+				);
+			});
+		}
+		if (this.state.query) {
+			searchNodes = React.createElement(
+				'li',
+				{ className: 'filterguide-entry' },
+				React.createElement(
+					'a',
+					{ onClick: this.clearFilter, href: '#', 'data-query': this.state.query },
+					React.createElement('span', { className: 'glyphicons fonticon glyphicons-search' }),
+					React.createElement(
+						'span',
+						{ className: 'filterguide-label' },
+						this.state.query
+					),
+					React.createElement('span', { className: 'glyphicons fonticon glyphicons-remove' })
+				)
+			);
+		}
+
+		return React.createElement(
+			'div',
+			{ className: 'filter-guide col-12' },
+			React.createElement(
+				'ul',
+				{ className: 'filterguide-list' },
+				collectionNodes,
+				tagNodes,
+				searchNodes
+			)
+		);
+	}
+});
+"use strict";
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+Zotero.ui.widgets.reactitem = {};
+//TODO: trigger showChildren with an extra itemID filter so quick clicks back and forth
+//between items don't overwrite with the wrong children?
+Zotero.ui.widgets.reactitem.init = function (el) {
+	var library = Zotero.ui.getAssociatedLibrary(el);
+
+	var reactInstance = ReactDOM.render(React.createElement(ItemDetails, { library: library }), document.getElementById('item-widget-div'));
+	Zotero.ui.widgets.reactitem.reactInstance = reactInstance;
+};
+
+Zotero.ui.editMatches = function (props, edit) {
+	//Z.debug("Zotero.ui.editMatches");
+	//Z.debug(props);
+	//Z.debug(edit);
+	if (props === null || edit === null) {
+		return false;
+	}
+	if (edit.field != props.field) {
+		return false;
+	}
+	//field is the same, make sure index matches if set
+	if (edit.creatorIndex != props.creatorIndex) {
+		//Z.debug("creatorIndex mismatch");
+		return false;
+	}
+	if (props.tagIndex != edit.tagIndex) {
+		//Z.debug("tagIndex mismatch");
+		return false;
+	}
+	return true;
+};
+
+Zotero.ui.genericDisplayedFields = function (item) {
+	var genericDisplayedFields = Object.keys(item.apiObj.data).filter(function (field) {
+		if (item.hideFields.indexOf(field) != -1) {
+			return false;
+		}
+		if (!item.fieldMap.hasOwnProperty(field)) {
+			return false;
+		}
+		if (field == "title" || field == "creators" || field == "itemType") {
+			return false;
+		}
+		return true;
+	});
+	return genericDisplayedFields;
+};
+
+Zotero.ui.widgets.reactitem.editFields = function (item) {
+	var fields = [{ field: "itemType" }, { field: "title" }];
+	var creators = item.get('creators');
+	creators.forEach(function (k, i) {
+		fields.push({ field: "creatorType", creatorIndex: i });
+		if (k.name) {
+			fields.push({ field: "name", creatorIndex: i });
+		} else {
+			fields.push({ field: "lastName", creatorIndex: i });
+			fields.push({ field: "firstName", creatorIndex: i });
+		}
+	});
+
+	var genericFields = Zotero.ui.genericDisplayedFields(item);
+	genericFields.forEach(function (k, i) {
+		fields.push({ field: k });
+	});
+	return fields;
+};
+
+//take an edit object and return the edit object selecting the next field of the item
+Zotero.ui.widgets.reactitem.nextEditField = function (item, edit) {
+	if (!edit || !edit.field) {
+		return null;
+	}
+	var editFields = Zotero.ui.widgets.reactitem.editFields(item);
+	var curFieldIndex;
+	for (var i = 0; i < editFields.length; i++) {
+		if (editFields[i].field == edit.field) {
+			if (editFields[i].creatorIndex == edit.creatorIndex) {
+				curFieldIndex = i;
+			}
+		}
+	}
+	if (curFieldIndex == editFields.length) {
+		return editFields[0];
+	} else {
+		return editFields[i + 1];
+	}
+	/*
+ //special case if editing a creator
+ switch(edit.field) {
+ 	case "title":
+ 		return {
+ 			creatorIndex: 0,
+ 			field: "creatorType"
+ 		};
+ 		break;
+ 	case "creatorType":
+ 		var creators = item.get('creators');
+ 		var creator = creators[edit.creatorIndex];
+ 		if(creator.name){
+ 			return {
+ 				creatorIndex: edit.creatorIndex,
+ 				field: "name"
+ 			};
+ 		} else {
+ 			return {
+ 				creatorIndex: edit.creatorIndex,
+ 				field: "lastName"
+ 			};
+ 		}
+ 		break;
+ 	case "lastName":
+ 		return {
+ 			creatorIndex: edit.creatorIndex + 1,
+ 			field: "firstName"
+ 		};
+ 		break;
+ 	case "name":
+ 	case "firstName":
+ 		//move to next creator, or fields after creators
+ 		if(edit.creatorIndex < creators.length){
+ 			return {
+ 				creatorIndex: edit.creatorIndex + 1,
+ 				field:"creatorType"
+ 			}
+ 		} else {
+ 			//move to first field after creators
+ 			var genericDisplayedFields = Zotero.ui.genericDisplayedFields(item);
+ 			return {
+ 				field: genericDisplayedFields[0]
+ 			}
+ 		}
+ 		break;
+ 	default:
+ 		var genericDisplayedFields = Zotero.ui.genericDisplayedFields(item);
+ 		//if currently at the last field, go back up to title
+ 		if(genericDisplayedFields[genericDisplayedFields.length - 1] == edit.field){
+ 			return {
+ 				field:"title"
+ 			};
+ 		}
+ 		//otherwise, return the field at current edit field + 1
+ 		for(var i = 0; i < genericDisplayedFields.length; i++){
+ 			if(edit.field == genericDisplayedFields[i]){
+ 				return {
+ 					field:genericDisplayedFields[i + 1]
+ 				};
+ 			}
+ 		}
+ }
+ */
+};
+
+var CreatorRow = React.createClass({
+	displayName: "CreatorRow",
+
+	getDefaultProps: function getDefaultProps() {
+		return {
+			item: null,
+			library: null,
+			creatorIndex: 0,
+			edit: null
+		};
+	},
+	render: function render() {
+		//Z.debug("CreatorRow render");
+		if (this.props.item == null) {
+			return null;
+		}
+		var item = this.props.item;
+		var creator = item.get('creators')[this.props.creatorIndex];
+		var edit = this.props.edit;
+		var nameSpans = null;
+		if (creator.name && creator.name != "") {
+			nameSpans = React.createElement(ItemField, _extends({}, this.props, { key: "name", field: "name" }));
+		} else {
+			nameSpans = [React.createElement(ItemField, _extends({}, this.props, { key: "lastName", field: "lastName" })), ", ", React.createElement(ItemField, _extends({}, this.props, { key: "firstName", field: "firstName" }))];
+		}
+		return React.createElement(
+			"tr",
+			{ className: "creator-row" },
+			React.createElement(
+				"th",
+				null,
+				React.createElement(ItemField, _extends({}, this.props, { field: "creatorType" }))
+			),
+			React.createElement(
+				"td",
+				null,
+				nameSpans,
+				React.createElement(
+					"div",
+					{ className: "btn-toolbar", role: "toolbar" },
+					React.createElement(ToggleCreatorFieldButton, this.props),
+					React.createElement(AddRemoveCreatorFieldButtons, this.props)
+				)
+			)
+		);
+	}
+});
+
+var ToggleCreatorFieldButton = React.createClass({
+	displayName: "ToggleCreatorFieldButton",
+
+	render: function render() {
+		//Z.debug("ToggleCreatorFieldButton render");
+		return React.createElement(
+			"div",
+			{ className: "btn-group" },
+			React.createElement(
+				"button",
+				{ type: "button",
+					className: "switch-two-field-creator-link btn btn-default",
+					title: "Toggle single field creator",
+					"data-itemkey": this.props.item.get('key'),
+					"data-creatorindex": this.props.creatorIndex,
+					onClick: this.switchCreatorFields },
+				React.createElement("span", { className: "fonticon glyphicons glyphicons-unchecked" })
+			)
+		);
+	},
+	switchCreatorFields: function switchCreatorFields(evt) {
+		//Z.debug("CreatorRow switchCreatorFields");
+		var creatorIndex = this.props.creatorIndex;
+		var item = this.props.item;
+		var creators = item.get('creators');
+		var creator = creators[creatorIndex];
+
+		//split a single name creator into first/last, or combine first/last
+		//into a single name
+		if (creator.name !== undefined) {
+			var split = creator.name.split(' ');
+			if (split.length > 1) {
+				creator.lastName = split.splice(-1, 1)[0];
+				creator.firstName = split.join(' ');
+			} else {
+				creator.lastName = creator.name;
+				creator.firstName = '';
+			}
+			delete creator.name;
+		} else {
+			if (creator.firstName === "" && creator.lastName === "") {
+				creator.name = "";
+			} else {
+				creator.name = creator.firstName + ' ' + creator.lastName;
+			}
+			delete creator.firstName;
+			delete creator.lastName;
+		}
+
+		creators[creatorIndex] = creator;
+		Zotero.ui.saveItem(item);
+		Zotero.ui.widgets.reactitem.reactInstance.setState({ item: item });
+	}
+});
+
+var AddRemoveCreatorFieldButtons = React.createClass({
+	displayName: "AddRemoveCreatorFieldButtons",
+
+	render: function render() {
+		//Z.debug("AddRemoveCreatorFieldButtons render");
+		return React.createElement(
+			"div",
+			{ className: "btn-group" },
+			React.createElement(
+				"button",
+				{ type: "button",
+					className: "btn btn-default",
+					"data-creatorindex": this.props.creatorIndex,
+					onClick: this.removeCreator },
+				React.createElement("span", { className: "fonticon glyphicons glyphicons-minus" })
+			),
+			React.createElement(
+				"button",
+				{ type: "button",
+					className: "btn btn-default",
+					"data-creatorindex": this.props.creatorIndex,
+					onClick: this.addCreator },
+				React.createElement("span", { className: "fonticon glyphicons glyphicons-plus" })
+			)
+		);
+	},
+	addCreator: function addCreator(evt) {
+		Z.debug("addCreator");
+		var item = this.props.item;
+		var creatorIndex = this.props.creatorIndex;
+		var creators = item.get('creators');
+		var newCreator = { creatorType: "author", firstName: "", lastName: "" };
+		creators.splice(creatorIndex + 1, 0, newCreator);
+		Zotero.ui.widgets.reactitem.reactInstance.setState({
+			item: item,
+			edit: {
+				field: "lastName",
+				creatorIndex: creatorIndex + 1
+			}
+		});
+	},
+	removeCreator: function removeCreator(evt) {
+		Z.debug("removeCreator");
+		var creatorIndex = this.props.creatorIndex;
+		var item = this.props.item;
+		var creators = item.get('creators');
+		creators.splice(creatorIndex, 1);
+		Zotero.ui.saveItem(item);
+		Zotero.ui.widgets.reactitem.reactInstance.setState({ item: item });
+	}
+});
+
+var ItemNavTabs = React.createClass({
+	displayName: "ItemNavTabs",
+
+	getDefaultProps: function getDefaultProps() {
+		return {
+			item: null
+		};
+	},
+	render: function render() {
+		Z.debug("ItemNavTabs render");
+		if (this.props.item == null) {
+			return null;
+		}
+		if (!this.props.item.isSupplementaryItem()) {
+			return React.createElement(
+				"ul",
+				{ className: "nav nav-tabs", role: "tablist" },
+				React.createElement(
+					"li",
+					{ role: "presentation", className: "active" },
+					React.createElement(
+						"a",
+						{ href: "#item-info-panel", "aria-controls": "item-info-panel", role: "tab", "data-toggle": "tab" },
+						"Info"
+					)
+				),
+				React.createElement(
+					"li",
+					{ role: "presentation" },
+					React.createElement(
+						"a",
+						{ href: "#item-children-panel", "aria-controls": "item-children-panel", role: "tab", "data-toggle": "tab" },
+						"Children"
+					)
+				),
+				React.createElement(
+					"li",
+					{ role: "presentation" },
+					React.createElement(
+						"a",
+						{ href: "#item-tags-panel", "aria-controls": "item-tags-panel", role: "tab", "data-toggle": "tab" },
+						"Tags"
+					)
+				)
+			);
+		}
+		return null;
+	}
+});
+
+var ItemFieldRow = React.createClass({
+	displayName: "ItemFieldRow",
+
+	getDefaultProps: function getDefaultProps() {
+		return {
+			item: null,
+			edit: null
+		};
+	},
+	render: function render() {
+		//Z.debug("ItemFieldRow render");
+		var item = this.props.item;
+		var field = this.props.field;
+		var placeholderOrValue = React.createElement(ItemField, { item: item, field: field, edit: this.props.edit });
+
+		if (field == 'url') {
+			var url = item.get('url');
+			return React.createElement(
+				"tr",
+				null,
+				React.createElement(
+					"th",
+					null,
+					React.createElement(
+						"a",
+						{ rel: "nofollow", href: url },
+						item.fieldMap[field]
+					)
+				),
+				React.createElement(
+					"td",
+					{ className: field },
+					placeholderOrValue
+				)
+			);
+		} else if (field == 'DOI') {
+			var doi = item.get('DOI');
+			return React.createElement(
+				"tr",
+				null,
+				React.createElement(
+					"th",
+					null,
+					React.createElement(
+						"a",
+						{ rel: "nofollow", href: 'http://dx.doi.org/' + doi },
+						item.fieldMap[field]
+					)
+				),
+				React.createElement(
+					"td",
+					{ className: field },
+					placeholderOrValue
+				)
+			);
+		} else if (Zotero.config.richTextFields[field]) {
+			return React.createElement(
+				"tr",
+				null,
+				React.createElement(
+					"th",
+					null,
+					item.fieldMap[field],
+					"}"
+				),
+				React.createElement(
+					"td",
+					{ className: field },
+					placeholderOrValue
+				)
+			);
+		} else {
+			return React.createElement(
+				"tr",
+				null,
+				React.createElement(
+					"th",
+					null,
+					item.fieldMap[field] || field
+				),
+				React.createElement(
+					"td",
+					{ className: field },
+					placeholderOrValue
+				)
+			);
+		}
+	}
+});
+
+//set onChange
+var ItemField = React.createClass({
+	displayName: "ItemField",
+
+	getDefaultProps: function getDefaultProps() {
+		return {
+			item: null,
+			field: null,
+			edit: null,
+			creatorIndex: null,
+			tagIndex: null
+		};
+	},
+	handleChange: function handleChange(evt) {
+		Z.debug("change on ItemField");
+		Z.debug(evt);
+		//set field to new value
+		var item = this.props.item;
+		switch (this.props.field) {
+			case "creatorType":
+			case "name":
+			case "firstName":
+			case "lastName":
+				var creators = item.get('creators');
+				var creator = creators[this.props.creatorIndex];
+				creator[this.props.field] = evt.target.value;
+				break;
+			case "tag":
+				var tags = item.get('tags');
+				var tag = tags[this.props.tagIndex];
+				tag.tag = evt.target.value;
+				break;
+			default:
+				item.set(this.props.field, evt.target.value);
+		}
+		Zotero.ui.widgets.reactitem.reactInstance.setState({ item: item });
+	},
+	handleBlur: function handleBlur(evt) {
+		Z.debug("blur on ItemField");
+		//save item, move edit to next field
+		Z.debug("handleBlur");
+		this.handleChange(evt);
+		Zotero.ui.widgets.reactitem.reactInstance.setState({ edit: null });
+		Zotero.ui.saveItem(this.props.item);
+	},
+	handleFocus: function handleFocus(evt) {
+		Z.debug("focus on ItemField");
+		var field = J(evt.target).data('field');
+		var creatorIndex = J(evt.target).data('creatorindex');
+		var tagIndex = J(evt.target).data('tagindex');
+		var edit = {
+			field: field,
+			creatorIndex: creatorIndex,
+			tagIndex: tagIndex
+		};
+		Z.debug(edit);
+		Zotero.ui.widgets.reactitem.reactInstance.setState({
+			edit: edit
+		});
+	},
+	checkKey: function checkKey(evt) {
+		Z.debug("ItemField checkKey");
+		evt.stopPropagation();
+		if (evt.keyCode === Zotero.ui.keyCode.ENTER) {
+			Z.debug("ItemField checkKey enter");
+			Z.debug(evt);
+			//var nextEdit = Zotero.ui.widgets.reactitem.nextEditField(this.props.item, this.props.edit);
+			J(evt.target).blur();
+			//Zotero.ui.widgets.reactitem.reactInstance.setState({edit:nextEdit});
+		}
+	},
+	render: function render() {
+		//Z.debug("ItemField render");
+		var item = this.props.item;
+		var field = this.props.field;
+		var creatorField = false;
+		var tagField = false;
+		var value;
+		switch (field) {
+			case "creatorType":
+			case "name":
+			case "firstName":
+			case "lastName":
+				creatorField = true;
+				var creatorIndex = this.props.creatorIndex;
+				var creator = item.get('creators')[creatorIndex];
+				value = creator[field];
+				var creatorPlaceHolders = {
+					'name': '(name)',
+					'lastName': '(Last Name)',
+					'firstName': '(First Name)'
+				};
+
+				break;
+			case "tag":
+				tagField = true;
+				var tagIndex = this.props.tagIndex;
+				var tag = item.get('tags')[tagIndex];
+				value = tag.tag;
+				break;
+			default:
+				value = item.get(field);
+		}
+
+		var editThisField = Zotero.ui.editMatches(this.props, this.props.edit);
+		if (!editThisField) {
+			var spanProps = {
+				className: "editable-item-field",
+				tabIndex: 0,
+				"data-field": field,
+				onFocus: this.handleFocus
+			};
+
+			if (creatorField) {
+				spanProps['data-creatorindex'] = this.props.creatorIndex;
+				var p = value == "" ? creatorPlaceHolders[field] : value;
+			} else if (tagField) {
+				spanProps['data-tagindex'] = this.props.tagIndex;
+				var p = value;
+			} else {
+				var p = value == "" ? React.createElement("div", { className: "empty-field-placeholder" }) : Zotero.ui.formatItemField(field, item);
+			}
+			return React.createElement(
+				"span",
+				spanProps,
+				p
+			);
+		}
+
+		var focusEl = function focusEl(el) {
+			if (el != null) {
+				el.focus();
+			}
+		};
+
+		var inputProps = {
+			className: "form-control item-field-control " + this.props.field,
+			name: field,
+			defaultValue: value,
+			//onChange: this.handleChange,
+			onKeyDown: this.checkKey,
+			onBlur: this.handleBlur,
+			creatorindex: this.props.creatorIndex,
+			tagindex: this.props.tagIndex,
+			ref: focusEl
+		};
+		if (creatorField) {
+			inputProps.placeholder = creatorPlaceHolders[field];
+		}
+
+		switch (this.props.field) {
+			case null:
+				return null;
+				break;
+			case 'itemType':
+				var itemTypeOptions = item.itemTypes.map(function (itemType) {
+					return React.createElement(
+						"option",
+						{ key: itemType.itemType,
+							label: itemType.localized,
+							value: itemType.itemType },
+						itemType.localized
+					);
+				});
+				return React.createElement(
+					"select",
+					inputProps,
+					itemTypeOptions
+				);
+				break;
+			case 'creatorType':
+				var creatorTypeOptions = item.creatorTypes[item.get('itemType')].map(function (creatorType) {
+					return React.createElement(
+						"option",
+						{ key: creatorType.creatorType,
+							label: creatorType.localized,
+							value: creatorType.creatorType
+						},
+						creatorType.localized
+					);
+				});
+				return React.createElement(
+					"select",
+					_extends({ id: "creatorType" }, inputProps, { "data-creatorindex": this.props.creatorIndex }),
+					creatorTypeOptions
+				);
+				break;
+			default:
+				if (Zotero.config.largeFields[this.props.field]) {
+					return React.createElement("textarea", inputProps);
+				} else if (Zotero.config.richTextFields[this.props.field]) {
+					return React.createElement("textarea", _extends({}, inputProps, { className: "rte default" }));
+				} else {
+					//default single line input field
+					return React.createElement("input", _extends({ type: "text" }, inputProps));
+				}
+		}
+	}
+});
+
+var ItemInfoPanel = React.createClass({
+	displayName: "ItemInfoPanel",
+
+	getDefaultProps: function getDefaultProps() {
+		return {
+			item: null,
+			loading: false,
+			edit: null
+		};
+	},
+	render: function render() {
+		Z.debug("ItemInfoPanel render");
+		var reactInstance = this;
+		var library = this.props.library;
+		var item = this.props.item;
+		Z.debug("ItemInfoPanel render: items.totalResults: " + library.items.totalResults);
+		var itemCountP = React.createElement(
+			"p",
+			{ className: "item-count", hidden: !this.props.libraryItemsLoaded },
+			library.items.totalResults + " items in this view"
+		);
+
+		var edit = this.props.edit;
+
+		if (item == null) {
+			return React.createElement(
+				"div",
+				{ id: "item-info-panel", role: "tabpanel", className: "item-details-div tab-pane active" },
+				React.createElement(LoadingSpinner, { loading: this.props.loading }),
+				itemCountP
+			);
+		}
+
+		var itemKey = item.get('key');
+		var libraryType = item.owningLibrary.libraryType;
+		var parentUrl = false;
+		if (item.get("parentItem")) {
+			parentUrl = library.websiteUrl({ itemKey: item.get("parentItem") });
+		}
+
+		var parentLink = parentUrl ? React.createElement(
+			"a",
+			{ href: parentUrl, className: "item-select-link", "data-itemkey": item.get('parentItem') },
+			"Parent Item"
+		) : null;
+		var libraryIDSpan;
+		if (libraryType == "user") {
+			libraryIDSpan = React.createElement("span", { id: "libraryUserID", title: item.apiObj.library.id });
+		} else {
+			libraryIDSpan = React.createElement("span", { id: "libraryGroupID", title: item.apiObj.library.id });
+		}
+
+		//the Zotero user that created the item, if it's a group library item
+		var zoteroItemCreatorRow = null;
+		if (libraryType == "group") {
+			zoteroItemCreatorRow = React.createElement(
+				"tr",
+				null,
+				React.createElement(
+					"th",
+					null,
+					"Added by"
+				),
+				React.createElement(
+					"td",
+					{ className: "user-creator" },
+					React.createElement(
+						"a",
+						{ href: item.apiObj.meta.createdByUser.links.alternate.href, className: "user-link" },
+						item.apiObj.meta.createdByUser.name
+					)
+				)
+			);
+		}
+
+		var creatorRows = [];
+		var creators = item.get('creators');
+		if (creators.length == 0) {
+			creators.push({
+				lastName: "",
+				firstName: ""
+			});
+		}
+
+		if (item.isSupplementaryItem()) {
+			creatorRows = null;
+		} else {
+			creatorRows = item.get('creators').map(function (creator, ind) {
+				return React.createElement(CreatorRow, { key: ind, library: library, creatorIndex: ind, item: item, edit: edit });
+			});
+		}
+
+		var genericFieldRows = [];
+		//filter out fields we don't want to display or don't want to include as generic
+		var genericDisplayedFields = Zotero.ui.genericDisplayedFields(item);
+		genericDisplayedFields.forEach(function (key) {
+			genericFieldRows.push(React.createElement(ItemFieldRow, _extends({ key: key }, reactInstance.props, { field: key })));
+		});
+
+		var typeAndTitle = ["itemType", "title"].map(function (key) {
+			return React.createElement(ItemFieldRow, _extends({ key: key }, reactInstance.props, { field: key }));
+		});
+
+		return React.createElement(
+			"div",
+			{ id: "item-info-panel", role: "tabpanel", className: "item-details-div tab-pane active" },
+			React.createElement(LoadingSpinner, { loading: this.props.loading }),
+			parentLink,
+			libraryIDSpan,
+			React.createElement(
+				"table",
+				{ className: "item-info-table table", "data-itemkey": itemKey },
+				React.createElement(
+					"tbody",
+					null,
+					zoteroItemCreatorRow,
+					typeAndTitle,
+					creatorRows,
+					genericFieldRows
+				)
+			)
+		);
+	}
+});
+
+var TagListRow = React.createClass({
+	displayName: "TagListRow",
+
+	getDefaultProps: function getDefaultProps() {
+		return {
+			tagIndex: 0,
+			tag: { tag: "" },
+			item: null,
+			library: null,
+			edit: null
+		};
+	},
+	removeTag: function removeTag(evt) {
+		var tag = this.props.tag.tag;
+		var item = this.props.item;
+		var tagIndex = this.props.tagIndex;
+
+		var tags = item.get('tags');
+		tags.splice(tagIndex, 1);
+		Zotero.ui.saveItem(item);
+		Zotero.ui.widgets.reactitem.reactInstance.setState({ item: item });
+	},
+	render: function render() {
+		//Z.debug("TagListRow render");
+		return React.createElement(
+			"div",
+			{ className: "row item-tag-row" },
+			React.createElement(
+				"div",
+				{ className: "col-xs-1" },
+				React.createElement("span", { className: "glyphicons fonticon glyphicons-tag" })
+			),
+			React.createElement(
+				"div",
+				{ className: "col-xs-9" },
+				React.createElement(ItemField, _extends({}, this.props, { field: "tag" }))
+			),
+			React.createElement(
+				"div",
+				{ className: "col-xs-2" },
+				React.createElement(
+					"button",
+					{ type: "button", className: "remove-tag-link btn btn-default", onClick: this.removeTag },
+					React.createElement("span", { className: "glyphicons fonticon glyphicons-minus" })
+				)
+			)
+		);
+	}
+});
+
+var ItemTagsPanel = React.createClass({
+	displayName: "ItemTagsPanel",
+
+	getInitialState: function getInitialState() {
+		return {
+			newTagString: ""
+		};
+	},
+	newTagChange: function newTagChange(evt) {
+		this.setState({ newTagString: evt.target.value });
+	},
+	//add the new tag to the item and save if keydown is ENTER
+	checkKey: function checkKey(evt) {
+		Z.debug("New tag checkKey");
+		evt.stopPropagation();
+		if (evt.keyCode === Zotero.ui.keyCode.ENTER) {
+			Z.debug(evt);
+			var item = this.props.item;
+			var tags = item.get('tags');
+			tags.push({
+				tag: evt.target.value
+			});
+			Zotero.ui.saveItem(item);
+			this.setState({ newTagString: "" });
+			Zotero.ui.widgets.reactitem.reactInstance.setState({ item: item });
+		}
+	},
+	render: function render() {
+		Z.debug("ItemTagsPanel render");
+		var reactInstance = this;
+		var item = this.props.item;
+		var library = this.props.library;
+		if (item == null) {
+			return React.createElement("div", { id: "item-tags-panel", role: "tabpanel", className: "item-tags-div tab-pane" });
+		}
+		var tagRows = [];
+		var tagRows = item.apiObj.data.tags.map(function (tag, ind) {
+			return React.createElement(TagListRow, _extends({ key: tag.tag }, reactInstance.props, { tag: tag, tagIndex: ind }));
+		});
+
+		return React.createElement(
+			"div",
+			{ id: "item-tags-panel", role: "tabpanel", className: "item-tags-div tab-pane" },
+			React.createElement(
+				"p",
+				null,
+				React.createElement(
+					"span",
+					{ className: "tag-count" },
+					item.get('tags').length
+				),
+				" tags"
+			),
+			React.createElement(
+				"button",
+				{ className: "add-tag-button btn btn-default" },
+				"Add Tag"
+			),
+			React.createElement(
+				"div",
+				{ className: "item-tags-list" },
+				tagRows
+			),
+			React.createElement(
+				"div",
+				{ className: "add-tag-form form-horizontal" },
+				React.createElement(
+					"div",
+					{ className: "form-group" },
+					React.createElement(
+						"div",
+						{ className: "col-xs-1" },
+						React.createElement(
+							"label",
+							{ htmlFor: "add-tag-input" },
+							React.createElement("span", { className: "glyphicons fonticon glyphicons-tag" })
+						)
+					),
+					React.createElement(
+						"div",
+						{ className: "col-xs-11" },
+						React.createElement("input", { type: "text", onKeyDown: this.checkKey, onChange: this.newTagChange, value: this.state.newTagString, id: "add-tag-input", className: "add-tag-input form-control" })
+					)
+				)
+			)
+		);
+	}
+});
+
+var ItemChildrenPanel = React.createClass({
+	displayName: "ItemChildrenPanel",
+
+	getDefaultProps: function getDefaultProps() {
+		return {
+			childItems: []
+		};
+	},
+	triggerUpload: function triggerUpload() {
+		this.props.library.trigger("uploadAttachment");
+	},
+	render: function render() {
+		Z.debug("ItemChildrenPanel render");
+		var childListEntries = this.props.childItems.map(function (item, ind) {
+			var title = item.get('title');
+			var href = Zotero.url.itemHref(item);
+			var iconClass = item.itemTypeIconClass();
+			var key = item.get('key');
+			if (item.itemType == "note") {
+				return React.createElement(
+					"li",
+					{ key: key },
+					React.createElement("span", { className: 'fonticon barefonticon ' + iconClass }),
+					React.createElement(
+						"a",
+						{ className: "item-select-link", "data-itemkey": item.get('key'), href: href, title: title },
+						title
+					)
+				);
+			} else if (item.attachmentDownloadUrl == false) {
+				return React.createElement(
+					"li",
+					{ key: key },
+					React.createElement("span", { className: 'fonticon barefonticon ' + iconClass }),
+					title,
+					"(",
+					React.createElement(
+						"a",
+						{ className: "item-select-link", "data-itemkey": item.get('key'), href: href, title: title },
+						"Attachment Details"
+					),
+					")"
+				);
+			} else {
+				var attachmentDownloadUrl = Zotero.url.attachmentDownloadUrl(item);
+				return React.createElement(
+					"li",
+					{ key: key },
+					React.createElement("span", { className: 'fonticon barefonticon ' + iconClass }),
+					React.createElement(
+						"a",
+						{ className: "itemdownloadlink", href: attachmentDownloadUrl },
+						title,
+						" ",
+						Zotero.url.attachmentFileDetails(item)
+					),
+					"(",
+					React.createElement(
+						"a",
+						{ className: "item-select-link", "data-itemkey": item.get('key'), href: href, title: title },
+						"Attachment Details"
+					),
+					")"
+				);
+			}
+		});
+		return React.createElement(
+			"div",
+			{ id: "item-children-panel", role: "tabpanel", className: "item-children-div tab-pane" },
+			React.createElement(
+				"ul",
+				{ id: "notes-and-attachments" },
+				childListEntries
+			),
+			React.createElement(
+				"button",
+				{ type: "button", onClick: this.triggerUpload, id: "upload-attachment-link", className: "btn btn-primary upload-attachment-button", hidden: !Zotero.config.librarySettings.allowUpload },
+				"Upload File"
+			)
+		);
+	}
+});
+
+var ItemDetails = React.createClass({
+	displayName: "ItemDetails",
+
+	getInitialState: function getInitialState() {
+		return {
+			item: null,
+			childItems: [],
+			itemLoading: false,
+			childrenLoading: false,
+			libraryItemsLoaded: false,
+			edit: null
+		};
+	},
+	componentWillMount: function componentWillMount() {
+		var reactInstance = this;
+		var library = this.props.library;
+		library.listen("displayedItemChanged modeChanged", reactInstance.loadItem, {});
+		//library.listen("itemTypeChanged", Zotero.ui.widgets.reactitem.itemTypeChanged, {widgetEl:el});
+		library.listen("uploadSuccessful", reactInstance.refreshChildren, {});
+
+		library.listen("tagsChanged", reactInstance.updateTypeahead, {});
+
+		library.listen("showChildren", reactInstance.refreshChildren, {});
+
+		library.trigger("displayedItemChanged");
+	},
+	componentDidMount: function componentDidMount() {
+		return;
+		var reactInstance = this;
+		var library = this.props.library;
+
+		//add typeahead if there is a tag input
+		var addTagInput = J("input.add-tag-input");
+		var editTagInput = J("input.item-field-control.tag");
+
+		var typeaheadSource = library.tags.plainList;
+		if (!typeaheadSource) {
+			typeaheadSource = [];
+		}
+		var ttEngine = new Bloodhound({
+			datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
+			queryTokenizer: Bloodhound.tokenizers.whitespace,
+			local: J.map(typeaheadSource, function (typeaheadSource) {
+				return { value: typeaheadSource };
+			})
+		});
+		ttEngine.initialize();
+		addTagInput.typeahead('destroy');
+		editTagInput.typeahead('destroy');
+
+		addTagInput.typeahead({
+			hint: true,
+			highlight: true,
+			minLength: 1
+		}, {
+			name: 'tags',
+			displayKey: 'value',
+			source: ttEngine.ttAdapter()
+			//local: library.tags.plainList
+		});
+		editTagInput.typeahead({
+			hint: true,
+			highlight: true,
+			minLength: 1
+		}, {
+			name: 'tags',
+			displayKey: 'value',
+			source: ttEngine.ttAdapter()
+			//local: library.tags.plainList
+		});
+	},
+	loadItem: function loadItem() {
+		Z.debug('Zotero eventful loadItem', 3);
+		var reactInstance = this;
+		var library = this.props.library;
+
+		//clean up RTEs before we end up removing their dom elements out from under them
+		//Zotero.ui.cleanUpRte(widgetEl);
+
+		//get the key of the item we need to display, or display library stats
+		var itemKey = Zotero.state.getUrlVar('itemKey');
+		if (!itemKey) {
+			Z.debug("No itemKey - " + itemKey, 3);
+			reactInstance.setState({ item: null });
+			return Promise.reject(new Error("No itemkey - " + itemKey));
+		}
+
+		//if we are showing an item, load it from local library of API
+		//then display it
+		var loadedItem = library.items.getItem(itemKey);
+		if (loadedItem) {
+			Z.debug("have item locally, loading details into ui", 3);
+			loadingPromise = Promise.resolve(loadedItem);
+		} else {
+			Z.debug("must fetch item from server", 3);
+			var config = {
+				'target': 'item',
+				'libraryType': library.type,
+				'libraryID': library.libraryID,
+				'itemKey': itemKey
+			};
+			reactInstance.setState({ itemLoading: true });
+			loadingPromise = library.loadItem(itemKey);
+		}
+
+		loadingPromise.then(function (item) {
+			loadedItem = item;
+		}).then(function () {
+			return loadedItem.getCreatorTypes(loadedItem.get('itemType'));
+		}).then(function (creatorTypes) {
+			Z.debug("done loading necessary data; displaying item");
+			reactInstance.setState({ item: loadedItem, itemLoading: false });
+			library.trigger('showChildren');
+			//Zotero.eventful.initTriggers(widgetEl);
+			try {
+				//trigger event for Zotero translator detection
+				var ev = document.createEvent('HTMLEvents');
+				ev.initEvent('ZoteroItemUpdated', true, true);
+				document.dispatchEvent(ev);
+			} catch (e) {
+				Zotero.error("Error triggering ZoteroItemUpdated event");
+			}
+		});
+		loadingPromise["catch"](function (err) {
+			Z.error("loadItem promise failed");
+			Z.error(err);
+		}).then(function () {
+			reactInstance.setState({ itemLoading: false });
+		})["catch"](Zotero.catchPromiseError);
+
+		return loadingPromise;
+	},
+	refreshChildren: function refreshChildren() {
+		Z.debug('reactitem.refreshChildren', 3);
+		var reactInstance = this;
+		var library = this.props.library;
+
+		var itemKey = Zotero.state.getUrlVar('itemKey');
+		if (!itemKey) {
+			Z.debug("No itemKey - " + itemKey, 3);
+			return Promise.reject(new Error("No itemkey - " + itemKey));
+		}
+
+		var item = library.items.getItem(itemKey);
+		reactInstance.setState({ loadingChildren: true });
+		var p = item.getChildren(library).then(function (childItems) {
+			reactInstance.setState({ childItems: childItems, loadingChildren: false });
+		})["catch"](Zotero.catchPromiseError);
+		return p;
+	},
+	updateTypeahead: function updateTypeahead() {
+		Z.debug("updateTypeahead", 3);
+		return;
+		var reactInstance = this;
+		var library = this.props.library;
+		if (library) {
+			reactInstance.addTagTypeahead();
+		}
+	},
+	addTagTypeahead: function addTagTypeahead() {
+		//TODO: reactify
+		Z.debug('adding typeahead', 3);
+		var reactInstance = this;
+		var library = this.props.library;
+
+		var typeaheadSource = library.tags.plainList;
+		if (!typeaheadSource) {
+			typeaheadSource = [];
+		}
+		var ttEngine = new Bloodhound({
+			datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
+			queryTokenizer: Bloodhound.tokenizers.whitespace,
+			local: J.map(typeaheadSource, function (typeaheadSource) {
+				return { value: typeaheadSource };
+			})
+		});
+		ttEngine.initialize();
+		widgetEl.find("input.taginput").typeahead('destroy');
+		widgetEl.find("input.taginput").typeahead({
+			hint: true,
+			highlight: true,
+			minLength: 1
+		}, {
+			name: 'tags',
+			displayKey: 'value',
+			source: ttEngine.ttAdapter()
+			//local: library.tags.plainList
+		});
+	},
+	addTagTypeaheadToInput: function addTagTypeaheadToInput() {
+		//TODO: reactify
+		Z.debug('adding typeahead', 3);
+		var reactInstance = this;
+		var library = this.props.library;
+		var typeaheadSource = library.tags.plainList;
+		if (!typeaheadSource) {
+			typeaheadSource = [];
+		}
+		var ttEngine = new Bloodhound({
+			datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
+			queryTokenizer: Bloodhound.tokenizers.whitespace,
+			local: J.map(typeaheadSource, function (typeaheadSource) {
+				return { value: typeaheadSource };
+			})
+		});
+		ttEngine.initialize();
+		J(element).typeahead('destroy');
+		J(element).typeahead({
+			hint: true,
+			highlight: true,
+			minLength: 1
+		}, {
+			name: 'tags',
+			displayKey: 'value',
+			source: ttEngine.ttAdapter()
+			//local: library.tags.plainList
+		});
+	},
+	addNote: function addNote() {
+		//TODO: reactify
+		Z.debug("Zotero.ui.addNote", 3);
+		var button = J(e.currentTarget);
+		var container = button.closest("form");
+		//var itemKey = J(button).data('itemkey');
+		var notenum = 0;
+		var lastNoteIndex = container.find("textarea.note-text:last").data('noteindex');
+		if (lastNoteIndex) {
+			notenum = parseInt(lastNoteIndex, 10);
+		}
+
+		var newindex = notenum + 1;
+		var newNoteID = "note_" + newindex;
+		var jel;
+		jel = container.find("td.notes button.add-note-button").before('<textarea cols="40" rows="24" name="' + newNoteID + '" id="' + newNoteID + '" className="rte default note-text" data-noteindex="' + newNoteID + '"></textarea>');
+		Zotero.ui.init.rte('default', true, newNoteID);
+	},
+	addTag: function addTag() {
+		//TODO: reactify
+		Z.debug("Zotero.ui.widgets.reactitem.addTag", 3);
+		var triggeringElement = J(e.triggeringElement);
+		var widgetEl = J(e.data.widgetEl);
+		widgetEl.find(".add-tag-form").show().find(".add-tag-input").focus();
+	},
+	render: function render() {
+		Z.debug("ItemDetails render");
+		var library = this.props.library;
+		var item = this.state.item;
+		var childItems = this.state.childItems;
+
+		return React.createElement(
+			"div",
+			{ role: "tabpanel" },
+			React.createElement(ItemNavTabs, { library: library, item: item }),
+			React.createElement(
+				"div",
+				{ className: "tab-content" },
+				React.createElement(ItemInfoPanel, { library: library,
+					item: item,
+					loading: this.state.itemLoading,
+					libraryItemsLoaded: this.state.libraryItemsLoaded,
+					edit: this.state.edit
+				}),
+				React.createElement(ItemChildrenPanel, { library: library, childItems: childItems, loading: this.state.childrenLoading }),
+				React.createElement(ItemTagsPanel, { library: library, item: item, edit: this.state.edit })
+			)
+		);
+	}
+});
+'use strict';
+
+Zotero.ui.widgets.reactitems = {};
+
+Zotero.ui.widgets.reactitems.init = function (el) {
+	Z.debug("widgets.items.init", 3);
+	var library = Zotero.ui.getAssociatedLibrary(el);
+
+	var reactInstance = ReactDOM.render(React.createElement(ItemsTable, { library: library }), document.getElementById('library-items-div'));
+
+	Zotero.ui.widgets.reactitems.reactInstance = reactInstance;
+	/*
+ library.listen("displayedItemsChanged", reactInstance.loadItems, {widgetEl: el});
+ library.listen("displayedItemChanged", reactInstance.selectDisplayed);
+ Zotero.listen("selectedItemsChanged", function(){
+ 	reactInstance.setState({selectedItemKeys:Zotero.state.getSelectedItemKeys()});
+ });
+ 
+ library.listen("loadMoreItems", reactInstance.loadMoreItems, {widgetEl: el});
+ library.listen("changeItemSorting", Zotero.ui.callbacks.resortItems, {widgetEl: el});
+ */
+	/*
+ var container = J(el);
+ //monitor scroll position of items pane for infinite scrolling
+ container.closest("#items-panel").on('scroll', function(e){
+ 	if(Zotero.ui.widgets.reactitems.scrollAtBottom(J(this))){
+ 		library.trigger("loadMoreItems");
+ 	}
+ });
+ */
+
+	//library.trigger("displayedItemsChanged");
+};
+/*
+Zotero.ui.widgets.reactitems.loadItems = function(event){
+	Z.debug('Zotero eventful loadItems', 3);
+	var library = Zotero.ui.widgets.reactitems.reactInstance.props.library;
+	var newConfig = Zotero.ui.getItemsConfig(library);
+	
+	//clear contents and show spinner while loading
+	Zotero.ui.widgets.reactitems.reactInstance.setState({items:[], moreloading:true});
+	
+	var p = library.loadItems(newConfig)
+	.then(function(response){
+		if(!response.loadedItems){
+			Zotero.error("expected loadedItems on response not present");
+			throw("Expected response to have loadedItems");
+		}
+		library.items.totalResults = response.totalResults;
+		Zotero.ui.widgets.reactitems.reactInstance.setState({items:response.loadedItems, moreloading:false, sort:newConfig.sort, order:newConfig.order});
+	}).catch(function(response){
+		Z.error(response);
+		Zotero.ui.widgets.reactitems.reactInstance.setState({errorLoading:true, moreloading:false, sort:newConfig.sort, order:newConfig.order});
+	});
+	return p;
+};
+*/
+//load more items when the user has scrolled to the bottom of the current list
+/*
+Zotero.ui.widgets.reactitems.loadMoreItems = function(event){
+	Z.debug('loadMoreItems', 3);
+	var widgetEl = J(event.data.widgetEl);
+	//bail out if we're already fetching more items
+	if(Zotero.ui.widgets.reactitems.reactInstance.state.moreloading){
+		return;
+	}
+	//bail out if we're done loading all items
+	if(Zotero.ui.widgets.reactitems.reactInstance.state.allItemsLoaded){
+		return;
+	}
+	
+	var reactInstance = Zotero.ui.widgets.reactitems.reactInstance;
+	reactInstance.setState({moreloading:true});
+	var library = reactInstance.props.library;
+	var newConfig = Zotero.ui.getItemsConfig(library);
+	var newStart = reactInstance.state.items.length;
+	newConfig.start = newStart;
+
+	var p = library.loadItems(newConfig)
+	.then(function(response){
+		if(!response.loadedItems){
+			Zotero.error("expected loadedItems on response not present");
+			throw("Expected response to have loadedItems");
+		}
+		var reactInstance = Zotero.ui.widgets.reactitems.reactInstance;
+		var allitems = reactInstance.state.items.concat(response.loadedItems);
+		reactInstance.setState({items:allitems, moreloading:false})
+
+		//see if we're displaying as many items as there are in results
+		var itemsDisplayed = allitems.length;
+		if(response.totalResults == itemsDisplayed) {
+			reactInstance.setState({allItemsLoaded:true});
+		}
+	}).catch(function(response){
+		Z.error(response);
+		Zotero.ui.widgets.reactitems.reactInstance.setState({errorLoading:true, moreloading:false});
+	});
+	
+};
+*/
+Zotero.ui.getItemsConfig = function (library) {
+	var effectiveUrlVars = ['tag', 'collectionKey', 'order', 'sort', 'q', 'qmode'];
+	var urlConfigVals = {};
+	J.each(effectiveUrlVars, function (index, value) {
+		var t = Zotero.state.getUrlVar(value);
+		if (t) {
+			urlConfigVals[value] = t;
+		}
+	});
+
+	var defaultConfig = { libraryID: library.libraryID,
+		libraryType: library.libraryType,
+		target: 'items',
+		targetModifier: 'top',
+		limit: library.preferences.getPref('itemsPerPage')
+	};
+
+	var userPreferencesApiArgs = {
+		order: Zotero.preferences.getPref('order'),
+		sort: Zotero.preferences.getPref('sort'),
+		limit: library.preferences.getPref('itemsPerPage')
+	};
+
+	//Build config object that should be displayed next and compare to currently displayed
+	var newConfig = J.extend({}, defaultConfig, userPreferencesApiArgs, urlConfigVals);
+	//newConfig.start = parseInt(newConfig.limit, 10) * (parseInt(newConfig.itemPage, 10) - 1);
+
+	//don't allow ordering by group only columns if user library
+	if (library.libraryType == 'user' && Zotero.Library.prototype.groupOnlyColumns.indexOf(newConfig.order) != -1) {
+		newConfig.order = 'title';
+	}
+
+	if (!newConfig.sort) {
+		newConfig.sort = Zotero.config.sortOrdering[newConfig.order];
+	}
+
+	//don't pass top if we are searching for tags (or query?)
+	if (newConfig.tag || newConfig.q) {
+		delete newConfig.targetModifier;
+	}
+
+	return newConfig;
+};
+
+/**
+ * Display the full library items section
+ * @param  {Dom Element} el          Container
+ * @param  {object} config      items config
+ * @param  {array} loadedItems loaded items array
+ * @return {undefined}
+ */
+/*
+Zotero.ui.widgets.reactitems.displayItems = function(el, config={}, itemsArray=[]) {
+	Z.debug("Zotero.ui.widgets.displayItems", 3);
+	var library = Zotero.ui.widgets.reactitems.reactInstance.props.library;
+	
+	var filledConfig = J.extend({}, Zotero.config.defaultApiArgs, config);
+	var displayFields = library.preferences.getPref('listDisplayedFields');
+	if(library.libraryType != 'group'){
+		displayFields = J.grep(displayFields, function(el, ind){
+			return J.inArray(el, Zotero.Library.prototype.groupOnlyColumns) == (-1);
+		});
+	}
+	
+	Zotero.ui.widgets.reactitems.reactInstance.setState({items:itemsArray, displayFields:displayFields})
+};
+*/
+/*
+Zotero.ui.callbacks.resortItems = function(e){
+	Z.debug(".field-table-header clicked", 3);
+	var widgetEl = J(e.data.widgetEl);
+	var library = Zotero.ui.getAssociatedLibrary(widgetEl);
+	var currentSortField = Zotero.ui.getPrioritizedVariable('order', 'title');
+	var currentSortOrder = Zotero.ui.getPrioritizedVariable('sort', 'asc');
+	var newSortField;
+	var newSortOrder;
+	if(e.newSortField){
+		newSortField = e.newSortField;
+	}
+	else {
+		newSortField = J(e.triggeringElement).data('columnfield');
+	}
+	if(e.newSortOrder){
+		newSortOrder = e.newSortOrder;
+	}
+	else{
+		newSortOrder = Zotero.config.sortOrdering[newSortField];
+	}
+	
+	//only allow ordering by the fields we have
+	if(J.inArray(newSortField, Zotero.Library.prototype.sortableColumns) == (-1)){
+		return false;
+	}
+	
+	//change newSort away from the field default if that was already the current state
+	if((!e.newSortOrder) && currentSortField == newSortField && currentSortOrder == newSortOrder){
+		if(newSortOrder == 'asc'){
+			newSortOrder = 'desc';
+		}
+		else{
+			newSortOrder = 'asc';
+		}
+	}
+	
+	//problem if there was no sort column mapped to the header that got clicked
+	if(!newSortField){
+		Zotero.ui.jsNotificationMessage("no order field mapped to column");
+		return false;
+	}
+	
+	//update the url with the new values
+	Zotero.state.pathVars['order'] = newSortField;
+	Zotero.state.pathVars['sort'] = newSortOrder;
+	Zotero.state.pushState();
+	
+	//set new order as preference and save it to use www prefs
+	library.preferences.setPref('sortField', newSortField);
+	library.preferences.setPref('sortOrder', newSortOrder);
+	library.preferences.setPref('order', newSortField);
+	library.preferences.setPref('sort', newSortOrder);
+	Zotero.preferences.setPref('order', newSortField);
+	Zotero.preferences.setPref('sort', newSortOrder);
+};
+*/
+Zotero.ui.widgets.reactitems.scrollAtBottom = function (el) {
+	if (J(el).scrollTop() + J(el).innerHeight() >= J(el)[0].scrollHeight) {
+		return true;
+	}
+	return false;
+};
+
+var ItemsTable = React.createClass({
+	displayName: 'ItemsTable',
+
+	componentWillMount: function componentWillMount() {
+		var reactInstance = this;
+		var library = this.props.library;
+
+		library.listen("displayedItemsChanged", reactInstance.loadItems, {});
+		library.listen("displayedItemChanged", reactInstance.selectDisplayed);
+		Zotero.listen("selectedItemsChanged", function () {
+			reactInstance.setState({ selectedItemKeys: Zotero.state.getSelectedItemKeys() });
+		});
+
+		library.listen("loadMoreItems", reactInstance.loadMoreItems, {});
+		library.trigger("displayedItemsChanged");
+
+		J(window).on('resize', function () {
+			if (!window.matchMedia("(min-width: 768px)").matches) {
+				reactInstance.setState({ narrow: true });
+			} else {
+				reactInstance.setState({ narrow: false });
+			}
+		});
+	},
+	getDefaultProps: function getDefaultProps() {
+		return {};
+	},
+	getInitialState: function getInitialState() {
+		return {
+			moreloading: false,
+			allItemsLoaded: false,
+			errorLoading: false,
+			items: [],
+			selectedItemKeys: [],
+			allSelected: false,
+			displayFields: ["title", "creator", "dateModified"],
+			order: "title",
+			sort: "asc",
+			narrow: false
+		};
+	},
+	loadItems: function loadItems() {
+		Z.debug('Zotero eventful loadItems', 3);
+		var reactInstance = this;
+		var library = this.props.library;
+		var newConfig = Zotero.ui.getItemsConfig(library);
+
+		//clear contents and show spinner while loading
+		this.setState({ items: [], moreloading: true });
+
+		var p = library.loadItems(newConfig).then(function (response) {
+			if (!response.loadedItems) {
+				Zotero.error("expected loadedItems on response not present");
+				throw "Expected response to have loadedItems";
+			}
+			library.items.totalResults = response.totalResults;
+			reactInstance.setState({
+				items: response.loadedItems,
+				moreloading: false,
+				sort: newConfig.sort,
+				order: newConfig.order
+			});
+		})['catch'](function (response) {
+			Z.error(response);
+			reactInstance.setState({
+				errorLoading: true,
+				moreloading: false,
+				sort: newConfig.sort,
+				order: newConfig.order
+			});
+		});
+		return p;
+	},
+	loadMoreItems: function loadMoreItems() {
+		Z.debug('loadMoreItems', 3);
+		var reactInstance = this;
+		var library = this.props.library;
+
+		//bail out if we're already fetching more items
+		if (reactInstance.state.moreloading) {
+			return;
+		}
+		//bail out if we're done loading all items
+		if (reactInstance.state.allItemsLoaded) {
+			return;
+		}
+
+		reactInstance.setState({ moreloading: true });
+		var library = reactInstance.props.library;
+		var newConfig = Zotero.ui.getItemsConfig(library);
+		var newStart = reactInstance.state.items.length;
+		newConfig.start = newStart;
+
+		var p = library.loadItems(newConfig).then(function (response) {
+			if (!response.loadedItems) {
+				Zotero.error("expected loadedItems on response not present");
+				throw "Expected response to have loadedItems";
+			}
+			var allitems = reactInstance.state.items.concat(response.loadedItems);
+			reactInstance.setState({ items: allitems, moreloading: false });
+
+			//see if we're displaying as many items as there are in results
+			var itemsDisplayed = allitems.length;
+			if (response.totalResults == itemsDisplayed) {
+				reactInstance.setState({ allItemsLoaded: true });
+			}
+		})['catch'](function (response) {
+			Z.error(response);
+			reactInstance.setState({ errorLoading: true, moreloading: false });
+		});
+	},
+	resortItems: function resortItems(evt) {
+		//handle click on the item table header to re-sort items
+		//if it is the currently sorted field, simply flip the sort order
+		//if it is not the currently sorted field, set it to be the currently sorted
+		//field and set the default ordering for that field
+		Z.debug(".field-table-header clicked", 3);
+		evt.preventDefault();
+		var reactInstance = this;
+		var library = this.props.library;
+		var currentSortField = this.state.order;
+		var currentSortOrder = this.state.sort;
+
+		var newSortField = J(evt.target).data('columnfield');
+		var newSortOrder;
+		if (newSortField != currentSortField) {
+			newSortOrder = Zotero.config.sortOrdering[newSortField]; //default for column
+		} else {
+				//swap sort order
+				if (currentSortOrder == "asc") {
+					newSortOrder = "desc";
+				} else {
+					newSortOrder = "asc";
+				}
+			}
+
+		//only allow ordering by the fields we have
+		if (library.sortableColumns.indexOf(newSortField) == -1) {
+			return false;
+		}
+
+		//problem if there was no sort column mapped to the header that got clicked
+		if (!newSortField) {
+			Zotero.ui.jsNotificationMessage("no order field mapped to column");
+			return false;
+		}
+
+		//update the url with the new values
+		Zotero.state.pathVars['order'] = newSortField;
+		Zotero.state.pathVars['sort'] = newSortOrder;
+		Zotero.state.pushState();
+
+		//set new order as preference and save it to use www prefs
+		library.preferences.setPref('sortField', newSortField);
+		library.preferences.setPref('sortOrder', newSortOrder);
+		library.preferences.setPref('order', newSortField);
+		library.preferences.setPref('sort', newSortOrder);
+		Zotero.preferences.setPref('order', newSortField);
+		Zotero.preferences.setPref('sort', newSortOrder);
+	},
+	//select and highlight in the itemlist the item  that is displayed
+	//in the item details widget
+	selectDisplayed: function selectDisplayed() {
+		Z.debug('widgets.items.selectDisplayed', 3);
+		Zotero.state.selectedItemKeys = [];
+		this.setState({ selectedItemKeys: Zotero.state.getSelectedItemKeys(), allSelected: false });
+	},
+	fixTableHeaders: function fixTableHeaders() {
+		var tableEl = this.refs.itemsTable;
+		var tel = J(tableEl);
+		var colWidths = [];
+		tel.find("tbody tr").first().find("td").each(function (ind, th) {
+			var width = J(th).width();
+			colWidths.push(width);
+			tel.find("thead th").eq(ind).width(width);
+		});
+
+		var bodyOffset = tel.find("thead").height();
+
+		tel.find("thead").css('position', 'fixed').css('margin-top', -bodyOffset).css('background-color', 'white').css('z-index', 10);
+		tel.find("tbody").css('margin-top', bodyOffset);
+		tel.css("margin-top", bodyOffset);
+	},
+	handleSelectAllChange: function handleSelectAllChange(evt) {
+		var library = this.props.library;
+		var nowselected = [];
+		var allSelected = false;
+		if (evt.target.checked) {
+			allSelected = true;
+			//select all items
+			this.state.items.forEach(function (item) {
+				nowselected.push(item.get('key'));
+			});
+		} else {
+			var selectedItemKey = Zotero.state.getUrlVar('itemKey');
+			if (selectedItemKey) {
+				nowselected.push(selectedItemKey);
+			}
+		}
+		Zotero.state.selectedItemKeys = nowselected;
+		this.setState({ selectedItemKeys: nowselected, allSelected: allSelected });
+		library.trigger("selectedItemsChanged", { selectedItemKeys: nowselected });
+
+		//if deselected all, reselect displayed item row
+		if (nowselected.length === 0) {
+			library.trigger('displayedItemChanged');
+		}
+	},
+	nonreactBind: function nonreactBind() {
+		Zotero.eventful.initTriggers();
+		if (J("body").hasClass('lib-body')) {
+			this.fixTableHeaders(J("#field-table"));
+		}
+	},
+	componentDidMount: function componentDidMount() {
+		this.nonreactBind();
+	},
+	componentDidUpdate: function componentDidUpdate() {
+		this.nonreactBind();
+	},
+	render: function render() {
+		var reactInstance = this;
+		var library = this.props.library;
+		var narrow = this.state.narrow;
+		var order = this.state.order;
+		var sort = this.state.sort;
+		var loading = this.state.moreloading;
+		var libraryString = library.libraryString;
+		var selectedItemKeys = this.state.selectedItemKeys;
+		var selectedItemKeyMap = {};
+		selectedItemKeys.forEach(function (itemKey) {
+			selectedItemKeyMap[itemKey] = true;
+		});
+
+		var sortIcon;
+		if (sort == "desc") {
+			sortIcon = React.createElement('span', { className: 'glyphicon fonticon glyphicon-chevron-down pull-right' });
+		} else {
+			sortIcon = React.createElement('span', { className: 'glyphicon fonticon glyphicon-chevron-up pull-right' });
+		}
+
+		var headers = [React.createElement(
+			'th',
+			{ key: 'checkbox-header' },
+			React.createElement('input', { type: 'checkbox',
+				className: 'itemlist-editmode-checkbox all-checkbox',
+				name: 'selectall',
+				checked: this.state.allSelected,
+				onChange: this.handleSelectAllChange })
+		)];
+		if (narrow) {
+			headers.push(React.createElement(
+				'th',
+				{ key: 'single-cell-header', className: 'eventfultrigger clickable', 'data-library': library.libraryString, 'data-triggers': 'chooseSortingDialog' },
+				Zotero.Item.prototype.fieldMap[order],
+				sortIcon
+			));
+		} else {
+			var fieldHeaders = this.state.displayFields.map(function (header, ind) {
+				var sortable = Zotero.Library.prototype.sortableColumns.indexOf(header) != -1;
+				var selectedClass = header == order ? "selected-order sort-" + sort + " " : "";
+				var sortspan = null;
+				if (header == order) {
+					sortspan = sortIcon;
+				}
+				return React.createElement(
+					'th',
+					{
+						key: header,
+						onClick: reactInstance.resortItems,
+						className: "field-table-header " + selectedClass + (sortable ? "clickable " : ""),
+						'data-columnfield': header },
+					Zotero.Item.prototype.fieldMap[header] ? Zotero.Item.prototype.fieldMap[header] : header,
+					sortspan
+				);
+			});
+			headers = headers.concat(fieldHeaders);
+		}
+
+		var itemRows = this.state.items.map(function (item) {
+			var selected = selectedItemKeyMap.hasOwnProperty(item.get('key')) ? true : false;
+			var p = {
+				key: item.get("key"),
+				item: item,
+				selected: selected,
+				narrow: narrow
+			};
+			return React.createElement(ItemRow, p);
+		});
+		return React.createElement(
+			'form',
+			{ className: 'item-select-form', method: 'POST' },
+			React.createElement(
+				'table',
+				{ id: 'field-table', ref: 'itemsTable', className: 'wide-items-table table table-striped' },
+				React.createElement(
+					'thead',
+					null,
+					React.createElement(
+						'tr',
+						null,
+						headers
+					)
+				),
+				React.createElement(
+					'tbody',
+					null,
+					itemRows
+				)
+			),
+			React.createElement(LoadingError, { errorLoading: this.state.errorLoading }),
+			React.createElement(LoadingSpinner, { loading: this.state.moreloading })
+		);
+	}
+});
+
+var ItemRow = React.createClass({
+	displayName: 'ItemRow',
+
+	getDefaultProps: function getDefaultProps() {
+		return {
+			displayFields: ["title", "creatorSummary", "dateModified"],
+			selected: false,
+			item: {},
+			narrow: false
+		};
+	},
+	handleSelectChange: function handleSelectChange(ev) {
+		var itemKey = this.props.item.get('key');
+		Zotero.state.toggleItemSelected(itemKey);
+		selected = Zotero.state.getSelectedItemKeys();
+
+		Zotero.ui.widgets.reactitems.reactInstance.setState({ selectedItemKeys: selected });
+		Zotero.ui.widgets.reactitems.reactInstance.props.library.trigger("selectedItemsChanged", { selectedItemKeys: selected });
+	},
+	handleItemLinkClick: function handleItemLinkClick(evt) {
+		evt.preventDefault();
+		var itemKey = J(evt.target).data('itemkey');
+		Zotero.state.pathVars.itemKey = itemKey;
+		Zotero.state.pushState();
+	},
+	render: function render() {
+		var reactInstance = this;
+		var item = this.props.item;
+		var selected = this.props.selected;
+		if (!this.props.narrow) {
+			var fields = this.props.displayFields.map(function (field) {
+				return React.createElement(
+					'td',
+					{ onClick: reactInstance.handleItemLinkClick, key: field, className: field, 'data-itemkey': item.get("key") },
+					React.createElement(
+						'a',
+						{ onClick: reactInstance.handleItemLinkClick, className: 'item-select-link', 'data-itemkey': item.get("key"), href: Zotero.url.itemHref(item), title: item.get(field) },
+						Zotero.ui.formatItemField(field, item, true)
+					)
+				);
+			});
+			return React.createElement(
+				'tr',
+				{ className: selected ? "highlighed" : "" },
+				React.createElement(
+					'td',
+					{ className: 'edit-checkbox-td', 'data-itemkey': item.get("key") },
+					React.createElement('input', { type: 'checkbox', onChange: this.handleSelectChange, checked: selected, className: 'itemlist-editmode-checkbox itemKey-checkbox', name: "selectitem-" + item.get("key"), 'data-itemkey': item.get("key") })
+				),
+				fields
+			);
+		} else {
+			return React.createElement(
+				'tr',
+				{ className: selected ? "highlighed" : "", 'data-itemkey': item.get('key') },
+				React.createElement(
+					'td',
+					{ className: 'edit-checkbox-td', 'data-itemkey': item.get('key') },
+					React.createElement('input', { type: 'checkbox', className: 'itemlist-editmode-checkbox itemKey-checkbox', name: "selectitem-" + item.get('key'), 'data-itemkey': item.get('key') })
+				),
+				React.createElement(SingleCellItemField, { onClick: reactInstance.handleItemLinkClick, item: item, displayFields: this.props.displayFields })
+			);
+		}
+	}
+});
+/*
+var SingleCellItemRow = React.createClass({
+	getDefaultProps: function() {
+		return {
+			displayFields: ["title", "creatorSummary", "dateModified"],
+			selected: false,
+			item: {}
+		};
+	},
+	handleSelectChange: function(ev) {
+		var itemKey = this.props.item.get('key');
+		Zotero.state.toggleItemSelected(itemKey);
+		selected = Zotero.state.getSelectedItemKeys();
+
+		Zotero.ui.widgets.reactitems.reactInstance.setState({selectedItemKeys:selected});
+		Zotero.ui.widgets.reactitems.reactInstance.props.library.trigger("selectedItemsChanged", {selectedItemKeys: selected});
+	},
+	handleItemLinkClick: function(evt) {
+		evt.preventDefault();
+		var itemKey = J(evt.target).data('itemkey');
+		Zotero.state.pathVars.itemKey = itemKey;
+		Zotero.state.pushState();
+	},
+	render: function() {
+		var item = this.props.item;
+		var selected = this.props.selected;
+		
+		return (
+			<tr className={selected ? "highlighed" : ""} data-itemkey={item.get('key')}>
+				<td className="edit-checkbox-td" data-itemkey={item.get('key')}>
+					<input type='checkbox' className='itemlist-editmode-checkbox itemKey-checkbox' name={"selectitem-" + item.get('key')} data-itemkey={item.get('key')} />
+				</td>
+				
+				<SingleCellItemField item={item} displayFields={this.props.displayFields} />
+			</tr>
+		)
+	}
+});
+*/
+var SingleCellItemField = React.createClass({
+	displayName: 'SingleCellItemField',
+
+	render: function render() {
+		var item = this.props.item;
+		var field = this.props.field;
+
+		var pps = [];
+		this.props.displayFields.forEach(function (field) {
+			var fieldDisplayName = Zotero.Item.prototype.fieldMap[field] ? Zotero.Item.prototype.fieldMap[field] + ":" : "";
+			if (field == "title") {
+				pps.push(React.createElement('span', { key: 'itemTypeIcon', className: 'sprite-icon pull-left sprite-treeitem-' + item.itemTypeImageClass() }));
+				pps.push(React.createElement(ColoredTags, { key: 'coloredTags', item: item }));
+				pps.push(React.createElement(
+					'b',
+					{ key: 'title' },
+					Zotero.ui.formatItemField(field, item, true)
+				));
+			} else if (field === 'dateAdded' || field === 'dateModified') {
+				pps.push(React.createElement('p', { key: field, title: item.get(field), dangerouslySetInnerHtml: { __html: fieldDisplayName + Zotero.ui.formatItemDateField(field, item, true) } }));
+			} else {
+				pps.push(React.createElement(
+					'p',
+					{ key: field, title: item.get(field) },
+					fieldDisplayName,
+					Zotero.ui.formatItemField(field, item, true)
+				));
+			}
+		});
+		return React.createElement(
+			'td',
+			{ onClick: this.props.onClick, className: 'single-cell-item', 'data-itemkey': item.get('key') },
+			React.createElement(
+				'a',
+				{ className: 'item-select-link', 'data-itemkey': item.get('key'), href: Zotero.url.itemHref(item) },
+				pps
+			)
+		);
+	}
+});
+
+var ColoredTags = React.createClass({
+	displayName: 'ColoredTags',
+
+	render: function render() {
+		var item = this.props.item;
+		var library = item.owningLibrary;
+
+		var coloredTags = library.matchColoredTags(item.apiObj._supplement.tagstrings);
+		Z.debug("coloredTags:" + JSON.stringify(coloredTags));
+
+		return React.createElement('span', { className: 'coloredTags' });
+	}
+});
+
+var ColoredTag = React.createClass({
+	displayName: 'ColoredTag',
+
+	render: function render() {
+		var styleObj = { color: this.props.color };
+		return React.createElement(
+			'span',
+			{ style: styleObj },
+			React.createElement('span', { style: styleObj, className: 'glyphicons fonticon glyphicons-tag' })
+		);
+	}
+});
+/*
+var ItemField = React.createClass({
+	render: function() {
+		var item = this.props.item;
+		var field = this.props.field;
+		return (
+			<td className={field} data-itemkey={item.get("key")}>
+				<a onClick={this.props.handleItemLinkClick} className='item-select-link' data-itemkey={item.get("key")} href={Zotero.url.itemHref(item)} title={item.get(field)}>
+					{Zotero.ui.formatItemField(field, item, true)}
+				</a>
+			</td>
+		);
+	}
+});
+*/
+var LoadingSpinner = React.createClass({
+	displayName: 'LoadingSpinner',
+
+	render: function render() {
+		var spinnerUrl = Zotero.config.baseWebsiteUrl + '/static/images/theme/broken-circle-spinner.gif';
+		return React.createElement(
+			'div',
+			{ className: 'items-spinner', hidden: !this.props.loading },
+			React.createElement('img', { className: 'spinner', src: spinnerUrl })
+		);
+	}
+});
+
+var LoadingError = React.createClass({
+	displayName: 'LoadingError',
+
+	render: function render() {
+		return React.createElement(
+			'p',
+			{ hidden: !this.props.errorLoading },
+			'There was an error loading your items. Please try again in a few minutes.'
+		);
+	}
+});
+"use strict";
+
+Zotero.ui.widgets.library = {};
+
+Zotero.ui.widgets.library.init = function (el) {
+	Z.debug("Zotero.ui.widgets.library.init");
+	var library = Zotero.ui.getAssociatedLibrary(el);
+	var reactInstance = ReactDOM.render(React.createElement(ReactZoteroLibrary, { library: library }), document.getElementById('library-widget'));
+};
+
+var FeedLink = React.createClass({
+	displayName: "FeedLink",
+
+	render: function render() {
+		var library = this.props.library;
+		var urlconfig = Zotero.ui.getItemsConfig(library);
+		var requestUrl = Zotero.ajax.apiRequestUrl(urlconfig) + Zotero.ajax.apiQueryString(urlconfig, false);
+		var feedUrl = requestUrl.replace(Zotero.config.baseApiUrl, Zotero.config.baseFeedUrl);
+		var newkeyurl = Zotero.url.requestReadApiKeyUrl(library.libraryType, library.libraryID, feedUrl);
+		var feedHref;
+		if (!Zotero.config.librarySettings.publish) {
+			feedHref = newkeyurl;
+		} else {
+			feedHref = feedUrl;
+		}
+
+		return React.createElement(
+			"p",
+			null,
+			React.createElement(
+				"a",
+				{ href: feedHref, type: "application/atom+xml", rel: "alternate", className: "feed-link" },
+				React.createElement("span", { className: "sprite-icon sprite-feed" }),
+				"Subscribe to this feed"
+			)
+		);
+	}
+});
+
+var ReactZoteroLibrary = React.createClass({
+	displayName: "ReactZoteroLibrary",
+
+	componentWillMount: function componentWillMount() {
+		//preload library
+		Z.debug("ReactZoteroLibrary componentWillMount", 3);
+		var reactInstance = this;
+		var library = this.props.library;
+		library.loadSettings();
+		library.listen("deleteIdb", function () {
+			library.idbLibrary.deleteDB();
+		});
+		library.listen("indexedDBError", function () {
+			Zotero.ui.jsNotificationMessage("There was an error initializing your library. Some data may not load properly.", 'notice');
+		});
+		library.listen("cachedDataLoaded", function () {});
+	},
+	componentDidMount: function componentDidMount() {
+		var reactInstance = this;
+		var library = this.props.library;
+		library.listen("displayedItemsChanged", function () {
+			Z.debug("ReactZoteroLibrary displayedItemsChanged");
+			reactInstance.refs.itemsWidget.loadItems();
+		}, {});
+
+		library.listen("tagsChanged libraryTagsUpdated selectedTagsChanged", function () {
+			Z.debug("setting tags on tagsWidget from Library");
+			reactInstance.refs.tagsWidget.setState({ tags: library.tags });
+		});
+	},
+	getInitialState: function getInitialState() {
+		return {
+			activePanel: "items",
+			deviceSize: "xs"
+		};
+	},
+	reflowPanelContainer: function reflowPanelContainer() {},
+	render: function render() {
+		Z.debug("react library render");
+		var library = this.props.library;
+		var user = Zotero.config.loggedInUser;
+		var userDisplayName = user ? user.displayName : null;
+		var base = Zotero.config.baseWebsiteUrl;
+		var settingsUrl = base + "/settings";
+		var inboxUrl = base + "/messages/inbox"; //TODO
+		var downloadUrl = base + "/download";
+		var documentationUrl = base + "/support";
+		var forumsUrl = Zotero.config.baseForumsUrl; //TODO
+		var logoutUrl = base + "/user/logout";
+		var loginUrl = base + "/user/login";
+		var homeUrl = base;
+		var staticUrl = function staticUrl(path) {
+			return base + "/static" + path;
+		};
+
+		var inboxText = user.unreadMessages > 0 ? React.createElement(
+			"strong",
+			null,
+			"Inbox (",
+			user.unreadMessages,
+			")"
+		) : "Inbox";
+		var siteActionsMenu;
+
+		if (user) {
+			siteActionsMenu = [React.createElement(
+				"button",
+				{ key: "button", type: "button", href: "#", className: "btn btn-default navbar-btn dropdown-toggle", "data-toggle": "dropdown", role: "button", "aria-expanded": "false" },
+				userDisplayName,
+				React.createElement("span", { className: "caret" }),
+				React.createElement(
+					"span",
+					{ className: "sr-only" },
+					"Toggle Dropdown"
+				)
+			), React.createElement(
+				"ul",
+				{ key: "listEntries", className: "dropdown-menu", role: "menu" },
+				React.createElement(
+					"li",
+					null,
+					React.createElement(
+						"a",
+						{ href: settingsUrl },
+						"Settings"
+					)
+				),
+				React.createElement(
+					"li",
+					null,
+					React.createElement(
+						"a",
+						{ href: inboxUrl },
+						inboxText
+					)
+				),
+				React.createElement(
+					"li",
+					null,
+					React.createElement(
+						"a",
+						{ href: downloadUrl },
+						"Download"
+					)
+				),
+				React.createElement("li", { className: "divider" }),
+				React.createElement(
+					"li",
+					null,
+					React.createElement(
+						"a",
+						{ href: documentationUrl, className: "documentation" },
+						"Documentation"
+					)
+				),
+				React.createElement(
+					"li",
+					null,
+					React.createElement(
+						"a",
+						{ href: forumsUrl, className: "forums" },
+						"Forums"
+					)
+				),
+				React.createElement("li", { className: "divider" }),
+				React.createElement(
+					"li",
+					null,
+					React.createElement(
+						"a",
+						{ href: logoutUrl },
+						"Log Out"
+					)
+				)
+			)];
+		} else {
+			siteActionsMenu = React.createElement(
+				"div",
+				{ className: "btn-group" },
+				React.createElement(
+					"a",
+					{ href: loginUrl, className: "btn btn-default navbar-btn", role: "button" },
+					"Log In"
+				),
+				React.createElement(
+					"button",
+					{ type: "button", href: "#", className: "btn btn-default navbar-btn dropdown-toggle", "data-toggle": "dropdown", role: "button", "aria-haspopup": "true", "aria-expanded": "false" },
+					React.createElement("span", { className: "caret" }),
+					React.createElement(
+						"span",
+						{ className: "sr-only" },
+						"Toggle Dropdown"
+					)
+				),
+				React.createElement(
+					"ul",
+					{ className: "dropdown-menu", role: "menu" },
+					React.createElement(
+						"li",
+						null,
+						React.createElement(
+							"a",
+							{ href: downloadUrl },
+							"Download"
+						)
+					),
+					React.createElement(
+						"li",
+						null,
+						React.createElement(
+							"a",
+							{ href: documentationUrl, className: "documentation" },
+							"Documentation"
+						)
+					),
+					React.createElement(
+						"li",
+						null,
+						React.createElement(
+							"a",
+							{ href: forumsUrl, className: "forums" },
+							"Forums"
+						)
+					)
+				)
+			);
+		}
+
+		return React.createElement(
+			"div",
+			null,
+			React.createElement(
+				"nav",
+				{ id: "primarynav", className: "navbar navbar-default", role: "navigation" },
+				React.createElement(
+					"div",
+					{ className: "container-fluid" },
+					React.createElement(
+						"div",
+						{ className: "navbar-header" },
+						React.createElement(
+							"button",
+							{ type: "button", className: "navbar-toggle collapsed", "data-toggle": "collapse", "data-target": "#primary-nav-linklist" },
+							userDisplayName,
+							React.createElement(
+								"span",
+								{ className: "sr-only" },
+								"Toggle navigation"
+							),
+							React.createElement("span", { className: "glyphicons fonticon glyphicons-menu-hamburger" })
+						),
+						React.createElement(
+							"a",
+							{ className: "navbar-brand hidden-sm hidden-xs", href: homeUrl },
+							React.createElement("img", { src: staticUrl('/images/theme/zotero.png'), alt: "Zotero", height: "20px" })
+						),
+						React.createElement(
+							"a",
+							{ className: "navbar-brand visible-sm-block visible-xs-block", href: homeUrl },
+							React.createElement("img", { src: staticUrl('/images/theme/zotero_theme/zotero_48.png'), alt: "Zotero", height: "24px" })
+						)
+					),
+					React.createElement(
+						"div",
+						{ className: "collapse navbar-collapse", id: "primary-nav-linklist" },
+						React.createElement(ControlPanel, { library: library, ref: "controlPanel" }),
+						React.createElement(
+							"ul",
+							{ className: "nav navbar-nav navbar-right" },
+							siteActionsMenu
+						),
+						React.createElement(
+							"div",
+							{ className: "eventfulwidget btn-toolbar hidden-xs navbar-right" },
+							React.createElement(LibrarySearchBox, { library: library })
+						)
+					)
+				)
+			),
+			React.createElement(
+				"div",
+				{ id: "js-message" },
+				React.createElement("ul", { id: "js-message-list" })
+			),
+			React.createElement(
+				"div",
+				{ id: "library", className: "row" },
+				React.createElement(
+					"div",
+					{ id: "panel-container" },
+					React.createElement(
+						"div",
+						{ id: "left-panel", className: "panelcontainer-panelcontainer col-xs-12 col-sm-4 col-md-3" },
+						React.createElement(FilterGuide, { ref: "filterGuide", library: library }),
+						React.createElement(
+							"div",
+							{ role: "tabpanel" },
+							React.createElement(
+								"ul",
+								{ className: "nav nav-tabs", role: "tablist" },
+								React.createElement(
+									"li",
+									{ role: "presentation", className: "active" },
+									React.createElement(
+										"a",
+										{ href: "#collections-panel", "aria-controls": "collections-panel", role: "tab", "data-toggle": "tab" },
+										"Collections"
+									)
+								),
+								React.createElement(
+									"li",
+									{ role: "presentation" },
+									React.createElement(
+										"a",
+										{ href: "#tags-panel", "aria-controls": "tags-panel", role: "tab", "data-toggle": "tab" },
+										"Tags"
+									)
+								)
+							),
+							React.createElement(
+								"div",
+								{ className: "tab-content" },
+								React.createElement(
+									"div",
+									{ id: "collections-panel", role: "tabpanel", className: "tab-pane active" },
+									React.createElement(Collections, { ref: "collectionsWidget", library: library })
+								),
+								React.createElement(
+									"div",
+									{ id: "tags-panel", role: "tabpanel", className: "tab-pane" },
+									React.createElement(Tags, { ref: "tagsWidget", library: library }),
+									React.createElement(FeedLink, { ref: "feedLinkWidget", library: library })
+								)
+							)
+						)
+					),
+					React.createElement(
+						"div",
+						{ id: "right-panel", className: "panelcontainer-panelcontainer col-xs-12 col-sm-8 col-md-9" },
+						React.createElement(
+							"div",
+							{ id: "items-panel", className: "panelcontainer-panel col-sm-12 col-md-7" },
+							React.createElement(LibrarySearchBox, { library: library }),
+							React.createElement(
+								"div",
+								{ id: "library-items-div", className: "library-items-div row" },
+								React.createElement(ItemsTable, { ref: "itemsWidget", library: library })
+							),
+							React.createElement(
+								"div",
+								{ id: "load-more-items-div", className: "row" },
+								React.createElement(
+									"button",
+									{ onClick: function () {
+											library.trigger('loadMoreItems');
+										}, type: "button", id: "load-more-items-button", className: "btn btn-default" },
+									"Load More Items"
+								)
+							)
+						),
+						React.createElement(
+							"div",
+							{ id: "item-panel", className: "panelcontainer-panel col-sm-12 col-md-5" },
+							React.createElement(
+								"div",
+								{ id: "item-widget-div", className: "item-details-div" },
+								React.createElement(ItemDetails, { ref: "itemWidget", library: library })
+							)
+						)
+					),
+					React.createElement(
+						"nav",
+						{ id: "panelcontainer-nav", className: "navbar navbar-default navbar-fixed-bottom visible-xs-block", role: "navigation" },
+						React.createElement(
+							"div",
+							{ className: "container-fluid" },
+							React.createElement(
+								"ul",
+								{ className: "nav navbar-nav" },
+								React.createElement(
+									"li",
+									{ className: "eventfultrigger filters-nav", "data-triggers": "showFiltersPanel" },
+									React.createElement(
+										"a",
+										{ href: "#" },
+										"Filters"
+									)
+								),
+								React.createElement(
+									"li",
+									{ className: "eventfultrigger items-nav", "data-triggers": "showItemsPanel" },
+									React.createElement(
+										"a",
+										{ href: "#" },
+										"Items"
+									)
+								)
+							)
+						)
+					),
+					React.createElement(SendToLibraryDialog, { ref: "sendToLibraryDialogWidget", library: library }),
+					React.createElement(CreateCollectionDialog, { ref: "createCollectionDialogWidget", library: library }),
+					React.createElement(UpdateCollectionDialog, { library: library }),
+					React.createElement(DeleteCollectionDialog, { library: library }),
+					React.createElement(AddToCollectionDialog, { library: library }),
+					React.createElement(CreateItemDialog, { library: library }),
+					React.createElement(CiteItemDialog, { library: library }),
+					React.createElement(UploadAttachmentDialog, { library: library }),
+					React.createElement(ExportItemsDialog, { library: library }),
+					React.createElement(LibrarySettingsDialog, { library: library })
+				)
+			)
+		);
+	}
+});
+/*<!-- Main Content -->*/ /*<!-- Nav tabs -->*/ /*<!-- Tab panes -->*/ /*<!-- /collections panel -->*/ /*<!-- tags browser section -->*/ /*<!-- /tags panel -->*/ /*<!-- /tabcontent -->*/ /*<!-- /tab-panel -->*/ /*<!-- /left-panel -->*/ /*<!-- /items panel -->*/ /*<!-- /item widget -->*/ /*<!-- /item panel -->*/ /*<!-- /right-panel -->*/ /*<!-- panelContainer nav footer -->*/ /*<ProgressModalDialog library={library} />*/ /*<ChooseSortingDialog library={library} />*/
+'use strict';
+
+Zotero.ui.widgets.reactlibrarysettingsdialog = {};
+
+Zotero.ui.widgets.reactlibrarysettingsdialog.init = function (el) {
+	Z.debug("librarysettingsdialog widget init", 3);
+	var library = Zotero.ui.getAssociatedLibrary(el);
+	var reactInstance = ReactDOM.render(React.createElement(LibrarySettingsDialog, { library: library }), document.getElementById('library-settings-dialog'));
+
+	library.listen('settingsLoaded', reactInstance.updateStateFromLibrary, {});
+	library.listen("librarySettingsDialog", reactInstance.openDialog, {});
+};
+
+var LibrarySettingsDialog = React.createClass({
+	displayName: 'LibrarySettingsDialog',
+
+	getInitialState: function getInitialState() {
+		return {
+			listDisplayedFields: [],
+			itemsPerPage: 25,
+			showAutomaticTags: true
+		};
+	},
+	openDialog: function openDialog() {
+		this.refs.modal.open();
+	},
+	closeDialog: function closeDialog(evt) {
+		this.refs.modal.close();
+	},
+	updateShowFields: function updateShowFields(evt) {
+		Z.debug("updateShowFields");
+		var library = this.props.library;
+		var listDisplayedFields = this.state.listDisplayedFields;
+		var fieldName = evt.target.value;
+		var display = evt.target.checked;
+
+		if (display) {
+			Z.debug("adding field " + fieldName + " to listDisplayedFields");
+			listDisplayedFields.push(fieldName);
+		} else {
+			Z.debug("filtering field " + fieldName + " from listDisplayedFields");
+
+			listDisplayedFields = listDisplayedFields.filter(function (val) {
+				if (val == fieldName) {
+					return false;
+				}
+				return true;
+			});
+		}
+
+		this.setState({
+			listDisplayedFields: listDisplayedFields
+		});
+
+		library.preferences.setPref("listDisplayedFields", listDisplayedFields);
+		library.preferences.persist();
+
+		library.trigger("displayedItemsChanged");
+	},
+	updateShowAutomaticTags: function updateShowAutomaticTags(evt) {
+		var library = this.props.library;
+		var showAutomaticTags = evt.target.checked;
+
+		this.setState({
+			showAutomaticTags: showAutomaticTags
+		});
+		library.preferences.setPref("showAutomaticTags", showAutomaticTags);
+		library.preferences.persist();
+
+		library.trigger("tagsChanged");
+	}, /*
+    updateItemsPerPage: function(evt) {
+    var library = this.props.library;
+    var itemsPerPage = evt.target.value;
+    this.setState({
+    itemsPerPage: itemsPerPage
+    });
+    library.preferences.setPref('itemsPerPage', itemsPerPage);
+    library.preferences.persist();
+    library.preferences.setPref("listDisplayedFields", listDisplayedFields);
+    },*/
+	updateStateFromLibrary: function updateStateFromLibrary() {
+		var library = this.props.library;
+		this.setState({
+			listDisplayedFields: library.preferences.getPref('listDisplayedFields'),
+			itemsPerPage: library.preferences.getPref('itemsPerPage'),
+			showAutomaticTags: library.preferences.getPref('showAutomaticTags')
+		});
+	},
+	render: function render() {
+		var reactInstance = this;
+		var library = this.props.library;
+		var listDisplayedFields = this.state.listDisplayedFields;
+		var itemsPerPage = this.state.itemsPerPage;
+		var showAutomaticTags = this.state.showAutomaticTags;
+		var fieldMap = Zotero.localizations.fieldMap;
+
+		var displayFieldNodes = Zotero.Library.prototype.displayableColumns.map(function (val, ind) {
+			var checked = listDisplayedFields.indexOf(val) != -1;
+			return React.createElement(
+				'div',
+				{ key: val, className: 'checkbox' },
+				React.createElement(
+					'label',
+					{ htmlFor: "display-column-field-" + val },
+					React.createElement('input', { onChange: reactInstance.updateShowFields, type: 'checkbox', checked: checked, name: 'display-column-field', value: val, id: "display-column-field-" + val, className: 'display-column-field' }),
+					fieldMap[val] || val
+				)
+			);
+		});
+
+		return React.createElement(
+			BootstrapModalWrapper,
+			{ ref: 'modal' },
+			React.createElement(
+				'div',
+				{ id: 'library-settings-dialog', className: 'library-settings-dialog', role: 'dialog', 'aria-hidden': 'true', 'data-keyboard': 'true' },
+				React.createElement(
+					'div',
+					{ className: 'modal-dialog' },
+					React.createElement(
+						'div',
+						{ className: 'modal-content' },
+						React.createElement(
+							'div',
+							{ className: 'modal-header' },
+							React.createElement(
+								'button',
+								{ type: 'button', className: 'close', 'data-dismiss': 'modal', 'aria-hidden': 'true' },
+								'×'
+							),
+							React.createElement(
+								'h3',
+								{ className: 'modal-title' },
+								'Library Settings'
+							)
+						),
+						React.createElement(
+							'div',
+							{ className: 'modal-body' },
+							React.createElement(
+								'form',
+								{ id: 'library-settings-form', className: 'library-settings-form', role: 'form' },
+								React.createElement(
+									'fieldset',
+									null,
+									React.createElement(
+										'legend',
+										null,
+										'Display Columns'
+									),
+									displayFieldNodes
+								),
+								React.createElement(
+									'div',
+									{ className: 'checkbox' },
+									React.createElement(
+										'label',
+										{ htmlFor: 'show-automatic-tags' },
+										React.createElement('input', { onChange: this.updateShowAutomaticTags, type: 'checkbox', id: 'show-automatic-tags', name: 'show-automatic-tags' }),
+										'Show Automatic Tags'
+									),
+									React.createElement(
+										'p',
+										{ className: 'help-block' },
+										'Automatic tags are tags added automatically when a reference was imported, rather than by a user.'
+									)
+								)
+							)
+						),
+						React.createElement(
+							'div',
+							{ className: 'modal-footer' },
+							React.createElement(
+								'button',
+								{ className: 'btn btn-default', 'data-dismiss': 'modal', 'aria-hidden': 'true' },
+								'Close'
+							)
+						)
+					)
+				)
+			)
+		);
+	}
+});
+/*
+<label htmlFor="items-per-page">Items Per Page</label>
+<select onChange={this.updateItemPerPage} defaultValue={this.state.itemsPerPage} id="items-per-page" name="items-per-page" className="form-control">
+<option value="25">25</option>
+<option value="50">50</option>
+<option value="75">75</option>
+<option value="100">100</option>
+</select>
+*/
+"use strict";
+
+Zotero.ui.widgets.panelContainer = {};
+
+Zotero.ui.widgets.panelContainer.init = function (el) {
+    Z.debug("panelContainer widget init", 3);
+    var library = Zotero.ui.getAssociatedLibrary(el);
+
+    library.listen("displayedItemsChanged showItemsPanel", Zotero.ui.widgets.panelContainer.showPanel, { widgetEl: el, panelSelector: "#items-panel" });
+    library.listen("showFiltersPanel", Zotero.ui.widgets.panelContainer.showPanel, { widgetEl: el, panelSelector: "#left-panel" });
+    library.listen("showItemPanel displayedItemChanged", Zotero.ui.widgets.panelContainer.showPanel, { widgetEl: el, panelSelector: "#item-panel" });
+    Zotero.listen("reflow", Zotero.ui.widgets.panelContainer.reflow, { widgetEl: el });
+
+    Zotero.ui.widgets.panelContainer.showPanel({ data: { widgetEl: el, panelSelector: "#items-panel" } });
+    J(window).on('resize', function () {
+        Zotero.ui.widgets.panelContainer.reflow({ data: { widgetEl: el } });
+    });
+    J(el).on('click', '.single-cell-item', function () {
+        library.trigger('showItemPanel');
+    });
+};
+
+Zotero.ui.widgets.panelContainer.reflow = function (evt) {
+    Zotero.ui.widgets.panelContainer.showPanel({ data: { widgetEl: evt.data.widgetEl, panelSelector: "#items-panel" } });
+    Zotero.ui.fixTableHeaders(J("#field-table"));
+};
+
+Zotero.ui.widgets.panelContainer.showPanel = function (evt) {
+    Z.debug("panelContainer.showPanel", 3);
+    var widgetEl = J(evt.data.widgetEl);
+    var selector = evt.data.panelSelector;
+    if (selector == "#item-panel" && !Zotero.state.getUrlVar('itemKey')) {
+        Z.debug("item-panel selected with no itemKey", 3);
+        selector = "#items-panel";
+    }
+    Z.debug("selector:" + selector, 3);
+
+    var deviceSize = 'xs';
+    var displaySections = [];
+    switch (true) {
+        case window.matchMedia("(min-width: 1200px)").matches:
+            deviceSize = 'lg';
+            widgetEl.find(".panelcontainer-panelcontainer").show().find('.panelcontainer-panel').show();
+            break;
+        case window.matchMedia("(min-width: 992px)").matches:
+            deviceSize = 'md';
+            widgetEl.find(".panelcontainer-panelcontainer").show().find('.panelcontainer-panel').show();
+            break;
+        case window.matchMedia("(min-width: 768px)").matches:
+            deviceSize = 'sm';
+            widgetEl.find(".panelcontainer-panelcontainer").show().find('.panelcontainer-panel').show();
+            if (selector == "#item-panel" || selector == "#items-panel") {
+                widgetEl.find(selector).siblings(".panelcontainer-panel").hide();
+                widgetEl.find(selector).show();
+            }
+            break;
+        default:
+            deviceSize = 'xs';
+            widgetEl.find('.panelcontainer-panelcontainer').hide().find('.panelcontainer-panel').hide();
+            widgetEl.find(selector).show().closest('.panelcontainer-panelcontainer').show();
+    }
+    Z.debug("panelContainer calculated deviceSize: " + deviceSize, 3);
+
+    widgetEl.find('#panelcontainer-nav li').removeClass('active');
+
+    switch (selector) {
+        case '#collections-panel':
+            widgetEl.find('li.collections-nav').addClass('active');
+            break;
+        case '#left-panel':
+            widgetEl.find('li.filters-nav').addClass('active');
+            break;
+    }
+};
+"use strict";
+
+Zotero.ui.widgets.reactsearchbox = {};
+
+Zotero.ui.widgets.reactsearchbox.init = function (el) {
+	Z.debug("Zotero.eventful.init.searchbox", 3);
+	var library = Zotero.ui.getAssociatedLibrary(el);
+	var container = J(el);
+
+	var reactInstance = ReactDOM.render(React.createElement(LibrarySearchBox, { library: library }), document.getElementById('search-box'));
+	Zotero.ui.widgets.reactsearchbox.reactInstance = reactInstance;
+};
+
+var LibrarySearchBox = React.createClass({
+	displayName: "LibrarySearchBox",
+
+	getInitialState: function getInitialState() {
+		return {
+			searchType: "simple"
+		};
+	},
+	search: function search(evt) {
+		e.preventDefault();
+		Z.debug("library-search form submitted", 3);
+		Zotero.state.clearUrlVars(['collectionKey', 'tag', 'q', 'qmode']);
+		var container = J(evt.target);
+		var query = container.find('input.search-query').val();
+		var searchType = container.find('input.search-query').data('searchtype');
+		if (query !== "" || Zotero.state.getUrlVar('q')) {
+			Zotero.state.pathVars['q'] = query;
+			if (searchType != "simple") {
+				Zotero.state.pathVars['qmode'] = searchType;
+			}
+			Zotero.state.pushState();
+		}
+		return false;
+	},
+	clearLibraryQuery: function clearLibraryQuery(evt) {
+		Zotero.state.unsetUrlVar('q');
+		Zotero.state.unsetUrlVar('qmode');
+
+		J(".search-query").val("");
+		Zotero.state.pushState();
+		return;
+	},
+	changeSearchType: function changeSearchType(evt) {
+		evt.preventDefault();
+		var selected = J(evt.target);
+		var selectedType = selected.data('searchtype');
+		this.setState({ searchType: selectedType });
+	},
+	render: function render() {
+		var placeHolder = "";
+		if (this.state.searchType == 'simple') {
+			placeHolder = 'Search Title, Creator, Year';
+		} else if (this.state.searchType == 'everything') {
+			placeHolder = 'Search Full Text';
+		}
+		var defaultValue = Zotero.state.getUrlVar('q');
+
+		return React.createElement(
+			"div",
+			{ className: "btn-toolbar row visible-xs", id: "search-box", style: { maxWidth: "350px" } },
+			React.createElement(
+				"form",
+				{ action: "/search/", onSubmit: this.search, className: "navbar-form zsearch library-search", role: "search" },
+				React.createElement(
+					"div",
+					{ className: "input-group" },
+					React.createElement(
+						"div",
+						{ className: "input-group-btn" },
+						React.createElement(
+							"button",
+							{ type: "button", className: "btn btn-default dropdown-toggle", "data-toggle": "dropdown" },
+							React.createElement("span", { className: "caret" })
+						),
+						React.createElement(
+							"ul",
+							{ className: "dropdown-menu" },
+							React.createElement(
+								"li",
+								null,
+								React.createElement(
+									"a",
+									{ href: "#", onClick: this.changeSearchType, "data-searchtype": "simple" },
+									"Title, Creator, Year"
+								)
+							),
+							React.createElement(
+								"li",
+								null,
+								React.createElement(
+									"a",
+									{ href: "#", onClick: this.changeSearchType, "data-searchtype": "everything" },
+									"Full Text"
+								)
+							)
+						)
+					),
+					React.createElement("input", { defaultValue: defaultValue, type: "text", name: "q", id: "header-search-query", className: "search-query form-control", placeholder: placeHolder }),
+					React.createElement(
+						"span",
+						{ className: "input-group-btn" },
+						React.createElement(
+							"button",
+							{ onClick: this.clearLibraryQuery, className: "btn btn-default clear-field-button", type: "button" },
+							React.createElement("span", { className: "glyphicons fonticon glyphicons-remove-2" })
+						)
+					)
+				)
+			)
+		);
+	}
+});
+"use strict";
+
+Zotero.ui.widgets.reactsendToLibraryDialog = {};
+
+Zotero.ui.widgets.reactsendToLibraryDialog.init = function (el) {
+	Z.debug("sendToLibraryDialog widget init", 3);
+	var library = Zotero.ui.getAssociatedLibrary(el);
+	var reactInstance = ReactDOM.render(React.createElement(SendToLibraryDialog, { library: library }), document.getElementById('send-to-library-dialog'));
+
+	library.listen("sendToLibraryDialog", reactInstance.openDialog, {});
+};
+
+var SendToLibraryDialog = React.createClass({
+	displayName: "SendToLibraryDialog",
+
+	getInitialState: function getInitialState() {
+		return {
+			writableLibraries: [],
+			loading: false,
+			loaded: false
+		};
+	},
+	handleLibraryChange: function handleLibraryChange(evt) {
+		this.setState({ targetLibrary: evt.target.value });
+	},
+	openDialog: function openDialog() {
+		this.refs.modal.open();
+		if (!this.state.loaded) {
+			this.loadForeignLibraries();
+		}
+	},
+	closeDialog: function closeDialog(evt) {
+		this.refs.modal.close();
+	},
+	loadForeignLibraries: function loadForeignLibraries() {
+		var reactInstance = this;
+		var library = this.props.library;
+		var userID = Zotero.config.loggedInUserID;
+		var personalLibraryString = 'u' + userID;
+
+		this.setState({ loading: true });
+
+		var memberGroups = library.groups.fetchUserGroups(userID).then(function (response) {
+			Z.debug("got member groups", 3);
+			var memberGroups = response.fetchedGroups;
+			var writableLibraries = [{ name: 'My Library', libraryString: personalLibraryString }];
+			for (var i = 0; i < memberGroups.length; i++) {
+				if (memberGroups[i].isWritable(userID)) {
+					var libraryString = 'g' + memberGroups[i].get('id');
+					writableLibraries.push({
+						name: memberGroups[i].get('name'),
+						libraryString: libraryString
+					});
+				}
+			}
+			reactInstance.setState({ writableLibraries: writableLibraries, loading: false, loaded: true });
+		})["catch"](function (err) {
+			Zotero.ui.jsNotificationMessage("There was an error loading group libraries", "error");
+			Z.error(err);
+			Z.error(err.message);
+		});
+	},
+	sendItem: function sendItem(evt) {
+		Z.debug("sendToLibrary callback", 3);
+		var library = this.props.library;
+		//instantiate destination library
+		var targetLibrary = this.state.targetLibrary;
+		var destLibConfig = Zotero.utils.parseLibString(targetLibrary);
+		destLibrary = new Zotero.Library(destLibConfig.libraryType, destLibConfig.libraryID);
+		Zotero.libraries[targetLibrary] = destLibrary;
+
+		//get items to send
+		var itemKeys = Zotero.state.getSelectedItemKeys();
+		if (itemKeys.length === 0) {
+			Zotero.ui.jsNotificationMessage("No items selected", 'notice');
+			this.closeDialog();
+			return false;
+		}
+
+		var sendItems = library.items.getItems(itemKeys);
+		library.sendToLibrary(sendItems, destLibrary).then(function (foreignItems) {
+			Zotero.ui.jsNotificationMessage("Items sent to other library", 'notice');
+		})["catch"](function (response) {
+			Z.debug(response);
+			Zotero.ui.jsNotificationMessage("Error sending items to other library", 'notice');
+		});
+		this.closeDialog();
+		return false;
+	},
+	render: function render() {
+		var destinationLibraries = this.state.writableLibraries;
+		var libraryOptions = destinationLibraries.map(function (lib) {
+			return React.createElement(
+				"option",
+				{ key: lib.libraryString, value: lib.libraryString },
+				lib.name
+			);
+		});
+		return React.createElement(
+			BootstrapModalWrapper,
+			{ ref: "modal" },
+			React.createElement(
+				"div",
+				{ id: "send-to-library-dialog", className: "send-to-library-dialog", role: "dialog", "aria-hidden": "true", title: "Send to Library", "data-keyboard": "true" },
+				React.createElement(
+					"div",
+					{ className: "modal-dialog" },
+					React.createElement(
+						"div",
+						{ className: "modal-content" },
+						React.createElement(
+							"div",
+							{ className: "modal-header" },
+							React.createElement(
+								"button",
+								{ type: "button", className: "close", "data-dismiss": "modal", "aria-hidden": "true" },
+								"×"
+							),
+							React.createElement(
+								"h3",
+								null,
+								"Send To Library"
+							)
+						),
+						React.createElement(
+							"div",
+							{ className: "send-to-library-div modal-body", "data-role": "content" },
+							React.createElement(
+								"form",
+								null,
+								React.createElement(
+									"div",
+									{ "data-role": "fieldcontain" },
+									React.createElement(
+										"label",
+										{ htmlFor: "destination-library" },
+										"Library"
+									),
+									React.createElement(
+										"select",
+										{ onChange: this.handleLibraryChange, className: "destination-library-select form-control", name: "desination-library" },
+										libraryOptions
+									)
+								)
+							)
+						),
+						React.createElement(
+							"div",
+							{ className: "modal-footer" },
+							React.createElement(
+								"button",
+								{ onClick: this.closeDialog, className: "btn", "data-dismiss": "modal", "aria-hidden": "true" },
+								"Close"
+							),
+							React.createElement(
+								"button",
+								{ onClick: this.sendItem, className: "btn btn-primary sendButton" },
+								"Send"
+							)
+						)
+					)
+				)
+			)
+		);
+	}
+});
+'use strict';
+
+Zotero.ui.widgets.reacttags = {};
+
+Zotero.ui.widgets.reacttags.init = function (el) {
+	Z.debug("tags widget init", 3);
+	var library = Zotero.ui.getAssociatedLibrary(el);
+
+	var reactInstance = ReactDOM.render(React.createElement(Tags, { library: library }), document.getElementById('tags-list-div'));
+	Zotero.ui.widgets.reacttags.reactInstance = reactInstance;
+};
+
+var TagRow = React.createClass({
+	displayName: 'TagRow',
+
+	getDefaultProps: function getDefaultProps() {
+		return {
+			showAutomatic: false
+		};
+	},
+	handleClick: function handleClick(evt) {
+		evt.stopPropagation();
+		evt.preventDefault();
+		var tag = this.props.tag;
+
+		Z.state.toggleTag(tag.apiObj.tag);
+		Z.state.clearUrlVars(['tag', 'collectionKey']);
+		Z.state.pushState();
+
+		var selectedTags = Zotero.state.getUrlVar('tag');
+		if (!J.isArray(selectedTags)) {
+			if (selectedTags) {
+				selectedTags = [selectedTags];
+			} else {
+				selectedTags = [];
+			}
+		}
+		Zotero.ui.widgets.reacttags.reactInstance.setState({ selectedTags: selectedTags });
+	},
+	render: function render() {
+		var tag = this.props.tag;
+		var title = tag.apiObj.tag;
+		if (tag.apiObj.meta.numItems) {
+			title += " (" + tag.apiObj.meta.numItems + ")";
+		}
+		var newUrl = "";
+
+		var tagStyle = {};
+		if (tag.color) {
+			tagStyle = {
+				color: tag.color,
+				fontWeight: "bold"
+			};
+		}
+
+		//render nothing for automatic tags user doesn't want displayed
+		if (this.props.showAutomatic == false && tag.apiObj.meta.type != 0) {
+			return null;
+		}
+
+		return React.createElement(
+			'li',
+			{ className: 'tag-row' },
+			React.createElement(
+				'a',
+				{ onClick: this.handleClick, className: 'tag-link', title: title, style: tagStyle, href: newUrl },
+				Zotero.ui.trimString(tag.apiObj.tag, 12)
+			)
+		);
+	}
+});
+
+var TagList = React.createClass({
+	displayName: 'TagList',
+
+	getDefaultProps: function getDefaultProps() {
+		return {
+			tags: [],
+			showAutomatic: false,
+			id: ""
+		};
+	},
+	render: function render() {
+		var showAutomatic = this.props.showAutomatic;
+		var tagRowNodes = this.props.tags.map(function (tag, ind) {
+			return React.createElement(TagRow, { key: tag.apiObj.tag, tag: tag, showAutomatic: showAutomatic });
+		});
+
+		return React.createElement(
+			'ul',
+			{ id: this.props.id },
+			tagRowNodes
+		);
+	}
+});
+
+var Tags = React.createClass({
+	displayName: 'Tags',
+
+	getDefaultProps: function getDefaultProps() {
+		return {};
+	},
+	getInitialState: function getInitialState() {
+		return {
+			tags: new Zotero.Tags(),
+			tagColors: null,
+			selectedTags: [],
+			tagFilter: "",
+			showAutomatic: false,
+			loading: false
+		};
+	},
+	componentWillMount: function componentWillMount(evt) {
+		var reactInstance = this;
+		var library = this.props.library;
+
+		var tagColors = library.preferences.getPref("tagColors");
+		var selectedTags = Zotero.state.getUrlVar('tag');
+		if (!J.isArray(selectedTags)) {
+			if (selectedTags) {
+				selectedTags = [selectedTags];
+			} else {
+				selectedTags = [];
+			}
+		}
+
+		reactInstance.setState({ tagColors: tagColors, selectedTags: selectedTags });
+
+		library.listen("tagsDirty", reactInstance.syncTags, {});
+		library.listen("cachedDataLoaded", reactInstance.syncTags, {});
+
+		library.listen("tagsChanged libraryTagsUpdated selectedTagsChanged", function (evt) {
+			reactInstance.setState({ tags: library.tags });
+		}, {});
+	},
+	handleFilterChanged: function handleFilterChanged(evt) {
+		this.setState({ tagFilter: evt.target.value });
+	},
+	syncTags: function syncTags(evt) {
+		Z.debug("Tags.syncTags");
+		var reactInstance = this;
+		if (this.state.loading) {
+			return;
+		}
+		var library = this.props.library;
+
+		//clear tags if we're explicitly not using cached tags
+		if (evt.data && evt.data.checkCached === false) {
+			library.tags.clear();
+		}
+
+		reactInstance.setState({ tags: library.tags, loading: true });
+
+		//cached tags are preloaded with library if the cache is enabled
+		//this function shouldn't be triggered until that has already been done
+		loadingPromise = library.loadUpdatedTags().then(function () {
+			Z.debug("syncTags done. clearing loading div");
+			reactInstance.setState({ tags: library.tags, loading: false });
+			return;
+		}, function (error) {
+			Z.error("syncTags failed. showing local data and clearing loading div");
+			reactInstance.setState({ tags: library.tags, loading: false });
+			Zotero.ui.jsNotificationMessage("There was an error loading tags. Some tags may not have been updated.", 'notice');
+		});
+
+		return;
+	},
+	render: function render() {
+		var tags = this.state.tags;
+		var selectedTagStrings = this.state.selectedTags;
+		var tagColors = this.state.tagColors;
+		if (tagColors === null) {
+			tagColors = [];
+		}
+
+		var matchAnyFilter = this.state.tagFilter;
+		var plainTagsList = tags.plainTagsList(tags.tagsArray);
+		var matchedTagStrings = Z.utils.matchAnyAutocomplete(matchAnyFilter, plainTagsList);
+
+		var tagColorStrings = [];
+		var coloredTags = [];
+		tagColors.forEach(function (tagColor, index) {
+			Z.debug("tagColor processing " + index);
+			tagColorStrings.push(tagColor.name.toLowerCase());
+			var coloredTag = tags.getTag(tagColor.name);
+			if (coloredTag) {
+				coloredTag.color = tagColor.color;
+				coloredTags.push(coloredTag);
+			}
+		});
+		var filteredTags = [];
+		var selectedTags = [];
+
+		//always show selected tags, even if they don't pass the filter
+		selectedTagStrings.forEach(function (tagString) {
+			var t = tags.getTag(tagString);
+			if (t) {
+				selectedTags.push(t);
+			}
+		});
+		//add to filteredTags if passes filter, and is not already selected or colored
+		matchedTagStrings.forEach(function (matchedString) {
+			var t = tags.getTag(matchedString);
+			if (t !== null && t.apiObj.meta.numItems > 0) {
+				//we have the actual tag object, and it has items
+				//add to filteredTags if it is not already in colored or selected lists
+				if (selectedTagStrings.indexOf(matchedString) == -1 && tagColorStrings.indexOf(matchedString) == -1) {
+					filteredTags.push(t);
+				}
+			}
+		});
+
+		return React.createElement(
+			'div',
+			{ id: 'tags-list-div', className: 'tags-list-div' },
+			React.createElement(
+				'div',
+				null,
+				React.createElement('input', { type: 'text', id: 'tag-filter-input', className: 'tag-filter-input form-control', placeholder: 'Filter Tags', onChange: this.handleFilterChanged }),
+				React.createElement(LoadingSpinner, { loading: this.state.loading }),
+				React.createElement(TagList, { tags: selectedTags, id: 'selected-tags-list' }),
+				React.createElement(TagList, { tags: coloredTags, id: 'colored-tags-list' }),
+				React.createElement(TagList, { tags: filteredTags, id: 'tags-list' })
+			)
+		);
+	}
+});
+"use strict";
+
+Zotero.ui.widgets.reactupdateCollectionDialog = {};
+
+Zotero.ui.widgets.reactupdateCollectionDialog.init = function (el) {
+	Z.debug("updatecollectionsdialog widget init", 3);
+	var library = Zotero.ui.getAssociatedLibrary(el);
+	var reactInstance = ReactDOM.render(React.createElement(UpdateCollectionDialog, { library: library }), document.getElementById('update-collection-dialog'));
+
+	library.listen("updateCollectionDialog", function () {
+		var currentCollectionKey = Zotero.state.getUrlVar('collectionKey');
+		var currentCollection = library.collections.getCollection(currentCollectionKey);
+		var parent = "";
+		var name = "";
+		if (currentCollection) {
+			parent = currentCollection.get('parentCollection');
+			name = currentCollection.get('name');
+		}
+		reactInstance.setState({
+			collectionName: name,
+			parentCollection: parent
+		});
+		reactInstance.openDialog();
+	}, {});
+};
+
+var UpdateCollectionDialog = React.createClass({
+	displayName: "UpdateCollectionDialog",
+
+	getInitialState: function getInitialState() {
+		return {
+			collectionName: "",
+			parentCollection: null
+		};
+	},
+	handleCollectionChange: function handleCollectionChange(evt) {
+		this.setState({ 'parentCollection': evt.target.value });
+	},
+	handleNameChange: function handleNameChange(evt) {
+		this.setState({ 'collectionName': evt.target.value });
+	},
+	openDialog: function openDialog() {
+		this.refs.modal.open();
+	},
+	closeDialog: function closeDialog(evt) {
+		this.refs.modal.close();
+	},
+	saveCollection: function saveCollection(evt) {
+		var reactInstance = this;
+		var library = this.props.library;
+		var parentKey = this.state.parentCollection;
+		var name = this.state.collectionName;
+		if (name == "") {
+			name = "Untitled";
+		}
+
+		var currentCollectionKey = Zotero.state.getUrlVar('collectionKey');
+		var collection = library.collections.getCollection(currentCollectionKey);
+
+		if (!collection) {
+			Zotero.ui.jsNotificationMessage("Selected collection not found", 'error');
+			return false;
+		}
+		Z.debug("updating collection: " + parentKey + ": " + name);
+		collection.update(name, parentKey).then(function (response) {
+			Zotero.ui.jsNotificationMessage("Collection Saved", 'confirm');
+			library.collections.dirty = true;
+			library.collections.initSecondaryData();
+			library.trigger('libraryCollectionsUpdated');
+			Zotero.state.pushState(true);
+			reactInstance.closeDialog();
+		})["catch"](Zotero.catchPromiseError);
+	},
+	render: function render() {
+		var library = this.props.library;
+		var ncollections = library.collections.nestedOrderingArray();
+
+		var collectionOptions = ncollections.map(function (collection, index) {
+			return React.createElement(
+				"option",
+				{ key: collection.get('key'), value: collection.get('key') },
+				'-'.repeat(collection.nestingDepth),
+				" ",
+				collection.get('name')
+			);
+		});
+		collectionOptions.unshift(React.createElement(
+			"option",
+			{ key: "emptyvalue", value: "" },
+			"None"
+		));
+
+		return React.createElement(
+			BootstrapModalWrapper,
+			{ ref: "modal" },
+			React.createElement(
+				"div",
+				{ id: "update-collection-dialog", className: "update-collection-dialog", role: "dialog", title: "Update Collection", "data-keyboard": "true" },
+				React.createElement(
+					"div",
+					{ className: "modal-dialog" },
+					React.createElement(
+						"div",
+						{ className: "modal-content" },
+						React.createElement(
+							"div",
+							{ className: "modal-header" },
+							React.createElement(
+								"button",
+								{ type: "button", className: "close", "data-dismiss": "modal", "aria-hidden": "true" },
+								"×"
+							),
+							React.createElement(
+								"h3",
+								null,
+								"Update Collection"
+							)
+						),
+						React.createElement(
+							"div",
+							{ className: "update-collection-div modal-body" },
+							React.createElement(
+								"form",
+								{ method: "POST", className: "zform" },
+								React.createElement(
+									"ol",
+									null,
+									React.createElement(
+										"li",
+										null,
+										React.createElement(
+											"label",
+											{ htmlFor: "updated-collection-title-input" },
+											"Rename Collection"
+										),
+										React.createElement("input", { value: this.state.collectionName, onChange: this.handleNameChange, id: "updated-collection-title-input", className: "updated-collection-title-input form-control" })
+									),
+									React.createElement(
+										"li",
+										null,
+										React.createElement(
+											"label",
+											{ htmlFor: "update-collection-parent-select" },
+											"Parent Collection"
+										),
+										React.createElement(
+											"select",
+											{ value: this.state.parentCollection, onChange: this.handleCollectionChange, className: "collectionKey-select update-collection-parent form-control" },
+											collectionOptions
+										)
+									)
+								)
+							)
+						),
+						React.createElement(
+							"div",
+							{ className: "modal-footer" },
+							React.createElement(
+								"button",
+								{ className: "btn", "data-dismiss": "modal", "aria-hidden": "true" },
+								"Close"
+							),
+							React.createElement(
+								"button",
+								{ onClick: this.saveCollection, className: "btn btn-primary updateButton" },
+								"Update"
+							)
+						)
+					)
+				)
+			)
+		);
+	}
+});
+"use strict";
+
+Zotero.ui.widgets.reactuploadDialog = {};
+
+Zotero.ui.widgets.reactuploadDialog.init = function (el) {
+	Z.debug("uploaddialog widget init", 3);
+	var library = Zotero.ui.getAssociatedLibrary(el);
+	var reactInstance = ReactDOM.render(React.createElement(UploadAttachmentDialog, { library: library }), document.getElementById('upload-dialog'));
+
+	library.listen("uploadAttachment", function () {
+		Z.debug("got uploadAttachment event; opening upload dialog");
+		reactInstance.setState({ itemKey: Zotero.state.getUrlVar('itemKey') });
+		reactInstance.openDialog();
+	}, {});
+};
+
+var UploadAttachmentDialog = React.createClass({
+	displayName: "UploadAttachmentDialog",
+
+	getInitialState: function getInitialState() {
+		return {
+			title: "",
+			fileInfo: null,
+			filename: "",
+			filesize: 0,
+			contentType: null,
+			percentLoaded: 0,
+			uploading: false
+		};
+	},
+	upload: function upload() {
+		Z.debug("uploadFunction", 3);
+		var reactInstance = this;
+		var library = this.props.library;
+
+		//callback for when everything in the upload form is filled
+		//grab file blob
+		//grab file data given by user
+		//create or modify attachment item
+		//Item.uploadExistingFile or uploadChildAttachment
+
+		var fileInfo = this.state.fileInfo;
+		var specifiedTitle = this.state.title;
+
+		var progressCallback = function progressCallback(e) {
+			Z.debug('fullUpload.upload.onprogress', 3);
+			var percentLoaded = Math.round(e.loaded / e.total * 100);
+			reactInstance.setState({ percentLoaded: percentLoaded });
+		};
+
+		this.setState({ uploading: true });
+
+		//upload new copy of file if we're modifying an attachment
+		//create child and upload file if we're modifying a top level item
+		var itemKey = Zotero.state.getUrlVar('itemKey');
+		var item = library.items.getItem(itemKey);
+		var uploadPromise;
+
+		if (!item.get("parentItem")) {
+			Z.debug("no parentItem", 3);
+			//get template item
+			var childItem = new Zotero.Item();
+			childItem.associateWithLibrary(library);
+			uploadPromise = childItem.initEmpty('attachment', 'imported_file').then(function (childItem) {
+				Z.debug("templateItemDeferred callback", 3);
+				childItem.set('title', specifiedTitle);
+
+				return item.uploadChildAttachment(childItem, fileInfo, progressCallback);
+			});
+		} else if (item.get('itemType') == 'attachment' && item.get("linkMode") == 'imported_file') {
+			Z.debug("imported_file attachment", 3);
+			uploadPromise = item.uploadFile(fileInfo, progressCallback);
+		}
+
+		uploadPromise.then(function () {
+			Z.debug("uploadSuccess", 3);
+			library.trigger("uploadSuccessful");
+			reactInstance.closeDialog();
+		})["catch"](reactInstance.failureHandler).then(function () {
+			reactInstance.closeDialog();
+		});
+	},
+	handleUploadFailure: function handleUploadFailure(failure) {
+		Z.debug("Upload failed", 3);
+		Z.debug(failure, 3);
+		Zotero.ui.jsNotificationMessage("There was a problem uploading your file.", 'error');
+		switch (failure.code) {
+			case 400:
+				Zotero.ui.jsNotificationMessage("Bad Input. 400", 'error');
+				break;
+			case 403:
+				Zotero.ui.jsNotificationMessage("You do not have permission to edit files", 'error');
+				break;
+			case 409:
+				Zotero.ui.jsNotificationMessage("The library is currently locked. Please try again in a few minutes.", 'error');
+				break;
+			case 412:
+				Zotero.ui.jsNotificationMessage("File conflict. Remote file has changed", 'error');
+				break;
+			case 413:
+				Zotero.ui.jsNotificationMessage("Requested upload would exceed storage quota.", 'error');
+				break;
+			case 428:
+				Zotero.ui.jsNotificationMessage("Precondition required error", 'error');
+				break;
+			case 429:
+				Zotero.ui.jsNotificationMessage("Too many uploads pending. Please try again in a few minutes", 'error');
+				break;
+			default:
+				Zotero.ui.jsNotificationMessage("Unknown error uploading file. " + failure.code, 'error');
+		}
+	},
+	handleFiles: function handleFiles(files) {
+		Z.debug("attachmentUpload handleFiles", 3);
+		var reactInstance = this;
+
+		if (typeof files == 'undefined' || files.length === 0) {
+			return false;
+		}
+		var file = files[0];
+
+		Zotero.file.getFileInfo(file).then(function (fileInfo) {
+			Z.debug(fileInfo);
+			reactInstance.setState({
+				fileInfo: fileInfo,
+				filename: fileInfo.filename,
+				filesize: fileInfo.filesize,
+				contentType: fileInfo.contentType
+			});
+		});
+		return;
+	},
+	handleDrop: function handleDrop(evt) {
+		Z.debug("fileuploaddroptarget drop callback", 3);
+		evt.stopPropagation();
+		evt.preventDefault();
+		//clear file input so drag/drop and input don't show conflicting information
+		var e = evt.originalEvent;
+		var dt = e.dataTransfer;
+		var files = dt.files;
+		this.handleFiles(files);
+	},
+	handleFileInputChange: function handleFileInputChange(evt) {
+		Z.debug("fileuploaddroptarget callback 1", 3);
+		evt.stopPropagation();
+		evt.preventDefault();
+		var files = J(this.refs.fileInput).get(0).files;
+		this.handleFiles(files);
+	},
+	handleTitleChange: function handleTitleChange(evt) {
+		this.setState({ title: evt.target.value });
+	},
+	openDialog: function openDialog() {
+		this.refs.modal.open();
+	},
+	closeDialog: function closeDialog(evt) {
+		this.refs.modal.close();
+	},
+	render: function render() {
+		var library = this.props.library;
+
+		return React.createElement(
+			BootstrapModalWrapper,
+			{ ref: "modal" },
+			React.createElement(
+				"div",
+				{ id: "upload-attachment-dialog", className: "upload-attachment-dialog", role: "dialog", title: "Upload Attachment", "data-keyboard": "true" },
+				React.createElement(
+					"div",
+					{ className: "modal-dialog" },
+					React.createElement(
+						"div",
+						{ className: "modal-content" },
+						React.createElement(
+							"div",
+							{ className: "modal-header" },
+							React.createElement(
+								"button",
+								{ type: "button", className: "close", "data-dismiss": "modal", "aria-hidden": "true" },
+								"×"
+							),
+							React.createElement(
+								"h3",
+								{ className: "modal-title" },
+								"Upload Attachment"
+							)
+						),
+						React.createElement(
+							"div",
+							{ className: "upload-attachment-div modal-body", "data-role": "content" },
+							React.createElement(
+								"form",
+								{ className: "attachmentuploadForm zform" },
+								React.createElement(
+									"h3",
+									null,
+									"Select a file for upload or drag and drop below"
+								),
+								React.createElement(
+									"span",
+									{ className: "btn btn-primary btn-file" },
+									"Choose File",
+									React.createElement("input", { onChange: this.handleFileInputChange, ref: "fileInput", type: "file", id: "fileuploadinput", className: "fileuploadinput", multiple: true })
+								),
+								React.createElement(
+									"div",
+									{ onDrop: this.handleDrop, id: "fileuploaddroptarget", className: "fileuploaddroptarget" },
+									React.createElement(
+										"h3",
+										null,
+										"Drop your file here"
+									),
+									React.createElement("h3", { id: "droppedfilename", className: "droppedfilename" }),
+									React.createElement(LoadingSpinner, { loading: this.state.uploading })
+								),
+								React.createElement(
+									"div",
+									{ id: "attachmentuploadfileinfo", className: "attachmentuploadfileinfo" },
+									React.createElement(
+										"table",
+										{ className: "table table-striped" },
+										React.createElement(
+											"tbody",
+											null,
+											React.createElement(
+												"tr",
+												null,
+												React.createElement(
+													"th",
+													null,
+													"Title"
+												),
+												React.createElement(
+													"td",
+													null,
+													React.createElement("input", { onChange: this.handleTitleChange, id: "upload-file-title-input", className: "upload-file-title-input form-control", type: "text" })
+												)
+											),
+											React.createElement(
+												"tr",
+												null,
+												React.createElement(
+													"th",
+													null,
+													"Size"
+												),
+												React.createElement(
+													"td",
+													{ className: "uploadfilesize" },
+													this.state.filesize
+												)
+											),
+											React.createElement(
+												"tr",
+												null,
+												React.createElement(
+													"th",
+													null,
+													"Type"
+												),
+												React.createElement(
+													"td",
+													{ className: "uploadfiletype" },
+													this.state.contentType
+												)
+											),
+											React.createElement(
+												"tr",
+												null,
+												React.createElement(
+													"th",
+													null,
+													"Upload"
+												),
+												React.createElement(
+													"td",
+													{ className: "uploadprogress" },
+													React.createElement("meter", { min: "0", max: "100", value: "0", id: "uploadprogressmeter", value: this.state.percentLoaded })
+												)
+											)
+										)
+									)
+								)
+							)
+						),
+						React.createElement(
+							"div",
+							{ className: "modal-footer" },
+							React.createElement(
+								"button",
+								{ type: "button", className: "btn btn-default", "data-dismiss": "modal", "aria-hidden": "true" },
+								"Close"
+							),
+							React.createElement(
+								"button",
+								{ onClick: this.upload, type: "button", className: "btn btn-primary uploadButton" },
+								"Upload"
+							)
+						)
+					)
+				)
+			)
+		);
+	}
+});
 
 
 /*

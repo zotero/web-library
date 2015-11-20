@@ -5,43 +5,34 @@ Zotero.ui.widgets.reactitems.init = function(el){
 	var library = Zotero.ui.getAssociatedLibrary(el);
 	
 	var reactInstance = ReactDOM.render(
-		<ItemTable library={library} />,
+		<ItemsTable library={library} />,
 		document.getElementById('library-items-div')
 	);
 
 	Zotero.ui.widgets.reactitems.reactInstance = reactInstance;
-
-	library.listen("displayedItemsChanged", Zotero.ui.widgets.reactitems.loadItems, {widgetEl: el});
+	/*
+	library.listen("displayedItemsChanged", reactInstance.loadItems, {widgetEl: el});
 	library.listen("displayedItemChanged", reactInstance.selectDisplayed);
 	Zotero.listen("selectedItemsChanged", function(){
 		reactInstance.setState({selectedItemKeys:Zotero.state.getSelectedItemKeys()});
 	});
 	
-	library.listen("loadMoreItems", Zotero.ui.widgets.reactitems.loadMoreItems, {widgetEl: el});
+	library.listen("loadMoreItems", reactInstance.loadMoreItems, {widgetEl: el});
 	library.listen("changeItemSorting", Zotero.ui.callbacks.resortItems, {widgetEl: el});
-
-	//bind item links inside widget
+	*/
+	/*
 	var container = J(el);
-	Zotero.state.bindItemLinks(container);
-	
 	//monitor scroll position of items pane for infinite scrolling
 	container.closest("#items-panel").on('scroll', function(e){
 		if(Zotero.ui.widgets.reactitems.scrollAtBottom(J(this))){
 			library.trigger("loadMoreItems");
 		}
 	});
-
-	J(window).on('resize', function(){
-		if(!window.matchMedia("(min-width: 768px)").matches){
-			Zotero.ui.widgets.reactitems.reactInstance.setState({narrow:true});
-		} else {
-			Zotero.ui.widgets.reactitems.reactInstance.setState({narrow:false});
-		}
-    });
-    
-	library.trigger("displayedItemsChanged");
+	*/
+	
+	//library.trigger("displayedItemsChanged");
 };
-
+/*
 Zotero.ui.widgets.reactitems.loadItems = function(event){
 	Z.debug('Zotero eventful loadItems', 3);
 	var library = Zotero.ui.widgets.reactitems.reactInstance.props.library;
@@ -64,8 +55,9 @@ Zotero.ui.widgets.reactitems.loadItems = function(event){
 	});
 	return p;
 };
-
+*/
 //load more items when the user has scrolled to the bottom of the current list
+/*
 Zotero.ui.widgets.reactitems.loadMoreItems = function(event){
 	Z.debug('loadMoreItems', 3);
 	var widgetEl = J(event.data.widgetEl);
@@ -106,7 +98,7 @@ Zotero.ui.widgets.reactitems.loadMoreItems = function(event){
 	});
 	
 };
-
+*/
 Zotero.ui.getItemsConfig = function(library){
 	var effectiveUrlVars = ['tag', 'collectionKey', 'order', 'sort', 'q', 'qmode'];
 	var urlConfigVals = {};
@@ -174,6 +166,7 @@ Zotero.ui.widgets.reactitems.displayItems = function(el, config={}, itemsArray=[
 	Zotero.ui.widgets.reactitems.reactInstance.setState({items:itemsArray, displayFields:displayFields})
 };
 */
+/*
 Zotero.ui.callbacks.resortItems = function(e){
 	Z.debug(".field-table-header clicked", 3);
 	var widgetEl = J(e.data.widgetEl);
@@ -229,7 +222,7 @@ Zotero.ui.callbacks.resortItems = function(e){
 	Zotero.preferences.setPref('order', newSortField);
 	Zotero.preferences.setPref('sort', newSortOrder);
 };
-
+*/
 Zotero.ui.widgets.reactitems.scrollAtBottom = function(el) {
 	if(J(el).scrollTop() + J(el).innerHeight() >= J(el)[0].scrollHeight){
 	  return true;
@@ -237,7 +230,28 @@ Zotero.ui.widgets.reactitems.scrollAtBottom = function(el) {
    return false;
 };
 
-var ItemTable = React.createClass({
+var ItemsTable = React.createClass({
+	componentWillMount: function() {
+		var reactInstance = this;
+		var library = this.props.library;
+
+		library.listen("displayedItemsChanged", reactInstance.loadItems, {});
+		library.listen("displayedItemChanged", reactInstance.selectDisplayed);
+		Zotero.listen("selectedItemsChanged", function(){
+			reactInstance.setState({selectedItemKeys:Zotero.state.getSelectedItemKeys()});
+		});
+		
+		library.listen("loadMoreItems", reactInstance.loadMoreItems, {});
+		library.trigger("displayedItemsChanged");
+
+		J(window).on('resize', function(){
+			if(!window.matchMedia("(min-width: 768px)").matches){
+				reactInstance.setState({narrow:true});
+			} else {
+				reactInstance.setState({narrow:false});
+			}
+		});
+	},
 	getDefaultProps: function() {
 		return {};
 	},
@@ -255,6 +269,128 @@ var ItemTable = React.createClass({
 			narrow: false
 		};
 	},
+	loadItems: function() {
+		Z.debug('Zotero eventful loadItems', 3);
+		var reactInstance = this;
+		var library = this.props.library;
+		var newConfig = Zotero.ui.getItemsConfig(library);
+		
+		//clear contents and show spinner while loading
+		this.setState({items:[], moreloading:true});
+		
+		var p = library.loadItems(newConfig)
+		.then(function(response){
+			if(!response.loadedItems){
+				Zotero.error("expected loadedItems on response not present");
+				throw("Expected response to have loadedItems");
+			}
+			library.items.totalResults = response.totalResults;
+			reactInstance.setState({
+				items:response.loadedItems,
+				moreloading:false,
+				sort:newConfig.sort,
+				order:newConfig.order
+			});
+		}).catch(function(response){
+			Z.error(response);
+			reactInstance.setState({
+				errorLoading:true,
+				moreloading:false,
+				sort:newConfig.sort,
+				order:newConfig.order
+			});
+		});
+		return p;
+	},
+	loadMoreItems: function() {
+		Z.debug('loadMoreItems', 3);
+		var reactInstance = this;
+		var library = this.props.library;
+		
+		//bail out if we're already fetching more items
+		if(reactInstance.state.moreloading){
+			return;
+		}
+		//bail out if we're done loading all items
+		if(reactInstance.state.allItemsLoaded){
+			return;
+		}
+		
+		reactInstance.setState({moreloading:true});
+		var library = reactInstance.props.library;
+		var newConfig = Zotero.ui.getItemsConfig(library);
+		var newStart = reactInstance.state.items.length;
+		newConfig.start = newStart;
+
+		var p = library.loadItems(newConfig)
+		.then(function(response){
+			if(!response.loadedItems){
+				Zotero.error("expected loadedItems on response not present");
+				throw("Expected response to have loadedItems");
+			}
+			var allitems = reactInstance.state.items.concat(response.loadedItems);
+			reactInstance.setState({items:allitems, moreloading:false})
+
+			//see if we're displaying as many items as there are in results
+			var itemsDisplayed = allitems.length;
+			if(response.totalResults == itemsDisplayed) {
+				reactInstance.setState({allItemsLoaded:true});
+			}
+		}).catch(function(response){
+			Z.error(response);
+			reactInstance.setState({errorLoading:true, moreloading:false});
+		});
+		
+	},
+	resortItems: function(evt) {
+		//handle click on the item table header to re-sort items
+		//if it is the currently sorted field, simply flip the sort order
+		//if it is not the currently sorted field, set it to be the currently sorted
+		//field and set the default ordering for that field
+		Z.debug(".field-table-header clicked", 3);
+		evt.preventDefault();
+		var reactInstance = this;
+		var library = this.props.library;
+		var currentSortField = this.state.order;
+		var currentSortOrder = this.state.sort;
+		
+		var newSortField = J(evt.target).data('columnfield');
+		var newSortOrder;
+		if(newSortField != currentSortField) {
+			newSortOrder = Zotero.config.sortOrdering[newSortField]; //default for column
+		} else {
+			//swap sort order
+			if(currentSortOrder == "asc"){
+				newSortOrder = "desc";
+			} else {
+				newSortOrder = "asc";
+			}
+		}
+
+		//only allow ordering by the fields we have
+		if(library.sortableColumns.indexOf(newSortField) == (-1)) {
+			return false;
+		}
+		
+		//problem if there was no sort column mapped to the header that got clicked
+		if(!newSortField){
+			Zotero.ui.jsNotificationMessage("no order field mapped to column");
+			return false;
+		}
+		
+		//update the url with the new values
+		Zotero.state.pathVars['order'] = newSortField;
+		Zotero.state.pathVars['sort'] = newSortOrder;
+		Zotero.state.pushState();
+		
+		//set new order as preference and save it to use www prefs
+		library.preferences.setPref('sortField', newSortField);
+		library.preferences.setPref('sortOrder', newSortOrder);
+		library.preferences.setPref('order', newSortField);
+		library.preferences.setPref('sort', newSortOrder);
+		Zotero.preferences.setPref('order', newSortField);
+		Zotero.preferences.setPref('sort', newSortOrder);
+	},
 	//select and highlight in the itemlist the item  that is displayed
 	//in the item details widget
 	selectDisplayed: function() {
@@ -265,23 +401,24 @@ var ItemTable = React.createClass({
 	fixTableHeaders: function() {
 		var tableEl = this.refs.itemsTable;
 		var tel = J(tableEl);
-	    var colWidths = [];
-	    tel.find("tbody tr").first().find("td").each(function(ind, th){
-	        var width = J(th).width();
-	        colWidths.push(width);
-	        tel.find("thead th").eq(ind).width(width);
-	    });
+		var colWidths = [];
+		tel.find("tbody tr").first().find("td").each(function(ind, th){
+			var width = J(th).width();
+			colWidths.push(width);
+			tel.find("thead th").eq(ind).width(width);
+		});
 
-	    var bodyOffset = tel.find("thead").height();
+		var bodyOffset = tel.find("thead").height();
 
-	    tel.find("thead").css('position', 'fixed').css('margin-top', -bodyOffset).css('background-color', 'white').css('z-index', 10);
-	    tel.find("tbody").css('margin-top', bodyOffset);
-	    tel.css("margin-top", bodyOffset);
+		tel.find("thead").css('position', 'fixed').css('margin-top', -bodyOffset).css('background-color', 'white').css('z-index', 10);
+		tel.find("tbody").css('margin-top', bodyOffset);
+		tel.css("margin-top", bodyOffset);
 	},
-	handleSelectAllChange: function(ev) {
+	handleSelectAllChange: function(evt) {
+		var library = this.props.library;
 		let nowselected = [];
 		let allSelected = false;
-		if(ev.target.checked){
+		if(evt.target.checked){
 			allSelected = true;
 			//select all items
 			this.state.items.forEach(function(item){
@@ -295,15 +432,12 @@ var ItemTable = React.createClass({
 		}
 		Zotero.state.selectedItemKeys = nowselected;
 		this.setState({selectedItemKeys:nowselected, allSelected:allSelected});
-		this.props.library.trigger("selectedItemsChanged", {selectedItemKeys: nowselected});
+		library.trigger("selectedItemsChanged", {selectedItemKeys: nowselected});
 
 		//if deselected all, reselect displayed item row
 		if(nowselected.length === 0){
-			this.props.library.trigger('displayedItemChanged');
+			library.trigger('displayedItemChanged');
 		}
-	},
-	newSortOrder: function() {
-
 	},
 	nonreactBind: function() {
 		Zotero.eventful.initTriggers();
@@ -318,11 +452,13 @@ var ItemTable = React.createClass({
 		this.nonreactBind();
 	},
 	render: function() {
+		var reactInstance = this;
+		var library = this.props.library;
 		var narrow = this.state.narrow;
 		var order = this.state.order;
 		var sort = this.state.sort;
 		var loading = this.state.moreloading;
-		var libraryString = this.props.library.libraryString;
+		var libraryString = library.libraryString;
 		var selectedItemKeys = this.state.selectedItemKeys;
 		var selectedItemKeyMap = {};
 		selectedItemKeys.forEach(function(itemKey) {
@@ -331,9 +467,9 @@ var ItemTable = React.createClass({
 
 		var sortIcon;
 		if(sort == "desc"){
-			sortIcon = (<span className="glyphicons fonticon chevron-down pull-right"></span>);
+			sortIcon = (<span className="glyphicon fonticon glyphicon-chevron-down pull-right"></span>);
 		} else {
-			sortIcon = (<span className="glyphicons fonticon chevron-up pull-right"></span>);
+			sortIcon = (<span className="glyphicon fonticon glyphicon-chevron-up pull-right"></span>);
 		}
 		
 		var headers = [(
@@ -348,9 +484,9 @@ var ItemTable = React.createClass({
 		if(narrow){
 			headers.push(
 				<th key="single-cell-header" className="eventfultrigger clickable" data-library={library.libraryString} data-triggers="chooseSortingDialog">
-                    {Zotero.Item.prototype.fieldMap[order]}
-                    {sortIcon}
-                </th>
+					{Zotero.Item.prototype.fieldMap[order]}
+					{sortIcon}
+				</th>
 			);
 		} else {
 			var fieldHeaders = this.state.displayFields.map(function(header, ind){
@@ -362,10 +498,9 @@ var ItemTable = React.createClass({
 				}
 				return (<th 
 					key={header}
-					data-triggers="changeItemSorting"
-					className={"field-table-header eventfultrigger " + selectedClass + (sortable ? "clickable " : "")}
-					data-columnfield={header}
-					data-library={libraryString}>
+					onClick={reactInstance.resortItems}
+					className={"field-table-header " + selectedClass + (sortable ? "clickable " : "")}
+					data-columnfield={header} >
 						{Zotero.Item.prototype.fieldMap[header] ? Zotero.Item.prototype.fieldMap[header] : header}
 						{sortspan}
 					</th>
@@ -376,15 +511,15 @@ var ItemTable = React.createClass({
 
 		var itemRows = this.state.items.map(function(item){
 			var selected = selectedItemKeyMap.hasOwnProperty(item.get('key')) ? true : false;
-			if(narrow){
-				return (
-					<SingleCellItemRow key={item.get("key")} item={item} selected={selected} />
-				);
-			} else {
-				return (
-					<ItemRow key={item.get("key")} item={item} selected={selected} />
-				);
-			}
+			var p = {
+				key: item.get("key"),
+				item: item,
+				selected: selected,
+				narrow: narrow
+			};
+			return (
+				<ItemRow {...p} />
+			);
 		});
 		return (
 			<form className="item-select-form" method='POST'>
@@ -411,7 +546,8 @@ var ItemRow = React.createClass({
 		return {
 			displayFields: ["title", "creatorSummary", "dateModified"],
 			selected: false,
-			item: {}
+			item: {},
+			narrow: false
 		};
 	},
 	handleSelectChange: function(ev) {
@@ -422,25 +558,48 @@ var ItemRow = React.createClass({
 		Zotero.ui.widgets.reactitems.reactInstance.setState({selectedItemKeys:selected});
 		Zotero.ui.widgets.reactitems.reactInstance.props.library.trigger("selectedItemsChanged", {selectedItemKeys: selected});
 	},
+	handleItemLinkClick: function(evt) {
+		evt.preventDefault();
+		var itemKey = J(evt.target).data('itemkey');
+		Zotero.state.pathVars.itemKey = itemKey;
+		Zotero.state.pushState();
+	},
 	render: function() {
+		var reactInstance = this;
 		var item = this.props.item;
 		var selected = this.props.selected;
-		var fields = this.props.displayFields.map(function(field){
+		if(!this.props.narrow){
+			var fields = this.props.displayFields.map(function(field){
+				return (
+					<td onClick={reactInstance.handleItemLinkClick} key={field} className={field} data-itemkey={item.get("key")}>
+						<a onClick={reactInstance.handleItemLinkClick} className='item-select-link' data-itemkey={item.get("key")} href={Zotero.url.itemHref(item)} title={item.get(field)}>
+							{Zotero.ui.formatItemField(field, item, true)}
+						</a>
+					</td>
+				)
+			});
 			return (
-				<ItemField key={field} field={field} item={item} />
+				<tr className={selected ? "highlighed" : ""}>
+					<td className="edit-checkbox-td" data-itemkey={item.get("key")}>
+						<input type='checkbox' onChange={this.handleSelectChange} checked={selected} className='itemlist-editmode-checkbox itemKey-checkbox' name={"selectitem-" + item.get("key")} data-itemkey={item.get("key")} />
+					</td>
+					{fields}
+				</tr>
 			)
-		});
-		return (
-			<tr className={selected ? "highlighed" : ""}>
-				<td className="edit-checkbox-td" data-itemkey={item.get("key")}>
-					<input type='checkbox' onChange={this.handleSelectChange} checked={selected} className='itemlist-editmode-checkbox itemKey-checkbox' name={"selectitem-" + item.get("key")} data-itemkey={item.get("key")} />
-				</td>
-				{fields}
-			</tr>
-		)
+		} else {
+			return (
+				<tr className={selected ? "highlighed" : ""} data-itemkey={item.get('key')}>
+					<td className="edit-checkbox-td" data-itemkey={item.get('key')}>
+						<input type='checkbox' className='itemlist-editmode-checkbox itemKey-checkbox' name={"selectitem-" + item.get('key')} data-itemkey={item.get('key')} />
+					</td>
+					
+					<SingleCellItemField onClick={reactInstance.handleItemLinkClick} item={item} displayFields={this.props.displayFields} />
+				</tr>
+			)
+		}
 	}
 });
-
+/*
 var SingleCellItemRow = React.createClass({
 	getDefaultProps: function() {
 		return {
@@ -457,6 +616,12 @@ var SingleCellItemRow = React.createClass({
 		Zotero.ui.widgets.reactitems.reactInstance.setState({selectedItemKeys:selected});
 		Zotero.ui.widgets.reactitems.reactInstance.props.library.trigger("selectedItemsChanged", {selectedItemKeys: selected});
 	},
+	handleItemLinkClick: function(evt) {
+		evt.preventDefault();
+		var itemKey = J(evt.target).data('itemkey');
+		Zotero.state.pathVars.itemKey = itemKey;
+		Zotero.state.pushState();
+	},
 	render: function() {
 		var item = this.props.item;
 		var selected = this.props.selected;
@@ -472,7 +637,7 @@ var SingleCellItemRow = React.createClass({
 		)
 	}
 });
-
+*/
 var SingleCellItemField = React.createClass({
 	render: function() {
 		var item = this.props.item;
@@ -498,7 +663,7 @@ var SingleCellItemField = React.createClass({
 			}
 		});
 		return (
-			<td className='single-cell-item' data-itemkey={item.get('key')}>
+			<td onClick={this.props.onClick} className='single-cell-item' data-itemkey={item.get('key')}>
 				<a className='item-select-link' data-itemkey={item.get('key')} href={Zotero.url.itemHref(item)}>
 					{pps}
 				</a>
@@ -533,21 +698,21 @@ var ColoredTag = React.createClass({
 		);
 	}
 });
-
+/*
 var ItemField = React.createClass({
 	render: function() {
 		var item = this.props.item;
 		var field = this.props.field;
 		return (
 			<td className={field} data-itemkey={item.get("key")}>
-				<a className='item-select-link' data-itemkey={item.get("key")} href={Zotero.url.itemHref(item)} title={item.get(field)}>
+				<a onClick={this.props.handleItemLinkClick} className='item-select-link' data-itemkey={item.get("key")} href={Zotero.url.itemHref(item)} title={item.get(field)}>
 					{Zotero.ui.formatItemField(field, item, true)}
 				</a>
 			</td>
 		);
 	}
 });
-
+*/
 var LoadingSpinner = React.createClass({
 	render: function() {
 		var spinnerUrl = Zotero.config.baseWebsiteUrl + '/static/images/theme/broken-circle-spinner.gif';
