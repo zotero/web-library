@@ -68,7 +68,7 @@ Zotero.State.prototype.rewriteAltUrl = function(){
 
 Zotero.State.prototype.updateCurState = function(){
     var state = this;
-    state.curState = J.extend({}, state.f, state.q, state.pathVars);
+    state.curState = J.extend({}, state.q, state.pathVars);
     return;
 };
 
@@ -210,8 +210,7 @@ Zotero.State.prototype.parseUrlVars = function(){
     Z.debug('Zotero.State.parseUrlVars', 3);
     var state = this;
     if(!state.useLocation) return;
-    state.q = J.deparam(J.param.querystring());
-    state.f = state.parseFragmentVars(); // J.deparam(J.param.fragment()),
+    state.q = Zotero.utils.parseQuery(Zotero.utils.querystring(window.location.href));
     state.pathVars = state.parsePathVars();
 };
 
@@ -263,21 +262,9 @@ Zotero.State.prototype.parsePathVars = function(pathname){
     return pathVars;
 };
 
-Zotero.State.prototype.parseFragmentVars = function(){
-    var state = this;
-    var fragmentVars = {};
-    var fragment = J.param.fragment();
-    var split_fragment = fragment.split('/');
-    for(var i=0; i<(split_fragment.length-1); i = i+2){
-        fragmentVars[split_fragment[i]] = split_fragment[i+1];
-    }
-    return fragmentVars;
-};
-
-Zotero.State.prototype.buildUrl = function(urlvars, queryVars, fragmentVars){
+Zotero.State.prototype.buildUrl = function(urlvars, queryVars){
     var state = this;
     //Z.debug("Zotero.State.buildUrl", 3);
-    if(typeof fragmentVars === 'undefined') { fragmentVars = false;}
     if(typeof queryVars === 'undefined') { queryVars = false;}
     var basePath = Zotero.config.nonparsedBaseUrl + '/';
     
@@ -355,7 +342,7 @@ Zotero.State.prototype.pushState = function(){
     state.prevHref = state.curHref || window.location.href;
     
     //selectively add state to hint where to go
-    var s = J.extend({}, state.f, state.q, state.pathVars);
+    var s = J.extend({}, state.q, state.pathVars);
     
     var urlvars = state.pathVars;
     var queryVars = state.q;
@@ -415,9 +402,6 @@ Zotero.State.prototype.getUrlVar = function(key){
     if(state.pathVars.hasOwnProperty(key) && (state.pathVars[key] !== '')){
         return state.pathVars[key];
     }
-    else if(state.f.hasOwnProperty(key)){
-        return state.f[key];
-    }
     else if(state.q.hasOwnProperty(key)){
         return state.q[key];
     }
@@ -431,13 +415,8 @@ Zotero.State.prototype.setUrlVar = function(key, val){
 
 Zotero.State.prototype.getUrlVars = function(){
     var state = this;
-    var params = J.deparam(J.param.querystring());
-    return J.extend(true,{}, state.pathVars, params, J.deparam(J.param.fragment()));
-};
-
-Zotero.State.prototype.setFragmentVar = function(key, val){
-    var state = this;
-    state.f[key] = val;
+    var params = Zotero.utils.parseQuery(Zotero.utils.querystring(window.location.href));
+    return J.extend(true,{}, state.pathVars, params);
 };
 
 Zotero.State.prototype.setQueryVar = function(key, val){
@@ -467,12 +446,6 @@ Zotero.State.prototype.addQueryVar = function(key, val){
         state.q[key] = val;
     }
     return state.q[key];
-};
-
-Zotero.State.prototype.updateFragment = function(updatedVars){
-    var state = this;
-    Z.debug("updateFragment", 3);
-    J.bbq.pushState(updatedVars, 0);
 };
 
 Zotero.State.prototype.popstateCallback = function(evt){
