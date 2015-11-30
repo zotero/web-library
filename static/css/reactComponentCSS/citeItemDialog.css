@@ -1,0 +1,8 @@
+/* ==== cite item dialog ==== */
+#cite-box-div {
+    border:1px solid #d5d5d5;
+    margin:5px;
+    padding:3px;
+    height:300px;
+    overflow: auto;
+}

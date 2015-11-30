@@ -1,14 +1,17 @@
 /* ==== General ==== */
+/*
 body.library {
     max-width:1920px;
     margin:0;
 }
-
+*/
+/*
 #library {
     padding-top:5px;
     padding-bottom:5px;
 }
-
+*/
+/*
 #js-message {
     width: 75%;
     position: fixed;
@@ -18,7 +21,7 @@ body.library {
     top:50px;
     z-index: 50;
 }
-
+*/
 .clickable {
     cursor:pointer;
 }
@@ -64,16 +67,20 @@ body.library {
 
 .barefonticon {
     float:left;
-    margin-right:5px;
+    margin-right:8px;
+    margin-left:4px;
+}
+.barefonticon:before{
+    font-size:12px;
 }
 .noteyellow:before {
     color:#D6D633;
 }
-
+/*
 .btn .fonticon{
     margin-top:-5px;
 }
-
+*/
 .item-select-link {
     position: relative;
 }
@@ -110,12 +117,13 @@ span.localized-date-span {
 }
 
 /* == Items Widget == */
+/*
 #items-pane td[data-itemkey]:not(.edit-checkbox-td) {
     cursor: pointer;
     max-width: 50%;
     word-wrap:break-word;
 }
-
+*/
 #library-items-div th:not(:last-child) {
     border-right:1px dotted rgba(0,0,0,0.2);
 }
@@ -124,20 +132,20 @@ span.localized-date-span {
     width: 100%;
     text-align: center;
 }
-
+/*
 #library-items-div table {
     margin-left:0;
     padding-left:0;
 }
-
+*/
 #library-items-div a {
     text-decoration:none;
 }
-
+/*
 #library-items-div tbody tr:hover {
     background-color: rgba(51,136,204,0.2);
 }
-
+*/
 #library-items-div th.clickable:hover {
     background-color: rgba(51,136,204,0.2);
 }
@@ -146,11 +154,26 @@ span.localized-date-span {
     text-align:center;
 }
 
+#library-items-div tr.highlighed {
+    background-color:rgba(100, 180, 250, 0.2);
+}
+/*
 #library-items-div {
     overflow-y: auto;
 }
+*/
+
+#load-more-items-button {
+    margin-left:auto;
+    margin-right:auto;
+    width:100%;
+}
 
 /* == Item Details == */
+p.item-count {
+    text-align: center;
+    margin-top:20px;
+}
 /*
 #item-details-div {
     overflow-y:auto;
@@ -184,9 +207,11 @@ td.creator * {
     margin-bottom: 20px;
 }
 */
+/*
 .itemDetailForm td, .itemDetailForm th {
     padding: 10px 4px;
 }
+*/
 /*
 .itemDetailForm td > *, .itemDetailForm th > * {
     margin: 0;
@@ -200,6 +225,49 @@ td.creator * {
     border: 1px solid rgba(0, 0, 0, 0.2);
     */
     padding: 5px;
+}
+
+span.editable-item-field {
+    min-width: 200px;
+    min-height: 15px;
+    cursor:pointer;
+}
+
+span.editable-creator-field {
+    min-width: 100px;
+    min-height: 15px;
+    cursor:pointer;
+}
+
+span.editable-item-field:hover,span.editable-creator-field:hover {
+    background-color: rgba(100, 180, 250, 0.5);
+    border-radius: 5px;
+}
+
+div.empty-field-placeholder {
+    display:inline-block;
+    width:90%;
+    min-height: 15px;
+    border-radius: 5px;
+}
+
+#item-tags-panel {
+    padding:15px;
+}
+
+ul.item-tags-list {
+    margin-top:10px;
+    margin-left:-25px;
+    list-style: none;
+}
+.editable-item-tag:hover {
+    cursor:pointer;
+    background-color: rgba(100, 180, 250, 0.5);
+}
+
+div.item-tags-list {
+    margin-top:10px;
+    margin-bottom:10px;
 }
 
 /* /edit form */
@@ -260,6 +328,10 @@ ul#notes-and-attachments li {
     border-bottom: 1px solid #e7e7e7;
 }
 
+/*===== left panel ===== */
+#left-panel .tab-content {
+    padding-bottom:15px;
+}
 /*===== collections ===== */
 #collection-list-div {
     padding:5px;
@@ -407,6 +479,7 @@ td.tags ul.item-details-tags-list li:not(:last-child):after {
 }
 
 /* ==== Twitter Typeahead ==== */
+/*
 .twitter-typeahead .tt-query,
 .twitter-typeahead .tt-hint {
   margin-bottom: 0;
@@ -467,6 +540,7 @@ td.tags ul.item-details-tags-list li:not(:last-child):after {
   color: #262626;
   background-color: rgba(51,136,204,0.4);
 }
+*/
 /* ==== End Twitter Typeahead ==== */
 
 
@@ -490,6 +564,10 @@ ul.filterguide-list li {
     margin:5px 5px 0 0;
     display: inline-block;
 }
+
+.filterguide-label {
+    padding:10px;
+}
 /* ==== end filterGuide ==== */
 
 /* ==== control panel ==== */
@@ -497,3 +575,20 @@ ul.filterguide-list li {
 .navbar-form .form-control {
     width: 100%;
 }
+
+/*
+#field-table thead {
+    height:35px;
+    position:fixed;
+    margin-top:-35px;
+    background-color:white;
+    z-index:10;
+}
+
+#field-table tbody {
+    margin-top:35px;
+}
+#field-table {
+    margin-top:35px;
+}
+*/

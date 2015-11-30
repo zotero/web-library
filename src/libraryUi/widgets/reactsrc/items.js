@@ -432,45 +432,7 @@ var ItemRow = React.createClass({
 		}
 	}
 });
-/*
-var SingleCellItemRow = React.createClass({
-	getDefaultProps: function() {
-		return {
-			displayFields: ["title", "creatorSummary", "dateModified"],
-			selected: false,
-			item: {}
-		};
-	},
-	handleSelectChange: function(ev) {
-		var itemKey = this.props.item.get('key');
-		Zotero.state.toggleItemSelected(itemKey);
-		selected = Zotero.state.getSelectedItemKeys();
 
-		Zotero.ui.widgets.reactitems.reactInstance.setState({selectedItemKeys:selected});
-		Zotero.ui.widgets.reactitems.reactInstance.props.library.trigger("selectedItemsChanged", {selectedItemKeys: selected});
-	},
-	handleItemLinkClick: function(evt) {
-		evt.preventDefault();
-		var itemKey = J(evt.target).data('itemkey');
-		Zotero.state.pathVars.itemKey = itemKey;
-		Zotero.state.pushState();
-	},
-	render: function() {
-		var item = this.props.item;
-		var selected = this.props.selected;
-		
-		return (
-			<tr className={selected ? "highlighed" : ""} data-itemkey={item.get('key')}>
-				<td className="edit-checkbox-td" data-itemkey={item.get('key')}>
-					<input type='checkbox' className='itemlist-editmode-checkbox itemKey-checkbox' name={"selectitem-" + item.get('key')} data-itemkey={item.get('key')} />
-				</td>
-				
-				<SingleCellItemField item={item} displayFields={this.props.displayFields} />
-			</tr>
-		)
-	}
-});
-*/
 var SingleCellItemField = React.createClass({
 	render: function() {
 		var item = this.props.item;
@@ -528,41 +490,6 @@ var ColoredTag = React.createClass({
 			<span style={styleObj}>
 				<span style={styleObj} className="glyphicons fonticon glyphicons-tag"></span>
 			</span>
-		);
-	}
-});
-/*
-var ItemField = React.createClass({
-	render: function() {
-		var item = this.props.item;
-		var field = this.props.field;
-		return (
-			<td className={field} data-itemkey={item.get("key")}>
-				<a onClick={this.props.handleItemLinkClick} className='item-select-link' data-itemkey={item.get("key")} href={Zotero.url.itemHref(item)} title={item.get(field)}>
-					{Zotero.ui.formatItemField(field, item, true)}
-				</a>
-			</td>
-		);
-	}
-});
-*/
-var LoadingSpinner = React.createClass({
-	render: function() {
-		var spinnerUrl = Zotero.config.baseWebsiteUrl + '/static/images/theme/broken-circle-spinner.gif';
-		return (
-			<div className="items-spinner" hidden={!this.props.loading}>
-				<img className='spinner' src={spinnerUrl} />
-			</div>
-		);
-	}
-});
-
-var LoadingError = React.createClass({
-	render: function() {
-		return (
-			<p hidden={!this.props.errorLoading}>
-				There was an error loading your items. Please try again in a few minutes.
-			</p>
 		);
 	}
 });

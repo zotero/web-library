@@ -1,0 +1,174 @@
+/* Full width Library */
+body.lib-body {
+    padding:0;
+    margin:0;
+    height: 100%;
+    width: 100%;
+}
+
+body.lib-body #primarynav {
+    margin-bottom:0px;
+    font-size:14px;
+}
+
+body #control-panel {
+    margin-bottom:0px;
+}
+
+body.lib-body .row {
+    margin:0;
+}
+
+body.lib-body #panel-container {
+    position:absolute;
+    height: calc(100% - 50px);
+    width: 100%;
+    padding:0;
+}
+
+body.lib-body #left-panel {
+    height:100%;
+    position:static;
+    overflow:auto;
+    padding:0;
+}
+body.lib-body #right-panel {
+    height:100%;
+    position:static;
+    padding:0;
+}
+
+body.lib-body #items-panel {
+    height:100%;
+    position:static;
+    overflow:auto;
+    padding:0;
+}
+
+body.lib-body #item-panel {
+    height:100%;
+    position:static;
+    overflow:auto;
+    padding:0;
+}
+
+body.lib-body #js-message {
+    position:absolute;
+    left:25%;
+    width:50%;
+    z-index: 15;
+}
+
+body.lib-body #content {
+    border-radius: 0;
+    height: calc(100% - 25px);
+}
+
+/* ==== General ==== */
+.clickable {
+    cursor:pointer;
+}
+
+.fonticon {
+    position: relative;
+    top: 1px;
+    display: inline-block;
+    -webkit-font-smoothing: antialiased;
+    font-style: normal;
+    font-weight: normal;
+    line-height: 1;
+    padding-left:0;
+    color:#000;
+}
+.fonticon:before{
+    font-size:16px;
+    font-style:normal;
+    font-weight:normal;
+    position:relative;
+    display:inline;
+    box-sizing:border-box;
+    margin-right:0;
+}
+.glyphicon:before{
+    font-size:16px;
+}
+/*allow tag colors to be set inline */
+.glyphicons.fonticon.tag:before{
+    color:inherit;
+}
+.glyphicons.fonticon.tag{
+    color:inherit;
+}
+
+.barefonticon {
+    float:left;
+    margin-right:8px;
+    margin-left:4px;
+}
+.barefonticon:before{
+    font-size:12px;
+}
+.noteyellow:before {
+    color:#D6D633;
+}
+.item-select-link {
+    position: relative;
+}
+.item-select-link span.sprite-icon {
+    top: 0;
+    left: 0;
+    margin-right:8px;
+}
+
+span.localized-date-span {
+    white-space: nowrap;
+    display: inline-block;
+}
+
+/* bootstrap style file input */
+.btn-file {
+    position: relative;
+    overflow: hidden;
+}
+.btn-file input[type=file] {
+    position: absolute;
+    top: 0;
+    right: 0;
+    min-width: 100%;
+    min-height: 100%;
+    font-size: 999px;
+    text-align: right;
+    filter: alpha(opacity=0);
+    opacity: 0;
+    outline: none;
+    background: white;
+    cursor: inherit;
+    display: block;
+}
+
+
+/*===== left panel ===== */
+#left-panel .tab-content {
+    padding-bottom:15px;
+}
+
+/*FIXES TO ORIGINAL LIBRARY STYLE*/
+#library h2 {
+    margin-top:0px;
+}
+
+#library a {
+    text-decoration: none;
+}
+
+#library td, #library th {
+    border-bottom: 1px solid #e7e7e7;
+}
+
+/* ==== feedlink ==== */
+.feedlink {
+    display:block;
+    border:1px dotted #ccc;
+    padding: 4px 0;
+}
+
