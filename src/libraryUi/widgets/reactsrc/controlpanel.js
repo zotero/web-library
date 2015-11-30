@@ -316,8 +316,8 @@ var CreateItemDropdown = React.createClass({
 
 var ControlPanel = React.createClass({
 	componentWillMount: function() {
-		reactInstance = this;
-		library = this.props.library;
+		var reactInstance = this;
+		var library = this.props.library;
 		
 		reactInstance.setState({user: Zotero.config.loggedInUser});
 		

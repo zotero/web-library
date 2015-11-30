@@ -149,7 +149,7 @@ var Tags = React.createClass({
 		
 		//cached tags are preloaded with library if the cache is enabled
 		//this function shouldn't be triggered until that has already been done
-		loadingPromise = library.loadUpdatedTags()
+		var loadingPromise = library.loadUpdatedTags()
 		.then(function(){
 			Z.debug("syncTags done. clearing loading div");
 			reactInstance.setState({tags:library.tags, loading:false});

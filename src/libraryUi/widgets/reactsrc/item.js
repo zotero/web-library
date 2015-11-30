@@ -945,6 +945,7 @@ var ItemDetails = React.createClass({
 		//if we are showing an item, load it from local library of API
 		//then display it
 		var loadedItem = library.items.getItem(itemKey);
+		var loadingPromise;
 		if(loadedItem){
 			Z.debug("have item locally, loading details into ui", 3);
 			loadingPromise = Promise.resolve(loadedItem);
