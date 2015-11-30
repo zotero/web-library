@@ -13,7 +13,7 @@ Zotero.ui.init.all = function(){
             break;
         case "default":
     }
-    Zotero.ui.init.libraryTemplates();
+    //Zotero.ui.init.libraryTemplates();
     Zotero.eventful.initWidgets();
     Zotero.ui.init.rte();
 };
@@ -186,6 +186,7 @@ Zotero.ui.init.tinyMce = function(type, autofocus, elements){
 };
 
 Zotero.ui.init.libraryTemplates = function(){
+    /*
     J.views.helpers({
         Zotero: Zotero,
         J: J,
@@ -215,6 +216,7 @@ Zotero.ui.init.libraryTemplates = function(){
             'template': "{{for ~tag.tagCtx.args[0].matchColoredTags(~tag.tagCtx.args[1]) tmpl='#coloredtagTemplate' /}}"
         }
     });
+    */
     /*
     J('#tagrowTemplate').template('tagrowTemplate');
     J('#tagslistTemplate').template('tagslistTemplate');
