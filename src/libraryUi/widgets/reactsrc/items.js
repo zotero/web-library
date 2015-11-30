@@ -10,95 +10,8 @@ Zotero.ui.widgets.reactitems.init = function(el){
 	);
 
 	Zotero.ui.widgets.reactitems.reactInstance = reactInstance;
-	/*
-	library.listen("displayedItemsChanged", reactInstance.loadItems, {widgetEl: el});
-	library.listen("displayedItemChanged", reactInstance.selectDisplayed);
-	Zotero.listen("selectedItemsChanged", function(){
-		reactInstance.setState({selectedItemKeys:Zotero.state.getSelectedItemKeys()});
-	});
-	
-	library.listen("loadMoreItems", reactInstance.loadMoreItems, {widgetEl: el});
-	library.listen("changeItemSorting", Zotero.ui.callbacks.resortItems, {widgetEl: el});
-	*/
-	/*
-	var container = J(el);
-	//monitor scroll position of items pane for infinite scrolling
-	container.closest("#items-panel").on('scroll', function(e){
-		if(Zotero.ui.widgets.reactitems.scrollAtBottom(J(this))){
-			library.trigger("loadMoreItems");
-		}
-	});
-	*/
-	
-	//library.trigger("displayedItemsChanged");
 };
-/*
-Zotero.ui.widgets.reactitems.loadItems = function(event){
-	Z.debug('Zotero eventful loadItems', 3);
-	var library = Zotero.ui.widgets.reactitems.reactInstance.props.library;
-	var newConfig = Zotero.ui.getItemsConfig(library);
-	
-	//clear contents and show spinner while loading
-	Zotero.ui.widgets.reactitems.reactInstance.setState({items:[], moreloading:true});
-	
-	var p = library.loadItems(newConfig)
-	.then(function(response){
-		if(!response.loadedItems){
-			Zotero.error("expected loadedItems on response not present");
-			throw("Expected response to have loadedItems");
-		}
-		library.items.totalResults = response.totalResults;
-		Zotero.ui.widgets.reactitems.reactInstance.setState({items:response.loadedItems, moreloading:false, sort:newConfig.sort, order:newConfig.order});
-	}).catch(function(response){
-		Z.error(response);
-		Zotero.ui.widgets.reactitems.reactInstance.setState({errorLoading:true, moreloading:false, sort:newConfig.sort, order:newConfig.order});
-	});
-	return p;
-};
-*/
-//load more items when the user has scrolled to the bottom of the current list
-/*
-Zotero.ui.widgets.reactitems.loadMoreItems = function(event){
-	Z.debug('loadMoreItems', 3);
-	var widgetEl = J(event.data.widgetEl);
-	//bail out if we're already fetching more items
-	if(Zotero.ui.widgets.reactitems.reactInstance.state.moreloading){
-		return;
-	}
-	//bail out if we're done loading all items
-	if(Zotero.ui.widgets.reactitems.reactInstance.state.allItemsLoaded){
-		return;
-	}
-	
-	var reactInstance = Zotero.ui.widgets.reactitems.reactInstance;
-	reactInstance.setState({moreloading:true});
-	var library = reactInstance.props.library;
-	var newConfig = Zotero.ui.getItemsConfig(library);
-	var newStart = reactInstance.state.items.length;
-	newConfig.start = newStart;
 
-	var p = library.loadItems(newConfig)
-	.then(function(response){
-		if(!response.loadedItems){
-			Zotero.error("expected loadedItems on response not present");
-			throw("Expected response to have loadedItems");
-		}
-		var reactInstance = Zotero.ui.widgets.reactitems.reactInstance;
-		var allitems = reactInstance.state.items.concat(response.loadedItems);
-		reactInstance.setState({items:allitems, moreloading:false})
-
-		//see if we're displaying as many items as there are in results
-		var itemsDisplayed = allitems.length;
-		if(response.totalResults == itemsDisplayed) {
-			reactInstance.setState({allItemsLoaded:true});
-		}
-	}).catch(function(response){
-		Z.error(response);
-		Zotero.ui.widgets.reactitems.reactInstance.setState({errorLoading:true, moreloading:false});
-	});
-	
-};
-*/
 Zotero.ui.getItemsConfig = function(library){
 	var effectiveUrlVars = ['tag', 'collectionKey', 'order', 'sort', 'q', 'qmode'];
 	var urlConfigVals = {};
@@ -143,86 +56,6 @@ Zotero.ui.getItemsConfig = function(library){
 	return newConfig;
 };
 
-/**
- * Display the full library items section
- * @param  {Dom Element} el          Container
- * @param  {object} config      items config
- * @param  {array} loadedItems loaded items array
- * @return {undefined}
- */
-/*
-Zotero.ui.widgets.reactitems.displayItems = function(el, config={}, itemsArray=[]) {
-	Z.debug("Zotero.ui.widgets.displayItems", 3);
-	var library = Zotero.ui.widgets.reactitems.reactInstance.props.library;
-	
-	var filledConfig = J.extend({}, Zotero.config.defaultApiArgs, config);
-	var displayFields = library.preferences.getPref('listDisplayedFields');
-	if(library.libraryType != 'group'){
-		displayFields = J.grep(displayFields, function(el, ind){
-			return J.inArray(el, Zotero.Library.prototype.groupOnlyColumns) == (-1);
-		});
-	}
-	
-	Zotero.ui.widgets.reactitems.reactInstance.setState({items:itemsArray, displayFields:displayFields})
-};
-*/
-/*
-Zotero.ui.callbacks.resortItems = function(e){
-	Z.debug(".field-table-header clicked", 3);
-	var widgetEl = J(e.data.widgetEl);
-	var library = Zotero.ui.getAssociatedLibrary(widgetEl);
-	var currentSortField = Zotero.ui.getPrioritizedVariable('order', 'title');
-	var currentSortOrder = Zotero.ui.getPrioritizedVariable('sort', 'asc');
-	var newSortField;
-	var newSortOrder;
-	if(e.newSortField){
-		newSortField = e.newSortField;
-	}
-	else {
-		newSortField = J(e.triggeringElement).data('columnfield');
-	}
-	if(e.newSortOrder){
-		newSortOrder = e.newSortOrder;
-	}
-	else{
-		newSortOrder = Zotero.config.sortOrdering[newSortField];
-	}
-	
-	//only allow ordering by the fields we have
-	if(J.inArray(newSortField, Zotero.Library.prototype.sortableColumns) == (-1)){
-		return false;
-	}
-	
-	//change newSort away from the field default if that was already the current state
-	if((!e.newSortOrder) && currentSortField == newSortField && currentSortOrder == newSortOrder){
-		if(newSortOrder == 'asc'){
-			newSortOrder = 'desc';
-		}
-		else{
-			newSortOrder = 'asc';
-		}
-	}
-	
-	//problem if there was no sort column mapped to the header that got clicked
-	if(!newSortField){
-		Zotero.ui.jsNotificationMessage("no order field mapped to column");
-		return false;
-	}
-	
-	//update the url with the new values
-	Zotero.state.pathVars['order'] = newSortField;
-	Zotero.state.pathVars['sort'] = newSortOrder;
-	Zotero.state.pushState();
-	
-	//set new order as preference and save it to use www prefs
-	library.preferences.setPref('sortField', newSortField);
-	library.preferences.setPref('sortOrder', newSortOrder);
-	library.preferences.setPref('order', newSortField);
-	library.preferences.setPref('sort', newSortOrder);
-	Zotero.preferences.setPref('order', newSortField);
-	Zotero.preferences.setPref('sort', newSortOrder);
-};
-*/
 Zotero.ui.widgets.reactitems.scrollAtBottom = function(el) {
 	if(J(el).scrollTop() + J(el).innerHeight() >= J(el)[0].scrollHeight){
 	  return true;
@@ -270,7 +103,7 @@ var ItemsTable = React.createClass({
 		};
 	},
 	loadItems: function() {
-		Z.debug('Zotero eventful loadItems', 3);
+		Z.debug('ItemsTable.loadItems', 3);
 		var reactInstance = this;
 		var library = this.props.library;
 		var newConfig = Zotero.ui.getItemsConfig(library);
@@ -303,7 +136,7 @@ var ItemsTable = React.createClass({
 		return p;
 	},
 	loadMoreItems: function() {
-		Z.debug('loadMoreItems', 3);
+		Z.debug('ItemsTable.loadMoreItems', 3);
 		var reactInstance = this;
 		var library = this.props.library;
 		
