@@ -43,8 +43,11 @@ var schema = {
 		allowUpload: {
 			default: false
 		},
+		baseWebsiteUrl: {
+			description: "Base website url"
+		},
 		libraryPath: {
-			description: "The url the library will be located at"
+			description: "path the library will be located at"
 		},
 		defaultSortColumn: {
 			description: "Default sort column",
@@ -75,7 +78,7 @@ prompt.get(schema, function(err, result){
 		"baseZoteroWebsiteUrl": "https:\/\/test.zotero.net",
 		"baseDownloadUrl": "",
 		"debugLogEndpoint": "",
-		"proxyDownloads": true,
+		"proxyDownloads": false,
 		"staticPath": "\/static",
 		"proxyPath": "",
 		"ignoreLoggedInStatus": false,
@@ -93,7 +96,6 @@ prompt.get(schema, function(err, result){
 		"apiVersion": 3,
 		"useIndexedDB": true,
 		"preferUrlItem": false,
-		"CORSallowed": true,
 		"locale": "en-US",
 		"cacheStoreType": "localStorage",
 		"preloadCachedLibrary": true,
@@ -169,6 +171,7 @@ prompt.get(schema, function(err, result){
 		"allowUpload": result.allowUpload,
 		"name": result.libraryName
 	};
+	config.baseWebsiteUrl = result.baseWebsiteUrl;
 	config.apiKey = result.apiKey;
 	config.nonparsedBaseUrl = result.libraryPath;
 	config.defaultSortOrder = result.defaultSortOrder;
