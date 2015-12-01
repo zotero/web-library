@@ -17,7 +17,7 @@ module.exports = function(grunt) {
 			options:{},
 			dist:{
 				src: [
-					"library/libZoterojs/build/libzoterojs.js",
+					"library/libZoteroJS/build/libzoterojs.js",
 					"src/_zoterowwwInit.js",
 					"src/State.js",
 					"src/Delay.js",
