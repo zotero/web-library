@@ -37,6 +37,7 @@ var ChooseSortingDialog = React.createClass({
 		this.setState({sortOrder: evt.target.value});
 	},
 	saveSorting: function() {
+		var library = this.props.library;
 		library.trigger("changeItemSorting", {newSortField:this.state.sortField, newSortOrder:this.state.sortOrder});
 		this.closeDialog();
 	},
@@ -50,7 +51,7 @@ var ChooseSortingDialog = React.createClass({
 		var library = this.props.library;
 		var sortableOptions = library.sortableColumns.map(function(col){
 			return (
-				<option label={Zotero.localizations.fieldMap[col]} value={col}>{Zotero.localizations.fieldMap[col]}</option>
+				<option key={col} label={Zotero.localizations.fieldMap[col]} value={col}>{Zotero.localizations.fieldMap[col]}</option>
 			);
 		});
 

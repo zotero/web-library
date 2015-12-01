@@ -50,6 +50,17 @@ var ReactZoteroLibrary = React.createClass({
 
 		});
 		
+		J(window).on('resize', function(){
+			if(!window.matchMedia("(min-width: 768px)").matches){
+				if(reactInstance.state.narrow != true){
+					reactInstance.setState({narrow:true});
+				}
+			} else {
+				if(reactInstance.state.narrow != false){
+					reactInstance.setState({narrow:false});
+				}
+			}
+		});
 	},
 	componentDidMount: function() {
 		var reactInstance = this;
@@ -65,16 +76,34 @@ var ReactZoteroLibrary = React.createClass({
 		});
 	},
 	getInitialState: function() {
+		var narrow;
+		if(!window.matchMedia("(min-width: 768px)").matches){
+			Z.debug("Library set to narrow")
+			narrow = true;
+		} else {
+			narrow = false;
+		}
+
 		return {
+			narrow: narrow,
 			activePanel: "items",
 			deviceSize: "xs",
 		};
+	},
+	showFiltersPanel: function(evt) {
+		evt.preventDefault();
+		this.setState({activePanel: "filters"});
+	},
+	showItemsPanel: function(evt) {
+		evt.preventDefault();
+		this.setState({activePanel: "items"});
 	},
 	reflowPanelContainer: function() {
 
 	},
 	render: function(){
 		Z.debug("react library render");
+		var reactInstance = this;
 		var library = this.props.library;
 		var user = Zotero.config.loggedInUser;
 		var userDisplayName = user ? user.displayName : null;
@@ -131,6 +160,37 @@ var ReactZoteroLibrary = React.createClass({
 			);
 		}
 
+		//figure out panel visibility based on state.activePanel
+		var narrow = reactInstance.state.narrow;
+		var leftPanelVisible = !narrow;
+		var rightPanelVisible = !narrow;
+		var itemsPanelVisible = !narrow;
+		var itemPanelVisible = !narrow;
+		var tagsPanelVisible = !narrow;
+		var collectionsPanelVisible = !narrow;
+		if(narrow){
+			switch(reactInstance.state.activePanel){
+				case "items":
+					rightPanelVisible = true;
+					itemsPanelVisible = true;
+					break;
+				case "item":
+					rightPanelVisible = true;
+					itemPanelVisible = true;
+					break;
+				case "tags":
+					leftPanelVisible = true;
+					tagsPanelVisible = true;
+					break;
+				case "collections":
+					leftPanelVisible = true;
+					collectionsPanelVisible = true;
+					break;
+				case "filters":
+					leftPanelVisible = true;
+					break;
+			}
+		}
 
 		return (
 			<div>
@@ -170,7 +230,7 @@ var ReactZoteroLibrary = React.createClass({
 			<div id="library" className="row">
 
 			<div id="panel-container">
-				<div id="left-panel" className="panelcontainer-panelcontainer col-xs-12 col-sm-4 col-md-3">
+				<div id="left-panel" hidden={!leftPanelVisible} className="panelcontainer-panelcontainer col-xs-12 col-sm-4 col-md-3">
 					<FilterGuide ref="filterGuide" library={library} />
 					
 					<div role="tabpanel">
@@ -194,11 +254,11 @@ var ReactZoteroLibrary = React.createClass({
 					</div>{/*<!-- /tab-panel -->*/}
 				</div>{/*<!-- /left-panel -->*/}
 				
-				<div id="right-panel" className="panelcontainer-panelcontainer col-xs-12 col-sm-8 col-md-9">
-					<div id="items-panel" className="panelcontainer-panel col-sm-12 col-md-7">
+				<div id="right-panel" hidden={!rightPanelVisible} className="panelcontainer-panelcontainer col-xs-12 col-sm-8 col-md-9">
+					<div hidden={!itemsPanelVisible} id="items-panel" className="panelcontainer-panel col-sm-12 col-md-7">
 						<LibrarySearchBox library={library} />
 						<div id="library-items-div" className="library-items-div row">
-							<ItemsTable ref="itemsWidget" library={library} />
+							<ItemsTable ref="itemsWidget" library={library} narrow={narrow} />
 						</div>
 
 						<div id="load-more-items-div" className="row">
@@ -208,7 +268,7 @@ var ReactZoteroLibrary = React.createClass({
 						</div>
 					</div>{/*<!-- /items panel -->*/}
 					
-					<div id="item-panel" className="panelcontainer-panel col-sm-12 col-md-5">
+					<div hidden={!itemPanelVisible} id="item-panel" className="panelcontainer-panel col-sm-12 col-md-5">
 						<div id="item-widget-div" className="item-details-div">
 							<ItemDetails ref="itemWidget" library={library} />
 						</div>{/*<!-- /item widget -->*/}
@@ -219,8 +279,8 @@ var ReactZoteroLibrary = React.createClass({
 				<nav id="panelcontainer-nav" className="navbar navbar-default navbar-fixed-bottom visible-xs-block" role="navigation">
 					<div className="container-fluid">
 						<ul className="nav navbar-nav">
-							<li className="eventfultrigger filters-nav" data-triggers="showFiltersPanel"><a href="#">Filters</a></li>
-							<li className="eventfultrigger items-nav" data-triggers="showItemsPanel"><a href="#">Items</a></li>
+							<li onClick={reactInstance.showFiltersPanel} className="filters-nav"><a href="#">Filters</a></li>
+							<li onClick={reactInstance.showItemsPanel} className="items-nav"><a href="#">Items</a></li>
 						</ul>
 					</div>
 				</nav>
@@ -246,7 +306,7 @@ var ReactZoteroLibrary = React.createClass({
 				
 				{/*<ProgressModalDialog library={library} />*/}
 				
-				{/*<ChooseSortingDialog library={library} />*/}
+				<ChooseSortingDialog library={library} />
 			</div>
 			</div>
 			</div>

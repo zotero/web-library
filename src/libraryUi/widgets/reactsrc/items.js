@@ -68,6 +68,7 @@ var ItemsTable = React.createClass({
 		var reactInstance = this;
 		var library = this.props.library;
 
+		library.listen("changeItemSorting", reactInstance.resortTriggered);
 		library.listen("displayedItemsChanged", reactInstance.loadItems, {});
 		library.listen("displayedItemChanged", reactInstance.selectDisplayed);
 		Zotero.listen("selectedItemsChanged", function(){
@@ -76,17 +77,11 @@ var ItemsTable = React.createClass({
 		
 		library.listen("loadMoreItems", reactInstance.loadMoreItems, {});
 		library.trigger("displayedItemsChanged");
-
-		J(window).on('resize', function(){
-			if(!window.matchMedia("(min-width: 768px)").matches){
-				reactInstance.setState({narrow:true});
-			} else {
-				reactInstance.setState({narrow:false});
-			}
-		});
 	},
 	getDefaultProps: function() {
-		return {};
+		return {
+			narrow: false
+		};
 	},
 	getInitialState: function() {
 		return {
@@ -99,7 +94,6 @@ var ItemsTable = React.createClass({
 			displayFields: ["title", "creator", "dateModified"],
 			order: "title",
 			sort: "asc",
-			narrow: false
 		};
 	},
 	loadItems: function() {
@@ -224,6 +218,42 @@ var ItemsTable = React.createClass({
 		Zotero.preferences.setPref('order', newSortField);
 		Zotero.preferences.setPref('sort', newSortOrder);
 	},
+	resortTriggered: function(evt) {
+		Z.debug("resortTriggered");
+		Z.debug(evt);
+		//re-sort triggered from another widget
+		var reactInstance = this;
+		var library = this.props.library;
+		var currentSortField = this.state.order;
+		var currentSortOrder = this.state.sort;
+		
+		var newSortField = evt.data.newSortField;
+		var newSortOrder = evt.data.newSortOrder;
+		
+		//only allow ordering by the fields we have
+		if(library.sortableColumns.indexOf(newSortField) == (-1)) {
+			return false;
+		}
+		
+		//problem if there was no sort column mapped to the header that got clicked
+		if(!newSortField){
+			Zotero.ui.jsNotificationMessage("no order field mapped to column");
+			return false;
+		}
+		
+		//update the url with the new values
+		Zotero.state.pathVars['order'] = newSortField;
+		Zotero.state.pathVars['sort'] = newSortOrder;
+		Zotero.state.pushState();
+		
+		//set new order as preference and save it to use www prefs
+		library.preferences.setPref('sortField', newSortField);
+		library.preferences.setPref('sortOrder', newSortOrder);
+		library.preferences.setPref('order', newSortField);
+		library.preferences.setPref('sort', newSortOrder);
+		Zotero.preferences.setPref('order', newSortField);
+		Zotero.preferences.setPref('sort', newSortOrder);
+	},
 	//select and highlight in the itemlist the item  that is displayed
 	//in the item details widget
 	selectDisplayed: function() {
@@ -272,8 +302,11 @@ var ItemsTable = React.createClass({
 			library.trigger('displayedItemChanged');
 		}
 	},
+	openSortingDialog: function(evt) {
+		var library = this.props.library;
+		library.trigger("chooseSortingDialog");
+	},
 	nonreactBind: function() {
-		Zotero.eventful.initTriggers();
 		if(J("body").hasClass('lib-body')){
 			this.fixTableHeaders(J("#field-table"));
 		}
@@ -287,7 +320,7 @@ var ItemsTable = React.createClass({
 	render: function() {
 		var reactInstance = this;
 		var library = this.props.library;
-		var narrow = this.state.narrow;
+		var narrow = this.props.narrow;
 		var order = this.state.order;
 		var sort = this.state.sort;
 		var loading = this.state.moreloading;
@@ -316,7 +349,7 @@ var ItemsTable = React.createClass({
 		)];
 		if(narrow){
 			headers.push(
-				<th key="single-cell-header" className="eventfultrigger clickable" data-library={library.libraryString} data-triggers="chooseSortingDialog">
+				<th key="single-cell-header" onClick={reactInstance.openSortingDialog} className="clickable">
 					{Zotero.Item.prototype.fieldMap[order]}
 					{sortIcon}
 				</th>
