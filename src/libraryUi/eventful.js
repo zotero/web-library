@@ -98,7 +98,7 @@ Zotero.eventful.initTriggers = function(el){
         Z.debug("triggerOnEvent", 3);
         event.preventDefault();
         var jel = J(event.delegateTarget);
-        eventName = jel.data("triggers");
+        var eventName = jel.data("triggers");
         Z.debug("eventName: " + eventName, 3);
         var filter = jel.data('library') || "";
         
