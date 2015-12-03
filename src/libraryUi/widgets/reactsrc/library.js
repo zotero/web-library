@@ -75,11 +75,19 @@ var ReactZoteroLibrary = React.createClass({
 			Z.debug("setting tags on tagsWidget from Library");
 			reactInstance.refs.tagsWidget.setState({tags:library.tags});
 		});
+
+		//trigger loading of more items on scroll reaching bottom
+		J(reactInstance.refs.itemsPanel).on('scroll', function(){
+			var jel = J(reactInstance.refs.itemsPanel);
+			if(jel.scrollTop() + jel.innerHeight() >= jel[0].scrollHeight){
+				reactInstance.refs.itemsWidget.loadMoreItems();
+			}
+		});
 	},
 	getInitialState: function() {
 		var narrow;
 		if(!window.matchMedia("(min-width: 768px)").matches){
-			Z.debug("Library set to narrow")
+			Z.debug("Library set to narrow", 3);
 			narrow = true;
 		} else {
 			narrow = false;
@@ -88,7 +96,7 @@ var ReactZoteroLibrary = React.createClass({
 		return {
 			narrow: narrow,
 			activePanel: "items",
-			deviceSize: "xs",
+			deviceSize: "xs"
 		};
 	},
 	showFiltersPanel: function(evt) {
@@ -119,7 +127,7 @@ var ReactZoteroLibrary = React.createClass({
 		var homeUrl = base;
 		var staticUrl = function(path){
 			return base + "/static" + path;
-		}
+		};
 
 		var inboxText = user.unreadMessages > 0 ? (<strong>Inbox ({user.unreadMessages})</strong>) : "Inbox";
 		var siteActionsMenu;
@@ -256,7 +264,7 @@ var ReactZoteroLibrary = React.createClass({
 				</div>{/*<!-- /left-panel -->*/}
 				
 				<div id="right-panel" hidden={!rightPanelVisible} className="panelcontainer-panelcontainer col-xs-12 col-sm-8 col-md-9">
-					<div hidden={!itemsPanelVisible} id="items-panel" className="panelcontainer-panel col-sm-12 col-md-7">
+					<div hidden={!itemsPanelVisible} ref="itemsPanel" id="items-panel" className="panelcontainer-panel col-sm-12 col-md-7">
 						<LibrarySearchBox library={library} />
 						<Items ref="itemsWidget" library={library} narrow={narrow} />
 					

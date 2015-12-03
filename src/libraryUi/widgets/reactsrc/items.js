@@ -36,7 +36,6 @@ Zotero.ui.getItemsConfig = function(library){
 	
 	//Build config object that should be displayed next and compare to currently displayed
 	var newConfig = J.extend({}, defaultConfig, userPreferencesApiArgs, urlConfigVals);
-	//newConfig.start = parseInt(newConfig.limit, 10) * (parseInt(newConfig.itemPage, 10) - 1);
 	
 	//don't allow ordering by group only columns if user library
 	if((library.libraryType == 'user') && (Zotero.Library.prototype.groupOnlyColumns.indexOf(newConfig.order) != -1)) {
@@ -55,13 +54,6 @@ Zotero.ui.getItemsConfig = function(library){
 	return newConfig;
 };
 
-Zotero.ui.widgets.reactitems.scrollAtBottom = function(el) {
-	if(J(el).scrollTop() + J(el).innerHeight() >= J(el)[0].scrollHeight){
-	  return true;
-   }
-   return false;
-};
-
 var Items = React.createClass({
 	componentWillMount: function() {
 		var reactInstance = this;
@@ -72,6 +64,14 @@ var Items = React.createClass({
 		library.listen("displayedItemChanged", reactInstance.selectDisplayed);
 		Zotero.listen("selectedItemsChanged", function(){
 			reactInstance.setState({selectedItemKeys:Zotero.state.getSelectedItemKeys()});
+		});
+		library.listen("selectedItemsChanged", function(){
+			reactInstance.setState({selectedItemKeys:Zotero.state.getSelectedItemKeys()});
+		});
+		
+		library.listen("selectedCollectionChanged", function(){
+			Zotero.state.selectedItemKeys = [];
+			library.trigger("selectedItemsChanged", {selectedItemKeys:[]});
 		});
 		
 		library.listen("loadMoreItems", reactInstance.loadMoreItems, {});
@@ -312,7 +312,8 @@ var Items = React.createClass({
 		}
 	},
 	componentDidMount: function() {
-		this.nonreactBind();
+		var reactInstance = this;
+		reactInstance.nonreactBind();
 	},
 	componentDidUpdate: function() {
 		this.nonreactBind();
@@ -385,8 +386,19 @@ var Items = React.createClass({
 				<ItemRow {...p} />
 			);
 		});
+		if(itemRows.length == 0){
+			var tds = this.state.displayFields.map(function(header){
+				return <td key={header}></td>;
+			});
+			tds = [<td key="check"></td>].concat(tds);
+			itemRows = (
+				<tr>
+					{tds}
+				</tr>
+			);
+		}
 		return (
-			<div id="library-items-div" className="library-items-div row">
+			<div id="library-items-div" className="library-items-div row" ref="topdiv">
 				<form className="item-select-form" method='POST'>
 					<table id='field-table' ref="itemsTable" className='wide-items-table table table-striped'>
 						<thead>
