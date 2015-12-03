@@ -228,6 +228,7 @@ Zotero.State.prototype.parsePathVars = function(pathname){
         pathname = window.location.pathname;
     }
     var basePath = Zotero.config.nonparsedBaseUrl;
+    basePath = basePath.replace(window.location.origin, "");
     var split_replaced = [];
     var re = new RegExp(".*" + basePath + "\/?");
     var replaced = pathname.replace(re, '');

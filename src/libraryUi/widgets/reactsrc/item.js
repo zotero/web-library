@@ -8,13 +8,9 @@ Zotero.ui.widgets.reactitem.init = function(el){
 		<ItemDetails library={library} />,
 		document.getElementById('item-widget-div')
 	);
-	Zotero.ui.widgets.reactitem.reactInstance = reactInstance;
 };
 
 Zotero.ui.editMatches = function(props, edit) {
-	//Z.debug("Zotero.ui.editMatches");
-	//Z.debug(props);
-	//Z.debug(edit);
 	if(props === null || edit === null){
 		return false;
 	}
@@ -91,70 +87,6 @@ Zotero.ui.widgets.reactitem.nextEditField = function(item, edit) {
 	} else {
 		return editFields[i+1];
 	}
-	/*
-	//special case if editing a creator
-	switch(edit.field) {
-		case "title":
-			return {
-				creatorIndex: 0,
-				field: "creatorType"
-			};
-			break;
-		case "creatorType":
-			var creators = item.get('creators');
-			var creator = creators[edit.creatorIndex];
-			if(creator.name){
-				return {
-					creatorIndex: edit.creatorIndex,
-					field: "name"
-				};
-			} else {
-				return {
-					creatorIndex: edit.creatorIndex,
-					field: "lastName"
-				};
-			}
-			break;
-		case "lastName":
-			return {
-				creatorIndex: edit.creatorIndex + 1,
-				field: "firstName"
-			};
-			break;
-		case "name":
-		case "firstName":
-			//move to next creator, or fields after creators
-			if(edit.creatorIndex < creators.length){
-				return {
-					creatorIndex: edit.creatorIndex + 1,
-					field:"creatorType"
-				}
-			} else {
-				//move to first field after creators
-				var genericDisplayedFields = Zotero.ui.genericDisplayedFields(item);
-				return {
-					field: genericDisplayedFields[0]
-				}
-			}
-			break;
-		default:
-			var genericDisplayedFields = Zotero.ui.genericDisplayedFields(item);
-			//if currently at the last field, go back up to title
-			if(genericDisplayedFields[genericDisplayedFields.length - 1] == edit.field){
-				return {
-					field:"title"
-				};
-			}
-			//otherwise, return the field at current edit field + 1
-			for(var i = 0; i < genericDisplayedFields.length; i++){
-				if(edit.field == genericDisplayedFields[i]){
-					return {
-						field:genericDisplayedFields[i + 1]
-					};
-				}
-			}
-	}
-	*/
 };
 
 var CreatorRow = React.createClass({
@@ -867,6 +799,7 @@ var ItemDetails = React.createClass({
 	componentWillMount: function() {
 		var reactInstance = this;
 		var library = this.props.library;
+		Zotero.ui.widgets.reactitem.reactInstance = reactInstance;
 		library.listen("displayedItemChanged modeChanged", reactInstance.loadItem, {});
 		//library.listen("itemTypeChanged", Zotero.ui.widgets.reactitem.itemTypeChanged, {widgetEl:el});
 		library.listen("uploadSuccessful", reactInstance.refreshChildren, {});
@@ -1071,32 +1004,6 @@ var ItemDetails = React.createClass({
 				//local: library.tags.plainList
 			}
 		);
-	},
-	addNote: function() {
-		//TODO: reactify
-		Z.debug("Zotero.ui.addNote", 3);
-		var button = J(e.currentTarget);
-		var container = button.closest("form");
-		//var itemKey = J(button).data('itemkey');
-		var notenum = 0;
-		var lastNoteIndex = container.find("textarea.note-text:last").data('noteindex');
-		if(lastNoteIndex){
-			notenum = parseInt(lastNoteIndex, 10);
-		}
-		
-		var newindex = notenum + 1;
-		var newNoteID = "note_" + newindex;
-		var jel;
-		jel = container.find("td.notes button.add-note-button").before('<textarea cols="40" rows="24" name="' + newNoteID + '" id="' + newNoteID + '" className="rte default note-text" data-noteindex="' + newNoteID + '"></textarea>');
-		Zotero.ui.init.rte('default', true, newNoteID);
-
-	},
-	addTag: function() {
-		//TODO: reactify
-		Z.debug("Zotero.ui.widgets.reactitem.addTag", 3);
-		var triggeringElement = J(e.triggeringElement);
-		var widgetEl = J(e.data.widgetEl);
-		widgetEl.find(".add-tag-form").show().find(".add-tag-input").focus();
 	},
 	render: function() {
 		Z.debug("ItemDetails render");
