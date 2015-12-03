@@ -3,9 +3,8 @@ Zotero.ui.widgets.reactcollections = {};
 Zotero.ui.widgets.reactcollections.init = function(el){
 	var library = Zotero.ui.getAssociatedLibrary(el);
 
-	var initialCollectionKey = Zotero.state.getUrlVar('collectionKey');
 	var reactInstance = ReactDOM.render(
-		<Collections library={library} initialCollectionKey={initialCollectionKey} />,
+		<Collections library={library} />,
 		document.getElementById('collection-list-div')
 	);
 };
@@ -125,14 +124,12 @@ var TrashRow = React.createClass({
 
 var Collections = React.createClass({
 	getDefaultProps: function() {
-		return{
-			initialCollectionKey: null
-		};
 	},
 	getInitialState: function() {
+		var initialCollectionKey = Zotero.state.getUrlVar('collectionKey');
 		return {
 			collections: null,
-			currentCollectionKey:this.props.initialCollectionKey,
+			currentCollectionKey:initialCollectionKey,
 			expandedCollections: {},
 			loading:false
 		};
