@@ -10,14 +10,20 @@ p.item-count {
 }
 
 span.editable-item-field {
-    min-width: 200px;
-    min-height: 15px;
+    display:inline-block;
+    width:90%;
+    min-height: 1em;
     cursor:pointer;
+    padding:2px;
+}
+
+span.editable-item-field.creator-field {
+    display:inline;
 }
 
 span.editable-creator-field {
-    min-width: 100px;
-    min-height: 15px;
+    width:90%;
+    min-height: 1em;
     cursor:pointer;
 }
 
