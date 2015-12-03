@@ -336,10 +336,11 @@ var ControlPanel = React.createClass({
 		return {};
 	},
 	getInitialState: function() {
+		var selectedItems = Zotero.state.getSelectedItemKeys();
 		return {
 			user: false,
 			canEdit: false,
-			selectedItems: [],
+			selectedItems: selectedItems,
 			selectedCollection: null
 		};
 	},

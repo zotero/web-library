@@ -38,6 +38,7 @@ var ReactZoteroLibrary = React.createClass({
 		//preload library
 		Z.debug("ReactZoteroLibrary componentWillMount", 3);
 		var reactInstance = this;
+		Zotero.reactLibraryInstance = reactInstance;
 		var library = this.props.library;
 		library.loadSettings();
 		library.listen("deleteIdb", function(){
