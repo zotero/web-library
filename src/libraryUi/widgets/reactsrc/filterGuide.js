@@ -106,7 +106,7 @@ var FilterGuide = React.createClass({
 		}
 
 		return (
-			<div className="filter-guide col-12">
+			<div id="filter-guide" className="filter-guide col-12">
 				<ul className="filterguide-list">
 					{collectionNodes}
 					{tagNodes}

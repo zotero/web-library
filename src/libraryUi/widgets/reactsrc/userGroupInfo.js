@@ -130,7 +130,7 @@ var UserGroups = React.createClass({
 		});
 
 		return (
-			<div className="user-groups">
+			<div id="user-groups-div" className="user-groups">
 				{groupNuggets}
 				<LoadingSpinner loading={reactInstance.state.loading} />
 			</div>

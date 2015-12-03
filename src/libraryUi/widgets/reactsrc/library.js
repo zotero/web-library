@@ -257,10 +257,8 @@ var ReactZoteroLibrary = React.createClass({
 				<div id="right-panel" hidden={!rightPanelVisible} className="panelcontainer-panelcontainer col-xs-12 col-sm-8 col-md-9">
 					<div hidden={!itemsPanelVisible} id="items-panel" className="panelcontainer-panel col-sm-12 col-md-7">
 						<LibrarySearchBox library={library} />
-						<div id="library-items-div" className="library-items-div row">
-							<ItemsTable ref="itemsWidget" library={library} narrow={narrow} />
-						</div>
-
+						<Items ref="itemsWidget" library={library} narrow={narrow} />
+					
 						<div id="load-more-items-div" className="row">
 							<button onClick={function(){library.trigger('loadMoreItems');}} type="button" id="load-more-items-button" className="btn btn-default">
 							Load More Items

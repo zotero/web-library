@@ -426,9 +426,11 @@ var ItemField = React.createClass({
 
 			var p = null;
 			if(creatorField){
+				spanProps.className += " creator-field";
 				spanProps['data-creatorindex'] = this.props.creatorIndex;
 				p = value == "" ? creatorPlaceHolders[field] : value;
 			} else if(tagField){
+				spanProps.className += " tag-field";
 				spanProps['data-tagindex'] = this.props.tagIndex;
 				p = value;
 			} else {

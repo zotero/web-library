@@ -5,7 +5,7 @@ Zotero.ui.widgets.reactitems.init = function(el){
 	var library = Zotero.ui.getAssociatedLibrary(el);
 	
 	var reactInstance = ReactDOM.render(
-		<ItemsTable library={library} />,
+		<Items library={library} />,
 		document.getElementById('library-items-div')
 	);
 };
@@ -20,17 +20,18 @@ Zotero.ui.getItemsConfig = function(library){
 		}
 	});
 	
-	var defaultConfig = {libraryID: library.libraryID,
-						 libraryType: library.libraryType,
-						 target:'items',
-						 targetModifier: 'top',
-						 limit: library.preferences.getPref('itemsPerPage'),
-					 };
-	
+	var defaultConfig = {
+		libraryID: library.libraryID,
+		libraryType: library.libraryType,
+		target:'items',
+		targetModifier: 'top',
+		limit: library.preferences.getPref('itemsPerPage')
+	};
+
 	var userPreferencesApiArgs = {
 		order: Zotero.preferences.getPref('order'),
 		sort: Zotero.preferences.getPref('sort'),
-		limit: library.preferences.getPref('itemsPerPage'),
+		limit: library.preferences.getPref('itemsPerPage')
 	};
 	
 	//Build config object that should be displayed next and compare to currently displayed
@@ -61,7 +62,7 @@ Zotero.ui.widgets.reactitems.scrollAtBottom = function(el) {
    return false;
 };
 
-var ItemsTable = React.createClass({
+var Items = React.createClass({
 	componentWillMount: function() {
 		var reactInstance = this;
 		var library = this.props.library;
@@ -96,7 +97,7 @@ var ItemsTable = React.createClass({
 		};
 	},
 	loadItems: function() {
-		Z.debug('ItemsTable.loadItems', 3);
+		Z.debug('Items.loadItems', 3);
 		var reactInstance = this;
 		var library = this.props.library;
 		var newConfig = Zotero.ui.getItemsConfig(library);
@@ -129,7 +130,7 @@ var ItemsTable = React.createClass({
 		return p;
 	},
 	loadMoreItems: function() {
-		Z.debug('ItemsTable.loadMoreItems', 3);
+		Z.debug('Items.loadMoreItems', 3);
 		var reactInstance = this;
 		var library = this.props.library;
 		
@@ -322,8 +323,6 @@ var ItemsTable = React.createClass({
 		var narrow = this.props.narrow;
 		var order = this.state.order;
 		var sort = this.state.sort;
-		var loading = this.state.moreloading;
-		var libraryString = library.libraryString;
 		var selectedItemKeys = this.state.selectedItemKeys;
 		var selectedItemKeyMap = {};
 		selectedItemKeys.forEach(function(itemKey) {
@@ -387,20 +386,22 @@ var ItemsTable = React.createClass({
 			);
 		});
 		return (
-			<form className="item-select-form" method='POST'>
-				<table id='field-table' ref="itemsTable" className='wide-items-table table table-striped'>
-					<thead>
-						<tr>
-							{headers}
-						</tr>
-					</thead>
-					<tbody>
-						{itemRows}
-					</tbody>
-				</table>
-				<LoadingError errorLoading={this.state.errorLoading} />
-				<LoadingSpinner loading={this.state.moreloading} />
-			</form>
+			<div id="library-items-div" className="library-items-div row">
+				<form className="item-select-form" method='POST'>
+					<table id='field-table' ref="itemsTable" className='wide-items-table table table-striped'>
+						<thead>
+							<tr>
+								{headers}
+							</tr>
+						</thead>
+						<tbody>
+							{itemRows}
+						</tbody>
+					</table>
+					<LoadingError errorLoading={this.state.errorLoading} />
+					<LoadingSpinner loading={this.state.moreloading} />
+				</form>
+			</div>
 		);
 		
 	}

@@ -227,7 +227,7 @@ var Collections = React.createClass({
 		
 		var libraryClassName = "my-library " + (currentCollectionKey == null ? "current-collection" : "");
 		return (
-			<div id="collection-list-container" className="collection-list-container">
+			<div id="collection-list-div" className="collection-list-container">
 				{/*<LoadingSpinner loading={this.state.loading} />*/}
 				<ul id="collection-list">
 					<li>
