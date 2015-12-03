@@ -329,7 +329,11 @@ var ControlPanel = React.createClass({
 		
 		library.listen("selectedCollectionChanged", function(evt){
 			var selectedCollection = Zotero.state.getUrlVar('collectionKey');
-			reactInstance.setState({selectedCollection: selectedCollection});
+			var selectedItemKeys = Zotero.state.getSelectedItemKeys();
+			reactInstance.setState({
+				selectedCollection: selectedCollection,
+				selectedItems: selectedItemKeys
+			});
 		}, {});
 	},
 	getDefaultProps: function(){
