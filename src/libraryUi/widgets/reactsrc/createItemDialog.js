@@ -7,23 +7,26 @@ Zotero.ui.widgets.reactcreateItemDialog.init = function(el){
 		<CreateItemDialog library={library} />,
 		document.getElementById('create-item-dialog')
 	);
-	
-	library.listen("createItem", function(evt){
-		Z.debug("Opening createItem dialog");
-		Z.debug(evt);
-		var itemType = evt.itemType;
-		Z.debug(itemType);
-		reactInstance.setState({itemType: itemType});
-		reactInstance.openDialog();
-	}, {});
 };
 
 var CreateItemDialog = React.createClass({
+	componentWillMount: function() {
+		var reactInstance = this;
+		var library = this.props.library;
+		library.listen("createItem", function(evt){
+			Z.debug("Opening createItem dialog");
+			Z.debug(evt);
+			var itemType = evt.data.itemType;
+			Z.debug(itemType);
+			reactInstance.setState({itemType: itemType});
+			reactInstance.openDialog();
+		}, {});
+	},
 	getInitialState: function() {
 		return {
 			title:"",
 			itemType: "document"
-		}
+		};
 	},
 	handleTitleChange: function(evt) {
 		this.setState({'title': evt.target.value});
@@ -40,11 +43,15 @@ var CreateItemDialog = React.createClass({
 		
 		var item = new Zotero.Item();
 		item.initEmpty(itemType).then(function(){
+			Z.debug("empty item initialized; associating with library and giving title");
 			item.associateWithLibrary(library);
+			Z.debug(1);
 			item.set('title', title);
+			Z.debug('2');
 			if(currentCollectionKey){
 				item.addToCollection(currentCollectionKey);
 			}
+			Z.debug("saving item");
 			return Zotero.ui.saveItem(item);
 		}).then(function(responses){
 			var itemKey = item.get('key');

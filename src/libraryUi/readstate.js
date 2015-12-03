@@ -63,7 +63,7 @@ Zotero.ui.updateRte = function(el){
     switch(Zotero.config.rte){
         case "ckeditor":
             var elid = "#" + el;
-            data = CKEDITOR.instances[el].getData();
+            var data = CKEDITOR.instances[el].getData();
             J(elid).val(data);
             break;
         default:
@@ -78,7 +78,7 @@ Zotero.ui.deactivateRte = function(el){
             //var elid = "#" + el;
             if(CKEDITOR.instances[el]){
                 Z.debug("deactivating " + el, 3);
-                data = CKEDITOR.instances[el].destroy();
+                var data = CKEDITOR.instances[el].destroy();
             }
             break;
         default:

@@ -294,8 +294,8 @@ Zotero.ui.getEventLibrary = function(e){
     }
     
     var libConfig = Zotero.ui.parseLibString(libString);
-    library = new Zotero.Library(libConfig.libraryType, libConfig.libraryID, '');
-    Zotero.libraries[Zotero.utils.libraryString(libraryType, libraryID)] = library;
+    var library = new Zotero.Library(libConfig.libraryType, libConfig.libraryID, '');
+    Zotero.libraries[Zotero.utils.libraryString(libConfig.libraryType, libConfig.libraryID)] = library;
 };
 /*
 Zotero.ui.parseLibString = function(s){

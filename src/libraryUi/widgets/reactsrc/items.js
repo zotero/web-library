@@ -77,6 +77,7 @@ var ItemsTable = React.createClass({
 		
 		library.listen("loadMoreItems", reactInstance.loadMoreItems, {});
 		library.trigger("displayedItemsChanged");
+		Zotero.ui.widgets.reactitems.reactInstance = reactInstance;
 	},
 	getDefaultProps: function() {
 		return {
@@ -417,9 +418,11 @@ var ItemRow = React.createClass({
 		};
 	},
 	handleSelectChange: function(ev) {
+		var reactInstance = this;
+		var library = this.props.library;
 		var itemKey = this.props.item.get('key');
 		Zotero.state.toggleItemSelected(itemKey);
-		selected = Zotero.state.getSelectedItemKeys();
+		var selected = Zotero.state.getSelectedItemKeys();
 		
 		Zotero.ui.widgets.reactitems.reactInstance.setState({selectedItemKeys:selected});
 		Zotero.ui.widgets.reactitems.reactInstance.props.library.trigger("selectedItemsChanged", {selectedItemKeys: selected});

@@ -15,25 +15,25 @@ var GroupNugget = React.createClass({
 		var group = this.props.group;
 
 		var userID = Zotero.config.loggedInUserID;
-        var groupManageable = false;
-        var memberCount = 1;
-        if(group.apiObj.data.members) {
-            memberCount += group.apiObj.data.members.length;
-        }
-        if(group.apiObj.data.admins){
-            memberCount += group.apiObj.data.admins.length;
-        }
-        
-        if(userID && (userID == group.apiObj.data.owner || (J.inArray(userID, group.apiObj.data.admins) != -1 ))) {
-            groupManageable = true;
-        }
-        
+		var groupManageable = false;
+		var memberCount = 1;
+		if(group.apiObj.data.members) {
+			memberCount += group.apiObj.data.members.length;
+		}
+		if(group.apiObj.data.admins){
+			memberCount += group.apiObj.data.admins.length;
+		}
+		
+		if(userID && (userID == group.apiObj.data.owner || (J.inArray(userID, group.apiObj.data.admins) != -1 ))) {
+			groupManageable = true;
+		}
+		
 		var groupImage = null;
 		if(group.hasImage){
 			groupImage = (
 				<a href={Zotero.url.groupViewUrl(group)} className="group-image">
-	                <img src={Zotero.url.groupImageUrl(group)} alt="" />
-	            </a>
+					<img src={Zotero.url.groupImageUrl(group)} alt="" />
+				</a>
 			);
 		}
 
@@ -41,10 +41,10 @@ var GroupNugget = React.createClass({
 		if(groupManageable){
 			manageLinks = (
 				<nav className="action-links">
-		            <li><a href={Zotero.url.groupSettingsUrl(group)}>Manage Profile</a></li>
-		            <li><a href={Zotero.url.groupMemberSettingsUrl(group)}>Manage Members</a></li>
-		            <li><a href={Zotero.url.groupLibrarySettingsUrl(group)}>Manage Library</a></li>
-		        </nav>
+					<li><a href={Zotero.url.groupSettingsUrl(group)}>Manage Profile</a></li>
+					<li><a href={Zotero.url.groupMemberSettingsUrl(group)}>Manage Members</a></li>
+					<li><a href={Zotero.url.groupLibrarySettingsUrl(group)}>Manage Library</a></li>
+				</nav>
 			);
 		}
 
@@ -53,9 +53,9 @@ var GroupNugget = React.createClass({
 			var markup = {__html: group.apiObj.data.description};
 			groupDescription = (
 				<tr>
-	                <th scope="row">Description</th> 
-	                <td dangerouslySetInnerHTML={markup}></td>
-	            </tr>
+					<th scope="row">Description</th> 
+					<td dangerouslySetInnerHTML={markup}></td>
+				</tr>
 			);
 		}
 
@@ -66,35 +66,35 @@ var GroupNugget = React.createClass({
 
 		return (
 			<div key={group.groupID} className="nugget-group">
-			    <div className="nugget-full">
-			    	{groupImage}
-			        <div className="nugget-name">
-			            <a href={Zotero.url.groupViewUrl(group)}>{group.apiObj.data.name}</a>
-			        </div>
-			        <nav id="group-library-link-nav" className="action-links">
-			            <ul>
-			            <li><a href={Zotero.url.groupLibraryUrl(group)}>Group Library</a></li>
-			            </ul>
-			        </nav>
-			        {manageLinks}
-			        <table className="nugget-profile table">
-			            <tr>
-			                <th scope="row">Members</th>
-			                <td>{memberCount}</td>
-			            </tr>
-			            {groupDescription}
-			            <tr>
-			                <th scope="row">Group Type</th>
-			                <td>{Zotero.Group.prototype.typeMap[group.apiObj.data.type]}</td>
-			            </tr>
-			            <tr>
-			                <th scope="row">Group Library</th>
-			                <td>
-			                	{libAccess}
-			                </td>
-			            </tr>
-			        </table>
-			    </div>
+				<div className="nugget-full">
+					{groupImage}
+					<div className="nugget-name">
+						<a href={Zotero.url.groupViewUrl(group)}>{group.apiObj.data.name}</a>
+					</div>
+					<nav id="group-library-link-nav" className="action-links">
+						<ul>
+						<li><a href={Zotero.url.groupLibraryUrl(group)}>Group Library</a></li>
+						</ul>
+					</nav>
+					{manageLinks}
+					<table className="nugget-profile table">
+						<tr>
+							<th scope="row">Members</th>
+							<td>{memberCount}</td>
+						</tr>
+						{groupDescription}
+						<tr>
+							<th scope="row">Group Type</th>
+							<td>{Zotero.Group.prototype.typeMap[group.apiObj.data.type]}</td>
+						</tr>
+						<tr>
+							<th scope="row">Group Library</th>
+							<td>
+								{libAccess}
+							</td>
+						</tr>
+					</table>
+				</div>
 			</div>
 		);
 	}
@@ -104,14 +104,14 @@ var UserGroups = React.createClass({
 	componentWillMount: function() {
 		var reactInstance = this;
 		var groups = new Zotero.Groups();
-	    if(Zotero.config.loggedIn && Zotero.config.loggedInUserID){
-	    	reactInstance.setState({loading:true});
-	        var groupsPromise = groups.fetchUserGroups(Zotero.config.loggedInUserID)
-	        .then(function(response){
-	            var groups = response.fetchedGroups;
-	            reactInstance.setState({groups:groups});
-	        }).catch(Zotero.catchPromiseError);
-	    }
+		if(Zotero.config.loggedIn && Zotero.config.loggedInUserID){
+			reactInstance.setState({loading:true});
+			var groupsPromise = groups.fetchUserGroups(Zotero.config.loggedInUserID)
+			.then(function(response){
+				var groups = response.fetchedGroups;
+				reactInstance.setState({groups:groups, loading:false});
+			}).catch(Zotero.catchPromiseError);
+		}
 	},
 	getInitialState: function() {
 		return {

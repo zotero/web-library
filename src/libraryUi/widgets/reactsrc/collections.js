@@ -56,7 +56,7 @@ var CollectionRow = React.createClass({
 		var isSelectedCollection = (this.props.selectedCollection == collectionKey);
 		
 		var childRows = [];
-		collection.children.forEach(function(collection, ind) {
+		collection.children.forEach(function(collection) {
 			childRows.push(
 				<CollectionRow 
 					key={collection.get('key')}
@@ -125,14 +125,10 @@ var TrashRow = React.createClass({
 });
 
 var Collections = React.createClass({
-	componentWillMount: function() {
-		var reactInstance = this;
-		var library = this.props.library;
-	},
 	getDefaultProps: function() {
 		return{
 			initialCollectionKey: null
-		}
+		};
 	},
 	getInitialState: function() {
 		return {
@@ -219,7 +215,7 @@ var Collections = React.createClass({
 		}
 		
 		var collectionRows = [];
-		collectionsArray.forEach(function(collection, ind){
+		collectionsArray.forEach(function(collection){
 			if(collection.topLevel){
 				collectionRows.push(<CollectionRow
 					key={collection.get('key')}

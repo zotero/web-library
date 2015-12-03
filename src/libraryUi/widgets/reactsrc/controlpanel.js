@@ -34,7 +34,7 @@ var LibraryDropdown = React.createClass({
 			accessibleLibraries: [],
 			loading:false,
 			loaded:false
-		}
+		};
 	},
 	populateDropdown: function() {
 		Z.debug("populateDropdown");
@@ -48,46 +48,46 @@ var LibraryDropdown = React.createClass({
 			return;
 		}
 		if(!Zotero.config.loggedIn){
-	        throw new Error("no logged in userID. Required for libraryDropdown widget");
-	    }
-	    
-	    var user = Zotero.config.loggedInUser;
-	    var personalLibraryString = 'u' + user.userID;
-	    var personalLibraryUrl = Zotero.url.userWebLibrary(user.slug);
-	    var currentLibraryName = Zotero.config.librarySettings.name;
-	    
-	    this.setState({loading: true});
+			throw new Error("no logged in userID. Required for libraryDropdown widget");
+		}
+		
+		var user = Zotero.config.loggedInUser;
+		var personalLibraryString = 'u' + user.userID;
+		var personalLibraryUrl = Zotero.url.userWebLibrary(user.slug);
+		var currentLibraryName = Zotero.config.librarySettings.name;
+		
+		this.setState({loading: true});
 
-	    var memberGroups = library.groups.fetchUserGroups(user.userID)
-	    .then(function(response){
-	        Z.debug("got member groups", 3);
-	        var memberGroups = response.fetchedGroups;
-	        var accessibleLibraries = [];
-	        if(!(Zotero.config.librarySettings.libraryType == 'user' && Zotero.config.librarySettings.libraryID == user.userID)){
-	            accessibleLibraries.push({
-	                name:'My Library',
-	                libraryString:personalLibraryString,
-	                webUrl:personalLibraryUrl
-	            });
-	        }
-	            
-	        for(var i = 0; i < memberGroups.length; i++){
-	            if(Zotero.config.librarySettings.libraryType == 'group' && memberGroups[i].get('id') == Zotero.config.librarySettings.libraryID){
-	                continue;
-	            }
-	            var libraryString = 'g' + memberGroups[i].get('id');
-	            accessibleLibraries.push({
-	                name: memberGroups[i].get('name'),
-	                libraryString: libraryString,
-	                webUrl: Zotero.url.groupWebLibrary(memberGroups[i])
-	            });
-	        }
-	        
-	        reactInstance.setState({accessibleLibraries: accessibleLibraries, loading:false, loaded:true});
-	    }).catch(function(err){
-	        Z.error(err);
-	        Z.error(err.message);
-	    });
+		var memberGroups = library.groups.fetchUserGroups(user.userID)
+		.then(function(response){
+			Z.debug("got member groups", 3);
+			var memberGroups = response.fetchedGroups;
+			var accessibleLibraries = [];
+			if(!(Zotero.config.librarySettings.libraryType == 'user' && Zotero.config.librarySettings.libraryID == user.userID)){
+				accessibleLibraries.push({
+					name:'My Library',
+					libraryString:personalLibraryString,
+					webUrl:personalLibraryUrl
+				});
+			}
+				
+			for(var i = 0; i < memberGroups.length; i++){
+				if(Zotero.config.librarySettings.libraryType == 'group' && memberGroups[i].get('id') == Zotero.config.librarySettings.libraryID){
+					continue;
+				}
+				var libraryString = 'g' + memberGroups[i].get('id');
+				accessibleLibraries.push({
+					name: memberGroups[i].get('name'),
+					libraryString: libraryString,
+					webUrl: Zotero.url.groupWebLibrary(memberGroups[i])
+				});
+			}
+			
+			reactInstance.setState({accessibleLibraries: accessibleLibraries, loading:false, loaded:true});
+		}).catch(function(err){
+			Z.error(err);
+			Z.error(err.message);
+		});
 	},
 	render: function() {
 		if(this.props.user == false){
@@ -175,7 +175,7 @@ var ActionsDropdown = React.createClass({
 	},
 	removeFromTrash: function(evt){
 		//Remove currently displayed single item or checked list of items from trash
- 		//when remove-from-trash link clicked
+		//when remove-from-trash link clicked
 		Z.debug('remove-from-trash clicked', 3);
 		var library = this.props.library;
 		var itemKeys = Zotero.state.getSelectedItemKeys();
@@ -322,7 +322,9 @@ var ControlPanel = React.createClass({
 		reactInstance.setState({user: Zotero.config.loggedInUser});
 		
 		library.listen("selectedItemsChanged", function(evt){
-			var selectedItemKeys = evt.selectedItemKeys;
+			Z.debug("got selectedItemsChanged event in ControlPanel - setting selectedItems");
+			Z.debug(evt);
+			var selectedItemKeys = evt.data.selectedItemKeys;
 			reactInstance.setState({selectedItems: selectedItemKeys});
 		}, {});
 		

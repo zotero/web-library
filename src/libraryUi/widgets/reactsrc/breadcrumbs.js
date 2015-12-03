@@ -34,7 +34,7 @@ var BreadCrumbs = React.createClass({
 		var library = this.props.library;
 
 		library.listen("displayedItemsChanged displayedItemChanged selectedCollectionChanged", function(){
-			reactInstance.forceUpdate()
+			reactInstance.forceUpdate();
 		});
 	},
 	getInitialProps: function(){
@@ -53,20 +53,24 @@ var BreadCrumbs = React.createClass({
 				crumbs.push(crumb);
 			});
 		} else if(library.libraryType == 'user'){
-			crumbs = [{label:'Home', path:'/'},
-					   {label:'People', path:'/people'},
-					   {label:(library.libraryLabel || library.libraryUrlIdentifier), path:'/' + library.libraryUrlIdentifier},
-					   {label:'Library', path:'/' + library.libraryUrlIdentifier + '/items'}];
+			crumbs = [
+				{label:'Home', path:'/'},
+				{label:'People', path:'/people'},
+				{label:(library.libraryLabel || library.libraryUrlIdentifier), path:'/' + library.libraryUrlIdentifier},
+				{label:'Library', path:'/' + library.libraryUrlIdentifier + '/items'}
+			];
 		} else{
-			crumbs = [{label:'Home', path:'/'},
-					   {label:'Groups', path:'/groups'},
-					   {label:(library.libraryLabel || library.libraryUrlIdentifier), path:'/groups/' + library.libraryUrlIdentifier},
-					   {label:'Library', path:'/groups/' + library.libraryUrlIdentifier + '/items'}];
+			crumbs = [
+				{label:'Home', path:'/'},
+				{label:'Groups', path:'/groups'},
+				{label:(library.libraryLabel || library.libraryUrlIdentifier), path:'/groups/' + library.libraryUrlIdentifier},
+				{label:'Library', path:'/groups/' + library.libraryUrlIdentifier + '/items'}
+			];
 		}
 
 		if(config.collectionKey){
 			Z.debug("have collectionKey", 4);
-			curCollection = library.collections.getCollection(config.collectionKey);
+			var curCollection = library.collections.getCollection(config.collectionKey);
 			if( curCollection ){
 				crumbs.push({label:curCollection.get('name'), path:Zotero.state.buildUrl({collectionKey:config.collectionKey})});
 			}

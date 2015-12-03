@@ -108,7 +108,7 @@ Zotero.ui.init.ckeditor = function(type, autofocus, container){
     
     Z.debug("initializing CK editors", 3);
     if(J(container).is('.rte')){
-        Z.debug("RTE textarea - " + ind + " - " + J(container).attr('name'), 3);
+        Z.debug("RTE textarea - " + " - " + J(container).attr('name'), 3);
         var edName = J(container).attr('name');
         if(!CKEDITOR.instances[edName]){
             var editor = CKEDITOR.replace(J(container), config );

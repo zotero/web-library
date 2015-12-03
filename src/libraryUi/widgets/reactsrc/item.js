@@ -66,7 +66,7 @@ Zotero.ui.widgets.reactitem.editFields = function(item) {
 	});
 	
 	var genericFields = Zotero.ui.genericDisplayedFields(item);
-	genericFields.forEach(function(k, i){
+	genericFields.forEach(function(k){
 		fields.push({field:k});
 	});
 	return fields;
@@ -163,7 +163,7 @@ var CreatorRow = React.createClass({
 			item:null,
 			library:null,
 			creatorIndex: 0,
-			edit: null,
+			edit: null
 		};
 	},
 	render: function() {
@@ -173,7 +173,6 @@ var CreatorRow = React.createClass({
 		}
 		var item = this.props.item;
 		var creator = item.get('creators')[this.props.creatorIndex];
-		var edit = this.props.edit;
 		var nameSpans = null;
 		if(creator.name && creator.name != "") {
 			nameSpans = (
@@ -305,7 +304,7 @@ var ItemNavTabs = React.createClass({
 	getDefaultProps: function() {
 		return {
 			item: null
-		}
+		};
 	},
 	render: function() {
 		Z.debug("ItemNavTabs render");
@@ -493,14 +492,15 @@ var ItemField = React.createClass({
 				onFocus: this.handleFocus
 			};
 
+			var p = null;
 			if(creatorField){
 				spanProps['data-creatorindex'] = this.props.creatorIndex;
-				var p = value == "" ? creatorPlaceHolders[field] : value;
+				p = value == "" ? creatorPlaceHolders[field] : value;
 			} else if(tagField){
 				spanProps['data-tagindex'] = this.props.tagIndex;
-				var p = value;
+				p = value;
 			} else {
-				var p = value == "" ? (<div className="empty-field-placeholder"></div>) : Zotero.ui.formatItemField(field, item);
+				p = value == "" ? (<div className="empty-field-placeholder"></div>) : Zotero.ui.formatItemField(field, item);
 			}
 			return (
 				<span {...spanProps}>
@@ -614,7 +614,7 @@ var ItemInfoPanel = React.createClass({
 					<LoadingSpinner loading={this.props.loading} />
 					{itemCountP}
 				</div>
-			)
+			);
 		}
 		
 		var itemKey = item.get('key');
@@ -629,7 +629,7 @@ var ItemInfoPanel = React.createClass({
 		if(libraryType == "user") {
 			libraryIDSpan = <span id="libraryUserID" title={item.apiObj.library.id}></span>;
 		} else {
-			libraryIDSpan = <span id="libraryGroupID" title={item.apiObj.library.id}></span>
+			libraryIDSpan = <span id="libraryGroupID" title={item.apiObj.library.id}></span>;
 		}
 		
 		//the Zotero user that created the item, if it's a group library item
@@ -770,7 +770,7 @@ var ItemTagsPanel = React.createClass({
 				</div>
 			);
 		}
-		var tagRows = [];
+		
 		var tagRows = item.apiObj.data.tags.map(function(tag, ind){
 			return (
 				<TagListRow key={tag.tag} {...reactInstance.props} tag={tag} tagIndex={ind} />
@@ -804,14 +804,14 @@ var ItemChildrenPanel = React.createClass({
 	getDefaultProps: function() {
 		return {
 			childItems: []
-		}
+		};
 	},
 	triggerUpload: function() {
 		this.props.library.trigger("uploadAttachment");
 	},
 	render: function() {
 		Z.debug("ItemChildrenPanel render");
-		var childListEntries = this.props.childItems.map(function(item, ind){
+		var childListEntries = this.props.childItems.map(function(item){
 			var title = item.get('title');
 			var href = Zotero.url.itemHref(item);
 			var iconClass = item.itemTypeIconClass();
@@ -862,7 +862,7 @@ var ItemDetails = React.createClass({
 			childrenLoading:false,
 			libraryItemsLoaded:false,
 			edit: null
-		}
+		};
 	},
 	componentWillMount: function() {
 		var reactInstance = this;
@@ -951,12 +951,6 @@ var ItemDetails = React.createClass({
 			loadingPromise = Promise.resolve(loadedItem);
 		} else{
 			Z.debug("must fetch item from server", 3);
-			var config = {
-				'target':'item',
-				'libraryType':library.type,
-				'libraryID':library.libraryID,
-				'itemKey':itemKey
-			};
 			reactInstance.setState({itemLoading:true});
 			loadingPromise = library.loadItem(itemKey);
 		}

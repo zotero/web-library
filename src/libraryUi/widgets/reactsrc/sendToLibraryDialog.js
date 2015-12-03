@@ -69,7 +69,7 @@ var SendToLibraryDialog = React.createClass({
 		//instantiate destination library
 		var targetLibrary = this.state.targetLibrary;
 		var destLibConfig = Zotero.utils.parseLibString(targetLibrary);
-		destLibrary = new Zotero.Library(destLibConfig.libraryType, destLibConfig.libraryID);
+		var destLibrary = new Zotero.Library(destLibConfig.libraryType, destLibConfig.libraryID);
 		Zotero.libraries[targetLibrary] = destLibrary;
 		
 		//get items to send
