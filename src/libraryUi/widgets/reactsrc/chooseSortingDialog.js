@@ -7,7 +7,6 @@ Zotero.ui.widgets.reactchooseSortingDialog.init = function(el){
 		<ChooseSortingDialog library={library} />,
 		document.getElementById('choose-sorting-dialog')
 	);
-	Zotero.ui.widgets.reactchooseSortingDialog.reactInstance = reactInstance;
 };
 
 var ChooseSortingDialog = React.createClass({

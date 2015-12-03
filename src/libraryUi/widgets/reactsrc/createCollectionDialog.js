@@ -7,7 +7,6 @@ Zotero.ui.widgets.reactcreateCollectionDialog.init = function(el){
 		<CreateCollectionDialog library={library} />,
 		document.getElementById('create-collection-dialog')
 	);
-	Zotero.ui.widgets.reactaddToCollectionDialog.reactInstance = reactInstance;
 };
 
 var CreateCollectionDialog = React.createClass({

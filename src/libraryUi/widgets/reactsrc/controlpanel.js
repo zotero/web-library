@@ -8,7 +8,6 @@ Zotero.ui.widgets.reactcontrolPanel.init = function(el){
 		<ControlPanel library={library} />,
 		document.getElementById('control-panel')
 	);
-	Zotero.ui.widgets.reactcontrolPanel.reactInstance = reactInstance;
 };
 
 var GroupsButton = React.createClass({

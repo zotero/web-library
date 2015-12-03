@@ -8,14 +8,13 @@ Zotero.ui.widgets.reacttags.init = function(el){
 		<Tags library={library} />,
 		document.getElementById('tags-list-div')
 	);
-	Zotero.ui.widgets.reacttags.reactInstance = reactInstance;
 };
 
 var TagRow = React.createClass({
 	getDefaultProps: function(){
 		return {
-			showAutomatic: false,
-		}
+			showAutomatic: false
+		};
 	},
 	handleClick: function(evt) {
 		evt.stopPropagation();
@@ -49,8 +48,8 @@ var TagRow = React.createClass({
 		if(tag.color){
 			tagStyle = {
 				color: tag.color,
-				fontWeight: "bold",
-			}
+				fontWeight: "bold"
+			};
 		}
 		
 		//render nothing for automatic tags user doesn't want displayed
@@ -71,8 +70,8 @@ var TagList = React.createClass({
 		return {
 			tags: [],
 			showAutomatic: false,
-			id: "",
-		}
+			id: ""
+		};
 	},
 	render: function() {
 		var showAutomatic = this.props.showAutomatic;
@@ -92,7 +91,7 @@ var TagList = React.createClass({
 
 var Tags = React.createClass({
 	getDefaultProps: function() {
-		return {}
+		return {};
 	},
 	getInitialState: function() {
 		return {
@@ -101,13 +100,14 @@ var Tags = React.createClass({
 			selectedTags: [],
 			tagFilter: "",
 			showAutomatic: false,
-			loading:false,
+			loading:false
 		};
 	},
 	componentWillMount: function(evt) {
 		var reactInstance = this;
 		var library = this.props.library;
-		
+		Zotero.ui.widgets.reacttags.reactInstance = reactInstance;
+
 		var tagColors = library.preferences.getPref("tagColors");
 		var selectedTags = Zotero.state.getUrlVar('tag');
 		if(!J.isArray(selectedTags)){

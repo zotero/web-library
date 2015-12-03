@@ -8,7 +8,6 @@ Zotero.ui.widgets.reactcollections.init = function(el){
 		<Collections library={library} initialCollectionKey={initialCollectionKey} />,
 		document.getElementById('collection-list-div')
 	);
-	Zotero.ui.widgets.reactcollections.reactInstance = reactInstance;
 };
 
 var CollectionRow = React.createClass({
@@ -141,7 +140,7 @@ var Collections = React.createClass({
 	componentWillMount: function() {
 		var reactInstance = this;
 		var library = this.props.library;
-		
+		Zotero.ui.widgets.reactcollections.reactInstance = reactInstance;
 		library.listen("collectionsDirty", reactInstance.syncCollections, {});
 		library.listen("libraryCollectionsUpdated", function(){
 			reactInstance.setState({collections:library.collections});

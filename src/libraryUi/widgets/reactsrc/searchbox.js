@@ -9,7 +9,6 @@ Zotero.ui.widgets.reactsearchbox.init = function(el){
 		<LibrarySearchBox library={library} />,
 		document.getElementById('search-box')
 	);
-	Zotero.ui.widgets.reactsearchbox.reactInstance = reactInstance;
 };
 
 var LibrarySearchBox = React.createClass({

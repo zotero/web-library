@@ -8,8 +8,6 @@ Zotero.ui.widgets.reactitems.init = function(el){
 		<ItemsTable library={library} />,
 		document.getElementById('library-items-div')
 	);
-
-	Zotero.ui.widgets.reactitems.reactInstance = reactInstance;
 };
 
 Zotero.ui.getItemsConfig = function(library){
