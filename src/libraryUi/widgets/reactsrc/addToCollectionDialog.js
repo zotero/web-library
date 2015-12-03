@@ -21,8 +21,8 @@ var AddToCollectionDialog = React.createClass({
 	},
 	getInitialState: function() {
 		return {
-			collectionKey: null,
-		}
+			collectionKey: null
+		};
 	},
 	handleCollectionChange: function(evt) {
 		this.setState({'collectionKey': evt.target.value});
@@ -37,6 +37,7 @@ var AddToCollectionDialog = React.createClass({
 	},
 	addToCollection: function(evt) {
 		Z.debug("add-to-collection clicked", 3);
+		var reactInstance = this;
 		var library = this.props.library;
 		var itemKeys = Zotero.state.getSelectedItemKeys();
 		var collectionKey = this.state.collectionKey;
@@ -53,6 +54,7 @@ var AddToCollectionDialog = React.createClass({
 		.then(function(response){
 			library.dirty = true;
 			Zotero.ui.jsNotificationMessage("Items added to collection", 'success');
+			reactInstance.closeDialog();
 		}).catch(Zotero.catchPromiseError);
 		return false;
 	},
@@ -124,5 +126,5 @@ var BootstrapModalWrapper = React.createClass({
 				{this.props.children}
 			</div>
 		);
-	},
+	}
 });
