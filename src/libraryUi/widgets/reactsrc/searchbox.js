@@ -18,7 +18,7 @@ var LibrarySearchBox = React.createClass({
 		};
 	},
 	search: function(evt) {
-		e.preventDefault();
+		evt.preventDefault();
 		Z.debug("library-search form submitted", 3);
 		Zotero.state.clearUrlVars(['collectionKey', 'tag', 'q', 'qmode']);
 		var container = J(evt.target);
@@ -57,7 +57,7 @@ var LibrarySearchBox = React.createClass({
 		var defaultValue = Zotero.state.getUrlVar('q');
 
 		return (
-			<div className="btn-toolbar row visible-xs" id="search-box" style={{maxWidth:"350px"}}>
+			<div className="btn-toolbar row" id="search-box" style={{maxWidth:"350px"}}>
 				<form action="/search/" onSubmit={this.search} className="navbar-form zsearch library-search" role="search">
 					<div className="input-group">
 						<div className="input-group-btn">

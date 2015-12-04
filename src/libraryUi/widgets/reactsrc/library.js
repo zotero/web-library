@@ -9,30 +9,6 @@ Zotero.ui.widgets.library.init = function(el){
 	);
 };
 
-var FeedLink = React.createClass({
-	render: function() {
-		var library = this.props.library;
-		var urlconfig = Zotero.ui.getItemsConfig(library);
-		var requestUrl = Zotero.ajax.apiRequestUrl(urlconfig) + Zotero.ajax.apiQueryString(urlconfig, false);
-		var feedUrl = requestUrl.replace(Zotero.config.baseApiUrl, Zotero.config.baseFeedUrl);
-		var newkeyurl = Zotero.url.requestReadApiKeyUrl(library.libraryType, library.libraryID, feedUrl);
-		var feedHref;
-		if(!Zotero.config.librarySettings.publish){
-			feedHref = newkeyurl;
-		} else {
-			feedHref = feedUrl;
-		}
-
-		return (
-			<p>
-				<a href={feedHref} type="application/atom+xml" rel="alternate" className="feed-link">
-					<span className="sprite-icon sprite-feed"></span>Subscribe to this feed
-				</a>
-			</p>
-		);
-	}
-});
-
 var ReactZoteroLibrary = React.createClass({
 	componentWillMount: function() {
 		//preload library
@@ -223,7 +199,7 @@ var ReactZoteroLibrary = React.createClass({
 						<ul className="nav navbar-nav navbar-right">
 							{siteActionsMenu}
 						</ul>
-						<div className="eventfulwidget btn-toolbar hidden-xs navbar-right">
+						<div className="btn-toolbar hidden-xs navbar-right">
 							<LibrarySearchBox library={library} />
 						</div>
 					</div>
@@ -265,7 +241,9 @@ var ReactZoteroLibrary = React.createClass({
 				
 				<div id="right-panel" hidden={!rightPanelVisible} className="panelcontainer-panelcontainer col-xs-12 col-sm-8 col-md-9">
 					<div hidden={!itemsPanelVisible} ref="itemsPanel" id="items-panel" className="panelcontainer-panel col-sm-12 col-md-7">
-						<LibrarySearchBox library={library} />
+						<div className="visible-xs">
+							<LibrarySearchBox library={library} />
+						</div>
 						<Items ref="itemsWidget" library={library} narrow={narrow} />
 					
 						<div id="load-more-items-div" className="row">
