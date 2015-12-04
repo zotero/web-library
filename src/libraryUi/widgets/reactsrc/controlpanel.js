@@ -247,18 +247,18 @@ var ActionsDropdown = React.createClass({
 					<li className="permission-edit selected-item-action" hidden={!showNonTrashActions}><a onClick={this.trashOrDeleteItems} className="move-to-trash-button clickable" title="Move to Trash">Move to Trash</a></li>
 					<li className="permission-edit selected-item-action" hidden={!showTrashActions}><a onClick={this.trashOrDeleteItems} className="permanently-delete-button clickable" title="Move to Trash">Permanently Delete</a></li>
 					<li className="permission-edit selected-item-action" hidden={!showTrashActions}><a onClick={this.removeFromTrash} className="remove-from-trash-button clickable" title="Remove from Trash">Remove from Trash</a></li>
-					<li className="divider permission-edit selected-item-action"></li>
+					<li className="divider permission-edit selected-item-action" hidden={!itemSelected}></li>
 					<li className="permission-edit"><a className="create-collection-button eventfultrigger clickable" data-library={library.libraryString} data-triggers="createCollectionDialog" title="New Collection">Create Collection</a></li>
 					<li className="permission-edit" hidden={!collectionSelected}><a className="update-collection-button eventfultrigger clickable" data-library={library.libraryString} data-triggers="updateCollectionDialog" title="Change Collection">Rename Collection</a></li>
 					<li className="permission-edit" hidden={!collectionSelected}><a className="delete-collection-button eventfultrigger clickable" data-library={library.libraryString} data-triggers="deleteCollectionDialog" title="Delete Collection">Delete Collection</a></li>
-					<li className="divider permission-edit"></li>
+					<li className="divider permission-edit" hidden={!collectionSelected}></li>
 					<li><a href="#" className="eventfultrigger clickable" data-library={library.libraryString} data-triggers="librarySettingsDialog">Library Settings</a></li>
 					<li><a href="#" className="cite-button eventfultrigger clickable" data-library={library.libraryString} data-triggers="citeItems">Cite</a></li>
 					<li><a href="#" className="export-button eventfultrigger clickable" data-library={library.libraryString} data-triggers="exportItemsDialog">Export</a></li>
 					{/*<li><a href="#" className="share-button eventfultrigger clickable" data-library={library.libraryString} data-triggers="shareToDocs">Share To Docs</a></li>*/}
 					<li className="divider selected-item-action"></li>
 					<li className="selected-item-action" hidden={!itemSelected}><a className="send-to-library-button eventfultrigger clickable" data-library={library.libraryString} data-triggers="sendToLibraryDialog" title="Copy to Library">Copy to Library</a></li>
-					<li className="divider"></li>
+					<li className="divider" hidden={!itemSelected}></li>
 					<li><a href="#" className="eventfultrigger clickable" data-library={library.libraryString} data-triggers="syncLibary">Sync</a></li>
 					<li><a href="#" className="eventfultrigger clickable" data-library={library.libraryString} data-triggers="deleteIdb">Delete IDB</a></li>
 				</ul>
