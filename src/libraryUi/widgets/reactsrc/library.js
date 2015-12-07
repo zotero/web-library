@@ -194,7 +194,7 @@ var ReactZoteroLibrary = React.createClass({
 					</div>
 
 					<div className="collapse navbar-collapse" id="primary-nav-linklist">
-						<ControlPanel library={library} ref="controlPanel" />
+						<ControlPanel library={library} editable={Zotero.config.librarySettings.allowEdit} ref="controlPanel" />
 						
 						<ul className="nav navbar-nav navbar-right">
 							{siteActionsMenu}

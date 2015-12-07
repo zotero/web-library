@@ -103,7 +103,7 @@ var LibraryDropdown = React.createClass({
 		});
 		
 		return (
-			<div id="library-dropdown" className="eventfulwidget btn-group"
+			<div id="library-dropdown" className="btn-group"
 				data-widget='libraryDropdown' data-library={this.props.library.libraryString}>
 				<button className="btn btn-default navbar-btn dropdown-toggle" onClick={this.populateDropdown} data-toggle="dropdown" href="#" title="Libraries">
 					<span className="glyphicons fonticon glyphicons-inbox"></span>
@@ -123,8 +123,9 @@ var ActionsDropdown = React.createClass({
 	getDefaultProps: function() {
 		return {
 			itemSelected: false,
-			selectedCollection: false,
-			library: null
+			selectedCollection: null,
+			library: null,
+			editable:false
 		};
 	},
 	trashOrDeleteItems: function(evt){
@@ -226,14 +227,27 @@ var ActionsDropdown = React.createClass({
 		
 		return false;
 	},
+	triggerLibraryEvent: function(evt) {
+		var eventType = J(evt.target).data('triggers');
+		this.props.library.trigger(eventType);
+	},
+	triggerSync: function() {
+		this.props.library.trigger("syncLibary");
+	},
+	triggerDeleteIdb: function() {
+		this.props.library.trigger("deleteIdb");
+	},
 	render: function() {
 		var library = this.props.library;
+		var editable = this.props.editable;
 		var itemSelected = this.props.itemSelected;
 		var selectedCollection = this.props.selectedCollection;
-		var collectionSelected = (selectedCollection != false);
+		var collectionSelected = (selectedCollection != null);
 
-		var showTrashActions = (itemSelected && (selectedCollection == "trash"));
-		var showNonTrashActions = (itemSelected && (selectedCollection != "trash"));
+		var showTrashActions = (editable && itemSelected && (selectedCollection == "trash"));
+		var showNonTrashActions = (editable && itemSelected && (selectedCollection != "trash"));
+		var showItemAction = editable && itemSelected;
+		var showCollectionAction = editable && collectionSelected;
 
 		return (
 			<div className="btn-group">
@@ -242,25 +256,24 @@ var ActionsDropdown = React.createClass({
 					<span className="caret"></span>
 				</button>
 				<ul className="dropdown-menu actions-menu">
-					<li className="permission-edit selected-item-action" hidden={!itemSelected}><a role="menuitem" className="eventfultrigger add-to-collection-button clickable" data-library={library.libraryString} data-triggers="addToCollectionDialog" title="Add to Collection">Add to Collection</a></li>
-					<li className="permission-edit selected-item-action selected-collection-action" hidden={!(itemSelected && collectionSelected)}><a onClick={this.removeFromCollection} className="remove-from-collection-button clickable" title="Remove from Collection">Remove from Collection</a></li>
-					<li className="permission-edit selected-item-action" hidden={!showNonTrashActions}><a onClick={this.trashOrDeleteItems} className="move-to-trash-button clickable" title="Move to Trash">Move to Trash</a></li>
-					<li className="permission-edit selected-item-action" hidden={!showTrashActions}><a onClick={this.trashOrDeleteItems} className="permanently-delete-button clickable" title="Move to Trash">Permanently Delete</a></li>
-					<li className="permission-edit selected-item-action" hidden={!showTrashActions}><a onClick={this.removeFromTrash} className="remove-from-trash-button clickable" title="Remove from Trash">Remove from Trash</a></li>
-					<li className="divider permission-edit selected-item-action" hidden={!itemSelected}></li>
-					<li className="permission-edit"><a className="create-collection-button eventfultrigger clickable" data-library={library.libraryString} data-triggers="createCollectionDialog" title="New Collection">Create Collection</a></li>
-					<li className="permission-edit" hidden={!collectionSelected}><a className="update-collection-button eventfultrigger clickable" data-library={library.libraryString} data-triggers="updateCollectionDialog" title="Change Collection">Rename Collection</a></li>
-					<li className="permission-edit" hidden={!collectionSelected}><a className="delete-collection-button eventfultrigger clickable" data-library={library.libraryString} data-triggers="deleteCollectionDialog" title="Delete Collection">Delete Collection</a></li>
-					<li className="divider permission-edit" hidden={!collectionSelected}></li>
-					<li><a href="#" className="eventfultrigger clickable" data-library={library.libraryString} data-triggers="librarySettingsDialog">Library Settings</a></li>
-					<li><a href="#" className="cite-button eventfultrigger clickable" data-library={library.libraryString} data-triggers="citeItems">Cite</a></li>
-					<li><a href="#" className="export-button eventfultrigger clickable" data-library={library.libraryString} data-triggers="exportItemsDialog">Export</a></li>
-					{/*<li><a href="#" className="share-button eventfultrigger clickable" data-library={library.libraryString} data-triggers="shareToDocs">Share To Docs</a></li>*/}
+					<li hidden={!showItemAction}><a href="#" role="menuitem" className="add-to-collection-button" onClick={this.triggerLibraryEvent} data-triggers="addToCollectionDialog" title="Add to Collection">Add to Collection</a></li>
+					<li hidden={!(showItemAction && showCollectionAction)}><a onClick={this.removeFromCollection} href="#" className="remove-from-collection-button" title="Remove from Collection">Remove from Collection</a></li>
+					<li hidden={!showNonTrashActions}><a onClick={this.trashOrDeleteItems} href="#" className="move-to-trash-button" title="Move to Trash">Move to Trash</a></li>
+					<li hidden={!showTrashActions}><a onClick={this.trashOrDeleteItems} href="#" className="permanently-delete-button" title="Move to Trash">Permanently Delete</a></li>
+					<li hidden={!showTrashActions}><a onClick={this.removeFromTrash} href="#" className="remove-from-trash-button" title="Remove from Trash">Remove from Trash</a></li>
+					<li className="divider" hidden={!showItemAction}></li>
+					<li><a className="create-collection-button" href="#" onClick={this.triggerLibraryEvent} data-triggers="createCollectionDialog" title="New Collection">Create Collection</a></li>
+					<li hidden={!showCollectionAction}><a href="#" className="update-collection-button" onClick={this.triggerLibraryEvent} data-triggers="updateCollectionDialog" title="Change Collection">Rename Collection</a></li>
+					<li hidden={!showCollectionAction}><a href="#" className="delete-collection-button" onClick={this.triggerLibraryEvent} data-triggers="deleteCollectionDialog" title="Delete Collection">Delete Collection</a></li>
+					<li className="divider"></li>
+					<li><a href="#" onClick={this.triggerLibraryEvent} data-triggers="librarySettingsDialog">Library Settings</a></li>
+					<li><a href="#" className="cite-button" onClick={this.triggerLibraryEvent} data-triggers="citeItems">Cite</a></li>
+					<li><a href="#" className="export-button" onClick={this.triggerLibraryEvent} data-triggers="exportItemsDialog">Export</a></li>
 					<li className="divider selected-item-action"></li>
-					<li className="selected-item-action" hidden={!itemSelected}><a className="send-to-library-button eventfultrigger clickable" data-library={library.libraryString} data-triggers="sendToLibraryDialog" title="Copy to Library">Copy to Library</a></li>
-					<li className="divider" hidden={!itemSelected}></li>
-					<li><a href="#" className="eventfultrigger clickable" data-library={library.libraryString} data-triggers="syncLibary">Sync</a></li>
-					<li><a href="#" className="eventfultrigger clickable" data-library={library.libraryString} data-triggers="deleteIdb">Delete IDB</a></li>
+					<li className="selected-item-action" hidden={!showItemAction}><a href="#" className="send-to-library-button" onClick={this.triggerLibraryEvent} data-triggers="sendToLibraryDialog" title="Copy to Library">Copy to Library</a></li>
+					<li className="divider" hidden={!showItemAction}></li>
+					<li><a href="#" data-triggers="syncLibrary" onClick={this.triggerLibraryEvent} >Sync</a></li>
+					<li><a href="#" data-triggers="deleteIdb" onClick={this.triggerLibraryEvent} >Delete IDB</a></li>
 				</ul>
 			</div>
 		);
@@ -270,7 +283,7 @@ var ActionsDropdown = React.createClass({
 var CreateItemDropdown = React.createClass({
 	getDefaultProps: function() {
 		return {
-			
+			editable: false
 		};
 	},
 	createItem: function(evt){
@@ -284,7 +297,6 @@ var CreateItemDropdown = React.createClass({
 	},
 	render: function() {
 		var reactInstance = this;
-		var libraryString = "";
 		var itemTypes = Object.keys(Zotero.Item.prototype.typeMap);
 		itemTypes = itemTypes.sort();
 		var nodes = itemTypes.map(function(itemType, ind){
@@ -303,7 +315,7 @@ var CreateItemDropdown = React.createClass({
 		}
 
 		return (
-			<div className="btn-group create-item-dropdown permission-edit">
+			<div className="btn-group create-item-dropdown" hidden={!this.props.editable}>
 				<button type="button" className={buttonClass} data-toggle="dropdown" title="New Item"><span className="glyphicons fonticon glyphicons-plus"></span></button>
 				<ul className="dropdown-menu" role="menu" style={{maxHeight:"300px", overflow:"auto"}}>
 					{nodes}
@@ -337,13 +349,14 @@ var ControlPanel = React.createClass({
 		}, {});
 	},
 	getDefaultProps: function(){
-		return {};
+		return {
+			editable: false
+		};
 	},
 	getInitialState: function() {
 		var selectedItems = Zotero.state.getSelectedItemKeys();
 		return {
 			user: false,
-			canEdit: false,
 			selectedItems: selectedItems,
 			selectedCollection: null
 		};
@@ -354,8 +367,8 @@ var ControlPanel = React.createClass({
 				<div className="btn-toolbar navbar-left">
 					<GroupsButton library={this.props.library} />
 					<LibraryDropdown user={this.state.user} library={this.props.library} />
-					<ActionsDropdown library={this.props.library} itemSelected={this.state.selectedItems.length > 0} selectedCollection={this.state.selectedCollection} />
-					<CreateItemDropdown library={this.props.library} />
+					<ActionsDropdown library={this.props.library} itemSelected={this.state.selectedItems.length > 0} selectedCollection={this.state.selectedCollection} editable={this.props.editable} />
+					<CreateItemDropdown library={this.props.library} editable={this.props.editable} />
 				</div>
 			</div>
 		);
