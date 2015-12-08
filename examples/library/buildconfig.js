@@ -5,6 +5,11 @@ var fs = require('fs');
 
 var schema = {
 	properties: {
+		apiEndpoint: {
+			required:true,
+			description: "Api endpoint",
+			default: "https://api.zotero.org"
+		},
 		username: {
 			required:false,
 			description: "Logged in user's username",
@@ -64,7 +69,7 @@ prompt.start();
 prompt.get(schema, function(err, result){
 	var config = {
 		"librarySettings": {
-			"libraryPathString": "/zotero/zotero-www/library/zotero-web-library/examples/reactlibrary/index.html",// "\/fcheslack\/items",
+			"libraryPathString": "",// "\/fcheslack\/items",
 			"libraryType": "user",
 			"libraryID": "",
 			"publish": 1,
@@ -72,9 +77,9 @@ prompt.get(schema, function(err, result){
 			"allowUpload": false,
 			"name": ""
 		},
-		"baseApiUrl": "https:\/\/apidev.zotero.org",
+		"baseApiUrl": "",
 		"baseWebsiteUrl": "https:\/\/test.zotero.net",
-		"baseFeedUrl": "https:\/\/apidev.zotero.org",
+		"baseFeedUrl": "",
 		"baseZoteroWebsiteUrl": "https:\/\/test.zotero.net",
 		"baseDownloadUrl": "",
 		"debugLogEndpoint": "",
@@ -161,6 +166,9 @@ prompt.get(schema, function(err, result){
 		"loggedInUser": false,
 		"loggedInUserID": false
 	};
+
+	config.baseApiUrl = result.apiEndpoint;
+	config.baseFeedUrl = result.apiEndpoint;
 
 	config.librarySettings = {
 		"libraryPathString": result.libraryPath,

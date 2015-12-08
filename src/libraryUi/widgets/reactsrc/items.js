@@ -450,13 +450,18 @@ var ItemRow = React.createClass({
 		var selected = this.props.selected;
 		if(!this.props.narrow){
 			var fields = this.props.displayFields.map(function(field){
+				var ctags = null;
+				if(field == "title"){
+					ctags = <ColoredTags item={item} />;
+				}
 				return (
 					<td onClick={reactInstance.handleItemLinkClick} key={field} className={field} data-itemkey={item.get("key")}>
+						{ctags}
 						<a onClick={reactInstance.handleItemLinkClick} className='item-select-link' data-itemkey={item.get("key")} href={Zotero.url.itemHref(item)} title={item.get(field)}>
 							{Zotero.ui.formatItemField(field, item, true)}
 						</a>
 					</td>
-				)
+				);
 			});
 			return (
 				<tr className={selected ? "highlighed" : ""}>
@@ -465,7 +470,7 @@ var ItemRow = React.createClass({
 					</td>
 					{fields}
 				</tr>
-			)
+			);
 		} else {
 			return (
 				<tr className={selected ? "highlighed" : ""} data-itemkey={item.get('key')}>
@@ -475,7 +480,7 @@ var ItemRow = React.createClass({
 					
 					<SingleCellItemField onClick={reactInstance.handleItemLinkClick} item={item} displayFields={this.props.displayFields} />
 				</tr>
-			)
+			);
 		}
 	}
 });
@@ -522,9 +527,12 @@ var ColoredTags = React.createClass({
 		var coloredTags = library.matchColoredTags(item.apiObj._supplement.tagstrings);
 		Z.debug("coloredTags:" + JSON.stringify(coloredTags));
 
+		var ctags = coloredTags.map(function(color){
+			return <ColoredTag key={color} color={color} />;
+		});
 		return (
 			<span className="coloredTags">
-
+				{ctags}
 			</span>
 		);
 	}
@@ -533,6 +541,7 @@ var ColoredTags = React.createClass({
 var ColoredTag = React.createClass({
 	render: function() {
 		var styleObj = {color:this.props.color};
+		//styleObj.color += " !important";
 		return (
 			<span style={styleObj}>
 				<span style={styleObj} className="glyphicons fonticon glyphicons-tag"></span>
