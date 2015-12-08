@@ -1241,45 +1241,20 @@ var queryString='?' + queryParamsArray.join('&');return apiKeyBase + queryString
  */Zotero.pages = { //base zotero js functions that will be used on every page
 base:{init:function init(){this.tagline();this.setupSearch();this.setupNav();J("#sitenav .toggle").click(this.navMenu); //set up support page expandos
 J(".support-menu-expand-section").hide();J(".support-menu-section").on('click',"h2",function(){J(this).siblings('.support-menu-expand-section').slideToggle();});}, /**
-         * Selects a random tagline for the header
-         *
-         * @return void
-         **/tagline:function tagline(){var taglines=['See it. Save it. Sort it. Search it. Cite it.','Leveraging the long tail of scholarship.','A personal research assistant. Inside your browser.','Goodbye 3x5 cards, hello Zotero.','Citation management is only the beginning.','The next-generation research tool.','Research, not re-search','The web now has a wrangler.'];var pos=Math.floor(Math.random() * taglines.length);J("#tagline").text(taglines[pos]);}, /**
-         * Send search to the right place
-         *
-         * @return void
-         **/setupSearch:function setupSearch(){ //Z.debug("setupSearch");
+		 * Selects a random tagline for the header
+		 *
+		 * @return void
+		 **/tagline:function tagline(){var taglines=['See it. Save it. Sort it. Search it. Cite it.','Leveraging the long tail of scholarship.','A personal research assistant. Inside your browser.','Goodbye 3x5 cards, hello Zotero.','Citation management is only the beginning.','The next-generation research tool.','Research, not re-search','The web now has a wrangler.'];var pos=Math.floor(Math.random() * taglines.length);J("#tagline").text(taglines[pos]);}, /**
+		 * Send search to the right place
+		 *
+		 * @return void
+		 **/setupSearch:function setupSearch(){ //Z.debug("setupSearch");
 var context="support";var label=""; // Look for a context specific search
-if(undefined !== window.zoterojsSearchContext){context = zoterojsSearchContext;}switch(context){case "people":label = "Search for people";break;case "group":label = "Search for groups";break;case "documentation":label = "Search documentation";break;case "library":label = "Search Library";break;case "grouplibrary":label = "Search Library";break;case "support":label = "Search support";break;case "forums":label = "Search forums";break;default:label = "Search support";break;}if(context == "documentation" || context == "support"){J("#simple-search").on('submit',function(e){e.preventDefault();var query=J(this).find("input[type='text']").val();Z.pages.base.supportSearchRedirect(query);});} /*
-            if(context == "forums"){
-                J("#simple-search").on('submit', function(e){
-                    e.preventDefault();
-                    var query     =  J(this).find("input[type='text']").val();
-                    Z.pages.base.forumSearchRedirect(query);
-                });
-            }
-            */if(context == "people" || context == "group"){J("#simple-search").on('submit',function(e){e.preventDefault();var searchUrl=Zotero.config.baseZoteroWebsiteUrl + "/search/#type/" + context;var query=J(this).find("input[type='text']").val();if(query !== "" && query != label){searchUrl = searchUrl + "/q/" + encodeURIComponent(query);}location.href = searchUrl;return false;});} //J("#header-search-query").val("");
-//J("#header-search-query").attr('placeholder', label);//.inputLabel(label, {color:"#aaa"});
-/*
-            if(context != 'library' && context != 'grouplibrary' && context != 'forums'){
-                J("#simple-search").on('submit', function(e){
-                    e.preventDefault();
-                    var searchUrl = Zotero.config.baseZoteroWebsiteUrl + "/search/#type/" + context;
-                    var query     = J(this).find("input[type='text']").val();
-                    if(query !== "" && query != label){
-                        searchUrl = searchUrl + "/q/" + encodeURIComponent(query);
-                    }
-                    location.href = searchUrl;
-                    return false;
-                });
-            }
-            else if(context != 'forums') {
-            }
-            */},supportSearchRedirect:function supportSearchRedirect(query){var q=encodeURIComponent(query + " site:www.zotero.org/support");Z.debug(q);return;var url="https://duckduckgo.com/?q=" + q; /*var url = "https://www.google.com/#q=" + q;*/window.location = url;},forumSearchRedirect:function forumSearchRedirect(query){var q=encodeURIComponent(query + " site:forums.zotero.org");var url="https://duckduckgo.com/?q=" + q; /*var url = "https://www.google.com/#q=" + q;*/window.location = url;}, /**
-         * Select the right nav tab
-         *
-         * @return void
-         **/setupNav:function setupNav(){var tab=""; // Look for a context specific search
+if(undefined !== window.zoterojsSearchContext){context = zoterojsSearchContext;}switch(context){case "people":label = "Search for people";break;case "group":label = "Search for groups";break;case "documentation":label = "Search documentation";break;case "library":label = "Search Library";break;case "grouplibrary":label = "Search Library";break;case "support":label = "Search support";break;case "forums":label = "Search forums";break;default:label = "Search support";break;}if(context == "documentation" || context == "support"){J("#simple-search").on('submit',function(e){e.preventDefault();var query=J(this).find("input[type='text']").val();Z.pages.base.supportSearchRedirect(query);});}if(context == "people" || context == "group"){J("#simple-search").on('submit',function(e){e.preventDefault();var searchUrl=Zotero.config.baseZoteroWebsiteUrl + "/search/#type/" + context;var query=J(this).find("input[type='text']").val();if(query !== "" && query != label){searchUrl = searchUrl + "/q/" + encodeURIComponent(query);}location.href = searchUrl;return false;});}},supportSearchRedirect:function supportSearchRedirect(query){var q=encodeURIComponent(query + " site:www.zotero.org/support");Z.debug(q);return;var url="https://duckduckgo.com/?q=" + q; /*var url = "https://www.google.com/#q=" + q;*/window.location = url;},forumSearchRedirect:function forumSearchRedirect(query){var q=encodeURIComponent(query + " site:forums.zotero.org");var url="https://duckduckgo.com/?q=" + q; /*var url = "https://www.google.com/#q=" + q;*/window.location = url;}, /**
+		 * Select the right nav tab
+		 *
+		 * @return void
+		 **/setupNav:function setupNav(){var tab=""; // Look for a context specific search
 if(undefined !== window.zoterojsSearchContext){tab = zoterojsSearchContext;if(tab == "support"){tab = "";}} // special case for being on the home page
 if(location.pathname == "/" && location.href.search("forums.") < 0){tab = "home";}if(tab !== ""){J(".primarynav").find("a." + tab).closest('li').addClass("active");}}},settings_cv:{init:function init(){ // Delete the cv section when the delete link is clicked
 J("#cv-sections").on("click",".cv-delete",function(e){if(confirm("Are you sure you want to delete this section?")){ // Clean up RTEs before moving the base DOM elements around
@@ -1299,20 +1274,10 @@ J("#cv-sections").on("click",".cv-move-up",function(e){if(J(this).closest('div.c
 Zotero.ui.cleanUpRte(J("#cv-sections")); // Move the section and reenable the rte control
 J(this).closest("div.cv-section").prev().before(J(this).closest("div.cv-section"));Zotero.ui.init.rte('default',false);}else {J(this).closest("div.cv-section").prev().before(J(this).closest("div.cv-section"));} //Zotero.pages.settings_cv.hideMoveLinks();
 return false;}); // reindex the field names before submitting the form
-J("#cv-submit").click(function(e){J("#cv-sections div.cv-section").each(function(i){var heading;if(J(this).hasClass("cv-text")){heading = J(this).find(".cv-heading").attr("name","cv_" + (i + 1) + "_heading");if(heading.val() == "Enter a section name"){heading.val("");}J(this).find(".cv-text").attr("name","cv_" + (i + 1) + "_text");}else if(J(this).hasClass("cv-collection")){heading = J(this).find(".cv-heading").attr("name","cv_" + (i + 1) + "_heading");if(heading.val() == "Enter a section name"){heading.val("");}J(this).find("select.cv-collection").attr("name","cv_" + (i + 1) + "_collection");}});}); // Hide unusable move links
-//this.hideMoveLinks();
-//init existing rte on first load
-Zotero.ui.init.rte('nolinks',false,J("#cv-sections"));} // Hides move links that can't be used. e.g. you can't move the top section up.
-/*
-        hideMoveLinks: function(){
-            J("#cv-sections .cv-move-down").show();
-            J("#cv-sections .cv-move-up").show();
-            J("#cv-sections .cv-move-up:first").hide();
-            J("#cv-sections .cv-move-down:last").hide();
-        },
-        */},settings_account:{},settings_profile:{init:function init(){Zotero.ui.init.rte('nolinks');}},settings_privacy:{ //disable publishNotes checkbox when the library is not set to be public
+J("#cv-submit").click(function(e){J("#cv-sections div.cv-section").each(function(i){var heading;if(J(this).hasClass("cv-text")){heading = J(this).find(".cv-heading").attr("name","cv_" + (i + 1) + "_heading");if(heading.val() == "Enter a section name"){heading.val("");}J(this).find(".cv-text").attr("name","cv_" + (i + 1) + "_text");}else if(J(this).hasClass("cv-collection")){heading = J(this).find(".cv-heading").attr("name","cv_" + (i + 1) + "_heading");if(heading.val() == "Enter a section name"){heading.val("");}J(this).find("select.cv-collection").attr("name","cv_" + (i + 1) + "_collection");}});}); //init existing rte on first load
+Zotero.ui.init.rte('nolinks',false,J("#cv-sections"));}},settings_account:{},settings_profile:{init:function init(){Zotero.ui.init.rte('nolinks');}},settings_privacy:{ //disable publishNotes checkbox when the library is not set to be public
 init:function init(){if(!J("input#privacy_publishLibrary").prop("checked")){J("input#privacy_publishNotes").prop("disabled",true);}J("input#privacy_publishLibrary").bind("change",function(){if(!J("input#privacy_publishLibrary").prop("checked")){J("input#privacy_publishNotes").prop("checked",false).prop("disabled",true);}else {J("input#privacy_publishNotes").prop("disabled",false);}});}},settings_apikeys:{init:function init(){}},settings_newkey:{init:function init(){Z.debug("zoteroPages settings_newkey",3);Zotero.pages.settings_editkey.init();}},settings_newoauthkey:{init:function init(){Zotero.pages.settings_newkey.init();J("button[name='edit']").closest('div.form-group').nextAll().hide();J("button[name='edit']").click(function(e){e.preventDefault();J("button[name='edit']").closest('div.form-group').nextAll().show();});},updatePermissionsSummary:function updatePermissionsSummary(){J("#permissions-summary").empty().append(Z.pages.settings_newoauthkey.permissionsSummary());}, //build a human readable summary of currently selected permissions
-permissionsSummary:function permissionsSummary(){var summary='';var libraryAccess=J("input#library_access").prop('checked');var notesAccess=J("input#notes_access").prop('checked');var writeAccess=J("input#write_access").prop('checked');if(libraryAccess){summary += "Access to read your personal library.<br />";}if(notesAccess){summary += "Access to read notes in your personal library.<br />";}if(writeAccess){summary += "Access to read and modify your personal library.<br />";}var allGroupAccess=J("input[name='groups_all']:checked").val();switch(allGroupAccess){case 'read':summary += "Access to read any of your group libraries<br />";break;case 'write':summary += "Access to read and modify any of your group libraries<br />";break;}var allowIndividualGroupPermissions=J("input#individual_groups").prop('checked');var individualGroupAccess=[];if(allowIndividualGroupPermissions){J("input.individual_group_permission:checked").each(function(ind,el){var groupname=J(el).data('groupname');var groupID=J(el).data('groupid');var permission=J(el).val();switch(permission){case 'read':summary += "Access to read library for group '" + groupname + "'<br />";break;case 'write':summary += "Access to read and modify library for group '" + groupname + "'<br />";break;}});}return summary;}},settings_editkey:{init:function init(){Z.debug("zoteroPages settings_editkey",3);if(!J("input[type='checkbox'][name='library_access']").prop("checked")){J("input[name='notes_access']").prop("disabled","disabled");}J("input#library_access").bind("change",function(){if(!J("input[type='checkbox'][name='library_access']").prop("checked")){J("input[name='notes_access']").prop("checked",false).prop("disabled",true);J("input[name='write_access']").prop('checked',false).prop('disabled',true);}else {J("input[name='notes_access']").prop("disabled",false);J("input[name='write_access']").prop('disabled',false);}});J("input[name='name']").focus();if(!J("input[type='checkbox'][name='individual_groups']").prop('checked')){J(".individual_group_permission").closest('div.form-group').hide();}J("input[name='individual_groups']").bind('change',function(){Z.debug("individual groups checkbox changed");if(J("input[type='checkbox'][name='individual_groups']").prop('checked')){J(".individual_group_permission").closest('div.form-group').show();}else {J(".individual_group_permission").closest('div.form-group').hide();}});J('input').bind('change',Zotero.pages.settings_newoauthkey.updatePermissionsSummary);Zotero.pages.settings_newoauthkey.updatePermissionsSummary();}},settings_storage:{init:function init(){selectedLevel = J("input[name=storageLevel]:checked").val();Zotero.pages.settings_storage.showSelectedResults(selectedLevel);J("input[name=storageLevel]").change(function(){Zotero.pages.settings_storage.showSelectedResults(J("input[name=storageLevel]:checked").val());});J("#purge-button").click(function(){if(confirm("You are about to remove all uploaded files associated with your personal library.")){J("#confirm_delete").val('confirmed');return true;}else {return false;}});},showSelectedResults:function showSelectedResults(selectedLevel){if(selectedLevel == 2){J("#order-result-div").html(zoteroData.orderResult2);}else if(selectedLevel == 3){J("#order-result-div").html(zoteroData.orderResult3);}else if(selectedLevel == 4){J("#order-result-div").html(zoteroData.orderResult4);}else if(selectedLevel == 5){J("#order-result-div").html(zoteroData.orderResult5);}else if(selectedLevel == 6){J("#order-result-div").html(zoteroData.orderResult6);}}},settings_deleteaccount:{init:function init(){J("button#deleteaccount").click(function(){if(!confirm("Are you sure you want to permanently delete your account? You will not be able to recover the account or the user name.")){return false;}});}},group_new:{init:function init(){var timeout; // When the value of the input box changes,
+permissionsSummary:function permissionsSummary(){var summary='';var libraryAccess=J("input#library_access").prop('checked');var notesAccess=J("input#notes_access").prop('checked');var writeAccess=J("input#write_access").prop('checked');if(libraryAccess){summary += "Access to read your personal library.<br />";}if(notesAccess){summary += "Access to read notes in your personal library.<br />";}if(writeAccess){summary += "Access to read and modify your personal library.<br />";}var allGroupAccess=J("input[name='groups_all']:checked").val();switch(allGroupAccess){case 'read':summary += "Access to read any of your group libraries<br />";break;case 'write':summary += "Access to read and modify any of your group libraries<br />";break;}var allowIndividualGroupPermissions=J("input#individual_groups").prop('checked');var individualGroupAccess=[];if(allowIndividualGroupPermissions){J("input.individual_group_permission:checked").each(function(ind,el){var groupname=J(el).data('groupname');var groupID=J(el).data('groupid');var permission=J(el).val();switch(permission){case 'read':summary += "Access to read library for group '" + groupname + "'<br />";break;case 'write':summary += "Access to read and modify library for group '" + groupname + "'<br />";break;}});}return summary;}},settings_editkey:{init:function init(){Z.debug("zoteroPages settings_editkey",3);if(!J("input[type='checkbox'][name='library_access']").prop("checked")){J("input[name='notes_access']").prop("disabled","disabled");}J("input#library_access").bind("change",function(){if(!J("input[type='checkbox'][name='library_access']").prop("checked")){J("input[name='notes_access']").prop("checked",false).prop("disabled",true);J("input[name='write_access']").prop('checked',false).prop('disabled',true);}else {J("input[name='notes_access']").prop("disabled",false);J("input[name='write_access']").prop('disabled',false);}});J("input[name='name']").focus();if(!J("input[type='checkbox'][name='individual_groups']").prop('checked')){J(".individual_group_permission").closest('div.form-group').hide();}J("input[name='individual_groups']").bind('change',function(){Z.debug("individual groups checkbox changed");if(J("input[type='checkbox'][name='individual_groups']").prop('checked')){J(".individual_group_permission").closest('div.form-group').show();}else {J(".individual_group_permission").closest('div.form-group').hide();}});J('input').bind('change',Zotero.pages.settings_newoauthkey.updatePermissionsSummary);Zotero.pages.settings_newoauthkey.updatePermissionsSummary();}},settings_storage:{init:function init(){var selectedLevel=J("input[name=storageLevel]:checked").val();Zotero.pages.settings_storage.showSelectedResults(selectedLevel);J("input[name=storageLevel]").change(function(){Zotero.pages.settings_storage.showSelectedResults(J("input[name=storageLevel]:checked").val());});J("#purge-button").click(function(){if(confirm("You are about to remove all uploaded files associated with your personal library.")){J("#confirm_delete").val('confirmed');return true;}else {return false;}});},showSelectedResults:function showSelectedResults(selectedLevel){if(selectedLevel == 2){J("#order-result-div").html(zoteroData.orderResult2);}else if(selectedLevel == 3){J("#order-result-div").html(zoteroData.orderResult3);}else if(selectedLevel == 4){J("#order-result-div").html(zoteroData.orderResult4);}else if(selectedLevel == 5){J("#order-result-div").html(zoteroData.orderResult5);}else if(selectedLevel == 6){J("#order-result-div").html(zoteroData.orderResult6);}}},settings_deleteaccount:{init:function init(){J("button#deleteaccount").click(function(){if(!confirm("Are you sure you want to permanently delete your account? You will not be able to recover the account or the user name.")){return false;}});}},group_new:{init:function init(){var timeout; // When the value of the input box changes,
 J("input#name").keyup(function(e){clearTimeout(timeout);timeout = setTimeout(Zotero.pages.group_new.nameChange,300);});J("input[name=group_type]").change(Zotero.pages.group_new.nameChange); //insert slug preview label
 J('input#name').after("<label id='slugpreview'>Group URL: " + Zotero.config.baseZoteroWebsiteUrl + "/" + "groups/" + Zotero.utils.slugify(J("input#name").val()) + "</label>");},nameChange:function nameChange(){ //make sure label is black after each change before checking with server
 J("#slugpreview").css("color","black");var groupType=J('input[name=group_type]:checked').val(); // update slug preview text
@@ -1337,136 +1302,8 @@ J("input[name='username']").after("<label id='slugpreview'>Profile URL: " + Zote
 J("input[name='username']").bind("keyup change",Zotero.pages.user_register.nameChange);},nameChange:function nameChange(){ //make sure label is black after each change before checking with server
 J("#slugpreview").css("color","black"); //create slug from username
 parent.slug = Zotero.utils.slugify(J("input[name='username']").val());J("#slugpreview").text("Profile URL: " + Zotero.config.baseZoteroWebsiteUrl + "/" + parent.slug); //check slug with server after half-second
-clearTimeout(parent.checkUserSlugTimeout);parent.checkUserSlugTimeout = setTimeout(Zotero.pages.user_register.checkSlug,500);},checkSlug:function checkSlug(){J.getJSON(baseURL + "/user/checkslug",{"slug":slug},function(data){if(data.valid){J("#slugpreview").css("color","green");}else {J("#slugpreview").css("color","red");}});}},user_profile:{init:function init(){J('#invite-button').click(function(){var groupID=J("#invite_group").val();J.post("/groups/inviteuser",{ajax:true,groupID:groupID,userID:zoteroData.profileUserID},function(data){if(data == 'true'){Zotero.ui.jsNotificationMessage("User has been invited to join your group.",'success');J('#invited-user-list').append("<li>" + J("#invite_group > option:selected").html() + "</li>");J('#invite_group > option:selected').remove();if(J('#invite_group > option').length === 0){J('#invite_group').remove();J('#invite-button').remove();}}},"text");});}},group_compose:{init:function init(){Zotero.ui.init.rte('nolinks');}},index_index:{ /*init: function(){
-            flowplayer("intro-screencast", Zotero.pages.staticPath+"/library/flowplayer/flowplayer-3.1.1.swf");
-        },
-        */ /*
-        init: function(){
-            //set up feature tour tab containers
-            var tabContainers = J('div#features-lists > div');
-            tabContainers.hide().filter(':first').show();
-
-            J('ul#features-tabs a').click(function () {
-                Zotero.pages.index_index.tabClick = true;
-                tabContainers.hide();
-                tabContainers.filter(this.hash).show();
-                J('ul#features-tabs a').removeClass('selected');
-                J(this).addClass('selected');
-                return false;
-            }).filter(':first').click();
-
-            //set timer to cycle tabs until user clicks one
-            Zotero.pages.index_index.tabCounter = 0;
-            Zotero.pages.index_index.tabClick = false;
-            //setTimeout(Zotero.pages.index_index.cycleTab, 5000);
-
-            //set up screen cast player + box
-            J("#intro-screencast-small").click(function(){
-                J('#content').prepend("<div id='dimmer'><div id='intro-screencast-lightbox-div'><a href='/static/videos/zotero_1_5_cast.flv' id='intro-screencast-lightbox'></a><a id='close-lightbox-link'>close</a></div></div>");
-                Zotero.pages.index_index.player = flowplayer("intro-screencast-lightbox", Zotero.pages.staticPath+"/library/flowplayer/flowplayer-3.1.1.swf",
-                    {clip:
-                        {autoPlay:true}
-                    }
-                );
-                J('#close-lightbox-link').click(function(){
-                    Zotero.pages.index_index.player.close();
-                    J('#dimmer').remove();
-                    J('#intro-screencast-lightbox-div').remove();
-                });
-                return false;
-            });
-        },
-        
-        cycleTab: function(){
-            if(Zotero.pages.index_index.tabClick === false){
-                setTimeout(Zotero.pages.index_index.cycleTab, 5000);
-            }
-            else{
-                return false;
-            }
-            Zotero.pages.index_index.tabCounter++;
-            Zotero.pages.index_index.tabCounter = Zotero.pages.index_index.tabCounter % 5;
-            var tabContainers = J('div#features-lists > div');
-            //tabContainers.hide().filter(':first').show();
-            tabContainers.hide();
-            tabContainers.eq(Zotero.pages.index_index.tabCounter).show();
-            J('ul#features-tabs a').removeClass('selected').eq(Zotero.pages.index_index.tabCounter).addClass('selected');
-
-        }
-        */},search_index:{init:function init(){ /*
-            Z.debug("search_index init");
-            // re-run search when a new tab is clicked
-            J("#search-nav li a").click(function(e){
-                e.preventDefault();
-                Z.debug("search nav link clicked");
-                var params  = Zotero.pages.search_index.parseSearchUrl();
-                
-                var newQueryType = J(this).attr("id").split("-")[1];
-                Z.debug(newQueryType);
-                
-                Zotero.nav.urlvars.pathVars['type'] = newQueryType;
-                
-                Zotero.nav.pushState();
-            });
-            */}}, /*
-        parseSearchUrl: function(hash){
-            Z.debug('parseSearchUrl', 3);
-            var params = {"type":"", "query":"", "page":""};
-            
-            params.type = Zotero.nav.getUrlVar('type') || 'support';
-            params.query = Zotero.nav.getUrlVar('q') || '';
-            params.page = Zotero.nav.getUrlVar('page') || 1;
-            return params;
-        },
-        
-        pageload: function(hash){
-            // Clear any results
-            Zotero.pages.search_index.clearResults();
-            
-            // In safari, the hash passed to this function by the history plugin is always whatever the hash was
-            // when the page was first loaded. To get around this bug, we just refresh the hash by grabbing it from
-            // the location object.
-            hash = location.hash;
-            
-            // Parse the hash or if there is nothing in the hash, just bail now
-            if(hash) {
-                params = Zotero.pages.search_index.parseHash(hash);
-            } else { return; }
-			
-			// Show the right tab and select the right support refinement if needed
-            switch (params.type) {
-                case "support":
-                case "forums":
-                case "documentation":
-                    J("#tabs").tabs('select','#support');
-                    J("input[name=supportRefinement]").val([params.type]);
-                    break;
-                default: J("#tabs").tabs('select','#' + params.type);
-            }
-
-            //add pubLibOnly param if box is checked
-            if((params.type == "people") && (J("#peopleLibraryOnly:checked").length)){
-                params.pubLibOnly = 1;
-            }
-
-            //add recent param if box checked
-            if((params.type == "forums") && (J("#forumsRecent:checked").length)){
-                params.recent = true;
-            }
-            else{
-                params.recent = false;
-            }
-            
-            // give focus to the search box
-            J("#" + params.type + "Query").focus();
-            
-			// Load the query into the right search field
-			J("#search-form .textinput").val(params.query);
-            
-            Zotero.pages.search_index.runSearch(params);
-        },
-        */search_items:{init:function init(){try{var library=new Zotero.Library();}catch(e) {Z.debug("Error initializing library");}J("#item-submit").bind('click submit',J.proxy(function(e){Z.debug("item search submitted",3);e.preventDefault();e.stopImmediatePropagation();var q=J("#itemQuery").val();var globalSearchD=library.fetchGlobalItems({q:q});globalSearchD.then(function(globalItems){Z.debug("globalItemSearch callback",3);Z.debug(globalItems);J("#search-result-count").empty().append(globalItems.totalResults);var jel=J("#search-results");jel.empty();J.each(globalItems.objects,function(ind,globalItem){J("#globalitemdetailsTemplate").tmpl({globalItem:globalItem}).appendTo(jel);});});return false;},this));}},index_start:{init:function init(){ // Fit the iFrame to the window
+clearTimeout(parent.checkUserSlugTimeout);parent.checkUserSlugTimeout = setTimeout(Zotero.pages.user_register.checkSlug,500);},checkSlug:function checkSlug(){J.getJSON(baseURL + "/user/checkslug",{"slug":slug},function(data){if(data.valid){J("#slugpreview").css("color","green");}else {J("#slugpreview").css("color","red");}});}},user_profile:{init:function init(){J('#invite-button').click(function(){var groupID=J("#invite_group").val();J.post("/groups/inviteuser",{ajax:true,groupID:groupID,userID:zoteroData.profileUserID},function(data){if(data == 'true'){Zotero.ui.jsNotificationMessage("User has been invited to join your group.",'success');J('#invited-user-list').append("<li>" + J("#invite_group > option:selected").html() + "</li>");J('#invite_group > option:selected').remove();if(J('#invite_group > option').length === 0){J('#invite_group').remove();J('#invite-button').remove();}}},"text");});}},group_compose:{init:function init(){Zotero.ui.init.rte('nolinks');}},index_index:{},search_index:{init:function init(){}},search_items:{init:function init(){try{var library=new Zotero.Library();}catch(e) {Z.debug("Error initializing library");}J("#item-submit").bind('click submit',J.proxy(function(e){Z.debug("item search submitted",3);e.preventDefault();e.stopImmediatePropagation();var q=J("#itemQuery").val();var globalSearchD=library.fetchGlobalItems({q:q});globalSearchD.then(function(globalItems){Z.debug("globalItemSearch callback",3);Z.debug(globalItems);J("#search-result-count").empty().append(globalItems.totalResults);var jel=J("#search-results");jel.empty();J.each(globalItems.objects,function(ind,globalItem){J("#globalitemdetailsTemplate").tmpl({globalItem:globalItem}).appendTo(jel);});});return false;},this));}},index_start:{init:function init(){ // Fit the iFrame to the window
 Zotero.pages.index_start.sizeIframe(); // Resize the iframe when the window is resized
 J(window).resize(Zotero.pages.index_start.sizeIframe); // Change the iframe src
 J(".start-select").click(function(){J("iframe").attr("src",J(this).attr("href"));return false;});J(".start-show-overlay").click(function(){J("#start-overlay").show();return false;});J(".start-hide-overlay").click(function(){J("#start-overlay").hide();return false;});Zotero.pages.user_register.init();}, // Resize the height of the iframe to fill the page
-sizeIframe:function sizeIframe(){J("iframe").css("height",J(window).height() - 144);}},index_startstandalone:{init:function init(){var browsername=BrowserDetect.browser;switch(browsername){case 'Chrome':J('#chrome-connector-download-button').closest('li').detach().prependTo('#recommended-download > ul');break;case 'Safari':J('#safari-connector-download-button').closest('li').detach().prependTo('#recommended-download > ul');break;case 'Firefox':J('#firefox-connector-message').closest('li').detach().prependTo('#recommended-download > ul');break;default:J('#connector-download-button').closest('li').detach().prependTo('#recommended-download > ul');J('#other-connectors-p').hide();}J('#recommended-download > ul').prepend('<li><p>Zotero Connectors allow you to save to Zotero directly from your web browser.</p></li>');Zotero.pages.user_register.init();}},index_download:{init:function init(){var browsername=BrowserDetect.browser;var os=BrowserDetect.OS;var arch=navigator.userAgent.indexOf('x86_64') != -1?'x86_64':'x86';if(os == 'Windows'){J('#standalone-windows-download-button').closest('li').clone().prependTo('#recommended-client-download ul');}else if(os == 'Mac'){J('#standalone-mac-download-button').closest('li').clone().prependTo('#recommended-client-download ul');}else if(os == 'Linux'){if(arch == 'x86_64'){J('#standalone-linux64-download-button').closest('li').clone().prependTo('#recommended-client-download ul');}else {J('#standalone-linux32-download-button').closest('li').clone().prependTo('#recommended-client-download ul');}}else {}J("#recommended-connector-download").show();switch(browsername){case 'Chrome':J('#chrome-connector-download-button').addClass('recommended-download').closest('li').detach().prependTo('#recommended-connector-download ul');break;case 'Safari':J('#safari-connector-download-button').addClass('recommended-download').closest('li').detach().prependTo('#recommended-connector-download ul');break;case 'Firefox':J('#firefox-connector-download-button').addClass('recommended-download').closest('li').detach().prependTo('#recommended-connector-download ul');break;default:J('#connector-download-button').closest('li').clone().prependTo('#recommended-connector-download ul');J('#other-connectors-p').hide();}J('#recommended-download ul').prepend('<li><p>Zotero Connectors allow you to save to Zotero directly from your web browser.</p></li>');}},index_bookmarklet:{init:function init(){J(".bookmarklet-instructions").hide();var section=J("#bookmarklet-tabs li.selected").data('section');J("#" + section + '-bookmarklet-div').show();J("#bookmarklet-tabs li").on('click',function(e){Z.debug("bookmarklet tab clicked");J("#bookmarklet-tabs li.selected").removeClass('selected');J(this).addClass('selected');var section=J(this).data('section');Z.debug(section);J(".bookmarklet-instructions").hide();J("#" + section + '-bookmarklet-div').show();});}}}; // end zoterojs
+sizeIframe:function sizeIframe(){J("iframe").css("height",J(window).height() - 144);}},index_startstandalone:{init:function init(){var browsername=BrowserDetect.browser;switch(browsername){case 'Chrome':J('#chrome-connector-download-button').closest('li').detach().prependTo('#recommended-download > ul');break;case 'Safari':J('#safari-connector-download-button').closest('li').detach().prependTo('#recommended-download > ul');break;case 'Firefox':J('#firefox-connector-message').closest('li').detach().prependTo('#recommended-download > ul');break;default:J('#connector-download-button').closest('li').detach().prependTo('#recommended-download > ul');J('#other-connectors-p').hide();}J('#recommended-download > ul').prepend('<li><p>Zotero Connectors allow you to save to Zotero directly from your web browser.</p></li>');Zotero.pages.user_register.init();}},index_download:{init:function init(){var browsername=BrowserDetect.browser;var os=BrowserDetect.OS;var arch=navigator.userAgent.indexOf('x86_64') != -1?'x86_64':'x86';if(os == 'Windows'){J('#standalone-windows-download-button').closest('li').clone().prependTo('#recommended-client-download ul');}else if(os == 'Mac'){J('#standalone-mac-download-button').closest('li').clone().prependTo('#recommended-client-download ul');}else if(os == 'Linux'){if(arch == 'x86_64'){J('#standalone-linux64-download-button').closest('li').clone().prependTo('#recommended-client-download ul');}else {J('#standalone-linux32-download-button').closest('li').clone().prependTo('#recommended-client-download ul');}}J("#recommended-connector-download").show();switch(browsername){case 'Chrome':J('#chrome-connector-download-button').addClass('recommended-download').closest('li').detach().prependTo('#recommended-connector-download ul');break;case 'Safari':J('#safari-connector-download-button').addClass('recommended-download').closest('li').detach().prependTo('#recommended-connector-download ul');break;case 'Firefox':J('#firefox-connector-download-button').addClass('recommended-download').closest('li').detach().prependTo('#recommended-connector-download ul');break;default:J('#connector-download-button').closest('li').clone().prependTo('#recommended-connector-download ul');J('#other-connectors-p').hide();}J('#recommended-download ul').prepend('<li><p>Zotero Connectors allow you to save to Zotero directly from your web browser.</p></li>');}},index_bookmarklet:{init:function init(){J(".bookmarklet-instructions").hide();var section=J("#bookmarklet-tabs li.selected").data('section');J("#" + section + '-bookmarklet-div').show();J("#bookmarklet-tabs li").on('click',function(e){Z.debug("bookmarklet tab clicked");J("#bookmarklet-tabs li.selected").removeClass('selected');J(this).addClass('selected');var section=J(this).data('section');Z.debug(section);J(".bookmarklet-instructions").hide();J("#" + section + '-bookmarklet-div').show();});}}}; // end zoterojs
