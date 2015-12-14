@@ -68,9 +68,8 @@ module.exports = function(grunt) {
 					//paths: ["static/css/reactComponentCSS"],
 					banner: '/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n'
 				},
-				files: {
-					"static/css/zotero-web-library.css": "static/css/zotero-web-library.less"
-				},
+				src:"static/css/zotero-web-library.less",
+				dest:"static/css/zotero-web-library.css",
 			}
 		},
 	});
