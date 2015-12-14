@@ -1,0 +1,5 @@
+/* ==== control panel ==== */
+/*override default bootstrap width */
+.navbar-form .form-control {
+    width: 100%;
+}

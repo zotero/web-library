@@ -1,3 +1,0 @@
-@import url("style.css");
-@import url("antiscreen.css") handheld;
-@import url("antiscreen.css") only screen and (max-device-width:480px);
