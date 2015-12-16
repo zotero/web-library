@@ -61,6 +61,7 @@ var FilterGuide = React.createClass({
 		Zotero.state.pushState();
 	},
 	render: function() {
+		var reactInstance = this;
 		var library = this.props.library;
 		var collectionNodes = null;
 		var tagNodes = null;
@@ -70,8 +71,8 @@ var FilterGuide = React.createClass({
 			var collection = library.collections.getCollection(this.state.collectionKey);
 			if(collection){
 				collectionNodes = (
-					<li className="filterguide-entry">
-						<a onClick={this.clearFilter} href="#" data-collectionkey={this.state.collectionKey}>
+					<li key={"collection_" + reactInstance.state.collectionKey} className="filterguide-entry">
+						<a onClick={reactInstance.clearFilter} href="#" data-collectionkey={reactInstance.state.collectionKey}>
 							<span className="glyphicons fonticon glyphicons-folder-open"></span>
 							<span className="filterguide-label">{collection.get('name')}</span>
 							<span className="glyphicons fonticon glyphicons-remove"></span>
@@ -80,11 +81,16 @@ var FilterGuide = React.createClass({
 				);
 			}
 		}
-		if(this.state.tags){
-			tagNodes = this.state.tags.map(function(tag){
+		
+		var tags = this.state.tags;
+		if(typeof tags == 'string'){
+			tags = [tags];
+		}
+		if(tags){
+			tagNodes = tags.map(function(tag){
 				return (
-					<li className="filterguide-entry">
-						<a onClick={this.clearFilter} href="#" data-tag={tag}>
+					<li key={"tag_" + tag} className="filterguide-entry">
+						<a onClick={reactInstance.clearFilter} href="#" data-tag={tag}>
 							<span className="glyphicons fonticon glyphicons-tag"></span>
 							<span className="filterguide-label">{tag}</span>
 							<span className="glyphicons fonticon glyphicons-remove"></span>
@@ -95,10 +101,10 @@ var FilterGuide = React.createClass({
 		}
 		if(this.state.query){
 			searchNodes = (
-				<li className="filterguide-entry">
-					<a onClick={this.clearFilter} href="#" data-query={this.state.query}>
+				<li key={"query_"+reactInstance.state.query} className="filterguide-entry">
+					<a onClick={reactInstance.clearFilter} href="#" data-query={reactInstance.state.query}>
 						<span className="glyphicons fonticon glyphicons-search"></span>
-						<span className="filterguide-label">{this.state.query}</span>
+						<span className="filterguide-label">{reactInstance.state.query}</span>
 						<span className="glyphicons fonticon glyphicons-remove"></span>
 					</a>
 				</li>

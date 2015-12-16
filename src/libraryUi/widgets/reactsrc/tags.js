@@ -24,17 +24,6 @@ var TagRow = React.createClass({
 		Z.state.toggleTag(tag.apiObj.tag);
 		Z.state.clearUrlVars(['tag', 'collectionKey']);
         Z.state.pushState();
-
-        var selectedTags = Zotero.state.getUrlVar('tag');
-        if(!J.isArray(selectedTags)){
-			if(selectedTags) {
-				selectedTags = [selectedTags];
-			}
-			else {
-				selectedTags = [];
-			}
-		}
-		Zotero.ui.widgets.reacttags.reactInstance.setState({selectedTags:selectedTags});
 	},
 	render: function() {
 		var tag = this.props.tag;
@@ -109,17 +98,7 @@ var Tags = React.createClass({
 		Zotero.ui.widgets.reacttags.reactInstance = reactInstance;
 
 		var tagColors = library.preferences.getPref("tagColors");
-		var selectedTags = Zotero.state.getUrlVar('tag');
-		if(!J.isArray(selectedTags)){
-			if(selectedTags) {
-				selectedTags = [selectedTags];
-			}
-			else {
-				selectedTags = [];
-			}
-		}
-		
-		reactInstance.setState({tagColors: tagColors, selectedTags:selectedTags});
+		reactInstance.setState({tagColors: tagColors});
 		
 		library.listen("tagsDirty", reactInstance.syncTags, {});
 		library.listen("cachedDataLoaded", reactInstance.syncTags, {});
@@ -131,6 +110,18 @@ var Tags = React.createClass({
 	},
 	handleFilterChanged: function(evt) {
 		this.setState({tagFilter: evt.target.value});
+	},
+	getSelectedTagsArray: function() {
+		var selectedTags = Zotero.state.getUrlVar('tag');
+        if(!J.isArray(selectedTags)){
+			if(selectedTags) {
+				selectedTags = [selectedTags];
+			}
+			else {
+				selectedTags = [];
+			}
+		}
+		return selectedTags;
 	},
 	syncTags: function(evt) {
 		Z.debug("Tags.syncTags");
@@ -164,8 +155,9 @@ var Tags = React.createClass({
 		return;
 	},
 	render: function() {
+		var reactInstance = this;
 		var tags = this.state.tags;
-		var selectedTagStrings = this.state.selectedTags;
+		var selectedTagStrings = reactInstance.getSelectedTagsArray();
 		var tagColors = this.state.tagColors;
 		if(tagColors === null){
 			tagColors = [];
