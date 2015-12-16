@@ -202,7 +202,7 @@ var UploadAttachmentDialog = React.createClass({
 										</tr>
 										<tr>
 											<th>Upload</th>
-											<td className="uploadprogress"><meter min="0" max="100" value="0" id="uploadprogressmeter" value={this.state.percentLoaded}></meter></td>
+											<td className="uploadprogress"><meter min="0" max="100" id="uploadprogressmeter" value={this.state.percentLoaded}></meter></td>
 										</tr>
 										</tbody>
 									</table>

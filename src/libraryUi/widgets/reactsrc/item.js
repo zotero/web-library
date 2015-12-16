@@ -358,7 +358,7 @@ var ItemField = React.createClass({
 	},
 	handleFocus: function(evt) {
 		Z.debug("focus on ItemField");
-		var field = J(evt.target).data('field');
+		var field = J(evt.currentTarget).data('field');
 		var creatorIndex = J(evt.target).data('creatorindex');
 		var tagIndex = J(evt.target).data('tagindex');
 		var edit = {
