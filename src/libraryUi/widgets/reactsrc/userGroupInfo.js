@@ -78,6 +78,7 @@ var GroupNugget = React.createClass({
 					</nav>
 					{manageLinks}
 					<table className="nugget-profile table">
+						<tbody>
 						<tr>
 							<th scope="row">Members</th>
 							<td>{memberCount}</td>
@@ -93,6 +94,7 @@ var GroupNugget = React.createClass({
 								{libAccess}
 							</td>
 						</tr>
+						</tbody>
 					</table>
 				</div>
 			</div>
@@ -125,7 +127,7 @@ var UserGroups = React.createClass({
 
 		var groupNuggets = groups.map(function(group){
 			return (
-				<GroupNugget group={group} />
+				<GroupNugget key={group.get('id')} group={group} />
 			);
 		});
 
