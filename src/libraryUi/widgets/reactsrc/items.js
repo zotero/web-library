@@ -112,11 +112,13 @@ var Items = React.createClass({
 				throw("Expected response to have loadedItems");
 			}
 			library.items.totalResults = response.totalResults;
+			var allLoaded = (response.totalResults == response.loadedItems.length);
 			reactInstance.setState({
 				items:response.loadedItems,
 				moreloading:false,
 				sort:newConfig.sort,
-				order:newConfig.order
+				order:newConfig.order,
+				allItemsLoaded:allLoaded
 			});
 		}).catch(function(response){
 			Z.error(response);
@@ -156,7 +158,7 @@ var Items = React.createClass({
 				throw("Expected response to have loadedItems");
 			}
 			var allitems = reactInstance.state.items.concat(response.loadedItems);
-			reactInstance.setState({items:allitems, moreloading:false})
+			reactInstance.setState({items:allitems, moreloading:false});
 
 			//see if we're displaying as many items as there are in results
 			var itemsDisplayed = allitems.length;
@@ -412,6 +414,11 @@ var Items = React.createClass({
 					</table>
 					<LoadingError errorLoading={this.state.errorLoading} />
 					<LoadingSpinner loading={this.state.moreloading} />
+					<div hidden={this.state.allItemsLoaded} id="load-more-items-div" className="row">
+						<button onClick={this.loadMoreItems} type="button" id="load-more-items-button" className="btn btn-default">
+							Load More Items
+						</button>
+					</div>
 				</form>
 			</div>
 		);
