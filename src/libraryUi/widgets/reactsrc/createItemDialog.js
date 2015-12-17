@@ -14,10 +14,7 @@ var CreateItemDialog = React.createClass({
 		var reactInstance = this;
 		var library = this.props.library;
 		library.listen("createItem", function(evt){
-			Z.debug("Opening createItem dialog");
-			Z.debug(evt);
 			var itemType = evt.data.itemType;
-			Z.debug(itemType);
 			reactInstance.setState({itemType: itemType});
 			reactInstance.openDialog();
 		}, {});
@@ -31,8 +28,7 @@ var CreateItemDialog = React.createClass({
 	handleTitleChange: function(evt) {
 		this.setState({'title': evt.target.value});
 	},
-	createItem: function(evt) {
-		evt.preventDefault();
+	createItem: function() {
 		var reactInstance = this;
 		var library = this.props.library;
 		var itemType = this.state.itemType;
@@ -44,20 +40,17 @@ var CreateItemDialog = React.createClass({
 		
 		var item = new Zotero.Item();
 		item.initEmpty(itemType).then(function(){
-			Z.debug("empty item initialized; associating with library and giving title");
 			item.associateWithLibrary(library);
-			Z.debug(1);
 			item.set('title', title);
-			Z.debug('2');
 			if(currentCollectionKey){
 				item.addToCollection(currentCollectionKey);
 			}
-			Z.debug("saving item");
 			return Zotero.ui.saveItem(item);
 		}).then(function(responses){
 			var itemKey = item.get('key');
 			Zotero.state.setUrlVar('itemKey', itemKey);
 			Zotero.state.pushState();
+			library.trigger("displayedItemsChanged");
 			reactInstance.closeDialog();
 		}).catch(function(error){
 			Zotero.error(error);
@@ -82,7 +75,7 @@ var CreateItemDialog = React.createClass({
 								<h3>Create Item</h3>
 							</div>
 							<div className="new-item-div modal-body" data-role="content">
-								<form onSubmit={this.createItem} method="POST">
+								<form method="POST">
 									<div data-role="fieldcontain">
 										<label htmlFor="new-item-title-input">Title</label>
 										<input onChange={this.handleTitleChange} id="new-item-title-input" className="new-item-title-input form-control" type="text" />
