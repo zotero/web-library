@@ -31,7 +31,8 @@ var CreateItemDialog = React.createClass({
 	handleTitleChange: function(evt) {
 		this.setState({'title': evt.target.value});
 	},
-	createItem: function() {
+	createItem: function(evt) {
+		evt.preventDefault();
 		var reactInstance = this;
 		var library = this.props.library;
 		var itemType = this.state.itemType;
@@ -81,7 +82,7 @@ var CreateItemDialog = React.createClass({
 								<h3>Create Item</h3>
 							</div>
 							<div className="new-item-div modal-body" data-role="content">
-								<form method="POST">
+								<form onSubmit={this.createItem} method="POST">
 									<div data-role="fieldcontain">
 										<label htmlFor="new-item-title-input">Title</label>
 										<input onChange={this.handleTitleChange} id="new-item-title-input" className="new-item-title-input form-control" type="text" />
