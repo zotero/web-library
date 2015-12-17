@@ -50,3 +50,7 @@
     margin-right:auto;
     width:100%;
 }
+
+.wide-items-table thead th{
+    background-color: #fff;
+}

@@ -264,20 +264,7 @@ var Items = React.createClass({
 		this.setState({selectedItemKeys: Zotero.state.getSelectedItemKeys(), allSelected:false});
 	},
 	fixTableHeaders: function() {
-		var tableEl = this.refs.itemsTable;
-		var tel = J(tableEl);
-		var colWidths = [];
-		tel.find("tbody tr").first().find("td").each(function(ind, th){
-			var width = J(th).width();
-			colWidths.push(width);
-			tel.find("thead th").eq(ind).width(width);
-		});
-
-		var bodyOffset = tel.find("thead").height();
-
-		tel.find("thead").css('position', 'fixed').css('margin-top', -bodyOffset).css('background-color', 'white').css('z-index', 10);
-		tel.find("tbody").css('margin-top', bodyOffset);
-		tel.css("margin-top", bodyOffset);
+		J(this.refs.itemsTable).floatThead();
 	},
 	handleSelectAllChange: function(evt) {
 		var library = this.props.library;
