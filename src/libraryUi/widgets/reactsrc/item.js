@@ -182,7 +182,7 @@ var ToggleCreatorFieldButton = React.createClass({
 
 		creators[creatorIndex] = creator;
 		Zotero.ui.saveItem(item);
-		Zotero.ui.widgets.reactitem.reactInstance.setState({item:item});
+		this.props.parentItemDetailsInstance.setState({item:item});
 	}
 });
 
@@ -213,7 +213,7 @@ var AddRemoveCreatorFieldButtons = React.createClass({
 		var creators = item.get('creators');
 		var newCreator = {creatorType:"author", firstName:"", lastName:""};
 		creators.splice(creatorIndex + 1, 0, newCreator);
-		Zotero.ui.widgets.reactitem.reactInstance.setState({
+		this.props.parentItemDetailsInstance.setState({
 			item:item,
 			edit: {
 				field:"lastName",
@@ -228,7 +228,7 @@ var AddRemoveCreatorFieldButtons = React.createClass({
 		var creators = item.get('creators');
 		creators.splice(creatorIndex, 1);
 		Zotero.ui.saveItem(item);
-		Zotero.ui.widgets.reactitem.reactInstance.setState({item:item});
+		this.props.parentItemDetailsInstance.setState({item:item});
 	}
 });
 
@@ -346,14 +346,14 @@ var ItemField = React.createClass({
 			default:
 				item.set(this.props.field, evt.target.value);
 		}
-		Zotero.ui.widgets.reactitem.reactInstance.setState({item:item});
+		this.props.parentItemDetailsInstance.setState({item:item});
 	},
 	handleBlur: function(evt) {
 		Z.debug("blur on ItemField");
 		//save item, move edit to next field
 		Z.debug("handleBlur");
 		this.handleChange(evt);
-		Zotero.ui.widgets.reactitem.reactInstance.setState({edit:null});
+		this.props.parentItemDetailsInstance.setState({edit:null});
 		Zotero.ui.saveItem(this.props.item);
 	},
 	handleFocus: function(evt) {
@@ -367,7 +367,7 @@ var ItemField = React.createClass({
 			tagIndex: tagIndex
 		};
 		Z.debug(edit);
-		Zotero.ui.widgets.reactitem.reactInstance.setState({
+		this.props.parentItemDetailsInstance.setState({
 			edit: edit
 		});
 	},
@@ -375,11 +375,8 @@ var ItemField = React.createClass({
 		Z.debug("ItemField checkKey");
 		evt.stopPropagation();
 		if (evt.keyCode === Zotero.ui.keyCode.ENTER){
-			Z.debug("ItemField checkKey enter");
-			Z.debug(evt);
 			//var nextEdit = Zotero.ui.widgets.reactitem.nextEditField(this.props.item, this.props.edit);
 			J(evt.target).blur();
-			//Zotero.ui.widgets.reactitem.reactInstance.setState({edit:nextEdit});
 		}
 	},
 	render: function(){
@@ -646,7 +643,7 @@ var TagListRow = React.createClass({
 		var tags = item.get('tags');
 		tags.splice(tagIndex, 1);
 		Zotero.ui.saveItem(item);
-		Zotero.ui.widgets.reactitem.reactInstance.setState({item:item});
+		this.props.parentItemDetailsInstance.setState({item:item});
 	},
 	render: function() {
 		//Z.debug("TagListRow render");
@@ -690,7 +687,7 @@ var ItemTagsPanel = React.createClass({
 			});
 			Zotero.ui.saveItem(item);
 			this.setState({newTagString:""});
-			Zotero.ui.widgets.reactitem.reactInstance.setState({item:item});
+			this.props.parentItemDetailsInstance.setState({item:item});
 		}
 	},
 	render: function() {
@@ -801,9 +798,7 @@ var ItemDetails = React.createClass({
 	componentWillMount: function() {
 		var reactInstance = this;
 		var library = this.props.library;
-		Zotero.ui.widgets.reactitem.reactInstance = reactInstance;
-		library.listen("displayedItemChanged modeChanged", reactInstance.loadItem, {});
-		//library.listen("itemTypeChanged", Zotero.ui.widgets.reactitem.itemTypeChanged, {widgetEl:el});
+		library.listen("displayedItemChanged", reactInstance.loadItem, {});
 		library.listen("uploadSuccessful", reactInstance.refreshChildren, {});
 		
 		library.listen("tagsChanged", reactInstance.updateTypeahead, {});
@@ -1009,6 +1004,7 @@ var ItemDetails = React.createClass({
 	},
 	render: function() {
 		Z.debug("ItemDetails render");
+		var reactInstance = this;
 		var library = this.props.library;
 		var item = this.state.item;
 		var childItems = this.state.childItems;
@@ -1023,9 +1019,10 @@ var ItemDetails = React.createClass({
 						loading={this.state.itemLoading}
 						libraryItemsLoaded={this.state.libraryItemsLoaded} 
 						edit={this.state.edit}
+						parentItemDetailsInstance={reactInstance}
 					/>
-					<ItemChildrenPanel library={library} childItems={childItems} loading={this.state.childrenLoading} />
-					<ItemTagsPanel library={library} item={item} edit={this.state.edit} />
+					<ItemChildrenPanel parentItemDetailsInstance={reactInstance} library={library} childItems={childItems} loading={this.state.childrenLoading} />
+					<ItemTagsPanel parentItemDetailsInstance={reactInstance} library={library} item={item} edit={this.state.edit} />
 				</div>
 			</div>
 		);

@@ -95,8 +95,6 @@ var Tags = React.createClass({
 	componentWillMount: function(evt) {
 		var reactInstance = this;
 		var library = this.props.library;
-		Zotero.ui.widgets.reacttags.reactInstance = reactInstance;
-
 		var tagColors = library.preferences.getPref("tagColors");
 		reactInstance.setState({tagColors: tagColors});
 		

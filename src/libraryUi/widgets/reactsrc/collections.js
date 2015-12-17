@@ -22,8 +22,7 @@ var CollectionRow = React.createClass({
 		evt.preventDefault();
 		var collectionKey = this.props.collection.get('collectionKey');
 		//if current collect
-		Zotero.ui.widgets.reactcollections.reactInstance.setState({currentCollectionKey:collectionKey});
-		Zotero.state.clearUrlVars(['mode']);
+		Zotero.state.clearUrlVars();
 		Zotero.state.pathVars['collectionKey'] = collectionKey;
 		Zotero.state.pushState();
 	},
@@ -38,7 +37,7 @@ var CollectionRow = React.createClass({
 		} else {
 			exp[collectionKey] = true;
 		}
-		Zotero.ui.widgets.reactcollections.reactInstance.setState({expandedCollections:exp});
+		this.props.parentCollectionsInstance.setState({expandedCollections:exp});
 		
 	},
 	render: function() {
@@ -102,7 +101,7 @@ var TrashRow = React.createClass({
 		};
 	},
 	handleClick: function() {
-		Zotero.state.clearUrlVars(['mode']);
+		Zotero.state.clearUrlVars();
 		Zotero.state.pathVars['collectionKey'] = this.props.collectionKey;
 		Zotero.state.pushState();
 	},
@@ -137,11 +136,16 @@ var Collections = React.createClass({
 	componentWillMount: function() {
 		var reactInstance = this;
 		var library = this.props.library;
-		Zotero.ui.widgets.reactcollections.reactInstance = reactInstance;
+		
 		library.listen("collectionsDirty", reactInstance.syncCollections, {});
 		library.listen("libraryCollectionsUpdated", function(){
 			reactInstance.setState({collections:library.collections});
 		}, {});
+		library.listen("selectedCollectionChanged", function(){
+			var collectionKey = Zotero.state.getUrlVar('collectionKey');
+			reactInstance.setState({currentCollectionKey:collectionKey});
+		}, {});
+		
 		library.listen("cachedDataLoaded", reactInstance.syncCollections, {});
 	},
 	returnToLibrary: function(evt) {
@@ -178,6 +182,7 @@ var Collections = React.createClass({
 	},
 	render: function() {
 		Z.debug("Collections render");
+		var reactInstance = this;
 		var library = this.props.library;
 		var collections = this.state.collections;
 		if(collections == null){
@@ -217,7 +222,8 @@ var Collections = React.createClass({
 					key={collection.get('key')}
 					collection={collection}
 					selectedCollection={currentCollectionKey}
-					expandedCollections={expandedCollections} />
+					expandedCollections={expandedCollections}
+					parentCollectionsInstance={reactInstance} />
 				);
 			}
 		});

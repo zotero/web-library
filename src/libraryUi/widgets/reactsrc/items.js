@@ -76,7 +76,6 @@ var Items = React.createClass({
 		
 		library.listen("loadMoreItems", reactInstance.loadMoreItems, {});
 		library.trigger("displayedItemsChanged");
-		Zotero.ui.widgets.reactitems.reactInstance = reactInstance;
 	},
 	getDefaultProps: function() {
 		return {
@@ -373,6 +372,8 @@ var Items = React.createClass({
 		var itemRows = this.state.items.map(function(item){
 			var selected = selectedItemKeyMap.hasOwnProperty(item.get('key')) ? true : false;
 			var p = {
+				itemsReactInstance: reactInstance,
+				library:library,
 				key: item.get("key"),
 				item: item,
 				selected: selected,
@@ -435,9 +436,7 @@ var ItemRow = React.createClass({
 		var itemKey = this.props.item.get('key');
 		Zotero.state.toggleItemSelected(itemKey);
 		var selected = Zotero.state.getSelectedItemKeys();
-		
-		Zotero.ui.widgets.reactitems.reactInstance.setState({selectedItemKeys:selected});
-		Zotero.ui.widgets.reactitems.reactInstance.props.library.trigger("selectedItemsChanged", {selectedItemKeys: selected});
+		library.trigger("selectedItemsChanged", {selectedItemKeys: selected});
 	},
 	handleItemLinkClick: function(evt) {
 		evt.preventDefault();
