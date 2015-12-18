@@ -29,7 +29,7 @@
 }
 */
 #library-items-div th.clickable:hover {
-    background-color: rgba(51,136,204,0.2);
+    background-color: rgba(102, 187, 255, 1);
 }
 
 #library-items-div div.no-results-message {

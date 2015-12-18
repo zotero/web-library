@@ -241,7 +241,7 @@ var ReactZoteroLibrary = React.createClass({
 				
 				<div id="right-panel" hidden={!rightPanelVisible} className="panelcontainer-panelcontainer col-xs-12 col-sm-8 col-md-9">
 					<div hidden={!itemsPanelVisible} ref="itemsPanel" id="items-panel" className="panelcontainer-panel col-sm-12 col-md-7">
-						<div className="visible-xs">
+						<div className="visible-xs library-search-box-container">
 							<LibrarySearchBox library={library} />
 						</div>
 						<Items ref="itemsWidget" library={library} narrow={narrow} />
