@@ -264,20 +264,16 @@ var Items = React.createClass({
 		this.setState({selectedItemKeys: Zotero.state.getSelectedItemKeys(), allSelected:false});
 	},
 	fixTableHeaders: function() {
-		var tableEl = this.refs.itemsTable;
-		var tel = J(tableEl);
-		var colWidths = [];
-		tel.find("tbody tr").first().find("td").each(function(ind, th){
-			var width = J(th).width();
-			colWidths.push(width);
-			tel.find("thead th").eq(ind).width(width);
-		});
-
-		var bodyOffset = tel.find("thead").height();
-
-		tel.find("thead").css('position', 'fixed').css('margin-top', -bodyOffset).css('background-color', 'white').css('z-index', 10);
-		tel.find("tbody").css('margin-top', bodyOffset);
-		tel.css("margin-top", bodyOffset);
+		if(J("body").hasClass('lib-body')) {
+			var tableEl = J(this.refs.itemsTable);
+			tableEl.floatThead({
+				top: function() {
+					var searchContainerEl = J('.library-search-box-container:visible');
+					var primaryNavEl = J('#primarynav');
+					return searchContainerEl.height() ? primaryNavEl.height() + searchContainerEl.height() + 'px' : 0;
+				}
+			});
+		}
 	},
 	handleSelectAllChange: function(evt) {
 		var library = this.props.library;
@@ -309,9 +305,7 @@ var Items = React.createClass({
 		library.trigger("chooseSortingDialog");
 	},
 	nonreactBind: function() {
-		if(J("body").hasClass('lib-body')){
-			this.fixTableHeaders(J("#field-table"));
-		}
+		this.fixTableHeaders();
 	},
 	componentDidMount: function() {
 		var reactInstance = this;

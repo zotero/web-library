@@ -46,6 +46,7 @@ module.exports = function(grunt) {
 					"src/libraryUi/widgets/localItems.js",
 					"src/libraryUi/widgets/siteSearch.js",
 					"src/libraryUi/widgets/publications.js",
+					"node_modules/floatthead/dist/jquery.floatThead.js",
 					"src/libraryUi/widgets/reactsrc/*",
 					"src/_zoteroLibraryUrl.js",
 					"src/zoteroPages.js",

@@ -29,7 +29,7 @@
 }
 */
 #library-items-div th.clickable:hover {
-    background-color: rgba(51,136,204,0.2);
+    background-color: rgba(102, 187, 255, 1);
 }
 
 #library-items-div div.no-results-message {
@@ -49,4 +49,8 @@
     margin-left:auto;
     margin-right:auto;
     width:100%;
+}
+
+.wide-items-table thead th{
+    background-color: #fff;
 }
