@@ -41,14 +41,14 @@ var ExportItemsDialog = React.createClass({
 			var exportUrl = exportUrls[key];
 			return (
 				<li key={key}>
-					<a href={exportUrl} target="_blank" className="export-link" data-exportformat={key}>{Zotero.config.exportFormatsMap[key]}</a>
+					<a href={exportUrl} target="_blank" className="export-link" title={key} data-exportformat={key}>{Zotero.config.exportFormatsMap[key]}</a>
 				</li>
 			);
 		});
 		
 		return (
 			<BootstrapModalWrapper ref="modal">
-				<div id="export-items-dialog" className="export-items-dialog" role="dialog" title="Library Settings" data-keyboard="true">
+				<div id="export-items-dialog" className="export-items-dialog" role="dialog" title="Export" data-keyboard="true">
 					<div  className="modal-dialog">
 						<div className="modal-content">
 							<div className="modal-header">

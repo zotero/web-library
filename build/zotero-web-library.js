@@ -1,5 +1,425 @@
-"use strict";function _typeof2(obj){return obj&&typeof Symbol!=="undefined"&&obj.constructor===Symbol?"symbol":typeof obj;}function _typeof(obj){return obj&&typeof Symbol!=="undefined"&&obj.constructor===Symbol?"symbol":typeof obj==="undefined"?"undefined":_typeof2(obj);}!(function(){var a,b,c,d;!(function(){var e={},f={};a=function(a,b,c){e[a]={deps:b,callback:c};},d=c=b=function(a){function c(b){if("."!==b.charAt(0))return b;for(var c=b.split("/"),d=a.split("/").slice(0,-1),e=0,f=c.length;f>e;e++){var g=c[e];if(".."===g)d.pop();else {if("."===g)continue;d.push(g);}}return d.join("/");}if((d._eak_seen=e,f[a]))return f[a];if((f[a]={},!e[a]))throw new Error("Could not find module "+a);for(var g,h=e[a],i=h.deps,j=h.callback,k=[],l=0,m=i.length;m>l;l++){"exports"===i[l]?k.push(g={}):k.push(b(c(i[l])));}var n=j.apply(this,k);return f[a]=g||n;};})(),a("promise/all",["./utils","exports"],function(a,b){"use strict";function c(a){var b=this;if(!d(a))throw new TypeError("You must pass an array to all.");return new b(function(b,c){function d(a){return function(b){f(a,b);};}function f(a,c){h[a]=c,0===--i&&b(h);}var g,h=[],i=a.length;0===i&&b([]);for(var j=0;j<a.length;j++){g=a[j],g&&e(g.then)?g.then(d(j),c):f(j,g);}});}var d=a.isArray,e=a.isFunction;b.all=c;}),a("promise/asap",["exports"],function(a){"use strict";function b(){return function(){process.nextTick(e);};}function c(){var a=0,b=new i(e),c=document.createTextNode("");return b.observe(c,{characterData:!0}),function(){c.data=a=++a%2;};}function d(){return function(){j.setTimeout(e,1);};}function e(){for(var a=0;a<k.length;a++){var b=k[a],c=b[0],d=b[1];c(d);}k=[];}function f(a,b){var c=k.push([a,b]);1===c&&g();}var g,h="undefined"!=typeof window?window:{},i=h.MutationObserver||h.WebKitMutationObserver,j="undefined"!=typeof global?global:this,k=[];g="undefined"!=typeof process&&"[object process]"===({}).toString.call(process)?b():i?c():d(),a.asap=f;}),a("promise/cast",["exports"],function(a){"use strict";function b(a){if(a&&"object"==(typeof a==="undefined"?"undefined":_typeof(a))&&a.constructor===this)return a;var b=this;return new b(function(b){b(a);});}a.cast=b;}),a("promise/config",["exports"],function(a){"use strict";function b(a,b){return 2!==arguments.length?c[a]:(c[a]=b,void 0);}var c={instrument:!1};a.config=c,a.configure=b;}),a("promise/polyfill",["./promise","./utils","exports"],function(a,b,c){"use strict";function d(){var a="Promise" in window&&"cast" in window.Promise&&"resolve" in window.Promise&&"reject" in window.Promise&&"all" in window.Promise&&"race" in window.Promise&&(function(){var a;return new window.Promise(function(b){a=b;}),f(a);})();a||(window.Promise=e);}var e=a.Promise,f=b.isFunction;c.polyfill=d;}),a("promise/promise",["./config","./utils","./cast","./all","./race","./resolve","./reject","./asap","exports"],function(a,b,c,d,e,f,g,h,i){"use strict";function j(a){if(!w(a))throw new TypeError("You must pass a resolver function as the first argument to the promise constructor");if(!(this instanceof j))throw new TypeError("Failed to construct 'Promise': Please use the 'new' operator, this object constructor cannot be called as a function.");this._subscribers=[],k(a,this);}function k(a,b){function c(a){p(b,a);}function d(a){r(b,a);}try{a(c,d);}catch(e) {d(e);}}function l(a,b,c,d){var e,f,g,h,i=w(c);if(i)try{e=c(d),g=!0;}catch(j) {h=!0,f=j;}else e=d,g=!0;o(b,e)||(i&&g?p(b,e):h?r(b,f):a===F?p(b,e):a===G&&r(b,e));}function m(a,b,c,d){var e=a._subscribers,f=e.length;e[f]=b,e[f+F]=c,e[f+G]=d;}function n(a,b){for(var c,d,e=a._subscribers,f=a._detail,g=0;g<e.length;g+=3){c=e[g],d=e[g+b],l(b,c,d,f);}a._subscribers=null;}function o(a,b){var c,d=null;try{if(a===b)throw new TypeError("A promises callback cannot return that same promise.");if(v(b)&&(d=b.then,w(d)))return d.call(b,function(d){return c?!0:(c=!0,b!==d?p(a,d):q(a,d),void 0);},function(b){return c?!0:(c=!0,r(a,b),void 0);}),!0;}catch(e) {return c?!0:(r(a,e),!0);}return !1;}function p(a,b){a===b?q(a,b):o(a,b)||q(a,b);}function q(a,b){a._state===D&&(a._state=E,a._detail=b,u.async(s,a));}function r(a,b){a._state===D&&(a._state=E,a._detail=b,u.async(t,a));}function s(a){n(a,a._state=F);}function t(a){n(a,a._state=G);}var u=a.config,v=(a.configure,b.objectOrFunction),w=b.isFunction,x=(b.now,c.cast),y=d.all,z=e.race,A=f.resolve,B=g.reject,C=h.asap;u.async=C;var D=void 0,E=0,F=1,G=2;j.prototype={constructor:j,_state:void 0,_detail:void 0,_subscribers:void 0,then:function then(a,b){var c=this,d=new this.constructor(function(){});if(this._state){var e=arguments;u.async(function(){l(c._state,d,e[c._state-1],c._detail);});}else m(this,d,a,b);return d;},"catch":function _catch(a){return this.then(null,a);}},j.all=y,j.cast=x,j.race=z,j.resolve=A,j.reject=B,i.Promise=j;}),a("promise/race",["./utils","exports"],function(a,b){"use strict";function c(a){var b=this;if(!d(a))throw new TypeError("You must pass an array to race.");return new b(function(b,c){for(var d,e=0;e<a.length;e++){d=a[e],d&&"function"==typeof d.then?d.then(b,c):b(d);}});}var d=a.isArray;b.race=c;}),a("promise/reject",["exports"],function(a){"use strict";function b(a){var b=this;return new b(function(b,c){c(a);});}a.reject=b;}),a("promise/resolve",["exports"],function(a){"use strict";function b(a){var b=this;return new b(function(b){b(a);});}a.resolve=b;}),a("promise/utils",["exports"],function(a){"use strict";function b(a){return c(a)||"object"==(typeof a==="undefined"?"undefined":_typeof(a))&&null!==a;}function c(a){return "function"==typeof a;}function d(a){return "[object Array]"===Object.prototype.toString.call(a);}var e=Date.now||function(){return new Date().getTime();};a.objectOrFunction=b,a.isFunction=c,a.isArray=d,a.now=e;}),b("promise/polyfill").polyfill();})();"use strict";function _typeof(obj){return obj&&typeof Symbol!=="undefined"&&obj.constructor===Symbol?"symbol":typeof obj==="undefined"?"undefined":_typeof2(obj);}(function(a){if((typeof exports==="undefined"?"undefined":_typeof(exports))==="object"){module.exports=a();}else {if(typeof define==="function"&&define.amd){define(a);}else {var c;try{c=window;}catch(b) {c=self;}c.SparkMD5=a();}}})(function(c){var e=function e(s,r){return s+r&4294967295;},n=function n(z,v,u,r,y,w){v=e(e(v,z),e(r,w));return e(v<<y|v>>>32-y,u);},a=function a(v,u,A,z,r,y,w){return n(u&A|~u&z,v,u,r,y,w);},k=function k(v,u,A,z,r,y,w){return n(u&z|A&~z,v,u,r,y,w);},f=function f(v,u,A,z,r,y,w){return n(u^A^z,v,u,r,y,w);},p=function p(v,u,A,z,r,y,w){return n(A^(u|~z),v,u,r,y,w);},d=function d(s,u){var t=s[0],r=s[1],w=s[2],v=s[3];t=a(t,r,w,v,u[0],7,-680876936);v=a(v,t,r,w,u[1],12,-389564586);w=a(w,v,t,r,u[2],17,606105819);r=a(r,w,v,t,u[3],22,-1044525330);t=a(t,r,w,v,u[4],7,-176418897);v=a(v,t,r,w,u[5],12,1200080426);w=a(w,v,t,r,u[6],17,-1473231341);r=a(r,w,v,t,u[7],22,-45705983);t=a(t,r,w,v,u[8],7,1770035416);v=a(v,t,r,w,u[9],12,-1958414417);w=a(w,v,t,r,u[10],17,-42063);r=a(r,w,v,t,u[11],22,-1990404162);t=a(t,r,w,v,u[12],7,1804603682);v=a(v,t,r,w,u[13],12,-40341101);w=a(w,v,t,r,u[14],17,-1502002290);r=a(r,w,v,t,u[15],22,1236535329);t=k(t,r,w,v,u[1],5,-165796510);v=k(v,t,r,w,u[6],9,-1069501632);w=k(w,v,t,r,u[11],14,643717713);r=k(r,w,v,t,u[0],20,-373897302);t=k(t,r,w,v,u[5],5,-701558691);v=k(v,t,r,w,u[10],9,38016083);w=k(w,v,t,r,u[15],14,-660478335);r=k(r,w,v,t,u[4],20,-405537848);t=k(t,r,w,v,u[9],5,568446438);v=k(v,t,r,w,u[14],9,-1019803690);w=k(w,v,t,r,u[3],14,-187363961);r=k(r,w,v,t,u[8],20,1163531501);t=k(t,r,w,v,u[13],5,-1444681467);v=k(v,t,r,w,u[2],9,-51403784);w=k(w,v,t,r,u[7],14,1735328473);r=k(r,w,v,t,u[12],20,-1926607734);t=f(t,r,w,v,u[5],4,-378558);v=f(v,t,r,w,u[8],11,-2022574463);w=f(w,v,t,r,u[11],16,1839030562);r=f(r,w,v,t,u[14],23,-35309556);t=f(t,r,w,v,u[1],4,-1530992060);v=f(v,t,r,w,u[4],11,1272893353);w=f(w,v,t,r,u[7],16,-155497632);r=f(r,w,v,t,u[10],23,-1094730640);t=f(t,r,w,v,u[13],4,681279174);v=f(v,t,r,w,u[0],11,-358537222);w=f(w,v,t,r,u[3],16,-722521979);r=f(r,w,v,t,u[6],23,76029189);t=f(t,r,w,v,u[9],4,-640364487);v=f(v,t,r,w,u[12],11,-421815835);w=f(w,v,t,r,u[15],16,530742520);r=f(r,w,v,t,u[2],23,-995338651);t=p(t,r,w,v,u[0],6,-198630844);v=p(v,t,r,w,u[7],10,1126891415);w=p(w,v,t,r,u[14],15,-1416354905);r=p(r,w,v,t,u[5],21,-57434055);t=p(t,r,w,v,u[12],6,1700485571);v=p(v,t,r,w,u[3],10,-1894986606);w=p(w,v,t,r,u[10],15,-1051523);r=p(r,w,v,t,u[1],21,-2054922799);t=p(t,r,w,v,u[8],6,1873313359);v=p(v,t,r,w,u[15],10,-30611744);w=p(w,v,t,r,u[6],15,-1560198380);r=p(r,w,v,t,u[13],21,1309151649);t=p(t,r,w,v,u[4],6,-145523070);v=p(v,t,r,w,u[11],10,-1120210379);w=p(w,v,t,r,u[2],15,718787259);r=p(r,w,v,t,u[9],21,-343485551);s[0]=e(t,s[0]);s[1]=e(r,s[1]);s[2]=e(w,s[2]);s[3]=e(v,s[3]);},q=function q(t){var u=[],r;for(r=0;r<64;r+=4){u[r>>2]=t.charCodeAt(r)+(t.charCodeAt(r+1)<<8)+(t.charCodeAt(r+2)<<16)+(t.charCodeAt(r+3)<<24);}return u;},m=function m(r){var t=[],s;for(s=0;s<64;s+=4){t[s>>2]=r[s]+(r[s+1]<<8)+(r[s+2]<<16)+(r[s+3]<<24);}return t;},l=function l(A){var u=A.length,r=[1732584193,-271733879,-1732584194,271733878],w,t,z,x,y,v;for(w=64;w<=u;w+=64){d(r,q(A.substring(w-64,w)));}A=A.substring(w-64);t=A.length;z=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];for(w=0;w<t;w+=1){z[w>>2]|=A.charCodeAt(w)<<(w%4<<3);}z[w>>2]|=128<<(w%4<<3);if(w>55){d(r,z);for(w=0;w<16;w+=1){z[w]=0;}}x=u*8;x=x.toString(16).match(/(.*?)(.{0,8})$/);y=parseInt(x[2],16);v=parseInt(x[1],16)||0;z[14]=y;z[15]=v;d(r,z);return r;},o=function o(z){var t=z.length,r=[1732584193,-271733879,-1732584194,271733878],v,s,y,w,x,u;for(v=64;v<=t;v+=64){d(r,m(z.subarray(v-64,v)));}z=v-64<t?z.subarray(v-64):new Uint8Array(0);s=z.length;y=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];for(v=0;v<s;v+=1){y[v>>2]|=z[v]<<(v%4<<3);}y[v>>2]|=128<<(v%4<<3);if(v>55){d(r,y);for(v=0;v<16;v+=1){y[v]=0;}}w=t*8;w=w.toString(16).match(/(.*?)(.{0,8})$/);x=parseInt(w[2],16);u=parseInt(w[1],16)||0;y[14]=x;y[15]=u;d(r,y);return r;},j=["0","1","2","3","4","5","6","7","8","9","a","b","c","d","e","f"],h=function h(u){var t="",r;for(r=0;r<4;r+=1){t+=j[u>>r*8+4&15]+j[u>>r*8&15];}return t;},b=function b(r){var s;for(s=0;s<r.length;s+=1){r[s]=h(r[s]);}return r.join("");},i=function i(r){return b(l(r));},g=function g(){this.reset();};if(i("hello")!=="5d41402abc4b2a76b9719d911017c592"){e=function(r,u){var t=(r&65535)+(u&65535),s=(r>>16)+(u>>16)+(t>>16);return s<<16|t&65535;};}g.prototype.append=function(r){if(/[\u0080-\uFFFF]/.test(r)){r=unescape(encodeURIComponent(r));}this.appendBinary(r);return this;};g.prototype.appendBinary=function(t){this._buff+=t;this._length+=t.length;var s=this._buff.length,r;for(r=64;r<=s;r+=64){d(this._state,q(this._buff.substring(r-64,r)));}this._buff=this._buff.substr(r-64);return this;};g.prototype.end=function(t){var w=this._buff,v=w.length,u,s=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],r;for(u=0;u<v;u+=1){s[u>>2]|=w.charCodeAt(u)<<(u%4<<3);}this._finish(s,v);r=!!t?this._state:b(this._state);this.reset();return r;};g.prototype._finish=function(s,w){var u=w,t,v,r;s[u>>2]|=128<<(u%4<<3);if(u>55){d(this._state,s);for(u=0;u<16;u+=1){s[u]=0;}}t=this._length*8;t=t.toString(16).match(/(.*?)(.{0,8})$/);v=parseInt(t[2],16);r=parseInt(t[1],16)||0;s[14]=v;s[15]=r;d(this._state,s);};g.prototype.reset=function(){this._buff="";this._length=0;this._state=[1732584193,-271733879,-1732584194,271733878];return this;};g.prototype.destroy=function(){delete this._state;delete this._buff;delete this._length;};g.hash=function(t,r){if(/[\u0080-\uFFFF]/.test(t)){t=unescape(encodeURIComponent(t));}var s=l(t);return !!r?s:b(s);};g.hashBinary=function(s,r){var t=l(s);return !!r?t:b(t);};g.ArrayBuffer=function(){this.reset();};g.ArrayBuffer.prototype.append=function(r){var u=this._concatArrayBuffer(this._buff,r),t=u.length,s;this._length+=r.byteLength;for(s=64;s<=t;s+=64){d(this._state,m(u.subarray(s-64,s)));}this._buff=s-64<t?u.subarray(s-64):new Uint8Array(0);return this;};g.ArrayBuffer.prototype.end=function(t){var w=this._buff,v=w.length,s=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],u,r;for(u=0;u<v;u+=1){s[u>>2]|=w[u]<<(u%4<<3);}this._finish(s,v);r=!!t?this._state:b(this._state);this.reset();return r;};g.ArrayBuffer.prototype._finish=g.prototype._finish;g.ArrayBuffer.prototype.reset=function(){this._buff=new Uint8Array(0);this._length=0;this._state=[1732584193,-271733879,-1732584194,271733878];return this;};g.ArrayBuffer.prototype.destroy=g.prototype.destroy;g.ArrayBuffer.prototype._concatArrayBuffer=function(u,s){var t=u.length,r=new Uint8Array(t+s.byteLength);r.set(u);r.set(new Uint8Array(s),t);return r;};g.ArrayBuffer.hash=function(r,s){var t=o(new Uint8Array(r));return !!s?t:b(t);};return g;});'use strict'; //'use strict';
-var J=jQuery.noConflict();var Zotero={ajax:{},callbacks:{},ui:{callbacks:{},keyCode:{BACKSPACE:8,COMMA:188,DELETE:46,DOWN:40,END:35,ENTER:13,ESCAPE:27,HOME:36,LEFT:37,PAGE_DOWN:34,PAGE_UP:33,PERIOD:190,RIGHT:39,SPACE:32,TAB:9,UP:38}},url:{},utils:{},offline:{},temp:{},localizations:{},config:{librarySettings:{},baseApiUrl:'https://apidev.zotero.org',baseWebsiteUrl:'https://test.zotero.net',baseFeedUrl:'https://apidev.zotero.org',baseZoteroWebsiteUrl:'https://test.zotero.net',baseDownloadUrl:'https://test.zotero.net',nonparsedBaseUrl:"",debugLogEndpoint:'',storeDebug:true,directDownloads:true,proxyPath:'/proxyrequest',ignoreLoggedInStatus:false,storePrefsRemote:true,preferUrlItem:true,sessionAuth:false,proxy:false,apiKey:'',apiVersion:3,locale:'en-US',cacheStoreType:'localStorage',preloadCachedLibrary:true,sortOrdering:{'dateAdded':'desc','dateModified':'desc','date':'desc','year':'desc','accessDate':'desc','title':'asc','creator':'asc'},defaultSortColumn:'title',defaultSortOrder:'asc',largeFields:{'title':1,'abstractNote':1,'extra':1},richTextFields:{'note':1},maxFieldSummaryLength:{title:60},exportFormats:['bibtex','bookmarks','mods','refer','rdf_bibliontology','rdf_dc','rdf_zotero','ris','wikipedia'],exportFormatsMap:{'bibtex':'BibTeX','bookmarks':'Bookmarks','mods':'MODS','refer':'Refer/BibIX','rdf_bibliontology':'Bibliontology RDF','rdf_dc':'Unqualified Dublin Core RDF','rdf_zotero':'Zotero RDF','ris':'RIS','wikipedia':'Wikipedia Citation Templates'},defaultApiArgs:{'order':'title','sort':'asc','limit':50,'start':0}},debug:function debug(debugstring,level){var prefLevel=3;if(Zotero.config.storeDebug){if(level<=prefLevel){Zotero.debugstring+="DEBUG:"+debugstring+"\n";}}if(typeof console=='undefined'){return;}if(typeof level!=="number"){level=1;}if(Zotero.preferences!==undefined){prefLevel=Zotero.preferences.getPref('debug_level');}if(level<=prefLevel){console.log(debugstring);}},warn:function warn(warnstring){if(Zotero.config.storeDebug){Zotero.debugstring+="WARN:"+warnstring+"\n";}if(typeof console=='undefined'||typeof console.warn=='undefined'){this.debug(warnstring);}else {console.warn(warnstring);}},error:function error(errorstring){if(Zotero.config.storeDebug){Zotero.debugstring+="ERROR:"+errorstring+"\n";}if(typeof console=='undefined'||typeof console.error=='undefined'){this.debug(errorstring);}else {console.error(errorstring);}},submitDebugLog:function submitDebugLog(){Zotero.net.ajax({url:Zotero.config.debugLogEndpoint,data:{'debug_string':Zotero.debugstring}}).then(function(xhr){var data=JSON.parse(xhr.responseText);if(data.logID){alert("ZoteroWWW debug logID:"+data.logID);}else if(data.error){alert("Error submitting ZoteroWWW debug log:"+data.error);}});},catchPromiseError:function catchPromiseError(err){Zotero.error(err);},libraries:{},validator:{patterns:{ //'itemKey': /^([A-Z0-9]{8,},?)+$/,
+'use strict';function _typeof2(obj){return obj&&typeof Symbol!=="undefined"&&obj.constructor===Symbol?"symbol":typeof obj;}function _typeof(obj){return obj&&typeof Symbol!=="undefined"&&obj.constructor===Symbol?"symbol":typeof obj==="undefined"?"undefined":_typeof2(obj);} /*!
+ * @overview es6-promise - a tiny implementation of Promises/A+.
+ * @copyright Copyright (c) 2014 Yehuda Katz, Tom Dale, Stefan Penner and contributors (Conversion to ES6 API by Jake Archibald)
+ * @license   Licensed under MIT license
+ *            See https://raw.githubusercontent.com/jakearchibald/es6-promise/master/LICENSE
+ * @version   3.0.2
+ */(function(){"use strict";function lib$es6$promise$utils$$objectOrFunction(x){return typeof x==='function'||(typeof x==='undefined'?'undefined':_typeof(x))==='object'&&x!==null;}function lib$es6$promise$utils$$isFunction(x){return typeof x==='function';}function lib$es6$promise$utils$$isMaybeThenable(x){return (typeof x==='undefined'?'undefined':_typeof(x))==='object'&&x!==null;}var lib$es6$promise$utils$$_isArray;if(!Array.isArray){lib$es6$promise$utils$$_isArray=function lib$es6$promise$utils$$_isArray(x){return Object.prototype.toString.call(x)==='[object Array]';};}else {lib$es6$promise$utils$$_isArray=Array.isArray;}var lib$es6$promise$utils$$isArray=lib$es6$promise$utils$$_isArray;var lib$es6$promise$asap$$len=0;var lib$es6$promise$asap$$toString=({}).toString;var lib$es6$promise$asap$$vertxNext;var lib$es6$promise$asap$$customSchedulerFn;var lib$es6$promise$asap$$asap=function asap(callback,arg){lib$es6$promise$asap$$queue[lib$es6$promise$asap$$len]=callback;lib$es6$promise$asap$$queue[lib$es6$promise$asap$$len+1]=arg;lib$es6$promise$asap$$len+=2;if(lib$es6$promise$asap$$len===2){ // If len is 2, that means that we need to schedule an async flush.
+// If additional callbacks are queued before the queue is flushed, they
+// will be processed by this flush that we are scheduling.
+if(lib$es6$promise$asap$$customSchedulerFn){lib$es6$promise$asap$$customSchedulerFn(lib$es6$promise$asap$$flush);}else {lib$es6$promise$asap$$scheduleFlush();}}};function lib$es6$promise$asap$$setScheduler(scheduleFn){lib$es6$promise$asap$$customSchedulerFn=scheduleFn;}function lib$es6$promise$asap$$setAsap(asapFn){lib$es6$promise$asap$$asap=asapFn;}var lib$es6$promise$asap$$browserWindow=typeof window!=='undefined'?window:undefined;var lib$es6$promise$asap$$browserGlobal=lib$es6$promise$asap$$browserWindow||{};var lib$es6$promise$asap$$BrowserMutationObserver=lib$es6$promise$asap$$browserGlobal.MutationObserver||lib$es6$promise$asap$$browserGlobal.WebKitMutationObserver;var lib$es6$promise$asap$$isNode=typeof process!=='undefined'&&({}).toString.call(process)==='[object process]'; // test for web worker but not in IE10
+var lib$es6$promise$asap$$isWorker=typeof Uint8ClampedArray!=='undefined'&&typeof importScripts!=='undefined'&&typeof MessageChannel!=='undefined'; // node
+function lib$es6$promise$asap$$useNextTick(){ // node version 0.10.x displays a deprecation warning when nextTick is used recursively
+// see https://github.com/cujojs/when/issues/410 for details
+return function(){process.nextTick(lib$es6$promise$asap$$flush);};} // vertx
+function lib$es6$promise$asap$$useVertxTimer(){return function(){lib$es6$promise$asap$$vertxNext(lib$es6$promise$asap$$flush);};}function lib$es6$promise$asap$$useMutationObserver(){var iterations=0;var observer=new lib$es6$promise$asap$$BrowserMutationObserver(lib$es6$promise$asap$$flush);var node=document.createTextNode('');observer.observe(node,{characterData:true});return function(){node.data=iterations=++iterations%2;};} // web worker
+function lib$es6$promise$asap$$useMessageChannel(){var channel=new MessageChannel();channel.port1.onmessage=lib$es6$promise$asap$$flush;return function(){channel.port2.postMessage(0);};}function lib$es6$promise$asap$$useSetTimeout(){return function(){setTimeout(lib$es6$promise$asap$$flush,1);};}var lib$es6$promise$asap$$queue=new Array(1000);function lib$es6$promise$asap$$flush(){for(var i=0;i<lib$es6$promise$asap$$len;i+=2){var callback=lib$es6$promise$asap$$queue[i];var arg=lib$es6$promise$asap$$queue[i+1];callback(arg);lib$es6$promise$asap$$queue[i]=undefined;lib$es6$promise$asap$$queue[i+1]=undefined;}lib$es6$promise$asap$$len=0;}function lib$es6$promise$asap$$attemptVertx(){try{var r=require;var vertx=r('vertx');lib$es6$promise$asap$$vertxNext=vertx.runOnLoop||vertx.runOnContext;return lib$es6$promise$asap$$useVertxTimer();}catch(e) {return lib$es6$promise$asap$$useSetTimeout();}}var lib$es6$promise$asap$$scheduleFlush; // Decide what async method to use to triggering processing of queued callbacks:
+if(lib$es6$promise$asap$$isNode){lib$es6$promise$asap$$scheduleFlush=lib$es6$promise$asap$$useNextTick();}else if(lib$es6$promise$asap$$BrowserMutationObserver){lib$es6$promise$asap$$scheduleFlush=lib$es6$promise$asap$$useMutationObserver();}else if(lib$es6$promise$asap$$isWorker){lib$es6$promise$asap$$scheduleFlush=lib$es6$promise$asap$$useMessageChannel();}else if(lib$es6$promise$asap$$browserWindow===undefined&&typeof require==='function'){lib$es6$promise$asap$$scheduleFlush=lib$es6$promise$asap$$attemptVertx();}else {lib$es6$promise$asap$$scheduleFlush=lib$es6$promise$asap$$useSetTimeout();}function lib$es6$promise$$internal$$noop(){}var lib$es6$promise$$internal$$PENDING=void 0;var lib$es6$promise$$internal$$FULFILLED=1;var lib$es6$promise$$internal$$REJECTED=2;var lib$es6$promise$$internal$$GET_THEN_ERROR=new lib$es6$promise$$internal$$ErrorObject();function lib$es6$promise$$internal$$selfFulfillment(){return new TypeError("You cannot resolve a promise with itself");}function lib$es6$promise$$internal$$cannotReturnOwn(){return new TypeError('A promises callback cannot return that same promise.');}function lib$es6$promise$$internal$$getThen(promise){try{return promise.then;}catch(error) {lib$es6$promise$$internal$$GET_THEN_ERROR.error=error;return lib$es6$promise$$internal$$GET_THEN_ERROR;}}function lib$es6$promise$$internal$$tryThen(then,value,fulfillmentHandler,rejectionHandler){try{then.call(value,fulfillmentHandler,rejectionHandler);}catch(e) {return e;}}function lib$es6$promise$$internal$$handleForeignThenable(promise,thenable,then){lib$es6$promise$asap$$asap(function(promise){var sealed=false;var error=lib$es6$promise$$internal$$tryThen(then,thenable,function(value){if(sealed){return;}sealed=true;if(thenable!==value){lib$es6$promise$$internal$$resolve(promise,value);}else {lib$es6$promise$$internal$$fulfill(promise,value);}},function(reason){if(sealed){return;}sealed=true;lib$es6$promise$$internal$$reject(promise,reason);},'Settle: '+(promise._label||' unknown promise'));if(!sealed&&error){sealed=true;lib$es6$promise$$internal$$reject(promise,error);}},promise);}function lib$es6$promise$$internal$$handleOwnThenable(promise,thenable){if(thenable._state===lib$es6$promise$$internal$$FULFILLED){lib$es6$promise$$internal$$fulfill(promise,thenable._result);}else if(thenable._state===lib$es6$promise$$internal$$REJECTED){lib$es6$promise$$internal$$reject(promise,thenable._result);}else {lib$es6$promise$$internal$$subscribe(thenable,undefined,function(value){lib$es6$promise$$internal$$resolve(promise,value);},function(reason){lib$es6$promise$$internal$$reject(promise,reason);});}}function lib$es6$promise$$internal$$handleMaybeThenable(promise,maybeThenable){if(maybeThenable.constructor===promise.constructor){lib$es6$promise$$internal$$handleOwnThenable(promise,maybeThenable);}else {var then=lib$es6$promise$$internal$$getThen(maybeThenable);if(then===lib$es6$promise$$internal$$GET_THEN_ERROR){lib$es6$promise$$internal$$reject(promise,lib$es6$promise$$internal$$GET_THEN_ERROR.error);}else if(then===undefined){lib$es6$promise$$internal$$fulfill(promise,maybeThenable);}else if(lib$es6$promise$utils$$isFunction(then)){lib$es6$promise$$internal$$handleForeignThenable(promise,maybeThenable,then);}else {lib$es6$promise$$internal$$fulfill(promise,maybeThenable);}}}function lib$es6$promise$$internal$$resolve(promise,value){if(promise===value){lib$es6$promise$$internal$$reject(promise,lib$es6$promise$$internal$$selfFulfillment());}else if(lib$es6$promise$utils$$objectOrFunction(value)){lib$es6$promise$$internal$$handleMaybeThenable(promise,value);}else {lib$es6$promise$$internal$$fulfill(promise,value);}}function lib$es6$promise$$internal$$publishRejection(promise){if(promise._onerror){promise._onerror(promise._result);}lib$es6$promise$$internal$$publish(promise);}function lib$es6$promise$$internal$$fulfill(promise,value){if(promise._state!==lib$es6$promise$$internal$$PENDING){return;}promise._result=value;promise._state=lib$es6$promise$$internal$$FULFILLED;if(promise._subscribers.length!==0){lib$es6$promise$asap$$asap(lib$es6$promise$$internal$$publish,promise);}}function lib$es6$promise$$internal$$reject(promise,reason){if(promise._state!==lib$es6$promise$$internal$$PENDING){return;}promise._state=lib$es6$promise$$internal$$REJECTED;promise._result=reason;lib$es6$promise$asap$$asap(lib$es6$promise$$internal$$publishRejection,promise);}function lib$es6$promise$$internal$$subscribe(parent,child,onFulfillment,onRejection){var subscribers=parent._subscribers;var length=subscribers.length;parent._onerror=null;subscribers[length]=child;subscribers[length+lib$es6$promise$$internal$$FULFILLED]=onFulfillment;subscribers[length+lib$es6$promise$$internal$$REJECTED]=onRejection;if(length===0&&parent._state){lib$es6$promise$asap$$asap(lib$es6$promise$$internal$$publish,parent);}}function lib$es6$promise$$internal$$publish(promise){var subscribers=promise._subscribers;var settled=promise._state;if(subscribers.length===0){return;}var child,callback,detail=promise._result;for(var i=0;i<subscribers.length;i+=3){child=subscribers[i];callback=subscribers[i+settled];if(child){lib$es6$promise$$internal$$invokeCallback(settled,child,callback,detail);}else {callback(detail);}}promise._subscribers.length=0;}function lib$es6$promise$$internal$$ErrorObject(){this.error=null;}var lib$es6$promise$$internal$$TRY_CATCH_ERROR=new lib$es6$promise$$internal$$ErrorObject();function lib$es6$promise$$internal$$tryCatch(callback,detail){try{return callback(detail);}catch(e) {lib$es6$promise$$internal$$TRY_CATCH_ERROR.error=e;return lib$es6$promise$$internal$$TRY_CATCH_ERROR;}}function lib$es6$promise$$internal$$invokeCallback(settled,promise,callback,detail){var hasCallback=lib$es6$promise$utils$$isFunction(callback),value,error,succeeded,failed;if(hasCallback){value=lib$es6$promise$$internal$$tryCatch(callback,detail);if(value===lib$es6$promise$$internal$$TRY_CATCH_ERROR){failed=true;error=value.error;value=null;}else {succeeded=true;}if(promise===value){lib$es6$promise$$internal$$reject(promise,lib$es6$promise$$internal$$cannotReturnOwn());return;}}else {value=detail;succeeded=true;}if(promise._state!==lib$es6$promise$$internal$$PENDING){ // noop
+}else if(hasCallback&&succeeded){lib$es6$promise$$internal$$resolve(promise,value);}else if(failed){lib$es6$promise$$internal$$reject(promise,error);}else if(settled===lib$es6$promise$$internal$$FULFILLED){lib$es6$promise$$internal$$fulfill(promise,value);}else if(settled===lib$es6$promise$$internal$$REJECTED){lib$es6$promise$$internal$$reject(promise,value);}}function lib$es6$promise$$internal$$initializePromise(promise,resolver){try{resolver(function resolvePromise(value){lib$es6$promise$$internal$$resolve(promise,value);},function rejectPromise(reason){lib$es6$promise$$internal$$reject(promise,reason);});}catch(e) {lib$es6$promise$$internal$$reject(promise,e);}}function lib$es6$promise$enumerator$$Enumerator(Constructor,input){var enumerator=this;enumerator._instanceConstructor=Constructor;enumerator.promise=new Constructor(lib$es6$promise$$internal$$noop);if(enumerator._validateInput(input)){enumerator._input=input;enumerator.length=input.length;enumerator._remaining=input.length;enumerator._init();if(enumerator.length===0){lib$es6$promise$$internal$$fulfill(enumerator.promise,enumerator._result);}else {enumerator.length=enumerator.length||0;enumerator._enumerate();if(enumerator._remaining===0){lib$es6$promise$$internal$$fulfill(enumerator.promise,enumerator._result);}}}else {lib$es6$promise$$internal$$reject(enumerator.promise,enumerator._validationError());}}lib$es6$promise$enumerator$$Enumerator.prototype._validateInput=function(input){return lib$es6$promise$utils$$isArray(input);};lib$es6$promise$enumerator$$Enumerator.prototype._validationError=function(){return new Error('Array Methods must be provided an Array');};lib$es6$promise$enumerator$$Enumerator.prototype._init=function(){this._result=new Array(this.length);};var lib$es6$promise$enumerator$$default=lib$es6$promise$enumerator$$Enumerator;lib$es6$promise$enumerator$$Enumerator.prototype._enumerate=function(){var enumerator=this;var length=enumerator.length;var promise=enumerator.promise;var input=enumerator._input;for(var i=0;promise._state===lib$es6$promise$$internal$$PENDING&&i<length;i++){enumerator._eachEntry(input[i],i);}};lib$es6$promise$enumerator$$Enumerator.prototype._eachEntry=function(entry,i){var enumerator=this;var c=enumerator._instanceConstructor;if(lib$es6$promise$utils$$isMaybeThenable(entry)){if(entry.constructor===c&&entry._state!==lib$es6$promise$$internal$$PENDING){entry._onerror=null;enumerator._settledAt(entry._state,i,entry._result);}else {enumerator._willSettleAt(c.resolve(entry),i);}}else {enumerator._remaining--;enumerator._result[i]=entry;}};lib$es6$promise$enumerator$$Enumerator.prototype._settledAt=function(state,i,value){var enumerator=this;var promise=enumerator.promise;if(promise._state===lib$es6$promise$$internal$$PENDING){enumerator._remaining--;if(state===lib$es6$promise$$internal$$REJECTED){lib$es6$promise$$internal$$reject(promise,value);}else {enumerator._result[i]=value;}}if(enumerator._remaining===0){lib$es6$promise$$internal$$fulfill(promise,enumerator._result);}};lib$es6$promise$enumerator$$Enumerator.prototype._willSettleAt=function(promise,i){var enumerator=this;lib$es6$promise$$internal$$subscribe(promise,undefined,function(value){enumerator._settledAt(lib$es6$promise$$internal$$FULFILLED,i,value);},function(reason){enumerator._settledAt(lib$es6$promise$$internal$$REJECTED,i,reason);});};function lib$es6$promise$promise$all$$all(entries){return new lib$es6$promise$enumerator$$default(this,entries).promise;}var lib$es6$promise$promise$all$$default=lib$es6$promise$promise$all$$all;function lib$es6$promise$promise$race$$race(entries){ /*jshint validthis:true */var Constructor=this;var promise=new Constructor(lib$es6$promise$$internal$$noop);if(!lib$es6$promise$utils$$isArray(entries)){lib$es6$promise$$internal$$reject(promise,new TypeError('You must pass an array to race.'));return promise;}var length=entries.length;function onFulfillment(value){lib$es6$promise$$internal$$resolve(promise,value);}function onRejection(reason){lib$es6$promise$$internal$$reject(promise,reason);}for(var i=0;promise._state===lib$es6$promise$$internal$$PENDING&&i<length;i++){lib$es6$promise$$internal$$subscribe(Constructor.resolve(entries[i]),undefined,onFulfillment,onRejection);}return promise;}var lib$es6$promise$promise$race$$default=lib$es6$promise$promise$race$$race;function lib$es6$promise$promise$resolve$$resolve(object){ /*jshint validthis:true */var Constructor=this;if(object&&(typeof object==='undefined'?'undefined':_typeof(object))==='object'&&object.constructor===Constructor){return object;}var promise=new Constructor(lib$es6$promise$$internal$$noop);lib$es6$promise$$internal$$resolve(promise,object);return promise;}var lib$es6$promise$promise$resolve$$default=lib$es6$promise$promise$resolve$$resolve;function lib$es6$promise$promise$reject$$reject(reason){ /*jshint validthis:true */var Constructor=this;var promise=new Constructor(lib$es6$promise$$internal$$noop);lib$es6$promise$$internal$$reject(promise,reason);return promise;}var lib$es6$promise$promise$reject$$default=lib$es6$promise$promise$reject$$reject;var lib$es6$promise$promise$$counter=0;function lib$es6$promise$promise$$needsResolver(){throw new TypeError('You must pass a resolver function as the first argument to the promise constructor');}function lib$es6$promise$promise$$needsNew(){throw new TypeError("Failed to construct 'Promise': Please use the 'new' operator, this object constructor cannot be called as a function.");}var lib$es6$promise$promise$$default=lib$es6$promise$promise$$Promise; /**
+    Promise objects represent the eventual result of an asynchronous operation. The
+    primary way of interacting with a promise is through its `then` method, which
+    registers callbacks to receive either a promise's eventual value or the reason
+    why the promise cannot be fulfilled.
+     Terminology
+    -----------
+     - `promise` is an object or function with a `then` method whose behavior conforms to this specification.
+    - `thenable` is an object or function that defines a `then` method.
+    - `value` is any legal JavaScript value (including undefined, a thenable, or a promise).
+    - `exception` is a value that is thrown using the throw statement.
+    - `reason` is a value that indicates why a promise was rejected.
+    - `settled` the final resting state of a promise, fulfilled or rejected.
+     A promise can be in one of three states: pending, fulfilled, or rejected.
+     Promises that are fulfilled have a fulfillment value and are in the fulfilled
+    state.  Promises that are rejected have a rejection reason and are in the
+    rejected state.  A fulfillment value is never a thenable.
+     Promises can also be said to *resolve* a value.  If this value is also a
+    promise, then the original promise's settled state will match the value's
+    settled state.  So a promise that *resolves* a promise that rejects will
+    itself reject, and a promise that *resolves* a promise that fulfills will
+    itself fulfill.
+      Basic Usage:
+    ------------
+     ```js
+    var promise = new Promise(function(resolve, reject) {
+      // on success
+      resolve(value);
+       // on failure
+      reject(reason);
+    });
+     promise.then(function(value) {
+      // on fulfillment
+    }, function(reason) {
+      // on rejection
+    });
+    ```
+     Advanced Usage:
+    ---------------
+     Promises shine when abstracting away asynchronous interactions such as
+    `XMLHttpRequest`s.
+     ```js
+    function getJSON(url) {
+      return new Promise(function(resolve, reject){
+        var xhr = new XMLHttpRequest();
+         xhr.open('GET', url);
+        xhr.onreadystatechange = handler;
+        xhr.responseType = 'json';
+        xhr.setRequestHeader('Accept', 'application/json');
+        xhr.send();
+         function handler() {
+          if (this.readyState === this.DONE) {
+            if (this.status === 200) {
+              resolve(this.response);
+            } else {
+              reject(new Error('getJSON: `' + url + '` failed with status: [' + this.status + ']'));
+            }
+          }
+        };
+      });
+    }
+     getJSON('/posts.json').then(function(json) {
+      // on fulfillment
+    }, function(reason) {
+      // on rejection
+    });
+    ```
+     Unlike callbacks, promises are great composable primitives.
+     ```js
+    Promise.all([
+      getJSON('/posts'),
+      getJSON('/comments')
+    ]).then(function(values){
+      values[0] // => postsJSON
+      values[1] // => commentsJSON
+       return values;
+    });
+    ```
+     @class Promise
+    @param {function} resolver
+    Useful for tooling.
+    @constructor
+  */function lib$es6$promise$promise$$Promise(resolver){this._id=lib$es6$promise$promise$$counter++;this._state=undefined;this._result=undefined;this._subscribers=[];if(lib$es6$promise$$internal$$noop!==resolver){if(!lib$es6$promise$utils$$isFunction(resolver)){lib$es6$promise$promise$$needsResolver();}if(!(this instanceof lib$es6$promise$promise$$Promise)){lib$es6$promise$promise$$needsNew();}lib$es6$promise$$internal$$initializePromise(this,resolver);}}lib$es6$promise$promise$$Promise.all=lib$es6$promise$promise$all$$default;lib$es6$promise$promise$$Promise.race=lib$es6$promise$promise$race$$default;lib$es6$promise$promise$$Promise.resolve=lib$es6$promise$promise$resolve$$default;lib$es6$promise$promise$$Promise.reject=lib$es6$promise$promise$reject$$default;lib$es6$promise$promise$$Promise._setScheduler=lib$es6$promise$asap$$setScheduler;lib$es6$promise$promise$$Promise._setAsap=lib$es6$promise$asap$$setAsap;lib$es6$promise$promise$$Promise._asap=lib$es6$promise$asap$$asap;lib$es6$promise$promise$$Promise.prototype={constructor:lib$es6$promise$promise$$Promise, /**
+      The primary way of interacting with a promise is through its `then` method,
+      which registers callbacks to receive either a promise's eventual value or the
+      reason why the promise cannot be fulfilled.
+       ```js
+      findUser().then(function(user){
+        // user is available
+      }, function(reason){
+        // user is unavailable, and you are given the reason why
+      });
+      ```
+       Chaining
+      --------
+       The return value of `then` is itself a promise.  This second, 'downstream'
+      promise is resolved with the return value of the first promise's fulfillment
+      or rejection handler, or rejected if the handler throws an exception.
+       ```js
+      findUser().then(function (user) {
+        return user.name;
+      }, function (reason) {
+        return 'default name';
+      }).then(function (userName) {
+        // If `findUser` fulfilled, `userName` will be the user's name, otherwise it
+        // will be `'default name'`
+      });
+       findUser().then(function (user) {
+        throw new Error('Found user, but still unhappy');
+      }, function (reason) {
+        throw new Error('`findUser` rejected and we're unhappy');
+      }).then(function (value) {
+        // never reached
+      }, function (reason) {
+        // if `findUser` fulfilled, `reason` will be 'Found user, but still unhappy'.
+        // If `findUser` rejected, `reason` will be '`findUser` rejected and we're unhappy'.
+      });
+      ```
+      If the downstream promise does not specify a rejection handler, rejection reasons will be propagated further downstream.
+       ```js
+      findUser().then(function (user) {
+        throw new PedagogicalException('Upstream error');
+      }).then(function (value) {
+        // never reached
+      }).then(function (value) {
+        // never reached
+      }, function (reason) {
+        // The `PedgagocialException` is propagated all the way down to here
+      });
+      ```
+       Assimilation
+      ------------
+       Sometimes the value you want to propagate to a downstream promise can only be
+      retrieved asynchronously. This can be achieved by returning a promise in the
+      fulfillment or rejection handler. The downstream promise will then be pending
+      until the returned promise is settled. This is called *assimilation*.
+       ```js
+      findUser().then(function (user) {
+        return findCommentsByAuthor(user);
+      }).then(function (comments) {
+        // The user's comments are now available
+      });
+      ```
+       If the assimliated promise rejects, then the downstream promise will also reject.
+       ```js
+      findUser().then(function (user) {
+        return findCommentsByAuthor(user);
+      }).then(function (comments) {
+        // If `findCommentsByAuthor` fulfills, we'll have the value here
+      }, function (reason) {
+        // If `findCommentsByAuthor` rejects, we'll have the reason here
+      });
+      ```
+       Simple Example
+      --------------
+       Synchronous Example
+       ```javascript
+      var result;
+       try {
+        result = findResult();
+        // success
+      } catch(reason) {
+        // failure
+      }
+      ```
+       Errback Example
+       ```js
+      findResult(function(result, err){
+        if (err) {
+          // failure
+        } else {
+          // success
+        }
+      });
+      ```
+       Promise Example;
+       ```javascript
+      findResult().then(function(result){
+        // success
+      }, function(reason){
+        // failure
+      });
+      ```
+       Advanced Example
+      --------------
+       Synchronous Example
+       ```javascript
+      var author, books;
+       try {
+        author = findAuthor();
+        books  = findBooksByAuthor(author);
+        // success
+      } catch(reason) {
+        // failure
+      }
+      ```
+       Errback Example
+       ```js
+       function foundBooks(books) {
+       }
+       function failure(reason) {
+       }
+       findAuthor(function(author, err){
+        if (err) {
+          failure(err);
+          // failure
+        } else {
+          try {
+            findBoooksByAuthor(author, function(books, err) {
+              if (err) {
+                failure(err);
+              } else {
+                try {
+                  foundBooks(books);
+                } catch(reason) {
+                  failure(reason);
+                }
+              }
+            });
+          } catch(error) {
+            failure(err);
+          }
+          // success
+        }
+      });
+      ```
+       Promise Example;
+       ```javascript
+      findAuthor().
+        then(findBooksByAuthor).
+        then(function(books){
+          // found books
+      }).catch(function(reason){
+        // something went wrong
+      });
+      ```
+       @method then
+      @param {Function} onFulfilled
+      @param {Function} onRejected
+      Useful for tooling.
+      @return {Promise}
+    */then:function then(onFulfillment,onRejection){var parent=this;var state=parent._state;if(state===lib$es6$promise$$internal$$FULFILLED&&!onFulfillment||state===lib$es6$promise$$internal$$REJECTED&&!onRejection){return this;}var child=new this.constructor(lib$es6$promise$$internal$$noop);var result=parent._result;if(state){var callback=arguments[state-1];lib$es6$promise$asap$$asap(function(){lib$es6$promise$$internal$$invokeCallback(state,child,callback,result);});}else {lib$es6$promise$$internal$$subscribe(parent,child,onFulfillment,onRejection);}return child;}, /**
+      `catch` is simply sugar for `then(undefined, onRejection)` which makes it the same
+      as the catch block of a try/catch statement.
+       ```js
+      function findAuthor(){
+        throw new Error('couldn't find that author');
+      }
+       // synchronous
+      try {
+        findAuthor();
+      } catch(reason) {
+        // something went wrong
+      }
+       // async with promises
+      findAuthor().catch(function(reason){
+        // something went wrong
+      });
+      ```
+       @method catch
+      @param {Function} onRejection
+      Useful for tooling.
+      @return {Promise}
+    */'catch':function _catch(onRejection){return this.then(null,onRejection);}};function lib$es6$promise$polyfill$$polyfill(){var local;if(typeof global!=='undefined'){local=global;}else if(typeof self!=='undefined'){local=self;}else {try{local=Function('return this')();}catch(e) {throw new Error('polyfill failed because global object is unavailable in this environment');}}var P=local.Promise;if(P&&Object.prototype.toString.call(P.resolve())==='[object Promise]'&&!P.cast){return;}local.Promise=lib$es6$promise$promise$$default;}var lib$es6$promise$polyfill$$default=lib$es6$promise$polyfill$$polyfill;var lib$es6$promise$umd$$ES6Promise={'Promise':lib$es6$promise$promise$$default,'polyfill':lib$es6$promise$polyfill$$default}; /* global define:true module:true window: true */if(typeof define==='function'&&define['amd']){define(function(){return lib$es6$promise$umd$$ES6Promise;});}else if(typeof module!=='undefined'&&module['exports']){module['exports']=lib$es6$promise$umd$$ES6Promise;}else if(typeof this!=='undefined'){this['ES6Promise']=lib$es6$promise$umd$$ES6Promise;}lib$es6$promise$polyfill$$default();}).call(undefined);'use strict';function _typeof(obj){return obj&&typeof Symbol!=="undefined"&&obj.constructor===Symbol?"symbol":typeof obj==="undefined"?"undefined":_typeof2(obj);}(function(factory){if((typeof exports==='undefined'?'undefined':_typeof(exports))==='object'){ // Node/CommonJS
+module.exports=factory();}else if(typeof define==='function'&&define.amd){ // AMD
+define(factory);}else { // Browser globals (with support for web workers)
+var glob;try{glob=window;}catch(e) {glob=self;}glob.SparkMD5=factory();}})(function(undefined){'use strict'; /*
+     * Fastest md5 implementation around (JKM md5).
+     * Credits: Joseph Myers
+     *
+     * @see http://www.myersdaily.org/joseph/javascript/md5-text.html
+     * @see http://jsperf.com/md5-shootout/7
+     */ /* this function is much faster,
+      so if possible we use it. Some IEs
+      are the only ones I know of that
+      need the idiotic second function,
+      generated by an if clause.  */var add32=function add32(a,b){return a+b&0xFFFFFFFF;},hex_chr=['0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f'];function cmn(q,a,b,x,s,t){a=add32(add32(a,q),add32(x,t));return add32(a<<s|a>>>32-s,b);}function ff(a,b,c,d,x,s,t){return cmn(b&c|~b&d,a,b,x,s,t);}function gg(a,b,c,d,x,s,t){return cmn(b&d|c&~d,a,b,x,s,t);}function hh(a,b,c,d,x,s,t){return cmn(b^c^d,a,b,x,s,t);}function ii(a,b,c,d,x,s,t){return cmn(c^(b|~d),a,b,x,s,t);}function md5cycle(x,k){var a=x[0],b=x[1],c=x[2],d=x[3];a=ff(a,b,c,d,k[0],7,-680876936);d=ff(d,a,b,c,k[1],12,-389564586);c=ff(c,d,a,b,k[2],17,606105819);b=ff(b,c,d,a,k[3],22,-1044525330);a=ff(a,b,c,d,k[4],7,-176418897);d=ff(d,a,b,c,k[5],12,1200080426);c=ff(c,d,a,b,k[6],17,-1473231341);b=ff(b,c,d,a,k[7],22,-45705983);a=ff(a,b,c,d,k[8],7,1770035416);d=ff(d,a,b,c,k[9],12,-1958414417);c=ff(c,d,a,b,k[10],17,-42063);b=ff(b,c,d,a,k[11],22,-1990404162);a=ff(a,b,c,d,k[12],7,1804603682);d=ff(d,a,b,c,k[13],12,-40341101);c=ff(c,d,a,b,k[14],17,-1502002290);b=ff(b,c,d,a,k[15],22,1236535329);a=gg(a,b,c,d,k[1],5,-165796510);d=gg(d,a,b,c,k[6],9,-1069501632);c=gg(c,d,a,b,k[11],14,643717713);b=gg(b,c,d,a,k[0],20,-373897302);a=gg(a,b,c,d,k[5],5,-701558691);d=gg(d,a,b,c,k[10],9,38016083);c=gg(c,d,a,b,k[15],14,-660478335);b=gg(b,c,d,a,k[4],20,-405537848);a=gg(a,b,c,d,k[9],5,568446438);d=gg(d,a,b,c,k[14],9,-1019803690);c=gg(c,d,a,b,k[3],14,-187363961);b=gg(b,c,d,a,k[8],20,1163531501);a=gg(a,b,c,d,k[13],5,-1444681467);d=gg(d,a,b,c,k[2],9,-51403784);c=gg(c,d,a,b,k[7],14,1735328473);b=gg(b,c,d,a,k[12],20,-1926607734);a=hh(a,b,c,d,k[5],4,-378558);d=hh(d,a,b,c,k[8],11,-2022574463);c=hh(c,d,a,b,k[11],16,1839030562);b=hh(b,c,d,a,k[14],23,-35309556);a=hh(a,b,c,d,k[1],4,-1530992060);d=hh(d,a,b,c,k[4],11,1272893353);c=hh(c,d,a,b,k[7],16,-155497632);b=hh(b,c,d,a,k[10],23,-1094730640);a=hh(a,b,c,d,k[13],4,681279174);d=hh(d,a,b,c,k[0],11,-358537222);c=hh(c,d,a,b,k[3],16,-722521979);b=hh(b,c,d,a,k[6],23,76029189);a=hh(a,b,c,d,k[9],4,-640364487);d=hh(d,a,b,c,k[12],11,-421815835);c=hh(c,d,a,b,k[15],16,530742520);b=hh(b,c,d,a,k[2],23,-995338651);a=ii(a,b,c,d,k[0],6,-198630844);d=ii(d,a,b,c,k[7],10,1126891415);c=ii(c,d,a,b,k[14],15,-1416354905);b=ii(b,c,d,a,k[5],21,-57434055);a=ii(a,b,c,d,k[12],6,1700485571);d=ii(d,a,b,c,k[3],10,-1894986606);c=ii(c,d,a,b,k[10],15,-1051523);b=ii(b,c,d,a,k[1],21,-2054922799);a=ii(a,b,c,d,k[8],6,1873313359);d=ii(d,a,b,c,k[15],10,-30611744);c=ii(c,d,a,b,k[6],15,-1560198380);b=ii(b,c,d,a,k[13],21,1309151649);a=ii(a,b,c,d,k[4],6,-145523070);d=ii(d,a,b,c,k[11],10,-1120210379);c=ii(c,d,a,b,k[2],15,718787259);b=ii(b,c,d,a,k[9],21,-343485551);x[0]=add32(a,x[0]);x[1]=add32(b,x[1]);x[2]=add32(c,x[2]);x[3]=add32(d,x[3]);}function md5blk(s){var md5blks=[],i; /* Andy King said do it this way. */for(i=0;i<64;i+=4){md5blks[i>>2]=s.charCodeAt(i)+(s.charCodeAt(i+1)<<8)+(s.charCodeAt(i+2)<<16)+(s.charCodeAt(i+3)<<24);}return md5blks;}function md5blk_array(a){var md5blks=[],i; /* Andy King said do it this way. */for(i=0;i<64;i+=4){md5blks[i>>2]=a[i]+(a[i+1]<<8)+(a[i+2]<<16)+(a[i+3]<<24);}return md5blks;}function md51(s){var n=s.length,state=[1732584193,-271733879,-1732584194,271733878],i,length,tail,tmp,lo,hi;for(i=64;i<=n;i+=64){md5cycle(state,md5blk(s.substring(i-64,i)));}s=s.substring(i-64);length=s.length;tail=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];for(i=0;i<length;i+=1){tail[i>>2]|=s.charCodeAt(i)<<(i%4<<3);}tail[i>>2]|=0x80<<(i%4<<3);if(i>55){md5cycle(state,tail);for(i=0;i<16;i+=1){tail[i]=0;}} // Beware that the final length might not fit in 32 bits so we take care of that
+tmp=n*8;tmp=tmp.toString(16).match(/(.*?)(.{0,8})$/);lo=parseInt(tmp[2],16);hi=parseInt(tmp[1],16)||0;tail[14]=lo;tail[15]=hi;md5cycle(state,tail);return state;}function md51_array(a){var n=a.length,state=[1732584193,-271733879,-1732584194,271733878],i,length,tail,tmp,lo,hi;for(i=64;i<=n;i+=64){md5cycle(state,md5blk_array(a.subarray(i-64,i)));} // Not sure if it is a bug, however IE10 will always produce a sub array of length 1
+// containing the last element of the parent array if the sub array specified starts
+// beyond the length of the parent array - weird.
+// https://connect.microsoft.com/IE/feedback/details/771452/typed-array-subarray-issue
+a=i-64<n?a.subarray(i-64):new Uint8Array(0);length=a.length;tail=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];for(i=0;i<length;i+=1){tail[i>>2]|=a[i]<<(i%4<<3);}tail[i>>2]|=0x80<<(i%4<<3);if(i>55){md5cycle(state,tail);for(i=0;i<16;i+=1){tail[i]=0;}} // Beware that the final length might not fit in 32 bits so we take care of that
+tmp=n*8;tmp=tmp.toString(16).match(/(.*?)(.{0,8})$/);lo=parseInt(tmp[2],16);hi=parseInt(tmp[1],16)||0;tail[14]=lo;tail[15]=hi;md5cycle(state,tail);return state;}function rhex(n){var s='',j;for(j=0;j<4;j+=1){s+=hex_chr[n>>j*8+4&0x0F]+hex_chr[n>>j*8&0x0F];}return s;}function hex(x){var i;for(i=0;i<x.length;i+=1){x[i]=rhex(x[i]);}return x.join('');} // In some cases the fast add32 function cannot be used..
+if(hex(md51('hello'))!=='5d41402abc4b2a76b9719d911017c592'){add32=function add32(x,y){var lsw=(x&0xFFFF)+(y&0xFFFF),msw=(x>>16)+(y>>16)+(lsw>>16);return msw<<16|lsw&0xFFFF;};} // ---------------------------------------------------
+/**
+     * ArrayBuffer slice polyfill.
+     *
+     * @see https://github.com/ttaubert/node-arraybuffer-slice
+     */if(typeof ArrayBuffer!=='undefined'&&!ArrayBuffer.prototype.slice){(function(){function clamp(val,length){val=val|0||0;if(val<0){return Math.max(val+length,0);}return Math.min(val,length);}ArrayBuffer.prototype.slice=function(from,to){var length=this.byteLength,begin=clamp(from,length),end=length,num,target,targetArray,sourceArray;if(to!==undefined){end=clamp(to,length);}if(begin>end){return new ArrayBuffer(0);}num=end-begin;target=new ArrayBuffer(num);targetArray=new Uint8Array(target);sourceArray=new Uint8Array(this,begin,num);targetArray.set(sourceArray);return target;};})();} // ---------------------------------------------------
+/**
+     * Helpers.
+     */function toUtf8(str){if(/[\u0080-\uFFFF]/.test(str)){str=unescape(encodeURIComponent(str));}return str;}function utf8Str2ArrayBuffer(str,returnUInt8Array){var length=str.length,buff=new ArrayBuffer(length),arr=new Uint8Array(buff),i;for(i=0;i<length;i+=1){arr[i]=str.charCodeAt(i);}return returnUInt8Array?arr:buff;}function arrayBuffer2Utf8Str(buff){return String.fromCharCode.apply(null,new Uint8Array(buff));}function concatenateArrayBuffers(first,second,returnUInt8Array){var result=new Uint8Array(first.byteLength+second.byteLength);result.set(new Uint8Array(first));result.set(new Uint8Array(second),first.byteLength);return returnUInt8Array?result:result.buffer;}function hexToBinaryString(hex){var bytes=[],length=hex.length,x;for(x=0;x<length-1;x+=2){bytes.push(parseInt(hex.substr(x,2),16));}return String.fromCharCode.apply(String,bytes);} // ---------------------------------------------------
+/**
+     * SparkMD5 OOP implementation.
+     *
+     * Use this class to perform an incremental md5, otherwise use the
+     * static methods instead.
+     */function SparkMD5(){ // call reset to init the instance
+this.reset();} /**
+     * Appends a string.
+     * A conversion will be applied if an utf8 string is detected.
+     *
+     * @param {String} str The string to be appended
+     *
+     * @return {SparkMD5} The instance itself
+     */SparkMD5.prototype.append=function(str){ // Converts the string to utf8 bytes if necessary
+// Then append as binary
+this.appendBinary(toUtf8(str));return this;}; /**
+     * Appends a binary string.
+     *
+     * @param {String} contents The binary string to be appended
+     *
+     * @return {SparkMD5} The instance itself
+     */SparkMD5.prototype.appendBinary=function(contents){this._buff+=contents;this._length+=contents.length;var length=this._buff.length,i;for(i=64;i<=length;i+=64){md5cycle(this._hash,md5blk(this._buff.substring(i-64,i)));}this._buff=this._buff.substring(i-64);return this;}; /**
+     * Finishes the incremental computation, reseting the internal state and
+     * returning the result.
+     *
+     * @param {Boolean} raw True to get the raw string, false to get the hex string
+     *
+     * @return {String} The result
+     */SparkMD5.prototype.end=function(raw){var buff=this._buff,length=buff.length,i,tail=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],ret;for(i=0;i<length;i+=1){tail[i>>2]|=buff.charCodeAt(i)<<(i%4<<3);}this._finish(tail,length);ret=hex(this._hash);if(raw){ret=hexToBinaryString(ret);}this.reset();return ret;}; /**
+     * Resets the internal state of the computation.
+     *
+     * @return {SparkMD5} The instance itself
+     */SparkMD5.prototype.reset=function(){this._buff='';this._length=0;this._hash=[1732584193,-271733879,-1732584194,271733878];return this;}; /**
+     * Gets the internal state of the computation.
+     *
+     * @return {Object} The state
+     */SparkMD5.prototype.getState=function(){return {buff:this._buff,length:this._length,hash:this._hash};}; /**
+     * Gets the internal state of the computation.
+     *
+     * @param {Object} state The state
+     *
+     * @return {SparkMD5} The instance itself
+     */SparkMD5.prototype.setState=function(state){this._buff=state.buff;this._length=state.length;this._hash=state.hash;return this;}; /**
+     * Releases memory used by the incremental buffer and other additional
+     * resources. If you plan to use the instance again, use reset instead.
+     */SparkMD5.prototype.destroy=function(){delete this._hash;delete this._buff;delete this._length;}; /**
+     * Finish the final calculation based on the tail.
+     *
+     * @param {Array}  tail   The tail (will be modified)
+     * @param {Number} length The length of the remaining buffer
+     */SparkMD5.prototype._finish=function(tail,length){var i=length,tmp,lo,hi;tail[i>>2]|=0x80<<(i%4<<3);if(i>55){md5cycle(this._hash,tail);for(i=0;i<16;i+=1){tail[i]=0;}} // Do the final computation based on the tail and length
+// Beware that the final length may not fit in 32 bits so we take care of that
+tmp=this._length*8;tmp=tmp.toString(16).match(/(.*?)(.{0,8})$/);lo=parseInt(tmp[2],16);hi=parseInt(tmp[1],16)||0;tail[14]=lo;tail[15]=hi;md5cycle(this._hash,tail);}; /**
+     * Performs the md5 hash on a string.
+     * A conversion will be applied if utf8 string is detected.
+     *
+     * @param {String}  str The string
+     * @param {Boolean} raw True to get the raw string, false to get the hex string
+     *
+     * @return {String} The result
+     */SparkMD5.hash=function(str,raw){ // Converts the string to utf8 bytes if necessary
+// Then compute it using the binary function
+return SparkMD5.hashBinary(toUtf8(str),raw);}; /**
+     * Performs the md5 hash on a binary string.
+     *
+     * @param {String}  content The binary string
+     * @param {Boolean} raw     True to get the raw string, false to get the hex string
+     *
+     * @return {String} The result
+     */SparkMD5.hashBinary=function(content,raw){var hash=md51(content),ret=hex(hash);return raw?hexToBinaryString(ret):ret;}; // ---------------------------------------------------
+/**
+     * SparkMD5 OOP implementation for array buffers.
+     *
+     * Use this class to perform an incremental md5 ONLY for array buffers.
+     */SparkMD5.ArrayBuffer=function(){ // call reset to init the instance
+this.reset();}; /**
+     * Appends an array buffer.
+     *
+     * @param {ArrayBuffer} arr The array to be appended
+     *
+     * @return {SparkMD5.ArrayBuffer} The instance itself
+     */SparkMD5.ArrayBuffer.prototype.append=function(arr){var buff=concatenateArrayBuffers(this._buff.buffer,arr,true),length=buff.length,i;this._length+=arr.byteLength;for(i=64;i<=length;i+=64){md5cycle(this._hash,md5blk_array(buff.subarray(i-64,i)));}this._buff=i-64<length?new Uint8Array(buff.buffer.slice(i-64)):new Uint8Array(0);return this;}; /**
+     * Finishes the incremental computation, reseting the internal state and
+     * returning the result.
+     *
+     * @param {Boolean} raw True to get the raw string, false to get the hex string
+     *
+     * @return {String} The result
+     */SparkMD5.ArrayBuffer.prototype.end=function(raw){var buff=this._buff,length=buff.length,tail=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],i,ret;for(i=0;i<length;i+=1){tail[i>>2]|=buff[i]<<(i%4<<3);}this._finish(tail,length);ret=hex(this._hash);if(raw){ret=hexToBinaryString(ret);}this.reset();return ret;}; /**
+     * Resets the internal state of the computation.
+     *
+     * @return {SparkMD5.ArrayBuffer} The instance itself
+     */SparkMD5.ArrayBuffer.prototype.reset=function(){this._buff=new Uint8Array(0);this._length=0;this._hash=[1732584193,-271733879,-1732584194,271733878];return this;}; /**
+     * Gets the internal state of the computation.
+     *
+     * @return {Object} The state
+     */SparkMD5.ArrayBuffer.prototype.getState=function(){var state=SparkMD5.prototype.getState.call(this); // Convert buffer to a string
+state.buff=arrayBuffer2Utf8Str(state.buff);return state;}; /**
+     * Gets the internal state of the computation.
+     *
+     * @param {Object} state The state
+     *
+     * @return {SparkMD5.ArrayBuffer} The instance itself
+     */SparkMD5.ArrayBuffer.prototype.setState=function(state){ // Convert string to buffer
+state.buff=utf8Str2ArrayBuffer(state.buff,true);return SparkMD5.prototype.setState.call(this,state);};SparkMD5.ArrayBuffer.prototype.destroy=SparkMD5.prototype.destroy;SparkMD5.ArrayBuffer.prototype._finish=SparkMD5.prototype._finish; /**
+     * Performs the md5 hash on an array buffer.
+     *
+     * @param {ArrayBuffer} arr The array buffer
+     * @param {Boolean}     raw True to get the raw string, false to get the hex one
+     *
+     * @return {String} The result
+     */SparkMD5.ArrayBuffer.hash=function(arr,raw){var hash=md51_array(new Uint8Array(arr)),ret=hex(hash);return raw?hexToBinaryString(ret):ret;};return SparkMD5;});'use strict'; //'use strict';
+var J=jQuery.noConflict();var Zotero={ajax:{},callbacks:{},ui:{callbacks:{},keyCode:{BACKSPACE:8,COMMA:188,DELETE:46,DOWN:40,END:35,ENTER:13,ESCAPE:27,HOME:36,LEFT:37,PAGE_DOWN:34,PAGE_UP:33,PERIOD:190,RIGHT:39,SPACE:32,TAB:9,UP:38}},url:{},utils:{},offline:{},temp:{},localizations:{},config:{librarySettings:{},baseApiUrl:'https://api.zotero.org',baseWebsiteUrl:'https://zotero.org',baseFeedUrl:'https://api.zotero.org',baseZoteroWebsiteUrl:'https://www.zotero.org',baseDownloadUrl:'https://www.zotero.org',nonparsedBaseUrl:"",debugLogEndpoint:'',storeDebug:true,directDownloads:true,proxyPath:'/proxyrequest',ignoreLoggedInStatus:false,storePrefsRemote:true,preferUrlItem:true,sessionAuth:false,proxy:false,apiKey:'',apiVersion:3,locale:'en-US',cacheStoreType:'localStorage',preloadCachedLibrary:true,sortOrdering:{'dateAdded':'desc','dateModified':'desc','date':'desc','year':'desc','accessDate':'desc','title':'asc','creator':'asc'},defaultSortColumn:'title',defaultSortOrder:'asc',largeFields:{'title':1,'abstractNote':1,'extra':1},richTextFields:{'note':1},maxFieldSummaryLength:{title:60},exportFormats:['bibtex','bookmarks','mods','refer','rdf_bibliontology','rdf_dc','rdf_zotero','ris','wikipedia'],exportFormatsMap:{'bibtex':'BibTeX','bookmarks':'Bookmarks','mods':'MODS','refer':'Refer/BibIX','rdf_bibliontology':'Bibliontology RDF','rdf_dc':'Unqualified Dublin Core RDF','rdf_zotero':'Zotero RDF','ris':'RIS','wikipedia':'Wikipedia Citation Templates'},defaultApiArgs:{'order':'title','sort':'asc','limit':50,'start':0}},debug:function debug(debugstring,level){var prefLevel=3;if(Zotero.config.storeDebug){if(level<=prefLevel){Zotero.debugstring+="DEBUG:"+debugstring+"\n";}}if(typeof console=='undefined'){return;}if(typeof level!=="number"){level=1;}if(Zotero.preferences!==undefined){prefLevel=Zotero.preferences.getPref('debug_level');}if(level<=prefLevel){console.log(debugstring);}},warn:function warn(warnstring){if(Zotero.config.storeDebug){Zotero.debugstring+="WARN:"+warnstring+"\n";}if(typeof console=='undefined'||typeof console.warn=='undefined'){this.debug(warnstring);}else {console.warn(warnstring);}},error:function error(errorstring){if(Zotero.config.storeDebug){Zotero.debugstring+="ERROR:"+errorstring+"\n";}if(typeof console=='undefined'||typeof console.error=='undefined'){this.debug(errorstring);}else {console.error(errorstring);}},submitDebugLog:function submitDebugLog(){Zotero.net.ajax({url:Zotero.config.debugLogEndpoint,data:{'debug_string':Zotero.debugstring}}).then(function(xhr){var data=JSON.parse(xhr.responseText);if(data.logID){alert("ZoteroWWW debug logID:"+data.logID);}else if(data.error){alert("Error submitting ZoteroWWW debug log:"+data.error);}});},catchPromiseError:function catchPromiseError(err){Zotero.error(err);},libraries:{},validator:{patterns:{ //'itemKey': /^([A-Z0-9]{8,},?)+$/,
 'itemKey':/^.+$/,'collectionKey':/^([A-Z0-9]{8,})|trash$/, //'tag': /^[^#]*$/,
 'libraryID':/^[0-9]+$/,'libraryType':/^(user|group|)$/,'target':/^(items?|collections?|tags|children|deleted|userGroups|key|settings|publications)$/,'targetModifier':/^(top|file|file\/view)$/, //get params
 'sort':/^(asc|desc)$/,'start':/^[0-9]*$/,'limit':/^[0-9]*$/,'order':/^\S*$/,'content':/^((html|json|data|bib|none|bibtex|bookmarks|coins|csljson|mods|refer|rdf_bibliontology|rdf_dc|ris|tei|wikipedia),?)+$/,'include':/^((html|json|data|bib|none|bibtex|bookmarks|coins|csljson|mods|refer|rdf_bibliontology|rdf_dc|ris|tei|wikipedia),?)+$/,'q':/^.*$/,'fq':/^\S*$/,'itemType':/^\S*$/,'locale':/^\S*$/,'tag':/^.*$/,'tagType':/^(0|1)$/,'key':/^\S*/,'format':/^(json|atom|bib|keys|versions|bibtex|bookmarks|mods|refer|rdf_bibliontology|rdf_dc|rdf_zotero|ris|wikipedia)$/,'style':/^\S*$/,'linkwrap':/^(0|1)*$/},validate:function validate(arg,type){Z.debug("Zotero.validate",4);if(arg===''){return null;}else if(arg===null){return true;}Z.debug(arg+" "+type,4);var patterns=this.patterns;if(patterns.hasOwnProperty(type)){return patterns[type].test(arg);}else {return null;}}},_logEnabled:0,enableLogging:function enableLogging(){Zotero._logEnabled++;if(Zotero._logEnabled>0){ //TODO: enable debug_log?
@@ -16,7 +436,7 @@ var registry=JSON.parse(this.store._registry);if(!registry){registry={};}var obj
 this.store[objectCacheString]=JSON.stringify(object); //make registry entry for object
 var registryEntry={'id':objectCacheString,saved:Date.now(),cachetags:cachetags};registry[objectCacheString]=registryEntry; //save registry back to storage
 this.store._registry=JSON.stringify(registry);};Zotero.Cache.prototype.load=function(params){Z.debug("Zotero.Cache.load",3);var objectCacheString=this.objectCacheString(params);Z.debug(objectCacheString,4);try{var s=this.store[objectCacheString];if(!s){Z.warn("No value found in cache store - "+objectCacheString,3);return null;}else {return JSON.parse(s);}}catch(e) {Z.error('Error parsing retrieved cache data: '+objectCacheString+' : '+s);return null;}};Zotero.Cache.prototype.expireCacheTag=function(tag){Z.debug("Zotero.Cache.expireCacheTag",3);var registry=JSON.parse(this.store._registry);var store=this.store;Object.keys(registry).forEach(function(index){var value=registry[index];if(value.cachetags.indexOf(tag)!=-1){Z.debug('tag '+tag+' found for item '+value['id']+' : expiring',4);delete store[value['id']];delete registry[value['id']];}});};Zotero.Cache.prototype.clear=function(){if(typeof this.store.clear=='function'){this.store.clear();}else {this.store={};}};Zotero.ajaxRequest=function(url,type,options){Z.debug("Zotero.ajaxRequest ==== "+url,3);if(!type){type='GET';}if(!options){options={};}var requestObject={url:url,type:type};requestObject=Z.extend({},requestObject,options);Z.debug(requestObject,3);return Zotero.net.queueRequest(requestObject);}; //non-DOM (jquery) event management
-Zotero.eventmanager={callbacks:{}};Zotero.trigger=function(eventType){var data=arguments.length<=1||arguments[1]===undefined?{}:arguments[1];var filter=arguments.length<=2||arguments[2]===undefined?false:arguments[2];if(filter){Z.debug("filter is not false",3);eventType+="_"+filter;}Zotero.debug("Triggering eventful "+eventType,3);Z.debug(data);console.warn('hello world');data.zeventful=true;if(data.triggeringElement===null||data.triggeringElement===undefined){data.triggeringElement=J("#eventful");}try{if(Zotero.eventmanager.callbacks.hasOwnProperty(eventType)){var callbacks=Zotero.eventmanager.callbacks[eventType];callbacks.forEach(function(callback){var cdata=Z.extend({},data,callback.data);var e={data:cdata};callback.f(e);});}}catch(e) {Z.error("failed triggering:"+eventType);Z.error(e);}};Zotero.listen=function(events,handler,data,filter){Z.debug("Zotero.listen: "+events); //append filter to event strings if it's specified
+Zotero.eventmanager={callbacks:{}};Zotero.trigger=function(eventType){var data=arguments.length<=1||arguments[1]===undefined?{}:arguments[1];var filter=arguments.length<=2||arguments[2]===undefined?false:arguments[2];if(filter){Z.debug("filter is not false",3);eventType+="_"+filter;}Zotero.debug("Triggering eventful "+eventType,3);Z.debug(data);data.zeventful=true;if(data.triggeringElement===null||data.triggeringElement===undefined){data.triggeringElement=J("#eventful");}try{if(Zotero.eventmanager.callbacks.hasOwnProperty(eventType)){var callbacks=Zotero.eventmanager.callbacks[eventType];callbacks.forEach(function(callback){var cdata=Z.extend({},data,callback.data);var e={data:cdata};callback.f(e);});}}catch(e) {Z.error("failed triggering:"+eventType);Z.error(e);}};Zotero.listen=function(events,handler,data,filter){Z.debug("Zotero.listen: "+events); //append filter to event strings if it's specified
 var eventsArray=events.split(" ");if(eventsArray.length>0&&filter){for(var i=0;i<eventsArray.length;i++){eventsArray[i]+="_"+filter;}}eventsArray.forEach(function(ev){if(Zotero.eventmanager.callbacks.hasOwnProperty(ev)){Zotero.eventmanager.callbacks[ev].push({data:data,f:handler});}else {Zotero.eventmanager.callbacks[ev]=[{data:data,f:handler}];}});};var Z=Zotero;'use strict'; /*
 Zotero.ajax.error = function(event, request, settings, exception){
 	//Zotero.ui.jsNotificationMessage("Error requesting " + settings.url, 'error');
@@ -440,7 +860,7 @@ Zotero.url.attachmentDownloadLink=function(item){var retString='';var downloadUr
 retString+='<a href="'+downloadUrl+'">'+'View Snapshot</a>';}else { //file: offer download
 var enctype=Zotero.utils.translateMimeType(item.apiObj.links['enclosure'].type);var enc=item.apiObj.links['enclosure'];var filesize=parseInt(enc['length'],10);var filesizeString=""+filesize+" B";if(filesize>1073741824){filesizeString=""+(filesize/1073741824).toFixed(1)+" GB";}else if(filesize>1048576){filesizeString=""+(filesize/1048576).toFixed(1)+" MB";}else if(filesize>1024){filesizeString=""+(filesize/1024).toFixed(1)+" KB";}Z.debug(enctype,3);retString+='<a href="'+downloadUrl+'">';if(enctype=='undefined'||enctype===''||typeof enctype=='undefined'){retString+=filesizeString+'</a>';}else {retString+=enctype+', '+filesizeString+'</a>';}return retString;}}return retString;};Zotero.url.attachmentDownloadUrl=function(item){if(item.apiObj.links&&item.apiObj.links['enclosure']){if(Zotero.config.proxyDownloads){ //we have a proxy for downloads at baseDownloadUrl so just pass an itemkey to that
 return Zotero.url.wwwDownloadUrl(item);}else {return Zotero.url.apiDownloadUrl(item);}}return false;};Zotero.url.apiDownloadUrl=function(item){if(item.apiObj.links['enclosure']){return item.apiObj.links['enclosure']['href'];}return false;};Zotero.url.proxyDownloadUrl=function(item){if(item.apiObj.links['enclosure']){if(Zotero.config.proxyDownloads){return Zotero.config.baseDownloadUrl+"?itemkey="+item.get('key');}else {return Zotero.url.apiDownloadUrl(item);}}else {return false;}};Zotero.url.wwwDownloadUrl=function(item){if(item.apiObj.links['enclosure']){return Zotero.config.baseZoteroWebsiteUrl+Zotero.config.librarySettings.libraryPathString+"/"+item.get('key')+"/file/view";}else {return false;}};Zotero.url.publicationsDownloadUrl=function(item){if(item.apiObj.links['enclosure']){return item.apiObj.links['enclosure']['href'];}return false;};Zotero.url.attachmentFileDetails=function(item){ //file: offer download
-if(!item.apiObj.links['enclosure'])return '';var enctype=Zotero.utils.translateMimeType(item.apiObj.links['enclosure'].type);var enc=item.apiObj.links['enclosure'];var filesizeString='';if(enc['length']){var filesize=parseInt(enc['length'],10);filesizeString=""+filesize+" B";if(filesize>1073741824){filesizeString=""+(filesize/1073741824).toFixed(1)+" GB";}else if(filesize>1048576){filesizeString=""+(filesize/1048576).toFixed(1)+" MB";}else if(filesize>1024){filesizeString=""+(filesize/1024).toFixed(1)+" KB";}return '('+enctype+', '+filesizeString+')';}else {return '('+enctype+')';}};Zotero.url.userWebLibrary=function(slug){return [Zotero.config.baseWebsiteUrl,slug,"items"].join("/");};Zotero.url.groupWebLibrary=function(group){if(group.type=='Private'){return [Zotero.config.baseWebsiteUrl,"groups",group.get('id'),"items"].join("/");}else {return [Zotero.config.baseWebsiteUrl,"groups",Zotero.utils.slugify(group.get('name')),"items"].join("/");}};Zotero.url.exportUrls=function(config){Z.debug("Zotero.url.exportUrls",3);var exportUrls={};var exportConfig={};Zotero.config.exportFormats.forEach(function(format){exportConfig=Z.extend(config,{'format':format});exportUrls[format]=Zotero.ajax.apiRequestUrl(exportConfig)+Zotero.ajax.apiQueryString({format:format,limit:'25'});});return exportUrls;};Zotero.url.relationUrl=function(libraryType,libraryID,itemKey){return "http://test.zotero.net/"+libraryType+"s/"+libraryID+"/items/"+itemKey;};'use strict';Zotero.file={};Zotero.file.getFileInfo=function(file){ //fileInfo: md5, filename, filesize, mtime, zip, contentType, charset
+if(!item.apiObj.links['enclosure'])return '';var enctype=Zotero.utils.translateMimeType(item.apiObj.links['enclosure'].type);var enc=item.apiObj.links['enclosure'];var filesizeString='';if(enc['length']){var filesize=parseInt(enc['length'],10);filesizeString=""+filesize+" B";if(filesize>1073741824){filesizeString=""+(filesize/1073741824).toFixed(1)+" GB";}else if(filesize>1048576){filesizeString=""+(filesize/1048576).toFixed(1)+" MB";}else if(filesize>1024){filesizeString=""+(filesize/1024).toFixed(1)+" KB";}return '('+enctype+', '+filesizeString+')';}else {return '('+enctype+')';}};Zotero.url.userWebLibrary=function(slug){return [Zotero.config.baseWebsiteUrl,slug,"items"].join("/");};Zotero.url.groupWebLibrary=function(group){if(group.type=='Private'){return [Zotero.config.baseWebsiteUrl,"groups",group.get('id'),"items"].join("/");}else {return [Zotero.config.baseWebsiteUrl,"groups",Zotero.utils.slugify(group.get('name')),"items"].join("/");}};Zotero.url.exportUrls=function(config){Z.debug("Zotero.url.exportUrls",3);var exportUrls={};var exportConfig={};Zotero.config.exportFormats.forEach(function(format){exportConfig=Z.extend(config,{'format':format});exportUrls[format]=Zotero.ajax.apiRequestUrl(exportConfig)+Zotero.ajax.apiQueryString({format:format,limit:'25'});});return exportUrls;};Zotero.url.relationUrl=function(libraryType,libraryID,itemKey){return "http://zotero.org/"+libraryType+"s/"+libraryID+"/items/"+itemKey;};'use strict';Zotero.file={};Zotero.file.getFileInfo=function(file){ //fileInfo: md5, filename, filesize, mtime, zip, contentType, charset
 if(typeof FileReader==='undefined'){return Promise.reject(new Error("FileReader not supported"));}return new Promise(function(resolve,reject){var fileInfo={};var reader=new FileReader();reader.onload=function(e){Z.debug('Zotero.file.getFileInfo onloadFunc',3);var result=e.target.result;Zotero.debug(result,3);fileInfo.md5=SparkMD5.ArrayBuffer.hash(result);fileInfo.filename=file.name;fileInfo.filesize=file.size;fileInfo.mtime=Date.now();fileInfo.contentType=file.type; //fileInfo.reader = reader;
 fileInfo.filedata=result;resolve(fileInfo);};reader.readAsArrayBuffer(file);});};Zotero.file.uploadFile=function(uploadInfo,fileInfo){Z.debug("Zotero.file.uploadFile",3);Z.debug(uploadInfo,4);var formData=new FormData();Object.keys(uploadInfo.params).forEach(function(key){var val=uploadInfo.params[key];formData.append(key,val);});var blobData=new Blob([fileInfo.filedata],{type:fileInfo.contentType});formData.append('file',blobData);var xhr=new XMLHttpRequest();xhr.open('POST',uploadInfo.url,true);return new Promise(function(resolve,reject){xhr.onload=function(evt){Z.debug('uploadFile onload event',3);if(this.status==201){Z.debug("successful upload - 201",3);resolve();}else {Z.error('uploadFile failed - '+xhr.status);reject({"message":"Failure uploading file.","code":xhr.status,"serverMessage":xhr.responseText});}};xhr.onprogress=function(evt){Z.debug('progress event');Z.debug(evt);};xhr.send(formData);}); //If CORS is not enabled on s3 this XHR will not have the normal status
 //information, but will still fire readyStateChanges so you can tell
@@ -528,24 +948,7 @@ library.tags.loaded=true;}); //resolve the overall deferred when all the child d
 return Promise.all([itemsPromise,collectionsPromise,tagsPromise]);};Zotero.Library.prototype.saveIndexedDB=function(){var library=this;var saveItemsPromise=library.idbLibrary.updateItems(library.items.itemsArray);var saveCollectionsPromise=library.idbLibrary.updateCollections(library.collections.collectionsArray);var saveTagsPromise=library.idbLibrary.updateTags(library.tags.tagsArray); //resolve the overall deferred when all the child deferreds are finished
 return Promise.all([saveItemsPromise,saveCollectionsPromise,saveTagsPromise]);};'use strict';function _typeof(obj){return obj&&typeof Symbol!=="undefined"&&obj.constructor===Symbol?"symbol":typeof obj==="undefined"?"undefined":_typeof2(obj);}Zotero.Preferences=function(store,idString){this.store=store;this.idString=idString;this.preferencesObject={};this.defaults={debug_level:3, //lower level is higher priority
 debug_log:true,debug_mock:false,listDisplayedFields:['title','creator','dateModified'],showAutomaticTags:false, //tagType:1 is automatic, tagType:0 was added by user
-itemsPerPage:25,order:'title',title:'asc'};this.load();};Zotero.Preferences.prototype.setPref=function(key,value){var preferences=this;preferences.preferencesObject[key]=value;preferences.persist();};Zotero.Preferences.prototype.setPrefs=function(newPrefs){var preferences=this;if((typeof newPrefs==='undefined'?'undefined':_typeof(newPrefs))!="object"){throw new Error("Preferences must be an object");}preferences.preferencesObject=newPrefs;preferences.persist();};Zotero.Preferences.prototype.getPref=function(key){var preferences=this;if(preferences.preferencesObject[key]){return preferences.preferencesObject[key];}else if(preferences.defaults[key]){return preferences.defaults[key];}else {return null;}};Zotero.Preferences.prototype.getPrefs=function(){var preferences=this;return preferences.preferencesObject;};Zotero.Preferences.prototype.persist=function(){var preferences=this;var storageString='preferences_'+preferences.idString;preferences.store[storageString]=JSON.stringify(preferences.preferencesObject);};Zotero.Preferences.prototype.load=function(){var preferences=this;var storageString='preferences_'+preferences.idString;var storageObjectString=preferences.store[storageString];if(!storageObjectString){preferences.preferencesObject={};}else {preferences.preferencesObject=JSON.parse(storageObjectString);}};"use strict"; //sync pull:
-//upload changed data
-// get updatedVersions for collections
-// get updatedVersions for searches
-// get upatedVersions for items
-// (sanity check versions we have for individual objects?)
-// loadCollectionsFromKeys
-// loadSearchesFromKeys
-// loadItemsFromKeys
-// process updated objects:
-//      ...
-// getDeletedData
-// process deleted
-// checkConcurrentUpdates (compare Last-Modified-Version from collections?newer request to one from /deleted request)
-Zotero.Library.prototype.syncLibrary=function(full){var library=this; //TODO: upload dirty collections
-//TODO: upload dirty items
-//pull down updated collections
-var syncPromise=library.loadUpdatedCollections().then(function(){return library.loadUpdatedItems();});};
+itemsPerPage:25,order:'title',title:'asc'};this.load();};Zotero.Preferences.prototype.setPref=function(key,value){var preferences=this;preferences.preferencesObject[key]=value;preferences.persist();};Zotero.Preferences.prototype.setPrefs=function(newPrefs){var preferences=this;if((typeof newPrefs==='undefined'?'undefined':_typeof(newPrefs))!="object"){throw new Error("Preferences must be an object");}preferences.preferencesObject=newPrefs;preferences.persist();};Zotero.Preferences.prototype.getPref=function(key){var preferences=this;if(preferences.preferencesObject[key]){return preferences.preferencesObject[key];}else if(preferences.defaults[key]){return preferences.defaults[key];}else {return null;}};Zotero.Preferences.prototype.getPrefs=function(){var preferences=this;return preferences.preferencesObject;};Zotero.Preferences.prototype.persist=function(){var preferences=this;var storageString='preferences_'+preferences.idString;preferences.store[storageString]=JSON.stringify(preferences.preferencesObject);};Zotero.Preferences.prototype.load=function(){var preferences=this;var storageString='preferences_'+preferences.idString;var storageObjectString=preferences.store[storageString];if(!storageObjectString){preferences.preferencesObject={};}else {preferences.preferencesObject=JSON.parse(storageObjectString);}};
 "use strict";
 
 var J = jQuery.noConflict();
@@ -3662,6 +4065,452 @@ var BreadCrumbs = React.createClass({
 		);
 	}
 });
+"use strict";
+
+Zotero.ui.widgets.library = {};
+
+Zotero.ui.widgets.library.init = function (el) {
+	Z.debug("Zotero.ui.widgets.library.init");
+	var library = Zotero.ui.getAssociatedLibrary(el);
+	var reactInstance = ReactDOM.render(React.createElement(ReactZoteroLibrary, { library: library }), document.getElementById('library-widget'));
+};
+
+var ReactZoteroLibrary = React.createClass({
+	displayName: "ReactZoteroLibrary",
+
+	componentWillMount: function componentWillMount() {
+		//preload library
+		Z.debug("ReactZoteroLibrary componentWillMount", 3);
+		var reactInstance = this;
+		Zotero.reactLibraryInstance = reactInstance;
+		var library = this.props.library;
+		library.loadSettings();
+		library.listen("deleteIdb", function () {
+			library.idbLibrary.deleteDB();
+		});
+		library.listen("indexedDBError", function () {
+			Zotero.ui.jsNotificationMessage("There was an error initializing your library. Some data may not load properly.", 'notice');
+		});
+		library.listen("cachedDataLoaded", function () {});
+
+		J(window).on('resize', function () {
+			if (!window.matchMedia("(min-width: 768px)").matches) {
+				if (reactInstance.state.narrow != true) {
+					reactInstance.setState({ narrow: true });
+				}
+			} else {
+				if (reactInstance.state.narrow != false) {
+					reactInstance.setState({ narrow: false });
+				}
+			}
+		});
+	},
+	componentDidMount: function componentDidMount() {
+		var reactInstance = this;
+		var library = this.props.library;
+		library.listen("displayedItemsChanged", function () {
+			Z.debug("ReactZoteroLibrary displayedItemsChanged");
+			reactInstance.refs.itemsWidget.loadItems();
+		}, {});
+
+		library.listen("tagsChanged libraryTagsUpdated selectedTagsChanged", function () {
+			Z.debug("setting tags on tagsWidget from Library");
+			reactInstance.refs.tagsWidget.setState({ tags: library.tags });
+		});
+
+		//trigger loading of more items on scroll reaching bottom
+		J(reactInstance.refs.itemsPanel).on('scroll', function () {
+			var jel = J(reactInstance.refs.itemsPanel);
+			if (jel.scrollTop() + jel.innerHeight() >= jel[0].scrollHeight) {
+				reactInstance.refs.itemsWidget.loadMoreItems();
+			}
+		});
+	},
+	getInitialState: function getInitialState() {
+		var narrow;
+		if (!window.matchMedia("(min-width: 768px)").matches) {
+			Z.debug("Library set to narrow", 3);
+			narrow = true;
+		} else {
+			narrow = false;
+		}
+
+		return {
+			narrow: narrow,
+			activePanel: "items",
+			deviceSize: "xs"
+		};
+	},
+	showFiltersPanel: function showFiltersPanel(evt) {
+		evt.preventDefault();
+		this.setState({ activePanel: "filters" });
+	},
+	showItemsPanel: function showItemsPanel(evt) {
+		evt.preventDefault();
+		this.setState({ activePanel: "items" });
+	},
+	reflowPanelContainer: function reflowPanelContainer() {},
+	render: function render() {
+		Z.debug("react library render");
+		var reactInstance = this;
+		var library = this.props.library;
+		var user = Zotero.config.loggedInUser;
+		var userDisplayName = user ? user.displayName : null;
+		var base = Zotero.config.baseWebsiteUrl;
+		var settingsUrl = base + "/settings";
+		var inboxUrl = base + "/messages/inbox"; //TODO
+		var downloadUrl = base + "/download";
+		var documentationUrl = base + "/support";
+		var forumsUrl = Zotero.config.baseForumsUrl; //TODO
+		var logoutUrl = base + "/user/logout";
+		var loginUrl = base + "/user/login";
+		var homeUrl = base;
+		var staticUrl = function staticUrl(path) {
+			return base + "/static" + path;
+		};
+
+		var inboxText = user.unreadMessages > 0 ? React.createElement(
+			"strong",
+			null,
+			"Inbox (",
+			user.unreadMessages,
+			")"
+		) : "Inbox";
+		var siteActionsMenu;
+
+		if (user) {
+			siteActionsMenu = [React.createElement(
+				"button",
+				{ key: "button", type: "button", href: "#", className: "btn btn-default navbar-btn dropdown-toggle", "data-toggle": "dropdown", role: "button", "aria-expanded": "false" },
+				userDisplayName,
+				React.createElement("span", { className: "caret" }),
+				React.createElement(
+					"span",
+					{ className: "sr-only" },
+					"Toggle Dropdown"
+				)
+			), React.createElement(
+				"ul",
+				{ key: "listEntries", className: "dropdown-menu", role: "menu" },
+				React.createElement(
+					"li",
+					null,
+					React.createElement(
+						"a",
+						{ href: settingsUrl },
+						"Settings"
+					)
+				),
+				React.createElement(
+					"li",
+					null,
+					React.createElement(
+						"a",
+						{ href: inboxUrl },
+						inboxText
+					)
+				),
+				React.createElement(
+					"li",
+					null,
+					React.createElement(
+						"a",
+						{ href: downloadUrl },
+						"Download"
+					)
+				),
+				React.createElement("li", { className: "divider" }),
+				React.createElement(
+					"li",
+					null,
+					React.createElement(
+						"a",
+						{ href: documentationUrl, className: "documentation" },
+						"Documentation"
+					)
+				),
+				React.createElement(
+					"li",
+					null,
+					React.createElement(
+						"a",
+						{ href: forumsUrl, className: "forums" },
+						"Forums"
+					)
+				),
+				React.createElement("li", { className: "divider" }),
+				React.createElement(
+					"li",
+					null,
+					React.createElement(
+						"a",
+						{ href: logoutUrl },
+						"Log Out"
+					)
+				)
+			)];
+		} else {
+			siteActionsMenu = React.createElement(
+				"div",
+				{ className: "btn-group" },
+				React.createElement(
+					"a",
+					{ href: loginUrl, className: "btn btn-default navbar-btn", role: "button" },
+					"Log In"
+				),
+				React.createElement(
+					"button",
+					{ type: "button", href: "#", className: "btn btn-default navbar-btn dropdown-toggle", "data-toggle": "dropdown", role: "button", "aria-haspopup": "true", "aria-expanded": "false" },
+					React.createElement("span", { className: "caret" }),
+					React.createElement(
+						"span",
+						{ className: "sr-only" },
+						"Toggle Dropdown"
+					)
+				),
+				React.createElement(
+					"ul",
+					{ className: "dropdown-menu", role: "menu" },
+					React.createElement(
+						"li",
+						null,
+						React.createElement(
+							"a",
+							{ href: downloadUrl },
+							"Download"
+						)
+					),
+					React.createElement(
+						"li",
+						null,
+						React.createElement(
+							"a",
+							{ href: documentationUrl, className: "documentation" },
+							"Documentation"
+						)
+					),
+					React.createElement(
+						"li",
+						null,
+						React.createElement(
+							"a",
+							{ href: forumsUrl, className: "forums" },
+							"Forums"
+						)
+					)
+				)
+			);
+		}
+
+		//figure out panel visibility based on state.activePanel
+		var narrow = reactInstance.state.narrow;
+		var leftPanelVisible = !narrow;
+		var rightPanelVisible = !narrow;
+		var itemsPanelVisible = !narrow;
+		var itemPanelVisible = !narrow;
+		var tagsPanelVisible = !narrow;
+		var collectionsPanelVisible = !narrow;
+		if (narrow) {
+			switch (reactInstance.state.activePanel) {
+				case "items":
+					rightPanelVisible = true;
+					itemsPanelVisible = true;
+					break;
+				case "item":
+					rightPanelVisible = true;
+					itemPanelVisible = true;
+					break;
+				case "tags":
+					leftPanelVisible = true;
+					tagsPanelVisible = true;
+					break;
+				case "collections":
+					leftPanelVisible = true;
+					collectionsPanelVisible = true;
+					break;
+				case "filters":
+					leftPanelVisible = true;
+					break;
+			}
+		}
+
+		return React.createElement(
+			"div",
+			null,
+			React.createElement(
+				"nav",
+				{ id: "primarynav", className: "navbar navbar-default", role: "navigation" },
+				React.createElement(
+					"div",
+					{ className: "container-fluid" },
+					React.createElement(
+						"div",
+						{ className: "navbar-header" },
+						React.createElement(
+							"button",
+							{ type: "button", className: "navbar-toggle collapsed", "data-toggle": "collapse", "data-target": "#primary-nav-linklist" },
+							userDisplayName,
+							React.createElement(
+								"span",
+								{ className: "sr-only" },
+								"Toggle navigation"
+							),
+							React.createElement("span", { className: "glyphicons fonticon glyphicons-menu-hamburger" })
+						),
+						React.createElement(
+							"a",
+							{ className: "navbar-brand hidden-sm hidden-xs", href: homeUrl },
+							React.createElement("img", { src: staticUrl('/images/theme/zotero.png'), alt: "Zotero", height: "20px" })
+						),
+						React.createElement(
+							"a",
+							{ className: "navbar-brand visible-sm-block visible-xs-block", href: homeUrl },
+							React.createElement("img", { src: staticUrl('/images/theme/zotero_theme/zotero_48.png'), alt: "Zotero", height: "24px" })
+						)
+					),
+					React.createElement(
+						"div",
+						{ className: "collapse navbar-collapse", id: "primary-nav-linklist" },
+						React.createElement(ControlPanel, { library: library, ref: "controlPanel" }),
+						React.createElement(
+							"ul",
+							{ className: "nav navbar-nav navbar-right" },
+							siteActionsMenu
+						),
+						React.createElement(
+							"div",
+							{ className: "eventfulwidget btn-toolbar hidden-xs navbar-right" },
+							React.createElement(LibrarySearchBox, { library: library })
+						)
+					)
+				)
+			),
+			React.createElement(
+				"div",
+				{ id: "js-message" },
+				React.createElement("ul", { id: "js-message-list" })
+			),
+			React.createElement(
+				"div",
+				{ id: "library", className: "row" },
+				React.createElement(
+					"div",
+					{ id: "panel-container" },
+					React.createElement(
+						"div",
+						{ id: "left-panel", hidden: !leftPanelVisible, className: "panelcontainer-panelcontainer col-xs-12 col-sm-4 col-md-3" },
+						React.createElement(FilterGuide, { ref: "filterGuide", library: library }),
+						React.createElement(
+							"div",
+							{ role: "tabpanel" },
+							React.createElement(
+								"ul",
+								{ className: "nav nav-tabs", role: "tablist" },
+								React.createElement(
+									"li",
+									{ role: "presentation", className: "active" },
+									React.createElement(
+										"a",
+										{ href: "#collections-panel", "aria-controls": "collections-panel", role: "tab", "data-toggle": "tab" },
+										"Collections"
+									)
+								),
+								React.createElement(
+									"li",
+									{ role: "presentation" },
+									React.createElement(
+										"a",
+										{ href: "#tags-panel", "aria-controls": "tags-panel", role: "tab", "data-toggle": "tab" },
+										"Tags"
+									)
+								)
+							),
+							React.createElement(
+								"div",
+								{ className: "tab-content" },
+								React.createElement(
+									"div",
+									{ id: "collections-panel", role: "tabpanel", className: "tab-pane active" },
+									React.createElement(Collections, { ref: "collectionsWidget", library: library })
+								),
+								React.createElement(
+									"div",
+									{ id: "tags-panel", role: "tabpanel", className: "tab-pane" },
+									React.createElement(Tags, { ref: "tagsWidget", library: library }),
+									React.createElement(FeedLink, { ref: "feedLinkWidget", library: library })
+								)
+							)
+						)
+					),
+					React.createElement(
+						"div",
+						{ id: "right-panel", hidden: !rightPanelVisible, className: "panelcontainer-panelcontainer col-xs-12 col-sm-8 col-md-9" },
+						React.createElement(
+							"div",
+							{ hidden: !itemsPanelVisible, ref: "itemsPanel", id: "items-panel", className: "panelcontainer-panel col-sm-12 col-md-7" },
+							React.createElement(LibrarySearchBox, { library: library }),
+							React.createElement(Items, { ref: "itemsWidget", library: library, narrow: narrow }),
+							React.createElement(
+								"div",
+								{ id: "load-more-items-div", className: "row" },
+								React.createElement(
+									"button",
+									{ onClick: function onClick() {
+											library.trigger('loadMoreItems');
+										}, type: "button", id: "load-more-items-button", className: "btn btn-default" },
+									"Load More Items"
+								)
+							)
+						),
+						React.createElement(
+							"div",
+							{ hidden: !itemPanelVisible, id: "item-panel", className: "panelcontainer-panel col-sm-12 col-md-5" },
+							React.createElement(
+								"div",
+								{ id: "item-widget-div", className: "item-details-div" },
+								React.createElement(ItemDetails, { ref: "itemWidget", library: library })
+							)
+						)
+					),
+					React.createElement(
+						"nav",
+						{ id: "panelcontainer-nav", className: "navbar navbar-default navbar-fixed-bottom visible-xs-block", role: "navigation" },
+						React.createElement(
+							"div",
+							{ className: "container-fluid" },
+							React.createElement(
+								"ul",
+								{ className: "nav navbar-nav" },
+								React.createElement(
+									"li",
+									{ onClick: reactInstance.showFiltersPanel, className: "filters-nav" },
+									React.createElement(
+										"a",
+										{ href: "#" },
+										"Filters"
+									)
+								),
+								React.createElement(
+									"li",
+									{ onClick: reactInstance.showItemsPanel, className: "items-nav" },
+									React.createElement(
+										"a",
+										{ href: "#" },
+										"Items"
+									)
+								)
+							)
+						)
+					),
+					React.createElement(CiteItemDialog, { library: library }),
+					React.createElement(ExportItemsDialog, { library: library }),
+					React.createElement(LibrarySettingsDialog, { library: library }),
+					React.createElement(ChooseSortingDialog, { library: library })
+				)
+			)
+		);
+	}
+});
 'use strict';
 
 Zotero.ui.widgets.reactchooseSortingDialog = {};
@@ -5257,7 +6106,7 @@ var ExportItemsDialog = React.createClass({
 				{ key: key },
 				React.createElement(
 					"a",
-					{ href: exportUrl, target: "_blank", className: "export-link", "data-exportformat": key },
+					{ href: exportUrl, target: "_blank", className: "export-link", title: key, "data-exportformat": key },
 					Zotero.config.exportFormatsMap[key]
 				)
 			);
@@ -5268,7 +6117,7 @@ var ExportItemsDialog = React.createClass({
 			{ ref: "modal" },
 			React.createElement(
 				"div",
-				{ id: "export-items-dialog", className: "export-items-dialog", role: "dialog", title: "Library Settings", "data-keyboard": "true" },
+				{ id: "export-items-dialog", className: "export-items-dialog", role: "dialog", title: "Export", "data-keyboard": "true" },
 				React.createElement(
 					"div",
 					{ className: "modal-dialog" },
@@ -5488,6 +6337,154 @@ var FilterGuide = React.createClass({
 				collectionNodes,
 				tagNodes,
 				searchNodes
+			)
+		);
+	}
+});
+'use strict';
+
+Zotero.ui.widgets.inviteToGroup = {};
+
+Zotero.ui.widgets.inviteToGroup.init = function (el) {
+	Z.debug("Zotero.ui.widgets.inviteToGroup");
+	//var library = Zotero.ui.getAssociatedLibrary(el);
+	var reactInstance = ReactDOM.render(React.createElement(InviteButton, null), document.getElementById('invite-to-group-div'));
+};
+
+var InviteButton = React.createClass({
+	displayName: 'InviteButton',
+
+	handleClick: function handleClick(evt) {
+		var invDialog = ReactDOM.render(React.createElement(InviteDialog, null), document.getElementById('invite-to-group-dialog'));
+		invDialog.openDialog();
+	},
+	render: function render() {
+		var reactInstance = this;
+		if (!Zotero.config.loggedIn) {
+			return null;
+		}
+		if (zoteroData.profileUserID == Zotero.config.loggedInUserID) {
+			return null;
+		}
+		return React.createElement(
+			'button',
+			{ className: 'btn btn-primary', onClick: reactInstance.handleClick },
+			'Invite to group'
+		);
+	}
+});
+
+var InviteDialog = React.createClass({
+	displayName: 'InviteDialog',
+
+	componentWillMount: function componentWillMount() {
+		var reactInstance = this;
+		var groups = new Zotero.Groups();
+		if (Zotero.config.loggedIn && Zotero.config.loggedInUserID && zoteroData.profileUserID != Zotero.config.loggedInUserID) {
+			reactInstance.setState({ loading: true });
+			var groupsPromise = groups.fetchUserGroups(Zotero.config.loggedInUserID).then(function (response) {
+				var groups = response.fetchedGroups;
+				reactInstance.setState({ groups: groups, loading: false });
+			}).catch(Zotero.catchPromiseError);
+		}
+	},
+	getInitialState: function getInitialState() {
+		return {
+			groups: [],
+			loading: false
+		};
+	},
+	openDialog: function openDialog() {
+		//this.setState({open:true});
+		this.refs.modal.open();
+	},
+	closeDialog: function closeDialog(evt) {
+		//this.setState({open:false});
+		this.refs.modal.close();
+	},
+	inviteToGroup: function inviteToGroup(evt) {
+		var reactInstance = this;
+		Z.debug(evt);
+		var groupID = J(evt.currentTarget).data('groupid');
+
+		J.ajax({
+			'type': 'POST',
+			'url': "/groups/inviteuser",
+			'data': {
+				'groupID': groupID,
+				'userID': zoteroData.profileUserID
+			},
+			'processData': true
+		}).then(function (data) {
+			Z.debug("got response from inviteuser");
+			if (data == 'true') {
+				Zotero.ui.jsNotificationMessage("User has been invited", 'success');
+			}
+		});
+	},
+	render: function render() {
+		var reactInstance = this;
+		var invitedGroupIDs = zoteroData.invitedGroupIDs;
+
+		var groupNodes = reactInstance.state.groups.map(function (group) {
+			if (invitedGroupIDs.indexOf(group.get('id').toString()) != -1) {
+				return React.createElement(
+					'li',
+					{ key: group.get('id') },
+					'Invitation pending to \'',
+					group.get('name'),
+					'\''
+				);
+			} else {
+				return React.createElement(
+					'li',
+					{ key: group.get('id') },
+					React.createElement(
+						'button',
+						{ className: 'btn btn-default', onClick: reactInstance.inviteToGroup, 'data-groupid': group.get('id') },
+						group.get('name')
+					)
+				);
+			}
+		});
+
+		return React.createElement(
+			BootstrapModalWrapper,
+			{ ref: 'modal' },
+			React.createElement(
+				'div',
+				{ id: 'invite-user-dialog', className: 'invite-user-dialog', role: 'dialog', title: 'Invite User', 'data-keyboard': 'true' },
+				React.createElement(
+					'div',
+					{ className: 'modal-dialog' },
+					React.createElement(
+						'div',
+						{ className: 'modal-content' },
+						React.createElement(
+							'div',
+							{ className: 'modal-header' },
+							React.createElement(
+								'button',
+								{ type: 'button', className: 'close', 'data-dismiss': 'modal', 'aria-hidden': 'true' },
+								'×'
+							),
+							React.createElement(
+								'h3',
+								null,
+								'Invite User'
+							)
+						),
+						React.createElement(
+							'div',
+							{ className: 'modal-body', 'data-role': 'content' },
+							React.createElement(
+								'ul',
+								null,
+								groupNodes
+							)
+						)
+					)
+				)
 			)
 		);
 	}
@@ -7901,6 +8898,172 @@ var LoadingSpinner = React.createClass({
 			React.createElement('img', { className: 'spinner', src: spinnerUrl })
 		);
 	}
+});
+'use strict';
+
+Zotero.ui.widgets.profileGroupsList = {};
+
+Zotero.ui.widgets.profileGroupsList.init = function (el) {
+	Z.debug("Zotero.ui.widgets.profileGroupsList");
+	//var library = Zotero.ui.getAssociatedLibrary(el);
+	var userID = zoteroData.profileUserID;
+
+	var reactInstance = ReactDOM.render(React.createElement(ProfileGroupsList, { userID: userID }), document.getElementById('profile-groups-div'));
+};
+
+var ProfileGroupsList = React.createClass({
+	displayName: 'ProfileGroupsList',
+
+	componentWillMount: function componentWillMount() {
+		var reactInstance = this;
+		var groups = new Zotero.Groups();
+		reactInstance.setState({ loading: true });
+		groups.fetchUserGroups(reactInstance.props.userID).then(function (response) {
+			var groups = response.fetchedGroups;
+			reactInstance.setState({ groups: groups, loading: false });
+		}).catch(Zotero.catchPromiseError);
+	},
+	getInitialState: function getInitialState() {
+		return {
+			groups: [],
+			loading: false
+		};
+	},
+	render: function render() {
+		var reactInstance = this;
+		Z.debug(reactInstance.state.groups);
+
+		var memberGroups = reactInstance.state.groups.map(function (group) {
+			return React.createElement(
+				'li',
+				{ key: group.get('id') },
+				React.createElement(
+					'a',
+					{ href: Zotero.url.groupViewUrl(group) },
+					group.get('name')
+				)
+			);
+		});
+
+		return React.createElement(
+			'div',
+			{ className: 'profile-groups-list' },
+			React.createElement(
+				'h2',
+				null,
+				'Groups'
+			),
+			React.createElement(LoadingSpinner, { loading: reactInstance.state.loading }),
+			React.createElement(
+				'ul',
+				null,
+				memberGroups
+			)
+		);
+	}
+});
+'use strict';
+
+Zotero.ui.widgets.recentItems = {};
+
+Zotero.ui.widgets.recentItems.init = function (el) {
+    Z.debug("widgets.recentItems.init");
+
+    var library = Zotero.ui.getAssociatedLibrary(el);
+
+    var reactInstance = ReactDOM.render(React.createElement(RecentItems, { library: library }), el);
+};
+
+var RecentItems = React.createClass({
+    displayName: 'RecentItems',
+
+    componentWillMount: function componentWillMount() {
+        var reactInstance = this;
+        var library = reactInstance.props.library;
+        reactInstance.setState({ loading: true });
+        library.loadItems({
+            'limit': 10,
+            'order': 'dateModified'
+        }).then(function (response) {
+            reactInstance.setState({ loading: false, items: response.loadedItems });
+        });
+    },
+    getDefaultProps: function getDefaultProps() {
+        return {
+            displayFields: ["title", "creatorSummary", "dateModified"],
+            item: {}
+        };
+    },
+    getInitialState: function getInitialState() {
+        return {
+            loading: false,
+            items: []
+        };
+    },
+    render: function render() {
+        var reactInstance = this;
+        var itemRows = this.state.items.map(function (item) {
+            return React.createElement(RecentItemRow, { key: item.get("key"), item: item });
+        });
+
+        var headers = this.props.displayFields.map(function (header) {
+            return React.createElement(
+                'th',
+                { key: header, className: 'field-table-header' },
+                Zotero.Item.prototype.fieldMap[header] ? Zotero.Item.prototype.fieldMap[header] : header
+            );
+        });
+
+        return React.createElement(
+            'table',
+            { id: 'field-table', ref: 'itemsTable', className: 'wide-items-table table table-striped' },
+            React.createElement(
+                'thead',
+                null,
+                React.createElement(
+                    'tr',
+                    null,
+                    headers
+                )
+            ),
+            React.createElement(
+                'tbody',
+                null,
+                itemRows
+            )
+        );
+    }
+});
+
+var RecentItemRow = React.createClass({
+    displayName: 'RecentItemRow',
+
+    getDefaultProps: function getDefaultProps() {
+        return {
+            displayFields: ["title", "creatorSummary", "dateModified"],
+            item: {}
+        };
+    },
+    render: function render() {
+        var reactInstance = this;
+        var item = this.props.item;
+        var fields = this.props.displayFields.map(function (field) {
+            return React.createElement(
+                'td',
+                { key: field, className: field, 'data-itemkey': item.get("key") },
+                React.createElement(
+                    'a',
+                    { 'data-itemkey': item.get("key"), href: Zotero.url.itemHref(item), title: item.get(field) },
+                    Zotero.ui.formatItemField(field, item, true)
+                )
+            );
+        });
+        return React.createElement(
+            'tr',
+            null,
+            fields
+        );
+    }
 });
 "use strict";
 
