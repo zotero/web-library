@@ -268,7 +268,7 @@ var ItemFieldRow = React.createClass({
 		var item = this.props.item;
 		var field = this.props.field;
 		var placeholderOrValue = (
-			<ItemField item={item} field={field} edit={this.props.edit} />
+			<ItemField item={item} field={field} edit={this.props.edit} parentItemDetailsInstance={this.props.parentItemDetailsInstance} />
 		);
 		
 		if(field == 'url'){
@@ -588,7 +588,7 @@ var ItemInfoPanel = React.createClass({
 		} else {
 			creatorRows = item.get('creators').map(function(creator, ind) {
 				return (
-					<CreatorRow key={ind} library={library} creatorIndex={ind} item={item} edit={edit} />
+					<CreatorRow key={ind} library={library} creatorIndex={ind} item={item} edit={edit} parentItemDetailsInstance={reactInstance.props.parentItemDetailsInstance} />
 				);
 			});
 		}
