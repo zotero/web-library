@@ -411,7 +411,7 @@ var ItemField = React.createClass({
 				value = item.get(field);
 		}
 
-		var editThisField = Zotero.ui.editMatches(this.props, this.props.edit);
+		var editThisField = editMatches(this.props, this.props.edit);
 		if(!editThisField){
 			var spanProps = {
 				className: "editable-item-field",
@@ -594,8 +594,8 @@ var ItemInfoPanel = React.createClass({
 		
 		var genericFieldRows = [];
 		//filter out fields we don't want to display or don't want to include as generic
-		var genericDisplayedFields = Zotero.ui.genericDisplayedFields(item);
-		genericDisplayedFields.forEach(function(key) {
+		var genDisplayedFields = genericDisplayedFields(item);
+		genDisplayedFields.forEach(function(key) {
 			genericFieldRows.push(<ItemFieldRow key={key} {...reactInstance.props} field={key} />);
 		});
 

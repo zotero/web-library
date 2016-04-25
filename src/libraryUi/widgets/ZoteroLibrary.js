@@ -3,6 +3,7 @@
 var log = require('../../Log.js').Logger('zotero-web-library:library');
 
 var React = require('react');
+var ReactDOM = require('react-dom');
 
 var ControlPanel = require('./ControlPanel.js');
 var FilterGuide = require('./FilterGuide.js');
