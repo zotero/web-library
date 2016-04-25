@@ -43,51 +43,7 @@ var genericDisplayedFields = function(item) {
 	});
 	return genericDisplayedFields;
 };
-/*
-var itemEditFields = function(item) {
-	var fields = [
-		{field:"itemType"},
-		{field:"title"}
-	];
-	var creators = item.get('creators');
-	creators.forEach(function(k, i) {
-		fields.push({field:"creatorType", creatorIndex:i});
-		if(k.name){
-			fields.push({field:"name", creatorIndex:i});
-		} else {
-			fields.push({field:"lastName", creatorIndex:i});
-			fields.push({field:"firstName", creatorIndex:i});
-		}
-	});
-	
-	var genericFields = Zotero.ui.genericDisplayedFields(item);
-	genericFields.forEach(function(k){
-		fields.push({field:k});
-	});
-	return fields;
-};
 
-//take an edit object and return the edit object selecting the next field of the item
-var nextEditField = function(item, edit) {
-	if(!edit || !edit.field){
-		return null;
-	}
-	var editFields = itemEditFields(item);
-	var curFieldIndex;
-	for(var i = 0; i < editFields.length; i++){
-		if(editFields[i].field == edit.field){
-			if(editFields[i].creatorIndex == edit.creatorIndex){
-				curFieldIndex = i;
-			}
-		}
-	}
-	if(curFieldIndex == editFields.length){
-		return editFields[0];
-	} else {
-		return editFields[i+1];
-	}
-};
-*/
 var CreatorRow = React.createClass({
 	getDefaultProps: function() {
 		return {
@@ -807,53 +763,6 @@ var ItemDetails = React.createClass({
 		library.trigger("displayedItemChanged");
 	},
 	componentDidMount: function() {
-		return;
-		var reactInstance = this;
-		var library = this.props.library;
-		
-		//add typeahead if there is a tag input
-		var addTagInput = J("input.add-tag-input");
-		var editTagInput = J("input.item-field-control.tag");
-		
-		var typeaheadSource = library.tags.plainList;
-		if(!typeaheadSource){
-			typeaheadSource = [];
-		}
-		var ttEngine = new Bloodhound({
-			datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
-			queryTokenizer: Bloodhound.tokenizers.whitespace,
-			local: J.map(typeaheadSource, function(typeaheadSource) { return { value: typeaheadSource }; })
-		});
-		ttEngine.initialize();
-		addTagInput.typeahead('destroy');
-		editTagInput.typeahead('destroy');
-
-		addTagInput.typeahead(
-			{
-				hint: true,
-				highlight: true,
-				minLength: 1
-			},
-			{
-				name: 'tags',
-				displayKey: 'value',
-				source: ttEngine.ttAdapter()
-				//local: library.tags.plainList
-			}
-		);
-		editTagInput.typeahead(
-			{
-				hint: true,
-				highlight: true,
-				minLength: 1
-			},
-			{
-				name: 'tags',
-				displayKey: 'value',
-				source: ttEngine.ttAdapter()
-				//local: library.tags.plainList
-			}
-		);
 	},
 	loadItem: function() {
 		log.debug('Zotero eventful loadItem', 3);
@@ -933,73 +842,12 @@ var ItemDetails = React.createClass({
 	updateTypeahead: function() {
 		log.debug("updateTypeahead", 3);
 		return;
-		var reactInstance = this;
-		var library = this.props.library;
-		if(library){
-			reactInstance.addTagTypeahead();
-		}
 	},
 	addTagTypeahead: function() {
 		//TODO: reactify
-		log.debug('adding typeahead', 3);
-		var reactInstance = this;
-		var library = this.props.library;
-
-		var typeaheadSource = library.tags.plainList;
-		if(!typeaheadSource){
-			typeaheadSource = [];
-		}
-		var ttEngine = new Bloodhound({
-			datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
-			queryTokenizer: Bloodhound.tokenizers.whitespace,
-			local: J.map(typeaheadSource, function(typeaheadSource) { return { value: typeaheadSource }; })
-		});
-		ttEngine.initialize();
-		widgetEl.find("input.taginput").typeahead('destroy');
-		widgetEl.find("input.taginput").typeahead(
-			{
-				hint: true,
-				highlight: true,
-				minLength: 1
-			},
-			{
-				name: 'tags',
-				displayKey: 'value',
-				source: ttEngine.ttAdapter()
-				//local: library.tags.plainList
-			}
-		);
-
 	},
 	addTagTypeaheadToInput: function() {
 		//TODO: reactify
-		log.debug('adding typeahead', 3);
-		var reactInstance = this;
-		var library = this.props.library;
-		var typeaheadSource = library.tags.plainList;
-		if(!typeaheadSource){
-			typeaheadSource = [];
-		}
-		var ttEngine = new Bloodhound({
-			datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
-			queryTokenizer: Bloodhound.tokenizers.whitespace,
-			local: J.map(typeaheadSource, function(typeaheadSource) { return { value: typeaheadSource }; })
-		});
-		ttEngine.initialize();
-		J(element).typeahead('destroy');
-		J(element).typeahead(
-			{
-				hint: true,
-				highlight: true,
-				minLength: 1
-			},
-			{
-				name: 'tags',
-				displayKey: 'value',
-				source: ttEngine.ttAdapter()
-				//local: library.tags.plainList
-			}
-		);
 	},
 	render: function() {
 		log.debug("ItemDetails render");

@@ -312,8 +312,6 @@ var ZoteroLibrary = React.createClass({
 				
 				<LibrarySettingsDialog library={library} />
 				
-				{/*<ProgressModalDialog library={library} />*/}
-				
 				<ChooseSortingDialog library={library} />
 			</div>
 			</div>
