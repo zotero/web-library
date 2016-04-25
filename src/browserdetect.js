@@ -1,3 +1,7 @@
+'use strict';
+
+var log = require('./Log.js').Logger('zotero-web-library:BrowserDetect');
+
 var BrowserDetect = {
     init: function () {
         this.browser = this.searchString(this.dataBrowser) || "An unknown browser";
@@ -115,3 +119,5 @@ var BrowserDetect = {
 
 };
 BrowserDetect.init();
+
+module.exports = BrowserDetect;

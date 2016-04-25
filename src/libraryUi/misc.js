@@ -1,3 +1,8 @@
+'use strict';
+
+var log = require('../Log.js').Logger('zotero-web-library:misc');
+
+var ui = {};
 
 /**
  * Update a Zotero_Item object from the current values of an edit item form
@@ -6,12 +11,12 @@
  * @return {bool}
  */
 /*
-Zotero.ui.updateItemFromForm = function(item, formEl){
-    Z.debug("Zotero.ui.updateItemFromForm", 3);
+ui.updateItemFromForm = function(item, formEl){
+    log.debug("ui.updateItemFromForm", 3);
     
     var base = J(formEl);
     base.closest('.eventfulwidget').data('ignoreformstorage', true);
-    var library = Zotero.ui.getAssociatedLibrary(base);
+    var library = ui.getAssociatedLibrary(base);
     
     var itemKey = '';
     if(item.get('key')) itemKey = item.get('key');
@@ -30,10 +35,10 @@ Zotero.ui.updateItemFromForm = function(item, formEl){
         var selector, inputValue, noteElID;
         if(field == 'note'){
             selector = "textarea[data-itemkey='" + itemKey + "'].rte";
-            Z.debug(selector, 4);
+            log.debug(selector, 4);
             noteElID = base.find(selector).attr('id');
-            Z.debug(noteElID, 4);
-            inputValue = Zotero.ui.getRte(noteElID);
+            log.debug(noteElID, 4);
+            inputValue = ui.getRte(noteElID);
         }
         else{
             selector = "[data-itemkey='" + itemKey + "'][name='" + field + "']";
@@ -41,13 +46,13 @@ Zotero.ui.updateItemFromForm = function(item, formEl){
         }
         
         if(typeof inputValue !== 'undefined'){
-            Z.debug("updating item " + field + ": " + inputValue);
+            log.debug("updating item " + field + ": " + inputValue);
             item.set(field, inputValue);
         }
     });
     var creators = [];
     base.find("tr.creator").each(function(index, el){
-        var creator = Zotero.ui.creatorFromElement(el);
+        var creator = ui.creatorFromElement(el);
         if(creator !== null){
             creators.push(creator);
         }
@@ -68,7 +73,7 @@ Zotero.ui.updateItemFromForm = function(item, formEl){
     var notes = [];
     base.find("textarea.note-text").each(function(index, el){
         var noteid = J(el).attr('id');
-        var noteContent = Zotero.ui.getRte(noteid);
+        var noteContent = ui.getRte(noteid);
         
         var noteItem = new Zotero.Item();
         if(library){
@@ -87,12 +92,12 @@ Zotero.ui.updateItemFromForm = function(item, formEl){
     item.apiObj.data.tags = tags;
     item.synced = false;
     item.dirty = true;
-    Z.debug(item);
+    log.debug(item);
 };
 */
 
 /*
-Zotero.ui.creatorFromElement = function(el){
+ui.creatorFromElement = function(el){
     var name, creator, firstName, lastName;
     var jel = J(el);
     var creatorType = jel.find("select.creator-type-select").val();
@@ -121,25 +126,25 @@ Zotero.ui.creatorFromElement = function(el){
 };
 */
 
-Zotero.ui.saveItem = function(item) {
+ui.saveItem = function(item) {
     //var requestData = JSON.stringify(item.apiObj);
-    Z.debug("pre writeItem debug", 4);
-    Z.debug(item, 4);
+    log.debug("pre writeItem debug", 4);
+    log.debug(item, 4);
     //show spinner before making ajax write call
     var library = item.owningLibrary;
     var writeResponse = item.writeItem()
     .then(function(writtenItems){
-        Z.debug("item write finished", 3);
+        log.debug("item write finished", 3);
         //check for errors, update nav
         if(item.writeFailure){
-            Z.error("Error writing item:" + item.writeFailure.message);
-            Zotero.ui.jsNotificationMessage('Error writing item', 'error');
+            log.error("Error writing item:" + item.writeFailure.message);
+            ui.jsNotificationMessage('Error writing item', 'error');
             throw new Error("Error writing item:" + item.writeFailure.message);
         }
     });
     
     //update list of tags we have if new ones added
-    Z.debug('adding new tags to library tags', 3);
+    log.debug('adding new tags to library tags', 3);
     var libTags = library.tags;
     var tags = item.apiObj.data.tags;
     J.each(tags, function(index, tagOb){
@@ -159,8 +164,8 @@ Zotero.ui.saveItem = function(item) {
  * @return {undefined}
  */
 /*
-Zotero.ui.saveFormData = function(){
-    Z.debug("saveFormData", 3);
+ui.saveFormData = function(){
+    log.debug("saveFormData", 3);
     J(".eventfulwidget").each(function(){
         var formInputs = J(this).find('input');
         J(this).data('tempformstorage', formInputs);
@@ -173,23 +178,23 @@ Zotero.ui.saveFormData = function(){
  * @return {undefined}
  */
 /*
-Zotero.ui.loadFormData = function(el){
-    Z.debug("loadFormData", 3);
+ui.loadFormData = function(el){
+    log.debug("loadFormData", 3);
     var formData = J(el).data('tempformstorage');
     if(J(el).data("ignoreformstorage")){
-        Z.debug("ignoring stored form data", 3);
+        log.debug("ignoring stored form data", 3);
         J(el).removeData('tempFormStorage');
         J(el).removeData('ignoreFormStorage');
         return;
     }
-    Z.debug('formData: ', 4);
-    Z.debug(formData, 4);
+    log.debug('formData: ', 4);
+    log.debug(formData, 4);
     if(formData){
         formData.each(function(index){
             var idstring = '#' + J(this).attr('id');
-            Z.debug('idstring:' + idstring, 4);
+            log.debug('idstring:' + idstring, 4);
             if(J(idstring).length){
-                Z.debug('setting value of ' + idstring, 4);
+                log.debug('setting value of ' + idstring, 4);
                 J(idstring).val(J(this).val());
             }
         });
@@ -201,7 +206,7 @@ Zotero.ui.loadFormData = function(el){
  * @param  {Zotero_Item} item Zotero item to get the class for
  * @return {string}
  */
-Zotero.ui.itemTypeClass = function(item) {
+ui.itemTypeClass = function(item) {
     var itemTypeClass = item.apiObj.data.itemType;
     if (item.apiObj.data.itemType == 'attachment') {
         if (item.mimeType == 'application/pdf') {
@@ -224,8 +229,8 @@ Zotero.ui.itemTypeClass = function(item) {
  * @param  {Dom Element} el Dom element
  * @return {Zotero_Library}
  */
-Zotero.ui.getAssociatedLibrary = function(el){
-    Z.debug("Zotero.ui.getAssociatedLibrary", 3);
+ui.getAssociatedLibrary = function(el){
+    log.debug("ui.getAssociatedLibrary", 3);
     var jel;
     if(typeof el == 'undefined'){
         jel = J(".zotero-library").first();
@@ -235,7 +240,7 @@ Zotero.ui.getAssociatedLibrary = function(el){
         if(jel.length === 0 || jel.is("#eventful") ){
             jel = J(".zotero-library").first();
             if(jel.length === 0){
-                Z.debug("No element passed and no default found for getAssociatedLibrary.");
+                log.debug("No element passed and no default found for getAssociatedLibrary.");
                 throw new Error("No element passed and no default found for getAssociatedLibrary.");
             }
         }
@@ -247,7 +252,7 @@ Zotero.ui.getAssociatedLibrary = function(el){
         //try getting it from a libraryString included on DOM element
         libString = J(el).data('library');
         if(libString){
-            library = Zotero.ui.libStringLibrary(libString);
+            library = ui.libStringLibrary(libString);
         }
         jel.data('zoterolibrary', library);
     }
@@ -256,14 +261,14 @@ Zotero.ui.getAssociatedLibrary = function(el){
         jel = J(".zotero-library").first();
         libString = jel.data('library');
         if(libString){
-            library = Zotero.ui.libStringLibrary(libString);
+            library = ui.libStringLibrary(libString);
         }
     }
-    if(!library){Z.error("No associated library found");}
+    if(!library){log.error("No associated library found");}
     return library;
 };
 
-Zotero.ui.libStringLibrary = function(libString){
+ui.libStringLibrary = function(libString){
     var library;
     if(Zotero.libraries.hasOwnProperty(libString)){
         library = Zotero.libraries[libString];
@@ -276,7 +281,7 @@ Zotero.ui.libStringLibrary = function(libString){
     return library;
 };
 
-Zotero.ui.getEventLibrary = function(e){
+ui.getEventLibrary = function(e){
     var tel = J(e.triggeringElement);
     if(e.library){
         return e.library;
@@ -284,7 +289,7 @@ Zotero.ui.getEventLibrary = function(e){
     if(e.data && e.data.library){
         return e.data.library;
     }
-    Z.debug(e);
+    log.debug(e);
     var libString = tel.data('library');
     if(!libString){
         throw "no library on event or libString on triggeringElement";
@@ -293,12 +298,12 @@ Zotero.ui.getEventLibrary = function(e){
         return Zotero.libraries[libString];
     }
     
-    var libConfig = Zotero.ui.parseLibString(libString);
+    var libConfig = ui.parseLibString(libString);
     var library = new Zotero.Library(libConfig.libraryType, libConfig.libraryID, '');
     Zotero.libraries[Zotero.utils.libraryString(libConfig.libraryType, libConfig.libraryID)] = library;
 };
 /*
-Zotero.ui.parseLibString = function(s){
+ui.parseLibString = function(s){
     var libraryType, libraryID;
     if(s[0] == "u"){
         libraryType = "user";
@@ -315,7 +320,7 @@ Zotero.ui.parseLibString = function(s){
  * @param  {[type]} key [description]
  * @return {[type]}     [description]
  */
-Zotero.ui.getPrioritizedVariable = function(key, defaultVal){
+ui.getPrioritizedVariable = function(key, defaultVal){
     var val = Zotero.state.getUrlVar(key) || Zotero.preferences.getPref(key) || Zotero.config.defaultApiArgs[key] || defaultVal;
     return val;
 };
@@ -324,32 +329,34 @@ Zotero.ui.getPrioritizedVariable = function(key, defaultVal){
  * Scroll to the top of the window
  * @return {undefined}
  */
-Zotero.ui.scrollToTop = function(){
+ui.scrollToTop = function(){
     window.scrollBy(0, -5000);
 };
 
 //get the nearest ancestor that is eventfulwidget
-Zotero.ui.parentWidgetEl = function(el){
+ui.parentWidgetEl = function(el){
     var matching;
     if(el.hasOwnProperty('data') && el.data.hasOwnProperty('widgetEl')){
-        Z.debug("event had widgetEl associated with it");
+        log.debug("event had widgetEl associated with it");
         return J(el.data.widgetEl);
     } else if(el.hasOwnProperty('currentTarget')){
-        Z.debug("event currentTarget set");
+        log.debug("event currentTarget set");
         matching = J(el.currentTarget).closest(".eventfulwidget");
         if(matching.length > 0){
             return matching.first();
         } else {
-            Z.debug("no matching closest to currentTarget");
-            Z.debug(el.currentTarget);
-            Z.debug(el.currentTarget);
+            log.debug("no matching closest to currentTarget");
+            log.debug(el.currentTarget);
+            log.debug(el.currentTarget);
         }
     }
     
     matching = J(el).closest(".eventfulwidget");
     if(matching.length > 0){
-        Z.debug("returning first closest widget");
+        log.debug("returning first closest widget");
         return matching.first();
     }
     return null;
 };
+
+module.exports = ui;

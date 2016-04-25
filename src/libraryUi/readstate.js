@@ -1,4 +1,8 @@
+'use strict';
 
+var log = require('../Log.js').Logger('zotero-web-library:readstate');
+
+var ui = {};
 /**
  * get a list of the itemKeys for items checked off in a form to know what items to operate on
  * if a single item is being displayed the form selections will be overridden
@@ -6,8 +10,8 @@
  * @param  {DOM element} container Container DOM Element to pull itemkey values from
  * @return {array}
  */
-Zotero.ui.getSelectedItemKeys = function(container){
-    Z.debug("Zotero.ui.getSelectedItemKeys", 3);
+ui.getSelectedItemKeys = function(container){
+    log.debug("ui.getSelectedItemKeys", 3);
     if(!container){
         container = J("body");
     }
@@ -27,8 +31,8 @@ Zotero.ui.getSelectedItemKeys = function(container){
     return itemKeys;
 };
 
-Zotero.ui.getAllFormItemKeys = function(container){
-    Z.debug("Zotero.ui.getAllFormItemKeys", 3);
+ui.getAllFormItemKeys = function(container){
+    log.debug("ui.getAllFormItemKeys", 3);
     if(!container){
         container = J("body");
     }
@@ -43,23 +47,23 @@ Zotero.ui.getAllFormItemKeys = function(container){
     return itemKeys;
 };
 
-Zotero.ui.getRte = function(el){
-    Z.debug("getRte", 3);
-    Z.debug("getRte", 3);
-    Z.debug(el);
+ui.getRte = function(el){
+    log.debug("getRte", 3);
+    log.debug("getRte", 3);
+    log.debug(el);
     switch(Zotero.config.rte){
         case "ckeditor":
             //var elid = "#" + el;
             //var edname = J(elid).attr('id');
-            //Z.debug("EdName: " + edname, 3);
+            //log.debug("EdName: " + edname, 3);
             return CKEDITOR.instances[el].getData();
         default:
             return tinyMCE.get(el).getContent();
     }
 };
 
-Zotero.ui.updateRte = function(el){
-    Z.debug("updateRte", 3);
+ui.updateRte = function(el){
+    log.debug("updateRte", 3);
     switch(Zotero.config.rte){
         case "ckeditor":
             var elid = "#" + el;
@@ -71,13 +75,13 @@ Zotero.ui.updateRte = function(el){
     }
 };
 
-Zotero.ui.deactivateRte = function(el){
-    Z.debug("deactivateRte", 3);
+ui.deactivateRte = function(el){
+    log.debug("deactivateRte", 3);
     switch(Zotero.config.rte){
         case "ckeditor":
             //var elid = "#" + el;
             if(CKEDITOR.instances[el]){
-                Z.debug("deactivating " + el, 3);
+                log.debug("deactivating " + el, 3);
                 var data = CKEDITOR.instances[el].destroy();
             }
             break;
@@ -86,9 +90,9 @@ Zotero.ui.deactivateRte = function(el){
     }
 };
 
-Zotero.ui.cleanUpRte = function(container){
-    Z.debug("cleanUpRte", 3);
+ui.cleanUpRte = function(container){
+    log.debug("cleanUpRte", 3);
     J(container).find("textarea.rte").each(function(ind, el){
-        Zotero.ui.deactivateRte(J(el).attr('name') );
+        ui.deactivateRte(J(el).attr('name') );
     });
 };

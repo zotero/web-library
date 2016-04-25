@@ -1,56 +1,60 @@
-Zotero.ui.init = {};
-Zotero.ui.widgets = {};
+'use strict';
+
+var log = require('../Log.js').Logger('zotero-web-library:init');
+
+var init = {};
+var widgets = {};
 
 //initialize ui
-Zotero.ui.init.all = function(){
+init.all = function(){
     //run UI initialization based on what page we're on
-    Z.debug("ui init based on page", 3);
+    log.debug("ui init based on page", 3);
     switch(Zotero.config.pageClass){
         case "my_library":
         case "user_library":
         case "group_library":
-            Zotero.ui.init.library();
+            init.library();
             break;
         case "default":
     }
-    //Zotero.ui.init.libraryTemplates();
+    //init.libraryTemplates();
     Zotero.eventful.initWidgets();
-    Zotero.ui.init.rte();
+    init.rte();
 };
 
-Zotero.ui.init.library = function(){
+init.library = function(){
     /*
-    Z.debug("Zotero.ui.init.library", 3);
+    log.debug("init.library", 3);
     
     //initialize RTE for textareas if marked
     var hasRTENoLinks = J('textarea.rte').filter('.nolinks').length;
     var hasRTEReadOnly = J('textarea.rte').filter('.readonly').length;
     var hasRTEDefault = J('textarea.rte').not('.nolinks').not('.readonly').length;
     if(hasRTENoLinks){
-        Zotero.ui.init.rte('nolinks', false, J('body'));
+        init.rte('nolinks', false, J('body'));
     }
     if(hasRTEReadOnly){
-        Zotero.ui.init.rte('readonly', false, J('body'));
+        init.rte('readonly', false, J('body'));
     }
     if(hasRTEDefault){
-        Zotero.ui.init.rte('default', false, J('body'));
+        init.rte('default', false, J('body'));
     }
     */
 };
 
-Zotero.ui.init.rte = function(type, autofocus, container){
-    Z.debug("init.rte", 3);
+init.rte = function(type, autofocus, container){
+    log.debug("init.rte", 3);
     if(Zotero.config.rte == 'ckeditor'){
-        Zotero.ui.init.ckeditor(type, autofocus, container);
+        init.ckeditor(type, autofocus, container);
         return;
     }
     else {
-        Zotero.ui.init.tinyMce(type, autofocus, container);
+        init.tinyMce(type, autofocus, container);
     }
 };
 
-Zotero.ui.init.ckeditor = function(type, autofocus, container){
-    Z.debug('init.ckeditor', 3);
+init.ckeditor = function(type, autofocus, container){
+    log.debug('init.ckeditor', 3);
     if(!type) { type = 'default'; }
     if(!container) { container = J('body');}
     
@@ -106,19 +110,19 @@ Zotero.ui.init.ckeditor = function(type, autofocus, container){
         config.startupFocus = true;
     }
     
-    Z.debug("initializing CK editors", 3);
+    log.debug("initializing CK editors", 3);
     if(J(container).is('.rte')){
-        Z.debug("RTE textarea - " + " - " + J(container).attr('name'), 3);
+        log.debug("RTE textarea - " + " - " + J(container).attr('name'), 3);
         var edName = J(container).attr('name');
         if(!CKEDITOR.instances[edName]){
             var editor = CKEDITOR.replace(J(container), config );
         }
     }
     else{
-        Z.debug("not a direct rte init");
-        Z.debug(container);
+        log.debug("not a direct rte init");
+        log.debug(container);
         J(container).find("textarea.rte").each(function(ind, el){
-            Z.debug("RTE textarea - " + ind + " - " + J(el).attr('name'), 3);
+            log.debug("RTE textarea - " + ind + " - " + J(el).attr('name'), 3);
             var edName = J(el).attr('name');
             if(!CKEDITOR.instances[edName]){
                 var editor = CKEDITOR.replace(el, config );
@@ -127,8 +131,8 @@ Zotero.ui.init.ckeditor = function(type, autofocus, container){
     }
 };
 
-Zotero.ui.init.tinyMce = function(type, autofocus, elements){
-    Z.debug('init.tinyMce', 3);
+init.tinyMce = function(type, autofocus, elements){
+    log.debug('init.tinyMce', 3);
     if(!type){
         type = 'default';
     }
@@ -163,7 +167,7 @@ Zotero.ui.init.tinyMce = function(type, autofocus, elements){
     
     if(autofocus){
         tmceConfig.init_instance_callback = function(inst){
-            Z.debug("inited " + inst.editorId);
+            log.debug("inited " + inst.editorId);
             inst.focus();
         };
     }
@@ -185,7 +189,7 @@ Zotero.ui.init.tinyMce = function(type, autofocus, elements){
     return tmceConfig;
 };
 
-Zotero.ui.init.libraryTemplates = function(){
+init.libraryTemplates = function(){
     /*
     J.views.helpers({
         Zotero: Zotero,
@@ -250,3 +254,7 @@ Zotero.ui.init.libraryTemplates = function(){
     */
 };
 
+module.exports = {
+    init: init,
+    widgets: widgets
+};

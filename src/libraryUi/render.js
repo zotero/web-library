@@ -1,3 +1,8 @@
+'use strict';
+
+var log = require('../Log.js').Logger('zotero-web-library:render');
+
+var ui = {};
 
 /**
  * Display a JS notification message to the user
@@ -6,8 +11,8 @@
  * @param  {int} timeout seconds to display notification
  * @return {undefined}
  */
-Zotero.ui.jsNotificationMessage = function(message, type, timeout){
-    Z.debug("notificationMessage: " + type + " : " + message, 3);
+ui.jsNotificationMessage = function(message, type, timeout){
+    log.debug("notificationMessage: " + type + " : " + message, 3);
     if(Zotero.config.suppressErrorNotifications) return;
     
     if(!timeout && (timeout !== false)){
@@ -49,13 +54,13 @@ Zotero.ui.jsNotificationMessage = function(message, type, timeout){
  * @param  {jQuery XHR Promise} jqxhr jqxhr returned from jquery.ajax
  * @return {undefined}
  */
-Zotero.ui.ajaxErrorMessage = function(jqxhr){
-    Z.debug("Zotero.ui.ajaxErrorMessage", 3);
+ui.ajaxErrorMessage = function(jqxhr){
+    log.debug("ui.ajaxErrorMessage", 3);
     if(typeof jqxhr == 'undefined'){
-        Z.debug('ajaxErrorMessage called with undefined argument');
+        log.debug('ajaxErrorMessage called with undefined argument');
         return '';
     }
-    Z.debug(jqxhr, 3);
+    log.debug(jqxhr, 3);
     switch(jqxhr.status){
         case 403:
             //don't have permission to view
@@ -69,30 +74,30 @@ Zotero.ui.ajaxErrorMessage = function(jqxhr){
             }
             break;
         case 404:
-            Zotero.ui.jsNotificationMessage("A requested resource could not be found.", 'error');
+            ui.jsNotificationMessage("A requested resource could not be found.", 'error');
             break;
         case 400:
-            Zotero.ui.jsNotificationMessage("Bad Request", 'error');
+            ui.jsNotificationMessage("Bad Request", 'error');
             break;
         case 405:
-            Zotero.ui.jsNotificationMessage("Method not allowed", 'error');
+            ui.jsNotificationMessage("Method not allowed", 'error');
             break;
         case 412:
-            Zotero.ui.jsNotificationMessage("Precondition failed", 'error');
+            ui.jsNotificationMessage("Precondition failed", 'error');
             break;
         case 500:
-            Zotero.ui.jsNotificationMessage("Something went wrong but we're not sure what.", 'error');
+            ui.jsNotificationMessage("Something went wrong but we're not sure what.", 'error');
             break;
         case 501:
-            Zotero.ui.jsNotificationMessage("We can't do that yet.", 'error');
+            ui.jsNotificationMessage("We can't do that yet.", 'error');
             break;
         case 503:
-            Zotero.ui.jsNotificationMessage("We've gone away for a little while. Please try again in a few minutes.", 'error');
+            ui.jsNotificationMessage("We've gone away for a little while. Please try again in a few minutes.", 'error');
             break;
         default:
-            Z.debug("jqxhr status did not match any expected case");
-            Z.debug(jqxhr.status);
-            //Zotero.ui.jsNotificationMessage("An error occurred performing the requested action.", 'error');
+            log.debug("jqxhr status did not match any expected case");
+            log.debug(jqxhr.status);
+            //ui.jsNotificationMessage("An error occurred performing the requested action.", 'error');
     }
     return '';
 };
@@ -104,7 +109,7 @@ Zotero.ui.ajaxErrorMessage = function(jqxhr){
  * @param  {string} type type of preloader to show
  * @return {undefined}
  */
-Zotero.ui.showSpinner = function(el, type){
+ui.showSpinner = function(el, type){
     var spinnerUrl = Zotero.config.baseWebsiteUrl + '/static/images/theme/broken-circle-spinner.gif';
     if(!type){
         J(el).html("<img class='spinner' src='" + spinnerUrl + "'/>");
@@ -119,7 +124,7 @@ Zotero.ui.showSpinner = function(el, type){
  * @param  {Dom Element} el container
  * @return {undefined}
  */
-Zotero.ui.appendSpinner = function(el){
+ui.appendSpinner = function(el){
     var spinnerUrl = Zotero.config.baseWebsiteUrl + 'static/images/theme/broken-circle-spinner.gif';
     J(el).append("<img class='spinner' src='" + spinnerUrl + "'/>");
 };
@@ -127,7 +132,7 @@ Zotero.ui.appendSpinner = function(el){
 //Take a table that is present in the DOM, save the widths of the headers and the offset of the body,
 //set the widths of the columns explicitly, set the header to position:fixed, set the offset of the body explictly
 //this has the effect of fixed table headers with scrollable data
-Zotero.ui.fixTableHeaders = function(tableEl) {
+ui.fixTableHeaders = function(tableEl) {
     var tel = J(tableEl);
     var colWidths = [];
     tel.find("thead th").each(function(ind, th){
@@ -148,3 +153,4 @@ Zotero.ui.fixTableHeaders = function(tableEl) {
 
 };
 
+module.exports = ui;

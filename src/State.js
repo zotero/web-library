@@ -1,4 +1,9 @@
-Zotero.State = function(){
+'use strict';
+
+var log = require('./Log.js').Logger('zotero-web-library:State');
+
+
+var State = function(){
     this.q = {};
     this.f = {};
     this.pathVars = {};
@@ -25,8 +30,8 @@ Zotero.State = function(){
 };
 
 //rewrite old style urls to current urls
-Zotero.State.prototype.rewriteAltUrl = function(){
-    Z.debug("rewriteAltUrl");
+State.prototype.rewriteAltUrl = function(){
+    log.debug("rewriteAltUrl");
     var state = this;
     var matches = false;
     var itemKey = false;
@@ -66,19 +71,19 @@ Zotero.State.prototype.rewriteAltUrl = function(){
     }
 };
 
-Zotero.State.prototype.updateCurState = function(){
+State.prototype.updateCurState = function(){
     var state = this;
     state.curState = J.extend({}, state.q, state.pathVars);
     return;
 };
 
-Zotero.State.prototype.savePrevState = function(){
+State.prototype.savePrevState = function(){
     var state = this;
     state.prevState = state.curState;
     return;
 };
 
-Zotero.State.prototype.getSelectedItemKeys = function(){
+State.prototype.getSelectedItemKeys = function(){
     var state = this;
     //filter actual selected itemKeys so we only return unique list
     //necessary because of duplicate item checkboxes, some of which
@@ -98,7 +103,7 @@ Zotero.State.prototype.getSelectedItemKeys = function(){
 };
 
 //toggle the selected state of the passed item key
-Zotero.State.prototype.toggleItemSelected = function(itemKey){
+State.prototype.toggleItemSelected = function(itemKey){
     var state = this;
     var newselected = [];
     var alreadySelected = false;
@@ -116,8 +121,8 @@ Zotero.State.prototype.toggleItemSelected = function(itemKey){
     state.selectedItemKeys = newselected;
 };
 
-Zotero.State.prototype.pushTag = function(newtag){
-    Z.debug('Zotero.State.pushTag', 3);
+State.prototype.pushTag = function(newtag){
+    log.debug('State.pushTag', 3);
     var state = this;
     if(state.pathVars['tag']){
         if(state.pathVars['tag'] instanceof Array){
@@ -134,8 +139,8 @@ Zotero.State.prototype.pushTag = function(newtag){
     return;
 };
 
-Zotero.State.prototype.popTag = function(oldtag){
-    Z.debug('Zotero.State.popTag', 3);
+State.prototype.popTag = function(oldtag){
+    log.debug('State.popTag', 3);
     var state = this;
     if(!state.pathVars['tag']){
         return;
@@ -153,8 +158,8 @@ Zotero.State.prototype.popTag = function(oldtag){
     }
 };
 
-Zotero.State.prototype.toggleTag = function(tagtitle){
-    Z.debug('Zotero.State.toggleTag', 3);
+State.prototype.toggleTag = function(tagtitle){
+    log.debug('State.toggleTag', 3);
     var state = this;
     if(!state.pathVars['tag']){
         state.pathVars['tag'] = [tagtitle];
@@ -184,16 +189,16 @@ Zotero.State.prototype.toggleTag = function(tagtitle){
     }
 };
 
-Zotero.State.prototype.unsetUrlVar = function(unset){
-    Z.debug("Zotero.State.unsetUrlVar", 3);
+State.prototype.unsetUrlVar = function(unset){
+    log.debug("State.unsetUrlVar", 3);
     var state = this;
     if(state.pathVars[unset]){
         delete(state.pathVars[unset]);
     }
 };
 
-Zotero.State.prototype.clearUrlVars = function(except){
-    Z.debug("Zotero.State.clearUrlVars", 3);
+State.prototype.clearUrlVars = function(except){
+    log.debug("State.clearUrlVars", 3);
     var state = this;
     if(!except){
         except = [];
@@ -206,16 +211,16 @@ Zotero.State.prototype.clearUrlVars = function(except){
     });
 };
 
-Zotero.State.prototype.parseUrlVars = function(){
-    Z.debug('Zotero.State.parseUrlVars', 3);
+State.prototype.parseUrlVars = function(){
+    log.debug('State.parseUrlVars', 3);
     var state = this;
     if(!state.useLocation) return;
     state.q = Zotero.utils.parseQuery(Zotero.utils.querystring(window.location.href));
     state.pathVars = state.parsePathVars();
 };
 
-Zotero.State.prototype.parsePathVars = function(pathname){
-    Z.debug('Zotero.State.parsePathVars', 3);
+State.prototype.parsePathVars = function(pathname){
+    log.debug('State.parsePathVars', 3);
     var state = this;
     var history = window.history;
     //parse variables out of library urls
@@ -263,9 +268,9 @@ Zotero.State.prototype.parsePathVars = function(pathname){
     return pathVars;
 };
 
-Zotero.State.prototype.buildUrl = function(urlvars, queryVars){
+State.prototype.buildUrl = function(urlvars, queryVars){
     var state = this;
-    //Z.debug("Zotero.State.buildUrl", 3);
+    //log.debug("State.buildUrl", 3);
     if(typeof queryVars === 'undefined') { queryVars = false;}
     var basePath = Zotero.config.nonparsedBaseUrl + '/';
     
@@ -309,9 +314,9 @@ Zotero.State.prototype.buildUrl = function(urlvars, queryVars){
 
 //addvars is an object mapping keys and values to add
 //removevars is an array of var keys to remove
-Zotero.State.prototype.mutateUrl = function(addvars, removevars){
+State.prototype.mutateUrl = function(addvars, removevars){
     var state = this;
-    //Z.debug("Zotero.State.mutateUrl", 3);
+    //log.debug("State.mutateUrl", 3);
     if(!addvars){
         addvars = {};
     }
@@ -328,13 +333,13 @@ Zotero.State.prototype.mutateUrl = function(addvars, removevars){
     });
     
     var url = state.buildUrl(urlvars, false);
-    //Z.debug("mutated Url:" + url, 3);
+    //log.debug("mutated Url:" + url, 3);
     
     return url;
 };
 
-Zotero.State.prototype.pushState = function(){
-    Z.debug('Zotero.State.pushState', 3);
+State.prototype.pushState = function(){
+    log.debug('State.pushState', 3);
     var state = this;
     var history = window.history;
     
@@ -349,16 +354,16 @@ Zotero.State.prototype.pushState = function(){
     var queryVars = state.q;
     var url = state.buildUrl(urlvars, queryVars, false);
     state.curHref = url;
-    Z.debug("about to push url: " + url, 3);
+    log.debug("about to push url: " + url, 3);
     //actually push state and manually call urlChangeCallback if specified
     if(state.useLocation){
         if(state.replacePush === true){
-            Z.debug("Zotero.State.pushState - replacePush", 3);
+            log.debug("State.pushState - replacePush", 3);
             state.replacePush = false;
             history.replaceState(s, document.title, url);
         }
         else{
-            Z.debug("Zotero.State.pushState - pushState", 3);
+            log.debug("State.pushState - pushState", 3);
             history.pushState(s, document.title, url);
             state.stateChanged();
         }
@@ -366,11 +371,11 @@ Zotero.State.prototype.pushState = function(){
     else {
         state.stateChanged();
     }
-    Zotero.debug("leaving pushstate", 3);
+    log.debug("leaving pushstate", 3);
 };
 
-Zotero.State.prototype.replaceState = function(){
-    Z.debug("Zotero.State.replaceState", 3);
+State.prototype.replaceState = function(){
+    log.debug("State.replaceState", 3);
     var state = this;
     var history = window.history;
     //update current and leave prev alone.
@@ -391,14 +396,14 @@ Zotero.State.prototype.replaceState = function(){
     }
 };
 
-Zotero.State.prototype.updateStateTitle = function(title){
-    Zotero.debug("Zotero.State.updateStateTitle", 3);
+State.prototype.updateStateTitle = function(title){
+    log.debug("State.updateStateTitle", 3);
     var state = this;
     
     document.title = title;
 };
 
-Zotero.State.prototype.getUrlVar = function(key){
+State.prototype.getUrlVar = function(key){
     var state = this;
     if(state.pathVars.hasOwnProperty(key) && (state.pathVars[key] !== '')){
         return state.pathVars[key];
@@ -409,18 +414,18 @@ Zotero.State.prototype.getUrlVar = function(key){
     return undefined;
 };
 
-Zotero.State.prototype.setUrlVar = function(key, val){
+State.prototype.setUrlVar = function(key, val){
     var state = this;
     state.pathVars[key] = val;
 };
 
-Zotero.State.prototype.getUrlVars = function(){
+State.prototype.getUrlVars = function(){
     var state = this;
     var params = Zotero.utils.parseQuery(Zotero.utils.querystring(window.location.href));
     return J.extend(true,{}, state.pathVars, params);
 };
 
-Zotero.State.prototype.setQueryVar = function(key, val){
+State.prototype.setQueryVar = function(key, val){
     var state = this;
     if(val === ''){
         delete state.q[key];
@@ -430,7 +435,7 @@ Zotero.State.prototype.setQueryVar = function(key, val){
     }
 };
 
-Zotero.State.prototype.addQueryVar = function(key, val){
+State.prototype.addQueryVar = function(key, val){
     var state = this;
     if(state.q.hasOwnProperty(key)){
         //property exists
@@ -449,13 +454,13 @@ Zotero.State.prototype.addQueryVar = function(key, val){
     return state.q[key];
 };
 
-Zotero.State.prototype.popstateCallback = function(evt){
+State.prototype.popstateCallback = function(evt){
     var state = this;
-    Z.debug("===== popstateCallback =====", 3);
+    log.debug("===== popstateCallback =====", 3);
     var history = window.history;
     state.prevHref = state.curHref;
     
-    Z.debug("new href, updating href and processing urlchange", 3);
+    log.debug("new href, updating href and processing urlchange", 3);
     state.curHref = window.location.href;// History.getState().cleanUrl;
     
     //reparse url to set vars in Z.ajax
@@ -463,18 +468,18 @@ Zotero.State.prototype.popstateCallback = function(evt){
     state.stateChanged(evt);
 };
 
-Zotero.State.prototype.stateChanged = function(event){
+State.prototype.stateChanged = function(event){
     var state = this;
-    Z.debug("stateChanged", 3);
+    log.debug("stateChanged", 3);
     state.savePrevState();
     state.updateCurState();
     //check for changed variables in the url and fire events for them
-    Z.debug("Checking changed variables", 3);
+    log.debug("Checking changed variables", 3);
     var changedVars = state.diffState(state.prevHref, state.curHref);
     var widgetEvents = {};
     J.each(changedVars, function(ind, val){
         var eventString = val + "Changed";
-        Z.debug(eventString, 3);
+        log.debug(eventString, 3);
         //map var events to widget events
         if(Zotero.eventful.eventMap.hasOwnProperty(eventString)){
             J.each(Zotero.eventful.eventMap[eventString], function(ind, val){
@@ -483,22 +488,22 @@ Zotero.State.prototype.stateChanged = function(event){
                 }
             });
         }
-        Z.debug("State Filter: " + state.filter, 3);
+        log.debug("State Filter: " + state.filter, 3);
         Zotero.trigger(eventString, {}, state.filter);
     });
     //TODO: is this eventMap triggering necessary?
     
     J.each(widgetEvents, function(ind, val){
-        Z.debug("State Filter: " + state.filter, 3);
+        log.debug("State Filter: " + state.filter, 3);
         
         Zotero.trigger(ind, {}, state.filter);
     });
     
-    Z.debug("===== stateChanged Done =====", 3);
+    log.debug("===== stateChanged Done =====", 3);
 };
 
-Zotero.State.prototype.diffState = function(prevHref, curHref){
-    Z.debug("Zotero.State.diffState", 3);
+State.prototype.diffState = function(prevHref, curHref){
+    log.debug("State.diffState", 3);
     var state = this;
     //check what has changed when a new state is pushed
     var prevVars = J.extend({}, state.parsePathVars(prevHref) );
@@ -544,10 +549,10 @@ Zotero.State.prototype.diffState = function(prevHref, curHref){
  * @return {undefined}
  */
 /*
-Zotero.State.prototype.bindTagLinks = function(container){
+State.prototype.bindTagLinks = function(container){
     return;
     var state = this;
-    Z.debug("Zotero.State.bindTagLinks", 3);
+    log.debug("State.bindTagLinks", 3);
     J(container).on('click', 'a.tag-link', function(e){
         e.preventDefault();
         e.stopImmediatePropagation();
@@ -565,21 +570,21 @@ Zotero.State.prototype.bindTagLinks = function(container){
  * @return {undefined}
  */
 /*
-Zotero.State.prototype.bindItemLinks = function(container){
-    Z.debug("Zotero.State.bindItemLinks", 3);
+State.prototype.bindItemLinks = function(container){
+    log.debug("State.bindItemLinks", 3);
     var state = this;
     
     J(container).on('click', "a.item-select-link", function(e){
         e.preventDefault();
         e.stopImmediatePropagation();
-        Z.debug("item-select-link clicked", 3);
+        log.debug("item-select-link clicked", 3);
         var itemKey = J(this).data('itemkey');
         state.pathVars.itemKey = itemKey;
         state.pushState();
     });
     J(container).on('click', 'td[data-itemkey]:not(.edit-checkbox-td)', function(e){
         e.preventDefault();
-        Z.debug("item-select-td clicked", 3);
+        log.debug("item-select-td clicked", 3);
         var itemKey = J(this).data('itemkey');
         if(e.ctrlKey){
             state.toggleItemSelected(itemKey);
@@ -591,3 +596,4 @@ Zotero.State.prototype.bindItemLinks = function(container){
     });
 };
 */
+module.exports = State;

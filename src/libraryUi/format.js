@@ -1,3 +1,8 @@
+'use strict';
+
+var log = require('../Log.js').Logger('zotero-web-library:format');
+
+var format = {};
 
 /**
  * Format an item field for display
@@ -6,7 +11,7 @@
  * @param  {boolean} trim  Trim output to limit length
  * @return {string}
  */
-Zotero.ui.formatItemField = function(field, item, trim){
+format.formatItemField = function(field, item, trim){
     if(typeof trim == 'undefined'){
         trim = false;
     }
@@ -98,11 +103,11 @@ Zotero.ui.formatItemField = function(field, item, trim){
             }
     }
     if(typeof formattedString == 'undefined'){
-        Z.error("formattedString for " + field + " undefined");
-        Z.error(item);
+        log.error("formattedString for " + field + " undefined");
+        log.error(item);
     }
     if(trim) {
-        return Zotero.ui.trimString(formattedString, trimLength);
+        return format.trimString(formattedString, trimLength);
     }
     else{
         return formattedString;
@@ -115,11 +120,11 @@ Zotero.ui.formatItemField = function(field, item, trim){
  * @param  {int} maxlen maximum length to allow for string
  * @return {string}
  */
-Zotero.ui.trimString = function(s, maxlen){
+format.trimString = function(s, maxlen){
     var trimLength = 35;
     var formattedString = s;
     if(typeof s == 'undefined'){
-        Z.error("formattedString passed to trimString was undefined.");
+        log.error("formattedString passed to trimString was undefined.");
         return '';
     }
     if(maxlen){
@@ -139,7 +144,7 @@ Zotero.ui.trimString = function(s, maxlen){
  * @param  {Zotero_Item} item  Zotero Item owning the field
  * @return {string}
  */
-Zotero.ui.formatItemDateField = function(field, item){
+format.formatItemDateField = function(field, item){
     var date;
     var timeOptions = {
         hour: "numeric",
@@ -207,7 +212,7 @@ Zotero.ui.formatItemDateField = function(field, item){
  * @param  {string} contentRow contenteRow name
  * @return {string}
  */
-Zotero.ui.formatItemContentRow = function(contentRow){
+format.formatItemContentRow = function(contentRow){
     if(contentRow.field == 'date'){
         if(!contentRow.fieldValue){return '';}
         var date = Zotero.utils.parseApiDate(contentRow.value);
@@ -223,7 +228,7 @@ Zotero.ui.formatItemContentRow = function(contentRow){
     }
 };
 
-Zotero.ui.groupUrl = function(group, route){
+format.groupUrl = function(group, route){
     var groupBase;
     if(group.groupType == 'Private'){
         groupBase = '/groups/' + group.groupID;
@@ -232,7 +237,7 @@ Zotero.ui.groupUrl = function(group, route){
         groupBase = '/groups/' + Zotero.utils.slugify(group.groupName);
     }
     var groupIDBase = '/groups/' + group.groupID;
-    Zotero.debug("groupBase: " + groupBase);
+    log.debug("groupBase: " + groupBase);
     switch(route){
         case 'groupView':
             return groupBase;
@@ -248,3 +253,5 @@ Zotero.ui.groupUrl = function(group, route){
             return groupIDBase + '/settings/members';
     }
 };
+
+module.exports = format;
