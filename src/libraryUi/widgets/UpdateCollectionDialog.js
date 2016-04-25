@@ -27,9 +27,9 @@ var UpdateCollectionDialog = React.createClass({
 	},
 	getInitialState: function() {
 		return {
-			collectionName: "",
-			parentCollection: null,
-		}
+			collectionName: '',
+			parentCollection: '',
+		};
 	},
 	handleCollectionChange: function(evt) {
 		this.setState({'parentCollection': evt.target.value});
