@@ -1,3 +1,0 @@
-<script id="singlecellitemrowsetTemplate" type="text/x-jsrender">
-    {{for items tmpl='#singlecellitemrowTemplate' ~displayFields=displayFields ~library=library /}}
-</script>

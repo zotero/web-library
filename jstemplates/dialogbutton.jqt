@@ -1,3 +1,0 @@
-<script id="dialogbuttonTemplate" type="text/x-jsrender">
-    <button class="dialogbutton" data-role="button">{{>title}}</button>
-</script>

@@ -1,5 +1,0 @@
-<script id="coloredtagTemplate" type="text/x-jsrender">
-	<span style="color:{{:#data}}">
-    	<span style="color:{{:#data}}" class="glyphicons fonticon glyphicons-tag"></span>
-	</span>
-</script>

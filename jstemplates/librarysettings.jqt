@@ -1,7 +1,0 @@
-<script id="librarysettingsTemplate" type="text/x-jsrender">
-    <form id="library-settings-form">
-    {{props columnFields}}
-        <label for="display-column-field-{{attr:prop}}"><input type="checkbox" name="display-column-field" value="{{attr:prop}}" id="display-column-field-{{attr:prop}}" />{{>~zoteroFieldMap[prop] || prop}}</label>
-    {{/props}}
-    </form>
-</script>

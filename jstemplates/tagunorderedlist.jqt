@@ -1,5 +1,0 @@
-<script id="tagunorderedlistTemplate" type="text/x-jsrender">
-<ul id="{{attr:id}}">
-    {{for tags tmpl='#tagrowTemplate' ~showAutomatic=~Zotero.preferences.getPref('showAutomaticTags') /}}
-</ul>
-</script>

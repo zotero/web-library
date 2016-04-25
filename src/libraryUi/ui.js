@@ -129,152 +129,6 @@ ui.appendSpinner = function(el){
     J(el).append("<img class='spinner' src='" + spinnerUrl + "'/>");
 };
 
-//Take a table that is present in the DOM, save the widths of the headers and the offset of the body,
-//set the widths of the columns explicitly, set the header to position:fixed, set the offset of the body explictly
-//this has the effect of fixed table headers with scrollable data
-ui.fixTableHeaders = function(tableEl) {
-    var tel = J(tableEl);
-    var colWidths = [];
-    tel.find("thead th").each(function(ind, th){
-        var width = J(th).width();
-        colWidths.push(width);
-        J(th).width(width);
-    });
-
-    tel.find("tbody>tr:first>td").each(function(ind, td){
-        J(td).width(colWidths[ind]);
-    });
-
-    var bodyOffset = tel.find("thead").height();
-
-    tel.find("thead").css('position', 'fixed').css('margin-top', -bodyOffset).css('background-color', 'white').css('z-index', 10);
-    tel.find("tbody").css('margin-top', bodyOffset);
-    tel.css("margin-top", bodyOffset);
-
-};
-
-/**
- * Update a Zotero_Item object from the current values of an edit item form
- * @param  {Zotero_Item} item   Zotero item to update
- * @param  {Dom Form} formEl edit item form to take values from
- * @return {bool}
- */
-/*
-ui.updateItemFromForm = function(item, formEl){
-    log.debug("ui.updateItemFromForm", 3);
-    
-    var base = J(formEl);
-    base.closest('.eventfulwidget').data('ignoreformstorage', true);
-    var library = ui.getAssociatedLibrary(base);
-    
-    var itemKey = '';
-    if(item.get('key')) itemKey = item.get('key');
-    else {
-        //new item - associate with library and add to collection if appropriate
-        if(library){
-            item.associateWithLibrary(library);
-        }
-        var collectionKey = Zotero.state.getUrlVar('collectionKey');
-        if(collectionKey){
-            item.addToCollection(collectionKey);
-        }
-    }
-    //update current representation of the item with form values
-    J.each(item.apiObj.data, function(field, value){
-        var selector, inputValue, noteElID;
-        if(field == 'note'){
-            selector = "textarea[data-itemkey='" + itemKey + "'].rte";
-            log.debug(selector, 4);
-            noteElID = base.find(selector).attr('id');
-            log.debug(noteElID, 4);
-            inputValue = ui.getRte(noteElID);
-        }
-        else{
-            selector = "[data-itemkey='" + itemKey + "'][name='" + field + "']";
-            inputValue = base.find(selector).val();
-        }
-        
-        if(typeof inputValue !== 'undefined'){
-            log.debug("updating item " + field + ": " + inputValue);
-            item.set(field, inputValue);
-        }
-    });
-    var creators = [];
-    base.find("tr.creator").each(function(index, el){
-        var creator = ui.creatorFromElement(el);
-        if(creator !== null){
-            creators.push(creator);
-        }
-    });
-    
-    var tags = [];
-    base.find("input.taginput").each(function(index, el){
-        var tagString = J(el).val();
-        if(tagString !== ''){
-            tags.push({tag: tagString});
-        }
-    });
-    
-    //grab all the notes from the form and add to item
-    //in the case of new items we can add notes in the creation request
-    //in the case of existing items we need to post notes to /children, but we still
-    //have that interface here for consistency
-    var notes = [];
-    base.find("textarea.note-text").each(function(index, el){
-        var noteid = J(el).attr('id');
-        var noteContent = ui.getRte(noteid);
-        
-        var noteItem = new Zotero.Item();
-        if(library){
-            noteItem.associateWithLibrary(library);
-        }
-        noteItem.initEmptyNote();
-        noteItem.set('note', noteContent);
-        noteItem.setParent(item.get('key'));
-        notes.push(noteItem);
-    });
-    
-    item.notes = notes;
-    if(creators.length){
-        item.apiObj.data.creators = creators;
-    }
-    item.apiObj.data.tags = tags;
-    item.synced = false;
-    item.dirty = true;
-    log.debug(item);
-};
-*/
-
-/*
-ui.creatorFromElement = function(el){
-    var name, creator, firstName, lastName;
-    var jel = J(el);
-    var creatorType = jel.find("select.creator-type-select").val();
-    if(jel.hasClass('singleCreator')){
-        name = jel.find("input.creator-name");
-        if(!name.val()){
-            //can't submit authors with empty names
-            return null;
-        }
-        creator = {creatorType: creatorType,
-                        name: name.val()
-                    };
-    }
-    else if(jel.hasClass('doubleCreator')){
-        firstName = jel.find("input.creator-first-name").val();
-        lastName = J(el).find("input.creator-last-name").val();
-        if((firstName === '') && (lastName === '')){
-            return null;
-        }
-        creator = {creatorType: creatorType,
-                        firstName: firstName,
-                        lastName: lastName
-                        };
-    }
-    return creator;
-};
-*/
-
 ui.saveItem = function(item) {
     //var requestData = JSON.stringify(item.apiObj);
     log.debug("pre writeItem debug", 4);
@@ -308,48 +162,6 @@ ui.saveItem = function(item) {
     return writeResponse;
 };
 
-/**
- * Temporarily store the data in a form so it can be reloaded
- * @return {undefined}
- */
-/*
-ui.saveFormData = function(){
-    log.debug("saveFormData", 3);
-    J(".eventfulwidget").each(function(){
-        var formInputs = J(this).find('input');
-        J(this).data('tempformstorage', formInputs);
-    });
-};
-*/
-/**
- * Reload previously saved form data
- * @param  {Dom Element} el DOM Form to restore data to
- * @return {undefined}
- */
-/*
-ui.loadFormData = function(el){
-    log.debug("loadFormData", 3);
-    var formData = J(el).data('tempformstorage');
-    if(J(el).data("ignoreformstorage")){
-        log.debug("ignoring stored form data", 3);
-        J(el).removeData('tempFormStorage');
-        J(el).removeData('ignoreFormStorage');
-        return;
-    }
-    log.debug('formData: ', 4);
-    log.debug(formData, 4);
-    if(formData){
-        formData.each(function(index){
-            var idstring = '#' + J(this).attr('id');
-            log.debug('idstring:' + idstring, 4);
-            if(J(idstring).length){
-                log.debug('setting value of ' + idstring, 4);
-                J(idstring).val(J(this).val());
-            }
-        });
-    }
-};
-*/
 /**
  * Get the class for an itemType to display an appropriate icon
  * @param  {Zotero_Item} item Zotero item to get the class for
@@ -430,40 +242,6 @@ ui.libStringLibrary = function(libString){
     return library;
 };
 
-ui.getEventLibrary = function(e){
-    var tel = J(e.triggeringElement);
-    if(e.library){
-        return e.library;
-    }
-    if(e.data && e.data.library){
-        return e.data.library;
-    }
-    log.debug(e);
-    var libString = tel.data('library');
-    if(!libString){
-        throw "no library on event or libString on triggeringElement";
-    }
-    if(Zotero.libraries.hasOwnProperty(libString)){
-        return Zotero.libraries[libString];
-    }
-    
-    var libConfig = ui.parseLibString(libString);
-    var library = new Zotero.Library(libConfig.libraryType, libConfig.libraryID, '');
-    Zotero.libraries[Zotero.utils.libraryString(libConfig.libraryType, libConfig.libraryID)] = library;
-};
-/*
-ui.parseLibString = function(s){
-    var libraryType, libraryID;
-    if(s[0] == "u"){
-        libraryType = "user";
-    }
-    else {
-        libraryType = "group";
-    }
-    libraryID = s.slice(1);
-    return {libraryType:libraryType, libraryID:libraryID};
-};
-*/
 /**
  * Get the highest priority variable named key set from various configs
  * @param  {[type]} key [description]
@@ -482,70 +260,12 @@ ui.scrollToTop = function(){
     window.scrollBy(0, -5000);
 };
 
-//get the nearest ancestor that is eventfulwidget
-ui.parentWidgetEl = function(el){
-    var matching;
-    if(el.hasOwnProperty('data') && el.data.hasOwnProperty('widgetEl')){
-        log.debug("event had widgetEl associated with it");
-        return J(el.data.widgetEl);
-    } else if(el.hasOwnProperty('currentTarget')){
-        log.debug("event currentTarget set");
-        matching = J(el.currentTarget).closest(".eventfulwidget");
-        if(matching.length > 0){
-            return matching.first();
-        } else {
-            log.debug("no matching closest to currentTarget");
-            log.debug(el.currentTarget);
-            log.debug(el.currentTarget);
-        }
-    }
-    
-    matching = J(el).closest(".eventfulwidget");
-    if(matching.length > 0){
-        log.debug("returning first closest widget");
-        return matching.first();
-    }
-    return null;
-};
-
-
 var init = {};
 
 //initialize ui
 init.all = function(){
-    //run UI initialization based on what page we're on
-    log.debug("ui init based on page", 3);
-    switch(Zotero.config.pageClass){
-        case "my_library":
-        case "user_library":
-        case "group_library":
-            init.library();
-            break;
-        case "default":
-    }
-    //init.libraryTemplates();
     Zotero.eventful.initWidgets();
     init.rte();
-};
-
-init.library = function(){
-    /*
-    log.debug("init.library", 3);
-    
-    //initialize RTE for textareas if marked
-    var hasRTENoLinks = J('textarea.rte').filter('.nolinks').length;
-    var hasRTEReadOnly = J('textarea.rte').filter('.readonly').length;
-    var hasRTEDefault = J('textarea.rte').not('.nolinks').not('.readonly').length;
-    if(hasRTENoLinks){
-        init.rte('nolinks', false, J('body'));
-    }
-    if(hasRTEReadOnly){
-        init.rte('readonly', false, J('body'));
-    }
-    if(hasRTEDefault){
-        init.rte('default', false, J('body'));
-    }
-    */
 };
 
 init.rte = function(type, autofocus, container){
@@ -693,71 +413,6 @@ init.tinyMce = function(type, autofocus, elements){
     
     tinymce.init(tmceConfig);
     return tmceConfig;
-};
-
-init.libraryTemplates = function(){
-    /*
-    J.views.helpers({
-        Zotero: Zotero,
-        J: J,
-        Modernizr: Modernizr,
-        zoteroFieldMap: Zotero.localizations.fieldMap,
-        formatItemField: Zotero.ui.formatItemField,
-        formatItemDateField: Zotero.format.itemDateField,
-        trimString: Zotero.ui.trimString,
-        multiplyChar: function(char, num) {
-            return Array(num).join(char);
-        },
-        displayInDetails: function(field, item) {
-            if( ( (J.inArray(field, item.hideFields) == -1) && (item.fieldMap.hasOwnProperty(field))) &&
-                (J.inArray(field, ['itemType', 'title', 'creators', 'notes']) == -1)) {
-                return true;
-            }
-            return false;
-        },
-        nonEditable: function(field, item) {
-            if( J.inArray(field, item.noEditFields) !== -1) {
-                return true;
-            }
-        },
-    });
-    J.views.tags({
-        'coloredTags': {
-            'template': "{{for ~tag.tagCtx.args[0].matchColoredTags(~tag.tagCtx.args[1]) tmpl='#coloredtagTemplate' /}}"
-        }
-    });
-    */
-    /*
-    J('#tagrowTemplate').template('tagrowTemplate');
-    J('#tagslistTemplate').template('tagslistTemplate');
-    J('#collectionlistTemplate').template('collectionlistTemplate');
-    J('#collectionrowTemplate').template('collectionrowTemplate');
-    J('#itemrowTemplate').template('itemrowTemplate');
-    J('#itemstableTemplate').template('itemstableTemplate');
-    J('#itemdetailsTemplate').template('itemdetailsTemplate');
-    J('#itemnotedetailsTemplate').template('itemnotedetailsTemplate');
-    J('#itemformTemplate').template('itemformTemplate');
-    J('#citeitemformTemplate').template('citeitemformTemplate');
-    J('#attachmentformTemplate').template('attachmentformTemplate');
-    J('#attachmentuploadTemplate').template('attachmentuploadTemplate');
-    J('#editnoteformTemplate').template('editnoteformTemplate');
-    J('#itemtagTemplate').template('itemtagTemplate');
-    J('#itemtypeselectTemplate').template('itemtypeselectTemplate');
-    J('#authorelementssingleTemplate').template('authorelementssingleTemplate');
-    J('#authorelementsdoubleTemplate').template('authorelementsdoubleTemplate');
-    J('#childitemsTemplate').template('childitemsTemplate');
-    J('#editcollectionbuttonsTemplate').template('editcollectionbuttonsTemplate');
-    J('#choosecollectionformTemplate').template('choosecollectionformTemplate');
-    J('#breadcrumbsTemplate').template('breadcrumbsTemplate');
-    J('#breadcrumbstitleTemplate').template('breadcrumbstitleTemplate');
-    J('#newcollectionformTemplate').template('newcollectionformTemplate');
-    J('#updatecollectionformTemplate').template('updatecollectionformTemplate');
-    J('#deletecollectionformTemplate').template('deletecollectionformTemplate');
-    J('#tagunorderedlistTemplate').template('tagunorderedlistTemplate');
-    J('#librarysettingsTemplate').template('librarysettingsTemplate');
-    J('#addtocollectionformTemplate').template('addtocollectionformTemplate');
-    J('#exportformatsTemplate').template('exportformatsTemplate');
-    */
 };
 
 ui.init = init;

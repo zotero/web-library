@@ -1,7 +1,7 @@
 'use strict';
 
 var log = require('./Log.js').Logger('zotero-web-library:Pages');
-
+var BrowserDetect = require('./BrowserDetect.js');
 /**
  * Zotero.Pages class containing page specific functions for the website. Loaded based on
  * the value of zoterojsClass

@@ -1,3 +1,0 @@
-<script id="breadcrumbstitleTemplate" type="text/x-jsrender">
-    {{for breadcrumbs}}{{if #data.label == 'Home'}}Zotero | {{else}}{{>#data.label}}{{if (#index < (breadcrumbs.length - 1))}} > {{/if}}{{/if}}{{/for}}
-</script>

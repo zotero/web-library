@@ -1,9 +1,0 @@
-<script id="exportformatsTemplate" type="text/x-jsrender">
-    <ul id="export-formats-ul">
-    {{props exportUrls ~exportFormatsMap=exportFormatsMap}}
-        <li>
-            <a href="{{url:prop}}" target="_blank" class="export-link" data-exportformat="{{attr:key}}">{{>~exportFormatsMap[key]}}</a>
-        </li>
-    {{/props}}
-    </ul>
-</script>

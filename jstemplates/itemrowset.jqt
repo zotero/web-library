@@ -1,3 +1,0 @@
-<script id="itemrowsetTemplate" type="text/x-jsrender">
-    {{for items tmpl='#itemrowTemplate' ~displayFields=displayFields ~library=library /}}
-</script>
