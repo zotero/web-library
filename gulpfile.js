@@ -8,6 +8,9 @@ var buffer = require('vinyl-buffer');
 var gutil = require('gulp-util');
 var sourcemaps = require('gulp-sourcemaps');
 var assign = require('lodash.assign');
+var uglify = require('gulp-uglify');
+var filter = require('gulp-filter');
+var rename = require('gulp-rename');
 
 // add custom browserify options here
 var customOpts = {
@@ -40,7 +43,13 @@ function bundle() {
 		.pipe(sourcemaps.init({loadMaps: true})) // loads map from browserify file
 		// Add transformation tasks to the pipeline here.
 		.pipe(sourcemaps.write('./')) // writes .map file
-		.pipe(gulp.dest('./build'));
+		.pipe(gulp.dest('./build'))
+		// repeat for minified version
+		.pipe(filter('*.js'))
+		.pipe(uglify())
+		.pipe(rename({ extname: '.min.js' }))
+		// .pipe(sourcemaps.write('.'))
+		.pipe(gulp.dest('build'));
 }
 
 
