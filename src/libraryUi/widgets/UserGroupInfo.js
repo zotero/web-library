@@ -57,7 +57,7 @@ var GroupNugget = React.createClass({
 		}
 
 		var libAccess = Zotero.Group.prototype.accessMap[group.apiObj.data.libraryReading][group.apiObj.data.libraryEditing];
-		if(group.apiObj.data.type == 'Private' && group.apiObj.data.libraryReading == "all"){
+		if(group.apiObj.data.type == 'Private' && group.apiObj.data.libraryReading == 'all'){
 			libAccess = Zotero.Group.prototype.accessMap['members'][group.apiObj.data.libraryEditing];
 		}
 

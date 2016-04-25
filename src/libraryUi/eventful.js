@@ -5,74 +5,74 @@ var log = require('../Log.js').Logger('zotero-web-library:eventful');
 var eventful = {};
 
 eventful.events = [
-    "collectionsDirty", //collections have been updated and should be synced
-    "tagsChanged", //library.tags has been updated in some way
-    "displayedItemsChanged", //filters for items list have changed
-    "displayedItemChanged", //item selected for detailed view has changed
-    "selectedItemsChanged", //items selected by checkbox for action have changed
-    "showCitations", //request to show the citations for currently selected items
-    "showSettings", //request to show settings panel
-    "exportItems", //request to export currently selected items
-    "libraryTagsUpdated",
-    "uploadSuccessful",
-    "refreshGroups",
-    "clearLibraryQuery",
-    "libraryItemsUpdated",
-    "citeItems",
-    "itemTypeChanged",
-    "addTag",
-    "showChildren",
-    "selectCollection",
-    "selectedCollectionChanged",
-    "libraryCollectionsUpdated",
-    "loadItemsDone",
-    "collectionsChanged",
-    "tagsChanged",
-    "itemsChanged",
-    "loadedCollectionsProcessed",
-    "deleteProgress",
-    "settingsLoaded",
-    "cachedDataLoaded",
+    'collectionsDirty', //collections have been updated and should be synced
+    'tagsChanged', //library.tags has been updated in some way
+    'displayedItemsChanged', //filters for items list have changed
+    'displayedItemChanged', //item selected for detailed view has changed
+    'selectedItemsChanged', //items selected by checkbox for action have changed
+    'showCitations', //request to show the citations for currently selected items
+    'showSettings', //request to show settings panel
+    'exportItems', //request to export currently selected items
+    'libraryTagsUpdated',
+    'uploadSuccessful',
+    'refreshGroups',
+    'clearLibraryQuery',
+    'libraryItemsUpdated',
+    'citeItems',
+    'itemTypeChanged',
+    'addTag',
+    'showChildren',
+    'selectCollection',
+    'selectedCollectionChanged',
+    'libraryCollectionsUpdated',
+    'loadItemsDone',
+    'collectionsChanged',
+    'tagsChanged',
+    'itemsChanged',
+    'loadedCollectionsProcessed',
+    'deleteProgress',
+    'settingsLoaded',
+    'cachedDataLoaded',
     //eventfultriggers:
-    "createItem",
-    "newItem",
-    "addToCollectionDialog",
-    "removeFromCollection",
-    "moveToTrash",
-    "removeFromTrash",
-    "toggleEdit",
-    "clearLibraryQuery",
-    "librarySettingsDialog",
-    "citeItems",
-    "exportItemsDialog",
-    "syncLibrary",
-    "createCollectionDialog",
-    "updateCollectionDialog",
-    "deleteCollectionDialog",
-    "showMoreTags",
-    "showFewerTags",
-    "indexedDBError",
+    'createItem',
+    'newItem',
+    'addToCollectionDialog',
+    'removeFromCollection',
+    'moveToTrash',
+    'removeFromTrash',
+    'toggleEdit',
+    'clearLibraryQuery',
+    'librarySettingsDialog',
+    'citeItems',
+    'exportItemsDialog',
+    'syncLibrary',
+    'createCollectionDialog',
+    'updateCollectionDialog',
+    'deleteCollectionDialog',
+    'showMoreTags',
+    'showFewerTags',
+    'indexedDBError',
 
 ];
 
 eventful.eventMap = {
-    "orderChanged":["displayedItemsChanged"],
-    "sortChanged":["displayedItemsChanged"],
-    "collectionKeyChanged":["displayedItemsChanged", "selectedCollectionChanged"],
-    "qChanged":["displayedItemsChanged"],
-    "tagChanged":["displayedItemsChanged", "selectedTagsChanged"],
-    "itemPageChanged":["displayedItemsChanged"],
-    "itemKeyChanged":["displayedItemChanged"]
+    'orderChanged':['displayedItemsChanged'],
+    'sortChanged':['displayedItemsChanged'],
+    'collectionKeyChanged':['displayedItemsChanged', 'selectedCollectionChanged'],
+    'qChanged':['displayedItemsChanged'],
+    'tagChanged':['displayedItemsChanged', 'selectedTagsChanged'],
+    'itemPageChanged':['displayedItemsChanged'],
+    'itemKeyChanged':['displayedItemChanged']
 };
 
 eventful.initWidgets = function(){
     Zotero.state.parsePathVars();
     
-    J(".eventfulwidget").each(function(ind, el){
-        var widgetName = J(el).data("widget");
+    J('.eventfulwidget').each(function(ind, el){
+        var widgetName = J(el).data('widget');
         if(widgetName && Zotero.ui.widgets[widgetName]){
             if(Zotero.ui.widgets[widgetName]['init']){
-                log.debug("eventfulwidget init: " + widgetName, 3);
+                log.debug('eventfulwidget init: ' + widgetName, 3);
                 Zotero.ui.widgets[widgetName].init(el);
             }
         }
@@ -92,36 +92,36 @@ eventful.initWidgets = function(){
 //this should be called on any elements that are inserted into the DOM
 //and once on page load
 eventful.initTriggers = function(el){
-    log.debug("eventful.initTriggers", 3);
+    log.debug('eventful.initTriggers', 3);
     if(!el){
-        el = J("html");
+        el = J('html');
     }
     //initialize elements that have data-triggers info to trigger that event
     var triggerOnEvent = function(event){
-        log.debug("triggerOnEvent", 3);
+        log.debug('triggerOnEvent', 3);
         event.preventDefault();
         var jel = J(event.delegateTarget);
-        var eventName = jel.data("triggers");
-        log.debug("eventName: " + eventName, 3);
-        var filter = jel.data('library') || "";
+        var eventName = jel.data('triggers');
+        log.debug('eventName: ' + eventName, 3);
+        var filter = jel.data('library') || '';
         
         Zotero.trigger(eventName, {triggeringElement:event.currentTarget}, filter);
     };
     
-    J(el).find(".eventfultrigger").each(function(ind, el){
+    J(el).find('.eventfultrigger').each(function(ind, el){
         if(J(el).data('triggerbound')){
             return;
         }
-        var ev = J(el).data("event");
+        var ev = J(el).data('event');
         
         if(ev){
-            log.debug("binding " + ev + " on " + el.tagName, 3);
+            log.debug('binding ' + ev + ' on ' + el.tagName, 3);
             J(el).on(ev, triggerOnEvent);
         }
         else {
             //log.debug("binding click trigger on " + el.tagName, 3);
             //default to triggering on click
-            J(el).on("click", triggerOnEvent);
+            J(el).on('click', triggerOnEvent);
         }
         J(el).data('triggerbound', true);
     });

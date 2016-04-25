@@ -9,11 +9,11 @@ var UpdateCollectionDialog = React.createClass({
 	componentWillMount: function() {
 		var reactInstance = this;
 		var library = this.props.library;
-		library.listen("updateCollectionDialog", function(){
+		library.listen('updateCollectionDialog', function(){
 			var currentCollectionKey = Zotero.state.getUrlVar('collectionKey');
 			var currentCollection = library.collections.getCollection(currentCollectionKey);
-			var parent = "";
-			var name = "";
+			var parent = '';
+			var name = '';
 			if(currentCollection){
 				parent = currentCollection.get('parentCollection');
 				name = currentCollection.get('name');
@@ -48,21 +48,21 @@ var UpdateCollectionDialog = React.createClass({
 		var library = this.props.library;
 		var parentKey = this.state.parentCollection;
 		var name = this.state.collectionName;
-		if(name == ""){
-			name = "Untitled";
+		if(name == ''){
+			name = 'Untitled';
 		}
 		
 		var currentCollectionKey = Zotero.state.getUrlVar('collectionKey');
 		var collection = library.collections.getCollection(currentCollectionKey);
 		
 		if(!collection){
-			Zotero.ui.jsNotificationMessage("Selected collection not found", 'error');
+			Zotero.ui.jsNotificationMessage('Selected collection not found', 'error');
 			return false;
 		}
-		log.debug("updating collection: " + parentKey + ": " + name);
+		log.debug('updating collection: ' + parentKey + ': ' + name);
 		collection.update(name, parentKey)
 		.then(function(response){
-			Zotero.ui.jsNotificationMessage("Collection Saved", 'confirm');
+			Zotero.ui.jsNotificationMessage('Collection Saved', 'confirm');
 			library.collections.dirty = true;
 			library.collections.initSecondaryData();
 			library.trigger('libraryCollectionsUpdated');

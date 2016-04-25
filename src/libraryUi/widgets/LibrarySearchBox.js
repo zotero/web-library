@@ -7,19 +7,19 @@ var React = require('react');
 var LibrarySearchBox = React.createClass({
 	getInitialState: function(){
 		return {
-			searchType: "simple",
+			searchType: 'simple',
 		};
 	},
 	search: function(evt) {
 		evt.preventDefault();
-		log.debug("library-search form submitted", 3);
+		log.debug('library-search form submitted', 3);
 		Zotero.state.clearUrlVars(['collectionKey', 'tag', 'q', 'qmode']);
 		var container = J(evt.target);
 		var query = container.find('input.search-query').val();
 		var searchType = container.find('input.search-query').data('searchtype');
-		if(query !== "" || Zotero.state.getUrlVar('q') ){
+		if(query !== '' || Zotero.state.getUrlVar('q') ){
 			Zotero.state.pathVars['q'] = query;
-			if(searchType != "simple"){
+			if(searchType != 'simple'){
 				Zotero.state.pathVars['qmode'] = searchType;
 			}
 			Zotero.state.pushState();
@@ -30,7 +30,7 @@ var LibrarySearchBox = React.createClass({
 		Zotero.state.unsetUrlVar('q');
 		Zotero.state.unsetUrlVar('qmode');
 		
-		J(".search-query").val("");
+		J('.search-query').val('');
 		Zotero.state.pushState();
 		return;
 	},
@@ -41,7 +41,7 @@ var LibrarySearchBox = React.createClass({
 		this.setState({searchType: selectedType});
 	},
 	render: function() {
-		var placeHolder = "";
+		var placeHolder = '';
 		if(this.state.searchType == 'simple'){
 			placeHolder = 'Search Title, Creator, Year';
 		} else if(this.state.searchType == 'everything'){
@@ -50,7 +50,7 @@ var LibrarySearchBox = React.createClass({
 		var defaultValue = Zotero.state.getUrlVar('q');
 
 		return (
-			<div className="btn-toolbar row" id="search-box" style={{maxWidth:"350px"}}>
+			<div className="btn-toolbar row" id="search-box" style={{maxWidth:'350px'}}>
 				<form action="/search/" onSubmit={this.search} className="navbar-form zsearch library-search" role="search">
 					<div className="input-group">
 						<div className="input-group-btn">

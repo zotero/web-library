@@ -10,16 +10,16 @@ var CreateCollectionDialog = React.createClass({
 		var reactInstance = this;
 		var library = this.props.library;
 
-		library.listen("createCollectionDialog", function(){
+		library.listen('createCollectionDialog', function(){
 			reactInstance.forceUpdate();
 			reactInstance.openDialog();
 		}, {});
 	},
 	getInitialState: function() {
 		return {
-			collectionName: "",
+			collectionName: '',
 			parentCollection: null,
-		}
+		};
 	},
 	handleCollectionChange: function(evt) {
 		log.debug(evt);
@@ -36,13 +36,13 @@ var CreateCollectionDialog = React.createClass({
 		this.refs.modal.close();
 	},
 	createCollection: function() {
-		log.debug("react createCollection");
+		log.debug('react createCollection');
 		var reactInstance = this;
 		var library = this.props.library;
 		var parentKey = this.state.parentCollection;
 		var name = this.state.collectionName;
-		if(name == ""){
-			name = "Untitled";
+		if(name == ''){
+			name = 'Untitled';
 		}
 		
 		library.addCollection(name, parentKey)
@@ -51,9 +51,9 @@ var CreateCollectionDialog = React.createClass({
 			library.trigger('libraryCollectionsUpdated');
 			Zotero.state.pushState();
 			reactInstance.closeDialog();
-			Zotero.ui.jsNotificationMessage("Collection Created", 'success');
+			Zotero.ui.jsNotificationMessage('Collection Created', 'success');
 		}).catch(function(error){
-			Zotero.ui.jsNotificationMessage("There was an error creating the collection.", "error");
+			Zotero.ui.jsNotificationMessage('There was an error creating the collection.', 'error');
 			reactInstance.closeDialog();
 		});
 	},

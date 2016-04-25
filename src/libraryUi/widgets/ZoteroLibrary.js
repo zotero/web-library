@@ -30,7 +30,7 @@ var ChooseSortingDialog = require('./ChooseSortingDialog.js');
 Zotero.ui.widgets.library = {};
 
 Zotero.ui.widgets.library.init = function(el){
-	log.debug("Zotero.ui.widgets.library.init");
+	log.debug('Zotero.ui.widgets.library.init');
 	var library = Zotero.ui.getAssociatedLibrary(el);
 	var reactInstance = ReactDOM.render(
 		<ZoteroLibrary library={library} />,
@@ -41,23 +41,23 @@ Zotero.ui.widgets.library.init = function(el){
 var ZoteroLibrary = React.createClass({
 	componentWillMount: function() {
 		//preload library
-		log.debug("ZoteroLibrary componentWillMount", 3);
+		log.debug('ZoteroLibrary componentWillMount', 3);
 		var reactInstance = this;
 		Zotero.reactLibraryInstance = reactInstance;
 		var library = this.props.library;
 		library.loadSettings();
-		library.listen("deleteIdb", function(){
+		library.listen('deleteIdb', function(){
 			library.idbLibrary.deleteDB();
 		});
-		library.listen("indexedDBError", function(){
-			Zotero.ui.jsNotificationMessage("There was an error initializing your library. Some data may not load properly.", 'notice');
+		library.listen('indexedDBError', function(){
+			Zotero.ui.jsNotificationMessage('There was an error initializing your library. Some data may not load properly.', 'notice');
 		});
-		library.listen("cachedDataLoaded", function() {
+		library.listen('cachedDataLoaded', function() {
 
 		});
 		
 		J(window).on('resize', function(){
-			if(!window.matchMedia("(min-width: 768px)").matches){
+			if(!window.matchMedia('(min-width: 768px)').matches){
 				if(reactInstance.state.narrow != true){
 					reactInstance.setState({narrow:true});
 				}
@@ -71,13 +71,13 @@ var ZoteroLibrary = React.createClass({
 	componentDidMount: function() {
 		var reactInstance = this;
 		var library = this.props.library;
-		library.listen("displayedItemsChanged", function() {
-			log.debug("ZoteroLibrary displayedItemsChanged");
+		library.listen('displayedItemsChanged', function() {
+			log.debug('ZoteroLibrary displayedItemsChanged');
 			reactInstance.refs.itemsWidget.loadItems();
 		}, {});
 	
-		library.listen("tagsChanged libraryTagsUpdated selectedTagsChanged", function(){
-			log.debug("setting tags on tagsWidget from Library");
+		library.listen('tagsChanged libraryTagsUpdated selectedTagsChanged', function(){
+			log.debug('setting tags on tagsWidget from Library');
 			reactInstance.refs.tagsWidget.setState({tags:library.tags});
 		});
 
@@ -91,8 +91,8 @@ var ZoteroLibrary = React.createClass({
 	},
 	getInitialState: function() {
 		var narrow;
-		if(!window.matchMedia("(min-width: 768px)").matches){
-			log.debug("Library set to narrow", 3);
+		if(!window.matchMedia('(min-width: 768px)').matches){
+			log.debug('Library set to narrow', 3);
 			narrow = true;
 		} else {
 			narrow = false;
@@ -100,41 +100,41 @@ var ZoteroLibrary = React.createClass({
 
 		return {
 			narrow: narrow,
-			activePanel: "items",
-			deviceSize: "xs"
+			activePanel: 'items',
+			deviceSize: 'xs'
 		};
 	},
 	showFiltersPanel: function(evt) {
 		evt.preventDefault();
-		this.setState({activePanel: "filters"});
+		this.setState({activePanel: 'filters'});
 	},
 	showItemsPanel: function(evt) {
 		evt.preventDefault();
-		this.setState({activePanel: "items"});
+		this.setState({activePanel: 'items'});
 	},
 	reflowPanelContainer: function() {
 
 	},
 	render: function(){
-		log.debug("react library render");
+		log.debug('react library render');
 		var reactInstance = this;
 		var library = this.props.library;
 		var user = Zotero.config.loggedInUser;
 		var userDisplayName = user ? user.displayName : null;
 		var base = Zotero.config.baseWebsiteUrl;
-		var settingsUrl = base + "/settings";
-		var inboxUrl = base + "/messages/inbox"; //TODO
-		var downloadUrl = base + "/download";
-		var documentationUrl = base + "/support";
+		var settingsUrl = base + '/settings';
+		var inboxUrl = base + '/messages/inbox'; //TODO
+		var downloadUrl = base + '/download';
+		var documentationUrl = base + '/support';
 		var forumsUrl = Zotero.config.baseForumsUrl; //TODO
-		var logoutUrl = base + "/user/logout";
-		var loginUrl = base + "/user/login";
+		var logoutUrl = base + '/user/logout';
+		var loginUrl = base + '/user/login';
 		var homeUrl = base;
 		var staticUrl = function(path){
-			return base + "/static" + path;
+			return base + '/static' + path;
 		};
 
-		var inboxText = user.unreadMessages > 0 ? (<strong>Inbox ({user.unreadMessages})</strong>) : "Inbox";
+		var inboxText = user.unreadMessages > 0 ? (<strong>Inbox ({user.unreadMessages})</strong>) : 'Inbox';
 		var siteActionsMenu;
 
 		if(user) {
@@ -184,23 +184,23 @@ var ZoteroLibrary = React.createClass({
 		var collectionsPanelVisible = !narrow;
 		if(narrow){
 			switch(reactInstance.state.activePanel){
-				case "items":
+				case 'items':
 					rightPanelVisible = true;
 					itemsPanelVisible = true;
 					break;
-				case "item":
+				case 'item':
 					rightPanelVisible = true;
 					itemPanelVisible = true;
 					break;
-				case "tags":
+				case 'tags':
 					leftPanelVisible = true;
 					tagsPanelVisible = true;
 					break;
-				case "collections":
+				case 'collections':
 					leftPanelVisible = true;
 					collectionsPanelVisible = true;
 					break;
-				case "filters":
+				case 'filters':
 					leftPanelVisible = true;
 					break;
 			}

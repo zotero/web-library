@@ -12,7 +12,7 @@ var ZoteroItemUpdated = function(){
         document.dispatchEvent(ev);
     }
     catch(e){
-        Zotero.debug("Error triggering ZoteroItemUpdated event");
+        Zotero.debug('Error triggering ZoteroItemUpdated event');
     }
 };
 

@@ -9,7 +9,7 @@ var CreateItemDialog = React.createClass({
 	componentWillMount: function() {
 		var reactInstance = this;
 		var library = this.props.library;
-		library.listen("createItem", function(evt){
+		library.listen('createItem', function(evt){
 			var itemType = evt.data.itemType;
 			reactInstance.setState({itemType: itemType});
 			reactInstance.openDialog();
@@ -17,8 +17,8 @@ var CreateItemDialog = React.createClass({
 	},
 	getInitialState: function() {
 		return {
-			title:"",
-			itemType: "document"
+			title:'',
+			itemType: 'document'
 		};
 	},
 	handleTitleChange: function(evt) {
@@ -31,8 +31,8 @@ var CreateItemDialog = React.createClass({
 		var itemType = this.state.itemType;
 		var currentCollectionKey = Zotero.state.getUrlVar('collectionKey');
 		var title = reactInstance.state.title;
-		if(title == ""){
-			title = "Untitled";
+		if(title == ''){
+			title = 'Untitled';
 		}
 		
 		var item = new Zotero.Item();
@@ -47,11 +47,11 @@ var CreateItemDialog = React.createClass({
 			var itemKey = item.get('key');
 			Zotero.state.setUrlVar('itemKey', itemKey);
 			Zotero.state.pushState();
-			library.trigger("displayedItemsChanged");
+			library.trigger('displayedItemsChanged');
 			reactInstance.closeDialog();
 		}).catch(function(error){
 			log.error(error);
-			Zotero.ui.jsNotificationMessage("There was an error creating the item.", "error");
+			Zotero.ui.jsNotificationMessage('There was an error creating the item.', 'error');
 			reactInstance.closeDialog();
 		});
 	},

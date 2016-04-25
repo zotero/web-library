@@ -10,7 +10,7 @@ var CollectionRow = React.createClass({
 	getDefaultProps: function(){
 		return {
 			collection:null,
-			selectedCollection:"",
+			selectedCollection:'',
 			depth:0,
 			expandedCollections: {}
 		};
@@ -24,7 +24,7 @@ var CollectionRow = React.createClass({
 		Zotero.state.pushState();
 	},
 	handleTwistyClick: function(evt){
-		log.debug("handleTwistyClick");
+		log.debug('handleTwistyClick');
 		//toggle expanded state for this collection
 		evt.preventDefault();
 		var collectionKey = this.props.collection.get('collectionKey');
@@ -68,11 +68,11 @@ var CollectionRow = React.createClass({
 			);
 		}
 		
-		var placeholderClasses = "placeholder small-icon light-icon pull-left";
+		var placeholderClasses = 'placeholder small-icon light-icon pull-left';
 		if(expandedCollections[collectionKey] === true) {
-			placeholderClasses += " glyphicon glyphicon-chevron-down clickable";
+			placeholderClasses += ' glyphicon glyphicon-chevron-down clickable';
 		} else if(childRows.length > 0) {
-			placeholderClasses += " glyphicon glyphicon-chevron-right clickable";
+			placeholderClasses += ' glyphicon glyphicon-chevron-right clickable';
 		}
 
 		return (
@@ -81,7 +81,7 @@ var CollectionRow = React.createClass({
 					<span className={placeholderClasses} onClick={this.handleTwistyClick}></span>
 					<span className="fonticon glyphicons glyphicons-folder-open barefonticon"></span>
 				</div>
-				<a href={collection.websiteCollectionLink} className={isSelectedCollection ? "current-collection" : ""} onClick={this.handleCollectionClick}>
+				<a href={collection.websiteCollectionLink} className={isSelectedCollection ? 'current-collection' : ''} onClick={this.handleCollectionClick}>
 					{collection.get('name')}
 				</a>
 				{childrenList}
@@ -93,8 +93,8 @@ var CollectionRow = React.createClass({
 var TrashRow = React.createClass({
 	getDefaultProps: function(){
 		return {
-			collectionKey:"trash",
-			selectedCollection:""
+			collectionKey:'trash',
+			selectedCollection:''
 		};
 	},
 	handleClick: function() {
@@ -103,8 +103,8 @@ var TrashRow = React.createClass({
 		Zotero.state.pushState();
 	},
 	render: function() {
-		log.debug("TrashRow render");
-		var className = (this.props.selectedCollection == this.props.collectionKey ? "collection-row current-collection" : "collection-row" );
+		log.debug('TrashRow render');
+		var className = (this.props.selectedCollection == this.props.collectionKey ? 'collection-row current-collection' : 'collection-row' );
 		
 		return (
 			<li className={className}>
@@ -134,16 +134,16 @@ var Collections = React.createClass({
 		var reactInstance = this;
 		var library = this.props.library;
 		
-		library.listen("collectionsDirty", reactInstance.syncCollections, {});
-		library.listen("libraryCollectionsUpdated", function(){
+		library.listen('collectionsDirty', reactInstance.syncCollections, {});
+		library.listen('libraryCollectionsUpdated', function(){
 			reactInstance.setState({collections:library.collections});
 		}, {});
-		library.listen("selectedCollectionChanged", function(){
+		library.listen('selectedCollectionChanged', function(){
 			var collectionKey = Zotero.state.getUrlVar('collectionKey');
 			reactInstance.setState({currentCollectionKey:collectionKey});
 		}, {});
 		
-		library.listen("cachedDataLoaded", reactInstance.syncCollections, {});
+		library.listen('cachedDataLoaded', reactInstance.syncCollections, {});
 	},
 	returnToLibrary: function(evt) {
 		evt.preventDefault();
@@ -152,7 +152,7 @@ var Collections = React.createClass({
         Zotero.state.pushState();
 	},
 	syncCollections: function(evt) {
-		log.debug("react collections syncCollections", 3);
+		log.debug('react collections syncCollections', 3);
 		var reactInstance = this;
 		if(this.state.loading){
 			return;
@@ -166,19 +166,19 @@ var Collections = React.createClass({
 		return library.loadUpdatedCollections()
 		.then(function(){
 			reactInstance.setState({collections:library.collections, loading:false});
-			library.trigger("libraryCollectionsUpdated");
+			library.trigger('libraryCollectionsUpdated');
 		},
 		function(err){
 			//sync failed, but we already had some data, so show that
-			log.error("Error syncing collections");
+			log.error('Error syncing collections');
 			log.error(err);
 			reactInstance.setState({collections:library.collections, loading:false});
-			library.trigger("libraryCollectionsUpdated");
-			Zotero.ui.jsNotificationMessage("Error loading collections. Collections list may not be up to date", 'error');
+			library.trigger('libraryCollectionsUpdated');
+			Zotero.ui.jsNotificationMessage('Error loading collections. Collections list may not be up to date', 'error');
 		});
 	},
 	render: function() {
-		log.debug("Collections render");
+		log.debug('Collections render');
 		var reactInstance = this;
 		var library = this.props.library;
 		var collections = this.state.collections;
@@ -188,7 +188,7 @@ var Collections = React.createClass({
 		
 		var collectionsArray = this.state.collections.collectionsArray;
 		var currentCollectionKey = this.state.currentCollectionKey;
-		var libraryUrlIdentifier = "";
+		var libraryUrlIdentifier = '';
 		//var libraryUrlIdentifier = (collections == null ? "" : collections.libraryUrlIdentifier);
 		
 		//Set of collections in an expanded state
@@ -225,7 +225,7 @@ var Collections = React.createClass({
 			}
 		});
 		
-		var libraryClassName = "my-library " + (currentCollectionKey == null ? "current-collection" : "");
+		var libraryClassName = 'my-library ' + (currentCollectionKey == null ? 'current-collection' : '');
 		return (
 			<div id="collection-list-div" className="collection-list-container">
 				{/*<LoadingSpinner loading={this.state.loading} />*/}

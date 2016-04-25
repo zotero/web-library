@@ -6,7 +6,7 @@ var React = require('react');
 
 var GroupsButton = React.createClass({
 	render: function(){
-		var groupsUrl = "/groups";
+		var groupsUrl = '/groups';
 		return (
 			<a className="btn btn-default navbar-btn navbar-left" href={groupsUrl} title="Groups">
 				<span className="glyphicons fonticon glyphicons-group"></span>
@@ -30,7 +30,7 @@ var LibraryDropdown = React.createClass({
 		};
 	},
 	populateDropdown: function() {
-		log.debug("populateDropdown");
+		log.debug('populateDropdown');
 		var reactInstance = this;
 		if(this.state.loading || this.state.loaded){
 			return;
@@ -41,7 +41,7 @@ var LibraryDropdown = React.createClass({
 			return;
 		}
 		if(!Zotero.config.loggedIn){
-			throw new Error("no logged in userID. Required for libraryDropdown widget");
+			throw new Error('no logged in userID. Required for libraryDropdown widget');
 		}
 		
 		var user = Zotero.config.loggedInUser;
@@ -53,7 +53,7 @@ var LibraryDropdown = React.createClass({
 
 		var memberGroups = library.groups.fetchUserGroups(user.userID)
 		.then(function(response){
-			log.debug("got member groups", 3);
+			log.debug('got member groups', 3);
 			var memberGroups = response.fetchedGroups;
 			var accessibleLibraries = [];
 			if(!(Zotero.config.librarySettings.libraryType == 'user' && Zotero.config.librarySettings.libraryID == user.userID)){
@@ -158,11 +158,11 @@ var ActionsDropdown = React.createClass({
 		
 		library.dirty = true;
 		response.catch(function(){
-			log.error("Error trashing items");
+			log.error('Error trashing items');
 		}).then(function(){
 			Zotero.state.clearUrlVars(['collectionKey', 'tag', 'q']);
 			Zotero.state.pushState(true);
-			library.trigger("displayedItemsChanged");
+			library.trigger('displayedItemsChanged');
 		}).catch(Zotero.catchPromiseError);
 		
 		return false; //stop event bubbling
@@ -185,10 +185,10 @@ var ActionsDropdown = React.createClass({
 		response.catch(function(){
 			
 		}).then(function(){
-			log.debug("post-removeFromTrash always execute: clearUrlVars", 3);
+			log.debug('post-removeFromTrash always execute: clearUrlVars', 3);
 			Zotero.state.clearUrlVars(['collectionKey', 'tag', 'q']);
 			Zotero.state.pushState();
-			library.trigger("displayedItemsChanged");
+			library.trigger('displayedItemsChanged');
 		}).catch(Zotero.catchPromiseError);
 		
 		return false;
@@ -216,7 +216,7 @@ var ActionsDropdown = React.createClass({
 			log.debug('removal responses finished. forcing reload', 3);
 			Zotero.state.clearUrlVars(['collectionKey', 'tag']);
 			Zotero.state.pushState(true);
-			library.trigger("displayedItemsChanged");
+			library.trigger('displayedItemsChanged');
 		}).catch(Zotero.catchPromiseError);
 		
 		return false;
@@ -226,10 +226,10 @@ var ActionsDropdown = React.createClass({
 		this.props.library.trigger(eventType);
 	},
 	triggerSync: function() {
-		this.props.library.trigger("syncLibary");
+		this.props.library.trigger('syncLibary');
 	},
 	triggerDeleteIdb: function() {
-		this.props.library.trigger("deleteIdb");
+		this.props.library.trigger('deleteIdb');
 	},
 	render: function() {
 		var library = this.props.library;
@@ -238,8 +238,8 @@ var ActionsDropdown = React.createClass({
 		var selectedCollection = this.props.selectedCollection;
 		var collectionSelected = (selectedCollection != null);
 
-		var showTrashActions = (editable && itemSelected && (selectedCollection == "trash"));
-		var showNonTrashActions = (editable && itemSelected && (selectedCollection != "trash"));
+		var showTrashActions = (editable && itemSelected && (selectedCollection == 'trash'));
+		var showNonTrashActions = (editable && itemSelected && (selectedCollection != 'trash'));
 		var showItemAction = editable && itemSelected;
 		var showCollectionAction = editable && collectionSelected;
 
@@ -282,11 +282,11 @@ var CreateItemDropdown = React.createClass({
 	},
 	createItem: function(evt){
 		//clear path vars and send to new item page with current collection when create-item-link clicked
-		log.debug("create-item-Link clicked", 3);
+		log.debug('create-item-Link clicked', 3);
 		evt.preventDefault();
 		var library = this.props.library;
 		var itemType = J(evt.target).data('itemtype');
-		library.trigger("createItem", {itemType:itemType});
+		library.trigger('createItem', {itemType:itemType});
 		return false;
 	},
 	render: function() {
@@ -303,15 +303,15 @@ var CreateItemDropdown = React.createClass({
 			);
 		});
 
-		var buttonClass = "create-item-button btn btn-default navbar-btn dropdown-toggle";
+		var buttonClass = 'create-item-button btn btn-default navbar-btn dropdown-toggle';
 		if(Zotero.state.getUrlVar('collectionKey') == 'trash'){
-			buttonClass += " disabled";
+			buttonClass += ' disabled';
 		}
 
 		return (
 			<div className="btn-group create-item-dropdown" hidden={!this.props.editable}>
 				<button type="button" className={buttonClass} data-toggle="dropdown" title="New Item"><span className="glyphicons fonticon glyphicons-plus"></span></button>
-				<ul className="dropdown-menu" role="menu" style={{maxHeight:"300px", overflow:"auto"}}>
+				<ul className="dropdown-menu" role="menu" style={{maxHeight:'300px', overflow:'auto'}}>
 					{nodes}
 				</ul>
 			</div>
@@ -326,14 +326,14 @@ var ControlPanel = React.createClass({
 		
 		reactInstance.setState({user: Zotero.config.loggedInUser});
 		
-		library.listen("selectedItemsChanged", function(evt){
-			log.debug("got selectedItemsChanged event in ControlPanel - setting selectedItems");
+		library.listen('selectedItemsChanged', function(evt){
+			log.debug('got selectedItemsChanged event in ControlPanel - setting selectedItems');
 			log.debug(evt);
 			var selectedItemKeys = evt.data.selectedItemKeys;
 			reactInstance.setState({selectedItems: selectedItemKeys});
 		}, {});
 		
-		library.listen("selectedCollectionChanged", function(evt){
+		library.listen('selectedCollectionChanged', function(evt){
 			var selectedCollection = Zotero.state.getUrlVar('collectionKey');
 			var selectedItemKeys = Zotero.state.getSelectedItemKeys();
 			reactInstance.setState({

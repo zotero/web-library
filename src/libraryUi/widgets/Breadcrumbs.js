@@ -7,12 +7,12 @@ var React = require('react');
 var BreadCrumb = React.createClass({
 	getInitialProps: function() {
 		return {
-			label: "",
-			path: ""
+			label: '',
+			path: ''
 		};
 	},
 	render: function(){
-		if(this.props.path != "") {
+		if(this.props.path != '') {
 			return (
 				<a href={this.props.path}>{this.props.label}</a>
 			);
@@ -29,7 +29,7 @@ var BreadCrumbs = React.createClass({
 		var reactInstance = this;
 		var library = this.props.library;
 
-		library.listen("displayedItemsChanged displayedItemChanged selectedCollectionChanged", function(){
+		library.listen('displayedItemsChanged displayedItemChanged selectedCollectionChanged', function(){
 			reactInstance.forceUpdate();
 		});
 	},
@@ -65,36 +65,36 @@ var BreadCrumbs = React.createClass({
 		}
 
 		if(config.collectionKey){
-			log.debug("have collectionKey", 4);
+			log.debug('have collectionKey', 4);
 			var curCollection = library.collections.getCollection(config.collectionKey);
 			if( curCollection ){
 				crumbs.push({label:curCollection.get('name'), path:Zotero.state.buildUrl({collectionKey:config.collectionKey})});
 			}
 		}
 		if(config.itemKey){
-			log.debug("have itemKey", 4);
+			log.debug('have itemKey', 4);
 			crumbs.push({label:library.items.getItem(config.itemKey).title, path:Zotero.state.buildUrl({collectionKey:config.collectionKey, itemKey:config.itemKey})});
 		}
 		
 		var crumbNodes = [];
-		var titleString = "";
+		var titleString = '';
 		crumbs.forEach(function(crumb, index){
 			crumbNodes.push(
 				<BreadCrumb label={crumb.label} path={crumb.path} />
 			);
-			if(crumb.label == "Home") {
-				titleString += "Zotero | ";
+			if(crumb.label == 'Home') {
+				titleString += 'Zotero | ';
 			} else {
 				titleString += crumb.label;
 			}
 			if(index < crumbs.length){
-				crumbNodes.push(" > ");
-				titleString += " > ";
+				crumbNodes.push(' > ');
+				titleString += ' > ';
 			}
 		});
 		
 		//set window title
-		if(titleString != ""){
+		if(titleString != ''){
 			Zotero.state.updateStateTitle(titleString);
 		}
 

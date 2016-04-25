@@ -11,7 +11,7 @@ var LibrarySettingsDialog = React.createClass({
 		var library = this.props.library;
 
 		library.listen('settingsLoaded', reactInstance.updateStateFromLibrary, {});
-		library.listen("librarySettingsDialog", reactInstance.openDialog, {});
+		library.listen('librarySettingsDialog', reactInstance.openDialog, {});
 	},
 	getInitialState: function() {
 		return {
@@ -27,17 +27,17 @@ var LibrarySettingsDialog = React.createClass({
 		this.refs.modal.close();
 	},
 	updateShowFields: function(evt) {
-		log.debug("updateShowFields");
+		log.debug('updateShowFields');
 		var library = this.props.library;
 		var listDisplayedFields = this.state.listDisplayedFields;
 		var fieldName = evt.target.value;
 		var display = evt.target.checked;
 		
 		if(display){
-			log.debug("adding field " + fieldName + " to listDisplayedFields");
+			log.debug('adding field ' + fieldName + ' to listDisplayedFields');
 			listDisplayedFields.push(fieldName);
 		} else {
-			log.debug("filtering field " + fieldName + " from listDisplayedFields");
+			log.debug('filtering field ' + fieldName + ' from listDisplayedFields');
 			
 			listDisplayedFields = listDisplayedFields.filter(function(val){
 				if(val == fieldName){
@@ -51,10 +51,10 @@ var LibrarySettingsDialog = React.createClass({
 			listDisplayedFields: listDisplayedFields
 		});
 
-		library.preferences.setPref("listDisplayedFields", listDisplayedFields);
+		library.preferences.setPref('listDisplayedFields', listDisplayedFields);
 		library.preferences.persist();
 
-		library.trigger("displayedItemsChanged");
+		library.trigger('displayedItemsChanged');
 	},
 	updateShowAutomaticTags: function(evt){
 		var library = this.props.library;
@@ -63,10 +63,10 @@ var LibrarySettingsDialog = React.createClass({
 		this.setState({
 			showAutomaticTags: showAutomaticTags
 		});
-		library.preferences.setPref("showAutomaticTags", showAutomaticTags);
+		library.preferences.setPref('showAutomaticTags', showAutomaticTags);
 		library.preferences.persist();
 
-		library.trigger("tagsChanged");
+		library.trigger('tagsChanged');
 	},/*
 	updateItemsPerPage: function(evt) {
 		var library = this.props.library;
@@ -99,7 +99,7 @@ var LibrarySettingsDialog = React.createClass({
 			var checked = (listDisplayedFields.indexOf(val) != -1);
 			return (
 				<div key={val} className="checkbox">
-					<label htmlFor={"display-column-field-" + val}><input onChange={reactInstance.updateShowFields} type="checkbox" checked={checked} name="display-column-field" value={val} id={"display-column-field-" + val} className="display-column-field" />{fieldMap[val] || val}</label>
+					<label htmlFor={'display-column-field-' + val}><input onChange={reactInstance.updateShowFields} type="checkbox" checked={checked} name="display-column-field" value={val} id={'display-column-field-' + val} className="display-column-field" />{fieldMap[val] || val}</label>
 				</div>
 			);
 		});

@@ -18,7 +18,7 @@ var RecentItems = React.createClass({
     },
     getDefaultProps: function() {
         return {
-            displayFields: ["title", "creatorSummary", "dateModified"],
+            displayFields: ['title', 'creatorSummary', 'dateModified'],
             item: {}
         };
     },
@@ -32,7 +32,7 @@ var RecentItems = React.createClass({
         var reactInstance = this;
         var itemRows = this.state.items.map(function(item){
             return (
-                <RecentItemRow key={item.get("key")} item={item} />
+                <RecentItemRow key={item.get('key')} item={item} />
             );
         });
 
@@ -62,7 +62,7 @@ var RecentItems = React.createClass({
 var RecentItemRow = React.createClass({
     getDefaultProps: function() {
         return {
-            displayFields: ["title", "creatorSummary", "dateModified"],
+            displayFields: ['title', 'creatorSummary', 'dateModified'],
             item: {}
         };
     },
@@ -71,8 +71,8 @@ var RecentItemRow = React.createClass({
         var item = this.props.item;
         var fields = this.props.displayFields.map(function(field){
             return (
-                <td key={field} className={field} data-itemkey={item.get("key")}>
-                    <a data-itemkey={item.get("key")} href={Zotero.url.itemHref(item)} title={item.get(field)}>
+                <td key={field} className={field} data-itemkey={item.get('key')}>
+                    <a data-itemkey={item.get('key')} href={Zotero.url.itemHref(item)} title={item.get(field)}>
                         {Zotero.format.itemField(field, item, true)}
                     </a>
                 </td>

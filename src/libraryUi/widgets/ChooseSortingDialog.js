@@ -17,12 +17,12 @@ var ChooseSortingDialog = React.createClass({
 			sortOrder: currentSortOrder
 		});
 
-		library.listen("chooseSortingDialog", reactInstance.openDialog, {});
+		library.listen('chooseSortingDialog', reactInstance.openDialog, {});
 	},
 	getInitialState: function() {
 		return {
-			sortField: "",
-			sortOrder: "asc"
+			sortField: '',
+			sortOrder: 'asc'
 		};
 	},
 	handleFieldChange: function(evt) {
@@ -33,7 +33,7 @@ var ChooseSortingDialog = React.createClass({
 	},
 	saveSorting: function() {
 		var library = this.props.library;
-		library.trigger("changeItemSorting", {newSortField:this.state.sortField, newSortOrder:this.state.sortOrder});
+		library.trigger('changeItemSorting', {newSortField:this.state.sortField, newSortOrder:this.state.sortOrder});
 		this.closeDialog();
 	},
 	openDialog: function() {

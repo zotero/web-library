@@ -9,7 +9,7 @@ var SendToLibraryDialog = React.createClass({
 	componentWillMount: function() {
 		var reactInstance = this;
 		var library = this.props.library;
-		library.listen("sendToLibraryDialog", reactInstance.openDialog, {});
+		library.listen('sendToLibraryDialog', reactInstance.openDialog, {});
 	},
 	getInitialState: function() {
 		return {
@@ -40,7 +40,7 @@ var SendToLibraryDialog = React.createClass({
 
 		var memberGroups = library.groups.fetchUserGroups(userID)
 		.then(function(response){
-			log.debug("got member groups", 3);
+			log.debug('got member groups', 3);
 			var memberGroups = response.fetchedGroups;
 			var writableLibraries = [{name:'My Library', libraryString:personalLibraryString}];
 			for(var i = 0; i < memberGroups.length; i++){
@@ -54,13 +54,13 @@ var SendToLibraryDialog = React.createClass({
 			}
 			reactInstance.setState({writableLibraries: writableLibraries, loading:false, loaded:true});
 		}).catch(function(err){
-			Zotero.ui.jsNotificationMessage("There was an error loading group libraries", "error");
+			Zotero.ui.jsNotificationMessage('There was an error loading group libraries', 'error');
 			log.error(err);
 			log.error(err.message);
 		});
 	},
 	sendItem: function(evt) {
-		log.debug("sendToLibrary callback", 3);
+		log.debug('sendToLibrary callback', 3);
 		var library = this.props.library;
 		//instantiate destination library
 		var targetLibrary = this.state.targetLibrary;
@@ -71,7 +71,7 @@ var SendToLibraryDialog = React.createClass({
 		//get items to send
 		var itemKeys = Zotero.state.getSelectedItemKeys();
 		if(itemKeys.length === 0){
-			Zotero.ui.jsNotificationMessage("No items selected", 'notice');
+			Zotero.ui.jsNotificationMessage('No items selected', 'notice');
 			this.closeDialog();
 			return false;
 		}
@@ -79,10 +79,10 @@ var SendToLibraryDialog = React.createClass({
 		var sendItems = library.items.getItems(itemKeys);
 		library.sendToLibrary(sendItems, destLibrary)
 		.then(function(foreignItems){
-			Zotero.ui.jsNotificationMessage("Items sent to other library", 'notice');
+			Zotero.ui.jsNotificationMessage('Items sent to other library', 'notice');
 		}).catch(function(response){
 			log.debug(response);
-			Zotero.ui.jsNotificationMessage("Error sending items to other library", 'notice');
+			Zotero.ui.jsNotificationMessage('Error sending items to other library', 'notice');
 		});
 		this.closeDialog();
 		return false;

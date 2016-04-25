@@ -25,15 +25,15 @@ var TagRow = React.createClass({
 		var tag = this.props.tag;
 		var title = tag.apiObj.tag;
 		if(tag.apiObj.meta.numItems) {
-			title += " (" + tag.apiObj.meta.numItems + ")";
+			title += ' (' + tag.apiObj.meta.numItems + ')';
 		}
-		var newUrl = "";
+		var newUrl = '';
 
 		var tagStyle = {};
 		if(tag.color){
 			tagStyle = {
 				color: tag.color,
-				fontWeight: "bold"
+				fontWeight: 'bold'
 			};
 		}
 		
@@ -55,7 +55,7 @@ var TagList = React.createClass({
 		return {
 			tags: [],
 			showAutomatic: false,
-			id: ""
+			id: ''
 		};
 	},
 	render: function() {
@@ -83,7 +83,7 @@ var Tags = React.createClass({
 			tags: new Zotero.Tags(),
 			tagColors: null,
 			selectedTags: [],
-			tagFilter: "",
+			tagFilter: '',
 			showAutomatic: false,
 			loading:false
 		};
@@ -91,13 +91,13 @@ var Tags = React.createClass({
 	componentWillMount: function(evt) {
 		var reactInstance = this;
 		var library = this.props.library;
-		var tagColors = library.preferences.getPref("tagColors");
+		var tagColors = library.preferences.getPref('tagColors');
 		reactInstance.setState({tagColors: tagColors});
 		
-		library.listen("tagsDirty", reactInstance.syncTags, {});
-		library.listen("cachedDataLoaded", reactInstance.syncTags, {});
+		library.listen('tagsDirty', reactInstance.syncTags, {});
+		library.listen('cachedDataLoaded', reactInstance.syncTags, {});
 		
-		library.listen("tagsChanged libraryTagsUpdated selectedTagsChanged", function(evt){
+		library.listen('tagsChanged libraryTagsUpdated selectedTagsChanged', function(evt){
 			reactInstance.setState({tags:library.tags});
 		}, {});
 		
@@ -118,7 +118,7 @@ var Tags = React.createClass({
 		return selectedTags;
 	},
 	syncTags: function(evt) {
-		log.debug("Tags.syncTags");
+		log.debug('Tags.syncTags');
 		var reactInstance = this;
 		if(this.state.loading){
 			return;
@@ -136,14 +136,14 @@ var Tags = React.createClass({
 		//this function shouldn't be triggered until that has already been done
 		var loadingPromise = library.loadUpdatedTags()
 		.then(function(){
-			log.debug("syncTags done. clearing loading div");
+			log.debug('syncTags done. clearing loading div');
 			reactInstance.setState({tags:library.tags, loading:false});
 			return;
 		},
 		function(error){
-			log.error("syncTags failed. showing local data and clearing loading div");
+			log.error('syncTags failed. showing local data and clearing loading div');
 			reactInstance.setState({tags:library.tags, loading:false});
-			Zotero.ui.jsNotificationMessage("There was an error loading tags. Some tags may not have been updated.", 'notice');
+			Zotero.ui.jsNotificationMessage('There was an error loading tags. Some tags may not have been updated.', 'notice');
 		});
 		
 		return;
@@ -164,7 +164,7 @@ var Tags = React.createClass({
 		var tagColorStrings = [];
 		var coloredTags = [];
 		tagColors.forEach(function(tagColor, index){
-			log.debug("tagColor processing " + index);
+			log.debug('tagColor processing ' + index);
 			tagColorStrings.push(tagColor.name.toLowerCase());
 			var coloredTag = tags.getTag(tagColor.name);
 			if(coloredTag){

@@ -10,26 +10,26 @@ var DeleteCollectionDialog = React.createClass({
 		var reactInstance = this;
 		var library = this.props.library;
 
-		library.listen("deleteCollectionDialog", function(){
-			reactInstance.setState({collectionKey:Zotero.state.getUrlVar("collectionKey")});
+		library.listen('deleteCollectionDialog', function(){
+			reactInstance.setState({collectionKey:Zotero.state.getUrlVar('collectionKey')});
 			reactInstance.openDialog();
 		});
 	},
 	getInitialState: function() {
 		return {
 			collectionKey: null,
-		}
+		};
 	},
 	handleCollectionChange: function(evt) {
 		this.setState({'parentCollection': evt.target.value});
 	},
 	deleteCollection: function() {
-		log.debug("DeleteCollectionDialog.deleteCollection", 3);
+		log.debug('DeleteCollectionDialog.deleteCollection', 3);
 		var reactInstance = this;
 		var library = this.props.library;
 		var collection = library.collections.getCollection(this.state.collectionKey);
 		if(!collection){
-			Zotero.ui.jsNotificationMessage("Selected collection not found", 'error');
+			Zotero.ui.jsNotificationMessage('Selected collection not found', 'error');
 			return false;
 		}
 		collection.remove()
@@ -38,14 +38,14 @@ var DeleteCollectionDialog = React.createClass({
 			library.collections.dirty = true;
 			library.collections.initSecondaryData();
 			Zotero.state.pushState();
-			Zotero.ui.jsNotificationMessage(collection.get('title') + " removed", 'confirm');
+			Zotero.ui.jsNotificationMessage(collection.get('title') + ' removed', 'confirm');
 			reactInstance.closeDialog();
 		}).catch(Zotero.catchPromiseError);
 		return false;
 	},
 	openDialog: function() {
 		if(!this.state.collectionKey){
-			log.error("DeleteCollectionDialog opened with no collectionKey");
+			log.error('DeleteCollectionDialog opened with no collectionKey');
 		}
 		this.refs.modal.open();
 	},

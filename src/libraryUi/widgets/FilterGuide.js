@@ -9,18 +9,18 @@ var FilterGuide = React.createClass({
 		var reactInstance = this;
 		var library = this.props.library;
 
-		library.listen("displayedItemsChanged", reactInstance.refreshFilters, {});
-		library.listen("displayedItemChanged", reactInstance.refreshFilters, {});
-		library.listen("updateFilterGuide", reactInstance.refreshFilters, {});
-		library.listen("selectedCollectionChanged", reactInstance.refreshFilters, {});
-		library.listen("cachedDataLoaded", reactInstance.refreshFilters, {});
-		library.listen("libraryCollectionsUpdated", reactInstance.refreshFilters, {});
+		library.listen('displayedItemsChanged', reactInstance.refreshFilters, {});
+		library.listen('displayedItemChanged', reactInstance.refreshFilters, {});
+		library.listen('updateFilterGuide', reactInstance.refreshFilters, {});
+		library.listen('selectedCollectionChanged', reactInstance.refreshFilters, {});
+		library.listen('cachedDataLoaded', reactInstance.refreshFilters, {});
+		library.listen('libraryCollectionsUpdated', reactInstance.refreshFilters, {});
 	},
 	getInitialState: function() {
 		return {
-			collectionKey: "",
+			collectionKey: '',
 			tags: [],
-			query: ""
+			query: ''
 		};
 	},
 	refreshFilters: function(evt){
@@ -42,7 +42,7 @@ var FilterGuide = React.createClass({
 		var query = target.data('query');
 		if(collectionKey){
 			Zotero.state.unsetUrlVar('collectionKey');
-			this.setState({collectionKey:""});
+			this.setState({collectionKey:''});
 		}
 		if(tag){
 			Zotero.state.toggleTag(tag);
@@ -50,7 +50,7 @@ var FilterGuide = React.createClass({
 		}
 		if(query){
 			library.trigger('clearLibraryQuery');
-			this.setState({query:""});
+			this.setState({query:''});
 			return;
 		}
 		Zotero.state.pushState();
@@ -62,11 +62,11 @@ var FilterGuide = React.createClass({
 		var tagNodes = null;
 		var searchNodes = null;
 
-		if(this.state.collectionKey != ""){
+		if(this.state.collectionKey != ''){
 			var collection = library.collections.getCollection(this.state.collectionKey);
 			if(collection){
 				collectionNodes = (
-					<li key={"collection_" + reactInstance.state.collectionKey} className="filterguide-entry">
+					<li key={'collection_' + reactInstance.state.collectionKey} className="filterguide-entry">
 						<a onClick={reactInstance.clearFilter} href="#" data-collectionkey={reactInstance.state.collectionKey}>
 							<span className="glyphicons fonticon glyphicons-folder-open"></span>
 							<span className="filterguide-label">{collection.get('name')}</span>
@@ -84,7 +84,7 @@ var FilterGuide = React.createClass({
 		if(tags){
 			tagNodes = tags.map(function(tag){
 				return (
-					<li key={"tag_" + tag} className="filterguide-entry">
+					<li key={'tag_' + tag} className="filterguide-entry">
 						<a onClick={reactInstance.clearFilter} href="#" data-tag={tag}>
 							<span className="glyphicons fonticon glyphicons-tag"></span>
 							<span className="filterguide-label">{tag}</span>
@@ -96,7 +96,7 @@ var FilterGuide = React.createClass({
 		}
 		if(this.state.query){
 			searchNodes = (
-				<li key={"query_"+reactInstance.state.query} className="filterguide-entry">
+				<li key={'query_'+reactInstance.state.query} className="filterguide-entry">
 					<a onClick={reactInstance.clearFilter} href="#" data-query={reactInstance.state.query}>
 						<span className="glyphicons fonticon glyphicons-search"></span>
 						<span className="filterguide-label">{reactInstance.state.query}</span>

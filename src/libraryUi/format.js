@@ -16,12 +16,12 @@ format.itemField = function(field, item, trim){
         trim = false;
     }
     var intlOptions = {
-        year: "numeric",
-        month: "numeric",
-        day: "numeric",
-        hour: "numeric",
-        minute: "numeric",
-        second: "numeric",
+        year: 'numeric',
+        month: 'numeric',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric',
+        second: 'numeric',
         hour12: false
     };
 
@@ -42,10 +42,10 @@ format.itemField = function(field, item, trim){
         trimLength = Zotero.config.maxFieldSummaryLength[field];
     }
     switch(field){
-        case "itemType":
+        case 'itemType':
             formattedString = Zotero.localizations.typeMap[item.apiObj.data.itemType];
             break;
-        case "dateModified":
+        case 'dateModified':
             if(!item.apiObj.data['dateModified']){
                 formattedString = '';
             }
@@ -57,7 +57,7 @@ format.itemField = function(field, item, trim){
                 formattedString = item.apiObj.data['dateModified'];
             }
             break;
-        case "dateAdded":
+        case 'dateAdded':
             if(!item.apiObj.data['dateAdded']){
                 formattedString = '';
             }
@@ -69,14 +69,14 @@ format.itemField = function(field, item, trim){
                 formattedString = item.apiObj.data['dateAdded'];
             }
             break;
-        case "title":
+        case 'title':
             formattedString = item.get('title');
             break;
-        case "creator":
-        case "creatorSummary":
+        case 'creator':
+        case 'creatorSummary':
             formattedString = item.get('creatorSummary');
             break;
-        case "addedBy":
+        case 'addedBy':
             if(item.apiObj.meta.createdByUser){
                 if(item.apiObj.meta.createdByUser.name !== '') {
                     formattedString = item.apiObj.meta.createdByUser.name;
@@ -86,7 +86,7 @@ format.itemField = function(field, item, trim){
                 }
             }
             break;
-        case "modifiedBy":
+        case 'modifiedBy':
             if(item.apiObj.meta.lastModifiedByUser){
                 if(item.apiObj.meta.lastModifiedByUser.name !== ''){
                     formattedString = item.apiObj.meta.lastModifiedByUser.name;
@@ -98,12 +98,12 @@ format.itemField = function(field, item, trim){
             break;
         default:
             var t = typeof(item.get(field));
-            if(typeof(t) !== "undefined") {
+            if(typeof(t) !== 'undefined') {
                 formattedString = item.get(field);
             }
     }
     if(typeof formattedString == 'undefined'){
-        log.error("formattedString for " + field + " undefined");
+        log.error('formattedString for ' + field + ' undefined');
         log.error(item);
     }
     if(trim) {
@@ -124,7 +124,7 @@ format.trimString = function(s, maxlen){
     var trimLength = 35;
     var formattedString = s;
     if(typeof s == 'undefined'){
-        log.error("formattedString passed to trimString was undefined.");
+        log.error('formattedString passed to trimString was undefined.');
         return '';
     }
     if(maxlen){
@@ -147,18 +147,18 @@ format.trimString = function(s, maxlen){
 format.itemDateField = function(field, item){
     var date;
     var timeOptions = {
-        hour: "numeric",
-        minute: "numeric",
-        second: "numeric",
+        hour: 'numeric',
+        minute: 'numeric',
+        second: 'numeric',
         hour12: false
     };
     var intlOptions = {
-        year: "numeric",
-        month: "numeric",
-        day: "numeric",
-        hour: "numeric",
-        minute: "numeric",
-        second: "numeric",
+        year: 'numeric',
+        month: 'numeric',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric',
+        second: 'numeric',
         hour12: false
     };
     
@@ -179,25 +179,25 @@ format.itemDateField = function(field, item){
     }
 
     switch(field){
-        case "dateModified":
+        case 'dateModified':
             if(!item.apiObj.data['dateModified']){
                 return '';
             }
             date = Zotero.utils.parseApiDate(item.apiObj.data['dateModified']);
             if(date){
-                return "<span class='localized-date-span'>" + formatDate(date) + "</span> <span class='localized-date-span'>" + formatTime(date) + "</span>";
+                return "<span class='localized-date-span'>" + formatDate(date) + "</span> <span class='localized-date-span'>" + formatTime(date) + '</span>';
             }
             else{
                 return item.apiObj.data['dateModified'];
             }
             return date.toLocaleString();
-        case "dateAdded":
+        case 'dateAdded':
             if(!item.apiObj.data['dateAdded']){
                 return '';
             }
             date = Zotero.utils.parseApiDate(item.apiObj.data['dateAdded']);
             if(date){
-                return "<span class='localized-date-span'>" + formatDate(date) + "</span> <span class='localized-date-span'>" + formatTime(date) + "</span>";
+                return "<span class='localized-date-span'>" + formatDate(date) + "</span> <span class='localized-date-span'>" + formatTime(date) + '</span>';
             }
             else{
                 return item.apiObj.data['dateAdded'];
@@ -237,7 +237,7 @@ format.groupUrl = function(group, route){
         groupBase = '/groups/' + Zotero.utils.slugify(group.groupName);
     }
     var groupIDBase = '/groups/' + group.groupID;
-    log.debug("groupBase: " + groupBase);
+    log.debug('groupBase: ' + groupBase);
     switch(route){
         case 'groupView':
             return groupBase;

@@ -31,7 +31,7 @@ var State = function(){
 
 //rewrite old style urls to current urls
 State.prototype.rewriteAltUrl = function(){
-    log.debug("rewriteAltUrl");
+    log.debug('rewriteAltUrl');
     var state = this;
     var matches = false;
     var itemKey = false;
@@ -40,7 +40,7 @@ State.prototype.rewriteAltUrl = function(){
     
     var basePath = Zotero.config.nonparsedBaseUrl;
     var pathname = window.location.pathname;
-    var baseRE = new RegExp(".*" + basePath + "\/?");
+    var baseRE = new RegExp('.*' + basePath + '\/?');
     var oldCollectionRE = /^.*\/items\/collections?\/([A-Z0-9]{8})(?:\/[A-Z0-9]{8})?$/;
     var oldItemRE = /^.*\/items\/([A-Z0-9]{8})$/;
 
@@ -190,7 +190,7 @@ State.prototype.toggleTag = function(tagtitle){
 };
 
 State.prototype.unsetUrlVar = function(unset){
-    log.debug("State.unsetUrlVar", 3);
+    log.debug('State.unsetUrlVar', 3);
     var state = this;
     if(state.pathVars[unset]){
         delete(state.pathVars[unset]);
@@ -198,7 +198,7 @@ State.prototype.unsetUrlVar = function(unset){
 };
 
 State.prototype.clearUrlVars = function(except){
-    log.debug("State.clearUrlVars", 3);
+    log.debug('State.clearUrlVars', 3);
     var state = this;
     if(!except){
         except = [];
@@ -233,9 +233,9 @@ State.prototype.parsePathVars = function(pathname){
         pathname = window.location.pathname;
     }
     var basePath = Zotero.config.nonparsedBaseUrl;
-    basePath = basePath.replace(window.location.origin, "");
+    basePath = basePath.replace(window.location.origin, '');
     var split_replaced = [];
-    var re = new RegExp(".*" + basePath + "\/?");
+    var re = new RegExp('.*' + basePath + '\/?');
     var replaced = pathname.replace(re, '');
     
     split_replaced = replaced.split('/');
@@ -305,7 +305,7 @@ State.prototype.buildUrl = function(urlvars, queryVars){
     var pathVarsString = urlVarsArray.join('/');
     var queryString = '';
     if(queryVarsArray.length){
-        queryString = '?' + queryVarsArray.join("&");
+        queryString = '?' + queryVarsArray.join('&');
     }
     var url = basePath + pathVarsString + queryString;
     
@@ -354,16 +354,16 @@ State.prototype.pushState = function(){
     var queryVars = state.q;
     var url = state.buildUrl(urlvars, queryVars, false);
     state.curHref = url;
-    log.debug("about to push url: " + url, 3);
+    log.debug('about to push url: ' + url, 3);
     //actually push state and manually call urlChangeCallback if specified
     if(state.useLocation){
         if(state.replacePush === true){
-            log.debug("State.pushState - replacePush", 3);
+            log.debug('State.pushState - replacePush', 3);
             state.replacePush = false;
             history.replaceState(s, document.title, url);
         }
         else{
-            log.debug("State.pushState - pushState", 3);
+            log.debug('State.pushState - pushState', 3);
             history.pushState(s, document.title, url);
             state.stateChanged();
         }
@@ -371,11 +371,11 @@ State.prototype.pushState = function(){
     else {
         state.stateChanged();
     }
-    log.debug("leaving pushstate", 3);
+    log.debug('leaving pushstate', 3);
 };
 
 State.prototype.replaceState = function(){
-    log.debug("State.replaceState", 3);
+    log.debug('State.replaceState', 3);
     var state = this;
     var history = window.history;
     //update current and leave prev alone.
@@ -397,7 +397,7 @@ State.prototype.replaceState = function(){
 };
 
 State.prototype.updateStateTitle = function(title){
-    log.debug("State.updateStateTitle", 3);
+    log.debug('State.updateStateTitle', 3);
     var state = this;
     
     document.title = title;
@@ -456,11 +456,11 @@ State.prototype.addQueryVar = function(key, val){
 
 State.prototype.popstateCallback = function(evt){
     var state = this;
-    log.debug("===== popstateCallback =====", 3);
+    log.debug('===== popstateCallback =====', 3);
     var history = window.history;
     state.prevHref = state.curHref;
     
-    log.debug("new href, updating href and processing urlchange", 3);
+    log.debug('new href, updating href and processing urlchange', 3);
     state.curHref = window.location.href;// History.getState().cleanUrl;
     
     //reparse url to set vars in Z.ajax
@@ -470,15 +470,15 @@ State.prototype.popstateCallback = function(evt){
 
 State.prototype.stateChanged = function(event){
     var state = this;
-    log.debug("stateChanged", 3);
+    log.debug('stateChanged', 3);
     state.savePrevState();
     state.updateCurState();
     //check for changed variables in the url and fire events for them
-    log.debug("Checking changed variables", 3);
+    log.debug('Checking changed variables', 3);
     var changedVars = state.diffState(state.prevHref, state.curHref);
     var widgetEvents = {};
     J.each(changedVars, function(ind, val){
-        var eventString = val + "Changed";
+        var eventString = val + 'Changed';
         log.debug(eventString, 3);
         //map var events to widget events
         if(Zotero.eventful.eventMap.hasOwnProperty(eventString)){
@@ -488,22 +488,22 @@ State.prototype.stateChanged = function(event){
                 }
             });
         }
-        log.debug("State Filter: " + state.filter, 3);
+        log.debug('State Filter: ' + state.filter, 3);
         Zotero.trigger(eventString, {}, state.filter);
     });
     //TODO: is this eventMap triggering necessary?
     
     J.each(widgetEvents, function(ind, val){
-        log.debug("State Filter: " + state.filter, 3);
+        log.debug('State Filter: ' + state.filter, 3);
         
         Zotero.trigger(ind, {}, state.filter);
     });
     
-    log.debug("===== stateChanged Done =====", 3);
+    log.debug('===== stateChanged Done =====', 3);
 };
 
 State.prototype.diffState = function(prevHref, curHref){
-    log.debug("State.diffState", 3);
+    log.debug('State.diffState', 3);
     var state = this;
     //check what has changed when a new state is pushed
     var prevVars = J.extend({}, state.parsePathVars(prevHref) );

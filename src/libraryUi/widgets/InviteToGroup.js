@@ -60,16 +60,16 @@ var InviteDialog = React.createClass({
 		
 		J.ajax({
 			'type': 'POST',
-			'url': "/groups/inviteuser",
+			'url': '/groups/inviteuser',
 			'data': {
 				'groupID': groupID,
 				'userID': zoteroData.profileUserID
 			},
 			'processData': true
 		}).then(function(data){
-			log.debug("got response from inviteuser");
+			log.debug('got response from inviteuser');
             if(data == 'true'){
-                Zotero.ui.jsNotificationMessage("User has been invited", 'success');
+                Zotero.ui.jsNotificationMessage('User has been invited', 'success');
             }
 		});
 	},

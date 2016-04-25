@@ -11,25 +11,25 @@ var UploadAttachmentDialog = React.createClass({
 	componentWillMount: function() {
 		var reactInstance = this;
 		var library = this.props.library;
-		library.listen("uploadAttachment", function(){
-			log.debug("got uploadAttachment event; opening upload dialog");
+		library.listen('uploadAttachment', function(){
+			log.debug('got uploadAttachment event; opening upload dialog');
 			reactInstance.setState({itemKey: Zotero.state.getUrlVar('itemKey')});
 			reactInstance.openDialog();
 		}, {});
 	},
 	getInitialState: function() {
 		return {
-			title: "",
+			title: '',
 			fileInfo: null,
-			filename: "",
+			filename: '',
 			filesize: 0,
 			contentType: null,
 			percentLoaded: 0,
 			uploading: false,
-		}
+		};
 	},
 	upload: function() {
-		log.debug("uploadFunction", 3);
+		log.debug('uploadFunction', 3);
 		var reactInstance = this;
 		var library = this.props.library;
 
@@ -56,27 +56,27 @@ var UploadAttachmentDialog = React.createClass({
 		var item = library.items.getItem(itemKey);
 		var uploadPromise;
 		
-		if(!item.get("parentItem")){
-			log.debug("no parentItem", 3);
+		if(!item.get('parentItem')){
+			log.debug('no parentItem', 3);
 			//get template item
 			var childItem = new Zotero.Item();
 			childItem.associateWithLibrary(library);
 			uploadPromise = childItem.initEmpty('attachment', 'imported_file')
 			.then(function(childItem){
-				log.debug("templateItemDeferred callback", 3);
+				log.debug('templateItemDeferred callback', 3);
 				childItem.set('title', specifiedTitle);
 				
 				return item.uploadChildAttachment(childItem, fileInfo, progressCallback);
 			});
 		}
-		else if(item.get('itemType') == 'attachment' && item.get("linkMode") == 'imported_file') {
-			log.debug("imported_file attachment", 3);
+		else if(item.get('itemType') == 'attachment' && item.get('linkMode') == 'imported_file') {
+			log.debug('imported_file attachment', 3);
 			uploadPromise = item.uploadFile(fileInfo, progressCallback);
 		}
 		
 		uploadPromise.then(function(){
-			log.debug("uploadSuccess", 3);
-			library.trigger("uploadSuccessful");
+			log.debug('uploadSuccess', 3);
+			library.trigger('uploadSuccessful');
 			reactInstance.closeDialog();
 		}).catch(reactInstance.failureHandler)
 		.then(function(){
@@ -84,37 +84,37 @@ var UploadAttachmentDialog = React.createClass({
 		});
 	},
 	handleUploadFailure: function(failure) {
-		log.debug("Upload failed", 3);
+		log.debug('Upload failed', 3);
 		log.debug(failure, 3);
-		Zotero.ui.jsNotificationMessage("There was a problem uploading your file.", 'error');
+		Zotero.ui.jsNotificationMessage('There was a problem uploading your file.', 'error');
 		switch(failure.code){
 			case 400:
-				Zotero.ui.jsNotificationMessage("Bad Input. 400", 'error');
+				Zotero.ui.jsNotificationMessage('Bad Input. 400', 'error');
 				break;
 			case 403:
-				Zotero.ui.jsNotificationMessage("You do not have permission to edit files", 'error');
+				Zotero.ui.jsNotificationMessage('You do not have permission to edit files', 'error');
 				break;
 			case 409:
-				Zotero.ui.jsNotificationMessage("The library is currently locked. Please try again in a few minutes.", 'error');
+				Zotero.ui.jsNotificationMessage('The library is currently locked. Please try again in a few minutes.', 'error');
 				break;
 			case 412:
-				Zotero.ui.jsNotificationMessage("File conflict. Remote file has changed", 'error');
+				Zotero.ui.jsNotificationMessage('File conflict. Remote file has changed', 'error');
 				break;
 			case 413:
-				Zotero.ui.jsNotificationMessage("Requested upload would exceed storage quota.", 'error');
+				Zotero.ui.jsNotificationMessage('Requested upload would exceed storage quota.', 'error');
 				break;
 			case 428:
-				Zotero.ui.jsNotificationMessage("Precondition required error", 'error');
+				Zotero.ui.jsNotificationMessage('Precondition required error', 'error');
 				break;
 			case 429:
-				Zotero.ui.jsNotificationMessage("Too many uploads pending. Please try again in a few minutes", 'error');
+				Zotero.ui.jsNotificationMessage('Too many uploads pending. Please try again in a few minutes', 'error');
 				break;
 			default:
-				Zotero.ui.jsNotificationMessage("Unknown error uploading file. " + failure.code, 'error');
+				Zotero.ui.jsNotificationMessage('Unknown error uploading file. ' + failure.code, 'error');
 		}
 	},
 	handleFiles: function(files) {
-		log.debug("attachmentUpload handleFiles", 3);
+		log.debug('attachmentUpload handleFiles', 3);
 		var reactInstance = this;
 		
 		if(typeof files == 'undefined' || files.length === 0){
@@ -135,7 +135,7 @@ var UploadAttachmentDialog = React.createClass({
 		return;
 	},
 	handleDrop: function(evt){
-		log.debug("fileuploaddroptarget drop callback", 3);
+		log.debug('fileuploaddroptarget drop callback', 3);
 		evt.stopPropagation();
 		evt.preventDefault();
 		//clear file input so drag/drop and input don't show conflicting information
@@ -145,7 +145,7 @@ var UploadAttachmentDialog = React.createClass({
 		this.handleFiles(files);
 	},
 	handleFileInputChange: function(evt){
-		log.debug("fileuploaddroptarget callback 1", 3);
+		log.debug('fileuploaddroptarget callback 1', 3);
 		evt.stopPropagation();
 		evt.preventDefault();
 		var files = J(this.refs.fileInput).get(0).files;

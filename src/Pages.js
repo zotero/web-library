@@ -14,11 +14,11 @@ var Pages = {
 			this.tagline();
 			this.setupSearch();
 			this.setupNav();
-			J("#sitenav .toggle").click(this.navMenu);
+			J('#sitenav .toggle').click(this.navMenu);
 			
 			//set up support page expandos
-			J(".support-menu-expand-section").hide();
-			J(".support-menu-section").on('click', "h2", function(){
+			J('.support-menu-expand-section').hide();
+			J('.support-menu-section').on('click', 'h2', function(){
 				J(this).siblings('.support-menu-expand-section').slideToggle();
 			});
 			
@@ -41,7 +41,7 @@ var Pages = {
 				'The web now has a wrangler.'
 			];
 			var pos = Math.floor(Math.random() * taglines.length);
-			J("#tagline").text(taglines[pos]);
+			J('#tagline').text(taglines[pos]);
 		},
 
 		/**
@@ -51,39 +51,39 @@ var Pages = {
 		 **/
 		setupSearch: function() {
 			//log.debug("setupSearch");
-			var context = "support";
-			var label   = "";
+			var context = 'support';
+			var label   = '';
 			
 			// Look for a context specific search
 			if(undefined !== window.zoterojsSearchContext){
 				context = zoterojsSearchContext;
 			}
 			switch (context) {
-				case "people"        : label = "Search for people";    break;
-				case "group"         : label = "Search for groups";    break;
-				case "documentation" : label = "Search documentation"; break;
-				case "library"       : label = "Search Library";       break;
-				case "grouplibrary"  : label = "Search Library";       break;
-				case "support"       : label = "Search support";       break;
-				case "forums"        : label = "Search forums";        break;
-				default              : label = "Search support";       break;
+				case 'people'        : label = 'Search for people';    break;
+				case 'group'         : label = 'Search for groups';    break;
+				case 'documentation' : label = 'Search documentation'; break;
+				case 'library'       : label = 'Search Library';       break;
+				case 'grouplibrary'  : label = 'Search Library';       break;
+				case 'support'       : label = 'Search support';       break;
+				case 'forums'        : label = 'Search forums';        break;
+				default              : label = 'Search support';       break;
 			}
 			
-			if(context == "documentation" || context == "support"){
-				J("#simple-search").on('submit', function(e){
+			if(context == 'documentation' || context == 'support'){
+				J('#simple-search').on('submit', function(e){
 					e.preventDefault();
 					var query     = J(this).find("input[type='text']").val();
 					Z.pages.base.supportSearchRedirect(query);
 				});
 			}
 
-			if(context == "people" || context == "group"){
-				J("#simple-search").on('submit', function(e){
+			if(context == 'people' || context == 'group'){
+				J('#simple-search').on('submit', function(e){
 					e.preventDefault();
-					var searchUrl = Zotero.config.baseZoteroWebsiteUrl + "/search/#type/" + context;
+					var searchUrl = Zotero.config.baseZoteroWebsiteUrl + '/search/#type/' + context;
 					var query     = J(this).find("input[type='text']").val();
-					if(query !== "" && query != label){
-						searchUrl = searchUrl + "/q/" + encodeURIComponent(query);
+					if(query !== '' && query != label){
+						searchUrl = searchUrl + '/q/' + encodeURIComponent(query);
 					}
 					location.href = searchUrl;
 					return false;
@@ -92,15 +92,15 @@ var Pages = {
 		},
 		
 		supportSearchRedirect: function(query) {
-			var q = encodeURIComponent(query + " site:www.zotero.org/support");
+			var q = encodeURIComponent(query + ' site:www.zotero.org/support');
 			//log.debug(q);return;
-			var url = "https://duckduckgo.com/?q=" + q;
+			var url = 'https://duckduckgo.com/?q=' + q;
 			window.location = url;
 		},
 
 		forumSearchRedirect: function(query) {
-			var q = encodeURIComponent(query + " site:forums.zotero.org");
-			var url = "https://duckduckgo.com/?q=" + q;
+			var q = encodeURIComponent(query + ' site:forums.zotero.org');
+			var url = 'https://duckduckgo.com/?q=' + q;
 			/*var url = "https://www.google.com/#q=" + q;*/
 			window.location = url;
 		},
@@ -110,90 +110,90 @@ var Pages = {
 		 * @return void
 		 **/
 		setupNav: function () {
-			var tab = "";
+			var tab = '';
 			// Look for a context specific search
 			if(undefined !== window.zoterojsSearchContext){
 				tab = zoterojsSearchContext;
-				if(tab == "support") { tab = ""; }
+				if(tab == 'support') { tab = ''; }
 				
 			}
 			// special case for being on the home page
-			if(location.pathname == "/" && location.href.search("forums.") < 0){
-				tab = "home";
+			if(location.pathname == '/' && location.href.search('forums.') < 0){
+				tab = 'home';
 			}
-			if(tab !== ""){
-				J(".primarynav").find("a." + tab).closest('li').addClass("active");
+			if(tab !== ''){
+				J('.primarynav').find('a.' + tab).closest('li').addClass('active');
 			}
 		}
 	},
 	settings_cv: {
 		init: function(){
 			// Delete the cv section when the delete link is clicked
-			J("#cv-sections").on("click", ".cv-delete", function(e){
-				if(confirm ("Are you sure you want to delete this section?")){
+			J('#cv-sections').on('click', '.cv-delete', function(e){
+				if(confirm ('Are you sure you want to delete this section?')){
 					// Clean up RTEs before moving the base DOM elements around
-					Zotero.ui.cleanUpRte(J("#cv-sections"));
+					Zotero.ui.cleanUpRte(J('#cv-sections'));
 					
-					J(this).closest("div.cv-section").remove();
+					J(this).closest('div.cv-section').remove();
 					
-					Zotero.ui.init.rte('default', false, J("#cv-sections"));
+					Zotero.ui.init.rte('default', false, J('#cv-sections'));
 					
 					return false;
 				}
 			});
 			
 			// Add a new cv section when the add button is clicked
-			J(".cv-insert-freetext").on("click", function(e){
+			J('.cv-insert-freetext').on('click', function(e){
 				// Get the number of sections that exist before adding a new one
-				var sectionCount  = J("#cv-sections div.cv-section").length;
+				var sectionCount  = J('#cv-sections div.cv-section').length;
 				var newIndex = sectionCount + 1;
-				var newTextareaID = "cv_" + newIndex + "_text";
+				var newTextareaID = 'cv_' + newIndex + '_text';
 
 				//render new section template into end of sections
-				J("#cv-sections").append( J('#cvsectionTemplate').render({
+				J('#cv-sections').append( J('#cvsectionTemplate').render({
 					cvSectionIndex: newIndex,
-					cvSectionType: "text",
+					cvSectionType: 'text',
 					cvEntry: {},
 				}) );
 
 				//activate RTE
-				Zotero.ui.init.rte('default', false, J("div.cv-section").last());
+				Zotero.ui.init.rte('default', false, J('div.cv-section').last());
 				
-				J("input.cv-heading").last().focus();
+				J('input.cv-heading').last().focus();
 				return false;
 			});
 			
 			// Add a new cv collection when the add button is clicked
-			J(".cv-insert-collection").on("click", function(e){
+			J('.cv-insert-collection').on('click', function(e){
 				// Get the number of sections that exist before adding a new one
-				var sectionCount  = J("#cv-sections div.cv-section").length;
+				var sectionCount  = J('#cv-sections div.cv-section').length;
 				var newIndex = sectionCount + 1;
 				
 				//render new section template into end of sections
 				log.debug(zoteroData.collectionOptions);
-				J("#cv-sections").append( J('#cvsectionTemplate').render({
+				J('#cv-sections').append( J('#cvsectionTemplate').render({
 					cvSectionIndex: newIndex,
-					cvSectionType: "collection",
+					cvSectionType: 'collection',
 					collectionOptions: zoteroData.collectionOptions,
 					cvEntry:{},
 				}) );
 
-				J("input.cv-heading").last().focus();
+				J('input.cv-heading').last().focus();
 				return false;
 			});
 			
 			// Move the section down when the down link is clicked
-			J("#cv-sections").on("click", ".cv-move-down", function(e){
-				if(J(this).closest('div.cv-section').find("textarea").length > 0){
+			J('#cv-sections').on('click', '.cv-move-down', function(e){
+				if(J(this).closest('div.cv-section').find('textarea').length > 0){
 					// Clean up RTEs before moving the base DOM elements around
-					Zotero.ui.cleanUpRte(J("#cv-sections"));
+					Zotero.ui.cleanUpRte(J('#cv-sections'));
 					
 					// Move the section and reenable the rte control
-					J(this).closest("div.cv-section").next().after(J(this).closest("div.cv-section"));
+					J(this).closest('div.cv-section').next().after(J(this).closest('div.cv-section'));
 					Zotero.ui.init.rte('default', false);
 				}
 				else {
-					J(this).closest("div.cv-section").next().after(J(this).closest("div.cv-section"));
+					J(this).closest('div.cv-section').next().after(J(this).closest('div.cv-section'));
 				}
 
 				//Zotero.pages.settings_cv.hideMoveLinks();
@@ -201,45 +201,45 @@ var Pages = {
 			});
 			
 			// Move the section up when the up link is clicked
-			J("#cv-sections").on("click", ".cv-move-up", function(e){
-				if(J(this).closest('div.cv-section').find("textarea").length > 0){
+			J('#cv-sections').on('click', '.cv-move-up', function(e){
+				if(J(this).closest('div.cv-section').find('textarea').length > 0){
 					// Clean up RTEs before moving the base DOM elements around
-					Zotero.ui.cleanUpRte(J("#cv-sections"));
+					Zotero.ui.cleanUpRte(J('#cv-sections'));
 					
 					// Move the section and reenable the rte control
-					J(this).closest("div.cv-section").prev().before(J(this).closest("div.cv-section"));
+					J(this).closest('div.cv-section').prev().before(J(this).closest('div.cv-section'));
 					Zotero.ui.init.rte('default', false);
 				}
 				else {
-					J(this).closest("div.cv-section").prev().before(J(this).closest("div.cv-section"));
+					J(this).closest('div.cv-section').prev().before(J(this).closest('div.cv-section'));
 				}
 				//Zotero.pages.settings_cv.hideMoveLinks();
 				return false;
 			});
 			
 			// reindex the field names before submitting the form
-			J("#cv-submit").click(function(e){
-				J("#cv-sections div.cv-section").each(function(i){
+			J('#cv-submit').click(function(e){
+				J('#cv-sections div.cv-section').each(function(i){
 					var heading;
-					if(J(this).hasClass("cv-text") ){
-						heading = J(this).find(".cv-heading").attr("name", "cv_"+(i+1)+"_heading");
-						if(heading.val() == "Enter a section name"){
-							heading.val("");
+					if(J(this).hasClass('cv-text') ){
+						heading = J(this).find('.cv-heading').attr('name', 'cv_'+(i+1)+'_heading');
+						if(heading.val() == 'Enter a section name'){
+							heading.val('');
 						}
-						J(this).find(".cv-text").attr("name", "cv_"+(i+1)+"_text");
+						J(this).find('.cv-text').attr('name', 'cv_'+(i+1)+'_text');
 					}
-					else if(J(this).hasClass("cv-collection") ){
-						heading = J(this).find(".cv-heading").attr("name", "cv_"+(i+1)+"_heading");
-						if(heading.val() == "Enter a section name"){
-							heading.val("");
+					else if(J(this).hasClass('cv-collection') ){
+						heading = J(this).find('.cv-heading').attr('name', 'cv_'+(i+1)+'_heading');
+						if(heading.val() == 'Enter a section name'){
+							heading.val('');
 						}
-						J(this).find("select.cv-collection").attr("name", "cv_"+(i+1)+"_collection");
+						J(this).find('select.cv-collection').attr('name', 'cv_'+(i+1)+'_collection');
 					}
 				});
 			});
 			
 			//init existing rte on first load
-			Zotero.ui.init.rte('nolinks', false, J("#cv-sections"));
+			Zotero.ui.init.rte('nolinks', false, J('#cv-sections'));
 		}
 	},
 	
@@ -255,15 +255,15 @@ var Pages = {
 	settings_privacy: {
 		//disable publishNotes checkbox when the library is not set to be public
 		init: function(){
-			if(!J("input#privacy_publishLibrary").prop("checked")){
-				J("input#privacy_publishNotes").prop("disabled",true);
+			if(!J('input#privacy_publishLibrary').prop('checked')){
+				J('input#privacy_publishNotes').prop('disabled',true);
 			}
-			J("input#privacy_publishLibrary").bind("change", function(){
-				if(!J("input#privacy_publishLibrary").prop("checked")){
-					J("input#privacy_publishNotes").prop("checked", false).prop("disabled",true);
+			J('input#privacy_publishLibrary').bind('change', function(){
+				if(!J('input#privacy_publishLibrary').prop('checked')){
+					J('input#privacy_publishNotes').prop('checked', false).prop('disabled',true);
 				}
 				else{
-					J("input#privacy_publishNotes").prop("disabled", false);
+					J('input#privacy_publishNotes').prop('disabled', false);
 				}
 			});
 		}
@@ -278,7 +278,7 @@ var Pages = {
 	
 	settings_newkey: {
 		init: function(){
-			log.debug("zoteroPages settings_newkey", 3);
+			log.debug('zoteroPages settings_newkey', 3);
 			Zotero.pages.settings_editkey.init();
 		}
 	},
@@ -295,38 +295,38 @@ var Pages = {
 		},
 		
 		updatePermissionsSummary: function(){
-			J("#permissions-summary").empty().append(Z.pages.settings_newoauthkey.permissionsSummary());
+			J('#permissions-summary').empty().append(Z.pages.settings_newoauthkey.permissionsSummary());
 		},
 		
 		//build a human readable summary of currently selected permissions
 		permissionsSummary: function(){
 			var summary = '';
-			var libraryAccess = J("input#library_access").prop('checked');
-			var notesAccess = J("input#notes_access").prop('checked');
-			var writeAccess = J("input#write_access").prop('checked');
+			var libraryAccess = J('input#library_access').prop('checked');
+			var notesAccess = J('input#notes_access').prop('checked');
+			var writeAccess = J('input#write_access').prop('checked');
 			if(libraryAccess){
-				summary += "Access to read your personal library.<br />";
+				summary += 'Access to read your personal library.<br />';
 			}
 			if(notesAccess){
-				summary += "Access to read notes in your personal library.<br />";
+				summary += 'Access to read notes in your personal library.<br />';
 			}
 			if(writeAccess){
-				summary += "Access to read and modify your personal library.<br />";
+				summary += 'Access to read and modify your personal library.<br />';
 			}
 			var allGroupAccess = J("input[name='groups_all']:checked").val();
 			switch(allGroupAccess){
 				case 'read':
-					summary += "Access to read any of your group libraries<br />";
+					summary += 'Access to read any of your group libraries<br />';
 					break;
 				case 'write':
-					summary += "Access to read and modify any of your group libraries<br />";
+					summary += 'Access to read and modify any of your group libraries<br />';
 					break;
 			}
 			
-			var allowIndividualGroupPermissions = J("input#individual_groups").prop('checked');
+			var allowIndividualGroupPermissions = J('input#individual_groups').prop('checked');
 			var individualGroupAccess = [];
 			if(allowIndividualGroupPermissions){
-				J("input.individual_group_permission:checked").each(function(ind, el){
+				J('input.individual_group_permission:checked').each(function(ind, el){
 					var groupname = J(el).data('groupname');
 					var groupID = J(el).data('groupid');
 					var permission = J(el).val();
@@ -347,32 +347,32 @@ var Pages = {
 	
 	settings_editkey: {
 		init: function(){
-			log.debug("zoteroPages settings_editkey", 3);
-			if(!J("input[type='checkbox'][name='library_access']").prop("checked")){
-				J("input[name='notes_access']").prop("disabled","disabled");
+			log.debug('zoteroPages settings_editkey', 3);
+			if(!J("input[type='checkbox'][name='library_access']").prop('checked')){
+				J("input[name='notes_access']").prop('disabled','disabled');
 			}
-			J("input#library_access").bind("change", function(){
-				if(!J("input[type='checkbox'][name='library_access']").prop("checked")){
-					J("input[name='notes_access']").prop("checked", false).prop("disabled", true);
+			J('input#library_access').bind('change', function(){
+				if(!J("input[type='checkbox'][name='library_access']").prop('checked')){
+					J("input[name='notes_access']").prop('checked', false).prop('disabled', true);
 					J("input[name='write_access']").prop('checked', false).prop('disabled', true);
 				}
 				else{
-					J("input[name='notes_access']").prop("disabled", false);
+					J("input[name='notes_access']").prop('disabled', false);
 					J("input[name='write_access']").prop('disabled', false);
 				}
 			});
 			J("input[name='name']").focus();
 			
 			if(!(J("input[type='checkbox'][name='individual_groups']").prop('checked'))) {
-				J(".individual_group_permission").closest('div.form-group').hide();
+				J('.individual_group_permission').closest('div.form-group').hide();
 			}
 			J("input[name='individual_groups']").bind('change', function(){
-				log.debug("individual groups checkbox changed");
+				log.debug('individual groups checkbox changed');
 				if(J("input[type='checkbox'][name='individual_groups']").prop('checked')){
-					J(".individual_group_permission").closest('div.form-group').show();
+					J('.individual_group_permission').closest('div.form-group').show();
 				}
 				else{
-					J(".individual_group_permission").closest('div.form-group').hide();
+					J('.individual_group_permission').closest('div.form-group').hide();
 				}
 			});
 			
@@ -383,17 +383,17 @@ var Pages = {
 	
 	settings_storage: {
 		init: function(){
-			var selectedLevel = J("input[name=storageLevel]:checked").val();
+			var selectedLevel = J('input[name=storageLevel]:checked').val();
 			
 			Zotero.pages.settings_storage.showSelectedResults(selectedLevel);
 			
-			J("input[name=storageLevel]").change(function(){
-				Zotero.pages.settings_storage.showSelectedResults(J("input[name=storageLevel]:checked").val());
+			J('input[name=storageLevel]').change(function(){
+				Zotero.pages.settings_storage.showSelectedResults(J('input[name=storageLevel]:checked').val());
 			});
 			
-			J("#purge-button").click(function(){
-				if(confirm("You are about to remove all uploaded files associated with your personal library.")){
-					J("#confirm_delete").val('confirmed');
+			J('#purge-button').click(function(){
+				if(confirm('You are about to remove all uploaded files associated with your personal library.')){
+					J('#confirm_delete').val('confirmed');
 					return true;
 				}
 				else{
@@ -404,27 +404,27 @@ var Pages = {
 		
 		showSelectedResults: function(selectedLevel){
 			if(selectedLevel == 2){
-				J("#order-result-div").html(zoteroData.orderResult2);
+				J('#order-result-div').html(zoteroData.orderResult2);
 			}
 			else if(selectedLevel == 3){
-				J("#order-result-div").html(zoteroData.orderResult3);
+				J('#order-result-div').html(zoteroData.orderResult3);
 			}
 			else if(selectedLevel == 4){
-				J("#order-result-div").html(zoteroData.orderResult4);
+				J('#order-result-div').html(zoteroData.orderResult4);
 			}
 			else if(selectedLevel == 5){
-				J("#order-result-div").html(zoteroData.orderResult5);
+				J('#order-result-div').html(zoteroData.orderResult5);
 			}
 			else if(selectedLevel == 6){
-				J("#order-result-div").html(zoteroData.orderResult6);
+				J('#order-result-div').html(zoteroData.orderResult6);
 			}
 		}
 	},
 	
 	settings_deleteaccount: {
 		init: function(){
-			J("button#deleteaccount").click(function(){
-				if(!confirm("Are you sure you want to permanently delete your account? You will not be able to recover the account or the user name.")){
+			J('button#deleteaccount').click(function(){
+				if(!confirm('Are you sure you want to permanently delete your account? You will not be able to recover the account or the user name.')){
 					return false;
 				}
 			});
@@ -435,46 +435,46 @@ var Pages = {
 		init: function(){
 			var timeout;
 			// When the value of the input box changes,
-			J("input#name").keyup(function(e){
+			J('input#name').keyup(function(e){
 				clearTimeout(timeout);
 				timeout = setTimeout(Zotero.pages.group_new.nameChange, 300);
 			});
 			
-			J("input[name=group_type]").change(Zotero.pages.group_new.nameChange);
+			J('input[name=group_type]').change(Zotero.pages.group_new.nameChange);
 			
 			//insert slug preview label
 			J('input#name').after("<label id='slugpreview'>Group URL: " +
-									Zotero.config.baseZoteroWebsiteUrl + "/" + "groups/" +
-									Zotero.utils.slugify(J("input#name").val()) +
-									"</label>");
+									Zotero.config.baseZoteroWebsiteUrl + '/' + 'groups/' +
+									Zotero.utils.slugify(J('input#name').val()) +
+									'</label>');
 			
 		},
 		
 		nameChange: function(){
 			//make sure label is black after each change before checking with server
-			J("#slugpreview").css("color", "black");
+			J('#slugpreview').css('color', 'black');
 			var groupType = J('input[name=group_type]:checked').val();
 			// update slug preview text
 			if(groupType == 'Private'){
-				J("#slugpreview").text("Group URL: " +Zotero.config.baseZoteroWebsiteUrl + "/" + "groups/<number>");
+				J('#slugpreview').text('Group URL: ' +Zotero.config.baseZoteroWebsiteUrl + '/' + 'groups/<number>');
 			}
 			else{
-				J("#slugpreview").text("Group URL: " +Zotero.config.baseZoteroWebsiteUrl + "/" + "groups/" +
-				Zotero.utils.slugify(J("input#name").val()) );
+				J('#slugpreview').text('Group URL: ' +Zotero.config.baseZoteroWebsiteUrl + '/' + 'groups/' +
+				Zotero.utils.slugify(J('input#name').val()) );
 			}
 			
 			if(groupType != 'Private'){
 				// Get the value of the name input
-				var input = J("input#name").val();
+				var input = J('input#name').val();
 				// Poll the server with the input value
-				J.getJSON(baseURL+"/group/checkname/", {"input":input}, function(data){
-					J("#namePreview span").text(data.slug);
+				J.getJSON(baseURL+'/group/checkname/', {'input':input}, function(data){
+					J('#namePreview span').text(data.slug);
 					if(data.valid){
-						J("#slugpreview").css({"color":"green"});
+						J('#slugpreview').css({'color':'green'});
 					} else {
-						J("#slugpreview").css({"color":"red"});
+						J('#slugpreview').css({'color':'red'});
 					}
-					J("#namePreview img").remove();
+					J('#namePreview img').remove();
 				});
 			}
 		}
@@ -482,20 +482,20 @@ var Pages = {
 	
 	group_settings: {
 		init: function(){
-			log.debug("initializing group delete form");
+			log.debug('initializing group delete form');
 			Zotero.ui.init.rte('nolinks');
 			
-			J("#deleteForm").submit(function(){
-				if(confirm("This will permanently delete this group, including any items in the group library")){
-					J("#confirm_delete").val('confirmed');
+			J('#deleteForm').submit(function(){
+				if(confirm('This will permanently delete this group, including any items in the group library')){
+					J('#confirm_delete').val('confirmed');
 					return true;
 				}
 				else{
 					return false;
 				}
 			});
-			J("#type-PublicOpen").click(function(){
-				if(confirm("Changing a group to Public Open will remove all files from Zotero Storage")){
+			J('#type-PublicOpen').click(function(){
+				if(confirm('Changing a group to Public Open will remove all files from Zotero Storage')){
 					return true;
 				}
 				else{
@@ -508,25 +508,25 @@ var Pages = {
 	group_library_settings: {
 		init: function(){
 			//initially disable inputs with disallowed values for current group type
-			if(J("#type-PublicOpen").prop('checked')){
+			if(J('#type-PublicOpen').prop('checked')){
 				//disallow file storage options for public open groups
-				J("#fileEditing-admins").prop('disabled', '1');
-				J("#fileEditing-members").prop('disabled', '1');
+				J('#fileEditing-admins').prop('disabled', '1');
+				J('#fileEditing-members').prop('disabled', '1');
 			}
-			if(J("#type-Private").prop('checked')){
+			if(J('#type-Private').prop('checked')){
 				//disallow internet readable on private
-				J("#libraryReading-all").prop('disabled', '1');
+				J('#libraryReading-all').prop('disabled', '1');
 			}
 			
 			//confirmation on changing group type to public open
-			J("#type-PublicOpen").click(function(){
-				if(confirm("Changing a group to Public Open will remove all files from Zotero Storage")){
+			J('#type-PublicOpen').click(function(){
+				if(confirm('Changing a group to Public Open will remove all files from Zotero Storage')){
 					//disallow files
 					J("input[name='fileEditing']").val(['none']);
-					J("#fileEditing-admins").prop('disabled', '1');
-					J("#fileEditing-members").prop('disabled', '1');
+					J('#fileEditing-admins').prop('disabled', '1');
+					J('#fileEditing-members').prop('disabled', '1');
 					//allow public library
-					J("#libraryReading-all").prop('disabled', '');
+					J('#libraryReading-all').prop('disabled', '');
 					
 					return true;
 				}
@@ -535,22 +535,22 @@ var Pages = {
 				}
 			});
 			
-			J("#type-Private").click(function(){
+			J('#type-Private').click(function(){
 				//select members only viewing of private group which is mandatory
 				J("input[name='libraryReading']").val(['members']);
 				//disable public library radio for private group
-				J("#libraryReading-all").prop('disabled', '1');
+				J('#libraryReading-all').prop('disabled', '1');
 				//allow files
-				J("#fileEditing-admins").prop('disabled', '');
-				J("#fileEditing-members").prop('disabled', '');
+				J('#fileEditing-admins').prop('disabled', '');
+				J('#fileEditing-members').prop('disabled', '');
 			});
 			
-			J("#type-PublicClosed").click(function(){
+			J('#type-PublicClosed').click(function(){
 				//allow files
-				J("#fileEditing-admins").prop('disabled', '');
-				J("#fileEditing-members").prop('disabled', '');
+				J('#fileEditing-admins').prop('disabled', '');
+				J('#fileEditing-members').prop('disabled', '');
 				//allow public library
-				J("#libraryReading-all").prop('disabled', '');
+				J('#libraryReading-all').prop('disabled', '');
 				
 			});
 		}
@@ -558,43 +558,43 @@ var Pages = {
 	
 	group_view: {
 		init: function(){
-			J("#join-group-button").click(Zotero.pages.group_view.joinGroup);
-			J("#leave-group-button").click(Zotero.pages.group_view.leaveGroup);
+			J('#join-group-button').click(Zotero.pages.group_view.joinGroup);
+			J('#leave-group-button').click(Zotero.pages.group_view.leaveGroup);
 			
 			Zotero.ui.init.rte('nolinks');
 		},
 		
 		joinGroup: function(){
 			Zotero.ui.showSpinner(J('.join-group-div'));
-			J.post("/groups/" + zoteroData.groupID + "/join", {ajax:true}, function(data){
+			J.post('/groups/' + zoteroData.groupID + '/join', {ajax:true}, function(data){
 				if(data.pending === true){
-					J(".join-group-div").empty().append("Membership Pending");
+					J('.join-group-div').empty().append('Membership Pending');
 				}
 				else if(data.success === true){
-					Zotero.ui.jsNotificationMessage("You are now a member of this group", 'success');
+					Zotero.ui.jsNotificationMessage('You are now a member of this group', 'success');
 				}
 				else{
-					J(".join-group-div").empty();
-					Zotero.ui.jsNotificationMessage("There was a problem joining this group.", 'error');
+					J('.join-group-div').empty();
+					Zotero.ui.jsNotificationMessage('There was a problem joining this group.', 'error');
 				}
 			},
-			"json");
+			'json');
 		},
 		
 		leaveGroup: function(){
-			if(confirm("Leave group?")){
-				Zotero.ui.showSpinner(J(".leave-group-div"));
-				J.post("/groups/" + zoteroData.groupID + "/leave", {ajax:true}, function(data){
+			if(confirm('Leave group?')){
+				Zotero.ui.showSpinner(J('.leave-group-div'));
+				J.post('/groups/' + zoteroData.groupID + '/leave', {ajax:true}, function(data){
 					if(data.success === true){
 						J('leave-group-div').empty();
-						Zotero.ui.jsNotificationMessage("You are no longer a member of this group", 'success');
+						Zotero.ui.jsNotificationMessage('You are no longer a member of this group', 'success');
 					}
 					else{
 						J('leave-group-div').empty();
-						Zotero.ui.jsNotificationMessage("There was a problem leaving this group. Please try again in a few minutes.", 'error');
+						Zotero.ui.jsNotificationMessage('There was a problem leaving this group. Please try again in a few minutes.', 'error');
 					}
 				},
-				"json");
+				'json');
 			}
 		}
 	},
@@ -617,21 +617,21 @@ var Pages = {
 		init: function(){
 			//insert slug preview label
 			J("input[name='username']").after("<label id='slugpreview'>Profile URL: " +
-									Zotero.config.baseZoteroWebsiteUrl + "/" +
+									Zotero.config.baseZoteroWebsiteUrl + '/' +
 									Zotero.utils.slugify(J("input[name='username']").val()) +
-									"</label>");
+									'</label>');
 
 			// When the value of the input box changes,
-			J("input[name='username']").bind("keyup change", Zotero.pages.user_register.nameChange);
+			J("input[name='username']").bind('keyup change', Zotero.pages.user_register.nameChange);
 		},
 		
 		nameChange: function(){
 			//make sure label is black after each change before checking with server
-			J("#slugpreview").css("color", "black");
+			J('#slugpreview').css('color', 'black');
 			
 			//create slug from username
 			parent.slug = Zotero.utils.slugify( J("input[name='username']").val() );
-			J("#slugpreview").text( "Profile URL: " + Zotero.config.baseZoteroWebsiteUrl + "/" + parent.slug );
+			J('#slugpreview').text( 'Profile URL: ' + Zotero.config.baseZoteroWebsiteUrl + '/' + parent.slug );
 			
 			//check slug with server after half-second
 			clearTimeout(parent.checkUserSlugTimeout);
@@ -639,11 +639,11 @@ var Pages = {
 		},
 		
 		checkSlug: function(){
-			J.getJSON(baseURL + "/user/checkslug", {"slug":slug}, function(data){
+			J.getJSON(baseURL + '/user/checkslug', {'slug':slug}, function(data){
 				if(data.valid){
-					J("#slugpreview").css("color", "green");
+					J('#slugpreview').css('color', 'green');
 				} else {
-					J("#slugpreview").css("color", "red");
+					J('#slugpreview').css('color', 'red');
 				}
 			});
 		}
@@ -652,18 +652,18 @@ var Pages = {
 	user_profile: {
 		init: function(){
 			J('#invite-button').click(function(){
-				var groupID = J("#invite_group").val();
-				J.post("/groups/inviteuser", {ajax:true, groupID:groupID, userID:zoteroData.profileUserID}, function(data){
+				var groupID = J('#invite_group').val();
+				J.post('/groups/inviteuser', {ajax:true, groupID:groupID, userID:zoteroData.profileUserID}, function(data){
 					if(data == 'true'){
-						Zotero.ui.jsNotificationMessage("User has been invited to join your group.", 'success');
-						J('#invited-user-list').append("<li>" + J("#invite_group > option:selected").html() + "</li>");
+						Zotero.ui.jsNotificationMessage('User has been invited to join your group.', 'success');
+						J('#invited-user-list').append('<li>' + J('#invite_group > option:selected').html() + '</li>');
 						J('#invite_group > option:selected').remove();
 						if(J('#invite_group > option').length === 0){
 							J('#invite_group').remove();
 							J('#invite-button').remove();
 						}
 					}
-				}, "text");
+				}, 'text');
 			});
 		}
 	},
@@ -687,23 +687,23 @@ var Pages = {
 				var library = new Zotero.Library();
 			}
 			catch(e){
-				log.debug("Error initializing library");
+				log.debug('Error initializing library');
 			}
 			
-			J("#item-submit").bind('click submit', J.proxy(function(e){
-				log.debug("item search submitted", 3);
+			J('#item-submit').bind('click submit', J.proxy(function(e){
+				log.debug('item search submitted', 3);
 				e.preventDefault();
 				e.stopImmediatePropagation();
-				var q = J("#itemQuery").val();
+				var q = J('#itemQuery').val();
 				var globalSearchD = library.fetchGlobalItems({q:q});
 				globalSearchD.then(function(globalItems){
-					log.debug("globalItemSearch callback", 3);
+					log.debug('globalItemSearch callback', 3);
 					log.debug(globalItems);
-					J("#search-result-count").empty().append(globalItems.totalResults);
-					var jel = J("#search-results");
+					J('#search-result-count').empty().append(globalItems.totalResults);
+					var jel = J('#search-results');
 					jel.empty();
 					J.each(globalItems.objects, function(ind, globalItem){
-						J("#globalitemdetailsTemplate").tmpl({globalItem:globalItem}).appendTo(jel);
+						J('#globalitemdetailsTemplate').tmpl({globalItem:globalItem}).appendTo(jel);
 					});
 				});
 				return false;
@@ -720,18 +720,18 @@ var Pages = {
 			J(window).resize(Zotero.pages.index_start.sizeIframe);
 			
 			// Change the iframe src
-			J(".start-select").click(function(){
-				J("iframe").attr("src", J(this).attr("href"));
+			J('.start-select').click(function(){
+				J('iframe').attr('src', J(this).attr('href'));
 				return false;
 			});
 			
-			J(".start-show-overlay").click(function(){
-				J("#start-overlay").show();
+			J('.start-show-overlay').click(function(){
+				J('#start-overlay').show();
 				return false;
 			});
 			
-			J(".start-hide-overlay").click(function(){
-				J("#start-overlay").hide();
+			J('.start-hide-overlay').click(function(){
+				J('#start-overlay').hide();
 				return false;
 			});
 			
@@ -739,7 +739,7 @@ var Pages = {
 		},
 		// Resize the height of the iframe to fill the page
 		sizeIframe: function() {
-			J("iframe").css("height", J(window).height() - 144);
+			J('iframe').css('height', J(window).height() - 144);
 		}
 	},
 	
@@ -787,7 +787,7 @@ var Pages = {
 				}
 			}
 			
-			J("#recommended-connector-download").show();
+			J('#recommended-connector-download').show();
 			switch(browsername){
 				case 'Chrome':
 					J('#chrome-connector-download-button').addClass('recommended-download').closest('li').detach().prependTo('#recommended-connector-download ul');
@@ -808,18 +808,18 @@ var Pages = {
 	
 	index_bookmarklet: {
 		init: function(){
-			J(".bookmarklet-instructions").hide();
-			var section = J("#bookmarklet-tabs li.selected").data('section');
-			J("#" + section + '-bookmarklet-div').show();
+			J('.bookmarklet-instructions').hide();
+			var section = J('#bookmarklet-tabs li.selected').data('section');
+			J('#' + section + '-bookmarklet-div').show();
 			
-			J("#bookmarklet-tabs li").on('click', function(e){
-				log.debug("bookmarklet tab clicked");
-				J("#bookmarklet-tabs li.selected").removeClass('selected');
+			J('#bookmarklet-tabs li').on('click', function(e){
+				log.debug('bookmarklet tab clicked');
+				J('#bookmarklet-tabs li.selected').removeClass('selected');
 				J(this).addClass('selected');
 				var section = J(this).data('section');
 				log.debug(section);
-				J(".bookmarklet-instructions").hide();
-				J("#" + section + '-bookmarklet-div').show();
+				J('.bookmarklet-instructions').hide();
+				J('#' + section + '-bookmarklet-div').show();
 			});
 		}
 	}

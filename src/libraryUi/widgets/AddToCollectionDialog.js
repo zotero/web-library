@@ -11,7 +11,7 @@ var AddToCollectionDialog = React.createClass({
 		var reactInstance = this;
 		var library = this.props.library;
 
-		library.listen("addToCollectionDialog", function(){
+		library.listen('addToCollectionDialog', function(){
 			reactInstance.setState({});
 			reactInstance.openDialog();
 		}, {});
@@ -33,24 +33,24 @@ var AddToCollectionDialog = React.createClass({
 		this.refs.modal.close();
 	},
 	addToCollection: function(evt) {
-		log.debug("add-to-collection clicked", 3);
+		log.debug('add-to-collection clicked', 3);
 		var reactInstance = this;
 		var library = this.props.library;
 		var itemKeys = Zotero.state.getSelectedItemKeys();
 		var collectionKey = this.state.collectionKey;
 		if(!collectionKey){
-			Zotero.ui.jsNotificationMessage("No collection selected", 'error');
+			Zotero.ui.jsNotificationMessage('No collection selected', 'error');
 			return false;
 		}
 		if(itemKeys.length === 0){
-			Zotero.ui.jsNotificationMessage("No items selected", 'notice');
+			Zotero.ui.jsNotificationMessage('No items selected', 'notice');
 			return false;
 		}
 		
 		library.collections.getCollection(collectionKey).addItems(itemKeys)
 		.then(function(response){
 			library.dirty = true;
-			Zotero.ui.jsNotificationMessage("Items added to collection", 'success');
+			Zotero.ui.jsNotificationMessage('Items added to collection', 'success');
 			reactInstance.closeDialog();
 		}).catch(Zotero.catchPromiseError);
 		return false;

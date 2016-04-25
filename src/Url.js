@@ -29,33 +29,33 @@ url.requestReadApiKeyUrl = function(libraryType, libraryID, redirect){
 };
 
 url.groupViewUrl = function(group){
-	if(group.get("type") == "Private"){
-		return Zotero.config.baseWebsiteUrl + "/groups/" + group.get("id");
+	if(group.get('type') == 'Private'){
+		return Zotero.config.baseWebsiteUrl + '/groups/' + group.get('id');
 	}
 	else {
-		return Zotero.config.baseWebsiteUrl + "/groups/" + Zotero.utils.slugify(group.get("name"));
+		return Zotero.config.baseWebsiteUrl + '/groups/' + Zotero.utils.slugify(group.get('name'));
 	}
 };
 
 url.groupLibraryUrl = function(group){
-	if(group.get("type") == "Private"){
-		return Zotero.config.baseWebsiteUrl + "/groups/" + group.get("id") + "/items";
+	if(group.get('type') == 'Private'){
+		return Zotero.config.baseWebsiteUrl + '/groups/' + group.get('id') + '/items';
 	}
 	else {
-		return Zotero.config.baseWebsiteUrl + "/groups/" + Zotero.utils.slugify(group.get("name")) + "/items";
+		return Zotero.config.baseWebsiteUrl + '/groups/' + Zotero.utils.slugify(group.get('name')) + '/items';
 	}
 };
 
 url.groupSettingsUrl = function(group){
-	return Zotero.config.baseWebsiteUrl + "/groups/" + group.get("id") + "/settings";
+	return Zotero.config.baseWebsiteUrl + '/groups/' + group.get('id') + '/settings';
 };
 
 url.groupMemberSettingsUrl = function(group){
-	return Zotero.config.baseWebsiteUrl + "/groups/" + group.get("id") + "/settings/members";
+	return Zotero.config.baseWebsiteUrl + '/groups/' + group.get('id') + '/settings/members';
 };
 
 url.groupLibrarySettingsUrl = function(group){
-	return Zotero.config.baseWebsiteUrl + "/groups/" + group.get("id") + "/settings/library";
+	return Zotero.config.baseWebsiteUrl + '/groups/' + group.get('id') + '/settings/library';
 };
 
 module.exports = url;

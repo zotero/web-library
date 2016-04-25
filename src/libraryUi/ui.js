@@ -12,13 +12,13 @@ var ui = {};
  * @return {undefined}
  */
 ui.jsNotificationMessage = function(message, type, timeout){
-    log.debug("notificationMessage: " + type + " : " + message, 3);
+    log.debug('notificationMessage: ' + type + ' : ' + message, 3);
     if(Zotero.config.suppressErrorNotifications) return;
     
     if(!timeout && (timeout !== false)){
         timeout = 5;
     }
-    var alertType = "alert-info";
+    var alertType = 'alert-info';
     if(type){
         switch(type){
             case 'error':
@@ -41,11 +41,11 @@ ui.jsNotificationMessage = function(message, type, timeout){
     }
     
     if(timeout){
-        J("#js-message").append("<div class='alert alert-dismissable " + alertType + "'><button type='button' class='close' data-dismiss='alert'><span aria-hidden='true'>&times;</span><span class='sr-only'>Close</span></button>" + message + "</div>").children("div").delay(parseInt(timeout, 10) * 1000).slideUp().delay(300).queue(function(){
+        J('#js-message').append("<div class='alert alert-dismissable " + alertType + "'><button type='button' class='close' data-dismiss='alert'><span aria-hidden='true'>&times;</span><span class='sr-only'>Close</span></button>" + message + '</div>').children('div').delay(parseInt(timeout, 10) * 1000).slideUp().delay(300).queue(function(){
             J(this).remove();
         });
     } else {
-        J("#js-message").append("<div class='alert alert-dismissable " + alertType + "'><button type='button' class='close' data-dismiss='alert'><span aria-hidden='true'>&times;</span><span class='sr-only'>Close</span></button>" + message + "</div>");
+        J('#js-message').append("<div class='alert alert-dismissable " + alertType + "'><button type='button' class='close' data-dismiss='alert'><span aria-hidden='true'>&times;</span><span class='sr-only'>Close</span></button>" + message + '</div>');
     }
 };
 
@@ -55,7 +55,7 @@ ui.jsNotificationMessage = function(message, type, timeout){
  * @return {undefined}
  */
 ui.ajaxErrorMessage = function(jqxhr){
-    log.debug("ui.ajaxErrorMessage", 3);
+    log.debug('ui.ajaxErrorMessage', 3);
     if(typeof jqxhr == 'undefined'){
         log.debug('ajaxErrorMessage called with undefined argument');
         return '';
@@ -65,25 +65,25 @@ ui.ajaxErrorMessage = function(jqxhr){
         case 403:
             //don't have permission to view
             if(Zotero.config.loggedIn || Zotero.config.ignoreLoggedInStatus){
-                return "You do not have permission to view this library.";
+                return 'You do not have permission to view this library.';
             }
             else{
                 Zotero.config.suppressErrorNotifications = true;
-                window.location = "/user/login";
-                return "";
+                window.location = '/user/login';
+                return '';
             }
             break;
         case 404:
-            ui.jsNotificationMessage("A requested resource could not be found.", 'error');
+            ui.jsNotificationMessage('A requested resource could not be found.', 'error');
             break;
         case 400:
-            ui.jsNotificationMessage("Bad Request", 'error');
+            ui.jsNotificationMessage('Bad Request', 'error');
             break;
         case 405:
-            ui.jsNotificationMessage("Method not allowed", 'error');
+            ui.jsNotificationMessage('Method not allowed', 'error');
             break;
         case 412:
-            ui.jsNotificationMessage("Precondition failed", 'error');
+            ui.jsNotificationMessage('Precondition failed', 'error');
             break;
         case 500:
             ui.jsNotificationMessage("Something went wrong but we're not sure what.", 'error');
@@ -95,7 +95,7 @@ ui.ajaxErrorMessage = function(jqxhr){
             ui.jsNotificationMessage("We've gone away for a little while. Please try again in a few minutes.", 'error');
             break;
         default:
-            log.debug("jqxhr status did not match any expected case");
+            log.debug('jqxhr status did not match any expected case');
             log.debug(jqxhr.status);
             //ui.jsNotificationMessage("An error occurred performing the requested action.", 'error');
     }
@@ -131,18 +131,18 @@ ui.appendSpinner = function(el){
 
 ui.saveItem = function(item) {
     //var requestData = JSON.stringify(item.apiObj);
-    log.debug("pre writeItem debug", 4);
+    log.debug('pre writeItem debug', 4);
     log.debug(item, 4);
     //show spinner before making ajax write call
     var library = item.owningLibrary;
     var writeResponse = item.writeItem()
     .then(function(writtenItems){
-        log.debug("item write finished", 3);
+        log.debug('item write finished', 3);
         //check for errors, update nav
         if(item.writeFailure){
-            log.error("Error writing item:" + item.writeFailure.message);
+            log.error('Error writing item:' + item.writeFailure.message);
             ui.jsNotificationMessage('Error writing item', 'error');
-            throw new Error("Error writing item:" + item.writeFailure.message);
+            throw new Error('Error writing item:' + item.writeFailure.message);
         }
     });
     
@@ -182,7 +182,7 @@ ui.itemTypeClass = function(item) {
             }
         }
     }
-    return "img-" + itemTypeClass;
+    return 'img-' + itemTypeClass;
 };
 
 /**
@@ -191,18 +191,18 @@ ui.itemTypeClass = function(item) {
  * @return {Zotero_Library}
  */
 ui.getAssociatedLibrary = function(el){
-    log.debug("ui.getAssociatedLibrary", 3);
+    log.debug('ui.getAssociatedLibrary', 3);
     var jel;
     if(typeof el == 'undefined'){
-        jel = J(".zotero-library").first();
+        jel = J('.zotero-library').first();
     }
     else {
         jel = J(el);
-        if(jel.length === 0 || jel.is("#eventful") ){
-            jel = J(".zotero-library").first();
+        if(jel.length === 0 || jel.is('#eventful') ){
+            jel = J('.zotero-library').first();
             if(jel.length === 0){
-                log.debug("No element passed and no default found for getAssociatedLibrary.");
-                throw new Error("No element passed and no default found for getAssociatedLibrary.");
+                log.debug('No element passed and no default found for getAssociatedLibrary.');
+                throw new Error('No element passed and no default found for getAssociatedLibrary.');
             }
         }
     }
@@ -219,13 +219,13 @@ ui.getAssociatedLibrary = function(el){
     }
     //if we still don't have a library, look for the default library for the page
     if(!library){
-        jel = J(".zotero-library").first();
+        jel = J('.zotero-library').first();
         libString = jel.data('library');
         if(libString){
             library = ui.libStringLibrary(libString);
         }
     }
-    if(!library){log.error("No associated library found");}
+    if(!library){log.error('No associated library found');}
     return library;
 };
 
@@ -269,7 +269,7 @@ init.all = function(){
 };
 
 init.rte = function(type, autofocus, container){
-    log.debug("init.rte", 3);
+    log.debug('init.rte', 3);
     if(Zotero.config.rte == 'ckeditor'){
         init.ckeditor(type, autofocus, container);
         return;
@@ -336,19 +336,19 @@ init.ckeditor = function(type, autofocus, container){
         config.startupFocus = true;
     }
     
-    log.debug("initializing CK editors", 3);
+    log.debug('initializing CK editors', 3);
     if(J(container).is('.rte')){
-        log.debug("RTE textarea - " + " - " + J(container).attr('name'), 3);
+        log.debug('RTE textarea - ' + ' - ' + J(container).attr('name'), 3);
         var edName = J(container).attr('name');
         if(!CKEDITOR.instances[edName]){
             var editor = CKEDITOR.replace(J(container), config );
         }
     }
     else{
-        log.debug("not a direct rte init");
+        log.debug('not a direct rte init');
         log.debug(container);
-        J(container).find("textarea.rte").each(function(ind, el){
-            log.debug("RTE textarea - " + ind + " - " + J(el).attr('name'), 3);
+        J(container).find('textarea.rte').each(function(ind, el){
+            log.debug('RTE textarea - ' + ind + ' - ' + J(el).attr('name'), 3);
             var edName = J(el).attr('name');
             if(!CKEDITOR.instances[edName]){
                 var editor = CKEDITOR.replace(el, config );
@@ -374,15 +374,15 @@ init.tinyMce = function(type, autofocus, elements){
         //script_url : '/static/library/tinymce_jquery/jscripts/tiny_mce/tiny_mce.js',
         mode : mode,
         elements:elements,
-        theme: "advanced",
+        theme: 'advanced',
         //plugins : "pagebreak,style,layer,table,save,advhr,advimage,advlink,emotions,iespell,inlinepopups,insertdatetime,preview,media,searchreplace,print,contextmenu,paste,directionality,fullscreen,visualchars,nonbreaking,xhtmlxtras,template",
         //plugins : "pagebreak,style,layer,table,advhr,advimage,advlink,preview,searchreplace,paste",
         
-        theme_advanced_toolbar_location : "top",
-        theme_advanced_buttons1 : "bold,italic,underline,strikethrough,separator,sub,sup,separator,forecolorpicker,backcolorpicker,separator,blockquote,separator,link,unlink",
-        theme_advanced_buttons2 : "formatselect,separator,justifyleft,justifycenter,justifyright,separator,bullist,numlist,outdent,indent,separator,removeformat,code,",
-        theme_advanced_buttons3 : "",
-        theme_advanced_toolbar_align : "left",
+        theme_advanced_toolbar_location : 'top',
+        theme_advanced_buttons1 : 'bold,italic,underline,strikethrough,separator,sub,sup,separator,forecolorpicker,backcolorpicker,separator,blockquote,separator,link,unlink',
+        theme_advanced_buttons2 : 'formatselect,separator,justifyleft,justifycenter,justifyright,separator,bullist,numlist,outdent,indent,separator,removeformat,code,',
+        theme_advanced_buttons3 : '',
+        theme_advanced_toolbar_align : 'left',
         theme_advanced_statusbar_location: 'bottom',
         theme_advanced_resizing: true,
         relative_urls: false,
@@ -393,7 +393,7 @@ init.tinyMce = function(type, autofocus, elements){
     
     if(autofocus){
         tmceConfig.init_instance_callback = function(inst){
-            log.debug("inited " + inst.editorId);
+            log.debug('inited ' + inst.editorId);
             inst.focus();
         };
     }

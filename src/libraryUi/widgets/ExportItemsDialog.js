@@ -10,11 +10,11 @@ var ExportItemsDialog = React.createClass({
 		var reactInstance = this;
 		var library = this.props.library;
 
-		library.listen("exportItemsDialog", function(){
-			log.debug("opening export dialog");
+		library.listen('exportItemsDialog', function(){
+			log.debug('opening export dialog');
 			reactInstance.openDialog();
 		}, {});
-		library.listen("displayedItemsChanged", function(){
+		library.listen('displayedItemsChanged', function(){
 			reactInstance.forceUpdate();
 		}, {});
 	},

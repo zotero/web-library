@@ -11,7 +11,7 @@ var CiteItemDialog = React.createClass({
 		var library = this.props.library;
 
 		reactInstance.getAvailableStyles();
-		library.listen("citeItems", reactInstance.openDialog, {});
+		library.listen('citeItems', reactInstance.openDialog, {});
 	},
 	getDefaultProps: function() {
 		return {
@@ -21,8 +21,8 @@ var CiteItemDialog = React.createClass({
 	getInitialState: function() {
 		return {
 			styles: [],
-			currentStyle: "",
-			citationString:""
+			currentStyle: '',
+			citationString:''
 		};
 	},
 	handleStyleChange: function(evt) {
@@ -37,7 +37,7 @@ var CiteItemDialog = React.createClass({
 		this.refs.modal.close();
 	},
 	cite: function(evt) {
-		log.debug("citeFunction", 3);
+		log.debug('citeFunction', 3);
 		var reactInstance = this;
 		var library = this.props.library;
 		var style = this.state.currentStyle;
@@ -85,7 +85,7 @@ var CiteItemDialog = React.createClass({
 		if(this.props.freeStyleInput){
 			freeStyleInput = (<input type="text" className="free-text-style-input form-control" placeholder="style" />);
 		}
-		var citationHtml = {"__html": this.state.citationString};
+		var citationHtml = {'__html': this.state.citationString};
 
 		return (
 			<BootstrapModalWrapper ref="modal">

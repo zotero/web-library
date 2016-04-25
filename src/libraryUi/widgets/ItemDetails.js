@@ -36,7 +36,7 @@ var genericDisplayedFields = function(item) {
 		if(!item.fieldMap.hasOwnProperty(field)){
 			return false;
 		}
-		if(field == "title" || field == "creators" || field == "itemType"){
+		if(field == 'title' || field == 'creators' || field == 'itemType'){
 			return false;
 		}
 		return true;
@@ -61,14 +61,14 @@ var CreatorRow = React.createClass({
 		var item = this.props.item;
 		var creator = item.get('creators')[this.props.creatorIndex];
 		var nameSpans = null;
-		if(creator.name && creator.name != "") {
+		if(creator.name && creator.name != '') {
 			nameSpans = (
 				<ItemField {... this.props} key="name" field="name" />
 			);
 		} else {
 			nameSpans = [
 				(<ItemField {... this.props} key="lastName" field="lastName" />),
-				", ",
+				', ',
 				(<ItemField {... this.props} key="firstName" field="firstName" />)
 			];
 		}
@@ -126,8 +126,8 @@ var ToggleCreatorFieldButton = React.createClass({
 			}
 			delete creator.name;
 		} else {
-			if(creator.firstName === "" && creator.lastName === "") {
-				creator.name = "";
+			if(creator.firstName === '' && creator.lastName === '') {
+				creator.name = '';
 			} else {
 				creator.name = creator.firstName + ' ' + creator.lastName;
 			}
@@ -162,22 +162,22 @@ var AddRemoveCreatorFieldButtons = React.createClass({
 		);
 	},
 	addCreator: function(evt) {
-		log.debug("addCreator");
+		log.debug('addCreator');
 		var item = this.props.item;
 		var creatorIndex = this.props.creatorIndex;
 		var creators = item.get('creators');
-		var newCreator = {creatorType:"author", firstName:"", lastName:""};
+		var newCreator = {creatorType:'author', firstName:'', lastName:''};
 		creators.splice(creatorIndex + 1, 0, newCreator);
 		this.props.parentItemDetailsInstance.setState({
 			item:item,
 			edit: {
-				field:"lastName",
+				field:'lastName',
 				creatorIndex:creatorIndex+1
 			}
 		});
 	},
 	removeCreator: function(evt) {
-		log.debug("removeCreator");
+		log.debug('removeCreator');
 		var creatorIndex = this.props.creatorIndex;
 		var item = this.props.item;
 		var creators = item.get('creators');
@@ -194,7 +194,7 @@ var ItemNavTabs = React.createClass({
 		};
 	},
 	render: function() {
-		log.debug("ItemNavTabs render");
+		log.debug('ItemNavTabs render');
 		if(this.props.item == null){
 			return null;
 		}
@@ -280,20 +280,20 @@ var ItemField = React.createClass({
 		};
 	},
 	handleChange: function(evt) {
-		log.debug("change on ItemField");
+		log.debug('change on ItemField');
 		log.debug(evt);
 		//set field to new value
 		var item = this.props.item;
 		switch(this.props.field) {
-			case "creatorType":
-			case "name":
-			case "firstName":
-			case "lastName":
+			case 'creatorType':
+			case 'name':
+			case 'firstName':
+			case 'lastName':
 				var creators = item.get('creators');
 				var creator = creators[this.props.creatorIndex];
 				creator[this.props.field] = evt.target.value;
 				break;
-			case "tag":
+			case 'tag':
 				var tags = item.get('tags');
 				var tag = tags[this.props.tagIndex];
 				tag.tag = evt.target.value;
@@ -304,15 +304,15 @@ var ItemField = React.createClass({
 		this.props.parentItemDetailsInstance.setState({item:item});
 	},
 	handleBlur: function(evt) {
-		log.debug("blur on ItemField");
+		log.debug('blur on ItemField');
 		//save item, move edit to next field
-		log.debug("handleBlur");
+		log.debug('handleBlur');
 		this.handleChange(evt);
 		this.props.parentItemDetailsInstance.setState({edit:null});
 		Zotero.ui.saveItem(this.props.item);
 	},
 	handleFocus: function(evt) {
-		log.debug("focus on ItemField");
+		log.debug('focus on ItemField');
 		var field = J(evt.currentTarget).data('field');
 		var creatorIndex = J(evt.target).data('creatorindex');
 		var tagIndex = J(evt.target).data('tagindex');
@@ -327,7 +327,7 @@ var ItemField = React.createClass({
 		});
 	},
 	checkKey: function(evt) {
-		log.debug("ItemField checkKey");
+		log.debug('ItemField checkKey');
 		evt.stopPropagation();
 		if (evt.keyCode === Zotero.ui.keyCode.ENTER){
 			//var nextEdit = Zotero.ui.widgets.reactitem.nextEditField(this.props.item, this.props.edit);
@@ -342,10 +342,10 @@ var ItemField = React.createClass({
 		var tagField = false;
 		var value;
 		switch(field){
-			case "creatorType":
-			case "name":
-			case "firstName":
-			case "lastName":
+			case 'creatorType':
+			case 'name':
+			case 'firstName':
+			case 'lastName':
 				creatorField = true;
 				var creatorIndex = this.props.creatorIndex;
 				var creator = item.get('creators')[creatorIndex];
@@ -357,7 +357,7 @@ var ItemField = React.createClass({
 				};
 				
 				break;
-			case "tag":
+			case 'tag':
 				tagField = true;
 				var tagIndex = this.props.tagIndex;
 				var tag = item.get('tags')[tagIndex];
@@ -370,23 +370,23 @@ var ItemField = React.createClass({
 		var editThisField = editMatches(this.props, this.props.edit);
 		if(!editThisField){
 			var spanProps = {
-				className: "editable-item-field",
+				className: 'editable-item-field',
 				tabIndex: 0,
-				"data-field": field,
+				'data-field': field,
 				onFocus: this.handleFocus
 			};
 
 			var p = null;
 			if(creatorField){
-				spanProps.className += " creator-field";
+				spanProps.className += ' creator-field';
 				spanProps['data-creatorindex'] = this.props.creatorIndex;
-				p = value == "" ? creatorPlaceHolders[field] : value;
+				p = value == '' ? creatorPlaceHolders[field] : value;
 			} else if(tagField){
-				spanProps.className += " tag-field";
+				spanProps.className += ' tag-field';
 				spanProps['data-tagindex'] = this.props.tagIndex;
 				p = value;
 			} else {
-				p = value == "" ? (<div className="empty-field-placeholder"></div>) : Zotero.format.itemField(field, item);
+				p = value == '' ? (<div className="empty-field-placeholder"></div>) : Zotero.format.itemField(field, item);
 			}
 			return (
 				<span {...spanProps}>
@@ -402,7 +402,7 @@ var ItemField = React.createClass({
 		};
 
 		var inputProps = {
-			className: ("form-control item-field-control " + this.props.field),
+			className: ('form-control item-field-control ' + this.props.field),
 			name: field,
 			defaultValue: value,
 			//onChange: this.handleChange,
@@ -481,14 +481,14 @@ var ItemInfoPanel = React.createClass({
 		};
 	},
 	render: function() {
-		log.debug("ItemInfoPanel render");
+		log.debug('ItemInfoPanel render');
 		var reactInstance = this;
 		var library = this.props.library;
 		var item = this.props.item;
-		log.debug("ItemInfoPanel render: items.totalResults: " + library.items.totalResults);
+		log.debug('ItemInfoPanel render: items.totalResults: ' + library.items.totalResults);
 		var itemCountP = (
 			<p className='item-count' hidden={!this.props.libraryItemsLoaded}>
-				{library.items.totalResults + " items in this view"}
+				{library.items.totalResults + ' items in this view'}
 			</p>
 		);
 		
@@ -506,13 +506,13 @@ var ItemInfoPanel = React.createClass({
 		var itemKey = item.get('key');
 		var libraryType = item.owningLibrary.libraryType;
 		var parentUrl = false;
-		if(item.get("parentItem")) {
-			parentUrl = library.websiteUrl({itemKey:item.get("parentItem")});
+		if(item.get('parentItem')) {
+			parentUrl = library.websiteUrl({itemKey:item.get('parentItem')});
 		}
 		
 		var parentLink = parentUrl ? <a href={parentUrl} className="item-select-link" data-itemkey={item.get('parentItem')}>Parent Item</a> : null;
 		var libraryIDSpan;
-		if(libraryType == "user") {
+		if(libraryType == 'user') {
 			libraryIDSpan = <span id="libraryUserID" title={item.apiObj.library.id}></span>;
 		} else {
 			libraryIDSpan = <span id="libraryGroupID" title={item.apiObj.library.id}></span>;
@@ -520,7 +520,7 @@ var ItemInfoPanel = React.createClass({
 		
 		//the Zotero user that created the item, if it's a group library item
 		var zoteroItemCreatorRow = null;
-		if(libraryType == "group") {
+		if(libraryType == 'group') {
 			zoteroItemCreatorRow = (
 				<tr>
 					<th>Added by</th>
@@ -533,8 +533,8 @@ var ItemInfoPanel = React.createClass({
 		var creators = item.get('creators');
 		if(creators.length == 0){
 			creators.push({
-				lastName: "",
-				firstName: ""
+				lastName: '',
+				firstName: ''
 			});
 		}
 		
@@ -555,7 +555,7 @@ var ItemInfoPanel = React.createClass({
 			genericFieldRows.push(<ItemFieldRow key={key} {...reactInstance.props} field={key} />);
 		});
 
-		var typeAndTitle = ["itemType", "title"].map(function(key){
+		var typeAndTitle = ['itemType', 'title'].map(function(key){
 			return (
 				<ItemFieldRow key={key} {...reactInstance.props} field={key} />
 			);
@@ -584,7 +584,7 @@ var TagListRow = React.createClass({
 	getDefaultProps: function(){
 		return {
 			tagIndex:0,
-			tag:{tag:""},
+			tag:{tag:''},
 			item:null,
 			library:null,
 			edit:null
@@ -623,7 +623,7 @@ var TagListRow = React.createClass({
 var ItemTagsPanel = React.createClass({
 	getInitialState: function() {
 		return {
-			newTagString: ""
+			newTagString: ''
 		};
 	},
 	newTagChange: function(evt) {
@@ -631,7 +631,7 @@ var ItemTagsPanel = React.createClass({
 	},
 	//add the new tag to the item and save if keydown is ENTER
 	checkKey: function(evt) {
-		log.debug("New tag checkKey");
+		log.debug('New tag checkKey');
 		evt.stopPropagation();
 		if (evt.keyCode === Zotero.ui.keyCode.ENTER){
 			log.debug(evt);
@@ -641,12 +641,12 @@ var ItemTagsPanel = React.createClass({
 				tag: evt.target.value
 			});
 			Zotero.ui.saveItem(item);
-			this.setState({newTagString:""});
+			this.setState({newTagString:''});
 			this.props.parentItemDetailsInstance.setState({item:item});
 		}
 	},
 	render: function() {
-		log.debug("ItemTagsPanel render");
+		log.debug('ItemTagsPanel render');
 		var reactInstance = this;
 		var item = this.props.item;
 		var library = this.props.library;
@@ -693,16 +693,16 @@ var ItemChildrenPanel = React.createClass({
 		};
 	},
 	triggerUpload: function() {
-		this.props.library.trigger("uploadAttachment");
+		this.props.library.trigger('uploadAttachment');
 	},
 	render: function() {
-		log.debug("ItemChildrenPanel render");
+		log.debug('ItemChildrenPanel render');
 		var childListEntries = this.props.childItems.map(function(item){
 			var title = item.get('title');
 			var href = Zotero.url.itemHref(item);
 			var iconClass = item.itemTypeIconClass();
 			var key = item.get('key');
-			if(item.itemType == "note"){
+			if(item.itemType == 'note'){
 				return (
 					<li key={key}>
 						<span className={'fonticon barefonticon ' + iconClass}></span>
@@ -753,14 +753,14 @@ var ItemDetails = React.createClass({
 	componentWillMount: function() {
 		var reactInstance = this;
 		var library = this.props.library;
-		library.listen("displayedItemChanged", reactInstance.loadItem, {});
-		library.listen("uploadSuccessful", reactInstance.refreshChildren, {});
+		library.listen('displayedItemChanged', reactInstance.loadItem, {});
+		library.listen('uploadSuccessful', reactInstance.refreshChildren, {});
 		
-		library.listen("tagsChanged", reactInstance.updateTypeahead, {});
+		library.listen('tagsChanged', reactInstance.updateTypeahead, {});
 
-		library.listen("showChildren", reactInstance.refreshChildren, {});
+		library.listen('showChildren', reactInstance.refreshChildren, {});
 		
-		library.trigger("displayedItemChanged");
+		library.trigger('displayedItemChanged');
 	},
 	componentDidMount: function() {
 	},
@@ -775,9 +775,9 @@ var ItemDetails = React.createClass({
 		//get the key of the item we need to display, or display library stats
 		var itemKey = Zotero.state.getUrlVar('itemKey');
 		if(!itemKey){
-			log.debug("No itemKey - " + itemKey, 3);
+			log.debug('No itemKey - ' + itemKey, 3);
 			reactInstance.setState({item:null});
-			return Promise.reject(new Error("No itemkey - " + itemKey));
+			return Promise.reject(new Error('No itemkey - ' + itemKey));
 		}
 		
 		//if we are showing an item, load it from local library of API
@@ -785,10 +785,10 @@ var ItemDetails = React.createClass({
 		var loadedItem = library.items.getItem(itemKey);
 		var loadingPromise;
 		if(loadedItem){
-			log.debug("have item locally, loading details into ui", 3);
+			log.debug('have item locally, loading details into ui', 3);
 			loadingPromise = Promise.resolve(loadedItem);
 		} else{
-			log.debug("must fetch item from server", 3);
+			log.debug('must fetch item from server', 3);
 			reactInstance.setState({itemLoading:true});
 			loadingPromise = library.loadItem(itemKey);
 		}
@@ -798,7 +798,7 @@ var ItemDetails = React.createClass({
 		}).then(function(){
 			return loadedItem.getCreatorTypes(loadedItem.get('itemType'));
 		}).then(function(creatorTypes){
-			log.debug("done loading necessary data; displaying item");
+			log.debug('done loading necessary data; displaying item');
 			reactInstance.setState({item:loadedItem, itemLoading:false});
 			library.trigger('showChildren');
 			//Zotero.eventful.initTriggers(widgetEl);
@@ -808,11 +808,11 @@ var ItemDetails = React.createClass({
 				ev.initEvent('ZoteroItemUpdated', true, true);
 				document.dispatchEvent(ev);
 			} catch(e){
-				log.error("Error triggering ZoteroItemUpdated event");
+				log.error('Error triggering ZoteroItemUpdated event');
 			}
 		});
 		loadingPromise.catch(function(err){
-			log.error("loadItem promise failed");
+			log.error('loadItem promise failed');
 			log.error(err);
 		}).then(function(){
 			reactInstance.setState({itemLoading: false});
@@ -827,8 +827,8 @@ var ItemDetails = React.createClass({
 		
 		var itemKey = Zotero.state.getUrlVar('itemKey');
 		if(!itemKey){
-			log.debug("No itemKey - " + itemKey, 3);
-			return Promise.reject(new Error("No itemkey - " + itemKey));
+			log.debug('No itemKey - ' + itemKey, 3);
+			return Promise.reject(new Error('No itemkey - ' + itemKey));
 		}
 		
 		var item = library.items.getItem(itemKey);
@@ -840,7 +840,7 @@ var ItemDetails = React.createClass({
 		return p;
 	},
 	updateTypeahead: function() {
-		log.debug("updateTypeahead", 3);
+		log.debug('updateTypeahead', 3);
 		return;
 	},
 	addTagTypeahead: function() {
@@ -850,7 +850,7 @@ var ItemDetails = React.createClass({
 		//TODO: reactify
 	},
 	render: function() {
-		log.debug("ItemDetails render");
+		log.debug('ItemDetails render');
 		var reactInstance = this;
 		var library = this.props.library;
 		var item = this.state.item;
