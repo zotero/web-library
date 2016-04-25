@@ -93,9 +93,8 @@ var Pages = {
 		
 		supportSearchRedirect: function(query) {
 			var q = encodeURIComponent(query + " site:www.zotero.org/support");
-			log.debug(q);return;
+			//log.debug(q);return;
 			var url = "https://duckduckgo.com/?q=" + q;
-			/*var url = "https://www.google.com/#q=" + q;*/
 			window.location = url;
 		},
 
