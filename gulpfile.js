@@ -11,6 +11,8 @@ var assign = require('lodash.assign');
 var uglify = require('gulp-uglify');
 var filter = require('gulp-filter');
 var rename = require('gulp-rename');
+var autoprefixer = require('gulp-autoprefixer');
+var less = require('gulp-less');
 
 // add custom browserify options here
 var customOpts = {
@@ -20,9 +22,9 @@ var customOpts = {
 var opts = assign({}, watchify.args, customOpts);
 var b = watchify(browserify(opts)); 
 
-b.transform("babelify", {
-	presets: ["es2015", "react"],
-	plugins: ["transform-flow-strip-types"]
+b.transform('babelify', {
+	presets: ['es2015', 'react'],
+	plugins: ['transform-flow-strip-types']
 });
 
 // add transformations here
@@ -52,6 +54,15 @@ function bundle() {
 		.pipe(gulp.dest('build'));
 }
 
+
+gulp.task('less', function() {
+	gulp.src('./static/css/zotero-web-library.less')
+	.pipe(less())
+	.pipe(autoprefixer({
+		browsers: ['last 2 versions']
+	}))
+	.pipe(gulp.dest('./static/css/'));
+});
 
 
 
