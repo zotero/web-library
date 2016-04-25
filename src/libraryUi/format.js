@@ -11,7 +11,7 @@ var format = {};
  * @param  {boolean} trim  Trim output to limit length
  * @return {string}
  */
-format.formatItemField = function(field, item, trim){
+format.itemField = function(field, item, trim){
     if(typeof trim == 'undefined'){
         trim = false;
     }
@@ -144,7 +144,7 @@ format.trimString = function(s, maxlen){
  * @param  {Zotero_Item} item  Zotero Item owning the field
  * @return {string}
  */
-format.formatItemDateField = function(field, item){
+format.itemDateField = function(field, item){
     var date;
     var timeOptions = {
         hour: "numeric",
@@ -212,7 +212,7 @@ format.formatItemDateField = function(field, item){
  * @param  {string} contentRow contenteRow name
  * @return {string}
  */
-format.formatItemContentRow = function(contentRow){
+format.itemContentRow = function(contentRow){
     if(contentRow.field == 'date'){
         if(!contentRow.fieldValue){return '';}
         var date = Zotero.utils.parseApiDate(contentRow.value);

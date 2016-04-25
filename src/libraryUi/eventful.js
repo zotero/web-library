@@ -2,7 +2,6 @@
 
 var log = require('../Log.js').Logger('zotero-web-library:eventful');
 
-Zotero.widgets = {};
 var eventful = {};
 
 eventful.events = [

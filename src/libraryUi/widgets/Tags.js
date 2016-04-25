@@ -44,7 +44,7 @@ var TagRow = React.createClass({
 
 		return (
 			<li className="tag-row">
-				<a onClick={this.handleClick} className='tag-link' title={title} style={tagStyle} href={newUrl}>{Zotero.ui.trimString(tag.apiObj.tag, 12)}</a>
+				<a onClick={this.handleClick} className='tag-link' title={title} style={tagStyle} href={newUrl}>{Zotero.format.trimString(tag.apiObj.tag, 12)}</a>
 			</li>
 		);
 	}

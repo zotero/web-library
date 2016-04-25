@@ -455,7 +455,7 @@ var ItemRow = React.createClass({
 					<td onClick={reactInstance.handleItemLinkClick} key={field} className={field} data-itemkey={item.get("key")}>
 						{ctags}
 						<a onClick={reactInstance.handleItemLinkClick} className='item-select-link' data-itemkey={item.get("key")} href={Zotero.url.itemHref(item)} title={item.get(field)}>
-							{Zotero.ui.formatItemField(field, item, true)}
+							{Zotero.format.itemField(field, item, true)}
 						</a>
 					</td>
 				);
@@ -493,16 +493,16 @@ var SingleCellItemField = React.createClass({
 			if(field == "title"){
 				pps.push(<span key="itemTypeIcon" className={'sprite-icon pull-left sprite-treeitem-' + item.itemTypeImageClass()}></span>);
 				pps.push(<ColoredTags key="coloredTags" item={item} />);
-				pps.push(<b key="title">{Zotero.ui.formatItemField(field, item, true)}</b>);
+				pps.push(<b key="title">{Zotero.format.itemField(field, item, true)}</b>);
 			} else if((field === 'dateAdded') || (field === 'dateModified')) {
 				pps.push(
-					<p key={field} title={item.get(field)} dangerouslySetInnerHtml={{__html:fieldDisplayName + Zotero.ui.formatItemDateField(field, item, true)}}>
+					<p key={field} title={item.get(field)} dangerouslySetInnerHtml={{__html:fieldDisplayName + Zotero.format.itemDateField(field, item, true)}}>
 						
 					</p>
 				);
 			} else {
 				pps.push(
-					<p key={field} title={item.get(field)}>{fieldDisplayName}{Zotero.ui.formatItemField(field, item, true)}</p>
+					<p key={field} title={item.get(field)}>{fieldDisplayName}{Zotero.format.itemField(field, item, true)}</p>
 				);
 			}
 		});

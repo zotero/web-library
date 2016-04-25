@@ -430,7 +430,7 @@ var ItemField = React.createClass({
 				spanProps['data-tagindex'] = this.props.tagIndex;
 				p = value;
 			} else {
-				p = value == "" ? (<div className="empty-field-placeholder"></div>) : Zotero.ui.formatItemField(field, item);
+				p = value == "" ? (<div className="empty-field-placeholder"></div>) : Zotero.format.itemField(field, item);
 			}
 			return (
 				<span {...spanProps}>

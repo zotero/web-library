@@ -73,7 +73,7 @@ var RecentItemRow = React.createClass({
             return (
                 <td key={field} className={field} data-itemkey={item.get("key")}>
                     <a data-itemkey={item.get("key")} href={Zotero.url.itemHref(item)} title={item.get(field)}>
-                        {Zotero.ui.formatItemField(field, item, true)}
+                        {Zotero.format.itemField(field, item, true)}
                     </a>
                 </td>
             );

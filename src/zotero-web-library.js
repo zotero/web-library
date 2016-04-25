@@ -8,6 +8,7 @@ Zotero.State = require('./State.js');
 Zotero.Delay = require('./Delay.js');
 Zotero.Pages = require('./Pages.js');
 Zotero.ui = require('./libraryUi/ui.js');
+Zotero.format = require('./libraryUi/format.js');
 Zotero.ui.widgets.Library = require('./libraryUi/widgets/ZoteroLibrary.js');
 Zotero.eventful = require('./libraryUi/eventful.js');
 Zotero.init = require('./Init.js');
