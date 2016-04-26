@@ -170,7 +170,6 @@ var Pages = {
 				var newIndex = sectionCount + 1;
 				
 				//render new section template into end of sections
-				log.debug(zoteroData.collectionOptions);
 				J('#cv-sections').append( J('#cvsectionTemplate').render({
 					cvSectionIndex: newIndex,
 					cvSectionType: 'collection',
@@ -367,7 +366,6 @@ var Pages = {
 				J('.individual_group_permission').closest('div.form-group').hide();
 			}
 			J("input[name='individual_groups']").bind('change', function(){
-				log.debug('individual groups checkbox changed');
 				if(J("input[type='checkbox'][name='individual_groups']").prop('checked')){
 					J('.individual_group_permission').closest('div.form-group').show();
 				}
@@ -482,7 +480,6 @@ var Pages = {
 	
 	group_settings: {
 		init: function(){
-			log.debug('initializing group delete form');
 			Zotero.ui.init.rte('nolinks');
 			
 			J('#deleteForm').submit(function(){
@@ -687,7 +684,7 @@ var Pages = {
 				var library = new Zotero.Library();
 			}
 			catch(e){
-				log.debug('Error initializing library');
+				log.error('Error initializing library');
 			}
 			
 			J('#item-submit').bind('click submit', J.proxy(function(e){
@@ -698,7 +695,7 @@ var Pages = {
 				var globalSearchD = library.fetchGlobalItems({q:q});
 				globalSearchD.then(function(globalItems){
 					log.debug('globalItemSearch callback', 3);
-					log.debug(globalItems);
+					//log.debug(globalItems);
 					J('#search-result-count').empty().append(globalItems.totalResults);
 					var jel = J('#search-results');
 					jel.empty();
@@ -813,11 +810,10 @@ var Pages = {
 			J('#' + section + '-bookmarklet-div').show();
 			
 			J('#bookmarklet-tabs li').on('click', function(e){
-				log.debug('bookmarklet tab clicked');
+				log.debug('bookmarklet tab clicked', 3);
 				J('#bookmarklet-tabs li.selected').removeClass('selected');
 				J(this).addClass('selected');
 				var section = J(this).data('section');
-				log.debug(section);
 				J('.bookmarklet-instructions').hide();
 				J('#' + section + '-bookmarklet-div').show();
 			});

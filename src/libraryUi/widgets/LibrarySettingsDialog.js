@@ -1,6 +1,6 @@
 'use strict';
 
-var log = require('../../Log.js').Logger('zotero-web-library:librarySettingsDialog');
+var log = require('../../Log.js').Logger('zotero-web-library:LibrarySettingsDialog');
 
 var React = require('react');
 var BootstrapModalWrapper = require('./BootstrapModalWrapper.js');
@@ -27,17 +27,17 @@ var LibrarySettingsDialog = React.createClass({
 		this.refs.modal.close();
 	},
 	updateShowFields: function(evt) {
-		log.debug('updateShowFields');
+		log.debug('updateShowFields', 3);
 		var library = this.props.library;
 		var listDisplayedFields = this.state.listDisplayedFields;
 		var fieldName = evt.target.value;
 		var display = evt.target.checked;
 		
 		if(display){
-			log.debug('adding field ' + fieldName + ' to listDisplayedFields');
+			log.debug('adding field ' + fieldName + ' to listDisplayedFields', 3);
 			listDisplayedFields.push(fieldName);
 		} else {
-			log.debug('filtering field ' + fieldName + ' from listDisplayedFields');
+			log.debug('filtering field ' + fieldName + ' from listDisplayedFields', 3);
 			
 			listDisplayedFields = listDisplayedFields.filter(function(val){
 				if(val == fieldName){

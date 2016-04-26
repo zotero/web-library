@@ -2,7 +2,7 @@
 
 var log = require('./Log.js').Logger('zotero-web-library:Init');
 
-log.debug('www init');
+log.debug('www init', 3);
 
 var init = function(){
 	log.debug('Zotero init', 3);

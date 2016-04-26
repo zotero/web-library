@@ -1,5 +1,7 @@
 'use strict';
 
+var log = require('../Log.js').Logger('zotero-web-library:ZoteroItemUpdated');
+
 /**
  * Trigger a ZoteroItemUpdated event on the document for zotero translators
  * @return {undefined}
@@ -12,7 +14,7 @@ var ZoteroItemUpdated = function(){
         document.dispatchEvent(ev);
     }
     catch(e){
-        Zotero.debug('Error triggering ZoteroItemUpdated event');
+        log.error('Error triggering ZoteroItemUpdated event');
     }
 };
 

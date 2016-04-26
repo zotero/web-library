@@ -57,7 +57,7 @@ ui.jsNotificationMessage = function(message, type, timeout){
 ui.ajaxErrorMessage = function(jqxhr){
     log.debug('ui.ajaxErrorMessage', 3);
     if(typeof jqxhr == 'undefined'){
-        log.debug('ajaxErrorMessage called with undefined argument');
+        log.warn('ajaxErrorMessage called with undefined argument');
         return '';
     }
     log.debug(jqxhr, 3);
@@ -95,7 +95,7 @@ ui.ajaxErrorMessage = function(jqxhr){
             ui.jsNotificationMessage("We've gone away for a little while. Please try again in a few minutes.", 'error');
             break;
         default:
-            log.debug('jqxhr status did not match any expected case');
+            log.warn('jqxhr status did not match any expected case');
             log.debug(jqxhr.status);
             //ui.jsNotificationMessage("An error occurred performing the requested action.", 'error');
     }
@@ -201,7 +201,7 @@ ui.getAssociatedLibrary = function(el){
         if(jel.length === 0 || jel.is('#eventful') ){
             jel = J('.zotero-library').first();
             if(jel.length === 0){
-                log.debug('No element passed and no default found for getAssociatedLibrary.');
+                log.warn('No element passed and no default found for getAssociatedLibrary.');
                 throw new Error('No element passed and no default found for getAssociatedLibrary.');
             }
         }
@@ -345,8 +345,8 @@ init.ckeditor = function(type, autofocus, container){
         }
     }
     else{
-        log.debug('not a direct rte init');
-        log.debug(container);
+        log.debug('not a direct rte init', 3);
+        log.debug(container, 3);
         J(container).find('textarea.rte').each(function(ind, el){
             log.debug('RTE textarea - ' + ind + ' - ' + J(el).attr('name'), 3);
             var edName = J(el).attr('name');
@@ -393,7 +393,7 @@ init.tinyMce = function(type, autofocus, elements){
     
     if(autofocus){
         tmceConfig.init_instance_callback = function(inst){
-            log.debug('inited ' + inst.editorId);
+            log.debug('inited ' + inst.editorId, 3);
             inst.focus();
         };
     }

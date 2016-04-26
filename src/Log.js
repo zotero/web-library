@@ -2,7 +2,7 @@
 
 var log = {};
 
-var prefLevel = 3;
+var prefLevel = 1;
 
 var debugOut;
 var warnOut;
@@ -30,61 +30,42 @@ log.SetLevel = function(level){
 };
 
 log.debug = function(debugstring, level){
-	/*
-	var prefLevel = 3;
-	if(Zotero.config.storeDebug){
-		if(level <= prefLevel){
-			Zotero.debugstring += 'DEBUG:' + debugstring + '\n';
-		}
-	}
-	*/
 	if(typeof(level) !== 'number'){
 		level = 1;
 	}
-	/*
-	if(Zotero.preferences !== undefined){
-		prefLevel = Zotero.preferences.getPref('debug_level');
-	}
-	*/
 	if(level <= prefLevel) {
 		debugOut(debugstring);
 	}
 };
 
-log.warn = function(warnstring){
-	/*
-	if(Zotero.config.storeDebug){
-		Zotero.debugstring += 'WARN:' + warnstring + '\n';
+log.debugObject = function(obj, level){
+	if(typeof(level) !== 'number'){
+		level = 1;
 	}
-	*/
+	if(level <= prefLevel) {
+		debugOut(obj);
+	}
+};
+
+log.warn = function(warnstring){
 	warnOut(warnstring);
 };
 
 log.error = function(errorstring){
-	/*
-	if(Zotero.config.storeDebug){
-		Zotero.debugstring += 'ERROR:' + errorstring + '\n';
-	}
-	*/
 	errorOut(errorstring);
 };
 
-log.debugFunction = function(prefix){
-	return function(debugstring, level){
-		return log.debug(`${prefix}: ${debugstring}`, level);
-	};
-};
-
-log.errorFunction = function(prefix){
-	return function(errorstring){
-		return log.error(`${prefix}: ${errorstring}`);
-	};
-};
-
-log.Logger = function(prefix){
+log.Logger = function(prefix, llevel=3){
+	prefLevel = llevel;
 	return {
 		debug: function(debugstring, level){
-			return log.debug(`${prefix}: ${debugstring}`, level);
+			if(typeof debugstring == 'string'){
+				return log.debug(`${prefix}: ${debugstring}`, level);
+			} else {
+				log.debug(`${prefix}: \\`, level);
+				log.debug(debugstring, level);
+				return;
+			}
 		},
 		warn: function(warnstring){
 			return log.warn(`${prefix}: ${warnstring}`);

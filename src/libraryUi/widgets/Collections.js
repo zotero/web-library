@@ -1,6 +1,6 @@
 'use strict';
 
-var log = require('../../Log.js').Logger('zotero-web-library:collections');
+var log = require('../../Log.js').Logger('zotero-web-library:Collections');
 
 var React = require('react');
 
@@ -24,7 +24,7 @@ var CollectionRow = React.createClass({
 		Zotero.state.pushState();
 	},
 	handleTwistyClick: function(evt){
-		log.debug('handleTwistyClick');
+		log.debug('handleTwistyClick', 3);
 		//toggle expanded state for this collection
 		evt.preventDefault();
 		var collectionKey = this.props.collection.get('collectionKey');
@@ -38,7 +38,6 @@ var CollectionRow = React.createClass({
 		
 	},
 	render: function() {
-		//log.debug("CollectionRow render");
 		if(this.props.collection == null){
 			return null;
 		}
@@ -103,7 +102,6 @@ var TrashRow = React.createClass({
 		Zotero.state.pushState();
 	},
 	render: function() {
-		log.debug('TrashRow render');
 		var className = (this.props.selectedCollection == this.props.collectionKey ? 'collection-row current-collection' : 'collection-row' );
 		
 		return (
@@ -178,7 +176,7 @@ var Collections = React.createClass({
 		});
 	},
 	render: function() {
-		log.debug('Collections render');
+		log.debug('Collections render', 3);
 		var reactInstance = this;
 		var library = this.props.library;
 		var collections = this.state.collections;

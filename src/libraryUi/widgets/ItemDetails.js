@@ -162,7 +162,7 @@ var AddRemoveCreatorFieldButtons = React.createClass({
 		);
 	},
 	addCreator: function(evt) {
-		log.debug('addCreator');
+		log.debug('addCreator', 3);
 		var item = this.props.item;
 		var creatorIndex = this.props.creatorIndex;
 		var creators = item.get('creators');
@@ -177,7 +177,7 @@ var AddRemoveCreatorFieldButtons = React.createClass({
 		});
 	},
 	removeCreator: function(evt) {
-		log.debug('removeCreator');
+		log.debug('removeCreator', 3);
 		var creatorIndex = this.props.creatorIndex;
 		var item = this.props.item;
 		var creators = item.get('creators');
@@ -194,7 +194,7 @@ var ItemNavTabs = React.createClass({
 		};
 	},
 	render: function() {
-		log.debug('ItemNavTabs render');
+		log.debug('ItemNavTabs render', 4);
 		if(this.props.item == null){
 			return null;
 		}
@@ -280,8 +280,6 @@ var ItemField = React.createClass({
 		};
 	},
 	handleChange: function(evt) {
-		log.debug('change on ItemField');
-		log.debug(evt);
 		//set field to new value
 		var item = this.props.item;
 		switch(this.props.field) {
@@ -304,15 +302,12 @@ var ItemField = React.createClass({
 		this.props.parentItemDetailsInstance.setState({item:item});
 	},
 	handleBlur: function(evt) {
-		log.debug('blur on ItemField');
 		//save item, move edit to next field
-		log.debug('handleBlur');
 		this.handleChange(evt);
 		this.props.parentItemDetailsInstance.setState({edit:null});
 		Zotero.ui.saveItem(this.props.item);
 	},
 	handleFocus: function(evt) {
-		log.debug('focus on ItemField');
 		var field = J(evt.currentTarget).data('field');
 		var creatorIndex = J(evt.target).data('creatorindex');
 		var tagIndex = J(evt.target).data('tagindex');
@@ -321,13 +316,11 @@ var ItemField = React.createClass({
 			creatorIndex: creatorIndex,
 			tagIndex: tagIndex
 		};
-		log.debug(edit);
 		this.props.parentItemDetailsInstance.setState({
 			edit: edit
 		});
 	},
 	checkKey: function(evt) {
-		log.debug('ItemField checkKey');
 		evt.stopPropagation();
 		if (evt.keyCode === Zotero.ui.keyCode.ENTER){
 			//var nextEdit = Zotero.ui.widgets.reactitem.nextEditField(this.props.item, this.props.edit);
@@ -335,7 +328,6 @@ var ItemField = React.createClass({
 		}
 	},
 	render: function(){
-		//log.debug("ItemField render");
 		var item = this.props.item;
 		var field = this.props.field;
 		var creatorField = false;
@@ -481,11 +473,10 @@ var ItemInfoPanel = React.createClass({
 		};
 	},
 	render: function() {
-		log.debug('ItemInfoPanel render');
+		log.debug('ItemInfoPanel render', 3);
 		var reactInstance = this;
 		var library = this.props.library;
 		var item = this.props.item;
-		log.debug('ItemInfoPanel render: items.totalResults: ' + library.items.totalResults);
 		var itemCountP = (
 			<p className='item-count' hidden={!this.props.libraryItemsLoaded}>
 				{library.items.totalResults + ' items in this view'}
@@ -601,7 +592,6 @@ var TagListRow = React.createClass({
 		this.props.parentItemDetailsInstance.setState({item:item});
 	},
 	render: function() {
-		//log.debug("TagListRow render");
 		return (
 			<div className="row item-tag-row">
 				<div className="col-xs-1">
@@ -631,10 +621,8 @@ var ItemTagsPanel = React.createClass({
 	},
 	//add the new tag to the item and save if keydown is ENTER
 	checkKey: function(evt) {
-		log.debug('New tag checkKey');
 		evt.stopPropagation();
 		if (evt.keyCode === Zotero.ui.keyCode.ENTER){
-			log.debug(evt);
 			var item = this.props.item;
 			var tags = item.get('tags');
 			tags.push({
@@ -646,7 +634,7 @@ var ItemTagsPanel = React.createClass({
 		}
 	},
 	render: function() {
-		log.debug('ItemTagsPanel render');
+		log.debug('ItemTagsPanel render', 3);
 		var reactInstance = this;
 		var item = this.props.item;
 		var library = this.props.library;
@@ -696,7 +684,7 @@ var ItemChildrenPanel = React.createClass({
 		this.props.library.trigger('uploadAttachment');
 	},
 	render: function() {
-		log.debug('ItemChildrenPanel render');
+		log.debug('ItemChildrenPanel render', 3);
 		var childListEntries = this.props.childItems.map(function(item){
 			var title = item.get('title');
 			var href = Zotero.url.itemHref(item);
@@ -798,7 +786,6 @@ var ItemDetails = React.createClass({
 		}).then(function(){
 			return loadedItem.getCreatorTypes(loadedItem.get('itemType'));
 		}).then(function(creatorTypes){
-			log.debug('done loading necessary data; displaying item');
 			reactInstance.setState({item:loadedItem, itemLoading:false});
 			library.trigger('showChildren');
 			//Zotero.eventful.initTriggers(widgetEl);
@@ -850,7 +837,7 @@ var ItemDetails = React.createClass({
 		//TODO: reactify
 	},
 	render: function() {
-		log.debug('ItemDetails render');
+		log.debug('ItemDetails render', 3);
 		var reactInstance = this;
 		var library = this.props.library;
 		var item = this.state.item;

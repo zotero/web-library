@@ -1,6 +1,6 @@
 'use strict';
 
-var log = require('../../Log.js').Logger('zotero-web-library:tags');
+var log = require('../../Log.js').Logger('zotero-web-library:Tags');
 
 var React = require('react');
 
@@ -118,7 +118,7 @@ var Tags = React.createClass({
 		return selectedTags;
 	},
 	syncTags: function(evt) {
-		log.debug('Tags.syncTags');
+		log.debug('Tags.syncTags', 3);
 		var reactInstance = this;
 		if(this.state.loading){
 			return;
@@ -136,7 +136,6 @@ var Tags = React.createClass({
 		//this function shouldn't be triggered until that has already been done
 		var loadingPromise = library.loadUpdatedTags()
 		.then(function(){
-			log.debug('syncTags done. clearing loading div');
 			reactInstance.setState({tags:library.tags, loading:false});
 			return;
 		},
@@ -164,7 +163,6 @@ var Tags = React.createClass({
 		var tagColorStrings = [];
 		var coloredTags = [];
 		tagColors.forEach(function(tagColor, index){
-			log.debug('tagColor processing ' + index);
 			tagColorStrings.push(tagColor.name.toLowerCase());
 			var coloredTag = tags.getTag(tagColor.name);
 			if(coloredTag){

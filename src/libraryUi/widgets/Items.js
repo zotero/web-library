@@ -217,8 +217,6 @@ var Items = React.createClass({
 		Zotero.preferences.setPref('sort', newSortOrder);
 	},
 	resortTriggered: function(evt) {
-		log.debug('resortTriggered');
-		log.debug(evt);
 		//re-sort triggered from another widget
 		var reactInstance = this;
 		var library = this.props.library;
@@ -522,8 +520,7 @@ var ColoredTags = React.createClass({
 		var library = item.owningLibrary;
 
 		var coloredTags = library.matchColoredTags(item.apiObj._supplement.tagstrings);
-		log.debug('coloredTags:' + JSON.stringify(coloredTags));
-
+		
 		var ctags = coloredTags.map(function(color){
 			return <ColoredTag key={color} color={color} />;
 		});

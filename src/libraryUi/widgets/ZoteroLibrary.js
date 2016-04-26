@@ -1,6 +1,6 @@
 'use strict';
 
-var log = require('../../Log.js').Logger('zotero-web-library:library');
+var log = require('../../Log.js').Logger('zotero-web-library:ZoteroLibrary');
 
 var React = require('react');
 var ReactDOM = require('react-dom');
@@ -30,7 +30,7 @@ var ChooseSortingDialog = require('./ChooseSortingDialog.js');
 Zotero.ui.widgets.library = {};
 
 Zotero.ui.widgets.library.init = function(el){
-	log.debug('Zotero.ui.widgets.library.init');
+	log.debug('Zotero.ui.widgets.library.init', 3);
 	var library = Zotero.ui.getAssociatedLibrary(el);
 	var reactInstance = ReactDOM.render(
 		<ZoteroLibrary library={library} />,
@@ -72,12 +72,10 @@ var ZoteroLibrary = React.createClass({
 		var reactInstance = this;
 		var library = this.props.library;
 		library.listen('displayedItemsChanged', function() {
-			log.debug('ZoteroLibrary displayedItemsChanged');
 			reactInstance.refs.itemsWidget.loadItems();
 		}, {});
 	
 		library.listen('tagsChanged libraryTagsUpdated selectedTagsChanged', function(){
-			log.debug('setting tags on tagsWidget from Library');
 			reactInstance.refs.tagsWidget.setState({tags:library.tags});
 		});
 
@@ -116,7 +114,7 @@ var ZoteroLibrary = React.createClass({
 
 	},
 	render: function(){
-		log.debug('react library render');
+		log.debug('ZoteroLibrary render', 3);
 		var reactInstance = this;
 		var library = this.props.library;
 		var user = Zotero.config.loggedInUser;

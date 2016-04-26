@@ -31,7 +31,7 @@ var State = function(){
 
 //rewrite old style urls to current urls
 State.prototype.rewriteAltUrl = function(){
-    log.debug('rewriteAltUrl');
+    log.debug('rewriteAltUrl', 3);
     var state = this;
     var matches = false;
     var itemKey = false;
