@@ -132,10 +132,12 @@ var ZoteroLibrary = React.createClass({
 			return base + '/static' + path;
 		};
 
-		var inboxText = user.unreadMessages > 0 ? (<strong>Inbox ({user.unreadMessages})</strong>) : 'Inbox';
+		var inboxText = '';
 		var siteActionsMenu;
 
 		if(user) {
+			inboxText = user.unreadMessages > 0 ? (<strong>Inbox ({user.unreadMessages})</strong>) : 'Inbox';
+
 			siteActionsMenu = [
 				(<button key="button" type="button" href="#" className="btn btn-default navbar-btn dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
 					{userDisplayName}
