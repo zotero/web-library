@@ -2,6 +2,10 @@
 
 var log = require('../../library/libZoteroJS/src/Log.js').Logger('zotero-web-library:Pages:Group');
 
+var React = require('react');
+var ReactDOM = require('react-dom');
+var UserGroupInfo = require('../libraryUi/widgets/UserGroupInfo.js');
+
 var Group = {
 	group_new: {
 		init: function(){
@@ -175,6 +179,11 @@ var Group = {
 			//set up screen cast player + box
 			//J("video").mediaelementplayer();
 			//TODO: lightbox?
+			log.debug('group_index init', 3);
+			ReactDOM.render(
+				React.createElement(UserGroupInfo, null),
+				document.getElementById('user-groups-div')
+			);
 		}
 	},
 
