@@ -1,6 +1,6 @@
 'use strict';
 
-var log = require('../../Log.js').Logger('zotero-web-library:BootstrapModalWrapper');
+var log = require('../../../library/libZoteroJS/src/Log.js').Logger('zotero-web-library:BootstrapModalWrapper');
 
 var React = require('react');
 

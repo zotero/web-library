@@ -1,6 +1,6 @@
 'use strict';
 
-var log = require('../../Log.js').Logger('zotero-web-library:chooseSortingDialog');
+var log = require('../../../library/libZoteroJS/src/Log.js').Logger('zotero-web-library:chooseSortingDialog');
 
 var React = require('react');
 var BootstrapModalWrapper = require('./BootstrapModalWrapper.js');

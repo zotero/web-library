@@ -1,6 +1,6 @@
 'use strict';
 
-var log = require('../../Log.js').Logger('zotero-web-library:browseLibrary');
+var log = require('../../../library/libZoteroJS/src/Log.js').Logger('zotero-web-library:browseLibrary');
 
 Zotero.ui.widgets.library = {};
 

@@ -1,6 +1,6 @@
 'use strict';
 
-var log = require('./Log.js').Logger('zotero-web-library:Init');
+var log = require('../library/libZoteroJS/src/Log.js').Logger('zotero-web-library:Init');
 
 log.debug('www init', 3);
 
@@ -19,9 +19,10 @@ var init = function(){
 	}
 	
 	//run page specific init
+	log.debug(`init page:${window.zoterojsClass}`, 1);
 	if((window.zoterojsClass) && (undefined !== Zotero.pages) && Zotero.pages[zoterojsClass]) {
 		try{
-			Zotero.pages[zoterojsClass].init();
+			Zotero.Pages[zoterojsClass].init();
 		}
 		catch(err){
 			log.error('Error running page specific init for ' + zoterojsClass);

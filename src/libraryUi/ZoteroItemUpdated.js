@@ -1,6 +1,6 @@
 'use strict';
 
-var log = require('../Log.js').Logger('zotero-web-library:ZoteroItemUpdated');
+var log = require('../../library/libZoteroJS/src/Log.js').Logger('zotero-web-library:ZoteroItemUpdated');
 
 /**
  * Trigger a ZoteroItemUpdated event on the document for zotero translators

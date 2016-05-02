@@ -1,12 +1,12 @@
 'use strict';
 
-var log = require('./Log.js').Logger('zotero-web-library:zotero-web-library');
+var log = require('../library/libZoteroJS/src/Log.js').Logger('zotero-web-library:zotero-web-library');
 
 var Zotero = require('../library/libZoteroJS/libzoterojs.js');
 
 Zotero.State = require('./State.js');
 Zotero.Delay = require('./Delay.js');
-Zotero.Pages = require('./Pages.js');
+Zotero.Pages = Zotero.pages = require('./Pages/Pages.js');
 Zotero.ui = require('./libraryUi/ui.js');
 Zotero.format = require('./libraryUi/format.js');
 Zotero.ui.widgets.Library = require('./libraryUi/widgets/ZoteroLibrary.js');
@@ -22,9 +22,13 @@ Zotero.defaultPrefs = {
 };
 
 var jQuery = require('jquery');
+window.$ = jQuery;
 window.jQuery = jQuery;
-window.J = jQuery.noConflict();
+window.J = jQuery;
 require('floatthead');
+
+window.React = require('react');
+window.ReactDOM = require('react-dom');
 
 jQuery(document).ready(function() {
 	/* The Zotero web library is built on top of libZotero as a group of
