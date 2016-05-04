@@ -18,18 +18,6 @@ var init = function(){
 		Zotero.pages.base.init();
 	}
 	
-	//run page specific init
-	log.debug(`init page:${window.zoterojsClass}`, 1);
-	if((window.zoterojsClass) && (undefined !== Zotero.pages) && Zotero.pages[zoterojsClass]) {
-		try{
-			Zotero.Pages[zoterojsClass].init();
-		}
-		catch(err){
-			log.error('Error running page specific init for ' + zoterojsClass);
-			log.error(err);
-		}
-	}
-	
 	if(typeof zoteroData == 'undefined'){
 		zoteroData = {};
 	}
@@ -81,6 +69,18 @@ var init = function(){
 	
 	if(Zotero.state.getUrlVar('proxy') == 'false'){
 		Zotero.config.proxy = false;
+	}
+
+	//run page specific init
+	log.debug(`init page:${window.zoterojsClass}`, 1);
+	if((window.zoterojsClass) && (undefined !== Zotero.pages) && Zotero.pages[zoterojsClass]) {
+		try{
+			Zotero.Pages[zoterojsClass].init();
+		}
+		catch(err){
+			log.error('Error running page specific init for ' + zoterojsClass);
+			log.error(err);
+		}
 	}
 	
 	// Bind to popstate to update state when browser goes back
