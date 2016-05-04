@@ -2,6 +2,11 @@
 
 var log = require('../../library/libZoteroJS/src/Log.js').Logger('zotero-web-library:Pages:User');
 
+var React = require('react');
+var ReactDOM = require('react-dom');
+var ProfileGroupsList = require('../libraryUi/widgets/ProfileGroupsList.js');
+var InviteButton = require('../libraryUi/widgets/InviteToGroup.js');
+
 var User = {
 	user_register: {
 		init: function(){
@@ -41,20 +46,18 @@ var User = {
 	
 	user_profile: {
 		init: function(){
-			J('#invite-button').click(function(){
-				var groupID = J('#invite_group').val();
-				J.post('/groups/inviteuser', {ajax:true, groupID:groupID, userID:zoteroData.profileUserID}, function(data){
-					if(data == 'true'){
-						Zotero.ui.jsNotificationMessage('User has been invited to join your group.', 'success');
-						J('#invited-user-list').append('<li>' + J('#invite_group > option:selected').html() + '</li>');
-						J('#invite_group > option:selected').remove();
-						if(J('#invite_group > option').length === 0){
-							J('#invite_group').remove();
-							J('#invite-button').remove();
-						}
-					}
-				}, 'text');
-			});
+			var profileGroupsDiv = document.getElementById('profile-groups-div');
+			var userID = profileGroupsDiv.getAttribute('data-userID');
+
+			ReactDOM.render(
+				React.createElement(ProfileGroupsList, {'userID': userID}),
+				document.getElementById('profile-groups-div')
+			);
+
+			ReactDOM.render(
+				React.createElement(InviteButton, null),
+				document.getElementById('invite-button')
+			);
 		}
 	}
 };

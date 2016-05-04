@@ -5,6 +5,7 @@ var log = require('../../library/libZoteroJS/src/Log.js').Logger('zotero-web-lib
 var React = require('react');
 var ReactDOM = require('react-dom');
 var UserGroupInfo = require('../libraryUi/widgets/UserGroupInfo.js');
+var RecentItems = require('../libraryUi/widgets/RecentItems.js');
 
 var Group = {
 	group_new: {
@@ -133,6 +134,14 @@ var Group = {
 	
 	group_view: {
 		init: function(){
+			var recentItemsDiv = document.getElementById('recent-items-div');
+			var library = Zotero.ui.getAssociatedLibrary(recentItemsDiv);
+
+			ReactDOM.render(
+				React.createElement(RecentItems, {library:library}),
+				document.getElementById('recent-items-div')
+			);
+
 			J('#join-group-button').click(Zotero.pages.group_view.joinGroup);
 			J('#leave-group-button').click(Zotero.pages.group_view.leaveGroup);
 			

@@ -3,6 +3,7 @@
 var log = require('../../../library/libZoteroJS/src/Log.js').Logger('zotero-web-library:inviteToGroup');
 
 var React = require('react');
+var BootstrapModalWrapper = require('./BootstrapModalWrapper.js');
 
 var InviteButton = React.createClass({
 	handleClick: function(evt){
@@ -115,4 +116,4 @@ var InviteDialog = React.createClass({
 	}
 });
 
-module.exports = InviteDialog;
+module.exports = InviteButton;

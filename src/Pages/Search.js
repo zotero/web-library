@@ -5,10 +5,16 @@ var log = require('../../library/libZoteroJS/src/Log.js').Logger('zotero-web-lib
 var React = require('react');
 var ReactDOM = require('react-dom');
 var GlobalSearch = require('../libraryUi/widgets/GlobalSearch.js');
+var SiteSearch = require('../libraryUi/widgets/SiteSearch.js');
 
 var Search = {
-	search_index: {
+	site_search: {
 		init: function(){
+			log.debug('site search init', 3);
+			ReactDOM.render(
+				React.createElement(SiteSearch, null),
+				document.getElementById('site-search')
+			);
 		}
 	},
 	
