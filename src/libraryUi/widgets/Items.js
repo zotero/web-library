@@ -73,6 +73,9 @@ var Items = React.createClass({
 		
 		library.listen('loadMoreItems', reactInstance.loadMoreItems, {});
 		library.trigger('displayedItemsChanged');
+
+		let displayFields = library.preferences.getPref('listDisplayedFields');
+		this.setState({displayFields: displayFields});
 	},
 	getDefaultProps: function() {
 		return {
@@ -364,6 +367,7 @@ var Items = React.createClass({
 			headers = headers.concat(fieldHeaders);
 		}
 
+		let displayFields = this.state.displayFields;
 		var itemRows = this.state.items.map(function(item){
 			var selected = selectedItemKeyMap.hasOwnProperty(item.get('key')) ? true : false;
 			var p = {
@@ -372,7 +376,8 @@ var Items = React.createClass({
 				key: item.get('key'),
 				item: item,
 				selected: selected,
-				narrow: narrow
+				narrow: narrow,
+				displayFields: displayFields
 			};
 			return (
 				<ItemRow {...p} />
