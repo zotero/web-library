@@ -3,3 +3,7 @@
 .navbar-form .form-control {
     width: 100%;
 }
+
+.dropdown-menu.actions-menu {
+	z-index: 1002;
+}
