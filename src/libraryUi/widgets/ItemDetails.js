@@ -465,6 +465,12 @@ var ItemField = React.createClass({
 });
 
 var ItemInfoPanel = React.createClass({
+	componentWillMount: function() {
+		let library = this.props.library;
+		library.listen('totalResultsLoaded', ()=>{
+			this.setState({libraryItemsLoaded:true});
+		});
+	},
 	getDefaultProps: function() {
 		return {
 			item: null,
@@ -472,13 +478,16 @@ var ItemInfoPanel = React.createClass({
 			edit:null
 		};
 	},
+	getInitialState:function() {
+		return {libraryItemsLoaded: false};
+	},
 	render: function() {
 		log.debug('ItemInfoPanel render', 3);
 		var reactInstance = this;
 		var library = this.props.library;
 		var item = this.props.item;
 		var itemCountP = (
-			<p className='item-count' hidden={!this.props.libraryItemsLoaded}>
+			<p className='item-count' hidden={!this.state.libraryItemsLoaded}>
 				{library.items.totalResults + ' items in this view'}
 			</p>
 		);
