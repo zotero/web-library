@@ -111,6 +111,7 @@ var Items = React.createClass({
 				throw('Expected response to have loadedItems');
 			}
 			library.items.totalResults = response.totalResults;
+			library.trigger('totalResultsLoaded');
 			var allLoaded = (response.totalResults == response.loadedItems.length);
 			reactInstance.setState({
 				items:response.loadedItems,
@@ -440,7 +441,15 @@ var ItemRow = React.createClass({
 	},
 	handleItemLinkClick: function(evt) {
 		evt.preventDefault();
-		var itemKey = J(evt.target).data('itemkey');
+		let itemKey = J(evt.target).data('itemkey');
+		if(evt.ctrlKey) {
+			//add item to selected, but don't deselect others
+			Zotero.state.toggleItemSelected(itemKey);
+			let selected = Zotero.state.getSelectedItemKeys();
+			let library = this.props.library;
+			library.trigger('selectedItemsChanged', {selectedItemKeys: selected});
+			return;
+		}
 		Zotero.state.pathVars.itemKey = itemKey;
 		Zotero.state.pushState();
 	},
