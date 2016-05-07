@@ -5,34 +5,8 @@ var net = require('../../../library/libZoteroJS/src/Net.js');
 var React = require('react');
 var LoadingSpinner = require('./LoadingSpinner.js');
 
-
-var ParseQuery = function(search) {
-	let queryOb = {};
-	let s = search;
-	if(search.startsWith('?')){
-		s = search.slice(1);
-	}
-	let split = s.split('&');
-	for(let arg of split){
-		if(arg.includes('=')){
-			let splitArg = arg.split('=');
-			if(splitArg.length > 2){
-				log.warn('parsed more than two segments in query param');
-			}
-			let param = decodeURIComponent(splitArg[0]);
-			let val = decodeURIComponent(splitArg[1]);
-			queryOb[param] = val;
-		} else {
-			//set blank string for params that have no value set
-			queryOb[arg] = '';
-		}
-	}
-	return queryOb;
-};
-
 var supportSearchRedirect = function(query) {
 	var q = encodeURIComponent(query + ' site:www.zotero.org/support');
-	//log.debug(q);return;
 	var url = 'https://duckduckgo.com/?q=' + q;
 	window.location = url;
 };
@@ -148,21 +122,26 @@ var GroupSearchResult = React.createClass({
 
 var SiteSearch = React.createClass({
 	componentWillMount: function() {
+		Zotero.config.nonparsedBaseUrl = '/search';
+	},
+	componentDidMount: function() {
+		if(this.state.query != ''){
+			this.search();
+		}
 	},
 	getDefaultProps: function() {
 		return {
 		};
 	},
 	getInitialState: function() {
-		let s = window.location.search;
-		let q = ParseQuery(s);
-		let query = '';
-		if(q.q){
-			query = q.q;
+		let query = Zotero.state.getUrlVar('q');
+		let type = Zotero.state.getUrlVar('type');
+		if(type == '' || type == undefined) {
+			type = 'support';
 		}
 		return {
 			query:query,
-			type:'support',
+			type:type,
 			supportType:'documentation',
 			loading:false,
 			page:1,
@@ -171,14 +150,13 @@ var SiteSearch = React.createClass({
 		};
 	},
 	queryChanged: function(evt) {
-		log.debug('queryChanged');
-		this.setState({query:evt.target.value, page:1});
+		let newq = evt.target.value;
+		this.setState({query:newq, page:1});
 	},
 	search: function(evt) {
 		if(evt){
 			evt.preventDefault();
 		}
-		log.debug(this.state);
 		
 		let query = this.state.query;
 		let type = this.state.type;
@@ -192,11 +170,12 @@ var SiteSearch = React.createClass({
 			}
 		}
 
+		Zotero.state.setQueryVar('q', query);
+		Zotero.state.pushState();
+
 		//build local search url
 		let searchPath = `/search/${type}?query=${encodeURIComponent(query)}`;
-		log.debug(`page:${this.state.page}`);
 		if(this.state.page > 1){
-			log.debug("adding page to searchPath");
 			searchPath += `&page=${this.state.page}`;
 		}
 
@@ -205,37 +184,31 @@ var SiteSearch = React.createClass({
 			newState.results = null;
 			newState.resultCount = null;
 		}
-		log.debug(newState);
 		this.setState(newState);
 
 		net.ajax({
 			type:'GET',
 			url:searchPath
 		}).then((request) => {
-			log.debug(request);
 			let results = JSON.parse(request.response);
-			log.debug(results);
 			let newResultArray = results.results;
 
 			if(this.state.page > 1){
 				newResultArray = this.state.results.concat(newResultArray);
 			}
 			this.setState({resultCount:results.resultCount, results:newResultArray, loading:false});
-			log.debug(this.state);
 		});
 	},
 	loadMore: function() {
-		log.debug('loadMore');
 		let newPage = this.state.page + 1;
-		log.debug(`setting new search page to:${newPage}`);
 		this.setState({page:newPage}, this.search);
 	},
 	setType: function(evt) {
 		evt.preventDefault();
-		log.debug(evt);
-		log.debug(evt.currentTarget);
 		let type = evt.currentTarget.getAttribute('data-searchtype');
 		this.setState({type:type, results:null, resultCount:null, loading:false});
+		Zotero.state.setUrlVar('type', type);
+		Zotero.state.pushState();
 	},
 	changeSupportType: function(evt){
 		this.setState({supportType:evt.target.value});
@@ -246,7 +219,6 @@ var SiteSearch = React.createClass({
 			switch(this.state.type){
 				case 'users':
 					resultNodes = this.state.results.map(function(result){
-						log.debug(result);
 						return (
 							<UserSearchResult key={result.userID} user={result} />
 						);
@@ -254,7 +226,6 @@ var SiteSearch = React.createClass({
 					break;
 				case 'groups':
 					resultNodes = this.state.results.map(function(result){
-						log.debug(result);
 						return (
 							<GroupSearchResult key={result.apiObj.id} group={result} />
 						);
@@ -274,21 +245,21 @@ var SiteSearch = React.createClass({
 			case 'users':
 				tabPanel = (
 					<form onSubmit={this.search}>
-						<input type="text" className="textinput form-control" onChange={this.queryChanged}/>
+						<input type="text" className="textinput form-control" value={this.state.query} onChange={this.queryChanged}/>
 					</form>
 				);
 				break;
 			case 'groups':
 				tabPanel = (
 					<form onSubmit={this.search}>
-						<input type="text" className="textinput form-control" onChange={this.queryChanged}/>
+						<input type="text" className="textinput form-control" value={this.state.query} onChange={this.queryChanged}/>
 					</form>
 				);
 				break;
 			case 'support':
 				tabPanel = (
 					<form onSubmit={this.search}>
-						<input type="text" className="textinput form-control" onChange={this.queryChanged}/>
+						<input type="text" className="textinput form-control" value={this.state.query} onChange={this.queryChanged}/>
 						<div className="radio">
 							<label><input type="radio" checked={this.state.supportType=='documentation'} name="supportType" value="documentation" onChange={this.changeSupportType}/>Documentation</label>
 						</div>

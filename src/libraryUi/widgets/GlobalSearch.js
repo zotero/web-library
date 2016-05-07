@@ -5,37 +5,55 @@ var Net = require('../../../library/libZoteroJS/src/Net.js');
 var React = require('react');
 var CanonicalItem = require('./CanonicalSearchResult.js');
 
+//const baseSearchUrl = 'https://52.91.6.162';
 const baseSearchUrl = 'https://localhost:8080';
 
 var globalSearchUrl = function(query){
 	return `${baseSearchUrl}/global/items?q=${query}`;
 };
 
+var globalDOIUrl = function(query){
+	return `${baseSearchUrl}/global/items?DOI=${query}`;
+};
+
 var GlobalSearch = React.createClass({
+	componentDidMount: function(){
+		if(this.state.search != ''){
+			this.search();
+		}
+	},
 	getDefaultProps: function() {
 		return {
-			item:null,
+			item:null
 		};
 	},
 	getInitialState: function() {
+		let query = Zotero.state.getUrlVar('q');
 		return {
-			search:'',
+			search:query,
 			results: []
 		};
 	},
 	handleSearchChange: function(evt){
-		log.debug(evt);
-		log.debug(`setting search state to ${evt.target.value}`);
 		this.setState({search:evt.target.value});
 	},
-	search: function(evt){
-		evt.preventDefault();
+	search: function(evt=false){
+		if(evt){
+			evt.preventDefault();
+		}
 		var searchTerm = this.state.search;
-		var searchUrl = globalSearchUrl(searchTerm);
-		log.debug(`searching:${searchUrl}`);
+		//update querystring
+		Zotero.state.setQueryVar('q', this.state.search);
+		Zotero.state.pushState();
+
+		var searchUrl = '';
+		if(searchTerm.startsWith('doi:')){
+			searchUrl = globalDOIUrl(searchTerm.slice(4));
+		} else {
+			searchUrl = globalSearchUrl(searchTerm);
+		}
 		
 		Net.ajax({url:searchUrl}).then((resp) => {
-			log.debug(resp);
 			var resultsObj = JSON.parse(resp.responseText);
 			var globalItems = resultsObj.map(function(g){
 				return g;
@@ -46,7 +64,6 @@ var GlobalSearch = React.createClass({
 	render: function() {
 		var reactInstance = this;
 		var resultNodes = reactInstance.state.results.map(function(globalItem){
-			log.debug(`rendering CanonicalItem for ${globalItem.ID}`);
 			return (
 				<CanonicalItem key={globalItem.ID} item={globalItem} />
 			);
@@ -54,9 +71,9 @@ var GlobalSearch = React.createClass({
 
 		return (
 			<div className='global-search'>
-				<form onSubmit={this.search}>
+				<form id="global-search-form" onSubmit={this.search}>
 					<div className='input-group'>
-						<input type='text' className='form-control' onChange={this.handleSearchChange} />
+						<input type='text' className='form-control' value={this.state.search} onChange={this.handleSearchChange} />
 						<span className='input-group-btn'>
 							<button type='button' className='btn btn-default' onClick={this.search}>
 								<span className='glyphicons fonticon glyphicons-search'></span>
