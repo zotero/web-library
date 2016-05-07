@@ -4,6 +4,6 @@
     width: 100%;
 }
 
-.dropdown-menu.actions-menu {
+#control-panel .btn-group {
 	z-index: 1002;
 }
