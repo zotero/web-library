@@ -159,14 +159,14 @@ State.prototype.popTag = function(oldtag){
 };
 
 State.prototype.toggleTag = function(tagtitle){
-    log.debug('State.toggleTag', 3);
+    log.debug('toggleTag', 3);
     var state = this;
     if(!state.pathVars['tag']){
         state.pathVars['tag'] = [tagtitle];
         return;
     }
-    else if(J.isArray(state.pathVars['tag'])) {
-        if(J.inArray(tagtitle, state.pathVars['tag']) != (-1) ){
+    else if(Array.isArray(state.pathVars['tag'])) {
+        if(state.pathVars['tag'].indexOf(tagtitle) != (-1) ){
             var newTagArray = state.pathVars['tag'].filter(function(element, index, array){
                 return element != tagtitle;
             });
@@ -205,7 +205,7 @@ State.prototype.clearUrlVars = function(except){
     }
     var pathVars = state.pathVars;
     for(let key in pathVars){
-        if(except.includes(key)){
+        if(except.indexOf(key) == -1){
             delete(pathVars[key]);
         }
     }
@@ -270,7 +270,7 @@ State.prototype.parsePathVars = function(pathname){
 
 State.prototype.buildUrl = function(urlvars, queryVars){
     var state = this;
-    log.debug("State.buildUrl", 3);
+    log.debug('State.buildUrl', 3);
     log.debug(urlvars);
     log.debug(queryVars);
     if(typeof queryVars === 'undefined') { queryVars = false;}
@@ -448,7 +448,7 @@ State.prototype.addQueryVar = function(key, val){
     var state = this;
     if(state.q.hasOwnProperty(key)){
         //property exists
-        if(J.isArray(state.q[key])){
+        if(Array.isArray(state.q[key])){
             state.q[key].push(val);
         }
         else{

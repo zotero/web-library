@@ -21,7 +21,7 @@ var GroupNugget = React.createClass({
 			memberCount += group.apiObj.data.admins.length;
 		}
 		
-		if(userID && (userID == group.apiObj.data.owner || (J.inArray(userID, group.apiObj.data.admins) != -1 ))) {
+		if(userID && (userID == group.apiObj.data.owner || (group.apiObj.data.admins.indexOf(userID) != -1 ))) {
 			groupManageable = true;
 		}
 		

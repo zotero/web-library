@@ -107,7 +107,7 @@ var Tags = React.createClass({
 	},
 	getSelectedTagsArray: function() {
 		var selectedTags = Zotero.state.getUrlVar('tag');
-        if(!J.isArray(selectedTags)){
+        if(!Array.isArray(selectedTags)){
 			if(selectedTags) {
 				selectedTags = [selectedTags];
 			}
