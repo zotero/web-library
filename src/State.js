@@ -73,7 +73,7 @@ State.prototype.rewriteAltUrl = function(){
 
 State.prototype.updateCurState = function(){
     var state = this;
-    state.curState = J.extend({}, state.q, state.pathVars);
+    state.curState = Z.extend({}, state.q, state.pathVars);
     return;
 };
 
@@ -330,7 +330,7 @@ State.prototype.mutateUrl = function(addvars, removevars){
         removevars = [];
     }
 
-    var urlvars = J.extend({}, state.pathVars);
+    var urlvars = Z.extend({}, state.pathVars);
     for(let key in addvars) {
         urlvars[key] = addvars[key];
     }
@@ -357,7 +357,7 @@ State.prototype.pushState = function(){
     state.prevHref = state.curHref || window.location.href;
     
     //selectively add state to hint where to go
-    var s = J.extend({}, state.q, state.pathVars);
+    var s = Z.extend({}, state.q, state.pathVars);
     
     var urlvars = state.pathVars;
     var queryVars = state.q;
@@ -392,7 +392,7 @@ State.prototype.replaceState = function(){
     state.updateCurState();
     
     //selectively add state to hint where to go
-    var s = J.extend({}, state.curState);
+    var s = Z.extend({}, state.curState);
     var urlvars = state.pathVars;
     var url = state.buildUrl(urlvars, false);
     
@@ -431,7 +431,7 @@ State.prototype.setUrlVar = function(key, val){
 State.prototype.getUrlVars = function(){
     var state = this;
     var params = Zotero.utils.parseQuery(Zotero.utils.querystring(window.location.href));
-    return J.extend(true,{}, state.pathVars, params);
+    return Z.extend(true,{}, state.pathVars, params);
 };
 
 State.prototype.setQueryVar = function(key, val){
@@ -514,8 +514,8 @@ State.prototype.diffState = function(prevHref, curHref){
     log.debug('State.diffState', 3);
     var state = this;
     //check what has changed when a new state is pushed
-    var prevVars = J.extend({}, state.parsePathVars(prevHref) );
-    var curVars = J.extend({}, state.parsePathVars(curHref) );
+    var prevVars = Z.extend({}, state.parsePathVars(prevHref) );
+    var curVars = Z.extend({}, state.parsePathVars(curHref) );
 
     var monitoredVars = ['start',
                          'limit',

@@ -8,7 +8,7 @@ var init = function(){
 	log.debug('Zotero init', 3);
 	
 	if(window.zoteroConfig){
-		Zotero.config = J.extend({}, Zotero.config, window.zoteroConfig);
+		Zotero.config = Z.extend({}, Zotero.config, window.zoteroConfig);
 	}
 	
 	Zotero.state.rewriteAltUrl();
@@ -40,7 +40,7 @@ var init = function(){
 	Zotero.store = store;
 	//initialize global preferences object
 	Zotero.preferences = new Zotero.Preferences(Zotero.store, 'global');
-	Zotero.preferences.defaults = J.extend({}, Zotero.preferences.defaults, Zotero.config.defaultPrefs);
+	Zotero.preferences.defaults = Z.extend({}, Zotero.preferences.defaults, Zotero.config.defaultPrefs);
 	
 	//get localized item constants if not stored in localstorage
 	var locale = 'en-US';

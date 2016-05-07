@@ -32,7 +32,7 @@ Zotero.ui.getItemsConfig = function(library){
 	};
 	
 	//Build config object that should be displayed next and compare to currently displayed
-	var newConfig = J.extend({}, defaultConfig, userPreferencesApiArgs, urlConfigVals);
+	var newConfig = Z.extend({}, defaultConfig, userPreferencesApiArgs, urlConfigVals);
 	
 	//don't allow ordering by group only columns if user library
 	if((library.libraryType == 'user') && (Zotero.Library.prototype.groupOnlyColumns.indexOf(newConfig.order) != -1)) {
