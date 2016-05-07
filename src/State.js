@@ -90,12 +90,12 @@ State.prototype.getSelectedItemKeys = function(){
     //may be hidden
     var uniqueKeys = {};
     var returnKeys = [];
-    J.each(state.selectedItemKeys, function(ind, val){
+    state.selectedItemKeys.forEach((val) => {
         uniqueKeys[val] = true;
     });
-    J.each(uniqueKeys, function(key, val){
+    for(let key in uniqueKeys){
         returnKeys.push(key);
-    });
+    }
     if(returnKeys.length === 0 && state.getUrlVar('itemKey')){
         returnKeys.push(state.getUrlVar('itemKey'));
     }
@@ -108,7 +108,7 @@ State.prototype.toggleItemSelected = function(itemKey){
     var newselected = [];
     var alreadySelected = false;
     var selectedItemKeys = state.getSelectedItemKeys();
-    J.each(selectedItemKeys, function(ind, val){
+    selectedItemKeys.forEach((val) => {
         if(val == itemKey){
             alreadySelected = true;
         } else {
@@ -204,11 +204,11 @@ State.prototype.clearUrlVars = function(except){
         except = [];
     }
     var pathVars = state.pathVars;
-    J.each(pathVars, function(key, value){
-        if(J.inArray(key, except) == (-1)){
+    for(let key in pathVars){
+        if(except.includes(key)){
             delete(pathVars[key]);
         }
-    });
+    }
 };
 
 State.prototype.parseUrlVars = function(){
@@ -270,36 +270,40 @@ State.prototype.parsePathVars = function(pathname){
 
 State.prototype.buildUrl = function(urlvars, queryVars){
     var state = this;
-    //log.debug("State.buildUrl", 3);
+    log.debug("State.buildUrl", 3);
+    log.debug(urlvars);
+    log.debug(queryVars);
     if(typeof queryVars === 'undefined') { queryVars = false;}
     var basePath = Zotero.config.nonparsedBaseUrl + '/';
     
     var urlVarsArray = [];
-    J.each(urlvars, function(index, value){
-        if(!value) { return; }
-        else if(value instanceof Array){
-            J.each(value, function(i, v){
+    for(let index in urlvars){
+        let value = urlvars[index];
+        if(!value) {
+            return;
+        } else if(Array.isArray(value)) {
+            value.forEach((v) => {
                 urlVarsArray.push(index + '/' + encodeURIComponent(v) );
             });
-        }
-        else{
+        } else{
             urlVarsArray.push(index + '/' + encodeURIComponent(value) );
         }
-    });
+    }
     urlVarsArray.sort();
     
     var queryVarsArray = [];
-    J.each(queryVars, function(index, value){
-        if(!value) { return; }
-        else if(value instanceof Array){
-            J.each(value, function(i, v){
+    for(let index in queryVars) {
+        let value = queryVars[index];
+        if(!value) {
+            return;
+        } else if(Array.isArray(value)) {
+            value.forEach((v) => {
                 queryVarsArray.push(index + '=' + encodeURIComponent(v) );
             });
-        }
-        else{
+        } else{
             queryVarsArray.push(index + '=' + encodeURIComponent(value) );
         }
-    });
+    }
     queryVarsArray.sort();
     
     var pathVarsString = urlVarsArray.join('/');
@@ -308,7 +312,9 @@ State.prototype.buildUrl = function(urlvars, queryVars){
         queryString = '?' + queryVarsArray.join('&');
     }
     var url = basePath + pathVarsString + queryString;
-    
+    log.debug(basePath);
+    log.debug(pathVarsString);
+    log.debug(queryString);
     return url;
 };
 
@@ -323,17 +329,20 @@ State.prototype.mutateUrl = function(addvars, removevars){
     if(!removevars){
         removevars = [];
     }
-    
+
     var urlvars = J.extend({}, state.pathVars);
-    J.each(addvars, function(key, val){
-        urlvars[key] = val;
-    });
-    J.each(removevars, function(index, val){
+    for(let key in addvars) {
+        urlvars[key] = addvars[key];
+    }
+    
+    if(!Array.isArray(removevars)){
+        log.error('removevars is not an array');
+    }
+    removevars.forEach((val) => {
         delete urlvars[val];
     });
     
     var url = state.buildUrl(urlvars, false);
-    //log.debug("mutated Url:" + url, 3);
     
     return url;
 };
@@ -477,12 +486,12 @@ State.prototype.stateChanged = function(event){
     log.debug('Checking changed variables', 3);
     var changedVars = state.diffState(state.prevHref, state.curHref);
     var widgetEvents = {};
-    J.each(changedVars, function(ind, val){
+    changedVars.forEach((val) => {
         var eventString = val + 'Changed';
         log.debug(eventString, 3);
         //map var events to widget events
         if(Zotero.eventful.eventMap.hasOwnProperty(eventString)){
-            J.each(Zotero.eventful.eventMap[eventString], function(ind, val){
+            Zotero.eventful.eventMap[eventString].forEach((val) => {
                 if(!widgetEvents.hasOwnProperty(val)){
                     widgetEvents[val] = 1;
                 }
@@ -493,11 +502,10 @@ State.prototype.stateChanged = function(event){
     });
     //TODO: is this eventMap triggering necessary?
     
-    J.each(widgetEvents, function(ind, val){
+    for(let ind in widgetEvents) {
         log.debug('State Filter: ' + state.filter, 3);
-        
         Zotero.trigger(ind, {}, state.filter);
-    });
+    }
     
     log.debug('===== stateChanged Done =====', 3);
 };
@@ -533,7 +541,7 @@ State.prototype.diffState = function(prevHref, curHref){
                          'mode'
                          ];
     var changedVars = [];
-    J.each(monitoredVars, function(ind, val){
+    monitoredVars.forEach((val) => {
         if(prevVars.hasOwnProperty(val) || curVars.hasOwnProperty(val)){
             if(prevVars[val] != curVars[val]){
                 changedVars.push(val);

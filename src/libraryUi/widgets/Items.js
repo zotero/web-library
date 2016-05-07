@@ -10,7 +10,7 @@ var LoadingError = require('./LoadingError.js');
 Zotero.ui.getItemsConfig = function(library){
 	var effectiveUrlVars = ['tag', 'collectionKey', 'order', 'sort', 'q', 'qmode'];
 	var urlConfigVals = {};
-	J.each(effectiveUrlVars, function(index, value){
+	effectiveUrlVars.forEach((value) => {
 		var t = Zotero.state.getUrlVar(value);
 		if(t){
 			urlConfigVals[value] = t;

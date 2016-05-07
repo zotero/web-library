@@ -18,9 +18,10 @@ url.requestReadApiKeyUrl = function(libraryType, libraryID, redirect){
 	}
 	
 	var queryParamsArray = [];
-	J.each(qparams, function(index, value){
+	for(let index in qparams){
+		let value = qparams[index];
 		queryParamsArray.push(encodeURIComponent(index) + '=' + encodeURIComponent(value));
-	});
+	}
 	
 	//build query string by concatenating array
 	var queryString = '?' + queryParamsArray.join('&');

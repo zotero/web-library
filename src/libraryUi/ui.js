@@ -169,10 +169,10 @@ ui.saveItem = function(item) {
 	log.debug('adding new tags to library tags', 3);
 	var libTags = library.tags;
 	var tags = item.apiObj.data.tags;
-	J.each(tags, function(index, tagOb){
-		var tagString = tagOb.tag;
+	tags.forEach((tagOb, index) =>{
+		let tagString = tagOb.tag;
 		if(!libTags.tagObjects.hasOwnProperty(tagString)){
-			var tag = new Zotero.Tag(tagOb);
+			let tag = new Zotero.Tag(tagOb);
 			libTags.addTag(tag);
 		}
 	});
