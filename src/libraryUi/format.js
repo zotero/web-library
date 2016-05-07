@@ -97,9 +97,9 @@ format.itemField = function(field, item, trim){
             }
             break;
         default:
-            var t = typeof(item.get(field));
-            if(typeof(t) !== 'undefined') {
-                formattedString = item.get(field);
+            let fv = item.get(field);
+            if(fv !== null && fv !== undefined) {
+                formattedString = fv;
             }
     }
     if(typeof formattedString == 'undefined'){
@@ -237,7 +237,6 @@ format.groupUrl = function(group, route){
         groupBase = '/groups/' + Zotero.utils.slugify(group.groupName);
     }
     var groupIDBase = '/groups/' + group.groupID;
-    log.debug('groupBase: ' + groupBase);
     switch(route){
         case 'groupView':
             return groupBase;

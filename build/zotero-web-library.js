@@ -5474,27 +5474,6 @@ var log = require('./Log.js').Logger('libZotero:Base');
 
 var Zotero = {
 	callbacks: {},
-	ui: {
-		callbacks: {},
-		keyCode: {
-			BACKSPACE: 8,
-			COMMA: 188,
-			DELETE: 46,
-			DOWN: 40,
-			END: 35,
-			ENTER: 13,
-			ESCAPE: 27,
-			HOME: 36,
-			LEFT: 37,
-			PAGE_DOWN: 34,
-			PAGE_UP: 33,
-			PERIOD: 190,
-			RIGHT: 39,
-			SPACE: 32,
-			TAB: 9,
-			UP: 38
-		}
-	},
 	offline: {},
 	temp: {},
 
@@ -5803,6 +5782,24 @@ Zotero.extend = function () {
 		});
 	}
 	return res;
+};
+
+Zotero.deepExtend = function (out) {
+	out = out || {};
+
+	for (var i = 1; i < arguments.length; i++) {
+		var obj = arguments[i];
+
+		if (!obj) continue;
+
+		for (var key in obj) {
+			if (obj.hasOwnProperty(key)) {
+				if (_typeof(obj[key]) === 'object') out[key] = Zotero.deepExtend(out[key], obj[key]);else out[key] = obj[key];
+			}
+		}
+	}
+
+	return out;
 };
 
 module.exports = Zotero;
@@ -7554,7 +7551,6 @@ var Item = function Item(itemObj) {
 Item.prototype = new Zotero.ApiObject();
 
 Item.prototype.parseJsonItem = function (apiObj) {
-	log.debug('parseJsonItem', 3);
 	var item = this;
 	item.version = apiObj.version;
 	item.key = apiObj.key;
@@ -7587,7 +7583,6 @@ Item.prototype.emptyJsonItem = function () {
 
 //populate property values derived from json content
 Item.prototype.initSecondaryData = function () {
-	log.debug('initSecondaryData', 3);
 	var item = this;
 
 	item.version = item.apiObj.version;
@@ -7611,7 +7606,6 @@ Item.prototype.initSecondaryData = function () {
 	item.synced = false;
 
 	item.updateTagStrings();
-	log.debug('done with initSecondaryData', 3);
 };
 
 Item.prototype.updateTagStrings = function () {
@@ -7752,7 +7746,7 @@ Item.prototype.createChildNotes = function (notes) {
 Item.prototype.writePatch = function () {};
 
 Item.prototype.getChildren = function (library) {
-	log.debug('Zotero.Item.getChildren', 3);
+	log.debug('Zotero.Item.getChildren', 4);
 	var item = this;
 	return Promise.resolve().then(function () {
 		//short circuit if has item has no children
@@ -10388,7 +10382,7 @@ log.error = function (errorstring) {
 };
 
 log.Logger = function (prefix) {
-	var llevel = arguments.length <= 1 || arguments[1] === undefined ? 3 : arguments[1];
+	var llevel = arguments.length <= 1 || arguments[1] === undefined ? 2 : arguments[1];
 
 	prefLevel = llevel;
 	return {
@@ -11467,7 +11461,12 @@ var Utils = {
 		});
 	},
 
+	/**
+  * Given a query string, parse keys/values into an object
+  **/
 	parseQuery: function parseQuery(query) {
+		log.debug('parseQuery');
+		log.debug(query);
 		var params = {};
 		var match;
 		var pl = /\+/g; // Regex for replacing addition symbol with a space
@@ -11482,7 +11481,21 @@ var Utils = {
 		return params;
 	},
 
+	buildQuery: function buildQuery() {
+		var params = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+
+		var q = '?';
+		for (var p in params) {
+			q += '&' + encodeURIComponent(p) + '=' + encodeURIComponent(params[p]);
+		}
+		return q;
+	},
+
+	//extract the section of a url between ? and #
 	querystring: function querystring(href) {
+		if (href.indexOf('?') == -1) {
+			return '';
+		}
 		var hashindex = href.indexOf('#') != -1 ? href.indexOf('#') : undefined;
 		var q = href.substring(href.indexOf('?') + 1, hashindex);
 		return q;
@@ -41860,7 +41873,7 @@ var init = function init() {
 	log.debug('Zotero init', 3);
 
 	if (window.zoteroConfig) {
-		Zotero.config = J.extend({}, Zotero.config, window.zoteroConfig);
+		Zotero.config = Z.extend({}, Zotero.config, window.zoteroConfig);
 	}
 
 	Zotero.state.rewriteAltUrl();
@@ -41868,17 +41881,6 @@ var init = function init() {
 	//base init to setup tagline and search bar
 	if (Zotero.pages) {
 		Zotero.pages.base.init();
-	}
-
-	//run page specific init
-	log.debug('init page:' + window.zoterojsClass, 1);
-	if (window.zoterojsClass && undefined !== Zotero.pages && Zotero.pages[zoterojsClass]) {
-		try {
-			Zotero.Pages[zoterojsClass].init();
-		} catch (err) {
-			log.error('Error running page specific init for ' + zoterojsClass);
-			log.error(err);
-		}
 	}
 
 	if (typeof zoteroData == 'undefined') {
@@ -41902,7 +41904,7 @@ var init = function init() {
 	Zotero.store = store;
 	//initialize global preferences object
 	Zotero.preferences = new Zotero.Preferences(Zotero.store, 'global');
-	Zotero.preferences.defaults = J.extend({}, Zotero.preferences.defaults, Zotero.config.defaultPrefs);
+	Zotero.preferences.defaults = Z.extend({}, Zotero.preferences.defaults, Zotero.config.defaultPrefs);
 
 	//get localized item constants if not stored in localstorage
 	var locale = 'en-US';
@@ -41930,6 +41932,17 @@ var init = function init() {
 
 	if (Zotero.state.getUrlVar('proxy') == 'false') {
 		Zotero.config.proxy = false;
+	}
+
+	//run page specific init
+	log.debug('init page:' + window.zoterojsClass, 1);
+	if (window.zoterojsClass && undefined !== Zotero.pages && Zotero.pages[zoterojsClass]) {
+		try {
+			Zotero.Pages[zoterojsClass].init();
+		} catch (err) {
+			log.error('Error running page specific init for ' + zoterojsClass);
+			log.error(err);
+		}
 	}
 
 	// Bind to popstate to update state when browser goes back
@@ -42075,6 +42088,11 @@ module.exports = base;
 
 var log = require('../../library/libZoteroJS/src/Log.js').Logger('zotero-web-library:Pages:Group');
 
+var React = require('react');
+var ReactDOM = require('react-dom');
+var UserGroupInfo = require('../libraryUi/widgets/UserGroupInfo.js');
+var RecentItems = require('../libraryUi/widgets/RecentItems.js');
+
 var Group = {
 	group_new: {
 		init: function init() {
@@ -42192,6 +42210,11 @@ var Group = {
 
 	group_view: {
 		init: function init() {
+			var recentItemsDiv = document.getElementById('recent-items-div');
+			var library = Zotero.ui.getAssociatedLibrary(recentItemsDiv);
+
+			ReactDOM.render(React.createElement(RecentItems, { library: library }), document.getElementById('recent-items-div'));
+
 			J('#join-group-button').click(Zotero.pages.group_view.joinGroup);
 			J('#leave-group-button').click(Zotero.pages.group_view.leaveGroup);
 
@@ -42233,6 +42256,8 @@ var Group = {
 			//set up screen cast player + box
 			//J("video").mediaelementplayer();
 			//TODO: lightbox?
+			log.debug('group_index init', 3);
+			ReactDOM.render(React.createElement(UserGroupInfo, null), document.getElementById('user-groups-div'));
 		}
 	},
 
@@ -42249,7 +42274,7 @@ var Group = {
 
 module.exports = Group;
 
-},{"../../library/libZoteroJS/src/Log.js":114}],296:[function(require,module,exports){
+},{"../../library/libZoteroJS/src/Log.js":114,"../libraryUi/widgets/RecentItems.js":328,"../libraryUi/widgets/UserGroupInfo.js":334,"react":290,"react-dom":154}],296:[function(require,module,exports){
 'use strict';
 
 var log = require('../../library/libZoteroJS/src/Log.js').Logger('zotero-web-library:Pages:Index');
@@ -42393,38 +42418,13 @@ var log = require('../../library/libZoteroJS/src/Log.js').Logger('zotero-web-lib
 var React = require('react');
 var ReactDOM = require('react-dom');
 var GlobalSearch = require('../libraryUi/widgets/GlobalSearch.js');
+var SiteSearch = require('../libraryUi/widgets/SiteSearch.js');
 
 var Search = {
-	search_index: {
-		init: function init() {}
-	},
-
-	search_items: {
+	site_search: {
 		init: function init() {
-			try {
-				var library = new Zotero.Library();
-			} catch (e) {
-				log.error('Error initializing library');
-			}
-
-			J('#item-submit').bind('click submit', J.proxy(function (e) {
-				log.debug('item search submitted', 3);
-				e.preventDefault();
-				e.stopImmediatePropagation();
-				var q = J('#itemQuery').val();
-				var globalSearchD = library.fetchGlobalItems({ q: q });
-				globalSearchD.then(function (globalItems) {
-					log.debug('globalItemSearch callback', 3);
-					//log.debug(globalItems);
-					J('#search-result-count').empty().append(globalItems.totalResults);
-					var jel = J('#search-results');
-					jel.empty();
-					J.each(globalItems.objects, function (ind, globalItem) {
-						J('#globalitemdetailsTemplate').tmpl({ globalItem: globalItem }).appendTo(jel);
-					});
-				});
-				return false;
-			}, this));
+			log.debug('site search init', 3);
+			ReactDOM.render(React.createElement(SiteSearch, null), document.getElementById('site-search'));
 		}
 	},
 
@@ -42438,7 +42438,7 @@ var Search = {
 
 module.exports = Search;
 
-},{"../../library/libZoteroJS/src/Log.js":114,"../libraryUi/widgets/GlobalSearch.js":319,"react":290,"react-dom":154}],299:[function(require,module,exports){
+},{"../../library/libZoteroJS/src/Log.js":114,"../libraryUi/widgets/GlobalSearch.js":319,"../libraryUi/widgets/SiteSearch.js":330,"react":290,"react-dom":154}],299:[function(require,module,exports){
 'use strict';
 
 var log = require('../../library/libZoteroJS/src/Log.js').Logger('zotero-web-library:Pages:Settings');
@@ -42741,6 +42741,11 @@ module.exports = SettingsPages;
 
 var log = require('../../library/libZoteroJS/src/Log.js').Logger('zotero-web-library:Pages:User');
 
+var React = require('react');
+var ReactDOM = require('react-dom');
+var ProfileGroupsList = require('../libraryUi/widgets/ProfileGroupsList.js');
+var InviteButton = require('../libraryUi/widgets/InviteToGroup.js');
+
 var User = {
 	user_register: {
 		init: function init() {
@@ -42777,28 +42782,22 @@ var User = {
 
 	user_profile: {
 		init: function init() {
-			J('#invite-button').click(function () {
-				var groupID = J('#invite_group').val();
-				J.post('/groups/inviteuser', { ajax: true, groupID: groupID, userID: zoteroData.profileUserID }, function (data) {
-					if (data == 'true') {
-						Zotero.ui.jsNotificationMessage('User has been invited to join your group.', 'success');
-						J('#invited-user-list').append('<li>' + J('#invite_group > option:selected').html() + '</li>');
-						J('#invite_group > option:selected').remove();
-						if (J('#invite_group > option').length === 0) {
-							J('#invite_group').remove();
-							J('#invite-button').remove();
-						}
-					}
-				}, 'text');
-			});
+			var profileGroupsDiv = document.getElementById('profile-groups-div');
+			var userID = profileGroupsDiv.getAttribute('data-userID');
+
+			ReactDOM.render(React.createElement(ProfileGroupsList, { 'userID': userID }), document.getElementById('profile-groups-div'));
+
+			ReactDOM.render(React.createElement(InviteButton, null), document.getElementById('invite-button'));
 		}
 	}
 };
 
 module.exports = User;
 
-},{"../../library/libZoteroJS/src/Log.js":114}],301:[function(require,module,exports){
+},{"../../library/libZoteroJS/src/Log.js":114,"../libraryUi/widgets/InviteToGroup.js":320,"../libraryUi/widgets/ProfileGroupsList.js":327,"react":290,"react-dom":154}],301:[function(require,module,exports){
 'use strict';
+
+function _typeof(obj) { return obj && typeof Symbol !== "undefined" && obj.constructor === Symbol ? "symbol" : typeof obj; }
 
 var log = require('../library/libZoteroJS/src/Log.js').Logger('zotero-web-library:State');
 
@@ -42871,7 +42870,7 @@ State.prototype.rewriteAltUrl = function () {
 
 State.prototype.updateCurState = function () {
     var state = this;
-    state.curState = J.extend({}, state.q, state.pathVars);
+    state.curState = Z.extend({}, state.q, state.pathVars);
     return;
 };
 
@@ -42888,12 +42887,12 @@ State.prototype.getSelectedItemKeys = function () {
     //may be hidden
     var uniqueKeys = {};
     var returnKeys = [];
-    J.each(state.selectedItemKeys, function (ind, val) {
+    state.selectedItemKeys.forEach(function (val) {
         uniqueKeys[val] = true;
     });
-    J.each(uniqueKeys, function (key, val) {
+    for (var key in uniqueKeys) {
         returnKeys.push(key);
-    });
+    }
     if (returnKeys.length === 0 && state.getUrlVar('itemKey')) {
         returnKeys.push(state.getUrlVar('itemKey'));
     }
@@ -42906,7 +42905,7 @@ State.prototype.toggleItemSelected = function (itemKey) {
     var newselected = [];
     var alreadySelected = false;
     var selectedItemKeys = state.getSelectedItemKeys();
-    J.each(selectedItemKeys, function (ind, val) {
+    selectedItemKeys.forEach(function (val) {
         if (val == itemKey) {
             alreadySelected = true;
         } else {
@@ -42953,13 +42952,13 @@ State.prototype.popTag = function (oldtag) {
 };
 
 State.prototype.toggleTag = function (tagtitle) {
-    log.debug('State.toggleTag', 3);
+    log.debug('toggleTag', 3);
     var state = this;
     if (!state.pathVars['tag']) {
         state.pathVars['tag'] = [tagtitle];
         return;
-    } else if (J.isArray(state.pathVars['tag'])) {
-        if (J.inArray(tagtitle, state.pathVars['tag']) != -1) {
+    } else if (Array.isArray(state.pathVars['tag'])) {
+        if (state.pathVars['tag'].indexOf(tagtitle) != -1) {
             var newTagArray = state.pathVars['tag'].filter(function (element, index, array) {
                 return element != tagtitle;
             });
@@ -42994,11 +42993,11 @@ State.prototype.clearUrlVars = function (except) {
         except = [];
     }
     var pathVars = state.pathVars;
-    J.each(pathVars, function (key, value) {
-        if (J.inArray(key, except) == -1) {
+    for (var key in pathVars) {
+        if (except.indexOf(key) == -1) {
             delete pathVars[key];
         }
-    });
+    }
 };
 
 State.prototype.parseUrlVars = function () {
@@ -43059,38 +43058,60 @@ State.prototype.parsePathVars = function (pathname) {
 
 State.prototype.buildUrl = function (urlvars, queryVars) {
     var state = this;
-    //log.debug("State.buildUrl", 3);
+    log.debug('State.buildUrl', 3);
+    log.debug(urlvars);
+    log.debug(queryVars);
     if (typeof queryVars === 'undefined') {
         queryVars = false;
     }
     var basePath = Zotero.config.nonparsedBaseUrl + '/';
 
     var urlVarsArray = [];
-    J.each(urlvars, function (index, value) {
+
+    var _loop = function _loop(index) {
+        var value = urlvars[index];
         if (!value) {
-            return;
-        } else if (value instanceof Array) {
-            J.each(value, function (i, v) {
+            return {
+                v: undefined
+            };
+        } else if (Array.isArray(value)) {
+            value.forEach(function (v) {
                 urlVarsArray.push(index + '/' + encodeURIComponent(v));
             });
         } else {
             urlVarsArray.push(index + '/' + encodeURIComponent(value));
         }
-    });
+    };
+
+    for (var index in urlvars) {
+        var _ret = _loop(index);
+
+        if ((typeof _ret === 'undefined' ? 'undefined' : _typeof(_ret)) === "object") return _ret.v;
+    }
     urlVarsArray.sort();
 
     var queryVarsArray = [];
-    J.each(queryVars, function (index, value) {
+
+    var _loop2 = function _loop2(index) {
+        var value = queryVars[index];
         if (!value) {
-            return;
-        } else if (value instanceof Array) {
-            J.each(value, function (i, v) {
+            return {
+                v: undefined
+            };
+        } else if (Array.isArray(value)) {
+            value.forEach(function (v) {
                 queryVarsArray.push(index + '=' + encodeURIComponent(v));
             });
         } else {
             queryVarsArray.push(index + '=' + encodeURIComponent(value));
         }
-    });
+    };
+
+    for (var index in queryVars) {
+        var _ret2 = _loop2(index);
+
+        if ((typeof _ret2 === 'undefined' ? 'undefined' : _typeof(_ret2)) === "object") return _ret2.v;
+    }
     queryVarsArray.sort();
 
     var pathVarsString = urlVarsArray.join('/');
@@ -43099,7 +43120,9 @@ State.prototype.buildUrl = function (urlvars, queryVars) {
         queryString = '?' + queryVarsArray.join('&');
     }
     var url = basePath + pathVarsString + queryString;
-
+    log.debug(basePath);
+    log.debug(pathVarsString);
+    log.debug(queryString);
     return url;
 };
 
@@ -43115,16 +43138,19 @@ State.prototype.mutateUrl = function (addvars, removevars) {
         removevars = [];
     }
 
-    var urlvars = J.extend({}, state.pathVars);
-    J.each(addvars, function (key, val) {
-        urlvars[key] = val;
-    });
-    J.each(removevars, function (index, val) {
+    var urlvars = Z.extend({}, state.pathVars);
+    for (var key in addvars) {
+        urlvars[key] = addvars[key];
+    }
+
+    if (!Array.isArray(removevars)) {
+        log.error('removevars is not an array');
+    }
+    removevars.forEach(function (val) {
         delete urlvars[val];
     });
 
     var url = state.buildUrl(urlvars, false);
-    //log.debug("mutated Url:" + url, 3);
 
     return url;
 };
@@ -43139,7 +43165,7 @@ State.prototype.pushState = function () {
     state.prevHref = state.curHref || window.location.href;
 
     //selectively add state to hint where to go
-    var s = J.extend({}, state.q, state.pathVars);
+    var s = Z.extend({}, state.q, state.pathVars);
 
     var urlvars = state.pathVars;
     var queryVars = state.q;
@@ -43172,7 +43198,7 @@ State.prototype.replaceState = function () {
     state.updateCurState();
 
     //selectively add state to hint where to go
-    var s = J.extend({}, state.curState);
+    var s = Z.extend({}, state.curState);
     var urlvars = state.pathVars;
     var url = state.buildUrl(urlvars, false);
 
@@ -43209,7 +43235,7 @@ State.prototype.setUrlVar = function (key, val) {
 State.prototype.getUrlVars = function () {
     var state = this;
     var params = Zotero.utils.parseQuery(Zotero.utils.querystring(window.location.href));
-    return J.extend(true, {}, state.pathVars, params);
+    return Z.extend(true, {}, state.pathVars, params);
 };
 
 State.prototype.setQueryVar = function (key, val) {
@@ -43225,7 +43251,7 @@ State.prototype.addQueryVar = function (key, val) {
     var state = this;
     if (state.q.hasOwnProperty(key)) {
         //property exists
-        if (J.isArray(state.q[key])) {
+        if (Array.isArray(state.q[key])) {
             state.q[key].push(val);
         } else {
             var newArray = [state.q[key], val];
@@ -43261,12 +43287,12 @@ State.prototype.stateChanged = function (event) {
     log.debug('Checking changed variables', 3);
     var changedVars = state.diffState(state.prevHref, state.curHref);
     var widgetEvents = {};
-    J.each(changedVars, function (ind, val) {
+    changedVars.forEach(function (val) {
         var eventString = val + 'Changed';
         log.debug(eventString, 3);
         //map var events to widget events
         if (Zotero.eventful.eventMap.hasOwnProperty(eventString)) {
-            J.each(Zotero.eventful.eventMap[eventString], function (ind, val) {
+            Zotero.eventful.eventMap[eventString].forEach(function (val) {
                 if (!widgetEvents.hasOwnProperty(val)) {
                     widgetEvents[val] = 1;
                 }
@@ -43277,11 +43303,10 @@ State.prototype.stateChanged = function (event) {
     });
     //TODO: is this eventMap triggering necessary?
 
-    J.each(widgetEvents, function (ind, val) {
+    for (var ind in widgetEvents) {
         log.debug('State Filter: ' + state.filter, 3);
-
         Zotero.trigger(ind, {}, state.filter);
-    });
+    }
 
     log.debug('===== stateChanged Done =====', 3);
 };
@@ -43290,12 +43315,12 @@ State.prototype.diffState = function (prevHref, curHref) {
     log.debug('State.diffState', 3);
     var state = this;
     //check what has changed when a new state is pushed
-    var prevVars = J.extend({}, state.parsePathVars(prevHref));
-    var curVars = J.extend({}, state.parsePathVars(curHref));
+    var prevVars = Z.extend({}, state.parsePathVars(prevHref));
+    var curVars = Z.extend({}, state.parsePathVars(curHref));
 
     var monitoredVars = ['start', 'limit', 'order', 'sort', 'content', 'format', 'q', 'fq', 'itemType', 'itemKey', 'collectionKey', 'searchKey', 'locale', 'tag', 'tagType', 'key', 'style', 'session', 'newer', 'since', 'itemPage', 'mode'];
     var changedVars = [];
-    J.each(monitoredVars, function (ind, val) {
+    monitoredVars.forEach(function (val) {
         if (prevVars.hasOwnProperty(val) || curVars.hasOwnProperty(val)) {
             if (prevVars[val] != curVars[val]) {
                 changedVars.push(val);
@@ -43328,9 +43353,10 @@ url.requestReadApiKeyUrl = function (libraryType, libraryID, redirect) {
 	}
 
 	var queryParamsArray = [];
-	J.each(qparams, function (index, value) {
+	for (var index in qparams) {
+		var value = qparams[index];
 		queryParamsArray.push(encodeURIComponent(index) + '=' + encodeURIComponent(value));
-	});
+	}
 
 	//build query string by concatenating array
 	var queryString = '?' + queryParamsArray.join('&');
@@ -43463,8 +43489,6 @@ module.exports = eventful;
 },{"../../library/libZoteroJS/src/Log.js":114}],304:[function(require,module,exports){
 'use strict';
 
-function _typeof(obj) { return obj && typeof Symbol !== "undefined" && obj.constructor === Symbol ? "symbol" : typeof obj; }
-
 var log = require('../../library/libZoteroJS/src/Log.js').Logger('zotero-web-library:format');
 
 var format = {};
@@ -43558,9 +43582,9 @@ format.itemField = function (field, item, trim) {
             }
             break;
         default:
-            var t = _typeof(item.get(field));
-            if (typeof t !== 'undefined') {
-                formattedString = item.get(field);
+            var fv = item.get(field);
+            if (fv !== null && fv !== undefined) {
+                formattedString = fv;
             }
     }
     if (typeof formattedString == 'undefined') {
@@ -43693,7 +43717,6 @@ format.groupUrl = function (group, route) {
         groupBase = '/groups/' + Zotero.utils.slugify(group.groupName);
     }
     var groupIDBase = '/groups/' + group.groupID;
-    log.debug('groupBase: ' + groupBase);
     switch (route) {
         case 'groupView':
             return groupBase;
@@ -43718,6 +43741,25 @@ module.exports = format;
 var log = require('../../library/libZoteroJS/src/Log.js').Logger('zotero-web-library:ui');
 
 var ui = {};
+ui.callbacks = {};
+ui.keyCode = {
+	BACKSPACE: 8,
+	COMMA: 188,
+	DELETE: 46,
+	DOWN: 40,
+	END: 35,
+	ENTER: 13,
+	ESCAPE: 27,
+	HOME: 36,
+	LEFT: 37,
+	PAGE_DOWN: 34,
+	PAGE_UP: 33,
+	PERIOD: 190,
+	RIGHT: 39,
+	SPACE: 32,
+	TAB: 9,
+	UP: 38
+};
 
 /**
  * Display a JS notification message to the user
@@ -43727,41 +43769,41 @@ var ui = {};
  * @return {undefined}
  */
 ui.jsNotificationMessage = function (message, type, timeout) {
-    log.debug('notificationMessage: ' + type + ' : ' + message, 3);
-    if (Zotero.config.suppressErrorNotifications) return;
+	log.debug('notificationMessage: ' + type + ' : ' + message, 3);
+	if (Zotero.config.suppressErrorNotifications) return;
 
-    if (!timeout && timeout !== false) {
-        timeout = 5;
-    }
-    var alertType = 'alert-info';
-    if (type) {
-        switch (type) {
-            case 'error':
-            case 'danger':
-                alertType = 'alert-danger';
-                timeout = false;
-                break;
-            case 'success':
-            case 'confirm':
-                alertType = 'alert-success';
-                break;
-            case 'info':
-                alertType = 'alert-info';
-                break;
-            case 'warning':
-            case 'warn':
-                alertType = 'alert-warning';
-                break;
-        }
-    }
+	if (!timeout && timeout !== false) {
+		timeout = 5;
+	}
+	var alertType = 'alert-info';
+	if (type) {
+		switch (type) {
+			case 'error':
+			case 'danger':
+				alertType = 'alert-danger';
+				timeout = false;
+				break;
+			case 'success':
+			case 'confirm':
+				alertType = 'alert-success';
+				break;
+			case 'info':
+				alertType = 'alert-info';
+				break;
+			case 'warning':
+			case 'warn':
+				alertType = 'alert-warning';
+				break;
+		}
+	}
 
-    if (timeout) {
-        J('#js-message').append("<div class='alert alert-dismissable " + alertType + "'><button type='button' class='close' data-dismiss='alert'><span aria-hidden='true'>&times;</span><span class='sr-only'>Close</span></button>" + message + '</div>').children('div').delay(parseInt(timeout, 10) * 1000).slideUp().delay(300).queue(function () {
-            J(this).remove();
-        });
-    } else {
-        J('#js-message').append("<div class='alert alert-dismissable " + alertType + "'><button type='button' class='close' data-dismiss='alert'><span aria-hidden='true'>&times;</span><span class='sr-only'>Close</span></button>" + message + '</div>');
-    }
+	if (timeout) {
+		J('#js-message').append("<div class='alert alert-dismissable " + alertType + "'><button type='button' class='close' data-dismiss='alert'><span aria-hidden='true'>&times;</span><span class='sr-only'>Close</span></button>" + message + '</div>').children('div').delay(parseInt(timeout, 10) * 1000).slideUp().delay(300).queue(function () {
+			J(this).remove();
+		});
+	} else {
+		J('#js-message').append("<div class='alert alert-dismissable " + alertType + "'><button type='button' class='close' data-dismiss='alert'><span aria-hidden='true'>&times;</span><span class='sr-only'>Close</span></button>" + message + '</div>');
+	}
 };
 
 /**
@@ -43770,50 +43812,50 @@ ui.jsNotificationMessage = function (message, type, timeout) {
  * @return {undefined}
  */
 ui.ajaxErrorMessage = function (jqxhr) {
-    log.debug('ui.ajaxErrorMessage', 3);
-    if (typeof jqxhr == 'undefined') {
-        log.warn('ajaxErrorMessage called with undefined argument');
-        return '';
-    }
-    log.debug(jqxhr, 3);
-    switch (jqxhr.status) {
-        case 403:
-            //don't have permission to view
-            if (Zotero.config.loggedIn || Zotero.config.ignoreLoggedInStatus) {
-                return 'You do not have permission to view this library.';
-            } else {
-                Zotero.config.suppressErrorNotifications = true;
-                window.location = '/user/login';
-                return '';
-            }
-            break;
-        case 404:
-            ui.jsNotificationMessage('A requested resource could not be found.', 'error');
-            break;
-        case 400:
-            ui.jsNotificationMessage('Bad Request', 'error');
-            break;
-        case 405:
-            ui.jsNotificationMessage('Method not allowed', 'error');
-            break;
-        case 412:
-            ui.jsNotificationMessage('Precondition failed', 'error');
-            break;
-        case 500:
-            ui.jsNotificationMessage("Something went wrong but we're not sure what.", 'error');
-            break;
-        case 501:
-            ui.jsNotificationMessage("We can't do that yet.", 'error');
-            break;
-        case 503:
-            ui.jsNotificationMessage("We've gone away for a little while. Please try again in a few minutes.", 'error');
-            break;
-        default:
-            log.warn('jqxhr status did not match any expected case');
-            log.debug(jqxhr.status);
-        //ui.jsNotificationMessage("An error occurred performing the requested action.", 'error');
-    }
-    return '';
+	log.debug('ui.ajaxErrorMessage', 3);
+	if (typeof jqxhr == 'undefined') {
+		log.warn('ajaxErrorMessage called with undefined argument');
+		return '';
+	}
+	log.debug(jqxhr, 3);
+	switch (jqxhr.status) {
+		case 403:
+			//don't have permission to view
+			if (Zotero.config.loggedIn || Zotero.config.ignoreLoggedInStatus) {
+				return 'You do not have permission to view this library.';
+			} else {
+				Zotero.config.suppressErrorNotifications = true;
+				window.location = '/user/login';
+				return '';
+			}
+			break;
+		case 404:
+			ui.jsNotificationMessage('A requested resource could not be found.', 'error');
+			break;
+		case 400:
+			ui.jsNotificationMessage('Bad Request', 'error');
+			break;
+		case 405:
+			ui.jsNotificationMessage('Method not allowed', 'error');
+			break;
+		case 412:
+			ui.jsNotificationMessage('Precondition failed', 'error');
+			break;
+		case 500:
+			ui.jsNotificationMessage("Something went wrong but we're not sure what.", 'error');
+			break;
+		case 501:
+			ui.jsNotificationMessage("We can't do that yet.", 'error');
+			break;
+		case 503:
+			ui.jsNotificationMessage("We've gone away for a little while. Please try again in a few minutes.", 'error');
+			break;
+		default:
+			log.warn('jqxhr status did not match any expected case');
+			log.debug(jqxhr.status);
+		//ui.jsNotificationMessage("An error occurred performing the requested action.", 'error');
+	}
+	return '';
 };
 
 /**
@@ -43823,12 +43865,12 @@ ui.ajaxErrorMessage = function (jqxhr) {
  * @return {undefined}
  */
 ui.showSpinner = function (el, type) {
-    var spinnerUrl = Zotero.config.baseWebsiteUrl + '/static/images/theme/broken-circle-spinner.gif';
-    if (!type) {
-        J(el).html("<img class='spinner' src='" + spinnerUrl + "'/>");
-    } else if (type == 'horizontal') {
-        J(el).html("<img class='spinner' src='" + spinnerUrl + "'/>");
-    }
+	var spinnerUrl = Zotero.config.baseWebsiteUrl + '/static/images/theme/broken-circle-spinner.gif';
+	if (!type) {
+		J(el).html("<img class='spinner' src='" + spinnerUrl + "'/>");
+	} else if (type == 'horizontal') {
+		J(el).html("<img class='spinner' src='" + spinnerUrl + "'/>");
+	}
 };
 
 /**
@@ -43837,40 +43879,40 @@ ui.showSpinner = function (el, type) {
  * @return {undefined}
  */
 ui.appendSpinner = function (el) {
-    var spinnerUrl = Zotero.config.baseWebsiteUrl + 'static/images/theme/broken-circle-spinner.gif';
-    J(el).append("<img class='spinner' src='" + spinnerUrl + "'/>");
+	var spinnerUrl = Zotero.config.baseWebsiteUrl + 'static/images/theme/broken-circle-spinner.gif';
+	J(el).append("<img class='spinner' src='" + spinnerUrl + "'/>");
 };
 
 ui.saveItem = function (item) {
-    //var requestData = JSON.stringify(item.apiObj);
-    log.debug('pre writeItem debug', 4);
-    log.debug(item, 4);
-    //show spinner before making ajax write call
-    var library = item.owningLibrary;
-    var writeResponse = item.writeItem().then(function (writtenItems) {
-        log.debug('item write finished', 3);
-        //check for errors, update nav
-        if (item.writeFailure) {
-            log.error('Error writing item:' + item.writeFailure.message);
-            ui.jsNotificationMessage('Error writing item', 'error');
-            throw new Error('Error writing item:' + item.writeFailure.message);
-        }
-    });
+	//var requestData = JSON.stringify(item.apiObj);
+	log.debug('pre writeItem debug', 4);
+	log.debug(item, 4);
+	//show spinner before making ajax write call
+	var library = item.owningLibrary;
+	var writeResponse = item.writeItem().then(function (writtenItems) {
+		log.debug('item write finished', 3);
+		//check for errors, update nav
+		if (item.writeFailure) {
+			log.error('Error writing item:' + item.writeFailure.message);
+			ui.jsNotificationMessage('Error writing item', 'error');
+			throw new Error('Error writing item:' + item.writeFailure.message);
+		}
+	});
 
-    //update list of tags we have if new ones added
-    log.debug('adding new tags to library tags', 3);
-    var libTags = library.tags;
-    var tags = item.apiObj.data.tags;
-    J.each(tags, function (index, tagOb) {
-        var tagString = tagOb.tag;
-        if (!libTags.tagObjects.hasOwnProperty(tagString)) {
-            var tag = new Zotero.Tag(tagOb);
-            libTags.addTag(tag);
-        }
-    });
-    libTags.updateSecondaryData();
+	//update list of tags we have if new ones added
+	log.debug('adding new tags to library tags', 3);
+	var libTags = library.tags;
+	var tags = item.apiObj.data.tags;
+	tags.forEach(function (tagOb, index) {
+		var tagString = tagOb.tag;
+		if (!libTags.tagObjects.hasOwnProperty(tagString)) {
+			var tag = new Zotero.Tag(tagOb);
+			libTags.addTag(tag);
+		}
+	});
+	libTags.updateSecondaryData();
 
-    return writeResponse;
+	return writeResponse;
 };
 
 /**
@@ -43879,24 +43921,24 @@ ui.saveItem = function (item) {
  * @return {string}
  */
 ui.itemTypeClass = function (item) {
-    var itemTypeClass = item.apiObj.data.itemType;
-    if (item.apiObj.data.itemType == 'attachment') {
-        if (item.mimeType == 'application/pdf') {
-            itemTypeClass += '-pdf';
-        } else {
-            switch (item.linkMode) {
-                case 0:
-                    itemTypeClass += '-file';break;
-                case 1:
-                    itemTypeClass += '-file';break;
-                case 2:
-                    itemTypeClass += '-snapshot';break;
-                case 3:
-                    itemTypeClass += '-web-link';break;
-            }
-        }
-    }
-    return 'img-' + itemTypeClass;
+	var itemTypeClass = item.apiObj.data.itemType;
+	if (item.apiObj.data.itemType == 'attachment') {
+		if (item.mimeType == 'application/pdf') {
+			itemTypeClass += '-pdf';
+		} else {
+			switch (item.linkMode) {
+				case 0:
+					itemTypeClass += '-file';break;
+				case 1:
+					itemTypeClass += '-file';break;
+				case 2:
+					itemTypeClass += '-snapshot';break;
+				case 3:
+					itemTypeClass += '-web-link';break;
+			}
+		}
+	}
+	return 'img-' + itemTypeClass;
 };
 
 /**
@@ -43905,55 +43947,55 @@ ui.itemTypeClass = function (item) {
  * @return {Zotero_Library}
  */
 ui.getAssociatedLibrary = function (el) {
-    log.debug('ui.getAssociatedLibrary', 3);
-    var jel;
-    if (typeof el == 'undefined') {
-        jel = J('.zotero-library').first();
-    } else {
-        jel = J(el);
-        if (jel.length === 0 || jel.is('#eventful')) {
-            jel = J('.zotero-library').first();
-            if (jel.length === 0) {
-                log.warn('No element passed and no default found for getAssociatedLibrary.');
-                throw new Error('No element passed and no default found for getAssociatedLibrary.');
-            }
-        }
-    }
-    //get Zotero.Library object if already bound to element
-    var library = jel.data('zoterolibrary');
-    var libString;
-    if (!library) {
-        //try getting it from a libraryString included on DOM element
-        libString = J(el).data('library');
-        if (libString) {
-            library = ui.libStringLibrary(libString);
-        }
-        jel.data('zoterolibrary', library);
-    }
-    //if we still don't have a library, look for the default library for the page
-    if (!library) {
-        jel = J('.zotero-library').first();
-        libString = jel.data('library');
-        if (libString) {
-            library = ui.libStringLibrary(libString);
-        }
-    }
-    if (!library) {
-        log.error('No associated library found');
-    }
-    return library;
+	log.debug('ui.getAssociatedLibrary', 3);
+	var jel;
+	if (typeof el == 'undefined') {
+		jel = J('.zotero-library').first();
+	} else {
+		jel = J(el);
+		if (jel.length === 0 || jel.is('#eventful')) {
+			jel = J('.zotero-library').first();
+			if (jel.length === 0) {
+				log.warn('No element passed and no default found for getAssociatedLibrary.');
+				throw new Error('No element passed and no default found for getAssociatedLibrary.');
+			}
+		}
+	}
+	//get Zotero.Library object if already bound to element
+	var library = jel.data('zoterolibrary');
+	var libString;
+	if (!library) {
+		//try getting it from a libraryString included on DOM element
+		libString = J(el).data('library');
+		if (libString) {
+			library = ui.libStringLibrary(libString);
+		}
+		jel.data('zoterolibrary', library);
+	}
+	//if we still don't have a library, look for the default library for the page
+	if (!library) {
+		jel = J('.zotero-library').first();
+		libString = jel.data('library');
+		if (libString) {
+			library = ui.libStringLibrary(libString);
+		}
+	}
+	if (!library) {
+		log.error('No associated library found');
+	}
+	return library;
 };
 
 ui.libStringLibrary = function (libString) {
-    var library;
-    if (Zotero.libraries.hasOwnProperty(libString)) {
-        library = Zotero.libraries[libString];
-    } else {
-        var libConfig = Zotero.utils.parseLibString(libString);
-        library = new Zotero.Library(libConfig.libraryType, libConfig.libraryID);
-        Zotero.libraries[libString] = library;
-    }
-    return library;
+	var library;
+	if (Zotero.libraries.hasOwnProperty(libString)) {
+		library = Zotero.libraries[libString];
+	} else {
+		var libConfig = Zotero.utils.parseLibString(libString);
+		library = new Zotero.Library(libConfig.libraryType, libConfig.libraryID);
+		Zotero.libraries[libString] = library;
+	}
+	return library;
 };
 
 /**
@@ -43962,8 +44004,8 @@ ui.libStringLibrary = function (libString) {
  * @return {[type]}     [description]
  */
 ui.getPrioritizedVariable = function (key, defaultVal) {
-    var val = Zotero.state.getUrlVar(key) || Zotero.preferences.getPref(key) || Zotero.config.defaultApiArgs[key] || defaultVal;
-    return val;
+	var val = Zotero.state.getUrlVar(key) || Zotero.preferences.getPref(key) || Zotero.config.defaultApiArgs[key] || defaultVal;
+	return val;
 };
 
 /**
@@ -43971,134 +44013,134 @@ ui.getPrioritizedVariable = function (key, defaultVal) {
  * @return {undefined}
  */
 ui.scrollToTop = function () {
-    window.scrollBy(0, -5000);
+	window.scrollBy(0, -5000);
 };
 
 var init = {};
 
 //initialize ui
 init.all = function () {
-    Zotero.eventful.initWidgets();
-    init.rte();
+	Zotero.eventful.initWidgets();
+	init.rte();
 };
 
 init.rte = function (type, autofocus, container) {
-    log.debug('init.rte', 3);
-    if (Zotero.config.rte == 'ckeditor') {
-        init.ckeditor(type, autofocus, container);
-        return;
-    } else {
-        init.tinyMce(type, autofocus, container);
-    }
+	log.debug('init.rte', 3);
+	if (Zotero.config.rte == 'ckeditor') {
+		init.ckeditor(type, autofocus, container);
+		return;
+	} else {
+		init.tinyMce(type, autofocus, container);
+	}
 };
 
 init.ckeditor = function (type, autofocus, container) {
-    log.debug('init.ckeditor', 3);
-    if (!type) {
-        type = 'default';
-    }
-    if (!container) {
-        container = J('body');
-    }
+	log.debug('init.ckeditor', 3);
+	if (!type) {
+		type = 'default';
+	}
+	if (!container) {
+		container = J('body');
+	}
 
-    var ckconfig = {};
-    ckconfig.toolbarGroups = [{ name: 'clipboard', groups: ['clipboard', 'undo'] },
-    //{ name: 'editing',     groups: [ 'find', 'selection' ] },
-    { name: 'links' }, { name: 'insert' }, { name: 'forms' }, { name: 'tools' }, { name: 'document', groups: ['mode', 'document', 'doctools'] }, { name: 'others' }, '/', { name: 'basicstyles', groups: ['basicstyles', 'cleanup'] }, { name: 'paragraph', groups: ['list', 'indent', 'blocks', 'align'] }, { name: 'styles' }, { name: 'colors' }, { name: 'about' }];
+	var ckconfig = {};
+	ckconfig.toolbarGroups = [{ name: 'clipboard', groups: ['clipboard', 'undo'] },
+	//{ name: 'editing',     groups: [ 'find', 'selection' ] },
+	{ name: 'links' }, { name: 'insert' }, { name: 'forms' }, { name: 'tools' }, { name: 'document', groups: ['mode', 'document', 'doctools'] }, { name: 'others' }, '/', { name: 'basicstyles', groups: ['basicstyles', 'cleanup'] }, { name: 'paragraph', groups: ['list', 'indent', 'blocks', 'align'] }, { name: 'styles' }, { name: 'colors' }, { name: 'about' }];
 
-    var nolinksckconfig = {};
-    nolinksckconfig.toolbarGroups = [{ name: 'clipboard', groups: ['clipboard', 'undo'] }, { name: 'editing', groups: ['find', 'selection'] }, { name: 'insert' }, { name: 'forms' }, { name: 'tools' }, { name: 'document', groups: ['mode', 'document', 'doctools'] }, { name: 'others' }, '/', { name: 'basicstyles', groups: ['basicstyles', 'cleanup'] }, { name: 'paragraph', groups: ['list', 'indent', 'blocks', 'align'] }, { name: 'styles' }, { name: 'colors' }, { name: 'about' }];
-    var readonlyckconfig = {};
-    readonlyckconfig.toolbarGroups = [];
-    readonlyckconfig.readOnly = true;
+	var nolinksckconfig = {};
+	nolinksckconfig.toolbarGroups = [{ name: 'clipboard', groups: ['clipboard', 'undo'] }, { name: 'editing', groups: ['find', 'selection'] }, { name: 'insert' }, { name: 'forms' }, { name: 'tools' }, { name: 'document', groups: ['mode', 'document', 'doctools'] }, { name: 'others' }, '/', { name: 'basicstyles', groups: ['basicstyles', 'cleanup'] }, { name: 'paragraph', groups: ['list', 'indent', 'blocks', 'align'] }, { name: 'styles' }, { name: 'colors' }, { name: 'about' }];
+	var readonlyckconfig = {};
+	readonlyckconfig.toolbarGroups = [];
+	readonlyckconfig.readOnly = true;
 
-    var config;
-    if (type == 'nolinks') {
-        config = J.extend(true, {}, nolinksckconfig);
-    } else if (type == 'readonly') {
-        config = J.extend(true, {}, readonlyckconfig);
-    } else {
-        config = J.extend(true, {}, ckconfig);
-    }
-    if (autofocus) {
-        config.startupFocus = true;
-    }
+	var config;
+	if (type == 'nolinks') {
+		config = Z.deepExtend({}, nolinksckconfig);
+	} else if (type == 'readonly') {
+		config = Z.deepExtend({}, readonlyckconfig);
+	} else {
+		config = Z.deepExtend({}, ckconfig);
+	}
+	if (autofocus) {
+		config.startupFocus = true;
+	}
 
-    log.debug('initializing CK editors', 3);
-    if (J(container).is('.rte')) {
-        log.debug('RTE textarea - ' + ' - ' + J(container).attr('name'), 3);
-        var edName = J(container).attr('name');
-        if (!CKEDITOR.instances[edName]) {
-            var editor = CKEDITOR.replace(J(container), config);
-        }
-    } else {
-        log.debug('not a direct rte init', 3);
-        log.debug(container, 3);
-        J(container).find('textarea.rte').each(function (ind, el) {
-            log.debug('RTE textarea - ' + ind + ' - ' + J(el).attr('name'), 3);
-            var edName = J(el).attr('name');
-            if (!CKEDITOR.instances[edName]) {
-                var editor = CKEDITOR.replace(el, config);
-            }
-        });
-    }
+	log.debug('initializing CK editors', 3);
+	if (J(container).is('.rte')) {
+		log.debug('RTE textarea - ' + ' - ' + J(container).attr('name'), 3);
+		var edName = J(container).attr('name');
+		if (!CKEDITOR.instances[edName]) {
+			var editor = CKEDITOR.replace(J(container), config);
+		}
+	} else {
+		log.debug('not a direct rte init', 3);
+		log.debug(container, 3);
+		J(container).find('textarea.rte').each(function (ind, el) {
+			log.debug('RTE textarea - ' + ind + ' - ' + J(el).attr('name'), 3);
+			var edName = J(el).attr('name');
+			if (!CKEDITOR.instances[edName]) {
+				var editor = CKEDITOR.replace(el, config);
+			}
+		});
+	}
 };
 
 init.tinyMce = function (type, autofocus, elements) {
-    log.debug('init.tinyMce', 3);
-    if (!type) {
-        type = 'default';
-    }
-    var mode = 'specific_textareas';
-    if (elements) {
-        mode = 'exact';
-    } else {
-        elements = '';
-    }
+	log.debug('init.tinyMce', 3);
+	if (!type) {
+		type = 'default';
+	}
+	var mode = 'specific_textareas';
+	if (elements) {
+		mode = 'exact';
+	} else {
+		elements = '';
+	}
 
-    var tmceConfig = {
-        //script_url : '/static/library/tinymce_jquery/jscripts/tiny_mce/tiny_mce.js',
-        mode: mode,
-        elements: elements,
-        theme: 'advanced',
-        //plugins : "pagebreak,style,layer,table,save,advhr,advimage,advlink,emotions,iespell,inlinepopups,insertdatetime,preview,media,searchreplace,print,contextmenu,paste,directionality,fullscreen,visualchars,nonbreaking,xhtmlxtras,template",
-        //plugins : "pagebreak,style,layer,table,advhr,advimage,advlink,preview,searchreplace,paste",
+	var tmceConfig = {
+		//script_url : '/static/library/tinymce_jquery/jscripts/tiny_mce/tiny_mce.js',
+		mode: mode,
+		elements: elements,
+		theme: 'advanced',
+		//plugins : "pagebreak,style,layer,table,save,advhr,advimage,advlink,emotions,iespell,inlinepopups,insertdatetime,preview,media,searchreplace,print,contextmenu,paste,directionality,fullscreen,visualchars,nonbreaking,xhtmlxtras,template",
+		//plugins : "pagebreak,style,layer,table,advhr,advimage,advlink,preview,searchreplace,paste",
 
-        theme_advanced_toolbar_location: 'top',
-        theme_advanced_buttons1: 'bold,italic,underline,strikethrough,separator,sub,sup,separator,forecolorpicker,backcolorpicker,separator,blockquote,separator,link,unlink',
-        theme_advanced_buttons2: 'formatselect,separator,justifyleft,justifycenter,justifyright,separator,bullist,numlist,outdent,indent,separator,removeformat,code,',
-        theme_advanced_buttons3: '',
-        theme_advanced_toolbar_align: 'left',
-        theme_advanced_statusbar_location: 'bottom',
-        theme_advanced_resizing: true,
-        relative_urls: false,
-        //width: '500',
-        //height: '300',
-        editor_selector: 'default'
-    };
+		theme_advanced_toolbar_location: 'top',
+		theme_advanced_buttons1: 'bold,italic,underline,strikethrough,separator,sub,sup,separator,forecolorpicker,backcolorpicker,separator,blockquote,separator,link,unlink',
+		theme_advanced_buttons2: 'formatselect,separator,justifyleft,justifycenter,justifyright,separator,bullist,numlist,outdent,indent,separator,removeformat,code,',
+		theme_advanced_buttons3: '',
+		theme_advanced_toolbar_align: 'left',
+		theme_advanced_statusbar_location: 'bottom',
+		theme_advanced_resizing: true,
+		relative_urls: false,
+		//width: '500',
+		//height: '300',
+		editor_selector: 'default'
+	};
 
-    if (autofocus) {
-        tmceConfig.init_instance_callback = function (inst) {
-            log.debug('inited ' + inst.editorId, 3);
-            inst.focus();
-        };
-    }
+	if (autofocus) {
+		tmceConfig.init_instance_callback = function (inst) {
+			log.debug('inited ' + inst.editorId, 3);
+			inst.focus();
+		};
+	}
 
-    if (type != 'nolinks') {
-        tmceConfig.theme_advanced_buttons1 += ',link';
-    }
+	if (type != 'nolinks') {
+		tmceConfig.theme_advanced_buttons1 += ',link';
+	}
 
-    if (type == 'nolinks') {
-        tmceConfig.editor_selector = 'nolinks';
-    }
+	if (type == 'nolinks') {
+		tmceConfig.editor_selector = 'nolinks';
+	}
 
-    if (type == 'readonly') {
-        tmceConfig.readonly = 1;
-        tmceConfig.editor_selector = 'readonly';
-    }
+	if (type == 'readonly') {
+		tmceConfig.readonly = 1;
+		tmceConfig.editor_selector = 'readonly';
+	}
 
-    tinymce.init(tmceConfig);
-    return tmceConfig;
+	tinymce.init(tmceConfig);
+	return tmceConfig;
 };
 
 ui.init = init;
@@ -44306,8 +44348,15 @@ var CanonicalItem = React.createClass({
 			item: null
 		};
 	},
+	getInitialState: function getInitialState() {
+		return {
+			showDetails: false
+		};
+	},
+	toggleDetails: function toggleDetails() {
+		this.setState({ showDetails: !this.state.showDetails });
+	},
 	render: function render() {
-		//console.log("CanonicalItem render");
 		if (this.props.item == null) {
 			return null;
 		}
@@ -44319,16 +44368,12 @@ var CanonicalItem = React.createClass({
 		var keys = Object.keys(item.data);
 		var canonicalDataFields = [];
 		canonicalDataFields = keys.map(function (key) {
-			//console.log("data key:" + key)
 			var val = item.data[key];
 			if (val === '') {
 				return null;
 			}
-			//console.log(val);
 			if (key == 'creators') {
-				//console.log("creators");
 				if (!val) {
-					console.log('falsy val, returning null');
 					return null;
 				}
 
@@ -44347,40 +44392,26 @@ var CanonicalItem = React.createClass({
 								null,
 								k.name
 							)
-						)
-						/*
-      <div key={"creator_" + i} className="creator">
-      	<span className="name">{k.name}</span>
-      </div>
-      */
-						;
+						);
 					} else {
-							return React.createElement(
-								'tr',
-								{ key: 'creator_' + i },
-								React.createElement(
-									'th',
-									null,
-									ItemMaps.creatorMap[k.creatorType]
-								),
-								React.createElement(
-									'td',
-									null,
-									k.lastName,
-									', ',
-									k.firstName
-								)
+						return React.createElement(
+							'tr',
+							{ key: 'creator_' + i },
+							React.createElement(
+								'th',
+								null,
+								ItemMaps.creatorMap[k.creatorType]
+							),
+							React.createElement(
+								'td',
+								null,
+								k.lastName,
+								', ',
+								k.firstName
 							)
-							/*
-       <div key={"creator_" + i} className="creator">
-       	<span className="lastName">{k.lastName}</span>
-       	<span className="firstName">{k.firstName}</span>
-       </div>
-       */
-							;
-						}
+						);
+					}
 				});
-				//console.log(creatorRows);
 				return creatorRows;
 			} else if (typeof val == 'string') {
 				return React.createElement(
@@ -44400,7 +44431,6 @@ var CanonicalItem = React.createClass({
 			}
 			return null;
 		});
-		//console.log(canonicalDataFields);
 
 		var datesAdded = item.meta.datesAdded.map(function (da) {
 			return React.createElement(
@@ -44414,7 +44444,9 @@ var CanonicalItem = React.createClass({
 
 		var instances = null;
 		if (item.libraryItems) {
+			//log.debug(`${item.libraryItems.length} public library item instances`);
 			instances = item.libraryItems.map(function (instance) {
+				instance = instance.replace('api.zotero.org', 'apidev.zotero.org');
 				return React.createElement(
 					'div',
 					{ key: instance },
@@ -44427,111 +44459,132 @@ var CanonicalItem = React.createClass({
 			});
 		}
 
+		var detailsClass = 'search-result-body panel-body hidden';
+		if (this.state.showDetails) {
+			detailsClass = 'search-result-body panel-body';
+		}
+
 		return React.createElement(
 			'div',
 			{ className: 'canonicalItem' },
 			React.createElement(
-				'h2',
-				null,
-				title
-			),
-			React.createElement(
 				'div',
-				{ className: 'canonicalMeta' },
+				{ className: 'panel panel-default' },
 				React.createElement(
-					'h3',
-					null,
-					'Canonical Meta'
+					'div',
+					{ className: 'panel-heading', onClick: this.toggleDetails },
+					React.createElement(
+						'h4',
+						{ className: 'panel-title' },
+						React.createElement(
+							'a',
+							{ role: 'button' },
+							title
+						)
+					)
 				),
 				React.createElement(
-					'table',
-					null,
+					'div',
+					{ className: detailsClass },
 					React.createElement(
-						'tbody',
-						null,
+						'div',
+						{ className: 'canonicalMeta' },
 						React.createElement(
-							'tr',
+							'h3',
 							null,
-							React.createElement(
-								'th',
-								null,
-								'Canonical ID'
-							),
-							React.createElement(
-								'td',
-								null,
-								item.ID
-							)
+							'Canonical Meta'
 						),
 						React.createElement(
-							'tr',
+							'table',
 							null,
 							React.createElement(
-								'th',
-								null,
-								'Instances'
-							),
-							React.createElement(
-								'td',
-								null,
-								item.meta.instanceCount
-							)
-						),
-						React.createElement(
-							'tr',
-							null,
-							React.createElement(
-								'th',
-								null,
-								'Libraries Count'
-							),
-							React.createElement(
-								'td',
-								null,
-								item.meta.librariesCount
-							)
-						),
-						React.createElement(
-							'tr',
-							null,
-							React.createElement(
-								'th',
-								null,
-								'Dates Added'
-							),
-							React.createElement(
-								'td',
+								'tbody',
 								null,
 								React.createElement(
-									'ul',
+									'tr',
 									null,
-									datesAdded
+									React.createElement(
+										'th',
+										null,
+										'Canonical ID'
+									),
+									React.createElement(
+										'td',
+										null,
+										item.ID
+									)
+								),
+								React.createElement(
+									'tr',
+									null,
+									React.createElement(
+										'th',
+										null,
+										'Instances'
+									),
+									React.createElement(
+										'td',
+										null,
+										item.meta.instanceCount
+									)
+								),
+								React.createElement(
+									'tr',
+									null,
+									React.createElement(
+										'th',
+										null,
+										'Libraries Count'
+									),
+									React.createElement(
+										'td',
+										null,
+										item.meta.librariesCount
+									)
+								),
+								React.createElement(
+									'tr',
+									null,
+									React.createElement(
+										'th',
+										null,
+										'Dates Added'
+									),
+									React.createElement(
+										'td',
+										null,
+										React.createElement(
+											'ul',
+											null,
+											datesAdded
+										)
+									)
 								)
 							)
 						)
-					)
-				)
-			),
-			React.createElement(
-				'div',
-				{ className: 'instances' },
-				instances
-			),
-			React.createElement(
-				'div',
-				{ className: 'canonicalData' },
-				React.createElement(
-					'h3',
-					null,
-					'Canonical Data'
-				),
-				React.createElement(
-					'table',
-					null,
+					),
 					React.createElement(
-						'tbody',
-						null,
-						canonicalDataFields
+						'div',
+						{ className: 'instances' },
+						instances
+					),
+					React.createElement(
+						'div',
+						{ className: 'canonicalData' },
+						React.createElement(
+							'h3',
+							null,
+							'Canonical Data'
+						),
+						React.createElement(
+							'table',
+							null,
+							React.createElement(
+								'tbody',
+								null,
+								canonicalDataFields
+							)
+						)
 					)
 				)
 			)
@@ -45149,7 +45202,7 @@ var Collections = React.createClass({
 
 module.exports = Collections;
 
-},{"../../../library/libZoteroJS/src/Log.js":114,"./LoadingSpinner.js":325,"react":290}],312:[function(require,module,exports){
+},{"../../../library/libZoteroJS/src/Log.js":114,"./LoadingSpinner.js":326,"react":290}],312:[function(require,module,exports){
 'use strict';
 
 var log = require('../../../library/libZoteroJS/src/Log.js').Logger('zotero-web-library:controlpanel');
@@ -45313,8 +45366,7 @@ var ActionsDropdown = React.createClass({
 		var trashingItems = library.items.getItems(itemKeys);
 		var deletingItems = []; //potentially deleting instead of trashing
 
-		//show spinner before making the possibly many the ajax requests
-		//Zotero.ui.showSpinner(J('#library-items-div'));
+		//TODO: show items list loading?
 
 		if (Zotero.state.getUrlVar('collectionKey') == 'trash') {
 			//items already in trash. delete them
@@ -45354,8 +45406,7 @@ var ActionsDropdown = React.createClass({
 
 		var untrashingItems = library.items.getItems(itemKeys);
 
-		//show spinner before making the possibly many the ajax requests
-		//Zotero.ui.showSpinner(J('#library-items-div'));
+		//TODO: show items list loading?
 
 		var response = library.items.untrashItems(untrashingItems);
 
@@ -45397,7 +45448,7 @@ var ActionsDropdown = React.createClass({
 		return false;
 	},
 	triggerLibraryEvent: function triggerLibraryEvent(evt) {
-		var eventType = J(evt.target).data('triggers');
+		var eventType = evt.currentTarget.getAttribute('data-triggers');
 		this.props.library.trigger(eventType);
 	},
 	triggerSync: function triggerSync() {
@@ -45578,7 +45629,7 @@ var CreateItemDropdown = React.createClass({
 		log.debug('create-item-Link clicked', 3);
 		evt.preventDefault();
 		var library = this.props.library;
-		var itemType = J(evt.target).data('itemtype');
+		var itemType = evt.target.getAttribute('data-itemtype');
 		library.trigger('createItem', { itemType: itemType });
 		return false;
 	},
@@ -46280,10 +46331,10 @@ var FilterGuide = React.createClass({
 		evt.preventDefault();
 		log.debug('widgets.filterGuide.clearFilter', 3);
 		var library = this.props.library;
-		var target = J(evt.currentTarget);
-		var collectionKey = target.data('collectionkey');
-		var tag = target.data('tag');
-		var query = target.data('query');
+		var target = evt.currentTarget;
+		var collectionKey = target.getAttribute('data-collectionkey');
+		var tag = target.getAttribute('data-tag');
+		var query = target.getAttribute('data-query');
 		if (collectionKey) {
 			Zotero.state.unsetUrlVar('collectionKey');
 			this.setState({ collectionKey: '' });
@@ -46392,41 +46443,61 @@ var Net = require('../../../library/libZoteroJS/src/Net.js');
 var React = require('react');
 var CanonicalItem = require('./CanonicalSearchResult.js');
 
+//const baseSearchUrl = 'https://52.91.6.162';
 var baseSearchUrl = 'https://localhost:8080';
 
 var globalSearchUrl = function globalSearchUrl(query) {
 	return baseSearchUrl + '/global/items?q=' + query;
 };
 
+var globalDOIUrl = function globalDOIUrl(query) {
+	return baseSearchUrl + '/global/items?DOI=' + query;
+};
+
 var GlobalSearch = React.createClass({
 	displayName: 'GlobalSearch',
 
+	componentDidMount: function componentDidMount() {
+		if (this.state.search != '') {
+			this.search();
+		}
+	},
 	getDefaultProps: function getDefaultProps() {
 		return {
 			item: null
 		};
 	},
 	getInitialState: function getInitialState() {
+		var query = Zotero.state.getUrlVar('q');
 		return {
-			search: '',
+			search: query,
 			results: []
 		};
 	},
 	handleSearchChange: function handleSearchChange(evt) {
-		log.debug(evt);
-		log.debug('setting search state to ' + evt.target.value);
 		this.setState({ search: evt.target.value });
 	},
-	search: function search(evt) {
+	search: function search() {
 		var _this = this;
 
-		evt.preventDefault();
+		var evt = arguments.length <= 0 || arguments[0] === undefined ? false : arguments[0];
+
+		if (evt) {
+			evt.preventDefault();
+		}
 		var searchTerm = this.state.search;
-		var searchUrl = globalSearchUrl(searchTerm);
-		log.debug('searching:' + searchUrl);
+		//update querystring
+		Zotero.state.setQueryVar('q', this.state.search);
+		Zotero.state.pushState();
+
+		var searchUrl = '';
+		if (searchTerm.startsWith('doi:')) {
+			searchUrl = globalDOIUrl(searchTerm.slice(4));
+		} else {
+			searchUrl = globalSearchUrl(searchTerm);
+		}
 
 		Net.ajax({ url: searchUrl }).then(function (resp) {
-			log.debug(resp);
 			var resultsObj = JSON.parse(resp.responseText);
 			var globalItems = resultsObj.map(function (g) {
 				return g;
@@ -46437,7 +46508,6 @@ var GlobalSearch = React.createClass({
 	render: function render() {
 		var reactInstance = this;
 		var resultNodes = reactInstance.state.results.map(function (globalItem) {
-			log.debug('rendering CanonicalItem for ' + globalItem.ID);
 			return React.createElement(CanonicalItem, { key: globalItem.ID, item: globalItem });
 		});
 
@@ -46446,11 +46516,11 @@ var GlobalSearch = React.createClass({
 			{ className: 'global-search' },
 			React.createElement(
 				'form',
-				{ onSubmit: this.search },
+				{ id: 'global-search-form', onSubmit: this.search },
 				React.createElement(
 					'div',
 					{ className: 'input-group' },
-					React.createElement('input', { type: 'text', className: 'form-control', onChange: this.handleSearchChange }),
+					React.createElement('input', { type: 'text', className: 'form-control', value: this.state.search, onChange: this.handleSearchChange }),
 					React.createElement(
 						'span',
 						{ className: 'input-group-btn' },
@@ -46474,6 +46544,155 @@ var GlobalSearch = React.createClass({
 module.exports = GlobalSearch;
 
 },{"../../../library/libZoteroJS/src/Log.js":114,"../../../library/libZoteroJS/src/Net.js":115,"./CanonicalSearchResult.js":308,"react":290}],320:[function(require,module,exports){
+'use strict';
+
+var log = require('../../../library/libZoteroJS/src/Log.js').Logger('zotero-web-library:inviteToGroup');
+
+var React = require('react');
+var BootstrapModalWrapper = require('./BootstrapModalWrapper.js');
+
+var InviteButton = React.createClass({
+	displayName: 'InviteButton',
+
+	handleClick: function handleClick(evt) {
+		var invDialog = ReactDOM.render(React.createElement(InviteDialog, null), document.getElementById('invite-to-group-dialog'));
+		invDialog.openDialog();
+	},
+	render: function render() {
+		var reactInstance = this;
+		if (!Zotero.config.loggedIn) {
+			return null;
+		}
+		if (zoteroData.profileUserID == Zotero.config.loggedInUserID) {
+			return null;
+		}
+		return React.createElement(
+			'button',
+			{ className: 'btn btn-primary', onClick: reactInstance.handleClick },
+			'Invite to group'
+		);
+	}
+});
+
+var InviteDialog = React.createClass({
+	displayName: 'InviteDialog',
+
+	componentWillMount: function componentWillMount() {
+		var reactInstance = this;
+		var groups = new Zotero.Groups();
+		if (Zotero.config.loggedIn && Zotero.config.loggedInUserID && zoteroData.profileUserID != Zotero.config.loggedInUserID) {
+			reactInstance.setState({ loading: true });
+			var groupsPromise = groups.fetchUserGroups(Zotero.config.loggedInUserID).then(function (response) {
+				var groups = response.fetchedGroups;
+				reactInstance.setState({ groups: groups, loading: false });
+			}).catch(Zotero.catchPromiseError);
+		}
+	},
+	getInitialState: function getInitialState() {
+		return {
+			groups: [],
+			loading: false
+		};
+	},
+	openDialog: function openDialog() {
+		//this.setState({open:true});
+		this.refs.modal.open();
+	},
+	closeDialog: function closeDialog(evt) {
+		//this.setState({open:false});
+		this.refs.modal.close();
+	},
+	inviteToGroup: function inviteToGroup(evt) {
+		var reactInstance = this;
+		log.debug(evt);
+		var groupID = parseInt(evt.currentTarget.getAttribute('data-groupid'), 10);
+
+		J.ajax({
+			'type': 'POST',
+			'url': '/groups/inviteuser',
+			'data': {
+				'groupID': groupID,
+				'userID': zoteroData.profileUserID
+			},
+			'processData': true
+		}).then(function (data) {
+			log.debug('got response from inviteuser');
+			if (data == 'true') {
+				Zotero.ui.jsNotificationMessage('User has been invited', 'success');
+			}
+		});
+	},
+	render: function render() {
+		var reactInstance = this;
+		var invitedGroupIDs = zoteroData.invitedGroupIDs;
+
+		var groupNodes = reactInstance.state.groups.map(function (group) {
+			if (invitedGroupIDs.indexOf(group.get('id').toString()) != -1) {
+				return React.createElement(
+					'li',
+					{ key: group.get('id') },
+					'Invitation pending to \'',
+					group.get('name'),
+					'\''
+				);
+			} else {
+				return React.createElement(
+					'li',
+					{ key: group.get('id') },
+					React.createElement(
+						'button',
+						{ className: 'btn btn-default', onClick: reactInstance.inviteToGroup, 'data-groupid': group.get('id') },
+						group.get('name')
+					)
+				);
+			}
+		});
+
+		return React.createElement(
+			BootstrapModalWrapper,
+			{ ref: 'modal' },
+			React.createElement(
+				'div',
+				{ id: 'invite-user-dialog', className: 'invite-user-dialog', role: 'dialog', title: 'Invite User', 'data-keyboard': 'true' },
+				React.createElement(
+					'div',
+					{ className: 'modal-dialog' },
+					React.createElement(
+						'div',
+						{ className: 'modal-content' },
+						React.createElement(
+							'div',
+							{ className: 'modal-header' },
+							React.createElement(
+								'button',
+								{ type: 'button', className: 'close', 'data-dismiss': 'modal', 'aria-hidden': 'true' },
+								'×'
+							),
+							React.createElement(
+								'h3',
+								null,
+								'Invite User'
+							)
+						),
+						React.createElement(
+							'div',
+							{ className: 'modal-body', 'data-role': 'content' },
+							React.createElement(
+								'ul',
+								null,
+								groupNodes
+							)
+						)
+					)
+				)
+			)
+		);
+	}
+});
+
+module.exports = InviteButton;
+
+},{"../../../library/libZoteroJS/src/Log.js":114,"./BootstrapModalWrapper.js":307,"react":290}],321:[function(require,module,exports){
 'use strict';
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
@@ -46858,9 +47077,9 @@ var ItemField = React.createClass({
 		Zotero.ui.saveItem(this.props.item);
 	},
 	handleFocus: function handleFocus(evt) {
-		var field = J(evt.currentTarget).data('field');
-		var creatorIndex = J(evt.target).data('creatorindex');
-		var tagIndex = J(evt.target).data('tagindex');
+		var field = evt.currentTarget.getAttribute('data-field');
+		var creatorIndex = evt.target.getAttribute('data-creatorindex');
+		var tagIndex = evt.target.getAttribute('data-tagindex');
 		var edit = {
 			field: field,
 			creatorIndex: creatorIndex,
@@ -46874,7 +47093,7 @@ var ItemField = React.createClass({
 		evt.stopPropagation();
 		if (evt.keyCode === Zotero.ui.keyCode.ENTER) {
 			//var nextEdit = Zotero.ui.widgets.reactitem.nextEditField(this.props.item, this.props.edit);
-			J(evt.target).blur();
+			evt.target.blur();
 		}
 	},
 	render: function render() {
@@ -47011,12 +47230,23 @@ var ItemField = React.createClass({
 var ItemInfoPanel = React.createClass({
 	displayName: 'ItemInfoPanel',
 
+	componentWillMount: function componentWillMount() {
+		var _this = this;
+
+		var library = this.props.library;
+		library.listen('totalResultsLoaded', function () {
+			_this.setState({ libraryItemsLoaded: true });
+		});
+	},
 	getDefaultProps: function getDefaultProps() {
 		return {
 			item: null,
 			loading: false,
 			edit: null
 		};
+	},
+	getInitialState: function getInitialState() {
+		return { libraryItemsLoaded: false };
 	},
 	render: function render() {
 		log.debug('ItemInfoPanel render', 3);
@@ -47025,7 +47255,7 @@ var ItemInfoPanel = React.createClass({
 		var item = this.props.item;
 		var itemCountP = React.createElement(
 			'p',
-			{ className: 'item-count', hidden: !this.props.libraryItemsLoaded },
+			{ className: 'item-count', hidden: !this.state.libraryItemsLoaded },
 			library.items.totalResults + ' items in this view'
 		);
 
@@ -47490,7 +47720,7 @@ var ItemDetails = React.createClass({
 
 module.exports = ItemDetails;
 
-},{"../../../library/libZoteroJS/src/Log.js":114,"./LoadingSpinner.js":325,"react":290}],321:[function(require,module,exports){
+},{"../../../library/libZoteroJS/src/Log.js":114,"./LoadingSpinner.js":326,"react":290}],322:[function(require,module,exports){
 'use strict';
 
 var log = require('../../../library/libZoteroJS/src/Log.js').Logger('zotero-web-library:items');
@@ -47503,7 +47733,7 @@ var LoadingError = require('./LoadingError.js');
 Zotero.ui.getItemsConfig = function (library) {
 	var effectiveUrlVars = ['tag', 'collectionKey', 'order', 'sort', 'q', 'qmode'];
 	var urlConfigVals = {};
-	J.each(effectiveUrlVars, function (index, value) {
+	effectiveUrlVars.forEach(function (value) {
 		var t = Zotero.state.getUrlVar(value);
 		if (t) {
 			urlConfigVals[value] = t;
@@ -47525,7 +47755,7 @@ Zotero.ui.getItemsConfig = function (library) {
 	};
 
 	//Build config object that should be displayed next and compare to currently displayed
-	var newConfig = J.extend({}, defaultConfig, userPreferencesApiArgs, urlConfigVals);
+	var newConfig = Z.extend({}, defaultConfig, userPreferencesApiArgs, urlConfigVals);
 
 	//don't allow ordering by group only columns if user library
 	if (library.libraryType == 'user' && Zotero.Library.prototype.groupOnlyColumns.indexOf(newConfig.order) != -1) {
@@ -47568,6 +47798,9 @@ var Items = React.createClass({
 
 		library.listen('loadMoreItems', reactInstance.loadMoreItems, {});
 		library.trigger('displayedItemsChanged');
+
+		var displayFields = library.preferences.getPref('listDisplayedFields');
+		this.setState({ displayFields: displayFields });
 	},
 	getDefaultProps: function getDefaultProps() {
 		return {
@@ -47602,6 +47835,7 @@ var Items = React.createClass({
 				throw 'Expected response to have loadedItems';
 			}
 			library.items.totalResults = response.totalResults;
+			library.trigger('totalResultsLoaded');
 			var allLoaded = response.totalResults == response.loadedItems.length;
 			reactInstance.setState({
 				items: response.loadedItems,
@@ -47671,7 +47905,7 @@ var Items = React.createClass({
 		var currentSortField = this.state.order;
 		var currentSortOrder = this.state.sort;
 
-		var newSortField = J(evt.target).data('columnfield');
+		var newSortField = evt.target.getAttribute('data-columnfield');
 		var newSortOrder;
 		if (newSortField != currentSortField) {
 			newSortOrder = Zotero.config.sortOrdering[newSortField]; //default for column
@@ -47750,7 +47984,7 @@ var Items = React.createClass({
 		this.setState({ selectedItemKeys: Zotero.state.getSelectedItemKeys(), allSelected: false });
 	},
 	fixTableHeaders: function fixTableHeaders() {
-		if (J('body').hasClass('lib-body')) {
+		if (document.getElementsByTagName('body')[0].className.indexOf('lib-body') != -1) {
 			var tableEl = J(this.refs.itemsTable);
 			tableEl.floatThead({
 				top: function top() {
@@ -47801,6 +48035,7 @@ var Items = React.createClass({
 		this.nonreactBind();
 	},
 	render: function render() {
+		log.debug('Items.render', 3);
 		var reactInstance = this;
 		var library = this.props.library;
 		var narrow = this.props.narrow;
@@ -47857,6 +48092,7 @@ var Items = React.createClass({
 			headers = headers.concat(fieldHeaders);
 		}
 
+		var displayFields = this.state.displayFields;
 		var itemRows = this.state.items.map(function (item) {
 			var selected = selectedItemKeyMap.hasOwnProperty(item.get('key')) ? true : false;
 			var p = {
@@ -47865,7 +48101,8 @@ var Items = React.createClass({
 				key: item.get('key'),
 				item: item,
 				selected: selected,
-				narrow: narrow
+				narrow: narrow,
+				displayFields: displayFields
 			};
 			return React.createElement(ItemRow, p);
 		});
@@ -47941,7 +48178,15 @@ var ItemRow = React.createClass({
 	},
 	handleItemLinkClick: function handleItemLinkClick(evt) {
 		evt.preventDefault();
-		var itemKey = J(evt.target).data('itemkey');
+		var itemKey = evt.target.getAttribute('data-itemkey');
+		if (evt.ctrlKey) {
+			//add item to selected, but don't deselect others
+			Zotero.state.toggleItemSelected(itemKey);
+			var selected = Zotero.state.getSelectedItemKeys();
+			var library = this.props.library;
+			library.trigger('selectedItemsChanged', { selectedItemKeys: selected });
+			return;
+		}
 		Zotero.state.pathVars.itemKey = itemKey;
 		Zotero.state.pushState();
 	},
@@ -48068,7 +48313,7 @@ var ColoredTag = React.createClass({
 
 module.exports = Items;
 
-},{"../../../library/libZoteroJS/src/Log.js":114,"./LoadingError.js":324,"./LoadingSpinner.js":325,"react":290}],322:[function(require,module,exports){
+},{"../../../library/libZoteroJS/src/Log.js":114,"./LoadingError.js":325,"./LoadingSpinner.js":326,"react":290}],323:[function(require,module,exports){
 'use strict';
 
 var log = require('../../../library/libZoteroJS/src/Log.js').Logger('zotero-web-library:searchbox');
@@ -48078,18 +48323,30 @@ var React = require('react');
 var LibrarySearchBox = React.createClass({
 	displayName: 'LibrarySearchBox',
 
+	componentWillMount: function componentWillMount() {
+		var library = this.props.library;
+		if (!library) {
+			log.error('no library prop set on LibrarySearchBox');
+		}
+		library.listen('clearLibraryQuery', this.clearLibraryQuery);
+	},
 	getInitialState: function getInitialState() {
+		var query = Zotero.state.getUrlVar('q');
+		if (query === undefined) {
+			query = '';
+		}
 		return {
-			searchType: 'simple'
+			searchType: 'simple',
+			query: query
 		};
 	},
 	search: function search(evt) {
 		evt.preventDefault();
 		log.debug('library-search form submitted', 3);
 		Zotero.state.clearUrlVars(['collectionKey', 'tag', 'q', 'qmode']);
-		var container = J(evt.target);
-		var query = container.find('input.search-query').val();
-		var searchType = container.find('input.search-query').data('searchtype');
+		var query = this.state.query;
+		var searchType = this.state.searchType;
+
 		if (query !== '' || Zotero.state.getUrlVar('q')) {
 			Zotero.state.pathVars['q'] = query;
 			if (searchType != 'simple') {
@@ -48099,19 +48356,21 @@ var LibrarySearchBox = React.createClass({
 		}
 		return false;
 	},
-	clearLibraryQuery: function clearLibraryQuery(evt) {
+	clearLibraryQuery: function clearLibraryQuery() {
 		Zotero.state.unsetUrlVar('q');
 		Zotero.state.unsetUrlVar('qmode');
 
-		J('.search-query').val('');
+		this.setState({ query: '' });
 		Zotero.state.pushState();
 		return;
 	},
 	changeSearchType: function changeSearchType(evt) {
 		evt.preventDefault();
-		var selected = J(evt.target);
-		var selectedType = selected.data('searchtype');
+		var selectedType = evt.target.getAttribute('data-searchtype');
 		this.setState({ searchType: selectedType });
+	},
+	changeQuery: function changeQuery(evt) {
+		this.setState({ query: evt.target.value });
 	},
 	render: function render() {
 		var placeHolder = '';
@@ -48120,7 +48379,6 @@ var LibrarySearchBox = React.createClass({
 		} else if (this.state.searchType == 'everything') {
 			placeHolder = 'Search Full Text';
 		}
-		var defaultValue = Zotero.state.getUrlVar('q');
 
 		return React.createElement(
 			'div',
@@ -48162,7 +48420,7 @@ var LibrarySearchBox = React.createClass({
 							)
 						)
 					),
-					React.createElement('input', { defaultValue: defaultValue, type: 'text', name: 'q', id: 'header-search-query', className: 'search-query form-control', placeholder: placeHolder }),
+					React.createElement('input', { onChange: this.changeQuery, value: this.state.query, type: 'text', name: 'q', id: 'header-search-query', className: 'search-query form-control', placeholder: placeHolder }),
 					React.createElement(
 						'span',
 						{ className: 'input-group-btn' },
@@ -48180,7 +48438,7 @@ var LibrarySearchBox = React.createClass({
 
 module.exports = LibrarySearchBox;
 
-},{"../../../library/libZoteroJS/src/Log.js":114,"react":290}],323:[function(require,module,exports){
+},{"../../../library/libZoteroJS/src/Log.js":114,"react":290}],324:[function(require,module,exports){
 'use strict';
 
 var log = require('../../../library/libZoteroJS/src/Log.js').Logger('zotero-web-library:LibrarySettingsDialog');
@@ -48370,7 +48628,7 @@ var LibrarySettingsDialog = React.createClass({
 
 module.exports = LibrarySettingsDialog;
 
-},{"../../../library/libZoteroJS/src/Log.js":114,"./BootstrapModalWrapper.js":307,"react":290}],324:[function(require,module,exports){
+},{"../../../library/libZoteroJS/src/Log.js":114,"./BootstrapModalWrapper.js":307,"react":290}],325:[function(require,module,exports){
 'use strict';
 
 var log = require('../../../library/libZoteroJS/src/Log.js').Logger('zotero-web-library:loadingError');
@@ -48391,7 +48649,7 @@ var LoadingError = React.createClass({
 
 module.exports = LoadingError;
 
-},{"../../../library/libZoteroJS/src/Log.js":114,"react":290}],325:[function(require,module,exports){
+},{"../../../library/libZoteroJS/src/Log.js":114,"react":290}],326:[function(require,module,exports){
 'use strict';
 
 var log = require('../../../library/libZoteroJS/src/Log.js').Logger('zotero-web-library:loadingSpinner');
@@ -48413,7 +48671,171 @@ var LoadingSpinner = React.createClass({
 
 module.exports = LoadingSpinner;
 
-},{"../../../library/libZoteroJS/src/Log.js":114,"react":290}],326:[function(require,module,exports){
+},{"../../../library/libZoteroJS/src/Log.js":114,"react":290}],327:[function(require,module,exports){
+'use strict';
+
+var log = require('../../../library/libZoteroJS/src/Log.js').Logger('zotero-web-library:profileGroupsList');
+
+var React = require('react');
+
+var LoadingSpinner = require('./LoadingSpinner.js');
+
+var ProfileGroupsList = React.createClass({
+	displayName: 'ProfileGroupsList',
+
+	componentWillMount: function componentWillMount() {
+		var reactInstance = this;
+		var groups = new Zotero.Groups();
+		reactInstance.setState({ loading: true });
+		groups.fetchUserGroups(reactInstance.props.userID).then(function (response) {
+			var groups = response.fetchedGroups;
+			reactInstance.setState({ groups: groups, loading: false });
+		}).catch(Zotero.catchPromiseError);
+	},
+	getInitialState: function getInitialState() {
+		return {
+			groups: [],
+			loading: false
+		};
+	},
+	render: function render() {
+		var reactInstance = this;
+		log.debug(reactInstance.state.groups);
+
+		var memberGroups = reactInstance.state.groups.map(function (group) {
+			return React.createElement(
+				'li',
+				{ key: group.get('id') },
+				React.createElement(
+					'a',
+					{ href: Zotero.url.groupViewUrl(group) },
+					group.get('name')
+				)
+			);
+		});
+
+		return React.createElement(
+			'div',
+			{ className: 'profile-groups-list' },
+			React.createElement(
+				'h2',
+				null,
+				'Groups'
+			),
+			React.createElement(LoadingSpinner, { loading: reactInstance.state.loading }),
+			React.createElement(
+				'ul',
+				null,
+				memberGroups
+			)
+		);
+	}
+});
+
+module.exports = ProfileGroupsList;
+
+},{"../../../library/libZoteroJS/src/Log.js":114,"./LoadingSpinner.js":326,"react":290}],328:[function(require,module,exports){
+'use strict';
+
+var log = require('../../../library/libZoteroJS/src/Log.js').Logger('zotero-web-library:recentItems');
+
+var React = require('react');
+
+var RecentItems = React.createClass({
+    displayName: 'RecentItems',
+
+    componentWillMount: function componentWillMount() {
+        var reactInstance = this;
+        var library = reactInstance.props.library;
+        reactInstance.setState({ loading: true });
+        library.loadItems({
+            'limit': 10,
+            'order': 'dateModified'
+        }).then(function (response) {
+            reactInstance.setState({ loading: false, items: response.loadedItems });
+        });
+    },
+    getDefaultProps: function getDefaultProps() {
+        return {
+            displayFields: ['title', 'creatorSummary', 'dateModified'],
+            item: {}
+        };
+    },
+    getInitialState: function getInitialState() {
+        return {
+            loading: false,
+            items: []
+        };
+    },
+    render: function render() {
+        var reactInstance = this;
+        var itemRows = this.state.items.map(function (item) {
+            return React.createElement(RecentItemRow, { key: item.get('key'), item: item });
+        });
+
+        var headers = this.props.displayFields.map(function (header) {
+            return React.createElement(
+                'th',
+                { key: header, className: 'field-table-header' },
+                Zotero.Item.prototype.fieldMap[header] ? Zotero.Item.prototype.fieldMap[header] : header
+            );
+        });
+
+        return React.createElement(
+            'table',
+            { id: 'field-table', ref: 'itemsTable', className: 'wide-items-table table table-striped' },
+            React.createElement(
+                'thead',
+                null,
+                React.createElement(
+                    'tr',
+                    null,
+                    headers
+                )
+            ),
+            React.createElement(
+                'tbody',
+                null,
+                itemRows
+            )
+        );
+    }
+});
+
+var RecentItemRow = React.createClass({
+    displayName: 'RecentItemRow',
+
+    getDefaultProps: function getDefaultProps() {
+        return {
+            displayFields: ['title', 'creatorSummary', 'dateModified'],
+            item: {}
+        };
+    },
+    render: function render() {
+        var reactInstance = this;
+        var item = this.props.item;
+        var fields = this.props.displayFields.map(function (field) {
+            return React.createElement(
+                'td',
+                { key: field, className: field, 'data-itemkey': item.get('key') },
+                React.createElement(
+                    'a',
+                    { 'data-itemkey': item.get('key'), href: Zotero.url.itemHref(item), title: item.get(field) },
+                    Zotero.format.itemField(field, item, true)
+                )
+            );
+        });
+        return React.createElement(
+            'tr',
+            null,
+            fields
+        );
+    }
+});
+
+module.exports = RecentItems;
+
+},{"../../../library/libZoteroJS/src/Log.js":114,"react":290}],329:[function(require,module,exports){
 'use strict';
 
 var log = require('../../../library/libZoteroJS/src/Log.js').Logger('zotero-web-library:sendToLibraryDialog');
@@ -48583,7 +49005,435 @@ var SendToLibraryDialog = React.createClass({
 
 module.exports = SendToLibraryDialog;
 
-},{"../../../library/libZoteroJS/src/Log.js":114,"./BootstrapModalWrapper.js":307,"react":290}],327:[function(require,module,exports){
+},{"../../../library/libZoteroJS/src/Log.js":114,"./BootstrapModalWrapper.js":307,"react":290}],330:[function(require,module,exports){
+'use strict';
+
+var log = require('../../../library/libZoteroJS/src/Log.js').Logger('zotero-web-library:SiteSearch');
+var net = require('../../../library/libZoteroJS/src/Net.js');
+var React = require('react');
+var LoadingSpinner = require('./LoadingSpinner.js');
+
+var supportSearchRedirect = function supportSearchRedirect(query) {
+	var q = encodeURIComponent(query + ' site:www.zotero.org/support');
+	var url = 'https://duckduckgo.com/?q=' + q;
+	window.location = url;
+};
+
+var forumSearchRedirect = function forumSearchRedirect(query) {
+	var q = encodeURIComponent(query + ' site:forums.zotero.org');
+	var url = 'https://duckduckgo.com/?q=' + q;
+	/*var url = "https://www.google.com/#q=" + q;*/
+	window.location = url;
+};
+
+var UserSearchResult = React.createClass({
+	displayName: 'UserSearchResult',
+
+	render: function render() {
+		var user = this.props.user;
+		var profile = user.meta.profile;
+
+		var profileHref = '/' + user.slug;
+
+		var imageSrc = 'https://s3.amazonaws.com/zotero.org/images/settings/profile/default_squarethumb.png';
+		if (user.hasImage == true) {
+			imageSrc = 'https://s3.amazonaws.com/zotero.org/images/settings/profile/' + user.userID + '_squarethumb.png';
+		}
+
+		var profileImage = React.createElement(
+			'a',
+			{ href: profileHref },
+			React.createElement('img', { className: 'small-profile-image media-object', src: imageSrc, alt: user.displayName, title: user.displayName })
+		);
+
+		var profileNodes = ['title', 'affiliation', 'location', 'disciplines'].map(function (field) {
+			if (!profile[field]) {
+				return null;
+			}
+			return React.createElement(
+				'li',
+				{ key: field },
+				profile[field]
+			);
+		});
+
+		return React.createElement(
+			'li',
+			{ className: 'user-result' },
+			React.createElement(
+				'div',
+				{ className: 'nugget-user media' },
+				React.createElement(
+					'div',
+					{ className: 'media-left' },
+					profileImage
+				),
+				React.createElement(
+					'div',
+					{ className: 'media-body' },
+					React.createElement(
+						'div',
+						{ className: 'nugget-name' },
+						React.createElement(
+							'a',
+							{ href: profileHref },
+							user.displayName
+						)
+					),
+					React.createElement(
+						'ul',
+						{ className: 'nugget-profile list-unstyled' },
+						profileNodes
+					)
+				)
+			)
+		);
+	}
+});
+
+var GroupSearchResult = React.createClass({
+	displayName: 'GroupSearchResult',
+
+	render: function render() {
+		var group = this.props.group;
+		var data = group.apiObj.data;
+
+		var groupHref = group.apiObj.links.alternate;
+		var groupLibraryHref = groupHref + '/items';
+
+		var groupImage = null;
+		if (group.wwwData.hasImage) {
+			//let imageSrc = `https://s3.amazonaws.com/zotero.org/images/settings/group/default_squarethumb.png`;
+			var imageSrc = 'https://s3.amazonaws.com/zotero.org/images/settings/group/' + data.groupID + '_squarethumb.png';
+			groupImage = React.createElement(
+				'a',
+				{ href: groupHref },
+				React.createElement('img', { className: 'small-profile-image media-object', src: imageSrc, alt: data.name, title: data.name })
+			);
+		}
+
+		var libraryLink = null;
+		if (data.type == 'PublicOpen' || data.type == 'PublicClosed') {
+			libraryLink = React.createElement(
+				'a',
+				{ href: groupLibraryHref },
+				'Library'
+			);
+		}
+
+		return React.createElement(
+			'li',
+			{ className: 'group-result' },
+			React.createElement(
+				'div',
+				{ className: 'nugget-group media' },
+				React.createElement(
+					'div',
+					{ className: 'media-left' },
+					groupImage
+				),
+				React.createElement(
+					'div',
+					{ className: 'media-body' },
+					React.createElement(
+						'div',
+						{ className: 'nugget-name' },
+						React.createElement(
+							'a',
+							{ href: groupHref },
+							data.name
+						)
+					),
+					React.createElement(
+						'dl',
+						{ 'class': 'nugget-profile' },
+						React.createElement(
+							'div',
+							{ className: 'nugget-description' },
+							React.createElement(
+								'dt',
+								null,
+								'Description'
+							),
+							React.createElement(
+								'dd',
+								null,
+								data.description
+							)
+						),
+						React.createElement(
+							'div',
+							{ className: 'nugget-type' },
+							React.createElement(
+								'dt',
+								null,
+								'Type'
+							),
+							React.createElement(
+								'dd',
+								null,
+								data.type
+							)
+						)
+					),
+					libraryLink
+				)
+			)
+		);
+	}
+});
+
+var SiteSearch = React.createClass({
+	displayName: 'SiteSearch',
+
+	componentWillMount: function componentWillMount() {
+		Zotero.config.nonparsedBaseUrl = '/search';
+	},
+	componentDidMount: function componentDidMount() {
+		if (this.state.query != '') {
+			this.search();
+		}
+	},
+	getDefaultProps: function getDefaultProps() {
+		return {};
+	},
+	getInitialState: function getInitialState() {
+		var query = Zotero.state.getUrlVar('q');
+		var type = Zotero.state.getUrlVar('type');
+		if (type == '' || type == undefined) {
+			type = 'support';
+		}
+		return {
+			query: query,
+			type: type,
+			supportType: 'documentation',
+			loading: false,
+			page: 1,
+			results: null,
+			resultCount: null
+		};
+	},
+	queryChanged: function queryChanged(evt) {
+		var newq = evt.target.value;
+		this.setState({ query: newq, page: 1 });
+	},
+	search: function search(evt) {
+		var _this = this;
+
+		if (evt) {
+			evt.preventDefault();
+		}
+
+		var query = this.state.query;
+		var type = this.state.type;
+
+		//redirect to duckduckgo if site search
+		if (type == 'support') {
+			if (this.state.supportType == 'documentation') {
+				supportSearchRedirect(this.state.query);
+			} else if (this.state.supportType == 'forums') {
+				forumSearchRedirect(this.state.query);
+			}
+		}
+
+		Zotero.state.setQueryVar('q', query);
+		Zotero.state.pushState();
+
+		//build local search url
+		var searchPath = '/search/' + type + '?query=' + encodeURIComponent(query);
+		if (this.state.page > 1) {
+			searchPath += '&page=' + this.state.page;
+		}
+
+		var newState = { loading: true };
+		if (this.state.page == 1) {
+			newState.results = null;
+			newState.resultCount = null;
+		}
+		this.setState(newState);
+
+		net.ajax({
+			type: 'GET',
+			url: searchPath
+		}).then(function (request) {
+			var results = JSON.parse(request.response);
+			var newResultArray = results.results;
+
+			if (_this.state.page > 1) {
+				newResultArray = _this.state.results.concat(newResultArray);
+			}
+			_this.setState({ resultCount: results.resultCount, results: newResultArray, loading: false });
+		});
+	},
+	loadMore: function loadMore() {
+		var newPage = this.state.page + 1;
+		this.setState({ page: newPage }, this.search);
+	},
+	setType: function setType(evt) {
+		evt.preventDefault();
+		var type = evt.currentTarget.getAttribute('data-searchtype');
+		this.setState({ type: type, results: null, resultCount: null, loading: false });
+		Zotero.state.setUrlVar('type', type);
+		Zotero.state.pushState();
+	},
+	changeSupportType: function changeSupportType(evt) {
+		this.setState({ supportType: evt.target.value });
+	},
+	render: function render() {
+		var resultNodes = null;
+		if (this.state.results != null) {
+			switch (this.state.type) {
+				case 'users':
+					resultNodes = this.state.results.map(function (result) {
+						return React.createElement(UserSearchResult, { key: result.userID, user: result });
+					});
+					break;
+				case 'groups':
+					resultNodes = this.state.results.map(function (result) {
+						return React.createElement(GroupSearchResult, { key: result.apiObj.id, group: result });
+					});
+					break;
+				case 'default':
+					log.warn('unknown search type: ' + this.state.type);
+			}
+		}
+		var usersLiClassname = this.state.type == 'users' ? 'active' : '';
+		var groupsLiClassname = this.state.type == 'groups' ? 'active' : '';
+		var supportLiClassname = this.state.type == 'support' ? 'active' : '';
+
+		var tabPanel = null;
+		switch (this.state.type) {
+			case 'users':
+				tabPanel = React.createElement(
+					'form',
+					{ onSubmit: this.search },
+					React.createElement('input', { type: 'text', className: 'textinput form-control', value: this.state.query, onChange: this.queryChanged })
+				);
+				break;
+			case 'groups':
+				tabPanel = React.createElement(
+					'form',
+					{ onSubmit: this.search },
+					React.createElement('input', { type: 'text', className: 'textinput form-control', value: this.state.query, onChange: this.queryChanged })
+				);
+				break;
+			case 'support':
+				tabPanel = React.createElement(
+					'form',
+					{ onSubmit: this.search },
+					React.createElement('input', { type: 'text', className: 'textinput form-control', value: this.state.query, onChange: this.queryChanged }),
+					React.createElement(
+						'div',
+						{ className: 'radio' },
+						React.createElement(
+							'label',
+							null,
+							React.createElement('input', { type: 'radio', checked: this.state.supportType == 'documentation', name: 'supportType', value: 'documentation', onChange: this.changeSupportType }),
+							'Documentation'
+						)
+					),
+					React.createElement(
+						'div',
+						{ className: 'radio' },
+						React.createElement(
+							'label',
+							null,
+							React.createElement('input', { type: 'radio', checked: this.state.supportType == 'forums', name: 'supportType', value: 'forums', onChange: this.changeSupportType }),
+							'Forums'
+						)
+					)
+				);
+				break;
+			default:
+				log.warn('unexpected search type: ' + this.state.type);
+		}
+
+		var moreButton = null;
+		if (this.state.results != null) {
+			if (this.state.resultCount > this.state.results.length) {
+				moreButton = React.createElement(
+					'button',
+					{ className: 'btn btn-default', onClick: this.loadMore },
+					'More'
+				);
+			}
+		}
+
+		return React.createElement(
+			'div',
+			{ className: 'sitesearch' },
+			React.createElement(
+				'h1',
+				null,
+				'Search'
+			),
+			React.createElement(
+				'ul',
+				{ className: 'nav nav-pills' },
+				React.createElement(
+					'li',
+					{ className: usersLiClassname },
+					React.createElement(
+						'a',
+						{ href: '#', 'data-searchtype': 'users', onClick: this.setType },
+						React.createElement(
+							'span',
+							null,
+							'People'
+						)
+					)
+				),
+				React.createElement(
+					'li',
+					{ className: groupsLiClassname },
+					React.createElement(
+						'a',
+						{ href: '#', 'data-searchtype': 'groups', onClick: this.setType },
+						React.createElement(
+							'span',
+							null,
+							'Groups'
+						)
+					)
+				),
+				React.createElement(
+					'li',
+					{ className: supportLiClassname },
+					React.createElement(
+						'a',
+						{ href: '#', 'data-searchtype': 'support', onClick: this.setType },
+						React.createElement(
+							'span',
+							null,
+							'Support'
+						)
+					)
+				)
+			),
+			React.createElement(
+				'div',
+				{ className: 'tab-content' },
+				tabPanel
+			),
+			React.createElement(
+				'div',
+				{ id: 'results' },
+				React.createElement('h2', { id: 'search-result-count' }),
+				React.createElement(LoadingSpinner, { loading: this.state.loading }),
+				React.createElement(
+					'ul',
+					{ id: 'search-results', className: 'list-unstyled' },
+					resultNodes
+				),
+				moreButton
+			)
+		);
+	}
+});
+
+module.exports = SiteSearch;
+
+},{"../../../library/libZoteroJS/src/Log.js":114,"../../../library/libZoteroJS/src/Net.js":115,"./LoadingSpinner.js":326,"react":290}],331:[function(require,module,exports){
 'use strict';
 
 var log = require('../../../library/libZoteroJS/src/Log.js').Logger('zotero-web-library:Tags');
@@ -48700,7 +49550,7 @@ var Tags = React.createClass({
 	},
 	getSelectedTagsArray: function getSelectedTagsArray() {
 		var selectedTags = Zotero.state.getUrlVar('tag');
-		if (!J.isArray(selectedTags)) {
+		if (!Array.isArray(selectedTags)) {
 			if (selectedTags) {
 				selectedTags = [selectedTags];
 			} else {
@@ -48800,7 +49650,7 @@ var Tags = React.createClass({
 
 module.exports = Tags;
 
-},{"../../../library/libZoteroJS/src/Log.js":114,"./LoadingSpinner.js":325,"react":290}],328:[function(require,module,exports){
+},{"../../../library/libZoteroJS/src/Log.js":114,"./LoadingSpinner.js":326,"react":290}],332:[function(require,module,exports){
 'use strict';
 
 var log = require('../../../library/libZoteroJS/src/Log.js').Logger('zotero-web-library:updateCollectionDialog');
@@ -48978,7 +49828,7 @@ var UpdateCollectionDialog = React.createClass({
 
 module.exports = UpdateCollectionDialog;
 
-},{"../../../library/libZoteroJS/src/Log.js":114,"./BootstrapModalWrapper.js":307,"react":290}],329:[function(require,module,exports){
+},{"../../../library/libZoteroJS/src/Log.js":114,"./BootstrapModalWrapper.js":307,"react":290}],333:[function(require,module,exports){
 'use strict';
 
 var log = require('../../../library/libZoteroJS/src/Log.js').Logger('zotero-web-library:uploadDialog');
@@ -49127,7 +49977,7 @@ var UploadAttachmentDialog = React.createClass({
 		log.debug('fileuploaddroptarget callback 1', 3);
 		evt.stopPropagation();
 		evt.preventDefault();
-		var files = J(this.refs.fileInput).get(0).files;
+		var files = this.refs.fileInput.files;
 		this.handleFiles(files);
 	},
 	handleTitleChange: function handleTitleChange(evt) {
@@ -49289,7 +50139,230 @@ var UploadAttachmentDialog = React.createClass({
 
 module.exports = UploadAttachmentDialog;
 
-},{"../../../library/libZoteroJS/src/Log.js":114,"./BootstrapModalWrapper.js":307,"./LoadingSpinner.js":325,"react":290}],330:[function(require,module,exports){
+},{"../../../library/libZoteroJS/src/Log.js":114,"./BootstrapModalWrapper.js":307,"./LoadingSpinner.js":326,"react":290}],334:[function(require,module,exports){
+'use strict';
+
+var log = require('../../../library/libZoteroJS/src/Log.js').Logger('zotero-web-library:userGroupInfo');
+
+var React = require('react');
+
+var LoadingSpinner = require('./LoadingSpinner.js');
+
+var GroupNugget = React.createClass({
+	displayName: 'GroupNugget',
+
+	render: function render() {
+		var reactInstance = this;
+		var group = this.props.group;
+
+		var userID = Zotero.config.loggedInUserID;
+		var groupManageable = false;
+		var memberCount = 1;
+		if (group.apiObj.data.members) {
+			memberCount += group.apiObj.data.members.length;
+		}
+		if (group.apiObj.data.admins) {
+			memberCount += group.apiObj.data.admins.length;
+		}
+
+		if (userID && (userID == group.apiObj.data.owner || group.apiObj.data.admins.indexOf(userID) != -1)) {
+			groupManageable = true;
+		}
+
+		var groupImage = null;
+		if (group.hasImage) {
+			groupImage = React.createElement(
+				'a',
+				{ href: Zotero.url.groupViewUrl(group), className: 'group-image' },
+				React.createElement('img', { src: Zotero.url.groupImageUrl(group), alt: '' })
+			);
+		}
+
+		var manageLinks = null;
+		if (groupManageable) {
+			manageLinks = React.createElement(
+				'nav',
+				{ className: 'action-links' },
+				React.createElement(
+					'li',
+					null,
+					React.createElement(
+						'a',
+						{ href: Zotero.url.groupSettingsUrl(group) },
+						'Manage Profile'
+					)
+				),
+				React.createElement(
+					'li',
+					null,
+					React.createElement(
+						'a',
+						{ href: Zotero.url.groupMemberSettingsUrl(group) },
+						'Manage Members'
+					)
+				),
+				React.createElement(
+					'li',
+					null,
+					React.createElement(
+						'a',
+						{ href: Zotero.url.groupLibrarySettingsUrl(group) },
+						'Manage Library'
+					)
+				)
+			);
+		}
+
+		var groupDescription = null;
+		if (group.apiObj.data.description) {
+			var markup = { __html: group.apiObj.data.description };
+			groupDescription = React.createElement(
+				'tr',
+				null,
+				React.createElement(
+					'th',
+					{ scope: 'row' },
+					'Description'
+				),
+				React.createElement('td', { dangerouslySetInnerHTML: markup })
+			);
+		}
+
+		var libAccess = Zotero.Group.prototype.accessMap[group.apiObj.data.libraryReading][group.apiObj.data.libraryEditing];
+		if (group.apiObj.data.type == 'Private' && group.apiObj.data.libraryReading == 'all') {
+			libAccess = Zotero.Group.prototype.accessMap['members'][group.apiObj.data.libraryEditing];
+		}
+
+		return React.createElement(
+			'div',
+			{ key: group.groupID, className: 'nugget-group' },
+			React.createElement(
+				'div',
+				{ className: 'nugget-full' },
+				groupImage,
+				React.createElement(
+					'div',
+					{ className: 'nugget-name' },
+					React.createElement(
+						'a',
+						{ href: Zotero.url.groupViewUrl(group) },
+						group.apiObj.data.name
+					)
+				),
+				React.createElement(
+					'nav',
+					{ id: 'group-library-link-nav', className: 'action-links' },
+					React.createElement(
+						'ul',
+						null,
+						React.createElement(
+							'li',
+							null,
+							React.createElement(
+								'a',
+								{ href: Zotero.url.groupLibraryUrl(group) },
+								'Group Library'
+							)
+						)
+					)
+				),
+				manageLinks,
+				React.createElement(
+					'table',
+					{ className: 'nugget-profile table' },
+					React.createElement(
+						'tbody',
+						null,
+						React.createElement(
+							'tr',
+							null,
+							React.createElement(
+								'th',
+								{ scope: 'row' },
+								'Members'
+							),
+							React.createElement(
+								'td',
+								null,
+								memberCount
+							)
+						),
+						groupDescription,
+						React.createElement(
+							'tr',
+							null,
+							React.createElement(
+								'th',
+								{ scope: 'row' },
+								'Group Type'
+							),
+							React.createElement(
+								'td',
+								null,
+								Zotero.Group.prototype.typeMap[group.apiObj.data.type]
+							)
+						),
+						React.createElement(
+							'tr',
+							null,
+							React.createElement(
+								'th',
+								{ scope: 'row' },
+								'Group Library'
+							),
+							React.createElement(
+								'td',
+								null,
+								libAccess
+							)
+						)
+					)
+				)
+			)
+		);
+	}
+});
+
+var UserGroups = React.createClass({
+	displayName: 'UserGroups',
+
+	componentWillMount: function componentWillMount() {
+		var reactInstance = this;
+		var groups = new Zotero.Groups();
+		if (Zotero.config.loggedIn && Zotero.config.loggedInUserID) {
+			reactInstance.setState({ loading: true });
+			var groupsPromise = groups.fetchUserGroups(Zotero.config.loggedInUserID).then(function (response) {
+				var groups = response.fetchedGroups;
+				reactInstance.setState({ groups: groups, loading: false });
+			}).catch(Zotero.catchPromiseError);
+		}
+	},
+	getInitialState: function getInitialState() {
+		return {
+			groups: [],
+			loading: false
+		};
+	},
+	render: function render() {
+		var reactInstance = this;
+		var groups = this.state.groups;
+
+		var groupNuggets = groups.map(function (group) {
+			return React.createElement(GroupNugget, { key: group.get('id'), group: group });
+		});
+
+		return React.createElement(
+			'div',
+			{ id: 'user-groups-div', className: 'user-groups' },
+			groupNuggets,
+			React.createElement(LoadingSpinner, { loading: reactInstance.state.loading })
+		);
+	}
+});
+
+module.exports = UserGroups;
+
+},{"../../../library/libZoteroJS/src/Log.js":114,"./LoadingSpinner.js":326,"react":290}],335:[function(require,module,exports){
 'use strict';
 
 var log = require('../../../library/libZoteroJS/src/Log.js').Logger('zotero-web-library:ZoteroLibrary');
@@ -49343,7 +50416,7 @@ var ZoteroLibrary = React.createClass({
 		});
 		library.listen('cachedDataLoaded', function () {});
 
-		J(window).on('resize', function () {
+		window.addEventListener('resize', function () {
 			if (!window.matchMedia('(min-width: 768px)').matches) {
 				if (reactInstance.state.narrow != true) {
 					reactInstance.setState({ narrow: true });
@@ -49367,9 +50440,9 @@ var ZoteroLibrary = React.createClass({
 		});
 
 		//trigger loading of more items on scroll reaching bottom
-		J(reactInstance.refs.itemsPanel).on('scroll', function () {
-			var jel = J(reactInstance.refs.itemsPanel);
-			if (jel.scrollTop() + jel.innerHeight() >= jel[0].scrollHeight) {
+		reactInstance.refs.itemsPanel.addEventListener('scroll', function () {
+			var el = reactInstance.refs.itemsPanel;
+			if (el.scrollTop + el.clientHeight >= el.scrollHeight) {
 				reactInstance.refs.itemsWidget.loadMoreItems();
 			}
 		});
@@ -49417,16 +50490,18 @@ var ZoteroLibrary = React.createClass({
 			return base + '/static' + path;
 		};
 
-		var inboxText = user.unreadMessages > 0 ? React.createElement(
-			'strong',
-			null,
-			'Inbox (',
-			user.unreadMessages,
-			')'
-		) : 'Inbox';
+		var inboxText = '';
 		var siteActionsMenu;
 
 		if (user) {
+			inboxText = user.unreadMessages > 0 ? React.createElement(
+				'strong',
+				null,
+				'Inbox (',
+				user.unreadMessages,
+				')'
+			) : 'Inbox';
+
 			siteActionsMenu = [React.createElement(
 				'button',
 				{ key: 'button', type: 'button', href: '#', className: 'btn btn-default navbar-btn dropdown-toggle', 'data-toggle': 'dropdown', role: 'button', 'aria-expanded': 'false' },
@@ -49762,7 +50837,7 @@ var ZoteroLibrary = React.createClass({
 
 module.exports = ZoteroLibrary;
 
-},{"../../../library/libZoteroJS/src/Log.js":114,"./AddToCollectionDialog.js":306,"./ChooseSortingDialog.js":309,"./CiteItemDialog.js":310,"./Collections.js":311,"./ControlPanel.js":312,"./CreateCollectionDialog.js":313,"./CreateItemDialog.js":314,"./DeleteCollectionDialog.js":315,"./ExportItemsDialog.js":316,"./FeedLink.js":317,"./FilterGuide.js":318,"./ItemDetails.js":320,"./Items.js":321,"./LibrarySearchBox.js":322,"./LibrarySettingsDialog.js":323,"./SendToLibraryDialog.js":326,"./Tags.js":327,"./UpdateCollectionDialog.js":328,"./UploadAttachmentDialog.js":329,"react":290,"react-dom":154}],331:[function(require,module,exports){
+},{"../../../library/libZoteroJS/src/Log.js":114,"./AddToCollectionDialog.js":306,"./ChooseSortingDialog.js":309,"./CiteItemDialog.js":310,"./Collections.js":311,"./ControlPanel.js":312,"./CreateCollectionDialog.js":313,"./CreateItemDialog.js":314,"./DeleteCollectionDialog.js":315,"./ExportItemsDialog.js":316,"./FeedLink.js":317,"./FilterGuide.js":318,"./ItemDetails.js":321,"./Items.js":322,"./LibrarySearchBox.js":323,"./LibrarySettingsDialog.js":324,"./SendToLibraryDialog.js":329,"./Tags.js":331,"./UpdateCollectionDialog.js":332,"./UploadAttachmentDialog.js":333,"react":290,"react-dom":154}],336:[function(require,module,exports){
 'use strict';
 
 var log = require('../library/libZoteroJS/src/Log.js').Logger('zotero-web-library:zotero-web-library');
@@ -49812,7 +50887,7 @@ jQuery(document).ready(function () {
 
 module.exports = Zotero;
 
-},{"../library/libZoteroJS/libzoterojs.js":1,"../library/libZoteroJS/src/Log.js":114,"./Delay.js":292,"./Init.js":293,"./Pages/Pages.js":297,"./State.js":301,"./Url.js":302,"./libraryUi/eventful.js":303,"./libraryUi/format.js":304,"./libraryUi/ui.js":305,"./libraryUi/widgets/ZoteroLibrary.js":330,"floatthead":150,"jquery":151,"react":290,"react-dom":154}]},{},[331])
+},{"../library/libZoteroJS/libzoterojs.js":1,"../library/libZoteroJS/src/Log.js":114,"./Delay.js":292,"./Init.js":293,"./Pages/Pages.js":297,"./State.js":301,"./Url.js":302,"./libraryUi/eventful.js":303,"./libraryUi/format.js":304,"./libraryUi/ui.js":305,"./libraryUi/widgets/ZoteroLibrary.js":335,"floatthead":150,"jquery":151,"react":290,"react-dom":154}]},{},[336])
 
 
 //# sourceMappingURL=zotero-web-library.js.map

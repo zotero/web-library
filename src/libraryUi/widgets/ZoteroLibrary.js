@@ -56,7 +56,7 @@ var ZoteroLibrary = React.createClass({
 
 		});
 		
-		J(window).on('resize', function(){
+		window.addEventListener('resize', function(){
 			if(!window.matchMedia('(min-width: 768px)').matches){
 				if(reactInstance.state.narrow != true){
 					reactInstance.setState({narrow:true});
@@ -80,9 +80,9 @@ var ZoteroLibrary = React.createClass({
 		});
 
 		//trigger loading of more items on scroll reaching bottom
-		J(reactInstance.refs.itemsPanel).on('scroll', function(){
-			var jel = J(reactInstance.refs.itemsPanel);
-			if(jel.scrollTop() + jel.innerHeight() >= jel[0].scrollHeight){
+		reactInstance.refs.itemsPanel.addEventListener('scroll', function(){
+			let el = reactInstance.refs.itemsPanel;
+			if(el.scrollTop + el.clientHeight >= el.scrollHeight){
 				reactInstance.refs.itemsWidget.loadMoreItems();
 			}
 		});

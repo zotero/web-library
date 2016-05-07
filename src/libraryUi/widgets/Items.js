@@ -183,7 +183,7 @@ var Items = React.createClass({
 		var currentSortField = this.state.order;
 		var currentSortOrder = this.state.sort;
 		
-		var newSortField = J(evt.target).data('columnfield');
+		var newSortField = evt.target.getAttribute('data-columnfield');
 		var newSortOrder;
 		if(newSortField != currentSortField) {
 			newSortOrder = Zotero.config.sortOrdering[newSortField]; //default for column
@@ -262,7 +262,7 @@ var Items = React.createClass({
 		this.setState({selectedItemKeys: Zotero.state.getSelectedItemKeys(), allSelected:false});
 	},
 	fixTableHeaders: function() {
-		if(J('body').hasClass('lib-body')) {
+		if(document.getElementsByTagName('body')[0].className.indexOf('lib-body') != -1) {
 			var tableEl = J(this.refs.itemsTable);
 			tableEl.floatThead({
 				top: function() {
@@ -313,6 +313,7 @@ var Items = React.createClass({
 		this.nonreactBind();
 	},
 	render: function() {
+		log.debug('Items.render', 3);
 		var reactInstance = this;
 		var library = this.props.library;
 		var narrow = this.props.narrow;
@@ -441,7 +442,7 @@ var ItemRow = React.createClass({
 	},
 	handleItemLinkClick: function(evt) {
 		evt.preventDefault();
-		let itemKey = J(evt.target).data('itemkey');
+		let itemKey = evt.target.getAttribute('data-itemkey');
 		if(evt.ctrlKey) {
 			//add item to selected, but don't deselect others
 			Zotero.state.toggleItemSelected(itemKey);

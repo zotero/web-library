@@ -35,11 +35,11 @@ var FilterGuide = React.createClass({
 	clearFilter: function(evt){
 		evt.preventDefault();
 		log.debug('widgets.filterGuide.clearFilter', 3);
-		var library = this.props.library;
-		var target = J(evt.currentTarget);
-		var collectionKey = target.data('collectionkey');
-		var tag = target.data('tag');
-		var query = target.data('query');
+		let library = this.props.library;
+		let target = evt.currentTarget;
+		let collectionKey = target.getAttribute('data-collectionkey');
+		let tag = target.getAttribute('data-tag');
+		let query = target.getAttribute('data-query');
 		if(collectionKey){
 			Zotero.state.unsetUrlVar('collectionKey');
 			this.setState({collectionKey:''});

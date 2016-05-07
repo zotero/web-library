@@ -148,7 +148,7 @@ var UploadAttachmentDialog = React.createClass({
 		log.debug('fileuploaddroptarget callback 1', 3);
 		evt.stopPropagation();
 		evt.preventDefault();
-		var files = J(this.refs.fileInput).get(0).files;
+		var files = this.refs.fileInput.files;
 		this.handleFiles(files);
 	},
 	handleTitleChange: function(evt) {

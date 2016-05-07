@@ -308,9 +308,9 @@ var ItemField = React.createClass({
 		Zotero.ui.saveItem(this.props.item);
 	},
 	handleFocus: function(evt) {
-		var field = J(evt.currentTarget).data('field');
-		var creatorIndex = J(evt.target).data('creatorindex');
-		var tagIndex = J(evt.target).data('tagindex');
+		var field = evt.currentTarget.getAttribute('data-field');
+		var creatorIndex = evt.target.getAttribute('data-creatorindex');
+		var tagIndex = evt.target.getAttribute('data-tagindex');
 		var edit = {
 			field: field,
 			creatorIndex: creatorIndex,
@@ -324,7 +324,7 @@ var ItemField = React.createClass({
 		evt.stopPropagation();
 		if (evt.keyCode === Zotero.ui.keyCode.ENTER){
 			//var nextEdit = Zotero.ui.widgets.reactitem.nextEditField(this.props.item, this.props.edit);
-			J(evt.target).blur();
+			evt.target.blur();
 		}
 	},
 	render: function(){

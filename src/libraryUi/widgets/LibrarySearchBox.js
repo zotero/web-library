@@ -5,18 +5,30 @@ var log = require('../../../library/libZoteroJS/src/Log.js').Logger('zotero-web-
 var React = require('react');
 
 var LibrarySearchBox = React.createClass({
+	componentWillMount: function(){
+		let library = this.props.library;
+		if(!library) {
+			log.error('no library prop set on LibrarySearchBox');
+		}
+		library.listen('clearLibraryQuery', this.clearLibraryQuery);
+	},
 	getInitialState: function(){
+		let query = Zotero.state.getUrlVar('q');
+		if(query === undefined){
+			query = '';
+		}
 		return {
 			searchType: 'simple',
+			query:query
 		};
 	},
 	search: function(evt) {
 		evt.preventDefault();
 		log.debug('library-search form submitted', 3);
 		Zotero.state.clearUrlVars(['collectionKey', 'tag', 'q', 'qmode']);
-		var container = J(evt.target);
-		var query = container.find('input.search-query').val();
-		var searchType = container.find('input.search-query').data('searchtype');
+		let query = this.state.query;
+		let searchType = this.state.searchType;
+		
 		if(query !== '' || Zotero.state.getUrlVar('q') ){
 			Zotero.state.pathVars['q'] = query;
 			if(searchType != 'simple'){
@@ -26,19 +38,21 @@ var LibrarySearchBox = React.createClass({
 		}
 		return false;
 	},
-	clearLibraryQuery: function(evt){
+	clearLibraryQuery: function(){
 		Zotero.state.unsetUrlVar('q');
 		Zotero.state.unsetUrlVar('qmode');
 		
-		J('.search-query').val('');
+		this.setState({query:''});
 		Zotero.state.pushState();
 		return;
 	},
 	changeSearchType: function(evt){
 		evt.preventDefault();
-		var selected = J(evt.target);
-		var selectedType = selected.data('searchtype');
+		let selectedType = evt.target.getAttribute('data-searchtype');
 		this.setState({searchType: selectedType});
+	},
+	changeQuery: function(evt){
+		this.setState({query:evt.target.value});
 	},
 	render: function() {
 		var placeHolder = '';
@@ -47,8 +61,7 @@ var LibrarySearchBox = React.createClass({
 		} else if(this.state.searchType == 'everything'){
 			placeHolder = 'Search Full Text';
 		}
-		var defaultValue = Zotero.state.getUrlVar('q');
-
+		
 		return (
 			<div className="btn-toolbar row" id="search-box" style={{maxWidth:'350px'}}>
 				<form action="/search/" onSubmit={this.search} className="navbar-form zsearch library-search" role="search">
@@ -60,7 +73,7 @@ var LibrarySearchBox = React.createClass({
 								<li><a href="#" onClick={this.changeSearchType} data-searchtype="everything">Full Text</a></li>
 							</ul>
 						</div>
-						<input defaultValue={defaultValue} type="text" name="q" id="header-search-query" className="search-query form-control" placeholder={placeHolder}/>
+						<input onChange={this.changeQuery} value={this.state.query} type="text" name="q" id="header-search-query" className="search-query form-control" placeholder={placeHolder}/>
 						<span className="input-group-btn">
 							<button onClick={this.clearLibraryQuery} className="btn btn-default clear-field-button" type="button"><span className="glyphicons fonticon glyphicons-remove-2"></span></button>
 						</span>

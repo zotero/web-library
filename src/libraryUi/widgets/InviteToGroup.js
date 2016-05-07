@@ -57,7 +57,7 @@ var InviteDialog = React.createClass({
 	inviteToGroup: function(evt) {
 		var reactInstance = this;
 		log.debug(evt);
-		var groupID = J(evt.currentTarget).data('groupid');
+		var groupID = parseInt(evt.currentTarget.getAttribute('data-groupid'), 10);
 		
 		J.ajax({
 			'type': 'POST',

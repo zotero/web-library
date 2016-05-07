@@ -134,8 +134,7 @@ var ActionsDropdown = React.createClass({
 		var trashingItems = library.items.getItems(itemKeys);
 		var deletingItems = []; //potentially deleting instead of trashing
 		
-		//show spinner before making the possibly many the ajax requests
-		//Zotero.ui.showSpinner(J('#library-items-div'));
+		//TODO: show items list loading?
 		
 		if(Zotero.state.getUrlVar('collectionKey') == 'trash'){
 			//items already in trash. delete them
@@ -176,8 +175,7 @@ var ActionsDropdown = React.createClass({
 		
 		var untrashingItems = library.items.getItems(itemKeys);
 		
-		//show spinner before making the possibly many the ajax requests
-		//Zotero.ui.showSpinner(J('#library-items-div'));
+		//TODO: show items list loading?
 		
 		var response = library.items.untrashItems(untrashingItems);
 		
@@ -222,7 +220,7 @@ var ActionsDropdown = React.createClass({
 		return false;
 	},
 	triggerLibraryEvent: function(evt) {
-		var eventType = J(evt.target).data('triggers');
+		var eventType = evt.currentTarget.getAttribute('data-triggers');
 		this.props.library.trigger(eventType);
 	},
 	triggerSync: function() {
@@ -285,7 +283,7 @@ var CreateItemDropdown = React.createClass({
 		log.debug('create-item-Link clicked', 3);
 		evt.preventDefault();
 		var library = this.props.library;
-		var itemType = J(evt.target).data('itemtype');
+		var itemType = evt.target.getAttribute('data-itemtype');
 		library.trigger('createItem', {itemType:itemType});
 		return false;
 	},
