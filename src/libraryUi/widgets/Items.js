@@ -302,15 +302,11 @@ var Items = React.createClass({
 		var library = this.props.library;
 		library.trigger('chooseSortingDialog');
 	},
-	nonreactBind: function() {
+	componentDidMount: function() {
 		this.fixTableHeaders();
 	},
-	componentDidMount: function() {
-		var reactInstance = this;
-		reactInstance.nonreactBind();
-	},
 	componentDidUpdate: function() {
-		this.nonreactBind();
+		this.fixTableHeaders();
 	},
 	render: function() {
 		log.debug('Items.render', 3);

@@ -5,7 +5,6 @@ var log = require('../../library/libZoteroJS/src/Log.js').Logger('zotero-web-lib
 //base zotero js functions that will be used on every page
 var base = {};
 base.init = function(){
-	this.tagline();
 	this.setupSearch();
 	this.setupNav();
 	J('#sitenav .toggle').click(this.navMenu);
@@ -16,26 +15,6 @@ base.init = function(){
 		J(this).siblings('.support-menu-expand-section').slideToggle();
 	});
 	
-};
-
-/**
- * Selects a random tagline for the header
- *
- * @return void
- **/
-base.tagline = function(){
-	var taglines = [
-		'See it. Save it. Sort it. Search it. Cite it.',
-		'Leveraging the long tail of scholarship.',
-		'A personal research assistant. Inside your browser.',
-		'Goodbye 3x5 cards, hello Zotero.',
-		'Citation management is only the beginning.',
-		'The next-generation research tool.',
-		'Research, not re-search',
-		'The web now has a wrangler.'
-	];
-	var pos = Math.floor(Math.random() * taglines.length);
-	J('#tagline').text(taglines[pos]);
 };
 
 /**
@@ -87,17 +66,16 @@ base.setupSearch = function() {
 
 base.supportSearchRedirect = function(query) {
 	var q = encodeURIComponent(query + ' site:www.zotero.org/support');
-	//log.debug(q);return;
-	var url = 'https://duckduckgo.com/?q=' + q;
+	var url = `https://duckduckgo.com/?q=${q}`;
 	window.location = url;
 };
 
 base.forumSearchRedirect = function(query) {
 	var q = encodeURIComponent(query + ' site:forums.zotero.org');
-	var url = 'https://duckduckgo.com/?q=' + q;
-	/*var url = "https://www.google.com/#q=" + q;*/
+	var url = `https://duckduckgo.com/?q=${q}`;
 	window.location = url;
 };
+
 /**
  * Select the right nav tab
  *

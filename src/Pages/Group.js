@@ -6,54 +6,17 @@ var React = require('react');
 var ReactDOM = require('react-dom');
 var UserGroupInfo = require('../libraryUi/widgets/UserGroupInfo.js');
 var RecentItems = require('../libraryUi/widgets/RecentItems.js');
+var CreateGroup = require('../libraryUi/widgets/CreateGroup.js');
 
 var Group = {
 	group_new: {
 		init: function(){
-			var timeout;
-			// When the value of the input box changes,
-			J('input#name').keyup(function(e){
-				clearTimeout(timeout);
-				timeout = setTimeout(Zotero.pages.group_new.nameChange, 300);
-			});
-			
-			J('input[name=group_type]').change(Zotero.pages.group_new.nameChange);
-			
-			//insert slug preview label
-			J('input#name').after("<label id='slugpreview'>Group URL: " +
-									Zotero.config.baseZoteroWebsiteUrl + '/' + 'groups/' +
-									Zotero.utils.slugify(J('input#name').val()) +
-									'</label>');
-			
-		},
-		
-		nameChange: function(){
-			//make sure label is black after each change before checking with server
-			J('#slugpreview').css('color', 'black');
-			var groupType = J('input[name=group_type]:checked').val();
-			// update slug preview text
-			if(groupType == 'Private'){
-				J('#slugpreview').text('Group URL: ' +Zotero.config.baseZoteroWebsiteUrl + '/' + 'groups/<number>');
-			}
-			else{
-				J('#slugpreview').text('Group URL: ' +Zotero.config.baseZoteroWebsiteUrl + '/' + 'groups/' +
-				Zotero.utils.slugify(J('input#name').val()) );
-			}
-			
-			if(groupType != 'Private'){
-				// Get the value of the name input
-				var input = J('input#name').val();
-				// Poll the server with the input value
-				J.getJSON(baseURL+'/group/checkname/', {'input':input}, function(data){
-					J('#namePreview span').text(data.slug);
-					if(data.valid){
-						J('#slugpreview').css({'color':'green'});
-					} else {
-						J('#slugpreview').css({'color':'red'});
-					}
-					J('#namePreview img').remove();
-				});
-			}
+			log.debug('group_new init');
+			ReactDOM.render(
+				React.createElement(CreateGroup, null),
+				document.getElementById('create-group')
+			);
+			return;
 		}
 	},
 	
