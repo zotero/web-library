@@ -11,6 +11,7 @@
 @import "reactComponentCSS/tags.css";
 @import "reactComponentCSS/uploadDialog.css";
 @import "reactComponentCSS/siteSearch.css";
+@import "reactComponentCSS/globalSearch.css";
 html {
   font-family: sans-serif;
   -ms-text-size-adjust: 100%;

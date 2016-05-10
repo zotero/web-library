@@ -136,8 +136,12 @@ var SiteSearch = React.createClass({
 	getInitialState: function() {
 		let query = Zotero.state.getUrlVar('q');
 		let type = Zotero.state.getUrlVar('type');
-		if(type == '' || type == undefined) {
+		if(type == '' || typeof(type) == 'undefined') {
 			type = 'support';
+		}
+		if(typeof(query) == 'undefined') {
+			log.debug('query is undefined');
+			query = '';
 		}
 		return {
 			query:query,
@@ -162,7 +166,7 @@ var SiteSearch = React.createClass({
 		let type = this.state.type;
 
 		//redirect to duckduckgo if site search
-		if(type == 'support'){
+		if(type == 'support' && this.state.query !== ''){
 			if(this.state.supportType == 'documentation'){
 				supportSearchRedirect(this.state.query);
 			} else if(this.state.supportType == 'forums'){

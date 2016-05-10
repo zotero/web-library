@@ -2,6 +2,10 @@
 
 var log = require('../../library/libZoteroJS/src/Log.js').Logger('zotero-web-library:Pages:Base');
 
+var React = require('react');
+var ReactDOM = require('react-dom');
+var SearchBox = require('../libraryUi/widgets/SearchBox.js');
+
 //base zotero js functions that will be used on every page
 var base = {};
 base.init = function(){
@@ -23,57 +27,15 @@ base.init = function(){
  * @return void
  **/
 base.setupSearch = function() {
-	//log.debug("setupSearch");
-	var context = 'support';
-	var label   = '';
-	
-	// Look for a context specific search
-	if(undefined !== window.zoterojsSearchContext){
-		context = zoterojsSearchContext;
+	log.debug('setupSearch');
+	let searchboxElement = document.getElementById('searchbox');
+	if(searchboxElement){
+		ReactDOM.render(
+			React.createElement(SearchBox, null),
+			searchboxElement
+		);
 	}
-	switch (context) {
-		case 'people'        : label = 'Search for people';    break;
-		case 'group'         : label = 'Search for groups';    break;
-		case 'documentation' : label = 'Search documentation'; break;
-		case 'library'       : label = 'Search Library';       break;
-		case 'grouplibrary'  : label = 'Search Library';       break;
-		case 'support'       : label = 'Search support';       break;
-		case 'forums'        : label = 'Search forums';        break;
-		default              : label = 'Search support';       break;
-	}
-	
-	if(context == 'documentation' || context == 'support'){
-		J('#simple-search').on('submit', function(e){
-			e.preventDefault();
-			var query     = J(this).find("input[type='text']").val();
-			Z.pages.base.supportSearchRedirect(query);
-		});
-	}
-
-	if(context == 'people' || context == 'group'){
-		J('#simple-search').on('submit', function(e){
-			e.preventDefault();
-			var searchUrl = Zotero.config.baseZoteroWebsiteUrl + '/search/#type/' + context;
-			var query     = J(this).find("input[type='text']").val();
-			if(query !== '' && query != label){
-				searchUrl = searchUrl + '/q/' + encodeURIComponent(query);
-			}
-			location.href = searchUrl;
-			return false;
-		});
-	}
-};
-
-base.supportSearchRedirect = function(query) {
-	var q = encodeURIComponent(query + ' site:www.zotero.org/support');
-	var url = `https://duckduckgo.com/?q=${q}`;
-	window.location = url;
-};
-
-base.forumSearchRedirect = function(query) {
-	var q = encodeURIComponent(query + ' site:forums.zotero.org');
-	var url = `https://duckduckgo.com/?q=${q}`;
-	window.location = url;
+	return;
 };
 
 /**
@@ -85,7 +47,7 @@ base.setupNav = function () {
 	var tab = '';
 	// Look for a context specific search
 	if(undefined !== window.zoterojsSearchContext){
-		tab = zoterojsSearchContext;
+		tab = window.zoterojsSearchContext;
 		if(tab == 'support') { tab = ''; }
 		
 	}

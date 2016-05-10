@@ -1,6 +1,6 @@
 'use strict';
 
-var log = require('../../../library/libZoteroJS/src/Log.js').Logger('zotero-web-library:searchbox');
+var log = require('../../../library/libZoteroJS/src/Log.js').Logger('zotero-web-library:LibrarySearchBox');
 
 var React = require('react');
 
