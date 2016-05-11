@@ -68,6 +68,7 @@ var CreateGroup = React.createClass({
 			}
 		}
 
+		let sessionKey = Zotero.utils.readCookie(Zotero.config.sessionCookieName);
 		return (
 			<div>
 				<h1>Create a New Group</h1>
@@ -82,37 +83,38 @@ var CreateGroup = React.createClass({
 						</div>
 					</div>
 					<div className="row">
-					<div className="form-group">
-						<legend>Group Type</legend>
-						<div id="public-open" className="group-select">
-							<h2>Public, Open Membership</h2>
-							<p>Anyone can view your group online and join the group instantly.</p>
-							<label for="group_type-PublicOpen">
-								<input type="radio" name="group_type" id="group_type-PublicOpen" onChange={this.changeType} value="PublicOpen" checked={this.state.type=='PublicOpen'} />
-								Choose a Public, Open Membership
-							</label>
+						<div className="form-group">
+							<legend>Group Type</legend>
+							<div id="public-open" className="group-select">
+								<h2>Public, Open Membership</h2>
+								<p>Anyone can view your group online and join the group instantly.</p>
+								<label for="group_type-PublicOpen">
+									<input type="radio" name="group_type" id="group_type-PublicOpen" onChange={this.changeType} value="PublicOpen" checked={this.state.type=='PublicOpen'} />
+									Choose a Public, Open Membership
+								</label>
+							</div>
+							<div id="public-closed" className="group-select">
+								<h2>Public, Closed Membership</h2>
+								<p>Anyone can view your group online, but members must apply or be invited.</p>
+								<label for="group_type-PublicClosed">
+									<input type="radio" name="group_type" id="group_type-PublicClosed" onChange={this.changeType} value="PublicClosed" checked={this.state.type=='PublicClosed'} />
+									Choose Public, Closed Membership
+								</label>
+							</div>
+							<div id="private" className="group-select">
+								<h2>Private Membership</h2>
+								<p>Only members can view your group online and must be invited to join.</p>
+								<label for="group_type-Private">
+									<input type="radio" name="group_type" id="group_type-Private" onChange={this.changeType} value="Private" checked={this.state.type=='Private'} />
+									Choose Private Membership
+								</label>
+							</div>
 						</div>
-						<div id="public-closed" className="group-select">
-							<h2>Public, Closed Membership</h2>
-							<p>Anyone can view your group online, but members must apply or be invited.</p>
-							<label for="group_type-PublicClosed">
-								<input type="radio" name="group_type" id="group_type-PublicClosed" onChange={this.changeType} value="PublicClosed" checked={this.state.type=='PublicClosed'} />
-								Choose Public, Closed Membership
-							</label>
-						</div>
-						<div id="private" className="group-select">
-							<h2>Private Membership</h2>
-							<p>Only members can view your group online and must be invited to join.</p>
-							<label for="group_type-Private">
-								<input type="radio" name="group_type" id="group_type-Private" onChange={this.changeType} value="Private" checked={this.state.type=='Private'} />
-								Choose Private Membership
-							</label>
-						</div>
-					</div>
 					</div>
 					<div className="row">
 						<button name="submit" id="submit" type="submit" className="btn btn-primary">Create Group</button>
 					</div>
+					<input type='hidden' name='session' value={sessionKey} />
 				</form>
 			</div>    
 		);
