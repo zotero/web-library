@@ -13,15 +13,15 @@ var GroupNugget = React.createClass({
 
 		var userID = Zotero.config.loggedInUserID;
 		var groupManageable = false;
-		var memberCount = 1;
-		if(group.apiObj.data.members) {
-			memberCount += group.apiObj.data.members.length;
-		}
-		if(group.apiObj.data.admins){
-			memberCount += group.apiObj.data.admins.length;
-		}
+		var memberCount = 1; //owner
+
+		let members = group.get('members');
+		let admins = group.get('admins');
+
+		memberCount += members.length;
+		memberCount += admins.length;
 		
-		if(userID && (userID == group.apiObj.data.owner || (group.apiObj.data.admins.indexOf(userID) != -1 ))) {
+		if(userID && (userID == group.apiObj.data.owner || (admins.indexOf(userID) != -1 ))) {
 			groupManageable = true;
 		}
 		

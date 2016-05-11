@@ -5,8 +5,10 @@ var BrowserDetect = require('../BrowserDetect.js');
 			
 var Index = {
 	index_index: {
+		init: function(){
+
+		}
 	},
-	
 	
 	index_start: {
 		init: function() {
