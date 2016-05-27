@@ -1,0 +1,9 @@
+/* ==== control panel ==== */
+/*override default bootstrap width */
+.navbar-form .form-control {
+    width: 100%;
+}
+
+#control-panel .btn-group {
+	z-index: 1002;
+}

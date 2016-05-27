@@ -1,93 +1,122 @@
 'use strict';
 
-var watchify = require('watchify');
-var browserify = require('browserify');
-var gulp = require('gulp');
-var source = require('vinyl-source-stream');
-var buffer = require('vinyl-buffer');
-var gutil = require('gulp-util');
-var sourcemaps = require('gulp-sourcemaps');
-var assign = require('lodash.assign');
-var uglify = require('gulp-uglify');
-var filter = require('gulp-filter');
-var rename = require('gulp-rename');
-var autoprefixer = require('gulp-autoprefixer');
-var less = require('gulp-less');
+const watchify = require('watchify');
+const browserify = require('browserify');
+const gulp = require('gulp');
+const source = require('vinyl-source-stream');
+const buffer = require('vinyl-buffer');
+const gutil = require('gulp-util');
+const sourcemaps = require('gulp-sourcemaps');
+const uglify = require('gulp-uglify');
+const autoprefixer = require('gulp-autoprefixer');
+const gulpif = require('gulp-if');
+const plumber = require('gulp-plumber');
+const cssminify = require('gulp-minify-css');
+const babel = require('gulp-babel');
+const rename = require('gulp-rename');
+const merge = require('merge-stream');
+const runSequence = require('run-sequence');
+const del = require('del');
+const sass = require('gulp-sass');
+const babelify = require('babelify');
 
-// add custom browserify options here
-var customOpts = {
-	entries: ['./src/zotero-web-library.js'],
-	debug: true
-};
-var opts = assign({}, watchify.args, customOpts);
-var wb = watchify(browserify(opts)); 
-var bb = browserify(opts);
-
-var babelifyOpts = {
+const babelifyOpts = {
 	presets: ['es2015', 'react'],
 	plugins: ['transform-flow-strip-types']
 };
 
-wb.transform('babelify', babelifyOpts);
-bb.transform('babelify', babelifyOpts);
+var bundle;
 
-// add transformations here
-// i.e. b.transform(coffeeify);
-
-gulp.task('js', wbundle); // so you can run `gulp js` to build the file
-wb.on('update', wbundle); // on any dep update, runs the bundler
-wb.on('log', gutil.log); // output build logs to terminal
-
-function wbundle() {
-	return wb.bundle()
-		// log errors if they happen
-		.on('error', gutil.log.bind(gutil, 'Browserify Error'))
-		.pipe(source('zotero-web-library.js'))
-		// optional, remove if you don't need to buffer file contents
-		.pipe(buffer())
-		// optional, remove if you dont want sourcemaps
-		.pipe(sourcemaps.init({loadMaps: true})) // loads map from browserify file
-		// Add transformation tasks to the pipeline here.
-		.pipe(sourcemaps.write('./')) // writes .map file
-		.pipe(gulp.dest('./build'))
-		// repeat for minified version
-		.pipe(filter('*.js'))
-		.pipe(uglify())
-		.pipe(rename({ extname: '.min.js' }))
-		// .pipe(sourcemaps.write('.'))
-		.pipe(gulp.dest('build'));
+function onError(err) {
+	gutil.log(gutil.colors.red('Error:'), err);
 }
 
-
-function bbundle() {
-	return bb.bundle()
-		// log errors if they happen
-		.on('error', gutil.log.bind(gutil, 'Browserify Error'))
-		.pipe(source('zotero-web-library.js'))
-		// optional, remove if you don't need to buffer file contents
-		.pipe(buffer())
-		// optional, remove if you dont want sourcemaps
-		.pipe(sourcemaps.init({loadMaps: true})) // loads map from browserify file
-		// Add transformation tasks to the pipeline here.
-		.pipe(sourcemaps.write('./')) // writes .map file
-		.pipe(gulp.dest('./build'))
-		// repeat for minified version
-		.pipe(filter('*.js'))
-		.pipe(uglify())
-		.pipe(rename({ extname: '.min.js' }))
-		// .pipe(sourcemaps.write('.'))
-		.pipe(gulp.dest('build'));
+function onSuccess(msg) {
+	gutil.log(gutil.colors.green('Build:'), msg);
 }
 
-gulp.task('less', function() {
-	gulp.src('./static/css/zotero-web-library.less')
-	.pipe(less())
-	.pipe(autoprefixer({
-		browsers: ['last 2 versions']
-	}))
-	.pipe(gulp.dest('./static/css/'));
+function getBrowserify(dev) {
+	if(!bundle) {
+		bundle = browserify({
+			debug: !dev,
+			entries: './src/js/zotero-web-library.js',
+			cache: {},
+			packageCache: {}
+		})
+		.transform(babelify, babelifyOpts);
+
+		if(dev) {
+			bundle.plugin(watchify);
+			bundle.on('update', function() {
+				return getJS(dev);
+			});
+			bundle.on('log', onSuccess);
+		}
+	}
+
+	return bundle;
+}
+
+function getJS(dev) {
+	return getBrowserify(dev).bundle()
+		.pipe(source('zotero-web-library.js'))
+		.pipe(buffer())
+		.pipe(plumber({errorHandler: onError}))
+		.pipe(gulpif(dev, sourcemaps.init({loadMaps: true})))
+		.pipe(gulpif(!dev, gulp.dest('./build')))
+		.pipe(gulpif(!dev, uglify()))
+		.pipe(gulpif(!dev, rename({ extname: '.min.js' })))
+		.pipe(gulpif(dev, sourcemaps.write('./')))
+		.pipe(gulp.dest('./build'));
+}
+
+function getSass(dev) {
+	return gulp.src('./src/scss/zotero-web-library.scss')
+		.pipe(plumber({errorHandler: onError}))
+		.pipe(gulpif(dev, sourcemaps.init({loadMaps: true})))
+		.pipe(sass())
+		.pipe(autoprefixer({
+			browsers: ['last 2 versions', 'IE 10']
+		}))
+		.pipe(gulpif(!dev, gulp.dest('./build')))
+		.pipe(gulpif(!dev, cssminify()))
+		.pipe(gulpif(!dev, rename({ extname: '.min.css' })))
+		.pipe(gulpif(dev, sourcemaps.write('./')))
+		.pipe(gulp.dest('./build'));
+}
+
+gulp.task('clean:build', () => {
+	return del('./build');
 });
 
-gulp.task('build', bbundle);
+gulp.task('clean:prepublish', () => {
+	return del('./lib');
+});
 
-gulp.task('default', ['less', 'build']);
+gulp.task('sass', () => {
+	return getSass(true);
+});
+
+gulp.task('js', () => {
+	return getJS(true);
+});
+
+gulp.task('dev', ['clean:build'], () => {
+	return merge(getSass(true), getJS(true));
+});
+
+gulp.task('build', ['clean:build'], () => {
+	return merge(getSass(false), getJS(false));
+});
+
+gulp.task('prepublish:js', ['clean:prepublish'], () => {
+	return gulp.src('./src/js/**/*.js')
+			.pipe(babel(babelifyOpts))
+			.pipe(gulp.dest('./lib/'));
+});
+
+gulp.task('prepublish', ['clean:prepublish'], (done) => {
+	return runSequence('prepublish:js', 'build', done);
+});
+
+gulp.task('default', ['dev']);
