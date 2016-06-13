@@ -15,7 +15,7 @@ Installation
 2. run `npm install` to install dev dependencies
 3. Try out the full library example by generating a config file (examples/reactlibrary/buildconfig.js)
 4. Point browser at the base directory for the example (examples/library/ for the full library)
-5. to build changes (including compiling bootstrap less style) run `grunt`
+5. to build changes (including compiling bootstrap less style) run `npm build`. For a development build with automatic incremental build on change, use `npm start`.  
 
 Note that to work fully this must be run from a web server because of the limitations on web pages loaded locally. An Apache .htaccess file is included in that directory that will rewrite urls so that the html history api used still works when reloading deeper urls. This would have to be done in different ways on other servers, but only affects reloading the library. The library loaded from the original page should work regardless.
 
