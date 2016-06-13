@@ -9,7 +9,8 @@
   "scripts": {
     "build": "./node_modules/.bin/gulp build",
     "start": "./node_modules/.bin/gulp",
-    "prepublish": "./node_modules/.bin/gulp prepublish"
+    "prepublish": "./node_modules/.bin/gulp prepublish",
+    "postpublish": "./node_modules/.bin/gulp postpublish"
   },
   "keywords": [
     "Zotero"

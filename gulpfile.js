@@ -90,7 +90,7 @@ gulp.task('clean:build', () => {
 });
 
 gulp.task('clean:prepublish', () => {
-	return del('./lib');
+	return del(['./lib', './sass']);
 });
 
 gulp.task('sass', () => {
@@ -109,14 +109,20 @@ gulp.task('build', ['clean:build'], () => {
 	return merge(getSass(false), getJS(false));
 });
 
-gulp.task('prepublish:js', ['clean:prepublish'], () => {
+gulp.task('prepublish:js', () => {
 	return gulp.src('./src/js/**/*.js')
 			.pipe(babel(babelifyOpts))
 			.pipe(gulp.dest('./lib/'));
 });
 
-gulp.task('prepublish', ['clean:prepublish'], (done) => {
-	return runSequence('prepublish:js', 'build', done);
+gulp.task('prepublish:sass', () => {
+	return gulp.src('./src/scss/**/*.scss')
+		.pipe(gulp.dest('./sass/'));
 });
 
+gulp.task('prepublish', ['clean:prepublish'], (done) => {
+	return runSequence('prepublish:js', 'prepublish:sass', 'build', done);
+});
+
+gulp.task('postpublish', ['clean:prepublish']);
 gulp.task('default', ['dev']);
