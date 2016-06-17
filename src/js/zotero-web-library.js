@@ -21,10 +21,14 @@ Zotero.defaultPrefs = {
     javascript_enabled: false
 };
 
-var jQuery = require('jquery');
-window.$ = jQuery;
-window.jQuery = jQuery;
-window.J = jQuery;
+// use existing jquery if available
+if (typeof jQuery === 'undefined' && typeof $ === 'undefined') {
+	var jQuery = require('jquery');
+} else if(typeof jQuery === 'undefined') {
+	var jQuery = $;
+}
+
+window.$ = window.jQuery = window.J = jQuery || $;
 require('floatthead');
 
 window.React = require('react');
