@@ -1,6 +1,6 @@
 'use strict';
 
-var log = require('../../../library/libZoteroJS/src/Log.js').Logger('zotero-web-library:ItemRelated');
+var log = require('libzotero/lib/Log').Logger('zotero-web-library:ItemRelated');
 var React = require('react');
 
 

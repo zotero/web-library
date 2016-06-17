@@ -1,6 +1,6 @@
 'use strict';
 
-var log = require('../../../library/libZoteroJS/src/Log.js').Logger('zotero-web-library:ItemTags');
+var log = require('libzotero/lib/Log').Logger('zotero-web-library:ItemTags');
 var React = require('react');
 var ItemField = require('./ItemField.js');
 
