@@ -7,29 +7,27 @@ var BootstrapModalWrapper = require('./BootstrapModalWrapper.js');
 
 var UpdateCollectionDialog = React.createClass({
 	componentWillMount: function() {
-		var reactInstance = this;
-		var library = this.props.library;
-		library.listen('updateCollectionDialog', function(){
-			var currentCollectionKey = Zotero.state.getUrlVar('collectionKey');
-			var currentCollection = library.collections.getCollection(currentCollectionKey);
-			var parent = '';
-			var name = '';
-			if(currentCollection){
-				parent = currentCollection.get('parentCollection');
-				name = currentCollection.get('name');
-			}
-			reactInstance.setState({
-				collectionName: name,
-				parentCollection: parent
-			});
-			reactInstance.openDialog();
-		}, {});
 	},
 	getInitialState: function() {
 		return {
 			collectionName: '',
 			parentCollection: '',
 		};
+	},
+	updateCollectionContext: function(){
+		let library = this.props.library;
+		let currentCollectionKey = Zotero.state.getUrlVar('collectionKey');
+		let currentCollection = library.collections.getCollection(currentCollectionKey);
+		let parent = '';
+		let name = '';
+		if(currentCollection){
+			parent = currentCollection.get('parentCollection');
+			name = currentCollection.get('name');
+		}
+		this.setState({
+			collectionName: name,
+			parentCollection: parent
+		});
 	},
 	handleCollectionChange: function(evt) {
 		this.setState({'parentCollection': evt.target.value});

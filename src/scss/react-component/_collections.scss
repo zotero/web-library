@@ -1,19 +1,19 @@
 /*===== collections ===== */
-#collection-list-div {
+.collection-list-container {
     padding:5px;
 }
 
-#collection-list-div ul {
+.collection-list-container ul {
     list-style:none;
     margin:0;
     padding:0;
 }
 
-#collection-list-div ul ul {
+.collection-list-container ul ul {
     margin-left: 1em;
 }
 
-#collection-list-container {
+.collection-list-container {
     padding-top:5px;
     clear: both;
 }
@@ -37,18 +37,46 @@
     color: #16B;
 }
 
-#collection-list a:hover,
-#collection-list a:active {
+#collection-list span.collection {
+    display:block;
+    border-bottom: 1px dotted #ccc;
+    padding: 5px;
+    cursor:pointer;
+}
+
+
+#collection-list span.collection:hover,
+#collection-list span.collection:active {
     background-color: rgba(51,136,204,0.2);
 }
 
 
-#collection-list a.current-collection {
+#collection-list span.current-collection {
     font-weight: bold;
     background-color: rgba(51,136,204,0.2);
 }
 
+#collection-list span.library {
+    display:block;
+    border-bottom: 1px dotted #ccc;
+    padding: 5px;
+    cursor:pointer;
+}
+
+
+#collection-list span.library:hover,
+#collection-list span.library:active {
+    background-color: rgba(51,136,204,0.2);
+}
+
+
+#collection-list span.current-library {
+    font-weight: bold;
+    background-color: rgba(51,136,204,0.2);
+}
+
+/*
 #collection-list span{
     margin-top:6px;
 }
-
+*/

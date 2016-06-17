@@ -7,13 +7,6 @@ var BootstrapModalWrapper = require('./BootstrapModalWrapper.js');
 
 var CreateCollectionDialog = React.createClass({
 	componentWillMount: function() {
-		var reactInstance = this;
-		var library = this.props.library;
-
-		library.listen('createCollectionDialog', function(){
-			reactInstance.forceUpdate();
-			reactInstance.openDialog();
-		}, {});
 	},
 	getInitialState: function() {
 		return {

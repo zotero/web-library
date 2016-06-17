@@ -5,28 +5,14 @@ var log = require('libzotero/lib/Log').Logger('zotero-web-library:ItemDetails');
 var React = require('react');
 
 var LoadingSpinner = require('./LoadingSpinner.js');
+var ItemAttachments = require('./ItemAttachments.js');
+var ItemNotes = require('./ItemNotes.js');
+var ItemTags = require('./ItemTags.js');
+var ItemRelated = require('./ItemRelated.js');
+var ItemField = require('./ItemField.js');
 
 //TODO: trigger showChildren with an extra itemID filter so quick clicks back and forth
 //between items don't overwrite with the wrong children?
-
-var editMatches = function(props, edit) {
-	if(props === null || edit === null){
-		return false;
-	}
-	if(edit.field != props.field) {
-		return false;
-	}
-	//field is the same, make sure index matches if set
-	if(edit.creatorIndex != props.creatorIndex) {
-		//log.debug("creatorIndex mismatch");
-		return false;
-	}
-	if(props.tagIndex != edit.tagIndex) {
-		//log.debug("tagIndex mismatch");
-		return false;
-	}
-	return true;
-};
 
 var genericDisplayedFields = function(item) {
 	var genericDisplayedFields = Object.keys(item.apiObj.data).filter(function(field){
@@ -202,8 +188,10 @@ var ItemNavTabs = React.createClass({
 			return (
 				<ul className="nav nav-tabs" role="tablist">
 					<li role="presentation" className="active"><a href="#item-info-panel" aria-controls="item-info-panel" role="tab" data-toggle="tab">Info</a></li>
-					<li role="presentation"><a href="#item-children-panel" aria-controls="item-children-panel" role="tab" data-toggle="tab">Children</a></li>
-					<li role="presentation"><a href="#item-tags-panel" aria-controls="item-tags-panel" role="tab" data-toggle="tab">Tags</a></li>
+					<li role="presentation"><a href="#item-notes" aria-controls="item-notes" role="tab" data-toggle="tab">Notes</a></li>
+					<li role="presentation"><a href="#item-tags" aria-controls="item-tags" role="tab" data-toggle="tab">Tags</a></li>
+					<li role="presentation"><a href="#item-attachments" aria-controls="item-attachments" role="tab" data-toggle="tab">Attachments</a></li>
+					<li role="presentation"><a href="#item-related" aria-controls="item-related" role="tab" data-toggle="tab">Related</a></li>
 				</ul>
 			);
 		}
@@ -268,208 +256,9 @@ var ItemFieldRow = React.createClass({
 	}
 });
 
-//set onChange
-var ItemField = React.createClass({
-	getDefaultProps: function() {
-		return {
-			item:null,
-			field:null,
-			edit:null,
-			creatorIndex: null,
-			tagIndex: null
-		};
-	},
-	handleChange: function(evt) {
-		//set field to new value
-		var item = this.props.item;
-		switch(this.props.field) {
-			case 'creatorType':
-			case 'name':
-			case 'firstName':
-			case 'lastName':
-				var creators = item.get('creators');
-				var creator = creators[this.props.creatorIndex];
-				creator[this.props.field] = evt.target.value;
-				break;
-			case 'tag':
-				var tags = item.get('tags');
-				var tag = tags[this.props.tagIndex];
-				tag.tag = evt.target.value;
-				break;
-			default:
-				item.set(this.props.field, evt.target.value);
-		}
-		this.props.parentItemDetailsInstance.setState({item:item});
-	},
-	handleBlur: function(evt) {
-		//save item, move edit to next field
-		this.handleChange(evt);
-		this.props.parentItemDetailsInstance.setState({edit:null});
-		Zotero.ui.saveItem(this.props.item);
-	},
-	handleFocus: function(evt) {
-		var field = evt.currentTarget.getAttribute('data-field');
-		var creatorIndex = evt.target.getAttribute('data-creatorindex');
-		var tagIndex = evt.target.getAttribute('data-tagindex');
-		var edit = {
-			field: field,
-			creatorIndex: creatorIndex,
-			tagIndex: tagIndex
-		};
-		this.props.parentItemDetailsInstance.setState({
-			edit: edit
-		});
-	},
-	checkKey: function(evt) {
-		evt.stopPropagation();
-		if (evt.keyCode === Zotero.ui.keyCode.ENTER){
-			//var nextEdit = Zotero.ui.widgets.reactitem.nextEditField(this.props.item, this.props.edit);
-			evt.target.blur();
-		}
-	},
-	render: function(){
-		var item = this.props.item;
-		var field = this.props.field;
-		var creatorField = false;
-		var tagField = false;
-		var value;
-		switch(field){
-			case 'creatorType':
-			case 'name':
-			case 'firstName':
-			case 'lastName':
-				creatorField = true;
-				var creatorIndex = this.props.creatorIndex;
-				var creator = item.get('creators')[creatorIndex];
-				value = creator[field];
-				var creatorPlaceHolders = {
-					'name': '(name)',
-					'lastName': '(Last Name)',
-					'firstName': '(First Name)'
-				};
-				
-				break;
-			case 'tag':
-				tagField = true;
-				var tagIndex = this.props.tagIndex;
-				var tag = item.get('tags')[tagIndex];
-				value = tag.tag;
-				break;
-			default:
-				value = item.get(field);
-		}
-
-		var editThisField = editMatches(this.props, this.props.edit);
-		if(!editThisField){
-			var spanProps = {
-				className: 'editable-item-field',
-				tabIndex: 0,
-				'data-field': field,
-				onFocus: this.handleFocus
-			};
-
-			var p = null;
-			if(creatorField){
-				spanProps.className += ' creator-field';
-				spanProps['data-creatorindex'] = this.props.creatorIndex;
-				p = value == '' ? creatorPlaceHolders[field] : value;
-			} else if(tagField){
-				spanProps.className += ' tag-field';
-				spanProps['data-tagindex'] = this.props.tagIndex;
-				p = value;
-			} else {
-				p = value == '' ? (<div className="empty-field-placeholder"></div>) : Zotero.format.itemField(field, item);
-			}
-			return (
-				<span {...spanProps}>
-					{p}
-				</span>
-			);
-		}
-		
-		var focusEl = function(el) {
-			if (el != null) {
-				el.focus();
-			}
-		};
-
-		var inputProps = {
-			className: ('form-control item-field-control ' + this.props.field),
-			name: field,
-			defaultValue: value,
-			//onChange: this.handleChange,
-			onKeyDown: this.checkKey,
-			onBlur: this.handleBlur,
-			creatorindex: this.props.creatorIndex,
-			tagindex: this.props.tagIndex,
-			ref: focusEl
-		};
-		if(creatorField){
-			inputProps.placeholder = creatorPlaceHolders[field];
-		}
-
-		switch(this.props.field) {
-			case null:
-				return null;
-				break;
-			case 'itemType':
-				var itemTypeOptions = item.itemTypes.map(function(itemType){
-					return (
-						<option key={itemType.itemType}
-							label={itemType.localized}
-							value={itemType.itemType}>
-							{itemType.localized}
-						</option>
-					);
-				});
-				return (
-					<select {...inputProps}>
-						{itemTypeOptions}
-					</select>
-				);
-				break;
-			case 'creatorType':
-				var creatorTypeOptions = item.creatorTypes[item.get('itemType')].map(function(creatorType){
-					return (
-						<option key={creatorType.creatorType}
-							label={creatorType.localized}
-							value={creatorType.creatorType}
-						>
-							{creatorType.localized}
-						</option>
-					);
-				});
-				return (
-					<select id="creatorType" {...inputProps} data-creatorindex={this.props.creatorIndex}>
-						{creatorTypeOptions}
-					</select>
-				);
-				break;
-			default:
-				if(Zotero.config.largeFields[this.props.field]) {
-					return (
-						<textarea {...inputProps}></textarea>
-					);
-				} else if (Zotero.config.richTextFields[this.props.field]) {
-					return (
-						<textarea {...inputProps} className="rte default"></textarea>
-					);
-				} else {
-					//default single line input field
-					return (
-						<input type='text' {...inputProps} />
-					);
-				}
-		}
-	}
-});
 
 var ItemInfoPanel = React.createClass({
 	componentWillMount: function() {
-		let library = this.props.library;
-		library.listen('totalResultsLoaded', ()=>{
-			this.setState({libraryItemsLoaded:true});
-		});
 	},
 	getDefaultProps: function() {
 		return {
@@ -521,12 +310,15 @@ var ItemInfoPanel = React.createClass({
 		//the Zotero user that created the item, if it's a group library item
 		var zoteroItemCreatorRow = null;
 		if(libraryType == 'group') {
-			zoteroItemCreatorRow = (
-				<tr>
-					<th>Added by</th>
-					<td className="user-creator"><a href={item.apiObj.meta.createdByUser.links.alternate.href} className="user-link">{item.apiObj.meta.createdByUser.name}</a></td>
-				</tr>
-			);
+			let createdByUser = item.get('createdByUser');
+			if(createdByUser){
+				zoteroItemCreatorRow = (
+					<tr>
+						<th>Added by</th>
+						<td className="user-creator"><a href={createdByUser.links.alternate.href} className="user-link">{createdByUser.name}</a></td>
+					</tr>
+				);
+			}
 		}
 		
 		var creatorRows = [];
@@ -580,162 +372,6 @@ var ItemInfoPanel = React.createClass({
 	}
 });
 
-var TagListRow = React.createClass({
-	getDefaultProps: function(){
-		return {
-			tagIndex:0,
-			tag:{tag:''},
-			item:null,
-			library:null,
-			edit:null
-		};
-	},
-	removeTag: function(evt) {
-		var tag = this.props.tag.tag;
-		var item = this.props.item;
-		var tagIndex = this.props.tagIndex;
-
-		var tags = item.get('tags');
-		tags.splice(tagIndex, 1);
-		Zotero.ui.saveItem(item);
-		this.props.parentItemDetailsInstance.setState({item:item});
-	},
-	render: function() {
-		return (
-			<div className="row item-tag-row">
-				<div className="col-xs-1">
-					<span className="glyphicons fonticon glyphicons-tag"></span>
-				</div>
-				<div className="col-xs-9">
-					<ItemField {... this.props} field="tag" />
-				</div>
-				<div className="col-xs-2">
-					<button type="button" className="remove-tag-link btn btn-default" onClick={this.removeTag} >
-						<span className="glyphicons fonticon glyphicons-minus"></span>
-					</button>
-				</div>
-			</div>
-		);
-	}
-});
-
-var ItemTagsPanel = React.createClass({
-	getInitialState: function() {
-		return {
-			newTagString: ''
-		};
-	},
-	newTagChange: function(evt) {
-		this.setState({newTagString: evt.target.value});
-	},
-	//add the new tag to the item and save if keydown is ENTER
-	checkKey: function(evt) {
-		evt.stopPropagation();
-		if (evt.keyCode === Zotero.ui.keyCode.ENTER){
-			var item = this.props.item;
-			var tags = item.get('tags');
-			tags.push({
-				tag: evt.target.value
-			});
-			Zotero.ui.saveItem(item);
-			this.setState({newTagString:''});
-			this.props.parentItemDetailsInstance.setState({item:item});
-		}
-	},
-	render: function() {
-		log.debug('ItemTagsPanel render', 3);
-		var reactInstance = this;
-		var item = this.props.item;
-		var library = this.props.library;
-		if(item == null) {
-			return (
-				<div id="item-tags-panel" role="tabpanel" className="item-tags-div tab-pane">
-				</div>
-			);
-		}
-		
-		var tagRows = item.apiObj.data.tags.map(function(tag, ind){
-			return (
-				<TagListRow key={tag.tag} {...reactInstance.props} tag={tag} tagIndex={ind} />
-			);
-		});
-		
-		return (
-			<div id="item-tags-panel" role="tabpanel" className="item-tags-div tab-pane">
-				<p><span className="tag-count">{item.get('tags').length}</span> tags</p>
-				<button className="add-tag-button btn btn-default">Add Tag</button>
-				
-				<div className="item-tags-list">
-					{tagRows}
-				</div>
-				<div className="add-tag-form form-horizontal">
-					<div className="form-group">
-						<div className="col-xs-1">
-							<label htmlFor="add-tag-input"><span className="glyphicons fonticon glyphicons-tag"></span></label>
-						</div>
-						<div className="col-xs-11">
-							<input type="text" onKeyDown={this.checkKey} onChange={this.newTagChange} value={this.state.newTagString} id="add-tag-input" className="add-tag-input form-control" />
-						</div>
-					</div>
-				</div>
-			</div>
-		);
-	}
-});
-
-var ItemChildrenPanel = React.createClass({
-	getDefaultProps: function() {
-		return {
-			childItems: []
-		};
-	},
-	triggerUpload: function() {
-		this.props.library.trigger('uploadAttachment');
-	},
-	render: function() {
-		log.debug('ItemChildrenPanel render', 3);
-		var childListEntries = this.props.childItems.map(function(item){
-			var title = item.get('title');
-			var href = Zotero.url.itemHref(item);
-			var iconClass = item.itemTypeIconClass();
-			var key = item.get('key');
-			if(item.itemType == 'note'){
-				return (
-					<li key={key}>
-						<span className={'fonticon barefonticon ' + iconClass}></span>
-						<a className='item-select-link' data-itemkey={item.get('key')} href={href} title={title}>{title}</a>
-					</li>
-				);
-			} else if(item.attachmentDownloadUrl == false) {
-				return (
-					<li key={key}>
-						<span className={'fonticon barefonticon ' + iconClass}></span>
-						{title}
-						(<a className='item-select-link' data-itemkey={item.get('key')} href={href} title={title}>Attachment Details</a>)
-					</li>
-				);
-			} else {
-				var attachmentDownloadUrl = Zotero.url.attachmentDownloadUrl(item);
-				return (
-					<li key={key}>
-						<span className={'fonticon barefonticon ' + iconClass}></span>
-						<a className='itemdownloadlink' href={attachmentDownloadUrl}>{title} {Zotero.url.attachmentFileDetails(item)}</a>
-						(<a className='item-select-link' data-itemkey={item.get('key')} href={href} title={title}>Attachment Details</a>)
-					</li>
-				);
-			}
-		});
-		return (
-			<div id="item-children-panel" role="tabpanel" className="item-children-div tab-pane">
-				<ul id="notes-and-attachments">
-					{childListEntries}
-				</ul>
-				<button type="button" onClick={this.triggerUpload} id="upload-attachment-link" className="btn btn-primary upload-attachment-button" hidden={!Zotero.config.librarySettings.allowUpload}>Upload File</button>
-			</div>
-		);
-	}
-});
-
 var ItemDetails = React.createClass({
 	getInitialState: function() {
 		return {
@@ -748,16 +384,7 @@ var ItemDetails = React.createClass({
 		};
 	},
 	componentWillMount: function() {
-		var reactInstance = this;
-		var library = this.props.library;
-		library.listen('displayedItemChanged', reactInstance.loadItem, {});
-		library.listen('uploadSuccessful', reactInstance.refreshChildren, {});
 		
-		library.listen('tagsChanged', reactInstance.updateTypeahead, {});
-
-		library.listen('showChildren', reactInstance.refreshChildren, {});
-		
-		library.trigger('displayedItemChanged');
 	},
 	componentDidMount: function() {
 	},
@@ -831,7 +458,17 @@ var ItemDetails = React.createClass({
 		reactInstance.setState({loadingChildren:true});
 		var p = item.getChildren(library)
 		.then(function(childItems){
-			reactInstance.setState({childItems: childItems, loadingChildren:false});
+			let notes = [];
+			let attachments = [];
+			childItems.forEach((child) => {
+				let type = child.get('itemType');
+				if(type == 'note') {
+					notes.push(child);
+				} else if(type == 'attachment') {
+					attachments.push(child);
+				}
+			});
+			reactInstance.setState({notes:notes, attachments:attachments, loadingChildren:false});
 		}).catch(Zotero.catchPromiseError);
 		return p;
 	},
@@ -847,10 +484,11 @@ var ItemDetails = React.createClass({
 	},
 	render: function() {
 		log.debug('ItemDetails render', 3);
-		var reactInstance = this;
-		var library = this.props.library;
-		var item = this.state.item;
-		var childItems = this.state.childItems;
+		let reactInstance = this;
+		let library = this.props.library;
+		let item = this.state.item;
+		let notes = this.state.notes;
+		let attachments = this.state.attachments;
 
 		return (
 			<div role="tabpanel">
@@ -864,8 +502,14 @@ var ItemDetails = React.createClass({
 						edit={this.state.edit}
 						parentItemDetailsInstance={reactInstance}
 					/>
+					<ItemNotes library={library} item={item} notes={notes} />
+					<ItemTags library={library} item={item} />
+					<ItemAttachments library={library} item={item} attachments={attachments} />
+					<ItemRelated library={library} item={item} />
+					{/*
 					<ItemChildrenPanel parentItemDetailsInstance={reactInstance} library={library} childItems={childItems} loading={this.state.childrenLoading} />
-					<ItemTagsPanel parentItemDetailsInstance={reactInstance} library={library} item={item} edit={this.state.edit} />
+					<ItemTags parentItemDetailsInstance={reactInstance} library={library} item={item} edit={this.state.edit} />
+					*/}
 				</div>
 			</div>
 		);

@@ -10,6 +10,7 @@ Zotero.Pages = Zotero.pages = require('./Pages/Pages.js');
 Zotero.ui = require('./libraryUi/ui.js');
 Zotero.format = require('./libraryUi/format.js');
 Zotero.ui.widgets.Library = require('./libraryUi/widgets/ZoteroLibrary.js');
+Zotero.ui.widgets.Libraries = require('./libraryUi/widgets/ZoteroLibraries.js');
 Zotero.eventful = require('./libraryUi/eventful.js');
 Zotero.init = require('./Init.js');
 Zotero.url = Zotero.extend({}, Zotero.url, require('./Url.js'));

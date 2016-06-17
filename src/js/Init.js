@@ -53,7 +53,7 @@ var init = function(){
 		log.debug('library page - ', 3);
 		Zotero.state.libraryString = Zotero.utils.libraryString(Zotero.config.librarySettings.libraryType,
 		Zotero.config.librarySettings.libraryID);
-		Zotero.state.filter = Zotero.state.libraryString;
+		//Zotero.state.filter = Zotero.state.libraryString;
 		
 		Zotero.Item.prototype.getItemTypes(locale);
 		Zotero.Item.prototype.getItemFields(locale);

@@ -320,25 +320,7 @@ var CreateItemDropdown = React.createClass({
 var ControlPanel = React.createClass({
 	componentWillMount: function() {
 		var reactInstance = this;
-		var library = this.props.library;
-		
 		reactInstance.setState({user: Zotero.config.loggedInUser});
-		
-		library.listen('selectedItemsChanged', function(evt){
-			log.debug('got selectedItemsChanged event in ControlPanel - setting selectedItems');
-			log.debug(evt);
-			var selectedItemKeys = evt.data.selectedItemKeys;
-			reactInstance.setState({selectedItems: selectedItemKeys});
-		}, {});
-		
-		library.listen('selectedCollectionChanged', function(evt){
-			var selectedCollection = Zotero.state.getUrlVar('collectionKey');
-			var selectedItemKeys = Zotero.state.getSelectedItemKeys();
-			reactInstance.setState({
-				selectedCollection: selectedCollection,
-				selectedItems: selectedItemKeys
-			});
-		}, {});
 	},
 	getDefaultProps: function(){
 		return {

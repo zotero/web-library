@@ -6,15 +6,6 @@ var React = require('react');
 
 var FilterGuide = React.createClass({
 	componentWillMount: function() {
-		var reactInstance = this;
-		var library = this.props.library;
-
-		library.listen('displayedItemsChanged', reactInstance.refreshFilters, {});
-		library.listen('displayedItemChanged', reactInstance.refreshFilters, {});
-		library.listen('updateFilterGuide', reactInstance.refreshFilters, {});
-		library.listen('selectedCollectionChanged', reactInstance.refreshFilters, {});
-		library.listen('cachedDataLoaded', reactInstance.refreshFilters, {});
-		library.listen('libraryCollectionsUpdated', reactInstance.refreshFilters, {});
 	},
 	getInitialState: function() {
 		return {
@@ -23,7 +14,7 @@ var FilterGuide = React.createClass({
 			query: ''
 		};
 	},
-	refreshFilters: function(evt){
+	refreshFilters: function(){
 		var library = this.props.library;
 		var displayConfig = Zotero.ui.getItemsConfig(library);
 		this.setState({

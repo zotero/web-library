@@ -25,6 +25,7 @@ var ExportItemsDialog = require('./ExportItemsDialog.js');
 var LibrarySettingsDialog = require('./LibrarySettingsDialog.js');
 var ChooseSortingDialog = require('./ChooseSortingDialog.js');
 
+var LibrariesCollections = require('./LibrariesCollections.js');
 
 
 Zotero.ui.widgets.library = {};
@@ -55,7 +56,7 @@ var ZoteroLibrary = React.createClass({
 		library.listen('cachedDataLoaded', function() {
 
 		});
-		
+
 		window.addEventListener('resize', function(){
 			if(!window.matchMedia('(min-width: 768px)').matches){
 				if(reactInstance.state.narrow != true){
@@ -71,10 +72,6 @@ var ZoteroLibrary = React.createClass({
 	componentDidMount: function() {
 		var reactInstance = this;
 		var library = this.props.library;
-		library.listen('displayedItemsChanged', function() {
-			reactInstance.refs.itemsWidget.loadItems();
-		}, {});
-	
 		library.listen('tagsChanged libraryTagsUpdated selectedTagsChanged', function(){
 			reactInstance.refs.tagsWidget.setState({tags:library.tags});
 		});
@@ -86,6 +83,28 @@ var ZoteroLibrary = React.createClass({
 				reactInstance.refs.itemsWidget.loadMoreItems();
 			}
 		});
+
+		//events affecting items widget
+		library.listen('changeItemSorting', this.refs.itemsWidget.resortTriggered);
+		library.listen('displayedItemsChanged', this.refs.itemsWidget.loadItems, {});
+		library.listen('displayedItemChanged', this.refs.itemsWidget.selectDisplayed);
+		Zotero.listen('selectedItemsChanged', function(){
+			reactInstance.refs.itemsWidget.setState({selectedItemKeys:Zotero.state.getSelectedItemKeys()});
+		});
+		library.listen('selectedItemsChanged', function(){
+			reactInstance.refs.itemsWidget.setState({selectedItemKeys:Zotero.state.getSelectedItemKeys()});
+		});
+		
+		library.listen('selectedCollectionChanged', function(){
+			Zotero.state.selectedItemKeys = [];
+			library.trigger('selectedItemsChanged', {selectedItemKeys:[]});
+		});
+		
+		//library.listen('loadMoreItems', this.refs.itemsWidget.loadMoreItems, {});
+
+		library.trigger('displayedItemsChanged');
+		//end events affecting items widget
+		
 	},
 	getInitialState: function() {
 		var narrow;
@@ -256,7 +275,10 @@ var ZoteroLibrary = React.createClass({
 						{/*<!-- Tab panes -->*/}
 						<div className="tab-content">
 							<div id="collections-panel" role="tabpanel" className="tab-pane active">
+								{/*
 								<Collections ref="collectionsWidget" library={library} />
+								*/}
+								<LibrariesCollections ref="collectionsWidget" library={library} name="My Library" />
 							</div>{/*<!-- /collections panel -->*/}
 							
 							<div id="tags-panel" role="tabpanel" className="tab-pane">

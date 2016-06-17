@@ -20,9 +20,6 @@
     padding-left:0;
 }
 */
-#library-items-div a {
-    text-decoration:none;
-}
 /*
 #library-items-div tbody tr:hover {
     background-color: rgba(51,136,204,0.2);
@@ -39,11 +36,18 @@
 #library-items-div tr.highlighed {
     background-color:rgba(100, 180, 250, 0.2);
 }
-/*
+
 #library-items-div {
     overflow-y: auto;
 }
-*/
+
+#library-items-div {
+    overflow-y: auto;
+}
+
+#library-items-div td {
+    padding:2px;
+}
 
 #load-more-items-button {
     margin-left:auto;

@@ -7,16 +7,6 @@ var BootstrapModalWrapper = require('./BootstrapModalWrapper.js');
 
 var ExportItemsDialog = React.createClass({
 	componentWillMount: function() {
-		var reactInstance = this;
-		var library = this.props.library;
-
-		library.listen('exportItemsDialog', function(){
-			log.debug('opening export dialog', 3);
-			reactInstance.openDialog();
-		}, {});
-		library.listen('displayedItemsChanged', function(){
-			reactInstance.forceUpdate();
-		}, {});
 	},
 	getInitialState: function() {
 		return {

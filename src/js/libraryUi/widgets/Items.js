@@ -53,26 +53,7 @@ Zotero.ui.getItemsConfig = function(library){
 
 var Items = React.createClass({
 	componentWillMount: function() {
-		var reactInstance = this;
 		var library = this.props.library;
-
-		library.listen('changeItemSorting', reactInstance.resortTriggered);
-		library.listen('displayedItemsChanged', reactInstance.loadItems, {});
-		library.listen('displayedItemChanged', reactInstance.selectDisplayed);
-		Zotero.listen('selectedItemsChanged', function(){
-			reactInstance.setState({selectedItemKeys:Zotero.state.getSelectedItemKeys()});
-		});
-		library.listen('selectedItemsChanged', function(){
-			reactInstance.setState({selectedItemKeys:Zotero.state.getSelectedItemKeys()});
-		});
-		
-		library.listen('selectedCollectionChanged', function(){
-			Zotero.state.selectedItemKeys = [];
-			library.trigger('selectedItemsChanged', {selectedItemKeys:[]});
-		});
-		
-		library.listen('loadMoreItems', reactInstance.loadMoreItems, {});
-		library.trigger('displayedItemsChanged');
 
 		let displayFields = library.preferences.getPref('listDisplayedFields');
 		this.setState({displayFields: displayFields});
@@ -83,20 +64,38 @@ var Items = React.createClass({
 		};
 	},
 	getInitialState: function() {
+		let selected = Zotero.state.getSelectedItemKeys();
 		return {
 			moreloading:false,
 			allItemsLoaded:false,
 			errorLoading:false,
 			items:[],
-			selectedItemKeys:[],
+			selectedItemKeys:selected,
 			allSelected:false,
 			displayFields: ['title', 'creator', 'dateModified'],
 			order: 'title',
 			sort: 'asc',
 		};
 	},
+	handleShortcuts: function(evt) {
+		if(evt.key == 'a'){
+			if(evt.ctrlKey){
+				evt.preventDefault();
+				evt.stopPropagation();
+				let nowselected = [];
+				//select all items
+				this.state.items.forEach(function(item){
+					nowselected.push(item.get('key'));
+				});
+				
+				Zotero.state.selectedItemKeys = nowselected;
+				this.setState({selectedItemKeys:nowselected, allSelected:true});
+				Zotero.trigger('selectedItemsChanged', {selectedItemKeys: nowselected});
+			}
+		}
+	},
 	loadItems: function() {
-		log.debug('Items.loadItems', 3);
+		log.debug('Items.loadItems', 2);
 		var reactInstance = this;
 		var library = this.props.library;
 		var newConfig = Zotero.ui.getItemsConfig(library);
@@ -111,7 +110,7 @@ var Items = React.createClass({
 				throw('Expected response to have loadedItems');
 			}
 			library.items.totalResults = response.totalResults;
-			library.trigger('totalResultsLoaded');
+			Zotero.trigger('totalResultsLoaded');
 			var allLoaded = (response.totalResults == response.loadedItems.length);
 			reactInstance.setState({
 				items:response.loadedItems,
@@ -176,8 +175,10 @@ var Items = React.createClass({
 		//if it is the currently sorted field, simply flip the sort order
 		//if it is not the currently sorted field, set it to be the currently sorted
 		//field and set the default ordering for that field
-		log.debug('.field-table-header clicked', 3);
-		evt.preventDefault();
+		if(evt){
+			log.debug('.field-table-header clicked', 3);
+			evt.preventDefault();
+		}
 		var reactInstance = this;
 		var library = this.props.library;
 		var currentSortField = this.state.order;
@@ -220,39 +221,24 @@ var Items = React.createClass({
 		Zotero.preferences.setPref('order', newSortField);
 		Zotero.preferences.setPref('sort', newSortOrder);
 	},
-	resortTriggered: function(evt) {
-		//re-sort triggered from another widget
-		var reactInstance = this;
-		var library = this.props.library;
-		var currentSortField = this.state.order;
-		var currentSortOrder = this.state.sort;
-		
-		var newSortField = evt.data.newSortField;
-		var newSortOrder = evt.data.newSortOrder;
-		
-		//only allow ordering by the fields we have
-		if(library.sortableColumns.indexOf(newSortField) == (-1)) {
-			return false;
+	itemClickHandler: function(evt){
+		evt.preventDefault();
+		let reactInstance = this;
+		let library = reactInstance.props.library;
+		let itemKey = evt.currentTarget.getAttribute('data-itemkey');
+		let selected;
+		if(evt.ctrlKey) {
+			//add item to selected, but don't deselect others
+			Zotero.state.toggleItemSelected(itemKey);
+			selected = Zotero.state.getSelectedItemKeys();
+		} else {
+			Zotero.state.pathVars.itemKey = itemKey;
+			Zotero.state.pushState();
+			selected = [itemKey];
+			Zotero.state.selectedItemKeys = selected;
 		}
 		
-		//problem if there was no sort column mapped to the header that got clicked
-		if(!newSortField){
-			Zotero.ui.jsNotificationMessage('no order field mapped to column');
-			return false;
-		}
-		
-		//update the url with the new values
-		Zotero.state.pathVars['order'] = newSortField;
-		Zotero.state.pathVars['sort'] = newSortOrder;
-		Zotero.state.pushState();
-		
-		//set new order as preference and save it to use www prefs
-		library.preferences.setPref('sortField', newSortField);
-		library.preferences.setPref('sortOrder', newSortOrder);
-		library.preferences.setPref('order', newSortField);
-		library.preferences.setPref('sort', newSortOrder);
-		Zotero.preferences.setPref('order', newSortField);
-		Zotero.preferences.setPref('sort', newSortOrder);
+		Zotero.trigger('selectedItemsChanged', {selectedItemKeys: selected});
 	},
 	//select and highlight in the itemlist the item  that is displayed
 	//in the item details widget
@@ -260,53 +246,6 @@ var Items = React.createClass({
 		log.debug('widgets.items.selectDisplayed', 3);
 		Zotero.state.selectedItemKeys = [];
 		this.setState({selectedItemKeys: Zotero.state.getSelectedItemKeys(), allSelected:false});
-	},
-	fixTableHeaders: function() {
-		if(document.getElementsByTagName('body')[0].className.indexOf('lib-body') != -1) {
-			var tableEl = J(this.refs.itemsTable);
-			tableEl.floatThead({
-				top: function() {
-					var searchContainerEl = J('.library-search-box-container:visible');
-					var primaryNavEl = J('#primarynav');
-					return searchContainerEl.height() ? primaryNavEl.height() + searchContainerEl.height() + 'px' : 0;
-				}
-			});
-		}
-	},
-	handleSelectAllChange: function(evt) {
-		var library = this.props.library;
-		let nowselected = [];
-		let allSelected = false;
-		if(evt.target.checked){
-			allSelected = true;
-			//select all items
-			this.state.items.forEach(function(item){
-				nowselected.push(item.get('key'));
-			});
-		} else {
-			let selectedItemKey = Zotero.state.getUrlVar('itemKey');
-			if(selectedItemKey){
-				nowselected.push(selectedItemKey);
-			}
-		}
-		Zotero.state.selectedItemKeys = nowselected;
-		this.setState({selectedItemKeys:nowselected, allSelected:allSelected});
-		library.trigger('selectedItemsChanged', {selectedItemKeys: nowselected});
-
-		//if deselected all, reselect displayed item row
-		if(nowselected.length === 0){
-			library.trigger('displayedItemChanged');
-		}
-	},
-	openSortingDialog: function(evt) {
-		var library = this.props.library;
-		library.trigger('chooseSortingDialog');
-	},
-	componentDidMount: function() {
-		this.fixTableHeaders();
-	},
-	componentDidUpdate: function() {
-		this.fixTableHeaders();
 	},
 	render: function() {
 		log.debug('Items.render', 3);
@@ -320,174 +259,145 @@ var Items = React.createClass({
 		selectedItemKeys.forEach(function(itemKey) {
 			selectedItemKeyMap[itemKey] = true;
 		});
-
-		var sortIcon;
-		if(sort == 'desc'){
-			sortIcon = (<span className="glyphicon fonticon glyphicon-chevron-down pull-right"></span>);
-		} else {
-			sortIcon = (<span className="glyphicon fonticon glyphicon-chevron-up pull-right"></span>);
-		}
 		
-		var headers = [(
-			<th key="checkbox-header">
-				<input type='checkbox'
-				className='itemlist-editmode-checkbox all-checkbox'
-				name='selectall'
-				checked={this.state.allSelected}
-				onChange={this.handleSelectAllChange} />
-			</th>
-		)];
-		if(narrow){
-			headers.push(
-				<th key="single-cell-header" onClick={reactInstance.openSortingDialog} className="clickable">
-					{Zotero.Item.prototype.fieldMap[order]}
-					{sortIcon}
-				</th>
-			);
-		} else {
-			var fieldHeaders = this.state.displayFields.map(function(header, ind){
-				var sortable = Zotero.Library.prototype.sortableColumns.indexOf(header) != -1;
-				var selectedClass = ((header == order) ? 'selected-order sort-' + sort + ' ' : '');
-				var sortspan = null;
-				if(header == order) {
-					sortspan = sortIcon;
-				}
-				return (<th 
-					key={header}
-					onClick={reactInstance.resortItems}
-					className={'field-table-header ' + selectedClass + (sortable ? 'clickable ' : '')}
-					data-columnfield={header} >
-						{Zotero.Item.prototype.fieldMap[header] ? Zotero.Item.prototype.fieldMap[header] : header}
-						{sortspan}
-					</th>
-				);
-			});
-			headers = headers.concat(fieldHeaders);
-		}
-
 		let displayFields = this.state.displayFields;
-		var itemRows = this.state.items.map(function(item){
-			var selected = selectedItemKeyMap.hasOwnProperty(item.get('key')) ? true : false;
-			var p = {
-				itemsReactInstance: reactInstance,
-				library:library,
-				key: item.get('key'),
-				item: item,
-				selected: selected,
-				narrow: narrow,
-				displayFields: displayFields
-			};
-			return (
-				<ItemRow {...p} />
-			);
-		});
-		if(itemRows.length == 0){
-			var tds = this.state.displayFields.map(function(header){
-				return <td key={header}></td>;
-			});
-			tds = [<td key="check"></td>].concat(tds);
-			itemRows = (
-				<tr>
-					{tds}
-				</tr>
-			);
-		}
+		let itemClickHandler = this.itemClickHandler;
+		let headerClickHandler = this.resortItems;
+		
 		return (
-			<div id="library-items-div" className="library-items-div row" ref="topdiv">
-				<form className="item-select-form" method='POST'>
-					<table id='field-table' ref="itemsTable" className='wide-items-table table table-striped'>
-						<thead>
-							<tr>
-								{headers}
-							</tr>
-						</thead>
-						<tbody>
-							{itemRows}
-						</tbody>
-					</table>
-					<LoadingError errorLoading={this.state.errorLoading} />
-					<LoadingSpinner loading={this.state.moreloading} />
-					<div hidden={this.state.allItemsLoaded} id="load-more-items-div" className="row">
-						<button onClick={this.loadMoreItems} type="button" id="load-more-items-button" className="btn btn-default">
-							Load More Items
-						</button>
-					</div>
-				</form>
+			<div id="library-items-div" className="library-items-div row" ref="topdiv" onKeyDown={this.handleShortcuts} tabIndex='0'>
+				<WideItemsTable 
+					items={this.state.items} 
+					selectedItemKeys={selectedItemKeys} 
+					sort={sort} 
+					order={order} 
+					rowClickHandler={itemClickHandler} 
+					headerClickHandler={headerClickHandler}
+					displayFields={displayFields}
+					/>
+				<LoadingError errorLoading={this.state.errorLoading} />
+				<LoadingSpinner loading={this.state.moreloading} />
+				<div hidden={this.state.allItemsLoaded} id="load-more-items-div" className="row">
+					<button onClick={this.loadMoreItems} type="button" id="load-more-items-button" className="btn btn-default">
+						Load More Items
+					</button>
+				</div>
 			</div>
 		);
 		
 	}
 });
 
-var ItemRow = React.createClass({
+var WideItemsTable = React.createClass({
 	getDefaultProps: function() {
 		return {
 			displayFields: ['title', 'creatorSummary', 'dateModified'],
-			selected: false,
-			item: {},
-			narrow: false
+			sort: '',
+			order: '',
+			selectedItemKeys: [],
+			items: [],
+			rowClickHandler:function(){},
+			headerClickHandler: function(){}
 		};
 	},
-	handleSelectChange: function(ev) {
-		var reactInstance = this;
-		var library = this.props.library;
-		var itemKey = this.props.item.get('key');
-		Zotero.state.toggleItemSelected(itemKey);
-		var selected = Zotero.state.getSelectedItemKeys();
-		library.trigger('selectedItemsChanged', {selectedItemKeys: selected});
+	componentDidMount: function() {
+		this.fixTableHeaders();
 	},
-	handleItemLinkClick: function(evt) {
-		evt.preventDefault();
-		let itemKey = evt.target.getAttribute('data-itemkey');
-		if(evt.ctrlKey) {
-			//add item to selected, but don't deselect others
-			Zotero.state.toggleItemSelected(itemKey);
-			let selected = Zotero.state.getSelectedItemKeys();
-			let library = this.props.library;
-			library.trigger('selectedItemsChanged', {selectedItemKeys: selected});
-			return;
-		}
-		Zotero.state.pathVars.itemKey = itemKey;
-		Zotero.state.pushState();
+	fixTableHeaders: function() {
+		var tableEl = J(this.refs.itemsTable);
+		tableEl.floatThead({
+			top: function() {
+				var searchContainerEl = J('.library-search-box-container:visible');
+				var primaryNavEl = J('#primarynav');
+				return searchContainerEl.height() ? primaryNavEl.height() + searchContainerEl.height() + 'px' : 0;
+			}
+		});
 	},
 	render: function() {
-		var reactInstance = this;
-		var item = this.props.item;
-		var selected = this.props.selected;
-		if(!this.props.narrow){
-			var fields = this.props.displayFields.map(function(field){
-				var ctags = null;
-				if(field == 'title'){
-					ctags = <ColoredTags item={item} />;
-				}
-				return (
-					<td onClick={reactInstance.handleItemLinkClick} key={field} className={field} data-itemkey={item.get('key')}>
-						{ctags}
-						<a onClick={reactInstance.handleItemLinkClick} className='item-select-link' data-itemkey={item.get('key')} href={Zotero.url.itemHref(item)} title={item.get(field)}>
+		log.debug('WideItemsTable.render', 3);
+		let reactInstance = this;
+		let order = this.props.order;
+		let sort = this.props.sort;
+		let selectedItemKeys = this.props.selectedItemKeys;
+		let selectedItemKeyMap = {};
+		selectedItemKeys.forEach(function(itemKey) {
+			selectedItemKeyMap[itemKey] = true;
+		});
+
+		let sortIcon;
+		if(sort == 'desc'){
+			sortIcon = (<span className="glyphicon fonticon glyphicon-chevron-down pull-right"></span>);
+		} else {
+			sortIcon = (<span className="glyphicon fonticon glyphicon-chevron-up pull-right"></span>);
+		}
+		
+		let headers = this.props.displayFields.map(function(header){
+			var sortable = Zotero.Library.prototype.sortableColumns.indexOf(header) != -1;
+			var selectedClass = ((header == order) ? 'selected-order sort-' + sort + ' ' : '');
+			var sortspan = null;
+			if(header == order) {
+				sortspan = sortIcon;
+			}
+			return (<th 
+				key={header}
+				onClick={reactInstance.props.headerClickHandler}
+				className={'field-table-header ' + selectedClass + (sortable ? 'clickable ' : '')}
+				data-columnfield={header} >
+					{Zotero.Item.prototype.fieldMap[header] ? Zotero.Item.prototype.fieldMap[header] : header}
+					{sortspan}
+				</th>
+			);
+		});
+	
+		let displayFields = this.props.displayFields;
+		let itemRows = this.props.items.map(function(item){
+			let itemKey = item.get('key');
+			let selected = selectedItemKeyMap.hasOwnProperty(item.get('key')) ? true : false;
+			let fieldValues = displayFields.map((field) => {
+				if(field == 'title') {
+					//TODO: add colored tags, and itemtype icon
+					return (
+						<span>
+							<ColoredTags item={item} />
 							{Zotero.format.itemField(field, item, true)}
-						</a>
+						</span>
+					);
+				} else {
+					return Zotero.format.itemField(field, item, true);
+				}
+			});
+			let tds = fieldValues.map((fieldValue,i) => {
+				return (
+					<td onClick={reactInstance.props.rowClickHandler} key={i} data-itemkey={itemKey}>
+						{fieldValue}
 					</td>
 				);
 			});
 			return (
-				<tr className={selected ? 'highlighed' : ''}>
-					<td className="edit-checkbox-td" data-itemkey={item.get('key')}>
-						<input type='checkbox' onChange={this.handleSelectChange} checked={selected} className='itemlist-editmode-checkbox itemKey-checkbox' name={'selectitem-' + item.get('key')} data-itemkey={item.get('key')} />
-					</td>
-					{fields}
+				<tr className={selected ? 'highlighed' : ''} key={itemKey}>
+					{tds}
 				</tr>
 			);
-		} else {
-			return (
-				<tr className={selected ? 'highlighed' : ''} data-itemkey={item.get('key')}>
-					<td className="edit-checkbox-td" data-itemkey={item.get('key')}>
-						<input type='checkbox' className='itemlist-editmode-checkbox itemKey-checkbox' name={'selectitem-' + item.get('key')} data-itemkey={item.get('key')} />
-					</td>
-					
-					<SingleCellItemField onClick={reactInstance.handleItemLinkClick} item={item} displayFields={this.props.displayFields} />
-				</tr>
-			);
-		}
+		});
+
+		return (
+			<table id='field-table' ref="itemsTable" className='wide-items-table table table-striped'>
+				<thead>
+					<tr>
+						{headers}
+					</tr>
+				</thead>
+				<tbody>
+					{itemRows}
+				</tbody>
+			</table>
+		);
+	}
+});
+
+var NarrowItemsTable = React.createClass({
+	render: function() {
+
 	}
 });
 

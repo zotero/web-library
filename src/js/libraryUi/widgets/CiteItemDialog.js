@@ -8,10 +8,7 @@ var BootstrapModalWrapper = require('./BootstrapModalWrapper.js');
 var CiteItemDialog = React.createClass({
 	componentWillMount: function() {
 		var reactInstance = this;
-		var library = this.props.library;
-
 		reactInstance.getAvailableStyles();
-		library.listen('citeItems', reactInstance.openDialog, {});
 	},
 	getDefaultProps: function() {
 		return {

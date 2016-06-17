@@ -7,13 +7,6 @@ var BootstrapModalWrapper = require('./BootstrapModalWrapper.js');
 
 var CreateItemDialog = React.createClass({
 	componentWillMount: function() {
-		var reactInstance = this;
-		var library = this.props.library;
-		library.listen('createItem', function(evt){
-			var itemType = evt.data.itemType;
-			reactInstance.setState({itemType: itemType});
-			reactInstance.openDialog();
-		}, {});
 	},
 	getInitialState: function() {
 		return {

@@ -6,11 +6,6 @@ var React = require('react');
 
 var LibrarySearchBox = React.createClass({
 	componentWillMount: function(){
-		let library = this.props.library;
-		if(!library) {
-			log.error('no library prop set on LibrarySearchBox');
-		}
-		library.listen('clearLibraryQuery', this.clearLibraryQuery);
 	},
 	getInitialState: function(){
 		let query = Zotero.state.getUrlVar('q');

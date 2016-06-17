@@ -8,7 +8,6 @@ var BootstrapModalWrapper = require('./BootstrapModalWrapper.js');
 var ChooseSortingDialog = React.createClass({
 	componentWillMount: function() {
 		var reactInstance = this;
-		var library = this.props.library;
 
 		var currentSortField = Zotero.ui.getPrioritizedVariable('order', 'title');
 		var currentSortOrder = Zotero.ui.getPrioritizedVariable('sort', 'asc');
@@ -16,8 +15,6 @@ var ChooseSortingDialog = React.createClass({
 			sortField: currentSortField,
 			sortOrder: currentSortOrder
 		});
-
-		library.listen('chooseSortingDialog', reactInstance.openDialog, {});
 	},
 	getInitialState: function() {
 		return {

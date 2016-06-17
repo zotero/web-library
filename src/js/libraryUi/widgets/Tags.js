@@ -88,19 +88,11 @@ var Tags = React.createClass({
 			loading:false
 		};
 	},
-	componentWillMount: function(evt) {
+	componentWillMount: function() {
 		var reactInstance = this;
 		var library = this.props.library;
 		var tagColors = library.preferences.getPref('tagColors');
 		reactInstance.setState({tagColors: tagColors});
-		
-		library.listen('tagsDirty', reactInstance.syncTags, {});
-		library.listen('cachedDataLoaded', reactInstance.syncTags, {});
-		
-		library.listen('tagsChanged libraryTagsUpdated selectedTagsChanged', function(evt){
-			reactInstance.setState({tags:library.tags});
-		}, {});
-		
 	},
 	handleFilterChanged: function(evt) {
 		this.setState({tagFilter: evt.target.value});

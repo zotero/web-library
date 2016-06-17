@@ -7,13 +7,6 @@ var BootstrapModalWrapper = require('./BootstrapModalWrapper.js');
 
 var DeleteCollectionDialog = React.createClass({
 	componentWillMount: function() {
-		var reactInstance = this;
-		var library = this.props.library;
-
-		library.listen('deleteCollectionDialog', function(){
-			reactInstance.setState({collectionKey:Zotero.state.getUrlVar('collectionKey')});
-			reactInstance.openDialog();
-		});
 	},
 	getInitialState: function() {
 		return {

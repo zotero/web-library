@@ -1,6 +1,3 @@
 [submodule "library/libZotero"]
 	path = library/libZotero
 	url = https://github.com/fcheslack/libZotero.git 
-[submodule "library/libZoteroJS"]
-	path = library/libZoteroJS
-	url = https://github.com/fcheslack/libZoteroJS

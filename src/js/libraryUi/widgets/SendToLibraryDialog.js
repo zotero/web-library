@@ -7,9 +7,6 @@ var BootstrapModalWrapper = require('./BootstrapModalWrapper.js');
 
 var SendToLibraryDialog = React.createClass({
 	componentWillMount: function() {
-		var reactInstance = this;
-		var library = this.props.library;
-		library.listen('sendToLibraryDialog', reactInstance.openDialog, {});
 	},
 	getInitialState: function() {
 		return {

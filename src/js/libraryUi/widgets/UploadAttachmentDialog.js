@@ -9,13 +9,6 @@ var BootstrapModalWrapper = require('./BootstrapModalWrapper.js');
 
 var UploadAttachmentDialog = React.createClass({
 	componentWillMount: function() {
-		var reactInstance = this;
-		var library = this.props.library;
-		library.listen('uploadAttachment', function(){
-			log.debug('got uploadAttachment event; opening upload dialog');
-			reactInstance.setState({itemKey: Zotero.state.getUrlVar('itemKey')});
-			reactInstance.openDialog();
-		}, {});
 	},
 	getInitialState: function() {
 		return {
