@@ -1,6 +1,6 @@
 {
   "name": "zotero-web-library",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Web library from zotero.org",
   "main": "lib/zotero-web-library.js",
   "directories": {
