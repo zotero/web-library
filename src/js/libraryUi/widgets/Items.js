@@ -78,7 +78,8 @@ var Items = React.createClass({
 		};
 	},
 	handleShortcuts: function(evt) {
-		if(evt.key == 'a'){
+		//keyCode is deprecated, but is necessary here because chrome doesn't properly set evt.key on keydown
+		if(evt.key == 'a' || evt.keyCode == 65){
 			if(evt.ctrlKey){
 				evt.preventDefault();
 				evt.stopPropagation();
