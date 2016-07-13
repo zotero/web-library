@@ -1,11 +1,11 @@
 RewriteEngine On
 
-RewriteRule ^.*(/static/.*)$ ../../$1
-RewriteRule ^.*(/build/.*)$ ../../$1
+RewriteRule ^.*(static/.*)$ ../../$1
+RewriteRule ^.*(build/.*)$ ../../$1
 RewriteRule ^.*(/libraryconfig.js)$ ./$1
 
 RewriteCond %{SCRIPT_FILENAME} !-f
 RewriteCond %{SCRIPT_FILENAME} !-d
-RewriteCond %{REQUEST_URI} !.*static/.*
+#RewriteCond %{REQUEST_URI} !.*static/.*
 RewriteRule ^(.*)$ index.html
 
