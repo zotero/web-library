@@ -318,6 +318,15 @@ State.prototype.buildUrl = function(urlvars, queryVars){
 State.prototype.buildLibraryUrl = function(library, urlvars, queryVars){
 	var state = this;
 	log.debug('State.buildUrl', 3);
+	
+	//add libraryUrlIdentifier from cached objects if we don't have it already
+	if(!library.libraryUrlIdentifier){
+		if(library.collections.collectionsArray.length > 0){
+			log.debug('setting libraryUrlIdentifier from collection');
+			library.libraryUrlIdentifier = library.collections.collectionsArray[0].apiObj.library.name;
+		}
+	}
+
 	if(typeof queryVars === 'undefined') { queryVars = false;}
 	let basePath = '';
 	switch(library.type){
@@ -586,19 +595,21 @@ State.prototype.stateChanged = function(){
 	let libraryChanged = false;
 	//let lib = this.libraryFromUrl(state.curHref);
 	let lib = this.libraryFromUrl();
-	if(lib.type != this.library.type || lib.identifier != this.library.libraryUrlIdentifier){
-		libraryChanged = true;
-		let libraryStrings = Object.keys(this.libraries);
-		for(let i = 0; i < libraryStrings.length; i++){
-			let libraryString = libraryStrings[i];
-			let library = this.libraries[libraryString];
-			if(lib.type == library.type && lib.identifier == library.libraryUrlIdentifier){
-				//set State's library to the matching instance we found in libraries
-				this.library = library;
-				break;
+	if(lib !== null && this.library !== null){
+		if(lib.type != this.library.type || lib.identifier != this.library.libraryUrlIdentifier){
+			libraryChanged = true;
+			let libraryStrings = Object.keys(this.libraries);
+			for(let i = 0; i < libraryStrings.length; i++){
+				let libraryString = libraryStrings[i];
+				let library = this.libraries[libraryString];
+				if(lib.type == library.type && lib.identifier == library.libraryUrlIdentifier){
+					//set State's library to the matching instance we found in libraries
+					this.library = library;
+					break;
+				}
 			}
+			log.error('Library change detected, but matching library not found in Zotero.state.libraries');
 		}
-		log.error('Library change detected, but matching library not found in Zotero.state.libraries');
 	}
 	if(libraryChanged){
 		Zotero.trigger('libraryChanged');
