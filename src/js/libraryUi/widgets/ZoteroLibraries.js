@@ -33,9 +33,11 @@ Zotero.ui.widgets.libraries = {};
 Zotero.ui.widgets.libraries.init = function(el){
 	log.debug('Zotero.ui.widgets.library.init');
 	let user = Zotero.config.loggedInUser;
+	let libString = el.getAttribute('data-library');
+	let identifier = el.getAttribute('data-identifier');
 	
 	var reactInstance = ReactDOM.render(
-		<ZoteroLibraries user={user} />,
+		<ZoteroLibraries user={user} libraryString={libString} identifier={identifier} />,
 		document.getElementById('library-widget')
 	);
 };
@@ -307,19 +309,26 @@ var ZoteroLibraries = React.createClass({
 			narrow = false;
 		}
 
+		//instantiate initial library specified in props
+		let initialLib = Z.Utils.parseLibString(this.props.libraryString);
+		let library = new Zotero.Library(initialLib.libraryType, initialLib.libraryID, this.props.identifier, Zotero.config.apiKey);
+		Zotero.state.library = library;
+
+		Zotero.state.pushState();
+		
 		let user = this.props.user;
 		let userLibrary = new Zotero.Library('user', user.userID, user.slug, Zotero.config.apiKey);
 		let libraries = {};
 		libraries[userLibrary.libraryString] = userLibrary;
-		Zotero.state.library = userLibrary;
 
+		
 		return {
 			userLibrary: userLibrary,
 			narrow: narrow,
 			activePanel: 'items',
 			deviceSize: 'xs',
 			libraries: libraries,
-			currentLibrary: userLibrary
+			currentLibrary: library
 		};
 	},
 	switchLibrary: function(evt) {
