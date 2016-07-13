@@ -31,6 +31,7 @@ if (typeof jQuery === 'undefined' && typeof $ === 'undefined') {
 
 window.$ = window.jQuery = window.J = jQuery || $;
 require('floatthead');
+require('bootstrap-sass');
 
 window.React = require('react');
 window.ReactDOM = require('react-dom');
