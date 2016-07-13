@@ -293,7 +293,7 @@ init.rte = function(type, autofocus, container){
 		init.ckeditor(type, autofocus, container);
 		return;
 	}
-	else {
+	else if(Zotero.config.rte == 'tinymce') {
 		init.tinyMce(type, autofocus, container);
 	}
 };
