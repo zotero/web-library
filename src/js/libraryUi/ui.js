@@ -343,13 +343,13 @@ init.ckeditor = function(type, autofocus, container){
 	
 	var config;
 	if(type == 'nolinks'){
-		config = Z.deepExtend({}, nolinksckconfig);
+		config = Z.extend({}, nolinksckconfig);
 	}
 	else if(type == 'readonly'){
-		config = Z.deepExtend({}, readonlyckconfig);
+		config = Z.extend({}, readonlyckconfig);
 	}
 	else {
-		config = Z.deepExtend({}, ckconfig);
+		config = Z.extend({}, ckconfig);
 	}
 	if(autofocus){
 		config.startupFocus = true;

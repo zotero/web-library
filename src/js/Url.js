@@ -2,6 +2,8 @@
 
 var url = {};
 
+//generate a key request url, including a redirect,
+//for creating keys with permission to read a private library feed
 url.requestReadApiKeyUrl = function(libraryType, libraryID, redirect){
 	var apiKeyBase = Zotero.config.baseWebsiteUrl + '/settings/keys/new';
 	apiKeyBase.replace('http', 'https');

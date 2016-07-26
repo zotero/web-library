@@ -11,10 +11,7 @@ var format = {};
  * @param  {boolean} trim  Trim output to limit length
  * @return {string}
  */
-format.itemField = function(field, item, trim){
-    if(typeof trim == 'undefined'){
-        trim = false;
-    }
+format.itemField = function(field, item, trim=false){
     var intlOptions = {
         year: 'numeric',
         month: 'numeric',
@@ -26,8 +23,8 @@ format.itemField = function(field, item, trim){
     };
 
     var formatDate;
-    if(window.Intl) {
-        var dateFormatter = new window.Intl.DateTimeFormat(undefined, intlOptions);
+    if(Intl) {
+        var dateFormatter = new Intl.DateTimeFormat(undefined, intlOptions);
         formatDate = dateFormatter.format;
     } else {
         formatDate = function(date) {
@@ -164,10 +161,10 @@ format.itemDateField = function(field, item){
     
     var formatDate;
     var formatTime;
-    if(window.Intl) {
-        var dateFormatter = new window.Intl.DateTimeFormat(undefined, intlOptions);
+    if(Intl) {
+        var dateFormatter = new Intl.DateTimeFormat(undefined, intlOptions);
         formatDate = dateFormatter.format;
-        var timeFormatter = new window.Intl.DateTimeFormat(undefined, timeOptions);
+        var timeFormatter = new Intl.DateTimeFormat(undefined, timeOptions);
         formatTime = timeFormatter.format;
     } else {
         formatDate = function(date) {
@@ -212,6 +209,7 @@ format.itemDateField = function(field, item){
  * @param  {string} contentRow contenteRow name
  * @return {string}
  */
+/*
 format.itemContentRow = function(contentRow){
     if(contentRow.field == 'date'){
         if(!contentRow.fieldValue){return '';}
@@ -227,7 +225,7 @@ format.itemContentRow = function(contentRow){
         return contentRow.fieldValue;
     }
 };
-
+*/
 format.groupUrl = function(group, route){
     var groupBase;
     if(group.groupType == 'Private'){

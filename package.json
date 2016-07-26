@@ -9,6 +9,7 @@
   "scripts": {
     "build": "./node_modules/.bin/gulp build",
     "start": "./node_modules/.bin/gulp",
+    "test": "./node_modules/.bin/mocha --compilers js:babel-core/register ./test/tests",
     "prepublish": "./node_modules/.bin/gulp prepublish",
     "postpublish": "./node_modules/.bin/gulp postpublish"
   },
@@ -18,10 +19,12 @@
   "author": "Faolan C-P",
   "license": "AGPL-3.0",
   "devDependencies": {
+    "babel-plugin-transform-object-rest-spread": "^6.8.0",
     "babel-preset-es2015": "6.9.0",
-    "babel-preset-react": "6.5.0",
+    "babel-preset-react": "^6.5.0",
     "babelify": "^7.3.0",
     "browserify": "^13.0.1",
+    "chai": "^3.5.0",
     "del": "^2.2.0",
     "gulp": "3.9.1",
     "gulp-autoprefixer": "3.1.0",
@@ -35,6 +38,7 @@
     "gulp-uglify": "1.5.3",
     "gulp-util": "^3.0.7",
     "merge-stream": "^1.0.0",
+    "mocha": "^2.5.3",
     "run-sequence": "^1.2.1",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.1.0",
