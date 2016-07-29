@@ -13,9 +13,11 @@ var ItemDetails = React.createClass({
 	},
 	render: function() {
 		return (
-			<div>
-				ItemDetails
-			</div>
+			<section id="item-details">
+				<header>
+					<h4 class="offscreen">Item title</h4>
+				</header>
+			</section>
 		);
 	}
 });

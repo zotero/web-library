@@ -13,9 +13,9 @@ var TagSelector = React.createClass({
 	},
 	render: function() {
 		return (
-			<div>
-				TagSelector
-			</div>
+			<nav id="tag-selector">
+				<h3>Tags</h3>
+			</nav>
 		);
 	}
 });

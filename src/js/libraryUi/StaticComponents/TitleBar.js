@@ -13,9 +13,17 @@ var TitleBar = React.createClass({
 	},
 	render: function() {
 		return (
-			<div>
-				TitleBar
-			</div>
+			<header id="title-bar">
+				<h1>Zotero</h1>
+				<nav>
+					<h2 class="offscreen">Site navigation</h2>
+				  <ul>
+				  	<li><a href="#">Feed</a></li>
+				  	<li><a href="#">Library</a></li>
+				  	<li><a href="#">Groups</a></li>
+				  </ul>
+				</nav>
+			</header>
 		);
 	}
 });

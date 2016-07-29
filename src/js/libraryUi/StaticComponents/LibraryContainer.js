@@ -9,7 +9,6 @@ var TitleBar = require('./TitleBar.js');
 var CollectionTree = require('./CollectionTree.js');
 var TagSelector = require('./TagSelector.js');
 var ItemList = require('./ItemList.js');
-var ItemDetails = require('./ItemDetails.js');
 
 Zotero.ui.widgets.StaticLibrary = {};
 
@@ -32,10 +31,16 @@ var LibraryContainer = React.createClass({
 		return (
 			<div>
 				<TitleBar />
-				<CollectionTree />
-				<TagSelector />
-				<ItemList />
-				<ItemDetails />
+				<main>
+					<section>
+						<header id="sidebar">
+							<h2 class="hidden-md hidden-lg">Library</h2>
+							<CollectionTree />
+							<TagSelector />
+						</header>
+						<ItemList />
+					</section>
+				</main>
 			</div>
 		);
 	}

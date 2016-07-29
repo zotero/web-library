@@ -13,9 +13,9 @@ var CollectionTree = React.createClass({
 	},
 	render: function() {
 		return (
-			<div>
-				CollectionTree
-			</div>
+			<nav id="collection-tree">
+				<h3>Library navigation</h3>
+			</nav>
 		);
 	}
 });

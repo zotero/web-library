@@ -1,3 +1,7 @@
+//
+// Zotero Web Library
+// --------------------------------------------------
+
 @import "abstracts/variables";
 @import "abstracts/functions";
 @import "abstracts/mixins";
@@ -8,3 +12,8 @@
 @import "base/reset";
 @import "base/base";
 
+@import "partials/sidebar";
+
+@import "components/title-bar";
+@import "components/collection-tree";
+@import "components/item-details";

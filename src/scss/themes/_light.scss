@@ -22,8 +22,25 @@ $text-shade-1: #222;
 $text-shade-2: #444;
 
 
-// Mapping
+// Scaffolding
 // --------------------------------------------------
 
 $body-bg: $shade-0;
 $text-color: $text-shade-1;
+
+
+// Partials
+// --------------------------------------------------
+
+// Sidebar
+$sidebar-bg: $shade-1;
+
+
+// Components
+// --------------------------------------------------
+
+// Title bar
+$title-bar-bg: $shade-1;
+
+// Item details
+$item-details-bg: $shade-1;
