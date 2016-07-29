@@ -3,3 +3,6 @@ indent_style = tab
 
 [*.scss]
 indent_style = tab
+
+[*.svg]
+indent_style = tab
