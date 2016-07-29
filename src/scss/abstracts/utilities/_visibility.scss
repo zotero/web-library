@@ -2,6 +2,9 @@
 // Visibility
 // --------------------------------------------------
 
+
+// Responsive visibility
+
 @each $bp in map-keys($grid-breakpoints) {
   .hidden-#{$bp}-up {
     @include media-breakpoint-up($bp) {
@@ -13,4 +16,11 @@
       display: none !important;
     }
   }
+}
+
+// Screen readers only
+
+.offscreen {
+	clip: rect(1px 1px 1px 1px);
+	position: absolute;
 }

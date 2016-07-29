@@ -14,7 +14,7 @@ var CollectionTree = React.createClass({
 	render: function() {
 		return (
 			<nav id="collection-tree">
-				<h3>Library navigation</h3>
+				<h3 className="offscreen">Library navigation</h3>
 			</nav>
 		);
 	}
