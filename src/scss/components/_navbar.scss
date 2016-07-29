@@ -5,7 +5,6 @@
 #navbar {
 	background: $title-bar-bg;
 	margin-bottom: $space-min;
-	overflow: hidden; // todo: just a quick fix
 
 	@include media-breakpoint-up(sm) {
 		flex: 0 0 auto;
@@ -14,6 +13,7 @@
 	.navbar-brand {
 		background: url("../static/images/zotero-logo.svg") 0 0 no-repeat;
 		height: $navbar-brand-height-xs;
+		margin: 0;
 		text-indent: -100%;
 		white-space: nowrap;
 		width: $navbar-brand-width-xs;

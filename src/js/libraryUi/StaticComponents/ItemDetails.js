@@ -16,6 +16,7 @@ var ItemDetails = React.createClass({
 			<section id="item-details">
 				<header>
 					<h4 className="offscreen">Item title</h4>
+					Item Details
 				</header>
 			</section>
 		);
