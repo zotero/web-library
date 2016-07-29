@@ -9,4 +9,17 @@
 	@media (min-width: $screen-sm-min) {
 		flex: 0 0 auto;
 	}
+
+	.navbar-brand {
+		background: url("../static/images/zotero-logo.svg") 0 0 no-repeat;
+		height: $navbar-brand-height-xs;
+		text-indent: -100%;
+		white-space: nowrap;
+		width: $navbar-brand-width-xs;
+
+		@media (min-width: $screen-sm-min) {
+			height: $navbar-brand-height-sm;
+			width: $navbar-brand-width-sm;
+		}
+	}
 }
