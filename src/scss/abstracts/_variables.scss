@@ -1,0 +1,35 @@
+//
+// Variables
+// --------------------------------------------------
+
+
+// Typography
+// --------------------------------------------------
+
+
+$font-family-sans-serif: "Helvetica Neue", Helvetica, Arial, sans-serif; // todo: BlinkMacSystemFont
+$font-family-base:       $font-family-sans-serif;
+
+$font-size-base: 14px;
+
+$line-height-base: 1.429;
+
+
+// Media queries breakpoints
+// --------------------------------------------------
+
+// Extra small screen
+$screen-xs-min: 480px;
+
+// Small screen
+$screen-sm-min: 768px;
+
+// Medium screen
+$screen-md-min: 992px;
+
+// Large screen
+$screen-lg-min: 1200px;
+
+$screen-xs-max: ($screen-sm-min - 1);
+$screen-sm-max: ($screen-md-min - 1);
+$screen-md-max: ($screen-lg-min - 1);
