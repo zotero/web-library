@@ -15,7 +15,7 @@ var ItemDetails = React.createClass({
 		return (
 			<section id="item-details">
 				<header>
-					<h4 class="offscreen">Item title</h4>
+					<h4 className="offscreen">Item title</h4>
 				</header>
 			</section>
 		);

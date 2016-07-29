@@ -14,9 +14,9 @@ var Navbar = React.createClass({
 	render: function() {
 		return (
 			<header id="navbar">
-				<h1>Zotero</h1>
+				<h1 className="navbar-brand">Zotero</h1>
 				<nav>
-					<h2 class="offscreen">Site navigation</h2>
+					<h2 className="offscreen">Site navigation</h2>
 				  <ul>
 				  	<li><a href="#">Feed</a></li>
 				  	<li><a href="#">Library</a></li>

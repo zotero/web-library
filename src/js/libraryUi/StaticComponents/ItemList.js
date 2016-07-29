@@ -20,7 +20,7 @@ var ItemsList = React.createClass({
 				<div id="item-list-container">
 					<header>
 						<h3>Collection title</h3>
-						<div class="toolbar"></div>
+						<div className="toolbar"></div>
 					</header>
 					<div>Item List</div>
 				</div>
