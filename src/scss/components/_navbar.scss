@@ -4,6 +4,7 @@
 
 #navbar {
 	background: $title-bar-bg;
+	margin-bottom: $space-min;
 	overflow: hidden; // todo: just a quick fix
 
 	@include media-breakpoint-up(sm) {
