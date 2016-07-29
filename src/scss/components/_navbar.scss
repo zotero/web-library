@@ -5,4 +5,8 @@
 #navbar {
 	background: $title-bar-bg;
 	overflow: hidden; // todo: just a quick fix
+
+	@media (min-width: $screen-sm-min) {
+		flex: 0 0 auto;
+	}
 }

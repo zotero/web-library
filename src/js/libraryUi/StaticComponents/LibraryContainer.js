@@ -16,7 +16,7 @@ Zotero.ui.widgets.StaticLibrary.init = function(el){
 	log.debug('StaticLibrary.init');
 	ReactDOM.render(
 		<LibraryContainer />,
-		document.getElementById('staticlibrary')
+		document.getElementById('library-container')
 	);
 };
 
@@ -29,7 +29,7 @@ var LibraryContainer = React.createClass({
 	},
 	render: function() {
 		return (
-			<div>
+			<div id="library-root">
 				<Navbar />
 				<main>
 					<section id="library">

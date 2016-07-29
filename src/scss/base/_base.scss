@@ -6,6 +6,13 @@
 	box-sizing: border-box;
 }
 
+html,
+body,
+#library-container,
+#library-root {
+	height: 100%;
+}
+
 body {
 	background: $body-bg;
 	color: $text-color;
@@ -14,4 +21,18 @@ body {
 		size: $font-size-base;
 	}
 	line-height: $line-height-base;
+}
+
+#library-root {
+	@media (min-width: $screen-sm-min) {
+		display: flex;
+		flex-direction: column;
+	}
+}
+
+main {
+	@media (min-width: $screen-sm-min) {
+		display: flex;
+		flex: 1 1 auto;
+	}
 }
