@@ -6,7 +6,7 @@
 	background: $title-bar-bg;
 	overflow: hidden; // todo: just a quick fix
 
-	@media (min-width: $screen-sm-min) {
+	@include media-breakpoint-up(sm) {
 		flex: 0 0 auto;
 	}
 
@@ -17,7 +17,7 @@
 		white-space: nowrap;
 		width: $navbar-brand-width-xs;
 
-		@media (min-width: $screen-sm-min) {
+		@include media-breakpoint-up(sm) {
 			height: $navbar-brand-height-sm;
 			width: $navbar-brand-width-sm;
 		}

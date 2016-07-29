@@ -3,11 +3,11 @@
 // --------------------------------------------------
 
 #item-list {
-	@media (min-width: $screen-sm-min) {
+	@include media-breakpoint-up(sm) {
 		flex: 1 1 auto;
 	}
 
-	@media (min-width: $screen-lg-min) {
+	@include media-breakpoint-up(lg) {
 		display: flex;
 	}
 }

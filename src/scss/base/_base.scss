@@ -24,14 +24,14 @@ body {
 }
 
 #library-root {
-	@media (min-width: $screen-sm-min) {
+	@include media-breakpoint-up(sm) {
 		display: flex;
 		flex-direction: column;
 	}
 }
 
 main {
-	@media (min-width: $screen-sm-min) {
+	@include media-breakpoint-up(sm) {
 		display: flex;
 		flex: 1 1 auto;
 	}

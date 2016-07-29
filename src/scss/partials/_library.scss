@@ -3,7 +3,7 @@
 // --------------------------------------------------
 
 #library {
-	@media (min-width: $screen-sm-min) {
+	@include media-breakpoint-up(sm) {
 		display: flex;
 		width: 100%;
 	}
