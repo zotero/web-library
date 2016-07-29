@@ -29,6 +29,7 @@ var bundle;
 
 function onError(err) {
 	gutil.log(gutil.colors.red('Error:'), err);
+	this.emit('end');
 }
 
 function onSuccess(msg) {
