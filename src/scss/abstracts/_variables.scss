@@ -33,3 +33,17 @@ $screen-lg-min: 1200px;
 $screen-xs-max: ($screen-sm-min - 1);
 $screen-sm-max: ($screen-md-min - 1);
 $screen-md-max: ($screen-lg-min - 1);
+
+
+// Sidebar
+// --------------------------------------------------
+
+$sidebar-width-sm: 320px;
+$sidebar-width-md: 25%;
+$sidebar-width-lg: 280px;
+
+
+// Item details
+// --------------------------------------------------
+
+$item-details-width-lg: 360px;

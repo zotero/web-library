@@ -4,4 +4,8 @@
 
 #item-details {
 	background: $item-details-bg;
+
+	@media (min-width: $screen-lg-min) {
+		flex: 0 0 $item-details-width-lg;
+	}
 }

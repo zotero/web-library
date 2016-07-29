@@ -2,6 +2,7 @@
 // Title bar
 // --------------------------------------------------
 
-#title-bar {
+#navbar {
 	background: $title-bar-bg;
+	overflow: hidden; // todo: just a quick fix
 }

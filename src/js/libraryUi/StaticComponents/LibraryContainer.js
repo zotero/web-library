@@ -5,7 +5,7 @@ var log = require('libzotero/lib/Log').Logger('zotero-web-library:LibraryContain
 var React = require('react');
 var ReactDOM = require('react-dom');
 
-var TitleBar = require('./TitleBar.js');
+var Navbar = require('./Navbar.js');
 var CollectionTree = require('./CollectionTree.js');
 var TagSelector = require('./TagSelector.js');
 var ItemList = require('./ItemList.js');
@@ -30,9 +30,9 @@ var LibraryContainer = React.createClass({
 	render: function() {
 		return (
 			<div>
-				<TitleBar />
+				<Navbar />
 				<main>
-					<section>
+					<section id="library">
 						<header id="sidebar">
 							<h2 class="hidden-md hidden-lg">Library</h2>
 							<CollectionTree />

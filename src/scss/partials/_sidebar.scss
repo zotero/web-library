@@ -4,4 +4,16 @@
 
 #sidebar {
 	background: $sidebar-bg;
+
+	@media (min-width: $screen-sm-min) {
+		flex: 0 0 $sidebar-width-sm;
+	}
+
+	@media (min-width: $screen-md-min) {
+		flex: 0 0 $sidebar-width-md;
+	}
+
+	@media (min-width: $screen-lg-min) {
+		flex: 0 0 $sidebar-width-lg;
+	}
 }

@@ -17,9 +17,13 @@ var ItemsList = React.createClass({
 	render: function() {
 		return (
 			<section id="item-list">
-				<header>
-				<h3>Collection title</h3>
-				</header>
+				<div id="item-list-container">
+					<header>
+						<h3>Collection title</h3>
+						<div class="toolbar"></div>
+					</header>
+					<div>Item List</div>
+				</div>
 				<ItemDetails />
 			</section>
 		);

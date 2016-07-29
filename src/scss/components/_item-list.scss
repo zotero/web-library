@@ -1,0 +1,13 @@
+//
+// Item list
+// --------------------------------------------------
+
+#item-list {
+	@media (min-width: $screen-sm-min) {
+		flex: 1 1 auto;
+	}
+
+	@media (min-width: $screen-lg-min) {
+		display: flex;
+	}
+}

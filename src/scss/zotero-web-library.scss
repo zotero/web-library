@@ -12,8 +12,11 @@
 @import "base/reset";
 @import "base/base";
 
+@import "partials/library";
 @import "partials/sidebar";
+@import "partials/item-list-container";
 
-@import "components/title-bar";
+@import "components/navbar";
 @import "components/collection-tree";
+@import "components/item-list";
 @import "components/item-details";
