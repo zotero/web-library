@@ -18,8 +18,11 @@ $line-height-base: 1.429;
 // Dimensions
 // --------------------------------------------------
 
-$space-min: 4px;
-
+$space-min:  4px;
+$space-xs:   8px;
+$space-sm:  12px;
+$space-md:  16px;
+$space-thumb: 42px;
 
 // Grid breakpoints
 // --------------------------------------------------
@@ -30,6 +33,29 @@ $grid-breakpoints: (
 	md: 992px,
 	lg: 1200px
 );
+
+// Z-index master list
+
+$z-index-mobile-nav: 990;
+$z-index-main:       1000;
+
+
+// Navbbar
+// --------------------------------------------------
+
+$navbar-height-xs: $space-thumb;
+$navbar-height-sm: 64px;
+$navbar-font-size: 16px;
+$navbar-margin-bottom: $space-min;
+$navbar-padding-horizontal: $space-md;
+$navbar-padding-top: 21px;
+$navbar-padding-bottom: 21px;
+$navbar-active-indicator: 3px;
+
+// Mobile nav
+// --------------------------------------------------
+
+$mobile-nav-width: 240px;
 
 
 // Navbbar brand

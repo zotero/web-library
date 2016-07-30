@@ -14,15 +14,18 @@ var Navbar = React.createClass({
 	render: function() {
 		return (
 			<header id="navbar">
-				<h1 className="navbar-brand">Zotero</h1>
-				<nav>
+				<h1 className="navbar-brand"><a href="/">Zotero</a></h1>
+				<nav className="navbar-nav">
 					<h2 className="offscreen">Site navigation</h2>
-				  <ul>
+				  <ul className="nav">
 				  	<li><a href="#">Feed</a></li>
-				  	<li><a href="#">Library</a></li>
+				  	<li className="active"><a href="#">Library</a></li>
 				  	<li><a href="#">Groups</a></li>
 				  </ul>
 				</nav>
+				<div className="navbar-right">
+					Test
+				</div>
 			</header>
 		);
 	}

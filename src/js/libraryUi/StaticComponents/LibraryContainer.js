@@ -6,6 +6,7 @@ var React = require('react');
 var ReactDOM = require('react-dom');
 
 var Navbar = require('./Navbar.js');
+var MobileNav = require('./MobileNav.js');
 var CollectionTree = require('./CollectionTree.js');
 var TagSelector = require('./TagSelector.js');
 var ItemList = require('./ItemList.js');
@@ -31,6 +32,7 @@ var LibraryContainer = React.createClass({
 		return (
 			<div id="library-root">
 				<Navbar />
+				<MobileNav />
 				<main>
 					<section id="library">
 						<header id="sidebar">

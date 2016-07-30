@@ -31,8 +31,20 @@ body {
 }
 
 main {
+	background: $main-bg;
+	position: relative;
+	transition: transform 0.5s ease;
+	z-index: $z-index-main;
+	// Cover mobile nav
+	min-height: calc(100% - (#{$navbar-height-xs} + #{$space-min}));
+
 	@include media-breakpoint-up(sm) {
 		display: flex;
 		flex: 1 1 auto;
+		min-height: 0;
+	}
+
+	.mobile-nav-opened & {
+		transform: translate3d(-($mobile-nav-width + $space-min), 0, 0);
 	}
 }

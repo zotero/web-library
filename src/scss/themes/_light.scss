@@ -6,41 +6,60 @@
 // Colors
 // --------------------------------------------------
 
+$zotero-red: #900;
+$tropy-blue: hsl(216, 60, 90);
+$asphalt:    hsl(216, 20, 60);
 
-// Shades
+$brand-primary:   $zotero-red;
+$brand-secondary: $tropy-blue;
+
+
+// Grays
 // --------------------------------------------------
 
-$shade-0: #fff;
-$shade-1: #f6f6f6;
+$white:  #fff;
+$smoke:  #f6f6f6;
+$silver: #e6e6e6;
+$slate:  #777;
+$iron:   #444;
+$coal:   #222;
+$black:  #000;
 
-
-// Text shades
-// --------------------------------------------------
-
-$text-shade-0: #000;
-$text-shade-1: #222;
-$text-shade-2: #444;
+// snow, dove, fog, pepper, silver, ash, (deep) cavern, (castle) rock, pewter,
+// shadow, graphite
 
 
 // Scaffolding
 // --------------------------------------------------
 
-$body-bg: $shade-0;
-$text-color: $text-shade-1;
+$body-bg:    $white;
+$text-color: $coal;
 
 
 // Partials
 // --------------------------------------------------
 
+
+// Main
+$main-bg: $white;
+
 // Sidebar
-$sidebar-bg: $shade-1;
+$sidebar-bg: $smoke;
 
 
 // Components
 // --------------------------------------------------
 
-// Title bar
-$title-bar-bg: $shade-1;
+// Navbar
+$navbar-bg:                       $smoke;
+$navbar-border:                   $white;
+$navbar-link-color:               $iron;
+$navbar-link-active-color:        $asphalt;
+$navbar-link-active-border-color: $asphalt;
+
+// Mobile nav
+$mobile-nav-bg: $silver;
+
 
 // Item details
-$item-details-bg: $shade-1;
+$item-details-bg: $smoke;

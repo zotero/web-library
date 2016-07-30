@@ -1,26 +1,94 @@
 //
-// Title bar
+// Navbar
 // --------------------------------------------------
 
 #navbar {
-	background: $title-bar-bg;
-	margin-bottom: $space-min;
+	background: $navbar-bg;
+	box-sizing: content-box;
+	font-size: $navbar-font-size;
+	height: $navbar-height-xs;
+	border-bottom: $space-min solid $navbar-border;
+	position: relative;
+	transition: transform 0.5s ease;
+	z-index: $z-index-main;
 
 	@include media-breakpoint-up(sm) {
+		display: flex;
 		flex: 0 0 auto;
+		height: $navbar-height-sm;
+		justify-content: space-between;
+	}
+
+	.mobile-nav-opened & {
+		transform: translate3d(-($mobile-nav-width + $space-min), 0, 0);
+	}
+
+	a {
+		color: $navbar-link-color;
 	}
 
 	.navbar-brand {
-		background: url("../static/images/zotero-logo.svg") 0 0 no-repeat;
-		height: $navbar-brand-height-xs;
 		margin: 0;
-		text-indent: -100%;
-		white-space: nowrap;
-		width: $navbar-brand-width-xs;
+		transition: transform 0.5s ease;
+
+		a {
+			display: block;
+			background: url("../static/images/zotero-logo.svg") center 11px
+				no-repeat / $navbar-brand-width-xs $navbar-brand-height-xs;
+			height: 100%;
+			text-indent: -200%;
+			white-space: nowrap;
+			width: $navbar-brand-width-xs + 2 * $navbar-padding-horizontal;
+
+			@include media-breakpoint-up(sm) {
+				background: {
+					position: center 19px;
+					size: $navbar-brand-width-sm $navbar-brand-height-sm;
+				}
+				width: $navbar-brand-width-sm + 2 * $navbar-padding-horizontal;
+			}
+		}
+	}
+
+	.navbar-nav {
+		@include media-breakpoint-up(sm) {
+			background-color: transparent;
+			display: flex;
+			position: static;
+			margin-right: auto;
+		}
+
+		ul {
+			@include media-breakpoint-up(sm) {
+				display: flex;
+			}
+		}
+
+		li {
+			display: flex;
+		}
+
+		a {
+			@include media-breakpoint-up(sm) {
+				align-items: center;
+				display: flex;
+				padding: 0 $navbar-padding-horizontal;
+			}
+		}
+
+		.active a {
+			@include media-breakpoint-up(sm) {
+				color: $navbar-link-active-color;
+				box-shadow: inset 0 (-$navbar-active-indicator) $asphalt;
+			}
+		}
+	}
+
+	.navbar-right {
+		display: none;
 
 		@include media-breakpoint-up(sm) {
-			height: $navbar-brand-height-sm;
-			width: $navbar-brand-width-sm;
+			display: block;
 		}
 	}
 }
