@@ -51,6 +51,7 @@ $navbar-padding-horizontal: $space-md;
 $navbar-padding-top: 21px;
 $navbar-padding-bottom: 21px;
 $navbar-active-indicator: 3px;
+$navbar-breakpoint: map-get($grid-breakpoints, sm);
 
 // Mobile nav
 // --------------------------------------------------

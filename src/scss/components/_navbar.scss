@@ -51,7 +51,9 @@
 	}
 
 	.navbar-nav {
-		@include media-breakpoint-up(sm) {
+		display: none;
+
+		@media (min-width: $navbar-breakpoint) {
 			background-color: transparent;
 			display: flex;
 			position: static;
