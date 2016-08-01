@@ -55,8 +55,8 @@
 
 		a {
 			display: block;
-			background: url("../static/images/zotero-logo.svg") center 11px
-				no-repeat / $navbar-brand-width-xs $navbar-brand-height-xs;
+			background: url("../static/images/zotero-logo.svg") center 11px no-repeat;
+			background-size: $navbar-brand-width-xs $navbar-brand-height-xs;
 			height: 100%;
 			text-indent: -200%;
 			white-space: nowrap;
@@ -135,7 +135,7 @@
 	.navbar-toggle {
 		border: none;
 		background: transparent;
-		padding: 12px 16px;
+		padding: 0 $space-md;
 		height: $navbar-height-xs;
 
 		&:focus {
@@ -148,12 +148,12 @@
 
 		.icon-bar {
 			display: block;
-			width: 24px;
-			height: 2px;
+			width: $icon-bar-width;
+			height: $icon-bar-height;
 			background: $icon-bar-bg;
 
 			& + .icon-bar {
-				margin-top: 6px;
+				margin-top: $icon-bar-spacing;
 			}
 		}
 

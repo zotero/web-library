@@ -18,10 +18,10 @@ $line-height-base: 1.429;
 // Dimensions
 // --------------------------------------------------
 
-$space-min:  4px;
-$space-xs:   8px;
-$space-sm:  12px;
-$space-md:  16px;
+$space-min:    4px;
+$space-xs:     8px;
+$space-sm:    12px;
+$space-md:    16px;
 $space-thumb: 42px;
 
 // Grid breakpoints
@@ -44,16 +44,19 @@ $z-index-main:       1000;
 // Navbbar
 // --------------------------------------------------
 
-$navbar-height-xs: $space-thumb;
-$navbar-height-sm: 64px;
-$navbar-font-size: 16px;
-$navbar-margin-bottom: $space-min;
+$navbar-height-xs:          $space-thumb;
+$navbar-height-sm:          64px;
+$navbar-font-size:          16px;
+$navbar-margin-bottom:      $space-min;
 $navbar-padding-horizontal: $space-md;
-$navbar-padding-top: 21px;
-$navbar-padding-bottom: 21px;
-$navbar-active-indicator: 3px;
-$navbar-breakpoint: map-get($grid-breakpoints, sm);
-$navbar-nav-mobile-width: 240px;
+$navbar-padding-top:        21px;
+$navbar-padding-bottom:     21px;
+$navbar-active-indicator:   3px;
+$navbar-breakpoint:         map-get($grid-breakpoints, sm);
+$navbar-nav-mobile-width:   240px;
+$icon-bar-width:            24px;
+$icon-bar-height:           2px;
+$icon-bar-spacing:          6px;
 
 
 // Navbbar brand
