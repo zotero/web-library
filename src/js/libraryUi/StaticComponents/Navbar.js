@@ -26,6 +26,11 @@ var Navbar = React.createClass({
 				<div className="navbar-right">
 					Test
 				</div>
+				<button className="navbar-toggle">
+					<span className="icon-bar"></span>
+					<span className="icon-bar"></span>
+					<span className="icon-bar"></span>
+				</button>
 			</header>
 		);
 	}

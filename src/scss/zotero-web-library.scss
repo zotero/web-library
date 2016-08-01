@@ -10,8 +10,9 @@
 
 @import "themes/light";
 
-@import "base/reset";
+@import "base/normalize";
 @import "base/base";
+@import "base/type";
 
 @import "partials/library";
 @import "partials/sidebar";
