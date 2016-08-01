@@ -1,0 +1,31 @@
+//
+// Navbar nav
+// --------------------------------------------------
+
+
+// Content transition
+
+@mixin content-transition {
+	transition: transform 0.3s ease-out;
+}
+
+
+// Content transform
+
+@mixin content-transform {
+	transform: translate3d(-($navbar-nav-mobile-width +$space-min), 0, 0);
+}
+
+
+// Mobile navbar transition
+
+@mixin mobile-navbar-nav-transition {
+	transition: transform 0.3s ease-out;
+}
+
+
+// Mobile navbar nav transform
+
+@mixin mobile-navbar-nav-transform {
+	transform: translate3d(($navbar-nav-mobile-width / 2), 0, 0);
+}

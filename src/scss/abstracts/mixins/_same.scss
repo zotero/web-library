@@ -1,0 +1,12 @@
+//
+// Same
+// --------------------------------------------------
+
+@mixin same($values...){
+    $length: length($values);
+    $value: nth($values, $length);
+
+    @for $i from 1 to $length{
+        #{nth($values, $i)}: $value;
+    }
+}

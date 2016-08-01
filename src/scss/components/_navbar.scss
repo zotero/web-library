@@ -3,24 +3,49 @@
 // --------------------------------------------------
 
 #navbar {
-	background: $navbar-bg;
-	box-sizing: content-box;
+	//box-sizing: content-box;
 	font-size: $navbar-font-size;
-	height: $navbar-height-xs;
-	border-bottom: $space-min solid $navbar-border;
-	position: relative;
-	transition: transform 0.5s ease;
-	z-index: $z-index-main;
+	height: $navbar-height-xs + $space-min;
+	//border-bottom: $space-min solid $navbar-border;
+
+	&:before {
+		content: " ";
+		position: absolute;
+		z-index: $z-index-navbar;
+		left: 0;
+		top: 0;
+		width: 100%;
+		box-sizing: border-box;
+		height: $navbar-height-xs + $space-min;
+		background: $navbar-bg;
+		border-bottom: $space-min solid $navbar-border;
+	}
+
+	> *,
+	&:before {
+		@include content-transition;
+	}
+
+	.navbar-nav-opened & {
+		> *:not(.navbar-nav),
+		&:before {
+			@include media-breakpoint-down(xs) {
+				@include content-transform;
+			}
+		}
+	}
 
 	@include media-breakpoint-up(sm) {
 		display: flex;
 		flex: 0 0 auto;
 		height: $navbar-height-sm;
 		justify-content: space-between;
-	}
+		background: $navbar-bg;
+		margin-bottom: $space-min;
 
-	.mobile-nav-opened & {
-		transform: translate3d(-($mobile-nav-width + $space-min), 0, 0);
+		&:before {
+			content: none;
+		}
 	}
 
 	a {
@@ -29,7 +54,6 @@
 
 	.navbar-brand {
 		margin: 0;
-		transition: transform 0.5s ease;
 
 		a {
 			display: block;
@@ -51,13 +75,29 @@
 	}
 
 	.navbar-nav {
-		display: none;
+		background: $silver;
+		position: fixed;
+		z-index: $z-index-mobile-nav;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		width: $navbar-nav-mobile-width;
+		@include mobile-navbar-nav-transition;
+
+		@include media-breakpoint-down(xs) {
+			@include mobile-navbar-nav-transform;
+
+			.navbar-nav-opened & {
+				transform: translate3d(0, 0, 0);
+			}
+		}
 
 		@media (min-width: $navbar-breakpoint) {
 			background-color: transparent;
 			display: flex;
 			position: static;
 			margin-right: auto;
+			z-index: auto;
 		}
 
 		ul {

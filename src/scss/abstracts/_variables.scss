@@ -36,7 +36,8 @@ $grid-breakpoints: (
 
 // Z-index master list
 
-$z-index-mobile-nav: 990;
+$z-index-mobile-nav:  -20;
+$z-index-navbar:      -10;
 $z-index-main:       1000;
 
 
@@ -52,11 +53,7 @@ $navbar-padding-top: 21px;
 $navbar-padding-bottom: 21px;
 $navbar-active-indicator: 3px;
 $navbar-breakpoint: map-get($grid-breakpoints, sm);
-
-// Mobile nav
-// --------------------------------------------------
-
-$mobile-nav-width: 240px;
+$navbar-nav-mobile-width: 240px;
 
 
 // Navbbar brand
