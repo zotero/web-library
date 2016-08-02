@@ -33,9 +33,8 @@ body {
 main {
 	background: $main-bg;
 	position: relative;
-	@include content-transition;
+	@include mobile-navbar-nav-transition(transform);
 	z-index: $z-index-main;
-	// Cover mobile nav
 	min-height: calc(100% - (#{$navbar-height-xs} + #{$space-min}));
 
 	@include media-breakpoint-up(sm) {

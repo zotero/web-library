@@ -38,9 +38,10 @@ $grid-breakpoints: (
 
 // Z-index master list
 
-$z-index-mobile-nav:  -20;
-$z-index-navbar:      -10;
-$z-index-main:       1000;
+$z-index-mobile-nav:  0;
+$z-index-navbar-bg:  10;
+$z-index-main:       10;
+$z-index-navbar:     20;
 
 
 // Navbbar

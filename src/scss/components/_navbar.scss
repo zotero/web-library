@@ -7,11 +7,13 @@
 	justify-content: space-between;
 	height: $navbar-height-xs + $space-min;
 	font-size: $navbar-font-size;
+	width: 100%;
+	@include mobile-navbar-nav-transition(width);
 
 	&:before {
 		content: " ";
 		position: absolute;
-		z-index: $z-index-navbar;
+		z-index: $z-index-navbar-bg;
 		left: 0;
 		top: 0;
 		width: 100%;
@@ -19,21 +21,6 @@
 		height: $navbar-height-xs + $space-min;
 		background: $navbar-bg;
 		border-bottom: $space-min solid $navbar-border;
-	}
-
-	.navbar-brand,
-	.navbar-toggle,
-	&:before {
-		@include content-transition;
-	}
-
-	.navbar-nav-opened & {
-		> *:not(.navbar-nav),
-		&:before {
-			@include media-breakpoint-down(xs) {
-				@include content-transform;
-			}
-		}
 	}
 
 	@include media-breakpoint-up(sm) {
@@ -45,6 +32,30 @@
 		&:before {
 			content: none;
 		}
+	}
+
+	.navbar-brand,
+	&:before {
+		@include mobile-navbar-nav-transition(transform);
+	}
+
+	.navbar-nav-opened & {
+		@include media-breakpoint-down(xs) {
+			@include navbar-transform;
+		}
+
+		.navbar-brand,
+		&:before {
+			@include media-breakpoint-down(xs) {
+				@include content-transform;
+			}
+		}
+	}
+
+	.navbar-brand,
+	.navbar-toggle {
+		position: relative;
+		z-index: $z-index-navbar;
 	}
 
 	a {
@@ -81,7 +92,7 @@
 		right: 0;
 		bottom: 0;
 		width: $navbar-nav-mobile-width;
-		@include mobile-navbar-nav-transition;
+		@include mobile-navbar-nav-transition(transform);
 
 		@include media-breakpoint-down(xs) {
 			@include mobile-navbar-nav-transform;
