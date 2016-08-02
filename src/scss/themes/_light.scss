@@ -7,8 +7,8 @@
 // --------------------------------------------------
 
 $zotero-red: #900;
-$tropy-blue: hsl(216, 60, 90);
-$asphalt:    hsl(216, 20, 60);
+$tropy-blue: #5c93e5;
+$asphalt:    #7a8799;
 
 $brand-primary:   $zotero-red;
 $brand-secondary: $tropy-blue;
@@ -35,6 +35,9 @@ $black:  #000;
 $body-bg:    $white;
 $text-color: $coal;
 
+$link-color:       $tropy-blue;
+$link-hover-color: $tropy-blue;
+
 
 // Partials
 // --------------------------------------------------
@@ -57,6 +60,7 @@ $navbar-border:                   $white;
 $navbar-link-color:               $iron;
 $navbar-link-active-color:        $asphalt;
 $navbar-link-mobile-active-color: $white;
+$user-profile-link-bg:            $silver;
 $icon-bar-bg:                     $iron;
 $icon-bar-bg-focus:               $asphalt;
 

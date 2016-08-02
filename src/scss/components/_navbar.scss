@@ -53,6 +53,11 @@
 
 	a {
 		color: $navbar-link-color;
+
+		&:hover {
+			color: $navbar-link-active-color;
+			text-decoration: none;
+		}
 	}
 
 	.navbar-brand {
@@ -131,6 +136,7 @@
 				align-items: center;
 				display: flex;
 				padding: 0 $navbar-padding-horizontal;
+				line-height: inherit;
 			}
 
 			&:hover {
@@ -156,26 +162,34 @@
 		}
 	}
 
-	.navbar-right {
-		display: none;
+	.search {
+		align-self: center;
 
-		@include media-breakpoint-up(sm) {
-			display: block;
+		@include media-breakpoint-down(xs) {
+			display: none;
 		}
 	}
 
+	.user-profile-link {
+		width: $space-xl;
+		height: $space-xl;
+		background: $user-profile-link-bg;
+		align-self: center;
+		margin-left: $space-xl;
+
+		@include media-breakpoint-down(xs) {
+			display: none;
+		}
+	}
+
+	.dropdown-toggle,
 	.navbar-toggle {
 		border: none;
 		background: transparent;
 		padding: 0 $space-md;
-		height: $navbar-height-xs;
 
 		&:focus {
 			outline: none;
-		}
-
-		@include media-breakpoint-up(sm) {
-			display: none;
 		}
 
 		.icon-bar {
@@ -193,6 +207,22 @@
 			.icon-bar {
 				background: $icon-bar-bg-focus;
 			}
+		}
+	}
+
+	.dropdown-toggle {
+		height: $navbar-height-sm;
+
+		@include media-breakpoint-down(xs) {
+			display: none;
+		}
+	}
+
+	.navbar-toggle {
+		height: $navbar-height-xs;
+
+		@include media-breakpoint-up(sm) {
+			display: none;
 		}
 	}
 }

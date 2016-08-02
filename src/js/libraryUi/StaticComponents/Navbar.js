@@ -23,9 +23,13 @@ var Navbar = React.createClass({
 				  	<li><a href="#">Groups</a></li>
 				  </ul>
 				</nav>
-				<div className="navbar-right">
-					Test
-				</div>
+				<a href="#" className="search">Search</a>
+				<a href="#" className="user-profile-link"></a>
+				<button className="dropdown-toggle">
+					<span className="icon-bar"></span>
+					<span className="icon-bar"></span>
+					<span className="icon-bar"></span>
+				</button>
 				<button className="navbar-toggle">
 					<span className="icon-bar"></span>
 					<span className="icon-bar"></span>

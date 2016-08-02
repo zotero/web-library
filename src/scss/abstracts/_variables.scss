@@ -14,6 +14,8 @@ $font-size-base: 14px;
 
 $line-height-base: 1.429;
 
+$link-hover-decoration: underline;
+
 
 // Dimensions
 // --------------------------------------------------
@@ -22,6 +24,10 @@ $space-min:    4px;
 $space-xs:     8px;
 $space-sm:    12px;
 $space-md:    16px;
+$space-lg:    24px;
+$space-xl:    32px;
+$space-max:   64px;
+
 $space-thumb: 42px;
 
 
@@ -48,8 +54,8 @@ $z-index-navbar:     20;
 // --------------------------------------------------
 
 $navbar-height-xs:          $space-thumb;
-$navbar-height-sm:          64px;
-$navbar-font-size:          16px;
+$navbar-height-sm:          $space-max;
+$navbar-font-size:          $space-md;
 $navbar-margin-bottom:      $space-min;
 $navbar-padding-horizontal: $space-md;
 $navbar-padding-top:        21px;
@@ -57,7 +63,7 @@ $navbar-padding-bottom:     21px;
 $navbar-active-indicator:   3px;
 $navbar-breakpoint:         map-get($grid-breakpoints, sm);
 $navbar-nav-mobile-width:   240px;
-$icon-bar-width:            24px;
+$icon-bar-width:            $space-lg;
 $icon-bar-height:           2px;
 $icon-bar-spacing:          6px;
 

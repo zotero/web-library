@@ -3,6 +3,19 @@
 // --------------------------------------------------
 
 
+// Links
+
+a {
+	color: $link-color;
+	text-decoration: none;
+
+	&:hover {
+		color: $link-hover-color;
+		text-decoration: $link-hover-decoration;
+	}
+}
+
+
 // Lists
 
 ul, ol {
