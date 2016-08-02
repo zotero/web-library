@@ -33,7 +33,6 @@ body {
 main {
 	background: $main-bg;
 	position: relative;
-	@include mobile-navbar-nav-transition(transform);
 	z-index: $z-index-main;
 	min-height: calc(100% - (#{$navbar-height-xs} + #{$space-min}));
 
@@ -43,8 +42,10 @@ main {
 		min-height: 0;
 	}
 
-	.navbar-nav-opened & {
-		@include media-breakpoint-down(xs) {
+	@include media-breakpoint-down(xs) {
+		@include mobile-navbar-nav-transition(transform);
+
+		.navbar-nav-opened & {
 			@include content-transform;
 		}
 	}

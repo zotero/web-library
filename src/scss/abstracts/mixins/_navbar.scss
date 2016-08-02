@@ -13,7 +13,7 @@
 // Navbar transform
 
 @mixin navbar-transform {
-	margin-left: -($navbar-nav-mobile-width + $space-min);
+	left: -($navbar-nav-mobile-width + $space-min);
 }
 
 

@@ -8,7 +8,12 @@
 	height: $navbar-height-xs + $space-min;
 	font-size: $navbar-font-size;
 	width: 100%;
-	@include mobile-navbar-nav-transition(margin-left);
+	position: relative;
+	left: 0;
+
+	@include media-breakpoint-down(xs) {
+		@include mobile-navbar-nav-transition(left);
+	}
 
 	&:before {
 		content: " ";
@@ -34,19 +39,9 @@
 		}
 	}
 
-	&:before {
-		@include mobile-navbar-nav-transition(transform);
-	}
-
 	.navbar-nav-opened & {
 		@include media-breakpoint-down(xs) {
 			@include navbar-transform;
-		}
-
-		&:before {
-			@include media-breakpoint-down(xs) {
-				@include content-transform;
-			}
 		}
 	}
 
@@ -63,14 +58,19 @@
 	.navbar-brand {
 		margin: 0;
 
+		@include media-breakpoint-down(xs) {
+			margin-right: auto; // Fix flex layout in Firefox
+		}
+
 		a {
 			display: block;
 			background: url("../static/images/zotero-logo.svg") center 11px no-repeat;
 			background-size: $navbar-brand-width-xs $navbar-brand-height-xs;
 			height: 100%;
-			text-indent: -200%;
+			text-indent: 100%;
 			white-space: nowrap;
 			width: $navbar-brand-width-xs + 2 * $navbar-padding-horizontal;
+			overflow: hidden;
 
 			@include media-breakpoint-up(sm) {
 				background: {
@@ -90,9 +90,9 @@
 		right: 0;
 		bottom: 0;
 		width: $navbar-nav-mobile-width;
-		@include mobile-navbar-nav-transition(transform);
 
 		@include media-breakpoint-down(xs) {
+			@include mobile-navbar-nav-transition(transform);
 			@include mobile-navbar-nav-transform;
 
 			.navbar-nav-opened & {
