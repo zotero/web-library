@@ -21,7 +21,8 @@
 		border-bottom: $space-min solid $navbar-border;
 	}
 
-	> *,
+	.navbar-brand,
+	.navbar-toggle,
 	&:before {
 		@include content-transition;
 	}
