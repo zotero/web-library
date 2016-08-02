@@ -10,17 +10,10 @@
 }
 
 
-// Navbar transform
-
-@mixin navbar-transform {
-	left: -($navbar-nav-mobile-width + $space-min);
-}
-
-
 // Content transform
 
 @mixin content-transform {
-	transform: translate3d(-($navbar-nav-mobile-width +$space-min), 0, 0);
+	left: -($navbar-nav-mobile-width + $space-min);
 }
 
 

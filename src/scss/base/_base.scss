@@ -35,6 +35,7 @@ main {
 	position: relative;
 	z-index: $z-index-main;
 	min-height: calc(100% - (#{$navbar-height-xs} + #{$space-min}));
+	left: 0;
 
 	@include media-breakpoint-up(sm) {
 		display: flex;
@@ -43,7 +44,7 @@ main {
 	}
 
 	@include media-breakpoint-down(xs) {
-		@include mobile-navbar-nav-transition(transform);
+		@include mobile-navbar-nav-transition(left);
 
 		.navbar-nav-opened & {
 			@include content-transform;

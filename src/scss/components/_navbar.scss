@@ -41,7 +41,7 @@
 
 	.navbar-nav-opened & {
 		@include media-breakpoint-down(xs) {
-			@include navbar-transform;
+			@include content-transform;
 		}
 	}
 
@@ -90,10 +90,10 @@
 		right: 0;
 		bottom: 0;
 		width: $navbar-nav-mobile-width;
+		@include mobile-navbar-nav-transform;
 
 		@include media-breakpoint-down(xs) {
 			@include mobile-navbar-nav-transition(transform);
-			@include mobile-navbar-nav-transform;
 
 			.navbar-nav-opened & {
 				transform: translate3d(0, 0, 0);
