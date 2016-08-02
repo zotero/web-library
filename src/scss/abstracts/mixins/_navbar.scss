@@ -6,13 +6,14 @@
 // Mobile navbar transition
 
 @mixin mobile-navbar-nav-transition($property) {
-	transition: #{$property} 0.25s ease-out;
+	transition: #{$property} 0.3s ease-out;
 }
 
 
 // Navbar transform
+
 @mixin navbar-transform {
-	width: calc(100% - #{$navbar-nav-mobile-width + $space-min});
+	margin-left: -($navbar-nav-mobile-width + $space-min);
 }
 
 
