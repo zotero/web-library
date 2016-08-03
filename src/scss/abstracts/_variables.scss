@@ -13,8 +13,14 @@ $font-family-base:       $font-family-sans-serif;
 $font-size-base: 14px;
 
 $line-height-base: 1.429;
+$line-height-ui:   26px;
 
 $link-hover-decoration: underline;
+
+$headings-font-family:    inherit;
+$headings-font-weight:    400;
+$headings-line-height:    inherit;
+$headings-color:          inherit;
 
 
 // Dimensions
@@ -80,10 +86,17 @@ $navbar-brand-height-sm: 22px;
 // Sidebar
 // --------------------------------------------------
 
-$sidebar-width-sm: 320px;
-$sidebar-width-md: 25%;
-$sidebar-width-lg: 280px;
+$sidebar-width-sm:       320px;
+$sidebar-width-md:       25%;
+$sidebar-width-lg:       280px;
 $touch-sidebar-width-lg: 25%;
+
+
+// Collection tree
+// --------------------------------------------------
+
+$collection-tree-padding-horizontal: $space-sm;
+$collection-tree-padding-vertical:   $space-xs;
 
 
 // Item details

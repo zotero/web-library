@@ -3,5 +3,32 @@
 // --------------------------------------------------
 
 #collection-tree {
+	padding: $collection-tree-padding-vertical 0;
 
+	h4 {
+		color: $collection-tree-headings-color;
+		margin: 0;
+		padding: 0 $collection-tree-padding-horizontal;
+	}
+
+	ul {
+		li {
+			a {
+				display: block;
+				color: $collection-tree-link-color;
+				padding: 0 $collection-tree-padding-horizontal;
+
+				&:hover {
+					text-decoration: none;
+				}
+			}
+
+			&.active {
+				a {
+					color: $collection-tree-active-link-color;
+					background: $collection-tree-active-link-bg;
+				}
+			}
+		}
+	}
 }

@@ -5,6 +5,7 @@
 #sidebar {
 	background: $sidebar-bg;
 	overflow: auto;
+	line-height: $line-height-ui;
 
 	@include media-breakpoint-up(sm) {
 		flex: 0 0 $sidebar-width-sm;

@@ -42,7 +42,6 @@ $link-hover-color: $tropy-blue;
 // Partials
 // --------------------------------------------------
 
-
 // Main
 $main-bg: $white;
 
@@ -63,6 +62,12 @@ $navbar-link-mobile-active-color: $white;
 $user-profile-link-bg:            $silver;
 $icon-bar-bg:                     $iron;
 $icon-bar-bg-focus:               $asphalt;
+
+// Collection tree
+$collection-tree-headings-color:    $slate;
+$collection-tree-link-color:        $iron;
+$collection-tree-active-link-color: $coal;
+$collection-tree-active-link-bg:    $silver;
 
 // Item details
 $item-details-bg: $smoke;
