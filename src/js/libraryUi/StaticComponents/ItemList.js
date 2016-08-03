@@ -18,7 +18,7 @@ var ItemsList = React.createClass({
 		return (
 			<section id="item-list">
 				<div id="item-list-container">
-					<header>
+					<header className="touch-header">
 						<h3>Collection title</h3>
 						<div className="toolbar"></div>
 					</header>
