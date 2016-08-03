@@ -5,14 +5,4 @@
 #item-list-container {
 	flex: 1 1 auto;
 	padding: 0 $space-min;
-
-	h3 {
-		@include media-breakpoint-up(md) {
-			display: none;
-
-			.touch & {
-				display: block;
-			}
-		}
-	}
 }

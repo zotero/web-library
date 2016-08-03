@@ -19,7 +19,7 @@ var ItemsList = React.createClass({
 			<section id="item-list">
 				<div id="item-list-container">
 					<header className="touch-header">
-						<h3>Collection title</h3>
+						<h3 className="hidden-mouse-md-up">Collection title</h3>
 						<div className="toolbar"></div>
 					</header>
 					<div>Item List</div>
