@@ -5,6 +5,10 @@
 #item-details {
 	background: $item-details-bg;
 
+	@include media-breakpoint-only(md) {
+		border-left: $space-min solid $body-bg;
+	}
+
 	@include media-breakpoint-up(lg) {
 		flex: 0 0 $item-details-width-lg;
 
