@@ -21,7 +21,7 @@ var CollectionTree = React.createClass({
 					<h4>My library</h4>
 					<ul className="nav">
 						<li><a href="#">All documents</a></li>
-						<li className=""><a href="#">Level 1</a>
+						<li className="active"><a href="#">Level 1</a>
 
 							{/* Level 2 */}
 							<section className="level">
