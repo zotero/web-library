@@ -17,10 +17,6 @@
 				display: block;
 				color: $collection-tree-link-color;
 				padding: 0 $collection-tree-padding-horizontal;
-
-				&:hover {
-					text-decoration: none;
-				}
 			}
 
 			&.active {
@@ -28,6 +24,19 @@
 					color: $collection-tree-active-link-color;
 					background: $collection-tree-active-link-bg;
 				}
+			}
+		}
+	}
+
+	@for $i from 1 through $collection-tree-max-levels {
+		$sel: if($i == 1, "ul", selector-nest($sel, "ul"));
+
+		#{$sel} {
+			a {
+				padding-left:
+					$collection-tree-padding-horizontal
+					+ $collection-tree-indent
+					* ($i - 1);
 			}
 		}
 	}
