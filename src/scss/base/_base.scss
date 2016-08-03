@@ -24,23 +24,23 @@ body {
 }
 
 #library-root {
+	display: flex;
+	flex-direction: column;
+
+
 	@include media-breakpoint-up(sm) {
-		display: flex;
-		flex-direction: column;
 	}
 }
 
 main {
+	flex: 1 1 auto;
 	background: $main-bg;
 	position: relative;
 	z-index: $z-index-main;
-	min-height: calc(100% - (#{$navbar-height-xs} + #{$space-min}));
 	left: 0;
 
 	@include media-breakpoint-up(sm) {
 		display: flex;
-		flex: 1 1 auto;
-		min-height: 0;
 	}
 
 	@include media-breakpoint-down(xs) {

@@ -5,15 +5,11 @@
 #navbar {
 	display: flex;
 	justify-content: space-between;
-	height: $navbar-height-xs + $space-min;
+	flex: 0 0 ($navbar-height-xs + $space-min);
 	font-size: $navbar-font-size;
 	width: 100%;
 	position: relative;
 	left: 0;
-
-	@include media-breakpoint-down(xs) {
-		@include mobile-navbar-nav-transition(left);
-	}
 
 	&:before {
 		content: " ";
@@ -28,6 +24,14 @@
 		border-bottom: $space-min solid $navbar-border;
 	}
 
+	@include media-breakpoint-down(xs) {
+		@include mobile-navbar-nav-transition(left);
+
+		.navbar-nav-opened & {
+			@include content-transform;
+		}
+	}
+
 	@include media-breakpoint-up(sm) {
 		flex: 0 0 auto;
 		height: $navbar-height-sm;
@@ -36,12 +40,6 @@
 
 		&:before {
 			content: none;
-		}
-	}
-
-	.navbar-nav-opened & {
-		@include media-breakpoint-down(xs) {
-			@include content-transform;
 		}
 	}
 
