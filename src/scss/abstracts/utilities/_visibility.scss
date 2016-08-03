@@ -7,13 +7,13 @@
 
 @each $bp in map-keys($grid-breakpoints) {
   .hidden-#{$bp}-up {
-    @include media-breakpoint-up($bp) {
+    @include bp-up($bp) {
       display: none !important;
     }
   }
 
   .hidden-#{$bp}-down {
-    @include media-breakpoint-down($bp) {
+    @include bp-down($bp) {
       display: none !important;
     }
   }
@@ -24,13 +24,13 @@
 
 @each $bp in map-keys($grid-breakpoints) {
 	body:not(.touch) .hidden-mouse-#{$bp}-up {
-		@include media-breakpoint-up($bp) {
+		@include bp-up($bp) {
 			display: none !important;
 		}
 	}
 
   body:not(.touch) .hidden-mouse-#{$bp}-down {
-    @include media-breakpoint-down($bp) {
+    @include bp-down($bp) {
       display: none !important;
     }
   }
@@ -41,13 +41,13 @@
 
 @each $bp in map-keys($grid-breakpoints) {
 	.touch .hidden-touch-#{$bp}-up {
-		@include media-breakpoint-up($bp) {
+		@include bp-up($bp) {
 			display: none !important;
 		}
 	}
 
   .touch .hidden-touch-#{$bp}-down {
-    @include media-breakpoint-down($bp) {
+    @include bp-down($bp) {
       display: none !important;
     }
   }

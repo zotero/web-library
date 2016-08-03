@@ -3,7 +3,7 @@
 // --------------------------------------------------
 
 #library {
-	@include media-breakpoint-up(sm) {
+	@include bp-up(sm) {
 		display: flex;
 		width: 100%;
 	}

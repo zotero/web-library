@@ -24,7 +24,7 @@
 					color: $touch-collection-tree-active-link-color;
 					background: $touch-collection-tree-active-link-bg;
 
-					@include media-breakpoint-up(md) {
+					@include bp-up(md) {
 						color: $collection-tree-active-link-color;
 						background: $collection-tree-active-link-bg;
 					}

@@ -2,7 +2,7 @@
 // Breakpoints
 // --------------------------------------------------
 
-@mixin media-breakpoint-up($name, $breakpoints: $grid-breakpoints) {
+@mixin bp-up($name, $breakpoints: $grid-breakpoints) {
   $min: breakpoint-min($name, $breakpoints);
   @if $min {
     @media (min-width: $min) {
@@ -13,7 +13,7 @@
   }
 }
 
-@mixin media-breakpoint-down($name, $breakpoints: $grid-breakpoints) {
+@mixin bp-down($name, $breakpoints: $grid-breakpoints) {
   $max: breakpoint-max($name, $breakpoints);
   @if $max {
     @media (max-width: $max) {
@@ -24,9 +24,9 @@
   }
 }
 
-@mixin media-breakpoint-only($name, $breakpoints: $grid-breakpoints) {
-  @include media-breakpoint-up($name, $breakpoints) {
-    @include media-breakpoint-down($name, $breakpoints) {
+@mixin bp-only($name, $breakpoints: $grid-breakpoints) {
+  @include bp-up($name, $breakpoints) {
+    @include bp-down($name, $breakpoints) {
       @content;
     }
   }
@@ -64,8 +64,8 @@
 }
 
 @mixin touch-or-bp-only($name, $breakpoints: $grid-breakpoints) {
-  @include media-breakpoint-up($name, $breakpoints) {
-    @include media-breakpoint-down($name, $breakpoints) {
+  @include bp-up($name, $breakpoints) {
+    @include bp-down($name, $breakpoints) {
       @content;
     }
 

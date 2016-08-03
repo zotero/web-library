@@ -28,7 +28,7 @@ body {
 	flex-direction: column;
 
 
-	@include media-breakpoint-up(sm) {
+	@include bp-up(sm) {
 	}
 }
 
@@ -39,11 +39,11 @@ main {
 	z-index: $z-index-main;
 	left: 0;
 
-	@include media-breakpoint-up(sm) {
+	@include bp-up(sm) {
 		display: flex;
 	}
 
-	@include media-breakpoint-down(xs) {
+	@include bp-down(xs) {
 		@include mobile-navbar-nav-transition(left);
 
 		.navbar-nav-opened & {

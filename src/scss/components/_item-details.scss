@@ -5,11 +5,11 @@
 #item-details {
 	background: $item-details-bg;
 
-	@include media-breakpoint-only(md) {
+	@include bp-only(md) {
 		border-left: $space-min solid $body-bg;
 	}
 
-	@include media-breakpoint-up(lg) {
+	@include bp-up(lg) {
 		flex: 0 0 $item-details-width-lg;
 
 		.touch & {

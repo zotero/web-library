@@ -8,16 +8,16 @@
 	line-height: $line-height-ui-touch;
 	position: relative;
 
-	@include media-breakpoint-up(sm) {
+	@include bp-up(sm) {
 		flex: 0 0 $sidebar-width-sm;
 	}
 
-	@include media-breakpoint-up(md) {
+	@include bp-up(md) {
 		flex: 0 0 $sidebar-width-md;
 		line-height: $line-height-ui;
 	}
 
-	@include media-breakpoint-up(lg) {
+	@include bp-up(lg) {
 		flex: 0 0 $sidebar-width-lg;
 
 		.touch & {

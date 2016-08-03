@@ -22,7 +22,7 @@
 		background: $navbar-bg;
 	}
 
-	@include media-breakpoint-down(xs) {
+	@include bp-down(xs) {
 		@include mobile-navbar-nav-transition(left);
 
 		.navbar-nav-opened & {
@@ -30,7 +30,7 @@
 		}
 	}
 
-	@include media-breakpoint-up(sm) {
+	@include bp-up(sm) {
 		flex: 0 0 auto;
 		height: $navbar-height-sm;
 		background: $navbar-bg;
@@ -59,7 +59,7 @@
 	.navbar-brand {
 		margin: 0;
 
-		@include media-breakpoint-down(xs) {
+		@include bp-down(xs) {
 			margin-right: auto; // Fix flex layout in Firefox
 		}
 
@@ -73,7 +73,7 @@
 			width: $navbar-brand-width-xs + 2 * $navbar-padding-horizontal;
 			overflow: hidden;
 
-			@include media-breakpoint-up(sm) {
+			@include bp-up(sm) {
 				background: {
 					position: center 19px;
 					size: $navbar-brand-width-sm $navbar-brand-height-sm;
@@ -92,7 +92,7 @@
 		bottom: 0;
 		width: $navbar-nav-mobile-width;
 
-		@include media-breakpoint-down(xs) {
+		@include bp-down(xs) {
 			@include mobile-navbar-nav-transition(transform);
 			@include mobile-navbar-nav-transform;
 
@@ -112,14 +112,14 @@
 		ul {
 			padding: 15px 0;
 
-			@include media-breakpoint-up(sm) {
+			@include bp-up(sm) {
 				display: flex;
 				padding: 0;
 			}
 		}
 
 		li {
-			@include media-breakpoint-up(sm) {
+			@include bp-up(sm) {
 				display: flex;
 			}
 		}
@@ -128,7 +128,7 @@
 			line-height: $space-thumb;
 			padding: 0 $space-md;
 
-			@include media-breakpoint-up(sm) {
+			@include bp-up(sm) {
 				align-items: center;
 				display: flex;
 				padding: 0 $navbar-padding-horizontal;
@@ -145,14 +145,14 @@
 			background: $navbar-link-active-color;
 			color: $navbar-link-mobile-active-color;
 
-			@include media-breakpoint-up(sm) {
+			@include bp-up(sm) {
 				background: transparent;
 				color: $navbar-link-active-color;
 			}
 		}
 
 		.active a {
-			@include media-breakpoint-up(sm) {
+			@include bp-up(sm) {
 				box-shadow: inset 0 (-$navbar-active-indicator) $navbar-link-active-color;
 			}
 		}
@@ -161,7 +161,7 @@
 	.search {
 		align-self: center;
 
-		@include media-breakpoint-down(xs) {
+		@include bp-down(xs) {
 			display: none;
 		}
 	}
@@ -173,7 +173,7 @@
 		align-self: center;
 		margin-left: $space-xl;
 
-		@include media-breakpoint-down(xs) {
+		@include bp-down(xs) {
 			display: none;
 		}
 	}
@@ -209,7 +209,7 @@
 	.dropdown-toggle {
 		height: $navbar-height-sm;
 
-		@include media-breakpoint-down(xs) {
+		@include bp-down(xs) {
 			display: none;
 		}
 	}
@@ -217,7 +217,7 @@
 	.navbar-toggle {
 		height: $navbar-height-xs;
 
-		@include media-breakpoint-up(sm) {
+		@include bp-up(sm) {
 			display: none;
 		}
 	}

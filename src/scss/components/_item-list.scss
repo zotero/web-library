@@ -3,11 +3,11 @@
 // --------------------------------------------------
 
 #item-list {
-	@include media-breakpoint-up(sm) {
+	@include bp-up(sm) {
 		flex: 1 1 auto;
 	}
 
-	@include media-breakpoint-up(lg) {
+	@include bp-up(lg) {
 		display: flex;
 	}
 }
