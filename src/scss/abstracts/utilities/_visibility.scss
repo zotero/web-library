@@ -11,6 +11,7 @@
       display: none !important;
     }
   }
+
   .hidden-#{$bp}-down {
     @include media-breakpoint-down($bp) {
       display: none !important;
@@ -24,4 +25,21 @@
 .offscreen {
 	clip: rect(1px 1px 1px 1px);
 	position: absolute;
+}
+
+
+// Hidden on 'mouse devices'
+
+@each $bp in map-keys($grid-breakpoints) {
+	body:not(.touch) .hidden-mouse-#{$bp}-up {
+		@include media-breakpoint-up($bp) {
+			display: none !important;
+		}
+	}
+
+  body:not(.touch) .hidden-#{$bp}-down {
+    @include media-breakpoint-down($bp) {
+      display: none !important;
+    }
+  }
 }
