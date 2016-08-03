@@ -16,5 +16,9 @@
 
 	@include media-breakpoint-up(lg) {
 		flex: 0 0 $sidebar-width-lg;
+
+		.touch & {
+			flex: 0 0 $touch-sidebar-width-lg;
+		}
 	}
 }
