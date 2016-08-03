@@ -14,48 +14,71 @@ var CollectionTree = React.createClass({
 	render: function() {
 		return (
 			<nav id="collection-tree">
-				<h3 className="offscreen">Library navigation</h3>
 
 				{/* Level 1 */}
-				<section className="level">
-					<h4>My library</h4>
-					<ul className="nav">
-						<li><a href="#">All documents</a></li>
-						<li className="active"><a href="#">Level 1</a>
+				<div className="level level-1">
+					<header className="touch-header hidden-mouse-md-up">
+						<h3>Library</h3>
+					</header>
 
-							{/* Level 2 */}
-							<section className="level">
-								<h5 className="hidden-mouse-md-up">Level 2 title</h5>
-								<ul className="nav">
-									<li className=""><a href="#">Level 2</a>
+					<section>
+						<h4>My library</h4>
+						<ul className="nav">
+							<li><a href="#">All documents</a></li>
+							<li className="active"><a href="#">Level 1</a>
 
-										{/* Level 3 */}
-										<section className="level">
-											<h6 className="hidden-mouse-md-up">Level 3 title</h6>
-											<ul className="nav">
-												<li className="active"><a href="#">Level 3</a></li>
-												<li><a href="#">Level 3</a></li>
-												<li><a href="#">Level 3</a></li>
-											</ul>
-										</section>
-									</li>
-									<li><a href="#">Level 2</a></li>
-									<li><a href="#">Level 2</a></li>
-								</ul>
-							</section>
-						</li>
-						<li><a href="#">Level 1</a></li>
-						<li><a href="#">Level 1</a></li>
-					</ul>
-				</section>
-				<section>
-					<h4>Group libraries</h4>
-					<ul className="nav">
-						<li><a href="#">Group library 1</a></li>
-						<li><a href="#">Group library 2</a></li>
-						<li><a href="#">Group library 3</a></li>
-					</ul>
-				</section>
+								{/* Level 2 */}
+								<section className="level level-2 ">
+									<header className="touch-header">
+										<h5 className="hidden-mouse-md-up">Level 2 title</h5>
+									</header>
+									<ul className="nav">
+										<li className=""><a href="#">Level 2</a>
+
+											{/* Level 3.1*/}
+											<section className="level level-3">
+												<header className="touch-header">
+													<h6 className="hidden-mouse-md-up">Level 3 title</h6>
+												</header>
+												<ul className="nav">
+													<li className=""><a href="#">Level 3.1</a></li>
+													<li><a href="#">Level 3.1</a></li>
+													<li><a href="#">Level 3.1</a></li>
+												</ul>
+											</section>
+										</li>
+										<li><a href="#">Level 2</a>
+
+											{/* Level 3.2 */}
+											<section className="level level-3">
+												<header className="touch-header">
+													<h6 className="hidden-mouse-md-up">Level 3 title</h6>
+												</header>
+												<ul className="nav">
+													<li className=""><a href="#">Level 3.2</a></li>
+													<li><a href="#">Level 3.2</a></li>
+													<li><a href="#">Level 3.2</a></li>
+												</ul>
+											</section>
+										</li>
+										<li><a href="#">Level 2</a></li>
+									</ul>
+								</section>
+							</li>
+							<li><a href="#">Level 1</a></li>
+							<li><a href="#">Level 1</a></li>
+						</ul>
+					</section>
+					<section>
+						<h4>Group libraries</h4>
+						<ul className="nav">
+							<li><a href="#">Group library 1</a></li>
+							<li><a href="#">Group library 2</a></li>
+							<li><a href="#">Group library 3</a></li>
+						</ul>
+					</section>
+
+				</div>
 			</nav>
 		);
 	}
