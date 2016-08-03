@@ -3,5 +3,6 @@
 // --------------------------------------------------
 
 #item-list-container {
-	width: 100%;
+	flex: 1 1 auto;
+	padding: 0 $space-min;
 }
