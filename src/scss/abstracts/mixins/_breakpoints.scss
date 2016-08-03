@@ -34,14 +34,9 @@
 
 
 @mixin touch-or-bp-up($name, $breakpoints: $grid-breakpoints) {
-  $min: breakpoint-min($name, $breakpoints);
-  @if $min {
-    @media (min-width: $min) {
-      @content;
-    }
-  } @else {
-    @content;
-  }
+	@include bp-up($name, $breakpoints: $grid-breakpoints) {
+		@content;
+	}
 
   .touch & {
 	  @content;
@@ -49,14 +44,9 @@
 }
 
 @mixin touch-or-bp-down($name, $breakpoints: $grid-breakpoints) {
-  $max: breakpoint-max($name, $breakpoints);
-  @if $max {
-    @media (max-width: $max) {
-      @content;
-    }
-  } @else {
-    @content;
-  }
+	@include bp-down($name, $breakpoints: $grid-breakpoints) {
+		@content;
+	}
 
   .touch & {
 	  @content;
@@ -64,13 +54,11 @@
 }
 
 @mixin touch-or-bp-only($name, $breakpoints: $grid-breakpoints) {
-  @include bp-up($name, $breakpoints) {
-    @include bp-down($name, $breakpoints) {
-      @content;
-    }
+  @include bp-only($name, $breakpoints: $grid-breakpoints) {
+		@content;
+	}
 
-    .touch & {
-	    @content;
-    }
+  .touch & {
+	  @content;
   }
 }
