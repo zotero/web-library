@@ -20,14 +20,6 @@
 }
 
 
-// Screen readers only
-
-.offscreen {
-	clip: rect(1px 1px 1px 1px);
-	position: absolute;
-}
-
-
 // Responsive visibility for 'mouse devices' only
 
 @each $bp in map-keys($grid-breakpoints) {
@@ -59,4 +51,12 @@
       display: none !important;
     }
   }
+}
+
+
+// Screen readers only
+
+.offscreen {
+	clip: rect(1px 1px 1px 1px);
+	position: absolute;
 }
