@@ -5,7 +5,7 @@
 #navbar {
 	display: flex;
 	justify-content: space-between;
-	flex: 0 0 ($navbar-height-xs + $space-min);
+	flex: 0 0 $navbar-height-xs;
 	font-size: $navbar-font-size;
 	width: 100%;
 	position: relative;
@@ -18,10 +18,8 @@
 		left: 0;
 		top: 0;
 		width: 100%;
-		box-sizing: border-box;
-		height: $navbar-height-xs + $space-min;
+		height: $navbar-height-xs;
 		background: $navbar-bg;
-		border-bottom: $space-min solid $navbar-border;
 	}
 
 	@include media-breakpoint-down(xs) {

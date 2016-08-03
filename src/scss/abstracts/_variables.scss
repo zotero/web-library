@@ -3,26 +3,6 @@
 // --------------------------------------------------
 
 
-// Typography
-// --------------------------------------------------
-
-
-$font-family-sans-serif: "Helvetica Neue", Helvetica, Arial, sans-serif; // todo: BlinkMacSystemFont
-$font-family-base:       $font-family-sans-serif;
-
-$font-size-base: 14px;
-
-$line-height-base: 1.429;
-$line-height-ui:   26px;
-
-$link-hover-decoration: underline;
-
-$headings-font-family:    inherit;
-$headings-font-weight:    400;
-$headings-line-height:    inherit;
-$headings-color:          inherit;
-
-
 // Dimensions
 // --------------------------------------------------
 
@@ -35,6 +15,26 @@ $space-xl:    32px;
 $space-max:   64px;
 
 $space-thumb: 42px;
+
+
+// Typography
+// --------------------------------------------------
+
+$font-family-sans-serif: "Helvetica Neue", Helvetica, Arial, sans-serif; // todo: BlinkMacSystemFont
+$font-family-base:       $font-family-sans-serif;
+
+$font-size-base: 14px;
+
+$line-height-base:     1.429;
+$line-height-ui:       26px;
+$line-height-ui-touch: $space-thumb;
+
+$link-hover-decoration: underline;
+
+$headings-font-family:    inherit;
+$headings-font-weight:    400;
+$headings-line-height:    inherit;
+$headings-color:          inherit;
 
 
 // Grid breakpoints

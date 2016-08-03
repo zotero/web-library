@@ -34,7 +34,7 @@ var LibraryContainer = React.createClass({
 				<main>
 					<section id="library">
 						<header id="sidebar">
-							<h2 className="hidden-md-up">Library</h2>
+							<h2 className="touch-header hidden-mouse-md-up">Library</h2>
 							<CollectionTree />
 							<TagSelector />
 						</header>

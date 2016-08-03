@@ -36,3 +36,20 @@ ul, ol {
 	padding: 0;
 	list-style: none;
 }
+
+
+// Headers
+
+.touch-header {
+	height: $space-thumb;
+	background: $body-bg;
+	color: $touch-header-color;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+
+	@include media-breakpoint-up(sm) {
+		padding-bottom: $space-min;
+		box-sizing: content-box;
+	}
+}
