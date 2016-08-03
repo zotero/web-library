@@ -41,7 +41,7 @@ ul, ol {
 // Headers
 
 .touch-header {
-	@mixin touch-header-styles {
+	@include touch-or-bp-down(sm) {
 		height: $space-thumb;
 		background: $body-bg;
 		color: $touch-header-color;
@@ -50,27 +50,8 @@ ul, ol {
 		align-items: center;
 	}
 
-	@mixin touch-header-sm-styles {
+	@include touch-or-bp-only(sm) {
 		padding-bottom: $space-min;
 		box-sizing: content-box;
-	}
-
-
-	@include media-breakpoint-down(sm) {
-		@include touch-header-styles;
-	}
-
-	.touch & {
-		@include touch-header-styles;
-	}
-
-	@include media-breakpoint-only(sm) {
-		@include touch-header-sm-styles;
-	}
-
-	@include media-breakpoint-up(md) {
-		.touch & {
-			@include touch-header-sm-styles;
-		}
 	}
 }

@@ -31,3 +31,46 @@
     }
   }
 }
+
+
+@mixin touch-or-bp-up($name, $breakpoints: $grid-breakpoints) {
+  $min: breakpoint-min($name, $breakpoints);
+  @if $min {
+    @media (min-width: $min) {
+      @content;
+    }
+  } @else {
+    @content;
+  }
+
+  .touch & {
+	  @content;
+  }
+}
+
+@mixin touch-or-bp-down($name, $breakpoints: $grid-breakpoints) {
+  $max: breakpoint-max($name, $breakpoints);
+  @if $max {
+    @media (max-width: $max) {
+      @content;
+    }
+  } @else {
+    @content;
+  }
+
+  .touch & {
+	  @content;
+  }
+}
+
+@mixin touch-or-bp-only($name, $breakpoints: $grid-breakpoints) {
+  @include media-breakpoint-up($name, $breakpoints) {
+    @include media-breakpoint-down($name, $breakpoints) {
+      @content;
+    }
+
+    .touch & {
+	    @content;
+    }
+  }
+}
