@@ -21,8 +21,10 @@
 
 			&.active {
 				a {
-					color: $touch-collection-tree-active-link-color;
-					background: $touch-collection-tree-active-link-bg;
+					@include touch-or-bp-down(sm) {
+						color: $touch-collection-tree-active-link-color;
+						background: $touch-collection-tree-active-link-bg;
+					}
 
 					@include bp-up(md) {
 						color: $collection-tree-active-link-color;

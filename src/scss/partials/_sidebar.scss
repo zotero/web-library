@@ -5,8 +5,11 @@
 #sidebar {
 	background: $sidebar-bg;
 	overflow: auto;
-	line-height: $line-height-ui-touch;
 	position: relative;
+
+	@include touch-or-bp-down(sm) {
+		line-height: $line-height-ui-touch;
+	}
 
 	@include bp-up(sm) {
 		flex: 0 0 $sidebar-width-sm;
