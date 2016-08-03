@@ -40,4 +40,16 @@
 			}
 		}
 	}
+
+	.level {
+		.level {
+			display: none;
+		}
+
+		.open {
+			> .level {
+				display: block;
+			}
+		}
+	}
 }

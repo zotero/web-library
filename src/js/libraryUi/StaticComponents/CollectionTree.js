@@ -15,16 +15,16 @@ var CollectionTree = React.createClass({
 		return (
 			<nav id="collection-tree">
 				<h3 className="offscreen">Library navigation</h3>
-				<section>
+				<section className="level">
 					<h4>My library</h4>
 					<ul className="nav">
 						<li><a href="#">All documents</a></li>
 						<li className="open"><a href="#">Level 1</a>
-							<section>
+							<section className="level">
 								<h5 className="hidden-mouse-md-up">Level 2 title</h5>
 								<ul className="nav">
-									<li class="open"><a href="#">Level 2</a>
-										<section>
+									<li className="open"><a href="#">Level 2</a>
+										<section className="level">
 											<h6 className="hidden-mouse-md-up">Level 3 title</h6>
 											<ul className="nav">
 												<li className="active"><a href="#">Level 3</a></li>
