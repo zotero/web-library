@@ -43,3 +43,20 @@
     }
   }
 }
+
+
+// Responsive visibility for 'touch devices' only
+
+@each $bp in map-keys($grid-breakpoints) {
+	.touch .hidden-touch-#{$bp}-up {
+		@include media-breakpoint-up($bp) {
+			display: none !important;
+		}
+	}
+
+  .touch .hidden-touch-#{$bp}-down {
+    @include media-breakpoint-down($bp) {
+      display: none !important;
+    }
+  }
+}
