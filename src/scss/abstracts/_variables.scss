@@ -26,6 +26,7 @@ $font-family-base:       $font-family-sans-serif;
 $font-size-base: 14px;
 
 $line-height-base:     1.429;
+$line-height-computed: floor(($font-size-base * $line-height-base));
 $line-height-ui:       26px;
 $line-height-ui-touch: $space-thumb;
 
@@ -104,7 +105,8 @@ $collection-tree-max-levels:         10;
 // Items & item list
 // --------------------------------------------------
 
-$item-list-row-height: $line-height-ui;
+$item-list-row-height-sm: $line-height-computed + 2 * $space-md;
+$item-list-row-height-md: $line-height-ui;
 $item-list-head-height: $space-lg;
 
 

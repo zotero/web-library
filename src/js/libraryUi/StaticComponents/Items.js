@@ -21,7 +21,7 @@ var Items = React.createClass({
 				<div id="items-container">
 					<header className="touch-header">
 						<h3 className="hidden-mouse-md-up">Collection title</h3>
-						<div className="toolbar"></div>
+						<div className="toolbar">Toolbar</div>
 					</header>
 					<ItemList/>
 				</div>
