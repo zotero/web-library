@@ -105,7 +105,7 @@ $collection-tree-max-levels:         10;
 // Items & item list
 // --------------------------------------------------
 
-$item-list-row-height-sm: $line-height-computed + 2 * $space-md;
+$item-list-row-height-sm: 62px;
 $item-list-row-height-md: $line-height-ui;
 $item-list-head-height: $space-lg - 2px; // 24px (content-box)
 
