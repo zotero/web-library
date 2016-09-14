@@ -36,6 +36,10 @@
   }
 }
 
+body:not(.touch) .hidden-mouse {
+	display: none !important;
+}
+
 
 // Responsive visibility for 'touch devices' only
 
@@ -51,6 +55,10 @@
       display: none !important;
     }
   }
+}
+
+.touch .hidden-touch {
+	display: none !important;
 }
 
 

@@ -2,8 +2,98 @@
 // Item list
 // --------------------------------------------------
 
-.item-list {
+.item-list-wrap {
+	flex: 1 1 auto;
+	display: flex;
+	flex-direction: column;
+}
 
+.item-list-head th,
+.item-list .metadata {
+	@include mouse-and-bp-up(md) {
+		&:first-child {
+			padding-left: $space-sm;
+		}
+
+		&:last-child {
+			padding-right: $space-sm;
+		}
+
+		&:nth-child(1) {
+			width: 40%;
+		}
+
+		&:nth-child(2) {
+			width: 20%;
+		}
+
+		&:nth-child(3) {
+			width: 10%;
+		}
+
+		&:nth-child(4) {
+			width: 20%;
+		}
+
+		&:nth-child(5) {
+			width: 5%;
+		}
+
+		&:nth-child(6) {
+			width: 5%;
+		}
+	}
+}
+
+.item-list-head {
+	table-layout: fixed;
+	width: 100%;
+	border-collapse: collapse;
+	height: $item-list-head-height;
+	border: {
+		top: 1px solid $item-list-head-border;
+		bottom: 1px solid $item-list-head-border;
+	}
+
+	th {
+		text-align: left;
+		font-weight: 400;
+		padding: 0 $space-xs;
+		color: $item-list-head-color;
+		position: relative;
+		@include css-truncate;
+
+		&:before {
+			content: " ";
+			position: absolute;
+			left: 0;
+			top: 2px;
+			bottom: 2px;
+			width: 1px;
+			background: $item-list-head-border;
+		}
+
+		&:first-child:before {
+			content: none;
+		}
+	}
+}
+
+.item-list-body {
+	overflow-y: scroll;
+	flex: 1 1 auto;
+
+	@include mouse-and-bp-up(sm) {
+		padding-top: 3px;
+		background: repeating-linear-gradient(to bottom, $items-odd-bg 3px,
+			$items-odd-bg ($item-list-row-height + 3px),
+			transparent ($item-list-row-height + 3px),
+			transparent (2 * $item-list-row-height + 3px));
+		background-attachment: local;
+	}
+}
+
+.item-list {
 	@include mouse-and-bp-up(md) {
 		display: table;
 		table-layout: fixed;
@@ -28,39 +118,6 @@
 			vertical-align: middle;
 			padding: 0 $space-xs 0 ($space-xs + 1px);
 			@include css-truncate;
-
-			&:first-child {
-				padding-left: $space-sm;
-			}
-
-			&:last-child {
-				padding-right: $space-sm;
-			}
-
-			&:nth-child(1) {
-				width: 40%;
-			}
-
-			&:nth-child(2) {
-				width: 20%;
-			}
-
-			&:nth-child(3) {
-				width: 10%;
-			}
-
-			&:nth-child(4) {
-				width: 20%;
-			}
-
-			&:nth-child(5) {
-				width: 5%;
-			}
-
-			&:nth-child(6) {
-				width: 5%;
-			}
 		}
 	}
 }
-
