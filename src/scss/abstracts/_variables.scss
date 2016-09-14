@@ -27,8 +27,6 @@ $font-size-base: 14px;
 
 $line-height-base:     1.429;
 $line-height-computed: floor(($font-size-base * $line-height-base));
-$line-height-ui:       26px;
-$line-height-ui-touch: $space-thumb;
 
 $link-hover-decoration: underline;
 
@@ -36,6 +34,17 @@ $headings-font-family:    inherit;
 $headings-font-weight:    400;
 $headings-line-height:    inherit;
 $headings-color:          inherit;
+
+
+// Common lenghts
+// --------------------------------------------------
+
+$padding-horizontal-sm: $space-sm;
+$padding-horizontal-md: $space-md;
+
+// todo: line-height-small
+$line-height-large: 26px;
+$line-height-large-touch: $space-thumb;
 
 
 // Grid breakpoints
@@ -106,8 +115,10 @@ $collection-tree-max-levels:         10;
 // --------------------------------------------------
 
 $item-list-row-height-sm: 62px;
-$item-list-row-height-md: $line-height-ui;
+$item-list-row-height-md: $line-height-large;
 $item-list-head-height: $space-lg - 2px; // 24px (content-box)
+$item-touch-padding-vertical: 11px;
+$item-touch-padding-horizontal: $padding-horizontal-md;
 
 
 // Item details

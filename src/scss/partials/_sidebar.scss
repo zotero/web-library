@@ -8,7 +8,7 @@
 	position: relative;
 
 	@include touch-or-bp-down(sm) {
-		line-height: $line-height-ui-touch;
+		line-height: $line-height-large-touch;
 	}
 
 	@include bp-up(sm) {
@@ -17,7 +17,7 @@
 
 	@include bp-up(md) {
 		flex: 0 0 $sidebar-width-md;
-		line-height: $line-height-ui;
+		line-height: $line-height-large;
 	}
 
 	@include bp-up(lg) {

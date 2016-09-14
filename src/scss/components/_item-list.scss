@@ -109,6 +109,14 @@
 	}
 
 	.item {
+		@include bp-down(sm) {
+			padding: $item-touch-padding-vertical $item-touch-padding-horizontal;
+		}
+
+		@include touch-or-bp-up(md) {
+			padding: $item-touch-padding-vertical $item-touch-padding-horizontal;
+		}
+
 		&.active {
 			color: $item-active-color;
 			background: $item-active-bg;
