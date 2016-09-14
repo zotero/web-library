@@ -6,6 +6,7 @@
 
 	@include mouse-and-bp-up(md) {
 		display: table;
+    table-layout: fixed;
 		width: 100%;
 	}
 
@@ -20,6 +21,16 @@
 			display: table-cell;
 			height: $item-list-row-height;
 			vertical-align: middle;
+			padding: 0 $space-xs;
+			@include css-truncate;
+
+      &:first-child {
+        padding-left: $space-sm;
+      }
+
+      &:last-child {
+        padding-right: $space-sm;
+      }
 		}
 	}
 }
