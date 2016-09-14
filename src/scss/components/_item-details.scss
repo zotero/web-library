@@ -7,6 +7,7 @@
 
 	@include bp-only(md) {
 		border-left: $space-min solid $body-bg;
+		flex: 1 1 0;
 	}
 
 	@include bp-up(lg) {

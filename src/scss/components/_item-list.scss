@@ -46,16 +46,17 @@
 }
 
 .item-list-head {
+	box-sizing: content-box; // Border-box results in buggy flex layout
 	table-layout: fixed;
 	width: 100%;
 	border-collapse: collapse;
-	height: $item-list-head-height;
 	border: {
 		top: 1px solid $item-list-head-border;
 		bottom: 1px solid $item-list-head-border;
 	}
 
 	th {
+		height: $item-list-head-height;
 		text-align: left;
 		font-weight: 400;
 		padding: 0 $space-xs;
