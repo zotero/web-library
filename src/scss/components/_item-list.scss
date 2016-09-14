@@ -117,13 +117,21 @@
 			padding: $item-touch-padding-vertical $item-touch-padding-horizontal;
 		}
 
+		@include mouse-and-bp-up(md) {
+			display: table-row;
+		}
+
+		&:nth-child(odd) {
+				background: $item-odd-bg;
+
+			@include bp-up(sm) {
+				background: inherit;
+			}
+		}
+
 		&.active {
 			color: $item-active-color;
 			background: $item-active-bg;
-		}
-
-		@include mouse-and-bp-up(md) {
-			display: table-row;
 		}
 	}
 
