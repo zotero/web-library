@@ -18,6 +18,73 @@
 		flex-direction: column;
 	}
 
+	.item-list-head {
+		table-layout: fixed;
+		width: 100%;
+		padding: 0;
+		border-collapse: collapse;
+		height: $item-list-head-height;
+		border: {
+			top: 1px solid $item-list-head-border;
+			bottom: 1px solid $item-list-head-border;
+		}
+
+		th {
+			text-align: left;
+			font-weight: 400;
+			padding: 0 $space-xs;
+			color: $item-list-head-color;
+			position: relative;
+			@include css-truncate;
+
+			&:before {
+				content: " ";
+				position: absolute;
+				left: 0;
+				top: 2px;
+				bottom: 2px;
+				width: 1px;
+				background: $item-list-head-border;
+			}
+
+			&:first-child {
+				padding-left: $space-sm;
+
+				&:before {
+					content: none;
+				}
+			}
+
+			&:last-child {
+				padding-right: $space-sm;
+			}
+
+			&:nth-child(1) { // todo: share between head and list
+				width: 40%;
+			}
+
+			&:nth-child(2) {
+				width: 20%;
+			}
+
+			&:nth-child(3) {
+				width: 10%;
+			}
+
+			&:nth-child(4) {
+				width: 20%;
+			}
+
+			&:nth-child(5) {
+				width: 5%;
+			}
+
+			&:nth-child(6) {
+				width: 5%;
+			}
+		}
+	}
+
 	.item-list-container {
 		overflow-y: scroll;
 		flex: 1 1 auto;

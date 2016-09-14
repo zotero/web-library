@@ -26,7 +26,7 @@
 			display: table-cell;
 			height: $item-list-row-height;
 			vertical-align: middle;
-			padding: 0 $space-xs;
+			padding: 0 $space-xs 0 ($space-xs + 1px);
 			@include css-truncate;
 
 			&:first-child {
@@ -38,7 +38,7 @@
 			}
 
 			&:nth-child(1) {
-			width: 40%;
+				width: 40%;
 			}
 
 			&:nth-child(2) {
@@ -57,7 +57,7 @@
 				width: 5%;
 			}
 
-			&:nth-child() {
+			&:nth-child(6) {
 				width: 5%;
 			}
 		}

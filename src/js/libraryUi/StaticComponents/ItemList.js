@@ -3,6 +3,7 @@
 var log = require('libzotero/lib/Log').Logger('zotero-web-library:ItemList');
 
 var React = require('react');
+var ReactDOM = require('react-dom');
 
 var ItemList = React.createClass({
 	getDefaultProps: function() {

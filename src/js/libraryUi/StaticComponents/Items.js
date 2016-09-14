@@ -23,6 +23,18 @@ var Items = React.createClass({
 						<h3 className="hidden-mouse-md-up">Collection title</h3>
 						<div className="toolbar"></div>
 					</header>
+					<table className="item-list-head">
+						<thead>
+							<tr>
+								<th>Title</th>
+								<th>Creator</th>
+								<th>Year</th>
+								<th>Date Modified</th>
+								<th></th>
+								<th></th>
+							</tr>
+						</thead>
+					</table>
 					<div className="item-list-container">
 						<ItemList/>
 					</div>
