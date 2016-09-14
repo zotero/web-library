@@ -86,7 +86,7 @@
 	background-attachment: local;
 
 	@include bp-only(sm) {
-		background: repeating-linear-gradient(to bottom, $item-odd-bg 0,
+		background-image: repeating-linear-gradient(to bottom, $item-odd-bg 0,
 			$item-odd-bg $item-list-row-height-sm,
 			transparent $item-list-row-height-sm,
 			transparent (2 * $item-list-row-height-sm));
@@ -94,7 +94,7 @@
 
 	@include mouse-and-bp-up(md) {
 		padding-top: 3px;
-		background: repeating-linear-gradient(to bottom, $items-odd-bg 3px,
+		background-image: repeating-linear-gradient(to bottom, $items-odd-bg 3px,
 			$items-odd-bg ($item-list-row-height-md + 3px),
 			transparent ($item-list-row-height-md + 3px),
 			transparent (2 * $item-list-row-height-md + 3px));
