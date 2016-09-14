@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg version="1.1" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" viewBox="0 0 96 22">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 22" width="96" height="22">
 	<g>
 		<path fill="#990000" d="M0,19.537l7.982-10.81c0.68-0.931,1.575-1.897,2.291-2.541L10.237,5.9C9.163,6.043,7.731,6.115,6.658,6.115
 			H0.394V4.003H13.1v1.611L5.011,16.638c-0.608,0.859-1.646,2.076-2.434,2.72l0.072,0.286c1.217-0.143,2.47-0.215,3.723-0.215H13.1
