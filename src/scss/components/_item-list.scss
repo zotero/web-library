@@ -18,6 +18,8 @@
 	.metadata {
 		@include mouse-and-bp-up(md) {
 			display: table-cell;
+			height: $item-list-row-height;
+			vertical-align: middle;
 		}
 	}
 }

@@ -18,12 +18,14 @@ var Items = React.createClass({
 	render: function() {
 		return (
 			<section id="items">
-				<div id="item-list-container">
+				<div id="items-container">
 					<header className="touch-header">
 						<h3 className="hidden-mouse-md-up">Collection title</h3>
 						<div className="toolbar"></div>
 					</header>
-					<ItemList/>
+					<div className="item-list-container">
+						<ItemList/>
+					</div>
 				</div>
 				<ItemDetails />
 			</section>
