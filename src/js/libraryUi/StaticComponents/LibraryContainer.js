@@ -8,7 +8,7 @@ var ReactDOM = require('react-dom');
 var Navbar = require('./Navbar.js');
 var CollectionTree = require('./CollectionTree.js');
 var TagSelector = require('./TagSelector.js');
-var ItemList = require('./ItemList.js');
+var Items = require('./Items.js');
 
 Zotero.ui.widgets.StaticLibrary = {};
 
@@ -38,7 +38,7 @@ var LibraryContainer = React.createClass({
 							<CollectionTree />
 							<TagSelector />
 						</header>
-						<ItemList />
+						<Items/>
 					</section>
 				</main>
 			</div>

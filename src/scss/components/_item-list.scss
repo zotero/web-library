@@ -2,12 +2,22 @@
 // Item list
 // --------------------------------------------------
 
-#item-list {
-	@include bp-up(sm) {
-		flex: 1 1 auto;
+.item-list {
+
+	@include mouse-and-bp-up(md) {
+		display: table;
+		width: 100%;
 	}
 
-	@include bp-up(lg) {
-		display: flex;
+	.item {
+		@include mouse-and-bp-up(md) {
+			display: table-row;
+		}
+	}
+
+	.metadata {
+		@include mouse-and-bp-up(md) {
+			display: table-cell;
+		}
 	}
 }

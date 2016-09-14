@@ -1,0 +1,13 @@
+//
+// Items
+// --------------------------------------------------
+
+#items {
+	@include bp-up(sm) {
+		flex: 1 1 auto;
+	}
+
+	@include bp-up(lg) {
+		display: flex;
+	}
+}
