@@ -6,11 +6,16 @@
 
 	@include mouse-and-bp-up(md) {
 		display: table;
-    table-layout: fixed;
+		table-layout: fixed;
 		width: 100%;
 	}
 
 	.item {
+		&.active {
+			color: $item-active-color;
+			background: $item-active-bg;
+		}
+
 		@include mouse-and-bp-up(md) {
 			display: table-row;
 		}
@@ -24,17 +29,17 @@
 			padding: 0 $space-xs;
 			@include css-truncate;
 
-      &:first-child {
-        padding-left: $space-sm;
-      }
+			&:first-child {
+				padding-left: $space-sm;
+			}
 
-      &:last-child {
-        padding-right: $space-sm;
-      }
+			&:last-child {
+				padding-right: $space-sm;
+			}
 
-      &:nth-child(1) {
-	      width: 40%;
-      }
+			&:nth-child(1) {
+			width: 40%;
+			}
 
 			&:nth-child(2) {
 				width: 20%;
@@ -58,3 +63,4 @@
 		}
 	}
 }
+

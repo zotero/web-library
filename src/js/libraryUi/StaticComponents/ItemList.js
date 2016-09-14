@@ -46,7 +46,7 @@ var ItemList = React.createClass({
 					<div className="metadata"></div>
 					<div className="metadata"></div>
 				</li>
-				<li className="item">
+				<li className="item active">
 					<div className="metadata">Responsive Web Design</div>
 					<div className="metadata">Marcott</div>
 					<div className="metadata">2010</div>

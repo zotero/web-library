@@ -20,15 +20,15 @@
 
 	.item-list-container {
 		overflow-y: scroll;
-    flex: 1 1 auto;
+		flex: 1 1 auto;
 
-    @include mouse-and-bp-up(sm) {
+		@include mouse-and-bp-up(sm) {
 			padding-top: 3px;
 			background: repeating-linear-gradient(to bottom, $items-odd-bg 3px,
 				$items-odd-bg ($item-list-row-height + 3px),
 				transparent ($item-list-row-height + 3px),
 				transparent (2 * $item-list-row-height + 3px));
 			background-attachment: local;
-    }
+		}
 	}
 }
