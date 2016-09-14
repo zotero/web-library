@@ -5,6 +5,10 @@
 #item-details {
 	background: $item-details-bg;
 
+	@include bp-only(sm) {
+		display: none; // dev only
+	}
+
 	@include bp-only(md) {
 		border-left: $space-min solid $body-bg;
 		flex: 1 1 0;
