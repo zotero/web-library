@@ -42,7 +42,7 @@ ul, ol {
 
 .touch-header {
 	@include touch-or-bp-down(sm) {
-		height: $space-thumb;
+		flex: 0 0 $space-thumb;
 		background: $body-bg;
 		color: $touch-header-color;
 		display: flex;
