@@ -46,10 +46,10 @@
 }
 
 .item-list-head {
-	box-sizing: content-box; // Border-box results in buggy flex layout
+	box-sizing: content-box; // border-box results in buggy flex layout
 	table-layout: fixed;
 	width: 100%;
-	border-collapse: collapse;
+	border-spacing: 0; // border-collapse results in buggy height
 	border: {
 		top: 1px solid $item-list-head-border;
 		bottom: 1px solid $item-list-head-border;
