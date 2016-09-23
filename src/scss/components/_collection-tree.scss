@@ -2,7 +2,7 @@
 // Collection tree
 // --------------------------------------------------
 
-#collection-tree {
+.collection-tree {
 	@include mouse-and-bp-up(md) {
 		padding: $collection-tree-padding-vertical 0;
 	}

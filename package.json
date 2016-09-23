@@ -29,6 +29,7 @@
     "gulp": "3.9.1",
     "gulp-autoprefixer": "3.1.0",
     "gulp-babel": "^6.1.2",
+    "gulp-connect": "^5.0.0",
     "gulp-if": "^2.0.1",
     "gulp-minify-css": "^1.2.4",
     "gulp-plumber": "1.1.0",
@@ -46,10 +47,16 @@
   },
   "dependencies": {
     "bootstrap-sass": "^3.3.6",
+    "floatthead": "1.4.0",
     "jquery": "^2.2.4",
     "libzotero": "^0.1.2",
     "react": "^15.1.0",
     "react-dom": "^15.1.0",
-    "floatthead": "1.4.0"
+    "react-redux": "^4.4.5",
+    "redux": "^3.6.0",
+    "redux-logger": "^2.6.1",
+    "redux-promise": "^0.5.3",
+    "redux-thunk": "^2.1.0",
+    "w3c-xmlhttprequest": "^2.1.0"
   }
 }

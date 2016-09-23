@@ -19,13 +19,16 @@ const runSequence = require('run-sequence');
 const del = require('del');
 const sass = require('gulp-sass');
 const babelify = require('babelify');
+const connect = require('gulp-connect');
 
 const babelifyOpts = {
+	extensions: ['.js', '.jsx'],
 	presets: ['es2015', 'react'],
-	plugins: ['transform-flow-strip-types']
+	plugins: [
+		'transform-es2015-modules-commonjs',
+		'transform-flow-strip-types'
+	]
 };
-
-var bundle;
 
 function onError(err) {
 	gutil.log(gutil.colors.red('Error:'), err);
@@ -37,38 +40,39 @@ function onSuccess(msg) {
 }
 
 function getBrowserify(dev) {
-	if(!bundle) {
-		bundle = browserify({
-			debug: !dev,
-			entries: './src/js/zotero-web-library.js',
-			cache: {},
-			packageCache: {}
-		})
-		.transform(babelify, babelifyOpts);
-
-		if(dev) {
-			bundle.plugin(watchify);
-			bundle.on('update', function() {
-				return getJS(dev);
-			});
-			bundle.on('log', onSuccess);
-		}
-	}
-
-	return bundle;
+	return browserify({
+		debug: dev,
+		entries: './src/js/zotero-web-library.js',
+		cache: {},
+		packageCache: {}
+	}).transform(babelify, babelifyOpts);
 }
 
-function getJS(dev) {
-	return getBrowserify(dev).bundle()
+function getJSBundle(dev, browserifyObject) {
+	return browserifyObject.bundle()
+		.on('error', onError)
 		.pipe(source('zotero-web-library.js'))
 		.pipe(buffer())
-		.pipe(plumber({errorHandler: onError}))
 		.pipe(gulpif(dev, sourcemaps.init({loadMaps: true})))
 		.pipe(gulpif(!dev, gulp.dest('./build')))
 		.pipe(gulpif(!dev, uglify()))
 		.pipe(gulpif(!dev, rename({ extname: '.min.js' })))
 		.pipe(gulpif(dev, sourcemaps.write('./')))
 		.pipe(gulp.dest('./build'));
+}
+
+function getJS(dev) {
+	var browserifyObject = getBrowserify(dev);
+
+	if(dev) {
+		browserifyObject.plugin(watchify);
+		browserifyObject.on('update', () => {
+			return getJSBundle(dev, browserifyObject);
+		});
+	}
+
+	browserifyObject.on('log', onSuccess);
+	return getJSBundle(dev, browserifyObject);
 }
 
 function getSass(dev) {
@@ -84,6 +88,11 @@ function getSass(dev) {
 		.pipe(gulpif(!dev, rename({ extname: '.min.css' })))
 		.pipe(gulpif(dev, sourcemaps.write('./')))
 		.pipe(gulp.dest('./build'));
+}
+
+function getHtml() {
+	return gulp.src('./src/demo/index.html')
+		.pipe(gulp.dest('./build/'))
 }
 
 gulp.task('clean:build', () => {
@@ -102,9 +111,24 @@ gulp.task('js', () => {
 	return getJS(true);
 });
 
+gulp.task('html', () => {
+	return getHtml();
+});
+
 gulp.task('dev', ['clean:build'], () => {
+	connect.server({
+		root: 'build',
+		port: 8001,
+		livereload: true
+	});
+
 	gulp.watch('./src/scss/**/*.scss', ['sass']);
-	return merge(getSass(true), getJS(true));
+	gulp.watch('./src/demo/*.html', ['html']);
+	return merge(
+		getSass(true),
+		getJS(true),
+		getHtml()
+	);
 });
 
 gulp.task('build', ['clean:build'], () => {
