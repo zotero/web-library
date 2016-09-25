@@ -91,7 +91,7 @@ function getSass(dev) {
 }
 
 function getHtml() {
-	return gulp.src('./src/demo/index.html')
+	return gulp.src('./src/demo/*.html')
 		.pipe(gulp.dest('./build/'))
 }
 
