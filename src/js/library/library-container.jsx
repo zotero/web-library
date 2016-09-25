@@ -5,6 +5,14 @@ import { connect } from 'react-redux';
 import { selectLibrary } from '../actions.js';
 import Library from './library.jsx';
 
+import createLogger from 'redux-logger';
+import ReactDOM from 'react-dom';
+import ReduxThunk from 'redux-thunk';
+import { createStore, applyMiddleware } from 'redux';
+import { Provider } from 'react-redux';
+
+import reducers from '../reducers.js';
+
 class LibraryContainer extends React.Component {
 	componentDidMount() {
 		this.props.dispatch(
@@ -14,6 +22,31 @@ class LibraryContainer extends React.Component {
 
 	render() {
 		return <Library />;
+	}
+
+	static init(element, userid, apiKey) {
+		if(element) {			
+			const config = {
+				apiKey: apiKey || element.getAttribute('data-apikey'),
+				userId: userid || parseInt(element.getAttribute('data-userid'), 10)
+			};
+
+			var store = createStore(
+				reducers,
+				{ config },
+				applyMiddleware(
+					ReduxThunk,
+					createLogger()
+				)
+			);
+
+			ReactDOM.render(
+				<Provider store={store}>
+					<LibraryContainerWrapped />
+				</Provider>,
+				element
+			);
+		}
 	}
 }
 
@@ -30,4 +63,6 @@ const mapStateToProps = state => {
 	};
 };
 
-export default connect(mapStateToProps)(LibraryContainer);
+const LibraryContainerWrapped = connect(mapStateToProps)(LibraryContainer);
+
+export default LibraryContainerWrapped;
