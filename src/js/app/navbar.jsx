@@ -3,8 +3,24 @@
 import React from 'react';
 
 export default class Navbar extends React.Component {
+	constructor(props) {
+		super(props);
+		this.state = {
+			navOpened: false
+		};
+	}
+
+	toggleNavbar() {
+		this.setState({
+			navOpened: !this.state.navOpened
+		});
+	}
 	render() {
-		return <header className="navbar">
+		var classNames = 'navbar';
+		if(this.state.navOpened) {
+			classNames += ' navbar-nav-opened';
+		}
+		return <header className={ classNames }>
 			<h1 className="navbar-brand"><a href="/">Zotero</a></h1>
 			<nav className="navbar-nav">
 				<h2 className="offscreen">Site navigation</h2>
@@ -16,7 +32,7 @@ export default class Navbar extends React.Component {
 			</nav>
 			<a href="#" className="search">Search</a>
 			<a href="#" className="user-profile-link"></a>
-			<button className="dropdown-toggle">
+			<button className="dropdown-toggle" onClick={ () => this.toggleNavbar() }>
 				<span className="icon-bar"></span>
 				<span className="icon-bar"></span>
 				<span className="icon-bar"></span>
