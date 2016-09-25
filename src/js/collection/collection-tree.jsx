@@ -7,20 +7,13 @@ export default class CollectionTree extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			collections: []
+			collections: this.props.collections.filter(c => c.nestingDepth === 1)
 		};
 	}
 
 	componentWillReceiveProps(nextProps) {
-		let rootCollections = [];
-		nextProps.collections.forEach(collection => {
-				if(collection.nestingDepth == 1) {
-					rootCollections.push(collection);	
-				}
-			});
-
 		this.setState({
-			collections: rootCollections
+			collections: nextProps.collections.filter(c => c.nestingDepth === 1)
 		});
 	}
 
@@ -66,11 +59,21 @@ export default class CollectionTree extends React.Component {
 }
 
 CollectionTree.propTypes = {
-	isFetching: React.PropTypes.bool.isRequired,
+	isFetching: React.PropTypes.bool,
 	onCollectionSelected: React.PropTypes.func.isRequired,
 	collections: React.PropTypes.arrayOf(React.PropTypes.shape({
-		name: React.PropTypes.string,
+		key: React.PropTypes.string.isRequired,
 		nestingDepth: React.PropTypes.integer,
-		children: React.PropTypes.array
+		children: React.PropTypes.array,
+		apiObj: React.PropTypes.shape({
+			data: React.PropTypes.shape({
+				name: React.PropTypes.string
+			})
+		})
 	})).isRequired
+};
+
+CollectionTree.defaultProps = {
+	isFetching: false,
+	onCollectionSelected: () => null
 };

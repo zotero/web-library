@@ -33,5 +33,5 @@ ItemsList.propTypes = {
 			year: React.PropTypes.number,
 			date: React.PropTypes.string
 		})
-	})
+	}).isRequired
 };

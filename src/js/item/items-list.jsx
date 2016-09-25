@@ -40,3 +40,7 @@ ItemsList.propTypes = {
 	items: React.PropTypes.array,
 	isFetching: React.PropTypes.bool
 };
+
+ItemsList.defaultProps = {
+	isFetching: false
+};

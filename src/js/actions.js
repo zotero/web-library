@@ -27,6 +27,9 @@ export function requestCollections(libraryString) {
 }
 
 export function receiveCollections(libraryString, collections) {
+	collections.sort(
+		(a, b) => a.apiObj.data.name.toUpperCase().localeCompare(b.apiObj.data.name.toUpperCase())
+	);
 	return {
 		type: RECEIVE_COLLECTIONS,
 		libraryString,
@@ -50,6 +53,10 @@ export function requestItems(collectionKey) {
 }
 
 export function receiveItems(collectionKey, items) {
+	items.sort(
+		(a, b) => a.data.title.toUpperCase().localeCompare(b.data.title.toUpperCase())
+	);
+
 	return {
 		type: RECEIVE_ITEMS,
 		collectionKey,
