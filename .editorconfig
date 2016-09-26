@@ -1,4 +1,4 @@
-[*.js]
+[*.{js,jsx}]
 indent_style = tab
 
 [*.scss]
