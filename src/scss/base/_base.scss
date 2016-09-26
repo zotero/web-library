@@ -8,8 +8,8 @@
 
 html,
 body,
-#library-container,
-#library-root {
+[data-widget="library"],
+[data-reactroot] {
 	height: 100%;
 }
 
@@ -23,12 +23,19 @@ body {
 	line-height: $line-height-base;
 }
 
-#library-root {
+[data-reactroot] {
 	display: flex;
 	flex-direction: column;
 
 
 	@include bp-up(sm) {
+	}
+}
+
+.library {
+	@include bp-up(sm) {
+		display: flex;
+		width: 100%;
 	}
 }
 
