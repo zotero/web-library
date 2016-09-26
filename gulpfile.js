@@ -21,15 +21,6 @@ const sass = require('gulp-sass');
 const babelify = require('babelify');
 const connect = require('gulp-connect');
 
-const babelifyOpts = {
-	extensions: ['.js', '.jsx'],
-	presets: ['es2015', 'react'],
-	plugins: [
-		'transform-es2015-modules-commonjs',
-		'transform-flow-strip-types'
-	]
-};
-
 function onError(err) {
 	gutil.log(gutil.colors.red('Error:'), err);
 	this.emit('end');
@@ -45,7 +36,10 @@ function getBrowserify(dev) {
 		entries: './src/js/zotero-web-library.js',
 		cache: {},
 		packageCache: {}
-	}).transform(babelify, babelifyOpts);
+	}).transform(
+		babelify, 
+		{ extensions: ['.js', '.jsx'] }
+	);
 }
 
 function getJSBundle(dev, browserifyObject) {
@@ -136,8 +130,8 @@ gulp.task('build', ['clean:build'], () => {
 });
 
 gulp.task('prepublish:js', () => {
-	return gulp.src('./src/js/**/*.js')
-			.pipe(babel(babelifyOpts))
+	return gulp.src('./src/js/**/*.js*')
+			.pipe(babel())
 			.pipe(gulp.dest('./lib/'));
 });
 
