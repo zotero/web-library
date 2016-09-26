@@ -19,27 +19,28 @@
 	@include bp-up(md) {
 		display: flex;
 	}
+}
 
-	#items-container {
-		@include bp-only(sm) {
-			position: absolute;
-			width: 100%;
-			height: 100%;
-			padding-left: $space-min;
-		}
 
-		@include bp-up(sm) {
-			display: flex;
-			flex-direction: column;
-		}
+.items-container {
+	@include bp-only(sm) {
+		position: absolute;
+		width: 100%;
+		height: 100%;
+		padding-left: $space-min;
+	}
 
-		@include bp-only(md) {
-			flex: 1 1 0;
-		}
+	@include bp-up(sm) {
+		display: flex;
+		flex-direction: column;
+	}
 
-		@include bp-up(lg) {
-			flex: 1 1 auto;
-			padding: 0 $space-min;
-		}
+	@include bp-only(md) {
+		flex: 1 1 0;
+	}
+
+	@include bp-up(lg) {
+		flex: 1 1 auto;
+		padding: 0 $space-min;
 	}
 }
