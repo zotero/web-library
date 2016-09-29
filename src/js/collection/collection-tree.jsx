@@ -1,7 +1,7 @@
 'use strict';
 
 import React from 'react';
-import Spinner from '../app/spinner.jsx';
+import Spinner from '../app/spinner';
 
 export default class CollectionTree extends React.Component {
 	constructor(props) {

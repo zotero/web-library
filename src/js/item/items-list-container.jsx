@@ -2,8 +2,8 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
-import ItemsList from './items-list.jsx';
-import { selectItem, fetchItemsIfNeeded } from '../actions.js';
+import ItemsList from './items-list';
+import { selectItem, fetchItemsIfNeeded } from '../actions';
 
 
 class ItemsListContainer extends React.Component {

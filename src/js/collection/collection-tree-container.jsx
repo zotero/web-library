@@ -2,8 +2,8 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
-import CollectionTree from './collection-tree.jsx';
-import { selectCollection, fetchCollectionsIfNeeded } from '../actions.js';
+import CollectionTree from './collection-tree';
+import { selectCollection, fetchCollectionsIfNeeded } from '../actions';
 
 
 class CollectionTreeContainer extends React.Component {

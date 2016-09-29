@@ -1,8 +1,8 @@
 'use strict';
 
 import React from 'react';
-import Item from './item.jsx';
-import Spinner from '../app/spinner.jsx';
+import Item from './item';
+import Spinner from '../app/spinner';
 
 export default class ItemsList extends React.Component {
 	render() {

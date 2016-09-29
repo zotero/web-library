@@ -2,8 +2,8 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
-import { selectLibrary } from '../actions.js';
-import Library from './library.jsx';
+import { selectLibrary } from '../actions';
+import Library from './library';
 
 import createLogger from 'redux-logger';
 import ReactDOM from 'react-dom';
@@ -11,7 +11,7 @@ import ReduxThunk from 'redux-thunk';
 import { createStore, applyMiddleware } from 'redux';
 import { Provider } from 'react-redux';
 
-import reducers from '../reducers.js';
+import reducers from '../reducers';
 
 class LibraryContainer extends React.Component {
 	componentDidMount() {

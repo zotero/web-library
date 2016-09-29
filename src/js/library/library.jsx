@@ -1,10 +1,10 @@
 'use strict';
 
 import React from 'react';
-import Navbar from '../app/navbar.jsx';
-import CollectionTreeContainer from '../collection/collection-tree-container.jsx';
-import TagSelector from '../app/tag-selector.jsx';
-import ItemsListContainer from '../item/items-list-container.jsx';
+import Navbar from '../app/navbar';
+import CollectionTreeContainer from '../collection/collection-tree-container';
+import TagSelector from '../app/tag-selector';
+import ItemsListContainer from '../item/items-list-container';
 
 export default class Library extends React.Component {
 	render() {

@@ -35,10 +35,10 @@ function getBrowserify(dev) {
 		debug: dev,
 		entries: './src/js/zotero-web-library.js',
 		cache: {},
-		packageCache: {}
+		packageCache: {},
+		extensions: ['.js', '.jsx']
 	}).transform(
-		babelify, 
-		{ extensions: ['.js', '.jsx'] }
+		babelify
 	);
 }
 

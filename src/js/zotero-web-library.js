@@ -4,17 +4,17 @@ import Zotero from 'libzotero';
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import CollectionTree from './collection/collection-tree.jsx';
-import CollectionTreeContainer from './collection/collection-tree-container.jsx';
-import Item from './item/item.jsx';
-import ItemDetails from './item/item-details.jsx';
-import ItemsList from './item/items-list.jsx';
-import ItemsListContainer from './item/items-list-container.jsx';
-import Library from './library/library.jsx';
-import LibraryContainer from './library/library-container.jsx';
-import Navbar from './app/navbar.jsx';
-import Spinner from './app/spinner.jsx';
-import TagSelector from './app/tag-selector.jsx';
+import CollectionTree from './collection/collection-tree';
+import CollectionTreeContainer from './collection/collection-tree-container';
+import Item from './item/item';
+import ItemDetails from './item/item-details';
+import ItemsList from './item/items-list';
+import ItemsListContainer from './item/items-list-container';
+import Library from './library/library';
+import LibraryContainer from './library/library-container';
+import Navbar from './app/navbar';
+import Spinner from './app/spinner';
+import TagSelector from './app/tag-selector';
 
 if(!Zotero.ui) {
 	Zotero.ui = {};
