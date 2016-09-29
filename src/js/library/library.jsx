@@ -18,7 +18,13 @@ export default class Library extends React.Component {
 							<CollectionTreeContainer />
 							<TagSelector />
 						</header>
-						<ItemsListContainer />
+						<section className="items-container">
+							<header className="touch-header">
+								<h3 className="hidden-mouse-md-up">Collection title</h3>
+								<div className="toolbar">Toolbar</div>
+							</header>
+							<ItemsListContainer />
+						</section>
 					</section>
 				</main>
 			</div>
