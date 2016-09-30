@@ -2,7 +2,7 @@
 // Items
 // --------------------------------------------------
 
-#items {
+.items {
 	@include bp-up(sm) {
 		flex: 1 1 auto;
 	}
