@@ -2,7 +2,7 @@
 // Items
 // --------------------------------------------------
 
-#items {
+.items {
 	@include bp-up(sm) {
 		flex: 1 1 auto;
 	}
@@ -27,12 +27,12 @@
 		position: absolute;
 		width: 100%;
 		height: 100%;
-		padding-left: $space-min;
 	}
 
 	@include bp-up(sm) {
 		display: flex;
 		flex-direction: column;
+		padding-left: $space-min;
 	}
 
 	@include bp-only(md) {

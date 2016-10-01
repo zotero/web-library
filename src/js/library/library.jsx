@@ -5,6 +5,7 @@ import Navbar from '../app/navbar';
 import CollectionTreeContainer from '../collection/collection-tree-container';
 import TagSelector from '../app/tag-selector';
 import ItemsListContainer from '../item/items-list-container';
+import ItemDetails from '../item/item-details';
 
 export default class Library extends React.Component {
 	render() {
@@ -18,12 +19,15 @@ export default class Library extends React.Component {
 							<CollectionTreeContainer />
 							<TagSelector />
 						</header>
-						<section className="items-container">
-							<header className="touch-header">
-								<h3 className="hidden-mouse-md-up">Collection title</h3>
-								<div className="toolbar">Toolbar</div>
-							</header>
-							<ItemsListContainer />
+						<section className="items">
+							<div className="items-container">
+								<header className="touch-header">
+									<h3 className="hidden-mouse-md-up">Collection title</h3>
+									<div className="toolbar">Toolbar</div>
+								</header>
+								<ItemsListContainer />
+							</div>
+							<ItemDetails/>
 						</section>
 					</section>
 				</main>
