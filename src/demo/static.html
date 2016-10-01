@@ -12,6 +12,7 @@
 </body>
 <script src="/zotero-web-library.js"></script>
 <script type="text/javascript">
+	/* global Zotero:false */
 	const collections = [...Array(5).keys()].map(index => {
 		return {
 			key: 'abcdefghijklmnopqrstuvwxyz'.toUpperCase().slice(index, index + 6),
@@ -51,7 +52,7 @@
 					React.createElement('header', {className: 'sidebar'}, 
 						React.createElement('h2', {className: 'offscreen'}, 'Web Library'),
 						React.createElement(CollectionTree, {collections: collections}),
-						React.createElement('TagSelector')
+						React.createElement(TagSelector)
 					),
 					React.createElement(ItemsList, {items: items})
 				)

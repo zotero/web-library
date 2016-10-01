@@ -15,6 +15,7 @@ import LibraryContainer from './library/library-container';
 import Navbar from './app/navbar';
 import Spinner from './app/spinner';
 import TagSelector from './app/tag-selector';
+import Editable from './editable/editable';
 
 if(!Zotero.ui) {
 	Zotero.ui = {};
@@ -33,6 +34,7 @@ Object.assign(Zotero.ui, {
 	Navbar,
 	Spinner,
 	TagSelector,
+	Editable,
 	React,
 	ReactDOM
 });
