@@ -2,11 +2,15 @@
 // Navs
 // --------------------------------------------------
 
-.nav {
-	 li {
-		 a {
+nav {
+	li {
+		a {
 			display: block;
 			text-decoration: none;
+
+			&:hover {
+				text-decoration: none;
+			}
 		}
 	}
 }
