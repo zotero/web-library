@@ -27,6 +27,9 @@ $font-size-base: 14px;
 
 $line-height-base:     1.429;
 $line-height-computed: floor(($font-size-base * $line-height-base));
+// todo: line-height-small
+$line-height-large: 26px;
+$line-height-large-touch: $space-thumb;
 
 $link-hover-decoration: underline;
 
@@ -36,15 +39,13 @@ $headings-line-height:    inherit;
 $headings-color:          inherit;
 
 
-// Common lenghts
+// Common dimensions
 // --------------------------------------------------
 
 $padding-horizontal-sm: $space-sm;
 $padding-horizontal-md: $space-md;
 
-// todo: line-height-small
-$line-height-large: 26px;
-$line-height-large-touch: $space-thumb;
+$component-padding-horizontal: $space-sm;
 
 
 // Grid breakpoints
@@ -134,3 +135,11 @@ $touch-item-details-width-lg: 33%;
 $tabs-height: $line-height-large;
 $tabs-padding-horizontal: $space-md;
 $tabs-compact-padding-horizontal: $space-xs;
+
+
+// Description list
+// --------------------------------------------------
+
+$dl-line-height: $space-lg;
+$dl-gutter: $space-sm;
+$dl-horizontal-offset: 33%;
