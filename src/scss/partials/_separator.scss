@@ -1,0 +1,22 @@
+//
+// Separator
+// --------------------------------------------------
+
+.separator {
+	height: 2px;
+	background: $separator-color;
+	margin: $space-md 0;
+
+	.abstract & {
+		margin: 9px 0 14px;
+
+		@include bp-only(md) {
+			position: absolute;
+			left: 0;
+			top: 0;
+			width: 2px;
+			height: 100%;
+			margin: 0;
+		}
+	}
+}

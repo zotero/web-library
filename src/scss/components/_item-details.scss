@@ -27,6 +27,16 @@
 		.empty {
 			display: none;
 		}
+
+		// 2 columns layout
+		.row {
+			display: flex;
+		}
+
+		.col {
+			flex: 0 0 50%;
+			position: relative;
+		}
 	}
 
 	@include bp-up(lg) {
@@ -34,6 +44,22 @@
 
 		.touch & {
 			flex: 0 0 $touch-item-details-width-lg;
+		}
+	}
+
+	.toolbar {
+		margin: $space-min 0 $space-md;
+	}
+
+	.dl-horizontal {
+		margin-top: 5px;
+
+		@include bp-only(md) {
+			margin-top: -5px;
+
+			dd {
+				padding-right: ($dl-gutter + 1px);
+			}
 		}
 	}
 }

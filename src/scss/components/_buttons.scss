@@ -1,0 +1,22 @@
+//
+// Buttons
+// --------------------------------------------------
+
+.btn {
+	border: 0;
+	color: $btn-color;
+	background: $btn-bg;
+	border-radius: $btn-border-radius;
+	padding: $btn-padding;
+	cursor: pointer;
+
+	&:hover,
+	&:focus {
+		background: darken($btn-bg, 5%);
+		outline: none;
+	}
+
+	&:active {
+		color: darken($btn-color, 20%);
+	}
+}
