@@ -3,7 +3,7 @@
 // --------------------------------------------------
 
 dl {
-	margin: 0;
+	margin: $dl-margin-top 0 0;
 	line-height: $dl-line-height;
 
 	dt {
