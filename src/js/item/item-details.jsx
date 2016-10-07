@@ -49,16 +49,16 @@ export default class ItemDetails extends React.Component {
 									<dd className='empty'></dd>
 									<dt className='empty'>Edition</dt>
 									<dd className='empty'></dd>
-									<dt className='empty'>Place</dt>
-									<dd className='empty'></dd>
-									<dt className='empty'>Publisher</dt>
-									<dd className='empty'></dd>
-									<dt className='empty'>Date</dt>
-									<dd className='empty'></dd>
-									<dt className='empty'># of Pages</dt>
-									<dd className='empty'></dd>
-									<dt className='empty'>Language</dt>
-									<dd className='empty'></dd>
+									<dt>Place</dt>
+									<dd>New York, New York</dd>
+									<dt>Publisher</dt>
+									<dd>Jeffrey Zeldman</dd>
+									<dt>Date</dt>
+									<dd>2011</dd>
+									<dt># of Pages</dt>
+									<dd>153</dd>
+									<dt>Language</dt>
+									<dd>English</dd>
 									<dt>ISBN</dt>
 									<dd>978-0-9844425-7-7</dd>
 									<dt className='empty'>Short Title</dt>
