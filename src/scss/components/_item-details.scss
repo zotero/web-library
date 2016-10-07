@@ -22,6 +22,11 @@
 				}
 			}
 		}
+
+		// Hide empty dt, dd
+		.empty {
+			display: none;
+		}
 	}
 
 	@include bp-up(lg) {

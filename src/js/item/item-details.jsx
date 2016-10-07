@@ -8,29 +8,29 @@ export default class ItemDetails extends React.Component {
 			<section className='item-details'>
 
 				{/* Future panel component */}
-				<section className="panel">
-					<header className="panel-header">
+				<section className='panel'>
+					<header className='panel-header'>
 						<h4 className='offscreen'>Item title</h4>
 
 						{/* Future tabs component */}
 						<nav>
 
 							{/* Props: justified, compact */}
-							<ul className="tabs compact">
-								<li className='active'><a href="#">Info</a></li>
-								<li><a href="#">Notes</a></li>
-								<li><a href="#">Tags</a></li>
-								<li><a href="#">Attachments</a></li>
-								<li><a href="#">Related</a></li>
+							<ul className='tabs compact'>
+								<li className='active'><a href='#'>Info</a></li>
+								<li><a href='#'>Notes</a></li>
+								<li><a href='#'>Tags</a></li>
+								<li><a href='#'>Attachments</a></li>
+								<li><a href='#'>Related</a></li>
 							</ul>
 						</nav>
 					</header>
-					<div className="panel-body">
-						<div className="tab-content">
-							<div className="tab-pane active">
+					<div className='panel-body'>
+						<div className='tab-content'>
+							<div className='tab-pane active'>
 
 								{/* Description list */}
-								<dl className="dl-horizontal">
+								<dl className='dl-horizontal'>
 									<dt>Item Type</dt>
 									<dd>Book</dd>
 									<dt>Title</dt>
@@ -43,42 +43,42 @@ export default class ItemDetails extends React.Component {
 									<dd>A Book Apart</dd>
 									<dt>Series Number</dt>
 									<dd>4</dd>
-									<dt>Volume</dt>
-									<dd></dd>
-									<dt># of Volume</dt>
-									<dd></dd>
-									<dt>Edition</dt>
-									<dd></dd>
-									<dt>Place</dt>
-									<dd></dd>
-									<dt>Publisher</dt>
-									<dd></dd>
-									<dt>Date</dt>
-									<dd></dd>
-									<dt># of Pages</dt>
-									<dd></dd>
-									<dt>Language</dt>
-									<dd></dd>
+									<dt className='empty'>Volume</dt>
+									<dd className='empty'></dd>
+									<dt className='empty'># of Volume</dt>
+									<dd className='empty'></dd>
+									<dt className='empty'>Edition</dt>
+									<dd className='empty'></dd>
+									<dt className='empty'>Place</dt>
+									<dd className='empty'></dd>
+									<dt className='empty'>Publisher</dt>
+									<dd className='empty'></dd>
+									<dt className='empty'>Date</dt>
+									<dd className='empty'></dd>
+									<dt className='empty'># of Pages</dt>
+									<dd className='empty'></dd>
+									<dt className='empty'>Language</dt>
+									<dd className='empty'></dd>
 									<dt>ISBN</dt>
 									<dd>978-0-9844425-7-7</dd>
-									<dt>Short Title</dt>
-									<dd></dd>
-									<dt>URL</dt>
-									<dd></dd>
-									<dt>Accessed</dt>
-									<dd></dd>
-									<dt>Archive</dt>
-									<dd></dd>
-									<dt>Loc. in Archive</dt>
-									<dd></dd>
-									<dt>Library Catalog</dt>
-									<dd></dd>
-									<dt>Call Number:</dt>
-									<dd></dd>
-									<dt>Rights</dt>
-									<dd></dd>
-									<dt>Extra</dt>
-									<dd></dd>
+									<dt className='empty'>Short Title</dt>
+									<dd className='empty'></dd>
+									<dt className='empty'>URL</dt>
+									<dd className='empty'></dd>
+									<dt className='empty'>Accessed</dt>
+									<dd className='empty'></dd>
+									<dt className='empty'>Archive</dt>
+									<dd className='empty'></dd>
+									<dt className='empty'>Loc. in Archive</dt>
+									<dd className='empty'></dd>
+									<dt className='empty'>Library Catalog</dt>
+									<dd className='empty'></dd>
+									<dt className='empty'>Call Number:</dt>
+									<dd className='empty'></dd>
+									<dt className='empty'>Rights</dt>
+									<dd className='empty'></dd>
+									<dt className='empty'>Extra</dt>
+									<dd className='empty'></dd>
 									<dt>Date Added</dt>
 									<dd>29/09/2016, 18:34:31</dd>
 									<dt>Modified</dt>
