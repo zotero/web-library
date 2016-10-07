@@ -92,7 +92,7 @@ export default class ItemDetails extends React.Component {
 									</div>
 									<div className="col">
 										<section className="abstract">
-											<div className="separator" role="separator"></div>
+											<div className="separator hidden-md-down" role="separator"></div>
 											<h5>Abstract</h5>
 											<p>Since its groundbreaking release in 2011, Responsive Web Design remains a fundamental resource for anyone working on the web.</p>
 											<p>Learn how to think beyond the desktop, and craft designs that respond to your users’ needs. In the second edition, Ethan Marcotte expands on the design principles behind fluid grids, flexible images, and media queries. Through new examples and updated facts and figures, you’ll learn how to deliver a quality experience, no matter how large or small the display.</p>

@@ -5,10 +5,6 @@
 .abstract {
 	padding: 0 $component-padding-horizontal;
 
-	@include bp-only(md) {
-		padding-left: ($component-padding-horizontal + 1px);
-	}
-
 	h5 {
 		line-height: 1.1;
 	}
