@@ -48,7 +48,7 @@
 	}
 
 	.toolbar {
-		margin: $space-min 0 $space-md;
+		margin: $space-min 0 ($space-md - 2px);
 	}
 
 	.dl-horizontal {
