@@ -1,7 +1,7 @@
 {
 	"presets": ["es2015", "react"],
 	"plugins": [
-		'transform-es2015-modules-commonjs',
+		'add-module-exports',
 		'transform-flow-strip-types'
 	]
 }

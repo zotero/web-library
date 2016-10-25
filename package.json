@@ -1,6 +1,6 @@
 {
   "name": "zotero-web-library",
-  "version": "0.1.1",
+  "version": "0.9.0-alpha",
   "description": "Web library from zotero.org",
   "main": "lib/zotero-web-library.js",
   "directories": {
@@ -19,6 +19,7 @@
   "author": "Faolan C-P",
   "license": "AGPL-3.0",
   "devDependencies": {
+    "babel-plugin-add-module-exports": "^0.2.1",
     "babel-plugin-transform-object-rest-spread": "^6.8.0",
     "babel-preset-es2015": "^6.14.0",
     "babel-preset-react": "^6.5.0",
