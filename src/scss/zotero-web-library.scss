@@ -16,6 +16,8 @@
 
 @import "partials/sidebar";
 @import "partials/navs";
+@import "partials/separator";
+@import "partials/abstract";
 
 @import "components/navbar";
 @import "components/collection-tree";
@@ -23,4 +25,9 @@
 @import "components/items";
 @import "components/item-list";
 @import "components/item-details";
+@import "components/tabs";
+@import "components/description-list";
+@import "components/panel";
+@import "components/toolbar";
+@import "components/buttons";
 @import "components/spinner";

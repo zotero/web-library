@@ -51,6 +51,9 @@ $sidebar-bg: $smoke;
 // Type
 $touch-header-color: $slate;
 
+// Separator
+$separator-color: $silver;
+
 
 // Components
 // --------------------------------------------------
@@ -86,3 +89,24 @@ $item-active-bg:    $asphalt;
 
 // Item details
 $item-details-bg: $smoke;
+
+// Panel
+$panel-bg: $smoke;
+$panel-header-color: $iron;
+$panel-header-shadow: rgba($black, 0.08);
+
+// Tabs
+$tab-bg: $silver;
+$tab-active-color: inherit;
+$tab-active-bg: $smoke;
+$tab-inactive-color: $slate; // #999?
+
+// Description list
+$dt-color: $slate;
+
+// Buttons
+$btn-color: $white;
+$btn-bg:    $asphalt;
+
+// Spinner
+$spinner-color: $slate;

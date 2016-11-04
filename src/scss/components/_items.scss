@@ -37,6 +37,7 @@
 
 	@include bp-only(md) {
 		flex: 1 1 0;
+		height: 50%;
 	}
 
 	@include bp-up(lg) {

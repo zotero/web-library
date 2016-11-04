@@ -1,0 +1,31 @@
+//
+// Toolbar
+// --------------------------------------------------
+
+.toolbar {
+	display: flex;
+	justify-content: space-between;
+	align-items: stretch;
+	height: $toolbar-height;
+	flex: 0 0 auto;
+	padding: 0 $component-padding-horizontal;
+
+	.toolbar-left,
+	.toolbar-center,
+	.toolbar-right {
+		display: flex;
+		align-items: center;
+	}
+
+	.toolbar-left {
+		margin-right: auto;
+	}
+
+	.toolbar-center {
+		margin: 0 auto;
+	}
+
+	.toolbar-right {
+		margin-left: auto;
+	}
+}

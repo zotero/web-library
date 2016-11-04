@@ -25,8 +25,14 @@ $font-family-base:       $font-family-sans-serif;
 
 $font-size-base: 14px;
 
+$font-size-h5: 16px;
+
+
 $line-height-base:     1.429;
 $line-height-computed: floor(($font-size-base * $line-height-base));
+// todo: line-height-small
+$line-height-large: 26px;
+$line-height-large-touch: $space-thumb;
 
 $link-hover-decoration: underline;
 
@@ -36,15 +42,15 @@ $headings-line-height:    inherit;
 $headings-color:          inherit;
 
 
-// Common lenghts
+// Common dimensions
 // --------------------------------------------------
 
 $padding-horizontal-sm: $space-sm;
 $padding-horizontal-md: $space-md;
 
-// todo: line-height-small
-$line-height-large: 26px;
-$line-height-large-touch: $space-thumb;
+$component-padding-horizontal: $space-sm;
+
+$border-radius-base: 3px;
 
 
 // Grid breakpoints
@@ -121,8 +127,44 @@ $item-touch-padding-vertical: 11px;
 $item-touch-padding-horizontal: $padding-horizontal-md;
 
 
+// Toolbar
+// --------------------------------------------------
+
+$toolbar-height: $space-lg;
+
+
+// Panel
+// --------------------------------------------------
+
+$panel-header-height: $space-lg;
+
+
 // Item details
 // --------------------------------------------------
 
 $item-details-width-lg: 360px;
 $touch-item-details-width-lg: 33%;
+
+
+// Tabs
+// --------------------------------------------------
+
+$tabs-height: $space-lg;
+$tabs-padding-horizontal: $space-md;
+$tabs-compact-padding-horizontal: $space-xs;
+
+
+// Description list
+// --------------------------------------------------
+
+$dl-margin: 0;
+$dl-line-height: $space-lg;
+$dl-gutter: $space-sm;
+$dl-horizontal-offset: 33%;
+
+
+// Buttons
+// --------------------------------------------------
+
+$btn-border-radius: $border-radius-base;
+$btn-padding: 2px $space-md;

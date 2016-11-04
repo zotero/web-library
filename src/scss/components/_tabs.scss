@@ -1,0 +1,63 @@
+//
+// Tabs
+// --------------------------------------------------
+
+.tabs {
+	display: flex;
+	background: $tab-bg;
+
+	li {
+		flex: 0 0 auto;
+		display: flex;
+
+		a {
+			flex: 1 1 auto;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			color: $tab-inactive-color;
+			background: $tab-bg;
+			padding: 0 $tabs-padding-horizontal;
+			height: $tabs-height;
+
+			&:hover {
+				color: $tab-active-color;
+			}
+		}
+
+		&.active {
+			a {
+				color: $tab-active-color;
+				background: $tab-active-bg;
+			}
+		}
+	}
+
+	.icon {
+		margin-right: $space-xs;
+	}
+
+	&.compact {
+		li {
+			a {
+				padding: 0 $tabs-compact-padding-horizontal;
+			}
+		}
+	}
+
+	&.justified {
+		width: 100%;
+
+		li {
+			flex: 1 1 0;
+		}
+	}
+}
+
+.tab-pane {
+	display: none;
+
+	&.active {
+		display: block;
+	}
+}
