@@ -3,5 +3,40 @@
 // --------------------------------------------------
 
 .tag-selector {
-	display: none; // dev
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+}
+
+.tag-selector-container {
+	flex: 1 1 auto;
+	overflow: auto;
+}
+
+.tag-selector-filter-container {
+	flex: 1 0 40px;
+	padding: .5em .25em;
+}
+
+.tag-selector-list {
+	list-style: none;
+	display: inline;
+}
+
+.tag-selector-item {
+	border-radius: 25%;
+	border: 1px solid transparent;
+	cursor: pointer;
+	display: inline-block;
+	padding: .05em .5em;
+
+	&.selected {
+		background-color: $brand-secondary;
+		border: 1px solid $brand-secondary;
+	}
+
+	&:hover {
+		background-color: lighten($brand-secondary, 15%);
+		border: 1px solid $brand-secondary;
+	}
 }

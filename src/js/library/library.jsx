@@ -3,7 +3,7 @@
 import React from 'react';
 import Navbar from '../app/navbar';
 import CollectionTreeContainer from '../collection/collection-tree-container';
-import TagSelector from '../app/tag-selector';
+import TagSelector from '../tag/tag-selector';
 import ItemsListContainer from '../item/items-list-container';
 import ItemDetails from '../item/item-details';
 

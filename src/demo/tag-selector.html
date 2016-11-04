@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>Zotero Web Library Demo</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link rel="stylesheet" href="/zotero-web-library.css">
+	</head>
+<body>
+	<!-- test account with read-only api key -->
+	<div data-widget="library" style="padding: 1em; margin: 1em; max-width: 200px; max-height: 120px;">
+	</div>
+</body>
+<script src="/zotero-web-library.js"></script>
+<script type="text/javascript">
+	/* global Zotero:false */
+	const React = Zotero.ui.React;
+	const ReactDOM = Zotero.ui.ReactDOM;
+	const TagSelector = Zotero.ui.TagSelector;
+	
+	ReactDOM.render(
+		React.createElement('div', {},
+			React.createElement(TagSelector, {
+				tags: [
+					{
+						name: 'tag1', 
+						selected: false
+					},
+					{
+						name: 'tag2', 
+						selected: false
+					},
+					{
+						name: 'lorem', 
+						selected: true
+					},
+					{
+						name: 'ipsum', 
+						selected: true
+					},
+					{
+						name: 'foo', 
+						selected: false
+					},
+					{
+						name: 'bar', 
+						selected: false
+					},
+					{
+						name: 'uho', 
+						selected: false
+					},
+					{
+						name: 'mehe', 
+						selected: false
+					},
+					{
+						name: 'ala', 
+						selected: false
+					},
+					{
+						name: 'wolf', 
+						selected: false
+					},
+					{
+						name: 'prolf',
+						selected: false
+					}
+				],
+				onSelection: selectedTag => {
+					console.log('selected tag: ', selectedTag);
+				}
+			})
+		),
+		document.querySelector('[data-widget=library]')
+	);
+</script>
+</html>

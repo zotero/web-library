@@ -14,7 +14,7 @@ import Library from './library/library';
 import LibraryContainer from './library/library-container';
 import Navbar from './app/navbar';
 import Spinner from './app/spinner';
-import TagSelector from './app/tag-selector';
+import TagSelector from './tag/tag-selector';
 import Editable from './editable/editable';
 
 if(!Zotero.ui) {
