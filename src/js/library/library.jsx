@@ -23,7 +23,7 @@ export default class Library extends React.Component {
 							<div className="items-container">
 								<header className="touch-header">
 									<h3 className="hidden-mouse-md-up">Collection title</h3>
-									<div className="toolbar">Toolbar</div>
+									<div className="toolbar hidden-touch hidden-sm-down">Toolbar</div>
 								</header>
 								<ItemsListContainer />
 							</div>
