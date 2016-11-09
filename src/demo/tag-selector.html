@@ -17,62 +17,91 @@
 	const React = Zotero.ui.React;
 	const ReactDOM = Zotero.ui.ReactDOM;
 	const TagSelector = Zotero.ui.TagSelector;
-	
-	ReactDOM.render(
-		React.createElement('div', {},
+	var searchString = '';
+	const initialTags = [
+		{
+			name: 'tag1', 
+			selected: false
+		},
+		{
+			name: 'tag2', 
+			selected: false
+		},
+		{
+			name: 'lorem', 
+			selected: true
+		},
+		{
+			name: 'ipsum', 
+			selected: true
+		},
+		{
+			name: 'foo', 
+			selected: false
+		},
+		{
+			name: 'bar', 
+			selected: false
+		},
+		{
+			name: 'uho', 
+			selected: false
+		},
+		{
+			name: 'mehe', 
+			selected: false
+		},
+		{
+			name: 'ala', 
+			selected: false
+		},
+		{
+			name: 'wolf', 
+			selected: false
+		},
+		{
+			name: 'prolf',
+			selected: false
+		}
+	];
+	var tags = initialTags.slice(0);
+
+
+	function getElement() {
+		return React.createElement('div', {},
 			React.createElement(TagSelector, {
-				tags: [
-					{
-						name: 'tag1', 
-						selected: false
-					},
-					{
-						name: 'tag2', 
-						selected: false
-					},
-					{
-						name: 'lorem', 
-						selected: true
-					},
-					{
-						name: 'ipsum', 
-						selected: true
-					},
-					{
-						name: 'foo', 
-						selected: false
-					},
-					{
-						name: 'bar', 
-						selected: false
-					},
-					{
-						name: 'uho', 
-						selected: false
-					},
-					{
-						name: 'mehe', 
-						selected: false
-					},
-					{
-						name: 'ala', 
-						selected: false
-					},
-					{
-						name: 'wolf', 
-						selected: false
-					},
-					{
-						name: 'prolf',
-						selected: false
-					}
-				],
 				onSelection: selectedTag => {
-					console.log('selected tag: ', selectedTag);
-				}
+					tags = tags.map(tag => {
+						if(tag.name === selectedTag.name) {
+							console.log('toggle tag: ', tag, selectedTag);
+							tag.selected = !tag.selected;
+						}
+						return tag;
+					});
+					render();
+				},
+				onActions: () => {
+					console.log('toggle actions dialog/context');
+				},
+				onSearch: newSearchString => {
+					console.log('New search string is ' + newSearchString);
+					searchString = newSearchString;
+					tags = initialTags.filter(tag => !!tag.name.match(new RegExp(searchString, 'i')));
+					render();
+				},
+				searchString,
+				tags
 			})
-		),
-		document.querySelector('[data-widget=library]')
-	);
+		);
+	}
+
+	function render() {
+		ReactDOM.render(
+			getElement(),
+			document.querySelector('[data-widget=library]')
+		);	
+	}
+
+	render();
 </script>
 </html>

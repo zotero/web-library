@@ -22,7 +22,12 @@ export default class TagSelector extends React.Component {
 					</ul>
 				</div>
 				<div className="tag-selector-filter-container">
-					<input className="tag-selector-filter" />
+					<input 
+						type="search"
+						value={this.props.searchString}
+						onChange={ ev => this.props.onSearch(ev.target.value) }
+						className="tag-selector-filter" />
+					<button className="tag-selector-actions" onClick={ () => this.props.onActions() } />
 				</div>
 			</div>
 		);
@@ -36,11 +41,16 @@ TagSelector.propTypes = {
 	})),
 	searchString: React.PropTypes.string,
 	shouldFocus: React.PropTypes.bool,
-	onSelection: React.PropTypes.func
+	onSelection: React.PropTypes.func,
+	onSearch: React.PropTypes.func,
+	onActions: React.PropTypes.func
 };
 
 TagSelector.defaultProps = {
 	tags: [],
 	searchString: '',
-	shouldFocus: false
+	shouldFocus: false,
+	onSelection: () => Promise.resolve(),
+	onSearch: () => Promise.resolve(),
+	onActions: () => Promise.resolve()
 };
