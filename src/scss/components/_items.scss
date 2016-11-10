@@ -5,7 +5,19 @@
 .items {
 
 	@include bp-down(xs) {
-		display: none; // Dev only
+		position: absolute;
+		left: 0;
+		top: $line-height-large-touch;
+		right: 0;
+		bottom: 0;
+		background: $items-bg;
+		overflow: auto;
+		transform: translate3d(100%, 0, 0);
+
+		&.active {
+			transform: translate3d(0, 0, 0);
+			transition: 0.6s transform cubic-bezier(0.23, 1, 0.32, 1);
+		}
 	}
 
 	@include bp-up(sm) {
