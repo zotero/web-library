@@ -3,6 +3,11 @@
 // --------------------------------------------------
 
 .items {
+
+	@include bp-down(xs) {
+		display: none; // Dev only
+	}
+
 	@include bp-up(sm) {
 		flex: 1 1 auto;
 	}

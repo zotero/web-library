@@ -43,7 +43,7 @@ export default class CollectionTree extends React.Component {
 			return (
 				<nav className="collection-tree">
 					<div className="level-1">
-						<header className="touch-header hidden-mouse-md-up">
+						<header className="touch-header hidden-mouse-md-up hidden-xs-down">
 							<h3>Library</h3>
 						</header>
 

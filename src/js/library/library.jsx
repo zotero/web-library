@@ -14,6 +14,7 @@ export default class Library extends React.Component {
 				<Navbar />
 				<main>
 					<section className="library">
+						<header className="touch-header hidden-sm-up">Mobile Header</header>
 						<header className="sidebar">
 							<h2 className="offscreen">Web library</h2>
 							<CollectionTreeContainer />

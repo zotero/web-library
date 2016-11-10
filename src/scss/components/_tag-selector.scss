@@ -6,6 +6,10 @@
 	display: flex;
 	flex-direction: column;
 	overflow: hidden;
+
+	@include bp-down(xs) {
+		display: none; // Dev only
+	}
 }
 
 .tag-selector-container {

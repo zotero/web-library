@@ -5,7 +5,7 @@
 .item-details {
 	background: $item-details-bg;
 
-	@include bp-only(sm) {
+	@include bp-down(sm) {
 		display: none; // dev only
 	}
 

@@ -53,12 +53,13 @@ ul, ol {
 
 .touch-header {
 	@include touch-or-bp-down(sm) {
-		flex: 0 0 $space-thumb;
+		flex: 0 0 $line-height-large-touch;
 		background: $body-bg;
 		color: $touch-header-color;
 		display: flex;
 		justify-content: center;
 		align-items: center;
+		height: $line-height-large-touch;
 	}
 
 	@include touch-or-bp-only(sm) {
