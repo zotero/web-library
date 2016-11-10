@@ -22,7 +22,7 @@ export default class CollectionTree extends React.Component {
 			<ul className={ `nav level level-${level}` }>
 				{ collections.map(collection => {
 					return (
-						<li className="" key={collection.key}>
+						<li key={collection.key}>
 							<a href="#" onClick={ () => this.props.onCollectionSelected(collection.key) }>
 								{ collection.apiObj.data.name }
 							</a>

@@ -7,6 +7,15 @@
 	overflow: auto;
 	position: relative;
 
+	@include bp-down(xs) {
+		position: absolute;
+		top: $line-height-large-touch;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		overflow: hidden;
+	}
+
 	@include touch-or-bp-down(sm) {
 		line-height: $line-height-large-touch;
 	}
