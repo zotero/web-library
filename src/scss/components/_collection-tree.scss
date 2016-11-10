@@ -64,6 +64,10 @@
 				background: $sidebar-bg;
 				transform: translate3d(100%, 0, 0);
 			}
+
+			@include bp-only(sm) {
+				top: ($line-height-large-touch + $space-min);
+			}
 		}
 	}
 
