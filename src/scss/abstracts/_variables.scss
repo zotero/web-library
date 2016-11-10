@@ -53,6 +53,13 @@ $component-padding-horizontal: $space-sm;
 $border-radius-base: 3px;
 
 
+// Transitions
+// --------------------------------------------------
+
+$nav-transition: 0.6s transform cubic-bezier(0.23, 1, 0.32, 1);
+
+
+
 // Grid breakpoints
 // --------------------------------------------------
 

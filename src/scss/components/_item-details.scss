@@ -9,6 +9,7 @@
 		@include same(top, right, bottom, left, 0);
 		position: absolute;
 		transform: translate3d(100%, 0, 0);
+		transition: $nav-transition;
 
 		&.active {
 			transform: translate3d(0, 0, 0);
