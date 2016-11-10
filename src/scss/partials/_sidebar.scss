@@ -13,7 +13,6 @@
 		left: 0;
 		right: 0;
 		bottom: 0;
-		overflow: hidden;
 	}
 
 	@include touch-or-bp-down(sm) {
@@ -21,7 +20,7 @@
 	}
 
 	@include mouse-and-bp-up(md) {
-		overflow: auto;
+		padding: $space-min 0;
 	}
 
 	@include bp-up(sm) {
