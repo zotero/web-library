@@ -19,20 +19,18 @@ export default class CollectionTree extends React.Component {
 
 	renderCollections(collections, level) {
 		return (
-			<section className={ `level level-${level}` }>
-				<ul className="nav">
-					{ collections.map(collection => {
-						return (
-							<li className="" key={collection.key}>
-								<a href="#" onClick={ () => this.props.onCollectionSelected(collection.key) }>
-									{ collection.apiObj.data.name }
-								</a>
-								{ collection.children.length ? this.renderCollections(collection.children, level + 1) : null }
-							</li>
-						);
-					}) }
-				</ul>
-			</section>
+			<ul className={ `nav level level-${level}` }>
+				{ collections.map(collection => {
+					return (
+						<li className="" key={collection.key}>
+							<a href="#" onClick={ () => this.props.onCollectionSelected(collection.key) }>
+								{ collection.apiObj.data.name }
+							</a>
+							{ collection.children.length ? this.renderCollections(collection.children, level + 1) : null }
+						</li>
+					);
+				}) }
+			</ul>
 		);
 	}
 
@@ -42,16 +40,19 @@ export default class CollectionTree extends React.Component {
 		} else {
 			return (
 				<nav className="collection-tree">
-					<div className="level-1">
-						<header className="touch-header hidden-mouse-md-up hidden-xs-down">
-							<h3>Library</h3>
-						</header>
+					<header className="touch-header hidden-mouse-md-up hidden-xs-down">
+						<h3>Library</h3>
+					</header>
 
-						<section>
-							<h4>My library</h4>
-							{ this.renderCollections(this.state.collections, 1)}
-						</section>
-					</div>
+					<section>
+						<h4>My Library</h4>
+						{ this.renderCollections(this.state.collections, 1)}
+					</section>
+
+					<section>
+						<h4>Group Libraries</h4>
+						{/* List of group libraries */}
+					</section>
 				</nav>
 			);
 		}
