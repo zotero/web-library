@@ -6,6 +6,7 @@
 	display: flex;
 	flex-direction: column;
 	overflow: hidden;
+	height: 100%;
 
 	@include bp-down(xs) {
 		display: none; // Dev only
@@ -14,10 +15,13 @@
 
 .tag-selector-container {
 	flex: 1 1 auto;
+	justify-content: space-between;
 	overflow: auto;
+	height: auto;
 }
 
 .tag-selector-filter-container {
+	height: auto;
 	flex: 0 0 2.5em;
 	display: flex;
 	flex-direction: row;
