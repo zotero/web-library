@@ -19,18 +19,20 @@ export default class CollectionTree extends React.Component {
 
 	renderCollections(collections, level) {
 		return (
-			<ul className={ `nav level level-${level}` }>
-				{ collections.map(collection => {
-					return (
-						<li key={collection.key}>
-							<a href="#" onClick={ () => this.props.onCollectionSelected(collection.key) }>
-								{ collection.apiObj.data.name }
-							</a>
-							{ collection.children.length ? this.renderCollections(collection.children, level + 1) : null }
-						</li>
-					);
-				}) }
-			</ul>
+			<div className={ `level level-${level}` }>
+				<ul className="nav">
+					{ collections.map(collection => {
+						return (
+							<li className=" " key={collection.key}>
+								<a href="#" onClick={ () => this.props.onCollectionSelected(collection.key) }>
+									{ collection.apiObj.data.name }
+								</a>
+								{ collection.children.length ? this.renderCollections(collection.children, level + 1) : null }
+							</li>
+						);
+					}) }
+				</ul>
+			</div>
 		);
 	}
 

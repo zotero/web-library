@@ -11,7 +11,6 @@
 		right: 0;
 		bottom: 0;
 		background: $items-bg;
-		overflow: auto;
 		transform: translate3d(100%, 0, 0);
 
 		&.active {
@@ -40,6 +39,12 @@
 
 
 .items-container {
+	@include bp-down(xs) {
+		display: flex;
+		height: 100%;
+	}
+
+
 	@include bp-only(sm) {
 		position: absolute;
 		width: 100%;
