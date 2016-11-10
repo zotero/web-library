@@ -46,15 +46,17 @@ export default class CollectionTree extends React.Component {
 						<h3>Library</h3>
 					</header>
 
-					<section>
-						<h4>My Library</h4>
-						{ this.renderCollections(this.state.collections, 1)}
-					</section>
+					<div className="scroll-container">
+						<section>
+							<h4>My Library</h4>
+							{ this.renderCollections(this.state.collections, 1)}
+						</section>
 
-					<section>
-						<h4>Group Libraries</h4>
-						{/* List of group libraries */}
-					</section>
+						<section>
+							<h4>Group Libraries</h4>
+							{/* List of group libraries */}
+						</section>
+					</div>
 				</nav>
 			);
 		}

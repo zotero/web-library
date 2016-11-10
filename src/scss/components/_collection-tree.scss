@@ -4,8 +4,14 @@
 
 .collection-tree {
 	@include touch-or-bp-down(sm) {
+		display: flex;
+		flex-direction: column;
 		height: 100%;
-		overflow: auto; // Do not set on positioned elements (horizontal overflow)
+
+		.scroll-container {
+			flex: 1 1 auto;
+			overflow: auto; // Do not set on positioned elements (horizontal overflow)
+		}
 	}
 
 	@include mouse-and-bp-up(md) {
