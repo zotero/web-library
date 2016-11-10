@@ -18,6 +18,7 @@ class CollectionTreeContainer extends React.Component {
 	render() {
 		return <CollectionTree 
 			collections={this.props.collections}
+			selected={this.props.selected}
 			isFetching={this.props.isFetching}
 			onCollectionSelected={this.props.onCollectionSelected} 
 		/>;
@@ -28,7 +29,8 @@ const mapStateToProps = state => {
 	return {
 		library: state.library,
 		collections: state.library && state.collections[state.library.libraryString] ? state.collections[state.library.libraryString].collections : [],
-		isFetching: state.library && state.collections[state.library.libraryString] ? state.collections[state.library.libraryString].isFetching : false
+		isFetching: state.library && state.collections[state.library.libraryString] ? state.collections[state.library.libraryString].isFetching : false,
+		selected: state.library && state.collections ? state.collections.selected : null
 	};
 };
 
@@ -36,7 +38,6 @@ const mapDispatchToProps = dispatch => {
 	return {
 		dispatch,
 		onCollectionSelected: collectionKey => {
-			console.warn('onCollectionSelected', collectionKey);
 			dispatch(selectCollection(collectionKey));
 		}
 	};
@@ -47,7 +48,8 @@ CollectionTreeContainer.propTypes = {
 	library: React.PropTypes.object,
 	collections: React.PropTypes.array,
 	isFetching: React.PropTypes.bool.isRequired,
-	dispatch: React.PropTypes.func.isRequired
+	dispatch: React.PropTypes.func.isRequired,
+	selected: React.PropTypes.string
 };
 
 export default connect(
