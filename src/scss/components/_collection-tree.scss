@@ -32,9 +32,7 @@
 	ul {
 		li {
 			a {
-				display: block;
 				color: $collection-tree-link-color;
-				padding: 0 $collection-tree-padding-horizontal;
 				position: relative;
 
 				@include touch-or-bp-down(sm) {
@@ -49,6 +47,10 @@
 						right: $padding-horizontal-md;
 						background: $touch-collection-tree-border;
 					}
+				}
+
+				@include mouse-and-bp-up(md) {
+					flex: 1 1 auto;
 				}
 			}
 
@@ -74,21 +76,35 @@
 				}
 			}
 		}
+
+		.item-container {
+			@include mouse-and-bp-up(md) {
+				display: flex;
+				flex-wrap: wrap;
+				align-items: center;
+			}
+		}
+
+		.active {
+			.item-container {
+				background: $collection-tree-active-link-bg;
+			}
+		}
 	}
 
 	@include mouse-and-bp-up(md) {
-		@for $i from 1 through $collection-tree-max-levels {
-			$sel: if($i == 1, "ul", selector-nest($sel, "ul"));
+	 @for $i from 1 through $collection-tree-max-levels {
+	 	$sel: if($i == 1, "ul", selector-nest($sel, "ul"));
 
-			#{$sel} {
-				a {
-					padding-left:
-						$collection-tree-padding-horizontal
-						+ $collection-tree-indent
-						* ($i - 1);
-				}
-			}
-		}
+	 	#{$sel} {
+	 		.item-container {
+	 			padding-left:
+	 				$collection-tree-padding-horizontal
+	 				+ $collection-tree-indent
+	 				* ($i - 1);
+	 		}
+	 	}
+	 }
 	}
 
 	.level {
@@ -113,13 +129,30 @@
 			@include bp-only(sm) {
 				top: ($line-height-large-touch + $space-min);
 			}
+
+			@include mouse-and-bp-up(md) {
+				flex: 1 1 100%;
+				display: none;
+			}
 		}
 	}
 
 	.open {
 		> .level {
-			transform: translate3d(0, 0, 0);
-			transition: $nav-transition;
+			@include touch-or-bp-down(sm) {
+				transform: translate3d(0, 0, 0);
+				transition: $nav-transition;
+			}
+
+			@include mouse-and-bp-up(md) {
+				display: block;
+			}
+		}
+
+		> .item-container {
+			.twisty {
+				background: green;
+			}
 		}
 	}
 

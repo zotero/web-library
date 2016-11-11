@@ -23,10 +23,15 @@ export default class CollectionTree extends React.Component {
 				<ul className="nav">
 					{ collections.map(collection => {
 						return (
-						<li key={collection.key} className={ collection.key === this.props.selected ? 'open' : '' }>
-								<a href="#" onClick={ () => this.props.onCollectionSelected(collection.key) }>
-									{ collection.apiObj.data.name }
-								</a>
+							<li key={collection.key} className={ collection.key === this.props.selected ? 'open' : '' }>
+								<div className="item-container">
+									{/* Button component */}
+									<button type="button" className="twisty hidden-sm-down hidden-touch"/>
+
+									<a href="#" onClick={ () => this.props.onCollectionSelected(collection.key) }>
+										{ collection.apiObj.data.name }
+									</a>
+								</div>
 								{ collection.children.length ? this.renderCollections(collection.children, level + 1) : null }
 							</li>
 						);
