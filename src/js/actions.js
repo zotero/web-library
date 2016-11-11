@@ -54,7 +54,15 @@ export function requestItems(collectionKey) {
 
 export function receiveItems(collectionKey, items) {
 	items.sort(
-		(a, b) => a.data.title.toUpperCase().localeCompare(b.data.title.toUpperCase())
+		(a, b) => {
+			if(!('title' in a.data)) {
+				return -1;
+			}
+			if(!('title' in b.data)) {
+				return 1;
+			}
+			return a.data.title.toUpperCase().localeCompare(b.data.title.toUpperCase());
+		}
 	);
 
 	return {

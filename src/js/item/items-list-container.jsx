@@ -25,6 +25,8 @@ class ItemsListContainer extends React.Component {
 	}
 }
 
+
+
 const mapStateToProps = state => {
 	var collections, collection;
 
@@ -36,10 +38,17 @@ const mapStateToProps = state => {
 		collection = collections.find(c => c.key === state.collections.selected);
 	}
 
+	const getTopLevelItems = () => {
+		if(collection && state.items[collection.key]) {
+			let items = state.items[collection.key].items;
+			return items.filter(i => !('parentItem' in i.data));
+		}
+		return [];
+	};
 
 	return {
 		collection: collection || {},
-		items: collection && state.items[collection.key] ? state.items[collection.key].items : [],
+		items: getTopLevelItems(),
 		isFetching: collection && state.items[collection.key] ? state.items[collection.key].isFetching : false,
 		selectedItemKey: collection && state.items.selected
 	};
