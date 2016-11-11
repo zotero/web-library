@@ -13,14 +13,15 @@ export default class Library extends React.Component {
 			<div>
 				<Navbar />
 				<main>
-					<section className="library">
+					<div>TUTAJ: { this.props.view }</div>
+					<section className={ `library ${ this.props.view === 'library' ? 'active' : '' }` }>
 						<header className="touch-header hidden-sm-up">Mobile Header</header>
 						<header className="sidebar">
 							<h2 className="offscreen">Web library</h2>
 							<CollectionTreeContainer />
 							<TagSelector />
 						</header>
-						<section className="items">
+						<section className={ `items ${ this.props.view === 'items' ? 'active' : '' }` }>
 							<div className="items-container">
 								<header className="touch-header hidden-xs-down">
 									<h3 className="hidden-mouse-md-up">Collection title</h3>
@@ -36,3 +37,7 @@ export default class Library extends React.Component {
 		);
 	}
 }
+
+Library.propTypes = {
+	view: React.PropTypes.string
+};

@@ -21,7 +21,9 @@ class LibraryContainer extends React.Component {
 	}
 
 	render() {
-		return <Library />;
+		return <Library
+			view={ this.props.view }
+		/>;
 	}
 
 	static init(element, userid, apiKey) {
@@ -53,13 +55,30 @@ class LibraryContainer extends React.Component {
 LibraryContainer.propTypes = {
 	userId: React.PropTypes.number,
 	apiKey: React.PropTypes.string,
-	dispatch: React.PropTypes.func.isRequired
+	dispatch: React.PropTypes.func.isRequired,
+	view: React.PropTypes.string
+};
+
+const getCurrentViewFromState = state => {
+	if(state.library &&
+		state.collections[state.library.libraryString] &&
+		state.collections.selected) {
+			let selectedCollectionKey = state.collections.selected;
+			let collections = state.collections[state.library.libraryString].collections;
+			let selectedCollection = collections.find(c => c.key === selectedCollectionKey);
+			if(selectedCollection && !selectedCollection.hasChildren) {
+				return 'items';
+			}	
+	}
+
+	return 'library';
 };
 
 const mapStateToProps = state => {
 	return {
 		userId: state.config.userId,
-		apiKey: state.config.apiKey
+		apiKey: state.config.apiKey,
+		view: getCurrentViewFromState(state) //@TODO: memoize
 	};
 };
 

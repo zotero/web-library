@@ -69,6 +69,7 @@ CollectionTree.propTypes = {
 	collections: React.PropTypes.arrayOf(React.PropTypes.shape({
 		key: React.PropTypes.string.isRequired,
 		nestingDepth: React.PropTypes.integer,
+		hasChildren: React.PropTypes.bool,
 		children: React.PropTypes.array,
 		apiObj: React.PropTypes.shape({
 			data: React.PropTypes.shape({
