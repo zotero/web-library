@@ -76,6 +76,7 @@ $grid-breakpoints: (
 $z-index-mobile-nav:  0;
 $z-index-navbar-bg:  10;
 $z-index-main:       10;
+$z-index-level:      10;
 $z-index-navbar:     20;
 
 
@@ -118,10 +119,11 @@ $touch-sidebar-width-lg: 25%;
 // Collection tree
 // --------------------------------------------------
 
-$collection-tree-padding-horizontal: $space-sm;
-$collection-tree-padding-vertical:   $space-min;
-$collection-tree-indent:             $space-md;
-$collection-tree-max-levels:         10;
+$collection-tree-padding-horizontal:       $space-sm;
+$collection-tree-padding-horizontal-touch: $space-md;
+$collection-tree-padding-vertical:         $space-min;
+$collection-tree-indent:                   $space-md;
+$collection-tree-max-levels:               10;
 
 
 // Items & item list

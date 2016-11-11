@@ -23,6 +23,10 @@
 		color: $collection-tree-headings-color;
 		margin: 0;
 		padding: 0 $collection-tree-padding-horizontal;
+
+		@include touch-or-bp-down(sm) {
+			padding: 0 $collection-tree-padding-horizontal-touch;
+		}
 	}
 
 	ul {
@@ -31,6 +35,29 @@
 				display: block;
 				color: $collection-tree-link-color;
 				padding: 0 $collection-tree-padding-horizontal;
+				position: relative;
+
+				@include touch-or-bp-down(sm) {
+					padding: 0 $collection-tree-padding-horizontal-touch;
+
+					&:before {
+						content: "";
+						position: absolute;
+						height: 1px;
+						top: 0;
+						left: $padding-horizontal-md;
+						right: $padding-horizontal-md;
+						background: $touch-collection-tree-border;
+					}
+				}
+			}
+
+			&:first-child {
+				> a {
+					&:before {
+						content: none;
+					}
+				}
 			}
 
 			&.active {
@@ -65,6 +92,8 @@
 	}
 
 	.level {
+		z-index: $z-index-level;
+
 		.level {
 			@include touch-or-bp-down(sm) {
 				position: absolute;
