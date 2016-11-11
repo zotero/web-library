@@ -13,7 +13,6 @@ export default class Library extends React.Component {
 			<div>
 				<Navbar />
 				<main>
-					<div>TUTAJ: { this.props.view }</div>
 					<section className={ `library ${ this.props.view === 'library' ? 'active' : '' }` }>
 						<header className="touch-header hidden-sm-up">Mobile Header</header>
 						<header className="sidebar">
