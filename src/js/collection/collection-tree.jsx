@@ -19,18 +19,20 @@ export default class CollectionTree extends React.Component {
 
 	renderCollections(collections, level) {
 		return (
-			<ul className={ `nav level level-${level}` }>
-				{ collections.map(collection => {
-					return (
+			<div className={ `level level-${level}` }>
+				<ul className="nav">
+					{ collections.map(collection => {
+						return (
 						<li key={collection.key} className={ collection.key === this.props.selected ? 'open' : '' }>
-							<a href="#" onClick={ () => this.props.onCollectionSelected(collection.key) }>
-								{ collection.apiObj.data.name }
-							</a>
-							{ collection.children.length ? this.renderCollections(collection.children, level + 1) : null }
-						</li>
-					);
-				}) }
-			</ul>
+								<a href="#" onClick={ () => this.props.onCollectionSelected(collection.key) }>
+									{ collection.apiObj.data.name }
+								</a>
+								{ collection.children.length ? this.renderCollections(collection.children, level + 1) : null }
+							</li>
+						);
+					}) }
+				</ul>
+			</div>
 		);
 	}
 
@@ -44,15 +46,17 @@ export default class CollectionTree extends React.Component {
 						<h3>Library</h3>
 					</header>
 
-					<section>
-						<h4>My Library</h4>
-						{ this.renderCollections(this.state.collections, 1)}
-					</section>
+					<div className="scroll-container">
+						<section>
+							<h4>My Library</h4>
+							{ this.renderCollections(this.state.collections, 1)}
+						</section>
 
-					<section>
-						<h4>Group Libraries</h4>
-						{/* List of group libraries */}
-					</section>
+						<section>
+							<h4>Group Libraries</h4>
+							{/* List of group libraries */}
+						</section>
+					</div>
 				</nav>
 			);
 		}

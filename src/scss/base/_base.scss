@@ -26,6 +26,10 @@ body {
 	line-height: $line-height-base;
 }
 
+[data-widget="library"] {
+	overflow: hidden; // Prevent any overflow
+}
+
 [data-reactroot] {
 	display: flex;
 	flex-direction: column;
@@ -60,4 +64,8 @@ main {
 			@include content-transform;
 		}
 	}
+}
+
+.scroll-container {
+	overflow: auto;
 }

@@ -4,7 +4,7 @@
 
 .sidebar {
 	background: $sidebar-bg;
-	overflow: auto;
+	overflow: hidden;
 	position: relative;
 
 	@include bp-down(xs) {
@@ -13,11 +13,14 @@
 		left: 0;
 		right: 0;
 		bottom: 0;
-		overflow: hidden;
 	}
 
 	@include touch-or-bp-down(sm) {
 		line-height: $line-height-large-touch;
+	}
+
+	@include mouse-and-bp-up(md) {
+		padding: $space-min 0;
 	}
 
 	@include bp-up(sm) {
