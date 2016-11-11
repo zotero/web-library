@@ -6,6 +6,10 @@
 	flex: 1 1 auto;
 	display: flex;
 	flex-direction: column;
+
+	@include bp-down(sm) {
+		box-shadow: inset 0 1px $item-list-head-border;
+	}
 }
 
 .item-list-head th,
