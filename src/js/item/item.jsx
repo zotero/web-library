@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-export default class ItemsList extends React.Component {
+export default class Item extends React.Component {
 	render() {
 		return (
 			<li className="item">
@@ -25,7 +25,7 @@ export default class ItemsList extends React.Component {
 	}
 }
 
-ItemsList.propTypes = {
+Item.propTypes = {
 	item: React.PropTypes.shape({
 		data: React.PropTypes.shape({
 			title: React.PropTypes.string,
