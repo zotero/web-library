@@ -26,7 +26,11 @@ export default class ItemsList extends React.Component {
 					<div className="item-list-body">
 						<ul className="item-list">
 							{
-								this.props.items.map(item => <Item key={ item.key } item={ item } />)
+								this.props.items.map(item => <Item
+									onClick={ () => this.props.onItemSelected(item.key) }
+									active= { item.key === this.props.selectedItemKey }
+									key={ item.key }
+									item={ item } />)
 							}
 						</ul>
 					</div>
@@ -38,7 +42,9 @@ export default class ItemsList extends React.Component {
 
 ItemsList.propTypes = {
 	items: React.PropTypes.array,
-	isFetching: React.PropTypes.bool
+	selectedItemKey: React.PropTypes.string, 
+	isFetching: React.PropTypes.bool,
+	onItemSelected: React.PropTypes.func
 };
 
 ItemsList.defaultProps = {

@@ -66,9 +66,18 @@ const getCurrentViewFromState = state => {
 			let selectedCollectionKey = state.collections.selected;
 			let collections = state.collections[state.library.libraryString].collections;
 			let selectedCollection = collections.find(c => c.key === selectedCollectionKey);
+			let selectedItemKey = state.items.selected;
+			if(state.items[selectedCollectionKey] && state.items[selectedCollectionKey].items) {
+				let items = state.items[selectedCollectionKey].items;
+				let selectedItem = items.find(i => i.key === selectedItemKey);
+				if(selectedItem) {
+					return 'item-details';
+				}
+			}
+				
 			if(selectedCollection && !selectedCollection.hasChildren) {
 				return 'items';
-			}	
+			}
 	}
 
 	return 'library';

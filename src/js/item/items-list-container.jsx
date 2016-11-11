@@ -16,7 +16,12 @@ class ItemsListContainer extends React.Component {
 	}
 
 	render() {
-		return <ItemsList isFetching={this.props.isFetching} items={this.props.items} />;
+		return <ItemsList 
+			isFetching={ this.props.isFetching }
+			items={ this.props.items }
+			selectedItemKey={ this.props.selectedItemKey }
+			onItemSelected={ this.props.onItemSelected }
+			/>;
 	}
 }
 
@@ -35,14 +40,15 @@ const mapStateToProps = state => {
 	return {
 		collection: collection || {},
 		items: collection && state.items[collection.key] ? state.items[collection.key].items : [],
-		isFetching: collection && state.items[collection.key] ? state.items[collection.key].isFetching : false
+		isFetching: collection && state.items[collection.key] ? state.items[collection.key].isFetching : false,
+		selectedItemKey: collection && state.items.selected
 	};
 };
 
 const mapDispatchToProps = dispatch => {
 	return {
 		dispatch,
-		onItemClick: index => {
+		onItemSelected: index => {
 			dispatch(selectItem(index));
 		}
 	};
@@ -51,7 +57,9 @@ const mapDispatchToProps = dispatch => {
 ItemsListContainer.propTypes = {
   collection: React.PropTypes.object.isRequired,
   items: React.PropTypes.array.isRequired,
+  selectedItemKey: React.PropTypes.string,
   isFetching: React.PropTypes.bool.isRequired,
+  onItemSelected: React.PropTypes.func,
   dispatch: React.PropTypes.func.isRequired
 };
 

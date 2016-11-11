@@ -5,7 +5,7 @@ import React from 'react';
 export default class Item extends React.Component {
 	render() {
 		return (
-			<li className="item">
+			<li className={ `item ${this.props.active ? 'active' : '' }` } onClick={ this.props.onClick }>
 				<div className="metadata">
 					{ this.props.item.data.title }
 				</div>
@@ -33,5 +33,12 @@ Item.propTypes = {
 			year: React.PropTypes.number,
 			date: React.PropTypes.string
 		})
-	}).isRequired
+	}).isRequired,
+	active: React.PropTypes.bool,
+	onClick: React.PropTypes.func
+};
+
+Item.defaultProps = {
+	active: false,
+	onClick: () => {} 
 };

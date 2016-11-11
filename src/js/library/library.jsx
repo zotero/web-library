@@ -13,6 +13,7 @@ export default class Library extends React.Component {
 			<div>
 				<Navbar />
 				<main>
+					<div>VIEW: { this.props.view }</div>
 					<section className={ `library ${ this.props.view === 'library' ? 'active' : '' }` }>
 						<header className="touch-header hidden-sm-up">Mobile Header</header>
 						<header className="sidebar">
@@ -28,7 +29,9 @@ export default class Library extends React.Component {
 								</header>
 								<ItemsListContainer />
 							</div>
-							<ItemDetails/>
+							<section className={ `item-details ${this.props.view === 'item-details' ? 'active' : ''}` }>
+								<ItemDetails/>
+							</section>
 						</section>
 					</section>
 				</main>
