@@ -42,8 +42,8 @@
 	@include bp-down(xs) {
 		display: flex;
 		height: 100%;
+		flex-direction: column;
 	}
-
 
 	@include bp-only(sm) {
 		position: absolute;
