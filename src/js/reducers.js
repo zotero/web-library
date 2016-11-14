@@ -1,6 +1,5 @@
 'use strict';
 
-import { combineReducers } from 'redux';
 import {
 	SELECT_LIBRARY,
 	SELECT_ITEM,
@@ -8,7 +7,6 @@ import {
 	RECEIVE_ITEMS,
 	REQUEST_COLLECTIONS,
 	RECEIVE_COLLECTIONS,
-	SELECT_COLLECTION,
 	ERROR_FETCHING_COLLECTIONS,
 	ERROR_FETCHING_ITEMS
 } from './actions.js';
@@ -56,11 +54,6 @@ function collections(state = {
 			return Object.assign({}, state, {
 				[action.libraryString]: collectionsByLibrary(state[action.libraryString], action)
 			});
-		case SELECT_COLLECTION:
-			return Object.assign({}, state, {
-				selected: action.collectionKey
-			});
-
 		default:
 			return state;
 	}
@@ -115,10 +108,9 @@ function config(state = {}) {
 	return state;
 }
 
-
-export default combineReducers({
+export default {
 	library,
 	collections,
 	items,
 	config
-});
+};

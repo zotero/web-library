@@ -6,7 +6,6 @@ export const REQUEST_ITEMS = 'REQUEST_ITEMS';
 export const RECEIVE_ITEMS = 'RECEIVE_ITEMS';
 export const REQUEST_COLLECTIONS = 'REQUEST_COLLECTIONS';
 export const RECEIVE_COLLECTIONS = 'RECEIVE_COLLECTIONS';
-export const SELECT_COLLECTION = 'SELECT_COLLECTION';
 export const ERROR_FETCHING_COLLECTIONS = 'ERROR_FETCHING_COLLECTIONS';
 export const ERROR_FETCHING_ITEMS = 'ERROR_FETCHING_ITEMS';
 
@@ -35,13 +34,6 @@ export function receiveCollections(libraryString, collections) {
 		libraryString,
 		collections,
 		receivedAt: Date.now()
-	};
-}
-
-export function selectCollection(collectionKey) {
-	return {
-		type: SELECT_COLLECTION,
-		collectionKey
 	};
 }
 

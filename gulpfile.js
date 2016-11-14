@@ -112,6 +112,7 @@ gulp.task('html', () => {
 gulp.task('dev', ['clean:build'], () => {
 	connect.server({
 		root: 'build',
+		fallback: 'build/index.html',
 		port: 8001,
 		livereload: true
 	});

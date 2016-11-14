@@ -1,6 +1,7 @@
 'use strict';
 
 import React from 'react';
+import { Link } from 'react-router';
 import Spinner from '../app/spinner';
 
 export default class CollectionTree extends React.Component {
@@ -27,10 +28,9 @@ export default class CollectionTree extends React.Component {
 								<div className="item-container">
 									{/* Button component */}
 									<button type="button" className="twisty hidden-sm-down hidden-touch"/>
-
-									<a href="#" onClick={ () => this.props.onCollectionSelected(collection.key) }>
+									<Link to={ `/collection/${collection.key}` }>
 										{ collection.apiObj.data.name }
-									</a>
+									</Link>
 								</div>
 								{ collection.children.length ? this.renderCollections(collection.children, level + 1) : null }
 							</li>

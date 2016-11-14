@@ -1,17 +1,25 @@
 'use strict';
 
 import React from 'react';
-import { connect } from 'react-redux';
-import { selectLibrary } from '../actions';
-import Library from './library';
-
+import { createStore, applyMiddleware, compose, combineReducers } from 'redux';
+import { Provider, connect } from 'react-redux';
+import { reduxReactRouter, routerStateReducer, ReduxRouter, push } from 'redux-router';
+import { Route } from 'react-router';
 import createLogger from 'redux-logger';
 import ReactDOM from 'react-dom';
 import ReduxThunk from 'redux-thunk';
-import { createStore, applyMiddleware } from 'redux';
-import { Provider } from 'react-redux';
+import { createHistory } from 'history';
 
+import { selectLibrary } from '../actions';
+import Library from './library';
 import reducers from '../reducers';
+
+ //@TODO: ensure this doesn't affect prod build
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+
+const combinedReducers = combineReducers(Object.assign({}, reducers, {
+	router: routerStateReducer
+}));
 
 class LibraryContainer extends React.Component {
 	componentDidMount() {
@@ -34,19 +42,29 @@ class LibraryContainer extends React.Component {
 			};
 
 			var store = createStore(
-				reducers,
+				combinedReducers,
 				{ config },
-				applyMiddleware(
-					ReduxThunk,
-					createLogger()
+				composeEnhancers(
+					applyMiddleware(
+						ReduxThunk,
+						createLogger()
+					),
+					reduxReactRouter({
+						createHistory
+					})
 				)
 			);
 
 			ReactDOM.render(
 				<Provider store={store}>
-					<LibraryContainerWrapped />
-				</Provider>,
-				element
+					<ReduxRouter>
+						<Route path="/" component={ LibraryContainerWrapped }>
+							<Route path="/collection/:key" name="collection" />
+							<Route path="/item/:key" name="item" />
+						</Route>
+					</ReduxRouter>
+				</Provider>
+				, element
 			);
 		}
 	}
@@ -91,6 +109,13 @@ const mapStateToProps = state => {
 	};
 };
 
-const LibraryContainerWrapped = connect(mapStateToProps)(LibraryContainer);
+const mapDispatchToProps = (dispatch) => {
+	return {
+		dispatch,
+		push
+	};
+};
+
+const LibraryContainerWrapped = connect(mapStateToProps, mapDispatchToProps)(LibraryContainer);
 
 export default LibraryContainerWrapped;

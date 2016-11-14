@@ -4,7 +4,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import CollectionTree from './collection-tree';
 import { selectCollection, fetchCollectionsIfNeeded } from '../actions';
-
+import { routeMatches } from '../utility.js';
 
 class CollectionTreeContainer extends React.Component {
 	componentWillReceiveProps(nextProps) {
@@ -30,7 +30,7 @@ const mapStateToProps = state => {
 		library: state.library,
 		collections: state.library && state.collections[state.library.libraryString] ? state.collections[state.library.libraryString].collections : [],
 		isFetching: state.library && state.collections[state.library.libraryString] ? state.collections[state.library.libraryString].isFetching : false,
-		selected: state.library && state.collections ? state.collections.selected : null
+		selected: routeMatches(state.router.routes, 'collection') ? state.router.params.key : null
 	};
 };
 
