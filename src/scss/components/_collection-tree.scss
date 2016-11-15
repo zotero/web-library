@@ -137,7 +137,8 @@
 		}
 	}
 
-	.open {
+	.open,
+	.selected {
 		> .level {
 			@include touch-or-bp-down(sm) {
 				transform: translate3d(0, 0, 0);

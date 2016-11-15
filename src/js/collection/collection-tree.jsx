@@ -19,12 +19,26 @@ export default class CollectionTree extends React.Component {
 	}
 
 	renderCollections(collections, level) {
+		let topLevelKeys = collections.map(col => col.key);
+		let hasOpen = topLevelKeys.some(topLevelKey => this.props.path.includes(topLevelKey));
 		return (
-			<div className={ `level level-${level}` }>
+			<div className={ `level level-${level} ${hasOpen ? 'has-open' : ''}` }>
 				<ul className="nav">
 					{ collections.map(collection => {
+						var openClass;
+						switch(this.props.path.indexOf(collection.key)) {
+							case -1:
+								openClass = '';
+							break;
+							case (this.props.path.length - 1):
+								openClass = 'selected';
+							break;
+							default: 
+								openClass = 'open';
+							break;
+						}
 						return (
-							<li key={collection.key} className={ collection.key === this.props.selected ? 'open' : '' }>
+							<li key={collection.key} className={ openClass }>
 								<div className="item-container">
 									{/* Button component */}
 									<button type="button" className="twisty hidden-sm-down hidden-touch"/>
@@ -82,10 +96,11 @@ CollectionTree.propTypes = {
 			})
 		})
 	})).isRequired,
-	selected: React.PropTypes.string
+	path: React.PropTypes.arrayOf(React.PropTypes.string)
 };
 
 CollectionTree.defaultProps = {
 	isFetching: false,
+	path: [],
 	onCollectionSelected: () => null
 };

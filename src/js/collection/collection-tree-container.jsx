@@ -4,21 +4,54 @@ import React from 'react';
 import { connect } from 'react-redux';
 import CollectionTree from './collection-tree';
 import { selectCollection, fetchCollectionsIfNeeded } from '../actions';
-import { routeMatches } from '../utility.js';
+
+
+const mapTreePath = (selectedKey, collections, curPath) => {
+	if(!curPath) {
+		curPath = [];
+	}
+	
+	for(let col of collections) {
+		if(col.key === selectedKey) {
+			return curPath.concat(col.key);
+		} else if(col.children.length) {
+			let maybePath = mapTreePath(selectedKey, col.children, curPath.concat(col.key));
+			if(maybePath.includes(selectedKey)) {
+				return maybePath;
+			}
+		}
+	}
+
+	return curPath;
+};
 
 class CollectionTreeContainer extends React.Component {
+	constructor(props) {
+		super();
+		this.state = {
+			path: mapTreePath(props.selected, props.collections.filter(c => c.nestingDepth === 1))
+		};
+	}
+
 	componentWillReceiveProps(nextProps) {
 		if(nextProps.library && nextProps.library != this.props.library) {
 			this.props.dispatch(
 				fetchCollectionsIfNeeded(nextProps.library)
 			);
 		}
+		
+		if(nextProps.selected && nextProps.selected != this.props.selected ||
+			nextProps.collections && nextProps.collections != this.props.collections) {
+			this.setState({
+				path: mapTreePath(nextProps.selected, nextProps.collections.filter(c => c.nestingDepth === 1))
+			});
+		}
 	}
 
 	render() {
 		return <CollectionTree 
 			collections={this.props.collections}
-			selected={this.props.selected}
+			path={this.state.path}
 			isFetching={this.props.isFetching}
 			onCollectionSelected={this.props.onCollectionSelected} 
 		/>;
@@ -30,7 +63,7 @@ const mapStateToProps = state => {
 		library: state.library,
 		collections: state.library && state.collections[state.library.libraryString] ? state.collections[state.library.libraryString].collections : [],
 		isFetching: state.library && state.collections[state.library.libraryString] ? state.collections[state.library.libraryString].isFetching : false,
-		selected: routeMatches(state.router.routes, 'collection') ? state.router.params.key : null
+		selected: state.router.location.pathname.match(/^\/collection\//) ? state.router.params.key : null
 	};
 };
 
