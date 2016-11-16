@@ -91,18 +91,18 @@
 	}
 
 	@include mouse-and-bp-up(md) {
-	 @for $i from 1 through $collection-tree-max-levels {
-	 	$sel: if($i == 1, "ul", selector-nest($sel, "ul"));
+		@for $i from 1 through $collection-tree-max-levels {
+			$sel: if($i == 1, "ul", selector-nest($sel, "ul"));
 
-	 	#{$sel} {
-	 		.item-container {
-	 			padding-left:
-	 				$collection-tree-padding-horizontal
-	 				+ $collection-tree-indent
-	 				* ($i - 1);
-	 		}
-	 	}
-	 }
+			#{$sel} {
+				.item-container {
+					padding-left:
+						$collection-tree-padding-horizontal
+							+ $collection-tree-indent
+							* ($i - 1);
+				}
+			}
+		}
 	}
 
 	.level {
@@ -145,17 +145,17 @@
 	}
 
 	@include mouse-and-bp-up(md) {
-	  .open {
-		  > .level {
-			  display: block;
-		  }
+		.open {
+			> .level {
+				display: block;
+			}
 
-		  > .item-container {
+			> .item-container {
 				.twisty {
 					background: green;
 				}
-		  }
-	  }
+			}
+		}
 	}
 
 	//.level {
