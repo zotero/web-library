@@ -61,8 +61,20 @@
 					}
 				}
 			}
+		}
 
-			&.active {
+		.item-container {
+			@include mouse-and-bp-up(md) {
+				display: flex;
+				flex-wrap: wrap;
+				align-items: center;
+			}
+		}
+
+		.selected {
+			> .item-container {
+				background: $collection-tree-active-link-bg;
+
 				> a {
 					@include touch-or-bp-down(sm) {
 						color: $touch-collection-tree-active-link-color;
@@ -74,20 +86,6 @@
 						background: $collection-tree-active-link-bg;
 					}
 				}
-			}
-		}
-
-		.item-container {
-			@include mouse-and-bp-up(md) {
-				display: flex;
-				flex-wrap: wrap;
-				align-items: center;
-			}
-		}
-
-		.active {
-			.item-container {
-				background: $collection-tree-active-link-bg;
 			}
 		}
 	}
@@ -137,24 +135,28 @@
 		}
 	}
 
-	.open,
-	.selected {
-		> .level {
-			@include touch-or-bp-down(sm) {
+	@include touch-or-bp-down(sm) {
+		.open,
+		.selected {
+			> .level {
 				transform: translate3d(0, 0, 0);
 				transition: $nav-transition;
 			}
-
-			@include mouse-and-bp-up(md) {
-				display: block;
-			}
 		}
+	}
 
-		> .item-container {
-			.twisty {
-				background: green;
-			}
-		}
+	@include mouse-and-bp-up(md) {
+	  .open {
+		  > .level {
+			  display: block;
+		  }
+
+		  > .item-container {
+				.twisty {
+					background: green;
+				}
+		  }
+	  }
 	}
 
 	//.level {
