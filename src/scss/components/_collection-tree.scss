@@ -124,8 +124,15 @@
 				}
 			}
 
+			// Special treatment for first absolute positioned level on tablets
 			@include bp-only(sm) {
-				top: ($line-height-large-touch + $space-min);
+				&.level-2 {
+					top: ($line-height-large-touch + $space-min);
+
+					.nav {
+						height: calc(100% - #{$line-height-large-touch + $space-min});
+					}
+				}
 			}
 
 			@include mouse-and-bp-up(md) {
