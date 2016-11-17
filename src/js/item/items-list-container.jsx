@@ -28,14 +28,16 @@ class ItemsListContainer extends React.Component {
 
 
 const mapStateToProps = state => {
-	var collections, collection;
+	var collections, collection, selected;
+
+	selected = state.router.location.pathname.match(/^\/collection\//) ? state.router.params.key : null;
 
 	if(state.library && state.library.libraryString && state.collections[state.library.libraryString]) {
 		collections = state.collections[state.library.libraryString].collections;
 	}
 
-	if(collections && state.collections.selected) {
-		collection = collections.find(c => c.key === state.collections.selected);
+	if(collections && selected) {
+		collection = collections.find(c => c.key === selected);
 	}
 
 	const getTopLevelItems = () => {
