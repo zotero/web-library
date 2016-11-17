@@ -28,6 +28,13 @@ export default class CollectionTree extends React.Component {
 			<div className={ `level level-${level} ${hasOpen ? 'has-open' : ''}` }>
 				<ul className="nav">
 					{ collections.map(collection => {
+						let twistyButton = (
+							<button
+								type="button"
+								className="twisty hidden-sm-down hidden-touch"
+								onClick={ () => this.props.onCollectionOpened(collection.key) }
+							/>
+						);
 						return (
 							<li
 								key={collection.key}
@@ -36,11 +43,7 @@ export default class CollectionTree extends React.Component {
 								<div className="item-container">
 									<div className="twisty-container">
 										{/* Button component */}
-										<button
-											type="button"
-											className="twisty hidden-sm-down hidden-touch"
-											onClick={ () => this.props.onCollectionOpened(collection.key) }
-										/>
+										{ collection.hasChildren ? twistyButton : '' }
 									</div>
 									<Link to={ `/collection/${collection.key}` }>
 										{ collection.apiObj.data.name }
