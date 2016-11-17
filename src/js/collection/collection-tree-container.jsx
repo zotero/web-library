@@ -63,8 +63,8 @@ class CollectionTreeContainer extends React.Component {
 			);
 		}
 		
-		if(nextProps.selected && nextProps.selected != this.props.selected ||
-			nextProps.collections && nextProps.collections != this.props.collections) {
+		if('selected' in nextProps && nextProps.selected != this.props.selected ||
+			'collections' in nextProps && nextProps.collections != this.props.collections) {
 			let path = mapTreePath(nextProps.selected, nextProps.collections.filter(c => c.nestingDepth === 1));
 			this.setState({
 				collections: applyTreePath(nextProps.collections, path)
@@ -108,7 +108,8 @@ CollectionTreeContainer.propTypes = {
 };
 
 CollectionTree.defaultProps = {
-	collections: []
+	collections: [],
+	selected: ''
 };
 
 export default connect(
