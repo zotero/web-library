@@ -7,41 +7,39 @@ import Spinner from '../app/spinner';
 export default class CollectionTree extends React.Component {
 	constructor(props) {
 		super(props);
+		//@TODO: deduplicate and use single loop
 		this.state = {
-			collections: this.props.collections.filter(c => c.nestingDepth === 1)
+			collections: this.props.collections.filter(c => c.nestingDepth === 1),
+			open: this.props.collections.filter(c => !!c.isOpen)
 		};
 	}
 
 	componentWillReceiveProps(nextProps) {
 		this.setState({
-			collections: nextProps.collections.filter(c => c.nestingDepth === 1)
+			collections: nextProps.collections.filter(c => c.nestingDepth === 1),
+			open: nextProps.collections.filter(c => !!c.isOpen)
 		});
 	}
 
 	renderCollections(collections, level) {
 		let topLevelKeys = collections.map(col => col.key);
-		let hasOpen = topLevelKeys.some(topLevelKey => this.props.path.includes(topLevelKey));
+		let hasOpen = topLevelKeys.some(topLevelKey => this.state.open.includes(topLevelKey));
 		return (
 			<div className={ `level level-${level} ${hasOpen ? 'has-open' : ''}` }>
 				<ul className="nav">
 					{ collections.map(collection => {
-						var openClass;
-						switch(this.props.path.indexOf(collection.key)) {
-							case -1:
-								openClass = '';
-							break;
-							case (this.props.path.length - 1):
-								openClass = 'selected';
-							break;
-							default: 
-								openClass = 'open';
-							break;
-						}
 						return (
-							<li key={collection.key} className={ openClass }>
+							<li 
+								key={collection.key} 
+								className={ `${collection.isOpen ? 'open' : ''} ${collection.isSelected ? 'selected' : '' }` }
+							>
 								<div className="item-container">
 									{/* Button component */}
-									<button type="button" className="twisty hidden-sm-down hidden-touch"/>
+									<button 
+										type="button"
+										className="twisty hidden-sm-down hidden-touch"
+										onClick={ () => this.props.onCollectionOpened(collection.key) }
+									/>
 									<Link to={ `/collection/${collection.key}` }>
 										{ collection.apiObj.data.name }
 									</Link>
@@ -84,7 +82,7 @@ export default class CollectionTree extends React.Component {
 
 CollectionTree.propTypes = {
 	isFetching: React.PropTypes.bool,
-	onCollectionSelected: React.PropTypes.func.isRequired,
+	onCollectionOpened: React.PropTypes.func,
 	collections: React.PropTypes.arrayOf(React.PropTypes.shape({
 		key: React.PropTypes.string.isRequired,
 		nestingDepth: React.PropTypes.integer,
@@ -94,13 +92,13 @@ CollectionTree.propTypes = {
 			data: React.PropTypes.shape({
 				name: React.PropTypes.string
 			})
-		})
-	})).isRequired,
-	path: React.PropTypes.arrayOf(React.PropTypes.string)
+		}),
+		isOpen: React.PropTypes.bool,
+		isSelected: React.PropTypes.selected
+	})).isRequired
 };
 
 CollectionTree.defaultProps = {
 	isFetching: false,
-	path: [],
-	onCollectionSelected: () => null
+	onCollectionOpened: () => null
 };

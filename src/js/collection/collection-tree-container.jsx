@@ -3,7 +3,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import CollectionTree from './collection-tree';
-import { selectCollection, fetchCollectionsIfNeeded } from '../actions';
+import { fetchCollectionsIfNeeded } from '../actions';
 
 
 const mapTreePath = (selectedKey, collections, curPath) => {
@@ -25,12 +25,33 @@ const mapTreePath = (selectedKey, collections, curPath) => {
 	return curPath;
 };
 
+const applyTreePath = (collections, path) => {
+	return collections.map(c => {
+		let index = path.indexOf(c.key);
+		c.isSelected = index >= 0 && index === path.length - 1;
+		c.isOpen = index >= 0 && index < path.length - 1;
+		return c;
+	});
+};
+
 class CollectionTreeContainer extends React.Component {
 	constructor(props) {
 		super();
+		let path = mapTreePath(props.selected, props.collections.filter(c => c.nestingDepth === 1));
 		this.state = {
-			path: mapTreePath(props.selected, props.collections.filter(c => c.nestingDepth === 1))
+			collections: applyTreePath(props.collections, path)
 		};
+	}
+
+	toggleOpenCollection(collectionKey) {
+		this.setState({
+			collections: this.state.collections.map(c => {
+				if(c.key === collectionKey) {
+					c.isOpen = !c.isOpen;
+				}
+				return c;
+			})
+		});
 	}
 
 	componentWillReceiveProps(nextProps) {
@@ -42,18 +63,20 @@ class CollectionTreeContainer extends React.Component {
 		
 		if(nextProps.selected && nextProps.selected != this.props.selected ||
 			nextProps.collections && nextProps.collections != this.props.collections) {
+			let path = mapTreePath(nextProps.selected, nextProps.collections.filter(c => c.nestingDepth === 1));
 			this.setState({
-				path: mapTreePath(nextProps.selected, nextProps.collections.filter(c => c.nestingDepth === 1))
+				collections: applyTreePath(nextProps.collections, path)
 			});
 		}
 	}
 
 	render() {
 		return <CollectionTree 
-			collections={this.props.collections}
+			collections={this.state.collections}
 			path={this.state.path}
 			isFetching={this.props.isFetching}
-			onCollectionSelected={this.props.onCollectionSelected} 
+			onCollectionSelected={this.props.onCollectionSelected}
+			onCollectionOpened={ collectionKey => this.toggleOpenCollection(collectionKey) }
 		/>;
 	}
 }
@@ -69,20 +92,21 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = (dispatch) => {
 	return {
-		dispatch,
-		onCollectionSelected: collectionKey => {
-			dispatch(selectCollection(collectionKey));
-		}
+		dispatch
 	};
 };
 
 CollectionTreeContainer.propTypes = {
-	onCollectionSelected: React.PropTypes.func.isRequired,
+	onCollectionSelected: React.PropTypes.func,
 	library: React.PropTypes.object,
 	collections: React.PropTypes.array,
 	isFetching: React.PropTypes.bool.isRequired,
 	dispatch: React.PropTypes.func.isRequired,
 	selected: React.PropTypes.string
+};
+
+CollectionTree.defaultProps = {
+	collections: []
 };
 
 export default connect(
