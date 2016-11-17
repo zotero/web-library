@@ -66,8 +66,8 @@
 		.item-container {
 			@include mouse-and-bp-up(md) {
 				display: flex;
-				flex-wrap: wrap;
 				align-items: center;
+				padding-right: $component-padding-horizontal;
 			}
 		}
 
@@ -83,7 +83,6 @@
 
 					@include bp-up(md) {
 						color: $collection-tree-active-link-color;
-						background: $collection-tree-active-link-bg;
 					}
 				}
 			}
@@ -159,7 +158,9 @@
 
 			> .item-container {
 				.twisty {
-					background: green;
+					&::after {
+						transform: rotate(90deg);
+					}
 				}
 			}
 		}

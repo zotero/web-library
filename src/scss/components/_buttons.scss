@@ -10,7 +10,6 @@
 	padding: $btn-padding;
 	cursor: pointer;
 
-	&:hover,
 	&:focus {
 		background: darken($btn-bg, 5%);
 		outline: none;
@@ -24,8 +23,49 @@
 
 // Twisty
 
-.twisty {
+// Container keeps the layout stable when there is no twisty
+.twisty-container {
 	width: $space-md;
 	height: $space-md;
-	margin-right: $space-xs;
+	margin-right: $space-min;
+
+	@include touch-or-bp-down(sm) {
+		display: none;
+	}
+}
+
+.twisty {
+	display: block;
+	width: 100%;
+	height: 100%;
+	border: 0;
+	background: transparent;
+	position: relative;
+	overflow: hidden;
+	cursor: pointer;
+
+	&:focus {
+		outline: none;
+
+		&::after{
+			border-left-color: $twisty-focus-color;
+
+			.selected & {
+				border-left-color: $twisty-focus-color-selected;
+			}
+		}
+	}
+
+	&::after {
+		content: "";
+		position: absolute;
+		left: 4px;
+		top: 4px;
+		border-width: 4.5px 7.794px;
+		border-style: solid;
+		border-color: transparent;
+		border-left-color: $twisty-color;
+		transform-origin: 3.5px 4.5px;
+		transition: all $twisty-transition;
+	}
 }
