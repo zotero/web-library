@@ -29,7 +29,9 @@ const applyTreePath = (collections, path) => {
 	return collections.map(c => {
 		let index = path.indexOf(c.key);
 		c.isSelected = index >= 0 && index === path.length - 1;
-		c.isOpen = index >= 0 && index < path.length - 1;
+		if(index >= 0 && index < path.length - 1) {
+			c.isOpen = true;
+		}
 		return c;
 	});
 };
