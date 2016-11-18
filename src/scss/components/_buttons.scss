@@ -58,9 +58,12 @@
 
 	&::after {
 		content: "";
+		box-sizing: border-box;
 		position: absolute;
 		left: 4px;
-		top: 4px;
+		top: 3px;
+		width: 15.588px;
+		height: 9px;
 		border-width: 4.5px 7.794px;
 		border-style: solid;
 		border-color: transparent;
