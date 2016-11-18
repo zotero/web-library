@@ -25,12 +25,12 @@ const mapTreePath = (selectedKey, collections, curPath) => {
 	return curPath;
 };
 
-const applyTreePath = (collections, path) => {
+const applyTreePath = (collections, path, reopen) => {
 	return collections.map(c => {
 		let index = path.indexOf(c.key);
 		c.isSelected = index >= 0 && index === path.length - 1;
-		if(index >= 0 && index < path.length - 1) {
-			c.isOpen = true;
+		if(reopen) {
+			c.isOpen = index >= 0 && index < path.length - 1;
 		}
 		return c;
 	});
@@ -41,7 +41,7 @@ class CollectionTreeContainer extends React.Component {
 		super();
 		let path = mapTreePath(props.selected, props.collections.filter(c => c.nestingDepth === 1));
 		this.state = {
-			collections: applyTreePath(props.collections, path)
+			collections: applyTreePath(props.collections, path, props.reopen)
 		};
 	}
 
@@ -67,7 +67,7 @@ class CollectionTreeContainer extends React.Component {
 			'collections' in nextProps && nextProps.collections != this.props.collections) {
 			let path = mapTreePath(nextProps.selected, nextProps.collections.filter(c => c.nestingDepth === 1));
 			this.setState({
-				collections: applyTreePath(nextProps.collections, path)
+				collections: applyTreePath(nextProps.collections, path, nextProps.reopen)
 			});
 		}
 	}
@@ -77,7 +77,6 @@ class CollectionTreeContainer extends React.Component {
 			collections={this.state.collections}
 			path={this.state.path}
 			isFetching={this.props.isFetching}
-			onCollectionSelected={this.props.onCollectionSelected}
 			onCollectionOpened={ collectionKey => this.toggleOpenCollection(collectionKey) }
 		/>;
 	}
@@ -88,7 +87,8 @@ const mapStateToProps = state => {
 		library: state.library,
 		collections: state.library && state.collections[state.library.libraryString] ? state.collections[state.library.libraryString].collections : [],
 		isFetching: state.library && state.collections[state.library.libraryString] ? state.collections[state.library.libraryString].isFetching : false,
-		selected: state.router.location.pathname.match(/^\/collection\//) ? state.router.params.key : null
+		selected: state.router.location.pathname.match(/^\/collection\//) ? state.router.params.key : null,
+		reopen: state.router && state.router.location.action != 'PUSH'
 	};
 };
 
@@ -99,12 +99,12 @@ const mapDispatchToProps = (dispatch) => {
 };
 
 CollectionTreeContainer.propTypes = {
-	onCollectionSelected: React.PropTypes.func,
 	library: React.PropTypes.object,
 	collections: React.PropTypes.array,
 	isFetching: React.PropTypes.bool.isRequired,
 	dispatch: React.PropTypes.func.isRequired,
-	selected: React.PropTypes.string
+	selected: React.PropTypes.string,
+	reopen: React.PropTypes.bool
 };
 
 CollectionTree.defaultProps = {
