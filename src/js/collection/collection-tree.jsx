@@ -31,7 +31,7 @@ export default class CollectionTree extends React.Component {
 						let twistyButton = (
 							<button
 								type="button"
-								className="twisty hidden-sm-down hidden-touch"
+								className="twisty"
 								onClick={ () => this.props.onCollectionOpened(collection.key) }
 							/>
 						);
