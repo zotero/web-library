@@ -20,6 +20,7 @@ const del = require('del');
 const sass = require('gulp-sass');
 const babelify = require('babelify');
 const connect = require('gulp-connect');
+const vfs = require('vinyl-fs');
 
 function onError(err) {
 	gutil.log(gutil.colors.red('Error:'), err);
@@ -89,6 +90,16 @@ function getHtml() {
 		.pipe(gulp.dest('./build/'))
 }
 
+function getImages(dev) {
+	if(dev) {
+		return vfs.src('./src/images/*')
+			.pipe(vfs.symlink('./build/images/'));
+	} else {
+		return gulp.src('./src/images/*')
+			.pipe(gulp.dest('./build/images/'));
+	}
+}
+
 gulp.task('clean:build', () => {
 	return del('./build');
 });
@@ -122,12 +133,13 @@ gulp.task('dev', ['clean:build'], () => {
 	return merge(
 		getSass(true),
 		getJS(true),
+		getImages(true),
 		getHtml()
 	);
 });
 
 gulp.task('build', ['clean:build'], () => {
-	return merge(getSass(false), getJS(false));
+	return merge(getSass(false), getJS(false), getImages(false));
 });
 
 gulp.task('prepublish:js', () => {
