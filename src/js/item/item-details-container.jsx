@@ -19,7 +19,7 @@ const mapStateToProps = state => {
 	var items, item;
 	let selectedCollectionKey = 'collection' in state.router.params ? state.router.params.collection : null;
 	let selectedItemKey = 'item' in state.router.params ? state.router.params.item : null;
-	let { fieldMap, hideFields, noEditFields } = Zotero.Item.prototype;
+	let { fieldMap, typeMap, hideFields, noEditFields } = Zotero.Item.prototype;
 	let { CREATORS, READONLY, EDITABLE } = ItemDetails.fieldTypes;
 
 	if(selectedCollectionKey && state.items[selectedCollectionKey]) {
@@ -36,7 +36,7 @@ const mapStateToProps = state => {
 			label: fieldMap[f],
 			visible: !hideFields.includes(f),
 			type: f === 'creators' ? CREATORS : noEditFields.includes(f) ? READONLY : EDITABLE,
-			value: item ? item.data[f] : null
+			value: item ? f === 'itemType' ? typeMap[item.data[f]] : item.data[f] : null
 		})),
 		item: item || undefined
 	};

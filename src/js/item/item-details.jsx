@@ -51,14 +51,22 @@ export default class ItemDetails extends React.Component {
 
 												switch(field.type) {
 													case this.constructor.fieldTypes.EDITABLE:
-														return [
-															(<dt className={ className }>{ field.key }</dt>),
-															(<dd className={ className }>{ field.value }</dd>)
-														];
 													case this.constructor.fieldTypes.READONLY:
 														return [
-															(<dt className={ className }>{ field.key }</dt>),
-															(<dd className={ className }>{ field.value }</dd>)
+															(<dt className={ className }>{ field.label }</dt>),
+															(<dd className={ className }>
+																{
+																	(() => {
+																		if(field.key === 'DOI') {
+																			return <a rel='nofollow' href={ 'http://dx.doi.org/' + field.value }>{ field.value }</a>;
+																		} else if(field.key === 'url') {
+																			return <a rel='nofollow' href={ field.value }>{ field.value }</a>;
+																		} else {
+																			return field.value;
+																		}
+																	})()
+																}
+															</dd>)
 														];
 													case this.constructor.fieldTypes.CREATORS:
 														return null;
