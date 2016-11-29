@@ -45,9 +45,9 @@ export default class CollectionTree extends React.Component {
 										{/* Button component */}
 										{ collection.hasChildren ? twistyButton : '' }
 									</div>
-									<Link to={ `/collection/${collection.key}` }>
+									<a onClick={ () => this.props.onCollectionSelected(collection.key) }>
 										{ collection.apiObj.data.name }
-									</Link>
+									</a>
 								</div>
 								{ collection.children.length ? this.renderCollections(collection.children, level + 1) : null }
 							</li>
@@ -88,6 +88,7 @@ export default class CollectionTree extends React.Component {
 CollectionTree.propTypes = {
 	isFetching: React.PropTypes.bool,
 	onCollectionOpened: React.PropTypes.func,
+	onCollectionSelected: React.PropTypes.func,
 	collections: React.PropTypes.arrayOf(React.PropTypes.shape({
 		key: React.PropTypes.string.isRequired,
 		nestingDepth: React.PropTypes.integer,
@@ -105,5 +106,6 @@ CollectionTree.propTypes = {
 
 CollectionTree.defaultProps = {
 	isFetching: false,
-	onCollectionOpened: () => null
+	onCollectionOpened: () => null,
+	onCollectionSelected: () => null
 };

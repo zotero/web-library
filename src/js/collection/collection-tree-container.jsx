@@ -4,6 +4,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import CollectionTree from './collection-tree';
 import { fetchCollectionsIfNeeded } from '../actions';
+import { push } from 'redux-router';
 
 
 const mapTreePath = (selectedKey, collections, curPath) => {
@@ -45,17 +46,6 @@ class CollectionTreeContainer extends React.Component {
 		};
 	}
 
-	toggleOpenCollection(collectionKey) {
-		this.setState({
-			collections: this.state.collections.map(c => {
-				if(c.key === collectionKey) {
-					c.isOpen = !c.isOpen;
-				}
-				return c;
-			})
-		});
-	}
-
 	componentWillReceiveProps(nextProps) {
 		if(nextProps.library && nextProps.library != this.props.library) {
 			this.props.dispatch(
@@ -72,12 +62,29 @@ class CollectionTreeContainer extends React.Component {
 		}
 	}
 
+
+	toggleOpenCollection(collectionKey) {
+		this.setState({
+			collections: this.state.collections.map(c => {
+				if(c.key === collectionKey) {
+					c.isOpen = !c.isOpen;
+				}
+				return c;
+			})
+		});
+	}
+
+	onCollectionSelected(collectionKey) {
+		this.props.dispatch(push(`/collection/${collectionKey}`));
+	}
+
 	render() {
 		return <CollectionTree 
 			collections={this.state.collections}
 			path={this.state.path}
 			isFetching={this.props.isFetching}
-			onCollectionOpened={ collectionKey => this.toggleOpenCollection(collectionKey) }
+			onCollectionOpened={ this.toggleOpenCollection.bind(this) }
+			onCollectionSelected={ this.onCollectionSelected.bind(this) }
 		/>;
 	}
 }
