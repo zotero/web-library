@@ -33,12 +33,15 @@ Item.propTypes = {
 			year: React.PropTypes.number,
 			date: React.PropTypes.string
 		})
-	}).isRequired,
+	}),
 	active: React.PropTypes.bool,
 	onClick: React.PropTypes.func
 };
 
 Item.defaultProps = {
+	item: {
+		data: {}
+	},
 	active: false,
 	onClick: () => {} 
 };
