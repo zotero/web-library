@@ -5,7 +5,7 @@ import Navbar from '../app/navbar';
 import CollectionTreeContainer from '../collection/collection-tree-container';
 import TagSelector from '../tag/tag-selector';
 import ItemsListContainer from '../item/items-list-container';
-import ItemDetails from '../item/item-details';
+import ItemDetailsContainer from '../item/item-details-container';
 
 export default class Library extends React.Component {
 	render() {
@@ -29,7 +29,7 @@ export default class Library extends React.Component {
 								<ItemsListContainer />
 							</div>
 							<section className={ `item-details ${this.props.view === 'item-details' ? 'active' : ''}` }>
-								<ItemDetails/>
+								<ItemDetailsContainer />
 							</section>
 						</section>
 					</section>

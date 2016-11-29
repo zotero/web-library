@@ -35,7 +35,7 @@ class LibraryContainer extends React.Component {
 	}
 
 	static init(element, userid, apiKey) {
-		if(element) {			
+		if(element) {
 			const config = {
 				apiKey: apiKey || element.getAttribute('data-apikey'),
 				userId: userid || parseInt(element.getAttribute('data-userid'), 10)
@@ -59,8 +59,8 @@ class LibraryContainer extends React.Component {
 				<Provider store={store}>
 					<ReduxRouter>
 						<Route path="/" component={ LibraryContainerWrapped }>
-							<Route path="/collection/:key" name="collection" />
-							<Route path="/item/:key" name="item" />
+							<Route path="/collection/:collection" />
+							<Route path="/collection/:collection/item/:item" />
 						</Route>
 					</ReduxRouter>
 				</Provider>

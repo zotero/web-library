@@ -4,7 +4,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import ItemsList from './items-list';
 import { selectItem, fetchItemsIfNeeded } from '../actions';
-
+import { push } from 'redux-router';
 
 class ItemsListContainer extends React.Component {
 	componentWillReceiveProps(nextProps) {
@@ -15,12 +15,16 @@ class ItemsListContainer extends React.Component {
 		}
 	}
 
+	onItemSelected(itemKey) {
+		this.props.dispatch(push(`/collection/${this.props.collection.key}/item/${itemKey}`));
+	}
+
 	render() {
 		return <ItemsList 
 			isFetching={ this.props.isFetching }
 			items={ this.props.items }
 			selectedItemKey={ this.props.selectedItemKey }
-			onItemSelected={ this.props.onItemSelected }
+			onItemSelected={ this.onItemSelected.bind(this) }
 			/>;
 	}
 }
@@ -28,16 +32,18 @@ class ItemsListContainer extends React.Component {
 
 
 const mapStateToProps = state => {
-	var collections, collection, selected;
+	var collections, collection;
 
-	selected = state.router.location.pathname.match(/^\/collection\//) ? state.router.params.key : null;
+	// selected = state.router.location.pathname.match(/^\/collection\//) ? state.router.params.key : null;
+	let selectedCollectionKey = 'collection' in state.router.params ? state.router.params.collection : null;
+	let selectedItemKey = 'item' in state.router.params ? state.router.params.item : null;
 
 	if(state.library && state.library.libraryString && state.collections[state.library.libraryString]) {
 		collections = state.collections[state.library.libraryString].collections;
 	}
 
-	if(collections && selected) {
-		collection = collections.find(c => c.key === selected);
+	if(collections && selectedCollectionKey) {
+		collection = collections.find(c => c.key === selectedCollectionKey);
 	}
 
 	const getTopLevelItems = () => {
@@ -52,16 +58,13 @@ const mapStateToProps = state => {
 		collection: collection || {},
 		items: getTopLevelItems(),
 		isFetching: collection && state.items[collection.key] ? state.items[collection.key].isFetching : false,
-		selectedItemKey: collection && state.items.selected
+		selectedItemKey: selectedItemKey
 	};
 };
 
 const mapDispatchToProps = dispatch => {
 	return {
-		dispatch,
-		onItemSelected: index => {
-			dispatch(selectItem(index));
-		}
+		dispatch
 	};
 };
 
@@ -70,7 +73,6 @@ ItemsListContainer.propTypes = {
   items: React.PropTypes.array.isRequired,
   selectedItemKey: React.PropTypes.string,
   isFetching: React.PropTypes.bool.isRequired,
-  onItemSelected: React.PropTypes.func,
   dispatch: React.PropTypes.func.isRequired
 };
 

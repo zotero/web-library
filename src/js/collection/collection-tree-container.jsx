@@ -87,7 +87,7 @@ const mapStateToProps = state => {
 		library: state.library,
 		collections: state.library && state.collections[state.library.libraryString] ? state.collections[state.library.libraryString].collections : [],
 		isFetching: state.library && state.collections[state.library.libraryString] ? state.collections[state.library.libraryString].isFetching : false,
-		selected: state.router.location.pathname.match(/^\/collection\//) ? state.router.params.key : null,
+		selected: 'collection' in state.router.params ? state.router.params.collection : null,
 		reopen: state.router && state.router.location.action != 'PUSH'
 	};
 };
