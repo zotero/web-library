@@ -13,7 +13,8 @@ export default class TagSelector extends React.Component {
 							<li 
 								className={ tag.selected ? 'tag-selector-item selected' : 'tag-selector-item' }
 								key={ tag.name }
-								onClick={ () => this.props.onSelection(tag) }
+								onClick={ ev => this.props.onSelection(tag, ev) }
+								onContextMenu={ ev => this.props.onTagContext(tag, ev) }
 							>
 								{ tag.name }
 							</li>
@@ -42,6 +43,7 @@ TagSelector.propTypes = {
 	searchString: React.PropTypes.string,
 	shouldFocus: React.PropTypes.bool,
 	onSelection: React.PropTypes.func,
+	onTagContext: React.PropTypes.func,
 	onSearch: React.PropTypes.func,
 	onActions: React.PropTypes.func
 };
@@ -51,6 +53,7 @@ TagSelector.defaultProps = {
 	searchString: '',
 	shouldFocus: false,
 	onSelection: () => Promise.resolve(),
+	onTagContext: () => Promise.resolve(),
 	onSearch: () => Promise.resolve(),
 	onActions: () => Promise.resolve()
 };
