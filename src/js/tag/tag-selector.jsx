@@ -15,6 +15,7 @@ export default class TagSelector extends React.Component {
 								key={ tag.name }
 								onClick={ ev => this.props.onSelection(tag, ev) }
 								onContextMenu={ ev => this.props.onTagContext(tag, ev) }
+								style={ tag.color ? { color: tag.color } : {} }
 							>
 								{ tag.name }
 							</li>
@@ -38,7 +39,8 @@ export default class TagSelector extends React.Component {
 TagSelector.propTypes = {
 	tags: React.PropTypes.arrayOf(React.PropTypes.shape({
 		name: React.PropTypes.string,
-		selected: React.PropTypes.bool
+		selected: React.PropTypes.bool,
+		color: React.PropTypes.string
 	})),
 	searchString: React.PropTypes.string,
 	shouldFocus: React.PropTypes.bool,

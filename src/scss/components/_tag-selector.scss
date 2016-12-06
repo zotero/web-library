@@ -2,13 +2,17 @@
 // Tag selector
 // --------------------------------------------------
 
+.library .tag-selector {
+	//@TODO: clean this up
+	position: absolute; // Dev only
+	bottom: 0;          // …
+	left: 0;            // …
+}
+
 .tag-selector {
 	display: flex;
 	flex-direction: column;
 	overflow: hidden;
-	position: absolute; // Dev only
-	bottom: 0;          // …
-	left: 0;            // …
 
 	@include bp-down(xs) {
 		display: none; // Dev only
