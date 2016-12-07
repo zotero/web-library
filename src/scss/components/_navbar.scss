@@ -5,9 +5,10 @@
 .navbar {
 	display: flex;
 	justify-content: space-between;
-	flex: 0 0 $navbar-height-xs;
+	flex: 0 0 auto;
 	font-size: $navbar-font-size;
 	width: 100%;
+	height: $navbar-height-xs;
 	position: relative;
 	left: 0;
 
@@ -57,6 +58,7 @@
 	}
 
 	.navbar-brand {
+		height: 100%;
 		margin: 0;
 
 		@include bp-down(xs) {
