@@ -38,7 +38,7 @@ export default class TagSelector extends React.Component {
 						value={this.props.searchString}
 						onChange={ ev => this.props.onSearch(ev.target.value) }
 						className="tag-selector-filter" />
-					<button className="tag-selector-actions" onClick={ () => this.props.onActions() } />
+					<button className="tag-selector-actions" onClick={ () => this.props.onSettings() } />
 				</div>
 			</div>
 		);
@@ -57,7 +57,7 @@ TagSelector.propTypes = {
 	onSelection: React.PropTypes.func,
 	onTagContext: React.PropTypes.func,
 	onSearch: React.PropTypes.func,
-	onActions: React.PropTypes.func
+	onSettings: React.PropTypes.func
 };
 
 TagSelector.defaultProps = {
@@ -67,5 +67,5 @@ TagSelector.defaultProps = {
 	onSelection: () => Promise.resolve(),
 	onTagContext: () => Promise.resolve(),
 	onSearch: () => Promise.resolve(),
-	onActions: () => Promise.resolve()
+	onSettings: () => Promise.resolve()
 };
