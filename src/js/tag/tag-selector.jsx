@@ -9,17 +9,26 @@ export default class TagSelector extends React.Component {
 				<div className="tag-selector-container">
 					<ul className="tag-selector-list">
 					{
-						this.props.tags.map(tag => (
-							<li 
-								className={ tag.selected ? 'tag-selector-item selected' : 'tag-selector-item' }
-								key={ tag.name }
-								onClick={ ev => this.props.onSelection(tag, ev) }
-								onContextMenu={ ev => this.props.onTagContext(tag, ev) }
-								style={ tag.color ? { color: tag.color } : {} }
-							>
-								{ tag.name }
-							</li>
-						))
+						this.props.tags.map(tag => {
+							let className = 'tag-selector-item';
+							if(tag.disabled) {
+								className += ' disabled';
+							} else if(tag.selected) {
+								className += ' selected';
+							}
+
+							return (
+								<li 
+									className={ className }
+									key={ tag.name }
+									onClick={ ev => this.props.onSelection(tag, ev) }
+									onContextMenu={ ev => this.props.onTagContext(tag, ev) }
+									style={ tag.color ? { color: tag.color } : {} }
+								>
+									{ tag.name }
+								</li>
+							);
+						})
 					}
 					</ul>
 				</div>
@@ -40,7 +49,8 @@ TagSelector.propTypes = {
 	tags: React.PropTypes.arrayOf(React.PropTypes.shape({
 		name: React.PropTypes.string,
 		selected: React.PropTypes.bool,
-		color: React.PropTypes.string
+		color: React.PropTypes.string,
+		disabled: React.PropTypes.bool
 	})),
 	searchString: React.PropTypes.string,
 	shouldFocus: React.PropTypes.bool,

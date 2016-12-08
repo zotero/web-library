@@ -63,7 +63,13 @@
 		border: 1px solid $brand-secondary;
 	}
 
-	&:hover {
+	&.disabled {
+		opacity: .6;
+		cursor: auto;
+		pointer-events: none;
+	}
+
+	&:not(.disabled):hover {
 		background-color: lighten($brand-secondary, 15%);
 		border: 1px solid $brand-secondary;
 	}
