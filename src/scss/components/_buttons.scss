@@ -25,6 +25,7 @@
 
 // Container keeps the layout stable when there is no twisty
 .twisty-container {
+	flex: 0 0 auto;
 	width: $space-md;
 	height: $space-md;
 	margin-right: $space-min;
