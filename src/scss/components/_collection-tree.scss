@@ -34,6 +34,7 @@
 			a {
 				color: $collection-tree-link-color;
 				position: relative;
+				@include css-truncate;
 
 				@include touch-or-bp-down(sm) {
 					padding: 0 $collection-tree-padding-horizontal-touch;
