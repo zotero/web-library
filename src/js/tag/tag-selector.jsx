@@ -38,7 +38,7 @@ export default class TagSelector extends React.Component {
 						value={this.props.searchString}
 						onChange={ ev => this.props.onSearch(ev.target.value) }
 						className="tag-selector-filter" />
-					<button className="tag-selector-actions" onClick={ () => this.props.onSettings() } />
+					<button className="tag-selector-actions" onClick={ ev => this.props.onSettings(ev) } />
 				</div>
 			</div>
 		);
