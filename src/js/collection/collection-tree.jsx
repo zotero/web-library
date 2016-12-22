@@ -1,8 +1,22 @@
 'use strict';
 
 import React from 'react';
-import { Link } from 'react-router';
 import Spinner from '../app/spinner';
+
+function testRecursive(collections, test) {
+	if(collections.some(test)) {
+		return true;
+	} else {
+		for(let collection of collections) {
+			if('children' in collection) {
+				if(testRecursive(collection.children, test)) {
+					return true;
+				}
+			}
+		}
+	}
+	return false;
+}
 
 export default class CollectionTree extends React.Component {
 	constructor(props) {
@@ -10,20 +24,20 @@ export default class CollectionTree extends React.Component {
 		//@TODO: deduplicate and use single loop
 		this.state = {
 			collections: this.props.collections.filter(c => c.nestingDepth === 1),
-			open: this.props.collections.filter(c => !!c.isOpen)
+			openKeys: this.props.collections.filter(c => !!c.isSelected).map(col => col.key)
 		};
 	}
 
 	componentWillReceiveProps(nextProps) {
 		this.setState({
 			collections: nextProps.collections.filter(c => c.nestingDepth === 1),
-			open: nextProps.collections.filter(c => !!c.isOpen)
+			openKeys: nextProps.collections.filter(c => !!c.isSelected).map(col => col.key)
 		});
 	}
 
 	renderCollections(collections, level) {
-		let topLevelKeys = collections.map(col => col.key);
-		let hasOpen = topLevelKeys.some(topLevelKey => this.state.open.includes(topLevelKey));
+		let hasOpen = testRecursive(collections, col => this.state.openKeys.includes(col.key));
+
 		return (
 			<div className={ `level level-${level} ${hasOpen ? 'has-open' : ''}` }>
 				<ul className="nav">
@@ -62,6 +76,7 @@ export default class CollectionTree extends React.Component {
 		if(this.props.isFetching) {
 			return <Spinner />;
 		} else {
+
 			return (
 				<nav className="collection-tree">
 					<header className="touch-header hidden-mouse-md-up hidden-xs-down">

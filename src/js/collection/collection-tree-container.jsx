@@ -32,6 +32,8 @@ const applyTreePath = (collections, path, reopen) => {
 		c.isSelected = index >= 0 && index === path.length - 1;
 		if(reopen) {
 			c.isOpen = index >= 0 && index < path.length - 1;
+		} else if(index >= 0 && index < path.length - 1) {
+			c.isOpen = true;
 		}
 		return c;
 	});
