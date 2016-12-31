@@ -2,3 +2,4 @@ node_modules
 /lib
 /sass
 /build
+.DS_Store
