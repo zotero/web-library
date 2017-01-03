@@ -63,6 +63,10 @@
 		border: 1px solid $brand-secondary;
 	}
 
+	&.colored {
+		font-weight: bold;
+	}
+
 	&.disabled {
 		opacity: .6;
 		cursor: auto;

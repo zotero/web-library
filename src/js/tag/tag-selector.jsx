@@ -16,7 +16,9 @@ export default class TagSelector extends React.Component {
 							} else if(tag.selected) {
 								className += ' selected';
 							}
-
+							if(tag.color) {
+								className += ' colored';
+							}
 							return (
 								<li 
 									className={ className }
