@@ -107,6 +107,7 @@
 
 	.level {
 		z-index: $z-index-level;
+		transition: $nav-transition;
 
 		.level {
 			@include touch-or-bp-down(sm) {
@@ -127,10 +128,10 @@
 			// Special treatment for first absolute positioned level on tablets
 			@include bp-only(sm) {
 				&.level-2 {
-					top: ($line-height-large-touch + $space-min);
+					//top: ($line-height-large-touch + $space-min);
 
 					.nav {
-						height: calc(100% - #{$line-height-large-touch + $space-min});
+						//height: calc(100% - #{$line-height-large-touch + $space-min});
 					}
 				}
 			}
@@ -142,11 +143,24 @@
 	}
 
 	@include touch-or-bp-down(sm) {
-		.open,
-		.selected {
-			> .level {
-				transform: translate3d(0, 0, 0);
-				transition: $nav-transition;
+		.level {
+			&.has-open {
+				transform: translate3d(-25%, 0, 0);
+
+				.level {
+					transform: translate3d(125%, 0, 0);
+
+					&.has-open {
+						transform: translate3d(0, 0, 0);
+					}
+				}
+			}
+
+			.open,
+			.selected {
+				> .level {
+					transform: translate3d(25%, 0, 0);
+				}
 			}
 		}
 	}
