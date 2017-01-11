@@ -100,6 +100,17 @@ function getImages(dev) {
 	}
 }
 
+function getIcons(dev) {
+	//@TODO: Consider auto-vieboxing/wrapping with symbol?
+	if(dev) {
+		return vfs.src('./src/icons/*')
+			.pipe(vfs.symlink('./build/icons/'));
+	} else {
+		return gulp.src('./src/icons/*')
+			.pipe(gulp.dest('./build/icons/'));
+	}
+}
+
 gulp.task('clean:build', () => {
 	return del('./build');
 });
@@ -134,12 +145,18 @@ gulp.task('dev', ['clean:build'], () => {
 		getSass(true),
 		getJS(true),
 		getImages(true),
+		getIcons(true),
 		getHtml()
 	);
 });
 
 gulp.task('build', ['clean:build'], () => {
-	return merge(getSass(false), getJS(false), getImages(false));
+	return merge(
+		getSass(false),
+		getJS(false),
+		getImages(false),
+		getIcons(false)
+	);
 });
 
 gulp.task('prepublish:js', () => {

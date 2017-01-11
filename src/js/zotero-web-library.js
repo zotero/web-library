@@ -29,6 +29,8 @@ if(!Zotero.ui) {
 Object.assign(Zotero.ui, {
 	CollectionTree,
 	CollectionTreeContainer,
+	Editable,
+	Icon,
 	Item,
 	ItemDetails,
 	ItemsList,
@@ -36,9 +38,10 @@ Object.assign(Zotero.ui, {
 	Library,
 	LibraryContainer,
 	Navbar,
-	Spinner,
-	TagSelector,
-	Editable,
 	React,
-	ReactDOM
+	ReactDOM,
+	Spinner,
+	Tab,
+	Tabset,
+	TagSelector
 });
