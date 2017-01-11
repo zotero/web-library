@@ -76,7 +76,7 @@ export default class CollectionTree extends React.Component {
 		if(this.props.isFetching) {
 			return <Spinner />;
 		} else {
-
+			let isRootActive = this.state.openKeys.length === 0;
 			return (
 				<nav className="collection-tree">
 					<header className="touch-header hidden-mouse-md-up hidden-xs-down">
@@ -84,15 +84,17 @@ export default class CollectionTree extends React.Component {
 					</header>
 
 					<div className="scroll-container">
-						<section>
-							<h4>My Library</h4>
-							{ this.renderCollections(this.state.collections, 1)}
-						</section>
+						<div className={ `level-root ${isRootActive ? 'active' : ''}` }>
+							<section>
+								<h4>My Library</h4>
+								{ this.renderCollections(this.state.collections, 1)}
+							</section>
 
-						<section>
-							<h4>Group Libraries</h4>
-							{/* List of group libraries */}
-						</section>
+							<section>
+								<h4>Group Libraries</h4>
+								{/* List of group libraries */}
+							</section>
+						</div>
 					</div>
 				</nav>
 			);
