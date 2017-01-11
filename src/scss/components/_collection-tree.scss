@@ -9,8 +9,13 @@
 		display: flex;
 		flex-direction: column;
 
-		.scroll-container {
+		.level-root {
 			flex: 1 1 auto;
+		}
+
+		.scroll-container {
+			overflow: auto;
+		  height: 100%;
 		}
 	}
 
@@ -125,43 +130,59 @@
 				}
 			}
 
-			// Special treatment for first absolute positioned level on tablets
-			@include bp-only(sm) {
-				&.level-2 {
-					//top: ($line-height-large-touch + $space-min);
-
-					.nav {
-						//height: calc(100% - #{$line-height-large-touch + $space-min});
-					}
-				}
-			}
-
 			@include mouse-and-bp-up(md) {
 				display: none;
+			}
+		}
+
+		.level-2 {
+			@include touch-or-bp-down(sm) {
+				transform: translate3d(125%, 0, 0);
 			}
 		}
 	}
 
 	@include touch-or-bp-down(sm) {
+		.level-root {
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background: blue;
+			transform: translate3d(-25%, 0, 0);
+			transition: $nav-transition;
+
+			&.active {
+				transform: translate3d(0, 0, 0);
+			}
+		}
+
+		.open,
+		.selected {
+			> .level {
+				transform: translate3d(25%, 0, 0);
+			}
+		}
+
 		.level {
 			&.has-open {
-				transform: translate3d(-25%, 0, 0);
-
-				.level {
-					transform: translate3d(125%, 0, 0);
-
-					&.has-open {
-						transform: translate3d(0, 0, 0);
-					}
-				}
+				transform: translate3d(0, 0, 0);
 			}
+		}
 
-			.open,
-			.selected {
-				> .level {
-					transform: translate3d(25%, 0, 0);
-				}
+		.level-1 {
+			&.has-open {
+				transform: none;
 			}
+		}
+	}
+
+	// Special treatment for first absolute positioned level on tablets
+	@include bp-only(sm) {
+		.level-root {
+			top: ($line-height-large-touch + $space-min) !important;
+			height: calc(100% - #{$line-height-large-touch + $space-min}) !important;
 		}
 	}
 
@@ -179,6 +200,18 @@
 				}
 			}
 		}
+	}
+
+	.level-1 {
+		background: red !important;
+	}
+
+	.level-2 {
+		background: yellow !important;
+	}
+
+	.level-3 {
+		background: green !important;
 	}
 
 	//.level {

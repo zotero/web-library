@@ -83,8 +83,8 @@ export default class CollectionTree extends React.Component {
 						<h3>Library</h3>
 					</header>
 
-					<div className="scroll-container">
-						<div className={ `level-root ${isRootActive ? 'active' : ''}` }>
+					<div className={ `level-root ${isRootActive ? 'active' : ''}` }>
+						<div className="scroll-container">
 							<section>
 								<h4>My Library</h4>
 								{ this.renderCollections(this.state.collections, 1)}
