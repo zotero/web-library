@@ -1,6 +1,6 @@
 'use strict';
 import React from 'react';
-import Tab from './tab.jsx';
+import Tab from './tab';
 
 export default class Tabset extends React.Component {
 	constructor(props) {

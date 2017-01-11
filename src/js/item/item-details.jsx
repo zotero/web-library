@@ -1,9 +1,9 @@
 'use strict';
 
 import React from 'react';
-import Item from './item.jsx';
-import Tabset from '../ui/tabset.jsx';
-import Tab from '../ui/tab.jsx';
+import Item from './item';
+import Tabset from '../ui/tabset';
+import Tab from '../ui/tab';
 
 export default class ItemDetails extends React.Component {
 	constructor(props) {
@@ -13,7 +13,7 @@ export default class ItemDetails extends React.Component {
 		};
 	}
 	setActiveTab(active, ev) {
-		ev.preventDefault();
+		ev.preventDefault();	
 		this.setState({
 			active
 		});
