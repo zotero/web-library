@@ -1,7 +1,7 @@
 'use strict';
 
 import React from 'react';
-import Spinner from '../app/spinner';
+import Spinner from '../ui/spinner';
 
 export default class EditableField extends React.Component {
 	constructor(props) {
@@ -44,7 +44,7 @@ export default class EditableField extends React.Component {
 
 	edit() {
 		this.setState({
-			editing: true
+			editing: true 
 		}, () => {
 			this.input.focus();
 		});

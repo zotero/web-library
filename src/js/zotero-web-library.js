@@ -13,9 +13,13 @@ import ItemsListContainer from './item/items-list-container';
 import Library from './library/library';
 import LibraryContainer from './library/library-container';
 import Navbar from './app/navbar';
-import Spinner from './app/spinner';
 import TagSelector from './tag/tag-selector';
 import Editable from './editable/editable';
+
+import Spinner from './ui/spinner';
+import Tabset from './ui/tabset';
+import Tab from './ui/tab';
+import Icon from './ui/icon';
 
 if(!Zotero.ui) {
 	Zotero.ui = {};

@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Item from './item';
-import Spinner from '../app/spinner';
+import Spinner from '../ui/spinner';
 
 export default class ItemsList extends React.Component {
 	render() {

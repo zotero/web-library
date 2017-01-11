@@ -1,7 +1,7 @@
 'use strict';
 
 import React from 'react';
-import Spinner from '../app/spinner';
+import Spinner from '../ui/spinner';
 
 function testRecursive(collections, test) {
 	if(collections.some(test)) {
