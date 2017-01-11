@@ -9,8 +9,13 @@
 		display: flex;
 		flex-direction: column;
 
-		.scroll-container {
+		.level-root {
 			flex: 1 1 auto;
+		}
+
+		.scroll-container {
+			overflow: auto;
+		  height: 100%;
 		}
 	}
 
