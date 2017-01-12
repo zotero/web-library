@@ -37,9 +37,12 @@ export default class CollectionTree extends React.Component {
 
 	renderCollections(collections, level) {
 		let hasOpen = testRecursive(collections, col => this.state.openKeys.includes(col.key));
+		let hasOpenLastLevel = testRecursive(collections, col => {
+			return col.isSelected && !col.hasChildren;
+		});
 
 		return (
-			<div className={ `level level-${level} ${hasOpen ? 'has-open' : ''}` }>
+			<div className={ `level level-${level} ${hasOpen ? 'has-open' : ''} ${hasOpenLastLevel ? 'level-last' : ''}` }>
 				<ul className="nav">
 					{ collections.map(collection => {
 						let twistyButton = (
