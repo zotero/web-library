@@ -35,6 +35,11 @@ export default class CollectionTree extends React.Component {
 		});
 	}
 
+	collectionSelectedHandler(key, ev) {
+		ev && ev.preventDefault();
+		this.props.onCollectionSelected(key);
+	}
+
 	renderCollections(collections, level) {
 		let hasOpen = testRecursive(collections, col => this.state.openKeys.includes(col.key));
 		let hasOpenLastLevel = testRecursive(collections, col => {
@@ -62,7 +67,7 @@ export default class CollectionTree extends React.Component {
 										{/* Button component */}
 										{ collection.hasChildren ? twistyButton : '' }
 									</div>
-									<a onClick={ () => this.props.onCollectionSelected(collection.key) }>
+									<a href="#" onClick={ ev => this.collectionSelectedHandler(collection.key, ev) }>
 										{ collection.apiObj.data.name }
 									</a>
 								</div>
