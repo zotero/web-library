@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Spinner from '../ui/spinner';
+import Icon from '../ui/icon';
 
 function testRecursive(collections, test) {
 	if(collections.some(test)) {
@@ -67,6 +68,7 @@ export default class CollectionTree extends React.Component {
 										{/* Button component */}
 										{ collection.hasChildren ? twistyButton : '' }
 									</div>
+									<Icon type="folder" width="16" height="16"/>
 									<a href="#" onClick={ ev => this.collectionSelectedHandler(collection.key, ev) }>
 										{ collection.apiObj.data.name }
 									</a>
