@@ -2,18 +2,32 @@
 
 import React from 'react';
 
+const coerceDimensions = props => ({
+	width: parseInt(props.width),
+	height: parseInt(props.height)
+});
+
 export default class Icon extends React.Component {
+	constructor(props) {
+		super(props);
+		this.state = coerceDimensions(props);
+	}
+
+	componentWillReceiveProps(nextProps) {
+		this.setState(coerceDimensions(nextProps));
+	}
+
 	render() {
 		let style = {};
 		if(this.props.width) {
 			style = Object.assign(style, {
-				width: this.props.width
+				width: `${this.props.width}px`
 			});
 		}
 
 		if(this.props.height) {
 			style = Object.assign(style, {
-				height: this.props.height
+				height: `${this.props.height}px`
 			});
 		}
 
@@ -38,8 +52,8 @@ export default class Icon extends React.Component {
 Icon.propTypes = {
 	type: React.PropTypes.string.isRequired,
 	label: React.PropTypes.string,
-	width: React.PropTypes.number,
-	height: React.PropTypes.number,
+	width: React.PropTypes.oneOfType([React.PropTypes.number, React.PropTypes.string]),
+	height: React.PropTypes.oneOfType([React.PropTypes.number, React.PropTypes.string]),
 	color: React.PropTypes.string,
 	style: React.PropTypes.object
 };
