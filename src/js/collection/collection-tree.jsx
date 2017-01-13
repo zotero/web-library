@@ -38,7 +38,19 @@ export default class CollectionTree extends React.Component {
 
 	collectionSelectedHandler(key, ev) {
 		ev && ev.preventDefault();
-		this.props.onCollectionSelected(key);
+		this.props.onCollectionSelected(key, ev);
+	}
+
+	collectionOpenenedHandler(key, ev) {
+		ev && ev.stopPropagation();
+		this.props.onCollectionOpened(key, ev);
+	}
+
+	collectionKeyboardHandler(key, ev) {
+		if(ev && (ev.key === 'Enter' || ev.key === ' ')) {
+			ev.stopPropagation();
+			this.props.onCollectionSelected(key, ev);
+		}
 	}
 
 	renderCollections(collections, level) {
@@ -49,13 +61,13 @@ export default class CollectionTree extends React.Component {
 
 		return (
 			<div className={ `level level-${level} ${hasOpen ? 'has-open' : ''} ${hasOpenLastLevel ? 'level-last' : ''}` }>
-				<ul className="nav">
+				<ul className="nav" role="group">
 					{ collections.map(collection => {
 						let twistyButton = (
 							<button
 								type="button"
 								className="twisty"
-								onClick={ () => this.props.onCollectionOpened(collection.key) }
+								onClick={ ev => this.collectionOpenenedHandler(collection.key, ev) }
 							/>
 						);
 						return (
@@ -63,13 +75,19 @@ export default class CollectionTree extends React.Component {
 								key={collection.key}
 								className={ `${collection.isOpen ? 'open' : ''} ${collection.isSelected ? 'selected' : '' }` }
 							>
-								<div className="item-container">
+								<div 
+									className="item-container"
+									onClick={ ev => this.collectionSelectedHandler(collection.key, ev) }
+									onKeyPress={ ev => this.collectionKeyboardHandler(collection.key, ev) }
+									role="treeitem"
+									aria-expanded={ collection.isOpen }
+									tabIndex="0" >
 									<div className="twisty-container">
 										{/* Button component */}
 										{ collection.hasChildren ? twistyButton : '' }
 									</div>
 									<Icon type="folder" width="16" height="16"/>
-									<a href="#" onClick={ ev => this.collectionSelectedHandler(collection.key, ev) }>
+									<a >
 										{ collection.apiObj.data.name }
 									</a>
 								</div>
@@ -94,7 +112,7 @@ export default class CollectionTree extends React.Component {
 					</header>
 
 					<div className={ `level-root ${isRootActive ? 'active' : ''}` }>
-						<div className="scroll-container">
+						<div className="scroll-container" role="tree">
 							<section>
 								<h4>My Library</h4>
 								{ this.renderCollections(this.state.collections, 1)}
