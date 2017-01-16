@@ -17,13 +17,14 @@ $brand-secondary: $tropy-blue;
 // Grays
 // --------------------------------------------------
 
-$white:  #fff;
-$smoke:  #f6f6f6;
-$silver: #e6e6e6;
-$slate:  #777;
-$iron:   #444;
-$coal:   #222;
-$black:  #000;
+$white:     #fff;
+$smoke:     #f6f6f6;
+$silver:    #e6e6e6;
+$gray-gull: #ccc;
+$slate:     #777;
+$iron:      #444;
+$coal:      #222;
+$black:     #000;
 
 // snow, dove, fog, pepper, silver, ash, (deep) cavern, (castle) rock, pewter,
 // shadow, graphite
@@ -78,6 +79,7 @@ $collection-tree-headings-color:          $slate;
 $collection-tree-link-color:              $iron;
 $collection-tree-active-link-color:       $coal;
 $collection-tree-active-link-bg:          $silver;
+$collection-tree-focus-color:             $gray-gull;
 $touch-collection-tree-active-link-color: $white;
 $touch-collection-tree-active-link-bg:    $asphalt;
 $touch-collection-tree-border:            $silver;

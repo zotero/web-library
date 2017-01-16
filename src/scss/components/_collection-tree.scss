@@ -61,10 +61,17 @@
 		}
 
 		.item-container {
+			outline: none;
+
 			@include mouse-and-bp-up(md) {
 				display: flex;
 				align-items: center;
 				padding-right: $component-padding-horizontal;
+
+				&:focus {
+					outline: 2px solid $collection-tree-focus-color;
+					outline-offset: -2px;
+				}
 			}
 		}
 
