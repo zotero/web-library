@@ -8,9 +8,16 @@ import ItemsListContainer from '../item/items-list-container';
 import ItemDetailsContainer from '../item/item-details-container';
 
 export default class Library extends React.Component {
+	constructor(props) {
+		super(props);
+		this.state = {
+			keyboard: false
+		};
+	}
+
 	render() {
 		return (
-			<div>
+			<div className={ this.state.keyboard ? 'keyboard' : '' }>
 				<Navbar />
 				<main>
 					<section className={ `library ${ this.props.view === 'library' ? 'active' : '' }` }>
@@ -36,6 +43,26 @@ export default class Library extends React.Component {
 				</main>
 			</div>
 		);
+	}
+
+	keyboardSupport(ev) {
+		console.log(ev);
+		if(ev.key === 'Tab') {
+			this.setState({
+				'keyboard': true
+			});
+		}
+	}
+
+
+	componentDidMount() {
+		this._keyboardListener = this.keyboardSupport.bind(this);
+		document.addEventListener('keyup', this._keyboardListener);
+	}
+
+
+	componentWillUnmount() {
+		document.removeEventListener('keyup', this._keyboardListener);
 	}
 }
 
