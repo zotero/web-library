@@ -68,6 +68,7 @@ export default class CollectionTree extends React.Component {
 								type="button"
 								className="twisty"
 								onClick={ ev => this.collectionOpenenedHandler(collection.key, ev) }
+								onKeyPress={ ev => ev.stopPropagation() }
 							/>
 						);
 						return (
