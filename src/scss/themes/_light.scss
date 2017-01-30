@@ -22,6 +22,7 @@ $smoke:     #f6f6f6;
 $silver:    #e6e6e6;
 $gray-gull: #ccc;
 $slate:     #777;
+$shade-5:   #555;
 $iron:      #444;
 $coal:      #222;
 $black:     #000;
@@ -79,7 +80,7 @@ $collection-tree-headings-color:          $slate;
 $collection-tree-link-color:              $iron;
 $collection-tree-active-link-color:       $coal;
 $collection-tree-active-link-bg:          $silver;
-$collection-tree-focus-color:             $gray-gull;
+$collection-tree-focus-color:             $asphalt;
 $touch-collection-tree-active-link-color: $white;
 $touch-collection-tree-active-link-bg:    $asphalt;
 $touch-collection-tree-border:            $silver;
@@ -113,11 +114,11 @@ $tab-inactive-color: $slate; // #999?
 $dt-color: $slate;
 
 // Buttons
-$btn-color: $white;
-$btn-bg:    $asphalt;
-$twisty-color: $slate;
-$twisty-focus-color: $iron;
-$twisty-focus-color-selected: $text-color;
+$btn-color:             $white;
+$btn-bg:                $asphalt;
+$twisty-color:          $slate;
+$twisty-focus-color:    $asphalt;
+$twisty-selected-color: $shade-5;
 
 // Spinner
 $spinner-color: $slate;

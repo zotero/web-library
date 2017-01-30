@@ -44,18 +44,19 @@
 	position: relative;
 	overflow: hidden;
 	cursor: pointer;
+  transition: transform $twisty-transition;
 
-	&:focus {
-		outline: none;
+  &:focus {
+    outline: none;
 
-		&::after{
-			border-left-color: $twisty-focus-color;
+    .keyboard & {
+      transform: scale(1.4);
 
-			.selected & {
-				border-left-color: $twisty-focus-color-selected;
-			}
-		}
-	}
+      &::after {
+        border-left-color: $twisty-focus-color;
+      }
+    }
+  }
 
 	&::after {
 		content: "";
@@ -72,4 +73,22 @@
 		transform-origin: 3.5px 4.5px;
 		transition: all $twisty-transition;
 	}
+}
+
+.selected {
+  > .item-container {
+    > .twisty-container {
+      > .twisty {
+        &::after {
+          border-left-color: $twisty-selected-color;
+        }
+
+        &:focus {
+          &::after {
+            border-left-color: $twisty-focus-color; // Reset
+          }
+        }
+      }
+    }
+  }
 }

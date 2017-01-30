@@ -27,6 +27,8 @@
 
 	ul {
 		li {
+			cursor: pointer;
+
 			a {
 				color: $collection-tree-link-color;
 				position: relative;
@@ -67,10 +69,16 @@
 				display: flex;
 				align-items: center;
 				padding-right: $component-padding-horizontal;
+			}
 
-				&:focus {
-					outline: 2px solid $collection-tree-focus-color;
-					outline-offset: -2px;
+			.keyboard & { // Heads up: 2 referencing parent selectors
+				@include mouse-and-bp-up(md) {
+
+					&:focus {
+						position: relative;
+						outline: 2px solid $collection-tree-focus-color;
+						outline-offset: -3px;
+					}
 				}
 			}
 		}
