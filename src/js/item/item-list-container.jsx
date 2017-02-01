@@ -2,11 +2,11 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
-import ItemsList from './items-list';
-import { selectItem, fetchItemsIfNeeded } from '../actions';
+import ItemList from './item-list';
+import { fetchItemsIfNeeded } from '../actions';
 import { push } from 'redux-router';
 
-class ItemsListContainer extends React.Component {
+class ItemListContainer extends React.Component {
 	componentWillReceiveProps(nextProps) {
 		if(nextProps.collection && nextProps.collection.key && nextProps.collection.key != this.props.collection.key) {
 			this.props.dispatch(
@@ -20,7 +20,7 @@ class ItemsListContainer extends React.Component {
 	}
 
 	render() {
-		return <ItemsList 
+		return <ItemList 
 			isFetching={ this.props.isFetching }
 			items={ this.props.items }
 			selectedItemKey={ this.props.selectedItemKey }
@@ -68,7 +68,7 @@ const mapDispatchToProps = dispatch => {
 	};
 };
 
-ItemsListContainer.propTypes = {
+ItemListContainer.propTypes = {
   collection: React.PropTypes.object.isRequired,
   items: React.PropTypes.array.isRequired,
   selectedItemKey: React.PropTypes.string,
@@ -79,4 +79,4 @@ ItemsListContainer.propTypes = {
 export default connect(
 	mapStateToProps,
 	mapDispatchToProps
-)(ItemsListContainer);
+)(ItemListContainer);

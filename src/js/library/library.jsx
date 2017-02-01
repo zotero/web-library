@@ -13,12 +13,13 @@ class Library extends React.Component {
 	}
 
 	render() {
-		let ItemsList = this.props.components['ItemsList'];
+		let ItemList = this.props.components['ItemList'];
 		let CollectionTree = this.props.components['CollectionTree'];
 		let ItemDetails = this.props.components['ItemDetails'];
 		let TagSelector = this.props.components['TagSelector'];
+		let activeViewClass = `view-${this.props.view}-active`;
 		return (
-			<div className={ this.state.keyboard ? 'keyboard' : '' }>
+			<div className={ `${activeViewClass} ${this.state.keyboard ? 'keyboard' : ''}` }>
 				<Navbar />
 				<main>
 					<section className={ `library ${ this.props.view === 'library' ? 'active' : '' }` }>
@@ -28,13 +29,13 @@ class Library extends React.Component {
 							<CollectionTree />
 							<TagSelector />
 						</header>
-						<section className={ `items ${ this.props.view === 'items' ? 'active' : '' }` }>
+						<section className={ `items ${ this.props.view === 'item-list' ? 'active' : '' }` }>
 							<div className="items-container">
 								<header className="touch-header hidden-xs-down">
 									<h3 className="hidden-mouse-md-up">Collection title</h3>
 									<div className="toolbar hidden-touch hidden-sm-down">Toolbar</div>
 								</header>
-								<ItemsList />
+								<ItemList />
 							</div>							
 							<ItemDetails active={this.props.view === 'item-details'} />
 						</section>

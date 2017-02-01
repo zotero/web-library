@@ -15,7 +15,7 @@ import Library from './library';
 import reducers from '../reducers';
 
 import CollectionTreeContainer from '../collection/collection-tree-container';
-import ItemsListContainer from '../item/items-list-container';
+import ItemListContainer from '../item/item-list-container';
 import ItemDetailsContainer from '../item/item-details-container';
 
  //@TODO: ensure this doesn't affect prod build
@@ -36,7 +36,7 @@ class LibraryContainer extends React.Component {
 		return <Library
 			view={ this.props.view }
 			injectCollectionTree = { CollectionTreeContainer }
-			injectItemsList = { ItemsListContainer }
+			injectItemList = { ItemListContainer }
 			injectItemDetails = { ItemDetailsContainer }
 		/>;
 	}
@@ -87,21 +87,21 @@ LibraryContainer.propTypes = {
 const getCurrentViewFromState = state => {
 	if(state.library &&
 		state.collections[state.library.libraryString] &&
-		state.collections.selected) {
-			let selectedCollectionKey = state.collections.selected;
+		'collection' in state.router.params) {
+			let selectedCollectionKey = state.router.params.collection;
 			let collections = state.collections[state.library.libraryString].collections;
 			let selectedCollection = collections.find(c => c.key === selectedCollectionKey);
-			let selectedItemKey = state.items.selected;
-			if(state.items[selectedCollectionKey] && state.items[selectedCollectionKey].items) {
+			if('item' in state.router.params && state.items[selectedCollectionKey] && state.items[selectedCollectionKey].items) {
+				let selectedItemKey = state.router.params.item;
 				let items = state.items[selectedCollectionKey].items;
 				let selectedItem = items.find(i => i.key === selectedItemKey);
 				if(selectedItem) {
 					return 'item-details';
 				}
 			}
-				
+
 			if(selectedCollection && !selectedCollection.hasChildren) {
-				return 'items';
+				return 'item-list';
 			}
 	}
 

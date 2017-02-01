@@ -3,7 +3,7 @@
 import React from 'react';
 import InjectableComponentsEnhance from '../enhancers/injectable-components-enhancer';
 
-class ItemsList extends React.Component {
+class ItemList extends React.Component {
 	render() {
 		let Item = this.props.components['Item'];
 		let Spinner = this.props.components['Spinner'];
@@ -42,15 +42,15 @@ class ItemsList extends React.Component {
 	}
 }
 
-ItemsList.propTypes = {
+ItemList.propTypes = {
 	items: React.PropTypes.array,
 	selectedItemKey: React.PropTypes.string, 
 	isFetching: React.PropTypes.bool,
 	onItemSelected: React.PropTypes.func
 };
 
-ItemsList.defaultProps = {
+ItemList.defaultProps = {
 	isFetching: false
 };
 
-export default InjectableComponentsEnhance(ItemsList);
+export default InjectableComponentsEnhance(ItemList);

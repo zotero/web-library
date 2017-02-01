@@ -2,7 +2,7 @@ import CollectionTree from './collection/collection-tree';
 import Item from './item/item';
 import ItemBox from './item/item-box';
 import ItemDetails from './item/item-details';
-import ItemsList from './item/items-list';
+import ItemList from './item/item-list';
 import Library from './library/library';
 import Navbar from './app/navbar';
 import TagSelector from './tag/tag-selector';
@@ -17,7 +17,7 @@ export default () => ({
 	Item,
 	ItemBox,
 	ItemDetails,
-	ItemsList,
+	ItemList,
 	Library,
 	Navbar,
 	TagSelector,
