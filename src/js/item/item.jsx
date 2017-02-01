@@ -1,8 +1,10 @@
 'use strict';
 
 import React from 'react';
+import InjectableComponentsEnhance from '../enhancers/injectable-components-enhancer';
+import { itemProp } from '../constants';
 
-export default class Item extends React.Component {
+class Item extends React.Component {
 	render() {
 		return (
 			<li className={ `item ${this.props.active ? 'active' : '' }` } onClick={ this.props.onClick }>
@@ -26,14 +28,7 @@ export default class Item extends React.Component {
 }
 
 Item.propTypes = {
-	item: React.PropTypes.shape({
-		data: React.PropTypes.shape({
-			title: React.PropTypes.string,
-			author: React.PropTypes.string,
-			year: React.PropTypes.number,
-			date: React.PropTypes.string
-		})
-	}),
+	item: itemProp,
 	active: React.PropTypes.bool,
 	onClick: React.PropTypes.func
 };
@@ -45,3 +40,5 @@ Item.defaultProps = {
 	active: false,
 	onClick: () => {} 
 };
+
+export default InjectableComponentsEnhance(Item);

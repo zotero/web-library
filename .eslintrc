@@ -20,6 +20,9 @@
     "extends": ["eslint:recommended", "plugin:react/recommended"],
     "rules": {
         "react/no-direct-mutation-state": "off",
+        "react/prop-types": [1, {
+            "ignore": ["components"]
+        }],
         "no-alert": "off",
         "no-array-constructor": "off",
         "no-bitwise": "off",

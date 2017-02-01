@@ -1,9 +1,9 @@
 'use strict';
 
 import React from 'react';
-import Spinner from '../ui/spinner';
+import InjectableComponentsEnhance from '../enhancers/injectable-components-enhancer';
 
-export default class EditableField extends React.Component {
+class Editable extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -100,6 +100,7 @@ export default class EditableField extends React.Component {
 	}
 
 	render() {
+		let Spinner = this.props.components['Spinner'];
 		if(this.state.processing) {
 			return <Spinner />;
 		}
@@ -126,7 +127,7 @@ export default class EditableField extends React.Component {
 }
 
 
-EditableField.propTypes = {
+Editable.propTypes = {
 	value: React.PropTypes.string,
 	placeholder: React.PropTypes.string,
 	emptytext: React.PropTypes.string,
@@ -135,7 +136,7 @@ EditableField.propTypes = {
 	editOnClick: React.PropTypes.bool
 };
 
-EditableField.defaultProps  = {
+Editable.defaultProps  = {
 	value: '',
 	placeholder: '',
 	emptytext: '',
@@ -143,3 +144,5 @@ EditableField.defaultProps  = {
 	onChange: () => {},
 	editOnClick: true
 };
+
+export default InjectableComponentsEnhance(Editable);

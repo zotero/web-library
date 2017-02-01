@@ -1,8 +1,7 @@
 'use strict';
 
 import React from 'react';
-import Spinner from '../ui/spinner';
-import Icon from '../ui/icon';
+import InjectableComponentsEnhance from '../enhancers/injectable-components-enhancer';
 
 function testRecursive(collections, test) {
 	if(collections.some(test)) {
@@ -19,7 +18,7 @@ function testRecursive(collections, test) {
 	return false;
 }
 
-export default class CollectionTree extends React.Component {
+class CollectionTree extends React.Component {
 	constructor(props) {
 		super(props);
 		//@TODO: deduplicate and use single loop
@@ -58,6 +57,7 @@ export default class CollectionTree extends React.Component {
 		let hasOpenLastLevel = collections.some(col => {
 			return col.isSelected && !col.hasChildren;
 		});
+		let Icon = this.props.components['Icon'];
 
 		return (
 			<div className={ `level level-${level} ${hasOpen ? 'has-open' : ''} ${hasOpenLastLevel ? 'level-last' : ''}` }>
@@ -102,6 +102,7 @@ export default class CollectionTree extends React.Component {
 	}
 
 	render() {
+		let Spinner = this.props.components['Spinner'];
 		if(this.props.isFetching) {
 			return <Spinner />;
 		} else {
@@ -155,3 +156,5 @@ CollectionTree.defaultProps = {
 	onCollectionOpened: () => null,
 	onCollectionSelected: () => null
 };
+
+export default InjectableComponentsEnhance(CollectionTree);

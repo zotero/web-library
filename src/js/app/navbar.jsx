@@ -1,8 +1,9 @@
 'use strict';
 
 import React from 'react';
+import InjectableComponentsEnhance from '../enhancers/injectable-components-enhancer';
 
-export default class Navbar extends React.Component {
+class Navbar extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -45,3 +46,5 @@ export default class Navbar extends React.Component {
 		</header>;
 	}
 }
+
+export default InjectableComponentsEnhance(Navbar);

@@ -4,7 +4,7 @@ import Zotero from 'libzotero';
 import React from 'react';
 import ItemDetails from './item-details';
 import { connect } from 'react-redux';
-import Item from './item';
+import { itemProp, fieldTypes} from '../constants';
 
 class ItemDetailsContainer extends React.Component {
 	render() {
@@ -20,7 +20,7 @@ const mapStateToProps = state => {
 	let selectedCollectionKey = 'collection' in state.router.params ? state.router.params.collection : null;
 	let selectedItemKey = 'item' in state.router.params ? state.router.params.item : null;
 	let { fieldMap, typeMap, hideFields, noEditFields } = Zotero.Item.prototype;
-	let { CREATORS, READONLY, EDITABLE } = ItemDetails.fieldTypes;
+	let { CREATORS, READONLY, EDITABLE } = fieldTypes;
 
 	if(selectedCollectionKey && state.items[selectedCollectionKey]) {
 		items = state.items[selectedCollectionKey].items;
@@ -49,11 +49,9 @@ const mapDispatchToProps = dispatch => {
 };
 
 ItemDetailsContainer.propTypes = {
-	fields: React.PropTypes.array
+	fields: React.PropTypes.array,
+	item: itemProp
 };
-
-ItemDetailsContainer.propTypes.item = Item.propTypes.item;
-
 
 export default connect(
 	mapStateToProps,

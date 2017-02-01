@@ -1,11 +1,13 @@
 'use strict';
 
 import React from 'react';
-import Item from './item';
-import Spinner from '../ui/spinner';
+import InjectableComponentsEnhance from '../enhancers/injectable-components-enhancer';
 
-export default class ItemsList extends React.Component {
+class ItemsList extends React.Component {
 	render() {
+		let Item = this.props.components['Item'];
+		let Spinner = this.props.components['Spinner'];
+
 		if(this.props.isFetching) {
 			return <Spinner />;
 		} else {
@@ -50,3 +52,5 @@ ItemsList.propTypes = {
 ItemsList.defaultProps = {
 	isFetching: false
 };
+
+export default InjectableComponentsEnhance(ItemsList);

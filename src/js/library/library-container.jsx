@@ -14,6 +14,10 @@ import { selectLibrary } from '../actions';
 import Library from './library';
 import reducers from '../reducers';
 
+import CollectionTreeContainer from '../collection/collection-tree-container';
+import ItemsListContainer from '../item/items-list-container';
+import ItemDetailsContainer from '../item/item-details-container';
+
  //@TODO: ensure this doesn't affect prod build
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
@@ -31,6 +35,9 @@ class LibraryContainer extends React.Component {
 	render() {
 		return <Library
 			view={ this.props.view }
+			injectCollectionTree = { CollectionTreeContainer }
+			injectItemsList = { ItemsListContainer }
+			injectItemDetails = { ItemDetailsContainer }
 		/>;
 	}
 

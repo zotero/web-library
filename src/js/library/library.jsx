@@ -2,12 +2,9 @@
 
 import React from 'react';
 import Navbar from '../app/navbar';
-import CollectionTreeContainer from '../collection/collection-tree-container';
-import TagSelector from '../tag/tag-selector';
-import ItemsListContainer from '../item/items-list-container';
-import ItemDetailsContainer from '../item/item-details-container';
+import InjectableComponentsEnhance from '../enhancers/injectable-components-enhancer';
 
-export default class Library extends React.Component {
+class Library extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -16,6 +13,10 @@ export default class Library extends React.Component {
 	}
 
 	render() {
+		let ItemsList = this.props.components['ItemsList'];
+		let CollectionTree = this.props.components['CollectionTree'];
+		let ItemDetails = this.props.components['ItemDetails'];
+		let TagSelector = this.props.components['TagSelector'];
 		return (
 			<div className={ this.state.keyboard ? 'keyboard' : '' }>
 				<Navbar />
@@ -24,7 +25,7 @@ export default class Library extends React.Component {
 						<header className="touch-header hidden-sm-up">Mobile Header</header>
 						<header className="sidebar">
 							<h2 className="offscreen">Web library</h2>
-							<CollectionTreeContainer />
+							<CollectionTree />
 							<TagSelector />
 						</header>
 						<section className={ `items ${ this.props.view === 'items' ? 'active' : '' }` }>
@@ -33,11 +34,9 @@ export default class Library extends React.Component {
 									<h3 className="hidden-mouse-md-up">Collection title</h3>
 									<div className="toolbar hidden-touch hidden-sm-down">Toolbar</div>
 								</header>
-								<ItemsListContainer />
-							</div>
-							<section className={ `item-details ${this.props.view === 'item-details' ? 'active' : ''}` }>
-								<ItemDetailsContainer />
-							</section>
+								<ItemsList />
+							</div>							
+							<ItemDetails active={this.props.view === 'item-details'} />
 						</section>
 					</section>
 				</main>
@@ -54,7 +53,6 @@ export default class Library extends React.Component {
 		}
 	}
 
-
 	componentDidMount() {
 		this._keyboardListener = this.keyboardSupport.bind(this);
 		document.addEventListener('keyup', this._keyboardListener);
@@ -69,3 +67,5 @@ export default class Library extends React.Component {
 Library.propTypes = {
 	view: React.PropTypes.string
 };
+
+export default InjectableComponentsEnhance(Library);
