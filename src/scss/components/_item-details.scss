@@ -11,13 +11,18 @@
 		transform: translate3d(100%, 0, 0);
 		transition: $nav-transition;
 
-		&.active {
+		.view-item-details-active & {
 			transform: translate3d(0, 0, 0);
 		}
 	}
 
+	@include bp-down(xs) {
+		.view-item-details-active & {
+			transform: translate3d(25%, 0, 0);
+		}
+	}
+
 	@include bp-only(md) {
-		border-left: $space-min solid $body-bg;
 		flex: 1 1 0;
 		height: 50%;
 
