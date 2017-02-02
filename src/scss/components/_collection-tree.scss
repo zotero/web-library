@@ -118,6 +118,15 @@
 		}
 	}
 
+	.svg-icon {
+		flex: 0 0 auto;
+		margin-right: $space-xs;
+
+		@include touch-or-bp-down(sm) {
+			display: none;
+		}
+	}
+
 	.level-root {
 		@include touch-or-bp-down(sm) {
 			flex: 1 1 0;
