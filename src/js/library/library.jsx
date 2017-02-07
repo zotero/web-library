@@ -30,13 +30,14 @@ class Library extends React.Component {
 							<TagSelector />
 						</header>
 						<section className={ `items ${ this.props.view === 'item-list' ? 'active' : '' }` }>
+							<header className="touch-header hidden-xs-down hidden-md-up">Tablet Header</header>
 							<div className="items-container">
-								<header className="touch-header hidden-xs-down">
+								<header className="hidden-sm-down">
 									<h3 className="hidden-mouse-md-up">Collection title</h3>
 									<div className="toolbar hidden-touch hidden-sm-down">Toolbar</div>
 								</header>
 								<ItemList />
-							</div>							
+							</div>
 							<ItemDetails active={this.props.view === 'item-details'} />
 						</section>
 					</section>

@@ -3,7 +3,6 @@
 // --------------------------------------------------
 
 .items {
-
 	@include bp-down(xs) {
 		position: absolute;
 		left: 0;
@@ -55,8 +54,10 @@
 
 	@include bp-only(sm) {
 		position: absolute;
-		width: 100%;
-		height: 100%;
+		top: $line-height-large-touch + $space-min;
+		right: 0;
+		bottom: 0;
+		left: 0;
 		transition: $nav-transition;
 
 		.view-item-details-active & {
