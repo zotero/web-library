@@ -76,7 +76,7 @@ class CollectionTree extends React.Component {
 								key={collection.key}
 								className={ `${collection.isOpen ? 'open' : ''} ${collection.isSelected ? 'selected' : '' }` }
 							>
-								<div 
+								<div
 									className="item-container"
 									onClick={ ev => this.collectionSelectedHandler(collection.key, ev) }
 									onKeyPress={ ev => this.collectionKeyboardHandler(collection.key, ev) }
@@ -88,7 +88,7 @@ class CollectionTree extends React.Component {
 										{ collection.hasChildren ? twistyButton : '' }
 									</div>
 									<Icon type="folder" width="16" height="16"/>
-									<a >
+									<a>
 										{ collection.apiObj.data.name }
 									</a>
 								</div>
