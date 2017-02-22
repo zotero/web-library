@@ -6,119 +6,117 @@
 // Colors
 // --------------------------------------------------
 
-$zotero-red: #900;
-$tropy-blue: #5c93e5;
-$asphalt:    #7a8799;
+$red:     #900;
+$blue:    #5c93e5;
+$asphalt: #7a8799;
 
-$brand-primary:   $zotero-red;
-$brand-secondary: $tropy-blue;
+$brand-primary:   $red;
+$brand-secondary: $blue;
 
 
 // Grays
 // --------------------------------------------------
 
-$white:     #fff;
-$smoke:     #f6f6f6;
-$silver:    #e6e6e6;
-$gray-gull: #ccc;
-$slate:     #777;
-$shade-5:   #555;
-$iron:      #444;
-$coal:      #222;
-$black:     #000;
-
-// snow, dove, fog, pepper, silver, ash, (deep) cavern, (castle) rock, pewter,
-// shadow, graphite
+$shade-0: #fff;
+$shade-1: #f6f6f6;
+$shade-2: #e6e6e6;
+$shade-3: #ddd;
+$shade-4: #ccc;
+$shade-5: #777;
+$shade-6: #555;
+$shade-7: #444;
+$shade-8: #222;
+$shade-9: #000;
 
 
 // Scaffolding
 // --------------------------------------------------
 
-$body-bg:    $white;
-$text-color: $coal;
+$body-bg:    $shade-0;
+$text-color: $shade-8;
 
-$link-color:       $tropy-blue;
-$link-hover-color: $tropy-blue;
+$link-color:       $blue;
+$link-hover-color: $blue;
 
 
 // Partials
 // --------------------------------------------------
 
 // Main
-$main-bg: $white;
+$main-bg: $shade-0;
 
 // Sidebar
-$sidebar-bg: $smoke;
+$sidebar-bg: $shade-1;
 
 // Type
-$touch-header-color: $slate;
+$touch-header-color: $shade-5;
 
 // Separator
-$separator-color: $silver;
+$separator-color: $shade-2;
 
 
 // Components
 // --------------------------------------------------
 
 // Icon
-$icon-color: $slate;
-$icon-active-color: $coal;
+$icon-color: $shade-5;
+$icon-active-color: $shade-8;
 
 // Navbar
-$navbar-bg:                       $smoke;
-$navbar-nav-mobile-bg:            $silver;
-$navbar-border-color:             $white;
-$navbar-link-color:               $iron;
+$navbar-bg:                       $shade-1;
+$navbar-nav-mobile-bg:            $shade-2;
+$navbar-border-color:             $shade-0;
+$navbar-link-color:               $shade-7;
 $navbar-link-active-color:        $asphalt;
-$navbar-link-mobile-active-color: $white;
-$user-profile-link-bg:            $silver;
-$icon-bar-bg:                     $iron;
+$navbar-link-mobile-active-color: $shade-0;
+$user-profile-link-bg:            $shade-2;
+$icon-bar-bg:                     $shade-7;
 $icon-bar-bg-focus:               $asphalt;
 
 // Collection tree
-$collection-tree-headings-color:          $slate;
-$collection-tree-link-color:              $iron;
-$collection-tree-active-link-color:       $coal;
-$collection-tree-active-link-bg:          $silver;
+$collection-tree-headings-color:          $shade-5;
+$collection-tree-link-color:              $shade-7;
+$collection-tree-active-link-color:       $shade-8;
+$collection-tree-active-link-bg:          $shade-2;
 $collection-tree-focus-color:             $asphalt;
-$touch-collection-tree-active-link-color: $white;
+$touch-collection-tree-active-link-color: $shade-0;
 $touch-collection-tree-active-link-bg:    $asphalt;
-$touch-collection-tree-border:            $silver;
+$touch-collection-tree-border:            $shade-2;
 
 // Items
-$items-bg:              $white;
-$items-odd-bg:          $smoke;
-$item-list-head-color:  $iron;
-$item-list-head-border: $silver;
+$items-bg:              $shade-0;
+$items-odd-bg:          $shade-1;
+$item-list-head-color:  $shade-7;
+$item-list-head-border: $shade-2;
 
 // Item list
-$item-odd-bg:       $smoke;
-$item-active-color: $white;
+$item-odd-bg:       $shade-1;
+$item-active-color: $shade-0;
 $item-active-bg:    $asphalt;
 
 // Item details
-$item-details-bg: $smoke;
+$item-details-bg: $shade-1;
 
 // Panel
-$panel-bg: $smoke;
-$panel-header-color: $iron;
-$panel-header-shadow: rgba($black, 0.08);
+$panel-bg: $shade-1;
+$panel-header-color: $shade-7;
+$panel-header-shadow: rgba($shade-9, 0.08);
 
 // Tabs
-$tab-bg: $silver;
+$tab-bg: $shade-2;
 $tab-active-color: inherit;
-$tab-active-bg: $smoke;
-$tab-inactive-color: $slate; // #999?
+$tab-active-bg: $shade-1;
+$tab-inactive-color: $shade-5; // #999?
 
 // Description list
-$dt-color: $slate;
+$dt-color: $shade-5;
 
 // Buttons
-$btn-color:             $white;
+$btn-color:             $shade-0;
 $btn-bg:                $asphalt;
-$twisty-color:          $slate;
+$twisty-color:          $shade-5;
 $twisty-focus-color:    $asphalt;
-$twisty-selected-color: $shade-5;
+$twisty-selected-color: $shade-6;
 
 // Spinner
-$spinner-color: $slate;
+$spinner-color: $shade-5;
