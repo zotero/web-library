@@ -1,0 +1,82 @@
+//
+// Touch header
+// --------------------------------------------------
+
+.touch-header {
+	@include touch-or-bp-down(sm) {
+		flex: 0 0 $line-height-large-touch;
+		background: $body-bg;
+		color: $touch-header-color;
+		height: $line-height-large-touch;
+		padding: 0 $component-padding-horizontal-touch;
+	}
+
+	@include touch-or-bp-only(sm) {
+		padding-bottom: $space-min;
+		box-sizing: content-box;
+	}
+
+	nav,
+	ul,
+	li {
+		height: 100%;
+	}
+
+	ul {
+		position: relative;
+	}
+
+	li {
+		align-items: center;
+		position: absolute;
+		top: 0;
+		transition:
+			left $nav-transition,
+			transform $nav-transition,
+			color $nav-transition;
+		display: none;
+		min-width: 1px;
+		white-space: nowrap;
+		max-width: calc(33.33% - #{$space-sm / 2});
+
+		div {
+			@include css-truncate;
+		}
+	}
+
+	.forelast,
+	.previous,
+	.current,
+	.next {
+		display: flex;
+	}
+
+	.forelast,
+	.current,
+	.next {
+		transform: translateX(-50%);
+	}
+
+	.forelast,
+	.previous {
+		color: $touch-header-link-color;
+		cursor: pointer;
+	}
+
+	.forelast {
+		left: -50%;
+	}
+
+	.previous {
+		left: 0;
+		transform: translateX(0);
+	}
+
+	.current {
+		left: 50%;
+	}
+
+	.next {
+		left: 150%;
+	}
+}

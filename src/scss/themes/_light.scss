@@ -48,9 +48,6 @@ $main-bg: $shade-0;
 // Sidebar
 $sidebar-bg: $shade-1;
 
-// Type
-$touch-header-color: $shade-5;
-
 // Separator
 $separator-color: $shade-2;
 
@@ -120,3 +117,7 @@ $twisty-selected-color: $shade-6;
 
 // Spinner
 $spinner-color: $shade-5;
+
+// Touch header
+$touch-header-color: $shade-7; // Better than $shade-5 to link color
+$touch-header-link-color: $asphalt;

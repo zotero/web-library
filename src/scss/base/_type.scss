@@ -47,23 +47,3 @@ ul, ol {
 	padding: 0;
 	list-style: none;
 }
-
-
-// Headers
-
-.touch-header {
-	@include touch-or-bp-down(sm) {
-		flex: 0 0 $line-height-large-touch;
-		background: $body-bg;
-		color: $touch-header-color;
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		height: $line-height-large-touch;
-	}
-
-	@include touch-or-bp-only(sm) {
-		padding-bottom: $space-min;
-		box-sizing: content-box;
-	}
-}

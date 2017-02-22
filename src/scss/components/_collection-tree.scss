@@ -132,7 +132,7 @@
 			flex: 1 1 0;
 			height: 100%;
 			transform: translate3d(-25%, 0, 0);
-			transition: $nav-transition;
+			transition: transform $nav-transition;
 
 			&.active {
 				transform: translate3d(0, 0, 0);
@@ -147,7 +147,7 @@
 
 	.level {
 		z-index: $z-index-level;
-		transition: $nav-transition;
+		transition: transform $nav-transition;
 
 		.level {
 			@include touch-or-bp-down(sm) {

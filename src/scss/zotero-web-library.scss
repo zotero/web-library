@@ -2,22 +2,42 @@
 // Zotero Web Library
 // --------------------------------------------------
 
+
+// Abstracts
+// --------------------------------------------------
+
 @import "abstracts/variables";
 @import "abstracts/functions";
 @import "abstracts/mixins";
 @import "abstracts/placeholders";
 @import "abstracts/utilities";
 
+
+// Theme
+// --------------------------------------------------
+
 @import "themes/light";
+
+
+// Base
+// --------------------------------------------------
 
 @import "base/normalize";
 @import "base/base";
 @import "base/type";
 
+
+// Partials
+// --------------------------------------------------
+
 @import "partials/sidebar";
 @import "partials/navs";
 @import "partials/separator";
 @import "partials/abstract";
+
+
+// Components
+// --------------------------------------------------
 
 @import "components/navbar";
 @import "components/collection-tree";
@@ -32,3 +52,4 @@
 @import "components/buttons";
 @import "components/spinner";
 @import "components/icon";
+@import "components/touch-header";
