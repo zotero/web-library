@@ -3,22 +3,15 @@
 // --------------------------------------------------
 
 
-// Mobile navbar transition
-
-@mixin mobile-navbar-nav-transition($property) {
-	transition: #{$property} 0.3s ease-out;
-}
-
-
 // Content transform
 
 @mixin content-transform {
-	left: -($navbar-nav-mobile-width + $space-min);
+	left: $content-transform;
 }
 
 
 // Mobile navbar nav transform
 
 @mixin mobile-navbar-nav-transform {
-	transform: translate3d(($navbar-nav-mobile-width / 2), 0, 0);
+	transform: translate3d(25%, 0, 0);
 }

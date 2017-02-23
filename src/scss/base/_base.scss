@@ -48,13 +48,14 @@ main {
 	position: relative;
 	z-index: $z-index-main;
 	left: 0;
+	overflow: hidden; // Do not overlap open mobile navbar nav
 
 	@include bp-up(sm) {
 		display: flex;
 	}
 
 	@include bp-down(xs) {
-		@include mobile-navbar-nav-transition(left);
+		transition: left $mobile-navbar-nav-transition;
 
 		.navbar-nav-opened & {
 			@include content-transform;

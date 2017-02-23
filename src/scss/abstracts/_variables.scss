@@ -57,6 +57,7 @@ $border-radius-base: 3px;
 // Transitions
 // --------------------------------------------------
 
+$mobile-navbar-nav-transition: 0.6s cubic-bezier(0.23, 1, 0.32, 1);
 $nav-transition: 0.6s cubic-bezier(0.23, 1, 0.32, 1);
 $twisty-transition: 0.1s ease;
 
@@ -84,19 +85,21 @@ $z-index-navbar:     20;
 // Navbbar
 // --------------------------------------------------
 
-$navbar-height-xs:          $space-thumb;
-$navbar-height-sm:          $space-max;
-$navbar-font-size:          $space-md;
-$navbar-margin-bottom:      $space-min;
-$navbar-padding-horizontal: $space-md;
-$navbar-padding-top:        21px;
-$navbar-padding-bottom:     21px;
-$navbar-active-indicator:   3px;
-$navbar-breakpoint:         map-get($grid-breakpoints, sm);
-$navbar-nav-mobile-width:   240px;
-$icon-bar-width:            $space-lg;
-$icon-bar-height:           2px;
-$icon-bar-spacing:          6px;
+$navbar-height-xs:             $space-thumb;
+$navbar-height-sm:             $space-max;
+$navbar-font-size:             $space-md;
+$navbar-margin-bottom:         $space-min;
+$navbar-padding-horizontal:    $space-md;
+$navbar-padding-top:           21px;
+$navbar-padding-bottom:        21px;
+$navbar-active-indicator:      3px;
+$navbar-breakpoint:            map-get($grid-breakpoints, sm);
+$toggle-padding-horizontal:    $space-md;
+$icon-bar-width:               $space-lg;
+$icon-bar-height:              2px;
+$icon-bar-spacing:             6px;
+$navbar-nav-mobile-width:      calc(100% - #{$icon-bar-width + 2 * $toggle-padding - $space-min});
+$content-transform:            calc(-100% + #{$icon-bar-width + 2 * $toggle-padding});
 
 
 // Navbbar brand
