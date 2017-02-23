@@ -3,6 +3,8 @@
 // --------------------------------------------------
 
 .touch-header {
+	overflow: hidden;
+
 	@include touch-or-bp-down(sm) {
 		flex: 0 0 $line-height-large-touch;
 		background: $body-bg;
