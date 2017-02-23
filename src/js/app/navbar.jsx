@@ -22,22 +22,26 @@ class Navbar extends React.Component {
 			classNames += ' navbar-nav-opened';
 		}
 		return <header className={ classNames }>
-			<h1 className="navbar-brand"><a href="/">Zotero</a></h1>
-			<h2 className="offscreen">Site navigation</h2>
-			<nav className="navbar-nav">
-				<ul className="nav">
-					<li><a href="#">Feed</a></li>
-					<li className="active"><a href="#">Library</a></li>
-					<li><a href="#">Groups</a></li>
-				</ul>
-			</nav>
-			<a href="#" className="search">Search</a>
-			<a href="#" className="user-profile-link"></a>
-			<button className="navbar-toggle" onClick={ () => this.toggleNavbar() }>
-				<span className="icon-bar"></span>
-				<span className="icon-bar"></span>
-				<span className="icon-bar"></span>
-			</button>
+			<div className="navbar-left">
+				<h1 className="navbar-brand"><a href="/">Zotero</a></h1>
+				<h2 className="offscreen">Site navigation</h2>
+				<nav className="navbar-nav">
+					<ul className="nav">
+						<li><a href="#">Feed</a></li>
+						<li className="active"><a href="#">Library</a></li>
+						<li><a href="#">Groups</a></li>
+					</ul>
+				</nav>
+			</div>
+			<div className="navbar-right">
+				<a href="#" className="search">Search</a>
+				<a href="#" className="user-profile-link"></a>
+				<button className="navbar-toggle" onClick={ () => this.toggleNavbar() }>
+					<span className="icon-bar"></span>
+					<span className="icon-bar"></span>
+					<span className="icon-bar"></span>
+				</button>
+			</div>
 		</header>;
 	}
 }

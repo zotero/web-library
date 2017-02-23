@@ -42,6 +42,11 @@
 		}
 	}
 
+	.navbar-left,
+	.navbar-right {
+		display: flex;
+	}
+
 	.navbar-brand,
 	.navbar-toggle {
 		position: relative;
