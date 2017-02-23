@@ -23,8 +23,8 @@ class Navbar extends React.Component {
 		}
 		return <header className={ classNames }>
 			<h1 className="navbar-brand"><a href="/">Zotero</a></h1>
+			<h2 className="offscreen">Site navigation</h2>
 			<nav className="navbar-nav">
-				<h2 className="offscreen">Site navigation</h2>
 				<ul className="nav">
 					<li><a href="#">Feed</a></li>
 					<li className="active"><a href="#">Library</a></li>
