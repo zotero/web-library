@@ -33,12 +33,12 @@ class Navbar extends React.Component {
 			</nav>
 			<a href="#" className="search">Search</a>
 			<a href="#" className="user-profile-link"></a>
-			<button className="dropdown-toggle" onClick={ () => this.toggleNavbar() }>
+			<button className="dropdown-toggle">
 				<span className="icon-bar"></span>
 				<span className="icon-bar"></span>
 				<span className="icon-bar"></span>
 			</button>
-			<button className="navbar-toggle">
+			<button className="navbar-toggle" onClick={ () => this.toggleNavbar() }>
 				<span className="icon-bar"></span>
 				<span className="icon-bar"></span>
 				<span className="icon-bar"></span>
