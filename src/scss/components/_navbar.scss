@@ -180,11 +180,10 @@
 		}
 	}
 
-	.dropdown-toggle,
 	.navbar-toggle {
 		border: none;
 		background: transparent;
-		padding: 0 $toggle-padding-horizontal;
+		padding: 0 $navbar-toggle-padding-horizontal;
 
 		&:focus {
 			outline: none;
@@ -208,19 +207,11 @@
 		}
 	}
 
-	.dropdown-toggle {
-		height: $navbar-height-sm;
-
-		@include bp-down(xs) {
-			display: none;
-		}
-	}
-
 	.navbar-toggle {
 		height: $navbar-height-xs;
 
 		@include bp-up(sm) {
-			display: none;
+			height: $navbar-height-sm;
 		}
 	}
 }
