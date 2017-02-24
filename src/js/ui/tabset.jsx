@@ -47,11 +47,9 @@ export default class Tabset extends React.Component {
 			for(let child of this.props.children) {
 				if(child.type === Tab) {
 					tabContents.push(
-						<div key={ counter } className="tab-content">
-							<div className={ `tab-pane ${this.state.active === counter ? 'active' : ''}` }>
-								{ child }
-							</div>
-						</div>
+						<section key={ counter } className={ `tab-pane ${this.state.active === counter ? 'active' : ''}` }>
+							{ child }
+						</section>
 					);
 					counter++;
 				}

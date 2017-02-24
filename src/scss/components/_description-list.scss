@@ -38,6 +38,12 @@ dl {
 		}
 	}
 
+	.empty {
+		@include bp-down(sm) {
+			display: none;
+		}
+	}
+
 	a {
 		color: inherit;
 		text-decoration: none;

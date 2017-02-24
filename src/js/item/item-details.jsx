@@ -11,50 +11,44 @@ class ItemDetails extends React.Component {
 		let ItemBox = this.props.components['ItemBox'];
 		return (
 			<section className={ `item-details ${this.props.active ? 'active' : ''}` }>
-				<section className="panel">
-					<header className="panel-header">
-						<h4 className="offscreen">
-							{ this.props.item.data.title }
-						</h4>
-					</header>
-					<Tabset>
-						<Tab title="Info">
-							<div className="toolbar hidden-sm-down hidden-lg-up">
-								<div className="toolbar-right"><button className="btn">Edit</button></div>
+				<Tabset>
+					<Tab title="Info">
+						<div className="toolbar hidden-sm-down hidden-lg-up">
+							<div className="toolbar-right"><button className="btn">Edit</button></div>
+						</div>
+						<div className="row">
+							<div className="col">
+								<h5 className="item-title">Item Title</h5>
+								<ItemBox
+									hiddenFields={ [ 'abstractNote' ] }
+									fields={ this.props.fields }
+									item={ this.props.item }
+								/>
 							</div>
-							<div className="row">
-								<div className="col">
-									<ItemBox
-										hiddenFields={ [ 'abstractNote' ] }
-										fields={ this.props.fields }
-										item={ this.props.item } 
-									/>
-								</div>
-								<div className="col">
-									<section className="abstract">
-										<div className="separator hidden-md-down" role="separator"></div>
-										<h5>Abstract</h5>
-										<div>
-											{ this.props.item.data.abstractNote }
-										</div>
-									</section>
-								</div>
+							<div className="col">
+								<section className="abstract">
+									<div className="separator" role="separator"></div>
+									<h6>Abstract</h6>
+									<div>
+										{ this.props.item.data.abstractNote }
+									</div>
+								</section>
 							</div>
-						</Tab>
-						<Tab title="Notes">
-							Notes tab content goes here
-						</Tab>
-						<Tab title="Tag">
-							Tag tab content goes here
-						</Tab>
-						<Tab title="Attachments">
-							Attachments tab content goes here
-						</Tab>
-						<Tab title="Related">
-							Related tab content goes here
-						</Tab>
-					</Tabset>
-				</section>
+						</div>
+					</Tab>
+					<Tab title="Notes">
+						Notes tab content goes here
+					</Tab>
+					<Tab title="Tag">
+						Tag tab content goes here
+					</Tab>
+					<Tab title="Attachments">
+						Attachments tab content goes here
+					</Tab>
+					<Tab title="Related">
+						Related tab content goes here
+					</Tab>
+				</Tabset>
 			</section>
 		);
 	}

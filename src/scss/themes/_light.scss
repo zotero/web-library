@@ -100,10 +100,11 @@ $panel-header-color: $shade-7;
 $panel-header-shadow: rgba($shade-9, 0.08);
 
 // Tabs
-$tab-bg: $shade-2;
-$tab-active-color: inherit;
-$tab-active-bg: $shade-1;
-$tab-inactive-color: $shade-5; // #999?
+$tab-bg:                $shade-2;
+$tab-active-color:      inherit;
+$tab-active-bg:         $shade-1;
+$tab-inactive-color:    $shade-5; // #999?
+$tab-pane-border-color: $shade-0;
 
 // Description list
 $dt-color: $shade-5;

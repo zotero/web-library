@@ -55,9 +55,17 @@
 }
 
 .tab-pane {
-	display: none;
+	@include mouse-and-bp-up(md) {
+		display: none;
 
-	&.active {
-		display: block;
+		&.active {
+			display: block;
+		}
+	}
+
+	@include touch-or-bp-down(sm) {
+		& + .tab-pane {
+			border-top: $space-min solid #fff;
+		}
 	}
 }

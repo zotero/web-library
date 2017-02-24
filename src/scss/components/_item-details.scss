@@ -17,6 +17,14 @@
 		}
 	}
 
+	@include touch-or-bp-down(sm) {
+		.panel {
+			.panel-header {
+				display: none;
+			}
+		}
+	}
+
 	@include bp-down(xs) {
 		top: 0;
 
@@ -57,6 +65,16 @@
 			flex: 0 0 50%;
 			position: relative;
 		}
+
+		.separator {
+			display: none;
+		}
+	}
+
+	@include mouse-and-bp-up(md) {
+		.item-title {
+			display: none;
+		}
 	}
 
 	@include bp-up(lg) {
@@ -72,10 +90,10 @@
 	}
 
 	.dl-horizontal {
-		margin-top: 5px;
+		margin-top: 3px;
 
 		@include bp-only(md) {
-			margin-top: -5px;
+			margin-top: -3px;
 
 			dd {
 				padding-right: ($dl-gutter + 1px);
