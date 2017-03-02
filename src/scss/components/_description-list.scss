@@ -39,7 +39,7 @@ dl {
 	}
 
 	.empty {
-		@include bp-down(sm) {
+		@include touch-or-bp-down(md) {
 			display: none;
 		}
 	}
