@@ -68,7 +68,7 @@
 			@include mouse-and-bp-up(md) {
 				display: flex;
 				align-items: center;
-				padding-right: $component-padding-horizontal;
+				padding-right: $default-padding-horizontal;
 			}
 
 			.keyboard & { // Heads up: 2 referencing parent selectors

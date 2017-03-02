@@ -10,7 +10,7 @@
 		background: $body-bg;
 		color: $touch-header-color;
 		height: $line-height-large-touch;
-		padding: 0 $component-padding-horizontal-touch;
+		padding: 0 $default-padding-horizontal-touch;
 	}
 
 	@include touch-or-bp-only(sm) {

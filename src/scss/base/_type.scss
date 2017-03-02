@@ -5,20 +5,35 @@
 
 // Headings
 
-h1, h2, h3, h4, h5, h6,
-.h1, .h2, .h3, .h4, .h5, .h6 {
+h1, h2, h3, h4, h5, h6 {
   font-family: $headings-font-family;
   font-weight: $headings-font-weight;
   line-height: $headings-line-height;
   color: $headings-color;
   font-size: inherit;
+  line-height: inherit;
   margin: 0;
 }
 
-h6, .h6 {
-	font-size: $font-size-h6;
+.h1, .h2 {
+	line-height: $headings-line-height;
 	margin-bottom: 1rem;
 }
+
+.h1 {
+	font: {
+		family: BlinkMacSystemFont, "HelveticaNeue-Light", "Helvetica Neue Light",
+			"Helvetica Neue", Helvetica, Arial, sans-serif;
+		size: $font-size-h1;
+		weight: 300;
+	}
+}
+
+.h2 {
+	font-size: $font-size-h2;
+	margin-top: ($space-md - 5px);
+}
+
 
 // Paragraph
 

@@ -20,12 +20,13 @@ $space-thumb: 42px;
 // Typography
 // --------------------------------------------------
 
-$font-family-sans-serif: "Helvetica Neue", Helvetica, Arial, sans-serif; // todo: BlinkMacSystemFont
+$font-family-sans-serif: BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
 $font-family-base:       $font-family-sans-serif;
 
 $font-size-base: 14px;
 
-$font-size-h6: 16px;
+$font-size-h1: 20px;
+$font-size-h2: 16px;
 
 
 $line-height-base:     1.429;
@@ -38,8 +39,7 @@ $link-hover-decoration: underline;
 
 $headings-font-family:    inherit;
 $headings-font-weight:    400;
-$headings-line-height:    inherit;
-$headings-color:          inherit;
+$headings-line-height:    1.3;
 
 
 // Common dimensions
@@ -48,8 +48,8 @@ $headings-color:          inherit;
 $padding-horizontal-sm: $space-sm;
 $padding-horizontal-md: $space-md;
 
-$component-padding-horizontal:       $space-sm;
-$component-padding-horizontal-touch: $space-md;
+$default-padding-horizontal:       $space-sm;
+$default-padding-horizontal-touch: $space-md;
 
 $border-radius-base: 3px;
 

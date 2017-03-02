@@ -26,14 +26,14 @@ dl {
 		dt {
 			flex: 0 0 $dl-horizontal-offset;
 			text-align: right;
-			padding-left: $component-padding-horizontal;
+			padding-left: $default-padding-horizontal;
 			padding-right: ($dl-gutter / 2);
 		}
 
 		dd {
 			flex: 0 0 calc(100% - #{$dl-horizontal-offset});
 			padding-left: ($dl-gutter / 2);
-			padding-right: $component-padding-horizontal;
+			padding-right: $default-padding-horizontal;
 			max-width: 100%;
 		}
 	}

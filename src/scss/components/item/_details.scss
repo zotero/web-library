@@ -17,14 +17,6 @@
 		}
 	}
 
-	@include touch-or-bp-down(sm) {
-		.panel {
-			.panel-header {
-				display: none;
-			}
-		}
-	}
-
 	@include bp-down(xs) {
 		top: 0;
 
@@ -36,12 +28,59 @@
 	@include bp-only(md) {
 		flex: 1 1 0;
 		height: 50%;
+	}
+
+	@include bp-up(lg) {
+		flex: 0 0 $item-details-width-lg;
+
+		.touch & {
+			flex: 0 0 $touch-item-details-width-lg;
+		}
+	}
+
+	.panel-header {
+		@include touch-or-bp-down(sm) {
+			display: none;
+		}
+	}
+
+	.toolbar {
+		margin: $space-min 0 ($space-md - 2px);
+	}
+
+	.item-title,
+	.tab-pane-heading {
+		@include mouse-and-bp-up(md) {
+			display: none;
+		}
+	}
+
+	.item-title {
+		border-bottom: 2px solid $separator-color;
+		padding-bottom: 10px;
+		margin: 10px $default-padding-horizontal-touch 9px;
+	}
+
+	.abstract-heading {
+		@include touch-or-bp-down(sm) {
+			margin-top: 9px;
+			border-top: 2px solid $separator-color;
+			padding-top: 11px;
+		}
+	}
+
+	.tab-pane-heading {
+		padding: 0 $default-padding-horizontal;
+	}
+
+	// Two column layout for md screens
+	@include bp-only(md) {
 
 		// Optimize tabs layout
 		.tabs.compact {
 			li {
 				a {
-					padding: 0 $tabs-padding-horizontal;
+					padding: 0 $default-padding-horizontal-touch;
 				}
 			}
 		}
@@ -69,24 +108,6 @@
 		.separator {
 			display: none;
 		}
-	}
-
-	@include mouse-and-bp-up(md) {
-		.item-title {
-			display: none;
-		}
-	}
-
-	@include bp-up(lg) {
-		flex: 0 0 $item-details-width-lg;
-
-		.touch & {
-			flex: 0 0 $touch-item-details-width-lg;
-		}
-	}
-
-	.toolbar {
-		margin: $space-min 0 ($space-md - 2px);
 	}
 
 	.dl-horizontal {

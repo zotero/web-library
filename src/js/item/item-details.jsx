@@ -18,7 +18,7 @@ class ItemDetails extends React.Component {
 						</div>
 						<div className="row">
 							<div className="col">
-								<h5 className="item-title">Item Title</h5>
+								<h5 className="h1 item-title">Item Title</h5>
 								<ItemBox
 									hiddenFields={ [ 'abstractNote' ] }
 									fields={ this.props.fields }
@@ -27,8 +27,7 @@ class ItemDetails extends React.Component {
 							</div>
 							<div className="col">
 								<section className="abstract">
-									<div className="separator" role="separator"></div>
-									<h6>Abstract</h6>
+									<h6 className="h2 abstract-heading">Abstract</h6>
 									<div>
 										{ this.props.item.data.abstractNote }
 									</div>
@@ -37,19 +36,19 @@ class ItemDetails extends React.Component {
 						</div>
 					</Tab>
 					<Tab title="Notes">
-						<h5 className="item-title">Notes</h5>
+						<h5 className="h2 tab-pane-heading">Notes</h5>
 						Notes tab content goes here
 					</Tab>
 					<Tab title="Tag">
-						<h5 className="item-title">Tags</h5>
+						<h5 className="h2 tab-pane-heading">Tags</h5>
 						Tag tab content goes here
 					</Tab>
 					<Tab title="Attachments">
-						<h5 className="item-title">Attachments</h5>
+						<h5 className="h2 tab-pane-heading">Attachments</h5>
 						Attachments tab content goes here
 					</Tab>
 					<Tab title="Related">
-						<h5 className="item-title">Related</h5>
+						<h5 className="h2 tab-pane-heading">Related</h5>
 						Related tab content goes here
 					</Tab>
 				</Tabset>
