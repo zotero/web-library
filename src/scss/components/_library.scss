@@ -1,6 +1,13 @@
 //
-// Items
+// Library
 // --------------------------------------------------
+
+.library {
+	@include bp-up(sm) {
+		display: flex;
+		width: 100%;
+	}
+}
 
 .items {
 	@include bp-down(xs) {

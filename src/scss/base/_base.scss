@@ -35,13 +35,6 @@ body {
 	flex-direction: column;
 }
 
-.library {
-	@include bp-up(sm) {
-		display: flex;
-		width: 100%;
-	}
-}
-
 main {
 	flex: 1 1 auto;
 	background: $main-bg;
