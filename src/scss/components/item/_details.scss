@@ -99,11 +99,41 @@
 	.dl-horizontal {
 		margin-top: 3px;
 
+		@include bp-down(xs) {
+			dt {
+				padding-right: $default-padding-horizontal-touch;
+			}
+
+			dd {
+				padding-left: $default-padding-horizontal-touch;
+			}
+		}
+
+		@include touch-or-bp-down(sm) {
+			dt {
+				padding-left: $default-padding-horizontal-touch;
+			}
+
+			dd {
+				padding-right: $default-padding-horizontal-touch;
+			}
+		}
+
+		@include mouse-and-bp-up(md) {
+			dt {
+				padding-left: $default-padding-horizontal;
+			}
+
+			dd {
+				padding-right: $default-padding-horizontal;
+			}
+		}
+
 		@include bp-only(md) {
 			margin-top: -3px;
 
 			dd {
-				padding-right: ($dl-gutter + 1px);
+				padding-right: ($dl-horizontal-gutter + 1px);
 			}
 		}
 	}
