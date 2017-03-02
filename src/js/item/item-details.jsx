@@ -37,15 +37,19 @@ class ItemDetails extends React.Component {
 						</div>
 					</Tab>
 					<Tab title="Notes">
+						<h5 className="item-title">Notes</h5>
 						Notes tab content goes here
 					</Tab>
 					<Tab title="Tag">
+						<h5 className="item-title">Tags</h5>
 						Tag tab content goes here
 					</Tab>
 					<Tab title="Attachments">
+						<h5 className="item-title">Attachments</h5>
 						Attachments tab content goes here
 					</Tab>
 					<Tab title="Related">
+						<h5 className="item-title">Related</h5>
 						Related tab content goes here
 					</Tab>
 				</Tabset>
