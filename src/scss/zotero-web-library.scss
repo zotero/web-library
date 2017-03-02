@@ -43,8 +43,6 @@
 @import "components/collection-tree";
 @import "components/tag-selector";
 @import "components/items";
-@import "components/item-list";
-@import "components/item-details";
 @import "components/tabs";
 @import "components/description-list";
 @import "components/panel";
@@ -53,3 +51,6 @@
 @import "components/spinner";
 @import "components/icon";
 @import "components/touch-header";
+
+@import "components/item/list";
+@import "components/item/details";

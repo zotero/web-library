@@ -105,7 +105,7 @@
 	}
 }
 
-.item-list {
+.item.list {
 	@include mouse-and-bp-up(md) {
 		display: table;
 		table-layout: fixed;

@@ -10,7 +10,7 @@ class ItemDetails extends React.Component {
 		let Tab = this.props.components['Tab'];
 		let ItemBox = this.props.components['ItemBox'];
 		return (
-			<section className={ `item-details ${this.props.active ? 'active' : ''}` }>
+			<section className={ `item details ${this.props.active ? 'active' : ''}` }>
 				<Tabset>
 					<Tab title="Info">
 						<div className="toolbar hidden-sm-down hidden-lg-up">

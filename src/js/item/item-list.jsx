@@ -26,7 +26,7 @@ class ItemList extends React.Component {
 						</thead>
 					</table>
 					<div className="item-list-body">
-						<ul className="item-list">
+						<ul className="item list">
 							{
 								this.props.items.map(item => <Item
 									onClick={ () => this.props.onItemSelected(item.key) }
@@ -44,7 +44,7 @@ class ItemList extends React.Component {
 
 ItemList.propTypes = {
 	items: React.PropTypes.array,
-	selectedItemKey: React.PropTypes.string, 
+	selectedItemKey: React.PropTypes.string,
 	isFetching: React.PropTypes.bool,
 	onItemSelected: React.PropTypes.func
 };
