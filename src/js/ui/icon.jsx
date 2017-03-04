@@ -19,6 +19,7 @@ export default class Icon extends React.Component {
 
 	render() {
 		let style = {};
+		let basename = this.props.type.split(/[\\/]/).pop();
 		if(this.props.width) {
 			style = Object.assign(style, {
 				width: `${this.props.width}px`
@@ -42,8 +43,8 @@ export default class Icon extends React.Component {
 		}
 
 		return (
-			<svg className={`svg-icon icon-${this.props.type} ${this.props.className}`} style={ style } aria-label={ this.props.label } role="img">
-				<use xlinkHref={ `/icons/${this.props.type}.svg#${this.props.type}`} viewBox="0 0 512 512" />
+			<svg className={`svg-icon icon-${basename} ${this.props.className || ''}`} style={ style } aria-label={ this.props.label } role="img">
+				<use xlinkHref={ `/icons/${this.props.type}.svg#${basename}`} viewBox="0 0 512 512" />
 			</svg>
 		);
 	}
