@@ -87,7 +87,7 @@ class CollectionTree extends React.Component {
 										{/* Button component */}
 										{ collection.hasChildren ? twistyButton : '' }
 									</div>
-									<Icon type="16/folder" width="16" height="16"/>
+									<Icon type={ `28/folder${collection.children.length ? 's' : ''}` } width="16" height="16"/>
 									<a>
 										{ collection.apiObj.data.name }
 									</a>
