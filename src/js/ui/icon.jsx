@@ -42,9 +42,9 @@ export default class Icon extends React.Component {
 		}
 
 		return (
-				<svg className="svg-icon" style={ style } aria-label={ this.props.label } role="img">
-					<use xlinkHref={ `/icons/${this.props.type}.svg#${this.props.type}`} viewBox="0 0 512 512" />
-				</svg>
+			<svg className={`svg-icon icon-${this.props.type} ${this.props.className}`} style={ style } aria-label={ this.props.label } role="img">
+				<use xlinkHref={ `/icons/${this.props.type}.svg#${this.props.type}`} viewBox="0 0 512 512" />
+			</svg>
 		);
 	}
 }
@@ -55,7 +55,8 @@ Icon.propTypes = {
 	width: React.PropTypes.oneOfType([React.PropTypes.number, React.PropTypes.string]),
 	height: React.PropTypes.oneOfType([React.PropTypes.number, React.PropTypes.string]),
 	color: React.PropTypes.string,
-	style: React.PropTypes.object
+	style: React.PropTypes.object,
+	className: React.PropTypes.string
 };
 
 Icon.defaultProps = {
