@@ -24,14 +24,14 @@ class CollectionTree extends React.Component {
 		//@TODO: deduplicate and use single loop
 		this.state = {
 			collections: this.props.collections.filter(c => c.nestingDepth === 1),
-			openKeys: this.props.collections.filter(c => !!c.isSelected).map(col => col.key)
+			selectedCollection: this.props.collections.find(c => !!c.isSelected)
 		};
 	}
 
 	componentWillReceiveProps(nextProps) {
 		this.setState({
 			collections: nextProps.collections.filter(c => c.nestingDepth === 1),
-			openKeys: nextProps.collections.filter(c => !!c.isSelected).map(col => col.key)
+			selectedCollection: nextProps.collections.find(c => !!c.isSelected)
 		});
 	}
 
@@ -53,7 +53,7 @@ class CollectionTree extends React.Component {
 	}
 
 	renderCollections(collections, level) {
-		let hasOpen = testRecursive(collections, col => this.state.openKeys.includes(col.key));
+		let hasOpen = testRecursive(collections, col => this.state.openKey == col.key);
 		let hasOpenLastLevel = collections.some(col => {
 			return col.isSelected && !col.hasChildren;
 		});
@@ -106,7 +106,12 @@ class CollectionTree extends React.Component {
 		if(this.props.isFetching) {
 			return <Spinner />;
 		} else {
-			let isRootActive = this.state.openKeys.length === 0;
+			let isRootActive = 
+			!this.state.selectedCollection
+			|| (this.state.selectedCollection
+				&& this.state.selectedCollection.nestingDepth === 1 
+				&& !this.state.selectedCollection.hasChildren
+			);
 			return (
 				<nav className="collection-tree">
 					<header className="touch-header hidden-mouse-md-up hidden-xs-down">
