@@ -17,6 +17,8 @@ import reducers from '../reducers';
 import CollectionTreeContainer from '../collection/collection-tree-container';
 import ItemListContainer from '../item/item-list-container';
 import ItemDetailsContainer from '../item/item-details-container';
+import TouchHeaderContainer from './touch-header-container';
+import { getCurrentViewFromState } from '../state-utils';
 
  //@TODO: ensure this doesn't affect prod build
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
@@ -38,6 +40,7 @@ class LibraryContainer extends React.Component {
 			injectCollectionTree = { CollectionTreeContainer }
 			injectItemList = { ItemListContainer }
 			injectItemDetails = { ItemDetailsContainer }
+			injectTouchHeader = { TouchHeaderContainer }
 		/>;
 	}
 
@@ -84,35 +87,11 @@ LibraryContainer.propTypes = {
 	view: React.PropTypes.string
 };
 
-const getCurrentViewFromState = state => {
-	if(state.library &&
-		state.collections[state.library.libraryString] &&
-		'collection' in state.router.params) {
-			let selectedCollectionKey = state.router.params.collection;
-			let collections = state.collections[state.library.libraryString].collections;
-			let selectedCollection = collections.find(c => c.key === selectedCollectionKey);
-			if('item' in state.router.params && state.items[selectedCollectionKey] && state.items[selectedCollectionKey].items) {
-				let selectedItemKey = state.router.params.item;
-				let items = state.items[selectedCollectionKey].items;
-				let selectedItem = items.find(i => i.key === selectedItemKey);
-				if(selectedItem) {
-					return 'item-details';
-				}
-			}
-
-			if(selectedCollection && !selectedCollection.hasChildren) {
-				return 'item-list';
-			}
-	}
-
-	return 'library';
-};
-
 const mapStateToProps = state => {
 	return {
 		userId: state.config.userId,
 		apiKey: state.config.apiKey,
-		view: getCurrentViewFromState(state) //@TODO: memoize
+		view: getCurrentViewFromState(state)
 	};
 };
 

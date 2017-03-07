@@ -17,38 +17,14 @@ class Library extends React.Component {
 		let CollectionTree = this.props.components['CollectionTree'];
 		let ItemDetails = this.props.components['ItemDetails'];
 		let TagSelector = this.props.components['TagSelector'];
+		let TouchHeader = this.props.components['TouchHeader'];
 		let activeViewClass = `view-${this.props.view}-active`;
 		return (
 			<div className={ `${activeViewClass} ${this.state.keyboard ? 'keyboard' : ''}` }>
 				<Navbar />
 				<main>
 					<section className={ `library ${ this.props.view === 'library' ? 'active' : '' }` }>
-						<header className="touch-header hidden-sm-up">
-							<nav>
-								<ul>
-									<li className="forelast" tabIndex="0">
-										<div>
-											<span>Title 0 XXXXXXXXXXXXXXX</span>
-										</div>
-									</li>
-									<li className="previous" tabIndex="0">
-										<div>
-											<span>Title 1 XXXXXXXXXXXXXXX</span>
-										</div>
-									</li>
-									<li className="current" tabIndex="0">
-										<div>
-											<span>Title 2</span>
-										</div>
-									</li>
-									<li className="next" tabIndex="0">
-										<div>
-											<span>Title 3</span>
-										</div>
-									</li>
-								</ul>
-							</nav>
-						</header>
+						<TouchHeader />
 						<header className="sidebar">
 							<h2 className="offscreen">Web library</h2>
 							<CollectionTree />
