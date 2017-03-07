@@ -10,16 +10,6 @@ export default class TouchHeader extends React.Component {
 
 	//@TODO: Refactor and deduplicate
 	render() {
-		let rootLink = (
-			<li className="previous" tabIndex="0">
-				<div>
-					<span onClick={ ev => this.collectionSelectedHandler(null, ev) }>
-						/
-					</span>
-				</div>
-			</li>
-		);
-
 		let forelast = this.props.forelast ? (
 			<li className="forelast" tabIndex="0">
 				<div>
@@ -37,7 +27,15 @@ export default class TouchHeader extends React.Component {
 					</span>
 				</div>
 			</li>
-		) : current ? '' : rootLink;
+		) : this.props.current ? (
+			<li className="previous" tabIndex="0">
+				<div>
+					<span onClick={ ev => this.collectionSelectedHandler(null, ev) }>
+						/
+					</span>
+				</div>
+			</li>
+		) : '';
 
 		let current = this.props.current ? (
 			<li className="current" tabIndex="0">
@@ -47,7 +45,15 @@ export default class TouchHeader extends React.Component {
 					</span>
 				</div>
 			</li>
-		) : rootLink;
+		) : (
+			<li className="current" tabIndex="0">
+				<div>
+					<span onClick={ ev => this.collectionSelectedHandler(null, ev) }>
+						/
+					</span>
+				</div>
+			</li>
+		);
 
 		let next = this.props.next ? (
 			<li className="next" tabIndex="0">

@@ -30,7 +30,6 @@ const getPathFromState = state => {
 
 //@TODO: memoize
 const mapTreePath = (selectedKey, collections, curPath) => {
-	console.info(`mapTreePath called for ${selectedKey} in`, collections);
 	for(let col of collections) {
 		if(col.key === selectedKey) {
 			return curPath.concat(col.key);
