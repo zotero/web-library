@@ -5,4 +5,16 @@
 .svg-icon {
 	display: inline-block;
 	color: $icon-color;
+
+	&.touch {
+		@include mouse-and-bp-up(md) {
+			display: none;
+		}
+	}
+
+	&.mouse {
+		@include touch-or-bp-down(sm) {
+			display: none;
+		}
+	}
 }
