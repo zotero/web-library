@@ -87,7 +87,8 @@ class CollectionTree extends React.Component {
 										{/* Button component */}
 										{ collection.hasChildren ? twistyButton : '' }
 									</div>
-									<Icon type={ `28/folder${collection.children.length ? 's' : ''}` } width="16" height="16"/>
+									<Icon type={ `28/folder${collection.children.length ? 's' : ''}` } className="touch" width="28" height="28"/>
+									<Icon type="16/folder" className="mouse" width="16" height="16"/>
 									<a>
 										{ collection.apiObj.data.name }
 									</a>
@@ -106,10 +107,10 @@ class CollectionTree extends React.Component {
 		if(this.props.isFetching) {
 			return <Spinner />;
 		} else {
-			let isRootActive = 
+			let isRootActive =
 			!this.state.selectedCollection
 			|| (this.state.selectedCollection
-				&& this.state.selectedCollection.nestingDepth === 1 
+				&& this.state.selectedCollection.nestingDepth === 1
 				&& !this.state.selectedCollection.hasChildren
 			);
 			return (

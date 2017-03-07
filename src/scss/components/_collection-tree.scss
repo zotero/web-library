@@ -30,31 +30,14 @@
 			cursor: pointer;
 
 			a {
+				flex: 1 1 auto;
 				color: $collection-tree-link-color;
 				position: relative;
 				@include css-truncate;
-
-				@include touch-or-bp-down(sm) {
-					padding: 0 $collection-tree-padding-horizontal-touch;
-
-					&:before {
-						content: "";
-						position: absolute;
-						height: 1px;
-						top: 0;
-						left: $padding-horizontal-md;
-						right: $padding-horizontal-md;
-						background: $touch-collection-tree-border;
-					}
-				}
-
-				@include mouse-and-bp-up(md) {
-					flex: 1 1 auto;
-				}
 			}
 
 			&:first-child {
-				> a {
+				> .item-container {
 					&:before {
 						content: none;
 					}
@@ -64,10 +47,25 @@
 
 		.item-container {
 			outline: none;
+			display: flex;
+			align-items: center;
+			position: relative;
+
+			@include touch-or-bp-down(sm) {
+				padding: 0 $default-padding-horizontal-touch;
+
+				&::before {
+					content: "";
+					position: absolute;
+					height: 1px;
+					top: 0;
+					left: $default-padding-horizontal-touch;
+					right: $default-padding-horizontal-touch;
+					background: $touch-collection-tree-border;
+				}
+			}
 
 			@include mouse-and-bp-up(md) {
-				display: flex;
-				align-items: center;
 				padding-right: $default-padding-horizontal;
 			}
 
@@ -85,17 +83,30 @@
 
 		.selected {
 			> .item-container {
-				@include mouse-and-bp-up(md) {
-					background: $collection-tree-active-link-bg;
-				}
+				@include touch-or-bp-down(sm) {
+					background: $touch-collection-tree-active-link-bg;
 
-				> a {
-					@include touch-or-bp-down(sm) {
-						color: $touch-collection-tree-active-link-color;
-						background: $touch-collection-tree-active-link-bg;
+					&::before {
+						content: none;
 					}
 
-					@include bp-up(md) {
+					.svg-icon.touch {
+						color: $touch-collection-tree-active-link-color;
+					}
+
+					> a {
+						color: $touch-collection-tree-active-link-color;
+					}
+				}
+
+				@include mouse-and-bp-up(md) {
+					background: $collection-tree-active-link-bg;
+
+					.svg-icon {
+						color: $collection-tree-active-icon-color;
+					}
+
+					> a {
 						color: $collection-tree-active-link-color;
 					}
 				}
@@ -122,8 +133,8 @@
 		flex: 0 0 auto;
 		margin-right: $space-xs;
 
-		@include touch-or-bp-down(sm) {
-			display: none;
+		&.touch {
+			margin-right: $space-md;
 		}
 	}
 
