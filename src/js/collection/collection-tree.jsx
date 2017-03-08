@@ -53,7 +53,7 @@ class CollectionTree extends React.Component {
 	}
 
 	renderCollections(collections, level) {
-		let hasOpen = testRecursive(collections, col => this.state.openKey == col.key);
+		let hasOpen = testRecursive(collections, col => this.state.selectedCollection == col);
 		let hasOpenLastLevel = collections.some(col => {
 			return col.isSelected && !col.hasChildren;
 		});
