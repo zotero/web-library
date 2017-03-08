@@ -26,7 +26,7 @@ class TouchHeaderContainer extends React.Component {
 			}
 
 			if(this.props.path.length > 1) {
-				previous = this.props.collections.find(c => c.key == this.props.path[0]);
+				previous = this.props.collections.find(c => c.key == this.props.path[this.props.path.length - 2]);
 			}
 		}
 		
