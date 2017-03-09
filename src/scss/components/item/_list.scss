@@ -13,7 +13,7 @@
 }
 
 .item-list-head th,
-.item-list .metadata {
+.item.list .metadata {
 	@include mouse-and-bp-up(md) {
 		&:first-child {
 			padding-left: $space-sm;
