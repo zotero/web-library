@@ -61,7 +61,8 @@ class ItemDetails extends React.Component {
 						</Tabs>
 					</div>
 					<Panel className={ cx({ 
-							'tab-pane': true, 
+							'tab-pane': true,
+							'info': true,
 							'active': this.state.tab === 'info'
 						}) }>
 						<div className="toolbar hidden-sm-down hidden-lg-up">
@@ -87,28 +88,32 @@ class ItemDetails extends React.Component {
 						</div>
 					</Panel>
 					<Panel className={ cx({ 
-							'tab-pane': true, 
+							'tab-pane': true,
+							'notes': true,
 							'active': this.state.tab === 'notes'
 						}) }>
 						<h5 className="h2 tab-pane-heading">Notes</h5>
 						<span>Notes tab content goes here</span>
 					</Panel>
 					<Panel className={ cx({ 
-							'tab-pane': true, 
+							'tab-pane': true,
+							'tags': true,
 							'active': this.state.tab === 'tags'
 						}) }>
 						<h5 className="h2 tab-pane-heading">Tags</h5>
 						<span>Tag tab content goes here</span>
 					</Panel>
 					<Panel className={ cx({ 
-							'tab-pane': true, 
+							'tab-pane': true,
+							'attachments': true,
 							'active': this.state.tab === 'attachments'
 						}) }>
 						<h5 className="h2 tab-pane-heading">Attachments</h5>
 						<span>Attachments tab content goes here</span>
 					</Panel>
 					<Panel className={ cx({ 
-							'tab-pane': true, 
+							'tab-pane': true,
+							'related': true,
 							'active': this.state.tab === 'related'
 						}) }>
 						<h5 className="h2 tab-pane-heading">Related</h5>
