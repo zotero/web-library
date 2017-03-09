@@ -24,7 +24,7 @@ export default class Panel extends React.Component {
 		const [header, ...body] = React.Children.toArray(this.props.children);
 
 		return (
-			<section className="panel">
+			<section className={ `panel ${this.props.className}` }>
 				{ this.renderHeader(header) }
 				{ this.renderBody(body) }
 			</section>
@@ -33,9 +33,11 @@ export default class Panel extends React.Component {
 }
 
 Panel.propTypes = {
-	children: React.PropTypes.node
+	children: React.PropTypes.node,
+	className: React.PropTypes.string
 };
 
 Panel.defaultProps = {
-	children: null
+	children: null,
+	className: ''
 };

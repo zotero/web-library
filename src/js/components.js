@@ -1,3 +1,4 @@
+// import Tabset from './ui/tabset';
 import CollectionTree from './collection/collection-tree';
 import Editable from './editable/editable';
 import Icon from './ui/icon';
@@ -7,11 +8,11 @@ import ItemDetails from './item/item-details';
 import ItemList from './item/item-list';
 import Library from './library/library';
 import Navbar from './app/navbar';
+import Panel from './ui/panel';
 import Spinner from './ui/spinner';
-import Tab from './ui/tab';
-import Tabset from './ui/tabset';
 import TagSelector from './tag/tag-selector';
 import TouchHeader from './library/touch-header';
+import { Tab, Tabs } from './ui/tabs';
 
 export default () => ({
 	CollectionTree,
@@ -23,9 +24,10 @@ export default () => ({
 	ItemList,
 	Library,
 	Navbar,
+	Panel,
 	Spinner,
 	Tab,
-	Tabset,
+	Tabs,
 	TagSelector,
 	TouchHeader
 });
