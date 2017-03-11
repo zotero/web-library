@@ -47,7 +47,6 @@ class CollectionTreeContainer extends React.Component {
 		
 		if('selected' in nextProps && nextProps.selected != this.props.selected ||
 			'collections' in nextProps && nextProps.collections != this.props.collections) {
-			console.log(nextProps.collections, nextProps.path);
 			this.setState({
 				collections: applyTreePath(nextProps.collections, nextProps.path)
 			});

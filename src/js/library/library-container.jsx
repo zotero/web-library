@@ -5,7 +5,6 @@ import { createStore, applyMiddleware, compose, combineReducers } from 'redux';
 import { Provider, connect } from 'react-redux';
 import { reduxReactRouter, routerStateReducer, ReduxRouter, push } from 'redux-router';
 import { Route } from 'react-router';
-import createLogger from 'redux-logger';
 import ReactDOM from 'react-dom';
 import ReduxThunk from 'redux-thunk';
 import { createHistory } from 'history';
@@ -56,8 +55,7 @@ class LibraryContainer extends React.Component {
 				{ config },
 				composeEnhancers(
 					applyMiddleware(
-						ReduxThunk,
-						createLogger()
+						ReduxThunk
 					),
 					reduxReactRouter({
 						createHistory
