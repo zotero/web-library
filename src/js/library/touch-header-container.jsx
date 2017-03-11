@@ -18,25 +18,16 @@ class TouchHeaderContainer extends React.Component {
 	}
 
 	render() {
-		var current, next, previous, forelast;
-
-		if(this.props.path) {
-			if(this.props.path.length > 0) {
-				current = this.props.collections.find(c => c.key == this.props.path[this.props.path.length - 1]);
-			}
-
-			if(this.props.path.length > 1) {
-				previous = this.props.collections.find(c => c.key == this.props.path[this.props.path.length - 2]);
-			}
-		}
+		let path = this.props.path.map(
+			key => this.props.collections.find(
+				c => c.key === key
+			)
+		);
 		
 		return (
 			<TouchHeader 
 				onCollectionSelected={ this.onCollectionSelected.bind(this) }
-				current={ current }
-				next = { next }
-				previous = { previous }
-				forelast = { forelast }
+				path = { path }
 			/>
 		);
 	}
