@@ -7,7 +7,7 @@ import ItemBox from './item/item-box';
 import ItemDetails from './item/item-details';
 import ItemList from './item/item-list';
 import Library from './library/library';
-import Navbar from './app/navbar';
+import Navbar from './ui/navbar';
 import Panel from './ui/panel';
 import Spinner from './ui/spinner';
 import TagSelector from './tag/tag-selector';
