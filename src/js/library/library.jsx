@@ -1,27 +1,44 @@
 'use strict';
 
 import React from 'react';
-import Navbar from '../app/navbar';
+import cx from 'classnames';
+
 import InjectableComponentsEnhance from '../enhancers/injectable-components-enhancer';
 
 class Library extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			keyboard: false
+			keyboard: false,
+			isNavOpened: false
 		};
 	}
 
+	navToggleHandler() {
+		this.setState({
+			isNavOpened: !this.state.isNavOpened
+		});
+	}
+
 	render() {
-		let ItemList = this.props.components['ItemList'];
 		let CollectionTree = this.props.components['CollectionTree'];
 		let ItemDetails = this.props.components['ItemDetails'];
+		let ItemList = this.props.components['ItemList'];
+		let Navbar = this.props.components['Navbar'];
 		let TagSelector = this.props.components['TagSelector'];
 		let TouchHeader = this.props.components['TouchHeader'];
+		
 		let activeViewClass = `view-${this.props.view}-active`;
+
 		return (
-			<div className={ `${activeViewClass} ${this.state.keyboard ? 'keyboard' : ''}` }>
-				<Navbar />
+			<div className={ cx({
+					activeViewClass,
+					'keyboard': this.state.keyboard,
+					'navbar-nav-opened': this.state.isNavOpened
+				}) }>
+				<Navbar
+					isOpened = { this.state.isNavOpened }
+					onToggle = { this.navToggleHandler.bind(this) }  />
 				<main>
 					<section className={ `library ${ this.props.view === 'library' ? 'active' : '' }` }>
 						<TouchHeader />
