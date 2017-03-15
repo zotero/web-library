@@ -3,20 +3,24 @@
 import Zotero from 'libzotero';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import ItemListContainer from './item/item-list-container';
-import LibraryContainer from './library/library-container';
-import CollectionTreeContainer from './collection/collection-tree-container';
-import components from './components';
+import ItemListContainer from './component/item/list/container';
+import LibraryContainer from './component/library/container';
+import CollectionTreeContainer from './component/collection-tree/container';
+import getComponents from './components';
 
 if(!Zotero.ui) {
 	Zotero.ui = {};
 }
 
 //expose components & react
-Object.assign(Zotero.ui, {
+Zotero.ui = {
 	React,
 	ReactDOM,
 	CollectionTreeContainer,
 	ItemListContainer,
-	LibraryContainer
-}, components());
+	LibraryContainer,
+	...getComponents(),
+	...Zotero.ui
+};
+
+console.info(Zotero.ui);

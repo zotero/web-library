@@ -2,9 +2,10 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
-import ItemList from './item-list';
-import { fetchItemsIfNeeded } from '../actions';
 import { push } from 'redux-router';
+
+import ItemList from '../list';
+import { fetchItemsIfNeeded } from '../../../actions';
 
 class ItemListContainer extends React.Component {
 	componentWillReceiveProps(nextProps) {

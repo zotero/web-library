@@ -3,7 +3,7 @@
 import React from 'react';
 import cx from 'classnames';
 
-import InjectableComponentsEnhance from '../enhancers/injectable-components-enhancer';
+import InjectableComponentsEnhance from '../../enhancers/injectable-components-enhancer';
 
 class Navbar extends React.Component {
 	constructor(props) {

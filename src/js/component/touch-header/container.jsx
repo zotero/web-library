@@ -1,14 +1,13 @@
 'use strict';
 
 import React from 'react';
+import { connect } from 'react-redux';
 import { push } from 'redux-router';
 
-import TouchHeader from './touch-header';
-import { connect } from 'react-redux';
-import { getCollections, getPathFromState } from '../state-utils';
+import { getCollections, getPathFromState } from '../../state-utils';
+import TouchHeader from '../touch-header';
 
 class TouchHeaderContainer extends React.Component {
-	
 	onCollectionSelected(collectionKey) {
 		if(collectionKey) {
 			this.props.dispatch(push(`/collection/${collectionKey}`));

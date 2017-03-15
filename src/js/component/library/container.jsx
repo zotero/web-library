@@ -1,23 +1,24 @@
 'use strict';
 
 import React from 'react';
+import ReactDOM from 'react-dom';
+import ReduxThunk from 'redux-thunk';
+import { createHistory } from 'history';
 import { createStore, applyMiddleware, compose, combineReducers } from 'redux';
 import { Provider, connect } from 'react-redux';
 import { reduxReactRouter, routerStateReducer, ReduxRouter, push } from 'redux-router';
 import { Route } from 'react-router';
-import ReactDOM from 'react-dom';
-import ReduxThunk from 'redux-thunk';
-import { createHistory } from 'history';
 
-import { selectLibrary } from '../actions';
-import Library from './library';
-import reducers from '../reducers';
+import reducers from '../../reducers';
+import { getCurrentViewFromState } from '../../state-utils';
+import { selectLibrary } from '../../actions';
 
-import CollectionTreeContainer from '../collection/collection-tree-container';
-import ItemListContainer from '../item/item-list-container';
-import ItemDetailsContainer from '../item/item-details-container';
-import TouchHeaderContainer from './touch-header-container';
-import { getCurrentViewFromState } from '../state-utils';
+import CollectionTreeContainer from '../collection-tree/container';
+import ItemDetailsContainer from '../item/details/container';
+import ItemListContainer from '../item/list/container';
+import Library from '../library';
+import TouchHeaderContainer from '../touch-header/container';
+
 
  //@TODO: ensure this doesn't affect prod build
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;

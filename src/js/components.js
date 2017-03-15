@@ -1,18 +1,17 @@
-// import Tabset from './ui/tabset';
-import CollectionTree from './collection/collection-tree';
-import Editable from './editable/editable';
-import Icon from './ui/icon';
-import Item from './item/item';
-import ItemBox from './item/item-box';
-import ItemDetails from './item/item-details';
-import ItemList from './item/item-list';
-import Library from './library/library';
-import Navbar from './ui/navbar';
-import Panel from './ui/panel';
-import Spinner from './ui/spinner';
-import TagSelector from './tag/tag-selector';
-import TouchHeader from './library/touch-header';
-import { Tab, Tabs } from './ui/tabs';
+import CollectionTree from './component/collection-tree';
+import Editable from './component/editable';
+import Icon from './component/ui/icon';
+import Item from './component/item';
+import ItemBox from './component/item/box';
+import ItemDetails from './component/item/details';
+import ItemList from './component/item/list';
+import Library from './component/library';
+import Navbar from './component/ui/navbar';
+import Panel from './component/ui/panel';
+import Spinner from './component/ui/spinner';
+import TagSelector from './component/tag-selector';
+import TouchHeader from './component/touch-header';
+import { Tab, Tabs } from './component/ui/tabs';
 
 export default () => ({
 	CollectionTree,

@@ -1,6 +1,7 @@
 'use strict';
 
 import React from 'react';
+import cx from 'classnames';
 
 const coerceDimensions = props => ({
 	width: parseInt(props.width),
@@ -42,8 +43,18 @@ export default class Icon extends React.Component {
 			style = Object.assign(style, this.props.style);
 		}
 
+		let svgAttr = {
+			className: cx(['svg-icon', `icon-${basename}`, this.props.className]),
+			role: 'img',
+			style
+		};
+
+		if(this.props.label) {
+			svgAttr['aria-label'] = this.props.label;
+		}
+
 		return (
-			<svg className={`svg-icon icon-${basename} ${this.props.className || ''}`} style={ style } aria-label={ this.props.label } role="img">
+			<svg { ...svgAttr }>
 				<use xlinkHref={ `/icons/${this.props.type}.svg#${basename}`} viewBox="0 0 512 512" />
 			</svg>
 		);

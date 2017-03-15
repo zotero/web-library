@@ -1,7 +1,7 @@
 'use strict';
 
 import React from 'react';
-import InjectableComponentsEnhance from '../enhancers/injectable-components-enhancer';
+import InjectableComponentsEnhance from '../../enhancers/injectable-components-enhancer';
 
 class ItemList extends React.Component {
 	render() {

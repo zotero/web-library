@@ -1,8 +1,9 @@
 'use strict';
 
 import React from 'react';
-import InjectableComponentsEnhance from '../enhancers/injectable-components-enhancer';
-import { fieldTypes, itemProp } from '../constants';
+
+import InjectableComponentsEnhance from '../../enhancers/injectable-components-enhancer';
+import { fieldTypes, itemProp } from '../../constants';
 
 class ItemBox extends React.Component {
 	render() {

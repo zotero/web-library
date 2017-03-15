@@ -3,8 +3,8 @@
 import React from 'react';
 import cx from 'classnames';
 
-import InjectableComponentsEnhance from '../enhancers/injectable-components-enhancer';
-import { itemProp } from '../constants';
+import InjectableComponentsEnhance from '../../enhancers/injectable-components-enhancer';
+import { itemProp } from '../../constants';
 
 class ItemDetails extends React.Component {
 	constructor(props) {

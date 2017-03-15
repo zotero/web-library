@@ -2,9 +2,10 @@
 
 import Zotero from 'libzotero';
 import React from 'react';
-import ItemDetails from './item-details';
+
+import ItemDetails from '../details';
 import { connect } from 'react-redux';
-import { itemProp, fieldTypes} from '../constants';
+import { itemProp, fieldTypes} from '../../../constants';
 
 class ItemDetailsContainer extends React.Component {
 	render() {

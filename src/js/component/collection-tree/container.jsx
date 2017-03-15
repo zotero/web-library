@@ -2,10 +2,11 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
-import CollectionTree from './collection-tree';
-import { fetchCollectionsIfNeeded } from '../actions';
 import { push } from 'redux-router';
-import { getCollections, getPathFromState } from '../state-utils';
+
+import CollectionTree from '../collection-tree';
+import { fetchCollectionsIfNeeded } from '../../actions';
+import { getCollections, getPathFromState } from '../../state-utils';
 
 /**
  * Marks collections as selected/open based on current path
@@ -102,7 +103,7 @@ CollectionTreeContainer.propTypes = {
 	isFetching: React.PropTypes.bool.isRequired,
 	dispatch: React.PropTypes.func.isRequired,
 	selected: React.PropTypes.string,
-	path: React.PropTypes.array,
+	path: React.PropTypes.array
 };
 
 CollectionTree.defaultProps = {
