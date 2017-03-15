@@ -51,7 +51,7 @@ main {
 		transition: left $mobile-navbar-nav-transition;
 
 		.navbar-nav-opened & {
-			@include content-transform;
+			left: $content-transform;
 		}
 	}
 }

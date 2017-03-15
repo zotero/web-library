@@ -27,7 +27,7 @@
 		transition: left $mobile-navbar-nav-transition;
 
 		.navbar-nav-opened & {
-			@include content-transform;
+			left: $content-transform;
 		}
 	}
 
@@ -101,7 +101,7 @@
 
 		@include bp-down(xs) {
 			transition: transform $mobile-navbar-nav-transition;
-			@include mobile-navbar-nav-transform;
+			transform: $mobile-navbar-nav-transform;
 
 			.navbar-nav-opened & {
 				transform: translate3d(0, 0, 0);
