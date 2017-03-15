@@ -1,6 +1,7 @@
 'use strict';
 
 import React from 'react';
+import cx from 'classnames';
 
 export default class TagSelector extends React.Component {
 	render() {
@@ -10,23 +11,24 @@ export default class TagSelector extends React.Component {
 					<ul className="tag-selector-list">
 					{
 						this.props.tags.map(tag => {
-							let className = 'tag-selector-item';
-							if(tag.disabled) {
-								className += ' disabled';
-							} else if(tag.selected) {
-								className += ' selected';
-							}
+							let className = cx('tag-selector-item', {
+								disabled: tag.disabled,
+								selected: tag.selected,
+								colored: tag.color
+							});
+							let props = {
+								className,
+								key: tag.name,
+								onClick: ev => this.props.onSelection(tag, ev),
+								onContextMenu: ev => this.props.onTagContext(tag, ev)
+							};
+
 							if(tag.color) {
-								className += ' colored';
+								props['style'] = { color: tag.color };
 							}
+
 							return (
-								<li 
-									className={ className }
-									key={ tag.name }
-									onClick={ ev => this.props.onSelection(tag, ev) }
-									onContextMenu={ ev => this.props.onTagContext(tag, ev) }
-									style={ tag.color ? { color: tag.color } : {} }
-								>
+								<li { ...props }>
 									{ tag.name }
 								</li>
 							);

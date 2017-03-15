@@ -1,7 +1,6 @@
 'use strict';
 
 import React from 'react';
-import cx from 'classnames';
 
 import InjectableComponentsEnhance from '../../enhancers/injectable-components-enhancer';
 
@@ -15,7 +14,7 @@ class Navbar extends React.Component {
 		
 	render() {
 		return (
-			<header className= { cx(['navbar', ...this.props.className]) }>
+			<header className="navbar">
 				<div className="navbar-left">
 					<h1 className="navbar-brand"><a href="/">Zotero</a></h1>
 					<h2 className="offscreen">Site navigation</h2>
@@ -42,13 +41,11 @@ class Navbar extends React.Component {
 }
 
 Navbar.propTypes = {
-	className: React.PropTypes.array,
 	onToggle: React.PropTypes.func.isRequired,
 	isOpened: React.PropTypes.bool
 };
 
 Navbar.defaultProps = {
-	className: [],
 	isOpened: false
 };
 

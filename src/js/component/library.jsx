@@ -65,7 +65,6 @@ class Library extends React.Component {
 	}
 
 	keyboardSupport(ev) {
-		console.log(ev);
 		if(ev.key === 'Tab') {
 			this.setState({
 				'keyboard': true
