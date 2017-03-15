@@ -1,0 +1,127 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Renders tags correctly 1`] = `
+<div
+  className="tag-selector"
+>
+  <div
+    className="tag-selector-container"
+  >
+    <ul
+      className="tag-selector-list"
+    >
+      <li
+        className="tag-selector-item colored"
+        onClick={[Function]}
+        onContextMenu={[Function]}
+        style={
+          Object {
+            "color": "#ff9900",
+          }
+        }
+      >
+        tag1
+      </li>
+      <li
+        className="tag-selector-item colored"
+        onClick={[Function]}
+        onContextMenu={[Function]}
+        style={
+          Object {
+            "color": "rgba(55, 255, 55, 1)",
+          }
+        }
+      >
+        tag2
+      </li>
+      <li
+        className="tag-selector-item selected colored"
+        onClick={[Function]}
+        onContextMenu={[Function]}
+        style={
+          Object {
+            "color": "rgb(55, 55, 255)",
+          }
+        }
+      >
+        lorem
+      </li>
+      <li
+        className="tag-selector-item selected colored"
+        onClick={[Function]}
+        onContextMenu={[Function]}
+        style={
+          Object {
+            "color": "red",
+          }
+        }
+      >
+        ipsum
+      </li>
+      <li
+        className="tag-selector-item"
+        onClick={[Function]}
+        onContextMenu={[Function]}
+      >
+        foo
+      </li>
+      <li
+        className="tag-selector-item"
+        onClick={[Function]}
+        onContextMenu={[Function]}
+      >
+        bar
+      </li>
+      <li
+        className="tag-selector-item"
+        onClick={[Function]}
+        onContextMenu={[Function]}
+      >
+        uho
+      </li>
+      <li
+        className="tag-selector-item"
+        onClick={[Function]}
+        onContextMenu={[Function]}
+      >
+        mehe
+      </li>
+      <li
+        className="tag-selector-item"
+        onClick={[Function]}
+        onContextMenu={[Function]}
+      >
+        ala
+      </li>
+      <li
+        className="tag-selector-item disabled"
+        onClick={[Function]}
+        onContextMenu={[Function]}
+      >
+        wolf
+      </li>
+      <li
+        className="tag-selector-item disabled"
+        onClick={[Function]}
+        onContextMenu={[Function]}
+      >
+        prolf
+      </li>
+    </ul>
+  </div>
+  <div
+    className="tag-selector-filter-container"
+  >
+    <input
+      className="tag-selector-filter"
+      onChange={[Function]}
+      type="search"
+      value=""
+    />
+    <button
+      className="tag-selector-actions"
+      onClick={[Function]}
+    />
+  </div>
+</div>
+`;

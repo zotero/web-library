@@ -1,0 +1,52 @@
+[
+  {
+    "name": "tag1",
+    "selected": false,
+    "color": "#ff9900"
+  },
+  {
+    "name": "tag2",
+    "selected": false,
+    "color": "rgba(55, 255, 55, 1)"
+  },
+  {
+    "name": "lorem",
+    "selected": true,
+    "color": "rgb(55, 55, 255)"
+  },
+  {
+    "name": "ipsum",
+    "selected": true,
+    "color": "red"
+  },
+  {
+    "name": "foo",
+    "selected": false
+  },
+  {
+    "name": "bar",
+    "selected": false
+  },
+  {
+    "name": "uho",
+    "selected": false
+  },
+  {
+    "name": "mehe",
+    "selected": false
+  },
+  {
+    "name": "ala",
+    "selected": false
+  },
+  {
+    "name": "wolf",
+    "selected": false,
+    "disabled": true
+  },
+  {
+    "name": "prolf",
+    "selected": false,
+    "disabled": true
+  }
+]

@@ -1,0 +1,56 @@
+[
+  {
+    "key": "AAAAAAAA",
+    "hasChildren": true,
+    "nestingDepth": 1,
+    "apiObj": {
+      "data": {
+        "key": "AAAAAAAA",
+        "name": "depth-1"
+      }
+    },
+    "children": [
+      {
+        "key": "BBBBBBBB",
+        "hasChildren": true,
+        "nestingDepth": 2,
+        "apiObj": {
+          "data": {
+            "key": "BBBBBBBB",
+            "name": "depth-2",
+            "parentCollection": "AAAAAAAA"
+          }
+        },
+        "children": [
+          {
+            "key": "CCCCCCCC",
+            "hasChildren": true,
+            "nestingDepth": 3,
+            "apiObj": {
+              "data": {
+                "key": "CCCCCCCC",
+                "name": "depth-3",
+                "parentCollection": "BBBBBBBB"
+              }
+            },
+            "children": [
+              {
+                "key": "DDDDDDDD",
+                "hasChildren": true,
+                "nestingDepth": 4,
+                "apiObj": {
+                  "data": {
+                    "key": "DDDDDDDD",
+                    "name": "depth-4",
+                    "parentCollection": "CCCCCCCC"
+                  }
+                },
+                "children": []
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]
