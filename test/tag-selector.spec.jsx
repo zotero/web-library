@@ -14,9 +14,16 @@ const mapCollectionsRecursive = (col, f) => {
 	});
 };
 
-it('Renders tags correctly', () => {
+it('Renders tag selector with multiple tags', () => {
 	let tree = renderer.create(
 		<TagSelector tags = { tags } />
+	).toJSON();
+	expect(tree).toMatchSnapshot();
+});
+
+it('Renders tag selector with a search string', () => {
+	let tree = renderer.create(
+		<TagSelector tags = { tags.filter(t => t.name.includes('tag')) } searchString="tag" />
 	).toJSON();
 	expect(tree).toMatchSnapshot();
 });

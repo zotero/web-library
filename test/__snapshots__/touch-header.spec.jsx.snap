@@ -1,0 +1,127 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Renders touch header at arbitrary depth 1`] = `
+<header
+  className="touch-header hidden-sm-up"
+>
+  <nav>
+    <ul>
+      <li
+        className="forelast"
+        data-id={4}
+        tabIndex="0"
+      >
+        <div>
+          <span
+            onClick={[Function]}
+          >
+            depth-2
+          </span>
+        </div>
+      </li>
+      <li
+        className="previous"
+        data-id={5}
+        tabIndex="0"
+      >
+        <div>
+          <span
+            onClick={[Function]}
+          >
+            depth-3
+          </span>
+        </div>
+      </li>
+      <li
+        className="current"
+        data-id={6}
+        tabIndex="0"
+      >
+        <div>
+          <span
+            onClick={[Function]}
+          >
+            depth-4
+          </span>
+        </div>
+      </li>
+      <li
+        className="next"
+        data-id={7}
+        tabIndex="0"
+      >
+        <div>
+          <span
+            onClick={[Function]}
+          >
+            
+          </span>
+        </div>
+      </li>
+    </ul>
+  </nav>
+</header>
+`;
+
+exports[`Renders touch header at root 1`] = `
+<header
+  className="touch-header hidden-sm-up"
+>
+  <nav>
+    <ul>
+      <li
+        className="forelast"
+        data-id={0}
+        tabIndex="0"
+      >
+        <div>
+          <span
+            onClick={[Function]}
+          >
+            
+          </span>
+        </div>
+      </li>
+      <li
+        className="previous"
+        data-id={1}
+        tabIndex="0"
+      >
+        <div>
+          <span
+            onClick={[Function]}
+          >
+            
+          </span>
+        </div>
+      </li>
+      <li
+        className="current"
+        data-id={2}
+        tabIndex="0"
+      >
+        <div>
+          <span
+            onClick={[Function]}
+          >
+            /
+          </span>
+        </div>
+      </li>
+      <li
+        className="next"
+        data-id={3}
+        tabIndex="0"
+      >
+        <div>
+          <span
+            onClick={[Function]}
+          >
+            
+          </span>
+        </div>
+      </li>
+    </ul>
+  </nav>
+</header>
+`;

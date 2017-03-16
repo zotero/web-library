@@ -28,7 +28,7 @@ export default class TouchHeader extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			headers: this.mapPathToHeaders([])
+			headers: this.mapPathToHeaders(props.path)
 		};
 	}
 

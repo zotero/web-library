@@ -1,6 +1,59 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Renders tags correctly 1`] = `
+exports[`Renders tag selector with a search string 1`] = `
+<div
+  className="tag-selector"
+>
+  <div
+    className="tag-selector-container"
+  >
+    <ul
+      className="tag-selector-list"
+    >
+      <li
+        className="tag-selector-item colored"
+        onClick={[Function]}
+        onContextMenu={[Function]}
+        style={
+          Object {
+            "color": "#ff9900",
+          }
+        }
+      >
+        tag1
+      </li>
+      <li
+        className="tag-selector-item colored"
+        onClick={[Function]}
+        onContextMenu={[Function]}
+        style={
+          Object {
+            "color": "rgba(55, 255, 55, 1)",
+          }
+        }
+      >
+        tag2
+      </li>
+    </ul>
+  </div>
+  <div
+    className="tag-selector-filter-container"
+  >
+    <input
+      className="tag-selector-filter"
+      onChange={[Function]}
+      type="search"
+      value="tag"
+    />
+    <button
+      className="tag-selector-actions"
+      onClick={[Function]}
+    />
+  </div>
+</div>
+`;
+
+exports[`Renders tag selector with multiple tags 1`] = `
 <div
   className="tag-selector"
 >
