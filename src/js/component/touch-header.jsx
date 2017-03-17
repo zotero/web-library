@@ -55,7 +55,7 @@ export default class TouchHeader extends React.Component {
 		headers = headers.map((h, i) => {
 			return {
 				id: i,
-				slot: getSlot(i, headers.length), 
+				slot: getSlot(i, headers.length),
 				...h
 			};
 		});
@@ -88,10 +88,10 @@ export default class TouchHeader extends React.Component {
 							if(header.slot) {
 								return (
 									<li data-id={ header.id} className={ header.slot } key={ header.id } tabIndex="0">
-										<div>
-											<span onClick={ ev => this.collectionSelectedHandler(header.key, ev) }>
+										<div className="center-axis">
+											<div className="inner" onClick={ ev => this.collectionSelectedHandler(header.key, ev) }>
 												{ header.label }
-											</span>
+											</div>
 										</div>
 									</li>
 								);

@@ -10,7 +10,6 @@
 		background: $body-bg;
 		color: $touch-header-color;
 		height: $line-height-large-touch;
-		padding: 0 $default-padding-horizontal-touch;
 	}
 
 	@include touch-or-bp-only(sm) {
@@ -28,57 +27,52 @@
 		position: relative;
 	}
 
+	.center-axis,
+	.inner {
+		height: 100%;
+		transition: transform $nav-transition;
+	}
+
 	li {
-		align-items: center;
 		position: absolute;
+		left: 0;
 		top: 0;
+		width: 100%;
 		transition:
-			left $nav-transition,
-			transform $nav-transition,
-			color $nav-transition;
-		display: none;
-		min-width: 1px;
-		white-space: nowrap;
-		max-width: calc(33.33% - #{$space-sm / 2});
-
-		div {
-			@include css-truncate;
-		}
+		  transform $nav-transition,
+		  color $nav-transition;
 	}
 
-	.forelast,
-	.previous,
-	.current,
-	.next {
+	.center-axis {
+		transform: translate3d(50%, 0, 0);
+	}
+
+	.inner {
+		position: absolute;
+		transform: translate3d(-50%, 0, 0);
 		display: flex;
-	}
-
-	.forelast,
-	.current,
-	.next {
-		transform: translateX(-50%);
-	}
-
-	.forelast,
-	.previous {
-		color: $touch-header-link-color;
-		cursor: pointer;
+		align-items: center;
 	}
 
 	.forelast {
-		left: -50%;
+		transform: translate3d(-100%, 0, 0);
 	}
 
 	.previous {
-		left: 0;
-		transform: translateX(0);
-	}
+		z-index: 1;
+		color: $touch-header-link-color;
 
-	.current {
-		left: 50%;
+		.center-axis {
+			transform: translate3d($default-padding-horizontal-touch, 0, 0);
+		}
+
+		.inner {
+			transform: translate3d(0, 0, 0);
+			cursor: pointer;
+		}
 	}
 
 	.next {
-		left: 150%;
+		transform: translate3d(100%, 0, 0);
 	}
 }
