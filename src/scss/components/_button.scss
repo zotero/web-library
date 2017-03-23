@@ -4,19 +4,68 @@
 
 .btn {
 	border: 0;
-	color: $btn-color;
-	background: $btn-bg;
 	border-radius: $btn-border-radius;
 	padding: $btn-padding;
 	cursor: pointer;
+}
+
+
+// Primary button
+
+.btn-primary {
+	color: $btn-primary-color;
+	background: $btn-primary-bg;
 
 	&:focus {
-		background: darken($btn-bg, 5%);
+		background: darken($btn-primary-bg, 5%);
 		outline: none;
 	}
 
 	&:active {
-		color: darken($btn-color, 20%);
+		color: darken($btn-primary-color, 20%);
+	}
+}
+
+
+// Icon button
+
+.btn-icon {
+	padding: $space-min;
+	background: $btn-icon-bg;
+	line-height: 1;
+
+	.svg-icon {
+		vertical-align: top;
+	}
+
+	&:active {
+		.svg-icon {
+			color: $icon-active-color;
+		}
+	}
+
+	&.active {
+		background: $btn-icon-active-bg;
+
+		.svg-icon {
+			color: $btn-icon-active-color;
+		}
+	}
+
+	.keyboard & {
+		&:focus {
+			background: $btn-icon-focus-bg;
+
+			.svg-icon {
+				color: $btn-icon-focus-color;
+			}
+
+			&:active {
+				.svg-icon {
+					color: $btn-icon-focus-active-color;
+				}
+			}
+		}
 	}
 }
 

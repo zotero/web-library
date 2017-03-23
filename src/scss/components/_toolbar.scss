@@ -9,6 +9,7 @@
 	height: $toolbar-height;
 	flex: 0 0 auto;
 	padding: 0 $default-padding-horizontal;
+	margin-bottom: $space-min;
 
 	.toolbar-left,
 	.toolbar-center,
@@ -27,5 +28,9 @@
 
 	.toolbar-right {
 		margin-left: auto;
+	}
+
+	.btn + .btn {
+		margin-left: $space-min / 2;
 	}
 }

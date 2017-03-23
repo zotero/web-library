@@ -13,6 +13,8 @@ $asphalt: #7a8799;
 $brand-primary:   $red;
 $brand-secondary: $blue;
 
+$transparent: transparent;
+
 
 // Grays
 // --------------------------------------------------
@@ -112,9 +114,15 @@ $tab-pane-border-color: $shade-0;
 // Description list
 $dt-color: $shade-5;
 
-// Buttons
-$btn-color:             $shade-0;
-$btn-bg:                $asphalt;
+// Button
+$btn-primary-color:             $shade-0;
+$btn-primary-bg:        $asphalt;
+$btn-icon-bg:           $transparent;
+$btn-icon-focus-color:  $shade-0;
+$btn-icon-focus-bg:     $asphalt;
+$btn-icon-focus-active-color: rgba($shade-0, 0.5);
+$btn-icon-active-color: $shade-6;
+$btn-icon-active-bg:    $shade-2;
 $twisty-color:          $shade-5;
 $twisty-focus-color:    $asphalt;
 $twisty-selected-color: $shade-6;

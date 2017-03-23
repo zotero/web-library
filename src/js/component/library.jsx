@@ -2,6 +2,7 @@
 
 import React from 'react';
 import cx from 'classnames';
+import Icon from './ui/icon';
 
 import InjectableComponentsEnhance from '../enhancers/injectable-components-enhancer';
 
@@ -27,7 +28,7 @@ class Library extends React.Component {
 		let Navbar = this.props.components['Navbar'];
 		let TagSelector = this.props.components['TagSelector'];
 		let TouchHeader = this.props.components['TouchHeader'];
-		
+
 		let activeViewClass = `view-${this.props.view}-active`;
 
 		return (
@@ -52,7 +53,21 @@ class Library extends React.Component {
 							<div className="items-container">
 								<header className="hidden-sm-down">
 									<h3 className="hidden-mouse-md-up">Collection title</h3>
-									<div className="toolbar hidden-touch hidden-sm-down">Toolbar</div>
+									<div className="toolbar hidden-touch hidden-sm-down">
+										<div className="toolbar-left">
+											<div className="tool-group">
+												<button className="btn btn-icon">
+													<Icon type={ `16/plus` } width="16" height="16"/>
+												</button>
+												<button className="btn btn-icon">
+													<Icon type={ `16/trash` } width="16" height="16"/>
+												</button>
+												<button className="btn btn-icon">
+													<Icon type={ `16/cog` } width="16" height="16"/>
+												</button>
+											</div>
+										</div>
+									</div>
 								</header>
 								<ItemList />
 							</div>
