@@ -130,9 +130,10 @@ function fetchItems(collection, library) {
 			library.loadFromKeys(keys, 'items')
 			.then(results => {
 				if(Array.isArray(results) && results.length >= 1 && Array.isArray(results[0].data)) {
-					// let items = results[0].data;
-					let items = library.items.objectArray;
-					dispatch(receiveItems(collection.key, items));
+					//@TODO: fix a memory leak/duplicate items in storage
+					console.warn('items stored in the library: ', library.items.objectArray.length, library.items.objectArray);
+					let items = new Zotero.Items(results[0].data);
+					dispatch(receiveItems(collection.key, items.objectArray));
 				} else {
 					dispatch(errorFetchingItems('Unexpected response from the API'));
 				}
