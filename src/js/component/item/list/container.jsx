@@ -50,7 +50,7 @@ const mapStateToProps = state => {
 	const getTopLevelItems = () => {
 		if(collection && state.items[collection.key]) {
 			let items = state.items[collection.key].items;
-			return items.filter(i => !('parentItem' in i.data));
+			return items.filter(i => !i.get('parentItem'));
 		}
 		return [];
 	};

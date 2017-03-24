@@ -9,16 +9,16 @@ class Item extends React.Component {
 		return (
 			<li className={ `item ${this.props.active ? 'active' : '' }` } onClick={ this.props.onClick }>
 				<div className="metadata">
-					{ this.props.item.data.title }
+					{ this.props.item.get('title') }
 				</div>
 				<div className="metadata author">
-					{ this.props.item.data.author }
+					{ this.props.item.get('author') }
 				</div>
 				<div className="metadata year">
-					{ this.props.item.data.year }
+					{ this.props.item.get('year') }
 				</div>
 				<div className="metadata hidden-touch hidden-sm-down">
-					{ this.props.item.data.date }
+					{ this.props.item.get('date') }
 				</div>
 				<div className="metadata hidden-touch hidden-sm-down"></div>
 				<div className="metadata hidden-touch hidden-sm-down"></div>
@@ -34,9 +34,6 @@ Item.propTypes = {
 };
 
 Item.defaultProps = {
-	item: {
-		data: {}
-	},
 	active: false,
 	onClick: () => {} 
 };

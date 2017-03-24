@@ -7,7 +7,6 @@ class Editable extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			processing: false,
 			editing: false,
 			value: props.value
 		};
@@ -19,27 +18,28 @@ class Editable extends React.Component {
 		});
 	}
 
-	save(newValue) {
+	async save(newValue) {
 		this.cancelPending();
-		this.setState({
-			processing: true
-		}, () => {
-			let promise = this.props.onSave(newValue);
-			promise.then(processedValue => {
-				this.setState({
-					value: processedValue,
-					editing: false,
-					processing: false
+		let promise = this.props.onSave(newValue);
+		if(promise && 'then' in promise) {
+			this.setState({
+				processing: true
+			}, () => {
+				promise.then(processedValue => {
+					this.setState({
+						value: processedValue,
+						editing: false,
+						processing: false
+					});
+				}).catch(() => {
+					this.setState({
+						value: this.props.value,
+						editing: true,
+						processing: false
+					});
 				});
 			});
-			promise.catch(() => {
-				this.setState({
-					value: this.props.value,
-					editing: true,
-					processing: false
-				});
-			});
-		});
+		}
 	}
 
 	edit() {
@@ -101,26 +101,28 @@ class Editable extends React.Component {
 
 	render() {
 		let Spinner = this.props.components['Spinner'];
-		if(this.state.processing) {
+		if(this.state.processing || this.props.processing) {
 			return <Spinner />;
-		}
-		else if(this.state.editing) {
-			return <form className="editable editable-field editable-editing"
-				onSubmit={ev => { this.submitHandler(ev); }}>
-				<input
-					ref={ ref => this.input = ref }
-					disabled={ this.state.processing ? 'disabled' : null }
-					value={ this.state.value }
-					placeholder={ this.props.placeholder }
-					onChange={ ev => this.changeHandler(ev) }
-					onKeyUp={ ev => this.keyboardHandler(ev) }
-					onBlur={ ev => this.blurHandler(ev) } />
-			</form>;
+		} else if(this.state.editing) {
+			return (
+				<form
+					className="editable editable-field editable-editing"
+					onSubmit={ev => { this.submitHandler(ev); }}>
+					<input
+						ref={ ref => this.input = ref }
+						// disabled={ this.state.processing ? 'disabled' : null }
+						value={ this.state.value }
+						placeholder={ this.props.placeholder }
+						onChange={ ev => this.changeHandler(ev) }
+						onKeyUp={ ev => this.keyboardHandler(ev) }
+						onBlur={ ev => this.blurHandler(ev) } />
+				</form>
+			);
 		} else {
 			return <span 
 				className="editable editable-field"
 				onClick={ ev => this.editHandler(ev) }>
-					{ this.state.value || this.props.emptytext }
+					{ (React.Children.count && this.props.children) || this.state.value || this.props.emptytext }
 				</span>;
 		}
 	}
@@ -128,12 +130,17 @@ class Editable extends React.Component {
 
 
 Editable.propTypes = {
-	value: React.PropTypes.string,
+	value: React.PropTypes.oneOfType([
+		React.PropTypes.string,
+		React.PropTypes.number
+	]),
+	processing: React.PropTypes.bool,
 	placeholder: React.PropTypes.string,
 	emptytext: React.PropTypes.string,
 	onSave: React.PropTypes.func,
 	onChange: React.PropTypes.func,
-	editOnClick: React.PropTypes.bool
+	editOnClick: React.PropTypes.bool,
+	children: React.PropTypes.node
 };
 
 Editable.defaultProps  = {

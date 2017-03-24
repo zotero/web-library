@@ -22,5 +22,3 @@ Zotero.ui = {
 	...getComponents(),
 	...Zotero.ui
 };
-
-console.info(Zotero.ui);

@@ -2,12 +2,18 @@ import Zotero from 'libzotero';
 
 export const SELECT_LIBRARY = 'SELECT_LIBRARY';
 export const SELECT_ITEM = 'SELECT_ITEM';
-export const REQUEST_ITEMS = 'REQUEST_ITEMS';
-export const RECEIVE_ITEMS = 'RECEIVE_ITEMS';
-export const REQUEST_COLLECTIONS = 'REQUEST_COLLECTIONS';
-export const RECEIVE_COLLECTIONS = 'RECEIVE_COLLECTIONS';
-export const ERROR_FETCHING_COLLECTIONS = 'ERROR_FETCHING_COLLECTIONS';
-export const ERROR_FETCHING_ITEMS = 'ERROR_FETCHING_ITEMS';
+
+export const REQUEST_FETCH_ITEMS = 'REQUEST_FETCH_ITEMS';
+export const RECEIVE_FETCH_ITEMS = 'RECEIVE_FETCH_ITEMS';
+export const ERROR_FETCH_ITEMS = 'ERROR_FETCH_ITEMS';
+
+export const REQUEST_FETCH_COLLECTIONS = 'REQUEST_FETCH_COLLECTIONS';
+export const RECEIVE_FETCH_COLLECTIONS = 'RECEIVE_FETCH_COLLECTIONS';
+export const ERROR_FETCH_COLLECTIONS = 'ERROR_FETCH_COLLECTIONS';
+
+export const REQUEST_UPDATE_ITEM = 'REQUEST_UPDATE_ITEM';
+export const RECEIVE_UPDATE_ITEM = 'RECEIVE_UPDATE_ITEM';
+export const ERROR_UPDATE_ITEM = 'ERROR_UPDATE_ITEM';
 
 export function selectLibrary(type, id, key) {
 	let library = new Zotero.Library(type, id, null, key);
@@ -20,7 +26,7 @@ export function selectLibrary(type, id, key) {
 
 export function requestCollections(libraryString) {
 	return {
-		type: REQUEST_COLLECTIONS,
+		type: REQUEST_FETCH_COLLECTIONS,
 		libraryString
 	};
 }
@@ -30,7 +36,7 @@ export function receiveCollections(libraryString, collections) {
 		(a, b) => a.apiObj.data.name.toUpperCase().localeCompare(b.apiObj.data.name.toUpperCase())
 	);
 	return {
-		type: RECEIVE_COLLECTIONS,
+		type: RECEIVE_FETCH_COLLECTIONS,
 		libraryString,
 		collections,
 		receivedAt: Date.now()
@@ -39,7 +45,7 @@ export function receiveCollections(libraryString, collections) {
 
 export function requestItems(collectionKey) {
 	return {
-		type: REQUEST_ITEMS,
+		type: REQUEST_FETCH_ITEMS,
 		collectionKey
 	};
 }
@@ -47,18 +53,12 @@ export function requestItems(collectionKey) {
 export function receiveItems(collectionKey, items) {
 	items.sort(
 		(a, b) => {
-			if(!('title' in a.data)) {
-				return -1;
-			}
-			if(!('title' in b.data)) {
-				return 1;
-			}
-			return a.data.title.toUpperCase().localeCompare(b.data.title.toUpperCase());
+			return a.get('title').toUpperCase().localeCompare(b.get('title').toUpperCase());
 		}
 	);
 
 	return {
-		type: RECEIVE_ITEMS,
+		type: RECEIVE_FETCH_ITEMS,
 		collectionKey,
 		items,
 		receivedAt: Date.now()
@@ -74,7 +74,7 @@ export function selectItem(index) {
 
 export function errorFetchingCollection(libraryString, error) {
 	return {
-		type: ERROR_FETCHING_COLLECTIONS,
+		type: ERROR_FETCH_COLLECTIONS,
 		libraryString,
 		error
 	};
@@ -82,7 +82,7 @@ export function errorFetchingCollection(libraryString, error) {
 
 export function errorFetchingItems(error) {
 	return {
-		type: ERROR_FETCHING_ITEMS,
+		type: ERROR_FETCH_ITEMS,
 		error
 	};
 }
@@ -127,10 +127,11 @@ function fetchItems(collection, library) {
 		dispatch(requestItems(collection.key));
 		collection.getMemberItemKeys()
 		.then((keys) => {
-			library.loadFromKeys(keys)
+			library.loadFromKeys(keys, 'items')
 			.then(results => {
 				if(Array.isArray(results) && results.length >= 1 && Array.isArray(results[0].data)) {
-					let items = results[0].data;
+					// let items = results[0].data;
+					let items = library.items.objectArray;
 					dispatch(receiveItems(collection.key, items));
 				} else {
 					dispatch(errorFetchingItems('Unexpected response from the API'));
@@ -147,12 +148,48 @@ function fetchItems(collection, library) {
 	};
 }
 
-
 export function fetchItemsIfNeeded(collection) {
 	return (dispatch, getState) => {
 		let state = getState();
 		if(!state.items[collection]) {
 			return dispatch(fetchItems(collection, state.library));
 		}
+	};
+}
+
+export function updateItem(item, field) {
+	return async dispatch => {
+		dispatch(requestUpdateItem(item, field));
+		try {
+			await item.writeItem();
+		} catch(c) {
+			dispatch(errorUpdateItem(c, item, field));
+		}
+		dispatch(receiveUpdateItem(item, field));
+	};
+}
+
+export function requestUpdateItem(item, field) {
+	return {
+		type: REQUEST_UPDATE_ITEM,
+		item,
+		field
+	};
+}
+
+export function receiveUpdateItem(item, field) {
+	return {
+		type: RECEIVE_UPDATE_ITEM,
+		item,
+		field
+	};
+}
+
+export function errorUpdateItem(error, item, field) {
+	return {
+		type: ERROR_UPDATE_ITEM,
+		error,
+		item,
+		field
 	};
 }

@@ -1,8 +1,20 @@
 {
 	"presets": ["es2015", "react"],
 	"plugins": [
-		'add-module-exports',
+		'syntax-async-generators',
+	    'add-module-exports',
 		'transform-flow-strip-types',
-		'transform-object-rest-spread'
+		'transform-object-rest-spread',
+		'transform-regenerator',
+		["transform-async-to-module-method", {
+			"module": "bluebird",
+			"method": "coroutine"
+		}],
+		["transform-runtime", {
+			"helpers": false,
+			"polyfill": false,
+			"regenerator": true,
+			"moduleName": "babel-runtime"
+		}]
 	]
 }

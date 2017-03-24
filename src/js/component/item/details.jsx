@@ -72,16 +72,15 @@ class ItemDetails extends React.Component {
 							<div className="col">
 								<h5 className="h1 item-title">Item Title</h5>
 								<ItemBox
-									hiddenFields={ [ 'abstractNote' ] }
-									fields={ this.props.fields }
 									item={ this.props.item }
+									hiddenFields={ [ 'abstractNote' ] }
 								/>
 							</div>
 							<div className="col">
 								<section className="abstract">
 									<h6 className="h2 abstract-heading">Abstract</h6>
 									<div>
-										{ this.props.item.data.abstractNote }
+										{ this.props.item.get('abstractNote') }
 									</div>
 								</section>
 							</div>
@@ -127,15 +126,12 @@ class ItemDetails extends React.Component {
 
 ItemDetails.defaultProps = {
 	item: {
-		title: '',
-		data: {}
+		get: () => ''
 	},
-	fields: [],
 	active: false
 };
 
 ItemDetails.propTypes = {
-	fields: React.PropTypes.array,
 	active: React.PropTypes.bool,
 	item: itemProp
 };
