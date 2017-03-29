@@ -32,8 +32,7 @@ class Library extends React.Component {
 		let activeViewClass = `view-${this.props.view}-active`;
 
 		return (
-			<div className={ cx({
-					activeViewClass,
+			<div className={ cx(activeViewClass, {
 					'keyboard': this.state.keyboard,
 					'navbar-nav-opened': this.state.isNavOpened
 				}) }>
