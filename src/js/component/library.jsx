@@ -2,6 +2,7 @@
 
 import React from 'react';
 import cx from 'classnames';
+
 import Icon from './ui/icon';
 
 import InjectableComponentsEnhance from '../enhancers/injectable-components-enhancer';
@@ -23,7 +24,7 @@ class Library extends React.Component {
 
 	render() {
 		let CollectionTree = this.props.components['CollectionTree'];
-		let IconButton = this.props.components['IconButton'];
+		let Button = this.props.components['Button'];
 		let ItemDetails = this.props.components['ItemDetails'];
 		let ItemList = this.props.components['ItemList'];
 		let Navbar = this.props.components['Navbar'];
@@ -58,9 +59,15 @@ class Library extends React.Component {
 									<Toolbar className="hidden-touch hidden-sm-down">
 										<div className="toolbar-left">
 											<ToolGroup>
-												<IconButton type={ '16/plus' } width="16" height="16" />
-												<IconButton type={ '16/trash' } width="16" height="16" />
-												<IconButton type={ '16/cog' } width="16" height="16" />
+												<Button>
+													<Icon type={ '16/plus' } width="16" height="16" />
+												</Button>
+												<Button>
+													<Icon type={ '16/trash' } width="16" height="16" />
+												</Button>
+												<Button>
+													<Icon type={ '16/cog' } width="16" height="16" />
+												</Button>
 											</ToolGroup>
 										</div>
 									</Toolbar>

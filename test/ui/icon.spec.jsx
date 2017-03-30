@@ -1,7 +1,7 @@
 import React from 'react';
 import renderer from 'react-test-renderer';
 
-import Icon from '../src/js/component/ui/icon';
+import Icon from '../../src/js/component/ui/icon';
 
 it('Renders icon', () => {
 	let tree = renderer.create(

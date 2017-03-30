@@ -11,12 +11,15 @@ exports[`Renders touch header at arbitrary depth 1`] = `
         data-id={4}
         tabIndex="0"
       >
-        <div>
-          <span
+        <div
+          className="center-axis"
+        >
+          <div
+            className="inner"
             onClick={[Function]}
           >
             depth-2
-          </span>
+          </div>
         </div>
       </li>
       <li
@@ -24,12 +27,15 @@ exports[`Renders touch header at arbitrary depth 1`] = `
         data-id={5}
         tabIndex="0"
       >
-        <div>
-          <span
+        <div
+          className="center-axis"
+        >
+          <div
+            className="inner"
             onClick={[Function]}
           >
             depth-3
-          </span>
+          </div>
         </div>
       </li>
       <li
@@ -37,12 +43,15 @@ exports[`Renders touch header at arbitrary depth 1`] = `
         data-id={6}
         tabIndex="0"
       >
-        <div>
-          <span
+        <div
+          className="center-axis"
+        >
+          <div
+            className="inner"
             onClick={[Function]}
           >
             depth-4
-          </span>
+          </div>
         </div>
       </li>
       <li
@@ -50,12 +59,15 @@ exports[`Renders touch header at arbitrary depth 1`] = `
         data-id={7}
         tabIndex="0"
       >
-        <div>
-          <span
+        <div
+          className="center-axis"
+        >
+          <div
+            className="inner"
             onClick={[Function]}
           >
             
-          </span>
+          </div>
         </div>
       </li>
     </ul>
@@ -74,12 +86,15 @@ exports[`Renders touch header at root 1`] = `
         data-id={0}
         tabIndex="0"
       >
-        <div>
-          <span
+        <div
+          className="center-axis"
+        >
+          <div
+            className="inner"
             onClick={[Function]}
           >
             
-          </span>
+          </div>
         </div>
       </li>
       <li
@@ -87,12 +102,15 @@ exports[`Renders touch header at root 1`] = `
         data-id={1}
         tabIndex="0"
       >
-        <div>
-          <span
+        <div
+          className="center-axis"
+        >
+          <div
+            className="inner"
             onClick={[Function]}
           >
             
-          </span>
+          </div>
         </div>
       </li>
       <li
@@ -100,12 +118,15 @@ exports[`Renders touch header at root 1`] = `
         data-id={2}
         tabIndex="0"
       >
-        <div>
-          <span
+        <div
+          className="center-axis"
+        >
+          <div
+            className="inner"
             onClick={[Function]}
           >
             /
-          </span>
+          </div>
         </div>
       </li>
       <li
@@ -113,12 +134,15 @@ exports[`Renders touch header at root 1`] = `
         data-id={3}
         tabIndex="0"
       >
-        <div>
-          <span
+        <div
+          className="center-axis"
+        >
+          <div
+            className="inner"
             onClick={[Function]}
           >
             
-          </span>
+          </div>
         </div>
       </li>
     </ul>
