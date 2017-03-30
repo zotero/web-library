@@ -23,13 +23,14 @@ class Library extends React.Component {
 
 	render() {
 		let CollectionTree = this.props.components['CollectionTree'];
+		let IconButton = this.props.components['IconButton'];
 		let ItemDetails = this.props.components['ItemDetails'];
 		let ItemList = this.props.components['ItemList'];
 		let Navbar = this.props.components['Navbar'];
 		let TagSelector = this.props.components['TagSelector'];
-		let TouchHeader = this.props.components['TouchHeader'];
 		let Toolbar = this.props.components['Toolbar'];
 		let ToolGroup = this.props.components['ToolGroup'];
+		let TouchHeader = this.props.components['TouchHeader'];
 
 		let activeViewClass = `view-${this.props.view}-active`;
 
@@ -57,15 +58,9 @@ class Library extends React.Component {
 									<Toolbar className="hidden-touch hidden-sm-down">
 										<div className="toolbar-left">
 											<ToolGroup>
-												<button className="btn btn-icon">
-													<Icon type={ '16/plus' } width="16" height="16"/>
-												</button>
-												<button className="btn btn-icon">
-													<Icon type={ '16/trash' } width="16" height="16"/>
-												</button>
-												<button className="btn btn-icon">
-													<Icon type={ '16/cog' } width="16" height="16"/>
-												</button>
+												<IconButton type={ '16/plus' } width="16" height="16" />
+												<IconButton type={ '16/trash' } width="16" height="16" />
+												<IconButton type={ '16/cog' } width="16" height="16" />
 											</ToolGroup>
 										</div>
 									</Toolbar>
