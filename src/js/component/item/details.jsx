@@ -19,6 +19,7 @@ class ItemDetails extends React.Component {
 		let Tabs = this.props.components['Tabs'];
 		let Tab = this.props.components['Tab'];
 		let ItemBox = this.props.components['ItemBox'];
+		let Toolbar = this.props.components['Toolbar'];
 
 		return (
 			<section className={ `item details ${this.props.active ? 'active' : ''}` }>
@@ -65,9 +66,13 @@ class ItemDetails extends React.Component {
 							'info': true,
 							'active': this.state.tab === 'info'
 						}) }>
-						<div className="toolbar hidden-sm-down hidden-lg-up">
-							<div className="toolbar-right"><button className="btn btn-primary">Edit</button></div>
-						</div>
+						<Toolbar className="hidden-sm-down hidden-lg-up">
+							<div className="toolbar-right">
+								<button className="btn btn-primary">
+									Edit
+								</button>
+							</div>
+						</Toolbar>
 						<div className="row">
 							<div className="col">
 								<h5 className="h1 item-title">Item Title</h5>

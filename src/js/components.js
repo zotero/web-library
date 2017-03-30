@@ -12,6 +12,7 @@ import Spinner from './component/ui/spinner';
 import TagSelector from './component/tag-selector';
 import TouchHeader from './component/touch-header';
 import { Tab, Tabs } from './component/ui/tabs';
+import { Toolbar, ToolGroup } from './component/ui/toolbars';
 
 export default () => ({
 	CollectionTree,
@@ -27,6 +28,8 @@ export default () => ({
 	Spinner,
 	Tab,
 	Tabs,
+	Toolbar,
+	ToolGroup,
 	TagSelector,
 	TouchHeader
 });

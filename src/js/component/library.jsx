@@ -28,6 +28,8 @@ class Library extends React.Component {
 		let Navbar = this.props.components['Navbar'];
 		let TagSelector = this.props.components['TagSelector'];
 		let TouchHeader = this.props.components['TouchHeader'];
+		let Toolbar = this.props.components['Toolbar'];
+		let ToolGroup = this.props.components['ToolGroup'];
 
 		let activeViewClass = `view-${this.props.view}-active`;
 
@@ -52,21 +54,21 @@ class Library extends React.Component {
 							<div className="items-container">
 								<header className="hidden-sm-down">
 									<h3 className="hidden-mouse-md-up">Collection title</h3>
-									<div className="toolbar hidden-touch hidden-sm-down">
+									<Toolbar className="hidden-touch hidden-sm-down">
 										<div className="toolbar-left">
-											<div className="tool-group">
+											<ToolGroup>
 												<button className="btn btn-icon">
-													<Icon type={ `16/plus` } width="16" height="16"/>
+													<Icon type={ '16/plus' } width="16" height="16"/>
 												</button>
 												<button className="btn btn-icon">
-													<Icon type={ `16/trash` } width="16" height="16"/>
+													<Icon type={ '16/trash' } width="16" height="16"/>
 												</button>
 												<button className="btn btn-icon">
-													<Icon type={ `16/cog` } width="16" height="16"/>
+													<Icon type={ '16/cog' } width="16" height="16"/>
 												</button>
-											</div>
+											</ToolGroup>
 										</div>
-									</div>
+									</Toolbar>
 								</header>
 								<ItemList />
 							</div>
