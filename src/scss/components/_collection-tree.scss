@@ -149,6 +149,13 @@
 				transform: translate3d(0, 0, 0);
 			}
 
+			// Always translate root level on phones
+			.view-item-list-active & {
+				@include bp-down(xs) {
+					transform: translate3d(-25%, 0, 0);
+				}
+			}
+
 			.scroll-container {
 				overflow: auto;
 				height: 100%;
