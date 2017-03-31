@@ -136,7 +136,7 @@ $collection-tree-max-levels:               10;
 
 $item-list-row-height-sm: 62px;
 $item-list-row-height-md: $line-height-large;
-$item-list-head-height: $space-lg - 2px; // 24px (content-box)
+$item-list-head-height: $space-lg; // 26px (content-box)
 $item-touch-padding-vertical: 11px;
 $item-touch-padding-horizontal: $padding-horizontal-md;
 
@@ -144,13 +144,13 @@ $item-touch-padding-horizontal: $padding-horizontal-md;
 // Toolbar
 // --------------------------------------------------
 
-$toolbar-height: $space-lg;
+$toolbar-height: $line-height-large;
 
 
 // Panel
 // --------------------------------------------------
 
-$panel-header-height: $space-lg;
+$panel-header-height: $line-height-large + $space-min;
 
 
 // Item details
@@ -163,7 +163,7 @@ $touch-item-details-width-lg: 33%;
 // Tabs
 // --------------------------------------------------
 
-$tabs-height: $space-lg;
+$tabs-height: $line-height-large + $space-min;
 $tabs-padding-horizontal: $space-md;
 $tabs-compact-padding-horizontal: $space-xs;
 
