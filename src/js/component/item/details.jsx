@@ -24,7 +24,7 @@ class ItemDetails extends React.Component {
 		return (
 			<section className={ `item details ${this.props.active ? 'active' : ''}` }>
 				<Panel>
-					<div>
+					<header>
 						<h4 className="offscreen">
 							{ this.props.title }
 						</h4>
@@ -60,7 +60,7 @@ class ItemDetails extends React.Component {
 								Related
 							</Tab>
 						</Tabs>
-					</div>
+					</header>
 					<div className={ cx({
 							'tab-pane': true,
 							'info': true,

@@ -5,11 +5,17 @@ import React from 'react';
 export default class Panel extends React.Component {
 
 	renderHeader(header) {
-		return (
-			<header className="panel-header">
-				{ React.cloneElement(header) }
-			</header>
-		);
+		if(header.type === 'header') {
+			return React.cloneElement(header, {
+				className: 'panel-header'
+			});
+		} else {
+			return (
+				<header className="panel-header">
+					{ React.cloneElement(header) }
+				</header>
+			);
+		}
 	}
 
 	renderBody(body) {
