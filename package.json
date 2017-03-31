@@ -58,6 +58,7 @@
     "babel-runtime": "^6.23.0",
     "bootstrap-sass": "^3.3.6",
     "classnames": "^2.2.5",
+    "draft-js": "^0.10.0",
     "floatthead": "1.4.0",
     "history": "<3.0.0",
     "jquery": "^2.2.4",

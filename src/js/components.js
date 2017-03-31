@@ -1,13 +1,14 @@
+import Button from './component/ui/button';
 import CollectionTree from './component/collection-tree';
 import Editable from './component/editable';
 import Icon from './component/ui/icon';
-import Button from './component/ui/button';
 import Item from './component/item';
 import ItemBox from './component/item/box';
 import ItemDetails from './component/item/details';
 import ItemList from './component/item/list';
 import Library from './component/library';
 import Navbar from './component/ui/navbar';
+import RichEditor from './component/rich-editor';
 import Panel from './component/ui/panel';
 import Spinner from './component/ui/spinner';
 import TagSelector from './component/tag-selector';
@@ -16,16 +17,17 @@ import { Tab, Tabs } from './component/ui/tabs';
 import { Toolbar, ToolGroup } from './component/ui/toolbars';
 
 export default () => ({
+	Button,
 	CollectionTree,
 	Editable,
 	Icon,
-	Button,
 	Item,
 	ItemBox,
 	ItemDetails,
 	ItemList,
 	Library,
 	Navbar,
+	RichEditor,
 	Panel,
 	Spinner,
 	Tab,
