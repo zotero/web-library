@@ -28,7 +28,7 @@ class ItemDetails extends React.Component {
 						<h4 className="offscreen">
 							{ this.props.title }
 						</h4>
-						<Tabs>
+						<Tabs compact>
 							<Tab
 							isActive={ this.state.tab === 'info' }
 							onActivate={ () => this.setState({ tab: 'info' }) }

@@ -1,0 +1,94 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Renders tabs 1`] = `
+<nav>
+  <ul
+    className="nav tabs"
+  >
+    <li
+      className="tab active"
+      onClick={[Function]}
+    >
+      <a
+        href=""
+        onClick={[Function]}
+      >
+        Active
+      </a>
+    </li>
+    <li
+      className="tab"
+      onClick={[Function]}
+    >
+      <a
+        href=""
+        onClick={[Function]}
+      >
+        Not Active
+      </a>
+    </li>
+  </ul>
+</nav>
+`;
+
+exports[`Renders tabs compact 1`] = `
+<nav>
+  <ul
+    className="nav tabs compact"
+  >
+    <li
+      className="tab"
+      onClick={[Function]}
+    >
+      <a
+        href=""
+        onClick={[Function]}
+      >
+        Lorem
+      </a>
+    </li>
+    <li
+      className="tab"
+      onClick={[Function]}
+    >
+      <a
+        href=""
+        onClick={[Function]}
+      >
+        Ipsum
+      </a>
+    </li>
+  </ul>
+</nav>
+`;
+
+exports[`Renders tabs justified 1`] = `
+<nav>
+  <ul
+    className="nav tabs justified"
+  >
+    <li
+      className="tab"
+      onClick={[Function]}
+    >
+      <a
+        href=""
+        onClick={[Function]}
+      >
+        Lorem
+      </a>
+    </li>
+    <li
+      className="tab"
+      onClick={[Function]}
+    >
+      <a
+        href=""
+        onClick={[Function]}
+      >
+        Ipsum
+      </a>
+    </li>
+  </ul>
+</nav>
+`;

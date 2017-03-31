@@ -26,17 +26,19 @@ Tab.propTypes = {
 };
 
 
-const Tabs = ({ children, justified }) => (
+const Tabs = ({ children, justified, compact }) => (
 	<nav>
-		<ul className={ cx({ nav: true, tabs: true, justified }) }>
+		<ul className={ cx('nav', 'tabs', { justified, compact }) }>
 			{ children }
 		</ul>
 	</nav>
 );
 
 Tabs.propTypes = {
-	justified: React.PropTypes.bool,
-	children: React.PropTypes.node
+	children: React.PropTypes.node,
+	className: React.PropTypes.string,
+	compact: React.PropTypes.bool,
+	justified: React.PropTypes.bool
 };
 
 
