@@ -19,6 +19,12 @@ body,
 
 html {
 	font-size: $font-size-base; // 1rem
+
+	@media (max-device-width: 480px) {
+		font-size: $font-size-mobile; // 1rem
+	}
+
+	-webkit-text-size-adjust: none;
 }
 
 body {
