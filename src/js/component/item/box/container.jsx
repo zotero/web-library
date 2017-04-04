@@ -8,6 +8,14 @@ import { connect } from 'react-redux';
 import { updateItem } from '../../../actions';
 import { itemProp } from '../../../constants';
 
+const { fieldMap, typeMap, hideFields, noEditFields } = Zotero.Item.prototype;
+const itemTypes = Object.keys(typeMap).map(typeKey => ({
+	value: typeKey,
+	label: typeMap[typeKey]
+}));
+
+// console.log(itemTypes);
+
 
 class ItemBoxContainer extends React.Component {
 	async itemUpdatedHandler(field, newValue) {
@@ -25,7 +33,7 @@ const mapStateToProps = state => {
 	var items, item;
 	let selectedCollectionKey = 'collection' in state.router.params ? state.router.params.collection : null;
 	let selectedItemKey = 'item' in state.router.params ? state.router.params.item : null;
-	let { fieldMap, typeMap, hideFields, noEditFields } = Zotero.Item.prototype;
+	
 
 	if(selectedCollectionKey && state.items[selectedCollectionKey]) {
 		items = state.items[selectedCollectionKey].items;
@@ -37,11 +45,12 @@ const mapStateToProps = state => {
 
 	return {
 		fields: Object.keys(fieldMap).map(f => ({
+			options: f === 'itemType' ? itemTypes : null,
 			key: f,
 			label: fieldMap[f],
 			readonly: noEditFields.includes(f),
 			processing: item && state.items.updating && item.key in state.items.updating && state.items.updating[item.key].includes(f),
-			value: item ? f === 'itemType' ? typeMap[item.get(f)] : item.get(f) : null
+			value: item ? item.get(f) : null
 		})).filter(f => !hideFields.includes(f.key)),
 		item: item || undefined
 	};

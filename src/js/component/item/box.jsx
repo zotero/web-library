@@ -1,6 +1,7 @@
 'use strict';
 
 import React from 'react';
+import cx from 'classnames';
 
 import InjectableComponentsEnhance from '../../enhancers/injectable-components-enhancer';
 import { itemProp } from '../../constants';
@@ -12,31 +13,45 @@ class ItemBox extends React.Component {
 			<dl className="dl-horizontal">
 				{
 					this.props.fields.map(field => {
-						var className;
+						var classNames = [];
 
 						if(this.props.hiddenFields.includes(field.key)) {
 							return null;
 						}
 
 						if(!field.value || !field.value.length) {
-							className = 'empty';
+							classNames.push('empty');
+						}
+
+						if(field.options && field.options.length) {
+							classNames.push('select');
 						}
 
 						return [
-							(<dt className={ className }>{ field.label }</dt>),
-							(<dd className={ className }>
+							(<dt className={ cx(classNames) }>{ field.label }</dt>),
+							(<dd className={ cx(classNames) }>
 								{
 									(() => {
 										switch(field.key) {
+											case 'note':
 											case 'notes':
 												return null;
-											case 'creators':
+											case 'creator':
 												return null;
+											case 'itemType':
+												return (
+													<Editable 
+														options = { field.options || null }
+														processing={ field.processing || false }
+														value={ field.value || '' }
+														editOnClick = { !field.readonly }
+														onSave={ newValue => this.props.onSave(field, newValue) } />
+												);
 											default:
 												return (
 													<Editable 
 														processing={ field.processing || false }
-														value={ field.value }
+														value={ field.value || '' }
 														editOnClick = { !field.readonly }
 														onSave={ newValue => this.props.onSave(field, newValue) }
 													>

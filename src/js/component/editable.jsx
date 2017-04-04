@@ -1,6 +1,7 @@
 'use strict';
 
 import React from 'react';
+import Select from 'react-select';
 import InjectableComponentsEnhance from '../enhancers/injectable-components-enhancer';
 
 class Editable extends React.Component {
@@ -93,9 +94,15 @@ class Editable extends React.Component {
 		}, this.props.onChange);
 	}
 
+	selectChangeHandler(newValue) {
+		this.setState({
+			value: newValue
+		}, this.props.onChange);
+	}
+
 	blurHandler() {
 		this.pending = setTimeout(() => { 
-			this.save(this.input.value);
+			this.save(this.input.value || this.input.props.value);
 		}, 100);
 	}
 
@@ -104,20 +111,37 @@ class Editable extends React.Component {
 		if(this.state.processing || this.props.processing) {
 			return <Spinner />;
 		} else if(this.state.editing) {
-			return (
-				<form
-					className="editable editable-field editable-editing"
-					onSubmit={ev => { this.submitHandler(ev); }}>
-					<input
-						ref={ ref => this.input = ref }
-						// disabled={ this.state.processing ? 'disabled' : null }
-						value={ this.state.value }
-						placeholder={ this.props.placeholder }
-						onChange={ ev => this.changeHandler(ev) }
-						onKeyUp={ ev => this.keyboardHandler(ev) }
-						onBlur={ ev => this.blurHandler(ev) } />
-				</form>
-			);
+			if(this.props.options && this.props.options.length) {
+				return (
+					<form
+						className="editable editable-select editable-editing"
+						onSubmit={ev => { this.submitHandler(ev); }}>
+						<Select
+							simpleValue
+							clearable = { false }						
+							ref={ ref => this.input = ref }
+							value={ this.state.value }
+							options={ this.props.options }
+							onChange={ this.selectChangeHandler.bind(this) }
+							onBlur={ ev => this.blurHandler(ev) } />
+					</form>
+				);
+			} else {
+				return (
+					<form
+						className="editable editable-field editable-editing"
+						onSubmit={ev => { this.submitHandler(ev); }}>
+						<input
+							ref={ ref => this.input = ref }
+							// disabled={ this.state.processing ? 'disabled' : null }
+							value={ this.state.value }
+							placeholder={ this.props.placeholder }
+							onChange={ ev => this.changeHandler(ev) }
+							onKeyUp={ ev => this.keyboardHandler(ev) }
+							onBlur={ ev => this.blurHandler(ev) } />
+					</form>
+				);
+			}
 		} else {
 			return <span 
 				className="editable editable-field"
@@ -140,6 +164,7 @@ Editable.propTypes = {
 	onSave: React.PropTypes.func,
 	onChange: React.PropTypes.func,
 	editOnClick: React.PropTypes.bool,
+	options: React.PropTypes.array,
 	children: React.PropTypes.node
 };
 

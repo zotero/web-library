@@ -123,29 +123,27 @@ export function fetchCollectionsIfNeeded(library) {
 }
 
 function fetchItems(collection, library) {
-	return dispatch => {
+	return async dispatch => {
 		dispatch(requestItems(collection.key));
-		collection.getMemberItemKeys()
-		.then((keys) => {
-			library.loadFromKeys(keys, 'items')
-			.then(results => {
-				if(Array.isArray(results) && results.length >= 1 && Array.isArray(results[0].data)) {
-					//@TODO: fix a memory leak/duplicate items in storage
-					console.warn('items stored in the library: ', library.items.objectArray.length, library.items.objectArray);
-					let items = new Zotero.Items(results[0].data);
-					dispatch(receiveItems(collection.key, items.objectArray));
-				} else {
-					dispatch(errorFetchingItems('Unexpected response from the API'));
-				}
-			})
-			.catch(error => {
-				dispatch(errorFetchingItems(error));
+		try {
+			let response = await library.loadItems({
+				limit: 50,
+				collectionKey: collection.key
 			});
-		})
-		.catch(error => {
-			dispatch(errorFetchingItems(error));
-		});
-		
+			//@TODO: support for paging/infinite scroll
+			// response.totalResults
+			if(response.status === 200) {
+				//@TODO: fix a memory leak/duplicate items in storage
+				console.warn('items stored in the library: ', library.items.objectArray.length, library.items.objectArray);
+				dispatch(receiveItems(collection.key, response.loadedItems));
+			} else {
+				//@TODO: handle for various responses including response.backoff == true
+				dispatch(errorFetchingItems(`Unexpected response from the API ${response.rawResponse.status} ${response.rawResponse.statusText}`));	
+			}
+
+		} catch(error) {
+			dispatch(errorFetchingItems(error.message));
+		}
 	};
 }
 
@@ -163,10 +161,10 @@ export function updateItem(item, field) {
 		dispatch(requestUpdateItem(item, field));
 		try {
 			await item.writeItem();
+			dispatch(receiveUpdateItem(item, field));
 		} catch(c) {
-			dispatch(errorUpdateItem(c, item, field));
+			dispatch(errorUpdateItem(c.message, item, field));
 		}
-		dispatch(receiveUpdateItem(item, field));
 	};
 }
 

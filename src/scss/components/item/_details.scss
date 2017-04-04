@@ -99,6 +99,10 @@
 	.dl-horizontal {
 		margin-top: 3px;
 
+		dd.select {
+			overflow: visible;
+		}
+
 		@include bp-down(xs) {
 			dt {
 				padding-right: $default-padding-horizontal-touch;
