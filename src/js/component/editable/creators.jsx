@@ -3,19 +3,9 @@
 import React from 'react';
 import cx from 'classnames';
 
-//@TODO: avoid using libzotero directly in visual component
-import Zotero from 'libzotero';
-
 import Editable from '../editable';
 import Button from '../ui/button';
 import Icon from '../ui/icon';
-
-
-//@TODO: filter options to match item type (in item box container)
-const creatorOptions = Object.keys(Zotero.Item.prototype.creatorMap).map(c => ({
-	value: c,
-	label: Zotero.Item.prototype.creatorMap[c]
-}));
 
 export default class EditableCreators extends React.Component {
 	constructor(props) {
@@ -98,7 +88,7 @@ export default class EditableCreators extends React.Component {
 							})}>
 								<Editable
 									onSave={ newValue => this.valueChangedHandler(index, 'creatorType', newValue)}
-									options={ creatorOptions }
+									options={ this.props.creatorTypes }
 									value={ creator.creatorType }
 								/>
 							{
@@ -140,6 +130,7 @@ export default class EditableCreators extends React.Component {
 
 EditableCreators.propTypes = {
 	value: React.PropTypes.array,
+	creatorTypes: React.PropTypes.array.isRequired,
 	onSave: React.PropTypes.func
 };
 

@@ -14,10 +14,17 @@ const itemTypes = Object.keys(typeMap).map(typeKey => ({
 	label: typeMap[typeKey]
 }));
 
-const fieldMap = { 
+const fieldMap = {
 	'creators': Zotero.Item.prototype.fieldMap['creator'],
 	...Zotero.Item.prototype.fieldMap
 };
+
+//@TODO: filter options to match item type (in item box container)
+const creatorTypes = Object.keys(Zotero.Item.prototype.creatorMap).map(c => ({
+	value: c,
+	label: Zotero.Item.prototype.creatorMap[c]
+}));
+
 const hideFields = ['creator', 'abstract', ...Zotero.Item.prototype.hideFields];
 
 
@@ -49,7 +56,7 @@ const mapStateToProps = state => {
 
 	return {
 		fields: Object.keys(fieldMap).map(f => ({
-			options: f === 'itemType' ? itemTypes : null,
+			options: f === 'itemType' ? itemTypes : f === 'creators' ? creatorTypes : null,
 			key: f,
 			label: fieldMap[f],
 			readonly: noEditFields.includes(f),

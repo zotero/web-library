@@ -39,7 +39,8 @@ class ItemBox extends React.Component {
 												return null;
 											case 'creators':
 												return (
-													<EditableCreators 
+													<EditableCreators
+														creatorTypes = { field.options || null }
 														value = { field.value || [] }
 														onSave={ newValue => this.props.onSave(field, newValue) } />
 												);
