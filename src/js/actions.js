@@ -53,7 +53,7 @@ export function requestItems(collectionKey) {
 export function receiveItems(collectionKey, items) {
 	items.sort(
 		(a, b) => {
-			return a.get('title').toUpperCase().localeCompare(b.get('title').toUpperCase());
+			return (a.get('title') || '').toUpperCase().localeCompare((b.get('title') || '').toUpperCase());
 		}
 	);
 

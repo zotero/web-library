@@ -9,6 +9,8 @@ import { itemProp } from '../../constants';
 class ItemBox extends React.Component {
 	render() {
 		let Editable = this.props.components['Editable'];
+		let EditableCreators = this.props.components['EditableCreators'];
+
 		return (
 			<dl className="dl-horizontal">
 				{
@@ -33,11 +35,14 @@ class ItemBox extends React.Component {
 								{
 									(() => {
 										switch(field.key) {
-											case 'note':
 											case 'notes':
 												return null;
-											case 'creator':
-												return null;
+											case 'creators':
+												return (
+													<EditableCreators 
+														value = { field.value || [] }
+														onSave={ newValue => this.props.onSave(field, newValue) } />
+												);
 											case 'itemType':
 												return (
 													<Editable 

@@ -102,7 +102,12 @@ class Editable extends React.Component {
 
 	blurHandler() {
 		this.pending = setTimeout(() => { 
-			this.save(this.input.value || this.input.props.value);
+			if('props' in this.input) {
+				this.save(this.input.props.value);
+			} else {
+				this.save(this.input.value);	
+			}
+			this.cancel();
 		}, 100);
 	}
 
@@ -132,6 +137,7 @@ class Editable extends React.Component {
 						className="editable editable-field editable-editing"
 						onSubmit={ev => { this.submitHandler(ev); }}>
 						<input
+							type="text"
 							ref={ ref => this.input = ref }
 							// disabled={ this.state.processing ? 'disabled' : null }
 							value={ this.state.value }

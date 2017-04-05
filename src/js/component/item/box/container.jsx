@@ -8,13 +8,17 @@ import { connect } from 'react-redux';
 import { updateItem } from '../../../actions';
 import { itemProp } from '../../../constants';
 
-const { fieldMap, typeMap, hideFields, noEditFields } = Zotero.Item.prototype;
+const { typeMap, noEditFields } = Zotero.Item.prototype;
 const itemTypes = Object.keys(typeMap).map(typeKey => ({
 	value: typeKey,
 	label: typeMap[typeKey]
 }));
 
-// console.log(itemTypes);
+const fieldMap = { 
+	'creators': Zotero.Item.prototype.fieldMap['creator'],
+	...Zotero.Item.prototype.fieldMap
+};
+const hideFields = ['creator', 'abstract', ...Zotero.Item.prototype.hideFields];
 
 
 class ItemBoxContainer extends React.Component {
