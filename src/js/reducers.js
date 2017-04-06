@@ -10,7 +10,7 @@ import {
 
 	REQUEST_FETCH_COLLECTIONS,
 	RECEIVE_FETCH_COLLECTIONS,
-	ERROR_FETCHING_COLLECTIONS,
+	ERROR_FETCH_COLLECTIONS,
 
 	REQUEST_UPDATE_ITEM,
 	RECEIVE_UPDATE_ITEM,
@@ -45,7 +45,7 @@ function collectionsByLibrary(state = {
 				isFetching: false,
 				collections: action.collections
 			});
-		case ERROR_FETCHING_COLLECTIONS:
+		case ERROR_FETCH_COLLECTIONS:
 			return Object.assign({}, state, {
 				isFetching: false
 			});
@@ -60,7 +60,7 @@ function collections(state = {
 	switch(action.type) {
 		case REQUEST_FETCH_COLLECTIONS:
 		case RECEIVE_FETCH_COLLECTIONS:
-		case ERROR_FETCHING_COLLECTIONS:
+		case ERROR_FETCH_COLLECTIONS:
 			return Object.assign({}, state, {
 				[action.libraryString]: collectionsByLibrary(state[action.libraryString], action)
 			});
@@ -70,7 +70,8 @@ function collections(state = {
 }
 
 function itemsByCollection(state = {
-	isFetching: false
+	isFetching: false,
+	items: []
 }, action) {
 	switch(action.type) {
 		case REQUEST_FETCH_ITEMS:
@@ -123,7 +124,8 @@ function itemsBeingUpdated(state = {}, action) {
 }
 
 function items(state = {
-	selected: ''
+	selected: '',
+	updating: {}
 }, action) {
 	switch(action.type) {
 		case REQUEST_FETCH_ITEMS:

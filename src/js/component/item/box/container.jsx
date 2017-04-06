@@ -53,15 +53,17 @@ const mapStateToProps = state => {
 
 	if(items && selectedItemKey) {
 		item = items.find(i => i.key === selectedItemKey);
-		const itemType = item.get('itemType');
+		if(item) {
+			const itemType = item.get('itemType');
 
-		if(itemType in state.creatorTypes) {
-			creatorTypesLoading = state.creatorTypes[item.get('itemType')].isFetching;
-			if('value' in state.creatorTypes[itemType]) {
-				creatorTypes = state.creatorTypes[item.get('itemType')].value.map(ct => ({
-					label: creatorMap[ct.creatorType],
-					value: ct.creatorType
-				}));
+			if(itemType in state.creatorTypes) {
+				creatorTypesLoading = state.creatorTypes[item.get('itemType')].isFetching;
+				if('value' in state.creatorTypes[itemType]) {
+					creatorTypes = state.creatorTypes[item.get('itemType')].value.map(ct => ({
+						label: creatorMap[ct.creatorType],
+						value: ct.creatorType
+					}));
+				}
 			}
 		}
 	}

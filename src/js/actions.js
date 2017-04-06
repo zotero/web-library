@@ -108,6 +108,7 @@ function fetchCollections(library) {
 				library.collections.objectArray
 			));
 		} catch(error) {
+			console.warn(error);
 			dispatch(errorFetchingCollection(
 				library.libraryString,
 				error.message
