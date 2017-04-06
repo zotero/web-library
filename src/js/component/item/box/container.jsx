@@ -19,7 +19,7 @@ const fieldMap = {
 	...Zotero.Item.prototype.fieldMap
 };
 
-const hideFields = ['creator', 'abstract', ...Zotero.Item.prototype.hideFields];
+const hideFields = ['creator', 'abstract', 'notes', ...Zotero.Item.prototype.hideFields];
 
 class ItemBoxContainer extends React.Component {
 	async itemUpdatedHandler(field, newValue) {
