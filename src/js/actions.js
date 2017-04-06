@@ -15,6 +15,10 @@ export const REQUEST_UPDATE_ITEM = 'REQUEST_UPDATE_ITEM';
 export const RECEIVE_UPDATE_ITEM = 'RECEIVE_UPDATE_ITEM';
 export const ERROR_UPDATE_ITEM = 'ERROR_UPDATE_ITEM';
 
+export const REQUEST_CREATOR_TYPES = 'REQUEST_CREATOR_TYPES';
+export const RECEIVE_CREATOR_TYPES = 'RECEIVE_CREATOR_TYPES';
+export const ERROR_CREATOR_TYPES = 'ERROR_CREATOR_TYPES';
+
 export function selectLibrary(type, id, key) {
 	let library = new Zotero.Library(type, id, null, key);
 	
@@ -95,21 +99,20 @@ export function sellectItem(index) {
 }
 
 function fetchCollections(library) {
-	return dispatch => {
+	return async dispatch => {
 		dispatch(requestCollections(library.libraryString));
-		library.loadUpdatedCollections()
-			.then(() => {
-				dispatch(receiveCollections(
-					library.libraryString,
-					library.collections.objectArray
-				));
-			})
-			.catch(error => {
-				dispatch(errorFetchingCollection(
-					library.libraryString,
-					error
-				));
-			});
+		try {
+			await library.loadUpdatedCollections();
+			dispatch(receiveCollections(
+				library.libraryString,
+				library.collections.objectArray
+			));
+		} catch(error) {
+			dispatch(errorFetchingCollection(
+				library.libraryString,
+				error.message
+			));
+		}
 	};
 }
 
@@ -190,5 +193,40 @@ export function errorUpdateItem(error, item, field) {
 		error,
 		item,
 		field
+	};
+}
+
+export function fetchCreatorTypes(itemType) {
+	return async dispatch => {
+		dispatch(requestCreatorTypes(itemType));
+		try {
+			let creatorTypes = await Zotero.Item.prototype.getCreatorTypes(itemType);
+			dispatch(receiveCreatorTypes(itemType, creatorTypes));
+		} catch(error) {
+			dispatch(errorCreatorTypes(error.message, itemType));
+		}
+	};
+}
+
+export function requestCreatorTypes(itemType) {
+	return {
+		type: REQUEST_CREATOR_TYPES,
+		itemType
+	};
+}
+
+export function receiveCreatorTypes(itemType, creatorTypes) {
+	return {
+		type: RECEIVE_CREATOR_TYPES,
+		itemType,
+		creatorTypes
+	};
+}
+
+export function errorCreatorTypes(error, itemType) {
+	return {
+		type: ERROR_CREATOR_TYPES,
+		error,
+		itemType
 	};
 }

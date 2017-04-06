@@ -88,6 +88,7 @@ export default class EditableCreators extends React.Component {
 							})}>
 								<Editable
 									onSave={ newValue => this.valueChangedHandler(index, 'creatorType', newValue)}
+									isLoading={ this.props.creatorTypesLoading }
 									options={ this.props.creatorTypes }
 									value={ creator.creatorType }
 								/>
@@ -131,6 +132,7 @@ export default class EditableCreators extends React.Component {
 EditableCreators.propTypes = {
 	value: React.PropTypes.array,
 	creatorTypes: React.PropTypes.array.isRequired,
+	creatorTypesLoading: React.PropTypes.bool,
 	onSave: React.PropTypes.func
 };
 

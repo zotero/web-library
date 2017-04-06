@@ -116,7 +116,7 @@ class Editable extends React.Component {
 		if(this.state.processing || this.props.processing) {
 			return <Spinner />;
 		} else if(this.state.editing) {
-			if(this.props.options && this.props.options.length) {
+			if(this.props.options) {
 				return (
 					<form
 						className="editable editable-select editable-editing"
@@ -126,6 +126,7 @@ class Editable extends React.Component {
 							clearable = { false }						
 							ref={ ref => this.input = ref }
 							value={ this.state.value }
+							isLoading={ this.props.isLoading }
 							options={ this.props.options }
 							onChange={ this.selectChangeHandler.bind(this) }
 							onBlur={ ev => this.blurHandler(ev) } />
@@ -171,6 +172,7 @@ Editable.propTypes = {
 	onChange: React.PropTypes.func,
 	editOnClick: React.PropTypes.bool,
 	options: React.PropTypes.array,
+	isLoading: React.PropTypes.bool,
 	children: React.PropTypes.node
 };
 

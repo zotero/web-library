@@ -40,7 +40,8 @@ class ItemBox extends React.Component {
 											case 'creators':
 												return (
 													<EditableCreators
-														creatorTypes = { field.options || null }
+														creatorTypes = { this.props.creatorTypes }
+														creatorTypesLoading = { this.props.creatorTypesLoading }
 														value = { field.value || [] }
 														onSave={ newValue => this.props.onSave(field, newValue) } />
 												);
@@ -93,6 +94,8 @@ ItemBox.defaultProps = {
 };
 
 ItemBox.propTypes = {
+	creatorTypes: React.PropTypes.array,
+	creatorTypesLoading: React.PropTypes.bool,
 	fields: React.PropTypes.array,
 	hiddenFields: React.PropTypes.array,
 	item: itemProp,

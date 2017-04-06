@@ -40,7 +40,7 @@ class CollectionTreeContainer extends React.Component {
 	}
 
 	componentWillReceiveProps(nextProps) {
-		if(nextProps.library && nextProps.library != this.props.library) {
+		if((!this.props.library && nextProps.library) || (this.props.library.libraryString != nextProps.library.libraryString)) {
 			this.props.dispatch(
 				fetchCollectionsIfNeeded(nextProps.library)
 			);
@@ -106,7 +106,7 @@ CollectionTreeContainer.propTypes = {
 	path: React.PropTypes.array
 };
 
-CollectionTree.defaultProps = {
+CollectionTreeContainer.defaultProps = {
 	collections: [],
 	path: [],
 	selected: ''

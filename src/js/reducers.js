@@ -14,7 +14,11 @@ import {
 
 	REQUEST_UPDATE_ITEM,
 	RECEIVE_UPDATE_ITEM,
-	ERROR_UPDATE_ITEM
+	ERROR_UPDATE_ITEM,
+
+	REQUEST_CREATOR_TYPES,
+	RECEIVE_CREATOR_TYPES,
+	ERROR_CREATOR_TYPES
 } from './actions.js';
 
 
@@ -66,8 +70,7 @@ function collections(state = {
 }
 
 function itemsByCollection(state = {
-	isFetching: false,
-	items: []
+	isFetching: false
 }, action) {
 	switch(action.type) {
 		case REQUEST_FETCH_ITEMS:
@@ -148,9 +151,41 @@ function config(state = {}) {
 	return state;
 }
 
+
+
+function creatorTypes(state = {}, action) {
+	switch(action.type) {
+		case REQUEST_CREATOR_TYPES:
+			return {
+				...state,
+				[action.itemType]: {
+					isFetching: true
+				}
+			};
+		case RECEIVE_CREATOR_TYPES:
+			return {
+				...state,
+				[action.itemType]: {
+					isFetching: false,
+					value: action.creatorTypes
+				}
+			};
+		case ERROR_CREATOR_TYPES:
+			return {
+				...state,
+				[action.itemType]: {
+					isFetching: false
+				}
+			};
+		default:
+			return state;
+	}	
+}
+
 export default {
 	library,
 	collections,
 	items,
-	config
+	config,
+	creatorTypes
 };
