@@ -6,9 +6,10 @@
 // Colors
 // --------------------------------------------------
 
-$red:     #900;
-$blue:    #5c93e5;
-$asphalt: #7a8799;
+$red:           #900;
+$blue:          #5c93e5;
+$asphalt:       #7a8799;
+$asphalt-light: #dadee3;
 
 $brand-primary:   $red;
 $brand-secondary: $blue;
@@ -41,6 +42,13 @@ $headings-color: $shade-7;
 
 $link-color:       $blue;
 $link-hover-color: $blue;
+
+
+// Typography
+// --------------------------------------------------
+
+$text-selection-color: inherit;
+$text-selection-bg: $asphalt-light;
 
 
 // Partials

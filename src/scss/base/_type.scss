@@ -70,3 +70,11 @@ ul, ol {
 	padding: 0;
 	list-style: none;
 }
+
+
+// Text selection
+
+::selection {
+	color: $text-selection-color;
+	background-color: $text-selection-bg;
+}
