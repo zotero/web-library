@@ -90,7 +90,7 @@
 						content: none;
 					}
 
-					.svg-icon.touch {
+					.icon.touch {
 						color: $touch-collection-tree-active-link-color;
 					}
 
@@ -102,7 +102,7 @@
 				@include mouse-and-bp-up(md) {
 					background: $collection-tree-active-link-bg;
 
-					.svg-icon {
+					.icon {
 						color: $collection-tree-active-icon-color;
 					}
 
@@ -129,7 +129,7 @@
 		}
 	}
 
-	.svg-icon {
+	.icon {
 		flex: 0 0 auto;
 		margin-right: $space-xs;
 

@@ -44,7 +44,7 @@ export default class Icon extends React.Component {
 		}
 
 		let svgAttr = {
-			className: cx(['svg-icon', `icon-${basename}`, this.props.className]),
+			className: cx(['icon', `icon-${basename}`, this.props.className]),
 			role: 'img',
 			style
 		};
@@ -72,5 +72,5 @@ Icon.propTypes = {
 };
 
 Icon.defaultProps = {
-	
+
 };

@@ -34,12 +34,12 @@
 	background: $btn-icon-bg;
 	line-height: 1;
 
-	.svg-icon {
+	.icon {
 		vertical-align: top;
 	}
 
 	&:active {
-		.svg-icon {
+		.icon {
 			color: $icon-active-color;
 		}
 	}
@@ -47,7 +47,7 @@
 	&.active {
 		background: $btn-icon-active-bg;
 
-		.svg-icon {
+		.icon {
 			color: $btn-icon-active-color;
 		}
 	}
@@ -56,12 +56,12 @@
 		&:focus {
 			background: $btn-icon-focus-bg;
 
-			.svg-icon {
+			.icon {
 				color: $btn-icon-focus-color;
 			}
 
 			&:active {
-				.svg-icon {
+				.icon {
 					color: $btn-icon-focus-active-color;
 				}
 			}
