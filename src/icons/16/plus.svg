@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 	<symbol id="plus" viewBox="0 0 16 16">
-		<polygon fill="currentColor" points="16,7 9,7 9,0 8,0 8,7 1,7 1,8 8,8 8,15 9,15 9,8 16,8"/>
+		<polygon fill="currentColor" points="15 7 9 7 9 1 8 1 8 7 2 7 2 8 8 8 8 14 9 14 9 8 15 8 15 7"/>
 	</symbol>
 	<use xlink:href="#plus" viewBox="0 0 16 16"/>
 </svg>
