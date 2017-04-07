@@ -18,3 +18,19 @@
 		}
 	}
 }
+
+.icon-spin {
+	@keyframes spin {
+		0% {
+			transform: rotate(0);
+		}
+
+		100% {
+			transform: rotate(360deg);
+		}
+	}
+
+	display: block; // todo
+	color: $spinner-color;
+	animation: spin 1.2s linear infinite;
+}
