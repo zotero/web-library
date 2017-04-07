@@ -1,20 +1,31 @@
-.editable-field {
-	display: inline-block;
-	margin-left: 3px;
-	min-height: calc(1.5em - 2px);
-	vertical-align: -1px;
-	width: 100%;
+//
+// Editable
+// --------------------------------------------------
 
-	input {
-		border: 1px solid #000;
-		font-size: 1em;
-		line-height: 1.5em;
-		margin-left: -3px;
-		margin: 0;
-		outline: none;
-		padding: 0 2px;
+.editable-control {
+	font: {
+		family: inherit;
+		size: inherit;
+		weight: inherit;
 	}
+	text-align: inherit;
+	position: relative;
+	left: -($editable-border-width + $editable-padding-horizontal);
+	width: calc(
+	  100% + #{$editable-border-width + $editable-padding-horizontal}
+	);
+	line-height: normal;
+	padding: $editable-padding-vertical $editable-padding-horizontal;
+	border: $editable-border-width solid $editable-border-color;
+	color: $editable-color;
+	background: $editable-bg;
+	border-radius: $editable-border-radius;
+	margin: -2em 0; // For the sake of safety
+	background-clip: padding-box;
+}
 
+// todo
+.editable-field {
 	.creators & {
 		height: 3.5em;
 		display: block;

@@ -45,7 +45,7 @@ class Editable extends React.Component {
 
 	edit() {
 		this.setState({
-			editing: true 
+			editing: true
 		}, () => {
 			this.input.focus();
 		});
@@ -101,11 +101,11 @@ class Editable extends React.Component {
 	}
 
 	blurHandler() {
-		this.pending = setTimeout(() => { 
+		this.pending = setTimeout(() => {
 			if('props' in this.input) {
 				this.save(this.input.props.value);
 			} else {
-				this.save(this.input.value);	
+				this.save(this.input.value);
 			}
 			this.cancel();
 		}, 100);
@@ -123,7 +123,7 @@ class Editable extends React.Component {
 						onSubmit={ev => { this.submitHandler(ev); }}>
 						<Select
 							simpleValue
-							clearable = { false }						
+							clearable = { false }
 							ref={ ref => this.input = ref }
 							value={ this.state.value }
 							isLoading={ this.props.isLoading }
@@ -139,6 +139,7 @@ class Editable extends React.Component {
 						onSubmit={ev => { this.submitHandler(ev); }}>
 						<input
 							type="text"
+							className="editable-control"
 							ref={ ref => this.input = ref }
 							// disabled={ this.state.processing ? 'disabled' : null }
 							value={ this.state.value }
@@ -150,11 +151,11 @@ class Editable extends React.Component {
 				);
 			}
 		} else {
-			return <span 
+			return <div
 				className="editable editable-field"
 				onClick={ ev => this.editHandler(ev) }>
 					{ (React.Children.count && this.props.children) || this.state.value || this.props.emptytext }
-				</span>;
+				</div>;
 		}
 	}
 }
