@@ -63,7 +63,7 @@
 	}
 
 	.navbar-brand {
-		height: 100%;
+		display: flex;
 		margin: 0;
 
 		@include bp-down(xs) {
@@ -74,7 +74,6 @@
 			display: block;
 			background: url("./images/zotero-logo.svg") center 11px no-repeat;
 			background-size: $navbar-brand-width-xs $navbar-brand-height-xs;
-			height: 100%;
 			text-indent: 100%;
 			white-space: nowrap;
 			width: $navbar-brand-width-xs + 2 * $navbar-padding-horizontal;
