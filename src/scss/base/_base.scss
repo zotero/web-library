@@ -20,7 +20,7 @@ body,
 html {
 	font-size: $font-size-base; // 1rem
 
-	@media (max-device-width: 480px) {
+	@media (max-device-width: map-get($grid-breakpoints, md) - 1px) {
 		font-size: $font-size-mobile; // 1rem
 	}
 
