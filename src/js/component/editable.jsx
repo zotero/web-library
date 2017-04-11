@@ -31,12 +31,16 @@ class Editable extends React.Component {
 						value: processedValue,
 						editing: false,
 						processing: false
+					}, () => {
+						this.props.onToggle(false);
 					});
 				}).catch(() => {
 					this.setState({
 						value: this.props.value,
 						editing: true,
 						processing: false
+					}, () => {
+						this.props.onToggle(true);
 					});
 				});
 			});
@@ -47,6 +51,7 @@ class Editable extends React.Component {
 		this.setState({
 			editing: true
 		}, () => {
+			this.props.onToggle(true);
 			this.input.focus();
 		});
 	}
@@ -55,6 +60,8 @@ class Editable extends React.Component {
 		this.cancelPending();
 		this.setState({
 			editing: false
+		}, () => {
+			this.props.onToggle(true);
 		});
 	}
 
@@ -171,6 +178,7 @@ Editable.propTypes = {
 	emptytext: React.PropTypes.string,
 	onSave: React.PropTypes.func,
 	onChange: React.PropTypes.func,
+	onToggle: React.PropTypes.func,
 	editOnClick: React.PropTypes.bool,
 	options: React.PropTypes.array,
 	isLoading: React.PropTypes.bool,
@@ -183,6 +191,7 @@ Editable.defaultProps  = {
 	emptytext: '',
 	onSave: v => Promise.resolve(v),
 	onChange: () => {},
+	onToggle: () => {},
 	editOnClick: true
 };
 

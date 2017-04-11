@@ -7,6 +7,22 @@ import InjectableComponentsEnhance from '../../enhancers/injectable-components-e
 import { itemProp } from '../../constants';
 
 class ItemBox extends React.Component {
+	constructor(props) {
+		super(props);
+		this.state = {
+			isEditingMap: {}
+		};
+	}
+
+	onEditableToggleHandler(key, isEditing) {
+		this.setState({
+			isEditingMap: {
+				...this.state.isEditingMap,
+				[key]: isEditing
+			}	
+		});
+	}
+
 	render() {
 		let Editable = this.props.components['Editable'];
 		let EditableCreators = this.props.components['EditableCreators'];
@@ -15,19 +31,15 @@ class ItemBox extends React.Component {
 			<dl className="dl-horizontal">
 				{
 					this.props.fields.map(field => {
-						var classNames = [];
-
 						if(this.props.hiddenFields.includes(field.key)) {
 							return null;
 						}
 
-						if(!field.value || !field.value.length) {
-							classNames.push('empty');
-						}
-
-						if(field.options && field.options.length) {
-							classNames.push('select');
-						}
+						const classNames = {
+							'empty': !field.value || !field.value.length,
+							'select': field.options && Array.isArray(field.options),
+							'editing': field.key in this.state.isEditingMap && this.state.isEditingMap[field.key]
+						};
 
 						return [
 							(<dt className={ cx(classNames) }>{ field.label }</dt>),
@@ -52,6 +64,7 @@ class ItemBox extends React.Component {
 														processing={ field.processing || false }
 														value={ field.value || '' }
 														editOnClick = { !field.readonly }
+														onToggle={ this.onEditableToggleHandler.bind(this, field.key) }
 														onSave={ newValue => this.props.onSave(field, newValue) } />
 												);
 											default:
@@ -59,7 +72,8 @@ class ItemBox extends React.Component {
 													<Editable 
 														processing={ field.processing || false }
 														value={ field.value || '' }
-														editOnClick = { !field.readonly }
+														editOnClick={ !field.readonly }
+														onToggle={ this.onEditableToggleHandler.bind(this, field.key) }
 														onSave={ newValue => this.props.onSave(field, newValue) }
 													>
 														{
