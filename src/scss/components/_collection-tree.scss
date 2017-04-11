@@ -147,6 +147,11 @@
 
 			&.active {
 				transform: translate3d(0, 0, 0);
+
+				.scroll-container {
+					overflow: scroll;
+					-webkit-overflow-scrolling: touch; // Momentum scrolling
+				}
 			}
 
 			// Always translate root level on phones
@@ -157,7 +162,7 @@
 			}
 
 			.scroll-container {
-				overflow: auto;
+				overflow: hidden; // Prevent scrolling of inactive levels
 				height: 100%;
 			}
 		}
@@ -179,7 +184,8 @@
 
 				.nav {
 					height: 100%;
-					overflow: auto; // Do not set on positioned elements (horizontal overflow)
+					-webkit-overflow-scrolling: touch;
+					overflow: scroll; // Do not set on positioned elements (horizontal overflow)
 				}
 			}
 
@@ -203,6 +209,10 @@
 
 				&.has-open {
 					transform: translate3d(0, 0, 0);
+
+					.nav {
+						overflow: hidden; // Prevent scrolling of inactive levels
+					}
 				}
 			}
 		}

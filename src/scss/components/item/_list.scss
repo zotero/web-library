@@ -86,8 +86,13 @@
 
 .item-list-body {
 	overflow-y: scroll;
+	-webkit-overflow-scrolling: touch; // Momentum scrolling
 	flex: 1 1 auto;
 	background-attachment: local;
+
+	.view-item-details-active & {
+		overflow: hidden; // Prevent scrolling in inactive state
+	}
 
 	@include bp-only(sm) {
 		background-image: repeating-linear-gradient(to bottom, $item-odd-bg 0,
