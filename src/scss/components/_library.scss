@@ -65,7 +65,7 @@
 		right: 0;
 		bottom: 0;
 		left: 0;
-		transition: $nav-transition;
+		transition: transform $nav-transition;
 
 		.view-item-details-active & {
 			transform: translate3d(-25%, 0, 0);
