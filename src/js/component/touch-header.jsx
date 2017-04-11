@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-const slots = ['next', 'current', 'previous', 'forelast'];
+const slots = ['next', 'current', 'previous', 'before-last'];
 const empty = {
 	key: null,
 	label: ''
