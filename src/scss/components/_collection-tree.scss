@@ -217,10 +217,10 @@
 			}
 		}
 
-		// Do not translate last level on tablets
+		// Do not translate last level on tablets and in touch mode
 		.level-last {
 			&.has-open {
-				@include bp-only(sm) {
+				@include touch-or-bp-only(sm) {
 					transform: translate3d(25%, 0, 0);
 				}
 			}
