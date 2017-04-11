@@ -51,22 +51,6 @@
 			color: $btn-icon-active-color;
 		}
 	}
-
-	.keyboard & {
-		&:focus {
-			background: $btn-icon-focus-bg;
-
-			.icon {
-				color: $btn-icon-focus-color;
-			}
-
-			&:active {
-				.icon {
-					color: $btn-icon-focus-active-color;
-				}
-			}
-		}
-	}
 }
 
 
@@ -95,18 +79,6 @@
 	cursor: pointer;
   transition: transform $twisty-transition;
 
-  &:focus {
-    outline: none;
-
-    .keyboard & {
-      transform: scale(1.4);
-
-      &::after {
-        border-left-color: $twisty-focus-color;
-      }
-    }
-  }
-
 	&::after {
 		content: "";
 		box-sizing: border-box;
@@ -130,14 +102,6 @@
       > .twisty {
         &::after {
           border-left-color: $twisty-selected-color;
-        }
-
-        .keyboard & {
-          &:focus {
-            &::after {
-              border-left-color: $twisty-focus-color; // Reset
-            }
-          }
         }
       }
     }

@@ -22,6 +22,10 @@
 	border-radius: $editable-border-radius;
 	margin: -2em 0; // For the sake of safety
 	background-clip: padding-box;
+
+	&:focus {
+		box-shadow: none; // Override generic focus styles
+	}
 }
 
 // todo

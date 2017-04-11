@@ -1,0 +1,8 @@
+//
+// Keyboard focus
+// --------------------------------------------------
+
+.keyboard :focus {
+	box-shadow: inset 0 0 0 2px $focus-color;
+	position: relative;
+}

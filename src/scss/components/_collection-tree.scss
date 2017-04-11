@@ -68,17 +68,6 @@
 			@include mouse-and-bp-up(md) {
 				padding-right: $default-padding-horizontal;
 			}
-
-			.keyboard & { // Heads up: 2 referencing parent selectors
-				@include mouse-and-bp-up(md) {
-
-					&:focus {
-						position: relative;
-						outline: 2px solid $collection-tree-focus-color;
-						outline-offset: -3px;
-					}
-				}
-			}
 		}
 
 		.selected {
