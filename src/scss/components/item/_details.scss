@@ -10,7 +10,7 @@
 		top: $line-height-large-touch + $space-min;
 		position: absolute;
 		transform: translate3d(100%, 0, 0);
-		transition: $nav-transition;
+		transition: transform $nav-transition;
 
 		.view-item-details-active & {
 			transform: translate3d(0, 0, 0);
