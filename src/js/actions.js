@@ -164,13 +164,23 @@ export function updateItem(item, field) {
 	return async dispatch => {
 		dispatch(requestUpdateItem(item, field));
 		try {
-			await item.writeItem();
-			dispatch(receiveUpdateItem(item, field));
+			let responses = await item.writeItem();
+			if(responses && responses.length && responses[0].status >= 200 && responses[0].status < 300) {
+				let updatedItem = responses[0].returnItems[0];
+				if(updatedItem.writeFailure) {
+					dispatch(errorUpdateItem(updatedItem.writeFailure.message, item, field));
+				} else {
+					dispatch(receiveUpdateItem(item, field));
+				}
+			} else {
+				dispatch(errorUpdateItem('Unexpected response from the API', item, field));	
+			}
 		} catch(c) {
 			dispatch(errorUpdateItem(c.message, item, field));
 		}
 	};
 }
+
 
 export function requestUpdateItem(item, field) {
 	return {
