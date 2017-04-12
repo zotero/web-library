@@ -11,8 +11,7 @@ class ItemDetailsContainer extends React.Component {
 	render() {
 		return <ItemDetails
 			injectItemBox = { ItemBox }
-			fields = { this.props.fields }
-			item = { this.props.item }
+			{ ...this.props }
 		/>;
 	}
 }
@@ -31,7 +30,8 @@ const mapStateToProps = state => {
 	}
 
 	return {
-		item: item || undefined
+		item: item || undefined,
+		processing: item && state.items.updating && item.key in state.items.updating
 	};
 };
 
@@ -43,7 +43,8 @@ const mapDispatchToProps = dispatch => {
 
 ItemDetailsContainer.propTypes = {
 	fields: React.PropTypes.array,
-	item: itemProp
+	item: itemProp,
+	processing: React.PropTypes.bool
 };
 
 export default connect(
