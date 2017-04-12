@@ -1,6 +1,7 @@
 'use strict';
 
 import React from 'react';
+import cx from 'classnames';
 import Select from 'react-select';
 import InjectableComponentsEnhance from '../enhancers/injectable-components-enhancer';
 
@@ -71,7 +72,7 @@ class Editable extends React.Component {
 
 	editHandler(ev) {
 		ev && ev.preventDefault();
-		if(this.props.editOnClick) {
+		if(!this.editing && this.props.editOnClick) {
 			this.edit();
 		}
 	}
@@ -118,17 +119,19 @@ class Editable extends React.Component {
 		}, 100);
 	}
 
-	render() {
-		let Spinner = this.props.components['Spinner'];
+	renderSpinner() {
+		const Spinner = this.props.components['Spinner'];
 		if(this.state.processing || this.props.processing) {
 			return <Spinner />;
-		} else if(this.state.editing) {
+		} else {
+			return null;
+		}
+	}
+
+	renderControl() {
+		if(this.state.editing) {
 			if(this.props.options) {
-				return (
-					<form
-						className="editable editable-select editable-editing"
-						onSubmit={ev => { this.submitHandler(ev); }}>
-						<Select
+				return <Select
 							simpleValue
 							clearable = { false }
 							ref={ ref => this.input = ref }
@@ -136,34 +139,40 @@ class Editable extends React.Component {
 							isLoading={ this.props.isLoading }
 							options={ this.props.options }
 							onChange={ this.selectChangeHandler.bind(this) }
-							onBlur={ ev => this.blurHandler(ev) } />
-					</form>
-				);
+							onBlur={ ev => this.blurHandler(ev) }
+						/>;
 			} else {
-				return (
-					<form
-						className="editable editable-field editable-editing"
-						onSubmit={ev => { this.submitHandler(ev); }}>
-						<input
+				return <input
 							type="text"
 							className="editable-control"
 							ref={ ref => this.input = ref }
-							// disabled={ this.state.processing ? 'disabled' : null }
+							disabled={ this.state.processing ? 'disabled' : null }
 							value={ this.state.value }
 							placeholder={ this.props.placeholder }
 							onChange={ ev => this.changeHandler(ev) }
 							onKeyUp={ ev => this.keyboardHandler(ev) }
-							onBlur={ ev => this.blurHandler(ev) } />
-					</form>
-				);
+							onBlur={ ev => this.blurHandler(ev) }
+						/>;
 			}
 		} else {
-			return <div
-				className="editable editable-field"
-				onClick={ ev => this.editHandler(ev) }>
-					{ (React.Children.count && this.props.children) || this.state.value || this.props.emptytext }
-				</div>;
+			return (React.Children.count && this.props.children) || this.state.value || this.props.emptytext;
 		}
+	}
+
+	render() {
+		const classNames = {
+			'editable-select': this.props.options,
+			'editable-field': !this.props.options,
+			'editable-editing': this.state.editing,
+			'editable-processing': this.state.processing || this.props.processing
+		};
+
+		return (
+			<div className={cx(classNames)} onClick={ ev => this.editHandler(ev) }>
+				{ this.renderSpinner() }
+				{ this.renderControl() }
+			</div>
+		);
 	}
 }
 
