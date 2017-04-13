@@ -3,10 +3,16 @@
 // --------------------------------------------------
 
 .editable {
+	flex: 1 1 auto;
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
 	min-width: 0; // Fix truncation
+  padding-left: $editable-border-width + $editable-padding-horizontal;
+
+	&.editing {
+		padding-left: 0;
+	}
 
 	.value {
 		@include css-truncate;
@@ -21,17 +27,13 @@
 }
 
 .editable-control {
+	flex: 1 1 0;
 	font: {
 		family: inherit;
 		size: inherit;
 		weight: inherit;
 	}
 	text-align: inherit;
-	position: relative;
-	left: -($editable-border-width + $editable-padding-horizontal);
-	width: calc(
-	  100% + #{$editable-border-width + $editable-padding-horizontal}
-	);
 	line-height: normal;
 	padding: $editable-padding-vertical $editable-padding-horizontal;
 	border: $editable-border-width solid $editable-border-color;

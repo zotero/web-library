@@ -45,8 +45,8 @@ dl {
 				flex: 0 0 calc(100% - #{$dl-horizontal-offset});
 				padding-left:
 				  $dl-horizontal-gutter / 2
+				  - $editable-border-width
 				  - $editable-padding-horizontal;
-				max-width: 100%;
 				overflow: visible;
 				display: flex;
 				min-width: 0; // Fix truncation
@@ -68,10 +68,5 @@ dl {
 	.key {
 		@include css-truncate;
 		line-height: normal; // Flex alignment is more stable
-	}
-
-	.editable {
-		flex: 1 1 auto;
-		padding-left: $editable-padding-horizontal;
 	}
 }
