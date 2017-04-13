@@ -19,7 +19,7 @@ class ItemBox extends React.Component {
 			isEditingMap: {
 				...this.state.isEditingMap,
 				[key]: isEditing
-			}	
+			}
 		});
 	}
 
@@ -42,7 +42,11 @@ class ItemBox extends React.Component {
 						};
 
 						return [
-							(<dt className={ cx(classNames) }>{ field.label }</dt>),
+							(<dt className={ cx(classNames) }>
+								<div className="key">
+									{ field.label }
+								</div>
+							</dt>),
 							(<dd className={ cx(classNames) }>
 								{
 									(() => {
@@ -59,7 +63,7 @@ class ItemBox extends React.Component {
 												);
 											case 'itemType':
 												return (
-													<Editable 
+													<Editable
 														options = { field.options || null }
 														processing={ field.processing || false }
 														value={ field.value || '' }
@@ -69,7 +73,7 @@ class ItemBox extends React.Component {
 												);
 											default:
 												return (
-													<Editable 
+													<Editable
 														processing={ field.processing || false }
 														value={ field.value || '' }
 														editOnClick={ !field.readonly }

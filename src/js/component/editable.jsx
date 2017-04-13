@@ -155,22 +155,24 @@ class Editable extends React.Component {
 						/>;
 			}
 		} else {
-			return (React.Children.count && this.props.children) || this.state.value || this.props.emptytext;
+			return <div className="value">
+						{ (React.Children.count && this.props.children) || this.state.value || this.props.emptytext }
+					</div>
 		}
 	}
 
 	render() {
 		const classNames = {
 			'editable-select': this.props.options,
-			'editable-field': !this.props.options,
-			'editable-editing': this.state.editing,
-			'editable-processing': this.state.processing || this.props.processing
+			'editable': !this.props.options,
+			'editing': this.state.editing,
+			'processing': this.state.processing || this.props.processing
 		};
 
 		return (
 			<div className={cx(classNames)} onClick={ ev => this.editHandler(ev) }>
-				{ this.renderSpinner() }
 				{ this.renderControl() }
+				{ this.renderSpinner() }
 			</div>
 		);
 	}

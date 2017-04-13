@@ -2,6 +2,24 @@
 // Editable
 // --------------------------------------------------
 
+.editable {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	min-width: 0; // Fix truncation
+
+	.value {
+		@include css-truncate;
+		flex: 1 1 auto;
+		line-height: normal; // Flex alignment is more consistent
+	}
+
+	.icon-spin {
+		flex: 0 0 auto;
+		margin-left: $space-xs;
+	}
+}
+
 .editable-control {
 	font: {
 		family: inherit;
