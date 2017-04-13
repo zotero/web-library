@@ -43,9 +43,9 @@ class ItemBox extends React.Component {
 
 						return [
 							(<dt className={ cx(classNames) }>
-								<div className="key">
+								<label>
 									{ field.label }
-								</div>
+								</label>
 							</dt>),
 							(<dd className={ cx(classNames) }>
 								{

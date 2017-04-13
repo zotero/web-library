@@ -65,7 +65,7 @@ dl {
 		text-decoration: none;
 	}
 
-	.key {
+	label {
 		@include css-truncate;
 		line-height: normal; // Flex alignment is more stable
 	}
