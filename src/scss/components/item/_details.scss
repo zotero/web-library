@@ -32,6 +32,7 @@
 
 	@include bp-up(lg) {
 		flex: 0 0 $item-details-width-lg;
+		min-width: 0; // Fix truncation
 
 		.touch & {
 			flex: 0 0 $touch-item-details-width-lg;
@@ -93,6 +94,7 @@
 		.col {
 			flex: 0 0 50%;
 			position: relative;
+			min-width: 0; // Fix truncation
 		}
 	}
 
