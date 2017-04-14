@@ -124,24 +124,30 @@ $tab-pane-border-color: $shade-0;
 $dt-color: $shade-5;
 
 // Button
-$btn-primary-color:             $shade-0;
-$btn-primary-bg:        $asphalt;
-$btn-icon-bg:           $transparent;
-$btn-icon-focus-color:  $shade-0;
-$btn-icon-focus-bg:     $asphalt;
+$btn-primary-color:           $shade-0;
+$btn-primary-bg:              $asphalt;
+$btn-default-color:           $text-color;
+$btn-default-bg:              $shade-0;
+$btn-default-active-color:    rgba($btn-default-color, 0.5);
+$btn-icon-bg:                 $transparent;
+$btn-icon-focus-color:        $shade-0;
+$btn-icon-focus-bg:           $asphalt;
 $btn-icon-focus-active-color: rgba($shade-0, 0.5);
-$btn-icon-active-color: $shade-6;
-$btn-icon-active-bg:    $shade-2;
-$twisty-color:          $shade-5;
-$twisty-focus-color:    $asphalt;
-$twisty-selected-color: $shade-6;
+$btn-icon-active-color:       $shade-6;
+$btn-icon-active-bg:          $shade-2;
+$twisty-color:                $shade-5;
+$twisty-focus-color:          $asphalt;
+$twisty-selected-color:       $shade-6;
 
 // Spinner
 $spinner-color: $asphalt;
 
 // Touch header
-$touch-header-color: $shade-7; // Better than $shade-5 to link color
+$touch-header-color:      $shade-7; // Better than $shade-5 to link color
 $touch-header-link-color: $asphalt;
+$btn-options-color:       $asphalt;
+$btn-options-bg:          $transparent;
+$btn-options-focus-color: rgba($btn-options-color, 0.5);
 
 // Editable
 $editable-color:        $text-color;

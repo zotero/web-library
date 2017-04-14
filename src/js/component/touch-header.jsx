@@ -1,6 +1,7 @@
 'use strict';
 
 import React from 'react';
+import Button from './ui/button';
 
 const slots = ['next', 'current', 'previous', 'before-last'];
 const empty = {
@@ -101,6 +102,7 @@ export default class TouchHeader extends React.Component {
 						}) }
 					</ul>
 				</nav>
+				<Button className="btn-default btn-options">Edit</Button>
 			</header>
 		);
 	}

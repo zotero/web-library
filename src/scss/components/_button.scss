@@ -27,6 +27,19 @@
 }
 
 
+// Default button
+
+.btn-default {
+	background: $btn-default-bg;
+	transition: color $btn-transition;
+
+	&:active {
+		color: $btn-default-active-color;
+		transition: none;
+	}
+}
+
+
 // Icon button
 
 .btn-icon {

@@ -4,6 +4,7 @@
 
 .touch-header {
 	overflow: hidden;
+	position: relative;
 
 	@include touch-or-bp-down(sm) {
 		flex: 0 0 $line-height-large-touch;
@@ -38,9 +39,7 @@
 		left: 0;
 		top: 0;
 		width: 100%;
-		transition:
-		  transform $nav-transition,
-		  color $nav-transition;
+		transition: transform $nav-transition, color $nav-transition;
 	}
 
 	.center-axis {
@@ -74,5 +73,20 @@
 
 	.next {
 		transform: translate3d(100%, 0, 0);
+	}
+
+	// Options button
+	.btn-options {
+		position: absolute;
+		right: 0;
+		top: 0;
+		height: 100%;
+		color: $btn-options-color;
+		background: $btn-options-bg;
+		z-index: 1;
+
+		&:active {
+			color: $btn-options-focus-color;
+		}
 	}
 }
