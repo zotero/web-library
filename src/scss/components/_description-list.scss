@@ -2,13 +2,29 @@
 // Description List
 // --------------------------------------------------
 
+@mixin dl-horizontal {
+	dt,
+	dd {
+		overflow: visible;
+		min-width: 0; // Fix truncation
+		display: flex;
+	}
+
+	dt {
+		flex: 0 0 $dl-horizontal-offset;
+		margin-top: 0;
+		align-items: center;
+		justify-content: flex-end;
+	}
+
+	dd {
+		flex: 0 0 calc(100% - #{$dl-horizontal-offset});
+	}
+}
+
+
 dl {
 	margin: $dl-margin;
-	line-height: $dl-line-height-mobile;
-
-	@include bp-up(md) {
-		line-height: $dl-line-height;
-	}
 
 	dt,
 	dd {
@@ -45,26 +61,9 @@ dl {
 		}
 
 		@include bp-up($dl-horizontal-bp) {
+			@include dl-horizontal;
 			display: flex;
 			flex-wrap: wrap;
-			line-height: $dl-horizontal-line-height;
-
-
-
-			dt {
-				flex: 0 0 $dl-horizontal-offset;
-				margin-top: 0;
-				display: flex;
-				align-items: center;
-				justify-content: flex-end;
-			}
-
-			dd {
-				flex: 0 0 calc(100% - #{$dl-horizontal-offset});
-				overflow: visible;
-				display: flex;
-				min-width: 0; // Fix truncation
-			}
 		}
 
 		@include bp-up(md) {
@@ -82,6 +81,102 @@ dl {
 				  $dl-horizontal-gutter / 2
 				  - $editable-border-width
 				  - $editable-padding-horizontal;
+			}
+		}
+
+		// Edit mode
+		.editing & {
+			@include touch-or-bp-down(sm) {
+				@include dl-horizontal;
+				display: flex;
+				flex-wrap: wrap;
+
+				dt,
+				dd {
+					min-height: $line-height-large-touch + 1px;
+					position: relative;
+
+					&::before {
+						content: "";
+						position: absolute;
+						bottom: calc(100% - 1px);
+						height: 1px;
+						background: $separator-color;
+						z-index: 1;
+					}
+
+					// Editable focus state
+					&.editing {
+						background: #fff;
+
+						&::before {
+							height: 3px;
+							background: rgba($focus-color, 0.6);
+						}
+
+						& + dt,
+						& + dt + dd {
+							&::before {
+								bottom: auto;
+								top: 0;
+								height: 3px;
+								background: rgba($focus-color, 0.6);
+							}
+						}
+
+						& + dt {
+							&::before {
+								left: 0;
+							}
+						}
+
+						& + dt + dd {
+							&::before {
+								right: 0;
+							}
+						}
+					}
+				}
+
+				dt {
+					padding-right: $dl-horizontal-gutter-mobile / 2;
+
+					&::before {
+						left: $space-md;
+						right: 0;
+					}
+
+					&.editing {
+						&::before {
+							left: 0;
+						}
+					}
+				}
+
+				dd {
+					padding-left: $dl-horizontal-gutter-mobile / 2;
+
+					&::before {
+						left: 0;
+						right: $space-md;
+					}
+
+					&.editing {
+						&::before {
+							right: 0;
+						}
+					}
+				}
+
+				.editable {
+					padding-left: 0;
+				}
+
+				.editable-control {
+					background: transparent;
+					padding: 0;
+					border: 0;
+				}
 			}
 		}
 	}
