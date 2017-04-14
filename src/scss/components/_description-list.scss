@@ -4,17 +4,20 @@
 
 dl {
 	margin: $dl-margin;
-	line-height: $dl-line-height;
+	line-height: $dl-line-height-mobile;
+
+	@include bp-up(md) {
+		line-height: $dl-line-height;
+	}
 
 	dt,
 	dd {
 		@include css-truncate;
-		min-height: $dl-line-height;
 	}
 
 	dt {
 		color: $dt-color;
-		margin-top: $space-min;
+		margin-top: $space-xs;
 	}
 
 	dd {
@@ -22,19 +25,34 @@ dl {
 	}
 
 	&.dl-horizontal {
+		@include bp-only(sm) {
+			dt,
+			dd {
+				min-height: $dl-horizontal-line-height-mobile;
+			}
+
+			dt {
+				padding-right: ($dl-horizontal-gutter-mobile / 2);
+			}
+
+			dd {
+				padding-left:
+					$dl-horizontal-gutter-mobile / 2
+					- $editable-border-width
+					- $editable-padding-horizontal;
+
+			}
+		}
+
 		@include bp-up($dl-horizontal-bp) {
 			display: flex;
 			flex-wrap: wrap;
 			line-height: $dl-horizontal-line-height;
 
-			dt,
-			dd {
-				min-height: $dl-horizontal-line-height;
-			}
+
 
 			dt {
 				flex: 0 0 $dl-horizontal-offset;
-				padding-right: ($dl-horizontal-gutter / 2);
 				margin-top: 0;
 				display: flex;
 				align-items: center;
@@ -43,13 +61,27 @@ dl {
 
 			dd {
 				flex: 0 0 calc(100% - #{$dl-horizontal-offset});
+				overflow: visible;
+				display: flex;
+				min-width: 0; // Fix truncation
+			}
+		}
+
+		@include bp-up(md) {
+			dt,
+			dd {
+				min-height: $dl-horizontal-line-height;
+			}
+
+			dt {
+				padding-right: $dl-horizontal-gutter / 2;
+			}
+
+			dd {
 				padding-left:
 				  $dl-horizontal-gutter / 2
 				  - $editable-border-width
 				  - $editable-padding-horizontal;
-				overflow: visible;
-				display: flex;
-				min-width: 0; // Fix truncation
 			}
 		}
 	}

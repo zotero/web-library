@@ -8,10 +8,13 @@
 	justify-content: space-between;
 	align-items: center;
 	min-width: 0; // Fix truncation
-  padding-left: $editable-border-width + $editable-padding-horizontal;
 
-	&.editing {
-		padding-left: 0;
+	@include bp-up(sm) {
+  	padding-left: $editable-border-width + $editable-padding-horizontal;
+
+		&.editing {
+			padding-left: 0;
+		}
 	}
 
 	.value {

@@ -18,13 +18,12 @@ body,
 }
 
 html {
-	font-size: $font-size-base; // 1rem
-
-	@media (max-device-width: map-get($grid-breakpoints, md) - 1px) {
-		font-size: $font-size-mobile; // 1rem
-	}
-
+	font-size: $font-size-mobile; // 1rem
 	-webkit-text-size-adjust: none;
+
+	@include bp-up(md) {
+		font-size: $font-size-base; // 1rem
+	}
 }
 
 body {
