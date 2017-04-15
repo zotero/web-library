@@ -172,18 +172,16 @@ $tabs-padding-horizontal: $space-md;
 $tabs-compact-padding-horizontal: $space-xs;
 
 
-// Description list
+// Metadata list
 // --------------------------------------------------
 
-$dl-margin:                        0;
-$dl-line-height:                   $line-height-computed; // Define in px
-$dl-line-height-mobile:            $line-height-computed-mobile; // Define in px
-$dl-horizontal-line-height:        $space-lg; // Define in px
-$dl-horizontal-line-height-mobile: 30px; // (~ $dl-horizontal-line-height / 13 * 16)
-$dl-horizontal-gutter:             $space-sm;
-$dl-horizontal-gutter-mobile:      $space-md;
-$dl-horizontal-offset:             33%;
-$dl-horizontal-bp:                 sm;
+$metadata-list-margin:             0;
+$metadata-list-line-height:        $space-lg; // Define in px
+$metadata-list-line-height-sm:     30px; // (~ $dl-horizontal-line-height / 13 * 16)
+$metadata-list-gutter:             $space-sm;
+$metadata-list-gutter-mobile:      $space-md;
+$metadata-list-offset:             33%;
+$metadata-list-bp:                 sm;
 
 
 // Buttons

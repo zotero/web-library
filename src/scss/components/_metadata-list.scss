@@ -5,6 +5,7 @@
 @mixin horizontal {
 	.metadata {
 		display: flex;
+		align-items: flex-start;
 	}
 
 	.key,
@@ -15,20 +16,25 @@
 	}
 
 	.key {
-		flex: 0 0 $dl-horizontal-offset;
+		flex: 0 0 $metadata-list-offset;
 		margin-top: 0;
 		align-items: center;
 		justify-content: flex-end;
 	}
 
 	.value {
-		flex: 0 0 calc(100% - #{$dl-horizontal-offset});
+		flex: 0 0 calc(100% - #{$metadata-list-offset});
 	}
 }
 
 
 .metadata-list {
-	margin: $dl-margin;
+	margin: $metadata-list-margin;
+
+	.key,
+	.value {
+		min-height: $metadata-list-line-height;
+	}
 
 	.key {
 		color: $dt-color;
@@ -37,42 +43,41 @@
 
 	&.horizontal {
 		@include bp-only(sm) {
-			.metadata {
-				min-height: $dl-horizontal-line-height-mobile;
+			.key,
+			.value {
+				min-height: $metadata-list-line-height-sm;
 			}
+		}
 
+		@include bp-up(sm) {
 			.key {
-				padding-right: ($dl-horizontal-gutter-mobile / 2);
+				padding-right: $metadata-list-gutter-mobile / 2;
 			}
 
 			.value {
 				padding-left:
-					$dl-horizontal-gutter-mobile / 2
+					$metadata-list-gutter-mobile / 2
 					- $editable-border-width
 					- $editable-padding-horizontal;
 
 			}
 		}
 
-		@include bp-up($dl-horizontal-bp) {
-			@include horizontal;
-		}
-
-		@include bp-up(md) {
-			.metadata {
-				min-height: $dl-horizontal-line-height;
-			}
-
+		@include mouse-and-bp-up(md) {
 			.key {
-				padding-right: $dl-horizontal-gutter / 2;
+				padding-right: $metadata-list-gutter / 2;
 			}
 
 			.value {
 				padding-left:
-				  $dl-horizontal-gutter / 2
+				  $metadata-list-gutter / 2
 				  - $editable-border-width
 				  - $editable-padding-horizontal;
 			}
+		}
+
+		@include bp-up($metadata-list-bp) {
+			@include horizontal;
 		}
 
 		// Edit mode
@@ -81,7 +86,6 @@
 				@include horizontal;
 
 				.metadata {
-					min-height: $line-height-large-touch + 1px;
 					position: relative;
 
 					&::before {
@@ -117,12 +121,9 @@
 					}
 				}
 
-				.key {
-					padding-right: $dl-horizontal-gutter-mobile / 2;
-				}
-
+				.key,
 				.value {
-					padding-left: $dl-horizontal-gutter-mobile / 2;
+					min-height: $line-height-large-touch + 1px;
 				}
 
 				.editable {
