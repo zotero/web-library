@@ -2,56 +2,50 @@
 // Description List
 // --------------------------------------------------
 
-@mixin dl-horizontal {
-	dt,
-	dd {
+@mixin horizontal {
+	.metadata {
+		display: flex;
+	}
+
+	.key,
+	.value {
 		overflow: visible;
 		min-width: 0; // Fix truncation
 		display: flex;
 	}
 
-	dt {
+	.key {
 		flex: 0 0 $dl-horizontal-offset;
 		margin-top: 0;
 		align-items: center;
 		justify-content: flex-end;
 	}
 
-	dd {
+	.value {
 		flex: 0 0 calc(100% - #{$dl-horizontal-offset});
 	}
 }
 
 
-dl {
+.metadata-list {
 	margin: $dl-margin;
 
-	dt,
-	dd {
-		@include css-truncate;
-	}
-
-	dt {
+	.key {
 		color: $dt-color;
 		margin-top: $space-xs;
 	}
 
-	dd {
-		margin: 0;
-	}
-
-	&.dl-horizontal {
+	&.horizontal {
 		@include bp-only(sm) {
-			dt,
-			dd {
+			.metadata {
 				min-height: $dl-horizontal-line-height-mobile;
 			}
 
-			dt {
+			.key {
 				padding-right: ($dl-horizontal-gutter-mobile / 2);
 			}
 
-			dd {
+			.value {
 				padding-left:
 					$dl-horizontal-gutter-mobile / 2
 					- $editable-border-width
@@ -61,22 +55,19 @@ dl {
 		}
 
 		@include bp-up($dl-horizontal-bp) {
-			@include dl-horizontal;
-			display: flex;
-			flex-wrap: wrap;
+			@include horizontal;
 		}
 
 		@include bp-up(md) {
-			dt,
-			dd {
+			.metadata {
 				min-height: $dl-horizontal-line-height;
 			}
 
-			dt {
+			.key {
 				padding-right: $dl-horizontal-gutter / 2;
 			}
 
-			dd {
+			.value {
 				padding-left:
 				  $dl-horizontal-gutter / 2
 				  - $editable-border-width
@@ -87,85 +78,51 @@ dl {
 		// Edit mode
 		.editing & {
 			@include touch-or-bp-down(sm) {
-				@include dl-horizontal;
-				display: flex;
-				flex-wrap: wrap;
+				@include horizontal;
 
-				dt,
-				dd {
+				.metadata {
 					min-height: $line-height-large-touch + 1px;
 					position: relative;
 
 					&::before {
 						content: "";
 						position: absolute;
+						left: $space-md;
+						right: $space-md;
 						bottom: calc(100% - 1px);
 						height: 1px;
 						background: $separator-color;
 						z-index: 1;
+
 					}
 
 					// Editable focus state
 					&.editing {
-						background: #fff;
+						background: $editable-bg;
 
-						&::before {
-							height: 3px;
+						&::before,
+						& + .metadata::before {
+							left: 0;
+							right: 0;
+							height: $editable-border-width;
 							background: rgba($focus-color, 0.6);
 						}
 
-						& + dt,
-						& + dt + dd {
+						& + .metadata {
 							&::before {
 								bottom: auto;
 								top: 0;
-								height: 3px;
-								background: rgba($focus-color, 0.6);
-							}
-						}
-
-						& + dt {
-							&::before {
-								left: 0;
-							}
-						}
-
-						& + dt + dd {
-							&::before {
-								right: 0;
 							}
 						}
 					}
 				}
 
-				dt {
+				.key {
 					padding-right: $dl-horizontal-gutter-mobile / 2;
-
-					&::before {
-						left: $space-md;
-						right: 0;
-					}
-
-					&.editing {
-						&::before {
-							left: 0;
-						}
-					}
 				}
 
-				dd {
+				.value {
 					padding-left: $dl-horizontal-gutter-mobile / 2;
-
-					&::before {
-						left: 0;
-						right: $space-md;
-					}
-
-					&.editing {
-						&::before {
-							right: 0;
-						}
-					}
 				}
 
 				.editable {

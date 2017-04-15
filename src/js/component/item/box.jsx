@@ -28,7 +28,7 @@ class ItemBox extends React.Component {
 		let EditableCreators = this.props.components['EditableCreators'];
 
 		return (
-			<dl className="dl-horizontal">
+			<ol className="metadata-list horizontal">
 				{
 					this.props.fields.map(field => {
 						if(this.props.hiddenFields.includes(field.key)) {
@@ -42,65 +42,67 @@ class ItemBox extends React.Component {
 						};
 
 						return [
-							(<dt className={ cx(classNames) }>
-								<label>
-									{ field.label }
-								</label>
-							</dt>),
-							(<dd className={ cx(classNames) }>
-								{
-									(() => {
-										switch(field.key) {
-											case 'notes':
-												return null;
-											case 'creators':
-												return (
-													<EditableCreators
-														creatorTypes = { this.props.creatorTypes }
-														creatorTypesLoading = { this.props.creatorTypesLoading }
-														value = { field.value || [] }
-														onSave={ newValue => this.props.onSave(field, newValue) } />
-												);
-											case 'itemType':
-												return (
-													<Editable
-														options = { field.options || null }
-														processing={ field.processing || false }
-														value={ field.value || '' }
-														editOnClick = { !field.readonly }
-														onToggle={ this.onEditableToggleHandler.bind(this, field.key) }
-														onSave={ newValue => this.props.onSave(field, newValue) } />
-												);
-											default:
-												return (
-													<Editable
-														processing={ field.processing || false }
-														value={ field.value || '' }
-														editOnClick={ !field.readonly }
-														onToggle={ this.onEditableToggleHandler.bind(this, field.key) }
-														onSave={ newValue => this.props.onSave(field, newValue) }
-													>
-														{
-															(() => {
-																if(field.key === 'DOI') {
-																	return <a rel='nofollow' href={ 'http://dx.doi.org/' + field.value }>{ field.value }</a>;
-																} else if(field.key === 'url') {
-																	return <a rel='nofollow' href={ field.value }>{ field.value }</a>;
-																} else {
-																	return field.value;
-																}
-															})()
-														}
-													</Editable>
-												);
-										}
-									})()
-								}
-							</dd>)
+							<li className={ cx('metadata', classNames) }>
+								<div className='key'>
+									<label>
+										{ field.label }
+									</label>
+								</div>
+								<div className='value'>
+									{
+										(() => {
+											switch(field.key) {
+												case 'notes':
+													return null;
+												case 'creators':
+													return (
+														<EditableCreators
+															creatorTypes = { this.props.creatorTypes }
+															creatorTypesLoading = { this.props.creatorTypesLoading }
+															value = { field.value || [] }
+															onSave={ newValue => this.props.onSave(field, newValue) } />
+													);
+												case 'itemType':
+													return (
+														<Editable
+															options = { field.options || null }
+															processing={ field.processing || false }
+															value={ field.value || '' }
+															editOnClick = { !field.readonly }
+															onToggle={ this.onEditableToggleHandler.bind(this, field.key) }
+															onSave={ newValue => this.props.onSave(field, newValue) } />
+													);
+												default:
+													return (
+														<Editable
+															processing={ field.processing || false }
+															value={ field.value || '' }
+															editOnClick={ !field.readonly }
+															onToggle={ this.onEditableToggleHandler.bind(this, field.key) }
+															onSave={ newValue => this.props.onSave(field, newValue) }
+														>
+															{
+																(() => {
+																	if(field.key === 'DOI') {
+																		return <a rel='nofollow' href={ 'http://dx.doi.org/' + field.value }>{ field.value }</a>;
+																	} else if(field.key === 'url') {
+																		return <a rel='nofollow' href={ field.value }>{ field.value }</a>;
+																	} else {
+																		return field.value;
+																	}
+																})()
+															}
+														</Editable>
+													);
+											}
+										})()
+									}
+								</div>
+							</li>
 						];
 					})
 				}
-			</dl>
+			</ol>
 		);
 	}
 }

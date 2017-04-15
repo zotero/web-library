@@ -155,7 +155,7 @@ class Editable extends React.Component {
 						/>;
 			}
 		} else {
-			return <div className="value">
+			return <div className="editable-value">
 						{ (React.Children.count && this.props.children) || this.state.value || this.props.emptytext }
 					</div>
 		}

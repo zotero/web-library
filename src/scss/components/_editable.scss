@@ -17,7 +17,7 @@
 		}
 	}
 
-	.value {
+	.editable-value {
 		@include css-truncate;
 		flex: 1 1 auto;
 		line-height: normal; // Flex alignment is more consistent

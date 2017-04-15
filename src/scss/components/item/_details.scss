@@ -98,44 +98,27 @@
 		}
 	}
 
-	.dl-horizontal {
+	.metadata-list.horizontal {
 		margin-top: 3px;
-
-		// Outer paddings
-		@include bp-down(xs) {
-			dt {
-				padding-right: $default-padding-horizontal-touch;
-			}
-
-			dd {
-				padding-left: $default-padding-horizontal-touch;
-			}
-		}
-
-		@include touch-or-bp-down(sm) {
-			dt {
-				padding-left: $default-padding-horizontal-touch;
-			}
-
-			dd {
-				padding-right: $default-padding-horizontal-touch;
-			}
-		}
-
-		@include mouse-and-bp-up(md) {
-			dt {
-				padding-left: $default-padding-horizontal;
-			}
-
-			dd {
-				padding-right: $default-padding-horizontal;
-			}
-		}
 
 		@include bp-only(md) {
 			margin-top: -3px;
+		}
 
-			dd {
+		.metadata {
+			@include bp-down(xs) {
+				padding: 0 $default-padding-horizontal-touch;
+			}
+
+			@include touch-or-bp-down(sm) {
+				padding: 0 $default-padding-horizontal-touch;
+			}
+
+			@include mouse-and-bp-up(md) {
+				padding: 0 $default-padding-horizontal;
+			}
+
+			@include bp-only(md) {
 				padding-right: ($dl-horizontal-gutter + 1px);
 			}
 		}
