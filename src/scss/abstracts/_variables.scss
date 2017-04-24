@@ -105,6 +105,7 @@ $icon-bar-spacing:                 6px;
 $navbar-nav-mobile-width:          calc(100% - #{$icon-bar-width + 2 * $navbar-toggle-padding-horizontal + $space-min});
 $content-transform:                calc(-100% + #{$icon-bar-width + 2 * $navbar-toggle-padding-horizontal});
 $mobile-navbar-nav-transform:      translate3d(25%, 0, 0);
+$nav-cover-width:                  $icon-bar-width + 2 * $navbar-toggle-padding-horizontal;
 
 
 // Navbbar brand

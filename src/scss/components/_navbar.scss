@@ -219,3 +219,14 @@
 		}
 	}
 }
+
+.nav-cover {
+	.navbar-nav-opened & {
+		position: fixed;
+		left: 0;
+		top: 0;
+		width: $nav-cover-width;
+		bottom: 0;
+		z-index: $z-index-navbar;
+	}
+}

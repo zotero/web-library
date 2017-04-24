@@ -43,6 +43,7 @@ class Library extends React.Component {
 				<Navbar
 					isOpened = { this.state.isNavOpened }
 					onToggle = { this.navToggleHandler.bind(this) }  />
+				<div className="nav-cover" />
 				<main>
 					<section className={ `library ${ this.props.view === 'library' ? 'active' : '' }` }>
 						<TouchHeader />
