@@ -22,20 +22,21 @@ const getSlot = (index, length) => {
 };
 
 const isPathChanged = (oldPath, newPath) => {
-	return oldPath.length === newPath.length && oldPath.every(
+	let pathUnchanged = oldPath.length === newPath.length && oldPath.every(
 		(v, i) => v.key === newPath[i].key
 	);
+	return !pathUnchanged;
 };
 
 class TouchHeader extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			headers: this.mapPathToHeaders(props.path)
+			headers: this.mapPathToHeaders(props.path, empty)
 		};
 	}
 
-	mapPathToHeaders(path) {
+	mapPathToHeaders(path, previous) {
 		let headers = path.map(c => ({
 			key: c.key,
 			label: c.apiObj.data.name
@@ -47,8 +48,12 @@ class TouchHeader extends React.Component {
 			label: '/'
 		});
 
-		// add empty node at the end
-		headers.push(empty);
+		// add previous node at the end. 
+		// This is last "current" node when going up the tree, empty otherwise
+		headers.push({
+			key: previous.key,
+			label: previous.label
+		});
 
 		// add to empty nodes to cover for root being current
 		headers.unshift(empty);
@@ -67,8 +72,14 @@ class TouchHeader extends React.Component {
 	}
 
 	componentWillReceiveProps(nextProps) {
-		if(!isPathChanged(this.props.path, nextProps.path)) {
-			let headers = this.mapPathToHeaders(nextProps.path);
+		if(isPathChanged(this.props.path, nextProps.path)) {
+			let previous;
+			if(nextProps.path.length < this.props.path.length) {
+				previous = this.state.headers[this.state.headers.length - 2];
+			} else {
+				previous = empty;
+			}
+			let headers = this.mapPathToHeaders(nextProps.path, previous);
 			this.setState({ headers });
 		}
 	}
@@ -78,7 +89,7 @@ class TouchHeader extends React.Component {
 			return true;
 		}
 
-		return !isPathChanged(this.props.path, nextProps.path);
+		return isPathChanged(this.props.path, nextProps.path);
 	}
 
 	collectionSelectedHandler(key, ev) {
