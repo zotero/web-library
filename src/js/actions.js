@@ -19,6 +19,10 @@ export const REQUEST_CREATOR_TYPES = 'REQUEST_CREATOR_TYPES';
 export const RECEIVE_CREATOR_TYPES = 'RECEIVE_CREATOR_TYPES';
 export const ERROR_CREATOR_TYPES = 'ERROR_CREATOR_TYPES';
 
+export const REQUEST_CHILD_ITEMS = 'REQUEST_CHILD_ITEMS';
+export const RECEIVE_CHILD_ITEMS = 'RECEIVE_CHILD_ITEMS';
+export const ERROR_CHILD_ITEMS = 'ERROR_CHILD_ITEMS';
+
 export function selectLibrary(type, id, key) {
 	let library = new Zotero.Library(type, id, null, key);
 	
@@ -239,5 +243,40 @@ export function errorCreatorTypes(error, itemType) {
 		type: ERROR_CREATOR_TYPES,
 		error,
 		itemType
+	};
+}
+
+// export function fetchChildItems(parentItem) {
+// 	return async dispatch => {
+// 		dispatch(requestChildItems(parentItem));
+// 		try {
+// 			let childItems = await parentItem.getChildren();
+// 			dispatch(receiveCreatorTypes(itemType, creatorTypes));
+// 		} catch(error) {
+// 			dispatch(errorCreatorTypes(error.message, itemType));
+// 		}
+// 	};
+// }
+
+export function requestChildItems(parentItem) {
+	return {
+		type: REQUEST_CHILD_ITEMS,
+		parentItem
+	};
+}
+
+export function receiveChildItems(parentItem, childItems) {
+	return {
+		type: RECEIVE_CHILD_ITEMS,
+		parentItem,
+		childItems
+	};
+}
+
+export function errorChildItems(error, parentItem) {
+	return {
+		type: ERROR_CHILD_ITEMS,
+		error,
+		parentItem
 	};
 }

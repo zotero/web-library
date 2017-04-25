@@ -21,6 +21,7 @@ class ItemDetails extends React.Component {
 		let Tab = this.props.components['Tab'];
 		let Tabs = this.props.components['Tabs'];
 		let Toolbar = this.props.components['Toolbar'];
+		let NoteEditor = this.props.components['NoteEditor'];
 
 		return (
 			<section className={ `item details ${this.props.active ? 'active' : ''}` }>
@@ -101,7 +102,9 @@ class ItemDetails extends React.Component {
 							'active': this.state.tab === 'notes'
 						}) }>
 						<h5 className="h2 tab-pane-heading">Notes</h5>
-						<span>Notes tab content goes here</span>
+						<NoteEditor
+							notes={ [] }
+						/>
 					</div>
 					<div className={ cx({
 							'tab-pane': true,

@@ -9,8 +9,9 @@ import ItemDetails from './component/item/details';
 import ItemList from './component/item/list';
 import Library from './component/library';
 import Navbar from './component/ui/navbar';
-import RichEditor from './component/rich-editor';
+import NoteEditor from './component/note-editor';
 import Panel from './component/ui/panel';
+import RichEditor from './component/rich-editor';
 import Spinner from './component/ui/spinner';
 import TagSelector from './component/tag-selector';
 import TouchHeader from './component/touch-header';
@@ -29,8 +30,9 @@ export default () => ({
 	ItemList,
 	Library,
 	Navbar,
-	RichEditor,
+	NoteEditor,
 	Panel,
+	RichEditor,
 	Spinner,
 	Tab,
 	Tabs,
