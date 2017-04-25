@@ -17,7 +17,6 @@ class ItemDetails extends React.Component {
 	render() {
 		let ItemBox = this.props.components['ItemBox'];
 		let Panel = this.props.components['Panel'];
-		let Spinner = this.props.components['Spinner'];
 		let Tab = this.props.components['Tab'];
 		let Tabs = this.props.components['Tabs'];
 		let Toolbar = this.props.components['Toolbar'];
@@ -78,9 +77,6 @@ class ItemDetails extends React.Component {
 						<div className="row">
 							<div className="col">
 								<h5 className="h1 item-title">Item Title</h5>
-								<div className="hidden-sm-up">
-									{ this.props.processing ? <Spinner /> : null }
-								</div>
 								<ItemBox
 									item={ this.props.item }
 									hiddenFields={ [ 'abstractNote' ] }
@@ -140,14 +136,12 @@ ItemDetails.defaultProps = {
 	item: {
 		get: () => ''
 	},
-	active: false,
-	processing: false
+	active: false
 };
 
 ItemDetails.propTypes = {
 	active: React.PropTypes.bool,
-	item: itemProp,
-	processing: React.PropTypes.bool
+	item: itemProp
 };
 
 export default InjectableComponentsEnhance(ItemDetails);

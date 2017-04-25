@@ -1,7 +1,9 @@
 'use strict';
 
 import React from 'react';
+
 import Button from './ui/button';
+import InjectableComponentsEnhance from '../enhancers/injectable-components-enhancer';
 
 const slots = ['next', 'current', 'previous', 'before-last'];
 const empty = {
@@ -25,7 +27,7 @@ const isPathChanged = (oldPath, newPath) => {
 	);
 };
 
-export default class TouchHeader extends React.Component {
+class TouchHeader extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -72,6 +74,10 @@ export default class TouchHeader extends React.Component {
 	}
 
 	shouldComponentUpdate(nextProps) {
+		if(this.props.processing !== nextProps.processing) {
+			return true;
+		}
+
 		return !isPathChanged(this.props.path, nextProps.path);
 	}
 
@@ -81,6 +87,8 @@ export default class TouchHeader extends React.Component {
 	}
 
 	render() {
+		let Spinner = this.props.components['Spinner'];
+
 		return (
 			<header className="touch-header hidden-sm-up">
 				<nav>
@@ -102,6 +110,7 @@ export default class TouchHeader extends React.Component {
 						}) }
 					</ul>
 				</nav>
+				{ this.props.processing ? <Spinner /> : null }
 				<Button className="btn-default btn-options">Edit</Button>
 			</header>
 		);
@@ -110,9 +119,13 @@ export default class TouchHeader extends React.Component {
 
 TouchHeader.propTypes = {
 	onCollectionSelected: React.PropTypes.func,
-	path: React.PropTypes.array
+	path: React.PropTypes.array,
+	processing: React.PropTypes.bool
 };
 
 TouchHeader.defaultProps = {
-	path: []
+	path: [],
+	processing: false
 };
+
+export default InjectableComponentsEnhance(TouchHeader);

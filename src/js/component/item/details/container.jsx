@@ -30,8 +30,7 @@ const mapStateToProps = state => {
 	}
 
 	return {
-		item: item || undefined,
-		processing: item && state.items.updating && item.key in state.items.updating
+		item: item || undefined
 	};
 };
 
@@ -43,8 +42,7 @@ const mapDispatchToProps = dispatch => {
 
 ItemDetailsContainer.propTypes = {
 	fields: React.PropTypes.array,
-	item: itemProp,
-	processing: React.PropTypes.bool
+	item: itemProp
 };
 
 export default connect(
