@@ -1,7 +1,6 @@
 'use strict';
 
 import React from 'react';
-
 import Button from './ui/button';
 import InjectableComponentsEnhance from '../enhancers/injectable-components-enhancer';
 
@@ -37,10 +36,7 @@ class TouchHeader extends React.Component {
 	}
 
 	mapPathToHeaders(path, previous) {
-		let headers = path.map(c => ({
-			key: c.key,
-			label: c.apiObj.data.name
-		}));
+		let headers = [ ...path ];
 
 		// add root path at the begining
 		headers.unshift({
@@ -55,7 +51,7 @@ class TouchHeader extends React.Component {
 			label: previous.label
 		});
 
-		// add to empty nodes to cover for root being current
+		// add two empty nodes to cover for root being current
 		headers.unshift(empty);
 		headers.unshift(empty);
 
