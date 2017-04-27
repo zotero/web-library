@@ -1,9 +1,10 @@
 'use strict';
 
 import React from 'react';
+import { itemProp } from '../../constants';
 import { connect } from 'react-redux';
 import { push } from 'redux-router';
-import { itemProp } from '../../constants';
+import { triggerEditingItem } from '../../actions';
 
 import { getCollections, getPathFromState } from '../../state-utils';
 import TouchHeader from '../touch-header';
@@ -17,10 +18,18 @@ class TouchHeaderContainer extends React.Component {
 		}
 	}
 
+	onEditingToggled(editing) {
+		console.info('onEditingToggled', editing);
+		this.props.dispatch(
+			triggerEditingItem(this.props.item.key, editing)
+		);
+	}
+
 	render() {
 		return (
 			<TouchHeader 
 				onCollectionSelected={ this.onCollectionSelected.bind(this) }
+				onEditingToggled={ this.onEditingToggled.bind(this) }
 				{ ...this.props }
 			/>
 		);
@@ -31,6 +40,7 @@ TouchHeaderContainer.propTypes = {
 	dispatch: React.PropTypes.func.isRequired,
 	push: React.PropTypes.func.isRequired,
 	path: React.PropTypes.array,
+	item: itemProp,
 	processing: React.PropTypes.bool
 };
 
@@ -66,7 +76,9 @@ const mapStateToProps = state => {
 
 	return {
 		processing: item && state.items.updating && item.key in state.items.updating,
-		path
+		editing: item && state.items.editing === item.key,
+		path,
+		item
 	};
 };
 

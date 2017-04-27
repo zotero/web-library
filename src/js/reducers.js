@@ -18,8 +18,15 @@ import {
 
 	REQUEST_CREATOR_TYPES,
 	RECEIVE_CREATOR_TYPES,
-	ERROR_CREATOR_TYPES
+	ERROR_CREATOR_TYPES,
+
+	TRIGGER_EDITING_ITEM
 } from './actions.js';
+
+//TODO: according to the docs, we shouldn't be using this
+import {
+	ROUTER_DID_CHANGE
+} from 'redux-router/lib/constants';
 
 
 function library(state = null, action) {
@@ -136,13 +143,22 @@ function items(state = {
 			});
 		case SELECT_ITEM:
 			return Object.assign({}, state, {
-				selected: action.index
+				selected: action.index,
+				editing: null
 			});
 		case REQUEST_UPDATE_ITEM:
 		case RECEIVE_UPDATE_ITEM:
 		case ERROR_UPDATE_ITEM:
 			return Object.assign({}, state, {
 				updating: itemsBeingUpdated(state['updating'], action)
+			});
+		case TRIGGER_EDITING_ITEM:
+			return Object.assign({}, state, {
+				editing: action.editing ? action.itemKey : null
+			});
+		case ROUTER_DID_CHANGE:
+			return Object.assign({}, state, {
+				editing: null
 			});
 		default:
 			return state;
@@ -152,8 +168,6 @@ function items(state = {
 function config(state = {}) {
 	return state;
 }
-
-
 
 function creatorTypes(state = {}, action) {
 	switch(action.type) {

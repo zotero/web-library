@@ -85,6 +85,10 @@ class TouchHeader extends React.Component {
 			return true;
 		}
 
+		if(this.props.editing !== nextProps.editing) {
+			return true;
+		}
+
 		return isPathChanged(this.props.path, nextProps.path);
 	}
 
@@ -96,38 +100,58 @@ class TouchHeader extends React.Component {
 	render() {
 		let Spinner = this.props.components['Spinner'];
 
-		return (
-			<header className="touch-header hidden-sm-up">
-				<nav>
-					<ul>
-						{ this.state.headers.map(header => {
-							if(header.slot) {
-								return (
-									<li data-id={ header.id} className={ header.slot } key={ header.id } tabIndex="0">
-										<div className="center-axis">
-											<div className="inner" onClick={ ev => this.collectionSelectedHandler(header.key, ev) }>
-												{ header.label }
+		if(this.props.editing) {
+			return (
+				<header className="touch-header hidden-sm-up">
+					{ this.props.processing ? <Spinner /> : null }
+					<Button
+						onClick={ () => this.props.onEditingToggled(false) }
+						className="btn-default btn-options"
+					>
+						Cancel
+					</Button>
+				</header>
+			);
+		} else {
+			return (
+				<header className="touch-header hidden-sm-up">
+					<nav>
+						<ul>
+							{ this.state.headers.map(header => {
+								if(header.slot) {
+									return (
+										<li data-id={ header.id} className={ header.slot } key={ header.id } tabIndex="0">
+											<div className="center-axis">
+												<div className="inner" onClick={ ev => this.collectionSelectedHandler(header.key, ev) }>
+													{ header.label }
+												</div>
 											</div>
-										</div>
-									</li>
-								);
-							} else {
-								return null;
-							}
-						}) }
-					</ul>
-				</nav>
-				{ this.props.processing ? <Spinner /> : null }
-				<Button className="btn-default btn-options">Edit</Button>
-			</header>
-		);
+										</li>
+									);
+								} else {
+									return null;
+								}
+							}) }
+						</ul>
+					</nav>
+					<Button
+						onClick={ () => this.props.onEditingToggled(true) }
+						className="btn-default btn-options"
+					>
+						Edit
+					</Button>
+				</header>
+			);
+		}
 	}
 }
 
 TouchHeader.propTypes = {
 	onCollectionSelected: React.PropTypes.func,
+	onEditingToggled: React.PropTypes.func,
 	path: React.PropTypes.array,
-	processing: React.PropTypes.bool
+	processing: React.PropTypes.bool,
+	editing: React.PropTypes.bool
 };
 
 TouchHeader.defaultProps = {

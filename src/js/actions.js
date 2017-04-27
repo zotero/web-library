@@ -23,6 +23,8 @@ export const REQUEST_CHILD_ITEMS = 'REQUEST_CHILD_ITEMS';
 export const RECEIVE_CHILD_ITEMS = 'RECEIVE_CHILD_ITEMS';
 export const ERROR_CHILD_ITEMS = 'ERROR_CHILD_ITEMS';
 
+export const TRIGGER_EDITING_ITEM = 'TRIGGER_EDITING_ITEM';
+
 export function selectLibrary(type, id, key) {
 	let library = new Zotero.Library(type, id, null, key);
 	
@@ -278,5 +280,13 @@ export function errorChildItems(error, parentItem) {
 		type: ERROR_CHILD_ITEMS,
 		error,
 		parentItem
+	};
+}
+
+export function triggerEditingItem(itemKey, editing) {
+	return {
+		type: TRIGGER_EDITING_ITEM,
+		itemKey,
+		editing
 	};
 }
