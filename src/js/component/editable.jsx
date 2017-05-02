@@ -88,10 +88,15 @@ class Editable extends React.Component {
 	}
 
 	keyboardHandler(ev) {
-		if(ev.keyCode == 27) {
+		if(ev.type === 'keyup' && ev.keyCode == 27) {
 			this.cancelPending();
 			ev.preventDefault();
 			this.cancel();
+		} else if(ev.type === 'keyup' &&  ev.keyCode == 13) {
+			this.save(this.input.value);
+		} else if(ev.type === 'keydown' && ev.keyCode == 9) {
+			this.cancelPending();
+			this.save(this.input.value);
 		}
 	}
 
@@ -133,16 +138,19 @@ class Editable extends React.Component {
 			if(this.props.options) {
 				return <Select
 							simpleValue
+							tabIndex="-1"
 							clearable = { false }
 							ref={ ref => this.input = ref }
 							value={ this.state.value }
 							isLoading={ this.props.isLoading }
 							options={ this.props.options }
 							onChange={ this.selectChangeHandler.bind(this) }
+							onKeyDown={ ev => this.keyboardHandler(ev) }
 							onBlur={ ev => this.blurHandler(ev) }
 						/>;
 			} else {
 				return <input
+							tabIndex="-1"
 							type="text"
 							className="editable-control"
 							ref={ ref => this.input = ref }
@@ -151,13 +159,14 @@ class Editable extends React.Component {
 							placeholder={ this.props.placeholder }
 							onChange={ ev => this.changeHandler(ev) }
 							onKeyUp={ ev => this.keyboardHandler(ev) }
+							onKeyDown={ ev => this.keyboardHandler(ev) }
 							onBlur={ ev => this.blurHandler(ev) }
 						/>;
 			}
 		} else {
-			return <div className="editable-value">
+			return <div className="editable-value" tabIndex="0" onFocus={ this.editHandler.bind(this) }>
 						{ (React.Children.count && this.props.children) || this.state.value || this.props.emptytext }
-					</div>
+					</div>;
 		}
 	}
 
