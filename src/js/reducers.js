@@ -20,7 +20,8 @@ import {
 	RECEIVE_CREATOR_TYPES,
 	ERROR_CREATOR_TYPES,
 
-	TRIGGER_EDITING_ITEM
+	TRIGGER_EDITING_ITEM,
+	TRIGGER_RESIZE_VIEWPORT
 } from './actions.js';
 
 //TODO: according to the docs, we shouldn't be using this
@@ -198,10 +199,27 @@ function creatorTypes(state = {}, action) {
 	}	
 }
 
+function viewport(state = {}, action) {
+	switch(action.type) {
+		case TRIGGER_RESIZE_VIEWPORT:
+			return {
+				width: action.width,
+				height: action.height,
+				xs: action.width < 480,
+				sm: action.width < 768 && action.width > 480,
+				md: action.width < 992 && action.width > 768,
+				lg: action.width < 1200 && action.width > 992
+			};
+		default: 
+			return state;
+	}
+}
+
 export default {
 	library,
 	collections,
 	items,
 	config,
-	creatorTypes
+	creatorTypes,
+	viewport
 };

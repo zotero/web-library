@@ -108,7 +108,7 @@ class TouchHeader extends React.Component {
 						onClick={ () => this.props.onEditingToggled(false) }
 						className="btn-default btn-options"
 					>
-						Cancel
+						Done
 					</Button>
 				</header>
 			);
@@ -134,12 +134,16 @@ class TouchHeader extends React.Component {
 							}) }
 						</ul>
 					</nav>
-					<Button
-						onClick={ () => this.props.onEditingToggled(true) }
-						className="btn-default btn-options"
-					>
-						Edit
-					</Button>
+					{ (() => {
+						return this.props.view === 'item-details' && (
+							<Button
+								onClick={ () => this.props.onEditingToggled(true) }
+								className="btn-default btn-options"
+							>
+								Edit
+							</Button>
+						);
+					})() }
 				</header>
 			);
 		}
@@ -151,7 +155,8 @@ TouchHeader.propTypes = {
 	onEditingToggled: React.PropTypes.func,
 	path: React.PropTypes.array,
 	processing: React.PropTypes.bool,
-	editing: React.PropTypes.bool
+	editing: React.PropTypes.bool,
+	view: React.PropTypes.string
 };
 
 TouchHeader.defaultProps = {

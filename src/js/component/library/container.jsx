@@ -11,7 +11,7 @@ import { Route } from 'react-router';
 
 import reducers from '../../reducers';
 import { getCurrentViewFromState } from '../../state-utils';
-import { selectLibrary } from '../../actions';
+import { selectLibrary, triggerResizeViewport } from '../../actions';
 
 import CollectionTreeContainer from '../collection-tree/container';
 import ItemDetailsContainer from '../item/details/container';
@@ -28,10 +28,27 @@ const combinedReducers = combineReducers(Object.assign({}, reducers, {
 }));
 
 class LibraryContainer extends React.Component {
+	constructor(props) {
+		super(props);
+		this.windowResizeHandler = () => {
+			this.props.dispatch(
+				triggerResizeViewport(window.innerWidth, window.innerHeight)
+			);
+		};
+	}
 	componentDidMount() {
 		this.props.dispatch(
 			selectLibrary('user', this.props.userId, this.props.apiKey)
 		);
+	}
+
+	componentWillMount() {
+		this.windowResizeHandler();
+		window.addEventListener('resize', this.windowResizeHandler);
+	}
+
+	componentWillUnmount() {
+		window.removeEventListener('resize', this.windowResizeHandler);
 	}
 
 	render() {

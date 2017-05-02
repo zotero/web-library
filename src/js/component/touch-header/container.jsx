@@ -5,6 +5,7 @@ import { itemProp } from '../../constants';
 import { connect } from 'react-redux';
 import { push } from 'redux-router';
 import { triggerEditingItem } from '../../actions';
+import { getCurrentViewFromState } from '../../state-utils';
 
 import { getCollections, getPathFromState } from '../../state-utils';
 import TouchHeader from '../touch-header';
@@ -19,7 +20,6 @@ class TouchHeaderContainer extends React.Component {
 	}
 
 	onEditingToggled(editing) {
-		console.info('onEditingToggled', editing);
 		this.props.dispatch(
 			triggerEditingItem(this.props.item.key, editing)
 		);
@@ -77,6 +77,7 @@ const mapStateToProps = state => {
 	return {
 		processing: item && state.items.updating && item.key in state.items.updating,
 		editing: item && state.items.editing === item.key,
+		view: getCurrentViewFromState(state),
 		path,
 		item
 	};

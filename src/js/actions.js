@@ -24,6 +24,7 @@ export const RECEIVE_CHILD_ITEMS = 'RECEIVE_CHILD_ITEMS';
 export const ERROR_CHILD_ITEMS = 'ERROR_CHILD_ITEMS';
 
 export const TRIGGER_EDITING_ITEM = 'TRIGGER_EDITING_ITEM';
+export const TRIGGER_RESIZE_VIEWPORT = 'TRIGGER_RESIZE_VIEWPORT';
 
 export function selectLibrary(type, id, key) {
 	let library = new Zotero.Library(type, id, null, key);
@@ -288,5 +289,13 @@ export function triggerEditingItem(itemKey, editing) {
 		type: TRIGGER_EDITING_ITEM,
 		itemKey,
 		editing
+	};
+}
+
+export function triggerResizeViewport(width, height) {
+	return {
+		type: TRIGGER_RESIZE_VIEWPORT,
+		width,
+		height
 	};
 }

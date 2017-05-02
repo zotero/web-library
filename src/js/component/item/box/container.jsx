@@ -68,13 +68,16 @@ const mapStateToProps = state => {
 		}
 	}
 
+	const isSmallScreen = 'lg' in state.viewport && !state.viewport.lg;
+	const editEnabled = !isSmallScreen || (item && state.items.editing === item.key);
+
 	//@TODO: Refactor
 	return {
 		fields: Object.keys(fieldMap).map(f => ({
 			options: f === 'itemType' ? itemTypes : null,
 			key: f,
 			label: fieldMap[f],
-			readonly: noEditFields.includes(f),
+			readonly: editEnabled ? noEditFields.includes(f) : true,
 			processing: item && state.items.updating && item.key in state.items.updating && state.items.updating[item.key].includes(f),
 			value: item ? item.get(f) : null
 		})).filter(f => !hideFields.includes(f.key)),
