@@ -208,7 +208,7 @@ function viewport(state = {}, action) {
 				xs: action.width < 480,
 				sm: action.width < 768 && action.width > 480,
 				md: action.width < 992 && action.width > 768,
-				lg: action.width < 1200 && action.width > 992
+				lg: action.width > 992
 			};
 		default: 
 			return state;
