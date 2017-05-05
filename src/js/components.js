@@ -1,6 +1,7 @@
 import Button from './component/ui/button';
 import CollectionTree from './component/collection-tree';
 import Editable from './component/editable';
+import EditableContent from './component/editable/content';
 import EditableCreators from './component/editable/creators';
 import Icon from './component/ui/icon';
 import Item from './component/item';
@@ -22,6 +23,7 @@ export default () => ({
 	Button,
 	CollectionTree,
 	Editable,
+	EditableContent,
 	EditableCreators,
 	Icon,
 	Item,

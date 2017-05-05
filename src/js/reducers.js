@@ -106,11 +106,11 @@ function itemsByCollection(state = {
 function fieldsBeingUpdated(state = [], action) {
 	switch(action.type) {
 		case REQUEST_UPDATE_ITEM:
-			return [...new Set(state.concat(action.field.key))];
+			return [...new Set(state.concat(action.fieldKey))];
 			
 		case ERROR_UPDATE_ITEM:
 		case RECEIVE_UPDATE_ITEM:
-			return [...new Set(state.filter(entry => entry != action.field.key))];
+			return [...new Set(state.filter(entry => entry != action.fieldKey))];
 	}
 }
 

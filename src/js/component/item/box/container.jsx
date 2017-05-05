@@ -13,7 +13,7 @@ const itemTypes = Object.keys(typeMap).map(typeKey => ({
 	value: typeKey,
 	label: typeMap[typeKey]
 }));
-
+	
 const fieldMap = {
 	'creators': Zotero.Item.prototype.fieldMap['creator'],
 	...Zotero.Item.prototype.fieldMap
@@ -22,11 +22,27 @@ const fieldMap = {
 const hideFields = ['creator', 'abstract', 'notes', ...Zotero.Item.prototype.hideFields];
 
 class ItemBoxContainer extends React.Component {
-	async itemUpdatedHandler(field, newValue) {
-		this.props.item.set(field.key, newValue);
-		this.props.dispatch(
-			updateItem(this.props.item, field)
-		);
+	//@TODO: we should use itemKey here and everywhere in actions
+	//		to avoid problems like this. When user navigates away
+	//		from this view, we can no longer request item update
+	//		since item is no longer set
+	async itemUpdatedHandler(item, fieldKey, newValue) {
+		try {
+			item.set(fieldKey, newValue);
+		} catch(c) {
+			//@TODO: better handling for this case, see above
+			throw c;
+		}
+
+		try {
+			
+			const updatedItem = await this.props.dispatch(
+				updateItem(item, fieldKey)
+			);
+			return updatedItem.get(fieldKey);
+		} catch(c) {
+			throw c;
+		}
 	}
 
 	componentWillReceiveProps(nextProps) {
@@ -38,7 +54,10 @@ class ItemBoxContainer extends React.Component {
 	}
 
 	render() {
-		return <ItemBox { ...this.props } onSave={ this.itemUpdatedHandler.bind(this) } />;
+		return <ItemBox 
+			onSave={ this.itemUpdatedHandler.bind(this, this.props.item) }
+			{ ...this.props }
+		/>;
 	}
 }
 

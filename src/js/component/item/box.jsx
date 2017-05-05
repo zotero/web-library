@@ -57,42 +57,34 @@ class ItemBox extends React.Component {
 												case 'creators':
 													return (
 														<EditableCreators
+															name={ field.key }
 															creatorTypes = { this.props.creatorTypes }
 															creatorTypesLoading = { this.props.creatorTypesLoading }
 															value = { field.value || [] }
-															onSave={ newValue => this.props.onSave(field, newValue) } />
+															onSave={ newValue => this.props.onSave(field.key, newValue) } />
 													);
 												case 'itemType':
 													return (
 														<Editable
+															name={ field.key }
 															options = { field.options || null }
 															processing={ field.processing || false }
 															value={ field.value || '' }
 															editOnClick = { !field.readonly }
 															onToggle={ this.onEditableToggleHandler.bind(this, field.key) }
-															onSave={ newValue => this.props.onSave(field, newValue) } />
+															onSave={ newValue => this.props.onSave(field.key, newValue) } 
+														/>
 													);
 												default:
 													return (
 														<Editable
+															name={ field.key }
 															processing={ field.processing || false }
 															value={ field.value || '' }
 															editOnClick={ !field.readonly }
 															onToggle={ this.onEditableToggleHandler.bind(this, field.key) }
-															onSave={ newValue => this.props.onSave(field, newValue) }
-														>
-															{
-																(() => {
-																	if(field.key === 'DOI') {
-																		return <a rel='nofollow' href={ 'http://dx.doi.org/' + field.value }>{ field.value }</a>;
-																	} else if(field.key === 'url') {
-																		return <a rel='nofollow' href={ field.value }>{ field.value }</a>;
-																	} else {
-																		return field.value;
-																	}
-																})()
-															}
-														</Editable>
+															onSave={ newValue => this.props.onSave(field.key, newValue) }
+														/>
 													);
 											}
 										})()

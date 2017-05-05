@@ -15,35 +15,30 @@ class Editable extends React.Component {
 	}
 
 	componentWillReceiveProps(nextProps) {
-		this.setState({
-			value: nextProps.value
-		});
+		if(nextProps.value !== this.props.value) {
+			this.setState({
+				value: nextProps.value
+			});
+		}
 	}
 
 	async save(newValue) {
 		this.cancelPending();
-		let promise = this.props.onSave(newValue);
-		if(promise && 'then' in promise) {
+		try {
 			this.setState({
 				processing: true
-			}, () => {
-				promise.then(processedValue => {
-					this.setState({
-						value: processedValue,
-						editing: false,
-						processing: false
-					}, () => {
-						this.props.onToggle(false);
-					});
-				}).catch(() => {
-					this.setState({
-						value: this.props.value,
-						editing: true,
-						processing: false
-					}, () => {
-						this.props.onToggle(true);
-					});
-				});
+			});
+			const updateValue = await this.props.onSave(newValue);
+			this.setState({
+				processing: false,
+				editing: false,
+				value: updateValue
+			});
+		} catch(c) {
+			this.setState({
+				processing: false,
+				editing: false,
+				value: this.props.value
 			});
 		}
 	}
@@ -134,6 +129,8 @@ class Editable extends React.Component {
 	}
 
 	renderControl() {
+		let EditableContent = this.props.components['EditableContent'];
+
 		if(this.state.editing) {
 			if(this.props.options) {
 				return <Select
@@ -165,7 +162,10 @@ class Editable extends React.Component {
 			}
 		} else {
 			return <div className="editable-value" tabIndex="0" onFocus={ this.editHandler.bind(this) }>
-						{ (React.Children.count && this.props.children) || this.state.value || this.props.emptytext }
+						<EditableContent
+							name={ this.props.name }
+							value={ this.state.value }
+						/>
 					</div>;
 		}
 	}
@@ -189,6 +189,7 @@ class Editable extends React.Component {
 
 
 Editable.propTypes = {
+	name: React.PropTypes.string,
 	value: React.PropTypes.oneOfType([
 		React.PropTypes.string,
 		React.PropTypes.number

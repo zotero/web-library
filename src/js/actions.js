@@ -105,6 +105,7 @@ export function sellectItem(index) {
 	};
 }
 
+//@TODO: add return value
 function fetchCollections(library) {
 	return async dispatch => {
 		dispatch(requestCollections(library.libraryString));
@@ -133,6 +134,8 @@ export function fetchCollectionsIfNeeded(library) {
 	};
 }
 
+
+//@TODO: add return value
 function fetchItems(collection, library) {
 	return async dispatch => {
 		dispatch(requestItems(collection.key));
@@ -167,50 +170,53 @@ export function fetchItemsIfNeeded(collection) {
 	};
 }
 
-export function updateItem(item, field) {
+export function updateItem(item, fieldKey) {
 	return async dispatch => {
-		dispatch(requestUpdateItem(item, field));
+		dispatch(requestUpdateItem(item, fieldKey));
 		try {
 			let responses = await item.writeItem();
 			if(responses && responses.length && responses[0].status >= 200 && responses[0].status < 300) {
 				let updatedItem = responses[0].returnItems[0];
 				if(updatedItem.writeFailure) {
-					dispatch(errorUpdateItem(updatedItem.writeFailure.message, item, field));
+					dispatch(errorUpdateItem(updatedItem.writeFailure.message, item, fieldKey));
 				} else {
-					dispatch(receiveUpdateItem(item, field));
+					dispatch(receiveUpdateItem(item, fieldKey));
+					return updatedItem;
 				}
 			} else {
-				dispatch(errorUpdateItem('Unexpected response from the API', item, field));	
+				dispatch(errorUpdateItem('Unexpected response from the API', item, fieldKey));	
+				throw new Error('Unexpected response from the API');
 			}
 		} catch(c) {
-			dispatch(errorUpdateItem(c.message, item, field));
+			dispatch(errorUpdateItem(c.message, item, fieldKey));
+			throw c;
 		}
 	};
 }
 
 
-export function requestUpdateItem(item, field) {
+export function requestUpdateItem(item, fieldKey) {
 	return {
 		type: REQUEST_UPDATE_ITEM,
 		item,
-		field
+		fieldKey
 	};
 }
 
-export function receiveUpdateItem(item, field) {
+export function receiveUpdateItem(item, fieldKey) {
 	return {
 		type: RECEIVE_UPDATE_ITEM,
 		item,
-		field
+		fieldKey
 	};
 }
 
-export function errorUpdateItem(error, item, field) {
+export function errorUpdateItem(error, item, fieldKey) {
 	return {
 		type: ERROR_UPDATE_ITEM,
 		error,
 		item,
-		field
+		fieldKey
 	};
 }
 
