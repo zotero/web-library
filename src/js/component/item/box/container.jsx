@@ -39,7 +39,7 @@ class ItemBoxContainer extends React.Component {
 			const updatedItem = await this.props.dispatch(
 				updateItem(item, fieldKey)
 			);
-			return updatedItem.get(fieldKey);
+			return updatedItem.get(fieldKey) || '';
 		} catch(c) {
 			throw c;
 		}
