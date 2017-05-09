@@ -46,6 +46,10 @@
 	margin: -2em 0; // For the sake of safety
 	background-clip: padding-box;
 
+	.select & {
+		z-index: 2;
+	}
+
 	&:focus {
 		box-shadow: none; // Override generic focus styles
 	}

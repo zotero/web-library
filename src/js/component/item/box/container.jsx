@@ -102,7 +102,8 @@ const mapStateToProps = state => {
 		})).filter(f => !hideFields.includes(f.key)),
 		item: item || undefined,
 		creatorTypes,
-		creatorTypesLoading
+		creatorTypesLoading,
+		isEditing: item && state.items.editing === item.key
 	};
 };
 
@@ -118,6 +119,7 @@ ItemBoxContainer.propTypes = {
 	dispatch: React.PropTypes.func.isRequired,
 	fields: React.PropTypes.array,
 	hiddenFields: React.PropTypes.array,
+	isEditing: React.PropTypes.bool,
 	item: itemProp
 };
 

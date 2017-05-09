@@ -28,7 +28,7 @@ class ItemBox extends React.Component {
 		let EditableCreators = this.props.components['EditableCreators'];
 
 		return (
-			<ol className="metadata-list horizontal">
+			<ol className={cx('metadata-list', 'horizontal', { editing: this.props.isEditing }) }>
 				{
 					this.props.fields.map(field => {
 						if(this.props.hiddenFields.includes(field.key)) {
@@ -110,6 +110,7 @@ ItemBox.propTypes = {
 	creatorTypesLoading: React.PropTypes.bool,
 	fields: React.PropTypes.array,
 	hiddenFields: React.PropTypes.array,
+	isEditing: React.PropTypes.bool, // relevant on small screens only
 	item: itemProp,
 	onSave: React.PropTypes.func
 };

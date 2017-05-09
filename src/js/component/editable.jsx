@@ -139,6 +139,7 @@ class Editable extends React.Component {
 		if(this.state.editing) {
 			if(this.props.options) {
 				return <Select
+							className="editable-control"
 							simpleValue
 							tabIndex="-1"
 							clearable = { false }
@@ -177,8 +178,8 @@ class Editable extends React.Component {
 
 	render() {
 		const classNames = {
-			'editable-select': this.props.options,
-			'editable': !this.props.options,
+			'select': this.props.options,
+			'editable': true,
 			'editing': this.state.editing,
 			'processing': this.state.processing || this.props.processing
 		};

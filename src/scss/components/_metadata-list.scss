@@ -81,7 +81,7 @@
 		}
 
 		// Edit mode
-		.editing & {
+		&.editing {
 			@include touch-or-bp-down(sm) {
 				@include horizontal;
 
@@ -126,6 +126,10 @@
 					min-height: $line-height-large-touch + 1px;
 				}
 
+				.value {
+					padding-left: 12px;
+				}
+
 				.editable {
 					padding-left: 0;
 				}
@@ -134,6 +138,10 @@
 					background: transparent;
 					padding: 0;
 					border: 0;
+
+					.select & {
+						background: $editable-bg;
+					}
 				}
 			}
 		}
