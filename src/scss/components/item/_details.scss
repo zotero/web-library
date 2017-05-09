@@ -116,6 +116,40 @@
 
 			@include touch-or-bp-down(sm) {
 				padding: 0 $default-padding-horizontal-touch;
+
+				&.editing {
+					.key,
+					.value {
+						display: inline-block;
+					}
+
+					.key {
+						width: 25%;
+						text-align: right;
+					}
+
+					.value {
+						width: 75%;
+						padding-left: 1em;
+					}
+
+					input {
+						outline: none;
+						border: none;
+					}
+
+					background-color: $shade-0;
+					border-top: 3px solid $asphalt-light;
+					border-bottom: 3px solid $asphalt-light;
+					padding-top: 4px;
+					margin-top: 8px;
+				}
+
+				&.editing.select {
+					.key {
+						vertical-align: top;
+					}
+				}
 			}
 
 			@include mouse-and-bp-up(md) {

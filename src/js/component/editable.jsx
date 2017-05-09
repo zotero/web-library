@@ -24,24 +24,25 @@ class Editable extends React.Component {
 
 	async save(newValue) {
 		this.cancelPending();
+		
 		if(this.state.value === this.props.value) {
 			return;
 		}
 
 		try {
 			this.setState({
-				processing: true
+				processing: true,
+				editing: false
 			});
+			this.props.onToggle(false);
 			const updateValue = await this.props.onSave(newValue);
 			this.setState({
 				processing: false,
-				editing: false,
 				value: updateValue
 			});
 		} catch(c) {
 			this.setState({
 				processing: false,
-				editing: false,
 				value: this.props.value
 			});
 		}
