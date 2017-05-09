@@ -40,8 +40,7 @@ TouchHeaderContainer.propTypes = {
 	dispatch: React.PropTypes.func.isRequired,
 	push: React.PropTypes.func.isRequired,
 	path: React.PropTypes.array,
-	item: itemProp,
-	processing: React.PropTypes.bool
+	item: itemProp
 };
 
 const mapStateToProps = state => {
@@ -75,7 +74,6 @@ const mapStateToProps = state => {
 	}
 
 	return {
-		processing: item && state.items.updating && item.key in state.items.updating,
 		editing: item && state.items.editing === item.key,
 		view: getCurrentViewFromState(state),
 		path,

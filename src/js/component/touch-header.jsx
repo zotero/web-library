@@ -81,10 +81,6 @@ class TouchHeader extends React.Component {
 	}
 
 	shouldComponentUpdate(nextProps) {
-		if(this.props.processing !== nextProps.processing) {
-			return true;
-		}
-
 		if(this.props.editing !== nextProps.editing) {
 			return true;
 		}
@@ -98,12 +94,9 @@ class TouchHeader extends React.Component {
 	}
 
 	render() {
-		let Spinner = this.props.components['Spinner'];
-
 		if(this.props.editing) {
 			return (
 				<header className="touch-header hidden-sm-up">
-					{ this.props.processing ? <Spinner /> : null }
 					<Button
 						onClick={ () => this.props.onEditingToggled(false) }
 						className="btn-default btn-options"
@@ -154,14 +147,12 @@ TouchHeader.propTypes = {
 	onCollectionSelected: React.PropTypes.func,
 	onEditingToggled: React.PropTypes.func,
 	path: React.PropTypes.array,
-	processing: React.PropTypes.bool,
 	editing: React.PropTypes.bool,
 	view: React.PropTypes.string
 };
 
 TouchHeader.defaultProps = {
 	path: [],
-	processing: false
 };
 
 export default InjectableComponentsEnhance(TouchHeader);
