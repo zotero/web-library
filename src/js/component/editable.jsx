@@ -61,7 +61,7 @@ class Editable extends React.Component {
 		this.setState({
 			editing: false
 		}, () => {
-			this.props.onToggle(true);
+			this.props.onToggle(false);
 		});
 	}
 
