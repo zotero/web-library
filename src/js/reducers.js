@@ -1,205 +1,352 @@
 'use strict';
 
-import {
+const { ck } = require('./utils');
+
+const {
+	CONFIGURE_API,
+	
+	REQUEST_META,
+	RECEIVE_META,
+	ERROR_META,
+
 	SELECT_LIBRARY,
 	SELECT_ITEM,
 
-	REQUEST_FETCH_ITEMS,
-	RECEIVE_FETCH_ITEMS,
-	ERROR_FETCH_ITEMS,
+	REQUEST_ITEMS_IN_COLLECTION,
+	RECEIVE_ITEMS_IN_COLLECTION,
+	ERROR_ITEMS_IN_COLLECTION,
 
-	REQUEST_FETCH_COLLECTIONS,
-	RECEIVE_FETCH_COLLECTIONS,
-	ERROR_FETCH_COLLECTIONS,
+	REQUEST_COLLECTIONS_IN_LIBRARY,
+	RECEIVE_COLLECTIONS_IN_LIBRARY,
+	ERROR_COLLECTIONS_IN_LIBRARY,
 
 	REQUEST_UPDATE_ITEM,
 	RECEIVE_UPDATE_ITEM,
 	ERROR_UPDATE_ITEM,
 
-	REQUEST_CREATOR_TYPES,
-	RECEIVE_CREATOR_TYPES,
-	ERROR_CREATOR_TYPES,
+	REQUEST_ITEM_TYPE_CREATOR_TYPES,
+	RECEIVE_ITEM_TYPE_CREATOR_TYPES,
+	ERROR_ITEM_TYPE_CREATOR_TYPES,
+
+	REQUEST_ITEM_TYPE_FIELDS,
+	RECEIVE_ITEM_TYPE_FIELDS,
+	ERROR_ITEM_TYPE_FIELDS,
+
+	REQUEST_CHILD_ITEMS,
+	RECEIVE_CHILD_ITEMS,
+	ERROR_CHILD_ITEMS,
 
 	TRIGGER_EDITING_ITEM,
 	TRIGGER_RESIZE_VIEWPORT
-} from './actions.js';
+} = require('./constants/actions.js');
 
-//TODO: according to the docs, we shouldn't be using this
-import {
-	ROUTER_DID_CHANGE
-} from 'redux-router/lib/constants';
+function removeKey(state, deleteKeys) {
+	if(!Array.isArray(deleteKeys)) {
+		deleteKeys = [deleteKeys];
+	}
 
+	return Object.keys(state)
+		.filter(key => !deleteKeys.includes(key))
+		.reduce((result, current) => {
+			result[current] = state[current];
+		return result;
+  }, {});
+}
 
-function library(state = null, action) {
+function without(array, deleteValues) {
+	if(!Array.isArray(deleteValues)) {
+		deleteValues = [deleteValues];
+	}
+
+	for (let deleteValue of deleteValues) {
+		let pos = array.indexOf(deleteValue);
+		if(pos > -1) {
+			array = [...array.slice(0, pos), ...array.slice(pos+1)];
+		}
+	}
+	return array;
+}
+
+//@TODO: multi-library support
+const library = (state = {}, action) => {
 	switch(action.type) {
 		case SELECT_LIBRARY:
-			return action.library;
-		default:
-			return state;
-	}
-}
-
-function collectionsByLibrary(state = {
-	isFetching: false,
-	collections: []
-}, action) {
-	switch(action.type) {
-		case REQUEST_FETCH_COLLECTIONS:
-			return Object.assign({}, state, {
-				isFetching: true
-			});
-		case RECEIVE_FETCH_COLLECTIONS:
-			return Object.assign({}, state, {
-				isFetching: false,
-				collections: action.collections
-			});
-		case ERROR_FETCH_COLLECTIONS:
-			return Object.assign({}, state, {
-				isFetching: false
-			});
-		default:
-			return state;
-	}
-}
-
-function collections(state = {
-	selected: ''
-}, action) {
-	switch(action.type) {
-		case REQUEST_FETCH_COLLECTIONS:
-		case RECEIVE_FETCH_COLLECTIONS:
-		case ERROR_FETCH_COLLECTIONS:
-			return Object.assign({}, state, {
-				[action.libraryString]: collectionsByLibrary(state[action.libraryString], action)
-			});
-		default:
-			return state;
-	}
-}
-
-function itemsByCollection(state = {
-	isFetching: false,
-	items: []
-}, action) {
-	switch(action.type) {
-		case REQUEST_FETCH_ITEMS:
-			return Object.assign({}, state, {
-				isFetching: true
-			});
-
-		case RECEIVE_FETCH_ITEMS:
-			return Object.assign({}, state, {
-				isFetching: false,
-				items: action.items
-			});
-
-		case ERROR_FETCH_ITEMS:
-			return Object.assign({}, state, {
-				isFetching: false
-			});
-
-		default:
-			return state;
-	}
-}
-
-function fieldsBeingUpdated(state = [], action) {
-	switch(action.type) {
-		case REQUEST_UPDATE_ITEM:
-			return [...new Set(state.concat(action.fieldKey))];
-			
-		case ERROR_UPDATE_ITEM:
-		case RECEIVE_UPDATE_ITEM:
-			return [...new Set(state.filter(entry => entry != action.fieldKey))];
-	}
-}
-
-function itemsBeingUpdated(state = {}, action) {
-	switch(action.type) {
-		case REQUEST_UPDATE_ITEM:
-			return {...state,
-				[action.item.key]: fieldsBeingUpdated(state[action.item.key] || [], action)
+			return {
+				...state,
+				libraryKey: action.libraryKey
 			};
-		case ERROR_UPDATE_ITEM:
+		default:
+			return state;
+	}
+};
+
+const meta = (state = {}, action) => {
+	switch(action.type) {
+		case RECEIVE_META:
+			return {
+				...state,
+				itemTypes: action.itemTypes,
+				itemFields: action.itemFields,
+				creatorFields: action.creatorFields
+			};
+		case RECEIVE_ITEM_TYPE_CREATOR_TYPES:
+			return {
+				...state,
+				itemTypeCreatorTypes: action.creatorTypes
+			};
+		case RECEIVE_ITEM_TYPE_FIELDS:
+			return {
+				...state,
+				itemTypeFields: action.fields
+			};
+	}
+
+	return state;
+};
+
+const config = (state = {}, action) => {
+	if(action.type === CONFIGURE_API) {
+		return {
+			...state,
+			apiKey: action.apiKey,
+			apiConfig: action.apiConfig
+		};
+	} else {
+		return state;
+	}
+};
+
+const collections = (state = {}, action) => {
+	var collections;
+	switch(action.type) {
+		case RECEIVE_COLLECTIONS_IN_LIBRARY:
+		collections = action.collections.reduce((aggr, collection) => {
+			aggr[ck(collection.key, action.libraryKey)] = collection;
+			return aggr;
+		}, {});
+			return { 
+				...state,
+				...collections
+			};
+		default:
+			return state;
+	}
+};
+
+const collectionsByLibrary = (state = {}, action) => {
+	switch(action.type) {
+		case RECEIVE_COLLECTIONS_IN_LIBRARY:
+			return {
+				...state,
+				[action.libraryKey]: action.collections.map(collection => ck(collection.key, action.libraryKey))
+			};
+		default:
+			return state;
+	}
+};
+
+const fetching = (state = {
+	collectionsInLibrary: [],
+	itemsInCollection: [],
+	creatorTypes: [],
+	itemTypeFields: [],
+	meta: false
+}, action) => {
+	switch(action.type) {
+		case REQUEST_META:
+			return {
+				...state,
+				meta: true
+			};
+		case RECEIVE_META:
+		case ERROR_META:
+			return {
+				...state,
+				meta: false
+			};
+		case REQUEST_COLLECTIONS_IN_LIBRARY:
+			return {
+				...state,
+				collectionsInLibrary: [...(state.collectionsInLibrary || []), action.libraryKey]
+			};
+		case RECEIVE_COLLECTIONS_IN_LIBRARY:
+		case ERROR_COLLECTIONS_IN_LIBRARY:
+			return {
+				...state, 
+				collectionsInLibrary: without(state.collectionsInLibrary, action.libraryKey)
+			};
+
+		case REQUEST_ITEMS_IN_COLLECTION:
+			return {
+				...state,
+				itemsInCollection: [...(state.itemsInCollection || []), ck(action.collectionKey, action.libraryKey)]
+			};
+		case RECEIVE_ITEMS_IN_COLLECTION:
+		case ERROR_ITEMS_IN_COLLECTION:
+			return {
+				...state,
+				itemsInCollection: without(state.itemsInCollection, ck(action.collectionKey, action.libraryKey))
+			};
+
+		case REQUEST_ITEM_TYPE_CREATOR_TYPES:
+			return {
+				...state,
+				itemTypeCreatorTypes: [...(state.itemTypeCreatorTypes || []), action.itemType]
+			};
+		case RECEIVE_ITEM_TYPE_CREATOR_TYPES:
+		case ERROR_ITEM_TYPE_CREATOR_TYPES:
+			return {
+				...state,
+				itemTypeCreatorTypes: without(state.itemTypeCreatorTypes, action.itemType)
+			};
+
+		case REQUEST_ITEM_TYPE_FIELDS:
+			return {
+				...state,
+				itemTypeFields: [...(state.itemTypeFields || []), action.itemType]
+			};
+		case RECEIVE_ITEM_TYPE_FIELDS:
+		case ERROR_ITEM_TYPE_FIELDS:
+			return {
+				...state,
+				itemTypeFields: without(state.itemTypeFields, action.itemType)
+			};
+
+		case REQUEST_CHILD_ITEMS:
+			return {
+				...state,
+				childItems: [...(state.childItems || []), ck(action.itemKey, action.libraryKey)]
+			};
+		case RECEIVE_CHILD_ITEMS:
+		case ERROR_CHILD_ITEMS:
+			return {
+				...state,
+				childItems: without(state.childItems, ck(action.itemKey, action.libraryKey))
+			};
+		default:
+			return state;
+	}
+};
+
+const updating = (state = {
+	items: {}
+}, action) => {
+	const itemCKey = ck(action.itemKey, action.libraryKey);
+	var newState;
+	switch(action.type) {
+		case REQUEST_UPDATE_ITEM:
+			return {
+				...state,
+				items: {
+					...state.items,
+					[itemCKey]: {
+						...(itemCKey in state.items ? state.items[itemCKey] : {}),
+						...action.patch
+					}
+				}
+			};
 		case RECEIVE_UPDATE_ITEM:
-			var newState = Object.assign({}, state);
-			var fields = fieldsBeingUpdated(state[action.item.key] || [], action);
-			if(action.item.key in newState && fields.length === 0) {
-				delete newState[action.item.key];
+		case ERROR_UPDATE_ITEM:
+			newState = {
+				...state,
+				items: {
+					...state.items,
+					[itemCKey]: removeKey(state.items[itemCKey], Object.keys(action.patch))
+				}
+			};
+			if(Object.keys(newState.items[itemCKey]).length === 0) {
+				delete newState.items[itemCKey];
 			}
 			return newState;
+		default:
+			return state;
 	}
-}
+};
 
-function items(state = {
-	selected: '',
-	updating: {}
-}, action) {
+const items = (state = {}, action) => {
+	var items;
 	switch(action.type) {
-		case REQUEST_FETCH_ITEMS:
-		case RECEIVE_FETCH_ITEMS:
-		case ERROR_FETCH_ITEMS:
-			return Object.assign({}, state, {
-				[action.collectionKey]: itemsByCollection(state[action.collectionKey], action)
-			});
-		case SELECT_ITEM:
-			return Object.assign({}, state, {
-				selected: action.index,
-				editing: null
-			});
-		case REQUEST_UPDATE_ITEM:
+		case RECEIVE_ITEMS_IN_COLLECTION:
+			items = action.items.reduce((aggr, item) => {
+				aggr[ck(item.key, action.libraryKey)] = item;
+				return aggr;
+			}, {});
+			return {
+				...state,
+				...items
+			};
 		case RECEIVE_UPDATE_ITEM:
-		case ERROR_UPDATE_ITEM:
-			return Object.assign({}, state, {
-				updating: itemsBeingUpdated(state['updating'], action)
-			});
-		case TRIGGER_EDITING_ITEM:
-			return Object.assign({}, state, {
-				editing: action.editing ? action.itemKey : null
-			});
-		case ROUTER_DID_CHANGE:
-			return Object.assign({}, state, {
-				editing: null
-			});
+			return {
+				...state,
+				[ck(action.itemKey, action.libraryKey)]: {
+					...(state.items && action.itemKey in state.items ? state.items[action.itemKey] : {}),
+					...action.item
+				}
+			};
+		case RECEIVE_CHILD_ITEMS:
+			items = action.childItems.reduce((aggr, item) => {
+				aggr[ck(item.key, action.libraryKey)] = item;
+				return aggr;
+			}, {});
+			return {
+				...state,
+				...items
+			};
+		default: 
+			return state;
+	}
+};
+
+//@TODO move sorting from action to reducer (to support pagination)
+const itemsByCollection = (state = {}, action) => {
+	switch(action.type) {
+		case RECEIVE_ITEMS_IN_COLLECTION:
+			return {
+				...state,
+				[ck(action.collectionKey, action.libraryKey)]: action.items.map(item => ck(item.key, action.libraryKey))
+			};
 		default:
 			return state;
 	}
-}
+};
 
-function config(state = {}) {
-	return state;
-}
-
-function creatorTypes(state = {}, action) {
+const itemsByParentItem = (state = {}, action) => {
 	switch(action.type) {
-		case REQUEST_CREATOR_TYPES:
+		case RECEIVE_CHILD_ITEMS:
 			return {
 				...state,
-				[action.itemType]: {
-					isFetching: true
-				}
-			};
-		case RECEIVE_CREATOR_TYPES:
-			return {
-				...state,
-				[action.itemType]: {
-					isFetching: false,
-					value: action.creatorTypes
-				}
-			};
-		case ERROR_CREATOR_TYPES:
-			return {
-				...state,
-				[action.itemType]: {
-					isFetching: false
-				}
+				[ck(action.itemKey, action.libraryKey)]: action.childItems.map(item => ck(item.key, action.libraryKey))
 			};
 		default:
 			return state;
-	}	
-}
+	}
+};
 
-function viewport(state = {}, action) {
+const creatorTypes = (state = {}, action) => {
+	switch(action.type) {
+		case RECEIVE_ITEM_TYPE_CREATOR_TYPES:
+			return {
+				...state,
+				[action.itemType]: action.creatorTypes
+			};
+		default:
+			return state;
+	}
+};
+
+const itemTypeFields = (state = {}, action) => {
+	switch(action.type) {
+		case RECEIVE_ITEM_TYPE_FIELDS:
+			return {
+				...state,
+				[action.itemType]: action.fields
+			};
+		default:
+			return state;
+	}
+};
+
+const viewport = (state = {}, action) => {
 	switch(action.type) {
 		case TRIGGER_RESIZE_VIEWPORT:
 			return {
@@ -213,13 +360,21 @@ function viewport(state = {}, action) {
 		default: 
 			return state;
 	}
-}
+};
 
-export default {
+module.exports = {
+	meta,
 	library,
 	collections,
+	collectionsByLibrary,
+	fetching,
+	updating,
 	items,
+	itemsByCollection,
+	itemsByParentItem,
 	config,
 	creatorTypes,
+	itemTypeFields,
 	viewport
+	// queue
 };

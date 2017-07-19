@@ -1,11 +1,12 @@
 'use strict';
 
-import React from 'react';
-import cx from 'classnames';
+const React = require('react');
+const PropTypes = require('prop-types');
+const cx = require('classnames');
 
-import Icon from './icon';
+const Icon = require('./icon');
 
-export default class Button extends React.Component {
+class Button extends React.Component {
 	render() {
 		return (
 			<button 
@@ -21,13 +22,15 @@ export default class Button extends React.Component {
 }
 
 Button.propTypes = {
-	active: React.PropTypes.bool,
-	children: React.PropTypes.node,
-	className: React.PropTypes.string,
-	onClick: React.PropTypes.func
+	active: PropTypes.bool,
+	children: PropTypes.node,
+	className: PropTypes.string,
+	onClick: PropTypes.func
 };
 
 
 Button.defaultProps = {
 	active: false
 };
+
+module.exports = Button;

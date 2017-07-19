@@ -1,8 +1,9 @@
 'use strict';
 
-import React from 'react';
+const React = require('react');
+const PropTypes = require('prop-types');
 
-export default class Panel extends React.Component {
+class Panel extends React.Component {
 
 	renderHeader(header) {
 		if(header.type === 'header') {
@@ -39,11 +40,13 @@ export default class Panel extends React.Component {
 }
 
 Panel.propTypes = {
-	children: React.PropTypes.node,
-	className: React.PropTypes.string
+	children: PropTypes.node,
+	className: PropTypes.string
 };
 
 Panel.defaultProps = {
 	children: null,
 	className: ''
 };
+
+module.exports = Panel;

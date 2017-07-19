@@ -1,8 +1,8 @@
 'use strict';
 
-import React from 'react';
-
-import InjectableComponentsEnhance from '../../enhancers/injectable-components-enhancer';
+const React = require('react');
+const PropTypes = require('prop-types');
+const InjectableComponentsEnhance = require('../../enhancers/injectable-components-enhancer');
 
 class Navbar extends React.Component {
 	constructor(props) {
@@ -41,12 +41,12 @@ class Navbar extends React.Component {
 }
 
 Navbar.propTypes = {
-	onToggle: React.PropTypes.func.isRequired,
-	isOpened: React.PropTypes.bool
+	onToggle: PropTypes.func.isRequired,
+	isOpened: PropTypes.bool
 };
 
 Navbar.defaultProps = {
 	isOpened: false
 };
 
-export default InjectableComponentsEnhance(Navbar);
+module.exports = InjectableComponentsEnhance(Navbar);

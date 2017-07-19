@@ -1,7 +1,8 @@
 'use strict';
 
-import React from 'react';
-import InjectableComponentsEnhance from '../enhancers/injectable-components-enhancer';
+const React = require('react');
+const PropTypes = require('prop-types');
+const InjectableComponentsEnhance = require('../enhancers/injectable-components-enhancer');
 
 class NoteEditor extends React.Component {
 	render() {
@@ -32,11 +33,11 @@ class NoteEditor extends React.Component {
 }
 
 NoteEditor.propTypes = {
-	notes: React.PropTypes.array
+	notes: PropTypes.array
 };
 
 NoteEditor.defaultProps = {
 	notes: []
 };
 
-export default InjectableComponentsEnhance(NoteEditor);
+module.exports = InjectableComponentsEnhance(NoteEditor);

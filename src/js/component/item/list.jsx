@@ -1,7 +1,8 @@
 'use strict';
 
-import React from 'react';
-import InjectableComponentsEnhance from '../../enhancers/injectable-components-enhancer';
+const React = require('react');
+const PropTypes = require('prop-types');
+const InjectableComponentsEnhance = require('../../enhancers/injectable-components-enhancer');
 
 class ItemList extends React.Component {
 	render() {
@@ -43,14 +44,14 @@ class ItemList extends React.Component {
 }
 
 ItemList.propTypes = {
-	items: React.PropTypes.array,
-	selectedItemKey: React.PropTypes.string,
-	isFetching: React.PropTypes.bool,
-	onItemSelected: React.PropTypes.func
+	items: PropTypes.array,
+	selectedItemKey: PropTypes.string,
+	isFetching: PropTypes.bool,
+	onItemSelected: PropTypes.func
 };
 
 ItemList.defaultProps = {
 	isFetching: false
 };
 
-export default InjectableComponentsEnhance(ItemList);
+module.exports = InjectableComponentsEnhance(ItemList);

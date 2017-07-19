@@ -1,9 +1,10 @@
 'use strict';
 
-import React from 'react';
-import cx from 'classnames';
-import Select from 'react-select';
-import InjectableComponentsEnhance from '../enhancers/injectable-components-enhancer';
+const React = require('react');
+const PropTypes = require('prop-types');
+const cx = require('classnames');
+const Select = require('react-select');
+const InjectableComponentsEnhance = require('../enhancers/injectable-components-enhancer');
 
 class Editable extends React.Component {
 	constructor(props) {
@@ -195,21 +196,21 @@ class Editable extends React.Component {
 
 
 Editable.propTypes = {
-	name: React.PropTypes.string,
-	value: React.PropTypes.oneOfType([
-		React.PropTypes.string,
-		React.PropTypes.number
+	name: PropTypes.string,
+	value: PropTypes.oneOfType([
+		PropTypes.string,
+		PropTypes.number
 	]),
-	processing: React.PropTypes.bool,
-	placeholder: React.PropTypes.string,
-	emptytext: React.PropTypes.string,
-	onSave: React.PropTypes.func,
-	onChange: React.PropTypes.func,
-	onToggle: React.PropTypes.func,
-	editOnClick: React.PropTypes.bool,
-	options: React.PropTypes.array,
-	isLoading: React.PropTypes.bool,
-	children: React.PropTypes.node
+	processing: PropTypes.bool,
+	placeholder: PropTypes.string,
+	emptytext: PropTypes.string,
+	onSave: PropTypes.func,
+	onChange: PropTypes.func,
+	onToggle: PropTypes.func,
+	editOnClick: PropTypes.bool,
+	options: PropTypes.array,
+	isLoading: PropTypes.bool,
+	children: PropTypes.node
 };
 
 Editable.defaultProps  = {
@@ -222,4 +223,4 @@ Editable.defaultProps  = {
 	editOnClick: true
 };
 
-export default InjectableComponentsEnhance(Editable);
+module.exports = InjectableComponentsEnhance(Editable);

@@ -37,6 +37,7 @@ function getBrowserify(dev) {
 		entries: './src/js/zotero-web-library.js',
 		cache: {},
 		packageCache: {},
+		standalone: 'ZoteroWebLibrary',
 		extensions: ['.js', '.jsx']
 	}).transform(
 		babelify

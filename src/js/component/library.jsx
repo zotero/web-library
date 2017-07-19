@@ -1,11 +1,10 @@
 'use strict';
 
-import React from 'react';
-import cx from 'classnames';
-
-import Icon from './ui/icon';
-
-import InjectableComponentsEnhance from '../enhancers/injectable-components-enhancer';
+const React = require('react');
+const PropTypes = require('prop-types');
+const cx = require('classnames');
+const Icon = require('./ui/icon');
+const InjectableComponentsEnhance = require('../enhancers/injectable-components-enhancer');
 
 class Library extends React.Component {
 	constructor(props) {
@@ -103,7 +102,7 @@ class Library extends React.Component {
 }
 
 Library.propTypes = {
-	view: React.PropTypes.string
+	view: PropTypes.string
 };
 
-export default InjectableComponentsEnhance(Library);
+module.exports = InjectableComponentsEnhance(Library);

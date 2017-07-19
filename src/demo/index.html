@@ -8,18 +8,19 @@
 	</head>
 <body>
 	<!-- test account with read-only api key -->
-	<div data-widget="library" data-userid="23868" data-apikey="aGgbjzONlFLjElPTfHZjgQfS"></div>
+	<div data-widget="library"></div>
 </body>
 <script src="/zotero-web-library.js"></script>
 <script type="text/javascript">
-	if(typeof zoteroData == 'undefined') {
-		var zoteroData = {};
-	}
-	var baseURL = "";
-	var baseDomain = "//test.zotero.net";
-	var staticPath = "/static";
-
-	Zotero.config.baseApiUrl = 'https://apidev.zotero.org';
-	Zotero.ui.LibraryContainer.init(document.querySelector('[data-widget=library]'));
+	ZoteroWebLibrary.LibraryContainer.init(
+		document.querySelector('[data-widget=library]'),
+		{
+			'userId': '23868',
+			'apiKey': 'aGgbjzONlFLjElPTfHZjgQfS',
+			'api': {
+				apiAuthorityPart: 'apidev.zotero.org'
+			}
+		}
+	);
 </script>
 </html>

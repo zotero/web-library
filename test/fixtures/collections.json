@@ -1,56 +1,86 @@
 [
   {
-    "key": "AAAAAAAA",
-    "hasChildren": true,
-    "nestingDepth": 1,
-    "apiObj": {
-      "data": {
-        "key": "AAAAAAAA",
-        "name": "depth-1"
-      }
+    "key": "BBBBBBBB",
+    "version": 1,
+    "library": {
+      "type": "user",
+      "id": 123456,
+      "name": "Test Library"
     },
-    "children": [
-      {
-        "key": "BBBBBBBB",
-        "hasChildren": true,
-        "nestingDepth": 2,
-        "apiObj": {
-          "data": {
-            "key": "BBBBBBBB",
-            "name": "depth-2",
-            "parentCollection": "AAAAAAAA"
-          }
-        },
-        "children": [
-          {
-            "key": "CCCCCCCC",
-            "hasChildren": true,
-            "nestingDepth": 3,
-            "apiObj": {
-              "data": {
-                "key": "CCCCCCCC",
-                "name": "depth-3",
-                "parentCollection": "BBBBBBBB"
-              }
-            },
-            "children": [
-              {
-                "key": "DDDDDDDD",
-                "hasChildren": true,
-                "nestingDepth": 4,
-                "apiObj": {
-                  "data": {
-                    "key": "DDDDDDDD",
-                    "name": "depth-4",
-                    "parentCollection": "CCCCCCCC"
-                  }
-                },
-                "children": []
-              }
-            ]
-          }
-        ]
-      }
-    ]
+    "links": {},
+    "meta": {
+      "numCollections": 0,
+      "numItems": 2
+    },
+    "data": {
+      "key": "BBBBBBBB",
+      "version": 1,
+      "name": "Test Collection B",
+      "parentCollection": false,
+      "relations": {}
+    }
+  },
+  {
+    "key": "CCCCCCCC",
+    "version": 1,
+    "library": {
+      "type": "user",
+      "id": 123456,
+      "name": "Test Library"
+    },
+    "links": {},
+    "meta": {
+      "numCollections": 0,
+      "numItems": 2
+    },
+    "data": {
+      "key": "CCCCCCCC",
+      "version": 1,
+      "name": "Test Collection C",
+      "parentCollection": false,
+      "relations": {}
+    }
+  },
+  {
+    "key": "AAAAAAAA",
+    "version": 1,
+    "library": {
+      "type": "user",
+      "id": 123456,
+      "name": "Test Library"
+    },
+    "links": {},
+    "meta": {
+      "numCollections": 1,
+      "numItems": 4
+    },
+    "data": {
+      "key": "AAAAAAAA",
+      "version": 1,
+      "name": "Test Collection A",
+      "parentCollection": false,
+      "relations": {}
+    }
+  },
+  {
+    "key": "AAAA0001",
+    "version": 1,
+    "library": {
+      "type": "user",
+      "id": 123456,
+      "name": "Test Library"
+    },
+    "links": {},
+    "meta": {
+      "numCollections": 0,
+      "numItems": 2
+    },
+    "data": {
+      "key": "AAAA0001",
+      "version": 1,
+      "name": "Test Collection A1",
+      "parentCollection": "AAAAAAAA",
+      "relations": {}
+    }
   }
 ]

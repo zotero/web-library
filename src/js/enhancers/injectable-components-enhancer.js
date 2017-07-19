@@ -1,7 +1,9 @@
 'use strict';
 
-import React from 'react';
-import components from '../components';
+module.exports = InjectableComponentsEnhance;
+
+const React = require('react');
+const components = require('../components');
 
 function injectablesFromProps(props) {
 	let injectedComponents = {};
@@ -15,7 +17,7 @@ function injectablesFromProps(props) {
 	return injectedComponents;
 }
 
-export default function InjectableComponentsEnhancer(ComposedComponent) {
+function InjectableComponentsEnhance(ComposedComponent) {
 	return class extends React.Component {
 		constructor(props) {
 			super(props);
@@ -36,3 +38,4 @@ export default function InjectableComponentsEnhancer(ComposedComponent) {
 		}
 	};
 }
+

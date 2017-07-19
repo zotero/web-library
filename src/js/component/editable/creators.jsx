@@ -1,13 +1,13 @@
 'use strict';
 
-import React from 'react';
-import cx from 'classnames';
+const React = require('react');
+const PropTypes = require('prop-types');
+const cx = require('classnames');
+const Editable = require('../editable');
+const Button = require('../ui/button');
+const Icon = require('../ui/icon');
 
-import Editable from '../editable';
-import Button from '../ui/button';
-import Icon from '../ui/icon';
-
-export default class EditableCreators extends React.Component {
+class EditableCreators extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -130,12 +130,14 @@ export default class EditableCreators extends React.Component {
 }
 
 EditableCreators.propTypes = {
-	value: React.PropTypes.array,
-	creatorTypes: React.PropTypes.array.isRequired,
-	creatorTypesLoading: React.PropTypes.bool,
-	onSave: React.PropTypes.func
+	value: PropTypes.array,
+	creatorTypes: PropTypes.array.isRequired,
+	creatorTypesLoading: PropTypes.bool,
+	onSave: PropTypes.func
 };
 
 EditableCreators.defaultProps = {
 	value: []
 };
+
+module.exports = EditableCreators;
