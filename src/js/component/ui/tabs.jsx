@@ -1,8 +1,8 @@
 'use strict';
 
-import React from 'react';
-import cx from 'classnames';
-
+const React = require('react');
+const PropTypes = require('prop-types');
+const cx = require('classnames');
 
 const Tab = ({ children, isActive, isDisabled, onActivate }) => (
 	<li
@@ -19,10 +19,10 @@ const Tab = ({ children, isActive, isDisabled, onActivate }) => (
 );
 
 Tab.propTypes = {
-	children: React.PropTypes.node,
-	isActive: React.PropTypes.bool,
-	isDisabled: React.PropTypes.bool,
-	onActivate: React.PropTypes.func.isRequired
+	children: PropTypes.node,
+	isActive: PropTypes.bool,
+	isDisabled: PropTypes.bool,
+	onActivate: PropTypes.func.isRequired
 };
 
 
@@ -35,10 +35,10 @@ const Tabs = ({ children, justified, compact }) => (
 );
 
 Tabs.propTypes = {
-	children: React.PropTypes.node,
-	className: React.PropTypes.string,
-	compact: React.PropTypes.bool,
-	justified: React.PropTypes.bool
+	children: PropTypes.node,
+	className: PropTypes.string,
+	compact: PropTypes.bool,
+	justified: PropTypes.bool
 };
 
 

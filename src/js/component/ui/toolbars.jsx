@@ -1,7 +1,8 @@
 'use strict';
 
-import React from 'react';
-import cx from 'classnames';
+const React = require('react');
+const PropTypes = require('prop-types');
+const cx = require('classnames');
 
 const Toolbar = ({ children, className }) => (
 	<div className={cx('toolbar', className)}>
@@ -10,8 +11,8 @@ const Toolbar = ({ children, className }) => (
 );
 
 Toolbar.propTypes = {
-	children: React.PropTypes.node,
-	className: React.PropTypes.string
+	children: PropTypes.node,
+	className: PropTypes.string
 };
 
 const ToolGroup = ({ children }) => (
@@ -21,7 +22,7 @@ const ToolGroup = ({ children }) => (
 );
 
 ToolGroup.propTypes = {
-	children: React.PropTypes.node
+	children: PropTypes.node
 };
 
 

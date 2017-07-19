@@ -1,10 +1,10 @@
 'use strict';
 
-import React from 'react';
-import cx from 'classnames';
-
-import InjectableComponentsEnhance from '../../enhancers/injectable-components-enhancer';
-import { itemProp } from '../../constants';
+const React = require('react');
+const PropTypes = require('prop-types');
+const cx = require('classnames');
+const InjectableComponentsEnhance = require('../../enhancers/injectable-components-enhancer');
+const { itemProp } = require('../../constants/item');
 
 class ItemDetails extends React.Component {
 	constructor(props) {
@@ -78,7 +78,7 @@ class ItemDetails extends React.Component {
 								<section className="abstract">
 									<h6 className="h2 abstract-heading">Abstract</h6>
 									<div>
-										{ this.props.item.get('abstractNote') }
+										{ this.props.item.abstractNote }
 									</div>
 								</section>
 							</div>
@@ -125,15 +125,13 @@ class ItemDetails extends React.Component {
 }
 
 ItemDetails.defaultProps = {
-	item: {
-		get: () => ''
-	},
+	item: PropTypes.object,
 	active: false
 };
 
 ItemDetails.propTypes = {
-	active: React.PropTypes.bool,
+	active: PropTypes.bool,
 	item: itemProp
 };
 
-export default InjectableComponentsEnhance(ItemDetails);
+module.exports = InjectableComponentsEnhance(ItemDetails);

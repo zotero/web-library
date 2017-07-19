@@ -1,9 +1,10 @@
 'use strict';
 
-import React from 'react';
-import cx from 'classnames';
+const React = require('react');
+const PropTypes = require('prop-types');
+const cx = require('classnames');
 
-export default class TagSelector extends React.Component {
+class TagSelector extends React.Component {
 	render() {
 		return (
 			<div className="tag-selector">
@@ -50,18 +51,18 @@ export default class TagSelector extends React.Component {
 }
 
 TagSelector.propTypes = {
-	tags: React.PropTypes.arrayOf(React.PropTypes.shape({
-		name: React.PropTypes.string,
-		selected: React.PropTypes.bool,
-		color: React.PropTypes.string,
-		disabled: React.PropTypes.bool
+	tags: PropTypes.arrayOf(PropTypes.shape({
+		name: PropTypes.string,
+		selected: PropTypes.bool,
+		color: PropTypes.string,
+		disabled: PropTypes.bool
 	})),
-	searchString: React.PropTypes.string,
-	shouldFocus: React.PropTypes.bool,
-	onSelection: React.PropTypes.func,
-	onTagContext: React.PropTypes.func,
-	onSearch: React.PropTypes.func,
-	onSettings: React.PropTypes.func
+	searchString: PropTypes.string,
+	shouldFocus: PropTypes.bool,
+	onSelection: PropTypes.func,
+	onTagContext: PropTypes.func,
+	onSearch: PropTypes.func,
+	onSettings: PropTypes.func
 };
 
 TagSelector.defaultProps = {
@@ -73,3 +74,5 @@ TagSelector.defaultProps = {
 	onSearch: () => Promise.resolve(),
 	onSettings: () => Promise.resolve()
 };
+
+module.exports = TagSelector;

@@ -1,59 +1,65 @@
 'use strict';
 
+const { ck } = require('./utils');
+
+//@TODO: multi-library support
+const getLibraryKey = state => {
+	return 'libraryKey' in state.library ? state.library.libraryKey : null;
+};
+
 const isCollectionSelected = state => {
-	return state.library && 
-		state.collections[state.library.libraryString] && 
-		'collection' in state.router.params;
+	const libraryKey = getLibraryKey(state);
+	const collections = state.collectionsByLibrary[libraryKey];
+	const isCollectionInPath = state.router && 'collection' in state.router.params;
+
+	return libraryKey && collections && isCollectionInPath;
 };
 
-const getCollections = state => {
-	return state.library &&
-		state.collections[state.library.libraryString] ? 
-			state.collections[state.library.libraryString].collections : [];
-};
-
-const getRootLevelCollections = state => {
-	return state.collections[state.library.libraryString].collections.filter(
-		c => c.nestingDepth === 1
-	);
-};
-
-
-const getPathFromState = state => {
-	if(isCollectionSelected(state)) {
-		let selectedCollectionKey = state.router.params.collection;
-		let collections = getRootLevelCollections(state);
-		return mapTreePath(selectedCollectionKey, collections, []);
-	}
-	return [];
-};
-
-//@TODO: memoize
-const mapTreePath = (selectedKey, collections, curPath) => {
-	for(let col of collections) {
-		if(col.key === selectedKey) {
-			return curPath.concat(col.key);
-		} else if(col.children.length) {
-			let maybePath = mapTreePath(selectedKey, col.children, curPath.concat(col.key));
-			if(maybePath.includes(selectedKey)) {
-				return maybePath;
-			}
-		}
+const getCollectionsPath = state => {
+	const libraryKey = getLibraryKey(state);
+	const path = [];
+	var nextKey = isCollectionSelected(state) ? state.router.params.collection : false;
+	
+	while(nextKey) {
+		const collection = state.collections[ck(nextKey, libraryKey)];
+		path.push(collection.key);
+		nextKey = collection.parentCollection;
 	}
 
-	return curPath;
+	return path.reverse();
 };
 
-//@TODO: memoize
+// const mapTreePath = (selectedKey, currentLevelCollections, collections, libraryKey, curPath = []) => {
+// 	for(const collection of currentLevelCollections) {
+// 		if(collection.key === selectedKey) {
+// 			return curPath.concat(collection.key);
+// 		} else if(collection.children.length) {
+// 			const nextLevelCollections = collection.children.map(collectionKey => collections[ck(collectionKey, libraryKey)]);
+// 			const maybePath = mapTreePath(
+// 				selectedKey, 
+// 				nextLevelCollections,
+// 				collections,
+// 				libraryKey,
+// 				curPath.concat(collection.key)
+// 			);
+// 			if(maybePath.includes(selectedKey)) {
+// 				return maybePath;
+// 			}
+// 		}
+// 	}
+
+// 	return curPath;
+// };
+
 const getCurrentViewFromState = state => {
 	if(isCollectionSelected(state)) {
-		let selectedCollectionKey = state.router.params.collection;
-		let collections = state.collections[state.library.libraryString].collections;
-		let selectedCollection = collections.find(c => c.key === selectedCollectionKey);
-		if('item' in state.router.params && state.items[selectedCollectionKey] && state.items[selectedCollectionKey].items) {
+		const libraryKey = getLibraryKey(state);
+		const selectedCollectionKey = state.router.params.collection;
+		const selectedCollection = state.collections[ck(selectedCollectionKey, libraryKey)];
+		
+		if('item' in state.router.params && state.itemsByCollection[ck(selectedCollectionKey, libraryKey)]) {
 			let selectedItemKey = state.router.params.item;
-			let items = state.items[selectedCollectionKey].items;
-			let selectedItem = items.find(i => i.key === selectedItemKey);
+			let selectedItem = state.items[ck(selectedItemKey, libraryKey)];
 			if(selectedItem) {
 				return 'item-details';
 			}
@@ -67,10 +73,72 @@ const getCurrentViewFromState = state => {
 	return 'library';
 };
 
-export default {
+const getCollection = state => {
+	if(isCollectionSelected(state)) {
+		const collectionKey = state.router.params.collection;
+		const libraryKey = getLibraryKey(state);
+		const collectionCKey = ck(collectionKey, libraryKey);
+
+		if(collectionCKey in state.collections) {
+			return state.collections[collectionCKey];
+		}
+	}
+
+	return null;
+};
+
+const getCollections = state => {
+	const libraryKey = getLibraryKey(state);
+	const keys = libraryKey && state.collectionsByLibrary[libraryKey] && state.collectionsByLibrary[libraryKey] || [];
+	return keys.map(ckey => state.collections[ckey]);
+};
+
+const getTopCollections = state => {
+	return getCollections(state).filter(collection => !collection.parentCollection);
+};
+
+const getItem = state => {
+	const libraryKey = getLibraryKey(state);
+	const itemKey = state.router && 'item' in  state.router.params && state.router.params.item;
+	const itemCKey = ck(itemKey, libraryKey);
+	return itemCKey in state.items ? state.items[itemCKey] : null;
+};
+
+const getItems = state => {
+	const libraryKey = getLibraryKey(state);
+	const collection = getCollection(state);
+	const ckeys = libraryKey && collection && state.itemsByCollection[ck(collection.key, libraryKey)] || [];
+	return ckeys.map(ckey => state.items[ckey]);
+};
+
+const getItemFieldValue = (field, state) => {
+	const libraryKey = getLibraryKey(state);
+	const item = getItem(state);
+	const itemCKey = ck(item.key, libraryKey);
+	const isBeingUpdated = isItemFieldBeingUpdated(field, state);
+	return (isBeingUpdated && state.updating.items[itemCKey][field]) ||
+		(item && item[field]);
+};
+
+const isItemFieldBeingUpdated = (field, state) => {
+	const libraryKey = getLibraryKey(state);
+	const item = getItem(state);
+	const itemCKey = ck(item.key, libraryKey);
+	return item && 
+		state.updating.items && 
+		itemCKey in state.updating.items && 
+		field in state.updating.items[itemCKey];
+};
+
+module.exports = {
 	isCollectionSelected,
+	getCollection,
 	getCollections,
-	getRootLevelCollections,
-	getPathFromState,
-	getCurrentViewFromState
+	getTopCollections,
+	getItem,
+	getItems,
+	getCollectionsPath,
+	getCurrentViewFromState,
+	getItemFieldValue,
+	isItemFieldBeingUpdated
 };

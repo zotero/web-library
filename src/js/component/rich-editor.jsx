@@ -1,12 +1,12 @@
 'use strict';
 
-import React from 'react';
-import { Editor, EditorState, RichUtils, convertFromHTML } from 'draft-js';
+const React = require('react');
+const PropTypes = require('prop-types');
+const { Editor, EditorState, RichUtils, convertFromHTML } = require('draft-js');
+const { Toolbar, ToolGroup } = require('./ui/toolbars');
+const Button = require('./ui/button');
 
-import { Toolbar, ToolGroup } from './ui/toolbars';
-import Button from './ui/button';
-
-export default class RichEditor extends React.Component {
+class RichEditor extends React.Component {
 	constructor(props) {
 		super(props);
 		let editorState = props.value ? convertFromHTML(props.value) : EditorState.createEmpty();
@@ -80,7 +80,9 @@ export default class RichEditor extends React.Component {
 }
 
 RichEditor.propTypes = {
-	value: React.PropTypes.string
+	value: PropTypes.string
 };
 
 RichEditor.defaultProps = {};
+
+module.exports = RichEditor;

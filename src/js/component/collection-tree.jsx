@@ -1,40 +1,10 @@
 'use strict';
 
-import React from 'react';
-import InjectableComponentsEnhance from '../enhancers/injectable-components-enhancer';
-
-function testRecursive(collections, test) {
-	if(collections.some(test)) {
-		return true;
-	} else {
-		for(let collection of collections) {
-			if('children' in collection) {
-				if(testRecursive(collection.children, test)) {
-					return true;
-				}
-			}
-		}
-	}
-	return false;
-}
+const React = require('react');
+const PropTypes = require('prop-types');
+const InjectableComponentsEnhance = require('../enhancers/injectable-components-enhancer');
 
 class CollectionTree extends React.Component {
-	constructor(props) {
-		super(props);
-		//@TODO: deduplicate and use single loop
-		this.state = {
-			collections: this.props.collections.filter(c => c.nestingDepth === 1),
-			selectedCollection: this.props.collections.find(c => !!c.isSelected)
-		};
-	}
-
-	componentWillReceiveProps(nextProps) {
-		this.setState({
-			collections: nextProps.collections.filter(c => c.nestingDepth === 1),
-			selectedCollection: nextProps.collections.find(c => !!c.isSelected)
-		});
-	}
-
 	collectionSelectedHandler(key, ev) {
 		ev && ev.preventDefault();
 		this.props.onCollectionSelected(key, ev);
@@ -52,11 +22,31 @@ class CollectionTree extends React.Component {
 		}
 	}
 
+	collectionsFromKeys(collections) {
+		return collections.map(
+			collectionKey => this.props.collections.find(
+				collection => collectionKey === collection.key
+			)
+		);
+	}
+
+	testRecursive(collections, test) {
+		if(collections.some(test)) {
+			return true;
+		} else {
+			for(let collection of collections) {
+				const childrenCollections = this.collectionsFromKeys(collection.children);
+				if(this.testRecursive(childrenCollections, test)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
 	renderCollections(collections, level) {
-		let hasOpen = testRecursive(collections, col => this.state.selectedCollection == col);
-		let hasOpenLastLevel = collections.some(col => {
-			return col.isSelected && !col.hasChildren;
-		});
+		let hasOpen = this.testRecursive(collections, col => col.isSelected);
+		let hasOpenLastLevel = collections.some(col => col.isSelected && !col.hasChildren);
 		let Icon = this.props.components['Icon'];
 
 		return (
@@ -90,10 +80,10 @@ class CollectionTree extends React.Component {
 									<Icon type={ `28/folder${collection.children.length ? 's' : ''}` } className="touch" width="28" height="28"/>
 									<Icon type="16/folder" className="mouse" width="16" height="16"/>
 									<a>
-										{ collection.apiObj.data.name }
+										{ collection.name }
 									</a>
 								</div>
-								{ collection.children.length ? this.renderCollections(collection.children, level + 1) : null }
+								{ collection.children.length ? this.renderCollections(this.collectionsFromKeys(collection.children), level + 1) : null }
 							</li>
 						);
 					}) }
@@ -103,15 +93,16 @@ class CollectionTree extends React.Component {
 	}
 
 	render() {
-		let Spinner = this.props.components['Spinner'];
+		const Spinner = this.props.components['Spinner'];
+		const selectedCollection = this.props.collections.find(c => c.isSelected) || null;
+		const topLevelCollections = this.props.collections.filter(c => c.parentCollection === false);
 		if(this.props.isFetching) {
 			return <Spinner />;
 		} else {
-			let isRootActive =
-			!this.state.selectedCollection
-			|| (this.state.selectedCollection
-				&& this.state.selectedCollection.nestingDepth === 1
-				&& !this.state.selectedCollection.hasChildren
+			let isRootActive = !selectedCollection || (
+				selectedCollection && 
+				selectedCollection.parentCollection === false &&
+				!selectedCollection.hasChildren
 			);
 			return (
 				<nav className="collection-tree">
@@ -123,7 +114,7 @@ class CollectionTree extends React.Component {
 						<div className="scroll-container" role="tree">
 							<section>
 								<h4>My Library</h4>
-								{ this.renderCollections(this.state.collections, 1)}
+								{ this.renderCollections(topLevelCollections, 1)}
 							</section>
 
 							<section>
@@ -139,22 +130,21 @@ class CollectionTree extends React.Component {
 }
 
 CollectionTree.propTypes = {
-	isFetching: React.PropTypes.bool,
-	onCollectionOpened: React.PropTypes.func,
-	onCollectionSelected: React.PropTypes.func,
-	collections: React.PropTypes.arrayOf(React.PropTypes.shape({
-		key: React.PropTypes.string.isRequired,
-		nestingDepth: React.PropTypes.integer,
-		hasChildren: React.PropTypes.bool,
-		children: React.PropTypes.array,
-		apiObj: React.PropTypes.shape({
-			data: React.PropTypes.shape({
-				name: React.PropTypes.string
-			})
-		}),
-		isOpen: React.PropTypes.bool,
-		isSelected: React.PropTypes.selected
-	})).isRequired
+	isFetching: PropTypes.bool,
+	onCollectionOpened: PropTypes.func,
+	onCollectionSelected: PropTypes.func,
+	collections: PropTypes.arrayOf(
+		PropTypes.shape({
+			key: PropTypes.string.isRequired,
+			parentCollection: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
+			name: PropTypes.string,
+			// not from the API, needs to be pre-calculated
+			hasChildren: PropTypes.bool,
+			children: PropTypes.array,
+			isOpen: PropTypes.bool,
+			isSelected: PropTypes.bool
+		}
+	)).isRequired
 };
 
 CollectionTree.defaultProps = {
@@ -163,4 +153,4 @@ CollectionTree.defaultProps = {
 	onCollectionSelected: () => null
 };
 
-export default InjectableComponentsEnhance(CollectionTree);
+module.exports = InjectableComponentsEnhance(CollectionTree);

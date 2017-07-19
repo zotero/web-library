@@ -1,24 +1,23 @@
 'use strict';
 
-import React from 'react';
-import ReactDOM from 'react-dom';
-import ReduxThunk from 'redux-thunk';
-import { createHistory } from 'history';
-import { createStore, applyMiddleware, compose, combineReducers } from 'redux';
-import { Provider, connect } from 'react-redux';
-import { reduxReactRouter, routerStateReducer, ReduxRouter, push } from 'redux-router';
-import { Route } from 'react-router';
-
-import reducers from '../../reducers';
-import { getCurrentViewFromState } from '../../state-utils';
-import { selectLibrary, triggerResizeViewport } from '../../actions';
-
-import CollectionTreeContainer from '../collection-tree/container';
-import ItemDetailsContainer from '../item/details/container';
-import ItemListContainer from '../item/list/container';
-import Library from '../library';
-import TouchHeaderContainer from '../touch-header/container';
-
+const React = require('react');
+const ReactDOM = require('react-dom');
+const PropTypes = require('prop-types');
+const ReduxThunk = require('redux-thunk').default;
+const ReduxAsyncQueue = require('redux-async-queue').default;
+const { createHistory } = require('history');
+const { createStore, applyMiddleware, compose, combineReducers } = require('redux');
+const { Provider, connect } = require('react-redux');
+const { reduxReactRouter, routerStateReducer, ReduxRouter, push } = require('redux-router');
+const { Route } = require('react-router');
+const reducers = require('../../reducers');
+const { getCurrentViewFromState } = require('../../state-utils');
+const { selectLibrary, initialize, triggerResizeViewport } = require('../../actions');
+const CollectionTreeContainer = require('../collection-tree/container');
+const ItemDetailsContainer = require('../item/details/container');
+const ItemListContainer = require('../item/list/container');
+const Library = require('../library');
+const TouchHeaderContainer = require('../touch-header/container');
 
  //@TODO: ensure this doesn't affect prod build
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
@@ -36,9 +35,17 @@ class LibraryContainer extends React.Component {
 			);
 		};
 	}
-	componentDidMount() {
+	
+	async componentDidMount() {
+		let { apiKey, userId, api } = this.props;
+		
+		await this.props.dispatch(
+			initialize(apiKey, api)
+		);
+		
+		//@TODO: introduce multi-library support
 		this.props.dispatch(
-			selectLibrary('user', this.props.userId, this.props.apiKey)
+			selectLibrary('user', userId)
 		);
 	}
 
@@ -61,11 +68,15 @@ class LibraryContainer extends React.Component {
 		/>;
 	}
 
-	static init(element, userid, apiKey) {
+	static init(element, opts = {}) {
 		if(element) {
+			//@TODO: use an action CONFIGURE_API instead
 			const config = {
-				apiKey: apiKey || element.getAttribute('data-apikey'),
-				userId: userid || parseInt(element.getAttribute('data-userid'), 10)
+				apiKey: opts.apiKey || element.getAttribute('data-apikey'),
+				userId: opts.userId || parseInt(element.getAttribute('data-userid'), 10),
+				apiConfig: {
+					...opts.api
+				}
 			};
 
 			var store = createStore(
@@ -73,7 +84,8 @@ class LibraryContainer extends React.Component {
 				{ config },
 				composeEnhancers(
 					applyMiddleware(
-						ReduxThunk
+						ReduxThunk,
+						ReduxAsyncQueue
 					),
 					reduxReactRouter({
 						createHistory
@@ -84,7 +96,7 @@ class LibraryContainer extends React.Component {
 			ReactDOM.render(
 				<Provider store={store}>
 					<ReduxRouter>
-						<Route path="/" component={ LibraryContainerWrapped }>
+						<Route path="/" component={LibraryContainerWrapped}>
 							<Route path="/collection/:collection" />
 							<Route path="/collection/:collection/item/:item" />
 						</Route>
@@ -97,17 +109,19 @@ class LibraryContainer extends React.Component {
 }
 
 LibraryContainer.propTypes = {
-	userId: React.PropTypes.number,
-	apiKey: React.PropTypes.string,
-	dispatch: React.PropTypes.func.isRequired,
-	view: React.PropTypes.string
+	userId: PropTypes.string,
+	apiKey: PropTypes.string,
+	api: PropTypes.object,
+	dispatch: PropTypes.func.isRequired,
+	view: PropTypes.string
 };
 
 const mapStateToProps = state => {
 	return {
-		userId: state.config.userId,
-		apiKey: state.config.apiKey,
-		view: getCurrentViewFromState(state)
+		view: getCurrentViewFromState(state),
+		userId: state.config.userId || null,
+		api: state.config.api || null,
+		apiKey: state.config.apiKey || null
 	};
 };
 
@@ -120,4 +134,4 @@ const mapDispatchToProps = (dispatch) => {
 
 const LibraryContainerWrapped = connect(mapStateToProps, mapDispatchToProps)(LibraryContainer);
 
-export default LibraryContainerWrapped;
+module.exports = LibraryContainerWrapped;

@@ -1,14 +1,15 @@
 'use strict';
 
-import React from 'react';
-import cx from 'classnames';
+const React = require('react');
+const PropTypes = require('prop-types');
+const cx = require('classnames');
 
 const coerceDimensions = props => ({
 	width: parseInt(props.width),
 	height: parseInt(props.height)
 });
 
-export default class Icon extends React.Component {
+class Icon extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = coerceDimensions(props);
@@ -62,15 +63,17 @@ export default class Icon extends React.Component {
 }
 
 Icon.propTypes = {
-	type: React.PropTypes.string.isRequired,
-	label: React.PropTypes.string,
-	width: React.PropTypes.oneOfType([React.PropTypes.number, React.PropTypes.string]),
-	height: React.PropTypes.oneOfType([React.PropTypes.number, React.PropTypes.string]),
-	color: React.PropTypes.string,
-	style: React.PropTypes.object,
-	className: React.PropTypes.string
+	type: PropTypes.string.isRequired,
+	label: PropTypes.string,
+	width: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+	height: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+	color: PropTypes.string,
+	style: PropTypes.object,
+	className: PropTypes.string
 };
 
 Icon.defaultProps = {
 
 };
+
+module.exports = Icon;

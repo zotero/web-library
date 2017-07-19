@@ -1,8 +1,9 @@
 'use strict';
 
-import React from 'react';
-import Button from './ui/button';
-import InjectableComponentsEnhance from '../enhancers/injectable-components-enhancer';
+const React = require('react');
+const PropTypes = require('prop-types');
+const Button = require('./ui/button');
+const InjectableComponentsEnhance = require('../enhancers/injectable-components-enhancer');
 
 const slots = ['next', 'current', 'previous', 'before-last'];
 const empty = {
@@ -144,15 +145,15 @@ class TouchHeader extends React.Component {
 }
 
 TouchHeader.propTypes = {
-	onCollectionSelected: React.PropTypes.func,
-	onEditingToggled: React.PropTypes.func,
-	path: React.PropTypes.array,
-	editing: React.PropTypes.bool,
-	view: React.PropTypes.string
+	onCollectionSelected: PropTypes.func,
+	onEditingToggled: PropTypes.func,
+	path: PropTypes.array,
+	editing: PropTypes.bool,
+	view: PropTypes.string
 };
 
 TouchHeader.defaultProps = {
-	path: [],
+	path: []
 };
 
-export default InjectableComponentsEnhance(TouchHeader);
+module.exports = InjectableComponentsEnhance(TouchHeader);

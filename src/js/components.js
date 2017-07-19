@@ -1,25 +1,27 @@
-import Button from './component/ui/button';
-import CollectionTree from './component/collection-tree';
-import Editable from './component/editable';
-import EditableContent from './component/editable/content';
-import EditableCreators from './component/editable/creators';
-import Icon from './component/ui/icon';
-import Item from './component/item';
-import ItemBox from './component/item/box';
-import ItemDetails from './component/item/details';
-import ItemList from './component/item/list';
-import Library from './component/library';
-import Navbar from './component/ui/navbar';
-import NoteEditor from './component/note-editor';
-import Panel from './component/ui/panel';
-import RichEditor from './component/rich-editor';
-import Spinner from './component/ui/spinner';
-import TagSelector from './component/tag-selector';
-import TouchHeader from './component/touch-header';
-import { Tab, Tabs } from './component/ui/tabs';
-import { Toolbar, ToolGroup } from './component/ui/toolbars';
+'use strict';
 
-export default () => ({
+const Button = require('./component/ui/button');
+const CollectionTree = require('./component/collection-tree');
+const Editable = require('./component/editable');
+const EditableContent = require('./component/editable/content');
+const EditableCreators = require('./component/editable/creators');
+const Icon = require('./component/ui/icon');
+const Item = require('./component/item');
+const ItemBox = require('./component/item/box');
+const ItemDetails = require('./component/item/details');
+const ItemList = require('./component/item/list');
+const Library = require('./component/library');
+const Navbar = require('./component/ui/navbar');
+const NoteEditor = require('./component/note-editor');
+const Panel = require('./component/ui/panel');
+const RichEditor = require('./component/rich-editor');
+const Spinner = require('./component/ui/spinner');
+const TagSelector = require('./component/tag-selector');
+const TouchHeader = require('./component/touch-header');
+const { Tab, Tabs } = require('./component/ui/tabs');
+const { Toolbar, ToolGroup } = require('./component/ui/toolbars');
+
+module.exports = () => ({
 	Button,
 	CollectionTree,
 	Editable,

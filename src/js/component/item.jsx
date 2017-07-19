@@ -1,24 +1,29 @@
 'use strict';
 
-import React from 'react';
-import InjectableComponentsEnhance from '../enhancers/injectable-components-enhancer';
-import { itemProp } from '../constants';
+const React = require('react');
+const PropTypes = require('prop-types');
+const InjectableComponentsEnhance = require('../enhancers/injectable-components-enhancer');
+const { itemProp } = require('../constants/item');
+const moment = require('moment');
 
 class Item extends React.Component {
 	render() {
 		return (
-			<li className={ `item ${this.props.active ? 'active' : '' }` } onClick={ this.props.onClick }>
-				<div className="metadata">
-					{ this.props.item.get('title') }
+			<li 
+				className={ `item ${this.props.active ? 'active' : '' }` }
+				onClick={ this.props.onClick }
+			>
+				<div className="metadata title">
+					{ this.props.item.title }
 				</div>
 				<div className="metadata author">
-					{ this.props.item.get('author') }
+					{ this.props.item.creatorSummary }
 				</div>
 				<div className="metadata year">
-					{ this.props.item.get('year') }
+					{ moment(this.props.item.parsedDate, 'YYYY-MM-DD').format('YYYY') }
 				</div>
-				<div className="metadata hidden-touch hidden-sm-down">
-					{ this.props.item.get('date') }
+				<div className="metadata date-modified hidden-touch hidden-sm-down">
+					{ moment(this.props.item.dateModified).format('YYYY-MM-DD HH:mm') }
 				</div>
 				<div className="metadata hidden-touch hidden-sm-down"></div>
 				<div className="metadata hidden-touch hidden-sm-down"></div>
@@ -29,8 +34,8 @@ class Item extends React.Component {
 
 Item.propTypes = {
 	item: itemProp,
-	active: React.PropTypes.bool,
-	onClick: React.PropTypes.func
+	active: PropTypes.bool,
+	onClick: PropTypes.func
 };
 
 Item.defaultProps = {
@@ -38,4 +43,4 @@ Item.defaultProps = {
 	onClick: () => {} 
 };
 
-export default InjectableComponentsEnhance(Item);
+module.exports = InjectableComponentsEnhance(Item);

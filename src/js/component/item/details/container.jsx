@@ -1,11 +1,11 @@
 'use strict';
 
-import React from 'react';
-
-import ItemDetails from '../details';
-import ItemBox from '../box/container';
-import { connect } from 'react-redux';
-import { itemProp } from '../../../constants';
+const React = require('react');
+const PropTypes = require('prop-types');
+const ItemDetails = require('../details');
+const ItemBox = require('../box/container');
+const { connect } = require('react-redux');
+const { itemProp } = require('../../../constants/item');
 
 class ItemDetailsContainer extends React.Component {
 	render() {
@@ -41,11 +41,11 @@ const mapDispatchToProps = dispatch => {
 };
 
 ItemDetailsContainer.propTypes = {
-	fields: React.PropTypes.array,
+	fields: PropTypes.array,
 	item: itemProp
 };
 
-export default connect(
+module.exports = connect(
 	mapStateToProps,
 	mapDispatchToProps
 )(ItemDetailsContainer);

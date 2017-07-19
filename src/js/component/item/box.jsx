@@ -1,10 +1,10 @@
 'use strict';
 
-import React from 'react';
-import cx from 'classnames';
-
-import InjectableComponentsEnhance from '../../enhancers/injectable-components-enhancer';
-import { itemProp } from '../../constants';
+const React = require('react');
+const PropTypes = require('prop-types');
+const cx = require('classnames');
+const InjectableComponentsEnhance = require('../../enhancers/injectable-components-enhancer');
+const { itemProp } = require('../../constants/item');
 
 class ItemBox extends React.Component {
 	constructor(props) {
@@ -26,15 +26,16 @@ class ItemBox extends React.Component {
 	render() {
 		let Editable = this.props.components['Editable'];
 		let EditableCreators = this.props.components['EditableCreators'];
+		let Spinner = this.props.components['Spinner'];
 
+		if(this.props.isLoading) {
+			return <Spinner />;
+		}
+		
 		return (
 			<ol className={cx('metadata-list', 'horizontal', { editing: this.props.isEditing }) }>
 				{
 					this.props.fields.map(field => {
-						if(this.props.hiddenFields.includes(field.key)) {
-							return null;
-						}
-
 						const classNames = {
 							'empty': !field.value || !field.value.length,
 							'select': field.options && Array.isArray(field.options),
@@ -59,7 +60,6 @@ class ItemBox extends React.Component {
 														<EditableCreators
 															name={ field.key }
 															creatorTypes = { this.props.creatorTypes }
-															creatorTypesLoading = { this.props.creatorTypesLoading }
 															value = { field.value || [] }
 															onSave={ newValue => this.props.onSave(field.key, newValue) } />
 													);
@@ -101,18 +101,15 @@ class ItemBox extends React.Component {
 
 ItemBox.defaultProps = {
 	fields: [],
-	hiddenFields: [],
 	onSave: v => Promise.resolve(v)
 };
 
 ItemBox.propTypes = {
-	creatorTypes: React.PropTypes.array,
-	creatorTypesLoading: React.PropTypes.bool,
-	fields: React.PropTypes.array,
-	hiddenFields: React.PropTypes.array,
-	isEditing: React.PropTypes.bool, // relevant on small screens only
-	item: itemProp,
-	onSave: React.PropTypes.func
+	isLoading: PropTypes.bool,
+	creatorTypes: PropTypes.array,
+	fields: PropTypes.array,
+	isEditing: PropTypes.bool, // relevant on small screens only
+	onSave: PropTypes.func
 };
 
-export default InjectableComponentsEnhance(ItemBox);
+module.exports = InjectableComponentsEnhance(ItemBox);

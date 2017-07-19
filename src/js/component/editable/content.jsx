@@ -1,8 +1,9 @@
 'use strict';
 
-import React from 'react';
+const React = require('react');
+const PropTypes = require('prop-types');
 
-export default class EditableContent extends React.Component {
+class EditableContent extends React.Component {
 	render() {
 		if(this.props.name === 'DOI') {
 			return <a rel='nofollow' href={ 'http://dx.doi.org/' + this.props.value }>{ this.props.value }</a>;
@@ -15,10 +16,10 @@ export default class EditableContent extends React.Component {
 }
 
 EditableContent.propTypes = {
-	name: React.PropTypes.string,
-	value: React.PropTypes.oneOfType([
-		React.PropTypes.string,
-		React.PropTypes.number
+	name: PropTypes.string,
+	value: PropTypes.oneOfType([
+		PropTypes.string,
+		PropTypes.number
 	])
 };
 
@@ -26,3 +27,5 @@ EditableContent.defaultProps = {
 	name: '',
 	value: ''
 };
+
+module.exports = EditableContent;

@@ -3,3 +3,4 @@ node_modules
 /sass
 /build
 .DS_Store
+coverage

@@ -1,18 +1,18 @@
 'use strict';
 
-import React from 'react';
-import { connect } from 'react-redux';
-import { push } from 'redux-router';
-
-import ItemList from '../list';
-import { fetchItemsIfNeeded } from '../../../actions';
+const React = require('react');
+const PropTypes = require('prop-types');
+const { connect } = require('react-redux');
+const { push } = require('redux-router');
+const ItemList = require('../list');
+const { fetchItems } = require('../../../actions');
+const { getCollection, getItems, getItem } = require('../../../state-utils');
+const { isNewValue } = require('../../../utils');
 
 class ItemListContainer extends React.Component {
 	componentWillReceiveProps(nextProps) {
-		if(nextProps.collection && nextProps.collection.key && nextProps.collection.key != this.props.collection.key) {
-			this.props.dispatch(
-				fetchItemsIfNeeded(nextProps.collection)
-			);
+		if(isNewValue(this.props.collection, nextProps.collection)) {
+			this.props.dispatch(fetchItems(nextProps.collection.key));
 		}
 	}
 
@@ -33,33 +33,15 @@ class ItemListContainer extends React.Component {
 
 
 const mapStateToProps = state => {
-	var collections, collection;
-
-	// selected = state.router.location.pathname.match(/^\/collection\//) ? state.router.params.key : null;
-	let selectedCollectionKey = 'collection' in state.router.params ? state.router.params.collection : null;
-	let selectedItemKey = 'item' in state.router.params ? state.router.params.item : null;
-
-	if(state.library && state.library.libraryString && state.collections[state.library.libraryString]) {
-		collections = state.collections[state.library.libraryString].collections;
-	}
-
-	if(collections && selectedCollectionKey) {
-		collection = collections.find(c => c.key === selectedCollectionKey);
-	}
-
-	const getTopLevelItems = () => {
-		if(collection && state.items[collection.key]) {
-			let items = state.items[collection.key].items;
-			return items.filter(i => !i.get('parentItem'));
-		}
-		return [];
-	};
+	const collection = getCollection(state);
+	const item = getItem(state);
+	const items = getItems(state);
 
 	return {
-		collection: collection || {},
-		items: getTopLevelItems(),
-		isFetching: collection && state.items[collection.key] ? state.items[collection.key].isFetching : false,
-		selectedItemKey: selectedItemKey
+		collection,
+		items,
+		isFetching: collection && state.fetching.itemsInCollection.includes(collection.key),
+		selectedItemKey: item ? item.key : null
 	};
 };
 
@@ -70,14 +52,14 @@ const mapDispatchToProps = dispatch => {
 };
 
 ItemListContainer.propTypes = {
-  collection: React.PropTypes.object.isRequired,
-  items: React.PropTypes.array.isRequired,
-  selectedItemKey: React.PropTypes.string,
-  isFetching: React.PropTypes.bool.isRequired,
-  dispatch: React.PropTypes.func.isRequired
+  collection: PropTypes.object.isRequired,
+  items: PropTypes.array.isRequired,
+  selectedItemKey: PropTypes.string,
+  isFetching: PropTypes.bool.isRequired,
+  dispatch: PropTypes.func.isRequired
 };
 
-export default connect(
+module.exports = connect(
 	mapStateToProps,
 	mapDispatchToProps
 )(ItemListContainer);

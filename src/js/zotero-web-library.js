@@ -1,24 +1,21 @@
 'use strict';
 
-import Zotero from 'libzotero';
-import React from 'react';
-import ReactDOM from 'react-dom';
-import ItemListContainer from './component/item/list/container';
-import LibraryContainer from './component/library/container';
-import CollectionTreeContainer from './component/collection-tree/container';
-import getComponents from './components';
+require('babel-regenerator-runtime');
 
-if(!Zotero.ui) {
-	Zotero.ui = {};
-}
+const React = require('react');
+const ReactDOM = require('react-dom');
+const ItemListContainer = require('./component/item/list/container');
+const LibraryContainer = require('./component/library/container');
+const CollectionTreeContainer = require('./component/collection-tree/container');
+const getComponents = require('./components');
+
 
 //expose components & react
-Zotero.ui = {
+module.exports = {
 	React,
 	ReactDOM,
 	CollectionTreeContainer,
 	ItemListContainer,
 	LibraryContainer,
-	...getComponents(),
-	...Zotero.ui
+	...getComponents()
 };

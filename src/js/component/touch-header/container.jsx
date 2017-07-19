@@ -1,14 +1,14 @@
 'use strict';
 
-import React from 'react';
-import { itemProp } from '../../constants';
-import { connect } from 'react-redux';
-import { push } from 'redux-router';
-import { triggerEditingItem } from '../../actions';
-import { getCurrentViewFromState } from '../../state-utils';
-
-import { getCollections, getPathFromState } from '../../state-utils';
-import TouchHeader from '../touch-header';
+const React = require('react');
+const PropTypes = require('prop-types');
+const { itemProp } = require('../../constants/item');
+const { connect } = require('react-redux');
+const { push } = require('redux-router');
+const { triggerEditingItem } = require('../../actions');
+const { getCurrentViewFromState } = require('../../state-utils');
+const { getCollections, getCollectionsPath } = require('../../state-utils');
+const TouchHeader = require('../touch-header');
 
 class TouchHeaderContainer extends React.Component {
 	onCollectionSelected(collectionKey) {
@@ -37,9 +37,9 @@ class TouchHeaderContainer extends React.Component {
 }
 
 TouchHeaderContainer.propTypes = {
-	dispatch: React.PropTypes.func.isRequired,
-	push: React.PropTypes.func.isRequired,
-	path: React.PropTypes.array,
+	dispatch: PropTypes.func.isRequired,
+	push: PropTypes.func.isRequired,
+	path: PropTypes.array,
 	item: itemProp
 };
 
@@ -47,9 +47,10 @@ const mapStateToProps = state => {
 	//@TODO: deduplicate into getItem(state)
 	var items, item;
 	const selectedCollectionKey = 'collection' in state.router.params ? state.router.params.collection : null;
-	const selectedItemKey = 'item' in state.router.params ? state.router.params.item : null;
+	const selectedItemKey = 'item' in state.router.params ? state.router.params.item : null;	
 	const collections = getCollections(state);
-	const path = getPathFromState(state).map(
+
+	const path = getCollectionsPath(state).map(
 		key => {
 			const col = collections.find(
 				c => c.key === key
@@ -57,7 +58,7 @@ const mapStateToProps = state => {
 			
 			return {
 				key: col.key,
-				label: col.apiObj.data.name
+				label: col.name
 			};
 		}
 	);
@@ -90,4 +91,4 @@ const mapDispatchToProps = (dispatch) => {
 
 const TouchHeaderWrapped = connect(mapStateToProps, mapDispatchToProps)(TouchHeaderContainer);
 
-export default TouchHeaderWrapped;
+module.exports = TouchHeaderWrapped;
