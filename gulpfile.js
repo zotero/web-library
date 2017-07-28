@@ -161,13 +161,13 @@ gulp.task('build', ['clean:build'], () => {
 });
 
 gulp.task('prepublish:js', () => {
-	return gulp.src('./src/js/**/*.js*')
+	return gulp.src('./src/js/**/*.js*', )
 			.pipe(babel())
 			.pipe(gulp.dest('./lib/'));
 });
 
 gulp.task('prepublish:sass', () => {
-	return gulp.src('./src/scss/**/*.scss')
+	return gulp.src('./src/scss/**/*.+(scss|css)')
 		.pipe(gulp.dest('./sass/'));
 });
 
