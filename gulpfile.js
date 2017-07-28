@@ -7,7 +7,7 @@ const source = require('vinyl-source-stream');
 const buffer = require('vinyl-buffer');
 const gutil = require('gulp-util');
 const sourcemaps = require('gulp-sourcemaps');
-const uglify = require('gulp-uglify');
+const babili = require('gulp-babili');
 const autoprefixer = require('gulp-autoprefixer');
 const gulpif = require('gulp-if');
 const plumber = require('gulp-plumber');
@@ -51,7 +51,7 @@ function getJSBundle(dev, browserifyObject) {
 		.pipe(buffer())
 		.pipe(gulpif(dev, sourcemaps.init({loadMaps: true})))
 		.pipe(gulpif(!dev, gulp.dest('./build')))
-		.pipe(gulpif(!dev, uglify()))
+		.pipe(gulpif(!dev, babili()))
 		.pipe(gulpif(!dev, rename({ extname: '.min.js' })))
 		.pipe(gulpif(dev, sourcemaps.write('./')))
 		.pipe(gulp.dest('./build'));

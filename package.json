@@ -40,6 +40,7 @@
     "gulp": "3.9.1",
     "gulp-autoprefixer": "3.1.1",
     "gulp-babel": "^6.1.2",
+    "gulp-babili": "^0.1.4",
     "gulp-connect": "^5.0.0",
     "gulp-if": "^2.0.1",
     "gulp-minify-css": "^1.2.4",
@@ -47,7 +48,6 @@
     "gulp-rename": "^1.2.2",
     "gulp-sass": "^2.3.1",
     "gulp-sourcemaps": "^1.6.0",
-    "gulp-uglify": "2.x.x",
     "gulp-util": "^3.0.7",
     "jest": "^19.0.2",
     "jest-enzyme": "^3.5.3",
@@ -83,6 +83,6 @@
     "redux-router": "^2.1.2",
     "redux-thunk": "^2.1.0",
     "w3c-xmlhttprequest": "^2.1.0",
-    "zotero-api-client": "file:../zoterojs/zotero-api-client-0.9.0.tgz"
+    "zotero-api-client": "file:/srv/zotero/zoterojs/zotero-api-client-0.9.0.tgz"
   }
 }
