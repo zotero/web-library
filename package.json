@@ -59,7 +59,8 @@
     "vinyl-buffer": "^1.0.0",
     "vinyl-fs": "^2.4.4",
     "vinyl-source-stream": "^1.1.0",
-    "watchify": "^3.7.0"
+    "watchify": "^3.7.0",
+    "zotero-api-client": "^0.9.0"
   },
   "dependencies": {
     "babel-runtime": "^6.23.0",
@@ -82,7 +83,6 @@
     "redux-promise": "^0.5.3",
     "redux-router": "^2.1.2",
     "redux-thunk": "^2.1.0",
-    "w3c-xmlhttprequest": "^2.1.0",
-    "zotero-api-client": "file:/srv/zotero/zoterojs/zotero-api-client-0.9.0.tgz"
+    "w3c-xmlhttprequest": "^2.1.0"
   }
 }
