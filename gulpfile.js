@@ -96,7 +96,7 @@ function getImages(dev) {
 		return vfs.src('./src/images/*')
 			.pipe(vfs.symlink('./build/images/'));
 	} else {
-		return gulp.src('./src/images/*')
+		return gulp.src('./src/images/**/*')
 			.pipe(gulp.dest('./build/images/'));
 	}
 }
@@ -107,7 +107,7 @@ function getIcons(dev) {
 		return vfs.src('./src/icons/*')
 			.pipe(vfs.symlink('./build/icons/'));
 	} else {
-		return gulp.src('./src/icons/*')
+		return gulp.src('./src/icons/**/*')
 			.pipe(gulp.dest('./build/icons/'));
 	}
 }
