@@ -70,51 +70,76 @@ class EditableCreators extends React.Component {
 				<Button onClick={ this.removeCreatorHandler.bind(this, index) }>
 					<Icon type={ '16/trash' } width="16" height="16" />
 				</Button>
-				<Button onClick={ this.addCreatorHandler.bind(this) }>
-					<Icon type={ '16/plus' } width="16" height="16" />
-				</Button>
 			</span>
 		);
 	}
 	render() {
 		return (
-			<div>
+			<div className="creators">
 				{
 					this.state.creators.map((creator, index) => {
 						return (
-							<div key={ index } className={cx('creators', {
+							<div key={ index } className={cx({
 								'creators-twoslot': 'lastName' in creator,
 								'creators-oneslot': 'name' in creator
 							})}>
-								<Editable
-									onSave={ newValue => this.valueChangedHandler(index, 'creatorType', newValue)}
-									isLoading={ this.props.creatorTypesLoading }
-									options={ this.props.creatorTypes }
-									value={ creator.creatorType }
-								/>
+								<div className="creators-entry">
+									<div className="key">
+										Creator Type
+									</div>
+									<div className="value">
+										<Editable
+											onSave={ newValue => this.valueChangedHandler(index, 'creatorType', newValue)}
+											isLoading={ this.props.creatorTypesLoading }
+											options={ this.props.creatorTypes }
+											value={ creator.creatorType }
+										/>
+									</div>
+								</div>
 							{
 								(() => {
 									if('name' in creator) {
 										return (
-											<Editable
-												onSave={ newValue => this.valueChangedHandler(index, 'name', newValue)}
-												value={ creator.name }
-											/>
+											<div className="creators-entry">
+												<div className="key">
+													Name
+												</div>
+												<div className="value">
+													<Editable
+														onSave={ newValue => this.valueChangedHandler(index, 'name', newValue)}
+														value={ creator.name }
+													/>
+												</div>
+											</div>
 										);
 									} else if ('lastName' in creator) {
 										return [
-											<Editable
-												onSave={ newValue => this.valueChangedHandler(index, 'lastName', newValue)}
-												key='lastName'
-												placeholder='last'
-												value={ creator.lastName }
-											/>,
-											<Editable
-												onSave={ newValue => this.valueChangedHandler(index, 'firstName', newValue)}
-												key='firstName'
-												placeholder='first'
-												value={ creator.firstName }
-											/>
+											<div className="creators-entry" key="lastName">
+												<div className="key">
+													Last Name
+												</div>
+												<div className="value">
+													<Editable
+														onSave={ newValue => this.valueChangedHandler(index, 'lastName', newValue)}
+														key='lastName'
+														placeholder='last'
+														value={ creator.lastName }
+													/>
+												</div>
+											</div>,
+											<div className="creators-entry" key="firstName">
+												<div className="key">
+													First Name
+												</div>
+												<div className="value">
+													<Editable
+														onSave={ newValue => this.valueChangedHandler(index, 'firstName', newValue)}
+														key='firstName'
+														placeholder='first'
+														value={ creator.firstName }
+													/>
+												</div>
+											</div>
 										];
 									}
 								})()
@@ -124,6 +149,10 @@ class EditableCreators extends React.Component {
 						);
 					})
 				}
+				<Button onClick={ this.addCreatorHandler.bind(this) }>
+					<Icon type={ '16/plus' } width="16" height="16" />
+					&nbsp;Add
+				</Button>
 			</div>
 		);
 	}

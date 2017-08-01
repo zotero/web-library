@@ -15,16 +15,11 @@ const {
 
 class ItemBoxContainer extends React.Component {
 	async itemUpdatedHandler(item, fieldKey, newValue) {
-		try {
-			const updatedItem = await this.props.dispatch(
-				updateItem(this.props.libraryKey, item.key, {
-					[fieldKey]: newValue
-				})
-			);
-			return updatedItem[fieldKey];
-		} catch(error) {
-			throw error;
-		}
+		await this.props.dispatch(
+			updateItem(this.props.libraryKey, item.key, {
+				[fieldKey]: newValue
+			})
+		);
 	}
 
 	componentWillReceiveProps(nextProps) {
@@ -53,16 +48,30 @@ const mapStateToProps = state => {
 		return {};
 	}
 
-	if(!(item.itemType in state.creatorTypes) || !(item.itemType in state.itemTypeFields)) {
+	if(!(item.itemType in state.meta.itemTypeCreatorTypes) || 
+		!(item.itemType in state.meta.itemTypeFields)) {
 		return {
 			item,
 			isLoading: true
 		};
 	}
 
+	const itemTypes = state.meta.itemTypes
+		.map(it => ({
+			value: it.itemType,
+			label: it.localized
+		}));
+
+	const itemTypeCreatorTypes = state.meta.itemTypeCreatorTypes[item.itemType]
+		.map(ct => ({
+			value: ct.creatorType,
+			label: ct.localized
+		}));
+
 	const fields = [
-		...state.itemTypeFields[item.itemType],
-		{ field: 'itemType', localized: 'Item Type' }
+		...state.meta.itemTypeFields[item.itemType],
+		{ field: 'itemType', localized: 'Item Type' },
+		{ field: 'creators', localized: 'Creators' }
 	];
 	const isSmallScreen = 'lg' in state.viewport && !state.viewport.lg;
 	const isEditingEnabled = !isSmallScreen || state.items.editing === item.key;
@@ -70,7 +79,7 @@ const mapStateToProps = state => {
 	//@TODO: Refactor
 	return {
 		fields: fields.map(f => ({
-				options: f.name === 'itemType' ? state.constants.itemTypes : null,
+				options: f.field === 'itemType' ? itemTypes : null,
 				key: f.field,
 				label: f.localized,
 				readonly: isEditingEnabled ? noEditFields.includes(f) : true,
@@ -78,7 +87,7 @@ const mapStateToProps = state => {
 				value: getItemFieldValue(f.field, state)
 		})).filter(f => !hideFields.includes(f.field)),
 		item: item || undefined,
-		creatorTypes: state.creatorTypes[item.itemType],
+		creatorTypes: itemTypeCreatorTypes,
 		
 		//@TODO: temporary, fix this together with selectLibrary events in actions
 		libraryKey: state.library.libraryKey, 

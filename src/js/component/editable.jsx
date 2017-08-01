@@ -30,23 +30,7 @@ class Editable extends React.Component {
 			return;
 		}
 
-		try {
-			this.setState({
-				processing: true,
-				editing: false
-			});
-			this.props.onToggle(false);
-			const updateValue = await this.props.onSave(newValue);
-			this.setState({
-				processing: false,
-				value: updateValue
-			});
-		} catch(c) {
-			this.setState({
-				processing: false,
-				value: this.props.value
-			});
-		}
+		this.props.onSave(newValue);
 	}
 
 	edit() {

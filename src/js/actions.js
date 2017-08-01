@@ -160,7 +160,6 @@ const fetchItems = (collectionKey) => {
 	};
 };
 
-//@TODO: sequential updates (to avoid invalid-version patches)
 const updateItem = (libraryKey, itemKey, patch) => {
 	return async dispatch => {
 		dispatch({

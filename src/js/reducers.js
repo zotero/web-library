@@ -80,7 +80,10 @@ const library = (state = {}, action) => {
 	}
 };
 
-const meta = (state = {}, action) => {
+const meta = (state = {
+	itemTypeCreatorTypes: {},
+	itemTypeFields: {}
+}, action) => {
 	switch(action.type) {
 		case RECEIVE_META:
 			return {
@@ -92,12 +95,12 @@ const meta = (state = {}, action) => {
 		case RECEIVE_ITEM_TYPE_CREATOR_TYPES:
 			return {
 				...state,
-				itemTypeCreatorTypes: action.creatorTypes
+				itemTypeCreatorTypes: itemTypeCreatorTypes(state, action)
 			};
 		case RECEIVE_ITEM_TYPE_FIELDS:
 			return {
 				...state,
-				itemTypeFields: action.fields
+				itemTypeFields: itemTypeFields(state, action)
 			};
 	}
 
@@ -322,7 +325,7 @@ const itemsByParentItem = (state = {}, action) => {
 	}
 };
 
-const creatorTypes = (state = {}, action) => {
+const itemTypeCreatorTypes = (state = {}, action) => {
 	switch(action.type) {
 		case RECEIVE_ITEM_TYPE_CREATOR_TYPES:
 			return {
@@ -373,8 +376,6 @@ module.exports = {
 	itemsByCollection,
 	itemsByParentItem,
 	config,
-	creatorTypes,
-	itemTypeFields,
 	viewport
 	// queue
 };
