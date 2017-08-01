@@ -100,12 +100,14 @@ class Editable extends React.Component {
 
 	blurHandler() {
 		this.pending = setTimeout(() => {
-			if('props' in this.input) {
-				this.save(this.input.props.value);
-			} else {
-				this.save(this.input.value);
+			if(this.input) {
+				if('props' in this.input) {
+					this.save(this.input.props.value);
+				} else {
+					this.save(this.input.value);
+				}
+				this.cancel();
 			}
-			this.cancel();
 		}, 100);
 	}
 
