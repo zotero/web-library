@@ -24,7 +24,6 @@ module.exports = Object.freeze({
 	],
 
 	noEditFields: [
-		'accessDate',
 		'modified',
 		'filename',
 		'dateAdded',
