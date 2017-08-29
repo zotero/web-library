@@ -45,6 +45,7 @@
 	border-radius: $editable-border-radius;
 	margin: -2em 0; // For the sake of safety
 	background-clip: padding-box;
+	max-width: 100%;
 
 	.select & {
 		z-index: 2;
