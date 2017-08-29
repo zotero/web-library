@@ -68,5 +68,13 @@
 		display: flex;
 		align-items: flex-start;
 		@include horizontal;
+
+		.key .editable {
+			flex: initial;
+		}
+
+		&.creators-type-editing .key {
+			display: block;
+		}
 	}
 }

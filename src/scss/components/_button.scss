@@ -7,6 +7,10 @@
 	border-radius: $btn-border-radius;
 	padding: $btn-padding;
 	cursor: pointer;
+
+	&[disabled] {
+		cursor: default;
+	}
 }
 
 

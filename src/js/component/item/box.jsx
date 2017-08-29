@@ -4,7 +4,6 @@ const React = require('react');
 const PropTypes = require('prop-types');
 const cx = require('classnames');
 const InjectableComponentsEnhance = require('../../enhancers/injectable-components-enhancer');
-const { itemProp } = require('../../constants/item');
 
 class ItemBox extends React.Component {
 	constructor(props) {
@@ -25,7 +24,7 @@ class ItemBox extends React.Component {
 
 	render() {
 		let Editable = this.props.components['Editable'];
-		let EditableCreators = this.props.components['EditableCreators'];
+		let Creators = this.props.components['Creators'];
 		let Spinner = this.props.components['Spinner'];
 
 		if(this.props.isLoading) {
@@ -42,56 +41,59 @@ class ItemBox extends React.Component {
 							'editing': field.key in this.state.isEditingMap && this.state.isEditingMap[field.key]
 						};
 
-						return [
-							<li className={ cx('metadata', classNames) }>
-								<div className='key'>
-									<label>
-										{ field.label }
-									</label>
-								</div>
-								<div className='value'>
-									{
-										(() => {
-											switch(field.key) {
-												case 'notes':
-													return null;
-												case 'creators':
-													return (
-														<EditableCreators
-															name={ field.key }
-															creatorTypes = { this.props.creatorTypes }
-															value = { field.value || [] }
-															onSave={ newValue => this.props.onSave(field.key, newValue) } />
-													);
-												case 'itemType':
-													return (
-														<Editable
-															name={ field.key }
-															options = { field.options || null }
-															processing={ field.processing || false }
-															value={ field.value || '' }
-															editOnClick = { !field.readonly }
-															onToggle={ this.onEditableToggleHandler.bind(this, field.key) }
-															onSave={ newValue => this.props.onSave(field.key, newValue) } 
-														/>
-													);
-												default:
-													return (
-														<Editable
-															name={ field.key }
-															processing={ field.processing || false }
-															value={ field.value || '' }
-															editOnClick={ !field.readonly }
-															onToggle={ this.onEditableToggleHandler.bind(this, field.key) }
-															onSave={ newValue => this.props.onSave(field.key, newValue) }
-														/>
-													);
-											}
-										})()
-									}
-								</div>
-							</li>
-						];
+						switch(field.key) {
+							case 'notes':
+								return null;
+							case 'creators':
+								return (
+									<Creators
+										name={ field.key }
+										creatorTypes = { this.props.creatorTypes }
+										value = { field.value || [] }
+										onSave={ newValue => this.props.onSave(field.key, newValue) } />
+								);
+							case 'itemType':
+								return (
+									<li className={ cx('metadata', classNames) }>
+										<div className='key'>
+											<label>
+												{ field.label }
+											</label>
+										</div>
+										<div className='value'>
+											<Editable
+												name={ field.key }
+												options = { field.options || null }
+												processing={ field.processing || false }
+												value={ field.value || '' }
+												editOnClick = { !field.readonly }
+												onToggle={ this.onEditableToggleHandler.bind(this, field.key) }
+												onSave={ newValue => this.props.onSave(field.key, newValue) } 
+											/>
+										</div>
+									</li>
+								);
+							default:
+								return (
+									<li className={ cx('metadata', classNames) }>
+										<div className='key'>
+											<label>
+												{ field.label }
+											</label>
+										</div>
+										<div className='value'>
+											<Editable
+												name={ field.key }
+												processing={ field.processing || false }
+												value={ field.value || '' }
+												editOnClick={ !field.readonly }
+												onToggle={ this.onEditableToggleHandler.bind(this, field.key) }
+												onSave={ newValue => this.props.onSave(field.key, newValue) }
+											/>
+										</div>
+									</li>
+								);
+							}
 					})
 				}
 			</ol>

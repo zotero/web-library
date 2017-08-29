@@ -2,9 +2,9 @@
 
 const Button = require('./component/ui/button');
 const CollectionTree = require('./component/collection-tree');
+const Creators = require('./component/creators');
 const Editable = require('./component/editable');
 const EditableContent = require('./component/editable/content');
-const EditableCreators = require('./component/editable/creators');
 const Icon = require('./component/ui/icon');
 const Item = require('./component/item');
 const ItemBox = require('./component/item/box');
@@ -24,9 +24,9 @@ const { Toolbar, ToolGroup } = require('./component/ui/toolbars');
 module.exports = () => ({
 	Button,
 	CollectionTree,
+	Creators,
 	Editable,
 	EditableContent,
-	EditableCreators,
 	Icon,
 	Item,
 	ItemBox,

@@ -10,6 +10,7 @@ class Button extends React.Component {
 	render() {
 		return (
 			<button 
+				disabled={this.props.disabled}
 				className={ cx(this.props.className, 'btn', {
 					'active': this.props.active,
 					'btn-icon': React.Children.toArray(this.props.children).some(c => c.type === Icon)
@@ -23,6 +24,7 @@ class Button extends React.Component {
 
 Button.propTypes = {
 	active: PropTypes.bool,
+	disabled: PropTypes.bool,
 	children: PropTypes.node,
 	className: PropTypes.string,
 	onClick: PropTypes.func
@@ -30,7 +32,8 @@ Button.propTypes = {
 
 
 Button.defaultProps = {
-	active: false
+	active: false,
+	disabled: null
 };
 
 module.exports = Button;

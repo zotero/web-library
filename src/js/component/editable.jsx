@@ -154,12 +154,12 @@ class Editable extends React.Component {
 						/>;
 			}
 		} else {
-			return <div className="editable-value" tabIndex="0" onFocus={ this.editHandler.bind(this) }>
+			return <span className="editable-value" tabIndex="0" onFocus={ this.editHandler.bind(this) }>
 						<EditableContent
 							name={ this.props.name }
-							value={ this.state.value }
+							value={ this.props.displayValue || this.state.value }
 						/>
-					</div>;
+					</span>;
 		}
 	}
 
@@ -172,10 +172,10 @@ class Editable extends React.Component {
 		};
 
 		return (
-			<div className={cx(classNames)} onClick={ ev => this.editHandler(ev) }>
+			<span className={cx(classNames)} onClick={ ev => this.editHandler(ev) }>
 				{ this.renderControl() }
 				{ this.renderSpinner() }
-			</div>
+			</span>
 		);
 	}
 }
@@ -184,6 +184,10 @@ class Editable extends React.Component {
 Editable.propTypes = {
 	name: PropTypes.string,
 	value: PropTypes.oneOfType([
+		PropTypes.string,
+		PropTypes.number
+	]),
+	displayValue: PropTypes.oneOfType([
 		PropTypes.string,
 		PropTypes.number
 	]),
@@ -200,6 +204,7 @@ Editable.propTypes = {
 };
 
 Editable.defaultProps  = {
+	displayValue: null,
 	value: '',
 	placeholder: '',
 	emptytext: '',
