@@ -154,12 +154,20 @@ class Editable extends React.Component {
 						/>;
 			}
 		} else {
-			return <span className="editable-value" tabIndex="0" onFocus={ this.editHandler.bind(this) }>
-						<EditableContent
-							name={ this.props.name }
-							value={ this.props.displayValue || this.state.value }
-						/>
-					</span>;
+			return (<span className="editable-value" tabIndex="0" onFocus={ this.editHandler.bind(this) }>
+						{(() => {
+							if(typeof this.props.children !== 'undefined') {
+								return this.props.children;
+							} else {
+								return (
+									<EditableContent
+										name={ this.props.name }
+										value={ this.props.displayValue || this.state.value }
+									/>
+								);
+							}
+						})()}
+					</span>);
 		}
 	}
 
