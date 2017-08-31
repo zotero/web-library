@@ -40,7 +40,7 @@ const mapStateToProps = state => {
 	return {
 		collection,
 		items,
-		isFetching: collection && state.fetching.itemsInCollection.includes(collection.key),
+		isFetching: collection ? state.fetching.itemsInCollection.includes(collection.key) : false,
 		selectedItemKey: item ? item.key : null
 	};
 };
@@ -52,7 +52,7 @@ const mapDispatchToProps = dispatch => {
 };
 
 ItemListContainer.propTypes = {
-  collection: PropTypes.object.isRequired,
+  collection: PropTypes.object,
   items: PropTypes.array.isRequired,
   selectedItemKey: PropTypes.string,
   isFetching: PropTypes.bool.isRequired,

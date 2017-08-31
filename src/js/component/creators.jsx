@@ -124,7 +124,7 @@ class Creators extends React.Component {
 												);
 											} else {
 												return (
-													<Button disabled="true">
+													<Button disabled={ true }>
 														<Icon color="rgba(0, 0, 0, 0.15)" type={ '16/plus' } width="16" height="16" />
 													</Button>
 												);
@@ -142,6 +142,7 @@ class Creators extends React.Component {
 }
 
 Creators.propTypes = {
+	name: PropTypes.string,
 	value: PropTypes.array,
 	creatorTypes: PropTypes.array.isRequired,
 	creatorTypesLoading: PropTypes.bool,

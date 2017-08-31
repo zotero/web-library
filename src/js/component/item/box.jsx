@@ -47,6 +47,7 @@ class ItemBox extends React.Component {
 							case 'creators':
 								return (
 									<Creators
+										key={ field.key }
 										name={ field.key }
 										creatorTypes = { this.props.creatorTypes }
 										value = { field.value || [] }
@@ -54,7 +55,7 @@ class ItemBox extends React.Component {
 								);
 							case 'itemType':
 								return (
-									<li className={ cx('metadata', classNames) }>
+									<li key={ field.key } className={ cx('metadata', classNames) }>
 										<div className='key'>
 											<label>
 												{ field.label }
@@ -75,7 +76,7 @@ class ItemBox extends React.Component {
 								);
 							default:
 								return (
-									<li className={ cx('metadata', classNames) }>
+									<li key={ field.key } className={ cx('metadata', classNames) }>
 										<div className='key'>
 											<label>
 												{ field.label }

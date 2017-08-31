@@ -125,7 +125,7 @@ class ItemDetails extends React.Component {
 }
 
 ItemDetails.defaultProps = {
-	item: PropTypes.object,
+	item: {},
 	active: false
 };
 

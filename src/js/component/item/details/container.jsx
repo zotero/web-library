@@ -30,7 +30,7 @@ const mapStateToProps = state => {
 	}
 
 	return {
-		item: item || undefined
+		item
 	};
 };
 
