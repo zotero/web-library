@@ -39,6 +39,9 @@ class Editable extends React.Component {
 		}, () => {
 			this.props.onToggle(true);
 			this.input.focus();
+			if(typeof this.input.setSelectionRange !== 'undefined') {
+				this.input.setSelectionRange(0, this.input.value.length);	
+			}
 		});
 	}
 
@@ -73,12 +76,10 @@ class Editable extends React.Component {
 	}
 
 	keyboardHandler(ev) {
-		if(ev.type === 'keyup' && ev.keyCode == 27) {
+		if(ev.type === 'keyup' && (ev.keyCode == 27 || ev.keyCode == 13)) {
 			this.cancelPending();
 			ev.preventDefault();
 			this.cancel();
-		} else if(ev.type === 'keyup' &&  ev.keyCode == 13) {
-			this.save(this.input.value);
 		} else if(ev.type === 'keydown' && ev.keyCode == 9) {
 			this.cancelPending();
 			this.save(this.input.value);
