@@ -120,6 +120,16 @@
 
 			@include mouse-and-bp-up(md) {
 				padding: 0 $default-padding-horizontal;
+				&:not(.editing) {
+					.value {
+						&:hover {
+							background-color: rgb(190, 205, 239);
+							border: 1px solid rgb(116, 146, 221);
+							border-radius: 10px;
+							margin-left: -1px;
+						}
+					}
+				}
 			}
 
 			@include bp-only(md) {
