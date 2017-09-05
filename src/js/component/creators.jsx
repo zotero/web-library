@@ -81,7 +81,14 @@ class Creators extends React.Component {
 										value={ creator.creatorType }
 										onToggle ={ isCreatorTypeEditing => this.setState({ isCreatorTypeEditing }) }
 										>
-										{ this.props.creatorTypes.find(c => c.value == creator.creatorType).label }
+										{(() => {
+											let creatorTypeDescription = this.props.creatorTypes.find(c => c.value == creator.creatorType);
+											if(creatorTypeDescription) {
+												return creatorTypeDescription.label;
+											} else {
+												return creator.creatorType;
+											}
+										})()}
 										&nbsp;<span className="Select-arrow"></span>
 										</Editable>
 								</div>
