@@ -27,6 +27,16 @@
 		flex: 0 0 auto;
 		margin-left: $space-xs;
 	}
+
+	&:not(.editing):hover {
+		.editable-value {
+			background-color: rgb(190, 205, 239);
+			border: 1px solid rgb(116, 146, 221);
+			border-radius: 10px;
+			min-height: calc(1em + 4px);
+			margin: -1px -1px -1px -1px;
+		}
+	}
 }
 
 .editable-control {
