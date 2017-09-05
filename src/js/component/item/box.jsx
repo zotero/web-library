@@ -74,6 +74,28 @@ class ItemBox extends React.Component {
 										</div>
 									</li>
 								);
+							case 'abstractNote':
+								return (
+									<li key={ field.key } className={ cx('metadata', classNames) }>
+										<div className='key'>
+											<label>
+												{ field.label }
+											</label>
+										</div>
+										<div className='value'>
+											<Editable
+												name={ field.key }
+												isTextArea={ true }
+												options = { field.options || null }
+												processing={ field.processing || false }
+												value={ field.value || '' }
+												editOnClick = { !field.readonly }
+												onToggle={ this.onEditableToggleHandler.bind(this, field.key) }
+												onSave={ newValue => this.props.onSave(field.key, newValue) } 
+											/>
+										</div>
+									</li>
+								);
 							default:
 								return (
 									<li key={ field.key } className={ cx('metadata', classNames) }>

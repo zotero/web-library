@@ -85,7 +85,7 @@ const mapStateToProps = state => {
 				readonly: isEditingEnabled ? noEditFields.includes(f) : true,
 				processing: isItemFieldBeingUpdated(f.field, state),
 				value: getItemFieldValue(f.field, state)
-		})).filter(f => !hideFields.includes(f.field)),
+		})).filter(f => !hideFields.includes(f.key)),
 		item: item || undefined,
 		creatorTypes: itemTypeCreatorTypes,
 		

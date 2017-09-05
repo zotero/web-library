@@ -19,7 +19,7 @@ module.exports = Object.freeze({
 		'filename',
 		'tags',
 		'creator',
-		'abstract',
+		'abstractNote',
 		'notes'
 	],
 

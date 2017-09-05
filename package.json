@@ -1,6 +1,6 @@
 {
   "name": "zotero-web-library",
-  "version": "0.9.11-alpha",
+  "version": "0.9.12-alpha",
   "description": "Web library from zotero.org",
   "main": "lib/zotero-web-library.js",
   "directories": {
@@ -72,6 +72,7 @@
     "bootstrap-sass": "^3.3.6",
     "classnames": "^2.2.5",
     "draft-js": "^0.10.0",
+    "escape-html": "^1.0.3",
     "floatthead": "1.4.0",
     "history": "<3.0.0",
     "jquery": "^2.2.4",

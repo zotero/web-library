@@ -76,7 +76,12 @@ class Editable extends React.Component {
 	}
 
 	keyboardHandler(ev) {
-		if(ev.type === 'keyup' && (ev.keyCode == 27 || ev.keyCode == 13)) {
+		
+		if(ev.type === 'keyup' && 
+			((this.input.tagName == 'TEXTAREA' && ev.keyCode == 27)
+				|| (this.input.tagName != 'TEXTAREA' && (ev.keyCode == 27 || ev.keyCode == 13))
+			)
+		) {
 			this.cancelPending();
 			ev.preventDefault();
 			this.cancel();
@@ -139,6 +144,19 @@ class Editable extends React.Component {
 							onKeyDown={ ev => this.keyboardHandler(ev) }
 							onBlur={ ev => this.blurHandler(ev) }
 						/>;
+			} else if(this.props.isTextArea) {
+				return <textarea
+						tabIndex="-1"
+						className="editable-control editable-textarea"
+						ref={ ref => this.input = ref }
+						value={ this.state.value }
+						disabled={ this.state.processing ? 'disabled' : null }
+						placeholder={ this.props.placeholder }
+						onChange={ ev => this.changeHandler(ev) }
+						onKeyUp={ ev => this.keyboardHandler(ev) }
+						onKeyDown={ ev => this.keyboardHandler(ev) }
+						onBlur={ ev => this.blurHandler(ev) }
+					/>;
 			} else {
 				return <input
 							tabIndex="-1"
@@ -163,6 +181,7 @@ class Editable extends React.Component {
 								return (
 									<EditableContent
 										name={ this.props.name }
+										isTextArea={ this.props.isTextArea }
 										value={ this.props.displayValue || this.state.value }
 									/>
 								);
