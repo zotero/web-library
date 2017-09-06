@@ -76,16 +76,21 @@ class Editable extends React.Component {
 	}
 
 	keyboardHandler(ev) {
-		
-		if(ev.type === 'keyup' && 
-			((this.input.tagName == 'TEXTAREA' && ev.keyCode == 27)
-				|| (this.input.tagName != 'TEXTAREA' && (ev.keyCode == 27 || ev.keyCode == 13))
-			)
-		) {
+		const [ENTER, ESC, TAB] = [13, 27, 9];
+
+		if(ev.keyCode === ESC) {
 			this.cancelPending();
 			ev.preventDefault();
 			this.cancel();
-		} else if(ev.type === 'keydown' && ev.keyCode == 9) {
+		} else if(
+			ev.type === 'keyup' && 
+			ev.keyCode === ENTER && 
+			this.input.tagName != 'TEXTAREA'
+		) {
+			this.cancelPending();
+			this.save(this.input.value);
+			this.cancel();
+		} else if(ev.type === 'keydown' && ev.keyCode == TAB) {
 			this.cancelPending();
 			this.save(this.input.value);
 		}
