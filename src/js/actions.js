@@ -1,4 +1,6 @@
-const api = require('zotero-api-client');
+const cache = require('zotero-api-client-cache');
+const api = require('zotero-api-client')().use(cache()).api;
+
 const { ck } = require('./utils');
 
 const {
@@ -286,6 +288,11 @@ function queueUpdateItem(itemKey, libraryKey, patch) {
 					...item,
 					...response.getData()
 				};
+
+				for(var collectionKey of updatedItem.collections) {
+					api().invalidate('resource.collections', collectionKey);
+				}
+				api().invalidate('resource.items', itemKey);
 
 				dispatch({
 					type: RECEIVE_UPDATE_ITEM,
