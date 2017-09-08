@@ -6,7 +6,7 @@ const ItemBox = require('../box');
 const { connect } = require('react-redux');
 const { updateItem, fetchItemTypeCreatorTypes, fetchItemTypeFields } = require('../../../actions');
 const { itemProp, hideFields, noEditFields } = require('../../../constants/item');
-const { isNewValue } = require('../../../utils');
+const { get } = require('../../../utils');
 const { 
 	getItem,
 	getItemFieldValue,
@@ -22,14 +22,11 @@ class ItemBoxContainer extends React.Component {
 		);
 	}
 
-	componentWillReceiveProps(nextProps) {
-		if(isNewValue(this.props.item, nextProps.item)) {
-			this.props.dispatch(
-				fetchItemTypeCreatorTypes(nextProps.item.itemType)
-			);
-			this.props.dispatch(
-				fetchItemTypeFields(nextProps.item.itemType)
-			);
+	componentWillReceiveProps(props) {
+		let itemType = get(props, 'item.itemType');
+		if(get(this.props, 'item.itemType') != itemType) {
+			this.props.dispatch(fetchItemTypeCreatorTypes(itemType));
+			this.props.dispatch(fetchItemTypeFields(itemType));
 		}
 	}
 

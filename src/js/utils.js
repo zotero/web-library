@@ -49,16 +49,37 @@ const ck = (itemOrCollectionKey, libraryKey) => {
 	return itemOrCollectionKey + libraryKey;
 };
 
-const isNewValue = (oldItem, newItem, key = 'key') => {
-	const oldKey = oldItem && key in oldItem && oldItem[key];
-	const newKey = newItem && key in newItem && newItem[key];
+const get = (src, path, fallback) => {
+	if(src === null) {
+		return fallback;
+	}
+	if(!path || !path.length) {
+		return src;
+	}
 
-	return !!newKey && oldKey !== newKey;
+	const parts = Array.isArray(path) ? path : path.split('.');
+	
+	var obj = src;
+	var i, ii;
+
+	for(i = 0, ii = parts.length; i < ii; i++) {
+		if(!obj.propertyIsEnumerable(parts[i])) {
+			return fallback;
+		}
+
+		obj = obj[parts[i]];
+
+		if(obj === null) {
+			return (i !== ii - 1) ? fallback : obj;
+		}
+	}
+
+	return obj;
 };
 
 
 module.exports = { 
 	enhanceCollections,
-	isNewValue,
-	ck
+	ck,
+	get
 };

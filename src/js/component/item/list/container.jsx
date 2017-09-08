@@ -7,12 +7,12 @@ const { push } = require('redux-router');
 const ItemList = require('../list');
 const { fetchItems } = require('../../../actions');
 const { getCollection, getItems, getItem } = require('../../../state-utils');
-const { isNewValue } = require('../../../utils');
+const { get } = require('../../../utils');
 
 class ItemListContainer extends React.Component {
-	componentWillReceiveProps(nextProps) {
-		if(isNewValue(this.props.collection, nextProps.collection)) {
-			this.props.dispatch(fetchItems(nextProps.collection.key));
+	componentWillReceiveProps(props) {
+		if(get(this.props, 'collection.key') !== get(props, 'collection.key')) {
+			this.props.dispatch(fetchItems(props.collection.key));
 		}
 	}
 
