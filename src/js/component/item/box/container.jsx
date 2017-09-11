@@ -66,10 +66,12 @@ const mapStateToProps = state => {
 		}));
 
 	const fields = [
-		...state.meta.itemTypeFields[item.itemType],
 		{ field: 'itemType', localized: 'Item Type' },
-		{ field: 'creators', localized: 'Creators' }
-	];
+		state.meta.itemTypeFields[item.itemType].find(itf => itf.field === 'title'),
+		{ field: 'creators', localized: 'Creators' },
+		...state.meta.itemTypeFields[item.itemType].filter(itf => itf.field !== 'title')
+	].filter(e => e); //filter out undefined
+
 	const isSmallScreen = 'lg' in state.viewport && !state.viewport.lg;
 	const isEditingEnabled = !isSmallScreen || state.items.editing === item.key;
 
