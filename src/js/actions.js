@@ -126,13 +126,20 @@ const fetchItems = (collectionKey) => {
 		});
 		try {
 			//@TODO: support for paging/infinite scroll
-			let items = (await api(config.apiKey, config.apiConfig)
+			let response = await api(config.apiKey, config.apiConfig)
 				.library(library.libraryKey)
 				.collections(collectionKey)
 				.items()
 				.get({
 					limit: 50
-				})).getData();
+				});
+			let items = response.getData();
+
+			response.raw.forEach((raw, i) => {
+				if('meta' in raw) {
+					items[i][Symbol.for('meta')] = raw.meta;
+				}
+			});
 
 			items.sort(
 				(a, b) => {

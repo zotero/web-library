@@ -4,9 +4,25 @@ const React = require('react');
 const PropTypes = require('prop-types');
 const InjectableComponentsEnhance = require('../enhancers/injectable-components-enhancer');
 const { itemProp } = require('../constants/item');
+const { get } = require('../utils');
 const moment = require('moment');
 
 class Item extends React.Component {
+
+	renderItemTitle() {
+		switch(this.props.item.itemType) {
+			case 'note':
+				return this.props.item.note.split('\n')[0].replace(/<(?:.|\n)*?>/gm, '');
+			default:
+				return this.props.item.title;
+		}
+	}
+
+	renderItemYear() {
+		const parsedDate = Symbol.for('meta') in this.props.item && get(this.props.item[Symbol.for('meta')], 'parsedDate', '');
+		return parsedDate && moment(parsedDate, 'YYYY-MM-DD').format('YYYY') || '';
+	}
+
 	render() {
 		return (
 			<li 
@@ -14,16 +30,16 @@ class Item extends React.Component {
 				onClick={ this.props.onClick }
 			>
 				<div className="metadata title">
-					{ this.props.item.title }
+					{ this.renderItemTitle() }
 				</div>
 				<div className="metadata author">
-					{ this.props.item.creatorSummary }
+					{ Symbol.for('meta') in this.props.item && get(this.props.item[Symbol.for('meta')], 'creatorSummary', '') }
 				</div>
 				<div className="metadata year">
-					{ moment(this.props.item.parsedDate, 'YYYY-MM-DD').format('YYYY') }
+					{ this. renderItemYear() }
 				</div>
 				<div className="metadata date-modified hidden-touch hidden-sm-down">
-					{ moment(this.props.item.dateModified).format('YYYY-MM-DD HH:mm') }
+					{ 'dateModified' in this.props.item ? moment(this.props.item.dateModified).format('YYYY-MM-DD HH:mm') : '' }
 				</div>
 				<div className="metadata hidden-touch hidden-sm-down"></div>
 				<div className="metadata hidden-touch hidden-sm-down"></div>
