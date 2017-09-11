@@ -63,10 +63,20 @@ class Creators extends React.Component {
 	}
 
 	render() {
+		let creators = this.state.creators;
+		
+		if(this.state.creators.length === 0 && this.props.creatorTypes.length) {
+			creators = [{
+				creatorType: this.props.creatorTypes[0].value,
+				firstName: '',
+				lastName: ''
+			}];
+		}
+
 		return (
 			<div className="creators">
 				{
-					this.state.creators.map((creator, index) => {
+					creators.map((creator, index) => {
 						return (
 							<li key={ index } className={ cx('metadata', 'creators-entry', {
 								'creators-twoslot': 'lastName' in creator,
