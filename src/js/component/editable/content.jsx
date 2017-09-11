@@ -15,7 +15,11 @@ class EditableContent extends React.Component {
 			return <span dangerouslySetInnerHTML={ { __html: escapeHtml(this.props.value).replace(/\n/g, 
 			'<br />') } }></span>;
 		} else {
-			return <span>{ this.props.value }</span>;
+			if(!this.props.value && this.props.placeholder) {
+				return <span className="editable-content placeholder">{ this.props.placeholder }</span>;
+			} else {
+				return <span className="editable-content">{ this.props.value }</span>;
+			}
 		}
 	}
 }

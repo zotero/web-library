@@ -186,6 +186,7 @@ class Editable extends React.Component {
 								return (
 									<EditableContent
 										name={ this.props.name }
+										placeholder={ this.props.placeholder }
 										isTextArea={ this.props.isTextArea }
 										value={ this.props.displayValue || this.state.value }
 									/>

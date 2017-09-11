@@ -23,6 +23,17 @@
 		line-height: normal; // Flex alignment is more consistent
 	}
 
+	.editable-content.placeholder {
+		&:before {
+			content: '(';
+		}
+		&:after {
+			content: ')';
+		}
+
+		color: $shade-5;
+	}
+
 	.icon-spin {
 		flex: 0 0 auto;
 		margin-left: $space-xs;

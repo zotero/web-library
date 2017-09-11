@@ -24,8 +24,18 @@ class Creators extends React.Component {
 
 	valueChangedHandler(index, key, value) {
 		const newCreators = this.state.creators.slice(0);
+		if(typeof newCreators[index] === 'undefined') {
+			newCreators[index] = {
+				creatorType: this.props.creatorTypes[0].value,
+				firstName: '',
+				lastName: ''
+			};
+		}
 		newCreators[index][key] = value;
-		this.props.onSave(newCreators);
+
+		if(newCreators[index].lastName || newCreators[index].firstName || newCreators[index].name) {
+			this.props.onSave(newCreators);
+		}
 	}
 
 	addCreatorHandler() {
@@ -49,17 +59,23 @@ class Creators extends React.Component {
 		if('name' in newCreators[index]) {
 			let creator = newCreators[index].name.split(' ');
 			newCreators[index] = {
-				firstName: creator.length > 1 ? creator[1] : '',
-				lastName: creator[0],
+				lastName: creator.length > 1 ? creator[1] : '',
+				firstName: creator[0],
 				creatorType: newCreators[index].creatorType
 			};
 		} else if('lastName' in newCreators[index]) {
 			newCreators[index] = {
-				name: `${newCreators[index].firstName} ${newCreators[index].lastName}`,
+				name: `${newCreators[index].firstName} ${newCreators[index].lastName}`.trim(),
 				creatorType: newCreators[index].creatorType
 			};
 		}
-		this.props.onSave(newCreators);
+		this.setState({
+			creators: newCreators
+		});
+
+		if(newCreators[index].lastName || newCreators[index].firstName || newCreators[index].name) {
+			this.props.onSave(newCreators);
+		}
 	}
 
 	render() {
@@ -108,6 +124,8 @@ class Creators extends React.Component {
 											return (
 												<Editable
 													onSave={ newValue => this.valueChangedHandler(index, 'name', newValue)}
+													key='name'
+													placeholder='full name'
 													value={ creator.name }
 												/>
 											);
@@ -118,6 +136,7 @@ class Creators extends React.Component {
 													key='lastName'
 													placeholder='last'
 													value={ creator.lastName }
+													displayValue={ creator.lastName ? `${creator.lastName},` : null }
 												/>,
 												<Editable
 													onSave={ newValue => this.valueChangedHandler(index, 'firstName', newValue)}
