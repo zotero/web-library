@@ -1,10 +1,28 @@
 'use strict';
 
 const React = require('react');
+const keydown = require('react-keydown').default;
 const PropTypes = require('prop-types');
 const InjectableComponentsEnhance = require('../../enhancers/injectable-components-enhancer');
 
 class ItemList extends React.Component {
+
+	@keydown( 'down' )
+	handleKeyDown() {
+		let index = this.props.items.findIndex(item => item.key === this.props.selectedItemKey) + 1;
+		if(this.props.items[index]) {
+			this.props.onItemSelected(this.props.items[index].key);
+		}
+	}
+
+	@keydown( 'up' )
+	handleKeyUp() {
+		let index = this.props.items.findIndex(item => item.key === this.props.selectedItemKey) - 1;
+		if(this.props.items[index]) {
+			this.props.onItemSelected(this.props.items[index].key);
+		}
+	}
+
 	render() {
 		let Item = this.props.components['Item'];
 		let Spinner = this.props.components['Spinner'];
