@@ -95,12 +95,12 @@ const meta = (state = {
 		case RECEIVE_ITEM_TYPE_CREATOR_TYPES:
 			return {
 				...state,
-				itemTypeCreatorTypes: itemTypeCreatorTypes(state, action)
+				itemTypeCreatorTypes: itemTypeCreatorTypes(state.itemTypeCreatorTypes, action)
 			};
 		case RECEIVE_ITEM_TYPE_FIELDS:
 			return {
 				...state,
-				itemTypeFields: itemTypeFields(state, action)
+				itemTypeFields: itemTypeFields(state.itemTypeFields, action)
 			};
 	}
 

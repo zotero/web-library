@@ -1,5 +1,6 @@
 'use strict';
 
+const assert = require('chai').assert;
 const React = require('react');
 const { render } = require('enzyme');
 const ItemList = require('../../src/js/component/item/list');
@@ -18,7 +19,7 @@ describe('<ItemList />', () => {
 			<ItemList items={ items } />
 		);
 
-		expect(wrapper.find('.item.list>.item').length).toEqual(2);	
+		assert.equal(wrapper.find('.item.list>.item').length, 2);	
 	});
 
 	

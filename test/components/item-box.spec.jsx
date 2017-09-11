@@ -1,5 +1,6 @@
 'use strict';
 
+const assert = require('chai').assert;
 const React = require('react');
 const { render } = require('enzyme');
 const ItemBox = require('../../src/js/component/item/box');
@@ -27,7 +28,7 @@ describe('<ItemBox />', () => {
 			<ItemBox item={ items[0] } fields={ fields } />
 		);
 
-		expect(wrapper.find('.metadata-list>.metadata').length).toEqual(14);
-		expect(wrapper.find('.metadata-list>.metadata.empty').length).toEqual(12);
+		assert.equal(wrapper.find('.metadata-list>.metadata').length, 14);
+		assert.equal(wrapper.find('.metadata-list>.metadata.empty').length, 12);
 	});	
 });

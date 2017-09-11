@@ -1,8 +1,8 @@
 'use strict';
 
+const assert = require('chai').assert;
 const configureStore = require('redux-mock-store').default;
 const thunk = require('redux-thunk').default;
-const fetchMock = require('fetch-mock');
 const { configureApi } = require('../../src/js/actions.js');
 const reducers = require(('../../src/js/reducers.js'));
 const { 
@@ -37,8 +37,8 @@ describe('reducers', () => {
 			apiAuthorityPart: 'apidev.zotero.org'
 		});
 		const state = reduce({}, action);
-		expect(state.config.apiKey).toEqual('API_KEY');
-		expect(state.config.apiConfig).toEqual({
+		assert.equal(state.config.apiKey, 'API_KEY');
+		assert.deepEqual(state.config.apiConfig, {
 			apiAuthorityPart: 'apidev.zotero.org'
 		});
 	});
@@ -56,42 +56,45 @@ describe('reducers', () => {
 			type: REQUEST_META
 		});
 
-		expect(state.fetching.meta).toEqual(true);
+		assert.strictEqual(state.fetching.meta, true);
 
 		state = reduce({}, {
 			type: RECEIVE_META,
 			...data
 		});
 
-		expect(state.meta).toEqual(data);
+		assert.strictEqual(state.fetching.meta, false);
+		assert.strictEqual(state.meta.itemTypes, data.itemTypes);
+		assert.strictEqual(state.meta.itemFields, data.itemFields);
+		assert.strictEqual(state.meta.creatorFields, data.creatorFields);
 
 		state = reduce(state, {
 			type: REQUEST_ITEM_TYPE_CREATOR_TYPES,
 			itemType: 'book'
 		});
-		expect(state.fetching.itemTypeCreatorTypes).toEqual(['book']);
+		assert.sameMembers(state.fetching.itemTypeCreatorTypes, ['book']);
 
 		state = reduce(state, {
 			type: RECEIVE_ITEM_TYPE_CREATOR_TYPES,
 			itemType: 'book',
 			creatorTypes: ['d']
 		});
-		expect(state.fetching.itemTypeCreatorTypes).toEqual([]);
-		expect(state.meta.itemTypeCreatorTypes).toEqual(['d']);
+		assert.isEmpty(state.fetching.itemTypeCreatorTypes);
+		assert.deepEqual(state.meta.itemTypeCreatorTypes, { book: ['d'] });
 
 		state = reduce(state, {
 			type: REQUEST_ITEM_TYPE_FIELDS,
 			itemType: 'journal'
 		});
-		expect(state.fetching.itemTypeFields).toEqual(['journal']);
+		assert.sameMembers(state.fetching.itemTypeFields, ['journal']);
 
 		state = reduce(state, {
 			type: RECEIVE_ITEM_TYPE_FIELDS,
 			itemType: 'journal',
 			fields: ['e']
 		});
-		expect(state.fetching.itemTypeFields).toEqual([]);
-		expect(state.meta.itemTypeFields).toEqual(['e']);
+		assert.isEmpty(state.fetching.itemTypeFields);
+		assert.deepEqual(state.meta.itemTypeFields, { journal: ['e'] });
 
 	});
 
@@ -112,8 +115,8 @@ describe('reducers', () => {
 			type: REQUEST_COLLECTIONS_IN_LIBRARY,
 			libraryKey: 'u123'
 		});
-		expect(state.fetching.collectionsInLibrary).toEqual(['u123']);
-		expect(Object.keys(state.collections).length).toEqual(0);
+		assert.sameMembers(state.fetching.collectionsInLibrary, ['u123']);
+		assert.isEmpty(Object.keys(state.collections));
 
 		state = reduce(state, {
 			type: RECEIVE_COLLECTIONS_IN_LIBRARY,
@@ -122,10 +125,10 @@ describe('reducers', () => {
 			receivedAt: 1499438101816
 		});
 
-		expect(state.fetching.collectionsInLibrary).toEqual([]);
-		expect(Object.keys(state.collections).length).toEqual(2);
-		expect(state.collections['c1u123']).toEqual(collectionData[0]);
-		expect(state.collectionsByLibrary['u123']).toEqual(['c1u123', 'c2u123']);
+		assert.isEmpty(state.fetching.collectionsInLibrary);
+		assert.lengthOf(Object.keys(state.collections), 2);
+		assert.deepEqual(state.collections['c1u123'], collectionData[0]);
+		assert.sameOrderedMembers(state.collectionsByLibrary['u123'], ['c1u123', 'c2u123']);
 	});
 
 	it('collections error', () => {
@@ -135,7 +138,7 @@ describe('reducers', () => {
 			type: REQUEST_COLLECTIONS_IN_LIBRARY,
 			libraryKey: 'u123'
 		});
-		expect(state.fetching.collectionsInLibrary).toEqual(['u123']);
+		assert.sameMembers(state.fetching.collectionsInLibrary, ['u123']);
 
 		state = reduce(state, {
 			type: ERROR_COLLECTIONS_IN_LIBRARY,
@@ -143,7 +146,7 @@ describe('reducers', () => {
 			error: new Error('Failed')
 		});
 
-		expect(state.fetching.collectionsInLibrary).toEqual([]);
+		assert.isEmpty(state.fetching.collectionsInLibrary);
 	});
 
 	describe('items', () => {
@@ -169,8 +172,8 @@ describe('reducers', () => {
 				collectionKey: 'AAAAAAAA'
 			});
 
-			expect(state.fetching.itemsInCollection).toEqual(['AAAAAAAAu123']);
-			expect(state.items).toEqual({});
+			assert.sameMembers(state.fetching.itemsInCollection, ['AAAAAAAAu123']);
+			assert.isEmpty(state.items, {});
 
 			state = reduce(state, {
 				type: RECEIVE_ITEMS_IN_COLLECTION,
@@ -180,10 +183,10 @@ describe('reducers', () => {
 				receivedAt: 1499438101816
 			});
 
-			expect(state.fetching.itemsInCollection).toEqual([]);
-			expect(state.items['ITEM1111u123']).toEqual(itemsData[0]);
-			expect(state.items['ITEM2222u123']).toEqual(itemsData[1]);
-			expect(state.itemsByCollection['AAAAAAAAu123']).toEqual(['ITEM1111u123', 'ITEM2222u123']);
+			assert.isEmpty(state.fetching.itemsInCollection, []);
+			assert.deepEqual(state.items['ITEM1111u123'], itemsData[0]);
+			assert.deepEqual(state.items['ITEM2222u123'], itemsData[1]);
+			assert.sameOrderedMembers(state.itemsByCollection['AAAAAAAAu123'], ['ITEM1111u123', 'ITEM2222u123']);
 		});
 
 		it('updating', () => {
@@ -203,9 +206,9 @@ describe('reducers', () => {
 				}
 			});
 
-			expect(state.updating.items['ITEM1111u123']['title']).toEqual('foobar');
-			expect(state.items['ITEM1111u123'].version).toEqual(1);
-			expect(state.items['ITEM1111u123'].title).toEqual('item 1');
+			assert.strictEqual(state.updating.items['ITEM1111u123']['title'], 'foobar');
+			assert.strictEqual(state.items['ITEM1111u123'].version, 1);
+			assert.strictEqual(state.items['ITEM1111u123'].title, 'item 1');
 
 			state = reduce(state, {
 				type: REQUEST_UPDATE_ITEM,
@@ -216,7 +219,7 @@ describe('reducers', () => {
 				}
 			});
 
-			expect(state.updating.items['ITEM1111u123']).toEqual({
+			assert.deepEqual(state.updating.items['ITEM1111u123'], {
 				title: 'foobar',
 				publisher: 'lorem'
 			});
@@ -236,9 +239,9 @@ describe('reducers', () => {
 				}
 			});
 
-			expect(state.items['ITEM1111u123'].version).toEqual(2);
-			expect(state.items['ITEM1111u123'].title).toEqual('foobar');
-			expect(state.updating.items['ITEM1111u123']).toEqual({
+			assert.strictEqual(state.items['ITEM1111u123'].version, 2);
+			assert.strictEqual(state.items['ITEM1111u123'].title, 'foobar');
+			assert.deepEqual(state.updating.items['ITEM1111u123'], {
 				publisher: 'lorem'
 			});
 
@@ -257,9 +260,9 @@ describe('reducers', () => {
 				}
 			});
 
-			expect(state.updating.items).toEqual({});
-			expect(state.items['ITEM1111u123'].version).toEqual(3);
-			expect(state.items['ITEM1111u123'].publisher).toEqual('lorem');
+			assert.isEmpty(state.updating.items);
+			assert.strictEqual(state.items['ITEM1111u123'].version, 3);
+			assert.strictEqual(state.items['ITEM1111u123'].publisher, 'lorem');
 		});
 
 		it('fetching child items', () => {
@@ -270,7 +273,7 @@ describe('reducers', () => {
 				libraryKey: 'u123'
 			});
 
-			expect(state.fetching.childItems).toEqual(['ITEM0000u123']);
+			assert.sameMembers(state.fetching.childItems, ['ITEM0000u123']);
 
 			state = reduce(state, {
 				type: RECEIVE_CHILD_ITEMS,
@@ -279,10 +282,10 @@ describe('reducers', () => {
 				childItems: itemsData
 			});
 
-			expect(state.fetching.childItems).toEqual([]);
-			expect(state.items['ITEM1111u123']).toEqual(itemsData[0]);
-			expect(state.items['ITEM2222u123']).toEqual(itemsData[1]);
-			expect(state.itemsByParentItem['ITEM0000u123']).toEqual(['ITEM1111u123', 'ITEM2222u123']);
+			assert.isEmpty(state.fetching.childItems);
+			assert.deepEqual(state.items['ITEM1111u123'], itemsData[0]);
+			assert.deepEqual(state.items['ITEM2222u123'], itemsData[1]);
+			assert.sameOrderedMembers(state.itemsByParentItem['ITEM0000u123'], ['ITEM1111u123', 'ITEM2222u123']);
 		});
 
 		// it('editing', () => {

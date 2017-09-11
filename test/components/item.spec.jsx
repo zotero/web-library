@@ -1,5 +1,6 @@
 'use strict';
 
+const assert = require('chai').assert;
 const React = require('react');
 const { render } = require('enzyme');
 const Item = require('../../src/js/component/item');
@@ -22,10 +23,9 @@ describe('<Item />', () => {
 			<Item item={ items[0] } />
 		);
 
-		expect(wrapper.find('li.item>div.title').text()).toEqual('document-2');
-		expect(wrapper.find('li.item>div.author').text()).toEqual('Loremus');
-		expect(wrapper.find('li.item>div.year').text()).toEqual('2006');
-		expect(wrapper.find('li.item>div.date-modified').text())
-			.toEqual(moment('2016-10-20T12:09:14Z').format('YYYY-MM-DD HH:mm'));
+		assert.equal(wrapper.find('li.item>div.title').text(), 'document-2');
+		assert.equal(wrapper.find('li.item>div.author').text(), 'Loremus');
+		assert.equal(wrapper.find('li.item>div.year').text(), '2006');
+			assert.equal(wrapper.find('li.item>div.date-modified').text(), moment('2016-10-20T12:09:14Z').format('YYYY-MM-DD HH:mm'));
 	});	
 });

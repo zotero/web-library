@@ -1,5 +1,6 @@
 'use strict';
 
+const assert = require('chai').assert;
 const React = require('react');
 const { render } = require('enzyme');
 const ItemDetails = require('../../src/js/component/item/details');
@@ -21,9 +22,9 @@ describe('<ItemDetails />', () => {
 			<ItemDetails item={ items[0] } />
 		);
 
-		expect(wrapper.find('.item.details>.panel>.panel-header .tabs>.tab').length).toEqual(5);
-		expect(wrapper.find('.item.details>.panel>.panel-body>.tab-pane').length).toEqual(5);
-		expect(wrapper.find('.item.details>.panel>.panel-header .tabs>.tab.active>a').text()).toEqual('Info');
-		expect(wrapper.find('.item.details>.panel>.panel-body>.tab-pane.info.active').length).toEqual(1);
+		assert.equal(wrapper.find('.item.details>.panel>.panel-header .tabs>.tab').length, 5);
+		assert.equal(wrapper.find('.item.details>.panel>.panel-body>.tab-pane').length, 5);
+		assert.equal(wrapper.find('.item.details>.panel>.panel-header .tabs>.tab.active>a').text(), 'Info');
+		assert.equal(wrapper.find('.item.details>.panel>.panel-body>.tab-pane.info.active').length, 1);
 	});	
 });

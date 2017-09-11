@@ -1,6 +1,6 @@
 'use strict';
 
-
+const assert = require('chai').assert;
 const collectionsFixture = require('./fixtures/collections');
 const itemsFixture = require('./fixtures/items-top');
 const {
@@ -49,7 +49,7 @@ describe('state-utils', () => {
 	});
 
 	it('getCollection', () => {
-		expect(getCollection(state)).toBeNull();
+		assert.isNull(getCollection(state));
 		state = {
 			...state,
 			router: {
@@ -58,16 +58,16 @@ describe('state-utils', () => {
 				}
 			}
 		};
-		expect(getCollection(state).key).toEqual('AAAA0001');
-		expect(getCollection(state).name).toEqual('Test Collection A1');
+		assert.equal(getCollection(state).key, 'AAAA0001');
+		assert.equal(getCollection(state).name, 'Test Collection A1');
 	});
 
 	it('getCollections', () => {
-		expect(getCollections(state)).toEqual(collections);
+		assert.deepEqual(getCollections(state), collections);
 	});
 
 	it('getTopCollections', () => {
-		expect(getTopCollections(state)).toEqual(collections.filter(c => c.key !== 'AAAA0001'));
+		assert.deepEqual(getTopCollections(state), collections.filter(c => c.key !== 'AAAA0001'));
 	});
 
 	it('getItem', () => {
@@ -80,7 +80,7 @@ describe('state-utils', () => {
 				}
 			}
 		};
-		expect(getItem(state)).toEqual(items[1]);
+		assert.equal(getItem(state), items[1]);
 	});
 
 	it('getItems', () => {
@@ -92,15 +92,15 @@ describe('state-utils', () => {
 				}
 			}
 		};
-		expect(getItems(state).length).toEqual(2);
-		expect(getItems(state)[0].key).toEqual('ITEM1111');
-		expect(getItems(state)[0].title).toEqual('document-1');
-		expect(getItems(state)[1].key).toEqual('ITEM2222');
-		expect(getItems(state)[1].title).toEqual('document-2');
+		assert.equal(getItems(state).length, 2);
+		assert.equal(getItems(state)[0].key, 'ITEM1111');
+		assert.equal(getItems(state)[0].title, 'document-1');
+		assert.equal(getItems(state)[1].key, 'ITEM2222');
+		assert.equal(getItems(state)[1].title, 'document-2');
 	});
 
 	it('getCollectionsPath', () => {
-		expect(getCollectionsPath(state)).toEqual([]);
+		assert.isEmpty(getCollectionsPath(state));
 		state = {
 			...state,
 			router: {
@@ -109,11 +109,11 @@ describe('state-utils', () => {
 				}
 			}
 		};
-		expect(getCollectionsPath(state)).toEqual(['AAAAAAAA', 'AAAA0001']);
+		assert.sameOrderedMembers(getCollectionsPath(state), ['AAAAAAAA', 'AAAA0001']);
 	});
 
 	it('getCurrentViewFromState', () => {
-		expect(getCurrentViewFromState(state)).toEqual('library');
+		assert.equal(getCurrentViewFromState(state), 'library');
 		state = {
 			...state,
 			router: {
@@ -122,7 +122,7 @@ describe('state-utils', () => {
 				}
 			}
 		};
-		expect(getCurrentViewFromState(state)).toEqual('item-list');
+		assert.equal(getCurrentViewFromState(state), 'item-list');
 		state = {
 			...state,
 			router: {
@@ -132,7 +132,7 @@ describe('state-utils', () => {
 				}
 			}
 		};
-		expect(getCurrentViewFromState(state)).toEqual('item-details');
+		assert.equal(getCurrentViewFromState(state), 'item-details');
 	});
 
 	it('getItemFieldValue', () => {
@@ -145,7 +145,7 @@ describe('state-utils', () => {
 				}
 			}
 		};
-		expect(getItemFieldValue('title', state)).toEqual('document-1');
+		assert.equal(getItemFieldValue('title', state), 'document-1');
 
 		state = {
 			...state,
@@ -157,7 +157,7 @@ describe('state-utils', () => {
 				}
 			}
 		};
-		expect(getItemFieldValue('title', state)).toEqual('foobar');
+		assert.equal(getItemFieldValue('title', state), 'foobar');
 	});
 
 	it('isItemFieldBeingUpdated', () => {
@@ -177,7 +177,7 @@ describe('state-utils', () => {
 				}
 			}
 		};
-		expect(isItemFieldBeingUpdated('title', state)).toEqual(true);
-		expect(isItemFieldBeingUpdated('publisher', state)).toEqual(false);
+		assert.equal(isItemFieldBeingUpdated('title', state), true);
+		assert.equal(isItemFieldBeingUpdated('publisher', state), false);
 	});
 });

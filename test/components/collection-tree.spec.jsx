@@ -1,5 +1,6 @@
 'use strict';
 
+const assert = require('chai').assert;
 const React = require('react');
 const { shallow, render, mount } = require('enzyme');
 const CollectionTree = require('../../src/js/component/collection-tree');
@@ -18,13 +19,13 @@ describe('<CollectionTree />', () => {
 			<CollectionTree collections={ collections } />
 		);
 		// no path present, root should be active
-		expect(wrapper.find('div.level-root.active').length).toEqual(1);
+		assert.equal(wrapper.find('div.level-root.active').length, 1);
 		// just one level-1 with 3 top-level collections
-		expect(wrapper.find('div.level-1').length).toEqual(1);
-		expect(wrapper.find('div.level-1>ul>li').length).toEqual(3);
+		assert.equal(wrapper.find('div.level-1').length, 1);
+		assert.equal(wrapper.find('div.level-1>ul>li').length, 3);
 		// one level-2 with 1 second-level collections
-		expect(wrapper.find('div.level-2').length).toEqual(1);
-		expect(wrapper.find('div.level-2>ul>li').length).toEqual(1);
+		assert.equal(wrapper.find('div.level-2').length, 1);
+		assert.equal(wrapper.find('div.level-2>ul>li').length, 1);
 	});
 
 	it('renders .selected, .open and .has-open', () => {
@@ -37,12 +38,12 @@ describe('<CollectionTree />', () => {
 		);
 
 		// path points to a subcollection, root should not be active
-		expect(wrapper.find('div.level-root:not(.active)').length).toEqual(1);
-		expect(wrapper.find('div.level-1.has-open:not(.level-last)').length).toEqual(1);
-		expect(wrapper.find('div.level-1>ul>li.open>.item-container a').text()).toEqual('Test Collection A');
-		expect(wrapper.find('div.level-2.has-open.level-last').length).toEqual(1);
-		expect(wrapper.find('div.level-2>ul>li.selected').length).toEqual(1);
-		expect(wrapper.find('div.level-2>ul>li.selected>.item-container a').text()).toEqual('Test Collection A1');
+		assert.equal(wrapper.find('div.level-root:not(.active)').length, 1);
+		assert.equal(wrapper.find('div.level-1.has-open:not(.level-last)').length, 1);
+		assert.equal(wrapper.find('div.level-1>ul>li.open>.item-container a').text(), 'Test Collection A');
+		assert.equal(wrapper.find('div.level-2.has-open.level-last').length, 1);
+		assert.equal(wrapper.find('div.level-2>ul>li.selected').length, 1);
+		assert.equal(wrapper.find('div.level-2>ul>li.selected>.item-container a').text(), 'Test Collection A1');
 	});
 
 	it('renders <Spinner /> when fetching', () => {
@@ -50,6 +51,6 @@ describe('<CollectionTree />', () => {
 			<CollectionTree collections={ collections } isFetching={ true } />
 		);
 
-		expect(wrapper.find('.icon-spin').length).toEqual(1);
+		assert.equal(wrapper.find('.icon-spin').length, 1);
 	});
 });

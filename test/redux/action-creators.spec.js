@@ -1,9 +1,15 @@
 'use strict';
 
+const assert = require('chai').assert;
+const cede = require('../helper/cede');
 const configureStore = require('redux-mock-store').default;
 const thunk = require('redux-thunk').default;
 const ReduxAsyncQueue = require('redux-async-queue').default;
 const fetchMock = require('fetch-mock');
+const FakeStore = require('../helper/fake-store.js');
+if(typeof window === 'undefined') {
+	global.window = { localStorage: new FakeStore() };
+}
 const { 
 	initialize,
 	fetchCollections,
@@ -25,10 +31,8 @@ const {
 	ERROR_ITEMS_IN_COLLECTION,
 	REQUEST_UPDATE_ITEM,
 	RECEIVE_UPDATE_ITEM,
-	ERROR_UPDATE_ITEM,
 	REQUEST_CHILD_ITEMS,
 	RECEIVE_CHILD_ITEMS,
-	ERROR_CHILD_ITEMS,
 } = require('../../src/js/constants/actions.js');
 
 const collectionsFixture = require('../fixtures/collections.json');
@@ -44,6 +48,9 @@ const initialState = {
 };
 
 describe('action creators', () => {
+	beforeEach(() => {
+		window.localStorage.clear();
+	});
 	afterEach(fetchMock.restore);
 
 	it('initialize', async () => {
@@ -53,12 +60,12 @@ describe('action creators', () => {
 		const store = mockStore(initialState);
 		const action = initialize();
 		await store.dispatch(action);
-		expect(store.getActions().length).toBe(2);
-		expect(store.getActions()[0].type).toBe(REQUEST_META);
-		expect(store.getActions()[1].type).toBe(RECEIVE_META);
-		expect(store.getActions()[1].itemTypes).toEqual(['a']);
-		expect(store.getActions()[1].itemFields).toEqual(['b']);
-		expect(store.getActions()[1].creatorFields).toEqual(['c']);
+		assert.strictEqual(store.getActions().length,2);
+		assert.strictEqual(store.getActions()[0].type,REQUEST_META);
+		assert.strictEqual(store.getActions()[1].type,RECEIVE_META);
+		assert.sameMembers(store.getActions()[1].itemTypes, ['a']);
+		assert.sameMembers(store.getActions()[1].itemFields, ['b']);
+		assert.sameMembers(store.getActions()[1].creatorFields, ['c']);
 	});
 
 	it('initialize error', async () => {
@@ -70,13 +77,13 @@ describe('action creators', () => {
 			await store.dispatch(action);
 			fail('Expected to throw an error');
 		} catch(error) {
-			expect(error.message).toEqual('500: Internal Server Error');
+			assert.equal(error.message, '500: Internal Server Error');
 		}
 		
-		expect(store.getActions().length).toBe(2);
-		expect(store.getActions()[0].type).toBe(REQUEST_META);
-		expect(store.getActions()[1].type).toBe(ERROR_META);
-		expect(store.getActions()[1].error.message).toEqual('500: Internal Server Error');
+		assert.strictEqual(store.getActions().length,2);
+		assert.strictEqual(store.getActions()[0].type,REQUEST_META);
+		assert.strictEqual(store.getActions()[1].type,ERROR_META);
+		assert.equal(store.getActions()[1].error.message, '500: Internal Server Error');
 	});
 
 	it('fetchCollections', async () => {
@@ -84,16 +91,16 @@ describe('action creators', () => {
 		const store = mockStore(initialState);
 		const action = fetchCollections('u123456');
 		await store.dispatch(action);
-		expect(store.getActions().length).toBe(2);
-		expect(store.getActions()[0].type).toBe(REQUEST_COLLECTIONS_IN_LIBRARY);
-		expect(store.getActions()[1].type).toBe(RECEIVE_COLLECTIONS_IN_LIBRARY);
+		assert.strictEqual(store.getActions().length,2);
+		assert.strictEqual(store.getActions()[0].type,REQUEST_COLLECTIONS_IN_LIBRARY);
+		assert.strictEqual(store.getActions()[1].type,RECEIVE_COLLECTIONS_IN_LIBRARY);
 		const collectionNamesInOrder = [
 			'Test Collection A',
 			'Test Collection A1',
 			'Test Collection B',
 			'Test Collection C'
 		];
-		expect(store.getActions()[1].collections.map(c => c.name)).toEqual(collectionNamesInOrder);
+		assert.sameOrderedMembers(store.getActions()[1].collections.map(c => c.name), collectionNamesInOrder);
 	});
 
 	it('fetchCollections error', async () => {
@@ -105,13 +112,13 @@ describe('action creators', () => {
 			await store.dispatch(action);
 			fail('Expected to throw an error');
 		} catch(error) {
-			expect(error.message).toEqual('500: Internal Server Error');
+			assert.equal(error.message, '500: Internal Server Error');
 		}
 
-		expect(store.getActions().length).toBe(2);
-		expect(store.getActions()[0].type).toBe(REQUEST_COLLECTIONS_IN_LIBRARY);
-		expect(store.getActions()[1].type).toBe(ERROR_COLLECTIONS_IN_LIBRARY);
-		expect(store.getActions()[1].error.message).toEqual('500: Internal Server Error');
+		assert.strictEqual(store.getActions().length,2);
+		assert.strictEqual(store.getActions()[0].type,REQUEST_COLLECTIONS_IN_LIBRARY);
+		assert.strictEqual(store.getActions()[1].type,ERROR_COLLECTIONS_IN_LIBRARY);
+		assert.equal(store.getActions()[1].error.message, '500: Internal Server Error');
 	});
 
 	it('fetchItems', async () => {
@@ -124,18 +131,18 @@ describe('action creators', () => {
 		});
 		const action = fetchItems('AAAAAAAA');
 		await store.dispatch(action);
-		expect(store.getActions().length).toBe(2);
-		expect(store.getActions()[0].type).toBe(REQUEST_ITEMS_IN_COLLECTION);
-		expect(store.getActions()[0].libraryKey).toEqual('u123456');
-		expect(store.getActions()[0].collectionKey).toEqual('AAAAAAAA');
-		expect(store.getActions()[1].type).toBe(RECEIVE_ITEMS_IN_COLLECTION);
-		expect(store.getActions()[1].libraryKey).toEqual('u123456');
-		expect(store.getActions()[1].collectionKey).toEqual('AAAAAAAA');
+		assert.strictEqual(store.getActions().length,2);
+		assert.strictEqual(store.getActions()[0].type,REQUEST_ITEMS_IN_COLLECTION);
+		assert.equal(store.getActions()[0].libraryKey, 'u123456');
+		assert.equal(store.getActions()[0].collectionKey, 'AAAAAAAA');
+		assert.strictEqual(store.getActions()[1].type,RECEIVE_ITEMS_IN_COLLECTION);
+		assert.equal(store.getActions()[1].libraryKey, 'u123456');
+		assert.equal(store.getActions()[1].collectionKey, 'AAAAAAAA');
 		const itemTitlesInOrder = [
 			'document-1',
 			'document-2'
 		];
-		expect(store.getActions()[1].items.map(c => c.title)).toEqual(itemTitlesInOrder);
+		assert.sameOrderedMembers(store.getActions()[1].items.map(c => c.title), itemTitlesInOrder);
 	});
 
 	it('fetchItems error', async () => {
@@ -152,20 +159,20 @@ describe('action creators', () => {
 			await store.dispatch(action);
 			fail('Expected to throw an error');
 		} catch(error) {
-			expect(error.message).toEqual('500: Internal Server Error');
+			assert.equal(error.message, '500: Internal Server Error');
 		}
 
-		expect(store.getActions().length).toBe(2);
-		expect(store.getActions()[0].type).toBe(REQUEST_ITEMS_IN_COLLECTION);
-		expect(store.getActions()[1].type).toBe(ERROR_ITEMS_IN_COLLECTION);
-		expect(store.getActions()[1].error.message).toEqual('500: Internal Server Error');
+		assert.strictEqual(store.getActions().length,2);
+		assert.strictEqual(store.getActions()[0].type,REQUEST_ITEMS_IN_COLLECTION);
+		assert.strictEqual(store.getActions()[1].type,ERROR_ITEMS_IN_COLLECTION);
+		assert.equal(store.getActions()[1].error.message, '500: Internal Server Error');
 	});
 
 	it('updateItem', async () => {
 		fetchMock.mock((url, opts) => {
-				expect(url.match(/https:\/\/api\.zotero\.org\/users\/123456\/items\/ITEM1111\??.*/));
-				expect(opts.method, 'patch');
-				expect(opts.body, {
+				assert(url.match(/https:\/\/api\.zotero\.org\/users\/123\/items\/ITEM1111\??.*/));
+				assert(opts.method, 'patch');
+				assert(opts.body, {
 					title: 'foobar'
 				});
 				return true;
@@ -187,21 +194,26 @@ describe('action creators', () => {
 				ITEM1111u123: {
 					key: 'ITEM1111',
 					version: 1,
-					title: 'foo'
+					title: 'foo',
+					collections: ['AAAAAAAA']
 				}
 			}
 		});
 
 		const action = updateItem('u123', 'ITEM1111', { title: 'foobar' });
 		await store.dispatch(action);
-		expect(store.getActions().length).toBe(1);
-		expect(store.getActions()[0].type).toBe(REQUEST_UPDATE_ITEM);
-		expect(store.getActions()[0].itemKey).toEqual('ITEM1111');
-		expect(store.getActions()[0].libraryKey).toEqual('u123');
-		expect(store.getActions()[0].patch).toEqual({ title: 'foobar'});
-		// expect(store.getActions()[1].type).toBe(RECEIVE_UPDATE_ITEM);
-		// expect(store.getActions()[1].item.title).toEqual('foobar');
-		// expect(store.getActions()[1].item.version).toEqual(1337);
+		assert.strictEqual(store.getActions().length,1);
+		assert.strictEqual(store.getActions()[0].type,REQUEST_UPDATE_ITEM);
+		assert.strictEqual(store.getActions()[0].itemKey, 'ITEM1111');
+		assert.strictEqual(store.getActions()[0].libraryKey, 'u123');
+		assert.deepEqual(store.getActions()[0].patch, { title: 'foobar'});
+
+		await cede(); // allow async-queue process this request
+		
+		assert.strictEqual(store.getActions()[1].type, RECEIVE_UPDATE_ITEM);
+		assert.strictEqual(store.getActions()[1].item.title, 'foobar');
+		assert.strictEqual(store.getActions()[1].item.version, 1337);
+
 	});
 
 	it('fetchItemTypeFields', async () => {
@@ -209,9 +221,9 @@ describe('action creators', () => {
 		const store = mockStore(initialState);
 		await store.dispatch(fetchItemTypeFields('book'));
 
-		expect(store.getActions().length).toBe(2);
-		expect(store.getActions()[0].itemType).toEqual('book');
-		expect(store.getActions()[1].fields).toEqual(fieldsFixture);
+		assert.strictEqual(store.getActions().length,2);
+		assert.strictEqual(store.getActions()[0].itemType, 'book');
+		assert.deepEqual(store.getActions()[1].fields, fieldsFixture);
 	});
 
 	it('fetchItemTypeCreatorTypes', async () => {
@@ -219,9 +231,9 @@ describe('action creators', () => {
 		const store = mockStore(initialState);
 		await store.dispatch(fetchItemTypeCreatorTypes('book'));
 
-		expect(store.getActions().length).toBe(2);
-		expect(store.getActions()[0].itemType).toEqual('book');
-		expect(store.getActions()[1].creatorTypes).toEqual(creatorTypesFixture);
+		assert.strictEqual(store.getActions().length, 2);
+		assert.strictEqual(store.getActions()[0].itemType, 'book');
+		assert.deepEqual(store.getActions()[1].creatorTypes, creatorTypesFixture);
 	});
 
 	it('fetchChildItems', async () => {
@@ -229,14 +241,14 @@ describe('action creators', () => {
 		const store = mockStore(initialState);
 		await store.dispatch(fetchChildItems('ITEM0000', 'u123'));
 
-		expect(store.getActions().length).toBe(2);
-		expect(store.getActions()[0].type).toEqual(REQUEST_CHILD_ITEMS);
-		expect(store.getActions()[0].itemKey).toEqual('ITEM0000');
-		expect(store.getActions()[0].libraryKey).toEqual('u123');
-		expect(store.getActions()[1].type).toEqual(RECEIVE_CHILD_ITEMS);
-		expect(store.getActions()[1].itemKey).toEqual('ITEM0000');
-		expect(store.getActions()[1].libraryKey).toEqual('u123');
-		expect(store.getActions()[1].childItems[0].key).toEqual('ITEM2222');
-		expect(store.getActions()[1].childItems[1].key).toEqual('ITEM1111');
+		assert.strictEqual(store.getActions().length,2);
+		assert.strictEqual(store.getActions()[0].type, REQUEST_CHILD_ITEMS);
+		assert.strictEqual(store.getActions()[0].itemKey, 'ITEM0000');
+		assert.strictEqual(store.getActions()[0].libraryKey, 'u123');
+		assert.strictEqual(store.getActions()[1].type, RECEIVE_CHILD_ITEMS);
+		assert.strictEqual(store.getActions()[1].itemKey, 'ITEM0000');
+		assert.strictEqual(store.getActions()[1].libraryKey, 'u123');
+		assert.strictEqual(store.getActions()[1].childItems[0].key, 'ITEM2222');
+		assert.strictEqual(store.getActions()[1].childItems[1].key, 'ITEM1111');
 	});
 });
