@@ -1,66 +1,55 @@
 'use strict';
 
 const React = require('react');
+const tinymce = require('tinymce');
+require('tinymce/themes/modern');
+const TinyMCE = require('react-tinymce');
 const PropTypes = require('prop-types');
-const { Editor, EditorState, RichUtils, convertFromHTML } = require('draft-js');
 const { Toolbar, ToolGroup } = require('./ui/toolbars');
 const Button = require('./ui/button');
 
 class RichEditor extends React.Component {
-	constructor(props) {
-		super(props);
-		let editorState = props.value ? convertFromHTML(props.value) : EditorState.createEmpty();
-		this.state = {
-			editorState: editorState
-		};
+	componentWillMount() {
+		window.tinymce = tinymce;
 	}
 
-	componentWillReceiveProps(props) {
-		let editorState = props.value ? convertFromHTML(props.value) : EditorState.createEmpty();
-		this.state = {
-			editorState: editorState
-		};
+	handleTinymceSetup(tinymce) {
+		this.tinymce = tinymce;
 	}
 
-	onChangeHandler(editorState) {
-		this.setState({editorState});
-	}
-
-	keyboardHandler(command) {
-		const newState = RichUtils.handleKeyCommand(this.state.editorState, command);
-		if(newState) {
-			this.onChangeHandler(newState);
-			return 'handled';
-		}
-		return 'not-handled';
+	onChangeHandler() {
+		this.forceUpdate();
 	}
 
 	buttonHandler(command) {
-		const newState = RichUtils.toggleInlineStyle(this.state.editorState, command);
-		if(newState) {
-			this.onChangeHandler(newState);
-		}
+		this.tinymce ? this.tinymce.editorCommands.execCommand(command) : null;
+	}
+
+	isEditorCommandState(command) {
+		return this.tinymce && this.tinymce.editorCommands.queryCommandState(command);
 	}
 
 	render() {
-		const currentStyle = this.state.editorState.getCurrentInlineStyle();
 		return (
 			<div className="rich-editor">
 				<Toolbar>
 					<div className="toolbar-left">
 						<ToolGroup>
 							<Button 
-								active={ currentStyle.has('BOLD') }
+								className="btn-icon"
+								active={ this.isEditorCommandState('BOLD') }
 								onClick={ this.buttonHandler.bind(this, 'BOLD') }>
 								B
 							</Button>
 							<Button 
-								active={ currentStyle.has('ITALIC') }
+								className="btn-icon"
+								active={ this.isEditorCommandState('ITALIC') }
 								onClick={ this.buttonHandler.bind(this, 'ITALIC') }>
 								I
 							</Button>
 							<Button 
-								active={ currentStyle.has('UNDERLINE') }
+								className="btn-icon"
+								active={ this.isEditorCommandState('UNDERLINE') }
 								onClick={ this.buttonHandler.bind(this, 'UNDERLINE') }>
 								U
 							</Button>
@@ -68,11 +57,18 @@ class RichEditor extends React.Component {
 					</div>
 				</Toolbar>
 				<div className="editor-container">
-					<Editor 
-						editorState={ this.state.editorState }
+					<TinyMCE
+						content={ this.props.value }
+						config={{
+							skin_url: '/static/other/lightgray',
+							branding: false,
+							setup: this.handleTinymceSetup.bind(this),
+							toolbar: false,
+							menubar: false,
+							statusbar: false
+						}}
 						onChange={ this.onChangeHandler.bind(this) }
-						handleKeyCommand={ this.keyboardHandler.bind(this) }
-					/>
+						/>
 				</div>
 			</div>
 		);

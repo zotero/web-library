@@ -56,7 +56,7 @@ class Icon extends React.Component {
 
 		return (
 			<svg { ...svgAttr }>
-				<use xlinkHref={ `/icons/${this.props.type}.svg#${basename}`} viewBox="0 0 512 512" />
+				<use xlinkHref={ `/static/icons/${this.props.type}.svg#${basename}`} viewBox="0 0 512 512" />
 			</svg>
 		);
 	}

@@ -91,24 +91,13 @@ function getHtml() {
 		.pipe(gulp.dest('./build/'))
 }
 
-function getImages(dev) {
+function getStatic(dev) {
 	if(dev) {
-		return vfs.src('./src/images/*')
-			.pipe(vfs.symlink('./build/images/'));
+		return vfs.src('./src/static/*')
+			.pipe(vfs.symlink('./build/static/'));
 	} else {
-		return gulp.src('./src/images/**/*')
-			.pipe(gulp.dest('./build/images/'));
-	}
-}
-
-function getIcons(dev) {
-	//@TODO: Consider auto-vieboxing/wrapping with symbol?
-	if(dev) {
-		return vfs.src('./src/icons/*')
-			.pipe(vfs.symlink('./build/icons/'));
-	} else {
-		return gulp.src('./src/icons/**/*')
-			.pipe(gulp.dest('./build/icons/'));
+		return gulp.src('./src/static/**/*')
+			.pipe(gulp.dest('./build/static/'));
 	}
 }
 
@@ -145,8 +134,7 @@ gulp.task('dev', ['clean:build'], () => {
 	return merge(
 		getSass(true),
 		getJS(true),
-		getImages(true),
-		getIcons(true),
+		getStatic(true),
 		getHtml()
 	);
 });
@@ -155,8 +143,7 @@ gulp.task('build', ['clean:build'], () => {
 	return merge(
 		getSass(false),
 		getJS(false),
-		getImages(false),
-		getIcons(false)
+		getStatic(false)
 	);
 });
 
