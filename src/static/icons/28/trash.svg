@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+	<symbol id="trash" viewBox="0 0 28 28">
+		<path fill="currentColor" d="M19,3V1.5A1.412,1.412,0,0,0,17.7,0H11.3A1.412,1.412,0,0,0,10,1.5V3H3V4H26V3ZM11,1.5c0-.286.158-.5.3-.5h6.4c.142,0,.3.214.3.5V3H11ZM12,8V23H11V8Zm6,0V23H17V8Zm5-2h1V25.5A2.5,2.5,0,0,1,21.5,28H7.5A2.5,2.5,0,0,1,5,25.5V6H6V25.5A1.5,1.5,0,0,0,7.5,27h14A1.5,1.5,0,0,0,23,25.5Z"/>
+	</symbol>
+	<use xlink:href="#trash" viewBox="0 0 28 28" />
+</svg>

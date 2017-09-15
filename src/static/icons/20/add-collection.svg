@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+	<symbol id="add-collection" viewBox="0 0 20 20">
+		<path fill="currentColor" d="M17,9.276V5a1,1,0,0,0-1-1H10L9.276,2.553A1,1,0,0,0,8.382,2H4.618a1,1,0,0,0-.894.553L3,4H2A1,1,0,0,0,1,5V15a1,1,0,0,0,1,1h9.76A4.495,4.495,0,1,0,17,9.276ZM2,5H3a1,1,0,0,0,.894-.553L4.618,3H8.382l.724,1.447A1,1,0,0,0,10,5h6V6H2ZM2,15V7H16V9.05A4.43,4.43,0,0,0,15.5,9a4.457,4.457,0,0,0-4.224,6Zm13.5,2A3.5,3.5,0,1,1,19,13.5,3.5,3.5,0,0,1,15.5,17ZM18,13v1H16v2H15V14H13V13h2V11h1v2Z"/>
+	</symbol>
+	<use xlink:href="#add-collection" viewBox="0 0 20 20"/>
+</svg>
