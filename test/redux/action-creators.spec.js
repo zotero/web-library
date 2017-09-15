@@ -189,7 +189,9 @@ describe('action creators', () => {
 			config: {
 				apiKey: 'API_KEY'
 			},
-			library: 'u123',
+			library: {
+				libraryKey: 'u123'
+			},
 			items: {
 				ITEM1111u123: {
 					key: 'ITEM1111',
@@ -200,7 +202,7 @@ describe('action creators', () => {
 			}
 		});
 
-		const action = updateItem('u123', 'ITEM1111', { title: 'foobar' });
+		const action = updateItem('ITEM1111', { title: 'foobar' });
 		await store.dispatch(action);
 		assert.strictEqual(store.getActions().length,1);
 		assert.strictEqual(store.getActions()[0].type,REQUEST_UPDATE_ITEM);
@@ -209,7 +211,7 @@ describe('action creators', () => {
 		assert.deepEqual(store.getActions()[0].patch, { title: 'foobar'});
 
 		await cede(); // allow async-queue process this request
-		
+
 		assert.strictEqual(store.getActions()[1].type, RECEIVE_UPDATE_ITEM);
 		assert.strictEqual(store.getActions()[1].item.title, 'foobar');
 		assert.strictEqual(store.getActions()[1].item.version, 1337);

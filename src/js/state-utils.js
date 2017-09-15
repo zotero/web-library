@@ -111,6 +111,13 @@ const getItems = state => {
 	return ckeys.map(ckey => state.items[ckey]);
 };
 
+const getChildItems = state => {
+	const libraryKey = getLibraryKey(state);
+	const item = getItem(state);
+	const ckeys = libraryKey && item && state.itemsByParentItem[ck(item.key, libraryKey)] || [];
+	return ckeys.map(ckey => state.items[ckey]);
+};
+
 const getItemFieldValue = (field, state) => {
 	const libraryKey = getLibraryKey(state);
 	const item = getItem(state);
@@ -131,12 +138,14 @@ const isItemFieldBeingUpdated = (field, state) => {
 };
 
 module.exports = {
+	getLibraryKey,
 	isCollectionSelected,
 	getCollection,
 	getCollections,
 	getTopCollections,
 	getItem,
 	getItems,
+	getChildItems,
 	getCollectionsPath,
 	getCurrentViewFromState,
 	getItemFieldValue,

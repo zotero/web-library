@@ -13,20 +13,45 @@ class RichEditor extends React.Component {
 		window.tinymce = tinymce;
 	}
 
-	handleTinymceSetup(tinymce) {
-		this.tinymce = tinymce;
+	componentWillReceiveProps(props) {
+		if(this.editor && (this.props.value !== props.value)) {
+			this.editor.setContent(props.value);
+			
+			// tinymce insists on focusing when switching readonly off
+			// it's is hardcoded with no opt out.
+			// below is a hack to prevent it from happening
+			let focus = this.editor.focus;
+			this.editor.focus = () => {};
+			this.editor.setMode('design');
+			this.editor.focus = focus;
+		}
 	}
 
-	onChangeHandler() {
+	handleEditorInit(ev, editor) {
+		this.editor = editor;
+	}
+
+	handleEditorInteraction() {
 		this.forceUpdate();
 	}
 
+	handleEditorFocus() {
+		clearTimeout(this.timeout);
+	}
+
+	handleEditorUpdate() {
+		this.timeout = setTimeout(() => {
+			this.editor.setMode('readonly');
+			this.props.onChange(this.editor.getContent());
+		}, 50);
+	}
+
 	buttonHandler(command) {
-		this.tinymce ? this.tinymce.editorCommands.execCommand(command) : null;
+		this.editor ? this.editor.editorCommands.execCommand(command) : null;
 	}
 
 	isEditorCommandState(command) {
-		return this.tinymce && this.tinymce.editorCommands.queryCommandState(command);
+		return this.editor && this.editor.editorCommands.queryCommandState(command);
 	}
 
 	render() {
@@ -62,12 +87,16 @@ class RichEditor extends React.Component {
 						config={{
 							skin_url: '/static/other/lightgray',
 							branding: false,
-							setup: this.handleTinymceSetup.bind(this),
 							toolbar: false,
 							menubar: false,
 							statusbar: false
 						}}
-						onChange={ this.onChangeHandler.bind(this) }
+						onInit={ this.handleEditorInit.bind(this) }
+						onChange={ this.handleEditorInteraction.bind(this) }
+						onKeyup={ this.handleEditorInteraction.bind(this) }
+						onMouseup={ this.handleEditorInteraction.bind(this) }
+						onFocus={ this.handleEditorFocus.bind(this) }
+						onBlur={ this.handleEditorUpdate.bind(this) }
 						/>
 				</div>
 			</div>
@@ -76,7 +105,8 @@ class RichEditor extends React.Component {
 }
 
 RichEditor.propTypes = {
-	value: PropTypes.string
+	value: PropTypes.string,
+	onChange: PropTypes.func.isRequired
 };
 
 RichEditor.defaultProps = {};

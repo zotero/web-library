@@ -5,14 +5,14 @@ const PropTypes = require('prop-types');
 const InjectableComponentsEnhance = require('../enhancers/injectable-components-enhancer');
 const { itemProp } = require('../constants/item');
 const { get } = require('../utils');
+const { noteAsTitle } = require('../common/format');
 const moment = require('moment');
 
 class Item extends React.Component {
-
 	renderItemTitle() {
 		switch(this.props.item.itemType) {
 			case 'note':
-				return this.props.item.note.split('\n')[0].replace(/<(?:.|\n)*?>/gm, '');
+				return noteAsTitle(this.props.item.note);
 			default:
 				return this.props.item.title;
 		}

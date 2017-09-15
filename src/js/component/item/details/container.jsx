@@ -5,32 +5,36 @@ const PropTypes = require('prop-types');
 const ItemDetails = require('../details');
 const ItemBox = require('../box/container');
 const { connect } = require('react-redux');
+const { fetchChildItems, updateItem } = require('../../../actions');
 const { itemProp } = require('../../../constants/item');
+const { get } = require('../../../utils');
+const { getItem, getChildItems } = require('../../../state-utils');
 
 class ItemDetailsContainer extends React.Component {
+	componentWillReceiveProps(props) {
+		const itemKey = get(props, 'item.key');
+		if(itemKey && get(this.props, 'item.key') !== itemKey) {
+			this.props.dispatch(fetchChildItems(itemKey));
+		}
+	}
+
+	async handleNoteChange(key, note) {
+		await this.props.dispatch(updateItem(key, { note }));
+	}
+
 	render() {
 		return <ItemDetails
-			injectItemBox = { ItemBox }
+			injectItemBox={ ItemBox }
+			onNoteChange={ this.handleNoteChange.bind(this) }
 			{ ...this.props }
 		/>;
 	}
 }
 
 const mapStateToProps = state => {
-	var items, item;
-	let selectedCollectionKey = 'collection' in state.router.params ? state.router.params.collection : null;
-	let selectedItemKey = 'item' in state.router.params ? state.router.params.item : null;
-
-	if(selectedCollectionKey && state.items[selectedCollectionKey]) {
-		items = state.items[selectedCollectionKey].items;
-	}
-
-	if(items && selectedItemKey) {
-		item = items.find(i => i.key === selectedItemKey);
-	}
-
 	return {
-		item
+		item: getItem(state) || {},
+		childItems: getChildItems(state) || []
 	};
 };
 
@@ -42,7 +46,8 @@ const mapDispatchToProps = dispatch => {
 
 ItemDetailsContainer.propTypes = {
 	fields: PropTypes.array,
-	item: itemProp
+	item: itemProp,
+	dispatch: PropTypes.func.isRequired
 };
 
 module.exports = connect(

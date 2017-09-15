@@ -91,7 +91,9 @@ class ItemDetails extends React.Component {
 						}) }>
 						<h5 className="h2 tab-pane-heading">Notes</h5>
 						<NoteEditor
-							notes={ [] }
+							item={ this.props.item }
+							notes={ this.props.childItems.filter(i => i.itemType === 'note') }
+							onChange={ this.props.onNoteChange }
 						/>
 					</div>
 					<div className={ cx({
@@ -131,7 +133,9 @@ ItemDetails.defaultProps = {
 
 ItemDetails.propTypes = {
 	active: PropTypes.bool,
-	item: itemProp
+	item: itemProp,
+	childItems: PropTypes.array,
+	onNoteChange: PropTypes.func.isRequired
 };
 
 module.exports = InjectableComponentsEnhance(ItemDetails);

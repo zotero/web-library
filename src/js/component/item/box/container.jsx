@@ -16,7 +16,7 @@ const {
 class ItemBoxContainer extends React.Component {
 	async itemUpdatedHandler(item, fieldKey, newValue) {
 		await this.props.dispatch(
-			updateItem(this.props.libraryKey, item.key, {
+			updateItem(item.key, {
 				[fieldKey]: newValue
 			})
 		);

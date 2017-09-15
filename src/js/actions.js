@@ -2,6 +2,7 @@ const cache = require('zotero-api-client-cache');
 const api = require('zotero-api-client')().use(cache()).api;
 
 const { ck } = require('./utils');
+const { getLibraryKey } = require('./state-utils');
 
 const {
 	CONFIGURE_API,
@@ -130,6 +131,7 @@ const fetchItems = (collectionKey) => {
 				.library(library.libraryKey)
 				.collections(collectionKey)
 				.items()
+				.top()
 				.get({
 					limit: 50
 				});
@@ -169,8 +171,10 @@ const fetchItems = (collectionKey) => {
 	};
 };
 
-const updateItem = (libraryKey, itemKey, patch) => {
-	return async dispatch => {
+const updateItem = (itemKey, patch, libraryKey) => {
+	return async (dispatch, getState) => {
+		libraryKey = libraryKey || getLibraryKey(getState());
+
 		dispatch({
 			type: REQUEST_UPDATE_ITEM,
 			itemKey,
@@ -238,12 +242,14 @@ const fetchItemTypeFields = (itemType) => {
 
 const fetchChildItems = (itemKey, libraryKey) => {
 	return async (dispatch, getState) => {
+		let config = getState().config;
+		libraryKey = libraryKey || getLibraryKey(getState());
 		dispatch({
 			type: REQUEST_CHILD_ITEMS,
 			itemKey,
 			libraryKey
 		});
-		let config = getState().config;
+		
 		try {
 			let childItems = (await api(config.apiKey, config.apiConfig).library(libraryKey).items(itemKey).children().get()).getData();
 			dispatch({
@@ -296,8 +302,17 @@ function queueUpdateItem(itemKey, libraryKey, patch) {
 					...response.getData()
 				};
 
-				for(var collectionKey of updatedItem.collections) {
-					api().invalidate('resource.collections', collectionKey);
+				if(updatedItem.collections) {
+					for(var collectionKey of updatedItem.collections) {
+						api().invalidate('resource.collections', collectionKey);
+					}
+				}
+
+				if(updatedItem.parentItem) {
+					api().invalidate({
+						'resource.items': updatedItem.parentItem,
+						'resource.children': null
+					});
 				}
 				api().invalidate('resource.items', itemKey);
 

@@ -2,13 +2,14 @@
 
 const assert = require('chai').assert;
 const collectionsFixture = require('./fixtures/collections');
-const itemsFixture = require('./fixtures/items-top');
+const itemsFixture = require('./fixtures/items');
 const {
 	getCollection,
 	getCollections,
 	getTopCollections,
 	getItem,
 	getItems,
+	getChildItems,
 	getCollectionsPath,
 	getCurrentViewFromState,
 	getItemFieldValue,
@@ -42,6 +43,9 @@ describe('state-utils', () => {
 			}, {}),
 			itemsByCollection: {
 				[ck('AAAAAAAA', LIBRARY_KEY)]: [ck('ITEM1111', LIBRARY_KEY), ck('ITEM2222', LIBRARY_KEY)]
+			},
+			itemsByParentItem: {
+				[ck('ITEM1111', LIBRARY_KEY)]: [ck('CHILD111', LIBRARY_KEY), ck('CHILD222', LIBRARY_KEY)]
 			},
 			updating: {},
 			fetchItems: {}
@@ -97,6 +101,24 @@ describe('state-utils', () => {
 		assert.equal(getItems(state)[0].title, 'document-1');
 		assert.equal(getItems(state)[1].key, 'ITEM2222');
 		assert.equal(getItems(state)[1].title, 'document-2');
+	});
+
+	it('getChildItems', () => {
+		state = {
+			...state,
+			router: {
+				params: {
+					collection: 'AAAAAAAA',
+					item: 'ITEM1111'
+				}
+			}
+		};
+
+		assert.equal(getChildItems(state).length, 2);
+		assert.equal(getChildItems(state)[0].key, 'CHILD111');
+		assert.equal(getChildItems(state)[0].filename, 'lorem-ipsum.gif');
+		assert.equal(getChildItems(state)[1].key, 'CHILD222');
+		assert.equal(getChildItems(state)[1].filename, 'foo-bar.gif');
 	});
 
 	it('getCollectionsPath', () => {

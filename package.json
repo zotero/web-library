@@ -15,7 +15,7 @@
   "scripts": {
     "build": "gulp build",
     "start": "gulp",
-    "test": "npm-run mocha --compilers js:babel-register test/**/*.spec.js",
+    "test": "npm-run mocha --compilers js:babel-register 'test/**/*.spec.js'",
     "prepack": "gulp prepublish",
     "postpack": "gulp postpublish"
   },
