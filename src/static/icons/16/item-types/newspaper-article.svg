@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+	<symbol id="newspaper-article" viewBox="0 0 16 16">
+		<path fill="currentColor" d="M3,2V4H1v9.5A1.5,1.5,0,0,0,2.5,15h12A1.5,1.5,0,0,0,16,13.5V2ZM2,13.5V5H3v8.5a.5.5,0,0,1-1,0Zm13,0a.5.5,0,0,1-.5.5H3.908A1.486,1.486,0,0,0,4,13.5V3H15ZM9,8H5v3H9ZM8,10H6V9H8Zm2-2h4V9H10Zm0,2h4v1H10Zm4,3H5V12h9Zm0-9H5V7h9ZM13,6H6V5h7Z"/>
+	</symbol>
+	<use xlink:href="#newspaper-article" viewBox="0 0 16 16"/>
+</svg>

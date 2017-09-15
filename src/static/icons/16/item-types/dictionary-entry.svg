@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+	<symbol id="dictionary-entry" viewBox="0 0 16 16">
+		<path fill="currentColor" d="M9.707,0H1V16H14V4.293Zm2.586,4H10V1.707ZM13,15H2V1H9V5h4ZM8.343,6H6.657L3.964,13H3v1H6V13H5.036l.385-1H9.58l.385,1H9v1h3V13h-.964ZM5.8,11,7.343,7h.313L9.2,11Z"/>
+	</symbol>
+	<use xlink:href="#dictionary-entry" viewBox="0 0 16 16"/>
+</svg>
