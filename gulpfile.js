@@ -148,7 +148,7 @@ gulp.task('build', ['clean:build'], () => {
 });
 
 gulp.task('prepublish:js', () => {
-	return gulp.src('./src/js/**/*.js*', )
+	return gulp.src('./src/js/**/*.js*')
 			.pipe(babel())
 			.pipe(gulp.dest('./lib/'));
 });
