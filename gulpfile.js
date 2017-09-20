@@ -96,7 +96,7 @@ function getStatic(dev) {
 		return vfs.src('./src/static/*')
 			.pipe(vfs.symlink('./build/static/'));
 	} else {
-		return gulp.src('./src/static/**/*')
+		return gulp.src('./src/static/**/*', { nodir: true })
 			.pipe(gulp.dest('./build/static/'));
 	}
 }
