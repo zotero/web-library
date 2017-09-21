@@ -15,7 +15,7 @@ class Library extends React.Component {
 		};
 	}
 
-	navToggleHandler() {
+	handleNavToggle() {
 		this.setState({
 			isNavOpened: !this.state.isNavOpened
 		});
@@ -33,7 +33,7 @@ class Library extends React.Component {
 		let TouchHeader = this.props.components['TouchHeader'];
 
 		let activeViewClass = `view-${this.props.view}-active`;
-
+		
 		return (
 			<div className={ cx(activeViewClass, {
 					'keyboard': this.state.keyboard,
@@ -41,7 +41,7 @@ class Library extends React.Component {
 				}) }>
 				<Navbar
 					isOpened = { this.state.isNavOpened }
-					onToggle = { this.navToggleHandler.bind(this) }  />
+					onToggle = { this.handleNavToggle.bind(this) }  />
 				<div className="nav-cover" />
 				<main>
 					<section className={ `library ${ this.props.view === 'library' ? 'active' : '' }` }>

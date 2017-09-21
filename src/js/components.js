@@ -18,6 +18,7 @@ const RichEditor = require('./component/rich-editor');
 const Spinner = require('./component/ui/spinner');
 const TagSelector = require('./component/tag-selector');
 const TouchHeader = require('./component/touch-header');
+const TouchNavigation = require('./component/touch-navigation');
 const { Tab, Tabs } = require('./component/ui/tabs');
 const { Toolbar, ToolGroup } = require('./component/ui/toolbars');
 
@@ -43,5 +44,6 @@ module.exports = () => ({
 	TagSelector,
 	Toolbar,
 	ToolGroup,
-	TouchHeader
+	TouchHeader,
+	TouchNavigation
 });

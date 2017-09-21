@@ -77,9 +77,11 @@ const get = (src, path, fallback) => {
 	return obj;
 };
 
+const noop = () => {};
 
 module.exports = { 
 	enhanceCollections,
 	ck,
-	get
+	get,
+	noop
 };

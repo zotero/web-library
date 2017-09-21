@@ -1,5 +1,5 @@
 {
-	"presets": ["react"],
+	"presets": ["stage-2", "react"],
 	"plugins": [
 		"transform-object-rest-spread",
 		"transform-decorators-legacy"
