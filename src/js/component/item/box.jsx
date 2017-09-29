@@ -67,6 +67,7 @@ class ItemBox extends React.Component {
 												options = { field.options || null }
 												processing={ field.processing || false }
 												value={ field.value || '' }
+												displayValue={ field.options.find(o => o.value === field.value).label }
 												editOnClick = { !field.readonly }
 												onToggle={ this.onEditableToggleHandler.bind(this, field.key) }
 												onSave={ newValue => this.props.onSave(field.key, newValue) } 
