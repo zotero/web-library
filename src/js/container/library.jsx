@@ -8,19 +8,20 @@ const ReduxAsyncQueue = require('redux-async-queue').default;
 const { createHistory } = require('history');
 const { createStore, applyMiddleware, compose, combineReducers } = require('redux');
 const { Provider, connect } = require('react-redux');
-const { reduxReactRouter, routerStateReducer, ReduxRouter, push } = require('redux-router');
+// const createHistory = require('history/createBrowserHistory');
+const { ConnectedRouter, routerReducer, routerMiddleware, push } = require('react-router-redux');
 const { Route } = require('react-router');
 const reducers = require('../reducers');
 const { getCurrentViewFromState } = require('../state-utils');
 const { selectLibrary, initialize, triggerResizeViewport } = require('../actions');
 const Library = require('../component/library');
 
+const history = createHistory();
+const middleware = routerMiddleware(history);
+
  //@TODO: ensure this doesn't affect prod build
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
-
-const combinedReducers = combineReducers(Object.assign({}, reducers, {
-	router: routerStateReducer
-}));
+const combinedReducers = combineReducers(reducers);
 
 class LibraryContainer extends React.Component {
 	constructor(props) {
@@ -77,20 +78,18 @@ class LibraryContainer extends React.Component {
 						ReduxThunk,
 						ReduxAsyncQueue
 					),
-					reduxReactRouter({
-						createHistory
-					})
+					middleware
 				)
 			);
 
 			ReactDOM.render(
 				<Provider store={store}>
-					<ReduxRouter>
+					<ConnectedRouter history={history}>
 						<Route path="/" component={LibraryContainerWrapped}>
 							<Route path="/collection/:collection" />
 							<Route path="/collection/:collection/item/:item" />
 						</Route>
-					</ReduxRouter>
+					</ConnectedRouter>
 				</Provider>
 				, element
 			);
