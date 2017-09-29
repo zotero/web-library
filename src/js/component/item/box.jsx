@@ -50,7 +50,7 @@ class ItemBox extends React.Component {
 										key={ field.key }
 										name={ field.key }
 										creatorTypes = { this.props.creatorTypes }
-										value = { field.value || [] }
+										value={ field.value || [] }
 										onSave={ newValue => this.props.onSave(field.key, newValue) } />
 								);
 							case 'itemType':
@@ -93,6 +93,50 @@ class ItemBox extends React.Component {
 												editOnClick = { !field.readonly }
 												onToggle={ this.onEditableToggleHandler.bind(this, field.key) }
 												onSave={ newValue => this.props.onSave(field.key, newValue) } 
+											/>
+										</div>
+									</li>
+								);
+							case 'url':
+								return (
+									<li key={ field.key } className={ cx('metadata', classNames) }>
+										<div className='key'>
+											<label>
+												<a rel='nofollow' href={ field.value }>
+													{ field.label }
+												</a>	
+											</label>
+										</div>
+										<div className='value'>
+											<Editable
+												name={ field.key }
+												processing={ field.processing || false }
+												value={ field.value || '' }
+												editOnClick={ !field.readonly }
+												onToggle={ this.onEditableToggleHandler.bind(this, field.key) }
+												onSave={ newValue => this.props.onSave(field.key, newValue) }
+											/>
+										</div>
+									</li>
+								);
+							case 'DOI':
+								return (
+									<li key={ field.key } className={ cx('metadata', classNames) }>
+										<div className='key'>
+											<label>
+												<a rel='nofollow' href={ 'http://dx.doi.org/' + this.props.value }>
+													{ field.label }
+												</a>	
+											</label>
+										</div>
+										<div className='value'>
+											<Editable
+												name={ field.key }
+												processing={ field.processing || false }
+												value={ field.value || '' }
+												editOnClick={ !field.readonly }
+												onToggle={ this.onEditableToggleHandler.bind(this, field.key) }
+												onSave={ newValue => this.props.onSave(field.key, newValue) }
 											/>
 										</div>
 									</li>
