@@ -1,6 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-	<symbol id="new" viewBox="0 0 16 16">
-		<path fill-rule="evenodd" fill="currentColor" d="M15.001,0l-0.001,15.985l-14.046,0l0,-15.985l14.047,0Zm-1.001,0.999l0,13.987l-12.047,0l0,-13.987l12.047,0Zm-3,8.001l0,2l2,0l0,1l-2,0l0,2l-1,0l0,-2l-1.984,0l0,-1l1.984,0l0,-2l1,0Zm0.943,-1.008l-7.992,0l0,-0.999l7.992,0l0,0.999Zm0,-2.997l-7.992,0l0,-0.999l7.992,0l0,0.999Z"/>
-	</symbol>
-	<use xlink:href="#new" viewBox="0 0 16 16"/>
-</svg>
