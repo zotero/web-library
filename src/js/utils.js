@@ -49,6 +49,18 @@ const ck = (itemOrCollectionKey, libraryKey) => {
 	return itemOrCollectionKey + libraryKey;
 };
 
+const splice = (array, at, count = 0, ...items) => {
+	if (at == null) {
+		at = array.length;
+	}
+
+	return [
+		...array.slice(0, at),
+		...items,
+		...array.slice(at + count)
+	];
+};
+
 const get = (src, path, fallback) => {
 	if(src === null) {
 		return fallback;
@@ -77,11 +89,17 @@ const get = (src, path, fallback) => {
 	return obj;
 };
 
+const transform = (src, path, f, fallback = {}) => {
+	return f(get(src, path) || fallback);
+};
+
 const noop = () => {};
 
 module.exports = { 
-	enhanceCollections,
 	ck,
+	enhanceCollections,
 	get,
-	noop
+	noop,
+	splice,
+	transform
 };

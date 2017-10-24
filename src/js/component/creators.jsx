@@ -6,88 +6,94 @@ const cx = require('classnames');
 const Editable = require('./editable');
 const Button = require('./ui/button');
 const Icon = require('./ui/icon');
+const deepEqual = require('deep-equal');
+const { splice } = require('../utils');
+
+const isVirtual = Symbol.for('isVirtual');
 
 class Creators extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
 			isCreatorTypeEditing: false,
-			creators: props.value
+			creators: props.value.length ? props.value : [this.newCreator]
 		};
 	}
 
 	componentWillReceiveProps(props) {
-		this.setState({
-			creators: props.value
-		});	
+		if (!deepEqual(this.props.value, props.value)) {
+			this.setState({
+				creators: props.value.length ? props.value : [this.newCreator]
+			});
+		}
+	}
+
+	saveCreatorsHandler(creators) {
+		this.setState({ creators });
+		this.props.onSave(creators.filter(
+			creator => !creator.isVirtual && (creator.lastName || creator.firstName || creator.name) 
+		));		
 	}
 
 	valueChangedHandler(index, key, value) {
-		const newCreators = this.state.creators.slice(0);
-		if(typeof newCreators[index] === 'undefined') {
-			newCreators[index] = {
-				creatorType: this.props.creatorTypes[0].value,
-				firstName: '',
-				lastName: ''
-			};
+		const creators = [...this.state.creators];
+		creators[index][key] = value;
+		if(creators[index][isVirtual]) {
+			delete creators[index][isVirtual];
 		}
-		newCreators[index][key] = value;
-
-		if(newCreators[index].lastName || newCreators[index].firstName || newCreators[index].name) {
-			this.props.onSave(newCreators);
-		}
+		this.saveCreatorsHandler(creators);
 	}
 
 	addCreatorHandler() {
-		const newCreators = this.state.creators.slice(0);
-		newCreators.push({
-			creatorType: 'author',
+		const creators = [...this.state.creators];
+		creators.push({
+			creatorType: 'author', 
 			firstName: '',
-			lastName: ''
+			lastName: '',
+			[isVirtual]: true
 		});
-		this.setState({creators: newCreators});
+		this.setState({ creators });
 	}
 
 	removeCreatorHandler(index) {
-		const newCreators = this.state.creators.slice(0);
-		newCreators.splice(index, 1);
-		this.props.onSave(newCreators);
+		this.saveCreatorsHandler(splice(this.state.creators, index, 1));
 	}
 
 	switchCreatorTypeHandler(index) {
-		const newCreators = this.state.creators.slice(0);
-		if('name' in newCreators[index]) {
-			let creator = newCreators[index].name.split(' ');
-			newCreators[index] = {
+		const creators = [...this.state.creators];
+
+		if('name' in creators[index]) {
+			let creator = creators[index].name.split(' ');
+			creators[index] = {
 				lastName: creator.length > 1 ? creator[1] : '',
 				firstName: creator[0],
-				creatorType: newCreators[index].creatorType
+				creatorType: creators[index].creatorType
 			};
-		} else if('lastName' in newCreators[index]) {
-			newCreators[index] = {
-				name: `${newCreators[index].firstName} ${newCreators[index].lastName}`.trim(),
-				creatorType: newCreators[index].creatorType
+		} else if('lastName' in creators[index]) {
+			creators[index] = {
+				name: `${creators[index].firstName} ${creators[index].lastName}`.trim(),
+				creatorType: creators[index].creatorType
 			};
 		}
-		this.setState({
-			creators: newCreators
-		});
 
-		if(newCreators[index].lastName || newCreators[index].firstName || newCreators[index].name) {
-			this.props.onSave(newCreators);
-		}
+		this.saveCreatorsHandler(creators);
+	}
+
+	get newCreator() {
+		return {
+			creatorType: 'author',
+			firstName: '',
+			lastName: '',
+			[isVirtual]: true
+		};
+	}
+
+	get hasVirtual() {
+		return !!this.state.creators.find(creator => creator[isVirtual]);
 	}
 
 	render() {
 		let creators = this.state.creators;
-		
-		if(this.state.creators.length === 0 && this.props.creatorTypes.length) {
-			creators = [{
-				creatorType: this.props.creatorTypes[0].value,
-				firstName: '',
-				lastName: ''
-			}];
-		}
 
 		return (
 			<div className="creators">
@@ -154,7 +160,7 @@ class Creators extends React.Component {
 										<Icon type={ '16/trash' } width="16" height="16" />
 									</Button>
 									{(() => {
-											if(index + 1 == this.state.creators.length) {
+											if(index + 1 == this.state.creators.length && !this.hasVirtual) {
 												return (
 													<Button onClick={ this.addCreatorHandler.bind(this) }>
 														<Icon type={ '16/plus' } width="16" height="16" />
