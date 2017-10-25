@@ -140,6 +140,8 @@ class Editable extends React.Component {
 							className="editable-control"
 							simpleValue
 							tabIndex="-1"
+							autofocus = { this.props.selectPreOpen }
+							openOnFocus = { this.props.selectPreOpen }
 							clearable = { false }
 							ref={ ref => this.input = ref }
 							value={ this.state.value }
@@ -232,6 +234,7 @@ Editable.propTypes = {
 	onChange: PropTypes.func,
 	onToggle: PropTypes.func,
 	editOnClick: PropTypes.bool,
+	selectPreOpen: PropTypes.bool,
 	options: PropTypes.array,
 	isLoading: PropTypes.bool,
 	children: PropTypes.node
@@ -245,7 +248,8 @@ Editable.defaultProps  = {
 	onSave: v => Promise.resolve(v),
 	onChange: () => {},
 	onToggle: () => {},
-	editOnClick: true
+	editOnClick: true,
+	selectPreOpen: true
 };
 
 module.exports = InjectableComponentsEnhance(Editable);
