@@ -56,7 +56,11 @@ class Creators extends React.Component {
 	}
 
 	removeCreatorHandler(index) {
-		this.saveCreatorsHandler(splice(this.state.creators, index, 1));
+		if(this.state.creators.length > 1) {
+			this.saveCreatorsHandler(splice(this.state.creators, index, 1));
+		} else {
+			this.saveCreatorsHandler([this.newCreator]);
+		}
 	}
 
 	switchCreatorTypeHandler(index) {
@@ -156,9 +160,22 @@ class Creators extends React.Component {
 									<Button onClick={ this.switchCreatorTypeHandler.bind(this, index) }>
 										<Icon type={ 'name' in creator ? '16/input-dual' : '16/input-single' } width="16" height="16" />
 									</Button>
-									<Button onClick={ this.removeCreatorHandler.bind(this, index) }>
-										<Icon type={ '16/trash' } width="16" height="16" />
-									</Button>
+									{(() => {
+											if(!creator[isVirtual] || creators.length > 1) {
+												return (
+													<Button onClick={ this.removeCreatorHandler.bind(this, index) }>
+														<Icon type={ '16/trash' } width="16" height="16" />
+													</Button>
+												);
+											} else {
+												return (
+													<Button disabled={ true }>
+														<Icon color="rgba(0, 0, 0, 0.15)" type={ '16/trash' } width="16" height="16" />
+													</Button>
+												);
+											}
+										})()
+									}
 									{(() => {
 											if(index + 1 == this.state.creators.length && !this.hasVirtual) {
 												return (
