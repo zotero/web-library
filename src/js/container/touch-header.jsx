@@ -2,13 +2,16 @@
 
 const React = require('react');
 const PropTypes = require('prop-types');
-const { itemProp } = require('../../constants/item');
+const { itemProp } = require('../constants/item');
 const { connect } = require('react-redux');
 const { push } = require('redux-router');
-const { triggerEditingItem } = require('../../actions');
-const { getCurrentViewFromState } = require('../../state-utils');
-const { getCollections, getCollectionsPath } = require('../../state-utils');
-const TouchHeader = require('../touch-header');
+const { triggerEditingItem } = require('../actions');
+const { 
+	getCurrentViewFromState,
+	getCollections,
+	getCollectionsPath
+} = require('../state-utils');
+const TouchHeader = require('../component/touch-header');
 
 class TouchHeaderContainer extends React.Component {
 	onCollectionSelected(collectionKey) {

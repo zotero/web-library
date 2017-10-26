@@ -2,7 +2,6 @@
 
 const React = require('react');
 const PropTypes = require('prop-types');
-const InjectableComponentsEnhance = require('../../enhancers/injectable-components-enhancer');
 
 class Navbar extends React.Component {
 	constructor(props) {
@@ -49,4 +48,4 @@ Navbar.defaultProps = {
 	isOpened: false
 };
 
-module.exports = InjectableComponentsEnhance(Navbar);
+module.exports = Navbar;

@@ -3,7 +3,10 @@
 const React = require('react');
 const PropTypes = require('prop-types');
 const cx = require('classnames');
-const InjectableComponentsEnhance = require('../../enhancers/injectable-components-enhancer');
+
+const Editable = require('../editable');
+const Creators = require('../creators');
+const Spinner = require('../ui/spinner');
 
 class ItemBox extends React.Component {
 	constructor(props) {
@@ -23,10 +26,6 @@ class ItemBox extends React.Component {
 	}
 
 	render() {
-		let Editable = this.props.components['Editable'];
-		let Creators = this.props.components['Creators'];
-		let Spinner = this.props.components['Spinner'];
-
 		if(this.props.isLoading) {
 			return <Spinner />;
 		}
@@ -182,4 +181,4 @@ ItemBox.propTypes = {
 	onSave: PropTypes.func
 };
 
-module.exports = InjectableComponentsEnhance(ItemBox);
+module.exports = ItemBox;

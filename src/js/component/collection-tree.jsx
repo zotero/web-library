@@ -2,7 +2,8 @@
 
 const React = require('react');
 const PropTypes = require('prop-types');
-const InjectableComponentsEnhance = require('../enhancers/injectable-components-enhancer');
+const Icon = require('./ui/icon');
+const Spinner = require('./ui/spinner');
 
 class CollectionTree extends React.Component {
 	collectionSelectedHandler(key, ev) {
@@ -47,7 +48,7 @@ class CollectionTree extends React.Component {
 	renderCollections(collections, level) {
 		let hasOpen = this.testRecursive(collections, col => col.isSelected);
 		let hasOpenLastLevel = collections.some(col => col.isSelected && !col.hasChildren);
-		let Icon = this.props.components['Icon'];
+		
 
 		return (
 			<div className={ `level level-${level} ${hasOpen ? 'has-open' : ''} ${hasOpenLastLevel ? 'level-last' : ''}` }>
@@ -93,7 +94,6 @@ class CollectionTree extends React.Component {
 	}
 
 	render() {
-		const Spinner = this.props.components['Spinner'];
 		const selectedCollection = this.props.collections.find(c => c.isSelected) || null;
 		const topLevelCollections = this.props.collections.filter(c => c.parentCollection === false);
 		if(this.props.isFetching) {
@@ -153,4 +153,4 @@ CollectionTree.defaultProps = {
 	onCollectionSelected: () => null
 };
 
-module.exports = InjectableComponentsEnhance(CollectionTree);
+module.exports = CollectionTree;

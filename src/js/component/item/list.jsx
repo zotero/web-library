@@ -3,10 +3,11 @@
 const React = require('react');
 const keydown = require('react-keydown').default;
 const PropTypes = require('prop-types');
-const InjectableComponentsEnhance = require('../../enhancers/injectable-components-enhancer');
+
+const Item = require('../item');
+const Spinner = require('../ui/spinner');
 
 class ItemList extends React.Component {
-
 	@keydown( 'down' )
 	handleKeyDown() {
 		let index = this.props.items.findIndex(item => item.key === this.props.selectedItemKey) + 1;
@@ -24,9 +25,6 @@ class ItemList extends React.Component {
 	}
 
 	render() {
-		let Item = this.props.components['Item'];
-		let Spinner = this.props.components['Spinner'];
-
 		if(this.props.isFetching) {
 			return <Spinner />;
 		} else {
@@ -72,4 +70,4 @@ ItemList.defaultProps = {
 	isFetching: false
 };
 
-module.exports = InjectableComponentsEnhance(ItemList);
+module.exports = ItemList;

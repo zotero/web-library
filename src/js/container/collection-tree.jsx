@@ -4,10 +4,10 @@ const React = require('react');
 const PropTypes = require('prop-types');
 const { connect } = require('react-redux');
 const { push } = require('redux-router');
-const CollectionTree = require('../collection-tree');
-const { fetchCollections } = require('../../actions');
-const { getCollections, getCollectionsPath } = require('../../state-utils');
-const { enhanceCollections } = require('../../utils');
+const CollectionTree = require('../component/collection-tree');
+const { fetchCollections } = require('../actions');
+const { getCollections, getCollectionsPath } = require('../state-utils');
+const { enhanceCollections } = require('../utils');
 
 class CollectionTreeContainer extends React.Component {
 	constructor(props) {

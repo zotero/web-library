@@ -3,9 +3,13 @@
 const React = require('react');
 const PropTypes = require('prop-types');
 const cx = require('classnames');
-const InjectableComponentsEnhance = require('../enhancers/injectable-components-enhancer');
 const { noteAsTitle } = require('../common/format');
 const { get } = require('../utils');
+
+const { Toolbar, ToolGroup } = require('./ui/toolbars');
+const Icon = require('./ui/icon');
+const Button = require('./ui/button');
+const RichEditor = require('./rich-editor');
 
 class NoteEditor extends React.Component {
 	constructor(props) {
@@ -35,8 +39,6 @@ class NoteEditor extends React.Component {
 	}
 
 	get richEditor() {
-		let RichEditor = this.props.components['RichEditor'];
-
 		return (
 			<div className="editor">
 				<RichEditor 
@@ -48,11 +50,6 @@ class NoteEditor extends React.Component {
 	}
 
 	render() {
-		let Toolbar = this.props.components['Toolbar'];
-		let ToolGroup = this.props.components['ToolGroup'];
-		let Icon = this.props.components['Icon'];
-		let Button = this.props.components['Button'];
-
 		return (
 			<div className="note-editor">
 				<nav>
@@ -103,4 +100,4 @@ NoteEditor.defaultProps = {
 	notes: []
 };
 
-module.exports = InjectableComponentsEnhance(NoteEditor);
+module.exports = NoteEditor;

@@ -2,7 +2,6 @@
 
 const React = require('react');
 const PropTypes = require('prop-types');
-const InjectableComponentsEnhance = require('../enhancers/injectable-components-enhancer');
 const { itemProp } = require('../constants/item');
 const { get } = require('../utils');
 const { noteAsTitle } = require('../common/format');
@@ -59,4 +58,4 @@ Item.defaultProps = {
 	onClick: () => {} 
 };
 
-module.exports = InjectableComponentsEnhance(Item);
+module.exports = Item;

@@ -10,14 +10,10 @@ const { createStore, applyMiddleware, compose, combineReducers } = require('redu
 const { Provider, connect } = require('react-redux');
 const { reduxReactRouter, routerStateReducer, ReduxRouter, push } = require('redux-router');
 const { Route } = require('react-router');
-const reducers = require('../../reducers');
-const { getCurrentViewFromState } = require('../../state-utils');
-const { selectLibrary, initialize, triggerResizeViewport } = require('../../actions');
-const CollectionTreeContainer = require('../collection-tree/container');
-const ItemDetailsContainer = require('../item/details/container');
-const ItemListContainer = require('../item/list/container');
-const Library = require('../library');
-const TouchHeaderContainer = require('../touch-header/container');
+const reducers = require('../reducers');
+const { getCurrentViewFromState } = require('../state-utils');
+const { selectLibrary, initialize, triggerResizeViewport } = require('../actions');
+const Library = require('../component/library');
 
  //@TODO: ensure this doesn't affect prod build
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
@@ -59,13 +55,7 @@ class LibraryContainer extends React.Component {
 	}
 
 	render() {
-		return <Library
-			view={ this.props.view }
-			injectCollectionTree = { CollectionTreeContainer }
-			injectItemList = { ItemListContainer }
-			injectItemDetails = { ItemDetailsContainer }
-			injectTouchHeader = { TouchHeaderContainer }
-		/>;
+		return <Library view={ this.props.view } />;
 	}
 
 	static init(element, opts = {}) {

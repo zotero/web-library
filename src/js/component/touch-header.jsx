@@ -3,7 +3,7 @@
 const React = require('react');
 const PropTypes = require('prop-types');
 const Button = require('./ui/button');
-const InjectableComponentsEnhance = require('../enhancers/injectable-components-enhancer');
+const TouchNavigation = require('./touch-navigation');
 
 class TouchHeader extends React.Component {
 	collectionSelectedHandler(key, ev) {
@@ -12,7 +12,6 @@ class TouchHeader extends React.Component {
 	}
 
 	render() {
-		let TouchNavigation = this.props.components['TouchNavigation'];
 		if(this.props.editing) {
 			return (
 				<header className="touch-header hidden-sm-up">
@@ -59,4 +58,4 @@ TouchHeader.defaultProps = {
 	path: []
 };
 
-module.exports = InjectableComponentsEnhance(TouchHeader);
+module.exports = TouchHeader;

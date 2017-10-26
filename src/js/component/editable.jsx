@@ -4,7 +4,8 @@ const React = require('react');
 const PropTypes = require('prop-types');
 const cx = require('classnames');
 const Select = require('react-select');
-const InjectableComponentsEnhance = require('../enhancers/injectable-components-enhancer');
+const Spinner = require('./ui/spinner');
+const EditableContent = require('./editable/content');
 
 class Editable extends React.Component {
 	constructor(props) {
@@ -123,7 +124,6 @@ class Editable extends React.Component {
 	}
 
 	renderSpinner() {
-		const Spinner = this.props.components['Spinner'];
 		if(this.state.processing || this.props.processing) {
 			return <Spinner />;
 		} else {
@@ -132,8 +132,6 @@ class Editable extends React.Component {
 	}
 
 	renderControl() {
-		let EditableContent = this.props.components['EditableContent'];
-
 		if(this.state.editing) {
 			if(this.props.options) {
 				return <Select
@@ -252,4 +250,4 @@ Editable.defaultProps  = {
 	selectPreOpen: true
 };
 
-module.exports = InjectableComponentsEnhance(Editable);
+module.exports = Editable;

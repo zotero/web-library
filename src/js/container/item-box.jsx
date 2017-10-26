@@ -2,16 +2,16 @@
 
 const React = require('react');
 const PropTypes = require('prop-types');
-const ItemBox = require('../box');
+const ItemBox = require('../component/item/box');
 const { connect } = require('react-redux');
-const { updateItem, fetchItemTypeCreatorTypes, fetchItemTypeFields } = require('../../../actions');
-const { itemProp, hideFields, noEditFields } = require('../../../constants/item');
-const { get } = require('../../../utils');
+const { updateItem, fetchItemTypeCreatorTypes, fetchItemTypeFields } = require('../actions');
+const { itemProp, hideFields, noEditFields } = require('../constants/item');
+const { get } = require('../utils');
 const { 
 	getItem,
 	getItemFieldValue,
 	isItemFieldBeingUpdated
-} = require('../../../state-utils');
+} = require('../state-utils');
 
 class ItemBoxContainer extends React.Component {
 	async itemUpdatedHandler(item, fieldKey, newValue) {

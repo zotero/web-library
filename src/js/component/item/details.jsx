@@ -3,8 +3,12 @@
 const React = require('react');
 const PropTypes = require('prop-types');
 const cx = require('classnames');
-const InjectableComponentsEnhance = require('../../enhancers/injectable-components-enhancer');
 const { itemProp } = require('../../constants/item');
+
+const ItemBoxContainer = require('../../container/item-box');
+const Panel = require('../ui/panel');
+const { Tab, Tabs } = require('../ui/tabs');
+const NoteEditor = require('../note-editor');
 
 class ItemDetails extends React.Component {
 	constructor(props) {
@@ -15,12 +19,6 @@ class ItemDetails extends React.Component {
 	}
 
 	render() {
-		let ItemBox = this.props.components['ItemBox'];
-		let Panel = this.props.components['Panel'];
-		let Tab = this.props.components['Tab'];
-		let Tabs = this.props.components['Tabs'];
-		let NoteEditor = this.props.components['NoteEditor'];
-
 		return (
 			<section className={ `item details ${this.props.active ? 'active' : ''}` }>
 				<Panel>
@@ -69,7 +67,7 @@ class ItemDetails extends React.Component {
 						<div className="row">
 							<div className="col">
 								<h5 className="h1 item-title">Item Title</h5>
-								<ItemBox
+								<ItemBoxContainer
 									item={ this.props.item }
 									hiddenFields={ [ 'abstractNote' ] }
 								/>
@@ -138,4 +136,4 @@ ItemDetails.propTypes = {
 	onNoteChange: PropTypes.func.isRequired
 };
 
-module.exports = InjectableComponentsEnhance(ItemDetails);
+module.exports = ItemDetails;

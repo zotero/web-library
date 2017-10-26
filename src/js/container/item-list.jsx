@@ -4,10 +4,10 @@ const React = require('react');
 const PropTypes = require('prop-types');
 const { connect } = require('react-redux');
 const { push } = require('redux-router');
-const ItemList = require('../list');
-const { fetchItems } = require('../../../actions');
-const { getCollection, getItems, getItem } = require('../../../state-utils');
-const { get } = require('../../../utils');
+const ItemList = require('../component/item/list');
+const { fetchItems } = require('../actions');
+const { getCollection, getItems, getItem } = require('../state-utils');
+const { get } = require('../utils');
 
 class ItemListContainer extends React.Component {
 	componentWillReceiveProps(props) {

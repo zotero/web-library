@@ -2,13 +2,12 @@
 
 const React = require('react');
 const PropTypes = require('prop-types');
-const ItemDetails = require('../details');
-const ItemBox = require('../box/container');
+const ItemDetails = require('../component/item/details');
 const { connect } = require('react-redux');
-const { fetchChildItems, updateItem } = require('../../../actions');
-const { itemProp } = require('../../../constants/item');
-const { get } = require('../../../utils');
-const { getItem, getChildItems } = require('../../../state-utils');
+const { fetchChildItems, updateItem } = require('../actions');
+const { itemProp } = require('../constants/item');
+const { get } = require('../utils');
+const { getItem, getChildItems } = require('../state-utils');
 
 class ItemDetailsContainer extends React.Component {
 	componentWillReceiveProps(props) {
@@ -23,11 +22,10 @@ class ItemDetailsContainer extends React.Component {
 	}
 
 	render() {
-		return <ItemDetails
-			injectItemBox={ ItemBox }
-			onNoteChange={ this.handleNoteChange.bind(this) }
-			{ ...this.props }
-		/>;
+		return <ItemDetails 
+				onNoteChange={ this.handleNoteChange.bind(this) }
+				{ ...this.props }
+			/>;
 	}
 }
 

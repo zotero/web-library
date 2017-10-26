@@ -4,7 +4,14 @@ const React = require('react');
 const PropTypes = require('prop-types');
 const cx = require('classnames');
 const Icon = require('./ui/icon');
-const InjectableComponentsEnhance = require('../enhancers/injectable-components-enhancer');
+const CollectionTreeContainer = require('../container/collection-tree');
+const Button = require('./ui/button');
+const ItemDetailsContainer = require('../container/item-details');
+const ItemListContainer = require('../container/item-list');
+const Navbar = require('./ui/navbar');
+const TagSelector = require('./tag-selector');
+const { Toolbar, ToolGroup } = require('./ui/toolbars');
+const TouchHeaderContainer = require('../container/touch-header');
 
 class Library extends React.Component {
 	constructor(props) {
@@ -22,16 +29,6 @@ class Library extends React.Component {
 	}
 
 	render() {
-		let CollectionTree = this.props.components['CollectionTree'];
-		let Button = this.props.components['Button'];
-		let ItemDetails = this.props.components['ItemDetails'];
-		let ItemList = this.props.components['ItemList'];
-		let Navbar = this.props.components['Navbar'];
-		let TagSelector = this.props.components['TagSelector'];
-		let Toolbar = this.props.components['Toolbar'];
-		let ToolGroup = this.props.components['ToolGroup'];
-		let TouchHeader = this.props.components['TouchHeader'];
-
 		let activeViewClass = `view-${this.props.view}-active`;
 		
 		return (
@@ -45,10 +42,10 @@ class Library extends React.Component {
 				<div className="nav-cover" />
 				<main>
 					<section className={ `library ${ this.props.view === 'library' ? 'active' : '' }` }>
-						<TouchHeader />
+						<TouchHeaderContainer />
 						<header className="sidebar">
 							<h2 className="offscreen">Web library</h2>
-							<CollectionTree />
+							<CollectionTreeContainer />
 							<TagSelector />
 						</header>
 						<section className={ `items ${ this.props.view === 'item-list' ? 'active' : '' }` }>
@@ -72,9 +69,9 @@ class Library extends React.Component {
 										</div>
 									</Toolbar>
 								</header>
-								<ItemList />
+								<ItemListContainer />
 							</div>
-							<ItemDetails active={this.props.view === 'item-details'} />
+							<ItemDetailsContainer active={this.props.view === 'item-details'} />
 						</section>
 					</section>
 				</main>
@@ -105,4 +102,4 @@ Library.propTypes = {
 	view: PropTypes.string
 };
 
-module.exports = InjectableComponentsEnhance(Library);
+module.exports = Library;
