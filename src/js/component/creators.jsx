@@ -69,8 +69,8 @@ class Creators extends React.Component {
 		if('name' in creators[index]) {
 			let creator = creators[index].name.split(' ');
 			creators[index] = {
-				lastName: creator.length > 1 ? creator[1] : '',
-				firstName: creator[0],
+				lastName: creator.length > 1 ? creator[creator.length - 1] : '',
+				firstName: creator.slice(0, creator.length - 1).join(' '),
 				creatorType: creators[index].creatorType
 			};
 		} else if('lastName' in creators[index]) {
