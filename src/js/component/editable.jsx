@@ -140,6 +140,7 @@ class Editable extends React.Component {
 							tabIndex="-1"
 							autofocus = { this.props.selectPreOpen }
 							openOnFocus = { this.props.selectPreOpen }
+							autoBlur = { this.props.selectPreOpen }
 							clearable = { false }
 							ref={ ref => this.input = ref }
 							value={ this.state.value }
