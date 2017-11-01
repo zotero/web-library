@@ -21,10 +21,20 @@ class Creators extends React.Component {
 	}
 
 	componentWillReceiveProps(props) {
-		if (!deepEqual(this.props.value, props.value)) {
+		if(!deepEqual(this.props.value, props.value)) {
 			this.setState({
 				creators: props.value.length ? props.value : [this.newCreator]
 			});
+		}
+
+		if(!deepEqual(this.props.creatorTypes, props.creatorTypes)) {
+			const validCreatorTypes = props.creatorTypes.map(ct => ct.value);
+			const creators = this.state.creators
+				.map(creator => ({
+					...creator,
+					creatorType: validCreatorTypes.includes(creator.creatorType) ? creator.creatorType : validCreatorTypes[0]
+				}));
+			this.setState({ creators });
 		}
 	}
 
@@ -38,7 +48,8 @@ class Creators extends React.Component {
 	valueChangedHandler(index, key, value) {
 		const creators = [...this.state.creators];
 		creators[index][key] = value;
-		if(creators[index][isVirtual]) {
+		if((creators[index].lastName || creators[index].firstName || creators[index].name) 
+			&& creators[index][isVirtual]) {
 			delete creators[index][isVirtual];
 		}
 		this.saveCreatorsHandler(creators);
@@ -46,12 +57,7 @@ class Creators extends React.Component {
 
 	addCreatorHandler() {
 		const creators = [...this.state.creators];
-		creators.push({
-			creatorType: 'author', 
-			firstName: '',
-			lastName: '',
-			[isVirtual]: true
-		});
+		creators.push(this.newCreator);
 		this.setState({ creators });
 	}
 
@@ -85,7 +91,7 @@ class Creators extends React.Component {
 
 	get newCreator() {
 		return {
-			creatorType: 'author',
+			creatorType: this.props.creatorTypes[0].value,
 			firstName: '',
 			lastName: '',
 			[isVirtual]: true
@@ -112,7 +118,6 @@ class Creators extends React.Component {
 								<div className="key">
 									<Editable
 										onSave={ newValue => this.valueChangedHandler(index, 'creatorType', newValue)}
-										isLoading={ this.props.creatorTypesLoading }
 										options={ this.props.creatorTypes }
 										value={ creator.creatorType }
 										onToggle ={ isCreatorTypeEditing => this.setState({ isCreatorTypeEditing }) }
@@ -206,7 +211,6 @@ Creators.propTypes = {
 	name: PropTypes.string,
 	value: PropTypes.array,
 	creatorTypes: PropTypes.array.isRequired,
-	creatorTypesLoading: PropTypes.bool,
 	onSave: PropTypes.func
 };
 
