@@ -1,23 +1,22 @@
 'use strict';
 
 const React = require('react');
-const keydown = require('react-keydown').default;
 const PropTypes = require('prop-types');
+const KeyHandler = require('react-key-handler').default;
+const { KEYDOWN } = require('react-key-handler');
 
 const Item = require('../item');
 const Spinner = require('../ui/spinner');
 
 class ItemList extends React.Component {
-	@keydown( 'down' )
-	handleKeyDown() {
+	handleKeyArrowDown() {
 		let index = this.props.items.findIndex(item => item.key === this.props.selectedItemKey) + 1;
 		if(this.props.items[index]) {
 			this.props.onItemSelected(this.props.items[index].key);
 		}
 	}
 
-	@keydown( 'up' )
-	handleKeyUp() {
+	handleKeyArrowUp() {
 		let index = this.props.items.findIndex(item => item.key === this.props.selectedItemKey) - 1;
 		if(this.props.items[index]) {
 			this.props.onItemSelected(this.props.items[index].key);
@@ -30,6 +29,16 @@ class ItemList extends React.Component {
 		} else {
 			return (
 				<div className="item-list-wrap">
+					<KeyHandler 
+						keyEventName={ KEYDOWN }
+						keyValue="ArrowDown"
+						onKeyHandle={ this.handleKeyArrowDown.bind(this) }
+					/>
+					<KeyHandler 
+						keyEventName={ KEYDOWN }
+						keyValue="ArrowUp"
+						onKeyHandle={ this.handleKeyArrowUp.bind(this) }
+					/>
 					<table className="item-list-head hidden-touch hidden-sm-down">
 						<thead>
 							<tr>
