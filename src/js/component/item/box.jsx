@@ -151,6 +151,7 @@ class ItemBox extends React.Component {
 										<div className='value'>
 											<Editable
 												name={ field.key }
+												isTextArea={ field.key === 'extra' }
 												processing={ field.processing || false }
 												value={ field.value || '' }
 												editOnClick={ !field.readonly }

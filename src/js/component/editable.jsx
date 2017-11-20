@@ -86,8 +86,18 @@ class Editable extends React.Component {
 		} else if(
 			ev.type === 'keyup' && 
 			ev.keyCode === ENTER && 
-			this.input.tagName != 'TEXTAREA'
+			this.input.tagName !== 'TEXTAREA'
 		) {
+			this.cancelPending();
+			this.save(this.input.value);
+			this.cancel();
+		} else if(
+			ev.type === 'keydown' &&
+			ev.keyCode === ENTER &&
+			this.input.tagName === 'TEXTAREA' &&
+			ev.shiftKey
+		) {
+			ev.preventDefault();
 			this.cancelPending();
 			this.save(this.input.value);
 			this.cancel();
