@@ -57,7 +57,8 @@ const mapStateToProps = state => {
 		.map(it => ({
 			value: it.itemType,
 			label: it.localized
-		}));
+		}))
+		.filter(it => it.value !== 'note');
 
 	const itemTypeCreatorTypes = state.meta.itemTypeCreatorTypes[item.itemType]
 		.map(ct => ({

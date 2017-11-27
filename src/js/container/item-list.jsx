@@ -35,7 +35,7 @@ class ItemListContainer extends React.Component {
 const mapStateToProps = state => {
 	const collection = getCollection(state);
 	const item = getItem(state);
-	const items = getItems(state).filter(i => !i.parentItem);
+	const items = getItems(state).filter(i => !i.parentItem && i.itemType !== 'note');
 
 	return {
 		collection,
