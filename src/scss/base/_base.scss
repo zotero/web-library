@@ -13,7 +13,7 @@
 html,
 body,
 [data-widget="library"],
-[data-reactroot] {
+.library-container {
 	height: 100%;
 }
 
@@ -40,7 +40,7 @@ body {
 	overflow: hidden; // Prevent any overflow
 }
 
-[data-reactroot] {
+.library-container {
 	display: flex;
 	flex-direction: column;
 }
