@@ -4,6 +4,8 @@ const { ck } = require('./utils');
 
 const {
 	CONFIGURE_API,
+
+	ROUTE_CHANGE,
 	
 	REQUEST_META,
 	RECEIVE_META,
@@ -365,6 +367,20 @@ const viewport = (state = {}, action) => {
 	}
 };
 
+const router = (state = {
+	params: {}
+}, action) => {
+	switch(action.type) {
+		case ROUTE_CHANGE:
+			return {
+				...state,
+				params: action.params
+			};
+		default:
+			return state;
+	}
+};
+
 module.exports = {
 	meta,
 	library,
@@ -376,6 +392,7 @@ module.exports = {
 	itemsByCollection,
 	itemsByParentItem,
 	config,
-	viewport
+	viewport,
+	router
 	// queue
 };

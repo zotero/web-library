@@ -2,9 +2,9 @@
 
 const React = require('react');
 const PropTypes = require('prop-types');
+const { withRouter } = require('react-router-dom');
 const { itemProp } = require('../constants/item');
 const { connect } = require('react-redux');
-const { push } = require('redux-router');
 const { triggerEditingItem } = require('../actions');
 const { 
 	getCurrentViewFromState,
@@ -16,9 +16,9 @@ const TouchHeader = require('../component/touch-header');
 class TouchHeaderContainer extends React.Component {
 	onCollectionSelected(collectionKey) {
 		if(collectionKey) {
-			this.props.dispatch(push(`/collection/${collectionKey}`));
+			this.props.history.push(`/collection/${collectionKey}`);
 		} else {
-			this.props.dispatch(push('/'));
+			this.props.history.push('/');
 		}
 	}
 
@@ -41,7 +41,6 @@ class TouchHeaderContainer extends React.Component {
 
 TouchHeaderContainer.propTypes = {
 	dispatch: PropTypes.func.isRequired,
-	push: PropTypes.func.isRequired,
 	path: PropTypes.array,
 	item: itemProp
 };
@@ -86,12 +85,9 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = (dispatch) => {
-	return {
-		dispatch,
-		push
-	};
+	return { dispatch };
 };
 
-const TouchHeaderWrapped = connect(mapStateToProps, mapDispatchToProps)(TouchHeaderContainer);
+const TouchHeaderWrapped = withRouter(connect(mapStateToProps, mapDispatchToProps)(TouchHeaderContainer));
 
 module.exports = TouchHeaderWrapped;

@@ -2,12 +2,13 @@
 
 const React = require('react');
 const PropTypes = require('prop-types');
+const { withRouter } = require('react-router-dom');
 const { connect } = require('react-redux');
-const { push } = require('redux-router');
 const CollectionTree = require('../component/collection-tree');
 const { fetchCollections } = require('../actions');
 const { getCollections, getCollectionsPath } = require('../state-utils');
 const { enhanceCollections } = require('../utils');
+
 
 class CollectionTreeContainer extends React.Component {
 	constructor(props) {
@@ -44,7 +45,7 @@ class CollectionTreeContainer extends React.Component {
 	}
 
 	onCollectionSelected(collectionKey) {
-		this.props.dispatch(push(`/collection/${collectionKey}`));
+		this.props.history.push(`/collection/${collectionKey}`);
 	}
 
 	render() {
@@ -89,7 +90,7 @@ CollectionTreeContainer.defaultProps = {
 	selected: ''
 };
 
-module.exports = connect(
+module.exports = withRouter(connect(
 	mapStateToProps,
 	mapDispatchToProps
-)(CollectionTreeContainer);
+)(CollectionTreeContainer));

@@ -2,8 +2,8 @@
 
 const React = require('react');
 const PropTypes = require('prop-types');
+const { withRouter } = require('react-router-dom');
 const { connect } = require('react-redux');
-const { push } = require('redux-router');
 const ItemList = require('../component/item/list');
 const { fetchItems } = require('../actions');
 const { getCollection, getItems, getItem } = require('../state-utils');
@@ -17,7 +17,7 @@ class ItemListContainer extends React.Component {
 	}
 
 	onItemSelected(itemKey) {
-		this.props.dispatch(push(`/collection/${this.props.collection.key}/item/${itemKey}`));
+		this.props.history.push(`/collection/${this.props.collection.key}/item/${itemKey}`);
 	}
 
 	render() {
@@ -59,7 +59,7 @@ ItemListContainer.propTypes = {
   dispatch: PropTypes.func.isRequired
 };
 
-module.exports = connect(
+module.exports = withRouter(connect(
 	mapStateToProps,
 	mapDispatchToProps
-)(ItemListContainer);
+)(ItemListContainer));

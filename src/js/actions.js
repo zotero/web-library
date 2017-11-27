@@ -10,6 +10,8 @@ const {
 	RECEIVE_META,
 	ERROR_META,
 
+	ROUTE_CHANGE,
+
 	SELECT_LIBRARY,
 	SELECT_ITEM,
 
@@ -40,6 +42,13 @@ const {
 	TRIGGER_EDITING_ITEM,
 	TRIGGER_RESIZE_VIEWPORT
 } = require('./constants/actions');
+
+const changeRoute = params => {
+	return {
+		type: ROUTE_CHANGE,
+		params
+	};
+};
 
 const configureApi = (apiKey, apiConfig = {}) => {
 	return {
@@ -342,6 +351,7 @@ function queueUpdateItem(itemKey, libraryKey, patch) {
 }
 
 module.exports = {
+	changeRoute,
 	configureApi,
 	initialize,
 	selectLibrary,

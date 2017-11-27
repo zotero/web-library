@@ -5,19 +5,19 @@ const ReactDOM = require('react-dom');
 const PropTypes = require('prop-types');
 const ReduxThunk = require('redux-thunk').default;
 const ReduxAsyncQueue = require('redux-async-queue').default;
-const { createHistory } = require('history');
 const { createStore, applyMiddleware, compose, combineReducers } = require('redux');
 const { Provider, connect } = require('react-redux');
 // const createHistory = require('history/createBrowserHistory');
-const { ConnectedRouter, routerReducer, routerMiddleware, push } = require('react-router-redux');
-const { Route } = require('react-router');
+// const { Route } = require('react-router');
+const { BrowserRouter, Route, Switch } = require('react-router-dom');
+const deepEqual = require('deep-equal');
 const reducers = require('../reducers');
 const { getCurrentViewFromState } = require('../state-utils');
-const { selectLibrary, initialize, triggerResizeViewport } = require('../actions');
+const { selectLibrary, initialize, triggerResizeViewport, changeRoute } = require('../actions');
 const Library = require('../component/library');
 
-const history = createHistory();
-const middleware = routerMiddleware(history);
+// const history = createHistory();
+// const middleware = routerMiddleware(history);
 
  //@TODO: ensure this doesn't affect prod build
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
@@ -35,12 +35,14 @@ class LibraryContainer extends React.Component {
 	
 	async componentDidMount() {
 		let { apiKey, userId, api } = this.props;
+		console.log('this.props', this.props);
 		
 		await this.props.dispatch(
 			initialize(apiKey, api)
 		);
 		
 		//@TODO: introduce multi-library support
+		this.props.dispatch(changeRoute(this.props.match.params));
 		this.props.dispatch(
 			selectLibrary('user', userId)
 		);
@@ -53,6 +55,12 @@ class LibraryContainer extends React.Component {
 
 	componentWillUnmount() {
 		window.removeEventListener('resize', this.windowResizeHandler);
+	}
+
+	componentWillReceiveProps(props) {
+		if(!deepEqual(this.props, props)) {
+			this.props.dispatch(changeRoute(props.match.params));
+		}
 	}
 
 	render() {
@@ -77,19 +85,19 @@ class LibraryContainer extends React.Component {
 					applyMiddleware(
 						ReduxThunk,
 						ReduxAsyncQueue
-					),
-					middleware
+					)
 				)
 			);
 
 			ReactDOM.render(
 				<Provider store={store}>
-					<ConnectedRouter history={history}>
-						<Route path="/" component={LibraryContainerWrapped}>
-							<Route path="/collection/:collection" />
-							<Route path="/collection/:collection/item/:item" />
-						</Route>
-					</ConnectedRouter>
+					<BrowserRouter>
+						<Switch>
+							<Route path="/collection/:collection/item/:item" component={LibraryContainerWrapped} />
+							<Route path="/collection/:collection" component={LibraryContainerWrapped} />
+							<Route path="/" component={LibraryContainerWrapped} />
+						</Switch>
+					</BrowserRouter>
 				</Provider>
 				, element
 			);
@@ -115,10 +123,7 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = (dispatch) => {
-	return {
-		dispatch,
-		push
-	};
+	return { dispatch };
 };
 
 const LibraryContainerWrapped = connect(mapStateToProps, mapDispatchToProps)(LibraryContainer);
