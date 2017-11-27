@@ -35,7 +35,6 @@ class LibraryContainer extends React.Component {
 	
 	async componentDidMount() {
 		let { apiKey, userId, api } = this.props;
-		console.log('this.props', this.props);
 		
 		await this.props.dispatch(
 			initialize(apiKey, api)
