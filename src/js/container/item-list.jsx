@@ -6,7 +6,7 @@ const { withRouter } = require('react-router-dom');
 const { connect } = require('react-redux');
 const ItemList = require('../component/item/list');
 const { fetchItems } = require('../actions');
-const { getCollection, getItems, getItem } = require('../state-utils');
+const { getCollection, getItems, getItem, isCollectionFetching } = require('../state-utils');
 const { get } = require('../utils');
 
 class ItemListContainer extends React.Component {
@@ -36,11 +36,12 @@ const mapStateToProps = state => {
 	const collection = getCollection(state);
 	const item = getItem(state);
 	const items = getItems(state).filter(i => !i.parentItem && i.itemType !== 'note');
+	const isFetching = isCollectionFetching(state);
 
 	return {
 		collection,
 		items,
-		isFetching: collection ? state.fetching.itemsInCollection.includes(collection.key) : false,
+		isFetching,
 		selectedItemKey: item ? item.key : null
 	};
 };

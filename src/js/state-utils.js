@@ -15,6 +15,18 @@ const isCollectionSelected = state => {
 	return libraryKey && collections && isCollectionInPath;
 };
 
+const isCollectionFetching = state => {
+	const libraryKey = getLibraryKey(state);
+	const collection = getCollection(state);
+
+	if(!collection) {
+		return false;
+	}
+	
+	const collectionCKey = ck(collection.key, libraryKey);
+	return state.fetching.itemsInCollection.includes(collectionCKey);
+};
+
 const getCollectionsPath = state => {
 	const libraryKey = getLibraryKey(state);
 	const path = [];
@@ -140,6 +152,7 @@ const isItemFieldBeingUpdated = (field, state) => {
 module.exports = {
 	getLibraryKey,
 	isCollectionSelected,
+	isCollectionFetching,
 	getCollection,
 	getCollections,
 	getTopCollections,
