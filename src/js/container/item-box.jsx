@@ -94,11 +94,13 @@ const mapStateToProps = state => {
 			label: ct.localized
 		}));
 
+	const titleField = item.itemType in baseMappings && baseMappings[item.itemType]['title'] || 'title';
+
 	const fields = [
 		{ field: 'itemType', localized: 'Item Type' },
-		state.meta.itemTypeFields[item.itemType].find(itf => itf.field === 'title'),
+		state.meta.itemTypeFields[item.itemType].find(itf => itf.field === titleField),
 		{ field: 'creators', localized: 'Creators' },
-		...state.meta.itemTypeFields[item.itemType].filter(itf => itf.field !== 'title')
+		...state.meta.itemTypeFields[item.itemType].filter(itf => itf.field !== titleField)
 	].filter(e => e); //filter out undefined
 
 	const isSmallScreen = 'lg' in state.viewport && !state.viewport.lg;
