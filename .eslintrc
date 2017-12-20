@@ -162,7 +162,7 @@
     "brace-style": "off",
     "callback-return": "off",
     "camelcase": "off",
-    "comma-dangle": "error",
+    "comma-dangle": "off",
     "comma-spacing": "off",
     "comma-style": "off",
     "complexity": [
