@@ -68,7 +68,7 @@ module.exports = Object.freeze({
 		email: {
 			'title': 'subject'
 		},
-		encyclopediaEntry: {
+		encyclopediaArticle: {
 			'publicationTitle': 'encyclopediaTitle'
 		},
 		film: {
