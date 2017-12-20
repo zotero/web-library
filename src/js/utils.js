@@ -93,6 +93,13 @@ const transform = (src, path, f, fallback = {}) => {
 	return f(get(src, path) || fallback);
 };
 
+const reverseMap = map => {
+	return Object.keys(map).reduce((acc, key) => {
+		acc[map[key]] = key;
+		return acc;
+	}, {});
+};
+
 const noop = () => {};
 
 module.exports = { 
@@ -100,6 +107,7 @@ module.exports = {
 	enhanceCollections,
 	get,
 	noop,
+	reverseMap,
 	splice,
-	transform
+	transform,
 };

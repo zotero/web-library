@@ -5,8 +5,8 @@ const PropTypes = require('prop-types');
 const ItemBox = require('../component/item/box');
 const { connect } = require('react-redux');
 const { updateItem, fetchItemTypeCreatorTypes, fetchItemTypeFields } = require('../actions');
-const { itemProp, hideFields, noEditFields } = require('../constants/item');
-const { get } = require('../utils');
+const { itemProp, hideFields, noEditFields, baseMappings } = require('../constants/item');
+const { get, reverseMap } = require('../utils');
 const { 
 	getItem,
 	getItemFieldValue,
@@ -15,11 +15,39 @@ const {
 
 class ItemBoxContainer extends React.Component {
 	async itemUpdatedHandler(item, fieldKey, newValue) {
-		await this.props.dispatch(
-			updateItem(item.key, {
-				[fieldKey]: newValue
-			})
-		);
+		var patch = {
+			[fieldKey]: newValue
+		};
+
+		// when changing itemType, map fields to base types and back to item-specific types
+		if(fieldKey === 'itemType') {
+			const baseValues = {};			
+			if(item.itemType in baseMappings) {
+				const namedToBaseMap = reverseMap(baseMappings[item.itemType]);
+				Object.keys(item).forEach(fieldName => {
+					if(fieldName in namedToBaseMap) {
+						if(item[fieldName].toString().length > 0) {
+							baseValues[namedToBaseMap[fieldName]] = item[fieldName];
+						}
+					}
+				});
+			}
+
+			patch = { ...patch, ...baseValues };
+
+			if(newValue in baseMappings) {
+				const namedToBaseMap = baseMappings[newValue];
+				const itemWithBaseValues = { ...item, ...baseValues };
+				Object.keys(itemWithBaseValues).forEach(fieldName => {
+					if(fieldName in namedToBaseMap) {
+						patch[namedToBaseMap[fieldName]] = itemWithBaseValues[fieldName];
+						patch[fieldName] = '';
+					}
+				});
+			}
+		}
+
+		await this.props.dispatch(updateItem(item.key, patch));
 	}
 
 	componentWillReceiveProps(props) {
