@@ -23,6 +23,7 @@ const {
 	RECEIVE_COLLECTIONS_IN_LIBRARY,
 	ERROR_COLLECTIONS_IN_LIBRARY,
 
+	PRE_REQUEST_UPDATE_ITEM,
 	REQUEST_UPDATE_ITEM,
 	RECEIVE_UPDATE_ITEM,
 	ERROR_UPDATE_ITEM,
@@ -180,23 +181,6 @@ const fetchItems = (collectionKey) => {
 	};
 };
 
-const updateItem = (itemKey, patch, libraryKey) => {
-	return async (dispatch, getState) => {
-		libraryKey = libraryKey || getLibraryKey(getState());
-
-		dispatch({
-			type: REQUEST_UPDATE_ITEM,
-			itemKey,
-			libraryKey,
-			patch
-		});
-
-		await dispatch(
-			queueUpdateItem(itemKey, libraryKey, patch)
-		);
-	};
-};
-
 const fetchItemTypeCreatorTypes = (itemType) => {
 	return async (dispatch, getState) => {
 		dispatch({
@@ -295,7 +279,22 @@ const triggerResizeViewport = (width, height) => {
 	};
 };
 
-function queueUpdateItem(itemKey, libraryKey, patch) {
+function updateItem(itemKey, patch) {
+	return async (dispatch, getState) => {
+		const libraryKey = getLibraryKey(getState());
+		dispatch({
+			type: PRE_REQUEST_UPDATE_ITEM,
+			itemKey,
+			libraryKey,
+			patch
+		});
+		dispatch(
+			queueUpdateItem(itemKey, patch, libraryKey)
+		);
+	};
+}
+
+function queueUpdateItem(itemKey, patch, libraryKey) {
 	return {
 		queue: ck(itemKey, libraryKey),
 		callback: async (next, dispatch, getState) => {
@@ -303,6 +302,13 @@ function queueUpdateItem(itemKey, libraryKey, patch) {
 			const config = state.config;
 			const item = state.items[ck(itemKey, libraryKey)];
 			const version = item.version;
+
+			dispatch({
+				type: REQUEST_UPDATE_ITEM,
+				itemKey,
+				libraryKey,
+				patch
+			});
 			
 			try {
 				const response = await api(config.apiKey, config.apiConfig).library(libraryKey).items(itemKey).version(version).patch(patch);

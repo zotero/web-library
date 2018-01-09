@@ -22,6 +22,7 @@ const {
 	RECEIVE_COLLECTIONS_IN_LIBRARY,
 	ERROR_COLLECTIONS_IN_LIBRARY,
 
+	PRE_REQUEST_UPDATE_ITEM,
 	REQUEST_UPDATE_ITEM,
 	RECEIVE_UPDATE_ITEM,
 	ERROR_UPDATE_ITEM,
@@ -239,7 +240,7 @@ const updating = (state = {
 	const itemCKey = ck(action.itemKey, action.libraryKey);
 	var newState;
 	switch(action.type) {
-		case REQUEST_UPDATE_ITEM:
+		case PRE_REQUEST_UPDATE_ITEM:
 			return {
 				...state,
 				items: {
