@@ -135,8 +135,17 @@ const getItemFieldValue = (field, state) => {
 	const item = getItem(state);
 	const itemCKey = ck(item.key, libraryKey);
 	const isBeingUpdated = isItemFieldBeingUpdated(field, state);
-	return (isBeingUpdated && state.updating.items[itemCKey][field]) ||
-		(item && item[field]);
+	if(isBeingUpdated) {
+		let aggregatedPatch = {};
+		state.updating.items[itemCKey].forEach(queueItem => {
+			aggregatedPatch = {
+				...queueItem.patch
+			};
+		});
+		return aggregatedPatch[field];
+	} else {
+		return item && item[field];
+	}
 };
 
 const isItemFieldBeingUpdated = (field, state) => {
@@ -146,7 +155,9 @@ const isItemFieldBeingUpdated = (field, state) => {
 	return item && 
 		state.updating.items && 
 		itemCKey in state.updating.items && 
-		field in state.updating.items[itemCKey];
+		state.updating.items[itemCKey].some(
+			queueItem => field in queueItem.patch
+		);
 };
 
 module.exports = {

@@ -4,6 +4,8 @@ const api = require('zotero-api-client')().use(cache()).api;
 const { ck } = require('./utils');
 const { getLibraryKey } = require('./state-utils');
 
+var queueIdCunter = 0;
+
 const {
 	CONFIGURE_API,
 	REQUEST_META,
@@ -282,19 +284,22 @@ const triggerResizeViewport = (width, height) => {
 function updateItem(itemKey, patch) {
 	return async (dispatch, getState) => {
 		const libraryKey = getLibraryKey(getState());
+		const queueId = ++queueIdCunter;
+
 		dispatch({
 			type: PRE_REQUEST_UPDATE_ITEM,
 			itemKey,
 			libraryKey,
-			patch
+			patch,
+			queueId
 		});
 		dispatch(
-			queueUpdateItem(itemKey, patch, libraryKey)
+			queueUpdateItem(itemKey, patch, libraryKey, queueId)
 		);
 	};
 }
 
-function queueUpdateItem(itemKey, patch, libraryKey) {
+function queueUpdateItem(itemKey, patch, libraryKey, queueId) {
 	return {
 		queue: ck(itemKey, libraryKey),
 		callback: async (next, dispatch, getState) => {
@@ -307,7 +312,8 @@ function queueUpdateItem(itemKey, patch, libraryKey) {
 				type: REQUEST_UPDATE_ITEM,
 				itemKey,
 				libraryKey,
-				patch
+				patch,
+				queueId
 			});
 			
 			try {
@@ -336,7 +342,8 @@ function queueUpdateItem(itemKey, patch, libraryKey) {
 					item: updatedItem,
 					itemKey,
 					libraryKey,
-					patch
+					patch,
+					queueId
 				});
 
 				return updatedItem;
@@ -346,7 +353,8 @@ function queueUpdateItem(itemKey, patch, libraryKey) {
 					error,
 					itemKey,
 					libraryKey,
-					patch
+					patch,
+					queueId
 				});
 				throw error;
 			} finally {

@@ -245,10 +245,27 @@ const updating = (state = {
 				...state,
 				items: {
 					...state.items,
-					[itemCKey]: {
-						...(itemCKey in state.items ? state.items[itemCKey] : {}),
-						...action.patch
-					}
+					[itemCKey]: [
+						...(itemCKey in state.items ? state.items[itemCKey] : []),
+						{
+							patch: action.patch,
+							queueId: action.queueId,
+							isRequested: false
+						}
+					]
+				}
+			};
+		case REQUEST_UPDATE_ITEM: 
+			return {
+				...state,
+				items: {
+					...state.items,
+					[itemCKey]: state.items[itemCKey].map(queueItem => {
+						if(queueItem.queueId === action.queueId) {
+							queueItem.isRequested = true;
+						}
+						return queueItem;
+					})
 				}
 			};
 		case RECEIVE_UPDATE_ITEM:
@@ -257,7 +274,7 @@ const updating = (state = {
 				...state,
 				items: {
 					...state.items,
-					[itemCKey]: removeKey(state.items[itemCKey], Object.keys(action.patch))
+					[itemCKey]: (state.items[itemCKey] || []).filter(queueItem => queueItem.queueId !== action.queueId)
 				}
 			};
 			if(Object.keys(newState.items[itemCKey]).length === 0) {
