@@ -49,6 +49,7 @@ class Editable extends React.Component {
 	cancel() {
 		this.cancelPending();
 		this.setState({
+			value: this.props.value,
 			editing: false
 		}, () => {
 			this.props.onToggle(false);
