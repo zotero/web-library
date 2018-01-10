@@ -62,7 +62,7 @@ class Editable extends React.Component {
 
 	editHandler(ev) {
 		ev && ev.preventDefault();
-		if(!this.editing && !this.props.processing && this.props.editOnClick) {
+		if(!this.state.editing && !this.props.processing && this.props.editOnClick) {
 			this.edit();
 		}
 	}
