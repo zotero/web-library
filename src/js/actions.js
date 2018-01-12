@@ -1,7 +1,7 @@
 const cache = require('zotero-api-client-cache');
 const api = require('zotero-api-client')().use(cache()).api;
 
-const { ck } = require('./utils');
+const { ck, get } = require('./utils');
 const { getLibraryKey } = require('./state-utils');
 
 var queueIdCunter = 0;
@@ -293,6 +293,29 @@ function updateItem(itemKey, patch) {
 			patch,
 			queueId
 		});
+
+		if('itemType' in patch) {
+			// when changing itemType, we may need to remove some fields
+			// from the patch to avoid 400. Usually these are the base-mapped 
+			// fields from the source type that are illegal in the targetType
+			await dispatch(
+				fetchItemTypeFields(patch.itemType)
+			);
+
+			let itemTypeFields = get(getState(), ['meta', 'itemTypeFields', patch.itemType]);
+			if(itemTypeFields) {
+				itemTypeFields = [
+					'itemType',
+					...itemTypeFields.map(fieldDetails => fieldDetails.field)
+				];
+				Object.keys(patch).forEach(patchedKey => {
+					if(!itemTypeFields.includes(patchedKey)) {
+						delete patch[patchedKey];
+					}
+				});
+			}
+		}
+
 		dispatch(
 			queueUpdateItem(itemKey, patch, libraryKey, queueId)
 		);
