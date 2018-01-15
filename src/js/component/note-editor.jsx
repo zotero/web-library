@@ -38,6 +38,10 @@ class NoteEditor extends React.Component {
 		this.props.onChange(this.state.selected, note);
 	}
 
+	handleAddNote() {
+		this.props.onAddNote();
+	}
+
 	get richEditor() {
 		return (
 			<div className="editor">
@@ -78,7 +82,7 @@ class NoteEditor extends React.Component {
 				<Toolbar>
 					<div className="toolbar-left">
 						<ToolGroup>
-							<Button>
+							<Button onClick={ this.handleAddNote.bind(this) }>
 								<Icon type={ '16/plus' } width="16" height="16" />
 							</Button>
 							<Button>

@@ -25,10 +25,15 @@ const {
 	RECEIVE_COLLECTIONS_IN_LIBRARY,
 	ERROR_COLLECTIONS_IN_LIBRARY,
 
-	PRE_REQUEST_UPDATE_ITEM,
+	PRE_UPDATE_ITEM,
 	REQUEST_UPDATE_ITEM,
 	RECEIVE_UPDATE_ITEM,
 	ERROR_UPDATE_ITEM,
+
+	PRE_CREATE_ITEM,
+	REQUEST_CREATE_ITEM,
+	RECEIVE_CREATE_ITEM,
+	ERROR_CREATE_ITEM,
 
 	REQUEST_ITEM_TYPE_CREATOR_TYPES,
 	RECEIVE_ITEM_TYPE_CREATOR_TYPES,
@@ -37,6 +42,10 @@ const {
 	REQUEST_ITEM_TYPE_FIELDS,
 	RECEIVE_ITEM_TYPE_FIELDS,
 	ERROR_ITEM_TYPE_FIELDS,
+
+	REQUEST_ITEM_TEMPLATE,
+	RECEIVE_ITEM_TEMPLATE,
+	ERROR_ITEM_TEMPLATE,
 
 	REQUEST_CHILD_ITEMS,
 	RECEIVE_CHILD_ITEMS,
@@ -235,6 +244,32 @@ const fetchItemTypeFields = (itemType) => {
 	};
 };
 
+const fetchItemTemplate = (itemType) => {
+	return async (dispatch, getState) => {
+		dispatch({
+			type: REQUEST_ITEM_TEMPLATE,
+			itemType
+		});
+		let config = getState().config;
+		try {
+			let template = (await api(config.apiKey, config.apiConfig).template(itemType).get()).getData();
+			dispatch({
+				type: RECEIVE_ITEM_TEMPLATE,
+				itemType,
+				template
+			});
+			return template;
+		} catch(error) {
+			dispatch({
+				type: ERROR_ITEM_TEMPLATE,
+				itemType,
+				error
+			});
+			throw error;
+		}
+	};
+};
+
 const fetchChildItems = (itemKey, libraryKey) => {
 	return async (dispatch, getState) => {
 		let config = getState().config;
@@ -281,13 +316,58 @@ const triggerResizeViewport = (width, height) => {
 	};
 };
 
+function createItem(properties) {
+	return async (dispatch, getState) => {
+		// dispatch({
+		// 	type: PRE_CREATE_ITEM,
+		// 	properties
+		// });
+		const state = getState();
+		const libraryKey = getLibraryKey(getState());
+		const config = state.config;
+		dispatch({
+			type: REQUEST_CREATE_ITEM,
+			libraryKey,
+			properties
+		});
+
+		try {
+			let response = await api(config.apiKey, config.apiConfig).library(libraryKey).items().post([properties]);
+			if(!response.isSuccess()) {
+				throw response.getErrors()[0];
+			}
+
+			dispatch({
+				type: RECEIVE_CREATE_ITEM,
+				libraryKey,
+				item: response.getEntityByIndex(0)
+			});
+		} catch(error) {
+			dispatch({
+					type: ERROR_CREATE_ITEM,
+					error,
+					libraryKey,
+					properties,
+				});
+			throw error;
+		}
+
+		if(properties.parentItem) {
+			api().invalidate({
+				'resource.items': properties.parentItem,
+				'resource.children': null
+			});
+		}
+	};
+}
+
 function updateItem(itemKey, patch) {
 	return async (dispatch, getState) => {
 		const libraryKey = getLibraryKey(getState());
 		const queueId = ++queueIdCunter;
 
 		dispatch({
-			type: PRE_REQUEST_UPDATE_ITEM,
+			type: PRE_UPDATE_ITEM,
 			itemKey,
 			libraryKey,
 			patch,
@@ -297,7 +377,7 @@ function updateItem(itemKey, patch) {
 		if('itemType' in patch) {
 			// when changing itemType, we may need to remove some fields
 			// from the patch to avoid 400. Usually these are the base-mapped 
-			// fields from the source type that are illegal in the targetType
+			// fields from the source type that are illegal in the target type
 			await dispatch(
 				fetchItemTypeFields(patch.itemType)
 			);
@@ -392,11 +472,13 @@ module.exports = {
 	configureApi,
 	initialize,
 	selectLibrary,
+	createItem,
 	updateItem,
 	fetchItems,
 	fetchCollections,
 	fetchItemTypeCreatorTypes,
 	fetchItemTypeFields,
+	fetchItemTemplate,
 	triggerEditingItem,
 	triggerResizeViewport,
 	fetchChildItems

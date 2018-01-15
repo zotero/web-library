@@ -4,7 +4,7 @@ const React = require('react');
 const PropTypes = require('prop-types');
 const ItemBox = require('../component/item/box');
 const { connect } = require('react-redux');
-const { updateItem, fetchItemTypeCreatorTypes, fetchItemTypeFields } = require('../actions');
+const {	updateItem, fetchItemTypeCreatorTypes, fetchItemTypeFields } = require('../actions');
 const { itemProp, hideFields, noEditFields, baseMappings } = require('../constants/item');
 const { get, reverseMap } = require('../utils');
 const { 
@@ -14,7 +14,15 @@ const {
 } = require('../state-utils');
 
 class ItemBoxContainer extends React.Component {
-	async itemUpdatedHandler(item, fieldKey, newValue) {
+	componentWillReceiveProps(props) {
+		let itemType = get(props, 'item.itemType');
+		if(get(this.props, 'item.itemType') != itemType) {
+			this.props.dispatch(fetchItemTypeCreatorTypes(itemType));
+			this.props.dispatch(fetchItemTypeFields(itemType));
+		}
+	}
+
+	async handleItemUpdated(item, fieldKey, newValue) {
 		var patch = {
 			[fieldKey]: newValue
 		};
@@ -50,17 +58,9 @@ class ItemBoxContainer extends React.Component {
 		await this.props.dispatch(updateItem(item.key, patch));
 	}
 
-	componentWillReceiveProps(props) {
-		let itemType = get(props, 'item.itemType');
-		if(get(this.props, 'item.itemType') != itemType) {
-			this.props.dispatch(fetchItemTypeCreatorTypes(itemType));
-			this.props.dispatch(fetchItemTypeFields(itemType));
-		}
-	}
-
 	render() {
 		return <ItemBox 
-			onSave={ this.itemUpdatedHandler.bind(this, this.props.item) }
+			onSave={ this.handleItemUpdated.bind(this, this.props.item) }
 			{ ...this.props }
 		/>;
 	}

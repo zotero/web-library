@@ -22,10 +22,15 @@ const {
 	RECEIVE_COLLECTIONS_IN_LIBRARY,
 	ERROR_COLLECTIONS_IN_LIBRARY,
 
-	PRE_REQUEST_UPDATE_ITEM,
+	PRE_UPDATE_ITEM,
 	REQUEST_UPDATE_ITEM,
 	RECEIVE_UPDATE_ITEM,
 	ERROR_UPDATE_ITEM,
+
+	PRE_CREATE_ITEM,
+	REQUEST_CREATE_ITEM,
+	RECEIVE_CREATE_ITEM,
+	ERROR_CREATE_ITEM,
 
 	REQUEST_ITEM_TYPE_CREATOR_TYPES,
 	RECEIVE_ITEM_TYPE_CREATOR_TYPES,
@@ -34,6 +39,10 @@ const {
 	REQUEST_ITEM_TYPE_FIELDS,
 	RECEIVE_ITEM_TYPE_FIELDS,
 	ERROR_ITEM_TYPE_FIELDS,
+
+	REQUEST_ITEM_TEMPLATE,
+	RECEIVE_ITEM_TEMPLATE,
+	ERROR_ITEM_TEMPLATE,
 
 	REQUEST_CHILD_ITEMS,
 	RECEIVE_CHILD_ITEMS,
@@ -85,7 +94,8 @@ const library = (state = {}, action) => {
 
 const meta = (state = {
 	itemTypeCreatorTypes: {},
-	itemTypeFields: {}
+	itemTypeFields: {},
+	itemTemplates: {}
 }, action) => {
 	switch(action.type) {
 		case RECEIVE_META:
@@ -104,6 +114,11 @@ const meta = (state = {
 			return {
 				...state,
 				itemTypeFields: itemTypeFields(state.itemTypeFields, action)
+			};
+		case RECEIVE_ITEM_TEMPLATE:
+			return {
+				...state,
+				itemTemplates: itemTemplates(state.itemTemplates, action)
 			};
 	}
 
@@ -156,6 +171,7 @@ const fetching = (state = {
 	itemsInCollection: [],
 	creatorTypes: [],
 	itemTypeFields: [],
+	itemTemplates: [],
 	meta: false
 }, action) => {
 	switch(action.type) {
@@ -217,6 +233,17 @@ const fetching = (state = {
 				...state,
 				itemTypeFields: without(state.itemTypeFields, action.itemType)
 			};
+		case REQUEST_ITEM_TEMPLATE:
+			return {
+				...state,
+				itemTemplates: [...(state.itemTemplates || []), action.itemType]
+			};
+		case RECEIVE_ITEM_TEMPLATE:
+		case ERROR_ITEM_TEMPLATE:
+			return {
+				...state,
+				itemTemplates: without(state.itemTemplates, action.itemType)
+			};
 
 		case REQUEST_CHILD_ITEMS:
 			return {
@@ -234,13 +261,32 @@ const fetching = (state = {
 	}
 };
 
+// const creating = (state = {
+// 	items: {}
+// }, action) => {
+// 	switch (action.type) {
+// 		case PRE_CREATE_ITEM:
+// 			return {
+// 				...state,
+// 				items: [
+// 					...state.items,
+// 					{
+// 						...action.properties
+// 					}
+// 				]
+// 			};
+// 		default:
+// 			return state;
+// 	}
+// };
+
 const updating = (state = {
 	items: {}
 }, action) => {
 	const itemCKey = ck(action.itemKey, action.libraryKey);
 	var newState;
 	switch(action.type) {
-		case PRE_REQUEST_UPDATE_ITEM:
+		case PRE_UPDATE_ITEM:
 			return {
 				...state,
 				items: {
@@ -289,6 +335,11 @@ const updating = (state = {
 const items = (state = {}, action) => {
 	var items;
 	switch(action.type) {
+		case RECEIVE_CREATE_ITEM:
+			return {
+				...state,
+				[ck(action.item.key, action.libraryKey)]: action.item
+			};
 		case RECEIVE_ITEMS_IN_COLLECTION:
 			items = action.items.reduce((aggr, item) => {
 				aggr[ck(item.key, action.libraryKey)] = item;
@@ -323,6 +374,9 @@ const items = (state = {}, action) => {
 //@TODO move sorting from action to reducer (to support pagination)
 const itemsByCollection = (state = {}, action) => {
 	switch(action.type) {
+		case RECEIVE_CREATE_ITEM:
+			// @TODO: 
+			return state;
 		case RECEIVE_ITEMS_IN_COLLECTION:
 			return {
 				...state,
@@ -335,6 +389,18 @@ const itemsByCollection = (state = {}, action) => {
 
 const itemsByParentItem = (state = {}, action) => {
 	switch(action.type) {
+		case RECEIVE_CREATE_ITEM:
+			if(action.item.parentItem) {
+				let parentKey = ck(action.item.parentItem, action.libraryKey);
+				return {
+					...state,
+					[parentKey]: [
+						...(parentKey in state && state[parentKey] || []),
+						ck(action.item.key, action.libraryKey)
+					]
+				};
+			}
+			return state;
 		case RECEIVE_CHILD_ITEMS:
 			return {
 				...state,
@@ -363,6 +429,18 @@ const itemTypeFields = (state = {}, action) => {
 			return {
 				...state,
 				[action.itemType]: action.fields
+			};
+		default:
+			return state;
+	}
+};
+
+const itemTemplates = (state = {}, action) => {
+	switch(action.type) {
+		case RECEIVE_ITEM_TEMPLATE:
+			return {
+				...state,
+				[action.itemType]: action.template
 			};
 		default:
 			return state;
@@ -400,17 +478,17 @@ const router = (state = {
 };
 
 module.exports = {
-	meta,
-	library,
 	collections,
 	collectionsByLibrary,
+	config,
+	// creating,
 	fetching,
-	updating,
 	items,
 	itemsByCollection,
 	itemsByParentItem,
-	config,
+	library,
+	meta,
+	router,
+	updating,
 	viewport,
-	router
-	// queue
 };
