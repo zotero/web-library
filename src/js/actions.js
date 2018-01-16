@@ -35,6 +35,10 @@ const {
 	RECEIVE_CREATE_ITEM,
 	ERROR_CREATE_ITEM,
 
+	REQUEST_DELETE_ITEM,
+	RECEIVE_DELETE_ITEM,
+	ERROR_DELETE_ITEM,
+
 	REQUEST_ITEM_TYPE_CREATOR_TYPES,
 	RECEIVE_ITEM_TYPE_CREATOR_TYPES,
 	ERROR_ITEM_TYPE_CREATOR_TYPES,
@@ -361,6 +365,37 @@ function createItem(properties) {
 	};
 }
 
+function deleteItem(item) {
+	return async (dispatch, getState) => {
+		const libraryKey = getLibraryKey(getState());
+		const config = getState().config;
+
+		dispatch({
+			type: REQUEST_DELETE_ITEM,
+			libraryKey,
+			item
+		});
+
+		try {
+			await api(config.apiKey, config.apiConfig)
+			.library(libraryKey).items(item.key).version(item.version).delete();
+			dispatch({
+				type: RECEIVE_DELETE_ITEM,
+				libraryKey,
+				item
+			});
+		} catch(error) {
+			dispatch({
+					type: ERROR_DELETE_ITEM,
+					error,
+					libraryKey,
+					item,
+				});
+			throw error;
+		}
+	};
+}
+
 function updateItem(itemKey, patch) {
 	return async (dispatch, getState) => {
 		const libraryKey = getLibraryKey(getState());
@@ -474,6 +509,7 @@ module.exports = {
 	selectLibrary,
 	createItem,
 	updateItem,
+	deleteItem,
 	fetchItems,
 	fetchCollections,
 	fetchItemTypeCreatorTypes,

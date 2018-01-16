@@ -32,6 +32,10 @@ const {
 	RECEIVE_CREATE_ITEM,
 	ERROR_CREATE_ITEM,
 
+	REQUEST_DELETE_ITEM,
+	RECEIVE_DELETE_ITEM,
+	ERROR_DELETE_ITEM,
+
 	REQUEST_ITEM_TYPE_CREATOR_TYPES,
 	RECEIVE_ITEM_TYPE_CREATOR_TYPES,
 	ERROR_ITEM_TYPE_CREATOR_TYPES,
@@ -59,9 +63,9 @@ function removeKey(state, deleteKeys) {
 
 	return Object.keys(state)
 		.filter(key => !deleteKeys.includes(key))
-		.reduce((result, current) => {
-			result[current] = state[current];
-		return result;
+		.reduce((aggr, current) => {
+			aggr[current] = state[current];
+		return aggr;
   }, {});
 }
 
@@ -332,6 +336,26 @@ const updating = (state = {
 	}
 };
 
+const deleting = (state = {
+	items: []
+}, action) => {
+	switch(action.type) {
+		case REQUEST_DELETE_ITEM:
+			return {
+				...state,
+				items: [...state.items, ck(action.item.key, action.libraryKey)]
+			};
+		case RECEIVE_DELETE_ITEM:
+		case ERROR_DELETE_ITEM:
+			return {
+				...state,
+				items: without(state.items, ck(action.item.key, action.libraryKey))
+			};
+		default:
+			return state;
+	}
+};
+
 const items = (state = {}, action) => {
 	var items;
 	switch(action.type) {
@@ -340,6 +364,8 @@ const items = (state = {}, action) => {
 				...state,
 				[ck(action.item.key, action.libraryKey)]: action.item
 			};
+		case RECEIVE_DELETE_ITEM:
+			return removeKey(state, ck(action.item.key, action.libraryKey));
 		case RECEIVE_ITEMS_IN_COLLECTION:
 			items = action.items.reduce((aggr, item) => {
 				aggr[ck(item.key, action.libraryKey)] = item;
@@ -377,6 +403,9 @@ const itemsByCollection = (state = {}, action) => {
 		case RECEIVE_CREATE_ITEM:
 			// @TODO: 
 			return state;
+		case RECEIVE_DELETE_ITEM:
+			//@TODO:
+			return state;
 		case RECEIVE_ITEMS_IN_COLLECTION:
 			return {
 				...state,
@@ -398,6 +427,15 @@ const itemsByParentItem = (state = {}, action) => {
 						...(parentKey in state && state[parentKey] || []),
 						ck(action.item.key, action.libraryKey)
 					]
+				};
+			}
+			return state;
+		case RECEIVE_DELETE_ITEM:
+			if(action.item.parentItem) {
+				let parentKey = ck(action.item.parentItem, action.libraryKey);
+				return {
+					...state,
+					[parentKey]: without(state[parentKey], ck(action.item.key, action.libraryKey))
 				};
 			}
 			return state;
@@ -482,6 +520,7 @@ module.exports = {
 	collectionsByLibrary,
 	config,
 	// creating,
+	deleting,
 	fetching,
 	items,
 	itemsByCollection,

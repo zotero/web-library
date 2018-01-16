@@ -33,4 +33,8 @@
 	.btn + .btn {
 		margin-left: $space-min / 2;
 	}
+
+	.dropdown-wrapper {
+		display: inline-block;
+	}
 }

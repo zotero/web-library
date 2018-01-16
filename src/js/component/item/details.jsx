@@ -93,6 +93,7 @@ class ItemDetails extends React.Component {
 							notes={ this.props.childItems.filter(i => i.itemType === 'note') }
 							onChange={ this.props.onNoteChange }
 							onAddNote={ this.props.onAddNote }
+							onDeleteNote={ this.props.onDeleteNote }
 						/>
 					</div>
 					<div className={ cx({

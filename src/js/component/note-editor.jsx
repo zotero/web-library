@@ -3,6 +3,8 @@
 const React = require('react');
 const PropTypes = require('prop-types');
 const cx = require('classnames');
+const Dropdown = require('@trendmicro/react-dropdown').default;
+const { DropdownToggle, DropdownMenu, MenuItem } = require('@trendmicro/react-dropdown');
 const { noteAsTitle } = require('../common/format');
 const { get } = require('../utils');
 
@@ -26,6 +28,12 @@ class NoteEditor extends React.Component {
 				selected: null
 			});
 		}
+
+		if(!props.notes.find(n => n.key == this.state.selected)) {
+			this.setState({
+				selected: null
+			});
+		}
 	}
 
 	handleEditNote(note) {
@@ -40,6 +48,16 @@ class NoteEditor extends React.Component {
 
 	handleAddNote() {
 		this.props.onAddNote();
+	}
+
+	handleDelete() {
+		let note = this.props.notes.find(n => n.key == this.state.selected);
+		this.props.onDeleteNote(note);
+	}
+
+	handleDuplicate() {
+		let note = this.props.notes.find(n => n.key == this.state.selected);
+		this.props.onAddNote(note.note);
 	}
 
 	get richEditor() {
@@ -68,7 +86,7 @@ class NoteEditor extends React.Component {
 									>
 										<Icon type={ '16/note' } width="16" height="16" />
 										<a>
-											{ noteAsTitle(note.note) }
+											{ note.note && noteAsTitle(note.note) || <em>Empty Note</em> }
 										</a>
 									</li>
 								);
@@ -85,9 +103,22 @@ class NoteEditor extends React.Component {
 							<Button onClick={ this.handleAddNote.bind(this) }>
 								<Icon type={ '16/plus' } width="16" height="16" />
 							</Button>
-							<Button>
-								<Icon type={ '16/cog' } width="16" height="16" />
-							</Button>
+							{
+								this.state.selected &&
+								<Dropdown className="dropdown-wrapper">
+									<DropdownToggle componentClass={ Button }>
+										<Icon type={ '16/cog' } width="16" height="16" />
+									</DropdownToggle>
+									<DropdownMenu>
+										<MenuItem onSelect={ this.handleDuplicate.bind(this) }>
+											Duplicate
+										</MenuItem>
+										<MenuItem onSelect={ this.handleDelete.bind(this) }>
+											Delete
+										</MenuItem>
+									</DropdownMenu>
+								</Dropdown>
+							}
 						</ToolGroup>
 					</div>
 				</Toolbar>
