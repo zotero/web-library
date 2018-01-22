@@ -3,6 +3,7 @@
 const React = require('react');
 const PropTypes = require('prop-types');
 const cx = require('classnames');
+
 const Icon = require('./ui/icon');
 const CollectionTreeContainer = require('../container/collection-tree');
 const Button = require('./ui/button');
@@ -12,12 +13,12 @@ const Navbar = require('./ui/navbar');
 const TagSelector = require('./tag-selector');
 const { Toolbar, ToolGroup } = require('./ui/toolbars');
 const TouchHeaderContainer = require('../container/touch-header');
+const UserTypeDetector = require('../enhancers/user-type-detector');
 
 class Library extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			keyboard: false,
 			isNavOpened: false
 		};
 	}
@@ -33,7 +34,9 @@ class Library extends React.Component {
 		
 		return (
 			<div className={ cx('library-container', activeViewClass, {
-					'keyboard': this.state.keyboard,
+					'keyboard': this.props.isKeyboardUser,
+					'mouse': this.props.isMouseUser,
+					'touch': this.props.isTouchUser,
 					'navbar-nav-opened': this.state.isNavOpened
 				}) }>
 				<Navbar
@@ -78,28 +81,13 @@ class Library extends React.Component {
 			</div>
 		);
 	}
-
-	keyboardSupport(ev) {
-		if(ev.key === 'Tab') {
-			this.setState({
-				'keyboard': true
-			});
-		}
-	}
-
-	componentDidMount() {
-		this._keyboardListener = this.keyboardSupport.bind(this);
-		document.addEventListener('keyup', this._keyboardListener);
-	}
-
-
-	componentWillUnmount() {
-		document.removeEventListener('keyup', this._keyboardListener);
-	}
 }
 
 Library.propTypes = {
-	view: PropTypes.string
+	isKeyboardUser: PropTypes.bool,
+	isMouseUser: PropTypes.bool,
+	isTouchUser: PropTypes.bool,
+	view: PropTypes.string,
 };
 
-module.exports = Library;
+module.exports = UserTypeDetector(Library);
