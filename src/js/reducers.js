@@ -1,6 +1,6 @@
 'use strict';
 
-const { ck } = require('./utils');
+const { ck, without } = require('./utils');
 
 const {
 	CONFIGURE_API,
@@ -67,20 +67,6 @@ function removeKey(state, deleteKeys) {
 			aggr[current] = state[current];
 		return aggr;
   }, {});
-}
-
-function without(array, deleteValues) {
-	if(!Array.isArray(deleteValues)) {
-		deleteValues = [deleteValues];
-	}
-
-	for (let deleteValue of deleteValues) {
-		let pos = array.indexOf(deleteValue);
-		if(pos > -1) {
-			array = [...array.slice(0, pos), ...array.slice(pos+1)];
-		}
-	}
-	return array;
 }
 
 //@TODO: multi-library support

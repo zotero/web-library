@@ -100,6 +100,20 @@ const reverseMap = map => {
 	}, {});
 };
 
+function without(array, deleteValues) {
+	if(!Array.isArray(deleteValues)) {
+		deleteValues = [deleteValues];
+	}
+
+	for (let deleteValue of deleteValues) {
+		let pos = array.indexOf(deleteValue);
+		if(pos > -1) {
+			array = [...array.slice(0, pos), ...array.slice(pos+1)];
+		}
+	}
+	return array;
+}
+
 const noop = () => {};
 
 module.exports = { 
@@ -110,4 +124,5 @@ module.exports = {
 	reverseMap,
 	splice,
 	transform,
+	without,
 };
