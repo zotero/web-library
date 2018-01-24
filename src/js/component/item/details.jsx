@@ -9,6 +9,7 @@ const ItemBoxContainer = require('../../container/item-box');
 const Panel = require('../ui/panel');
 const { Tab, Tabs } = require('../ui/tabs');
 const NoteEditor = require('../note-editor');
+const TagEditor = require('../tag-editor');
 
 class ItemDetails extends React.Component {
 	constructor(props) {
@@ -40,8 +41,8 @@ class ItemDetails extends React.Component {
 								Notes
 							</Tab>
 							<Tab
-							isActive={ this.state.tab === 'tag' }
-							onActivate={ () => this.setState({ tab: 'tag' }) }
+							isActive={ this.state.tab === 'tags' }
+							onActivate={ () => this.setState({ tab: 'tags' }) }
 							>
 								Tag
 							</Tab>
@@ -102,7 +103,14 @@ class ItemDetails extends React.Component {
 							'active': this.state.tab === 'tags'
 						}) }>
 						<h5 className="h2 tab-pane-heading">Tags</h5>
-						<span>Tag tab content goes here</span>
+						<TagEditor
+							item={ this.props.item }
+							tags={ this.props.item.tags }
+							isProcessingTags={ this.props.isProcessingTags }
+							onAddTag={ this.props.onAddTag }
+							onDeleteTag={ this.props.onDeleteTag }
+							onUpdateTag={ this.props.onUpdateTag }
+						/>
 					</div>
 					<div className={ cx({
 							'tab-pane': true,

@@ -86,7 +86,7 @@ class NoteEditor extends React.Component {
 									>
 										<Icon type={ '16/note' } width="16" height="16" />
 										<a>
-											{ note.note && noteAsTitle(note.note) || <em>Empty Note</em> }
+											{ note.note && noteAsTitle(note.note) || <em>Untitled Note</em> }
 										</a>
 									</li>
 								);

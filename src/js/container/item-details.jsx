@@ -35,11 +35,38 @@ class ItemDetailsContainer extends React.Component {
 		await this.props.dispatch(deleteItem(note));
 	}
 
+	async handleAddTag(tag) {
+		let patch = {
+			tags: [...this.props.item.tags, { tag }]
+		};
+		await this.props.dispatch(updateItem(this.props.item.key, patch));
+	}
+
+	async handleDeleteTag(tag) {
+		let patch = {
+			tags: [...this.props.item.tags.filter(t => t.tag != tag)]
+		};
+		await this.props.dispatch(updateItem(this.props.item.key, patch));
+	}
+
+	async handleUpdateTag(tag, newTag) {
+		let patch = {
+			tags: [
+				...this.props.item.tags.filter(t => t.tag != tag), {
+				tag: newTag
+			}]
+		};
+		await this.props.dispatch(updateItem(this.props.item.key, patch));
+	}
+
 	render() {
 		return <ItemDetails 
 				onNoteChange={ this.handleNoteChange.bind(this) }
 				onAddNote={ this.handleAddNote.bind(this) }
 				onDeleteNote = { this.handleDeleteNote.bind(this) }
+				onAddTag = { this.handleAddTag.bind(this) }
+				onDeleteTag = { this.handleDeleteTag.bind(this) }
+				onUpdateTag = { this.handleUpdateTag.bind(this) }
 				{ ...this.props }
 			/>;
 	}
