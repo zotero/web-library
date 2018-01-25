@@ -11,7 +11,7 @@ class Editable extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			editing: false,
+			editing: props.shouldInitEditing,
 			value: props.value
 		};
 	}
@@ -176,6 +176,7 @@ class Editable extends React.Component {
 					/>;
 			} else {
 				return <input
+							autoFocus
 							tabIndex="-1"
 							type="text"
 							className="editable-control"
@@ -247,7 +248,8 @@ Editable.propTypes = {
 	selectPreOpen: PropTypes.bool,
 	options: PropTypes.array,
 	isLoading: PropTypes.bool,
-	children: PropTypes.node
+	children: PropTypes.node,
+	shouldInitEditing: PropTypes.bool,
 };
 
 Editable.defaultProps  = {
@@ -259,7 +261,8 @@ Editable.defaultProps  = {
 	onChange: () => {},
 	onToggle: () => {},
 	editOnClick: true,
-	selectPreOpen: true
+	selectPreOpen: true,
+	shouldInitEditing: false,
 };
 
 module.exports = Editable;
