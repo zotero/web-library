@@ -100,7 +100,7 @@ const reverseMap = map => {
 	}, {});
 };
 
-function without(array, deleteValues) {
+const without = (array, deleteValues) => {
 	if(!Array.isArray(deleteValues)) {
 		deleteValues = [deleteValues];
 	}
@@ -112,7 +112,20 @@ function without(array, deleteValues) {
 		}
 	}
 	return array;
-}
+};
+
+const deduplicateByKey = (array, key) => {
+	return array.slice()
+	.sort(function(a, b) {
+		return a[key] > b[key];
+	})
+	.reduce(function(a, b) {
+		if ((a.slice(-1)[0] && a.slice(-1)[0][key]) !== b[key]) {
+			a.push(b);
+		}
+		return a;
+	},[]);
+};
 
 const noop = () => {};
 
@@ -125,4 +138,5 @@ module.exports = {
 	splice,
 	transform,
 	without,
+	deduplicateByKey,
 };

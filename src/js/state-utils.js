@@ -151,6 +151,9 @@ const getItemFieldValue = (field, state) => {
 const isItemFieldBeingUpdated = (field, state) => {
 	const libraryKey = getLibraryKey(state);
 	const item = getItem(state);
+	if(!item) {
+		return false;
+	}
 	const itemCKey = ck(item.key, libraryKey);
 	return item && 
 		state.updating.items && 

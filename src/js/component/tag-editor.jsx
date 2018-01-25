@@ -2,9 +2,8 @@
 
 const React = require('react');
 const PropTypes = require('prop-types');
-const cx = require('classnames');
-const { get } = require('../utils');
 
+const Editable = require('./editable');
 const { Toolbar, ToolGroup } = require('./ui/toolbars');
 const Icon = require('./ui/icon');
 const Button = require('./ui/button');
@@ -13,101 +12,104 @@ class TagEditor extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			selected: null,
-			virtual: null,
-			editing: null,
-			editingValue: ''
+			processingTag: null,
+			virtualTag: null
 		};
 	}
 
 	componentWillReceiveProps(props) {
-		const itemKey = get(props, 'item.key');
-		if(itemKey && get(this.props, 'item.key') !== itemKey) {
+		if(this.props.tags != props.tags) {
 			this.setState({
-				selected: null,
-				virtual: null,
-				editing: null,
-				editingValue: ''
+				virtualTag: null,
 			});
 		}
 
-		if(!props.tags.find(t => t.tag == this.state.selected)) {
+		if(this.props.isProcessingTags && !props.isProcessingTags) {
 			this.setState({
-				selected: null,
-				virtual: null,
-				editing: null,
-				editingValue: ''
+				processingTag: null
 			});
 		}
 	}
 
 	handleAddTag() {
 		this.setState({
-			virtual: ''
+			virtualTag: ''
 		});
 	}
 
-	handlePersistAddTag(ev) {
-		this.props.onAddTag(ev.target.value);
+	handlePersistAddTag(newTag) {
+		this.setState({
+			virtualTag: newTag
+		});
+		this.props.onAddTag(newTag);
+	}
+
+	handleCancelAddTag() {
+		if(this.state.virtualTag == '') {
+			this.setState({
+				processingTag: null,
+				virtualTag: null
+			});
+		}
 	}
 
 	handleDelete(tag) {
+		this.setState({
+			processingTag: tag
+		});
 		this.props.onDeleteTag(tag);
 	}
 
-	handleUpdate(tag, newTag) {
-		this.props.onUpdateTag(tag, newTag);
-	}
-
-	handleEdit(tag) {
+	async handleUpdate(tag, newTag) {
 		this.setState({
-			editing: tag,
-			editingValue: tag
+			processingTag: tag
 		});
-	}
-
-	handleChange(ev) {
-		this.setState({
-			editingValue: ev.target.value
-		});
+		await this.props.onUpdateTag(tag, newTag);
 	}
 
 	render() {
+		let tags = [...this.props.tags];
+		tags.sort((t1, t2) => t1.tag > t2.tag);
 		return (
 			<div className="tag-editor">
 				<nav>
 					<ul className="nav list">
 						{
-							this.props.tags.map(tag => {
+							tags.map(tag => {
 								return (
-									<li 
-										className={ cx('item', {'selected': this.state.selected == tag.tag }) }
-										key={ tag.tag } 
-									>
+									<li className="item" key={ tag.tag } >
 										<Icon type={ '16/tag' } width="16" height="16" />
-											{ this.state.editing == tag.tag ? (
-												<input 
-													value={ this.state.editingValue }
-													onChange={ this.handleChange.bind(this) }
-													onBlur={ ev => this.handleUpdate(tag.tag, ev.target.value) }
-												/>
-											) : (
-												<span onClick={ () => this.handleEdit(tag.tag) }>
-													{ tag.tag }
-												</span>
-											)}
-										<Button className="btn-icon" onClick={ () => this.handleDelete(tag.tag) }>
-											<Icon type={ '16/minus' } width="16" height="16" />
+											<Editable
+												name="tag"
+												processing={ this.state.processingTag === tag.tag }
+												value={ tag.tag }
+												editOnClick = { !this.props.isProcessingTags }
+												onSave={ newValue => this.handleUpdate(tag.tag, newValue) } 
+											/>
+										<Button 
+											className="btn-icon"
+											disabled={ this.props.isProcessingTags }
+											onClick={ () => this.handleDelete(tag.tag) }
+										>
+											<Icon type={ '16/trash' } width="16" height="16" />
 										</Button>
 									</li>
 								);
 							})
 						}
 						{
-							this.state.virtual !== null && (
+							this.state.virtualTag !== null && (
 								<li className="item virtual">
 									<Icon type={ '16/tag' } width="16" height="16" />
-									<input onBlur={ this.handlePersistAddTag.bind(this) } />
+									<Editable
+										name="tag"
+										processing={ this.state.virtualTag !== '' }
+										shouldInitEditing={ this.state.virtualTag === '' }
+										value={ this.state.virtualTag }
+										editOnClick = { false }
+										onToggle = { isEditing => !isEditing && this.handleCancelAddTag() }
+										onSave={ newValue => this.handlePersistAddTag(newValue) } 
+									/>
 								</li>
 							)
 						}

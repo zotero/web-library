@@ -6,8 +6,8 @@ const ItemDetails = require('../component/item/details');
 const { connect } = require('react-redux');
 const { createItem, updateItem, deleteItem, fetchItemTemplate, fetchChildItems } = require('../actions');
 const { itemProp } = require('../constants/item');
-const { get } = require('../utils');
-const { getItem, getChildItems } = require('../state-utils');
+const { get, deduplicateByKey } = require('../utils');
+const { getItem, getChildItems, isItemFieldBeingUpdated } = require('../state-utils');
 
 class ItemDetailsContainer extends React.Component {
 	componentWillReceiveProps(props) {
@@ -37,8 +37,9 @@ class ItemDetailsContainer extends React.Component {
 
 	async handleAddTag(tag) {
 		let patch = {
-			tags: [...this.props.item.tags, { tag }]
+			tags: deduplicateByKey([...this.props.item.tags, { tag }], 'tag')
 		};
+
 		await this.props.dispatch(updateItem(this.props.item.key, patch));
 	}
 
@@ -46,15 +47,16 @@ class ItemDetailsContainer extends React.Component {
 		let patch = {
 			tags: [...this.props.item.tags.filter(t => t.tag != tag)]
 		};
+
 		await this.props.dispatch(updateItem(this.props.item.key, patch));
 	}
 
 	async handleUpdateTag(tag, newTag) {
 		let patch = {
-			tags: [
+			tags: deduplicateByKey([
 				...this.props.item.tags.filter(t => t.tag != tag), {
 				tag: newTag
-			}]
+			}], 'tag')
 		};
 		await this.props.dispatch(updateItem(this.props.item.key, patch));
 	}
@@ -74,8 +76,9 @@ class ItemDetailsContainer extends React.Component {
 
 const mapStateToProps = state => {
 	return {
+		childItems: getChildItems(state) || [],
+		isProcessingTags: isItemFieldBeingUpdated('tags', state),
 		item: getItem(state) || {},
-		childItems: getChildItems(state) || []
 	};
 };
 
