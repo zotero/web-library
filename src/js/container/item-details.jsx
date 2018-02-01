@@ -4,7 +4,7 @@ const React = require('react');
 const PropTypes = require('prop-types');
 const ItemDetails = require('../component/item/details');
 const { connect } = require('react-redux');
-const { createItem, updateItem, deleteItem, fetchItemTemplate, fetchChildItems } = require('../actions');
+const { createItem, updateItem, deleteItem, fetchItemTemplate, fetchChildItems, uploadAttachment } = require('../actions');
 const { itemProp } = require('../constants/item');
 const { get, deduplicateByKey } = require('../utils');
 const { getItem, getChildItems, isItemFieldBeingUpdated } = require('../state-utils');
@@ -61,6 +61,18 @@ class ItemDetailsContainer extends React.Component {
 		await this.props.dispatch(updateItem(this.props.item.key, patch));
 	}
 
+	async handleAddAttachment(fileData) {
+		const attachmentTemplate = await this.props.dispatch(fetchItemTemplate('attachment', { linkMode: 'imported_file' }));
+		const attachment = {
+			...attachmentTemplate,
+			parentItem: this.props.item.key,
+			filename: fileData.fileName,
+			contentType: fileData.contentType
+		};
+		let item = await this.props.dispatch(createItem(attachment));
+		await this.props.dispatch(uploadAttachment(item.key, fileData));
+	}
+
 	render() {
 		return <ItemDetails 
 				onNoteChange={ this.handleNoteChange.bind(this) }
@@ -69,6 +81,7 @@ class ItemDetailsContainer extends React.Component {
 				onAddTag = { this.handleAddTag.bind(this) }
 				onDeleteTag = { this.handleDeleteTag.bind(this) }
 				onUpdateTag = { this.handleUpdateTag.bind(this) }
+				onAddAttachment = { this.handleAddAttachment.bind(this) }
 				{ ...this.props }
 			/>;
 	}

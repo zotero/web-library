@@ -35,6 +35,10 @@ const {
 	RECEIVE_CREATE_ITEM,
 	ERROR_CREATE_ITEM,
 
+	REQUEST_UPLOAD_ATTACHMENT,
+	RECEIVE_UPLOAD_ATTACHMENT,
+	ERROR_UPLOAD_ATTACHMENT,
+
 	REQUEST_DELETE_ITEM,
 	RECEIVE_DELETE_ITEM,
 	ERROR_DELETE_ITEM,
@@ -248,7 +252,7 @@ const fetchItemTypeFields = (itemType) => {
 	};
 };
 
-const fetchItemTemplate = (itemType) => {
+const fetchItemTemplate = (itemType, opts = {}) => {
 	return async (dispatch, getState) => {
 		dispatch({
 			type: REQUEST_ITEM_TEMPLATE,
@@ -256,7 +260,7 @@ const fetchItemTemplate = (itemType) => {
 		});
 		let config = getState().config;
 		try {
-			let template = (await api(config.apiKey, config.apiConfig).template(itemType).get()).getData();
+			let template = (await api(config.apiKey, config.apiConfig).template(itemType).get(opts)).getData();
 			dispatch({
 				type: RECEIVE_ITEM_TEMPLATE,
 				itemType,
@@ -346,6 +350,7 @@ function createItem(properties) {
 				libraryKey,
 				item: response.getEntityByIndex(0)
 			});
+			return response.getEntityByIndex(0);
 		} catch(error) {
 			dispatch({
 					type: ERROR_CREATE_ITEM,
@@ -502,20 +507,62 @@ function queueUpdateItem(itemKey, patch, libraryKey, queueId) {
 	};
 }
 
+function uploadAttachment(itemKey, fileData) {
+	return async (dispatch, getState) => {
+		const state = getState();
+		const libraryKey = getLibraryKey(getState());
+		const config = state.config;
+		dispatch({
+			type: REQUEST_UPLOAD_ATTACHMENT,
+			libraryKey,
+			itemKey,
+			fileData,
+		});
+
+		// console.log(config.apiKey, config.apiConfig, libraryKey, itemKey);
+
+		try {
+			let response = await api(config.apiKey, config.apiConfig)
+				.library(libraryKey)
+				.items(itemKey)
+				.attachment(fileData.fileName, fileData.file)
+				.post();
+
+			dispatch({
+				type: RECEIVE_UPLOAD_ATTACHMENT,
+				libraryKey,
+				itemKey,
+				fileData,
+				response,
+			});
+		} catch(error) {
+			dispatch({
+				type: ERROR_UPLOAD_ATTACHMENT,
+				libraryKey,
+				itemKey,
+				fileData,
+				error,
+			});
+			throw error;
+		}
+	};
+}
+
 module.exports = {
 	changeRoute,
 	configureApi,
-	initialize,
-	selectLibrary,
 	createItem,
-	updateItem,
 	deleteItem,
-	fetchItems,
+	fetchChildItems,
 	fetchCollections,
+	fetchItems,
+	fetchItemTemplate,
 	fetchItemTypeCreatorTypes,
 	fetchItemTypeFields,
-	fetchItemTemplate,
+	initialize,
+	selectLibrary,
 	triggerEditingItem,
 	triggerResizeViewport,
-	fetchChildItems
+	updateItem,
+	uploadAttachment,
 };
