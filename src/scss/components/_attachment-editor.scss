@@ -1,0 +1,81 @@
+.attachment-editor {
+	display: flex;
+	flex-direction: column;
+
+	.list {
+		flex: 1 1 auto;
+	}
+
+	.editor {
+		flex: 1 1 auto;
+	}
+
+	.toolbar {
+		flex: 0 0 auto;
+	}
+
+	.item {
+		outline: none;
+		display: flex;
+		align-items: center;
+		position: relative;
+		cursor: pointer;
+		padding-left: 12px;
+		padding-right: 12px;
+		line-height: 26px;
+
+		&.selected {
+			@include touch-or-bp-down(sm) {
+				background: $touch-collection-tree-active-link-bg;
+
+				.icon.touch {
+					color: $touch-collection-tree-active-link-color;
+				}
+
+				> a {
+					color: $touch-collection-tree-active-link-color;
+				}
+			}
+
+			@include mouse-and-bp-up(md) {
+				background: $collection-tree-active-link-bg;
+
+				.icon {
+					color: $collection-tree-active-icon-color;
+				}
+
+				> a {
+					color: $collection-tree-active-link-color;
+				}
+			}
+		}
+
+		a {
+			flex: 1 1 auto;
+			color: $collection-tree-link-color;
+			position: relative;
+			@include css-truncate;
+		}
+
+		.icon {
+			flex: 0 0 auto;
+			margin-right: $space-xs;
+
+			&.touch {
+				margin-right: $space-md;
+			}
+		}
+
+		.icon-trash {
+			display: none;
+			&.touch {
+				display: block;
+			}
+		}
+
+		&:hover .icon-trash,
+		.editable.editing + .btn .icon-trash {
+			display: block;
+		}
+	}
+}

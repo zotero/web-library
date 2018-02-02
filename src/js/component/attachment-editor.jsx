@@ -2,6 +2,7 @@
 
 const React = require('react');
 const PropTypes = require('prop-types');
+const cx = require('classnames');
 
 const { Toolbar, ToolGroup } = require('./ui/toolbars');
 const Icon = require('./ui/icon');
@@ -39,7 +40,6 @@ class AttachmentEditor extends React.Component {
 	}
 
 	handleFileUpload() {
-		console.log(this.state.fileData);
 		this.props.onAddAttachment(this.state.fileData);
 	}
 
@@ -48,6 +48,22 @@ class AttachmentEditor extends React.Component {
 			<div key="attachment-editor" className="attachment-editor">
 				<nav>
 					<ul className="nav list">
+						{
+							this.props.attachments.map(attachment => {
+								return (
+									<li 
+										className={ cx('item', {'selected': this.state.selected == attachment.key }) }
+										key={ attachment.key }
+									>
+										<Icon type={ '16/paperclip' } width="16" height="16" />
+										<a>
+											{ attachment.filename }
+										</a>
+										<Icon type={ '16/trash' } width="16" height="16" />
+									</li>
+								);
+							})
+						}
 						{
 							this.state.isAddingAttachment && (
 								<li>
