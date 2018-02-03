@@ -12,7 +12,9 @@ const { getItem, getChildItems, isItemFieldBeingUpdated } = require('../state-ut
 class ItemDetailsContainer extends React.Component {
 	componentWillReceiveProps(props) {
 		const itemKey = get(props, 'item.key');
-		if(itemKey && get(this.props, 'item.key') !== itemKey) {
+		if(itemKey 
+			&& get(this.props, 'item.key') !== itemKey 
+			&& !['attachment', 'note'].includes(props.item.itemType)) {
 			this.props.dispatch(fetchChildItems(itemKey));
 		}
 	}
