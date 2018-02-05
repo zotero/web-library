@@ -505,7 +505,6 @@ module.exports = {
 	collections,
 	collectionsByLibrary,
 	config,
-	// creating,
 	deleting,
 	fetching,
 	items,

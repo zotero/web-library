@@ -122,16 +122,18 @@ const fetchCollections = (libraryKey) => {
 		});
 		try {
 			const { config } = getState();
-			const collections = (await api(config.apiKey, config.apiConfig).library(libraryKey).collections().get()).getData();
+			const response = await api(config.apiKey, config.apiConfig).library(libraryKey).collections().get();
+			const collections = response.getData();
 			collections.sort(
 				(a, b) => a.name.toUpperCase().localeCompare(b.name.toUpperCase())
 			);
 
 			dispatch({
 				type: RECEIVE_COLLECTIONS_IN_LIBRARY,
+				receivedAt: Date.now(),
 				libraryKey,
 				collections,
-				receivedAt: Date.now()
+				response
 			});
 			return collections;
 		} catch(error) {
@@ -181,9 +183,10 @@ const fetchItems = (collectionKey) => {
 			dispatch({
 				type: RECEIVE_ITEMS_IN_COLLECTION,
 				libraryKey: library.libraryKey,
+				receivedAt: Date.now(),
 				collectionKey,
 				items,
-				receivedAt: Date.now()
+				response,
 			});
 
 			return items;
@@ -289,12 +292,14 @@ const fetchChildItems = (itemKey, libraryKey) => {
 		});
 		
 		try {
-			let childItems = (await api(config.apiKey, config.apiConfig).library(libraryKey).items(itemKey).children().get()).getData();
+			let response = await api(config.apiKey, config.apiConfig).library(libraryKey).items(itemKey).children().get();
+			let childItems = response.getData();
 			dispatch({
 				type: RECEIVE_CHILD_ITEMS,
 				itemKey,
 				libraryKey,
-				childItems
+				childItems,
+				response
 			});
 		} catch(error) {
 			dispatch({

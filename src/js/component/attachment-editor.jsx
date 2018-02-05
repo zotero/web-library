@@ -43,6 +43,10 @@ class AttachmentEditor extends React.Component {
 		this.props.onAddAttachment(this.state.fileData);
 	}
 
+	handleDelete(attachment) {
+		this.props.onDeleteAttachment(attachment);
+	}
+
 	render() {
 		return (
 			<div key="attachment-editor" className="attachment-editor">
@@ -56,10 +60,20 @@ class AttachmentEditor extends React.Component {
 										key={ attachment.key }
 									>
 										<Icon type={ '16/paperclip' } width="16" height="16" />
-										<a>
-											{ attachment.filename }
-										</a>
-										<Icon type={ '16/trash' } width="16" height="16" />
+										{
+											attachment.key in this.props.attachentViewUrls ? (
+												<a href={ this.props.attachentViewUrls[attachment.key] }>
+													{ attachment.filename }
+												</a>
+											) : (
+												<span>
+													{ attachment.filename }
+												</span>
+											)
+										}
+										<Button onClick={ this.handleDelete.bind(this, attachment) }>
+											<Icon type={ '16/trash' } width="16" height="16" />
+										</Button>
 									</li>
 								);
 							})

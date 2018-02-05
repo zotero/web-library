@@ -10,12 +10,29 @@ const { get, deduplicateByKey } = require('../utils');
 const { getItem, getChildItems, isItemFieldBeingUpdated } = require('../state-utils');
 
 class ItemDetailsContainer extends React.Component {
+	state = {
+		apiAuthorityPart: {}
+	}
+
 	componentWillReceiveProps(props) {
 		const itemKey = get(props, 'item.key');
 		if(itemKey 
 			&& get(this.props, 'item.key') !== itemKey 
 			&& !['attachment', 'note'].includes(props.item.itemType)) {
 			this.props.dispatch(fetchChildItems(itemKey));
+		}
+
+		if(props.childItems != this.props.childItems) {
+			const attachentViewUrls = props.childItems
+				.filter(i => i.itemType === 'attachment')
+				.reduce((aggr, item) => {
+					// @TODO: url should not include the key
+					let config = props.config;
+					let baseUrl = config.apiConfig.apiAuthorityPart;
+					aggr[item.key] = `https://${baseUrl}/users/${config.userId}/items/${item.key}/file/view?key=${config.apiKey}`;
+					return aggr;
+			}, {});
+			this.setState({ attachentViewUrls });
 		}
 	}
 
@@ -75,6 +92,10 @@ class ItemDetailsContainer extends React.Component {
 		await this.props.dispatch(uploadAttachment(item.key, fileData));
 	}
 
+	async handleDeleteAttachment(attachment) {
+		await this.props.dispatch(deleteItem(attachment));
+	}
+
 	render() {
 		return <ItemDetails 
 				onNoteChange={ this.handleNoteChange.bind(this) }
@@ -84,13 +105,16 @@ class ItemDetailsContainer extends React.Component {
 				onDeleteTag = { this.handleDeleteTag.bind(this) }
 				onUpdateTag = { this.handleUpdateTag.bind(this) }
 				onAddAttachment = { this.handleAddAttachment.bind(this) }
+				onDeleteAttachment = { this.handleDeleteAttachment.bind(this) }
 				{ ...this.props }
+				{ ...this.state }
 			/>;
 	}
 }
 
 const mapStateToProps = state => {
 	return {
+		config: state.config,
 		childItems: getChildItems(state) || [],
 		isProcessingTags: isItemFieldBeingUpdated('tags', state),
 		item: getItem(state) || {},

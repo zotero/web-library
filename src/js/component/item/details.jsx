@@ -123,7 +123,9 @@ class ItemDetails extends React.Component {
 							<h5 className="h2 tab-pane-heading">Attachments</h5>
 							<AttachmentEditor
 								attachments={ this.props.childItems.filter(i => i.itemType === 'attachment') }
+								attachentViewUrls={ this.props.attachentViewUrls }
 								onAddAttachment={ this.props.onAddAttachment }
+								onDeleteAttachment={ this.props.onDeleteAttachment }
 							/>
 						</div>
 						<div className={ cx({
