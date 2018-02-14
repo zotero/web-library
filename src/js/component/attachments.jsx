@@ -8,7 +8,7 @@ const { Toolbar, ToolGroup } = require('./ui/toolbars');
 const Icon = require('./ui/icon');
 const Button = require('./ui/button');
 
-class AttachmentEditor extends React.Component {
+class Attachments extends React.Component {
 	state = {
 		isAddingAttachment: false,
 		fileData: null,
@@ -49,7 +49,7 @@ class AttachmentEditor extends React.Component {
 
 	render() {
 		return (
-			<div key="attachment-editor" className="attachment-editor">
+			<div className="details-list attachments" key="attachments">
 				<nav>
 					<ul className="nav list">
 						{
@@ -108,12 +108,12 @@ class AttachmentEditor extends React.Component {
 	}
 }
 
-AttachmentEditor.propTypes = {
+Attachments.propTypes = {
 	
 };
 
-AttachmentEditor.defaultProps = {
+Attachments.defaultProps = {
 	attachments: []
 };
 
-module.exports = AttachmentEditor;
+module.exports = Attachments;

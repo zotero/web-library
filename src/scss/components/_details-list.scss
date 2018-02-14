@@ -1,12 +1,8 @@
-.note-editor {
+.details-list {
 	display: flex;
 	flex-direction: column;
 
 	.list {
-		flex: 1 1 auto;
-	}
-
-	.editor {
 		flex: 1 1 auto;
 	}
 
@@ -22,7 +18,7 @@
 		cursor: pointer;
 		padding-left: 12px;
 		padding-right: 12px;
-		line-height: 26px;
+		min-height: 26px;
 
 		&.selected {
 			@include touch-or-bp-down(sm) {
@@ -64,6 +60,19 @@
 			&.touch {
 				margin-right: $space-md;
 			}
+		}
+
+		.icon-trash {
+			display: none;
+
+			&.touch {
+				display: block;
+			}
+		}
+
+		&:hover .icon-trash,
+		.editable.editing + .btn .icon-trash {
+			display: block;
 		}
 	}
 }

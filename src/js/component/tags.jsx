@@ -8,7 +8,7 @@ const { Toolbar, ToolGroup } = require('./ui/toolbars');
 const Icon = require('./ui/icon');
 const Button = require('./ui/button');
 
-class TagEditor extends React.Component {
+class Tags extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -71,7 +71,7 @@ class TagEditor extends React.Component {
 		let tags = [...this.props.tags];
 		tags.sort((t1, t2) => t1.tag > t2.tag);
 		return (
-			<div className="tag-editor">
+			<div className="details-list tags">
 				<nav>
 					<ul className="nav list">
 						{
@@ -130,7 +130,7 @@ class TagEditor extends React.Component {
 	}
 }
 
-TagEditor.propTypes = {
+Tags.propTypes = {
 	onAddTag: PropTypes.func.isRequired,
 	onDeleteTag: PropTypes.func.isRequired,
 	onUpdateTag: PropTypes.func.isRequired,
@@ -138,8 +138,8 @@ TagEditor.propTypes = {
 	tags: PropTypes.array,
 };
 
-TagEditor.defaultProps = {
+Tags.defaultProps = {
 	tags: []
 };
 
-module.exports = TagEditor;
+module.exports = Tags;

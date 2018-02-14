@@ -8,9 +8,9 @@ const { itemProp } = require('../../constants/item');
 const ItemBoxContainer = require('../../container/item-box');
 const Panel = require('../ui/panel');
 const { Tab, Tabs } = require('../ui/tabs');
-const NoteEditor = require('../note-editor');
-const TagEditor = require('../tag-editor');
-const AttachmentEditor = require('../attachment-editor');
+const Notes = require('../notes');
+const Tags = require('../tags');
+const Attachments = require('../attachments');
 
 class ItemDetails extends React.Component {
 	constructor(props) {
@@ -92,7 +92,7 @@ class ItemDetails extends React.Component {
 								'active': this.state.tab === 'notes'
 							}) }>
 							<h5 className="h2 tab-pane-heading">Notes</h5>
-							<NoteEditor
+							<Notes
 								item={ this.props.item }
 								notes={ this.props.childItems.filter(i => i.itemType === 'note') }
 								onChange={ this.props.onNoteChange }
@@ -106,7 +106,7 @@ class ItemDetails extends React.Component {
 								'active': this.state.tab === 'tags'
 							}) }>
 							<h5 className="h2 tab-pane-heading">Tags</h5>
-							<TagEditor
+							<Tags
 								item={ this.props.item }
 								tags={ this.props.item.tags }
 								isProcessingTags={ this.props.isProcessingTags }
@@ -121,7 +121,7 @@ class ItemDetails extends React.Component {
 								'active': this.state.tab === 'attachments'
 							}) }>
 							<h5 className="h2 tab-pane-heading">Attachments</h5>
-							<AttachmentEditor
+							<Attachments
 								attachments={ this.props.childItems.filter(i => i.itemType === 'attachment') }
 								attachentViewUrls={ this.props.attachentViewUrls }
 								onAddAttachment={ this.props.onAddAttachment }

@@ -13,7 +13,7 @@ const Icon = require('./ui/icon');
 const Button = require('./ui/button');
 const RichEditor = require('./rich-editor');
 
-class NoteEditor extends React.Component {
+class Notes extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -73,7 +73,7 @@ class NoteEditor extends React.Component {
 
 	render() {
 		return (
-			<div className="note-editor">
+			<div className="details-list notes">
 				<nav>
 					<ul className="nav list">
 						{
@@ -127,12 +127,12 @@ class NoteEditor extends React.Component {
 	}
 }
 
-NoteEditor.propTypes = {
+Notes.propTypes = {
 	notes: PropTypes.array
 };
 
-NoteEditor.defaultProps = {
+Notes.defaultProps = {
 	notes: []
 };
 
-module.exports = NoteEditor;
+module.exports = Notes;
