@@ -5,14 +5,14 @@ const PropTypes = require('prop-types');
 const { withRouter } = require('react-router-dom');
 const { connect } = require('react-redux');
 const ItemList = require('../component/item/list');
-const { fetchItems } = require('../actions');
+const { fetchItemsInCollection } = require('../actions');
 const { getCollection, getItems, getItem, isCollectionFetching } = require('../state-utils');
 const { get } = require('../utils');
 
 class ItemListContainer extends React.Component {
 	componentWillReceiveProps(props) {
 		if(get(this.props, 'collection.key') !== get(props, 'collection.key')) {
-			this.props.dispatch(fetchItems(props.collection.key));
+			this.props.dispatch(fetchItemsInCollection(props.collection.key));
 		}
 	}
 

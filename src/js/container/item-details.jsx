@@ -4,10 +4,10 @@ const React = require('react');
 const PropTypes = require('prop-types');
 const ItemDetails = require('../component/item/details');
 const { connect } = require('react-redux');
-const { createItem, updateItem, deleteItem, fetchItemTemplate, fetchChildItems, uploadAttachment } = require('../actions');
+const { createItem, updateItem, deleteItem, fetchItemTemplate, fetchChildItems, uploadAttachment, fetchItems } = require('../actions');
 const { itemProp } = require('../constants/item');
-const { get, deduplicateByKey } = require('../utils');
-const { getItem, getChildItems, isItemFieldBeingUpdated } = require('../state-utils');
+const { get, deduplicateByKey, mapRelationsToItemKeys } = require('../utils');
+const { getItem, getChildItems, isItemFieldBeingUpdated, getRelatedItems, getCollection } = require('../state-utils');
 
 class ItemDetailsContainer extends React.Component {
 	state = {
@@ -20,6 +20,14 @@ class ItemDetailsContainer extends React.Component {
 			&& get(this.props, 'item.key') !== itemKey 
 			&& !['attachment', 'note'].includes(props.item.itemType)) {
 			this.props.dispatch(fetchChildItems(itemKey));
+		}
+
+		if(itemKey && get(this.props, 'item.key') !== itemKey) {
+			let relatedItemKeys = mapRelationsToItemKeys(props.item.relations, props.config.userId);
+
+			if(relatedItemKeys.length) {
+				this.props.dispatch(fetchItems(relatedItemKeys));
+			}
 		}
 
 		if(props.childItems != this.props.childItems) {
@@ -118,6 +126,8 @@ const mapStateToProps = state => {
 		childItems: getChildItems(state) || [],
 		isProcessingTags: isItemFieldBeingUpdated('tags', state),
 		item: getItem(state) || {},
+		relations: getRelatedItems(state) || [],
+		collection: getCollection(state)
 	};
 };
 

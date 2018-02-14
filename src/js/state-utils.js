@@ -1,6 +1,6 @@
 'use strict';
 
-const { ck } = require('./utils');
+const { ck, mapRelationsToItemKeys } = require('./utils');
 
 //@TODO: multi-library support
 const getLibraryKey = state => {
@@ -130,6 +130,21 @@ const getChildItems = state => {
 	return ckeys.map(ckey => state.items[ckey]);
 };
 
+const getRelatedItems = state => {
+	const libraryKey = getLibraryKey(state);
+	const item = getItem(state);
+	if(!item) {
+		return [];
+	}
+	const relatedItemKeys = mapRelationsToItemKeys(item.relations, state.config.userId);
+	return relatedItemKeys.map(relatedItemKey => {
+		relatedItemKey = ck(relatedItemKey, libraryKey);
+		if(relatedItemKey in state.items) {
+			return state.items[relatedItemKey];
+		}
+	}).filter(item => item !== null);
+};
+
 const getItemFieldValue = (field, state) => {
 	const libraryKey = getLibraryKey(state);
 	const item = getItem(state);
@@ -176,5 +191,6 @@ module.exports = {
 	getCollectionsPath,
 	getCurrentViewFromState,
 	getItemFieldValue,
+	getRelatedItems,
 	isItemFieldBeingUpdated
 };

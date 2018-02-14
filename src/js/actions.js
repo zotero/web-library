@@ -59,6 +59,10 @@ const {
 	RECEIVE_CHILD_ITEMS,
 	ERROR_CHILD_ITEMS,
 
+	REQUEST_FETCH_ITEMS,
+	RECEIVE_FETCH_ITEMS,
+	ERROR_FETCH_ITEMS,
+
 	TRIGGER_EDITING_ITEM,
 	TRIGGER_RESIZE_VIEWPORT
 } = require('./constants/actions');
@@ -147,7 +151,7 @@ const fetchCollections = (libraryKey) => {
 	};
 };
 
-const fetchItems = (collectionKey) => {
+const fetchItemsInCollection = (collectionKey) => {
 	return async (dispatch, getState) => {
 		let { config, library } = getState();
 		
@@ -310,6 +314,45 @@ const fetchChildItems = (itemKey, libraryKey) => {
 			});
 		}
 	};
+};
+
+//@TODO: This will fail if itemKeys.length > 50
+//@TODO: It probably makes sense to skip itemKeys that already exists in state.items
+const fetchItems = (itemKeys, libraryKey) => {
+	return async (dispatch, getState) => {
+		let config = getState().config;
+		libraryKey = libraryKey || getLibraryKey(getState());
+		dispatch({
+			type: REQUEST_FETCH_ITEMS,
+			itemKeys,
+			libraryKey
+		});
+		
+		try {
+			let response = await api(config.apiKey, config.apiConfig)
+				.library(libraryKey)
+				.items()
+				.get({
+				itemKey: itemKeys.join(',')
+			});
+			let items = response.getData();
+			dispatch({
+				type: RECEIVE_FETCH_ITEMS,
+				itemKeys,
+				libraryKey,
+				items,
+				response
+			});
+		} catch(error) {
+			dispatch({
+				type: ERROR_FETCH_ITEMS,
+				error,
+				itemKeys,
+				libraryKey
+			});
+		}
+	};
+
 };
 
 const triggerEditingItem = (itemKey, libraryKey, editing) => {
@@ -561,6 +604,7 @@ module.exports = {
 	fetchChildItems,
 	fetchCollections,
 	fetchItems,
+	fetchItemsInCollection,
 	fetchItemTemplate,
 	fetchItemTypeCreatorTypes,
 	fetchItemTypeFields,

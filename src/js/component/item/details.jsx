@@ -11,6 +11,7 @@ const { Tab, Tabs } = require('../ui/tabs');
 const Notes = require('../notes');
 const Tags = require('../tags');
 const Attachments = require('../attachments');
+const Relations = require('../relations');
 
 class ItemDetails extends React.Component {
 	constructor(props) {
@@ -134,7 +135,10 @@ class ItemDetails extends React.Component {
 								'active': this.state.tab === 'related'
 							}) }>
 							<h5 className="h2 tab-pane-heading">Related</h5>
-							<span>Related tab content goes here</span>
+							<Relations
+								relations={ this.props.relations }
+								collection={ this.props.collection }
+							/>
 						</div>
 					</Panel>
 				)}

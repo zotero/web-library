@@ -111,6 +111,7 @@ const without = (array, deleteValues) => {
 			array = [...array.slice(0, pos), ...array.slice(pos+1)];
 		}
 	}
+
 	return array;
 };
 
@@ -127,6 +128,17 @@ const deduplicateByKey = (array, key) => {
 	},[]);
 };
 
+const mapRelationsToItemKeys = (relations, userId) => {
+	if(!('dc:relation' in relations)) {
+		return [];
+	}
+	var relatedUrls = Array.isArray(relations['dc:relation']) ? relations['dc:relation'] : [relations['dc:relation']];
+	return relatedUrls.map(relatedUrl => {
+		let match = relatedUrl.match(`https?://zotero.org/users/${userId}/items/([A-Z0-9]{8})`);
+		return match ? match[1] : null;
+	}).filter(String);
+};
+
 const noop = () => {};
 
 module.exports = { 
@@ -139,4 +151,5 @@ module.exports = {
 	transform,
 	without,
 	deduplicateByKey,
+	mapRelationsToItemKeys,
 };

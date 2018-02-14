@@ -52,6 +52,10 @@ const {
 	RECEIVE_CHILD_ITEMS,
 	ERROR_CHILD_ITEMS,
 
+	REQUEST_FETCH_ITEMS,
+	RECEIVE_FETCH_ITEMS,
+	ERROR_FETCH_ITEMS,
+
 	TRIGGER_EDITING_ITEM,
 	TRIGGER_RESIZE_VIEWPORT
 } = require('./constants/actions.js');
@@ -162,6 +166,7 @@ const fetching = (state = {
 	creatorTypes: [],
 	itemTypeFields: [],
 	itemTemplates: [],
+	items: [],
 	meta: false
 }, action) => {
 	switch(action.type) {
@@ -245,6 +250,23 @@ const fetching = (state = {
 			return {
 				...state,
 				childItems: without(state.childItems, ck(action.itemKey, action.libraryKey))
+			};
+		case REQUEST_FETCH_ITEMS:
+			return {
+				...state,
+				items: [
+					...(state.items || []),
+					...action.itemKeys.map(itemKey => ck(itemKey, action.libraryKey))
+				]
+			};
+		case RECEIVE_FETCH_ITEMS:
+		case ERROR_FETCH_ITEMS:
+			return {
+				...state,
+				items: without(
+					state.items,
+					action.itemKeys.map(itemKey => ck(itemKey, action.libraryKey))
+				)
 			};
 		default:
 			return state;
@@ -371,6 +393,15 @@ const items = (state = {}, action) => {
 			};
 		case RECEIVE_CHILD_ITEMS:
 			items = action.childItems.reduce((aggr, item) => {
+				aggr[ck(item.key, action.libraryKey)] = item;
+				return aggr;
+			}, {});
+			return {
+				...state,
+				...items
+			};
+		case RECEIVE_FETCH_ITEMS:
+			items = action.items.reduce((aggr, item) => {
 				aggr[ck(item.key, action.libraryKey)] = item;
 				return aggr;
 			}, {});
