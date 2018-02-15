@@ -63,6 +63,10 @@ const {
 	RECEIVE_FETCH_ITEMS,
 	ERROR_FETCH_ITEMS,
 
+	REQUEST_TOP_ITEMS,
+	RECEIVE_TOP_ITEMS,
+	ERROR_TOP_ITEMS,
+
 	TRIGGER_EDITING_ITEM,
 	TRIGGER_RESIZE_VIEWPORT
 } = require('./constants/actions');
@@ -352,7 +356,38 @@ const fetchItems = (itemKeys, libraryKey) => {
 			});
 		}
 	};
+};
 
+const fetchTopItems = libraryKey => {
+	return async (dispatch, getState) => {
+		let config = getState().config;
+		libraryKey = libraryKey || getLibraryKey(getState());
+		dispatch({
+			type: REQUEST_TOP_ITEMS,
+			libraryKey
+		});
+		
+		try {
+			let response = await api(config.apiKey, config.apiConfig)
+				.library(libraryKey)
+				.items()
+				.top()
+				.get();
+			let items = response.getData();
+			dispatch({
+				type: RECEIVE_TOP_ITEMS,
+				libraryKey,
+				items,
+				response
+			});
+		} catch(error) {
+			dispatch({
+				type: ERROR_TOP_ITEMS,
+				error,
+				libraryKey
+			});
+		}
+	};
 };
 
 const triggerEditingItem = (itemKey, libraryKey, editing) => {
@@ -608,6 +643,7 @@ module.exports = {
 	fetchItemTemplate,
 	fetchItemTypeCreatorTypes,
 	fetchItemTypeFields,
+	fetchTopItems,
 	initialize,
 	selectLibrary,
 	triggerEditingItem,

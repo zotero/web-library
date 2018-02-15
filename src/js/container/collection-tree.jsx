@@ -45,7 +45,11 @@ class CollectionTreeContainer extends React.Component {
 	}
 
 	onCollectionSelected(collectionKey) {
-		this.props.history.push(`/collection/${collectionKey}`);
+		if(collectionKey) {
+			this.props.history.push(`/collection/${collectionKey}`);
+		} else {
+			this.props.history.push('/');
+		}
 	}
 
 	render() {

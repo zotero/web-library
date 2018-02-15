@@ -53,6 +53,26 @@ class CollectionTree extends React.Component {
 		return (
 			<div className={ `level level-${level} ${hasOpen ? 'has-open' : ''} ${hasOpenLastLevel ? 'level-last' : ''}` }>
 				<ul className="nav" role="group">
+					{
+						level === 1 && (
+							<li key="all-documents">
+								<div
+									className="item-container"
+									onClick={ ev => this.collectionSelectedHandler(null, ev) }
+									onKeyPress={ ev => this.collectionKeyboardHandler(null, ev) }
+									role="treeitem"
+									tabIndex="0"
+								>
+									<div className="twisty-container" />
+									<Icon type="28/document" className="touch" width="28" height="28"/>
+									<Icon type="16/document" className="mouse" width="16" height="16"/>
+									<a>
+										All Documents
+									</a>
+								</div>
+							</li>
+						)
+					}
 					{ collections.map(collection => {
 						let twistyButton = (
 							<button

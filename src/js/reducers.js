@@ -56,6 +56,10 @@ const {
 	RECEIVE_FETCH_ITEMS,
 	ERROR_FETCH_ITEMS,
 
+	REQUEST_TOP_ITEMS,
+	RECEIVE_TOP_ITEMS,
+	ERROR_TOP_ITEMS,
+
 	TRIGGER_EDITING_ITEM,
 	TRIGGER_RESIZE_VIEWPORT
 } = require('./constants/actions.js');
@@ -167,7 +171,8 @@ const fetching = (state = {
 	itemTypeFields: [],
 	itemTemplates: [],
 	items: [],
-	meta: false
+	meta: false,
+	itemsTop: false
 }, action) => {
 	switch(action.type) {
 		case REQUEST_META:
@@ -267,6 +272,17 @@ const fetching = (state = {
 					state.items,
 					action.itemKeys.map(itemKey => ck(itemKey, action.libraryKey))
 				)
+			};
+		case REQUEST_TOP_ITEMS:
+			return {
+				...state,
+				itemsTop: true
+			};
+		case RECEIVE_TOP_ITEMS:
+		case ERROR_TOP_ITEMS:
+			return {
+				...state,
+				itemsTop: false
 			};
 		default:
 			return state;
@@ -401,6 +417,7 @@ const items = (state = {}, action) => {
 				...items
 			};
 		case RECEIVE_FETCH_ITEMS:
+		case RECEIVE_TOP_ITEMS:
 			items = action.items.reduce((aggr, item) => {
 				aggr[ck(item.key, action.libraryKey)] = item;
 				return aggr;
@@ -428,6 +445,26 @@ const itemsByCollection = (state = {}, action) => {
 				...state,
 				[ck(action.collectionKey, action.libraryKey)]: action.items.map(item => ck(item.key, action.libraryKey))
 			};
+		default:
+			return state;
+	}
+};
+
+const itemsTop = (state = [], action) => {
+	switch(action.type) {
+		case RECEIVE_CREATE_ITEM:
+			// @TODO: 
+			return state;
+		case RECEIVE_DELETE_ITEM:
+			//@TODO:
+			return state;
+		case RECEIVE_TOP_ITEMS:
+			return [
+				...(new Set([
+					...state,
+					...action.items.map(item => ck(item.key, action.libraryKey))
+				]))
+			];
 		default:
 			return state;
 	}
@@ -541,6 +578,7 @@ module.exports = {
 	items,
 	itemsByCollection,
 	itemsByParentItem,
+	itemsTop,
 	library,
 	meta,
 	router,

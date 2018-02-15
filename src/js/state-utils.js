@@ -7,6 +7,10 @@ const getLibraryKey = state => {
 	return 'libraryKey' in state.library ? state.library.libraryKey : null;
 };
 
+const isTopLevel = state => {
+	return !!getLibraryKey(state) && !('collection' in state.router.params);
+};
+
 const isCollectionSelected = state => {
 	const libraryKey = getLibraryKey(state);
 	const collections = state.collectionsByLibrary[libraryKey];
@@ -15,16 +19,20 @@ const isCollectionSelected = state => {
 	return libraryKey && collections && isCollectionInPath;
 };
 
-const isCollectionFetching = state => {
+const isFetchingItems = state => {
 	const libraryKey = getLibraryKey(state);
 	const collection = getCollection(state);
 
-	if(!collection) {
-		return false;
+	if(isTopLevel(state)) {
+		return state.fetching.itemsTop;
 	}
-	
-	const collectionCKey = ck(collection.key, libraryKey);
-	return state.fetching.itemsInCollection.includes(collectionCKey);
+
+	if(collection) {
+		const collectionCKey = ck(collection.key, libraryKey);
+		return state.fetching.itemsInCollection.includes(collectionCKey);
+	}
+
+	return false;
 };
 
 const getCollectionsPath = state => {
@@ -119,8 +127,14 @@ const getItem = state => {
 const getItems = state => {
 	const libraryKey = getLibraryKey(state);
 	const collection = getCollection(state);
-	const ckeys = libraryKey && collection && state.itemsByCollection[ck(collection.key, libraryKey)] || [];
-	return ckeys.map(ckey => state.items[ckey]);
+
+	if(isTopLevel(state)) {
+		const ckeys = libraryKey && state.itemsTop || [];
+		return ckeys.map(ckey => state.items[ckey]);
+	} else {
+		const ckeys = libraryKey && collection && state.itemsByCollection[ck(collection.key, libraryKey)] || [];
+		return ckeys.map(ckey => state.items[ckey]);
+	}
 };
 
 const getChildItems = state => {
@@ -179,18 +193,19 @@ const isItemFieldBeingUpdated = (field, state) => {
 };
 
 module.exports = {
-	getLibraryKey,
-	isCollectionSelected,
-	isCollectionFetching,
+	getChildItems,
 	getCollection,
 	getCollections,
-	getTopCollections,
-	getItem,
-	getItems,
-	getChildItems,
 	getCollectionsPath,
 	getCurrentViewFromState,
+	getItem,
 	getItemFieldValue,
+	getItems,
+	getLibraryKey,
 	getRelatedItems,
-	isItemFieldBeingUpdated
+	getTopCollections,
+	isCollectionSelected,
+	isFetchingItems,
+	isItemFieldBeingUpdated,
+	isTopLevel,
 };

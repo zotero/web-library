@@ -94,6 +94,7 @@ class LibraryContainer extends React.Component {
 						<Switch>
 							<Route path="/collection/:collection/item/:item" component={LibraryContainerWrapped} />
 							<Route path="/collection/:collection" component={LibraryContainerWrapped} />
+							<Route path="/item/:item" component={LibraryContainerWrapped} />
 							<Route path="/" component={LibraryContainerWrapped} />
 						</Switch>
 					</BrowserRouter>
