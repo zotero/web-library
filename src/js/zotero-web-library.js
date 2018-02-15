@@ -21,7 +21,10 @@ const ItemDetails = require('./component/item/details');
 const ItemList = require('./component/item/list');
 const Library = require('./component/library');
 const Navbar = require('./component/ui/navbar');
-const NoteEditor = require('./component/note-editor');
+const Notes = require('./component/notes');
+const Tags = require('./component/tags');
+const Attachments = require('./component/attachments');
+const Relations = require('./component/relations');
 const Panel = require('./component/ui/panel');
 const RichEditor = require('./component/rich-editor');
 const Spinner = require('./component/ui/spinner');
@@ -38,6 +41,7 @@ module.exports = {
 	CollectionTreeContainer,
 	ItemListContainer,
 	LibraryContainer,
+	Attachments,
 	Button,
 	CollectionTree,
 	Creators,
@@ -50,15 +54,17 @@ module.exports = {
 	ItemList,
 	Library,
 	Navbar,
-	NoteEditor,
+	Notes,
 	Panel,
+	Relations,
 	RichEditor,
 	Spinner,
 	Tab,
 	Tabs,
+	Tags,
 	TagSelector,
 	Toolbar,
 	ToolGroup,
 	TouchHeader,
-	TouchNavigation
+	TouchNavigation,
 };
