@@ -3,6 +3,7 @@
 const React = require('react');
 const PropTypes = require('prop-types');
 const ItemDetails = require('../component/item/details');
+const { withRouter } = require('react-router-dom');
 const { connect } = require('react-redux');
 const { createItem, updateItem, deleteItem, fetchItemTemplate, fetchChildItems, uploadAttachment, fetchItems } = require('../actions');
 const { itemProp } = require('../constants/item');
@@ -104,6 +105,15 @@ class ItemDetailsContainer extends React.Component {
 		await this.props.dispatch(deleteItem(attachment));
 	}
 
+	handleRelatedItemSelected(item) {
+		let isSameCollection = item.collections.includes(this.props.collection.key);
+		if(isSameCollection) {
+			this.props.history.push(`/collection/${this.props.collection.key}/item/${item.key}`);
+		} else {
+			this.props.history.push(`/item/${item.key}`);
+		}
+	}
+
 	render() {
 		return <ItemDetails 
 				onNoteChange={ this.handleNoteChange.bind(this) }
@@ -114,6 +124,7 @@ class ItemDetailsContainer extends React.Component {
 				onUpdateTag = { this.handleUpdateTag.bind(this) }
 				onAddAttachment = { this.handleAddAttachment.bind(this) }
 				onDeleteAttachment = { this.handleDeleteAttachment.bind(this) }
+				onRelatedItemSelected = { this.handleRelatedItemSelected.bind(this) }
 				{ ...this.props }
 				{ ...this.state }
 			/>;
@@ -143,7 +154,7 @@ ItemDetailsContainer.propTypes = {
 	dispatch: PropTypes.func.isRequired
 };
 
-module.exports = connect(
+module.exports = withRouter(connect(
 	mapStateToProps,
 	mapDispatchToProps
-)(ItemDetailsContainer);
+)(ItemDetailsContainer));

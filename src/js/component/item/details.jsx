@@ -138,6 +138,7 @@ class ItemDetails extends React.Component {
 							<Relations
 								relations={ this.props.relations }
 								collection={ this.props.collection }
+								onRelatedItemSelected={ this.props.onRelatedItemSelected }
 							/>
 						</div>
 					</Panel>

@@ -16,7 +16,7 @@ class Relations extends React.Component {
 	}
 
 	handleSelect(item) {
-		//@TODO
+		this.props.onRelatedItemSelected(item);
 	}
 
 	render() {
