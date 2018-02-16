@@ -11,12 +11,12 @@ const Button = require('./ui/button');
 
 class Relations extends React.Component {
 	
-	handleDelete() {
-		//@TODO
+	handleDelete(item) {
+		this.props.onRelatedItemDelete(item);
 	}
 
 	handleSelect(item) {
-		this.props.onRelatedItemSelected(item);
+		this.props.onRelatedItemSelect(item);
 	}
 
 	render() {

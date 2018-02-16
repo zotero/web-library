@@ -7,7 +7,7 @@ const { withRouter } = require('react-router-dom');
 const { connect } = require('react-redux');
 const { createItem, updateItem, deleteItem, fetchItemTemplate, fetchChildItems, uploadAttachment, fetchItems } = require('../actions');
 const { itemProp } = require('../constants/item');
-const { get, deduplicateByKey, mapRelationsToItemKeys } = require('../utils');
+const { get, deduplicateByKey, mapRelationsToItemKeys, removeRelationByItemKey } = require('../utils');
 const { getItem, getChildItems, isItemFieldBeingUpdated, getRelatedItems, getCollection } = require('../state-utils');
 
 class ItemDetailsContainer extends React.Component {
@@ -24,7 +24,10 @@ class ItemDetailsContainer extends React.Component {
 		}
 
 		if(itemKey && get(this.props, 'item.key') !== itemKey) {
-			let relatedItemKeys = mapRelationsToItemKeys(props.item.relations, props.config.userId);
+			let relatedItemKeys = mapRelationsToItemKeys(
+				props.item.relations,
+				props.config.userId
+			).filter(String);
 
 			if(relatedItemKeys.length) {
 				this.props.dispatch(fetchItems(relatedItemKeys));
@@ -105,13 +108,36 @@ class ItemDetailsContainer extends React.Component {
 		await this.props.dispatch(deleteItem(attachment));
 	}
 
-	handleRelatedItemSelected(item) {
+	handleRelatedItemSelect(item) {
 		let isSameCollection = item.collections.includes(this.props.collection.key);
 		if(isSameCollection) {
 			this.props.history.push(`/collection/${this.props.collection.key}/item/${item.key}`);
 		} else {
 			this.props.history.push(`/item/${item.key}`);
 		}
+	}
+
+	async handleRelatedItemDelete(relatedItem) {
+		let patch1 = {
+			relations: removeRelationByItemKey(
+				relatedItem.key,
+				this.props.item.relations,
+				this.props.config.userId
+			)
+		};
+
+		let patch2 = {
+			relations: removeRelationByItemKey(
+				this.props.item.key,
+				relatedItem.relations,
+				this.props.config.userId
+			)
+		};
+
+		await Promise.all([
+			this.props.dispatch(updateItem(this.props.item.key, patch1)),
+			this.props.dispatch(updateItem(relatedItem.key, patch2)),
+		]);
 	}
 
 	render() {
@@ -124,7 +150,8 @@ class ItemDetailsContainer extends React.Component {
 				onUpdateTag = { this.handleUpdateTag.bind(this) }
 				onAddAttachment = { this.handleAddAttachment.bind(this) }
 				onDeleteAttachment = { this.handleDeleteAttachment.bind(this) }
-				onRelatedItemSelected = { this.handleRelatedItemSelected.bind(this) }
+				onRelatedItemSelect = { this.handleRelatedItemSelect.bind(this) }
+				onRelatedItemDelete = { this.handleRelatedItemDelete.bind(this) }
 				{ ...this.props }
 				{ ...this.state }
 			/>;

@@ -128,28 +128,44 @@ const deduplicateByKey = (array, key) => {
 	},[]);
 };
 
-const mapRelationsToItemKeys = (relations, userId) => {
+const mapRelationsToItemKeys = (relations, userId, relationType='dc:relation') => {
 	if(!('dc:relation' in relations)) {
 		return [];
 	}
-	var relatedUrls = Array.isArray(relations['dc:relation']) ? relations['dc:relation'] : [relations['dc:relation']];
+	var relatedUrls = Array.isArray(relations[relationType]) ? relations[relationType] : [relations[relationType]];
 	return relatedUrls.map(relatedUrl => {
 		let match = relatedUrl.match(`https?://zotero.org/users/${userId}/items/([A-Z0-9]{8})`);
 		return match ? match[1] : null;
-	}).filter(String);
+	});
+};
+
+const removeRelationByItemKey = (itemKey, relations, userId, relationType='dc:relation') => {
+	let relatedItemKeys = mapRelationsToItemKeys(relations, userId, relationType);
+	let index = relatedItemKeys.indexOf(itemKey);
+	if(index === -1) {
+		return relations;
+	}
+	let relatedUrls = Array.isArray(relations[relationType]) ? relations[relationType] : [relations[relationType]];
+	relatedUrls.splice(index, 1);
+
+	return {
+		...relations,
+		[relationType]: relatedUrls
+	};
 };
 
 const noop = () => {};
 
 module.exports = { 
 	ck,
+	deduplicateByKey,
 	enhanceCollections,
 	get,
+	mapRelationsToItemKeys,
 	noop,
+	removeRelationByItemKey,
 	reverseMap,
 	splice,
 	transform,
 	without,
-	deduplicateByKey,
-	mapRelationsToItemKeys,
 };
