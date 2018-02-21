@@ -8,26 +8,96 @@ const { KEYDOWN } = require('react-key-handler');
 const Item = require('../item');
 const Spinner = require('../ui/spinner');
 
+const { without } = require('../../utils');
+
 class ItemList extends React.Component {
-	handleKeyArrowDown() {
-		var selectedItemKey;
-		if(this.props.selectedItemKeys.length) {
-			selectedItemKey = this.props.selectedItemKeys[this.props.selectedItemKeys.length - 1];
+	handleKeyArrowDown(ev) {
+		const lastItemKey = this.props.selectedItemKeys[this.props.selectedItemKeys.length - 1];
+		const index = this.props.items.findIndex(i => i.key === lastItemKey);
+
+		if(index + 1 >= this.props.items.length) {
+			return;
 		}
-		let index = this.props.items.findIndex(item => item.key === selectedItemKey) + 1;
-		if(this.props.items[index]) {
-			this.props.onItemSelect(this.props.items[index].key);
+
+		if(ev.getModifierState('Shift')) {
+			if(this.props.selectedItemKeys.includes(this.props.items[index + 1].key)) {
+				if(this.props.items.slice(0, index).some(
+					i => this.props.selectedItemKeys.includes(i.key)
+				)) {
+					var offset = 1;
+					while(index + offset !== this.props.items.length - 1 && 
+						this.props.selectedItemKeys.includes(this.props.items[index + offset].key)
+					) {
+						offset++;
+					}
+					var consecutiveCounter = 1;
+					while(this.props.selectedItemKeys.includes(this.props.items[index + offset - consecutiveCounter].key)) {
+						consecutiveCounter++;
+					}
+					const consecutiveKeys = this.props.items.slice(index + offset - consecutiveCounter + 1, index + offset).map(i => i.key);
+					this.props.onMultipleItemsSelect([
+						...this.props.selectedItemKeys.filter(k => !consecutiveKeys.includes(k)),
+						...consecutiveKeys,
+						this.props.items[index + offset].key
+					]);
+				} else {
+					this.props.onMultipleItemsSelect(
+						without(this.props.selectedItemKeys, this.props.items[index].key)
+					);
+				}
+			} else {
+				this.props.onMultipleItemsSelect([
+					...this.props.selectedItemKeys,
+					this.props.items[index + 1].key
+				]);
+			}
+		} else {
+			this.props.onItemSelect(this.props.items[index + 1].key);
 		}
 	}
 
-	handleKeyArrowUp() {
-		var selectedItemKey;
-		if(this.props.selectedItemKeys.length) {
-			selectedItemKey = this.props.selectedItemKeys[0];
+	handleKeyArrowUp(ev) {
+		const lastItemKey = this.props.selectedItemKeys[this.props.selectedItemKeys.length - 1];
+		const index = this.props.items.findIndex(i => i.key === lastItemKey);
+
+		if(index - 1 < 0) {
+			return;
 		}
-		let index = this.props.items.findIndex(item => item.key === selectedItemKey) - 1;
-		if(this.props.items[index]) {
-			this.props.onItemSelect(this.props.items[index].key);
+
+		if(ev.getModifierState('Shift')) {
+			if(this.props.selectedItemKeys.includes(this.props.items[index - 1].key)) {
+				if(this.props.items.slice(index + 1).some(
+					i => this.props.selectedItemKeys.includes(i.key)
+				)) {
+					var offset = 1;
+					while(index - offset !== 0 && 
+						this.props.selectedItemKeys.includes(this.props.items[index - offset].key)
+					) {
+						offset++;
+					}
+					var consecutiveCounter = 1;
+					while(this.props.selectedItemKeys.includes(this.props.items[index - offset + consecutiveCounter].key)) {
+						consecutiveCounter++;
+					}
+					const consecutiveKeys = this.props.items.slice(index - offset, index - offset + consecutiveCounter).reverse().map(i => i.key);
+					this.props.onMultipleItemsSelect([
+						...this.props.selectedItemKeys.filter(k => !consecutiveKeys.includes(k)),
+						...consecutiveKeys,
+						this.props.items[index - offset].key
+					]);
+				} else {
+					this.props.onMultipleItemsSelect(
+						without(this.props.selectedItemKeys, this.props.items[index].key)
+					);
+				}
+			} else {
+				this.props.onMultipleItemsSelect([
+					...this.props.selectedItemKeys,
+					this.props.items[index - 1].key
+				]);
+			}
+		} else {
+			this.props.onItemSelect(this.props.items[index - 1].key);
 		}
 	}
 
@@ -35,16 +105,20 @@ class ItemList extends React.Component {
 		if(ev.getModifierState('Shift')) {
 			let startIndex = this.props.selectedItemKeys.length ? this.props.items.findIndex(i => i.key === this.props.selectedItemKeys[0]) : 0;
 			let endIndex = this.props.items.findIndex(i => i.key === item.key);
+			let isFlipped = false;
 			if(startIndex > endIndex) {
 				[startIndex, endIndex] = [endIndex, startIndex];
+				isFlipped = true;
 			}
 
 			endIndex++;
 			const keys = this.props.items.slice(startIndex, endIndex).map(i => i.key);
+			if(isFlipped) {
+				keys.reverse();
+			}
 			this.props.onMultipleItemsSelect(keys);
-		} else if(ev.getModifierState('Control') || ev.getModifierState('OS')) {
-			//@TODO: should be os-dependent: ctrl on win/lin and OS on macOS
-			
+		} else if(ev.getModifierState('Control') || ev.getModifierState('Meta')) {
+			this.props.onMultipleItemsSelect([...this.props.selectedItemKeys, item.key]);
 		} else {
 			this.props.onItemSelect(item.key);
 		}
