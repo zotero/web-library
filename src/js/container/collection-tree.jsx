@@ -6,7 +6,7 @@ const { withRouter } = require('react-router-dom');
 const { connect } = require('react-redux');
 const CollectionTree = require('../component/collection-tree');
 const { fetchCollections } = require('../actions');
-const { getCollections, getCollectionsPath } = require('../state-utils');
+const { getCollections, getCollectionsPath, isTopLevel } = require('../state-utils');
 const { enhanceCollections } = require('../utils');
 
 
@@ -59,6 +59,7 @@ class CollectionTreeContainer extends React.Component {
 			isFetching={this.props.isFetching}
 			onCollectionOpened={ this.toggleOpenCollection.bind(this) }
 			onCollectionSelected={ this.onCollectionSelected.bind(this) }
+			isTopLevel={ this.props.isTopLevel }
 		/>;
 	}
 }
@@ -69,7 +70,8 @@ const mapStateToProps = state => {
 		collections: getCollections(state),
 		isFetching: state.library && state.collections[state.library.libraryKey] ? state.collections[state.library.libraryKey].isFetching : false,
 		selected: 'collection' in state.router.params ? state.router.params.collection : null,
-		path: getCollectionsPath(state)
+		path: getCollectionsPath(state),
+		isTopLevel: isTopLevel(state)
 	};
 };
 

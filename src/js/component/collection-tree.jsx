@@ -4,6 +4,7 @@ const React = require('react');
 const PropTypes = require('prop-types');
 const Icon = require('./ui/icon');
 const Spinner = require('./ui/spinner');
+const cx = require('classnames');
 
 class CollectionTree extends React.Component {
 	collectionSelectedHandler(key, ev) {
@@ -48,14 +49,16 @@ class CollectionTree extends React.Component {
 	renderCollections(collections, level) {
 		let hasOpen = this.testRecursive(collections, col => col.isSelected);
 		let hasOpenLastLevel = collections.some(col => col.isSelected && !col.hasChildren);
-		
 
 		return (
 			<div className={ `level level-${level} ${hasOpen ? 'has-open' : ''} ${hasOpenLastLevel ? 'level-last' : ''}` }>
 				<ul className="nav" role="group">
 					{
 						level === 1 && (
-							<li key="all-documents">
+							<li 
+								key="all-documents"
+								className={ cx({'selected': this.props.isTopLevel })}
+								>
 								<div
 									className="item-container"
 									onClick={ ev => this.collectionSelectedHandler(null, ev) }
