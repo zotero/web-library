@@ -8,7 +8,7 @@ const { connect } = require('react-redux');
 const { createItem, updateItem, deleteItem, fetchItemTemplate, fetchChildItems, uploadAttachment, fetchItems } = require('../actions');
 const { itemProp } = require('../constants/item');
 const { get, deduplicateByKey, mapRelationsToItemKeys, removeRelationByItemKey } = require('../utils');
-const { getItem, getChildItems, isItemFieldBeingUpdated, getRelatedItems, getCollection } = require('../state-utils');
+const { getItem, getChildItems, isItemFieldBeingUpdated, getRelatedItems, getCollection, getCollectionItemCount, isTopLevel, getLibraryItemCount } = require('../state-utils');
 
 class ItemDetailsContainer extends React.Component {
 	state = {
@@ -165,7 +165,8 @@ const mapStateToProps = state => {
 		isProcessingTags: isItemFieldBeingUpdated('tags', state),
 		item: getItem(state) || {},
 		relations: getRelatedItems(state) || [],
-		collection: getCollection(state)
+		collection: getCollection(state),
+		itemsCount: isTopLevel(state) ? getLibraryItemCount(state) : getCollectionItemCount(state)
 	};
 };
 

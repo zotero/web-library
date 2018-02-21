@@ -1,6 +1,6 @@
 {
   "name": "zotero-web-library",
-  "version": "0.9.30-alpha",
+  "version": "0.9.31-alpha",
   "description": "Web library from zotero.org",
   "main": "lib/zotero-web-library.js",
   "directories": {
@@ -86,7 +86,7 @@
     "redux-promise": "^0.5.3",
     "redux-thunk": "^2.2.0",
     "tinymce": "^4.7.3",
-    "zotero-api-client": "^0.10.0",
-    "zotero-api-client-cache": "^0.2.0"
+    "zotero-api-client": "^0.11.0",
+    "zotero-api-client-cache": "^0.4.1"
   }
 }

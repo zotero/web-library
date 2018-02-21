@@ -11,6 +11,11 @@ const isTopLevel = state => {
 	return !!getLibraryKey(state) && !('collection' in state.router.params);
 };
 
+const getLibraryItemCount = state => {
+	const libraryKey = getLibraryKey(state);
+	return libraryKey && libraryKey in state.itemCountByLibrary ? state.itemCountByLibrary[libraryKey] : null;
+};
+
 const isCollectionSelected = state => {
 	const libraryKey = getLibraryKey(state);
 	const collections = state.collectionsByLibrary[libraryKey];
@@ -117,6 +122,16 @@ const getTopCollections = state => {
 	return getCollections(state).filter(collection => !collection.parentCollection);
 };
 
+const getCollectionItemCount = state => {
+	const libraryKey = getLibraryKey(state);
+	const collection = getCollection(state);
+	if(libraryKey && collection) {
+		return state.itemCountByCollection[ck(collection.key, libraryKey)];
+	}
+
+	return null;
+};
+
 const getItem = state => {
 	const libraryKey = getLibraryKey(state);
 	const itemKey = state.router && 'item' in  state.router.params && state.router.params.item;
@@ -195,12 +210,14 @@ const isItemFieldBeingUpdated = (field, state) => {
 module.exports = {
 	getChildItems,
 	getCollection,
+	getCollectionItemCount,
 	getCollections,
 	getCollectionsPath,
 	getCurrentViewFromState,
 	getItem,
 	getItemFieldValue,
 	getItems,
+	getLibraryItemCount,
 	getLibraryKey,
 	getRelatedItems,
 	getTopCollections,

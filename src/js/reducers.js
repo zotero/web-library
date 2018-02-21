@@ -515,6 +515,33 @@ const itemTypeCreatorTypes = (state = {}, action) => {
 	}
 };
 
+const itemCountByCollection = (state = {}, action) => {
+	switch(action.type) {
+		case RECEIVE_COLLECTIONS_IN_LIBRARY:
+			return {
+				...state,
+				...(action.response.getData().reduce((aggr, collection, index) => {
+					aggr[ck(collection.key, action.libraryKey)] = action.response.getMeta()[index].numItems;
+					return aggr;
+				}, {}))
+			};
+		default:
+			return state;
+	}	
+};
+
+const itemCountByLibrary = (state = {}, action) => {
+	switch(action.type) {
+		case RECEIVE_TOP_ITEMS:
+			return {
+				...state,
+				[action.libraryKey]: action.response.response.headers.get('Total-Results')
+			};
+		default:
+			return state;
+	}	
+};
+
 const itemTypeFields = (state = {}, action) => {
 	switch(action.type) {
 		case RECEIVE_ITEM_TYPE_FIELDS:
@@ -579,6 +606,8 @@ module.exports = {
 	itemsByCollection,
 	itemsByParentItem,
 	itemsTop,
+	itemCountByCollection,
+	itemCountByLibrary,
 	library,
 	meta,
 	router,
