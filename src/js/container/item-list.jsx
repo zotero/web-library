@@ -21,7 +21,7 @@ class ItemListContainer extends React.PureComponent {
 		}
 	}
 
-	onItemSelected(itemKey) {
+	handleItemSelect(itemKey) {
 		if(this.props.isTopLevel) {
 			this.props.history.push(`/item/${itemKey}`);
 		} else {
@@ -29,12 +29,21 @@ class ItemListContainer extends React.PureComponent {
 		}
 	}
 
+	handleMultipleItemsSelect(keys) {
+		if(this.props.isTopLevel) {
+			this.props.history.push(`/items/${keys.join(',')}`);
+		} else {
+			this.props.history.push(`/collection/${this.props.collection.key}/items/${keys.join(',')}`);
+		}
+	}
+
 	render() {
 		return <ItemList 
 			isFetching={ this.props.isFetching }
 			items={ this.props.items }
-			selectedItemKey={ this.props.selectedItemKey }
-			onItemSelected={ this.onItemSelected.bind(this) }
+			selectedItemKeys={ this.props.selectedItemKeys }
+			onItemSelect={ this.handleItemSelect.bind(this) }
+			onMultipleItemsSelect={ this.handleMultipleItemsSelect.bind(this) }
 			/>;
 	}
 }
@@ -52,7 +61,7 @@ const mapStateToProps = state => {
 		items,
 		isFetching,
 		isTopLevel: isTopLevel(state),
-		selectedItemKey: item ? item.key : null
+		selectedItemKeys: item ? [item.key] : (state.router && 'items' in state.router.params && state.router.params.items.split(',')) || []
 	};
 };
 

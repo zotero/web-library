@@ -10,17 +10,46 @@ const Spinner = require('../ui/spinner');
 
 class ItemList extends React.Component {
 	handleKeyArrowDown() {
-		let index = this.props.items.findIndex(item => item.key === this.props.selectedItemKey) + 1;
+		var selectedItemKey;
+		if(this.props.selectedItemKeys.length) {
+			selectedItemKey = this.props.selectedItemKeys[this.props.selectedItemKeys.length - 1];
+		}
+		let index = this.props.items.findIndex(item => item.key === selectedItemKey) + 1;
 		if(this.props.items[index]) {
-			this.props.onItemSelected(this.props.items[index].key);
+			this.props.onItemSelect(this.props.items[index].key);
 		}
 	}
 
 	handleKeyArrowUp() {
-		let index = this.props.items.findIndex(item => item.key === this.props.selectedItemKey) - 1;
-		if(this.props.items[index]) {
-			this.props.onItemSelected(this.props.items[index].key);
+		var selectedItemKey;
+		if(this.props.selectedItemKeys.length) {
+			selectedItemKey = this.props.selectedItemKeys[0];
 		}
+		let index = this.props.items.findIndex(item => item.key === selectedItemKey) - 1;
+		if(this.props.items[index]) {
+			this.props.onItemSelect(this.props.items[index].key);
+		}
+	}
+
+	handleItemSelect(item, ev) {
+		if(ev.getModifierState('Shift')) {
+			let startIndex = this.props.selectedItemKeys.length ? this.props.items.findIndex(i => i.key === this.props.selectedItemKeys[0]) : 0;
+			let endIndex = this.props.items.findIndex(i => i.key === item.key);
+			if(startIndex > endIndex) {
+				[startIndex, endIndex] = [endIndex, startIndex];
+			}
+
+			endIndex++;
+			const keys = this.props.items.slice(startIndex, endIndex).map(i => i.key);
+			this.props.onMultipleItemsSelect(keys);
+		} else if(ev.getModifierState('Control') || ev.getModifierState('OS')) {
+			//@TODO: should be os-dependent: ctrl on win/lin and OS on macOS
+			
+		} else {
+			this.props.onItemSelect(item.key);
+		}
+
+		ev.preventDefault();
 	}
 
 	render() {
@@ -55,8 +84,8 @@ class ItemList extends React.Component {
 						<ul className="item list">
 							{
 								this.props.items.map(item => <Item
-									onClick={ () => this.props.onItemSelected(item.key) }
-									active= { item.key === this.props.selectedItemKey }
+									onClick={ this.handleItemSelect.bind(this, item) }
+									active= { this.props.selectedItemKeys.includes(item.key) }
 									key={ item.key }
 									item={ item } />)
 							}
@@ -70,13 +99,14 @@ class ItemList extends React.Component {
 
 ItemList.propTypes = {
 	items: PropTypes.array,
-	selectedItemKey: PropTypes.string,
+	selectedItemKeys: PropTypes.array,
 	isFetching: PropTypes.bool,
-	onItemSelected: PropTypes.func
+	onItemSelect: PropTypes.func
 };
 
 ItemList.defaultProps = {
-	isFetching: false
+	isFetching: false,
+	selectedItemKeys: []
 };
 
 module.exports = ItemList;

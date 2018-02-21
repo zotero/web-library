@@ -118,6 +118,8 @@
 	}
 
 	.item {
+		user-select: none;
+		
 		@include bp-down(sm) {
 			padding: $item-touch-padding-vertical $item-touch-padding-horizontal;
 		}
