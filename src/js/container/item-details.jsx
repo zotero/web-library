@@ -159,14 +159,17 @@ class ItemDetailsContainer extends React.Component {
 }
 
 const mapStateToProps = state => {
+	const item = getItem(state);
+
 	return {
+		item: item || {},
 		config: state.config,
 		childItems: getChildItems(state) || [],
 		isProcessingTags: isItemFieldBeingUpdated('tags', state),
-		item: getItem(state) || {},
 		relations: getRelatedItems(state) || [],
 		collection: getCollection(state),
-		itemsCount: isTopLevel(state) ? getLibraryItemCount(state) : getCollectionItemCount(state)
+		itemsCount: isTopLevel(state) ? getLibraryItemCount(state) : getCollectionItemCount(state),
+		selectedItemKeys: item ? [item.key] : (state.router && 'items' in state.router.params && state.router.params.items.split(',')) || []
 	};
 };
 

@@ -3,14 +3,14 @@
 const React = require('react');
 const PropTypes = require('prop-types');
 
-class ItemDetailsInfo extends React.PureComponent {
+class ItemDetailsInfoSelected extends React.PureComponent {
 	render() {
 		return (
 			<div className="info-wrapper">
 				<div className="info">
 					{
-						this.props.itemsCount !== null &&
-						`${this.props.itemsCount} items in this view`
+						this.props.selectedItemKeys.length > 0 &&
+						`${this.props.selectedItemKeys.length} items selected`
 					}
 				</div>
 			</div>
@@ -18,4 +18,4 @@ class ItemDetailsInfo extends React.PureComponent {
 	}
 }
 
-module.exports = ItemDetailsInfo;
+module.exports = ItemDetailsInfoSelected;

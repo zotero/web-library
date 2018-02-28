@@ -6,7 +6,8 @@ const cx = require('classnames');
 const { itemProp } = require('../../constants/item');
 
 const ItemDetailsTabs = require('./details/tabs');
-const ItemDetailsInfo = require('./details/info');
+const ItemDetailsInfoView = require('./details/info-view');
+const ItemDetailsInfoSelected = require('./details/info-selected');
 
 class ItemDetails extends React.Component {
 	render() {
@@ -17,7 +18,11 @@ class ItemDetails extends React.Component {
 					!['attachment', 'note'].includes(this.props.item.itemType) && 
 						<ItemDetailsTabs { ...this.props } />
 					) : (
-						<ItemDetailsInfo { ...this.props } />
+						this.props.selectedItemKeys.length ? (
+							<ItemDetailsInfoSelected { ...this.props } />
+						) : (
+							<ItemDetailsInfoView { ...this.props } />
+						)
 					)
 				}
 			</section>
