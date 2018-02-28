@@ -13,12 +13,12 @@ const {
 	isItemFieldBeingUpdated
 } = require('../state-utils');
 
-class ItemBoxContainer extends React.Component {
+class ItemBoxContainer extends React.PureComponent {
 	componentWillReceiveProps(props) {
 		let itemType = get(props, 'item.itemType');
-		if(get(this.props, 'item.itemType') != itemType) {
+		if(props.shouldFetchMeta === true) {
 			this.props.dispatch(fetchItemTypeCreatorTypes(itemType));
-			this.props.dispatch(fetchItemTypeFields(itemType));
+			this.props.dispatch(fetchItemTypeFields(itemType));	
 		}
 	}
 
@@ -73,10 +73,15 @@ const mapStateToProps = state => {
 		return {};
 	}
 
-	if(!(item.itemType in state.meta.itemTypeCreatorTypes) || 
-		!(item.itemType in state.meta.itemTypeFields)) {
+	let isMetaAvailable = item.itemType in state.meta.itemTypeCreatorTypes && item.itemType in state.meta.itemTypeFields;
+	let shouldFetchMeta = !isMetaAvailable 
+		&& !state.fetching.itemTypeCreatorTypes.includes(item.itemType) 
+		&& !state.fetching.itemTypeFields.includes(item.itemType);
+
+	if(!isMetaAvailable) {
 		return {
 			item,
+			shouldFetchMeta,
 			isLoading: true
 		};
 	}

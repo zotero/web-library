@@ -166,13 +166,14 @@ const collectionsByLibrary = (state = {}, action) => {
 
 const fetching = (state = {
 	collectionsInLibrary: [],
-	itemsInCollection: [],
 	creatorTypes: [],
-	itemTypeFields: [],
-	itemTemplates: [],
 	items: [],
+	itemsInCollection: [],
+	itemsTop: false,
+	itemTemplates: [],
+	itemTypeCreatorTypes: [],
+	itemTypeFields: [],
 	meta: false,
-	itemsTop: false
 }, action) => {
 	switch(action.type) {
 		case REQUEST_META:

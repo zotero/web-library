@@ -53,7 +53,7 @@ class ItemListContainer extends React.PureComponent {
 const mapStateToProps = state => {
 	const collection = getCollection(state);
 	const item = getItem(state);
-	const items = getItems(state).filter(i => !i.parentItem && i.itemType !== 'note');
+	const items = getItems(state).filter(i => !i.parentItem);
 	const isFetching = isFetchingItems(state);
 
 	return {
