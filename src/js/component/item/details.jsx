@@ -15,7 +15,6 @@ class ItemDetails extends React.Component {
 			<section className={ `item details ${this.props.active ? 'active' : ''}` }>
 				{
 				'key' in this.props.item ? (
-					!['attachment', 'note'].includes(this.props.item.itemType) && 
 						<ItemDetailsTabs { ...this.props } />
 					) : (
 						this.props.selectedItemKeys.length ? (
