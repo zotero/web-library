@@ -7,6 +7,7 @@ const cx = require('classnames');
 const Editable = require('../editable');
 const Creators = require('../creators');
 const Spinner = require('../ui/spinner');
+const BoxEntry = require('./box/entry');
 
 class ItemBox extends React.Component {
 	constructor(props) {
@@ -25,6 +26,96 @@ class ItemBox extends React.Component {
 		});
 	}
 
+	renderCreators(field) {
+		return (
+			<Creators
+				key={ field.key }
+				name={ field.key }
+				creatorTypes = { this.props.creatorTypes }
+				value={ field.value || [] }
+				onSave={ newValue => this.props.onSave(field.key, newValue) } />
+		);
+	}
+
+	renderItemTypeField(field, common, classNames) {
+		return (
+			<BoxEntry key={ field.key } classNames={ classNames }>
+				{ field.label }
+				<Editable
+					displayValue={ field.options.find(o => o.value === field.value).label }
+					{ ...common }
+				/>
+			</BoxEntry>
+		);
+	}
+
+	renderAbstractNote(field, common, classNames) {
+		return (
+			<BoxEntry key={ field.key } classNames={ classNames }>
+				{ field.label }
+				<Editable isTextArea={ true } { ...common } />
+			</BoxEntry>
+		);
+	}
+
+	renderUrlField(field, common, classNames) {
+		return (
+			<BoxEntry key={ field.key } classNames={ classNames }>
+				<a rel='nofollow' href={ field.value }>
+					{ field.label }
+				</a>	
+				<Editable { ...common } />
+			</BoxEntry>
+		);
+	}
+
+	renderDOIField(field, common, classNames) {
+		return (
+			<BoxEntry key={ field.key } classNames={ classNames }>
+				<a rel='nofollow' href={ 'http://dx.doi.org/' + this.props.value }>
+					{ field.label }
+				</a>	
+				<Editable { ...common } />
+			</BoxEntry>
+		);
+	}
+
+	renderGenericField(field, common, classNames) {
+		return (
+			<BoxEntry key={ field.key } classNames={ classNames }>
+				{ field.label }
+				<Editable isTextArea={ field.key === 'extra' } { ...common } />
+			</BoxEntry>
+		);
+	}
+
+	renderField(field) {
+		const classNames = {
+			'empty': !field.value || !field.value.length,
+			'select': field.options && Array.isArray(field.options),
+			'editing': field.key in this.state.isEditingMap && this.state.isEditingMap[field.key]
+		};
+		const common = {
+			name: field.key,
+			value: field.value || '',
+			editOnClick: !field.readonly,
+			onToggle: this.onEditableToggleHandler.bind(this, field.key),
+			onSave: newValue => this.props.onSave(field.key, newValue),
+			processing: field.processing || false,
+			options: field.options || null
+		};
+
+		switch(field.key) {
+			case 'notes': return null;
+			case 'creators': return this.renderCreators(field, common, classNames);
+			case 'itemType': return this.renderItemTypeField(field, common, classNames);
+			case 'abstractNote': return this.renderAbstractNote(field, common, classNames);
+			case 'url': return this.renderUrlField(field, common, classNames);
+			case 'DOI': return this.renderDOIField(field, common, classNames);
+			default: return this.renderGenericField(field, common, classNames);
+		}
+	}
+
 	render() {
 		if(this.props.isLoading) {
 			return <Spinner />;
@@ -32,138 +123,7 @@ class ItemBox extends React.Component {
 		
 		return (
 			<ol className={cx('metadata-list', 'horizontal', { editing: this.props.isEditing }) }>
-				{
-					this.props.fields.map(field => {
-						const classNames = {
-							'empty': !field.value || !field.value.length,
-							'select': field.options && Array.isArray(field.options),
-							'editing': field.key in this.state.isEditingMap && this.state.isEditingMap[field.key]
-						};
-
-						switch(field.key) {
-							case 'notes':
-								return null;
-							case 'creators':
-								return (
-									<Creators
-										key={ field.key }
-										name={ field.key }
-										creatorTypes = { this.props.creatorTypes }
-										value={ field.value || [] }
-										onSave={ newValue => this.props.onSave(field.key, newValue) } />
-								);
-							case 'itemType':
-								return (
-									<li key={ field.key } className={ cx('metadata', classNames) }>
-										<div className='key'>
-											<label>
-												{ field.label }
-											</label>
-										</div>
-										<div className='value'>
-											<Editable
-												name={ field.key }
-												options = { field.options || null }
-												processing={ field.processing || false }
-												value={ field.value || '' }
-												displayValue={ field.options.find(o => o.value === field.value).label }
-												editOnClick = { !field.readonly }
-												onToggle={ this.onEditableToggleHandler.bind(this, field.key) }
-												onSave={ newValue => this.props.onSave(field.key, newValue) } 
-											/>
-										</div>
-									</li>
-								);
-							case 'abstractNote':
-								return (
-									<li key={ field.key } className={ cx('metadata', classNames) }>
-										<div className='key'>
-											<label>
-												{ field.label }
-											</label>
-										</div>
-										<div className='value'>
-											<Editable
-												name={ field.key }
-												isTextArea={ true }
-												options = { field.options || null }
-												processing={ field.processing || false }
-												value={ field.value || '' }
-												editOnClick = { !field.readonly }
-												onToggle={ this.onEditableToggleHandler.bind(this, field.key) }
-												onSave={ newValue => this.props.onSave(field.key, newValue) } 
-											/>
-										</div>
-									</li>
-								);
-							case 'url':
-								return (
-									<li key={ field.key } className={ cx('metadata', classNames) }>
-										<div className='key'>
-											<label>
-												<a rel='nofollow' href={ field.value }>
-													{ field.label }
-												</a>	
-											</label>
-										</div>
-										<div className='value'>
-											<Editable
-												name={ field.key }
-												processing={ field.processing || false }
-												value={ field.value || '' }
-												editOnClick={ !field.readonly }
-												onToggle={ this.onEditableToggleHandler.bind(this, field.key) }
-												onSave={ newValue => this.props.onSave(field.key, newValue) }
-											/>
-										</div>
-									</li>
-								);
-							case 'DOI':
-								return (
-									<li key={ field.key } className={ cx('metadata', classNames) }>
-										<div className='key'>
-											<label>
-												<a rel='nofollow' href={ 'http://dx.doi.org/' + this.props.value }>
-													{ field.label }
-												</a>	
-											</label>
-										</div>
-										<div className='value'>
-											<Editable
-												name={ field.key }
-												processing={ field.processing || false }
-												value={ field.value || '' }
-												editOnClick={ !field.readonly }
-												onToggle={ this.onEditableToggleHandler.bind(this, field.key) }
-												onSave={ newValue => this.props.onSave(field.key, newValue) }
-											/>
-										</div>
-									</li>
-								);
-							default:
-								return (
-									<li key={ field.key } className={ cx('metadata', classNames) }>
-										<div className='key'>
-											<label>
-												{ field.label }
-											</label>
-										</div>
-										<div className='value'>
-											<Editable
-												name={ field.key }
-												isTextArea={ field.key === 'extra' }
-												processing={ field.processing || false }
-												value={ field.value || '' }
-												editOnClick={ !field.readonly }
-												onToggle={ this.onEditableToggleHandler.bind(this, field.key) }
-												onSave={ newValue => this.props.onSave(field.key, newValue) }
-											/>
-										</div>
-									</li>
-								);
-							}
-					})
-				}
+				{ this.props.fields.map(this.renderField.bind(this)) }
 			</ol>
 		);
 	}
