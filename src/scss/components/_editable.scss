@@ -34,11 +34,6 @@
 		color: $shade-5;
 	}
 
-	.icon-spin {
-		flex: 0 0 auto;
-		margin-left: $space-xs;
-	}
-
 	&:not(.editing):hover {
 		.editable-value {
 			background-color: rgb(190, 205, 239);
@@ -72,15 +67,14 @@
 		z-index: 2;
 	}
 
+	.textarea & {
+		margin: 0;
+		height: 6em;	
+	}
+
 	&:focus {
 		box-shadow: none; // Override generic focus styles
 	}
-}
-
-.editable-textarea {
-	margin: 0;
-	height: 6em;
-
 }
 
 // @TODO: very rudementary styling, .creators field needs real styling

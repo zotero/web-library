@@ -4,26 +4,54 @@ const React = require('react');
 const PropTypes = require('prop-types');
 const cx = require('classnames');
 
+const Creators = require('./box/creators');
 const Editable = require('../editable');
-const Creators = require('../creators');
+const Field = require('./box/field');
+const Input = require('../input');
+const SelectInput = require('../select-input');
 const Spinner = require('../ui/spinner');
-const BoxEntry = require('./box/entry');
+const TextAreaInput = require('../text-area-input');
 
-class ItemBox extends React.Component {
+const pickInputComponent = field => {
+	switch(field.key) {
+		case 'itemType': return SelectInput;
+		case 'abstractNote': return TextAreaInput;
+		case 'extra': return TextAreaInput;
+		default: return Input;
+	}
+};
+
+class ItemBox extends React.PureComponent {
 	constructor(props) {
 		super(props);
 		this.state = {
-			isEditingMap: {}
+			activeEntry: null
 		};
 	}
 
-	onEditableToggleHandler(key, isEditing) {
-		this.setState({
-			isEditingMap: {
-				...this.state.isEditingMap,
-				[key]: isEditing
-			}
-		});
+	handleFieldEdit(key) {
+		this.setState({ activeEntry: key });
+	}
+
+	handleCancel(key) {
+		if(key === this.state.activeEntry) {
+			this.setState({ activeEntry: null });
+		}
+	}
+
+	handleEditableCommit(key, newValue, isChanged) {
+		if(isChanged) {
+			this.props.onSave(key, newValue);
+		}
+		if(key === this.state.activeEntry) {
+			this.setState({ activeEntry: null });
+		}
+	}
+
+	get currentIndex() {
+		return this.props.fields.findIndex(
+			field => field.key === this.state.activeEntry
+		);
 	}
 
 	renderCreators(field) {
@@ -33,86 +61,75 @@ class ItemBox extends React.Component {
 				name={ field.key }
 				creatorTypes = { this.props.creatorTypes }
 				value={ field.value || [] }
-				onSave={ newValue => this.props.onSave(field.key, newValue) } />
+				onSave={ this.handleEditableCommit.bind(this, field.key) } />
 		);
 	}
 
-	renderItemTypeField(field, common, classNames) {
-		return (
-			<BoxEntry key={ field.key } classNames={ classNames }>
-				{ field.label }
-				<Editable
-					displayValue={ field.options.find(o => o.value === field.value).label }
-					{ ...common }
-				/>
-			</BoxEntry>
-		);
-	}
-
-	renderAbstractNote(field, common, classNames) {
-		return (
-			<BoxEntry key={ field.key } classNames={ classNames }>
-				{ field.label }
-				<Editable isTextArea={ true } { ...common } />
-			</BoxEntry>
-		);
-	}
-
-	renderUrlField(field, common, classNames) {
-		return (
-			<BoxEntry key={ field.key } classNames={ classNames }>
-				<a rel='nofollow' href={ field.value }>
-					{ field.label }
-				</a>	
-				<Editable { ...common } />
-			</BoxEntry>
-		);
-	}
-
-	renderDOIField(field, common, classNames) {
-		return (
-			<BoxEntry key={ field.key } classNames={ classNames }>
-				<a rel='nofollow' href={ 'http://dx.doi.org/' + this.props.value }>
-					{ field.label }
-				</a>	
-				<Editable { ...common } />
-			</BoxEntry>
-		);
-	}
-
-	renderGenericField(field, common, classNames) {
-		return (
-			<BoxEntry key={ field.key } classNames={ classNames }>
-				{ field.label }
-				<Editable isTextArea={ field.key === 'extra' } { ...common } />
-			</BoxEntry>
-		);
+	renderLabel(field) {
+		switch(field.key) {
+			case 'url':
+				return (
+					<label>
+						<a rel='nofollow' href={ field.value }>
+							{ field.label }
+						</a>
+					</label>
+				);
+			case 'DOI':
+				return (
+					<label>
+						<a rel='nofollow' href={ 'http://dx.doi.org/' + field.value }>
+							{ field.label }
+						</a>
+					</label>
+				);
+			default:
+			return <label>{ field.label }</label>;
+		}
 	}
 
 	renderField(field) {
-		const classNames = {
-			'empty': !field.value || !field.value.length,
-			'select': field.options && Array.isArray(field.options),
-			'editing': field.key in this.state.isEditingMap && this.state.isEditingMap[field.key]
-		};
-		const common = {
-			name: field.key,
-			value: field.value || '',
-			editOnClick: !field.readonly,
-			onToggle: this.onEditableToggleHandler.bind(this, field.key),
-			onSave: newValue => this.props.onSave(field.key, newValue),
-			processing: field.processing || false,
-			options: field.options || null
-		};
+		if(field.key === 'creators') {
+			return this.renderCreators(field);
+		} else {
+			const isActive = this.state.activeEntry === field.key;
+			const classNames = {
+				'empty': !field.value || !field.value.length,
+				'select': field.options && Array.isArray(field.options),
+				'editing': isActive
+			};
+			const display = field.key === 'itemType' ? 
+				field.options.find(o => o.value === field.value) :
+				null;
+			const props = {
+				autoFocus: true,
+				autoSelect: true,
+				display: display ? display.label : null,
+				inputComponent: pickInputComponent(field),
+				isActive,
+				isBusy: field.processing || false,
+				onCancel: this.handleCancel.bind(this, field.key),
+				onCommit: this.handleEditableCommit.bind(this, field.key),
+				options: field.options || null,
+				value: field.value || '',
+			};
 
-		switch(field.key) {
-			case 'notes': return null;
-			case 'creators': return this.renderCreators(field, common, classNames);
-			case 'itemType': return this.renderItemTypeField(field, common, classNames);
-			case 'abstractNote': return this.renderAbstractNote(field, common, classNames);
-			case 'url': return this.renderUrlField(field, common, classNames);
-			case 'DOI': return this.renderDOIField(field, common, classNames);
-			default: return this.renderGenericField(field, common, classNames);
+			if(props.inputComponent !== SelectInput) {
+				props['onBlur'] = () => false; //commit on blur
+			}
+
+			return (
+				<Field 
+					classNames={ classNames }
+					isActive={ isActive }
+					key={ field.key }
+					onClick={ this.handleFieldEdit.bind(this, field.key) }
+					onFocus={ this.handleFieldEdit.bind(this, field.key) }
+				>
+					{ this.renderLabel(field) }
+					<Editable { ...props } />
+				</Field>
+			);
 		}
 	}
 

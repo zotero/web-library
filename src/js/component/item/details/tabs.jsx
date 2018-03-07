@@ -23,7 +23,7 @@ class ItemDetailsTabs extends React.PureComponent {
 
 	componentWillReceiveProps(props) {
 		if(this.state.tab == null || this.props.item.key !== props.item.key) {
-			this.setDefaultActiveTab(props);		
+			this.setDefaultActiveTab(props);
 		}
 	}
 
