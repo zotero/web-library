@@ -180,9 +180,12 @@ const getItemFieldValue = (field, state) => {
 	const itemCKey = ck(item.key, libraryKey);
 	const isBeingUpdated = isItemFieldBeingUpdated(field, state);
 	if(isBeingUpdated) {
-		let aggregatedPatch = {};
+		let aggregatedPatch = {
+			[field]: item[field]
+		};
 		state.updating.items[itemCKey].forEach(queueItem => {
 			aggregatedPatch = {
+				...aggregatedPatch,
 				...queueItem.patch
 			};
 		});
