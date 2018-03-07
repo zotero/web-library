@@ -433,6 +433,12 @@ function createItem(properties) {
 				libraryKey,
 				item: response.getEntityByIndex(0)
 			});
+			if(properties.parentItem) {
+				api().invalidate({
+					'resource.items': properties.parentItem,
+					'resource.children': null
+				});
+			}
 			return response.getEntityByIndex(0);
 		} catch(error) {
 			dispatch({
@@ -442,13 +448,6 @@ function createItem(properties) {
 					properties,
 				});
 			throw error;
-		}
-
-		if(properties.parentItem) {
-			api().invalidate({
-				'resource.items': properties.parentItem,
-				'resource.children': null
-			});
 		}
 	};
 }
@@ -549,19 +548,33 @@ function queueUpdateItem(itemKey, patch, libraryKey, queueId) {
 					...response.getData()
 				};
 
+				// invalidate child items for any collection of this item
 				if(updatedItem.collections) {
 					for(var collectionKey of updatedItem.collections) {
-						api().invalidate('resource.collections', collectionKey);
+						api().invalidate({
+							'resource.collections': collectionKey,
+							'resource.items': null
+						});
 					}
 				}
 
+				// invalidate child items for the parent of this item
 				if(updatedItem.parentItem) {
 					api().invalidate({
 						'resource.items': updatedItem.parentItem,
 						'resource.children': null
 					});
 				}
+
+				// invalidate this item
 				api().invalidate('resource.items', itemKey);
+
+				// invalidate top items of this library
+				api().invalidate({
+					'resource.library': libraryKey,
+					'resource.items': null,
+					'resource.top': null
+				});
 
 				dispatch({
 					type: RECEIVE_UPDATE_ITEM,
