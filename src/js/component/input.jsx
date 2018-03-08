@@ -21,6 +21,13 @@ class Input extends React.PureComponent {
 	commit() {
 		this.props.onCommit(this.state.value, this.hasChanged);
 	}
+	
+	focus() {
+		if(this.input != null) {
+			this.input.focus();
+			this.props.selectOnFocus && this.input.select();
+		}
+	}
 
 	componentWillReceiveProps({ value }) {
 		if (value !== this.props.value) {
@@ -39,7 +46,7 @@ class Input extends React.PureComponent {
 	}
 
 	handleFocus(event) {
-		this.props.autoSelect && event.target.select();
+		this.props.selectOnFocus && event.target.select();
 		this.props.onFocus(event);
 	}
 
@@ -49,7 +56,7 @@ class Input extends React.PureComponent {
 				this.cancel(true);
 			break;
 			case 'Enter':
-			
+
 				this.commit(true);
 			break;
 		default:
@@ -64,6 +71,7 @@ class Input extends React.PureComponent {
 	renderInput() {
 		return (
 			<input
+				autoFocus={ this.props.autoFocus }
 				className={ this.props.className }
 				disabled={ this.props.isDisabled }
 				onBlur={ this.handleBlur.bind(this) }
@@ -72,11 +80,11 @@ class Input extends React.PureComponent {
 				onKeyDown={ this.handleKeyDown.bind(this) }
 				placeholder={ this.props.placeholder }
 				readOnly={ this.props.isReadOnly }
+				ref={ input => this.input = input }
 				required={ this.props.isRequired }
 				tabIndex={ this.props.tabIndex }
 				type={ this.props.type }
 				value={ this.state.value }
-				autoFocus={ this.props.autoFocus }
 			/>
 		);
 	}
@@ -107,7 +115,6 @@ class Input extends React.PureComponent {
 
 	static propTypes = {
 		autoFocus: PropTypes.bool,
-		autoSelect: PropTypes.bool,
 		className: PropTypes.string,
 		isBusy: PropTypes.bool,
 		isDisabled: PropTypes.bool,
@@ -119,6 +126,7 @@ class Input extends React.PureComponent {
 		onCommit: PropTypes.func.isRequired,
 		onFocus: PropTypes.func.isRequired,
 		placeholder: PropTypes.string,
+		selectOnFocus: PropTypes.bool,
 		tabIndex: PropTypes.number,
 		type: PropTypes.string.isRequired,
 		value: PropTypes.string.isRequired,

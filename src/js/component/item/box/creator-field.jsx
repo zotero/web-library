@@ -7,14 +7,22 @@ const Field = require('./field');
 const Editable = require('../../editable');
 const Button = require('../../ui/button');
 const Icon = require('../../ui/icon');
+const Input = require('../../input');
 const SelectInput = require('../../select-input');
 
 class CreatorField extends React.PureComponent {
-	state = {
-		active: null
+	constructor(props) {
+		super(props);
+		this.state = {
+			active: null
+		};
+		this.fieldComponents = {};
 	}
 
 	handleEdit(field) {
+		if(this.props.isForm && this.fieldComponents[field]) {
+			this.fieldComponents[field].focus();
+		}
 		this.setState({ active: field });
 	}
 
@@ -42,7 +50,12 @@ class CreatorField extends React.PureComponent {
 		return 'name' in this.props.creator ? '16/input-dual' : '16/input-single';
 	}
 
+	get isDual() {
+		return 'lastName' in this.props.creator;
+	}
+
 	renderDual() {
+		const FormField = this.props.isForm ? Input : Editable;
 		const { creator } = this.props;
 		return (
 			<React.Fragment>
@@ -52,16 +65,17 @@ class CreatorField extends React.PureComponent {
 					onClick={ this.handleEdit.bind(this, 'lastName') }
 					onFocus={ this.handleEdit.bind(this, 'lastName') }
 				>
-					<Editable
-						onCommit={ this.handleEditableCommit.bind(this, 'lastName') }
-						onCancel={ this.handleCancel.bind(this) }
+					<FormField
+						autoFocus={ !this.props.isForm }
+						displayValue={ creator.lastName ? `${creator.lastName},` : null }
 						isActive={ this.state.active === 'lastName' }
 						onBlur={ () => false }
+						onCancel={ this.handleCancel.bind(this) }
+						onCommit={ this.handleEditableCommit.bind(this, 'lastName') }
 						placeholder='last'
+						ref={ component => this.fieldComponents['lastName'] = component }
+						selectOnFocus={ true }
 						value={ creator.lastName }
-						displayValue={ creator.lastName ? `${creator.lastName},` : null }
-						autoFocus
-						autoSelect
 					/>
 				</span>
 				<span
@@ -70,15 +84,16 @@ class CreatorField extends React.PureComponent {
 					onClick={ this.handleEdit.bind(this, 'firstName') }
 					onFocus={ this.handleEdit.bind(this, 'firstName') }
 				>
-					<Editable
-						onCommit={ this.handleEditableCommit.bind(this, 'firstName') }
-						onCancel={ this.handleCancel.bind(this) }
+					<FormField
+						autoFocus={ !this.props.isForm }
 						isActive={ this.state.active === 'firstName' }
 						onBlur={ () => false }
+						onCancel={ this.handleCancel.bind(this) }
+						onCommit={ this.handleEditableCommit.bind(this, 'firstName') }
 						placeholder='first'
+						ref={ component => this.fieldComponents['firstName'] = component }
+						selectOnFocus={ true }
 						value={ creator.firstName }
-						autoFocus
-						autoSelect
 					/>
 				</span>
 			</React.Fragment>
@@ -86,6 +101,7 @@ class CreatorField extends React.PureComponent {
 	}
 
 	renderSingle() {
+		const FormField = this.props.isForm ? Input : Editable;
 		const { creator } = this.props;
 		return (
 			<span
@@ -94,15 +110,16 @@ class CreatorField extends React.PureComponent {
 				onClick={ this.handleEdit.bind(this, 'name') }
 				onFocus={ this.handleEdit.bind(this, 'name') }
 			>
-				<Editable
-					onCommit={ this.handleEditableCommit.bind(this, 'name') }
-					onCancel={ this.handleCancel.bind(this) }
+				<FormField
+					autoFocus={ !this.props.isForm }
 					isActive={ this.state.active === 'name' }
 					onBlur={ () => false }
+					onCancel={ this.handleCancel.bind(this) }
+					onCommit={ this.handleEditableCommit.bind(this, 'name') }
 					placeholder='full name'
+					ref={ component => this.fieldComponents['name'] = component }
+					selectOnFocus={ true }
 					value={ creator.name }
-					autoFocus
-					autoSelect
 				/>
 			</span>
 		);
@@ -144,7 +161,7 @@ class CreatorField extends React.PureComponent {
 					</Editable>
 				</span>
 				<React.Fragment>
-					{ 'lastName' in creator ? this.renderDual() : this.renderSingle() }
+					{ this.isDual ? this.renderDual() : this.renderSingle() }
 					<Button onClick={ this.handleCreatorTypeSwitch.bind(this, index) }>
 						<Icon type={ this.icon } width="16" height="16" />
 					</Button>
@@ -177,15 +194,16 @@ class CreatorField extends React.PureComponent {
 	}
 
 	static propTypes = {
-		index: PropTypes.number.isRequired,
-		onChange: PropTypes.func.isRequired,
 		creator: PropTypes.object.isRequired,
 		creatorTypes: PropTypes.array.isRequired,
+		index: PropTypes.number.isRequired,
 		isCreateAllowed: PropTypes.bool,
 		isDeleteAllowed: PropTypes.bool,
-		onCreatorTypeSwitch: PropTypes.func.isRequired,
+		isForm: PropTypes.bool,
+		onChange: PropTypes.func.isRequired,
 		onCreatorAdd: PropTypes.func.isRequired,
 		onCreatorRemove: PropTypes.func.isRequired,
+		onCreatorTypeSwitch: PropTypes.func.isRequired,
 	};
 }
 

@@ -12,6 +12,10 @@
 		}
 	}
 
+	input, textarea, .Select {
+		flex: 1 1 auto;
+	}
+
 	.icon-spin {
 		flex: 0 0 auto;
 		margin-left: $space-xs;

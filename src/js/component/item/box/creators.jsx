@@ -35,11 +35,11 @@ class Creators extends React.PureComponent {
 
 	handleSaveCreators(creators) {
 		this.setState({ creators });
-		const hasChanged = !deepEqual(creators, this.props.value);
 		const newValue = creators.filter(
 			creator => !creator[Symbol.for('isVirtual')]
 				&& (creator.lastName || creator.firstName || creator.name) 
 		);
+		const hasChanged = !deepEqual(newValue, this.props.value);
 		this.props.onSave(newValue, hasChanged);
 	}
 
@@ -112,11 +112,12 @@ class Creators extends React.PureComponent {
 			isCreateAllowed: index + 1 === this.state.creators.length && !this.hasVirtual,
 			isCreatorTypeEditing: this.state.isCreatorTypeEditing,
 			isDeleteAllowed: !isVirtual || this.state.creators.length > 1,
+			isForm: this.props.isForm,
 			isVirtual,
 			onChange: this.handleValueChanged.bind(this),
-			onCreatorTypeSwitch: this.handleCreatorTypeSwitch.bind(this),
 			onCreatorAdd: this.handleCreatorAdd.bind(this),
 			onCreatorRemove: this.handleCreatorRemove.bind(this),
+			onCreatorTypeSwitch: this.handleCreatorTypeSwitch.bind(this),
 		};
 		return <CreatorField key={ index } { ...props } />;
 	}
@@ -130,17 +131,17 @@ class Creators extends React.PureComponent {
 			</div>
 		);
 	}
+	static defaultProps = {
+		value: []
+	};
+
+	static propTypes = {
+		creatorTypes: PropTypes.array.isRequired,
+		isForm: PropTypes.bool,
+		name: PropTypes.string,
+		onSave: PropTypes.func,
+		value: PropTypes.array,
+	};
 }
-
-Creators.propTypes = {
-	name: PropTypes.string,
-	value: PropTypes.array,
-	creatorTypes: PropTypes.array.isRequired,
-	onSave: PropTypes.func
-};
-
-Creators.defaultProps = {
-	value: []
-};
 
 module.exports = Creators;

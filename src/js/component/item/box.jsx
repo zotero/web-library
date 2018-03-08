@@ -27,9 +27,15 @@ class ItemBox extends React.PureComponent {
 		this.state = {
 			activeEntry: null
 		};
+		this.fieldComponents = {};
 	}
 
 	handleFieldEdit(key) {
+		if(this.props.isForm) {
+			if(this.fieldComponents[key]) {
+				this.fieldComponents[key].focus();
+			}
+		}
 		this.setState({ activeEntry: key });
 	}
 
@@ -61,7 +67,9 @@ class ItemBox extends React.PureComponent {
 				name={ field.key }
 				creatorTypes = { this.props.creatorTypes }
 				value={ field.value || [] }
-				onSave={ this.handleEditableCommit.bind(this, field.key) } />
+				onSave={ this.handleEditableCommit.bind(this, field.key) }
+				isForm={ this.props.isForm }
+			/>
 		);
 	}
 
@@ -102,8 +110,7 @@ class ItemBox extends React.PureComponent {
 				field.options.find(o => o.value === field.value) :
 				null;
 			const props = {
-				autoFocus: true,
-				autoSelect: true,
+				autoFocus: !this.props.isForm,
 				display: display ? display.label : null,
 				inputComponent: pickInputComponent(field),
 				isActive,
@@ -111,12 +118,18 @@ class ItemBox extends React.PureComponent {
 				onCancel: this.handleCancel.bind(this, field.key),
 				onCommit: this.handleEditableCommit.bind(this, field.key),
 				options: field.options || null,
+				selectOnFocus: true,
 				value: field.value || '',
 			};
 
 			if(props.inputComponent !== SelectInput) {
 				props['onBlur'] = () => false; //commit on blur
 			}
+			if(props.inputComponent === SelectInput) {
+				props['onBlur'] = this.handleCancel.bind(this, field.key);
+			}
+
+			const FormField = this.props.isForm ? props.inputComponent : Editable;
 
 			return (
 				<Field 
@@ -127,7 +140,7 @@ class ItemBox extends React.PureComponent {
 					onFocus={ this.handleFieldEdit.bind(this, field.key) }
 				>
 					{ this.renderLabel(field) }
-					<Editable { ...props } />
+					<FormField ref={ fieldComponent => this.fieldComponents[field.key] = fieldComponent } { ...props } />
 				</Field>
 			);
 		}
@@ -152,10 +165,11 @@ ItemBox.defaultProps = {
 };
 
 ItemBox.propTypes = {
-	isLoading: PropTypes.bool,
 	creatorTypes: PropTypes.array,
 	fields: PropTypes.array,
 	isEditing: PropTypes.bool, // relevant on small screens only
+	isForm: PropTypes.bool,
+	isLoading: PropTypes.bool,
 	onSave: PropTypes.func
 };
 
