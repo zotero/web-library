@@ -2,6 +2,7 @@
 
 const React = require('react');
 const PropTypes = require('prop-types');
+const cx = require('classnames');
 const { noop } = require('../utils');
 
 const Spinner = require('./ui/spinner');
@@ -62,6 +63,13 @@ class SelectInput extends React.PureComponent {
 		};
 	}
 
+	get className() {
+		return {
+			'input-group': true,
+			'busy': this.props.isBusy
+		};
+	}
+
 	renderInput() {
 		return <Select
 			autoFocus= { this.props.autoFocus }
@@ -87,7 +95,7 @@ class SelectInput extends React.PureComponent {
 
 	render() {
 		return (
-			<div className="input-group">
+			<div className={ cx(this.className) }>
 				{ this.renderInput() }
 				{ this.renderSpinner() }
 			</div>
