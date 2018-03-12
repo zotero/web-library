@@ -37,7 +37,7 @@ class Creators extends React.PureComponent {
 		this.setState({ creators });
 		const newValue = creators.filter(
 			creator => !creator[Symbol.for('isVirtual')]
-				&& (creator.lastName || creator.firstName || creator.name) 
+				&& (creator.lastName || creator.firstName || creator.name)
 		);
 		const hasChanged = !deepEqual(newValue, this.props.value);
 		this.props.onSave(newValue, hasChanged);
@@ -49,7 +49,7 @@ class Creators extends React.PureComponent {
 			...creators[index],
 			[key]: value
 		};
-		if((creators[index].lastName || creators[index].firstName || creators[index].name) 
+		if((creators[index].lastName || creators[index].firstName || creators[index].name)
 			&& creators[index][Symbol.for('isVirtual')]) {
 			delete creators[index][Symbol.for('isVirtual')];
 		}
@@ -105,7 +105,7 @@ class Creators extends React.PureComponent {
 
 	renderField(creator, index) {
 		const isVirtual = creator[Symbol.for('isVirtual')] || false;
-		const props = { 
+		const props = {
 			creator,
 			creatorTypes: this.props.creatorTypes,
 			index,
@@ -126,9 +126,9 @@ class Creators extends React.PureComponent {
 		let creators = this.state.creators;
 
 		return (
-			<div className="creators">
+			<React.Fragment>
 				{ creators.map(this.renderField.bind(this)) }
-			</div>
+			</React.Fragment>
 		);
 	}
 	static defaultProps = {

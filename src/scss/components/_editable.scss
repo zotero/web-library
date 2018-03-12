@@ -69,7 +69,7 @@
 
 	.textarea & {
 		margin: 0;
-		height: 6em;	
+		height: 6em;
 	}
 
 	&:focus {
@@ -79,7 +79,7 @@
 
 // @TODO: very rudementary styling, .creators field needs real styling
 .creators {
-	width: 100%;
+	//width: 100%;
 
 	.creators-entry {
 		display: flex;
