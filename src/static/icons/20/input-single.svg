@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+	<symbol id="input-single" viewBox="0 0 20 20">
+		<path fill="currentColor" d="M18,7v6H3V7H18m0-1H3A1,1,0,0,0,2,7v6a1,1,0,0,0,1,1H18a1,1,0,0,0,1-1V7a1,1,0,0,0-1-1ZM5,8H4v4H5Z"/>
+	</symbol>
+	<use xlink:href="#input-single" viewBox="0 0 20 20"/>
+</svg>

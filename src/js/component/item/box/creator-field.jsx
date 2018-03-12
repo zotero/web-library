@@ -27,7 +27,7 @@ class CreatorField extends React.PureComponent {
 	}
 
 	handleCancel() {
-		this.setState({ active: null });	
+		this.setState({ active: null });
 	}
 
 	handleEditableCommit(field, newValue) {
@@ -47,7 +47,7 @@ class CreatorField extends React.PureComponent {
 	}
 
 	get icon() {
-		return 'name' in this.props.creator ? '16/input-dual' : '16/input-single';
+		return 'name' in this.props.creator ? '20/input-dual' : '20/input-single';
 	}
 
 	get isDual() {
@@ -59,9 +59,9 @@ class CreatorField extends React.PureComponent {
 		const { creator } = this.props;
 		return (
 			<React.Fragment>
-				<span 
+				<span
 					tabIndex={ this.state.active === 'lastName' ? null : 0 }
-					className="field-editable-wrap" 
+					className="field-editable-wrap"
 					onClick={ this.handleEdit.bind(this, 'lastName') }
 					onFocus={ this.handleEdit.bind(this, 'lastName') }
 				>
@@ -80,7 +80,7 @@ class CreatorField extends React.PureComponent {
 				</span>
 				<span
 					tabIndex={ this.state.active === 'firstName' ? null : 0 }
-					className="field-editable-wrap" 
+					className="field-editable-wrap"
 					onClick={ this.handleEdit.bind(this, 'firstName') }
 					onFocus={ this.handleEdit.bind(this, 'firstName') }
 				>
@@ -106,7 +106,7 @@ class CreatorField extends React.PureComponent {
 		return (
 			<span
 				tabIndex={ this.state.active === 'name' ? null : 0 }
-				className="field-editable-wrap" 
+				className="field-editable-wrap"
 				onClick={ this.handleEdit.bind(this, 'name') }
 				onFocus={ this.handleEdit.bind(this, 'name') }
 			>
@@ -134,14 +134,14 @@ class CreatorField extends React.PureComponent {
 			'creators-oneslot': 'name' in creator,
 			'creators-type-editing': this.state.isCreatorTypeActive
 		};
-		
+
 		const creatorTypeDescription = creatorTypes.find(
 			c => c.value == creator.creatorType
 		) || { label: creator.creatorType };
 
 		return (
 			<Field key={ index } className={ cx(className) } tabIndex={ null }>
-				<span 
+				<span
 					tabIndex={ this.state.active === 'creatorType' ? null : 0 }
 					className="field-editable-wrap"
 					onClick={ this.handleEdit.bind(this, 'creatorType') }
@@ -163,16 +163,16 @@ class CreatorField extends React.PureComponent {
 				<React.Fragment>
 					{ this.isDual ? this.renderDual() : this.renderSingle() }
 					<Button onClick={ this.handleCreatorTypeSwitch.bind(this, index) }>
-						<Icon type={ this.icon } width="16" height="16" />
+						<Icon type={ this.icon } width="20" height="20" />
 					</Button>
 					{
 						this.props.isDeleteAllowed ? (
 							<Button onClick={ this.handleCreatorRemove.bind(this, index) }>
-								<Icon type={ '16/trash' } width="16" height="16" />
+								<Icon type={ '16/minus' } width="16" height="16" />
 							</Button>
 						) : (
 							<Button disabled={ true }>
-								<Icon color="rgba(0, 0, 0, 0.15)" type={ '16/trash' } width="16" height="16" />
+								<Icon color="rgba(0, 0, 0, 0.15)" type={ '16/minus' } width="16" height="16" />
 							</Button>
 						)
 					}

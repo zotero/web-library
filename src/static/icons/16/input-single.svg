@@ -1,7 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-	<symbol id="input-single" viewBox="0 0 16 16">
-		<path fill="currentColor" d="M16,5c0,-0.6 -0.4,-1 -1,-1l-14,0c-0.6,0 -1,0.4 -1,1l0,6c0,0.6 0.4,1 1,1l14,0c0.6,0 1,-0.4 1,-1l0,-6Zm-1,6l-14,0l0,-6l14,0l0,6Z" />
-		<rect fill="currentColor" x="1.882" y="6.005" width="1" height="4"/>
-	</symbol>
-	<use xlink:href="#input-single" viewBox="0 0 16 16"/>
-</svg>
