@@ -154,6 +154,7 @@ class CreatorField extends React.PureComponent {
 						options={ creatorTypes }
 						inputComponent={ SelectInput }
 						value={ creator.creatorType }
+						selectProps={ { searchable: false } }
 						autoFocus
 					>
 						<span className="text-container">{ creatorTypeDescription.label }</span>
