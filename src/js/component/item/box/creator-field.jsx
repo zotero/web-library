@@ -156,7 +156,7 @@ class CreatorField extends React.PureComponent {
 						value={ creator.creatorType }
 						autoFocus
 					>
-						{ creatorTypeDescription.label }
+						<span className="text-container">{ creatorTypeDescription.label }</span>
 						<span className="Select-arrow"></span>
 					</Editable>
 				</span>
