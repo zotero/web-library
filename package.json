@@ -87,6 +87,7 @@
     "redux-thunk": "^2.2.0",
     "tinymce": "^4.7.9",
     "zotero-api-client": "^0.11.0",
-    "zotero-api-client-cache": "^0.4.1"
+    "zotero-api-client-cache": "^0.4.1",
+    "zotero-base-mappings": "0.0.1"
   }
 }
