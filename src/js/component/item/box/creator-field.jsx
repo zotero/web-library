@@ -157,7 +157,7 @@ class CreatorField extends React.PureComponent {
 						autoFocus
 					>
 						{ creatorTypeDescription.label }
-						&nbsp;<span className="Select-arrow"></span>
+						<span className="Select-arrow"></span>
 					</Editable>
 				</span>
 				<React.Fragment>
