@@ -125,6 +125,7 @@ class Input extends React.PureComponent {
 	static propTypes = {
 		autoFocus: PropTypes.bool,
 		className: PropTypes.string,
+		id: PropTypes.string,
 		isBusy: PropTypes.bool,
 		isDisabled: PropTypes.bool,
 		isReadOnly: PropTypes.bool,
@@ -139,7 +140,6 @@ class Input extends React.PureComponent {
 		tabIndex: PropTypes.number,
 		type: PropTypes.string.isRequired,
 		value: PropTypes.string.isRequired,
-		id: PropTypes.string,
 	};
 }
 

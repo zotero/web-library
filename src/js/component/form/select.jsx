@@ -75,6 +75,7 @@ class SelectInput extends React.PureComponent {
 			autoFocus= { this.props.autoFocus }
 			className={ this.props.className }
 			disabled={ this.props.isDisabled }
+			id={ this.props.id }
 			onBlur={ this.handleBlur.bind(this) }
 			onChange={ this.handleChange.bind(this) }
 			onFocus={ this.handleFocus.bind(this) }
@@ -117,6 +118,7 @@ class SelectInput extends React.PureComponent {
 	static propTypes = {
 		autoFocus: PropTypes.bool,
 		className: PropTypes.string,
+		id: PropTypes.string,
 		isBusy: PropTypes.bool,
 		isDisabled: PropTypes.bool,
 		isReadOnly: PropTypes.bool,
