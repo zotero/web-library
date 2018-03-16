@@ -11,6 +11,18 @@ const Spinner = require('../ui/spinner');
 const { without } = require('../../utils');
 
 class ItemList extends React.Component {
+	state = {
+		isFocused: false
+	}
+
+	handleFocus() {
+		this.setState({isFocused: true});
+	}
+
+	handleBlur() {
+		this.setState({isFocused: false});
+	}
+
 	handleKeyArrowDown(ev) {
 		const lastItemKey = this.props.selectedItemKeys[this.props.selectedItemKeys.length - 1];
 		const index = this.props.items.findIndex(i => i.key === lastItemKey);
@@ -126,12 +138,10 @@ class ItemList extends React.Component {
 		ev.preventDefault();
 	}
 
-	render() {
-		if(this.props.isFetching) {
-			return <Spinner />;
-		} else {
+	get keyHandlers() {
+		if(this.state.isFocused) {
 			return (
-				<div className="item-list-wrap">
+				<React.Fragment>
 					<KeyHandler 
 						keyEventName={ KEYDOWN }
 						keyValue="ArrowDown"
@@ -142,6 +152,20 @@ class ItemList extends React.Component {
 						keyValue="ArrowUp"
 						onKeyHandle={ this.handleKeyArrowUp.bind(this) }
 					/>
+				</React.Fragment>
+			);
+		} else {
+			return null;
+		}
+	}
+
+	render() {
+		if(this.props.isFetching) {
+			return <Spinner />;
+		} else {
+			return (
+				<div className="item-list-wrap">
+					{ this.keyHandlers }
 					<table className="item-list-head hidden-touch hidden-sm-down">
 						<thead>
 							<tr>
@@ -155,7 +179,12 @@ class ItemList extends React.Component {
 						</thead>
 					</table>
 					<div className="item-list-body">
-						<ul className="item list">
+						<ul 
+							className="item list"
+							tabIndex={ 0 }
+							onFocus={ this.handleFocus.bind(this) }
+							onBlur={ this.handleBlur.bind(this) }
+						>
 							{
 								this.props.items.map(item => <Item
 									onClick={ this.handleItemSelect.bind(this, item) }
