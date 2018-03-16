@@ -180,7 +180,7 @@ class CreatorField extends React.PureComponent {
 							</Button>
 						) : (
 							<Button disabled={ true }>
-								<Icon color="rgba(0, 0, 0, 0.15)" type={ '16/minus' } width="16" height="16" />
+								<Icon type={ '16/minus' } width="16" height="16" />
 							</Button>
 						)
 					}
@@ -191,7 +191,7 @@ class CreatorField extends React.PureComponent {
 							</Button>
 						) : (
 							<Button disabled={ true }>
-								<Icon color="rgba(0, 0, 0, 0.15)" type={ '16/plus' } width="16" height="16" />
+								<Icon type={ '16/plus' } width="16" height="16" />
 							</Button>
 						)
 					}
