@@ -10,6 +10,8 @@ const Icon = require('../../ui/icon');
 const Input = require('../../input');
 const SelectInput = require('../../select-input');
 
+//@TODO: refactor tabIndexing through creators field
+
 class CreatorField extends React.PureComponent {
 	constructor(props) {
 		super(props);
@@ -60,7 +62,7 @@ class CreatorField extends React.PureComponent {
 		return (
 			<React.Fragment>
 				<span
-					tabIndex={ this.state.active === 'lastName' ? null : 0 }
+					tabIndex={ this.props.isForm ? -1 : this.state.active === 'lastName' ? null : 0 }
 					className="field-editable-wrap"
 					onClick={ this.handleEdit.bind(this, 'lastName') }
 					onFocus={ this.handleEdit.bind(this, 'lastName') }
@@ -76,10 +78,11 @@ class CreatorField extends React.PureComponent {
 						ref={ component => this.fieldComponents['lastName'] = component }
 						selectOnFocus={ true }
 						value={ creator.lastName }
+						tabIndex={ this.props.isForm ? 0 : -1 }
 					/>
 				</span>
 				<span
-					tabIndex={ this.state.active === 'firstName' ? null : 0 }
+					tabIndex={ this.props.isForm ? -1 : this.state.active === 'firstName' ? null : 0 }
 					className="field-editable-wrap"
 					onClick={ this.handleEdit.bind(this, 'firstName') }
 					onFocus={ this.handleEdit.bind(this, 'firstName') }
@@ -94,6 +97,7 @@ class CreatorField extends React.PureComponent {
 						ref={ component => this.fieldComponents['firstName'] = component }
 						selectOnFocus={ true }
 						value={ creator.firstName }
+						tabIndex={ this.props.isForm ? 0 : -1 }
 					/>
 				</span>
 			</React.Fragment>
@@ -105,7 +109,7 @@ class CreatorField extends React.PureComponent {
 		const { creator } = this.props;
 		return (
 			<span
-				tabIndex={ this.state.active === 'name' ? null : 0 }
+				tabIndex={ this.props.isForm ? -1 : this.state.active === 'name' ? null : 0 }
 				className="field-editable-wrap"
 				onClick={ this.handleEdit.bind(this, 'name') }
 				onFocus={ this.handleEdit.bind(this, 'name') }
@@ -120,12 +124,14 @@ class CreatorField extends React.PureComponent {
 					ref={ component => this.fieldComponents['name'] = component }
 					selectOnFocus={ true }
 					value={ creator.name }
+					tabIndex={ this.props.isForm ? 0 : -1 }
 				/>
 			</span>
 		);
 	}
 
 	render() {
+		const FormField = this.props.isForm ? SelectInput : Editable;
 		const { index, creator, creatorTypes } = this.props;
 		const className = {
 			'metadata': true,
@@ -142,12 +148,12 @@ class CreatorField extends React.PureComponent {
 		return (
 			<Field key={ index } className={ cx(className) } tabIndex={ null }>
 				<span
-					tabIndex={ this.state.active === 'creatorType' ? null : 0 }
+					tabIndex={ this.props.isForm ? -1 : this.state.active === 'creatorType' ? null : 0 }
 					className="field-editable-wrap"
 					onClick={ this.handleEdit.bind(this, 'creatorType') }
 					onFocus={ this.handleEdit.bind(this, 'creatorType') }
 				>
-					<Editable
+					<FormField
 						onCommit={ this.handleEditableCommit.bind(this, 'creatorType') }
 						onCancel={ this.handleCancel.bind(this) }
 						isActive={ this.state.active === 'creatorType' }
@@ -155,11 +161,12 @@ class CreatorField extends React.PureComponent {
 						inputComponent={ SelectInput }
 						value={ creator.creatorType }
 						selectProps={ { searchable: false } }
-						autoFocus
+						tabIndex={ this.props.isForm ? 0 : -1 }
+						autoFocus={ !this.props.isForm }
 					>
 						<span className="text-container">{ creatorTypeDescription.label }</span>
 						<span className="Select-arrow"></span>
-					</Editable>
+					</FormField>
 				</span>
 				<React.Fragment>
 					{ this.isDual ? this.renderDual() : this.renderSingle() }
