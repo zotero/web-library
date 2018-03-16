@@ -3,11 +3,11 @@
 const React = require('react');
 const PropTypes = require('prop-types');
 const cx = require('classnames');
-const { noop } = require('../utils');
+const { noop } = require('../../utils');
 
-const Spinner = require('./ui/spinner');
+const Spinner = require('../ui/spinner');
 
-class Input extends React.PureComponent {
+class TextAreaInput extends React.PureComponent {
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -22,7 +22,7 @@ class Input extends React.PureComponent {
 	commit() {
 		this.props.onCommit(this.state.value, this.hasChanged);
 	}
-	
+
 	focus() {
 		if(this.input != null) {
 			this.input.focus();
@@ -57,8 +57,9 @@ class Input extends React.PureComponent {
 				this.cancel(true);
 			break;
 			case 'Enter':
-
-				this.commit(true);
+				if(event.shiftKey) {
+					this.commit(true);
+				}
 			break;
 		default:
 			return;
@@ -78,7 +79,7 @@ class Input extends React.PureComponent {
 
 	renderInput() {
 		return (
-			<input
+			<textarea
 				autoFocus={ this.props.autoFocus }
 				className={ this.props.className }
 				disabled={ this.props.isDisabled }
@@ -91,7 +92,6 @@ class Input extends React.PureComponent {
 				ref={ input => this.input = input }
 				required={ this.props.isRequired }
 				tabIndex={ this.props.tabIndex }
-				type={ this.props.type }
 				value={ this.state.value }
 			/>
 		);
@@ -117,7 +117,6 @@ class Input extends React.PureComponent {
 		onCommit: noop,
 		onFocus: noop,
 		tabIndex: -1,
-		type: 'text',
 		value: '',
 	};
 
@@ -136,9 +135,8 @@ class Input extends React.PureComponent {
 		placeholder: PropTypes.string,
 		selectOnFocus: PropTypes.bool,
 		tabIndex: PropTypes.number,
-		type: PropTypes.string.isRequired,
 		value: PropTypes.string.isRequired,
 	};
 }
 
-module.exports = Input;
+module.exports = TextAreaInput;

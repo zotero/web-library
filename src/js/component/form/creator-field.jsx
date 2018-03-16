@@ -4,11 +4,11 @@ const React = require('react');
 const PropTypes = require('prop-types');
 const cx = require('classnames');
 const Field = require('./field');
-const Editable = require('../../editable');
-const Button = require('../../ui/button');
-const Icon = require('../../ui/icon');
-const Input = require('../../input');
-const SelectInput = require('../../select-input');
+const Editable = require('../editable');
+const Button = require('../ui/button');
+const Icon = require('../ui/icon');
+const Input = require('./input');
+const SelectInput = require('./select');
 
 //@TODO: refactor tabIndexing through creators field
 

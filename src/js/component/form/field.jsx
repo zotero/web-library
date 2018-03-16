@@ -3,7 +3,7 @@
 const React = require('react');
 const PropTypes = require('prop-types');
 const cx = require('classnames');
-const { noop } = require('../../../utils');
+const { noop } = require('../../utils');
 
 class Field extends React.PureComponent {
 	handleClick() {

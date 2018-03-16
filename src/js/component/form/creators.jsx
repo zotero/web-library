@@ -3,7 +3,7 @@
 const React = require('react');
 const PropTypes = require('prop-types');
 const deepEqual = require('deep-equal');
-const { splice } = require('../../../utils');
+const { splice } = require('../../utils');
 const CreatorField = require('./creator-field');
 
 class Creators extends React.PureComponent {

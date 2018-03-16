@@ -5,9 +5,9 @@ const PropTypes = require('prop-types');
 const cx = require('classnames');
 
 const EditableContent = require('./editable/content');
-const Input = require('./input');
-const SelectInput = require('./select-input');
-const TextAreaInput = require('./text-area-input');
+const Input = require('./form/input');
+const SelectInput = require('./form/select');
+const TextAreaInput = require('./form/text-area');
 
 class Editable extends React.PureComponent {
 	renderContent() {

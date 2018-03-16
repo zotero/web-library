@@ -4,7 +4,7 @@ const escapeHtml = require('escape-html');
 const React = require('react');
 const PropTypes = require('prop-types');
 const cx = require('classnames');
-const TextAreaInput = require('../text-area-input');
+const TextAreaInput = require('../form/text-area');
 
 class EditableContent extends React.PureComponent {
 	get content() {

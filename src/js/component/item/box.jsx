@@ -4,13 +4,13 @@ const React = require('react');
 const PropTypes = require('prop-types');
 const cx = require('classnames');
 
-const Creators = require('./box/creators');
+const Creators = require('../form/creators');
 const Editable = require('../editable');
-const Field = require('./box/field');
-const Input = require('../input');
-const SelectInput = require('../select-input');
+const Field = require('../form/field');
+const Input = require('../form/input');
+const SelectInput = require('../form/select');
 const Spinner = require('../ui/spinner');
-const TextAreaInput = require('../text-area-input');
+const TextAreaInput = require('../form/text-area');
 
 const pickInputComponent = field => {
 	switch(field.key) {
@@ -73,26 +73,22 @@ class ItemBox extends React.PureComponent {
 		);
 	}
 
-	renderLabel(field) {
+	renderLabelContent(field) {
 		switch(field.key) {
 			case 'url':
 				return (
-					<label>
-						<a rel='nofollow' href={ field.value }>
-							{ field.label }
-						</a>
-					</label>
+					<a rel='nofollow' href={ field.value }>
+						{ field.label }
+					</a>
 				);
 			case 'DOI':
 				return (
-					<label>
-						<a rel='nofollow' href={ 'http://dx.doi.org/' + field.value }>
-							{ field.label }
-						</a>
-					</label>
+					<a rel='nofollow' href={ 'http://dx.doi.org/' + field.value }>
+						{ field.label }
+					</a>
 				);
 			default:
-			return <label>{ field.label }</label>;
+				return field.label;
 		}
 	}
 
@@ -139,8 +135,14 @@ class ItemBox extends React.PureComponent {
 					onClick={ this.handleFieldEdit.bind(this, field.key) }
 					onFocus={ this.handleFieldEdit.bind(this, field.key) }
 				>
-					{ this.renderLabel(field) }
-					<FormField ref={ fieldComponent => this.fieldComponents[field.key] = fieldComponent } { ...props } />
+					<label htmlFor={ field.key} >
+						{ this.renderLabelContent(field) }
+					</label>
+					<FormField 
+						id={ field.key }
+						ref={ fieldComponent => this.fieldComponents[field.key] = fieldComponent }
+						{ ...props }
+					/>
 				</Field>
 			);
 		}

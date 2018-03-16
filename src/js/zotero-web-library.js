@@ -11,7 +11,7 @@ const CollectionTreeContainer = require('./container/collection-tree');
 
 const Button = require('./component/ui/button');
 const CollectionTree = require('./component/collection-tree');
-const Creators = require('./component/item/box/creators');
+const Creators = require('./component/form/creators');
 const Editable = require('./component/editable');
 const EditableContent = require('./component/editable/content');
 const Icon = require('./component/ui/icon');

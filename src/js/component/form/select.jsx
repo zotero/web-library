@@ -3,11 +3,12 @@
 const React = require('react');
 const PropTypes = require('prop-types');
 const cx = require('classnames');
-const { noop } = require('../utils');
+const { noop } = require('../../utils');
 
-const Spinner = require('./ui/spinner');
+const Spinner = require('../ui/spinner');
+const Select = require('react-select').default;
 
-class TextAreaInput extends React.PureComponent {
+class SelectInput extends React.PureComponent {
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -26,7 +27,6 @@ class TextAreaInput extends React.PureComponent {
 	focus() {
 		if(this.input != null) {
 			this.input.focus();
-			this.props.selectOnFocus && this.input.select();
 		}
 	}
 
@@ -36,9 +36,9 @@ class TextAreaInput extends React.PureComponent {
 		}
 	}
 
-	handleChange({ target }) {
-		this.setState({ value: target.value });
-		this.props.onChange(target.value);
+	handleChange(value) {
+		this.props.onChange(value);
+		this.setState({ value }, this.commit.bind(this));
 	}
 
 	handleBlur(event) {
@@ -47,27 +47,20 @@ class TextAreaInput extends React.PureComponent {
 	}
 
 	handleFocus(event) {
-		this.props.selectOnFocus && event.target.select();
 		this.props.onFocus(event);
-	}
-
-	handleKeyDown(event) {
-		switch (event.key) {
-			case 'Escape':
-				this.cancel(true);
-			break;
-			case 'Enter':
-				if(event.shiftKey) {
-					this.commit(true);
-				}
-			break;
-		default:
-			return;
-		}
 	}
 
 	get hasChanged() {
 		return this.state.value !== this.props.value;
+	}
+
+	get selectProps() {
+		return {
+			simpleValue: true,
+			openOnFocus: true,
+			clearable: false,
+			...this.props.selectProps
+		};
 	}
 
 	get className() {
@@ -78,23 +71,22 @@ class TextAreaInput extends React.PureComponent {
 	}
 
 	renderInput() {
-		return (
-			<textarea
-				autoFocus={ this.props.autoFocus }
-				className={ this.props.className }
-				disabled={ this.props.isDisabled }
-				onBlur={ this.handleBlur.bind(this) }
-				onChange={ this.handleChange.bind(this) }
-				onFocus={ this.handleFocus.bind(this) }
-				onKeyDown={ this.handleKeyDown.bind(this) }
-				placeholder={ this.props.placeholder }
-				readOnly={ this.props.isReadOnly }
-				ref={ input => this.input = input }
-				required={ this.props.isRequired }
-				tabIndex={ this.props.tabIndex }
-				value={ this.state.value }
-			/>
-		);
+		return <Select
+			autoFocus= { this.props.autoFocus }
+			className={ this.props.className }
+			disabled={ this.props.isDisabled }
+			onBlur={ this.handleBlur.bind(this) }
+			onChange={ this.handleChange.bind(this) }
+			onFocus={ this.handleFocus.bind(this) }
+			options={ this.props.options }
+			placeholder={ this.props.placeholder }
+			readOnly={ this.props.isReadOnly }
+			ref={ input => this.input = input }
+			required={ this.props.isRequired }
+			tabIndex={ this.props.tabIndex }
+			value={ this.state.value }
+			{ ...this.selectProps }
+		/>;
 	}
 
 	renderSpinner() {
@@ -116,6 +108,8 @@ class TextAreaInput extends React.PureComponent {
 		onChange: noop,
 		onCommit: noop,
 		onFocus: noop,
+		options: [],
+		selectProps: {},
 		tabIndex: -1,
 		value: '',
 	};
@@ -132,11 +126,12 @@ class TextAreaInput extends React.PureComponent {
 		onChange: PropTypes.func.isRequired,
 		onCommit: PropTypes.func.isRequired,
 		onFocus: PropTypes.func.isRequired,
+		options: PropTypes.array.isRequired,
 		placeholder: PropTypes.string,
-		selectOnFocus: PropTypes.bool,
+		selectProps: PropTypes.object.isRequired,
 		tabIndex: PropTypes.number,
 		value: PropTypes.string.isRequired,
 	};
 }
 
-module.exports = TextAreaInput;
+module.exports = SelectInput;
