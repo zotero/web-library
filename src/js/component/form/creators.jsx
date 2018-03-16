@@ -76,14 +76,16 @@ class Creators extends React.PureComponent {
 		if('name' in creators[index]) {
 			let creator = creators[index].name.split(' ');
 			creators[index] = {
-				lastName: creator.length > 1 ? creator[creator.length - 1] : '',
+				lastName: creator.length > 0 ? creator[creator.length - 1] : '',
 				firstName: creator.slice(0, creator.length - 1).join(' '),
-				creatorType: creators[index].creatorType
+				creatorType: creators[index].creatorType,
+				[Symbol.for('isVirtual')]: creators[index][Symbol.for('isVirtual')]
 			};
 		} else if('lastName' in creators[index]) {
 			creators[index] = {
 				name: `${creators[index].firstName} ${creators[index].lastName}`.trim(),
-				creatorType: creators[index].creatorType
+				creatorType: creators[index].creatorType,
+				[Symbol.for('isVirtual')]: creators[index][Symbol.for('isVirtual')]
 			};
 		}
 
