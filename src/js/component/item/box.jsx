@@ -133,7 +133,7 @@ class ItemBox extends React.PureComponent {
 
 			return (
 				<Field 
-					className={ className }
+					className={ cx(className) }
 					isActive={ isActive }
 					key={ field.key }
 					onClick={ this.handleFieldEdit.bind(this, field.key) }
