@@ -61,7 +61,6 @@ class ItemBoxContainer extends React.PureComponent {
 	render() {
 		return <ItemBox 
 			onSave={ this.handleItemUpdated.bind(this, this.props.item) }
-			isForm={ true }
 			{ ...this.props }
 		/>;
 	}
