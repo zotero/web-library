@@ -96,10 +96,12 @@ class ItemBox extends React.PureComponent {
 			return this.renderCreators(field);
 		} else {
 			const isActive = this.state.activeEntry === field.key;
-			const classNames = {
+			const className = {
 				'empty': !field.value || !field.value.length,
 				'select': field.options && Array.isArray(field.options),
-				'editing': isActive
+				'editing': isActive,
+				'abstract': field.key === 'abstractNote',
+				'extra': field.key === 'extra',
 			};
 			const display = field.key === 'itemType' ? 
 				field.options.find(o => o.value === field.value) :
@@ -131,7 +133,7 @@ class ItemBox extends React.PureComponent {
 
 			return (
 				<Field 
-					classNames={ classNames }
+					className={ className }
 					isActive={ isActive }
 					key={ field.key }
 					onClick={ this.handleFieldEdit.bind(this, field.key) }
