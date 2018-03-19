@@ -53,6 +53,17 @@ class ItemBoxContainer extends React.PureComponent {
 					}
 				});
 			}
+
+			const targetTypeCreatorTypes = await this.props.dispatch(fetchItemTypeCreatorTypes(item.itemType));
+			
+			//convert item creators to match creators appropriate for this item type
+			if(item.creators && Array.isArray(item.creators)) {
+				for(var creator of item.creators) {
+					if(typeof targetTypeCreatorTypes.find(c => c.creatorType === creator.creatorType) === 'undefined') {
+						creator.creatorType = targetTypeCreatorTypes[0].creatorType;
+					}
+				}
+			}
 		}
 
 		await this.props.dispatch(updateItem(item.key, patch));

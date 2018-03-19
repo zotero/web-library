@@ -38,7 +38,11 @@ class SelectInput extends React.PureComponent {
 
 	handleChange(value) {
 		this.props.onChange(value);
-		this.setState({ value });
+		if(value !== null || (value === null && this.props.clearable)) {
+			this.setState({ value });
+		} else {
+			this.setState({ value: this.props.value });
+		}
 	}
 
 	handleBlur(event) {

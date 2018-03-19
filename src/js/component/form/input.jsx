@@ -57,7 +57,6 @@ class Input extends React.PureComponent {
 				this.cancel(event);
 			break;
 			case 'Enter':
-
 				this.commit(event);
 			break;
 		default:
