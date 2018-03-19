@@ -54,12 +54,11 @@ class SelectInput extends React.PureComponent {
 		return this.state.value !== this.props.value;
 	}
 
-	get selectProps() {
+	get defaultSelectProps() {
 		return {
 			simpleValue: true,
 			openOnFocus: true,
 			clearable: false,
-			...this.props.selectProps
 		};
 	}
 
@@ -72,6 +71,8 @@ class SelectInput extends React.PureComponent {
 
 	renderInput() {
 		return <Select
+			{ ...this.defaultSelectProps }
+			{ ...this.props }
 			autoFocus= { this.props.autoFocus }
 			className={ this.props.className }
 			disabled={ this.props.isDisabled }
@@ -86,7 +87,6 @@ class SelectInput extends React.PureComponent {
 			required={ this.props.isRequired }
 			tabIndex={ this.props.tabIndex }
 			value={ this.state.value }
-			{ ...this.selectProps }
 		/>;
 	}
 

@@ -82,7 +82,14 @@ class Input extends React.PureComponent {
 				autoFocus={ this.props.autoFocus }
 				className={ this.props.className }
 				disabled={ this.props.isDisabled }
+				form={ this.props.form }
 				id={ this.props.id }
+				inputMode={ this.props.inputMode }
+				max={ this.props.max }
+				maxLength={ this.props.maxLength }
+				min={ this.props.min }
+				minLength={ this.props.minLength }
+				name={ this.props.name }
 				onBlur={ this.handleBlur.bind(this) }
 				onChange={ this.handleChange.bind(this) }
 				onFocus={ this.handleFocus.bind(this) }
@@ -91,6 +98,8 @@ class Input extends React.PureComponent {
 				readOnly={ this.props.isReadOnly }
 				ref={ input => this.input = input }
 				required={ this.props.isRequired }
+				spellCheck={ this.props.spellCheck }
+				step={ this.props.step }
 				tabIndex={ this.props.tabIndex }
 				type={ this.props.type }
 				value={ this.state.value }
@@ -140,6 +149,15 @@ class Input extends React.PureComponent {
 		tabIndex: PropTypes.number,
 		type: PropTypes.string.isRequired,
 		value: PropTypes.string.isRequired,
+		form: PropTypes.string,
+		inputMode: PropTypes.string,
+		max: PropTypes.number,
+		maxLength: PropTypes.number,
+		min: PropTypes.number,
+		minLength: PropTypes.number,
+		name: PropTypes.string,
+		spellCheck: PropTypes.bool,
+		step: PropTypes.number,
 	};
 }
 

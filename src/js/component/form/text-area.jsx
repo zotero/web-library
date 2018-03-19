@@ -80,10 +80,16 @@ class TextAreaInput extends React.PureComponent {
 	renderInput() {
 		return (
 			<textarea
+				autoComplete={ this.props.autoComplete }
 				autoFocus={ this.props.autoFocus }
 				className={ this.props.className }
+				cols={ this.props.cols }
 				disabled={ this.props.isDisabled }
+				form={ this.props.form }
 				id={ this.props.id }
+				maxLength={ this.props.maxLength }
+				minLength={ this.props.minLength }
+				name={ this.props.name }
 				onBlur={ this.handleBlur.bind(this) }
 				onChange={ this.handleChange.bind(this) }
 				onFocus={ this.handleFocus.bind(this) }
@@ -92,8 +98,11 @@ class TextAreaInput extends React.PureComponent {
 				readOnly={ this.props.isReadOnly }
 				ref={ input => this.input = input }
 				required={ this.props.isRequired }
+				rows={ this.props.rows }
+				spellCheck={ this.props.spellCheck }
 				tabIndex={ this.props.tabIndex }
 				value={ this.state.value }
+				wrap={ this.props.wrap }
 			/>
 		);
 	}
@@ -138,6 +147,15 @@ class TextAreaInput extends React.PureComponent {
 		selectOnFocus: PropTypes.bool,
 		tabIndex: PropTypes.number,
 		value: PropTypes.string.isRequired,
+		autoComplete: PropTypes.bool,
+		cols: PropTypes.number,
+		form: PropTypes.string,
+		maxLength: PropTypes.number,
+		minLength: PropTypes.number,
+		name: PropTypes.string,
+		rows: PropTypes.number,
+		spellCheck: PropTypes.bool,
+		wrap: PropTypes.bool,
 	};
 }
 
