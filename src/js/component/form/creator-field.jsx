@@ -160,16 +160,16 @@ class CreatorField extends React.PureComponent {
 					onFocus={ this.handleEdit.bind(this, 'creatorType') }
 				>
 					<FormField
-						onCommit={ this.handleEditableCommit.bind(this, 'creatorType') }
-						onCancel={ this.handleCancel.bind(this) }
-						isActive={ this.state.active === 'creatorType' }
-						options={ creatorTypes }
-						inputComponent={ SelectInput }
-						value={ creator.creatorType }
-						selectProps={ { searchable: false } }
-						tabIndex={ this.props.isForm ? 0 : -1 }
 						autoFocus={ !this.props.isForm }
 						className="form-control-sm"
+						inputComponent={ SelectInput }
+						isActive={ this.state.active === 'creatorType' }
+						onCancel={ this.handleCancel.bind(this) }
+						onCommit={ this.handleEditableCommit.bind(this, 'creatorType') }
+						options={ creatorTypes }
+						searchable={ false }
+						tabIndex={ this.props.isForm ? 0 : -1 }
+						value={ creator.creatorType }
 					>
 						<span className="text-container">{ creatorTypeDescription.label }</span>
 						<span className="Select-arrow"></span>
