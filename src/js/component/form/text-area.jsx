@@ -80,6 +80,7 @@ class TextAreaInput extends React.PureComponent {
 	renderInput() {
 		return (
 			<textarea
+				{ ...this.props }
 				autoComplete={ this.props.autoComplete }
 				autoFocus={ this.props.autoFocus }
 				className={ this.props.className }

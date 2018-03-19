@@ -79,6 +79,7 @@ class CreatorField extends React.PureComponent {
 						selectOnFocus={ true }
 						value={ creator.lastName }
 						tabIndex={ this.props.isForm ? 0 : -1 }
+						aria-label="last name"
 					/>
 				</span>
 				<span
@@ -98,6 +99,7 @@ class CreatorField extends React.PureComponent {
 						selectOnFocus={ true }
 						value={ creator.firstName }
 						tabIndex={ this.props.isForm ? 0 : -1 }
+						aria-label="first name"
 					/>
 				</span>
 			</React.Fragment>
@@ -125,6 +127,7 @@ class CreatorField extends React.PureComponent {
 					selectOnFocus={ true }
 					value={ creator.name }
 					tabIndex={ this.props.isForm ? 0 : -1 }
+					aria-label="full name"
 				/>
 			</span>
 		);

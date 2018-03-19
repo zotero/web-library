@@ -79,6 +79,7 @@ class Input extends React.PureComponent {
 	renderInput() {
 		return (
 			<input
+				{ ...this.props }
 				autoFocus={ this.props.autoFocus }
 				className={ this.props.className }
 				disabled={ this.props.isDisabled }
