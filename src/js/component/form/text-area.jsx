@@ -15,12 +15,12 @@ class TextAreaInput extends React.PureComponent {
 		};
 	}
 
-	cancel() {
-		this.props.onCancel(this.hasChanged);
+	cancel(event = null) {
+		this.props.onCancel(this.hasChanged, event);
 	}
 
-	commit() {
-		this.props.onCommit(this.state.value, this.hasChanged);
+	commit(event = null) {
+		this.props.onCommit(this.state.value, this.hasChanged, event);
 	}
 
 	focus() {
@@ -43,7 +43,7 @@ class TextAreaInput extends React.PureComponent {
 
 	handleBlur(event) {
 		const shouldCancel = this.props.onBlur(event);
-		shouldCancel ? this.cancel() : this.commit();
+		shouldCancel ? this.cancel(event) : this.commit(event);
 	}
 
 	handleFocus(event) {
@@ -54,11 +54,11 @@ class TextAreaInput extends React.PureComponent {
 	handleKeyDown(event) {
 		switch (event.key) {
 			case 'Escape':
-				this.cancel(true);
+				this.cancel(event);
 			break;
 			case 'Enter':
 				if(event.shiftKey) {
-					this.commit(true);
+					this.commit(event);
 				}
 			break;
 		default:
@@ -78,9 +78,14 @@ class TextAreaInput extends React.PureComponent {
 	}
 
 	renderInput() {
+		const extraProps = Object.keys(this.props).reduce((aggr, key) => {
+			if(key.match(/^(aria-|data-).*/)) {
+				aggr[key] = this.props[key];
+			}
+			return aggr;
+		}, {});
 		return (
 			<textarea
-				{ ...this.props }
 				autoComplete={ this.props.autoComplete }
 				autoFocus={ this.props.autoFocus }
 				className={ cx('form-control', this.props.className) }
@@ -104,6 +109,7 @@ class TextAreaInput extends React.PureComponent {
 				tabIndex={ this.props.tabIndex }
 				value={ this.state.value }
 				wrap={ this.props.wrap }
+				{ ...extraProps }
 			/>
 		);
 	}

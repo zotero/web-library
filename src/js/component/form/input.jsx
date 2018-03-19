@@ -15,12 +15,12 @@ class Input extends React.PureComponent {
 		};
 	}
 
-	cancel() {
-		this.props.onCancel(this.hasChanged);
+	cancel(event = null) {
+		this.props.onCancel(this.hasChanged, event);
 	}
 
-	commit() {
-		this.props.onCommit(this.state.value, this.hasChanged);
+	commit(event = null) {
+		this.props.onCommit(this.state.value, this.hasChanged, event);
 	}
 	
 	focus() {
@@ -43,7 +43,7 @@ class Input extends React.PureComponent {
 
 	handleBlur(event) {
 		const shouldCancel = this.props.onBlur(event);
-		shouldCancel ? this.cancel() : this.commit();
+		shouldCancel ? this.cancel(event) : this.commit(event);
 	}
 
 	handleFocus(event) {
@@ -54,11 +54,11 @@ class Input extends React.PureComponent {
 	handleKeyDown(event) {
 		switch (event.key) {
 			case 'Escape':
-				this.cancel(true);
+				this.cancel(event);
 			break;
 			case 'Enter':
 
-				this.commit(true);
+				this.commit(event);
 			break;
 		default:
 			return;
@@ -77,9 +77,14 @@ class Input extends React.PureComponent {
 	}
 
 	renderInput() {
+		const extraProps = Object.keys(this.props).reduce((aggr, key) => {
+			if(key.match(/^(aria-|data-).*/)) {
+				aggr[key] = this.props[key];
+			}
+			return aggr;
+		}, {});
 		return (
 			<input
-				{ ...this.props }
 				autoFocus={ this.props.autoFocus }
 				className={ cx('form-control', this.props.className) }
 				disabled={ this.props.isDisabled }
@@ -104,6 +109,7 @@ class Input extends React.PureComponent {
 				tabIndex={ this.props.tabIndex }
 				type={ this.props.type }
 				value={ this.state.value }
+				{ ...extraProps }
 			/>
 		);
 	}

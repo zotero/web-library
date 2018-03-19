@@ -16,12 +16,12 @@ class SelectInput extends React.PureComponent {
 		};
 	}
 
-	cancel() {
-		this.props.onCancel(this.hasChanged);
+	cancel(event = null) {
+		this.props.onCancel(this.hasChanged, event);
 	}
 
-	commit() {
-		this.props.onCommit(this.state.value, this.hasChanged);
+	commit(event = null) {
+		this.props.onCommit(this.state.value, this.hasChanged, event);
 	}
 
 	focus() {
@@ -43,7 +43,7 @@ class SelectInput extends React.PureComponent {
 
 	handleBlur(event) {
 		const shouldCancel = this.props.onBlur(event);
-		shouldCancel ? this.cancel() : this.commit();
+		shouldCancel ? this.cancel(event) : this.commit(event);
 	}
 
 	handleFocus(event) {

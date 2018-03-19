@@ -32,8 +32,15 @@ class CreatorField extends React.PureComponent {
 		this.setState({ active: null });
 	}
 
-	handleEditableCommit(field, newValue) {
-		this.props.onChange(this.props.index, field, newValue);
+	handleEditableCommit(field, newValue, hasChanged, srcEvent) {
+		if(hasChanged) {
+			this.props.onChange(this.props.index, field, newValue);
+		}
+		if(this.props.isForm && srcEvent) {
+			if(srcEvent.type == 'keydown' && srcEvent.key == 'Enter') {
+				srcEvent.target.blur();
+			}
+		}
 		this.setState({ active: null });
 	}
 

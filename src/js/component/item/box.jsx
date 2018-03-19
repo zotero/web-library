@@ -45,19 +45,18 @@ class ItemBox extends React.PureComponent {
 		}
 	}
 
-	handleEditableCommit(key, newValue, isChanged) {
+	handleEditableCommit(key, newValue, isChanged, srcEvent) {
 		if(isChanged) {
 			this.props.onSave(key, newValue);
 		}
 		if(key === this.state.activeEntry) {
 			this.setState({ activeEntry: null });
 		}
-	}
-
-	get currentIndex() {
-		return this.props.fields.findIndex(
-			field => field.key === this.state.activeEntry
-		);
+		if(this.props.isForm && srcEvent) {
+			if(srcEvent.type == 'keydown' && srcEvent.key == 'Enter') {
+				srcEvent.target.blur();
+			}
+		}
 	}
 
 	renderCreators(field) {
