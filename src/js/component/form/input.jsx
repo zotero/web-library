@@ -81,7 +81,7 @@ class Input extends React.PureComponent {
 			<input
 				{ ...this.props }
 				autoFocus={ this.props.autoFocus }
-				className={ this.props.className }
+				className={ cx('form-control', this.props.className) }
 				disabled={ this.props.isDisabled }
 				form={ this.props.form }
 				id={ this.props.id }

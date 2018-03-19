@@ -83,7 +83,7 @@ class TextAreaInput extends React.PureComponent {
 				{ ...this.props }
 				autoComplete={ this.props.autoComplete }
 				autoFocus={ this.props.autoFocus }
-				className={ this.props.className }
+				className={ cx('form-control', this.props.className) }
 				cols={ this.props.cols }
 				disabled={ this.props.isDisabled }
 				form={ this.props.form }
