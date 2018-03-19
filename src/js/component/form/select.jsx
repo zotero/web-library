@@ -38,7 +38,7 @@ class SelectInput extends React.PureComponent {
 
 	handleChange(value) {
 		this.props.onChange(value);
-		this.setState({ value }, this.commit.bind(this));
+		this.setState({ value });
 	}
 
 	handleBlur(event) {
