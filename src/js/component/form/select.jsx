@@ -20,8 +20,8 @@ class SelectInput extends React.PureComponent {
 		this.props.onCancel(this.hasChanged, event);
 	}
 
-	commit(event = null) {
-		this.props.onCommit(this.state.value, this.hasChanged, event);
+	commit(event = null, value = null, force = false) {
+		this.props.onCommit(value || this.state.value, force ? true : this.hasChanged, event);
 	}
 
 	focus() {
@@ -37,21 +37,35 @@ class SelectInput extends React.PureComponent {
 	}
 
 	handleChange(value) {
-		this.props.onChange(value);
-		if(value !== null || (value === null && this.props.clearable)) {
-			this.setState({ value });
-		} else {
-			this.setState({ value: this.props.value });
+		value = value !== null || (value === null && this.props.clearable) ? 
+			value : this.props.value;
+		this.setState({ value });
+		if(this.forceCommitOnNextChange) {
+			this.commit(null, value, value !== this.props.value);
 		}
+		this.forceCommitOnNextChange = false;
 	}
 
 	handleBlur(event) {
-		const shouldCancel = this.props.onBlur(event);
-		shouldCancel ? this.cancel(event) : this.commit(event);
+		this.props.onBlur(event);
+		this.cancel();
+		if(this.props.autoBlur) {
+			this.forceCommitOnNextChange = true;
+		}
 	}
 
 	handleFocus(event) {
 		this.props.onFocus(event);
+	}
+
+	handleKeyDown(event) {
+		switch (event.key) {
+			case 'Escape':
+				this.cancel(event);
+			break;
+		default:
+			return;
+		}
 	}
 
 	get hasChanged() {
@@ -61,7 +75,6 @@ class SelectInput extends React.PureComponent {
 	get defaultSelectProps() {
 		return {
 			simpleValue: true,
-			openOnFocus: true,
 			clearable: false,
 		};
 	}
@@ -84,6 +97,7 @@ class SelectInput extends React.PureComponent {
 			onBlur={ this.handleBlur.bind(this) }
 			onChange={ this.handleChange.bind(this) }
 			onFocus={ this.handleFocus.bind(this) }
+			onInputKeyDown={ this.handleKeyDown.bind(this) }
 			options={ this.props.options }
 			placeholder={ this.props.placeholder }
 			readOnly={ this.props.isReadOnly }

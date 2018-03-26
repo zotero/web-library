@@ -10,8 +10,6 @@ const Icon = require('../ui/icon');
 const Input = require('./input');
 const SelectInput = require('./select');
 
-//@TODO: refactor tabIndexing through creators field
-
 class CreatorField extends React.PureComponent {
 	constructor(props) {
 		super(props);
@@ -21,11 +19,18 @@ class CreatorField extends React.PureComponent {
 		this.fieldComponents = {};
 	}
 
-	handleEdit(field) {
-		if(this.props.isForm && this.fieldComponents[field]) {
-			this.fieldComponents[field].focus();
-		}
-		this.setState({ active: field });
+	handleFieldClick(key, event) {
+		this.setState({ active: key }, () => {
+			if(this.fieldComponents[key] instanceof SelectInput) {
+				//@NOTE: hacky!
+				this.fieldComponents[key].input.setState({ isOpen: true });
+			}
+		});
+		event.preventDefault();
+	}
+
+	handleFieldFocus(key) {
+		this.setState({ active: key });
 	}
 
 	handleCancel() {
@@ -64,82 +69,45 @@ class CreatorField extends React.PureComponent {
 	}
 
 	renderDual() {
-		const FormField = this.props.isForm ? Input : Editable;
-		const { creator } = this.props;
 		return (
 			<React.Fragment>
-				<span
-					tabIndex={ this.props.isForm ? -1 : this.state.active === 'lastName' ? null : 0 }
-					className="field-editable-wrap"
-					onClick={ this.handleEdit.bind(this, 'lastName') }
-					onFocus={ this.handleEdit.bind(this, 'lastName') }
-				>
-					<FormField
-						autoFocus={ !this.props.isForm }
-						displayValue={ creator.lastName ? `${creator.lastName},` : null }
-						isActive={ this.state.active === 'lastName' }
-						onBlur={ () => false }
-						onCancel={ this.handleCancel.bind(this) }
-						onCommit={ this.handleEditableCommit.bind(this, 'lastName') }
-						placeholder='last'
-						ref={ component => this.fieldComponents['lastName'] = component }
-						selectOnFocus={ true }
-						value={ creator.lastName }
-						tabIndex={ this.props.isForm ? 0 : -1 }
-						aria-label="last name"
-						className="form-control-sm"
-					/>
-				</span>
-				<span
-					tabIndex={ this.props.isForm ? -1 : this.state.active === 'firstName' ? null : 0 }
-					className="field-editable-wrap"
-					onClick={ this.handleEdit.bind(this, 'firstName') }
-					onFocus={ this.handleEdit.bind(this, 'firstName') }
-				>
-					<FormField
-						autoFocus={ !this.props.isForm }
-						isActive={ this.state.active === 'firstName' }
-						onBlur={ () => false }
-						onCancel={ this.handleCancel.bind(this) }
-						onCommit={ this.handleEditableCommit.bind(this, 'firstName') }
-						placeholder='first'
-						ref={ component => this.fieldComponents['firstName'] = component }
-						selectOnFocus={ true }
-						value={ creator.firstName }
-						tabIndex={ this.props.isForm ? 0 : -1 }
-						aria-label="first name"
-						className="form-control-sm"
-					/>
-				</span>
+				{ this.renderField('lastName', 'last name') }
+				{ this.renderField('firstName', 'first name') }
 			</React.Fragment>
 		);
 	}
 
 	renderSingle() {
+		return this.renderField('name', 'name');
+	}
+
+	renderField(name, label) {
 		const FormField = this.props.isForm ? Input : Editable;
 		const { creator } = this.props;
+		const extraProps = { 
+			[this.props.isForm ? 'ref' : 'inputRef']: component => this.fieldComponents[name] = component
+		};
+
+		if(this.props.isForm) {
+			extraProps['tabIndex'] = 0;
+		}
+		
 		return (
-			<span
-				tabIndex={ this.props.isForm ? -1 : this.state.active === 'name' ? null : 0 }
-				className="field-editable-wrap"
-				onClick={ this.handleEdit.bind(this, 'name') }
-				onFocus={ this.handleEdit.bind(this, 'name') }
-			>
-				<FormField
-					autoFocus={ !this.props.isForm }
-					isActive={ this.state.active === 'name' }
-					onBlur={ () => false }
-					onCancel={ this.handleCancel.bind(this) }
-					onCommit={ this.handleEditableCommit.bind(this, 'name') }
-					placeholder='full name'
-					ref={ component => this.fieldComponents['name'] = component }
-					selectOnFocus={ true }
-					value={ creator.name }
-					tabIndex={ this.props.isForm ? 0 : -1 }
-					aria-label="full name"
-					className="form-control-sm"
-				/>
-			</span>
+			<FormField
+				autoFocus={ !this.props.isForm }
+				isActive={ this.state.active === name }
+				onBlur={ () => false }
+				onCancel={ this.handleCancel.bind(this) }
+				onCommit={ this.handleEditableCommit.bind(this, name) }
+				placeholder={ label }
+				selectOnFocus={ true }
+				value={ creator[name] }
+				aria-label={ label }
+				className="form-control-sm"
+				onEditableClick={ this.handleFieldClick.bind(this, name) }
+				onEditableFocus={ this.handleFieldFocus.bind(this, name) }
+				{ ...extraProps }
+			/>
 		);
 	}
 
@@ -154,34 +122,38 @@ class CreatorField extends React.PureComponent {
 			'creators-type-editing': this.state.isCreatorTypeActive
 		};
 
+		const extraProps = { 
+			[this.props.isForm ? 'ref' : 'inputRef']: component => this.fieldComponents['creatorType'] = component
+		};
+
+		if(this.props.isForm) {
+			extraProps['tabIndex'] = 0;
+		}
+
 		const creatorTypeDescription = creatorTypes.find(
 			c => c.value == creator.creatorType
 		) || { label: creator.creatorType };
 
 		return (
-			<Field key={ index } className={ cx(className) } tabIndex={ null }>
-				<span
-					tabIndex={ this.props.isForm ? -1 : this.state.active === 'creatorType' ? null : 0 }
-					className="field-editable-wrap"
-					onClick={ this.handleEdit.bind(this, 'creatorType') }
-					onFocus={ this.handleEdit.bind(this, 'creatorType') }
+			<Field key={ index } className={ cx(className) }>
+				<FormField
+					autoFocus={ !this.props.isForm }
+					autoBlur={ true }
+					className="form-control-sm"
+					inputComponent={ SelectInput }
+					isActive={ this.state.active === 'creatorType' }
+					onCancel={ this.handleCancel.bind(this) }
+					onCommit={ this.handleEditableCommit.bind(this, 'creatorType') }
+					options={ creatorTypes }
+					searchable={ false }
+					value={ creator.creatorType }
+					onEditableClick={ this.handleFieldClick.bind(this, 'creatorType') }
+					onEditableFocus={ this.handleFieldFocus.bind(this, 'creatorType') }
+					{ ...extraProps }
 				>
-					<FormField
-						autoFocus={ !this.props.isForm }
-						className="form-control-sm"
-						inputComponent={ SelectInput }
-						isActive={ this.state.active === 'creatorType' }
-						onCancel={ this.handleCancel.bind(this) }
-						onCommit={ this.handleEditableCommit.bind(this, 'creatorType') }
-						options={ creatorTypes }
-						searchable={ false }
-						tabIndex={ this.props.isForm ? 0 : -1 }
-						value={ creator.creatorType }
-					>
-						<span className="text-container">{ creatorTypeDescription.label }</span>
-						<span className="Select-arrow"></span>
-					</FormField>
-				</span>
+					<span className="text-container">{ creatorTypeDescription.label }</span>
+					<span className="Select-arrow"></span>
+				</FormField>
 				<React.Fragment>
 					{ this.isDual ? this.renderDual() : this.renderSingle() }
 					<Button onClick={ this.handleCreatorTypeSwitch.bind(this, index) }>

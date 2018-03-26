@@ -25,17 +25,22 @@ class ItemBox extends React.PureComponent {
 	constructor(props) {
 		super(props);
 		this.state = {
-			activeEntry: null
+			activeEntry: null,
 		};
 		this.fieldComponents = {};
 	}
 
-	handleFieldEdit(key) {
-		if(this.props.isForm) {
-			if(this.fieldComponents[key]) {
-				this.fieldComponents[key].focus();
+	handleFieldClick(key, event) {
+		this.setState({ activeEntry: key }, () => {
+			if(this.fieldComponents[key] instanceof SelectInput) {
+				//@NOTE: hacky! https://github.com/JedWatson/react-select/issues/2106
+				this.fieldComponents[key].input.setState({ isOpen: true });
 			}
-		}
+		});
+		event.preventDefault();
+	}
+
+	handleFieldFocus(key) {
 		this.setState({ activeEntry: key });
 	}
 
@@ -117,13 +122,25 @@ class ItemBox extends React.PureComponent {
 				options: field.options || null,
 				selectOnFocus: true,
 				value: field.value || '',
-				className: 'form-control-sm'
+				className: 'form-control-sm',
+				onEditableClick: this.handleFieldClick.bind(this, field.key),
+				onEditableFocus: this.handleFieldFocus.bind(this, field.key),
+				id: field.key,
+				[this.props.isForm ? 'ref' : 'inputRef']: component => this.fieldComponents[field.key] = component,
 			};
+
+			if(this.props.isForm) {
+				props['tabIndex'] = 0;
+			}
+
+			if(props.inputComponent === SelectInput) {
+				// props['onChange'] = () => true; //commit on change
+				// props['onBlur'] = this.handleCancel.bind(this, field.key);
+				props['autoBlur'] = true;
+			}
 
 			if(props.inputComponent !== SelectInput) {
 				props['onBlur'] = () => false; //commit on blur
-			} else {
-				props['onBlur'] = this.handleCancel.bind(this, field.key);
 			}
 			if(props.inputComponent === TextAreaInput) {
 				props['rows'] = 5;
@@ -136,17 +153,11 @@ class ItemBox extends React.PureComponent {
 					className={ cx(className) }
 					isActive={ isActive }
 					key={ field.key }
-					onClick={ this.handleFieldEdit.bind(this, field.key) }
-					onFocus={ this.handleFieldEdit.bind(this, field.key) }
 				>
 					<label htmlFor={ field.key} >
 						{ this.renderLabelContent(field) }
 					</label>
-					<FormField 
-						id={ field.key }
-						ref={ fieldComponent => this.fieldComponents[field.key] = fieldComponent }
-						{ ...props }
-					/>
+					<FormField { ...props } />
 				</Field>
 			);
 		}

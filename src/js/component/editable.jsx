@@ -8,19 +8,19 @@ const EditableContent = require('./editable/content');
 const Input = require('./form/input');
 const SelectInput = require('./form/select');
 const TextAreaInput = require('./form/text-area');
+const { noop } = require('../utils');
 
 class Editable extends React.PureComponent {
-	renderContent() {
-		const hasChildren = typeof this.props.children !== 'undefined';
-		return (
-			<span className="editable-value">
-				{
-					hasChildren ? 
-						this.props.children :
-						<EditableContent { ...this.props } />
-				}
-			</span>
-		);
+	setInput(input) {
+		this.props.inputRef(input);
+	}
+
+	handleClick(event) {
+		this.props.onEditableClick(event);
+	}
+
+	handleFocus(event) {
+		this.props.onEditableFocus(event);
 	}
 
 	get isActive() {
@@ -40,6 +40,18 @@ class Editable extends React.PureComponent {
 		};
 	}
 
+	renderContent() {
+		const hasChildren = typeof this.props.children !== 'undefined';
+		return (
+			<span className="editable-value">
+				{
+					hasChildren ? 
+						this.props.children :
+						<EditableContent { ...this.props } />
+				}
+			</span>
+		);
+	}
 
 	renderControls() {
 		const InputComponent = this.props.inputComponent;
@@ -47,7 +59,7 @@ class Editable extends React.PureComponent {
 			<InputComponent
 				className="editable-control"
 				isReadOnly={ this.isReadOnly }
-				ref={ this.setInput }
+				ref={ this.setInput.bind(this) }
 				{ ...this.props }
 			/>
 		);
@@ -55,18 +67,27 @@ class Editable extends React.PureComponent {
 
 	render() {
 		return (
-			<div className={ cx(this.className) }>
+			<div
+				tabIndex={ this.isActive ? null : 0 }
+				onMouseDown={ this.handleClick.bind(this) } 
+				onFocus={ this.handleFocus.bind(this) } 
+				className={ cx(this.className) }
+			>
 				{ this.isActive ? this.renderControls() : this.renderContent() }
 			</div>
 		);
 	}
 	static defaultProps = {
 		inputComponent: Input,
+		inputRef: noop,
+		onEditableClick: noop,
+		onEditableFocus: noop,
 	};
 
 	static propTypes = {
 		children: PropTypes.oneOfType([PropTypes.element, PropTypes.array]),
 		inputComponent: PropTypes.func,
+		inputRef: PropTypes.func,
 		isActive: PropTypes.bool,
 		isBusy: PropTypes.bool,
 		isDisabled: PropTypes.bool,
