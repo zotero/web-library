@@ -16,21 +16,18 @@ class Creators extends React.PureComponent {
 	}
 
 	componentWillReceiveProps(props) {
+		let creators = this.state.creators;
 		if(!deepEqual(this.props.value, props.value)) {
-			this.setState({
-				creators: props.value.length ? [...props.value] : [this.newCreator]
-			});
+			creators = props.value.length ? props.value : [this.newCreator];
 		}
-
 		if(!deepEqual(this.props.creatorTypes, props.creatorTypes)) {
 			const validCreatorTypes = props.creatorTypes.map(ct => ct.value);
-			const creators = this.state.creators
-				.map(creator => ({
+			creators = creators.map(creator => ({
 					...creator,
 					creatorType: validCreatorTypes.includes(creator.creatorType) ? creator.creatorType : validCreatorTypes[0]
 				}));
-			this.setState({ creators });
 		}
+		this.setState({ creators });
 	}
 
 	handleSaveCreators(creators) {
