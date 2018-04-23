@@ -40,7 +40,8 @@ class SelectInput extends React.PureComponent {
 		value = value !== null || (value === null && this.props.clearable) ? 
 			value : this.props.value;
 		this.setState({ value });
-		if(this.forceCommitOnNextChange) {
+
+		if(this.props.onChange(value) || this.forceCommitOnNextChange) {
 			this.commit(null, value, value !== this.props.value);
 		}
 		this.forceCommitOnNextChange = false;

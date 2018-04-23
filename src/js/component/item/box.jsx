@@ -134,9 +134,7 @@ class ItemBox extends React.PureComponent {
 			}
 
 			if(props.inputComponent === SelectInput) {
-				// props['onChange'] = () => true; //commit on change
-				// props['onBlur'] = this.handleCancel.bind(this, field.key);
-				props['autoBlur'] = true;
+				props['onChange'] = () => true; //commit on change
 			}
 
 			if(props.inputComponent !== SelectInput) {
