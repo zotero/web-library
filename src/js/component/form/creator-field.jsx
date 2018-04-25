@@ -122,7 +122,7 @@ class CreatorField extends React.PureComponent {
 			'creators-type-editing': this.state.isCreatorTypeActive
 		};
 
-		const extraProps = { 
+		const extraProps = {
 			[this.props.isForm ? 'ref' : 'inputRef']: component => this.fieldComponents['creatorType'] = component
 		};
 
@@ -138,17 +138,17 @@ class CreatorField extends React.PureComponent {
 			<Field key={ index } className={ cx(className) }>
 				<FormField
 					autoFocus={ !this.props.isForm }
-					autoBlur={ true }
 					className="form-control-sm"
 					inputComponent={ SelectInput }
 					isActive={ this.state.active === 'creatorType' }
 					onCancel={ this.handleCancel.bind(this) }
+					onChange={ () => true }
 					onCommit={ this.handleEditableCommit.bind(this, 'creatorType') }
+					onEditableClick={ this.handleFieldClick.bind(this, 'creatorType') }
+					onEditableFocus={ this.handleFieldFocus.bind(this, 'creatorType') }
 					options={ creatorTypes }
 					searchable={ false }
 					value={ creator.creatorType }
-					onEditableClick={ this.handleFieldClick.bind(this, 'creatorType') }
-					onEditableFocus={ this.handleFieldFocus.bind(this, 'creatorType') }
 					{ ...extraProps }
 				>
 					<span className="text-container">{ creatorTypeDescription.label }</span>
