@@ -19,6 +19,18 @@ class CreatorField extends React.PureComponent {
 		this.fieldComponents = {};
 	}
 
+	focus() {
+		const key = 'lastName' in this.props.creator ? 'lastName' : 'name';
+		if(!this.props.isForm) {
+			this.setState(
+				{ active: key },
+				() => this.fieldComponents[key].focus()
+			);
+		} else {
+			this.fieldComponents[key].focus();
+		}
+	}
+
 	handleFieldClick(key, event) {
 		this.setState({ active: key }, () => {
 			if(this.fieldComponents[key] instanceof SelectInput) {

@@ -13,6 +13,7 @@ class Creators extends React.PureComponent {
 			isCreatorTypeEditing: false,
 			creators: props.value.length ? [...props.value] : [this.newCreator]
 		};
+		this.fields = {};
 	}
 
 	componentWillReceiveProps(props) {
@@ -28,6 +29,12 @@ class Creators extends React.PureComponent {
 				}));
 		}
 		this.setState({ creators });
+	}
+
+	componentDidUpdate(props, state) {
+		if(this.state.creators.length > state.creators.length) {
+			this.fields[this.state.creators.length - 1].focus();
+		}
 	}
 
 	handleSaveCreators(creators) {
@@ -117,6 +124,7 @@ class Creators extends React.PureComponent {
 			onCreatorAdd: this.handleCreatorAdd.bind(this),
 			onCreatorRemove: this.handleCreatorRemove.bind(this),
 			onCreatorTypeSwitch: this.handleCreatorTypeSwitch.bind(this),
+			ref: ref => this.fields[index] = ref
 		};
 		return <CreatorField key={ index } { ...props } />;
 	}
