@@ -120,7 +120,7 @@ class ItemBox extends React.PureComponent {
 				onCancel: this.handleCancel.bind(this, field.key),
 				onCommit: this.handleEditableCommit.bind(this, field.key),
 				options: field.options || null,
-				selectOnFocus: true,
+				selectOnFocus: !this.props.isForm,
 				value: field.value || '',
 				className: 'form-control-sm',
 				onEditableClick: this.handleFieldClick.bind(this, field.key),

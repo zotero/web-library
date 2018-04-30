@@ -100,7 +100,7 @@ class CreatorField extends React.PureComponent {
 				onCancel={ this.handleCancel.bind(this) }
 				onCommit={ this.handleEditableCommit.bind(this, name) }
 				placeholder={ label }
-				selectOnFocus={ true }
+				selectOnFocus={ !this.props.isForm }
 				value={ creator[name] }
 				aria-label={ label }
 				className="form-control-sm"
