@@ -30,6 +30,15 @@ class ItemBox extends React.PureComponent {
 		this.fieldComponents = {};
 	}
 
+	focusField(name = 'itemType') {
+		if(name in this.fieldComponents) {
+			this.fieldComponents[name].focus();
+			return true;
+		} else {
+			return false;
+		}
+	}
+
 	handleFieldClick(key, event) {
 		this.setState({ activeEntry: key }, () => {
 			if(this.fieldComponents[key] instanceof SelectInput) {
