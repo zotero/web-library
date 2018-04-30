@@ -32,7 +32,8 @@ class Creators extends React.PureComponent {
 	}
 
 	componentDidUpdate(props, state) {
-		if(this.state.creators.length > state.creators.length) {
+		if(this.state.creators.length > state.creators.length &&
+			this.state.creators[this.state.creators.length - 1][Symbol.for('isVirtual')]) {
 			this.fields[this.state.creators.length - 1].focus();
 		}
 	}
