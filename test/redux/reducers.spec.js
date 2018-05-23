@@ -1,11 +1,11 @@
 'use strict';
 
 const assert = require('chai').assert;
-const configureStore = require('redux-mock-store').default;
+const configureStore = require('redux-mock-store');
 const thunk = require('redux-thunk').default;
 const { configureApi } = require('../../src/js/actions.js');
 const reducers = require(('../../src/js/reducers.js'));
-const { 
+const {
 	REQUEST_META,
 	RECEIVE_META,
 	REQUEST_COLLECTIONS_IN_LIBRARY,
@@ -304,14 +304,14 @@ describe('reducers', () => {
 
 
 
-	
+
 	// it('initializes with required meta data', async () => {
 	// 	const store = mockStore({});
 	// 	await store.dispatch(initialize('API_KEY'));
 	// 	console.log(store.getActions());
 	// });
 
-	
+
 	// const initialState = {}
 
 });

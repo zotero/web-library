@@ -2,7 +2,7 @@
 
 const assert = require('chai').assert;
 const cede = require('../helper/cede');
-const configureStore = require('redux-mock-store').default;
+const configureStore = require('redux-mock-store');
 const thunk = require('redux-thunk').default;
 const ReduxAsyncQueue = require('redux-async-queue').default;
 const fetchMock = require('fetch-mock');
@@ -10,7 +10,7 @@ const FakeStore = require('../helper/fake-store.js');
 if(typeof window === 'undefined') {
 	global.window = { localStorage: new FakeStore() };
 }
-const { 
+const {
 	initialize,
 	fetchCollections,
 	fetchItems,
@@ -19,7 +19,7 @@ const {
 	fetchItemTypeCreatorTypes,
 	fetchChildItems
 } = require('../../src/js/actions.js');
-const { 
+const {
 	REQUEST_META,
 	RECEIVE_META,
 	ERROR_META,
@@ -79,7 +79,7 @@ describe('action creators', () => {
 		} catch(error) {
 			assert.equal(error.message, '500: Internal Server Error');
 		}
-		
+
 		assert.strictEqual(store.getActions().length,2);
 		assert.strictEqual(store.getActions()[0].type,REQUEST_META);
 		assert.strictEqual(store.getActions()[1].type,ERROR_META);
@@ -107,7 +107,7 @@ describe('action creators', () => {
 		fetchMock.mock('begin:https://api.zotero.org/', { status: 500 });
 		const store = mockStore(initialState);
 		const action = fetchCollections('u123456');
-		
+
 		try {
 			await store.dispatch(action);
 			fail('Expected to throw an error');
@@ -153,8 +153,8 @@ describe('action creators', () => {
 				libraryKey: 'u123456'
 			}
 		});
-		const action = fetchItems('AAAAAAAA'); 
-		
+		const action = fetchItems('AAAAAAAA');
+
 		try {
 			await store.dispatch(action);
 			fail('Expected to throw an error');

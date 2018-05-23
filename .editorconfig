@@ -1,8 +1,16 @@
 [*.{js,jsx}]
 indent_style = tab
+trim_trailing_whitespace = true
+insert_final_newline = true
+
+[*.{html,hbs,tpl,svg}]
+indent_style = tab
+insert_final_newline = true
 
 [*.scss]
 indent_style = tab
+trim_trailing_whitespace = true
+insert_final_newline = true
 
 [*.svg]
 indent_style = tab

@@ -1,6 +1,6 @@
 {
   "env": {
-    "browser": {
+    "production": {
       "presets": [
         "es2015",
         "stage-2",
