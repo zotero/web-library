@@ -45,21 +45,22 @@
 // Components
 // --------------------------------------------------
 
-@import "components/navbar";
-@import "components/collection-tree";
-@import "components/tag-selector";
-@import "components/tabs";
-@import "components/metadata-list";
-@import "components/panel";
-@import "components/toolbar";
 @import "components/button";
-@import "components/icon";
-@import "components/touch-header";
-@import "components/editable";
-@import "components/rich-editor";
+@import "components/collection-tree";
 @import "components/details-list";
-@import "components/notes";
+@import "components/dropdown";
+@import "components/editable";
+@import "components/icon";
 @import "components/input";
+@import "components/metadata-list";
+@import "components/navbar";
+@import "components/notes";
+@import "components/panel";
+@import "components/rich-editor";
+@import "components/tabs";
+@import "components/tag-selector";
+@import "components/toolbar";
+@import "components/touch-header";
 
 @import "components/library";
 

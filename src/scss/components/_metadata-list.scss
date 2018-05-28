@@ -2,36 +2,6 @@
 // Description List
 // --------------------------------------------------
 
-@mixin horizontal {
-	.metadata {
-		display: flex;
-		align-items: flex-start;
-	}
-
-	.key,
-	.value {
-		overflow: visible;
-		min-width: 0; // Fix truncation
-		display: flex;
-	}
-
-	.key {
-		flex: 0 0 $metadata-list-offset;
-		margin-top: 0;
-		align-items: center;
-		justify-content: flex-end;
-
-		.field-editable-wrap {
-			justify-content: flex-end;			
-		}
-	}
-
-	.value {
-		flex: 0 0 calc(100% - #{$metadata-list-offset});
-	}
-}
-
-
 .metadata-list {
 	margin: $metadata-list-margin;
 

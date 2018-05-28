@@ -1,10 +1,13 @@
+/* eslint-disable react/no-deprecated */
 'use strict';
 
 const React = require('react');
 const PropTypes = require('prop-types');
 const cx = require('classnames');
-const Dropdown = require('@trendmicro/react-dropdown').default;
-const { DropdownToggle, DropdownMenu, MenuItem } = require('@trendmicro/react-dropdown');
+const Dropdown = require('reactstrap/lib/Dropdown').default;
+const DropdownToggle = require('reactstrap/lib/DropdownToggle').default;
+const DropdownMenu = require('reactstrap/lib/DropdownMenu').default;
+const DropdownItem = require('reactstrap/lib/DropdownItem').default;
 const { noteAsTitle } = require('../common/format');
 const { get } = require('../utils');
 
@@ -17,6 +20,7 @@ class Notes extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
+			isOpen: false,
 			selected: null
 		};
 	}
@@ -60,10 +64,16 @@ class Notes extends React.Component {
 		this.props.onAddNote(note.note);
 	}
 
+	handleToggleDropdown() {
+		this.setState({
+			isOpen: !this.state.isOpen
+		});
+	}
+
 	get richEditor() {
 		return (
 			<div className="editor">
-				<RichEditor 
+				<RichEditor
 					value={ this.props.notes.find(n => n.key == this.state.selected).note }
 					onChange={ this.handleChangeNote.bind(this) }
 				/>
@@ -79,7 +89,7 @@ class Notes extends React.Component {
 						{
 							this.props.notes.map(note => {
 								return (
-									<li 
+									<li
 										className={ cx('item', {'selected': this.state.selected == note.key }) }
 										key={ note.key }
 										onClick={ ev => this.handleEditNote(note, ev) }
@@ -105,17 +115,24 @@ class Notes extends React.Component {
 							</Button>
 							{
 								this.state.selected &&
-								<Dropdown className="dropdown-wrapper">
-									<DropdownToggle componentClass={ Button }>
+								<Dropdown
+									isOpen={ this.state.isOpen }
+									toggle={ this.handleToggleDropdown.bind(this) }
+									className="dropdown-wrapper"
+								>
+									<DropdownToggle
+										color={ null }
+										className="btn-icon dropdown-toggle"
+									>
 										<Icon type={ '16/cog' } width="16" height="16" />
 									</DropdownToggle>
 									<DropdownMenu>
-										<MenuItem onSelect={ this.handleDuplicate.bind(this) }>
+										<DropdownItem onClick={ this.handleDuplicate.bind(this) }>
 											Duplicate
-										</MenuItem>
-										<MenuItem onSelect={ this.handleDelete.bind(this) }>
+										</DropdownItem>
+										<DropdownItem onClick={ this.handleDelete.bind(this) }>
 											Delete
-										</MenuItem>
+										</DropdownItem>
 									</DropdownMenu>
 								</Dropdown>
 							}
