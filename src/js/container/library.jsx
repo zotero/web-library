@@ -1,3 +1,4 @@
+/* eslint-disable react/no-deprecated */
 'use strict';
 
 const React = require('react');
@@ -15,6 +16,7 @@ const reducers = require('../reducers');
 const { getCurrentViewFromState } = require('../state-utils');
 const { selectLibrary, initialize, triggerResizeViewport, changeRoute } = require('../actions');
 const Library = require('../component/library');
+const defaults = require('../constants/defaults');
 
 // const history = createHistory();
 // const middleware = routerMiddleware(history);
@@ -32,14 +34,14 @@ class LibraryContainer extends React.Component {
 			);
 		};
 	}
-	
+
 	async componentDidMount() {
 		let { apiKey, userId, api } = this.props;
-		
+
 		await this.props.dispatch(
 			initialize(apiKey, api)
 		);
-		
+
 		//@TODO: introduce multi-library support
 		this.props.dispatch(changeRoute(this.props.match.params));
 		this.props.dispatch(
@@ -66,15 +68,12 @@ class LibraryContainer extends React.Component {
 		return <Library view={ this.props.view } />;
 	}
 
-	static init(element, opts = {}) {
+	static init(element, config = {}) {
 		if(element) {
 			//@TODO: use an action CONFIGURE_API instead
-			const config = {
-				apiKey: opts.apiKey || element.getAttribute('data-apikey'),
-				userId: opts.userId || parseInt(element.getAttribute('data-userid'), 10),
-				apiConfig: {
-					...opts.api
-				}
+			config = {
+				...defaults,
+				...config
 			};
 
 			var store = createStore(
