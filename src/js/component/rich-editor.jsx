@@ -1,6 +1,8 @@
+/* eslint-disable react/no-deprecated */
 'use strict';
 
 const React = require('react');
+const cx = require('classnames');
 const tinymce = require('tinymce');
 require('tinymce/themes/modern');
 const TinyMCE = require('react-tinymce');
@@ -16,7 +18,7 @@ class RichEditor extends React.Component {
 	componentWillReceiveProps(props) {
 		if(this.editor && (this.props.value !== props.value)) {
 			this.editor.setContent(props.value);
-			
+
 			// tinymce insists on focusing when switching readonly off
 			// it's is hardcoded with no opt out.
 			// below is a hack to prevent it from happening
@@ -60,21 +62,24 @@ class RichEditor extends React.Component {
 				<Toolbar>
 					<div className="toolbar-left">
 						<ToolGroup>
-							<Button 
-								className="btn-icon"
-								active={ this.isEditorCommandState('BOLD') }
+							<Button
+								className={ cx("btn-icon", {
+									active: this.isEditorCommandState('BOLD')
+								})}
 								onClick={ this.buttonHandler.bind(this, 'BOLD') }>
 								B
 							</Button>
-							<Button 
-								className="btn-icon"
-								active={ this.isEditorCommandState('ITALIC') }
+							<Button
+								className={ cx("btn-icon", {
+									active: this.isEditorCommandState('ITALIC')
+								})}
 								onClick={ this.buttonHandler.bind(this, 'ITALIC') }>
 								I
 							</Button>
-							<Button 
-								className="btn-icon"
-								active={ this.isEditorCommandState('UNDERLINE') }
+							<Button
+								className={ cx("btn-icon", {
+									active: this.isEditorCommandState('UNDERLINE')
+								})}
 								onClick={ this.buttonHandler.bind(this, 'UNDERLINE') }>
 								U
 							</Button>
