@@ -1,3 +1,4 @@
+/* eslint-disable react/no-deprecated */
 'use strict';
 
 const React = require('react');
@@ -17,8 +18,8 @@ class ItemDetailsContainer extends React.Component {
 
 	componentWillReceiveProps(props) {
 		const itemKey = get(props, 'item.key');
-		if(itemKey 
-			&& get(this.props, 'item.key') !== itemKey 
+		if(itemKey
+			&& get(this.props, 'item.key') !== itemKey
 			&& !['attachment', 'note'].includes(props.item.itemType)) {
 			this.props.dispatch(fetchChildItems(itemKey));
 		}
@@ -141,7 +142,7 @@ class ItemDetailsContainer extends React.Component {
 	}
 
 	render() {
-		return <ItemDetails 
+		return <ItemDetails
 				onNoteChange={ this.handleNoteChange.bind(this) }
 				onAddNote={ this.handleAddNote.bind(this) }
 				onDeleteNote = { this.handleDeleteNote.bind(this) }
