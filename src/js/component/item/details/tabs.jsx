@@ -9,6 +9,7 @@ const NotesTab = require('./tabs/notes');
 const TagsTab = require('./tabs/tags');
 const AttachmentsTab = require('./tabs/attachments');
 const RelatedTab = require('./tabs/related');
+const StandaloneNoteTab = require('./tabs/standalone-note');
 
 class ItemDetailsTabs extends React.PureComponent {
 	state = {
@@ -120,13 +121,18 @@ class ItemDetailsTabs extends React.PureComponent {
 					)
 				}
 
+				{
+					this.props.item.itemType === 'note' && (
+						<StandaloneNoteTab isActive={ this.state.tab === 'standalone-note' } { ...this.props } />
+					)
+				}
+
 				<TagsTab isActive={ this.state.tab === 'tags' } { ...this.props } />
 				{
 					!['attachment', 'note'].includes(this.props.item.itemType) && (
 						<AttachmentsTab isActive={ this.state.tab === 'attachments' } { ...this.props } />
 					)
 				}
-
 				<RelatedTab isActive={ this.state.tab === 'related' } { ...this.props } />
 			</Panel>
 		);
