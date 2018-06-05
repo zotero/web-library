@@ -6,7 +6,7 @@ const {
 	CONFIGURE_API,
 
 	ROUTE_CHANGE,
-	
+
 	REQUEST_META,
 	RECEIVE_META,
 	ERROR_META,
@@ -143,7 +143,7 @@ const collections = (state = {}, action) => {
 			aggr[ck(collection.key, action.libraryKey)] = collection;
 			return aggr;
 		}, {});
-			return { 
+			return {
 				...state,
 				...collections
 			};
@@ -195,7 +195,7 @@ const fetching = (state = {
 		case RECEIVE_COLLECTIONS_IN_LIBRARY:
 		case ERROR_COLLECTIONS_IN_LIBRARY:
 			return {
-				...state, 
+				...state,
 				collectionsInLibrary: without(state.collectionsInLibrary, action.libraryKey)
 			};
 
@@ -330,7 +330,7 @@ const updating = (state = {
 					]
 				}
 			};
-		case REQUEST_UPDATE_ITEM: 
+		case REQUEST_UPDATE_ITEM:
 			return {
 				...state,
 				items: {
@@ -391,15 +391,6 @@ const items = (state = {}, action) => {
 			};
 		case RECEIVE_DELETE_ITEM:
 			return removeKey(state, ck(action.item.key, action.libraryKey));
-		case RECEIVE_ITEMS_IN_COLLECTION:
-			items = action.items.reduce((aggr, item) => {
-				aggr[ck(item.key, action.libraryKey)] = item;
-				return aggr;
-			}, {});
-			return {
-				...state,
-				...items
-			};
 		case RECEIVE_UPDATE_ITEM:
 			return {
 				...state,
@@ -417,9 +408,13 @@ const items = (state = {}, action) => {
 				...state,
 				...items
 			};
+		case RECEIVE_ITEMS_IN_COLLECTION:
 		case RECEIVE_FETCH_ITEMS:
 		case RECEIVE_TOP_ITEMS:
-			items = action.items.reduce((aggr, item) => {
+			items = action.items.reduce((aggr, item, i) => {
+				if(action.meta[i]) {
+					item[Symbol.for('meta')] = action.meta[i];
+				}
 				aggr[ck(item.key, action.libraryKey)] = item;
 				return aggr;
 			}, {});
@@ -427,7 +422,7 @@ const items = (state = {}, action) => {
 				...state,
 				...items
 			};
-		default: 
+		default:
 			return state;
 	}
 };
@@ -436,7 +431,7 @@ const items = (state = {}, action) => {
 const itemsByCollection = (state = {}, action) => {
 	switch(action.type) {
 		case RECEIVE_CREATE_ITEM:
-			// @TODO: 
+			// @TODO:
 			return state;
 		case RECEIVE_DELETE_ITEM:
 			//@TODO:
@@ -454,7 +449,7 @@ const itemsByCollection = (state = {}, action) => {
 const itemsTop = (state = [], action) => {
 	switch(action.type) {
 		case RECEIVE_CREATE_ITEM:
-			// @TODO: 
+			// @TODO:
 			return state;
 		case RECEIVE_DELETE_ITEM:
 			//@TODO:
@@ -528,7 +523,7 @@ const itemCountByCollection = (state = {}, action) => {
 			};
 		default:
 			return state;
-	}	
+	}
 };
 
 const itemCountByLibrary = (state = {}, action) => {
@@ -536,11 +531,11 @@ const itemCountByLibrary = (state = {}, action) => {
 		case RECEIVE_TOP_ITEMS:
 			return {
 				...state,
-				[action.libraryKey]: action.response.response.headers.get('Total-Results')
+				[action.libraryKey]: parseInt(action.response.response.headers.get('Total-Results'), 10)
 			};
 		default:
 			return state;
-	}	
+	}
 };
 
 const itemTypeFields = (state = {}, action) => {
@@ -578,7 +573,7 @@ const viewport = (state = {}, action) => {
 				md: action.width < 992 && action.width > 768,
 				lg: action.width > 992
 			};
-		default: 
+		default:
 			return state;
 	}
 };

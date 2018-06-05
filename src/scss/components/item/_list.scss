@@ -4,7 +4,7 @@
 
 .item-list-wrap {
 	flex: 1 1 auto;
-	display: flex;
+	// display: flex;
 	flex-direction: column;
 
 	@include bp-down(sm) {
@@ -15,43 +15,46 @@
 .item-list-head th,
 .item.list .metadata {
 	@include mouse-and-bp-up(md) {
-		&:first-child {
-			padding-left: $space-sm;
-		}
+		// &:first-child {
+		// 	padding-left: $space-sm;
+		// }
 
-		&:last-child {
-			padding-right: $space-sm;
-		}
+		// &:last-child {
+		// 	padding-right: $space-sm;
+		// }
 
-		&:nth-child(1) {
-			width: 40%;
-		}
+		// &:nth-child(1) {
+		// 	width: 40%;
+		// }
 
-		&:nth-child(2) {
-			width: 20%;
-		}
+		// &:nth-child(2) {
+		// 	width: 20%;
+		// }
 
-		&:nth-child(3) {
-			width: 10%;
-		}
+		// &:nth-child(3) {
+		// 	width: 10%;
+		// }
 
-		&:nth-child(4) {
-			width: 20%;
-		}
+		// &:nth-child(4) {
+		// 	width: 20%;
+		// }
 
-		&:nth-child(5) {
-			width: 5%;
-		}
+		// &:nth-child(5) {
+		// 	width: 5%;
+		// }
 
-		&:nth-child(6) {
-			width: 5%;
-		}
+		// &:nth-child(6) {
+		// 	width: 5%;
+		// }
 	}
 }
 
 .item-list-head {
-	box-sizing: content-box; // border-box results in buggy flex layout
-	table-layout: fixed;
+	// box-sizing: content-box; // border-box results in buggy flex layout
+	// table-layout: fixed;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
 	width: 100%;
 	border-spacing: 0; // border-collapse results in buggy height
 	border: {
@@ -59,7 +62,7 @@
 		bottom: 1px solid $item-list-head-border;
 	}
 
-	th {
+	> div {
 		height: $item-list-head-height;
 		text-align: left;
 		font-weight: 400;
@@ -94,32 +97,37 @@
 		overflow: hidden; // Prevent scrolling in inactive state
 	}
 
-	@include bp-only(sm) {
-		background-image: repeating-linear-gradient(to bottom, $item-odd-bg 0,
-			$item-odd-bg $item-list-row-height-sm,
-			transparent $item-list-row-height-sm,
-			transparent (2 * $item-list-row-height-sm));
-	}
+	// can't use this because of virtualisation
+	// @include bp-only(sm) {
+	// 	background-image: repeating-linear-gradient(to bottom, $item-odd-bg 0,
+	// 		$item-odd-bg $item-list-row-height-sm,
+	// 		transparent $item-list-row-height-sm,
+	// 		transparent (2 * $item-list-row-height-sm));
+	// }
 
-	@include mouse-and-bp-up(md) {
-		padding-top: 3px;
-		background-image: repeating-linear-gradient(to bottom, $items-odd-bg 3px,
-			$items-odd-bg ($item-list-row-height-md + 3px),
-			transparent ($item-list-row-height-md + 3px),
-			transparent (2 * $item-list-row-height-md + 3px));
-	}
+	// @include mouse-and-bp-up(md) {
+	// 	padding-top: 3px;
+	// 	background-image: repeating-linear-gradient(to bottom, $items-odd-bg 3px,
+	// 		$items-odd-bg ($item-list-row-height-md + 3px),
+	// 		transparent ($item-list-row-height-md + 3px),
+	// 		transparent (2 * $item-list-row-height-md + 3px));
+	// }
 }
 
 .item.list {
 	@include mouse-and-bp-up(md) {
-		display: table;
-		table-layout: fixed;
+		// display: table;
+		// table-layout: fixed;
 		width: 100%;
 	}
 
 	.item {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
 		user-select: none;
-		
+		width: 100%;
+
 		@include bp-down(sm) {
 			padding: $item-touch-padding-vertical $item-touch-padding-horizontal;
 		}
@@ -129,15 +137,15 @@
 		}
 
 		@include mouse-and-bp-up(md) {
-			display: table-row;
+			// display: table-row;
 		}
 
-		&:nth-child(odd) {
-				background: $item-odd-bg;
+		&.odd { // can't use nth-child(odd) because of virtualisation
+			background: $item-odd-bg;
 
-			@include bp-up(sm) {
-				background: inherit;
-			}
+			// @include bp-up(sm) {
+			// 	background: inherit;
+			// }
 		}
 
 		&.active {
@@ -148,7 +156,7 @@
 
 	.metadata {
 		@include mouse-and-bp-up(md) {
-			display: table-cell;
+			// display: table-cell;
 			height: $item-list-row-height-md;
 			vertical-align: middle;
 			padding: 0 $space-xs 0 ($space-xs + 1px);
@@ -158,10 +166,10 @@
 
 	.author,
 	.year {
-		display: inline;
+		// display: inline;
 
 		@include mouse-and-bp-up(md) {
-			display: table-cell;
+			// display: table-cell;
 		}
 	}
 

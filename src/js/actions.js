@@ -71,6 +71,7 @@ const {
 	TRIGGER_RESIZE_VIEWPORT
 } = require('./constants/actions');
 
+
 const changeRoute = params => {
 	return {
 		type: ROUTE_CHANGE,
@@ -87,7 +88,7 @@ const configureApi = (apiKey, apiConfig = {}) => {
 };
 
 //@TODO: separate authenticate and selectLibrary events
-//		 allow having multiple open libraries as per design 
+//		 allow having multiple open libraries as per design
 const selectLibrary = (type, id) => {
 	return {
 		type: SELECT_LIBRARY,
@@ -155,10 +156,10 @@ const fetchCollections = (libraryKey) => {
 	};
 };
 
-const fetchItemsInCollection = (collectionKey) => {
+const fetchItemsInCollection = (collectionKey, start = 0, limit = 50) => {
 	return async (dispatch, getState) => {
 		let { config, library } = getState();
-		
+
 		dispatch({
 			type: REQUEST_ITEMS_IN_COLLECTION,
 			libraryKey: library.libraryKey,
@@ -171,22 +172,10 @@ const fetchItemsInCollection = (collectionKey) => {
 				.collections(collectionKey)
 				.items()
 				.top()
-				.get({
-					limit: 50
-				});
+				.get({ start, limit });
+
 			let items = response.getData();
-
-			response.raw.forEach((raw, i) => {
-				if('meta' in raw) {
-					items[i][Symbol.for('meta')] = raw.meta;
-				}
-			});
-
-			items.sort(
-				(a, b) => {
-					return (a.title || '').toUpperCase().localeCompare((b.title || '').toUpperCase());
-				}
-			);
+			let meta = response.getMeta();
 
 			dispatch({
 				type: RECEIVE_ITEMS_IN_COLLECTION,
@@ -194,6 +183,7 @@ const fetchItemsInCollection = (collectionKey) => {
 				receivedAt: Date.now(),
 				collectionKey,
 				items,
+				meta,
 				response,
 			});
 
@@ -298,15 +288,18 @@ const fetchChildItems = (itemKey, libraryKey) => {
 			itemKey,
 			libraryKey
 		});
-		
+
 		try {
 			let response = await api(config.apiKey, config.apiConfig).library(libraryKey).items(itemKey).children().get();
 			let childItems = response.getData();
+			let meta = response.getMeta();
+
 			dispatch({
 				type: RECEIVE_CHILD_ITEMS,
 				itemKey,
 				libraryKey,
 				childItems,
+				meta,
 				response
 			});
 		} catch(error) {
@@ -331,7 +324,7 @@ const fetchItems = (itemKeys, libraryKey) => {
 			itemKeys,
 			libraryKey
 		});
-		
+
 		try {
 			let response = await api(config.apiKey, config.apiConfig)
 				.library(libraryKey)
@@ -339,12 +332,16 @@ const fetchItems = (itemKeys, libraryKey) => {
 				.get({
 				itemKey: itemKeys.join(',')
 			});
+
 			let items = response.getData();
+			let meta = response.getMeta();
+
 			dispatch({
 				type: RECEIVE_FETCH_ITEMS,
 				itemKeys,
 				libraryKey,
 				items,
+				meta,
 				response
 			});
 		} catch(error) {
@@ -358,26 +355,31 @@ const fetchItems = (itemKeys, libraryKey) => {
 	};
 };
 
-const fetchTopItems = libraryKey => {
+const fetchTopItems = (start = 0, limit = 50) => {
 	return async (dispatch, getState) => {
 		let config = getState().config;
-		libraryKey = libraryKey || getLibraryKey(getState());
+		let libraryKey = getLibraryKey(getState());
+
 		dispatch({
 			type: REQUEST_TOP_ITEMS,
 			libraryKey
 		});
-		
+
 		try {
 			let response = await api(config.apiKey, config.apiConfig)
 				.library(libraryKey)
 				.items()
 				.top()
-				.get();
+				.get({ start, limit });
+
 			let items = response.getData();
+			let meta = response.getMeta();
+
 			dispatch({
 				type: RECEIVE_TOP_ITEMS,
 				libraryKey,
 				items,
+				meta,
 				response
 			});
 		} catch(error) {
@@ -498,7 +500,7 @@ function updateItem(itemKey, patch) {
 
 		if('itemType' in patch) {
 			// when changing itemType, we may need to remove some fields
-			// from the patch to avoid 400. Usually these are the base-mapped 
+			// from the patch to avoid 400. Usually these are the base-mapped
 			// fields from the source type that are illegal in the target type
 			await dispatch(
 				fetchItemTypeFields(patch.itemType)
@@ -540,7 +542,7 @@ function queueUpdateItem(itemKey, patch, libraryKey, queueId) {
 				patch,
 				queueId
 			});
-			
+
 			try {
 				const response = await api(config.apiKey, config.apiConfig).library(libraryKey).items(itemKey).version(version).patch(patch);
 				const updatedItem = {

@@ -15,7 +15,6 @@ const Creators = require('./component/form/creators');
 const Editable = require('./component/editable');
 const EditableContent = require('./component/editable/content');
 const Icon = require('./component/ui/icon');
-const Item = require('./component/item');
 const ItemBox = require('./component/item/box');
 const ItemDetails = require('./component/item/details');
 const ItemList = require('./component/item/list');
@@ -48,7 +47,6 @@ module.exports = {
 	Editable,
 	EditableContent,
 	Icon,
-	Item,
 	ItemBox,
 	ItemDetails,
 	ItemList,

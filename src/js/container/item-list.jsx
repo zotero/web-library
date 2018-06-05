@@ -1,3 +1,4 @@
+/* eslint-disable react/no-deprecated */
 'use strict';
 
 const React = require('react');
@@ -6,17 +7,27 @@ const { withRouter } = require('react-router-dom');
 const { connect } = require('react-redux');
 const ItemList = require('../component/item/list');
 const { fetchItemsInCollection, fetchTopItems } = require('../actions');
-const { getCollection, getItems, getItem, isFetchingItems, isTopLevel } = require('../state-utils');
+const {
+	getCollection,
+	getCollectionItemCount,
+	getItem,
+	getItems,
+	getLibraryItemCount,
+	isFetchingItems,
+	isTopLevel
+} = require('../state-utils');
 const { get } = require('../utils');
 
 class ItemListContainer extends React.PureComponent {
 	componentWillReceiveProps(props) {
-		if(!props.isTopLevel && 
+		if(!props.isTopLevel && !this.props.isTopLevel &&
 			get(this.props, 'collection.key') !== get(props, 'collection.key')) {
+			console.log('componentWillReceiveProps -> fetchItemsInCollection', props.collection.key);
 			this.props.dispatch(fetchItemsInCollection(props.collection.key));
 		}
 
 		if(props.isTopLevel && !this.props.isTopLevel) {
+			console.log('componentWillReceiveProps -> fetchTopItems');
 			this.props.dispatch(fetchTopItems());
 		}
 	}
@@ -37,29 +48,38 @@ class ItemListContainer extends React.PureComponent {
 		}
 	}
 
+	async handleLoadMore({ startIndex, stopIndex }) {
+		let start = startIndex;
+		let limit = (stopIndex - startIndex) + 1;
+		console.log('fetch', start, limit);
+		const { isTopLevel, dispatch, collection } = this.props;
+		isTopLevel ?
+			await dispatch(fetchTopItems(start, limit)) :
+			await dispatch(fetchItemsInCollection(collection.key, start, limit));
+	}
+
 	render() {
-		return <ItemList 
-			isFetching={ this.props.isFetching }
-			items={ this.props.items }
-			selectedItemKeys={ this.props.selectedItemKeys }
+		return <ItemList
+			{ ...this.props }
 			onItemSelect={ this.handleItemSelect.bind(this) }
 			onMultipleItemsSelect={ this.handleMultipleItemsSelect.bind(this) }
-			/>;
+			onLoadMore={ this.handleLoadMore.bind(this) }
+		/>;
 	}
 }
-
-
 
 const mapStateToProps = state => {
 	const collection = getCollection(state);
 	const item = getItem(state);
-	const items = getItems(state).filter(i => !i.parentItem);
-	const isFetching = isFetchingItems(state);
+	const items = getItems(state);
+	const totalItemsCount = (isTopLevel(state) ? getLibraryItemCount(state) : getCollectionItemCount(state)) || 0;
+	const isReady = !(totalItemsCount === 0 && isFetchingItems(state));
 
 	return {
 		collection,
 		items,
-		isFetching,
+		isReady,
+		totalItemsCount,
 		isTopLevel: isTopLevel(state),
 		selectedItemKeys: item ? [item.key] : (state.router && 'items' in state.router.params && state.router.params.items.split(',')) || []
 	};
@@ -75,7 +95,6 @@ ItemListContainer.propTypes = {
   collection: PropTypes.object,
   items: PropTypes.array.isRequired,
   selectedItemKey: PropTypes.string,
-  isFetching: PropTypes.bool.isRequired,
   dispatch: PropTypes.func.isRequired
 };
 
