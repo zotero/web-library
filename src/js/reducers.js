@@ -60,6 +60,8 @@ const {
 	RECEIVE_TOP_ITEMS,
 	ERROR_TOP_ITEMS,
 
+	SORT_ITEMS,
+
 	TRIGGER_EDITING_ITEM,
 	TRIGGER_RESIZE_VIEWPORT
 } = require('./constants/actions.js');
@@ -123,15 +125,29 @@ const meta = (state = {
 	return state;
 };
 
-const config = (state = {}, action) => {
-	if(action.type === CONFIGURE_API) {
-		return {
-			...state,
-			apiKey: action.apiKey,
-			apiConfig: action.apiConfig
-		};
-	} else {
-		return state;
+const config = (state = {
+	apiKey: null,
+	apiConfig: {},
+	userId: null,
+	sortBy: 'title',
+	sortDirection: 'asc'
+}, action) => {
+	switch(action.type) {
+		case CONFIGURE_API:
+			return {
+				...state,
+				apiKey: action.apiKey,
+				userId: action.userId,
+				apiConfig: action.apiConfig,
+			};
+		case SORT_ITEMS:
+			return {
+				...state,
+				sortBy: action.sortBy,
+				sortDirection: action.sortDirection
+			};
+		default:
+			return state;
 	}
 };
 

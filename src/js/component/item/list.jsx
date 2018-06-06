@@ -2,10 +2,7 @@
 
 const React = require('react');
 const PropTypes = require('prop-types');
-const { baseMappings } = require('../../constants/item');
-const { noteAsTitle } = require('../../common/format');
-const { without, get } = require('../../utils');
-const Spinner = require('../ui/spinner');
+const { without } = require('../../utils');
 const AutoSizer = require('react-virtualized/dist/commonjs/AutoSizer').default;
 const InfiniteLoader = require('react-virtualized/dist/commonjs/InfiniteLoader').default;
 const Table = require('react-virtualized/dist/commonjs/Table').default;
@@ -13,15 +10,22 @@ const Column = require('react-virtualized/dist/commonjs/Table/Column').default;
 const defaultRowRenderer = require('react-virtualized/dist/commonjs/Table/defaultRowRenderer').default;
 const defaultHeaderRowRenderer = require('react-virtualized/dist/commonjs/Table/defaultHeaderRowRenderer').default;
 
+const LOADING = 1;
+const LOADED = 2;
+
 class ItemList extends React.PureComponent {
-	// componentDidUpdate({ isTopLevel, collection, items }, state, snapshot) {
-	// 	if(this.table && (
-	// 		this.props.isTopLevel !== isTopLevel ||
-	// 		get(this.props.collection, 'key') !== get(collection, 'key'))) {
-	// 		console.log('forceUpdateGrid');
-	// 		this.table.forceUpdateGrid();
-	// 	}
-	// }
+	constructor(props) {
+		super(props);
+		this.loadedRowsMap = {};
+	}
+	componentDidUpdate({ sortBy, sortDirection, items }) {
+		if(this.props.sortBy !== sortBy ||
+			this.props.sortDirection !== sortDirection ||
+			this.props.items.length !== items.length ) {
+			this.loadedRowsMap = {};
+			this.loader.resetLoadMoreRowsCache(false);
+		}
+	}
 
 	handleKeyArrowDown(ev) {
 		const lastItemKey = this.props.selectedItemKeys[this.props.selectedItemKeys.length - 1];
@@ -149,8 +153,18 @@ class ItemList extends React.PureComponent {
 		ev.preventDefault();
 	}
 
-	handleLoadMore({ startIndex, stopIndex }) {
-		return this.props.onLoadMore({ startIndex, stopIndex });
+	async handleLoadMore({ startIndex, stopIndex }) {
+		this.startIndex = startIndex;
+		this.stopIndex = stopIndex;
+		for(let i = startIndex; i <= stopIndex; i++) {
+			this.loadedRowsMap[i] = LOADING;
+		}
+
+		await this.props.onLoadMore({ startIndex, stopIndex });
+
+		for(let i = startIndex; i <= stopIndex; i++) {
+			this.loadedRowsMap[i] = LOADED;
+		}
 	}
 
 	handleRowClick({ event, index }) {
@@ -159,35 +173,24 @@ class ItemList extends React.PureComponent {
 		}
 	}
 
+	handleSort(opts) {
+		this.props.onSort({ ...opts, startIndex: this.startIndex, stopIndex: this.stopIndex });
+	}
+
 	getRow({ index }) {
 		if (index < this.props.items.length) {
-			let item = this.props.items[index];
-			let { itemType, note } = item;
-
-			let title = itemType === 'note' ?
-				noteAsTitle(note) :
-				item[itemType in baseMappings && baseMappings[itemType]['title'] || 'title'];
-
-			let creatorSummary = Symbol.for('meta') in item ?
-				item[Symbol.for('meta')].creatorSummary :
-				'';
-
-			let parsedDate = Symbol.for('meta') in item ?
-				item[Symbol.for('meta')].parsedDate :
-				'';
-
-			return {
-				title,
-				creatorSummary,
-				parsedDate
-			}
+			return this.props.items[index];
 		} else {
 			return {
 				title: '...',
-				creatorSummary: '...',
-				parsedDate: '...'
+				creator: '...',
+				date: '...'
 			}
 		}
+	}
+
+	getRowHasLoaded({ index }) {
+		return !!this.loadedRowsMap[index];
 	}
 
 	renderRow({ className, index, ...opts }) {
@@ -216,7 +219,7 @@ class ItemList extends React.PureComponent {
 
 	render() {
 		if(!this.props.isReady) {
-			return <Spinner />;
+			return null;
 		}
 
 		return (
@@ -224,8 +227,8 @@ class ItemList extends React.PureComponent {
 				<AutoSizer>
 					{({ width, height }) => (
 						<InfiniteLoader
-							{ ...this.props }
-							isRowLoaded={ ({ index }) => index < this.props.items.length }
+							ref={ ref => this.loader = ref }
+							isRowLoaded={ this.getRowHasLoaded.bind(this) }
 							loadMoreRows={ this.handleLoadMore.bind(this) }
 							rowCount={ this.props.totalItemsCount }
 						>
@@ -244,6 +247,7 @@ class ItemList extends React.PureComponent {
 									rowRenderer={ this.renderRow.bind(this) }
 									headerRowRenderer={ this.renderHeaderRow.bind(this) }
 									onRowClick={ this.handleRowClick.bind(this) }
+									sort={ this.handleSort.bind(this) }
 								>
 									<Column
 										className="metadata title"
@@ -253,12 +257,12 @@ class ItemList extends React.PureComponent {
 									/>
 									<Column
 										label='Author'
-										dataKey='creatorSummary'
+										dataKey='creator'
 										width={ Math.floor(0.3 * width) }
 									/>
 									<Column
 										label='Date'
-										dataKey='parsedDate'
+										dataKey='date'
 										width={ Math.floor(0.2 * width) }
 									/>
 								</Table>

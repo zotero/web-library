@@ -6,7 +6,7 @@
  * @param  {Array} path        A list of keys containing currently selected collection
  *                             and all of its parents in reverse order (i.e. selected
  *                             collection key is the last element of the array)
- * @return {Array}             Flat list of collections annotated with isSelected 
+ * @return {Array}             Flat list of collections annotated with isSelected
  *                             and isOpen properties
  */
 const applyPathToCollections = (collections, path) => {
@@ -18,7 +18,7 @@ const applyPathToCollections = (collections, path) => {
 		} else if(index !== -1) {
 			c.isOpen = false;
 		}
-		
+
 		return c;
 	});
 };
@@ -70,7 +70,7 @@ const get = (src, path, fallback) => {
 	}
 
 	const parts = Array.isArray(path) ? path : path.split('.');
-	
+
 	var obj = src;
 	var i, ii;
 
@@ -154,9 +154,39 @@ const removeRelationByItemKey = (itemKey, relations, userId, relationType='dc:re
 	};
 };
 
+const isUndefinedOrNull = value => typeof value === 'undefined' || value === null;
+
+const sortByKey = (items, key, direction) => {
+	items.sort((a, b) => {
+		if(isUndefinedOrNull(a[key]) && isUndefinedOrNull(b[key])) {
+			return 0;
+		}
+
+		if(typeof a[key] !== typeof b[key]) {
+			if(isUndefinedOrNull(a[key])) {
+				return direction === 'asc' ? 1 : -1;
+			}
+			if(isUndefinedOrNull(b[key])) {
+				return direction === 'asc' ? -1 : 1;
+			}
+		}
+
+		switch(typeof a[key]) {
+			case 'string':
+				return direction === 'asc' ?
+					a[key].toUpperCase().localeCompare(b[key].toUpperCase()):
+					b[key].toUpperCase().localeCompare(a[key].toUpperCase());
+			case 'number':
+				return direction === 'asc' ? a[key] - b[key] : b[key] - a[key];
+			default:
+				return 0;
+		}
+	});
+};
+
 const noop = () => {};
 
-module.exports = { 
+module.exports = {
 	ck,
 	deduplicateByKey,
 	enhanceCollections,
@@ -165,6 +195,7 @@ module.exports = {
 	noop,
 	removeRelationByItemKey,
 	reverseMap,
+	sortByKey,
 	splice,
 	transform,
 	without,

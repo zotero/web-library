@@ -2,7 +2,7 @@ const cache = require('zotero-api-client-cache');
 const api = require('zotero-api-client')().use(cache()).api;
 
 const { ck, get } = require('./utils');
-const { getLibraryKey } = require('./state-utils');
+const { getLibraryKey, getCollectionItemCount, getLibraryItemCount } = require('./state-utils');
 
 var queueIdCunter = 0;
 
@@ -67,6 +67,8 @@ const {
 	RECEIVE_TOP_ITEMS,
 	ERROR_TOP_ITEMS,
 
+	SORT_ITEMS,
+
 	TRIGGER_EDITING_ITEM,
 	TRIGGER_RESIZE_VIEWPORT
 } = require('./constants/actions');
@@ -79,11 +81,20 @@ const changeRoute = params => {
 	};
 };
 
-const configureApi = (apiKey, apiConfig = {}) => {
+const configureApi = (userId, apiKey, apiConfig = {}) => {
 	return {
 		type: CONFIGURE_API,
 		apiKey,
+		userId,
 		apiConfig
+	};
+};
+
+const sortItems = (sortBy, sortDirection) => {
+	return {
+		type: SORT_ITEMS,
+		sortBy,
+		sortDirection
 	};
 };
 
@@ -156,23 +167,29 @@ const fetchCollections = (libraryKey) => {
 	};
 };
 
-const fetchItemsInCollection = (collectionKey, start = 0, limit = 50) => {
+const fetchItemsInCollection = (collectionKey, { start = 0, limit = 50, sort = 'dateModified', direction = "desc" } = {}) => {
 	return async (dispatch, getState) => {
-		let { config, library } = getState();
+		let { config, library, itemCountByCollection, itemsByCollection, items } = getState();
+		let totalItemsCount = itemCountByCollection[ck(collectionKey, library.libraryKey)];
+		let knownItemsCkeys = itemsByCollection[ck(collectionKey, library.libraryKey)];
+
+		if(knownItemsCkeys && knownItemsCkeys.length === totalItemsCount) {
+			return knownItemsCkeys.map(ckey => items[ckey]);
+		}
 
 		dispatch({
 			type: REQUEST_ITEMS_IN_COLLECTION,
 			libraryKey: library.libraryKey,
 			collectionKey
 		});
+
 		try {
-			//@TODO: support for paging/infinite scroll
 			let response = await api(config.apiKey, config.apiConfig)
 				.library(library.libraryKey)
 				.collections(collectionKey)
 				.items()
 				.top()
-				.get({ start, limit });
+				.get({ start, limit, sort, direction });
 
 			let items = response.getData();
 			let meta = response.getMeta();
@@ -355,10 +372,17 @@ const fetchItems = (itemKeys, libraryKey) => {
 	};
 };
 
-const fetchTopItems = (start = 0, limit = 50) => {
-	return async (dispatch, getState) => {
-		let config = getState().config;
+const fetchTopItems = ({ start = 0, limit = 50, sort = 'dateModified', direction = 'desc' }) => {
+	return async (dispatch, getState, ) => {
+		let { config, library, itemCountByLibrary, itemsTop, items } = getState();
 		let libraryKey = getLibraryKey(getState());
+		let totalItemsCount = itemCountByLibrary[library.libraryKey];
+		let knownItemsCkeys = itemsTop;
+
+		if(knownItemsCkeys && knownItemsCkeys.length === totalItemsCount) {
+			// there is no need for a request
+			return knownItemsCkeys.map(ckey => items[ckey]);
+		}
 
 		dispatch({
 			type: REQUEST_TOP_ITEMS,
@@ -370,7 +394,7 @@ const fetchTopItems = (start = 0, limit = 50) => {
 				.library(libraryKey)
 				.items()
 				.top()
-				.get({ start, limit });
+				.get({ start, limit, sort, direction });
 
 			let items = response.getData();
 			let meta = response.getMeta();
@@ -382,6 +406,7 @@ const fetchTopItems = (start = 0, limit = 50) => {
 				meta,
 				response
 			});
+			return items;
 		} catch(error) {
 			dispatch({
 				type: ERROR_TOP_ITEMS,
@@ -617,8 +642,6 @@ function uploadAttachment(itemKey, fileData) {
 			fileData,
 		});
 
-		// console.log(config.apiKey, config.apiConfig, libraryKey, itemKey);
-
 		try {
 			let response = await api(config.apiKey, config.apiConfig)
 				.library(libraryKey)
@@ -661,6 +684,7 @@ module.exports = {
 	fetchTopItems,
 	initialize,
 	selectLibrary,
+	sortItems,
 	triggerEditingItem,
 	triggerResizeViewport,
 	updateItem,

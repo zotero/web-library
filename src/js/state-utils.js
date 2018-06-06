@@ -8,7 +8,7 @@ const getLibraryKey = state => {
 };
 
 const isTopLevel = state => {
-	return !!getLibraryKey(state) && !('collection' in state.router.params);
+	return !('collection' in state.router.params);
 };
 
 const getLibraryItemCount = state => {
@@ -44,7 +44,7 @@ const getCollectionsPath = state => {
 	const libraryKey = getLibraryKey(state);
 	const path = [];
 	var nextKey = isCollectionSelected(state) ? state.router.params.collection : false;
-	
+
 	while(nextKey) {
 		const collection = state.collections[ck(nextKey, libraryKey)];
 		path.push(collection.key);
@@ -61,7 +61,7 @@ const getCollectionsPath = state => {
 // 		} else if(collection.children.length) {
 // 			const nextLevelCollections = collection.children.map(collectionKey => collections[ck(collectionKey, libraryKey)]);
 // 			const maybePath = mapTreePath(
-// 				selectedKey, 
+// 				selectedKey,
 // 				nextLevelCollections,
 // 				collections,
 // 				libraryKey,
@@ -81,7 +81,7 @@ const getCurrentViewFromState = state => {
 		const libraryKey = getLibraryKey(state);
 		const selectedCollectionKey = state.router.params.collection;
 		const selectedCollection = state.collections[ck(selectedCollectionKey, libraryKey)];
-		
+
 		if('item' in state.router.params && state.itemsByCollection[ck(selectedCollectionKey, libraryKey)]) {
 			let selectedItemKey = state.router.params.item;
 			let selectedItem = state.items[ck(selectedItemKey, libraryKey)];
@@ -139,18 +139,22 @@ const getItem = state => {
 	return itemCKey in state.items ? state.items[itemCKey] : null;
 };
 
-const getItems = state => {
+const getItems = state => isTopLevel(state) ?
+	getItemsInLibrary(state) :
+	getItemsInCollection(state);
+
+const getItemsInCollection = state => {
 	const libraryKey = getLibraryKey(state);
 	const collection = getCollection(state);
+	const ckeys = libraryKey && collection && state.itemsByCollection[ck(collection.key, libraryKey)] || [];
+	return ckeys.map(ckey => state.items[ckey]);
+}
 
-	if(isTopLevel(state)) {
-		const ckeys = libraryKey && state.itemsTop || [];
-		return ckeys.map(ckey => state.items[ckey]);
-	} else {
-		const ckeys = libraryKey && collection && state.itemsByCollection[ck(collection.key, libraryKey)] || [];
-		return ckeys.map(ckey => state.items[ckey]);
-	}
-};
+const getItemsInLibrary = state => {
+	const libraryKey = getLibraryKey(state);
+	const ckeys = libraryKey && state.itemsTop || [];
+	return ckeys.map(ckey => state.items[ckey]);
+}
 
 const getChildItems = state => {
 	const libraryKey = getLibraryKey(state);
@@ -202,9 +206,9 @@ const isItemFieldBeingUpdated = (field, state) => {
 		return false;
 	}
 	const itemCKey = ck(item.key, libraryKey);
-	return item && 
-		state.updating.items && 
-		itemCKey in state.updating.items && 
+	return item &&
+		state.updating.items &&
+		itemCKey in state.updating.items &&
 		state.updating.items[itemCKey].some(
 			queueItem => field in queueItem.patch
 		);

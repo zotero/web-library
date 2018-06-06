@@ -14,7 +14,7 @@ const { BrowserRouter, Route, Switch } = require('react-router-dom');
 const deepEqual = require('deep-equal');
 const reducers = require('../reducers');
 const { getCurrentViewFromState } = require('../state-utils');
-const { selectLibrary, initialize, triggerResizeViewport, changeRoute } = require('../actions');
+const { configureApi, selectLibrary, initialize, triggerResizeViewport, changeRoute } = require('../actions');
 const Library = require('../component/library');
 const defaults = require('../constants/defaults');
 
@@ -36,17 +36,19 @@ class LibraryContainer extends React.Component {
 	}
 
 	async componentDidMount() {
-		let { apiKey, userId, api } = this.props;
+		await this.props.dispatch(
+			initialize()
+		);
 
 		await this.props.dispatch(
-			initialize(apiKey, api)
+			changeRoute(this.props.match.params)
 		);
 
 		//@TODO: introduce multi-library support
-		this.props.dispatch(changeRoute(this.props.match.params));
 		this.props.dispatch(
-			selectLibrary('user', userId)
+			selectLibrary('user', this.props.userId)
 		);
+
 	}
 
 	componentWillMount() {
@@ -69,22 +71,20 @@ class LibraryContainer extends React.Component {
 	}
 
 	static init(element, config = {}) {
+		const { apiKey, apiConfig, userId } = {...defaults, ...config };
 		if(element) {
-			//@TODO: use an action CONFIGURE_API instead
-			config = {
-				...defaults,
-				...config
-			};
-
 			var store = createStore(
 				combinedReducers,
-				{ config },
 				composeEnhancers(
 					applyMiddleware(
 						ReduxThunk,
 						ReduxAsyncQueue
 					)
 				)
+			);
+
+			store.dispatch(
+				configureApi(userId, apiKey, apiConfig)
 			);
 
 			ReactDOM.render(
