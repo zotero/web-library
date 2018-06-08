@@ -11,8 +11,8 @@ $blue:          #0069e0;
 $asphalt:       #7a8799;
 $asphalt-light: #dadee3;
 
-$brand-primary:   $red;
-$brand-secondary: $blue;
+$primary:   $red;
+$secondary: $blue;
 
 $transparent: transparent;
 
@@ -127,7 +127,7 @@ $dt-color: $shade-5;
 // Button
 $btn-primary-color:           $shade-0;
 $btn-primary-bg:              $asphalt;
-$btn-secondary-color:         $brand-secondary;
+$btn-secondary-color:         $secondary;
 $btn-default-color:           $text-color;
 $btn-default-bg:              $shade-0;
 $btn-default-active-color:    rgba($btn-default-color, 0.5);
