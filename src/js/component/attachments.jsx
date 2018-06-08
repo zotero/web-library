@@ -55,11 +55,11 @@ class Attachments extends React.Component {
 						{
 							this.props.attachments.map(attachment => {
 								return (
-									<li 
+									<li
 										className={ cx('item', {'selected': this.state.selected == attachment.key }) }
 										key={ attachment.key }
 									>
-										<Icon type={ '16/paperclip' } width="16" height="16" />
+										<Icon type={ '16/item-types/attachment' } width="16" height="16" />
 										{
 											attachment.key in this.props.attachentViewUrls ? (
 												<a href={ this.props.attachentViewUrls[attachment.key] }>
@@ -82,7 +82,7 @@ class Attachments extends React.Component {
 							this.state.isAddingAttachment && (
 								<li>
 									<input onChange={ this.handleFileSelect.bind(this) } type="file" />
-									<Button 
+									<Button
 										disabled={ !this.state.fileData }
 										onClick={ this.handleFileUpload.bind(this) }
 									>
@@ -109,7 +109,7 @@ class Attachments extends React.Component {
 }
 
 Attachments.propTypes = {
-	
+
 };
 
 Attachments.defaultProps = {

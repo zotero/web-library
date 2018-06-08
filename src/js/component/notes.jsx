@@ -94,7 +94,7 @@ class Notes extends React.Component {
 										key={ note.key }
 										onClick={ ev => this.handleEditNote(note, ev) }
 									>
-										<Icon type={ '16/note' } width="16" height="16" />
+										<Icon type={ '16/item-types/note' } width="16" height="16" />
 										<a>
 											{ note.note && noteAsTitle(note.note) || <em>Untitled Note</em> }
 										</a>

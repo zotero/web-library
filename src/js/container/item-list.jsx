@@ -3,7 +3,6 @@
 
 const React = require('react');
 const PropTypes = require('prop-types');
-const throttle = require('lodash.throttle');
 const { withRouter } = require('react-router-dom');
 const { baseMappings } = require('../constants/item');
 const { connect } = require('react-redux');
@@ -39,7 +38,8 @@ const processItems = items => {
 			key: item.key,
 			title,
 			creator,
-			date
+			date,
+			itemType
 		}
 	});
 };

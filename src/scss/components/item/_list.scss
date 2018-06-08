@@ -155,6 +155,13 @@
 	}
 
 	.metadata {
+
+		&.title {
+			.icon {
+				margin-right: $space-xs;
+			}
+		}
+
 		@include mouse-and-bp-up(md) {
 			// display: table-cell;
 			height: $item-list-row-height-md;

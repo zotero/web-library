@@ -2,6 +2,7 @@
 
 const React = require('react');
 const PropTypes = require('prop-types');
+const paramCase = require('param-case');
 const { without } = require('../../utils');
 const AutoSizer = require('react-virtualized/dist/commonjs/AutoSizer').default;
 const InfiniteLoader = require('react-virtualized/dist/commonjs/InfiniteLoader').default;
@@ -9,6 +10,7 @@ const Table = require('react-virtualized/dist/commonjs/Table').default;
 const Column = require('react-virtualized/dist/commonjs/Table/Column').default;
 const defaultRowRenderer = require('react-virtualized/dist/commonjs/Table/defaultRowRenderer').default;
 const defaultHeaderRowRenderer = require('react-virtualized/dist/commonjs/Table/defaultHeaderRowRenderer').default;
+const Icon = require('../ui/icon');
 
 const LOADING = 1;
 const LOADED = 2;
@@ -213,8 +215,17 @@ class ItemList extends React.PureComponent {
 		return defaultHeaderRowRenderer({ className, ...opts });
 	}
 
-	registerTable(ref) {
-		this.table = ref;
+	renderTitleCell({ cellData, rowData }) {
+		let icon = rowData.itemType ?
+			<Icon type={ `16/item-types/${paramCase(rowData.itemType)}` } width="16" height="16" /> :
+			<Icon type={ `16/item-types/document` } width="16" height="16" />;
+
+		return (
+			<React.Fragment>
+				{ icon }
+				{ String(cellData) }
+			</React.Fragment>
+		);
 	}
 
 	render() {
@@ -235,7 +246,7 @@ class ItemList extends React.PureComponent {
 							{({onRowsRendered, registerChild}) => (
 								<Table
 									{ ...this.props }
-									ref={ ref => { registerChild(ref); this.registerTable(ref); } }
+									ref={ registerChild }
 									className="item list"
 									width={ width }
 									height={ height }
@@ -251,6 +262,7 @@ class ItemList extends React.PureComponent {
 								>
 									<Column
 										className="metadata title"
+										cellRenderer={ this.renderTitleCell.bind(this) }
 										label='Title'
 										dataKey='title'
 										width={ Math.floor(0.5 * width)  }
