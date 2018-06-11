@@ -30,7 +30,7 @@ $font-size-h1: 20px;
 $font-size-h2: 16px;
 
 
-$line-height-base:           1.53846;
+$line-height-base:           1.539;
 $line-height-computed:       ceil($font-size-base * $line-height-base);
 $line-height-computed-mobile: floor($font-size-mobile * $line-height-base);
 
