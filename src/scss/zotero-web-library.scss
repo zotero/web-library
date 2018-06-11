@@ -53,7 +53,6 @@
 @import "components/editable";
 @import "components/icon";
 @import "components/input";
-@import "components/metadata-list";
 @import "components/navbar";
 @import "components/notes";
 @import "components/panel";
@@ -67,3 +66,6 @@
 
 @import "components/item/list";
 @import "components/item/details";
+
+@import "components/metadata/list";
+@import "components/metadata/pane";

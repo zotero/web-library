@@ -1,0 +1,70 @@
+//
+// Metadata (info) pane
+// --------------------------------------------------
+
+.info {
+	.item-title,
+	.tab-pane-heading {
+		@include mouse-and-bp-up(md) {
+			display: none;
+		}
+	}
+
+	.item-title {
+		border-bottom: 2px solid $separator-color;
+		padding-bottom: 10px;
+		margin: 10px $default-padding-horizontal-touch 9px;
+	}
+
+	.tab-pane-heading {
+		padding: 0 $default-padding-horizontal;
+	}
+
+	.metadata-list.horizontal {
+		margin-top: 23px - 12px;
+
+		@include bp-only(md) {
+			margin-top: -3px;
+		}
+
+		.metadata {
+			@include bp-down(xs) {
+				padding: 0 $default-padding-horizontal-touch;
+
+				.editable-value {
+					line-height: inherit; // Fix height
+				}
+			}
+
+			@include touch-or-bp-down(sm) {
+				padding: 0 $default-padding-horizontal-touch;
+			}
+
+			@include mouse-and-bp-up(md) {
+				padding: 0 $default-padding-horizontal;
+			}
+
+			@include bp-only(md) {
+				padding-right: ($metadata-list-gutter + 1px);
+			}
+		}
+	}
+
+	.abstract-heading {
+		@include touch-or-bp-down(sm) {
+			margin-top: 9px;
+			border-top: 2px solid $separator-color;
+			padding-top: 11px;
+		}
+
+		@include mouse-and-bp-up(md) {
+			margin-top: 23px - 7px;
+			border-top: 2px solid $separator-color;
+			padding-top: 23px - 4px;
+		}
+	}
+
+	.abstract-body {
+		margin-bottom: 1em;
+	}
+}

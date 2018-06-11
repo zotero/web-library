@@ -49,41 +49,6 @@
 		margin: $space-min 0 ($space-md - 2px);
 	}
 
-	.item-title,
-	.tab-pane-heading {
-		@include mouse-and-bp-up(md) {
-			display: none;
-		}
-	}
-
-	.item-title {
-		border-bottom: 2px solid $separator-color;
-		padding-bottom: 10px;
-		margin: 10px $default-padding-horizontal-touch 9px;
-	}
-
-	.abstract-heading {
-		@include touch-or-bp-down(sm) {
-			margin-top: 9px;
-			border-top: 2px solid $separator-color;
-			padding-top: 11px;
-		}
-
-		@include mouse-and-bp-up(md) {
-			margin-top: 23px - 7px;
-			border-top: 2px solid $separator-color;
-			padding-top: 23px - 4px;
-		}
-	}
-
-	.abstract-body {
-		margin-bottom: 1em;
-	}
-
-	.tab-pane-heading {
-		padding: 0 $default-padding-horizontal;
-	}
-
 	.info-wrapper {
 		align-items: center;
 		display: flex;
@@ -117,49 +82,6 @@
 			flex: 0 0 50%;
 			position: relative;
 			min-width: 0; // Fix truncation
-		}
-	}
-
-	.metadata-list.horizontal {
-		margin-top: 23px - 12px;
-
-		@include bp-only(md) {
-			margin-top: -3px;
-		}
-
-		.metadata {
-			@include bp-down(xs) {
-				padding: 0 $default-padding-horizontal-touch;
-
-				.editable-value {
-					line-height: inherit; // Fix height
-				}
-			}
-
-			@include touch-or-bp-down(sm) {
-				padding: 0 $default-padding-horizontal-touch;
-			}
-
-			@include mouse-and-bp-up(md) {
-				padding: 0 $default-padding-horizontal;
-				//&:not(.editing) {
-				//	.value {
-				//		.editable:hover {
-				//			.editable-value {
-				//				background-color: rgb(190, 205, 239);
-				//				border: 1px solid rgb(116, 146, 221);
-				//				border-radius: 10px;
-				//				min-height: calc(1em + 4px);
-				//				margin: -1px -1px -1px -1px;
-				//			}
-				//		}
-				//	}
-				//}
-			}
-
-			@include bp-only(md) {
-				padding-right: ($metadata-list-gutter + 1px);
-			}
 		}
 	}
 }
