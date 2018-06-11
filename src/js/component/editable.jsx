@@ -43,13 +43,13 @@ class Editable extends React.PureComponent {
 	renderContent() {
 		const hasChildren = typeof this.props.children !== 'undefined';
 		return (
-			<span className="editable-value">
+			<div className="truncate">
 				{
-					hasChildren ? 
+					hasChildren ?
 						this.props.children :
 						<EditableContent { ...this.props } />
 				}
-			</span>
+			</div>
 		);
 	}
 
@@ -69,8 +69,8 @@ class Editable extends React.PureComponent {
 		return (
 			<div
 				tabIndex={ this.isActive ? null : 0 }
-				onMouseDown={ this.handleClick.bind(this) } 
-				onFocus={ this.handleFocus.bind(this) } 
+				onMouseDown={ this.handleClick.bind(this) }
+				onFocus={ this.handleFocus.bind(this) }
 				className={ cx(this.className) }
 			>
 				{ this.isActive ? this.renderControls() : this.renderContent() }

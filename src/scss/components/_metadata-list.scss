@@ -15,11 +15,6 @@
 		margin-top: $space-xs;
 	}
 
-	.field-editable-wrap {
-		flex: 1 1 auto;
-		display: flex;
-	}
-
 	&.horizontal {
 		@include bp-only(sm) {
 			.key,
@@ -48,10 +43,9 @@
 			}
 
 			.value {
-				padding-left:
-				  $metadata-list-gutter / 2
-				  - $editable-border-width
-				  - $editable-padding-horizontal;
+				display: flex;
+				align-items: center;
+				padding-left: $metadata-list-gutter / 2;
 			}
 		}
 
@@ -109,19 +103,19 @@
 					padding-left: 12px;
 				}
 
-				.editable {
-					padding-left: 0;
-				}
+				//.editable {
+				//	padding-left: 0;
+				//}
 
-				.editable-control {
-					background: transparent;
-					padding: 0;
-					border: 0;
-
-					.select & {
-						background: $editable-bg;
-					}
-				}
+				//.editable-control {
+				//	background: transparent;
+				//	padding: 0;
+				//	border: 0;
+				//
+				//	.select & {
+				//		background: $editable-bg;
+				//	}
+				//}
 			}
 		}
 	}

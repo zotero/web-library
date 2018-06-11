@@ -4,94 +4,120 @@
 
 .editable {
 	flex: 1 1 auto;
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
 	min-width: 0; // Fix truncation
-
-	@include bp-up(sm) {
-  	padding-left: $editable-border-width + $editable-padding-horizontal;
-
-		&.editing {
-			padding-left: 0;
-		}
-	}
-
-	.editable-value {
-		@include css-truncate;
-		flex: 1 1 auto;
-		line-height: normal; // Flex alignment is more consistent
-	}
-
-	.editable-content.placeholder {
-		&:before {
-			content: '(';
-		}
-		&:after {
-			content: ')';
-		}
-
-		color: $shade-5;
-	}
-
-	&:not(.editing):hover {
-		.editable-value {
-			background-color: rgb(190, 205, 239);
-			border: 1px solid rgb(116, 146, 221);
-			border-radius: 10px;
-			min-height: calc(1em + 4px);
-			margin: -1px -1px -1px -1px;
-		}
-	}
 }
 
 .editable-control {
-	flex: 1 1 0;
+	flex: 1 1 auto;
 	font: {
 		family: inherit;
 		size: inherit;
 		weight: inherit;
 	}
 	text-align: inherit;
+	margin: -($editable-border-width + $editable-padding-horizontal);
+	width: calc(
+		100% + #{2 * ($editable-border-width + $editable-padding-horizontal)}
+	);
 	line-height: normal;
 	padding: $editable-padding-vertical $editable-padding-horizontal;
 	border: $editable-border-width solid $editable-border-color;
 	color: $editable-color;
 	background: $editable-bg;
 	border-radius: $editable-border-radius;
-	margin: -2em 0; // For the sake of safety
 	background-clip: padding-box;
-	max-width: 100%;
-
-	.select & {
-		z-index: 2;
-	}
-
-	.textarea & {
-		margin: 0;
-		height: 6em;
-	}
-
-	&:focus {
-		box-shadow: none; // Override generic focus styles
-	}
 }
 
-// @TODO: very rudementary styling, .creators field needs real styling
-.creators {
-	//width: 100%;
-
-	.creators-entry {
-		display: flex;
-		align-items: flex-start;
-		@include horizontal;
-
-		.key .editable {
-			flex: initial;
-		}
-
-		&.creators-type-editing .key {
-			display: block;
-		}
-	}
-}
+//.editable {
+//	flex: 1 1 auto;
+//	display: flex;
+//	justify-content: space-between;
+//	align-items: center;
+//	min-width: 0; // Fix truncation
+//
+//	//@include bp-up(sm) {
+//	//	padding-left: $editable-border-width + $editable-padding-horizontal;
+//	//
+//	//	&.editing {
+//	//		padding-left: 0;
+//	//	}
+//	//}
+//
+//	.editable-value {
+//		@include css-truncate;
+//		flex: 1 1 auto;
+//		line-height: normal; // Flex alignment is more consistent
+//	}
+//
+//	.editable-content.placeholder {
+//		&:before {
+//			content: '(';
+//		}
+//		&:after {
+//			content: ')';
+//		}
+//
+//		color: $shade-5;
+//	}
+//
+//	//&:not(.editing):hover {
+//	//	.editable-value {
+//	//		background-color: rgb(190, 205, 239);
+//	//		border: 1px solid rgb(116, 146, 221);
+//	//		border-radius: 10px;
+//	//		min-height: calc(1em + 4px);
+//	//		margin: -1px -1px -1px -1px;
+//	//	}
+//	//}
+//}
+//
+//.editable-control {
+//	flex: 1 1 0;
+//	font: {
+//		family: inherit;
+//		size: inherit;
+//		weight: inherit;
+//	}
+//	text-align: inherit;
+//	line-height: normal;
+//	padding: $editable-padding-vertical $editable-padding-horizontal;
+//	border: $editable-border-width solid $editable-border-color;
+//	color: $editable-color;
+//	background: $editable-bg;
+//	border-radius: $editable-border-radius;
+//	margin: -2em 0; // For the sake of safety
+//	background-clip: padding-box;
+//	max-width: 100%;
+//
+//	.select & {
+//		z-index: 2;
+//	}
+//
+//	.textarea & {
+//		margin: 0;
+//		height: 6em;
+//	}
+//
+//	&:focus {
+//		box-shadow: none; // Override generic focus styles
+//	}
+//}
+//
+//// @TODO: very rudementary styling, .creators field needs real styling
+//.creators {
+//	//width: 100%;
+//
+//	.creators-entry {
+//		display: flex;
+//		align-items: flex-start;
+//		@include horizontal;
+//
+//		.key .editable {
+//			flex: initial;
+//		}
+//
+//		&.creators-type-editing .key {
+//			display: block;
+//		}
+//	}
+//}
