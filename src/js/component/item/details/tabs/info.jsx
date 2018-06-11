@@ -23,7 +23,7 @@ class InfoTab extends React.PureComponent {
 					<div className="col">
 						<section className="abstract">
 							<h6 className="h2 abstract-heading">Abstract</h6>
-							<div>
+							<div className="abstract-body">
 								{ this.props.item.abstractNote }
 							</div>
 						</section>

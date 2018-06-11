@@ -68,6 +68,16 @@
 			border-top: 2px solid $separator-color;
 			padding-top: 11px;
 		}
+
+		@include mouse-and-bp-up(md) {
+			margin-top: 23px - 7px;
+			border-top: 2px solid $separator-color;
+			padding-top: 23px - 4px;
+		}
+	}
+
+	.abstract-body {
+		margin-bottom: 1em;
 	}
 
 	.tab-pane-heading {
@@ -111,7 +121,7 @@
 	}
 
 	.metadata-list.horizontal {
-		margin-top: 3px;
+		margin-top: 23px - 12px;
 
 		@include bp-only(md) {
 			margin-top: -3px;
@@ -129,7 +139,6 @@
 			@include touch-or-bp-down(sm) {
 				padding: 0 $default-padding-horizontal-touch;
 			}
-
 
 			@include mouse-and-bp-up(md) {
 				padding: 0 $default-padding-horizontal;
