@@ -2,7 +2,7 @@
 // Item details
 // --------------------------------------------------
 
-.item.details {
+.item-details {
 	background: $item-details-bg;
 
 	@include bp-down(sm) {

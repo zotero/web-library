@@ -247,7 +247,7 @@ class ItemList extends React.PureComponent {
 								<Table
 									{ ...this.props }
 									ref={ registerChild }
-									className="item list"
+									className="item-list"
 									width={ width }
 									height={ height }
 									onRowsRendered={ onRowsRendered }

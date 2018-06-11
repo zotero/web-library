@@ -12,7 +12,7 @@ const ItemDetailsInfoSelected = require('./details/info-selected');
 class ItemDetails extends React.Component {
 	render() {
 		return (
-			<section className={ `item details ${this.props.active ? 'active' : ''}` }>
+			<section className={ `item-details ${this.props.active ? 'active' : ''}` }>
 				{
 				'key' in this.props.item ? (
 						<ItemDetailsTabs { ...this.props } />
