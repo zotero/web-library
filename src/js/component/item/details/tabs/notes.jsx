@@ -4,7 +4,7 @@ const React = require('react');
 const cx = require('classnames');
 const Notes = require('../../../notes');
 
-class InfoTab extends React.PureComponent {
+class NotesTab extends React.PureComponent {
 	render() {
 		return (
 			<div className={ cx({
@@ -25,4 +25,4 @@ class InfoTab extends React.PureComponent {
 	}
 }
 
-module.exports = InfoTab;
+module.exports = NotesTab;
