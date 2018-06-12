@@ -1,3 +1,4 @@
+/* eslint-disable react/no-deprecated */
 'use strict';
 
 const React = require('react');
@@ -7,7 +8,7 @@ const { connect } = require('react-redux');
 const {	updateItem, fetchItemTypeCreatorTypes, fetchItemTypeFields } = require('../actions');
 const { itemProp, hideFields, noEditFields, baseMappings } = require('../constants/item');
 const { get, reverseMap } = require('../utils');
-const { 
+const {
 	getItem,
 	getItemFieldValue,
 	isItemFieldBeingUpdated
@@ -18,7 +19,7 @@ class ItemBoxContainer extends React.PureComponent {
 		let itemType = get(props, 'item.itemType');
 		if(props.shouldFetchMeta === true) {
 			this.props.dispatch(fetchItemTypeCreatorTypes(itemType));
-			this.props.dispatch(fetchItemTypeFields(itemType));	
+			this.props.dispatch(fetchItemTypeFields(itemType));
 		}
 	}
 
@@ -29,7 +30,7 @@ class ItemBoxContainer extends React.PureComponent {
 
 		// when changing itemType, map fields to base types and back to item-specific types
 		if(fieldKey === 'itemType') {
-			const baseValues = {};			
+			const baseValues = {};
 			if(item.itemType in baseMappings) {
 				const namedToBaseMap = reverseMap(baseMappings[item.itemType]);
 				Object.keys(item).forEach(fieldName => {
@@ -55,7 +56,7 @@ class ItemBoxContainer extends React.PureComponent {
 			}
 
 			const targetTypeCreatorTypes = await this.props.dispatch(fetchItemTypeCreatorTypes(item.itemType));
-			
+
 			//convert item creators to match creators appropriate for this item type
 			if(item.creators && Array.isArray(item.creators)) {
 				for(var creator of item.creators) {
@@ -70,7 +71,7 @@ class ItemBoxContainer extends React.PureComponent {
 	}
 
 	render() {
-		return <ItemBox 
+		return <ItemBox
 			onSave={ this.handleItemUpdated.bind(this, this.props.item) }
 			{ ...this.props }
 		/>;
@@ -85,8 +86,8 @@ const mapStateToProps = state => {
 	}
 
 	let isMetaAvailable = item.itemType in state.meta.itemTypeCreatorTypes && item.itemType in state.meta.itemTypeFields;
-	let shouldFetchMeta = !isMetaAvailable 
-		&& !state.fetching.itemTypeCreatorTypes.includes(item.itemType) 
+	let shouldFetchMeta = !isMetaAvailable
+		&& !state.fetching.itemTypeCreatorTypes.includes(item.itemType)
 		&& !state.fetching.itemTypeFields.includes(item.itemType);
 
 	if(!isMetaAvailable) {
@@ -134,9 +135,9 @@ const mapStateToProps = state => {
 		})).filter(f => !hideFields.includes(f.key)),
 		item: item || undefined,
 		creatorTypes: itemTypeCreatorTypes,
-		
+
 		//@TODO: temporary, fix this together with selectLibrary events in actions
-		libraryKey: state.library.libraryKey, 
+		libraryKey: state.library.libraryKey,
 		isEditing: item && state.items.editing === item.key
 	};
 };

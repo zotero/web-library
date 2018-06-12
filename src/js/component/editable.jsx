@@ -55,12 +55,13 @@ class Editable extends React.PureComponent {
 
 	renderControls() {
 		const InputComponent = this.props.inputComponent;
+		const { className, ...props } = this.props;
 		return (
 			<InputComponent
-				className="editable-control"
+				{ ...props }
+				className={ cx(className, "editable-control") }
 				isReadOnly={ this.isReadOnly }
 				ref={ this.setInput.bind(this) }
-				{ ...this.props }
 			/>
 		);
 	}

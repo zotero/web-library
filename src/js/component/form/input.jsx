@@ -1,3 +1,4 @@
+/* eslint-disable react/no-deprecated */
 'use strict';
 
 const React = require('react');
@@ -22,7 +23,7 @@ class Input extends React.PureComponent {
 	commit(event = null) {
 		this.props.onCommit(this.state.value, this.hasChanged, event);
 	}
-	
+
 	focus() {
 		if(this.input != null) {
 			this.input.focus();
@@ -85,7 +86,7 @@ class Input extends React.PureComponent {
 		return (
 			<input
 				autoFocus={ this.props.autoFocus }
-				className={ cx('form-control', this.props.className) }
+				className={ this.props.className }
 				disabled={ this.props.isDisabled }
 				form={ this.props.form }
 				id={ this.props.id }
@@ -127,6 +128,7 @@ class Input extends React.PureComponent {
 	}
 
 	static defaultProps = {
+		className: 'form-control',
 		onBlur: noop,
 		onCancel: noop,
 		onChange: noop,

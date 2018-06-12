@@ -1,3 +1,4 @@
+/* eslint-disable react/no-deprecated */
 'use strict';
 
 const React = require('react');
@@ -37,7 +38,7 @@ class SelectInput extends React.PureComponent {
 	}
 
 	handleChange(value) {
-		value = value !== null || (value === null && this.props.clearable) ? 
+		value = value !== null || (value === null && this.props.clearable) ?
 			value : this.props.value;
 		this.setState({ value });
 
