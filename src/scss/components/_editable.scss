@@ -26,6 +26,10 @@
 	background: $editable-bg;
 	border-radius: $editable-border-radius;
 	background-clip: padding-box;
+
+	.busy > & {
+		padding-right: $editable-padding-horizontal + $space-md + 1px;
+	}
 }
 
 //.editable {

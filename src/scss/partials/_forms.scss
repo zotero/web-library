@@ -1,0 +1,21 @@
+//
+// Forms
+// --------------------------------------------------
+
+.input-group {
+	display: flex;
+	position: relative;
+
+	.icon-spin {
+		position: absolute;
+	}
+
+	.editable-control {
+		& + .icon-spin {
+			width: $space-md;
+			height: $space-md;
+			top: 0;
+			right: 0;
+		}
+	}
+}
