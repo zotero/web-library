@@ -43,13 +43,13 @@ class Editable extends React.PureComponent {
 	renderContent() {
 		const hasChildren = typeof this.props.children !== 'undefined';
 		return (
-			<div className="truncate">
+			<React.Fragment>
 				{
 					hasChildren ?
 						this.props.children :
 						<EditableContent { ...this.props } />
 				}
-			</div>
+			</React.Fragment>
 		);
 	}
 

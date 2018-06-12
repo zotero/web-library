@@ -14,11 +14,11 @@ class EditableContent extends React.PureComponent {
 	get displayValue() {
 		const { options, value, display, placeholder } = this.props;
 
-		return value ? 
+		return value ?
 			options && options.find(e => e.value == value).label || display ||  value :
 			placeholder;
 	}
-	
+
 	render() {
 		if(this.props.inputComponent === TextAreaInput) {
 			return <span dangerouslySetInnerHTML={ { __html: this.content } } />;
@@ -28,7 +28,7 @@ class EditableContent extends React.PureComponent {
 				'placeholder': !this.props.value && this.props.placeholder
 			};
 			return (
-				<span className={ cx(className) }>{ this.displayValue }</span>
+				<div className={ cx(className) }>{ this.displayValue }</div>
 			);
 		}
 	}

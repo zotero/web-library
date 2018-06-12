@@ -32,6 +32,10 @@
 	}
 }
 
+.editable-content {
+	@include css-truncate; // Truncate by default, make exceptions where necessary
+}
+
 //.editable {
 //	flex: 1 1 auto;
 //	display: flex;
