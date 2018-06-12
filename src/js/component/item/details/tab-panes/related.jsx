@@ -4,7 +4,7 @@ const React = require('react');
 const cx = require('classnames');
 const Relations = require('../../../relations');
 
-class RelatedTab extends React.PureComponent {
+class RelatedTabPane extends React.PureComponent {
 	render() {
 		return (
 			<div className={ cx({
@@ -24,4 +24,4 @@ class RelatedTab extends React.PureComponent {
 	}
 }
 
-module.exports = RelatedTab;
+module.exports = RelatedTabPane;

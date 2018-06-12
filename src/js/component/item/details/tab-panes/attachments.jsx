@@ -3,7 +3,7 @@
 const React = require('react');
 const Attachments = require('../../../attachments');const cx = require('classnames');
 
-class AttachmentsTab extends React.PureComponent {
+class AttachmentsTabPane extends React.PureComponent {
 	render() {
 		return (
 			<div className={ cx({
@@ -23,4 +23,4 @@ class AttachmentsTab extends React.PureComponent {
 	}
 }
 
-module.exports = AttachmentsTab;
+module.exports = AttachmentsTabPane;

@@ -4,12 +4,12 @@
 const React = require('react');
 const Panel = require('../../ui/panel');
 const { Tab, Tabs } = require('../../ui/tabs');
-const InfoTab = require('./tabs/info');
-const NotesTab = require('./tabs/notes');
-const TagsTab = require('./tabs/tags');
-const AttachmentsTab = require('./tabs/attachments');
-const RelatedTab = require('./tabs/related');
-const StandaloneNoteTab = require('./tabs/standalone-note');
+const InfoTabPane = require('./tab-panes/info');
+const NotesTabPane = require('./tab-panes/notes');
+const TagsTabPane = require('./tab-panes/tags');
+const AttachmentsTabPane = require('./tab-panes/attachments');
+const RelatedTabPane = require('./tab-panes/related');
+const StandaloneNoteTabPane = require('./tab-panes/standalone-note');
 
 class ItemDetailsTabs extends React.PureComponent {
 	state = {
@@ -115,25 +115,25 @@ class ItemDetailsTabs extends React.PureComponent {
 				{
 					!['attachment', 'note'].includes(this.props.item.itemType) && (
 						<React.Fragment>
-							<InfoTab isActive={ this.state.tab === 'info' } { ...this.props } />
-							<NotesTab isActive={ this.state.tab === 'notes' } { ...this.props } />
+							<InfoTabPane isActive={ this.state.tab === 'info' } { ...this.props } />
+							<NotesTabPane isActive={ this.state.tab === 'notes' } { ...this.props } />
 						</React.Fragment>
 					)
 				}
 
 				{
 					this.props.item.itemType === 'note' && (
-						<StandaloneNoteTab isActive={ this.state.tab === 'standalone-note' } { ...this.props } />
+						<StandaloneNoteTabPane isActive={ this.state.tab === 'standalone-note' } { ...this.props } />
 					)
 				}
 
-				<TagsTab isActive={ this.state.tab === 'tags' } { ...this.props } />
+				<TagsTabPane isActive={ this.state.tab === 'tags' } { ...this.props } />
 				{
 					!['attachment', 'note'].includes(this.props.item.itemType) && (
-						<AttachmentsTab isActive={ this.state.tab === 'attachments' } { ...this.props } />
+						<AttachmentsTabPane isActive={ this.state.tab === 'attachments' } { ...this.props } />
 					)
 				}
-				<RelatedTab isActive={ this.state.tab === 'related' } { ...this.props } />
+				<RelatedTabPane isActive={ this.state.tab === 'related' } { ...this.props } />
 			</Panel>
 		);
 	}

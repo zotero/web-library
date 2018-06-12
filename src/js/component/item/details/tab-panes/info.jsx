@@ -4,7 +4,7 @@ const React = require('react');
 const cx = require('classnames');
 const ItemBoxContainer = require('../../../../container/item-box');
 
-class InfoTab extends React.PureComponent {
+class InfoTabPane extends React.PureComponent {
 	render() {
 		return (
 			<div className={ cx({
@@ -34,4 +34,4 @@ class InfoTab extends React.PureComponent {
 	}
 }
 
-module.exports = InfoTab;
+module.exports = InfoTabPane;

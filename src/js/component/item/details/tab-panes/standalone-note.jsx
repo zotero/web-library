@@ -4,7 +4,7 @@ const React = require('react');
 const cx = require('classnames');
 const RichEditor = require('../../../rich-editor');
 
-class StandaloneNoteTab extends React.PureComponent {
+class StandaloneNoteTabPane extends React.PureComponent {
 	handleChangeNote(note) {
 		this.props.onNoteChange(this.props.item.key, note);
 	}
@@ -27,4 +27,4 @@ class StandaloneNoteTab extends React.PureComponent {
 	}
 }
 
-module.exports = StandaloneNoteTab;
+module.exports = StandaloneNoteTabPane;

@@ -6,10 +6,10 @@ const cx = require('classnames');
 
 const Tab = ({ children, isActive, isDisabled, onActivate }) => (
 	<li
-		className={ cx({ 
+		className={ cx({
 			tab: true,
-			active: isActive, 
-			disabled: isDisabled 
+			active: isActive,
+			disabled: isDisabled
 		}) }
 		onClick={ isDisabled ? null : onActivate }>
 			<a href="" onClick={ ev => { ev.preventDefault(); isDisabled ? null : onActivate(); } }>

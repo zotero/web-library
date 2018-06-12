@@ -4,7 +4,7 @@ const React = require('react');
 const cx = require('classnames');
 const Tags = require('../../../tags');
 
-class TagsTab extends React.PureComponent {
+class TagsTabPane extends React.PureComponent {
 	render() {
 		return (
 			<div className={ cx({
@@ -26,4 +26,4 @@ class TagsTab extends React.PureComponent {
 	}
 }
 
-module.exports = TagsTab;
+module.exports = TagsTabPane;
