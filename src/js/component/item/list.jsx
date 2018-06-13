@@ -231,7 +231,7 @@ class ItemList extends React.PureComponent {
 		return defaultRowRenderer({ className, index, ...opts });
 	}
 
-	handleResizeStart(index, ev) {
+	handleResizeStart(index) {
 		const rect = this.containerDom.getBoundingClientRect();
 		this.isResizing = true;
 		this.resizingColumn = index - 1;
@@ -243,12 +243,12 @@ class ItemList extends React.PureComponent {
 		}
 
 		this.resizeOffset = offset;
-		ev.preventDefault();
 	}
 
 	handleResize(ev) {
 		if(this.isResizing) {
-			const width = Math.max(ev.clientX - this.resizeOffset, 10);
+			const minWidth = 30;
+			const width = Math.max(ev.clientX - this.resizeOffset, minWidth);
 			const fraction = width / this.availableWidth;
 			const columns = [ ...this.state.columns ];
 			columns[this.resizingColumn].fraction = fraction;
@@ -257,9 +257,14 @@ class ItemList extends React.PureComponent {
 				aggregatedFraction += columns[i].fraction;
 			}
 
-			columns[columns.length -1].fraction = 1.0 - aggregatedFraction;
+			const lastColumnFraction = 1.0 - aggregatedFraction;
+			const lastColumnWidth = lastColumnFraction * this.availableWidth;
 
-			this.setState({ columns, t: Date.now() })
+			if(lastColumnWidth >= minWidth) {
+				// prevent resize if last column would shrink below minWidth
+				columns[columns.length -1].fraction = 1.0 - aggregatedFraction;
+				this.setState({ columns, t: Date.now() })
+			}
 		}
 	}
 
@@ -282,6 +287,7 @@ class ItemList extends React.PureComponent {
 					className="resize-handle"
 					key="resize-handle"
 					onMouseDown={ ev => this.handleResizeStart(index, ev) }
+					onClick={ ev => ev.stopPropagation() }
 				/>
 			);
 		});
@@ -303,7 +309,9 @@ class ItemList extends React.PureComponent {
 
 	renderColumn({ dataKey, ...opts }) {
 		const key = dataKey;
-		const label = dataKey; //@TODO: lookup
+		const itemField = this.props.itemFields.find(e => e.field === dataKey);
+		const label = dataKey === 'creator' ? 'Creator' :
+			itemField ? itemField.localized : dataKey;
 		const cellRenderer = dataKey === 'title' ?
 			this.renderTitleCell.bind(this) : undefined;
 		const className = dataKey === 'title' ?

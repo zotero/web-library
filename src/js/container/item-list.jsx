@@ -133,9 +133,10 @@ const mapStateToProps = state => {
 	const item = getItem(state);
 	const items = processItems(getItems(state));
 	const totalItemsCount = (isTopLevel(state) ? getLibraryItemCount(state) : getCollectionItemCount(state)) || 50;
-	const isReady = (isTopLevel(state) && library) || collection !== null;
 	const { sortBy, sortDirection } = state.config;
 	const preferences = state.preferences;
+	const itemFields = state.meta.itemFields;
+	const isReady = itemFields && (isTopLevel(state) && library) || collection !== null;
 
 	sortByKey(items, sortBy, sortDirection);
 
@@ -146,6 +147,7 @@ const mapStateToProps = state => {
 		totalItemsCount,
 		sortBy,
 		preferences,
+		itemFields,
 		sortDirection: sortDirection.toUpperCase(),
 		isTopLevel: isTopLevel(state),
 		selectedItemKeys: item ? [item.key] : (state.router && 'items' in state.router.params && state.router.params.items.split(',')) || []
