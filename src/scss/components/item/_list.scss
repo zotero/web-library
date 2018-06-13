@@ -71,16 +71,6 @@
 		position: relative;
 		@include css-truncate;
 
-		&:before {
-			content: " ";
-			position: absolute;
-			left: 0;
-			top: 2px;
-			bottom: 2px;
-			width: 1px;
-			background: $item-list-head-border;
-		}
-
 		&:first-child:before {
 			content: none;
 		}
@@ -122,13 +112,23 @@
 	}
 
 	.resize-handle {
-		border: 1px solid red;
+		&::before {
+			background: $item-list-head-border;
+			bottom: 0;
+			content: "";
+			left: 2px;
+			position: absolute;
+			top: 0;
+			width: 1px; // rendered handle width for visual
+		}
+
+		bottom: 2px;
 		cursor: ew-resize;
-		float: left;
-		height: 100%;
 		left: -8px;
-		position: relative;
-		width: 2px;
+		left: 0;
+		position: absolute;
+		top: 2px;
+		width: 8px; // actual handle width for cursor grip
 	}
 
 	.item {
