@@ -19,7 +19,16 @@ class ItemList extends React.PureComponent {
 	constructor(props) {
 		super(props);
 		this.loadedRowsMap = {};
+		this.handleResizeEnd = this.handleResizeEnd.bind(this);
+		this.handleResize = this.handleResize.bind(this);
+		this.handleMouseLeave = this.handleMouseLeave.bind(this);
+		this.state = { };
 	}
+
+	static getDerivedStateFromProps({ preferences: { columns } }) {
+		return { columns };
+	}
+
 	componentDidUpdate({ sortBy, sortDirection, items }) {
 		if(this.props.sortBy !== sortBy ||
 			this.props.sortDirection !== sortDirection ||
@@ -27,6 +36,18 @@ class ItemList extends React.PureComponent {
 			this.loadedRowsMap = {};
 			this.loader.resetLoadMoreRowsCache(false);
 		}
+	}
+
+	componentDidMount() {
+		document.addEventListener('mouseup', this.handleResizeEnd);
+		document.addEventListener('mousemove', this.handleResize);
+		document.addEventListener('mouseleave', this.handleMouseLeave);
+	}
+
+	componentWillUnmount() {
+		document.removeEventListener('mouseup', this.handleResizeEnd)
+		document.removeEventListener('mousemove', this.handleResize);
+		document.removeEventListener('mouseleave', this.handleMouseLeave);
 	}
 
 	handleKeyArrowDown(ev) {
@@ -210,9 +231,61 @@ class ItemList extends React.PureComponent {
 		return defaultRowRenderer({ className, index, ...opts });
 	}
 
-	renderHeaderRow({ className, ...opts }) {
+	handleResizeStart(index, ev) {
+		const rect = this.containerDom.getBoundingClientRect();
+		this.isResizing = true;
+		this.resizingColumn = index - 1;
+		this.availableWidth = rect.right - rect.left;
+		let offset = rect.left;
+		for(let i = 0; i < index - 1; i++) {
+			const columnWidth = this.state.columns[i].fraction * this.availableWidth;
+			offset += columnWidth;
+		}
+
+		this.resizeOffset = offset;
+		ev.preventDefault();
+	}
+
+	handleResize(ev) {
+		if(this.isResizing) {
+			const width = Math.max(ev.clientX - this.resizeOffset, 10);
+			const fraction = width / this.availableWidth;
+			const columns = [ ...this.state.columns ];
+			columns[this.resizingColumn].fraction = fraction;
+			let aggregatedFraction = 0
+			for(let i = 0; i < columns.length - 1; i++) {
+				aggregatedFraction += columns[i].fraction;
+			}
+
+			columns[columns.length -1].fraction = 1.0 - aggregatedFraction;
+
+			this.setState({ columns, t: Date.now() })
+		}
+	}
+
+	handleResizeEnd() {
+		if(this.isResizing) {
+			this.isResizing = false;
+		}
+	}
+
+	handleMouseLeave() {
+		this.isResizing = false;
+	}
+
+	renderHeaderRow({ className, columns, ...opts }) {
 		className += ' item-list-head';
-		return defaultHeaderRowRenderer({ className, ...opts });
+		columns.forEach(({ props: { children } }, index) => {
+			if(index === 0 ) { return }
+			children.unshift(
+				<div
+					className="resize-handle"
+					key="resize-handle"
+					onMouseDown={ ev => this.handleResizeStart(index, ev) }
+				/>
+			);
+		});
+		return defaultHeaderRowRenderer({ className, columns, ...opts });
 	}
 
 	renderTitleCell({ cellData, rowData }) {
@@ -228,13 +301,28 @@ class ItemList extends React.PureComponent {
 		);
 	}
 
+	renderColumn({ dataKey, ...opts }) {
+		const key = dataKey;
+		const label = dataKey; //@TODO: lookup
+		const cellRenderer = dataKey === 'title' ?
+			this.renderTitleCell.bind(this) : undefined;
+		const className = dataKey === 'title' ?
+			'metadata title' : undefined;
+
+		return <Column { ...{ key, dataKey, className, label, cellRenderer, ...opts } } />
+	}
+
 	render() {
 		if(!this.props.isReady) {
 			return null;
 		}
 
 		return (
-			<div className="item-list-wrap" onKeyDown={ this.handleKeyDown.bind(this) }>
+			<div
+				ref={ ref => this.containerDom = ref }
+				className="item-list-wrap"
+				onKeyDown={ this.handleKeyDown.bind(this) }
+			>
 				<AutoSizer>
 					{({ width, height }) => (
 						<InfiniteLoader
@@ -260,23 +348,13 @@ class ItemList extends React.PureComponent {
 									onRowClick={ this.handleRowClick.bind(this) }
 									sort={ this.handleSort.bind(this) }
 								>
-									<Column
-										className="metadata title"
-										cellRenderer={ this.renderTitleCell.bind(this) }
-										label='Title'
-										dataKey='title'
-										width={ Math.floor(0.5 * width)  }
-									/>
-									<Column
-										label='Author'
-										dataKey='creator'
-										width={ Math.floor(0.3 * width) }
-									/>
-									<Column
-										label='Date'
-										dataKey='date'
-										width={ Math.floor(0.2 * width) }
-									/>
+										{
+											this.state.columns
+											.map(({ field, fraction }, index) => this.renderColumn({
+												width: Math.floor(fraction * width),
+												dataKey: field
+											}))
+										}
 								</Table>
 							)}
 						</InfiniteLoader>

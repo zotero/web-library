@@ -121,6 +121,16 @@
 		width: 100%;
 	}
 
+	.resize-handle {
+		border: 1px solid red;
+		cursor: ew-resize;
+		float: left;
+		height: 100%;
+		left: -8px;
+		position: relative;
+		width: 2px;
+	}
+
 	.item {
 		display: flex;
 		flex-direction: row;

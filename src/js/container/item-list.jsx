@@ -135,6 +135,7 @@ const mapStateToProps = state => {
 	const totalItemsCount = (isTopLevel(state) ? getLibraryItemCount(state) : getCollectionItemCount(state)) || 50;
 	const isReady = (isTopLevel(state) && library) || collection !== null;
 	const { sortBy, sortDirection } = state.config;
+	const preferences = state.preferences;
 
 	sortByKey(items, sortBy, sortDirection);
 
@@ -144,6 +145,7 @@ const mapStateToProps = state => {
 		isReady,
 		totalItemsCount,
 		sortBy,
+		preferences,
 		sortDirection: sortDirection.toUpperCase(),
 		isTopLevel: isTopLevel(state),
 		selectedItemKeys: item ? [item.key] : (state.router && 'items' in state.router.params && state.router.params.items.split(',')) || []
