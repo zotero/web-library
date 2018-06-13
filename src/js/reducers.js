@@ -1,6 +1,7 @@
 'use strict';
 
 const { ck, without } = require('./utils');
+const defaults = require('./constants/defaults');
 
 const {
 	CONFIGURE_API,
@@ -61,6 +62,8 @@ const {
 	ERROR_TOP_ITEMS,
 
 	SORT_ITEMS,
+
+	PREFERENCE_CHANGE,
 
 	TRIGGER_EDITING_ITEM,
 	TRIGGER_RESIZE_VIEWPORT
@@ -578,6 +581,15 @@ const itemTemplates = (state = {}, action) => {
 	}
 };
 
+const preferences = (state = { ...defaults.preferences }, action) => {
+	switch(action.type) {
+		case PREFERENCE_CHANGE:
+			return { [action.name]: action.value }
+		default:
+			return state;
+	}
+}
+
 const viewport = (state = {}, action) => {
 	switch(action.type) {
 		case TRIGGER_RESIZE_VIEWPORT:
@@ -614,14 +626,15 @@ module.exports = {
 	config,
 	deleting,
 	fetching,
+	itemCountByCollection,
+	itemCountByLibrary,
 	items,
 	itemsByCollection,
 	itemsByParentItem,
 	itemsTop,
-	itemCountByCollection,
-	itemCountByLibrary,
 	library,
 	meta,
+	preferences,
 	router,
 	updating,
 	viewport,

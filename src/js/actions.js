@@ -69,6 +69,8 @@ const {
 
 	SORT_ITEMS,
 
+	PREFERENCE_CHANGE,
+
 	TRIGGER_EDITING_ITEM,
 	TRIGGER_RESIZE_VIEWPORT
 } = require('./constants/actions');
@@ -106,6 +108,14 @@ const selectLibrary = (type, id) => {
 		libraryKey: api().library(type, id).getConfig().resource.library
 	};
 };
+
+const preference_change = (name, value) => {
+	return {
+		type: PREFERENCE_CHANGE,
+		name,
+		value
+	};
+}
 
 const initialize = () => {
 	return async (dispatch, getState) => {
@@ -683,6 +693,7 @@ module.exports = {
 	fetchItemTypeFields,
 	fetchTopItems,
 	initialize,
+	preference_change,
 	selectLibrary,
 	sortItems,
 	triggerEditingItem,
