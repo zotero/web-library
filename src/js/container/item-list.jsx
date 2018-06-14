@@ -78,6 +78,16 @@ class ItemListContainer extends React.PureComponent {
 		return dispatch(preferenceChange('columns', newColumns));
 	}
 
+	handleColumnReorder(columns) {
+		const { dispatch } = this.props;
+		return dispatch(preferenceChange('columns', columns));
+	}
+
+	handleColumnResize(columns) {
+		const { dispatch } = this.props;
+		return dispatch(preferenceChange('columns', columns));
+	}
+
 	async handleLoadMore({ startIndex, stopIndex }) {
 		let start = startIndex;
 		let limit = (stopIndex - startIndex) + 1;
@@ -118,6 +128,8 @@ class ItemListContainer extends React.PureComponent {
 			onLoadMore={ this.handleLoadMore.bind(this) }
 			onSort={ this.handleSort.bind(this) }
 			onColumnVisibilityChange={ this.handleColumnVisibilityChange.bind(this) }
+			onColumnReorder={ this.handleColumnReorder.bind(this) }
+			onColumnResize={ this.handleColumnResize.bind(this) }
 		/>;
 	}
 }

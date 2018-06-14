@@ -2,6 +2,7 @@
 
 const React = require('react');
 const PropTypes = require('prop-types');
+const cx = require('classnames');
 const paramCase = require('param-case');
 const { without, resizeVisibleColumns } = require('../../../utils');
 const AutoSizer = require('react-virtualized/dist/commonjs/AutoSizer').default;
@@ -10,6 +11,7 @@ const Table = require('react-virtualized/dist/commonjs/Table').default;
 const Column = require('react-virtualized/dist/commonjs/Table/Column').default;
 const defaultRowRenderer = require('react-virtualized/dist/commonjs/Table/defaultRowRenderer').default;
 const defaultHeaderRowRenderer = require('react-virtualized/dist/commonjs/Table/defaultHeaderRowRenderer').default;
+const SortIndicator = require('react-virtualized/dist/commonjs/Table//SortIndicator').default;
 const Icon = require('../../ui/icon');
 const { columnMinWidthFraction } = require('../../../constants/defaults');
 
@@ -20,8 +22,8 @@ class Items extends React.PureComponent {
 	constructor(props) {
 		super(props);
 		this.loadedRowsMap = {};
-		this.handleResizeEnd = this.handleResizeEnd.bind(this);
-		this.handleResize = this.handleResize.bind(this);
+		this.handleMouseUp = this.handleMouseUp.bind(this);
+		this.handleMouseMove = this.handleMouseMove.bind(this);
 		this.handleMouseLeave = this.handleMouseLeave.bind(this);
 		this.state = { };
 	}
@@ -30,7 +32,7 @@ class Items extends React.PureComponent {
 		return { columns };
 	}
 
-	componentDidUpdate({ sortBy, sortDirection, items }) {
+	componentDidUpdate({ sortBy, sortDirection, items }, prevState) {
 		if(this.props.sortBy !== sortBy ||
 			this.props.sortDirection !== sortDirection ||
 			this.props.items.length !== items.length ) {
@@ -40,14 +42,14 @@ class Items extends React.PureComponent {
 	}
 
 	componentDidMount() {
-		document.addEventListener('mouseup', this.handleResizeEnd);
-		document.addEventListener('mousemove', this.handleResize);
+		document.addEventListener('mouseup', this.handleMouseUp);
+		document.addEventListener('mousemove', this.handleMouseMove);
 		document.addEventListener('mouseleave', this.handleMouseLeave);
 	}
 
 	componentWillUnmount() {
-		document.removeEventListener('mouseup', this.handleResizeEnd)
-		document.removeEventListener('mousemove', this.handleResize);
+		document.removeEventListener('mouseup', this.handleMouseUp)
+		document.removeEventListener('mousemove', this.handleMouseMove);
 		document.removeEventListener('mouseleave', this.handleMouseLeave);
 	}
 
@@ -235,7 +237,6 @@ class Items extends React.PureComponent {
 	handleResizeStart(index) {
 		const rect = this.containerDom.getBoundingClientRect();
 		const visibleColumns = this.state.columns.filter(c => c.isVisible);
-		this.isResizing = true;
 		this.resizingColumn = index - 1;
 		this.availableWidth = rect.right - rect.left;
 		let offset = rect.left;
@@ -245,10 +246,12 @@ class Items extends React.PureComponent {
 			offset += columnWidth;
 		}
 		this.resizeOffset = offset;
+
+		this.setState({ isResizing: true })
 	}
 
-	handleResize(ev) {
-		if(this.isResizing) {
+	handleMouseMove(ev) {
+		if(this.state.isResizing) {
 			const width = ev.clientX - this.resizeOffset;
 			const fraction = Math.max(width / this.availableWidth, columnMinWidthFraction);
 			const columns = [ ...this.state.columns ];
@@ -259,34 +262,77 @@ class Items extends React.PureComponent {
 			, 0);
 			var overflowFraction = aggregatedFraction - 1.0;
 			resizeVisibleColumns(columns, -1 * overflowFraction, true);
-			this.setState({ columns, t: Math.floor(Date.now() / 16.666) }); //aim for 60fps and no more
+			this.props.onColumnResize(columns);
+		} else if(this.state.isReordering) {
+			const { columns } = this.state;
+			const visibleColumns = columns.filter(c => c.isVisible);
+			var aggregatedOffset = this.reorderOffset;
+			var targetIndex;
+
+			if(ev.clientX < aggregatedOffset) {
+				targetIndex = 0;
+			} else {
+				for (let i = 0; i < visibleColumns.length; i++) {
+					aggregatedOffset += visibleColumns[i].fraction * this.availableWidth;
+					const testOffest = aggregatedOffset - 0.5 * visibleColumns[i].fraction * this.availableWidth;
+					if(ev.clientX < testOffest) {
+						targetIndex = i;
+						break;
+					}
+				}
+			}
+
+			if(this.state.reorderTargetIndex !== targetIndex) {
+				var realReorderTargetIndex;
+				if(targetIndex === visibleColumns.length) {
+					realReorderTargetIndex = columns.findIndex(c => c.field === visibleColumns[visibleColumns.length - 1].field) + 1
+				} else {
+					realReorderTargetIndex = columns.findIndex(c => c.field === visibleColumns[targetIndex].field);
+				}
+
+				this.setState({ reorderTargetIndex: realReorderTargetIndex })
+			}
 		}
 	}
 
-	handleResizeEnd() {
-		if(this.isResizing) {
-			this.isResizing = false;
+	handleMouseUp() {
+		if(this.state.isResizing) {
+			this.setState({ isResizing: false });
+			const visibleColumns = this.state.columns.filter(c => c.isVisible);
+		} else if(this.state.isReordering) {
+			const columns = [ ...this.state.columns ];
+			const indexFrom = this.reorderingColumn;
+			const indexTo = this.state.reorderTargetIndex;
+
+			if(columns[indexFrom] && columns[indexTo]) {
+				columns.splice(indexTo, 0, columns.splice(indexFrom, 1)[0]);
+				this.props.onColumnReorder(columns);
+			}
+
+			this.setState({
+				isReordering: false,
+				reorderTargetIndex: null,
+			});
+
 		}
 	}
 
 	handleMouseLeave() {
-		this.isResizing = false;
+		this.setState({ isResizing: false });
+		this.setState({ isReordering: false });
 	}
 
-	renderHeaderRow({ className, columns, ...opts }) {
+	handleReorderStart(index) {
+		const rect = this.containerDom.getBoundingClientRect();
+		this.availableWidth = rect.right - rect.left;
+		this.reorderOffset = rect.left;
+		this.reorderingColumn = index;
+		this.setState({ isReordering: true });
+	}
+
+	renderHeaderRow({ className, ...opts }) {
 		className += ' item-list-head';
-		columns.forEach(({ props: { children } }, index) => {
-			if(index === 0 ) { return }
-			children.unshift(
-				<div
-					className="resize-handle"
-					key="resize-handle"
-					onMouseDown={ ev => this.handleResizeStart(index, ev) }
-					onClick={ ev => ev.stopPropagation() }
-				/>
-			);
-		});
-		return defaultHeaderRowRenderer({ className, columns, ...opts });
+		return defaultHeaderRowRenderer({ className, ...opts });
 	}
 
 	renderTitleCell({ cellData, rowData }) {
@@ -302,6 +348,37 @@ class Items extends React.PureComponent {
 		);
 	}
 
+	renderHeaderCell({ dataKey, label, sortBy, sortDirection }) {
+		const isSortIndicatorVisible = sortBy === dataKey;
+		const index = this.state.columns.findIndex(c => c.field === dataKey);
+		return (
+			<React.Fragment>
+				{
+					index === this.state.reorderTargetIndex &&
+						<div className="reorder-target" />
+				}
+				{ index !== 0 &&
+					<div
+						className="resize-handle"
+						key="resize-handle"
+						onMouseDown={ ev => this.handleResizeStart(index, ev) }
+						onClick={ ev => ev.stopPropagation() }
+					/>
+				}
+				<span
+					className="header-label"
+					onMouseDown={ ev => this.handleReorderStart(index, ev) }
+					title={label}
+				>
+					{label}
+				</span>
+				{ isSortIndicatorVisible &&
+					<SortIndicator key="SortIndicator" sortDirection={sortDirection} />
+				}
+			</React.Fragment>
+		);
+	}
+
 	renderColumn({ dataKey, ...opts }) {
 		const key = dataKey;
 		const label = dataKey in this.props.columnNames ?
@@ -311,7 +388,10 @@ class Items extends React.PureComponent {
 		const className = dataKey === 'title' ?
 			'metadata title' : undefined;
 
-		return <Column { ...{ key, dataKey, className, label, cellRenderer, ...opts } } />
+		return <Column
+			headerRenderer={ this.renderHeaderCell.bind(this) }
+			{ ...{ key, dataKey, className, label, cellRenderer, ...opts } }
+		/>
 	}
 
 	render() {
@@ -322,7 +402,10 @@ class Items extends React.PureComponent {
 		return (
 			<div
 				ref={ ref => this.containerDom = ref }
-				className="item-list-wrap"
+				className={cx('item-list-wrap', {
+					resizing: this.state.isResizing,
+					reordering: this.state.isReordering,
+				}) }
 				onKeyDown={ this.handleKeyDown.bind(this) }
 			>
 				<AutoSizer>
