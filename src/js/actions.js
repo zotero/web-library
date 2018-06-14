@@ -109,7 +109,7 @@ const selectLibrary = (type, id) => {
 	};
 };
 
-const preference_change = (name, value) => {
+const preferenceChange = (name, value) => {
 	return {
 		type: PREFERENCE_CHANGE,
 		name,
@@ -693,7 +693,7 @@ module.exports = {
 	fetchItemTypeFields,
 	fetchTopItems,
 	initialize,
-	preference_change,
+	preferenceChange,
 	selectLibrary,
 	sortItems,
 	triggerEditingItem,

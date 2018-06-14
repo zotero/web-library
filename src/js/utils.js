@@ -1,5 +1,7 @@
 'use strict';
 
+const { columnMinWidthFraction } = require('./constants/defaults');
+
 /**
  * Marks collections as selected/open based on current path
  * @param  {Array} collections Flat list of collections
@@ -186,6 +188,26 @@ const sortByKey = (items, key, direction) => {
 
 const noop = () => {};
 
+// @TODO: columns util, move elsewhere?
+const resizeVisibleColumns = (columns, fractionBias, invert = false) => {
+	const visibleColumns = columns.filter(c => c.isVisible);
+	const isLastColumn = cp => invert ? cp === 0 : cp === visibleColumns.length - 1;
+	const adjustColumnuPointer = cp => invert ? cp - 1 : cp + 1;
+
+	var columnPointer = invert ? visibleColumns.length -1 : 0;
+
+	while (fractionBias != 0 && !isLastColumn(columnPointer)) {
+		const newFraction = Math.max(
+			visibleColumns[columnPointer].fraction + fractionBias,
+			columnMinWidthFraction
+		);
+		const adjustedFraction = newFraction - visibleColumns[columnPointer].fraction;
+		visibleColumns[columnPointer].fraction = newFraction;
+		fractionBias -= adjustedFraction;
+		columnPointer = adjustColumnuPointer(columnPointer);
+	}
+}
+
 module.exports = {
 	ck,
 	deduplicateByKey,
@@ -194,6 +216,7 @@ module.exports = {
 	mapRelationsToItemKeys,
 	noop,
 	removeRelationByItemKey,
+	resizeVisibleColumns,
 	reverseMap,
 	sortByKey,
 	splice,

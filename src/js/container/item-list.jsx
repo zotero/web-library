@@ -8,7 +8,7 @@ const { baseMappings } = require('../constants/item');
 const { connect } = require('react-redux');
 const { noteAsTitle } = require('../common/format');
 const ItemList = require('../component/item/list');
-const { fetchItemsInCollection, fetchTopItems, sortItems } = require('../actions');
+const { fetchItemsInCollection, fetchTopItems, sortItems, preferenceChange } = require('../actions');
 const {
 	getCollection,
 	getCollectionItemCount,
@@ -19,7 +19,7 @@ const {
 	isFetchingItems,
 	isTopLevel,
 } = require('../state-utils');
-const { get, sortByKey } = require('../utils');
+const { get, sortByKey, resizeVisibleColumns } = require('../utils');
 
 const processItems = items => {
 	return items.map(item => {
@@ -45,29 +45,6 @@ const processItems = items => {
 };
 
 class ItemListContainer extends React.PureComponent {
-	// componentDidUpdate({ sortBy, sortDirection, collection, isTopLevel }) {
-	// 	var isFetchRequired = false;
-
-	// 	if(sortBy !== this.props.sortBy || sortDirection !== this.props.sortDirection) {
-	// 		console.log('sorting has changed');
-	// 		isFetchRequired = true;
-	// 	}
-
-	// 	if(get(collection, 'key') !== get(this.props.collection, 'key')) {
-	// 		console.log('collection has changed');
-	// 		isFetchRequired = true;
-	// 	}
-
-	// 	if(isTopLevel && !this.props.isTopLevel) {
-	// 		console.log('switched from collection to top-level');
-	// 		isFetchRequired = true;
-	// 	}
-
-	// 	if(isFetchRequired) {
-	// 		this.handleLoadMore({ startIndex: 0, stopIndex: 49 });
-	// 	}
-	// }
-
 	handleItemSelect(itemKey) {
 		if(this.props.isTopLevel) {
 			this.props.history.push(`/item/${itemKey}`);
@@ -82,6 +59,23 @@ class ItemListContainer extends React.PureComponent {
 		} else {
 			this.props.history.push(`/collection/${this.props.collection.key}/items/${keys.join(',')}`);
 		}
+	}
+
+	handleColumnVisibilityChange(field, isVisible) {
+		const { preferences, dispatch } = this.props;
+		const columnIndex = preferences.columns.findIndex(c => c.field === field);
+		const newColumns = [ ...preferences.columns ];
+
+		var fractionBias;
+		if(!newColumns[columnIndex].isVisible && isVisible) {
+			fractionBias = newColumns[columnIndex].fraction * -1;
+		} else if(newColumns[columnIndex].isVisible && !isVisible) {
+			fractionBias = newColumns[columnIndex].fraction;
+		}
+
+		resizeVisibleColumns(newColumns, fractionBias);
+		newColumns[columnIndex].isVisible = isVisible;
+		return dispatch(preferenceChange('columns', newColumns));
 	}
 
 	async handleLoadMore({ startIndex, stopIndex }) {
@@ -123,6 +117,7 @@ class ItemListContainer extends React.PureComponent {
 			onMultipleItemsSelect={ this.handleMultipleItemsSelect.bind(this) }
 			onLoadMore={ this.handleLoadMore.bind(this) }
 			onSort={ this.handleSort.bind(this) }
+			onColumnVisibilityChange={ this.handleColumnVisibilityChange.bind(this) }
 		/>;
 	}
 }

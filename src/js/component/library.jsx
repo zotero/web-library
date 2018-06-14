@@ -31,7 +31,7 @@ class Library extends React.Component {
 
 	render() {
 		let activeViewClass = `view-${this.props.view}-active`;
-		
+
 		return (
 			<div className={ cx('library-container', activeViewClass, {
 					'keyboard': this.props.isKeyboardUser,
@@ -53,27 +53,7 @@ class Library extends React.Component {
 						</header>
 						<section className={ `items ${ this.props.view === 'item-list' ? 'active' : '' }` }>
 							<header className="touch-header hidden-xs-down hidden-md-up">Tablet Header</header>
-							<div className="items-container">
-								<header className="hidden-sm-down">
-									<h3 className="hidden-mouse-md-up">Collection title</h3>
-									<Toolbar className="hidden-touch hidden-sm-down">
-										<div className="toolbar-left">
-											<ToolGroup>
-												<Button>
-													<Icon type={ '16/plus' } width="16" height="16" />
-												</Button>
-												<Button>
-													<Icon type={ '16/trash' } width="16" height="16" />
-												</Button>
-												<Button>
-													<Icon type={ '16/cog' } width="16" height="16" />
-												</Button>
-											</ToolGroup>
-										</div>
-									</Toolbar>
-								</header>
-								<ItemListContainer />
-							</div>
+							<ItemListContainer />
 							<ItemDetailsContainer active={this.props.view === 'item-details'} />
 						</section>
 					</section>

@@ -209,3 +209,10 @@
 		}
 	}
 }
+
+.column-selector {
+	.tick {
+		display: inline-block;
+		width: $space-md;
+	}
+}
