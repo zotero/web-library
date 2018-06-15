@@ -65,13 +65,13 @@
 	.abstract-heading {
 		@include touch-or-bp-down(sm) {
 			margin-top: 9px;
-			border-top: 2px solid $separator-color;
+			border-top: 1px solid $separator-color;
 			padding-top: 11px;
 		}
 
 		@include mouse-and-bp-up(md) {
 			margin-top: 23px - 7px;
-			border-top: 2px solid $separator-color;
+			border-top: 1px solid $separator-color;
 			padding-top: 23px - 4px;
 		}
 	}
