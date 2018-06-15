@@ -21,7 +21,8 @@ class EditableContent extends React.PureComponent {
 
 	render() {
 		if(this.props.inputComponent === TextAreaInput) {
-			return <span dangerouslySetInnerHTML={ { __html: this.content } } />;
+			return <div className="editable-content"
+				dangerouslySetInnerHTML={ { __html: this.content } } />;
 		} else {
 			const className = {
 				'editable-content': true,

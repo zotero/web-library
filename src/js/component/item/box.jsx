@@ -117,7 +117,7 @@ class ItemBox extends React.PureComponent {
 				'abstract': field.key === 'abstractNote',
 				'extra': field.key === 'extra',
 			};
-			const display = field.key === 'itemType' ? 
+			const display = field.key === 'itemType' ?
 				field.options.find(o => o.value === field.value) :
 				null;
 			const props = {
@@ -150,13 +150,13 @@ class ItemBox extends React.PureComponent {
 				props['onBlur'] = () => false; //commit on blur
 			}
 			if(props.inputComponent === TextAreaInput) {
-				props['rows'] = 5;
+				props['rows'] = 3;
 			}
 
 			const FormField = this.props.isForm ? props.inputComponent : Editable;
 
 			return (
-				<Field 
+				<Field
 					className={ cx(className) }
 					isActive={ isActive }
 					key={ field.key }
@@ -174,7 +174,7 @@ class ItemBox extends React.PureComponent {
 		if(this.props.isLoading) {
 			return <Spinner />;
 		}
-		
+
 		return (
 			<ol className={cx('metadata-list', 'horizontal', { editing: this.props.isEditing }) }>
 				{ this.props.fields.map(this.renderField.bind(this)) }

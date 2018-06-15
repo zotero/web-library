@@ -47,6 +47,12 @@
 				align-items: center;
 				padding-left: $metadata-list-gutter / 2;
 			}
+
+			.extra {
+				.value {
+					align-items: flex-start;
+				}
+			}
 		}
 
 		@include bp-up($metadata-list-bp) {
@@ -123,13 +129,6 @@
 	.editable {
 		line-height: normal;
 
-		&:hover {
-			.editable-content {
-				background-color: $editable-hover-bg;
-				border-color: $editable-hover-bg;
-			}
-		}
-
 		.editable-content {
 			padding: 2px;
 			border: 1px solid transparent;
@@ -137,6 +136,25 @@
 			margin: -3px;
 			border-radius: 3px;
 			cursor: pointer;
+		}
+
+		&:hover {
+			.editable-content {
+				background-color: $editable-hover-bg;
+				border-color: $editable-hover-bg;
+			}
+		}
+
+		&.textarea {
+			.editable-content {
+				margin-top: 1px; // Align vertically with label
+				padding-top: 0;
+				padding-bottom: 0;
+			}
+
+			.editable-control {
+				margin-top: -1px; // Align vertically with label
+			}
 		}
 	}
 
@@ -160,5 +178,11 @@
 	label {
 		@include css-truncate;
 		line-height: normal; // Flex alignment is more stable
+	}
+
+	.extra {
+		label {
+			line-height: $line-height-base;
+		}
 	}
 }
