@@ -11,7 +11,7 @@
 	}
 
 	.key {
-		color: $dt-color;
+		color: $key-color;
 		margin-top: $space-xs;
 	}
 
@@ -125,8 +125,8 @@
 
 		&:hover {
 			.editable-content {
-				background-color: #ebebeb;
-				border-color: #ebebeb;
+				background-color: $editable-hover-bg;
+				border-color: $editable-hover-bg;
 			}
 		}
 

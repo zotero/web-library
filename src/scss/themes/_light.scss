@@ -121,8 +121,10 @@ $tab-active-bg:         $shade-1;
 $tab-inactive-color:    $shade-5; // #999?
 $tab-pane-border-color: $shade-0;
 
-// Description list
-$dt-color: $shade-5;
+// Metadata list
+$key-color: $shade-5;
+$editable-hover-bg: darken($panel-bg, 4%);
+
 
 // Button
 $btn-primary-color:           $shade-0;
