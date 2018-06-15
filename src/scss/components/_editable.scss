@@ -46,6 +46,8 @@
 			line-height: $line-height-base;
 			padding-top: 0;
 			padding-bottom: 0;
+			resize: none;
+			min-height: round(3 * $font-size-base * $line-height-base) + 2 * $editable-border-width;
 		}
 	}
 }

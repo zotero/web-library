@@ -149,9 +149,6 @@ class ItemBox extends React.PureComponent {
 			if(props.inputComponent !== SelectInput) {
 				props['onBlur'] = () => false; //commit on blur
 			}
-			if(props.inputComponent === TextAreaInput) {
-				props['rows'] = 3;
-			}
 
 			const FormField = this.props.isForm ? props.inputComponent : Editable;
 
