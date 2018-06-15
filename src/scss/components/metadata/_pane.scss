@@ -32,7 +32,7 @@
 		padding: 0 $default-padding-horizontal;
 	}
 
-	.metadata-list.horizontal {
+	.metadata-list {
 		margin-top: 23px - 12px;
 
 		@include bp-only(md) {

@@ -13,116 +13,123 @@
 	.key {
 		color: $key-color;
 		margin-top: $space-xs;
+
+		a {
+			color: inherit;
+			text-decoration: none;
+
+			&[href]:hover {
+				color: $link-color;
+			}
+		}
 	}
 
-	&.horizontal {
-		@include bp-only(sm) {
+	@include bp-only(sm) {
+		.key,
+		.value {
+			min-height: $metadata-list-line-height-sm;
+		}
+	}
+
+	@include bp-up(sm) {
+		.key {
+			padding-right: $metadata-list-gutter-mobile / 2;
+		}
+
+		.value {
+			padding-left:
+				$metadata-list-gutter-mobile / 2
+				- $editable-border-width
+				- $editable-padding-horizontal;
+
+		}
+	}
+
+	@include mouse-and-bp-up(md) {
+		.key {
+			padding-right: $metadata-list-gutter / 2;
+		}
+
+		.value {
+			display: flex;
+			align-items: center;
+			padding-left: $metadata-list-gutter / 2;
+		}
+
+		.extra {
+			.value {
+				align-items: flex-start;
+			}
+		}
+	}
+
+	@include bp-up($metadata-list-bp) {
+		@include horizontal;
+	}
+
+	// Edit mode
+	&.editing {
+		@include touch-or-bp-down(sm) {
+			@include horizontal;
+
+			.metadata {
+				position: relative;
+
+				&::before {
+					content: "";
+					position: absolute;
+					left: $space-md;
+					right: $space-md;
+					bottom: calc(100% - 1px);
+					height: 1px;
+					background: $separator-color;
+					z-index: 1;
+
+				}
+
+				// Editable focus state
+				&.editing {
+					background: $editable-bg;
+
+					&::before,
+					& + .metadata::before {
+						left: 0;
+						right: 0;
+						height: $editable-border-width;
+						background: rgba($focus-color, 0.6);
+					}
+
+					& + .metadata {
+						&::before {
+							bottom: auto;
+							top: 0;
+						}
+					}
+				}
+			}
+
 			.key,
 			.value {
-				min-height: $metadata-list-line-height-sm;
-			}
-		}
-
-		@include bp-up(sm) {
-			.key {
-				padding-right: $metadata-list-gutter-mobile / 2;
+				min-height: $line-height-large-touch + 1px;
 			}
 
 			.value {
-				padding-left:
-					$metadata-list-gutter-mobile / 2
-					- $editable-border-width
-					- $editable-padding-horizontal;
-
-			}
-		}
-
-		@include mouse-and-bp-up(md) {
-			.key {
-				padding-right: $metadata-list-gutter / 2;
+				padding-left: 12px;
 			}
 
-			.value {
-				display: flex;
-				align-items: center;
-				padding-left: $metadata-list-gutter / 2;
-			}
+			//.editable {
+			//	padding-left: 0;
+			//}
 
-			.extra {
-				.value {
-					align-items: flex-start;
-				}
-			}
-		}
-
-		@include bp-up($metadata-list-bp) {
-			@include horizontal;
-		}
-
-		// Edit mode
-		&.editing {
-			@include touch-or-bp-down(sm) {
-				@include horizontal;
-
-				.metadata {
-					position: relative;
-
-					&::before {
-						content: "";
-						position: absolute;
-						left: $space-md;
-						right: $space-md;
-						bottom: calc(100% - 1px);
-						height: 1px;
-						background: $separator-color;
-						z-index: 1;
-
-					}
-
-					// Editable focus state
-					&.editing {
-						background: $editable-bg;
-
-						&::before,
-						& + .metadata::before {
-							left: 0;
-							right: 0;
-							height: $editable-border-width;
-							background: rgba($focus-color, 0.6);
-						}
-
-						& + .metadata {
-							&::before {
-								bottom: auto;
-								top: 0;
-							}
-						}
-					}
-				}
-
-				.key,
-				.value {
-					min-height: $line-height-large-touch + 1px;
-				}
-
-				.value {
-					padding-left: 12px;
-				}
-
-				//.editable {
-				//	padding-left: 0;
-				//}
-
-				//.editable-control {
-				//	background: transparent;
-				//	padding: 0;
-				//	border: 0;
-				//
-				//	.select & {
-				//		background: $editable-bg;
-				//	}
-				//}
-			}
+			//.editable-control {
+			//	background: transparent;
+			//	padding: 0;
+			//	border: 0;
+			//
+			//	.select & {
+			//		background: $editable-bg;
+			//	}
+			//}
 		}
 	}
 
@@ -168,11 +175,6 @@
 		@include touch-or-bp-down(md) {
 			display: none;
 		}
-	}
-
-	a {
-		color: inherit;
-		text-decoration: none;
 	}
 
 	label {

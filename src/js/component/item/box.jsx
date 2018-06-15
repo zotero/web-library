@@ -176,7 +176,7 @@ class ItemBox extends React.PureComponent {
 		}
 
 		return (
-			<ol className={cx('metadata-list', 'horizontal', { editing: this.props.isEditing }) }>
+			<ol className={cx('metadata-list', { editing: this.props.isEditing }) }>
 				{ this.props.fields.map(this.renderField.bind(this)) }
 			</ol>
 		);
