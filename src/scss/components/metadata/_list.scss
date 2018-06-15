@@ -124,13 +124,13 @@
 		line-height: normal;
 
 		&:hover {
-			.truncate {
+			.editable-content {
 				background-color: #ebebeb;
 				border-color: #ebebeb;
 			}
 		}
 
-		.truncate {
+		.editable-content {
 			padding: 2px;
 			border: 1px solid transparent;
 			width: calc(100% + 6px);
