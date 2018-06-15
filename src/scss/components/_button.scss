@@ -7,6 +7,16 @@
 	border-radius: $btn-border-radius;
 	padding: $btn-padding;
 	cursor: pointer;
+	border: $border-width solid transparent;
+	transition:
+		color $btn-transition,
+		background-color $btn-transition,
+		border-color $btn-transition,
+		box-shadow $btn-transition;
+
+	&:focus {
+		outline: none;
+	}
 
 	&[disabled] {
 		cursor: default;
@@ -21,7 +31,7 @@
 	background: $btn-primary-bg;
 
 	&:focus {
-		background: darken($btn-primary-bg, 5%);
+		background: darken($btn-primary-bg, 5%); // todo
 		outline: none;
 	}
 
@@ -58,6 +68,13 @@
 	&:active {
 		.icon {
 			color: $icon-active-color;
+		}
+	}
+
+	&:focus {
+		.keyboard & {
+			border-color: $btn-secondary-color;
+			box-shadow: inset 0 0 0 $input-btn-focus-width $btn-secondary-color;
 		}
 	}
 

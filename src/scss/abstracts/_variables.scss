@@ -45,7 +45,7 @@ $headings-font-weight:    400;
 $headings-line-height:    1.3;
 
 
-// Common dimensions
+// Components
 // --------------------------------------------------
 
 $padding-horizontal-sm: $space-sm;
@@ -54,7 +54,9 @@ $padding-horizontal-md: $space-md;
 $default-padding-horizontal:       $space-sm;
 $default-padding-horizontal-touch: $space-md;
 
-$border-radius-base: 3px;
+$border-radius: 3px;
+
+$border-width: 1px;
 
 
 // Transitions
@@ -186,11 +188,18 @@ $metadata-list-offset:             33%;
 $metadata-list-bp:                 sm;
 
 
+// Buttons & forms
+// --------------------------------------------------
+
+$input-btn-focus-width: 2px;
+
+
 // Buttons
 // --------------------------------------------------
 
-$btn-border-radius: $border-radius-base;
+$btn-border-radius: $border-radius;
 $btn-padding: 2px $space-md;
+$btn-transition: 0.15s ease;
 
 
 // Editable
@@ -200,3 +209,8 @@ $editable-border-width:       3px;
 $editable-padding-vertical:   2px;
 $editable-padding-horizontal: 2px;
 $editable-border-radius:      3px;
+
+
+// Outline
+$outline-width:  $input-btn-focus-width + $border-width;
+$outline-offset: 2px;

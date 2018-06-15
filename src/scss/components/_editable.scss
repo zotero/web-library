@@ -26,6 +26,10 @@
 		border-radius: $editable-border-radius;
 		background-clip: padding-box;
 
+		&:focus {
+			outline: none;
+		}
+
 		.busy > & {
 			padding-right: $editable-padding-horizontal + $space-md + 1px;
 		}

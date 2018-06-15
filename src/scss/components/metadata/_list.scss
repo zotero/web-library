@@ -180,6 +180,12 @@
 	label {
 		@include css-truncate;
 		line-height: normal; // Flex alignment is more stable
+
+		&[for="url"] {
+			overflow: inherit;
+			text-overflow: inherit;
+			white-space: inherit;
+		}
 	}
 
 	.extra {

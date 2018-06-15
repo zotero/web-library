@@ -43,14 +43,14 @@ $headings-color: $shade-7;
 $link-color:       $blue;
 $link-hover-color: $blue;
 
-$focus-color: $asphalt;
+$focus-color: $secondary;
 
 
 // Typography
 // --------------------------------------------------
 
 $text-selection-color: inherit;
-$text-selection-bg: $asphalt-light;
+$text-selection-bg: rgba($secondary, 0.2);
 
 // Separator
 $separator-color: $shade-3;
@@ -156,7 +156,7 @@ $btn-options-focus-color: rgba($btn-options-color, 0.5);
 // Editable
 $editable-color:        $text-color;
 $editable-bg:           $shade-0;
-$editable-border-color: rgba($shade-9, 0.1);
+$editable-border-color: $secondary;
 
 
 //

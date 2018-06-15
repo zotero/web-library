@@ -3,6 +3,7 @@
 // --------------------------------------------------
 
 .keyboard :focus {
-	box-shadow: inset 0 0 0 2px $focus-color;
+	outline: $outline-width solid $focus-color;
+	outline-offset: $outline-offset;
 	position: relative;
 }
