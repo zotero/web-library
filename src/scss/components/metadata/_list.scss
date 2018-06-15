@@ -188,6 +188,59 @@
 		}
 	}
 
+	.creators-entry {
+		.value {
+			> *:not(:first-child) {
+				margin-left: 2px;
+			}
+
+			> *:not(:last-child) {
+				margin-right: 2px;
+			}
+
+			.editable {
+				min-width: $space-lg;
+
+				&:first-child {
+					flex: 0 1 auto;
+
+					&.editing {
+						flex: 1 1 auto;
+					}
+				}
+
+				&:last-of-type {
+					margin-right: auto;
+				}
+			}
+
+			.btn {
+				display: none;
+			}
+		}
+
+		&.creators-twoslot {
+			.editable:first-child {
+				display: flex;
+
+				.input-group {
+					flex: 1 1 auto;
+				}
+
+				&::after {
+					content: ",";
+					flex: 0 0 auto;
+				}
+
+				&.editing {
+					&::after {
+						margin-left: 5px;
+					}
+				}
+			}
+		}
+	}
+
 	.extra {
 		label {
 			line-height: $line-height-base;
