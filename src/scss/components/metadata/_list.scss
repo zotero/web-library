@@ -215,7 +215,35 @@
 			}
 
 			.btn {
-				display: none;
+				padding: 0;
+				border: none;
+				width: $space-md;
+				height: $space-md;
+				flex: 0 0 auto;
+
+				&:focus {
+					.keyboard & {
+						box-shadow: none;
+						outline: $outline-width solid $focus-color;
+					}
+				}
+
+				.icon {
+					display: none;
+				}
+			}
+
+			.btn:nth-last-child(3) {
+				width: 17px;
+				margin-left: $space-min + $input-btn-focus-width + $input-border-width;
+			}
+
+			.btn:nth-last-child(2) {
+				background: image-url("icons/minus-circle-secondary.svg") no-repeat center center;
+			}
+
+			.btn:last-child {
+				background: image-url("icons/plus-circle-secondary.svg") no-repeat center center;
 			}
 		}
 
@@ -231,6 +259,16 @@
 					content: ",";
 					flex: 0 0 auto;
 				}
+			}
+
+			.btn:nth-last-child(3) {
+				background: image-url("icons/input-single.svg") no-repeat center center;
+			}
+		}
+
+		&.creators-oneslot {
+			.btn:nth-last-child(3) {
+				background: image-url("icons/input-dual.svg") no-repeat center center;
 			}
 		}
 	}
