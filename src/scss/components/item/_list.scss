@@ -77,7 +77,7 @@
 		padding: 0 $space-xs;
 		color: $item-list-head-color;
 		position: relative;
-		@include css-truncate;
+		@include text-truncate;
 
 		.resizing &,
 		.reordering & {
@@ -193,7 +193,7 @@
 			height: $item-list-row-height-md;
 			vertical-align: middle;
 			padding: 0 $space-xs 0 ($space-xs + 1px);
-			@include css-truncate;
+			@include text-truncate;
 		}
 	}
 

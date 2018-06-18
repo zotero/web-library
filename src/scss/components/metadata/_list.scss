@@ -178,7 +178,7 @@
 	}
 
 	label {
-		@include css-truncate;
+		@include text-truncate;
 		line-height: normal; // Flex alignment is more stable
 
 		&[for="url"] {

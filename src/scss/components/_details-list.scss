@@ -50,7 +50,7 @@
 			flex: 1 1 auto;
 			color: $collection-tree-link-color;
 			position: relative;
-			@include css-truncate;
+			@include text-truncate;
 		}
 
 		.icon {

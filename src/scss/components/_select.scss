@@ -1,0 +1,147 @@
+//
+// React select
+// --------------------------------------------------
+
+.Select {
+	position: relative;
+	flex: 1 1 0;
+	min-width: 0; // Prevent overflow
+
+	.Select-control {
+		display: flex;
+		align-items: center;
+		border-radius: $input-border-radius;
+		transition: border $input-transition, box-shadow $input-transition;
+		cursor: default;
+		border: $input-border-width solid $input-border-color;
+		position: relative;
+	}
+
+	&.is-focused {
+		.Select-control {
+			border: $input-border-width solid $input-focus-color;
+			box-shadow: 0 0 0 2px $secondary;
+			outline: none;
+		}
+	}
+
+	&.is-searchable.is-open {
+		.Select-control {
+			cursor: text;
+		}
+	}
+
+	.Select-multi-value-wrapper {
+		flex: 1 1 0;
+		display: flex;
+		align-items: center;
+		min-width: 0; // Prevent overflow
+	}
+
+	&.Select--single {
+		.Select-value-label {
+			@include text-truncate;
+		}
+
+		&.has-value {
+			.Select-value {
+				padding-right:
+					$input-btn-padding-x
+					+ $space-md;
+
+				.busy & {
+					padding-right:
+						$input-btn-padding-x
+						+ $space-md
+						+ $space-md
+						+ $space-min
+						+ 1px;
+				}
+			}
+		}
+	}
+
+	.Select-value {
+		display: flex;
+		align-items: center;
+		position: absolute;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		left: 0;
+		padding: 0 $input-btn-padding-x;
+	}
+
+	.Select-input {
+		outline: none;
+		max-width: 100%;
+		overflow: hidden;
+
+		&:empty {
+			&::before {
+				content: "\00a0";
+			}
+		}
+
+		> input {
+			border: none;
+			background: none;
+			padding: 0;
+			font-family: inherit;
+			font-size: inherit;
+			font-weight: inherit;
+			outline: none;
+		}
+	}
+
+	.Select-arrow-zone {
+		flex: 0 0 auto;
+	}
+
+	.Select-arrow {
+		display: block;
+		width: $space-md;
+		height: $space-md;
+		background: image-url("chevron-7.svg") no-repeat 0 0;
+	}
+
+	.Select-menu-outer {
+		position: absolute;
+		left: 0; // todo (?)
+		top: calc(100% + #{$space-min + $input-border-width});
+		right: 0; // todo (?)
+		background-color: $menu-bg;
+		border-radius: $menu-border-radius;
+		z-index: $z-index-menu;
+		padding: $space-min 0;
+		box-shadow: $menu-box-shadow;
+		background-clip: padding-box;
+	}
+
+	.Select-menu {
+		max-height: 10 * $line-height-large;
+		overflow-y: auto;
+	}
+
+	.Select-option,
+	.Select-noresults {
+		padding: 0 $input-btn-padding-x;
+		line-height: $line-height-large;
+	}
+
+	.Select-option {
+		cursor: pointer;
+
+		&.is-focused {
+			background-color: $menu-item-hover-bg;
+		}
+
+		&.is-selected {
+			background-color: $menu-item-selected-bg;
+		}
+	}
+
+	.Select-noresults {
+		color: $menu-no-results-color;
+	}
+}

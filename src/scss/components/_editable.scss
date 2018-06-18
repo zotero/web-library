@@ -37,10 +37,11 @@
 
 	&:not(.textarea) {
 		.editable-content {
-			@include css-truncate;
+			@include text-truncate;
 		}
 	}
 
+	// Textarea
 	&.textarea {
 		.editable-content {
 			line-height: $line-height-base;
@@ -52,6 +53,36 @@
 			padding-bottom: 0;
 			resize: none;
 			min-height: round(3 * $font-size-base * $line-height-base) + 2 * $editable-border-width;
+		}
+	}
+
+	// Select
+	&.select {
+		.Select-control {
+			border: none;
+		}
+
+		.Select-value {
+			padding: 0;
+		}
+
+		.is-focused {
+			.Select-control {
+				border: none;
+				box-shadow: none;
+			}
+		}
+
+		.Select--single {
+			&.has-value {
+				.Select-value {
+					padding-right: $space-md;
+				}
+			}
+		}
+
+		.Select-arrow {
+			margin-right: 1px; // Tweak optical arrow position
 		}
 	}
 }

@@ -67,7 +67,6 @@ $border-width: 1px;
 $mobile-navbar-nav-transition: 0.6s cubic-bezier(0.23, 1, 0.32, 1);
 $nav-transition: 0.6s cubic-bezier(0.23, 1, 0.32, 1);
 $twisty-transition: 0.1s ease;
-$btn-transition: 0.4s ease;
 
 
 // Grid breakpoints
@@ -193,12 +192,14 @@ $metadata-list-bp:                 sm;
 // Buttons & forms
 // --------------------------------------------------
 
-$input-btn-padding-x: $space-sm;
+$input-btn-padding-x: $space-xs;
 $input-btn-padding-y: 7px;
 $input-btn-padding-x-lg: $space-md;
 $input-btn-padding-y-lg: 11px;
 $input-btn-padding-x-sm: $space-sm;
 $input-btn-padding-y-sm: 3px;
+
+$input-border-width: $border-width;
 
 $input-btn-focus-width: 2px;
 
@@ -211,6 +212,13 @@ $input-btn-border-radius: $border-radius-sm;
 $btn-border-radius: $border-radius;
 $btn-padding: 2px $space-md;
 $btn-transition: 0.15s ease;
+
+// Forms
+// --------------------------------------------------
+
+$input-border-radius: $input-btn-border-radius;
+
+$input-transition: 0.15s ease;
 
 
 // Editable
