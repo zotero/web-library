@@ -96,14 +96,14 @@ class CreatorField extends React.PureComponent {
 	renderField(name, label) {
 		const FormField = this.props.isForm ? Input : Editable;
 		const { creator } = this.props;
-		const extraProps = { 
+		const extraProps = {
 			[this.props.isForm ? 'ref' : 'inputRef']: component => this.fieldComponents[name] = component
 		};
 
 		if(this.props.isForm) {
 			extraProps['tabIndex'] = 0;
 		}
-		
+
 		return (
 			<FormField
 				autoFocus={ !this.props.isForm }
@@ -115,7 +115,7 @@ class CreatorField extends React.PureComponent {
 				selectOnFocus={ !this.props.isForm }
 				value={ creator[name] }
 				aria-label={ label }
-				className="form-control-sm"
+				className={ this.props.isForm ? 'form-control form-control-sm' : '' }
 				onEditableClick={ this.handleFieldClick.bind(this, name) }
 				onEditableFocus={ this.handleFieldFocus.bind(this, name) }
 				{ ...extraProps }
@@ -150,7 +150,7 @@ class CreatorField extends React.PureComponent {
 			<Field key={ index } className={ cx(className) }>
 				<FormField
 					autoFocus={ !this.props.isForm }
-					className="form-control-sm"
+					className={ this.props.isForm ? 'form-control form-control-sm' : '' }
 					inputComponent={ SelectInput }
 					isActive={ this.state.active === 'creatorType' }
 					onCancel={ this.handleCancel.bind(this) }

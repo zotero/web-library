@@ -131,7 +131,7 @@ class ItemBox extends React.PureComponent {
 				options: field.options || null,
 				selectOnFocus: !this.props.isForm,
 				value: field.value || '',
-				className: 'form-control-sm',
+				className: this.props.isForm ? 'form-control form-control-sm' : '',
 				onEditableClick: this.handleFieldClick.bind(this, field.key),
 				onEditableFocus: this.handleFieldFocus.bind(this, field.key),
 				id: field.key,
