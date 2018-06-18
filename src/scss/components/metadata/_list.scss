@@ -248,16 +248,18 @@
 		}
 
 		&.creators-twoslot {
-			.editable:first-child {
-				display: flex;
+			.value {
+				.editable:first-child {
+					display: flex;
 
-				.input-group {
-					flex: 1 1 auto;
-				}
+					.input-group {
+						flex: 1 1 auto;
+					}
 
-				&::after {
-					content: ",";
-					flex: 0 0 auto;
+					&::after {
+						content: ",";
+						flex: 0 0 auto;
+					}
 				}
 			}
 
