@@ -231,12 +231,6 @@
 					content: ",";
 					flex: 0 0 auto;
 				}
-
-				&.editing {
-					&::after {
-						margin-left: 5px;
-					}
-				}
 			}
 		}
 	}
