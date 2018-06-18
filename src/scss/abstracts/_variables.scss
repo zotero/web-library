@@ -54,7 +54,9 @@ $padding-horizontal-md: $space-md;
 $default-padding-horizontal:       $space-sm;
 $default-padding-horizontal-touch: $space-md;
 
-$border-radius: 3px;
+$border-radius:    4px;
+$border-radius-sm: 3px;
+$border-radius-lg: 6px;
 
 $border-width: 1px;
 
@@ -191,7 +193,16 @@ $metadata-list-bp:                 sm;
 // Buttons & forms
 // --------------------------------------------------
 
+$input-btn-padding-x: $space-sm;
+$input-btn-padding-y: 7px;
+$input-btn-padding-x-lg: $space-md;
+$input-btn-padding-y-lg: 11px;
+$input-btn-padding-x-sm: $space-sm;
+$input-btn-padding-y-sm: 3px;
+
 $input-btn-focus-width: 2px;
+
+$input-btn-border-radius: $border-radius-sm;
 
 
 // Buttons
@@ -212,5 +223,11 @@ $editable-border-radius:      3px;
 
 
 // Outline
+// --------------------------------------------------
 $outline-width:  $input-btn-focus-width + $border-width;
 $outline-offset: 2px;
+
+
+// Dropdown
+// --------------------------------------------------
+$menu-border-radius: $border-radius-sm;
