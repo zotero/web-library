@@ -81,7 +81,7 @@
 					left: $space-md;
 					right: $space-md;
 					bottom: calc(100% - 1px);
-					height: 1px;
+					height: $separator-width;
 					background: $separator-color;
 					z-index: 1;
 
