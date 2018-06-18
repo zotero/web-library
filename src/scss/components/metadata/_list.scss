@@ -133,34 +133,36 @@
 		}
 	}
 
-	.editable {
-		line-height: normal;
+	@include mouse-and-bp-up(md) {
+		.editable {
+			line-height: normal;
 
-		.editable-content {
-			padding: 2px;
-			border: 1px solid transparent;
-			width: calc(100% + 6px);
-			margin: -3px;
-			border-radius: 3px;
-			cursor: pointer;
-		}
-
-		&:hover {
 			.editable-content {
-				background-color: $editable-hover-bg;
-				border-color: $editable-hover-bg;
-			}
-		}
-
-		&.textarea {
-			.editable-content {
-				margin-top: 1px; // Align vertically with label
-				padding-top: 0;
-				padding-bottom: 0;
+				padding: 2px;
+				border: 1px solid transparent;
+				width: calc(100% + 6px);
+				margin: -3px;
+				border-radius: 3px;
+				cursor: pointer;
 			}
 
-			.editable-control {
-				margin-top: -1px; // Align vertically with label
+			&:hover {
+				.editable-content {
+					background-color: $editable-hover-bg;
+					border-color: $editable-hover-bg;
+				}
+			}
+
+			&.textarea {
+				.editable-content {
+					margin-top: 1px; // Align vertically with label
+					padding-top: 0;
+					padding-bottom: 0;
+				}
+
+				.editable-control {
+					margin-top: -1px; // Align vertically with label
+				}
 			}
 		}
 	}
@@ -188,6 +190,7 @@
 		}
 	}
 
+	// Creators field
 	.creators-entry {
 		.value {
 			> *:not(:first-child) {
@@ -220,6 +223,11 @@
 				width: $space-md;
 				height: $space-md;
 				flex: 0 0 auto;
+				display: none;
+
+				@include mouse-and-bp-up(md) {
+					display: block;
+				}
 
 				&:focus {
 					.keyboard & {
