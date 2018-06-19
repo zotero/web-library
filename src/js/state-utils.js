@@ -11,6 +11,11 @@ const isTopLevel = state => {
 	return !('collection' in state.router.params);
 };
 
+const isEditing = (itemKey, state) => {
+	const libraryKey = getLibraryKey(state);
+	return state.editing === ck(itemKey, libraryKey);
+};
+
 const getLibraryItemCount = state => {
 	const libraryKey = getLibraryKey(state);
 	return libraryKey && libraryKey in state.itemCountByLibrary ? state.itemCountByLibrary[libraryKey] : null;
@@ -229,6 +234,7 @@ module.exports = {
 	getRelatedItems,
 	getTopCollections,
 	isCollectionSelected,
+	isEditing,
 	isFetchingItems,
 	isItemFieldBeingUpdated,
 	isTopLevel,

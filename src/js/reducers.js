@@ -400,6 +400,17 @@ const deleting = (state = {
 	}
 };
 
+const editing = (state = null, action) => {
+	switch(action.type) {
+		case TRIGGER_EDITING_ITEM:
+			return action.isEditing ?
+				ck(action.itemKey, action.libraryKey):
+				null;
+		default:
+			return state;
+	}
+};
+
 const items = (state = {}, action) => {
 	var items;
 	switch(action.type) {
@@ -590,7 +601,9 @@ const preferences = (state = { ...defaults.preferences }, action) => {
 	}
 }
 
-const viewport = (state = {}, action) => {
+const viewport = (state = {
+	width: 0, height: 0, xs: false, sm: false, md: false, lg: false,
+}, action) => {
 	switch(action.type) {
 		case TRIGGER_RESIZE_VIEWPORT:
 			return {
@@ -625,6 +638,7 @@ module.exports = {
 	collectionsByLibrary,
 	config,
 	deleting,
+	editing,
 	fetching,
 	itemCountByCollection,
 	itemCountByLibrary,

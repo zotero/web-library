@@ -427,13 +427,17 @@ const fetchTopItems = ({ start = 0, limit = 50, sort = 'dateModified', direction
 	};
 };
 
-const triggerEditingItem = (itemKey, libraryKey, editing) => {
-	return {
-		type: TRIGGER_EDITING_ITEM,
-		itemKey,
-		libraryKey,
-		editing
-	};
+const triggerEditingItem = (itemKey, isEditing) => {
+	return async (dispatch, getState) => {
+		let libraryKey = getLibraryKey(getState());
+
+		return dispatch({
+			type: TRIGGER_EDITING_ITEM,
+			itemKey,
+			libraryKey,
+			isEditing
+		});
+	}
 };
 
 const triggerResizeViewport = (width, height) => {

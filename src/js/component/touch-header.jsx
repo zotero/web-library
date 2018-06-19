@@ -5,14 +5,9 @@ const PropTypes = require('prop-types');
 const Button = require('./ui/button');
 const TouchNavigation = require('./touch-navigation');
 
-class TouchHeader extends React.Component {
-	collectionSelectedHandler(key, ev) {
-		ev && ev.preventDefault();
-		this.props.onCollectionSelected(key, ev);
-	}
-
+class TouchHeader extends React.PureComponent {
 	render() {
-		if(this.props.editing) {
+		if(this.props.isEditing) {
 			return (
 				<header className="touch-header hidden-sm-up">
 					<Button
@@ -50,7 +45,7 @@ TouchHeader.propTypes = {
 	onCollectionSelected: PropTypes.func,
 	onEditingToggled: PropTypes.func,
 	path: PropTypes.array,
-	editing: PropTypes.bool,
+	isEditing: PropTypes.bool,
 	view: PropTypes.string
 };
 

@@ -11,7 +11,8 @@ const { get, reverseMap } = require('../utils');
 const {
 	getItem,
 	getItemFieldValue,
-	isItemFieldBeingUpdated
+	isEditing,
+	isItemFieldBeingUpdated,
 } = require('../state-utils');
 
 class ItemBoxContainer extends React.PureComponent {
@@ -120,8 +121,10 @@ const mapStateToProps = state => {
 		...state.meta.itemTypeFields[item.itemType].filter(itf => itf.field !== titleField)
 	].filter(e => e); //filter out undefined
 
-	const isSmallScreen = 'lg' in state.viewport && !state.viewport.lg;
-	const isEditingEnabled = !isSmallScreen || state.items.editing === item.key;
+	const isEditingEnabled = !state.viewport.xs || item && isEditing(item.key, state);
+	const isForm = state.viewport.xs && item && isEditing(item.key, state);
+
+	console.log('isEditingEnabled', isEditingEnabled, 'isForm', isForm);
 
 	//@TODO: Refactor
 	return {
@@ -135,10 +138,8 @@ const mapStateToProps = state => {
 		})).filter(f => !hideFields.includes(f.key)),
 		item: item || undefined,
 		creatorTypes: itemTypeCreatorTypes,
-
-		//@TODO: temporary, fix this together with selectLibrary events in actions
-		libraryKey: state.library.libraryKey,
-		isEditing: item && state.items.editing === item.key
+		isEditing: isEditingEnabled,
+		isForm,
 	};
 };
 

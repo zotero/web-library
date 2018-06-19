@@ -40,6 +40,10 @@ class ItemBox extends React.PureComponent {
 	}
 
 	handleFieldClick(key, event) {
+		const field = this.props.fields.find(f => f.key === key);
+		if(!this.props.isForm && field.readonly) {
+			return;
+		}
 		this.setState({ activeEntry: key }, () => {
 			if(this.fieldComponents[key] instanceof SelectInput) {
 				//@NOTE: hacky! https://github.com/JedWatson/react-select/issues/2106
@@ -50,6 +54,10 @@ class ItemBox extends React.PureComponent {
 	}
 
 	handleFieldFocus(key) {
+		const field = this.props.fields.find(f => f.key === key);
+		if(!this.props.isForm && field.readonly) {
+			return;
+		}
 		this.setState({ activeEntry: key });
 	}
 
