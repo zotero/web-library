@@ -35,7 +35,7 @@
 		min-width: 0; // Fix truncation
 
 		.touch & {
-			flex: 0 0 $touch-item-details-width-lg;
+			flex: 0 0 $item-details-width-lg-touch;
 		}
 	}
 

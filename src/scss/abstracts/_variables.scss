@@ -129,7 +129,7 @@ $navbar-brand-height-sm: 23px;
 $sidebar-width-sm:       320px;
 $sidebar-width-md:       25%;
 $sidebar-width-lg:       280px;
-$touch-sidebar-width-lg: 25%;
+$sidebar-width-lg-touch: 25%;
 
 
 // Collection tree
@@ -148,8 +148,8 @@ $collection-tree-max-levels:       10;
 $item-list-row-height-sm: 62px;
 $item-list-row-height-md: $line-height-large;
 $item-list-head-height:   $space-lg; // 26px (content-box)
-$item-touch-padding-y:    11px;
-$item-touch-padding-x:    $padding-x-md;
+$item-padding-y-touch:    11px;
+$item-padding-x-touch:    $padding-x-md;
 
 
 // Toolbar
@@ -167,9 +167,9 @@ $panel-header-height: $line-height-large + $space-min;
 // Item details
 // --------------------------------------------------
 
-$item-details-width-lg: 360px;
-$touch-item-details-width-lg: 33%;
-$info-view-font-size: 20px;
+$item-details-width-lg:       360px;
+$item-details-width-lg-touch: 33%;
+$info-view-font-size:         20px;
 
 
 // Tabs
