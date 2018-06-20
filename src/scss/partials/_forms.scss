@@ -3,6 +3,7 @@
 // --------------------------------------------------
 
 .input-group {
+	flex: 1 1 auto;
 	display: flex;
 	position: relative;
 
@@ -17,5 +18,21 @@
 			top: 0;
 			right: 0;
 		}
+	}
+}
+
+.form-control {
+	display: block;
+	width: 100%;
+	background-color: $input-bg;
+
+	@include touch-or-bp-down(sm) {
+		padding: 0 $input-btn-padding-x-mobile;
+		border: none;
+	}
+
+	@include mouse-and-bp-up(md) {
+		padding: 0 $input-btn-padding-x;
+		border: $input-border-width solid $input-border-color;
 	}
 }

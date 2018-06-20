@@ -188,7 +188,6 @@ $metadata-list-line-height-sm:     30px; // (~ $dl-horizontal-line-height / 13 *
 $metadata-list-gutter:             $space-sm;
 $metadata-list-gutter-mobile:      $space-md;
 $metadata-list-offset:             33%;
-$metadata-list-bp:                 sm;
 
 
 // Buttons & forms
@@ -196,6 +195,9 @@ $metadata-list-bp:                 sm;
 
 $input-btn-padding-x: $space-xs;
 $input-btn-padding-y: 7px;
+
+$input-btn-padding-x-mobile: $default-padding-horizontal-touch;
+
 $input-btn-padding-x-lg: $space-md;
 $input-btn-padding-y-lg: 11px;
 $input-btn-padding-x-sm: $space-sm;

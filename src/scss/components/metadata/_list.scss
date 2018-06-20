@@ -4,15 +4,43 @@
 
 .metadata-list {
 	margin: $metadata-list-margin;
+	margin-top: 23px - 12px;
+
+	@include bp-only(md) {
+		margin-top: -3px;
+	}
+
+	.metadata {
+		display: flex;
+		align-items: flex-start;
+
+		@include touch-or-bp-down(sm) {
+			padding: 0 $default-padding-horizontal-touch;
+		}
+
+		@include mouse-and-bp-up(md) {
+			padding: 0 $default-padding-horizontal;
+		}
+
+		@include bp-only(md) {
+			padding-right: ($metadata-list-gutter + 1px);
+		}
+	}
 
 	.key,
 	.value {
 		min-height: $metadata-list-line-height;
+		overflow: visible;
+		min-width: 0; // Fix truncation
+		display: flex;
 	}
 
 	.key {
 		color: $key-color;
 		margin-top: $space-xs;
+		flex: 0 0 $metadata-list-offset;
+		margin-top: 0;
+		align-items: center;
 
 		a {
 			color: inherit;
@@ -22,6 +50,10 @@
 				color: $link-color;
 			}
 		}
+	}
+
+	.value {
+		flex: 0 0 calc(100% - #{$metadata-list-offset});
 	}
 
 	@include bp-only(sm) {
@@ -48,6 +80,7 @@
 	@include mouse-and-bp-up(md) {
 		.key {
 			padding-right: $metadata-list-gutter / 2;
+			justify-content: flex-end;
 		}
 
 		.value {
@@ -63,47 +96,48 @@
 		}
 	}
 
-	@include bp-up($metadata-list-bp) {
-		@include horizontal;
-	}
-
 	// Edit mode
 	&.editing {
 		@include touch-or-bp-down(sm) {
-			@include horizontal;
-
 			.metadata {
 				position: relative;
+				background-color: $input-bg;
+
+				@include touch-or-bp-down(sm) {
+					padding-right: 0;
+				}
 
 				&::before {
-					content: "";
-					position: absolute;
-					left: $space-md;
-					right: $space-md;
-					bottom: calc(100% - 1px);
-					height: $separator-width;
-					background: $separator-color;
-					z-index: 1;
-
+				 content: "";
+				 position: absolute;
+				 left: $space-md;
+				 right: 0;
+				 bottom: calc(100% - 1px);
+				 height: $input-border-width;
+				 background: $separator-color;
+				 z-index: 1;
 				}
 
 				// Editable focus state
 				&.editing {
-					background: $editable-bg;
+					z-index: 2;
 
 					&::before,
-					& + .metadata::before {
+					&::after {
+						content: "";
+						position: absolute;
 						left: 0;
 						right: 0;
-						height: $editable-border-width;
-						background: rgba($focus-color, 0.6);
+						height: $outline-width;
+						background-color: $focus-color;
 					}
 
-					& + .metadata {
-						&::before {
-							bottom: auto;
-							top: 0;
-						}
+					&::before {
+						bottom: calc(100% - 1px);
+					}
+
+					&::after {
+						top: calc(100% - 1px);
 					}
 				}
 			}
@@ -111,10 +145,6 @@
 			.key,
 			.value {
 				min-height: $line-height-large-touch + 1px;
-			}
-
-			.value {
-				padding-left: 12px;
 			}
 		}
 	}
