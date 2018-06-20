@@ -17,7 +17,7 @@
 			align-items: center;
 			color: $tab-inactive-color;
 			background: $tab-bg;
-			padding: 0 $tabs-padding-horizontal;
+			padding: 0 $tabs-padding-x;
 			height: $tabs-height;
 
 			&:hover {
@@ -40,7 +40,7 @@
 	&.compact {
 		li {
 			a {
-				padding: 0 $tabs-compact-padding-horizontal;
+				padding: 0 $tabs-compact-padding-x;
 			}
 		}
 	}

@@ -76,7 +76,7 @@
 			background-size: $navbar-brand-width-xs $navbar-brand-height-xs;
 			text-indent: 100%;
 			white-space: nowrap;
-			width: $navbar-brand-width-xs + 2 * $navbar-padding-horizontal;
+			width: $navbar-brand-width-xs + 2 * $navbar-padding-x;
 			overflow: hidden;
 
 			@include bp-up(sm) {
@@ -84,7 +84,7 @@
 					position: center 18px;
 					size: $navbar-brand-width-sm $navbar-brand-height-sm;
 				}
-				width: $navbar-brand-width-sm + 2 * $navbar-padding-horizontal;
+				width: $navbar-brand-width-sm + 2 * $navbar-padding-x;
 			}
 		}
 	}
@@ -137,7 +137,7 @@
 			@include bp-up(sm) {
 				align-items: center;
 				display: flex;
-				padding: 0 $navbar-padding-horizontal;
+				padding: 0 $navbar-padding-x;
 				line-height: inherit;
 			}
 
@@ -187,7 +187,7 @@
 	.navbar-toggle {
 		border: none;
 		background: transparent;
-		padding: 0 $navbar-toggle-padding-horizontal;
+		padding: 0 $navbar-toggle-padding-x;
 
 		&:focus {
 			outline: none;

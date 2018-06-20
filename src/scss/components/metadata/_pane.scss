@@ -25,11 +25,11 @@
 	.item-title {
 		border-bottom: $separator-width solid $separator-color;
 		padding-bottom: 10px;
-		margin: 10px $default-padding-horizontal-touch 9px;
+		margin: 10px $default-padding-x-touch 9px;
 	}
 
 	.tab-pane-heading {
-		padding: 0 $default-padding-horizontal;
+		padding: 0 $default-padding-x;
 	}
 
 	.abstract-heading {

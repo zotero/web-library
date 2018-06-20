@@ -62,7 +62,7 @@
 		color: $touch-header-link-color;
 
 		.center-axis {
-			transform: translate3d($default-padding-horizontal-touch, 0, 0);
+			transform: translate3d($default-padding-x-touch, 0, 0);
 		}
 
 		.inner {

@@ -11,17 +11,17 @@
 	}
 
 	@include mouse-and-bp-up(md) {
-		padding: $collection-tree-padding-vertical 0;
+		padding: $collection-tree-padding-y 0;
 		overflow: auto;
 	}
 
 	h4 {
 		color: $collection-tree-headings-color;
 		margin: 0;
-		padding: 0 $collection-tree-padding-horizontal;
+		padding: 0 $collection-tree-padding-x;
 
 		@include touch-or-bp-down(sm) {
-			padding: 0 $collection-tree-padding-horizontal-touch;
+			padding: 0 $collection-tree-padding-x-touch;
 		}
 	}
 
@@ -52,21 +52,21 @@
 			position: relative;
 
 			@include touch-or-bp-down(sm) {
-				padding: 0 $default-padding-horizontal-touch;
+				padding: 0 $default-padding-x-touch;
 
 				&::before {
 					content: "";
 					position: absolute;
 					height: 1px;
 					top: 0;
-					left: $default-padding-horizontal-touch;
-					right: $default-padding-horizontal-touch;
+					left: $default-padding-x-touch;
+					right: $default-padding-x-touch;
 					background: $touch-collection-tree-border;
 				}
 			}
 
 			@include mouse-and-bp-up(md) {
-				padding-right: $default-padding-horizontal;
+				padding-right: $default-padding-x;
 			}
 		}
 
@@ -110,7 +110,7 @@
 			#{$sel} {
 				.item-container {
 					padding-left:
-						$collection-tree-padding-horizontal
+						$collection-tree-padding-x
 							+ $collection-tree-indent
 							* ($i - 1);
 				}

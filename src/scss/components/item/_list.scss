@@ -156,11 +156,11 @@
 		width: 100%;
 
 		@include bp-down(sm) {
-			padding: $item-touch-padding-vertical $item-touch-padding-horizontal;
+			padding: $item-touch-padding-y $item-touch-padding-x;
 		}
 
 		@include touch-or-bp-up(md) {
-			padding: $item-touch-padding-vertical $item-touch-padding-horizontal;
+			padding: $item-touch-padding-y $item-touch-padding-x;
 		}
 
 		@include mouse-and-bp-up(md) {

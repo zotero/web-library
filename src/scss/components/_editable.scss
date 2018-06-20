@@ -11,11 +11,11 @@
 		font: inherit;
 		line-height: normal;
 		text-align: inherit;
-		margin: -($editable-border-width + $editable-padding-horizontal);
+		margin: -($editable-border-width + $editable-padding-x);
 		width: calc(
-			100% + #{2 * ($editable-border-width + $editable-padding-horizontal)}
+			100% + #{2 * ($editable-border-width + $editable-padding-x)}
 		);
-		padding: $editable-padding-vertical $editable-padding-horizontal;
+		padding: $editable-padding-y $editable-padding-x;
 		border: $editable-border-width solid $editable-border-color;
 		color: $editable-color;
 		background: $editable-bg;
@@ -27,7 +27,7 @@
 		}
 
 		.busy > & {
-			padding-right: $editable-padding-horizontal + $space-md + 1px;
+			padding-right: $editable-padding-x + $space-md + 1px;
 		}
 	}
 
@@ -96,7 +96,7 @@
 //	min-width: 0; // Fix truncation
 //
 //	//@include bp-up(sm) {
-//	//	padding-left: $editable-border-width + $editable-padding-horizontal;
+//	//	padding-left: $editable-border-width + $editable-padding-x;
 //	//
 //	//	&.editing {
 //	//		padding-left: 0;
@@ -140,7 +140,7 @@
 //	}
 //	text-align: inherit;
 //	line-height: normal;
-//	padding: $editable-padding-vertical $editable-padding-horizontal;
+//	padding: $editable-padding-y $editable-padding-x;
 //	border: $editable-border-width solid $editable-border-color;
 //	color: $editable-color;
 //	background: $editable-bg;

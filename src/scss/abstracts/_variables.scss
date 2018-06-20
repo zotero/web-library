@@ -48,11 +48,11 @@ $headings-line-height:    1.3;
 // Components
 // --------------------------------------------------
 
-$padding-horizontal-sm: $space-sm;
-$padding-horizontal-md: $space-md;
+$padding-x-sm: $space-sm;
+$padding-x-md: $space-md;
 
-$default-padding-horizontal:       $space-sm;
-$default-padding-horizontal-touch: $space-md;
+$default-padding-x:       $space-sm;
+$default-padding-x-touch: $space-md;
 
 $border-radius:    4px;
 $border-radius-sm: 3px;
@@ -95,23 +95,23 @@ $z-index-menu:     1000;
 // Navbbar
 // --------------------------------------------------
 
-$navbar-height-xs:                 $space-thumb;
-$navbar-height-sm:                 $space-max;
-$navbar-font-size:                 $space-md;
-$navbar-margin-bottom:             $space-min;
-$navbar-padding-horizontal:        $space-md;
-$navbar-padding-top:               21px;
-$navbar-padding-bottom:            21px;
-$navbar-active-indicator:          3px;
-$navbar-breakpoint:                map-get($grid-breakpoints, sm);
-$navbar-toggle-padding-horizontal: $space-md;
-$icon-bar-width:                   $space-lg;
-$icon-bar-height:                  2px;
-$icon-bar-spacing:                 6px;
-$navbar-nav-mobile-width:          calc(100% - #{$icon-bar-width + 2 * $navbar-toggle-padding-horizontal + $space-min});
-$content-transform:                calc(-100% + #{$icon-bar-width + 2 * $navbar-toggle-padding-horizontal});
-$mobile-navbar-nav-transform:      translate3d(25%, 0, 0);
-$nav-cover-width:                  $icon-bar-width + 2 * $navbar-toggle-padding-horizontal;
+$navbar-height-xs:            $space-thumb;
+$navbar-height-sm:            $space-max;
+$navbar-font-size:            $space-md;
+$navbar-margin-bottom:        $space-min;
+$navbar-padding-x:            $space-md;
+$navbar-padding-top:          21px;
+$navbar-padding-bottom:       21px;
+$navbar-active-indicator:     3px;
+$navbar-breakpoint:           map-get($grid-breakpoints, sm);
+$navbar-toggle-padding-x:     $space-md;
+$icon-bar-width:              $space-lg;
+$icon-bar-height:             2px;
+$icon-bar-spacing:            6px;
+$navbar-nav-mobile-width:     calc(100% - #{$icon-bar-width + 2 * $navbar-toggle-padding-x + $space-min});
+$content-transform:           calc(-100% + #{$icon-bar-width + 2 * $navbar-toggle-padding-x});
+$mobile-navbar-nav-transform: translate3d(25%, 0, 0);
+$nav-cover-width:             $icon-bar-width + 2 * $navbar-toggle-padding-x;
 
 
 // Navbbar brand
@@ -135,11 +135,11 @@ $touch-sidebar-width-lg: 25%;
 // Collection tree
 // --------------------------------------------------
 
-$collection-tree-padding-horizontal:       $space-sm;
-$collection-tree-padding-horizontal-touch: $space-md;
-$collection-tree-padding-vertical:         $space-min;
-$collection-tree-indent:                   $space-md;
-$collection-tree-max-levels:               10;
+$collection-tree-padding-x:        $space-sm;
+$collection-tree-padding-x-touch:  $space-md;
+$collection-tree-padding-y:        $space-min;
+$collection-tree-indent:           $space-md;
+$collection-tree-max-levels:       10;
 
 
 // Items & item list
@@ -147,9 +147,9 @@ $collection-tree-max-levels:               10;
 
 $item-list-row-height-sm: 62px;
 $item-list-row-height-md: $line-height-large;
-$item-list-head-height: $space-lg; // 26px (content-box)
-$item-touch-padding-vertical: 11px;
-$item-touch-padding-horizontal: $padding-horizontal-md;
+$item-list-head-height:   $space-lg; // 26px (content-box)
+$item-touch-padding-y:    11px;
+$item-touch-padding-x:    $padding-x-md;
 
 
 // Toolbar
@@ -176,8 +176,8 @@ $info-view-font-size: 20px;
 // --------------------------------------------------
 
 $tabs-height: $line-height-large + $space-min;
-$tabs-padding-horizontal: $space-md;
-$tabs-compact-padding-horizontal: $space-xs;
+$tabs-padding-x: $space-md;
+$tabs-compact-padding-x: $space-xs;
 
 
 // Metadata list
@@ -197,7 +197,7 @@ $metadata-list-offset:             33%;
 $input-btn-padding-x: $space-xs;
 $input-btn-padding-y: 7px;
 
-$input-btn-padding-x-mobile: $default-padding-horizontal-touch;
+$input-btn-padding-x-mobile: $default-padding-x-touch;
 
 $input-btn-padding-x-lg: $space-md;
 $input-btn-padding-y-lg: 11px;
@@ -230,10 +230,10 @@ $input-transition: 0.15s ease;
 // Editable
 // --------------------------------------------------
 
-$editable-border-width:       3px;
-$editable-padding-vertical:   2px;
-$editable-padding-horizontal: 2px;
-$editable-border-radius:      3px;
+$editable-border-width:  3px;
+$editable-padding-y:     2px;
+$editable-padding-x:     2px;
+$editable-border-radius: 3px;
 
 
 // Outline
