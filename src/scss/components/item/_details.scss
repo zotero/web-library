@@ -72,4 +72,13 @@
 			min-width: 0; // Fix truncation
 		}
 	}
+
+	.info-view {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		height: 100%;
+		font-size: $info-view-font-size;
+		color: $info-view-color;
+	}
 }

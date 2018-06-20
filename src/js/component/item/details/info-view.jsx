@@ -6,13 +6,11 @@ const PropTypes = require('prop-types');
 class ItemDetailsInfoView extends React.PureComponent {
 	render() {
 		return (
-			<div className="info-wrapper">
-				<div className="info">
-					{
-						this.props.itemsCount !== null &&
-						`${this.props.itemsCount} items in this view`
-					}
-				</div>
+			<div className="info-view">
+				{
+					this.props.itemsCount !== null &&
+					`${this.props.itemsCount} items in this view`
+				}
 			</div>
 		);
 	}

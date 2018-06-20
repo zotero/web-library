@@ -6,13 +6,11 @@ const PropTypes = require('prop-types');
 class ItemDetailsInfoSelected extends React.PureComponent {
 	render() {
 		return (
-			<div className="info-wrapper">
-				<div className="info">
-					{
-						this.props.selectedItemKeys.length > 0 &&
-						`${this.props.selectedItemKeys.length} items selected`
-					}
-				</div>
+			<div className="info-view">
+				{
+					this.props.selectedItemKeys.length > 0 &&
+					`${this.props.selectedItemKeys.length} items selected`
+				}
 			</div>
 		);
 	}
