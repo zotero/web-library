@@ -1,7 +1,7 @@
 const cache = require('zotero-api-client-cache');
 const api = require('zotero-api-client')().use(cache()).api;
 
-const { ck, get } = require('./utils');
+const { ck, uck, get } = require('./utils');
 const { getLibraryKey, getCollectionItemCount, getLibraryItemCount } = require('./state-utils');
 
 var queueIdCunter = 0;
@@ -43,6 +43,10 @@ const {
 	RECEIVE_DELETE_ITEM,
 	ERROR_DELETE_ITEM,
 
+	REQUEST_DELETE_ITEMS,
+	RECEIVE_DELETE_ITEMS,
+	ERROR_DELETE_ITEMS,
+
 	REQUEST_ITEM_TYPE_CREATOR_TYPES,
 	RECEIVE_ITEM_TYPE_CREATOR_TYPES,
 	ERROR_ITEM_TYPE_CREATOR_TYPES,
@@ -75,6 +79,46 @@ const {
 	TRIGGER_RESIZE_VIEWPORT
 } = require('./constants/actions');
 
+// @TODO: rename and move to utils/api
+const cleanupCacheAfterDelete = (itemKeys, state) => {
+	const libraryKey = getLibraryKey(state);
+	const { itemsByCollection, itemsByParentItem, itemsTop } = state;
+	// cleanup relevant caches
+	itemKeys.forEach(key => {
+		const ckey = ck(key, libraryKey);
+
+		Object.entries(itemsByCollection)
+		.forEach(([ collectionCkey, itemsInCollectionCkeys]) => {
+			if(itemsInCollectionCkeys.includes(ckey)) {
+				const collectionKey = uck(collectionCkey).shift();
+				api().invalidate({
+					'resource.library': libraryKey,
+					'resource.collections': collectionKey,
+				});
+			}
+		});
+
+		Object.entries(itemsByParentItem)
+		.forEach(([ parentCkey, itemsInParentCkeys]) => {
+			if(itemsInParentCkeys.includes(ckey)) {
+				const parentKey = uck(parentCkey).shift();
+				api().invalidate({
+					'resource.library': libraryKey,
+					'resource.items': parentKey,
+					'resource.children': null
+				});
+			}
+		});
+
+		if(itemsTop.find(topItemCkey => topItemCkey === ckey)) {
+			api().invalidate({
+				'resource.library': libraryKey,
+				'resource.items': null,
+				'resource.top': null
+			});
+		}
+	});
+};
 
 const changeRoute = params => {
 	return {
@@ -495,6 +539,7 @@ function createItem(properties) {
 
 function deleteItem(item) {
 	return async (dispatch, getState) => {
+		const state = getState();
 		const libraryKey = getLibraryKey(getState());
 		const config = getState().config;
 
@@ -512,12 +557,46 @@ function deleteItem(item) {
 				libraryKey,
 				item
 			});
+			cleanupCacheAfterDelete([item.key], state);
 		} catch(error) {
 			dispatch({
 					type: ERROR_DELETE_ITEM,
 					error,
 					libraryKey,
 					item,
+				});
+			throw error;
+		}
+	};
+}
+
+function deleteItems(itemKeys) {
+	return async (dispatch, getState) => {
+		const state = getState();
+		const libraryKey = getLibraryKey(state);
+		const { config } = getState(state);
+
+		dispatch({
+			type: REQUEST_DELETE_ITEMS,
+			libraryKey,
+			itemKeys
+		});
+
+		try {
+			await api(config.apiKey, config.apiConfig)
+			.library(libraryKey).items().delete(itemKeys);
+			dispatch({
+				type: RECEIVE_DELETE_ITEMS,
+				libraryKey,
+				itemKeys
+			});
+			cleanupCacheAfterDelete(itemKeys, state);
+		} catch(error) {
+			dispatch({
+					type: ERROR_DELETE_ITEMS,
+					error,
+					libraryKey,
+					itemKeys,
 				});
 			throw error;
 		}
@@ -688,6 +767,7 @@ module.exports = {
 	configureApi,
 	createItem,
 	deleteItem,
+	deleteItems,
 	fetchChildItems,
 	fetchCollections,
 	fetchItems,

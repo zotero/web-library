@@ -46,10 +46,17 @@ const enhanceCollections = (collections, path = []) => {
 
 /**
  * Returns a unique compund key for item/collection
+ * or splits a compound key into individual bits
  */
 const ck = (itemOrCollectionKey, libraryKey) => {
 	return itemOrCollectionKey + libraryKey;
 };
+
+const uck = (coumpoundKey) => {
+	//eslint-disable-next-line no-unused-vars
+	const [ _, key, libraryKey ] = coumpoundKey.match(/^([A-Z0-9]+)((u|g)\d+)$/);
+	return [ key, libraryKey ];
+}
 
 const splice = (array, at, count = 0, ...items) => {
 	if (at == null) {
@@ -107,14 +114,16 @@ const without = (array, deleteValues) => {
 		deleteValues = [deleteValues];
 	}
 
-	for (let deleteValue of deleteValues) {
-		let pos = array.indexOf(deleteValue);
-		if(pos > -1) {
-			array = [...array.slice(0, pos), ...array.slice(pos+1)];
-		}
-	}
+	return array.filter(value => !deleteValues.includes(value))
 
-	return array;
+	// for (let deleteValue of deleteValues) {
+	// 	let pos = array.indexOf(deleteValue);
+	// 	if(pos > -1) {
+	// 		array = [...array.slice(0, pos), ...array.slice(pos+1)];
+	// 	}
+	// }
+
+	// return array;
 };
 
 const deduplicateByKey = (array, key) => {
@@ -221,5 +230,6 @@ module.exports = {
 	sortByKey,
 	splice,
 	transform,
+	uck,
 	without,
 };

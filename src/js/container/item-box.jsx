@@ -124,8 +124,6 @@ const mapStateToProps = state => {
 	const isEditingEnabled = !state.viewport.xs || item && isEditing(item.key, state);
 	const isForm = state.viewport.xs && item && isEditing(item.key, state);
 
-	console.log('isEditingEnabled', isEditingEnabled, 'isForm', isForm);
-
 	//@TODO: Refactor
 	return {
 		fields: fields.map(f => ({

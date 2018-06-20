@@ -8,7 +8,13 @@ const { baseMappings } = require('../constants/item');
 const { connect } = require('react-redux');
 const { noteAsTitle } = require('../common/format');
 const ItemList = require('../component/item/list');
-const { fetchItemsInCollection, fetchTopItems, sortItems, preferenceChange } = require('../actions');
+const {
+	deleteItems,
+	fetchItemsInCollection,
+	fetchTopItems,
+	sortItems,
+	preferenceChange
+} = require('../actions');
 const {
 	getCollection,
 	getCollectionItemCount,
@@ -59,6 +65,17 @@ class ItemListContainer extends React.PureComponent {
 		} else {
 			this.props.history.push(`/collection/${this.props.collection.key}/items/${keys.join(',')}`);
 		}
+	}
+
+	async handleDelete() {
+		const { dispatch, selectedItemKeys } = this.props;
+
+		//@TODO: more graceful way of deleting > 50 items?
+		do {
+			const itemKeys = selectedItemKeys.splice(0, 50);
+			await dispatch(deleteItems(itemKeys));
+		} while (selectedItemKeys.length > 50);
+		this.handleItemSelect('');
 	}
 
 	handleColumnVisibilityChange(field, isVisible) {
@@ -123,6 +140,7 @@ class ItemListContainer extends React.PureComponent {
 		return <ItemList
 			key = { key }
 			{ ...this.props }
+			onDelete={ this.handleDelete.bind(this) }
 			onItemSelect={ this.handleItemSelect.bind(this) }
 			onMultipleItemsSelect={ this.handleMultipleItemsSelect.bind(this) }
 			onLoadMore={ this.handleLoadMore.bind(this) }
@@ -144,6 +162,7 @@ const mapStateToProps = state => {
 	const preferences = state.preferences;
 	const itemFields = state.meta.itemFields;
 	const isReady = itemFields && (isTopLevel(state) && library) || collection !== null;
+	const isDeleting = state.deleting.some(itemKey => items.filter(i => i.key === itemKey));
 
 	sortByKey(items, sortBy, sortDirection);
 
@@ -151,6 +170,7 @@ const mapStateToProps = state => {
 		collection,
 		items,
 		isReady,
+		isDeleting,
 		totalItemsCount,
 		sortBy,
 		preferences,

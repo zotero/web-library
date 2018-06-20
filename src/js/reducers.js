@@ -37,6 +37,10 @@ const {
 	RECEIVE_DELETE_ITEM,
 	ERROR_DELETE_ITEM,
 
+	REQUEST_DELETE_ITEMS,
+	RECEIVE_DELETE_ITEMS,
+	ERROR_DELETE_ITEMS,
+
 	REQUEST_ITEM_TYPE_CREATOR_TYPES,
 	RECEIVE_ITEM_TYPE_CREATOR_TYPES,
 	ERROR_ITEM_TYPE_CREATOR_TYPES,
@@ -331,10 +335,10 @@ const fetching = (state = {
 const updating = (state = {
 	items: {}
 }, action) => {
-	const itemCKey = ck(action.itemKey, action.libraryKey);
-	var newState;
+	var itemCKey;
 	switch(action.type) {
 		case PRE_UPDATE_ITEM:
+			itemCKey = ck(action.itemKey, action.libraryKey);
 			return {
 				...state,
 				items: {
@@ -350,6 +354,7 @@ const updating = (state = {
 				}
 			};
 		case REQUEST_UPDATE_ITEM:
+			itemCKey = ck(action.itemKey, action.libraryKey);
 			return {
 				...state,
 				items: {
@@ -364,7 +369,8 @@ const updating = (state = {
 			};
 		case RECEIVE_UPDATE_ITEM:
 		case ERROR_UPDATE_ITEM:
-			newState = {
+			itemCKey = ck(action.itemKey, action.libraryKey);
+			var newState = {
 				...state,
 				items: {
 					...state.items,
@@ -380,21 +386,23 @@ const updating = (state = {
 	}
 };
 
-const deleting = (state = {
-	items: []
-}, action) => {
+const deleting = (state = [], action) => {
 	switch(action.type) {
 		case REQUEST_DELETE_ITEM:
-			return {
-				...state,
-				items: [...state.items, ck(action.item.key, action.libraryKey)]
-			};
-		case RECEIVE_DELETE_ITEM:
+			return [...state, ck(action.item.key, action.libraryKey)];
+		case REQUEST_DELETE_ITEMS:
+			return [
+					...state,
+					...action.itemKeys.map(ikey => ck(ikey, action.libraryKey))
+				];
 		case ERROR_DELETE_ITEM:
-			return {
-				...state,
-				items: without(state.items, ck(action.item.key, action.libraryKey))
-			};
+			return without(state, ck(action.item.key, action.libraryKey));
+		case RECEIVE_DELETE_ITEMS:
+		case ERROR_DELETE_ITEMS:
+			return without(
+				state,
+				action.itemKeys.map(ikey => ck(ikey, action.libraryKey))
+			);
 		default:
 			return state;
 	}
@@ -421,6 +429,8 @@ const items = (state = {}, action) => {
 			};
 		case RECEIVE_DELETE_ITEM:
 			return removeKey(state, ck(action.item.key, action.libraryKey));
+		case RECEIVE_DELETE_ITEMS:
+			return removeKey(state, action.itemKeys.map(key => ck(key, action.libraryKey)));
 		case RECEIVE_UPDATE_ITEM:
 			return {
 				...state,
@@ -464,8 +474,21 @@ const itemsByCollection = (state = {}, action) => {
 			// @TODO:
 			return state;
 		case RECEIVE_DELETE_ITEM:
-			//@TODO:
-			return state;
+			var removedCkey = ck(action.item.key, action.libraryKey);
+			return Object.entries(state).reduce((aggr, [collectionCKey, itemKeys]) => {
+				aggr[collectionCKey] = itemKeys.filter(
+					ck => ck !== removedCkey
+				);
+				return aggr;
+			}, {})
+		case RECEIVE_DELETE_ITEMS:
+			var removedCkeys = action.itemKeys.map(k => ck(k, action.libraryKey));
+			return Object.entries(state).reduce((aggr, [collectionCKey, itemKeys]) => {
+				aggr[collectionCKey] = itemKeys.filter(
+					ck => !removedCkeys.includes(ck)
+				);
+				return aggr;
+			}, {})
 		case RECEIVE_ITEMS_IN_COLLECTION:
 			return {
 				...state,
@@ -482,8 +505,11 @@ const itemsTop = (state = [], action) => {
 			// @TODO:
 			return state;
 		case RECEIVE_DELETE_ITEM:
-			//@TODO:
-			return state;
+			var removedCkey = ck(action.item.key, action.libraryKey);
+			return state.filter(ck => ck !== removedCkey);
+		case RECEIVE_DELETE_ITEMS:
+			var removedCkeys = action.itemKeys.map(k => ck(k, action.libraryKey));
+			return state.filter(ck => !removedCkeys.includes(ck));
 		case RECEIVE_TOP_ITEMS:
 			return [
 				...(new Set([
@@ -519,6 +545,14 @@ const itemsByParentItem = (state = {}, action) => {
 				};
 			}
 			return state;
+		case RECEIVE_DELETE_ITEMS:
+			var removedCkeys = action.itemKeys.map(k => ck(k, action.libraryKey));
+			return Object.entries(state).reduce((aggr, [parentCKey, itemKeys]) => {
+				aggr[parentCKey] = itemKeys.filter(
+					ck => !removedCkeys.includes(ck)
+				);
+				return aggr;
+			}, {})
 		case RECEIVE_CHILD_ITEMS:
 			return {
 				...state,
