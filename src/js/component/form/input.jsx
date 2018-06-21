@@ -5,7 +5,7 @@ const React = require('react');
 const PropTypes = require('prop-types');
 const cx = require('classnames');
 const { noop } = require('../../utils');
-
+const AutoResizer = require('./auto-sizer');
 const Spinner = require('../ui/spinner');
 
 class Input extends React.PureComponent {
@@ -83,35 +83,36 @@ class Input extends React.PureComponent {
 			}
 			return aggr;
 		}, {});
-		return (
-			<input
-				autoFocus={ this.props.autoFocus }
-				className={ this.props.className }
-				disabled={ this.props.isDisabled }
-				form={ this.props.form }
-				id={ this.props.id }
-				inputMode={ this.props.inputMode }
-				max={ this.props.max }
-				maxLength={ this.props.maxLength }
-				min={ this.props.min }
-				minLength={ this.props.minLength }
-				name={ this.props.name }
-				onBlur={ this.handleBlur.bind(this) }
-				onChange={ this.handleChange.bind(this) }
-				onFocus={ this.handleFocus.bind(this) }
-				onKeyDown={ this.handleKeyDown.bind(this) }
-				placeholder={ this.props.placeholder }
-				readOnly={ this.props.isReadOnly }
-				ref={ input => this.input = input }
-				required={ this.props.isRequired }
-				spellCheck={ this.props.spellCheck }
-				step={ this.props.step }
-				tabIndex={ this.props.tabIndex }
-				type={ this.props.type }
-				value={ this.state.value }
-				{ ...extraProps }
-			/>
-		);
+		const input = <input
+			autoFocus={ this.props.autoFocus }
+			className={ this.props.className }
+			disabled={ this.props.isDisabled }
+			form={ this.props.form }
+			id={ this.props.id }
+			inputMode={ this.props.inputMode }
+			max={ this.props.max }
+			maxLength={ this.props.maxLength }
+			min={ this.props.min }
+			minLength={ this.props.minLength }
+			name={ this.props.name }
+			onBlur={ this.handleBlur.bind(this) }
+			onChange={ this.handleChange.bind(this) }
+			onFocus={ this.handleFocus.bind(this) }
+			onKeyDown={ this.handleKeyDown.bind(this) }
+			placeholder={ this.props.placeholder }
+			readOnly={ this.props.isReadOnly }
+			ref={ input => this.input = input }
+			required={ this.props.isRequired }
+			spellCheck={ this.props.spellCheck }
+			step={ this.props.step }
+			tabIndex={ this.props.tabIndex }
+			type={ this.props.type }
+			value={ this.state.value }
+			{ ...extraProps }
+		/>;
+		return this.props.resize ?
+			<AutoResizer content={ this.state.value }>{ input }</AutoResizer> :
+			input;
 	}
 
 	renderSpinner() {
@@ -142,30 +143,31 @@ class Input extends React.PureComponent {
 	static propTypes = {
 		autoFocus: PropTypes.bool,
 		className: PropTypes.string,
+		form: PropTypes.string,
 		id: PropTypes.string,
+		inputMode: PropTypes.string,
 		isBusy: PropTypes.bool,
 		isDisabled: PropTypes.bool,
 		isReadOnly: PropTypes.bool,
 		isRequired: PropTypes.bool,
+		max: PropTypes.number,
+		maxLength: PropTypes.number,
+		min: PropTypes.number,
+		minLength: PropTypes.number,
+		name: PropTypes.string,
 		onBlur: PropTypes.func.isRequired,
 		onCancel: PropTypes.func.isRequired,
 		onChange: PropTypes.func.isRequired,
 		onCommit: PropTypes.func.isRequired,
 		onFocus: PropTypes.func.isRequired,
 		placeholder: PropTypes.string,
+		resize: PropTypes.bool,
 		selectOnFocus: PropTypes.bool,
+		spellCheck: PropTypes.bool,
+		step: PropTypes.number,
 		tabIndex: PropTypes.number,
 		type: PropTypes.string.isRequired,
 		value: PropTypes.string.isRequired,
-		form: PropTypes.string,
-		inputMode: PropTypes.string,
-		max: PropTypes.number,
-		maxLength: PropTypes.number,
-		min: PropTypes.number,
-		minLength: PropTypes.number,
-		name: PropTypes.string,
-		spellCheck: PropTypes.bool,
-		step: PropTypes.number,
 	};
 }
 

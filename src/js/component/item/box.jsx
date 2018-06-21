@@ -150,11 +150,13 @@ class ItemBox extends React.PureComponent {
 				props['tabIndex'] = 0;
 			}
 
-			if(props.inputComponent === SelectInput) {
-				props['onChange'] = () => true; //commit on change
+			if(props.inputComponent === TextAreaInput) {
+				props['resize'] = true;
 			}
 
-			if(props.inputComponent !== SelectInput) {
+			if(props.inputComponent === SelectInput) {
+				props['onChange'] = () => true; //commit on change
+			} else if(props.inputComponent !== SelectInput) {
 				props['onBlur'] = () => false; //commit on blur
 			}
 

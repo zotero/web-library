@@ -1,10 +1,11 @@
+/* eslint-disable react/no-deprecated */
 'use strict';
 
 const React = require('react');
 const PropTypes = require('prop-types');
 const cx = require('classnames');
 const { noop } = require('../../utils');
-
+const AutoResizer = require('./auto-sizer');
 const Spinner = require('../ui/spinner');
 
 class TextAreaInput extends React.PureComponent {
@@ -84,34 +85,36 @@ class TextAreaInput extends React.PureComponent {
 			}
 			return aggr;
 		}, {});
-		return (
-			<textarea
-				autoComplete={ this.props.autoComplete }
-				autoFocus={ this.props.autoFocus }
-				className={ cx('form-control', this.props.className) }
-				cols={ this.props.cols }
-				disabled={ this.props.isDisabled }
-				form={ this.props.form }
-				id={ this.props.id }
-				maxLength={ this.props.maxLength }
-				minLength={ this.props.minLength }
-				name={ this.props.name }
-				onBlur={ this.handleBlur.bind(this) }
-				onChange={ this.handleChange.bind(this) }
-				onFocus={ this.handleFocus.bind(this) }
-				onKeyDown={ this.handleKeyDown.bind(this) }
-				placeholder={ this.props.placeholder }
-				readOnly={ this.props.isReadOnly }
-				ref={ input => this.input = input }
-				required={ this.props.isRequired }
-				rows={ this.props.rows }
-				spellCheck={ this.props.spellCheck }
-				tabIndex={ this.props.tabIndex }
-				value={ this.state.value }
-				wrap={ this.props.wrap }
-				{ ...extraProps }
-			/>
-		);
+		const input = <textarea
+			autoComplete={ this.props.autoComplete }
+			autoFocus={ this.props.autoFocus }
+			className={ this.props.className }
+			cols={ this.props.cols }
+			disabled={ this.props.isDisabled }
+			form={ this.props.form }
+			id={ this.props.id }
+			maxLength={ this.props.maxLength }
+			minLength={ this.props.minLength }
+			name={ this.props.name }
+			onBlur={ this.handleBlur.bind(this) }
+			onChange={ this.handleChange.bind(this) }
+			onFocus={ this.handleFocus.bind(this) }
+			onKeyDown={ this.handleKeyDown.bind(this) }
+			placeholder={ this.props.placeholder }
+			readOnly={ this.props.isReadOnly }
+			ref={ input => this.input = input }
+			required={ this.props.isRequired }
+			rows={ this.props.rows }
+			spellCheck={ this.props.spellCheck }
+			tabIndex={ this.props.tabIndex }
+			value={ this.state.value }
+			wrap={ this.props.wrap }
+			{ ...extraProps }
+		/>;
+
+		return this.props.resize ?
+			<AutoResizer content={ this.state.value }>{ input }</AutoResizer> :
+			input;
 	}
 
 	renderSpinner() {
@@ -128,6 +131,7 @@ class TextAreaInput extends React.PureComponent {
 	}
 
 	static defaultProps = {
+		className: 'form-control',
 		onBlur: noop,
 		onCancel: noop,
 		onChange: noop,
@@ -138,30 +142,31 @@ class TextAreaInput extends React.PureComponent {
 	};
 
 	static propTypes = {
+		autoComplete: PropTypes.bool,
 		autoFocus: PropTypes.bool,
 		className: PropTypes.string,
+		cols: PropTypes.number,
+		form: PropTypes.string,
 		id: PropTypes.string,
 		isBusy: PropTypes.bool,
 		isDisabled: PropTypes.bool,
 		isReadOnly: PropTypes.bool,
 		isRequired: PropTypes.bool,
+		maxLength: PropTypes.number,
+		minLength: PropTypes.number,
+		name: PropTypes.string,
 		onBlur: PropTypes.func.isRequired,
 		onCancel: PropTypes.func.isRequired,
 		onChange: PropTypes.func.isRequired,
 		onCommit: PropTypes.func.isRequired,
 		onFocus: PropTypes.func.isRequired,
 		placeholder: PropTypes.string,
+		resize: PropTypes.bool,
+		rows: PropTypes.number,
 		selectOnFocus: PropTypes.bool,
+		spellCheck: PropTypes.bool,
 		tabIndex: PropTypes.number,
 		value: PropTypes.string.isRequired,
-		autoComplete: PropTypes.bool,
-		cols: PropTypes.number,
-		form: PropTypes.string,
-		maxLength: PropTypes.number,
-		minLength: PropTypes.number,
-		name: PropTypes.string,
-		rows: PropTypes.number,
-		spellCheck: PropTypes.bool,
 		wrap: PropTypes.bool,
 	};
 }
