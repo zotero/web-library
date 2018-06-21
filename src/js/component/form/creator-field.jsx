@@ -134,23 +134,14 @@ class CreatorField extends React.PureComponent {
 			'creators-type-editing': this.state.isCreatorTypeActive
 		};
 
-		const extraProps = {
-			[this.props.isForm ? 'ref' : 'inputRef']: component => this.fieldComponents['creatorType'] = component
-		};
-
-		if(this.props.isForm) {
-			extraProps['tabIndex'] = 0;
-		}
-
 		const creatorTypeDescription = creatorTypes.find(
 			c => c.value == creator.creatorType
 		) || { label: creator.creatorType };
 
 		return (
 			<Field key={ index } className={ cx(className) }>
-				<FormField
-					autoFocus={ !this.props.isForm }
-					className={ this.props.isForm ? 'form-control form-control-sm' : '' }
+				<SelectInput
+					className="form-control form-control-sm"
 					inputComponent={ SelectInput }
 					isActive={ this.state.active === 'creatorType' }
 					onCancel={ this.handleCancel.bind(this) }
@@ -159,13 +150,14 @@ class CreatorField extends React.PureComponent {
 					onEditableClick={ this.handleFieldClick.bind(this, 'creatorType') }
 					onEditableFocus={ this.handleFieldFocus.bind(this, 'creatorType') }
 					options={ creatorTypes }
+					ref={ component => this.fieldComponents['creatorType'] = component }
 					searchable={ false }
+					tabIndex = { 0 }
 					value={ creator.creatorType }
-					{ ...extraProps }
 				>
 					<span className="text-container">{ creatorTypeDescription.label }</span>
 					<span className="Select-arrow"></span>
-				</FormField>
+				</SelectInput>
 				<React.Fragment>
 					{ this.isDual ? this.renderDual() : this.renderSingle() }
 					<Button onClick={ this.handleCreatorTypeSwitch.bind(this, index) }>
