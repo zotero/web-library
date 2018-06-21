@@ -27,7 +27,7 @@
 	background-color: $input-bg;
 
 	@include touch-or-bp-down(sm) {
-		padding: 0 $input-btn-padding-x-mobile;
+		padding: 0;
 		border: none;
 	}
 

@@ -33,6 +33,10 @@
 		overflow: visible;
 		min-width: 0; // Fix truncation
 		display: flex;
+
+		@include bp-only(sm) {
+			min-height: $metadata-list-line-height-sm;
+		}
 	}
 
 	.key {
@@ -41,6 +45,15 @@
 		flex: 0 0 $metadata-list-offset;
 		margin-top: 0;
 		align-items: center;
+
+		@include touch-or-bp-down(sm) {
+			padding-right: $metadata-list-gutter-mobile / 2;
+		}
+
+		@include mouse-and-bp-up(md) {
+			padding-right: $metadata-list-gutter / 2;
+			justify-content: flex-end;
+		}
 
 		a {
 			color: inherit;
@@ -54,45 +67,15 @@
 
 	.value {
 		flex: 0 0 calc(100% - #{$metadata-list-offset});
-	}
 
-	@include bp-only(sm) {
-		.key,
-		.value {
-			min-height: $metadata-list-line-height-sm;
-		}
-	}
-
-	@include bp-up(sm) {
-		.key {
-			padding-right: $metadata-list-gutter-mobile / 2;
+		@include touch-or-bp-down(sm) {
+			padding-left: $metadata-list-gutter-mobile / 2;
 		}
 
-		.value {
-			padding-left:
-				$metadata-list-gutter-mobile / 2
-				- $editable-border-width
-				- $editable-padding-x;
-
-		}
-	}
-
-	@include mouse-and-bp-up(md) {
-		.key {
-			padding-right: $metadata-list-gutter / 2;
-			justify-content: flex-end;
-		}
-
-		.value {
+		@include mouse-and-bp-up(md) {
 			display: flex;
 			align-items: center;
 			padding-left: $metadata-list-gutter / 2;
-		}
-
-		.extra {
-			.value {
-				align-items: flex-start;
-			}
 		}
 	}
 
@@ -102,20 +85,39 @@
 			.metadata {
 				position: relative;
 				background-color: $input-bg;
+				padding-top: $input-border-width;
 
-				@include touch-or-bp-down(sm) {
-					padding-right: 0;
+				&::before,
+				&::after {
+					position: absolute;
+					left: $default-padding-x-touch;
+					right: 0;
+					top: 0;
+					height: $input-border-width;
+					background: $separator-color;
+					z-index: 1;
 				}
 
 				&::before {
-				 content: "";
-				 position: absolute;
-				 left: $space-md;
-				 right: 0;
-				 bottom: calc(100% - 1px);
-				 height: $input-border-width;
-				 background: $separator-color;
-				 z-index: 1;
+					content: "";
+				}
+
+				&:first-child {
+					&::before {
+						left: 0;
+					}
+				}
+
+				&:last-child {
+					padding-top: 0;
+					padding-bottom: $input-border-width;
+
+					&::after {
+						content: "";
+						left: 0;
+						top: auto;
+						bottom: 0;
+					}
 				}
 
 				// Editable focus state
@@ -144,7 +146,7 @@
 
 			.key,
 			.value {
-				min-height: $line-height-large-touch + 1px;
+				min-height: $line-height-large-touch;
 			}
 		}
 	}
