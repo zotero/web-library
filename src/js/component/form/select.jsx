@@ -93,7 +93,7 @@ class SelectInput extends React.PureComponent {
 			{ ...this.defaultSelectProps }
 			{ ...this.props }
 			autoFocus= { this.props.autoFocus }
-			className={ cx('form-control', this.props.className) }
+			className={ this.props.className }
 			disabled={ this.props.isDisabled }
 			id={ this.props.id }
 			onBlur={ this.handleBlur.bind(this) }
@@ -124,6 +124,7 @@ class SelectInput extends React.PureComponent {
 	}
 
 	static defaultProps = {
+		className: 'form-control',
 		onBlur: noop,
 		onCancel: noop,
 		onChange: noop,
