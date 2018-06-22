@@ -151,7 +151,7 @@ class ItemBox extends React.PureComponent {
 			}
 
 			if(props.inputComponent === TextAreaInput) {
-				props['resize'] = true;
+				props['resize'] = 'vertical';
 			}
 
 			if(props.inputComponent === SelectInput) {

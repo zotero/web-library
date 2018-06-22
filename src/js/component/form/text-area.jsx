@@ -5,7 +5,7 @@ const React = require('react');
 const PropTypes = require('prop-types');
 const cx = require('classnames');
 const { noop } = require('../../utils');
-const AutoResizer = require('./auto-sizer');
+const AutoResizer = require('./auto-resizer');
 const Spinner = require('../ui/spinner');
 
 class TextAreaInput extends React.PureComponent {
@@ -113,7 +113,12 @@ class TextAreaInput extends React.PureComponent {
 		/>;
 
 		return this.props.resize ?
-			<AutoResizer content={ this.state.value }>{ input }</AutoResizer> :
+			<AutoResizer
+				content={ this.state.value }
+				vertical={ this.props.resize === 'vertical' }
+			>
+				{ input }
+			</AutoResizer> :
 			input;
 	}
 
@@ -161,7 +166,7 @@ class TextAreaInput extends React.PureComponent {
 		onCommit: PropTypes.func.isRequired,
 		onFocus: PropTypes.func.isRequired,
 		placeholder: PropTypes.string,
-		resize: PropTypes.bool,
+		resize: PropTypes.string,
 		rows: PropTypes.number,
 		selectOnFocus: PropTypes.bool,
 		spellCheck: PropTypes.bool,
