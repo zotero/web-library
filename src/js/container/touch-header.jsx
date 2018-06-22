@@ -6,13 +6,8 @@ const { withRouter } = require('react-router-dom');
 const { itemProp } = require('../constants/item');
 const { connect } = require('react-redux');
 const { triggerEditingItem } = require('../actions');
-const {
-	getItem,
-	getCurrentViewFromState,
-	getCollections,
-	getCollectionsPath,
-	isEditing,
-} = require('../state-utils');
+const { get } = require('../utils');
+const { getCollectionsPath } = require('../common/state');
 const TouchHeader = require('../component/touch-header');
 
 class TouchHeaderContainer extends React.Component {
@@ -48,17 +43,17 @@ TouchHeaderContainer.propTypes = {
 };
 
 const mapStateToProps = state => {
-	const collections = getCollections(state);
+	const libraryKey = state.current.library;
+	const itemKey = state.current.item;
+	const collections = get(state, ['libraries', libraryKey, 'collections'], []);
 	const path = getCollectionsPath(state).map(
 		key => {
-			const { name } = collections.find(
-				c => c.key === key
-			);
+			const { name } = collections[key]
 			return { key, name };
 		}
 	);
 
-	const item = getItem(state);
+	const item = get(state, ['libraries', libraryKey, 'items', itemKey]);
 	if(item) {
 		// Push an empty item to the path to force "current" to become empty
 		// when an item is selected
@@ -66,8 +61,8 @@ const mapStateToProps = state => {
 	}
 
 	return {
-		isEditing: item ? isEditing(item.key, state) : false,
-		view: getCurrentViewFromState(state),
+		isEditing: item ? state.current.editing === item.key : false,
+		view: state.current.view,
 		path,
 		item
 	};

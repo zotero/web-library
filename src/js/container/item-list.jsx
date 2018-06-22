@@ -15,16 +15,6 @@ const {
 	sortItems,
 	preferenceChange
 } = require('../actions');
-const {
-	getCollection,
-	getCollectionItemCount,
-	getItem,
-	getItems,
-	getLibraryItemCount,
-	getLibraryKey,
-	isFetchingItems,
-	isTopLevel,
-} = require('../state-utils');
 const { get, sortByKey, resizeVisibleColumns } = require('../utils');
 
 const processItems = items => {
@@ -112,8 +102,6 @@ class ItemListContainer extends React.PureComponent {
 		let direction = this.props.sortDirection.toLowerCase();
 		const { isTopLevel, dispatch, collection } = this.props;
 
-		console.log('handleLoadMore', { isTopLevel, collection, start, limit });
-
 		return isTopLevel ?
 			await dispatch(fetchTopItems({ start, limit, sort, direction })) :
 			await dispatch(fetchItemsInCollection(collection.key, { start, limit, sort, direction }));
@@ -153,16 +141,26 @@ class ItemListContainer extends React.PureComponent {
 }
 
 const mapStateToProps = state => {
-	const library = getLibraryKey(state);
-	const collection = getCollection(state);
-	const item = getItem(state);
-	const items = processItems(getItems(state));
-	const totalItemsCount = (isTopLevel(state) ? getLibraryItemCount(state) : getCollectionItemCount(state)) || 50;
+	const libraryKey = state.current.library;
+	const collectionKey = state.current.collection;
+	const itemKey = state.current.item;
+	const collection = get(state, ['libraries', libraryKey, 'collections', collectionKey]);
+	const item = get(state, ['libraries', libraryKey, 'items', itemKey]);
+	const items = processItems(
+		(collectionKey ?
+			get(state, ['libraries', libraryKey, 'itemsByCollection', collectionKey], []) :
+			get(state, ['libraries', libraryKey, 'itemsTop'], [])
+		).map(key => get(state, ['libraries', libraryKey, 'items', key]))
+	);
+	const totalItemsCount = collectionKey ?
+		get(state, ['libraries', libraryKey, 'itemCountByCollection', collectionKey], 0) :
+		get(state, ['itemCountTopByLibrary', libraryKey], 50);
 	const { sortBy, sortDirection } = state.config;
 	const preferences = state.preferences;
 	const itemFields = state.meta.itemFields;
-	const isReady = itemFields && (isTopLevel(state) && library) || collection !== null;
-	const isDeleting = state.deleting.some(itemKey => items.filter(i => i.key === itemKey));
+	const isReady = libraryKey && ((!collectionKey && itemFields) || collection !== null);
+	const isDeleting = get(state, ['libraries', libraryKey, 'deleting'], [])
+			.some(itemKey => items.filter(i => i.key === itemKey));
 
 	sortByKey(items, sortBy, sortDirection);
 
@@ -176,7 +174,7 @@ const mapStateToProps = state => {
 		preferences,
 		itemFields,
 		sortDirection: sortDirection.toUpperCase(),
-		isTopLevel: isTopLevel(state),
+		isTopLevel: !collectionKey,
 		selectedItemKeys: item ? [item.key] : (state.router && 'items' in state.router.params && state.router.params.items.split(',')) || []
 	};
 };

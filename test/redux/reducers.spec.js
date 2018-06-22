@@ -1,39 +1,33 @@
 'use strict';
 
 const assert = require('chai').assert;
-const configureStore = require('redux-mock-store');
-const thunk = require('redux-thunk').default;
-const { configureApi } = require('../../src/js/actions.js');
-const reducers = require(('../../src/js/reducers.js'));
+const { configureApi } = require('../../src/js/actions');
+const reducers = require('../../src/js/reducers');
 const {
-	REQUEST_META,
-	RECEIVE_META,
-	REQUEST_COLLECTIONS_IN_LIBRARY,
-	RECEIVE_COLLECTIONS_IN_LIBRARY,
 	ERROR_COLLECTIONS_IN_LIBRARY,
-	REQUEST_ITEMS_IN_COLLECTION,
-	RECEIVE_ITEMS_IN_COLLECTION,
-	ERROR_ITEMS_IN_COLLECTION,
-	REQUEST_UPDATE_ITEM,
-	RECEIVE_UPDATE_ITEM,
-	ERROR_UPDATE_ITEM,
-	REQUEST_ITEM_TYPE_CREATOR_TYPES,
-	RECEIVE_ITEM_TYPE_CREATOR_TYPES,
-	REQUEST_ITEM_TYPE_FIELDS,
-	RECEIVE_ITEM_TYPE_FIELDS,
-	TRIGGER_EDITING_ITEM,
-	REQUEST_CHILD_ITEMS,
+	PRE_UPDATE_ITEM,
 	RECEIVE_CHILD_ITEMS,
-	ERROR_CHILD_ITEMS,
+	RECEIVE_COLLECTIONS_IN_LIBRARY,
+	RECEIVE_ITEM_TYPE_CREATOR_TYPES,
+	RECEIVE_ITEM_TYPE_FIELDS,
+	RECEIVE_ITEMS_IN_COLLECTION,
+	RECEIVE_META,
+	RECEIVE_UPDATE_ITEM,
+	REQUEST_CHILD_ITEMS,
+	REQUEST_COLLECTIONS_IN_LIBRARY,
+	REQUEST_ITEM_TYPE_CREATOR_TYPES,
+	REQUEST_ITEM_TYPE_FIELDS,
+	REQUEST_ITEMS_IN_COLLECTION,
+	REQUEST_META,
+	REQUEST_UPDATE_ITEM,
 } = require('../../src/js/constants/actions.js');
 
-const mockStore = configureStore([thunk]);
 const { combineReducers } = require('redux');
 const reduce = combineReducers(reducers);
 
 describe('reducers', () => {
 	it('config', () => {
-		const action = configureApi('API_KEY', {
+		const action = configureApi('u123', 'API_KEY', {
 			apiAuthorityPart: 'apidev.zotero.org'
 		});
 		const state = reduce({}, action);
@@ -116,19 +110,20 @@ describe('reducers', () => {
 			libraryKey: 'u123'
 		});
 		assert.sameMembers(state.fetching.collectionsInLibrary, ['u123']);
-		assert.isEmpty(Object.keys(state.collections));
+		assert.isEmpty(Object.keys(state.libraries.u123.collections));
 
 		state = reduce(state, {
 			type: RECEIVE_COLLECTIONS_IN_LIBRARY,
 			libraryKey: 'u123',
 			collections: collectionData,
-			receivedAt: 1499438101816
+			receivedAt: 1499438101816,
+			response: { getData: () => [], getMeta: () => [] }
 		});
 
 		assert.isEmpty(state.fetching.collectionsInLibrary);
-		assert.lengthOf(Object.keys(state.collections), 2);
-		assert.deepEqual(state.collections['c1u123'], collectionData[0]);
-		assert.sameOrderedMembers(state.collectionsByLibrary['u123'], ['c1u123', 'c2u123']);
+		assert.lengthOf(Object.keys(state.libraries.u123.collections), 2);
+		assert.deepEqual(state.libraries.u123.collections.c1, collectionData[0]);
+		assert.deepEqual(Object.keys(state.libraries.u123.collections), ['c1', 'c2']);
 	});
 
 	it('collections error', () => {
@@ -169,33 +164,50 @@ describe('reducers', () => {
 			state = reduce(state, {
 				type: REQUEST_ITEMS_IN_COLLECTION,
 				libraryKey: 'u123',
-				collectionKey: 'AAAAAAAA'
+				collectionKey: 'CLECTION'
 			});
 
-			assert.sameMembers(state.fetching.itemsInCollection, ['AAAAAAAAu123']);
-			assert.isEmpty(state.items, {});
+			assert.sameMembers(state.libraries.u123.fetching.itemsInCollection, ['CLECTION']);
+			assert.isEmpty(state.libraries.u123.items);
 
 			state = reduce(state, {
 				type: RECEIVE_ITEMS_IN_COLLECTION,
-				collectionKey: 'AAAAAAAA',
+				collectionKey: 'CLECTION',
 				libraryKey: 'u123',
 				items: itemsData,
 				receivedAt: 1499438101816
 			});
 
-			assert.isEmpty(state.fetching.itemsInCollection, []);
-			assert.deepEqual(state.items['ITEM1111u123'], itemsData[0]);
-			assert.deepEqual(state.items['ITEM2222u123'], itemsData[1]);
-			assert.sameOrderedMembers(state.itemsByCollection['AAAAAAAAu123'], ['ITEM1111u123', 'ITEM2222u123']);
+			assert.isEmpty(state.libraries.u123.fetching.itemsInCollection, []);
+			assert.deepEqual(state.libraries.u123.items['ITEM1111'], itemsData[0]);
+			assert.deepEqual(state.libraries.u123.items['ITEM2222'], itemsData[1]);
+			assert.sameOrderedMembers(
+				state.libraries.u123.itemsByCollection['CLECTION'],
+				['ITEM1111', 'ITEM2222']
+			);
 		});
 
 		it('updating', () => {
 			var state = {
-				items: {
-					[itemsData[0].key + 'u123']: itemsData[0],
-					[itemsData[1].key + 'u123']: itemsData[1]
+				libraries: {
+					u123: {
+						items: {
+							[itemsData[0].key]: itemsData[0],
+							[itemsData[1].key]: itemsData[1],
+						}
+					}
 				}
 			};
+
+			state = reduce(state, {
+				type: PRE_UPDATE_ITEM,
+				libraryKey: 'u123',
+				itemKey: itemsData[0].key,
+				patch: {
+					title: 'foobar'
+				},
+				queueId: 1
+			});
 
 			state = reduce(state, {
 				type: REQUEST_UPDATE_ITEM,
@@ -203,12 +215,24 @@ describe('reducers', () => {
 				itemKey: itemsData[0].key,
 				patch: {
 					title: 'foobar'
-				}
+				},
+				queueId: 1
 			});
 
-			assert.strictEqual(state.updating.items['ITEM1111u123']['title'], 'foobar');
-			assert.strictEqual(state.items['ITEM1111u123'].version, 1);
-			assert.strictEqual(state.items['ITEM1111u123'].title, 'item 1');
+			assert.lengthOf(state.libraries.u123.updating.items.ITEM1111, 1);
+			assert.strictEqual(state.libraries.u123.updating.items.ITEM1111[0].patch.title, 'foobar');
+			assert.strictEqual(state.libraries.u123.items['ITEM1111'].version, 1);
+			assert.strictEqual(state.libraries.u123.items['ITEM1111'].title, 'item 1');
+
+			state = reduce(state, {
+				type: PRE_UPDATE_ITEM,
+				libraryKey: 'u123',
+				itemKey: itemsData[0].key,
+				patch: {
+					publisher: 'lorem'
+				},
+				queueId: 2
+			});
 
 			state = reduce(state, {
 				type: REQUEST_UPDATE_ITEM,
@@ -216,13 +240,13 @@ describe('reducers', () => {
 				itemKey: itemsData[0].key,
 				patch: {
 					publisher: 'lorem'
-				}
+				},
+				queueId: 2
 			});
 
-			assert.deepEqual(state.updating.items['ITEM1111u123'], {
-				title: 'foobar',
-				publisher: 'lorem'
-			});
+			assert.lengthOf(state.libraries.u123.updating.items.ITEM1111, 2);
+			assert.strictEqual(state.libraries.u123.updating.items.ITEM1111[0].patch.title, 'foobar');
+			assert.strictEqual(state.libraries.u123.updating.items.ITEM1111[1].patch.publisher, 'lorem');
 
 
 			state = reduce(state, {
@@ -236,14 +260,13 @@ describe('reducers', () => {
 				},
 				patch: {
 					title: 'foobar'
-				}
+				},
+				queueId: 1
 			});
 
-			assert.strictEqual(state.items['ITEM1111u123'].version, 2);
-			assert.strictEqual(state.items['ITEM1111u123'].title, 'foobar');
-			assert.deepEqual(state.updating.items['ITEM1111u123'], {
-				publisher: 'lorem'
-			});
+			assert.strictEqual(state.libraries.u123.items['ITEM1111'].version, 2);
+			assert.strictEqual(state.libraries.u123.items['ITEM1111'].title, 'foobar');
+			assert.lengthOf(state.libraries.u123.updating.items.ITEM1111, 1);
 
 			state = reduce(state, {
 				type: RECEIVE_UPDATE_ITEM,
@@ -257,12 +280,13 @@ describe('reducers', () => {
 				},
 				patch: {
 					publisher: 'lorem'
-				}
+				},
+				queueId: 2,
 			});
 
-			assert.isEmpty(state.updating.items);
-			assert.strictEqual(state.items['ITEM1111u123'].version, 3);
-			assert.strictEqual(state.items['ITEM1111u123'].publisher, 'lorem');
+			assert.isEmpty(state.libraries.u123.updating.items);
+			assert.strictEqual(state.libraries.u123.items['ITEM1111'].version, 3);
+			assert.strictEqual(state.libraries.u123.items['ITEM1111'].publisher, 'lorem');
 		});
 
 		it('fetching child items', () => {
@@ -273,7 +297,7 @@ describe('reducers', () => {
 				libraryKey: 'u123'
 			});
 
-			assert.sameMembers(state.fetching.childItems, ['ITEM0000u123']);
+			assert.sameMembers(state.libraries.u123.fetching.childItems, ['ITEM0000']);
 
 			state = reduce(state, {
 				type: RECEIVE_CHILD_ITEMS,
@@ -282,36 +306,13 @@ describe('reducers', () => {
 				childItems: itemsData
 			});
 
-			assert.isEmpty(state.fetching.childItems);
-			assert.deepEqual(state.items['ITEM1111u123'], itemsData[0]);
-			assert.deepEqual(state.items['ITEM2222u123'], itemsData[1]);
-			assert.sameOrderedMembers(state.itemsByParentItem['ITEM0000u123'], ['ITEM1111u123', 'ITEM2222u123']);
+			assert.isEmpty(state.libraries.u123.fetching.childItems);
+			assert.deepEqual(state.libraries.u123.items['ITEM1111'], itemsData[0]);
+			assert.deepEqual(state.libraries.u123.items['ITEM2222'], itemsData[1]);
+			assert.sameOrderedMembers(
+				state.libraries.u123.itemsByParent['ITEM0000'],
+				['ITEM1111', 'ITEM2222']
+			);
 		});
-
-		// it('editing', () => {
-		// 	var state = {};
-
-		// 	state = items(state, {
-		// 		type: TRIGGER_EDITING_ITEM,
-		// 		libraryKey: 'u123',
-		// 		item
-
-
-		// 	});
-
-		// });
 	});
-
-
-
-
-	// it('initializes with required meta data', async () => {
-	// 	const store = mockStore({});
-	// 	await store.dispatch(initialize('API_KEY'));
-	// 	console.log(store.getActions());
-	// });
-
-
-	// const initialState = {}
-
 });

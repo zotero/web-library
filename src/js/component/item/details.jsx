@@ -2,7 +2,6 @@
 
 const React = require('react');
 const PropTypes = require('prop-types');
-const cx = require('classnames');
 const { itemProp } = require('../../constants/item');
 
 const ItemDetailsTabs = require('./details/tabs');

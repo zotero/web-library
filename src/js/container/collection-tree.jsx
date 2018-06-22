@@ -1,3 +1,5 @@
+/* eslint-disable react/no-deprecated */
+
 'use strict';
 
 const React = require('react');
@@ -6,9 +8,8 @@ const { withRouter } = require('react-router-dom');
 const { connect } = require('react-redux');
 const CollectionTree = require('../component/collection-tree');
 const { fetchCollections } = require('../actions');
-const { getCollections, getCollectionsPath, isTopLevel } = require('../state-utils');
-const { enhanceCollections } = require('../utils');
-
+const { getCollectionsPath } = require('../common/state');
+const { get, enhanceCollections } = require('../utils');
 
 class CollectionTreeContainer extends React.Component {
 	constructor(props) {
@@ -24,7 +25,7 @@ class CollectionTreeContainer extends React.Component {
 				fetchCollections(nextProps.libraryKey)
 			);
 		}
-		
+
 		if('selected' in nextProps && nextProps.selected != this.props.selected ||
 			'collections' in nextProps && nextProps.collections != this.props.collections) {
 			this.setState({
@@ -53,7 +54,7 @@ class CollectionTreeContainer extends React.Component {
 	}
 
 	render() {
-		return <CollectionTree 
+		return <CollectionTree
 			collections={this.state.collections}
 			path={this.state.path}
 			isFetching={this.props.isFetching}
@@ -65,13 +66,17 @@ class CollectionTreeContainer extends React.Component {
 }
 
 const mapStateToProps = state => {
+	const libraryKey = state.current.library;
+
 	return {
-		libraryKey: 'libraryKey' in state.library ? state.library.libraryKey : null,
-		collections: getCollections(state),
-		isFetching: state.library && state.collections[state.library.libraryKey] ? state.collections[state.library.libraryKey].isFetching : false,
-		selected: 'collection' in state.router.params ? state.router.params.collection : null,
+		libraryKey,
+		collections: Object.values(
+			get(state, ['libraries', libraryKey, 'collections'], {})
+		),
+		isFetching: libraryKey in state.fetching.collectionsInLibrary,
+		selected: state.current.collection,
 		path: getCollectionsPath(state),
-		isTopLevel: isTopLevel(state)
+		isTopLevel: !state.current.collection
 	};
 };
 

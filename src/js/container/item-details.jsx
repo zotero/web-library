@@ -9,7 +9,6 @@ const { connect } = require('react-redux');
 const { createItem, updateItem, deleteItem, fetchItemTemplate, fetchChildItems, uploadAttachment, fetchItems } = require('../actions');
 const { itemProp } = require('../constants/item');
 const { get, deduplicateByKey, mapRelationsToItemKeys, removeRelationByItemKey } = require('../utils');
-const { getItem, getChildItems, isItemFieldBeingUpdated, getRelatedItems, getCollection, getCollectionItemCount, isTopLevel, getLibraryItemCount } = require('../state-utils');
 
 class ItemDetailsContainer extends React.Component {
 	state = {
@@ -160,17 +159,33 @@ class ItemDetailsContainer extends React.Component {
 }
 
 const mapStateToProps = state => {
-	const item = getItem(state);
+	const libraryKey = state.current.library;
+	const collectionKey = state.current.collection;
+	const itemKey = state.current.item;
+	const item = get(state, ['libraries', libraryKey, 'items', itemKey], {});
+	const childItems = get(state, ['libraries', libraryKey, 'itemsByParent', itemKey], [])
+			.map(key => get(state, ['libraries', libraryKey, 'items', key], {}));
+	const isProcessingTags = get(state,
+		['libraries', libraryKey, 'updating', 'items', itemKey], []
+	).some(({ patch }) => 'tagd' in patch);
+	const relations = item.relations ?
+		mapRelationsToItemKeys(item.relations, state.config.userId)
+			.map(key => get(state, ['libraries', libraryKey, 'items', key]))
+			.filter(item => item !== null) : [];
+	const itemsCount = collectionKey ?
+		get(state, ['libraries', libraryKey, 'itemCountByCollection', collectionKey], 0) :
+		get(state, ['itemCountTopByLibrary', libraryKey], 0);
+	const selectedItemKeys = get(state, 'router.params.items');
 
 	return {
-		item: item || {},
+		item,
 		config: state.config,
-		childItems: getChildItems(state) || [],
-		isProcessingTags: isItemFieldBeingUpdated('tags', state),
-		relations: getRelatedItems(state) || [],
-		collection: getCollection(state),
-		itemsCount: isTopLevel(state) ? getLibraryItemCount(state) : getCollectionItemCount(state),
-		selectedItemKeys: item ? [item.key] : (state.router && 'items' in state.router.params && state.router.params.items.split(',')) || []
+		childItems,
+		isProcessingTags,
+		relations,
+		collection: get(state, 'libraries', libraryKey, 'collections', collectionKey),
+		itemsCount,
+		selectedItemKeys: selectedItemKeys ? selectedItemKeys.split(',') : []
 	};
 };
 

@@ -8,12 +8,7 @@ const { connect } = require('react-redux');
 const {	updateItem, fetchItemTypeCreatorTypes, fetchItemTypeFields } = require('../actions');
 const { itemProp, hideFields, noEditFields, baseMappings } = require('../constants/item');
 const { get, reverseMap } = require('../utils');
-const {
-	getItem,
-	getItemFieldValue,
-	isEditing,
-	isItemFieldBeingUpdated,
-} = require('../state-utils');
+const { getItemFieldValue } = require('../common/state');
 
 class ItemBoxContainer extends React.PureComponent {
 	componentWillReceiveProps(props) {
@@ -80,7 +75,9 @@ class ItemBoxContainer extends React.PureComponent {
 }
 
 const mapStateToProps = state => {
-	const item = getItem(state);
+	const libraryKey = state.current.library;
+	const itemKey = state.current.item;
+	const item = get(state, ['libraries', libraryKey, 'items', itemKey]);
 
 	if(!item) {
 		return {};
@@ -121,8 +118,10 @@ const mapStateToProps = state => {
 		...state.meta.itemTypeFields[item.itemType].filter(itf => itf.field !== titleField)
 	].filter(e => e); //filter out undefined
 
-	const isEditingEnabled = !state.viewport.xs || item && isEditing(item.key, state);
-	const isForm = state.viewport.xs && item && isEditing(item.key, state);
+	//@TODO: Refactor
+	const isEditing = state.current.editing === item.key;
+	const isEditingEnabled = !state.viewport.xs || item && isEditing;
+	const isForm = state.viewport.xs && item && isEditing;
 
 	//@TODO: Refactor
 	return {
@@ -131,7 +130,10 @@ const mapStateToProps = state => {
 				key: f.field,
 				label: f.localized,
 				readonly: isEditingEnabled ? noEditFields.includes(f) : true,
-				processing: isItemFieldBeingUpdated(f.field, state),
+				processing: get(
+					state,
+					['libraries', libraryKey, 'updating', 'items', item.key], []
+				).some(({ patch }) => f.field in patch),
 				value: getItemFieldValue(f.field, state)
 		})).filter(f => !hideFields.includes(f.key)),
 		item: item || undefined,

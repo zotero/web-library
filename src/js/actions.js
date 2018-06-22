@@ -1,10 +1,12 @@
 const cache = require('zotero-api-client-cache');
 const api = require('zotero-api-client')().use(cache()).api;
 
-const { ck, uck, get } = require('./utils');
-const { getLibraryKey, getCollectionItemCount, getLibraryItemCount } = require('./state-utils');
+const { get } = require('./utils');
 
 var queueIdCunter = 0;
+
+//@TODO: merge meta into items
+//item[Symbol.for('meta')] = action.meta[i];
 
 const {
 	CONFIGURE_API,
@@ -79,18 +81,18 @@ const {
 	TRIGGER_RESIZE_VIEWPORT
 } = require('./constants/actions');
 
-// @TODO: rename and move to utils/api
+// @TODO: rename and move to common/api
 const cleanupCacheAfterDelete = (itemKeys, state) => {
-	const libraryKey = getLibraryKey(state);
-	const { itemsByCollection, itemsByParentItem, itemsTop } = state;
+	const libraryKey = state.current.library;
+	const itemsByCollection = get(state, ['libraries', libraryKey, 'itemsByCollection']);;
+	const itemsByParent = get(state, ['libraries', libraryKey, 'itemsByParent']);
+	const itemsTop = get(state, ['libraries', libraryKey, 'itemsTop']);
+
 	// cleanup relevant caches
 	itemKeys.forEach(key => {
-		const ckey = ck(key, libraryKey);
-
 		Object.entries(itemsByCollection)
-		.forEach(([ collectionCkey, itemsInCollectionCkeys]) => {
-			if(itemsInCollectionCkeys.includes(ckey)) {
-				const collectionKey = uck(collectionCkey).shift();
+		.forEach(([collectionKey, itemsInCollectionKeys]) => {
+			if(itemsInCollectionKeys.includes(key)) {
 				api().invalidate({
 					'resource.library': libraryKey,
 					'resource.collections': collectionKey,
@@ -98,10 +100,9 @@ const cleanupCacheAfterDelete = (itemKeys, state) => {
 			}
 		});
 
-		Object.entries(itemsByParentItem)
-		.forEach(([ parentCkey, itemsInParentCkeys]) => {
-			if(itemsInParentCkeys.includes(ckey)) {
-				const parentKey = uck(parentCkey).shift();
+		Object.entries(itemsByParent)
+		.forEach(([ parentKey, itemsInParentKeys]) => {
+			if(itemsInParentKeys.includes(key)) {
 				api().invalidate({
 					'resource.library': libraryKey,
 					'resource.items': parentKey,
@@ -110,7 +111,7 @@ const cleanupCacheAfterDelete = (itemKeys, state) => {
 			}
 		});
 
-		if(itemsTop.find(topItemCkey => topItemCkey === ckey)) {
+		if(itemsTop.find(topItemKey => topItemKey === key)) {
 			api().invalidate({
 				'resource.library': libraryKey,
 				'resource.items': null,
@@ -163,7 +164,7 @@ const preferenceChange = (name, value) => {
 
 const initialize = () => {
 	return async (dispatch, getState) => {
-		const { apiConfig } = getState().config;
+		const { config: apiConfig } = getState();
 		dispatch({
 			type: REQUEST_META
 		});
@@ -223,23 +224,26 @@ const fetchCollections = (libraryKey) => {
 
 const fetchItemsInCollection = (collectionKey, { start = 0, limit = 50, sort = 'dateModified', direction = "desc" } = {}) => {
 	return async (dispatch, getState) => {
-		let { config, library, itemCountByCollection, itemsByCollection, items } = getState();
-		let totalItemsCount = itemCountByCollection[ck(collectionKey, library.libraryKey)];
-		let knownItemsCkeys = itemsByCollection[ck(collectionKey, library.libraryKey)];
+		const state = getState();
+		const config = state.config;
+		const libraryKey = state.current.library;
+		const collectionKey = state.current.collection;
+		const totalItemsCount = get(state, ['libraries', libraryKey, 'itemCountByCollection', collectionKey]);
+		const knownItemKeys = get(state, ['libraries', libraryKey, 'itemsByCollection', collectionKey], []);
 
-		if(knownItemsCkeys && knownItemsCkeys.length === totalItemsCount) {
-			return knownItemsCkeys.map(ckey => items[ckey]);
+		if(knownItemKeys.length === totalItemsCount) {
+			return knownItemKeys.map(key => get(state, ['libraries', libraryKey, 'items', key]))
 		}
 
 		dispatch({
 			type: REQUEST_ITEMS_IN_COLLECTION,
-			libraryKey: library.libraryKey,
+			libraryKey,
 			collectionKey
 		});
 
 		try {
 			let response = await api(config.apiKey, config.apiConfig)
-				.library(library.libraryKey)
+				.library(libraryKey)
 				.collections(collectionKey)
 				.items()
 				.top()
@@ -250,7 +254,7 @@ const fetchItemsInCollection = (collectionKey, { start = 0, limit = 50, sort = '
 
 			dispatch({
 				type: RECEIVE_ITEMS_IN_COLLECTION,
-				libraryKey: library.libraryKey,
+				libraryKey,
 				receivedAt: Date.now(),
 				collectionKey,
 				items,
@@ -353,7 +357,7 @@ const fetchItemTemplate = (itemType, opts = {}) => {
 const fetchChildItems = (itemKey, libraryKey) => {
 	return async (dispatch, getState) => {
 		let config = getState().config;
-		libraryKey = libraryKey || getLibraryKey(getState());
+		libraryKey = libraryKey || get(getState(), 'current.library');
 		dispatch({
 			type: REQUEST_CHILD_ITEMS,
 			itemKey,
@@ -389,7 +393,7 @@ const fetchChildItems = (itemKey, libraryKey) => {
 const fetchItems = (itemKeys, libraryKey) => {
 	return async (dispatch, getState) => {
 		let config = getState().config;
-		libraryKey = libraryKey || getLibraryKey(getState());
+		libraryKey = libraryKey || get(getState(), 'current.library');
 		dispatch({
 			type: REQUEST_FETCH_ITEMS,
 			itemKeys,
@@ -428,14 +432,14 @@ const fetchItems = (itemKeys, libraryKey) => {
 
 const fetchTopItems = ({ start = 0, limit = 50, sort = 'dateModified', direction = 'desc' }) => {
 	return async (dispatch, getState, ) => {
-		let { config, library, itemCountByLibrary, itemsTop, items } = getState();
-		let libraryKey = getLibraryKey(getState());
-		let totalItemsCount = itemCountByLibrary[library.libraryKey];
-		let knownItemsCkeys = itemsTop;
+		const state = getState();
+		const libraryKey = state.current.library;
+		const totalItemsCount = get(state, ['itemCountTopByLibrary', libraryKey]);
+		const knownItemKeys = get(state, ['libraries', libraryKey, 'itemsTop'], []);
 
-		if(knownItemsCkeys && knownItemsCkeys.length === totalItemsCount) {
+		if(knownItemKeys.length === totalItemsCount) {
 			// there is no need for a request
-			return knownItemsCkeys.map(ckey => items[ckey]);
+			return knownItemKeys.map(key => get(state, ['libraries', libraryKey, 'items', key]))
 		}
 
 		dispatch({
@@ -444,7 +448,7 @@ const fetchTopItems = ({ start = 0, limit = 50, sort = 'dateModified', direction
 		});
 
 		try {
-			let response = await api(config.apiKey, config.apiConfig)
+			let response = await api(state.config.apiKey, state.config.apiConfig)
 				.library(libraryKey)
 				.items()
 				.top()
@@ -473,7 +477,7 @@ const fetchTopItems = ({ start = 0, limit = 50, sort = 'dateModified', direction
 
 const triggerEditingItem = (itemKey, isEditing) => {
 	return async (dispatch, getState) => {
-		let libraryKey = getLibraryKey(getState());
+		let libraryKey = get(getState(), 'current.library');
 
 		return dispatch({
 			type: TRIGGER_EDITING_ITEM,
@@ -499,7 +503,7 @@ function createItem(properties) {
 		// 	properties
 		// });
 		const state = getState();
-		const libraryKey = getLibraryKey(getState());
+		const libraryKey = get(getState(), 'current.library');
 		const config = state.config;
 		dispatch({
 			type: REQUEST_CREATE_ITEM,
@@ -540,7 +544,7 @@ function createItem(properties) {
 function deleteItem(item) {
 	return async (dispatch, getState) => {
 		const state = getState();
-		const libraryKey = getLibraryKey(getState());
+		const libraryKey = get(getState(), 'current.library');
 		const config = getState().config;
 
 		dispatch({
@@ -552,6 +556,7 @@ function deleteItem(item) {
 		try {
 			await api(config.apiKey, config.apiConfig)
 			.library(libraryKey).items(item.key).version(item.version).delete();
+			// search in state, add to action
 			dispatch({
 				type: RECEIVE_DELETE_ITEM,
 				libraryKey,
@@ -573,7 +578,7 @@ function deleteItem(item) {
 function deleteItems(itemKeys) {
 	return async (dispatch, getState) => {
 		const state = getState();
-		const libraryKey = getLibraryKey(state);
+		const libraryKey = get(getState(), 'current.library');
 		const { config } = getState(state);
 
 		dispatch({
@@ -605,7 +610,7 @@ function deleteItems(itemKeys) {
 
 function updateItem(itemKey, patch) {
 	return async (dispatch, getState) => {
-		const libraryKey = getLibraryKey(getState());
+		const libraryKey = get(getState(), 'current.library');
 		const queueId = ++queueIdCunter;
 
 		dispatch({
@@ -646,11 +651,12 @@ function updateItem(itemKey, patch) {
 
 function queueUpdateItem(itemKey, patch, libraryKey, queueId) {
 	return {
-		queue: ck(itemKey, libraryKey),
+		queue: libraryKey + itemKey,
 		callback: async (next, dispatch, getState) => {
 			const state = getState();
+			const libraryKey = state.current.library;
 			const config = state.config;
-			const item = state.items[ck(itemKey, libraryKey)];
+			const item = get(state, ['libraries', libraryKey, 'items', itemKey]);
 			const version = item.version;
 
 			dispatch({
@@ -726,7 +732,7 @@ function queueUpdateItem(itemKey, patch, libraryKey, queueId) {
 function uploadAttachment(itemKey, fileData) {
 	return async (dispatch, getState) => {
 		const state = getState();
-		const libraryKey = getLibraryKey(getState());
+		const libraryKey = get(getState(), 'current.library');
 		const config = state.config;
 		dispatch({
 			type: REQUEST_UPLOAD_ATTACHMENT,

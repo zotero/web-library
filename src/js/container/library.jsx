@@ -13,7 +13,6 @@ const { Provider, connect } = require('react-redux');
 const { BrowserRouter, Route, Switch } = require('react-router-dom');
 const deepEqual = require('deep-equal');
 const reducers = require('../reducers');
-const { getCurrentViewFromState } = require('../state-utils');
 const { configureApi, selectLibrary, initialize, triggerResizeViewport, changeRoute } = require('../actions');
 const Library = require('../component/library');
 const defaults = require('../constants/defaults');
@@ -116,7 +115,7 @@ LibraryContainer.propTypes = {
 
 const mapStateToProps = state => {
 	return {
-		view: getCurrentViewFromState(state),
+		view: state.current.view,
 		userId: state.config.userId || null,
 		api: state.config.api || null,
 		apiKey: state.config.apiKey || null

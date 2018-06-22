@@ -44,20 +44,6 @@ const enhanceCollections = (collections, path = []) => {
 	return applyPathToCollections(collections, path);
 };
 
-/**
- * Returns a unique compund key for item/collection
- * or splits a compound key into individual bits
- */
-const ck = (itemOrCollectionKey, libraryKey) => {
-	return itemOrCollectionKey + libraryKey;
-};
-
-const uck = (coumpoundKey) => {
-	//eslint-disable-next-line no-unused-vars
-	const [ _, key, libraryKey ] = coumpoundKey.match(/^([A-Z0-9]+)((u|g)\d+)$/);
-	return [ key, libraryKey ];
-}
-
 const splice = (array, at, count = 0, ...items) => {
 	if (at == null) {
 		at = array.length;
@@ -107,23 +93,6 @@ const reverseMap = map => {
 		acc[map[key]] = key;
 		return acc;
 	}, {});
-};
-
-const without = (array, deleteValues) => {
-	if(!Array.isArray(deleteValues)) {
-		deleteValues = [deleteValues];
-	}
-
-	return array.filter(value => !deleteValues.includes(value))
-
-	// for (let deleteValue of deleteValues) {
-	// 	let pos = array.indexOf(deleteValue);
-	// 	if(pos > -1) {
-	// 		array = [...array.slice(0, pos), ...array.slice(pos+1)];
-	// 	}
-	// }
-
-	// return array;
 };
 
 const deduplicateByKey = (array, key) => {
@@ -195,6 +164,13 @@ const sortByKey = (items, key, direction) => {
 	});
 };
 
+const indexByKey = (elements, key) => {
+	return elements.reduce((aggr, element) => {
+		aggr[element[key]] = element;
+		return aggr;
+	}, {});
+}
+
 const noop = () => {};
 
 // @TODO: columns util, move elsewhere?
@@ -218,10 +194,10 @@ const resizeVisibleColumns = (columns, fractionBias, invert = false) => {
 }
 
 module.exports = {
-	ck,
 	deduplicateByKey,
 	enhanceCollections,
 	get,
+	indexByKey,
 	mapRelationsToItemKeys,
 	noop,
 	removeRelationByItemKey,
@@ -230,6 +206,4 @@ module.exports = {
 	sortByKey,
 	splice,
 	transform,
-	uck,
-	without,
 };
