@@ -166,7 +166,7 @@ class TextAreaInput extends React.PureComponent {
 		onCommit: PropTypes.func.isRequired,
 		onFocus: PropTypes.func.isRequired,
 		placeholder: PropTypes.string,
-		resize: PropTypes.string,
+		resize: PropTypes.oneOfType([PropTypes.bool, PropTypes.string]),
 		rows: PropTypes.number,
 		selectOnFocus: PropTypes.bool,
 		spellCheck: PropTypes.bool,

@@ -166,7 +166,7 @@ class Input extends React.PureComponent {
 		onCommit: PropTypes.func.isRequired,
 		onFocus: PropTypes.func.isRequired,
 		placeholder: PropTypes.string,
-		resize: PropTypes.string,
+		resize: PropTypes.oneOfType([PropTypes.bool, PropTypes.string]),
 		selectOnFocus: PropTypes.bool,
 		spellCheck: PropTypes.bool,
 		step: PropTypes.number,
