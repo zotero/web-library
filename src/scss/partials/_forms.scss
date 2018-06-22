@@ -36,3 +36,9 @@
 		border: $input-border-width solid $input-border-color;
 	}
 }
+
+.auto-resizer {
+	textarea {
+		resize: none;
+	}
+}

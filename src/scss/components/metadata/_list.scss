@@ -65,6 +65,17 @@
 		}
 	}
 
+	label {
+		@include text-truncate;
+		line-height: normal; // Flex alignment is more stable
+
+		&[for="url"] {
+			overflow: inherit;
+			text-overflow: inherit;
+			white-space: inherit;
+		}
+	}
+
 	.value {
 		flex: 0 0 calc(100% - #{$metadata-list-offset});
 
@@ -76,6 +87,20 @@
 			display: flex;
 			align-items: center;
 			padding-left: $metadata-list-gutter / 2;
+		}
+	}
+
+	.empty {
+		.editable-content {
+			&:before {
+				content: "\00a0";
+			}
+		}
+	}
+
+	&:not(.editing) {
+		.empty {
+			display: none;
 		}
 	}
 
@@ -149,6 +174,43 @@
 				min-height: $line-height-large-touch;
 			}
 		}
+
+		// Textarea fields
+		.extra {
+			@include touch-or-bp-down(sm) {
+				flex-direction: column;
+				align-items: normal;
+			}
+
+			.key {
+				@include touch-or-bp-down(sm) {
+					flex: 1 1 auto;
+					padding-right: 0;
+				}
+			}
+
+			.value {
+				@include touch-or-bp-down(sm) {
+					padding-left: 0;
+					padding-bottom: 7px;
+					margin-top: -6px;
+				}
+			}
+
+			.auto-resizer {
+				@include touch-or-bp-down(sm) {
+					flex: 1 1 auto; // Full width
+				}
+			}
+
+			.content {
+				@include touch-or-bp-down(sm) {
+					white-space: pre-wrap;
+					min-height: round(3 * $font-size-mobile * $line-height-base);
+					line-height: $line-height-base;
+				}
+			}
+		}
 	}
 
 	@include mouse-and-bp-up(md) {
@@ -187,29 +249,6 @@
 					margin-bottom: -3px; // …
 				}
 			}
-		}
-	}
-
-	.empty {
-		.editable-content {
-			&:before {
-				content: "\00a0";
-			}
-		}
-
-		@include touch-or-bp-down(md) {
-			display: none;
-		}
-	}
-
-	label {
-		@include text-truncate;
-		line-height: normal; // Flex alignment is more stable
-
-		&[for="url"] {
-			overflow: inherit;
-			text-overflow: inherit;
-			white-space: inherit;
 		}
 	}
 

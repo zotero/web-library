@@ -59,7 +59,6 @@
 		}
 
 		.editable-control {
-			resize: none;
 			min-height: round(3 * $font-size-base * $line-height-base) + 2 * $editable-border-width;
 			padding-top: 0; // No padding for visual 2px padding between border and text selection
 			padding-bottom: 0;
