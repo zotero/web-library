@@ -172,14 +172,19 @@
 			}
 
 			&.textarea {
+				&.editing {
+					margin-top: 2px; // Compensate missing padding on editable-control
+					margin-bottom: 2px; // …
+				}
+
 				.editable-content {
-					margin-top: 1px; // Align vertically with label
-					padding-top: 0;
-					padding-bottom: 0;
+					margin-top: -1px; // Align vertically with label
+					margin-bottom: -1px; // …
 				}
 
 				.editable-control {
-					margin-top: -1px; // Align vertically with label
+					margin-top: -3px; // Align vertically with label
+					margin-bottom: -3px; // …
 				}
 			}
 		}

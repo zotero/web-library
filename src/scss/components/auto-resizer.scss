@@ -1,0 +1,30 @@
+//
+// Auto resizer
+// --------------------------------------------------
+
+.auto-resizer {
+	flex: 0 0 auto;
+	margin-right: auto;
+	position: relative;
+	max-width: 100%;
+
+	.content {
+		@include text-truncate;
+		color: transparent;
+		line-height: normal; // Todo: only when containing editables
+		min-width: $space-sm;
+		white-space: pre;
+
+		&::after {
+			content: "\200b"; // Permanently insert a zero-width character to expand textareas at newlines
+		}
+	}
+
+	:last-child {
+		position: absolute;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		left: 0;
+	}
+}
