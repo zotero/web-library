@@ -18,6 +18,28 @@
 		}
 	}
 
+	&.textarea {
+		@include touch-or-bp-down(sm) {
+			&.busy {
+				&::after {
+					content: "";
+					position: absolute;
+					right: 0;
+					bottom: 2px; // Align with last line
+					width: $space-lg;
+					height: $space-lg;
+					background: $body-bg;
+				}
+			}
+		}
+
+		.icon-spin {
+			top: auto;
+			bottom: 2px; // Align with last line
+			z-index: 2; // Over generated content 'backdrop'
+		}
+	}
+
 	.editable-control {
 		& + .icon-spin {
 			width: $space-md;
@@ -43,15 +65,17 @@
 		border: $input-border-width solid $input-border-color;
 	}
 
-	.busy & {
+	.busy:not(.textarea) & {
 		@include touch-or-bp-down(sm) {
 			padding-right: $space-lg + 1px;
 		}
 	}
 }
 
-.auto-resizer {
-	textarea {
+textarea {
+	resize: vertical;
+
+	.auto-resizer & {
 		resize: none;
 	}
 }
