@@ -189,6 +189,12 @@
 				}
 			}
 
+			label {
+				@include touch-or-bp-down(sm) {
+					flex: 1 1 auto;
+				}
+			}
+
 			.value {
 				@include touch-or-bp-down(sm) {
 					padding-left: 0;

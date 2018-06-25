@@ -9,6 +9,13 @@
 
 	.icon-spin {
 		position: absolute;
+
+		@include touch-or-bp-down(sm) {
+			width: $space-lg;
+			height: $space-lg;
+			right: 0;
+			top: calc(50% - #{$space-lg / 2});
+		}
 	}
 
 	.editable-control {
@@ -34,6 +41,12 @@
 	@include mouse-and-bp-up(md) {
 		padding: 0 $input-btn-padding-x;
 		border: $input-border-width solid $input-border-color;
+	}
+
+	.busy & {
+		@include touch-or-bp-down(sm) {
+			padding-right: $space-lg + 1px;
+		}
 	}
 }
 
