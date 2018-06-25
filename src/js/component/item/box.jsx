@@ -150,11 +150,15 @@ class ItemBox extends React.PureComponent {
 
 			if(props.inputComponent === SelectInput) {
 				props['onChange'] = () => true; //commit on change
+				// select inputs render without Editable and need to be tabbable
+				props['tabIndex'] = 0;
 			} else if(props.inputComponent !== SelectInput) {
 				props['onBlur'] = () => false; //commit on blur
 			}
 
-			const FormField = this.props.isForm ? props.inputComponent : Editable;
+			// Renders wrapped in Editable unless it's a Select or ItemBox is in form mode
+			const FormField = this.props.isForm || props.inputComponent === SelectInput ?
+				props.inputComponent : Editable;
 
 			return (
 				<Field
