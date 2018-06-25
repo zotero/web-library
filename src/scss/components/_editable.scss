@@ -44,22 +44,11 @@
 	// Textarea
 	&.textarea {
 		.editable-content,
-		.content, // Auto-resizer
 		.editable-control {
 			line-height: $line-height-base;
 		}
 
-		.auto-resizer {
-			flex: 1 0 auto; // Full width
-		}
-
-		.content {
-			white-space: pre-wrap;
-			min-height: round(3 * $font-size-base * $line-height-base);
-		}
-
 		.editable-control {
-			min-height: round(3 * $font-size-base * $line-height-base) + 2 * $editable-border-width;
 			padding-top: 0; // No padding for visual 2px padding between border and text selection
 			padding-bottom: 0;
 		}

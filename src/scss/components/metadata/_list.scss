@@ -196,20 +196,6 @@
 					margin-top: -6px;
 				}
 			}
-
-			.auto-resizer {
-				@include touch-or-bp-down(sm) {
-					flex: 1 1 auto; // Full width
-				}
-			}
-
-			.content {
-				@include touch-or-bp-down(sm) {
-					white-space: pre-wrap;
-					min-height: round(3 * $font-size-mobile * $line-height-base);
-					line-height: $line-height-base;
-				}
-			}
 		}
 	}
 

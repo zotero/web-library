@@ -8,12 +8,29 @@
 	position: relative;
 	max-width: 100%;
 
+	// Textarea
+	&.vertical {
+		flex: 1 1 auto; // Full width
+
+		.content {
+			line-height: $line-height-base;
+
+			@include touch-or-bp-down(sm) {
+				min-height: round($textarea-rows * $font-size-mobile * $line-height-base);
+			}
+
+			@include mouse-and-bp-up(md) {
+				min-height: round($textarea-rows * $font-size-base * $line-height-base);
+			}
+		}
+	}
+
 	.content {
 		@include text-truncate;
 		color: transparent;
 		line-height: normal; // Todo: only when containing editables
 		min-width: $space-sm;
-		white-space: pre;
+		white-space: pre-wrap;
 
 		&::after {
 			content: "\200b"; // Permanently insert a zero-width character to expand textareas at newlines
