@@ -10,6 +10,8 @@
 }
 
 .items {
+	min-width: 0; // Fix truncation of long values in metadata list
+
 	@include bp-down(xs) {
 		position: absolute;
 		left: 0;
