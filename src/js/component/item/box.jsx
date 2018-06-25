@@ -39,18 +39,12 @@ class ItemBox extends React.PureComponent {
 		}
 	}
 
-	handleFieldClick(key, event) {
+	handleFieldClick(key) {
 		const field = this.props.fields.find(f => f.key === key);
 		if(!this.props.isForm && field.readonly) {
 			return;
 		}
-		this.setState({ activeEntry: key }, () => {
-			if(this.fieldComponents[key] instanceof SelectInput) {
-				//@NOTE: hacky! https://github.com/JedWatson/react-select/issues/2106
-				this.fieldComponents[key].input.setState({ isOpen: true });
-			}
-		});
-		event.preventDefault();
+		this.setState({ activeEntry: key });
 	}
 
 	handleFieldFocus(key) {

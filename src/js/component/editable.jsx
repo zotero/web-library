@@ -70,7 +70,7 @@ class Editable extends React.PureComponent {
 		return (
 			<div
 				tabIndex={ this.isActive ? null : 0 }
-				onMouseDown={ this.handleClick.bind(this) }
+				onClick={ this.handleClick.bind(this) }
 				onFocus={ this.handleFocus.bind(this) }
 				className={ cx(this.className) }
 			>

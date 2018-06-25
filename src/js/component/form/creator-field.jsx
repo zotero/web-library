@@ -31,14 +31,8 @@ class CreatorField extends React.PureComponent {
 		}
 	}
 
-	handleFieldClick(key, event) {
-		this.setState({ active: key }, () => {
-			if(this.fieldComponents[key] instanceof SelectInput) {
-				//@NOTE: hacky!
-				this.fieldComponents[key].input.setState({ isOpen: true });
-			}
-		});
-		event.preventDefault();
+	handleFieldClick(key) {
+		this.setState({ active: key });
 	}
 
 	handleFieldFocus(key) {
