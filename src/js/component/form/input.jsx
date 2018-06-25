@@ -72,6 +72,7 @@ class Input extends React.PureComponent {
 	get className() {
 		return {
 			'input-group': true,
+			'input': true,
 			'busy': this.props.isBusy
 		};
 	}

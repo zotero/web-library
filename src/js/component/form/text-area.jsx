@@ -74,6 +74,7 @@ class TextAreaInput extends React.PureComponent {
 	get className() {
 		return {
 			'input-group': true,
+			'textarea': true,
 			'busy': this.props.isBusy
 		};
 	}

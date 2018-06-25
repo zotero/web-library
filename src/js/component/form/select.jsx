@@ -84,6 +84,7 @@ class SelectInput extends React.PureComponent {
 	get className() {
 		return {
 			'input-group': true,
+			'select': true,
 			'busy': this.props.isBusy
 		};
 	}
