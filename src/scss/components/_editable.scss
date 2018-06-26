@@ -15,11 +15,11 @@
 		font: inherit;
 		line-height: normal;
 		text-align: inherit;
-		margin: -($editable-border-width + $editable-padding-x);
+		margin: -($editable-border-width + $editable-padding);
 		width: calc(
-			100% + #{2 * ($editable-border-width + $editable-padding-x)}
+			100% + #{2 * ($editable-border-width + $editable-padding)}
 		);
-		padding: $editable-padding-y $editable-padding-x;
+		padding: $editable-padding;
 		border: $editable-border-width solid $editable-border-color;
 		color: $editable-color;
 		background: $editable-bg;
@@ -31,7 +31,7 @@
 		}
 
 		.busy > & {
-			padding-right: $editable-padding-x + $space-md + 1px;
+			padding-right: $editable-padding + $space-md + 1px;
 		}
 	}
 
@@ -51,36 +51,6 @@
 		.editable-control {
 			padding-top: 0; // No padding for visual 2px padding between border and text selection
 			padding-bottom: 0;
-		}
-	}
-
-	// Select
-	&.select {
-		.Select-control {
-			border: none;
-		}
-
-		.Select-value {
-			padding: 0;
-		}
-
-		.is-focused {
-			.Select-control {
-				border: none;
-				box-shadow: none;
-			}
-		}
-
-		.Select--single {
-			&.has-value {
-				.Select-value {
-					padding-right: $space-md;
-				}
-			}
-		}
-
-		.Select-arrow {
-			margin-right: 1px; // Tweak optical arrow position
 		}
 	}
 }

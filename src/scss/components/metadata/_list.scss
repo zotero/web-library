@@ -207,11 +207,69 @@
 	}
 
 	@include mouse-and-bp-up(md) {
+		.value {
+			.select {
+				line-height: normal;
+
+				.Select-control {
+					padding: $editable-padding;
+					border: $input-border-width solid transparent;
+					width: calc(100% + #{2 * $editable-border-width});
+					margin: -$editable-border-width;
+					background-color: transparent;
+					cursor: pointer;
+					transition: none;
+				}
+
+				&:hover {
+					.Select-control {
+						background-color: $editable-hover-bg;
+						border-color: $editable-hover-bg;
+					}
+				}
+
+				.Select-value {
+					padding: 0 $editable-padding;
+				}
+
+				.Select--single {
+					&.has-value {
+						.Select-value {
+							padding-right: $space-md;
+						}
+					}
+				}
+
+				.Select-arrow {
+					display: none;
+					margin-right: 2px; // Tweak optical arrow position
+				}
+
+				.is-focused {
+					.Select-control {
+						border-color: $input-focus-color;
+						background-color: $input-bg;
+						border-radius: 1px;
+					}
+
+					.Select-arrow {
+						display: block;
+					}
+				}
+
+				.Select-menu-outer {
+					left: -$editable-padding;
+					top: calc(100% + #{$space-min + $input-border-width + $editable-padding + $input-border-width});
+					right: -$editable-padding;
+				}
+			}
+		}
+
 		.editable {
 			line-height: normal;
 
 			.editable-content {
-				padding: $editable-padding-y $editable-padding-x;
+				padding: $editable-padding;
 				border: $input-border-width solid transparent;
 				width: calc(100% + #{2 * $editable-border-width});
 				margin: -$editable-border-width;
@@ -233,7 +291,7 @@
 				}
 
 				.editable-content {
-					padding: 0 $editable-padding-x;
+					padding: 0 $editable-padding;
 					margin-top: 1px; // Align vertically with label
 					margin-bottom: 1px; // …
 				}

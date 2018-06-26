@@ -14,13 +14,15 @@
 		transition: border $input-transition, box-shadow $input-transition;
 		cursor: default;
 		border: $input-border-width solid $input-border-color;
+		background-color: $input-bg;
+		padding: $input-btn-padding-y ($input-btn-padding-x - 4px) $input-btn-padding-y $input-btn-padding-x; // Todo: just default, handle padding with .form-control and modifier classes on .Select.
 		position: relative;
 	}
 
 	&.is-focused {
 		.Select-control {
 			border: $input-border-width solid $input-focus-color;
-			box-shadow: 0 0 0 2px $secondary;
+			box-shadow: 0 0 0 2px $input-focus-color;
 			outline: none;
 		}
 	}
@@ -45,17 +47,19 @@
 
 		&.has-value {
 			.Select-value {
-				padding-right:
-					$input-btn-padding-x
-					+ $space-md;
-
-				.busy & {
+				@include mouse-and-bp-up(md) {
 					padding-right:
-						$input-btn-padding-x
-						+ $space-md
-						+ $space-md
-						+ $space-min
-						+ 1px;
+						($input-btn-padding-x - 4px)
+						+ $space-md;
+
+					.busy & {
+						padding-right:
+							($input-btn-padding-x - 4px)
+							+ $space-md
+							+ $space-md
+							+ $input-border-width
+							+ 1px;
+					}
 				}
 			}
 		}
@@ -107,9 +111,9 @@
 
 	.Select-menu-outer {
 		position: absolute;
-		left: 0; // todo (?)
+		left: $input-border-width;
 		top: calc(100% + #{$space-min + $input-border-width});
-		right: 0; // todo (?)
+		right: $input-border-width;
 		background-color: $menu-bg;
 		border-radius: $menu-border-radius;
 		z-index: $z-index-menu;

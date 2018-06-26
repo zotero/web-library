@@ -40,6 +40,16 @@
 		}
 	}
 
+	&.select {
+		.icon-spin {
+			@include mouse-and-bp-up(md) {
+				right: 20px;
+				top: calc(50% - #{$space-md / 2});
+			}
+		}
+	}
+
+	// Todo
 	.editable-control {
 		& + .icon-spin {
 			width: $space-md;
