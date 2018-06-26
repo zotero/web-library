@@ -4,6 +4,84 @@
 
 // Creators field
 .creators-entry {
+	@include mouse-and-bp-up(md) {
+		.key {
+			justify-content: flex-end;
+
+			.input-group {
+				flex: 0 0 auto;
+				max-width: 100%;
+			}
+
+			.Select {
+				padding: 0;
+				border: none;
+				background-color: transparent;
+				line-height: normal;
+
+				.Select-control {
+					justify-content: flex-end;
+					background-color: transparent;
+					border: none;
+					padding: 0;
+					cursor: pointer;
+					box-shadow: none;
+				}
+
+				.Select-multi-value-wrapper {
+					flex: 0 0 auto;
+					max-width: 100%;
+				}
+
+				.Select-value {
+					flex: 0 0 auto;
+					position: static;
+					padding: 0;
+					max-width: 100%;
+				}
+
+				.Select-input {
+					position: absolute;
+				}
+
+				.Select-arrow-zone {
+					order: -1;
+				}
+
+				.Select-arrow {
+					background-image: image-url("icons/chevron-7-777.svg");
+				}
+
+				.Select-menu-outer {
+					text-align: left;
+					width: auto;
+					white-space: nowrap;
+					right: auto;
+				}
+
+				&:hover {
+					.Select-control {
+						color: $link-color;
+					}
+
+					.Select-arrow {
+						background-image: image-url("icons/chevron-7-secondary.svg");
+					}
+				}
+
+				&.is-focused {
+					.Select-control {
+						color: $link-color;
+					}
+
+					.Select-arrow {
+						background-image: image-url("icons/chevron-7-secondary.svg");
+					}
+				}
+			}
+		}
+	}
+
 	.value {
 		> *:not(:first-child) {
 			margin-left: 2px;
