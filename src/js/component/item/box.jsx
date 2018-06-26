@@ -122,10 +122,11 @@ class ItemBox extends React.PureComponent {
 			const display = field.key === 'itemType' ?
 				field.options.find(o => o.value === field.value) :
 				null;
+			const inputComponent = pickInputComponent(field);
 			const props = {
-				autoFocus: !this.props.isForm,
+				autoFocus: !this.props.isForm && inputComponent !== SelectInput,
 				display: display ? display.label : null,
-				inputComponent: pickInputComponent(field),
+				inputComponent,
 				isActive,
 				isBusy: field.processing || false,
 				onCancel: this.handleCancel.bind(this, field.key),
@@ -133,7 +134,11 @@ class ItemBox extends React.PureComponent {
 				options: field.options || null,
 				selectOnFocus: !this.props.isForm,
 				value: field.value || '',
-				className: this.props.isForm ? 'form-control form-control-sm' : '',
+				className: cx({
+					'form-control': this.props.isForm,
+					'form-control-sm': this.props.isForm,
+					'pseudo-editable': !this.props.isForm && inputComponent === SelectInput
+				}),
 				onEditableClick: this.handleFieldClick.bind(this, field.key),
 				onEditableFocus: this.handleFieldFocus.bind(this, field.key),
 				id: field.key,
