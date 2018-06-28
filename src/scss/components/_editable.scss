@@ -55,6 +55,64 @@
 	}
 }
 
+.pseudo-editable {
+	@include mouse-and-bp-up(md) {
+		line-height: normal;
+
+		.Select-control {
+			padding: $editable-padding;
+			border: $input-border-width solid transparent;
+			width: calc(100% + #{2 * $editable-border-width});
+			margin: -$editable-border-width;
+			background-color: transparent;
+			cursor: pointer;
+			transition: none;
+		}
+
+		&:hover {
+			.Select-control {
+				background-color: $editable-hover-bg;
+				border-color: $editable-hover-bg;
+			}
+		}
+
+		.Select-value {
+			padding: 0 $editable-padding;
+		}
+
+		.Select--single {
+			&.has-value {
+				.Select-value {
+					padding-right: $space-md;
+				}
+			}
+		}
+
+		.Select-arrow {
+			display: none;
+			margin-right: 2px; // Tweak optical arrow position
+		}
+
+		&.is-focused {
+			.Select-control {
+				border-color: $input-focus-color;
+				background-color: $input-bg;
+				border-radius: 1px;
+			}
+
+			.Select-arrow {
+				display: block;
+			}
+		}
+
+		.Select-menu-outer {
+			left: -$editable-padding;
+			top: calc(100% + #{$space-min + $input-border-width + $editable-padding + $input-border-width});
+			right: -$editable-padding;
+		}
+	}
+}
+
 
 
 
