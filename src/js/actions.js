@@ -227,7 +227,6 @@ const fetchItemsInCollection = (collectionKey, { start = 0, limit = 50, sort = '
 		const state = getState();
 		const config = state.config;
 		const libraryKey = state.current.library;
-		const collectionKey = state.current.collection;
 		const totalItemsCount = get(state, ['libraries', libraryKey, 'itemCountByCollection', collectionKey]);
 		const knownItemKeys = get(state, ['libraries', libraryKey, 'itemsByCollection', collectionKey], []);
 
@@ -266,7 +265,7 @@ const fetchItemsInCollection = (collectionKey, { start = 0, limit = 50, sort = '
 		} catch(error) {
 			dispatch({
 				type: ERROR_ITEMS_IN_COLLECTION,
-				libraryKey: library.libraryKey,
+				libraryKey,
 				collectionKey,
 				error
 			});

@@ -2,10 +2,7 @@
 
 const assert = require('chai').assert;
 
-const { 
-	enhanceCollections,
-	ck
-} = require('../src/js/utils');
+const { enhanceCollections, } = require('../src/js/utils');
 const collectionsFixture = require('./fixtures/collections');
 
 describe('utils', () => {
@@ -25,7 +22,4 @@ describe('utils', () => {
 		assert.equal(enhanced.find(c => c.key === 'AAAA0001').isOpen, false);
 	});
 
-	it('should generate a compound key', () => {
-		assert.equal(ck('ITEM1234', 'u111'), 'ITEM1234u111');
-	});
 });

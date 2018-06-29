@@ -13,7 +13,7 @@ if(typeof window === 'undefined') {
 const {
 	initialize,
 	fetchCollections,
-	fetchItems,
+	fetchItemsInCollection,
 	updateItem,
 	fetchItemTypeFields,
 	fetchItemTypeCreatorTypes,
@@ -29,6 +29,7 @@ const {
 	REQUEST_ITEMS_IN_COLLECTION,
 	RECEIVE_ITEMS_IN_COLLECTION,
 	ERROR_ITEMS_IN_COLLECTION,
+	PRE_UPDATE_ITEM,
 	REQUEST_UPDATE_ITEM,
 	RECEIVE_UPDATE_ITEM,
 	REQUEST_CHILD_ITEMS,
@@ -121,15 +122,16 @@ describe('action creators', () => {
 		assert.equal(store.getActions()[1].error.message, '500: Internal Server Error');
 	});
 
-	it('fetchItems', async () => {
+	it('fetchItemsInCollection', async () => {
 		fetchMock.mock(/https:\/\/api\.zotero\.org\/users\/123456\/collections\/AAAAAAAA\??.*/, itemsFixture);
 		const store = mockStore({
 			...initialState,
-			library: {
-				libraryKey: 'u123456'
+			current: {
+				...initialState.current,
+				library: 'u123456'
 			}
 		});
-		const action = fetchItems('AAAAAAAA');
+		const action = fetchItemsInCollection('AAAAAAAA');
 		await store.dispatch(action);
 		assert.strictEqual(store.getActions().length,2);
 		assert.strictEqual(store.getActions()[0].type,REQUEST_ITEMS_IN_COLLECTION);
@@ -138,22 +140,19 @@ describe('action creators', () => {
 		assert.strictEqual(store.getActions()[1].type,RECEIVE_ITEMS_IN_COLLECTION);
 		assert.equal(store.getActions()[1].libraryKey, 'u123456');
 		assert.equal(store.getActions()[1].collectionKey, 'AAAAAAAA');
-		const itemTitlesInOrder = [
-			'document-1',
-			'document-2'
-		];
-		assert.sameOrderedMembers(store.getActions()[1].items.map(c => c.title), itemTitlesInOrder);
+		assert.deepEqual(store.getActions()[1].items, itemsFixture.map(i => i.data));
 	});
 
-	it('fetchItems error', async () => {
+	it('fetchItemsInCollection error', async () => {
 		fetchMock.mock('begin:https://api.zotero.org/', { status: 500 });
 		const store = mockStore({
 			...initialState,
-			library: {
-				libraryKey: 'u123456'
+			current: {
+				...initialState.current,
+				library: 'u123456'
 			}
 		});
-		const action = fetchItems('AAAAAAAA');
+		const action = fetchItemsInCollection('AAAAAAAA');
 
 		try {
 			await store.dispatch(action);
@@ -186,35 +185,44 @@ describe('action creators', () => {
 		});
 
 		const store = mockStore({
-			config: {
-				apiKey: 'API_KEY'
+			...initialState,
+			current: {
+				...initialState.current,
+				library: 'u123'
 			},
-			library: {
-				libraryKey: 'u123'
-			},
-			items: {
-				ITEM1111u123: {
-					key: 'ITEM1111',
-					version: 1,
-					title: 'foo',
-					collections: ['AAAAAAAA']
+			libraries: {
+				u123: {
+					items: {
+						'ITEM1111': {
+							key: 'ITEM1111',
+							version: 1,
+							title: 'foo',
+							collections: ['AAAAAAAA']
+						}
+					}
 				}
 			}
 		});
 
 		const action = updateItem('ITEM1111', { title: 'foobar' });
 		await store.dispatch(action);
-		assert.strictEqual(store.getActions().length,1);
-		assert.strictEqual(store.getActions()[0].type,REQUEST_UPDATE_ITEM);
+		assert.strictEqual(store.getActions()[0].type, PRE_UPDATE_ITEM);
 		assert.strictEqual(store.getActions()[0].itemKey, 'ITEM1111');
 		assert.strictEqual(store.getActions()[0].libraryKey, 'u123');
 		assert.deepEqual(store.getActions()[0].patch, { title: 'foobar'});
 
 		await cede(); // allow async-queue process this request
 
-		assert.strictEqual(store.getActions()[1].type, RECEIVE_UPDATE_ITEM);
-		assert.strictEqual(store.getActions()[1].item.title, 'foobar');
-		assert.strictEqual(store.getActions()[1].item.version, 1337);
+		assert.strictEqual(store.getActions()[1].type,REQUEST_UPDATE_ITEM);
+		assert.strictEqual(store.getActions()[1].itemKey, 'ITEM1111');
+		assert.strictEqual(store.getActions()[1].libraryKey, 'u123');
+		assert.deepEqual(store.getActions()[1].patch, { title: 'foobar'});
+
+		await cede(); // allow async-queue process this request
+
+		assert.strictEqual(store.getActions()[2].type, RECEIVE_UPDATE_ITEM);
+		assert.strictEqual(store.getActions()[2].item.title, 'foobar');
+		assert.strictEqual(store.getActions()[2].item.version, 1337);
 
 	});
 
