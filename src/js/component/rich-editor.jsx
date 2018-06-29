@@ -3,18 +3,16 @@
 
 const React = require('react');
 const cx = require('classnames');
-const tinymce = require('tinymce');
-require('tinymce/themes/modern');
+if(typeof window === 'object' && process.env.NODE_ENV !== 'test') {
+	window.tinymce = require('tinymce');
+	require('tinymce/themes/modern');
+}
 const TinyMCE = require('react-tinymce');
 const PropTypes = require('prop-types');
 const { Toolbar, ToolGroup } = require('./ui/toolbars');
 const Button = require('./ui/button');
 
 class RichEditor extends React.Component {
-	componentWillMount() {
-		window.tinymce = tinymce;
-	}
-
 	componentWillReceiveProps(props) {
 		if(this.editor && (this.props.value !== props.value)) {
 			this.editor.setContent(props.value);
@@ -56,6 +54,29 @@ class RichEditor extends React.Component {
 		return this.editor && this.editor.editorCommands.queryCommandState(command);
 	}
 
+	renderEditor() {
+		if(process.env.NODE_ENV !== 'test') {
+			return (
+				<TinyMCE
+					content={ this.props.value }
+					config={{
+						skin_url: '/static/other/lightgray',
+						branding: false,
+						toolbar: false,
+						menubar: false,
+						statusbar: false
+					}}
+					onInit={ this.handleEditorInit.bind(this) }
+					onChange={ this.handleEditorInteraction.bind(this) }
+					onKeyup={ this.handleEditorInteraction.bind(this) }
+					onMouseup={ this.handleEditorInteraction.bind(this) }
+					onFocus={ this.handleEditorFocus.bind(this) }
+					onBlur={ this.handleEditorUpdate.bind(this) }
+				/>
+			);
+		} else return null;
+	}
+
 	render() {
 		return (
 			<div className="rich-editor">
@@ -87,22 +108,7 @@ class RichEditor extends React.Component {
 					</div>
 				</Toolbar>
 				<div className="editor-container">
-					<TinyMCE
-						content={ this.props.value }
-						config={{
-							skin_url: '/static/other/lightgray',
-							branding: false,
-							toolbar: false,
-							menubar: false,
-							statusbar: false
-						}}
-						onInit={ this.handleEditorInit.bind(this) }
-						onChange={ this.handleEditorInteraction.bind(this) }
-						onKeyup={ this.handleEditorInteraction.bind(this) }
-						onMouseup={ this.handleEditorInteraction.bind(this) }
-						onFocus={ this.handleEditorFocus.bind(this) }
-						onBlur={ this.handleEditorUpdate.bind(this) }
-						/>
+					{ this.renderEditor() }
 				</div>
 			</div>
 		);

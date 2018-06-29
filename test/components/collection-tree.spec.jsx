@@ -9,20 +9,17 @@ const { enhanceCollections } = require('../../src/js/utils');
 
 
 describe('<CollectionTree />', () => {
-	var collections;
-	beforeEach(() => {
-		collections = enhanceCollections(collectionsFixture.map(c => c.data));
-	});
+	const collections = collectionsFixture.map(c => c.data);
 
 	it('renders tree hierarchy', () => {
-		const wrapper = render(
+		const wrapper = shallow(
 			<CollectionTree collections={ collections } />
 		);
 		// no path present, root should be active
 		assert.equal(wrapper.find('div.level-root.active').length, 1);
 		// just one level-1 with 3 top-level collections
 		assert.equal(wrapper.find('div.level-1').length, 1);
-		assert.equal(wrapper.find('div.level-1>ul>li').length, 3);
+		assert.equal(wrapper.find('div.level-1>ul>li.collection').length, 3);
 		// one level-2 with 1 second-level collections
 		assert.equal(wrapper.find('div.level-2').length, 1);
 		assert.equal(wrapper.find('div.level-2>ul>li').length, 1);
@@ -33,7 +30,7 @@ describe('<CollectionTree />', () => {
 			collectionsFixture.map(c => c.data),
 			['AAAAAAAA', 'AAAA0001']
 		);
-		const wrapper = render(
+		const wrapper = shallow(
 			<CollectionTree collections={ collections } />
 		);
 
@@ -47,7 +44,7 @@ describe('<CollectionTree />', () => {
 	});
 
 	it('renders <Spinner /> when fetching', () => {
-		const wrapper = render(
+		const wrapper = shallow(
 			<CollectionTree collections={ collections } isFetching={ true } />
 		);
 

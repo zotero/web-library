@@ -9,7 +9,7 @@ const itemsFixture = require('../fixtures/items-top');
 
 describe('<ItemList />', () => {
 	var items;
-	
+
 	beforeEach(() => {
 		items = itemsFixture.map(i => i.data);
 	});
@@ -19,8 +19,6 @@ describe('<ItemList />', () => {
 			<ItemList items={ items } />
 		);
 
-		assert.equal(wrapper.find('.item.list>.item').length, 2);	
+		assert.equal(wrapper.find('.item.list>.item').length, 2);
 	});
-
-	
 });

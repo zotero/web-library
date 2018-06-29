@@ -41,7 +41,7 @@
     "watch:stylelint": "nodemon -q -w src/scss --ext 'scss' --exec 'npm run stylelint'",
     "watch:eslint": "nodemon -q -w src/js --ext 'js,jsx' --exec 'npm run eslint'",
     "watch:lint": "run-p 'watch:stylelint -s' 'watch:eslint -s'",
-    "test": "nyc mocha --require babel-core/register 'test/**/*.spec.js'"
+    "test": "nyc mocha 'test/**/*.spec.+(js|jsx)'"
   },
   "keywords": [
     "Zotero"
@@ -60,6 +60,7 @@
     "deep-equal": "^1.0.1",
     "escape-html": "^1.0.3",
     "history": "^4.7.2",
+    "memoize-one": "^4.0.0",
     "moment": "^2.22.1",
     "param-case": "^2.1.1",
     "prop-types": "^15.6.1",
@@ -101,6 +102,7 @@
     "chai": "^4.1.2",
     "envify": "^4.1.0",
     "enzyme": "^3.3.0",
+    "enzyme-adapter-react-16": "^1.1.1",
     "eslint": "^4.19.1",
     "eslint-plugin-react": "^7.8.2",
     "fetch-mock": "^6.4.2",

@@ -2,22 +2,31 @@
 
 const React = require('react');
 const PropTypes = require('prop-types');
+const memoize = require('memoize-one');
+const cx = require('classnames');
 const Icon = require('./ui/icon');
 const Spinner = require('./ui/spinner');
-const cx = require('classnames');
 
 class CollectionTree extends React.Component {
-	collectionSelectedHandler(key, ev) {
+	state = {
+		opened: []
+	}
+
+	handleSelect(key, ev) {
 		ev && ev.preventDefault();
 		this.props.onCollectionSelected(key, ev);
 	}
 
-	collectionOpenenedHandler(key, ev) {
+	handleOpenToggle(key, ev) {
 		ev && ev.stopPropagation();
-		this.props.onCollectionOpened(key, ev);
+		const { opened } = this.state;
+		opened.includes(key) ?
+			this.setState({ opened: opened.filter(k => k !== key) }) :
+			this.setState({ opened: [...opened, key ] });
+		this.props.onCollectionOpened();
 	}
 
-	collectionKeyboardHandler(key, ev) {
+	handleKeyPress(key, ev) {
 		if(ev && (ev.key === 'Enter' || ev.key === ' ')) {
 			ev.stopPropagation();
 			this.props.onCollectionSelected(key, ev);
@@ -37,7 +46,7 @@ class CollectionTree extends React.Component {
 			return true;
 		} else {
 			for(let collection of collections) {
-				const childrenCollections = this.collectionsFromKeys(collection.children);
+				const childrenCollections = this.collectionsFromKeys(this.childMap[collection.key] || []);
 				if(this.testRecursive(childrenCollections, test)) {
 					return true;
 				}
@@ -46,23 +55,73 @@ class CollectionTree extends React.Component {
 		return false;
 	}
 
+	makeChildMap = memoize(collections => collections.reduce((aggr, col) => {
+		if(!col.parentCollection) {
+			return aggr;
+		}
+		if(!(col.parentCollection in aggr)) {
+			aggr[col.parentCollection] = [];
+		}
+		aggr[col.parentCollection].push(col.key);
+		return aggr;
+	}, {}));
+
+	makeDerivedData = memoize((collections, path, opened) => {
+		return collections.reduce((aggr, c) => {
+			const derivedData = {
+				isSelected: false,
+				isOpen: false
+			};
+
+			let index = path.indexOf(c.key);
+			derivedData['isSelected'] = index >= 0 && index === path.length - 1;
+			if(opened.includes(c.key)) {
+				derivedData['isOpen'] = true;
+			} else {
+				if(index >= 0 && index < path.length - 1) {
+					derivedData['isOpen'] = true;
+				} else if(index !== -1) {
+					derivedData['isOpen'] = false;
+				}
+			}
+
+			aggr[c.key] = derivedData
+			return aggr;
+		}, {});
+	});
+
+	get childMap() {
+		const { collections } = this.props;
+		return this.makeChildMap(collections);
+	}
+
+	get derivedData() {
+		const { collections, path } = this.props;
+		return this.makeDerivedData(collections, path, this.state.opened);
+	}
+
 	renderCollections(collections, level) {
-		let hasOpen = this.testRecursive(collections, col => col.isSelected);
-		let hasOpenLastLevel = collections.some(col => col.isSelected && !col.hasChildren);
+		const { childMap, derivedData } = this;
+		const hasOpen = this.testRecursive(collections, col => col.isSelected);
+		const hasOpenLastLevel = collections.some(
+			col => col.isSelected && col.key in childMap
+		);
 
 		return (
 			<div className={ `level level-${level} ${hasOpen ? 'has-open' : ''} ${hasOpenLastLevel ? 'level-last' : ''}` }>
 				<ul className="nav" role="group">
 					{
 						level === 1 && (
-							<li 
-								key="all-documents"
-								className={ cx({'selected': this.props.isTopLevel })}
+							<li
+								className={ cx({
+									'all-documents': true,
+									'selected': this.props.isTopLevel
+								})}
 								>
 								<div
 									className="item-container"
-									onClick={ ev => this.collectionSelectedHandler(null, ev) }
-									onKeyPress={ ev => this.collectionKeyboardHandler(null, ev) }
+									onClick={ ev => this.handleSelect(null, ev) }
+									onKeyPress={ ev => this.handleKeyPress(null, ev) }
 									role="treeitem"
 									tabIndex="0"
 								>
@@ -81,33 +140,40 @@ class CollectionTree extends React.Component {
 							<button
 								type="button"
 								className="twisty"
-								onClick={ ev => this.collectionOpenenedHandler(collection.key, ev) }
+								onClick={ ev => this.handleOpenToggle(collection.key, ev) }
 								onKeyPress={ ev => ev.stopPropagation() }
 							/>
 						);
 						return (
 							<li
 								key={collection.key}
-								className={ `${collection.isOpen ? 'open' : ''} ${collection.isSelected ? 'selected' : '' }` }
+								className={ cx({
+									'open': derivedData[collection.key].isOpen,
+									'selected': derivedData[collection.key].isSelected,
+									'collection': true,
+								})}
 							>
 								<div
 									className="item-container"
-									onClick={ ev => this.collectionSelectedHandler(collection.key, ev) }
-									onKeyPress={ ev => this.collectionKeyboardHandler(collection.key, ev) }
+									onClick={ ev => this.handleSelect(collection.key, ev) }
+									onKeyPress={ ev => this.handleKeyPress(collection.key, ev) }
 									role="treeitem"
-									aria-expanded={ collection.isOpen }
+									aria-expanded={ derivedData[collection.key].isOpen }
 									tabIndex="0" >
 									<div className="twisty-container">
 										{/* Button component */}
-										{ collection.hasChildren ? twistyButton : '' }
+										{ collection.key in childMap ? twistyButton : '' }
 									</div>
-									<Icon type={ `28/folder${collection.children.length ? 's' : ''}` } className="touch" width="28" height="28"/>
+									<Icon type={ `28/folder${(collection.key in childMap) ? 's' : ''}` } className="touch" width="28" height="28"/>
 									<Icon type="16/folder" className="mouse" width="16" height="16"/>
 									<a>
 										{ collection.name }
 									</a>
 								</div>
-								{ collection.children.length ? this.renderCollections(this.collectionsFromKeys(collection.children), level + 1) : null }
+								{ collection.key in childMap ?
+									this.renderCollections(this.collectionsFromKeys(childMap[collection.key]), level + 1) :
+									null
+								}
 							</li>
 						);
 					}) }
@@ -117,15 +183,18 @@ class CollectionTree extends React.Component {
 	}
 
 	render() {
-		const selectedCollection = this.props.collections.find(c => c.isSelected) || null;
-		const topLevelCollections = this.props.collections.filter(c => c.parentCollection === false);
+		const { collections } = this.props;
+		const selectedCollection = Object.keys(this.derivedData)
+			.find((collectionKey) => this.derivedData[collectionKey].isSelected) || null;
+		const topLevelCollections = collections
+			.filter(c => c.parentCollection === false);
 		if(this.props.isFetching) {
 			return <Spinner />;
 		} else {
 			let isRootActive = !selectedCollection || (
-				selectedCollection && 
+				selectedCollection &&
 				selectedCollection.parentCollection === false &&
-				!selectedCollection.hasChildren
+				!(selectedCollection.key in this.childMap)
 			);
 			return (
 				<nav className="collection-tree">
@@ -156,24 +225,22 @@ CollectionTree.propTypes = {
 	isFetching: PropTypes.bool,
 	onCollectionOpened: PropTypes.func,
 	onCollectionSelected: PropTypes.func,
+	path: PropTypes.array,
 	collections: PropTypes.arrayOf(
 		PropTypes.shape({
 			key: PropTypes.string.isRequired,
 			parentCollection: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
 			name: PropTypes.string,
-			// not from the API, needs to be pre-calculated
-			hasChildren: PropTypes.bool,
-			children: PropTypes.array,
-			isOpen: PropTypes.bool,
-			isSelected: PropTypes.bool
 		}
 	)).isRequired
 };
 
 CollectionTree.defaultProps = {
+	collections: [],
 	isFetching: false,
 	onCollectionOpened: () => null,
-	onCollectionSelected: () => null
+	onCollectionSelected: () => null,
+	path: [],
 };
 
 module.exports = CollectionTree;
