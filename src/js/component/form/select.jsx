@@ -8,6 +8,7 @@ const { noop } = require('../../utils');
 
 const Spinner = require('../ui/spinner');
 const Select = require('react-select').default;
+const { UserTypeContext } = require('../../context');
 
 class SelectInput extends React.PureComponent {
 	constructor(props) {
@@ -89,26 +90,51 @@ class SelectInput extends React.PureComponent {
 		};
 	}
 
-	renderInput() {
-		return <Select
-			{ ...this.defaultSelectProps }
-			{ ...this.props }
-			autoFocus= { this.props.autoFocus }
-			className={ this.props.className }
-			disabled={ this.props.isDisabled }
-			id={ this.props.id }
-			onBlur={ this.handleBlur.bind(this) }
-			onChange={ this.handleChange.bind(this) }
-			onFocus={ this.handleFocus.bind(this) }
-			onInputKeyDown={ this.handleKeyDown.bind(this) }
-			options={ this.props.options }
-			placeholder={ this.props.placeholder }
-			readOnly={ this.props.isReadOnly }
-			ref={ input => this.input = input }
-			required={ this.props.isRequired }
-			tabIndex={ this.props.tabIndex }
-			value={ this.state.value }
-		/>;
+	renderInput(userType) {
+		const {
+			options,
+			autoFocus,
+			className,
+			id,
+			placeholder,
+			tabIndex,
+			value,
+		} = this.props;
+
+		const commonProps = {
+			disabled: this.props.isDisabled,
+			onBlur: this.handleBlur.bind(this),
+			onFocus: this.handleFocus.bind(this),
+			readOnly: this.props.isReadOnly,
+			ref: input => this.input = input,
+			required: this.props.isRequired,
+		};
+
+		if(userType === 'touch') {
+			const props = {
+				...commonProps,
+				onKeyDown: this.handleKeyDown.bind(this),
+				onChange: ev => this.handleChange(ev.target.value, ev),
+				autoFocus, className, id, placeholder, tabIndex, value
+			};
+			return (
+				<select { ...props }>
+					{ options.map(({ value, label }) => (
+						<option key={ value } value={ value }>{ label }</option>)
+					)}
+				</select>
+			);
+		} else {
+			const props = {
+				...this.defaultSelectProps,
+				...this.props,
+				...commonProps,
+				onInputKeyDown: this.handleKeyDown.bind(this),
+				onChange: this.handleChange.bind(this),
+			};
+
+			return <Select { ...props } />;
+		}
 	}
 
 	renderSpinner() {
@@ -117,10 +143,14 @@ class SelectInput extends React.PureComponent {
 
 	render() {
 		return (
-			<div className={ cx(this.className) }>
-				{ this.renderInput() }
-				{ this.renderSpinner() }
-			</div>
+			<UserTypeContext.Consumer>
+			{ userType => (
+				<div className={ cx(this.className) }>
+					{ this.renderInput(userType) }
+					{ this.renderSpinner() }
+				</div>
+			)}
+			</UserTypeContext.Consumer>
 		);
 	}
 
@@ -132,7 +162,6 @@ class SelectInput extends React.PureComponent {
 		onCommit: noop,
 		onFocus: noop,
 		options: [],
-		selectProps: {},
 		tabIndex: -1,
 		value: '',
 	};
@@ -152,7 +181,6 @@ class SelectInput extends React.PureComponent {
 		onFocus: PropTypes.func.isRequired,
 		options: PropTypes.array.isRequired,
 		placeholder: PropTypes.string,
-		selectProps: PropTypes.object.isRequired,
 		tabIndex: PropTypes.number,
 		value: PropTypes.string.isRequired,
 	};

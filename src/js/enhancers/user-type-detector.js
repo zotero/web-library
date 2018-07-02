@@ -3,10 +3,11 @@
 const React = require('react');
 
 var UserTypeDetector = ComposedComponent => class extends React.PureComponent {
-	state = { 
+	state = {
 		isKeyboardUser: null,
 		isMouseUser: null,
-		isTouchUser: null
+		isTouchUser: null,
+		userType: null
 	};
 
 	componentDidMount() {
@@ -29,7 +30,8 @@ var UserTypeDetector = ComposedComponent => class extends React.PureComponent {
 			this.setState({
 				'isKeyboardUser': true,
 				'isMouseUser': false,
-				'isTouchUser': false
+				'isTouchUser': false,
+				'userType': 'keyboard'
 			});
 		}
 	}
@@ -40,7 +42,8 @@ var UserTypeDetector = ComposedComponent => class extends React.PureComponent {
 			this.setState({
 				'isKeyboardUser': false,
 				'isMouseUser': true,
-				'isTouchUser': false
+				'isTouchUser': false,
+				'userType': 'mouse'
 			});
 		}
 	}
@@ -50,7 +53,8 @@ var UserTypeDetector = ComposedComponent => class extends React.PureComponent {
 		this.setState({
 			'isKeyboardUser': false,
 			'isMouseUser': false,
-			'isTouchUser': true
+			'isTouchUser': true,
+			'userType': 'touch'
 		});
 	}
 
