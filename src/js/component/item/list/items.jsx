@@ -458,7 +458,8 @@ Items.propTypes = {
 };
 
 Items.defaultProps = {
-	selectedItemKeys: []
+	selectedItemKeys: [],
+	preferences: {}
 };
 
 module.exports = Items;
