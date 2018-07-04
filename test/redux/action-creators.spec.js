@@ -6,10 +6,7 @@ const configureStore = require('redux-mock-store');
 const thunk = require('redux-thunk').default;
 const ReduxAsyncQueue = require('redux-async-queue').default;
 const fetchMock = require('fetch-mock');
-const FakeStore = require('../helper/fake-store.js');
-if(typeof window === 'undefined') {
-	global.window = { localStorage: new FakeStore() };
-}
+
 const {
 	initialize,
 	fetchCollections,
