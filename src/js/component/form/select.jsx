@@ -8,7 +8,7 @@ const { noop } = require('../../utils');
 
 const Spinner = require('../ui/spinner');
 const Select = require('react-select').default;
-const { UserTypeContext } = require('../../context');
+const { UserTypeContext, ViewportContext } = require('../../context');
 
 class SelectInput extends React.PureComponent {
 	constructor(props) {
@@ -90,7 +90,7 @@ class SelectInput extends React.PureComponent {
 		};
 	}
 
-	renderInput(userType) {
+	renderInput(userType, viewport) {
 		const {
 			options,
 			autoFocus,
@@ -110,7 +110,7 @@ class SelectInput extends React.PureComponent {
 			required: this.props.isRequired,
 		};
 
-		if(userType === 'touch') {
+		if(userType === 'touch' || viewport.xs || viewport.sm) {
 			const props = {
 				...commonProps,
 				onKeyDown: this.handleKeyDown.bind(this),
@@ -143,14 +143,18 @@ class SelectInput extends React.PureComponent {
 
 	render() {
 		return (
-			<UserTypeContext.Consumer>
-			{ userType => (
-				<div className={ cx(this.className) }>
-					{ this.renderInput(userType) }
-					{ this.renderSpinner() }
-				</div>
-			)}
-			</UserTypeContext.Consumer>
+			<ViewportContext.Consumer>
+				{ viewport => (
+					<UserTypeContext.Consumer>
+					{ userType => (
+						<div className={ cx(this.className) }>
+							{ this.renderInput(userType, viewport) }
+							{ this.renderSpinner() }
+						</div>
+					)}
+					</UserTypeContext.Consumer>
+				)}
+			</ViewportContext.Consumer>
 		);
 	}
 

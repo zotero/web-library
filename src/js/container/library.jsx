@@ -16,6 +16,7 @@ const reducers = require('../reducers');
 const { configureApi, selectLibrary, initialize, triggerResizeViewport, changeRoute } = require('../actions');
 const Library = require('../component/library');
 const defaults = require('../constants/defaults');
+const { ViewportContext } = require('../context');
 
 // const history = createHistory();
 // const middleware = routerMiddleware(history);
@@ -66,7 +67,11 @@ class LibraryContainer extends React.Component {
 	}
 
 	render() {
-		return <Library view={ this.props.view } />;
+		return (
+			<ViewportContext.Provider value={ this.props.viewport }>
+				<Library view={ this.props.view } />
+			</ViewportContext.Provider>
+		);
 	}
 
 	static init(element, config = {}) {
@@ -118,7 +123,8 @@ const mapStateToProps = state => {
 		view: state.current.view,
 		userId: state.config.userId || null,
 		api: state.config.api || null,
-		apiKey: state.config.apiKey || null
+		apiKey: state.config.apiKey || null,
+		viewport: state.viewport
 	};
 };
 
