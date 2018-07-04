@@ -28,7 +28,6 @@ describe('<ItemBox />', () => {
 			<ItemBox item={ items[0] } fields={ fields } />
 		);
 
-		assert.equal(wrapper.find('.metadata-list>.metadata').length, 14);
-		assert.equal(wrapper.find('.metadata-list>.metadata.empty').length, 12);
+		assert.equal(wrapper.find('.metadata-list').find('Field').length, 14);
 	});
 });
