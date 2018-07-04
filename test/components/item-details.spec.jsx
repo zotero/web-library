@@ -17,14 +17,33 @@ describe('<ItemDetails />', () => {
 		}));
 	});
 
-	it('renders tabs & tab contents', () => {
+	it('renders details pane with tabs when one item is selected', () => {
 		const wrapper = shallow(
 			<ItemDetails item={ items[0] } />
 		);
 
-		assert.equal(wrapper.find('.item.details>.panel>.panel-header .tabs>.tab').length, 5);
-		assert.equal(wrapper.find('.item.details>.panel>.panel-body>.tab-pane').length, 5);
-		assert.equal(wrapper.find('.item.details>.panel>.panel-header .tabs>.tab.active>a').text(), 'Info');
-		assert.equal(wrapper.find('.item.details>.panel>.panel-body>.tab-pane.info.active').length, 1);
+		assert.lengthOf(wrapper.find('ItemDetailsTabs'), 1);
+		assert.lengthOf(wrapper.find('ItemDetailsInfoSelected'), 0);
+		assert.lengthOf(wrapper.find('ItemDetailsInfoView'), 0);
+	});
+
+	it('renders details pane showing how many items selected when multiple items are selected', () => {
+		const wrapper = shallow(
+			<ItemDetails selectedItemKeys={ ['AAAAAAAA', 'BBBBBBBB'] } />
+		);
+
+		assert.lengthOf(wrapper.find('ItemDetailsTabs'), 0);
+		assert.lengthOf(wrapper.find('ItemDetailsInfoSelected'), 1);
+		assert.lengthOf(wrapper.find('ItemDetailsInfoView'), 0);
+	});
+
+	it('renders details pane showing how many items visible when no item is selected', () => {
+		const wrapper = shallow(
+			<ItemDetails />
+		);
+
+		assert.lengthOf(wrapper.find('ItemDetailsTabs'), 0);
+		assert.lengthOf(wrapper.find('ItemDetailsInfoSelected'), 0);
+		assert.lengthOf(wrapper.find('ItemDetailsInfoView'), 1);
 	});
 });

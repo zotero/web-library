@@ -30,14 +30,14 @@ class ItemDetails extends React.Component {
 
 ItemDetails.defaultProps = {
 	item: {},
-	active: false
+	active: false,
+	selectedItemKeys: []
 };
 
 ItemDetails.propTypes = {
 	active: PropTypes.bool,
 	item: itemProp,
-	childItems: PropTypes.array,
-	onNoteChange: PropTypes.func.isRequired
+	selectedItemKeys: PropTypes.array
 };
 
 module.exports = ItemDetails;
