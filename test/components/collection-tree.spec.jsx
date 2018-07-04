@@ -5,7 +5,6 @@ const React = require('react');
 const { shallow, render, mount } = require('enzyme');
 const CollectionTree = require('../../src/js/component/collection-tree');
 const collectionsFixture = require('../fixtures/collections');
-const { enhanceCollections } = require('../../src/js/utils');
 
 
 describe('<CollectionTree />', () => {
@@ -26,17 +25,18 @@ describe('<CollectionTree />', () => {
 	});
 
 	it('renders .selected, .open and .has-open', () => {
-		collections = enhanceCollections(
-			collectionsFixture.map(c => c.data),
-			['AAAAAAAA', 'AAAA0001']
-		);
 		const wrapper = shallow(
-			<CollectionTree collections={ collections } />
+			<CollectionTree
+				path={ ['AAAAAAAA', 'AAAA0001'] }
+				collections={ collections }
+			/>
 		);
 
+		// console.log(wrapper.html());
 		// path points to a subcollection, root should not be active
-		assert.equal(wrapper.find('div.level-root:not(.active)').length, 1);
-		assert.equal(wrapper.find('div.level-1.has-open:not(.level-last)').length, 1);
+		assert.isNotOk(wrapper.find('div.level-root').hasClass('active'));
+
+		assert.isNotOk(wrapper.find('div.level-1.has-open').hasClass('level-last'));
 		assert.equal(wrapper.find('div.level-1>ul>li.open>.item-container a').text(), 'Test Collection A');
 		assert.equal(wrapper.find('div.level-2.has-open.level-last').length, 1);
 		assert.equal(wrapper.find('div.level-2>ul>li.selected').length, 1);
@@ -48,6 +48,6 @@ describe('<CollectionTree />', () => {
 			<CollectionTree collections={ collections } isFetching={ true } />
 		);
 
-		assert.equal(wrapper.find('.icon-spin').length, 1);
+		assert.equal(wrapper.name(), 'Spinner');
 	});
 });

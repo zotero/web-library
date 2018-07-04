@@ -102,13 +102,18 @@ class CollectionTree extends React.Component {
 
 	renderCollections(collections, level) {
 		const { childMap, derivedData } = this;
-		const hasOpen = this.testRecursive(collections, col => col.isSelected);
+
+		const hasOpen = this.testRecursive(
+			collections, col => derivedData[col.key].isSelected
+		);
 		const hasOpenLastLevel = collections.some(
-			col => col.isSelected && col.key in childMap
+			col => derivedData[col.key].isSelected && !(col.key in childMap)
 		);
 
 		return (
-			<div className={ `level level-${level} ${hasOpen ? 'has-open' : ''} ${hasOpenLastLevel ? 'level-last' : ''}` }>
+			<div className={ cx('level', `level-${level}`, {
+				'has-open': hasOpen, 'level-last': hasOpenLastLevel
+			}) }>
 				<ul className="nav" role="group">
 					{
 						level === 1 && (
