@@ -32,7 +32,6 @@ const {
 	RECEIVE_UPDATE_ITEM,
 	ERROR_UPDATE_ITEM,
 
-	PRE_CREATE_ITEM,
 	REQUEST_CREATE_ITEM,
 	RECEIVE_CREATE_ITEM,
 	ERROR_CREATE_ITEM,
@@ -241,15 +240,17 @@ const fetchItemsInCollection = (collectionKey, { start = 0, limit = 50, sort = '
 		});
 
 		try {
-			let response = await api(config.apiKey, config.apiConfig)
+			const response = await api(config.apiKey, config.apiConfig)
 				.library(libraryKey)
 				.collections(collectionKey)
 				.items()
 				.top()
 				.get({ start, limit, sort, direction });
 
-			let items = response.getData();
-			let meta = response.getMeta();
+			const items = response.getData().map((item, index) => ({
+				...item,
+				[Symbol.for('meta')]: response.getMeta()[index] || {}
+			}));
 
 			dispatch({
 				type: RECEIVE_ITEMS_IN_COLLECTION,
@@ -257,7 +258,6 @@ const fetchItemsInCollection = (collectionKey, { start = 0, limit = 50, sort = '
 				receivedAt: Date.now(),
 				collectionKey,
 				items,
-				meta,
 				response,
 			});
 
@@ -364,16 +364,22 @@ const fetchChildItems = (itemKey, libraryKey) => {
 		});
 
 		try {
-			let response = await api(config.apiKey, config.apiConfig).library(libraryKey).items(itemKey).children().get();
-			let childItems = response.getData();
-			let meta = response.getMeta();
+			let response = await api(config.apiKey, config.apiConfig)
+				.library(libraryKey)
+				.items(itemKey)
+				.children()
+				.get();
+
+			const childItems = response.getData().map((item, index) => ({
+				...item,
+				[Symbol.for('meta')]: response.getMeta()[index] || {}
+			}));
 
 			dispatch({
 				type: RECEIVE_CHILD_ITEMS,
 				itemKey,
 				libraryKey,
 				childItems,
-				meta,
 				response
 			});
 		} catch(error) {
@@ -407,15 +413,16 @@ const fetchItems = (itemKeys, libraryKey) => {
 				itemKey: itemKeys.join(',')
 			});
 
-			let items = response.getData();
-			let meta = response.getMeta();
+			const items = response.getData().map((item, index) => ({
+				...item,
+				[Symbol.for('meta')]: response.getMeta()[index] || {}
+			}));
 
 			dispatch({
 				type: RECEIVE_FETCH_ITEMS,
 				itemKeys,
 				libraryKey,
 				items,
-				meta,
 				response
 			});
 		} catch(error) {
@@ -429,7 +436,7 @@ const fetchItems = (itemKeys, libraryKey) => {
 	};
 };
 
-const fetchTopItems = ({ start = 0, limit = 50, sort = 'dateModified', direction = 'desc' }) => {
+const fetchTopItems = ({ start = 0, limit = 50, sort = 'dateModified', direction = 'desc' } = {}) => {
 	return async (dispatch, getState, ) => {
 		const state = getState();
 		const libraryKey = state.current.library;
@@ -453,14 +460,15 @@ const fetchTopItems = ({ start = 0, limit = 50, sort = 'dateModified', direction
 				.top()
 				.get({ start, limit, sort, direction });
 
-			let items = response.getData();
-			let meta = response.getMeta();
+			const items = response.getData().map((item, index) => ({
+				...item,
+				[Symbol.for('meta')]: response.getMeta()[index] || {}
+			}));
 
 			dispatch({
 				type: RECEIVE_TOP_ITEMS,
 				libraryKey,
 				items,
-				meta,
 				response
 			});
 			return items;
@@ -497,10 +505,6 @@ const triggerResizeViewport = (width, height) => {
 
 function createItem(properties) {
 	return async (dispatch, getState) => {
-		// dispatch({
-		// 	type: PRE_CREATE_ITEM,
-		// 	properties
-		// });
 		const state = getState();
 		const libraryKey = get(getState(), 'current.library');
 		const config = state.config;
@@ -511,15 +515,24 @@ function createItem(properties) {
 		});
 
 		try {
-			let response = await api(config.apiKey, config.apiConfig).library(libraryKey).items().post([properties]);
+			let response = await api(config.apiKey, config.apiConfig)
+				.library(libraryKey)
+				.items()
+				.post([properties]);
+
 			if(!response.isSuccess()) {
 				throw response.getErrors()[0];
 			}
 
+			const item = {
+				...response.getEntityByIndex(0),
+				[Symbol.for('meta')]: response.getMeta()[0] || {}
+			};
+
 			dispatch({
 				type: RECEIVE_CREATE_ITEM,
 				libraryKey,
-				item: response.getEntityByIndex(0)
+				item
 			});
 			if(properties.parentItem) {
 				api().invalidate({

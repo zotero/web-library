@@ -8,13 +8,16 @@ const ReduxAsyncQueue = require('redux-async-queue').default;
 const fetchMock = require('fetch-mock');
 
 const {
-	initialize,
+	createItem,
+	fetchChildItems,
 	fetchCollections,
+	fetchItems,
 	fetchItemsInCollection,
-	updateItem,
-	fetchItemTypeFields,
 	fetchItemTypeCreatorTypes,
-	fetchChildItems
+	fetchItemTypeFields,
+	fetchTopItems,
+	initialize,
+	updateItem,
 } = require('../../src/js/actions.js');
 const {
 	REQUEST_META,
@@ -31,6 +34,10 @@ const {
 	RECEIVE_UPDATE_ITEM,
 	REQUEST_CHILD_ITEMS,
 	RECEIVE_CHILD_ITEMS,
+	REQUEST_FETCH_ITEMS,
+	RECEIVE_FETCH_ITEMS,
+	REQUEST_TOP_ITEMS,
+	RECEIVE_TOP_ITEMS,
 } = require('../../src/js/constants/actions.js');
 
 const collectionsFixture = require('../fixtures/collections.json');
@@ -42,6 +49,9 @@ const mockStore = configureStore([thunk, ReduxAsyncQueue]);
 const initialState = {
 	config: {
 		apiKey: 'API_KEY'
+	},
+	current: {
+		library: 'u123'
 	}
 };
 
@@ -85,9 +95,9 @@ describe('action creators', () => {
 	});
 
 	it('fetchCollections', async () => {
-		fetchMock.mock(/https:\/\/api\.zotero\.org\/users\/123456\/collections\??.*/, collectionsFixture);
+		fetchMock.mock(/https:\/\/api\.zotero\.org\/users\/444\/collections\??.*/, collectionsFixture);
 		const store = mockStore(initialState);
-		const action = fetchCollections('u123456');
+		const action = fetchCollections('u444');
 		await store.dispatch(action);
 		assert.strictEqual(store.getActions().length,2);
 		assert.strictEqual(store.getActions()[0].type,REQUEST_COLLECTIONS_IN_LIBRARY);
@@ -104,7 +114,7 @@ describe('action creators', () => {
 	it('fetchCollections error', async () => {
 		fetchMock.mock('begin:https://api.zotero.org/', { status: 500 });
 		const store = mockStore(initialState);
-		const action = fetchCollections('u123456');
+		const action = fetchCollections('u444');
 
 		try {
 			await store.dispatch(action);
@@ -120,35 +130,28 @@ describe('action creators', () => {
 	});
 
 	it('fetchItemsInCollection', async () => {
-		fetchMock.mock(/https:\/\/api\.zotero\.org\/users\/123456\/collections\/AAAAAAAA\??.*/, itemsFixture);
-		const store = mockStore({
-			...initialState,
-			current: {
-				...initialState.current,
-				library: 'u123456'
-			}
-		});
+		fetchMock.mock(/https:\/\/api\.zotero\.org\/users\/123\/collections\/AAAAAAAA\??.*/, itemsFixture);
+		const store = mockStore(initialState);
 		const action = fetchItemsInCollection('AAAAAAAA');
 		await store.dispatch(action);
 		assert.strictEqual(store.getActions().length,2);
 		assert.strictEqual(store.getActions()[0].type,REQUEST_ITEMS_IN_COLLECTION);
-		assert.equal(store.getActions()[0].libraryKey, 'u123456');
+		assert.equal(store.getActions()[0].libraryKey, 'u123');
 		assert.equal(store.getActions()[0].collectionKey, 'AAAAAAAA');
 		assert.strictEqual(store.getActions()[1].type,RECEIVE_ITEMS_IN_COLLECTION);
-		assert.equal(store.getActions()[1].libraryKey, 'u123456');
+		assert.equal(store.getActions()[1].libraryKey, 'u123');
 		assert.equal(store.getActions()[1].collectionKey, 'AAAAAAAA');
 		assert.deepEqual(store.getActions()[1].items, itemsFixture.map(i => i.data));
+
+		assert.deepEqual(
+			store.getActions()[1].items[0][Symbol.for('meta')],
+			itemsFixture[0].meta
+		);
 	});
 
 	it('fetchItemsInCollection error', async () => {
 		fetchMock.mock('begin:https://api.zotero.org/', { status: 500 });
-		const store = mockStore({
-			...initialState,
-			current: {
-				...initialState.current,
-				library: 'u123456'
-			}
-		});
+		const store = mockStore(initialState);
 		const action = fetchItemsInCollection('AAAAAAAA');
 
 		try {
@@ -162,6 +165,44 @@ describe('action creators', () => {
 		assert.strictEqual(store.getActions()[0].type,REQUEST_ITEMS_IN_COLLECTION);
 		assert.strictEqual(store.getActions()[1].type,ERROR_ITEMS_IN_COLLECTION);
 		assert.equal(store.getActions()[1].error.message, '500: Internal Server Error');
+	});
+
+	it('fetchItems', async () => {
+		fetchMock.get(/https:\/\/api\.zotero\.org\/users\/123\/items\??.*/, itemsFixture);
+		const store = mockStore(initialState);
+		const action = fetchItems(['ITEM2222', 'ITEM1111', 'CHILD111', 'CHILD222']);
+		await store.dispatch(action);
+		assert.strictEqual(store.getActions().length,2);
+		assert.strictEqual(store.getActions()[0].type, REQUEST_FETCH_ITEMS);
+		assert.strictEqual(store.getActions()[0].libraryKey, 'u123');
+		assert.deepEqual(store.getActions()[0].itemKeys, ['ITEM2222', 'ITEM1111', 'CHILD111', 'CHILD222']);
+		assert.strictEqual(store.getActions()[1].type, RECEIVE_FETCH_ITEMS);
+		assert.strictEqual(store.getActions()[1].libraryKey, 'u123');
+		assert.deepEqual(store.getActions()[1].itemKeys, ['ITEM2222', 'ITEM1111', 'CHILD111', 'CHILD222']);
+		assert.deepEqual(store.getActions()[1].items, itemsFixture.map(i => i.data));
+
+		assert.deepEqual(
+			store.getActions()[1].items[0][Symbol.for('meta')],
+			itemsFixture[0].meta
+		);
+	});
+
+	it('fetchTopItems', async () => {
+		fetchMock.get(/https:\/\/api\.zotero\.org\/users\/123\/items\/top\??.*/, itemsFixture);
+		const store = mockStore(initialState);
+		const action = fetchTopItems();
+		await store.dispatch(action);
+		assert.strictEqual(store.getActions().length, 2);
+		assert.strictEqual(store.getActions()[0].type, REQUEST_TOP_ITEMS);
+		assert.strictEqual(store.getActions()[0].libraryKey, 'u123');
+		assert.strictEqual(store.getActions()[1].type, RECEIVE_TOP_ITEMS);
+		assert.strictEqual(store.getActions()[1].libraryKey, 'u123');
+		assert.deepEqual(store.getActions()[1].items, itemsFixture.map(i => i.data));
+
+		assert.deepEqual(
+			store.getActions()[1].items[0][Symbol.for('meta')],
+			itemsFixture[0].meta
+		);
 	});
 
 	it('updateItem', async () => {
@@ -183,10 +224,6 @@ describe('action creators', () => {
 
 		const store = mockStore({
 			...initialState,
-			current: {
-				...initialState.current,
-				library: 'u123'
-			},
 			libraries: {
 				u123: {
 					items: {
@@ -246,7 +283,7 @@ describe('action creators', () => {
 	it('fetchChildItems', async () => {
 		fetchMock.mock(/https:\/\/api\.zotero\.org\/users\/123\/items\/ITEM0000\/children\??.*/, itemsFixture);
 		const store = mockStore(initialState);
-		await store.dispatch(fetchChildItems('ITEM0000', 'u123'));
+		await store.dispatch(fetchChildItems('ITEM0000'));
 
 		assert.strictEqual(store.getActions().length,2);
 		assert.strictEqual(store.getActions()[0].type, REQUEST_CHILD_ITEMS);
@@ -257,5 +294,31 @@ describe('action creators', () => {
 		assert.strictEqual(store.getActions()[1].libraryKey, 'u123');
 		assert.strictEqual(store.getActions()[1].childItems[0].key, 'ITEM2222');
 		assert.strictEqual(store.getActions()[1].childItems[1].key, 'ITEM1111');
+
+		assert.deepEqual(
+			store.getActions()[1].childItems[0][Symbol.for('meta')],
+			itemsFixture[0].meta
+		);
+	});
+
+	it('createItem', async() => {
+		fetchMock.post(/https:\/\/api\.zotero\.org\/users\/123\/items\?.*/, {
+			body: {
+				success: { "0": itemsFixture[0].key },
+				failed: {},
+				successful: { "0": itemsFixture[0] }
+			},
+			headers: { 'Last-Modified-Version': 70 }
+		});
+		const store = mockStore(initialState);
+		const { version, key, dateAdded, dateModified, ...properties } = itemsFixture[0].data; // eslint-disable-line no-unused-vars
+		await store.dispatch(createItem(properties));
+
+		assert.strictEqual(store.getActions().length, 2);
+		assert.deepEqual(store.getActions()[1].item, itemsFixture[0].data);
+		assert.deepEqual(
+			store.getActions()[1].item[Symbol.for('meta')],
+			itemsFixture[0].meta
+		);
 	});
 });
