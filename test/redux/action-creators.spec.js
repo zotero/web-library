@@ -2,7 +2,7 @@
 
 const assert = require('chai').assert;
 const cede = require('../helper/cede');
-const configureStore = require('redux-mock-store');
+const configureStore = require('redux-mock-store').default;
 const thunk = require('redux-thunk').default;
 const ReduxAsyncQueue = require('redux-async-queue').default;
 const fetchMock = require('fetch-mock');
