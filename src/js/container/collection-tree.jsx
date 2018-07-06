@@ -20,11 +20,17 @@ class CollectionTreeContainer extends React.Component {
 		}
 	}
 
-	onCollectionSelected(collectionKey) {
-		if(collectionKey) {
-			this.props.history.push(`/collection/${collectionKey}`);
-		} else {
-			this.props.history.push('/');
+	handleSelect(itemsSource, collectionKey) {
+		switch(itemsSource) {
+			case 'top':
+				this.props.history.push('/');
+			break;
+			case 'trash':
+				this.props.history.push('/trash');
+			break;
+			case 'collection':
+				this.props.history.push(`/collection/${collectionKey}`);
+			break;
 		}
 	}
 
@@ -33,8 +39,8 @@ class CollectionTreeContainer extends React.Component {
 			collections={ this.props.collections }
 			path={ this.props.path }
 			isFetching={ this.props.isFetching }
-			onCollectionSelected={ this.onCollectionSelected.bind(this) }
-			isTopLevel={ this.props.isTopLevel }
+			onSelect={ this.handleSelect.bind(this) }
+			itemsSource={ this.props.itemsSource }
 		/>;
 	}
 }
@@ -50,7 +56,7 @@ const mapStateToProps = state => {
 		isFetching: libraryKey in state.fetching.collectionsInLibrary,
 		selected: state.current.collection,
 		path: getCollectionsPath(state),
-		isTopLevel: !state.current.collection
+		itemsSource: state.current.itemsSource
 	};
 };
 
@@ -61,12 +67,13 @@ const mapDispatchToProps = (dispatch) => {
 };
 
 CollectionTreeContainer.propTypes = {
-	libraryKey: PropTypes.string,
 	collections: PropTypes.array,
-	isFetching: PropTypes.bool.isRequired,
 	dispatch: PropTypes.func.isRequired,
+	isFetching: PropTypes.bool.isRequired,
+	itemsSource: PropTypes.string,
+	libraryKey: PropTypes.string,
+	path: PropTypes.array,
 	selected: PropTypes.string,
-	path: PropTypes.array
 };
 
 CollectionTreeContainer.defaultProps = {

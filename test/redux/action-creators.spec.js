@@ -16,6 +16,7 @@ const {
 	fetchItemTypeCreatorTypes,
 	fetchItemTypeFields,
 	fetchTopItems,
+	fetchTrashItems,
 	initialize,
 	updateItem,
 } = require('../../src/js/actions.js');
@@ -38,6 +39,8 @@ const {
 	RECEIVE_FETCH_ITEMS,
 	REQUEST_TOP_ITEMS,
 	RECEIVE_TOP_ITEMS,
+	REQUEST_TRASH_ITEMS,
+	RECEIVE_TRASH_ITEMS,
 } = require('../../src/js/constants/actions.js');
 
 const collectionsFixture = require('../fixtures/collections.json');
@@ -130,7 +133,7 @@ describe('action creators', () => {
 	});
 
 	it('fetchItemsInCollection', async () => {
-		fetchMock.mock(/https:\/\/api\.zotero\.org\/users\/123\/collections\/AAAAAAAA\??.*/, itemsFixture);
+		fetchMock.mock(/https:\/\/api\.zotero\.org\/users\/123\/collections\/AAAAAAAA\/items\/top\??.*/, itemsFixture);
 		const store = mockStore(initialState);
 		const action = fetchItemsInCollection('AAAAAAAA');
 		await store.dispatch(action);
@@ -301,7 +304,33 @@ describe('action creators', () => {
 		);
 	});
 
-	it('createItem', async() => {
+
+	it('fetchTrashItems', async () => {
+		const trashedItems = itemsFixture.map(item => ({
+			data: {
+				...item.data,
+				deleted: 1
+			},
+			...item
+		}));
+		fetchMock.mock(/https:\/\/api\.zotero\.org\/users\/123\/items\/trash\??.*/, trashedItems);
+		const store = mockStore(initialState);
+		await store.dispatch(fetchTrashItems());
+
+		assert.strictEqual(store.getActions().length, 2);
+		assert.strictEqual(store.getActions()[0].type, REQUEST_TRASH_ITEMS);
+		assert.strictEqual(store.getActions()[0].libraryKey, 'u123');
+		assert.strictEqual(store.getActions()[1].type, RECEIVE_TRASH_ITEMS);
+		assert.strictEqual(store.getActions()[1].libraryKey, 'u123');
+		assert(store.getActions()[1].items.some(i => i.key === 'ITEM2222' ));
+
+		assert.deepEqual(
+			store.getActions()[1].items[0][Symbol.for('meta')],
+			itemsFixture[0].meta
+		);
+	});
+
+	it('createItem', async () => {
 		fetchMock.post(/https:\/\/api\.zotero\.org\/users\/123\/items\?.*/, {
 			body: {
 				success: { "0": itemsFixture[0].key },

@@ -8,6 +8,7 @@ const stateDefault = {
 	item: null,
 	view: 'library',
 	editing: null,
+	itemsSource: null,
 };
 
 const current = (state = stateDefault, action) => {
@@ -18,13 +19,16 @@ const current = (state = stateDefault, action) => {
 				library: action.libraryKey
 			};
 		case ROUTE_CHANGE:
+			var itemKeys = action.params.items ? action.params.items.split(',') : [];
 			return {
 				...state,
 				collection: action.params.collection || null,
-				item: action.params.item || null,
+				item: itemKeys && itemKeys.length === 1 ? itemKeys.pop() : null,
 				view: action.params.item ?
 					'item-details' : action.params.collection ?
-						'item-list' : 'library'
+						'item-list' : 'library',
+				itemsSource: action.params.collection ? 'collection' :
+					action.path.includes('/trash') ? 'trash' : 'top'
 			};
 		case TRIGGER_EDITING_ITEM:
 			return {

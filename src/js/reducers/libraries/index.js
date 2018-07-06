@@ -7,6 +7,7 @@ const items = require('./items');
 const itemsByCollection = require('./items-by-collection');
 const itemsByParent = require('./items-by-parent');
 const itemsTop = require('./items-top');
+const itemsTrash = require('./items-trash');
 const updating = require('./updating');
 const itemCountByCollection = require('./item-count-by-collection');
 const { get } = require('../../utils');
@@ -30,6 +31,7 @@ const actions = Object.entries(require('../../constants/actions'))
 			'RECEIVE_FETCH_ITEMS',
 			'RECEIVE_ITEMS_IN_COLLECTION',
 			'RECEIVE_TOP_ITEMS',
+			'RECEIVE_TRASH_ITEMS',
 			'RECEIVE_UPDATE_ITEM',
 			'REQUEST_CHILD_ITEMS',
 			'REQUEST_COLLECTIONS_IN_LIBRARY',
@@ -56,6 +58,7 @@ const libraries = (state = {}, action) => {
 				itemsByCollection: itemsByCollection(get(state, [action.libraryKey, 'itemsByCollection']), action),
 				itemsByParent: itemsByParent(get(state, [action.libraryKey, 'itemsByParent']), action),
 				itemsTop: itemsTop(get(state, [action.libraryKey, 'itemsTop']), action),
+				itemsTrash: itemsTrash(get(state, [action.libraryKey, 'itemsTrash']), action),
 				updating: updating(get(state, [action.libraryKey, 'updating']), action),
 			}
 		}

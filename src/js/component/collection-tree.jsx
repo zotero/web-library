@@ -12,9 +12,9 @@ class CollectionTree extends React.Component {
 		opened: []
 	}
 
-	handleSelect(key, ev) {
+	handleSelect(itemsSource, key, ev) {
 		ev && ev.preventDefault();
-		this.props.onCollectionSelected(key, ev);
+		this.props.onSelect(itemsSource, key);
 	}
 
 	handleOpenToggle(key, ev) {
@@ -26,10 +26,10 @@ class CollectionTree extends React.Component {
 		this.props.onCollectionOpened();
 	}
 
-	handleKeyPress(key, ev) {
+	handleKeyPress(itemsSource, key, ev) {
 		if(ev && (ev.key === 'Enter' || ev.key === ' ')) {
 			ev.stopPropagation();
-			this.props.onCollectionSelected(key, ev);
+			this.props.onSelect(itemsSource, key, ev);
 		}
 	}
 
@@ -120,13 +120,13 @@ class CollectionTree extends React.Component {
 							<li
 								className={ cx({
 									'all-documents': true,
-									'selected': this.props.isTopLevel
+									'selected': this.props.itemsSource === 'top'
 								})}
 								>
 								<div
 									className="item-container"
-									onClick={ ev => this.handleSelect(null, ev) }
-									onKeyPress={ ev => this.handleKeyPress(null, ev) }
+									onClick={ ev => this.handleSelect('top', null, ev) }
+									onKeyPress={ ev => this.handleKeyPress('top', null, ev) }
 									role="treeitem"
 									tabIndex="0"
 								>
@@ -160,8 +160,8 @@ class CollectionTree extends React.Component {
 							>
 								<div
 									className="item-container"
-									onClick={ ev => this.handleSelect(collection.key, ev) }
-									onKeyPress={ ev => this.handleKeyPress(collection.key, ev) }
+									onClick={ ev => this.handleSelect('collection', collection.key, ev) }
+									onKeyPress={ ev => this.handleKeyPress('collection', collection.key, ev) }
 									role="treeitem"
 									aria-expanded={ derivedData[collection.key].isOpen }
 									tabIndex="0" >
@@ -182,6 +182,31 @@ class CollectionTree extends React.Component {
 							</li>
 						);
 					}) }
+					{
+						level === 1 && (
+							<li
+								className={ cx({
+									'trash': true,
+									'selected': this.props.itemsSource === 'trash'
+								})}
+								>
+								<div
+									className="item-container"
+									onClick={ ev => this.handleSelect('trash', null, ev) }
+									onKeyPress={ ev => this.handleKeyPress('trash', null, ev) }
+									role="treeitem"
+									tabIndex="0"
+								>
+									<div className="twisty-container" />
+									<Icon type="28/trash" className="touch" width="28" height="28"/>
+									<Icon type="16/trash" className="mouse" width="16" height="16"/>
+									<a>
+										Trash
+									</a>
+								</div>
+							</li>
+						)
+					}
 				</ul>
 			</div>
 		);
@@ -229,7 +254,7 @@ class CollectionTree extends React.Component {
 CollectionTree.propTypes = {
 	isFetching: PropTypes.bool,
 	onCollectionOpened: PropTypes.func,
-	onCollectionSelected: PropTypes.func,
+	onSelect: PropTypes.func,
 	path: PropTypes.array,
 	collections: PropTypes.arrayOf(
 		PropTypes.shape({
@@ -244,7 +269,7 @@ CollectionTree.defaultProps = {
 	collections: [],
 	isFetching: false,
 	onCollectionOpened: () => null,
-	onCollectionSelected: () => null,
+	onSelect: () => null,
 	path: [],
 };
 

@@ -77,24 +77,24 @@ class Items extends React.PureComponent {
 						consecutiveCounter++;
 					}
 					const consecutiveKeys = this.props.items.slice(index + offset - consecutiveCounter + 1, index + offset).map(i => i.key);
-					this.props.onMultipleItemsSelect([
+					this.props.onItemsSelect([
 						...this.props.selectedItemKeys.filter(k => !consecutiveKeys.includes(k)),
 						...consecutiveKeys,
 						this.props.items[index + offset].key
 					]);
 				} else {
-					this.props.onMultipleItemsSelect(
+					this.props.onItemsSelect(
 						without(this.props.selectedItemKeys, this.props.items[index].key)
 					);
 				}
 			} else {
-				this.props.onMultipleItemsSelect([
+				this.props.onItemsSelect([
 					...this.props.selectedItemKeys,
 					this.props.items[index + 1].key
 				]);
 			}
 		} else {
-			this.props.onItemSelect(this.props.items[index + 1].key);
+			this.props.onItemsSelect([this.props.items[index + 1].key]);
 		}
 	}
 
@@ -122,24 +122,24 @@ class Items extends React.PureComponent {
 						consecutiveCounter++;
 					}
 					const consecutiveKeys = this.props.items.slice(index - offset, index - offset + consecutiveCounter).reverse().map(i => i.key);
-					this.props.onMultipleItemsSelect([
+					this.props.onItemsSelect([
 						...this.props.selectedItemKeys.filter(k => !consecutiveKeys.includes(k)),
 						...consecutiveKeys,
 						this.props.items[index - offset].key
 					]);
 				} else {
-					this.props.onMultipleItemsSelect(
+					this.props.onItemsSelect(
 						without(this.props.selectedItemKeys, this.props.items[index].key)
 					);
 				}
 			} else {
-				this.props.onMultipleItemsSelect([
+				this.props.onItemsSelect([
 					...this.props.selectedItemKeys,
 					this.props.items[index - 1].key
 				]);
 			}
 		} else {
-			this.props.onItemSelect(this.props.items[index - 1].key);
+			this.props.onItemsSelect([this.props.items[index - 1].key]);
 		}
 	}
 
@@ -169,11 +169,11 @@ class Items extends React.PureComponent {
 			if(isFlipped) {
 				keys.reverse();
 			}
-			this.props.onMultipleItemsSelect(keys);
+			this.props.onItemsSelect(keys);
 		} else if(ev.getModifierState('Control') || ev.getModifierState('Meta')) {
-			this.props.onMultipleItemsSelect([...this.props.selectedItemKeys, item.key]);
+			this.props.onItemsSelect([...this.props.selectedItemKeys, item.key]);
 		} else {
-			this.props.onItemSelect(item.key);
+			this.props.onItemsSelect([item.key]);
 		}
 
 		ev.preventDefault();
@@ -454,7 +454,7 @@ class Items extends React.PureComponent {
 Items.propTypes = {
 	items: PropTypes.array,
 	selectedItemKeys: PropTypes.array,
-	onItemSelect: PropTypes.func
+	onItemsSelect: PropTypes.func
 };
 
 Items.defaultProps = {

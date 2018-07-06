@@ -12,8 +12,9 @@ const {
 	deleteItems,
 	fetchItemsInCollection,
 	fetchTopItems,
+	fetchTrashItems,
+	preferenceChange,
 	sortItems,
-	preferenceChange
 } = require('../actions');
 const { get, sortByKey, resizeVisibleColumns } = require('../utils');
 
@@ -41,19 +42,17 @@ const processItems = items => {
 };
 
 class ItemListContainer extends React.PureComponent {
-	handleItemSelect(itemKey) {
-		if(this.props.isTopLevel) {
-			this.props.history.push(`/item/${itemKey}`);
-		} else {
-			this.props.history.push(`/collection/${this.props.collection.key}/item/${itemKey}`);
-		}
-	}
-
-	handleMultipleItemsSelect(keys) {
-		if(this.props.isTopLevel) {
-			this.props.history.push(`/items/${keys.join(',')}`);
-		} else {
-			this.props.history.push(`/collection/${this.props.collection.key}/items/${keys.join(',')}`);
+	handleItemsSelect(keys) {
+		switch(this.props.itemsSource) {
+			case 'top':
+				this.props.history.push(`/items/${keys.join(',')}`);
+			break;
+			case 'trash':
+				this.props.history.push(`/trash/items/${keys.join(',')}`);
+			break;
+			case 'collection':
+				this.props.history.push(`/collection/${this.props.collection.key}/items/${keys.join(',')}`);
+			break;
 		}
 	}
 
@@ -100,11 +99,16 @@ class ItemListContainer extends React.PureComponent {
 		let limit = (stopIndex - startIndex) + 1;
 		let sort = this.props.sortBy;
 		let direction = this.props.sortDirection.toLowerCase();
-		const { isTopLevel, dispatch, collection } = this.props;
+		const { itemsSource, dispatch, collection } = this.props;
 
-		return isTopLevel ?
-			await dispatch(fetchTopItems({ start, limit, sort, direction })) :
-			await dispatch(fetchItemsInCollection(collection.key, { start, limit, sort, direction }));
+		switch(itemsSource) {
+			case 'top':
+				return await dispatch(fetchTopItems({ start, limit, sort, direction }));
+			case 'trash':
+				return await dispatch(fetchTrashItems({ start, limit, sort, direction }));
+			case 'collection':
+				return await dispatch(fetchItemsInCollection(collection.key, { start, limit, sort, direction }));
+		}
 	}
 
 	async handleSort({ sortBy, sortDirection, stopIndex }) {
@@ -115,22 +119,13 @@ class ItemListContainer extends React.PureComponent {
 	}
 
 	render() {
-		let { collection, isTopLevel } = this.props;
-		var key;
-		if(isTopLevel) {
-			key = 'top-level';
-		} else if(collection) {
-			key = `collection-${collection.key}`;
-		} else {
-			key = 'empty-list';
-		}
+		let { collection = {}, itemsSource } = this.props;
 
 		return <ItemList
-			key = { key }
+			key = { `${itemsSource}-${collection.key}` }
 			{ ...this.props }
 			onDelete={ this.handleDelete.bind(this) }
-			onItemSelect={ this.handleItemSelect.bind(this) }
-			onMultipleItemsSelect={ this.handleMultipleItemsSelect.bind(this) }
+			onItemsSelect={ this.handleItemsSelect.bind(this) }
 			onLoadMore={ this.handleLoadMore.bind(this) }
 			onSort={ this.handleSort.bind(this) }
 			onColumnVisibilityChange={ this.handleColumnVisibilityChange.bind(this) }
@@ -142,19 +137,28 @@ class ItemListContainer extends React.PureComponent {
 
 const mapStateToProps = state => {
 	const libraryKey = state.current.library;
+	const itemsSource = state.current.itemsSource;
 	const collectionKey = state.current.collection;
 	const itemKey = state.current.item;
 	const collection = get(state, ['libraries', libraryKey, 'collections', collectionKey]);
 	const item = get(state, ['libraries', libraryKey, 'items', itemKey]);
-	const items = processItems(
-		(collectionKey ?
-			get(state, ['libraries', libraryKey, 'itemsByCollection', collectionKey], []) :
-			get(state, ['libraries', libraryKey, 'itemsTop'], [])
-		).map(key => get(state, ['libraries', libraryKey, 'items', key]))
-	);
-	const totalItemsCount = collectionKey ?
-		get(state, ['libraries', libraryKey, 'itemCountByCollection', collectionKey], 0) :
-		get(state, ['itemCountTopByLibrary', libraryKey], 50);
+	var items = [], totalItemsCount = 0;
+	switch(itemsSource) {
+		case 'top':
+				items = get(state, ['libraries', libraryKey, 'itemsTop'], []);
+				totalItemsCount = get(state, ['itemCountTopByLibrary', libraryKey], 50);
+		break;
+		case 'trash':
+				items = get(state, ['libraries', libraryKey, 'itemsTrash'], []);
+				totalItemsCount = get(state, ['itemCountTrashByLibrary', libraryKey], 50);
+		break;
+		case 'collection':
+				items = get(state, ['libraries', libraryKey, 'itemsByCollection', collectionKey], []);
+				totalItemsCount = get(state, ['libraries', libraryKey, 'itemCountByCollection', collectionKey], 0)
+		break;
+	}
+
+	items = processItems(items.map(key => get(state, ['libraries', libraryKey, 'items', key])));
 	const { sortBy, sortDirection } = state.config;
 	const preferences = state.preferences;
 	const itemFields = state.meta.itemFields;
@@ -173,8 +177,8 @@ const mapStateToProps = state => {
 		sortBy,
 		preferences,
 		itemFields,
+		itemsSource,
 		sortDirection: sortDirection.toUpperCase(),
-		isTopLevel: !collectionKey,
 		selectedItemKeys: item ? [item.key] : (state.router && 'items' in state.router.params && state.router.params.items.split(',')) || []
 	};
 };

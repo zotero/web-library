@@ -41,7 +41,7 @@ class LibraryContainer extends React.Component {
 		);
 
 		await this.props.dispatch(
-			changeRoute(this.props.match.params)
+			changeRoute(this.props.match)
 		);
 
 		//@TODO: introduce multi-library support
@@ -62,7 +62,7 @@ class LibraryContainer extends React.Component {
 
 	componentWillReceiveProps(props) {
 		if(!deepEqual(this.props, props)) {
-			this.props.dispatch(changeRoute(props.match.params));
+			this.props.dispatch(changeRoute(props.match));
 		}
 	}
 
@@ -95,11 +95,11 @@ class LibraryContainer extends React.Component {
 				<Provider store={store}>
 					<BrowserRouter>
 						<Switch>
-							<Route path="/collection/:collection/item/:item" component={LibraryContainerWrapped} />
 							<Route path="/collection/:collection/items/:items" component={LibraryContainerWrapped} />
 							<Route path="/collection/:collection" component={LibraryContainerWrapped} />
-							<Route path="/item/:item" component={LibraryContainerWrapped} />
 							<Route path="/items/:items" component={LibraryContainerWrapped} />
+							<Route path="/trash/items/:items" component={LibraryContainerWrapped} />
+							<Route path="/trash" component={LibraryContainerWrapped} />
 							<Route path="/" component={LibraryContainerWrapped} />
 						</Switch>
 					</BrowserRouter>

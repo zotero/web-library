@@ -72,6 +72,10 @@ const {
 	RECEIVE_TOP_ITEMS,
 	ERROR_TOP_ITEMS,
 
+	REQUEST_TRASH_ITEMS,
+	RECEIVE_TRASH_ITEMS,
+	ERROR_TRASH_ITEMS,
+
 	SORT_ITEMS,
 
 	PREFERENCE_CHANGE,
@@ -120,10 +124,10 @@ const cleanupCacheAfterDelete = (itemKeys, state) => {
 	});
 };
 
-const changeRoute = params => {
+const changeRoute = match => {
 	return {
 		type: ROUTE_CHANGE,
-		params
+		...match
 	};
 };
 
@@ -482,6 +486,52 @@ const fetchTopItems = ({ start = 0, limit = 50, sort = 'dateModified', direction
 	};
 };
 
+const fetchTrashItems = ({ start = 0, limit = 50, sort = 'dateModified', direction = 'desc' } = {}) => {
+	return async (dispatch, getState, ) => {
+		const state = getState();
+		const libraryKey = state.current.library;
+		const totalItemsCount = get(state, ['itemCountTrashByLibrary', libraryKey]);
+		const knownItemKeys = get(state, ['libraries', libraryKey, 'itemsTrash'], []);
+
+		if(knownItemKeys.length === totalItemsCount) {
+			// there is no need for a request
+			return knownItemKeys.map(key => get(state, ['libraries', libraryKey, 'items', key]))
+		}
+
+		dispatch({
+			type: REQUEST_TRASH_ITEMS,
+			libraryKey
+		});
+
+		try {
+			let response = await api(state.config.apiKey, state.config.apiConfig)
+				.library(libraryKey)
+				.items()
+				.trash()
+				.get({ start, limit, sort, direction });
+
+			const items = response.getData().map((item, index) => ({
+				...item,
+				[Symbol.for('meta')]: response.getMeta()[index] || {}
+			}));
+
+			dispatch({
+				type: RECEIVE_TRASH_ITEMS,
+				libraryKey,
+				items,
+				response
+			});
+			return items;
+		} catch(error) {
+			dispatch({
+				type: ERROR_TRASH_ITEMS,
+				error,
+				libraryKey
+			});
+		}
+	};
+};
+
 const triggerEditingItem = (itemKey, isEditing) => {
 	return async (dispatch, getState) => {
 		let libraryKey = get(getState(), 'current.library');
@@ -780,6 +830,7 @@ function uploadAttachment(itemKey, fileData) {
 	};
 }
 
+
 module.exports = {
 	changeRoute,
 	configureApi,
@@ -794,6 +845,7 @@ module.exports = {
 	fetchItemTypeCreatorTypes,
 	fetchItemTypeFields,
 	fetchTopItems,
+	fetchTrashItems,
 	initialize,
 	preferenceChange,
 	selectLibrary,

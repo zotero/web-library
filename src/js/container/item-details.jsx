@@ -111,9 +111,9 @@ class ItemDetailsContainer extends React.Component {
 	handleRelatedItemSelect(item) {
 		let isSameCollection = item.collections.includes(this.props.collection.key);
 		if(isSameCollection) {
-			this.props.history.push(`/collection/${this.props.collection.key}/item/${item.key}`);
+			this.props.history.push(`/collection/${this.props.collection.key}/items/${item.key}`);
 		} else {
-			this.props.history.push(`/item/${item.key}`);
+			this.props.history.push(`/items/${item.key}`);
 		}
 	}
 
@@ -172,9 +172,20 @@ const mapStateToProps = state => {
 		mapRelationsToItemKeys(item.relations, state.config.userId)
 			.map(key => get(state, ['libraries', libraryKey, 'items', key]))
 			.filter(item => item !== null) : [];
-	const itemsCount = collectionKey ?
-		get(state, ['libraries', libraryKey, 'itemCountByCollection', collectionKey], 0) :
-		get(state, ['itemCountTopByLibrary', libraryKey], 0);
+
+	var itemsCount;
+	switch(state.current.itemsSource) {
+		case 'top':
+				itemsCount = get(state, ['itemCountTopByLibrary', libraryKey], 0);
+		break;
+		case 'trash':
+				itemsCount = get(state, ['itemCountTrashByLibrary', libraryKey], 0);
+		break;
+		case 'collection':
+				itemsCount = get(state, ['libraries', libraryKey, 'itemCountByCollection', collectionKey], 0)
+		break;
+	}
+
 	const selectedItemKeys = get(state, 'router.params.items');
 
 	return {
