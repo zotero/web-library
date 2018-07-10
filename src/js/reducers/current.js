@@ -24,7 +24,7 @@ const current = (state = stateDefault, action) => {
 				...state,
 				collection: action.params.collection || null,
 				item: itemKeys && itemKeys.length === 1 ? itemKeys.pop() : null,
-				view: action.params.item ?
+				view: action.params.items ?
 					'item-details' : action.params.collection ?
 						'item-list' : 'library',
 				itemsSource: action.params.collection ? 'collection' :
