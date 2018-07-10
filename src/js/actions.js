@@ -76,6 +76,11 @@ const {
 	RECEIVE_TRASH_ITEMS,
 	ERROR_TRASH_ITEMS,
 
+	PRE_MOVE_ITEMS_TRASH,
+	REQUEST_MOVE_ITEMS_TRASH,
+	RECEIVE_MOVE_ITEMS_TRASH,
+	ERROR_MOVE_ITEMS_TRASH,
+
 	SORT_ITEMS,
 
 	PREFERENCE_CHANGE,
@@ -713,7 +718,7 @@ function updateItem(itemKey, patch) {
 
 function queueUpdateItem(itemKey, patch, libraryKey, queueId) {
 	return {
-		queue: libraryKey + itemKey,
+		queue: libraryKey,
 		callback: async (next, dispatch, getState) => {
 			const state = getState();
 			const libraryKey = state.current.library;
@@ -830,6 +835,117 @@ function uploadAttachment(itemKey, fileData) {
 	};
 }
 
+function moveToTrash(itemKeys) {
+	return async (dispatch, getState) => {
+		const libraryKey = getState().current.library;
+		const queueId = ++queueIdCunter;
+
+		dispatch({
+			type: PRE_MOVE_ITEMS_TRASH,
+			itemKeys,
+			libraryKey,
+			queueId
+		});
+
+		dispatch(
+			queueMoveItemsToTrash(itemKeys, libraryKey, queueId)
+		);
+	};
+}
+
+function queueMoveItemsToTrash(itemKeys, libraryKey, queueId) {
+	return {
+		queue: libraryKey,
+		callback: async (next, dispatch, getState) => {
+			const state = getState();
+			const libraryKey = state.current.library;
+			const config = state.config;
+			const version = state.libraries[libraryKey].version;
+			const multiPatch = itemKeys.map(key => ({ key, deleted: 1 }));
+
+			dispatch({
+				type: REQUEST_MOVE_ITEMS_TRASH,
+				itemKeys,
+				libraryKey,
+				queueId
+			});
+
+			try {
+				const response = await api(config.apiKey, config.apiConfig)
+					.library(libraryKey)
+					.version(version)
+					.items()
+					.post(multiPatch);
+
+				const itemsModified = [];
+				const itemKeysModified = [];
+				const itemKeysByCollection = {};
+				const itemKeysTop = [];
+
+				itemKeys.map((_, index) => {
+					try {
+						const updatedItem = response.getEntityByIndex(index);
+						itemKeysModified.push(updatedItem.key);
+						itemsModified.push(updatedItem);
+						const match = Object.entries(state.libraries[libraryKey].itemsByCollection)
+							.find(([_, itemKeys]) => itemKeys.includes(updatedItem.key)); //eslint-disable-line no-unused-vars
+
+						if(match) {
+							const collectionKey = match[0];
+							if(!(collectionKey in itemKeysByCollection)) {
+								itemKeysByCollection[collectionKey] = [];
+							}
+							itemKeysByCollection[collectionKey].push(updatedItem.key);
+						}
+
+						if(state.libraries[libraryKey].itemsTop.includes(updatedItem.key)) {
+							itemKeysTop.push(updatedItem.key);
+						}
+					} catch(e) {
+						// ignore single-item failure as we're dispatching aggregated ERROR
+						// containing all keys that failed to update
+					}
+				});
+
+				dispatch({
+					type: RECEIVE_MOVE_ITEMS_TRASH,
+					items: itemsModified,
+					itemKeys: itemKeysModified,
+					itemKeysByCollection,
+					itemKeysTop,
+					libraryKey,
+					response,
+					queueId
+				});
+
+				if(!response.isSuccess()) {
+					dispatch({
+						type: ERROR_MOVE_ITEMS_TRASH,
+						itemKeys: itemKeys.filter(itemKey => !itemKeysModified.includes(itemKey)),
+						error: response.getErrors(),
+						libraryKey,
+						queueId
+					});
+				}
+
+				// @TODO: more targeted cache invalidation
+				api().invalidate({ 'resource.library': libraryKey });
+				return;
+			} catch(error) {
+				dispatch({
+					type: ERROR_MOVE_ITEMS_TRASH,
+					error,
+					itemKeys,
+					libraryKey,
+					queueId
+				});
+				throw error;
+			} finally {
+				next();
+			}
+		}
+	};
+}
 
 module.exports = {
 	changeRoute,
@@ -847,6 +963,7 @@ module.exports = {
 	fetchTopItems,
 	fetchTrashItems,
 	initialize,
+	moveToTrash,
 	preferenceChange,
 	selectLibrary,
 	sortItems,

@@ -20,10 +20,13 @@ const {
 	REQUEST_ITEMS_IN_COLLECTION,
 	REQUEST_META,
 	REQUEST_UPDATE_ITEM,
+	RECEIVE_MOVE_ITEMS_TRASH,
 } = require('../../src/js/constants/actions.js');
-
+const stateFixture = require('../fixtures/state.json');
 const { combineReducers } = require('redux');
 const reduce = combineReducers(reducers);
+
+const getTestState = () => JSON.parse(JSON.stringify(stateFixture));
 
 describe('reducers', () => {
 	it('config', () => {
@@ -312,6 +315,62 @@ describe('reducers', () => {
 			assert.sameOrderedMembers(
 				state.libraries.u123.itemsByParent['ITEM0000'],
 				['ITEM1111', 'ITEM2222']
+			);
+		});
+
+		it('moving items to trash', () => {
+			var state = getTestState();
+			const libraryKey = state.current.library;
+			const collectionKey = Object.keys(
+				state.libraries[libraryKey].itemsByCollection
+			)[0];
+			const itemsToTrashFromCollections = state.libraries[libraryKey].itemsByCollection[collectionKey].slice(0, 2);
+			const itemsToTrashTop = Object.values(
+				state.libraries[libraryKey].itemsTop
+			).slice(0, 2);
+			const itemsToTrash = [...itemsToTrashFromCollections, ...itemsToTrashTop];
+			const originalCollectionCount = state.libraries[libraryKey].itemCountByCollection[collectionKey];
+			const originalTopCount = state.itemCountTopByLibrary[libraryKey];
+
+			state = reduce(state, {
+				type: RECEIVE_MOVE_ITEMS_TRASH,
+				items: Object.assign(...Object.keys(state.libraries[libraryKey].items)
+					.filter(itemKey => itemsToTrash.includes(itemKey))
+					.map( itemKey => ({ [itemKey]: {
+						key: itemKey,
+						deleted: 1
+				}}))),
+				itemKeys: itemsToTrash,
+				itemKeysByCollection: {
+					[collectionKey]: itemsToTrashFromCollections
+				},
+				itemKeysTop: itemsToTrashTop,
+				libraryKey
+			});
+
+			assert.notIncludeMembers(
+				state.libraries[libraryKey].itemsByCollection[collectionKey],
+				itemsToTrashFromCollections
+			);
+			assert.notIncludeMembers(
+				state.libraries[libraryKey].itemsTop,
+				itemsToTrashTop
+			);
+			assert.equal(
+				state.libraries[libraryKey].itemCountByCollection[collectionKey],
+				originalCollectionCount - 2
+			);
+			assert.equal(
+				state.itemCountTopByLibrary[libraryKey],
+				originalTopCount - 2
+			);
+			assert.sameMembers(
+				state.libraries[libraryKey].itemsTrash,
+				itemsToTrash
+			);
+			assert.strictEqual(
+				state.libraries[libraryKey].items[itemsToTrash[0]].deleted,
+				1
 			);
 		});
 	});

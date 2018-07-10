@@ -122,9 +122,9 @@ const sortByKey = (items, key, direction) => {
 	});
 };
 
-const indexByKey = (elements, key) => {
+const indexByKey = (elements, key, processor = e => e) => {
 	return elements.reduce((aggr, element) => {
-		aggr[element[key]] = element;
+		aggr[element[key]] = processor(element);
 		return aggr;
 	}, {});
 }

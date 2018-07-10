@@ -1,6 +1,9 @@
 'use strict';
 
-const { RECEIVE_COLLECTIONS_IN_LIBRARY } = require('../../constants/actions');
+const {
+	RECEIVE_COLLECTIONS_IN_LIBRARY,
+	RECEIVE_MOVE_ITEMS_TRASH
+} = require('../../constants/actions');
 
 const itemCountByCollection = (state = {}, action) => {
 	switch(action.type) {
@@ -12,6 +15,17 @@ const itemCountByCollection = (state = {}, action) => {
 					return aggr;
 				}, {}))
 			};
+		case RECEIVE_MOVE_ITEMS_TRASH:
+			return {
+				...state,
+				...Object.entries(action.itemKeysByCollection).reduce(
+					(aggr, [collectionKey, itemKeys]) => {
+						aggr[collectionKey] = Math.max(
+							(state[collectionKey] || 0) - itemKeys.length, 0
+						)
+						return aggr;
+				}, {})
+			}
 		default:
 			return state;
 	}

@@ -5,6 +5,7 @@ const {
 	RECEIVE_DELETE_ITEM,
 	RECEIVE_DELETE_ITEMS,
 	RECEIVE_ITEMS_IN_COLLECTION,
+	RECEIVE_MOVE_ITEMS_TRASH,
 } = require('../../constants/actions.js');
 
 const itemsByCollection = (state = {}, action) => {
@@ -18,6 +19,7 @@ const itemsByCollection = (state = {}, action) => {
 				return aggr;
 			}, {});
 		case RECEIVE_DELETE_ITEMS:
+		case RECEIVE_MOVE_ITEMS_TRASH:
 			return Object.entries(state).reduce((aggr, [collectionKey, itemKeys]) => {
 				aggr[collectionKey] = itemKeys.filter(k => !action.itemKeys.includes(k))
 				return aggr;

@@ -5,6 +5,7 @@ const {
 	RECEIVE_DELETE_ITEM,
 	RECEIVE_DELETE_ITEMS,
 	RECEIVE_TRASH_ITEMS,
+	RECEIVE_MOVE_ITEMS_TRASH,
 } = require('../../constants/actions.js');
 
 const itemsTop = (state = [], action) => {
@@ -22,6 +23,11 @@ const itemsTop = (state = [], action) => {
 					...state,
 					...action.items.map(item => item.key)
 				]))
+			];
+		case RECEIVE_MOVE_ITEMS_TRASH:
+			return [
+				...state,
+				...action.itemKeys
 			];
 		default:
 			return state;

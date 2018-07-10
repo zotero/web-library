@@ -19,6 +19,7 @@ const {
 	fetchTrashItems,
 	initialize,
 	updateItem,
+	moveToTrash,
 } = require('../../src/js/actions.js');
 const {
 	REQUEST_META,
@@ -41,6 +42,9 @@ const {
 	RECEIVE_TOP_ITEMS,
 	REQUEST_TRASH_ITEMS,
 	RECEIVE_TRASH_ITEMS,
+	PRE_MOVE_ITEMS_TRASH,
+	REQUEST_MOVE_ITEMS_TRASH,
+	RECEIVE_MOVE_ITEMS_TRASH,
 } = require('../../src/js/constants/actions.js');
 
 const collectionsFixture = require('../fixtures/collections.json');
@@ -349,5 +353,85 @@ describe('action creators', () => {
 			store.getActions()[1].item[Symbol.for('meta')],
 			itemsFixture[0].meta
 		);
+	});
+
+	it('moveToTrash', async () => {
+		fetchMock.post((url, opts) => {
+				assert(url.match(/https:\/\/api\.zotero\.org\/users\/123\/items\??.*/));
+				assert(opts.body, {
+					deleted: 1
+				});
+				return true;
+			}, {
+			headers: {
+				'Last-Modified-Version': 1337
+			},
+			body: {
+				success: { '0': 'ITEM1111', '1': 'ITEM2222' },
+				failed: {},
+				successful: {
+					'0': {
+						key: 'ITEM1111',
+						deleted: 1,
+					},
+					'1': {
+						key: 'ITEM2222',
+						deleted: 1
+					}
+				}
+			},
+		});
+
+		const store = mockStore({
+			...initialState,
+			libraries: {
+				u123: {
+					itemsTop: ['ITEM1111', 'ITEM2222'],
+					itemsTrash: [],
+					itemsByCollection: {
+						'AAAAAAAA': ['ITEM1111']
+					},
+					items: {
+						'ITEM1111': {
+							key: 'ITEM1111',
+							version: 1,
+							title: 'foo',
+							collections: ['AAAAAAAA']
+						},
+						'ITEM2222': {
+							key: 'ITEM2222',
+							version: 1,
+							title: 'bar',
+							collections: []
+						}
+					}
+				}
+			}
+		});
+
+		const action = moveToTrash(['ITEM1111', 'ITEM2222']);
+		await store.dispatch(action);
+
+		assert.strictEqual(store.getActions()[0].type, PRE_MOVE_ITEMS_TRASH);
+		assert.sameMembers(store.getActions()[0].itemKeys, ['ITEM1111', 'ITEM2222']);
+		assert.strictEqual(store.getActions()[0].libraryKey, 'u123');
+
+		await cede(); // allow async-queue process this request
+
+		assert.strictEqual(store.getActions()[1].type, REQUEST_MOVE_ITEMS_TRASH);
+		assert.sameMembers(store.getActions()[1].itemKeys, ['ITEM1111', 'ITEM2222']);
+		assert.strictEqual(store.getActions()[1].libraryKey, 'u123');
+
+		await cede(); // allow async-queue process this request
+
+		assert.strictEqual(store.getActions()[2].type, RECEIVE_MOVE_ITEMS_TRASH);
+		assert.sameMembers(store.getActions()[2].itemKeys, ['ITEM1111', 'ITEM2222']);
+		assert.deepEqual(store.getActions()[2].itemKeysByCollection, {
+			'AAAAAAAA': ['ITEM1111']
+		});
+		assert.sameMembers(store.getActions()[2].itemKeysTop, ['ITEM1111', 'ITEM2222']);
+		assert.lengthOf(store.getActions()[2].items, 2);
+		assert.strictEqual(store.getActions()[2].items[0].version, 1337);
+		assert.typeOf(store.getActions()[2].response.response, 'object');
 	});
 });

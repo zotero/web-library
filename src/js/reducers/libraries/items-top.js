@@ -5,6 +5,7 @@ const {
 	RECEIVE_DELETE_ITEM,
 	RECEIVE_DELETE_ITEMS,
 	RECEIVE_TOP_ITEMS,
+	RECEIVE_MOVE_ITEMS_TRASH,
 } = require('../../constants/actions.js');
 
 const itemsTop = (state = [], action) => {
@@ -15,6 +16,7 @@ const itemsTop = (state = [], action) => {
 		case RECEIVE_DELETE_ITEM:
 			return state.filter(key => key !== action.item.key);
 		case RECEIVE_DELETE_ITEMS:
+		case RECEIVE_MOVE_ITEMS_TRASH:
 			return state.filter(key => !action.itemKeys.includes(key));
 		case RECEIVE_TOP_ITEMS:
 			return [

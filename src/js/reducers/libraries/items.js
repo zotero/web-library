@@ -10,6 +10,7 @@ const {
 	RECEIVE_FETCH_ITEMS,
 	RECEIVE_TOP_ITEMS,
 	RECEIVE_TRASH_ITEMS,
+	RECEIVE_MOVE_ITEMS_TRASH,
 } = require('../../constants/actions.js');
 const { get, indexByKey } = require('../../utils');
 const { removeKeys } = require('../../common/immutable');
@@ -33,6 +34,14 @@ const items = (state = {}, action) => {
 					...action.item
 				}
 			};
+		case RECEIVE_MOVE_ITEMS_TRASH:
+			return {
+				...state,
+				...indexByKey(Object.values(action.items), 'key', item => ({
+					...state[item.key],
+					...item
+				}))
+			}
 		case RECEIVE_CHILD_ITEMS:
 			return {
 				...state,

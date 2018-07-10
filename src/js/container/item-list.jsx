@@ -10,6 +10,7 @@ const { noteAsTitle } = require('../common/format');
 const ItemList = require('../component/item/list');
 const {
 	deleteItems,
+	moveToTrash,
 	fetchItemsInCollection,
 	fetchTopItems,
 	fetchTrashItems,
@@ -42,7 +43,7 @@ const processItems = items => {
 };
 
 class ItemListContainer extends React.PureComponent {
-	handleItemsSelect(keys) {
+	handleItemsSelect(keys = []) {
 		switch(this.props.itemsSource) {
 			case 'top':
 				this.props.history.push(`/items/${keys.join(',')}`);
@@ -59,12 +60,13 @@ class ItemListContainer extends React.PureComponent {
 	async handleDelete() {
 		const { dispatch, selectedItemKeys } = this.props;
 
+		//@TODO: if current view is trash, delete pernamently
 		//@TODO: more graceful way of deleting > 50 items?
 		do {
 			const itemKeys = selectedItemKeys.splice(0, 50);
-			await dispatch(deleteItems(itemKeys));
+			await dispatch(moveToTrash(itemKeys));
 		} while (selectedItemKeys.length > 50);
-		this.handleItemSelect('');
+		this.handleItemsSelect();
 	}
 
 	handleColumnVisibilityChange(field, isVisible) {
