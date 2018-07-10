@@ -27,6 +27,11 @@ const { combineReducers } = require('redux');
 const reduce = combineReducers(reducers);
 
 const getTestState = () => JSON.parse(JSON.stringify(stateFixture));
+const mockResponse = {
+	getData: () => [],
+	getMeta: () => [],
+	response: new Response('', { headers: { 'Last-Modified-Version': 1337 } })
+};
 
 describe('reducers', () => {
 	it('config', () => {
@@ -120,7 +125,7 @@ describe('reducers', () => {
 			libraryKey: 'u123',
 			collections: collectionData,
 			receivedAt: 1499438101816,
-			response: { getData: () => [], getMeta: () => [] }
+			response: mockResponse
 		});
 
 		assert.isEmpty(state.fetching.collectionsInLibrary);
@@ -167,7 +172,7 @@ describe('reducers', () => {
 			state = reduce(state, {
 				type: REQUEST_ITEMS_IN_COLLECTION,
 				libraryKey: 'u123',
-				collectionKey: 'CLECTION'
+				collectionKey: 'CLECTION',
 			});
 
 			assert.sameMembers(state.libraries.u123.fetching.itemsInCollection, ['CLECTION']);
@@ -178,7 +183,8 @@ describe('reducers', () => {
 				collectionKey: 'CLECTION',
 				libraryKey: 'u123',
 				items: itemsData,
-				receivedAt: 1499438101816
+				receivedAt: 1499438101816,
+				response: mockResponse
 			});
 
 			assert.isEmpty(state.libraries.u123.fetching.itemsInCollection, []);
@@ -306,7 +312,8 @@ describe('reducers', () => {
 				type: RECEIVE_CHILD_ITEMS,
 				itemKey: 'ITEM0000',
 				libraryKey: 'u123',
-				childItems: itemsData
+				childItems: itemsData,
+				response: mockResponse
 			});
 
 			assert.isEmpty(state.libraries.u123.fetching.childItems);
@@ -345,7 +352,8 @@ describe('reducers', () => {
 					[collectionKey]: itemsToTrashFromCollections
 				},
 				itemKeysTop: itemsToTrashTop,
-				libraryKey
+				libraryKey,
+				response: mockResponse
 			});
 
 			assert.notIncludeMembers(

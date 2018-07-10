@@ -882,7 +882,7 @@ function queueMoveItemsToTrash(itemKeys, libraryKey, queueId) {
 				const itemKeysByCollection = {};
 				const itemKeysTop = [];
 
-				itemKeys.map((_, index) => {
+				itemKeys.forEach((_, index) => {
 					try {
 						const updatedItem = response.getEntityByIndex(index);
 						itemKeysModified.push(updatedItem.key);
