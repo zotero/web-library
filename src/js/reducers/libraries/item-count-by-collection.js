@@ -21,9 +21,8 @@ const itemCountByCollection = (state = {}, action) => {
 				...state,
 				...Object.entries(action.itemKeysByCollection).reduce(
 					(aggr, [collectionKey, itemKeys]) => {
-						aggr[collectionKey] = Math.max(
-							(state[collectionKey] || 0) - itemKeys.length, 0
-						)
+						if(!(collectionKey in state)) { return aggr; }
+						aggr[collectionKey] = state[collectionKey] - itemKeys.length
 						return aggr;
 				}, {})
 			}
@@ -32,7 +31,8 @@ const itemCountByCollection = (state = {}, action) => {
 				...state,
 				...Object.entries(action.itemKeysByCollection).reduce(
 					(aggr, [collectionKey, itemKeys]) => {
-						aggr[collectionKey] = (state[collectionKey] || 0) + itemKeys.length
+						if(!(collectionKey in state)) { return aggr; }
+						aggr[collectionKey] = state[collectionKey] + itemKeys.length;
 						return aggr;
 				}, {})
 			}
