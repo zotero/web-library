@@ -1,6 +1,10 @@
 'use strict';
 
-const { RECEIVE_TRASH_ITEMS } = require('../constants/actions');
+const {
+	RECEIVE_MOVE_ITEMS_TRASH,
+	RECEIVE_RECOVER_ITEMS_TRASH,
+	RECEIVE_TRASH_ITEMS,
+} = require('../constants/actions');
 
 const itemCountTrashByLibrary = (state = {}, action) => {
 	switch(action.type) {
@@ -9,8 +13,18 @@ const itemCountTrashByLibrary = (state = {}, action) => {
 				...state,
 				[action.libraryKey]: parseInt(action.response.response.headers.get('Total-Results'), 10)
 			};
-		default:
-			return state;
+	case RECEIVE_MOVE_ITEMS_TRASH:
+		return {
+			...state,
+			[action.libraryKey]: (state[action.libraryKey] || 0) + action.itemKeys.length
+		}
+	case RECEIVE_RECOVER_ITEMS_TRASH:
+		return {
+			...state,
+			[action.libraryKey]: (state[action.libraryKey] || 0) - action.itemKeys.length
+		}
+	default:
+		return state;
 	}
 };
 

@@ -81,6 +81,11 @@ const {
 	RECEIVE_MOVE_ITEMS_TRASH,
 	ERROR_MOVE_ITEMS_TRASH,
 
+	PRE_RECOVER_ITEMS_TRASH,
+	REQUEST_RECOVER_ITEMS_TRASH,
+	RECEIVE_RECOVER_ITEMS_TRASH,
+	ERROR_RECOVER_ITEMS_TRASH,
+
 	SORT_ITEMS,
 
 	PREFERENCE_CHANGE,
@@ -152,6 +157,52 @@ const sortItems = (sortBy, sortDirection) => {
 		sortDirection
 	};
 };
+
+const postItemsMultiPatch = async (state, multiPatch) => {
+	const config = state.config;
+	const libraryKey = state.current.library;
+	const version = state.libraries[libraryKey].version;
+	const response = await api(config.apiKey, config.apiConfig)
+		.library(libraryKey)
+		.version(version)
+		.items()
+		.post(multiPatch);
+
+	const items = [];
+	const itemKeys = [];
+	const itemKeysByCollection = {};
+	const itemKeysTop = [];
+
+	multiPatch.forEach((_, index) => {
+		try {
+			const updatedItem = response.getEntityByIndex(index);
+			itemKeys.push(updatedItem.key);
+			items.push(updatedItem);
+			state.libraries[libraryKey].items[updatedItem.key]
+				.collections.forEach(collectionKey => {
+					if(!(collectionKey in itemKeysByCollection)) {
+						itemKeysByCollection[collectionKey] = [];
+					}
+					itemKeysByCollection[collectionKey].push(updatedItem.key);
+				})
+
+			if(!state.libraries[libraryKey].items[updatedItem.key].parentItem) {
+				itemKeysTop.push(updatedItem.key);
+			}
+		} catch(e) {
+			// ignore single-item failure as we're dispatching aggregated ERROR
+			// containing all keys that failed to update
+		}
+	});
+
+	return {
+		response,
+		items,
+		itemKeys,
+		itemKeysByCollection,
+		itemKeysTop,
+	};
+}
 
 //@TODO: separate authenticate and selectLibrary events
 //		 allow having multiple open libraries as per design
@@ -858,9 +909,6 @@ function queueMoveItemsToTrash(itemKeys, libraryKey, queueId) {
 		queue: libraryKey,
 		callback: async (next, dispatch, getState) => {
 			const state = getState();
-			const libraryKey = state.current.library;
-			const config = state.config;
-			const version = state.libraries[libraryKey].version;
 			const multiPatch = itemKeys.map(key => ({ key, deleted: 1 }));
 
 			dispatch({
@@ -871,57 +919,21 @@ function queueMoveItemsToTrash(itemKeys, libraryKey, queueId) {
 			});
 
 			try {
-				const response = await api(config.apiKey, config.apiConfig)
-					.library(libraryKey)
-					.version(version)
-					.items()
-					.post(multiPatch);
-
-				const itemsModified = [];
-				const itemKeysModified = [];
-				const itemKeysByCollection = {};
-				const itemKeysTop = [];
-
-				itemKeys.forEach((_, index) => {
-					try {
-						const updatedItem = response.getEntityByIndex(index);
-						itemKeysModified.push(updatedItem.key);
-						itemsModified.push(updatedItem);
-						const match = Object.entries(state.libraries[libraryKey].itemsByCollection)
-							.find(([_, itemKeys]) => itemKeys.includes(updatedItem.key)); //eslint-disable-line no-unused-vars
-
-						if(match) {
-							const collectionKey = match[0];
-							if(!(collectionKey in itemKeysByCollection)) {
-								itemKeysByCollection[collectionKey] = [];
-							}
-							itemKeysByCollection[collectionKey].push(updatedItem.key);
-						}
-
-						if(state.libraries[libraryKey].itemsTop.includes(updatedItem.key)) {
-							itemKeysTop.push(updatedItem.key);
-						}
-					} catch(e) {
-						// ignore single-item failure as we're dispatching aggregated ERROR
-						// containing all keys that failed to update
-					}
-				});
+				const { response, itemKeys, ...itemsData } = await postItemsMultiPatch(state, multiPatch);
 
 				dispatch({
 					type: RECEIVE_MOVE_ITEMS_TRASH,
-					items: itemsModified,
-					itemKeys: itemKeysModified,
-					itemKeysByCollection,
-					itemKeysTop,
 					libraryKey,
 					response,
-					queueId
+					queueId,
+					itemKeys,
+					...itemsData,
 				});
 
 				if(!response.isSuccess()) {
 					dispatch({
 						type: ERROR_MOVE_ITEMS_TRASH,
-						itemKeys: itemKeys.filter(itemKey => !itemKeysModified.includes(itemKey)),
+						itemKeys: itemKeys.filter(itemKey => !itemKeys.includes(itemKey)),
 						error: response.getErrors(),
 						libraryKey,
 						queueId
@@ -934,6 +946,79 @@ function queueMoveItemsToTrash(itemKeys, libraryKey, queueId) {
 			} catch(error) {
 				dispatch({
 					type: ERROR_MOVE_ITEMS_TRASH,
+					error,
+					itemKeys,
+					libraryKey,
+					queueId
+				});
+				throw error;
+			} finally {
+				next();
+			}
+		}
+	};
+}
+
+function recoverFromTrash(itemKeys) {
+	return async (dispatch, getState) => {
+		const libraryKey = getState().current.library;
+		const queueId = ++queueIdCunter;
+
+		dispatch({
+			type: PRE_RECOVER_ITEMS_TRASH,
+			itemKeys,
+			libraryKey,
+			queueId
+		});
+
+		dispatch(
+			queueRecoverItemsFromTrash(itemKeys, libraryKey, queueId)
+		);
+	};
+}
+
+function queueRecoverItemsFromTrash(itemKeys, libraryKey, queueId) {
+	return {
+		queue: libraryKey,
+		callback: async (next, dispatch, getState) => {
+			const state = getState();
+			const multiPatch = itemKeys.map(key => ({ key, deleted: 0 }));
+
+			dispatch({
+				type: REQUEST_RECOVER_ITEMS_TRASH,
+				itemKeys,
+				libraryKey,
+				queueId
+			});
+
+			try {
+				const { response, itemKeys, ...itemsData } = await postItemsMultiPatch(state, multiPatch);
+
+				dispatch({
+					type: RECEIVE_RECOVER_ITEMS_TRASH,
+					libraryKey,
+					response,
+					queueId,
+					itemKeys,
+					...itemsData,
+				});
+
+				if(!response.isSuccess()) {
+					dispatch({
+						type: ERROR_RECOVER_ITEMS_TRASH,
+						itemKeys: itemKeys.filter(itemKey => !itemKeys.includes(itemKey)),
+						error: response.getErrors(),
+						libraryKey,
+						queueId
+					});
+				}
+
+				// @TODO: more targeted cache invalidation
+				api().invalidate({ 'resource.library': libraryKey });
+				return;
+			} catch(error) {
+				dispatch({
+					type: ERROR_RECOVER_ITEMS_TRASH,
 					error,
 					itemKeys,
 					libraryKey,
@@ -965,6 +1050,7 @@ module.exports = {
 	initialize,
 	moveToTrash,
 	preferenceChange,
+	recoverFromTrash,
 	selectLibrary,
 	sortItems,
 	triggerEditingItem,

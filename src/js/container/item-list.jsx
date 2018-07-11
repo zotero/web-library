@@ -11,6 +11,7 @@ const ItemList = require('../component/item/list');
 const {
 	deleteItems,
 	moveToTrash,
+	recoverFromTrash,
 	fetchItemsInCollection,
 	fetchTopItems,
 	fetchTrashItems,
@@ -65,6 +66,19 @@ class ItemListContainer extends React.PureComponent {
 		do {
 			const itemKeys = selectedItemKeys.splice(0, 50);
 			await dispatch(moveToTrash(itemKeys));
+		} while (selectedItemKeys.length > 50);
+		this.handleItemsSelect();
+	}
+
+	//@TODO: deduplicate
+	async handleUndelete() {
+		const { dispatch, selectedItemKeys } = this.props;
+
+		//@TODO: if current view is trash, delete pernamently
+		//@TODO: more graceful way of deleting > 50 items?
+		do {
+			const itemKeys = selectedItemKeys.splice(0, 50);
+			await dispatch(recoverFromTrash(itemKeys));
 		} while (selectedItemKeys.length > 50);
 		this.handleItemsSelect();
 	}
@@ -127,6 +141,7 @@ class ItemListContainer extends React.PureComponent {
 			key = { `${itemsSource}-${collection.key}` }
 			{ ...this.props }
 			onDelete={ this.handleDelete.bind(this) }
+			onUndelete={ this.handleUndelete.bind(this) }
 			onItemsSelect={ this.handleItemsSelect.bind(this) }
 			onLoadMore={ this.handleLoadMore.bind(this) }
 			onSort={ this.handleSort.bind(this) }

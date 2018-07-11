@@ -17,7 +17,7 @@ class ItemListToolbar extends React.PureComponent {
 	}
 
 	render() {
-		const { isDeleting, selectedItemKeys, onDelete } = this.props;
+		const { isDeleting, selectedItemKeys, onDelete, itemsSource, isUndeleting, onUndelete } = this.props;
 
 		return (
 			<header className="hidden-sm-down">
@@ -28,16 +28,31 @@ class ItemListToolbar extends React.PureComponent {
 							<Button>
 								<Icon type={ '16/plus' } width="16" height="16" />
 							</Button>
-							<Button
-								onClick={ onDelete }
-								disabled={ isDeleting || selectedItemKeys.length === 0 }
-							>
-								{
-									isDeleting ?
-									<Spinner /> :
-									<Icon type={ '16/trash' } width="16" height="16" />
-								}
-							</Button>
+							{
+								itemsSource === 'trash' ? (
+									<Button
+										onClick={ onUndelete }
+										disabled={ isUndeleting || selectedItemKeys.length === 0 }
+									>
+										{
+											isUndeleting ?
+											<Spinner /> :
+											<Icon type={ '16/trash' } width="16" height="16" />
+										}
+									</Button>
+								) : (
+									<Button
+										onClick={ onDelete }
+										disabled={ isDeleting || selectedItemKeys.length === 0 }
+									>
+										{
+											isDeleting ?
+											<Spinner /> :
+											<Icon type={ '16/trash' } width="16" height="16" />
+										}
+									</Button>
+								)
+							}
 							<Button>
 								<Icon type={ '16/cog' } width="16" height="16" />
 							</Button>

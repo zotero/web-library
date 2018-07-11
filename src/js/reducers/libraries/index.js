@@ -45,6 +45,7 @@ const actions = Object.entries(require('../../constants/actions'))
 			'REQUEST_UPDATE_ITEM',
 			'TRIGGER_EDITING_ITEM',
 			'RECEIVE_MOVE_ITEMS_TRASH',
+			'RECEIVE_RECOVER_ITEMS_TRASH'
 	]).includes(key) ? value : false).filter(Boolean);
 
 const libraries = (state = {}, action) => {

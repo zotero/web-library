@@ -2,7 +2,8 @@
 
 const {
 	RECEIVE_COLLECTIONS_IN_LIBRARY,
-	RECEIVE_MOVE_ITEMS_TRASH
+	RECEIVE_MOVE_ITEMS_TRASH,
+	RECEIVE_RECOVER_ITEMS_TRASH,
 } = require('../../constants/actions');
 
 const itemCountByCollection = (state = {}, action) => {
@@ -23,6 +24,15 @@ const itemCountByCollection = (state = {}, action) => {
 						aggr[collectionKey] = Math.max(
 							(state[collectionKey] || 0) - itemKeys.length, 0
 						)
+						return aggr;
+				}, {})
+			}
+		case RECEIVE_RECOVER_ITEMS_TRASH:
+			return {
+				...state,
+				...Object.entries(action.itemKeysByCollection).reduce(
+					(aggr, [collectionKey, itemKeys]) => {
+						aggr[collectionKey] = (state[collectionKey] || 0) + itemKeys.length
 						return aggr;
 				}, {})
 			}

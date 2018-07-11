@@ -1,6 +1,10 @@
 'use strict';
 
-const { RECEIVE_TOP_ITEMS, RECEIVE_MOVE_ITEMS_TRASH } = require('../constants/actions');
+const {
+	RECEIVE_MOVE_ITEMS_TRASH,
+	RECEIVE_RECOVER_ITEMS_TRASH,
+	RECEIVE_TOP_ITEMS,
+} = require('../constants/actions');
 
 const itemCountTopByLibrary = (state = {}, action) => {
 	switch(action.type) {
@@ -16,6 +20,11 @@ const itemCountTopByLibrary = (state = {}, action) => {
 					(state[action.libraryKey] || 0) - action.itemKeysTop.length,
 					0
 				)
+			}
+		case RECEIVE_RECOVER_ITEMS_TRASH:
+			return {
+				...state,
+				[action.libraryKey]: (state[action.libraryKey] || 0) + action.itemKeysTop.length
 			}
 		default:
 			return state;
