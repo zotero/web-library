@@ -11,14 +11,18 @@
 	}
 
 	.metadata {
-		display: flex;
 		align-items: flex-start;
+
+		@include bp-down(xs) {
+			margin-bottom: $font-size-mobile / 2;
+		}
 
 		@include touch-or-bp-down(sm) {
 			padding: 0 $default-padding-x-touch;
 		}
 
 		@include mouse-and-bp-up(md) {
+			display: flex;
 			padding: 0 $default-padding-x;
 		}
 
@@ -45,10 +49,6 @@
 		flex: 0 0 $metadata-list-offset;
 		margin-top: 0;
 		align-items: center;
-
-		@include touch-or-bp-down(sm) {
-			padding-right: $metadata-list-gutter-mobile / 2;
-		}
 
 		@include mouse-and-bp-up(md) {
 			padding-right: $metadata-list-gutter / 2;
@@ -79,10 +79,6 @@
 	.value {
 		flex: 0 0 calc(100% - #{$metadata-list-offset});
 
-		@include touch-or-bp-down(sm) {
-			padding-left: $metadata-list-gutter-mobile / 2;
-		}
-
 		@include mouse-and-bp-up(md) {
 			display: flex;
 			align-items: center;
@@ -108,9 +104,12 @@
 	&.editing {
 		@include touch-or-bp-down(sm) {
 			.metadata {
+				display: flex;
+				align-items: flex-start;
 				position: relative;
 				background-color: $input-bg;
 				padding-top: $input-border-width;
+				margin-bottom: 0;
 
 				&::before,
 				&::after {
@@ -172,6 +171,14 @@
 			.key,
 			.value {
 				min-height: $line-height-large-touch;
+			}
+
+			.key {
+				padding-right: $metadata-list-gutter-mobile / 2;
+			}
+
+			.value {
+				padding-left: $metadata-list-gutter-mobile / 2;
 			}
 		}
 
