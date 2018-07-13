@@ -61,8 +61,10 @@
 }
 
 .form-control {
+	flex: 1 1 auto;
 	display: block;
 	width: 100%;
+	color: $input-color;
 	background-color: $input-bg;
 
 	@include touch-or-bp-down(sm) {
@@ -91,7 +93,6 @@ textarea {
 }
 
 select {
-	@include touch-or-bp-down(sm) {
-		appearance: none;
-	}
+	appearance: none;
+	color: $input-color;
 }
