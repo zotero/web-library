@@ -89,3 +89,9 @@ textarea {
 		resize: none;
 	}
 }
+
+select {
+	@include touch-or-bp-down(sm) {
+		appearance: none;
+	}
+}
