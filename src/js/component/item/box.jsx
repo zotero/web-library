@@ -113,6 +113,7 @@ class ItemBox extends React.PureComponent {
 		} else {
 			const isActive = this.state.activeEntry === field.key;
 			const className = {
+				[field.key]: true,
 				'empty': !field.value || !field.value.length,
 				'select': field.options && Array.isArray(field.options),
 				'editing': isActive,

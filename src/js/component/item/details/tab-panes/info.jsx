@@ -14,7 +14,9 @@ class InfoTabPane extends React.PureComponent {
 			}) }>
 				<div className="row">
 					<div className="col">
-						<h5 className="h1 item-title">Item Title</h5>
+						<h5 className={ cx('h1', { 'item-title': !this.props.isEditing }) }>
+							{ this.props.item.title }
+						</h5>
 						<ItemBoxContainer
 							item={ this.props.item }
 							hiddenFields={ [ 'abstractNote' ] }
