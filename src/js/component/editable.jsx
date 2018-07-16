@@ -9,6 +9,7 @@ const Input = require('./form/input');
 const SelectInput = require('./form/select');
 const TextAreaInput = require('./form/text-area');
 const { noop } = require('../utils');
+const { UserTypeContext, ViewportContext } = require('../context');
 
 class Editable extends React.PureComponent {
 	setInput(input) {
@@ -68,14 +69,26 @@ class Editable extends React.PureComponent {
 
 	render() {
 		return (
-			<div
-				tabIndex={ this.isActive ? null : 0 }
-				onClick={ this.handleClick.bind(this) }
-				onFocus={ this.handleFocus.bind(this) }
-				className={ cx(this.className) }
-			>
-				{ this.isActive ? this.renderControls() : this.renderContent() }
-			</div>
+			<UserTypeContext.Consumer>
+				{ userType => (
+					<ViewportContext.Consumer>
+						{ viewport => (
+							<div
+								tabIndex={ userType === 'touch' || viewport.xs || viewport.sm ?
+									null : this.isActive ? null : 0
+								}
+								onClick={ this.handleClick.bind(this) }
+								onFocus={ this.handleFocus.bind(this) }
+								className={ cx(this.className) }
+							>
+								{ this.isActive ? this.renderControls() : this.renderContent() }
+							</div>
+						)
+					}
+					</ViewportContext.Consumer>
+				)
+			}
+			</UserTypeContext.Consumer>
 		);
 	}
 	static defaultProps = {
