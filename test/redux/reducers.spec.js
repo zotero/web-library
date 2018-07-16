@@ -22,6 +22,7 @@ const {
 	REQUEST_UPDATE_ITEM,
 	RECEIVE_MOVE_ITEMS_TRASH,
 	RECEIVE_RECOVER_ITEMS_TRASH,
+	RECEIVE_ADD_ITEMS_TO_COLLECTION,
 } = require('../../src/js/constants/actions.js');
 const stateFixture = require('../fixtures/state.json');
 const { combineReducers } = require('redux');
@@ -452,6 +453,54 @@ describe('reducers', () => {
 				state.libraries[libraryKey].items[itemKeysTrashed[0]].deleted,
 				0
 			);
+		});
+
+		it('add item to collection', () => {
+			var state = getTestState();
+			const libraryKey = state.current.library;
+			const collectionKey = Object.keys(
+				state.libraries[libraryKey].itemsByCollection
+			)[0];
+			const itemKeys = state.libraries[libraryKey].itemsTop.slice(0, 3);
+			itemKeys.forEach(itemKey => {
+				assert.notInclude(
+					state.libraries[libraryKey].items[itemKey].collections,
+					collectionKey
+				)
+			});
+			assert.notIncludeMembers(
+				state.libraries[libraryKey].itemsByCollection[collectionKey],
+				itemKeys
+			);
+			state = reduce(state, {
+				type: RECEIVE_ADD_ITEMS_TO_COLLECTION,
+				items: Object.assign(...Object.keys(state.libraries[libraryKey].items)
+					.filter(itemKey => itemKeys.includes(itemKey))
+					.map( itemKey => ({ [itemKey]: {
+						key: itemKey,
+						collections: [
+							...state.libraries[libraryKey].items[itemKey].collections,
+							collectionKey
+						]
+				}}))),
+				itemKeys,
+				collectionKey,
+				libraryKey,
+				response: mockResponse
+			});
+
+			itemKeys.forEach(itemKey => {
+				assert.include(
+					state.libraries[libraryKey].items[itemKey].collections,
+					collectionKey
+				)
+			});
+
+			assert.includeMembers(
+				state.libraries[libraryKey].itemsByCollection[collectionKey],
+				itemKeys
+			);
+
 		});
 	});
 });

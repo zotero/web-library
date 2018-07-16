@@ -91,7 +91,12 @@ const {
 	PREFERENCE_CHANGE,
 
 	TRIGGER_EDITING_ITEM,
-	TRIGGER_RESIZE_VIEWPORT
+	TRIGGER_RESIZE_VIEWPORT,
+
+	PRE_ADD_ITEMS_TO_COLLECTION,
+	REQUEST_ADD_ITEMS_TO_COLLECTION,
+	RECEIVE_ADD_ITEMS_TO_COLLECTION,
+	ERROR_ADD_ITEMS_TO_COLLECTION,
 } = require('./constants/actions');
 
 // @TODO: rename and move to common/api
@@ -1032,7 +1037,91 @@ function queueRecoverItemsFromTrash(itemKeys, libraryKey, queueId) {
 	};
 }
 
+function addToCollection(itemKeys, collectionKey) {
+	return async (dispatch, getState) => {
+		const libraryKey = getState().current.library;
+		const queueId = ++queueIdCunter;
+
+		dispatch({
+			type: PRE_ADD_ITEMS_TO_COLLECTION,
+			itemKeys,
+			collectionKey,
+			libraryKey,
+			queueId
+		});
+
+		dispatch(
+			queueAddToCollection(itemKeys, collectionKey, libraryKey, queueId)
+		);
+	};
+}
+
+function queueAddToCollection(itemKeys, collectionKey, libraryKey, queueId) {
+	return {
+		queue: libraryKey,
+		callback: async (next, dispatch, getState) => {
+			const state = getState();
+			const multiPatch = itemKeys.map(key => {
+				const item = state.libraries[libraryKey].items[key];
+				return {
+					key,
+					collections: [...(item.collections || []), collectionKey]
+				};
+			});
+
+			dispatch({
+				type: REQUEST_ADD_ITEMS_TO_COLLECTION,
+				itemKeys,
+				collectionKey,
+				libraryKey,
+				queueId
+			});
+
+			try {
+				const { response, itemKeys, items } = await postItemsMultiPatch(state, multiPatch);
+
+				dispatch({
+					type: RECEIVE_ADD_ITEMS_TO_COLLECTION,
+					libraryKey,
+					itemKeys,
+					collectionKey,
+					items,
+					response,
+					queueId,
+				});
+
+				if(!response.isSuccess()) {
+					dispatch({
+						type: ERROR_ADD_ITEMS_TO_COLLECTION,
+						itemKeys: itemKeys.filter(itemKey => !itemKeys.includes(itemKey)),
+						error: response.getErrors(),
+						libraryKey,
+						collectionKey,
+						queueId
+					});
+				}
+
+				// @TODO: more targeted cache invalidation
+				api().invalidate({ 'resource.library': libraryKey });
+				return;
+			} catch(error) {
+				dispatch({
+					type: ERROR_ADD_ITEMS_TO_COLLECTION,
+					error,
+					itemKeys,
+					libraryKey,
+					queueId
+				});
+				throw error;
+			} finally {
+				next();
+			}
+		}
+	};
+}
+
 module.exports = {
+	addToCollection,
 	changeRoute,
 	configureApi,
 	createItem,

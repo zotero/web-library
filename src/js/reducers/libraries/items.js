@@ -12,6 +12,7 @@ const {
 	RECEIVE_TRASH_ITEMS,
 	RECEIVE_MOVE_ITEMS_TRASH,
 	RECEIVE_RECOVER_ITEMS_TRASH,
+	RECEIVE_ADD_ITEMS_TO_COLLECTION,
 } = require('../../constants/actions.js');
 const { get, indexByKey } = require('../../utils');
 const { removeKeys } = require('../../common/immutable');
@@ -37,6 +38,7 @@ const items = (state = {}, action) => {
 			};
 		case RECEIVE_MOVE_ITEMS_TRASH:
 		case RECEIVE_RECOVER_ITEMS_TRASH:
+		case RECEIVE_ADD_ITEMS_TO_COLLECTION:
 			return {
 				...state,
 				...indexByKey(Object.values(action.items), 'key', item => ({

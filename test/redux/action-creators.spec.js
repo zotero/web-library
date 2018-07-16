@@ -8,6 +8,7 @@ const ReduxAsyncQueue = require('redux-async-queue').default;
 const fetchMock = require('fetch-mock');
 
 const {
+	addToCollection,
 	createItem,
 	fetchChildItems,
 	fetchCollections,
@@ -18,9 +19,9 @@ const {
 	fetchTopItems,
 	fetchTrashItems,
 	initialize,
-	updateItem,
 	moveToTrash,
 	recoverFromTrash,
+	updateItem,
 } = require('../../src/js/actions.js');
 const {
 	REQUEST_META,
@@ -49,6 +50,9 @@ const {
 	PRE_RECOVER_ITEMS_TRASH,
 	REQUEST_RECOVER_ITEMS_TRASH,
 	RECEIVE_RECOVER_ITEMS_TRASH,
+	PRE_ADD_ITEMS_TO_COLLECTION,
+	REQUEST_ADD_ITEMS_TO_COLLECTION,
+	RECEIVE_ADD_ITEMS_TO_COLLECTION,
 } = require('../../src/js/constants/actions.js');
 
 const collectionsFixture = require('../fixtures/collections.json');
@@ -467,7 +471,7 @@ describe('action creators', () => {
 					itemsTop: [],
 					itemsTrash: ['ITEM1111', 'ITEM2222'],
 					itemsByCollection: {
-						'AAAAAAAA': []
+						'AAAAAAAA': ['ITEM1111']
 					},
 					items: {
 						'ITEM1111': {
@@ -512,6 +516,89 @@ describe('action creators', () => {
 		assert.sameMembers(store.getActions()[2].itemKeysTop, ['ITEM1111', 'ITEM2222']);
 		assert.lengthOf(store.getActions()[2].items, 2);
 		assert.strictEqual(store.getActions()[2].items[0].version, 1337);
+		assert.typeOf(store.getActions()[2].response.response, 'object');
+	});
+
+	it('addToCollection', async () => {
+		fetchMock.post((url) => {
+				assert(url.match(/https:\/\/api\.zotero\.org\/users\/123\/items\??.*/));
+				return true;
+			}, {
+			headers: {
+				'Last-Modified-Version': 1337
+			},
+			body: {
+				success: { '0': 'ITEM1111', '1': 'ITEM2222' },
+				failed: {},
+				successful: {
+					'0': {
+						key: 'ITEM1111',
+						collections: ['AAAAAAAA']
+					},
+					'1': {
+						key: 'ITEM2222',
+						collections: ['AAAAAAAA']
+					}
+				}
+			},
+		});
+
+		const store = mockStore({
+			...initialState,
+			libraries: {
+				u123: {
+					itemsTop: [],
+					itemsByCollection: {
+						'AAAAAAAA': [],
+						'BBBBBBBB': ['ITEM2222']
+					},
+					items: {
+						'ITEM1111': {
+							key: 'ITEM1111',
+							version: 1,
+							title: 'foo',
+							collections: [],
+						},
+						'ITEM2222': {
+							key: 'ITEM2222',
+							version: 1,
+							title: 'bar',
+							collections: ['BBBBBBBB'],
+						}
+					}
+				}
+			}
+		});
+
+		const action = addToCollection(['ITEM1111', 'ITEM2222'], 'AAAAAAAA');
+		await store.dispatch(action);
+
+		assert.strictEqual(store.getActions()[0].type, PRE_ADD_ITEMS_TO_COLLECTION);
+		assert.sameMembers(store.getActions()[0].itemKeys, ['ITEM1111', 'ITEM2222']);
+		assert.strictEqual(store.getActions()[0].collectionKey, 'AAAAAAAA');
+		assert.strictEqual(store.getActions()[0].libraryKey, 'u123');
+
+		await cede(); // allow async-queue process this request
+
+		assert.strictEqual(store.getActions()[1].type, REQUEST_ADD_ITEMS_TO_COLLECTION);
+		assert.sameMembers(store.getActions()[1].itemKeys, ['ITEM1111', 'ITEM2222']);
+		assert.strictEqual(store.getActions()[1].collectionKey, 'AAAAAAAA');
+		assert.strictEqual(store.getActions()[1].libraryKey, 'u123');
+
+		await cede(); // allow async-queue process this request
+
+		assert.strictEqual(store.getActions()[2].type, RECEIVE_ADD_ITEMS_TO_COLLECTION);
+		assert.sameMembers(store.getActions()[2].itemKeys, ['ITEM1111', 'ITEM2222']);
+		assert.strictEqual(store.getActions()[2].collectionKey, 'AAAAAAAA');
+
+		assert.sameMembers(
+			store.getActions()[2].items.find(i => i.key === 'ITEM1111').collections,
+			['AAAAAAAA']
+		);
+		assert.sameMembers(
+			store.getActions()[2].items.find(i => i.key === 'ITEM2222').collections,
+			['AAAAAAAA', 'BBBBBBBB']
+		);
 		assert.typeOf(store.getActions()[2].response.response, 'object');
 	});
 });
