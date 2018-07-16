@@ -29,9 +29,36 @@
 		&:focus {
 			outline: none;
 		}
+	}
 
-		.busy > & {
-			padding-right: $editable-padding + $space-md + 1px;
+	.input-group {
+		&.busy {
+			.editable-control {
+				padding-right: $space-sm + $space-xs;
+			}
+		}
+
+		.icon-spin {
+			// Use scale() for better rendering quality
+			@keyframes editable-spin {
+				0% {
+					transform: scale(0.75) rotate(0);
+				}
+
+				100% {
+					transform: scale(0.75) rotate(360deg);
+				}
+			}
+
+			right: 0;
+			top: 0;
+			width: auto;
+			height: 100%;
+			animation: editable-spin 1s linear infinite;
+
+			path {
+				stroke-width: 1.33px; // Results in 1px
+			}
 		}
 	}
 
