@@ -6,6 +6,7 @@ const memoize = require('memoize-one');
 const cx = require('classnames');
 const Icon = require('./ui/icon');
 const Spinner = require('./ui/spinner');
+const Node = require('./collection-tree/node');
 
 class CollectionTree extends React.Component {
 	state = {
@@ -117,94 +118,51 @@ class CollectionTree extends React.Component {
 				<ul className="nav" role="group">
 					{
 						level === 1 && (
-							<li
+							<Node
 								className={ cx({
 									'all-documents': true,
 									'selected': this.props.itemsSource === 'top'
 								})}
-								>
-								<div
-									className="item-container"
-									onClick={ ev => this.handleSelect('top', null, ev) }
-									onKeyPress={ ev => this.handleKeyPress('top', null, ev) }
-									role="treeitem"
-									tabIndex="0"
-								>
-									<div className="twisty-container" />
-									<Icon type="28/document" className="touch" width="28" height="28"/>
-									<Icon type="16/document" className="mouse" width="16" height="16"/>
-									<a>
-										All Documents
-									</a>
-								</div>
-							</li>
+								onClick={ this.handleSelect.bind(this, 'top', null) }
+								onKeyPress={ this.handleKeyPress.bind(this, 'top', null) }
+								label="All Documents"
+								icon="document"
+							/>
 						)
 					}
-					{ collections.map(collection => {
-						let twistyButton = (
-							<button
-								type="button"
-								className="twisty"
-								onClick={ ev => this.handleOpenToggle(collection.key, ev) }
-								onKeyPress={ ev => ev.stopPropagation() }
-							/>
-						);
-						return (
-							<li
-								key={collection.key}
-								className={ cx({
-									'open': derivedData[collection.key].isOpen,
-									'selected': derivedData[collection.key].isSelected,
-									'collection': true,
-								})}
-							>
-								<div
-									className="item-container"
-									onClick={ ev => this.handleSelect('collection', collection.key, ev) }
-									onKeyPress={ ev => this.handleKeyPress('collection', collection.key, ev) }
-									role="treeitem"
-									aria-expanded={ derivedData[collection.key].isOpen }
-									tabIndex="0" >
-									<div className="twisty-container">
-										{/* Button component */}
-										{ collection.key in childMap ? twistyButton : '' }
-									</div>
-									<Icon type={ `28/folder${(collection.key in childMap) ? 's' : ''}` } className="touch" width="28" height="28"/>
-									<Icon type="16/folder" className="mouse" width="16" height="16"/>
-									<a>
-										{ collection.name }
-									</a>
-								</div>
-								{ collection.key in childMap ?
-									this.renderCollections(this.collectionsFromKeys(childMap[collection.key]), level + 1) :
-									null
-								}
-							</li>
-						);
-					}) }
+					{ collections.map(collection => (
+						<Node
+							key={ collection.key }
+							className={ cx({
+								'open': derivedData[collection.key].isOpen,
+								'selected': derivedData[collection.key].isSelected,
+								'collection': true,
+							})}
+							onOpen={ this.handleOpenToggle.bind(this, collection.key) }
+							onClick={ this.handleSelect.bind(this, 'collection', collection.key) }
+							onKeyPress={ this.handleKeyPress.bind(this, 'collection', collection.key) }
+							label={ collection.name }
+							isOpen={ derivedData[collection.key].isOpen }
+							icon="folder"
+						>
+							{ collection.key in childMap ?
+								this.renderCollections(this.collectionsFromKeys(childMap[collection.key]), level + 1) :
+								null
+							}
+						</Node>
+					)) }
 					{
 						level === 1 && (
-							<li
+							<Node
 								className={ cx({
 									'trash': true,
 									'selected': this.props.itemsSource === 'trash'
 								})}
-								>
-								<div
-									className="item-container"
-									onClick={ ev => this.handleSelect('trash', null, ev) }
-									onKeyPress={ ev => this.handleKeyPress('trash', null, ev) }
-									role="treeitem"
-									tabIndex="0"
-								>
-									<div className="twisty-container" />
-									<Icon type="28/trash" className="touch" width="28" height="28"/>
-									<Icon type="16/trash" className="mouse" width="16" height="16"/>
-									<a>
-										Trash
-									</a>
-								</div>
-							</li>
+								onClick={ this.handleSelect.bind(this, 'trash', null) }
+								onKeyPress={ this.handleKeyPress.bind(this, 'trash', null) }
+								label="Trash"
+								icon="trash"
+							/>
 						)
 					}
 				</ul>
