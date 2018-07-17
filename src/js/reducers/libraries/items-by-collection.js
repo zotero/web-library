@@ -35,12 +35,13 @@ const itemsByCollection = (state = {}, action) => {
 				return aggr;
 			}, {});
 		case RECEIVE_ADD_ITEMS_TO_COLLECTION:
-			// if(!(action.collectionKey in state)) { return state; }
 			return {
 				...state,
 				[action.collectionKey]: [
-					...(state[action.collectionKey] || []),
-					...action.itemKeys
+					...(new Set([
+						...(state[action.collectionKey] || []),
+						...action.itemKeys
+					]))
 				]
 			}
 		case RECEIVE_ITEMS_IN_COLLECTION:

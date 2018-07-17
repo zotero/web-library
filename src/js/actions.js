@@ -1065,7 +1065,12 @@ function queueAddToCollection(itemKeys, collectionKey, libraryKey, queueId) {
 				const item = state.libraries[libraryKey].items[key];
 				return {
 					key,
-					collections: [...(item.collections || []), collectionKey]
+					collections: [
+						...(new Set([
+							...(item.collections || []),
+							collectionKey
+						]))
+					]
 				};
 			});
 
@@ -1079,11 +1084,13 @@ function queueAddToCollection(itemKeys, collectionKey, libraryKey, queueId) {
 
 			try {
 				const { response, itemKeys, items } = await postItemsMultiPatch(state, multiPatch);
+				const itemKeysChanged = Object.values(response.raw.success);
 
 				dispatch({
 					type: RECEIVE_ADD_ITEMS_TO_COLLECTION,
 					libraryKey,
 					itemKeys,
+					itemKeysChanged,
 					collectionKey,
 					items,
 					response,

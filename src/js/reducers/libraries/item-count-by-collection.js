@@ -47,7 +47,7 @@ const itemCountByCollection = (state = {}, action) => {
 			if(!(action.collectionKey in state)) { return state; }
 			return {
 				...state,
-				[action.collectionKey]: state[action.collectionKey] + action.itemKeys.length
+				[action.collectionKey]: state[action.collectionKey] + action.itemKeysChanged.length
 			}
 		default:
 			return state;
