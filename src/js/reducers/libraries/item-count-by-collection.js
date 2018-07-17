@@ -1,6 +1,7 @@
 'use strict';
 
 const {
+	RECEIVE_ADD_ITEMS_TO_COLLECTION,
 	RECEIVE_COLLECTIONS_IN_LIBRARY,
 	RECEIVE_MOVE_ITEMS_TRASH,
 	RECEIVE_RECOVER_ITEMS_TRASH,
@@ -35,6 +36,12 @@ const itemCountByCollection = (state = {}, action) => {
 						aggr[collectionKey] = state[collectionKey] + itemKeys.length;
 						return aggr;
 				}, {})
+			}
+		case RECEIVE_ADD_ITEMS_TO_COLLECTION:
+			if(!(action.collectionKey in state)) { return state; }
+			return {
+				...state,
+				[action.collectionKey]: state[action.collectionKey] + action.itemKeys.length
 			}
 		default:
 			return state;

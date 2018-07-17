@@ -17,6 +17,8 @@ const { configureApi, selectLibrary, initialize, triggerResizeViewport, changeRo
 const Library = require('../component/library');
 const defaults = require('../constants/defaults');
 const { ViewportContext } = require('../context');
+const HTML5Backend = require('react-dnd-html5-backend').default;
+const { DragDropContext } = require('react-dnd');
 
 // const history = createHistory();
 // const middleware = routerMiddleware(history);
@@ -25,6 +27,7 @@ const { ViewportContext } = require('../context');
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 const combinedReducers = combineReducers(reducers);
 
+@DragDropContext(HTML5Backend)
 class LibraryContainer extends React.Component {
 	constructor(props) {
 		super(props);

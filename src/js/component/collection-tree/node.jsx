@@ -2,23 +2,48 @@
 
 const React = require('react');
 const PropTypes = require('prop-types');
+const cx = require('classnames');
 const Icon = require('../ui/icon');
 const { noop } = require('../../utils');
+const { ITEM } = require('../../constants/dnd');
+const {
+	DropTarget,
+	DropTargetConnector,
+	DropTargetMonitor,
+	ConnectDropTarget,
+} = require('react-dnd');
 
+const dndSpec = {
+	drop(props, monitor) {
+		if(monitor.isOver({ shallow: true })) {
+			const { dndTarget } = props;
+			return dndTarget;
+		}
+	},
+}
+
+const dndCollect = (connect, monitor) => ({
+	connectDropTarget: connect.dropTarget(),
+	isOver: monitor.isOver({ shallow: true }),
+	canDrop: monitor.canDrop(),
+});
+
+@DropTarget(ITEM, dndSpec, dndCollect)
 class Node extends React.PureComponent {
 	render() {
 		const {
+			canDrop,
 			children,
 			className,
+			connectDropTarget,
+			icon,
 			isOpen,
+			isOver,
 			label,
 			onClick,
 			onKeyPress,
 			onOpen,
-			icon,
 		} = this.props;
-
-		console.log(children);
 
 		const twistyButton = children !== null ? (
 			<button
@@ -28,13 +53,14 @@ class Node extends React.PureComponent {
 				onKeyPress={ ev => ev.stopPropagation() }
 			/>
 		) : null;
+		const isActive = canDrop && isOver;
 
-		return (
+		return connectDropTarget(
 			<li
 				className={ className }
 				>
 				<div
-					className="item-container"
+					className={ cx('item-container', { 'dnd-target': isActive }) }
 					onClick={ onClick }
 					onKeyPress={ onKeyPress }
 					role="treeitem"

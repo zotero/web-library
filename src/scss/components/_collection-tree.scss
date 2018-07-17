@@ -43,6 +43,53 @@
 					}
 				}
 			}
+
+			&.selected {
+				> .item-container {
+					@include touch-or-bp-down(sm) {
+						background: $touch-collection-tree-active-link-bg;
+
+						&::before {
+							content: none;
+						}
+
+						.icon.touch {
+							color: $touch-collection-tree-active-link-color;
+						}
+
+						> a {
+							color: $touch-collection-tree-active-link-color;
+						}
+					}
+
+					@include mouse-and-bp-up(md) {
+						background: $collection-tree-active-link-bg;
+
+						.icon {
+							color: $collection-tree-active-icon-color;
+						}
+
+						> a {
+							color: $collection-tree-active-link-color;
+						}
+					}
+				}
+			}
+
+			& > .item-container.dnd-target,
+			&.selected > .item-container.dnd-target {
+				@include mouse-and-bp-up(md) {
+					background: $collection-tree-dnd-target-bg-color;
+
+					.icon {
+						color: $collection-tree-dnd-target-link-color;
+					}
+
+					> a {
+						color: $collection-tree-dnd-target-icon-color;
+					}
+				}
+			}
 		}
 
 		.item-container {
@@ -67,38 +114,6 @@
 
 			@include mouse-and-bp-up(md) {
 				padding-right: $default-padding-x;
-			}
-		}
-
-		.selected {
-			> .item-container {
-				@include touch-or-bp-down(sm) {
-					background: $touch-collection-tree-active-link-bg;
-
-					&::before {
-						content: none;
-					}
-
-					.icon.touch {
-						color: $touch-collection-tree-active-link-color;
-					}
-
-					> a {
-						color: $touch-collection-tree-active-link-color;
-					}
-				}
-
-				@include mouse-and-bp-up(md) {
-					background: $collection-tree-active-link-bg;
-
-					.icon {
-						color: $collection-tree-active-icon-color;
-					}
-
-					> a {
-						color: $collection-tree-active-link-color;
-					}
-				}
 			}
 		}
 	}

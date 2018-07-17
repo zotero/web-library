@@ -9,6 +9,7 @@ const { connect } = require('react-redux');
 const { noteAsTitle } = require('../common/format');
 const ItemList = require('../component/item/list');
 const {
+	addToCollection,
 	deleteItems,
 	moveToTrash,
 	recoverFromTrash,
@@ -134,6 +135,13 @@ class ItemListContainer extends React.PureComponent {
 		return await this.handleLoadMore({ startIndex: 0, stopIndex });
 	}
 
+	async handleDrag({ itemKey, targetType, collectionKey }) {
+		const { dispatch } = this.props;
+		if(targetType === 'collection') {
+			return await dispatch(addToCollection([itemKey], collectionKey));
+		}
+	}
+
 	render() {
 		let { collection = {}, itemsSource } = this.props;
 
@@ -142,6 +150,7 @@ class ItemListContainer extends React.PureComponent {
 			{ ...this.props }
 			onDelete={ this.handleDelete.bind(this) }
 			onUndelete={ this.handleUndelete.bind(this) }
+			onItemDrag={ this.handleDrag.bind(this) }
 			onItemsSelect={ this.handleItemsSelect.bind(this) }
 			onLoadMore={ this.handleLoadMore.bind(this) }
 			onSort={ this.handleSort.bind(this) }

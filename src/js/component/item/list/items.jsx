@@ -9,10 +9,10 @@ const AutoSizer = require('react-virtualized/dist/commonjs/AutoSizer').default;
 const InfiniteLoader = require('react-virtualized/dist/commonjs/InfiniteLoader').default;
 const Table = require('react-virtualized/dist/commonjs/Table').default;
 const Column = require('react-virtualized/dist/commonjs/Table/Column').default;
-const defaultRowRenderer = require('react-virtualized/dist/commonjs/Table/defaultRowRenderer').default;
 const defaultHeaderRowRenderer = require('react-virtualized/dist/commonjs/Table/defaultHeaderRowRenderer').default;
 const SortIndicator = require('react-virtualized/dist/commonjs/Table//SortIndicator').default;
 const Icon = require('../../ui/icon');
+const Row = require('./row');
 const { columnMinWidthFraction } = require('../../../constants/defaults');
 
 const LOADING = 1;
@@ -219,7 +219,7 @@ class Items extends React.PureComponent {
 		return !!this.loadedRowsMap[index];
 	}
 
-	renderRow({ className, index, ...opts }) {
+	renderRow({ className, index,...opts }) {
 		className += ' item';
 		if(index % 2 === 1) {
 			className += ' odd';
@@ -231,7 +231,10 @@ class Items extends React.PureComponent {
 			}
 		}
 
-		return defaultRowRenderer({ className, index, ...opts });
+		return <Row
+			onDrag={ this.props.onItemDrag }
+			{ ...{className, index, ...opts} }
+		/>;
 	}
 
 	handleResizeStart(index) {

@@ -330,6 +330,7 @@ describe('reducers', () => {
 		it('moving items to trash', () => {
 			var state = getTestState();
 			const libraryKey = state.current.library;
+			state.itemCountTrashByLibrary[libraryKey] = 0;
 			const collectionKey = Object.keys(
 				state.libraries[libraryKey].itemsByCollection
 			)[0];
@@ -462,6 +463,7 @@ describe('reducers', () => {
 				state.libraries[libraryKey].itemsByCollection
 			)[0];
 			const itemKeys = state.libraries[libraryKey].itemsTop.slice(0, 3);
+			const originalCollectionCount = state.libraries[libraryKey].itemCountByCollection[collectionKey];
 			itemKeys.forEach(itemKey => {
 				assert.notInclude(
 					state.libraries[libraryKey].items[itemKey].collections,
@@ -499,6 +501,11 @@ describe('reducers', () => {
 			assert.includeMembers(
 				state.libraries[libraryKey].itemsByCollection[collectionKey],
 				itemKeys
+			);
+
+			assert.strictEqual(
+				state.libraries[libraryKey].itemCountByCollection[collectionKey],
+				originalCollectionCount + 3
 			);
 
 		});

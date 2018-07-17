@@ -112,7 +112,7 @@
 	position: relative;
 	overflow: hidden;
 	cursor: pointer;
-  transition: transform $twisty-transition;
+	transition: transform $twisty-transition;
 
 	&::after {
 		content: "";
@@ -128,6 +128,12 @@
 		border-left-color: $twisty-color;
 		transform-origin: 3.5px 4.5px;
 		transition: all $twisty-transition;
+	}
+
+	.dnd-target & {
+		&::after {
+			border-left-color: $twisty-dnd-target-color;
+		}
 	}
 }
 

@@ -94,6 +94,9 @@ $collection-tree-focus-color:             $asphalt;
 $touch-collection-tree-active-link-color: $shade-0;
 $touch-collection-tree-active-link-bg:    $asphalt;
 $touch-collection-tree-border:            $shade-2;
+$collection-tree-dnd-target-link-color:   $shade-0;
+$collection-tree-dnd-target-bg-color:     $blue;
+$collection-tree-dnd-target-icon-color:   $shade-0;
 
 // Items
 $items-bg:              $shade-0;
@@ -142,6 +145,7 @@ $btn-icon-active-bg:          $shade-2;
 $twisty-color:                $shade-5;
 $twisty-focus-color:          $asphalt;
 $twisty-selected-color:       $shade-6;
+$twisty-dnd-target-color:     $shade-0;
 
 // Forms
 $input-color:        $text-color;

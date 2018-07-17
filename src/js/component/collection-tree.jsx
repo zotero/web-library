@@ -127,6 +127,7 @@ class CollectionTree extends React.Component {
 								onKeyPress={ this.handleKeyPress.bind(this, 'top', null) }
 								label="All Documents"
 								icon="document"
+								dndTarget={ { 'targetType': 'all-documents' } }
 							/>
 						)
 					}
@@ -144,6 +145,7 @@ class CollectionTree extends React.Component {
 							label={ collection.name }
 							isOpen={ derivedData[collection.key].isOpen }
 							icon="folder"
+							dndTarget={ { 'targetType': 'collection', collectionKey: collection.key } }
 						>
 							{ collection.key in childMap ?
 								this.renderCollections(this.collectionsFromKeys(childMap[collection.key]), level + 1) :
@@ -162,6 +164,7 @@ class CollectionTree extends React.Component {
 								onKeyPress={ this.handleKeyPress.bind(this, 'trash', null) }
 								label="Trash"
 								icon="trash"
+								dndTarget={ { 'targetType': 'trash' } }
 							/>
 						)
 					}
