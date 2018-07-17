@@ -3,6 +3,7 @@
 const {
 	RECEIVE_ADD_ITEMS_TO_COLLECTION,
 	RECEIVE_COLLECTIONS_IN_LIBRARY,
+	RECEIVE_ITEMS_IN_COLLECTION,
 	RECEIVE_MOVE_ITEMS_TRASH,
 	RECEIVE_RECOVER_ITEMS_TRASH,
 } = require('../../constants/actions');
@@ -16,6 +17,11 @@ const itemCountByCollection = (state = {}, action) => {
 					aggr[collection.key] = action.response.getMeta()[index].numItems;
 					return aggr;
 				}, {}))
+			};
+		case RECEIVE_ITEMS_IN_COLLECTION:
+			return {
+				...state,
+				[action.collectionKey]: parseInt(action.response.response.headers.get('Total-Results'), 10)
 			};
 		case RECEIVE_MOVE_ITEMS_TRASH:
 			return {
