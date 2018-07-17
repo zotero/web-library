@@ -231,9 +231,11 @@ class Items extends React.PureComponent {
 			}
 		}
 
+		const { selectedItemKeys } = this.props;
+
 		return <Row
 			onDrag={ this.props.onItemDrag }
-			{ ...{className, index, ...opts} }
+			{ ...{className, index, selectedItemKeys, ...opts} }
 		/>;
 	}
 

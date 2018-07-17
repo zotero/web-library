@@ -135,10 +135,10 @@ class ItemListContainer extends React.PureComponent {
 		return await this.handleLoadMore({ startIndex: 0, stopIndex });
 	}
 
-	async handleDrag({ itemKey, targetType, collectionKey }) {
+	async handleDrag({ itemKeys, targetType, collectionKey }) {
 		const { dispatch } = this.props;
 		if(targetType === 'collection') {
-			return await dispatch(addToCollection([itemKey], collectionKey));
+			return await dispatch(addToCollection(itemKeys, collectionKey));
 		}
 	}
 

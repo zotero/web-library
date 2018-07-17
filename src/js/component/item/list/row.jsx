@@ -3,17 +3,22 @@
 const React = require('react');
 const PropTypes = require('prop-types');
 const { DragSource } = require('react-dnd');
+const { getEmptyImage } = require('react-dnd-html5-backend');
 const { ITEM } = require('../../../constants/dnd');
 
 const dndSpec = {
-	beginDrag: (props) => {
-		return { itemKey: props.rowData.key };
+	beginDrag: ({ selectedItemKeys, rowData }) => {
+		const itemKey = rowData.key;
+		const isDraggingSelected = selectedItemKeys.includes(itemKey);
+		return { itemKey, selectedItemKeys, rowData, isDraggingSelected };
 	},
-	endDrag: (props, monitor) => {
+	endDrag: ({ rowData, selectedItemKeys, onDrag }, monitor) => {
+		const itemKey = rowData.key;
+		const isDraggingSelected = selectedItemKeys.includes(itemKey);
 		const dropResult = monitor.getDropResult();
 		if(dropResult) {
-			props.onDrag({
-				itemKey: props.rowData.key,
+			onDrag({
+				itemKeys: isDraggingSelected ? selectedItemKeys : [itemKey],
 				...dropResult
 			});
 		}
@@ -22,6 +27,7 @@ const dndSpec = {
 
 const dndCollect = (connect, monitor) => ({
 	connectDragSource: connect.dragSource(),
+	connectDragPreview: connect.dragPreview(),
 	isDragging: monitor.isDragging(),
 });
 
@@ -33,6 +39,7 @@ class Row extends React.PureComponent {
 			className,
 			columns,
 			connectDragSource,
+			connectDragPreview,
 			index,
 			isDragging,
 			key,
@@ -42,8 +49,9 @@ class Row extends React.PureComponent {
 			onRowMouseOver,
 			onRowRightClick,
 			rowData,
+			selectedItemKeys,
 			style,
-			text
+			text,
 		} = this.props;
 		if (
 			onRowClick ||
@@ -85,7 +93,8 @@ class Row extends React.PureComponent {
 					opacity: isDragging ? 0.5 : 1
 				} }
 			>
-				{columns}
+				{ columns }
+				{ connectDragPreview(getEmptyImage()) }
 			</div>
 		);
 	}

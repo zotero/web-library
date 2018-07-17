@@ -84,12 +84,13 @@ $grid-breakpoints: (
 
 // Z-index master list
 
-$z-index-mobile-nav:  0;
-$z-index-navbar-bg:  10;
-$z-index-main:       10;
-$z-index-level:      10;
-$z-index-navbar:     20;
-$z-index-menu:     1000;
+$z-index-mobile-nav:     0;
+$z-index-navbar-bg:     10;
+$z-index-main:          10;
+$z-index-level:         10;
+$z-index-navbar:        20;
+$z-index-menu:        1000;
+$z-index-drag-layer:  2000;
 
 
 // Navbbar

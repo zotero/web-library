@@ -19,6 +19,7 @@ const defaults = require('../constants/defaults');
 const { ViewportContext } = require('../context');
 const HTML5Backend = require('react-dnd-html5-backend').default;
 const { DragDropContext } = require('react-dnd');
+const CustomDragLayer = require('../component/drag-layer');
 
 // const history = createHistory();
 // const middleware = routerMiddleware(history);
@@ -72,6 +73,7 @@ class LibraryContainer extends React.Component {
 	render() {
 		return (
 			<ViewportContext.Provider value={ this.props.viewport }>
+				<CustomDragLayer />
 				<Library view={ this.props.view } />
 			</ViewportContext.Provider>
 		);

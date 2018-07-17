@@ -1,0 +1,27 @@
+.drag-layer {
+	height: 100%;
+	left: 0;
+	pointer-events: none;
+	position: fixed;
+	top: 0;
+	width: 100%;
+	z-index: $z-index-drag-layer;
+}
+
+
+.items-drag-indicator {
+	border-radius: $border-radius;
+	background: $shade-0;
+	padding: $space-sm;
+	border: 1px solid $asphalt;
+	display: flex;
+	display: inline-block;
+
+	> span, > svg {
+		vertical-align: middle;
+	}
+
+	> span {
+		margin-left: $space-min;
+	}
+}
