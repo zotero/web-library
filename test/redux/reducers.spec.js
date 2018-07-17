@@ -486,6 +486,7 @@ describe('reducers', () => {
 						]
 				}}))),
 				itemKeys,
+				itemKeysChanged: itemKeys,
 				collectionKey,
 				libraryKey,
 				response: mockResponse
