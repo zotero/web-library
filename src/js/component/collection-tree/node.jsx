@@ -20,6 +20,9 @@ const dndSpec = {
 			return dndTarget;
 		}
 	},
+	canDrop({ dndTarget }) {
+		return dndTarget.targetType === 'collection';
+	}
 }
 
 const dndCollect = (connect, monitor) => ({
