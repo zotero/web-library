@@ -18,8 +18,8 @@
 		}
 	}
 
-	&.textarea {
-		&.busy {
+	&.busy {
+		&.textarea {
 			&::after {
 				content: "";
 				position: absolute;
@@ -49,27 +49,7 @@
 					width: $space-md;
 					height: $space-md;
 				}
-
 			}
-		}
-	}
-
-	&.select {
-		.icon-spin {
-			@include mouse-and-bp-up(md) {
-				right: 20px;
-				top: calc(50% - #{$space-md / 2});
-			}
-		}
-	}
-
-	// Todo
-	.editable-control {
-		& + .icon-spin {
-			width: $space-md;
-			height: $space-md;
-			top: 0;
-			right: 0;
 		}
 	}
 }

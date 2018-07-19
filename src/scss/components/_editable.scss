@@ -2,6 +2,29 @@
 // Editable
 // --------------------------------------------------
 
+%editable-spin {
+	// Use scale() for better rendering quality
+	@keyframes editable-spin {
+		0% {
+			transform: scale(0.75) rotate(0);
+		}
+
+		100% {
+			transform: scale(0.75) rotate(360deg);
+		}
+	}
+
+	right: 0;
+	top: 0;
+	width: auto;
+	height: 100%;
+	animation: editable-spin 1s linear infinite;
+
+	path {
+		stroke-width: 1.33px; // Results in 1px
+	}
+}
+
 .editable {
 	flex: 1 1 auto;
 	min-width: 0; // Fix truncation
@@ -29,36 +52,9 @@
 		&:focus {
 			outline: none;
 		}
-	}
 
-	.input-group {
-		&.busy {
-			.editable-control:not(textarea) {
-				padding-right: $space-sm + $space-xs;
-			}
-		}
-
-		.icon-spin {
-			// Use scale() for better rendering quality
-			@keyframes editable-spin {
-				0% {
-					transform: scale(0.75) rotate(0);
-				}
-
-				100% {
-					transform: scale(0.75) rotate(360deg);
-				}
-			}
-
-			right: 0;
-			top: 0;
-			width: auto;
-			height: 100%;
-			animation: editable-spin 1s linear infinite;
-
-			path {
-				stroke-width: 1.33px; // Results in 1px
-			}
+		@include state(".editable-control", ".busy .editable-control") {
+			padding-right: $space-sm + $space-xs;
 		}
 	}
 
@@ -66,6 +62,10 @@
 		.editable-content {
 			@include text-truncate;
 		}
+	}
+
+	.icon-spin {
+		@extend %editable-spin;
 	}
 
 	// Textarea
@@ -113,10 +113,14 @@
 			padding: 0 $editable-padding;
 		}
 
-		.Select--single {
+		&.Select--single {
 			&.has-value {
 				.Select-value {
 					padding-right: $space-md;
+
+					@include state(".pseudo-editable", ".busy .pseudo-editable") {
+						padding-right: $space-xl;
+					}
 				}
 			}
 		}
@@ -143,5 +147,10 @@
 			top: calc(100% + #{$space-min + $input-border-width + $editable-padding + $input-border-width});
 			right: -$editable-padding;
 		}
+	}
+
+	& + .icon-spin {
+		@extend %editable-spin;
+		right: $space-md - 1px;
 	}
 }
