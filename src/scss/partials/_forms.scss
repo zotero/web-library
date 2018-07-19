@@ -19,24 +19,38 @@
 	}
 
 	&.textarea {
-		@include touch-or-bp-down(sm) {
-			&.busy {
-				&::after {
-					content: "";
-					position: absolute;
-					right: 0;
-					bottom: 2px; // Align with last line
+		&.busy {
+			&::after {
+				content: "";
+				position: absolute;
+				right: 0;
+				background: $body-bg;
+			}
+
+			.icon-spin {
+				top: auto;
+				z-index: 2; // Over generated content 'backdrop'
+			}
+
+			// Align backdrop and spinner with last line
+			@include touch-or-bp-down(sm) {
+				&::after,
+				.icon-spin {
+					bottom: 2px;
 					width: $space-lg;
 					height: $space-lg;
-					background: $body-bg;
 				}
 			}
-		}
 
-		.icon-spin {
-			top: auto;
-			bottom: 2px; // Align with last line
-			z-index: 2; // Over generated content 'backdrop'
+			@include mouse-and-bp-up(md) {
+				&::after,
+				.icon-spin {
+					bottom: 1px;
+					width: $space-md;
+					height: $space-md;
+				}
+
+			}
 		}
 	}
 

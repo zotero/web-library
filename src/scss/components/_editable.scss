@@ -33,7 +33,7 @@
 
 	.input-group {
 		&.busy {
-			.editable-control {
+			.editable-control:not(textarea) {
 				padding-right: $space-sm + $space-xs;
 			}
 		}
