@@ -85,8 +85,8 @@
 .pseudo-editable {
 	@include touch-or-bp-down(sm) {
 		flex: 1 1 auto;
-		appearance: none;
 		border: none;
+		padding: 0;
 	}
 
 	@include mouse-and-bp-up(md) {

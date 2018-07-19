@@ -4,6 +4,12 @@
 
 // Creators field
 .creators-entry {
+	@include touch-or-bp-down(sm) {
+		select {
+			color: $key-color;
+		}
+	}
+
 	@include mouse-and-bp-up(md) {
 		.key {
 			justify-content: flex-end;
@@ -18,6 +24,7 @@
 				border: none;
 				background-color: transparent;
 				line-height: normal;
+				color: $key-color;
 
 				.Select-control {
 					justify-content: flex-end;
