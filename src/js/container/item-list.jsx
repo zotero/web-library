@@ -10,13 +10,14 @@ const { noteAsTitle } = require('../common/format');
 const ItemList = require('../component/item/list');
 const {
 	addToCollection,
-	deleteItems,
-	moveToTrash,
-	recoverFromTrash,
+	createItem,
 	fetchItemsInCollection,
+	fetchItemTemplate,
 	fetchTopItems,
 	fetchTrashItems,
+	moveToTrash,
 	preferenceChange,
+	recoverFromTrash,
 	sortItems,
 } = require('../actions');
 const { get, sortByKey, resizeVisibleColumns } = require('../utils');
@@ -26,11 +27,11 @@ const processItems = items => {
 		let { itemType, note } = item;
 		let title = itemType === 'note' ?
 			noteAsTitle(note) :
-			item[itemType in baseMappings && baseMappings[itemType]['title'] || 'title'];
-		let creator = Symbol.for('meta') in item ?
+			item[itemType in baseMappings && baseMappings[itemType]['title'] || 'title'] || '';
+		let creator = item[Symbol.for('meta')] && item[Symbol.for('meta')].creatorSummary ?
 			item[Symbol.for('meta')].creatorSummary :
 			'';
-		let date = Symbol.for('meta') in item ?
+		let date = item[Symbol.for('meta')] && item[Symbol.for('meta')].parsedDate ?
 			item[Symbol.for('meta')].parsedDate :
 			'';
 
@@ -128,6 +129,17 @@ class ItemListContainer extends React.PureComponent {
 		}
 	}
 
+	async handleNewItemCreate(itemType) {
+		const { itemsSource, dispatch, collection } = this.props;
+		const template = await dispatch(fetchItemTemplate(itemType));
+		const newItem = {
+			...template,
+			collections: itemsSource === 'collection' ? [collection.key] : []
+		};
+		const item = await dispatch(createItem(newItem));
+		this.handleItemsSelect([item.key]);
+	}
+
 	async handleSort({ sortBy, sortDirection, stopIndex }) {
 		const { dispatch } = this.props;
 		sortDirection = sortDirection.toLowerCase(); // react-virtualised uses ASC/DESC, zotero asc/desc
@@ -153,6 +165,7 @@ class ItemListContainer extends React.PureComponent {
 			onItemDrag={ this.handleDrag.bind(this) }
 			onItemsSelect={ this.handleItemsSelect.bind(this) }
 			onLoadMore={ this.handleLoadMore.bind(this) }
+			onNewItemCreate={ this.handleNewItemCreate.bind(this) }
 			onSort={ this.handleSort.bind(this) }
 			onColumnVisibilityChange={ this.handleColumnVisibilityChange.bind(this) }
 			onColumnReorder={ this.handleColumnReorder.bind(this) }
@@ -188,6 +201,7 @@ const mapStateToProps = state => {
 	const { sortBy, sortDirection } = state.config;
 	const preferences = state.preferences;
 	const itemFields = state.meta.itemFields;
+	const itemTypes = state.meta.itemTypes;
 	const isReady = libraryKey && ((!collectionKey && itemFields) || collection !== null);
 	const isDeleting = get(state, ['libraries', libraryKey, 'deleting'], [])
 			.some(itemKey => items.filter(i => i.key === itemKey));
@@ -203,6 +217,7 @@ const mapStateToProps = state => {
 		sortBy,
 		preferences,
 		itemFields,
+		itemTypes,
 		itemsSource,
 		sortDirection: sortDirection.toUpperCase(),
 		selectedItemKeys: item ? [item.key] : (state.router && 'items' in state.router.params && state.router.params.items.split(',')) || []

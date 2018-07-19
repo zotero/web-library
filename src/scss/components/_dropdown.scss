@@ -51,4 +51,10 @@
 			background-color: $menu-item-hover-bg;
 		}
 	}
+
+	.dropdown-divider {
+		margin-top: $space-min;
+		margin-bottom: $space-min;
+		border-top: 1px solid $shade-4;
+	}
 }

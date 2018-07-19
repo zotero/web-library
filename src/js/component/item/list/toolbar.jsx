@@ -8,6 +8,7 @@ const Button = require('../../ui/button');
 const Spinner = require('../../ui/spinner');
 const { Toolbar, ToolGroup } = require('../../ui/toolbars');
 const ColumnSelector = require('./column-selector');
+const NewItemSelector = require('./new-item-selector');
 
 class ItemListToolbar extends React.PureComponent {
 	state = { columns: [] }
@@ -25,9 +26,11 @@ class ItemListToolbar extends React.PureComponent {
 				<Toolbar className="hidden-touch hidden-sm-down">
 					<div className="toolbar-left">
 						<ToolGroup>
-							<Button>
-								<Icon type={ '16/plus' } width="16" height="16" />
-							</Button>
+							<NewItemSelector
+								disabled={ !['top', 'collection'].includes(itemsSource) }
+								{ ...this.props }
+								{ ...this.state }
+							/>
 							{
 								itemsSource === 'trash' ? (
 									<Button
@@ -59,7 +62,7 @@ class ItemListToolbar extends React.PureComponent {
 						</ToolGroup>
 					</div>
 					<div className="toolbar-right">
-						<ColumnSelector { ...this.props } { ...this.state } />
+						<ColumnSelector { ...this.props } />
 					</div>
 				</Toolbar>
 			</header>

@@ -643,7 +643,8 @@ function createItem(properties) {
 			dispatch({
 				type: RECEIVE_CREATE_ITEM,
 				libraryKey,
-				item
+				item,
+				response
 			});
 			if(properties.parentItem) {
 				api().invalidate({
@@ -831,7 +832,8 @@ function queueUpdateItem(itemKey, patch, libraryKey, queueId) {
 					itemKey,
 					libraryKey,
 					patch,
-					queueId
+					queueId,
+					response
 				});
 
 				return updatedItem;

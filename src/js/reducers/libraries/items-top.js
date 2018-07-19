@@ -12,8 +12,11 @@ const {
 const itemsTop = (state = [], action) => {
 	switch(action.type) {
 		case RECEIVE_CREATE_ITEM:
-			// @TODO:
-			return state;
+			if(!action.item.parentItem) {
+				return [...state, action.item.key]
+			} else {
+				return state;
+			}
 		case RECEIVE_DELETE_ITEM:
 			return state.filter(key => key !== action.item.key);
 		case RECEIVE_DELETE_ITEMS:

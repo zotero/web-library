@@ -23,6 +23,7 @@ const {
 	RECEIVE_MOVE_ITEMS_TRASH,
 	RECEIVE_RECOVER_ITEMS_TRASH,
 	RECEIVE_ADD_ITEMS_TO_COLLECTION,
+	RECEIVE_CREATE_ITEM,
 } = require('../../src/js/constants/actions.js');
 const stateFixture = require('../fixtures/state.json');
 const { combineReducers } = require('redux');
@@ -272,7 +273,8 @@ describe('reducers', () => {
 				patch: {
 					title: 'foobar'
 				},
-				queueId: 1
+				queueId: 1,
+				response: mockResponse
 			});
 
 			assert.strictEqual(state.libraries.u123.items['ITEM1111'].version, 2);
@@ -293,6 +295,7 @@ describe('reducers', () => {
 					publisher: 'lorem'
 				},
 				queueId: 2,
+				response: mockResponse
 			});
 
 			assert.isEmpty(state.libraries.u123.updating.items);
@@ -508,7 +511,56 @@ describe('reducers', () => {
 				state.libraries[libraryKey].itemCountByCollection[collectionKey],
 				originalCollectionCount + 3
 			);
+		});
 
+		it('create a new item', () => {
+			var state = getTestState();
+			const libraryKey = state.current.library;
+			const collectionKey = Object.keys(
+				state.libraries[libraryKey].itemsByCollection
+			)[0];
+			const originalCollectionCount = state.libraries[libraryKey].itemCountByCollection[collectionKey];
+			const originalTopCount = state.itemCountTopByLibrary[libraryKey];
+			state = reduce(state, {
+				type: RECEIVE_CREATE_ITEM,
+				item: {
+					key: 'AAAAAAAA',
+					'itemType' : 'book',
+					'title' : '',
+					'creators' : [{
+						'creatorType' : 'author',
+						'firstName' : '',
+						'lastName' : ''
+					}],
+					'url' : '',
+					'tags' : [],
+					'collections' : [collectionKey],
+					'relations' : {}
+				},
+				libraryKey,
+				response: mockResponse
+			});
+
+			assert.strictEqual(
+				state.libraries[libraryKey].items['AAAAAAAA'].itemType,
+				'book'
+			);
+			assert.include(
+				state.libraries[libraryKey].itemsByCollection[collectionKey],
+				'AAAAAAAA'
+			);
+			assert.include(
+				state.libraries[libraryKey].itemsTop,
+				'AAAAAAAA'
+			);
+			assert.strictEqual(
+				state.libraries[libraryKey].itemCountByCollection[collectionKey],
+				originalCollectionCount + 1
+			);
+			assert.strictEqual(
+				state.itemCountTopByLibrary[libraryKey],
+				originalTopCount + 1
+			);
 		});
 	});
 });

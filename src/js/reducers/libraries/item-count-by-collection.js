@@ -6,10 +6,22 @@ const {
 	RECEIVE_ITEMS_IN_COLLECTION,
 	RECEIVE_MOVE_ITEMS_TRASH,
 	RECEIVE_RECOVER_ITEMS_TRASH,
+	RECEIVE_CREATE_ITEM,
 } = require('../../constants/actions');
 
 const itemCountByCollection = (state = {}, action) => {
 	switch(action.type) {
+		case RECEIVE_CREATE_ITEM:
+			return {
+				...state,
+				...(action.item.collections.reduce(
+					(aggr, collectionKey) => {
+						if(collectionKey in state) {
+							aggr[collectionKey] = state[collectionKey] + 1;
+						}
+						return aggr;
+					}, {}))
+			};
 		case RECEIVE_COLLECTIONS_IN_LIBRARY:
 			return {
 				...state,

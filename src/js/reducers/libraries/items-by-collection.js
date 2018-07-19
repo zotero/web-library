@@ -13,8 +13,17 @@ const {
 const itemsByCollection = (state = {}, action) => {
 	switch(action.type) {
 		case RECEIVE_CREATE_ITEM:
-			// @TODO:
-			return state;
+			return {
+				...state,
+				...(action.item.collections.reduce(
+					(aggr, collectionKey) => {
+						aggr[collectionKey] = [
+							...(state[collectionKey] || []),
+							action.item.key
+						];
+						return aggr;
+					}, {}))
+			}
 		case RECEIVE_DELETE_ITEM:
 			return Object.entries(state).reduce((aggr, [collectionKey, itemKeys]) => {
 				aggr[collectionKey] = itemKeys.filter(k => k !== action.item.key)

@@ -272,7 +272,7 @@ describe('action creators', () => {
 		assert.strictEqual(store.getActions()[2].type, RECEIVE_UPDATE_ITEM);
 		assert.strictEqual(store.getActions()[2].item.title, 'foobar');
 		assert.strictEqual(store.getActions()[2].item.version, 1337);
-
+		assert.typeOf(store.getActions()[2].response.response, 'object');
 	});
 
 	it('fetchItemTypeFields', async () => {
@@ -361,6 +361,7 @@ describe('action creators', () => {
 			store.getActions()[1].item[Symbol.for('meta')],
 			itemsFixture[0].meta
 		);
+		assert.typeOf(store.getActions()[1].response.response, 'object');
 	});
 
 	it('moveToTrash', async () => {
