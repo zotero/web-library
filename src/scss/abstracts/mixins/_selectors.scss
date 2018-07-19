@@ -1,0 +1,9 @@
+//
+// Selectors
+// --------------------------------------------------
+
+@mixin state($sel, $state) {
+  @at-root #{selector-replace(&, $sel, $state)} {
+    @content;
+  }
+}
