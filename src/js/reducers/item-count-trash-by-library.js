@@ -4,6 +4,7 @@ const {
 	RECEIVE_MOVE_ITEMS_TRASH,
 	RECEIVE_RECOVER_ITEMS_TRASH,
 	RECEIVE_TRASH_ITEMS,
+	RECEIVE_DELETE_ITEMS,
 } = require('../constants/actions');
 
 const itemCountTrashByLibrary = (state = {}, action) => {
@@ -20,6 +21,7 @@ const itemCountTrashByLibrary = (state = {}, action) => {
 			[action.libraryKey]: state[action.libraryKey] + action.itemKeys.length
 		}
 	case RECEIVE_RECOVER_ITEMS_TRASH:
+	case RECEIVE_DELETE_ITEMS:
 		if(!(action.libraryKey in state)) { return state; }
 		return {
 			...state,

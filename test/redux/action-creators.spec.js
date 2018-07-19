@@ -10,6 +10,7 @@ const fetchMock = require('fetch-mock');
 const {
 	addToCollection,
 	createItem,
+	deleteItems,
 	fetchChildItems,
 	fetchCollections,
 	fetchItems,
@@ -53,6 +54,8 @@ const {
 	PRE_ADD_ITEMS_TO_COLLECTION,
 	REQUEST_ADD_ITEMS_TO_COLLECTION,
 	RECEIVE_ADD_ITEMS_TO_COLLECTION,
+	REQUEST_DELETE_ITEMS,
+	RECEIVE_DELETE_ITEMS,
 } = require('../../src/js/constants/actions.js');
 
 const collectionsFixture = require('../fixtures/collections.json');
@@ -518,6 +521,56 @@ describe('action creators', () => {
 		assert.lengthOf(store.getActions()[2].items, 2);
 		assert.strictEqual(store.getActions()[2].items[0].version, 1337);
 		assert.typeOf(store.getActions()[2].response.response, 'object');
+	});
+
+	it('deleteItems', async () => {
+		fetchMock.delete((url) => {
+				assert(url.match(/https:\/\/api\.zotero\.org\/users\/123\/items\??.*/));
+				return true;
+			}, {
+			status: 204,
+			headers: {
+				'Last-Modified-Version': 1337
+			}
+		});
+
+		const store = mockStore({
+			...initialState,
+			libraries: {
+				u123: {
+					itemsTop: [],
+					itemsTrash: ['ITEM1111', 'ITEM2222'],
+					items: {
+						'ITEM1111': {
+							key: 'ITEM1111',
+							version: 1,
+							title: 'foo',
+							collections: ['AAAAAAAA'],
+							deleted: 1
+						},
+						'ITEM2222': {
+							key: 'ITEM2222',
+							version: 1,
+							title: 'bar',
+							collections: [],
+							deleted: 1
+						}
+					}
+				}
+			}
+		});
+
+		const action = deleteItems(['ITEM1111', 'ITEM2222']);
+		await store.dispatch(action);
+
+		assert.strictEqual(store.getActions()[0].type, REQUEST_DELETE_ITEMS);
+		assert.sameMembers(store.getActions()[0].itemKeys, ['ITEM1111', 'ITEM2222']);
+		assert.strictEqual(store.getActions()[0].libraryKey, 'u123');
+
+		assert.strictEqual(store.getActions()[1].type, RECEIVE_DELETE_ITEMS);
+		assert.sameMembers(store.getActions()[1].itemKeys, ['ITEM1111', 'ITEM2222']);
+		assert.strictEqual(store.getActions()[1].libraryKey, 'u123');
+		assert.typeOf(store.getActions()[1].response.response, 'object');
 	});
 
 	it('addToCollection', async () => {

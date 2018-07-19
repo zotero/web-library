@@ -102,9 +102,9 @@ const {
 // @TODO: rename and move to common/api
 const cleanupCacheAfterDelete = (itemKeys, state) => {
 	const libraryKey = state.current.library;
-	const itemsByCollection = get(state, ['libraries', libraryKey, 'itemsByCollection']);;
-	const itemsByParent = get(state, ['libraries', libraryKey, 'itemsByParent']);
-	const itemsTop = get(state, ['libraries', libraryKey, 'itemsTop']);
+	const itemsByCollection = get(state, ['libraries', libraryKey, 'itemsByCollection'], {});
+	const itemsByParent = get(state, ['libraries', libraryKey, 'itemsByParent'], {});
+	const itemsTop = get(state, ['libraries', libraryKey, 'itemsTop'], []);
 
 	// cleanup relevant caches
 	itemKeys.forEach(key => {
@@ -712,13 +712,18 @@ function deleteItems(itemKeys) {
 		});
 
 		try {
-			await api(config.apiKey, config.apiConfig)
-			.library(libraryKey).items().delete(itemKeys);
+			const response = await api(config.apiKey, config.apiConfig)
+				.library(libraryKey)
+				.items()
+				.delete(itemKeys);
+
 			dispatch({
 				type: RECEIVE_DELETE_ITEMS,
 				libraryKey,
-				itemKeys
+				itemKeys,
+				response
 			});
+
 			cleanupCacheAfterDelete(itemKeys, state);
 		} catch(error) {
 			dispatch({

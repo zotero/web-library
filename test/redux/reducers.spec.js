@@ -6,12 +6,17 @@ const reducers = require('../../src/js/reducers');
 const {
 	ERROR_COLLECTIONS_IN_LIBRARY,
 	PRE_UPDATE_ITEM,
+	RECEIVE_ADD_ITEMS_TO_COLLECTION,
 	RECEIVE_CHILD_ITEMS,
 	RECEIVE_COLLECTIONS_IN_LIBRARY,
+	RECEIVE_CREATE_ITEM,
+	RECEIVE_DELETE_ITEMS,
 	RECEIVE_ITEM_TYPE_CREATOR_TYPES,
 	RECEIVE_ITEM_TYPE_FIELDS,
 	RECEIVE_ITEMS_IN_COLLECTION,
 	RECEIVE_META,
+	RECEIVE_MOVE_ITEMS_TRASH,
+	RECEIVE_RECOVER_ITEMS_TRASH,
 	RECEIVE_UPDATE_ITEM,
 	REQUEST_CHILD_ITEMS,
 	REQUEST_COLLECTIONS_IN_LIBRARY,
@@ -20,10 +25,6 @@ const {
 	REQUEST_ITEMS_IN_COLLECTION,
 	REQUEST_META,
 	REQUEST_UPDATE_ITEM,
-	RECEIVE_MOVE_ITEMS_TRASH,
-	RECEIVE_RECOVER_ITEMS_TRASH,
-	RECEIVE_ADD_ITEMS_TO_COLLECTION,
-	RECEIVE_CREATE_ITEM,
 } = require('../../src/js/constants/actions.js');
 const stateFixture = require('../fixtures/state.json');
 const { combineReducers } = require('redux');
@@ -457,6 +458,38 @@ describe('reducers', () => {
 				state.libraries[libraryKey].items[itemKeysTrashed[0]].deleted,
 				0
 			);
+		});
+
+		it('delete items', () => {
+			var state = getTestState();
+			const libraryKey = state.current.library;
+			const collectionKey = Object.keys(
+				state.libraries[libraryKey].itemsByCollection
+			)[0];
+
+			//prepare state
+			const itemKeysTrashedFromCollections = state.libraries[libraryKey].itemsByCollection[collectionKey].splice(0, 2);
+			const itemKeysTrashedFromTop = state.libraries[libraryKey].itemsTop.splice(0, 2);
+			const itemKeysTrashed = [...itemKeysTrashedFromCollections, ...itemKeysTrashedFromTop];
+			state.itemCountTrashByLibrary[libraryKey] = itemKeysTrashed.length;
+
+			state = reduce(state, {
+				type: RECEIVE_DELETE_ITEMS,
+				itemKeys: itemKeysTrashed,
+				libraryKey,
+				response: mockResponse,
+			});
+
+			assert.isEmpty(state.libraries[libraryKey].itemsTrash);
+			assert.notIncludeMembers(
+				Object.keys(state.libraries[libraryKey].items),
+				itemKeysTrashed
+			);
+			assert.equal(
+				state.itemCountTrashByLibrary[libraryKey],
+				0
+			);
+			assert.isEmpty(state.libraries[libraryKey].itemsTrash);
 		});
 
 		it('add item to collection', () => {

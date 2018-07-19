@@ -9,6 +9,7 @@ const Spinner = require('../../ui/spinner');
 const { Toolbar, ToolGroup } = require('../../ui/toolbars');
 const ColumnSelector = require('./column-selector');
 const NewItemSelector = require('./new-item-selector');
+const ItemActions = require('./item-actions');
 
 class ItemListToolbar extends React.PureComponent {
 	state = { columns: [] }
@@ -31,18 +32,7 @@ class ItemListToolbar extends React.PureComponent {
 								{ ...this.props }
 							/>
 							{
-								itemsSource === 'trash' ? (
-									<Button
-										onClick={ onUndelete }
-										disabled={ isUndeleting || selectedItemKeys.length === 0 }
-									>
-										{
-											isUndeleting ?
-											<Spinner /> :
-											<Icon type={ '16/trash' } width="16" height="16" />
-										}
-									</Button>
-								) : (
+								itemsSource !== 'trash' && (
 									<Button
 										onClick={ onDelete }
 										disabled={ isDeleting || selectedItemKeys.length === 0 }
@@ -55,9 +45,7 @@ class ItemListToolbar extends React.PureComponent {
 									</Button>
 								)
 							}
-							<Button>
-								<Icon type={ '16/cog' } width="16" height="16" />
-							</Button>
+							<ItemActions { ...this.props } />
 						</ToolGroup>
 					</div>
 					<div className="toolbar-right">
