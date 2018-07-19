@@ -29,7 +29,6 @@ class ItemListToolbar extends React.PureComponent {
 							<NewItemSelector
 								disabled={ !['top', 'collection'].includes(itemsSource) }
 								{ ...this.props }
-								{ ...this.state }
 							/>
 							{
 								itemsSource === 'trash' ? (
@@ -62,7 +61,7 @@ class ItemListToolbar extends React.PureComponent {
 						</ToolGroup>
 					</div>
 					<div className="toolbar-right">
-						<ColumnSelector { ...this.props } />
+						<ColumnSelector { ...this.props } { ...this.state } />
 					</div>
 				</Toolbar>
 			</header>
