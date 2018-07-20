@@ -53,7 +53,7 @@
 			outline: none;
 		}
 
-		@include state(".editable-control", ".busy .editable-control") {
+		@include state(".busy .editable-control") {
 			padding-right: $space-sm + $space-xs;
 		}
 	}
@@ -118,7 +118,7 @@
 				.Select-value {
 					padding-right: $space-md;
 
-					@include state(".pseudo-editable", ".busy .pseudo-editable") {
+					@include state(".busy .pseudo-editable") {
 						padding-right: $space-xl;
 					}
 				}
