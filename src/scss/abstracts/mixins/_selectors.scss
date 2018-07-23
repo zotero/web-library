@@ -24,8 +24,8 @@
 }
 
 // Variant mixin (alias)
-@mixin variant($state) {
-	@include state($state) {
+@mixin variant($arg) {
+	@include state($arg) {
 		@content;
 	}
 }
