@@ -9,8 +9,22 @@ const { triggerEditingItem } = require('../actions');
 const { get } = require('../utils');
 const { getCollectionsPath } = require('../common/state');
 const TouchHeader = require('../component/touch-header');
+const memoize = require('memoize-one');
 
 class TouchHeaderContainer extends React.Component {
+	makePath = memoize((path, startAt, item) => {
+		if(startAt && path.includes(startAt)) {
+			path.splice(0, path.indexOf(startAt));
+		}
+
+		if(item) {
+			// Push an empty item to the path to force "current" to become empty
+			// when an item is selected
+			path.push({key: '', label: ''});
+		}
+		return path;
+	});
+
 	onCollectionSelected(collectionKey) {
 		if(collectionKey) {
 			this.props.history.push(`/collection/${collectionKey}`);
@@ -26,45 +40,82 @@ class TouchHeaderContainer extends React.Component {
 	}
 
 	render() {
+		const { path, rootAtCurrentItemsSource, root, includeItem, item } = this.props;
 		return (
 			<TouchHeader
+				{ ...this.props }
 				onCollectionSelected={ this.onCollectionSelected.bind(this) }
 				onEditingToggled={ this.onEditingToggled.bind(this) }
-				{ ...this.props }
+				path={ this.makePath(
+					path,
+					rootAtCurrentItemsSource ? root.key : null,
+					includeItem ? item : null
+				) }
+				root={ rootAtCurrentItemsSource ? root : undefined }
+
 			/>
 		);
 	}
-}
 
-TouchHeaderContainer.propTypes = {
-	dispatch: PropTypes.func.isRequired,
-	path: PropTypes.array,
-	item: itemProp
-};
+	static defaultProps = {
+		root: {
+			key: null,
+			label: '/'
+		}
+	}
+
+	static propTypes = {
+		dispatch: PropTypes.func.isRequired,
+		path: PropTypes.array,
+		item: itemProp,
+		includeItem: PropTypes.bool,
+		root: PropTypes.object,
+		rootAtCurrentItemsSource: PropTypes.bool
+	}
+}
 
 const mapStateToProps = state => {
 	const libraryKey = state.current.library;
 	const itemKey = state.current.item;
 	const collections = get(state, ['libraries', libraryKey, 'collections'], []);
+	const item = get(state, ['libraries', libraryKey, 'items', itemKey]);
 	const path = getCollectionsPath(state).map(
 		key => {
 			const { name } = collections[key]
-			return { key, name };
+			return { key, label: name };
 		}
 	);
 
-	const item = get(state, ['libraries', libraryKey, 'items', itemKey]);
-	if(item) {
-		// Push an empty item to the path to force "current" to become empty
-		// when an item is selected
-		path.push({key: '', label: ''});
+	let root;
+	switch(state.current.itemsSource) {
+		case 'collection': {
+			root = {
+				key: state.current.collection,
+				label: get(collections, [state.current.collection, 'name'])
+			}
+		}
+		break;
+		case 'top': {
+			root = {
+				key: null,
+				label: 'All Documents'
+			}
+		}
+		break;
+		case 'trash': {
+			root = {
+				key: 'trash',
+				label: 'Trash'
+			}
+		}
 	}
 
 	return {
 		isEditing: item ? state.current.editing === item.key : false,
 		view: state.current.view,
 		path,
-		item
+		item,
+		root
 	};
 };
 

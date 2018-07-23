@@ -1,15 +1,17 @@
 'use strict';
 
 const React = require('react');
+const cx = require('classnames');
 const PropTypes = require('prop-types');
 const Button = require('./ui/button');
 const TouchNavigation = require('./touch-navigation');
 
 class TouchHeader extends React.PureComponent {
 	render() {
-		if(this.props.isEditing) {
+		const { isEditing, path, root, className } = this.props;
+		if(isEditing) {
 			return (
-				<header className="touch-header hidden-sm-up">
+				<header className={ cx('touch-header', className) }>
 					<Button
 						onClick={ () => this.props.onEditingToggled(false) }
 						className="btn-default btn-options"
@@ -20,9 +22,10 @@ class TouchHeader extends React.PureComponent {
 			);
 		} else {
 			return (
-				<header className="touch-header hidden-sm-up">
+				<header className={ cx('touch-header', className) }>
 					<TouchNavigation
-						path={ this.props.path }
+						root={ root }
+						path={ path }
 						onNavigation={ this.props.onCollectionSelected }
 					/>
 					{ (() => {

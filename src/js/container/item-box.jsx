@@ -119,9 +119,10 @@ const mapStateToProps = state => {
 	].filter(e => e); //filter out undefined
 
 	//@TODO: Refactor
-	const isEditing = state.current.editing === item.key;
-	const isEditingEnabled = !state.viewport.xs || item && isEditing;
-	const isForm = state.viewport.xs && item && isEditing;
+	const isExpicitEdit = !!(state.viewport.xs || state.viewport.sm); //@TODO: also for userType == touch?
+	const isEditing = !!(isExpicitEdit && state.current.editing === item.key);
+	const isForm = !!(isExpicitEdit && isEditing && item);
+	const isReadOnlyMode = !!(isExpicitEdit && !isEditing);
 
 	//@TODO: Refactor
 	return {
@@ -129,7 +130,7 @@ const mapStateToProps = state => {
 				options: f.field === 'itemType' ? itemTypes : null,
 				key: f.field,
 				label: f.localized,
-				readonly: isEditingEnabled ? noEditFields.includes(f) : true,
+				readonly: isReadOnlyMode ? true : noEditFields.includes(f),
 				processing: get(
 					state,
 					['libraries', libraryKey, 'updating', 'items', item.key], []
@@ -138,7 +139,7 @@ const mapStateToProps = state => {
 		})).filter(f => !hideFields.includes(f.key)),
 		item: item || undefined,
 		creatorTypes: itemTypeCreatorTypes,
-		isEditing: isEditingEnabled,
+		isEditing,
 		isForm,
 	};
 };

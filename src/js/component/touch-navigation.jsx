@@ -1,3 +1,4 @@
+/* eslint-disable react/no-deprecated */
 'use strict';
 
 const React = require('react');
@@ -39,12 +40,9 @@ class TouchNavigation extends React.Component {
 		let headers = [ ...path ];
 
 		// add root path at the begining
-		headers.unshift({
-			key: null,
-			label: this.props.root
-		});
+		headers.unshift(this.props.root);
 
-		// add previous node at the end. 
+		// add previous node at the end.
 		// This is last "current" node when going up the tree, empty otherwise
 		headers.push({
 			key: previous.key,
@@ -63,7 +61,6 @@ class TouchNavigation extends React.Component {
 				...h
 			};
 		});
-
 		return headers;
 	}
 
@@ -75,16 +72,13 @@ class TouchNavigation extends React.Component {
 			} else {
 				previous = empty;
 			}
+
 			let headers = this.mapPathToHeaders(props.path, previous);
 			this.setState({ headers });
 		}
 	}
 
 	shouldComponentUpdate(props) {
-		if(this.props.children !== props.children) {
-			return true;
-		}
-
 		return isPathChanged(this.props.path, props.path);
 	}
 
@@ -114,19 +108,22 @@ class TouchNavigation extends React.Component {
 					}) }
 				</ul>
 			</nav>
-		); 
+		);
 	}
 
 	static propTypes = {
 		onNavigation: PropTypes.func,
 		path: PropTypes.array,
-		root: PropTypes.string
+		root: PropTypes.object
 	}
 
 	static defaultProps = {
 		onNavigation: noop,
 		path: [],
-		root: '/'
+		root: {
+			label: '/',
+			key: null
+		}
 	}
 }
 module.exports = TouchNavigation;

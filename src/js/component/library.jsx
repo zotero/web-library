@@ -31,6 +31,7 @@ class Library extends React.Component {
 	}
 
 	render() {
+		const { itemsSource, collectionKey } = this.props;
 		let activeViewClass = `view-${this.props.view}-active`;
 
 		return (
@@ -47,14 +48,25 @@ class Library extends React.Component {
 					<div className="nav-cover" />
 					<main>
 						<section className={ `library ${ this.props.view === 'library' ? 'active' : '' }` }>
-							<TouchHeaderContainer />
+							<TouchHeaderContainer
+								className="hidden-sm-up"
+								includeItem={ true }
+							/>
 							<header className="sidebar">
 								<h2 className="offscreen">Web library</h2>
 								<CollectionTreeContainer />
 								<TagSelector />
 							</header>
 							<section className={ `items ${ this.props.view === 'item-list' ? 'active' : '' }` }>
-								<header className="touch-header hidden-xs-down hidden-md-up">Tablet Header</header>
+								<TouchHeaderContainer
+									key={ itemsSource === 'collection' ?
+										`collection-${collectionKey}` :
+										itemsSource
+									}
+									className="hidden-xs-down hidden-md-up"
+									includeItem={ true }
+									rootAtCurrentItemsSource={ true }
+								/>
 								<ItemListContainer />
 								<ItemDetailsContainer active={this.props.view === 'item-details'} />
 							</section>

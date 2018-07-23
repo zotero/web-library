@@ -20,6 +20,7 @@ const { ViewportContext } = require('../context');
 const HTML5Backend = require('react-dnd-html5-backend').default;
 const { DragDropContext } = require('react-dnd');
 const CustomDragLayer = require('../component/drag-layer');
+const { get } = require('../utils');
 
 // const history = createHistory();
 // const middleware = routerMiddleware(history);
@@ -65,7 +66,7 @@ class LibraryContainer extends React.Component {
 	}
 
 	componentWillReceiveProps(props) {
-		if(!deepEqual(this.props, props)) {
+		if(!deepEqual(this.props.match, props.match)) {
 			this.props.dispatch(changeRoute(props.match));
 		}
 	}
@@ -74,7 +75,7 @@ class LibraryContainer extends React.Component {
 		return (
 			<ViewportContext.Provider value={ this.props.viewport }>
 				<CustomDragLayer />
-				<Library view={ this.props.view } />
+				<Library { ...this.props } />
 			</ViewportContext.Provider>
 		);
 	}
@@ -129,7 +130,9 @@ const mapStateToProps = state => {
 		userId: state.config.userId || null,
 		api: state.config.api || null,
 		apiKey: state.config.apiKey || null,
-		viewport: state.viewport
+		viewport: state.viewport,
+		itemsSource: state.current.itemsSource,
+		collectionKey: state.current.collection,
 	};
 };
 
