@@ -86,14 +86,6 @@
 		}
 	}
 
-	.empty {
-		.editable-content {
-			&:before {
-				content: "\00a0";
-			}
-		}
-	}
-
 	&:not(.editing) {
 		.empty {
 			display: none;
@@ -224,6 +216,12 @@
 				margin: -$editable-border-width;
 				border-radius: $editable-border-radius;
 				cursor: pointer;
+
+				@include state(".empty .editable") {
+					&:before {
+						content: "\00a0";
+					}
+				}
 			}
 
 			&:hover {

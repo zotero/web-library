@@ -199,14 +199,12 @@
 			height: $icon-bar-height;
 			background: $icon-bar-bg;
 
+			@include state(".navbar-toggle:focus") {
+				background: $icon-bar-bg-focus;
+			}
+
 			& + .icon-bar {
 				margin-top: $icon-bar-spacing;
-			}
-		}
-
-		&:focus {
-			.icon-bar {
-				background: $icon-bar-bg-focus;
 			}
 		}
 	}

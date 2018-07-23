@@ -17,10 +17,8 @@
 		background-color: $input-bg;
 		padding: $input-btn-padding-y ($input-btn-padding-x - 4px) $input-btn-padding-y $input-btn-padding-x; // Todo: just default, handle padding with .form-control and modifier classes on .Select.
 		position: relative;
-	}
 
-	&.is-focused {
-		.Select-control {
+		@include state(".Select.is-focused") {
 			border: $input-border-width solid $input-focus-color;
 			box-shadow: 0 0 0 2px $input-focus-color;
 			outline: none;

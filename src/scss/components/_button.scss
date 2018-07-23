@@ -128,23 +128,15 @@
 		border-left-color: $twisty-color;
 		transform-origin: 3.5px 4.5px;
 		transition: all $twisty-transition;
-	}
 
-	.dnd-target & {
-		&::after {
+		.dnd-target & {
 			border-left-color: $twisty-dnd-target-color;
+		}
+
+		.selected > .item-container > .twisty-container > & {
+			border-left-color: $twisty-selected-color;
 		}
 	}
 }
 
-.selected {
-  > .item-container {
-    > .twisty-container {
-      > .twisty {
-        &::after {
-          border-left-color: $twisty-selected-color;
-        }
-      }
-    }
-  }
-}
+

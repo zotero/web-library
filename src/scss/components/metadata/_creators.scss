@@ -104,6 +104,19 @@
 			&:first-child {
 				flex: 0 1 auto;
 
+				@include state(".creators-entry.creators-twoslot") {
+					display: flex;
+
+					.input-group {
+						flex: 1 1 auto;
+					}
+
+					&::after {
+						content: ",";
+						flex: 0 0 auto;
+					}
+				}
+
 				&.editing {
 					flex: 1 1 auto;
 				}
@@ -141,6 +154,14 @@
 		.btn:nth-last-child(3) {
 			width: 17px;
 			margin-left: $space-min + $input-btn-focus-width + $input-border-width;
+
+			@include state(".creators-entry.creators-twoslot") {
+				background: image-url("icons/input-single.svg") no-repeat center center;
+			}
+
+			@include state(".creators-entry.creators-oneslot") {
+				background: image-url("icons/input-dual.svg") no-repeat center center;
+			}
 		}
 
 		.btn:nth-last-child(2) {
@@ -149,33 +170,6 @@
 
 		.btn:last-child {
 			background: image-url("icons/plus-circle.svg") no-repeat center center;
-		}
-	}
-
-	&.creators-twoslot {
-		.value {
-			.editable:first-child {
-				display: flex;
-
-				.input-group {
-					flex: 1 1 auto;
-				}
-
-				&::after {
-					content: ",";
-					flex: 0 0 auto;
-				}
-			}
-		}
-
-		.btn:nth-last-child(3) {
-			background: image-url("icons/input-single.svg") no-repeat center center;
-		}
-	}
-
-	&.creators-oneslot {
-		.btn:nth-last-child(3) {
-			background: image-url("icons/input-dual.svg") no-repeat center center;
 		}
 	}
 }

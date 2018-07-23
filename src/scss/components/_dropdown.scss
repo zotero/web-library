@@ -1,6 +1,16 @@
 .dropdown {
 	.dropdown-toggle {
 		display: inline-flex;
+
+		// Todo: rework
+		&.btn-secondary {
+			&:hover {
+				@include state(".dropdown.show") {
+					background-color: darken($btn-secondary-color, 8%);
+					box-shadow: none;
+				}
+			}
+		}
 	}
 
 	.dropdown-caret {
@@ -18,19 +28,8 @@
 		border-radius: $menu-border-radius;
 		z-index: $z-index-menu;
 		display: none;
-	}
 
-	&.show {
-		.dropdown-toggle {
-			&.btn-secondary {
-				&:hover {
-					background-color: darken($btn-secondary-color, 8%);
-					box-shadow: none;
-				}
-			}
-		}
-
-		.dropdown-menu {
+		@include state(".dropdown.show") {
 			display: block;
 			padding: $space-xs 0;
 			margin: $space-min 0;

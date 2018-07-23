@@ -6,9 +6,17 @@
 	display: flex;
 	background: $tab-bg;
 
+	&.justified {
+		width: 100%;
+	}
+
 	li {
 		flex: 0 0 auto;
 		display: flex;
+
+		@include variant(".tabs.justified") {
+			flex: 1 1 0;
+		}
 
 		a {
 			flex: 1 1 auto;
@@ -23,12 +31,14 @@
 			&:hover {
 				color: $tab-active-color;
 			}
-		}
 
-		&.active {
-			a {
+			@include state("li.active") {
 				color: $tab-active-color;
 				background: $tab-active-bg;
+			}
+
+			@include variant(".tabs.compact") {
+				padding: 0 $tabs-compact-padding-x;
 			}
 		}
 	}
@@ -36,36 +46,20 @@
 	.icon {
 		margin-right: $space-xs;
 	}
-
-	&.compact {
-		li {
-			a {
-				padding: 0 $tabs-compact-padding-x;
-			}
-		}
-	}
-
-	&.justified {
-		width: 100%;
-
-		li {
-			flex: 1 1 0;
-		}
-	}
 }
 
 .tab-pane {
+	@include touch-or-bp-down(sm) {
+		& + .tab-pane {
+			border-top: $space-min solid #fff;
+		}
+	}
+
 	@include mouse-and-bp-up(md) {
 		display: none;
 
 		&.active {
 			display: block;
-		}
-	}
-
-	@include touch-or-bp-down(sm) {
-		& + .tab-pane {
-			border-top: $space-min solid #fff;
 		}
 	}
 }
