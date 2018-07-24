@@ -110,7 +110,7 @@ class SelectInput extends React.PureComponent {
 			required: this.props.isRequired,
 		};
 
-		if(userType === 'touch' || viewport.xs || viewport.sm) {
+		if(userType === 'touch' || viewport.xxs || viewport.xs || viewport.sm) {
 			const props = {
 				...commonProps,
 				onKeyDown: this.handleKeyDown.bind(this),

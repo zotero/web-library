@@ -74,7 +74,7 @@ class Editable extends React.PureComponent {
 					<ViewportContext.Consumer>
 						{ viewport => (
 							<div
-								tabIndex={ userType === 'touch' || viewport.xs || viewport.sm ?
+								tabIndex={ userType === 'touch' || viewport.xxs || viewport.xs || viewport.sm ?
 									null : this.isActive ? null : 0
 								}
 								onClick={ this.handleClick.bind(this) }
