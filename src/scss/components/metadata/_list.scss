@@ -251,6 +251,17 @@
 		}
 	}
 
+	// Title field
+	.title {
+		@include touch-or-bp-down(sm) {
+			display: none;
+
+			@include state(".metadata-list.editing") {
+				display: flex;
+			}
+		}
+	}
+
 	// Extra field
 	.extra {
 		label {
