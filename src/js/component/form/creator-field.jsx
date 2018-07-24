@@ -112,6 +112,7 @@ class CreatorField extends React.PureComponent {
 				className={ this.props.isForm ? 'form-control form-control-sm' : '' }
 				onEditableClick={ this.handleFieldClick.bind(this, name) }
 				onEditableFocus={ this.handleFieldFocus.bind(this, name) }
+				isDisabled = { this.props.readOnly }
 				{ ...extraProps }
 			/>
 		);
@@ -147,6 +148,7 @@ class CreatorField extends React.PureComponent {
 					ref={ component => this.fieldComponents['creatorType'] = component }
 					searchable={ false }
 					tabIndex = { 0 }
+					isDisabled = { this.props.readOnly }
 					value={ creator.creatorType }
 				>
 					<span className="text-container">{ creatorTypeDescription.label }</span>

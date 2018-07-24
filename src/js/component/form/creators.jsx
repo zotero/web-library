@@ -126,6 +126,7 @@ class Creators extends React.PureComponent {
 			onCreatorAdd: this.handleCreatorAdd.bind(this),
 			onCreatorRemove: this.handleCreatorRemove.bind(this),
 			onCreatorTypeSwitch: this.handleCreatorTypeSwitch.bind(this),
+			readOnly: this.props.readOnly,
 			ref: ref => this.fields[index] = ref
 		};
 		return <CreatorField key={ index } { ...props } />;

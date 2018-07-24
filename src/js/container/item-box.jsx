@@ -130,7 +130,7 @@ const mapStateToProps = state => {
 				options: f.field === 'itemType' ? itemTypes : null,
 				key: f.field,
 				label: f.localized,
-				readonly: isReadOnlyMode ? true : noEditFields.includes(f),
+				readOnly: isReadOnlyMode ? true : noEditFields.includes(f),
 				processing: get(
 					state,
 					['libraries', libraryKey, 'updating', 'items', item.key], []

@@ -41,7 +41,7 @@ class ItemBox extends React.PureComponent {
 
 	handleFieldClick(key) {
 		const field = this.props.fields.find(f => f.key === key);
-		if(!this.props.isForm && field.readonly) {
+		if(!this.props.isForm && field.readOnly) {
 			return;
 		}
 		this.setState({ activeEntry: key });
@@ -49,7 +49,7 @@ class ItemBox extends React.PureComponent {
 
 	handleFieldFocus(key) {
 		const field = this.props.fields.find(f => f.key === key);
-		if(!this.props.isForm && field.readonly) {
+		if(!this.props.isForm && field.readOnly) {
 			return;
 		}
 		this.setState({ activeEntry: key });
@@ -80,6 +80,7 @@ class ItemBox extends React.PureComponent {
 			<Creators
 				key={ field.key }
 				name={ field.key }
+				readOnly={ field.readOnly }
 				creatorTypes = { this.props.creatorTypes }
 				value={ field.value || [] }
 				onSave={ this.handleEditableCommit.bind(this, field.key) }
@@ -124,6 +125,7 @@ class ItemBox extends React.PureComponent {
 				field.options.find(o => o.value === field.value) :
 				null;
 			const inputComponent = pickInputComponent(field);
+			const isPseudoEditable = !this.props.isForm && inputComponent === SelectInput;
 			const props = {
 				autoFocus: !this.props.isForm && inputComponent !== SelectInput,
 				display: display ? display.label : null,
@@ -135,11 +137,12 @@ class ItemBox extends React.PureComponent {
 				options: field.options || null,
 				selectOnFocus: !this.props.isForm,
 				value: field.value || '',
+				isDisabled: isPseudoEditable && field.readOnly,
 				className: cx({
 					'form-control': this.props.isForm,
 					'form-control-sm': this.props.isForm,
-					'pseudo-editable': !this.props.isForm && inputComponent === SelectInput
-				}),
+					'pseudo-editable': isPseudoEditable
+			}),
 				onEditableClick: this.handleFieldClick.bind(this, field.key),
 				onEditableFocus: this.handleFieldFocus.bind(this, field.key),
 				id: field.key,
