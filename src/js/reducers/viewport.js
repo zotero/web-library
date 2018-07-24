@@ -12,10 +12,11 @@ const viewport = (state = defaultState, action) => {
 			return {
 				width: action.width,
 				height: action.height,
-				xs: action.width < 480,
-				sm: action.width <= 768 && action.width > 480,
-				md: action.width <= 992 && action.width > 768,
-				lg: action.width > 992
+				xxs: action.width < 480,
+				xs: action.width >= 480 && action.width < 768,
+				sm: action.width >= 768 && action.width < 992,
+				md: action.width >= 992 && action.width < 1200,
+				lg: action.width >= 1200
 			};
 		default:
 			return state;
