@@ -186,7 +186,7 @@ $tabs-compact-padding-x: $space-xs;
 
 $metadata-list-margin:             0;
 $metadata-list-line-height:        $space-lg; // Define in px
-$metadata-list-line-height-sm:     30px; // (~ $dl-horizontal-line-height / 13 * 16)
+$metadata-list-line-height-sm:     30px; // (~ $metadata-list-line-height / 13 * 16)
 $metadata-list-gutter:             $space-sm;
 $metadata-list-gutter-mobile:      $space-md;
 $metadata-list-offset:             33%;

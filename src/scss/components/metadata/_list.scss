@@ -17,12 +17,22 @@
 			margin-bottom: $font-size-mobile / 2;
 		}
 
-		@include touch-or-bp-down(sm) {
+		@include touch-or-bp-down(xs) {
 			padding: 0 $default-padding-x-touch;
 		}
 
-		@include mouse-and-bp-up(md) {
+		@include mouse-and-bp-up(sm) {
 			display: flex;
+			padding: 0 $default-padding-x-touch;
+		}
+
+		@include touch-or-bp-down(md) {
+			&.empty:not(.editing) {
+				display: none;
+			}
+		}
+
+		@include mouse-and-bp-up(md) {
 			padding: 0 $default-padding-x;
 		}
 
@@ -50,9 +60,13 @@
 		margin-top: 0;
 		align-items: center;
 
+		@include mouse-and-bp-up(sm) {
+			justify-content: flex-end;
+			padding-right: $metadata-list-gutter-mobile / 2;
+		}
+
 		@include mouse-and-bp-up(md) {
 			padding-right: $metadata-list-gutter / 2;
-			justify-content: flex-end;
 		}
 
 		a {
@@ -79,16 +93,14 @@
 	.value {
 		flex: 0 0 calc(100% - #{$metadata-list-offset});
 
+		@include mouse-and-bp-up(sm) {
+			padding-left: $metadata-list-gutter-mobile / 2;
+		}
+
 		@include mouse-and-bp-up(md) {
 			display: flex;
 			align-items: center;
 			padding-left: $metadata-list-gutter / 2;
-		}
-	}
-
-	&:not(.editing) {
-		.empty {
-			display: none;
 		}
 	}
 
@@ -254,7 +266,7 @@
 	// Title field
 	.title {
 		@include touch-or-bp-down(sm) {
-			display: none;
+			display: none !important;
 
 			@include state(".metadata-list.editing") {
 				display: flex;
