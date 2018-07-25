@@ -95,13 +95,13 @@
 	.value {
 		flex: 0 0 calc(100% - #{$metadata-list-offset});
 
-		@include mouse-and-bp-up(sm) {
+		@include bp-up(sm) {
+			display: flex;
+			align-items: center;
 			padding-left: $metadata-list-gutter-mobile / 2;
 		}
 
 		@include mouse-and-bp-up(md) {
-			display: flex;
-			align-items: center;
 			padding-left: $metadata-list-gutter / 2;
 		}
 	}
@@ -180,6 +180,7 @@
 			}
 
 			.key {
+				justify-content: flex-start;
 				padding-right: $metadata-list-gutter-mobile / 2;
 			}
 
