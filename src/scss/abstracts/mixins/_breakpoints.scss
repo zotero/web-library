@@ -27,7 +27,9 @@
 @mixin bp-only($name, $breakpoints: $grid-breakpoints) {
   @include bp-up($name, $breakpoints) {
     @include bp-down($name, $breakpoints) {
-      @content;
+  	  body .library-container & { // Normalize specifity
+      	@content;
+      }
     }
   }
 }
@@ -35,30 +37,36 @@
 
 @mixin touch-or-bp-up($name, $breakpoints: $grid-breakpoints) {
 	@include bp-up($name, $breakpoints: $grid-breakpoints) {
-		@content;
+	  body .library-container & { // Normalize specifity
+			@content;
+		}
 	}
 
-  .touch & {
+  body.touch & {
 	  @content;
   }
 }
 
 @mixin touch-or-bp-down($name, $breakpoints: $grid-breakpoints) {
 	@include bp-down($name, $breakpoints: $grid-breakpoints) {
-		@content;
+	  body .library-container & { // Normalize specifity
+			@content;
+		}
 	}
 
-  .touch & {
+  body.touch & {
 	  @content;
   }
 }
 
 @mixin touch-or-bp-only($name, $breakpoints: $grid-breakpoints) {
   @include bp-only($name, $breakpoints: $grid-breakpoints) {
-		@content;
+	  body .library-container & { // Normalize specifity
+			@content;
+		}
 	}
 
-  .touch & {
+  body.touch & {
 	  @content;
   }
 }
