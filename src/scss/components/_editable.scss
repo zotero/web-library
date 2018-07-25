@@ -87,6 +87,7 @@
 		flex: 1 1 auto;
 		border: none;
 		padding: 0;
+		background-color: transparent;
 	}
 
 	@include mouse-and-bp-up(md) {
