@@ -26,18 +26,20 @@
 			padding: 0 $default-padding-x-touch;
 		}
 
-		@include touch-or-bp-down(md) {
-			&.empty:not(.editing) {
-				display: none;
-			}
-		}
-
 		@include mouse-and-bp-up(md) {
 			padding: 0 $default-padding-x;
 		}
 
 		@include bp-only(md) {
 			padding-right: ($metadata-list-gutter + 1px);
+		}
+
+		@include touch-or-bp-down(md) {
+			&.empty {
+				@include state(".metadata-list:not(.editing)") {
+					display: none;
+				}
+			}
 		}
 	}
 
