@@ -10,6 +10,20 @@
 		margin-top: -3px;
 	}
 
+	&.editing {
+		@include bp-only(sm) {
+			margin-left: $metadata-list-margin-x;
+			margin-right: $metadata-list-margin-x;
+		}
+
+		.touch & {
+			@include bp-up(md) {
+				margin-left: $metadata-list-margin-x;
+				margin-right: $metadata-list-margin-x;
+			}
+		}
+	}
+
 	.metadata {
 		align-items: flex-start;
 
