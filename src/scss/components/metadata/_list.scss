@@ -41,6 +41,73 @@
 				}
 			}
 		}
+
+		// Edit mode
+		@include state(".metadata-list.editing") {
+			display: flex;
+			align-items: flex-start;
+			position: relative;
+			background-color: $input-bg;
+			padding-top: $input-border-width;
+			margin-bottom: 0;
+
+			&::before,
+			&::after {
+				position: absolute;
+				left: $default-padding-x-touch;
+				right: 0;
+				top: 0;
+				height: $input-border-width;
+				background: $separator-color;
+				z-index: 1;
+			}
+
+			&::before {
+				content: "";
+			}
+
+			&:first-child {
+				&::before {
+					left: 0;
+				}
+			}
+
+			&:last-child {
+				padding-top: 0;
+				padding-bottom: $input-border-width;
+
+				&::after {
+					content: "";
+					left: 0;
+					top: auto;
+					bottom: 0;
+				}
+			}
+
+			// Editable focus state
+			&.editing {
+				z-index: 2;
+
+				&::before,
+				&::after {
+					content: "";
+					position: absolute;
+					left: 0;
+					right: 0;
+					height: $outline-width;
+					background-color: $focus-color;
+				}
+
+				&::before {
+					bottom: calc(100% - 1px);
+				}
+
+				&::after {
+					top: calc(100% - 1px);
+				}
+			}
+
+		}
 	}
 
 	.key,
@@ -52,6 +119,13 @@
 
 		@include bp-only(sm) {
 			min-height: $metadata-list-line-height-sm;
+		}
+
+		// Edit mode
+		@include state(".metadata-list.editing") {
+			@include touch-or-bp-down(sm) {
+				min-height: $line-height-large-touch;
+			}
 		}
 	}
 
@@ -69,6 +143,14 @@
 
 		@include mouse-and-bp-up(md) {
 			padding-right: $metadata-list-gutter / 2;
+		}
+
+		// Edit mode
+		@include state(".metadata-list.editing") {
+			@include touch-or-bp-down(sm) {
+				justify-content: flex-start;
+				padding-right: $metadata-list-gutter-mobile / 2;
+			}
 		}
 
 		a {
@@ -104,118 +186,11 @@
 		@include mouse-and-bp-up(md) {
 			padding-left: $metadata-list-gutter / 2;
 		}
-	}
 
-	// Edit mode
-	&.editing {
-		@include touch-or-bp-down(sm) {
-			.metadata {
-				display: flex;
-				align-items: flex-start;
-				position: relative;
-				background-color: $input-bg;
-				padding-top: $input-border-width;
-				margin-bottom: 0;
-
-				&::before,
-				&::after {
-					position: absolute;
-					left: $default-padding-x-touch;
-					right: 0;
-					top: 0;
-					height: $input-border-width;
-					background: $separator-color;
-					z-index: 1;
-				}
-
-				&::before {
-					content: "";
-				}
-
-				&:first-child {
-					&::before {
-						left: 0;
-					}
-				}
-
-				&:last-child {
-					padding-top: 0;
-					padding-bottom: $input-border-width;
-
-					&::after {
-						content: "";
-						left: 0;
-						top: auto;
-						bottom: 0;
-					}
-				}
-
-				// Editable focus state
-				&.editing {
-					z-index: 2;
-
-					&::before,
-					&::after {
-						content: "";
-						position: absolute;
-						left: 0;
-						right: 0;
-						height: $outline-width;
-						background-color: $focus-color;
-					}
-
-					&::before {
-						bottom: calc(100% - 1px);
-					}
-
-					&::after {
-						top: calc(100% - 1px);
-					}
-				}
-			}
-
-			.key,
-			.value {
-				min-height: $line-height-large-touch;
-			}
-
-			.key {
-				justify-content: flex-start;
-				padding-right: $metadata-list-gutter-mobile / 2;
-			}
-
-			.value {
-				padding-left: $metadata-list-gutter-mobile / 2;
-			}
-		}
-
-		// Textarea fields
-		.extra {
+		// Edit mode
+		@include state(".metadata-list.editing") {
 			@include touch-or-bp-down(sm) {
-				flex-direction: column;
-				align-items: normal;
-			}
-
-			.key {
-				@include touch-or-bp-down(sm) {
-					flex: 1 1 auto;
-					padding-right: 0;
-				}
-			}
-
-			label {
-				@include touch-or-bp-down(sm) {
-					flex: 1 1 auto;
-				}
-			}
-
-			.value {
-				@include touch-or-bp-down(sm) {
-					flex: 1 1 auto;
-					padding-left: 0;
-					padding-bottom: 7px;
-					margin-top: -6px;
-				}
+				padding-left: $metadata-list-gutter-mobile / 2;
 			}
 		}
 	}
@@ -277,10 +252,46 @@
 		}
 	}
 
-	// Extra field
+	// Textarea fields
 	.extra {
+		// Edit mode
+		@include state(".metadata-list.editing") {
+			@include touch-or-bp-down(sm) {
+				flex-direction: column;
+				align-items: normal;
+			}
+		}
+
+		.key {
+			@include state(".metadata-list.editing") {
+				@include touch-or-bp-down(sm) {
+					flex: 1 1 auto;
+					padding-right: 0;
+				}
+			}
+		}
+
 		label {
 			line-height: $line-height-base;
+
+			// Edit mode
+			@include state(".metadata-list.editing") {
+				@include touch-or-bp-down(sm) {
+					flex: 1 1 auto;
+				}
+			}
+		}
+
+		.value {
+			// Edit mode
+			@include state(".metadata-list.editing") {
+				@include touch-or-bp-down(sm) {
+					flex: 1 1 auto;
+					padding-left: 0;
+					padding-bottom: 7px;
+					margin-top: -6px;
+				}
+			}
 		}
 	}
 }
