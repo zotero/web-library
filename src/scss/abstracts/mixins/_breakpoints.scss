@@ -27,9 +27,7 @@
 @mixin bp-only($name, $breakpoints: $grid-breakpoints) {
   @include bp-up($name, $breakpoints) {
     @include bp-down($name, $breakpoints) {
-  	  body .library-container & { // Normalize specifity
-      	@content;
-      }
+     	@content;
     }
   }
 }
