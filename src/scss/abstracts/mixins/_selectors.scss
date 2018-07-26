@@ -4,15 +4,21 @@
 
 // State mixin
 @mixin state($state) {
-	$space-index: str-index($state, " ");
-	$selectors: ();
+	$selectors: $state;
 
-	@if $space-index == null {
-		$selectors: simple-selectors($state);
-	} @else {
-		$selectors: append($selectors, str-slice($state, 1, ($space-index - 1)));
-		$selectors: append($selectors, str-slice($state, ($space-index + 1)));
+	@each $token in " ", ">", "+", "~" {
+		$i: str-index($selectors, $token);
+
+		@while $i != null {
+			$first-part: str-slice($selectors, 1, ($i - 1));
+			$last-part: str-slice($selectors, ($i + 1));
+			$selectors: #{$first-part}#{$last-part};
+
+			$i: str-index($selectors, $token);
+		}
 	}
+
+	$selectors: simple-selectors($selectors);
 
 	@each $sel in $selectors {
 		@if str-index(#{&}, $sel) != null {
