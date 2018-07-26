@@ -35,43 +35,43 @@
 
 @mixin touch-or-bp-up($name, $breakpoints: $grid-breakpoints) {
 	@include bp-up($name, $breakpoints: $grid-breakpoints) {
-	  body .library-container & { // Normalize specifity
+	  .library-container:not(.specifity) & { // Normalize specifity
 			@content;
 		}
 	}
 
-  body .touch & {
+  .library-container.touch & {
 	  @content;
   }
 }
 
 @mixin touch-or-bp-down($name, $breakpoints: $grid-breakpoints) {
 	@include bp-down($name, $breakpoints: $grid-breakpoints) {
-	  body .library-container & { // Normalize specifity
+	  .library-container:not(.specifity) & { // Normalize specifity
 			@content;
 		}
 	}
 
-  body .touch & {
+  .library-container.touch & {
 	  @content;
   }
 }
 
 @mixin touch-or-bp-only($name, $breakpoints: $grid-breakpoints) {
   @include bp-only($name, $breakpoints: $grid-breakpoints) {
-	  body .library-container & { // Normalize specifity
+	  .library-container:not(.specifity) & { // Normalize specifity
 			@content;
 		}
 	}
 
-  body .touch & {
+  .library-container.touch & {
 	  @content;
   }
 }
 
 
 @mixin mouse-and-bp-up($name, $breakpoints: $grid-breakpoints) {
-	body:not(.touch) & {
+	.library-container:not(.touch) & {
 		@include bp-up($name, $breakpoints: $grid-breakpoints) {
 			@content;
 		}
@@ -79,7 +79,7 @@
 }
 
 @mixin mouse-and-bp-down($name, $breakpoints: $grid-breakpoints) {
-	body:not(.touch) & {
+	.library-container:not(.touch) & {
 		@include bp-down($name, $breakpoints: $grid-breakpoints) {
 			@content;
 		}
@@ -87,7 +87,7 @@
 }
 
 @mixin mouse-and-bp-only($name, $breakpoints: $grid-breakpoints) {
-	body:not(.touch) & {
+	.library-container:not(.touch) & {
   	@include bp-only($name, $breakpoints: $grid-breakpoints) {
 			@content;
 		}
