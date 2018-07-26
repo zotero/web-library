@@ -181,3 +181,11 @@
 		}
 	}
 }
+
+.title + .creators-entry {
+	.metadata-list.editing & {
+		&::before {
+			left: 0;
+		}
+	}
+}
