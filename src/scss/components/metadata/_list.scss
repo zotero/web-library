@@ -16,11 +16,9 @@
 			margin-right: $metadata-list-margin-x;
 		}
 
-		.touch & {
-			@include bp-up(md) {
-				margin-left: $metadata-list-margin-x;
-				margin-right: $metadata-list-margin-x;
-			}
+		@include touch-and-bp-up(md) {
+			margin-left: $metadata-list-margin-x;
+			margin-right: $metadata-list-margin-x;
 		}
 	}
 

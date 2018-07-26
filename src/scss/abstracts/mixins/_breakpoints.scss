@@ -33,6 +33,14 @@
 }
 
 
+@mixin touch-and-bp-up($name, $breakpoints: $grid-breakpoints) {
+	@include bp-up($name, $breakpoints: $grid-breakpoints) {
+	  .library-container.touch & {
+			@content;
+		}
+	}
+}
+
 @mixin touch-or-bp-up($name, $breakpoints: $grid-breakpoints) {
 	@include bp-up($name, $breakpoints: $grid-breakpoints) {
 	  .library-container:not(.specifity) & { // Normalize specifity
