@@ -269,7 +269,7 @@
 	// Title field
 	.title {
 		@include touch-or-bp-down(sm) {
-			display: none !important;
+			display: none;
 
 			@include state(".metadata-list.editing") {
 				display: flex;
