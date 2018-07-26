@@ -4,6 +4,14 @@
 
 // Creators field
 .creators-entry {
+	.editing & {
+		@include variant(".title + .creators-entry") {
+			&::before {
+				left: 0;
+			}
+		}
+	}
+
 	@include touch-or-bp-down(sm) {
 		select {
 			color: $key-color;
@@ -178,14 +186,6 @@
 
 		.btn:last-child {
 			background: image-url("icons/plus-circle.svg") no-repeat center center;
-		}
-	}
-}
-
-.title + .creators-entry {
-	.metadata-list.editing & {
-		&::before {
-			left: 0;
 		}
 	}
 }
