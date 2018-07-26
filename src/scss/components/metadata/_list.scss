@@ -34,8 +34,11 @@
 			padding-right: $default-padding-x-touch;
 		}
 
-		@include mouse-and-bp-up(sm) {
+		@include bp-up(sm) {
 			display: flex;
+		}
+
+		@include mouse-and-bp-up(sm) {
 			padding-left: $default-padding-x-touch;
 			padding-right: $default-padding-x-touch;
 		}
@@ -149,7 +152,7 @@
 		margin-top: 0;
 		align-items: center;
 
-		@include mouse-and-bp-up(sm) {
+		@include bp-up(sm) {
 			justify-content: flex-end;
 			padding-right: $metadata-list-gutter-mobile / 2;
 		}
