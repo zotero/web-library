@@ -179,6 +179,12 @@
 		}
 	}
 
+	.handle {
+		padding: 0 $space-min 0 $space-min;
+		flex: 0 0 $metadata-handle-offset;
+		cursor: move;
+	}
+
 	label {
 		@include text-truncate;
 		line-height: normal; // Flex alignment is more stable
@@ -191,7 +197,7 @@
 	}
 
 	.value {
-		flex: 0 0 calc(100% - #{$metadata-list-offset});
+		flex: 0 0 calc(100% - #{$metadata-list-offset} - #{$metadata-handle-offset});
 
 		@include bp-up(sm) {
 			display: flex;

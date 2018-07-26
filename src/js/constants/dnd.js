@@ -1,5 +1,6 @@
 'use strict';
 
 module.exports = Object.freeze({
-	'ITEM': 'ITEM'
+	'ITEM': 'ITEM',
+	'CREATOR': 'CREATOR'
 });

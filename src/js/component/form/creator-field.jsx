@@ -62,6 +62,7 @@ class CreatorField extends React.PureComponent {
 	handleCreatorRemove() {
 		this.props.onCreatorRemove(this.props.index);
 	}
+
 	handleCreatorAdd() {
 		this.props.onCreatorAdd();
 	}
@@ -119,8 +120,7 @@ class CreatorField extends React.PureComponent {
 	}
 
 	render() {
-		const FormField = this.props.isForm ? SelectInput : Editable;
-		const { index, creator, creatorTypes } = this.props;
+		const { index, creator, creatorTypes, onReorder, onReorderCommit, onReorderCancel } = this.props;
 		const className = {
 			'metadata': true,
 			'creators-entry': true,
@@ -134,7 +134,15 @@ class CreatorField extends React.PureComponent {
 		) || { label: creator.creatorType };
 
 		return (
-			<Field key={ index } className={ cx(className) }>
+			<Field
+				className={ cx(className) }
+				index={ index }
+				isSortable={ true }
+				key={ creator.id }
+				onReorder={ onReorder }
+				onReorderCancel={ onReorderCancel }
+				onReorderCommit={ onReorderCommit }
+			>
 				<SelectInput
 					className="form-control form-control-sm"
 					inputComponent={ SelectInput }
@@ -198,6 +206,10 @@ class CreatorField extends React.PureComponent {
 		onCreatorAdd: PropTypes.func.isRequired,
 		onCreatorRemove: PropTypes.func.isRequired,
 		onCreatorTypeSwitch: PropTypes.func.isRequired,
+		onReorder: PropTypes.func,
+		onReorderCancel: PropTypes.func,
+		onReorderCommit: PropTypes.func,
+		readOnly: PropTypes.bool,
 	};
 }
 

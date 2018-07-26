@@ -5,6 +5,7 @@ const React = require('react');
 const PropTypes = require('prop-types');
 const deepEqual = require('deep-equal');
 const { splice } = require('../../utils');
+const { removeKeys } = require('../../common/immutable')
 const CreatorField = require('./creator-field');
 
 class Creators extends React.PureComponent {
@@ -12,7 +13,9 @@ class Creators extends React.PureComponent {
 		super(props);
 		this.state = {
 			isCreatorTypeEditing: false,
-			creators: props.value.length ? [...props.value] : [this.newCreator]
+			creators: props.value.length ?
+				props.value.map((creator, id) => ({ ...creator, id })) :
+				[this.newCreator]
 		};
 		this.fields = {};
 	}
@@ -29,6 +32,7 @@ class Creators extends React.PureComponent {
 					creatorType: validCreatorTypes.includes(creator.creatorType) ? creator.creatorType : validCreatorTypes[0]
 				}));
 		}
+		creators = creators.map((creator, id) => ({ ...creator, id }));
 		this.setState({ creators });
 	}
 
@@ -41,10 +45,10 @@ class Creators extends React.PureComponent {
 
 	handleSaveCreators(creators) {
 		this.setState({ creators });
-		const newValue = creators.filter(
-			creator => !creator[Symbol.for('isVirtual')]
+		const newValue = creators
+			.filter(creator => !creator[Symbol.for('isVirtual')]
 				&& (creator.lastName || creator.firstName || creator.name)
-		);
+			).map(creator => removeKeys(creator, 'id'));
 		const hasChanged = !deepEqual(newValue, this.props.value);
 		this.props.onSave(newValue, hasChanged);
 	}
@@ -98,6 +102,21 @@ class Creators extends React.PureComponent {
 		this.handleSaveCreators(creators);
 	}
 
+	handleReorder(fromIndex, toIndex) {
+		const creators = [ ...this.state.creators ];
+		creators.splice(toIndex, 0, creators.splice(fromIndex, 1)[0]);
+		this.setState({ creators });
+	}
+
+	handleReorderCommit() {
+		this.handleSaveCreators(this.state.creators);
+	}
+
+	handleReorderCancel() {
+		const creators = this.props.value.map((creator, id) => ({ ...creator, id }));
+		this.setState({ creators });
+	}
+
 	get newCreator() {
 		return {
 			creatorType: this.props.creatorTypes[0].value,
@@ -126,10 +145,13 @@ class Creators extends React.PureComponent {
 			onCreatorAdd: this.handleCreatorAdd.bind(this),
 			onCreatorRemove: this.handleCreatorRemove.bind(this),
 			onCreatorTypeSwitch: this.handleCreatorTypeSwitch.bind(this),
+			onReorder: this.handleReorder.bind(this),
+			onReorderCommit: this.handleReorderCommit.bind(this),
+			onReorderCancel: this.handleReorderCancel.bind(this),
 			readOnly: this.props.readOnly,
 			ref: ref => this.fields[index] = ref
 		};
-		return <CreatorField key={ index } { ...props } />;
+		return <CreatorField key={ creator.id } { ...props } />;
 	}
 
 	render() {
@@ -150,6 +172,7 @@ class Creators extends React.PureComponent {
 		isForm: PropTypes.bool,
 		name: PropTypes.string,
 		onSave: PropTypes.func,
+		readOnly: PropTypes.bool,
 		value: PropTypes.array,
 	};
 }
