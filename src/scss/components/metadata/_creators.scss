@@ -200,6 +200,7 @@
 			align-items: center;
 			flex: 0 0 auto;
 			padding: 0 $default-padding-x-touch;
+			border-left: 1px solid $separator-color;
 			margin-right: -$default-padding-x-touch;
 
 			@include state(".editing .creators-entry") {
