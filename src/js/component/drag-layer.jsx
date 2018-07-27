@@ -3,20 +3,24 @@
 const React = require('react');
 const Icon = require('./ui/icon');
 const paramCase = require('param-case');
+const Field = require('./form/field');
+const { Consumer } = require('react-dnd/lib/DragDropContext'); //@NOTE: using undocumented feature
 const { DragLayer } = require('react-dnd');
-const { ITEM } = require('../constants/dnd');
+const { ITEM, CREATOR } = require('../constants/dnd');
 
 const dndCollect = monitor => ({
+	clientOffset: monitor.getClientOffset(),
+	currentOffset: monitor.getSourceClientOffset(),
+	initialClientOffset: monitor.getInitialClientOffset(),
+	initialSourceClientOffset: monitor.getInitialSourceClientOffset(),
+	differenceFromInitialOffset: monitor.getDifferenceFromInitialOffset(),
+	isDragging: monitor.isDragging(),
 	item: monitor.getItem(),
 	itemType: monitor.getItemType(),
-	currentOffset: monitor.getSourceClientOffset(),
-	clientOffset: monitor.getClientOffset(),
-	isDragging: monitor.isDragging()
 });
 
-const getItemStyles = props => {
-	const { currentOffset, clientOffset } = props;
-		if (!currentOffset) {
+const getNextToCursorStyles = ({ clientOffset }) => {
+		if (!clientOffset) {
 			return {
 				display: 'none'
 			};
@@ -30,12 +34,53 @@ const getItemStyles = props => {
 		};
 }
 
+const getRelativeToOriginalStyles = ({ differenceFromInitialOffset }, sourceRect) => {
+		if (!differenceFromInitialOffset) {
+			return {
+				display: 'none'
+			};
+		}
+
+		const x = sourceRect.x + differenceFromInitialOffset.x;
+		const y = sourceRect.y + differenceFromInitialOffset.y;
+
+		const transform = `translate(${x}px, ${y}px)`;
+		return {
+			width: sourceRect.width,
+			height: sourceRect.height,
+			transform: transform,
+			WebkitTransform: transform
+		};
+}
+
 @DragLayer(dndCollect)
 class CustomDragLayer extends React.PureComponent {
 
-	renderItem(type, { isDraggingSelected, selectedItemKeys, rowData }) {
+	renderItem(type, props, isPreviewRequired) {
 		switch (type) {
+			case CREATOR:
+				var { raw } = props;
+				if(!isPreviewRequired) {
+					// on desktops we use html5 backend
+					return null
+				}
+				return (
+					<div className="metadata creators creator-drag-indicator">
+						<div className="creator-type">{ raw.creatorType }</div>
+						{ 'name' in raw ? (
+							<div className="name">{ raw.name }</div>
+						) : (
+							<React.Fragment>
+								<div className="last-name">{ raw.lastName }</div>
+								<div className="first-name">{ raw.firstName }</div>
+							</React.Fragment>
+						)
+						}
+					</div>
+				)
 			case ITEM:
+				// for items dragging we always use custom preview
+				var { isDraggingSelected, selectedItemKeys, rowData } = props;
 				if(isDraggingSelected && selectedItemKeys.length > 1) {
 					return (
 						<div className="items-drag-indicator multiple">
@@ -60,17 +105,37 @@ class CustomDragLayer extends React.PureComponent {
 
 	render() {
 		const { item, itemType, isDragging } = this.props;
+		var style;
 
 		if (!isDragging) {
 			return null;
 		}
 
+		switch(itemType) {
+			case CREATOR:
+				style = getRelativeToOriginalStyles(this.props, item.sourceRect);
+			break
+			case ITEM:
+				style = getNextToCursorStyles(this.props);
+			break;
+		}
+
 		return (
-			<div className="drag-layer">
-				<div style={ getItemStyles(this.props) }>
-					{ this.renderItem(itemType, item) }
-				</div>
-			</div>
+			<Consumer>
+			{({ dragDropManager }) => {
+				return (
+					<div className="drag-layer">
+						<div style={ style }>
+							{ this.renderItem(
+								itemType,
+								item,
+								dragDropManager.backend.previewEnabled()
+							) }
+						</div>
+					</div>
+				);
+			}}
+			</Consumer>
 		);
 	}
 }

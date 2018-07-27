@@ -133,15 +133,19 @@ class CreatorField extends React.PureComponent {
 			c => c.value == creator.creatorType
 		) || { label: creator.creatorType };
 
+		// raw formatted data for use in drag-n-drop indicator
+		const raw = { ...creator, creatorType: creatorTypeDescription.label, }
+
 		return (
 			<Field
 				className={ cx(className) }
 				index={ index }
-				isSortable={ true }
+				isSortable={ !this.props.readOnly }
 				key={ creator.id }
 				onReorder={ onReorder }
 				onReorderCancel={ onReorderCancel }
 				onReorderCommit={ onReorderCommit }
+				raw={ raw }
 			>
 				<SelectInput
 					className="form-control form-control-sm"

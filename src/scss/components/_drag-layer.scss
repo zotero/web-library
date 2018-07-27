@@ -8,12 +8,33 @@
 	z-index: $z-index-drag-layer;
 }
 
-.items-drag-indicator {
+.creator-drag-indicator {
 	border-radius: $border-radius;
 	background: $shade-0;
 	padding: $space-sm;
 	border: 1px solid $asphalt;
 	display: flex;
+
+	.creator-type {
+		color: $shade-5;
+		flex: 0 0 33%;
+	}
+
+	.name {
+		flex: 0 0 66%;
+	}
+
+	.first-name,
+	.last-name {
+		flex: 0 0 33%;
+	}
+}
+
+.items-drag-indicator {
+	border-radius: $border-radius;
+	background: $shade-0;
+	padding: $space-sm;
+	border: 1px solid $asphalt;
 	display: inline-block;
 
 	> span,

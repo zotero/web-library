@@ -32,8 +32,11 @@ const dndTargetSpec = {
 };
 
 const dndSourceSpec = {
-	beginDrag: ({ index, onReorder, onReorderCommit, onReorderCancel}) => {
-		return { index, onReorder, onReorderCommit, onReorderCancel};
+	beginDrag: ({ index, raw, onReorder, onReorderCommit, onReorderCancel}, monitor, component) => {
+		if(!component) { return null; }
+		// eslint-disable-next-line react/no-find-dom-node
+		const sourceRect = findDOMNode(component).getBoundingClientRect();
+		return { index, raw, onReorder, onReorderCommit, onReorderCancel, sourceRect};
 	},
 	endDrag: (props, monitor) => {
 		const { onReorderCommit, onReorderCancel } = props;
@@ -113,6 +116,7 @@ class Field extends React.PureComponent {
 		onReorder: PropTypes.func,
 		onReorderCommit: PropTypes.func,
 		onReorderCancel: PropTypes.func,
+		raw: PropTypes.object,
 	};
 
 	static defaultProps = {

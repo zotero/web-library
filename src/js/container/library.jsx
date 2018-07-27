@@ -17,19 +17,17 @@ const { configureApi, selectLibrary, initialize, triggerResizeViewport, changeRo
 const Library = require('../component/library');
 const defaults = require('../constants/defaults');
 const { ViewportContext } = require('../context');
-const HTML5Backend = require('react-dnd-html5-backend').default;
 const { DragDropContext } = require('react-dnd');
+const { default: MultiBackend } = require('react-dnd-multi-backend');
+const HTML5toTouch = require('react-dnd-multi-backend/lib/HTML5toTouch').default;
 const CustomDragLayer = require('../component/drag-layer');
-const { get } = require('../utils');
-
-// const history = createHistory();
-// const middleware = routerMiddleware(history);
 
  //@TODO: ensure this doesn't affect prod build
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 const combinedReducers = combineReducers(reducers);
 
-@DragDropContext(HTML5Backend)
+
+@DragDropContext(MultiBackend(HTML5toTouch))
 class LibraryContainer extends React.Component {
 	constructor(props) {
 		super(props);
