@@ -44,8 +44,10 @@ const dndSourceSpec = {
 	}
 };
 
-const dndTargetCollect = (connect) => ({
+const dndTargetCollect = (connect, monitor) => ({
 	connectDropTarget: connect.dropTarget(),
+	isOver: monitor.isOver({ shallow: true }),
+	canDrop: monitor.canDrop(),
 });
 
 const dndSourceCollect = (connect, monitor) => ({
@@ -59,20 +61,23 @@ const dndSourceCollect = (connect, monitor) => ({
 class Field extends React.PureComponent {
 	render() {
 		const {
-			isDragging,
-			isSortable,
-			connectDragSource,
+			canDrop,
 			connectDragPreview,
-			connectDropTarget
+			connectDragSource,
+			connectDropTarget,
+			isDragging,
+			isOver,
+			isSortable,
 		} = this.props;
 		const [label, value] = React.Children.toArray(this.props.children);
 		const opacity = isDragging ? 0 : 1;
+		const isDragTarget = isOver && canDrop;
 
 		return isSortable ? connectDropTarget(
 			connectDragPreview(
 				<li
 					style={ { opacity } }
-					className={ cx('metadata', this.props.className) }
+					className={ cx('metadata', this.props.className, { 'dnd-target': isDragTarget }) }
 				>
 					<div className="key">
 						{ label }
