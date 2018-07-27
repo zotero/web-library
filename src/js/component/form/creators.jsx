@@ -7,15 +7,16 @@ const deepEqual = require('deep-equal');
 const { splice } = require('../../utils');
 const { removeKeys } = require('../../common/immutable')
 const CreatorField = require('./creator-field');
+const { enumerateObjects } = require('../../utils');
 
 class Creators extends React.PureComponent {
 	constructor(props) {
 		super(props);
 		this.state = {
 			isCreatorTypeEditing: false,
-			creators: props.value.length ?
-				props.value.map((creator, id) => ({ ...creator, id })) :
-				[this.newCreator]
+			creators: enumerateObjects(
+				props.value.length ? props.value : [this.newCreator]
+			)
 		};
 		this.fields = {};
 	}
@@ -32,8 +33,7 @@ class Creators extends React.PureComponent {
 					creatorType: validCreatorTypes.includes(creator.creatorType) ? creator.creatorType : validCreatorTypes[0]
 				}));
 		}
-		creators = creators.map((creator, id) => ({ ...creator, id }));
-		this.setState({ creators });
+		this.setState({ creators: enumerateObjects(creators) });
 	}
 
 	componentDidUpdate(props, state) {
@@ -67,9 +67,9 @@ class Creators extends React.PureComponent {
 	}
 
 	handleCreatorAdd() {
-		const creators = [...this.state.creators];
-		creators.push(this.newCreator);
-		this.setState({ creators });
+		this.setState({
+			creators: enumerateObjects([...this.state.creators, this.newCreator])
+		});
 	}
 
 	handleCreatorRemove(index) {
@@ -113,8 +113,7 @@ class Creators extends React.PureComponent {
 	}
 
 	handleReorderCancel() {
-		const creators = this.props.value.map((creator, id) => ({ ...creator, id }));
-		this.setState({ creators });
+		this.setState({ creators: enumerateObjects(this.props.value) });
 	}
 
 	get newCreator() {

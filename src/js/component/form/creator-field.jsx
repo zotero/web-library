@@ -22,12 +22,9 @@ class CreatorField extends React.PureComponent {
 	focus() {
 		const key = 'lastName' in this.props.creator ? 'lastName' : 'name';
 		if(!this.props.isForm) {
-			this.setState(
-				{ active: key },
-				() => this.fieldComponents[key].focus()
-			);
+			this.setState({ active: key });
 		} else {
-			this.fieldComponents[key].focus();
+			key in this.fieldComponents && this.fieldComponents[key].focus();
 		}
 	}
 
@@ -120,7 +117,16 @@ class CreatorField extends React.PureComponent {
 	}
 
 	render() {
-		const { index, creator, creatorTypes, onReorder, onReorderCommit, onReorderCancel } = this.props;
+		const {
+			creator,
+			creatorTypes,
+			index,
+			isVirtual,
+			onReorder,
+			onReorderCancel,
+			onReorderCommit,
+			readOnly,
+		} = this.props;
 		const className = {
 			'metadata': true,
 			'creators-entry': true,
@@ -140,7 +146,7 @@ class CreatorField extends React.PureComponent {
 			<Field
 				className={ cx(className) }
 				index={ index }
-				isSortable={ !this.props.readOnly }
+				isSortable={ !isVirtual && !readOnly }
 				key={ creator.id }
 				onReorder={ onReorder }
 				onReorderCancel={ onReorderCancel }

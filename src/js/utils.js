@@ -129,6 +129,10 @@ const indexByKey = (elements, key, processor = e => e) => {
 	}, {});
 }
 
+const enumerateObjects = (objects, key = 'id', start = 0) => {
+	return objects.map((o, i) => ({ ...o, [key]: i + start }));
+}
+
 const noop = () => {};
 
 // @TODO: columns util, move elsewhere?
@@ -163,4 +167,5 @@ module.exports = {
 	sortByKey,
 	splice,
 	transform,
+	enumerateObjects,
 };
