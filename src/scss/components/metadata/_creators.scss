@@ -8,8 +8,18 @@
 
 	.editing & {
 		@include variant(".title + .creators-entry") {
+			@include bp-up(sm) {
+				padding-top: 0;
+				border-top-left-radius: $input-border-radius;
+				border-top-right-radius: $input-border-radius;
+			}
+
 			&::before {
 				left: 0;
+
+				@include bp-up(sm) {
+					content: none;
+				}
 			}
 		}
 	}

@@ -12,6 +12,7 @@
 
 	&.editing {
 		margin-top: $form-section-margin;
+		margin-bottom: $form-section-margin;
 
 		@include bp-only(sm) {
 			margin-left: $metadata-list-margin-x;
@@ -105,11 +106,21 @@
 			&:last-child {
 				padding-bottom: $input-border-width;
 
+				@include bp-up(sm) {
+					padding-bottom: 0;
+					border-bottom-left-radius: $input-border-radius;
+					border-bottom-right-radius: $input-border-radius;
+				}
+
 				&::after {
 					content: "";
 					left: 0;
 					top: auto;
 					bottom: 0;
+
+					@include bp-up(sm) {
+						content: none;
+					}
 				}
 			}
 
