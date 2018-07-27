@@ -4,6 +4,8 @@
 
 // Creators field
 .creators-entry {
+	position: relative;
+
 	.editing & {
 		@include variant(".title + .creators-entry") {
 			&::before {
@@ -186,6 +188,43 @@
 
 		.btn:last-child {
 			background: image-url("icons/plus-circle.svg") no-repeat center center;
+		}
+	}
+
+	.handle {
+		cursor: move;
+		display: none;
+
+		@include touch-or-bp-down(sm) {
+			align-self: stretch;
+			align-items: center;
+			flex: 0 0 auto;
+			padding: 0 $default-padding-x-touch;
+			margin-right: -$default-padding-x-touch;
+
+			@include state(".editing .creators-entry") {
+				display: flex;
+			}
+
+			.icon-grip {
+				color: $handle-color-touch;
+			}
+		}
+
+		@include mouse-and-bp-up(md) {
+			align-items: center;
+			position: absolute;
+			left: 0;
+			top: 0;
+			height: 100%;
+
+			@include state(".creators-entry:hover") {
+				display: flex;
+			}
+
+			.icon-grip {
+				color: $handle-color-mouse;
+			}
 		}
 	}
 }

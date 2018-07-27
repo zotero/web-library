@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 	<symbol id="grip" viewBox="0 0 24 24">
-		<path d="M23,9.25H1V7.75H23Zm0,2H1v1.5H23Zm0,3.5H1v1.5H23Z"/>
+		<path fill="currentColor" d="M23,9.25H1V7.75H23Zm0,2H1v1.5H23Zm0,3.5H1v1.5H23Z"/>
 	</symbol>
 	<use xlink:href="#grip" viewBox="0 0 24 24"/>
 </svg>
