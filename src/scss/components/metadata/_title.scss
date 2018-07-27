@@ -1,0 +1,32 @@
+//
+// Title
+// --------------------------------------------------
+
+.metadata-list {
+	.title {
+		@include touch-or-bp-down(sm) {
+			display: none;
+
+			@include state(".metadata-list.editing") {
+				display: flex;
+				margin-bottom: $form-section-margin;
+				border-bottom-left-radius: $input-btn-border-radius;
+				border-bottom-right-radius: $input-btn-border-radius;
+			}
+		}
+
+		@include bp-down(xs) {
+			@include state(".metadata-list.editing") {
+				min-height: $line-height-large-touch + 2 * $border-width;
+				padding-bottom: $border-width;
+
+				&::after {
+					content: "";
+					left: 0;
+					top: auto;
+					bottom: 0;
+				}
+			}
+		}
+	}
+}

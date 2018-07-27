@@ -11,6 +11,8 @@
 	}
 
 	&.editing {
+		margin-top: $form-section-margin;
+
 		@include bp-only(sm) {
 			margin-left: $metadata-list-margin-x;
 			margin-right: $metadata-list-margin-x;
@@ -85,8 +87,18 @@
 			}
 
 			&:first-child {
+				@include bp-up(sm) {
+					padding-top: 0;
+					border-top-left-radius: $input-border-radius;
+					border-top-right-radius: $input-border-radius;
+				}
+
 				&::before {
 					left: 0;
+
+					@include bp-up(sm) {
+						content: none;
+					}
 				}
 			}
 
@@ -252,27 +264,6 @@
 				.editable-control {
 					margin-top: -3px; // Align vertically with label
 					margin-bottom: -3px; // …
-				}
-			}
-		}
-	}
-
-	// Title field
-	.title {
-		@include touch-or-bp-down(sm) {
-			display: none;
-
-			@include state(".metadata-list.editing") {
-				display: flex;
-				margin-bottom: $form-section-margin;
-				min-height: $line-height-large-touch + 2 * $border-width;
-				padding-bottom: $border-width;
-
-				&::after {
-					content: "";
-					left: 0;
-					top: auto;
-					bottom: 0;
 				}
 			}
 		}
