@@ -121,6 +121,7 @@ class CreatorField extends React.PureComponent {
 			creator,
 			creatorTypes,
 			index,
+			isSingle,
 			isVirtual,
 			onReorder,
 			onReorderCancel,
@@ -146,7 +147,7 @@ class CreatorField extends React.PureComponent {
 			<Field
 				className={ cx(className) }
 				index={ index }
-				isSortable={ !isVirtual && !readOnly }
+				isSortable={ !isSingle && !isVirtual && !readOnly }
 				key={ creator.id }
 				onReorder={ onReorder }
 				onReorderCancel={ onReorderCancel }
@@ -212,6 +213,7 @@ class CreatorField extends React.PureComponent {
 		isCreateAllowed: PropTypes.bool,
 		isDeleteAllowed: PropTypes.bool,
 		isForm: PropTypes.bool,
+		isSingle: PropTypes.bool,
 		onChange: PropTypes.func.isRequired,
 		onCreatorAdd: PropTypes.func.isRequired,
 		onCreatorRemove: PropTypes.func.isRequired,

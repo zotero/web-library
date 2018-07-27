@@ -140,6 +140,7 @@ class Creators extends React.PureComponent {
 			isDeleteAllowed: !isVirtual || this.state.creators.length > 1,
 			isForm: this.props.isForm,
 			isVirtual,
+			isSingle: this.state.creators.length === 1,
 			onChange: this.handleValueChanged.bind(this),
 			onCreatorAdd: this.handleCreatorAdd.bind(this),
 			onCreatorRemove: this.handleCreatorRemove.bind(this),
