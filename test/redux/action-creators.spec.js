@@ -9,6 +9,7 @@ const fetchMock = require('fetch-mock');
 
 const {
 	addToCollection,
+	createCollection,
 	createItem,
 	deleteItems,
 	fetchChildItems,
@@ -654,5 +655,25 @@ describe('action creators', () => {
 			['AAAAAAAA', 'BBBBBBBB']
 		);
 		assert.typeOf(store.getActions()[2].response.response, 'object');
+	});
+
+	it('createCollection', async () => {
+		fetchMock.post(/https:\/\/api\.zotero\.org\/users\/123\/collections\?.*/, {
+			body: {
+				success: { "0": collectionsFixture[0].key },
+				failed: {},
+				successful: { "0": {
+					...collectionsFixture[0]
+				} }
+			},
+			headers: { 'Last-Modified-Version': collectionsFixture[0].data.version }
+		});
+		const store = mockStore(initialState);
+		const { version, key, ...properties } = collectionsFixture[0].data; // eslint-disable-line no-unused-vars
+		await store.dispatch(createCollection(properties));
+
+		assert.strictEqual(store.getActions().length, 2);
+		assert.deepEqual(store.getActions()[1].collection, collectionsFixture[0].data);
+		assert.typeOf(store.getActions()[1].response.response, 'object');
 	});
 });

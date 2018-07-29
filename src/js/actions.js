@@ -86,6 +86,10 @@ const {
 	RECEIVE_RECOVER_ITEMS_TRASH,
 	ERROR_RECOVER_ITEMS_TRASH,
 
+	ERROR_CREATE_COLLECTION,
+	RECEIVE_CREATE_COLLECTION,
+	REQUEST_CREATE_COLLECTION,
+
 	SORT_ITEMS,
 
 	PREFERENCE_CHANGE,
@@ -1134,10 +1138,58 @@ function queueAddToCollection(itemKeys, collectionKey, libraryKey, queueId) {
 	};
 }
 
+const createCollection = properties => {
+	return async (dispatch, getState) => {
+		const state = getState();
+		const libraryKey = get(getState(), 'current.library');
+		const config = state.config;
+		dispatch({
+			type: REQUEST_CREATE_COLLECTION,
+			libraryKey,
+			properties
+		});
+
+		try {
+			let response = await api(config.apiKey, config.apiConfig)
+				.library(libraryKey)
+				.collections()
+				.post([properties]);
+
+			if(!response.isSuccess()) {
+				throw response.getErrors()[0];
+			}
+
+			const collection = {
+				...response.getEntityByIndex(0)
+			};
+
+			dispatch({
+				type: RECEIVE_CREATE_COLLECTION,
+				libraryKey,
+				collection,
+				response
+			});
+			api().invalidate({
+				'resource.collections': null,
+			});
+			return response.getEntityByIndex(0);
+		} catch(error) {
+			dispatch({
+					type: ERROR_CREATE_COLLECTION,
+					error,
+					libraryKey,
+					properties,
+				});
+			throw error;
+		}
+	};
+}
+
 module.exports = {
 	addToCollection,
 	changeRoute,
 	configureApi,
+	createCollection,
 	createItem,
 	deleteItem,
 	deleteItems,
