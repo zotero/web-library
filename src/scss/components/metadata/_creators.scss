@@ -191,7 +191,7 @@
 			}
 		}
 
-		.btn:nth-last-child(3) {
+		.btn-single-dual {
 			width: 17px;
 			margin-left: $space-min + $input-btn-focus-width + $input-border-width;
 
@@ -212,7 +212,7 @@
 			}
 		}
 
-		.btn:nth-last-child(2) {
+		.btn-minus {
 			width: 14px;
 			background: image-url("icons/minus-circle.svg") no-repeat center center;
 
@@ -221,7 +221,7 @@
 			}
 		}
 
-		.btn:last-child {
+		.btn-plus {
 			width: 14px;
 			background: image-url("icons/plus-circle.svg") no-repeat center center;
 

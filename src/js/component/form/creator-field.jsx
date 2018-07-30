@@ -175,27 +175,33 @@ class CreatorField extends React.PureComponent {
 				</SelectInput>
 				<React.Fragment>
 					{ this.isDual ? this.renderDual() : this.renderSingle() }
-					<Button onClick={ this.handleCreatorTypeSwitch.bind(this, index) }>
+					<Button className="btn-single-dual"
+						onClick={ this.handleCreatorTypeSwitch.bind(this, index) }
+					>
 						<Icon type={ this.icon } width="20" height="20" />
 					</Button>
 					{
 						this.props.isDeleteAllowed ? (
-							<Button onClick={ this.handleCreatorRemove.bind(this, index) }>
+							<Button className="btn-minus"
+								onClick={ this.handleCreatorRemove.bind(this, index) }
+							>
 								<Icon type={ '16/minus' } width="16" height="16" />
 							</Button>
 						) : (
-							<Button disabled={ true }>
+							<Button className="btn-minus" disabled={ true }>
 								<Icon type={ '16/minus' } width="16" height="16" />
 							</Button>
 						)
 					}
 					{
 						this.props.isCreateAllowed ? (
-							<Button onClick={ this.handleCreatorAdd.bind(this) }>
+							<Button className="btn-plus"
+								onClick={ this.handleCreatorAdd.bind(this) }
+							>
 								<Icon type={ '16/plus' } width="16" height="16" />
 							</Button>
 						) : (
-							<Button disabled={ true }>
+							<Button className="btn-plus" disabled={ true }>
 								<Icon type={ '16/plus' } width="16" height="16" />
 							</Button>
 						)
