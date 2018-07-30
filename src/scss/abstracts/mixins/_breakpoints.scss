@@ -101,3 +101,28 @@
 		}
 	}
 }
+
+
+@mixin keyboard-and-bp-up($name, $breakpoints: $grid-breakpoints) {
+	.library-container.keyboard & {
+		@include bp-up($name, $breakpoints: $grid-breakpoints) {
+			@content;
+		}
+	}
+}
+
+@mixin keyboard-and-bp-down($name, $breakpoints: $grid-breakpoints) {
+	.library-container.keyboard & {
+		@include bp-down($name, $breakpoints: $grid-breakpoints) {
+			@content;
+		}
+	}
+}
+
+@mixin keyboard-and-bp-only($name, $breakpoints: $grid-breakpoints) {
+	.library-container.keyboard & {
+  	@include bp-only($name, $breakpoints: $grid-breakpoints) {
+			@content;
+		}
+	}
+}
