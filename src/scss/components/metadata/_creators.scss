@@ -161,14 +161,28 @@
 			width: $space-md;
 			height: $space-md;
 			flex: 0 0 auto;
-			display: none;
+
+			@include touch-or-bp-down(sm) {
+				display: none;
+			}
 
 			@include mouse-and-bp-up(md) {
-				display: block;
+				opacity: 0;
+			}
+
+			@include state(".creators-entry:hover") {
+				@include mouse-and-bp-up(md) { // Repeat for specifity
+					opacity: 1;
+
+					&[disabled] {
+						opacity: 0.5;
+					}
+				}
 			}
 
 			&:focus {
-				.keyboard & {
+				@include keyboard-and-bp-up(md) {
+					opacity: 1;
 					box-shadow: none;
 					outline: $outline-width solid $focus-color;
 				}
@@ -185,19 +199,37 @@
 
 			@include state(".creators-entry.creators-twoslot") {
 				background: image-url("icons/input-single.svg") no-repeat center center;
+
+				&:active {
+					background-image: image-url("icons/input-single-active.svg");
+				}
 			}
 
 			@include state(".creators-entry.creators-oneslot") {
 				background: image-url("icons/input-dual.svg") no-repeat center center;
+
+				&:active {
+					background-image: image-url("icons/input-dual-active.svg");
+				}
 			}
 		}
 
 		.btn:nth-last-child(2) {
+			width: 14px;
 			background: image-url("icons/minus-circle.svg") no-repeat center center;
+
+			&:active {
+				background-image: image-url("icons/minus-circle-active.svg");
+			}
 		}
 
 		.btn:last-child {
+			width: 14px;
 			background: image-url("icons/plus-circle.svg") no-repeat center center;
+
+			&:active {
+				background-image: image-url("icons/plus-circle-active.svg");
+			}
 		}
 	}
 
