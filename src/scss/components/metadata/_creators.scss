@@ -61,6 +61,14 @@
 					padding: 0;
 					cursor: pointer;
 					box-shadow: none;
+
+					@include state(".Select:hover") {
+						color: $link-color;
+					}
+
+					@include state(".Select.is-focused") {
+						color: $link-color;
+					}
 				}
 
 				.Select-multi-value-wrapper {
@@ -85,6 +93,20 @@
 
 				.Select-arrow {
 					background-image: image-url("icons/chevron-7-777.svg");
+					display: none;
+
+					@include state(".creators-entry:hover") {
+						display: block;
+					}
+
+					@include state(".Select:hover") {
+						background-image: image-url("icons/chevron-7-secondary.svg");
+					}
+
+					@include state(".Select.is-focused") {
+						display: block;
+						background-image: image-url("icons/chevron-7-secondary.svg");
+					}
 				}
 
 				.Select-menu-outer {
@@ -92,26 +114,6 @@
 					width: auto;
 					white-space: nowrap;
 					right: auto;
-				}
-
-				&:hover {
-					.Select-control {
-						color: $link-color;
-					}
-
-					.Select-arrow {
-						background-image: image-url("icons/chevron-7-secondary.svg");
-					}
-				}
-
-				&.is-focused {
-					.Select-control {
-						color: $link-color;
-					}
-
-					.Select-arrow {
-						background-image: image-url("icons/chevron-7-secondary.svg");
-					}
 				}
 			}
 		}
