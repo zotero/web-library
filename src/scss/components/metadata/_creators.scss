@@ -6,7 +6,17 @@
 .creators-entry {
 	position: relative;
 
-	.editing & {
+	@include state(".editing .creators-entry") {
+		@include touch-or-bp-down(xs) {
+			&::before {
+				left: 2 * $default-padding-x-touch + $space-lg;
+			}
+		}
+
+		@include touch-or-bp-down(sm) {
+			padding-left: 2 * $default-padding-x-touch + $space-lg;
+		}
+
 		@include variant(".title + .creators-entry") {
 			@include bp-up(sm) {
 				padding-top: 0;
@@ -15,7 +25,9 @@
 			}
 
 			&::before {
-				left: 0;
+				@include touch-or-bp-down(xs) {
+					left: 0;
+				}
 
 				@include bp-up(sm) {
 					content: none;
@@ -215,6 +227,19 @@
 		.btn-minus {
 			width: 14px;
 			background: image-url("icons/minus-circle.svg") no-repeat center center;
+
+			@include touch-or-bp-down(sm) {
+				@include state(".editing .creators-entry") {
+					display: block;
+					position: absolute;
+					left: 0;
+					top: 0;
+					margin: 0;
+					width: 2 * $default-padding-x-touch + $space-lg;
+					height: 100%;
+					background: image-url("icons/minus-circle-touch.svg") no-repeat center center;
+				}
+			}
 
 			&:active {
 				background-image: image-url("icons/minus-circle-active.svg");
