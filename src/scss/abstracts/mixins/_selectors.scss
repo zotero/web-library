@@ -3,35 +3,37 @@
 // --------------------------------------------------
 
 // State mixin
-@mixin state($state) {
-	$selectors: $state;
+@mixin state($states...) {
+	@each $state in $states {
+		$selectors: $state;
 
-	@each $token in " ", ">", "+", "~" {
-		$i: str-index($selectors, $token);
-
-		@while $i != null {
-			$first-part: str-slice($selectors, 1, ($i - 1));
-			$last-part: str-slice($selectors, ($i + 1));
-			$selectors: #{$first-part}#{$last-part};
-
+		@each $token in " ", ">", "+", "~" {
 			$i: str-index($selectors, $token);
+
+			@while $i != null {
+				$first-part: str-slice($selectors, 1, ($i - 1));
+				$last-part: str-slice($selectors, ($i + 1));
+				$selectors: #{$first-part}#{$last-part};
+
+				$i: str-index($selectors, $token);
+			}
 		}
-	}
 
-	$selectors: simple-selectors($selectors);
+		$selectors: simple-selectors($selectors);
 
-	@each $sel in $selectors {
-		@if str-index(#{&}, $sel) != null {
-			@at-root #{selector-replace(&, $sel, $state)} {
-				@content;
+		@each $sel in $selectors {
+			@if str-index(#{&}, $sel) != null {
+				@at-root #{selector-replace(&, $sel, $state)} {
+					@content;
+				}
 			}
 		}
 	}
 }
 
 // Variant mixin (alias)
-@mixin variant($arg) {
-	@include state($arg) {
+@mixin variant($args...) {
+	@include state($args...) {
 		@content;
 	}
 }

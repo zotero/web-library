@@ -62,11 +62,7 @@
 					cursor: pointer;
 					box-shadow: none;
 
-					@include state(".Select:hover") {
-						color: $link-color;
-					}
-
-					@include state(".Select.is-focused") {
+					@include state(".Select:hover", ".Select.is-focused") {
 						color: $link-color;
 					}
 				}
