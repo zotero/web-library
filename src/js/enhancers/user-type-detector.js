@@ -29,8 +29,6 @@ var UserTypeDetector = ComposedComponent => class extends React.PureComponent {
 		if(ev.key === 'Tab') {
 			this.setState({
 				'isKeyboardUser': true,
-				'isMouseUser': false,
-				'isTouchUser': false,
 				'userType': 'keyboard'
 			});
 		}
@@ -40,7 +38,6 @@ var UserTypeDetector = ComposedComponent => class extends React.PureComponent {
 		// prevent simulated mouse events triggering mouse user
 		if(!this.lastTouchStartEvent || ev.timeStamp - this.lastTouchStartEvent > 300) {
 			this.setState({
-				'isKeyboardUser': false,
 				'isMouseUser': true,
 				'isTouchUser': false,
 				'userType': 'mouse'
@@ -51,7 +48,6 @@ var UserTypeDetector = ComposedComponent => class extends React.PureComponent {
 	handleTouch(ev) {
 		this.lastTouchStartEvent = ev.timeStamp;
 		this.setState({
-			'isKeyboardUser': false,
 			'isMouseUser': false,
 			'isTouchUser': true,
 			'userType': 'touch'
