@@ -33,6 +33,7 @@
 }
 
 
+// Touch breakpoints
 @mixin touch-and-bp-up($name, $breakpoints: $grid-breakpoints) {
 	@include bp-up($name, $breakpoints: $grid-breakpoints) {
 	  .library-container.touch & {
@@ -78,6 +79,52 @@
 }
 
 
+// Touch + keyboard breakpoints
+@mixin touch-keyboard-and-bp-up($name, $breakpoints: $grid-breakpoints) {
+	@include bp-up($name, $breakpoints: $grid-breakpoints) {
+	  .library-container.touch.keyboard & {
+			@content;
+		}
+	}
+}
+
+@mixin touch-keyboard-or-bp-up($name, $breakpoints: $grid-breakpoints) {
+	@include bp-up($name, $breakpoints: $grid-breakpoints) {
+	  .library-container:not(.specifity).keyboard & { // Normalize specifity
+			@content;
+		}
+	}
+
+  .library-container.touch.keyboard & {
+	  @content;
+  }
+}
+
+@mixin touch-keyboard-or-bp-down($name, $breakpoints: $grid-breakpoints) {
+	@include bp-down($name, $breakpoints: $grid-breakpoints) {
+	  .library-container:not(.specifity).keyboard & { // Normalize specifity
+			@content;
+		}
+	}
+
+  .library-container.touch.keyboard & {
+	  @content;
+  }
+}
+
+@mixin touch-keyboard-or-bp-only($name, $breakpoints: $grid-breakpoints) {
+  @include bp-only($name, $breakpoints: $grid-breakpoints) {
+	  .library-container:not(.specifity).keyboard & { // Normalize specifity
+			@content;
+		}
+	}
+
+  .library-container.touch.keyboard & {
+	  @content;
+  }
+}
+
+// Mouse breakpoints
 @mixin mouse-and-bp-up($name, $breakpoints: $grid-breakpoints) {
 	.library-container:not(.touch) & {
 		@include bp-up($name, $breakpoints: $grid-breakpoints) {
@@ -102,25 +149,25 @@
 	}
 }
 
-
-@mixin keyboard-and-bp-up($name, $breakpoints: $grid-breakpoints) {
-	.library-container.keyboard & {
+// Mouse + keyboard breakpoints
+@mixin mouse-keyboard-and-bp-up($name, $breakpoints: $grid-breakpoints) {
+	.library-container:not(.touch).keyboard & {
 		@include bp-up($name, $breakpoints: $grid-breakpoints) {
 			@content;
 		}
 	}
 }
 
-@mixin keyboard-and-bp-down($name, $breakpoints: $grid-breakpoints) {
-	.library-container.keyboard & {
+@mixin mouse-keyboard-and-bp-down($name, $breakpoints: $grid-breakpoints) {
+	.library-container:not(.touch).keyboard & {
 		@include bp-down($name, $breakpoints: $grid-breakpoints) {
 			@content;
 		}
 	}
 }
 
-@mixin keyboard-and-bp-only($name, $breakpoints: $grid-breakpoints) {
-	.library-container.keyboard & {
+@mixin mouse-keyboard-and-bp-only($name, $breakpoints: $grid-breakpoints) {
+	.library-container:not(.touch).keyboard & {
   	@include bp-only($name, $breakpoints: $grid-breakpoints) {
 			@content;
 		}

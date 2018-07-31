@@ -191,10 +191,12 @@
 			}
 
 			&:focus {
-				@include keyboard-and-bp-up(md) {
-					opacity: 1;
-					box-shadow: none;
-					outline: $outline-width solid $focus-color;
+				@include touch-or-bp-down(sm) {
+					outline-offset: -$outline-width;
+				}
+
+				@include mouse-keyboard-and-bp-up(md) {
+				 opacity: 1;
 				}
 			}
 
