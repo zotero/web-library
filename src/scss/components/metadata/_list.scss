@@ -28,6 +28,10 @@
 	.metadata {
 		align-items: flex-start;
 
+		&.dnd-source {
+			opacity: 0;
+		}
+
 		@include bp-down(xs) {
 			margin-bottom: $font-size-mobile / 2;
 		}

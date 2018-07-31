@@ -26,6 +26,7 @@ class ItemBox extends React.PureComponent {
 		super(props);
 		this.state = {
 			activeEntry: null,
+			isDragging: false,
 		};
 		this.fieldComponents = {};
 	}
@@ -75,6 +76,10 @@ class ItemBox extends React.PureComponent {
 		}
 	}
 
+	handleDragStatusChange(isDragging) {
+		this.setState({ isDragging });
+	}
+
 	renderCreators(field) {
 		return (
 			<Creators
@@ -85,6 +90,7 @@ class ItemBox extends React.PureComponent {
 				value={ field.value || [] }
 				onSave={ this.handleEditableCommit.bind(this, field.key) }
 				isForm={ this.props.isForm }
+				onDragStatusChange={ this.handleDragStatusChange.bind(this) }
 			/>
 		);
 	}
@@ -190,7 +196,10 @@ class ItemBox extends React.PureComponent {
 		}
 
 		return (
-			<ol className={cx('metadata-list', { editing: this.props.isEditing }) }>
+			<ol className={ cx('metadata-list', {
+				editing: this.props.isEditing ,
+				'dnd-in-progress': this.state.isDragging
+			}) }>
 				{ this.props.fields.map(this.renderField.bind(this)) }
 			</ol>
 		);

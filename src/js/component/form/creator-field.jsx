@@ -123,6 +123,7 @@ class CreatorField extends React.PureComponent {
 			index,
 			isSingle,
 			isVirtual,
+			onDragStatusChange,
 			onReorder,
 			onReorderCancel,
 			onReorderCommit,
@@ -133,7 +134,7 @@ class CreatorField extends React.PureComponent {
 			'creators-entry': true,
 			'creators-twoslot': 'lastName' in creator,
 			'creators-oneslot': 'name' in creator,
-			'creators-type-editing': this.state.isCreatorTypeActive
+			'creators-type-editing': this.state.isCreatorTypeActive,
 		};
 
 		const creatorTypeDescription = creatorTypes.find(
@@ -145,13 +146,14 @@ class CreatorField extends React.PureComponent {
 
 		return (
 			<Field
-				className={ cx(className) }
+				className={ cx(this.props.className, className) }
 				index={ index }
 				isSortable={ !isSingle && !isVirtual && !readOnly }
 				key={ creator.id }
 				onReorder={ onReorder }
 				onReorderCancel={ onReorderCancel }
 				onReorderCommit={ onReorderCommit }
+				onDragStatusChange={ onDragStatusChange }
 				raw={ raw }
 			>
 				<SelectInput
@@ -213,6 +215,7 @@ class CreatorField extends React.PureComponent {
 	}
 
 	static propTypes = {
+		className: PropTypes.string,
 		creator: PropTypes.object.isRequired,
 		creatorTypes: PropTypes.array.isRequired,
 		index: PropTypes.number.isRequired,
@@ -224,6 +227,7 @@ class CreatorField extends React.PureComponent {
 		onCreatorAdd: PropTypes.func.isRequired,
 		onCreatorRemove: PropTypes.func.isRequired,
 		onCreatorTypeSwitch: PropTypes.func.isRequired,
+		onDragStatusChange: PropTypes.func,
 		onReorder: PropTypes.func,
 		onReorderCancel: PropTypes.func,
 		onReorderCommit: PropTypes.func,

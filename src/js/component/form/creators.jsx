@@ -145,9 +145,10 @@ class Creators extends React.PureComponent {
 			onCreatorAdd: this.handleCreatorAdd.bind(this),
 			onCreatorRemove: this.handleCreatorRemove.bind(this),
 			onCreatorTypeSwitch: this.handleCreatorTypeSwitch.bind(this),
+			onDragStatusChange: this.props.onDragStatusChange,
 			onReorder: this.handleReorder.bind(this),
-			onReorderCommit: this.handleReorderCommit.bind(this),
 			onReorderCancel: this.handleReorderCancel.bind(this),
+			onReorderCommit: this.handleReorderCommit.bind(this),
 			readOnly: this.props.readOnly,
 			ref: ref => this.fields[index] = ref
 		};
@@ -171,6 +172,7 @@ class Creators extends React.PureComponent {
 		creatorTypes: PropTypes.array.isRequired,
 		isForm: PropTypes.bool,
 		name: PropTypes.string,
+		onDragStatusChange: PropTypes.func,
 		onSave: PropTypes.func,
 		readOnly: PropTypes.bool,
 		value: PropTypes.array,

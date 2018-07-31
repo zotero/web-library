@@ -59,6 +59,12 @@ const dndSourceCollect = (connect, monitor) => ({
 @DropTarget(CREATOR, dndTargetSpec, dndTargetCollect)
 @DragSource(CREATOR, dndSourceSpec, dndSourceCollect)
 class Field extends React.PureComponent {
+	componentDidUpdate({ isDragging: wasDragging }) {
+		const { isDragging, onDragStatusChange } = this.props;
+		if(isDragging !== wasDragging) {
+			onDragStatusChange(isDragging);
+		}
+	}
 	render() {
 		const {
 			canDrop,
@@ -70,14 +76,15 @@ class Field extends React.PureComponent {
 			isSortable,
 		} = this.props;
 		const [label, value] = React.Children.toArray(this.props.children);
-		const opacity = isDragging ? 0 : 1;
 		const isDragTarget = isOver && canDrop;
 
 		return isSortable ? connectDropTarget(
 			connectDragPreview(
 				<li
-					style={ { opacity } }
-					className={ cx('metadata', this.props.className, { 'dnd-target': isDragTarget }) }
+					className={ cx('metadata', this.props.className, {
+						'dnd-target': isDragTarget,
+						'dnd-source': isDragging
+					}) }
 				>
 					<div className="key">
 						{ label }
@@ -118,13 +125,15 @@ class Field extends React.PureComponent {
 		isActive: PropTypes.bool,
 		isDragging: PropTypes.bool,
 		isSortable: PropTypes.bool,
+		onDragStatusChange: PropTypes.func,
 		onReorder: PropTypes.func,
-		onReorderCommit: PropTypes.func,
 		onReorderCancel: PropTypes.func,
+		onReorderCommit: PropTypes.func,
 		raw: PropTypes.object,
 	};
 
 	static defaultProps = {
+		onDragStatusChange: noop,
 		onReorder: noop,
 		onReorderCancel: noop,
 		onReorderCommit: noop,
