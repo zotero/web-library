@@ -15,13 +15,13 @@
 		margin-bottom: $form-section-margin;
 
 		@include bp-only(sm) {
-			margin-left: $metadata-list-margin-x;
-			margin-right: $metadata-list-margin-x;
+			margin-left: $metadata-list-margin-x-touch;
+			margin-right: $metadata-list-margin-x-touch;
 		}
 
 		@include touch-and-bp-up(md) {
-			margin-left: $metadata-list-margin-x;
-			margin-right: $metadata-list-margin-x;
+			margin-left: $metadata-list-margin-x-touch;
+			margin-right: $metadata-list-margin-x-touch;
 		}
 	}
 

@@ -7,14 +7,12 @@
 	position: relative;
 
 	@include state(".editing .creators-entry") {
-		@include touch-or-bp-down(xs) {
+		@include touch-or-bp-down(sm) {
+			padding-left: 2 * $default-padding-x-touch + $space-lg;
+
 			&::before {
 				left: 2 * $default-padding-x-touch + $space-lg;
 			}
-		}
-
-		@include touch-or-bp-down(sm) {
-			padding-left: 2 * $default-padding-x-touch + $space-lg;
 		}
 
 		@include variant(".title + .creators-entry") {
