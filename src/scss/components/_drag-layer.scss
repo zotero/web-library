@@ -20,23 +20,22 @@
 	display: flex;
 	align-items: center;
 	min-height: $line-height-large-touch;
-	background-color: $input-bg;
 	padding-left: 2 * $default-padding-x-touch + $space-lg;
 	padding-right: 2 * $default-padding-x-touch + $space-lg + $input-border-width;
 	box-shadow: 0 2px 20px $creator-drag-preview-shadow;
 	background:
+		linear-gradient(
+			to left,
+			transparent,
+			transparent $handle-width,
+			$input-border-color $handle-width,
+			$input-border-color ($handle-width + $input-border-width),
+			transparent ($handle-width + $input-border-width)
+		),
 		image-url("icons/minus-circle-touch.svg")
 			no-repeat $default-padding-x-touch center,
 		image-url("icons/grip.svg")
-			no-repeat right $default-padding-x-touch center,
-		linear-gradient(
-			to left,
-			$input-bg,
-			$input-bg $handle-width,
-			$input-border-color $handle-width,
-			$input-border-color ($handle-width + $input-border-width),
-			$input-bg ($handle-width + $input-border-width)
-		);
+			no-repeat right $default-padding-x-touch center $input-bg;
 
 	.creator-type {
 		flex: 0 0 calc(
