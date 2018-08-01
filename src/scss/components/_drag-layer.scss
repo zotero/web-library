@@ -1,34 +1,27 @@
+
 .drag-layer {
-	height: 100%;
-	left: 0;
-	pointer-events: none;
 	position: fixed;
 	top: 0;
-	width: 100%;
+	right: 0;
+	bottom: 0;
+	left: 0;
 	z-index: $z-index-drag-layer;
+	pointer-events: none;
 	touch-action: none;
 	overflow: hidden;
 }
 
-.creator-drag-indicator {
-	border-radius: $border-radius;
-	background: $shade-0;
-	padding: $space-sm;
-	border: 1px solid $asphalt;
+.creator-drag-preview {
 	display: flex;
+	align-items: center;
+	min-height: $line-height-large-touch;
+	background-color: $input-bg;
+	padding-left: 2 * $default-padding-x-touch + $space-lg;
+	box-shadow: 0 2px 20px $creator-drag-preview-shadow;
 
 	.creator-type {
-		color: $shade-5;
-		flex: 0 0 33%;
-	}
-
-	.name {
-		flex: 0 0 66%;
-	}
-
-	.first-name,
-	.last-name {
-		flex: 0 0 33%;
+		flex: 0 0 $metadata-list-offset;
+		color: $key-color;
 	}
 }
 
