@@ -67,15 +67,9 @@ class CustomDragLayer extends React.PureComponent {
 				return (
 					<div className="metadata creators creator-drag-preview">
 						<div className="creator-type">{ raw.creatorType }</div>
-						{ 'name' in raw ? (
-							<div className="name">{ raw.name }</div>
-						) : (
-							<React.Fragment>
-								<div className="last-name">{ raw.lastName }</div>
-								<div className="first-name">{ raw.firstName }</div>
-							</React.Fragment>
-						)
-						}
+						<div className="name truncate">
+							{ 'name' in raw ? raw.name : raw.lastName + ', ' + raw.firstName }
+						</div>
 					</div>
 				)
 			case ITEM:

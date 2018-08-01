@@ -19,6 +19,7 @@
 	min-height: $line-height-large-touch;
 	background-color: $input-bg;
 	padding-left: 2 * $default-padding-x-touch + $space-lg;
+	padding-right: 2 * $default-padding-x-touch + $space-lg + $input-border-width;
 	box-shadow: 0 2px 20px $creator-drag-preview-shadow;
 	background:
 		image-url("icons/minus-circle-touch.svg")
@@ -27,16 +28,22 @@
 			no-repeat right $default-padding-x-touch center,
 		linear-gradient(
 			to left,
-			transparent,
-			transparent $handle-width,
+			$input-bg,
+			$input-bg $handle-width,
 			$input-border-color $handle-width,
 			$input-border-color ($handle-width + $input-border-width),
-			transparent ($handle-width + $input-border-width)
+			$input-bg ($handle-width + $input-border-width)
 		);
 
 	.creator-type {
 		flex: 0 0 $metadata-list-offset;
 		color: $key-color;
+		padding-right: $metadata-list-gutter-mobile / 2;
+	}
+
+	.name {
+		padding-left: $metadata-list-gutter-mobile / 2;
+		padding-right: $default-padding-x-touch;
 	}
 }
 
