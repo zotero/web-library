@@ -28,10 +28,6 @@
 	.metadata {
 		align-items: flex-start;
 
-		&.dnd-source {
-			opacity: 0;
-		}
-
 		@include bp-down(xs) {
 			margin-bottom: $font-size-mobile / 2;
 		}
@@ -59,10 +55,25 @@
 			padding-right: ($metadata-list-gutter + 1px);
 		}
 
-		@include touch-or-bp-down(md) {
-			&.empty {
+		&.empty {
+			@include touch-or-bp-down(md) {
 				@include state(".metadata-list:not(.editing)") {
 					display: none;
+				}
+			}
+		}
+
+		&.dnd-source {
+			opacity: 0;
+
+			@include touch-or-bp-down(sm) {
+				& + .metadata {
+					padding-top: 0;
+					margin-top: $input-border-width;
+
+					&::before {
+						content: none;
+					}
 				}
 			}
 		}
