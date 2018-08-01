@@ -18,6 +18,8 @@
 	background-color: $input-bg;
 	padding-left: 2 * $default-padding-x-touch + $space-lg;
 	box-shadow: 0 2px 20px $creator-drag-preview-shadow;
+	background: image-url("icons/minus-circle-touch.svg") no-repeat
+		$default-padding-x-touch center;
 
 	.creator-type {
 		flex: 0 0 $metadata-list-offset;
