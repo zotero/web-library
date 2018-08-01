@@ -1,3 +1,6 @@
+//
+// Drag layer
+// --------------------------------------------------
 
 .drag-layer {
 	position: fixed;
@@ -36,9 +39,12 @@
 		);
 
 	.creator-type {
-		flex: 0 0 $metadata-list-offset;
+		flex: 0 0 calc(
+			#{$metadata-list-offset} - #{$metadata-list-gutter-mobile / 2}
+		);
 		color: $key-color;
-		padding-right: $metadata-list-gutter-mobile / 2;
+		margin-right: $metadata-list-gutter-mobile / 2;
+		text-overflow: clip; // Mirror select
 	}
 
 	.name {
