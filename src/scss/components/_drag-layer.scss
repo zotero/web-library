@@ -6,6 +6,8 @@
 	top: 0;
 	width: 100%;
 	z-index: $z-index-drag-layer;
+	touch-action: none;
+	overflow: hidden;
 }
 
 .creator-drag-indicator {

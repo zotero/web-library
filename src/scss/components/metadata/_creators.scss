@@ -267,6 +267,7 @@
 			padding: 0 $default-padding-x-touch;
 			border-left: 1px solid $input-border-color;
 			margin-right: -$default-padding-x-touch;
+			touch-action: manipulation;
 
 			@include state(".editing .creators-entry") {
 				display: flex;
