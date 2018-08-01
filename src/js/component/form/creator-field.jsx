@@ -68,7 +68,7 @@ class CreatorField extends React.PureComponent {
 	}
 
 	handleCreatorAdd() {
-		this.props.onCreatorAdd();
+		this.props.onCreatorAdd(this.props.creator);
 	}
 
 	get icon() {

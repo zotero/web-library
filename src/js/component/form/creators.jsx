@@ -37,9 +37,11 @@ class Creators extends React.PureComponent {
 	}
 
 	componentDidUpdate(props, state) {
-		if(this.state.creators.length > state.creators.length &&
-			this.state.creators[this.state.creators.length - 1][Symbol.for('isVirtual')]) {
-			this.fields[this.state.creators.length - 1].focus();
+		if(this.state.creators.length > state.creators.length) {
+			let virtualEntryIndex = this.state.creators.findIndex(c => c[Symbol.for('isVirtual')]);
+			if(virtualEntryIndex > -1) {
+				this.fields[virtualEntryIndex].focus();
+			}
 		}
 	}
 
@@ -66,9 +68,21 @@ class Creators extends React.PureComponent {
 		this.handleSaveCreators(creators);
 	}
 
-	handleCreatorAdd() {
+	handleCreatorAdd({ id, creatorType }) {
+		let insertAfterIndex = this.state.creators.findIndex(c => c.id === id);
+		let newCreator = {
+			creatorType,
+			firstName: '',
+			lastName: '',
+			[Symbol.for('isVirtual')]: true
+		};
+
 		this.setState({
-			creators: enumerateObjects([...this.state.creators, this.newCreator])
+			creators: enumerateObjects([
+				...this.state.creators.slice(0, insertAfterIndex + 1),
+				newCreator,
+				...this.state.creators.slice(insertAfterIndex + 1, this.state.creators.length),
+			])
 		});
 	}
 
@@ -135,8 +149,7 @@ class Creators extends React.PureComponent {
 			creator,
 			creatorTypes: this.props.creatorTypes,
 			index,
-			isCreateAllowed: index + 1 === this.state.creators.length && !this.hasVirtual,
-			isCreatorTypeEditing: this.state.isCreatorTypeEditing,
+			isCreateAllowed: !this.hasVirtual,
 			isDeleteAllowed: !isVirtual || this.state.creators.length > 1,
 			isForm: this.props.isForm,
 			isVirtual,
