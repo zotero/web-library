@@ -9,6 +9,7 @@
 	@include state(".editing .creators-entry") {
 		@include touch-or-bp-down(sm) {
 			padding-left: 2 * $default-padding-x-touch + $space-lg;
+			padding-right: 2 * $default-padding-x-touch + $space-lg + $input-border-width;
 
 			&::before {
 				left: 2 * $default-padding-x-touch + $space-lg;
@@ -266,7 +267,7 @@
 			flex: 0 0 auto;
 			padding: 0 $default-padding-x-touch;
 			border-left: 1px solid $input-border-color;
-			margin-right: -$default-padding-x-touch;
+			margin-right: -(2 * $default-padding-x-touch + $space-lg + $input-border-width);
 			touch-action: manipulation;
 
 			@include state(".editing .creators-entry") {
