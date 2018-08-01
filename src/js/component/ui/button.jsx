@@ -13,20 +13,28 @@ class Button extends React.Component {
 			'btn-icon': React.Children.toArray(this.props.children).some(c => c.type === Icon)
 		});
 		return (
-			<button  className={ classNames } onClick={ onClick } { ...props }>
+			<button
+				className={ classNames }
+				onFocus={ this.props.onFocus }
+				onBlur={ this.props.onBlur }
+				onClick={ onClick } { ...props }>
 				{ children }
 			</button>
 		);
 	}
 
 	static defaultProps = {
-		onClick: noop
+		onBlur: noop,
+		onClick: noop,
+		onFocus: noop,
 	}
 
 	static propTypes = {
 		children: PropTypes.node,
 		className: PropTypes.string,
-		onClick: PropTypes.func
+		onBlur: PropTypes.func,
+		onClick: PropTypes.func,
+		onFocus: PropTypes.func,
 	}
 }
 

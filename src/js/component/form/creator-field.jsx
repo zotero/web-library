@@ -33,7 +33,14 @@ class CreatorField extends React.PureComponent {
 	}
 
 	handleFieldFocus(key) {
-		this.setState({ active: key });
+		this.setState({
+			active: key,
+			hasFocus: true,
+		});
+	}
+
+	handleFieldBlur() {
+		this.setState({ hasFocus: false });
 	}
 
 	handleCancel() {
@@ -100,7 +107,7 @@ class CreatorField extends React.PureComponent {
 			<FormField
 				autoFocus={ !this.props.isForm }
 				isActive={ this.state.active === name }
-				onBlur={ () => false }
+				onBlur={ this.handleFieldBlur.bind(this) }
 				onCancel={ this.handleCancel.bind(this) }
 				onCommit={ this.handleEditableCommit.bind(this, name) }
 				placeholder={ label }
@@ -130,11 +137,12 @@ class CreatorField extends React.PureComponent {
 			readOnly,
 		} = this.props;
 		const className = {
-			'metadata': true,
 			'creators-entry': true,
-			'creators-twoslot': 'lastName' in creator,
 			'creators-oneslot': 'name' in creator,
+			'creators-twoslot': 'lastName' in creator,
 			'creators-type-editing': this.state.isCreatorTypeActive,
+			'has-focus': this.state.hasFocus,
+			'metadata': true,
 		};
 
 		const creatorTypeDescription = creatorTypes.find(
@@ -163,8 +171,9 @@ class CreatorField extends React.PureComponent {
 					onCancel={ this.handleCancel.bind(this) }
 					onChange={ () => true }
 					onCommit={ this.handleEditableCommit.bind(this, 'creatorType') }
-					onEditableClick={ this.handleFieldClick.bind(this, 'creatorType') }
-					onEditableFocus={ this.handleFieldFocus.bind(this, 'creatorType') }
+					onClick={ this.handleFieldClick.bind(this, 'creatorType') }
+					onFocus={ this.handleFieldFocus.bind(this, 'creatorType') }
+					onBlur={ this.handleFieldBlur.bind(this, 'creatorType') }
 					options={ creatorTypes }
 					ref={ component => this.fieldComponents['creatorType'] = component }
 					searchable={ false }
@@ -177,20 +186,30 @@ class CreatorField extends React.PureComponent {
 				</SelectInput>
 				<React.Fragment>
 					{ this.isDual ? this.renderDual() : this.renderSingle() }
-					<Button className="btn-single-dual"
+					<Button
+						className="btn-single-dual"
+						onBlur={ () => this.setState({ hasFocus: false }) }
 						onClick={ this.handleCreatorTypeSwitch.bind(this, index) }
+						onFocus={ () => this.setState({ hasFocus: true }) }
 					>
 						<Icon type={ this.icon } width="20" height="20" />
 					</Button>
 					{
 						this.props.isDeleteAllowed ? (
-							<Button className="btn-minus"
+							<Button
+								className="btn-minus"
+								onBlur={ () => this.setState({ hasFocus: false }) }
 								onClick={ this.handleCreatorRemove.bind(this, index) }
+								onFocus={ () => this.setState({ hasFocus: true }) }
 							>
 								<Icon type={ '16/minus' } width="16" height="16" />
 							</Button>
 						) : (
-							<Button className="btn-minus" disabled={ true }>
+							<Button
+								className="btn-minus" disabled={ true }
+								onBlur={ () => this.setState({ hasFocus: false }) }
+								onFocus={ () => this.setState({ hasFocus: true }) }
+							>
 								<Icon type={ '16/minus' } width="16" height="16" />
 							</Button>
 						)

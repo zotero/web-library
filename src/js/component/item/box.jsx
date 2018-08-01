@@ -56,6 +56,10 @@ class ItemBox extends React.PureComponent {
 		this.setState({ activeEntry: key });
 	}
 
+	handleFieldBlur() {
+		this.setState({ activeEntry: null });
+	}
+
 	handleCancel(key) {
 		if(key === this.state.activeEntry) {
 			this.setState({ activeEntry: null });
@@ -124,6 +128,7 @@ class ItemBox extends React.PureComponent {
 				'empty': !field.value || !field.value.length,
 				'select': field.options && Array.isArray(field.options),
 				'editing': isActive,
+				'has-focus': isActive,
 				'abstract': field.key === 'abstractNote',
 				'extra': field.key === 'extra',
 			};
@@ -149,11 +154,19 @@ class ItemBox extends React.PureComponent {
 					'form-control-sm': this.props.isForm,
 					'pseudo-editable': isPseudoEditable
 			}),
-				onEditableClick: this.handleFieldClick.bind(this, field.key),
-				onEditableFocus: this.handleFieldFocus.bind(this, field.key),
 				id: field.key,
 				[this.props.isForm ? 'ref' : 'inputRef']: component => this.fieldComponents[field.key] = component,
 			};
+
+			if(isPseudoEditable) {
+				props['onClick'] = this.handleFieldClick.bind(this, field.key);
+				props['onFocus'] = this.handleFieldFocus.bind(this, field.key);
+				props['onBlur'] = this.handleFieldBlur.bind(this, field.key);
+			} else {
+				props['onEditableClick'] = this.handleFieldClick.bind(this, field.key);
+				props['onEditableFocus'] = this.handleFieldFocus.bind(this, field.key);
+				props['onEditableBlur'] = this.handleFieldBlur.bind(this, field.key);
+			}
 
 			if(this.props.isForm) {
 				props['tabIndex'] = 0;
