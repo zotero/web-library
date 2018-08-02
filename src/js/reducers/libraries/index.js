@@ -24,13 +24,17 @@ const actions = Object.entries(require('../../constants/actions'))
 			'ERROR_TOP_ITEMS',
 			'ERROR_UPDATE_ITEM',
 			'PRE_UPDATE_ITEM',
+			'RECEIVE_ADD_ITEMS_TO_COLLECTION',
 			'RECEIVE_CHILD_ITEMS',
 			'RECEIVE_COLLECTIONS_IN_LIBRARY',
+			'RECEIVE_CREATE_COLLECTION',
 			'RECEIVE_CREATE_ITEM',
 			'RECEIVE_DELETE_ITEM',
 			'RECEIVE_DELETE_ITEMS',
 			'RECEIVE_FETCH_ITEMS',
 			'RECEIVE_ITEMS_IN_COLLECTION',
+			'RECEIVE_MOVE_ITEMS_TRASH',
+			'RECEIVE_RECOVER_ITEMS_TRASH',
 			'RECEIVE_TOP_ITEMS',
 			'RECEIVE_TRASH_ITEMS',
 			'RECEIVE_UPDATE_ITEM',
@@ -44,9 +48,6 @@ const actions = Object.entries(require('../../constants/actions'))
 			'REQUEST_TOP_ITEMS',
 			'REQUEST_UPDATE_ITEM',
 			'TRIGGER_EDITING_ITEM',
-			'RECEIVE_MOVE_ITEMS_TRASH',
-			'RECEIVE_RECOVER_ITEMS_TRASH',
-			'RECEIVE_ADD_ITEMS_TO_COLLECTION'
 	]).includes(key) ? value : false).filter(Boolean);
 
 const libraries = (state = {}, action) => {

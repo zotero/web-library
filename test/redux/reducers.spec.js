@@ -9,6 +9,7 @@ const {
 	RECEIVE_ADD_ITEMS_TO_COLLECTION,
 	RECEIVE_CHILD_ITEMS,
 	RECEIVE_COLLECTIONS_IN_LIBRARY,
+	RECEIVE_CREATE_COLLECTION,
 	RECEIVE_CREATE_ITEM,
 	RECEIVE_DELETE_ITEMS,
 	RECEIVE_ITEM_TYPE_CREATOR_TYPES,
@@ -593,6 +594,31 @@ describe('reducers', () => {
 			assert.strictEqual(
 				state.itemCountTopByLibrary[libraryKey],
 				originalTopCount + 1
+			);
+		});
+
+		it('create a collection item', () => {
+			var state = getTestState();
+			const libraryKey = state.current.library;
+			const collectionKey = Object.keys(
+				state.libraries[libraryKey].itemsByCollection
+			)[0];
+			state = reduce(state, {
+				type: RECEIVE_CREATE_COLLECTION,
+				collection: {
+					key: 'COLCOL11',
+					version: 1337,
+					name: 'New Collection',
+					parentCollection: collectionKey,
+					relations : {}
+				},
+				libraryKey,
+				response: mockResponse
+			});
+
+			assert.strictEqual(
+				state.libraries[libraryKey].collections['COLCOL11'].name,
+				'New Collection'
 			);
 		});
 	});
