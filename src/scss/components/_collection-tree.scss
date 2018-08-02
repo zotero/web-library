@@ -5,6 +5,14 @@
 .collection-tree {
 	height: 100%;
 
+	.desktop-header {
+		display: flex;
+
+		> h4 {
+			flex: 1 0 auto;
+		}
+	}
+
 	@include touch-or-bp-down(sm) {
 		display: flex;
 		flex-direction: column;

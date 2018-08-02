@@ -7,7 +7,7 @@ const PropTypes = require('prop-types');
 const { withRouter } = require('react-router-dom');
 const { connect } = require('react-redux');
 const CollectionTree = require('../component/collection-tree');
-const { fetchCollections } = require('../actions');
+const { fetchCollections, createCollection } = require('../actions');
 const { getCollectionsPath } = require('../common/state');
 const { get } = require('../utils');
 
@@ -34,6 +34,12 @@ class CollectionTreeContainer extends React.Component {
 		}
 	}
 
+	async handleCollectionAdd(name, parentCollection = null) {
+		return await this.props.dispatch(createCollection({
+			name, parentCollection
+		}));
+	}
+
 	render() {
 		return <CollectionTree
 			collections={ this.props.collections }
@@ -41,6 +47,7 @@ class CollectionTreeContainer extends React.Component {
 			isFetching={ this.props.isFetching }
 			onSelect={ this.handleSelect.bind(this) }
 			itemsSource={ this.props.itemsSource }
+			onCollectionAdd={ this.handleCollectionAdd.bind(this) }
 		/>;
 	}
 }

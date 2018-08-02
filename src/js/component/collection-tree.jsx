@@ -5,11 +5,15 @@ const PropTypes = require('prop-types');
 const memoize = require('memoize-one');
 const cx = require('classnames');
 const Icon = require('./ui/icon');
+const Button = require('./ui/button');
 const Spinner = require('./ui/spinner');
+const Input = require('./form/input');
 const Node = require('./collection-tree/node');
 
 class CollectionTree extends React.Component {
 	state = {
+		isAddingCollection: false,
+		isAddingCollectionBusy: false,
 		opened: []
 	}
 
@@ -33,6 +37,24 @@ class CollectionTree extends React.Component {
 			this.props.onSelect(itemsSource, key, ev);
 		}
 	}
+
+	handleCollectionAdd() {
+		this.setState({ isAddingCollection: true });
+	}
+
+	async handleCollectionAddCommit(name) {
+		this.setState({ isAddingCollectionBusy: true });
+		await this.props.onCollectionAdd(name);
+		this.setState({
+			isAddingCollection: false,
+			isAddingCollectionBusy: false
+		});
+	}
+
+	handleCollectionAddCancel() {
+		this.setState({ isAddingCollection: false });
+	}
+
 
 	collectionsFromKeys(collections) {
 		return collections.map(
@@ -159,6 +181,21 @@ class CollectionTree extends React.Component {
 						</Node>
 					)) }
 					{
+						this.state.isAddingCollection && level === 1 && (
+							<Node
+								className={ cx({ 'new-collection': true })}
+							>
+								<Icon type="28/folder" className="touch" width="28" height="28" />
+								<Icon type="16/folder" className="mouse" width="16" height="16" />
+								<Input autoFocus
+									busy={ this.state.isAddingCollectionBusy }
+									onCommit={ this.handleCollectionAddCommit.bind(this) }
+									onCancel={ this.handleCollectionAddCancel.bind(this) }
+								/>
+							</Node>
+						)
+					}
+					{
 						level === 1 && (
 							<Node
 								className={ cx({
@@ -202,7 +239,12 @@ class CollectionTree extends React.Component {
 					<div className={ `level-root ${isRootActive ? 'active' : ''}` }>
 						<div className="scroll-container" role="tree">
 							<section>
-								<h4>My Library</h4>
+								<div className="desktop-header">
+									<h4>My Library</h4>
+									<Button onClick={ this.handleCollectionAdd.bind(this) } >
+										<Icon type={ '20/add-collection' } width="20" height="20" />
+									</Button>
+								</div>
 								{ this.renderCollections(topLevelCollections, 1)}
 							</section>
 
