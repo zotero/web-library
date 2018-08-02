@@ -125,10 +125,12 @@ class CollectionTree extends React.Component {
 								})}
 								onClick={ this.handleSelect.bind(this, 'top', null) }
 								onKeyPress={ this.handleKeyPress.bind(this, 'top', null) }
-								label="All Documents"
-								icon="document"
 								dndTarget={ { 'targetType': 'all-documents' } }
-							/>
+							>
+								<Icon type="28/document" className="touch" width="28" height="28" />
+								<Icon type="16/document" className="mouse" width="16" height="16" />
+								<a>All Documents</a>
+							</Node>
 						)
 					}
 					{ collections.map(collection => (
@@ -139,6 +141,10 @@ class CollectionTree extends React.Component {
 								'selected': derivedData[collection.key].isSelected,
 								'collection': true,
 							})}
+							subtree={ collection.key in childMap ?
+								this.renderCollections(this.collectionsFromKeys(childMap[collection.key]), level + 1) :
+								null
+							}
 							onOpen={ this.handleOpenToggle.bind(this, collection.key) }
 							onClick={ this.handleSelect.bind(this, 'collection', collection.key) }
 							onKeyPress={ this.handleKeyPress.bind(this, 'collection', collection.key) }
@@ -147,10 +153,9 @@ class CollectionTree extends React.Component {
 							icon="folder"
 							dndTarget={ { 'targetType': 'collection', collectionKey: collection.key } }
 						>
-							{ collection.key in childMap ?
-								this.renderCollections(this.collectionsFromKeys(childMap[collection.key]), level + 1) :
-								null
-							}
+								<Icon type="28/folder" className="touch" width="28" height="28" />
+								<Icon type="16/folder" className="mouse" width="16" height="16" />
+								<a>{ collection.name }</a>
 						</Node>
 					)) }
 					{
@@ -162,10 +167,12 @@ class CollectionTree extends React.Component {
 								})}
 								onClick={ this.handleSelect.bind(this, 'trash', null) }
 								onKeyPress={ this.handleKeyPress.bind(this, 'trash', null) }
-								label="Trash"
-								icon="trash"
 								dndTarget={ { 'targetType': 'trash' } }
-							/>
+							>
+								<Icon type="28/trash" className="touch" width="28" height="28" />
+								<Icon type="16/trash" className="mouse" width="16" height="16" />
+								<a>Trash</a>
+							</Node>
 						)
 					}
 				</ul>
@@ -192,7 +199,6 @@ class CollectionTree extends React.Component {
 					<header className="touch-header hidden-mouse-md-up hidden-xs-down">
 						<h3>Library</h3>
 					</header>
-
 					<div className={ `level-root ${isRootActive ? 'active' : ''}` }>
 						<div className="scroll-container" role="tree">
 							<section>
