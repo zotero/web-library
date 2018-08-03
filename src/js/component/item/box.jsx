@@ -17,6 +17,7 @@ const pickInputComponent = field => {
 		case 'itemType': return SelectInput;
 		case 'abstractNote': return TextAreaInput;
 		case 'extra': return TextAreaInput;
+		case 'title': return TextAreaInput;
 		default: return Input;
 	}
 };
