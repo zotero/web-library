@@ -82,9 +82,7 @@ class Node extends React.PureComponent {
 	static propTypes = {
 		children: PropTypes.oneOfType([PropTypes.element, PropTypes.array]),
 		className: PropTypes.string,
-		icon: PropTypes.string.isRequired,
 		isOpen: PropTypes.bool,
-		label: PropTypes.string,
 		onClick: PropTypes.func,
 		onKeyPress: PropTypes.func,
 		onOpen: PropTypes.func,
