@@ -118,11 +118,15 @@ class SelectInput extends React.PureComponent {
 				autoFocus, className, id, placeholder, tabIndex, value
 			};
 			return (
-				<select { ...props }>
-					{ options.map(({ value, label }) => (
-						<option key={ value } value={ value }>{ label }</option>)
-					)}
-				</select>
+				<div className="native-select-wrap" >
+					<div className="value">{ options.find(o => o.value === value).label }</div>
+					<select { ...props }>
+						{ options.map(({ value, label }) => (
+							<option key={ value } value={ value }>{ label }</option>)
+						)}
+					</select>
+				</div>
+
 			);
 		} else {
 			const props = {
