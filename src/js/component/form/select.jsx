@@ -115,11 +115,11 @@ class SelectInput extends React.PureComponent {
 				...commonProps,
 				onKeyDown: this.handleKeyDown.bind(this),
 				onChange: ev => this.handleChange(ev.target.value, ev),
-				autoFocus, className, id, placeholder, tabIndex, value
+				autoFocus, id, placeholder, tabIndex, value
 			};
 			return (
 				<div className="native-select-wrap" >
-					<div className="value">{ options.find(o => o.value === value).label }</div>
+					<div className={ className }>{ options.find(o => o.value === value).label }</div>
 					<select { ...props }>
 						{ options.map(({ value, label }) => (
 							<option key={ value } value={ value }>{ label }</option>)
