@@ -18,6 +18,7 @@ class Input extends React.PureComponent {
 
 	cancel(event = null) {
 		this.props.onCancel(this.hasChanged, event);
+		this.input.blur();
 	}
 
 	commit(event = null) {

@@ -101,6 +101,11 @@ class CreatorField extends React.PureComponent {
 
 		if(this.props.isForm) {
 			extraProps['tabIndex'] = 0;
+			extraProps['onClick'] = this.handleFieldClick.bind(this, name);
+			extraProps['onFocus'] = this.handleFieldFocus.bind(this, name);
+		} else {
+			extraProps['onEditableClick'] = this.handleFieldClick.bind(this, name);
+			extraProps['onEditableFocus'] = this.handleFieldFocus.bind(this, name);
 		}
 
 		return (
@@ -115,8 +120,6 @@ class CreatorField extends React.PureComponent {
 				value={ creator[name] }
 				aria-label={ label }
 				className={ this.props.isForm ? 'form-control form-control-sm' : '' }
-				onEditableClick={ this.handleFieldClick.bind(this, name) }
-				onEditableFocus={ this.handleFieldFocus.bind(this, name) }
 				isDisabled = { this.props.readOnly }
 				{ ...extraProps }
 			/>

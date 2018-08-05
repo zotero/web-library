@@ -26,6 +26,7 @@ class ItemBox extends React.PureComponent {
 	constructor(props) {
 		super(props);
 		this.state = {
+			focusedEntry: null,
 			activeEntry: null,
 			isDragging: false,
 		};
@@ -51,6 +52,8 @@ class ItemBox extends React.PureComponent {
 
 	handleFieldFocus(key) {
 		const field = this.props.fields.find(f => f.key === key);
+		this.setState({ focusedEntry: key });
+
 		if(!this.props.isForm && field.readOnly) {
 			return;
 		}
@@ -58,7 +61,7 @@ class ItemBox extends React.PureComponent {
 	}
 
 	handleFieldBlur() {
-		this.setState({ activeEntry: null });
+		this.setState({ activeEntry: null, focusedEntry: null });
 	}
 
 	handleCancel(key) {
@@ -129,7 +132,7 @@ class ItemBox extends React.PureComponent {
 				'empty': !field.value || !field.value.length,
 				'select': field.options && Array.isArray(field.options),
 				'editing': isActive,
-				'has-focus': isActive,
+				'has-focus': this.state.focusedEntry === field.key,
 				'abstract': field.key === 'abstractNote',
 				'extra': field.key === 'extra',
 			};
@@ -159,7 +162,7 @@ class ItemBox extends React.PureComponent {
 				[this.props.isForm ? 'ref' : 'inputRef']: component => this.fieldComponents[field.key] = component,
 			};
 
-			if(isPseudoEditable) {
+			if(isPseudoEditable || this.props.isForm) {
 				props['onClick'] = this.handleFieldClick.bind(this, field.key);
 				props['onFocus'] = this.handleFieldFocus.bind(this, field.key);
 				props['onBlur'] = this.handleFieldBlur.bind(this, field.key);
