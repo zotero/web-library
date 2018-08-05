@@ -101,6 +101,11 @@ const {
 	REQUEST_ADD_ITEMS_TO_COLLECTION,
 	RECEIVE_ADD_ITEMS_TO_COLLECTION,
 	ERROR_ADD_ITEMS_TO_COLLECTION,
+
+	PRE_UPDATE_COLLECTION,
+	REQUEST_UPDATE_COLLECTION,
+	RECEIVE_UPDATE_COLLECTION,
+	ERROR_UPDATE_COLLECTION,
 } = require('./constants/actions');
 
 // @TODO: rename and move to common/api
@@ -1185,6 +1190,88 @@ const createCollection = properties => {
 	};
 }
 
+function updateCollection(collectionKey, patch) {
+	return async (dispatch, getState) => {
+		const libraryKey = get(getState(), 'current.library');
+		const queueId = ++queueIdCunter;
+
+		dispatch({
+			type: PRE_UPDATE_COLLECTION,
+			collectionKey,
+			libraryKey,
+			patch,
+			queueId
+		});
+
+		dispatch(
+			queueUpdateCollection(collectionKey, patch, libraryKey, queueId)
+		);
+	};
+}
+
+function queueUpdateCollection(collectionKey, patch, libraryKey, queueId) {
+	return {
+		queue: libraryKey,
+		callback: async (next, dispatch, getState) => {
+			const state = getState();
+			const libraryKey = state.current.library;
+			const config = state.config;
+			const collection = get(state, ['libraries', libraryKey, 'collections', collectionKey]);
+			const version = collection.version;
+
+			dispatch({
+				type: REQUEST_UPDATE_COLLECTION,
+				collectionKey,
+				libraryKey,
+				patch,
+				queueId
+			});
+
+			try {
+				const response = await api(config.apiKey, config.apiConfig)
+					.library(libraryKey)
+					.collections(collectionKey)
+					.version(version)
+					.patch(patch);
+
+				const updatedCollection = {
+					...collection,
+					...response.getData()
+				};
+
+				// @TODO: can this be more specific?
+				// We need to invalidate list of collections in this library
+				api().invalidate({ 'resource.library': libraryKey });
+
+				dispatch({
+					type: RECEIVE_UPDATE_COLLECTION,
+					collection: updatedCollection,
+					collectionKey,
+					libraryKey,
+					patch,
+					queueId,
+					response
+				});
+
+				return updateCollection;
+			} catch(error) {
+				dispatch({
+					type: ERROR_UPDATE_COLLECTION,
+					error,
+					collectionKey,
+					libraryKey,
+					patch,
+					queueId
+				});
+				throw error;
+			} finally {
+				next();
+			}
+		}
+	};
+}
+
+
 module.exports = {
 	addToCollection,
 	changeRoute,
@@ -1210,6 +1297,7 @@ module.exports = {
 	sortItems,
 	triggerEditingItem,
 	triggerResizeViewport,
+	updateCollection,
 	updateItem,
 	uploadAttachment,
 };

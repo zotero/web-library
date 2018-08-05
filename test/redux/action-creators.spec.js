@@ -23,6 +23,7 @@ const {
 	initialize,
 	moveToTrash,
 	recoverFromTrash,
+	updateCollection,
 	updateItem,
 } = require('../../src/js/actions.js');
 const {
@@ -57,6 +58,9 @@ const {
 	RECEIVE_ADD_ITEMS_TO_COLLECTION,
 	REQUEST_DELETE_ITEMS,
 	RECEIVE_DELETE_ITEMS,
+	PRE_UPDATE_COLLECTION,
+	REQUEST_UPDATE_COLLECTION,
+	RECEIVE_UPDATE_COLLECTION,
 } = require('../../src/js/constants/actions.js');
 
 const collectionsFixture = require('../fixtures/collections.json');
@@ -675,5 +679,52 @@ describe('action creators', () => {
 		assert.strictEqual(store.getActions().length, 2);
 		assert.deepEqual(store.getActions()[1].collection, collectionsFixture[0].data);
 		assert.typeOf(store.getActions()[1].response.response, 'object');
+	});
+
+	it('updateCollection', async () => {
+		fetchMock.patch(/https:\/\/api\.zotero\.org\/users\/123\/collections\/AAAAAAAA\??.*/, {
+			headers: {
+				'Last-Modified-Version': 1337
+			},
+			body: {
+				name: 'foobar'
+			}
+		});
+
+		const store = mockStore({
+			...initialState,
+			libraries: {
+				u123: {
+					collections: {
+						'AAAAAAAA': {
+							key: 'AAAAAAAA',
+							version: 1,
+							name: 'Test Collection A',
+						}
+					}
+				}
+			}
+		});
+
+		const action = updateCollection('AAAAAAAA', { name: 'foobar' });
+		await store.dispatch(action);
+		assert.strictEqual(store.getActions()[0].type, PRE_UPDATE_COLLECTION);
+		assert.strictEqual(store.getActions()[0].collectionKey, 'AAAAAAAA');
+		assert.strictEqual(store.getActions()[0].libraryKey, 'u123');
+		assert.deepEqual(store.getActions()[0].patch, { name: 'foobar'});
+
+		await cede(); // allow async-queue process this request
+
+		assert.strictEqual(store.getActions()[1].type,REQUEST_UPDATE_COLLECTION);
+		assert.strictEqual(store.getActions()[1].collectionKey, 'AAAAAAAA');
+		assert.strictEqual(store.getActions()[1].libraryKey, 'u123');
+		assert.deepEqual(store.getActions()[1].patch, { name: 'foobar'});
+
+		await cede(); // allow async-queue process this request
+
+		assert.strictEqual(store.getActions()[2].type, RECEIVE_UPDATE_COLLECTION);
+		assert.strictEqual(store.getActions()[2].collection.name, 'foobar');
+		assert.strictEqual(store.getActions()[2].collection.version, 1337);
+		assert.typeOf(store.getActions()[2].response.response, 'object');
 	});
 });
