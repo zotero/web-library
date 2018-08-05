@@ -10,6 +10,7 @@ const collectionsFixture = require('../fixtures/collections');
 
 describe('<CollectionTree />', () => {
 	const collections = collectionsFixture.map(c => c.data);
+	const topLevelCollections = collections.filter(c => !c.parentCollection);
 
 	it('renders tree hierarchy', () => {
 		const wrapper = shallow(
@@ -19,10 +20,11 @@ describe('<CollectionTree />', () => {
 		assert.equal(wrapper.find('div.level-root.active').length, 1);
 		// just one level-1 with 3 top-level collections
 		assert.equal(wrapper.find('div.level-1').length, 1);
-		assert.lengthOf(wrapper.find('div.level-1>ul').find(Node), collections.length + 2);
-		// one level-2 with 1 second-level collections
-		assert.equal(wrapper.find('div.level-2').length, 1);
-		assert.lengthOf(wrapper.find('div.level-2>ul').find(Node), 1);
+		assert.lengthOf(wrapper.find('div.level-1>ul').find(Node), topLevelCollections.length + 2);
+		// one node with subcollections
+		assert.lengthOf(
+			wrapper.find('div.level-1>ul').findWhere(n => !!n.props().subtree),
+		1);
 	});
 
 	it('renders .selected, .open and .has-open', () => {
@@ -37,10 +39,13 @@ describe('<CollectionTree />', () => {
 		assert.isNotOk(wrapper.find('div.level-root').hasClass('active'));
 		assert.isNotOk(wrapper.find('div.level-1.has-open').hasClass('level-last'));
 		assert.strictEqual(wrapper.find('div.level-1 > ul').find('[isOpen=true]').props().label, 'Test Collection A');
-		assert.lengthOf(wrapper.find('div.level-2.has-open.level-last'), 1);
-		assert.strictEqual(wrapper.find('div.level-2 > ul').find(Node).props().label, 'Test Collection A1');
+
+		let nodeWithSubTree = wrapper.find('div.level-1>ul').findWhere(n => !!n.props().subtree);
+		let subtreeWrapper = shallow(nodeWithSubTree.props().subtree);
+		assert.lengthOf(subtreeWrapper.find('div.level-2.has-open.level-last'), 1);
+		assert.strictEqual(subtreeWrapper.find('div.level-2 > ul').find(Node).props().label, 'Test Collection A1');
 		assert.include(
-			wrapper.find('div.level-2 > ul').find(Node).props().className,
+			subtreeWrapper.find('div.level-2 > ul').find(Node).props().className,
 			'selected'
 		);
 	});
