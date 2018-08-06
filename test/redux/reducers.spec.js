@@ -37,6 +37,18 @@ const mockResponse = {
 	getMeta: () => [],
 	response: new Response('', { headers: { 'Last-Modified-Version': 1337 } })
 };
+const itemsData = [
+	{
+		key: 'ITEM1111',
+		version: 1,
+		title: 'item 1'
+	},
+	{
+		key: 'ITEM2222',
+		version: 1,
+		title: 'item 2'
+	}
+];
 
 describe('reducers', () => {
 	it('config', () => {
@@ -157,469 +169,454 @@ describe('reducers', () => {
 		assert.isEmpty(state.fetching.collectionsInLibrary);
 	});
 
-	describe('items', () => {
-		const itemsData = [
-			{
-				key: 'ITEM1111',
-				version: 1,
-				title: 'item 1'
-			},
-			{
-				key: 'ITEM2222',
-				version: 1,
-				title: 'item 2'
-			}
-		];
+	it('fetching items', () => {
+		var state = {};
 
-		it('fetching', () => {
-			var state = {};
-
-			state = reduce(state, {
-				type: REQUEST_ITEMS_IN_COLLECTION,
-				libraryKey: 'u123',
-				collectionKey: 'CLECTION',
-			});
-
-			assert.sameMembers(state.libraries.u123.fetching.itemsInCollection, ['CLECTION']);
-			assert.isEmpty(state.libraries.u123.items);
-
-			state = reduce(state, {
-				type: RECEIVE_ITEMS_IN_COLLECTION,
-				collectionKey: 'CLECTION',
-				libraryKey: 'u123',
-				items: itemsData,
-				receivedAt: 1499438101816,
-				response: mockResponse
-			});
-
-			assert.isEmpty(state.libraries.u123.fetching.itemsInCollection, []);
-			assert.deepEqual(state.libraries.u123.items['ITEM1111'], itemsData[0]);
-			assert.deepEqual(state.libraries.u123.items['ITEM2222'], itemsData[1]);
-			assert.sameOrderedMembers(
-				state.libraries.u123.itemsByCollection['CLECTION'],
-				['ITEM1111', 'ITEM2222']
-			);
+		state = reduce(state, {
+			type: REQUEST_ITEMS_IN_COLLECTION,
+			libraryKey: 'u123',
+			collectionKey: 'CLECTION',
 		});
 
-		it('updating', () => {
-			var state = {
-				libraries: {
-					u123: {
-						items: {
-							[itemsData[0].key]: itemsData[0],
-							[itemsData[1].key]: itemsData[1],
-						}
+		assert.sameMembers(state.libraries.u123.fetching.itemsInCollection, ['CLECTION']);
+		assert.isEmpty(state.libraries.u123.items);
+
+		state = reduce(state, {
+			type: RECEIVE_ITEMS_IN_COLLECTION,
+			collectionKey: 'CLECTION',
+			libraryKey: 'u123',
+			items: itemsData,
+			receivedAt: 1499438101816,
+			response: mockResponse
+		});
+
+		assert.isEmpty(state.libraries.u123.fetching.itemsInCollection, []);
+		assert.deepEqual(state.libraries.u123.items['ITEM1111'], itemsData[0]);
+		assert.deepEqual(state.libraries.u123.items['ITEM2222'], itemsData[1]);
+		assert.sameOrderedMembers(
+			state.libraries.u123.itemsByCollection['CLECTION'],
+			['ITEM1111', 'ITEM2222']
+		);
+	});
+
+	it('updating', () => {
+		var state = {
+			libraries: {
+				u123: {
+					items: {
+						[itemsData[0].key]: itemsData[0],
+						[itemsData[1].key]: itemsData[1],
 					}
 				}
-			};
+			}
+		};
 
-			state = reduce(state, {
-				type: PRE_UPDATE_ITEM,
-				libraryKey: 'u123',
-				itemKey: itemsData[0].key,
-				patch: {
-					title: 'foobar'
-				},
-				queueId: 1
-			});
-
-			state = reduce(state, {
-				type: REQUEST_UPDATE_ITEM,
-				libraryKey: 'u123',
-				itemKey: itemsData[0].key,
-				patch: {
-					title: 'foobar'
-				},
-				queueId: 1
-			});
-
-			assert.lengthOf(state.libraries.u123.updating.items.ITEM1111, 1);
-			assert.strictEqual(state.libraries.u123.updating.items.ITEM1111[0].patch.title, 'foobar');
-			assert.strictEqual(state.libraries.u123.items['ITEM1111'].version, 1);
-			assert.strictEqual(state.libraries.u123.items['ITEM1111'].title, 'item 1');
-
-			state = reduce(state, {
-				type: PRE_UPDATE_ITEM,
-				libraryKey: 'u123',
-				itemKey: itemsData[0].key,
-				patch: {
-					publisher: 'lorem'
-				},
-				queueId: 2
-			});
-
-			state = reduce(state, {
-				type: REQUEST_UPDATE_ITEM,
-				libraryKey: 'u123',
-				itemKey: itemsData[0].key,
-				patch: {
-					publisher: 'lorem'
-				},
-				queueId: 2
-			});
-
-			assert.lengthOf(state.libraries.u123.updating.items.ITEM1111, 2);
-			assert.strictEqual(state.libraries.u123.updating.items.ITEM1111[0].patch.title, 'foobar');
-			assert.strictEqual(state.libraries.u123.updating.items.ITEM1111[1].patch.publisher, 'lorem');
-
-
-			state = reduce(state, {
-				type: RECEIVE_UPDATE_ITEM,
-				libraryKey: 'u123',
-				itemKey: itemsData[0].key,
-				item: {
-					...itemsData[0],
-					version: 2,
-					title: 'foobar'
-				},
-				patch: {
-					title: 'foobar'
-				},
-				queueId: 1,
-				response: mockResponse
-			});
-
-			assert.strictEqual(state.libraries.u123.items['ITEM1111'].version, 2);
-			assert.strictEqual(state.libraries.u123.items['ITEM1111'].title, 'foobar');
-			assert.lengthOf(state.libraries.u123.updating.items.ITEM1111, 1);
-
-			state = reduce(state, {
-				type: RECEIVE_UPDATE_ITEM,
-				libraryKey: 'u123',
-				itemKey: itemsData[0].key,
-				item: {
-					...itemsData[0],
-					version: 3,
-					title: 'foobar',
-					publisher: 'lorem'
-				},
-				patch: {
-					publisher: 'lorem'
-				},
-				queueId: 2,
-				response: mockResponse
-			});
-
-			assert.isEmpty(state.libraries.u123.updating.items);
-			assert.strictEqual(state.libraries.u123.items['ITEM1111'].version, 3);
-			assert.strictEqual(state.libraries.u123.items['ITEM1111'].publisher, 'lorem');
+		state = reduce(state, {
+			type: PRE_UPDATE_ITEM,
+			libraryKey: 'u123',
+			itemKey: itemsData[0].key,
+			patch: {
+				title: 'foobar'
+			},
+			queueId: 1
 		});
 
-		it('fetching child items', () => {
-			var state = {};
-			state = reduce(state, {
-				type: REQUEST_CHILD_ITEMS,
-				itemKey: 'ITEM0000',
-				libraryKey: 'u123'
-			});
-
-			assert.sameMembers(state.libraries.u123.fetching.childItems, ['ITEM0000']);
-
-			state = reduce(state, {
-				type: RECEIVE_CHILD_ITEMS,
-				itemKey: 'ITEM0000',
-				libraryKey: 'u123',
-				childItems: itemsData,
-				response: mockResponse
-			});
-
-			assert.isEmpty(state.libraries.u123.fetching.childItems);
-			assert.deepEqual(state.libraries.u123.items['ITEM1111'], itemsData[0]);
-			assert.deepEqual(state.libraries.u123.items['ITEM2222'], itemsData[1]);
-			assert.sameOrderedMembers(
-				state.libraries.u123.itemsByParent['ITEM0000'],
-				['ITEM1111', 'ITEM2222']
-			);
+		state = reduce(state, {
+			type: REQUEST_UPDATE_ITEM,
+			libraryKey: 'u123',
+			itemKey: itemsData[0].key,
+			patch: {
+				title: 'foobar'
+			},
+			queueId: 1
 		});
 
-		it('moving items to trash', () => {
-			var state = getTestState();
-			const libraryKey = state.current.library;
-			state.itemCountTrashByLibrary[libraryKey] = 0;
-			const collectionKey = Object.keys(
-				state.libraries[libraryKey].itemsByCollection
-			)[0];
-			const itemsToTrashFromCollections = state.libraries[libraryKey].itemsByCollection[collectionKey].slice(0, 2);
-			const itemsToTrashTop = Object.values(
-				state.libraries[libraryKey].itemsTop
-			).slice(0, 2);
-			const itemsToTrash = [...itemsToTrashFromCollections, ...itemsToTrashTop];
-			const originalCollectionCount = state.libraries[libraryKey].itemCountByCollection[collectionKey];
-			const originalTopCount = state.itemCountTopByLibrary[libraryKey];
+		assert.lengthOf(state.libraries.u123.updating.items.ITEM1111, 1);
+		assert.strictEqual(state.libraries.u123.updating.items.ITEM1111[0].patch.title, 'foobar');
+		assert.strictEqual(state.libraries.u123.items['ITEM1111'].version, 1);
+		assert.strictEqual(state.libraries.u123.items['ITEM1111'].title, 'item 1');
 
-			state = reduce(state, {
-				type: RECEIVE_MOVE_ITEMS_TRASH,
-				items: Object.assign(...Object.keys(state.libraries[libraryKey].items)
-					.filter(itemKey => itemsToTrash.includes(itemKey))
-					.map( itemKey => ({ [itemKey]: {
-						key: itemKey,
-						deleted: 1
-				}}))),
-				itemKeys: itemsToTrash,
-				itemKeysByCollection: {
-					[collectionKey]: itemsToTrashFromCollections
-				},
-				itemKeysTop: itemsToTrashTop,
-				libraryKey,
-				response: mockResponse
-			});
-
-			assert.notIncludeMembers(
-				state.libraries[libraryKey].itemsByCollection[collectionKey],
-				itemsToTrashFromCollections
-			);
-			assert.notIncludeMembers(
-				state.libraries[libraryKey].itemsTop,
-				itemsToTrashTop
-			);
-			assert.equal(
-				state.libraries[libraryKey].itemCountByCollection[collectionKey],
-				originalCollectionCount - 2
-			);
-			assert.equal(
-				state.itemCountTopByLibrary[libraryKey],
-				originalTopCount - 2
-			);
-			assert.equal(
-				state.itemCountTrashByLibrary[libraryKey],
-				4
-			);
-			assert.sameMembers(
-				state.libraries[libraryKey].itemsTrash,
-				itemsToTrash
-			);
-			assert.strictEqual(
-				state.libraries[libraryKey].items[itemsToTrash[0]].deleted,
-				1
-			);
+		state = reduce(state, {
+			type: PRE_UPDATE_ITEM,
+			libraryKey: 'u123',
+			itemKey: itemsData[0].key,
+			patch: {
+				publisher: 'lorem'
+			},
+			queueId: 2
 		});
 
-		it('recover items from trash', () => {
-			var state = getTestState();
-			const libraryKey = state.current.library;
-			const collectionKey = Object.keys(
-				state.libraries[libraryKey].itemsByCollection
-			)[0];
-
-			//prepare state
-			const itemKeysTrashedFromCollections = state.libraries[libraryKey].itemsByCollection[collectionKey].splice(0, 2);
-			const originalCollectionCount = state.libraries[libraryKey].itemCountByCollection[collectionKey] = state.libraries[libraryKey].itemCountByCollection[collectionKey] - 2;
-			const itemKeysTrashedFromTop = state.libraries[libraryKey].itemsTop.splice(0, 2);
-			const originalTopCount = state.itemCountTopByLibrary[libraryKey] = state.libraries[libraryKey].itemCountByCollection[collectionKey] - 2;
-			const itemKeysTrashed = [...itemKeysTrashedFromCollections, ...itemKeysTrashedFromTop];
-			state.itemCountTrashByLibrary[libraryKey] = itemKeysTrashed.length;
-
-			state.libraries[libraryKey].itemsTrash = [...itemKeysTrashed];
-			state.libraries[libraryKey].items = Object.assign(...Object.values(state.libraries[libraryKey].items)
-				.map(item => ({ [item.key]: {
-					...item,
-					deleted: itemKeysTrashed.includes(item.key) ? 1 : 0
-				}}))
-			);
-
-			state = reduce(state, {
-				type: RECEIVE_RECOVER_ITEMS_TRASH,
-				items: Object.assign(...Object.keys(state.libraries[libraryKey].items)
-					.filter(itemKey => itemKeysTrashed.includes(itemKey))
-					.map( itemKey => ({ [itemKey]: {
-						key: itemKey,
-						deleted: 0
-				}}))),
-				itemKeys: itemKeysTrashed,
-				itemKeysByCollection: {
-					[collectionKey]: itemKeysTrashedFromCollections
-				},
-				itemKeysTop: itemKeysTrashedFromTop,
-				libraryKey,
-				response: mockResponse
-			});
-
-			assert.includeMembers(
-				state.libraries[libraryKey].itemsByCollection[collectionKey],
-				itemKeysTrashedFromCollections
-			);
-			assert.includeMembers(
-				state.libraries[libraryKey].itemsTop,
-				itemKeysTrashedFromTop
-			);
-			assert.equal(
-				state.libraries[libraryKey].itemCountByCollection[collectionKey],
-				originalCollectionCount + 2
-			);
-			assert.equal(
-				state.itemCountTopByLibrary[libraryKey],
-				originalTopCount + 2
-			);
-			assert.equal(
-				state.itemCountTrashByLibrary[libraryKey],
-				0
-			);
-			assert.isEmpty(state.libraries[libraryKey].itemsTrash);
-			assert.strictEqual(
-				state.libraries[libraryKey].items[itemKeysTrashed[0]].deleted,
-				0
-			);
+		state = reduce(state, {
+			type: REQUEST_UPDATE_ITEM,
+			libraryKey: 'u123',
+			itemKey: itemsData[0].key,
+			patch: {
+				publisher: 'lorem'
+			},
+			queueId: 2
 		});
 
-		it('delete items', () => {
-			var state = getTestState();
-			const libraryKey = state.current.library;
-			const collectionKey = Object.keys(
-				state.libraries[libraryKey].itemsByCollection
-			)[0];
+		assert.lengthOf(state.libraries.u123.updating.items.ITEM1111, 2);
+		assert.strictEqual(state.libraries.u123.updating.items.ITEM1111[0].patch.title, 'foobar');
+		assert.strictEqual(state.libraries.u123.updating.items.ITEM1111[1].patch.publisher, 'lorem');
 
-			//prepare state
-			const itemKeysTrashedFromCollections = state.libraries[libraryKey].itemsByCollection[collectionKey].splice(0, 2);
-			const itemKeysTrashedFromTop = state.libraries[libraryKey].itemsTop.splice(0, 2);
-			const itemKeysTrashed = [...itemKeysTrashedFromCollections, ...itemKeysTrashedFromTop];
-			state.itemCountTrashByLibrary[libraryKey] = itemKeysTrashed.length;
 
-			state = reduce(state, {
-				type: RECEIVE_DELETE_ITEMS,
-				itemKeys: itemKeysTrashed,
-				libraryKey,
-				response: mockResponse,
-			});
-
-			assert.isEmpty(state.libraries[libraryKey].itemsTrash);
-			assert.notIncludeMembers(
-				Object.keys(state.libraries[libraryKey].items),
-				itemKeysTrashed
-			);
-			assert.equal(
-				state.itemCountTrashByLibrary[libraryKey],
-				0
-			);
-			assert.isEmpty(state.libraries[libraryKey].itemsTrash);
+		state = reduce(state, {
+			type: RECEIVE_UPDATE_ITEM,
+			libraryKey: 'u123',
+			itemKey: itemsData[0].key,
+			item: {
+				...itemsData[0],
+				version: 2,
+				title: 'foobar'
+			},
+			patch: {
+				title: 'foobar'
+			},
+			queueId: 1,
+			response: mockResponse
 		});
 
-		it('add item to collection', () => {
-			var state = getTestState();
-			const libraryKey = state.current.library;
-			const collectionKey = Object.keys(
-				state.libraries[libraryKey].itemsByCollection
-			)[0];
-			const itemKeys = state.libraries[libraryKey].itemsTop.slice(0, 3);
-			const originalCollectionCount = state.libraries[libraryKey].itemCountByCollection[collectionKey];
-			itemKeys.forEach(itemKey => {
-				assert.notInclude(
-					state.libraries[libraryKey].items[itemKey].collections,
-					collectionKey
-				)
-			});
-			assert.notIncludeMembers(
-				state.libraries[libraryKey].itemsByCollection[collectionKey],
-				itemKeys
-			);
-			state = reduce(state, {
-				type: RECEIVE_ADD_ITEMS_TO_COLLECTION,
-				items: Object.assign(...Object.keys(state.libraries[libraryKey].items)
-					.filter(itemKey => itemKeys.includes(itemKey))
-					.map( itemKey => ({ [itemKey]: {
-						key: itemKey,
-						collections: [
-							...state.libraries[libraryKey].items[itemKey].collections,
-							collectionKey
-						]
-				}}))),
-				itemKeys,
-				itemKeysChanged: itemKeys,
-				collectionKey,
-				libraryKey,
-				response: mockResponse
-			});
+		assert.strictEqual(state.libraries.u123.items['ITEM1111'].version, 2);
+		assert.strictEqual(state.libraries.u123.items['ITEM1111'].title, 'foobar');
+		assert.lengthOf(state.libraries.u123.updating.items.ITEM1111, 1);
 
-			itemKeys.forEach(itemKey => {
-				assert.include(
-					state.libraries[libraryKey].items[itemKey].collections,
-					collectionKey
-				)
-			});
-
-			assert.includeMembers(
-				state.libraries[libraryKey].itemsByCollection[collectionKey],
-				itemKeys
-			);
-
-			assert.strictEqual(
-				state.libraries[libraryKey].itemCountByCollection[collectionKey],
-				originalCollectionCount + 3
-			);
+		state = reduce(state, {
+			type: RECEIVE_UPDATE_ITEM,
+			libraryKey: 'u123',
+			itemKey: itemsData[0].key,
+			item: {
+				...itemsData[0],
+				version: 3,
+				title: 'foobar',
+				publisher: 'lorem'
+			},
+			patch: {
+				publisher: 'lorem'
+			},
+			queueId: 2,
+			response: mockResponse
 		});
 
-		it('create a new item', () => {
-			var state = getTestState();
-			const libraryKey = state.current.library;
-			const collectionKey = Object.keys(
-				state.libraries[libraryKey].itemsByCollection
-			)[0];
-			const originalCollectionCount = state.libraries[libraryKey].itemCountByCollection[collectionKey];
-			const originalTopCount = state.itemCountTopByLibrary[libraryKey];
-			state = reduce(state, {
-				type: RECEIVE_CREATE_ITEM,
-				item: {
-					key: 'AAAAAAAA',
-					'itemType' : 'book',
-					'title' : '',
-					'creators' : [{
-						'creatorType' : 'author',
-						'firstName' : '',
-						'lastName' : ''
-					}],
-					'url' : '',
-					'tags' : [],
-					'collections' : [collectionKey],
-					'relations' : {}
-				},
-				libraryKey,
-				response: mockResponse
-			});
+		assert.isEmpty(state.libraries.u123.updating.items);
+		assert.strictEqual(state.libraries.u123.items['ITEM1111'].version, 3);
+		assert.strictEqual(state.libraries.u123.items['ITEM1111'].publisher, 'lorem');
+	});
 
-			assert.strictEqual(
-				state.libraries[libraryKey].items['AAAAAAAA'].itemType,
-				'book'
-			);
+	it('fetching child items', () => {
+		var state = {};
+		state = reduce(state, {
+			type: REQUEST_CHILD_ITEMS,
+			itemKey: 'ITEM0000',
+			libraryKey: 'u123'
+		});
+
+		assert.sameMembers(state.libraries.u123.fetching.childItems, ['ITEM0000']);
+
+		state = reduce(state, {
+			type: RECEIVE_CHILD_ITEMS,
+			itemKey: 'ITEM0000',
+			libraryKey: 'u123',
+			childItems: itemsData,
+			response: mockResponse
+		});
+
+		assert.isEmpty(state.libraries.u123.fetching.childItems);
+		assert.deepEqual(state.libraries.u123.items['ITEM1111'], itemsData[0]);
+		assert.deepEqual(state.libraries.u123.items['ITEM2222'], itemsData[1]);
+		assert.sameOrderedMembers(
+			state.libraries.u123.itemsByParent['ITEM0000'],
+			['ITEM1111', 'ITEM2222']
+		);
+	});
+
+	it('moving items to trash', () => {
+		var state = getTestState();
+		const libraryKey = state.current.library;
+		state.itemCountTrashByLibrary[libraryKey] = 0;
+		const collectionKey = Object.keys(
+			state.libraries[libraryKey].itemsByCollection
+		)[0];
+		const itemsToTrashFromCollections = state.libraries[libraryKey].itemsByCollection[collectionKey].slice(0, 2);
+		const itemsToTrashTop = Object.values(
+			state.libraries[libraryKey].itemsTop
+		).slice(0, 2);
+		const itemsToTrash = [...itemsToTrashFromCollections, ...itemsToTrashTop];
+		const originalCollectionCount = state.libraries[libraryKey].itemCountByCollection[collectionKey];
+		const originalTopCount = state.itemCountTopByLibrary[libraryKey];
+
+		state = reduce(state, {
+			type: RECEIVE_MOVE_ITEMS_TRASH,
+			items: Object.assign(...Object.keys(state.libraries[libraryKey].items)
+				.filter(itemKey => itemsToTrash.includes(itemKey))
+				.map( itemKey => ({ [itemKey]: {
+					key: itemKey,
+					deleted: 1
+			}}))),
+			itemKeys: itemsToTrash,
+			itemKeysByCollection: {
+				[collectionKey]: itemsToTrashFromCollections
+			},
+			itemKeysTop: itemsToTrashTop,
+			libraryKey,
+			response: mockResponse
+		});
+
+		assert.notIncludeMembers(
+			state.libraries[libraryKey].itemsByCollection[collectionKey],
+			itemsToTrashFromCollections
+		);
+		assert.notIncludeMembers(
+			state.libraries[libraryKey].itemsTop,
+			itemsToTrashTop
+		);
+		assert.equal(
+			state.libraries[libraryKey].itemCountByCollection[collectionKey],
+			originalCollectionCount - 2
+		);
+		assert.equal(
+			state.itemCountTopByLibrary[libraryKey],
+			originalTopCount - 2
+		);
+		assert.equal(
+			state.itemCountTrashByLibrary[libraryKey],
+			4
+		);
+		assert.sameMembers(
+			state.libraries[libraryKey].itemsTrash,
+			itemsToTrash
+		);
+		assert.strictEqual(
+			state.libraries[libraryKey].items[itemsToTrash[0]].deleted,
+			1
+		);
+	});
+
+	it('recover items from trash', () => {
+		var state = getTestState();
+		const libraryKey = state.current.library;
+		const collectionKey = Object.keys(
+			state.libraries[libraryKey].itemsByCollection
+		)[0];
+
+		//prepare state
+		const itemKeysTrashedFromCollections = state.libraries[libraryKey].itemsByCollection[collectionKey].splice(0, 2);
+		const originalCollectionCount = state.libraries[libraryKey].itemCountByCollection[collectionKey] = state.libraries[libraryKey].itemCountByCollection[collectionKey] - 2;
+		const itemKeysTrashedFromTop = state.libraries[libraryKey].itemsTop.splice(0, 2);
+		const originalTopCount = state.itemCountTopByLibrary[libraryKey] = state.libraries[libraryKey].itemCountByCollection[collectionKey] - 2;
+		const itemKeysTrashed = [...itemKeysTrashedFromCollections, ...itemKeysTrashedFromTop];
+		state.itemCountTrashByLibrary[libraryKey] = itemKeysTrashed.length;
+
+		state.libraries[libraryKey].itemsTrash = [...itemKeysTrashed];
+		state.libraries[libraryKey].items = Object.assign(...Object.values(state.libraries[libraryKey].items)
+			.map(item => ({ [item.key]: {
+				...item,
+				deleted: itemKeysTrashed.includes(item.key) ? 1 : 0
+			}}))
+		);
+
+		state = reduce(state, {
+			type: RECEIVE_RECOVER_ITEMS_TRASH,
+			items: Object.assign(...Object.keys(state.libraries[libraryKey].items)
+				.filter(itemKey => itemKeysTrashed.includes(itemKey))
+				.map( itemKey => ({ [itemKey]: {
+					key: itemKey,
+					deleted: 0
+			}}))),
+			itemKeys: itemKeysTrashed,
+			itemKeysByCollection: {
+				[collectionKey]: itemKeysTrashedFromCollections
+			},
+			itemKeysTop: itemKeysTrashedFromTop,
+			libraryKey,
+			response: mockResponse
+		});
+
+		assert.includeMembers(
+			state.libraries[libraryKey].itemsByCollection[collectionKey],
+			itemKeysTrashedFromCollections
+		);
+		assert.includeMembers(
+			state.libraries[libraryKey].itemsTop,
+			itemKeysTrashedFromTop
+		);
+		assert.equal(
+			state.libraries[libraryKey].itemCountByCollection[collectionKey],
+			originalCollectionCount + 2
+		);
+		assert.equal(
+			state.itemCountTopByLibrary[libraryKey],
+			originalTopCount + 2
+		);
+		assert.equal(
+			state.itemCountTrashByLibrary[libraryKey],
+			0
+		);
+		assert.isEmpty(state.libraries[libraryKey].itemsTrash);
+		assert.strictEqual(
+			state.libraries[libraryKey].items[itemKeysTrashed[0]].deleted,
+			0
+		);
+	});
+
+	it('delete items', () => {
+		var state = getTestState();
+		const libraryKey = state.current.library;
+		const collectionKey = Object.keys(
+			state.libraries[libraryKey].itemsByCollection
+		)[0];
+
+		//prepare state
+		const itemKeysTrashedFromCollections = state.libraries[libraryKey].itemsByCollection[collectionKey].splice(0, 2);
+		const itemKeysTrashedFromTop = state.libraries[libraryKey].itemsTop.splice(0, 2);
+		const itemKeysTrashed = [...itemKeysTrashedFromCollections, ...itemKeysTrashedFromTop];
+		state.itemCountTrashByLibrary[libraryKey] = itemKeysTrashed.length;
+
+		state = reduce(state, {
+			type: RECEIVE_DELETE_ITEMS,
+			itemKeys: itemKeysTrashed,
+			libraryKey,
+			response: mockResponse,
+		});
+
+		assert.isEmpty(state.libraries[libraryKey].itemsTrash);
+		assert.notIncludeMembers(
+			Object.keys(state.libraries[libraryKey].items),
+			itemKeysTrashed
+		);
+		assert.equal(
+			state.itemCountTrashByLibrary[libraryKey],
+			0
+		);
+		assert.isEmpty(state.libraries[libraryKey].itemsTrash);
+	});
+
+	it('add item to collection', () => {
+		var state = getTestState();
+		const libraryKey = state.current.library;
+		const collectionKey = Object.keys(
+			state.libraries[libraryKey].itemsByCollection
+		)[0];
+		const itemKeys = state.libraries[libraryKey].itemsTop.slice(0, 3);
+		const originalCollectionCount = state.libraries[libraryKey].itemCountByCollection[collectionKey];
+		itemKeys.forEach(itemKey => {
+			assert.notInclude(
+				state.libraries[libraryKey].items[itemKey].collections,
+				collectionKey
+			)
+		});
+		assert.notIncludeMembers(
+			state.libraries[libraryKey].itemsByCollection[collectionKey],
+			itemKeys
+		);
+		state = reduce(state, {
+			type: RECEIVE_ADD_ITEMS_TO_COLLECTION,
+			items: Object.assign(...Object.keys(state.libraries[libraryKey].items)
+				.filter(itemKey => itemKeys.includes(itemKey))
+				.map( itemKey => ({ [itemKey]: {
+					key: itemKey,
+					collections: [
+						...state.libraries[libraryKey].items[itemKey].collections,
+						collectionKey
+					]
+			}}))),
+			itemKeys,
+			itemKeysChanged: itemKeys,
+			collectionKey,
+			libraryKey,
+			response: mockResponse
+		});
+
+		itemKeys.forEach(itemKey => {
 			assert.include(
-				state.libraries[libraryKey].itemsByCollection[collectionKey],
-				'AAAAAAAA'
-			);
-			assert.include(
-				state.libraries[libraryKey].itemsTop,
-				'AAAAAAAA'
-			);
-			assert.strictEqual(
-				state.libraries[libraryKey].itemCountByCollection[collectionKey],
-				originalCollectionCount + 1
-			);
-			assert.strictEqual(
-				state.itemCountTopByLibrary[libraryKey],
-				originalTopCount + 1
-			);
+				state.libraries[libraryKey].items[itemKey].collections,
+				collectionKey
+			)
 		});
 
-		it('create a collection item', () => {
-			var state = getTestState();
-			const libraryKey = state.current.library;
-			const collectionKey = Object.keys(
-				state.libraries[libraryKey].itemsByCollection
-			)[0];
-			state = reduce(state, {
-				type: RECEIVE_CREATE_COLLECTION,
-				collection: {
-					key: 'COLCOL11',
-					version: 1337,
-					name: 'New Collection',
-					parentCollection: collectionKey,
-					relations : {}
-				},
-				libraryKey,
-				response: mockResponse
-			});
+		assert.includeMembers(
+			state.libraries[libraryKey].itemsByCollection[collectionKey],
+			itemKeys
+		);
 
-			assert.strictEqual(
-				state.libraries[libraryKey].collections['COLCOL11'].name,
-				'New Collection'
-			);
+		assert.strictEqual(
+			state.libraries[libraryKey].itemCountByCollection[collectionKey],
+			originalCollectionCount + 3
+		);
+	});
+
+	it('create a new item', () => {
+		var state = getTestState();
+		const libraryKey = state.current.library;
+		const collectionKey = Object.keys(
+			state.libraries[libraryKey].itemsByCollection
+		)[0];
+		const originalCollectionCount = state.libraries[libraryKey].itemCountByCollection[collectionKey];
+		const originalTopCount = state.itemCountTopByLibrary[libraryKey];
+		state = reduce(state, {
+			type: RECEIVE_CREATE_ITEM,
+			item: {
+				key: 'AAAAAAAA',
+				'itemType' : 'book',
+				'title' : '',
+				'creators' : [{
+					'creatorType' : 'author',
+					'firstName' : '',
+					'lastName' : ''
+				}],
+				'url' : '',
+				'tags' : [],
+				'collections' : [collectionKey],
+				'relations' : {}
+			},
+			libraryKey,
+			response: mockResponse
 		});
+
+		assert.strictEqual(
+			state.libraries[libraryKey].items['AAAAAAAA'].itemType,
+			'book'
+		);
+		assert.include(
+			state.libraries[libraryKey].itemsByCollection[collectionKey],
+			'AAAAAAAA'
+		);
+		assert.include(
+			state.libraries[libraryKey].itemsTop,
+			'AAAAAAAA'
+		);
+		assert.strictEqual(
+			state.libraries[libraryKey].itemCountByCollection[collectionKey],
+			originalCollectionCount + 1
+		);
+		assert.strictEqual(
+			state.itemCountTopByLibrary[libraryKey],
+			originalTopCount + 1
+		);
+	});
+
+	it('create a collection item', () => {
+		var state = getTestState();
+		const libraryKey = state.current.library;
+		const collectionKey = Object.keys(
+			state.libraries[libraryKey].itemsByCollection
+		)[0];
+		state = reduce(state, {
+			type: RECEIVE_CREATE_COLLECTION,
+			collection: {
+				key: 'COLCOL11',
+				version: 1337,
+				name: 'New Collection',
+				parentCollection: collectionKey,
+				relations : {}
+			},
+			libraryKey,
+			response: mockResponse
+		});
+
+		assert.strictEqual(
+			state.libraries[libraryKey].collections['COLCOL11'].name,
+			'New Collection'
+		);
 	});
 });
