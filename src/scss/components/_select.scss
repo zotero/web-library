@@ -1,18 +1,3 @@
-.native-select-wrap {
-	flex: 0 0 auto;
-	margin-right: auto;
-	position: relative;
-
-	> select {
-		bottom: 0;
-		left: 0;
-		opacity: 0;
-		position: absolute;
-		right: 0;
-		top: 0;
-	}
-}
-
 //
 // React select
 // --------------------------------------------------

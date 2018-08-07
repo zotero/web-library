@@ -215,6 +215,12 @@
 				color: $link-color;
 			}
 		}
+
+		// Native select
+		.form-control {
+			@include text-truncate;
+			color: $key-color;
+		}
 	}
 
 	label {
@@ -226,6 +232,12 @@
 			text-overflow: inherit;
 			white-space: inherit;
 		}
+	}
+
+	// Native select
+	.form-control {
+		line-height: normal;
+		background-color: transparent;
 	}
 
 	.value {

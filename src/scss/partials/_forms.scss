@@ -5,6 +5,7 @@
 .input-group {
 	flex: 1 1 auto;
 	display: flex;
+	min-width: 0;
 	position: relative;
 
 	.icon-spin {
@@ -86,7 +87,20 @@ textarea {
 	}
 }
 
-select {
-	appearance: none;
-	color: $input-color;
+.native-select-wrap {
+	flex: 1 1 auto;
+	display: flex;
+	align-items: center;
+	min-width: 0;
+	position: relative;
+
+	select {
+		appearance: none;
+		position: absolute;
+		left: 0;
+		top: 0;
+		width: 100%;
+		height: 100%;
+		opacity: 0;
+	}
 }
