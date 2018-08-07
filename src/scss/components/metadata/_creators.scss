@@ -176,26 +176,24 @@
 			}
 
 			@include mouse-and-bp-up(md) {
-				opacity: 0;
+				display: none;
 			}
 
 			@include state(".creators-entry:hover") {
 				@include mouse-and-bp-up(md) { // Repeat for specifity
-					opacity: 1;
+					display: block;
+				}
+			}
 
-					&[disabled] {
-						opacity: 0.5;
-					}
+			@include state(".creators-entry.has-focus") {
+				@include mouse-keyboard-and-bp-up(md) {
+					display: block;
 				}
 			}
 
 			&:focus {
 				@include touch-or-bp-down(sm) {
 					outline-offset: -$outline-width;
-				}
-
-				@include mouse-keyboard-and-bp-up(md) {
-					opacity: 1;
 				}
 			}
 
