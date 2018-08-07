@@ -9,12 +9,25 @@ const Button = require('./ui/button');
 const Spinner = require('./ui/spinner');
 const Input = require('./form/input');
 const Node = require('./collection-tree/node');
+const ActionsDropdown = require('./collection-tree/actions-dropdown');
+const DropdownItem = require('reactstrap/lib/DropdownItem').default;
+const deepEqual = require('deep-equal');
 
 class CollectionTree extends React.Component {
 	state = {
 		isAddingCollection: false,
 		isAddingCollectionBusy: false,
-		opened: []
+		opened: [],
+		renaming: null,
+	}
+
+	componentDidUpdate({ updating: wasUpdating }) {
+		if(!deepEqual(this.props.updating, wasUpdating)) {
+			let updatedCollectionKey = wasUpdating.find(cKey => !this.props.updating.includes(cKey));
+			if(updatedCollectionKey &&  updatedCollectionKey === this.state.renaming) {
+				this.setState({ renaming: null });
+			}
+		}
 	}
 
 	handleSelect(itemsSource, key, ev) {
@@ -55,6 +68,17 @@ class CollectionTree extends React.Component {
 		this.setState({ isAddingCollection: false });
 	}
 
+	handleRename(collectionKey) {
+		this.setState({ renaming: collectionKey});
+	}
+
+	async handleCollectionRenameCommit(collectionKey, name) {
+		await this.props.onCollectionUpdate(collectionKey, { name });
+	}
+
+	handleCollectionRenameCancel() {
+		this.setState({ renaming: null });
+	}
 
 	collectionsFromKeys(collections) {
 		return collections.map(
@@ -177,7 +201,25 @@ class CollectionTree extends React.Component {
 						>
 								<Icon type="28/folder" className="touch" width="28" height="28" />
 								<Icon type="16/folder" className="mouse" width="16" height="16" />
-								<a>{ collection.name }</a>
+								{
+									this.state.renaming === collection.key ?
+									<Input autoFocus
+										isBusy={ this.props.updating.includes(collection.key) }
+										onBlur={ () => true /* cancel on blur */ }
+										onCancel={ this.handleCollectionRenameCancel.bind(this) }
+										onCommit={ this.handleCollectionRenameCommit.bind(this, collection.key) }
+										value={ collection.name }
+									/> :
+									<React.Fragment>
+										<a>{ collection.name }</a>
+										<ActionsDropdown>
+											<DropdownItem onClick={ this.handleRename.bind(this, collection.key) }>
+												Rename
+											</DropdownItem>
+										</ActionsDropdown>
+									</React.Fragment>
+								}
+
 						</Node>
 					)) }
 					{
@@ -188,9 +230,10 @@ class CollectionTree extends React.Component {
 								<Icon type="28/folder" className="touch" width="28" height="28" />
 								<Icon type="16/folder" className="mouse" width="16" height="16" />
 								<Input autoFocus
-									busy={ this.state.isAddingCollectionBusy }
+									isBusy={ this.state.isAddingCollectionBusy }
 									onCommit={ this.handleCollectionAddCommit.bind(this) }
 									onCancel={ this.handleCollectionAddCancel.bind(this) }
+									onBlur={ () => true /* cancel on blur */ }
 								/>
 							</Node>
 						)
@@ -265,6 +308,7 @@ CollectionTree.propTypes = {
 	onCollectionOpened: PropTypes.func,
 	onSelect: PropTypes.func,
 	path: PropTypes.array,
+	updating: PropTypes.array,
 	collections: PropTypes.arrayOf(
 		PropTypes.shape({
 			key: PropTypes.string.isRequired,
@@ -280,6 +324,7 @@ CollectionTree.defaultProps = {
 	onCollectionOpened: () => null,
 	onSelect: () => null,
 	path: [],
+	updating: []
 };
 
 module.exports = CollectionTree;

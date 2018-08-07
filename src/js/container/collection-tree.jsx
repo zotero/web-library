@@ -7,7 +7,7 @@ const PropTypes = require('prop-types');
 const { withRouter } = require('react-router-dom');
 const { connect } = require('react-redux');
 const CollectionTree = require('../component/collection-tree');
-const { fetchCollections, createCollection } = require('../actions');
+const { fetchCollections, createCollection, updateCollection } = require('../actions');
 const { getCollectionsPath } = require('../common/state');
 const { get } = require('../utils');
 
@@ -40,6 +40,10 @@ class CollectionTreeContainer extends React.Component {
 		}));
 	}
 
+	async handleCollectionUpdate(collectionKey, patch) {
+		await this.props.dispatch(updateCollection(collectionKey, patch));
+	}
+
 	render() {
 		return <CollectionTree
 			collections={ this.props.collections }
@@ -48,6 +52,8 @@ class CollectionTreeContainer extends React.Component {
 			onSelect={ this.handleSelect.bind(this) }
 			itemsSource={ this.props.itemsSource }
 			onCollectionAdd={ this.handleCollectionAdd.bind(this) }
+			onCollectionUpdate={ this.handleCollectionUpdate.bind(this) }
+			updating={ this.props.updating }
 		/>;
 	}
 }
@@ -63,7 +69,8 @@ const mapStateToProps = state => {
 		isFetching: libraryKey in state.fetching.collectionsInLibrary,
 		selected: state.current.collection,
 		path: getCollectionsPath(state),
-		itemsSource: state.current.itemsSource
+		itemsSource: state.current.itemsSource,
+		updating: Object.keys(get(state, ['libraries', libraryKey, 'updating', 'collections'], {}))
 	};
 };
 
