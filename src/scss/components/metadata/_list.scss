@@ -296,6 +296,7 @@
 	}
 
 	// Textarea fields
+	.title,
 	.extra {
 		// Edit mode
 		@include state(".metadata-list.editing") {
