@@ -140,25 +140,28 @@
 			}
 
 			// Editable focus state
-			&.editing {
-				z-index: 2;
+			&.has-focus {
+				.keyboard & {
+					z-index: 2;
 
-				&::before,
-				&::after {
-					content: "";
-					position: absolute;
-					left: 0;
-					right: 0;
-					height: $outline-width;
-					background-color: $focus-color;
-				}
+					&::before,
+					&::after {
+						content: "";
+						position: absolute;
+						left: 0;
+						right: 0;
+						height: $outline-width;
+						background-color: $focus-color;
+					}
 
-				&::before {
-					bottom: calc(100% - 1px);
-				}
+					&::before {
+						top: auto;
+						bottom: calc(100% - #{$input-border-width});
+					}
 
-				&::after {
-					top: calc(100% - 1px);
+					&::after {
+						top: 100%;
+					}
 				}
 			}
 		}
@@ -236,8 +239,15 @@
 
 	// Native select
 	.form-control {
-		line-height: normal;
 		background-color: transparent;
+
+		&:not(textarea) {
+			line-height: normal;
+		}
+
+		&:focus {
+			outline: none;
+		}
 	}
 
 	.value {

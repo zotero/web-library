@@ -94,6 +94,12 @@ textarea {
 	min-width: 0;
 	position: relative;
 
+	.form-control {
+		.has-focus & {
+			color: $focus-color;
+		}
+	}
+
 	select {
 		appearance: none;
 		position: absolute;

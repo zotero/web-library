@@ -228,18 +228,18 @@ $input-border-radius: $input-btn-border-radius;
 $input-transition: 0.15s ease;
 
 
-// Editable
-// --------------------------------------------------
-
-$editable-border-width:  3px;
-$editable-padding:       2px;
-$editable-border-radius: 3px;
-
-
 // Outline
 // --------------------------------------------------
 $outline-width:  $input-btn-focus-width + $border-width;
 $outline-offset: 2px;
+
+
+// Editable
+// --------------------------------------------------
+
+$editable-border-width:  $outline-width;
+$editable-padding:       2px;
+$editable-border-radius: 3px;
 
 
 // Dropdown
