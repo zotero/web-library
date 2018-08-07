@@ -119,12 +119,12 @@ class SelectInput extends React.PureComponent {
 			};
 			return (
 				<div className="native-select-wrap" >
-					<div className={ className }>{ options.find(o => o.value === value).label }</div>
 					<select { ...props }>
 						{ options.map(({ value, label }) => (
 							<option key={ value } value={ value }>{ label }</option>)
 						)}
 					</select>
+					<div className={ className }>{ options.find(o => o.value === value).label }</div>
 				</div>
 
 			);

@@ -223,6 +223,10 @@
 		.form-control {
 			@include text-truncate;
 			color: $key-color;
+
+			@include state("select:focus + .form-control") {
+				color: $focus-color;
+			}
 		}
 	}
 

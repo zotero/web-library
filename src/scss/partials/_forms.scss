@@ -94,12 +94,6 @@ textarea {
 	min-width: 0;
 	position: relative;
 
-	.form-control {
-		.has-focus & {
-			color: $focus-color;
-		}
-	}
-
 	select {
 		appearance: none;
 		position: absolute;
@@ -107,6 +101,17 @@ textarea {
 		top: 0;
 		width: 100%;
 		height: 100%;
+		z-index: 1;
 		opacity: 0;
+
+		&:focus {
+			position: absolute; // Reset
+		}
+	}
+
+	.form-control {
+		.has-focus & {
+			color: $focus-color;
+		}
 	}
 }
