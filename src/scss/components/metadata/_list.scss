@@ -316,6 +316,14 @@
 				flex-direction: column;
 				align-items: normal;
 			}
+
+			.keyboard & {
+				&.has-focus {
+					&::after {
+						top: calc(100% - #{$outline-width});
+					}
+				}
+			}
 		}
 
 		.key {
