@@ -11,6 +11,11 @@
 			padding-left: 2 * $default-padding-x-touch + $space-lg;
 			padding-right: 2 * $default-padding-x-touch + $space-lg + $input-border-width;
 
+			&.single,
+			&.virtual {
+				padding-right: $default-padding-x-touch;
+			}
+
 			&::before {
 				left: 2 * $default-padding-x-touch + $space-lg;
 			}
