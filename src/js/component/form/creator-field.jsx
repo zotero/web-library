@@ -146,6 +146,8 @@ class CreatorField extends React.PureComponent {
 			'creators-type-editing': this.state.isCreatorTypeActive,
 			'has-focus': this.state.hasFocus,
 			'metadata': true,
+			'single': isSingle,
+			'virtual': isVirtual,
 		};
 
 		const creatorTypeDescription = creatorTypes.find(
