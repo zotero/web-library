@@ -8669,7 +8669,8 @@
       ],
       "itemsTrash": [],
       "updating": {
-        "items": {}
+        "items": {},
+        "collections": {}
       }
     }
   },

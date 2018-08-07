@@ -5,6 +5,7 @@ const { configureApi } = require('../../src/js/actions');
 const reducers = require('../../src/js/reducers');
 const {
 	ERROR_COLLECTIONS_IN_LIBRARY,
+	PRE_UPDATE_COLLECTION,
 	PRE_UPDATE_ITEM,
 	RECEIVE_ADD_ITEMS_TO_COLLECTION,
 	RECEIVE_CHILD_ITEMS,
@@ -18,6 +19,7 @@ const {
 	RECEIVE_META,
 	RECEIVE_MOVE_ITEMS_TRASH,
 	RECEIVE_RECOVER_ITEMS_TRASH,
+	RECEIVE_UPDATE_COLLECTION,
 	RECEIVE_UPDATE_ITEM,
 	REQUEST_CHILD_ITEMS,
 	REQUEST_COLLECTIONS_IN_LIBRARY,
@@ -25,6 +27,7 @@ const {
 	REQUEST_ITEM_TYPE_FIELDS,
 	REQUEST_ITEMS_IN_COLLECTION,
 	REQUEST_META,
+	REQUEST_UPDATE_COLLECTION,
 	REQUEST_UPDATE_ITEM,
 } = require('../../src/js/constants/actions.js');
 const stateFixture = require('../fixtures/state.json');
@@ -617,6 +620,70 @@ describe('reducers', () => {
 		assert.strictEqual(
 			state.libraries[libraryKey].collections['COLCOL11'].name,
 			'New Collection'
+		);
+	});
+
+	it('update existing collection', () => {
+		var state = getTestState();
+		const libraryKey = state.current.library;
+		const collectionKey = Object.keys(
+			state.libraries[libraryKey].itemsByCollection
+		)[0];
+		const collectionData = { ...state.libraries[libraryKey].collections[collectionKey] };
+
+		state = reduce(state, {
+			type: PRE_UPDATE_COLLECTION,
+			libraryKey,
+			collectionKey,
+			patch: {
+				name: 'foobar'
+			},
+			queueId: 1
+		});
+
+		state = reduce(state, {
+			type: REQUEST_UPDATE_COLLECTION,
+			libraryKey,
+			collectionKey,
+			patch: {
+				name: 'foobar'
+			},
+			queueId: 1
+		});
+
+		assert.lengthOf(state.libraries[libraryKey].updating.collections[collectionKey], 1);
+		assert.strictEqual(
+			state.libraries[libraryKey].updating.collections[collectionKey][0].patch.name,
+			'foobar'
+		);
+		assert.strictEqual(state.libraries[libraryKey].collections[collectionKey].version, 1);
+		assert.strictEqual(
+			state.libraries[libraryKey].collections[collectionKey].name,
+			collectionData.name
+		);
+
+		state = reduce(state, {
+			type: RECEIVE_UPDATE_COLLECTION,
+			libraryKey,
+			collectionKey,
+			patch: {
+				name: 'foobar'
+			},
+			queueId: 1,
+			collection: {
+				...collectionData,
+				version: 3,
+				name: 'foobar'
+			},
+			response: mockResponse
+		});
+
+		assert.isEmpty(state.libraries[libraryKey].updating.collections);
+		assert.strictEqual(state.libraries[libraryKey].collections[collectionKey].name, 'foobar');
+		assert.strictEqual(state.libraries[libraryKey].collections[collectionKey].version, 3);
+		assert.strictEqual(
+			state.libraries[libraryKey].collections[collectionKey].name,
+			'foobar'
 		);
 	});
 });
