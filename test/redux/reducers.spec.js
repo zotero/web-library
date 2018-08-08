@@ -29,6 +29,7 @@ const {
 	REQUEST_META,
 	REQUEST_UPDATE_COLLECTION,
 	REQUEST_UPDATE_ITEM,
+	RECEIVE_DELETE_COLLECTION,
 } = require('../../src/js/constants/actions.js');
 const stateFixture = require('../fixtures/state.json');
 const { combineReducers } = require('redux');
@@ -684,6 +685,31 @@ describe('reducers', () => {
 		assert.strictEqual(
 			state.libraries[libraryKey].collections[collectionKey].name,
 			'foobar'
+		);
+	});
+
+	it('delete a collection', () => {
+		var state = getTestState();
+		const libraryKey = state.current.library;
+		const collectionKey = Object.keys(
+			state.libraries[libraryKey].itemsByCollection
+		)[0];
+
+		state = reduce(state, {
+			type: RECEIVE_DELETE_COLLECTION,
+			collectionKey,
+			libraryKey,
+			response: mockResponse,
+		});
+
+		assert.notProperty(
+			state.libraries[libraryKey].collections,
+			collectionKey
+		);
+
+		assert.notProperty(
+			state.libraries[libraryKey].itemCountByCollection,
+			collectionKey
 		);
 	});
 });

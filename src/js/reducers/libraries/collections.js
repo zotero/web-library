@@ -3,9 +3,11 @@
 const {
 	RECEIVE_COLLECTIONS_IN_LIBRARY,
 	RECEIVE_CREATE_COLLECTION,
+	RECEIVE_DELETE_COLLECTION,
 	RECEIVE_UPDATE_COLLECTION,
 } = require('../../constants/actions.js');
 const { indexByKey } = require('../../utils');
+const { removeKeys } = require('../../common/immutable');
 
 const collections = (state = {}, action) => {
 	switch(action.type) {
@@ -20,6 +22,8 @@ const collections = (state = {}, action) => {
 				...state,
 				...indexByKey(action.collections, 'key')
 			};
+		case RECEIVE_DELETE_COLLECTION:
+			return removeKeys(state, action.collectionKey);
 		default:
 			return state;
 	}

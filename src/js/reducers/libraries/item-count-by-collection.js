@@ -3,11 +3,13 @@
 const {
 	RECEIVE_ADD_ITEMS_TO_COLLECTION,
 	RECEIVE_COLLECTIONS_IN_LIBRARY,
+	RECEIVE_CREATE_ITEM,
+	RECEIVE_DELETE_COLLECTION,
 	RECEIVE_ITEMS_IN_COLLECTION,
 	RECEIVE_MOVE_ITEMS_TRASH,
 	RECEIVE_RECOVER_ITEMS_TRASH,
-	RECEIVE_CREATE_ITEM,
 } = require('../../constants/actions');
+const { removeKeys } = require('../../common/immutable');
 
 const itemCountByCollection = (state = {}, action) => {
 	switch(action.type) {
@@ -61,6 +63,8 @@ const itemCountByCollection = (state = {}, action) => {
 				...state,
 				[action.collectionKey]: state[action.collectionKey] + action.itemKeysChanged.length
 			}
+		case RECEIVE_DELETE_COLLECTION:
+			return removeKeys(state, action.collectionKey);
 		default:
 			return state;
 	}
