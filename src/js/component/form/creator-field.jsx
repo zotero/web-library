@@ -223,6 +223,7 @@ class CreatorField extends React.PureComponent {
 						this.props.isCreateAllowed ? (
 							<Button className="btn-plus"
 								onClick={ this.handleCreatorAdd.bind(this) }
+								onFocus={ () => this.setState({ hasFocus: true }) }
 							>
 								<Icon type={ '16/plus' } width="16" height="16" />
 							</Button>
