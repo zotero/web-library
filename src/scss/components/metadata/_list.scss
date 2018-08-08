@@ -219,12 +219,13 @@
 			}
 		}
 
-		// Native select
-		.form-control {
-			@include text-truncate;
-			color: $key-color;
+		.native-select-wrap {
+			.form-control {
+				@include text-truncate;
+				color: $key-color;
+			}
 
-			@include state("select:focus + .form-control") {
+			select:focus + .form-control {
 				color: $focus-color;
 			}
 		}
@@ -241,16 +242,19 @@
 		}
 	}
 
-	// Native select
 	.form-control {
-		background-color: transparent;
-
 		&:not(textarea) {
 			line-height: normal;
 		}
 
 		&:focus {
 			outline: none;
+		}
+	}
+
+	.native-select-wrap {
+		.form-control {
+			background-color: transparent;
 		}
 	}
 
