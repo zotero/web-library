@@ -11,6 +11,7 @@ const {
 	addToCollection,
 	createCollection,
 	createItem,
+	deleteCollection,
 	deleteItems,
 	fetchChildItems,
 	fetchCollections,
@@ -61,6 +62,8 @@ const {
 	PRE_UPDATE_COLLECTION,
 	REQUEST_UPDATE_COLLECTION,
 	RECEIVE_UPDATE_COLLECTION,
+	REQUEST_DELETE_COLLECTION,
+	RECEIVE_DELETE_COLLECTION,
 } = require('../../src/js/constants/actions.js');
 
 const collectionsFixture = require('../fixtures/collections.json');
@@ -726,5 +729,43 @@ describe('action creators', () => {
 		assert.strictEqual(store.getActions()[2].collection.name, 'foobar');
 		assert.strictEqual(store.getActions()[2].collection.version, 1337);
 		assert.typeOf(store.getActions()[2].response.response, 'object');
+	});
+
+	it('deleteCollection', async () => {
+		fetchMock.delete(/https:\/\/api\.zotero\.org\/users\/123\/collections\/AAAAAAAA\??.*/, {
+			status: 204,
+			headers: {
+				'Last-Modified-Version': 1337
+			}
+		});
+		const collections = {
+			'AAAAAAAA': {
+				key: 'AAAAAAAA',
+				version: 1,
+				name: 'Test Collection A',
+			},
+			'BBBBBBBB': {
+				key: 'BBBBBBBB',
+				version: 1,
+				name: 'Test Collection B',
+			}
+		};
+
+		const store = mockStore({
+			...initialState,
+			libraries: { u123: { collections } }
+		});
+
+		const action = deleteCollection(Object.values(collections)[0]);
+		await store.dispatch(action);
+
+		assert.strictEqual(store.getActions()[0].type, REQUEST_DELETE_COLLECTION);
+		assert.strictEqual(store.getActions()[0].collection.key, 'AAAAAAAA');
+		assert.strictEqual(store.getActions()[0].libraryKey, 'u123');
+
+		assert.strictEqual(store.getActions()[1].type, RECEIVE_DELETE_COLLECTION);
+		assert.strictEqual(store.getActions()[1].collection.key, 'AAAAAAAA');
+		assert.strictEqual(store.getActions()[1].libraryKey, 'u123');
+		assert.typeOf(store.getActions()[1].response.response, 'object');
 	});
 });

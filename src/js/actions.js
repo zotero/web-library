@@ -106,6 +106,10 @@ const {
 	REQUEST_UPDATE_COLLECTION,
 	RECEIVE_UPDATE_COLLECTION,
 	ERROR_UPDATE_COLLECTION,
+
+	REQUEST_DELETE_COLLECTION,
+	RECEIVE_DELETE_COLLECTION,
+	ERROR_DELETE_COLLECTION,
 } = require('./constants/actions');
 
 // @TODO: rename and move to common/api
@@ -687,13 +691,17 @@ function deleteItem(item) {
 		});
 
 		try {
-			await api(config.apiKey, config.apiConfig)
-			.library(libraryKey).items(item.key).version(item.version).delete();
-			// search in state, add to action
+			let response = await api(config.apiKey, config.apiConfig)
+				.library(libraryKey)
+				.items(item.key)
+				.version(item.version)
+				.delete();
+
 			dispatch({
 				type: RECEIVE_DELETE_ITEM,
 				libraryKey,
-				item
+				item,
+				response
 			});
 			cleanupCacheAfterDelete([item.key], state);
 		} catch(error) {
@@ -1271,6 +1279,45 @@ function queueUpdateCollection(collectionKey, patch, libraryKey, queueId) {
 	};
 }
 
+const deleteCollection = (collection) => {
+	return async (dispatch, getState) => {
+		const state = getState();
+		const libraryKey = state.current.library;
+		const config = getState().config;
+
+		dispatch({
+			type: REQUEST_DELETE_COLLECTION,
+			libraryKey,
+			collection
+		});
+
+		try {
+			let response = await api(config.apiKey, config.apiConfig)
+				.library(libraryKey)
+				.collections(collection.key)
+				.version(collection.version)
+				.delete();
+
+			api().invalidate({ 'resource.library': libraryKey });
+
+			dispatch({
+				type: RECEIVE_DELETE_COLLECTION,
+				libraryKey,
+				collection,
+				response
+			});
+		} catch(error) {
+			dispatch({
+					type: ERROR_DELETE_COLLECTION,
+					error,
+					libraryKey,
+					collection,
+				});
+			throw error;
+		}
+	};
+}
+
 
 module.exports = {
 	addToCollection,
@@ -1278,6 +1325,7 @@ module.exports = {
 	configureApi,
 	createCollection,
 	createItem,
+	deleteCollection,
 	deleteItem,
 	deleteItems,
 	fetchChildItems,
