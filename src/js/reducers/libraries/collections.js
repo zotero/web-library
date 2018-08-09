@@ -23,7 +23,7 @@ const collections = (state = {}, action) => {
 				...indexByKey(action.collections, 'key')
 			};
 		case RECEIVE_DELETE_COLLECTION:
-			return removeKeys(state, action.collectionKey);
+			return removeKeys(state, action.collection.key);
 		default:
 			return state;
 	}

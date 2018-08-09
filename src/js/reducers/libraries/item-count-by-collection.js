@@ -64,7 +64,7 @@ const itemCountByCollection = (state = {}, action) => {
 				[action.collectionKey]: state[action.collectionKey] + action.itemKeysChanged.length
 			}
 		case RECEIVE_DELETE_COLLECTION:
-			return removeKeys(state, action.collectionKey);
+			return removeKeys(state, action.collection.key);
 		default:
 			return state;
 	}

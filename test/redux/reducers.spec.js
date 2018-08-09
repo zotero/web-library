@@ -697,7 +697,7 @@ describe('reducers', () => {
 
 		state = reduce(state, {
 			type: RECEIVE_DELETE_COLLECTION,
-			collectionKey,
+			collection: { ...state.libraries[libraryKey].collections[collectionKey] },
 			libraryKey,
 			response: mockResponse,
 		});
