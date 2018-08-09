@@ -51,6 +51,7 @@ class CollectionTreeContainer extends React.Component {
 
 	async handleCollectionDelete(collection) {
 		await this.props.dispatch(deleteCollection(collection));
+		this.props.history.push('/');
 	}
 
 	render() {
