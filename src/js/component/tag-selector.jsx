@@ -29,7 +29,7 @@ class TagSelector extends React.Component {
 							}
 
 							return (
-								<li { ...props }>
+								<li key={ tag.name } { ...props }>
 									{ tag.name }
 								</li>
 							);
@@ -38,7 +38,7 @@ class TagSelector extends React.Component {
 					</ul>
 				</div>
 				<div className="tag-selector-filter-container">
-					<input 
+					<input
 						type="search"
 						value={this.props.searchString}
 						onChange={ ev => this.props.onSearch(ev.target.value) }

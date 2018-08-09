@@ -10,7 +10,7 @@ const Button = require('./ui/button');
 const ItemDetailsContainer = require('../container/item-details');
 const ItemListContainer = require('../container/item-list');
 const Navbar = require('./ui/navbar');
-const TagSelector = require('./tag-selector');
+const TagSelectorContainer = require('../container/tag-selector');
 const { Toolbar, ToolGroup } = require('./ui/toolbars');
 const TouchHeaderContainer = require('../container/touch-header');
 const UserTypeDetector = require('../enhancers/user-type-detector');
@@ -55,7 +55,7 @@ class Library extends React.Component {
 							<header className="sidebar">
 								<h2 className="offscreen">Web library</h2>
 								<CollectionTreeContainer />
-								<TagSelector />
+								<TagSelectorContainer />
 							</header>
 							<section className={ `items ${ this.props.view === 'item-list' ? 'active' : '' }` }>
 								<TouchHeaderContainer
