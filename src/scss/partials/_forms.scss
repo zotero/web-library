@@ -2,6 +2,10 @@
 // Forms
 // --------------------------------------------------
 
+::placeholder {
+	color: $placeholder-color;
+}
+
 .input-group {
 	flex: 1 1 auto;
 	display: flex;
