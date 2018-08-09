@@ -34,6 +34,8 @@
 		),
 		image-url("icons/minus-circle-touch.svg")
 			no-repeat $default-padding-x-touch center,
+		image-url("icons/chevron-13.svg")
+			no-repeat right ($handle-width + 4px) center,
 		image-url("icons/grip.svg")
 			no-repeat right $default-padding-x-touch center $input-bg;
 

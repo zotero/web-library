@@ -8,8 +8,11 @@
 
 	@include state(".editing .creators-entry") {
 		@include touch-or-bp-down(sm) {
+			$handle-width: 2 * $default-padding-x-touch + $space-lg + $input-border-width;
+
 			padding-left: 2 * $default-padding-x-touch + $space-lg;
-			padding-right: 2 * $default-padding-x-touch + $space-lg + $input-border-width;
+			padding-right: $handle-width;
+			background: image-url("icons/chevron-13.svg") no-repeat right ($handle-width + 4px) center $input-bg;
 
 			&.single,
 			&.virtual {
@@ -132,40 +135,58 @@
 	}
 
 	.value {
-		> *:not(:first-child) {
-			margin-left: 2px;
-		}
+		@include touch-or-bp-down(sm) {
+			padding-right: 31px;
 
-		> *:not(:last-child) {
-			margin-right: 2px;
-		}
-
-		.editable {
-			min-width: $space-lg;
-
-			&:first-child {
+			.input-group {
 				flex: 0 1 auto;
 
-				@include state(".creators-entry.creators-twoslot") {
-					display: flex;
-
-					.input-group {
-						flex: 1 1 auto;
-					}
-
-					&::after {
-						content: ",";
-						flex: 0 0 auto;
-					}
-				}
-
-				&.editing {
-					flex: 1 1 auto;
+				& + .input-group {
+					//flex: 0 10000 auto;
 				}
 			}
 
-			&:last-of-type {
-				margin-right: auto;
+			.form-control {
+				text-overflow: ellipsis;
+			}
+		}
+
+		@include mouse-and-bp-up(md) {
+			> *:not(:first-child) {
+				margin-left: 2px;
+			}
+
+			> *:not(:last-child) {
+				margin-right: 2px;
+			}
+
+			.editable {
+				min-width: $space-lg;
+
+				&:first-child {
+					flex: 0 1 auto;
+
+					@include state(".creators-entry.creators-twoslot") {
+						display: flex;
+
+						.input-group {
+							flex: 1 1 auto;
+						}
+
+						&::after {
+							content: ",";
+							flex: 0 0 auto;
+						}
+					}
+
+					&.editing {
+						flex: 1 1 auto;
+					}
+				}
+
+				&:last-of-type {
+					margin-right: auto;
+				}
 			}
 		}
 
