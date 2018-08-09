@@ -80,6 +80,10 @@ class CollectionTree extends React.Component {
 		this.setState({ renaming: null });
 	}
 
+	async handleDelete(collection) {
+		await this.props.onCollectionDelete(collection);
+	}
+
 	collectionsFromKeys(collections) {
 		return collections.map(
 			collectionKey => this.props.collections.find(
@@ -215,6 +219,9 @@ class CollectionTree extends React.Component {
 										<ActionsDropdown>
 											<DropdownItem onClick={ this.handleRename.bind(this, collection.key) }>
 												Rename
+											</DropdownItem>
+											<DropdownItem onClick={ this.handleDelete.bind(this, collection) }>
+												Delete
 											</DropdownItem>
 										</ActionsDropdown>
 									</React.Fragment>
