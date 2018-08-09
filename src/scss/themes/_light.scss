@@ -20,25 +20,26 @@ $transparent: transparent;
 // Grays
 // --------------------------------------------------
 
-$shade-0: #fff;
-$shade-1: #f6f6f6;
-$shade-2: #e6e6e6;
-$shade-3: #ddd;
-$shade-4: #ccc;
-$shade-5: #777;
-$shade-6: #555;
-$shade-7: #444;
-$shade-8: #222;
-$shade-9: #000;
+$shade-0:  #fff;
+$shade-1:  #f6f6f6;
+$shade-2:  #e6e6e6;
+$shade-3:  #ddd;
+$shade-4:  #ccc;
+$shade-5:  #bbb;
+$shade-6:  #777;
+$shade-7:  #555;
+$shade-8:  #444;
+$shade-9:  #222;
+$shade-10: #000;
 
 
 // Scaffolding
 // --------------------------------------------------
 
 $body-bg:    $shade-0;
-$text-color: $shade-8;
+$text-color: $shade-9;
 
-$headings-color: $shade-7;
+$headings-color: $shade-8;
 
 $link-color:       $blue;
 $link-hover-color: $blue;
@@ -71,24 +72,24 @@ $sidebar-bg: $shade-1;
 
 // Icon
 $icon-color: $secondary;
-$icon-active-color: $shade-8;
+$icon-active-color: $shade-9;
 
 // Navbar
 $navbar-bg:                       $shade-1;
 $navbar-nav-mobile-bg:            $shade-2;
 $navbar-border-color:             $shade-0;
-$navbar-link-color:               $shade-7;
+$navbar-link-color:               $shade-8;
 $navbar-link-active-color:        $secondary;
 $navbar-link-mobile-active-color: $shade-0;
 $user-profile-link-bg:            $shade-2;
-$icon-bar-bg:                     $shade-7;
+$icon-bar-bg:                     $shade-8;
 $icon-bar-bg-focus:               $asphalt;
 
 // Collection tree
-$collection-tree-headings-color:          $shade-5;
-$collection-tree-link-color:              $shade-7;
-$collection-tree-active-link-color:       $shade-8;
-$collection-tree-active-icon-color:       $shade-6;
+$collection-tree-headings-color:          $shade-6;
+$collection-tree-link-color:              $shade-8;
+$collection-tree-active-link-color:       $shade-9;
+$collection-tree-active-icon-color:       $shade-7;
 $collection-tree-active-link-bg:          $shade-2;
 $collection-tree-focus-color:             $asphalt;
 $touch-collection-tree-active-link-color: $shade-0;
@@ -101,7 +102,7 @@ $collection-tree-dnd-target-icon-color:   $shade-0;
 // Items
 $items-bg:              $shade-0;
 $items-odd-bg:          $shade-1;
-$item-list-head-color:  $shade-7;
+$item-list-head-color:  $shade-8;
 $item-list-head-border: $shade-2;
 
 // Item list
@@ -111,25 +112,25 @@ $item-active-bg:    $secondary;
 
 // Item details
 $item-details-bg: $shade-1;
-$info-view-color: #bbb;
+$info-view-color: $shade-5;
 
 // Panel
 $panel-bg: $shade-1;
-$panel-header-color: $shade-7;
-$panel-header-shadow: rgba($shade-9, 0.08);
+$panel-header-color: $shade-8;
+$panel-header-shadow: rgba($shade-10, 0.08);
 
 // Tabs
 $tab-bg:                $shade-2;
 $tab-active-color:      inherit;
 $tab-active-bg:         $shade-1;
-$tab-inactive-color:    $shade-5; // #999?
+$tab-inactive-color:    $shade-6; // #999?
 $tab-pane-border-color: $shade-0;
 
 // Metadata list
-$key-color:          $shade-5;
+$key-color:          $shade-6;
 $editable-hover-bg:  darken($panel-bg, 4%);
 $handle-color-touch: $shade-4;
-$handle-color-mouse: $shade-5;
+$handle-color-mouse: $shade-6;
 
 // Button
 $btn-primary-color:           $shade-0;
@@ -142,11 +143,11 @@ $btn-icon-bg:                 $transparent;
 $btn-icon-focus-color:        $shade-0;
 $btn-icon-focus-bg:           $asphalt;
 $btn-icon-focus-active-color: rgba($shade-0, 0.5);
-$btn-icon-active-color:       $shade-6;
+$btn-icon-active-color:       $shade-7;
 $btn-icon-active-bg:          $shade-2;
-$twisty-color:                $shade-5;
+$twisty-color:                $shade-6;
 $twisty-focus-color:          $asphalt;
-$twisty-selected-color:       $shade-6;
+$twisty-selected-color:       $shade-7;
 $twisty-dnd-target-color:     $shade-0;
 
 // Forms
@@ -154,13 +155,13 @@ $input-color:        $text-color;
 $input-bg:           $body-bg;
 $input-border-color: $shade-3;
 $input-focus-color:  $secondary;
-$placeholder-color:  #bbb;
+$placeholder-color:  $shade-5;
 
 // Spinner
 $spinner-color: $secondary;
 
 // Touch header
-$touch-header-color:      $shade-7; // Better than $shade-5 to link color
+$touch-header-color:      $shade-8; // Better than $shade-6 to link color
 $touch-header-link-color: $asphalt;
 $btn-options-color:       $secondary;
 $btn-options-bg:          $transparent;
@@ -176,7 +177,7 @@ $menu-bg:               $body-bg;
 $menu-box-shadow:       0 0 0 1px rgba(0, 0, 0, 0.08), 0 3px 8px rgba(0, 0, 0, 0.2);
 $menu-item-hover-bg:    $shade-1;
 $menu-item-selected-bg: $shade-2;
-$menu-no-results-color: #bbb;
+$menu-no-results-color: $shade-5;
 
 // Drag layer
-$creator-drag-preview-shadow: rgba($shade-9, 0.2);
+$creator-drag-preview-shadow: rgba($shade-10, 0.2);
