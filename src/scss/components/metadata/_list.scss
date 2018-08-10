@@ -140,7 +140,7 @@
 			}
 
 			// Editable focus state
-			&.has-focus {
+			&:focus-within {
 				.keyboard & {
 					z-index: 2;
 
@@ -226,7 +226,7 @@
 			}
 
 			select:focus + .form-control {
-				color: $focus-color;
+				color: $focus-color; // Reset
 			}
 		}
 	}
@@ -335,8 +335,8 @@
 				align-items: normal;
 			}
 
-			.keyboard & {
-				&.has-focus {
+			&:focus-within {
+				.keyboard & {
 					&::after {
 						top: calc(100% - #{$outline-width});
 					}

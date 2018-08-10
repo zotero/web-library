@@ -110,12 +110,10 @@ textarea {
 
 		&:focus {
 			position: absolute; // Reset
-		}
-	}
 
-	.form-control {
-		.has-focus & {
-			color: $focus-color;
+			& + .form-control {
+				color: $focus-color;
+			}
 		}
 	}
 }

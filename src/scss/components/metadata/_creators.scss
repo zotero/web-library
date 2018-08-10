@@ -201,9 +201,11 @@
 				display: none;
 			}
 
-			@include mouse-and-bp-up(md) {
-				clip: rect(0, 0, 0, 0);
-				position: absolute;
+			@include state(".creators-entry:not(:focus-within)") {
+				@include mouse-and-bp-up(md) {
+					clip: rect(0, 0, 0, 0);
+					position: absolute;
+				}
 			}
 
 			@include state(".creators-entry:hover") {
@@ -213,7 +215,7 @@
 				}
 			}
 
-			@include state(".creators-entry.has-focus") {
+			@include state(".creators-entry:focus-within") {
 				@include mouse-and-bp-up(md) {
 					clip: auto;
 					position: static;
