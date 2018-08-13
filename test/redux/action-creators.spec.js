@@ -26,6 +26,7 @@ const {
 	recoverFromTrash,
 	updateCollection,
 	updateItem,
+	fetchLibrarySettings,
 } = require('../../src/js/actions.js');
 const {
 	REQUEST_META,
@@ -64,12 +65,15 @@ const {
 	RECEIVE_UPDATE_COLLECTION,
 	REQUEST_DELETE_COLLECTION,
 	RECEIVE_DELETE_COLLECTION,
+	REQUEST_LIBRARY_SETTINGS,
+	RECEIVE_LIBRARY_SETTINGS,
 } = require('../../src/js/constants/actions.js');
 
 const collectionsFixture = require('../fixtures/collections.json');
 const itemsFixture = require('../fixtures/items-top.json');
 const creatorTypesFixture = require('../fixtures/item-types-creator-types.json');
 const fieldsFixture = require('../fixtures/item-types-fields.json');
+const settingsFixture = require('../fixtures/settings.json');
 
 const mockStore = configureStore([thunk, ReduxAsyncQueue]);
 const initialState = {
@@ -766,6 +770,22 @@ describe('action creators', () => {
 		assert.strictEqual(store.getActions()[1].type, RECEIVE_DELETE_COLLECTION);
 		assert.strictEqual(store.getActions()[1].collection.key, 'AAAAAAAA');
 		assert.strictEqual(store.getActions()[1].libraryKey, 'u123');
+		assert.typeOf(store.getActions()[1].response.response, 'object');
+	});
+
+	it('fetchLibrarySettings', async () => {
+		fetchMock.get(/https:\/\/api\.zotero\.org\/users\/123\/settings\??.*/, settingsFixture);
+
+		const store = mockStore(initialState);
+		const action = fetchLibrarySettings();
+		await store.dispatch(action);
+
+		assert.strictEqual(store.getActions()[0].type, REQUEST_LIBRARY_SETTINGS);
+		assert.strictEqual(store.getActions()[0].libraryKey, 'u123');
+
+		assert.strictEqual(store.getActions()[1].type, RECEIVE_LIBRARY_SETTINGS);
+		assert.strictEqual(store.getActions()[1].libraryKey, 'u123');
+		assert.deepEqual(store.getActions()[1].settings, settingsFixture);
 		assert.typeOf(store.getActions()[1].response.response, 'object');
 	});
 });

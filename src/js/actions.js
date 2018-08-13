@@ -110,6 +110,10 @@ const {
 	REQUEST_DELETE_COLLECTION,
 	RECEIVE_DELETE_COLLECTION,
 	ERROR_DELETE_COLLECTION,
+
+	REQUEST_LIBRARY_SETTINGS,
+	RECEIVE_LIBRARY_SETTINGS,
+	ERROR_LIBRARY_SETTINGS,
 } = require('./constants/actions');
 
 // @TODO: rename and move to common/api
@@ -1318,6 +1322,39 @@ const deleteCollection = (collection) => {
 	};
 }
 
+const fetchLibrarySettings = () => {
+	return async (dispatch, getState) => {
+		const { config, current: { library: libraryKey } } = getState();
+		dispatch({
+			type: REQUEST_LIBRARY_SETTINGS,
+			libraryKey
+		});
+		try {
+			const response = await api(config.apiKey, config.apiConfig)
+				.library(libraryKey)
+				.settings()
+				.get();
+
+			const settings = response.getData();
+
+			dispatch({
+				type: RECEIVE_LIBRARY_SETTINGS,
+				libraryKey,
+				settings,
+				response
+			});
+			return settings;
+		} catch(error) {
+			dispatch({
+				type: ERROR_LIBRARY_SETTINGS,
+				libraryKey,
+				error
+			});
+			throw error;
+		}
+	};
+}
+
 
 module.exports = {
 	addToCollection,
@@ -1335,6 +1372,7 @@ module.exports = {
 	fetchItemTemplate,
 	fetchItemTypeCreatorTypes,
 	fetchItemTypeFields,
+	fetchLibrarySettings,
 	fetchTopItems,
 	fetchTrashItems,
 	initialize,
