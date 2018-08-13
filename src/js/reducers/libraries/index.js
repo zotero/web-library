@@ -9,6 +9,7 @@ const itemsByParent = require('./items-by-parent');
 const itemsTop = require('./items-top');
 const itemsTrash = require('./items-trash');
 const updating = require('./updating');
+const tags = require('./tags');
 const itemCountByCollection = require('./item-count-by-collection');
 const version = require('./version');
 const { get } = require('../../utils');
@@ -55,6 +56,9 @@ const actions = Object.entries(require('../../constants/actions'))
 			'REQUEST_UPDATE_COLLECTION',
 			'REQUEST_UPDATE_ITEM',
 			'TRIGGER_EDITING_ITEM',
+			'REQUEST_LIBRARY_SETTINGS',
+			'RECEIVE_LIBRARY_SETTINGS',
+			'ERROR_LIBRARY_SETTINGS',
 	]).includes(key) ? value : false).filter(Boolean);
 
 const libraries = (state = {}, action) => {
@@ -71,6 +75,7 @@ const libraries = (state = {}, action) => {
 				itemsByParent: itemsByParent(get(state, [action.libraryKey, 'itemsByParent']), action),
 				itemsTop: itemsTop(get(state, [action.libraryKey, 'itemsTop']), action),
 				itemsTrash: itemsTrash(get(state, [action.libraryKey, 'itemsTrash']), action),
+				tags: tags(get(state, [action.libraryKey, 'tags']), action),
 				updating: updating(get(state, [action.libraryKey, 'updating']), action),
 				version: version(get(state, [action.libraryKey, 'version']), action),
 			}

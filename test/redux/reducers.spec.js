@@ -30,8 +30,11 @@ const {
 	REQUEST_UPDATE_COLLECTION,
 	REQUEST_UPDATE_ITEM,
 	RECEIVE_DELETE_COLLECTION,
+	REQUEST_LIBRARY_SETTINGS,
+	RECEIVE_LIBRARY_SETTINGS,
 } = require('../../src/js/constants/actions.js');
 const stateFixture = require('../fixtures/state.json');
+const settingsFixture = require('../fixtures/settings.json');
 const { combineReducers } = require('redux');
 const reduce = combineReducers(reducers);
 
@@ -711,5 +714,21 @@ describe('reducers', () => {
 			state.libraries[libraryKey].itemCountByCollection,
 			collectionKey
 		);
+	});
+
+	it('obtains tag colors from library settings', () => {
+		var state = getTestState();
+		const libraryKey = state.current.library;
+		const tagName = settingsFixture.tagColors.value[0].name;
+		const tagColor = settingsFixture.tagColors.value[0].color;
+
+		state = reduce(state, {
+			type: RECEIVE_LIBRARY_SETTINGS,
+			settings: settingsFixture,
+			libraryKey,
+			response: mockResponse,
+		});
+
+		assert.strictEqual(state.libraries[libraryKey].tags[tagName].color, tagColor);
 	});
 });
