@@ -27,6 +27,7 @@ const {
 	updateCollection,
 	updateItem,
 	fetchLibrarySettings,
+	fetchTagsInCollection,
 } = require('../../src/js/actions.js');
 const {
 	REQUEST_META,
@@ -67,6 +68,8 @@ const {
 	RECEIVE_DELETE_COLLECTION,
 	REQUEST_LIBRARY_SETTINGS,
 	RECEIVE_LIBRARY_SETTINGS,
+	REQUEST_TAGS_IN_COLLECTION,
+	RECEIVE_TAGS_IN_COLLECTION,
 } = require('../../src/js/constants/actions.js');
 
 const collectionsFixture = require('../fixtures/collections.json');
@@ -74,6 +77,7 @@ const itemsFixture = require('../fixtures/items-top.json');
 const creatorTypesFixture = require('../fixtures/item-types-creator-types.json');
 const fieldsFixture = require('../fixtures/item-types-fields.json');
 const settingsFixture = require('../fixtures/settings.json');
+const tagsResponseFixture = require('../fixtures/tags-response');
 
 const mockStore = configureStore([thunk, ReduxAsyncQueue]);
 const initialState = {
@@ -788,4 +792,25 @@ describe('action creators', () => {
 		assert.deepEqual(store.getActions()[1].settings, settingsFixture);
 		assert.typeOf(store.getActions()[1].response.response, 'object');
 	});
+
+	it('fetchTagsInCollection', async () => {
+			fetchMock.get(/https:\/\/api\.zotero\.org\/users\/123\/collections\/AAAAAAAA\??.*/, tagsResponseFixture);
+			const store = mockStore(initialState);
+			const action = fetchTagsInCollection('AAAAAAAA');
+			await store.dispatch(action);
+
+			assert.strictEqual(store.getActions()[0].type, REQUEST_TAGS_IN_COLLECTION);
+			assert.strictEqual(store.getActions()[0].libraryKey, 'u123');
+			assert.strictEqual(store.getActions()[0].collectionKey, 'AAAAAAAA');
+
+			assert.strictEqual(store.getActions()[1].type, RECEIVE_TAGS_IN_COLLECTION);
+			assert.strictEqual(store.getActions()[1].libraryKey, 'u123');
+			assert.strictEqual(store.getActions()[1].collectionKey, 'AAAAAAAA');
+			assert.deepEqual(store.getActions()[1].tags, tagsResponseFixture.map(t => ({ tag: t.tag })));
+			assert.deepEqual(
+				store.getActions()[1].tags[0][Symbol.for('meta')],
+				tagsResponseFixture[0].meta
+			);
+			assert.typeOf(store.getActions()[1].response.response, 'object');
+	})
 });
