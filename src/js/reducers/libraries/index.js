@@ -10,6 +10,7 @@ const itemsTop = require('./items-top');
 const itemsTrash = require('./items-trash');
 const updating = require('./updating');
 const tags = require('./tags');
+const tagsByCollection = require('./tags-by-collection');
 const itemCountByCollection = require('./item-count-by-collection');
 const version = require('./version');
 const { get } = require('../../utils');
@@ -59,6 +60,9 @@ const actions = Object.entries(require('../../constants/actions'))
 			'REQUEST_LIBRARY_SETTINGS',
 			'RECEIVE_LIBRARY_SETTINGS',
 			'ERROR_LIBRARY_SETTINGS',
+			'RECEIVE_TAGS_IN_COLLECTION',
+			'REQUEST_TAGS_IN_COLLECTION',
+			'ERROR_TAGS_IN_COLLECTION',
 	]).includes(key) ? value : false).filter(Boolean);
 
 const libraries = (state = {}, action) => {
@@ -78,6 +82,7 @@ const libraries = (state = {}, action) => {
 				tags: tags(get(state, [action.libraryKey, 'tags']), action),
 				updating: updating(get(state, [action.libraryKey, 'updating']), action),
 				version: version(get(state, [action.libraryKey, 'version']), action),
+				tagsByCollection: tagsByCollection(get(state, [action.libraryKey, 'tagsByCollection']), action),
 			}
 		}
 	} else { return state; }

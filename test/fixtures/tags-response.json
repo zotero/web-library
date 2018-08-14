@@ -1,0 +1,18 @@
+[
+    {
+        "tag": "tag-1",
+        "links": {},
+        "meta": {
+            "type": 1,
+            "numItems": 11
+        }
+    },
+    {
+        "tag": "tag-2",
+        "links": {},
+        "meta": {
+            "type": 1,
+            "numItems": 23
+        }
+    }
+]

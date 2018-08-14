@@ -30,11 +30,12 @@ const {
 	REQUEST_UPDATE_COLLECTION,
 	REQUEST_UPDATE_ITEM,
 	RECEIVE_DELETE_COLLECTION,
-	REQUEST_LIBRARY_SETTINGS,
 	RECEIVE_LIBRARY_SETTINGS,
+	RECEIVE_TAGS_IN_COLLECTION,
 } = require('../../src/js/constants/actions.js');
 const stateFixture = require('../fixtures/state.json');
 const settingsFixture = require('../fixtures/settings.json');
+const tagsResponseFixture = require('../fixtures/tags-response');
 const { combineReducers } = require('redux');
 const reduce = combineReducers(reducers);
 
@@ -729,6 +730,30 @@ describe('reducers', () => {
 			response: mockResponse,
 		});
 
+		assert.strictEqual(state.libraries[libraryKey].tags[tagName].tag, tagName);
 		assert.strictEqual(state.libraries[libraryKey].tags[tagName].color, tagColor);
+	});
+
+	it('fetches tags for all items in a collection', () => {
+		var state = getTestState();
+		const libraryKey = state.current.library;
+		const collectionKey = Object.keys(
+			state.libraries[libraryKey].itemsByCollection
+		)[0];
+		const tagName = tagsResponseFixture[0].tag;
+
+		state = reduce(state, {
+			type: RECEIVE_TAGS_IN_COLLECTION,
+			tags: tagsResponseFixture.map(t => ({ tag: t.tag })),
+			libraryKey,
+			collectionKey,
+			response: mockResponse,
+		});
+
+		assert.strictEqual(state.libraries[libraryKey].tags[tagName].tag, tagName);
+		assert.deepEqual(
+			state.libraries[libraryKey].tagsByCollection[collectionKey],
+			tagsResponseFixture.map(t => t.tag )
+		);
 	});
 });
