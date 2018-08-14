@@ -28,6 +28,7 @@ const {
 	updateItem,
 	fetchLibrarySettings,
 	fetchTagsInCollection,
+	fetchTagsInLibrary,
 } = require('../../src/js/actions.js');
 const {
 	REQUEST_META,
@@ -70,6 +71,8 @@ const {
 	RECEIVE_LIBRARY_SETTINGS,
 	REQUEST_TAGS_IN_COLLECTION,
 	RECEIVE_TAGS_IN_COLLECTION,
+	REQUEST_TAGS_IN_LIBRARY,
+	RECEIVE_TAGS_IN_LIBRARY,
 } = require('../../src/js/constants/actions.js');
 
 const collectionsFixture = require('../fixtures/collections.json');
@@ -806,6 +809,24 @@ describe('action creators', () => {
 			assert.strictEqual(store.getActions()[1].type, RECEIVE_TAGS_IN_COLLECTION);
 			assert.strictEqual(store.getActions()[1].libraryKey, 'u123');
 			assert.strictEqual(store.getActions()[1].collectionKey, 'AAAAAAAA');
+			assert.deepEqual(store.getActions()[1].tags, tagsResponseFixture.map(t => ({ tag: t.tag })));
+			assert.deepEqual(
+				store.getActions()[1].tags[0][Symbol.for('meta')],
+				tagsResponseFixture[0].meta
+			);
+			assert.typeOf(store.getActions()[1].response.response, 'object');
+	})
+	it('fetchTagsInLibrary', async () => {
+			fetchMock.get(/https:\/\/api\.zotero\.org\/users\/123\/tags\??.*/, tagsResponseFixture);
+			const store = mockStore(initialState);
+			const action = fetchTagsInLibrary();
+			await store.dispatch(action);
+
+			assert.strictEqual(store.getActions()[0].type, REQUEST_TAGS_IN_LIBRARY);
+			assert.strictEqual(store.getActions()[0].libraryKey, 'u123');
+
+			assert.strictEqual(store.getActions()[1].type, RECEIVE_TAGS_IN_LIBRARY);
+			assert.strictEqual(store.getActions()[1].libraryKey, 'u123');
 			assert.deepEqual(store.getActions()[1].tags, tagsResponseFixture.map(t => ({ tag: t.tag })));
 			assert.deepEqual(
 				store.getActions()[1].tags[0][Symbol.for('meta')],

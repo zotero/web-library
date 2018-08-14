@@ -118,6 +118,10 @@ const {
 	REQUEST_TAGS_IN_COLLECTION,
 	RECEIVE_TAGS_IN_COLLECTION,
 	ERROR_TAGS_IN_COLLECTION,
+
+	REQUEST_TAGS_IN_LIBRARY,
+	RECEIVE_TAGS_IN_LIBRARY,
+	ERROR_TAGS_IN_LIBRARY,
 } = require('./constants/actions');
 
 // @TODO: rename and move to common/api
@@ -1411,6 +1415,54 @@ const fetchTagsInCollection = (collectionKey, { start = 0, limit = 50 } = {}) =>
 	};
 };
 
+const fetchTagsInLibrary = ({ start = 0, limit = 50 } = {}) => {
+	return async (dispatch, getState) => {
+		const state = getState();
+		const config = state.config;
+		const libraryKey = state.current.library;
+		const totalTagsCount = state.tagsCountByLibrary;
+		const knownTags = get(state, ['tagsByLibrary', libraryKey], []);
+
+		if(knownTags.length === totalTagsCount) {
+			return knownTags.map(key => get(state, ['libraries', libraryKey, 'tags', key]))
+		}
+
+		dispatch({
+			type: REQUEST_TAGS_IN_LIBRARY,
+			libraryKey,
+		});
+
+		try {
+			const response = await api(config.apiKey, config.apiConfig)
+				.library(libraryKey)
+				.tags()
+				.get({ start, limit });
+
+			const tags = response.getData().map((tagData, index) => ({
+				tag: tagData.tag,
+				[Symbol.for('meta')]: response.getMeta()[index] || {}
+			}));
+
+			dispatch({
+				type: RECEIVE_TAGS_IN_LIBRARY,
+				libraryKey,
+				tags,
+				response,
+			});
+
+			return tags;
+		} catch(error) {
+			dispatch({
+				type: ERROR_TAGS_IN_LIBRARY,
+				libraryKey,
+				error
+			});
+
+			throw error;
+		}
+	};
+};
+
 
 module.exports = {
 	addToCollection,
@@ -1430,6 +1482,7 @@ module.exports = {
 	fetchItemTypeFields,
 	fetchLibrarySettings,
 	fetchTagsInCollection,
+	fetchTagsInLibrary,
 	fetchTopItems,
 	fetchTrashItems,
 	initialize,
