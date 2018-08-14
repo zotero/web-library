@@ -59,10 +59,8 @@ const actions = Object.entries(require('../../constants/actions'))
 			'TRIGGER_EDITING_ITEM',
 			'REQUEST_LIBRARY_SETTINGS',
 			'RECEIVE_LIBRARY_SETTINGS',
-			'ERROR_LIBRARY_SETTINGS',
 			'RECEIVE_TAGS_IN_COLLECTION',
-			'REQUEST_TAGS_IN_COLLECTION',
-			'ERROR_TAGS_IN_COLLECTION',
+			'RECEIVE_TAGS_IN_LIBRARY',
 	]).includes(key) ? value : false).filter(Boolean);
 
 const libraries = (state = {}, action) => {

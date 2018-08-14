@@ -32,6 +32,7 @@ const {
 	RECEIVE_DELETE_COLLECTION,
 	RECEIVE_LIBRARY_SETTINGS,
 	RECEIVE_TAGS_IN_COLLECTION,
+	RECEIVE_TAGS_IN_LIBRARY,
 } = require('../../src/js/constants/actions.js');
 const stateFixture = require('../fixtures/state.json');
 const settingsFixture = require('../fixtures/settings.json');
@@ -755,5 +756,24 @@ describe('reducers', () => {
 			state.libraries[libraryKey].tagsByCollection[collectionKey],
 			tagsResponseFixture.map(t => t.tag )
 		);
+	});
+
+	it('fetches tags for all items in a library', () => {
+		var state = getTestState();
+		const libraryKey = state.current.library;
+		const tagName = tagsResponseFixture[0].tag;
+
+		state = reduce(state, {
+			type: RECEIVE_TAGS_IN_LIBRARY,
+			tags: tagsResponseFixture.map(t => ({ tag: t.tag })),
+			libraryKey,
+			response: {
+				...mockResponse,
+				response: new Response('', { headers: { 'Total-Results': tagsResponseFixture.length } })
+			},
+		});
+
+		assert.strictEqual(state.libraries[libraryKey].tags[tagName].tag, tagName);
+		assert.strictEqual(state.tagCountByLibrary[libraryKey], tagsResponseFixture.length);
 	});
 });

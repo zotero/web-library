@@ -10,5 +10,6 @@ module.exports = {
 	meta: require('./meta'),
 	preferences: require('./preferences'),
 	router: require('./router'),
+	tagCountByLibrary: require('./tag-count-by-library'),
 	viewport: require('./viewport'),
 };
