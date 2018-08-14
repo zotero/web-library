@@ -11,6 +11,7 @@ const itemsTrash = require('./items-trash');
 const updating = require('./updating');
 const tags = require('./tags');
 const tagsByCollection = require('./tags-by-collection');
+const tagCountByCollection = require('./tag-count-by-collection');
 const itemCountByCollection = require('./item-count-by-collection');
 const version = require('./version');
 const { get } = require('../../utils');
@@ -77,10 +78,11 @@ const libraries = (state = {}, action) => {
 				itemsByParent: itemsByParent(get(state, [action.libraryKey, 'itemsByParent']), action),
 				itemsTop: itemsTop(get(state, [action.libraryKey, 'itemsTop']), action),
 				itemsTrash: itemsTrash(get(state, [action.libraryKey, 'itemsTrash']), action),
+				tagCountByCollection: tagCountByCollection(get(state, [action.libraryKey, 'tagCountByCollection']), action),
 				tags: tags(get(state, [action.libraryKey, 'tags']), action),
+				tagsByCollection: tagsByCollection(get(state, [action.libraryKey, 'tagsByCollection']), action),
 				updating: updating(get(state, [action.libraryKey, 'updating']), action),
 				version: version(get(state, [action.libraryKey, 'version']), action),
-				tagsByCollection: tagsByCollection(get(state, [action.libraryKey, 'tagsByCollection']), action),
 			}
 		}
 	} else { return state; }

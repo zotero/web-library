@@ -748,13 +748,20 @@ describe('reducers', () => {
 			tags: tagsResponseFixture.map(t => ({ tag: t.tag })),
 			libraryKey,
 			collectionKey,
-			response: mockResponse,
+			response: {
+				...mockResponse,
+				response: new Response('', { headers: { 'Total-Results': tagsResponseFixture.length } })
+			},
 		});
 
 		assert.strictEqual(state.libraries[libraryKey].tags[tagName].tag, tagName);
 		assert.deepEqual(
 			state.libraries[libraryKey].tagsByCollection[collectionKey],
 			tagsResponseFixture.map(t => t.tag )
+		);
+		assert.strictEqual(
+			state.libraries[libraryKey].tagCountByCollection[collectionKey],
+			tagsResponseFixture.length
 		);
 	});
 
