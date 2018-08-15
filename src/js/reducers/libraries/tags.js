@@ -22,7 +22,10 @@ const tags = (state = {}, action) => {
 		case RECEIVE_TAGS_IN_COLLECTION:
 			return {
 				...state,
-				...indexByKey(action.tags, 'tag')
+				...indexByKey(action.tags, 'tag', tag => ({
+					...state[tag.tag],
+					...tag
+				}))
 			}
 		default:
 			return state;

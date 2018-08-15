@@ -787,4 +787,33 @@ describe('reducers', () => {
 		assert.strictEqual(state.libraries[libraryKey].tags[tagName].tag, tagName);
 		assert.strictEqual(state.tagCountByLibrary[libraryKey], tagsResponseFixture.length);
 	});
+
+	it('preserves color from settings when given tag is actually encountered', () => {
+	var state = getTestState();
+		const libraryKey = state.current.library;
+		const tagName = settingsFixture.tagColors.value[0].name;
+		const tagColor = settingsFixture.tagColors.value[0].color;
+
+		state = reduce(state, {
+			type: RECEIVE_LIBRARY_SETTINGS,
+			settings: settingsFixture,
+			libraryKey,
+			response: mockResponse,
+		});
+
+		assert.strictEqual(state.libraries[libraryKey].tags[tagName].color, tagColor);
+
+		state = reduce(state, {
+			type: RECEIVE_TAGS_IN_LIBRARY,
+			tags: [{ tag: tagName }],
+			libraryKey,
+			response: {
+				...mockResponse,
+				response: new Response('', { headers: { 'Total-Results': tagsResponseFixture.length } })
+			},
+		});
+
+		assert.strictEqual(state.libraries[libraryKey].tags[tagName].color, tagColor);
+
+	});
 });
