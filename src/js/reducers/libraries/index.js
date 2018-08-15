@@ -13,6 +13,7 @@ const tags = require('./tags');
 const tagsByCollection = require('./tags-by-collection');
 const tagCountByCollection = require('./tag-count-by-collection');
 const itemCountByCollection = require('./item-count-by-collection');
+const tagsFromSettings = require('./tags-from-settings.js');
 const version = require('./version');
 const { get } = require('../../utils');
 const actions = Object.entries(require('../../constants/actions'))
@@ -81,6 +82,7 @@ const libraries = (state = {}, action) => {
 				tagCountByCollection: tagCountByCollection(get(state, [action.libraryKey, 'tagCountByCollection']), action),
 				tags: tags(get(state, [action.libraryKey, 'tags']), action),
 				tagsByCollection: tagsByCollection(get(state, [action.libraryKey, 'tagsByCollection']), action),
+				tagsFromSettings: tagsFromSettings(get(state, [action.libraryKey, 'tagsFromSettings']), action),
 				updating: updating(get(state, [action.libraryKey, 'updating']), action),
 				version: version(get(state, [action.libraryKey, 'version']), action),
 			}

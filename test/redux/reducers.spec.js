@@ -733,6 +733,10 @@ describe('reducers', () => {
 
 		assert.strictEqual(state.libraries[libraryKey].tags[tagName].tag, tagName);
 		assert.strictEqual(state.libraries[libraryKey].tags[tagName].color, tagColor);
+		assert.deepEqual(
+			state.libraries[libraryKey].tagsFromSettings,
+			settingsFixture.tagColors.value.map(({ name }) => name)
+		);
 	});
 
 	it('fetches tags for all items in a collection', () => {
