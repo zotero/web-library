@@ -24,6 +24,7 @@
 	justify-content: space-between;
 	overflow: auto;
 	height: auto;
+	max-height: 160px;
 }
 
 .tag-selector-filter-container {
@@ -57,6 +58,19 @@
 	display: inline-block;
 	padding: .05em .5em;
 	margin: 0;
+
+	&.placeholder {
+		position: relative;
+		vertical-align: middle;
+		&::before {
+			content: " ";
+			background: $shade-3;
+			width: 100%;
+			position: absolute;
+			height: 1rem;
+			top: -.5rem;
+		}
+	}
 
 	&.selected {
 		background-color: $secondary;

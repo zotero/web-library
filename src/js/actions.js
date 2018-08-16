@@ -122,6 +122,10 @@ const {
 	REQUEST_TAGS_IN_LIBRARY,
 	RECEIVE_TAGS_IN_LIBRARY,
 	ERROR_TAGS_IN_LIBRARY,
+
+	REQUEST_TAGS_FOR_ITEM,
+	RECEIVE_TAGS_FOR_ITEM,
+	ERROR_TAGS_FOR_ITEM,
 } = require('./constants/actions');
 
 // @TODO: rename and move to common/api
@@ -326,7 +330,11 @@ const fetchItemsInCollection = (collectionKey, { start = 0, limit = 50, sort = '
 		dispatch({
 			type: REQUEST_ITEMS_IN_COLLECTION,
 			libraryKey,
-			collectionKey
+			collectionKey,
+			start,
+			limit,
+			sort,
+			direction,
 		});
 
 		try {
@@ -349,6 +357,10 @@ const fetchItemsInCollection = (collectionKey, { start = 0, limit = 50, sort = '
 				collectionKey,
 				items,
 				response,
+				start,
+				limit,
+				sort,
+				direction,
 			});
 
 			return items;
@@ -540,7 +552,11 @@ const fetchTopItems = ({ start = 0, limit = 50, sort = 'dateModified', direction
 
 		dispatch({
 			type: REQUEST_TOP_ITEMS,
-			libraryKey
+			libraryKey,
+			start,
+			limit,
+			sort,
+			direction,
 		});
 
 		try {
@@ -559,7 +575,11 @@ const fetchTopItems = ({ start = 0, limit = 50, sort = 'dateModified', direction
 				type: RECEIVE_TOP_ITEMS,
 				libraryKey,
 				items,
-				response
+				response,
+				start,
+				limit,
+				sort,
+				direction,
 			});
 			return items;
 		} catch(error) {
@@ -586,7 +606,11 @@ const fetchTrashItems = ({ start = 0, limit = 50, sort = 'dateModified', directi
 
 		dispatch({
 			type: REQUEST_TRASH_ITEMS,
-			libraryKey
+			libraryKey,
+			start,
+			limit,
+			sort,
+			direction,
 		});
 
 		try {
@@ -605,14 +629,22 @@ const fetchTrashItems = ({ start = 0, limit = 50, sort = 'dateModified', directi
 				type: RECEIVE_TRASH_ITEMS,
 				libraryKey,
 				items,
-				response
+				response,
+				start,
+				limit,
+				sort,
+				direction,
 			});
 			return items;
 		} catch(error) {
 			dispatch({
 				type: ERROR_TRASH_ITEMS,
 				error,
-				libraryKey
+				libraryKey,
+				start,
+				limit,
+				sort,
+				direction,
 			});
 		}
 	};
@@ -1363,7 +1395,7 @@ const fetchLibrarySettings = () => {
 	};
 }
 
-const fetchTagsInCollection = (collectionKey, { start = 0, limit = 50 } = {}) => {
+const fetchTagsInCollection = (collectionKey, { start = 0, limit = 50, sort = 'title', direction = "asc" } = {}) => {
 	return async (dispatch, getState) => {
 		const state = getState();
 		const config = state.config;
@@ -1378,6 +1410,10 @@ const fetchTagsInCollection = (collectionKey, { start = 0, limit = 50 } = {}) =>
 		dispatch({
 			type: REQUEST_TAGS_IN_COLLECTION,
 			libraryKey,
+			start,
+			limit,
+			sort,
+			direction,
 			collectionKey
 		});
 
@@ -1386,7 +1422,7 @@ const fetchTagsInCollection = (collectionKey, { start = 0, limit = 50 } = {}) =>
 				.library(libraryKey)
 				.collections(collectionKey)
 				.tags()
-				.get({ start, limit });
+				.get({ start, limit, sort, direction });
 
 			const tags = response.getData().map((tagData, index) => ({
 				tag: tagData.tag,
@@ -1399,6 +1435,8 @@ const fetchTagsInCollection = (collectionKey, { start = 0, limit = 50 } = {}) =>
 				collectionKey,
 				tags,
 				response,
+				start,
+				limit,
 			});
 
 			return tags;
@@ -1407,7 +1445,9 @@ const fetchTagsInCollection = (collectionKey, { start = 0, limit = 50 } = {}) =>
 				type: ERROR_TAGS_IN_COLLECTION,
 				libraryKey,
 				collectionKey,
-				error
+				error,
+				start,
+				limit,
 			});
 
 			throw error;
@@ -1415,7 +1455,7 @@ const fetchTagsInCollection = (collectionKey, { start = 0, limit = 50 } = {}) =>
 	};
 };
 
-const fetchTagsInLibrary = ({ start = 0, limit = 50 } = {}) => {
+const fetchTagsInLibrary = ({ start = 0, limit = 50, sort = 'title', direction = "asc" } = {}) => {
 	return async (dispatch, getState) => {
 		const state = getState();
 		const config = state.config;
@@ -1430,13 +1470,17 @@ const fetchTagsInLibrary = ({ start = 0, limit = 50 } = {}) => {
 		dispatch({
 			type: REQUEST_TAGS_IN_LIBRARY,
 			libraryKey,
+			start,
+			limit,
+			sort,
+			direction,
 		});
 
 		try {
 			const response = await api(config.apiKey, config.apiConfig)
 				.library(libraryKey)
 				.tags()
-				.get({ start, limit });
+				.get({ start, limit, sort, direction });
 
 			const tags = response.getData().map((tagData, index) => ({
 				tag: tagData.tag,
@@ -1448,6 +1492,7 @@ const fetchTagsInLibrary = ({ start = 0, limit = 50 } = {}) => {
 				libraryKey,
 				tags,
 				response,
+				start, limit, sort, direction
 			});
 
 			return tags;
@@ -1455,7 +1500,69 @@ const fetchTagsInLibrary = ({ start = 0, limit = 50 } = {}) => {
 			dispatch({
 				type: ERROR_TAGS_IN_LIBRARY,
 				libraryKey,
-				error
+				error,
+				start, limit, sort, direction
+			});
+
+			throw error;
+		}
+	};
+};
+
+const fetchTagsForItem = (itemKey, { start = 0, limit = 50, sort = 'title', direction = "asc" } = {}) => {
+	return async (dispatch, getState) => {
+		const state = getState();
+		const config = state.config;
+		const libraryKey = state.current.library;
+		const totalTagsCount = get(state, ['libraries', libraryKey, 'tagsCountByItem', itemKey]);
+		const knownTags = get(state, ['libraries', libraryKey, 'tagsByItem', itemKey], []);
+
+		if(knownTags.length === totalTagsCount) {
+			return knownTags.map(key => get(state, ['libraries', libraryKey, 'tags', key]))
+		}
+
+		dispatch({
+			type: REQUEST_TAGS_FOR_ITEM,
+			libraryKey,
+			itemKey,
+			start,
+			limit,
+			sort,
+			direction,
+
+		});
+
+		try {
+			const response = await api(config.apiKey, config.apiConfig)
+				.library(libraryKey)
+				.items(itemKey)
+				.tags()
+				.get({ start, limit, sort, direction });
+
+			const tags = response.getData().map((tagData, index) => ({
+				tag: tagData.tag,
+				[Symbol.for('meta')]: response.getMeta()[index] || {}
+			}));
+
+			dispatch({
+				type: RECEIVE_TAGS_FOR_ITEM,
+				libraryKey,
+				itemKey,
+				tags,
+				response,
+				start,
+				limit,
+			});
+
+			return tags;
+		} catch(error) {
+			dispatch({
+				type: ERROR_TAGS_FOR_ITEM,
+				libraryKey,
+				itemKey,
+				error,
+				start,
+				limit,
 			});
 
 			throw error;
@@ -1481,6 +1588,7 @@ module.exports = {
 	fetchItemTypeCreatorTypes,
 	fetchItemTypeFields,
 	fetchLibrarySettings,
+	fetchTagsForItem,
 	fetchTagsInCollection,
 	fetchTagsInLibrary,
 	fetchTopItems,

@@ -33,6 +33,7 @@ const {
 	RECEIVE_LIBRARY_SETTINGS,
 	RECEIVE_TAGS_IN_COLLECTION,
 	RECEIVE_TAGS_IN_LIBRARY,
+	RECEIVE_TAGS_FOR_ITEM,
 } = require('../../src/js/constants/actions.js');
 const stateFixture = require('../fixtures/state.json');
 const settingsFixture = require('../fixtures/settings.json');
@@ -721,7 +722,7 @@ describe('reducers', () => {
 	it('obtains tag colors from library settings', () => {
 		var state = getTestState();
 		const libraryKey = state.current.library;
-		const tagName = settingsFixture.tagColors.value[0].name;
+		const tagName = `${settingsFixture.tagColors.value[0].name}-0`;
 		const tagColor = settingsFixture.tagColors.value[0].color;
 
 		state = reduce(state, {
@@ -731,11 +732,11 @@ describe('reducers', () => {
 			response: mockResponse,
 		});
 
-		assert.strictEqual(state.libraries[libraryKey].tags[tagName].tag, tagName);
+		assert.strictEqual(state.libraries[libraryKey].tags[tagName].tag, settingsFixture.tagColors.value[0].name);
 		assert.strictEqual(state.libraries[libraryKey].tags[tagName].color, tagColor);
 		assert.deepEqual(
 			state.libraries[libraryKey].tagsFromSettings,
-			settingsFixture.tagColors.value.map(({ name }) => name)
+			settingsFixture.tagColors.value.map(({ name }) => `${name}-0`)
 		);
 	});
 
@@ -745,11 +746,11 @@ describe('reducers', () => {
 		const collectionKey = Object.keys(
 			state.libraries[libraryKey].itemsByCollection
 		)[0];
-		const tagName = tagsResponseFixture[0].tag;
+		const tagName = `${tagsResponseFixture[0].tag}-${tagsResponseFixture[0].meta.type}`;
 
 		state = reduce(state, {
 			type: RECEIVE_TAGS_IN_COLLECTION,
-			tags: tagsResponseFixture.map(t => ({ tag: t.tag })),
+			tags: tagsResponseFixture.map(t => ({ tag: t.tag, [Symbol.for('meta')]: t.meta })),
 			libraryKey,
 			collectionKey,
 			response: {
@@ -758,10 +759,10 @@ describe('reducers', () => {
 			},
 		});
 
-		assert.strictEqual(state.libraries[libraryKey].tags[tagName].tag, tagName);
+		assert.strictEqual(state.libraries[libraryKey].tags[tagName].tag, tagsResponseFixture[0].tag);
 		assert.deepEqual(
 			state.libraries[libraryKey].tagsByCollection[collectionKey],
-			tagsResponseFixture.map(t => t.tag )
+			tagsResponseFixture.map(t => `${t.tag}-${t.meta.type}`)
 		);
 		assert.strictEqual(
 			state.libraries[libraryKey].tagCountByCollection[collectionKey],
@@ -772,11 +773,11 @@ describe('reducers', () => {
 	it('fetches tags for all items in a library', () => {
 		var state = getTestState();
 		const libraryKey = state.current.library;
-		const tagName = tagsResponseFixture[0].tag;
+		const tagName = `${tagsResponseFixture[0].tag}-${tagsResponseFixture[0].meta.type}`;
 
 		state = reduce(state, {
 			type: RECEIVE_TAGS_IN_LIBRARY,
-			tags: tagsResponseFixture.map(t => ({ tag: t.tag })),
+			tags: tagsResponseFixture.map(t => ({ tag: t.tag, [Symbol.for('meta')]: t.meta })),
 			libraryKey,
 			response: {
 				...mockResponse,
@@ -784,14 +785,18 @@ describe('reducers', () => {
 			},
 		});
 
-		assert.strictEqual(state.libraries[libraryKey].tags[tagName].tag, tagName);
+		assert.strictEqual(state.libraries[libraryKey].tags[tagName].tag, tagsResponseFixture[0].tag);
 		assert.strictEqual(state.tagCountByLibrary[libraryKey], tagsResponseFixture.length);
+		assert.deepEqual(
+			state.libraries[libraryKey].tagsTop,
+			tagsResponseFixture.map(t => `${t.tag}-${t.meta.type}`)
+		);
 	});
 
 	it('preserves color from settings when given tag is actually encountered', () => {
 	var state = getTestState();
 		const libraryKey = state.current.library;
-		const tagName = settingsFixture.tagColors.value[0].name;
+		const tagName = `${settingsFixture.tagColors.value[0].name}-0`;
 		const tagColor = settingsFixture.tagColors.value[0].color;
 
 		state = reduce(state, {
@@ -805,7 +810,7 @@ describe('reducers', () => {
 
 		state = reduce(state, {
 			type: RECEIVE_TAGS_IN_LIBRARY,
-			tags: [{ tag: tagName }],
+			tags: [{ tag: tagName, [Symbol.for('meta')]: { type: 0 } }],
 			libraryKey,
 			response: {
 				...mockResponse,
@@ -814,6 +819,33 @@ describe('reducers', () => {
 		});
 
 		assert.strictEqual(state.libraries[libraryKey].tags[tagName].color, tagColor);
+	});
 
+	it('fetches tags for an item', () => {
+		var state = getTestState();
+		const libraryKey = state.current.library;
+		const itemKey = Object.keys(state.libraries[libraryKey].items)[0];
+		const tagName = `${tagsResponseFixture[0].tag}-${tagsResponseFixture[0].meta.type}`;
+
+		state = reduce(state, {
+			type: RECEIVE_TAGS_FOR_ITEM,
+			tags: tagsResponseFixture.map(t => ({ tag: t.tag, [Symbol.for('meta')]: t.meta })),
+			libraryKey,
+			itemKey,
+			response: {
+				...mockResponse,
+				response: new Response('', { headers: { 'Total-Results': tagsResponseFixture.length } })
+			},
+		});
+
+		assert.strictEqual(state.libraries[libraryKey].tags[tagName].tag, tagsResponseFixture[0].tag);
+		assert.deepEqual(
+			state.libraries[libraryKey].tagsByItem[itemKey],
+			tagsResponseFixture.map(t => `${t.tag}-${t.meta.type}`)
+		);
+		assert.strictEqual(
+			state.libraries[libraryKey].tagCountByItem[itemKey],
+			tagsResponseFixture.length
+		);
 	});
 });

@@ -19,6 +19,10 @@ const {
 	fetchItemsInCollection,
 	fetchItemTypeCreatorTypes,
 	fetchItemTypeFields,
+	fetchLibrarySettings,
+	fetchTagsForItem,
+	fetchTagsInCollection,
+	fetchTagsInLibrary,
 	fetchTopItems,
 	fetchTrashItems,
 	initialize,
@@ -26,9 +30,6 @@ const {
 	recoverFromTrash,
 	updateCollection,
 	updateItem,
-	fetchLibrarySettings,
-	fetchTagsInCollection,
-	fetchTagsInLibrary,
 } = require('../../src/js/actions.js');
 const {
 	REQUEST_META,
@@ -73,6 +74,8 @@ const {
 	RECEIVE_TAGS_IN_COLLECTION,
 	REQUEST_TAGS_IN_LIBRARY,
 	RECEIVE_TAGS_IN_LIBRARY,
+	REQUEST_TAGS_FOR_ITEM,
+	RECEIVE_TAGS_FOR_ITEM,
 } = require('../../src/js/constants/actions.js');
 
 const collectionsFixture = require('../fixtures/collections.json');
@@ -815,7 +818,7 @@ describe('action creators', () => {
 				tagsResponseFixture[0].meta
 			);
 			assert.typeOf(store.getActions()[1].response.response, 'object');
-	})
+	});
 	it('fetchTagsInLibrary', async () => {
 			fetchMock.get(/https:\/\/api\.zotero\.org\/users\/123\/tags\??.*/, tagsResponseFixture);
 			const store = mockStore(initialState);
@@ -827,6 +830,26 @@ describe('action creators', () => {
 
 			assert.strictEqual(store.getActions()[1].type, RECEIVE_TAGS_IN_LIBRARY);
 			assert.strictEqual(store.getActions()[1].libraryKey, 'u123');
+			assert.deepEqual(store.getActions()[1].tags, tagsResponseFixture.map(t => ({ tag: t.tag })));
+			assert.deepEqual(
+				store.getActions()[1].tags[0][Symbol.for('meta')],
+				tagsResponseFixture[0].meta
+			);
+			assert.typeOf(store.getActions()[1].response.response, 'object');
+	});
+	it('fetchTagsForItem', async () => {
+			fetchMock.get(/https:\/\/api\.zotero\.org\/users\/123\/items\/ITEM1111\??.*/, tagsResponseFixture);
+			const store = mockStore(initialState);
+			const action = fetchTagsForItem('ITEM1111');
+			await store.dispatch(action);
+
+			assert.strictEqual(store.getActions()[0].type, REQUEST_TAGS_FOR_ITEM);
+			assert.strictEqual(store.getActions()[0].libraryKey, 'u123');
+			assert.strictEqual(store.getActions()[0].itemKey, 'ITEM1111');
+
+			assert.strictEqual(store.getActions()[1].type, RECEIVE_TAGS_FOR_ITEM);
+			assert.strictEqual(store.getActions()[1].libraryKey, 'u123');
+			assert.strictEqual(store.getActions()[1].itemKey, 'ITEM1111');
 			assert.deepEqual(store.getActions()[1].tags, tagsResponseFixture.map(t => ({ tag: t.tag })));
 			assert.deepEqual(
 				store.getActions()[1].tags[0][Symbol.for('meta')],

@@ -13,7 +13,14 @@ const { Provider, connect } = require('react-redux');
 const { BrowserRouter, Route, Switch } = require('react-router-dom');
 const deepEqual = require('deep-equal');
 const reducers = require('../reducers');
-const { configureApi, selectLibrary, initialize, triggerResizeViewport, changeRoute } = require('../actions');
+const {
+	configureApi,
+	selectLibrary,
+	initialize,
+	triggerResizeViewport,
+	changeRoute,
+	fetchLibrarySettings
+} = require('../actions');
 const Library = require('../component/library');
 const defaults = require('../constants/defaults');
 const { ViewportContext } = require('../context');
@@ -48,8 +55,12 @@ class LibraryContainer extends React.Component {
 		);
 
 		//@TODO: introduce multi-library support
-		this.props.dispatch(
+		await this.props.dispatch(
 			selectLibrary('user', this.props.userId)
+		);
+
+		await this.props.dispatch(
+			fetchLibrarySettings()
 		);
 
 	}

@@ -53,17 +53,22 @@ const reverseMap = map => {
 	}, {});
 };
 
+const deduplicate = array => [...(new Set(array))];
+
 const deduplicateByKey = (array, key) => {
-	return array.slice()
-	.sort(function(a, b) {
-		return a[key] > b[key];
-	})
-	.reduce(function(a, b) {
-		if ((a.slice(-1)[0] && a.slice(-1)[0][key]) !== b[key]) {
-			a.push(b);
+	const seen = [];
+	let i = array.length;
+	let removedCounter = 0;
+
+	while(i--) {
+		if(seen.includes(array[i][key])) {
+			array.splice(i, 1);
+			removedCounter++;
 		}
-		return a;
-	},[]);
+		seen.push(array[i][key]);
+	}
+
+	return removedCounter;
 };
 
 const mapRelationsToItemKeys = (relations, userId, relationType='dc:relation') => {
@@ -122,6 +127,13 @@ const sortByKey = (items, key, direction) => {
 	});
 };
 
+const indexByGeneratedKey = (elements, keygenerator, processor = e => e) => {
+	return elements.reduce((aggr, element) => {
+		aggr[keygenerator(element)] = processor(element);
+		return aggr;
+	}, {});
+}
+
 const indexByKey = (elements, key, processor = e => e) => {
 	return elements.reduce((aggr, element) => {
 		aggr[element[key]] = processor(element);
@@ -155,9 +167,27 @@ const resizeVisibleColumns = (columns, fractionBias, invert = false) => {
 	}
 }
 
+// close-enough approximation
+// see: https://stackoverflow.com/questions/25582882/javascript-math-random-normal-distribution-gaussian-bell-curve
+const gaussianRand = () => {
+  var rand = 0;
+
+  for (var i = 0; i < 6; i += 1) {
+    rand += Math.random();
+  }
+
+  return rand / 6;
+};
+
+const gaussianRandom = (start, end) => Math.floor(start + gaussianRand() * (end - start + 1));
+
 module.exports = {
+	deduplicate,
 	deduplicateByKey,
+	enumerateObjects,
+	gaussianRandom,
 	get,
+	indexByGeneratedKey,
 	indexByKey,
 	mapRelationsToItemKeys,
 	noop,
@@ -167,5 +197,4 @@ module.exports = {
 	sortByKey,
 	splice,
 	transform,
-	enumerateObjects,
 };

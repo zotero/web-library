@@ -54,6 +54,7 @@ const itemsByCollection = (state = {}, action) => {
 				]
 			}
 		case RECEIVE_ITEMS_IN_COLLECTION:
+		//@TODO: this seems incorrect
 			return {
 				...state,
 				[action.collectionKey]: action.items.map(item => item.key)

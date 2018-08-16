@@ -3,17 +3,20 @@
 const collections = require('./collections');
 const deleting = require('./deleting');
 const fetching = require('./fetching');
+const itemCountByCollection = require('./item-count-by-collection');
 const items = require('./items');
 const itemsByCollection = require('./items-by-collection');
 const itemsByParent = require('./items-by-parent');
 const itemsTop = require('./items-top');
 const itemsTrash = require('./items-trash');
-const updating = require('./updating');
+const tagCountByCollection = require('./tag-count-by-collection');
+const tagCountByItem = require('./tag-count-by-item');
 const tags = require('./tags');
 const tagsByCollection = require('./tags-by-collection');
-const tagCountByCollection = require('./tag-count-by-collection');
-const itemCountByCollection = require('./item-count-by-collection');
+const tagsByItem = require('./tags-by-item');
 const tagsFromSettings = require('./tags-from-settings.js');
+const tagsTop = require('./tags-top');
+const updating = require('./updating');
 const version = require('./version');
 const { get } = require('../../utils');
 const actions = Object.entries(require('../../constants/actions'))
@@ -63,6 +66,7 @@ const actions = Object.entries(require('../../constants/actions'))
 			'RECEIVE_LIBRARY_SETTINGS',
 			'RECEIVE_TAGS_IN_COLLECTION',
 			'RECEIVE_TAGS_IN_LIBRARY',
+			'RECEIVE_TAGS_FOR_ITEM',
 	]).includes(key) ? value : false).filter(Boolean);
 
 const libraries = (state = {}, action) => {
@@ -80,9 +84,12 @@ const libraries = (state = {}, action) => {
 				itemsTop: itemsTop(get(state, [action.libraryKey, 'itemsTop']), action),
 				itemsTrash: itemsTrash(get(state, [action.libraryKey, 'itemsTrash']), action),
 				tagCountByCollection: tagCountByCollection(get(state, [action.libraryKey, 'tagCountByCollection']), action),
+				tagCountByItem: tagCountByItem(get(state, [action.libraryKey, 'tagCountByItem']), action),
 				tags: tags(get(state, [action.libraryKey, 'tags']), action),
 				tagsByCollection: tagsByCollection(get(state, [action.libraryKey, 'tagsByCollection']), action),
+				tagsByItem: tagsByItem(get(state, [action.libraryKey, 'tagsByItem']), action),
 				tagsFromSettings: tagsFromSettings(get(state, [action.libraryKey, 'tagsFromSettings']), action),
+				tagsTop: tagsTop(get(state, [action.libraryKey, 'tagsTop']), action),
 				updating: updating(get(state, [action.libraryKey, 'updating']), action),
 				version: version(get(state, [action.libraryKey, 'version']), action),
 			}

@@ -67,9 +67,9 @@ class ItemDetailsContainer extends React.Component {
 	}
 
 	async handleAddTag(tag) {
-		let patch = {
-			tags: deduplicateByKey([...this.props.item.tags, { tag }], 'tag')
-		};
+		let tags = [...this.props.item.tags, { tag }];
+		deduplicateByKey(tags, 'tag');
+		let patch = { tags };
 
 		await this.props.dispatch(updateItem(this.props.item.key, patch));
 	}
@@ -83,12 +83,12 @@ class ItemDetailsContainer extends React.Component {
 	}
 
 	async handleUpdateTag(tag, newTag) {
-		let patch = {
-			tags: deduplicateByKey([
-				...this.props.item.tags.filter(t => t.tag != tag), {
-				tag: newTag
-			}], 'tag')
-		};
+		let tags = [
+			...this.props.item.tags.filter(t => t.tag != tag), {
+			tag: newTag
+		}];
+		deduplicateByKey(tags, 'tag');
+		let patch = { tags };
 		await this.props.dispatch(updateItem(this.props.item.key, patch));
 	}
 
