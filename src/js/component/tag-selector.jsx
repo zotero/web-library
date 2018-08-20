@@ -3,18 +3,21 @@
 const React = require('react');
 const PropTypes = require('prop-types');
 const TagList = require('./tag-selector/tag-list');
+const Input = require('./form/input');
 
 class TagSelector extends React.Component {
+
 	render() {
 		return (
 			<div className="tag-selector">
 				<TagList { ...this.props } />
 				<div className="tag-selector-filter-container">
-					<input
+					<Input
 						type="search"
-						value={this.props.searchString}
-						onChange={ ev => this.props.onSearch(ev.target.value) }
-						className="tag-selector-filter" />
+						value={ this.props.searchString }
+						onChange={ this.props.onSearch }
+						className="tag-selector-filter"
+					/>
 					<button className="tag-selector-actions" onClick={ ev => this.props.onSettings(ev) } />
 				</div>
 			</div>

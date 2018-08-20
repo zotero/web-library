@@ -10,14 +10,18 @@ class TagList extends React.PureComponent {
 		this.handleMaybeLoadMore(0);
 	}
 	handleScroll(el) {
-		// console.log(el.target.scrollTop, el.target.innerHeight);
 		this.handleMaybeLoadMore(el.target.scrollTop);
+	}
+	componentDidUpdate({ searchString: prevSearchString }) {
+		if(this.props.searchString != prevSearchString) {
+			this.handleMaybeLoadMore(this.container.scrollTop);
+		}
 	}
 
 	async handleMaybeLoadMore(scrollTop) {
 		if(this.isBusy) { return; }
-
 		const { tags, totalTagCount, sourceTagsCount } = this.props;
+
 		if(totalTagCount > tags.length && scrollTop + PIXEL_BUFFER > this.firstPlaceholderOffsetTop) {
 			const start = sourceTagsCount;
 			const limit = PAGE_SIZE;
@@ -76,6 +80,7 @@ class TagList extends React.PureComponent {
 
 	render() {
 		const { totalTagCount } = this.props;
+		this.firstPlaceholderOffsetTop = 0;
 		return (
 			<div
 				className="tag-selector-container"
@@ -88,6 +93,7 @@ class TagList extends React.PureComponent {
 				</ul>
 			</div>
 		)
+
 	}
 }
 

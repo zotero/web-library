@@ -9,6 +9,13 @@ const TagSelector = require('../component/tag-selector.jsx');
 const { fetchTagsInCollection, fetchTagsInLibrary } = require('../actions');
 
 class TagSelectorContainer extends React.PureComponent {
+	state = {
+		searchString: ''
+	}
+
+	handleSearch(searchString) {
+		this.setState({ searchString })
+	}
 	async handleLoadMore(start, limit) {
 		const { itemsSource, dispatch, collectionKey } = this.props;
 
@@ -25,9 +32,30 @@ class TagSelectorContainer extends React.PureComponent {
 
 	render() {
 		if(this.props.isReady) {
+			let { tags, totalTagCount, ...props } = this.props;
+
+			if(this.state.searchString !== '') {
+				let prefilterTagsLength = tags.length;
+				tags = this.props.tags.filter(
+					t => t.tag.toLowerCase().includes(this.state.searchString.toLowerCase())
+				)
+
+				// it's not possible to filter tags via api so we always pretend
+				// there are few more matching tags until all possible tags are fetched
+				if(prefilterTagsLength < totalTagCount) {
+					totalTagCount = tags.length + 3;
+				} else {
+					totalTagCount = tags.length;
+				}
+
+			}
 			return <TagSelector
+				onSearch={ this.handleSearch.bind(this) }
 				onLoadMore={ this.handleLoadMore.bind(this) }
-				{ ...this.props }
+				tags={ tags }
+				totalTagCount={ totalTagCount }
+				searchString={ this.state.searchString }
+				{ ...props }
 			/>;
 		} else {
 			return null;
