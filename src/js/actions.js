@@ -2,6 +2,7 @@ const cache = require('zotero-api-client-cache');
 const api = require('zotero-api-client')().use(cache()).api;
 
 const { get } = require('./utils');
+const { getSerializedQuery } = require('./common/state');
 
 var queueIdCunter = 0;
 
@@ -126,6 +127,10 @@ const {
 	REQUEST_TAGS_FOR_ITEM,
 	RECEIVE_TAGS_FOR_ITEM,
 	ERROR_TAGS_FOR_ITEM,
+
+	REQUEST_ITEMS_BY_QUERY,
+	RECEIVE_ITEMS_BY_QUERY,
+	ERROR_ITEMS_BY_QUERY,
 } = require('./constants/actions');
 
 // @TODO: rename and move to common/api
@@ -376,6 +381,76 @@ const fetchItemsInCollection = (collectionKey, { start = 0, limit = 50, sort = '
 		}
 	};
 };
+
+const fetchItemsQuery = (query = {}, { start = 0, limit = 50, sort = 'dateModified', direction = "desc" } = {}) => {
+	return async (dispatch, getState) => {
+		const { collection = null, tag = null, q = null } = query;
+		const serializedQuery = getSerializedQuery(query);
+		const state = getState();
+		const config = state.config;
+		const libraryKey = state.current.library;
+		const totalItemsCount = get(state, ['libraries', libraryKey, 'itemCountByQuery', serializedQuery]);
+		const knownItemKeys = get(state, ['libraries', libraryKey, 'itemsByQuery', serializedQuery], []);
+
+		if(knownItemKeys.length === totalItemsCount) {
+			return knownItemKeys.map(key => get(state, ['libraries', libraryKey, 'items', key]))
+		}
+
+		dispatch({
+			type: REQUEST_ITEMS_BY_QUERY,
+			libraryKey,
+			query,
+			serializedQuery,
+			start,
+			limit,
+			sort,
+			direction,
+		});
+
+		try {
+			var configuredApi = api(config.apiKey, config.apiConfig)
+				.library(libraryKey)
+				.items()
+				.top();
+
+			if(collection) {
+				configuredApi.collections(collection);
+			}
+
+			const response = await configuredApi.get({ start, limit, sort, direction, tag, q });
+
+			const items = response.getData().map((item, index) => ({
+				...item,
+				[Symbol.for('meta')]: response.getMeta()[index] || {}
+			}));
+
+			dispatch({
+				type: RECEIVE_ITEMS_BY_QUERY,
+				libraryKey,
+				query,
+				serializedQuery,
+				items,
+				response,
+				start,
+				limit,
+				sort,
+				direction,
+			});
+
+			return items;
+		} catch(error) {
+			dispatch({
+				type: ERROR_ITEMS_BY_QUERY,
+				libraryKey,
+				query,
+				serializedQuery,
+				error
+			});
+
+			throw error;
+		}
+	};
+}
 
 const fetchItemTypeCreatorTypes = (itemType) => {
 	return async (dispatch, getState) => {
@@ -1584,6 +1659,7 @@ module.exports = {
 	fetchCollections,
 	fetchItems,
 	fetchItemsInCollection,
+	fetchItemsQuery,
 	fetchItemTemplate,
 	fetchItemTypeCreatorTypes,
 	fetchItemTypeFields,

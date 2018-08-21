@@ -34,7 +34,7 @@ TagSelector.propTypes = {
 	})),
 	searchString: PropTypes.string,
 	shouldFocus: PropTypes.bool,
-	onSelection: PropTypes.func,
+	onSelect: PropTypes.func,
 	onTagContext: PropTypes.func,
 	onSearch: PropTypes.func,
 	onSettings: PropTypes.func,
@@ -46,7 +46,7 @@ TagSelector.defaultProps = {
 	tags: [],
 	searchString: '',
 	shouldFocus: false,
-	onSelection: () => Promise.resolve(),
+	onSelect: () => Promise.resolve(),
 	onTagContext: () => Promise.resolve(),
 	onSearch: () => Promise.resolve(),
 	onSettings: () => Promise.resolve()

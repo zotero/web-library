@@ -55,7 +55,7 @@ class TagList extends React.PureComponent {
 
 		let props = {
 			className,
-			onClick: ev => this.props.onSelection(tag, ev),
+			onClick: ev => this.props.onSelect(tag.tag, ev),
 			onContextMenu: ev => this.props.onTagContext(tag, ev),
 			ref: index == tags.length ? this.refFirstPlaceholder.bind(this) : undefined,
 		};

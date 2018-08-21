@@ -31,5 +31,9 @@ const getItemFieldValue = (field, state) => {
 	return { ...item, ...aggregatedPatch}[field] || null;
 };
 
+const getSerializedQuery = ({ collection = null, tag = [], q = null }) => {
+	return `${collection}-${tag.join('-')}-${q}`;
+}
 
-module.exports = { getCollectionsPath, getItemFieldValue };
+
+module.exports = { getCollectionsPath, getItemFieldValue, getSerializedQuery };

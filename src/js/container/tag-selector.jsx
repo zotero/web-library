@@ -16,6 +16,39 @@ class TagSelectorContainer extends React.PureComponent {
 	handleSearch(searchString) {
 		this.setState({ searchString })
 	}
+
+	handleSelect(tagName) {
+		const { itemsSource, collectionKey, selectedTags, history } = this.props;
+		const index = selectedTags.indexOf(tagName)
+		if(index > -1) {
+			selectedTags.splice(index, 1);
+		} else {
+			selectedTags.push(tagName);
+		}
+
+		selectedTags.sort();
+
+		if(selectedTags.length) {
+			switch(itemsSource) {
+				case 'top':
+					history.push(`/tags/${selectedTags.join(',')}`);
+				break;
+				case 'collection':
+					history.push(`/collection/${collectionKey}/tags/${selectedTags.join(',')}`);
+				break;
+			}
+		} else {
+			switch(itemsSource) {
+				case 'top':
+					history.push('/');
+				break;
+				case 'collection':
+					history.push(`/collection/${collectionKey}`);
+				break;
+			}
+		}
+	}
+
 	async handleLoadMore(start, limit) {
 		const { itemsSource, dispatch, collectionKey } = this.props;
 
@@ -52,6 +85,7 @@ class TagSelectorContainer extends React.PureComponent {
 			return <TagSelector
 				onSearch={ this.handleSearch.bind(this) }
 				onLoadMore={ this.handleLoadMore.bind(this) }
+				onSelect={ this.handleSelect.bind(this) }
 				tags={ tags }
 				totalTagCount={ totalTagCount }
 				searchString={ this.state.searchString }
@@ -64,7 +98,13 @@ class TagSelectorContainer extends React.PureComponent {
 }
 
 const mapStateToProps = state => {
-	const { library: libraryKey, item: itemKey, collection: collectionKey, itemsSource }  = state.current;
+	const {
+		library: libraryKey,
+		item: itemKey,
+		collection: collectionKey,
+		tags: selectedTags,
+		itemsSource
+	} = state.current;
 	if(!libraryKey) {
 		return { isReady: false }
 	}
@@ -92,14 +132,15 @@ const mapStateToProps = state => {
 	if(totalTagCount === null) {
 		// number of tags for this source is unknown.
 		// We pretend it's 30 and display placeholders
-		// until we know how many it is trully
+		// until we know how many it is truly
 		totalTagCount = 30;
 	}
 
 	const sourceTagsFiltered = sourceTags.filter(t => !tagsFromSettings.includes(t));
 	const tags = [ ...tagsFromSettings, ...sourceTagsFiltered ].map(tag => ({
 		...state.libraries[libraryKey].tags[tag],
-		disabled: tagsFromSettings.includes(tag) && !sourceTags.includes(tag)
+		disabled: tagsFromSettings.includes(tag) && !sourceTags.includes(tag),
+		selected: selectedTags.includes(state.libraries[libraryKey].tags[tag].tag)
 	}));
 
 	const duplicatesFound = deduplicateByKey(tags, 'tag');
@@ -108,9 +149,9 @@ const mapStateToProps = state => {
 
 	return {
 		isReady: true,
-		tags, totalTagCount, sourceTagsCount, itemsSource, collectionKey
+		tags, totalTagCount, sourceTagsCount, itemsSource, collectionKey, selectedTags
 	}
 
 };
 
-module.exports = connect(mapStateToProps)(TagSelectorContainer);
+module.exports = withRouter(connect(mapStateToProps)(TagSelectorContainer));

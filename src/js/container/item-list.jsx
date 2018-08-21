@@ -13,6 +13,7 @@ const {
 	createItem,
 	deleteItems,
 	fetchItemsInCollection,
+	fetchItemsQuery,
 	fetchItemTemplate,
 	fetchTopItems,
 	fetchTrashItems,
@@ -22,6 +23,7 @@ const {
 	sortItems,
 } = require('../actions');
 const { get, sortByKey, resizeVisibleColumns } = require('../utils');
+const { getSerializedQuery } = require('../common/state');
 
 const processItems = items => {
 	return items.map(item => {
@@ -123,24 +125,32 @@ class ItemListContainer extends React.PureComponent {
 		let limit = (stopIndex - startIndex) + 1;
 		let sort = this.props.sortBy;
 		let direction = this.props.sortDirection.toLowerCase();
-		const { itemsSource, dispatch, collection } = this.props;
+		let tag = this.props.selectedTags || [];
+		const { itemsSource, dispatch, collectionKey } = this.props;
+		const sortAndDirection = { start, limit, sort, direction };
 
 		switch(itemsSource) {
 			case 'top':
-				return await dispatch(fetchTopItems({ start, limit, sort, direction }));
+				if(tag.length) {
+					return await dispatch(fetchItemsQuery({ tag }, sortAndDirection));
+				}
+				return await dispatch(fetchTopItems());
 			case 'trash':
-				return await dispatch(fetchTrashItems({ start, limit, sort, direction }));
+				return await dispatch(fetchTrashItems(sortAndDirection));
 			case 'collection':
-				return await dispatch(fetchItemsInCollection(collection.key, { start, limit, sort, direction }));
+				if(tag.length) {
+					return await dispatch(fetchItemsQuery({ collection: collectionKey, tag }, sortAndDirection));
+				}
+				return await dispatch(fetchItemsInCollection(collectionKey, sortAndDirection));
 		}
 	}
 
 	async handleNewItemCreate(itemType) {
-		const { itemsSource, dispatch, collection } = this.props;
+		const { itemsSource, dispatch, collectionKey } = this.props;
 		const template = await dispatch(fetchItemTemplate(itemType));
 		const newItem = {
 			...template,
-			collections: itemsSource === 'collection' ? [collection.key] : []
+			collections: itemsSource === 'collection' ? [collectionKey] : []
 		};
 		const item = await dispatch(createItem(newItem));
 		this.handleItemsSelect([item.key]);
@@ -161,10 +171,11 @@ class ItemListContainer extends React.PureComponent {
 	}
 
 	render() {
-		let { collection = {}, itemsSource } = this.props;
+		let { collectionKey = '', itemsSource, selectedTags } = this.props;
+
 
 		return <ItemList
-			key = { `${itemsSource}-${collection.key}` }
+			key = { `${itemsSource}-${(selectedTags || []).join(',')}-${collectionKey}` }
 			{ ...this.props }
 			onDelete={ this.handleDelete.bind(this) }
 			onPermanentlyDelete={ this.handlePermanentlyDelete.bind(this) }
@@ -185,22 +196,33 @@ const mapStateToProps = state => {
 	const libraryKey = state.current.library;
 	const itemsSource = state.current.itemsSource;
 	const collectionKey = state.current.collection;
+	const selectedTags = state.current.tags;
 	const itemKey = state.current.item;
 	const collection = get(state, ['libraries', libraryKey, 'collections', collectionKey]);
 	const item = get(state, ['libraries', libraryKey, 'items', itemKey]);
 	var items = [], totalItemsCount = 0;
 	switch(itemsSource) {
 		case 'top':
+			if(selectedTags.length) {
+				items = get(state, ['libraries', libraryKey, 'itemsByQuery', getSerializedQuery({ tag: selectedTags})], []);
+				totalItemsCount = get(state, ['libraries', libraryKey, 'itemCountByQuery', getSerializedQuery({ tag: selectedTags})], 50);
+			} else {
 				items = get(state, ['libraries', libraryKey, 'itemsTop'], []);
 				totalItemsCount = get(state, ['itemCountTopByLibrary', libraryKey], 50);
+			}
 		break;
 		case 'trash':
 				items = get(state, ['libraries', libraryKey, 'itemsTrash'], []);
 				totalItemsCount = get(state, ['itemCountTrashByLibrary', libraryKey], 50);
 		break;
 		case 'collection':
+			if(selectedTags.length) {
+				items = get(state, ['libraries', libraryKey, 'itemsByQuery', getSerializedQuery({ collection: collectionKey, tag: selectedTags })], []);
+				totalItemsCount = get(state, ['libraries', libraryKey, 'itemCountByQuery', getSerializedQuery({ collection: collectionKey, tag: selectedTags })], 50)
+			} else {
 				items = get(state, ['libraries', libraryKey, 'itemsByCollection', collectionKey], []);
 				totalItemsCount = get(state, ['libraries', libraryKey, 'itemCountByCollection', collectionKey], 0)
+			}
 		break;
 	}
 
@@ -216,7 +238,7 @@ const mapStateToProps = state => {
 	sortByKey(items, sortBy, sortDirection);
 
 	return {
-		collection,
+		collectionKey,
 		items,
 		isReady,
 		isDeleting,
@@ -226,6 +248,7 @@ const mapStateToProps = state => {
 		itemFields,
 		itemTypes,
 		itemsSource,
+		selectedTags,
 		sortDirection: sortDirection.toUpperCase(),
 		selectedItemKeys: item ? [item.key] : (state.router && 'items' in state.router.params && state.router.params.items.split(',')) || []
 	};

@@ -14,10 +14,12 @@ const tagCountByItem = require('./tag-count-by-item');
 const tags = require('./tags');
 const tagsByCollection = require('./tags-by-collection');
 const tagsByItem = require('./tags-by-item');
-const tagsFromSettings = require('./tags-from-settings.js');
+const tagsFromSettings = require('./tags-from-settings');
 const tagsTop = require('./tags-top');
 const updating = require('./updating');
 const version = require('./version');
+const itemsByQuery = require('./items-by-query');
+const itemCountByQuery = require('./item-count-by-query');
 const { get } = require('../../utils');
 const actions = Object.entries(require('../../constants/actions'))
 		.map(([key, value]) => ([
@@ -67,6 +69,7 @@ const actions = Object.entries(require('../../constants/actions'))
 			'RECEIVE_TAGS_IN_COLLECTION',
 			'RECEIVE_TAGS_IN_LIBRARY',
 			'RECEIVE_TAGS_FOR_ITEM',
+			'RECEIVE_ITEMS_BY_QUERY',
 	]).includes(key) ? value : false).filter(Boolean);
 
 const libraries = (state = {}, action) => {
@@ -78,9 +81,11 @@ const libraries = (state = {}, action) => {
 				deleting: deleting(get(state, [action.libraryKey, 'deleting']), action),
 				fetching: fetching(get(state, [action.libraryKey, 'fetching']), action),
 				itemCountByCollection: itemCountByCollection(get(state, [action.libraryKey, 'itemCountByCollection']), action),
+				itemCountByQuery: itemCountByQuery(get(state, [action.libraryKey, 'itemCountByQuery']), action),
 				items: items(get(state, [action.libraryKey, 'items']), action),
 				itemsByCollection: itemsByCollection(get(state, [action.libraryKey, 'itemsByCollection']), action),
 				itemsByParent: itemsByParent(get(state, [action.libraryKey, 'itemsByParent']), action),
+				itemsByQuery: itemsByQuery(get(state, [action.libraryKey, 'itemsByQuery']), action),
 				itemsTop: itemsTop(get(state, [action.libraryKey, 'itemsTop']), action),
 				itemsTrash: itemsTrash(get(state, [action.libraryKey, 'itemsTrash']), action),
 				tagCountByCollection: tagCountByCollection(get(state, [action.libraryKey, 'tagCountByCollection']), action),
