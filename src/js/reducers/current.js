@@ -21,7 +21,8 @@ const current = (state = stateDefault, action) => {
 			};
 		case ROUTE_CHANGE:
 			var itemKeys = action.params.items ? action.params.items.split(',') : [];
-			var tagNames = action.params.tags ? action.params.tags.split(',') : [];
+			var tagNames = action.params.tags ? action.params.tags.split(/\b,\b/).map(t => t.replace(/,,/g, ',')) : [];
+
 			return {
 				...state,
 				collection: action.params.collection || null,

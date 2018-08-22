@@ -28,13 +28,15 @@ class TagSelectorContainer extends React.PureComponent {
 
 		selectedTags.sort();
 
-		if(selectedTags.length) {
+		const escapedTags = selectedTags.map(t => t.replace(/,/g, ',,'));
+
+		if(escapedTags.length) {
 			switch(itemsSource) {
 				case 'top':
-					history.push(`/tags/${selectedTags.join(',')}`);
+					history.push(`/tags/${escapedTags.join(',')}`);
 				break;
 				case 'collection':
-					history.push(`/collection/${collectionKey}/tags/${selectedTags.join(',')}`);
+					history.push(`/collection/${collectionKey}/tags/${escapedTags.join(',')}`);
 				break;
 			}
 		} else {
