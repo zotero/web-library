@@ -7,6 +7,7 @@ const { connect } = require('react-redux');
 const { deduplicateByKey, get } = require('../utils');
 const TagSelector = require('../component/tag-selector.jsx');
 const { fetchTagsInCollection, fetchTagsInLibrary } = require('../actions');
+const { makePath } = require('../common/navigation');
 
 class TagSelectorContainer extends React.PureComponent {
 	state = {
@@ -26,28 +27,16 @@ class TagSelectorContainer extends React.PureComponent {
 			selectedTags.push(tagName);
 		}
 
-		selectedTags.sort();
-
-		const escapedTags = selectedTags.map(t => t.replace(/,/g, ',,'));
-
-		if(escapedTags.length) {
-			switch(itemsSource) {
-				case 'top':
-					history.push(`/tags/${escapedTags.join(',')}`);
-				break;
-				case 'collection':
-					history.push(`/collection/${collectionKey}/tags/${escapedTags.join(',')}`);
-				break;
-			}
-		} else {
-			switch(itemsSource) {
-				case 'top':
-					history.push('/');
-				break;
-				case 'collection':
-					history.push(`/collection/${collectionKey}`);
-				break;
-			}
+		switch(itemsSource) {
+			case 'top':
+				history.push(makePath({ tags: selectedTags }));
+			break;
+			case 'trash':
+				history.push(makePath({ trash: true }));
+			break;
+			case 'collection':
+				history.push(makePath({ tags: selectedTags, collection: collectionKey }));
+			break;
 		}
 	}
 

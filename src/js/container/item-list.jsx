@@ -24,6 +24,7 @@ const {
 } = require('../actions');
 const { get, sortByKey, resizeVisibleColumns } = require('../utils');
 const { getSerializedQuery } = require('../common/state');
+const { makePath } = require('../common/navigation');
 
 const processItems = items => {
 	return items.map(item => {
@@ -50,15 +51,16 @@ const processItems = items => {
 
 class ItemListContainer extends React.PureComponent {
 	handleItemsSelect(keys = []) {
-		switch(this.props.itemsSource) {
+		const { history, collectionKey, itemsSource, selectedTags } = this.props;
+		switch(itemsSource) {
 			case 'top':
-				this.props.history.push(`/items/${keys.join(',')}`);
+				history.push(makePath({ tags: selectedTags, items: keys }));
 			break;
 			case 'trash':
-				this.props.history.push(`/trash/items/${keys.join(',')}`);
+				history.push(makePath({ trash: true, items: keys }));
 			break;
 			case 'collection':
-				this.props.history.push(`/collection/${this.props.collection.key}/items/${keys.join(',')}`);
+				history.push(makePath({ tags: selectedTags, collection: collectionKey, items: keys }));
 			break;
 		}
 	}
