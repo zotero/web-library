@@ -3,6 +3,7 @@ const api = require('zotero-api-client')().use(cache()).api;
 
 const { get } = require('./utils');
 const { getSerializedQuery } = require('./common/state');
+const deepEqual = require('deep-equal');
 
 var queueIdCunter = 0;
 
@@ -385,26 +386,28 @@ const fetchItemsInCollection = (collectionKey, { start = 0, limit = 50, sort = '
 const fetchItemsQuery = (query = {}, { start = 0, limit = 50, sort = 'dateModified', direction = "desc" } = {}) => {
 	return async (dispatch, getState) => {
 		const { collection = null, tag = null, q = null } = query;
-		const serializedQuery = getSerializedQuery(query);
 		const state = getState();
 		const config = state.config;
 		const libraryKey = state.current.library;
-		const totalItemsCount = get(state, ['libraries', libraryKey, 'itemCountByQuery', serializedQuery]);
-		const knownItemKeys = get(state, ['libraries', libraryKey, 'itemsByQuery', serializedQuery], []);
+		const totalItemsCount = get(state, ['libraries', libraryKey, 'queryItemCount']);
+		const knownItemKeys = get(state, ['libraries', libraryKey, 'queryItems'], []);
+		const previousQuery = get(state, ['libraries', libraryKey, 'query']);
+		const isQueryChanged = !deepEqual(query, previousQuery);
 
-		if(knownItemKeys.length === totalItemsCount) {
-			return knownItemKeys.map(key => get(state, ['libraries', libraryKey, 'items', key]))
+		if(!isQueryChanged && knownItemKeys.length === totalItemsCount) {
+			//@TODO: optimisiation where if all data is available and subset is requested
+			//		 that subset is delivered without going back to the server
 		}
 
-		dispatch({
+		await dispatch({
 			type: REQUEST_ITEMS_BY_QUERY,
 			libraryKey,
 			query,
-			serializedQuery,
 			start,
 			limit,
 			sort,
 			direction,
+			isQueryChanged,
 		});
 
 		try {
@@ -428,13 +431,13 @@ const fetchItemsQuery = (query = {}, { start = 0, limit = 50, sort = 'dateModifi
 				type: RECEIVE_ITEMS_BY_QUERY,
 				libraryKey,
 				query,
-				serializedQuery,
 				items,
 				response,
 				start,
 				limit,
 				sort,
 				direction,
+				isQueryChanged,
 			});
 
 			return items;
@@ -443,8 +446,8 @@ const fetchItemsQuery = (query = {}, { start = 0, limit = 50, sort = 'dateModifi
 				type: ERROR_ITEMS_BY_QUERY,
 				libraryKey,
 				query,
-				serializedQuery,
-				error
+				isQueryChanged,
+				error,
 			});
 
 			throw error;

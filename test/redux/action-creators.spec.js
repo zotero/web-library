@@ -6,6 +6,7 @@ const configureStore = require('redux-mock-store').default;
 const thunk = require('redux-thunk').default;
 const ReduxAsyncQueue = require('redux-async-queue').default;
 const fetchMock = require('fetch-mock');
+const { URL } = require('url');
 
 const {
 	addToCollection,
@@ -30,6 +31,7 @@ const {
 	recoverFromTrash,
 	updateCollection,
 	updateItem,
+	fetchItemsQuery,
 } = require('../../src/js/actions.js');
 const {
 	REQUEST_META,
@@ -76,6 +78,8 @@ const {
 	RECEIVE_TAGS_IN_LIBRARY,
 	REQUEST_TAGS_FOR_ITEM,
 	RECEIVE_TAGS_FOR_ITEM,
+	REQUEST_ITEMS_BY_QUERY,
+	RECEIVE_ITEMS_BY_QUERY,
 } = require('../../src/js/constants/actions.js');
 
 const collectionsFixture = require('../fixtures/collections.json');
@@ -857,4 +861,33 @@ describe('action creators', () => {
 			);
 			assert.typeOf(store.getActions()[1].response.response, 'object');
 	})
+
+	it('fetchItemsQuery', async () => {
+		fetchMock.mock(
+			url => {
+				assert.isNotNull(url.match(/https:\/\/api\.zotero\.org\/users\/123\/items\/top\??.*/));
+				const parsedUrl = new URL(url);
+				assert.deepEqual(parsedUrl.searchParams.getAll('tag'), ['tag1', 'tag2']);
+				return true;
+			}, itemsFixture
+		);
+		const store = mockStore(initialState);
+		const tag = ['tag1', 'tag2'];
+		const action = fetchItemsQuery({ tag });
+		await store.dispatch(action);
+		assert.strictEqual(store.getActions().length,2);
+		assert.strictEqual(store.getActions()[0].type, REQUEST_ITEMS_BY_QUERY);
+		assert.equal(store.getActions()[0].libraryKey, 'u123');
+		assert.deepEqual(store.getActions()[0].query.tag, tag);
+		assert.strictEqual(store.getActions()[1].type, RECEIVE_ITEMS_BY_QUERY);
+		assert.equal(store.getActions()[1].libraryKey, 'u123');
+		assert.deepEqual(store.getActions()[1].query.tag, tag);
+		assert.strictEqual(store.getActions()[1].isQueryChanged, true);
+		assert.deepEqual(store.getActions()[1].items, itemsFixture.map(i => i.data));
+
+		assert.deepEqual(
+			store.getActions()[1].items[0][Symbol.for('meta')],
+			itemsFixture[0].meta
+		);
+	});
 });

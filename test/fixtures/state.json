@@ -8672,7 +8672,10 @@
       "updating": {
         "items": {},
         "collections": {}
-      }
+      },
+      "query": {},
+      "queryItemCount": null,
+      "queryItems": []
     }
   },
   "meta": {

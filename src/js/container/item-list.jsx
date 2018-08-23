@@ -59,6 +59,7 @@ class ItemListContainer extends React.PureComponent {
 			case 'trash':
 				history.push(makePath({ trash: true, items: keys }));
 			break;
+			case 'query':
 			case 'collection':
 				history.push(makePath({ tags: selectedTags, collection: collectionKey, items: keys }));
 			break;
@@ -132,17 +133,13 @@ class ItemListContainer extends React.PureComponent {
 		const sortAndDirection = { start, limit, sort, direction };
 
 		switch(itemsSource) {
+			case 'query':
+				return await dispatch(fetchItemsQuery({ collection: collectionKey, tag }, sortAndDirection));
 			case 'top':
-				if(tag.length) {
-					return await dispatch(fetchItemsQuery({ tag }, sortAndDirection));
-				}
 				return await dispatch(fetchTopItems());
 			case 'trash':
 				return await dispatch(fetchTrashItems(sortAndDirection));
 			case 'collection':
-				if(tag.length) {
-					return await dispatch(fetchItemsQuery({ collection: collectionKey, tag }, sortAndDirection));
-				}
 				return await dispatch(fetchItemsInCollection(collectionKey, sortAndDirection));
 		}
 	}
@@ -173,11 +170,18 @@ class ItemListContainer extends React.PureComponent {
 	}
 
 	render() {
-		let { collectionKey = '', itemsSource, selectedTags } = this.props;
-
+		let { collectionKey = '', query, itemsSource } = this.props;
+		var key;
+		if(itemsSource == 'collection') {
+			key = collectionKey;
+		} else if(itemsSource == 'query') {
+			key = `query-${getSerializedQuery(query)}`;
+		} else {
+			key = itemsSource;
+		}
 
 		return <ItemList
-			key = { `${itemsSource}-${(selectedTags || []).join(',')}-${collectionKey}` }
+			key = { key }
 			{ ...this.props }
 			onDelete={ this.handleDelete.bind(this) }
 			onPermanentlyDelete={ this.handlePermanentlyDelete.bind(this) }
@@ -201,30 +205,25 @@ const mapStateToProps = state => {
 	const selectedTags = state.current.tags;
 	const itemKey = state.current.item;
 	const collection = get(state, ['libraries', libraryKey, 'collections', collectionKey]);
+	const query = get(state, ['libraries', libraryKey, 'query']);
 	const item = get(state, ['libraries', libraryKey, 'items', itemKey]);
 	var items = [], totalItemsCount = 0;
 	switch(itemsSource) {
+		case 'query':
+			items = get(state, ['libraries', libraryKey, 'queryItems'], []);
+			totalItemsCount = get(state, ['libraries', libraryKey, 'queryItemCount']) || 50;
+		break;
 		case 'top':
-			if(selectedTags.length) {
-				items = get(state, ['libraries', libraryKey, 'itemsByQuery', getSerializedQuery({ tag: selectedTags})], []);
-				totalItemsCount = get(state, ['libraries', libraryKey, 'itemCountByQuery', getSerializedQuery({ tag: selectedTags})], 50);
-			} else {
-				items = get(state, ['libraries', libraryKey, 'itemsTop'], []);
-				totalItemsCount = get(state, ['itemCountTopByLibrary', libraryKey], 50);
-			}
+			items = get(state, ['libraries', libraryKey, 'itemsTop'], []);
+			totalItemsCount = get(state, ['itemCountTopByLibrary', libraryKey], 50);
 		break;
 		case 'trash':
-				items = get(state, ['libraries', libraryKey, 'itemsTrash'], []);
-				totalItemsCount = get(state, ['itemCountTrashByLibrary', libraryKey], 50);
+			items = get(state, ['libraries', libraryKey, 'itemsTrash'], []);
+			totalItemsCount = get(state, ['itemCountTrashByLibrary', libraryKey], 50);
 		break;
 		case 'collection':
-			if(selectedTags.length) {
-				items = get(state, ['libraries', libraryKey, 'itemsByQuery', getSerializedQuery({ collection: collectionKey, tag: selectedTags })], []);
-				totalItemsCount = get(state, ['libraries', libraryKey, 'itemCountByQuery', getSerializedQuery({ collection: collectionKey, tag: selectedTags })], 50)
-			} else {
-				items = get(state, ['libraries', libraryKey, 'itemsByCollection', collectionKey], []);
-				totalItemsCount = get(state, ['libraries', libraryKey, 'itemCountByCollection', collectionKey], 0)
-			}
+			items = get(state, ['libraries', libraryKey, 'itemsByCollection', collectionKey], []);
+			totalItemsCount = get(state, ['libraries', libraryKey, 'itemCountByCollection', collectionKey], 0)
 		break;
 	}
 
@@ -251,6 +250,7 @@ const mapStateToProps = state => {
 		itemTypes,
 		itemsSource,
 		selectedTags,
+		query,
 		sortDirection: sortDirection.toUpperCase(),
 		selectedItemKeys: item ? [item.key] : (state.router && 'items' in state.router.params && state.router.params.items.split(',')) || []
 	};

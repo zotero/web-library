@@ -34,6 +34,8 @@ const {
 	RECEIVE_TAGS_IN_COLLECTION,
 	RECEIVE_TAGS_IN_LIBRARY,
 	RECEIVE_TAGS_FOR_ITEM,
+	REQUEST_ITEMS_BY_QUERY,
+	RECEIVE_ITEMS_BY_QUERY,
 } = require('../../src/js/constants/actions.js');
 const stateFixture = require('../fixtures/state.json');
 const settingsFixture = require('../fixtures/settings.json');
@@ -51,11 +53,13 @@ const itemsData = [
 	{
 		key: 'ITEM1111',
 		version: 1,
+		tags: [],
 		title: 'item 1'
 	},
 	{
 		key: 'ITEM2222',
 		version: 1,
+		tags: [],
 		title: 'item 2'
 	}
 ];
@@ -847,5 +851,95 @@ describe('reducers', () => {
 			state.libraries[libraryKey].tagCountByItem[itemKey],
 			tagsResponseFixture.length
 		);
+	});
+
+	it('fetching items by query', () => {
+		var state = getTestState();
+		const libraryKey = state.current.library;
+
+		const mockResponseWithHeader = {
+			...mockResponse,
+			response: new Response('', { headers: { 'Total-Results': 4 } })
+		};
+
+		const otherMockResponseWithHeader = {
+			...mockResponse,
+			response: new Response('', { headers: { 'Total-Results': 2 } })
+		};
+		const moreItemsData = [
+			{
+				key: 'ITEM3333',
+				version: 1,
+				tags: [],
+				title: 'item 3'
+			},
+			{
+				key: 'ITEM4444',
+				version: 1,
+				tags: [],
+				title: 'item 4'
+			}
+		];
+
+		const otherItemsData = [
+			{
+				key: 'ITEM5555',
+				version: 1,
+				tags: [],
+				title: 'item 5'
+			},
+			{
+				key: 'ITEM6666',
+				version: 1,
+				tags: [],
+				title: 'item 6'
+			}
+		];
+
+		state = reduce(state, {
+			type: RECEIVE_ITEMS_BY_QUERY,
+			libraryKey: libraryKey,
+			query: { tag: ['tag1', 'tag2'] },
+			isQueryChanged: true,
+			items: itemsData,
+			response: mockResponseWithHeader
+		});
+
+		assert.deepEqual(state.libraries[libraryKey].query, { tag: ['tag1', 'tag2'] });
+		assert.deepEqual(state.libraries[libraryKey].queryItems, ['ITEM1111', 'ITEM2222']);
+		assert.deepEqual(state.libraries[libraryKey].queryItemCount, 4);
+		assert.deepEqual(state.libraries[libraryKey].items['ITEM1111'], itemsData[0]);
+		assert.deepEqual(state.libraries[libraryKey].items['ITEM2222'], itemsData[1]);
+
+		state = reduce(state, {
+			type: RECEIVE_ITEMS_BY_QUERY,
+			libraryKey: libraryKey,
+			query: { tag: ['tag1', 'tag2'] },
+			isQueryChanged: false,
+			items: moreItemsData,
+			response: mockResponseWithHeader
+		});
+
+		assert.deepEqual(state.libraries[libraryKey].query, { tag: ['tag1', 'tag2'] });
+		assert.deepEqual(state.libraries[libraryKey].queryItems, ['ITEM1111', 'ITEM2222', 'ITEM3333', 'ITEM4444']);
+		assert.deepEqual(state.libraries[libraryKey].queryItemCount, 4);
+		assert.deepEqual(state.libraries[libraryKey].items['ITEM3333'], moreItemsData[0]);
+		assert.deepEqual(state.libraries[libraryKey].items['ITEM4444'], moreItemsData[1]);
+
+		state = reduce(state, {
+			type: RECEIVE_ITEMS_BY_QUERY,
+			libraryKey: libraryKey,
+			query: { tag: ['tag3'] },
+			isQueryChanged: true,
+			items: otherItemsData,
+			response: otherMockResponseWithHeader
+		});
+
+		assert.deepEqual(state.libraries[libraryKey].query, { tag: ['tag3'] });
+		assert.deepEqual(state.libraries[libraryKey].queryItems, ['ITEM5555', 'ITEM6666']);
+		assert.deepEqual(state.libraries[libraryKey].queryItemCount, 2);
+		assert.deepEqual(state.libraries[libraryKey].items['ITEM5555'], otherItemsData[0]);
+		assert.deepEqual(state.libraries[libraryKey].items['ITEM6666'], otherItemsData[1]);
+
 	});
 });

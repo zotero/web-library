@@ -22,6 +22,17 @@ const current = (state = stateDefault, action) => {
 		case ROUTE_CHANGE:
 			var itemKeys = action.params.items ? action.params.items.split(',') : [];
 			var tagNames = action.params.tags ? action.params.tags.split(/\b,\b/).map(t => t.replace(/,,/g, ',')) : [];
+			var itemsSource;
+
+			if(tagNames.length) {
+				itemsSource = 'query';
+			} else if(action.params.collection) {
+				itemsSource = 'collection';
+			} else if(action.path.includes('/trash')) {
+				itemsSource = 'trash';
+			} else {
+				itemsSource = 'top';
+			}
 
 			return {
 				...state,
@@ -30,8 +41,7 @@ const current = (state = stateDefault, action) => {
 				view: action.params.items ?
 					'item-details' : action.params.collection ?
 						'item-list' : 'library',
-				itemsSource: action.params.collection ? 'collection' :
-					action.path.includes('/trash') ? 'trash' : 'top',
+				itemsSource,
 				tags: tagNames
 			};
 		case TRIGGER_EDITING_ITEM:

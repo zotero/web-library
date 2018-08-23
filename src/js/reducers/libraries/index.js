@@ -18,8 +18,9 @@ const tagsFromSettings = require('./tags-from-settings');
 const tagsTop = require('./tags-top');
 const updating = require('./updating');
 const version = require('./version');
-const itemsByQuery = require('./items-by-query');
-const itemCountByQuery = require('./item-count-by-query');
+const query = require('./query');
+const queryItems = require('./query-items');
+const queryItemCount = require('./query-item-count');
 const { get } = require('../../utils');
 const actions = Object.entries(require('../../constants/actions'))
 		.map(([key, value]) => ([
@@ -30,7 +31,12 @@ const actions = Object.entries(require('../../constants/actions'))
 			'ERROR_DELETE_ITEM',
 			'ERROR_DELETE_ITEMS',
 			'ERROR_FETCH_ITEMS',
+			'ERROR_ITEMS_BY_QUERY',
 			'ERROR_ITEMS_IN_COLLECTION',
+			'ERROR_LIBRARY_SETTINGS',
+			'ERROR_TAGS_FOR_ITEM',
+			'ERROR_TAGS_IN_COLLECTION',
+			'ERROR_TAGS_IN_LIBRARY',
 			'ERROR_TOP_ITEMS',
 			'ERROR_UPDATE_COLLECTION',
 			'ERROR_UPDATE_ITEM',
@@ -45,9 +51,14 @@ const actions = Object.entries(require('../../constants/actions'))
 			'RECEIVE_DELETE_ITEM',
 			'RECEIVE_DELETE_ITEMS',
 			'RECEIVE_FETCH_ITEMS',
+			'RECEIVE_ITEMS_BY_QUERY',
 			'RECEIVE_ITEMS_IN_COLLECTION',
+			'RECEIVE_LIBRARY_SETTINGS',
 			'RECEIVE_MOVE_ITEMS_TRASH',
 			'RECEIVE_RECOVER_ITEMS_TRASH',
+			'RECEIVE_TAGS_FOR_ITEM',
+			'RECEIVE_TAGS_IN_COLLECTION',
+			'RECEIVE_TAGS_IN_LIBRARY',
 			'RECEIVE_TOP_ITEMS',
 			'RECEIVE_TRASH_ITEMS',
 			'RECEIVE_UPDATE_COLLECTION',
@@ -59,17 +70,16 @@ const actions = Object.entries(require('../../constants/actions'))
 			'REQUEST_DELETE_ITEM',
 			'REQUEST_DELETE_ITEMS',
 			'REQUEST_FETCH_ITEMS',
+			'REQUEST_ITEMS_BY_QUERY',
 			'REQUEST_ITEMS_IN_COLLECTION',
+			'REQUEST_LIBRARY_SETTINGS',
+			'REQUEST_TAGS_FOR_ITEM',
+			'REQUEST_TAGS_IN_COLLECTION',
+			'REQUEST_TAGS_IN_LIBRARY',
 			'REQUEST_TOP_ITEMS',
 			'REQUEST_UPDATE_COLLECTION',
 			'REQUEST_UPDATE_ITEM',
 			'TRIGGER_EDITING_ITEM',
-			'REQUEST_LIBRARY_SETTINGS',
-			'RECEIVE_LIBRARY_SETTINGS',
-			'RECEIVE_TAGS_IN_COLLECTION',
-			'RECEIVE_TAGS_IN_LIBRARY',
-			'RECEIVE_TAGS_FOR_ITEM',
-			'RECEIVE_ITEMS_BY_QUERY',
 	]).includes(key) ? value : false).filter(Boolean);
 
 const libraries = (state = {}, action) => {
@@ -81,11 +91,9 @@ const libraries = (state = {}, action) => {
 				deleting: deleting(get(state, [action.libraryKey, 'deleting']), action),
 				fetching: fetching(get(state, [action.libraryKey, 'fetching']), action),
 				itemCountByCollection: itemCountByCollection(get(state, [action.libraryKey, 'itemCountByCollection']), action),
-				itemCountByQuery: itemCountByQuery(get(state, [action.libraryKey, 'itemCountByQuery']), action),
 				items: items(get(state, [action.libraryKey, 'items']), action),
 				itemsByCollection: itemsByCollection(get(state, [action.libraryKey, 'itemsByCollection']), action),
 				itemsByParent: itemsByParent(get(state, [action.libraryKey, 'itemsByParent']), action),
-				itemsByQuery: itemsByQuery(get(state, [action.libraryKey, 'itemsByQuery']), action),
 				itemsTop: itemsTop(get(state, [action.libraryKey, 'itemsTop']), action),
 				itemsTrash: itemsTrash(get(state, [action.libraryKey, 'itemsTrash']), action),
 				tagCountByCollection: tagCountByCollection(get(state, [action.libraryKey, 'tagCountByCollection']), action),
@@ -97,6 +105,9 @@ const libraries = (state = {}, action) => {
 				tagsTop: tagsTop(get(state, [action.libraryKey, 'tagsTop']), action),
 				updating: updating(get(state, [action.libraryKey, 'updating']), action),
 				version: version(get(state, [action.libraryKey, 'version']), action),
+				query: query(get(state, [action.libraryKey, 'query']), action),
+				queryItems: queryItems(get(state, [action.libraryKey, 'queryItems']), action),
+				queryItemCount: queryItemCount(get(state, [action.libraryKey, 'queryItemCount']), action),
 			}
 		}
 	} else { return state; }
