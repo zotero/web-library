@@ -1,16 +1,14 @@
 'use strict';
 
 const {
-	REQUEST_ITEMS_BY_QUERY,
-	RECEIVE_ITEMS_BY_QUERY,
+	QUERY_CHANGE,
 } = require('../../constants/actions.js');
 
 const query = (state = {}, action) => {
 	switch(action.type) {
-		case REQUEST_ITEMS_BY_QUERY:
-		case RECEIVE_ITEMS_BY_QUERY:
+		case QUERY_CHANGE:
 			return {
-				...action.query
+				...action.newQuery
 			};
 		default:
 			return state;

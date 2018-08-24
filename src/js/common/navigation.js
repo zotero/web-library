@@ -1,6 +1,15 @@
 'use strict';
 
-const makePath = ({ collection = null, items = null, trash = false, tags = null } = {}) => {
+const getQueryFromRoute = match => {
+	const { collection, tags, search = '' } = match.params;
+	return { collection, tag: tagsFromUrlPart(tags), q: search };
+}
+
+const tagsFromUrlPart = tags => tags ? tags.split(/\b,\b/).map(t => t.replace(/,,/g, ',')) : [];
+
+const tagsToUrlPart = tags => tags.map(t => t.replace(/,/g, ',,'));
+
+const makePath = ({ collection = null, items = null, trash = false, tags = null, search = null } = {}) => {
 	const path = [];
 	if(trash) {
 		path.push('trash')
@@ -11,10 +20,14 @@ const makePath = ({ collection = null, items = null, trash = false, tags = null 
 	if(tags && tags.length) {
 		if(Array.isArray(tags)) {
 			tags.sort();
-			path.push('tags', tags.map(t => t.replace(/,/g, ',,')).join());
+			path.push('tags', tagsToUrlPart(tags).join());
 		} else {
 			path.push('tags', tags);
 		}
+	}
+
+	if(search) {
+		path.push('search', search);
 	}
 
 	if(items && items.length) {
@@ -28,4 +41,4 @@ const makePath = ({ collection = null, items = null, trash = false, tags = null 
 	return '/' + path.join('/');
 }
 
-module.exports = { makePath };
+module.exports = { makePath, getQueryFromRoute, tagsFromUrlPart, tagsToUrlPart };

@@ -1,6 +1,7 @@
 'use strict';
 
 const { SELECT_LIBRARY, ROUTE_CHANGE, TRIGGER_EDITING_ITEM } = require('../constants/actions');
+const { tagsFromUrlPart } = require('../common/navigation');
 
 const stateDefault = {
 	library: null,
@@ -20,11 +21,12 @@ const current = (state = stateDefault, action) => {
 				library: action.libraryKey
 			};
 		case ROUTE_CHANGE:
-			var itemKeys = action.params.items ? action.params.items.split(',') : [];
-			var tagNames = action.params.tags ? action.params.tags.split(/\b,\b/).map(t => t.replace(/,,/g, ',')) : [];
+			var { collection, items, tags, search = '' } = action.params;
+			var itemKeys = items ? action.params.items.split(',') : [];
+			var tagNames = tagsFromUrlPart(tags);
 			var itemsSource;
 
-			if(tagNames.length) {
+			if(tagNames.length || search.length) {
 				itemsSource = 'query';
 			} else if(action.params.collection) {
 				itemsSource = 'collection';
@@ -36,13 +38,14 @@ const current = (state = stateDefault, action) => {
 
 			return {
 				...state,
-				collection: action.params.collection || null,
+				collection: collection || null,
 				item: itemKeys && itemKeys.length === 1 ? itemKeys.pop() : null,
-				view: action.params.items ?
+				view: items ?
 					'item-details' : action.params.collection ?
 						'item-list' : 'library',
 				itemsSource,
-				tags: tagNames
+				tags: tagNames,
+				search,
 			};
 		case TRIGGER_EDITING_ITEM:
 			return {

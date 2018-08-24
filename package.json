@@ -65,6 +65,7 @@
     "param-case": "^2.1.1",
     "prop-types": "^15.6.1",
     "react": "^16.4.2",
+    "react-debounce-input": "^3.2.0",
     "react-dnd": "^5.0.0",
     "react-dnd-html5-backend": "^5.0.1",
     "react-dnd-multi-backend": "^3.1.0",
@@ -82,8 +83,8 @@
     "redux-promise": "^0.6.0",
     "redux-thunk": "^2.2.0",
     "tinymce": "^4.8.2",
-    "zotero-api-client": "^0.18.1",
-    "zotero-api-client-cache": "^0.6.0",
+    "zotero-api-client": "^0.19.0",
+    "zotero-api-client-cache": "^0.7.0",
     "zotero-base-mappings": "0.0.2"
   },
   "devDependencies": {

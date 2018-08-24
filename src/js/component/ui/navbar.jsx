@@ -2,6 +2,7 @@
 
 const React = require('react');
 const PropTypes = require('prop-types');
+const SearchContainer = require('./../../container/search');
 
 class Navbar extends React.Component {
 	constructor(props) {
@@ -10,7 +11,7 @@ class Navbar extends React.Component {
 			navOpened: false
 		};
 	}
-		
+
 	render() {
 		return (
 			<header className="navbar">
@@ -26,7 +27,7 @@ class Navbar extends React.Component {
 					</nav>
 				</div>
 				<div className="navbar-right">
-					<a href="#" className="search">Search</a>
+					<SearchContainer />
 					<a href="#" className="user-profile-link"></a>
 					<button className="navbar-toggle" onClick={ ev => this.props.onToggle(ev) }>
 						<span className="icon-bar"></span>

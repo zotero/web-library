@@ -1,8 +1,9 @@
 const cache = require('zotero-api-client-cache');
 const api = require('zotero-api-client')().use(cache()).api;
+// const api = require('zotero-api-client')().api;
 
 const { get } = require('./utils');
-const { getSerializedQuery } = require('./common/state');
+const { getQueryFromRoute } = require('./common/navigation');
 const deepEqual = require('deep-equal');
 
 var queueIdCunter = 0;
@@ -17,6 +18,7 @@ const {
 	ERROR_META,
 
 	ROUTE_CHANGE,
+	QUERY_CHANGE,
 
 	SELECT_LIBRARY,
 	SELECT_ITEM,
@@ -175,10 +177,17 @@ const cleanupCacheAfterDelete = (itemKeys, state) => {
 };
 
 const changeRoute = match => {
-	return {
-		type: ROUTE_CHANGE,
-		...match
-	};
+	return async (dispatch, getState) => {
+		dispatch({ type: ROUTE_CHANGE, ...match });
+		const state = getState();
+		const { library: libraryKey } = state.current;
+		const newQuery = getQueryFromRoute(match);
+		const oldQuery = get(state, ['libraries', libraryKey, 'query']);
+
+		if(!deepEqual(newQuery, oldQuery)) {
+			dispatch({ type: QUERY_CHANGE, libraryKey, newQuery, oldQuery });
+		}
+	}
 };
 
 const configureApi = (userId, apiKey, apiConfig = {}) => {
@@ -389,17 +398,17 @@ const fetchItemsQuery = (query = {}, { start = 0, limit = 50, sort = 'dateModifi
 		const state = getState();
 		const config = state.config;
 		const libraryKey = state.current.library;
-		const totalItemsCount = get(state, ['libraries', libraryKey, 'queryItemCount']);
-		const knownItemKeys = get(state, ['libraries', libraryKey, 'queryItems'], []);
-		const previousQuery = get(state, ['libraries', libraryKey, 'query']);
-		const isQueryChanged = !deepEqual(query, previousQuery);
+		// const totalItemsCount = get(state, ['libraries', libraryKey, 'queryItemCount']);
+		// const knownItemKeys = get(state, ['libraries', libraryKey, 'queryItems'], []);
+		// const previousQuery = get(state, ['libraries', libraryKey, 'query']);
+		// const isQueryChanged = !deepEqual(query, previousQuery);
 
-		if(!isQueryChanged && knownItemKeys.length === totalItemsCount) {
+		// if(!isQueryChanged && knownItemKeys.length === totalItemsCount) {
 			//@TODO: optimisiation where if all data is available and subset is requested
 			//		 that subset is delivered without going back to the server
-		}
+		// }
 
-		await dispatch({
+		dispatch({
 			type: REQUEST_ITEMS_BY_QUERY,
 			libraryKey,
 			query,
@@ -407,7 +416,7 @@ const fetchItemsQuery = (query = {}, { start = 0, limit = 50, sort = 'dateModifi
 			limit,
 			sort,
 			direction,
-			isQueryChanged,
+			// isQueryChanged,
 		});
 
 		try {
@@ -417,7 +426,7 @@ const fetchItemsQuery = (query = {}, { start = 0, limit = 50, sort = 'dateModifi
 				.top();
 
 			if(collection) {
-				configuredApi.collections(collection);
+				configuredApi = configuredApi.collections(collection);
 			}
 
 			const response = await configuredApi.get({ start, limit, sort, direction, tag, q });
@@ -437,7 +446,7 @@ const fetchItemsQuery = (query = {}, { start = 0, limit = 50, sort = 'dateModifi
 				limit,
 				sort,
 				direction,
-				isQueryChanged,
+				// isQueryChanged,
 			});
 
 			return items;

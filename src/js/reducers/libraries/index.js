@@ -80,6 +80,7 @@ const actions = Object.entries(require('../../constants/actions'))
 			'REQUEST_UPDATE_COLLECTION',
 			'REQUEST_UPDATE_ITEM',
 			'TRIGGER_EDITING_ITEM',
+			'QUERY_CHANGE',
 	]).includes(key) ? value : false).filter(Boolean);
 
 const libraries = (state = {}, action) => {

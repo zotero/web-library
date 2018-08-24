@@ -50,7 +50,7 @@ const fetching = (state = {
 		case ERROR_COLLECTIONS_IN_LIBRARY:
 			return {
 				...state,
-				collectionsInLibrary: state.collectionsInLibrary
+				collectionsInLibrary: (state.collectionsInLibrary || [])
 					.filter(key => key !== action.libraryKey)
 			};
 
