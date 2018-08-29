@@ -26,7 +26,7 @@ const { get, sortByKey, resizeVisibleColumns } = require('../utils');
 const { getSerializedQuery } = require('../common/state');
 const { makePath } = require('../common/navigation');
 
-const processItems = items => {
+const processItems = (items, state) => {
 	return items.map(item => {
 		let { itemType, note } = item;
 		let title = itemType === 'note' ?
@@ -38,13 +38,17 @@ const processItems = items => {
 		let date = item[Symbol.for('meta')] && item[Symbol.for('meta')].parsedDate ?
 			item[Symbol.for('meta')].parsedDate :
 			'';
+		let coloredTags = item.tags
+			.map(tag => get(state, ['libraries', state.current.library, 'tags', `${tag.tag}-0`]))
+			.filter(tag => tag && tag.color);
 
 		return {
 			key: item.key,
 			title,
 			creator,
 			date,
-			itemType
+			itemType,
+			coloredTags
 		}
 	});
 };
@@ -227,7 +231,7 @@ const mapStateToProps = state => {
 		break;
 	}
 
-	items = processItems(items.map(key => get(state, ['libraries', libraryKey, 'items', key])));
+	items = processItems(items.map(key => get(state, ['libraries', libraryKey, 'items', key])), state);
 	const { sortBy, sortDirection } = state.config;
 	const preferences = state.preferences;
 	const itemFields = state.meta.itemFields;

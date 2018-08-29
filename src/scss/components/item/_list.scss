@@ -181,10 +181,19 @@
 		}
 	}
 
+	.colored-square {
+		width: 12px;
+		height: 12px;
+		display: inline-block;
+		margin-right: $space-xs;
+		vertical-align: middle;
+	}
+
 	.metadata {
 		&.title {
 			.icon {
 				margin-right: $space-xs;
+				vertical-align: middle;
 			}
 		}
 

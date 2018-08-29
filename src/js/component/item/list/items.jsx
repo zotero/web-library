@@ -210,7 +210,8 @@ class Items extends React.PureComponent {
 			return {
 				title: '...',
 				creator: '...',
-				date: '...'
+				date: '...',
+				coloredTags: [],
 			}
 		}
 	}
@@ -345,9 +346,17 @@ class Items extends React.PureComponent {
 			<Icon type={ `16/item-types/${paramCase(rowData.itemType)}` } width="16" height="16" /> :
 			<Icon type={ `16/item-types/document` } width="16" height="16" />;
 
+		let coloredSquares = rowData.coloredTags.map(tag => (
+			<div
+				key={ tag.tag }
+				className="colored-square"
+				style={ { backgroundColor: tag.color } }
+			/>
+		));
 		return (
 			<React.Fragment>
 				{ icon }
+				{ coloredSquares }
 				{ String(cellData) }
 			</React.Fragment>
 		);
