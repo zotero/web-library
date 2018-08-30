@@ -1,3 +1,4 @@
+/* eslint-disable react/no-deprecated */
 'use strict';
 
 const React = require('react');
@@ -12,6 +13,7 @@ class Tags extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
+			editingTag: null,
 			processingTag: null,
 			virtualTag: null
 		};
@@ -33,11 +35,16 @@ class Tags extends React.Component {
 
 	handleAddTag() {
 		this.setState({
-			virtualTag: ''
+			virtualTag: '',
+			editingTag: '',
 		});
 	}
 
 	handlePersistAddTag(newTag) {
+		if(newTag === '') {
+			this.handleCancelAddTag();
+			return;
+		}
 		this.setState({
 			virtualTag: newTag
 		});
@@ -60,7 +67,19 @@ class Tags extends React.Component {
 		this.props.onDeleteTag(tag);
 	}
 
-	async handleUpdate(tag, newTag) {
+	handleEdit(tag) {
+		this.setState({
+			editingTag: tag
+		});
+	}
+
+	handleCancel() {
+		this.setState({ editingTag: null });
+	}
+
+	async handleCommit(tag, newTag, hasChanged) {
+		this.setState({ editingTag: null });
+		if(!hasChanged) { return; }
 		this.setState({
 			processingTag: tag
 		});
@@ -80,13 +99,16 @@ class Tags extends React.Component {
 									<li className="item" key={ tag.tag } >
 										<Icon type={ '16/tag' } width="16" height="16" />
 											<Editable
-												name="tag"
-												processing={ this.state.processingTag === tag.tag }
+												autoFocus
+												isBusy={ this.state.processingTag === tag.tag }
+												isActive={ this.state.editingTag === tag.tag }
 												value={ tag.tag }
-												editOnClick = { !this.props.isProcessingTags }
-												onSave={ newValue => this.handleUpdate(tag.tag, newValue) } 
+												onCommit={ this.handleCommit.bind(this, tag.tag) }
+												onCancel={ this.handleCancel.bind(this) }
+												onEditableClick={ this.handleEdit.bind(this, tag.tag) }
+												onEditableFocus={ this.handleEdit.bind(this, tag.tag) }
 											/>
-										<Button 
+										<Button
 											className="btn-icon"
 											disabled={ this.props.isProcessingTags }
 											onClick={ () => this.handleDelete(tag.tag) }
@@ -102,13 +124,12 @@ class Tags extends React.Component {
 								<li className="item virtual">
 									<Icon type={ '16/tag' } width="16" height="16" />
 									<Editable
-										name="tag"
-										processing={ this.state.virtualTag !== '' }
-										shouldInitEditing={ this.state.virtualTag === '' }
+										autoFocus
+										isBusy={ this.state.virtualTag !== '' }
+										isActive={ this.state.editingTag === '' }
 										value={ this.state.virtualTag }
-										editOnClick = { false }
-										onToggle = { isEditing => !isEditing && this.handleCancelAddTag() }
-										onSave={ newValue => this.handlePersistAddTag(newValue) } 
+										onCancel={ this.handleCancelAddTag.bind(this) }
+										onCommit={ newValue => this.handlePersistAddTag(newValue) }
 									/>
 								</li>
 							)
