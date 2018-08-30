@@ -18,11 +18,13 @@ class Input extends React.PureComponent {
 
 	cancel(event = null) {
 		this.props.onCancel(this.hasChanged, event);
+		this.hasBeenCancelled = true;
 		this.input.blur();
 	}
 
 	commit(event = null) {
 		this.props.onCommit(this.state.value, this.hasChanged, event);
+		this.hasBeenCommitted = true;
 	}
 
 	focus() {
@@ -45,6 +47,7 @@ class Input extends React.PureComponent {
 
 	handleBlur(event) {
 		const shouldCancel = this.props.onBlur(event);
+		if (this.hasBeenCancelled || this.hasBeenCommitted) { return; }
 		shouldCancel ? this.cancel(event) : this.commit(event);
 	}
 
@@ -79,6 +82,8 @@ class Input extends React.PureComponent {
 	}
 
 	renderInput() {
+		this.hasBeenCancelled = false;
+		this.hasBeenCommitted = false;
 		const extraProps = Object.keys(this.props).reduce((aggr, key) => {
 			if(key.match(/^(aria-|data-).*/)) {
 				aggr[key] = this.props[key];
