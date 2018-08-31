@@ -48,7 +48,7 @@ const fetching = (state = {
 		case ERROR_CHILD_ITEMS:
 			return {
 				...state,
-				childItems: state.childItems
+				childItems: (state.childItems || [])
 					.filter(key => key !== action.itemKey)
 			};
 		case REQUEST_FETCH_ITEMS:
