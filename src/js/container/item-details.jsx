@@ -160,6 +160,7 @@ class ItemDetailsContainer extends React.Component {
 
 const mapStateToProps = state => {
 	const libraryKey = state.current.library;
+	const itemsSource = state.current.itemsSource;
 	const collectionKey = state.current.collection;
 	const itemKey = state.current.item;
 	const item = get(state, ['libraries', libraryKey, 'items', itemKey], {});
@@ -175,15 +176,19 @@ const mapStateToProps = state => {
 	const isEditing = state.current.editing === item.key;
 
 	var itemsCount;
-	switch(state.current.itemsSource) {
+
+	switch(itemsSource) {
+		case 'query':
+			itemsCount = get(state, ['libraries', libraryKey, 'queryItemCount']) || 0;
+		break;
 		case 'top':
-				itemsCount = get(state, ['itemCountTopByLibrary', libraryKey], 0);
+			itemsCount = get(state, ['itemCountTopByLibrary', libraryKey], 0);
 		break;
 		case 'trash':
-				itemsCount = get(state, ['itemCountTrashByLibrary', libraryKey], 0);
+			itemsCount = get(state, ['itemCountTrashByLibrary', libraryKey], 0);
 		break;
 		case 'collection':
-				itemsCount = get(state, ['libraries', libraryKey, 'itemCountByCollection', collectionKey], 0)
+			itemsCount = get(state, ['libraries', libraryKey, 'itemCountByCollection', collectionKey], 0)
 		break;
 	}
 
