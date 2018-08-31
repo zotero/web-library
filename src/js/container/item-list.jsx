@@ -138,7 +138,7 @@ class ItemListContainer extends React.PureComponent {
 			case 'query':
 				return await dispatch(fetchItemsQuery({ collection: collectionKey, tag, q }, sortAndDirection));
 			case 'top':
-				return await dispatch(fetchTopItems());
+				return await dispatch(fetchTopItems(sortAndDirection));
 			case 'trash':
 				return await dispatch(fetchTrashItems(sortAndDirection));
 			case 'collection':
