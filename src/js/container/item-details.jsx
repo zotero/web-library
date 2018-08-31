@@ -179,16 +179,16 @@ const mapStateToProps = state => {
 
 	switch(itemsSource) {
 		case 'query':
-			itemsCount = get(state, ['libraries', libraryKey, 'queryItemCount']) || 0;
+			itemsCount = get(state, ['libraries', libraryKey, 'queryItemCount']);
 		break;
 		case 'top':
-			itemsCount = get(state, ['itemCountTopByLibrary', libraryKey], 0);
+			itemsCount = get(state, ['itemCountTopByLibrary', libraryKey], null);
 		break;
 		case 'trash':
-			itemsCount = get(state, ['itemCountTrashByLibrary', libraryKey], 0);
+			itemsCount = get(state, ['itemCountTrashByLibrary', libraryKey], null);
 		break;
 		case 'collection':
-			itemsCount = get(state, ['libraries', libraryKey, 'itemCountByCollection', collectionKey], 0)
+			itemsCount = get(state, ['libraries', libraryKey, 'itemCountByCollection', collectionKey], null)
 		break;
 	}
 
