@@ -7,11 +7,13 @@ const { withRouter } = require('react-router-dom');
 const { baseMappings } = require('../constants/item');
 const { connect } = require('react-redux');
 const { noteAsTitle } = require('../common/format');
+const { saveAs } = require('file-saver');
 const ItemList = require('../component/item/list');
 const {
 	addToCollection,
 	createItem,
 	deleteItems,
+	exportItems,
 	fetchItemsInCollection,
 	fetchItemsQuery,
 	fetchItemTemplate,
@@ -171,6 +173,12 @@ class ItemListContainer extends React.PureComponent {
 		}
 	}
 
+	async handleExport(format) {
+		const { dispatch, selectedItemKeys } = this.props;
+		const exportData = await dispatch(exportItems(selectedItemKeys, format));
+		saveAs(exportData, 'export-data');
+	}
+
 	render() {
 		let { collectionKey = '', itemsSource, search, tags } = this.props;
 		var key;
@@ -185,17 +193,18 @@ class ItemListContainer extends React.PureComponent {
 		return <ItemList
 			key = { key }
 			{ ...this.props }
+			onColumnReorder={ this.handleColumnReorder.bind(this) }
+			onColumnResize={ this.handleColumnResize.bind(this) }
+			onColumnVisibilityChange={ this.handleColumnVisibilityChange.bind(this) }
 			onDelete={ this.handleDelete.bind(this) }
-			onPermanentlyDelete={ this.handlePermanentlyDelete.bind(this) }
-			onUndelete={ this.handleUndelete.bind(this) }
+			onExport={ this.handleExport.bind(this )}
 			onItemDrag={ this.handleDrag.bind(this) }
 			onItemsSelect={ this.handleItemsSelect.bind(this) }
 			onLoadMore={ this.handleLoadMore.bind(this) }
 			onNewItemCreate={ this.handleNewItemCreate.bind(this) }
+			onPermanentlyDelete={ this.handlePermanentlyDelete.bind(this) }
 			onSort={ this.handleSort.bind(this) }
-			onColumnVisibilityChange={ this.handleColumnVisibilityChange.bind(this) }
-			onColumnReorder={ this.handleColumnReorder.bind(this) }
-			onColumnResize={ this.handleColumnResize.bind(this) }
+			onUndelete={ this.handleUndelete.bind(this) }
 		/>;
 	}
 }

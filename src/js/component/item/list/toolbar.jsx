@@ -10,6 +10,7 @@ const { Toolbar, ToolGroup } = require('../../ui/toolbars');
 const ColumnSelector = require('./column-selector');
 const NewItemSelector = require('./new-item-selector');
 const ItemActions = require('./item-actions');
+const ExportActions = require('./export-actions');
 
 class ItemListToolbar extends React.PureComponent {
 	state = { columns: [] }
@@ -46,6 +47,7 @@ class ItemListToolbar extends React.PureComponent {
 								)
 							}
 							<ItemActions { ...this.props } />
+							<ExportActions { ...this.props } />
 						</ToolGroup>
 					</div>
 					<div className="toolbar-right">

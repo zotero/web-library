@@ -134,6 +134,10 @@ const {
 	REQUEST_ITEMS_BY_QUERY,
 	RECEIVE_ITEMS_BY_QUERY,
 	ERROR_ITEMS_BY_QUERY,
+
+	REQUEST_EXPORT_ITEMS,
+	RECEIVE_EXPORT_ITEMS,
+	ERROR_EXPORT_ITEMS,
 } = require('./constants/actions');
 
 // @TODO: rename and move to common/api
@@ -1657,6 +1661,45 @@ const fetchTagsForItem = (itemKey, { start = 0, limit = 50, sort = 'title', dire
 	};
 };
 
+const exportItems = (itemKeys, format) => {
+	return async (dispatch, getState) => {
+		let { config, current: { library: libraryKey } } = getState();
+
+		dispatch({
+			type: REQUEST_EXPORT_ITEMS,
+			itemKeys,
+			libraryKey
+		});
+
+		try {
+			const response = await api(config.apiKey, config.apiConfig)
+				.library(libraryKey)
+				.items()
+				.get({ itemKey: itemKeys.join(','), format });
+
+			const exportData = await response.response.blob();
+
+			dispatch({
+				type: RECEIVE_EXPORT_ITEMS,
+				itemKeys,
+				libraryKey,
+				exportData,
+				response
+			});
+
+			return exportData;
+		} catch(error) {
+			dispatch({
+				type: ERROR_EXPORT_ITEMS,
+				error,
+				itemKeys,
+				libraryKey
+			});
+		}
+	};
+};
+
+
 
 module.exports = {
 	addToCollection,
@@ -1667,6 +1710,7 @@ module.exports = {
 	deleteCollection,
 	deleteItem,
 	deleteItems,
+	exportItems,
 	fetchChildItems,
 	fetchCollections,
 	fetchItems,
