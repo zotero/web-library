@@ -12,6 +12,7 @@ $space-sm:    12px;
 $space-md:    16px;
 $space-lg:    24px;
 $space-xl:    32px;
+$space-xxl:   48px;
 $space-max:   64px;
 
 $space-thumb: 42px;
@@ -90,7 +91,8 @@ $z-index-main:          10;
 $z-index-level:         10;
 $z-index-navbar:        20;
 $z-index-menu:          30;
-$z-index-drag-layer:    40;
+$z-index-modal:			100;
+$z-index-drag-layer:    200;
 
 
 // Navbbar
@@ -251,3 +253,20 @@ $menu-border-radius: $border-radius-sm;
 // --------------------------------------------------
 
 $auto-resizer-vertical-rows: 3;
+
+//
+// Icon
+//
+$icon-spin-size: $space-xl;
+
+// Modal
+// --------------------------------------------------
+$modal-title-line-height:     $space-xl;
+$modal-header-padding-mobile: $space-md;
+$modal-inner-padding-mobile:  $space-md;
+$modal-header-padding-md:     $space-lg;
+$modal-inner-padding-md:      $space-lg;
+$modal-header-padding-lg:     $space-xl;
+$modal-inner-padding-lg:      $space-xl;
+$modal-md:                    500px;
+$modal-lg:                    800px;

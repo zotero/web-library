@@ -8,6 +8,7 @@ module.exports = {
 	itemCountTrashByLibrary: require('./item-count-trash-by-library'),
 	libraries: require('./libraries'),
 	meta: require('./meta'),
+	modal: require('./modal'),
 	preferences: require('./preferences'),
 	router: require('./router'),
 	tagCountByLibrary: require('./tag-count-by-library'),

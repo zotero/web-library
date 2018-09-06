@@ -1,10 +1,10 @@
 const cache = require('zotero-api-client-cache');
 const api = require('zotero-api-client')().use(cache()).api;
 // const api = require('zotero-api-client')().api;
-
 const { get } = require('./utils');
 const { getQueryFromRoute } = require('./common/navigation');
 const deepEqual = require('deep-equal');
+
 
 var queueIdCunter = 0;
 
@@ -138,6 +138,12 @@ const {
 	REQUEST_EXPORT_ITEMS,
 	RECEIVE_EXPORT_ITEMS,
 	ERROR_EXPORT_ITEMS,
+
+	TOGGLE_MODAL,
+
+	REQUEST_CITE_ITEMS,
+	RECEIVE_CITE_ITEMS,
+	ERROR_CITE_ITEMS,
 } = require('./constants/actions');
 
 // @TODO: rename and move to common/api
@@ -272,6 +278,10 @@ const preferenceChange = (name, value) => {
 		name,
 		value
 	};
+}
+
+const toggleModal = (id, shouldOpen) => {
+	return { type: TOGGLE_MODAL, id, shouldOpen }
 }
 
 const initialize = () => {
@@ -1699,11 +1709,53 @@ const exportItems = (itemKeys, format) => {
 	};
 };
 
+const citeItems = (itemKeys, style = 'chicago-note-bibliography') => {
+	return async (dispatch, getState) => {
+		let { config, current: { library: libraryKey } } = getState();
 
+		dispatch({
+			type: REQUEST_CITE_ITEMS,
+			itemKeys,
+			libraryKey,
+			style,
+		});
+
+		try {
+			const response = await api(config.apiKey, config.apiConfig)
+				.library(libraryKey)
+				.items()
+				.get({
+					itemKey: itemKeys.join(','),
+					include: 'citation',
+					style
+				});
+
+			const citations = await response.getData().map(d => d.citation)
+
+			dispatch({
+				type: RECEIVE_CITE_ITEMS,
+				itemKeys,
+				libraryKey,
+				citations,
+				response,
+			});
+
+			return citations;
+		} catch(error) {
+			dispatch({
+				type: ERROR_CITE_ITEMS,
+				error,
+				itemKeys,
+				libraryKey,
+			});
+		}
+	};
+};
 
 module.exports = {
 	addToCollection,
 	changeRoute,
+	citeItems,
 	configureApi,
 	createCollection,
 	createItem,
@@ -1731,6 +1783,7 @@ module.exports = {
 	recoverFromTrash,
 	selectLibrary,
 	sortItems,
+	toggleModal,
 	triggerEditingItem,
 	triggerResizeViewport,
 	updateCollection,

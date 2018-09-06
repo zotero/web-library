@@ -11,6 +11,8 @@ const stateDefault = {
 	editing: null,
 	itemsSource: null,
 	tags: [],
+	search: '',
+	itemKeys: [],
 };
 
 const current = (state = stateDefault, action) => {
@@ -46,6 +48,7 @@ const current = (state = stateDefault, action) => {
 				itemsSource,
 				tags: tagNames,
 				search,
+				itemKeys
 			};
 		case TRIGGER_EDITING_ITEM:
 			return {

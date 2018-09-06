@@ -62,7 +62,7 @@ class ExportActions extends React.PureComponent {
 					disabled={ this.props.selectedItemKeys.length == 0 }
 					className="btn-icon dropdown-folder"
 				>
-					<Icon type={ '16/cog' } width="16" height="16" />
+					Export
 				</DropdownToggle>
 				<DropdownMenu>
 					{

@@ -14,6 +14,9 @@ $asphalt-light: #dadee3;
 $primary:   $red;
 $secondary: $blue;
 
+$blue-dark:    #333c66;
+$blue-darkest: #3d4466;
+
 $transparent: transparent;
 
 
@@ -181,3 +184,12 @@ $menu-no-results-color: $shade-5;
 
 // Drag layer
 $creator-drag-preview-shadow: rgba($shade-10, 0.2);
+
+// Modal
+$modal-backdrop-bg:           rgba($blue-darkest, 0.5);
+$modal-content-bg:            $shade-0;
+$modal-header-color:          $shade-0;
+$modal-header-bg:             $blue-dark;
+$modal-footer-border-width:   1px;
+$modal-footer-border-color:   $shade-2;
+$modal-icon-spin-color:       $shade-0;

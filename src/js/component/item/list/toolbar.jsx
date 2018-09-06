@@ -20,7 +20,13 @@ class ItemListToolbar extends React.PureComponent {
 	}
 
 	render() {
-		const { isDeleting, selectedItemKeys, onDelete, itemsSource, isUndeleting, onUndelete } = this.props;
+		const {
+			isDeleting,
+			selectedItemKeys,
+			onDelete,
+			onBibliographyOpen,
+			itemsSource,
+		} = this.props;
 
 		return (
 			<header className="hidden-sm-down">
@@ -48,6 +54,12 @@ class ItemListToolbar extends React.PureComponent {
 							}
 							<ItemActions { ...this.props } />
 							<ExportActions { ...this.props } />
+							<Button
+								onClick={ onBibliographyOpen }
+								disabled={ selectedItemKeys.length === 0 }
+							>
+								Bibliography
+							</Button>
 						</ToolGroup>
 					</div>
 					<div className="toolbar-right">

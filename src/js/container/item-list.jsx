@@ -23,6 +23,7 @@ const {
 	preferenceChange,
 	recoverFromTrash,
 	sortItems,
+	toggleModal,
 } = require('../actions');
 const { get, sortByKey, resizeVisibleColumns } = require('../utils');
 const { getSerializedQuery } = require('../common/state');
@@ -179,6 +180,11 @@ class ItemListContainer extends React.PureComponent {
 		saveAs(exportData, 'export-data');
 	}
 
+	handleBibliographyOpen() {
+		const { dispatch } = this.props;
+		dispatch(toggleModal('BIBLIOGRAPHY', true));
+	}
+
 	render() {
 		let { collectionKey = '', itemsSource, search, tags } = this.props;
 		var key;
@@ -205,6 +211,7 @@ class ItemListContainer extends React.PureComponent {
 			onPermanentlyDelete={ this.handlePermanentlyDelete.bind(this) }
 			onSort={ this.handleSort.bind(this) }
 			onUndelete={ this.handleUndelete.bind(this) }
+			onBibliographyOpen={ this.handleBibliographyOpen.bind(this) }
 		/>;
 	}
 }
@@ -266,7 +273,7 @@ const mapStateToProps = state => {
 		tags,
 		search,
 		sortDirection: sortDirection.toUpperCase(),
-		selectedItemKeys: item ? [item.key] : (state.router && 'items' in state.router.params && state.router.params.items.split(',')) || []
+		selectedItemKeys: item ? [item.key] : state.current.itemKeys
 	};
 };
 

@@ -72,6 +72,7 @@
     "react-dnd-multi-backend": "^3.1.0",
     "react-dom": "^16.4.2",
     "react-key-handler": "^1.1.0",
+    "react-modal": "^3.5.1",
     "react-redux": "^5.0.7",
     "react-router": "^4.2.0",
     "react-router-dom": "^4.2.2",

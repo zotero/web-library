@@ -15,6 +15,7 @@ const { Toolbar, ToolGroup } = require('./ui/toolbars');
 const TouchHeaderContainer = require('../container/touch-header');
 const UserTypeDetector = require('../enhancers/user-type-detector');
 const { UserTypeContext } = require('../context');
+const BibliographyContainer = require('../container/bibliography');
 
 class Library extends React.Component {
 	constructor(props) {
@@ -72,6 +73,7 @@ class Library extends React.Component {
 							</section>
 						</section>
 					</main>
+					<BibliographyContainer />
 				</div>
 			</UserTypeContext.Provider>
 		);
