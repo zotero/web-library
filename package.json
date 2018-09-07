@@ -9,7 +9,8 @@
     "build"
   ],
   "config": {
-    "port": "8001"
+    "port": "8001",
+    "styles_cache_time": "86400000"
   },
   "browserslist": "last 2 versions",
   "scripts": {
@@ -26,6 +27,7 @@
     "build:styles-json": "node scripts/build-styles-json.js --stylesCacheTime $npm_package_config_styles_cache_time",
     "build:static": "mkdir -p build/static && rsync -vazL src/static/* build/static/",
     "build:postprocess": "postcss build/static/zotero-web-library.css --use autoprefixer --no-map -r",
+    "build:styles-json": "node scripts/build-styles-json.js --stylesCacheTime $npm_package_config_styles_cache_time",
     "devel": "run-p 'devel:js -s' 'devel:scss -s' 'devel:html -s' 'devel:static -s'",
     "devel:js": "watchify -s ZoteroWebLibrary --extension=.jsx src/js/main.js -d -v -t [babelify] -p mapstraction -o build/static/zotero-web-library.js",
     "devel:scss": "nodemon -q -w src/scss --ext 'scss' --exec 'npm run devbuild:scss'",
@@ -34,7 +36,7 @@
     "devbuild:scss": "run-s devbuild:scss:build devbuild:scss:post",
     "devbuild:scss:build": "for f in src/scss/*.scss; do node-sass $f --recursive --source-map true --source-map-contents true --output build/static; done;",
     "devbuild:scss:post": "postcss build/static/*.css --use autoprefixer -r",
-    "start": "run-p \"serve -s {@}\" \"devel -s {@}\"",
+    "start": "run-p \"build:styles-json\" \"serve -s {@}\" \"devel -s {@}\"",
     "stylelint": "stylelint src/scss/**/*.scss || true",
     "eslint": "eslint \"src/js/**/*.+(js|jsx)\" || true",
     "lint": "run-p stylelint eslint",

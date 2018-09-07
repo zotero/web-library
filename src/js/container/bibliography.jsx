@@ -5,16 +5,32 @@ const PropTypes = require('prop-types');
 const { withRouter } = require('react-router-dom');
 const { connect } = require('react-redux');
 const { toggleModal, citeItems } = require('../actions');
+const { coreCitationStyles } = require('../../../data/citation-styles-data.json');
 const Bibliography = require('../component/bibliography')
 
 class BibliographyContainer extends React.PureComponent {
-	async componentDidUpdate({ isOpen: wasOpen }) {
-		const { dispatch, isOpen, itemKeys } = this.props;
+	state = {
+		citationStyle: coreCitationStyles.find(cs => cs.isDefault).name,
+		isUpdating: false
+	}
 
-		if(isOpen && !wasOpen) {
-			const citations = await dispatch(citeItems(itemKeys));
-			this.setState({ citations });
+	async componentDidUpdate({ isOpen: wasOpen }, { citationStyle: prevCitationStyle }) {
+		const { dispatch, isOpen, itemKeys } = this.props;
+		const { citationStyle } = this.state;
+
+		if(isOpen && !wasOpen || citationStyle != prevCitationStyle ) {
+			this.setState({ isUpdating: true })
+			try {
+				const citations = await dispatch(citeItems(itemKeys, citationStyle));
+				this.setState({ citations });
+			} finally {
+				this.setState({ isUpdating: false });
+			}
 		}
+	}
+
+	handleCitationStyleChange(citationStyle) {
+		this.setState({ citationStyle });
 	}
 
 	async handleCancel() {
@@ -23,8 +39,13 @@ class BibliographyContainer extends React.PureComponent {
 	}
 
 	render() {
+		const { citationStyle } = this.state;
+
 		return <Bibliography
 			onCancel={ this.handleCancel.bind(this) }
+			onCitationStyleChanged={ this.handleCitationStyleChange.bind(this) }
+			citationStyle={ citationStyle }
+			citationStyles={ coreCitationStyles }
 			{ ...this.props }
 			{ ...this.state }
 		/>;

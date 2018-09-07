@@ -2,6 +2,8 @@ node_modules
 /lib
 /sass
 /build
+/data
+/_*
 .DS_Store
 coverage
 .nyc_output

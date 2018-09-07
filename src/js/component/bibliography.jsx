@@ -6,6 +6,7 @@ const Spinner = require('./ui/spinner');
 const Button = require('./ui/button');
 const Icon = require('./ui/icon');
 const Modal = require('./ui/modal');
+const StyleSelector = require('./style-selector');
 const { noop } = require('../utils');
 const cx = require('classnames');
 
@@ -15,14 +16,18 @@ class Bibliography extends React.Component {
 		this.props.onCancel();
 	}
 
+	handleStyleChange() {
+		this.props.onStyleChange()
+	}
+
 	renderModalContent() {
-		const { citations } = this.props;
+		const { citations, isUpdating } = this.props;
 
 		return(
 			<div className="modal-content" tabIndex={ -1 }>
 				<div className="modal-header">
 					<h4 className="modal-title text-truncate">
-						Generate Bibliography
+						Bibliography
 					</h4>
 					<Button
 						className="close"
@@ -32,9 +37,18 @@ class Bibliography extends React.Component {
 					</Button>
 				</div>
 				<div className="modal-body">
-					<div className="bibliography read-only"
-						dangerouslySetInnerHTML={ { __html: citations } }
-					/>
+					{ isUpdating ? (
+						<Spinner />
+					) : (
+						<React.Fragment>
+							<div className="style-selector-container">
+								<StyleSelector {...this.props } />
+							</div>
+							<div className="bibliography read-only"
+								dangerouslySetInnerHTML={ { __html: citations } }
+							/>
+						</React.Fragment>
+					) }
 				</div>
 			</div>
 		);
