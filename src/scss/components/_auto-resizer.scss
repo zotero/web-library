@@ -18,13 +18,16 @@
 		color: transparent;
 		line-height: normal; // Todo: only when containing editables
 		min-width: $space-sm;
-		white-space: pre-wrap;
 
-		&::after {
-			content: "\200b"; // Permanently insert a zero-width character to expand textareas at newlines
+		.textarea & {
+			white-space: pre-wrap;
+
+			&::after {
+				content: "\200b"; // Permanently insert a zero-width character to expand textareas at newlines
+			}
 		}
 
-		@include state(".auto-resizer.vertical") {
+		@include variant(".auto-resizer.vertical") {
 			line-height: $line-height-base;
 
 			@include touch-or-bp-down(sm) {

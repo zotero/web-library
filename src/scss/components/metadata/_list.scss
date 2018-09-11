@@ -300,8 +300,7 @@
 
 			&:hover {
 				.editable-content {
-					background-color: $editable-hover-bg;
-					border-color: $editable-hover-bg;
+					background-color: $editable-hover-bg; // Use transparency so you can see through the comma between last and first name
 				}
 			}
 

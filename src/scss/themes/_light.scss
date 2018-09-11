@@ -131,7 +131,7 @@ $tab-pane-border-color: $shade-0;
 
 // Metadata list
 $key-color:          $shade-6;
-$editable-hover-bg:  darken($panel-bg, 4%);
+$editable-hover-bg:  rgba($shade-10, 0.04);
 $handle-color-touch: $shade-4;
 $handle-color-mouse: $shade-6;
 

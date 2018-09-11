@@ -135,6 +135,12 @@
 	}
 
 	.value {
+		.editable {
+			::placeholder {
+				color: transparent; // Hide
+			}
+		}
+
 		@include touch-or-bp-down(sm) {
 			padding-right: 31px;
 
@@ -161,13 +167,18 @@
 			}
 
 			.editable {
-				min-width: $space-lg;
+				flex: 1 1 0;
 
 				&:first-child {
-					flex: 0 1 auto;
-
 					@include state(".creators-entry.creators-twoslot") {
 						display: flex;
+						flex: 0 1 auto;
+						max-width: calc(#{$creators-last-name-max-width} - 30px); // Substract buttons and margins / 2
+
+						.editable-content {
+							position: relative;
+							z-index: 1; // Higher than comma
+						}
 
 						.input-group {
 							flex: 1 1 auto;
@@ -178,14 +189,10 @@
 							flex: 0 0 auto;
 						}
 					}
-
-					&.editing {
-						flex: 1 1 auto;
-					}
 				}
 
 				&:last-of-type {
-					margin-right: auto;
+					margin-right: 6px; // 8px
 				}
 			}
 		}
@@ -203,22 +210,19 @@
 
 			@include state(".creators-entry:not(:focus-within)") {
 				@include mouse-and-bp-up(md) {
-					clip: rect(0, 0, 0, 0);
-					position: absolute;
+					visibility: hidden;
 				}
 			}
 
 			@include state(".creators-entry:hover") {
 				@include mouse-and-bp-up(md) { // Repeat for specifity
-					clip: auto;
-					position: static;
+					visibility: visible;
 				}
 			}
 
 			@include state(".creators-entry:focus-within") {
 				@include mouse-and-bp-up(md) {
-					clip: auto;
-					position: static;
+					visibility: visible;
 				}
 			}
 
