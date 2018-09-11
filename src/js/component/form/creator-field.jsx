@@ -108,6 +108,10 @@ class CreatorField extends React.PureComponent {
 			extraProps['onEditableFocus'] = this.handleFieldFocus.bind(this, name);
 		}
 
+		if(name === 'lastName') {
+			extraProps['resize'] = 'horizontal';
+		}
+
 		return (
 			<FormField
 				autoFocus={ !this.props.isForm }
