@@ -11,6 +11,7 @@ const Input = require('./form/input');
 const Node = require('./collection-tree/node');
 const ActionsDropdown = require('./collection-tree/actions-dropdown');
 const DropdownItem = require('reactstrap/lib/DropdownItem').default;
+const { ViewportContext } = require('../context');
 const deepEqual = require('deep-equal');
 
 class CollectionTree extends React.Component {
@@ -151,15 +152,14 @@ class CollectionTree extends React.Component {
 		return this.makeDerivedData(collections, path, this.state.opened);
 	}
 
-	renderCollections(collections, level) {
+	renderCollections(collections, level, parentCollection = null) {
 		const { childMap, derivedData } = this;
+		const { itemsSource } = this.props;
 
 		const hasOpen = this.testRecursive(
 			collections, col => derivedData[col.key].isSelected
 		);
-		const hasOpenLastLevel = collections.some(
-			col => derivedData[col.key].isSelected && !(col.key in childMap)
-		);
+		const hasOpenLastLevel = collections.length === 0;
 
 		return (
 			<div className={ cx('level', `level-${level}`, {
@@ -171,7 +171,7 @@ class CollectionTree extends React.Component {
 							<Node
 								className={ cx({
 									'all-documents': true,
-									'selected': this.props.itemsSource === 'top'
+									'selected': itemsSource === 'top'
 								})}
 								onClick={ this.handleSelect.bind(this, 'top', null) }
 								onKeyPress={ this.handleKeyPress.bind(this, 'top', null) }
@@ -191,9 +191,12 @@ class CollectionTree extends React.Component {
 								'selected': derivedData[collection.key].isSelected,
 								'collection': true,
 							})}
-							subtree={ collection.key in childMap ?
-								this.renderCollections(this.collectionsFromKeys(childMap[collection.key]), level + 1) :
-								null
+							subtree={
+								this.renderCollections(
+									this.collectionsFromKeys(childMap[collection.key] || []),
+									level + 1,
+									collection
+								)
 							}
 							onOpen={ this.handleOpenToggle.bind(this, collection.key) }
 							onClick={ this.handleSelect.bind(this, 'collection', collection.key) }
@@ -250,7 +253,7 @@ class CollectionTree extends React.Component {
 							<Node
 								className={ cx({
 									'trash': true,
-									'selected': this.props.itemsSource === 'trash'
+									'selected': itemsSource === 'trash'
 								})}
 								onClick={ this.handleSelect.bind(this, 'trash', null) }
 								onKeyPress={ this.handleKeyPress.bind(this, 'trash', null) }
@@ -262,6 +265,20 @@ class CollectionTree extends React.Component {
 							</Node>
 						)
 					}
+					<ViewportContext.Consumer>
+						{ viewport => (
+							viewport.xxs && itemsSource === 'collection' && parentCollection && (
+								<Node
+									onClick={ this.handleSelect.bind(this, 'items', parentCollection.key, null) }
+									onKeyPress={ this.handleKeyPress.bind(this, 'items', parentCollection.key, null) }
+								>
+									<Icon type="28/document" className="touch" width="28" height="28" />
+									<Icon type="16/document" className="mouse" width="16" height="16" />
+									<a>Items</a>
+								</Node>
+							)
+						)}
+					</ViewportContext.Consumer>
 				</ul>
 			</div>
 		);

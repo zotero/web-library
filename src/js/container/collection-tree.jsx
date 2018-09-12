@@ -25,8 +25,8 @@ class CollectionTreeContainer extends React.Component {
 		}
 	}
 
-	handleSelect(itemsSource, collectionKey) {
-		switch(itemsSource) {
+	handleSelect(nodeType, collectionKey) {
+		switch(nodeType) {
 			case 'top':
 				this.props.history.push('/');
 			break;
@@ -35,6 +35,9 @@ class CollectionTreeContainer extends React.Component {
 			break;
 			case 'collection':
 				this.props.history.push(`/collection/${collectionKey}`);
+			break;
+			case 'items':
+				this.props.history.push(`/collection/${collectionKey}/item-list`);
 			break;
 		}
 	}

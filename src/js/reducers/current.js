@@ -23,7 +23,7 @@ const current = (state = stateDefault, action) => {
 				library: action.libraryKey
 			};
 		case ROUTE_CHANGE:
-			var { collection, items, tags, search = '' } = action.params;
+			var { collection, items, tags, view, search = '' } = action.params;
 			var itemKeys = items ? action.params.items.split(',') : [];
 			var tagNames = tagsFromUrlPart(tags);
 			var itemsSource;
@@ -38,17 +38,19 @@ const current = (state = stateDefault, action) => {
 				itemsSource = 'top';
 			}
 
+			if(!view) {
+				view = items ? 'item-details' : 'library';
+			}
+
 			return {
 				...state,
 				collection: collection || null,
 				item: itemKeys && itemKeys.length === 1 ? itemKeys.pop() : null,
-				view: items ?
-					'item-details' : action.params.collection ?
-						'item-list' : 'library',
 				itemsSource,
 				tags: tagNames,
 				search,
-				itemKeys
+				itemKeys,
+				view,
 			};
 		case TRIGGER_EDITING_ITEM:
 			return {

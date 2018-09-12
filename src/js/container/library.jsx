@@ -117,7 +117,7 @@ class LibraryContainer extends React.Component {
 							<Route path="/collection/:collection/tags/:tags/search/:search" component={LibraryContainerWrapped} />
 							<Route path="/collection/:collection/tags/:tags/" component={LibraryContainerWrapped} />
 							<Route path="/collection/:collection/search/:search" component={LibraryContainerWrapped} />
-							<Route path="/collection/:collection" component={LibraryContainerWrapped} />
+							<Route path="/collection/:collection/:view?" component={LibraryContainerWrapped} />
 							<Route path="/items/:items" component={LibraryContainerWrapped} />
 							<Route path="/tags/:tags/search/:search/items/:items" component={LibraryContainerWrapped} />
 							<Route path="/tags/:tags/search/:search" component={LibraryContainerWrapped} />
