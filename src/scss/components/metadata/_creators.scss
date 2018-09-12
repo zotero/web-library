@@ -141,7 +141,11 @@
 			flex: 1 1 0;
 
 			::placeholder {
-				//color: transparent; // Hide
+				color: transparent; // Hide
+			}
+
+			.placeholder {
+				color: $placeholder-color;
 			}
 		}
 
