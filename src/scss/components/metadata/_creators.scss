@@ -150,7 +150,8 @@
 		}
 
 		> :first-child {
-			@include state(".creators-entry.creators-twoslot") {
+			@include state(".creators-entry.creators-twoslot:not(.creators-modal-trigger)") {
+
 				display: flex;
 				flex: 0 1 auto;
 				margin-right: $space-xs;

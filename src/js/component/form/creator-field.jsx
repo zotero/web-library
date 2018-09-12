@@ -9,6 +9,7 @@ const Button = require('../ui/button');
 const Icon = require('../ui/icon');
 const Input = require('./input');
 const SelectInput = require('./select');
+const { ViewportContext } = require('../../context');
 
 class CreatorField extends React.PureComponent {
 	constructor(props) {
@@ -131,116 +132,132 @@ class CreatorField extends React.PureComponent {
 	}
 
 	render() {
-		const {
-			creator,
-			creatorTypes,
-			index,
-			isSingle,
-			isVirtual,
-			onDragStatusChange,
-			onReorder,
-			onReorderCancel,
-			onReorderCommit,
-			readOnly,
-		} = this.props;
-		const className = {
-			'creators-entry': true,
-			'creators-oneslot': 'name' in creator,
-			'creators-twoslot': 'lastName' in creator,
-			'creators-type-editing': this.state.isCreatorTypeActive,
-			'has-focus': this.state.hasFocus,
-			'metadata': true,
-			'single': isSingle,
-			'virtual': isVirtual,
-		};
-
-		const creatorTypeDescription = creatorTypes.find(
-			c => c.value == creator.creatorType
-		) || { label: creator.creatorType };
-
-		// raw formatted data for use in drag-n-drop indicator
-		const raw = { ...creator, creatorType: creatorTypeDescription.label, }
-
 		return (
-			<Field
-				className={ cx(this.props.className, className) }
-				index={ index }
-				isSortable={ !isSingle && !isVirtual && !readOnly }
-				key={ creator.id }
-				onReorder={ onReorder }
-				onReorderCancel={ onReorderCancel }
-				onReorderCommit={ onReorderCommit }
-				onDragStatusChange={ onDragStatusChange }
-				raw={ raw }
-			>
-				<SelectInput
-					className="form-control form-control-sm"
-					inputComponent={ SelectInput }
-					isActive={ this.state.active === 'creatorType' }
-					onCancel={ this.handleCancel.bind(this) }
-					onChange={ () => true }
-					onCommit={ this.handleEditableCommit.bind(this, 'creatorType') }
-					onClick={ this.handleFieldClick.bind(this, 'creatorType') }
-					onFocus={ this.handleFieldFocus.bind(this, 'creatorType') }
-					onBlur={ this.handleFieldBlur.bind(this, 'creatorType') }
-					options={ creatorTypes }
-					ref={ component => this.fieldComponents['creatorType'] = component }
-					searchable={ false }
-					tabIndex = { 0 }
-					isDisabled = { this.props.readOnly }
-					value={ creator.creatorType }
-				>
-					<span className="text-container">{ creatorTypeDescription.label }</span>
-					<span className="Select-arrow"></span>
-				</SelectInput>
-				<React.Fragment>
-					{ this.isDual ? this.renderDual() : this.renderSingle() }
-					<Button
-						className="btn-single-dual"
-						onBlur={ () => this.setState({ hasFocus: false }) }
-						onClick={ this.handleCreatorTypeSwitch.bind(this, index) }
-						onFocus={ () => this.setState({ hasFocus: true }) }
-					>
-						<Icon type={ this.icon } width="20" height="20" />
-					</Button>
-					{
-						this.props.isDeleteAllowed ? (
-							<Button
-								className="btn-minus"
-								onBlur={ () => this.setState({ hasFocus: false }) }
-								onClick={ this.handleCreatorRemove.bind(this, index) }
-								onFocus={ () => this.setState({ hasFocus: true }) }
-							>
-								<Icon type={ '16/minus' } width="16" height="16" />
-							</Button>
-						) : (
-							<Button
-								className="btn-minus" disabled={ true }
-								onBlur={ () => this.setState({ hasFocus: false }) }
-								onFocus={ () => this.setState({ hasFocus: true }) }
-							>
-								<Icon type={ '16/minus' } width="16" height="16" />
-							</Button>
-						)
-					}
-					{
-						this.props.isCreateAllowed ? (
-							<Button className="btn-plus"
-								onClick={ this.handleCreatorAdd.bind(this) }
-								onFocus={ () => this.setState({ hasFocus: true }) }
-							>
-								<Icon type={ '16/plus' } width="16" height="16" />
-							</Button>
-						) : (
-							<Button className="btn-plus" disabled={ true }>
-								<Icon type={ '16/plus' } width="16" height="16" />
-							</Button>
-						)
-					}
-				</React.Fragment>
-			</Field>
-		);
+		<ViewportContext.Consumer>
+			{ viewport => {
+				const {
+					creator,
+					creatorTypes,
+					index,
+					isSingle,
+					isVirtual,
+					onDragStatusChange,
+					onReorder,
+					onReorderCancel,
+					onReorderCommit,
+					readOnly,
+				} = this.props;
+				const className = {
+					'creators-entry': true,
+					'creators-oneslot': 'name' in creator,
+					'creators-twoslot': 'lastName' in creator,
+					'creators-type-editing': this.state.isCreatorTypeActive,
+					'creators-modal-trigger': viewport.xxs ||viewport.xs,
+					'has-focus': this.state.hasFocus,
+					'metadata': true,
+					'single': isSingle,
+					'virtual': isVirtual,
+				};
 
+				const creatorTypeDescription = creatorTypes.find(
+					c => c.value == creator.creatorType
+				) || { label: creator.creatorType };
+
+				// raw formatted data for use in drag-n-drop indicator
+				const raw = { ...creator, creatorType: creatorTypeDescription.label, }
+
+				return (
+					<Field
+						className={ cx(this.props.className, className) }
+						index={ index }
+						isSortable={ !isSingle && !isVirtual && !readOnly }
+						key={ creator.id }
+						onReorder={ onReorder }
+						onReorderCancel={ onReorderCancel }
+						onReorderCommit={ onReorderCommit }
+						onDragStatusChange={ onDragStatusChange }
+						raw={ raw }
+					>
+						<SelectInput
+							className="form-control form-control-sm"
+							inputComponent={ SelectInput }
+							isActive={ this.state.active === 'creatorType' }
+							onCancel={ this.handleCancel.bind(this) }
+							onChange={ () => true }
+							onCommit={ this.handleEditableCommit.bind(this, 'creatorType') }
+							onClick={ this.handleFieldClick.bind(this, 'creatorType') }
+							onFocus={ this.handleFieldFocus.bind(this, 'creatorType') }
+							onBlur={ this.handleFieldBlur.bind(this, 'creatorType') }
+							options={ creatorTypes }
+							ref={ component => this.fieldComponents['creatorType'] = component }
+							searchable={ false }
+							tabIndex = { 0 }
+							isDisabled = { this.props.readOnly }
+							value={ creator.creatorType }
+						>
+							<span className="text-container">{ creatorTypeDescription.label }</span>
+							<span className="Select-arrow"></span>
+						</SelectInput>
+						<React.Fragment>
+						<ViewportContext.Consumer>
+							{ viewport => (
+								viewport.xxs || viewport.xs ? (
+									<div>
+										{ this.isDual ? `${creator.lastName}, ${creator.firstName}` : creator.name }
+									</div>
+								) : (
+									this.isDual ? this.renderDual() : this.renderSingle()
+								)
+							)}
+						</ViewportContext.Consumer>
+							<Button
+								className="btn-single-dual"
+								onBlur={ () => this.setState({ hasFocus: false }) }
+								onClick={ this.handleCreatorTypeSwitch.bind(this, index) }
+								onFocus={ () => this.setState({ hasFocus: true }) }
+							>
+								<Icon type={ this.icon } width="20" height="20" />
+							</Button>
+							{
+								this.props.isDeleteAllowed ? (
+									<Button
+										className="btn-minus"
+										onBlur={ () => this.setState({ hasFocus: false }) }
+										onClick={ this.handleCreatorRemove.bind(this, index) }
+										onFocus={ () => this.setState({ hasFocus: true }) }
+									>
+										<Icon type={ '16/minus' } width="16" height="16" />
+									</Button>
+								) : (
+									<Button
+										className="btn-minus" disabled={ true }
+										onBlur={ () => this.setState({ hasFocus: false }) }
+										onFocus={ () => this.setState({ hasFocus: true }) }
+									>
+										<Icon type={ '16/minus' } width="16" height="16" />
+									</Button>
+								)
+							}
+							{
+								this.props.isCreateAllowed ? (
+									<Button className="btn-plus"
+										onClick={ this.handleCreatorAdd.bind(this) }
+										onFocus={ () => this.setState({ hasFocus: true }) }
+									>
+										<Icon type={ '16/plus' } width="16" height="16" />
+									</Button>
+								) : (
+									<Button className="btn-plus" disabled={ true }>
+										<Icon type={ '16/plus' } width="16" height="16" />
+									</Button>
+								)
+							}
+						</React.Fragment>
+					</Field>
+				);
+			}}
+		</ViewportContext.Consumer>
+		);
 	}
 
 	static propTypes = {
