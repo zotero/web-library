@@ -139,11 +139,11 @@
 		@include touch-or-bp-down(sm) {
 			@include state(".editing .creators-entry") {
 				align-items: center;
-				padding-right: 31px;
+				padding-right: $creators-value-padding-right-touch;
 			}
 
 			@include state(".editing .creators-entry.single, .editing .creators-entry.virtual") {
-				padding-right: 39px;
+				padding-right: $creators-value-padding-right-touch + $space-xs;
 			}
 
 			.creator-string {
