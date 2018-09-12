@@ -202,7 +202,7 @@ class CreatorField extends React.PureComponent {
 						<ViewportContext.Consumer>
 							{ viewport => (
 								viewport.xxs || viewport.xs ? (
-									<div>
+									<div className="creator-string">
 										{ this.isDual ? `${creator.lastName}, ${creator.firstName}` : creator.name }
 									</div>
 								) : (

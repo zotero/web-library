@@ -136,35 +136,9 @@
 	}
 
 	.value {
-		.editable,
-		.input-group {
-			flex: 1 1 0;
-
-			::placeholder {
-				color: transparent; // Hide
-			}
-
-			.placeholder {
-				color: $placeholder-color;
-			}
-		}
-
-		> :first-child {
-			@include state(".creators-entry.creators-twoslot:not(.creators-modal-trigger)") {
-
-				display: flex;
-				flex: 0 1 auto;
-				margin-right: $space-xs;
-
-				&::after {
-					content: ",";
-					flex: 0 0 auto;
-				}
-			}
-		}
-
 		@include touch-or-bp-down(sm) {
 			@include state(".editing .creators-entry") {
+				align-items: center;
 				padding-right: 31px;
 			}
 
@@ -172,22 +146,12 @@
 				padding-right: 39px;
 			}
 
-			> :first-child {
-				@include state(".creators-entry.creators-twoslot") {
-					max-width: calc(#{$creators-last-name-max-width-touch} - 2px); // Substract margin
+			.creator-string {
+				@include text-truncate;
+
+				@include state(".creators-entry.virtual") {
+					color: $placeholder-color;
 				}
-			}
-
-			.input-group {
-				align-items: center; // Align comma in edit mode
-			}
-
-			.auto-resizer {
-				max-width: calc(100% - 4.5px); // Substract comma
-			}
-
-			.form-control {
-				text-overflow: ellipsis;
 			}
 		}
 
@@ -203,11 +167,24 @@
 			.editable {
 				flex: 1 1 0;
 
+				::placeholder {
+					color: transparent; // Hide
+				}
+
+				.placeholder {
+					color: $placeholder-color;
+				}
+
 				&:first-child {
 					@include state(".creators-entry.creators-twoslot") {
 						display: flex;
 						flex: 0 1 auto;
 						max-width: calc(#{$creators-last-name-max-width} - 30px); // Substract buttons and margins / 2
+
+						&::after {
+							content: ",";
+							flex: 0 0 auto;
+						}
 
 						.editable-content {
 							position: relative;
