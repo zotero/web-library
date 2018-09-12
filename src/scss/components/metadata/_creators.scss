@@ -16,7 +16,8 @@
 
 			&.single,
 			&.virtual {
-				padding-right: $default-padding-x-touch;
+				padding-right: 0;
+				background-position: right 12px center; // 16px
 			}
 
 			&::before {
@@ -135,21 +136,49 @@
 	}
 
 	.value {
-		.editable {
+		.editable,
+		.input-group {
+			flex: 1 1 0;
+
 			::placeholder {
-				color: transparent; // Hide
+				//color: transparent; // Hide
+			}
+		}
+
+		> :first-child {
+			@include state(".creators-entry.creators-twoslot") {
+				display: flex;
+				flex: 0 1 auto;
+				margin-right: $space-xs;
+
+				&::after {
+					content: ",";
+					flex: 0 0 auto;
+				}
 			}
 		}
 
 		@include touch-or-bp-down(sm) {
-			padding-right: 31px;
+			@include state(".editing .creators-entry") {
+				padding-right: 31px;
+			}
+
+			@include state(".editing .creators-entry.single, .editing .creators-entry.virtual") {
+				padding-right: 39px;
+			}
+
+			> :first-child {
+				@include state(".creators-entry.creators-twoslot") {
+					max-width: calc(#{$creators-last-name-max-width-touch} - 2px); // Substract margin
+				}
+			}
 
 			.input-group {
-				flex: 0 1 auto;
+				align-items: center; // Align comma in edit mode
+			}
 
-				& + .input-group {
-					//flex: 0 10000 auto;
-				}
+			.auto-resizer {
+				max-width: calc(100% - 4.5px); // Substract comma
 			}
 
 			.form-control {
@@ -183,11 +212,6 @@
 						.input-group {
 							flex: 1 1 auto;
 						}
-
-						&::after {
-							content: ",";
-							flex: 0 0 auto;
-						}
 					}
 				}
 
@@ -214,14 +238,8 @@
 				}
 			}
 
-			@include state(".creators-entry:hover") {
+			@include state(".creators-entry:hover", ".creators-entry:focus-within") {
 				@include mouse-and-bp-up(md) { // Repeat for specifity
-					visibility: visible;
-				}
-			}
-
-			@include state(".creators-entry:focus-within") {
-				@include mouse-and-bp-up(md) {
 					visibility: visible;
 				}
 			}
