@@ -10,6 +10,7 @@ const Icon = require('../ui/icon');
 const Input = require('./input');
 const SelectInput = require('./select');
 const { noop } = require('../../utils');
+const format = require('../../common/format');
 const { UserTypeContext, ViewportContext } = require('../../context');
 
 class CreatorField extends React.PureComponent {
@@ -211,7 +212,7 @@ class CreatorField extends React.PureComponent {
 						{
 							isPopoverEditing ? (
 								<div className="creator-string">
-									{ this.isDual ? `${creator.lastName}, ${creator.firstName}` : creator.name }
+									{ format.creator(creator) }
 								</div>
 							) : (
 								this.isDual ? this.renderDual() : this.renderSingle()
