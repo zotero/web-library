@@ -180,6 +180,7 @@ class CreatorField extends React.PureComponent {
 					onReorderCommit={ onReorderCommit }
 					onDragStatusChange={ onDragStatusChange }
 					raw={ raw }
+					tabIndex = { isPopoverEditing ? 0 : null }
 				>
 					{ isPopoverEditing ? <div className="truncate">{ creatorTypeDescription.label }</div> : (
 					<SelectInput

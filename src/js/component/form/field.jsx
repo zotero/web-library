@@ -81,6 +81,7 @@ class Field extends React.PureComponent {
 		return isSortable ? connectDropTarget(
 			connectDragPreview(
 				<li
+					tabIndex={ this.props.tabIndex }
 					onClick={ this.props.onClick }
 					className={ cx('metadata', this.props.className, {
 						'dnd-target': isDragTarget,
@@ -105,6 +106,7 @@ class Field extends React.PureComponent {
 			)
 		) : (
 			<li
+				tabIndex={ this.props.tabIndex }
 				onClick={ this.props.onClick }
 				className={ cx('metadata', this.props.className) }
 			>
@@ -133,6 +135,7 @@ class Field extends React.PureComponent {
 		onReorderCommit: PropTypes.func,
 		onClick: PropTypes.func,
 		raw: PropTypes.object,
+		tabIndex: PropTypes.number,
 	};
 
 	static defaultProps = {
