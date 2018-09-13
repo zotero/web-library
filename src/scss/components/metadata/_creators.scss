@@ -44,20 +44,6 @@
 		}
 	}
 
-	@include touch-or-bp-down(sm) {
-		select {
-			color: $key-color;
-			padding: 0;
-			background-color: transparent;
-		}
-	}
-
-	@include bp-only(sm) {
-		.select {
-			flex-grow: 0;
-		}
-	}
-
 	@include mouse-and-bp-up(md) {
 		.key {
 			justify-content: flex-end;

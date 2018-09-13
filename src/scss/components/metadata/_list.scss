@@ -218,17 +218,6 @@
 				color: $link-color;
 			}
 		}
-
-		.native-select-wrap {
-			.form-control {
-				@include text-truncate;
-				color: $key-color;
-			}
-
-			select:focus + .form-control {
-				color: $focus-color; // Reset
-			}
-		}
 	}
 
 	label {

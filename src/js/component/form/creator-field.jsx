@@ -187,7 +187,7 @@ class CreatorField extends React.PureComponent {
 					onDragStatusChange={ onDragStatusChange }
 					raw={ raw }
 				>
-					{ isPopoverEditing ? <div>{ creatorTypeDescription.label }</div> : (
+					{ isPopoverEditing ? <div className="truncate">{ creatorTypeDescription.label }</div> : (
 					<SelectInput
 						className="form-control form-control-sm"
 						inputComponent={ SelectInput }
