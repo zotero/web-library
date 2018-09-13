@@ -212,7 +212,9 @@ class CreatorField extends React.PureComponent {
 						{
 							isPopoverEditing ? (
 								<div className="creator-string">
-									{ format.creator(creator) }
+									{ isVirtual ? this.isDual ? 'last name, first name' : 'name' :
+										format.creator(creator)
+									}
 								</div>
 							) : (
 								this.isDual ? this.renderDual() : this.renderSingle()
