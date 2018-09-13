@@ -176,7 +176,7 @@ class Creators extends React.PureComponent {
 		return (
 			<React.Fragment>
 				{ creators.map(this.renderField.bind(this)) }
-				{ this.props.isEditing && (
+				{ this.props.isEditing && !this.hasVirtual && (
 					<li className="metadata add-creator">
 						<Button
 							className="btn-plus"
