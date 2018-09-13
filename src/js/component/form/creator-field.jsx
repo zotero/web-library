@@ -208,17 +208,15 @@ class CreatorField extends React.PureComponent {
 					/>
 					)}
 					<React.Fragment>
-					<ViewportContext.Consumer>
-						{ viewport => (
-							viewport.xxs || viewport.xs ? (
+						{
+							isPopoverEditing ? (
 								<div className="creator-string">
 									{ this.isDual ? `${creator.lastName}, ${creator.firstName}` : creator.name }
 								</div>
 							) : (
 								this.isDual ? this.renderDual() : this.renderSingle()
 							)
-						)}
-					</ViewportContext.Consumer>
+						}
 						<Button
 							className="btn-single-dual"
 							onBlur={ () => this.setState({ hasFocus: false }) }
