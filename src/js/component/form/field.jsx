@@ -81,6 +81,7 @@ class Field extends React.PureComponent {
 		return isSortable ? connectDropTarget(
 			connectDragPreview(
 				<li
+					onClick={ this.props.onClick }
 					className={ cx('metadata', this.props.className, {
 						'dnd-target': isDragTarget,
 						'dnd-source': isDragging
@@ -104,6 +105,7 @@ class Field extends React.PureComponent {
 			)
 		) : (
 			<li
+				onClick={ this.props.onClick }
 				className={ cx('metadata', this.props.className) }
 			>
 				<div className="key">
@@ -129,6 +131,7 @@ class Field extends React.PureComponent {
 		onReorder: PropTypes.func,
 		onReorderCancel: PropTypes.func,
 		onReorderCommit: PropTypes.func,
+		onClick: PropTypes.func,
 		raw: PropTypes.object,
 	};
 
@@ -137,6 +140,7 @@ class Field extends React.PureComponent {
 		onReorder: noop,
 		onReorderCancel: noop,
 		onReorderCommit: noop,
+		onClick: noop,
 	}
 }
 
