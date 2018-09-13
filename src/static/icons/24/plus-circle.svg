@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+	<symbol id="plus-circle" viewBox="0 0 24 24">
+		<path fill="currentColor" d="M12.5,1A10.5,10.5,0,1,1,2,11.5,10.512,10.512,0,0,1,12.5,1m0-1A11.5,11.5,0,1,0,24,11.5,11.5,11.5,0,0,0,12.5,0ZM18,11H13V6H12v5H7v1h5v5h1V12h5Z"/>
+	</symbol>
+	<use xlink:href="#plus-circle" viewBox="0 0 24 24"/>
+</svg>

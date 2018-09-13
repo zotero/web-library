@@ -184,10 +184,9 @@ class Creators extends React.PureComponent {
 								this, creators[creators.length - 1])
 							}
 						>
-							<Icon type={ '16/plus' } width="16" height="16" />
+							<Icon type={ '24/plus-circle' } width="24" height="24" />
+							Add Creator …
 						</Button>
-
-						<div>Add Creator</div>
 					</li>
 				)}
 			</React.Fragment>
