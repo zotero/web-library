@@ -7,6 +7,8 @@ const deepEqual = require('deep-equal');
 const { splice } = require('../../utils');
 const { removeKeys } = require('../../common/immutable')
 const CreatorField = require('./creator-field');
+const Button = require('../ui/button');
+const Icon = require('../ui/icon');
 const { enumerateObjects } = require('../../utils');
 
 class Creators extends React.PureComponent {
@@ -174,6 +176,20 @@ class Creators extends React.PureComponent {
 		return (
 			<React.Fragment>
 				{ creators.map(this.renderField.bind(this)) }
+				{ this.props.isEditing && (
+					<li className="metadata add-creator">
+						<Button
+							className="btn-plus"
+							onClick={ this.handleCreatorAdd.bind(
+								this, creators[creators.length - 1])
+							}
+						>
+							<Icon type={ '16/plus' } width="16" height="16" />
+						</Button>
+
+						<div>Add Creator</div>
+					</li>
+				)}
 			</React.Fragment>
 		);
 	}

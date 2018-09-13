@@ -98,6 +98,7 @@ class ItemBox extends React.PureComponent {
 				value={ field.value || [] }
 				onSave={ this.handleEditableCommit.bind(this, field.key) }
 				isForm={ this.props.isForm }
+				isEditing={ this.props.isForm }
 				onDragStatusChange={ this.handleDragStatusChange.bind(this) }
 			/>
 		);
