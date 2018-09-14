@@ -238,6 +238,7 @@ $input-transition: 0.15s ease;
 
 // Outline
 // --------------------------------------------------
+
 $outline-width:  $input-btn-focus-width + $border-width;
 $outline-offset: 2px;
 
@@ -252,6 +253,7 @@ $editable-border-radius: 3px;
 
 // Dropdown
 // --------------------------------------------------
+
 $menu-border-radius: $border-radius-sm;
 
 
@@ -260,13 +262,16 @@ $menu-border-radius: $border-radius-sm;
 
 $auto-resizer-vertical-rows: 3;
 
-//
+
 // Icon
-//
+// --------------------------------------------------
+
 $icon-spin-size: $space-xl;
+
 
 // Modal
 // --------------------------------------------------
+
 $modal-title-line-height:     $space-xl;
 $modal-header-padding-mobile: $space-md;
 $modal-inner-padding-mobile:  $space-md;
