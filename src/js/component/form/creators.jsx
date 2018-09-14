@@ -165,6 +165,7 @@ class Creators extends React.PureComponent {
 			onReorderCancel: this.handleReorderCancel.bind(this),
 			onReorderCommit: this.handleReorderCommit.bind(this),
 			readOnly: this.props.readOnly,
+			isEditing: this.props.isEditing,
 			ref: ref => this.fields[index] = ref
 		};
 		return <CreatorField key={ creator.id } { ...props } />;

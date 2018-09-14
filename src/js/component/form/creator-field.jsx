@@ -11,6 +11,8 @@ const Input = require('./input');
 const SelectInput = require('./select');
 const { noop } = require('../../utils');
 const format = require('../../common/format');
+const Modal = require('../ui/modal');
+const { CSSTransition } = require('react-transition-group');
 const { UserTypeContext, ViewportContext } = require('../../context');
 
 class CreatorField extends React.PureComponent {
@@ -63,14 +65,20 @@ class CreatorField extends React.PureComponent {
 
 	handleCreatorRemove() {
 		this.props.onCreatorRemove(this.props.index);
+		this.setState({ isModalVisible: false })
 	}
 
 	handleCreatorAdd() {
 		this.props.onCreatorAdd(this.props.creator);
+		this.setState({ isModalVisible: true })
 	}
 
-	handleEditPopoverOpen() {
-		console.log("Popoever to edit creator should open");
+	handleModalOpen() {
+		this.setState({ isModalVisible: true })
+	}
+
+	handleModalClose() {
+		this.setState({ isModalVisible: false })
 	}
 
 	get icon() {
@@ -79,6 +87,14 @@ class CreatorField extends React.PureComponent {
 
 	get isDual() {
 		return 'lastName' in this.props.creator;
+	}
+
+	get creatorLabel() {
+		const { creator, creatorTypes } = this.props;
+		const creatorTypeDescription = creatorTypes.find(
+				c => c.value == creator.creatorType
+			) || { label: creator.creatorType };
+		return creatorTypeDescription.label;
 	}
 
 	renderDual() {
@@ -131,19 +147,126 @@ class CreatorField extends React.PureComponent {
 		);
 	}
 
+	renderCreatorTypeSelector() {
+		const { creator, creatorTypes } = this.props;
+		return <SelectInput
+			className="form-control form-control-sm"
+			inputComponent={ SelectInput }
+			isActive={ this.state.active === 'creatorType' }
+			onCancel={ this.handleCancel.bind(this) }
+			onChange={ () => true }
+			onCommit={ this.handleEditableCommit.bind(this, 'creatorType') }
+			onClick={ this.handleFieldClick.bind(this, 'creatorType') }
+			onFocus={ this.handleFieldFocus.bind(this, 'creatorType') }
+			options={ creatorTypes }
+			ref={ component => this.fieldComponents['creatorType'] = component }
+			searchable={ false }
+			tabIndex = { 0 }
+			isDisabled = { this.props.readOnly }
+			value={ creator.creatorType }
+		/>
+	}
+
+	renderModal(shouldUseTransition) {
+		const { isModalVisible } = this.state;
+		const content = (
+			<div className="modal-content" tabIndex={ -1 }>
+				<div className="modal-header">
+					<Button
+						className="close"
+						onClick={ this.handleModalClose.bind(this) }
+					>
+						Cancel
+					</Button>
+					<h4 className="modal-title text-truncate">
+						{ this.creatorLabel }
+					</h4>
+					<Button
+						className="close"
+						onClick={ this.handleModalClose.bind(this) }
+					>
+						Done
+					</Button>
+				</div>
+				<div className="modal-body">
+					<Field>
+						<label>
+							Creator
+						</label>
+						{ this.renderCreatorTypeSelector() }
+					</Field>
+					{
+						this.isDual ? (
+							<React.Fragment>
+								<Field>
+									<label>
+										Last Name
+									</label>
+									{ this.renderField('lastName', 'last name') }
+								</Field>
+								<Field>
+									<label>
+										First Name
+									</label>
+									{ this.renderField('firstName', 'first name') }
+								</Field>
+							</React.Fragment>
+						) : (
+							<Field>
+								<label>
+									Name
+								</label>
+								{ this.renderField('name', 'name') }
+							</Field>
+						)
+					}
+					<Button onClick={ this.handleCreatorTypeSwitch.bind(this) }>
+						Switch to { this.isDual ? 'Single' : 'Dual' } Field
+					</Button>
+					<Button onClick={ this.handleCreatorRemove.bind(this) }>
+						Delete { this.creatorLabel }
+					</Button>
+				</div>
+			</div>
+		);
+		if(shouldUseTransition) {
+			return (
+				<CSSTransition
+					in={ isModalVisible }
+					timeout={ 300 }
+					classNames="creator-modal"
+					mountOnEnter
+					unmountOnExit
+				>
+					{ content }
+				</CSSTransition>
+			);
+		} else {
+			return (
+				<Modal
+					isOpen={ isModalVisible }
+					contentLabel="Edit Creator"
+					onRequestClose={ this.handleModalClose.bind(this) }
+				>
+					{ content }
+				</Modal>
+			);
+		}
+	}
+
 	render() {
 		return (
 		<UserTypeContext.Consumer>
 		{ userType => (
 		<ViewportContext.Consumer>
 		{ viewport => {
-			const isPopoverEditing = userType === 'touch' || viewport.xxs || viewport.xs || viewport.sm;
+			const shouldUseModalEdit = userType === 'touch' || viewport.xxs || viewport.xs || viewport.sm;
 			const {
 				creator,
-				creatorTypes,
 				index,
 				isSingle,
 				isVirtual,
+				isEditing,
 				onDragStatusChange,
 				onReorder,
 				onReorderCancel,
@@ -155,55 +278,38 @@ class CreatorField extends React.PureComponent {
 				'creators-oneslot': 'name' in creator,
 				'creators-twoslot': 'lastName' in creator,
 				'creators-type-editing': this.state.isCreatorTypeActive,
-				'creators-modal-trigger': isPopoverEditing,
+				'creators-modal-trigger': shouldUseModalEdit,
 				'metadata': true,
 				'single': isSingle,
 				'virtual': isVirtual,
 			};
 
-			const creatorTypeDescription = creatorTypes.find(
-				c => c.value == creator.creatorType
-			) || { label: creator.creatorType };
-
 			// raw formatted data for use in drag-n-drop indicator
-			const raw = { ...creator, creatorType: creatorTypeDescription.label, }
+			const raw = { ...creator, creatorType: this.creatorLabel, }
 
 			return (
+				<React.Fragment>
+				{ this.renderModal(viewport.xxs) }
 				<Field
 					className={ cx(this.props.className, className) }
 					index={ index }
 					isSortable={ !isSingle && !isVirtual && !readOnly }
 					key={ creator.id }
-					onClick={ isPopoverEditing ? this.handleEditPopoverOpen : noop }
+					onClick={ shouldUseModalEdit && isEditing ? this.handleModalOpen.bind(this) : noop }
 					onReorder={ onReorder }
 					onReorderCancel={ onReorderCancel }
 					onReorderCommit={ onReorderCommit }
 					onDragStatusChange={ onDragStatusChange }
 					raw={ raw }
-					tabIndex = { isPopoverEditing ? 0 : null }
+					tabIndex = { shouldUseModalEdit ? 0 : null }
 				>
-					{ isPopoverEditing ? <div className="truncate">{ creatorTypeDescription.label }</div> : (
-					<SelectInput
-						className="form-control form-control-sm"
-						inputComponent={ SelectInput }
-						isActive={ this.state.active === 'creatorType' }
-						onCancel={ this.handleCancel.bind(this) }
-						onChange={ () => true }
-						onCommit={ this.handleEditableCommit.bind(this, 'creatorType') }
-						onClick={ isPopoverEditing ? this.handleEditPopoverOpen :
-							this.handleFieldClick.bind(this, 'creatorType') }
-						onFocus={ this.handleFieldFocus.bind(this, 'creatorType') }
-						options={ creatorTypes }
-						ref={ component => this.fieldComponents['creatorType'] = component }
-						searchable={ false }
-						tabIndex = { 0 }
-						isDisabled = { this.props.readOnly || isPopoverEditing }
-						value={ creator.creatorType }
-					/>
-					)}
+					{ shouldUseModalEdit && isEditing ?
+						<div className="truncate">{ this.creatorLabel }</div> :
+						this.renderCreatorTypeSelector()
+					}
 					<React.Fragment>
 						{
-							isPopoverEditing ? (
+							shouldUseModalEdit ? (
 								<div className="creator-string">
 									{ isVirtual ? this.isDual ? 'last name, first name' : 'name' :
 										format.creator(creator)
@@ -249,6 +355,7 @@ class CreatorField extends React.PureComponent {
 						}
 					</React.Fragment>
 				</Field>
+				</React.Fragment>
 			);
 		}}
 		</ViewportContext.Consumer>
