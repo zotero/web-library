@@ -6,7 +6,7 @@
 .creators-entry {
 	position: relative;
 
-	@include state(".editing .creators-entry") {
+	@include state(".metadata-list.editing .creators-entry") {
 		@include touch-or-bp-down(sm) {
 			$handle-width: 2 * $default-padding-x-touch + $space-lg + $input-border-width;
 
@@ -39,6 +39,33 @@
 
 				@include bp-up(sm) {
 					content: none;
+				}
+			}
+		}
+
+		// Creators focus state
+		&:focus {
+			.keyboard & {
+				outline: none;
+				z-index: 2;
+
+				&::before,
+				&::after {
+					content: "";
+					position: absolute;
+					left: 0;
+					right: 0;
+					height: $outline-width;
+					background-color: $focus-color;
+				}
+
+				&::before {
+					top: auto;
+					bottom: calc(100% - #{$input-border-width});
+				}
+
+				&::after {
+					top: 100%;
 				}
 			}
 		}
@@ -318,12 +345,9 @@
 
 .metadata-list { // Specifity
 	&.editing { // …
-		.add-creator {
-			@include touch-or-bp-down(sm) {
-				padding-left: 0; // Keep vertical paddings
-				padding-right: 0;
-				margin-bottom: $form-section-margin;
-			}
+		.add-creator,
+		.last {
+			margin-bottom: $form-section-margin;
 
 			@include bp-down(xs) {
 				padding-bottom: $border-width;
@@ -334,45 +358,12 @@
 				border-bottom-right-radius: $input-btn-border-radius;
 			}
 
-			&::before {
-				@include touch-or-bp-down(sm) {
-					left: 2 * $default-padding-x-touch + $space-lg;
-				}
-
-				@include touch-keyboard-or-bp-down(sm) {
-					@include state(".add-creator:focus-within") {
-						left: 0;
-					}
-				}
-			}
-
 			&::after {
 				@include bp-down(xs) {
 					content: "";
 					left: 0;
 					top: auto;
 					bottom: 0;
-				}
-			}
-
-			.btn {
-				@include touch-or-bp-down(sm) {
-					padding: 0 $default-padding-x-touch;
-					border: 0;
-					width: 100%;
-					text-align: left;
-					color: $link-color;
-					line-height: $line-height-large-touch;
-
-					&:focus {
-						outline: none;
-					}
-
-					.icon {
-						vertical-align: top;
-						margin-top: ($line-height-large-touch - $space-lg) / 2;
-						margin-right: $default-padding-x-touch;
-					}
 				}
 			}
 
@@ -402,6 +393,46 @@
 						@include touch-keyboard-or-bp-down(sm) {
 							content: "";
 						}
+					}
+				}
+			}
+		}
+
+		.add-creator {
+			@include touch-or-bp-down(sm) {
+				padding-left: 0; // Keep vertical paddings
+				padding-right: 0;
+			}
+
+			&::before {
+				@include touch-or-bp-down(sm) {
+					left: 2 * $default-padding-x-touch + $space-lg;
+				}
+
+				@include touch-keyboard-or-bp-down(sm) {
+					@include state(".add-creator:focus-within") {
+						left: 0;
+					}
+				}
+			}
+
+			.btn {
+				@include touch-or-bp-down(sm) {
+					padding: 0 $default-padding-x-touch;
+					border: 0;
+					width: 100%;
+					text-align: left;
+					color: $link-color;
+					line-height: $line-height-large-touch;
+
+					&:focus {
+						outline: none;
+					}
+
+					.icon {
+						vertical-align: top;
+						margin-top: ($line-height-large-touch - $space-lg) / 2;
+						margin-right: $default-padding-x-touch;
 					}
 				}
 			}

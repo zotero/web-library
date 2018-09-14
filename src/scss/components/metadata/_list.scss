@@ -140,7 +140,7 @@
 			}
 
 			// Editable focus state
-			&:focus-within {
+			&:focus-within:not(.creators-entry) {
 				.keyboard & {
 					z-index: 2;
 
