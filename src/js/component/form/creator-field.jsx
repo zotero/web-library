@@ -189,43 +189,45 @@ class CreatorField extends React.PureComponent {
 					</Button>
 				</div>
 				<div className="modal-body">
-					<Field>
-						<label>
-							Creator
-						</label>
-						{ this.renderCreatorTypeSelector() }
-					</Field>
-					{
-						this.isDual ? (
-							<React.Fragment>
+					<ol className="metadata-list editing">
+						<Field>
+							<label>
+								Creator
+							</label>
+							{ this.renderCreatorTypeSelector() }
+						</Field>
+						{
+							this.isDual ? (
+								<React.Fragment>
+									<Field>
+										<label>
+											Last Name
+										</label>
+										{ this.renderField('lastName', 'last name') }
+									</Field>
+									<Field>
+										<label>
+											First Name
+										</label>
+										{ this.renderField('firstName', 'first name') }
+									</Field>
+								</React.Fragment>
+							) : (
 								<Field>
 									<label>
-										Last Name
+										Name
 									</label>
-									{ this.renderField('lastName', 'last name') }
+									{ this.renderField('name', 'name') }
 								</Field>
-								<Field>
-									<label>
-										First Name
-									</label>
-									{ this.renderField('firstName', 'first name') }
-								</Field>
-							</React.Fragment>
-						) : (
-							<Field>
-								<label>
-									Name
-								</label>
-								{ this.renderField('name', 'name') }
-							</Field>
-						)
-					}
-					<Button onClick={ this.handleCreatorTypeSwitch.bind(this) }>
-						Switch to { this.isDual ? 'Single' : 'Dual' } Field
-					</Button>
-					<Button onClick={ this.handleCreatorRemove.bind(this) }>
-						Delete { this.creatorLabel }
-					</Button>
+							)
+						}
+						<Button onClick={ this.handleCreatorTypeSwitch.bind(this) }>
+							Switch to { this.isDual ? 'Single' : 'Dual' } Field
+						</Button>
+						<Button onClick={ this.handleCreatorRemove.bind(this) }>
+							Delete { this.creatorLabel }
+						</Button>
+					</ol>
 				</div>
 			</div>
 		);
