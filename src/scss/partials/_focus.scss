@@ -7,3 +7,10 @@
 	outline-offset: $outline-offset;
 	position: relative;
 }
+
+// Hide modal outline
+[tabindex="-1"] {
+	&:focus {
+		outline: none;
+	}
+}

@@ -22,14 +22,14 @@
 	width: auto;
 	margin: $space-xs;
 
-	@include bp-up(md) {
+	@include bp-up(sm) {
 		max-width: $modal-md;
 		margin: $space-xl auto;
 
-		&.modal-lg {
-			width: $modal-lg;
-			max-width: calc(100% - 2 * #{$space-xl});
-		}
+		//&.modal-lg {
+		//	width: $modal-lg;
+		//	max-width: calc(100% - 2 * #{$space-xl});
+		//}
 	}
 
 	&.loading {
