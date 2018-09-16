@@ -173,3 +173,19 @@
 	height: 50px;
 	overflow: scroll;
 }
+
+
+.modal-slide-entering {
+  transform: translateX(100%);
+}
+.modal-slide-entered {
+  transform: translateX(0%);
+  transition: all 300ms ease-out;
+}
+.modal-slide-exiting {
+  transform: translateX(0%);
+}
+.modal-slide-exited {
+  transform: translateX(100%);
+  transition: all 300ms ease-out;
+}

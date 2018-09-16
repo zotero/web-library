@@ -231,29 +231,17 @@ class CreatorField extends React.PureComponent {
 				</div>
 			</div>
 		);
-		if(shouldUseTransition) {
-			return (
-				<CSSTransition
-					in={ isModalVisible }
-					timeout={ 300 }
-					classNames="creator-modal"
-					mountOnEnter
-					unmountOnExit
-				>
-					{ content }
-				</CSSTransition>
-			);
-		} else {
-			return (
-				<Modal
-					isOpen={ isModalVisible }
-					contentLabel="Edit Creator"
-					onRequestClose={ this.handleModalClose.bind(this) }
-				>
-					{ content }
-				</Modal>
-			);
-		}
+		return (
+			<Modal
+				isOpen={ isModalVisible }
+				contentLabel="Edit Creator"
+				transition={ shouldUseTransition ? "modal-slide" : null }
+				transitionTimeout={ shouldUseTransition ? 300 : null }
+				onRequestClose={ this.handleModalClose.bind(this) }
+			>
+				{ content }
+			</Modal>
+		);
 	}
 
 	render() {

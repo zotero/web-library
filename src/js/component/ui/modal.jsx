@@ -4,7 +4,7 @@ const React = require('react');
 const PropTypes = require('prop-types');
 const ReactModal = require('react-modal');
 const cx = require('classnames');
-
+const { Transition } = require('react-transition-group');
 var initialPadding;
 
 class Modal extends React.PureComponent {
@@ -56,18 +56,33 @@ class Modal extends React.PureComponent {
 	}
 
 	render() {
-		const { className, ...props } = this.props;
-		return <ReactModal
-			role="dialog"
-			// prevent scroll on focus by setting max height
-			style={{ content: { maxHeight: 'calc(100% - 32px)', overflowY: 'hidden' } }}
-			onAfterOpen={ this.handleModalOpen.bind(this) }
-			contentRef={ contentRef => { this.contentRef = contentRef; } }
-			appElement={ document.querySelector('.library-container') }
-			className={ cx('modal', className) }
-			overlayClassName="modal-backdrop"
-			{ ...props }
-		/>;
+		const { className, isOpen, transition, transitionTimeout, ...props } = this.props;
+		const modalProps = {
+			role: 'dialog',
+			style: { content: { maxHeight: 'calc(100% - 32px)', overflowY: 'hidden' } },
+			onAfterOpen: this.handleModalOpen.bind(this),
+			contentRef: contentRef => { this.contentRef = contentRef; },
+			appElement: document.querySelector('.library-container'),
+			className: cx('modal', className),
+			overlayClassName: 'modal-backdrop',
+			isOpen: transition ? true : isOpen,
+			...props
+		};
+
+		if(transition) {
+			return (
+				<Transition in={ isOpen } timeout={ transitionTimeout }>
+				{ state =>
+					<ReactModal
+						{ ...modalProps }
+						overlayClassName={ cx(modalProps.overlayClassName, `${transition}-${state}`) }
+					/>
+				}
+				</Transition>
+			);
+		} else {
+			return <ReactModal { ...modalProps } />;
+		}
 	}
 
 	static propTypes = {
