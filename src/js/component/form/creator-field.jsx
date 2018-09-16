@@ -12,7 +12,6 @@ const SelectInput = require('./select');
 const { noop } = require('../../utils');
 const format = require('../../common/format');
 const Modal = require('../ui/modal');
-const { CSSTransition } = require('react-transition-group');
 const { UserTypeContext, ViewportContext } = require('../../context');
 
 class CreatorField extends React.PureComponent {

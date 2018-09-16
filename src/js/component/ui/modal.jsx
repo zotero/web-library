@@ -4,7 +4,6 @@ const React = require('react');
 const PropTypes = require('prop-types');
 const ReactModal = require('react-modal');
 const cx = require('classnames');
-const { Transition } = require('react-transition-group');
 var initialPadding;
 
 class Modal extends React.PureComponent {
@@ -63,26 +62,14 @@ class Modal extends React.PureComponent {
 			onAfterOpen: this.handleModalOpen.bind(this),
 			contentRef: contentRef => { this.contentRef = contentRef; },
 			appElement: document.querySelector('.library-container'),
-			className: cx('modal', className),
-			overlayClassName: 'modal-backdrop',
-			isOpen: transition ? true : isOpen,
+			className: cx('modal', className, transition),
+			overlayClassName: cx('modal-backdrop', transition),
+			isOpen: isOpen,
+			closeTimeoutMS: transitionTimeout,
 			...props
 		};
 
-		if(transition) {
-			return (
-				<Transition in={ isOpen } timeout={ transitionTimeout }>
-				{ state =>
-					<ReactModal
-						{ ...modalProps }
-						overlayClassName={ cx(modalProps.overlayClassName, `${transition}-${state}`) }
-					/>
-				}
-				</Transition>
-			);
-		} else {
-			return <ReactModal { ...modalProps } />;
-		}
+		return <ReactModal { ...modalProps } />;
 	}
 
 	static propTypes = {
