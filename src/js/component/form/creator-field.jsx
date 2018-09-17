@@ -64,12 +64,10 @@ class CreatorField extends React.PureComponent {
 
 	handleCreatorRemove() {
 		this.props.onCreatorRemove(this.props.index);
-		this.setState({ isModalVisible: false })
 	}
 
 	handleCreatorAdd() {
 		this.props.onCreatorAdd(this.props.creator);
-		this.setState({ isModalVisible: true })
 	}
 
 	handleModalOpen() {
@@ -278,8 +276,7 @@ class CreatorField extends React.PureComponent {
 				'creators-modal-trigger': shouldUseModalEdit,
 				'metadata': true,
 				'single': isSingle,
-				'virtual': isVirtual,
-				'last': isEditing && isVirtual,
+				'virtual': isVirtual
 			};
 
 			// raw formatted data for use in drag-n-drop indicator

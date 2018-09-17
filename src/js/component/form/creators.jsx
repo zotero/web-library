@@ -2,6 +2,7 @@
 'use strict';
 
 const React = require('react');
+const cx = require('classnames');
 const PropTypes = require('prop-types');
 const deepEqual = require('deep-equal');
 const { splice } = require('../../utils');
@@ -166,6 +167,9 @@ class Creators extends React.PureComponent {
 			onReorderCommit: this.handleReorderCommit.bind(this),
 			readOnly: this.props.readOnly,
 			isEditing: this.props.isEditing,
+			className: cx({
+				last: this.props.isEditing && index === this.state.creators.length - 1
+			}),
 			ref: ref => this.fields[index] = ref
 		};
 		return <CreatorField key={ creator.id } { ...props } />;
