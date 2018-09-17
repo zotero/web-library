@@ -69,8 +69,9 @@ class CreatorField extends React.PureComponent {
 		this.props.onCreatorTypeSwitch(this.props.index);
 	}
 
-	handleCreatorRemove() {
+	handleCreatorRemove(ev) {
 		this.props.onCreatorRemove(this.props.index);
+		ev && ev.stopPropagation();
 	}
 
 	handleCreatorAdd() {
@@ -323,7 +324,7 @@ class CreatorField extends React.PureComponent {
 						}
 						<Button
 							className="btn-single-dual"
-							onClick={ this.handleCreatorTypeSwitch.bind(this, index) }
+							onClick={ this.handleCreatorTypeSwitch.bind(this) }
 						>
 							<Icon type={ this.icon } width="20" height="20" />
 						</Button>
@@ -331,7 +332,7 @@ class CreatorField extends React.PureComponent {
 							this.props.isDeleteAllowed ? (
 								<Button
 									className="btn-minus"
-									onClick={ this.handleCreatorRemove.bind(this, index) }
+									onClick={ this.handleCreatorRemove.bind(this) }
 								>
 									<Icon type={ '16/minus' } width="16" height="16" />
 								</Button>
