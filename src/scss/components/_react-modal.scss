@@ -16,10 +16,18 @@
 	overflow-y: auto;
 	-webkit-overflow-scrolling: touch; // Momentum scrolling for iOS
 	z-index: $z-index-modal;
+
+	@include bp-down(xs) {
+		overflow-y: hidden;
+	}
 }
 
 .modal {
 	width: auto;
+
+	@include bp-down(xs) {
+		height: calc(100% - #{$navbar-height-xs});
+	}
 
 	@include bp-up(sm) {
 		max-width: $modal-md;
@@ -52,52 +60,39 @@
 .modal-content {
 	width: 100%;
 	background: $modal-content-bg;
+
+	@include bp-down(xs) {
+		height: 100%;
+	}
 }
 
 .modal-header {
 	display: flex;
 	align-items: center;
-	padding: $modal-header-padding-mobile;
+	padding: 0 $modal-header-padding-mobile;
 	background-color: $modal-header-bg;
 
-	> h4 {
-		color: $modal-header-color;
+	@include bp-down(sm) { // todo: touch-or-bp-down(sm)
+		height: $modal-header-height-mobile;
 	}
 
 	@include bp-up(md) {
 		padding: $modal-header-padding-md;
 	}
 
-	.close {
-		flex: 0 0 auto;
-		margin: -$space-xs;
-		margin-left: auto;
-		width: 3 * $modal-header-padding-mobile;
-		height: 3 * $modal-header-padding-mobile;
-
-		@include bp-up(md) {
-			width: $space-xxl;
-			height: $space-xxl;
-		}
-
-		.icon {
-			color: $modal-header-color;
-		}
-
-		&:active {
-			.icon {
-				color: $modal-header-color;
-			}
-		}
+	&-left,
+	&-right {
+		flex: 1 0 0;
 	}
 
-	[class*="btn-outline-inverse"] {
-		flex: 0 0 auto;
-		margin: -1em 0 -1em $space-md;
+	&-center {
+		flex: 2 0 0;
+		max-width: 50%;
+		text-align: center;
+	}
 
-		@include bp-up(md) {
-			margin-left: $space-xl;
-		}
+	&-right {
+		text-align: right;
 	}
 }
 
@@ -114,6 +109,14 @@
 
 	@include bp-up(md) {
 		padding: $modal-inner-padding-md;
+	}
+}
+
+.modal-body {
+	@include bp-down(xs) {
+		height: calc(100% - #{$modal-header-height-mobile});
+		overflow-y: auto;
+		-webkit-overflow-scrolling: touch; // Momentum scrolling for iOS
 	}
 }
 

@@ -22,6 +22,11 @@
 		@include touch-and-bp-up(md) {
 			margin-left: $metadata-list-margin-x-touch;
 			margin-right: $metadata-list-margin-x-touch;
+
+			@include variant(".modal .metadata-list") {
+				margin-left: -$modal-inner-padding-mobile;
+				margin-right: -$modal-inner-padding-mobile;
+			}
 		}
 	}
 
