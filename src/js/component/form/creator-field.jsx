@@ -32,6 +32,13 @@ class CreatorField extends React.PureComponent {
 		}
 	}
 
+	componentDidMount() {
+		const { isVirtual, isEditing } = this.props;
+		if(isEditing && isVirtual) {
+			this.handleModalOpen();
+		}
+	}
+
 	handleFieldClick(key) {
 		this.setState({ active: key });
 	}
