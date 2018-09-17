@@ -235,7 +235,7 @@ class CreatorField extends React.PureComponent {
 				isOpen={ isModalVisible }
 				contentLabel="Edit Creator"
 				transition={ shouldUseTransition ? "modal-slide" : null }
-				transitionTimeout={ shouldUseTransition ? 300 : null }
+				transitionTimeout={ shouldUseTransition ? 600 : null }
 				onRequestClose={ this.handleModalClose.bind(this) }
 			>
 				{ content }

@@ -20,7 +20,6 @@
 
 .modal {
 	width: auto;
-	margin: $space-xs;
 
 	@include bp-up(sm) {
 		max-width: $modal-md;
@@ -174,17 +173,22 @@
 	overflow: scroll;
 }
 
+.modal-slide {
+	@include bp-down(xs) {
+		&.ReactModal {
+			&__Overlay {
+				transform: translate3d(0, 100%, 0);
 
-.modal-slide.ReactModal__Overlay {
-	transform: translateX(100%);
-}
+				&--after-open {
+					transform: translate3d(0, $navbar-height-xs, 0);
+					transition: transform $nav-transition;
+				}
 
-.modal-slide.ReactModal__Overlay--after-open {
-	transform: translateX(0%);
-	transition: all 300ms ease-out;
-}
-
-.modal-slide.ReactModal__Overlay--before-close {
-	transform: translateX(100%);
-	transition: all 300ms ease-out;
+				&--before-close {
+					transform: translate3d(0, 100%, 0);
+					transition: transform $modal-exit-transition-xs;
+				}
+			}
+		}
+	}
 }
