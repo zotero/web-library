@@ -96,13 +96,6 @@
 	}
 }
 
-.modal-title {
-	flex: 1 1 auto;
-	line-height: $modal-title-line-height;
-	-webkit-font-smoothing: antialiased;
-	-moz-osx-font-smoothing: grayscale;
-}
-
 .modal-body,
 .modal-footer {
 	padding: $modal-inner-padding-mobile;
