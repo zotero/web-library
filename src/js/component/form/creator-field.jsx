@@ -241,6 +241,7 @@ class CreatorField extends React.PureComponent {
 			<Modal
 				isOpen={ isModalVisible }
 				contentLabel="Edit Creator"
+				className="modal-touch"
 				overlayClassName={ shouldUseTransition ? "modal-slide" : null }
 				closeTimeoutMS={ shouldUseTransition ? 600 : null }
 				onRequestClose={ this.handleModalClose.bind(this) }
