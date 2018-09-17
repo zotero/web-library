@@ -168,7 +168,8 @@ class Creators extends React.PureComponent {
 			readOnly: this.props.readOnly,
 			isEditing: this.props.isEditing,
 			className: cx({
-				last: this.props.isEditing && index === this.state.creators.length - 1
+				last: this.hasVirtual && this.props.isEditing &&
+					index === this.state.creators.length - 1
 			}),
 			ref: ref => this.fields[index] = ref
 		};
