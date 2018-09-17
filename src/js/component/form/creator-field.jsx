@@ -279,6 +279,7 @@ class CreatorField extends React.PureComponent {
 				'metadata': true,
 				'single': isSingle,
 				'virtual': isVirtual,
+				'last': isEditing && isVirtual,
 			};
 
 			// raw formatted data for use in drag-n-drop indicator
