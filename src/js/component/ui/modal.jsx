@@ -55,17 +55,16 @@ class Modal extends React.PureComponent {
 	}
 
 	render() {
-		const { className, isOpen, transition, transitionTimeout, ...props } = this.props;
+		const { className, overlayClassName, isOpen, ...props } = this.props;
 		const modalProps = {
 			role: 'dialog',
 			style: { content: { maxHeight: 'calc(100% - 32px)', overflowY: 'hidden' } },
 			onAfterOpen: this.handleModalOpen.bind(this),
 			contentRef: contentRef => { this.contentRef = contentRef; },
 			appElement: document.querySelector('.library-container'),
-			className: cx('modal', className, transition),
-			overlayClassName: cx('modal-backdrop', transition),
+			className: cx('modal', className),
+			overlayClassName: cx('modal-backdrop', overlayClassName),
 			isOpen: isOpen,
-			closeTimeoutMS: transitionTimeout,
 			...props
 		};
 

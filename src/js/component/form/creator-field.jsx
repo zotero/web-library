@@ -236,12 +236,13 @@ class CreatorField extends React.PureComponent {
 				</div>
 			</div>
 		);
+
 		return (
 			<Modal
 				isOpen={ isModalVisible }
 				contentLabel="Edit Creator"
-				transition={ shouldUseTransition ? "modal-slide" : null }
-				transitionTimeout={ shouldUseTransition ? 600 : null }
+				overlayClassName={ shouldUseTransition ? "modal-slide" : null }
+				closeTimeoutMS={ shouldUseTransition ? 600 : null }
 				onRequestClose={ this.handleModalClose.bind(this) }
 			>
 				{ content }
