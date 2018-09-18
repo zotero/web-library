@@ -115,7 +115,7 @@ class CreatorField extends React.PureComponent {
 		return this.renderField('name', 'name');
 	}
 
-	renderField(name, label) {
+	renderField(name, label, inModal = false) {
 		const FormField = this.props.isForm ? Input : Editable;
 		const { creator } = this.props;
 		const extraProps = {
@@ -131,7 +131,7 @@ class CreatorField extends React.PureComponent {
 			extraProps['onEditableFocus'] = this.handleFieldFocus.bind(this, name);
 		}
 
-		if(name === 'lastName') {
+		if(!inModal && name === 'lastName') {
 			extraProps['resize'] = 'horizontal';
 		}
 
@@ -214,13 +214,13 @@ class CreatorField extends React.PureComponent {
 										<label>
 											Last Name
 										</label>
-										{ this.renderField('lastName', 'last name') }
+										{ this.renderField('lastName', 'last name', true) }
 									</Field>
 									<Field>
 										<label>
 											First Name
 										</label>
-										{ this.renderField('firstName', 'first name') }
+										{ this.renderField('firstName', 'first name', true) }
 									</Field>
 								</React.Fragment>
 							) : (
@@ -228,7 +228,7 @@ class CreatorField extends React.PureComponent {
 									<label>
 										Name
 									</label>
-									{ this.renderField('name', 'name') }
+									{ this.renderField('name', 'name', true) }
 								</Field>
 							)
 						}
@@ -255,7 +255,7 @@ class CreatorField extends React.PureComponent {
 				isOpen={ isModalVisible }
 				contentLabel="Edit Creator"
 				className="modal-touch"
-				overlayClassName={ shouldUseTransition ? "modal-slide" : null }
+				overlayClassName={ "modal-slide" }
 				closeTimeoutMS={ shouldUseTransition ? 600 : null }
 				onRequestClose={ this.handleModalClose.bind(this) }
 			>
