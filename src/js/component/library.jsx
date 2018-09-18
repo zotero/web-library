@@ -31,6 +31,19 @@ class Library extends React.Component {
 		});
 	}
 
+	componentDidUpdate() {
+		const { isKeyboardUser, isMouseUser, isTouchUser } = this.props;
+		document.documentElement.classList.toggle('keyboard', isKeyboardUser);
+		document.documentElement.classList.toggle('mouse', isMouseUser);
+		document.documentElement.classList.toggle('touch', isTouchUser);
+	}
+
+	componentWillUnmount() {
+		document.documentElement.classList.toggle('keyboard', false);
+		document.documentElement.classList.toggle('mouse', false);
+		document.documentElement.classList.toggle('touch', false);
+	}
+
 	render() {
 		const { itemsSource, collectionKey } = this.props;
 		const key = itemsSource === 'collection' ?
@@ -41,9 +54,6 @@ class Library extends React.Component {
 		return (
 			<UserTypeContext.Provider value={ this.props.userType }>
 				<div className={ cx('library-container', activeViewClass, {
-						'keyboard': this.props.isKeyboardUser,
-						'mouse': this.props.isMouseUser,
-						'touch': this.props.isTouchUser,
 						'navbar-nav-opened': this.state.isNavOpened
 					}) }>
 					<Navbar
