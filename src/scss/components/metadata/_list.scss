@@ -172,6 +172,12 @@
 		}
 	}
 
+	.touch-separated {
+		@include state(".metadata-list.editing") {
+			margin-bottom: $form-section-margin;
+		}
+	}
+
 	.key,
 	.value {
 		min-height: $metadata-list-line-height;

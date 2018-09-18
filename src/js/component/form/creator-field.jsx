@@ -201,7 +201,7 @@ class CreatorField extends React.PureComponent {
 				</div>
 				<div className="modal-body">
 					<ol className="metadata-list editing">
-						<Field>
+						<Field className="touch-separated">
 							<label>
 								Creator
 							</label>
@@ -232,7 +232,10 @@ class CreatorField extends React.PureComponent {
 								</Field>
 							)
 						}
-						<Button onClick={ this.handleCreatorTypeSwitch.bind(this) }>
+						<Button
+							className="touch-separated"
+							onClick={ this.handleCreatorTypeSwitch.bind(this) }
+						>
 							Switch to { this.isDual ? 'Single' : 'Dual' } Field
 						</Button>
 						<Button onClick={ this.handleCreatorRemove.bind(this) }>
