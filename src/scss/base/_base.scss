@@ -14,11 +14,18 @@ body,
 }
 
 html {
-	font-size: $font-size-mobile; // 1rem
   -webkit-tap-highlight-color: rgba($shade-10, 0); // Transparent highlight color
+
+	@include bp-down(sm) {
+		font-size: $font-size-mobile; // 1rem
+	}
 
 	@include bp-up(md) {
 		font-size: $font-size-base; // 1rem
+	}
+
+	&.touch {
+		font-size: $font-size-mobile; // 1rem
 	}
 }
 
