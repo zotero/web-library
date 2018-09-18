@@ -241,7 +241,8 @@
 
 			&:focus {
 				@include touch-or-bp-down(sm) {
-					outline-offset: -$outline-width;
+					outline: none;
+					box-shadow: 0 0 0 2px $red;
 				}
 			}
 
@@ -279,13 +280,14 @@
 				@include state(".editing .creators-entry") {
 					display: block;
 					position: absolute;
-					left: 0;
-					top: 0;
-					margin: 0;
-					width: 2 * $default-padding-x-touch + $space-lg;
-					height: 100%;
-					background: image-url("icons/minus-circle-touch.svg") no-repeat center center;
-					z-index: 1; // Focus outline higher than top 'border'
+					left: $default-padding-x-touch + 1px;
+					top: ($line-height-large-touch - 23px) / 2;
+					margin-right: $default-padding-x-touch;
+					width: 23px;
+					height: 23px;
+					background: image-url("icons/minus-touch.svg") no-repeat -2px -1px $input-bg;
+					border: 1px solid $red;
+					border-radius: 50%;
 				}
 			}
 
