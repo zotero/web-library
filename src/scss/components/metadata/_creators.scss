@@ -71,8 +71,16 @@
 		}
 	}
 
-	@include mouse-and-bp-up(md) {
-		.key {
+	.key {
+		@include touch-or-bp-down(sm) {
+			@include state(".creators-entry.virtual") {
+				flex-basis: calc((100% - #{2 * $default-padding-x-touch
+					+ $input-border-width + $space-lg}) * #{$metadata-list-offset / 100%}
+				); // Align with creators
+			}
+		}
+
+		@include mouse-and-bp-up(md) {
 			justify-content: flex-end;
 
 			.input-group {
