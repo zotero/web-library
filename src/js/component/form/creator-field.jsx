@@ -232,12 +232,12 @@ class CreatorField extends React.PureComponent {
 								</Field>
 							)
 						}
-						<li className="metadata touch-separated">
+						<li className="metadata touch-separated has-btn">
 							<Button onClick={ this.handleCreatorTypeSwitch.bind(this) }>
 								Switch to { this.isDual ? 'Single' : 'Dual' } Field
 							</Button>
 						</li>
-						<li className="metadata">
+						<li className="metadata has-btn">
 							<Button onClick={ this.handleCreatorRemove.bind(this) }>
 								Delete { this.creatorLabel }
 							</Button>

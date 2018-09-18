@@ -168,7 +168,7 @@ class Creators extends React.PureComponent {
 			readOnly: this.props.readOnly,
 			isEditing: this.props.isEditing,
 			className: cx({
-				last: this.hasVirtual && this.props.isEditing &&
+				'touch-separated': this.hasVirtual && this.props.isEditing &&
 					index === this.state.creators.length - 1
 			}),
 			ref: ref => this.fields[index] = ref
@@ -183,7 +183,7 @@ class Creators extends React.PureComponent {
 			<React.Fragment>
 				{ creators.map(this.renderField.bind(this)) }
 				{ this.props.isEditing && !this.hasVirtual && (
-					<li className="metadata add-creator">
+					<li className="metadata touch-separated has-btn-icon">
 						<Button
 							className="btn-plus"
 							onClick={ this.handleCreatorAdd.bind(

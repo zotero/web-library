@@ -175,6 +175,113 @@
 	.touch-separated {
 		@include state(".metadata-list.editing") {
 			margin-bottom: $form-section-margin;
+
+			@include bp-down(xs) {
+				padding-bottom: $border-width;
+			}
+
+			@include touch-or-bp-up(sm) {
+				border-bottom-left-radius: $input-btn-border-radius;
+				border-bottom-right-radius: $input-btn-border-radius;
+			}
+
+			&::after {
+				@include bp-down(xs) {
+					content: "";
+					left: 0;
+					top: auto;
+					bottom: 0;
+				}
+			}
+
+			& + .metadata {
+				@include bp-down(xs) {
+					padding-bottom: $border-width;
+				}
+
+				@include touch-and-bp-up(sm) {
+					padding-top: 0;
+					border-top-left-radius: $input-btn-border-radius;
+					border-top-right-radius: $input-btn-border-radius;
+				}
+
+				&::before {
+					@include bp-down(xs) {
+						left: 0;
+					}
+
+					@include touch-and-bp-up(sm) {
+						content: none;
+					}
+				}
+
+				&:focus-within {
+					&::before {
+						@include touch-keyboard-or-bp-down(sm) {
+							content: "";
+						}
+					}
+				}
+			}
+		}
+	}
+
+	.has-btn,
+	.has-btn-icon {
+		@include touch-or-bp-down(sm) {
+			padding-left: 0; // Keep vertical paddings
+			padding-right: 0;
+
+			.btn {
+				padding: 0 $default-padding-x-touch;
+				border: 0;
+				width: 100%;
+				text-align: left;
+				color: $link-color;
+				line-height: $line-height-large-touch;
+
+				&:focus {
+					outline: none;
+				}
+			}
+		}
+
+		&::before {
+			@include touch-keyboard-or-bp-down(sm) {
+				@include state(".touch-separated:focus-within") {
+					left: 0;
+				}
+			}
+		}
+	}
+
+	.has-btn {
+		&::before {
+			@include touch-or-bp-down(sm) {
+				left: $default-padding-x-touch;
+			}
+		}
+
+		.btn {
+			background: transparent;
+		}
+	}
+
+	.has-btn-icon {
+		&::before {
+			@include touch-or-bp-down(sm) {
+				left: 2 * $default-padding-x-touch + $space-lg;
+			}
+		}
+
+		.btn-icon {
+			@include touch-or-bp-down(sm) {
+				.icon {
+					vertical-align: top;
+					margin-top: ($line-height-large-touch - $space-lg) / 2;
+					margin-right: $default-padding-x-touch;
+				}
+			}
 		}
 	}
 
