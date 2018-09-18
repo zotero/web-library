@@ -238,7 +238,10 @@ class CreatorField extends React.PureComponent {
 							</Button>
 						</li>
 						<li className="metadata has-btn">
-							<Button onClick={ this.handleCreatorRemove.bind(this) }>
+							<Button
+								className="btn-delete"
+								onClick={ this.handleCreatorRemove.bind(this) }
+							>
 								Delete { this.creatorLabel }
 							</Button>
 						</li>

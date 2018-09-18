@@ -243,6 +243,10 @@
 				&:focus {
 					outline: none;
 				}
+
+				&.btn-delete {
+					color: $red;
+				}
 			}
 		}
 
