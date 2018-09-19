@@ -59,15 +59,11 @@ class CollectionTreeContainer extends React.Component {
 
 	render() {
 		return <CollectionTree
-			collections={ this.props.collections }
-			path={ this.props.path }
-			isFetching={ this.props.isFetching }
+			{ ...this.props }
 			onSelect={ this.handleSelect.bind(this) }
-			itemsSource={ this.props.itemsSource }
 			onCollectionAdd={ this.handleCollectionAdd.bind(this) }
 			onCollectionUpdate={ this.handleCollectionUpdate.bind(this) }
 			onCollectionDelete={ this.handleCollectionDelete.bind(this) }
-			updating={ this.props.updating }
 		/>;
 	}
 }
@@ -80,6 +76,7 @@ const mapStateToProps = state => {
 		collections: Object.values(
 			get(state, ['libraries', libraryKey, 'collections'], {})
 		),
+		groups: state.groups,
 		isFetching: libraryKey in state.fetching.collectionsInLibrary,
 		selected: state.current.collection,
 		path: getCollectionsPath(state),

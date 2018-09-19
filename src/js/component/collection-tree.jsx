@@ -284,6 +284,26 @@ class CollectionTree extends React.Component {
 		);
 	}
 
+	renderGroups(level = 1) {
+		const { groups } = this.props;
+
+		return (
+			<div className={ cx('level', `level-${level}`) }>
+				<ul className="nav" role="group">
+					{
+						groups.map(group => (
+							<Node key={ group.id }>
+								<Icon type="28/folder" className="touch" width="28" height="28" />
+								<Icon type="16/folder" className="mouse" width="16" height="16" />
+								<a>{ group.name }</a>
+							</Node>
+						))
+					}
+				</ul>
+			</div>
+		);
+	}
+
 	render() {
 		const { collections } = this.props;
 		const selectedCollection = Object.keys(this.derivedData)
@@ -317,7 +337,7 @@ class CollectionTree extends React.Component {
 
 							<section>
 								<h4>Group Libraries</h4>
-								{/* List of group libraries */}
+								{ this.renderGroups() }
 							</section>
 						</div>
 					</div>
@@ -333,6 +353,7 @@ CollectionTree.propTypes = {
 	onSelect: PropTypes.func,
 	path: PropTypes.array,
 	updating: PropTypes.array,
+	groups: PropTypes.array,
 	collections: PropTypes.arrayOf(
 		PropTypes.shape({
 			key: PropTypes.string.isRequired,
