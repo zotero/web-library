@@ -306,7 +306,7 @@ class CreatorField extends React.PureComponent {
 					raw={ raw }
 					tabIndex = { shouldUseModalEdit ? 0 : null }
 				>
-					{ shouldUseModalEdit && isEditing ?
+					{ shouldUseModalEdit ?
 						<div className="truncate">{ this.creatorLabel }</div> :
 						this.renderCreatorTypeSelector()
 					}
