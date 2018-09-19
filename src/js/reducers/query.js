@@ -2,7 +2,7 @@
 
 const {
 	QUERY_CHANGE,
-} = require('../../constants/actions.js');
+} = require('../constants/actions.js');
 
 const query = (state = {}, action) => {
 	switch(action.type) {

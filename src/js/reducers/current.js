@@ -1,6 +1,6 @@
 'use strict';
 
-const { SELECT_LIBRARY, ROUTE_CHANGE, TRIGGER_EDITING_ITEM } = require('../constants/actions');
+const { ROUTE_CHANGE, TRIGGER_EDITING_ITEM } = require('../constants/actions');
 const { tagsFromUrlPart } = require('../common/navigation');
 
 const stateDefault = {
@@ -17,13 +17,8 @@ const stateDefault = {
 
 const current = (state = stateDefault, action) => {
 	switch(action.type) {
-		case SELECT_LIBRARY:
-			return {
-				...state,
-				library: action.libraryKey
-			};
 		case ROUTE_CHANGE:
-			var { collection, items, tags, view, search = '' } = action.params;
+			var { library, collection, items, tags, view, search = '' } = action.params;
 			var itemKeys = items ? action.params.items.split(',') : [];
 			var tagNames = tagsFromUrlPart(tags);
 			var itemsSource;
@@ -51,6 +46,7 @@ const current = (state = stateDefault, action) => {
 				search,
 				itemKeys,
 				view,
+				library,
 			};
 		case TRIGGER_EDITING_ITEM:
 			return {

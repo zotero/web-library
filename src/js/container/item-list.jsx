@@ -225,13 +225,12 @@ const mapStateToProps = state => {
 	const itemKey = state.current.item;
 	const collection = get(state, ['libraries', libraryKey, 'collections', collectionKey]);
 	const item = get(state, ['libraries', libraryKey, 'items', itemKey]);
-	const query = get(state, ['libraries', libraryKey, 'query']);
 	var items = [], totalItemsCount = 0;
 
 	switch(itemsSource) {
 		case 'query':
-			items = get(state, ['libraries', libraryKey, 'queryItems'], []);
-			totalItemsCount = get(state, ['libraries', libraryKey, 'queryItemCount']);
+			items = state.queryItems;
+			totalItemsCount = state.queryItemCount;
 			totalItemsCount = totalItemsCount === null ? 50 : totalItemsCount;
 		break;
 		case 'top':

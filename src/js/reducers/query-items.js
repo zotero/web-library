@@ -3,7 +3,7 @@
 const {
 	QUERY_CHANGE,
 	RECEIVE_ITEMS_BY_QUERY,
-} = require('../../constants/actions.js');
+} = require('../constants/actions.js');
 
 const queryItems = (state = [], action) => {
 	switch(action.type) {

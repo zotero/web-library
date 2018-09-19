@@ -1,4 +1,3 @@
-/* eslint-disable react/no-deprecated */
 'use strict';
 
 const React = require('react');
@@ -19,7 +18,6 @@ const {
 	fetchGroups,
 	fetchLibrarySettings,
 	initialize,
-	selectLibrary,
 	triggerResizeViewport,
 } = require('../actions');
 const Library = require('../component/library');
@@ -50,27 +48,16 @@ class LibraryContainer extends React.Component {
 		await this.props.dispatch(
 			initialize()
 		);
-
 		await this.props.dispatch(
 			changeRoute(this.props.match)
 		);
-
-		//@TODO: introduce multi-library support
-		await this.props.dispatch(
-			selectLibrary('user', this.props.userId)
-		);
-
 		await this.props.dispatch(
 			fetchGroups()
 		);
-
 		await this.props.dispatch(
 			fetchLibrarySettings()
 		);
 
-	}
-
-	componentWillMount() {
 		this.windowResizeHandler();
 		window.addEventListener('resize', this.windowResizeHandler);
 	}
@@ -79,9 +66,9 @@ class LibraryContainer extends React.Component {
 		window.removeEventListener('resize', this.windowResizeHandler);
 	}
 
-	componentWillReceiveProps(props) {
-		if(!deepEqual(this.props.match, props.match)) {
-			this.props.dispatch(changeRoute(props.match));
+	componentDidUpdate({ match: previousMatch }) {
+		if(!deepEqual(this.props.match, previousMatch)) {
+			this.props.dispatch(changeRoute(this.props.match));
 		}
 	}
 
@@ -115,7 +102,7 @@ class LibraryContainer extends React.Component {
 				<Provider store={store}>
 					<BrowserRouter>
 						<Switch>
-							<Route path="/collection/:collection/tags/:tags/search/:search/items/:items" component={LibraryContainerWrapped} />
+						<Route path="/:library?/collection/:collection/tags/:tags/search/:search/items/:items" component={LibraryContainerWrapped} />
 							<Route path="/collection/:collection/tags/:tags/items/:items" component={LibraryContainerWrapped} />
 							<Route path="/collection/:collection/search/:search/items/:items" component={LibraryContainerWrapped} />
 							<Route path="/collection/:collection/items/:items" component={LibraryContainerWrapped} />
@@ -132,6 +119,23 @@ class LibraryContainer extends React.Component {
 							<Route path="/search/:search" component={LibraryContainerWrapped} />
 							<Route path="/trash/items/:items" component={LibraryContainerWrapped} />
 							<Route path="/trash" component={LibraryContainerWrapped} />
+							<Route path="/:library?/collection/:collection/tags/:tags/search/:search/items/:items" component={LibraryContainerWrapped} />
+							<Route path="/:library?/collection/:collection/tags/:tags/items/:items" component={LibraryContainerWrapped} />
+							<Route path="/:library?/collection/:collection/search/:search/items/:items" component={LibraryContainerWrapped} />
+							<Route path="/:library?/collection/:collection/items/:items" component={LibraryContainerWrapped} />
+							<Route path="/:library?/collection/:collection/tags/:tags/search/:search" component={LibraryContainerWrapped} />
+							<Route path="/:library?/collection/:collection/tags/:tags/" component={LibraryContainerWrapped} />
+							<Route path="/:library?/collection/:collection/search/:search" component={LibraryContainerWrapped} />
+							<Route path="/:library?/collection/:collection/:view?" component={LibraryContainerWrapped} />
+							<Route path="/:library?/items/:items" component={LibraryContainerWrapped} />
+							<Route path="/:library?/tags/:tags/search/:search/items/:items" component={LibraryContainerWrapped} />
+							<Route path="/:library?/tags/:tags/search/:search" component={LibraryContainerWrapped} />
+							<Route path="/:library?/tags/:tags/items/:items" component={LibraryContainerWrapped} />
+							<Route path="/:library?/tags/:tags" component={LibraryContainerWrapped} />
+							<Route path="/:library?/search/:search/items/:items" component={LibraryContainerWrapped} />
+							<Route path="/:library?/search/:search" component={LibraryContainerWrapped} />
+							<Route path="/:library?/trash/items/:items" component={LibraryContainerWrapped} />
+							<Route path="/:library?/trash" component={LibraryContainerWrapped} />
 							<Route path="/" component={LibraryContainerWrapped} />
 						</Switch>
 					</BrowserRouter>

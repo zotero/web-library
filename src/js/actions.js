@@ -20,7 +20,6 @@ const {
 	ROUTE_CHANGE,
 	QUERY_CHANGE,
 
-	SELECT_LIBRARY,
 	SELECT_ITEM,
 
 	REQUEST_ITEMS_IN_COLLECTION,
@@ -192,14 +191,23 @@ const cleanupCacheAfterDelete = (itemKeys, state) => {
 
 const changeRoute = match => {
 	return async (dispatch, getState) => {
-		dispatch({ type: ROUTE_CHANGE, ...match });
 		const state = getState();
-		const { library: libraryKey } = state.current;
+		const defaultLibrary = `u${state.config.userId}`;
+
+		await dispatch({
+			type: ROUTE_CHANGE,
+			...match,
+			params: {
+				...match.params,
+				library: match.params.library || defaultLibrary
+			}
+		});
+
 		const newQuery = getQueryFromRoute(match);
-		const oldQuery = get(state, ['libraries', libraryKey, 'query']);
+		const oldQuery = state.query;
 
 		if(!deepEqual(newQuery, oldQuery)) {
-			dispatch({ type: QUERY_CHANGE, libraryKey, newQuery, oldQuery });
+			await dispatch({ type: QUERY_CHANGE, newQuery, oldQuery });
 		}
 	}
 };
@@ -266,15 +274,6 @@ const postItemsMultiPatch = async (state, multiPatch) => {
 		itemKeysTop,
 	};
 }
-
-//@TODO: separate authenticate and selectLibrary events
-//		 allow having multiple open libraries as per design
-const selectLibrary = (type, id) => {
-	return {
-		type: SELECT_LIBRARY,
-		libraryKey: api().library(type, id).getConfig().resource.library
-	};
-};
 
 const preferenceChange = (name, value) => {
 	return {
@@ -469,7 +468,6 @@ const fetchItemsQuery = (query = {}, { start = 0, limit = 50, sort = 'dateModifi
 			limit,
 			sort,
 			direction,
-			// isQueryChanged,
 		});
 
 		try {
@@ -499,7 +497,6 @@ const fetchItemsQuery = (query = {}, { start = 0, limit = 50, sort = 'dateModifi
 				limit,
 				sort,
 				direction,
-				// isQueryChanged,
 			});
 
 			return items;
@@ -508,7 +505,6 @@ const fetchItemsQuery = (query = {}, { start = 0, limit = 50, sort = 'dateModifi
 				type: ERROR_ITEMS_BY_QUERY,
 				libraryKey,
 				query,
-				isQueryChanged,
 				error,
 			});
 
@@ -1821,7 +1817,6 @@ module.exports = {
 	moveToTrash,
 	preferenceChange,
 	recoverFromTrash,
-	selectLibrary,
 	sortItems,
 	toggleModal,
 	triggerEditingItem,

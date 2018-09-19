@@ -179,7 +179,7 @@ const mapStateToProps = state => {
 
 	switch(itemsSource) {
 		case 'query':
-			itemsCount = get(state, ['libraries', libraryKey, 'queryItemCount']);
+			itemsCount = state.queryItemCount;
 		break;
 		case 'top':
 			itemsCount = get(state, ['itemCountTopByLibrary', libraryKey], null);

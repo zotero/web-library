@@ -18,9 +18,6 @@ const tagsFromSettings = require('./tags-from-settings');
 const tagsTop = require('./tags-top');
 const updating = require('./updating');
 const version = require('./version');
-const query = require('./query');
-const queryItems = require('./query-items');
-const queryItemCount = require('./query-item-count');
 const { get } = require('../../utils');
 const actions = Object.entries(require('../../constants/actions'))
 		.map(([key, value]) => ([
@@ -31,7 +28,6 @@ const actions = Object.entries(require('../../constants/actions'))
 			'ERROR_DELETE_ITEM',
 			'ERROR_DELETE_ITEMS',
 			'ERROR_FETCH_ITEMS',
-			'ERROR_ITEMS_BY_QUERY',
 			'ERROR_ITEMS_IN_COLLECTION',
 			'ERROR_LIBRARY_SETTINGS',
 			'ERROR_TAGS_FOR_ITEM',
@@ -51,7 +47,6 @@ const actions = Object.entries(require('../../constants/actions'))
 			'RECEIVE_DELETE_ITEM',
 			'RECEIVE_DELETE_ITEMS',
 			'RECEIVE_FETCH_ITEMS',
-			'RECEIVE_ITEMS_BY_QUERY',
 			'RECEIVE_ITEMS_IN_COLLECTION',
 			'RECEIVE_LIBRARY_SETTINGS',
 			'RECEIVE_MOVE_ITEMS_TRASH',
@@ -70,7 +65,6 @@ const actions = Object.entries(require('../../constants/actions'))
 			'REQUEST_DELETE_ITEM',
 			'REQUEST_DELETE_ITEMS',
 			'REQUEST_FETCH_ITEMS',
-			'REQUEST_ITEMS_BY_QUERY',
 			'REQUEST_ITEMS_IN_COLLECTION',
 			'REQUEST_LIBRARY_SETTINGS',
 			'REQUEST_TAGS_FOR_ITEM',
@@ -80,7 +74,9 @@ const actions = Object.entries(require('../../constants/actions'))
 			'REQUEST_UPDATE_COLLECTION',
 			'REQUEST_UPDATE_ITEM',
 			'TRIGGER_EDITING_ITEM',
-			'QUERY_CHANGE',
+			'ERROR_ITEMS_BY_QUERY',
+			'RECEIVE_ITEMS_BY_QUERY',
+			'REQUEST_ITEMS_BY_QUERY',
 	]).includes(key) ? value : false).filter(Boolean);
 
 const libraries = (state = {}, action) => {
@@ -105,10 +101,7 @@ const libraries = (state = {}, action) => {
 				tagsFromSettings: tagsFromSettings(get(state, [action.libraryKey, 'tagsFromSettings']), action),
 				tagsTop: tagsTop(get(state, [action.libraryKey, 'tagsTop']), action),
 				updating: updating(get(state, [action.libraryKey, 'updating']), action),
-				version: version(get(state, [action.libraryKey, 'version']), action),
-				query: query(get(state, [action.libraryKey, 'query']), action),
-				queryItems: queryItems(get(state, [action.libraryKey, 'queryItems']), action),
-				queryItemCount: queryItemCount(get(state, [action.libraryKey, 'queryItemCount']), action),
+				version: version(get(state, [action.libraryKey, 'version']), action)
 			}
 		}
 	} else { return state; }
