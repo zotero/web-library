@@ -194,9 +194,11 @@
 				padding-bottom: $border-width;
 			}
 
-			@include touch-or-bp-up(sm) {
-				border-bottom-left-radius: $input-btn-border-radius;
-				border-bottom-right-radius: $input-btn-border-radius;
+			@include variant("main .metadata-list") {
+				@include touch-or-bp-up(sm) {
+					border-bottom-left-radius: $input-btn-border-radius;
+					border-bottom-right-radius: $input-btn-border-radius;
+				}
 			}
 
 			&::after {
