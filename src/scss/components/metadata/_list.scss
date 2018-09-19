@@ -110,17 +110,21 @@
 			}
 
 			&:first-child {
-				@include bp-up(sm) {
-					padding-top: 0;
-					border-top-left-radius: $input-border-radius;
-					border-top-right-radius: $input-border-radius;
+				@include variant("main .metadata-list") { // Exclude modals
+					@include bp-up(sm) {
+						padding-top: 0;
+						border-top-left-radius: $input-border-radius;
+						border-top-right-radius: $input-border-radius;
+					}
 				}
 
 				&::before {
 					left: 0;
 
-					@include bp-up(sm) {
-						content: none;
+					@include variant("main .metadata-list") {
+						@include bp-up(sm) {
+							content: none;
+						}
 					}
 				}
 			}
@@ -128,10 +132,12 @@
 			&:last-child {
 				padding-bottom: $input-border-width;
 
-				@include bp-up(sm) {
-					padding-bottom: 0;
-					border-bottom-left-radius: $input-border-radius;
-					border-bottom-right-radius: $input-border-radius;
+				@include variant("main .metadata-list") {
+					@include bp-up(sm) {
+						padding-bottom: 0;
+						border-bottom-left-radius: $input-border-radius;
+						border-bottom-right-radius: $input-border-radius;
+					}
 				}
 
 				&::after {
@@ -140,8 +146,10 @@
 					top: auto;
 					bottom: 0;
 
-					@include bp-up(sm) {
-						content: none;
+					@include variant("main .metadata-list") {
+						@include bp-up(sm) {
+							content: none;
+						}
 					}
 				}
 			}
@@ -182,17 +190,26 @@
 				padding-bottom: $border-width;
 			}
 
+			.modal & {
+				padding-bottom: $border-width;
+			}
+
 			@include touch-or-bp-up(sm) {
 				border-bottom-left-radius: $input-btn-border-radius;
 				border-bottom-right-radius: $input-btn-border-radius;
 			}
 
 			&::after {
+				left: 0;
+				top: auto;
+				bottom: 0;
+
 				@include bp-down(xs) {
 					content: "";
-					left: 0;
-					top: auto;
-					bottom: 0;
+				}
+
+				.modal & {
+					content: "";
 				}
 			}
 
@@ -201,10 +218,12 @@
 					padding-bottom: $border-width;
 				}
 
-				@include touch-and-bp-up(sm) {
-					padding-top: 0;
-					border-top-left-radius: $input-btn-border-radius;
-					border-top-right-radius: $input-btn-border-radius;
+				@include variant("main .metadata-list") {
+					@include touch-and-bp-up(sm) {
+						padding-top: 0;
+						border-top-left-radius: $input-btn-border-radius;
+						border-top-right-radius: $input-btn-border-radius;
+					}
 				}
 
 				&::before {
@@ -212,8 +231,14 @@
 						left: 0;
 					}
 
-					@include touch-and-bp-up(sm) {
-						content: none;
+					.modal & {
+						left: 0;
+					}
+
+					@include variant("main .metadata-list") {
+						@include touch-and-bp-up(sm) {
+							content: none;
+						}
 					}
 				}
 
