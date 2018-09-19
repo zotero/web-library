@@ -172,7 +172,7 @@ class CreatorField extends React.PureComponent {
 		/>
 	}
 
-	renderModal(shouldUseTransition) {
+	renderModal() {
 		const { isModalVisible } = this.state;
 		const content = (
 			<div className="modal-content" tabIndex={ -1 }>
@@ -256,7 +256,7 @@ class CreatorField extends React.PureComponent {
 				contentLabel="Edit Creator"
 				className="modal-touch modal-centered"
 				overlayClassName={ "modal-slide" }
-				closeTimeoutMS={ shouldUseTransition ? 600 : null }
+				closeTimeoutMS={ 600 }
 				onRequestClose={ this.handleModalClose.bind(this) }
 			>
 				{ content }
@@ -299,7 +299,7 @@ class CreatorField extends React.PureComponent {
 
 			return (
 				<React.Fragment>
-				{ this.renderModal(viewport.xxs) }
+				{ this.renderModal() }
 				<Field
 					className={ cx(this.props.className, className) }
 					index={ index }
