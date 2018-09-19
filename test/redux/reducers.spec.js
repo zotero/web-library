@@ -34,8 +34,8 @@ const {
 	RECEIVE_TAGS_IN_COLLECTION,
 	RECEIVE_TAGS_IN_LIBRARY,
 	RECEIVE_TAGS_FOR_ITEM,
-	REQUEST_ITEMS_BY_QUERY,
 	RECEIVE_ITEMS_BY_QUERY,
+	RECEIVE_GROUPS,
 } = require('../../src/js/constants/actions.js');
 const stateFixture = require('../fixtures/state.json');
 const settingsFixture = require('../fixtures/settings.json');
@@ -941,5 +941,28 @@ describe('reducers', () => {
 		assert.deepEqual(state.libraries[libraryKey].items['ITEM5555'], otherItemsData[0]);
 		assert.deepEqual(state.libraries[libraryKey].items['ITEM6666'], otherItemsData[1]);
 
+	});
+
+	it('groups', () => {
+		const groupsData = [
+			{
+				id: 123,
+				name: 'group1'
+			},
+			{
+				id: 321,
+				name: 'group2'
+			}
+		];
+		var state = {};
+
+		state = reduce(state, {
+			type: RECEIVE_GROUPS,
+			libraryKey: 'u123',
+			groups: groupsData,
+			response: mockResponse
+		});
+
+		assert.deepEqual(state.groups, groupsData);
 	});
 });

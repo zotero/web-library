@@ -31,6 +31,10 @@ const {
 	RECEIVE_COLLECTIONS_IN_LIBRARY,
 	ERROR_COLLECTIONS_IN_LIBRARY,
 
+	REQUEST_GROUPS,
+	RECEIVE_GROUPS,
+	ERROR_GROUPS,
+
 	PRE_UPDATE_ITEM,
 	REQUEST_UPDATE_ITEM,
 	RECEIVE_UPDATE_ITEM,
@@ -336,6 +340,41 @@ const fetchCollections = (libraryKey) => {
 		} catch(error) {
 			dispatch({
 				type: ERROR_COLLECTIONS_IN_LIBRARY,
+				libraryKey,
+				error
+			});
+			throw error;
+		}
+	};
+};
+
+const fetchGroups = () => {
+	return async (dispatch, getState) => {
+		const { config, current: { library: libraryKey } } = getState();
+		dispatch({
+			type: REQUEST_GROUPS,
+			libraryKey
+		});
+		try {
+			const response = await api(config.apiKey, config.apiConfig)
+				.library(libraryKey)
+				.groups()
+				.get();
+			const groups = response.getData();
+			groups.sort(
+				(a, b) => a.name.toUpperCase().localeCompare(b.name.toUpperCase())
+			);
+
+			dispatch({
+				type: RECEIVE_GROUPS,
+				libraryKey,
+				groups,
+				response
+			});
+			return groups;
+		} catch(error) {
+			dispatch({
+				type: ERROR_GROUPS,
 				libraryKey,
 				error
 			});
@@ -1765,6 +1804,7 @@ module.exports = {
 	exportItems,
 	fetchChildItems,
 	fetchCollections,
+	fetchGroups,
 	fetchItems,
 	fetchItemsInCollection,
 	fetchItemsQuery,

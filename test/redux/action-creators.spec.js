@@ -32,6 +32,7 @@ const {
 	updateCollection,
 	updateItem,
 	fetchItemsQuery,
+	fetchGroups,
 } = require('../../src/js/actions.js');
 const {
 	REQUEST_META,
@@ -80,6 +81,8 @@ const {
 	RECEIVE_TAGS_FOR_ITEM,
 	REQUEST_ITEMS_BY_QUERY,
 	RECEIVE_ITEMS_BY_QUERY,
+	REQUEST_GROUPS,
+	RECEIVE_GROUPS,
 } = require('../../src/js/constants/actions.js');
 
 const collectionsFixture = require('../fixtures/collections.json');
@@ -889,5 +892,21 @@ describe('action creators', () => {
 			store.getActions()[1].items[0][Symbol.for('meta')],
 			itemsFixture[0].meta
 		);
+	});
+
+	it('fetchGroups', async () => {
+			const groupsResponseMock = [{ data: {id: 1, name: 'group1'}}];
+			fetchMock.get(/https:\/\/api\.zotero\.org\/users\/123\/groups\??.*/, groupsResponseMock);
+			const store = mockStore(initialState);
+			const action = fetchGroups();
+			await store.dispatch(action);
+
+			assert.strictEqual(store.getActions()[0].type, REQUEST_GROUPS);
+			assert.strictEqual(store.getActions()[0].libraryKey, 'u123');
+
+			assert.strictEqual(store.getActions()[1].type, RECEIVE_GROUPS);
+			assert.strictEqual(store.getActions()[1].libraryKey, 'u123');
+			assert.deepEqual(store.getActions()[1].groups[0], groupsResponseMock[0].data);
+			assert.typeOf(store.getActions()[1].response.response, 'object');
 	});
 });

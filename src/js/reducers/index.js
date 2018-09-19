@@ -4,6 +4,7 @@ module.exports = {
 	config: require('./config'),
 	current: require('./current'),
 	fetching: require('./fetching'),
+	groups: require('./groups'),
 	itemCountTopByLibrary: require('./item-count-top-by-library'),
 	itemCountTrashByLibrary: require('./item-count-trash-by-library'),
 	libraries: require('./libraries'),
