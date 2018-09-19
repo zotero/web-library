@@ -73,7 +73,7 @@
 
 	.key {
 		@include touch-or-bp-down(sm) {
-			@include state(".creators-entry.virtual") {
+			@include state(".editing .creators-entry.virtual") {
 				flex-basis: calc((100% - #{2 * $default-padding-x-touch
 					+ $input-border-width + $space-lg}) * #{$metadata-list-offset / 100%}
 				); // Align with creators
@@ -167,12 +167,8 @@
 				padding-right: $creators-value-padding-right-touch + $space-xs;
 			}
 
-			.creator-string {
-				@include text-truncate;
-
-				@include state(".creators-entry.virtual") {
-					color: $placeholder-color;
-				}
+			@include state(".creators-entry.virtual") {
+				color: $placeholder-color;
 			}
 		}
 

@@ -313,7 +313,7 @@ class CreatorField extends React.PureComponent {
 					<React.Fragment>
 						{
 							shouldUseModalEdit ? (
-								<div className="creator-string">
+								<div className="truncate">
 									{ isVirtual ? this.isDual ? 'last name, first name' : 'name' :
 										format.creator(creator)
 									}
