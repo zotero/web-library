@@ -156,7 +156,7 @@
 	align-items: center;
 	min-height: calc(100% - #{2 * $space-xs});
 
-	@include bp-up(md) {
+	@include bp-up(sm) {
 		min-height: calc(100% - #{2 * $space-xl});
 	}
 }
@@ -170,19 +170,77 @@
 }
 
 .modal-slide {
-	@include bp-down(xs) {
-		&.ReactModal {
-			&__Overlay {
-				transform: translate3d(0, 100%, 0);
+	&.ReactModal {
+		&__Overlay {
+			@include touch-or-bp-down(sm) {
+				opacity: 0;
+			}
 
-				&--after-open {
-					transform: translate3d(0, $navbar-height-xs, 0);
-					transition: transform $nav-transition;
+			@include bp-down(xs) {
+				html:not(.specifity) & {
+					opacity: 1; // Reset
+					transform: translate3d(0, 100%, 0);
+				}
+			}
+
+			.modal-content {
+				@include touch-or-bp-down(sm) {
+					transform: translate3d(0, 100%, 0);
 				}
 
-				&--before-close {
-					transform: translate3d(0, 100%, 0);
-					transition: transform $modal-exit-transition-xs;
+				@include bp-down(xs) {
+					html:not(.specifity) & {
+						transform: none; // Reset
+					}
+				}
+			}
+
+			&--after-open {
+				@include touch-or-bp-down(sm) {
+					opacity: 1;
+					transition: opacity $nav-transition;
+				}
+
+				@include bp-down(xs) {
+					html:not(.specifity) & {
+						transform: translate3d(0, $navbar-height-xs, 0);
+						transition: transform $nav-transition;
+					}
+				}
+
+				.modal-content {
+					@include touch-or-bp-down(sm) {
+						transform: translate3d(0, 0, 0);
+						transition: transform $nav-transition;
+					}
+				}
+			}
+
+			&--before-close {
+				@include touch-or-bp-down(sm) {
+					opacity: 0;
+					transition: opacity $modal-exit-transition-xs;
+				}
+
+				@include bp-down(xs) {
+					html:not(.specifity) & {
+						opacity: 1; // Reset
+						transform: translate3d(0, 100%, 0);
+						transition: transform $modal-exit-transition-xs;
+					}
+				}
+
+				.modal-content {
+					@include touch-or-bp-down(sm) {
+						transform: translate3d(0, 100%, 0);
+						transition: transform $modal-exit-transition-xs;
+					}
+
+					@include bp-down(xs) {
+						html:not(.specifity) & {
+							transform: none; // Reset
+						}
+					}
 				}
 			}
 		}
