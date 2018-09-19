@@ -64,6 +64,11 @@
 	@include bp-down(xs) {
 		height: 100%;
 	}
+
+	@include touch-and-bp-up(sm) {
+		border-radius: $modal-border-radius;
+		overflow: hidden;
+	}
 }
 
 .modal-header {
