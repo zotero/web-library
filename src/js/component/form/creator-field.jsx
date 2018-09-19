@@ -177,14 +177,7 @@ class CreatorField extends React.PureComponent {
 		const content = (
 			<div className="modal-content" tabIndex={ -1 }>
 				<div className="modal-header">
-					<div className="modal-header-left">
-						<Button
-							className="btn-link"
-							onClick={ this.handleModalClose.bind(this) }
-						>
-							Cancel
-						</Button>
-					</div>
+					<div className="modal-header-left" />
 					<div className="modal-header-center">
 						<h4 className="modal-title truncate">
 							{ this.creatorLabel }
