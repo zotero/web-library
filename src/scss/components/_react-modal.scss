@@ -32,11 +32,6 @@
 	@include bp-up(sm) {
 		max-width: $modal-md;
 		margin: $space-xl auto;
-
-		//&.modal-lg {
-		//	width: $modal-lg;
-		//	max-width: calc(100% - 2 * #{$space-xl});
-		//}
 	}
 
 	&.loading {
@@ -74,16 +69,9 @@
 .modal-header {
 	display: flex;
 	align-items: center;
-	padding: 0 $modal-header-padding-mobile;
+	padding: 0 $modal-header-padding;
 	background-color: $modal-header-bg;
-
-	@include bp-down(sm) { // todo: touch-or-bp-down(sm)
-		height: $modal-header-height-mobile;
-	}
-
-	@include bp-up(md) {
-		padding: $modal-header-padding-md;
-	}
+	height: $modal-header-height;
 
 	&-left,
 	&-right {
@@ -103,16 +91,12 @@
 
 .modal-body,
 .modal-footer {
-	padding: $modal-inner-padding-mobile;
-
-	@include bp-up(md) {
-		padding: $modal-inner-padding-md;
-	}
+	padding: $modal-inner-padding;
 }
 
 .modal-body {
 	@include bp-down(xs) {
-		height: calc(100% - #{$modal-header-height-mobile});
+		height: calc(100% - #{$modal-header-height});
 		overflow-y: auto;
 		-webkit-overflow-scrolling: touch; // Momentum scrolling for iOS
 	}
@@ -130,28 +114,6 @@
 
 		&:not(:last-child) {
 			margin-right: $space-sm / 2;
-		}
-	}
-}
-
-.modal-lg {
-	.modal-header {
-		@include bp-up(md) {
-			padding: $modal-header-padding-lg;
-
-			.close {
-				margin: -$space-md;
-				margin-left: auto;
-				width: 2 * $modal-header-padding-lg;
-				height: 2 * $modal-header-padding-lg;
-			}
-		}
-	}
-
-	.modal-body,
-	.modal-footer {
-		@include bp-up(md) {
-			padding: $modal-inner-padding-lg;
 		}
 	}
 }

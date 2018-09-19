@@ -272,14 +272,11 @@ $icon-spin-size: $space-xl;
 // Modal
 // --------------------------------------------------
 
-$modal-header-height-mobile:  $space-thumb;
-$modal-header-padding-mobile: $space-md;
-$modal-inner-padding-mobile:  $space-md;
-$modal-header-padding-md:     $space-lg;
-$modal-inner-padding-md:      $space-lg;
-$modal-header-padding-lg:     $space-xl;
-$modal-inner-padding-lg:      $space-xl;
-$modal-md:                    444px;
-$modal-lg:                    800px;
-$modal-border-radius:         $border-radius-lg;
-$modal-exit-transition-xs:    0.2s linear;
+$modal-header-height:        $space-thumb;
+$modal-header-padding:       $space-md;
+$modal-inner-padding:        $space-md;
+$modal-header-padding-md:    $space-lg;
+$modal-inner-padding-md:     $space-lg;
+$modal-md:                   444px;
+$modal-border-radius:        $border-radius-lg;
+$modal-exit-transition-xs:   0.2s linear;
