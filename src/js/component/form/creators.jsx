@@ -49,7 +49,7 @@ class Creators extends React.PureComponent {
 	}
 
 	handleSaveCreators(creators) {
-		this.setState({ creators });
+		this.setState({ creators: enumerateObjects(creators) });
 		const newValue = creators
 			.filter(creator => !creator[Symbol.for('isVirtual')]
 				&& (creator.lastName || creator.firstName || creator.name)
