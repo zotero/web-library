@@ -305,7 +305,7 @@ class CreatorField extends React.PureComponent {
 					onReorderCommit={ onReorderCommit }
 					onDragStatusChange={ onDragStatusChange }
 					raw={ raw }
-					tabIndex = { shouldUseModalEdit ? 0 : null }
+					tabIndex = { isEditing ? 0 : null }
 				>
 					{ shouldUseModalEdit ?
 						<div className="truncate">{ this.creatorLabel }</div> :
