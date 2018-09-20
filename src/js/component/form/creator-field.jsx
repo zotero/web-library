@@ -116,19 +116,20 @@ class CreatorField extends React.PureComponent {
 	}
 
 	renderField(name, label, inModal = false) {
-		const FormField = this.props.isForm ? Input : Editable;
-		const { creator } = this.props;
+		const { isForm, creator } = this.props
+		const shouldUseEditable = !isForm && !inModal;
+		const FormField = shouldUseEditable ? Editable : Input;
 		const extraProps = {
-			[this.props.isForm ? 'ref' : 'inputRef']: component => this.fieldComponents[name] = component
+			[shouldUseEditable ? 'inputRef' : 'ref']: component => this.fieldComponents[name] = component
 		};
 
-		if(this.props.isForm) {
+		if(shouldUseEditable) {
+			extraProps['onEditableClick'] = this.handleFieldClick.bind(this, name);
+			extraProps['onEditableFocus'] = this.handleFieldFocus.bind(this, name);
+		} else {
 			extraProps['tabIndex'] = 0;
 			extraProps['onClick'] = this.handleFieldClick.bind(this, name);
 			extraProps['onFocus'] = this.handleFieldFocus.bind(this, name);
-		} else {
-			extraProps['onEditableClick'] = this.handleFieldClick.bind(this, name);
-			extraProps['onEditableFocus'] = this.handleFieldFocus.bind(this, name);
 		}
 
 		if(!inModal && name === 'lastName') {
@@ -137,15 +138,15 @@ class CreatorField extends React.PureComponent {
 
 		return (
 			<FormField
-				autoFocus={ !this.props.isForm }
+				autoFocus={ shouldUseEditable }
 				isActive={ this.state.active === name }
 				onCancel={ this.handleCancel.bind(this) }
 				onCommit={ this.handleEditableCommit.bind(this, name) }
 				placeholder={ label }
-				selectOnFocus={ !this.props.isForm }
+				selectOnFocus={ shouldUseEditable }
 				value={ creator[name] }
 				aria-label={ label }
-				className={ this.props.isForm ? 'form-control form-control-sm' : '' }
+				className={ shouldUseEditable ? '' : 'form-control form-control-sm' }
 				isDisabled = { this.props.readOnly }
 				{ ...extraProps }
 			/>
