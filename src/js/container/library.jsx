@@ -52,7 +52,7 @@ class LibraryContainer extends React.Component {
 			changeRoute(this.props.match)
 		);
 		await this.props.dispatch(
-			fetchGroups()
+			fetchGroups(this.props.userLibraryKey)
 		);
 		await this.props.dispatch(
 			fetchLibrarySettings()
@@ -136,6 +136,7 @@ class LibraryContainer extends React.Component {
 							<Route path="/:library?/search/:search" component={LibraryContainerWrapped} />
 							<Route path="/:library?/trash/items/:items" component={LibraryContainerWrapped} />
 							<Route path="/:library?/trash" component={LibraryContainerWrapped} />
+							<Route path="/:library" component={LibraryContainerWrapped} />
 							<Route path="/" component={LibraryContainerWrapped} />
 						</Switch>
 					</BrowserRouter>
@@ -157,9 +158,10 @@ LibraryContainer.propTypes = {
 const mapStateToProps = state => {
 	return {
 		view: state.current.view,
-		userId: state.config.userId || null,
-		api: state.config.api || null,
-		apiKey: state.config.apiKey || null,
+		userId: state.config.userId,
+		userLibraryKey: state.config.userLibraryKey,
+		api: state.config.api,
+		apiKey: state.config.apiKey,
 		viewport: state.viewport,
 		itemsSource: state.current.itemsSource,
 		collectionKey: state.current.collection,

@@ -58,7 +58,8 @@ const processItems = (items, state) => {
 
 class ItemListContainer extends React.PureComponent {
 	handleItemsSelect(items = []) {
-		const { history, collectionKey: collection, itemsSource, tags, search } = this.props;
+		const { history, collectionKey: collection, libraryKey: library,
+			itemsSource, tags, search } = this.props;
 		const trash = itemsSource === 'trash';
 
 		switch(itemsSource) {
@@ -66,7 +67,7 @@ class ItemListContainer extends React.PureComponent {
 			case 'top':
 			case 'query':
 			case 'collection':
-				history.push(makePath({ search, tags, trash, collection, items }));
+				history.push(makePath({ library, search, tags, trash, collection, items }));
 			break;
 		}
 	}
@@ -259,6 +260,7 @@ const mapStateToProps = state => {
 	sortByKey(items, sortBy, sortDirection);
 
 	return {
+		libraryKey,
 		collectionKey,
 		items,
 		isReady,

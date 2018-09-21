@@ -9,6 +9,7 @@ const { connect } = require('react-redux');
 const { createItem, updateItem, deleteItem, fetchItemTemplate, fetchChildItems, uploadAttachment, fetchItems } = require('../actions');
 const { itemProp } = require('../constants/item');
 const { get, deduplicateByKey, mapRelationsToItemKeys, removeRelationByItemKey } = require('../utils');
+const { makePath } = require('../common/navigation');
 
 class ItemDetailsContainer extends React.Component {
 	state = {
@@ -109,11 +110,12 @@ class ItemDetailsContainer extends React.Component {
 	}
 
 	handleRelatedItemSelect(item) {
-		let isSameCollection = item.collections.includes(this.props.collection.key);
+		const { history, collection, libraryKey: library } = this.props;
+		let isSameCollection = item.collections.includes(collection.key);
 		if(isSameCollection) {
-			this.props.history.push(`/collection/${this.props.collection.key}/items/${item.key}`);
+			history.push(makePath({ library, collection: collection.key, items: item.key }));
 		} else {
-			this.props.history.push(`/items/${item.key}`);
+			history.push(makePath({ library, items: item.key }));
 		}
 	}
 
@@ -195,6 +197,7 @@ const mapStateToProps = state => {
 	const selectedItemKeys = get(state, 'router.params.items');
 
 	return {
+		libraryKey,
 		item,
 		config: state.config,
 		childItems,

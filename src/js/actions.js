@@ -347,9 +347,9 @@ const fetchCollections = (libraryKey) => {
 	};
 };
 
-const fetchGroups = () => {
+const fetchGroups = (libraryKey) => {
 	return async (dispatch, getState) => {
-		const { config, current: { library: libraryKey } } = getState();
+		const { config } = getState();
 		dispatch({
 			type: REQUEST_GROUPS,
 			libraryKey

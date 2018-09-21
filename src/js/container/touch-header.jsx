@@ -10,9 +10,10 @@ const { get } = require('../utils');
 const { getCollectionsPath } = require('../common/state');
 const TouchHeader = require('../component/touch-header');
 const memoize = require('memoize-one');
+const { makePath } = require('../common/navigation');
 
 class TouchHeaderContainer extends React.Component {
-	makePath = memoize((path, startAt, item) => {
+	makeTouchHeaderPath = memoize((path, startAt, item) => {
 		if(startAt && path.includes(startAt)) {
 			path.splice(0, path.indexOf(startAt));
 		}
@@ -26,11 +27,8 @@ class TouchHeaderContainer extends React.Component {
 	});
 
 	onCollectionSelected(collectionKey) {
-		if(collectionKey) {
-			this.props.history.push(`/collection/${collectionKey}`);
-		} else {
-			this.props.history.push('/');
-		}
+		const { history, libraryKey: library } = this.props;
+		history.push(makePath({ library, collection: collectionKey }));
 	}
 
 	onEditingToggled(isEditing) {
@@ -46,7 +44,7 @@ class TouchHeaderContainer extends React.Component {
 				{ ...this.props }
 				onCollectionSelected={ this.onCollectionSelected.bind(this) }
 				onEditingToggled={ this.onEditingToggled.bind(this) }
-				path={ this.makePath(
+				path={ this.makeTouchHeaderPath(
 					path,
 					rootAtCurrentItemsSource ? root.key : null,
 					includeItem ? item : null
@@ -113,6 +111,7 @@ const mapStateToProps = state => {
 	return {
 		isEditing: item ? state.current.editing === item.key : false,
 		view: state.current.view,
+		libraryKey,
 		path,
 		item,
 		root

@@ -15,31 +15,17 @@ const {
 } = require('../actions');
 const { getCollectionsPath } = require('../common/state');
 const { get } = require('../utils');
+const { makePath } = require('../common/navigation');
 
 class CollectionTreeContainer extends React.Component {
-	componentWillReceiveProps(nextProps) {
-		if((!this.props.libraryKey && nextProps.libraryKey) || (this.props.libraryKey != nextProps.libraryKey)) {
-			this.props.dispatch(
-				fetchCollections(nextProps.libraryKey)
-			);
-		}
+	componentDidMount() {
+		this.props.dispatch(
+			fetchCollections(this.props.userLibraryKey)
+		);
 	}
 
-	handleSelect(nodeType, collectionKey) {
-		switch(nodeType) {
-			case 'top':
-				this.props.history.push('/');
-			break;
-			case 'trash':
-				this.props.history.push('/trash');
-			break;
-			case 'collection':
-				this.props.history.push(`/collection/${collectionKey}`);
-			break;
-			case 'items':
-				this.props.history.push(`/collection/${collectionKey}/item-list`);
-			break;
-		}
+	handleSelect(pathData) {
+		this.props.history.push(makePath(pathData));
 	}
 
 	async handleCollectionAdd(name, parentCollection = null) {
@@ -70,12 +56,14 @@ class CollectionTreeContainer extends React.Component {
 
 const mapStateToProps = state => {
 	const libraryKey = state.current.library;
+	const userLibraryKey = state.config.userLibraryKey;
 
 	return {
 		libraryKey,
 		collections: Object.values(
-			get(state, ['libraries', libraryKey, 'collections'], {})
+			get(state, ['libraries', userLibraryKey, 'collections'], {})
 		),
+		userLibraryKey,
 		groups: state.groups,
 		isFetching: libraryKey in state.fetching.collectionsInLibrary,
 		selected: state.current.collection,

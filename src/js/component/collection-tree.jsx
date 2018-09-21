@@ -31,9 +31,9 @@ class CollectionTree extends React.Component {
 		}
 	}
 
-	handleSelect(itemsSource, key, ev) {
+	handleSelect(pathData, ev) {
 		ev && ev.preventDefault();
-		this.props.onSelect(itemsSource, key);
+		this.props.onSelect(pathData);
 	}
 
 	handleOpenToggle(key, ev) {
@@ -45,10 +45,10 @@ class CollectionTree extends React.Component {
 		this.props.onCollectionOpened();
 	}
 
-	handleKeyPress(itemsSource, key, ev) {
+	handleKeyPress(pathData, ev) {
 		if(ev && (ev.key === 'Enter' || ev.key === ' ')) {
 			ev.stopPropagation();
-			this.props.onSelect(itemsSource, key, ev);
+			this.props.onSelect(pathData, ev);
 		}
 	}
 
@@ -152,9 +152,9 @@ class CollectionTree extends React.Component {
 		return this.makeDerivedData(collections, path, this.state.opened);
 	}
 
-	renderCollections(collections, level, parentCollection = null) {
+	renderCollections(collections, level, library, parentCollection = null) {
 		const { childMap, derivedData } = this;
-		const { itemsSource } = this.props;
+		const { itemsSource, libraryKey, userLibraryKey } = this.props;
 
 		const hasOpen = this.testRecursive(
 			collections, col => derivedData[col.key].isSelected
@@ -171,10 +171,10 @@ class CollectionTree extends React.Component {
 							<Node
 								className={ cx({
 									'all-documents': true,
-									'selected': itemsSource === 'top'
+									'selected': libraryKey === userLibraryKey && itemsSource === 'top'
 								})}
-								onClick={ this.handleSelect.bind(this, 'top', null) }
-								onKeyPress={ this.handleKeyPress.bind(this, 'top', null) }
+								onClick={ this.handleSelect.bind(this, { library: userLibraryKey }) }
+								onKeyPress={ this.handleKeyPress.bind(this, { library: userLibraryKey }) }
 								dndTarget={ { 'targetType': 'all-documents' } }
 							>
 								<Icon type="28/document" className="touch" width="28" height="28" />
@@ -195,12 +195,17 @@ class CollectionTree extends React.Component {
 								this.renderCollections(
 									this.collectionsFromKeys(childMap[collection.key] || []),
 									level + 1,
+									library,
 									collection
 								)
 							}
 							onOpen={ this.handleOpenToggle.bind(this, collection.key) }
-							onClick={ this.handleSelect.bind(this, 'collection', collection.key) }
-							onKeyPress={ this.handleKeyPress.bind(this, 'collection', collection.key) }
+							onClick={ this.handleSelect.bind(this, {
+								library: userLibraryKey, collection: collection.key })
+							}
+							onKeyPress={ this.handleKeyPress.bind(this, {
+								library: userLibraryKey, collection: collection.key })
+							}
 							label={ collection.name }
 							isOpen={ derivedData[collection.key].isOpen }
 							icon="folder"
@@ -255,8 +260,8 @@ class CollectionTree extends React.Component {
 									'trash': true,
 									'selected': itemsSource === 'trash'
 								})}
-								onClick={ this.handleSelect.bind(this, 'trash', null) }
-								onKeyPress={ this.handleKeyPress.bind(this, 'trash', null) }
+								onClick={ this.handleSelect.bind(this, { library: userLibraryKey, trash: true }) }
+								onKeyPress={ this.handleKeyPress.bind(this, { library: userLibraryKey, trash: true }) }
 								dndTarget={ { 'targetType': 'trash' } }
 							>
 								<Icon type="28/trash" className="touch" width="28" height="28" />
@@ -269,8 +274,14 @@ class CollectionTree extends React.Component {
 						{ viewport => (
 							viewport.xxs && itemsSource === 'collection' && parentCollection && (
 								<Node
-									onClick={ this.handleSelect.bind(this, 'items', parentCollection.key, null) }
-									onKeyPress={ this.handleKeyPress.bind(this, 'items', parentCollection.key, null) }
+									onClick={ this.handleSelect.bind(this, {
+										library: userLibraryKey,
+										view: 'item-list'
+									}) }
+									onKeyPress={ this.handleKeyPress.bind(this, {
+										library: userLibraryKey,
+										view: 'item-list'
+									}) }
 								>
 									<Icon type="28/document" className="touch" width="28" height="28" />
 									<Icon type="16/document" className="mouse" width="16" height="16" />
@@ -292,7 +303,11 @@ class CollectionTree extends React.Component {
 				<ul className="nav" role="group">
 					{
 						groups.map(group => (
-							<Node key={ group.id }>
+							<Node
+								onClick={ this.handleSelect.bind(this, {'library': `g${group.id}`}) }
+								onKeyPress={ this.handleKeyPress.bind(this, {'library': `g${group.id}`}) }
+								key={ group.id }
+							>
 								<Icon type="28/folder" className="touch" width="28" height="28" />
 								<Icon type="16/folder" className="mouse" width="16" height="16" />
 								<a>{ group.name }</a>
@@ -305,7 +320,7 @@ class CollectionTree extends React.Component {
 	}
 
 	render() {
-		const { collections } = this.props;
+		const { collections, userLibraryKey } = this.props;
 		const selectedCollection = Object.keys(this.derivedData)
 			.find((collectionKey) => this.derivedData[collectionKey].isSelected) || null;
 		const topLevelCollections = collections
@@ -332,7 +347,7 @@ class CollectionTree extends React.Component {
 										<Icon type={ '20/add-collection' } width="20" height="20" />
 									</Button>
 								</div>
-								{ this.renderCollections(topLevelCollections, 1)}
+								{ this.renderCollections(topLevelCollections, 1, userLibraryKey)}
 							</section>
 
 							<section>

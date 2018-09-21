@@ -11,8 +11,8 @@ class SearchContainer extends React.PureComponent {
 	state = { search: '' }
 
 	handleSearch(search) {
-		const { collection, tags, history } = this.props;
-		history.push(makePath({ search, tags, collection }));
+		const { library, collection, tags, history } = this.props;
+		history.push(makePath({ library, search, tags, collection }));
 	}
 
 	render() {

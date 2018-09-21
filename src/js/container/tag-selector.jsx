@@ -19,7 +19,7 @@ class TagSelectorContainer extends React.PureComponent {
 	}
 
 	handleSelect(tagName) {
-		const { itemsSource, collectionKey, selectedTags, history } = this.props;
+		const { libraryKey: library, itemsSource, collectionKey, selectedTags, history } = this.props;
 		const index = selectedTags.indexOf(tagName)
 		if(index > -1) {
 			selectedTags.splice(index, 1);
@@ -29,16 +29,16 @@ class TagSelectorContainer extends React.PureComponent {
 
 		switch(itemsSource) {
 			case 'top':
-				history.push(makePath({ tags: selectedTags }));
+				history.push(makePath({ library, tags: selectedTags }));
 			break;
 			case 'trash':
-				history.push(makePath({ trash: true }));
+				history.push(makePath({ library, trash: true }));
 			break;
 			case 'collection':
-				history.push(makePath({ tags: selectedTags, collection: collectionKey }));
+				history.push(makePath({ library, tags: selectedTags, collection: collectionKey }));
 			break;
 			case 'query':
-				history.push(makePath({ tags: selectedTags, collection: collectionKey }));
+				history.push(makePath({ library, tags: selectedTags, collection: collectionKey }));
 			break;
 		}
 	}
@@ -146,8 +146,8 @@ const mapStateToProps = state => {
 	totalTagCount -= duplicatesFound;
 
 	return {
-		isReady: true,
-		tags, totalTagCount, sourceTagsCount, itemsSource, collectionKey, selectedTags
+		isReady: true, libraryKey, tags, totalTagCount, sourceTagsCount, itemsSource,
+		collectionKey, selectedTags
 	}
 
 };
