@@ -2,6 +2,11 @@
 // Keyboard focus
 // --------------------------------------------------
 
+.mouse :focus,
+.touch :focus {
+	outline: none;
+}
+
 .keyboard :focus {
 	outline: $outline-width solid $focus-color;
 	outline-offset: $outline-offset;
