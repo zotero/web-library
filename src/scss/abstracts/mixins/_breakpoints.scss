@@ -42,6 +42,14 @@
 	}
 }
 
+@mixin touch-and-bp-only($name, $breakpoints: $grid-breakpoints) {
+	html.touch & {
+  	@include bp-only($name, $breakpoints: $grid-breakpoints) {
+			@content;
+		}
+	}
+}
+
 @mixin touch-or-bp-up($name, $breakpoints: $grid-breakpoints) {
 	@include bp-up($name, $breakpoints: $grid-breakpoints) {
 	  html:not(.specifity) & { // Normalize specifity
@@ -83,6 +91,14 @@
 @mixin touch-keyboard-and-bp-up($name, $breakpoints: $grid-breakpoints) {
 	@include bp-up($name, $breakpoints: $grid-breakpoints) {
 	  html.touch.keyboard & {
+			@content;
+		}
+	}
+}
+
+@mixin touch-keyboard-and-bp-only($name, $breakpoints: $grid-breakpoints) {
+	html.touch.keyboard & {
+  	@include bp-only($name, $breakpoints: $grid-breakpoints) {
 			@content;
 		}
 	}
