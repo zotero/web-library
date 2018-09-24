@@ -26,18 +26,18 @@
 		}
 
 		@include variant(".title + .creators-entry") {
-			@include bp-up(sm) {
+			@include bp-up-normalized(sm) {
 				padding-top: 0;
 				border-top-left-radius: $input-border-radius;
 				border-top-right-radius: $input-border-radius;
 			}
 
 			&::before {
-				@include touch-or-bp-down(xs) {
+				@include bp-down-normalized(xs) {
 					left: 0;
 				}
 
-				@include bp-up(sm) {
+				@include bp-up-normalized(sm) {
 					content: none;
 				}
 			}
@@ -45,7 +45,7 @@
 
 		// Creators focus state
 		&:focus {
-			.keyboard & {
+			.keyboard:not(.specifity) & {
 				outline: none;
 				z-index: 2;
 

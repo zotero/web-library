@@ -11,15 +11,12 @@
 	}
 
 	&.editing {
-		margin-top: $form-section-margin;
-		margin-bottom: $form-section-margin;
-
-		@include bp-only(sm) {
-			margin-left: $metadata-list-margin-x-touch;
-			margin-right: $metadata-list-margin-x-touch;
+		@include touch-or-bp-down(sm) {
+			margin-top: $form-section-margin;
+			margin-bottom: $form-section-margin;
 		}
 
-		@include touch-and-bp-up(md) {
+		@include touch-and-bp-up(sm) {
 			margin-left: $metadata-list-margin-x-touch;
 			margin-right: $metadata-list-margin-x-touch;
 		}
@@ -87,26 +84,28 @@
 
 		// Edit mode
 		@include state(".metadata-list.editing") {
-			display: flex;
-			align-items: flex-start;
-			position: relative;
-			background-color: $input-bg;
-			padding-top: $input-border-width;
-			margin-bottom: 0;
+			@include touch-or-bp-down(sm) {
+				display: flex;
+				align-items: flex-start;
+				position: relative;
+				background-color: $input-bg;
+				padding-top: $input-border-width;
+				margin-bottom: 0;
 
-			&::before,
-			&::after {
-				position: absolute;
-				left: $default-padding-x-touch;
-				right: 0;
-				top: 0;
-				height: $input-border-width;
-				background: $input-border-color;
-				z-index: 1;
-			}
+				&::before,
+				&::after {
+					position: absolute;
+					left: $default-padding-x-touch;
+					right: 0;
+					top: 0;
+					height: $input-border-width;
+					background: $input-border-color;
+					z-index: 1;
+				}
 
-			&::before {
-				content: "";
+				&::before {
+					content: "";
+				}
 			}
 
 			&:first-child {
@@ -119,7 +118,9 @@
 				}
 
 				&::before {
-					left: 0;
+					@include bp-down-normalized(xs) {
+						left: 0;
+					}
 
 					@include variant("main .metadata-list") {
 						@include bp-up(sm) {
@@ -141,13 +142,15 @@
 				}
 
 				&::after {
-					content: "";
-					left: 0;
-					top: auto;
-					bottom: 0;
+					@include bp-down-normalized(xs) {
+						content: "";
+						left: 0;
+						top: auto;
+						bottom: 0;
+					}
 
 					@include variant("main .metadata-list") {
-						@include bp-up(sm) {
+						@include bp-up-normalized(sm) {
 							content: none;
 						}
 					}
@@ -184,7 +187,9 @@
 
 	.touch-separated {
 		@include state(".metadata-list.editing") {
-			margin-bottom: $form-section-margin;
+			@include touch-or-bp-down(sm) {
+				margin-bottom: $form-section-margin;
+			}
 
 			@include bp-down(xs) {
 				padding-bottom: $border-width;
@@ -229,7 +234,7 @@
 				}
 
 				&::before {
-					@include bp-down(xs) {
+					@include bp-down-normalized(xs) {
 						left: 0;
 					}
 
