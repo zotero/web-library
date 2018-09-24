@@ -5,12 +5,12 @@ const PropTypes = require('prop-types');
 const { withRouter } = require('react-router-dom');
 const { itemProp } = require('../constants/item');
 const { connect } = require('react-redux');
-const { triggerEditingItem } = require('../actions');
 const { get } = require('../utils');
 const { getCollectionsPath } = require('../common/state');
 const TouchHeader = require('../component/touch-header');
 const memoize = require('memoize-one');
 const { makePath } = require('../common/navigation');
+const TriggersEditMode = require('../enhancers/triggers-edit-mode');
 
 class TouchHeaderContainer extends React.Component {
 	makeTouchHeaderPath = memoize((path, startAt, item) => {
@@ -31,19 +31,12 @@ class TouchHeaderContainer extends React.Component {
 		history.push(makePath({ library, collection: collectionKey }));
 	}
 
-	onEditingToggled(isEditing) {
-		this.props.dispatch(
-			triggerEditingItem(this.props.item.key, isEditing)
-		);
-	}
-
 	render() {
 		const { path, rootAtCurrentItemsSource, root, includeItem, item } = this.props;
 		return (
 			<TouchHeader
 				{ ...this.props }
 				onCollectionSelected={ this.onCollectionSelected.bind(this) }
-				onEditingToggled={ this.onEditingToggled.bind(this) }
 				path={ this.makeTouchHeaderPath(
 					path,
 					rootAtCurrentItemsSource ? root.key : null,
@@ -109,7 +102,6 @@ const mapStateToProps = state => {
 	}
 
 	return {
-		isEditing: item ? state.current.editing === item.key : false,
 		view: state.current.view,
 		libraryKey,
 		path,
@@ -118,10 +110,6 @@ const mapStateToProps = state => {
 	};
 };
 
-const mapDispatchToProps = (dispatch) => {
-	return { dispatch };
-};
-
-const TouchHeaderWrapped = withRouter(connect(mapStateToProps, mapDispatchToProps)(TouchHeaderContainer));
+const TouchHeaderWrapped = withRouter(connect(mapStateToProps)(TriggersEditMode(TouchHeaderContainer)));
 
 module.exports = TouchHeaderWrapped;

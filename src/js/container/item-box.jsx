@@ -120,7 +120,7 @@ const mapStateToProps = state => {
 
 	//@TODO: Refactor
 	const isExpicitEdit = !!(state.viewport.xxs || state.viewport.xs || state.viewport.sm); //@TODO: also for userType == touch?
-	const isEditing = !!(isExpicitEdit && state.current.editing === item.key);
+	const isEditing = state.current.editing === item.key;
 	const isForm = !!(isExpicitEdit && isEditing && item);
 	const isReadOnlyMode = !!(isExpicitEdit && !isEditing);
 

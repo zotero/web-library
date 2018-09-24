@@ -13,7 +13,7 @@ class TouchHeader extends React.PureComponent {
 			return (
 				<header className={ cx('touch-header', className) }>
 					<Button
-						onClick={ () => this.props.onEditingToggled(false) }
+						onClick={ () => this.props.onEditModeToggle(false) }
 						className="btn-default btn-options"
 					>
 						Done
@@ -31,7 +31,7 @@ class TouchHeader extends React.PureComponent {
 					{ (() => {
 						return this.props.view === 'item-details' && (
 							<Button
-								onClick={ () => this.props.onEditingToggled(true) }
+								onClick={ () => this.props.onEditModeToggle(true) }
 								className="btn-default btn-options"
 							>
 								Edit
@@ -46,7 +46,7 @@ class TouchHeader extends React.PureComponent {
 
 TouchHeader.propTypes = {
 	onCollectionSelected: PropTypes.func,
-	onEditingToggled: PropTypes.func,
+	onEditModeToggle: PropTypes.func,
 	path: PropTypes.array,
 	isEditing: PropTypes.bool,
 	view: PropTypes.string

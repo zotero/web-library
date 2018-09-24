@@ -4,6 +4,7 @@
 const React = require('react');
 const Panel = require('../../ui/panel');
 const { Tab, Tabs } = require('../../ui/tabs');
+const Button = require('../../ui/button');
 const InfoTabPane = require('./tab-panes/info');
 const NotesTabPane = require('./tab-panes/notes');
 const TagsTabPane = require('./tab-panes/tags');
@@ -41,6 +42,8 @@ class ItemDetailsTabs extends React.PureComponent {
 	}
 
 	render() {
+		const { isEditing, onEditModeToggle } = this.props;
+
 		return (
 			<Panel>
 				<header>
@@ -111,6 +114,14 @@ class ItemDetailsTabs extends React.PureComponent {
 							Related
 						</Tab>
 					</Tabs>
+					<div className="right">
+						<Button
+							className="hidden-mouse-lg-up"
+							onClick={ () => onEditModeToggle(!isEditing) }
+						>
+							{ isEditing ? "Done" : "Edit" }
+						</Button>
+					</div>
 				</header>
 				{
 					!['attachment', 'note'].includes(this.props.item.itemType) && (
