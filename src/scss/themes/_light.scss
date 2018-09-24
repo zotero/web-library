@@ -123,11 +123,9 @@ $panel-header-color: $shade-8;
 $panel-header-shadow: rgba($shade-10, 0.08);
 
 // Tabs
-$tab-bg:                $shade-2;
-$tab-active-color:      inherit;
-$tab-active-bg:         $shade-1;
-$tab-inactive-color:    $shade-6; // #999?
-$tab-pane-border-color: $shade-0;
+$tabs-border-color:  $shade-3;
+$tab-active-color:   $secondary;
+$tab-inactive-color: $headings-color;
 
 // Metadata list
 $key-color:          $shade-6;
