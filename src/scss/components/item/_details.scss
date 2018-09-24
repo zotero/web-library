@@ -43,6 +43,10 @@
 		@include touch-or-bp-down(sm) {
 			display: none;
 		}
+
+		@include touch-and-bp-only(md) {
+			display: block;
+		}
 	}
 
 	.toolbar {
