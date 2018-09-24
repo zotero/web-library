@@ -33,6 +33,32 @@
 }
 
 
+// Normalized media query mixins
+@mixin bp-up-normalized($name, $breakpoints: $grid-breakpoints) {
+	@include bp-up($name, $breakpoints: $grid-breakpoints) {
+		html:not(.specifity) & {
+			@content;
+		}
+	}
+}
+
+@mixin bp-down-normalized($name, $breakpoints: $grid-breakpoints) {
+	@include bp-down($name, $breakpoints: $grid-breakpoints) {
+		html:not(.specifity) & {
+			@content;
+		}
+	}
+}
+
+@mixin bp-only-normalized($name, $breakpoints: $grid-breakpoints) {
+	@include bp-only($name, $breakpoints: $grid-breakpoints) {
+		html:not(.specifity) & {
+			@content;
+		}
+	}
+}
+
+
 // Touch breakpoints
 @mixin touch-and-bp-up($name, $breakpoints: $grid-breakpoints) {
 	@include bp-up($name, $breakpoints: $grid-breakpoints) {
