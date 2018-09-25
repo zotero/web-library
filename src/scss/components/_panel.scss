@@ -28,7 +28,7 @@
 	}
 
 	.panel-body {
-		flex: 1 1 auto;
+		flex: 1 1 0;
 		overflow-y: scroll;
 		-webkit-overflow-scrolling: touch; // Momentum scrolling
 		margin-bottom: $space-min;
