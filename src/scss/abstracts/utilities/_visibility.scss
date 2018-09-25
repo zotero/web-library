@@ -23,20 +23,20 @@
 // Responsive visibility for 'mouse devices' only
 
 @each $bp in map-keys($grid-breakpoints) {
-	body:not(.touch) .hidden-mouse-#{$bp}-up {
+	html:not(.touch) .hidden-mouse-#{$bp}-up {
 		@include bp-up($bp) {
 			display: none !important;
 		}
 	}
 
-  body:not(.touch) .hidden-mouse-#{$bp}-down {
+  html:not(.touch) .hidden-mouse-#{$bp}-down {
     @include bp-down($bp) {
       display: none !important;
     }
   }
 }
 
-body:not(.touch) .hidden-mouse {
+html:not(.touch) .hidden-mouse {
 	display: none !important;
 }
 
