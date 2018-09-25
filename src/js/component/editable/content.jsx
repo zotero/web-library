@@ -9,7 +9,9 @@ const Select = require('../form/select');
 
 class EditableContent extends React.PureComponent {
 	get content() {
-		return escapeHtml(this.props.value).replace(/\n/g, '<br />');
+		const { input } = this.props;
+		const value = this.props.value || input && input.props.value;
+		return escapeHtml(value).replace(/\n/g, '<br />');
 	}
 
 	get hasValue() {
@@ -24,11 +26,10 @@ class EditableContent extends React.PureComponent {
 
 	get displayValue() {
 		const { options, display, placeholder, input } = this.props;
+		const value = this.props.value || input && input.props.value;
 
 		if(!this.hasValue) { return placeholder; }
 		if(display) { return display; }
-
-		var value = this.props.value || input && input.props.value;
 
 		if(this.isSelect && options) {
 			const displayValue = options.find(e => e.value == value);
