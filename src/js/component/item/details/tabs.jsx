@@ -114,14 +114,12 @@ class ItemDetailsTabs extends React.PureComponent {
 							Related
 						</Tab>
 					</Tabs>
-					<div className="right">
 						<Button
-							className="hidden-mouse-lg-up"
+							className="hidden-mouse-lg-up btn-edit"
 							onClick={ () => onEditModeToggle(!isEditing) }
 						>
 							{ isEditing ? "Done" : "Edit" }
 						</Button>
-					</div>
 				</header>
 				{
 					!['attachment', 'note'].includes(this.props.item.itemType) && (

@@ -161,12 +161,6 @@ $item-padding-x-touch:    $padding-x-md;
 $toolbar-height: $line-height-large;
 
 
-// Panel
-// --------------------------------------------------
-
-$panel-header-height: $line-height-large + $space-min;
-
-
 // Item details
 // --------------------------------------------------
 
@@ -178,8 +172,9 @@ $info-view-font-size:         20px;
 // Tabs
 // --------------------------------------------------
 
-$tabs-height: $line-height-large + $space-min;
-$tabs-padding-x: $space-md;
+$tabs-height:            $line-height-large + $space-min;
+$tabs-height-touch:      $space-thumb;
+$tabs-padding-x:         $space-md;
 $tabs-compact-padding-x: $space-xs;
 
 

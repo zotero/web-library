@@ -16,7 +16,7 @@
 	}
 
 	.panel-header {
-		flex: 0 0 $panel-header-height;
+		flex: 0 0 auto;
 		color: $panel-header-color;
 		display: flex;
 		position: relative;

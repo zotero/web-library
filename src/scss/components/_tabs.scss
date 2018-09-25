@@ -4,7 +4,7 @@
 
 .tabs {
 	display: flex;
-	border-bottom: 1px solid $tabs-border-color;
+	border-bottom: $border-width solid $tabs-border-color;
 
 	&.justified {
 		width: 100%;
@@ -26,6 +26,10 @@
 			color: $tab-inactive-color;
 			padding: 0 $tabs-padding-x;
 			height: $tabs-height;
+
+			@include touch-or-bp-down(sm) {
+				height: $tabs-height-touch;
+			}
 
 			&:hover {
 				color: $tab-active-color;
