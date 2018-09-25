@@ -128,10 +128,12 @@ $tab-active-color:   $secondary;
 $tab-inactive-color: $headings-color;
 
 // Metadata list
-$key-color:          $shade-6;
-$editable-hover-bg:  rgba($shade-10, 0.04);
-$handle-color-touch: $shade-4;
-$handle-color-mouse: $shade-6;
+$key-color:                $shade-6;
+$editable-hover-bg:        rgba($shade-10, 0.04);
+$handle-color-touch:       $shade-4;
+$handle-color-mouse:       $shade-6;
+$metadata-heading-color:   $shade-5;
+$metadata-separator-color: $shade-3;
 
 // Button
 $btn-primary-color:           $shade-0;
