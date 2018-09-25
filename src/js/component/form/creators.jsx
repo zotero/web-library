@@ -178,12 +178,13 @@ class Creators extends React.PureComponent {
 	}
 
 	render() {
+		const { device, isEditing } = this.props;
 		let creators = this.state.creators;
 
 		return (
 			<React.Fragment>
 				{ creators.map(this.renderField.bind(this)) }
-				{ this.props.isEditing && !this.hasVirtual && (
+				{ device.shouldUseEditMode && isEditing && !this.hasVirtual && (
 					<li className="metadata touch-separated has-btn-icon">
 						<Button
 							className="btn-plus"
