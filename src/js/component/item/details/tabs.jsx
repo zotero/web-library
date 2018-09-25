@@ -118,7 +118,7 @@ class ItemDetailsTabs extends React.PureComponent {
 							className="hidden-mouse-lg-up btn-edit"
 							onClick={ () => onEditModeToggle(!isEditing) }
 						>
-							{ isEditing ? "Done" : "Edit" }
+							{ isEditing ? "Done" : "Display Empty Fields" }
 						</Button>
 				</header>
 				{

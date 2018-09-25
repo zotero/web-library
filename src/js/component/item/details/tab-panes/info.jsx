@@ -2,10 +2,12 @@
 
 const React = require('react');
 const cx = require('classnames');
+const Button = require('../../../ui/button');
 const ItemBoxContainer = require('../../../../container/item-box');
 
 class InfoTabPane extends React.PureComponent {
 	render() {
+		const { isEditing, onEditModeToggle } = this.props;
 		return (
 			<div className={ cx({
 				'tab-pane': true,
@@ -20,6 +22,12 @@ class InfoTabPane extends React.PureComponent {
 								</h5>
 							)
 						}
+						<Button
+							className="hidden-mouse hidden-touch-md-down"
+							onClick={ () => onEditModeToggle(!isEditing) }
+						>
+							{ isEditing ? "Done" : "Display Empty Fields" }
+						</Button>
 						<ItemBoxContainer
 							item={ this.props.item }
 							hiddenFields={ [ 'abstractNote' ] }
