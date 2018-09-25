@@ -149,6 +149,7 @@ class Creators extends React.PureComponent {
 	renderField(creator, index) {
 		const isVirtual = creator[Symbol.for('isVirtual')] || false;
 		const props = {
+			...this.props,
 			creator,
 			creatorTypes: this.props.creatorTypes,
 			index,

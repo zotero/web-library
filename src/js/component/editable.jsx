@@ -6,24 +6,11 @@ const cx = require('classnames');
 
 const EditableContent = require('./editable/content');
 const Input = require('./form/input');
-const SelectInput = require('./form/select');
 const TextAreaInput = require('./form/text-area');
+const SelectInput = require('./form/select');
 const { noop } = require('../utils');
-const { UserTypeContext, ViewportContext } = require('../context');
 
 class Editable extends React.PureComponent {
-	setInput(input) {
-		this.props.inputRef(input);
-	}
-
-	handleClick(event) {
-		this.props.onEditableClick(event);
-	}
-
-	handleFocus(event) {
-		this.props.onEditableFocus(event);
-	}
-
 	get isActive() {
 		return (this.props.isActive || this.props.isBusy) && !this.props.isDisabled;
 	}
@@ -33,11 +20,12 @@ class Editable extends React.PureComponent {
 	}
 
 	get className() {
+		const { input, inputComponent } = this.props;
 		return {
 			'editable': true,
 			'editing': this.isActive,
-			'textarea': this.props.inputComponent === TextAreaInput,
-			'select': this.props.inputComponent === SelectInput
+			'textarea': inputComponent === TextAreaInput || input && input.type === TextAreaInput,
+			'select': inputComponent === SelectInput || input && input.type === SelectInput,
 		};
 	}
 
@@ -46,62 +34,50 @@ class Editable extends React.PureComponent {
 		return (
 			<React.Fragment>
 				{
-					hasChildren ?
-						this.props.children :
-						<EditableContent { ...this.props } />
+				hasChildren ?
+					this.props.children :
+					<EditableContent { ...this.props } />
 				}
 			</React.Fragment>
 		);
 	}
 
 	renderControls() {
-		const InputComponent = this.props.inputComponent;
-		const { className, ...props } = this.props;
-		return (
-			<InputComponent
-				{ ...props }
+		const { input: InputElement, inputComponent: InputComponent } = this.props;
+		if(InputElement) {
+			return InputElement;
+		} else {
+			const { className, ...props } = this.props;
+			return <InputComponent
 				className={ cx(className, "editable-control") }
-				isReadOnly={ this.isReadOnly }
-				ref={ this.setInput.bind(this) }
+				{ ...props }
 			/>
-		);
+		}
 	}
 
 	render() {
+		const { isDisabled } = this.props;
 		return (
-			<UserTypeContext.Consumer>
-				{ userType => (
-					<ViewportContext.Consumer>
-						{ viewport => (
-							<div
-								tabIndex={ userType === 'touch' || viewport.xxs || viewport.xs || viewport.sm ?
-									null : this.isActive ? null : 0
-								}
-								onClick={ this.handleClick.bind(this) }
-								onFocus={ this.handleFocus.bind(this) }
-								className={ cx(this.className) }
-							>
-								{ this.isActive ? this.renderControls() : this.renderContent() }
-							</div>
-						)
-					}
-					</ViewportContext.Consumer>
-				)
-			}
-			</UserTypeContext.Consumer>
+			<div
+				tabIndex={ isDisabled ? null : this.isActive ? null : 0 }
+				onClick={ event => this.props.onClick(event) }
+				onFocus={ event => this.props.onFocus(event) }
+				className={ cx(this.className) }
+			>
+				{ this.isActive ? this.renderControls() : this.renderContent() }
+			</div>
 		);
 	}
 	static defaultProps = {
 		inputComponent: Input,
-		inputRef: noop,
-		onEditableClick: noop,
-		onEditableFocus: noop,
+		onClick: noop,
+		onFocus: noop,
 	};
 
 	static propTypes = {
 		children: PropTypes.oneOfType([PropTypes.element, PropTypes.array]),
+		input: PropTypes.element,
 		inputComponent: PropTypes.func,
-		inputRef: PropTypes.func,
 		isActive: PropTypes.bool,
 		isBusy: PropTypes.bool,
 		isDisabled: PropTypes.bool,

@@ -10,5 +10,6 @@ module.exports = {
 		sm: false,
 		md: false,
 		lg: true,
+		isLg: () => this.lg
 	}),
 };

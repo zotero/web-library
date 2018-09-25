@@ -9,10 +9,8 @@ const Button = require('../ui/button');
 const Icon = require('../ui/icon');
 const Input = require('./input');
 const SelectInput = require('./select');
-const { noop } = require('../../utils');
 const format = require('../../common/format');
 const Modal = require('../ui/modal');
-const { UserTypeContext, ViewportContext } = require('../../context');
 
 class CreatorField extends React.PureComponent {
 	constructor(props) {
@@ -79,6 +77,10 @@ class CreatorField extends React.PureComponent {
 	}
 
 	handleModalOpen() {
+		const { device, isEditing } = this.props;
+		if(!device.shouldUseModalCreatorField) { return; }
+		if(device.shouldUseEditMode && !isEditing) { return; }
+
 		this.setState({ isModalVisible: true })
 	}
 
@@ -115,42 +117,50 @@ class CreatorField extends React.PureComponent {
 		return this.renderField('name', 'name');
 	}
 
-	renderField(name, label, inModal = false) {
-		const { isForm, creator } = this.props
+	renderEditable(name, input) {
+		const props = {
+			onClick: this.handleFieldClick.bind(this, name),
+			onFocus: this.handleFieldFocus.bind(this, name),
+			isActive: this.state.active === name,
+			input
+		};
+
+		return <Editable { ...props } />
+	}
+
+	renderFormField(name, label, inModal = false) {
+		const { isForm, creator } = this.props;
 		const shouldUseEditable = !isForm && !inModal;
-		const FormField = shouldUseEditable ? Editable : Input;
-		const extraProps = {
-			[shouldUseEditable ? 'inputRef' : 'ref']: component => this.fieldComponents[name] = component
+		const props = {
+			tabIndex: 0,
+			onClick: this.handleFieldClick.bind(this, name),
+			onFocus: this.handleFieldFocus.bind(this, name),
+			onCancel: this.handleCancel.bind(this),
+			onCommit: this.handleEditableCommit.bind(this, name),
+			placeholder: label,
+			value: creator[name],
+			'aria-label': label,
+			className: shouldUseEditable ? 'editable-control' : 'form-control form-control-sm',
+			isDisabled: this.props.readOnly,
+			resize: (!inModal && name === 'lastName') ? 'horizontal' : null,
+			ref: component => this.fieldComponents[name] = component
 		};
 
 		if(shouldUseEditable) {
-			extraProps['onEditableClick'] = this.handleFieldClick.bind(this, name);
-			extraProps['onEditableFocus'] = this.handleFieldFocus.bind(this, name);
-		} else {
-			extraProps['tabIndex'] = 0;
-			extraProps['onClick'] = this.handleFieldClick.bind(this, name);
-			extraProps['onFocus'] = this.handleFieldFocus.bind(this, name);
+			props['autoFocus'] = true;
+			props['selectOnFocus'] = true;
 		}
 
-		if(!inModal && name === 'lastName') {
-			extraProps['resize'] = 'horizontal';
-		}
+		return <Input { ...props } />
+	}
 
-		return (
-			<FormField
-				autoFocus={ shouldUseEditable }
-				isActive={ this.state.active === name }
-				onCancel={ this.handleCancel.bind(this) }
-				onCommit={ this.handleEditableCommit.bind(this, name) }
-				placeholder={ label }
-				selectOnFocus={ shouldUseEditable }
-				value={ creator[name] }
-				aria-label={ label }
-				className={ shouldUseEditable ? '' : 'form-control form-control-sm' }
-				isDisabled = { this.props.readOnly }
-				{ ...extraProps }
-			/>
-		);
+	renderField(name, label, inModal = false) {
+		const { isForm } = this.props;
+		const shouldUseEditable = !isForm && !inModal;
+		const formField = this.renderFormField(name, label, inModal);
+
+		return shouldUseEditable ? this.renderEditable(name, formField) : formField;
+
 	}
 
 	renderCreatorTypeSelector() {
@@ -259,112 +269,102 @@ class CreatorField extends React.PureComponent {
 	}
 
 	render() {
+		const {
+			creator,
+			device,
+			index,
+			isEditing,
+			isSingle,
+			isVirtual,
+			onDragStatusChange,
+			onReorder,
+			onReorderCancel,
+			onReorderCommit,
+			readOnly,
+		} = this.props;
+		const className = {
+			'creators-entry': true,
+			'creators-oneslot': 'name' in creator,
+			'creators-twoslot': 'lastName' in creator,
+			'creators-type-editing': this.state.isCreatorTypeActive,
+			'creators-modal-trigger': device.shouldUseModalCreatorField,
+			'metadata': true,
+			'single': isSingle,
+			'virtual': isVirtual
+		};
+
+		// raw formatted data for use in drag-n-drop indicator
+		const raw = { ...creator, creatorType: this.creatorLabel, }
+
 		return (
-		<UserTypeContext.Consumer>
-		{ userType => (
-		<ViewportContext.Consumer>
-		{ viewport => {
-			const shouldUseModalEdit = userType === 'touch' || viewport.xxs || viewport.xs || viewport.sm;
-			const {
-				creator,
-				index,
-				isSingle,
-				isVirtual,
-				isEditing,
-				onDragStatusChange,
-				onReorder,
-				onReorderCancel,
-				onReorderCommit,
-				readOnly,
-			} = this.props;
-			const className = {
-				'creators-entry': true,
-				'creators-oneslot': 'name' in creator,
-				'creators-twoslot': 'lastName' in creator,
-				'creators-type-editing': this.state.isCreatorTypeActive,
-				'creators-modal-trigger': shouldUseModalEdit,
-				'metadata': true,
-				'single': isSingle,
-				'virtual': isVirtual
-			};
-
-			// raw formatted data for use in drag-n-drop indicator
-			const raw = { ...creator, creatorType: this.creatorLabel, }
-
-			return (
+			<React.Fragment>
+			{ this.renderModal() }
+			<Field
+				className={ cx(this.props.className, className) }
+				index={ index }
+				isSortable={ !isSingle && !isVirtual && !readOnly }
+				key={ creator.id }
+				onClick={ this.handleModalOpen.bind(this) }
+				onReorder={ onReorder }
+				onReorderCancel={ onReorderCancel }
+				onReorderCommit={ onReorderCommit }
+				onDragStatusChange={ onDragStatusChange }
+				raw={ raw }
+				tabIndex = { isEditing ? 0 : null }
+			>
+				{ device.shouldUseModalCreatorField ?
+					<div className="truncate">{ this.creatorLabel }</div> :
+					this.renderCreatorTypeSelector()
+				}
 				<React.Fragment>
-				{ this.renderModal() }
-				<Field
-					className={ cx(this.props.className, className) }
-					index={ index }
-					isSortable={ !isSingle && !isVirtual && !readOnly }
-					key={ creator.id }
-					onClick={ shouldUseModalEdit && isEditing ? this.handleModalOpen.bind(this) : noop }
-					onReorder={ onReorder }
-					onReorderCancel={ onReorderCancel }
-					onReorderCommit={ onReorderCommit }
-					onDragStatusChange={ onDragStatusChange }
-					raw={ raw }
-					tabIndex = { isEditing ? 0 : null }
-				>
-					{ shouldUseModalEdit ?
-						<div className="truncate">{ this.creatorLabel }</div> :
-						this.renderCreatorTypeSelector()
+					{
+						device.shouldUseModalCreatorField ? (
+							<div className="truncate">
+								{ isVirtual ? this.isDual ? 'last name, first name' : 'name' :
+									format.creator(creator)
+								}
+							</div>
+						) : (
+							this.isDual ? this.renderDual() : this.renderSingle()
+						)
 					}
-					<React.Fragment>
-						{
-							shouldUseModalEdit ? (
-								<div className="truncate">
-									{ isVirtual ? this.isDual ? 'last name, first name' : 'name' :
-										format.creator(creator)
-									}
-								</div>
-							) : (
-								this.isDual ? this.renderDual() : this.renderSingle()
-							)
-						}
-						<Button
-							className="btn-single-dual"
-							onClick={ this.handleCreatorTypeSwitch.bind(this) }
-						>
-							<Icon type={ this.icon } width="20" height="20" />
-						</Button>
-						{
-							this.props.isDeleteAllowed ? (
-								<Button
-									className="btn-minus"
-									onClick={ this.handleCreatorRemove.bind(this) }
-								>
-									<Icon type={ '16/minus' } width="16" height="16" />
-								</Button>
-							) : (
-								<Button className="btn-minus" disabled={ true }>
-									<Icon type={ '16/minus' } width="16" height="16" />
-								</Button>
-							)
-						}
-						{
-							this.props.isCreateAllowed ? (
-								<Button
-									className="btn-plus"
-									onClick={ this.handleCreatorAdd.bind(this) }
-								>
-									<Icon type={ '16/plus' } width="16" height="16" />
-								</Button>
-							) : (
-								<Button className="btn-plus" disabled={ true }>
-									<Icon type={ '16/plus' } width="16" height="16" />
-								</Button>
-							)
-						}
-					</React.Fragment>
-				</Field>
+					<Button
+						className="btn-single-dual"
+						onClick={ this.handleCreatorTypeSwitch.bind(this) }
+					>
+						<Icon type={ this.icon } width="20" height="20" />
+					</Button>
+					{
+						this.props.isDeleteAllowed ? (
+							<Button
+								className="btn-minus"
+								onClick={ this.handleCreatorRemove.bind(this) }
+							>
+								<Icon type={ '16/minus' } width="16" height="16" />
+							</Button>
+						) : (
+							<Button className="btn-minus" disabled={ true }>
+								<Icon type={ '16/minus' } width="16" height="16" />
+							</Button>
+						)
+					}
+					{
+						this.props.isCreateAllowed ? (
+							<Button
+								className="btn-plus"
+								onClick={ this.handleCreatorAdd.bind(this) }
+							>
+								<Icon type={ '16/plus' } width="16" height="16" />
+							</Button>
+						) : (
+							<Button className="btn-plus" disabled={ true }>
+								<Icon type={ '16/plus' } width="16" height="16" />
+							</Button>
+						)
+					}
 				</React.Fragment>
-			);
-		}}
-		</ViewportContext.Consumer>
-		)}
-		</UserTypeContext.Consumer>
+			</Field>
+			</React.Fragment>
 		);
 	}
 

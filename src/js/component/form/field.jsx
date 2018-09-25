@@ -126,7 +126,6 @@ class Field extends React.PureComponent {
 		connectDragPreview: PropTypes.func,
 		connectDragSource: PropTypes.func,
 		connectDropTarget: PropTypes.func,
-		isActive: PropTypes.bool,
 		isDragging: PropTypes.bool,
 		isSortable: PropTypes.bool,
 		onDragStatusChange: PropTypes.func,

@@ -9,6 +9,7 @@ const {	updateItem, fetchItemTypeCreatorTypes, fetchItemTypeFields } = require('
 const { itemProp, hideFields, noEditFields, baseMappings } = require('../constants/item');
 const { get, reverseMap } = require('../utils');
 const { getItemFieldValue } = require('../common/state');
+const withDevice = require('../enhancers/with-device');
 
 class ItemBoxContainer extends React.PureComponent {
 	componentWillReceiveProps(props) {
@@ -144,12 +145,6 @@ const mapStateToProps = state => {
 	};
 };
 
-const mapDispatchToProps = dispatch => {
-	return {
-		dispatch
-	};
-};
-
 ItemBoxContainer.propTypes = {
 	creatorTypes: PropTypes.array,
 	creatorTypesLoading: PropTypes.bool,
@@ -160,7 +155,4 @@ ItemBoxContainer.propTypes = {
 	libraryKey: PropTypes.string
 };
 
-module.exports = connect(
-	mapStateToProps,
-	mapDispatchToProps
-)(ItemBoxContainer);
+module.exports = withDevice(connect(mapStateToProps)(ItemBoxContainer));
