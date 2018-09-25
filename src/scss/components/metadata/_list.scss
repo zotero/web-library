@@ -3,11 +3,8 @@
 // --------------------------------------------------
 
 .metadata-list {
-	margin: $metadata-list-margin;
-	margin-top: 23px - 12px;
-
-	@include bp-only(md) {
-		margin-top: -3px;
+	@include mouse-and-bp-up(md) {
+		margin-top: $space-sm;
 	}
 
 	&.editing {
