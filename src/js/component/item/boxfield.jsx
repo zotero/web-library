@@ -48,6 +48,7 @@ class BoxField extends React.PureComponent {
 			onFocus,
 			onBlur,
 			isBusy: field.processing || false,
+			isDisabled: this.isDisabled
 		};
 
 		return <Editable { ...props } />
