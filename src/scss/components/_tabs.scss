@@ -60,7 +60,19 @@
 .tab-pane {
 	@include touch-or-bp-down(sm) {
 		& + .tab-pane {
-			border-top: $space-min solid #fff;
+			border-top: $space-min solid $body-bg;
+		}
+	}
+
+	@include touch-and-bp-only(md) {
+		display: none;
+
+		&.active {
+			display: block;
+		}
+
+		& + .tab-pane {
+			border-top: 0;
 		}
 	}
 
