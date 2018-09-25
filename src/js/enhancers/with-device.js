@@ -10,15 +10,14 @@ const withDevice = Component => {
 		{ userType => (
 		<ViewportContext.Consumer>
 		{ viewport => {
-			const shouldUseEditMode = viewport.xxs || viewport.xs || viewport.sm;
-			const shouldUseCompactView = userType === 'touch' && (viewport.md || viewport.lg);
-			const shouldUseModalCreatorField = userType === 'touch' || viewport.xxs ||
-				viewport.xs || viewport.sm;
+			const shouldUseEditMode = userType === 'touch' || viewport.xxs || viewport.xs || viewport.sm;
+			// const shouldUseCompactView = userType === 'touch' && (viewport.md || viewport.lg);
+			const shouldUseModalCreatorField = shouldUseEditMode;
 			const device = {
 				viewport,
-				userType,
+				[userType]: true,
 				shouldUseEditMode,
-				shouldUseCompactView,
+				// shouldUseCompactView,
 				shouldUseModalCreatorField,
 			}
 			return <Component { ...props } device={ device } />

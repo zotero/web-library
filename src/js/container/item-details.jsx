@@ -176,7 +176,6 @@ const mapStateToProps = state => {
 		mapRelationsToItemKeys(item.relations, state.config.userId)
 			.map(key => get(state, ['libraries', libraryKey, 'items', key]))
 			.filter(item => item !== null) : [];
-	const isEditing = state.current.editing === item.key;
 
 	var itemsCount;
 
@@ -207,7 +206,6 @@ const mapStateToProps = state => {
 		collection: get(state, 'libraries', libraryKey, 'collections', collectionKey),
 		itemsCount,
 		selectedItemKeys: selectedItemKeys ? selectedItemKeys.split(',') : [],
-		isEditing
 	};
 };
 

@@ -4,13 +4,13 @@
 const React = require('react');
 const Panel = require('../../ui/panel');
 const { Tab, Tabs } = require('../../ui/tabs');
-const Button = require('../../ui/button');
 const InfoTabPane = require('./tab-panes/info');
 const NotesTabPane = require('./tab-panes/notes');
 const TagsTabPane = require('./tab-panes/tags');
 const AttachmentsTabPane = require('./tab-panes/attachments');
 const RelatedTabPane = require('./tab-panes/related');
 const StandaloneNoteTabPane = require('./tab-panes/standalone-note');
+const EditToggleButton = require('../../edit-toggle-button');
 
 class ItemDetailsTabs extends React.PureComponent {
 	state = {
@@ -42,7 +42,7 @@ class ItemDetailsTabs extends React.PureComponent {
 	}
 
 	render() {
-		const { isEditing, onEditModeToggle } = this.props;
+		const { device, isEditing, onEditModeToggle } = this.props;
 
 		return (
 			<Panel>
@@ -114,12 +114,7 @@ class ItemDetailsTabs extends React.PureComponent {
 							Related
 						</Tab>
 					</Tabs>
-						<Button
-							className="hidden-mouse-lg-up btn-edit"
-							onClick={ () => onEditModeToggle(!isEditing) }
-						>
-							{ isEditing ? "Done" : "Display Empty Fields" }
-						</Button>
+						<EditToggleButton className="hidden-mouse-lg-up btn-edit" />
 				</header>
 				{
 					!['attachment', 'note'].includes(this.props.item.itemType) && (
