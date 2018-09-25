@@ -8,8 +8,8 @@ const { connect } = require('react-redux');
 const {	updateItem, fetchItemTypeCreatorTypes, fetchItemTypeFields } = require('../actions');
 const { itemProp, hideFields, noEditFields, baseMappings } = require('../constants/item');
 const { get, reverseMap } = require('../utils');
-const { getItemFieldValue } = require('../common/state');
 const withDevice = require('../enhancers/with-device');
+const withEditMode = require('../enhancers/with-edit-mode');
 
 class ItemBoxContainer extends React.PureComponent {
 	componentWillReceiveProps(props) {
@@ -68,10 +68,44 @@ class ItemBoxContainer extends React.PureComponent {
 	}
 
 	render() {
-		return <ItemBox
-			onSave={ this.handleItemUpdated.bind(this, this.props.item) }
-			{ ...this.props }
-		/>;
+		const { isLoading, device, item, isEditing, itemTypeFields, itemTypes, itemTypeCreatorTypes, pendingChanges } = this.props;
+		if(isLoading) {
+			return <ItemBox isLoading />;
+		}
+		const titleField = item.itemType in baseMappings && baseMappings[item.itemType]['title'] || 'title';
+		const isForm = !!(device.shouldUseEditMode && isEditing && item);
+		const isReadOnlyMode = !!(device.shouldUseEditMode && !isEditing);
+		const aggregatedPatch = pendingChanges.reduce(
+			(aggr, { patch }) => ({...aggr, ...patch}), {}
+		);
+		const itemWithPendingChnages = { ...item, ...aggregatedPatch};
+
+		const fields = [
+			{ field: 'itemType', localized: 'Item Type' },
+			itemTypeFields[item.itemType].find(itf => itf.field === titleField),
+			{ field: 'creators', localized: 'Creators' },
+			...itemTypeFields[item.itemType].filter(itf => itf.field !== titleField)
+		].filter(e => e)
+		.map(f => ({
+			options: f.field === 'itemType' ? itemTypes : null,
+			key: f.field,
+			label: f.localized,
+			readOnly: isReadOnlyMode ? true : noEditFields.includes(f),
+			processing: pendingChanges.some(({ patch }) => f.field in patch),
+			value: itemWithPendingChnages[f.field] || null,
+		})).filter(f => !hideFields.includes(f.key)); //filter out undefined
+
+		const props = {
+			...this.props,
+			fields,
+			onSave: this.handleItemUpdated.bind(this, item),
+			item: item || undefined,
+			creatorTypes: itemTypeCreatorTypes,
+			isEditing,
+			isForm,
+		};
+
+		return <ItemBox { ... props } />;
 	}
 }
 
@@ -97,6 +131,8 @@ const mapStateToProps = state => {
 		};
 	}
 
+	const itemTypeFields = state.meta.itemTypeFields;
+
 	const itemTypes = state.meta.itemTypes
 		.map(it => ({
 			value: it.itemType,
@@ -110,39 +146,11 @@ const mapStateToProps = state => {
 			label: ct.localized
 		}));
 
-	const titleField = item.itemType in baseMappings && baseMappings[item.itemType]['title'] || 'title';
+	const pendingChanges = state.libraries[libraryKey].updating.items[itemKey] || [];
 
-	const fields = [
-		{ field: 'itemType', localized: 'Item Type' },
-		state.meta.itemTypeFields[item.itemType].find(itf => itf.field === titleField),
-		{ field: 'creators', localized: 'Creators' },
-		...state.meta.itemTypeFields[item.itemType].filter(itf => itf.field !== titleField)
-	].filter(e => e); //filter out undefined
-
-	//@TODO: Refactor
-	const isExpicitEdit = !!(state.viewport.xxs || state.viewport.xs || state.viewport.sm); //@TODO: also for userType == touch?
-	const isEditing = state.current.editing === item.key;
-	const isForm = !!(isExpicitEdit && isEditing && item);
-	const isReadOnlyMode = !!(isExpicitEdit && !isEditing);
-
-	//@TODO: Refactor
 	return {
-		fields: fields.map(f => ({
-				options: f.field === 'itemType' ? itemTypes : null,
-				key: f.field,
-				label: f.localized,
-				readOnly: isReadOnlyMode ? true : noEditFields.includes(f),
-				processing: get(
-					state,
-					['libraries', libraryKey, 'updating', 'items', item.key], []
-				).some(({ patch }) => f.field in patch),
-				value: getItemFieldValue(f.field, state)
-		})).filter(f => !hideFields.includes(f.key)),
-		item: item || undefined,
-		creatorTypes: itemTypeCreatorTypes,
-		isEditing,
-		isForm,
-	};
+		item, itemTypeFields, itemTypes, itemTypeCreatorTypes, pendingChanges
+	}
 };
 
 ItemBoxContainer.propTypes = {
@@ -155,4 +163,8 @@ ItemBoxContainer.propTypes = {
 	libraryKey: PropTypes.string
 };
 
-module.exports = withDevice(connect(mapStateToProps)(ItemBoxContainer));
+ItemBoxContainer.defaultProps = {
+	pendingChanges: []
+}
+
+module.exports = withDevice(withEditMode(connect(mapStateToProps)(ItemBoxContainer)));

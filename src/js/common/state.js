@@ -21,19 +21,9 @@ const getCollectionsPath = (state) => {
 	return path.reverse();
 };
 
-const getItemFieldValue = (field, state) => {
-	const libraryKey = state.current.library;
-	const itemKey = state.current.item;
-	const item = get(state, ['libraries', libraryKey, 'items', itemKey]);
-	const pendingChanges = get(state, ['libraries', libraryKey, 'updating', 'items', itemKey], []);
-	const aggregatedPatch = pendingChanges.reduce((aggr, { patch }) => ({...aggr, ...patch}), {});
-
-	return { ...item, ...aggregatedPatch}[field] || null;
-};
-
 const getSerializedQuery = ({ collection = null, tag = [], q = null } = {}) => {
 	return `${collection}-${tag.join('-')}-${q}`;
 }
 
 
-module.exports = { getCollectionsPath, getItemFieldValue, getSerializedQuery };
+module.exports = { getCollectionsPath, getSerializedQuery };

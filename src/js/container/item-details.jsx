@@ -10,7 +10,7 @@ const { createItem, updateItem, deleteItem, fetchItemTemplate, fetchChildItems, 
 const { itemProp } = require('../constants/item');
 const { get, deduplicateByKey, mapRelationsToItemKeys, removeRelationByItemKey } = require('../utils');
 const { makePath } = require('../common/navigation');
-const TriggersEditMode = require('../enhancers/triggers-edit-mode');
+const withEditMode = require('../enhancers/with-edit-mode');
 
 class ItemDetailsContainer extends React.Component {
 	state = {
@@ -217,4 +217,4 @@ ItemDetailsContainer.propTypes = {
 	dispatch: PropTypes.func.isRequired
 };
 
-module.exports = withRouter(connect(mapStateToProps)(TriggersEditMode(ItemDetailsContainer)));
+module.exports = withRouter(withEditMode(connect(mapStateToProps)(ItemDetailsContainer)));

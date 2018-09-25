@@ -10,7 +10,7 @@ const { getCollectionsPath } = require('../common/state');
 const TouchHeader = require('../component/touch-header');
 const memoize = require('memoize-one');
 const { makePath } = require('../common/navigation');
-const TriggersEditMode = require('../enhancers/triggers-edit-mode');
+const withEditMode = require('../enhancers/with-edit-mode');
 
 class TouchHeaderContainer extends React.Component {
 	makeTouchHeaderPath = memoize((path, startAt, item) => {
@@ -110,6 +110,6 @@ const mapStateToProps = state => {
 	};
 };
 
-const TouchHeaderWrapped = withRouter(connect(mapStateToProps)(TriggersEditMode(TouchHeaderContainer)));
+const TouchHeaderWrapped = withRouter(withEditMode(connect(mapStateToProps)(TouchHeaderContainer)));
 
 module.exports = TouchHeaderWrapped;

@@ -4,7 +4,7 @@ const React = require('react');
 const { connect } = require('react-redux');
 const { triggerEditingItem } = require('../actions');
 
-var TriggersEditMode = ComposedComponent => connect(mapStateToProps)(
+var withEditMode = Component => connect(mapStateToProps)(
 	class extends React.PureComponent {
 		onEditModeToggle(isEditing) {
 			this.props.dispatch(
@@ -13,11 +13,14 @@ var TriggersEditMode = ComposedComponent => connect(mapStateToProps)(
 		}
 
 		render() {
-			return <ComposedComponent
+			return <Component
 				onEditModeToggle={ this.onEditModeToggle.bind(this) }
 				{...this.props }
 			/>;
 		}
+
+		static displayName = `withEditMode(${Component.displayName || Component.name})`
+		static WrappedComponent = Component;
 	}
 );
 
@@ -26,4 +29,4 @@ const mapStateToProps = state => ({
 	isEditing: state.current.item ? state.current.editing === state.current.item : false,
 })
 
-module.exports = TriggersEditMode;
+module.exports = withEditMode;
