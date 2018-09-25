@@ -32,11 +32,25 @@
 		padding: 0 $default-padding-x;
 	}
 
+	.abstract {
+		@include touch-or-bp-down(sm) {
+			padding: 0 $default-padding-x-touch;
+		}
+
+		@include mouse-and-bp-up(md) {
+			padding: 0 $default-padding-x;
+		}
+	}
+
 	.abstract-heading {
 		@include touch-or-bp-down(sm) {
 			margin-top: 9px;
 			border-top: $separator-width solid $separator-color;
 			padding-top: 11px;
+		}
+
+		@include bp-down-normalized(xs) {
+			display: none;
 		}
 
 		@include mouse-and-bp-up(md) {
