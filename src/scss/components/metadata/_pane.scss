@@ -23,9 +23,9 @@
 			content: "";
 			position: absolute;
 			width: $border-width;
-			height: calc(100% - #{ 2 * $default-padding-x - $space-min});
+			height: 100%;
 			left: calc(50% - #{$border-width});
-			top: $default-padding-x;
+			top: 0;
 			background: #ddd;
 		}
 	}
@@ -38,9 +38,9 @@
 	}
 
 	.item-title {
-		//border-bottom: $separator-width solid $separator-color;
+		border-bottom: $separator-width solid $separator-color;
 		padding-bottom: 10px;
-		margin: 10px $default-padding-x-touch 9px;
+		margin: 27px $default-padding-x-touch 21px;
 	}
 
 	.tab-pane-heading {
@@ -49,48 +49,56 @@
 
 	.abstract {
 		@include touch-or-bp-down(sm) {
-			padding: 0 $default-padding-x-touch;
+			margin: 0 $default-padding-x-touch;
 		}
 
 		@include mouse-and-bp-up(md) {
-			padding: 0 $default-padding-x;
-		}
-	}
-
-	.abstract-heading {
-		@include mouse-and-bp-up(md) {
-			font-size: $font-size-base;
-			line-height: $line-height-base;
-			color: $key-color;
-			margin-top: 0;
-			padding-top: 0;
-			margin-bottom: 0;
+			margin: 0 $default-padding-x;
 		}
 
 		@include mouse-and-bp-only(lg) {
 			margin-top: 15px - 7px;
-			padding-top: 15px - 6px;
 			border-top: 1px solid $metadata-separator-color;
 		}
 
-		//@include touch-or-bp-down(sm) {
-		//	margin-top: 9px;
-		//	border-top: $separator-width solid $separator-color;
-		//	padding-top: 11px;
-		//}
-		//
-		//@include bp-down-normalized(xs) {
-		//	display: none;
-		//}
-		//
-		//@include mouse-and-bp-up(md) {
-		//	margin-top: 23px - 7px;
-		//	border-top: $separator-width solid $separator-color;
-		//	padding-top: 23px - 4px;
-		//}
+		&.empty {
+			@include mouse-and-bp-only(md) {
+				padding-top: 14px;
+			}
+
+			@include mouse-and-bp-only(lg) {
+				padding-top: 9px; // metadata-list spacing
+			}
+		}
+	}
+
+	.abstract-heading {
+		color: $key-color;
+
+		@include mouse-and-bp-up(md) {
+			font-size: $font-size-base;
+			line-height: $metadata-list-line-height;
+			margin-top: $space-sm;
+			margin-bottom: 0;
+			padding-bottom: 2px; // Use padding to bypass collapsing margins
+		}
+
+		@include mouse-and-bp-only(lg) {
+			margin-top: 15px - 8px;
+			margin-bottom: 0;
+			padding-bottom: 2px; // Use padding to bypass collapsing margins
+		}
+
+		@include state(".empty .abstract-heading") {
+			display: none;
+		}
 	}
 
 	.abstract-body {
 		margin-bottom: 1em;
+
+		.textarea {
+
+		}
 	}
 }

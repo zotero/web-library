@@ -70,6 +70,11 @@
 
 	// Textarea
 	&.textarea {
+		&.editing {
+			margin-top: 2px; // Compensate missing padding on editable-control
+			margin-bottom: 2px; // …
+		}
+
 		.editable-content,
 		.editable-control {
 			line-height: $line-height-base;

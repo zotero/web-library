@@ -331,6 +331,10 @@
 			min-height: $metadata-list-line-height-sm;
 		}
 
+		@include touch-and-bp-up(md) {
+			min-height: $metadata-list-line-height-sm;
+		}
+
 		// Edit mode
 		@include state(".metadata-list.editing") {
 			@include touch-or-bp-down(sm) {
@@ -447,11 +451,6 @@
 			}
 
 			&.textarea {
-				&.editing {
-					margin-top: 2px; // Compensate missing padding on editable-control
-					margin-bottom: 2px; // …
-				}
-
 				.editable-content {
 					padding: 0 $editable-padding;
 					margin-top: 1px; // Align vertically with label
