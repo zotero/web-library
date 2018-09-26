@@ -4,10 +4,24 @@ const React = require('react');
 const cx = require('classnames');
 const ItemBoxContainer = require('../../../../container/item-box');
 const EditToggleButton = require('../../../edit-toggle-button');
+const Editable = require('../../../editable');
+const TextAreaInput = require('../../../form/text-area');
+const withDevice = require('../../../../enhancers/with-device');
 
 class InfoTabPane extends React.PureComponent {
+	state = {
+		isActive: false
+	}
+
+	handleCommit(newValue) {
+		this.props.onSave('abstractNote', newValue);
+		this.setState({ isActive: false });
+	}
+
 	render() {
-		const { isActive, isEditing, item } = this.props;
+		const { isActive, isEditing, item, device, pendingChanges } = this.props;
+		const placeholder = !device.shouldUseEditMode || (device.shouldUseEditMode && isEditing) ?
+			'Add abstract…' : '';
 
 		return (
 			<div className={ cx({
@@ -25,15 +39,27 @@ class InfoTabPane extends React.PureComponent {
 						}
 						<EditToggleButton className="hidden-mouse hidden-touch-md-down" />
 						<ItemBoxContainer
-							item={ item }
+							{ ...this.props }
 							hiddenFields={ [ 'abstractNote' ] }
 						/>
 					</div>
 					<div className="col">
 						<section className="abstract">
-							<h6 className="h2 abstract-heading">Abstract</h6>
+							<h6 className="h2 abstract-heading">
+								{ item.abstractNote && "Abstract" }
+							</h6>
 							<div className="abstract-body">
-								{ item.abstractNote }
+								<Editable
+									autoFocus
+									isActive={ this.state.isActive }
+									onClick={ () => this.setState({ isActive: true }) }
+									onCommit={ this.handleCommit.bind(this) }
+									onCancel={ () => this.setState({ isActive: false }) }
+									isBusy={ pendingChanges.some(({ patch }) => 'abstractNote' in patch) }
+									inputComponent={ TextAreaInput }
+									value={ item.abstractNote }
+									placeholder={ placeholder }
+								/>
 							</div>
 						</section>
 					</div>
@@ -43,4 +69,4 @@ class InfoTabPane extends React.PureComponent {
 	}
 }
 
-module.exports = InfoTabPane;
+module.exports = withDevice(InfoTabPane);

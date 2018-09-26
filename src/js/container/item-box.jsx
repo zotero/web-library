@@ -20,53 +20,6 @@ class ItemBoxContainer extends React.PureComponent {
 		}
 	}
 
-	async handleItemUpdated(item, fieldKey, newValue) {
-		var patch = {
-			[fieldKey]: newValue
-		};
-
-		// when changing itemType, map fields to base types and back to item-specific types
-		if(fieldKey === 'itemType') {
-			const baseValues = {};
-			if(item.itemType in baseMappings) {
-				const namedToBaseMap = reverseMap(baseMappings[item.itemType]);
-				Object.keys(item).forEach(fieldName => {
-					if(fieldName in namedToBaseMap) {
-						if(item[fieldName].toString().length > 0) {
-							baseValues[namedToBaseMap[fieldName]] = item[fieldName];
-						}
-					}
-				});
-			}
-
-			patch = { ...patch, ...baseValues };
-
-			if(newValue in baseMappings) {
-				const namedToBaseMap = baseMappings[newValue];
-				const itemWithBaseValues = { ...item, ...baseValues };
-				Object.keys(itemWithBaseValues).forEach(fieldName => {
-					if(fieldName in namedToBaseMap) {
-						patch[namedToBaseMap[fieldName]] = itemWithBaseValues[fieldName];
-						patch[fieldName] = '';
-					}
-				});
-			}
-
-			const targetTypeCreatorTypes = await this.props.dispatch(fetchItemTypeCreatorTypes(item.itemType));
-
-			//convert item creators to match creators appropriate for this item type
-			if(item.creators && Array.isArray(item.creators)) {
-				for(var creator of item.creators) {
-					if(typeof targetTypeCreatorTypes.find(c => c.creatorType === creator.creatorType) === 'undefined') {
-						creator.creatorType = targetTypeCreatorTypes[0].creatorType;
-					}
-				}
-			}
-		}
-
-		await this.props.dispatch(updateItem(item.key, patch));
-	}
-
 	render() {
 		const { isLoading, device, item, isEditing, itemTypeFields, itemTypes, itemTypeCreatorTypes, pendingChanges } = this.props;
 		if(isLoading) {
@@ -98,7 +51,6 @@ class ItemBoxContainer extends React.PureComponent {
 		const props = {
 			...this.props,
 			fields,
-			onSave: this.handleItemUpdated.bind(this, item),
 			item: item || undefined,
 			creatorTypes: itemTypeCreatorTypes,
 			isEditing,

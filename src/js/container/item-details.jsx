@@ -6,9 +6,9 @@ const PropTypes = require('prop-types');
 const ItemDetails = require('../component/item/details');
 const { withRouter } = require('react-router-dom');
 const { connect } = require('react-redux');
-const { createItem, updateItem, deleteItem, fetchItemTemplate, fetchChildItems, uploadAttachment, fetchItems } = require('../actions');
-const { itemProp } = require('../constants/item');
-const { get, deduplicateByKey, mapRelationsToItemKeys, removeRelationByItemKey } = require('../utils');
+const { createItem, updateItem, deleteItem, fetchItemTemplate, fetchChildItems, uploadAttachment, fetchItems, fetchItemTypeCreatorTypes } = require('../actions');
+const { itemProp, baseMappings } = require('../constants/item');
+const { get, deduplicateByKey, mapRelationsToItemKeys, removeRelationByItemKey, reverseMap } = require('../utils');
 const { makePath } = require('../common/navigation');
 const withEditMode = require('../enhancers/with-edit-mode');
 
@@ -48,6 +48,54 @@ class ItemDetailsContainer extends React.Component {
 			}, {});
 			this.setState({ attachentViewUrls });
 		}
+	}
+
+	async handleItemUpdated(fieldKey, newValue) {
+		const item = this.props.item;
+		var patch = {
+			[fieldKey]: newValue
+		};
+
+		// when changing itemType, map fields to base types and back to item-specific types
+		if(fieldKey === 'itemType') {
+			const baseValues = {};
+			if(item.itemType in baseMappings) {
+				const namedToBaseMap = reverseMap(baseMappings[item.itemType]);
+				Object.keys(item).forEach(fieldName => {
+					if(fieldName in namedToBaseMap) {
+						if(item[fieldName].toString().length > 0) {
+							baseValues[namedToBaseMap[fieldName]] = item[fieldName];
+						}
+					}
+				});
+			}
+
+			patch = { ...patch, ...baseValues };
+
+			if(newValue in baseMappings) {
+				const namedToBaseMap = baseMappings[newValue];
+				const itemWithBaseValues = { ...item, ...baseValues };
+				Object.keys(itemWithBaseValues).forEach(fieldName => {
+					if(fieldName in namedToBaseMap) {
+						patch[namedToBaseMap[fieldName]] = itemWithBaseValues[fieldName];
+						patch[fieldName] = '';
+					}
+				});
+			}
+
+			const targetTypeCreatorTypes = await this.props.dispatch(fetchItemTypeCreatorTypes(item.itemType));
+
+			//convert item creators to match creators appropriate for this item type
+			if(item.creators && Array.isArray(item.creators)) {
+				for(var creator of item.creators) {
+					if(typeof targetTypeCreatorTypes.find(c => c.creatorType === creator.creatorType) === 'undefined') {
+						creator.creatorType = targetTypeCreatorTypes[0].creatorType;
+					}
+				}
+			}
+		}
+
+		await this.props.dispatch(updateItem(item.key, patch));
 	}
 
 	async handleNoteChange(key, note) {
@@ -155,6 +203,7 @@ class ItemDetailsContainer extends React.Component {
 				onDeleteAttachment = { this.handleDeleteAttachment.bind(this) }
 				onRelatedItemSelect = { this.handleRelatedItemSelect.bind(this) }
 				onRelatedItemDelete = { this.handleRelatedItemDelete.bind(this) }
+				onSave = { this.handleItemUpdated.bind(this) }
 				{ ...this.props }
 				{ ...this.state }
 			/>;
@@ -195,8 +244,10 @@ const mapStateToProps = state => {
 	}
 
 	const selectedItemKeys = get(state, 'router.params.items');
+	const pendingChanges = get(state, ['libraries', libraryKey, 'updating', 'items', itemKey]) || [];
 
 	return {
+		pendingChanges,
 		libraryKey,
 		item,
 		config: state.config,

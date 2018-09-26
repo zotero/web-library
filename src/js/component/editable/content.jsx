@@ -9,9 +9,7 @@ const Select = require('../form/select');
 
 class EditableContent extends React.PureComponent {
 	get content() {
-		const { input } = this.props;
-		const value = this.props.value || input && input.props.value;
-		return escapeHtml(value).replace(/\n/g, '<br />');
+		return escapeHtml(this.displayValue).replace(/\n/g, '<br />');
 	}
 
 	get hasValue() {
@@ -57,7 +55,8 @@ class EditableContent extends React.PureComponent {
 	}
 
 	static defaultProps = {
-		value: ''
+		value: '',
+		placeholder: ''
 	};
 
 	static propTypes = {
