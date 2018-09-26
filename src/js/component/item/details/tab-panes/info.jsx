@@ -51,6 +51,7 @@ class InfoTabPane extends React.PureComponent {
 							<div className="abstract-body">
 								<Editable
 									autoFocus
+									resize='vertical'
 									isActive={ this.state.isActive }
 									onClick={ () => this.setState({ isActive: true }) }
 									onCommit={ this.handleCommit.bind(this) }
