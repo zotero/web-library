@@ -44,7 +44,7 @@ class InfoTabPane extends React.PureComponent {
 						/>
 					</div>
 					<div className="col">
-						<section className={ cx('abstract', !item.abstractNote && 'empty') }>
+						<section className={ cx('abstract', !item.abstractNote && 'empty-abstract') }>
 							<h6 className="h2 abstract-heading">
 								Abstract
 							</h6>

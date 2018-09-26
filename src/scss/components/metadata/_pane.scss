@@ -3,18 +3,6 @@
 // --------------------------------------------------
 
 .info {
-	//.info-wrapper {
-	//	align-items: center;
-	//	display: flex;
-	//	flex-direction: column;
-	//	height: 100%;
-	//	justify-content: center;
-	//
-	//	.info {
-	//		flex: 0 0 content;
-	//	}
-	//}
-
 	@include bp-only(md) {
 		position: relative;
 		min-height: 100%;
@@ -61,7 +49,7 @@
 			border-top: 1px solid $metadata-separator-color;
 		}
 
-		&.empty {
+		&.empty-abstract {
 			@include mouse-and-bp-only(md) {
 				padding-top: 14px;
 			}
@@ -80,25 +68,21 @@
 			line-height: $metadata-list-line-height;
 			margin-top: $space-sm;
 			margin-bottom: 0;
-			padding-bottom: 2px; // Use padding to bypass collapsing margins
+			padding-bottom: 2px;
 		}
 
 		@include mouse-and-bp-only(lg) {
 			margin-top: 15px - 8px;
 			margin-bottom: 0;
-			padding-bottom: 2px; // Use padding to bypass collapsing margins
+			padding-bottom: 2px;
 		}
 
-		@include state(".empty .abstract-heading") {
+		@include state(".empty-abstract .abstract-heading") {
 			display: none;
 		}
 	}
 
 	.abstract-body {
 		margin-bottom: 1em;
-
-		.textarea {
-
-		}
 	}
 }

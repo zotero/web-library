@@ -427,40 +427,9 @@
 
 	@include mouse-and-bp-up(md) {
 		.editable {
-			line-height: normal;
-
-			.editable-content {
-				padding: $editable-padding;
-				border: $input-border-width solid transparent;
-				width: calc(100% + #{2 * $editable-border-width});
-				margin: -$editable-border-width;
-				border-radius: $editable-border-radius;
-				cursor: pointer;
-
-				@include state(".empty .editable") {
-					&:before {
-						content: "\00a0";
-					}
-				}
-			}
-
-			&:hover {
-				.editable-content {
-					background-color: $editable-hover-bg; // Use transparency so you can see through the comma between last and first name
-				}
-			}
-
 			&.textarea {
-				.editable-content {
-					padding: 0 $editable-padding;
-					margin-top: 1px; // Align vertically with label
-					margin-bottom: 1px; // …
-				}
-
-				.editable-control {
-					margin-top: -3px; // Align vertically with label
-					margin-bottom: -3px; // …
-				}
+				margin-top: round(($metadata-list-line-height - $font-size-base * $line-height-base) / 2); // Align vertically with label
+				margin-bottom: round(($metadata-list-line-height - $font-size-base * $line-height-base) / 2); // …
 			}
 		}
 	}
