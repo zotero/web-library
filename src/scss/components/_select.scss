@@ -134,6 +134,7 @@
 
 	.Select-option {
 		cursor: pointer;
+		color: $text-color;
 
 		&.is-focused {
 			background-color: $menu-item-hover-bg;
