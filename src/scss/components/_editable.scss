@@ -43,7 +43,9 @@
 		cursor: pointer;
 
 		@include state(".editable:hover") {
-			background-color: $editable-hover-bg; // Use transparency so you can see through the comma between last and first name
+			@include mouse-and-bp-up(md) {
+				background-color: $editable-hover-bg; // Use transparency so you can see through the comma between last and first name
+			}
 		}
 
 		@include state(".empty .editable") {
