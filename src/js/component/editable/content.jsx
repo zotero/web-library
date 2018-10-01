@@ -8,10 +8,6 @@ const TextAreaInput = require('../form/text-area');
 const Select = require('../form/select');
 
 class EditableContent extends React.PureComponent {
-	get content() {
-		return escapeHtml(this.displayValue).replace(/\n/g, '<br />');
-	}
-
 	get hasValue() {
 		const { input, value } = this.props;
 		return !!(value || input && input.props.value);
@@ -20,6 +16,11 @@ class EditableContent extends React.PureComponent {
 	get isSelect() {
 		const { input, inputComponent } = this.props;
 		return inputComponent === Select || input && input.type == Select;
+	}
+
+	get isTextarea() {
+		const { input, inputComponent } = this.props;
+		return inputComponent === TextAreaInput || input && input.type === TextAreaInput;
 	}
 
 	get displayValue() {
@@ -34,23 +35,26 @@ class EditableContent extends React.PureComponent {
 			return displayValue ? displayValue.label : value;
 		}
 
-		return value;
+		if(this.isTextarea) {
+			return escapeHtml(value).replace(/\n/g, '<br />');
+		} else {
+			return value;
+		}
 	}
 
 	render() {
-		const { input, inputComponent } = this.props;
+		const className = {
+			'editable-content': true,
+			'placeholder': !this.hasValue && this.props.placeholder
+		};
 
-		if(inputComponent === TextAreaInput || input && input.type === TextAreaInput) {
-			return <div className="editable-content"
-				dangerouslySetInnerHTML={ { __html: this.content } } />;
+		if(this.isTextarea) {
+			return <div
+				className={ cx(className) }
+				dangerouslySetInnerHTML={ { __html: this.displayValue } }
+			/>;
 		} else {
-			const className = {
-				'editable-content': true,
-				'placeholder': !this.hasValue && this.props.placeholder
-			};
-			return (
-				<div className={ cx(className) }>{ this.displayValue }</div>
-			);
+			return <div className={ cx(className) }>{ this.displayValue }</div>;
 		}
 	}
 
