@@ -24,8 +24,9 @@ class EditableContent extends React.PureComponent {
 	}
 
 	get displayValue() {
-		const { options, display, placeholder, input } = this.props;
+		const { options, display, input } = this.props;
 		const value = this.props.value || input && input.props.value;
+		const placeholder = this.props.placeholder || input && input.props.placeholder;
 
 		if(!this.hasValue) { return placeholder; }
 		if(display) { return display; }
@@ -45,7 +46,7 @@ class EditableContent extends React.PureComponent {
 	render() {
 		const className = {
 			'editable-content': true,
-			'placeholder': !this.hasValue && this.props.placeholder
+			'placeholder': !this.hasValue
 		};
 
 		if(this.isTextarea) {
