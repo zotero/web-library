@@ -11,6 +11,7 @@ const { itemProp, baseMappings } = require('../constants/item');
 const { get, deduplicateByKey, mapRelationsToItemKeys, removeRelationByItemKey, reverseMap } = require('../utils');
 const { makePath } = require('../common/navigation');
 const withEditMode = require('../enhancers/with-edit-mode');
+const withDevice = require('../enhancers/with-device');
 
 class ItemDetailsContainer extends React.Component {
 	state = {
@@ -192,6 +193,11 @@ class ItemDetailsContainer extends React.Component {
 	}
 
 	render() {
+		const { isEditing, device, item } = this.props;
+		const isForm = !!(device.shouldUseEditMode && isEditing && item);
+		const isReadOnlyMode = !!(device.shouldUseEditMode && !isEditing);
+		const extraProps = { isForm, isReadOnlyMode };
+
 		return <ItemDetails
 				onNoteChange={ this.handleNoteChange.bind(this) }
 				onAddNote={ this.handleAddNote.bind(this) }
@@ -206,6 +212,7 @@ class ItemDetailsContainer extends React.Component {
 				onSave = { this.handleItemUpdated.bind(this) }
 				{ ...this.props }
 				{ ...this.state }
+				{ ...extraProps }
 			/>;
 	}
 }
@@ -266,4 +273,4 @@ ItemDetailsContainer.propTypes = {
 	dispatch: PropTypes.func.isRequired
 };
 
-module.exports = withRouter(withEditMode(connect(mapStateToProps)(ItemDetailsContainer)));
+module.exports = withRouter(withDevice(withEditMode(connect(mapStateToProps)(ItemDetailsContainer))));

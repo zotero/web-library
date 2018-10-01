@@ -5,10 +5,9 @@ const React = require('react');
 const PropTypes = require('prop-types');
 const ItemBox = require('../component/item/box');
 const { connect } = require('react-redux');
-const {	updateItem, fetchItemTypeCreatorTypes, fetchItemTypeFields } = require('../actions');
+const {	fetchItemTypeCreatorTypes, fetchItemTypeFields } = require('../actions');
 const { itemProp, hideFields, noEditFields, baseMappings } = require('../constants/item');
-const { get, reverseMap } = require('../utils');
-const withDevice = require('../enhancers/with-device');
+const { get } = require('../utils');
 const withEditMode = require('../enhancers/with-edit-mode');
 
 class ItemBoxContainer extends React.PureComponent {
@@ -21,13 +20,14 @@ class ItemBoxContainer extends React.PureComponent {
 	}
 
 	render() {
-		const { isLoading, device, item, isEditing, itemTypeFields, itemTypes, itemTypeCreatorTypes, pendingChanges } = this.props;
+		const { isLoading, isReadOnlyMode, item, isEditing, itemTypeFields, itemTypes,
+			itemTypeCreatorTypes, pendingChanges } = this.props;
+
 		if(isLoading) {
 			return <ItemBox isLoading />;
 		}
 		const titleField = item.itemType in baseMappings && baseMappings[item.itemType]['title'] || 'title';
-		const isForm = !!(device.shouldUseEditMode && isEditing && item);
-		const isReadOnlyMode = !!(device.shouldUseEditMode && !isEditing);
+
 		const aggregatedPatch = pendingChanges.reduce(
 			(aggr, { patch }) => ({...aggr, ...patch}), {}
 		);
@@ -53,8 +53,7 @@ class ItemBoxContainer extends React.PureComponent {
 			fields,
 			item: item || undefined,
 			creatorTypes: itemTypeCreatorTypes,
-			isEditing,
-			isForm,
+			isEditing
 		};
 
 		return <ItemBox { ... props } />;
@@ -119,4 +118,4 @@ ItemBoxContainer.defaultProps = {
 	pendingChanges: []
 }
 
-module.exports = withDevice(withEditMode(connect(mapStateToProps)(ItemBoxContainer)));
+module.exports = withEditMode(connect(mapStateToProps)(ItemBoxContainer));
