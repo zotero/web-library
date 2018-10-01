@@ -7,6 +7,16 @@ const EditToggleButton = require('../../../edit-toggle-button');
 const Abstract = require('../../abstract');
 
 class InfoTabPane extends React.PureComponent {
+	get className() {
+		const { item, isEditing } = this.props;
+
+		return cx({
+			'empty-abstract': !item.abstractNote,
+			abstract: true,
+			editing: isEditing,
+		});
+	}
+
 	render() {
 		const { isActive, isEditing, item } = this.props;
 
@@ -31,7 +41,7 @@ class InfoTabPane extends React.PureComponent {
 						/>
 					</div>
 					<div className="col">
-						<section className={ cx('abstract', !item.abstractNote && 'empty-abstract') }>
+						<section className={ this.className }>
 							<h6 className="h2 abstract-heading">
 								Abstract
 							</h6>

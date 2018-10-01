@@ -10,8 +10,14 @@ class Abstract extends React.PureComponent {
 		isActive: false
 	}
 
-	handleCommit(newValue) {
-		this.props.onSave('abstractNote', newValue);
+	handleMakeActive() {
+		this.setState({ isActive: true });
+	}
+
+	handleCommit(newValue, hasChanged) {
+		if(hasChanged) {
+			this.props.onSave('abstractNote', newValue);
+		}
 		this.setState({ isActive: false });
 	}
 
@@ -31,17 +37,19 @@ class Abstract extends React.PureComponent {
 	}
 
 	renderEditable(input) {
+		const { device, isEditing } = this.props;
 		return <Editable
-			autoFocus
-			isBusy={ this.isBusy }
-			isActive={ this.state.isActive }
-			onClick={ () => this.setState({ isActive: true }) }
 			input={ input }
-		/>
+			isActive={ this.state.isActive }
+			isBusy={ this.isBusy }
+			isDisabled={ device.shouldUseEditMode && !isEditing }
+			onClick={ this.handleMakeActive.bind(this) }
+			onFocus={ this.handleMakeActive.bind(this) }
+		/>;
 	}
 
 	renderFormField() {
-		const { pendingChanges, item } = this.props;
+		const { pendingChanges, item, isForm } = this.props;
 		const aggregatedPatch = pendingChanges.reduce(
 			(aggr, { patch }) => ({...aggr, ...patch}), {}
 		);
@@ -49,12 +57,15 @@ class Abstract extends React.PureComponent {
 
 		return (
 			<TextAreaInput
-				resize='vertical'
-				onCommit={ this.handleCommit.bind(this) }
-				onCancel={ () => this.setState({ isActive: false }) }
+				autoFocus={ !isForm }
 				isBusy={ this.isBusy }
-				value={ itemWithPendingChnages.abstractNote }
+				onCancel={ () => this.setState({ isActive: false }) }
+				onCommit={ this.handleCommit.bind(this) }
 				placeholder={ this.placeholder }
+				resize='vertical'
+				selectOnFocus={ !isForm }
+				tabIndex={ isForm ? 0 : null }
+				value={ itemWithPendingChnages.abstractNote }
 			/>
 		);
 	}
