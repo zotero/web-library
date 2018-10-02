@@ -48,6 +48,10 @@
 			}
 		}
 
+		&.placeholder {
+			color: $placeholder-color;
+		}
+
 		@include state(".empty .editable") {
 			&:before {
 				content: "\00a0";

@@ -188,10 +188,6 @@
 					color: transparent; // Hide
 				}
 
-				.placeholder {
-					color: $placeholder-color;
-				}
-
 				&:first-child {
 					@include state(".creators-entry.creators-twoslot") {
 						display: flex;
