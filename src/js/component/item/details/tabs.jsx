@@ -114,7 +114,11 @@ class ItemDetailsTabs extends React.PureComponent {
 							Related
 						</Tab>
 					</Tabs>
-						<EditToggleButton className="hidden-mouse-lg-up btn-edit" />
+						{
+							this.state.tab === 'info' && (
+								<EditToggleButton className="hidden-mouse-lg-up btn-edit" />
+							)
+						}
 				</header>
 				{
 					!['attachment', 'note'].includes(this.props.item.itemType) && (
