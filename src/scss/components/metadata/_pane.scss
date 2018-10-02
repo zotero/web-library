@@ -3,6 +3,10 @@
 // --------------------------------------------------
 
 .info {
+	@include touch-or-bp-down(sm) {
+		padding-bottom: $space-lg - 8px;
+	}
+
 	@include bp-only(md) {
 		position: relative;
 		min-height: 100%;
@@ -50,6 +54,12 @@
 		}
 
 		&.empty-abstract {
+			&:not(.editing) {
+				@include touch-or-bp-down(sm) {
+					display: none;
+				}
+			}
+
 			@include mouse-and-bp-only(md) {
 				padding-top: 14px;
 			}
@@ -104,6 +114,6 @@
 	}
 
 	.abstract-body {
-		margin-bottom: 1em;
+		margin-bottom: 2px; // 24px
 	}
 }

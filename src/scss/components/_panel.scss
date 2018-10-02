@@ -31,7 +31,6 @@
 		flex: 1 1 0;
 		overflow-y: scroll;
 		-webkit-overflow-scrolling: touch; // Momentum scrolling
-		margin-bottom: $space-min;
 
 		// Disable scrolling while dragging creators on mobiles, keep scrollbar
 		@include touch-or-bp-down(sm) {
