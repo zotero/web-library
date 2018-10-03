@@ -114,6 +114,6 @@
 	}
 
 	.abstract-body {
-		margin-bottom: 2px; // 24px
+		padding-bottom: 2px; // 24px, use padding to prevent collapsing margins
 	}
 }
