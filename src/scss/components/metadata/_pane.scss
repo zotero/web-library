@@ -22,6 +22,10 @@
 		}
 	}
 
+	@include mouse-and-bp-up(md) {
+		padding-bottom: 20px - 7px;
+	}
+
 	.item-title,
 	.tab-pane-heading {
 		@include mouse-and-bp-up(md) {
