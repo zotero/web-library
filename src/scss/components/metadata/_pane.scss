@@ -72,6 +72,10 @@
 				padding-top: 9px; // metadata-list spacing
 			}
 		}
+
+		::placeholder {
+			color: transparent;
+		}
 	}
 
 	.abstract-heading {
@@ -113,7 +117,9 @@
 		}
 
 		@include state(".empty-abstract .abstract-heading") {
-			display: none;
+			@include mouse-and-bp-up(md) {
+				display: none;
+			}
 		}
 	}
 
