@@ -1,6 +1,7 @@
 'use strict';
 
 const React = require('react');
+const cx = require('classnames');
 const withDevice = require('../../enhancers/with-device');
 const Editable = require('../editable');
 const TextAreaInput = require('../form/text-area');
@@ -66,6 +67,11 @@ class Abstract extends React.PureComponent {
 				selectOnFocus={ !isForm }
 				tabIndex={ isForm ? 0 : null }
 				value={ itemWithPendingChnages.abstractNote }
+				className={ cx({
+					'form-control': isForm,
+					'form-control-sm': isForm,
+					'editable-control': this.shouldUseEditable,
+				}) }
 			/>
 		);
 	}
