@@ -6,7 +6,7 @@ const React = require('react');
 const PropTypes = require('prop-types');
 const { withRouter } = require('react-router-dom');
 const { connect } = require('react-redux');
-const CollectionTree = require('../component/collection-tree');
+const Libraries = require('../component/libraries');
 const {
 	fetchCollections,
 	createCollection,
@@ -16,12 +16,22 @@ const {
 const { getCollectionsPath } = require('../common/state');
 const { get } = require('../utils');
 const { makePath } = require('../common/navigation');
+const deepEqual = require('deep-equal');
 
-class CollectionTreeContainer extends React.Component {
+class LibrariesContainer extends React.Component {
 	componentDidMount() {
 		this.props.dispatch(
 			fetchCollections(this.props.userLibraryKey)
 		);
+	}
+
+	componentDidUpdate({ groups: prevGroups }) {
+		const { groups } = this.props;
+		if(!deepEqual(groups, prevGroups)) {
+			groups.forEach(group => {
+				this.props.dispatch(fetchCollections(`g${group.id}`));
+			});
+		}
 	}
 
 	handleSelect(pathData) {
@@ -44,7 +54,7 @@ class CollectionTreeContainer extends React.Component {
 	}
 
 	render() {
-		return <CollectionTree
+		return <Libraries
 			{ ...this.props }
 			onSelect={ this.handleSelect.bind(this) }
 			onCollectionAdd={ this.handleCollectionAdd.bind(this) }
@@ -65,6 +75,12 @@ const mapStateToProps = state => {
 		),
 		userLibraryKey,
 		groups: state.groups,
+		groupCollections: state.groups.reduce((aggr, group) => {
+			aggr[`g${group.id}`] = Object.values(
+				get(state, ['libraries', `g${group.id}`, 'collections'], {})
+			);
+			return aggr;
+		}, {}),
 		isFetching: libraryKey in state.fetching.collectionsInLibrary,
 		selected: state.current.collection,
 		path: getCollectionsPath(state),
@@ -79,7 +95,7 @@ const mapDispatchToProps = (dispatch) => {
 	};
 };
 
-CollectionTreeContainer.propTypes = {
+LibrariesContainer.propTypes = {
 	collections: PropTypes.array,
 	dispatch: PropTypes.func.isRequired,
 	isFetching: PropTypes.bool.isRequired,
@@ -89,7 +105,7 @@ CollectionTreeContainer.propTypes = {
 	selected: PropTypes.string,
 };
 
-CollectionTreeContainer.defaultProps = {
+LibrariesContainer.defaultProps = {
 	collections: [],
 	path: [],
 	selected: ''
@@ -98,4 +114,4 @@ CollectionTreeContainer.defaultProps = {
 module.exports = withRouter(connect(
 	mapStateToProps,
 	mapDispatchToProps
-)(CollectionTreeContainer));
+)(LibrariesContainer));

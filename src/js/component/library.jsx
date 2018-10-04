@@ -5,7 +5,7 @@ const PropTypes = require('prop-types');
 const cx = require('classnames');
 
 const Icon = require('./ui/icon');
-const CollectionTreeContainer = require('../container/collection-tree');
+const LibrariesContainer = require('../container/libraries');
 const Button = require('./ui/button');
 const ItemDetailsContainer = require('../container/item-details');
 const ItemListContainer = require('../container/item-list');
@@ -68,7 +68,7 @@ class Library extends React.Component {
 							/>
 							<header className="sidebar">
 								<h2 className="offscreen">Web library</h2>
-								<CollectionTreeContainer />
+								<LibrariesContainer />
 								<TagSelectorContainer key={ key } />
 							</header>
 							<section className={ `items ${ this.props.view === 'item-list' ? 'active' : '' }` }>

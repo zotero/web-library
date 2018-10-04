@@ -7,10 +7,10 @@ const ReactDOM = require('react-dom');
 
 const ItemListContainer = require('./container/item-list');
 const LibraryContainer = require('./container/library');
-const CollectionTreeContainer = require('./container/collection-tree');
+const LibrariesContainer = require('./container/libraries');
 
 const Button = require('./component/ui/button');
-const CollectionTree = require('./component/collection-tree');
+const Libraries = require('./component/libraries');
 const Creators = require('./component/form/creators');
 const Editable = require('./component/editable');
 const EditableContent = require('./component/editable/content');
@@ -37,12 +37,8 @@ const { Toolbar, ToolGroup } = require('./component/ui/toolbars');
 module.exports = {
 	React,
 	ReactDOM,
-	CollectionTreeContainer,
-	ItemListContainer,
-	LibraryContainer,
 	Attachments,
 	Button,
-	CollectionTree,
 	Creators,
 	Editable,
 	EditableContent,
@@ -50,7 +46,11 @@ module.exports = {
 	ItemBox,
 	ItemDetails,
 	ItemList,
+	ItemListContainer,
+	Libraries,
+	LibrariesContainer,
 	Library,
+	LibraryContainer,
 	Navbar,
 	Notes,
 	Panel,
