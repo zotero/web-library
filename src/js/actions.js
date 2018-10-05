@@ -1378,9 +1378,8 @@ const createCollection = properties => {
 	};
 }
 
-function updateCollection(collectionKey, patch) {
-	return async (dispatch, getState) => {
-		const libraryKey = get(getState(), 'current.library');
+function updateCollection(libraryKey, collectionKey, patch) {
+	return async dispatch => {
 		const queueId = ++queueIdCunter;
 
 		dispatch({
@@ -1392,17 +1391,16 @@ function updateCollection(collectionKey, patch) {
 		});
 
 		dispatch(
-			queueUpdateCollection(collectionKey, patch, libraryKey, queueId)
+			queueUpdateCollection(libraryKey, collectionKey, patch, queueId)
 		);
 	};
 }
 
-function queueUpdateCollection(collectionKey, patch, libraryKey, queueId) {
+function queueUpdateCollection(libraryKey, collectionKey, patch, queueId) {
 	return {
 		queue: libraryKey,
 		callback: async (next, dispatch, getState) => {
 			const state = getState();
-			const libraryKey = state.current.library;
 			const config = state.config;
 			const collection = get(state, ['libraries', libraryKey, 'collections', collectionKey]);
 			const version = collection.version;

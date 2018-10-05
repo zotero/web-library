@@ -10,10 +10,21 @@ const Input = require('../form/input');
 const ActionsDropdown = require('./actions-dropdown');
 const DropdownItem = require('reactstrap/lib/DropdownItem').default;
 const { ViewportContext } = require('../../context');
+const deepEqual = require('deep-equal');
 const { noop } = require('../../utils.js');
 
 class CollectionTree extends React.PureComponent {
-	state = { opened: [] }
+	state = { opened: [], renaming: null }
+
+	componentDidUpdate({ updating: wasUpdating }) {
+		const { updating } = this.props;
+		if(!deepEqual(updating, wasUpdating)) {
+			let updatedCollectionKey = wasUpdating.find(cKey => !updating.includes(cKey));
+			if(updatedCollectionKey &&  updatedCollectionKey === this.state.renaming) {
+				this.setState({ renaming: null });
+			}
+		}
+	}
 
 	handleSelect(target) {
 		const { onSelect, libraryKey } = this.props;
@@ -34,6 +45,19 @@ class CollectionTree extends React.PureComponent {
 		opened.includes(key) ?
 			this.setState({ opened: opened.filter(k => k !== key) }) :
 			this.setState({ opened: [...opened, key ] });
+	}
+
+	handleRenameTrigger(collectionKey) {
+		this.setState({ renaming: collectionKey});
+	}
+
+	handleRenameCancel() {
+		this.setState({ renaming: null });
+	}
+
+	handleRename(collectionKey, value, hasChanged) {
+		const { libraryKey, onRename } = this.props;
+		if(hasChanged) { onRename(libraryKey, collectionKey, value); }
 	}
 
 	collectionsFromKeys(collections) {
@@ -107,9 +131,7 @@ class CollectionTree extends React.PureComponent {
 
 	renderCollections(collections, level, parentCollection = null) {
 		const { childMap, derivedData } = this;
-		const { itemsSource, isUserLibrary, onRenameCancel,
-			onRenameCommit, onRename, onDelete, onAddCommit,
-			onAddCancel } = this.props;
+		const { itemsSource, isUserLibrary, onRename, onDelete, onAddCommit, onAddCancel } = this.props;
 
 		const hasOpen = this.testRecursive(
 			collections, col => derivedData[col.key].isSelected
@@ -168,14 +190,14 @@ class CollectionTree extends React.PureComponent {
 									<Input autoFocus
 										isBusy={ this.props.updating.includes(collection.key) }
 										onBlur={ () => true /* cancel on blur */ }
-										onCancel={ () => onRenameCancel(this) }
-										onCommit={ () => onRenameCommit(collection.key) }
+										onCancel={ this.handleRenameCancel.bind(this) }
+										onCommit={ this.handleRename.bind(this, collection.key) }
 										value={ collection.name }
 									/> :
 									<React.Fragment>
 										<a>{ collection.name }</a>
 										<ActionsDropdown>
-											<DropdownItem onClick={ () => onRename(collection.key) }>
+											<DropdownItem onClick={ this.handleRenameTrigger.bind(this, collection.key) }>
 												Rename
 											</DropdownItem>
 											<DropdownItem onClick={ () => onDelete(collection) }>
@@ -258,8 +280,6 @@ class CollectionTree extends React.PureComponent {
 		libraryKey: PropTypes.string.isRequired,
 		onAddCancel: PropTypes.func,
 		onAddCommit: PropTypes.func,
-		onRenameCancel: PropTypes.func,
-		onRenameCommit: PropTypes.func,
 		onDelete: PropTypes.func,
 		onRename: PropTypes.func,
 		onSelect: PropTypes.func,
@@ -272,8 +292,6 @@ class CollectionTree extends React.PureComponent {
 		onSelect: noop,
 		onAddCancel: noop,
 		onAddCommit: noop,
-		onRenameCancel: noop,
-		onRenameCommit: noop,
 		onDelete: noop,
 		onRename: noop,
 		path: [],

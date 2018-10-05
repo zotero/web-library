@@ -7,25 +7,17 @@ const Icon = require('./ui/icon');
 const Button = require('./ui/button');
 const Spinner = require('./ui/spinner');
 const Node = require('./libraries/node');
-const deepEqual = require('deep-equal');
 const CollectionTree = require('./libraries/collection-tree.jsx');
 
 class Libraries extends React.Component {
 	state = {
 		isAddingCollection: false,
 		isAddingCollectionBusy: false,
-		renaming: null,
 		opened: [], // opened group libraries
 	}
 
-	componentDidUpdate({ updating: wasUpdating, libraryKey: prevLibraryKey }) {
-		const { updating, libraryKey, userLibraryKey } = this.props;
-		if(!deepEqual(updating, wasUpdating)) {
-			let updatedCollectionKey = wasUpdating.find(cKey => !updating.includes(cKey));
-			if(updatedCollectionKey &&  updatedCollectionKey === this.state.renaming) {
-				this.setState({ renaming: null });
-			}
-		}
+	componentDidUpdate({ libraryKey: prevLibraryKey }) {
+		const { libraryKey, userLibraryKey } = this.props;
 
 		if(libraryKey != prevLibraryKey && libraryKey !== userLibraryKey) {
 			this.setState({ opened: [...this.state.opened, libraryKey ] });
@@ -55,16 +47,8 @@ class Libraries extends React.Component {
 		this.setState({ isAddingCollection: false });
 	}
 
-	handleRename(collectionKey) {
-		this.setState({ renaming: collectionKey});
-	}
-
-	async handleRenameCommit(collectionKey, name) {
-		await this.props.onCollectionUpdate(collectionKey, { name });
-	}
-
-	handleRenameCancel() {
-		this.setState({ renaming: null });
+	async handleRename(libraryKey, collectionKey, name) {
+		await this.props.onCollectionUpdate(libraryKey, collectionKey, { name });
 	}
 
 	async handleDelete(collection) {
@@ -91,8 +75,6 @@ class Libraries extends React.Component {
 			isUserLibrary: true,
 			onAddCancel: this.handleAddCancel.bind(this),
 			onAddCommit: this.handleAddCommit.bind(this),
-			onRenameCancel: this.handleRenameCancel.bind(this),
-			onRenameCommit: this.handleRenameCommit.bind(this),
 			onDelete: this.handleDelete.bind(this),
 			onRename: this.handleRename.bind(this),
 			onSelect: this.handleSelect.bind(this),
@@ -109,8 +91,6 @@ class Libraries extends React.Component {
 			isUserLibrary: false,
 			onAddCancel: this.handleAddCancel.bind(this),
 			onAddCommit: this.handleAddCommit.bind(this),
-			onRenameCancel: this.handleRenameCancel.bind(this),
-			onRenameCommit: this.handleRenameCommit.bind(this),
 			onDelete: this.handleDelete.bind(this),
 			onRename: this.handleRename.bind(this),
 			onSelect: this.handleSelect.bind(this),

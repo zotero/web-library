@@ -42,8 +42,8 @@ class LibrariesContainer extends React.Component {
 		}));
 	}
 
-	async handleCollectionUpdate(collectionKey, patch) {
-		await this.props.dispatch(updateCollection(collectionKey, patch));
+	async handleCollectionUpdate(libraryKey, collectionKey, patch) {
+		await this.props.dispatch(updateCollection(libraryKey, collectionKey, patch));
 	}
 
 	async handleCollectionDelete(collection) {
