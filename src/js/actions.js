@@ -1457,10 +1457,8 @@ function queueUpdateCollection(libraryKey, collectionKey, patch, queueId) {
 	};
 }
 
-const deleteCollection = (collection) => {
+const deleteCollection = (libraryKey, collection) => {
 	return async (dispatch, getState) => {
-		const state = getState();
-		const libraryKey = state.current.library;
 		const config = getState().config;
 
 		dispatch({

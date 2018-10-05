@@ -60,6 +60,11 @@ class CollectionTree extends React.PureComponent {
 		if(hasChanged) { onRename(libraryKey, collectionKey, value); }
 	}
 
+	handleDelete(collection) {
+		const { libraryKey, onDelete } = this.props;
+		onDelete(libraryKey, collection);
+	}
+
 	collectionsFromKeys(collections) {
 		return collections.map(
 			collectionKey => this.props.collections.find(
@@ -131,7 +136,7 @@ class CollectionTree extends React.PureComponent {
 
 	renderCollections(collections, level, parentCollection = null) {
 		const { childMap, derivedData } = this;
-		const { itemsSource, isUserLibrary, onRename, onDelete, onAddCommit, onAddCancel } = this.props;
+		const { itemsSource, isUserLibrary, onAddCommit, onAddCancel } = this.props;
 
 		const hasOpen = this.testRecursive(
 			collections, col => derivedData[col.key].isSelected
@@ -200,7 +205,7 @@ class CollectionTree extends React.PureComponent {
 											<DropdownItem onClick={ this.handleRenameTrigger.bind(this, collection.key) }>
 												Rename
 											</DropdownItem>
-											<DropdownItem onClick={ () => onDelete(collection) }>
+											<DropdownItem onClick={ this.handleDelete.bind(this, collection) }>
 												Delete
 											</DropdownItem>
 										</ActionsDropdown>

@@ -51,8 +51,8 @@ class Libraries extends React.Component {
 		await this.props.onCollectionUpdate(libraryKey, collectionKey, { name });
 	}
 
-	async handleDelete(collection) {
-		await this.props.onCollectionDelete(collection);
+	async handleDelete(libraryKey, collection) {
+		await this.props.onCollectionDelete(libraryKey, collection);
 	}
 
 	handleOpenToggle(groupKey, ev) {
