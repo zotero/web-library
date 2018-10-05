@@ -18,12 +18,17 @@ class Libraries extends React.Component {
 		opened: [], // opened group libraries
 	}
 
-	componentDidUpdate({ updating: wasUpdating }) {
-		if(!deepEqual(this.props.updating, wasUpdating)) {
-			let updatedCollectionKey = wasUpdating.find(cKey => !this.props.updating.includes(cKey));
+	componentDidUpdate({ updating: wasUpdating, libraryKey: prevLibraryKey }) {
+		const { updating, libraryKey, userLibraryKey } = this.props;
+		if(!deepEqual(updating, wasUpdating)) {
+			let updatedCollectionKey = wasUpdating.find(cKey => !updating.includes(cKey));
 			if(updatedCollectionKey &&  updatedCollectionKey === this.state.renaming) {
 				this.setState({ renaming: null });
 			}
+		}
+
+		if(libraryKey != prevLibraryKey && libraryKey !== userLibraryKey) {
+			this.setState({ opened: [...this.state.opened, libraryKey ] });
 		}
 	}
 

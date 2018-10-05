@@ -25,6 +25,13 @@ class LibrariesContainer extends React.Component {
 		);
 	}
 
+	componentDidUpdate({ libraryKey: prevLibraryKey }) {
+		const { libraryKey, userLibraryKey, dispatch } = this.props;
+		if(libraryKey != prevLibraryKey && libraryKey !== userLibraryKey) {
+			dispatch(fetchCollections(libraryKey));
+		}
+	}
+
 	handleSelect(pathData) {
 		this.props.history.push(makePath(pathData));
 	}
