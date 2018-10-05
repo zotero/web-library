@@ -16,7 +16,6 @@ const {
 const { getCollectionsPath } = require('../common/state');
 const { get } = require('../utils');
 const { makePath } = require('../common/navigation');
-const deepEqual = require('deep-equal');
 
 class LibrariesContainer extends React.Component {
 	componentDidMount() {
@@ -36,8 +35,8 @@ class LibrariesContainer extends React.Component {
 		this.props.history.push(makePath(pathData));
 	}
 
-	async handleCollectionAdd(name, parentCollection = null) {
-		return await this.props.dispatch(createCollection({
+	async handleCollectionAdd(libraryKey, name, parentCollection = null) {
+		return await this.props.dispatch(createCollection(libraryKey, {
 			name, parentCollection
 		}));
 	}

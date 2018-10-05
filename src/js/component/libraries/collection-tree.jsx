@@ -65,6 +65,11 @@ class CollectionTree extends React.PureComponent {
 		onDelete(libraryKey, collection);
 	}
 
+	handleAddCommit(name) {
+		const { libraryKey, onAddCommit } = this.props;
+		onAddCommit(libraryKey, name);
+	}
+
 	collectionsFromKeys(collections) {
 		return collections.map(
 			collectionKey => this.props.collections.find(
@@ -215,16 +220,16 @@ class CollectionTree extends React.PureComponent {
 						</Node>
 					)) }
 					{
-						this.state.isAddingCollection && level === 1 && (
+						this.props.isAdding && level === 1 && (
 							<Node
 								className={ cx({ 'new-collection': true })}
 							>
 								<Icon type="28/folder" className="touch" width="28" height="28" />
 								<Icon type="16/folder" className="mouse" width="16" height="16" />
 								<Input autoFocus
-									isBusy={ this.state.isAddingCollectionBusy }
-									onCommit={ () => onAddCommit() }
-									onCancel={ () => onAddCancel() }
+									isBusy={ this.props.isAddingBusy }
+									onCommit={ this.handleAddCommit.bind(this) }
+									onCancel={ onAddCancel }
 									onBlur={ () => true /* cancel on blur */ }
 								/>
 							</Node>
@@ -280,6 +285,8 @@ class CollectionTree extends React.PureComponent {
 				name: PropTypes.string,
 			}
 		)),
+		isAdding: PropTypes.bool,
+		isAddingBusy: PropTypes.bool,
 		isUserLibrary: PropTypes.bool,
 		itemsSource: PropTypes.string,
 		libraryKey: PropTypes.string.isRequired,

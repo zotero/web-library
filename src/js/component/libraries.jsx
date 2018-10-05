@@ -11,8 +11,8 @@ const CollectionTree = require('./libraries/collection-tree.jsx');
 
 class Libraries extends React.Component {
 	state = {
-		isAddingCollection: false,
-		isAddingCollectionBusy: false,
+		virtualEntryIn: false,
+		virtualEntryBusy: false,
 		opened: [], // opened group libraries
 	}
 
@@ -30,21 +30,21 @@ class Libraries extends React.Component {
 	}
 
 
-	handleAdd() {
-		this.setState({ isAddingCollection: true });
+	handleAdd(libraryKey) {
+		this.setState({ virtualEntryIn: libraryKey });
 	}
 
-	async handleAddCommit(name) {
-		this.setState({ isAddingCollectionBusy: true });
-		await this.props.onCollectionAdd(name);
+	async handleAddCommit(libraryKey, name) {
+		this.setState({ virtualEntryBusy: true });
+		await this.props.onCollectionAdd(libraryKey, name);
 		this.setState({
-			isAddingCollection: false,
-			isAddingCollectionBusy: false
+			virtualEntryIn: null,
+			virtualEntryBusy: false
 		});
 	}
 
 	handleAddCancel() {
-		this.setState({ isAddingCollection: false });
+		this.setState({ virtualEntryIn: null });
 	}
 
 	async handleRename(libraryKey, collectionKey, name) {
@@ -52,7 +52,7 @@ class Libraries extends React.Component {
 	}
 
 	async handleDelete(libraryKey, collection) {
-		await this.props.onCollectionDelete(libraryKey, collection);
+		await this.props.onCollectionDelete(libraryKey,collection);
 	}
 
 	handleOpenToggle(groupKey, ev) {
@@ -69,6 +69,7 @@ class Libraries extends React.Component {
 
 	renderCollections() {
 		const { userLibraryKey } = this.props;
+		const { virtualEntryIn, virtualEntryBusy } = this.state;
 		const props = {
 			...this.props,
 			libraryKey: userLibraryKey,
@@ -78,12 +79,15 @@ class Libraries extends React.Component {
 			onDelete: this.handleDelete.bind(this),
 			onRename: this.handleRename.bind(this),
 			onSelect: this.handleSelect.bind(this),
+			isAdding: virtualEntryIn === userLibraryKey,
+			isAddingBusy: virtualEntryIn === userLibraryKey && virtualEntryBusy,
 		}
 		return <CollectionTree { ...props } />;
 	}
 
 	renderGroupCollections(groupKey) {
 		const { groupCollections } = this.props;
+		const { virtualEntryIn, virtualEntryBusy } = this.state;
 		const props = {
 			...this.props,
 			collections: groupCollections[groupKey],
@@ -94,6 +98,8 @@ class Libraries extends React.Component {
 			onDelete: this.handleDelete.bind(this),
 			onRename: this.handleRename.bind(this),
 			onSelect: this.handleSelect.bind(this),
+			isAdding: virtualEntryIn === groupKey,
+			isAddingBusy: virtualEntryIn === groupKey && virtualEntryBusy,
 		}
 		return <CollectionTree { ...props } />;
 	}
@@ -123,6 +129,13 @@ class Libraries extends React.Component {
 									<Icon type="28/folder" className="touch" width="28" height="28" />
 									<Icon type="16/folder" className="mouse" width="16" height="16" />
 									<a>{ group.name }</a>
+									{
+										opened.includes(groupKey) && (
+											<Button onClick={ this.handleAdd.bind(this, groupKey) } >
+												<Icon type={ '20/add-collection' } width="20" height="20" />
+											</Button>
+										)
+									}
 								</Node>
 						)})
 					}
@@ -132,6 +145,7 @@ class Libraries extends React.Component {
 	}
 
 	render() {
+		const { userLibraryKey } = this.props;
 		const isRootActive = false; //TODO
 		// const selectedCollection = Object.keys(this.derivedData)
 		// 	.find((collectionKey) => this.derivedData[collectionKey].isSelected) || null;
@@ -154,7 +168,7 @@ class Libraries extends React.Component {
 							<section>
 								<div className="desktop-header">
 									<h4>My Library</h4>
-									<Button onClick={ this.handleAdd.bind(this) } >
+									<Button onClick={ this.handleAdd.bind(this, userLibraryKey) } >
 										<Icon type={ '20/add-collection' } width="20" height="20" />
 									</Button>
 								</div>

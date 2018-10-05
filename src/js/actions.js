@@ -1331,10 +1331,9 @@ function queueAddToCollection(itemKeys, collectionKey, libraryKey, queueId) {
 	};
 }
 
-const createCollection = properties => {
+const createCollection = (libraryKey, properties) => {
 	return async (dispatch, getState) => {
 		const state = getState();
-		const libraryKey = get(getState(), 'current.library');
 		const config = state.config;
 		dispatch({
 			type: REQUEST_CREATE_COLLECTION,
