@@ -25,15 +25,6 @@ class LibrariesContainer extends React.Component {
 		);
 	}
 
-	componentDidUpdate({ groups: prevGroups }) {
-		const { groups } = this.props;
-		if(!deepEqual(groups, prevGroups)) {
-			groups.forEach(group => {
-				this.props.dispatch(fetchCollections(`g${group.id}`));
-			});
-		}
-	}
-
 	handleSelect(pathData) {
 		this.props.history.push(makePath(pathData));
 	}
@@ -53,6 +44,11 @@ class LibrariesContainer extends React.Component {
 		this.props.history.push('/');
 	}
 
+	async handleGroupOpen(groupKey) {
+		const { dispatch } = this.props;
+		await dispatch(fetchCollections(groupKey));
+	}
+
 	render() {
 		return <Libraries
 			{ ...this.props }
@@ -60,6 +56,7 @@ class LibrariesContainer extends React.Component {
 			onCollectionAdd={ this.handleCollectionAdd.bind(this) }
 			onCollectionUpdate={ this.handleCollectionUpdate.bind(this) }
 			onCollectionDelete={ this.handleCollectionDelete.bind(this) }
+			onGroupOpen={ this.handleGroupOpen.bind(this) }
 		/>;
 	}
 }

@@ -15,6 +15,7 @@ class Libraries extends React.Component {
 		isAddingCollection: false,
 		isAddingCollectionBusy: false,
 		renaming: null,
+		opened: [], // opened group libraries
 	}
 
 	componentDidUpdate({ updating: wasUpdating }) {
@@ -65,6 +66,17 @@ class Libraries extends React.Component {
 		await this.props.onCollectionDelete(collection);
 	}
 
+	handleOpenToggle(groupKey, ev) {
+		ev && ev.stopPropagation();
+		const { onGroupOpen } = this.props;
+		const { opened } = this.state;
+		const isOpened = opened.includes(groupKey);
+		isOpened ?
+			this.setState({ opened: opened.filter(k => k !== groupKey) }) :
+			this.setState({ opened: [...opened, groupKey ] });
+
+		if(!isOpened) { onGroupOpen(groupKey); }
+	}
 
 	renderCollections() {
 		const { userLibraryKey } = this.props;
@@ -103,6 +115,7 @@ class Libraries extends React.Component {
 
 	renderGroups() {
 		const { groups } = this.props;
+		const { opened } = this.state;
 
 		// @TODO
 		// onClick={ this.handleSelect.bind(this, {'library': groupKey }) }
@@ -116,7 +129,9 @@ class Libraries extends React.Component {
 							const groupKey = `g${group.id}`;
 							return (
 								<Node
-
+									className={ cx({ 'open': opened.includes(groupKey) }) }
+									isOpen={ opened.includes(groupKey) }
+									onOpen={ this.handleOpenToggle.bind(this, groupKey) }
 									subtree={ this.renderGroupCollections(groupKey) }
 									key={ group.id }
 								>

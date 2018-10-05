@@ -34,7 +34,6 @@ class CollectionTree extends React.PureComponent {
 		opened.includes(key) ?
 			this.setState({ opened: opened.filter(k => k !== key) }) :
 			this.setState({ opened: [...opened, key ] });
-		this.props.onOpened();
 	}
 
 	collectionsFromKeys(collections) {
@@ -123,7 +122,7 @@ class CollectionTree extends React.PureComponent {
 			}) }>
 				<ul className="nav" role="group">
 					{
-						isUserLibrary && level === 1 && (
+						level === 1 && (
 							<Node
 								className={ cx({
 									'all-documents': true,
@@ -259,7 +258,6 @@ class CollectionTree extends React.PureComponent {
 		libraryKey: PropTypes.string.isRequired,
 		onAddCancel: PropTypes.func,
 		onAddCommit: PropTypes.func,
-		onOpened: PropTypes.func,
 		onRenameCancel: PropTypes.func,
 		onRenameCommit: PropTypes.func,
 		onDelete: PropTypes.func,
@@ -272,7 +270,6 @@ class CollectionTree extends React.PureComponent {
 	static defaultProps = {
 		collections: [],
 		onSelect: noop,
-		onOpened: noop,
 		onAddCancel: noop,
 		onAddCommit: noop,
 		onRenameCancel: noop,
