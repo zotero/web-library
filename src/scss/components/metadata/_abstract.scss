@@ -19,10 +19,19 @@
 	&.editing {
 		@include touch-or-bp-down(sm) {
 			margin: 0 $abstract-margin-x-touch;
+			background-color: $input-bg;
+			border-radius: $input-border-radius;
+		}
+
+		@include touch-and-bp-only(md) {
+			margin-top: $form-section-margin;
 		}
 
 		@include bp-down-normalized(xs) {
 			margin: 0;
+			border-radius: 0;
+			border-top: $separator-width solid $separator-color;
+			border-bottom: $separator-width solid $separator-color;
 		}
 	}
 
@@ -51,6 +60,18 @@
 	@include mouse-and-bp-up(md) {
 		padding-bottom: 2px; // 24px, use padding to prevent collapsing margins
 	}
+
+	.editing & {
+		@include touch-or-bp-down(sm) {
+			border-bottom-left-radius: $input-border-radius;
+			border-bottom-right-radius: $input-border-radius;
+			overflow: hidden;
+		}
+
+		@include bp-down-normalized(xs) {
+			border-radius: 0;
+		}
+	}
 }
 
 .abstract-heading {
@@ -58,7 +79,6 @@
 
 	@include touch-or-bp-down(sm) {
 		margin-top: 8px; // metadata-list spacing
-		border-top: $separator-width solid $separator-color;
 		padding-top: 10px; // metadata-list spacing
 		margin-bottom: 4px; // metadata-list spacing
 		line-height: $line-height-base;
@@ -99,14 +119,8 @@
 	.editing & {
 		@include touch-or-bp-down(sm) {
 			padding: 0 $input-btn-padding-x-touch;
-			border-top: 0;
 			margin-bottom: 0;
 			line-height: $space-thumb;
-			background-color: $input-bg;
-		}
-
-		@include touch-or-bp-down(xs) {
-			border-top: $separator-width solid $separator-color;
 		}
 
 		@include mouse-and-bp-up(md) {
