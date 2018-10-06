@@ -15,7 +15,7 @@
 			}
 		}
 
-		@include bp-down(xs) {
+		@include bp-down-normalized(xs) {
 			@include state(".metadata-list.editing") {
 				min-height: $line-height-large-touch + 2 * $border-width;
 				padding-bottom: $border-width;
