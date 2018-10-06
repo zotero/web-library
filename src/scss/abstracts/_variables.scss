@@ -199,12 +199,13 @@ $creators-value-padding-right-touch: 31px;
 // Buttons & forms
 // --------------------------------------------------
 
-$input-btn-padding-x: $space-xs;
-$input-btn-padding-y: 2px;
-$input-btn-padding-x-lg: $space-md;
-$input-btn-padding-y-lg: 11px;
-$input-btn-padding-x-sm: $space-sm;
-$input-btn-padding-y-sm: 3px;
+$input-btn-padding-x:       $space-xs;
+$input-btn-padding-x-touch: $space-md;
+$input-btn-padding-y:       2px;
+$input-btn-padding-x-lg:    $space-md;
+$input-btn-padding-y-lg:    11px;
+$input-btn-padding-x-sm:    $space-sm;
+$input-btn-padding-y-sm:    3px;
 
 $input-border-width: $border-width;
 
@@ -274,3 +275,9 @@ $modal-inner-padding-md:     $space-lg;
 $modal-md:                   444px;
 $modal-border-radius:        $border-radius-lg;
 $modal-exit-transition-xs:   0.2s linear;
+
+
+// Abstract
+// --------------------------------------------------
+
+$abstract-margin-x-touch: $metadata-list-margin-x-touch;

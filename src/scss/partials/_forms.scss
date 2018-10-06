@@ -6,6 +6,12 @@
 	color: $placeholder-color;
 }
 
+label {
+	@include touch-or-bp-down(sm) {
+		padding: 0 ($input-btn-padding-x-touch / 2) 0 $input-btn-padding-x-touch;
+	}
+}
+
 .input-group {
 	flex: 1 1 auto;
 	display: flex;
@@ -20,6 +26,13 @@
 			height: $space-lg;
 			right: 0;
 			top: calc(50% - #{$space-lg / 2});
+		}
+	}
+
+	&.textarea {
+		@include touch-or-bp-down(sm) {
+			margin-top: -6px;
+			padding-bottom: 7px;
 		}
 	}
 
@@ -41,7 +54,8 @@
 			@include touch-or-bp-down(sm) {
 				&::after,
 				.icon-spin {
-					bottom: 2px;
+					right: $input-btn-padding-x-touch;
+					bottom: 9px;
 					width: $space-lg;
 					height: $space-lg;
 				}
@@ -67,7 +81,7 @@
 	background-color: $input-bg;
 
 	@include touch-or-bp-down(sm) {
-		padding: 0;
+		padding: 0 $input-btn-padding-x-touch 0 ($input-btn-padding-x-touch / 2);
 		border: none;
 	}
 
@@ -79,6 +93,12 @@
 	.busy:not(.textarea) & {
 		@include touch-or-bp-down(sm) {
 			padding-right: $space-lg + 1px;
+		}
+	}
+
+	@at-root #{selector-append(textarea, &)} {
+		@include touch-or-bp-down(sm) {
+			padding-left: $input-btn-padding-x-touch;
 		}
 	}
 }
