@@ -7,8 +7,10 @@
 }
 
 label {
-	@include touch-or-bp-down(sm) {
-		padding: 0 ($input-btn-padding-x-touch / 2) 0 $input-btn-padding-x-touch;
+	.editing & {
+		@include touch-or-bp-down(sm) {
+			padding: 0 ($input-btn-padding-x-touch / 2) 0 $input-btn-padding-x-touch;
+		}
 	}
 }
 
