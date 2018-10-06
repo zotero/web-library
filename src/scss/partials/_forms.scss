@@ -9,6 +9,7 @@
 label {
 	.editing & {
 		@include touch-or-bp-down(sm) {
+			flex: 1 1 auto;
 			padding: 0 ($input-btn-padding-x-touch / 2) 0 $input-btn-padding-x-touch;
 		}
 	}
