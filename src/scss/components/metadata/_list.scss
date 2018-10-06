@@ -121,6 +121,10 @@
 						left: 0;
 					}
 
+					html:not(specifity) .modal & {
+						left: 0;
+					}
+
 					@include variant("main .metadata-list") {
 						@include bp-up(sm) {
 							content: none;
@@ -142,6 +146,13 @@
 
 				&::after {
 					@include bp-down-normalized(xs) {
+						content: "";
+						left: 0;
+						top: auto;
+						bottom: 0;
+					}
+
+					html:not(.specifity) .modal & {
 						content: "";
 						left: 0;
 						top: auto;
@@ -206,15 +217,17 @@
 			}
 
 			&::after {
-				left: 0;
-				top: auto;
-				bottom: 0;
-
-				@include bp-down(xs) {
+				@include bp-down-normalized(xs) {
+					left: 0;
+					top: auto;
+					bottom: 0;
 					content: "";
 				}
 
-				.modal & {
+				html:not(.specifity) .modal & {
+					left: 0;
+					top: auto;
+					bottom: 0;
 					content: "";
 				}
 			}
