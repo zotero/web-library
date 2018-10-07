@@ -22,6 +22,12 @@
 		.textarea & {
 			white-space: pre-wrap;
 
+			.editing & {
+				@include touch-or-bp-down(sm) {
+					padding: 0 $input-btn-padding-x-touch;
+				}
+			}
+
 			&::after {
 				content: "\200b"; // Permanently insert a zero-width character to expand textareas at newlines
 			}
