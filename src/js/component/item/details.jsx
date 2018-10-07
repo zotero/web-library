@@ -7,11 +7,15 @@ const { itemProp } = require('../../constants/item');
 const ItemDetailsTabs = require('./details/tabs');
 const ItemDetailsInfoView = require('./details/info-view');
 const ItemDetailsInfoSelected = require('./details/info-selected');
+const TouchHeaderContainer = require('../../container/touch-header');
 
 class ItemDetails extends React.Component {
 	render() {
 		return (
 			<section className={ `item-details ${this.props.active ? 'active' : ''}` }>
+				<TouchHeaderContainer
+					className="hidden-mouse hidden-md-down"
+				/>
 				{
 				'key' in this.props.item ? (
 						<ItemDetailsTabs { ...this.props } />

@@ -34,7 +34,6 @@ class InfoTabPane extends React.PureComponent {
 								</h5>
 							)
 						}
-						<EditToggleButton className="hidden-mouse hidden-touch-md-down" />
 						<ItemBoxContainer
 							{ ...this.props }
 							hiddenFields={ [ 'abstractNote' ] }
