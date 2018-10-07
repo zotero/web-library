@@ -4,7 +4,11 @@
 
 .info {
 	@include touch-or-bp-down(sm) {
-		padding-bottom: $space-lg - 8px;
+		padding-bottom: $space-lg - 14px;
+	}
+
+	@include touch-and-bp-only(md) {
+		padding-bottom: 0;
 	}
 
 	@include bp-only(md) {

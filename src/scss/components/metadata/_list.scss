@@ -7,6 +7,10 @@
 		margin-top: $space-sm;
 	}
 
+	@include touch-and-bp-only(md) {
+		margin-bottom: $space-lg - 8px;
+	}
+
 	&.editing {
 		@include touch-or-bp-down(sm) {
 			margin-top: $form-section-margin;

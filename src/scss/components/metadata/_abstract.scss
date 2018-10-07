@@ -4,7 +4,11 @@
 
 .abstract {
 	@include touch-or-bp-down(sm) {
-		margin: 0 $default-padding-x-touch;
+		margin: 0 $default-padding-x-touch 8px;
+	}
+
+	@include touch-and-bp-only(md) {
+		margin-bottom: 18px; // 24px
 	}
 
 	@include mouse-and-bp-up(md) {
@@ -18,17 +22,18 @@
 
 	&.editing {
 		@include touch-or-bp-down(sm) {
-			margin: 0 $abstract-margin-x-touch;
+			margin: 0 $abstract-margin-x-touch 10px;
 			background-color: $input-bg;
 			border-radius: $input-border-radius;
 		}
 
 		@include touch-and-bp-only(md) {
 			margin-top: $form-section-margin;
+			margin-bottom: $form-section-margin;
 		}
 
 		@include bp-down-normalized(xs) {
-			margin: 0;
+			margin: 0 0 10px 0;
 			border-radius: 0;
 			border-top: $separator-width solid $separator-color;
 			border-bottom: $separator-width solid $separator-color;
