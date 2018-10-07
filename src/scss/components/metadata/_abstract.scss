@@ -4,11 +4,18 @@
 
 .abstract {
 	@include touch-or-bp-down(sm) {
-		margin: 0 $default-padding-x-touch 8px;
+		margin: 8px $default-padding-x-touch 8px;
+		border-top: 1px solid $metadata-separator-color;
+	}
+
+	@include bp-down-normalized(xs) {
+		border-top: 0;
 	}
 
 	@include touch-and-bp-only(md) {
+		margin-top: 0;
 		margin-bottom: 18px; // 24px
+		border-top: 0;
 	}
 
 	@include mouse-and-bp-up(md) {
@@ -25,6 +32,7 @@
 			margin: 0 $abstract-margin-x-touch 10px;
 			background-color: $input-bg;
 			border-radius: $input-border-radius;
+			border-top: 0;
 		}
 
 		@include touch-and-bp-only(md) {
@@ -83,7 +91,7 @@
 	color: $key-color;
 
 	@include touch-or-bp-down(sm) {
-		margin-top: 8px; // metadata-list spacing
+		margin-top: 0;
 		padding-top: 10px; // metadata-list spacing
 		margin-bottom: 4px; // metadata-list spacing
 		line-height: $line-height-base;
