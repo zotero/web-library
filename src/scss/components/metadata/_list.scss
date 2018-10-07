@@ -274,62 +274,68 @@
 
 	.has-btn,
 	.has-btn-icon {
-		@include touch-or-bp-down(sm) {
-			padding-left: 0; // Keep vertical paddings
-			padding-right: 0;
+		@include state(".metadata-list.editing") {
+			@include touch-or-bp-down(sm) {
+				padding-left: 0; // Keep vertical paddings
+				padding-right: 0;
 
-			.btn {
-				padding: 0 $default-padding-x-touch;
-				border: 0;
-				width: 100%;
-				text-align: left;
-				color: $link-color;
-				line-height: $line-height-large-touch;
+				.btn {
+					padding: 0 $default-padding-x-touch;
+					border: 0;
+					width: 100%;
+					text-align: left;
+					color: $link-color;
+					line-height: $line-height-large-touch;
 
-				&:focus {
-					outline: none;
-				}
+					&:focus {
+						outline: none;
+					}
 
-				&.btn-delete {
-					color: $red;
+					&.btn-delete {
+						color: $red;
+					}
 				}
 			}
-		}
 
-		&::before {
-			@include touch-keyboard-or-bp-down(sm) {
-				@include state(".touch-separated:focus-within") {
-					left: 0;
+			&::before {
+				@include touch-keyboard-or-bp-down(sm) {
+					@include state(".touch-separated:focus-within") {
+						left: 0;
+					}
 				}
 			}
 		}
 	}
 
 	.has-btn {
-		&::before {
-			@include touch-or-bp-down(sm) {
-				left: $default-padding-x-touch;
+		@include state(".metadata-list.editing") {
+			&::before {
+				@include touch-or-bp-down(sm) {
+					left: $default-padding-x-touch;
+				}
 			}
-		}
 
-		.btn {
-			background: transparent;
+			.btn {
+				background: transparent;
+			}
 		}
 	}
 
 	.has-btn-icon {
-		&::before {
-			@include touch-or-bp-down(sm) {
-				left: 2 * $default-padding-x-touch + $space-lg;
+		@include state(".metadata-list.editing") {
+			&::before {
+				@include touch-or-bp-down(sm) {
+					left: 2 * $default-padding-x-touch + $space-lg;
+				}
 			}
-		}
 
-		.btn-icon {
-			@include touch-or-bp-down(sm) {
-				.icon {
-					vertical-align: top;
-					margin-top: ($line-height-large-touch - $space-lg) / 2;
-					margin-right: $default-padding-x-touch;
+			.btn-icon {
+				@include touch-or-bp-down(sm) {
+					.icon {
+						vertical-align: top;
+						margin-top: ($line-height-large-touch - $space-lg) / 2;
+						margin-right: $default-padding-x-touch;
+					}
 				}
 			}
 		}
