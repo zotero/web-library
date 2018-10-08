@@ -10,7 +10,7 @@ const Icon = require('./ui/icon');
 const Button = require('./ui/button');
 
 class Relations extends React.Component {
-	
+
 	handleDelete(item) {
 		this.props.onRelatedItemDelete(item);
 	}
@@ -27,7 +27,7 @@ class Relations extends React.Component {
 						{
 							this.props.relations.map(item => {
 								return item && (
-									<li 
+									<li
 										className="item"
 										key={ item.key }
 									>
@@ -52,14 +52,14 @@ class Relations extends React.Component {
 			</div>
 		);
 	}
-}
 
-Relations.propTypes = {
-	
-};
-	
-Relations.defaultProps = {
-	relations: {}
-};
+	static propTypes = {
+
+	}
+
+	static defaultProps = {
+		relations: []
+	};
+}
 
 module.exports = Relations;

@@ -61,8 +61,8 @@ class Attachments extends React.Component {
 									>
 										<Icon type={ '16/item-types/attachment' } width="16" height="16" />
 										{
-											attachment.key in this.props.attachentViewUrls ? (
-												<a href={ this.props.attachentViewUrls[attachment.key] }>
+											attachment.key in this.props.attachmentViewUrls ? (
+												<a href={ this.props.attachmentViewUrls[attachment.key] }>
 													{ attachment.filename }
 												</a>
 											) : (
@@ -113,7 +113,8 @@ Attachments.propTypes = {
 };
 
 Attachments.defaultProps = {
-	attachments: []
+	attachments: [],
+	attachmentViewUrls: {}
 };
 
 module.exports = Attachments;

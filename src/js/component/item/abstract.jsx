@@ -82,6 +82,10 @@ class Abstract extends React.PureComponent {
 		return this.shouldUseEditable ?
 			this.renderEditable(formField) : formField;
 	}
+
+	static defaultProps = {
+		pendingChanges: []
+	}
 }
 
 module.exports = withDevice(Abstract);

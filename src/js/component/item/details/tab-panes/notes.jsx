@@ -23,6 +23,10 @@ class NotesTabPane extends React.PureComponent {
 			</div>
 		);
 	}
+
+	static defaultProps = {
+		childItems: []
+	}
 }
 
 module.exports = NotesTabPane;

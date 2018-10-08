@@ -14,12 +14,16 @@ class AttachmentsTabPane extends React.PureComponent {
 				<h5 className="h2 tab-pane-heading">Attachments</h5>
 				<Attachments
 					attachments={ this.props.childItems.filter(i => i.itemType === 'attachment') }
-					attachentViewUrls={ this.props.attachentViewUrls }
+					attachmentViewUrls={ this.props.attachmentViewUrls }
 					onAddAttachment={ this.props.onAddAttachment }
 					onDeleteAttachment={ this.props.onDeleteAttachment }
 				/>
 			</div>
 		);
+	}
+
+	static defaultProps = {
+		childItems: []
 	}
 }
 

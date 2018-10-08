@@ -1,4 +1,3 @@
-/* eslint-disable react/no-deprecated */
 'use strict';
 
 const React = require('react');
@@ -6,48 +5,33 @@ const PropTypes = require('prop-types');
 const ItemDetails = require('../component/item/details');
 const { withRouter } = require('react-router-dom');
 const { connect } = require('react-redux');
-const { createItem, updateItem, deleteItem, fetchItemTemplate, fetchChildItems, uploadAttachment, fetchItems, fetchItemTypeCreatorTypes } = require('../actions');
+const { createItem, updateItem, deleteItem, fetchItemTemplate, fetchChildItems, uploadAttachment, fetchItems, fetchItemTypeCreatorTypes, fetchItemTypeFields } = require('../actions');
 const { itemProp, baseMappings } = require('../constants/item');
 const { get, deduplicateByKey, mapRelationsToItemKeys, removeRelationByItemKey, reverseMap } = require('../utils');
 const { makePath } = require('../common/navigation');
+const { hideFields, noEditFields } = require('../constants/item');
 const withEditMode = require('../enhancers/with-edit-mode');
 const withDevice = require('../enhancers/with-device');
 
 class ItemDetailsContainer extends React.Component {
-	state = {
-		apiAuthorityPart: {}
-	}
-
-	componentWillReceiveProps(props) {
-		const itemKey = get(props, 'item.key');
-		if(itemKey
-			&& get(this.props, 'item.key') !== itemKey
-			&& !['attachment', 'note'].includes(props.item.itemType)) {
-			this.props.dispatch(fetchChildItems(itemKey));
+	componentDidUpdate({ item: prevItem }) {
+		const { item, config, shouldFetchMeta, dispatch } = this.props;
+		if(item.key && shouldFetchMeta === true) {
+			this.props.dispatch(fetchItemTypeCreatorTypes(item.itemType));
+			this.props.dispatch(fetchItemTypeFields(item.itemType));
 		}
-
-		if(itemKey && get(this.props, 'item.key') !== itemKey) {
+		if(item.key && item.key !== prevItem.key) {
+			if(!['attachment', 'note'].includes(item.itemType)) {
+				this.props.dispatch(fetchChildItems(item.key));
+			}
 			let relatedItemKeys = mapRelationsToItemKeys(
-				props.item.relations,
-				props.config.userId
+				item.relations,
+				config.userId
 			).filter(String);
 
 			if(relatedItemKeys.length) {
-				this.props.dispatch(fetchItems(relatedItemKeys));
+				dispatch(fetchItems(relatedItemKeys));
 			}
-		}
-
-		if(props.childItems != this.props.childItems) {
-			const attachentViewUrls = props.childItems
-				.filter(i => i.itemType === 'attachment')
-				.reduce((aggr, item) => {
-					// @TODO: url should not include the key
-					let config = props.config;
-					let baseUrl = config.apiConfig.apiAuthorityPart;
-					aggr[item.key] = `https://${baseUrl}/users/${config.userId}/items/${item.key}/file/view?key=${config.apiKey}`;
-					return aggr;
-			}, {});
-			this.setState({ attachentViewUrls });
 		}
 	}
 
@@ -193,10 +177,45 @@ class ItemDetailsContainer extends React.Component {
 	}
 
 	render() {
-		const { isEditing, device, item } = this.props;
+		const { isEditing, device, item, isLoading, itemTypeFields,
+			itemTypes, pendingChanges, childItems, config } = this.props;
 		const isForm = !!(device.shouldUseEditMode && isEditing && item);
 		const isReadOnlyMode = !!(device.shouldUseEditMode && !isEditing);
 		const extraProps = { isForm, isReadOnlyMode };
+
+		if(!isLoading) {
+			const titleField = item.itemType in baseMappings && baseMappings[item.itemType]['title'] || 'title';
+			const aggregatedPatch = pendingChanges.reduce(
+				(aggr, { patch }) => ({...aggr, ...patch}), {}
+			);
+			const itemWithPendingChnages = { ...item, ...aggregatedPatch};
+			const fields = [
+				{ field: 'itemType', localized: 'Item Type' },
+				itemTypeFields[item.itemType].find(itf => itf.field === titleField),
+				{ field: 'creators', localized: 'Creators' },
+				...itemTypeFields[item.itemType].filter(itf => itf.field !== titleField)
+			]
+			.filter(e => e)
+			.map(f => ({
+				options: f.field === 'itemType' ? itemTypes : null,
+				key: f.field,
+				label: f.localized,
+				readOnly: isReadOnlyMode ? true : noEditFields.includes(f),
+				processing: pendingChanges.some(({ patch }) => f.field in patch),
+				value: itemWithPendingChnages[f.field] || null,
+			})).filter(f => !hideFields.includes(f.key)); //filter out undefined
+
+			const attachmentViewUrls = childItems
+				.filter(i => i.itemType === 'attachment')
+				.reduce((aggr, item) => {
+					// @TODO: url should not include the key
+					aggr[item.key] = `https://${config.apiConfig.apiAuthorityPart}/users/${config.userId}/items/${item.key}/file/view?key=${config.apiKey}`;
+					return aggr;
+			}, {});
+
+			extraProps['fields'] = fields;
+			extraProps['attachmentViewUrls'] = attachmentViewUrls;
+		}
 
 		return <ItemDetails
 				onNoteChange={ this.handleNoteChange.bind(this) }
@@ -211,7 +230,6 @@ class ItemDetailsContainer extends React.Component {
 				onRelatedItemDelete = { this.handleRelatedItemDelete.bind(this) }
 				onSave = { this.handleItemUpdated.bind(this) }
 				{ ...this.props }
-				{ ...this.state }
 				{ ...extraProps }
 			/>;
 	}
@@ -228,10 +246,32 @@ const mapStateToProps = state => {
 	const isProcessingTags = get(state,
 		['libraries', libraryKey, 'updating', 'items', itemKey], []
 	).some(({ patch }) => 'tagd' in patch);
-	const relations = item.relations ?
-		mapRelationsToItemKeys(item.relations, state.config.userId)
-			.map(key => get(state, ['libraries', libraryKey, 'items', key]))
-			.filter(item => item !== null) : [];
+	const isMetaAvailable = item.itemType in state.meta.itemTypeCreatorTypes &&
+		item.itemType in state.meta.itemTypeFields;
+	const shouldFetchMeta = !isMetaAvailable
+		&& !state.fetching.itemTypeCreatorTypes.includes(item.itemType)
+		&& !state.fetching.itemTypeFields.includes(item.itemType);
+	const isLoading = !isMetaAvailable;
+	const extraProps = [];
+
+	if(isMetaAvailable) {
+		extraProps['itemTypeFields'] = state.meta.itemTypeFields;
+		extraProps['itemTypes'] = state.meta.itemTypes
+			.map(it => ({
+				value: it.itemType,
+				label: it.localized
+			}))
+			.filter(it => it.value !== 'note');
+		extraProps['creatorTypes'] = state.meta.itemTypeCreatorTypes[item.itemType]
+			.map(ct => ({
+				value: ct.creatorType,
+				label: ct.localized
+			}));
+		extraProps['relations'] = item.relations ?
+			mapRelationsToItemKeys(item.relations, state.config.userId)
+				.map(key => get(state, ['libraries', libraryKey, 'items', key]))
+				.filter(item => item !== null) : [];
+	}
 
 	var itemsCount;
 
@@ -254,16 +294,18 @@ const mapStateToProps = state => {
 	const pendingChanges = get(state, ['libraries', libraryKey, 'updating', 'items', itemKey]) || [];
 
 	return {
-		pendingChanges,
-		libraryKey,
-		item,
-		config: state.config,
 		childItems,
-		isProcessingTags,
-		relations,
 		collection: get(state, 'libraries', libraryKey, 'collections', collectionKey),
+		config: state.config,
+		isLoading,
+		isProcessingTags,
+		item,
 		itemsCount,
+		libraryKey,
+		pendingChanges,
 		selectedItemKeys: selectedItemKeys ? selectedItemKeys.split(',') : [],
+		shouldFetchMeta,
+		...extraProps
 	};
 };
 

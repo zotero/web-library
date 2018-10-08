@@ -1,6 +1,7 @@
 'use strict';
 
 const React = require('react');
+const cx = require('classnames');
 const PropTypes = require('prop-types');
 const { itemProp } = require('../../constants/item');
 
@@ -11,16 +12,18 @@ const TouchHeaderContainer = require('../../container/touch-header');
 
 class ItemDetails extends React.Component {
 	render() {
+		const { item, selectedItemKeys, active } = this.props;
+
 		return (
-			<section className={ `item-details ${this.props.active ? 'active' : ''}` }>
+			<section className={ cx('item-details', { 'active': active }) }>
 				<TouchHeaderContainer
 					className="hidden-mouse hidden-md-down"
 				/>
 				{
-				'key' in this.props.item ? (
+					'key' in item ? (
 						<ItemDetailsTabs { ...this.props } />
 					) : (
-						this.props.selectedItemKeys.length ? (
+						selectedItemKeys.length ? (
 							<ItemDetailsInfoSelected { ...this.props } />
 						) : (
 							<ItemDetailsInfoView { ...this.props } />

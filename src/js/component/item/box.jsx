@@ -3,7 +3,6 @@
 const React = require('react');
 const PropTypes = require('prop-types');
 const cx = require('classnames');
-const Spinner = require('../ui/spinner');
 const Creators = require('../form/creators');
 const BoxField = require('./boxfield');
 
@@ -104,10 +103,6 @@ class ItemBox extends React.PureComponent {
 	}
 
 	render() {
-		if(this.props.isLoading) {
-			return <Spinner />;
-		}
-
 		return (
 			<ol className={ cx('metadata-list', {
 				editing: this.props.isEditing ,
