@@ -15,14 +15,16 @@
 		position: relative;
 		min-height: 100%;
 
-		&::after {
-			content: "";
-			position: absolute;
-			width: $border-width;
-			height: 100%;
-			left: calc(50% - #{$border-width});
-			top: 0;
-			background: #ddd;
+		&:not(.loading) {
+			&::after {
+				content: "";
+				position: absolute;
+				width: $border-width;
+				height: 100%;
+				left: calc(50% - #{$border-width});
+				top: 0;
+				background: #ddd;
+			}
 		}
 	}
 

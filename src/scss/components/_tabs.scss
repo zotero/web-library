@@ -58,29 +58,46 @@
 }
 
 .tab-pane {
-	@include touch-or-bp-down(sm) {
-		& + .tab-pane {
-			border-top: $space-min solid $body-bg;
-		}
-	}
-
 	@include touch-and-bp-only(md) {
 		display: none;
-
-		&.active {
-			display: block;
-		}
-
-		& + .tab-pane {
-			border-top: 0;
-		}
 	}
 
 	@include mouse-and-bp-up(md) {
 		display: none;
+	}
 
-		&.active {
+	&.active {
+		@include touch-and-bp-only(md) {
 			display: block;
+		}
+
+		@include mouse-and-bp-up(md) {
+			display: block;
+		}
+	}
+
+	&.loading {
+		html:not(.specifity) & {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			height: 100%;
+			padding: 0;
+		}
+
+		.icon-spin {
+			width: $icon-spin-size-md;
+			height: $icon-spin-size-md;
+		}
+	}
+
+	& + .tab-pane {
+		@include touch-or-bp-down(sm) {
+			border-top: $space-min solid $body-bg;
+		}
+
+		@include touch-and-bp-only(md) {
+			border-top: 0;
 		}
 	}
 }
