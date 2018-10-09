@@ -13,11 +13,12 @@ const withDevice = Component => {
 			const shouldUseEditMode = userType === 'touch' || viewport.xxs || viewport.xs || viewport.sm;
 			// const shouldUseCompactView = userType === 'touch' && (viewport.md || viewport.lg);
 			const shouldUseModalCreatorField = shouldUseEditMode;
+			const shouldUseTabs = viewport.md || (viewport.lg && userType != 'touch');
 			const device = {
 				viewport,
 				[userType]: true,
 				shouldUseEditMode,
-				// shouldUseCompactView,
+				shouldUseTabs,
 				shouldUseModalCreatorField,
 			}
 			return <Component { ...props } device={ device } />

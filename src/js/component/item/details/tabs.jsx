@@ -46,7 +46,6 @@ class ItemDetailsTabs extends React.PureComponent {
 		const { device, isLoadingMeta, isLoadingChildItems, isLoadingRelated,
 			isEditing, onEditModeToggle } = this.props;
 		const isLoading = isLoadingMeta || isLoadingChildItems || isLoadingRelated;
-		const shouldUseTabs = !(device.viewport.xxs || device.viewport.xs || device.viewport.sm);
 
 		return (
 			<Panel>
@@ -126,7 +125,7 @@ class ItemDetailsTabs extends React.PureComponent {
 				</header>
 				{
 					// on small devices, where tabs are not used, we display single spinner
-					isLoading && !shouldUseTabs ? <Spinner /> : (
+					isLoading && !device.shouldUseTabs ? <Spinner /> : (
 						<React.Fragment>
 							{
 								!['attachment', 'note'].includes(this.props.item.itemType) && (
