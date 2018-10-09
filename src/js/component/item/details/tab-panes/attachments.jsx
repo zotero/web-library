@@ -1,23 +1,34 @@
 'use strict';
 
 const React = require('react');
-const Attachments = require('../../../attachments');const cx = require('classnames');
+const Attachments = require('../../../attachments');
+const cx = require('classnames');
+const Spinner = require('../../../ui/spinner');
 
 class AttachmentsTabPane extends React.PureComponent {
 	render() {
+		const { isActive, childItems, attachmentViewUrls, onAddAttachment,
+			onDeleteAttachment, isLoadingChildItems } = this.props;
 		return (
 			<div className={ cx({
 				'tab-pane': true,
 				'attachments': true,
-				'active': this.props.isActive
+				'active': isActive,
+				'loading': isLoadingChildItems,
 			}) }>
-				<h5 className="h2 tab-pane-heading">Attachments</h5>
-				<Attachments
-					attachments={ this.props.childItems.filter(i => i.itemType === 'attachment') }
-					attachmentViewUrls={ this.props.attachmentViewUrls }
-					onAddAttachment={ this.props.onAddAttachment }
-					onDeleteAttachment={ this.props.onDeleteAttachment }
-				/>
+				{
+				isLoadingChildItems ? <Spinner /> : (
+					<React.Fragment>
+						<h5 className="h2 tab-pane-heading">Attachments</h5>
+						<Attachments
+							attachments={ childItems.filter(i => i.itemType === 'attachment') }
+							attachmentViewUrls={ attachmentViewUrls }
+							onAddAttachment={ onAddAttachment }
+							onDeleteAttachment={ onDeleteAttachment }
+						/>
+					</React.Fragment>
+					)
+				}
 			</div>
 		);
 	}

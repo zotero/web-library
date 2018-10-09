@@ -3,23 +3,33 @@
 const React = require('react');
 const cx = require('classnames');
 const Notes = require('../../../notes');
+const Spinner = require('../../../ui/spinner');
 
 class NotesTabPane extends React.PureComponent {
 	render() {
+		const { isLoadingChildItems, isActive, item, childItems, onNoteChange,
+			onAddNote, onDeleteNote } = this.props;
 		return (
 			<div className={ cx({
 				'tab-pane': true,
 				'notes': true,
-				'active': this.props.isActive
+				'active': isActive,
+				'loading': isLoadingChildItems
 			}) }>
-				<h5 className="h2 tab-pane-heading">Notes</h5>
-				<Notes
-					item={ this.props.item }
-					notes={ this.props.childItems.filter(i => i.itemType === 'note') }
-					onChange={ this.props.onNoteChange }
-					onAddNote={ this.props.onAddNote }
-					onDeleteNote={ this.props.onDeleteNote }
-				/>
+				{
+					isLoadingChildItems ? <Spinner /> : (
+						<React.Fragment>
+							<h5 className="h2 tab-pane-heading">Notes</h5>
+							<Notes
+								item={ item }
+								notes={ childItems.filter(i => i.itemType === 'note') }
+								onChange={ onNoteChange }
+								onAddNote={ onAddNote }
+								onDeleteNote={ onDeleteNote }
+							/>
+						</React.Fragment>
+					)
+				}
 			</div>
 		);
 	}

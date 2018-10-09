@@ -7,28 +7,18 @@ const Abstract = require('../../abstract');
 const Spinner = require('../../../ui/spinner');
 
 class InfoTabPane extends React.PureComponent {
-	get className() {
-		const { item, isEditing } = this.props;
-
-		return cx({
-			'empty-abstract': !item.abstractNote,
-			abstract: true,
-			editing: isEditing,
-		});
-	}
-
 	render() {
-		const { isActive, isEditing, isLoading, item } = this.props;
+		const { isActive, isEditing, isLoadingMeta, item } = this.props;
 
 		return (
 			<div className={ cx({
 				'tab-pane': true,
 				'info': true,
 				'active': isActive,
-				'loading': isLoading
+				'loading': isLoadingMeta
 			}) }>
 				{
-					isLoading ? <Spinner /> : (
+					isLoadingMeta ? <Spinner /> : (
 						<div className="row">
 							<div className="col">
 								{ !isEditing && (
@@ -43,7 +33,11 @@ class InfoTabPane extends React.PureComponent {
 								/>
 							</div>
 							<div className="col">
-								<section className={ this.className }>
+								<section className={ cx({
+									'empty-abstract': !item.abstractNote,
+									abstract: true,
+									editing: isEditing,
+								}) }>
 									<h6 className="h2 abstract-heading">
 										Abstract
 									</h6>

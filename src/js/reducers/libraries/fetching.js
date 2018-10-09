@@ -18,6 +18,7 @@ const {
 const fetching = (state = {
 	items: [],
 	itemsInCollection: [],
+	childItems: [],
 	itemsTop: false,
 }, action) => {
 	switch(action.type) {
@@ -76,6 +77,8 @@ const fetching = (state = {
 				...state,
 				itemsTop: false
 			};
+		default:
+			return state;
 	}
 }
 
