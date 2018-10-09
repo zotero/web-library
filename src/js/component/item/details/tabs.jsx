@@ -11,6 +11,7 @@ const AttachmentsTabPane = require('./tab-panes/attachments');
 const RelatedTabPane = require('./tab-panes/related');
 const StandaloneNoteTabPane = require('./tab-panes/standalone-note');
 const EditToggleButton = require('../../edit-toggle-button');
+const Spinner = require('../../ui/spinner');
 
 class ItemDetailsTabs extends React.PureComponent {
 	state = {
@@ -42,7 +43,10 @@ class ItemDetailsTabs extends React.PureComponent {
 	}
 
 	render() {
-		const { device, isEditing, onEditModeToggle } = this.props;
+		const { device, isLoadingMeta, isLoadingChildItems, isLoadingRelated,
+			isEditing, onEditModeToggle } = this.props;
+		const isLoading = isLoadingMeta || isLoadingChildItems || isLoadingRelated;
+		const shouldUseTabs = !(device.viewport.xxs || device.viewport.xs || device.viewport.sm);
 
 		return (
 			<Panel>
@@ -121,27 +125,35 @@ class ItemDetailsTabs extends React.PureComponent {
 						}
 				</header>
 				{
-					!['attachment', 'note'].includes(this.props.item.itemType) && (
+					// on small devices, where tabs are not used, we display single spinner
+					isLoading && !shouldUseTabs ? <Spinner /> : (
 						<React.Fragment>
-							<InfoTabPane isActive={ this.state.tab === 'info' } { ...this.props } />
-							<NotesTabPane isActive={ this.state.tab === 'notes' } { ...this.props } />
+							{
+								!['attachment', 'note'].includes(this.props.item.itemType) && (
+									<React.Fragment>
+										<InfoTabPane isActive={ this.state.tab === 'info' } { ...this.props } />
+										<NotesTabPane isActive={ this.state.tab === 'notes' } { ...this.props } />
+									</React.Fragment>
+								)
+							}
+
+							{
+								this.props.item.itemType === 'note' && (
+									<StandaloneNoteTabPane isActive={ this.state.tab === 'standalone-note' } { ...this.props } />
+								)
+							}
+
+							<TagsTabPane isActive={ this.state.tab === 'tags' } { ...this.props } />
+							{
+								!['attachment', 'note'].includes(this.props.item.itemType) && (
+									<AttachmentsTabPane isActive={ this.state.tab === 'attachments' } { ...this.props } />
+								)
+							}
+							<RelatedTabPane isActive={ this.state.tab === 'related' } { ...this.props } />
 						</React.Fragment>
 					)
 				}
 
-				{
-					this.props.item.itemType === 'note' && (
-						<StandaloneNoteTabPane isActive={ this.state.tab === 'standalone-note' } { ...this.props } />
-					)
-				}
-
-				<TagsTabPane isActive={ this.state.tab === 'tags' } { ...this.props } />
-				{
-					!['attachment', 'note'].includes(this.props.item.itemType) && (
-						<AttachmentsTabPane isActive={ this.state.tab === 'attachments' } { ...this.props } />
-					)
-				}
-				<RelatedTabPane isActive={ this.state.tab === 'related' } { ...this.props } />
 			</Panel>
 		);
 	}
