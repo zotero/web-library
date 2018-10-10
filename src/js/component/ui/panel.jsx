@@ -2,6 +2,7 @@
 
 const React = require('react');
 const PropTypes = require('prop-types');
+const cx = require('classnames');
 
 class Panel extends React.Component {
 
@@ -12,7 +13,7 @@ class Panel extends React.Component {
 			});
 		} else {
 			return (
-				<header className="panel-header">
+				<header className={ cx('panel-header', this.props.headerClassName) }>
 					{ React.cloneElement(header) }
 				</header>
 			);
@@ -21,12 +22,12 @@ class Panel extends React.Component {
 
 	renderBody(body) {
 		return (
-			<div className="panel-body">
+			<div className={ cx('panel-body', this.props.bodyClassName) }>
 				{ body }
 			</div>
 		);
 	}
-	
+
 	render() {
 		const [header, ...body] = React.Children.toArray(this.props.children);
 
@@ -41,7 +42,9 @@ class Panel extends React.Component {
 
 Panel.propTypes = {
 	children: PropTypes.node,
-	className: PropTypes.string
+	className: PropTypes.string,
+	bodyClassName: PropTypes.string,
+	headerClassName: PropTypes.string,
 };
 
 Panel.defaultProps = {

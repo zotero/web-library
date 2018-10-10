@@ -3,6 +3,7 @@
 
 const React = require('react');
 const Panel = require('../../ui/panel');
+const cx = require('classnames');
 const { Tab, Tabs } = require('../../ui/tabs');
 const InfoTabPane = require('./tab-panes/info');
 const NotesTabPane = require('./tab-panes/notes');
@@ -48,7 +49,7 @@ class ItemDetailsTabs extends React.PureComponent {
 		const isLoading = isLoadingMeta || isLoadingChildItems || isLoadingRelated;
 
 		return (
-			<Panel>
+			<Panel bodyClassName={ cx({ 'loading': isLoading && !device.shouldUseTabs }) }>
 				<header>
 					<h4 className="offscreen">
 						{ this.props.title }
