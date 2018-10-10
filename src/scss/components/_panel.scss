@@ -32,15 +32,28 @@
 		overflow-y: scroll;
 		-webkit-overflow-scrolling: touch; // Momentum scrolling
 
+		&.loading {
+			@include touch-or-bp-down(sm) {
+				display: flex;
+				justify-content: center;
+				align-items: center;
+			}
+		}
+
 		// Disable scrolling while dragging creators on mobiles, keep scrollbar
-		@include touch-or-bp-down(sm) {
-			@include state(".drag-layer + .library-container") {
+		@include state(".drag-layer + .library-container") {
+			@include touch-or-bp-down(sm) {
 				pointer-events: none;
 
 				.tab-pane {
 					pointer-events: auto; // Reset
 				}
 			}
+		}
+
+		.icon-spin {
+			width: $icon-spin-size-md;
+			height: $icon-spin-size-md;
 		}
 	}
 }
