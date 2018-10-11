@@ -18,6 +18,7 @@ class ItemDetails extends React.Component {
 			<section className={ cx('item-details', { 'active': active }) }>
 				<TouchHeaderContainer
 					className="hidden-mouse hidden-md-down"
+					includeNav={ false }
 				/>
 				{
 					'key' in item ? (

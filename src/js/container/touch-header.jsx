@@ -32,16 +32,18 @@ class TouchHeaderContainer extends React.Component {
 	}
 
 	render() {
-		const { path, rootAtCurrentItemsSource, root, includeItem, item } = this.props;
+		const { path, includeNav, rootAtCurrentItemsSource, root, includeItem, item } = this.props;
+		const touchHeaderPath = includeNav ? this.makeTouchHeaderPath(
+			path,
+			rootAtCurrentItemsSource ? root.key : null,
+			includeItem ? item : null
+		) : [];
+
 		return (
 			<TouchHeader
 				{ ...this.props }
 				onCollectionSelected={ this.onCollectionSelected.bind(this) }
-				path={ this.makeTouchHeaderPath(
-					path,
-					rootAtCurrentItemsSource ? root.key : null,
-					includeItem ? item : null
-				) }
+				path={ touchHeaderPath }
 				root={ rootAtCurrentItemsSource ? root : undefined }
 
 			/>
@@ -49,6 +51,7 @@ class TouchHeaderContainer extends React.Component {
 	}
 
 	static defaultProps = {
+		includeNav: true,
 		root: {
 			key: null,
 			label: '/'
@@ -59,6 +62,7 @@ class TouchHeaderContainer extends React.Component {
 		dispatch: PropTypes.func.isRequired,
 		path: PropTypes.array,
 		item: itemProp,
+		includeNav: PropTypes.bool,
 		includeItem: PropTypes.bool,
 		root: PropTypes.object,
 		rootAtCurrentItemsSource: PropTypes.bool
