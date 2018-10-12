@@ -185,6 +185,7 @@ class CollectionTree extends React.PureComponent {
 									collection
 								)
 							}
+							hideTwisty={ !(collection.key in childMap) }
 							onOpen={ this.handleOpenToggle.bind(this, collection.key) }
 							onClick={ this.handleSelect.bind(this, { collection: collection.key }) }
 							onKeyPress={ this.handleKeyPress.bind(this, { collection: collection.key }) }

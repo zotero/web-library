@@ -39,6 +39,7 @@ class Node extends React.PureComponent {
 			children,
 			className,
 			connectDropTarget,
+			hideTwisty,
 			isOpen,
 			isOver,
 			onClick,
@@ -47,14 +48,12 @@ class Node extends React.PureComponent {
 			subtree,
 		} = this.props;
 
-		const twistyButton = children !== null ? (
-			<button
-				type="button"
-				className="twisty"
-				onClick={ onOpen }
-				onKeyPress={ ev => ev.stopPropagation() }
-			/>
-		) : null;
+		const twistyButton = <button
+			type="button"
+			className="twisty"
+			onClick={ onOpen }
+			onKeyPress={ ev => ev.stopPropagation() }
+		/>;
 		const isActive = canDrop && isOver;
 
 		return connectDropTarget(
@@ -70,7 +69,7 @@ class Node extends React.PureComponent {
 					aria-expanded={ isOpen }
 				>
 					<div className="twisty-container">
-						{ subtree && twistyButton }
+						{ subtree && !hideTwisty ? twistyButton : null }
 					</div>
 					{ children }
 				</div>
@@ -82,6 +81,7 @@ class Node extends React.PureComponent {
 	static propTypes = {
 		children: PropTypes.oneOfType([PropTypes.element, PropTypes.array]),
 		className: PropTypes.string,
+		hideTwisty: PropTypes.bool,
 		isOpen: PropTypes.bool,
 		onClick: PropTypes.func,
 		onKeyPress: PropTypes.func,
