@@ -23,14 +23,25 @@ class ItemDetailsTabs extends React.PureComponent {
 		this.setDefaultActiveTab(this.props);
 	}
 
-	componentWillReceiveProps(props) {
-		// if(this.state.tab == null || this.props.item.key !== props.item.key) {
-		// 	this.setDefaultActiveTab(props);
-		// }
+	componentDidUpdate() {
+		const { item: { itemType } } = this.props;
+		const { tab } = this.state;
+
+		if(tab === 'standalone-note' && itemType != 'note') {
+			this.setDefaultActiveTab();
+		}
+		if(tab === 'standalone-attachment' && itemType != 'attachment') {
+			this.setDefaultActiveTab();
+		}
+
+		if(['info', 'notes', 'attachments'].includes(tab) &&
+			['note', 'attachment'].includes(itemType)) {
+			this.setDefaultActiveTab();
+		}
 	}
 
-	setDefaultActiveTab(props) {
-		switch(props.item.itemType) {
+	setDefaultActiveTab() {
+		switch(this.props.item.itemType) {
 			case 'note':
 				this.setState({ tab: 'standalone-note' });
 			break;
