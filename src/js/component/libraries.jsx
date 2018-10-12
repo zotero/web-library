@@ -145,14 +145,8 @@ class Libraries extends React.Component {
 	}
 
 	render() {
-		const { userLibraryKey } = this.props;
-		const isRootActive = false; //TODO
-		// const selectedCollection = Object.keys(this.derivedData)
-		// 	.find((collectionKey) => this.derivedData[collectionKey].isSelected) || null;
-		// const isRootActive = !selectedCollection || (
-		// 	selectedCollection && selectedCollection.parentCollection === false &&
-		// 	!(selectedCollection.key in this.childMap)
-		// );
+		const { userLibraryKey, libraryKey, itemsSource } = this.props;
+		const isRootActive = libraryKey === userLibraryKey && itemsSource === 'top';
 
 		if(this.props.isFetching) {
 			return <Spinner />;
