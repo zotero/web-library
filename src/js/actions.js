@@ -314,26 +314,34 @@ const initialize = () => {
 	};
 };
 
-const fetchCollections = (libraryKey) => {
+const fetchCollections = (libraryKey, { start = 0, limit = 50, sort = 'dateModified', direction = "desc" } = {}) => {
 	return async (dispatch, getState) => {
 		dispatch({
 			type: REQUEST_COLLECTIONS_IN_LIBRARY,
-			libraryKey
+			libraryKey,
+			start,
+			limit,
+			sort,
+			direction,
 		});
 		try {
 			const { config } = getState();
-			const response = await api(config.apiKey, config.apiConfig).library(libraryKey).collections().get();
+			const response = await api(config.apiKey, config.apiConfig)
+				.library(libraryKey)
+				.collections()
+				.get({ start, limit, sort, direction });
 			const collections = response.getData();
-			collections.sort(
-				(a, b) => a.name.toUpperCase().localeCompare(b.name.toUpperCase())
-			);
 
 			dispatch({
 				type: RECEIVE_COLLECTIONS_IN_LIBRARY,
 				receivedAt: Date.now(),
 				libraryKey,
 				collections,
-				response
+				response,
+				start,
+				limit,
+				sort,
+				direction,
 			});
 			return collections;
 		} catch(error) {

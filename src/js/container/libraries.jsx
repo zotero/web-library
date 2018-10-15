@@ -16,19 +16,36 @@ const {
 const { getCollectionsPath } = require('../common/state');
 const { get } = require('../utils');
 const { makePath } = require('../common/navigation');
+const PAGE_SIZE = 100;
 
 class LibrariesContainer extends React.Component {
 	componentDidMount() {
-		this.props.dispatch(
-			fetchCollections(this.props.userLibraryKey)
-		);
+		const { dispatch, userLibraryKey } = this.props;
+		dispatch(fetchCollections(userLibraryKey, { start: 0, limit: PAGE_SIZE }));
 	}
 
 	componentDidUpdate({ libraryKey: prevLibraryKey }) {
-		const { libraryKey, userLibraryKey, dispatch } = this.props;
+		const { collectionCountByLibrary, collections, groupCollections, libraryKey, userLibraryKey, dispatch, collectionsBeingFetched } = this.props;
 		if(libraryKey != prevLibraryKey && libraryKey !== userLibraryKey) {
-			dispatch(fetchCollections(libraryKey));
+			dispatch(fetchCollections(libraryKey, { start: 0, limit: PAGE_SIZE }));
 		}
+
+		const fetchNextPage = (libraryKey, collections) => {
+			if(!collectionsBeingFetched.includes(libraryKey) &&
+			collectionCountByLibrary[libraryKey] > collections.length) {
+				dispatch(fetchCollections(libraryKey, { start: collections.length, limit: PAGE_SIZE }));
+			}
+		}
+
+		if(userLibraryKey in collectionCountByLibrary) {
+			fetchNextPage(userLibraryKey, collections);
+		}
+
+		Object.keys(groupCollections).forEach(groupId => {
+			if(groupId in collectionCountByLibrary) {
+				fetchNextPage(groupId, groupCollections[groupId]);
+			}
+		});
 	}
 
 	handleSelect(pathData) {
@@ -52,7 +69,7 @@ class LibrariesContainer extends React.Component {
 
 	async handleGroupOpen(groupKey) {
 		const { dispatch } = this.props;
-		await dispatch(fetchCollections(groupKey));
+		await dispatch(fetchCollections(groupKey, { start: 0, limit: PAGE_SIZE }));
 	}
 
 	render() {
@@ -76,6 +93,8 @@ const mapStateToProps = state => {
 		collections: Object.values(
 			get(state, ['libraries', userLibraryKey, 'collections'], {})
 		),
+		collectionCountByLibrary: state.collectionCountByLibrary,
+		collectionsBeingFetched: state.fetching.collectionsInLibrary,
 		userLibraryKey,
 		groups: state.groups,
 		groupCollections: state.groups.reduce((aggr, group) => {

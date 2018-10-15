@@ -1,6 +1,7 @@
 'use strict';
 
 module.exports = {
+	collectionCountByLibrary: require('./collection-count-by-library'),
 	config: require('./config'),
 	current: require('./current'),
 	fetching: require('./fetching'),
