@@ -148,6 +148,10 @@ class CollectionTree extends React.PureComponent {
 		);
 		const hasOpenLastLevel = collections.length === 0;
 
+		collections.sort((c1, c2) =>
+			c1.name.toUpperCase().localeCompare(c2.name.toUpperCase())
+		);
+
 		return (
 			<div className={ cx('level', `level-${level}`, {
 				'has-open': hasOpen, 'level-last': hasOpenLastLevel
