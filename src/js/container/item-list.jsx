@@ -28,6 +28,7 @@ const {
 const { get, sortByKey, resizeVisibleColumns } = require('../utils');
 const { getSerializedQuery } = require('../common/state');
 const { makePath } = require('../common/navigation');
+const exportFormats = require('../constants/export-formats');
 
 const processItems = (items, state) => {
 	return items.map(item => {
@@ -178,7 +179,10 @@ class ItemListContainer extends React.PureComponent {
 	async handleExport(format) {
 		const { dispatch, selectedItemKeys } = this.props;
 		const exportData = await dispatch(exportItems(selectedItemKeys, format));
-		saveAs(exportData, 'export-data');
+
+		const fileName = ['export-data', exportFormats.find(f => f.key === format).extension]
+			.filter(Boolean).join('.');
+		saveAs(exportData, fileName);
 	}
 
 	handleBibliographyOpen() {

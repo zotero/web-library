@@ -1,0 +1,15 @@
+module.exports = [
+	{ extension: 'bib', key: 'bibtex', label: 'BibTeX' },
+	{ extension: 'bib', key: 'biblatex', label: 'BibLaTeX' },
+	{ extension: 'html', key: 'bookmarks', label: 'Netscape Bookmark File Format' },
+	{ extension: null, key: 'coins', label: 'COinS' },
+	{ extension: 'json', key: 'csljson', label: 'Citation Style Language data format' },
+	{ extension: 'xml', key: 'mods', label: 'MODS' },
+	{ extension: 'txt', key: 'refer', label: 'Refer/BibIX' },
+	{ extension: 'rdf', key: 'rdf_bibliontology', label: 'Bibliographic Ontology RDF' },
+	{ extension: 'rdf', key: 'rdf_dc', label: 'Unqualified Dublin Core RDF' },
+	{ extension: 'rdf', key: 'rdf_zotero', label: 'Zotero RDF' },
+	{ extension: 'ris', key: 'ris', label: 'RIS' },
+	{ extension: 'xml', key: 'tei', label: 'Text Encoding Initiative (TEI)' },
+	{ extension: 'txt', key: 'wikipedia', label: 'Wikipedia Citation Templates ' },
+];

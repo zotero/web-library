@@ -9,22 +9,7 @@ const Dropdown = require('reactstrap/lib/Dropdown').default;
 const DropdownToggle = require('reactstrap/lib/DropdownToggle').default;
 const DropdownMenu = require('reactstrap/lib/DropdownMenu').default;
 const DropdownItem = require('reactstrap/lib/DropdownItem').default;
-
-const exportFormats = [
-	{ key: 'bibtex', label: 'BibTeX' },
-	{ key: 'biblatex', label: 'BibLaTeX' },
-	{ key: 'bookmarks', label: 'Netscape Bookmark File Format' },
-	{ key: 'coins', label: 'COinS' },
-	{ key: 'csljson', label: 'Citation Style Language data format' },
-	{ key: 'mods', label: 'MODS' },
-	{ key: 'refer', label: 'Refer/BibIX' },
-	{ key: 'rdf_bibliontology', label: 'Bibliographic Ontology RDF' },
-	{ key: 'rdf_dc', label: 'Unqualified Dublin Core RDF' },
-	{ key: 'rdf_zotero', label: 'Zotero RDF' },
-	{ key: 'ris', label: 'RIS' },
-	{ key: 'tei', label: 'Text Encoding Initiative (TEI)' },
-	{ key: 'wikipedia', label: 'Wikipedia Citation Templates ' },
-];
+const exportFormats = require('../../../constants/export-formats');
 
 class ExportActions extends React.PureComponent {
 	state = {
