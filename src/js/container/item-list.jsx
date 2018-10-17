@@ -19,6 +19,7 @@ const {
 	fetchItemTemplate,
 	fetchTopItems,
 	fetchTrashItems,
+	fetchPublicationsItems,
 	moveToTrash,
 	preferenceChange,
 	recoverFromTrash,
@@ -62,13 +63,15 @@ class ItemListContainer extends React.PureComponent {
 		const { history, collectionKey: collection, libraryKey: library,
 			itemsSource, tags, search } = this.props;
 		const trash = itemsSource === 'trash';
+		const publications = itemsSource === 'publications';
 
 		switch(itemsSource) {
 			case 'trash':
 			case 'top':
 			case 'query':
 			case 'collection':
-				history.push(makePath({ library, search, tags, trash, collection, items }));
+			case 'publications':
+				history.push(makePath({ library, search, tags, trash, publications, collection, items }));
 			break;
 		}
 	}
@@ -146,6 +149,8 @@ class ItemListContainer extends React.PureComponent {
 				return await dispatch(fetchTopItems(sortAndDirection));
 			case 'trash':
 				return await dispatch(fetchTrashItems(sortAndDirection));
+			case 'publications':
+				return await dispatch(fetchPublicationsItems(sortAndDirection));
 			case 'collection':
 				return await dispatch(fetchItemsInCollection(collectionKey, sortAndDirection));
 		}
@@ -245,6 +250,11 @@ const mapStateToProps = state => {
 		case 'trash':
 			items = get(state, ['libraries', libraryKey, 'itemsTrash'], []);
 			totalItemsCount = get(state, ['itemCountTrashByLibrary', libraryKey], 50);
+		break;
+		case 'publications':
+			items = state.itemsPublications;
+			totalItemsCount = state.itemCount.publications;
+			totalItemsCount = totalItemsCount === null ? 50 : totalItemsCount;
 		break;
 		case 'collection':
 			items = get(state, ['libraries', libraryKey, 'itemsByCollection', collectionKey], []);

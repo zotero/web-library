@@ -6,7 +6,7 @@ const {
 	RECEIVE_ITEMS_IN_COLLECTION,
 	RECEIVE_FETCH_ITEMS,
 	RECEIVE_TOP_ITEMS,
-	RECEIVE_TRASH_ITEMS,
+	RECEIVE_TRASH_ITEMS
 } = require('../../constants/actions');
 
 const tagCountByCollection = (state = {}, action) => {

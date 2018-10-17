@@ -29,6 +29,8 @@ const current = (state = stateDefault, action) => {
 				itemsSource = 'collection';
 			} else if(action.path.includes('/trash')) {
 				itemsSource = 'trash';
+			} else if(action.path.includes('/publications')) {
+				itemsSource = 'publications';
 			} else {
 				itemsSource = 'top';
 			}

@@ -245,6 +245,23 @@ class CollectionTree extends React.PureComponent {
 							<Node
 								className={ cx({
 									'trash': true,
+									'selected': itemsSource === 'publications'
+								})}
+								onClick={ this.handleSelect.bind(this, { publications: true }) }
+								onKeyPress={ this.handleKeyPress.bind(this, { publications: true }) }
+								dndTarget={ { 'targetType': 'publications' } }
+							>
+								<Icon type="28/document" className="touch" width="28" height="28" />
+								<Icon type="16/document" className="mouse" width="16" height="16" />
+								<a>My Publications</a>
+							</Node>
+						)
+					}
+					{
+						isUserLibrary && level === 1 && (
+							<Node
+								className={ cx({
+									'trash': true,
 									'selected': itemsSource === 'trash'
 								})}
 								onClick={ this.handleSelect.bind(this, { trash: true }) }

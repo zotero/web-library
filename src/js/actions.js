@@ -147,6 +147,10 @@ const {
 	REQUEST_CITE_ITEMS,
 	RECEIVE_CITE_ITEMS,
 	ERROR_CITE_ITEMS,
+
+	REQUEST_PUBLICATIONS_ITEMS,
+	RECEIVE_PUBLICATIONS_ITEMS,
+	ERROR_PUBLICATIONS_ITEMS,
 } = require('./constants/actions');
 
 // @TODO: rename and move to common/api
@@ -783,6 +787,66 @@ const fetchTrashItems = ({ start = 0, limit = 50, sort = 'dateModified', directi
 		} catch(error) {
 			dispatch({
 				type: ERROR_TRASH_ITEMS,
+				error,
+				libraryKey,
+				start,
+				limit,
+				sort,
+				direction,
+			});
+		}
+	};
+};
+
+const fetchPublicationsItems = ({ start = 0, limit = 50, sort = 'dateModified', direction = 'desc' } = {}) => {
+	return async (dispatch, getState, ) => {
+		const state = getState();
+		const libraryKey = state.config.userLibraryKey;
+		const totalItemsCount = state.itemCount.publications;
+		const knownItemKeys = state.itemsPublications;
+
+		if(knownItemKeys.length === totalItemsCount) {
+			// there is no need for a request
+			return knownItemKeys.map(key => get(state, ['libraries', libraryKey, 'items', key]))
+		}
+
+		dispatch({
+			type: REQUEST_PUBLICATIONS_ITEMS,
+			libraryKey,
+			start,
+			limit,
+			sort,
+			direction,
+		});
+
+		try {
+			let response = await api(state.config.apiKey, state.config.apiConfig)
+				.library(libraryKey)
+				.publications()
+				.items()
+				.get({ start, limit, sort, direction });
+
+			const items = response.getData().map((item, index) => ({
+				...item,
+				tags: item.tags || [],  // tags are not present on items in my publications
+										// but most of the code expects tags key to be present
+				[Symbol.for('meta')]: response.getMeta()[index] || {}
+			}));
+
+			dispatch({
+				type: RECEIVE_PUBLICATIONS_ITEMS,
+				libraryKey,
+				items,
+				response,
+				start,
+				limit,
+				sort,
+				direction,
+			});
+			return items;
+		} catch(error) {
+			dispatch({
+				type: ERROR_PUBLICATIONS_ITEMS,
 				error,
 				libraryKey,
 				start,
@@ -1811,6 +1875,7 @@ module.exports = {
 	fetchItemTypeCreatorTypes,
 	fetchItemTypeFields,
 	fetchLibrarySettings,
+	fetchPublicationsItems,
 	fetchTagsForItem,
 	fetchTagsInCollection,
 	fetchTagsInLibrary,

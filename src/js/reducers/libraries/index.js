@@ -56,6 +56,7 @@ const actions = Object.entries(require('../../constants/actions'))
 			'RECEIVE_TAGS_IN_LIBRARY',
 			'RECEIVE_TOP_ITEMS',
 			'RECEIVE_TRASH_ITEMS',
+			'RECEIVE_PUBLICATIONS_ITEMS',
 			'RECEIVE_UPDATE_COLLECTION',
 			'RECEIVE_UPDATE_ITEM',
 			'REQUEST_CHILD_ITEMS',

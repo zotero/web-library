@@ -119,6 +119,8 @@ class LibraryContainer extends React.Component {
 							<Route path="/search/:search" component={LibraryContainerWrapped} />
 							<Route path="/trash/items/:items" component={LibraryContainerWrapped} />
 							<Route path="/trash" component={LibraryContainerWrapped} />
+							<Route path="/publications/items/:items" component={LibraryContainerWrapped} />
+							<Route path="/publications" component={LibraryContainerWrapped} />
 							<Route path="/:library?/collection/:collection/tags/:tags/search/:search/items/:items" component={LibraryContainerWrapped} />
 							<Route path="/:library?/collection/:collection/tags/:tags/items/:items" component={LibraryContainerWrapped} />
 							<Route path="/:library?/collection/:collection/search/:search/items/:items" component={LibraryContainerWrapped} />
@@ -136,6 +138,8 @@ class LibraryContainer extends React.Component {
 							<Route path="/:library?/search/:search" component={LibraryContainerWrapped} />
 							<Route path="/:library?/trash/items/:items" component={LibraryContainerWrapped} />
 							<Route path="/:library?/trash" component={LibraryContainerWrapped} />
+							<Route path="/:library?/publications/items/:items" component={LibraryContainerWrapped} />
+							<Route path="/:library?/publications" component={LibraryContainerWrapped} />
 							<Route path="/:library" component={LibraryContainerWrapped} />
 							<Route path="/" component={LibraryContainerWrapped} />
 						</Switch>

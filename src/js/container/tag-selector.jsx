@@ -34,6 +34,9 @@ class TagSelectorContainer extends React.PureComponent {
 			case 'trash':
 				history.push(makePath({ library, trash: true }));
 			break;
+			case 'publications':
+				history.push(makePath({ library, publications: true }));
+			break;
 			case 'collection':
 				history.push(makePath({ library, tags: selectedTags, collection: collectionKey }));
 			break;
@@ -51,6 +54,9 @@ class TagSelectorContainer extends React.PureComponent {
 				return await dispatch(fetchTagsInLibrary({ start, limit }));
 			case 'trash':
 				//@TODO;
+				return;
+			case 'publications':
+				//@TODO
 				return;
 			case 'collection':
 				return await dispatch(fetchTagsInCollection(collectionKey, { start, limit }));
@@ -111,6 +117,7 @@ const mapStateToProps = state => {
 	switch(itemsSource) {
 		case 'query':
 		case 'trash':
+		case 'publications':
 			//@TODO: these requires a special request
 			sourceTags = [];
 			totalTagCount = 0;

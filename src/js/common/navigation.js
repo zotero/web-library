@@ -9,7 +9,7 @@ const tagsFromUrlPart = tags => tags ? tags.split(/\b,\b/).map(t => t.replace(/,
 
 const tagsToUrlPart = tags => tags.map(t => t.replace(/,/g, ',,'));
 
-const makePath = ({ library = null, collection = null, items = null, trash = false, tags = null, search = null, view = null } = {}) => {
+const makePath = ({ library = null, collection = null, items = null, trash = false, publications = false, tags = null, search = null, view = null } = {}) => {
 	const path = [];
 	if(library && library.substr(0, 1) === 'g') {
 		path.push(library)
@@ -17,6 +17,8 @@ const makePath = ({ library = null, collection = null, items = null, trash = fal
 
 	if(trash) {
 		path.push('trash')
+	} else if (publications) {
+		path.push('publications');
 	} else if(collection) {
 		path.push('collection', collection);
 	}
@@ -45,7 +47,6 @@ const makePath = ({ library = null, collection = null, items = null, trash = fal
 	if(view) {
 		path.push(view);
 	}
-
 
 	return '/' + path.join('/');
 }

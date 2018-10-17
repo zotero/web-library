@@ -12,6 +12,7 @@ const {
 	RECEIVE_TRASH_ITEMS,
 	RECEIVE_UPDATE_ITEM,
 	RECEIVE_DELETE_ITEMS,
+	RECEIVE_PUBLICATIONS_ITEMS,
 } = require('../../constants/actions.js');
 
 const version = (state = 0, action) => {
@@ -25,6 +26,7 @@ const version = (state = 0, action) => {
 		case RECEIVE_MOVE_ITEMS_TRASH:
 		case RECEIVE_TOP_ITEMS:
 		case RECEIVE_TRASH_ITEMS:
+		case RECEIVE_PUBLICATIONS_ITEMS:
 		case RECEIVE_UPDATE_ITEM:
 		case RECEIVE_DELETE_ITEMS:
 			return parseInt(action.response.response.headers.get('Last-Modified-Version'), 10);
