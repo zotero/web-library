@@ -52,7 +52,7 @@ class LibrariesContainer extends React.Component {
 		this.props.history.push(makePath(pathData));
 	}
 
-	async handleCollectionAdd(libraryKey, name, parentCollection = null) {
+	async handleCollectionAdd(libraryKey, parentCollection, name) {
 		return await this.props.dispatch(createCollection(libraryKey, {
 			name, parentCollection
 		}));

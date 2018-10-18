@@ -65,9 +65,20 @@ class CollectionTree extends React.PureComponent {
 		onDelete(libraryKey, collection);
 	}
 
-	handleAddCommit(name) {
+	handleSubcollection(collectionKey) {
+		const { libraryKey, onAdd } = this.props;
+		const { opened } = this.state;
+
+		if(collectionKey !== null) {
+			this.setState({ opened: [...opened, collectionKey ] });
+		}
+
+		onAdd(libraryKey, collectionKey);
+	}
+
+	handleAddCommit(parentCollection, name) {
 		const { libraryKey, onAddCommit } = this.props;
-		onAddCommit(libraryKey, name);
+		onAddCommit(libraryKey, parentCollection, name);
 	}
 
 	collectionsFromKeys(collections) {
@@ -141,12 +152,15 @@ class CollectionTree extends React.PureComponent {
 
 	renderCollections(collections, level, parentCollection = null) {
 		const { childMap, derivedData } = this;
-		const { itemsSource, isUserLibrary, onAddCommit, onAddCancel } = this.props;
+		const { itemsSource, isUserLibrary, virtual, onAddCancel } = this.props;
 
 		const hasOpen = this.testRecursive(
 			collections, col => derivedData[col.key].isSelected
 		);
 		const hasOpenLastLevel = collections.length === 0;
+		const hasVirtual = virtual !== null &&
+			(virtual.collectionKey === parentCollection.key ||
+			(virtual.collectionKey === null && level === 1));
 
 		collections.sort((c1, c2) =>
 			c1.name.toUpperCase().localeCompare(c2.name.toUpperCase())
@@ -218,6 +232,9 @@ class CollectionTree extends React.PureComponent {
 											<DropdownItem onClick={ this.handleDelete.bind(this, collection) }>
 												Delete
 											</DropdownItem>
+											<DropdownItem onClick={ this.handleSubcollection.bind(this, collection.key) }>
+												New Subcollection
+											</DropdownItem>
 										</ActionsDropdown>
 									</React.Fragment>
 								}
@@ -225,15 +242,15 @@ class CollectionTree extends React.PureComponent {
 						</Node>
 					)) }
 					{
-						this.props.isAdding && level === 1 && (
+						hasVirtual && (
 							<Node
 								className={ cx({ 'new-collection': true })}
 							>
 								<Icon type="28/folder" className="touch" width="28" height="28" />
 								<Icon type="16/folder" className="mouse" width="16" height="16" />
 								<Input autoFocus
-									isBusy={ this.props.isAddingBusy }
-									onCommit={ this.handleAddCommit.bind(this) }
+									isBusy={ virtual.isBusy }
+									onCommit={ this.handleAddCommit.bind(this, parentCollection.key) }
 									onCancel={ onAddCancel }
 									onBlur={ () => true /* cancel on blur */ }
 								/>
@@ -312,6 +329,7 @@ class CollectionTree extends React.PureComponent {
 		isUserLibrary: PropTypes.bool,
 		itemsSource: PropTypes.string,
 		libraryKey: PropTypes.string.isRequired,
+		onAdd: PropTypes.func,
 		onAddCancel: PropTypes.func,
 		onAddCommit: PropTypes.func,
 		onDelete: PropTypes.func,
@@ -319,15 +337,17 @@ class CollectionTree extends React.PureComponent {
 		onSelect: PropTypes.func,
 		path: PropTypes.array,
 		updating: PropTypes.array,
+		virtual: PropTypes.object,
 	};
 
 	static defaultProps = {
 		collections: [],
-		onSelect: noop,
+		onAdd: noop,
 		onAddCancel: noop,
 		onAddCommit: noop,
 		onDelete: noop,
 		onRename: noop,
+		onSelect: noop,
 		path: [],
 		updating: [],
 	};
