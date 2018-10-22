@@ -20,8 +20,6 @@ module.exports = Object.freeze({
 			{ field: 'dateAdded', fraction: 0.1, isVisible: false },
 			{ field: 'dateModified', fraction: 0.1, isVisible: false },
 			{ field: 'extra', fraction: 0.2, isVisible: false },
-			{ field: 'attachments', fraction: 0.1, isVisible: false },
-			{ field: 'notes', fraction: 0.1, isVisible: false },
 		]
 	}
 });

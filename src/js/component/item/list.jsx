@@ -19,8 +19,6 @@ class ItemList extends React.PureComponent {
 				dateAdded: 'Date Added',
 				dateModified: 'Date Modified',
 				itemType: 'Item Type',
-				attachments: 'Attachments',
-				notes: 'Notes',
 				year: 'Year',
 				publication: 'Publication'
 			}
