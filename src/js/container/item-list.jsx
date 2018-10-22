@@ -6,7 +6,7 @@ const PropTypes = require('prop-types');
 const { withRouter } = require('react-router-dom');
 const { baseMappings } = require('../constants/item');
 const { connect } = require('react-redux');
-const { noteAsTitle } = require('../common/format');
+const { noteAsTitle, itemTypeLocalized } = require('../common/format');
 const { saveAs } = require('file-saver');
 const ItemList = require('../component/item/list');
 const {
@@ -33,27 +33,36 @@ const exportFormats = require('../constants/export-formats');
 
 const processItems = (items, state) => {
 	return items.map(item => {
-		let { itemType, note } = item;
-		let title = itemType === 'note' ?
+		const { meta: { itemTypes }} = state;
+		const { itemType, note, publisher, publication, dateAdded, dateModified, extra } = item;
+		const title = itemType === 'note' ?
 			noteAsTitle(note) :
 			item[itemType in baseMappings && baseMappings[itemType]['title'] || 'title'] || '';
-		let creator = item[Symbol.for('meta')] && item[Symbol.for('meta')].creatorSummary ?
+		const creator = item[Symbol.for('meta')] && item[Symbol.for('meta')].creatorSummary ?
 			item[Symbol.for('meta')].creatorSummary :
 			'';
-		let date = item[Symbol.for('meta')] && item[Symbol.for('meta')].parsedDate ?
+		const date = item[Symbol.for('meta')] && item[Symbol.for('meta')].parsedDate ?
 			item[Symbol.for('meta')].parsedDate :
 			'';
-		let coloredTags = item.tags
+		const coloredTags = item.tags
 			.map(tag => get(state, ['libraries', state.current.library, 'tags', `${tag.tag}-0`]))
 			.filter(tag => tag && tag.color);
+		// same logic as https://github.com/zotero/zotero/blob/6abfd3b5b03969564424dc03313d63ae1de86100/chrome/content/zotero/xpcom/itemTreeView.js#L1062
+		const year = date.substr(0, 4);
 
 		return {
-			key: item.key,
-			title,
+			coloredTags,
 			creator,
 			date,
-			itemType,
-			coloredTags
+			dateAdded,
+			dateModified,
+			extra,
+			itemType: itemTypeLocalized(item, itemTypes),
+			key: item.key,
+			publication,
+			publisher,
+			title,
+			year,
 		}
 	});
 };
@@ -262,7 +271,10 @@ const mapStateToProps = state => {
 		break;
 	}
 
-	items = processItems(items.map(key => get(state, ['libraries', libraryKey, 'items', key])), state);
+	items = processItems(
+		items.map(key => get(state, ['libraries', libraryKey, 'items', key])),
+		state
+	);
 	const { sortBy, sortDirection } = state.config;
 	const preferences = state.preferences;
 	const itemFields = state.meta.itemFields;
