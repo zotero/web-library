@@ -241,18 +241,24 @@ class Items extends React.PureComponent {
 	}
 
 	handleResizeStart(index) {
+		const { columns } = this.state;
 		const rect = this.containerDom.getBoundingClientRect();
-		const visibleColumns = this.state.columns.filter(c => c.isVisible);
-		this.resizingColumn = index - 1;
-		this.availableWidth = rect.right - rect.left;
+		const visibleColumns = columns.filter(c => c.isVisible);
+		const column = this.state.columns[index];
+		// index of the column among visible columns
+		const visibleIndex = visibleColumns.findIndex(c => c.field === column.field);
+		// previous visible column is the one being resized
+		const columnToResize = visibleColumns[visibleIndex - 1];
 		let offset = rect.left;
+		this.availableWidth = rect.right - rect.left;
 
-		for(let i = 0; i < index - 1; i++) {
+		for(let i = 0; i < visibleIndex - 1; i++) {
 			const columnWidth = visibleColumns[i].fraction * this.availableWidth;
 			offset += columnWidth;
 		}
-		this.resizeOffset = offset;
 
+		this.resizeOffset = offset;
+		this.resizeIndex = this.state.columns.findIndex(c => c.field === columnToResize.field);
 		this.setState({ isResizing: true })
 	}
 
@@ -261,7 +267,7 @@ class Items extends React.PureComponent {
 			const width = ev.clientX - this.resizeOffset;
 			const fraction = Math.max(width / this.availableWidth, columnMinWidthFraction);
 			const columns = [ ...this.state.columns ];
-			columns[this.resizingColumn].fraction = fraction;
+			columns[this.resizeIndex].fraction = fraction;
 			const visibleColumns = columns.filter(c => c.isVisible);
 			const aggregatedFraction = visibleColumns.reduce(
 				(aggr, { fraction }) => aggr + fraction
@@ -285,7 +291,7 @@ class Items extends React.PureComponent {
 						targetIndex = i;
 						break;
 					}
-				}
+					}
 			}
 
 			if(this.state.reorderTargetIndex !== targetIndex) {
