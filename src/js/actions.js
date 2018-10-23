@@ -1,7 +1,7 @@
 const cache = require('zotero-api-client-cache');
 const api = require('zotero-api-client')().use(cache()).api;
 // const api = require('zotero-api-client')().api;
-const { get } = require('./utils');
+const { get, JSONTryParse } = require('./utils');
 const { getQueryFromRoute } = require('./common/navigation');
 const deepEqual = require('deep-equal');
 
@@ -100,6 +100,7 @@ const {
 	SORT_ITEMS,
 
 	PREFERENCE_CHANGE,
+	PREFERENCES_LOAD,
 
 	TRIGGER_EDITING_ITEM,
 	TRIGGER_RESIZE_VIEWPORT,
@@ -279,7 +280,23 @@ const postItemsMultiPatch = async (state, multiPatch) => {
 	};
 }
 
+const preferencesLoad = () => {
+	const preferences = JSONTryParse(localStorage.getItem('zotero-web-library-prefs'));
+
+	return {
+		type: PREFERENCES_LOAD,
+		preferences
+	};
+}
+
 const preferenceChange = (name, value) => {
+	const preferences = {
+		...JSONTryParse(localStorage.getItem('zotero-web-library-prefs')),
+		[name]: value
+	};
+
+	localStorage.setItem('zotero-web-library-prefs', JSON.stringify(preferences));
+
 	return {
 		type: PREFERENCE_CHANGE,
 		name,
@@ -1884,6 +1901,7 @@ module.exports = {
 	initialize,
 	moveToTrash,
 	preferenceChange,
+	preferencesLoad,
 	recoverFromTrash,
 	sortItems,
 	toggleModal,

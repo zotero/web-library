@@ -181,6 +181,16 @@ const gaussianRand = () => {
 
 const gaussianRandom = (start, end) => Math.floor(start + gaussianRand() * (end - start + 1));
 
+const JSONTryParse = (json, fallback = {}) => {
+	var output;
+	try {
+		output = JSON.parse(json);
+	} catch(_) {
+		output = fallback
+	}
+	return output;
+}
+
 module.exports = {
 	deduplicate,
 	deduplicateByKey,
@@ -189,6 +199,7 @@ module.exports = {
 	get,
 	indexByGeneratedKey,
 	indexByKey,
+	JSONTryParse,
 	mapRelationsToItemKeys,
 	noop,
 	removeRelationByItemKey,

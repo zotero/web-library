@@ -199,7 +199,7 @@ class Items extends React.PureComponent {
 		}
 	}
 
-	handleSort(opts) {
+	handleSort({ ...opts }) {
 		this.props.onSort({ ...opts, startIndex: this.startIndex, stopIndex: this.stopIndex });
 	}
 

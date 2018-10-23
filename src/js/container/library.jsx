@@ -18,6 +18,7 @@ const {
 	fetchGroups,
 	fetchLibrarySettings,
 	initialize,
+	preferencesLoad,
 	triggerResizeViewport,
 } = require('../actions');
 const Library = require('../component/library');
@@ -45,6 +46,8 @@ class LibraryContainer extends React.Component {
 	}
 
 	async componentDidMount() {
+		this.props.dispatch(preferencesLoad());
+
 		await this.props.dispatch(
 			initialize()
 		);
