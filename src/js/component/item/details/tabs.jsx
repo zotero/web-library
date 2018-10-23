@@ -12,6 +12,7 @@ const AttachmentsTabPane = require('./tab-panes/attachments');
 const RelatedTabPane = require('./tab-panes/related');
 const StandaloneNoteTabPane = require('./tab-panes/standalone-note');
 const EditToggleButton = require('../../edit-toggle-button');
+const StandaloneAttachmentTabPane = require('./tab-panes/standalone-attachment');
 const Spinner = require('../../ui/spinner');
 
 class ItemDetailsTabs extends React.PureComponent {
@@ -150,7 +151,19 @@ class ItemDetailsTabs extends React.PureComponent {
 
 							{
 								this.props.item.itemType === 'note' && (
-									<StandaloneNoteTabPane isActive={ this.state.tab === 'standalone-note' } { ...this.props } />
+									<StandaloneNoteTabPane
+										isActive={ this.state.tab === 'standalone-note' }
+										{ ...this.props }
+									/>
+								)
+							}
+
+							{
+								this.props.item.itemType === 'attachment' && (
+									<StandaloneAttachmentTabPane
+										isActive={ this.state.tab === 'standalone-attachment' }
+										{ ...this.props }
+									/>
 								)
 							}
 

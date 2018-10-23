@@ -8,9 +8,6 @@ const deepEqual = require('deep-equal');
 
 var queueIdCunter = 0;
 
-//@TODO: merge meta into items
-//item[Symbol.for('meta')] = action.meta[i];
-
 const {
 	CONFIGURE_API,
 	REQUEST_META,
@@ -153,6 +150,18 @@ const {
 	RECEIVE_PUBLICATIONS_ITEMS,
 	ERROR_PUBLICATIONS_ITEMS,
 } = require('./constants/actions');
+
+const extractItems = (response, state) => {
+	return response.getData().map((item, index) => ({
+		...item,
+		tags: item.tags || [],  // tags are not present on items in my publications
+								// but most of the code expects tags key to be present
+		[Symbol.for('meta')]: response.getMeta()[index] || {},
+		// @TODO: url should not include the key
+		[Symbol.for('attachmentUrl')]: item.itemType === 'attachment' &&
+			`https://${state.config.apiConfig.apiAuthorityPart}/users/${state.config.userId}/items/${item.key}/file/view?key=${state.config.apiKey}`
+	}));
+}
 
 // @TODO: rename and move to common/api
 const cleanupCacheAfterDelete = (itemKeys, state) => {
@@ -441,10 +450,7 @@ const fetchItemsInCollection = (collectionKey, { start = 0, limit = 50, sort = '
 				.top()
 				.get({ start, limit, sort, direction });
 
-			const items = response.getData().map((item, index) => ({
-				...item,
-				[Symbol.for('meta')]: response.getMeta()[index] || {}
-			}));
+			const items = extractItems(response, state);
 
 			dispatch({
 				type: RECEIVE_ITEMS_IN_COLLECTION,
@@ -510,11 +516,7 @@ const fetchItemsQuery = (query = {}, { start = 0, limit = 50, sort = 'dateModifi
 			}
 
 			const response = await configuredApi.get({ start, limit, sort, direction, tag, q });
-
-			const items = response.getData().map((item, index) => ({
-				...item,
-				[Symbol.for('meta')]: response.getMeta()[index] || {}
-			}));
+			const items = extractItems(response, state);
 
 			dispatch({
 				type: RECEIVE_ITEMS_BY_QUERY,
@@ -622,7 +624,7 @@ const fetchItemTemplate = (itemType, opts = {}) => {
 
 const fetchChildItems = (itemKey, libraryKey) => {
 	return async (dispatch, getState) => {
-		let config = getState().config;
+		const state = getState();
 		libraryKey = libraryKey || get(getState(), 'current.library');
 		dispatch({
 			type: REQUEST_CHILD_ITEMS,
@@ -631,16 +633,12 @@ const fetchChildItems = (itemKey, libraryKey) => {
 		});
 
 		try {
-			let response = await api(config.apiKey, config.apiConfig)
+			const response = await api(state.config.apiKey, state.config.apiConfig)
 				.library(libraryKey)
 				.items(itemKey)
 				.children()
 				.get();
-
-			const childItems = response.getData().map((item, index) => ({
-				...item,
-				[Symbol.for('meta')]: response.getMeta()[index] || {}
-			}));
+			const childItems = extractItems(response, state);
 
 			dispatch({
 				type: RECEIVE_CHILD_ITEMS,
@@ -664,7 +662,7 @@ const fetchChildItems = (itemKey, libraryKey) => {
 //@TODO: It probably makes sense to skip itemKeys that already exists in state.items
 const fetchItems = (itemKeys, libraryKey) => {
 	return async (dispatch, getState) => {
-		let config = getState().config;
+		const state = getState();
 		libraryKey = libraryKey || get(getState(), 'current.library');
 		dispatch({
 			type: REQUEST_FETCH_ITEMS,
@@ -673,17 +671,13 @@ const fetchItems = (itemKeys, libraryKey) => {
 		});
 
 		try {
-			let response = await api(config.apiKey, config.apiConfig)
+			const response = await api(state.config.apiKey, state.config.apiConfig)
 				.library(libraryKey)
 				.items()
 				.get({
 				itemKey: itemKeys.join(',')
 			});
-
-			const items = response.getData().map((item, index) => ({
-				...item,
-				[Symbol.for('meta')]: response.getMeta()[index] || {}
-			}));
+			const items = extractItems(response, state);
 
 			dispatch({
 				type: RECEIVE_FETCH_ITEMS,
@@ -725,16 +719,12 @@ const fetchTopItems = ({ start = 0, limit = 50, sort = 'dateModified', direction
 		});
 
 		try {
-			let response = await api(state.config.apiKey, state.config.apiConfig)
+			const response = await api(state.config.apiKey, state.config.apiConfig)
 				.library(libraryKey)
 				.items()
 				.top()
 				.get({ start, limit, sort, direction });
-
-			const items = response.getData().map((item, index) => ({
-				...item,
-				[Symbol.for('meta')]: response.getMeta()[index] || {}
-			}));
+			const items = extractItems(response, state);
 
 			dispatch({
 				type: RECEIVE_TOP_ITEMS,
@@ -779,16 +769,12 @@ const fetchTrashItems = ({ start = 0, limit = 50, sort = 'dateModified', directi
 		});
 
 		try {
-			let response = await api(state.config.apiKey, state.config.apiConfig)
+			const response = await api(state.config.apiKey, state.config.apiConfig)
 				.library(libraryKey)
 				.items()
 				.trash()
 				.get({ start, limit, sort, direction });
-
-			const items = response.getData().map((item, index) => ({
-				...item,
-				[Symbol.for('meta')]: response.getMeta()[index] || {}
-			}));
+			const items = extractItems(response, state);
 
 			dispatch({
 				type: RECEIVE_TRASH_ITEMS,
@@ -837,18 +823,12 @@ const fetchPublicationsItems = ({ start = 0, limit = 50, sort = 'dateModified', 
 		});
 
 		try {
-			let response = await api(state.config.apiKey, state.config.apiConfig)
+			const response = await api(state.config.apiKey, state.config.apiConfig)
 				.library(libraryKey)
 				.publications()
 				.items()
 				.get({ start, limit, sort, direction });
-
-			const items = response.getData().map((item, index) => ({
-				...item,
-				tags: item.tags || [],  // tags are not present on items in my publications
-										// but most of the code expects tags key to be present
-				[Symbol.for('meta')]: response.getMeta()[index] || {}
-			}));
+			const items = extractItems(response, state);
 
 			dispatch({
 				type: RECEIVE_PUBLICATIONS_ITEMS,

@@ -265,13 +265,6 @@ const mapStateToProps = state => {
 				value: ct.creatorType,
 				label: ct.localized
 			}));
-		extraProps['attachmentViewUrls'] = childItems
-			.filter(i => i.itemType === 'attachment')
-			.reduce((aggr, item) => {
-				// @TODO: url should not include the key
-				aggr[item.key] = `https://${state.config.apiConfig.apiAuthorityPart}/users/${state.config.userId}/items/${item.key}/file/view?key=${state.config.apiKey}`;
-				return aggr;
-		}, {});
 	}
 
 	var itemsCount;
