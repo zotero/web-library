@@ -3,6 +3,7 @@ const api = require('zotero-api-client')().use(cache()).api;
 // const api = require('zotero-api-client')().api;
 const { get, JSONTryParse } = require('./utils');
 const { getQueryFromRoute } = require('./common/navigation');
+const { preferences: defaultPreferences } = require('./constants/defaults');
 const deepEqual = require('deep-equal');
 
 
@@ -290,7 +291,10 @@ const postItemsMultiPatch = async (state, multiPatch) => {
 }
 
 const preferencesLoad = () => {
-	const preferences = JSONTryParse(localStorage.getItem('zotero-web-library-prefs'));
+	const preferences = {
+		...defaultPreferences,
+		...JSONTryParse(localStorage.getItem('zotero-web-library-prefs'))
+	};
 
 	return {
 		type: PREFERENCES_LOAD,
