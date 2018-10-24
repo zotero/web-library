@@ -66,36 +66,32 @@ class TagSelectorContainer extends React.PureComponent {
 	}
 
 	render() {
-		if(this.props.isReady) {
-			let { tags, totalTagCount, ...props } = this.props;
+		let { tags, totalTagCount, ...props } = this.props;
 
-			if(this.state.searchString !== '') {
-				let prefilterTagsLength = tags.length;
-				tags = this.props.tags.filter(
-					t => t.tag.toLowerCase().includes(this.state.searchString.toLowerCase())
-				)
+		if(this.state.searchString !== '') {
+			let prefilterTagsLength = tags.length;
+			tags = this.props.tags.filter(
+				t => t.tag.toLowerCase().includes(this.state.searchString.toLowerCase())
+			)
 
-				// it's not possible to filter tags via api so we always pretend
-				// there are few more matching tags until all possible tags are fetched
-				if(prefilterTagsLength < totalTagCount) {
-					totalTagCount = tags.length + 3;
-				} else {
-					totalTagCount = tags.length;
-				}
-
+			// it's not possible to filter tags via api so we always pretend
+			// there are few more matching tags until all possible tags are fetched
+			if(prefilterTagsLength < totalTagCount) {
+				totalTagCount = tags.length + 3;
+			} else {
+				totalTagCount = tags.length;
 			}
-			return <TagSelector
-				onSearch={ this.handleSearch.bind(this) }
-				onLoadMore={ this.handleLoadMore.bind(this) }
-				onSelect={ this.handleSelect.bind(this) }
-				tags={ tags }
-				totalTagCount={ totalTagCount }
-				searchString={ this.state.searchString }
-				{ ...props }
-			/>;
-		} else {
-			return null;
 		}
+
+		return <TagSelector
+			onSearch={ this.handleSearch.bind(this) }
+			onLoadMore={ this.handleLoadMore.bind(this) }
+			onSelect={ this.handleSelect.bind(this) }
+			tags={ tags }
+			totalTagCount={ totalTagCount }
+			searchString={ this.state.searchString }
+			{ ...props }
+		/>;
 	}
 }
 

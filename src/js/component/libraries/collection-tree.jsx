@@ -295,8 +295,8 @@ class CollectionTree extends React.PureComponent {
 						{ viewport => (
 							viewport.xxs && itemsSource === 'collection' && parentCollection && (
 								<Node
-									onClick={ this.handleSelect.bind(this, { view: 'item-list' }) }
-									onKeyPress={ this.handleKeyPress.bind(this, { view: 'item-list' }) }
+									onClick={ this.handleSelect.bind(this, { view: 'item-list', collection: parentCollection.key }) }
+									onKeyPress={ this.handleKeyPress.bind(this, { view: 'item-list', collection: parentCollection.key }) }
 								>
 									<Icon type="28/document" className="touch" width="28" height="28" />
 									<Icon type="16/document" className="mouse" width="16" height="16" />
