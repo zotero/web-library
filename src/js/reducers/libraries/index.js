@@ -78,6 +78,9 @@ const actions = Object.entries(require('../../constants/actions'))
 			'ERROR_ITEMS_BY_QUERY',
 			'RECEIVE_ITEMS_BY_QUERY',
 			'REQUEST_ITEMS_BY_QUERY',
+			'REQUEST_CREATE_ITEMS',
+			'RECEIVE_CREATE_ITEMS',
+			'ERROR_CREATE_ITEMS'
 	]).includes(key) ? value : false).filter(Boolean);
 
 const libraries = (state = {}, action) => {

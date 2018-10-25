@@ -36,6 +36,7 @@ const {
 	RECEIVE_TAGS_FOR_ITEM,
 	RECEIVE_ITEMS_BY_QUERY,
 	RECEIVE_GROUPS,
+	RECEIVE_CREATE_ITEMS,
 } = require('../../src/js/constants/actions.js');
 const stateFixture = require('../fixtures/state.json');
 const settingsFixture = require('../fixtures/settings.json');
@@ -606,6 +607,94 @@ describe('reducers', () => {
 		assert.strictEqual(
 			state.itemCountTopByLibrary[libraryKey],
 			originalTopCount + 1
+		);
+	});
+
+	it('create multiple items', () => {
+		var state = getTestState();
+		const libraryKey = state.current.library;
+		const collectionKey = Object.keys(
+			state.libraries[libraryKey].itemsByCollection
+		)[0];
+		const originalCollectionCount = state.libraries[libraryKey].itemCountByCollection[collectionKey];
+		const originalTopCount = state.itemCountTopByLibrary[libraryKey];
+		state = reduce(state, {
+			type: RECEIVE_CREATE_ITEMS,
+			items: [{
+				key: 'AAAAAAAA',
+				'itemType' : 'book',
+				'title' : '',
+				'creators' : [{
+					'creatorType' : 'author',
+					'firstName' : '',
+					'lastName' : ''
+				}],
+				'url' : '',
+				'tags' : [],
+				'collections' : [collectionKey],
+				'relations' : {}
+			}, {
+			key: 'BBBBBBBB',
+			'itemType' : 'journal',
+			'title' : '',
+			'creators' : [{
+				'creatorType' : 'author',
+				'firstName' : '',
+				'lastName' : ''
+			}],
+			'url' : '',
+			'tags' : [],
+			'collections' : [],
+			'relations' : {}
+		}, {
+			key: 'CCCCCCCC',
+			'itemType' : 'journal',
+			'title' : '',
+			'creators' : [{
+				'creatorType' : 'author',
+				'firstName' : '',
+				'lastName' : ''
+			}],
+			'url' : '',
+			'tags' : [],
+			'collections' : [collectionKey],
+			'relations' : {}
+		}],
+			libraryKey,
+			response: mockResponse
+		});
+
+		assert.strictEqual(
+			state.libraries[libraryKey].items['AAAAAAAA'].itemType,
+			'book'
+		);
+		assert.strictEqual(
+			state.libraries[libraryKey].items['BBBBBBBB'].itemType,
+			'journal'
+		);
+		assert.include(
+			state.libraries[libraryKey].itemsByCollection[collectionKey],
+			'AAAAAAAA'
+		);
+		assert.notInclude(
+			state.libraries[libraryKey].itemsByCollection[collectionKey],
+			'BBBBBBBB'
+		);
+		assert.include(
+			state.libraries[libraryKey].itemsTop,
+			'AAAAAAAA'
+		);
+		assert.include(
+			state.libraries[libraryKey].itemsTop,
+			'BBBBBBBB'
+		);
+		assert.strictEqual(
+			state.libraries[libraryKey].itemCountByCollection[collectionKey],
+			originalCollectionCount + 2
+		);
+		assert.strictEqual(
+			state.itemCountTopByLibrary[libraryKey],
+			originalTopCount + 3
 		);
 	});
 

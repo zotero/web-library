@@ -20,7 +20,7 @@ const dndSpec = {
 			return dndTarget;
 		}
 	},
-	canDrop({ dndTarget }) {
+	canDrop({ dndTarget = {} }) {
 		return dndTarget.targetType === 'collection';
 	}
 }

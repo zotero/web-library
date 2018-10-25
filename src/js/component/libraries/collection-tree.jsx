@@ -152,7 +152,7 @@ class CollectionTree extends React.PureComponent {
 
 	renderCollections(collections, level, parentCollection = null) {
 		const { childMap, derivedData } = this;
-		const { itemsSource, isUserLibrary, virtual, onAddCancel } = this.props;
+		const { libraryKey, itemsSource, isUserLibrary, virtual, onAddCancel } = this.props;
 
 		const hasOpen = this.testRecursive(
 			collections, col => derivedData[col.key].isSelected
@@ -180,7 +180,7 @@ class CollectionTree extends React.PureComponent {
 								})}
 								onClick={ this.handleSelect.bind(this, {}) }
 								onKeyPress={ this.handleKeyPress.bind(this, {}) }
-								dndTarget={ { 'targetType': 'all-documents' } }
+								dndTarget={ { 'targetType': 'all-documents', libraryKey } }
 							>
 								<Icon type="28/document" className="touch" width="28" height="28" />
 								<Icon type="16/document" className="mouse" width="16" height="16" />
@@ -210,7 +210,7 @@ class CollectionTree extends React.PureComponent {
 							label={ collection.name }
 							isOpen={ derivedData[collection.key].isOpen }
 							icon="folder"
-							dndTarget={ { 'targetType': 'collection', collectionKey: collection.key } }
+							dndTarget={ { 'targetType': 'collection', collectionKey: collection.key, libraryKey } }
 						>
 								<Icon type="28/folder" className="touch" width="28" height="28" />
 								<Icon type="16/folder" className="mouse" width="16" height="16" />
@@ -266,7 +266,7 @@ class CollectionTree extends React.PureComponent {
 								})}
 								onClick={ this.handleSelect.bind(this, { publications: true }) }
 								onKeyPress={ this.handleKeyPress.bind(this, { publications: true }) }
-								dndTarget={ { 'targetType': 'publications' } }
+								dndTarget={ { 'targetType': 'publications', libraryKey } }
 							>
 								<Icon type="28/document" className="touch" width="28" height="28" />
 								<Icon type="16/document" className="mouse" width="16" height="16" />
@@ -283,7 +283,7 @@ class CollectionTree extends React.PureComponent {
 								})}
 								onClick={ this.handleSelect.bind(this, { trash: true }) }
 								onKeyPress={ this.handleKeyPress.bind(this, { trash: true }) }
-								dndTarget={ { 'targetType': 'trash' } }
+								dndTarget={ { 'targetType': 'trash', libraryKey } }
 							>
 								<Icon type="28/trash" className="touch" width="28" height="28" />
 								<Icon type="16/trash" className="mouse" width="16" height="16" />
@@ -311,9 +311,9 @@ class CollectionTree extends React.PureComponent {
 	}
 
 	render() {
-		const { libraryKey, collections } = this.props;
+		const { collections } = this.props;
 		const topLevelCollections = collections.filter(c => c.parentCollection === false);
-		return this.renderCollections(topLevelCollections, 1, libraryKey);
+		return this.renderCollections(topLevelCollections, 1);
 	}
 
 	static propTypes = {

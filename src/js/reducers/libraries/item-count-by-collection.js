@@ -4,6 +4,7 @@ const {
 	RECEIVE_ADD_ITEMS_TO_COLLECTION,
 	RECEIVE_COLLECTIONS_IN_LIBRARY,
 	RECEIVE_CREATE_ITEM,
+	RECEIVE_CREATE_ITEMS,
 	RECEIVE_DELETE_COLLECTION,
 	RECEIVE_ITEMS_IN_COLLECTION,
 	RECEIVE_MOVE_ITEMS_TRASH,
@@ -23,6 +24,21 @@ const itemCountByCollection = (state = {}, action) => {
 						}
 						return aggr;
 					}, {}))
+			};
+		case RECEIVE_CREATE_ITEMS:
+			return {
+				...state,
+				...(action.items.reduce((aggr, item) => {
+					item.collections.forEach(
+						collectionKey => {
+							if(collectionKey in aggr) {
+								aggr[collectionKey]++;
+							} else if(collectionKey in state) {
+								aggr[collectionKey] = state[collectionKey] + 1;
+							}
+					});
+					return aggr;
+				}, {}))
 			};
 		case RECEIVE_COLLECTIONS_IN_LIBRARY:
 			return {

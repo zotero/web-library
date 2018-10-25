@@ -166,13 +166,13 @@ class ItemListContainer extends React.PureComponent {
 	}
 
 	async handleNewItemCreate(itemType) {
-		const { itemsSource, dispatch, collectionKey } = this.props;
+		const { itemsSource, dispatch, collectionKey, libraryKey } = this.props;
 		const template = await dispatch(fetchItemTemplate(itemType));
 		const newItem = {
 			...template,
 			collections: itemsSource === 'collection' ? [collectionKey] : []
 		};
-		const item = await dispatch(createItem(newItem));
+		const item = await dispatch(createItem(newItem, libraryKey));
 		this.handleItemsSelect([item.key]);
 	}
 
@@ -183,10 +183,10 @@ class ItemListContainer extends React.PureComponent {
 		return await this.handleLoadMore({ startIndex: 0, stopIndex });
 	}
 
-	async handleDrag({ itemKeys, targetType, collectionKey }) {
+	async handleDrag({ itemKeys, targetType, collectionKey, libraryKey }) {
 		const { dispatch } = this.props;
 		if(targetType === 'collection') {
-			return await dispatch(addToCollection(itemKeys, collectionKey));
+			return await dispatch(addToCollection(itemKeys, collectionKey, libraryKey));
 		}
 	}
 

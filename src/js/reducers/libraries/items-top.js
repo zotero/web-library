@@ -2,6 +2,7 @@
 
 const {
 	RECEIVE_CREATE_ITEM,
+	RECEIVE_CREATE_ITEMS,
 	RECEIVE_DELETE_ITEM,
 	RECEIVE_DELETE_ITEMS,
 	RECEIVE_MOVE_ITEMS_TRASH,
@@ -17,6 +18,8 @@ const itemsTop = (state = [], action) => {
 			} else {
 				return state;
 			}
+		case RECEIVE_CREATE_ITEMS:
+			return [...state, ...action.items.filter(i => !i.parentItem).map(i => i.key)];
 		case RECEIVE_DELETE_ITEM:
 			return state.filter(key => key !== action.item.key);
 		case RECEIVE_DELETE_ITEMS:

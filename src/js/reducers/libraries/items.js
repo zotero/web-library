@@ -2,6 +2,7 @@
 
 const {
 	RECEIVE_CREATE_ITEM,
+	RECEIVE_CREATE_ITEMS,
 	RECEIVE_DELETE_ITEM,
 	RECEIVE_DELETE_ITEMS,
 	RECEIVE_UPDATE_ITEM,
@@ -59,6 +60,7 @@ const items = (state = {}, action) => {
 		case RECEIVE_TRASH_ITEMS:
 		case RECEIVE_PUBLICATIONS_ITEMS:
 		case RECEIVE_ITEMS_BY_QUERY:
+		case RECEIVE_CREATE_ITEMS:
 			return {
 				...state,
 				...indexByKey(action.items, 'key')

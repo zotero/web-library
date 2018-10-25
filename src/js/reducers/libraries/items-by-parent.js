@@ -1,16 +1,18 @@
 'use strict';
 const { get } = require('../../utils');
 const {
+	RECEIVE_CHILD_ITEMS,
 	RECEIVE_CREATE_ITEM,
+	RECEIVE_CREATE_ITEMS,
 	RECEIVE_DELETE_ITEM,
 	RECEIVE_DELETE_ITEMS,
-	RECEIVE_CHILD_ITEMS,
 } = require('../../constants/actions.js');
 
 const itemsByParent = (state = {}, action) => {
-	const parentKey = get(action, 'item.parentItem');
+	var parentKey;
 	switch(action.type) {
 		case RECEIVE_CREATE_ITEM:
+			parentKey = get(action, 'item.parentItem');
 			if(parentKey) {
 				return {
 					...state,
@@ -21,7 +23,23 @@ const itemsByParent = (state = {}, action) => {
 				};
 			}
 			return state;
+		case RECEIVE_CREATE_ITEMS:
+			return {
+				...state,
+				...(action.items.reduce((aggr, item) => {
+					parentKey = get(action, 'item.parentItem');
+					if(parentKey) {
+						if(parentKey in aggr) {
+							aggr[parentKey] = [...aggr[parentKey], item.key]
+						} else if(parentKey in state) {
+							aggr[parentKey] = [...state[parentKey], item.key]
+						}
+					}
+					return aggr;
+				}, {}))
+			};
 		case RECEIVE_DELETE_ITEM:
+			parentKey = get(action, 'item.parentItem');
 			if(parentKey) {
 				return {
 					...state,

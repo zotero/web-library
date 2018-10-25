@@ -13,6 +13,7 @@ const {
 	RECEIVE_UPDATE_ITEM,
 	RECEIVE_DELETE_ITEMS,
 	RECEIVE_PUBLICATIONS_ITEMS,
+	RECEIVE_CREATE_ITEMS,
 } = require('../../constants/actions.js');
 
 const version = (state = 0, action) => {
@@ -21,6 +22,7 @@ const version = (state = 0, action) => {
 		case RECEIVE_CHILD_ITEMS:
 		case RECEIVE_COLLECTIONS_IN_LIBRARY:
 		case RECEIVE_CREATE_ITEM:
+		case RECEIVE_CREATE_ITEMS:
 		case RECEIVE_FETCH_ITEMS:
 		case RECEIVE_ITEMS_IN_COLLECTION:
 		case RECEIVE_MOVE_ITEMS_TRASH:

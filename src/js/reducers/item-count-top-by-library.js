@@ -2,6 +2,7 @@
 
 const {
 	RECEIVE_CREATE_ITEM,
+	RECEIVE_CREATE_ITEMS,
 	RECEIVE_MOVE_ITEMS_TRASH,
 	RECEIVE_RECOVER_ITEMS_TRASH,
 	RECEIVE_TOP_ITEMS,
@@ -17,6 +18,14 @@ const itemCountTopByLibrary = (state = {}, action) => {
 				}
 			} else {
 				return state;
+			}
+		case RECEIVE_CREATE_ITEMS:
+			return {
+				...state,
+				[action.libraryKey]: action.items.reduce(
+					(aggr, item) => item.parentItem ? aggr : aggr + 1,
+					state[action.libraryKey]
+				)
 			}
 		case RECEIVE_TOP_ITEMS:
 			return {

@@ -92,7 +92,7 @@ class ItemDetailsContainer extends React.Component {
 			parentItem: this.props.item.key,
 			note
 		};
-		await this.props.dispatch(createItem(item));
+		await this.props.dispatch(createItem(item, this.props.libraryKey));
 	}
 
 	async handleDeleteNote(note) {
@@ -133,7 +133,7 @@ class ItemDetailsContainer extends React.Component {
 			filename: fileData.fileName,
 			contentType: fileData.contentType
 		};
-		let item = await this.props.dispatch(createItem(attachment));
+		let item = await this.props.dispatch(createItem(attachment, this.props.libraryKey));
 		await this.props.dispatch(uploadAttachment(item.key, fileData));
 	}
 

@@ -3,6 +3,7 @@
 const {
 	RECEIVE_ADD_ITEMS_TO_COLLECTION,
 	RECEIVE_CREATE_ITEM,
+	RECEIVE_CREATE_ITEMS,
 	RECEIVE_DELETE_ITEM,
 	RECEIVE_DELETE_ITEMS,
 	RECEIVE_ITEMS_IN_COLLECTION,
@@ -24,6 +25,21 @@ const itemsByCollection = (state = {}, action) => {
 						return aggr;
 					}, {}))
 			}
+		case RECEIVE_CREATE_ITEMS:
+			return {
+				...state,
+				...(action.items.reduce((aggr, item) => {
+					item.collections.forEach(
+						collectionKey => {
+							if(collectionKey in aggr) {
+								aggr[collectionKey] = [...aggr[collectionKey], item.key]
+							} else if(collectionKey in state) {
+								aggr[collectionKey] = [...state[collectionKey], item.key];
+							}
+					});
+					return aggr;
+				}, {}))
+			};
 		case RECEIVE_DELETE_ITEM:
 			return Object.entries(state).reduce((aggr, [collectionKey, itemKeys]) => {
 				aggr[collectionKey] = itemKeys.filter(k => k !== action.item.key)
@@ -54,10 +70,14 @@ const itemsByCollection = (state = {}, action) => {
 				]
 			}
 		case RECEIVE_ITEMS_IN_COLLECTION:
-		//@TODO: this seems incorrect
 			return {
 				...state,
-				[action.collectionKey]: action.items.map(item => item.key)
+				[action.collectionKey]: [
+					...(new Set([
+						...(state[action.collectionKey] || []),
+						...action.items.map(item => item.key)
+					]))
+				]
 			};
 		default:
 			return state;

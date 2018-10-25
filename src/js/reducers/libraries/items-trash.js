@@ -7,10 +7,12 @@ const {
 	RECEIVE_TRASH_ITEMS,
 	RECEIVE_MOVE_ITEMS_TRASH,
 	RECEIVE_RECOVER_ITEMS_TRASH,
+	RECEIVE_CREATE_ITEMS,
 } = require('../../constants/actions.js');
 
 const itemsTop = (state = [], action) => {
 	switch(action.type) {
+		case RECEIVE_CREATE_ITEMS:
 		case RECEIVE_CREATE_ITEM:
 			// @TODO:
 			return state;

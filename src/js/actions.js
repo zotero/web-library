@@ -4,6 +4,7 @@ const api = require('zotero-api-client')().use(cache()).api;
 const { get, JSONTryParse } = require('./utils');
 const { getQueryFromRoute } = require('./common/navigation');
 const { preferences: defaultPreferences } = require('./constants/defaults');
+const { removeKeys } = require('./common/immutable');
 const deepEqual = require('deep-equal');
 
 
@@ -40,6 +41,10 @@ const {
 	REQUEST_CREATE_ITEM,
 	RECEIVE_CREATE_ITEM,
 	ERROR_CREATE_ITEM,
+
+	REQUEST_CREATE_ITEMS,
+	RECEIVE_CREATE_ITEMS,
+	ERROR_CREATE_ITEMS,
 
 	REQUEST_UPLOAD_ATTACHMENT,
 	RECEIVE_UPLOAD_ATTACHMENT,
@@ -880,11 +885,56 @@ const triggerResizeViewport = (width, height) => {
 	};
 };
 
-function createItem(properties) {
+function createItems(items, libraryKey) {
 	return async (dispatch, getState) => {
 		const state = getState();
-		const libraryKey = get(getState(), 'current.library');
 		const config = state.config;
+
+		dispatch({
+			type: REQUEST_CREATE_ITEMS,
+			libraryKey,
+			items
+		});
+
+		try {
+			let response = await api(config.apiKey, config.apiConfig)
+				.library(libraryKey)
+				.items()
+				.post(items);
+
+			if(!response.isSuccess()) {
+				throw response.getErrors();
+			}
+
+			const createdItems = extractItems(response, state);
+
+			dispatch({
+				type: RECEIVE_CREATE_ITEMS,
+				libraryKey,
+				items: createdItems,
+				response
+			});
+
+			api().invalidate({ 'resource.library': libraryKey });
+
+			return response.getData();
+		} catch(error) {
+			dispatch({
+					type: ERROR_CREATE_ITEMS,
+					error,
+					libraryKey,
+					items,
+				});
+			throw error;
+		}
+	};
+}
+
+function createItem(properties, libraryKey) {
+	return async (dispatch, getState) => {
+		const state = getState();
+		const config = state.config;
+
 		dispatch({
 			type: REQUEST_CREATE_ITEM,
 			libraryKey,
@@ -1314,22 +1364,37 @@ function queueRecoverItemsFromTrash(itemKeys, libraryKey, queueId) {
 	};
 }
 
-function addToCollection(itemKeys, collectionKey) {
+function addToCollection(itemKeys, collectionKey, targetLibraryKey) {
 	return async (dispatch, getState) => {
-		const libraryKey = getState().current.library;
+		const currentLibraryKey = getState().current.library;
 		const queueId = ++queueIdCunter;
 
 		dispatch({
-			type: PRE_ADD_ITEMS_TO_COLLECTION,
-			itemKeys,
-			collectionKey,
-			libraryKey,
-			queueId
-		});
+				type: PRE_ADD_ITEMS_TO_COLLECTION,
+				itemKeys,
+				collectionKey,
+				libraryKey: targetLibraryKey,
+				queueId
+			});
 
-		dispatch(
-			queueAddToCollection(itemKeys, collectionKey, libraryKey, queueId)
-		);
+		if(currentLibraryKey === targetLibraryKey) {
+			dispatch(
+				queueAddToCollection(itemKeys, collectionKey, currentLibraryKey, queueId)
+			);
+		} else {
+			dispatch(
+				createItems(
+					itemKeys.map(ik => ({
+							...removeKeys(
+								getState().libraries[currentLibraryKey].items[ik],
+								['key', 'version']
+							),
+							collections: [collectionKey]
+						})
+					), targetLibraryKey
+				)
+			);
+		}
 	};
 }
 
