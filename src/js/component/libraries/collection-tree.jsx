@@ -152,7 +152,7 @@ class CollectionTree extends React.PureComponent {
 
 	renderCollections(collections, level, parentCollection = null) {
 		const { childMap, derivedData } = this;
-		const { libraryKey, itemsSource, isUserLibrary, virtual, onAddCancel } = this.props;
+		const { libraryKey, itemsSource, isUserLibrary, isCurrentLibrary, virtual, onAddCancel } = this.props;
 
 		const hasOpen = this.testRecursive(
 			collections, col => derivedData[col.key].isSelected
@@ -176,7 +176,7 @@ class CollectionTree extends React.PureComponent {
 							<Node
 								className={ cx({
 									'all-documents': true,
-									'selected': itemsSource === 'top'
+									'selected': isCurrentLibrary && itemsSource === 'top'
 								})}
 								onClick={ this.handleSelect.bind(this, {}) }
 								onKeyPress={ this.handleKeyPress.bind(this, {}) }
@@ -261,7 +261,7 @@ class CollectionTree extends React.PureComponent {
 						isUserLibrary && level === 1 && (
 							<Node
 								className={ cx({
-									'trash': true,
+									'publications': true,
 									'selected': itemsSource === 'publications'
 								})}
 								onClick={ this.handleSelect.bind(this, { publications: true }) }
@@ -275,11 +275,11 @@ class CollectionTree extends React.PureComponent {
 						)
 					}
 					{
-						isUserLibrary && level === 1 && (
+						level === 1 && (
 							<Node
 								className={ cx({
 									'trash': true,
-									'selected': itemsSource === 'trash'
+									'selected': isCurrentLibrary && itemsSource === 'trash'
 								})}
 								onClick={ this.handleSelect.bind(this, { trash: true }) }
 								onKeyPress={ this.handleKeyPress.bind(this, { trash: true }) }

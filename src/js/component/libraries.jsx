@@ -64,12 +64,13 @@ class Libraries extends React.Component {
 	}
 
 	renderCollections() {
-		const { userLibraryKey } = this.props;
+		const { userLibraryKey, libraryKey } = this.props;
 		const { virtual } = this.state;
 		const props = {
 			...this.props,
 			libraryKey: userLibraryKey,
 			isUserLibrary: true,
+			isCurrentLibrary: libraryKey === userLibraryKey,
 			onAdd: this.handleAdd.bind(this),
 			onAddCancel: this.handleAddCancel.bind(this),
 			onAddCommit: this.handleAddCommit.bind(this),
@@ -82,13 +83,14 @@ class Libraries extends React.Component {
 	}
 
 	renderGroupCollections(groupKey) {
-		const { groupCollections } = this.props;
+		const { groupCollections, libraryKey } = this.props;
 		const { virtual } = this.state;
 		const props = {
 			...this.props,
 			collections: groupCollections[groupKey],
 			libraryKey: groupKey,
 			isUserLibrary: false,
+			isCurrentLibrary: libraryKey === groupKey,
 			onAdd: this.handleAdd.bind(this),
 			onAddCancel: this.handleAddCancel.bind(this),
 			onAddCommit: this.handleAddCommit.bind(this),

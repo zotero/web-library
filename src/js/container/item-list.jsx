@@ -205,14 +205,14 @@ class ItemListContainer extends React.PureComponent {
 	}
 
 	render() {
-		let { collectionKey = '', itemsSource, search, tags } = this.props;
+		let { libraryKey, collectionKey = '', itemsSource, search, tags } = this.props;
 		var key;
 		if(itemsSource == 'collection') {
-			key = collectionKey;
+			key = `${libraryKey}-${collectionKey}`;
 		} else if(itemsSource == 'query') {
-			key = `query-${getSerializedQuery({ collection: collectionKey, tag: tags, q: search })}`;
+			key = `${libraryKey}-query-${getSerializedQuery({ collection: collectionKey, tag: tags, q: search })}`;
 		} else {
-			key = itemsSource;
+			key = `${libraryKey}-${itemsSource}`;
 		}
 
 		return <ItemList
