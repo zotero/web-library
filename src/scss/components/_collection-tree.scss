@@ -3,7 +3,8 @@
 // --------------------------------------------------
 
 .collection-tree {
-	height: 100%;
+	height: calc(100% - 160px); // temporary solution to stop collection tree and tag selector
+				 				// from overlapping
 
 	.desktop-header {
 		display: flex;

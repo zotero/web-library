@@ -9,9 +9,11 @@ class TagList extends React.PureComponent {
 	componentDidMount() {
 		this.handleMaybeLoadMore(0);
 	}
+
 	handleScroll(el) {
 		this.handleMaybeLoadMore(el.target.scrollTop);
 	}
+
 	componentDidUpdate({ searchString: prevSearchString }) {
 		if(this.props.searchString != prevSearchString) {
 			this.handleMaybeLoadMore(this.container.scrollTop);

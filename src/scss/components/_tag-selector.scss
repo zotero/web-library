@@ -3,10 +3,8 @@
 // --------------------------------------------------
 
 .library .tag-selector {
-	//@TODO: clean this up
-	position: absolute; // Dev only
-	bottom: 0;          // …
-	left: 0;            // …
+	height: 160px;
+	position: relative; // required for scroll offset calculation
 }
 
 .tag-selector {
@@ -24,7 +22,7 @@
 	justify-content: space-between;
 	overflow: auto;
 	height: auto;
-	max-height: 160px;
+	// max-height: 160px;
 }
 
 .tag-selector-filter-container {
