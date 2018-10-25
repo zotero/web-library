@@ -394,7 +394,7 @@ const fetchCollections = (libraryKey, { start = 0, limit = 50, sort = 'dateModif
 	};
 };
 
-const fetchGroups = (libraryKey) => {
+const fetchGroups = libraryKey => {
 	return async (dispatch, getState) => {
 		const { config } = getState();
 		dispatch({
@@ -1469,7 +1469,7 @@ function queueAddToCollection(itemKeys, collectionKey, libraryKey, queueId) {
 	};
 }
 
-const createCollection = (libraryKey, properties) => {
+const createCollection = (properties, libraryKey) => {
 	return async (dispatch, getState) => {
 		const state = getState();
 		const config = state.config;
@@ -1515,7 +1515,7 @@ const createCollection = (libraryKey, properties) => {
 	};
 }
 
-function updateCollection(libraryKey, collectionKey, patch) {
+function updateCollection(collectionKey, patch, libraryKey) {
 	return async dispatch => {
 		const queueId = ++queueIdCunter;
 
@@ -1528,12 +1528,12 @@ function updateCollection(libraryKey, collectionKey, patch) {
 		});
 
 		dispatch(
-			queueUpdateCollection(libraryKey, collectionKey, patch, queueId)
+			queueUpdateCollection(collectionKey, patch, libraryKey, queueId)
 		);
 	};
 }
 
-function queueUpdateCollection(libraryKey, collectionKey, patch, queueId) {
+function queueUpdateCollection(collectionKey, patch, libraryKey, queueId) {
 	return {
 		queue: libraryKey,
 		callback: async (next, dispatch, getState) => {
@@ -1594,7 +1594,7 @@ function queueUpdateCollection(libraryKey, collectionKey, patch, queueId) {
 	};
 }
 
-const deleteCollection = (libraryKey, collection) => {
+const deleteCollection = (collection, libraryKey) => {
 	return async (dispatch, getState) => {
 		const config = getState().config;
 

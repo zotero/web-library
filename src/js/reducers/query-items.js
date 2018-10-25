@@ -10,16 +10,12 @@ const queryItems = (state = [], action) => {
 		case QUERY_CHANGE:
 			return [];
 		case RECEIVE_ITEMS_BY_QUERY:
-			if(action.isQueryChanged) {
-				return [...action.items.map(item => item.key)];
-			} else {
-				return [
-					...(new Set([
-						...state,
-						...action.items.map(item => item.key)
-					]))
-				];
-			}
+			return [
+				...(new Set([
+					...state,
+					...action.items.map(item => item.key)
+				]))
+			];
 		default:
 			return state;
 	}

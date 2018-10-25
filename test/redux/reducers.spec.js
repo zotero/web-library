@@ -37,6 +37,7 @@ const {
 	RECEIVE_ITEMS_BY_QUERY,
 	RECEIVE_GROUPS,
 	RECEIVE_CREATE_ITEMS,
+	QUERY_CHANGE,
 } = require('../../src/js/constants/actions.js');
 const stateFixture = require('../fixtures/state.json');
 const settingsFixture = require('../fixtures/settings.json');
@@ -986,6 +987,12 @@ describe('reducers', () => {
 		];
 
 		state = reduce(state, {
+			type: QUERY_CHANGE,
+			oldQuery: null,
+			newQuery: { tag: ['tag1', 'tag2'] },
+		});
+
+		state = reduce(state, {
 			type: RECEIVE_ITEMS_BY_QUERY,
 			libraryKey: libraryKey,
 			query: { tag: ['tag1', 'tag2'] },
@@ -994,9 +1001,9 @@ describe('reducers', () => {
 			response: mockResponseWithHeader
 		});
 
-		assert.deepEqual(state.libraries[libraryKey].query, { tag: ['tag1', 'tag2'] });
-		assert.deepEqual(state.libraries[libraryKey].queryItems, ['ITEM1111', 'ITEM2222']);
-		assert.deepEqual(state.libraries[libraryKey].queryItemCount, 4);
+		assert.deepEqual(state.query, { tag: ['tag1', 'tag2'] });
+		assert.deepEqual(state.queryItems, ['ITEM1111', 'ITEM2222']);
+		assert.deepEqual(state.queryItemCount, 4);
 		assert.deepEqual(state.libraries[libraryKey].items['ITEM1111'], itemsData[0]);
 		assert.deepEqual(state.libraries[libraryKey].items['ITEM2222'], itemsData[1]);
 
@@ -1009,11 +1016,17 @@ describe('reducers', () => {
 			response: mockResponseWithHeader
 		});
 
-		assert.deepEqual(state.libraries[libraryKey].query, { tag: ['tag1', 'tag2'] });
-		assert.deepEqual(state.libraries[libraryKey].queryItems, ['ITEM1111', 'ITEM2222', 'ITEM3333', 'ITEM4444']);
-		assert.deepEqual(state.libraries[libraryKey].queryItemCount, 4);
+		assert.deepEqual(state.query, { tag: ['tag1', 'tag2'] });
+		assert.deepEqual(state.queryItems, ['ITEM1111', 'ITEM2222', 'ITEM3333', 'ITEM4444']);
+		assert.deepEqual(state.queryItemCount, 4);
 		assert.deepEqual(state.libraries[libraryKey].items['ITEM3333'], moreItemsData[0]);
 		assert.deepEqual(state.libraries[libraryKey].items['ITEM4444'], moreItemsData[1]);
+
+		state = reduce(state, {
+			type: QUERY_CHANGE,
+			oldQuery: { tag: ['tag1', 'tag2'] },
+			newQuery: { tag: ['tag3'] },
+		});
 
 		state = reduce(state, {
 			type: RECEIVE_ITEMS_BY_QUERY,
@@ -1024,9 +1037,9 @@ describe('reducers', () => {
 			response: otherMockResponseWithHeader
 		});
 
-		assert.deepEqual(state.libraries[libraryKey].query, { tag: ['tag3'] });
-		assert.deepEqual(state.libraries[libraryKey].queryItems, ['ITEM5555', 'ITEM6666']);
-		assert.deepEqual(state.libraries[libraryKey].queryItemCount, 2);
+		assert.deepEqual(state.query, { tag: ['tag3'] });
+		assert.deepEqual(state.queryItems, ['ITEM5555', 'ITEM6666']);
+		assert.deepEqual(state.queryItemCount, 2);
 		assert.deepEqual(state.libraries[libraryKey].items['ITEM5555'], otherItemsData[0]);
 		assert.deepEqual(state.libraries[libraryKey].items['ITEM6666'], otherItemsData[1]);
 

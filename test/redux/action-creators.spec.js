@@ -149,13 +149,16 @@ describe('action creators', () => {
 		assert.strictEqual(store.getActions().length,2);
 		assert.strictEqual(store.getActions()[0].type,REQUEST_COLLECTIONS_IN_LIBRARY);
 		assert.strictEqual(store.getActions()[1].type,RECEIVE_COLLECTIONS_IN_LIBRARY);
-		const collectionNamesInOrder = [
+		const collectionNames = [
 			'Test Collection A',
 			'Test Collection A1',
 			'Test Collection B',
 			'Test Collection C'
 		];
-		assert.sameOrderedMembers(store.getActions()[1].collections.map(c => c.name), collectionNamesInOrder);
+		assert.sameMembers(
+			store.getActions()[1].collections.map(c => c.name),
+			collectionNames
+		);
 	});
 
 	it('fetchCollections error', async () => {
@@ -385,7 +388,7 @@ describe('action creators', () => {
 		});
 		const store = mockStore(initialState);
 		const { version, key, dateAdded, dateModified, ...properties } = itemsFixture[0].data; // eslint-disable-line no-unused-vars
-		await store.dispatch(createItem(properties));
+		await store.dispatch(createItem(properties, 'u123'));
 
 		assert.strictEqual(store.getActions().length, 2);
 		assert.deepEqual(store.getActions()[1].item, itemsFixture[0].data);
@@ -653,7 +656,7 @@ describe('action creators', () => {
 			}
 		});
 
-		const action = addToCollection(['ITEM1111', 'ITEM2222'], 'AAAAAAAA');
+		const action = addToCollection(['ITEM1111', 'ITEM2222'], 'AAAAAAAA', 'u123');
 		await store.dispatch(action);
 
 		assert.strictEqual(store.getActions()[0].type, PRE_ADD_ITEMS_TO_COLLECTION);
@@ -698,7 +701,7 @@ describe('action creators', () => {
 		});
 		const store = mockStore(initialState);
 		const { version, key, ...properties } = collectionsFixture[0].data; // eslint-disable-line no-unused-vars
-		await store.dispatch(createCollection(properties));
+		await store.dispatch(createCollection(properties, 'u123'));
 
 		assert.strictEqual(store.getActions().length, 2);
 		assert.deepEqual(store.getActions()[1].collection, collectionsFixture[0].data);
@@ -730,7 +733,7 @@ describe('action creators', () => {
 			}
 		});
 
-		const action = updateCollection('AAAAAAAA', { name: 'foobar' });
+		const action = updateCollection('AAAAAAAA', { name: 'foobar' }, 'u123');
 		await store.dispatch(action);
 		assert.strictEqual(store.getActions()[0].type, PRE_UPDATE_COLLECTION);
 		assert.strictEqual(store.getActions()[0].collectionKey, 'AAAAAAAA');
@@ -777,7 +780,7 @@ describe('action creators', () => {
 			libraries: { u123: { collections } }
 		});
 
-		const action = deleteCollection(Object.values(collections)[0]);
+		const action = deleteCollection(Object.values(collections)[0], 'u123');
 		await store.dispatch(action);
 
 		assert.strictEqual(store.getActions()[0].type, REQUEST_DELETE_COLLECTION);
@@ -885,7 +888,6 @@ describe('action creators', () => {
 		assert.strictEqual(store.getActions()[1].type, RECEIVE_ITEMS_BY_QUERY);
 		assert.equal(store.getActions()[1].libraryKey, 'u123');
 		assert.deepEqual(store.getActions()[1].query.tag, tag);
-		assert.strictEqual(store.getActions()[1].isQueryChanged, true);
 		assert.deepEqual(store.getActions()[1].items, itemsFixture.map(i => i.data));
 
 		assert.deepEqual(
@@ -898,7 +900,7 @@ describe('action creators', () => {
 			const groupsResponseMock = [{ data: {id: 1, name: 'group1'}}];
 			fetchMock.get(/https:\/\/api\.zotero\.org\/users\/123\/groups\??.*/, groupsResponseMock);
 			const store = mockStore(initialState);
-			const action = fetchGroups();
+			const action = fetchGroups('u123');
 			await store.dispatch(action);
 
 			assert.strictEqual(store.getActions()[0].type, REQUEST_GROUPS);

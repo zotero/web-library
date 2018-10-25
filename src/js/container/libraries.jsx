@@ -53,17 +53,17 @@ class LibrariesContainer extends React.Component {
 	}
 
 	async handleCollectionAdd(libraryKey, parentCollection, name) {
-		return await this.props.dispatch(createCollection(libraryKey, {
+		return await this.props.dispatch(createCollection({
 			name, parentCollection
-		}));
+		}, libraryKey));
 	}
 
 	async handleCollectionUpdate(libraryKey, collectionKey, patch) {
-		await this.props.dispatch(updateCollection(libraryKey, collectionKey, patch));
+		await this.props.dispatch(updateCollection(collectionKey, patch, libraryKey));
 	}
 
 	async handleCollectionDelete(libraryKey, collection) {
-		await this.props.dispatch(deleteCollection(libraryKey, collection));
+		await this.props.dispatch(deleteCollection(collection, libraryKey));
 		this.props.history.push('/');
 	}
 
