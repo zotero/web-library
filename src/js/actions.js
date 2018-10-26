@@ -885,7 +885,7 @@ const triggerResizeViewport = (width, height) => {
 	};
 };
 
-function createItems(items, libraryKey) {
+const createItems = (items, libraryKey) => {
 	return async (dispatch, getState) => {
 		const state = getState();
 		const config = state.config;
@@ -930,7 +930,7 @@ function createItems(items, libraryKey) {
 	};
 }
 
-function createItem(properties, libraryKey) {
+const createItem = (properties, libraryKey) => {
 	return async (dispatch, getState) => {
 		const state = getState();
 		const config = state.config;
@@ -981,7 +981,7 @@ function createItem(properties, libraryKey) {
 	};
 }
 
-function deleteItem(item) {
+const deleteItem = item => {
 	return async (dispatch, getState) => {
 		const state = getState();
 		const libraryKey = get(getState(), 'current.library');
@@ -1019,7 +1019,7 @@ function deleteItem(item) {
 	};
 }
 
-function deleteItems(itemKeys) {
+const deleteItems = itemKeys => {
 	return async (dispatch, getState) => {
 		const state = getState();
 		const libraryKey = get(getState(), 'current.library');
@@ -1057,7 +1057,7 @@ function deleteItems(itemKeys) {
 	};
 }
 
-function updateItem(itemKey, patch) {
+const updateItem = (itemKey, patch) => {
 	return async (dispatch, getState) => {
 		const libraryKey = get(getState(), 'current.library');
 		const queueId = ++queueIdCunter;
@@ -1098,7 +1098,7 @@ function updateItem(itemKey, patch) {
 	};
 }
 
-function queueUpdateItem(itemKey, patch, libraryKey, queueId) {
+const queueUpdateItem = (itemKey, patch, libraryKey, queueId) => {
 	return {
 		queue: libraryKey,
 		callback: async (next, dispatch, getState) => {
@@ -1179,7 +1179,7 @@ function queueUpdateItem(itemKey, patch, libraryKey, queueId) {
 	};
 }
 
-function uploadAttachment(itemKey, fileData) {
+const uploadAttachment = (itemKey, fileData) => {
 	return async (dispatch, getState) => {
 		const state = getState();
 		const libraryKey = get(getState(), 'current.library');
@@ -1218,7 +1218,7 @@ function uploadAttachment(itemKey, fileData) {
 	};
 }
 
-function moveToTrash(itemKeys) {
+const moveToTrash = itemKeys => {
 	return async (dispatch, getState) => {
 		const libraryKey = getState().current.library;
 		const queueId = ++queueIdCunter;
@@ -1236,7 +1236,7 @@ function moveToTrash(itemKeys) {
 	};
 }
 
-function queueMoveItemsToTrash(itemKeys, libraryKey, queueId) {
+const queueMoveItemsToTrash = (itemKeys, libraryKey, queueId) => {
 	return {
 		queue: libraryKey,
 		callback: async (next, dispatch, getState) => {
@@ -1291,7 +1291,7 @@ function queueMoveItemsToTrash(itemKeys, libraryKey, queueId) {
 	};
 }
 
-function recoverFromTrash(itemKeys) {
+const recoverFromTrash = itemKeys => {
 	return async (dispatch, getState) => {
 		const libraryKey = getState().current.library;
 		const queueId = ++queueIdCunter;
@@ -1309,7 +1309,7 @@ function recoverFromTrash(itemKeys) {
 	};
 }
 
-function queueRecoverItemsFromTrash(itemKeys, libraryKey, queueId) {
+const queueRecoverItemsFromTrash = (itemKeys, libraryKey, queueId) => {
 	return {
 		queue: libraryKey,
 		callback: async (next, dispatch, getState) => {
@@ -1364,7 +1364,7 @@ function queueRecoverItemsFromTrash(itemKeys, libraryKey, queueId) {
 	};
 }
 
-function addToCollection(itemKeys, collectionKey, targetLibraryKey) {
+const addToCollection = (itemKeys, collectionKey, targetLibraryKey) => {
 	return async (dispatch, getState) => {
 		const currentLibraryKey = getState().current.library;
 		const queueId = ++queueIdCunter;
@@ -1398,7 +1398,7 @@ function addToCollection(itemKeys, collectionKey, targetLibraryKey) {
 	};
 }
 
-function queueAddToCollection(itemKeys, collectionKey, libraryKey, queueId) {
+const queueAddToCollection = (itemKeys, collectionKey, libraryKey, queueId) => {
 	return {
 		queue: libraryKey,
 		callback: async (next, dispatch, getState) => {
@@ -1515,7 +1515,7 @@ const createCollection = (properties, libraryKey) => {
 	};
 }
 
-function updateCollection(collectionKey, patch, libraryKey) {
+const updateCollection = (collectionKey, patch, libraryKey) => {
 	return async dispatch => {
 		const queueId = ++queueIdCunter;
 
@@ -1533,7 +1533,7 @@ function updateCollection(collectionKey, patch, libraryKey) {
 	};
 }
 
-function queueUpdateCollection(collectionKey, patch, libraryKey, queueId) {
+const queueUpdateCollection = (collectionKey, patch, libraryKey, queueId) => {
 	return {
 		queue: libraryKey,
 		callback: async (next, dispatch, getState) => {
