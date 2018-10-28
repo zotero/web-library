@@ -26,9 +26,9 @@ class TouchHeaderContainer extends React.Component {
 		return path;
 	});
 
-	onCollectionSelected(collectionKey) {
-		const { history, libraryKey: library } = this.props;
-		history.push(makePath({ library, collection: collectionKey }));
+	onNavigation(path) {
+		const { history } = this.props;
+		history.push(makePath(path));
 	}
 
 	render() {
@@ -42,7 +42,7 @@ class TouchHeaderContainer extends React.Component {
 		return (
 			<TouchHeader
 				{ ...this.props }
-				onCollectionSelected={ this.onCollectionSelected.bind(this) }
+				onNavigation={ this.onNavigation.bind(this) }
 				path={ touchHeaderPath }
 				root={ rootAtCurrentItemsSource ? root : undefined }
 
@@ -77,9 +77,23 @@ const mapStateToProps = state => {
 	const path = getCollectionsPath(state).map(
 		key => {
 			const { name } = collections[key]
-			return { key, label: name };
+			return {
+				key,
+				label: name,
+				path: { library: libraryKey, collection: key },
+			};
 		}
 	);
+
+	if(libraryKey) {
+		path.unshift({
+			key: libraryKey,
+			path: { library: libraryKey },
+			//@TODO: when first loading, group name is not known
+			label: libraryKey === state.config.userLibraryKey ?
+				"My Library" : (state.groups.find(g => g.id === parseInt(libraryKey.slice(1), 10)) || { name: libraryKey}).name
+		})
+	}
 
 	let root;
 	switch(state.current.itemsSource) {
@@ -93,7 +107,7 @@ const mapStateToProps = state => {
 		case 'top': {
 			root = {
 				key: null,
-				label: 'All Documents'
+				label: "All Items"
 			}
 		}
 		break;

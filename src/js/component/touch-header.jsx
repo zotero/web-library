@@ -9,7 +9,7 @@ const EditToggleButton = require('./edit-toggle-button');
 class TouchHeader extends React.PureComponent {
 
 	render() {
-		const { isEditing, includeNav, path, root, view, className, onCollectionSelected } = this.props;
+		const { isEditing, includeNav, path, root, view, className, onNavigation } = this.props;
 
 		return (
 			<header className={ cx('touch-header', className) }>
@@ -17,7 +17,7 @@ class TouchHeader extends React.PureComponent {
 					!isEditing && includeNav && <TouchNavigation
 						root={ root }
 						path={ path }
-						onNavigation={ onCollectionSelected }
+						onNavigation={ onNavigation }
 					/>
 				}
 				{ view === 'item-details' && (
@@ -29,7 +29,7 @@ class TouchHeader extends React.PureComponent {
 }
 
 TouchHeader.propTypes = {
-	onCollectionSelected: PropTypes.func,
+	onNavigation: PropTypes.func,
 	onEditModeToggle: PropTypes.func,
 	path: PropTypes.array,
 	isEditing: PropTypes.bool,

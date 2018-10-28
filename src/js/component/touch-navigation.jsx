@@ -82,9 +82,9 @@ class TouchNavigation extends React.Component {
 		return isPathChanged(this.props.path, props.path);
 	}
 
-	handleNavigation(key, ev) {
+	handleNavigation(path, ev) {
 		ev && ev.preventDefault();
-		this.props.onNavigation(key, ev);
+		this.props.onNavigation(path, ev);
 	}
 
 	render() {
@@ -96,7 +96,7 @@ class TouchNavigation extends React.Component {
 							return (
 								<li data-id={ header.id} className={ header.slot } key={ header.id } tabIndex="0">
 									<div className="center-axis">
-										<div className="inner" onClick={ ev => this.handleNavigation(header.key, ev) }>
+										<div className="inner" onClick={ ev => this.handleNavigation(header.path, ev) }>
 											{ header.label }
 										</div>
 									</div>
