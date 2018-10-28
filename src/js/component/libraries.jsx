@@ -28,6 +28,13 @@ class Libraries extends React.Component {
 		this.props.onSelect(pathData);
 	}
 
+	handleKeyPress(pathData, ev) {
+		if(ev && (ev.key === 'Enter' || ev.key === ' ')) {
+			ev.stopPropagation();
+			this.props.onSelect(pathData);
+		}
+	}
+
 
 	handleAdd(libraryKey, collectionKey) {
 		this.setState({ virtual: { libraryKey, collectionKey } });
@@ -103,7 +110,7 @@ class Libraries extends React.Component {
 	}
 
 	renderGroups() {
-		const { groups } = this.props;
+		const { groups, libraryKey, itemsSource } = this.props;
 		const { opened } = this.state;
 
 		// @TODO
@@ -118,9 +125,14 @@ class Libraries extends React.Component {
 							const groupKey = `g${group.id}`;
 							return (
 								<Node
-									className={ cx({ 'open': opened.includes(groupKey) }) }
+									className={ cx({
+										'open': opened.includes(groupKey),
+										'selected': libraryKey === groupKey && itemsSource === 'top'
+									}) }
 									isOpen={ opened.includes(groupKey) }
 									onOpen={ this.handleOpenToggle.bind(this, groupKey) }
+									onClick={ this.handleSelect.bind(this, { library: groupKey}) }
+									onKeyPress={ this.handleKeyPress.bind(this, { library: groupKey}) }
 									subtree={ this.renderGroupCollections(groupKey) }
 									key={ group.id }
 								>
@@ -143,15 +155,20 @@ class Libraries extends React.Component {
 	}
 
 	renderMyLibrary() {
-		const { userLibraryKey } = this.props;
+		const { libraryKey, userLibraryKey, itemsSource } = this.props;
 		const { opened } = this.state;
 		return (
 			<div className={ cx('level', 'level-0') }>
 				<ul className="nav" role="group">
 					<Node
-						className={ cx({ 'open': opened.includes(userLibraryKey) }) }
+						className={ cx({
+							'open': opened.includes(userLibraryKey),
+							'selected': libraryKey === userLibraryKey && itemsSource === 'top'
+						}) }
 						isOpen={ opened.includes(userLibraryKey) }
 						onOpen={ this.handleOpenToggle.bind(this, userLibraryKey) }
+						onClick={ this.handleSelect.bind(this, { library: userLibraryKey}) }
+						onKeyPress={ this.handleKeyPress.bind(this, { library: userLibraryKey}) }
 						subtree={ this.renderCollections() }
 						key={ userLibraryKey }
 					>

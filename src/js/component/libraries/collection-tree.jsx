@@ -158,9 +158,10 @@ class CollectionTree extends React.PureComponent {
 			collections, col => derivedData[col.key].isSelected
 		);
 		const hasOpenLastLevel = collections.length === 0;
-		const hasVirtual = virtual !== null &&
-			(virtual.collectionKey === parentCollection.key ||
-			(virtual.collectionKey === null && level === 1));
+		const hasVirtual = virtual !== null && (
+				(parentCollection && virtual.collectionKey === parentCollection.key) ||
+				(virtual.collectionKey === null && level === 1)
+			);
 
 		collections.sort((c1, c2) =>
 			c1.name.toUpperCase().localeCompare(c2.name.toUpperCase())
@@ -171,23 +172,23 @@ class CollectionTree extends React.PureComponent {
 				'has-open': hasOpen, 'level-last': hasOpenLastLevel
 			}) }>
 				<ul className="nav" role="group">
-					{
-						level === 1 && (
-							<Node
-								className={ cx({
-									'all-documents': true,
-									'selected': isCurrentLibrary && itemsSource === 'top'
-								})}
-								onClick={ this.handleSelect.bind(this, {}) }
-								onKeyPress={ this.handleKeyPress.bind(this, {}) }
-								dndTarget={ { 'targetType': 'all-documents', libraryKey } }
-							>
-								<Icon type="28/document" className="touch" width="28" height="28" />
-								<Icon type="16/document" className="mouse" width="16" height="16" />
-								<a>All Documents</a>
-							</Node>
-						)
-					}
+					<ViewportContext.Consumer>
+					{ viewport => (
+							viewport.xxs && level === 1 && parentCollection === null && (
+								<Node
+									className={ cx({
+										'all-documents': true,
+									})}
+									onClick={ this.handleSelect.bind(this, { view: 'item-list' }) }
+									onKeyPress={ this.handleKeyPress.bind(this, { view: 'item-list' }) }
+								>
+									<Icon type="28/document" className="touch" width="28" height="28" />
+									<Icon type="16/document" className="mouse" width="16" height="16" />
+									<a>All Items</a>
+								</Node>
+							)
+						)}
+					</ViewportContext.Consumer>
 					{ collections.map(collection => (
 						<Node
 							key={ collection.key }
@@ -250,7 +251,9 @@ class CollectionTree extends React.PureComponent {
 								<Icon type="16/folder" className="mouse" width="16" height="16" />
 								<Input autoFocus
 									isBusy={ virtual.isBusy }
-									onCommit={ this.handleAddCommit.bind(this, parentCollection.key) }
+									onCommit={ this.handleAddCommit.bind(
+										this, parentCollection ? parentCollection.key : null
+									) }
 									onCancel={ onAddCancel }
 									onBlur={ () => true /* cancel on blur */ }
 								/>
