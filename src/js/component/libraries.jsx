@@ -16,9 +16,9 @@ class Libraries extends React.Component {
 	}
 
 	componentDidUpdate({ libraryKey: prevLibraryKey }) {
-		const { libraryKey, userLibraryKey } = this.props;
+		const { libraryKey } = this.props;
 
-		if(libraryKey != prevLibraryKey && libraryKey !== userLibraryKey) {
+		if(libraryKey != prevLibraryKey) {
 			this.setState({ opened: [...this.state.opened, libraryKey ] });
 		}
 	}
@@ -142,6 +142,35 @@ class Libraries extends React.Component {
 		);
 	}
 
+	renderMyLibrary() {
+		const { userLibraryKey } = this.props;
+		const { opened } = this.state;
+		return (
+			<div className={ cx('level', 'level-0') }>
+				<ul className="nav" role="group">
+					<Node
+						className={ cx({ 'open': opened.includes(userLibraryKey) }) }
+						isOpen={ opened.includes(userLibraryKey) }
+						onOpen={ this.handleOpenToggle.bind(this, userLibraryKey) }
+						subtree={ this.renderCollections() }
+						key={ userLibraryKey }
+					>
+						<Icon type="28/folder" className="touch" width="28" height="28" />
+						<Icon type="16/folder" className="mouse" width="16" height="16" />
+						<a>My Library</a>
+						{
+							opened.includes(userLibraryKey) && (
+								<Button onClick={ this.handleAdd.bind(this, userLibraryKey, null) } >
+									<Icon type={ '20/add-collection' } width="20" height="20" />
+								</Button>
+							)
+						}
+					</Node>
+				</ul>
+			</div>
+		);
+	}
+
 	render() {
 		const { userLibraryKey, libraryKey, itemsSource } = this.props;
 		const isRootActive = libraryKey === userLibraryKey && itemsSource === 'top';
@@ -158,13 +187,7 @@ class Libraries extends React.Component {
 					<div className={ `level-root ${isRootActive ? 'active' : ''}` }>
 						<div className="scroll-container" role="tree">
 							<section>
-								<div className="desktop-header">
-									<h4>My Library</h4>
-									<Button onClick={ this.handleAdd.bind(this, userLibraryKey, null) } >
-										<Icon type={ '20/add-collection' } width="20" height="20" />
-									</Button>
-								</div>
-								{ this.renderCollections() }
+								{ this.renderMyLibrary() }
 							</section>
 							<section>
 								<div className="desktop-header">
