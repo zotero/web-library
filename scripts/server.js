@@ -1,3 +1,4 @@
+/*eslint no-console: 0*/
 'use strict';
 
 const fs = require('fs');
@@ -19,4 +20,6 @@ const handler = (req, resp) => {
 	serve(req, resp, fallback);
 };
 
-http.createServer(handler).listen(port);
+http.createServer(handler).listen(port, () => {
+	console.log(`>>> Listening on http://localhost:${port}/\n`);
+});
