@@ -18,6 +18,7 @@ const stateDefault = {
 const current = (state = stateDefault, action) => {
 	switch(action.type) {
 		case ROUTE_CHANGE:
+			var { defaultLibrary } = action;
 			var { library, collection, items, tags, view, search = '' } = action.params;
 			var itemKeys = items ? action.params.items.split(',') : [];
 			var tagNames = tagsFromUrlPart(tags);
@@ -36,7 +37,7 @@ const current = (state = stateDefault, action) => {
 			}
 
 			if(!view) {
-				view = items ? 'item-details' : 'library';
+				view = items ? 'item-details' : collection ? 'collection' : library ? 'library' : 'libraries';
 			}
 
 			return {
@@ -48,7 +49,7 @@ const current = (state = stateDefault, action) => {
 				search,
 				itemKeys,
 				view,
-				library,
+				library: library || defaultLibrary
 			};
 		case TRIGGER_EDITING_ITEM:
 			return {

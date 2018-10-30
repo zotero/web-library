@@ -110,12 +110,8 @@ class Libraries extends React.Component {
 	}
 
 	renderGroups() {
-		const { groups, libraryKey, itemsSource } = this.props;
+		const { groups, libraryKey, itemsSource, device, view } = this.props;
 		const { opened } = this.state;
-
-		// @TODO
-		// onClick={ this.handleSelect.bind(this, {'library': groupKey }) }
-		// onKeyPress={ this.handleKeyPress.bind(this, {'library': groupKey }) }
 
 		return (
 			<div className={ cx('level', 'level-0') }>
@@ -123,16 +119,20 @@ class Libraries extends React.Component {
 					{
 						groups.map(group => {
 							const groupKey = `g${group.id}`;
+							const isOpen = (!device.viewport.xxs && opened.includes(groupKey)) ||
+								(device.viewport.xxs && view !== 'libraries' && libraryKey == groupKey);
+							const isSelected = !device.viewport.xxs &&
+								libraryKey === groupKey && itemsSource === 'top';
 							return (
 								<Node
 									className={ cx({
-										'open': opened.includes(groupKey),
-										'selected': libraryKey === groupKey && itemsSource === 'top'
+										'open': isOpen,
+										'selected': isSelected,
 									}) }
-									isOpen={ opened.includes(groupKey) }
+									isOpen={ isOpen }
 									onOpen={ this.handleOpenToggle.bind(this, groupKey) }
-									onClick={ this.handleSelect.bind(this, { library: groupKey}) }
-									onKeyPress={ this.handleKeyPress.bind(this, { library: groupKey}) }
+									onClick={ this.handleSelect.bind(this, { library: groupKey, view: 'library' }) }
+									onKeyPress={ this.handleKeyPress.bind(this, { library: groupKey, view: 'library'}) }
 									subtree={ this.renderGroupCollections(groupKey) }
 									key={ group.id }
 								>
@@ -140,7 +140,7 @@ class Libraries extends React.Component {
 									<Icon type="16/folder" className="mouse" width="16" height="16" />
 									<a>{ group.name }</a>
 									{
-										opened.includes(groupKey) && (
+										isOpen && (
 											<Button onClick={ this.handleAdd.bind(this, groupKey, null) } >
 												<Icon type={ '20/add-collection' } width="20" height="20" />
 											</Button>
@@ -155,20 +155,25 @@ class Libraries extends React.Component {
 	}
 
 	renderMyLibrary() {
-		const { libraryKey, userLibraryKey, itemsSource } = this.props;
+		const { libraryKey, userLibraryKey, itemsSource, view, device } = this.props;
 		const { opened } = this.state;
+		const isOpen = (!device.viewport.xxs && opened.includes(userLibraryKey)) ||
+			(device.viewport.xxs && view !== 'libraries' && libraryKey == userLibraryKey);
+		const isSelected = !device.viewport.xxs &&
+			libraryKey === userLibraryKey && itemsSource === 'top';
+
 		return (
 			<div className={ cx('level', 'level-0') }>
 				<ul className="nav" role="group">
 					<Node
 						className={ cx({
-							'open': opened.includes(userLibraryKey),
-							'selected': libraryKey === userLibraryKey && itemsSource === 'top'
+							'open': isOpen,
+							'selected': isSelected
 						}) }
-						isOpen={ opened.includes(userLibraryKey) }
+						isOpen={ isOpen }
 						onOpen={ this.handleOpenToggle.bind(this, userLibraryKey) }
-						onClick={ this.handleSelect.bind(this, { library: userLibraryKey}) }
-						onKeyPress={ this.handleKeyPress.bind(this, { library: userLibraryKey}) }
+						onClick={ this.handleSelect.bind(this, { library: userLibraryKey, view: 'library' }) }
+						onKeyPress={ this.handleKeyPress.bind(this, { library: userLibraryKey, view: 'library' }) }
 						subtree={ this.renderCollections() }
 						key={ userLibraryKey }
 					>
@@ -176,7 +181,7 @@ class Libraries extends React.Component {
 						<Icon type="16/folder" className="mouse" width="16" height="16" />
 						<a>My Library</a>
 						{
-							opened.includes(userLibraryKey) && (
+							isOpen && (
 								<Button onClick={ this.handleAdd.bind(this, userLibraryKey, null) } >
 									<Icon type={ '20/add-collection' } width="20" height="20" />
 								</Button>
@@ -189,8 +194,8 @@ class Libraries extends React.Component {
 	}
 
 	render() {
-		const { userLibraryKey, libraryKey, itemsSource } = this.props;
-		const isRootActive = libraryKey === userLibraryKey && itemsSource === 'top';
+		const { userLibraryKey, libraryKey, itemsSource, view } = this.props;
+		const isRootActive = view === 'libraries';
 
 		if(this.props.isFetching) {
 			return <Spinner />;

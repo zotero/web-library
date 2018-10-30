@@ -216,11 +216,8 @@ const changeRoute = match => {
 
 		await dispatch({
 			type: ROUTE_CHANGE,
+			defaultLibrary,
 			...match,
-			params: {
-				...match.params,
-				library: match.params.library || defaultLibrary
-			}
 		});
 
 		const newQuery = getQueryFromRoute(match);

@@ -111,7 +111,7 @@ class LibraryContainer extends React.Component {
 							<Route path="/collection/:collection/tags/:tags/search/:search" component={LibraryContainerWrapped} />
 							<Route path="/collection/:collection/tags/:tags/" component={LibraryContainerWrapped} />
 							<Route path="/collection/:collection/search/:search" component={LibraryContainerWrapped} />
-							<Route path="/collection/:collection/:view(library|item-list|item-details)?" component={LibraryContainerWrapped} />
+							<Route path="/collection/:collection/:view(collection|item-list|item-details)?" component={LibraryContainerWrapped} />
 							<Route path="/items/:items" component={LibraryContainerWrapped} />
 							<Route path="/tags/:tags/search/:search/items/:items" component={LibraryContainerWrapped} />
 							<Route path="/tags/:tags/search/:search" component={LibraryContainerWrapped} />
@@ -123,7 +123,7 @@ class LibraryContainer extends React.Component {
 							<Route path="/trash" component={LibraryContainerWrapped} />
 							<Route path="/publications/items/:items" component={LibraryContainerWrapped} />
 							<Route path="/publications" component={LibraryContainerWrapped} />
-							<Route path="/:view(library|item-list|item-details)" component={LibraryContainerWrapped} />
+							<Route path="/:view(libraries|library|collection|item-list|item-details)" component={LibraryContainerWrapped} />
 							<Route path="/:library/collection/:collection/tags/:tags/search/:search/items/:items" component={LibraryContainerWrapped} />
 							<Route path="/:library/collection/:collection/tags/:tags/search/:search/items/:items" component={LibraryContainerWrapped} />
 							<Route path="/:library/collection/:collection/tags/:tags/items/:items" component={LibraryContainerWrapped} />
@@ -132,7 +132,7 @@ class LibraryContainer extends React.Component {
 							<Route path="/:library/collection/:collection/tags/:tags/search/:search" component={LibraryContainerWrapped} />
 							<Route path="/:library/collection/:collection/tags/:tags/" component={LibraryContainerWrapped} />
 							<Route path="/:library/collection/:collection/search/:search" component={LibraryContainerWrapped} />
-							<Route path="/:library/collection/:collection/:view(library|item-list|item-details)?" component={LibraryContainerWrapped} />
+							<Route path="/:library/collection/:collection/:view(libraries|library|collection|item-list|item-details)?" component={LibraryContainerWrapped} />
 							<Route path="/:library/items/:items" component={LibraryContainerWrapped} />
 							<Route path="/:library/tags/:tags/search/:search/items/:items" component={LibraryContainerWrapped} />
 							<Route path="/:library/tags/:tags/search/:search" component={LibraryContainerWrapped} />
@@ -144,7 +144,7 @@ class LibraryContainer extends React.Component {
 							<Route path="/:library/trash" component={LibraryContainerWrapped} />
 							<Route path="/:library/publications/items/:items" component={LibraryContainerWrapped} />
 							<Route path="/:library/publications" component={LibraryContainerWrapped} />
-							<Route path="/:library/:view(library|item-list|item-details)" component={LibraryContainerWrapped} />
+							<Route path="/:library/:view(library|collection|item-list|item-details)" component={LibraryContainerWrapped} />
 							<Route path="/:library" component={LibraryContainerWrapped} />
 							<Route path="/" component={LibraryContainerWrapped} />
 						</Switch>

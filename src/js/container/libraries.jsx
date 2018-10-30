@@ -16,6 +16,7 @@ const {
 const { getCollectionsPath } = require('../common/state');
 const { get } = require('../utils');
 const { makePath } = require('../common/navigation');
+const withDevice = require('../enhancers/with-device');
 const PAGE_SIZE = 100;
 
 class LibrariesContainer extends React.Component {
@@ -106,6 +107,7 @@ const mapStateToProps = state => {
 		isFetching: libraryKey in state.fetching.collectionsInLibrary,
 		selected: state.current.collection,
 		path: getCollectionsPath(state),
+		view: state.current.view,
 		itemsSource: state.current.itemsSource,
 		updating: Object.keys(get(state, ['libraries', libraryKey, 'updating', 'collections'], {}))
 	};
@@ -133,7 +135,7 @@ LibrariesContainer.defaultProps = {
 	selected: ''
 };
 
-module.exports = withRouter(connect(
+module.exports = withRouter(withDevice(connect(
 	mapStateToProps,
 	mapDispatchToProps
-)(LibrariesContainer));
+)(LibrariesContainer)));
