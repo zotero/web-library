@@ -76,6 +76,7 @@ const mapStateToProps = state => {
 	const item = get(state, ['libraries', libraryKey, 'items', itemKey]);
 	const view = state.current.view;
 	const itemsSource = state.current.itemsSource;
+	const collection = state.current.collection;
 	const path = getCollectionsPath(state).map(
 		key => {
 			const { name } = collections[key]
@@ -97,7 +98,7 @@ const mapStateToProps = state => {
 		})
 	}
 
-	if(libraryKey && view === 'item-list') {
+	if(libraryKey && (view === 'item-list' || view === 'item-details')) {
 		let label;
 			switch(itemsSource) {
 				case 'trash': label = "Trash"; break;
@@ -109,7 +110,13 @@ const mapStateToProps = state => {
 
 		path.push({
 			key: null,
-			path: { library: libraryKey, view: 'item-list' },
+			path: {
+				library: libraryKey,
+				view: 'item-list',
+				trash: itemsSource === 'trash',
+				publications: itemsSource === 'publications',
+				collection
+			},
 			label
 		});
 	}
