@@ -61,6 +61,7 @@ class TouchNavigation extends React.Component {
 				...h
 			};
 		});
+
 		return headers;
 	}
 

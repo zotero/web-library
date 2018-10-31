@@ -74,6 +74,7 @@ const mapStateToProps = state => {
 	const itemKey = state.current.item;
 	const collections = get(state, ['libraries', libraryKey, 'collections'], []);
 	const item = get(state, ['libraries', libraryKey, 'items', itemKey]);
+	const view = state.current.view;
 	const path = getCollectionsPath(state).map(
 		key => {
 			const { name } = collections[key]
@@ -85,46 +86,29 @@ const mapStateToProps = state => {
 		}
 	);
 
-	if(libraryKey) {
+	if(libraryKey && view !== 'libraries') {
 		path.unshift({
 			key: libraryKey,
-			path: { library: libraryKey },
+			path: { library: libraryKey, view: 'library' },
 			//@TODO: when first loading, group name is not known
 			label: libraryKey === state.config.userLibraryKey ?
 				"My Library" : (state.groups.find(g => g.id === parseInt(libraryKey.slice(1), 10)) || { name: libraryKey}).name
 		})
 	}
 
-	let root;
-	switch(state.current.itemsSource) {
-		case 'collection': {
-			root = {
-				key: state.current.collection,
-				label: get(collections, [state.current.collection, 'name'])
-			}
-		}
-		break;
-		case 'top': {
-			root = {
-				key: null,
-				label: "All Items"
-			}
-		}
-		break;
-		case 'trash': {
-			root = {
-				key: 'trash',
-				label: 'Trash'
-			}
-		}
+	if(libraryKey && view === 'item-list') {
+		path.push({
+			key: null,
+			path: { library: libraryKey, view: 'item-list' },
+			label: "Items"
+		});
 	}
 
 	return {
-		view: state.current.view,
+		view,
 		libraryKey,
 		path,
-		item,
-		root
+		item
 	};
 };
 
