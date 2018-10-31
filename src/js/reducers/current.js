@@ -37,7 +37,11 @@ const current = (state = stateDefault, action) => {
 			}
 
 			if(!view) {
-				view = items ? 'item-details' : collection ? 'collection' : library ? 'library' : 'libraries';
+				if(['query', 'trash', 'publications'].includes(itemsSource)) {
+					view = 'item-list';
+				} else {
+					view = items ? 'item-details' : collection ? 'collection' : library ? 'library' : 'libraries';
+				}
 			}
 
 			return {
