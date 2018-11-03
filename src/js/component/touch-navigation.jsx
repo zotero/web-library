@@ -98,7 +98,9 @@ class TouchNavigation extends React.Component {
 								<li data-id={ header.id} className={ header.slot } key={ header.id } tabIndex="0">
 									<div className="center-axis">
 										<div className="inner" onClick={ ev => this.handleNavigation(header.path, ev) }>
-											{ header.label }
+											<div className="truncate">
+												{ header.label }
+											</div>
 										</div>
 									</div>
 								</li>

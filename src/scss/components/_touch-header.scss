@@ -51,6 +51,7 @@
 		transform: translate3d(-50%, 0, 0);
 		display: flex;
 		align-items: center;
+		max-width: calc((100% - 2 * #{$default-padding-x-touch}) / 3 - 4px); // Todo: see #73
 	}
 
 	.before-last {
