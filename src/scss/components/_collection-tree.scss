@@ -223,6 +223,7 @@
 		> .level {
 			@include touch-or-bp-down(sm) {
 				transform: translate3d(25%, 0, 0);
+				z-index: $z-index-level-active;
 
 				&.has-open {
 					transform: translate3d(0, 0, 0);
