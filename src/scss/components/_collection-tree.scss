@@ -20,6 +20,14 @@
 		overflow: auto;
 	}
 
+	section {
+		& + section {
+			@include touch-or-bp-down(sm) {
+				border-top: $space-min solid $touch-collection-tree-separator;
+			}
+		}
+	}
+
 	h4 {
 		color: $collection-tree-headings-color;
 		margin: 0;
@@ -43,8 +51,10 @@
 
 			&:first-child {
 				> .item-container {
-					&:before {
-						content: none;
+					&::before {
+						@include touch-or-bp-down(sm) {
+							content: none;
+						}
 					}
 				}
 			}
@@ -111,8 +121,8 @@
 					position: absolute;
 					height: 1px;
 					top: 0;
-					left: $default-padding-x-touch;
-					right: $default-padding-x-touch;
+					left: 2 * $default-padding-x-touch + 28px;
+					right: 0;
 					background: $touch-collection-tree-border;
 				}
 			}
