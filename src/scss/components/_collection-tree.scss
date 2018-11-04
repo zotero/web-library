@@ -130,6 +130,15 @@
 			@include mouse-and-bp-up(md) {
 				padding-right: $default-padding-x;
 			}
+
+			> .icon {
+				flex: 0 0 auto;
+				margin-right: $space-xs;
+
+				&.touch {
+					margin-right: $space-md;
+				}
+			}
 		}
 	}
 
@@ -145,15 +154,6 @@
 							* ($i - 1);
 				}
 			}
-		}
-	}
-
-	.icon {
-		flex: 0 0 auto;
-		margin-right: $space-xs;
-
-		&.touch {
-			margin-right: $space-md;
 		}
 	}
 

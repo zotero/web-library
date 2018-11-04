@@ -142,7 +142,7 @@ class Libraries extends React.Component {
 									{
 										isOpen && (
 											<Button onClick={ this.handleAdd.bind(this, groupKey, null) } >
-												<Icon type={ '20/add-collection' } width="20" height="20" />
+												<Icon type={ '16/plus' } width="16" height="16" />
 											</Button>
 										)
 									}
@@ -183,7 +183,7 @@ class Libraries extends React.Component {
 						{
 							isOpen && (
 								<Button onClick={ this.handleAdd.bind(this, userLibraryKey, null) } >
-									<Icon type={ '20/add-collection' } width="20" height="20" />
+									<Icon type={ '16/plus' } width="16" height="16" />
 								</Button>
 							)
 						}
