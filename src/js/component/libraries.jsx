@@ -212,9 +212,7 @@ class Libraries extends React.Component {
 								{ this.renderMyLibrary() }
 							</section>
 							<section>
-								<div className="desktop-header">
-									<h4>Group Libraries</h4>
-								</div>
+								<h4>Group Libraries</h4>
 								{ this.renderGroups() }
 							</section>
 						</div>
