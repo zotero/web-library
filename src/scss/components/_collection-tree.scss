@@ -38,6 +38,12 @@
 		}
 	}
 
+	.icon {
+		@include mouse-and-bp-up(md) {
+			color: $collection-tree-icon-color;
+		}
+	}
+
 	ul {
 		li {
 			cursor: pointer;
