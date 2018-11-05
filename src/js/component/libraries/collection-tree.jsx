@@ -152,12 +152,19 @@ class CollectionTree extends React.PureComponent {
 
 	renderCollections(collections, level, parentCollection = null) {
 		const { childMap, derivedData } = this;
-		const { libraryKey, itemsSource, isUserLibrary, isCurrentLibrary, virtual, onAddCancel } = this.props;
+		const { libraryKey, itemsSource, isUserLibrary, isCurrentLibrary,
+			virtual, onAddCancel, device } = this.props;
 
 		const hasOpen = this.testRecursive(
 			collections, col => derivedData[col.key].isSelected
 		);
-		const hasOpenLastLevel = collections.length === 0;
+
+		// at least one collection contains subcollections
+		const hasNested = collections.some(c => c.key in childMap);
+
+		// on mobiles, there is extra level that only contains "items"
+		const isLastLevel = device.viewport.xxs ? collections.length === 0 : !hasNested;
+
 		const hasVirtual = virtual !== null && (
 				(parentCollection && virtual.collectionKey === parentCollection.key) ||
 				(virtual.collectionKey === null && level === 1)
@@ -169,7 +176,7 @@ class CollectionTree extends React.PureComponent {
 
 		return (
 			<div className={ cx('level', `level-${level}`, {
-				'has-open': hasOpen, 'level-last': hasOpenLastLevel
+				'has-open': hasOpen, 'level-last': isLastLevel
 			}) }>
 				<ul className="nav" role="group">
 					<ViewportContext.Consumer>
@@ -200,11 +207,11 @@ class CollectionTree extends React.PureComponent {
 								'collection': true,
 							})}
 							subtree={
-								this.renderCollections(
+								(hasSubCollections || device.viewport.xxs) ? this.renderCollections(
 									this.collectionsFromKeys(childMap[collection.key] || []),
 									level + 1,
 									collection
-								)
+								) : null
 							}
 							hideTwisty={ !hasSubCollections }
 							onOpen={ this.handleOpenToggle.bind(this, collection.key) }
