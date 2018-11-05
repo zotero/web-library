@@ -189,7 +189,9 @@ class CollectionTree extends React.PureComponent {
 							)
 						)}
 					</ViewportContext.Consumer>
-					{ collections.map(collection => (
+					{ collections.map(collection => {
+						const hasSubCollections = collection.key in childMap;
+						return (
 						<Node
 							key={ collection.key }
 							className={ cx({
@@ -204,7 +206,7 @@ class CollectionTree extends React.PureComponent {
 									collection
 								)
 							}
-							hideTwisty={ !(collection.key in childMap) }
+							hideTwisty={ !hasSubCollections }
 							onOpen={ this.handleOpenToggle.bind(this, collection.key) }
 							onClick={ this.handleSelect.bind(this, { collection: collection.key }) }
 							onKeyPress={ this.handleKeyPress.bind(this, { collection: collection.key }) }
@@ -213,8 +215,8 @@ class CollectionTree extends React.PureComponent {
 							icon="folder"
 							dndTarget={ { 'targetType': 'collection', collectionKey: collection.key, libraryKey } }
 						>
-								<Icon type="28/folder" className="touch" width="28" height="28" />
-								<Icon type="16/folder" className="mouse" width="16" height="16" />
+								<Icon type={ hasSubCollections ? '28/folders' : '28/folder' } className="touch" width="28" height="28" />
+								<Icon type={ '16/folder' } className="mouse" width="16" height="16" />
 								{
 									this.state.renaming === collection.key ?
 									<Input autoFocus
@@ -241,7 +243,8 @@ class CollectionTree extends React.PureComponent {
 								}
 
 						</Node>
-					)) }
+						);
+					}) }
 					{
 						hasVirtual && (
 							<Node
