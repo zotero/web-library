@@ -39,9 +39,6 @@ class TouchNavigation extends React.Component {
 	mapPathToHeaders(path, previous) {
 		let headers = [ ...path ];
 
-		// add root path at the begining
-		headers.unshift(this.props.root);
-
 		// add previous node at the end.
 		// This is last "current" node when going up the tree, empty otherwise
 		headers.push({
@@ -117,16 +114,11 @@ class TouchNavigation extends React.Component {
 	static propTypes = {
 		onNavigation: PropTypes.func,
 		path: PropTypes.array,
-		root: PropTypes.object
 	}
 
 	static defaultProps = {
 		onNavigation: noop,
 		path: [],
-		root: {
-			label: '/',
-			key: null
-		}
 	}
 }
 module.exports = TouchNavigation;

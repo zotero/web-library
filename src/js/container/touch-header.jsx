@@ -8,54 +8,35 @@ const { connect } = require('react-redux');
 const { get } = require('../utils');
 const { getCollectionsPath } = require('../common/state');
 const TouchHeader = require('../component/touch-header');
-const memoize = require('memoize-one');
 const { makePath } = require('../common/navigation');
 const withEditMode = require('../enhancers/with-edit-mode');
 
 class TouchHeaderContainer extends React.Component {
-	makeTouchHeaderPath = memoize((path, startAt, item) => {
-		if(startAt && path.includes(startAt)) {
-			path.splice(0, path.indexOf(startAt));
-		}
-
-		if(item) {
-			// Push an empty item to the path to force "current" to become empty
-			// when an item is selected
-			path.push({key: '', label: ''});
-		}
-		return path;
-	});
-
 	onNavigation(path) {
 		const { history } = this.props;
 		history.push(makePath(path));
 	}
 
 	render() {
-		const { path, includeNav, rootAtCurrentItemsSource, root, includeItem, item } = this.props;
-		const touchHeaderPath = includeNav ? this.makeTouchHeaderPath(
-			path,
-			rootAtCurrentItemsSource ? root.key : null,
-			includeItem ? item : null
-		) : [];
+		const { path, rootAtCurrentItemsSource } = this.props;
+		var touchHeaderPath = path;
+
+		if(rootAtCurrentItemsSource) {
+			const index = path.findIndex(n => n.key === "itemsSource");
+			touchHeaderPath = path.splice(index);
+		}
 
 		return (
 			<TouchHeader
 				{ ...this.props }
 				onNavigation={ this.onNavigation.bind(this) }
 				path={ touchHeaderPath }
-				root={ rootAtCurrentItemsSource ? root : undefined }
-
 			/>
 		);
 	}
 
 	static defaultProps = {
 		includeNav: true,
-		root: {
-			key: null,
-			label: '/'
-		}
 	}
 
 	static propTypes = {
@@ -64,7 +45,6 @@ class TouchHeaderContainer extends React.Component {
 		item: itemProp,
 		includeNav: PropTypes.bool,
 		includeItem: PropTypes.bool,
-		root: PropTypes.object,
 		rootAtCurrentItemsSource: PropTypes.bool
 	}
 }
@@ -94,22 +74,25 @@ const mapStateToProps = state => {
 			path: { library: libraryKey, view: 'library' },
 			//@TODO: when first loading, group name is not known
 			label: libraryKey === state.config.userLibraryKey ?
-				"My Library" : (state.groups.find(g => g.id === parseInt(libraryKey.slice(1), 10)) || { name: libraryKey}).name
+				"My Library" :
+				(state.groups.find(
+					g => g.id === parseInt(libraryKey.slice(1), 10)
+				) || { name: libraryKey }).name
 		})
 	}
 
 	if(libraryKey && (view === 'item-list' || view === 'item-details')) {
 		let label;
-			switch(itemsSource) {
-				case 'trash': label = "Trash"; break;
-				case 'publications': label = "My Publications"; break;
-				case 'query': label = "Search results"; break; //@NOTE: currently not in use
-				case 'top': label = "All Items"; break;
-				default: label = "Items"; break;
-			}
+		switch(itemsSource) {
+			case 'trash': label = "Trash"; break;
+			case 'publications': label = "My Publications"; break;
+			case 'query': label = "Search results"; break; //@NOTE: currently not in use
+			case 'top': label = "All Items"; break;
+			default: label = "Items"; break;
+		}
 
 		path.push({
-			key: null,
+			key: 'itemsSource',
 			path: {
 				library: libraryKey,
 				view: 'item-list',
@@ -119,6 +102,18 @@ const mapStateToProps = state => {
 			},
 			label
 		});
+	}
+
+	// add a root node
+	path.unshift({
+		key: 'root',
+		path: { view: 'libraries' },
+		label: 'Libraries'
+	});
+
+	// empty last node to represent current item if one is selected
+	if(item) {
+		path.push({key: '', label: ''});
 	}
 
 	return {
