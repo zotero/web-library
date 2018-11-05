@@ -163,7 +163,7 @@ class CollectionTree extends React.PureComponent {
 		const hasNested = collections.some(c => c.key in childMap);
 
 		// on mobiles, there is extra level that only contains "items"
-		const isLastLevel = device.viewport.xxs ? collections.length === 0 : !hasNested;
+		const isLastLevel = device.isSingleColumn ? collections.length === 0 : !hasNested;
 
 		const hasVirtual = virtual !== null && (
 				(parentCollection && virtual.collectionKey === parentCollection.key) ||
@@ -179,23 +179,19 @@ class CollectionTree extends React.PureComponent {
 				'has-open': hasOpen, 'level-last': isLastLevel
 			}) }>
 				<ul className="nav" role="group">
-					<ViewportContext.Consumer>
-					{ viewport => (
-							viewport.xxs && level === 1 && parentCollection === null && (
-								<Node
-									className={ cx({
-										'all-documents': true,
-									})}
-									onClick={ this.handleSelect.bind(this, { view: 'item-list' }) }
-									onKeyPress={ this.handleKeyPress.bind(this, { view: 'item-list' }) }
-								>
-									<Icon type="28/document" className="touch" width="28" height="28" />
-									<Icon type="16/document" className="mouse" width="16" height="16" />
-									<a>All Items</a>
-								</Node>
-							)
-						)}
-					</ViewportContext.Consumer>
+					{ device.isSingleColumn && level === 1 && parentCollection === null && (
+						<Node
+							className={ cx({
+								'all-documents': true,
+							})}
+							onClick={ this.handleSelect.bind(this, { view: 'item-list' }) }
+							onKeyPress={ this.handleKeyPress.bind(this, { view: 'item-list' }) }
+						>
+							<Icon type="28/document" className="touch" width="28" height="28" />
+							<Icon type="16/document" className="mouse" width="16" height="16" />
+							<a>All Items</a>
+						</Node>
+					) }
 					{ collections.map(collection => {
 						const hasSubCollections = collection.key in childMap;
 						return (
@@ -207,7 +203,7 @@ class CollectionTree extends React.PureComponent {
 								'collection': true,
 							})}
 							subtree={
-								(hasSubCollections || device.viewport.xxs) ? this.renderCollections(
+								(hasSubCollections || device.isSingleColumn) ? this.renderCollections(
 									this.collectionsFromKeys(childMap[collection.key] || []),
 									level + 1,
 									collection
@@ -304,20 +300,16 @@ class CollectionTree extends React.PureComponent {
 							</Node>
 						)
 					}
-					<ViewportContext.Consumer>
-						{ viewport => (
-							viewport.xxs && itemsSource === 'collection' && parentCollection && (
-								<Node
-									onClick={ this.handleSelect.bind(this, { view: 'item-list', collection: parentCollection.key }) }
-									onKeyPress={ this.handleKeyPress.bind(this, { view: 'item-list', collection: parentCollection.key }) }
-								>
-									<Icon type="28/document" className="touch" width="28" height="28" />
-									<Icon type="16/document" className="mouse" width="16" height="16" />
-									<a>Items</a>
-								</Node>
-							)
-						)}
-					</ViewportContext.Consumer>
+						{ device.isSingleColumn && itemsSource === 'collection' && parentCollection && (
+							<Node
+								onClick={ this.handleSelect.bind(this, { view: 'item-list', collection: parentCollection.key }) }
+								onKeyPress={ this.handleKeyPress.bind(this, { view: 'item-list', collection: parentCollection.key }) }
+							>
+								<Icon type="28/document" className="touch" width="28" height="28" />
+								<Icon type="16/document" className="mouse" width="16" height="16" />
+								<a>Items</a>
+							</Node>
+						) }
 				</ul>
 			</div>
 		);
