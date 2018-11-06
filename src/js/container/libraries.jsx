@@ -19,7 +19,7 @@ const { makePath } = require('../common/navigation');
 const withDevice = require('../enhancers/with-device');
 const PAGE_SIZE = 100;
 
-class LibrariesContainer extends React.Component {
+class LibrariesContainer extends React.PureComponent {
 	componentDidMount() {
 		const { dispatch, userLibraryKey } = this.props;
 		dispatch(fetchCollections(userLibraryKey, { start: 0, limit: PAGE_SIZE }));

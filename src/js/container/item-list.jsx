@@ -244,46 +244,49 @@ const mapStateToProps = state => {
 	const itemKey = state.current.item;
 	const collection = get(state, ['libraries', libraryKey, 'collections', collectionKey]);
 	const item = get(state, ['libraries', libraryKey, 'items', itemKey]);
-	var items = [], totalItemsCount = 0;
-
-	switch(itemsSource) {
-		case 'query':
-			items = state.queryItems;
-			totalItemsCount = state.queryItemCount;
-			totalItemsCount = totalItemsCount === null ? 50 : totalItemsCount;
-		break;
-		case 'top':
-			items = get(state, ['libraries', libraryKey, 'itemsTop'], []);
-			totalItemsCount = get(state, ['itemCountTopByLibrary', libraryKey], 50);
-		break;
-		case 'trash':
-			items = get(state, ['libraries', libraryKey, 'itemsTrash'], []);
-			totalItemsCount = get(state, ['itemCountTrashByLibrary', libraryKey], 50);
-		break;
-		case 'publications':
-			items = state.itemsPublications;
-			totalItemsCount = state.itemCount.publications;
-			totalItemsCount = totalItemsCount === null ? 50 : totalItemsCount;
-		break;
-		case 'collection':
-			items = get(state, ['libraries', libraryKey, 'itemsByCollection', collectionKey], []);
-			totalItemsCount = get(state, ['libraries', libraryKey, 'itemCountByCollection', collectionKey], 0)
-		break;
-	}
-
-	items = processItems(
-		items.map(key => get(state, ['libraries', libraryKey, 'items', key])),
-		state
-	);
+	const isMetaAvailable = !state.fetching.meta;
 	const { sortBy, sortDirection } = state.config;
 	const preferences = state.preferences;
 	const itemFields = state.meta.itemFields;
 	const itemTypes = state.meta.itemTypes;
 	const isReady = libraryKey && ((!collectionKey && itemFields) || collection !== null);
+	var items = [], totalItemsCount = 0;
+
+	if(isMetaAvailable) {
+		switch(itemsSource) {
+			case 'query':
+				items = state.queryItems;
+				totalItemsCount = state.queryItemCount;
+				totalItemsCount = totalItemsCount === null ? 50 : totalItemsCount;
+			break;
+			case 'top':
+				items = get(state, ['libraries', libraryKey, 'itemsTop'], []);
+				totalItemsCount = get(state, ['itemCountTopByLibrary', libraryKey], 50);
+			break;
+			case 'trash':
+				items = get(state, ['libraries', libraryKey, 'itemsTrash'], []);
+				totalItemsCount = get(state, ['itemCountTrashByLibrary', libraryKey], 50);
+			break;
+			case 'publications':
+				items = state.itemsPublications;
+				totalItemsCount = state.itemCount.publications;
+				totalItemsCount = totalItemsCount === null ? 50 : totalItemsCount;
+			break;
+			case 'collection':
+				items = get(state, ['libraries', libraryKey, 'itemsByCollection', collectionKey], []);
+				totalItemsCount = get(state, ['libraries', libraryKey, 'itemCountByCollection', collectionKey], 0)
+			break;
+		}
+
+		items = processItems(
+			items.map(key => get(state, ['libraries', libraryKey, 'items', key])),
+			state
+		);
+		sortByKey(items, sortBy, sortDirection);
+	}
+
 	const isDeleting = get(state, ['libraries', libraryKey, 'deleting'], [])
 			.some(itemKey => items.filter(i => i.key === itemKey));
-
-	sortByKey(items, sortBy, sortDirection);
 
 	return {
 		libraryKey,

@@ -35,7 +35,7 @@ const combinedReducers = combineReducers(reducers);
 
 
 @DragDropContext(MultiBackend(HTML5toTouch))
-class LibraryContainer extends React.Component {
+class LibraryContainer extends React.PureComponent {
 	constructor(props) {
 		super(props);
 		this.windowResizeHandler = () => {
@@ -48,16 +48,16 @@ class LibraryContainer extends React.Component {
 	async componentDidMount() {
 		this.props.dispatch(preferencesLoad());
 
-		await this.props.dispatch(
+		this.props.dispatch(
 			initialize()
 		);
-		await this.props.dispatch(
+		this.props.dispatch(
 			changeRoute(this.props.match)
 		);
-		await this.props.dispatch(
+		this.props.dispatch(
 			fetchGroups(this.props.userLibraryKey)
 		);
-		await this.props.dispatch(
+		this.props.dispatch(
 			fetchLibrarySettings()
 		);
 
