@@ -19,6 +19,7 @@ const {
 	fetchLibrarySettings,
 	initialize,
 	preferencesLoad,
+	toggleTransitions,
 	triggerResizeViewport,
 } = require('../actions');
 const Library = require('../component/library');
@@ -69,9 +70,15 @@ class LibraryContainer extends React.PureComponent {
 		window.removeEventListener('resize', this.windowResizeHandler);
 	}
 
-	componentDidUpdate({ match: previousMatch }) {
+	componentDidUpdate({ match: previousMatch, isFetchingCollections: wasFetchingCollections }) {
+		const { dispatch, isFetchingCollections } = this.props;
+
 		if(!deepEqual(this.props.match, previousMatch)) {
-			this.props.dispatch(changeRoute(this.props.match));
+			dispatch(changeRoute(this.props.match));
+		}
+
+		if(!isFetchingCollections && wasFetchingCollections) {
+			dispatch(toggleTransitions(true));
 		}
 	}
 
@@ -157,7 +164,6 @@ class LibraryContainer extends React.PureComponent {
 }
 
 LibraryContainer.propTypes = {
-	userId: PropTypes.string,
 	apiKey: PropTypes.string,
 	api: PropTypes.object,
 	dispatch: PropTypes.func.isRequired,
@@ -165,16 +171,19 @@ LibraryContainer.propTypes = {
 };
 
 const mapStateToProps = state => {
-	return {
-		view: state.current.view,
-		userId: state.config.userId,
-		userLibraryKey: state.config.userLibraryKey,
-		api: state.config.api,
-		apiKey: state.config.apiKey,
-		viewport: state.viewport,
-		itemsSource: state.current.itemsSource,
-		collectionKey: state.current.collection,
-	};
+	const {
+		current: { view, useTransitions },
+		config: { userLibraryKey, api, apiKey },
+		current: { itemsSource, library: libraryKey, collection: collectionKey },
+		fetching: { collectionsInLibrary },
+		viewport
+	} = state;
+
+	const isFetchingCollections = collectionsInLibrary
+		.some(key => key === userLibraryKey || key === libraryKey);
+
+	return { view, userLibraryKey, api, apiKey, viewport, itemsSource,
+		collectionKey, isFetchingCollections, useTransitions };
 };
 
 const mapDispatchToProps = (dispatch) => {

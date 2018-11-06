@@ -1,6 +1,6 @@
 'use strict';
 
-const { ROUTE_CHANGE, TRIGGER_EDITING_ITEM } = require('../constants/actions');
+const { ROUTE_CHANGE, TRIGGER_EDITING_ITEM, TOGGLE_TRANSITIONS } = require('../constants/actions');
 const { tagsFromUrlPart } = require('../common/navigation');
 
 const stateDefault = {
@@ -13,6 +13,7 @@ const stateDefault = {
 	tags: [],
 	search: '',
 	itemKeys: [],
+	useTransitions: false,
 };
 
 const current = (state = stateDefault, action) => {
@@ -60,6 +61,11 @@ const current = (state = stateDefault, action) => {
 				...state,
 				editing: action.isEditing ? action.itemKey : null
 			};
+		case TOGGLE_TRANSITIONS:
+			return {
+				...state,
+				useTransitions: action.useTransitions
+			}
 		default:
 			return state;
 	}

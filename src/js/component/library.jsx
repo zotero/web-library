@@ -45,7 +45,7 @@ class Library extends React.Component {
 	}
 
 	render() {
-		const { itemsSource, collectionKey } = this.props;
+		const { itemsSource, collectionKey, useTransitions } = this.props;
 		const key = itemsSource === 'collection' ?
 			`collection-${collectionKey}` :
 			itemsSource;
@@ -54,7 +54,8 @@ class Library extends React.Component {
 		return (
 			<UserTypeContext.Provider value={ this.props.userType }>
 				<div className={ cx('library-container', activeViewClass, {
-						'navbar-nav-opened': this.state.isNavOpened
+						'navbar-nav-opened': this.state.isNavOpened,
+						'no-transition': !useTransitions
 					}) }>
 					<Navbar
 						isOpened = { this.state.isNavOpened }

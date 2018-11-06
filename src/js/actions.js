@@ -20,6 +20,7 @@ const {
 	QUERY_CHANGE,
 
 	SELECT_ITEM,
+	TOGGLE_TRANSITIONS,
 
 	REQUEST_ITEMS_IN_COLLECTION,
 	RECEIVE_ITEMS_IN_COLLECTION,
@@ -321,6 +322,10 @@ const preferenceChange = (name, value) => {
 
 const toggleModal = (id, shouldOpen) => {
 	return { type: TOGGLE_MODAL, id, shouldOpen }
+}
+
+const toggleTransitions = useTransitions => {
+	return { type: TOGGLE_TRANSITIONS, useTransitions };
 }
 
 const initialize = () => {
@@ -1951,6 +1956,7 @@ module.exports = {
 	recoverFromTrash,
 	sortItems,
 	toggleModal,
+	toggleTransitions,
 	triggerEditingItem,
 	triggerResizeViewport,
 	updateCollection,
