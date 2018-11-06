@@ -48,12 +48,16 @@ class Node extends React.PureComponent {
 			subtree,
 		} = this.props;
 
-		const twistyButton = <button
-			type="button"
-			className="twisty"
-			onClick={ onOpen }
-			onKeyPress={ ev => ev.stopPropagation() }
-		/>;
+		const twistyButton = (
+			<button
+				type="button"
+				className="twisty"
+				onClick={ onOpen }
+				onKeyPress={ ev => ev.stopPropagation() }
+			>
+				<Icon type={ '16/triangle' } width="16" height="16" />
+			</button>
+		);
 		const isActive = canDrop && isOver;
 
 		return connectDropTarget(
@@ -68,9 +72,7 @@ class Node extends React.PureComponent {
 					tabIndex="0"
 					aria-expanded={ isOpen }
 				>
-					<div className="twisty-container">
-						{ subtree && !hideTwisty ? twistyButton : null }
-					</div>
+					{ subtree && !hideTwisty ? twistyButton : null }
 					{ children }
 				</div>
 				{ subtree }

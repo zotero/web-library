@@ -139,10 +139,11 @@ $sidebar-width-lg-touch: 25%;
 // Collection tree
 // --------------------------------------------------
 
+$collection-tree-padding-left:     $space-md;
 $collection-tree-padding-x:        $space-sm;
 $collection-tree-padding-x-touch:  $space-md;
 $collection-tree-padding-y:        $space-min;
-$collection-tree-indent:           $space-md;
+$collection-tree-indent:           $space-sm;
 $collection-tree-max-levels:       10;
 
 

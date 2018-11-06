@@ -98,51 +98,19 @@
 
 // Twisty
 
-// Container keeps the layout stable when there is no twisty
-.twisty-container {
-	flex: 0 0 auto;
-	width: $space-md;
-	height: $space-md;
-	margin-right: $space-min;
-
-	@include touch-or-bp-down(sm) {
-		display: none;
-	}
-}
-
 .twisty {
 	display: block;
-	width: 100%;
-	height: 100%;
+	width: $space-md;
+	height: $space-md;
 	border: 0;
+	padding: 0;
 	background: transparent;
-	position: relative;
-	overflow: hidden;
 	cursor: pointer;
 	transition: transform $twisty-transition;
 
-	&::after {
-		content: "";
-		box-sizing: border-box;
-		position: absolute;
-		left: 4px;
-		top: 3px;
-		width: 15.588px;
-		height: 9px;
-		border-width: 4.5px 7.794px;
-		border-style: solid;
-		border-color: transparent;
-		border-left-color: $twisty-color;
-		transform-origin: 3.5px 4.5px;
-		transition: all $twisty-transition;
-
-		.dnd-target & {
-			border-left-color: $twisty-dnd-target-color;
-		}
-
-		.selected > .item-container > .twisty-container > & {
-			border-left-color: $twisty-selected-color;
-		}
+	.icon-triangle {
+		vertical-align: top;
+		transform: rotate(90deg);
 	}
 }
 

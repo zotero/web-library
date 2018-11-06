@@ -31,7 +31,7 @@
 	h4 {
 		color: $collection-tree-headings-color;
 		margin: 0;
-		padding: 0 $collection-tree-padding-x;
+		padding: 0 $collection-tree-padding-x 0 $collection-tree-padding-left;
 
 		@include touch-or-bp-down(sm) {
 			padding: 0 $collection-tree-padding-x-touch;
@@ -155,7 +155,7 @@
 			#{$sel} {
 				.item-container {
 					padding-left:
-						$collection-tree-padding-x
+						$collection-tree-padding-left
 							+ $collection-tree-indent
 							* ($i - 1);
 				}
@@ -258,13 +258,23 @@
 			> .level {
 				display: block;
 			}
+		}
+	}
 
-			> .item-container {
-				.twisty {
-					&::after {
-						transform: rotate(90deg);
-					}
-				}
+	.twisty {
+		margin-left: -$collection-tree-padding-left;
+
+		@include touch-or-bp-down(sm) {
+			display: none;
+		}
+
+		.icon-triangle {
+			@include state(".open > .item-container .twisty") {
+				transform: scaleY(-1);
+			}
+
+			.dnd-target & {
+				color: $twisty-dnd-target-color;
 			}
 		}
 	}
