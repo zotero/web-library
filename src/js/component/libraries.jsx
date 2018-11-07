@@ -8,6 +8,7 @@ const Button = require('./ui/button');
 const Spinner = require('./ui/spinner');
 const Node = require('./libraries/node');
 const CollectionTree = require('./libraries/collection-tree.jsx');
+const TouchHeaderContainer = require('../container/touch-header');
 
 class Libraries extends React.Component {
 	state = {
@@ -203,9 +204,9 @@ class Libraries extends React.Component {
 
 			return (
 				<nav className="collection-tree">
-					<header className="touch-header hidden-mouse-md-up hidden-xs-down">
-						<h3>Library</h3>
-					</header>
+					<TouchHeaderContainer
+						className="hidden-xs-down hidden-mouse-md-up"
+					/>
 					<div className={ `level-root ${isRootActive ? 'active' : ''}` }>
 						<div className="scroll-container" role="tree">
 							<section>
