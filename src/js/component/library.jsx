@@ -55,7 +55,7 @@ class Library extends React.Component {
 			<UserTypeContext.Provider value={ this.props.userType }>
 				<div className={ cx('library-container', activeViewClass, {
 						'navbar-nav-opened': this.state.isNavOpened,
-						'no-transition': !useTransitions
+						'no-transitions': !useTransitions
 					}) }>
 					<Navbar
 						isOpened = { this.state.isNavOpened }

@@ -46,6 +46,12 @@ body {
 .library-container {
 	display: flex;
 	flex-direction: column;
+
+	&.no-transitions {
+		* {
+			transition: none !important; // Disable all transitions on initial load
+		}
+	}
 }
 
 main {
