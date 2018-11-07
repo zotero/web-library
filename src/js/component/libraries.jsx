@@ -120,9 +120,9 @@ class Libraries extends React.Component {
 					{
 						groups.map(group => {
 							const groupKey = `g${group.id}`;
-							const isOpen = (!device.isSingleColumn && opened.includes(groupKey)) ||
-								(device.isSingleColumn && view !== 'libraries' && libraryKey == groupKey);
-							const isSelected = !device.isSingleColumn &&
+							const isOpen = (!device.isTouchOrSmall && opened.includes(groupKey)) ||
+								(device.isTouchOrSmall && view !== 'libraries' && libraryKey == groupKey);
+							const isSelected = !device.isTouchOrSmall &&
 								libraryKey === groupKey && itemsSource === 'top';
 							return (
 								<Node
@@ -158,9 +158,9 @@ class Libraries extends React.Component {
 	renderMyLibrary() {
 		const { libraryKey, userLibraryKey, itemsSource, view, device } = this.props;
 		const { opened } = this.state;
-		const isOpen = (!device.isSingleColumn && opened.includes(userLibraryKey)) ||
-			(device.isSingleColumn && view !== 'libraries' && libraryKey == userLibraryKey);
-		const isSelected = !device.isSingleColumn &&
+		const isOpen = (!device.isTouchOrSmall && opened.includes(userLibraryKey)) ||
+			(device.isTouchOrSmall && view !== 'libraries' && libraryKey == userLibraryKey);
+		const isSelected = !device.isTouchOrSmall &&
 			libraryKey === userLibraryKey && itemsSource === 'top';
 
 		return (

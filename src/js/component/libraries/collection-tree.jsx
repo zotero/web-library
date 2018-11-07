@@ -81,6 +81,7 @@ class CollectionTree extends React.PureComponent {
 		onAddCommit(libraryKey, parentCollection, name);
 	}
 
+	//@TODO: memoize once
 	collectionsFromKeys(collections) {
 		return collections.map(
 			collectionKey => this.props.collections.find(
@@ -89,20 +90,17 @@ class CollectionTree extends React.PureComponent {
 		);
 	}
 
-	testRecursive(collections, test) {
-		if(collections.some(test)) {
-			return true;
-		} else {
-			for(let collection of collections) {
-				const childrenCollections = this.collectionsFromKeys(
-					this.childMap[collection.key] || []
-				);
-				if(this.testRecursive(childrenCollections, test)) {
-					return true;
-				}
-			}
+	findRecursive(collections, test, depth = 0) {
+		const result = collections.find(test);
+		if(result) { return [result, depth]; }
+		for(let collection of collections) {
+			const childrenCollections = this.collectionsFromKeys(
+				this.childMap[collection.key] || []
+			);
+			const result = this.findRecursive(childrenCollections, test, depth + 1);
+			if(result[0]) { return result; }
 		}
-		return false;
+		return [null, depth];
 	}
 
 	makeChildMap = memoize(collections => collections.reduce((aggr, col) => {
@@ -155,8 +153,19 @@ class CollectionTree extends React.PureComponent {
 		const { libraryKey, itemsSource, isUserLibrary, isCurrentLibrary,
 			virtual, onAddCancel, device } = this.props;
 
-		const hasOpen = this.testRecursive(
-			collections, col => derivedData[col.key].isSelected
+
+		// if isSelected is
+		const [selected, selectedDepth] = this.findRecursive(
+			collections,
+			col => derivedData[col.key].isSelected
+		);
+
+		// if isSelected is deeper in this tree, hasOpen is true
+		// if isSelected is a directly in collections, hasOpen is only true
+		// if selected item has subcollections (otherwise it's selected but not open)
+		const hasOpen = selected !== null && (
+			device.isSingleColumn || selectedDepth > 0 ||
+			(selectedDepth == 0 && selected.key in childMap)
 		);
 
 		// at least one collection contains subcollections
