@@ -78,7 +78,9 @@ class LibraryContainer extends React.PureComponent {
 		}
 
 		if(!isFetchingCollections && wasFetchingCollections) {
-			dispatch(toggleTransitions(true));
+			// setTimeout required to ensure everything else in the UI had
+			// a chance to update before transition are enabled
+			setTimeout(() => dispatch(toggleTransitions(true)))
 		}
 	}
 

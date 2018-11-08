@@ -1,4 +1,3 @@
-/* eslint-disable react/no-deprecated */
 'use strict';
 
 const React = require('react');
@@ -28,7 +27,7 @@ const isPathChanged = (oldPath, newPath) => {
 	return !pathUnchanged;
 };
 
-class TouchNavigation extends React.Component {
+class TouchNavigation extends React.PureComponent {
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -62,22 +61,18 @@ class TouchNavigation extends React.Component {
 		return headers;
 	}
 
-	componentWillReceiveProps(props) {
-		if(isPathChanged(this.props.path, props.path)) {
+	componentDidUpdate({ path: previousPath }) {
+		const { path } = this.props;
+		if(isPathChanged(path, previousPath)) {
 			let previous;
-			if(props.path.length < this.props.path.length) {
+			if(previousPath.length < path.length) {
 				previous = this.state.headers[this.state.headers.length - 2];
 			} else {
 				previous = empty;
 			}
-
-			let headers = this.mapPathToHeaders(props.path, previous);
+			const headers = this.mapPathToHeaders(path, previous);
 			this.setState({ headers });
 		}
-	}
-
-	shouldComponentUpdate(props) {
-		return isPathChanged(this.props.path, props.path);
 	}
 
 	handleNavigation(path, ev) {
