@@ -94,6 +94,7 @@ $z-index-navbar:        20;
 $z-index-menu:          30;
 $z-index-modal:			    40;
 $z-index-drag-layer:    50;
+$z-index-load-cover:    100;
 
 
 // Navbbar
@@ -266,6 +267,7 @@ $auto-resizer-vertical-rows: 3;
 $icon-spin-size-sm: $space-md;
 $icon-spin-size-md: $space-lg;
 $icon-spin-size-lg: $space-xl;
+$icon-spin-size-xlg: $space-max;
 
 
 // Modal

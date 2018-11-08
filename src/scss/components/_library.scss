@@ -9,6 +9,28 @@
 	}
 }
 
+.loading-cover {
+	display: none;
+
+	@include bp-down(xs) {
+		align-items: center;
+		background: $shade-0;
+		bottom: 0;
+		display: flex;
+		justify-content: center;
+		left: 0;
+		position: absolute;
+		right: 0;
+		top: 0;
+		z-index: $z-index-load-cover;
+
+		.icon-spin {
+			height: $icon-spin-size-xlg;
+			width: $icon-spin-size-xlg;
+		}
+	}
+}
+
 .items {
 	min-width: 0; // Fix truncation of long values in metadata list
 

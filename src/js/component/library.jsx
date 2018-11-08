@@ -5,6 +5,7 @@ const PropTypes = require('prop-types');
 const cx = require('classnames');
 
 const Icon = require('./ui/icon');
+const Spinner = require('./ui/spinner');
 const LibrariesContainer = require('../container/libraries');
 const Button = require('./ui/button');
 const ItemDetailsContainer = require('../container/item-details');
@@ -57,6 +58,13 @@ class Library extends React.Component {
 						'navbar-nav-opened': this.state.isNavOpened,
 						'no-transitions': !useTransitions
 					}) }>
+					{
+						!useTransitions && (
+							<div className="loading-cover">
+								<Spinner />
+							</div>
+						)
+					}
 					<Navbar
 						isOpened = { this.state.isNavOpened }
 						onToggle = { this.handleNavToggle.bind(this) }  />
