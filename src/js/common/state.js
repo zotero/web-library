@@ -2,7 +2,7 @@
 
 const { get } = require('../utils');
 
-const getCollectionsPath = (state) => {
+const getCollectionsPath = state => {
 	const libraryKey = state.current.library;
 	const path = [];
 	if(libraryKey) {
@@ -20,6 +20,7 @@ const getCollectionsPath = (state) => {
 
 	return path.reverse();
 };
+
 
 const getSerializedQuery = ({ collection = null, tag = [], q = null } = {}) => {
 	return `${collection}-${tag.join('-')}-${q}`;

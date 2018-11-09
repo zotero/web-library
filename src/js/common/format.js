@@ -10,8 +10,25 @@ const itemTypeLocalized = (item, itemTypes) => {
 	return (itemTypes.find(it => it.itemType === itemType) || {}).localized;
 }
 
+//@TODO: figure out better place for this
+const itemsSourceLabel = itemsSource => {
+	switch(itemsSource) {
+		case 'trash':
+			return "Trash";
+		case 'publications':
+			return "My Publications";
+		case 'query':
+			return "Search results"; //@NOTE: currently not in use
+		case 'top':
+			return "All Items";
+		default:
+			return "Items";
+	}
+}
+
 module.exports = {
 	noteAsTitle,
 	creator,
-	itemTypeLocalized
+	itemTypeLocalized,
+	itemsSourceLabel,
 };

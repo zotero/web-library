@@ -36,7 +36,6 @@ class Libraries extends React.Component {
 		}
 	}
 
-
 	handleAdd(libraryKey, collectionKey) {
 		this.setState({ virtual: { libraryKey, collectionKey } });
 	}
@@ -205,6 +204,7 @@ class Libraries extends React.Component {
 			return (
 				<nav className="collection-tree">
 					<TouchHeaderContainer
+						skipSelected={ true }
 						className="hidden-xs-down hidden-mouse-md-up"
 					/>
 					<div className={ `level-root ${isRootActive ? 'active' : ''}` }>

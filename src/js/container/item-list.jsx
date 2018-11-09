@@ -289,21 +289,22 @@ const mapStateToProps = state => {
 			.some(itemKey => items.filter(i => i.key === itemKey));
 
 	return {
-		libraryKey,
+		collection,
 		collectionKey,
-		items,
-		isReady,
 		isDeleting,
-		totalItemsCount,
-		sortBy,
-		preferences,
+		isReady,
 		itemFields,
-		itemTypes,
+		items,
 		itemsSource,
-		tags,
+		itemTypes,
+		libraryKey,
+		preferences,
 		search,
+		selectedItemKeys: item ? [item.key] : state.current.itemKeys,
+		sortBy,
 		sortDirection: sortDirection.toUpperCase(),
-		selectedItemKeys: item ? [item.key] : state.current.itemKeys
+		tags,
+		totalItemsCount,
 	};
 };
 

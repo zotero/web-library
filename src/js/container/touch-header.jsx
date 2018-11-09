@@ -9,6 +9,8 @@ const { get } = require('../utils');
 const { getCollectionsPath } = require('../common/state');
 const TouchHeader = require('../component/touch-header');
 const { makePath } = require('../common/navigation');
+const { makeChildMap } = require('../common/collection');
+const { itemsSourceLabel } = require('../common/format');
 const withEditMode = require('../enhancers/with-edit-mode');
 
 class TouchHeaderContainer extends React.Component {
@@ -17,13 +19,65 @@ class TouchHeaderContainer extends React.Component {
 		history.push(makePath(path));
 	}
 
+	get childMap() {
+		const { collections } = this.props;
+		return collections.length ? makeChildMap(collections) : {};
+	}
+
 	render() {
-		const { path, rootAtCurrentItemsSource } = this.props;
-		var touchHeaderPath = path;
+		const { path, view, itemsSource, skipSelected, includeItem, item,
+			includeItemsSource, rootAtCurrentItemsSource, libraryKey,
+			collection } = this.props;
+
+		var touchHeaderPath = [ ...path];
+
+		if(includeItemsSource && libraryKey && (view === 'item-list' || view === 'item-details')) {
+			const label = itemsSourceLabel(itemsSource);
+			touchHeaderPath.push({
+				key: itemsSource,
+				type: 'itemsSource',
+				path: {
+					library: libraryKey,
+					view: 'item-list',
+					trash: itemsSource === 'trash',
+					publications: itemsSource === 'publications',
+					collection
+				},
+				label
+			});
+		}
 
 		if(rootAtCurrentItemsSource) {
-			const index = path.findIndex(n => n.key === "itemsSource");
-			touchHeaderPath = path.splice(index);
+			const index = touchHeaderPath.findIndex(n => n.type === "itemsSource");
+			touchHeaderPath = touchHeaderPath.splice(index);
+		} else {
+			// add a root node
+			touchHeaderPath.unshift({
+				key: 'root',
+				type: 'root',
+				path: { view: 'libraries' },
+				label: 'Libraries'
+			});
+		}
+
+		// empty last node to represent current item if one is selected
+		if(includeItem && item) {
+			touchHeaderPath.push({key: '', label: ''});
+		}
+
+		if(skipSelected) {
+			const key = touchHeaderPath[touchHeaderPath.length - 1].key;
+			const nodeType = touchHeaderPath[touchHeaderPath.length - 1].type;
+
+			// nodes that can be selected: Trash, Publications, Collection with no children
+			const isCollectionNode = nodeType === 'collection';
+			const isItemsSourceNode = nodeType === 'itemsSource';
+			const hasChildren = key in this.childMap;
+			const isLeafNode = isItemsSourceNode || (isCollectionNode && !hasChildren);
+
+			if(isLeafNode) {
+				touchHeaderPath.pop();
+			}
 		}
 
 		return (
@@ -45,7 +99,8 @@ class TouchHeaderContainer extends React.Component {
 		item: itemProp,
 		includeNav: PropTypes.bool,
 		includeItem: PropTypes.bool,
-		rootAtCurrentItemsSource: PropTypes.bool
+		rootAtCurrentItemsSource: PropTypes.bool,
+		includeItemsSource: PropTypes.bool,
 	}
 }
 
@@ -62,6 +117,7 @@ const mapStateToProps = state => {
 			const { name } = collections[key]
 			return {
 				key,
+				type: 'collection',
 				label: name,
 				path: { library: libraryKey, collection: key },
 			};
@@ -71,6 +127,7 @@ const mapStateToProps = state => {
 	if(libraryKey && view !== 'libraries') {
 		path.unshift({
 			key: libraryKey,
+			type: 'library',
 			path: { library: libraryKey, view: 'library' },
 			//@TODO: when first loading, group name is not known
 			label: libraryKey === state.config.userLibraryKey ?
@@ -81,46 +138,14 @@ const mapStateToProps = state => {
 		})
 	}
 
-	if(libraryKey && (view === 'item-list' || view === 'item-details')) {
-		let label;
-		switch(itemsSource) {
-			case 'trash': label = "Trash"; break;
-			case 'publications': label = "My Publications"; break;
-			case 'query': label = "Search results"; break; //@NOTE: currently not in use
-			case 'top': label = "All Items"; break;
-			default: label = "Items"; break;
-		}
-
-		path.push({
-			key: 'itemsSource',
-			path: {
-				library: libraryKey,
-				view: 'item-list',
-				trash: itemsSource === 'trash',
-				publications: itemsSource === 'publications',
-				collection
-			},
-			label
-		});
-	}
-
-	// add a root node
-	path.unshift({
-		key: 'root',
-		path: { view: 'libraries' },
-		label: 'Libraries'
-	});
-
-	// empty last node to represent current item if one is selected
-	if(item) {
-		path.push({key: '', label: ''});
-	}
-
 	return {
+		collections: Object.values(collections),
 		view,
 		libraryKey,
 		path,
-		item
+		item,
+		itemsSource,
+		collection
 	};
 };
 

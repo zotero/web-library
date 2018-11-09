@@ -18,6 +18,12 @@
 		box-sizing: content-box;
 	}
 
+	&.fake {
+		justify-content: center;
+	    align-items: center;
+	    display: flex;
+	}
+
 	nav,
 	ul,
 	li {

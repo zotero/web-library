@@ -19,6 +19,7 @@ class ItemDetails extends React.Component {
 				<TouchHeaderContainer
 					className="hidden-mouse hidden-md-down"
 					includeNav={ false }
+					includeItem={ true }
 				/>
 				{
 					'key' in item ? (

@@ -9,18 +9,17 @@ const EditToggleButton = require('./edit-toggle-button');
 class TouchHeader extends React.PureComponent {
 
 	render() {
-		const { isEditing, includeNav, path, root, view, className, onNavigation } = this.props;
+		const { isEditing, includeItem, includeNav, path, root, view, className, onNavigation } = this.props;
 
 		return (
 			<header className={ cx('touch-header', className) }>
 				{
-					!isEditing && includeNav && <TouchNavigation
-						root={ root }
+					(!isEditing || !includeItem) && includeNav && <TouchNavigation
 						path={ path }
 						onNavigation={ onNavigation }
 					/>
 				}
-				{ view === 'item-details' && (
+				{ view === 'item-details' && includeItem && (
 					<EditToggleButton className="btn-default btn-options" />
 				)}
 			</header>

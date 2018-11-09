@@ -10,6 +10,7 @@ const { Toolbar, ToolGroup } = require('../../ui/toolbars');
 const ColumnSelector = require('./column-selector');
 const NewItemSelector = require('./new-item-selector');
 const ItemActions = require('./item-actions');
+const { itemsSourceLabel } = require('../../../common/format');
 const ExportActions = require('./export-actions');
 
 class ItemListToolbar extends React.PureComponent {
@@ -21,16 +22,24 @@ class ItemListToolbar extends React.PureComponent {
 
 	render() {
 		const {
+			collection,
 			isDeleting,
-			selectedItemKeys,
-			onDelete,
-			onBibliographyOpen,
 			itemsSource,
+			onBibliographyOpen,
+			onDelete,
+			selectedItemKeys,
 		} = this.props;
+
+		const touchHeaderLabel = itemsSource === 'collection' ?
+			collection ? collection.name : '' : itemsSourceLabel(itemsSource);
 
 		return (
 			<header className="hidden-sm-down">
-				<h3 className="hidden-mouse-md-up">Collection title</h3>
+				<header className="touch-header fake hidden-mouse">
+					<div className="truncate">
+						{ touchHeaderLabel }
+					</div>
+				</header>
 				<Toolbar className="hidden-touch hidden-sm-down">
 					<div className="toolbar-left">
 						<ToolGroup>

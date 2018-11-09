@@ -12,6 +12,7 @@ const DropdownItem = require('reactstrap/lib/DropdownItem').default;
 const { ViewportContext } = require('../../context');
 const deepEqual = require('deep-equal');
 const { noop } = require('../../utils.js');
+const { makeChildMap } = require('../../common/collection');
 
 class CollectionTree extends React.PureComponent {
 	state = { opened: [], renaming: null }
@@ -103,17 +104,6 @@ class CollectionTree extends React.PureComponent {
 		return [null, depth];
 	}
 
-	makeChildMap = memoize(collections => collections.reduce((aggr, col) => {
-		if(!col.parentCollection) {
-			return aggr;
-		}
-		if(!(col.parentCollection in aggr)) {
-			aggr[col.parentCollection] = [];
-		}
-		aggr[col.parentCollection].push(col.key);
-		return aggr;
-	}, {}));
-
 	makeDerivedData = memoize((collections, path, opened) => {
 		return collections.reduce((aggr, c) => {
 			const derivedData = {
@@ -140,7 +130,7 @@ class CollectionTree extends React.PureComponent {
 
 	get childMap() {
 		const { collections } = this.props;
-		return this.makeChildMap(collections);
+		return collections.length ? makeChildMap(collections) : {};
 	}
 
 	get derivedData() {

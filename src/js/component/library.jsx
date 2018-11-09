@@ -73,6 +73,7 @@ class Library extends React.Component {
 						<section className={ `library ${ this.props.view === 'library' ? 'active' : '' }` }>
 							<TouchHeaderContainer
 								className="hidden-sm-up"
+								includeItemsSource={ true }
 								includeItem={ true }
 							/>
 							<header className="sidebar">
