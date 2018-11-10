@@ -35,7 +35,7 @@ class ItemListToolbar extends React.PureComponent {
 
 		return (
 			<header className="hidden-sm-down">
-				<header className="touch-header fake hidden-mouse">
+				<header className="touch-header hidden-mouse">
 					<div className="truncate">
 						{ touchHeaderLabel }
 					</div>
