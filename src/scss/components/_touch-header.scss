@@ -30,6 +30,14 @@
 		height: 100%;
 	}
 
+	.icon-previous {
+		position: absolute;
+		left: $default-padding-x-touch;
+		top: ($line-height-large-touch - $space-md) / 2;
+		z-index: 2;
+		transform: rotate(-90deg);
+	}
+
 	ul {
 		position: relative;
 	}
@@ -45,7 +53,8 @@
 		left: 0;
 		top: 0;
 		width: 100%;
-		transition: transform $nav-transition, color $nav-transition;
+		transition: transform $nav-transition, color $nav-transition,
+			opacity 0.6s ease;
 	}
 
 	.center-axis {
@@ -57,11 +66,14 @@
 		transform: translate3d(-50%, 0, 0);
 		display: flex;
 		align-items: center;
-		max-width: calc((100% - 2 * #{$default-padding-x-touch}) / 3 - 4px); // Todo: see #73
+		max-width: calc((100% - 4 * #{$default-padding-x-touch}) / 3 - 4px); // Todo: see #73
 	}
 
 	.before-last {
 		transform: translate3d(-100%, 0, 0);
+		opacity: 0;
+		transition: transform $nav-transition, color $nav-transition,
+			opacity $nav-transition;
 	}
 
 	.previous {
@@ -69,7 +81,7 @@
 		color: $touch-header-link-color;
 
 		.center-axis {
-			transform: translate3d($default-padding-x-touch, 0, 0);
+			transform: translate3d(($default-padding-x-touch + $space-md), 0, 0);
 		}
 
 		.inner {

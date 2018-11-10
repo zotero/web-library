@@ -3,6 +3,7 @@
 const React = require('react');
 const PropTypes = require('prop-types');
 const noop = require('../utils');
+const Icon = require('./ui/icon');
 
 const slots = ['next', 'current', 'previous', 'before-last'];
 const empty = {
@@ -83,6 +84,7 @@ class TouchNavigation extends React.PureComponent {
 	render() {
 		return (
 			<nav>
+				<Icon type={ '16/caret-16' } width="16" height="16" className="icon-previous" />
 				<ul>
 					{ this.state.headers.map(header => {
 						if(header.slot) {
