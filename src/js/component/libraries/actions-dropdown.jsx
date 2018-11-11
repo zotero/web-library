@@ -22,7 +22,7 @@ class ActionsDropdown extends React.PureComponent {
 			<Dropdown
 				isOpen={ this.state.isOpen }
 				toggle={ this.handleToggleDropdown.bind(this) }
-				className="dropdown-wrapper column-selector"
+				className="dropdown-wrapper"
 			>
 				<DropdownToggle
 					color={ null }

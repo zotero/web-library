@@ -145,6 +145,26 @@
 					margin-right: $space-md;
 				}
 			}
+
+			.dropdown-wrapper {
+				@include mouse-and-bp-up(md) {
+					margin-right: -$space-min - $input-border-width;
+				}
+			}
+
+			.dropdown-toggle {
+				@include mouse-and-bp-up(md) {
+					visibility: hidden;
+
+					@include state(".item-container:hover") {
+						visibility: visible;
+					}
+
+					@include state(".dropdown-wrapper.show .dropdown-toggle") {
+						visibility: visible;
+					}
+				}
+			}
 		}
 	}
 
