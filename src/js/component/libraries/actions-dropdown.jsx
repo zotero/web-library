@@ -26,11 +26,11 @@ class ActionsDropdown extends React.PureComponent {
 			>
 				<DropdownToggle
 					color={ null }
-					className="btn-icon dropdown-folder"
+					className="btn-icon dropdown-toggle"
 				>
 					<Icon type={ '16/options' } width="16" height="16" />
 				</DropdownToggle>
-				<DropdownMenu>
+				<DropdownMenu right>
 					{ this.props.children }
 				</DropdownMenu>
 			</Dropdown>

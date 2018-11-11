@@ -1,38 +1,18 @@
 .dropdown {
-	.dropdown-toggle {
-		display: inline-flex;
-
-		// Todo: rework
-		&.btn-secondary {
-			&:hover {
-				@include state(".dropdown.show") {
-					background-color: darken($btn-secondary-color, 8%);
-					box-shadow: none;
-				}
-			}
-		}
-	}
-
-	.dropdown-caret {
-		width: $space-md;
-		height: $space-md;
-		display: inline-block;
-		background: image-url("bg-icons/16/chevron-11-down-light.svg");
-	}
-
 	.dropdown-menu {
-		left: 0;
-		top: calc(100% + 4px);
 		background-color: $menu-bg;
 		box-shadow: $menu-box-shadow;
 		border-radius: $menu-border-radius;
 		z-index: $z-index-menu;
 		display: none;
 
+		@include mouse-and-bp-up(md) {
+			padding: $space-min 0;
+			margin: $space-min 0;
+		}
+
 		@include state(".dropdown.show") {
 			display: block;
-			padding: $space-xs 0;
-			margin: $space-min 0;
 		}
 	}
 
@@ -41,19 +21,27 @@
 		width: 100%;
 		border: none;
 		text-align: left;
+		line-height: $line-height-base; // Prevent inheritance
 		background-color: transparent;
 		margin: 0;
-		padding: $input-btn-padding-y-sm $input-btn-padding-x-lg;
+
+		@include mouse-and-bp-up(md) {
+			padding: ($input-btn-padding-y + $input-border-width) $input-btn-padding-x;
+		}
 
 		&:hover,
 		&:focus {
 			background-color: $menu-item-hover-bg;
+		}
+
+		&:focus {
+			outline: none;
 		}
 	}
 
 	.dropdown-divider {
 		margin-top: $space-min;
 		margin-bottom: $space-min;
-		border-top: 1px solid $shade-4;
+		border-top: $input-border-width solid $menu-devider;
 	}
 }

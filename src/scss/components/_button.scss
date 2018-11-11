@@ -7,6 +7,7 @@
 	padding: $btn-padding;
 	cursor: pointer;
 	border: $border-width solid transparent;
+	color: $text-color;
 	transition:
 		color $btn-transition,
 		background-color $btn-transition,
@@ -16,6 +17,10 @@
 	//&:focus {
 	//	outline: none;
 	//}
+
+	&:not(:disabled) {
+		cursor: pointer;
+	}
 
 	&[disabled] {
 		opacity: 0.5;

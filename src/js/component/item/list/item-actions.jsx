@@ -43,7 +43,7 @@ class ItemActions extends React.PureComponent {
 			>
 				<DropdownToggle
 					color={ null }
-					className="btn-icon dropdown-folder"
+					className="btn-icon dropdown-toggle"
 				>
 					<Icon type={ '16/cog' } width="16" height="16" />
 				</DropdownToggle>

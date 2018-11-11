@@ -62,7 +62,7 @@ class NewItemSelector extends React.PureComponent {
 			<DropdownToggle
 				color={ null }
 				disabled={ this.props.disabled }
-				className="btn-icon dropdown-folder"
+				className="btn-icon dropdown-toggle"
 			>
 				<Icon type={ '16/plus' } width="16" height="16" />
 			</DropdownToggle>
