@@ -22,7 +22,8 @@ class Library extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			isNavOpened: false
+			isNavOpened: false,
+			hasUserTypeChanged: false
 		};
 	}
 
@@ -32,11 +33,20 @@ class Library extends React.Component {
 		});
 	}
 
-	componentDidUpdate() {
-		const { isKeyboardUser, isMouseUser, isTouchUser } = this.props;
+	componentDidUpdate({ userType: previousUserType }) {
+		const { isKeyboardUser, isMouseUser, isTouchUser, userType } = this.props;
+		const { hasUserTypeChanged } = this.state;
+
 		document.documentElement.classList.toggle('keyboard', isKeyboardUser);
 		document.documentElement.classList.toggle('mouse', isMouseUser);
 		document.documentElement.classList.toggle('touch', isTouchUser);
+
+		if(userType !== previousUserType) {
+			this.setState({ hasUserTypeChanged: true });
+		}
+		if(hasUserTypeChanged === true) {
+			window.setTimeout(() => this.setState({ hasUserTypeChanged: false }));
+		}
 	}
 
 	componentWillUnmount() {
@@ -46,17 +56,18 @@ class Library extends React.Component {
 	}
 
 	render() {
-		const { itemsSource, collectionKey, useTransitions } = this.props;
+		const { itemsSource, collectionKey, useTransitions, userType, view } = this.props;
+		const { isNavOpened, hasUserTypeChanged } = this.state;
 		const key = itemsSource === 'collection' ?
 			`collection-${collectionKey}` :
 			itemsSource;
-		let activeViewClass = `view-${this.props.view}-active`;
+		let activeViewClass = `view-${view}-active`;
 
 		return (
-			<UserTypeContext.Provider value={ this.props.userType }>
+			<UserTypeContext.Provider value={ userType }>
 				<div className={ cx('library-container', activeViewClass, {
-						'navbar-nav-opened': this.state.isNavOpened,
-						'no-transitions': !useTransitions
+						'navbar-nav-opened': isNavOpened,
+						'no-transitions': !useTransitions || hasUserTypeChanged
 					}) }>
 					{
 						!useTransitions && (
@@ -66,11 +77,11 @@ class Library extends React.Component {
 						)
 					}
 					<Navbar
-						isOpened = { this.state.isNavOpened }
+						isOpened = { isNavOpened }
 						onToggle = { this.handleNavToggle.bind(this) }  />
 					<div className="nav-cover" />
 					<main>
-						<section className={ `library ${ this.props.view === 'library' ? 'active' : '' }` }>
+						<section className={ `library ${ view === 'library' ? 'active' : '' }` }>
 							<TouchHeaderContainer
 								className="hidden-sm-up"
 								includeItemsSource={ true }
@@ -81,7 +92,7 @@ class Library extends React.Component {
 								<LibrariesContainer />
 								<TagSelectorContainer key={ key } />
 							</header>
-							<section className={ `items ${ this.props.view === 'item-list' ? 'active' : '' }` }>
+							<section className={ `items ${ view === 'item-list' ? 'active' : '' }` }>
 								<TouchHeaderContainer
 									key={ key }
 									className="hidden-xs-down hidden-md-up"
@@ -89,7 +100,7 @@ class Library extends React.Component {
 									rootAtCurrentItemsSource={ true }
 								/>
 								<ItemListContainer />
-								<ItemDetailsContainer active={this.props.view === 'item-details'} />
+								<ItemDetailsContainer active={ view === 'item-details' } />
 							</section>
 						</section>
 					</main>
