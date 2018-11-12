@@ -4,6 +4,11 @@ const React = require('react');
 const PropTypes = require('prop-types');
 
 class ItemDetailsInfoView extends React.PureComponent {
+	shouldComponentUpdate({ itemsCount: nextItemsCount }) {
+		const { itemsCount } = this.props;
+		return itemsCount !== nextItemsCount;
+	}
+
 	render() {
 		const { itemsCount } = this.props;
 		var label;
