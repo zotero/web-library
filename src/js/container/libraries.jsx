@@ -26,13 +26,13 @@ class LibrariesContainer extends React.PureComponent {
 	}
 
 	componentDidUpdate({ libraryKey: prevLibraryKey }) {
-		const { collectionCountByLibrary, collections, groupCollections, libraryKey, userLibraryKey, dispatch, collectionsBeingFetched } = this.props;
+		const { collectionCountByLibrary, collections, groupCollections, libraryKey, userLibraryKey, dispatch, librariesWithCollectionsFetching } = this.props;
 		if(libraryKey != prevLibraryKey && libraryKey !== userLibraryKey) {
 			dispatch(fetchCollections(libraryKey, { start: 0, limit: PAGE_SIZE }));
 		}
 
 		const fetchNextPage = (libraryKey, collections) => {
-			if(!collectionsBeingFetched.includes(libraryKey) &&
+			if(!librariesWithCollectionsFetching.includes(libraryKey) &&
 			collectionCountByLibrary[libraryKey] > collections.length) {
 				dispatch(fetchCollections(libraryKey, { start: collections.length, limit: PAGE_SIZE }));
 			}
@@ -95,7 +95,7 @@ const mapStateToProps = state => {
 			get(state, ['libraries', userLibraryKey, 'collections'], {})
 		),
 		collectionCountByLibrary: state.collectionCountByLibrary,
-		collectionsBeingFetched: state.fetching.collectionsInLibrary,
+		librariesWithCollectionsFetching: state.fetching.collectionsInLibrary,
 		userLibraryKey,
 		groups: state.groups,
 		groupCollections: state.groups.reduce((aggr, group) => {

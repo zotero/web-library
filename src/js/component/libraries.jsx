@@ -37,7 +37,12 @@ class Libraries extends React.Component {
 	}
 
 	handleAdd(libraryKey, collectionKey) {
-		this.setState({ virtual: { libraryKey, collectionKey } });
+		const { opened } = this.state;
+		if(!opened.includes(libraryKey)) {
+			this.handleOpenToggle(libraryKey);
+		}
+		window.setTimeout(() => this.setState({ virtual: { libraryKey, collectionKey } }));
+		// this.setState({ virtual: { libraryKey, collectionKey } });
 	}
 
 	async handleAddCommit(libraryKey, parentCollection, name) {
@@ -110,7 +115,8 @@ class Libraries extends React.Component {
 	}
 
 	renderGroups() {
-		const { groups, libraryKey, itemsSource, device, view } = this.props;
+		const { groups, libraryKey, itemsSource, device, view,
+			librariesWithCollectionsFetching } = this.props;
 		const { opened } = this.state;
 
 		return (
@@ -123,26 +129,29 @@ class Libraries extends React.Component {
 								(device.isTouchOrSmall && view !== 'libraries' && libraryKey == groupKey);
 							const isSelected = !device.isTouchOrSmall &&
 								libraryKey === groupKey && itemsSource === 'top';
+							const isFetching = librariesWithCollectionsFetching.includes(groupKey);
 							return (
 								<Node
 									className={ cx({
-										'open': isOpen,
+										'open': isOpen && !isFetching,
 										'selected': isSelected,
+										'busy': isFetching
 									}) }
-									isOpen={ isOpen }
+									isOpen={ isOpen && !isFetching }
 									onOpen={ this.handleOpenToggle.bind(this, groupKey) }
 									onClick={ this.handleSelect.bind(this, { library: groupKey, view: 'library' }) }
 									onKeyPress={ this.handleKeyPress.bind(this, { library: groupKey, view: 'library'}) }
-									subtree={ this.renderGroupCollections(groupKey) }
+									subtree={ isFetching ? null : this.renderGroupCollections(groupKey) }
 									key={ group.id }
 								>
 									<Icon type="28/library" className="touch" width="28" height="28" />
 									<Icon type="16/library" className="mouse" width="16" height="16" />
 									<a>{ group.name }</a>
+									{ isFetching && <Spinner className="mouse" /> }
 									{
-										isOpen && (
+										!isFetching && (
 											<Button onClick={ this.handleAdd.bind(this, groupKey, null) } >
-												<Icon type={ '16/plus' } width="16" height="16" />
+												<Icon className="mouse" type={ '16/plus' } width="16" height="16" />
 											</Button>
 										)
 									}
@@ -180,13 +189,9 @@ class Libraries extends React.Component {
 						<Icon type="28/library" className="touch" width="28" height="28" />
 						<Icon type="16/library" className="mouse" width="16" height="16" />
 						<a>My Library</a>
-						{
-							isOpen && (
-								<Button onClick={ this.handleAdd.bind(this, userLibraryKey, null) } >
-									<Icon type={ '16/plus' } width="16" height="16" />
-								</Button>
-							)
-						}
+						<Button onClick={ this.handleAdd.bind(this, userLibraryKey, null) } >
+							<Icon className="mouse" type={ '16/plus' } width="16" height="16" />
+						</Button>
 					</Node>
 				</ul>
 			</div>
