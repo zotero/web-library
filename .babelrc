@@ -1,34 +1,10 @@
 {
-  "env": {
-    "production": {
-      "presets": [
-        "es2015",
-        "stage-2",
-        "react"
-      ],
-      "plugins": [
-        "transform-async-to-generator",
-        "transform-class-properties",
-        "transform-object-rest-spread",
-        "transform-decorators-legacy",
-        [
-          "transform-runtime",
-          {
-            "helpers": false,
-            "polyfill": false,
-            "regenerator": true
-          }
-        ]
-      ]
-    }
-  },
   "presets": [
-    "stage-2",
-    "react"
+    "@babel/preset-env",
+    "@babel/preset-react"
   ],
   "plugins": [
-    "transform-object-rest-spread",
-    "transform-class-properties",
-    "transform-decorators-legacy"
+    "@babel/plugin-proposal-class-properties",
+    ["@babel/plugin-proposal-decorators", { "legacy": true }]
   ]
 }
