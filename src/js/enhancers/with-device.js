@@ -1,6 +1,7 @@
 'use strict';
 
 const React = require('react');
+const hoistNonReactStatic = require('hoist-non-react-statics');
 const { UserTypeContext, ViewportContext } = require('../context');
 
 
@@ -17,6 +18,7 @@ const withDevice = Component => {
 			const isSingleColumn = viewport.xxs || viewport.xs;
 			const device = {
 				viewport,
+				userType,
 				[userType]: true,
 				isSingleColumn,
 				isTouchOrSmall,
@@ -33,6 +35,7 @@ const withDevice = Component => {
 
 	C.displayName = `withDevice(${Component.displayName || Component.name})`;
 	C.WrappedComponent = Component;
+	hoistNonReactStatic(C, Component);
 	return C;
 };
 

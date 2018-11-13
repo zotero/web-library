@@ -7,6 +7,7 @@ const ReduxThunk = require('redux-thunk').default;
 const ReduxAsyncQueue = require('redux-async-queue').default;
 const { createStore, applyMiddleware, compose, combineReducers } = require('redux');
 const { Provider, connect } = require('react-redux');
+const withUserTypeDetection = require('../enhancers/with-user-type-detector');
 // const createHistory = require('history/createBrowserHistory');
 // const { Route } = require('react-router');
 const { BrowserRouter, Route, Switch } = require('react-router-dom');
@@ -24,7 +25,7 @@ const {
 } = require('../actions');
 const Library = require('../component/library');
 const defaults = require('../constants/defaults');
-const { ViewportContext } = require('../context');
+const { ViewportContext, UserTypeContext } = require('../context');
 const { DragDropContext } = require('react-dnd');
 const { default: MultiBackend } = require('react-dnd-multi-backend');
 const HTML5toTouch = require('react-dnd-multi-backend/lib/HTML5toTouch').default;
@@ -85,10 +86,13 @@ class LibraryContainer extends React.PureComponent {
 	}
 
 	render() {
+		const { userType, viewport } = this.props;
 		return (
-			<ViewportContext.Provider value={ this.props.viewport }>
+			<ViewportContext.Provider value={ viewport }>
+			<UserTypeContext.Provider value={ userType }>
 				<CustomDragLayer />
 				<Library { ...this.props } />
+			</UserTypeContext.Provider>
 			</ViewportContext.Provider>
 		);
 	}
@@ -188,10 +192,6 @@ const mapStateToProps = state => {
 		collectionKey, isFetchingCollections, useTransitions };
 };
 
-const mapDispatchToProps = (dispatch) => {
-	return { dispatch };
-};
-
-const LibraryContainerWrapped = connect(mapStateToProps, mapDispatchToProps)(LibraryContainer);
+const LibraryContainerWrapped = withUserTypeDetection(connect(mapStateToProps)(LibraryContainer));
 
 module.exports = LibraryContainerWrapped;

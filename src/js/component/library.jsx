@@ -14,9 +14,9 @@ const Navbar = require('./ui/navbar');
 const TagSelectorContainer = require('../container/tag-selector');
 const { Toolbar, ToolGroup } = require('./ui/toolbars');
 const TouchHeaderContainer = require('../container/touch-header');
-const UserTypeDetector = require('../enhancers/user-type-detector');
 const { UserTypeContext } = require('../context');
 const BibliographyContainer = require('../container/bibliography');
+const withDevice = require('../enhancers/with-device');
 
 class Library extends React.Component {
 	constructor(props) {
@@ -33,15 +33,15 @@ class Library extends React.Component {
 		});
 	}
 
-	componentDidUpdate({ userType: previousUserType }) {
-		const { isKeyboardUser, isMouseUser, isTouchUser, userType } = this.props;
+	componentDidUpdate({ device: { isTouchOrSmall: wasTouchOrSmall, userType: previousUserType } }) {
+		const { device } = this.props;
 		const { hasUserTypeChanged } = this.state;
 
-		document.documentElement.classList.toggle('keyboard', isKeyboardUser);
-		document.documentElement.classList.toggle('mouse', isMouseUser);
-		document.documentElement.classList.toggle('touch', isTouchUser);
+		document.documentElement.classList.toggle('keyboard', !!device.keyboard);
+		document.documentElement.classList.toggle('mouse', !!device.mouse);
+		document.documentElement.classList.toggle('touch', !!device.touch);
 
-		if(userType !== previousUserType) {
+		if(device.isTouchOrSmall !== wasTouchOrSmall && device.userType !== previousUserType) {
 			this.setState({ hasUserTypeChanged: true });
 		}
 		if(hasUserTypeChanged === true) {
@@ -56,7 +56,7 @@ class Library extends React.Component {
 	}
 
 	render() {
-		const { itemsSource, collectionKey, useTransitions, userType, view } = this.props;
+		const { itemsSource, collectionKey, useTransitions, view, device } = this.props;
 		const { isNavOpened, hasUserTypeChanged } = this.state;
 		const key = itemsSource === 'collection' ?
 			`collection-${collectionKey}` :
@@ -64,49 +64,47 @@ class Library extends React.Component {
 		let activeViewClass = `view-${view}-active`;
 
 		return (
-			<UserTypeContext.Provider value={ userType }>
-				<div className={ cx('library-container', activeViewClass, {
-						'navbar-nav-opened': isNavOpened,
-						'no-transitions': !useTransitions || hasUserTypeChanged
-					}) }>
-					{
-						!useTransitions && (
-							<div className="loading-cover">
-								<Spinner />
-							</div>
-						)
-					}
-					<Navbar
-						isOpened = { isNavOpened }
-						onToggle = { this.handleNavToggle.bind(this) }  />
-					<div className="nav-cover" />
-					<main>
-						<section className={ `library ${ view === 'library' ? 'active' : '' }` }>
+			<div className={ cx('library-container', activeViewClass, {
+					'navbar-nav-opened': isNavOpened,
+					'no-transitions': !useTransitions || hasUserTypeChanged
+				}) }>
+				{
+					!useTransitions && (
+						<div className="loading-cover">
+							<Spinner />
+						</div>
+					)
+				}
+				<Navbar
+					isOpened = { isNavOpened }
+					onToggle = { this.handleNavToggle.bind(this) }  />
+				<div className="nav-cover" />
+				<main>
+					<section className={ `library ${ view === 'library' ? 'active' : '' }` }>
+						<TouchHeaderContainer
+							className="hidden-sm-up"
+							includeItemsSource={ true }
+							includeItem={ true }
+						/>
+						<header className="sidebar">
+							<h2 className="offscreen">Web library</h2>
+							<LibrariesContainer />
+							<TagSelectorContainer key={ key } />
+						</header>
+						<section className={ `items ${ view === 'item-list' ? 'active' : '' }` }>
 							<TouchHeaderContainer
-								className="hidden-sm-up"
-								includeItemsSource={ true }
+								key={ key }
+								className="hidden-xs-down hidden-md-up"
 								includeItem={ true }
+								rootAtCurrentItemsSource={ true }
 							/>
-							<header className="sidebar">
-								<h2 className="offscreen">Web library</h2>
-								<LibrariesContainer />
-								<TagSelectorContainer key={ key } />
-							</header>
-							<section className={ `items ${ view === 'item-list' ? 'active' : '' }` }>
-								<TouchHeaderContainer
-									key={ key }
-									className="hidden-xs-down hidden-md-up"
-									includeItem={ true }
-									rootAtCurrentItemsSource={ true }
-								/>
-								<ItemListContainer />
-								<ItemDetailsContainer active={ view === 'item-details' } />
-							</section>
+							<ItemListContainer />
+							<ItemDetailsContainer active={ view === 'item-details' } />
 						</section>
-					</main>
-					<BibliographyContainer />
-				</div>
-			</UserTypeContext.Provider>
+					</section>
+				</main>
+				<BibliographyContainer />
+			</div>
 		);
 	}
 }
@@ -115,8 +113,7 @@ Library.propTypes = {
 	isKeyboardUser: PropTypes.bool,
 	isMouseUser: PropTypes.bool,
 	isTouchUser: PropTypes.bool,
-	userType: PropTypes.string,
 	view: PropTypes.string,
 };
 
-module.exports = UserTypeDetector(Library);
+module.exports = withDevice(Library);

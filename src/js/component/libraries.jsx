@@ -129,7 +129,7 @@ class Libraries extends React.Component {
 								(device.isTouchOrSmall && view !== 'libraries' && libraryKey == groupKey);
 							const isSelected = !device.isTouchOrSmall &&
 								libraryKey === groupKey && itemsSource === 'top';
-							const isFetching = librariesWithCollectionsFetching.includes(groupKey);
+							const isFetching = !device.isTouchOrSmall && librariesWithCollectionsFetching.includes(groupKey);
 							return (
 								<Node
 									className={ cx({
