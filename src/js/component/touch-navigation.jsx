@@ -2,6 +2,7 @@
 
 const React = require('react');
 const PropTypes = require('prop-types');
+const { CSSTransition } = require('react-transition-group');
 const noop = require('../utils');
 const Icon = require('./ui/icon');
 
@@ -82,9 +83,17 @@ class TouchNavigation extends React.PureComponent {
 	}
 
 	render() {
+		const hasPrevious = this.state.headers.some(h => h.slot === 'previous' && h.key != null);
 		return (
 			<nav>
-				<Icon type={ '16/caret-16' } width="16" height="16" className="icon-previous" />
+				<CSSTransition
+					in={ hasPrevious }
+					timeout={ 300 }
+					classNames="fade"
+					unmountOnExit
+				>
+					<Icon type={ '16/caret-16' } width="16" height="16" className="icon-previous" />
+				</CSSTransition>
 				<ul>
 					{ this.state.headers.map(header => {
 						if(header.slot) {

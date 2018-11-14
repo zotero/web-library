@@ -37,6 +37,25 @@
 		top: ($line-height-large-touch - $space-md) / 2;
 		z-index: 2;
 		transform: rotate(-90deg);
+
+		&.fade {
+			will-change: opacity;
+		}
+
+		&.fade-enter {
+			opacity: 0.01;
+		}
+		&.fade-enter-active {
+			opacity: 1;
+			transition: all 300ms ease-out;
+		}
+		&.fade-exit {
+			opacity: 1;
+		}
+		&.fade-exit-active {
+			opacity: 0.01;
+			transition: all 300ms ease-out;
+		}
 	}
 
 	ul {
