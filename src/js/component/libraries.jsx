@@ -150,8 +150,8 @@ class Libraries extends React.Component {
 									{ isFetching && <Spinner className="mouse" /> }
 									{
 										!isFetching && (
-											<Button onClick={ this.handleAdd.bind(this, groupKey, null) } >
-												<Icon className="mouse" type={ '16/plus' } width="16" height="16" />
+											<Button className="mouse btn-icon-plus" onClick={ this.handleAdd.bind(this, groupKey, null) } >
+												<Icon type={ '16/plus' } width="16" height="16" />
 											</Button>
 										)
 									}
@@ -189,8 +189,8 @@ class Libraries extends React.Component {
 						<Icon type="28/library" className="touch" width="28" height="28" />
 						<Icon type="16/library" className="mouse" width="16" height="16" />
 						<a>My Library</a>
-						<Button onClick={ this.handleAdd.bind(this, userLibraryKey, null) } >
-							<Icon className="mouse" type={ '16/plus' } width="16" height="16" />
+						<Button className="mouse btn-icon-plus" onClick={ this.handleAdd.bind(this, userLibraryKey, null) } >
+							<Icon type={ '16/plus' } width="16" height="16" />
 						</Button>
 					</Node>
 				</ul>

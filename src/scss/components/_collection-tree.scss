@@ -88,7 +88,7 @@
 					@include mouse-and-bp-up(md) {
 						background: $collection-tree-active-link-bg;
 
-						.icon {
+						.icon:not(.icon-spin) {
 							color: $collection-tree-active-icon-color;
 						}
 
@@ -145,6 +145,21 @@
 
 				&.touch {
 					margin-right: $space-md;
+				}
+			}
+
+			.icon-spin {
+				margin-right: 0;
+				margin-left: $space-xs;
+				color: $icon-color; // Reset
+			}
+
+			.btn-icon-plus {
+				margin-right: -$space-min - $input-border-width;
+				visibility: hidden;
+
+				@include state(".item-container:hover") {
+					visibility: visible;
 				}
 			}
 

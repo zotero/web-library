@@ -36,8 +36,11 @@
   }
 }
 
-html:not(.touch) .hidden-mouse {
-	display: none !important;
+.hidden-mouse,
+.touch {
+	@include mouse-and-bp-up(md) {
+		display: none !important;
+	}
 }
 
 
@@ -57,8 +60,11 @@ html:not(.touch) .hidden-mouse {
   }
 }
 
-.touch .hidden-touch {
-	display: none !important;
+hidden-touch,
+.mouse {
+	@include touch-or-bp-down(sm) {
+		display: none !important;
+	}
 }
 
 
