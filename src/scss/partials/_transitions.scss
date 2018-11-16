@@ -1,0 +1,25 @@
+//
+// Transitions
+// --------------------------------------------------
+
+.fade {
+	will-change: opacity;
+
+	&-enter {
+		opacity: 0;
+
+		&-active {
+			opacity: 1;
+			transition: $fade-transition;
+		}
+	}
+
+	&-exit {
+		opacity: 1;
+
+		&-active {
+			opacity: 0;
+			transition: $fade-transition;
+		}
+	}
+}

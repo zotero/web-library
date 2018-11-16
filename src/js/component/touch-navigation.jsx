@@ -88,7 +88,7 @@ class TouchNavigation extends React.PureComponent {
 			<nav>
 				<CSSTransition
 					in={ hasPrevious }
-					timeout={ 300 }
+					timeout={ 250 }
 					classNames="fade"
 					unmountOnExit
 				>
