@@ -57,8 +57,10 @@
 
 			&:first-child {
 				> .item-container {
-					&::before {
-						@include touch-or-bp-down(sm) {
+					@include touch-or-bp-down(sm) {
+						padding-top: 0;
+
+						&::before {
 							content: none;
 						}
 					}
@@ -120,7 +122,7 @@
 			position: relative;
 
 			@include touch-or-bp-down(sm) {
-				padding: 0 $default-padding-x-touch;
+				padding: 1px $default-padding-x-touch 0;
 
 				&::before {
 					content: "";
@@ -147,12 +149,20 @@
 			}
 
 			.dropdown-wrapper {
+				@include touch-or-bp-down(sm) {
+					margin-left: $space-xs;
+					margin-right: -$space-xs;
+				}
+
 				@include mouse-and-bp-up(md) {
+					margin-left: $space-xs;
 					margin-right: -$space-min - $input-border-width;
 				}
 			}
 
 			.dropdown-toggle {
+				display: block;
+
 				@include mouse-and-bp-up(md) {
 					visibility: hidden;
 

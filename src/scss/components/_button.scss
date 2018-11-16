@@ -14,9 +14,14 @@
 		border-color $btn-transition,
 		box-shadow $btn-transition;
 
-	//&:focus {
-	//	outline: none;
-	//}
+	&:focus {
+		outline: none;
+
+		.keyboard & {
+			border-color: $btn-secondary-color;
+			box-shadow: 0 0 0 $input-btn-focus-width $btn-secondary-color;
+		}
+	}
 
 	&:not(:disabled) {
 		cursor: pointer;
@@ -70,9 +75,16 @@
 // Icon button
 
 .btn-icon {
-	padding: $space-min;
 	background: $btn-icon-bg;
 	line-height: 1;
+
+	@include touch-or-bp-down(sm) {
+		padding: $space-min - $border-width;
+	}
+
+	@include mouse-and-bp-up(md) {
+		padding: $space-min;
+	}
 
 	.icon {
 		vertical-align: top;
@@ -84,12 +96,11 @@
 		}
 	}
 
-	//&:focus {
-	//	.keyboard & {
-	//		border-color: $btn-secondary-color;
-	//		box-shadow: inset 0 0 0 $input-btn-focus-width $btn-secondary-color;
-	//	}
-	//}
+	&:focus {
+		@include mouse-keyboard-and-bp-up(md) {
+			box-shadow: inset 0 0 0 $input-btn-focus-width $btn-secondary-color;
+		}
+	}
 
 	&.active {
 		background: $btn-icon-active-bg;
