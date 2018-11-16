@@ -51,9 +51,11 @@
 			}
 		}
 
-		.icon-spin {
-			width: $icon-spin-size-md;
-			height: $icon-spin-size-md;
+		.tab-pane {
+			> .icon-spin {
+				width: $icon-spin-size-md;
+				height: $icon-spin-size-md;
+			}
 		}
 	}
 }
