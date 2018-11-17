@@ -11,6 +11,7 @@ const ColumnSelector = require('./column-selector');
 const NewItemSelector = require('./new-item-selector');
 const ItemActions = require('./item-actions');
 const { itemsSourceLabel } = require('../../../common/format');
+const TouchHeaderContainer = require('../../../container/touch-header');
 const ExportActions = require('./export-actions');
 
 class ItemListToolbar extends React.PureComponent {
@@ -30,16 +31,16 @@ class ItemListToolbar extends React.PureComponent {
 			selectedItemKeys,
 		} = this.props;
 
-		const touchHeaderLabel = itemsSource === 'collection' ?
-			collection ? collection.name : '' : itemsSourceLabel(itemsSource);
+
+		// const touchHeaderLabel = itemsSource === 'collection' ?
+		// 	collection ? collection.name : '' : itemsSourceLabel(itemsSource);
 
 		return (
 			<header className="hidden-sm-down">
-				<header className="touch-header hidden-mouse">
-					<div className="truncate">
-						{ touchHeaderLabel }
-					</div>
-				</header>
+				<TouchHeaderContainer
+					className="hidden-mouse"
+					variant={ TouchHeaderContainer.variants.SOURCE }
+				/>
 				<Toolbar className="hidden-touch hidden-sm-down">
 					<div className="toolbar-left">
 						<ToolGroup>

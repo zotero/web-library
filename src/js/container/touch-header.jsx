@@ -3,6 +3,7 @@
 const React = require('react');
 const PropTypes = require('prop-types');
 const { withRouter } = require('react-router-dom');
+const withDevice = require('../enhancers/with-device');
 const { itemProp } = require('../constants/item');
 const { connect } = require('react-redux');
 const { get } = require('../utils');
@@ -24,65 +25,96 @@ class TouchHeaderContainer extends React.Component {
 		return collections.length ? makeChildMap(collections) : {};
 	}
 
+	get itemsSourceNode() {
+		const { itemsSource, libraryKey, collection } = this.props;
+		const label = itemsSourceLabel(itemsSource);
+		return {
+			key: itemsSource,
+			type: 'itemsSource',
+			path: {
+				library: libraryKey,
+				view: 'item-list',
+				trash: itemsSource === 'trash',
+				publications: itemsSource === 'publications',
+				collection
+			},
+			label
+		}
+	}
+
+	get rootNode() {
+		return {
+			key: 'root',
+			type: 'root',
+			path: { view: 'libraries' },
+			label: 'Libraries'
+		};
+	}
+
+	get itemNode() {
+		const { item } = this.props;
+		return item ? { key: '', label: '' } : null;
+	}
+
+	get isSelectedOpened() {
+		const { collection } = this.props;
+		const hasChildren = collection in this.childMap;
+		return hasChildren;
+	}
+
+	get isItemsView() {
+		const { view } = this.props;
+		return view === 'item-list' || view === 'item-details';
+	}
+
+	get isLastNodeCurrentlySelectedCollection() {
+		const { collection } = this.props;
+		return collection !== null && !this.isSelectedOpened;
+	}
+
+	get selectedNode() {
+		const { path } = this.props;
+		return this.isLastNodeCurrentlySelectedCollection ? path[path.length - 1] : this.itemsSourceNode;
+	}
+
 	render() {
-		const { path, view, itemsSource, skipSelected, includeItem, item,
-			includeItemsSource, rootAtCurrentItemsSource, libraryKey,
-			collection } = this.props;
+		const { path, variant } = this.props;
+		const variants = TouchHeaderContainer.variants;
+		const shouldIncludeItem = [variants.ITEM, variants.SOURCE_AND_ITEM, variants.MOBILE].includes(variant);
+		var touchHeaderPath;
 
-		var touchHeaderPath = [ ...path];
-
-		if(includeItemsSource && libraryKey && (view === 'item-list' || view === 'item-details')) {
-			const label = itemsSourceLabel(itemsSource);
-			touchHeaderPath.push({
-				key: itemsSource,
-				type: 'itemsSource',
-				path: {
-					library: libraryKey,
-					view: 'item-list',
-					trash: itemsSource === 'trash',
-					publications: itemsSource === 'publications',
-					collection
-				},
-				label
-			});
+		switch(variant) {
+			case variants.MOBILE:
+				touchHeaderPath = [
+					this.rootNode,
+					...path,
+					this.isItemsView ? this.itemsSourceNode : null,
+					this.itemNode
+				];
+			break;
+			case variants.NAVIGATION:
+				touchHeaderPath = [this.rootNode, ...path];
+				if(this.isLastNodeCurrentlySelectedCollection) {
+					touchHeaderPath.pop();
+				}
+			break;
+			case variants.SOURCE:
+				touchHeaderPath = [ this.selectedNode ];
+			break;
+			case variants.SOURCE_AND_ITEM:
+				touchHeaderPath = [ this.selectedNode, this.itemNode ];
+			break;
+			case variants.ITEM:
+				touchHeaderPath = [ this.itemNode ];
+			break;
 		}
+		touchHeaderPath = touchHeaderPath.filter(Boolean);
 
-		if(rootAtCurrentItemsSource) {
-			const index = touchHeaderPath.findIndex(n => n.type === "itemsSource");
-			touchHeaderPath = touchHeaderPath.splice(index);
-		} else {
-			// add a root node
-			touchHeaderPath.unshift({
-				key: 'root',
-				type: 'root',
-				path: { view: 'libraries' },
-				label: 'Libraries'
-			});
-		}
-
-		// empty last node to represent current item if one is selected
-		if(includeItem && item) {
-			touchHeaderPath.push({key: '', label: ''});
-		}
-
-		if(skipSelected) {
-			const key = touchHeaderPath[touchHeaderPath.length - 1].key;
-			const nodeType = touchHeaderPath[touchHeaderPath.length - 1].type;
-
-			// nodes that can be selected: Trash, Publications, Collection with no children
-			const isCollectionNode = nodeType === 'collection';
-			const isItemsSourceNode = nodeType === 'itemsSource';
-			const hasChildren = key in this.childMap;
-			const isLeafNode = isItemsSourceNode || (isCollectionNode && !hasChildren);
-
-			if(isLeafNode) {
-				touchHeaderPath.pop();
-			}
-		}
 
 		return (
 			<TouchHeader
 				{ ...this.props }
+				shouldIncludeItem={ shouldIncludeItem }
 				onNavigation={ this.onNavigation.bind(this) }
 				path={ touchHeaderPath }
 			/>
@@ -98,10 +130,15 @@ class TouchHeaderContainer extends React.Component {
 		path: PropTypes.array,
 		item: itemProp,
 		includeNav: PropTypes.bool,
-		includeItem: PropTypes.bool,
-		rootAtCurrentItemsSource: PropTypes.bool,
-		includeItemsSource: PropTypes.bool,
 	}
+
+	static variants = {
+		MOBILE: 'MOBILE',
+		NAVIGATION: 'NAVIGATION',
+		SOURCE: 'SOURCE',
+		SOURCE_AND_ITEM: 'SOURCE_AND_ITEM',
+		ITEM: 'ITEM'
+	};
 }
 
 const mapStateToProps = state => {
@@ -149,6 +186,6 @@ const mapStateToProps = state => {
 	};
 };
 
-const TouchHeaderWrapped = withRouter(withEditMode(connect(mapStateToProps)(TouchHeaderContainer)));
+const TouchHeaderWrapped = withDevice(withRouter(withEditMode(connect(mapStateToProps)(TouchHeaderContainer))));
 
 module.exports = TouchHeaderWrapped;

@@ -2,10 +2,11 @@
 
 const React = require('react');
 const { connect } = require('react-redux');
+const hoistNonReactStatic = require('hoist-non-react-statics');
 const { triggerEditingItem } = require('../actions');
 
-var withEditMode = Component => connect(mapStateToProps)(
-	class extends React.PureComponent {
+var withEditMode = Component => {
+	class EnhancedComponent extends React.PureComponent {
 		onEditModeToggle(isEditing) {
 			this.props.dispatch(
 				triggerEditingItem(this.props.itemKey, isEditing)
@@ -22,7 +23,9 @@ var withEditMode = Component => connect(mapStateToProps)(
 		static displayName = `withEditMode(${Component.displayName || Component.name})`
 		static WrappedComponent = Component;
 	}
-);
+
+	return connect(mapStateToProps)(hoistNonReactStatic(EnhancedComponent, Component));
+}
 
 const mapStateToProps = state => ({
 	itemKey: state.current.item,

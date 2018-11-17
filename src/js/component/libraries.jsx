@@ -209,7 +209,7 @@ class Libraries extends React.Component {
 			return (
 				<nav className="collection-tree">
 					<TouchHeaderContainer
-						skipSelected={ true }
+						variant={ TouchHeaderContainer.variants.NAVIGATION }
 						className="hidden-xs-down hidden-mouse-md-up"
 					/>
 					<div className={ `level-root ${isRootActive ? 'active' : ''}` }>

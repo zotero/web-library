@@ -144,7 +144,6 @@ class CollectionTree extends React.PureComponent {
 			virtual, onAddCancel, device } = this.props;
 
 
-		// if isSelected is
 		const [selected, selectedDepth] = this.findRecursive(
 			collections,
 			col => derivedData[col.key].isSelected
@@ -157,6 +156,12 @@ class CollectionTree extends React.PureComponent {
 			device.isSingleColumn || selectedDepth > 0 ||
 			(selectedDepth == 0 && selected.key in childMap)
 		);
+
+		const isAllItemsSelected = !device.isSingleColumn &&
+			parentCollection === null && selected === null;
+
+		const isItemsSelected = !device.isSingleColumn &&
+			parentCollection !== null && selected === null;
 
 		// at least one collection contains subcollections
 		const hasNested = collections.some(c => c.key in childMap);
@@ -178,10 +183,10 @@ class CollectionTree extends React.PureComponent {
 				'has-open': hasOpen, 'level-last': isLastLevel
 			}) }>
 				<ul className="nav" role="group">
-					{ device.isSingleColumn && level === 1 && parentCollection === null && (
+					{ device.isTouchOrSmall && level === 1 && parentCollection === null && (
 						<Node
 							className={ cx({
-								'all-documents': true,
+								'selected': isAllItemsSelected,
 							})}
 							onClick={ this.handleSelect.bind(this, { view: 'item-list' }) }
 							onKeyPress={ this.handleKeyPress.bind(this, { view: 'item-list' }) }
@@ -189,6 +194,19 @@ class CollectionTree extends React.PureComponent {
 							<Icon type="28/document" className="touch" width="28" height="28" />
 							<Icon type="16/document" className="mouse" width="16" height="16" />
 							<a>All Items</a>
+						</Node>
+					) }
+					{ device.isTouchOrSmall && itemsSource === 'collection' && parentCollection && (
+						<Node
+							className={ cx({
+								'selected': isItemsSelected,
+							})}
+							onClick={ this.handleSelect.bind(this, { view: 'item-list', collection: parentCollection.key }) }
+							onKeyPress={ this.handleKeyPress.bind(this, { view: 'item-list', collection: parentCollection.key }) }
+						>
+							<Icon type="28/document" className="touch" width="28" height="28" />
+							<Icon type="16/document" className="mouse" width="16" height="16" />
+							<a>Items</a>
 						</Node>
 					) }
 					{ collections.map(collection => {
@@ -308,16 +326,6 @@ class CollectionTree extends React.PureComponent {
 							</Node>
 						)
 					}
-						{ device.isSingleColumn && itemsSource === 'collection' && parentCollection && (
-							<Node
-								onClick={ this.handleSelect.bind(this, { view: 'item-list', collection: parentCollection.key }) }
-								onKeyPress={ this.handleKeyPress.bind(this, { view: 'item-list', collection: parentCollection.key }) }
-							>
-								<Icon type="28/document" className="touch" width="28" height="28" />
-								<Icon type="16/document" className="mouse" width="16" height="16" />
-								<a>Items</a>
-							</Node>
-						) }
 				</ul>
 			</div>
 		);

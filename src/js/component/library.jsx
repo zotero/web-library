@@ -83,8 +83,7 @@ class Library extends React.Component {
 					<section className={ `library ${ view === 'library' ? 'active' : '' }` }>
 						<TouchHeaderContainer
 							className="hidden-sm-up"
-							includeItemsSource={ true }
-							includeItem={ true }
+							variant={ TouchHeaderContainer.variants.MOBILE }
 						/>
 						<header className="sidebar">
 							<h2 className="offscreen">Web library</h2>
@@ -92,11 +91,11 @@ class Library extends React.Component {
 							<TagSelectorContainer key={ key } />
 						</header>
 						<section className={ `items ${ view === 'item-list' ? 'active' : '' }` }>
+							{/* Tablet TouchHeader */}
 							<TouchHeaderContainer
 								key={ key }
 								className="hidden-xs-down hidden-md-up"
-								includeItem={ true }
-								rootAtCurrentItemsSource={ true }
+								variant={ TouchHeaderContainer.variants.SOURCE_AND_ITEM }
 							/>
 							<ItemListContainer />
 							<ItemDetailsContainer active={ view === 'item-details' } />
