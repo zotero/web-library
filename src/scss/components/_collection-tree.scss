@@ -114,80 +114,98 @@
 				}
 			}
 		}
+	}
 
-		.item-container {
-			outline: none;
-			display: flex;
-			align-items: center;
-			position: relative;
+	.item-container {
+		outline: none;
+		display: flex;
+		align-items: center;
+		position: relative;
+
+		@include touch-or-bp-down(sm) {
+			padding: 1px $default-padding-x-touch 0;
+
+			&::before {
+				content: "";
+				position: absolute;
+				height: 1px;
+				top: 0;
+				left: 2 * $default-padding-x-touch + 28px;
+				right: 0;
+				background: $touch-collection-tree-border;
+			}
+		}
+
+		@include mouse-and-bp-up(md) {
+			padding-right: $default-padding-x;
+		}
+
+		> .icon {
+			flex: 0 0 auto;
+			margin-right: $space-xs;
+
+			&.touch {
+				margin-right: $space-md;
+			}
+		}
+
+		.icon-spin {
+			margin-right: 0;
+			margin-left: $space-xs;
+			color: $icon-color; // Reset
+		}
+
+		.btn-icon-plus {
+			margin-right: -$space-min - $input-border-width;
+			visibility: hidden;
+
+			@include state(".item-container:hover") {
+				visibility: visible;
+			}
+		}
+
+		.dropdown-wrapper {
+			@include touch-or-bp-down(sm) {
+				margin-left: $space-xs;
+				margin-right: -$space-xs;
+			}
+
+			@include mouse-and-bp-up(md) {
+				margin-left: $space-xs;
+				margin-right: -$space-min - $input-border-width;
+			}
+		}
+
+		.dropdown-toggle {
+			display: block;
 
 			@include touch-or-bp-down(sm) {
-				padding: 1px $default-padding-x-touch 0;
+				@include state(".dropdown-wrapper.show .dropdown-toggle") {
+					background-color: $btn-secondary-color;
 
-				&::before {
-					content: "";
-					position: absolute;
-					height: 1px;
-					top: 0;
-					left: 2 * $default-padding-x-touch + 28px;
-					right: 0;
-					background: $touch-collection-tree-border;
+					@include state("li.selected .item-container") {
+						background-color: $body-bg;
+					}
+
+					.icon {
+						color: $shade-0;
+
+						@include state("li.selected .item-container") {
+							color: $icon-color;
+						}
+					}
 				}
 			}
 
 			@include mouse-and-bp-up(md) {
-				padding-right: $default-padding-x;
-			}
-
-			> .icon {
-				flex: 0 0 auto;
-				margin-right: $space-xs;
-
-				&.touch {
-					margin-right: $space-md;
-				}
-			}
-
-			.icon-spin {
-				margin-right: 0;
-				margin-left: $space-xs;
-				color: $icon-color; // Reset
-			}
-
-			.btn-icon-plus {
-				margin-right: -$space-min - $input-border-width;
 				visibility: hidden;
 
 				@include state(".item-container:hover") {
 					visibility: visible;
 				}
-			}
 
-			.dropdown-wrapper {
-				@include touch-or-bp-down(sm) {
-					margin-left: $space-xs;
-					margin-right: -$space-xs;
-				}
-
-				@include mouse-and-bp-up(md) {
-					margin-left: $space-xs;
-					margin-right: -$space-min - $input-border-width;
-				}
-			}
-
-			.dropdown-toggle {
-				display: block;
-
-				@include mouse-and-bp-up(md) {
-					visibility: hidden;
-
-					@include state(".item-container:hover") {
-						visibility: visible;
-					}
-
-					@include state(".dropdown-wrapper.show .dropdown-toggle") {
-						visibility: visible;
-					}
+				@include state(".dropdown-wrapper.show .dropdown-toggle") {
+					visibility: visible;
 				}
 			}
 		}

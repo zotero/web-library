@@ -4,11 +4,15 @@
 		box-shadow: $menu-box-shadow;
 		border-radius: $menu-border-radius;
 		z-index: $z-index-menu;
+		margin: $space-min 0;
 		display: none;
+
+		@include touch-or-bp-down(sm) {
+			padding: $space-xs 0;
+		}
 
 		@include mouse-and-bp-up(md) {
 			padding: $space-min 0;
-			margin: $space-min 0;
 		}
 
 		@include state(".dropdown.show") {
@@ -25,6 +29,10 @@
 		background-color: transparent;
 		margin: 0;
 
+		@include touch-or-bp-down(sm) {
+			padding: $input-btn-padding-y-touch $input-btn-padding-x-touch;
+		}
+
 		@include mouse-and-bp-up(md) {
 			padding: ($input-btn-padding-y + $input-border-width) $input-btn-padding-x;
 		}
@@ -40,8 +48,14 @@
 	}
 
 	.dropdown-divider {
-		margin-top: $space-min;
-		margin-bottom: $space-min;
 		border-top: $input-border-width solid $menu-devider;
+
+		@include touch-or-bp-down(sm) {
+			margin: $space-xs 0;
+		}
+
+		@include mouse-and-bp-up(md) {
+			margin: $space-min 0;
+		}
 	}
 }
