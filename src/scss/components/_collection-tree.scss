@@ -38,88 +38,11 @@
 		}
 	}
 
-	.icon {
-		@include mouse-and-bp-up(md) {
-			color: $collection-tree-icon-color;
-		}
-	}
-
-	ul {
-		li {
-			cursor: pointer;
-
-			a {
-				flex: 1 1 auto;
-				color: $collection-tree-link-color;
-				position: relative;
-				@include text-truncate;
-			}
-
-			&:first-child {
-				> .item-container {
-					@include touch-or-bp-down(sm) {
-						padding-top: 0;
-
-						&::before {
-							content: none;
-						}
-					}
-				}
-			}
-
-			&.selected {
-				> .item-container {
-					@include touch-or-bp-down(sm) {
-						background: $touch-collection-tree-active-link-bg;
-
-						&::before {
-							content: none;
-						}
-
-						.icon.touch {
-							color: $touch-collection-tree-active-link-color;
-						}
-
-						> a {
-							color: $touch-collection-tree-active-link-color;
-						}
-					}
-
-					@include mouse-and-bp-up(md) {
-						background: $collection-tree-active-link-bg;
-
-						.icon:not(.icon-spin) {
-							color: $collection-tree-active-icon-color;
-						}
-
-						> a {
-							color: $collection-tree-active-link-color;
-						}
-					}
-				}
-			}
-
-			& > .item-container.dnd-target,
-			&.selected > .item-container.dnd-target {
-				@include mouse-and-bp-up(md) {
-					background: $collection-tree-dnd-target-bg-color;
-
-					.icon {
-						color: $collection-tree-dnd-target-link-color;
-					}
-
-					> a {
-						color: $collection-tree-dnd-target-icon-color;
-					}
-				}
-			}
-		}
-	}
-
 	.item-container {
 		outline: none;
 		display: flex;
 		align-items: center;
+		cursor: pointer;
 		position: relative;
 
 		@include touch-or-bp-down(sm) {
@@ -140,12 +63,104 @@
 			padding-right: $default-padding-x;
 		}
 
+		@include variant("li:first-child > .item-container") {
+			@include touch-or-bp-down(sm) {
+	 			padding-top: 0;
+
+	 			&::before {
+	 				content: none;
+	 			}
+	 		}
+		}
+
+		@include state("li.selected > .item-container") {
+			@include touch-or-bp-down(sm) {
+				background: $touch-collection-tree-active-link-bg;
+
+				&::before {
+					content: none;
+				}
+			}
+
+			@include mouse-and-bp-up(md) {
+				background: $collection-tree-active-link-bg;
+			}
+		}
+
+		// Revisit: dnd styling
+		@include state(".item-container.dnd-target", "li.selected .item-container.dnd-target") {
+			@include mouse-and-bp-up(md) {
+				background: $collection-tree-dnd-target-bg-color;
+			}
+		}
+
+		.twisty {
+			margin-left: -$collection-tree-padding-left;
+
+			@include touch-or-bp-down(sm) {
+				display: none;
+			}
+
+			.icon-triangle {
+				@include state(".open > .item-container") {
+					transform: scaleY(-1);
+				}
+			}
+		}
+
+		.icon {
+			@include touch-or-bp-down(sm) {
+				@include state("li.selected > .item-container") {
+					color: $touch-collection-tree-active-link-color;
+				}
+			}
+
+			@include mouse-and-bp-up(md) {
+				&:not(.icon-spin) {
+					color: $collection-tree-icon-color;
+
+					@include state("li.selected > .item-container") {
+						color: $collection-tree-active-icon-color;
+					}
+				}
+
+				// Rivisit: dnd styling
+				@include state(".item-container.dnd-target", "li.selected .item-container.dnd-target") {
+					color: $collection-tree-dnd-target-link-color;
+				}
+			}
+		}
+
 		> .icon {
 			flex: 0 0 auto;
 			margin-right: $space-xs;
 
 			&.touch {
 				margin-right: $space-md;
+			}
+		}
+
+		> a {
+			flex: 1 1 auto;
+			color: $collection-tree-link-color;
+			position: relative;
+			@include text-truncate;
+
+			@include state("li.selected > .item-container") {
+				@include touch-or-bp-down(sm) {
+					color: $touch-collection-tree-active-link-color;
+				}
+
+				@include mouse-and-bp-up(md) {
+					color: $collection-tree-active-link-color;
+				}
+			}
+
+			// Rivisit: dnd styling
+			@include state(".item-container.dnd-target", "li.selected .item-container.dnd-target") {
+				@include mouse-and-bp-up(md) {
+					color: $collection-tree-dnd-target-icon-color;
+				}
 			}
 		}
 
@@ -320,24 +335,6 @@
 		@include mouse-and-bp-up(md) {
 			> .level {
 				display: block;
-			}
-		}
-	}
-
-	.twisty {
-		margin-left: -$collection-tree-padding-left;
-
-		@include touch-or-bp-down(sm) {
-			display: none;
-		}
-
-		.icon-triangle {
-			@include state(".open > .item-container .twisty") {
-				transform: scaleY(-1);
-			}
-
-			.dnd-target & {
-				color: $twisty-dnd-target-color;
 			}
 		}
 	}
