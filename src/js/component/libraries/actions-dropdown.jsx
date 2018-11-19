@@ -13,7 +13,8 @@ class ActionsDropdown extends React.PureComponent {
 		isOpen: false
 	}
 
-	handleToggleDropdown() {
+	handleToggleDropdown(ev) {
+		ev && ev.stopPropagation();
 		this.setState({ isOpen: !this.state.isOpen });
 	}
 
