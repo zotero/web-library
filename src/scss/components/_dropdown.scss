@@ -6,6 +6,7 @@
 		z-index: $z-index-menu;
 		margin: $space-min 0;
 		display: none;
+		left: 0; // required for correct popper js rendering
 
 		@include touch-or-bp-down(sm) {
 			padding: $space-xs 0;
