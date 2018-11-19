@@ -3,9 +3,6 @@
 // --------------------------------------------------
 
 .touch-header {
-	display: flex;
-	justify-content: center;
-	align-items: center;
 	overflow: hidden;
 	position: relative;
 
@@ -25,10 +22,6 @@
 	ul,
 	li {
 		height: 100%;
-	}
-
-	nav {
-		flex: 1 1 0;
 	}
 
 	.icon-previous {
@@ -62,7 +55,6 @@
 		transform: translate3d(50%, 0, 0);
 	}
 
-	> .truncate,
 	.inner {
 		max-width: calc((100% - 4 * #{$default-padding-x-touch}) / 3 - 4px); // Todo: see #73
 	}
