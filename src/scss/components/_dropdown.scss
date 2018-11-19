@@ -29,6 +29,7 @@
 		line-height: $line-height-base; // Prevent inheritance
 		background-color: transparent;
 		margin: 0;
+		cursor: pointer;
 
 		@include touch-or-bp-down(sm) {
 			padding: $input-btn-padding-y-touch $input-btn-padding-x-touch;

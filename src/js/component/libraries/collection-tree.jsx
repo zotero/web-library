@@ -249,22 +249,13 @@ class CollectionTree extends React.PureComponent {
 									<React.Fragment>
 										<a>{ collection.name }</a>
 										<ActionsDropdown>
-											<DropdownItem
-												onClick={ this.handleRenameTrigger.bind(this, collection.key) }
-												className="btn"
-											>
+											<DropdownItem onClick={ this.handleRenameTrigger.bind(this, collection.key) }>
 												Rename
 											</DropdownItem>
-											<DropdownItem
-												onClick={ this.handleDelete.bind(this, collection) }
-												className="btn"
-											>
+											<DropdownItem onClick={ this.handleDelete.bind(this, collection) }>
 												Delete
 											</DropdownItem>
-											<DropdownItem
-												onClick={ this.handleSubcollection.bind(this, collection.key) }
-												className="btn"
-											>
+											<DropdownItem onClick={ this.handleSubcollection.bind(this, collection.key) }>
 												New Subcollection
 											</DropdownItem>
 										</ActionsDropdown>
