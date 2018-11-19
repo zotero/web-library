@@ -3,7 +3,12 @@
 const React = require('react');
 
 module.exports = {
-	UserTypeContext: React.createContext('mouse'),
+	UserContext: React.createContext({
+		isKeyboardUser: false,
+		isMouseUser: false,
+		isTouchUser: false,
+		userType: 'mouse'
+	}),
 	ViewportContext: React.createContext({
 		xxs: false,
 		xs: false,

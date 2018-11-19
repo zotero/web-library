@@ -25,7 +25,7 @@ const {
 } = require('../actions');
 const Library = require('../component/library');
 const defaults = require('../constants/defaults');
-const { ViewportContext, UserTypeContext } = require('../context');
+const { ViewportContext, UserContext } = require('../context');
 const { DragDropContext } = require('react-dnd');
 const { default: MultiBackend } = require('react-dnd-multi-backend');
 const HTML5toTouch = require('react-dnd-multi-backend/lib/HTML5toTouch').default;
@@ -86,13 +86,13 @@ class LibraryContainer extends React.PureComponent {
 	}
 
 	render() {
-		const { userType, viewport } = this.props;
+		const { user, viewport } = this.props;
 		return (
 			<ViewportContext.Provider value={ viewport }>
-			<UserTypeContext.Provider value={ userType }>
+			<UserContext.Provider value={ user }>
 				<CustomDragLayer />
 				<Library { ...this.props } />
-			</UserTypeContext.Provider>
+			</UserContext.Provider>
 			</ViewportContext.Provider>
 		);
 	}

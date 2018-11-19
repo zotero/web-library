@@ -8,7 +8,7 @@ const { noop } = require('../../utils');
 
 const Spinner = require('../ui/spinner');
 const Select = require('react-select').default;
-const { UserTypeContext, ViewportContext } = require('../../context');
+const { UserContext, ViewportContext } = require('../../context');
 
 class SelectInput extends React.PureComponent {
 	constructor(props) {
@@ -149,14 +149,14 @@ class SelectInput extends React.PureComponent {
 		return (
 			<ViewportContext.Consumer>
 				{ viewport => (
-					<UserTypeContext.Consumer>
-					{ userType => (
+					<UserContext.Consumer>
+					{ ({ userType }) => (
 						<div className={ cx(this.className) }>
 							{ this.renderInput(userType, viewport) }
 							{ this.renderSpinner() }
 						</div>
 					)}
-					</UserTypeContext.Consumer>
+					</UserContext.Consumer>
 				)}
 			</ViewportContext.Consumer>
 		);

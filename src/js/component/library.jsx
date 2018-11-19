@@ -14,7 +14,6 @@ const Navbar = require('./ui/navbar');
 const TagSelectorContainer = require('../container/tag-selector');
 const { Toolbar, ToolGroup } = require('./ui/toolbars');
 const TouchHeaderContainer = require('../container/touch-header');
-const { UserTypeContext } = require('../context');
 const BibliographyContainer = require('../container/bibliography');
 const withDevice = require('../enhancers/with-device');
 
@@ -37,9 +36,9 @@ class Library extends React.Component {
 		const { device } = this.props;
 		const { hasUserTypeChanged } = this.state;
 
-		document.documentElement.classList.toggle('keyboard', !!device.keyboard);
-		document.documentElement.classList.toggle('mouse', !!device.mouse);
-		document.documentElement.classList.toggle('touch', !!device.touch);
+		document.documentElement.classList.toggle('keyboard', !!device.isKeyboardUser);
+		document.documentElement.classList.toggle('mouse', !!device.isMouseUser);
+		document.documentElement.classList.toggle('touch', !!device.isTouchUser);
 
 		if(device.isTouchOrSmall !== wasTouchOrSmall && device.userType !== previousUserType) {
 			this.setState({ hasUserTypeChanged: true });
@@ -109,9 +108,6 @@ class Library extends React.Component {
 }
 
 Library.propTypes = {
-	isKeyboardUser: PropTypes.bool,
-	isMouseUser: PropTypes.bool,
-	isTouchUser: PropTypes.bool,
 	view: PropTypes.string,
 };
 

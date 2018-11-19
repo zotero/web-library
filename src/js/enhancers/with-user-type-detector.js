@@ -31,7 +31,6 @@ const withUserTypeDetection = Component => {
 			if(ev.key === 'Tab') {
 				this.setState({
 					'isKeyboardUser': true,
-					'userType': 'keyboard'
 				});
 			}
 		}
@@ -59,7 +58,7 @@ const withUserTypeDetection = Component => {
 		}
 
 		render() {
-			return <Component {...this.props } { ...this.state } />;
+			return <Component {...this.props } user={ this.state } />;
 		}
 
 		static displayName = `userTypeDetector(${Component.displayName || Component.name})`

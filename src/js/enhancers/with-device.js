@@ -2,13 +2,13 @@
 
 const React = require('react');
 const hoistNonReactStatic = require('hoist-non-react-statics');
-const { UserTypeContext, ViewportContext } = require('../context');
+const { UserContext, ViewportContext } = require('../context');
 
 
 const withDevice = Component => {
 	const C = props => (
-		<UserTypeContext.Consumer>
-		{ userType => (
+		<UserContext.Consumer>
+		{ ({ userType, isKeyboardUser, isMouseUser, isTouchUser }) => (
 		<ViewportContext.Consumer>
 		{ viewport => {
 			const isTouchOrSmall = userType === 'touch' || viewport.xxs || viewport.xs || viewport.sm;
@@ -25,12 +25,15 @@ const withDevice = Component => {
 				shouldUseEditMode,
 				shouldUseModalCreatorField,
 				shouldUseTabs,
+				isKeyboardUser,
+				isMouseUser,
+				isTouchUser,
 			}
 			return <Component { ...props } device={ device } />
 		}}
 		</ViewportContext.Consumer>
 		)}
-		</UserTypeContext.Consumer>
+		</UserContext.Consumer>
 	);
 
 	C.displayName = `withDevice(${Component.displayName || Component.name})`;
