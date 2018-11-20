@@ -212,7 +212,8 @@ class CollectionTree extends React.PureComponent {
 						</Node>
 					) }
 					{ collections.map(collection => {
-						const hasSubCollections = collection.key in childMap;
+						const hasSubCollections = collection.key in childMap ||
+							(virtual !== null && virtual.collectionKey === collection.key);
 						return (
 						<Node
 							key={ collection.key }
