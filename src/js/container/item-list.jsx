@@ -17,12 +17,13 @@ const {
 	fetchItemsInCollection,
 	fetchItemsQuery,
 	fetchItemTemplate,
+	fetchPublicationsItems,
 	fetchTopItems,
 	fetchTrashItems,
-	fetchPublicationsItems,
 	moveToTrash,
 	preferenceChange,
 	recoverFromTrash,
+	removeFromCollection,
 	sortItems,
 	toggleModal,
 } = require('../actions');
@@ -111,6 +112,16 @@ class ItemListContainer extends React.PureComponent {
 		do {
 			const itemKeys = selectedItemKeys.splice(0, 50);
 			await dispatch(recoverFromTrash(itemKeys));
+		} while (selectedItemKeys.length > 50);
+		this.handleItemsSelect();
+	}
+
+	async handleRemove() {
+		const { dispatch, selectedItemKeys, collectionKey } = this.props;
+
+		do {
+			const itemKeys = selectedItemKeys.splice(0, 50);
+			await dispatch(removeFromCollection(itemKeys, collectionKey));
 		} while (selectedItemKeys.length > 50);
 		this.handleItemsSelect();
 	}
@@ -230,6 +241,7 @@ class ItemListContainer extends React.PureComponent {
 			onPermanentlyDelete={ this.handlePermanentlyDelete.bind(this) }
 			onSort={ this.handleSort.bind(this) }
 			onUndelete={ this.handleUndelete.bind(this) }
+			onRemove={ this.handleRemove.bind(this) }
 			onBibliographyOpen={ this.handleBibliographyOpen.bind(this) }
 		/>;
 	}

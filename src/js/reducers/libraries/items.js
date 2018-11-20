@@ -15,6 +15,7 @@ const {
 	RECEIVE_MOVE_ITEMS_TRASH,
 	RECEIVE_RECOVER_ITEMS_TRASH,
 	RECEIVE_ADD_ITEMS_TO_COLLECTION,
+	RECEIVE_REMOVE_ITEMS_FROM_COLLECTION,
 	RECEIVE_ITEMS_BY_QUERY,
 } = require('../../constants/actions.js');
 const { get, indexByKey } = require('../../utils');
@@ -42,6 +43,7 @@ const items = (state = {}, action) => {
 		case RECEIVE_MOVE_ITEMS_TRASH:
 		case RECEIVE_RECOVER_ITEMS_TRASH:
 		case RECEIVE_ADD_ITEMS_TO_COLLECTION:
+		case RECEIVE_REMOVE_ITEMS_FROM_COLLECTION:
 			return {
 				...state,
 				...indexByKey(Object.values(action.items), 'key', item => ({

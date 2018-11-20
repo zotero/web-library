@@ -9,6 +9,7 @@ const {
 	RECEIVE_ITEMS_IN_COLLECTION,
 	RECEIVE_MOVE_ITEMS_TRASH,
 	RECEIVE_RECOVER_ITEMS_TRASH,
+	RECEIVE_REMOVE_ITEMS_FROM_COLLECTION,
 } = require('../../constants/actions.js');
 
 const itemsByCollection = (state = {}, action) => {
@@ -68,6 +69,12 @@ const itemsByCollection = (state = {}, action) => {
 						...action.itemKeys
 					]))
 				]
+			}
+		case RECEIVE_REMOVE_ITEMS_FROM_COLLECTION:
+			return {
+				...state,
+				[action.collectionKey]: (state[action.collectionKey] || [])
+					.filter(itemKey => !action.itemKeysChanged.includes(itemKey))
 			}
 		case RECEIVE_ITEMS_IN_COLLECTION:
 			return {

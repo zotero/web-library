@@ -16,8 +16,10 @@ const {
 	deleteItems,
 	fetchChildItems,
 	fetchCollections,
+	fetchGroups,
 	fetchItems,
 	fetchItemsInCollection,
+	fetchItemsQuery,
 	fetchItemTypeCreatorTypes,
 	fetchItemTypeFields,
 	fetchLibrarySettings,
@@ -29,10 +31,9 @@ const {
 	initialize,
 	moveToTrash,
 	recoverFromTrash,
+	removeFromCollection,
 	updateCollection,
 	updateItem,
-	fetchItemsQuery,
-	fetchGroups,
 } = require('../../src/js/actions.js');
 const {
 	REQUEST_META,
@@ -83,6 +84,9 @@ const {
 	RECEIVE_ITEMS_BY_QUERY,
 	REQUEST_GROUPS,
 	RECEIVE_GROUPS,
+	PRE_REMOVE_ITEMS_FROM_COLLECTION,
+	REQUEST_REMOVE_ITEMS_FROM_COLLECTION,
+	RECEIVE_REMOVE_ITEMS_FROM_COLLECTION,
 } = require('../../src/js/constants/actions.js');
 
 const collectionsFixture = require('../fixtures/collections.json');
@@ -684,6 +688,87 @@ describe('action creators', () => {
 		assert.sameMembers(
 			store.getActions()[2].items.find(i => i.key === 'ITEM2222').collections,
 			['AAAAAAAA', 'BBBBBBBB']
+		);
+		assert.typeOf(store.getActions()[2].response.response, 'object');
+	});
+
+	it('removeFromCollection', async () => {
+		fetchMock.post((url) => {
+				assert(url.match(/https:\/\/api\.zotero\.org\/users\/123\/items\??.*/));
+				return true;
+			}, {
+			headers: {
+				'Last-Modified-Version': 1337
+			},
+			body: {
+				success: { '0': 'ITEM1111', '1': 'ITEM2222' },
+				failed: {},
+				successful: {
+					'0': {
+						key: 'ITEM1111',
+						collections: []
+					},
+					'1': {
+						key: 'ITEM2222',
+						collections: ['BBBBBBBB']
+					}
+				}
+			},
+		});
+
+		const store = mockStore({
+			...initialState,
+			libraries: {
+				u123: {
+					itemsTop: [],
+					itemsByCollection: {
+						'AAAAAAAA': ['ITEM1111', 'ITEM2222'],
+						'BBBBBBBB': ['ITEM2222'],
+					},
+					items: {
+						'ITEM1111': {
+							key: 'ITEM1111',
+							version: 1,
+							title: 'foo',
+							collections: ['AAAAAAAA'],
+						},
+						'ITEM2222': {
+							key: 'ITEM2222',
+							version: 1,
+							title: 'bar',
+							collections: ['AAAAAAAA', 'BBBBBBBB'],
+						}
+					}
+				}
+			}
+		});
+
+		const action = removeFromCollection(['ITEM1111', 'ITEM2222'], 'AAAAAAAA');
+		await store.dispatch(action);
+
+		assert.strictEqual(store.getActions()[0].type, PRE_REMOVE_ITEMS_FROM_COLLECTION);
+		assert.sameMembers(store.getActions()[0].itemKeys, ['ITEM1111', 'ITEM2222']);
+		assert.strictEqual(store.getActions()[0].collectionKey, 'AAAAAAAA');
+		assert.strictEqual(store.getActions()[0].libraryKey, 'u123');
+
+		await cede(); // allow async-queue process this request
+
+		assert.strictEqual(store.getActions()[1].type, REQUEST_REMOVE_ITEMS_FROM_COLLECTION);
+		assert.sameMembers(store.getActions()[1].itemKeys, ['ITEM1111', 'ITEM2222']);
+		assert.strictEqual(store.getActions()[1].collectionKey, 'AAAAAAAA');
+		assert.strictEqual(store.getActions()[1].libraryKey, 'u123');
+
+		await cede(); // allow async-queue process this request
+
+		assert.strictEqual(store.getActions()[2].type, RECEIVE_REMOVE_ITEMS_FROM_COLLECTION);
+		assert.sameMembers(store.getActions()[2].itemKeys, ['ITEM1111', 'ITEM2222']);
+		assert.sameMembers(store.getActions()[2].itemKeysChanged, ['ITEM1111', 'ITEM2222']);
+		assert.strictEqual(store.getActions()[2].collectionKey, 'AAAAAAAA');
+
+		assert.isEmpty(store.getActions()[2].items.find(i => i.key === 'ITEM1111').collections);
+		assert.sameMembers(
+			store.getActions()[2].items.find(i => i.key === 'ITEM2222').collections,
+			['BBBBBBBB']
 		);
 		assert.typeOf(store.getActions()[2].response.response, 'object');
 	});

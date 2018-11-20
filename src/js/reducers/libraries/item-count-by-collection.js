@@ -9,6 +9,7 @@ const {
 	RECEIVE_ITEMS_IN_COLLECTION,
 	RECEIVE_MOVE_ITEMS_TRASH,
 	RECEIVE_RECOVER_ITEMS_TRASH,
+	RECEIVE_REMOVE_ITEMS_FROM_COLLECTION,
 } = require('../../constants/actions');
 const { removeKeys } = require('../../common/immutable');
 
@@ -78,6 +79,12 @@ const itemCountByCollection = (state = {}, action) => {
 			return {
 				...state,
 				[action.collectionKey]: state[action.collectionKey] + action.itemKeysChanged.length
+			}
+		case RECEIVE_REMOVE_ITEMS_FROM_COLLECTION:
+			if(!(action.collectionKey in state)) { return state; }
+			return {
+				...state,
+				[action.collectionKey]: state[action.collectionKey] - action.itemKeysChanged.length
 			}
 		case RECEIVE_DELETE_COLLECTION:
 			return removeKeys(state, action.collection.key);

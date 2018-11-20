@@ -38,6 +38,7 @@ const {
 	RECEIVE_GROUPS,
 	RECEIVE_CREATE_ITEMS,
 	QUERY_CHANGE,
+	RECEIVE_REMOVE_ITEMS_FROM_COLLECTION
 } = require('../../src/js/constants/actions.js');
 const stateFixture = require('../fixtures/state.json');
 const settingsFixture = require('../fixtures/settings.json');
@@ -558,6 +559,59 @@ describe('reducers', () => {
 		assert.strictEqual(
 			state.libraries[libraryKey].itemCountByCollection[collectionKey],
 			originalCollectionCount + 3
+		);
+	});
+
+	it('remove item from collection', () => {
+		var state = getTestState();
+		const libraryKey = state.current.library;
+		const collectionKey = Object.entries(state.libraries[libraryKey].itemCountByCollection)
+			.find(([_, count]) => count > 3)[0]; //eslint-disable-line no-unused-vars
+		const itemKeys = state.libraries[libraryKey].itemsByCollection[collectionKey].slice(0, 3);
+		const originalCollectionCount = state.libraries[libraryKey].itemCountByCollection[collectionKey];
+		itemKeys.forEach(itemKey => {
+			assert.include(
+				state.libraries[libraryKey].items[itemKey].collections,
+				collectionKey
+			)
+		});
+		assert.includeMembers(
+			state.libraries[libraryKey].itemsByCollection[collectionKey],
+			itemKeys
+		);
+		state = reduce(state, {
+			type: RECEIVE_REMOVE_ITEMS_FROM_COLLECTION,
+			items: Object.assign(...Object.keys(state.libraries[libraryKey].items)
+				.filter(itemKey => itemKeys.includes(itemKey))
+				.map( itemKey => ({ [itemKey]: {
+					key: itemKey,
+					collections: [
+						state.libraries[libraryKey].items[itemKey].collections
+							.filter(cKey => cKey !== collectionKey),
+					]
+			}}))),
+			itemKeys,
+			itemKeysChanged: itemKeys,
+			collectionKey,
+			libraryKey,
+			response: mockResponse
+		});
+
+		itemKeys.forEach(itemKey => {
+			assert.notInclude(
+				state.libraries[libraryKey].items[itemKey].collections,
+				collectionKey
+			)
+		});
+
+		assert.notIncludeMembers(
+			state.libraries[libraryKey].itemsByCollection[collectionKey],
+			itemKeys
+		);
+
+		assert.strictEqual(
+			state.libraries[libraryKey].itemCountByCollection[collectionKey],
+			originalCollectionCount - 3
 		);
 	});
 

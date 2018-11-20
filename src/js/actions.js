@@ -114,6 +114,11 @@ const {
 	RECEIVE_ADD_ITEMS_TO_COLLECTION,
 	ERROR_ADD_ITEMS_TO_COLLECTION,
 
+	PRE_REMOVE_ITEMS_FROM_COLLECTION,
+	REQUEST_REMOVE_ITEMS_FROM_COLLECTION,
+	RECEIVE_REMOVE_ITEMS_FROM_COLLECTION,
+	ERROR_REMOVE_ITEMS_FROM_COLLECTION,
+
 	PRE_UPDATE_COLLECTION,
 	REQUEST_UPDATE_COLLECTION,
 	RECEIVE_UPDATE_COLLECTION,
@@ -1471,6 +1476,91 @@ const queueAddToCollection = (itemKeys, collectionKey, libraryKey, queueId) => {
 	};
 }
 
+const removeFromCollection = (itemKeys, collectionKey) => {
+	return async (dispatch, getState) => {
+		const libraryKey = getState().current.library;
+		const queueId = ++queueIdCunter;
+
+		dispatch({
+				type: PRE_REMOVE_ITEMS_FROM_COLLECTION,
+				itemKeys,
+				collectionKey,
+				libraryKey,
+				queueId
+			});
+
+		dispatch(
+			queueRemoveFromCollection(itemKeys, collectionKey, libraryKey, queueId)
+		);
+	};
+}
+
+const queueRemoveFromCollection = (itemKeys, collectionKey, libraryKey, queueId) => {
+	return {
+		queue: libraryKey,
+		callback: async (next, dispatch, getState) => {
+			const state = getState();
+			const multiPatch = itemKeys.map(key => {
+				const item = state.libraries[libraryKey].items[key];
+				return {
+					key,
+					collections: item.collections.filter(cKey => cKey !== collectionKey),
+				};
+			});
+
+			dispatch({
+				type: REQUEST_REMOVE_ITEMS_FROM_COLLECTION,
+				itemKeys,
+				collectionKey,
+				libraryKey,
+				queueId
+			});
+
+			try {
+				const { response, itemKeys, items } = await postItemsMultiPatch(state, multiPatch);
+				const itemKeysChanged = Object.values(response.raw.success);
+
+				dispatch({
+					type: RECEIVE_REMOVE_ITEMS_FROM_COLLECTION,
+					libraryKey,
+					itemKeys,
+					itemKeysChanged,
+					collectionKey,
+					items,
+					response,
+					queueId,
+				});
+
+				if(!response.isSuccess()) {
+					dispatch({
+						type: ERROR_REMOVE_ITEMS_FROM_COLLECTION,
+						itemKeys: itemKeys.filter(itemKey => !itemKeys.includes(itemKey)),
+						error: response.getErrors(),
+						libraryKey,
+						collectionKey,
+						queueId
+					});
+				}
+
+				// @TODO: more targeted cache invalidation
+				api().invalidate({ 'resource.library': libraryKey });
+				return;
+			} catch(error) {
+				dispatch({
+					type: ERROR_REMOVE_ITEMS_FROM_COLLECTION,
+					error,
+					itemKeys,
+					libraryKey,
+					queueId
+				});
+				throw error;
+			} finally {
+				next();
+			}
+		}
+	};
+}
+
 const createCollection = (properties, libraryKey) => {
 	return async (dispatch, getState) => {
 		const state = getState();
@@ -1954,6 +2044,7 @@ module.exports = {
 	preferenceChange,
 	preferencesLoad,
 	recoverFromTrash,
+	removeFromCollection,
 	sortItems,
 	toggleModal,
 	toggleTransitions,

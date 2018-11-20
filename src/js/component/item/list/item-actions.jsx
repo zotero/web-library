@@ -31,9 +31,10 @@ class ItemActions extends React.PureComponent {
 	render() {
 		const {
 			itemsSource,
-			selectedItemKeys,
 			onPermanentlyDelete,
-			onUndelete
+			onRemove,
+			onUndelete,
+			selectedItemKeys,
 		} = this.props;
 		return (
 			<Dropdown
@@ -48,6 +49,13 @@ class ItemActions extends React.PureComponent {
 					<Icon type={ '16/cog' } width="16" height="16" />
 				</DropdownToggle>
 				<DropdownMenu>
+					{ selectedItemKeys.length > 0 && itemsSource === 'collection' && (
+						<React.Fragment>
+							<DropdownItem onClick={ onRemove }>
+								Remove from Collection
+							</DropdownItem>
+						</React.Fragment>
+					)}
 					{ selectedItemKeys.length > 0 && itemsSource === 'trash' && (
 						<React.Fragment>
 							<DropdownItem onClick={ onUndelete }>
@@ -64,15 +72,17 @@ class ItemActions extends React.PureComponent {
 	}
 
 	static defaultProps = {
-		onUndelete: noop,
 		onPermanentlyDelete: noop,
+		onRemove: noop,
+		onUndelete: noop,
 		selectedItemKeys: [],
 	}
 
 	static propTypes = {
 		itemsSource: PropTypes.string,
-		onUndelete: PropTypes.func,
 		onPermanentlyDelete: PropTypes.func,
+		onRemove: PropTypes.func,
+		onUndelete: PropTypes.func,
 		selectedItemKeys: PropTypes.array,
 	}
 }
