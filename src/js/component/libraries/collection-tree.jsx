@@ -158,9 +158,11 @@ class CollectionTree extends React.PureComponent {
 		);
 
 		const isAllItemsSelected = !device.isSingleColumn &&
+			!['trash', 'publications', 'query'].includes(itemsSource) &&
 			parentCollection === null && selected === null;
 
 		const isItemsSelected = !device.isSingleColumn &&
+			!['trash', 'publications', 'query'].includes(itemsSource) &&
 			parentCollection !== null && selected === null;
 
 		// at least one collection contains subcollections
@@ -196,7 +198,7 @@ class CollectionTree extends React.PureComponent {
 							<a>All Items</a>
 						</Node>
 					) }
-					{ device.isTouchOrSmall && itemsSource === 'collection' && parentCollection && (
+					{ device.isTouchOrSmall && parentCollection && (
 						<Node
 							className={ cx({
 								'selected': isItemsSelected,
