@@ -66,7 +66,9 @@ const itemsByCollection = (state = {}, action) => {
 				[action.collectionKey]: [
 					...(new Set([
 						...(state[action.collectionKey] || []),
-						...action.itemKeys
+						...action.itemKeys.filter(iKey =>
+							action.items.find(item => item.key === iKey && !item.deleted)
+						)
 					]))
 				]
 			}

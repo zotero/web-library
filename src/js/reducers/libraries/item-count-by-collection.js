@@ -76,9 +76,14 @@ const itemCountByCollection = (state = {}, action) => {
 			}
 		case RECEIVE_ADD_ITEMS_TO_COLLECTION:
 			if(!(action.collectionKey in state)) { return state; }
+
 			return {
 				...state,
-				[action.collectionKey]: state[action.collectionKey] + action.itemKeysChanged.length
+				[action.collectionKey]: state[action.collectionKey] +
+					action.itemKeysChanged
+					.filter(iKey =>
+						action.items.find(item => item.key === iKey && !item.deleted)
+					).length
 			}
 		case RECEIVE_REMOVE_ITEMS_FROM_COLLECTION:
 			if(!(action.collectionKey in state)) { return state; }

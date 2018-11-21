@@ -679,6 +679,7 @@ describe('action creators', () => {
 
 		assert.strictEqual(store.getActions()[2].type, RECEIVE_ADD_ITEMS_TO_COLLECTION);
 		assert.sameMembers(store.getActions()[2].itemKeys, ['ITEM1111', 'ITEM2222']);
+		assert.lengthOf(store.getActions()[2].items, 2);
 		assert.strictEqual(store.getActions()[2].collectionKey, 'AAAAAAAA');
 
 		assert.sameMembers(

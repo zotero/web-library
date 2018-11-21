@@ -508,7 +508,7 @@ describe('reducers', () => {
 		assert.isEmpty(state.libraries[libraryKey].itemsTrash);
 	});
 
-	it('add item to collection', () => {
+	it('add items to collection', () => {
 		var state = getTestState();
 		const libraryKey = state.current.library;
 		const collectionKey = Object.keys(
@@ -528,15 +528,13 @@ describe('reducers', () => {
 		);
 		state = reduce(state, {
 			type: RECEIVE_ADD_ITEMS_TO_COLLECTION,
-			items: Object.assign(...Object.keys(state.libraries[libraryKey].items)
-				.filter(itemKey => itemKeys.includes(itemKey))
-				.map( itemKey => ({ [itemKey]: {
-					key: itemKey,
-					collections: [
-						...state.libraries[libraryKey].items[itemKey].collections,
-						collectionKey
-					]
-			}}))),
+			items: itemKeys.map(iKey => ({
+				...state.libraries[libraryKey].items[iKey],
+				collections: [
+					...state.libraries[libraryKey].items[iKey].collections,
+					collectionKey
+				]
+			})),
 			itemKeys,
 			itemKeysChanged: itemKeys,
 			collectionKey,
@@ -560,6 +558,132 @@ describe('reducers', () => {
 			state.libraries[libraryKey].itemCountByCollection[collectionKey],
 			originalCollectionCount + 3
 		);
+	});
+
+	it('add a deleted item to a collection', () => {
+		var state = getTestState();
+		const libraryKey = state.current.library;
+		const [collectionKey, targetCollectionKey] = Object.keys(
+			state.libraries[libraryKey].itemsByCollection
+		).slice(0, 2);
+
+		//prepare state
+		const itemKeysTrashed = state.libraries[libraryKey].itemsByCollection[collectionKey].splice(0, 2);
+		state.libraries[libraryKey].itemCountByCollection[collectionKey] = state.libraries[libraryKey].itemCountByCollection[collectionKey] - 2;
+		state.itemCountTrashByLibrary[libraryKey] = itemKeysTrashed.length;
+		state.libraries[libraryKey].itemsTrash = [...itemKeysTrashed];
+		state.libraries[libraryKey].items = Object.assign(
+			...Object.values(state.libraries[libraryKey].items)
+				.map(item => ({ [item.key]: {
+					...item,
+					deleted: itemKeysTrashed.includes(item.key) ? 1 : 0
+				}}))
+		);
+		const originalCollectionLength = state.libraries[libraryKey].itemCountByCollection[collectionKey];
+		const originalTargetCollectionLength = state.libraries[libraryKey].itemCountByCollection[targetCollectionKey];
+
+		assert.notIncludeMembers(
+			state.libraries[libraryKey].itemsByCollection[collectionKey],
+			itemKeysTrashed
+		);
+
+		assert.notIncludeMembers(
+			state.libraries[libraryKey].itemsByCollection[targetCollectionKey],
+			itemKeysTrashed
+		);
+
+		state = reduce(state, {
+			type: RECEIVE_ADD_ITEMS_TO_COLLECTION,
+			itemKeys: itemKeysTrashed,
+			items: itemKeysTrashed.map(iKey => ({
+				...state.libraries[libraryKey].items[iKey],
+				collections: [
+					...state.libraries[libraryKey].items[iKey].collections,
+					targetCollectionKey
+				]
+			})),
+			itemKeysTrashed,
+			itemKeysChanged: itemKeysTrashed,
+			targetCollectionKey,
+			libraryKey,
+			response: mockResponse
+		});
+
+		// added items to targetCollection, but items are still trashed
+		// hence item itself has changed, but collections did not
+		itemKeysTrashed.forEach(itemKey => {
+			assert.include(
+				state.libraries[libraryKey].items[itemKey].collections,
+				collectionKey
+			)
+		});
+
+		assert.notIncludeMembers(
+			state.libraries[libraryKey].itemsByCollection[collectionKey],
+			itemKeysTrashed
+		);
+
+		assert.notIncludeMembers(
+			state.libraries[libraryKey].itemsByCollection[targetCollectionKey],
+			itemKeysTrashed
+		);
+
+		assert.strictEqual(
+			state.libraries[libraryKey].itemCountByCollection[collectionKey],
+			originalCollectionLength
+		);
+
+		assert.strictEqual(
+			state.libraries[libraryKey].itemCountByCollection[targetCollectionKey],
+			originalTargetCollectionLength
+		);
+
+		state = reduce(state, {
+			type: RECEIVE_RECOVER_ITEMS_TRASH,
+			items: itemKeysTrashed.map(iKey => ({
+				...state.libraries[libraryKey].items[iKey],
+				deleted: 0,
+			})),
+			itemKeys: itemKeysTrashed,
+			itemKeysByCollection: {
+				[collectionKey]: itemKeysTrashed,
+				[targetCollectionKey]: itemKeysTrashed,
+			},
+			itemKeysTop: [],
+			libraryKey,
+			response: mockResponse
+		});
+
+		// untrashed items should appear in the original collection
+		// as well as targetCollection
+
+		itemKeysTrashed.forEach(itemKey => {
+			assert.include(
+				state.libraries[libraryKey].items[itemKey].collections,
+				collectionKey
+			)
+		});
+
+		assert.includeMembers(
+			state.libraries[libraryKey].itemsByCollection[collectionKey],
+			itemKeysTrashed
+		);
+
+		assert.includeMembers(
+			state.libraries[libraryKey].itemsByCollection[targetCollectionKey],
+			itemKeysTrashed
+		);
+
+		assert.strictEqual(
+			state.libraries[libraryKey].itemCountByCollection[collectionKey],
+			originalCollectionLength + 2
+		);
+
+		assert.strictEqual(
+			state.libraries[libraryKey].itemCountByCollection[targetCollectionKey],
+			originalTargetCollectionLength + 2
+		);
+
 	});
 
 	it('remove item from collection', () => {
