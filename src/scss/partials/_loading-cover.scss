@@ -16,10 +16,5 @@
 		left: 0;
 		z-index: $z-index-loading-cover;
 		background-color: $shade-0;
-
-		.icon-spin {
-			height: $icon-spin-size-lg;
-			width: $icon-spin-size-lg;
-		}
 	}
 }

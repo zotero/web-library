@@ -70,7 +70,7 @@ class Library extends React.Component {
 				{
 					!useTransitions && (
 						<div className="loading-cover">
-							<Spinner />
+							<Spinner className="large"/>
 						</div>
 					)
 				}

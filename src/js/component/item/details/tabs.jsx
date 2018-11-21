@@ -138,7 +138,7 @@ class ItemDetailsTabs extends React.PureComponent {
 				</header>
 				{
 					// on small devices, where tabs are not used, we display single spinner
-					isLoading && !device.shouldUseTabs ? <Spinner /> : (
+					isLoading && !device.shouldUseTabs ? <Spinner className="large" /> : (
 						<React.Fragment>
 							{
 								!['attachment', 'note'].includes(this.props.item.itemType) && (

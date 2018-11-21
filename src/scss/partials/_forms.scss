@@ -25,9 +25,7 @@ label {
 		position: absolute;
 
 		@include touch-or-bp-down(sm) {
-			width: $space-lg;
-			height: $space-lg;
-			right: 0;
+			right: $input-btn-padding-x-touch;
 			top: calc(50% - #{$space-lg / 2});
 		}
 	}
@@ -59,8 +57,6 @@ label {
 				.icon-spin {
 					right: $input-btn-padding-x-touch;
 					bottom: 9px;
-					width: $space-lg;
-					height: $space-lg;
 				}
 			}
 
@@ -68,8 +64,8 @@ label {
 				&::after,
 				.icon-spin {
 					bottom: 1px;
-					width: $space-md;
-					height: $space-md;
+					width: $icon-spin-size-sm;
+					height: $icon-spin-size-sm;
 				}
 			}
 		}
@@ -95,7 +91,7 @@ label {
 
 	.busy:not(.textarea) & {
 		@include touch-or-bp-down(sm) {
-			padding-right: $space-lg + 1px;
+			padding-right: $input-btn-padding-x-touch + $space-lg + 1px;
 		}
 	}
 

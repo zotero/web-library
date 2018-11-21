@@ -19,6 +19,18 @@
 	}
 
 	display: block; // todo
+	width: $icon-spin-size-md;
+	height: $icon-spin-size-md;
 	color: $spinner-color;
 	animation: spin 1s linear infinite;
+
+	&.large {
+		width: $icon-spin-size-lg;
+		height: $icon-spin-size-lg;
+	}
+
+	&.small {
+		width: $icon-spin-size-sm;
+		height: $icon-spin-size-sm;
+	}
 }

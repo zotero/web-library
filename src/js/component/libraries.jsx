@@ -147,7 +147,7 @@ class Libraries extends React.Component {
 									<Icon type="28/library" className="touch" width="28" height="28" />
 									<Icon type="16/library" className="mouse" width="16" height="16" />
 									<a>{ group.name }</a>
-									{ isFetching && <Spinner className="mouse" /> }
+									{ isFetching && <Spinner className="small mouse" /> }
 									{
 										!isFetching && (
 											<Button className="mouse btn-icon-plus" onClick={ this.handleAdd.bind(this, groupKey, null) } >
