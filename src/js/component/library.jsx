@@ -9,7 +9,7 @@ const Spinner = require('./ui/spinner');
 const LibrariesContainer = require('../container/libraries');
 const Button = require('./ui/button');
 const ItemDetailsContainer = require('../container/item-details');
-const ItemListContainer = require('../container/item-list');
+const ItemsContainer = require('../container/items');
 const Navbar = require('./ui/navbar');
 const TagSelectorContainer = require('../container/tag-selector');
 const { Toolbar, ToolGroup } = require('./ui/toolbars');
@@ -96,7 +96,7 @@ class Library extends React.Component {
 								className="hidden-xs-down hidden-md-up"
 								variant={ TouchHeaderContainer.variants.SOURCE_AND_ITEM }
 							/>
-							<ItemListContainer />
+							<ItemsContainer />
 							<ItemDetailsContainer active={ view === 'item-details' } />
 						</section>
 					</section>

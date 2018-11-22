@@ -5,7 +5,7 @@ require('babel-regenerator-runtime');
 const React = require('react');
 const ReactDOM = require('react-dom');
 
-const ItemListContainer = require('./container/item-list');
+const ItemsContainer = require('./container/items');
 const LibraryContainer = require('./container/library');
 const LibrariesContainer = require('./container/libraries');
 
@@ -17,7 +17,7 @@ const EditableContent = require('./component/editable/content');
 const Icon = require('./component/ui/icon');
 const ItemBox = require('./component/item/box');
 const ItemDetails = require('./component/item/details');
-const ItemList = require('./component/item/list');
+const Items = require('./component/item/items');
 const Library = require('./component/library');
 const Navbar = require('./component/ui/navbar');
 const Notes = require('./component/notes');
@@ -45,8 +45,8 @@ module.exports = {
 	Icon,
 	ItemBox,
 	ItemDetails,
-	ItemList,
-	ItemListContainer,
+	Items,
+	ItemsContainer,
 	Libraries,
 	LibrariesContainer,
 	Library,

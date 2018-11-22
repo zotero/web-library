@@ -2,7 +2,8 @@
 // Item list
 // --------------------------------------------------
 
-.item-list-wrap {
+.items-table-wrap,
+.items-list-wrap {
 	flex: 1 1 auto;
 	// display: flex;
 	flex-direction: column;
@@ -20,8 +21,8 @@
 	}
 }
 
-.item-list-head th,
-.item-list .metadata {
+.items-table-head th,
+.items-table .metadata {
 	@include mouse-and-bp-up(md) {
 		// &:first-child {
 		// 	padding-left: $space-sm;
@@ -57,7 +58,7 @@
 	}
 }
 
-.item-list-head {
+.items-table-head {
 	// box-sizing: content-box; // border-box results in buggy flex layout
 	// table-layout: fixed;
 	display: flex;
@@ -86,7 +87,7 @@
 	}
 }
 
-.item-list-body {
+.items-table-body {
 	overflow-y: scroll;
 	-webkit-overflow-scrolling: touch; // Momentum scrolling
 	flex: 1 1 auto;
@@ -113,7 +114,7 @@
 	// }
 }
 
-.item-list {
+.items-table {
 	@include mouse-and-bp-up(md) {
 		// display: table;
 		// table-layout: fixed;

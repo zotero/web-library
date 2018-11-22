@@ -4,11 +4,9 @@
 const React = require('react');
 const PropTypes = require('prop-types');
 const { withRouter } = require('react-router-dom');
-const { baseMappings } = require('../constants/item');
 const { connect } = require('react-redux');
-const { noteAsTitle, itemTypeLocalized } = require('../common/format');
 const { saveAs } = require('file-saver');
-const ItemList = require('../component/item/list');
+const Items = require('../component/item/items');
 const {
 	addToCollection,
 	createItem,
@@ -30,45 +28,11 @@ const {
 const { get, sortByKey, resizeVisibleColumns } = require('../utils');
 const { getSerializedQuery } = require('../common/state');
 const { makePath } = require('../common/navigation');
+const processItems = require('../common/process-items');
 const exportFormats = require('../constants/export-formats');
+const withDevice = require('../enhancers/with-device');
 
-const processItems = (items, state) => {
-	return items.map(item => {
-		const { meta: { itemTypes }} = state;
-		const { itemType, note, publisher, publication, dateAdded, dateModified, extra } = item;
-		const title = itemType === 'note' ?
-			noteAsTitle(note) :
-			item[itemType in baseMappings && baseMappings[itemType]['title'] || 'title'] || '';
-		const creator = item[Symbol.for('meta')] && item[Symbol.for('meta')].creatorSummary ?
-			item[Symbol.for('meta')].creatorSummary :
-			'';
-		const date = item[Symbol.for('meta')] && item[Symbol.for('meta')].parsedDate ?
-			item[Symbol.for('meta')].parsedDate :
-			'';
-		const coloredTags = item.tags
-			.map(tag => get(state, ['libraries', state.current.library, 'tags', `${tag.tag}-0`]))
-			.filter(tag => tag && tag.color);
-		// same logic as https://github.com/zotero/zotero/blob/6abfd3b5b03969564424dc03313d63ae1de86100/chrome/content/zotero/xpcom/itemTreeView.js#L1062
-		const year = date.substr(0, 4);
-
-		return {
-			coloredTags,
-			creator,
-			date,
-			dateAdded,
-			dateModified,
-			extra,
-			itemType: itemTypeLocalized(item, itemTypes),
-			key: item.key,
-			publication,
-			publisher,
-			title,
-			year,
-		}
-	});
-};
-
-class ItemListContainer extends React.PureComponent {
+class ItemsContainer extends React.PureComponent {
 	handleItemsSelect(items = []) {
 		const { history, collectionKey: collection, libraryKey: library,
 			itemsSource, tags, search } = this.props;
@@ -226,7 +190,7 @@ class ItemListContainer extends React.PureComponent {
 			key = `${libraryKey}-${itemsSource}`;
 		}
 
-		return <ItemList
+		return <Items
 			key = { key }
 			{ ...this.props }
 			onColumnReorder={ this.handleColumnReorder.bind(this) }
@@ -326,14 +290,14 @@ const mapDispatchToProps = dispatch => {
 	};
 };
 
-ItemListContainer.propTypes = {
+ItemsContainer.propTypes = {
   collection: PropTypes.object,
   items: PropTypes.array.isRequired,
   selectedItemKey: PropTypes.string,
   dispatch: PropTypes.func.isRequired
 };
 
-module.exports = withRouter(connect(
+module.exports = withRouter(withDevice(connect(
 	mapStateToProps,
 	mapDispatchToProps
-)(ItemListContainer));
+)(ItemsContainer)));

@@ -18,7 +18,7 @@ const { columnMinWidthFraction } = require('../../../constants/defaults');
 const LOADING = 1;
 const LOADED = 2;
 
-class Items extends React.PureComponent {
+class ItemsTable extends React.PureComponent {
 	constructor(props) {
 		super(props);
 		this.loadedRowsMap = {};
@@ -343,7 +343,7 @@ class Items extends React.PureComponent {
 	}
 
 	renderHeaderRow({ className, ...opts }) {
-		className += ' item-list-head';
+		className += ' items-table-head';
 		return defaultHeaderRowRenderer({ className, ...opts });
 	}
 
@@ -422,7 +422,7 @@ class Items extends React.PureComponent {
 		return (
 			<div
 				ref={ ref => this.containerDom = ref }
-				className={cx('item-list-wrap', {
+				className={cx('items-table-wrap', {
 					resizing: this.state.isResizing,
 					reordering: this.state.isReordering,
 				}) }
@@ -440,7 +440,7 @@ class Items extends React.PureComponent {
 								<Table
 									{ ...this.props }
 									ref={ registerChild }
-									className="item-list"
+									className="items-table"
 									width={ width }
 									height={ height }
 									onRowsRendered={ onRowsRendered }
@@ -471,15 +471,15 @@ class Items extends React.PureComponent {
 	}
 }
 
-Items.propTypes = {
+ItemsTable.propTypes = {
 	items: PropTypes.array,
 	selectedItemKeys: PropTypes.array,
 	onItemsSelect: PropTypes.func
 };
 
-Items.defaultProps = {
+ItemsTable.defaultProps = {
 	selectedItemKeys: [],
 	preferences: {}
 };
 
-module.exports = Items;
+module.exports = ItemsTable;

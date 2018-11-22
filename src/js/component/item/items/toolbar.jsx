@@ -14,7 +14,7 @@ const { itemsSourceLabel } = require('../../../common/format');
 const TouchHeaderContainer = require('../../../container/touch-header');
 const ExportActions = require('./export-actions');
 
-class ItemListToolbar extends React.PureComponent {
+class ItemsTableToolbar extends React.PureComponent {
 	state = { columns: [] }
 
 	static getDerivedStateFromProps({ preferences: { columns } }) {
@@ -81,4 +81,4 @@ class ItemListToolbar extends React.PureComponent {
 	}
 }
 
-module.exports = ItemListToolbar;
+module.exports = ItemsTableToolbar;
