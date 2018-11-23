@@ -6,6 +6,7 @@ const PropTypes = require('prop-types');
 const ItemsTableToolbar = require('./items/toolbar');
 const ItemsTable = require('./items/table');
 const ItemsList = require('./items/list');
+const TouchHeaderContainer = require('../../container/touch-header');
 
 class Items extends React.PureComponent {
 	state = {};
@@ -31,6 +32,10 @@ class Items extends React.PureComponent {
 		if(device.isTouchOrSmall) {
 			return (
 				<div className="items-container">
+					<TouchHeaderContainer
+						className="hidden-mouse hidden-sm-down"
+						variant={ TouchHeaderContainer.variants.SOURCE }
+					/>
 					<ItemsList { ...this.props } { ...this.state } />
 				</div>
 			);

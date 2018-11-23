@@ -2,6 +2,7 @@
 
 const React = require('react');
 const PropTypes = require('prop-types');
+const cx = require('classnames');
 
 const { default: AutoSizer } = require('react-virtualized/dist/commonjs/AutoSizer');
 const { default: InfiniteLoader } = require('react-virtualized/dist/commonjs/InfiniteLoader');
@@ -75,9 +76,14 @@ class ItemsList extends React.PureComponent {
 
 	renderRow({ index, isScrolling, key, style }) {
 		const item = this.getRow({ index });
+		const className = cx({
+			item: true,
+			odd: index % 2 === 1,
+			active: this.props.selectedItemKeys.includes(item.key)
+		});
 		return (
 			<div
-				className="items-list-row" key={ key } style={ style }
+				className={ className } key={ key } style={ style }
 				onClick={ event => this.handleRowClick({ event, index }) }
 				>
 				{ item.title }
@@ -107,11 +113,12 @@ class ItemsList extends React.PureComponent {
 							{({onRowsRendered, registerChild}) => (
 								<List
 									{ ...this.props }
+									className="items-list"
 									height={ height }
 									onRowsRendered={ onRowsRendered }
 									ref={ registerChild }
 									rowCount={ totalItemsCount }
-									rowHeight={ 40 }
+									rowHeight={ 42 }
 									width={ width }
 									rowRenderer={ this.renderRow.bind(this) }
 								/>

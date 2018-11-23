@@ -242,3 +242,21 @@
 		width: $space-md;
 	}
 }
+
+
+.items-list {
+	.item {
+		// items in the list are fixed at 42px height
+		padding: $space-xs;
+		@include text-truncate;
+
+		&.odd { // can't use nth-child(odd) because of virtualisation
+			background: $item-odd-bg;
+		}
+
+		&.active {
+			color: $item-active-color;
+			background: $item-active-bg;
+		}
+	}
+}

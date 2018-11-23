@@ -37,10 +37,6 @@ class ItemsTableToolbar extends React.PureComponent {
 
 		return (
 			<header className="hidden-sm-down">
-				<TouchHeaderContainer
-					className="hidden-mouse"
-					variant={ TouchHeaderContainer.variants.SOURCE }
-				/>
 				<Toolbar className="hidden-touch hidden-sm-down">
 					<div className="toolbar-left">
 						<ToolGroup>

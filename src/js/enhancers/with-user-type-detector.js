@@ -37,7 +37,7 @@ const withUserTypeDetection = Component => {
 
 		handleMouse(ev) {
 			// prevent simulated mouse events triggering mouse user
-			if(!this.lastTouchStartEvent || ev.timeStamp - this.lastTouchStartEvent > 300) {
+			if(!this.lastTouchStartEvent || ev.timeStamp - this.lastTouchStartEvent > 500) {
 				this.setState({
 					'isKeyboardUser': false,
 					'isMouseUser': true,
