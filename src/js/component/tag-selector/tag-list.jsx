@@ -6,8 +6,9 @@ const PAGE_SIZE = 30;
 const PIXEL_BUFFER = 100;
 
 class TagList extends React.PureComponent {
-	componentDidMount() {
-		this.handleMaybeLoadMore(0);
+	constructor(props) {
+		super(props);
+		props.onLoadMore(0, PAGE_SIZE);
 	}
 
 	handleScroll(el) {

@@ -45,25 +45,26 @@ class LibraryContainer extends React.PureComponent {
 				triggerResizeViewport(window.innerWidth, window.innerHeight)
 			);
 		};
-	}
 
-	async componentDidMount() {
-		this.props.dispatch(preferencesLoad());
+		props.dispatch(preferencesLoad());
 
-		this.props.dispatch(
+		props.dispatch(
 			initialize()
 		);
-		this.props.dispatch(
+		props.dispatch(
 			changeRoute(this.props.match)
 		);
-		this.props.dispatch(
+		props.dispatch(
 			fetchGroups(this.props.userLibraryKey)
 		);
-		this.props.dispatch(
+		props.dispatch(
 			fetchLibrarySettings()
 		);
 
 		this.windowResizeHandler();
+	}
+
+	async componentDidMount() {
 		window.addEventListener('resize', this.windowResizeHandler);
 	}
 

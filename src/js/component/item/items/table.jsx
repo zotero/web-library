@@ -438,7 +438,6 @@ class ItemsTable extends React.PureComponent {
 						>
 							{({onRowsRendered, registerChild}) => (
 								<Table
-									{ ...this.props }
 									ref={ registerChild }
 									className="items-table"
 									width={ width }

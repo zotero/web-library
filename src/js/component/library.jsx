@@ -87,12 +87,13 @@ class Library extends React.Component {
 						<header className="sidebar">
 							<h2 className="offscreen">Web library</h2>
 							<LibrariesContainer />
-							<TagSelectorContainer key={ key } />
+							{ key !== null &&
+								<TagSelectorContainer key={ key } />
+							}
 						</header>
 						<section className={ `items ${ view === 'item-list' ? 'active' : '' }` }>
 							{/* Tablet TouchHeader */}
 							<TouchHeaderContainer
-								key={ key }
 								className="hidden-xs-down hidden-md-up"
 								variant={ TouchHeaderContainer.variants.SOURCE_AND_ITEM }
 							/>
