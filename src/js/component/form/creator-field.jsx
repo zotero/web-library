@@ -15,8 +15,10 @@ const Modal = require('../ui/modal');
 class CreatorField extends React.PureComponent {
 	constructor(props) {
 		super(props);
+		const { device: { shouldUseModalCreatorField, shouldUseEditMode }, isEditing } = props;
 		this.state = {
-			active: null
+			active: null,
+			isModalVisible: shouldUseModalCreatorField && shouldUseEditMode && isEditing
 		};
 		this.fieldComponents = {};
 	}
@@ -27,13 +29,6 @@ class CreatorField extends React.PureComponent {
 			this.setState({ active: key });
 		} else {
 			key in this.fieldComponents && this.fieldComponents[key].focus();
-		}
-	}
-
-	componentDidMount() {
-		const { isVirtual, isEditing } = this.props;
-		if(isEditing && isVirtual) {
-			this.handleModalOpen();
 		}
 	}
 

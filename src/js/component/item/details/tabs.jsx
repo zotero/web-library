@@ -16,12 +16,11 @@ const StandaloneAttachmentTabPane = require('./tab-panes/standalone-attachment')
 const Spinner = require('../../ui/spinner');
 
 class ItemDetailsTabs extends React.PureComponent {
-	state = {
-		tab: null
-	};
-
-	componentDidMount() {
-		this.setDefaultActiveTab(this.props);
+	constructor(props) {
+		super(props);
+		this.state = {
+			tab: this.pickDefaultActiveTab(props.item.itemType)
+		};
 	}
 
 	componentDidUpdate() {
@@ -42,17 +41,22 @@ class ItemDetailsTabs extends React.PureComponent {
 	}
 
 	setDefaultActiveTab() {
-		switch(this.props.item.itemType) {
+		this.setState({ tab: this.defaultActiveTab });
+	}
+
+	pickDefaultActiveTab(itemType) {
+		switch(itemType) {
 			case 'note':
-				this.setState({ tab: 'standalone-note' });
-			break;
+				return 'standalone-note';
 			case 'attachment':
-				this.setState({ tab: 'standalone-attachment' });
-			break;
+				return 'standalone-attachment';
 			default:
-				this.setState({ tab: 'info' });
-			break;
+				return 'info';
 		}
+	}
+
+	get defaultActiveTab() {
+		return this.pickDefaultActiveTab(this.props.item.itemType);
 	}
 
 	render() {
