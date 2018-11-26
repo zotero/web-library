@@ -171,7 +171,11 @@ class ItemsTable extends React.PureComponent {
 			}
 			this.props.onItemsSelect(keys);
 		} else if(ev.getModifierState('Control') || ev.getModifierState('Meta')) {
-			this.props.onItemsSelect([...this.props.selectedItemKeys, item.key]);
+			if(this.props.selectedItemKeys.includes(item.key)) {
+				this.props.onItemsSelect(this.props.selectedItemKeys.filter(ik => ik !== item.key))
+			} else {
+				this.props.onItemsSelect([...(new Set([...this.props.selectedItemKeys, item.key]))]);
+			}
 		} else {
 			this.props.onItemsSelect([item.key]);
 		}
