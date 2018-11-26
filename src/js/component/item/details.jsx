@@ -12,8 +12,7 @@ const TouchHeaderContainer = require('../../container/touch-header');
 
 class ItemDetails extends React.Component {
 	render() {
-		const { item, selectedItemKeys, active } = this.props;
-
+		const { item, selectedItemKeys, active, } = this.props;
 		return (
 			<section className={ cx('item-details', { 'active': active }) }>
 				<TouchHeaderContainer
@@ -21,7 +20,7 @@ class ItemDetails extends React.Component {
 					variant={ TouchHeaderContainer.variants.ITEM }
 				/>
 				{
-					'key' in item ? (
+					item && 'key' in item ? (
 						<ItemDetailsTabs { ...this.props } />
 					) : (
 						selectedItemKeys.length ? (

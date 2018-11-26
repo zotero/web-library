@@ -16,11 +16,11 @@ const withDevice = require('../enhancers/with-device');
 class ItemDetailsContainer extends React.Component {
 	async componentDidUpdate({ item: prevItem }) {
 		const { item, shouldFetchMeta, relatedItemsKeys, relatedItems, dispatch } = this.props;
-		if(item.key && shouldFetchMeta === true) {
+		if(item && item.key && shouldFetchMeta === true) {
 			this.props.dispatch(fetchItemTypeCreatorTypes(item.itemType));
 			this.props.dispatch(fetchItemTypeFields(item.itemType));
 		}
-		if(item.key && item.key !== prevItem.key) {
+		if(item && prevItem && item.key !== prevItem.key) {
 			const { numChildren = 0 } = item[Symbol.for('meta')];
 			if(numChildren > 0) {
 				this.props.dispatch(fetchChildItems(item.key));
@@ -229,23 +229,26 @@ const mapStateToProps = state => {
 	const itemsSource = state.current.itemsSource;
 	const collectionKey = state.current.collection;
 	const itemKey = state.current.item;
-	const item = get(state, ['libraries', libraryKey, 'items', itemKey], {});
+	const item = get(state, ['libraries', libraryKey, 'items', itemKey], null);
+	const itemType = item ? item.itemType : null;
 	const childItems = get(state, ['libraries', libraryKey, 'itemsByParent', itemKey], [])
 			.map(key => get(state, ['libraries', libraryKey, 'items', key], {}));
 	const isProcessingTags = get(state,
 		['libraries', libraryKey, 'updating', 'items', itemKey], []
 	).some(({ patch }) => 'tagd' in patch);
-	const isMetaAvailable = item.itemType in state.meta.itemTypeCreatorTypes &&
-		item.itemType in state.meta.itemTypeFields;
+	const isMetaAvailable = itemType in state.meta.itemTypeCreatorTypes &&
+		itemType in state.meta.itemTypeFields;
 	const shouldFetchMeta = !isMetaAvailable
-		&& !state.fetching.itemTypeCreatorTypes.includes(item.itemType)
-		&& !state.fetching.itemTypeFields.includes(item.itemType);
+		&& !state.fetching.itemTypeCreatorTypes.includes(itemType)
+		&& !state.fetching.itemTypeFields.includes(itemType);
 	const isLoadingMeta = !isMetaAvailable;
 	const isLoadingChildItems = get(
 		state, ['libraries', libraryKey, 'fetching', 'childItems'], [])
 	.includes(itemKey);
-	const relatedItemsKeys = mapRelationsToItemKeys(item.relations || {}, state.config.userId)
-		.filter(String);
+
+
+	const relatedItemsKeys = item ? mapRelationsToItemKeys(item.relations || {}, state.config.userId)
+		.filter(String) : [];
 	const relatedItems = relatedItemsKeys
 			.map(key => get(state, ['libraries', libraryKey, 'items', key]))
 			.filter(Boolean);
@@ -260,7 +263,7 @@ const mapStateToProps = state => {
 				label: it.localized
 			}))
 			.filter(it => it.value !== 'note');
-		extraProps['creatorTypes'] = state.meta.itemTypeCreatorTypes[item.itemType]
+		extraProps['creatorTypes'] = state.meta.itemTypeCreatorTypes[itemType]
 			.map(ct => ({
 				value: ct.creatorType,
 				label: ct.localized
