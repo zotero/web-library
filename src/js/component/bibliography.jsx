@@ -36,9 +36,9 @@ class Bibliography extends React.Component {
 						<Icon type={ '24/remove' } width="24" height="24" />
 					</Button>
 				</div>
-				<div className="modal-body">
+				<div className={ cx('modal-body', { loading: isUpdating }) }>
 					{ isUpdating ? (
-						<Spinner />
+						<Spinner className="large" />
 					) : (
 						<React.Fragment>
 							<div className="style-selector-container">
@@ -63,7 +63,7 @@ class Bibliography extends React.Component {
 				className={ cx('modal-lg', { loading: !isReady })}
 				onRequestClose={ this.handleCancel.bind(this) }
 			>
-				{ this.renderModalContent() }
+				{ isReady ? this.renderModalContent() : <Spinner className="large" /> }
 			</Modal>
 		);
 	}

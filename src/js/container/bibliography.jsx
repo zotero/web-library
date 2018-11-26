@@ -11,6 +11,7 @@ const Bibliography = require('../component/bibliography')
 class BibliographyContainer extends React.PureComponent {
 	state = {
 		citationStyle: coreCitationStyles.find(cs => cs.isDefault).name,
+		isReady: false,
 		isUpdating: false
 	}
 
@@ -18,13 +19,15 @@ class BibliographyContainer extends React.PureComponent {
 		const { dispatch, isOpen, itemKeys } = this.props;
 		const { citationStyle } = this.state;
 
-		if(isOpen && !wasOpen || citationStyle != prevCitationStyle ) {
-			this.setState({ isUpdating: true })
+		console.log(isOpen, wasOpen, citationStyle, prevCitationStyle);
+
+		if((isOpen && !wasOpen) || citationStyle !== prevCitationStyle) {
+			this.setState({ isUpdating: true });
 			try {
 				const citations = await dispatch(citeItems(itemKeys, citationStyle));
 				this.setState({ citations });
 			} finally {
-				this.setState({ isUpdating: false });
+				this.setState({ isUpdating: false, isReady: true });
 			}
 		}
 	}
@@ -55,7 +58,7 @@ class BibliographyContainer extends React.PureComponent {
 }
 
 const mapStateToProps = state => {
-	const isOpen = state.modal == 'BIBLIOGRAPHY';
+	const isOpen = state.modal === 'BIBLIOGRAPHY';
 	const itemKeys = state.current.itemKeys;
 
 	return { isOpen, itemKeys };
