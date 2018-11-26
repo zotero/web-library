@@ -20,7 +20,7 @@ class ItemDetailsContainer extends React.Component {
 			this.props.dispatch(fetchItemTypeCreatorTypes(item.itemType));
 			this.props.dispatch(fetchItemTypeFields(item.itemType));
 		}
-		if(item && prevItem && item.key !== prevItem.key) {
+		if((item && prevItem === null) || (item && item.key !== prevItem.key)) {
 			const { numChildren = 0 } = item[Symbol.for('meta')];
 			if(numChildren > 0) {
 				this.props.dispatch(fetchChildItems(item.key));

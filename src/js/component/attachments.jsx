@@ -63,11 +63,11 @@ class Attachments extends React.Component {
 										{
 											attachment[Symbol.for('attachmentUrl')] ? (
 												<a href={ attachment[Symbol.for('attachmentUrl')] }>
-													{ attachment.filename }
+													{ attachment.title || attachment.filename }
 												</a>
 											) : (
 												<span>
-													{ attachment.filename }
+													{ attachment.title || attachment.filename }
 												</span>
 											)
 										}
