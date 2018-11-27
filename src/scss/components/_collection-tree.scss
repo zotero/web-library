@@ -182,7 +182,7 @@
 		.dropdown-wrapper {
 			@include touch-or-bp-down(sm) {
 				margin-left: $space-xs;
-				margin-right: -$space-xs;
+				margin-right: -$space-min;
 			}
 
 			@include mouse-and-bp-up(md) {
