@@ -48,7 +48,7 @@
 		top: 0;
 		width: 100%;
 		transition: transform $nav-transition, color $nav-transition,
-			opacity 0.6s ease;
+			opacity $nav-transition-duration ease;
 	}
 
 	.center-axis {
@@ -89,17 +89,37 @@
 
 	.next {
 		transform: translate3d(100%, 0, 0);
+		opacity: 0;
+		transition: transform $nav-transition, opacity $nav-transition;
 	}
 
-	// Options button
-	.btn-options {
+	// Options menu & edit button
+	.dropdown,
+	.btn-edit {
+		position: absolute;
+		top: 0;
+		height: 100%;
+		z-index: 1;
+	}
+
+	.btn {
+		color: $btn-options-color;
+		background: $btn-options-bg;
+	}
+
+	// Options menu
+	.dropdown {
+		right: $default-padding-x-touch - $space-min;
+		display: flex;
+		align-items: center;
+	}
+
+	// Edit button
+	.btn-edit {
 		position: absolute;
 		right: 0;
 		top: 0;
 		height: 100%;
-		color: $btn-options-color;
-		background: $btn-options-bg;
-		z-index: 1;
 
 		&:active {
 			color: $btn-options-focus-color;

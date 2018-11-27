@@ -5,6 +5,7 @@ const cx = require('classnames');
 const PropTypes = require('prop-types');
 const TouchNavigation = require('./touch-navigation');
 const EditToggleButton = require('./edit-toggle-button');
+const Icon = require('./ui/icon');
 
 class TouchHeader extends React.PureComponent {
 
@@ -19,8 +20,13 @@ class TouchHeader extends React.PureComponent {
 						onNavigation={ onNavigation }
 					/>
 				}
+				<div className="dropdown-wrapper dropdown">
+					<button className="btn btn-icon dropdown-toggle">
+							<Icon type="24/options" width="24" height="24" />
+					</button>
+				</div>
 				{ view === 'item-details' && shouldIncludeItem && (
-					<EditToggleButton className="btn-default btn-options" />
+					<EditToggleButton className="btn-default btn-edit" />
 				)}
 			</header>
 		)
