@@ -19,8 +19,6 @@ class BibliographyContainer extends React.PureComponent {
 		const { dispatch, isOpen, itemKeys } = this.props;
 		const { citationStyle } = this.state;
 
-		console.log(isOpen, wasOpen, citationStyle, prevCitationStyle);
-
 		if((isOpen && !wasOpen) || citationStyle !== prevCitationStyle) {
 			this.setState({ isUpdating: true });
 			try {
