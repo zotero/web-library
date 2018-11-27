@@ -6,14 +6,14 @@
 	overflow: hidden;
 	position: relative;
 
-	@include touch-or-bp-down(sm) {
+	@include bp-down-normalized(sm) {
 		flex: 0 0 $line-height-large-touch;
 		background: $body-bg;
 		color: $touch-header-color;
 		height: $line-height-large-touch;
 	}
 
-	@include touch-or-bp-only(sm) {
+	@include bp-only-normalized(sm) {
 		padding-bottom: $space-min;
 		box-sizing: content-box;
 	}
