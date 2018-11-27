@@ -98,10 +98,10 @@ class TouchNavigation extends React.PureComponent {
 					{ this.state.headers.map(header => {
 						if(header.slot) {
 							return (
-								<li data-id={ header.id} className={ header.slot } key={ header.id } tabIndex="0">
+								<li data-id={ header.id} className={ header.slot } key={ header.id }>
 									<div className="center-axis">
 										<div className="inner" onClick={ ev => this.handleNavigation(header.path, ev) }>
-											<div className="truncate">
+											<div className="truncate" tabIndex="0">
 												{ header.label }
 											</div>
 										</div>
