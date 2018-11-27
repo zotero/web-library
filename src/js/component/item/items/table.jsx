@@ -224,19 +224,14 @@ class ItemsTable extends React.PureComponent {
 		return !!this.loadedRowsMap[index];
 	}
 
-	renderRow({ className, index,...opts }) {
-		className += ' item';
-		if(index % 2 === 1) {
-			className += ' odd';
-		}
-		if(index < this.props.items.length) {
-			let item = this.props.items[index];
-			if(this.props.selectedItemKeys.includes(item.key)) {
-				className += ' active';
-			}
-		}
-
-		const { selectedItemKeys } = this.props;
+	renderRow({ className: otherClassName, index,...opts }) {
+		const { selectedItemKeys, items } = this.props;
+		const className = cx({
+			className: otherClassName,
+			item: true,
+			odd: (index + 1) % 2 === 1,
+			active: index < items.length && selectedItemKeys.includes(items[index].key)
+		});
 
 		return <Row
 			onDrag={ this.props.onItemDrag }

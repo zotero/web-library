@@ -78,7 +78,7 @@ class ItemsList extends React.PureComponent {
 		const item = this.getRow({ index });
 		const className = cx({
 			item: true,
-			odd: index % 2 === 1,
+			odd: (index + 1) % 2 === 1,
 			active: this.props.selectedItemKeys.includes(item.key)
 		});
 		return (
