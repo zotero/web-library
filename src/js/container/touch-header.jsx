@@ -78,10 +78,10 @@ class TouchHeaderContainer extends React.Component {
 	}
 
 	render() {
-		const { path, variant } = this.props;
+		const { path, variant, view, item } = this.props;
 		const variants = TouchHeaderContainer.variants;
-		const shouldIncludeItem = [variants.ITEM, variants.SOURCE_AND_ITEM, variants.MOBILE].includes(variant);
-		var touchHeaderPath;
+		var touchHeaderPath, shouldIncludeEditButton, shouldIncludeItemListOptions,
+			shouldIncludeCollectionOptions;
 
 		switch(variant) {
 			case variants.MOBILE:
@@ -91,21 +91,30 @@ class TouchHeaderContainer extends React.Component {
 					this.isItemsView ? this.itemsSourceNode : null,
 					this.itemNode
 				];
+				shouldIncludeEditButton = view === 'item-details';
+				shouldIncludeItemListOptions = view === 'item-list';
+				shouldIncludeCollectionOptions = view !== 'libraries' &&
+					!shouldIncludeEditButton && !shouldIncludeItemListOptions;
 			break;
 			case variants.NAVIGATION:
 				touchHeaderPath = [this.rootNode, ...path];
 				if(this.isLastNodeCurrentlySelectedCollection) {
 					touchHeaderPath.pop();
 				}
+				shouldIncludeCollectionOptions = true;
 			break;
 			case variants.SOURCE:
 				touchHeaderPath = [ this.selectedNode ];
+				shouldIncludeItemListOptions = true;
 			break;
 			case variants.SOURCE_AND_ITEM:
 				touchHeaderPath = [ this.selectedNode, this.itemNode ];
+				shouldIncludeItemListOptions = !item;
+				shouldIncludeEditButton = !!item;
 			break;
 			case variants.ITEM:
 				touchHeaderPath = [ this.itemNode ];
+				shouldIncludeEditButton = !!item;
 			break;
 		}
 		touchHeaderPath = touchHeaderPath.filter(Boolean);
@@ -114,7 +123,8 @@ class TouchHeaderContainer extends React.Component {
 		return (
 			<TouchHeader
 				{ ...this.props }
-				shouldIncludeItem={ shouldIncludeItem }
+				{ ...{ shouldIncludeEditButton, shouldIncludeItemListOptions,
+					shouldIncludeCollectionOptions } }
 				onNavigation={ this.onNavigation.bind(this) }
 				path={ touchHeaderPath }
 			/>
@@ -122,14 +132,12 @@ class TouchHeaderContainer extends React.Component {
 	}
 
 	static defaultProps = {
-		includeNav: true,
 	}
 
 	static propTypes = {
 		dispatch: PropTypes.func.isRequired,
 		path: PropTypes.array,
 		item: itemProp,
-		includeNav: PropTypes.bool,
 	}
 
 	static variants = {

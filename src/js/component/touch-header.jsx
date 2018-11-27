@@ -5,27 +5,32 @@ const cx = require('classnames');
 const PropTypes = require('prop-types');
 const TouchNavigation = require('./touch-navigation');
 const EditToggleButton = require('./edit-toggle-button');
+const CollectionActions = require('./touch-header/collection-actions');
+const ItemListActions = require('./touch-header/item-list-actions');
+const TouchHeaderContainer = require('../container/touch-header');
 const Icon = require('./ui/icon');
 
 class TouchHeader extends React.PureComponent {
 
 	render() {
-		const { isEditing, shouldIncludeItem, includeNav, path, root, view, className, onNavigation } = this.props;
-
+		const { isEditing, variant, path, root, view, className, onNavigation,
+			shouldIncludeEditButton, shouldIncludeItemListOptions,
+			shouldIncludeCollectionOptions } = this.props;
 		return (
 			<header className={ cx('touch-header', className) }>
 				{
-					(!isEditing || !shouldIncludeItem) && includeNav && <TouchNavigation
+					(!isEditing || !shouldIncludeEditButton) && <TouchNavigation
 						path={ path }
 						onNavigation={ onNavigation }
 					/>
 				}
-				<div className="dropdown-wrapper dropdown">
-					<button className="btn btn-icon dropdown-toggle">
-							<Icon type="24/options" width="24" height="24" />
-					</button>
-				</div>
-				{ view === 'item-details' && shouldIncludeItem && (
+				{
+					shouldIncludeCollectionOptions && <CollectionActions />
+				}
+				{
+					shouldIncludeItemListOptions && <ItemListActions />
+				}
+				{ shouldIncludeEditButton && (
 					<EditToggleButton className="btn-default btn-edit" />
 				)}
 			</header>
