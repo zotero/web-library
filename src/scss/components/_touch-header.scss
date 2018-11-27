@@ -6,16 +6,11 @@
 	overflow: hidden;
 	position: relative;
 
-	@include bp-down-normalized(sm) {
+	@include touch-or-bp-down(sm) {
 		flex: 0 0 $line-height-large-touch;
 		background: $body-bg;
 		color: $touch-header-color;
 		height: $line-height-large-touch;
-	}
-
-	@include bp-only-normalized(sm) {
-		padding-bottom: $space-min;
-		box-sizing: content-box;
 	}
 
 	nav,
