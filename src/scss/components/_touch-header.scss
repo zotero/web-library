@@ -3,7 +3,6 @@
 // --------------------------------------------------
 
 .touch-header {
-	overflow: hidden;
 	position: relative;
 
 	@include touch-or-bp-down(sm) {
