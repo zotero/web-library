@@ -63,7 +63,7 @@
 
 	@include bp-only(sm) {
 		position: absolute;
-		top: $line-height-large-touch + $space-min;
+		top: $line-height-large-touch;
 		right: 0;
 		bottom: 0;
 		left: 0;
