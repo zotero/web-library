@@ -51,14 +51,11 @@
 	}
 
 	.inner {
-		max-width: calc((100% - 4 * #{$default-padding-x-touch}) / 3 - 4px); // Todo: see #73
-	}
-
-	.inner {
 		position: absolute;
 		transform: translate3d(-50%, 0, 0);
 		display: flex;
 		align-items: center;
+		max-width: calc((100% - 4 * #{$default-padding-x-touch}) / 3 - 4px); // Todo: see #73
 	}
 
 	.before-last {
