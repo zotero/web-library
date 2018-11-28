@@ -38,16 +38,7 @@ class ItemsContainer extends React.PureComponent {
 			itemsSource, tags, search } = this.props;
 		const trash = itemsSource === 'trash';
 		const publications = itemsSource === 'publications';
-
-		switch(itemsSource) {
-			case 'trash':
-			case 'top':
-			case 'query':
-			case 'collection':
-			case 'publications':
-				history.push(makePath({ library, search, tags, trash, publications, collection, items }));
-			break;
-		}
+		history.push(makePath({ library, search, tags, trash, publications, collection, items }));
 	}
 
 	async handleDelete() {
@@ -264,11 +255,14 @@ const mapStateToProps = state => {
 	const isDeleting = get(state, ['libraries', libraryKey, 'deleting'], [])
 			.some(itemKey => items.filter(i => i.key === itemKey));
 
+	const isSelectMode = state.current.isSelectMode;
+
 	return {
 		collection,
 		collectionKey,
 		isDeleting,
 		isReady,
+		isSelectMode,
 		itemFields,
 		items,
 		itemsSource,

@@ -70,22 +70,44 @@ class ItemsList extends React.PureComponent {
 
 	//@TODO: multi select
 	handleItemSelect(item, ev) {
-		this.props.onItemsSelect([item.key]);
+		const { isSelectMode, selectedItemKeys } = this.props;
+		if(isSelectMode) {
+			if(selectedItemKeys.includes(item.key)) {
+				this.props.onItemsSelect(selectedItemKeys.filter(key => key !== item.key));
+			} else {
+				this.props.onItemsSelect([...selectedItemKeys, item.key]);
+			}
+		} else {
+			this.props.onItemsSelect([item.key]);
+		}
+
 		ev.preventDefault();
 	}
 
 	renderRow({ index, isScrolling, key, style }) {
+		const { isSelectMode, items, selectedItemKeys } = this.props;
 		const item = this.getRow({ index });
+		const isLoaded = index < items.length;
+		const active = selectedItemKeys.includes(item.key);
 		const className = cx({
+			active,
 			item: true,
 			odd: (index + 1) % 2 === 1,
-			active: this.props.selectedItemKeys.includes(item.key)
+			placeholder: !isLoaded
 		});
 		return (
 			<div
 				className={ className } key={ key } style={ style }
 				onClick={ event => this.handleRowClick({ event, index }) }
 				>
+				{ isSelectMode && isLoaded && (
+					<input
+						className="checkbox"
+						type="checkbox"
+						readOnly
+						checked={ active }
+					/>
+				)}
 				{ item.title }
 			</div>
 		);

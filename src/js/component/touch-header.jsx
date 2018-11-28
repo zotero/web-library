@@ -25,10 +25,10 @@ class TouchHeader extends React.PureComponent {
 					/>
 				}
 				{
-					shouldIncludeCollectionOptions && <CollectionActions />
+					shouldIncludeCollectionOptions && <CollectionActions { ...this.props } />
 				}
 				{
-					shouldIncludeItemListOptions && <ItemListActions />
+					shouldIncludeItemListOptions && <ItemListActions { ...this.props } />
 				}
 				{ shouldIncludeEditButton && (
 					<EditToggleButton className="btn-default btn-edit" />

@@ -1,6 +1,7 @@
 'use strict';
 
-const { ROUTE_CHANGE, TRIGGER_EDITING_ITEM, TOGGLE_TRANSITIONS } = require('../constants/actions');
+const { ROUTE_CHANGE, TRIGGER_EDITING_ITEM, TRIGGER_SELECT_MODE,
+	TOGGLE_TRANSITIONS } = require('../constants/actions');
 const { tagsFromUrlPart } = require('../common/navigation');
 
 const stateDefault = {
@@ -14,6 +15,7 @@ const stateDefault = {
 	search: '',
 	itemKeys: [],
 	useTransitions: false,
+	isSelectMode: false,
 };
 
 const current = (state = stateDefault, action) => {
@@ -23,6 +25,7 @@ const current = (state = stateDefault, action) => {
 			var { library, collection, items, tags, view, search = '' } = action.params;
 			var itemKeys = items ? action.params.items.split(',') : [];
 			var tagNames = tagsFromUrlPart(tags);
+			var isSelectMode = itemKeys.length > 1 ? true : state.isSelectMode;
 			var itemsSource;
 
 			if(tagNames.length || search.length) {
@@ -41,7 +44,7 @@ const current = (state = stateDefault, action) => {
 				if(['query', 'trash', 'publications'].includes(itemsSource)) {
 					view = 'item-list';
 				} else {
-					view = items ? 'item-details' : collection ? 'collection' : library ? 'library' : 'libraries';
+					view = items ? isSelectMode ? 'item-list' : 'item-details' : collection ? 'collection' : library ? 'library' : 'libraries';
 				}
 			}
 
@@ -54,7 +57,8 @@ const current = (state = stateDefault, action) => {
 				search,
 				itemKeys,
 				view,
-				library: library || defaultLibrary
+				library: library || defaultLibrary,
+				isSelectMode,
 			};
 		case TRIGGER_EDITING_ITEM:
 			return {
@@ -65,6 +69,11 @@ const current = (state = stateDefault, action) => {
 			return {
 				...state,
 				useTransitions: action.useTransitions
+			}
+		case TRIGGER_SELECT_MODE:
+			return {
+				...state,
+				isSelectMode: action.isSelectMode
 			}
 		default:
 			return state;

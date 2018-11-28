@@ -19,7 +19,13 @@ class CollectionActions extends React.PureComponent {
 		this.setState({ isOpen: !this.state.isOpen });
 	}
 
+	handleSelectModeToggle() {
+		const { isSelectMode, onSelectModeToggle } = this.props;
+		onSelectModeToggle(!isSelectMode);
+	}
+
 	render() {
+		const { isSelectMode } = this.props;
 		return (
 			<Dropdown
 				isOpen={ this.state.isOpen }
@@ -33,8 +39,8 @@ class CollectionActions extends React.PureComponent {
 					<Icon type="24/options" width="24" height="24" />
 				</DropdownToggle>
 				<DropdownMenu>
-					<DropdownItem>
-						Select Items
+					<DropdownItem onClick={ this.handleSelectModeToggle.bind(this) }>
+						{ isSelectMode ? 'Cancel' : 'Select Items' }
 					</DropdownItem>
 				</DropdownMenu>
 			</Dropdown>
@@ -42,9 +48,12 @@ class CollectionActions extends React.PureComponent {
 	}
 
 	static defaultProps = {
+		onSelectModeToggle: noop,
 	}
 
 	static propTypes = {
+		isSelectMode: PropTypes.bool,
+		onSelectModeToggle: PropTypes.func,
 	}
 }
 

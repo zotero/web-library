@@ -13,6 +13,7 @@ const { makePath } = require('../common/navigation');
 const { makeChildMap } = require('../common/collection');
 const { itemsSourceLabel } = require('../common/format');
 const withEditMode = require('../enhancers/with-edit-mode');
+const withSelectMode = require('../enhancers/with-select-mode');
 
 class TouchHeaderContainer extends React.Component {
 	onNavigation(path) {
@@ -52,8 +53,8 @@ class TouchHeaderContainer extends React.Component {
 	}
 
 	get itemNode() {
-		const { item } = this.props;
-		return item ? { key: '', label: '' } : null;
+		const { item, isSelectMode } = this.props;
+		return (item && !isSelectMode) ? { key: '', label: '' } : null;
 	}
 
 	get isSelectedOpened() {
@@ -78,7 +79,7 @@ class TouchHeaderContainer extends React.Component {
 	}
 
 	render() {
-		const { path, variant, view, item } = this.props;
+		const { path, variant, view, item, isSelectMode } = this.props;
 		const variants = TouchHeaderContainer.variants;
 		var touchHeaderPath, shouldIncludeEditButton, shouldIncludeItemListOptions,
 			shouldIncludeCollectionOptions;
@@ -109,12 +110,12 @@ class TouchHeaderContainer extends React.Component {
 			break;
 			case variants.SOURCE_AND_ITEM:
 				touchHeaderPath = [ this.selectedNode, this.itemNode ];
-				shouldIncludeItemListOptions = !item;
-				shouldIncludeEditButton = !!item;
+				shouldIncludeItemListOptions = !item || (!!item && isSelectMode),
+				shouldIncludeEditButton = !isSelectMode && !!item;
 			break;
 			case variants.ITEM:
 				touchHeaderPath = [ this.itemNode ];
-				shouldIncludeEditButton = !!item;
+				shouldIncludeEditButton = !isSelectMode && !!item;
 			break;
 		}
 		touchHeaderPath = touchHeaderPath.filter(Boolean);
@@ -194,6 +195,6 @@ const mapStateToProps = state => {
 	};
 };
 
-const TouchHeaderWrapped = withDevice(withRouter(withEditMode(connect(mapStateToProps)(TouchHeaderContainer))));
+const TouchHeaderWrapped = withDevice(withRouter(withSelectMode(withEditMode(connect(mapStateToProps)(TouchHeaderContainer)))));
 
 module.exports = TouchHeaderWrapped;

@@ -108,6 +108,7 @@ const {
 
 	TRIGGER_EDITING_ITEM,
 	TRIGGER_RESIZE_VIEWPORT,
+	TRIGGER_SELECT_MODE,
 
 	PRE_ADD_ITEMS_TO_COLLECTION,
 	REQUEST_ADD_ITEMS_TO_COLLECTION,
@@ -873,13 +874,25 @@ const fetchPublicationsItems = ({ start = 0, limit = 50, sort = 'dateModified', 
 
 const triggerEditingItem = (itemKey, isEditing) => {
 	return async (dispatch, getState) => {
-		let libraryKey = get(getState(), 'current.library');
+		let libraryKey = getState().current.library;
 
 		return dispatch({
 			type: TRIGGER_EDITING_ITEM,
 			itemKey,
 			libraryKey,
 			isEditing
+		});
+	}
+};
+
+const triggerSelectMode = (isSelectMode) => {
+	return async (dispatch, getState) => {
+		const libraryKey = getState().current.library;
+
+		return dispatch({
+			type: TRIGGER_SELECT_MODE,
+			libraryKey,
+			isSelectMode
 		});
 	}
 };
@@ -2050,6 +2063,7 @@ module.exports = {
 	toggleTransitions,
 	triggerEditingItem,
 	triggerResizeViewport,
+	triggerSelectMode,
 	updateCollection,
 	updateItem,
 	uploadAttachment,

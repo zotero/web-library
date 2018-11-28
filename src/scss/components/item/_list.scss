@@ -264,5 +264,10 @@
 			color: $item-active-color;
 			background: $item-active-bg;
 		}
+
+		.checkbox {
+			pointer-events: none; // these are purely decorative
+			margin-right: $space-sm;
+		}
 	}
 }
