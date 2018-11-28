@@ -4,7 +4,14 @@
 
 .icon {
 	display: inline-block;
-	color: $icon-color;
+
+	@include touch-or-bp-down(sm) {
+		color: $icon-color-touch;
+	}
+
+	@include mouse-and-bp-up(md) {
+		color: $icon-color;
+	}
 }
 
 .icon-spin {

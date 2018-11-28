@@ -21,7 +21,9 @@
 	}
 
 	.icon {
-		color: $link-color;
+		@include mouse-and-bp-up(md) {
+			color: $link-color;
+		}
 	}
 }
 
