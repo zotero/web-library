@@ -117,8 +117,6 @@
 
 			@include mouse-and-bp-up(md) {
 				&:not(.icon-spin) {
-					color: $collection-tree-icon-color;
-
 					@include state("li.selected > .item-container") {
 						color: $collection-tree-active-icon-color;
 					}
