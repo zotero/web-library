@@ -244,6 +244,11 @@
 					outline: none;
 					box-shadow: 0 0 0 2px $red;
 				}
+
+				@include mouse-keyboard-and-bp-up(md) {
+					box-shadow: none;
+					outline: $outline-width solid $focus-color;
+				}
 			}
 
 			.icon {

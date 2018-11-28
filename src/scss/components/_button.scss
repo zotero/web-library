@@ -39,6 +39,13 @@
 	border: 0;
 	color: $link-color;
 	background-color: transparent;
+
+	&:focus {
+		.keyboard & {
+			box-shadow: none;
+			outline: $outline-width solid $focus-color;
+		}
+	}
 }
 
 
@@ -50,7 +57,6 @@
 
 	&:focus {
 		background: darken($btn-primary-bg, 5%); // todo
-		outline: none;
 	}
 
 	&:active {
