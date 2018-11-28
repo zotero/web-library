@@ -19,6 +19,10 @@
 	@include bp-down(sm) {
 		box-shadow: inset 0 1px $item-list-head-border;
 	}
+
+	.icon {
+		color: $link-color;
+	}
 }
 
 .items-table-head th,
