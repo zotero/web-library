@@ -28,8 +28,11 @@
 	display: block; // todo
 	width: $icon-spin-size-md;
 	height: $icon-spin-size-md;
-	color: $spinner-color;
 	animation: spin 1s linear infinite;
+
+	@include mouse-and-bp-up(md) {
+		color: $spinner-color;
+	}
 
 	&.large {
 		width: $icon-spin-size-lg;
