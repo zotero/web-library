@@ -4,7 +4,7 @@ const React = require('react');
 const PropTypes = require('prop-types');
 const cx = require('classnames');
 
-class Panel extends React.Component {
+class Panel extends React.PureComponent {
 
 	renderHeader(header) {
 		if(header.type === 'header') {

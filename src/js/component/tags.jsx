@@ -9,7 +9,7 @@ const { Toolbar, ToolGroup } = require('./ui/toolbars');
 const Icon = require('./ui/icon');
 const Button = require('./ui/button');
 
-class Tags extends React.Component {
+class Tags extends React.PureComponent {
 	constructor(props) {
 		super(props);
 		this.state = {

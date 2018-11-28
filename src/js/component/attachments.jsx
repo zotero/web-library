@@ -8,7 +8,7 @@ const { Toolbar, ToolGroup } = require('./ui/toolbars');
 const Icon = require('./ui/icon');
 const Button = require('./ui/button');
 
-class Attachments extends React.Component {
+class Attachments extends React.PureComponent {
 	state = {
 		isAddingAttachment: false,
 		fileData: null,

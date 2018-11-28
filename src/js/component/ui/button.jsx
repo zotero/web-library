@@ -6,7 +6,7 @@ const PropTypes = require('prop-types');
 const React = require('react');
 const { noop } = require('../../utils');
 
-class Button extends React.Component {
+class Button extends React.PureComponent {
 	render() {
 		const { children, onClick, className, ...props } = this.props;
 		const classNames = cx('btn', className, {

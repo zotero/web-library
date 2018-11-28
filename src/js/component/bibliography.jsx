@@ -11,7 +11,7 @@ const { noop } = require('../utils');
 const cx = require('classnames');
 
 
-class Bibliography extends React.Component {
+class Bibliography extends React.PureComponent {
 	handleCancel() {
 		this.props.onCancel();
 	}

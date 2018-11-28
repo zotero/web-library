@@ -5,7 +5,7 @@ const PropTypes = require('prop-types');
 const TagList = require('./tag-selector/tag-list');
 const Input = require('./form/input');
 
-class TagSelector extends React.Component {
+class TagSelector extends React.PureComponent {
 
 	render() {
 		return (

@@ -13,7 +13,7 @@ const { hideFields, noEditFields } = require('../constants/item');
 const withEditMode = require('../enhancers/with-edit-mode');
 const withDevice = require('../enhancers/with-device');
 
-class ItemDetailsContainer extends React.Component {
+class ItemDetailsContainer extends React.PureComponent {
 	async componentDidUpdate({ item: prevItem }) {
 		const { item, shouldFetchMeta, relatedItemsKeys, relatedItems, dispatch } = this.props;
 		if(item && item.key && shouldFetchMeta === true) {

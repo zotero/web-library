@@ -4,7 +4,7 @@ const React = require('react');
 const PropTypes = require('prop-types');
 const SearchContainer = require('./../../container/search');
 
-class Navbar extends React.Component {
+class Navbar extends React.PureComponent {
 	constructor(props) {
 		super(props);
 		this.state = {

@@ -16,7 +16,7 @@ const Icon = require('./ui/icon');
 const Button = require('./ui/button');
 const RichEditor = require('./rich-editor');
 
-class Notes extends React.Component {
+class Notes extends React.PureComponent {
 	constructor(props) {
 		super(props);
 		this.state = {

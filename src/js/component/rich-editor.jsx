@@ -12,7 +12,7 @@ const PropTypes = require('prop-types');
 const { Toolbar, ToolGroup } = require('./ui/toolbars');
 const Button = require('./ui/button');
 
-class RichEditor extends React.Component {
+class RichEditor extends React.PureComponent {
 	componentWillReceiveProps(props) {
 		if(this.editor && (this.props.value !== props.value)) {
 			this.editor.setContent(props.value);

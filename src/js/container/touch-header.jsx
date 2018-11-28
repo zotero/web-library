@@ -15,7 +15,7 @@ const { itemsSourceLabel } = require('../common/format');
 const withEditMode = require('../enhancers/with-edit-mode');
 const withSelectMode = require('../enhancers/with-select-mode');
 
-class TouchHeaderContainer extends React.Component {
+class TouchHeaderContainer extends React.PureComponent {
 	onNavigation(path) {
 		const { history } = this.props;
 		history.push(makePath(path));

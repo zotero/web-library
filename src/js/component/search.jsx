@@ -5,7 +5,7 @@ const PropTypes = require('prop-types');
 const { DebounceInput } = require('react-debounce-input');
 const { noop } = require('../utils');
 
-class Search extends React.Component {
+class Search extends React.PureComponent {
 	render() {
 		return (
 			<div className="search-container">

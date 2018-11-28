@@ -10,7 +10,7 @@ const ItemDetailsInfoView = require('./details/info-view');
 const ItemDetailsInfoSelected = require('./details/info-selected');
 const TouchHeaderContainer = require('../../container/touch-header');
 
-class ItemDetails extends React.Component {
+class ItemDetails extends React.PureComponent {
 	render() {
 		const { item, selectedItemKeys, active, } = this.props;
 		return (

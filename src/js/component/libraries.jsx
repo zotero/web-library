@@ -10,7 +10,7 @@ const Node = require('./libraries/node');
 const CollectionTree = require('./libraries/collection-tree.jsx');
 const TouchHeaderContainer = require('../container/touch-header');
 
-class Libraries extends React.Component {
+class Libraries extends React.PureComponent {
 	state = {
 		virtual: null,
 		opened: [], // opened group libraries

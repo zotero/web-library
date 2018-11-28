@@ -9,7 +9,7 @@ const { Toolbar, ToolGroup } = require('./ui/toolbars');
 const Icon = require('./ui/icon');
 const Button = require('./ui/button');
 
-class Relations extends React.Component {
+class Relations extends React.PureComponent {
 
 	handleDelete(item) {
 		this.props.onRelatedItemDelete(item);

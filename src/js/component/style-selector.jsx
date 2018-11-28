@@ -6,7 +6,7 @@ const cx = require('classnames');
 const Select = require('./form/select');
 const { citationStylesCount } = require('../../../data/citation-styles-data.json');
 
-class StyleSelector extends React.Component {
+class StyleSelector extends React.PureComponent {
 	render() {
 		return (
 			<div className={ cx('style-selector', this.props.className ) }>

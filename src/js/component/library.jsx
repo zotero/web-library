@@ -17,7 +17,7 @@ const TouchHeaderContainer = require('../container/touch-header');
 const BibliographyContainer = require('../container/bibliography');
 const withDevice = require('../enhancers/with-device');
 
-class Library extends React.Component {
+class Library extends React.PureComponent {
 	constructor(props) {
 		super(props);
 		this.state = {
