@@ -1,4 +1,16 @@
 .dropdown {
+	.dropdown-toggle {
+		@include touch-or-bp-down(sm) {
+			@include state(".dropdown.show") {
+				background-color: $btn-secondary-color;
+
+				.icon {
+					color: $body-bg;
+				}
+			}
+		}
+	}
+
 	.dropdown-menu {
 		background-color: $menu-bg;
 		box-shadow: $menu-box-shadow;

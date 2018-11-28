@@ -196,16 +196,10 @@
 
 			@include touch-or-bp-down(sm) {
 				@include state(".dropdown-wrapper.show .dropdown-toggle") {
-					background-color: $btn-secondary-color;
-
 					@include state("li.selected .item-container") {
 						background-color: $body-bg;
-					}
 
-					.icon {
-						color: $shade-0;
-
-						@include state("li.selected .item-container") {
+						.icon {
 							color: $icon-color;
 						}
 					}
