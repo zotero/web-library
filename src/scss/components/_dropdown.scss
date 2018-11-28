@@ -29,6 +29,7 @@
 		line-height: $line-height-base; // Prevent inheritance
 		background-color: transparent;
 		margin: 0;
+		white-space: nowrap; // Prevent line break due to positioned dropdown-wrapper
 		cursor: pointer;
 
 		@include touch-or-bp-down(sm) {
