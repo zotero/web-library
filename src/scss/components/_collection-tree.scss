@@ -212,6 +212,10 @@
 
 				@include state(".dropdown-wrapper.show .dropdown-toggle") {
 					visibility: visible;
+
+					.icon {
+						color: $icon-active-color;
+					}
 				}
 			}
 		}
