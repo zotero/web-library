@@ -248,7 +248,7 @@ class CollectionTree extends React.PureComponent {
 										selectOnFocus
 										isActive={ true }
 										isBusy={ this.props.updating.includes(collection.key) }
-										onBlur={ () => true /* cancel on blur */ }
+										onBlur={ () => false /* commit on blur */ }
 										onCancel={ this.handleRenameCancel.bind(this) }
 										onCommit={ this.handleRename.bind(this, collection.key) }
 										value={ collection.name }
