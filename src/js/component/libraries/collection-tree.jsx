@@ -243,7 +243,9 @@ class CollectionTree extends React.PureComponent {
 								<Icon type={ '16/folder' } className="mouse" width="16" height="16" />
 								{
 									this.state.renaming === collection.key ?
-									<Editable autoFocus
+									<Editable
+										autoFocus
+										selectOnFocus
 										isActive={ true }
 										isBusy={ this.props.updating.includes(collection.key) }
 										onBlur={ () => true /* cancel on blur */ }
