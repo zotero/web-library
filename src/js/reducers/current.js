@@ -26,6 +26,7 @@ const current = (state = stateDefault, action) => {
 			var itemKeys = items ? action.params.items.split(',') : [];
 			var tagNames = tagsFromUrlPart(tags);
 			var isSelectMode = itemKeys.length > 1 ? true : state.isSelectMode;
+			var isEditing = state.isEditing;
 			var itemsSource;
 
 			if(tagNames.length || search.length) {
@@ -48,17 +49,26 @@ const current = (state = stateDefault, action) => {
 				}
 			}
 
+			if(isSelectMode && view !== 'item-list') {
+				isSelectMode = false;
+			}
+
+			if(isEditing && view !== 'item-details') {
+				isEditing = false;
+			}
+
 			return {
 				...state,
 				collection: collection || null,
-				item: itemKeys && itemKeys.length === 1 ? itemKeys.pop() : null,
-				itemsSource,
-				tags: tagNames,
-				search,
-				itemKeys,
-				view,
-				library: library || defaultLibrary,
+				isEditing,
 				isSelectMode,
+				item: itemKeys && itemKeys.length === 1 ? itemKeys.pop() : null,
+				itemKeys,
+				itemsSource,
+				library: library || defaultLibrary,
+				search,
+				tags: tagNames,
+				view,
 			};
 		case TRIGGER_EDITING_ITEM:
 			return {

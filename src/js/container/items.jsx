@@ -38,7 +38,8 @@ class ItemsContainer extends React.PureComponent {
 			itemsSource, tags, search } = this.props;
 		const trash = itemsSource === 'trash';
 		const publications = itemsSource === 'publications';
-		history.push(makePath({ library, search, tags, trash, publications, collection, items }));
+		const view = 'item-list';
+		history.push(makePath({ library, search, tags, trash, publications, collection, items, view }));
 	}
 
 	async handleDelete() {
