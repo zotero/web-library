@@ -39,9 +39,9 @@
 	}
 
 	.item-container {
-		outline: none;
 		display: flex;
 		align-items: center;
+		outline-offset: -$outline-width;
 		cursor: pointer;
 		position: relative;
 
@@ -169,7 +169,10 @@
 
 		.btn-icon-plus {
 			margin-right: -$space-min - $input-border-width;
-			visibility: hidden;
+
+			@include state(".item-container:not(:focus-within)") {
+				visibility: hidden;
+			}
 
 			@include state(".item-container:hover") {
 				visibility: visible;
@@ -204,7 +207,9 @@
 			}
 
 			@include mouse-and-bp-up(md) {
-				visibility: hidden;
+				@include state(".item-container:not(:focus-within)") {
+					visibility: hidden;
+				}
 
 				@include state(".item-container:hover") {
 					visibility: visible;
