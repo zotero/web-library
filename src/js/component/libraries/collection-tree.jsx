@@ -13,6 +13,7 @@ const { ViewportContext } = require('../../context');
 const deepEqual = require('deep-equal');
 const { noop } = require('../../utils.js');
 const { makeChildMap } = require('../../common/collection');
+const Editable = require('../editable');
 
 class CollectionTree extends React.PureComponent {
 	state = { opened: [], renaming: null }
@@ -242,7 +243,8 @@ class CollectionTree extends React.PureComponent {
 								<Icon type={ '16/folder' } className="mouse" width="16" height="16" />
 								{
 									this.state.renaming === collection.key ?
-									<Input autoFocus
+									<Editable autoFocus
+										isActive={ true }
 										isBusy={ this.props.updating.includes(collection.key) }
 										onBlur={ () => true /* cancel on blur */ }
 										onCancel={ this.handleRenameCancel.bind(this) }
@@ -275,8 +277,9 @@ class CollectionTree extends React.PureComponent {
 							>
 								<Icon type="28/folder" className="touch" width="28" height="28" />
 								<Icon type="16/folder" className="mouse" width="16" height="16" />
-								<Input autoFocus
+								<Editable autoFocus
 									isBusy={ virtual.isBusy }
+									isActive={ true }
 									onCommit={ this.handleAddCommit.bind(
 										this, parentCollection ? parentCollection.key : null
 									) }
