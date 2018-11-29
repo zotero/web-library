@@ -279,14 +279,15 @@ class CollectionTree extends React.PureComponent {
 							>
 								<Icon type="28/folder" className="touch" width="28" height="28" />
 								<Icon type="16/folder" className="mouse" width="16" height="16" />
-								<Editable autoFocus
+								<Editable
+									autoFocus
 									isBusy={ virtual.isBusy }
 									isActive={ true }
 									onCommit={ this.handleAddCommit.bind(
 										this, parentCollection ? parentCollection.key : null
 									) }
 									onCancel={ onAddCancel }
-									onBlur={ () => true /* cancel on blur */ }
+									onBlur={ () => false /* commit on blur */ }
 								/>
 							</Node>
 						)
