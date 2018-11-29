@@ -75,7 +75,7 @@
 
 		@include state("li.selected > .item-container") {
 			@include touch-or-bp-down(sm) {
-				background: $touch-collection-tree-active-link-bg;
+				background: $touch-collection-tree-active-bg;
 
 				&::before {
 					content: none;
@@ -83,7 +83,7 @@
 			}
 
 			@include mouse-and-bp-up(md) {
-				background: $collection-tree-active-link-bg;
+				background: $collection-tree-active-bg;
 			}
 		}
 
@@ -111,7 +111,7 @@
 		.icon {
 			@include touch-or-bp-down(sm) {
 				@include state("li.selected > .item-container") {
-					color: $touch-collection-tree-active-link-color;
+					color: $touch-collection-tree-active-color;
 				}
 			}
 
@@ -124,7 +124,7 @@
 
 				// Rivisit: dnd styling
 				@include state(".item-container.dnd-target", "li.selected .item-container.dnd-target") {
-					color: $collection-tree-dnd-target-link-color;
+					color: $collection-tree-dnd-target-color;
 				}
 			}
 		}
@@ -138,19 +138,18 @@
 			}
 		}
 
-		> a {
+		> .truncate {
 			flex: 1 1 auto;
-			color: $collection-tree-link-color;
+			color: $collection-tree-color;
 			position: relative;
-			@include text-truncate;
 
 			@include state("li.selected > .item-container") {
 				@include touch-or-bp-down(sm) {
-					color: $touch-collection-tree-active-link-color;
+					color: $touch-collection-tree-active-color;
 				}
 
 				@include mouse-and-bp-up(md) {
-					color: $collection-tree-active-link-color;
+					color: $collection-tree-active-color;
 				}
 			}
 
@@ -200,7 +199,7 @@
 						background-color: $body-bg;
 
 						.icon {
-							color: $touch-collection-tree-active-link-bg;
+							color: $touch-collection-tree-active-bg;
 						}
 					}
 				}

@@ -23,33 +23,33 @@
 
 		&.selected {
 			@include touch-or-bp-down(sm) {
-				background: $touch-collection-tree-active-link-bg;
+				background: $touch-collection-tree-active-bg;
 
 				.icon.touch {
-					color: $touch-collection-tree-active-link-color;
+					color: $touch-collection-tree-active-color;
 				}
 
 				> a {
-					color: $touch-collection-tree-active-link-color;
+					color: $touch-collection-tree-active-color;
 				}
 			}
 
 			@include mouse-and-bp-up(md) {
-				background: $collection-tree-active-link-bg;
+				background: $collection-tree-active-bg;
 
 				.icon {
 					color: $collection-tree-active-icon-color;
 				}
 
 				> a {
-					color: $collection-tree-active-link-color;
+					color: $collection-tree-active-color;
 				}
 			}
 		}
 
 		a {
 			flex: 1 1 auto;
-			color: $collection-tree-link-color;
+			color: $collection-tree-color;
 			position: relative;
 			@include text-truncate;
 		}

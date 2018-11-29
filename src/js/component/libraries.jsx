@@ -146,7 +146,7 @@ class Libraries extends React.PureComponent {
 								>
 									<Icon type="28/library" className="touch" width="28" height="28" />
 									<Icon type="16/library" className="mouse" width="16" height="16" />
-									<a>{ group.name }</a>
+									<div className="truncate">{ group.name }</div>
 									{ isFetching && <Spinner className="small mouse" /> }
 									{
 										!isFetching && (
@@ -188,7 +188,7 @@ class Libraries extends React.PureComponent {
 					>
 						<Icon type="28/library" className="touch" width="28" height="28" />
 						<Icon type="16/library" className="mouse" width="16" height="16" />
-						<a>My Library</a>
+						<div className="truncate">My Library</div>
 						<Button className="mouse btn-icon-plus" onClick={ this.handleAdd.bind(this, userLibraryKey, null) } >
 							<Icon type={ '16/plus' } width="16" height="16" />
 						</Button>

@@ -195,7 +195,7 @@ class CollectionTree extends React.PureComponent {
 						>
 							<Icon type="28/document" className="touch" width="28" height="28" />
 							<Icon type="16/document" className="mouse" width="16" height="16" />
-							<a>All Items</a>
+							<div className="truncate">All Items</div>
 						</Node>
 					) }
 					{ device.isTouchOrSmall && parentCollection && (
@@ -208,7 +208,7 @@ class CollectionTree extends React.PureComponent {
 						>
 							<Icon type="28/document" className="touch" width="28" height="28" />
 							<Icon type="16/document" className="mouse" width="16" height="16" />
-							<a>Items</a>
+							<div className="truncate">Items</div>
 						</Node>
 					) }
 					{ collections.map(collection => {
@@ -250,7 +250,7 @@ class CollectionTree extends React.PureComponent {
 										value={ collection.name }
 									/> :
 									<React.Fragment>
-										<a>{ collection.name }</a>
+										<div className="truncate">{ collection.name }</div>
 										<ActionsDropdown>
 											<DropdownItem onClick={ this.handleRenameTrigger.bind(this, collection.key) }>
 												Rename
@@ -299,7 +299,7 @@ class CollectionTree extends React.PureComponent {
 							>
 								<Icon type="28/document" className="touch" width="28" height="28" />
 								<Icon type="16/document" className="mouse" width="16" height="16" />
-								<a>My Publications</a>
+								<div className="truncate">My Publications</div>
 							</Node>
 						)
 					}
@@ -316,7 +316,7 @@ class CollectionTree extends React.PureComponent {
 							>
 								<Icon type="28/trash" className="touch" width="28" height="28" />
 								<Icon type="16/trash" className="mouse" width="16" height="16" />
-								<a>Trash</a>
+								<div className="truncate">Trash</div>
 							</Node>
 						)
 					}
