@@ -5,31 +5,22 @@ const React = require('react');
 const PropTypes = require('prop-types');
 const { withRouter } = require('react-router-dom');
 const { connect } = require('react-redux');
-const { saveAs } = require('file-saver');
+
 const Items = require('../component/item/items');
 const {
 	addToCollection,
-	createItem,
-	deleteItems,
-	exportItems,
 	fetchItemsInCollection,
 	fetchItemsQuery,
-	fetchItemTemplate,
 	fetchPublicationsItems,
 	fetchTopItems,
 	fetchTrashItems,
-	moveToTrash,
 	preferenceChange,
-	recoverFromTrash,
-	removeFromCollection,
 	sortItems,
-	toggleModal,
 } = require('../actions');
 const { get, sortByKey, resizeVisibleColumns } = require('../utils');
 const { getSerializedQuery } = require('../common/state');
 const { makePath } = require('../common/navigation');
 const processItems = require('../common/process-items');
-const exportFormats = require('../constants/export-formats');
 const withDevice = require('../enhancers/with-device');
 
 class ItemsContainer extends React.PureComponent {
@@ -40,46 +31,6 @@ class ItemsContainer extends React.PureComponent {
 		const publications = itemsSource === 'publications';
 		const view = 'item-list';
 		history.push(makePath({ library, search, tags, trash, publications, collection, items, view }));
-	}
-
-	async handleDelete() {
-		const { dispatch, selectedItemKeys } = this.props;
-
-		do {
-			const itemKeys = selectedItemKeys.splice(0, 50);
-			await dispatch(moveToTrash(itemKeys));
-		} while (selectedItemKeys.length > 50);
-		this.handleItemsSelect();
-	}
-
-	async handlePermanentlyDelete() {
-		const { dispatch, selectedItemKeys } = this.props;
-
-		do {
-			const itemKeys = selectedItemKeys.splice(0, 50);
-			await dispatch(deleteItems(itemKeys));
-		} while (selectedItemKeys.length > 50);
-		this.handleItemsSelect();
-	}
-
-	async handleUndelete() {
-		const { dispatch, selectedItemKeys } = this.props;
-
-		do {
-			const itemKeys = selectedItemKeys.splice(0, 50);
-			await dispatch(recoverFromTrash(itemKeys));
-		} while (selectedItemKeys.length > 50);
-		this.handleItemsSelect();
-	}
-
-	async handleRemove() {
-		const { dispatch, selectedItemKeys, collectionKey } = this.props;
-
-		do {
-			const itemKeys = selectedItemKeys.splice(0, 50);
-			await dispatch(removeFromCollection(itemKeys, collectionKey));
-		} while (selectedItemKeys.length > 50);
-		this.handleItemsSelect();
 	}
 
 	handleColumnVisibilityChange(field, isVisible) {
@@ -132,17 +83,6 @@ class ItemsContainer extends React.PureComponent {
 		}
 	}
 
-	async handleNewItemCreate(itemType) {
-		const { itemsSource, dispatch, collectionKey, libraryKey } = this.props;
-		const template = await dispatch(fetchItemTemplate(itemType));
-		const newItem = {
-			...template,
-			collections: itemsSource === 'collection' ? [collectionKey] : []
-		};
-		const item = await dispatch(createItem(newItem, libraryKey));
-		this.handleItemsSelect([item.key]);
-	}
-
 	async handleSort({ sortBy, sortDirection, stopIndex }) {
 		const { dispatch } = this.props;
 		sortDirection = sortDirection.toLowerCase(); // react-virtualised uses ASC/DESC, zotero asc/desc
@@ -155,20 +95,6 @@ class ItemsContainer extends React.PureComponent {
 		if(targetType === 'collection') {
 			return await dispatch(addToCollection(itemKeys, collectionKey, libraryKey));
 		}
-	}
-
-	async handleExport(format) {
-		const { dispatch, selectedItemKeys } = this.props;
-		const exportData = await dispatch(exportItems(selectedItemKeys, format));
-
-		const fileName = ['export-data', exportFormats.find(f => f.key === format).extension]
-			.filter(Boolean).join('.');
-		saveAs(exportData, fileName);
-	}
-
-	handleBibliographyOpen() {
-		const { dispatch } = this.props;
-		dispatch(toggleModal('BIBLIOGRAPHY', true));
 	}
 
 	render() {
@@ -188,17 +114,10 @@ class ItemsContainer extends React.PureComponent {
 			onColumnReorder={ this.handleColumnReorder.bind(this) }
 			onColumnResize={ this.handleColumnResize.bind(this) }
 			onColumnVisibilityChange={ this.handleColumnVisibilityChange.bind(this) }
-			onDelete={ this.handleDelete.bind(this) }
-			onExport={ this.handleExport.bind(this )}
 			onItemDrag={ this.handleDrag.bind(this) }
 			onItemsSelect={ this.handleItemsSelect.bind(this) }
 			onLoadMore={ this.handleLoadMore.bind(this) }
-			onNewItemCreate={ this.handleNewItemCreate.bind(this) }
-			onPermanentlyDelete={ this.handlePermanentlyDelete.bind(this) }
 			onSort={ this.handleSort.bind(this) }
-			onUndelete={ this.handleUndelete.bind(this) }
-			onRemove={ this.handleRemove.bind(this) }
-			onBibliographyOpen={ this.handleBibliographyOpen.bind(this) }
 		/>;
 	}
 }

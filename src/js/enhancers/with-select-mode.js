@@ -40,7 +40,7 @@ var withSelectMode = Component => {
 
 const mapStateToProps = state => ({
 	collectionKey: state.current.collection,
-	isSelectMode: state.current.isSelectMode,
+	isSelectMode: !!state.current.isSelectMode,
 	itemsSource: state.current.itemsSource,
 	libraryKey: state.current.library,
 	search: state.current.search,

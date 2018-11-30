@@ -6,14 +6,12 @@ const PropTypes = require('prop-types');
 const TouchNavigation = require('./touch-navigation');
 const EditToggleButton = require('./edit-toggle-button');
 const CollectionActions = require('./touch-header/collection-actions');
-const ItemListActions = require('./touch-header/item-list-actions');
-const TouchHeaderContainer = require('../container/touch-header');
-const Icon = require('./ui/icon');
+const ItemsActionsContainer = require('../container/items-actions');
 
 class TouchHeader extends React.PureComponent {
 
 	render() {
-		const { isEditing, variant, path, root, view, className, onNavigation,
+		const { isEditing, path, className, onNavigation,
 			shouldIncludeEditButton, shouldIncludeItemListOptions,
 			shouldIncludeCollectionOptions } = this.props;
 		return (
@@ -28,7 +26,7 @@ class TouchHeader extends React.PureComponent {
 					shouldIncludeCollectionOptions && <CollectionActions { ...this.props } />
 				}
 				{
-					shouldIncludeItemListOptions && <ItemListActions { ...this.props } />
+					shouldIncludeItemListOptions && <ItemsActionsContainer />
 				}
 				{ shouldIncludeEditButton && (
 					<EditToggleButton className="btn-default btn-edit" />
@@ -39,12 +37,12 @@ class TouchHeader extends React.PureComponent {
 }
 
 TouchHeader.propTypes = {
-	onNavigation: PropTypes.func,
-	onEditModeToggle: PropTypes.func,
-	path: PropTypes.array,
-	isEditing: PropTypes.bool,
-	view: PropTypes.string,
 	className: PropTypes.string,
+	isEditing: PropTypes.bool,
+	onEditModeToggle: PropTypes.func,
+	onNavigation: PropTypes.func,
+	path: PropTypes.array,
+	view: PropTypes.string,
 };
 
 TouchHeader.defaultProps = {
