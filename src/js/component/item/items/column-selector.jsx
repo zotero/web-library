@@ -45,9 +45,9 @@ class ColumnSelector extends React.PureComponent {
 					color={ null }
 					className="btn-icon dropdown-toggle"
 				>
-					<Icon type={ '16/cog' } width="16" height="16" />
+					<Icon type={ '16/columns' } width="16" height="16" />
 				</DropdownToggle>
-				<DropdownMenu>
+				<DropdownMenu right>
 					{ this.props.columns.map(this.renderColumnItem.bind(this)) }
 				</DropdownMenu>
 			</Dropdown>
