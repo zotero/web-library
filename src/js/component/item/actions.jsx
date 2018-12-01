@@ -85,6 +85,20 @@ class ItemsActions extends React.PureComponent {
 						</Button>
 					)
 				}
+				<Button
+					onClick={ onRemove }
+					disabled={ selectedItemKeys.length === 0 }
+				>
+					<Icon type="20/remove-from-collection" width="20" height="20" />
+				</Button>
+				<ExportActions { ...this.props } />
+				<Button
+					onClick={ onBibliographyOpen }
+					disabled={ selectedItemKeys.length === 0 }
+				>
+					Bibliography
+				</Button>
+
 				<UncontrolledDropdown className="dropdown-wrapper">
 					<DropdownToggle
 					color={ null }
@@ -99,19 +113,6 @@ class ItemsActions extends React.PureComponent {
 						{ this.renderShowInLibrary() }
 					</DropdownMenu>
 				</UncontrolledDropdown>
-				<ExportActions { ...this.props } />
-				<Button
-					onClick={ onBibliographyOpen }
-					disabled={ selectedItemKeys.length === 0 }
-				>
-					Bibliography
-				</Button>
-				<Button
-					onClick={ onRemove }
-					disabled={ selectedItemKeys.length === 0 }
-				>
-					Remove from Collection
-				</Button>
 			</ToolGroup>
 		);
 	}

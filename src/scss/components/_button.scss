@@ -94,6 +94,10 @@
 
 	.icon {
 		vertical-align: top;
+
+		&[width="20"] {
+			margin: -2px;
+		}
 	}
 
 	&:active {
