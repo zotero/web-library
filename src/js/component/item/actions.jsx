@@ -96,7 +96,7 @@ class ItemsActions extends React.PureComponent {
 					onClick={ onBibliographyOpen }
 					disabled={ selectedItemKeys.length === 0 }
 				>
-					Bibliography
+					<Icon type="16/bibliography" width="16" height="16" />
 				</Button>
 
 				<UncontrolledDropdown className="dropdown-wrapper">
