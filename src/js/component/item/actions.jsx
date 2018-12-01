@@ -90,7 +90,7 @@ class ItemsActions extends React.PureComponent {
 					color={ null }
 					className="btn-icon dropdown-toggle"
 					>
-						<Icon type="16/cog" width="16" height="26" />
+						<Icon type="16/options" width="16" height="16" />
 					</DropdownToggle>
 					<DropdownMenu>
 						{ this.renderRestoretoLibrary() }
