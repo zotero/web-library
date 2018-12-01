@@ -66,54 +66,59 @@ class ItemsActions extends React.PureComponent {
 			onBibliographyOpen, onRemove, } = this.props;
 
 		return (
-			<ToolGroup>
-				<NewItemSelector
-					disabled={ !['top', 'collection'].includes(itemsSource) }
-					{ ...this.props }
-				/>
-				{
-					itemsSource !== 'trash' && (
-						<Button
-							onClick={ onDelete }
-							disabled={ isDeleting || selectedItemKeys.length === 0 }
-						>
-							{
-								isDeleting ?
-								<Spinner /> :
-								<Icon type={ '16/trash' } width="16" height="16" />
-							}
-						</Button>
-					)
-				}
-				<Button
-					onClick={ onRemove }
-					disabled={ selectedItemKeys.length === 0 }
-				>
-					<Icon type="20/remove-from-collection" width="20" height="20" />
-				</Button>
-				<ExportActions { ...this.props } />
-				<Button
-					onClick={ onBibliographyOpen }
-					disabled={ selectedItemKeys.length === 0 }
-				>
-					<Icon type="16/bibliography" width="16" height="16" />
-				</Button>
-
-				<UncontrolledDropdown className="dropdown-wrapper">
-					<DropdownToggle
-					color={ null }
-					className="btn-icon dropdown-toggle"
+			<>
+				<ToolGroup>
+					<NewItemSelector
+						disabled={ !['top', 'collection'].includes(itemsSource) }
+						{ ...this.props }
+					/>
+					{
+						itemsSource !== 'trash' && (
+							<Button
+								onClick={ onDelete }
+								disabled={ isDeleting || selectedItemKeys.length === 0 }
+							>
+								{
+									isDeleting ?
+									<Spinner /> :
+									<Icon type={ '16/trash' } width="16" height="16" />
+								}
+							</Button>
+						)
+					}
+					<Button
+						onClick={ onRemove }
+						disabled={ selectedItemKeys.length === 0 }
 					>
-						<Icon type="16/options" width="16" height="16" />
-					</DropdownToggle>
-					<DropdownMenu>
-						{ this.renderRestoretoLibrary() }
-						{ this.renderPermanentlyDelete() }
-						{ this.renderDuplicateItem() }
-						{ this.renderShowInLibrary() }
-					</DropdownMenu>
-				</UncontrolledDropdown>
-			</ToolGroup>
+						<Icon type="20/remove-from-collection" width="20" height="20" />
+					</Button>
+				</ToolGroup>
+				<ToolGroup>
+					<ExportActions { ...this.props } />
+					<Button
+						onClick={ onBibliographyOpen }
+						disabled={ selectedItemKeys.length === 0 }
+					>
+						<Icon type="16/bibliography" width="16" height="16" />
+					</Button>
+				</ToolGroup>
+				<ToolGroup>
+					<UncontrolledDropdown className="dropdown-wrapper">
+						<DropdownToggle
+						color={ null }
+						className="btn-icon dropdown-toggle"
+						>
+							<Icon type="16/options" width="16" height="16" />
+						</DropdownToggle>
+						<DropdownMenu>
+							{ this.renderRestoretoLibrary() }
+							{ this.renderPermanentlyDelete() }
+							{ this.renderDuplicateItem() }
+							{ this.renderShowInLibrary() }
+						</DropdownMenu>
+					</UncontrolledDropdown>
+				</ToolGroup>
+			</>
 		);
 	}
 

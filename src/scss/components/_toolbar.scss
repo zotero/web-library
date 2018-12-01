@@ -30,11 +30,15 @@
 		margin-left: auto;
 	}
 
-	.btn + .btn {
-		margin-left: $space-min / 2;
-	}
+	.tool-group {
+		display: flex;
 
-	.dropdown-wrapper {
-		display: inline-block;
+		> * + * {
+			margin-left: $space-min / 2;
+		}
+
+		& + .tool-group {
+			margin-left: $space-lg;
+		}
 	}
 }
