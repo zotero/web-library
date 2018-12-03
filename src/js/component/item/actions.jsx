@@ -66,7 +66,7 @@ class ItemsActions extends React.PureComponent {
 			onBibliographyOpen, onRemove, } = this.props;
 
 		return (
-			<>
+			<React.Fragment>
 				<ToolGroup>
 					<NewItemSelector
 						disabled={ !['top', 'collection'].includes(itemsSource) }
@@ -118,7 +118,7 @@ class ItemsActions extends React.PureComponent {
 						</DropdownMenu>
 					</UncontrolledDropdown>
 				</ToolGroup>
-			</>
+			</React.Fragment>
 		);
 	}
 
