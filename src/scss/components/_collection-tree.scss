@@ -168,14 +168,16 @@
 		}
 
 		.btn-icon-plus {
-			margin-right: -$space-min - $input-border-width;
+			@include mouse-and-bp-up(md) {
+				margin-right: -$space-min - $input-border-width;
 
-			@include state(".item-container:not(:focus-within)") {
-				visibility: hidden;
-			}
+				@include state(".item-container:not(:focus-within)", "html:not(.keyboard)") {
+					visibility: hidden;
+				}
 
-			@include state(".item-container:hover") {
-				visibility: visible;
+				@include state(".item-container:hover") {
+					visibility: visible;
+				}
 			}
 		}
 
@@ -207,7 +209,7 @@
 			}
 
 			@include mouse-and-bp-up(md) {
-				@include state(".item-container:not(:focus-within)") {
+				@include state(".item-container:not(:focus-within)", "html:not(.keyboard)") {
 					visibility: hidden;
 				}
 
