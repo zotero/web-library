@@ -79,23 +79,19 @@ class ItemsActions extends React.PureComponent {
 						disabled={ !['top', 'collection'].includes(itemsSource) }
 						{ ...this.props }
 					/>
-					{
-						itemsSource !== 'trash' && (
-							<Button
-								onClick={ onDelete }
-								disabled={ isDeleting || selectedItemKeys.length === 0 }
-							>
-								{
-									isDeleting ?
-									<Spinner /> :
-									<Icon type={ '16/trash' } width="16" height="16" />
-								}
-							</Button>
-						)
-					}
+					<Button
+						onClick={ onDelete }
+						disabled={ isDeleting || selectedItemKeys.length === 0 || itemsSource === 'trash' }
+					>
+						{
+							isDeleting ?
+							<Spinner /> :
+							<Icon type={ '16/trash' } width="16" height="16" />
+						}
+					</Button>
 					<Button
 						onClick={ onRemove }
-						disabled={ selectedItemKeys.length === 0 }
+						disabled={ selectedItemKeys.length === 0 || itemsSource !== 'collection' }
 					>
 						<Icon type="20/remove-from-collection" width="20" height="20" />
 					</Button>
