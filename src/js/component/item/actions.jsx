@@ -82,6 +82,7 @@ class ItemsActions extends React.PureComponent {
 					<Button
 						onClick={ onDelete }
 						disabled={ isDeleting || selectedItemKeys.length === 0 || itemsSource === 'trash' }
+						title="Move to Trash"
 					>
 						{
 							isDeleting ?
@@ -92,6 +93,7 @@ class ItemsActions extends React.PureComponent {
 					<Button
 						onClick={ onRemove }
 						disabled={ selectedItemKeys.length === 0 || itemsSource !== 'collection' }
+						title="Remove from Collection"
 					>
 						<Icon type="20/remove-from-collection" width="20" height="20" />
 					</Button>
@@ -101,6 +103,7 @@ class ItemsActions extends React.PureComponent {
 					<Button
 						onClick={ onBibliographyOpen }
 						disabled={ selectedItemKeys.length === 0 }
+						title="Create Bibliography"
 					>
 						<Icon type="16/bibliography" width="16" height="16" />
 					</Button>
@@ -111,6 +114,7 @@ class ItemsActions extends React.PureComponent {
 							color={ null }
 							className="btn-icon dropdown-toggle"
 							disabled={ !this.hasExtraItemOptions }
+							title="More"
 						>
 							<Icon type="16/options" width="16" height="16" />
 						</DropdownToggle>
