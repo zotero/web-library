@@ -44,8 +44,8 @@ class ItemsActions extends React.PureComponent {
 	}
 
 	renderDuplicateItem() {
-		const { selectedItemKeys, onDuplicate } = this.props;
-		return selectedItemKeys.length === 1 ? (
+		const { selectedItemKeys, onDuplicate, itemsSource } = this.props;
+		return itemsSource !== 'trash' && selectedItemKeys.length === 1 ? (
 				<DropdownItem onClick={ onDuplicate }>
 					Duplicate Item
 				</DropdownItem>
@@ -53,8 +53,8 @@ class ItemsActions extends React.PureComponent {
 	}
 
 	renderShowInLibrary() {
-		const { selectedItemKeys, onLibraryShow } = this.props;
-		return selectedItemKeys.length === 1 ? (
+		const { selectedItemKeys, onLibraryShow, itemsSource } = this.props;
+		return itemsSource !== 'trash' && itemsSource !== 'top' && selectedItemKeys.length === 1 ? (
 				<DropdownItem onClick={ onLibraryShow }>
 					Show In Library
 				</DropdownItem>
@@ -63,7 +63,7 @@ class ItemsActions extends React.PureComponent {
 
 	get hasExtraItemOptions() {
 		const { selectedItemKeys, itemsSource } = this.props;
-		return selectedItemKeys.length === 1 || (
+		return (selectedItemKeys.length === 1 && itemsSource !== 'trash') || (
 			selectedItemKeys.length > 0 && itemsSource === 'trash'
 		);
 	}
