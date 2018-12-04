@@ -61,6 +61,13 @@ class ItemsActions extends React.PureComponent {
 			) : null;
 	}
 
+	get hasExtraItemOptions() {
+		const { selectedItemKeys, itemsSource } = this.props;
+		return selectedItemKeys.length === 1 || (
+			selectedItemKeys.length > 0 && itemsSource === 'trash'
+		);
+	}
+
 	renderMouse() {
 		const { itemsSource, onDelete, isDeleting, selectedItemKeys,
 			onBibliographyOpen, onRemove, } = this.props;
@@ -105,8 +112,9 @@ class ItemsActions extends React.PureComponent {
 				<ToolGroup>
 					<UncontrolledDropdown className="dropdown-wrapper">
 						<DropdownToggle
-						color={ null }
-						className="btn-icon dropdown-toggle"
+							color={ null }
+							className="btn-icon dropdown-toggle"
+							disabled={ !this.hasExtraItemOptions }
 						>
 							<Icon type="16/options" width="16" height="16" />
 						</DropdownToggle>
