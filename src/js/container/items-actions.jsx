@@ -7,6 +7,7 @@ const { saveAs } = require('file-saver');
 const { get } = require('../utils');
 const { makePath } = require('../common/navigation');
 const { withRouter } = require('react-router-dom');
+const { removeKeys } = require('../common/immutable');
 const ItemsActions = require('../component/item/actions');
 const withSelectMode = require('../enhancers/with-select-mode');
 const withDevice = require('../enhancers/with-device');
@@ -93,6 +94,13 @@ class ItemsActionsContainer extends React.PureComponent {
 		saveAs(exportData, fileName);
 	}
 
+	async handleDuplicate() {
+		const { item, libraryKey: library, dispatch } = this.props;
+		const copyItem = removeKeys(item, ['key', 'version']);
+		const newItem = await dispatch(createItem(copyItem, library));
+		this.handleItemsSelect([newItem.key]);
+	}
+
 	handleBibliographyOpen() {
 		const { dispatch } = this.props;
 		dispatch(toggleModal('BIBLIOGRAPHY', true));
@@ -110,13 +118,14 @@ class ItemsActionsContainer extends React.PureComponent {
 			itemsSource={ this.props.itemsSource }
 			onBibliographyOpen={ this.handleBibliographyOpen.bind(this) }
 			onDelete={ this.handleDelete.bind(this) }
+			onDuplicate={ this.handleDuplicate.bind(this) }
 			onExport={ this.handleExport.bind(this )}
+			onLibraryShow={ this.handleLibraryShow.bind(this) }
 			onNewItemCreate={ this.handleNewItemCreate.bind(this) }
 			onPermanentlyDelete={ this.handlePermanentlyDelete.bind(this) }
 			onRemove={ this.handleRemove.bind(this) }
 			onSelectModeToggle={ this.props.onSelectModeToggle }
 			onUndelete={ this.handleUndelete.bind(this) }
-			onLibraryShow={ this.handleLibraryShow.bind(this) }
 			selectedItemKeys={ this.props.selectedItemKeys }
 		/>
 	}
@@ -156,6 +165,7 @@ const mapStateToProps = state => {
 		itemsSource,
 		tags,
 		search,
+		item,
 		selectedItemKeys: item ? [item.key] : state.current.itemKeys,
 	}
 }
