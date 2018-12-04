@@ -98,6 +98,11 @@ class ItemsActionsContainer extends React.PureComponent {
 		dispatch(toggleModal('BIBLIOGRAPHY', true));
 	}
 
+	handleLibraryShow() {
+		const { history, selectedItemKeys, libraryKey: library } = this.props;
+		history.push(makePath({ library, items: selectedItemKeys[0] }));
+	}
+
 	render() {
 		return <ItemsActions
 			device={ this.props.device }
@@ -111,6 +116,7 @@ class ItemsActionsContainer extends React.PureComponent {
 			onRemove={ this.handleRemove.bind(this) }
 			onSelectModeToggle={ this.props.onSelectModeToggle }
 			onUndelete={ this.handleUndelete.bind(this) }
+			onLibraryShow={ this.handleLibraryShow.bind(this) }
 			selectedItemKeys={ this.props.selectedItemKeys }
 		/>
 	}
