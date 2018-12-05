@@ -59,7 +59,11 @@ class CollectionTree extends React.PureComponent {
 
 	handleRename(collectionKey, value, hasChanged) {
 		const { libraryKey, onRename } = this.props;
-		if(hasChanged) { onRename(libraryKey, collectionKey, value); }
+		if(hasChanged) {
+			onRename(libraryKey, collectionKey, value);
+		} else {
+			this.setState({ renaming: null });
+		}
 	}
 
 	handleDelete(collection) {
@@ -79,8 +83,12 @@ class CollectionTree extends React.PureComponent {
 	}
 
 	handleAddCommit(parentCollection, name) {
-		const { libraryKey, onAddCommit } = this.props;
-		onAddCommit(libraryKey, parentCollection, name);
+		const { libraryKey, onAddCommit, onAddCancel } = this.props;
+		if(name) {
+			onAddCommit(libraryKey, parentCollection, name);
+		} else {
+			onAddCancel();
+		}
 	}
 
 	//@TODO: memoize once
