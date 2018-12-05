@@ -113,7 +113,7 @@ class CollectionTree extends React.PureComponent {
 		return [null, depth];
 	}
 
-	makeDerivedData = memoize((collections, path, opened) => {
+	makeDerivedData = memoize((collections, path, opened, isTouchOrSmall) => {
 		return collections.reduce((aggr, c) => {
 			const derivedData = {
 				isSelected: false,
@@ -122,9 +122,9 @@ class CollectionTree extends React.PureComponent {
 
 			let index = path.indexOf(c.key);
 			derivedData['isSelected'] = index >= 0 && index === path.length - 1;
-			if(opened.includes(c.key)) {
+			if(!isTouchOrSmall && opened.includes(c.key)) {
 				derivedData['isOpen'] = true;
-			} else {
+			} else if(isTouchOrSmall) {
 				if(index >= 0 && index < path.length - 1) {
 					derivedData['isOpen'] = true;
 				} else if(index !== -1) {
@@ -143,8 +143,8 @@ class CollectionTree extends React.PureComponent {
 	}
 
 	get derivedData() {
-		const { collections, path } = this.props;
-		return this.makeDerivedData(collections, path, this.state.opened);
+		const { collections, path, device } = this.props;
+		return this.makeDerivedData(collections, path, this.state.opened, device.isTouchOrSmall);
 	}
 
 	renderCollections(collections, level, parentCollection = null) {
