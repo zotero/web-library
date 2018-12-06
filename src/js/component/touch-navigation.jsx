@@ -101,7 +101,9 @@ class TouchNavigation extends React.PureComponent {
 								<li data-id={ header.id} className={ header.slot } key={ header.id }>
 									<div className="center-axis">
 										<div className="inner" onClick={ ev => this.handleNavigation(header.path, ev) }>
-											<div className="truncate" tabIndex="0">
+											<div
+												className="truncate"
+												tabIndex={ header.label && header.slot === 'previous' ? 0 : null }>
 												{ header.label }
 											</div>
 										</div>

@@ -87,7 +87,7 @@ class Library extends React.PureComponent {
 						<header className="sidebar">
 							<h2 className="offscreen">Web library</h2>
 							<LibrariesContainer />
-							{ key !== null &&
+							{ key !== null && !device.isTouchOrSmall &&
 								<TagSelectorContainer key={ key } />
 							}
 						</header>

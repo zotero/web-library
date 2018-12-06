@@ -110,14 +110,14 @@ class CollectionTree extends React.PureComponent {
 			const result = this.findRecursive(childrenCollections, test, depth + 1);
 			if(result[0]) { return result; }
 		}
-		return [null, depth];
+		return [null, null];
 	}
 
 	makeDerivedData = memoize((collections, path, opened, isTouchOrSmall) => {
 		return collections.reduce((aggr, c) => {
 			const derivedData = {
 				isSelected: false,
-				isOpen: false
+				isOpen: false,
 			};
 
 			let index = path.indexOf(c.key);
@@ -158,12 +158,14 @@ class CollectionTree extends React.PureComponent {
 			col => derivedData[col.key].isSelected
 		);
 
+		const selectedHasChildren = selected !== null && selected.key in childMap;
+
 		// if isSelected is deeper in this tree, hasOpen is true
 		// if isSelected is a directly in collections, hasOpen is only true
 		// if selected item has subcollections (otherwise it's selected but not open)
 		const hasOpen = selected !== null && (
 			device.isSingleColumn || selectedDepth > 0 ||
-			(selectedDepth == 0 && selected.key in childMap)
+			(selectedDepth === 0 && selectedHasChildren)
 		);
 
 		const isAllItemsSelected = !device.isSingleColumn &&
@@ -223,12 +225,24 @@ class CollectionTree extends React.PureComponent {
 					{ collections.map(collection => {
 						const hasSubCollections = collection.key in childMap ||
 							(virtual !== null && virtual.collectionKey === collection.key);
+						const isSelected = derivedData[collection.key].isSelected;
+						const isSiblingOfSelected = selectedDepth === 0; // collections.some(col => derivedData[col.key].isSelected);
+						const isChildOfSelected = parentCollection && derivedData[parentCollection.key].isSelected;
+						const isParentOfSelected = collection.key in childMap &&
+							childMap[collection.key].some(colKey =>
+								colKey in derivedData && derivedData[colKey].isSelected
+							);
+						const shouldBeTabbableOnTouch = (isSelected && selectedHasChildren) || (isParentOfSelected && !selectedHasChildren);
+						const shouldBeTabbable = shouldBeTabbableOnTouch || !device.isTouchOrSmall;
+						const shouldButtonBeTabbableOnTouch = isChildOfSelected || (isSiblingOfSelected && !selectedHasChildren);
+						const shouldButtonBeTabbable = shouldButtonBeTabbableOnTouch || !device.isTouchOrSmall;
+
 						return (
 						<Node
 							key={ collection.key }
 							className={ cx({
 								'open': derivedData[collection.key].isOpen,
-								'selected': derivedData[collection.key].isSelected,
+								'selected': isSelected,
 								'collection': true,
 							})}
 							subtree={
@@ -244,6 +258,7 @@ class CollectionTree extends React.PureComponent {
 							onKeyPress={ this.handleKeyPress.bind(this, { collection: collection.key }) }
 							label={ collection.name }
 							isOpen={ derivedData[collection.key].isOpen }
+							tabIndex={ shouldBeTabbable ? "0" : null }
 							icon="folder"
 							dndTarget={ { 'targetType': 'collection', collectionKey: collection.key, libraryKey } }
 						>
@@ -263,7 +278,7 @@ class CollectionTree extends React.PureComponent {
 									/> :
 									<React.Fragment>
 										<div className="truncate">{ collection.name }</div>
-										<ActionsDropdown>
+										<ActionsDropdown tabIndex={ shouldButtonBeTabbable ? "0" : "-1" }>
 											<DropdownItem onClick={ this.handleRenameTrigger.bind(this, collection.key) }>
 												Rename
 											</DropdownItem>

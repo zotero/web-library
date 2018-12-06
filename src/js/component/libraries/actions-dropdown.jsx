@@ -19,6 +19,7 @@ class ActionsDropdown extends React.PureComponent {
 	}
 
 	render() {
+		const { tabIndex } = this.props;
 		return (
 			<Dropdown
 				isOpen={ this.state.isOpen }
@@ -26,6 +27,7 @@ class ActionsDropdown extends React.PureComponent {
 				className="dropdown-wrapper"
 			>
 				<DropdownToggle
+					tabIndex={ tabIndex }
 					color={ null }
 					className="btn-icon dropdown-toggle"
 				>

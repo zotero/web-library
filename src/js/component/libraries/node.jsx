@@ -46,6 +46,7 @@ class Node extends React.PureComponent {
 			onKeyPress,
 			onOpen,
 			subtree,
+			tabIndex,
 		} = this.props;
 
 		const twistyButton = (
@@ -69,7 +70,7 @@ class Node extends React.PureComponent {
 					onClick={ onClick }
 					onKeyPress={ onKeyPress }
 					role="treeitem"
-					tabIndex="0"
+					tabIndex={ tabIndex }
 					aria-expanded={ isOpen }
 				>
 					{ subtree && !hideTwisty ? twistyButton : null }
