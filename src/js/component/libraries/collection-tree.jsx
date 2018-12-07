@@ -187,6 +187,12 @@ class CollectionTree extends React.PureComponent {
 				(virtual.collectionKey === null && level === 1)
 			);
 
+		// used to decide whether nodes are tabbable on touch devices
+		const isSiblingOfSelected = selectedDepth === 0;
+		const isChildOfSelected = parentCollection && derivedData[parentCollection.key].isSelected;
+		const shouldBeTabbableOnTouch = isChildOfSelected || (isSiblingOfSelected && !selectedHasChildren);
+		const shouldBeTabbable = shouldBeTabbableOnTouch || !device.isTouchOrSmall;
+
 		collections.sort((c1, c2) =>
 			c1.name.toUpperCase().localeCompare(c2.name.toUpperCase())
 		);
@@ -201,6 +207,7 @@ class CollectionTree extends React.PureComponent {
 							className={ cx({
 								'selected': isAllItemsSelected,
 							})}
+							tabIndex={ shouldBeTabbable ? "0" : null }
 							onClick={ this.handleSelect.bind(this, { view: 'item-list' }) }
 							onKeyPress={ this.handleKeyPress.bind(this, { view: 'item-list' }) }
 						>
@@ -214,6 +221,7 @@ class CollectionTree extends React.PureComponent {
 							className={ cx({
 								'selected': isItemsSelected,
 							})}
+							tabIndex={ shouldBeTabbable ? "0" : null }
 							onClick={ this.handleSelect.bind(this, { view: 'item-list', collection: parentCollection.key }) }
 							onKeyPress={ this.handleKeyPress.bind(this, { view: 'item-list', collection: parentCollection.key }) }
 						>
@@ -226,16 +234,6 @@ class CollectionTree extends React.PureComponent {
 						const hasSubCollections = collection.key in childMap ||
 							(virtual !== null && virtual.collectionKey === collection.key);
 						const isSelected = derivedData[collection.key].isSelected;
-						const isSiblingOfSelected = selectedDepth === 0; // collections.some(col => derivedData[col.key].isSelected);
-						const isChildOfSelected = parentCollection && derivedData[parentCollection.key].isSelected;
-						const isParentOfSelected = collection.key in childMap &&
-							childMap[collection.key].some(colKey =>
-								colKey in derivedData && derivedData[colKey].isSelected
-							);
-						const shouldBeTabbableOnTouch = (isSelected && selectedHasChildren) || (isParentOfSelected && !selectedHasChildren);
-						const shouldBeTabbable = shouldBeTabbableOnTouch || !device.isTouchOrSmall;
-						const shouldButtonBeTabbableOnTouch = isChildOfSelected || (isSiblingOfSelected && !selectedHasChildren);
-						const shouldButtonBeTabbable = shouldButtonBeTabbableOnTouch || !device.isTouchOrSmall;
 
 						return (
 						<Node
@@ -278,7 +276,7 @@ class CollectionTree extends React.PureComponent {
 									/> :
 									<React.Fragment>
 										<div className="truncate">{ collection.name }</div>
-										<ActionsDropdown tabIndex={ shouldButtonBeTabbable ? "0" : "-1" }>
+										<ActionsDropdown tabIndex={ shouldBeTabbable ? "0" : "-1" }>
 											<DropdownItem onClick={ this.handleRenameTrigger.bind(this, collection.key) }>
 												Rename
 											</DropdownItem>
@@ -322,6 +320,7 @@ class CollectionTree extends React.PureComponent {
 									'publications': true,
 									'selected': itemsSource === 'publications'
 								})}
+								tabIndex={ shouldBeTabbable ? "0" : null }
 								onClick={ this.handleSelect.bind(this, { publications: true }) }
 								onKeyPress={ this.handleKeyPress.bind(this, { publications: true }) }
 								dndTarget={ { 'targetType': 'publications', libraryKey } }
@@ -339,6 +338,7 @@ class CollectionTree extends React.PureComponent {
 									'trash': true,
 									'selected': isCurrentLibrary && itemsSource === 'trash'
 								})}
+								tabIndex={ shouldBeTabbable ? "0" : null }
 								onClick={ this.handleSelect.bind(this, { trash: true }) }
 								onKeyPress={ this.handleKeyPress.bind(this, { trash: true }) }
 								dndTarget={ { 'targetType': 'trash', libraryKey } }
