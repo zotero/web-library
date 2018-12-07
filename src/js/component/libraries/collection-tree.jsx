@@ -13,6 +13,7 @@ const { ViewportContext } = require('../../context');
 const deepEqual = require('deep-equal');
 const { noop } = require('../../utils.js');
 const { makeChildMap } = require('../../common/collection');
+const { isTriggerEvent } = require('../../common/event');
 const Editable = require('../editable');
 
 class CollectionTree extends React.PureComponent {
@@ -49,8 +50,11 @@ class CollectionTree extends React.PureComponent {
 			this.setState({ opened: [...opened, key ] });
 	}
 
-	handleRenameTrigger(collectionKey) {
-		this.setState({ renaming: collectionKey});
+	handleRenameTrigger(collectionKey, ev) {
+		if(isTriggerEvent(ev)) {
+			ev.preventDefault();
+			this.setState({ renaming: collectionKey});
+		}
 	}
 
 	handleRenameCancel() {
@@ -66,20 +70,26 @@ class CollectionTree extends React.PureComponent {
 		}
 	}
 
-	handleDelete(collection) {
-		const { libraryKey, onDelete } = this.props;
-		onDelete(libraryKey, collection);
+	handleDelete(collection, ev) {
+		if(isTriggerEvent(ev)) {
+			ev.preventDefault();
+			const { libraryKey, onDelete } = this.props;
+			onDelete(libraryKey, collection);
+		}
 	}
 
-	handleSubcollection(collectionKey) {
-		const { libraryKey, onAdd } = this.props;
-		const { opened } = this.state;
+	handleSubcollection(collectionKey, ev) {
+		if(isTriggerEvent(ev)) {
+			ev.preventDefault();
+			const { libraryKey, onAdd } = this.props;
+			const { opened } = this.state;
 
-		if(collectionKey !== null) {
-			this.setState({ opened: [...opened, collectionKey ] });
+			if(collectionKey !== null) {
+				this.setState({ opened: [...opened, collectionKey ] });
+			}
+
+			onAdd(libraryKey, collectionKey);
 		}
-
-		onAdd(libraryKey, collectionKey);
 	}
 
 	handleAddCommit(parentCollection, name) {
@@ -278,13 +288,22 @@ class CollectionTree extends React.PureComponent {
 									<React.Fragment>
 										<div className="truncate">{ collection.name }</div>
 										<ActionsDropdown tabIndex={ shouldBeTabbable ? "0" : "-1" }>
-											<DropdownItem onClick={ this.handleRenameTrigger.bind(this, collection.key) }>
+											<DropdownItem
+												onKeyDown={ ev => this.handleRenameTrigger(collection.key, ev) }
+												onClick={ ev => this.handleRenameTrigger(collection.key, ev) }
+											>
 												Rename
 											</DropdownItem>
-											<DropdownItem onClick={ this.handleDelete.bind(this, collection) }>
+											<DropdownItem
+												onKeyDown={ ev => this.handleDelete(collection, ev) }
+												onClick={ ev => this.handleDelete(collection, ev) }
+											>
 												Delete
 											</DropdownItem>
-											<DropdownItem onClick={ this.handleSubcollection.bind(this, collection.key) }>
+											<DropdownItem
+												onKeyDown={ ev => this.handleSubcollection(collection.key, ev) }
+												onClick={ ev => this.handleSubcollection(collection.key, ev) }
+											>
 												New Subcollection
 											</DropdownItem>
 										</ActionsDropdown>
