@@ -6,6 +6,7 @@ const cx = require('classnames');
 const Icon = require('../ui/icon');
 const { noop } = require('../../utils');
 const { ITEM } = require('../../constants/dnd');
+const { omit } = require('../../common/immutable');
 const {
 	DropTarget,
 	DropTargetConnector,
@@ -42,11 +43,8 @@ class Node extends React.PureComponent {
 			hideTwisty,
 			isOpen,
 			isOver,
-			onClick,
-			onKeyPress,
 			onOpen,
 			subtree,
-			tabIndex,
 		} = this.props;
 
 		const twistyButton = (
@@ -60,6 +58,10 @@ class Node extends React.PureComponent {
 			</button>
 		);
 		const isActive = canDrop && isOver;
+		const props = omit(this.props, ["canDrop", "children", "className",
+			"connectDropTarget", "dndTarget", "hideTwisty", "isOpen", "isOver",
+			"onOpen", "subtree"
+		]);
 
 		return connectDropTarget(
 			<li
@@ -67,11 +69,9 @@ class Node extends React.PureComponent {
 				>
 				<div
 					className={ cx('item-container', { 'dnd-target': isActive }) }
-					onClick={ onClick }
-					onKeyPress={ onKeyPress }
 					role="treeitem"
-					tabIndex={ tabIndex }
 					aria-expanded={ isOpen }
+					{ ...props }
 				>
 					{ subtree && !hideTwisty ? twistyButton : null }
 					{ children }

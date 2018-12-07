@@ -29,15 +29,9 @@ class CollectionTree extends React.PureComponent {
 		}
 	}
 
-	handleSelect(target) {
-		const { onSelect, libraryKey } = this.props;
-		onSelect({ library: libraryKey, ...target });
-	}
-
-	handleKeyPress(target, ev) {
-		const { onSelect, libraryKey } = this.props;
-		if(ev && (ev.key === 'Enter' || ev.key === ' ')) {
-			ev.stopPropagation();
+	handleSelect(target, ev) {
+		if(isTriggerEvent(ev)) {
+			const { onSelect, libraryKey } = this.props;
 			onSelect({ library: libraryKey, ...target });
 		}
 	}
@@ -219,8 +213,8 @@ class CollectionTree extends React.PureComponent {
 								'selected': isAllItemsSelected,
 							})}
 							tabIndex={ shouldBeTabbable ? "0" : null }
-							onClick={ this.handleSelect.bind(this, { view: 'item-list' }) }
-							onKeyPress={ this.handleKeyPress.bind(this, { view: 'item-list' }) }
+							onClick={ ev => this.handleSelect({ view: 'item-list' }, ev) }
+							onKeyDown={ ev => this.handleSelect({ view: 'item-list' }, ev) }
 						>
 							<Icon type="28/document" className="touch" width="28" height="28" />
 							<Icon type="16/document" className="mouse" width="16" height="16" />
@@ -233,8 +227,12 @@ class CollectionTree extends React.PureComponent {
 								'selected': isItemsSelected,
 							})}
 							tabIndex={ shouldBeTabbable ? "0" : null }
-							onClick={ this.handleSelect.bind(this, { view: 'item-list', collection: parentCollection.key }) }
-							onKeyPress={ this.handleKeyPress.bind(this, { view: 'item-list', collection: parentCollection.key }) }
+							onClick={ ev => this.handleSelect(
+								{ view: 'item-list', collection: parentCollection.key }, ev
+							) }
+							onKeyDown={ ev => this.handleSelect(
+								{ view: 'item-list', collection: parentCollection.key }, ev
+							) }
 						>
 							<Icon type="28/document" className="touch" width="28" height="28" />
 							<Icon type="16/document" className="mouse" width="16" height="16" />
@@ -262,9 +260,9 @@ class CollectionTree extends React.PureComponent {
 								) : null
 							}
 							hideTwisty={ !hasSubCollections }
-							onOpen={ this.handleOpenToggle.bind(this, collection.key) }
-							onClick={ this.handleSelect.bind(this, { collection: collection.key }) }
-							onKeyPress={ this.handleKeyPress.bind(this, { collection: collection.key }) }
+							onOpen={ ev => this.handleOpenToggle(collection.key, ev) }
+							onClick={ ev => this.handleSelect({ collection: collection.key }, ev) }
+							onKeyDown={ ev => this.handleSelect({ collection: collection.key }, ev) }
 							label={ collection.name }
 							isOpen={ derivedData[collection.key].isOpen }
 							tabIndex={ shouldBeTabbable ? "0" : null }
@@ -341,8 +339,8 @@ class CollectionTree extends React.PureComponent {
 									'selected': itemsSource === 'publications'
 								})}
 								tabIndex={ shouldBeTabbable ? "0" : null }
-								onClick={ this.handleSelect.bind(this, { publications: true }) }
-								onKeyPress={ this.handleKeyPress.bind(this, { publications: true }) }
+								onClick={ ev => this.handleSelect(this, { publications: true }, ev) }
+								onKeyDown={ ev => this.handleSelect(this, { publications: true }, ev) }
 								dndTarget={ { 'targetType': 'publications', libraryKey } }
 							>
 								<Icon type="28/document" className="touch" width="28" height="28" />
@@ -359,8 +357,8 @@ class CollectionTree extends React.PureComponent {
 									'selected': isCurrentLibrary && itemsSource === 'trash'
 								})}
 								tabIndex={ shouldBeTabbable ? "0" : null }
-								onClick={ this.handleSelect.bind(this, { trash: true }) }
-								onKeyPress={ this.handleKeyPress.bind(this, { trash: true }) }
+								onClick={ ev => this.handleSelect({ trash: true }, ev) }
+								onKeyDown={ ev => this.handleSelect({ trash: true }, ev) }
 								dndTarget={ { 'targetType': 'trash', libraryKey } }
 							>
 								<Icon type="28/trash" className="touch" width="28" height="28" />

@@ -12,4 +12,7 @@ const removeKeys = (object, deleteKeys) => {
 	}, {});
 }
 
-module.exports = { removeKeys };
+//@TODO: rename everywhere
+const omit = removeKeys;
+
+module.exports = { removeKeys, omit };
