@@ -78,8 +78,11 @@ class TouchNavigation extends React.PureComponent {
 	}
 
 	handleNavigation(path, ev) {
-		ev && ev.preventDefault();
-		this.props.onNavigation(path, ev);
+		ev.preventDefault();
+		if(ev.type === 'click' ||
+			(ev.type === 'keypress' && (ev.key === 'Enter' || ev.key === ' '))) {
+			this.props.onNavigation(path, ev);
+		}
 	}
 
 	render() {
@@ -100,7 +103,11 @@ class TouchNavigation extends React.PureComponent {
 							return (
 								<li data-id={ header.id} className={ header.slot } key={ header.id }>
 									<div className="center-axis">
-										<div className="inner" onClick={ ev => this.handleNavigation(header.path, ev) }>
+										<div
+											className="inner"
+											onClick={ ev => this.handleNavigation(header.path, ev) }
+											onKeyPress={ ev => this.handleNavigation(header.path, ev) }
+										>
 											<div
 												className="truncate"
 												tabIndex={ header.label && header.slot === 'previous' ? 0 : null }>

@@ -33,7 +33,7 @@ class CollectionTree extends React.PureComponent {
 		onSelect({ library: libraryKey, ...target });
 	}
 
-	handleKeyPress(ev, target) {
+	handleKeyPress(target, ev) {
 		const { onSelect, libraryKey } = this.props;
 		if(ev && (ev.key === 'Enter' || ev.key === ' ')) {
 			ev.stopPropagation();
@@ -150,8 +150,7 @@ class CollectionTree extends React.PureComponent {
 	renderCollections(collections, level, parentCollection = null) {
 		const { childMap, derivedData } = this;
 		const { libraryKey, itemsSource, isUserLibrary, isCurrentLibrary,
-			virtual, onAddCancel, device } = this.props;
-
+			virtual, onAddCancel, device, path, view } = this.props;
 
 		const [selected, selectedDepth] = this.findRecursive(
 			collections,
@@ -189,8 +188,10 @@ class CollectionTree extends React.PureComponent {
 
 		// used to decide whether nodes are tabbable on touch devices
 		const isSiblingOfSelected = selectedDepth === 0;
-		const isChildOfSelected = parentCollection && derivedData[parentCollection.key].isSelected;
-		const shouldBeTabbableOnTouch = isChildOfSelected || (isSiblingOfSelected && !selectedHasChildren);
+		const isChildOfSelected = (parentCollection && derivedData[parentCollection.key].isSelected) ||
+			(parentCollection === null && path.length === 0 && view !== 'libraries');
+		const shouldBeTabbableOnTouch = isCurrentLibrary &&
+			(isChildOfSelected || (isSiblingOfSelected && !selectedHasChildren));
 		const shouldBeTabbable = shouldBeTabbableOnTouch || !device.isTouchOrSmall;
 
 		collections.sort((c1, c2) =>

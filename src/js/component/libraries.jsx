@@ -118,6 +118,8 @@ class Libraries extends React.PureComponent {
 		const { groups, libraryKey, itemsSource, device, view,
 			librariesWithCollectionsFetching } = this.props;
 		const { opened } = this.state;
+		const shouldBeTabbableOnTouch = view === 'libraries';
+		const shouldBeTabbable = shouldBeTabbableOnTouch || !device.isTouchOrSmall;
 
 		return (
 			<div className={ cx('level', 'level-0') }>
@@ -137,6 +139,7 @@ class Libraries extends React.PureComponent {
 										'selected': isSelected,
 										'busy': isFetching
 									}) }
+									tabIndex={ shouldBeTabbable ? "0" : null }
 									isOpen={ isOpen && !isFetching }
 									onOpen={ this.handleOpenToggle.bind(this, groupKey) }
 									onClick={ this.handleSelect.bind(this, { library: groupKey, view: 'library' }) }
@@ -170,6 +173,8 @@ class Libraries extends React.PureComponent {
 			(device.isTouchOrSmall && view !== 'libraries' && libraryKey == userLibraryKey);
 		const isSelected = !device.isTouchOrSmall &&
 			libraryKey === userLibraryKey && itemsSource === 'top';
+		const shouldBeTabbableOnTouch = view === 'libraries';
+		const shouldBeTabbable = shouldBeTabbableOnTouch || !device.isTouchOrSmall;
 
 		return (
 			<div className={ cx('level', 'level-0') }>
@@ -179,6 +184,7 @@ class Libraries extends React.PureComponent {
 							'open': isOpen,
 							'selected': isSelected
 						}) }
+						tabIndex={ shouldBeTabbable ? "0" : null }
 						isOpen={ isOpen }
 						onOpen={ this.handleOpenToggle.bind(this, userLibraryKey) }
 						onClick={ this.handleSelect.bind(this, { library: userLibraryKey, view: 'library' }) }
