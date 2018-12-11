@@ -20,10 +20,14 @@ const {
 const { get, sortByKey, resizeVisibleColumns } = require('../utils');
 const { getSerializedQuery } = require('../common/state');
 const { makePath } = require('../common/navigation');
-const processItems = require('../common/process-items');
+const processItem = require('../common/process-item');
 const withDevice = require('../enhancers/with-device');
 
 class ItemsContainer extends React.PureComponent {
+	state = {
+		items: []
+	}
+
 	handleItemsSelect(items = []) {
 		const { history, collectionKey: collection, libraryKey: library,
 			itemsSource, tags, search } = this.props;
@@ -63,27 +67,41 @@ class ItemsContainer extends React.PureComponent {
 	async handleLoadMore({ startIndex, stopIndex }) {
 		let start = startIndex;
 		let limit = (stopIndex - startIndex) + 1;
-		let sort = this.props.sortBy;
 		let direction = this.props.sortDirection.toLowerCase();
 		let tag = this.props.tags || [];
-		const { itemsSource, dispatch, collectionKey, search: q } = this.props;
+		const { itemsSource, dispatch, libraryTags, itemTypes, collectionKey,
+			search: q, sortBy: sort,  } = this.props;
 		const sortAndDirection = { start, limit, sort, direction };
+		var sourceItems = [];
 
 		switch(itemsSource) {
 			case 'query':
-				return await dispatch(fetchItemsQuery({ collection: collectionKey, tag, q }, sortAndDirection));
+				sourceItems = await dispatch(fetchItemsQuery({ collection: collectionKey, tag, q }, sortAndDirection));
+				break;
 			case 'top':
-				return await dispatch(fetchTopItems(sortAndDirection));
+				sourceItems = await dispatch(fetchTopItems(sortAndDirection));
+				break;
 			case 'trash':
-				return await dispatch(fetchTrashItems(sortAndDirection));
+				sourceItems = await dispatch(fetchTrashItems(sortAndDirection));
+				break;
 			case 'publications':
-				return await dispatch(fetchPublicationsItems(sortAndDirection));
+				sourceItems = await dispatch(fetchPublicationsItems(sortAndDirection));
+				break;
 			case 'collection':
-				return await dispatch(fetchItemsInCollection(collectionKey, sortAndDirection));
+				sourceItems = await dispatch(fetchItemsInCollection(collectionKey, sortAndDirection));
+				break;
 		}
+
+		const items = [...this.state.items];
+		for(let i = 0; i < limit; i++) {
+			items[startIndex + i] = processItem(sourceItems[i], itemTypes, libraryTags) || null;
+		}
+		sortByKey(items, sort, direction);
+		this.setState({ items });
 	}
 
 	async handleSort({ sortBy, sortDirection, stopIndex }) {
+		this.setState({ items: [] });
 		const { dispatch } = this.props;
 		sortDirection = sortDirection.toLowerCase(); // react-virtualised uses ASC/DESC, zotero asc/desc
 		await dispatch(sortItems(sortBy, sortDirection));
@@ -110,6 +128,7 @@ class ItemsContainer extends React.PureComponent {
 
 		return <Items
 			key = { key }
+			items = { this.state.items }
 			{ ...this.props }
 			onColumnReorder={ this.handleColumnReorder.bind(this) }
 			onColumnResize={ this.handleColumnResize.bind(this) }
@@ -131,60 +150,55 @@ const mapStateToProps = state => {
 	const itemKey = state.current.item;
 	const collection = get(state, ['libraries', libraryKey, 'collections', collectionKey]);
 	const item = get(state, ['libraries', libraryKey, 'items', itemKey]);
+	const libraryTags = get(state, ['libraries', libraryKey, 'tags']);
 	const isMetaAvailable = !state.fetching.meta;
 	const { sortBy, sortDirection } = state.config;
 	const preferences = state.preferences;
 	const itemFields = state.meta.itemFields;
 	const itemTypes = state.meta.itemTypes;
 	const isReady = libraryKey && ((!collectionKey && itemFields) || collection !== null);
-	var items = [], totalItemsCount = 0;
+	var totalItemsCount = 0;
 
 	if(isMetaAvailable) {
 		switch(itemsSource) {
 			case 'query':
-				items = state.queryItems;
+				// items = state.queryItems;
 				totalItemsCount = state.queryItemCount;
 				totalItemsCount = totalItemsCount === null ? 50 : totalItemsCount;
 			break;
 			case 'top':
-				items = get(state, ['libraries', libraryKey, 'itemsTop'], []);
+				// items = get(state, ['libraries', libraryKey, 'itemsTop'], []);
 				totalItemsCount = get(state, ['itemCountTopByLibrary', libraryKey], 50);
 			break;
 			case 'trash':
-				items = get(state, ['libraries', libraryKey, 'itemsTrash'], []);
+				// items = get(state, ['libraries', libraryKey, 'itemsTrash'], []);
 				totalItemsCount = get(state, ['itemCountTrashByLibrary', libraryKey], 50);
 			break;
 			case 'publications':
-				items = state.itemsPublications;
+				// items = state.itemsPublications;
 				totalItemsCount = state.itemCount.publications;
 				totalItemsCount = totalItemsCount === null ? 50 : totalItemsCount;
 			break;
 			case 'collection':
-				items = get(state, ['libraries', libraryKey, 'itemsByCollection', collectionKey], []);
+				// items = get(state, ['libraries', libraryKey, 'itemsByCollection', collectionKey], []);
 				totalItemsCount = get(state, ['libraries', libraryKey, 'itemCountByCollection', collectionKey], 0)
 			break;
 		}
-
-		items = processItems(
-			items.map(key => get(state, ['libraries', libraryKey, 'items', key])),
-			state
-		);
-		sortByKey(items, sortBy, sortDirection);
 	}
 
-	const isDeleting = get(state, ['libraries', libraryKey, 'deleting'], [])
-			.some(itemKey => items.filter(i => i.key === itemKey));
+	//@TODO: indicate if isDeleting item(s) within visible set
+	// const isDeleting = get(state, ['libraries', libraryKey, 'deleting'], [])
+	// 		.some(itemKey => items.filter(i => i.key === itemKey));
 
 	const isSelectMode = state.current.isSelectMode;
 
 	return {
 		collection,
 		collectionKey,
-		isDeleting,
+		// isDeleting,
 		isReady,
 		isSelectMode,
 		itemFields,
-		items,
 		itemsSource,
 		itemTypes,
 		libraryKey,
@@ -195,6 +209,7 @@ const mapStateToProps = state => {
 		sortDirection: sortDirection.toUpperCase(),
 		tags,
 		totalItemsCount,
+		libraryTags
 	};
 };
 
@@ -206,7 +221,7 @@ const mapDispatchToProps = dispatch => {
 
 ItemsContainer.propTypes = {
   collection: PropTypes.object,
-  items: PropTypes.array.isRequired,
+  // items: PropTypes.array.isRequired,
   selectedItemKey: PropTypes.string,
   dispatch: PropTypes.func.isRequired
 };

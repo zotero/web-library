@@ -8,33 +8,24 @@ const { default: AutoSizer } = require('react-virtualized/dist/commonjs/AutoSize
 const { default: InfiniteLoader } = require('react-virtualized/dist/commonjs/InfiniteLoader');
 const { default: List } = require('react-virtualized/dist/commonjs/List');
 
-const LOADING = 1;
-const LOADED = 2;
-
 class ItemsList extends React.PureComponent {
-	constructor(props) {
-		super(props);
-		this.loadedRowsMap = {};
-	}
 
 	// Identical to table.jsx
-	componentDidUpdate({ sortBy, sortDirection, items }, prevState) {
+	componentDidUpdate({ sortBy, sortDirection }) {
 		if(this.props.sortBy !== sortBy ||
-			this.props.sortDirection !== sortDirection ||
-			this.props.items.length !== items.length ) {
-			this.loadedRowsMap = {};
+			this.props.sortDirection !== sortDirection) {
 			this.loader.resetLoadMoreRowsCache(false);
 		}
 	}
 
 	// Identical to table.jsx
 	getRowHasLoaded({ index }) {
-		return !!this.loadedRowsMap[index];
+		return !!this.props.items[index];
 	}
 
 	// Identical to table.jsx
 	getRow({ index }) {
-		if (index < this.props.items.length) {
+		if (this.props.items[index]) {
 			return this.props.items[index];
 		} else {
 			return {
@@ -50,20 +41,12 @@ class ItemsList extends React.PureComponent {
 	async handleLoadMore({ startIndex, stopIndex }) {
 		this.startIndex = startIndex;
 		this.stopIndex = stopIndex;
-		for(let i = startIndex; i <= stopIndex; i++) {
-			this.loadedRowsMap[i] = LOADING;
-		}
-
 		await this.props.onLoadMore({ startIndex, stopIndex });
-
-		for(let i = startIndex; i <= stopIndex; i++) {
-			this.loadedRowsMap[i] = LOADED;
-		}
 	}
 
 	// Identical to table.jsx
 	handleRowClick({ event, index }) {
-		if(index < this.props.items.length) {
+		if(this.props.items[index]) {
 			this.handleItemSelect(this.props.items[index], event);
 		}
 	}

@@ -443,11 +443,6 @@ const fetchItemsInCollection = (collectionKey, { start = 0, limit = 50, sort = '
 		const config = state.config;
 		const libraryKey = state.current.library;
 		const totalItemsCount = get(state, ['libraries', libraryKey, 'itemCountByCollection', collectionKey]);
-		const knownItemKeys = get(state, ['libraries', libraryKey, 'itemsByCollection', collectionKey], []);
-
-		if(knownItemKeys.length === totalItemsCount) {
-			return knownItemKeys.map(key => get(state, ['libraries', libraryKey, 'items', key]))
-		}
 
 		dispatch({
 			type: REQUEST_ITEMS_IN_COLLECTION,
@@ -718,13 +713,13 @@ const fetchTopItems = ({ start = 0, limit = 50, sort = 'dateModified', direction
 	return async (dispatch, getState, ) => {
 		const state = getState();
 		const libraryKey = state.current.library;
-		const totalItemsCount = get(state, ['itemCountTopByLibrary', libraryKey]);
-		const knownItemKeys = get(state, ['libraries', libraryKey, 'itemsTop'], []);
-
-		if(knownItemKeys.length === totalItemsCount) {
-			// there is no need for a request
-			return knownItemKeys.map(key => get(state, ['libraries', libraryKey, 'items', key]))
-		}
+		// @TODO: support pagination, sorting, deduplicate
+		// const totalItemsCount = get(state, ['itemCountTopByLibrary', libraryKey]);
+		// const knownItemKeys = get(state, ['libraries', libraryKey, 'itemsTop'], []);
+		// if(knownItemKeys.length === totalItemsCount) {
+		// 	// there is no need for a request
+		// 	return knownItemKeys.map(key => get(state, ['libraries', libraryKey, 'items', key]))
+		// }
 
 		dispatch({
 			type: REQUEST_TOP_ITEMS,
@@ -768,13 +763,6 @@ const fetchTrashItems = ({ start = 0, limit = 50, sort = 'dateModified', directi
 	return async (dispatch, getState, ) => {
 		const state = getState();
 		const libraryKey = state.current.library;
-		const totalItemsCount = get(state, ['itemCountTrashByLibrary', libraryKey]);
-		const knownItemKeys = get(state, ['libraries', libraryKey, 'itemsTrash'], []);
-
-		if(knownItemKeys.length === totalItemsCount) {
-			// there is no need for a request
-			return knownItemKeys.map(key => get(state, ['libraries', libraryKey, 'items', key]))
-		}
 
 		dispatch({
 			type: REQUEST_TRASH_ITEMS,
@@ -823,12 +811,6 @@ const fetchPublicationsItems = ({ start = 0, limit = 50, sort = 'dateModified', 
 		const state = getState();
 		const libraryKey = state.config.userLibraryKey;
 		const totalItemsCount = state.itemCount.publications;
-		const knownItemKeys = state.itemsPublications;
-
-		if(knownItemKeys.length === totalItemsCount) {
-			// there is no need for a request
-			return knownItemKeys.map(key => get(state, ['libraries', libraryKey, 'items', key]))
-		}
 
 		dispatch({
 			type: REQUEST_PUBLICATIONS_ITEMS,

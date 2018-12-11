@@ -15,13 +15,9 @@ const Icon = require('../../ui/icon');
 const Row = require('./row');
 const { columnMinWidthFraction } = require('../../../constants/defaults');
 
-const LOADING = 1;
-const LOADED = 2;
-
 class ItemsTable extends React.PureComponent {
 	constructor(props) {
 		super(props);
-		this.loadedRowsMap = {};
 		this.handleMouseUp = this.handleMouseUp.bind(this);
 		this.handleMouseMove = this.handleMouseMove.bind(this);
 		this.handleMouseLeave = this.handleMouseLeave.bind(this);
@@ -32,11 +28,9 @@ class ItemsTable extends React.PureComponent {
 		return { columns };
 	}
 
-	componentDidUpdate({ sortBy, sortDirection, items }, prevState) {
+	componentDidUpdate({ sortBy, sortDirection }) {
 		if(this.props.sortBy !== sortBy ||
-			this.props.sortDirection !== sortDirection ||
-			this.props.items.length !== items.length ) {
-			this.loadedRowsMap = {};
+			this.props.sortDirection !== sortDirection) {
 			this.loader.resetLoadMoreRowsCache(false);
 		}
 	}
@@ -186,19 +180,11 @@ class ItemsTable extends React.PureComponent {
 	async handleLoadMore({ startIndex, stopIndex }) {
 		this.startIndex = startIndex;
 		this.stopIndex = stopIndex;
-		for(let i = startIndex; i <= stopIndex; i++) {
-			this.loadedRowsMap[i] = LOADING;
-		}
-
 		await this.props.onLoadMore({ startIndex, stopIndex });
-
-		for(let i = startIndex; i <= stopIndex; i++) {
-			this.loadedRowsMap[i] = LOADED;
-		}
 	}
 
 	handleRowClick({ event, index }) {
-		if(index < this.props.items.length) {
+		if(this.props.items[index]) {
 			this.handleItemSelect(this.props.items[index], event);
 		}
 	}
@@ -208,7 +194,7 @@ class ItemsTable extends React.PureComponent {
 	}
 
 	getRow({ index }) {
-		if (index < this.props.items.length) {
+		if (this.props.items[index]) {
 			return this.props.items[index];
 		} else {
 			return {
@@ -221,7 +207,7 @@ class ItemsTable extends React.PureComponent {
 	}
 
 	getRowHasLoaded({ index }) {
-		return !!this.loadedRowsMap[index];
+		return !!this.props.items[index];
 	}
 
 	renderRow({ className: otherClassName, index,...opts }) {
@@ -230,7 +216,7 @@ class ItemsTable extends React.PureComponent {
 			className: otherClassName,
 			item: true,
 			odd: (index + 1) % 2 === 1,
-			active: index < items.length && selectedItemKeys.includes(items[index].key)
+			active: items[index] && selectedItemKeys.includes(items[index].key)
 		});
 
 		return <Row
@@ -450,13 +436,15 @@ class ItemsTable extends React.PureComponent {
 									headerRowRenderer={ this.renderHeaderRow.bind(this) }
 									onRowClick={ this.handleRowClick.bind(this) }
 									sort={ this.handleSort.bind(this) }
+									sortBy={ this.props.sortBy }
+									sortDirection={ this.props.sortDirection }
 								>
 										{
 											this.state.columns
 											.filter(c => c.isVisible)
-											.map(({ field, fraction }, index) => this.renderColumn({
+											.map(({ field, fraction }) => this.renderColumn({
 												width: Math.floor(fraction * width),
-												dataKey: field
+												dataKey: field,
 											}))
 										}
 								</Table>
