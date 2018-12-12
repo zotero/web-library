@@ -5,16 +5,17 @@ const ReactDOM = require('react-dom');
 const PropTypes = require('prop-types');
 const ReduxThunk = require('redux-thunk').default;
 const ReduxAsyncQueue = require('redux-async-queue').default;
-const { createStore, applyMiddleware, compose, combineReducers } = require('redux');
+const { createStore, applyMiddleware, compose } = require('redux');
 const { Provider, connect } = require('react-redux');
 const withUserTypeDetection = require('../enhancers/with-user-type-detector');
 // const createHistory = require('history/createBrowserHistory');
 // const { Route } = require('react-router');
+const { createBrowserHistory } = require('history');
+const { routerMiddleware, ConnectedRouter } = require('connected-react-router');
 const { BrowserRouter, Route, Switch } = require('react-router-dom');
-const deepEqual = require('deep-equal');
-const reducers = require('../reducers');
+// const deepEqual = require('deep-equal');
+const createReducers = require('../reducers');
 const {
-	changeRoute,
 	configureApi,
 	fetchGroups,
 	fetchLibrarySettings,
@@ -23,8 +24,10 @@ const {
 	toggleTransitions,
 	triggerResizeViewport,
 } = require('../actions');
+const routes = require('../routes');
 const Library = require('../component/library');
 const defaults = require('../constants/defaults');
+const { getCurrent } = require('../common/state');
 const { ViewportContext, UserContext } = require('../context');
 const { DragDropContext } = require('react-dnd');
 const { default: MultiBackend } = require('react-dnd-multi-backend');
@@ -33,8 +36,7 @@ const CustomDragLayer = require('../component/drag-layer');
 
  //@TODO: ensure this doesn't affect prod build
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
-const combinedReducers = combineReducers(reducers);
-
+const history = createBrowserHistory();
 
 @DragDropContext(MultiBackend(HTML5toTouch))
 class LibraryContainer extends React.PureComponent {
@@ -51,9 +53,7 @@ class LibraryContainer extends React.PureComponent {
 		props.dispatch(
 			initialize()
 		);
-		props.dispatch(
-			changeRoute(this.props.match)
-		);
+
 		props.dispatch(
 			fetchGroups(this.props.userLibraryKey)
 		);
@@ -75,9 +75,9 @@ class LibraryContainer extends React.PureComponent {
 	componentDidUpdate({ match: previousMatch, isFetchingCollections: wasFetchingCollections }) {
 		const { dispatch, isFetchingCollections } = this.props;
 
-		if(!deepEqual(this.props.match, previousMatch)) {
-			dispatch(changeRoute(this.props.match));
-		}
+		// if(!deepEqual(this.props.match, previousMatch)) {
+		// 	dispatch(changeRoute(this.props.match));
+		// }
 
 		if(!isFetchingCollections && wasFetchingCollections) {
 			// setTimeout required to ensure everything else in the UI had
@@ -87,7 +87,8 @@ class LibraryContainer extends React.PureComponent {
 	}
 
 	render() {
-		const { user, viewport } = this.props;
+		const { user, viewport, libraryKey } = this.props;
+
 		return (
 			<ViewportContext.Provider value={ viewport }>
 			<UserContext.Provider value={ user }>
@@ -102,9 +103,10 @@ class LibraryContainer extends React.PureComponent {
 		const { apiKey, apiConfig, userId } = {...defaults, ...config };
 		if(element) {
 			var store = createStore(
-				combinedReducers,
+				createReducers(history),
 				composeEnhancers(
 					applyMiddleware(
+						routerMiddleware(history),
 						ReduxThunk,
 						ReduxAsyncQueue
 					)
@@ -117,52 +119,15 @@ class LibraryContainer extends React.PureComponent {
 
 			ReactDOM.render(
 				<Provider store={store}>
-					<BrowserRouter>
-						<Switch>
-							<Route path="/collection/:collection/tags/:tags/items/:items" component={LibraryContainerWrapped} />
-							<Route path="/collection/:collection/search/:search/items/:items" component={LibraryContainerWrapped} />
-							<Route path="/collection/:collection/items/:items" component={LibraryContainerWrapped} />
-							<Route path="/collection/:collection/tags/:tags/search/:search" component={LibraryContainerWrapped} />
-							<Route path="/collection/:collection/tags/:tags/" component={LibraryContainerWrapped} />
-							<Route path="/collection/:collection/search/:search" component={LibraryContainerWrapped} />
-							<Route path="/collection/:collection/:view(collection|item-list|item-details)?" component={LibraryContainerWrapped} />
-							<Route path="/items/:items" component={LibraryContainerWrapped} />
-							<Route path="/tags/:tags/search/:search/items/:items" component={LibraryContainerWrapped} />
-							<Route path="/tags/:tags/search/:search" component={LibraryContainerWrapped} />
-							<Route path="/tags/:tags/items/:items" component={LibraryContainerWrapped} />
-							<Route path="/tags/:tags" component={LibraryContainerWrapped} />
-							<Route path="/search/:search/items/:items" component={LibraryContainerWrapped} />
-							<Route path="/search/:search" component={LibraryContainerWrapped} />
-							<Route path="/trash/items/:items" component={LibraryContainerWrapped} />
-							<Route path="/trash" component={LibraryContainerWrapped} />
-							<Route path="/publications/items/:items" component={LibraryContainerWrapped} />
-							<Route path="/publications" component={LibraryContainerWrapped} />
-							<Route path="/:view(libraries|library|collection|item-list|item-details)" component={LibraryContainerWrapped} />
-							<Route path="/:library/collection/:collection/tags/:tags/search/:search/items/:items" component={LibraryContainerWrapped} />
-							<Route path="/:library/collection/:collection/tags/:tags/search/:search/items/:items" component={LibraryContainerWrapped} />
-							<Route path="/:library/collection/:collection/tags/:tags/items/:items" component={LibraryContainerWrapped} />
-							<Route path="/:library/collection/:collection/search/:search/items/:items" component={LibraryContainerWrapped} />
-							<Route path="/:library/collection/:collection/items/:items" component={LibraryContainerWrapped} />
-							<Route path="/:library/collection/:collection/tags/:tags/search/:search" component={LibraryContainerWrapped} />
-							<Route path="/:library/collection/:collection/tags/:tags/" component={LibraryContainerWrapped} />
-							<Route path="/:library/collection/:collection/search/:search" component={LibraryContainerWrapped} />
-							<Route path="/:library/collection/:collection/:view(libraries|library|collection|item-list|item-details)?" component={LibraryContainerWrapped} />
-							<Route path="/:library/items/:items" component={LibraryContainerWrapped} />
-							<Route path="/:library/tags/:tags/search/:search/items/:items" component={LibraryContainerWrapped} />
-							<Route path="/:library/tags/:tags/search/:search" component={LibraryContainerWrapped} />
-							<Route path="/:library/tags/:tags/items/:items" component={LibraryContainerWrapped} />
-							<Route path="/:library/tags/:tags" component={LibraryContainerWrapped} />
-							<Route path="/:library/search/:search/items/:items" component={LibraryContainerWrapped} />
-							<Route path="/:library/search/:search" component={LibraryContainerWrapped} />
-							<Route path="/:library/trash/items/:items" component={LibraryContainerWrapped} />
-							<Route path="/:library/trash" component={LibraryContainerWrapped} />
-							<Route path="/:library/publications/items/:items" component={LibraryContainerWrapped} />
-							<Route path="/:library/publications" component={LibraryContainerWrapped} />
-							<Route path="/:library/:view(library|collection|item-list|item-details)" component={LibraryContainerWrapped} />
-							<Route path="/:library" component={LibraryContainerWrapped} />
-							<Route path="/" component={LibraryContainerWrapped} />
-						</Switch>
-					</BrowserRouter>
+					<ConnectedRouter history={history}>
+						<BrowserRouter>
+							<Switch>
+								{ routes.map(route =>
+									<Route key={ route } path={ route } component={ LibraryContainerWrapped } />
+								)}
+							</Switch>
+						</BrowserRouter>
+					</ConnectedRouter>
 				</Provider>
 				, element
 			);
@@ -179,18 +144,22 @@ LibraryContainer.propTypes = {
 
 const mapStateToProps = state => {
 	const {
-		current: { view, useTransitions },
+		collectionKey,
+		itemsSource,
+		libraryKey,
+		useTransitions,
+		view,
+	} = getCurrent(state);
+	const {
 		config: { userLibraryKey, api, apiKey },
-		current: { itemsSource, library: libraryKey, collection: collectionKey },
 		fetching: { collectionsInLibrary },
-		viewport
+		viewport,
 	} = state;
-
 	const isFetchingCollections = collectionsInLibrary
 		.some(key => key === userLibraryKey || key === libraryKey);
 
 	return { view, userLibraryKey, api, apiKey, viewport, itemsSource,
-		collectionKey, isFetchingCollections, useTransitions };
+		collectionKey, isFetchingCollections, useTransitions, libraryKey };
 };
 
 const LibraryContainerWrapped = withUserTypeDetection(connect(mapStateToProps)(LibraryContainer));

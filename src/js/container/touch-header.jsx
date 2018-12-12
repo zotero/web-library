@@ -2,7 +2,7 @@
 
 const React = require('react');
 const PropTypes = require('prop-types');
-const { withRouter } = require('react-router-dom');
+const { push } = require('connected-react-router');
 const withDevice = require('../enhancers/with-device');
 const { itemProp } = require('../constants/item');
 const { connect } = require('react-redux');
@@ -12,13 +12,13 @@ const TouchHeader = require('../component/touch-header');
 const { makePath } = require('../common/navigation');
 const { makeChildMap } = require('../common/collection');
 const { itemsSourceLabel } = require('../common/format');
+const { getCurrent } = require('../common/state');
 const withEditMode = require('../enhancers/with-edit-mode');
 const withSelectMode = require('../enhancers/with-select-mode');
 
 class TouchHeaderContainer extends React.PureComponent {
 	onNavigation(path) {
-		const { history } = this.props;
-		history.push(makePath(path));
+		this.props.push(makePath(path));
 	}
 
 	get childMap() {
@@ -136,7 +136,6 @@ class TouchHeaderContainer extends React.PureComponent {
 	}
 
 	static propTypes = {
-		dispatch: PropTypes.func.isRequired,
 		path: PropTypes.array,
 		item: itemProp,
 	}
@@ -151,13 +150,15 @@ class TouchHeaderContainer extends React.PureComponent {
 }
 
 const mapStateToProps = state => {
-	const libraryKey = state.current.library;
-	const itemKey = state.current.item;
+	const {
+		libraryKey,
+		itemKey,
+		view,
+		itemsSource,
+		collectionKey: collection, //@TODO: rename to collectionKey
+	} = getCurrent(state);
 	const collections = get(state, ['libraries', libraryKey, 'collections'], []);
 	const item = get(state, ['libraries', libraryKey, 'items', itemKey]);
-	const view = state.current.view;
-	const itemsSource = state.current.itemsSource;
-	const collection = state.current.collection;
 	const path = getCollectionsPath(state).map(
 		key => {
 			const { name } = collections[key]
@@ -195,6 +196,8 @@ const mapStateToProps = state => {
 	};
 };
 
-const TouchHeaderWrapped = withDevice(withRouter(withSelectMode(withEditMode(connect(mapStateToProps)(TouchHeaderContainer)))));
+const TouchHeaderWrapped = withDevice(withSelectMode(withEditMode(
+	connect(mapStateToProps, { push })(TouchHeaderContainer)
+)));
 
 module.exports = TouchHeaderWrapped;

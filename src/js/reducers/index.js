@@ -1,6 +1,9 @@
 'use strict';
 
-module.exports = {
+const { combineReducers } = require('redux');
+const { connectRouter } = require('connected-react-router');
+
+module.exports = history => combineReducers({
 	collectionCountByLibrary: require('./collection-count-by-library'),
 	config: require('./config'),
 	current: require('./current'),
@@ -17,7 +20,7 @@ module.exports = {
 	query: require('./query'),
 	queryItemCount: require('./query-item-count'),
 	queryItems: require('./query-items'),
-	router: require('./router'),
+	router: connectRouter(history),
 	tagCountByLibrary: require('./tag-count-by-library'),
 	viewport: require('./viewport'),
-};
+});

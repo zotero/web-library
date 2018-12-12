@@ -4,6 +4,7 @@ const React = require('react');
 const PropTypes = require('prop-types');
 const cx = require('classnames');
 
+const { getSerializedQuery } = require('../common/state');
 const Icon = require('./ui/icon');
 const Spinner = require('./ui/spinner');
 const LibrariesContainer = require('../container/libraries');
@@ -55,11 +56,17 @@ class Library extends React.PureComponent {
 	}
 
 	render() {
-		const { itemsSource, collectionKey, useTransitions, view, device } = this.props;
+		const { libraryKey, collectionKey = '', itemsSource, search, tags } = this.props;
+		var key;
+		if(itemsSource == 'collection') {
+			key = `${libraryKey}-${collectionKey}`;
+		} else if(itemsSource == 'query') {
+			key = `${libraryKey}-query-${getSerializedQuery({ collection: collectionKey, tag: tags, q: search })}`;
+		} else {
+			key = `${libraryKey}-${itemsSource}`;
+}
+		const { useTransitions, view, device } = this.props;
 		const { isNavOpened, hasUserTypeChanged } = this.state;
-		const key = itemsSource === 'collection' ?
-			`collection-${collectionKey}` :
-			itemsSource;
 		let activeViewClass = `view-${view}-active`;
 
 		return (
@@ -87,7 +94,7 @@ class Library extends React.PureComponent {
 						<header className="sidebar">
 							<h2 className="offscreen">Web library</h2>
 							<LibrariesContainer />
-							{ key !== null && !device.isTouchOrSmall &&
+							{ !device.isTouchOrSmall &&
 								<TagSelectorContainer key={ key } />
 							}
 						</header>
@@ -97,7 +104,7 @@ class Library extends React.PureComponent {
 								className="hidden-xs-down hidden-md-up"
 								variant={ TouchHeaderContainer.variants.SOURCE_AND_ITEM }
 							/>
-							<ItemsContainer />
+							<ItemsContainer key={ key } />
 							<ItemDetailsContainer active={ view === 'item-details' } />
 						</section>
 					</section>

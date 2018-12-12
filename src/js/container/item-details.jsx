@@ -3,13 +3,14 @@
 const React = require('react');
 const PropTypes = require('prop-types');
 const ItemDetails = require('../component/item/details');
-const { withRouter } = require('react-router-dom');
+const { push } = require('connected-react-router');
 const { connect } = require('react-redux');
 const { createItem, updateItem, deleteItem, fetchItemTemplate, fetchChildItems, uploadAttachment, fetchItems, fetchItemTypeCreatorTypes, fetchItemTypeFields } = require('../actions');
 const { itemProp, baseMappings } = require('../constants/item');
 const { get, deduplicateByKey, mapRelationsToItemKeys, removeRelationByItemKey, reverseMap } = require('../utils');
 const { makePath } = require('../common/navigation');
 const { hideFields, noEditFields } = require('../constants/item');
+const { getCurrent } = require('../common/state');
 const withEditMode = require('../enhancers/with-edit-mode');
 const withDevice = require('../enhancers/with-device');
 
@@ -142,12 +143,12 @@ class ItemDetailsContainer extends React.PureComponent {
 	}
 
 	handleRelatedItemSelect(item) {
-		const { history, collection, libraryKey: library } = this.props;
+		const { push, collection, libraryKey: library } = this.props;
 		let isSameCollection = item.collections.includes(collection.key);
 		if(isSameCollection) {
-			history.push(makePath({ library, collection: collection.key, items: item.key }));
+			push(makePath({ library, collection: collection.key, items: item.key }));
 		} else {
-			history.push(makePath({ library, items: item.key }));
+			push(makePath({ library, items: item.key }));
 		}
 	}
 
@@ -225,10 +226,12 @@ class ItemDetailsContainer extends React.PureComponent {
 }
 
 const mapStateToProps = state => {
-	const libraryKey = state.current.library;
-	const itemsSource = state.current.itemsSource;
-	const collectionKey = state.current.collection;
-	const itemKey = state.current.item;
+	const {
+		libraryKey,
+		itemsSource,
+		collectionKey,
+		itemKey,
+	} = getCurrent(state);
 	const item = get(state, ['libraries', libraryKey, 'items', itemKey], null);
 	const itemType = item ? item.itemType : null;
 	const childItems = get(state, ['libraries', libraryKey, 'itemsByParent', itemKey], [])
@@ -314,4 +317,5 @@ ItemDetailsContainer.propTypes = {
 	dispatch: PropTypes.func.isRequired
 };
 
-module.exports = withRouter(withDevice(withEditMode(connect(mapStateToProps)(ItemDetailsContainer))));
+module.exports = withDevice(withEditMode(connect(
+	mapStateToProps, { push })(ItemDetailsContainer)));

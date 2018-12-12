@@ -3,11 +3,13 @@
 const React = require('react');
 const PropTypes = require('prop-types');
 const { connect } = require('react-redux');
+const { bindActionCreators } = require('redux');
 const { saveAs } = require('file-saver');
 const { get } = require('../utils');
 const { makePath } = require('../common/navigation');
-const { withRouter } = require('react-router-dom');
+const { push } = require('connected-react-router');
 const { removeKeys } = require('../common/immutable');
+const { getCurrent } = require('../common/state');
 const ItemsActions = require('../component/item/actions');
 const withSelectMode = require('../enhancers/with-select-mode');
 const withDevice = require('../enhancers/with-device');
@@ -27,12 +29,12 @@ const exportFormats = require('../constants/export-formats');
 class ItemsActionsContainer extends React.PureComponent {
 	//@TODO: idenitical to ItemsContainer, reduce duplication
 	handleItemsSelect(items = []) {
-		const { history, collectionKey: collection, libraryKey: library,
+		const { push, collectionKey: collection, libraryKey: library,
 			itemsSource, tags, search } = this.props;
 		const trash = itemsSource === 'trash';
 		const publications = itemsSource === 'publications';
 		const view = 'item-list';
-		history.push(makePath({ library, search, tags, trash, publications, collection, items, view }));
+		push(makePath({ library, search, tags, trash, publications, collection, items, view }));
 	}
 	async handleDelete() {
 		const { dispatch, selectedItemKeys } = this.props;
@@ -107,8 +109,8 @@ class ItemsActionsContainer extends React.PureComponent {
 	}
 
 	handleLibraryShow() {
-		const { history, selectedItemKeys, libraryKey: library } = this.props;
-		history.push(makePath({ library, items: selectedItemKeys[0] }));
+		const { push, selectedItemKeys, libraryKey: library } = this.props;
+		push(makePath({ library, items: selectedItemKeys[0] }));
 	}
 
 	render() {
@@ -134,7 +136,7 @@ class ItemsActionsContainer extends React.PureComponent {
 		collectionKey: PropTypes.string,
 		device: PropTypes.object,
 		dispatch: PropTypes.func,
-		history: PropTypes.object,
+		push: PropTypes.func,
 		isSelectMode: PropTypes.bool,
 		itemsSource: PropTypes.string,
 		libraryKey: PropTypes.string,
@@ -150,14 +152,16 @@ class ItemsActionsContainer extends React.PureComponent {
 }
 
 const mapStateToProps = state => {
-	const libraryKey = state.current.library;
-	const collectionKey = state.current.collection;
-	const itemsSource = state.current.itemsSource;
-	const itemKey = state.current.item;
-	const item = get(state, ['libraries', libraryKey, 'items', itemKey]);
-	const tags = state.current.tags;
-	const search = state.current.search;
+	const {
+		libraryKey,
+		collectionKey,
+		itemsSource,
+		itemKey,
+		tags,
+		search,
+	} = getCurrent(state);
 
+	const item = get(state, ['libraries', libraryKey, 'items', itemKey]);
 
 	return {
 		itemKey,
@@ -170,5 +174,9 @@ const mapStateToProps = state => {
 	}
 }
 
-module.exports = withRouter(withSelectMode(withDevice(connect(mapStateToProps)(
-	ItemsActionsContainer))));
+//@TODO: bind all action creators
+const mapDispatchToProps = dispatch => ({ dispatch, ...bindActionCreators({ push }, dispatch) });
+
+module.exports = withSelectMode(withDevice(
+	connect(mapStateToProps, mapDispatchToProps)(ItemsActionsContainer)
+));

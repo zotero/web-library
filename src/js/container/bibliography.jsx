@@ -2,10 +2,11 @@
 
 const React = require('react');
 const PropTypes = require('prop-types');
-const { withRouter } = require('react-router-dom');
+
 const { connect } = require('react-redux');
 const { toggleModal, citeItems } = require('../actions');
 const { coreCitationStyles } = require('../../../data/citation-styles-data.json');
+const { getCurrent } = require('../common/state');
 const Bibliography = require('../component/bibliography')
 
 class BibliographyContainer extends React.PureComponent {
@@ -57,10 +58,10 @@ class BibliographyContainer extends React.PureComponent {
 
 const mapStateToProps = state => {
 	const isOpen = state.modal === 'BIBLIOGRAPHY';
-	const itemKeys = state.current.itemKeys;
+	const { itemKeys } = getCurrent(state);
 
 	return { isOpen, itemKeys };
 };
 
 
-module.exports = withRouter(connect(mapStateToProps)(BibliographyContainer));
+module.exports = connect(mapStateToProps)(BibliographyContainer);

@@ -11,15 +11,20 @@ const CollectionTree = require('./libraries/collection-tree.jsx');
 const TouchHeaderContainer = require('../container/touch-header');
 
 class Libraries extends React.PureComponent {
-	state = {
-		virtual: null,
-		opened: [], // opened group libraries
+	constructor(props) {
+		super(props);
+
+		this.state = {
+			virtual: null,
+			opened: [props.libraryKey], // opened group libraries
+		}
 	}
+
 
 	componentDidUpdate({ libraryKey: prevLibraryKey }) {
 		const { libraryKey } = this.props;
 
-		if(libraryKey != prevLibraryKey) {
+		if(libraryKey !== prevLibraryKey) {
 			this.setState({ opened: [...this.state.opened, libraryKey ] });
 		}
 	}

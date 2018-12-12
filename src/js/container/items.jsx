@@ -3,8 +3,9 @@
 
 const React = require('react');
 const PropTypes = require('prop-types');
-const { withRouter } = require('react-router-dom');
 const { connect } = require('react-redux');
+const { push } = require('connected-react-router');
+const { bindActionCreators } = require('redux');
 
 const Items = require('../component/item/items');
 const {
@@ -18,23 +19,24 @@ const {
 	sortItems,
 } = require('../actions');
 const { get, sortByKey, resizeVisibleColumns } = require('../utils');
-const { getSerializedQuery } = require('../common/state');
 const { makePath } = require('../common/navigation');
 const processItem = require('../common/process-item');
+const { getCurrent } = require('../common/state');
 const withDevice = require('../enhancers/with-device');
 
 class ItemsContainer extends React.PureComponent {
-	state = {
-		items: []
+	constructor(props) {
+		super(props);
+		this.state = { items: [] };
 	}
 
 	handleItemsSelect(items = []) {
-		const { history, collectionKey: collection, libraryKey: library,
+		const { push, collectionKey: collection, libraryKey: library,
 			itemsSource, tags, search } = this.props;
 		const trash = itemsSource === 'trash';
 		const publications = itemsSource === 'publications';
 		const view = 'item-list';
-		history.push(makePath({ library, search, tags, trash, publications, collection, items, view }));
+		push(makePath({ library, search, tags, trash, publications, collection, items, view }));
 	}
 
 	handleColumnVisibilityChange(field, isVisible) {
@@ -92,8 +94,10 @@ class ItemsContainer extends React.PureComponent {
 				break;
 		}
 
+		const actualLimit = Math.min(limit, sourceItems.length);
 		const items = [...this.state.items];
-		for(let i = 0; i < limit; i++) {
+
+		for(let i = 0; i < actualLimit; i++) {
 			items[startIndex + i] = processItem(sourceItems[i], itemTypes, libraryTags) || null;
 		}
 		sortByKey(items, sort, direction);
@@ -116,18 +120,7 @@ class ItemsContainer extends React.PureComponent {
 	}
 
 	render() {
-		let { libraryKey, collectionKey = '', itemsSource, search, tags } = this.props;
-		var key;
-		if(itemsSource == 'collection') {
-			key = `${libraryKey}-${collectionKey}`;
-		} else if(itemsSource == 'query') {
-			key = `${libraryKey}-query-${getSerializedQuery({ collection: collectionKey, tag: tags, q: search })}`;
-		} else {
-			key = `${libraryKey}-${itemsSource}`;
-		}
-
 		return <Items
-			key = { key }
 			items = { this.state.items }
 			{ ...this.props }
 			onColumnReorder={ this.handleColumnReorder.bind(this) }
@@ -142,12 +135,16 @@ class ItemsContainer extends React.PureComponent {
 }
 
 const mapStateToProps = state => {
-	const libraryKey = state.current.library;
-	const itemsSource = state.current.itemsSource;
-	const collectionKey = state.current.collection;
-	const tags = state.current.tags;
-	const search = state.current.search;
-	const itemKey = state.current.item;
+	const {
+		libraryKey,
+		itemsSource,
+		collectionKey,
+		tags,
+		search,
+		itemKey,
+		itemKeys,
+		isSelectMode,
+	} = getCurrent(state);
 	const collection = get(state, ['libraries', libraryKey, 'collections', collectionKey]);
 	const item = get(state, ['libraries', libraryKey, 'items', itemKey]);
 	const libraryTags = get(state, ['libraries', libraryKey, 'tags']);
@@ -190,8 +187,6 @@ const mapStateToProps = state => {
 	// const isDeleting = get(state, ['libraries', libraryKey, 'deleting'], [])
 	// 		.some(itemKey => items.filter(i => i.key === itemKey));
 
-	const isSelectMode = state.current.isSelectMode;
-
 	return {
 		collection,
 		collectionKey,
@@ -204,7 +199,7 @@ const mapStateToProps = state => {
 		libraryKey,
 		preferences,
 		search,
-		selectedItemKeys: item ? [item.key] : state.current.itemKeys,
+		selectedItemKeys: item ? [item.key] : itemKeys,
 		sortBy,
 		sortDirection: sortDirection.toUpperCase(),
 		tags,
@@ -213,11 +208,8 @@ const mapStateToProps = state => {
 	};
 };
 
-const mapDispatchToProps = dispatch => {
-	return {
-		dispatch
-	};
-};
+//@TODO: bind all action creators
+const mapDispatchToProps = dispatch => ({ dispatch, ...bindActionCreators({ push }, dispatch) });
 
 ItemsContainer.propTypes = {
   collection: PropTypes.object,
@@ -226,7 +218,7 @@ ItemsContainer.propTypes = {
   dispatch: PropTypes.func.isRequired
 };
 
-module.exports = withRouter(withDevice(connect(
+module.exports = withDevice(connect(
 	mapStateToProps,
 	mapDispatchToProps
-)(ItemsContainer)));
+)(ItemsContainer));

@@ -2,12 +2,14 @@
 
 const React = require('react');
 const PropTypes = require('prop-types');
-const { withRouter } = require('react-router-dom');
 const { connect } = require('react-redux');
+const { push } = require('connected-react-router');
+const { bindActionCreators } = require('redux');
 const { deduplicateByKey, get } = require('../utils');
 const TagSelector = require('../component/tag-selector.jsx');
 const { fetchTagsInCollection, fetchTagsInLibrary } = require('../actions');
 const { makePath } = require('../common/navigation');
+const { getCurrent } = require('../common/state');
 
 class TagSelectorContainer extends React.PureComponent {
 	state = {
@@ -19,7 +21,7 @@ class TagSelectorContainer extends React.PureComponent {
 	}
 
 	handleSelect(tagName) {
-		const { libraryKey: library, itemsSource, collectionKey, selectedTags, history } = this.props;
+		const { libraryKey: library, itemsSource, collectionKey, selectedTags, push } = this.props;
 		const index = selectedTags.indexOf(tagName)
 		if(index > -1) {
 			selectedTags.splice(index, 1);
@@ -29,19 +31,19 @@ class TagSelectorContainer extends React.PureComponent {
 
 		switch(itemsSource) {
 			case 'top':
-				history.push(makePath({ library, tags: selectedTags }));
+				push(makePath({ library, tags: selectedTags }));
 			break;
 			case 'trash':
-				history.push(makePath({ library, trash: true }));
+				push(makePath({ library, trash: true }));
 			break;
 			case 'publications':
-				history.push(makePath({ library, publications: true }));
+				push(makePath({ library, publications: true }));
 			break;
 			case 'collection':
-				history.push(makePath({ library, tags: selectedTags, collection: collectionKey }));
+				push(makePath({ library, tags: selectedTags, collection: collectionKey }));
 			break;
 			case 'query':
-				history.push(makePath({ library, tags: selectedTags, collection: collectionKey }));
+				push(makePath({ library, tags: selectedTags, collection: collectionKey }));
 			break;
 		}
 	}
@@ -97,12 +99,11 @@ class TagSelectorContainer extends React.PureComponent {
 
 const mapStateToProps = state => {
 	const {
-		library: libraryKey,
-		item: itemKey,
-		collection: collectionKey,
+		libraryKey,
+		collectionKey,
 		tags: selectedTags,
 		itemsSource
-	} = state.current;
+	} = getCurrent(state);
 	if(!libraryKey) {
 		return { isReady: false }
 	}
@@ -155,4 +156,7 @@ const mapStateToProps = state => {
 
 };
 
-module.exports = withRouter(connect(mapStateToProps)(TagSelectorContainer));
+//@TODO: bind all action creators
+const mapDispatchToProps = dispatch => ({ dispatch, ...bindActionCreators({ push }, dispatch) });
+
+module.exports = connect(mapStateToProps, mapDispatchToProps)(TagSelectorContainer);
