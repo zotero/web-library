@@ -13,9 +13,16 @@ class ActionsDropdown extends React.PureComponent {
 		isOpen: false
 	}
 
-	handleToggleDropdown(ev) {
+	handleDropwdownToggle(ev) {
 		ev && ev.stopPropagation();
 		this.setState({ isOpen: !this.state.isOpen });
+	}
+
+	handleToggleInteraction(ev) {
+		ev && ev.stopPropagation();
+		if(ev.type === 'keydown' && ev.key === "Escape") {
+			this.setState({ isOpen: false });
+		}
 	}
 
 	render() {
@@ -23,10 +30,12 @@ class ActionsDropdown extends React.PureComponent {
 		return (
 			<Dropdown
 				isOpen={ this.state.isOpen }
-				toggle={ this.handleToggleDropdown.bind(this) }
+				toggle={ ev => this.handleDropwdownToggle(ev) }
 				className="dropdown-wrapper"
 			>
 				<DropdownToggle
+					onClick={ ev => this.handleToggleInteraction(ev) }
+					onKeyDown={ ev => this.handleToggleInteraction(ev) }
 					tabIndex={ tabIndex }
 					color={ null }
 					className="btn-icon dropdown-toggle"
