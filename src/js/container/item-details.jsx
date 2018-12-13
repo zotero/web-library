@@ -15,22 +15,11 @@ const withEditMode = require('../enhancers/with-edit-mode');
 const withDevice = require('../enhancers/with-device');
 
 class ItemDetailsContainer extends React.PureComponent {
-	async componentDidUpdate({ item: prevItem }) {
-		const { item, shouldFetchMeta, relatedItemsKeys, relatedItems, dispatch } = this.props;
+	async componentDidUpdate() {
+		const { item, shouldFetchMeta, dispatch } = this.props;
 		if(item && item.key && shouldFetchMeta === true) {
 			this.props.dispatch(fetchItemTypeCreatorTypes(item.itemType));
 			this.props.dispatch(fetchItemTypeFields(item.itemType));
-		}
-		if((item && prevItem === null) || (item && item.key !== prevItem.key)) {
-			const { numChildren = 0 } = item[Symbol.for('meta')];
-			if(numChildren > 0) {
-				this.props.dispatch(fetchChildItems(item.key));
-			}
-			if(relatedItemsKeys.length > relatedItems.length) {
-				this.setState({ isLoadingRelated: true })
-				await dispatch(fetchItems(relatedItemsKeys));
-				this.setState({ isLoadingRelated: false })
-			}
 		}
 	}
 
@@ -255,6 +244,9 @@ const mapStateToProps = state => {
 	const relatedItems = relatedItemsKeys
 			.map(key => get(state, ['libraries', libraryKey, 'items', key]))
 			.filter(Boolean);
+	const isLoadingRelatedItems = get(
+		state, ['libraries', libraryKey, 'fetching', 'items'], [])
+	.some(loadedItemKey => relatedItemsKeys.includes(loadedItemKey));
 
 	const extraProps = [];
 
@@ -306,10 +298,12 @@ const mapStateToProps = state => {
 		relatedItems,
 		relatedItemsKeys,
 		selectedItemKeys: selectedItemKeys ? selectedItemKeys.split(',') : [],
+		isLoadingRelatedItems,
 		shouldFetchMeta,
 		...extraProps
 	};
 };
+
 
 ItemDetailsContainer.propTypes = {
 	fields: PropTypes.array,
@@ -318,4 +312,4 @@ ItemDetailsContainer.propTypes = {
 };
 
 module.exports = withDevice(withEditMode(connect(
-	mapStateToProps, { push })(ItemDetailsContainer)));
+	mapStateToProps, { push, fetchItems, fetchChildItems })(ItemDetailsContainer)));

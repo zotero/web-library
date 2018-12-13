@@ -6,18 +6,30 @@ const cx = require('classnames');
 const Spinner = require('../../../ui/spinner');
 
 class AttachmentsTabPane extends React.PureComponent {
+	componentDidUpdate({ prevItem, wasActive }) {
+		const { item, isActive, fetchChildItems, childItems, isLoadingChildItems } = this.props;
+		const { numChildren = 0 } = item[Symbol.for('meta')];
+
+		if(!isLoadingChildItems && isActive && numChildren > childItems.length) {
+			if(item && !prevItem || prevItem && item.key !== prevItem.key || !wasActive) {
+				fetchChildItems(item.key);
+			}
+		}
+	}
+
 	render() {
-		const { isActive, childItems, attachmentViewUrls, onAddAttachment,
+		const { isActive, item, childItems, attachmentViewUrls, onAddAttachment,
 			onDeleteAttachment, isLoadingChildItems } = this.props;
+		const { numChildren = 0 } = item[Symbol.for('meta')];
 		return (
 			<div className={ cx({
 				'tab-pane': true,
 				'attachments': true,
 				'active': isActive,
-				'loading': isLoadingChildItems,
+				'loading': numChildren > childItems.length,
 			}) }>
 				{
-				isLoadingChildItems ? <Spinner /> : (
+				numChildren > childItems.length ? <Spinner /> : (
 					<React.Fragment>
 						<h5 className="h2 tab-pane-heading">Attachments</h5>
 						<Attachments

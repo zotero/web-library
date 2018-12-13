@@ -55,10 +55,10 @@ const fetching = (state = {
 		case REQUEST_FETCH_ITEMS:
 			return {
 				...state,
-				items: [
+				items: [...(new Set([
 					...(state.items || []),
 					...action.itemKeys
-				]
+				]))]
 			};
 		case RECEIVE_FETCH_ITEMS:
 		case ERROR_FETCH_ITEMS:
