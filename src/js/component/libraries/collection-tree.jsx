@@ -36,8 +36,7 @@ class CollectionTree extends React.PureComponent {
 		}
 	}
 
-	handleOpenToggle(key, ev) {
-		ev && ev.stopPropagation();
+	handleOpenToggle(key) {
 		const { opened } = this.state;
 		opened.includes(key) ?
 			this.setState({ opened: opened.filter(k => k !== key) }) :
@@ -260,7 +259,7 @@ class CollectionTree extends React.PureComponent {
 								) : null
 							}
 							hideTwisty={ !hasSubCollections }
-							onOpen={ ev => this.handleOpenToggle(collection.key, ev) }
+							onOpen={ () => this.handleOpenToggle(collection.key) }
 							onClick={ ev => this.handleSelect({ collection: collection.key }, ev) }
 							onKeyDown={ ev => this.handleSelect({ collection: collection.key }, ev) }
 							label={ collection.name }
@@ -285,7 +284,9 @@ class CollectionTree extends React.PureComponent {
 									/> :
 									<React.Fragment>
 										<div className="truncate">{ collection.name }</div>
-										<ActionsDropdown tabIndex={ shouldBeTabbable ? "0" : "-1" }>
+										<ActionsDropdown
+											tabIndex={ shouldBeTabbable ? "0" : "-1" }
+										>
 											<DropdownItem
 												onKeyDown={ ev => this.handleRenameTrigger(collection.key, ev) }
 												onClick={ ev => this.handleRenameTrigger(collection.key, ev) }

@@ -7,6 +7,7 @@ const Icon = require('../ui/icon');
 const { noop } = require('../../utils');
 const { ITEM } = require('../../constants/dnd');
 const { omit } = require('../../common/immutable');
+const { isTriggerEvent } = require('../../common/event');
 const {
 	DropTarget,
 	DropTargetConnector,
@@ -34,6 +35,14 @@ const dndCollect = (connect, monitor) => ({
 
 @DropTarget(ITEM, dndSpec, dndCollect)
 class Node extends React.PureComponent {
+
+	handleToggleInteraction(ev) {
+		ev && ev.stopPropagation();
+		if(isTriggerEvent(ev, true)) {
+			this.props.onOpen();
+		}
+	}
+
 	render() {
 		const {
 			canDrop,
@@ -43,7 +52,6 @@ class Node extends React.PureComponent {
 			hideTwisty,
 			isOpen,
 			isOver,
-			onOpen,
 			subtree,
 		} = this.props;
 
@@ -51,8 +59,8 @@ class Node extends React.PureComponent {
 			<button
 				type="button"
 				className="twisty"
-				onClick={ onOpen }
-				onKeyPress={ ev => ev.stopPropagation() }
+				onClick={ ev => this.handleToggleInteraction(ev) }
+				onKeyDown={ ev => this.handleToggleInteraction(ev) }
 			>
 				<Icon type={ '16/triangle' } width="16" height="16" />
 			</button>

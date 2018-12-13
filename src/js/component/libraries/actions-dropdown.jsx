@@ -7,6 +7,7 @@ const Icon = require('../ui/icon');
 const Dropdown = require('reactstrap/lib/Dropdown').default;
 const DropdownToggle = require('reactstrap/lib/DropdownToggle').default;
 const DropdownMenu = require('reactstrap/lib/DropdownMenu').default;
+const { isTriggerEvent } = require('../../common/event');
 
 class ActionsDropdown extends React.PureComponent {
 	state = {
@@ -21,6 +22,13 @@ class ActionsDropdown extends React.PureComponent {
 	handleToggleInteraction(ev) {
 		ev && ev.stopPropagation();
 		if(ev.type === 'keydown' && ev.key === "Escape") {
+			this.setState({ isOpen: false });
+		}
+	}
+
+	handleMenuInteraction(ev) {
+		if(isTriggerEvent(ev)) {
+			ev && ev.stopPropagation();
 			this.setState({ isOpen: false });
 		}
 	}
@@ -43,7 +51,10 @@ class ActionsDropdown extends React.PureComponent {
 					<Icon type={ '24/options-sm' } width="24" height="24" className="touch" />
 					<Icon type={ '16/options' } width="16" height="16" className="mouse" />
 				</DropdownToggle>
-				<DropdownMenu right>
+				<DropdownMenu
+					onClick={ ev => this.handleMenuInteraction(ev) }
+					onKeyDown={ ev => this.handleMenuInteraction(ev) }
+					right>
 					{ this.props.children }
 				</DropdownMenu>
 			</Dropdown>
