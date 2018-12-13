@@ -64,7 +64,8 @@ class Library extends React.PureComponent {
 			key = `${libraryKey}-query-${getSerializedQuery({ collection: collectionKey, tag: tags, q: search })}`;
 		} else {
 			key = `${libraryKey}-${itemsSource}`;
-}
+		}
+
 		const { useTransitions, view, device } = this.props;
 		const { isNavOpened, hasUserTypeChanged } = this.state;
 		let activeViewClass = `view-${view}-active`;

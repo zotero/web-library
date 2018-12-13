@@ -149,6 +149,8 @@ const mapStateToProps = state => {
 		libraryKey,
 		useTransitions,
 		view,
+		search,
+		tags,
 	} = getCurrent(state);
 	const {
 		config: { userLibraryKey, api, apiKey },
@@ -159,7 +161,8 @@ const mapStateToProps = state => {
 		.some(key => key === userLibraryKey || key === libraryKey);
 
 	return { view, userLibraryKey, api, apiKey, viewport, itemsSource,
-		collectionKey, isFetchingCollections, useTransitions, libraryKey };
+		collectionKey, isFetchingCollections, useTransitions, libraryKey,
+		search, tags };
 };
 
 const LibraryContainerWrapped = withUserTypeDetection(connect(mapStateToProps)(LibraryContainer));

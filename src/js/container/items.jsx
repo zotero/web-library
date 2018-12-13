@@ -160,7 +160,7 @@ const mapStateToProps = state => {
 		switch(itemsSource) {
 			case 'query':
 				// items = state.queryItems;
-				totalItemsCount = state.queryItemCount;
+				totalItemsCount = state.query.totalResults;
 				totalItemsCount = totalItemsCount === null ? 50 : totalItemsCount;
 			break;
 			case 'top':

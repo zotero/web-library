@@ -92,7 +92,7 @@ const getCurrent = state => {
 		itemsSource,
 		libraryKey: params.library || defaultLibraryKey,
 		search,
-		tags: [],
+		tags: tags || [],
 		userLibraryKey: state.config.userLibraryKey,
 		useTransitions: state.current.useTransitions,
 		view,
@@ -100,4 +100,4 @@ const getCurrent = state => {
 }
 
 
-module.exports = { getCollectionsPath, getSerializedQuery, getCurrent };
+module.exports = { getCollectionsPath, getSerializedQuery, getCurrent, getParamsFromRoute };

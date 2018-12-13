@@ -18,8 +18,6 @@ module.exports = history => combineReducers({
 	modal: require('./modal'),
 	preferences: require('./preferences'),
 	query: require('./query'),
-	queryItemCount: require('./query-item-count'),
-	queryItems: require('./query-items'),
 	router: connectRouter(history),
 	tagCountByLibrary: require('./tag-count-by-library'),
 	viewport: require('./viewport'),

@@ -1,7 +1,7 @@
 'use strict';
 
-const getQueryFromRoute = match => {
-	const { collection, tags, search = '' } = match.params;
+const getQueryFromParams = params => {
+	const { collection, tags, search = '' } = params;
 	return { collection, tag: tagsFromUrlPart(tags), q: search };
 }
 
@@ -51,4 +51,4 @@ const makePath = ({ library = null, collection = null, items = null, trash = fal
 	return '/' + path.join('/');
 }
 
-module.exports = { makePath, getQueryFromRoute, tagsFromUrlPart, tagsToUrlPart };
+module.exports = { makePath, getQueryFromParams, tagsFromUrlPart, tagsToUrlPart };
