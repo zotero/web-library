@@ -97,7 +97,7 @@
 		}
 
 		// Revisit: dnd styling
-		@include state(".item-container.dnd-target", "li.selected .item-container.dnd-target") {
+		@include state(".item-container.dnd-target", "li.selected > .item-container.dnd-target") {
 			@include mouse-and-bp-up(md) {
 				background: $collection-tree-dnd-target-bg-color;
 			}
@@ -132,7 +132,7 @@
 				}
 
 				// Rivisit: dnd styling
-				@include state(".item-container.dnd-target", "li.selected .item-container.dnd-target") {
+				@include state(".item-container.dnd-target", "li.selected > .item-container.dnd-target") {
 					color: $collection-tree-dnd-target-color;
 				}
 			}
@@ -163,7 +163,7 @@
 			}
 
 			// Rivisit: dnd styling
-			@include state(".item-container.dnd-target", "li.selected .item-container.dnd-target") {
+			@include state(".item-container.dnd-target", "li.selected > .item-container.dnd-target") {
 				@include mouse-and-bp-up(md) {
 					color: $collection-tree-dnd-target-icon-color;
 				}
@@ -206,7 +206,7 @@
 
 			@include touch-or-bp-down(sm) {
 				@include state(".dropdown-wrapper.show .dropdown-toggle") {
-					@include state("li.selected .item-container") {
+					@include state("li.selected > .item-container") {
 						background-color: $body-bg;
 
 						.icon {
