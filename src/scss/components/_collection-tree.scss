@@ -59,6 +59,14 @@
 			}
 		}
 
+		@include touch-keyboard-or-bp-down(sm) {
+			&:focus {
+				&::before {
+					content: none;
+				}
+			}
+		}
+
 		@include mouse-and-bp-up(md) {
 			height: $line-height-large;
 			padding-right: $default-padding-x;
