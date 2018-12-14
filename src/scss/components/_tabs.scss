@@ -76,7 +76,7 @@
 		}
 	}
 
-	&.loading {
+	&.loading.active {
 		html:not(.specifity) & {
 			display: flex;
 			justify-content: center;
