@@ -17,7 +17,6 @@ const {
 const { getCollectionsPath } = require('../common/state');
 const { get } = require('../utils');
 const { makePath } = require('../common/navigation');
-const { getCurrent } = require('../common/state');
 const withDevice = require('../enhancers/with-device');
 const PAGE_SIZE = 100;
 
@@ -100,7 +99,7 @@ const mapStateToProps = state => {
 		collectionKey,
 		view,
 		itemsSource
-	} = getCurrent(state);
+	} = state.current;
 
 	return {
 		libraryKey,

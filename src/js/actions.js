@@ -5,7 +5,6 @@ const { get, JSONTryParse } = require('./utils');
 
 const { preferences: defaultPreferences } = require('./constants/defaults');
 const { removeKeys } = require('./common/immutable');
-const { getCurrent } = require('./common/state');
 
 var queueIdCunter = 0;
 
@@ -173,7 +172,7 @@ const extractItems = (response, state) => {
 
 // @TODO: rename and move to common/api
 const cleanupCacheAfterDelete = (itemKeys, state) => {
-	const { libraryKey } = getCurrent(state);
+	const { libraryKey } = state.current;
 	const itemsByCollection = get(state, ['libraries', libraryKey, 'itemsByCollection'], {});
 	const itemsByParent = get(state, ['libraries', libraryKey, 'itemsByParent'], {});
 	const itemsTop = get(state, ['libraries', libraryKey, 'itemsTop'], []);
@@ -230,7 +229,7 @@ const sortItems = (sortBy, sortDirection) => {
 
 const postItemsMultiPatch = async (state, multiPatch) => {
 	const config = state.config;
-	const { libraryKey } = getCurrent(state);
+	const { libraryKey } = state.current;
 	const version = state.libraries[libraryKey].version;
 	const response = await api(config.apiKey, config.apiConfig)
 		.library(libraryKey)
@@ -416,7 +415,7 @@ const fetchItemsInCollection = (collectionKey, { start = 0, limit = 50, sort = '
 	return async (dispatch, getState) => {
 		const state = getState();
 		const config = state.config;
-		const { libraryKey } = getCurrent(state);
+		const { libraryKey } = state.current;
 		// const totalItemsCount = get(state, ['libraries', libraryKey, 'itemCountByCollection', collectionKey]);
 
 		dispatch({
@@ -471,7 +470,7 @@ const fetchItemsQuery = (query = {}, { start = 0, limit = 50, sort = 'dateModifi
 		const { collection = null, tag = null, q = null } = query;
 		const state = getState();
 		const config = state.config;
-		const { libraryKey } = getCurrent(state);
+		const { libraryKey } = state.current;
 		// const totalItemsCount = get(state, ['libraries', libraryKey, 'queryItemCount']);
 		// const knownItemKeys = get(state, ['libraries', libraryKey, 'queryItems'], []);
 		// const previousQuery = get(state, ['libraries', libraryKey, 'query']);
@@ -612,7 +611,7 @@ const fetchItemTemplate = (itemType, opts = {}) => {
 const fetchChildItems = (itemKey) => {
 	return async (dispatch, getState) => {
 		const state = getState();
-		const { libraryKey } = getCurrent(state);
+		const { libraryKey } = state.current;
 		dispatch({
 			type: REQUEST_CHILD_ITEMS,
 			itemKey,
@@ -650,7 +649,7 @@ const fetchChildItems = (itemKey) => {
 const fetchItems = (itemKeys) => {
 	return async (dispatch, getState) => {
 		const state = getState();
-		const { libraryKey } = getCurrent(state);
+		const { libraryKey } = state.current;
 		dispatch({
 			type: REQUEST_FETCH_ITEMS,
 			itemKeys,
@@ -687,7 +686,7 @@ const fetchItems = (itemKeys) => {
 const fetchTopItems = ({ start = 0, limit = 50, sort = 'dateModified', direction = 'desc' } = {}) => {
 	return async (dispatch, getState, ) => {
 		const state = getState();
-		const { libraryKey } = getCurrent(state);
+		const { libraryKey } = state.current;
 		// @TODO: support pagination, sorting, deduplicate
 		// const totalItemsCount = get(state, ['itemCountTopByLibrary', libraryKey]);
 		// const knownItemKeys = get(state, ['libraries', libraryKey, 'itemsTop'], []);
@@ -737,7 +736,7 @@ const fetchTopItems = ({ start = 0, limit = 50, sort = 'dateModified', direction
 const fetchTrashItems = ({ start = 0, limit = 50, sort = 'dateModified', direction = 'desc' } = {}) => {
 	return async (dispatch, getState, ) => {
 		const state = getState();
-		const { libraryKey } = getCurrent(state);
+		const { libraryKey } = state.current;
 
 		dispatch({
 			type: REQUEST_TRASH_ITEMS,
@@ -784,7 +783,7 @@ const fetchTrashItems = ({ start = 0, limit = 50, sort = 'dateModified', directi
 const fetchPublicationsItems = ({ start = 0, limit = 50, sort = 'dateModified', direction = 'desc' } = {}) => {
 	return async (dispatch, getState, ) => {
 		const state = getState();
-		const libraryKey = state.config.userLibraryKey;
+		const libraryKey = state.current.userLibraryKey;
 		// const totalItemsCount = state.itemCount.publications;
 
 		dispatch({
@@ -831,7 +830,7 @@ const fetchPublicationsItems = ({ start = 0, limit = 50, sort = 'dateModified', 
 
 const triggerEditingItem = (itemKey, isEditing) => {
 	return async (dispatch, getState) => {
-		const { libraryKey } = getCurrent(getState());
+		const { libraryKey } = getState().current;
 
 		return dispatch({
 			type: TRIGGER_EDITING_ITEM,
@@ -844,7 +843,7 @@ const triggerEditingItem = (itemKey, isEditing) => {
 
 const triggerSelectMode = (isSelectMode) => {
 	return async (dispatch, getState) => {
-		const { libraryKey } = getCurrent(getState());
+		const { libraryKey } = getState().current;
 
 		return dispatch({
 			type: TRIGGER_SELECT_MODE,
@@ -961,7 +960,7 @@ const createItem = (properties, libraryKey) => {
 const deleteItem = item => {
 	return async (dispatch, getState) => {
 		const state = getState();
-		const { libraryKey } = getCurrent(state);
+		const { libraryKey } = state.current;
 		const config = getState().config;
 
 		dispatch({
@@ -999,7 +998,7 @@ const deleteItem = item => {
 const deleteItems = itemKeys => {
 	return async (dispatch, getState) => {
 		const state = getState();
-		const { libraryKey } = getCurrent(state);
+		const { libraryKey } = state.current;
 		const { config } = getState(state);
 
 		dispatch({
@@ -1036,7 +1035,7 @@ const deleteItems = itemKeys => {
 
 const updateItem = (itemKey, patch) => {
 	return async (dispatch, getState) => {
-		const { libraryKey } = getCurrent(getState());
+		const { libraryKey } = getState().current;
 		const queueId = ++queueIdCunter;
 
 		dispatch({
@@ -1080,7 +1079,7 @@ const queueUpdateItem = (itemKey, patch, libraryKey, queueId) => {
 		queue: libraryKey,
 		callback: async (next, dispatch, getState) => {
 			const state = getState();
-			const { libraryKey } = getCurrent(state);
+			const { libraryKey } = state.current;
 			const config = state.config;
 			const item = get(state, ['libraries', libraryKey, 'items', itemKey]);
 			const version = item.version;
@@ -1159,7 +1158,7 @@ const queueUpdateItem = (itemKey, patch, libraryKey, queueId) => {
 const uploadAttachment = (itemKey, fileData) => {
 	return async (dispatch, getState) => {
 		const state = getState();
-		const { libraryKey } = getCurrent(state);
+		const { libraryKey } = state.current;
 		const config = state.config;
 		dispatch({
 			type: REQUEST_UPLOAD_ATTACHMENT,
@@ -1197,7 +1196,7 @@ const uploadAttachment = (itemKey, fileData) => {
 
 const moveToTrash = itemKeys => {
 	return async (dispatch, getState) => {
-		const { libraryKey } = getCurrent(getState());
+		const { libraryKey } = getState().current;
 		const queueId = ++queueIdCunter;
 
 		dispatch({
@@ -1270,7 +1269,7 @@ const queueMoveItemsToTrash = (itemKeys, libraryKey, queueId) => {
 
 const recoverFromTrash = itemKeys => {
 	return async (dispatch, getState) => {
-		const { libraryKey } = getCurrent(getState());
+		const { libraryKey } = getState().current;
 		const queueId = ++queueIdCunter;
 
 		dispatch({
@@ -1343,7 +1342,7 @@ const queueRecoverItemsFromTrash = (itemKeys, libraryKey, queueId) => {
 
 const addToCollection = (itemKeys, collectionKey, targetLibraryKey) => {
 	return async (dispatch, getState) => {
-		const { libraryKey: currentLibraryKey } = getCurrent(getState());
+		const { libraryKey: currentLibraryKey } = getState().current;
 		const queueId = ++queueIdCunter;
 
 		dispatch({
@@ -1448,7 +1447,7 @@ const queueAddToCollection = (itemKeys, collectionKey, libraryKey, queueId) => {
 
 const removeFromCollection = (itemKeys, collectionKey) => {
 	return async (dispatch, getState) => {
-		const { libraryKey } = getCurrent(getState());
+		const { libraryKey } = getState().current;
 		const queueId = ++queueIdCunter;
 
 		dispatch({
@@ -1697,7 +1696,7 @@ const fetchLibrarySettings = () => {
 	return async (dispatch, getState) => {
 		const state = getState();
 		const config = state.config;
-		const { libraryKey } = getCurrent(state);
+		const { libraryKey } = state.current;
 
 		dispatch({
 			type: REQUEST_LIBRARY_SETTINGS,
@@ -1733,7 +1732,7 @@ const fetchTagsInCollection = (collectionKey, { start = 0, limit = 50, sort = 't
 	return async (dispatch, getState) => {
 		const state = getState();
 		const config = state.config;
-		const { libraryKey } = getCurrent(state);
+		const { libraryKey } = state.current;
 		const totalTagsCount = get(state, ['libraries', libraryKey, 'tagsCountByCollection', collectionKey]);
 		const knownTags = get(state, ['libraries', libraryKey, 'tagsByCollection', collectionKey], []);
 
@@ -1793,7 +1792,7 @@ const fetchTagsInLibrary = ({ start = 0, limit = 50, sort = 'title', direction =
 	return async (dispatch, getState) => {
 		const state = getState();
 		const config = state.config;
-		const { libraryKey } = getCurrent(state);
+		const { libraryKey } = state.current;
 		const totalTagsCount = state.tagsCountByLibrary;
 		const knownTags = get(state, ['tagsByLibrary', libraryKey], []);
 
@@ -1847,7 +1846,7 @@ const fetchTagsForItem = (itemKey, { start = 0, limit = 50, sort = 'title', dire
 	return async (dispatch, getState) => {
 		const state = getState();
 		const config = state.config;
-		const { libraryKey } = getCurrent(state);
+		const { libraryKey } = state.current;
 		const totalTagsCount = get(state, ['libraries', libraryKey, 'tagsCountByItem', itemKey]);
 		const knownTags = get(state, ['libraries', libraryKey, 'tagsByItem', itemKey], []);
 
@@ -1908,7 +1907,7 @@ const exportItems = (itemKeys, format) => {
 	return async (dispatch, getState) => {
 		const state = getState();
 		const config = state.config;
-		const { libraryKey } = getCurrent(state);
+		const { libraryKey } = state.current;
 
 		dispatch({
 			type: REQUEST_EXPORT_ITEMS,
@@ -1948,7 +1947,7 @@ const citeItems = (itemKeys, style = 'chicago-note-bibliography') => {
 	return async (dispatch, getState) => {
 		const state = getState();
 		const config = state.config;
-		const { libraryKey } = getCurrent(state);
+		const { libraryKey } = state.current;
 
 		dispatch({
 			type: REQUEST_CITE_ITEMS,

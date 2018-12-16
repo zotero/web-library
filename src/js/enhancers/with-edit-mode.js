@@ -4,7 +4,6 @@ const React = require('react');
 const { connect } = require('react-redux');
 const hoistNonReactStatic = require('hoist-non-react-statics');
 const { triggerEditingItem } = require('../actions');
-const { getCurrent } = require('../common/state.js');
 
 var withEditMode = Component => {
 	class EnhancedComponent extends React.PureComponent {
@@ -29,7 +28,7 @@ var withEditMode = Component => {
 }
 
 const mapStateToProps = state => {
-	const { itemKey, editingItemKey } = getCurrent(state);
+	const { itemKey, editingItemKey } = state.current;
 
 	return { itemKey, isEditing: itemKey ? editingItemKey === itemKey : false };
 }

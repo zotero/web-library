@@ -6,7 +6,6 @@ const { connect } = require('react-redux');
 const { push } = require('connected-react-router');
 const Search = require('../component/search.jsx');
 const { makePath } = require('../common/navigation');
-const { getCurrent } = require('../common/state');
 
 class SearchContainer extends React.PureComponent {
 	state = { search: '' }
@@ -25,7 +24,7 @@ class SearchContainer extends React.PureComponent {
 }
 
 const mapStateToProps = state => {
-	const { library, collection, tags, search } = getCurrent(state);
+	const { library, collection, tags, search } = state.current;
 	return { library, collection, tags, search }
 };
 

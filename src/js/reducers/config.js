@@ -17,7 +17,6 @@ const config = (state = defaultState, action) => {
 				...state,
 				apiKey: action.apiKey,
 				userId: action.userId,
-				userLibraryKey: `u${action.userId}`,
 				apiConfig: action.apiConfig,
 			};
 		case SORT_ITEMS:

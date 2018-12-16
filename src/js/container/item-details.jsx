@@ -10,7 +10,6 @@ const { itemProp, baseMappings } = require('../constants/item');
 const { get, deduplicateByKey, mapRelationsToItemKeys, removeRelationByItemKey, reverseMap } = require('../utils');
 const { makePath } = require('../common/navigation');
 const { hideFields, noEditFields } = require('../constants/item');
-const { getCurrent } = require('../common/state');
 const withEditMode = require('../enhancers/with-edit-mode');
 const withDevice = require('../enhancers/with-device');
 
@@ -220,7 +219,7 @@ const mapStateToProps = state => {
 		itemsSource,
 		collectionKey,
 		itemKey,
-	} = getCurrent(state);
+	} = state.current;
 	const item = get(state, ['libraries', libraryKey, 'items', itemKey], null);
 	const itemType = item ? item.itemType : null;
 	const childItems = get(state, ['libraries', libraryKey, 'itemsByParent', itemKey], [])

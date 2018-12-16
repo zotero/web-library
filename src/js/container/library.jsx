@@ -27,7 +27,6 @@ const {
 const routes = require('../routes');
 const Library = require('../component/library');
 const defaults = require('../constants/defaults');
-const { getCurrent } = require('../common/state');
 const { ViewportContext, UserContext } = require('../context');
 const { DragDropContext } = require('react-dnd');
 const { default: MultiBackend } = require('react-dnd-multi-backend');
@@ -89,14 +88,18 @@ class LibraryContainer extends React.PureComponent {
 	render() {
 		const { user, viewport, libraryKey } = this.props;
 
-		return (
-			<ViewportContext.Provider value={ viewport }>
-			<UserContext.Provider value={ user }>
-				<CustomDragLayer />
-				<Library { ...this.props } />
-			</UserContext.Provider>
-			</ViewportContext.Provider>
-		);
+		if(libraryKey) {
+			return (
+				<ViewportContext.Provider value={ viewport }>
+				<UserContext.Provider value={ user }>
+					<CustomDragLayer />
+					<Library { ...this.props } />
+				</UserContext.Provider>
+				</ViewportContext.Provider>
+			);
+		} else {
+			return null;
+		}
 	}
 
 	static init(element, config = {}) {
@@ -151,9 +154,10 @@ const mapStateToProps = state => {
 		view,
 		search,
 		tags,
-	} = getCurrent(state);
+	} = state.current;
 	const {
-		config: { userLibraryKey, api, apiKey },
+		current: { userLibraryKey },
+		config: { api, apiKey },
 		fetching: { collectionsInLibrary },
 		viewport,
 	} = state;

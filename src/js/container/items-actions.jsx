@@ -9,7 +9,6 @@ const { get } = require('../utils');
 const { makePath } = require('../common/navigation');
 const { push } = require('connected-react-router');
 const { removeKeys } = require('../common/immutable');
-const { getCurrent } = require('../common/state');
 const ItemsActions = require('../component/item/actions');
 const withSelectMode = require('../enhancers/with-select-mode');
 const withDevice = require('../enhancers/with-device');
@@ -159,7 +158,7 @@ const mapStateToProps = state => {
 		itemKey,
 		tags,
 		search,
-	} = getCurrent(state);
+	} = state.current;
 
 	const item = get(state, ['libraries', libraryKey, 'items', itemKey]);
 

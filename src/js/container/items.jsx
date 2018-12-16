@@ -21,7 +21,6 @@ const {
 const { get, sortByKey, resizeVisibleColumns } = require('../utils');
 const { makePath } = require('../common/navigation');
 const processItem = require('../common/process-item');
-const { getCurrent } = require('../common/state');
 const withDevice = require('../enhancers/with-device');
 
 class ItemsContainer extends React.PureComponent {
@@ -144,7 +143,7 @@ const mapStateToProps = state => {
 		itemKey,
 		itemKeys,
 		isSelectMode,
-	} = getCurrent(state);
+	} = state.current;
 	const collection = get(state, ['libraries', libraryKey, 'collections', collectionKey]);
 	const item = get(state, ['libraries', libraryKey, 'items', itemKey]);
 	const libraryTags = get(state, ['libraries', libraryKey, 'tags']);

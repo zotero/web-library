@@ -5,7 +5,6 @@ const { connect } = require('react-redux');
 const hoistNonReactStatic = require('hoist-non-react-statics');
 const { triggerSelectMode } = require('../actions');
 const { makePath } = require('../common/navigation');
-const { getCurrent } = require('../common/state.js');
 
 var withSelectMode = Component => {
 	class EnhancedComponent extends React.PureComponent {
@@ -41,7 +40,7 @@ var withSelectMode = Component => {
 
 const mapStateToProps = state => {
 	const { collectionKey, isSelectMode, itemsSource, libraryKey, search,
-		tags } = getCurrent(state);
+		tags } = state;
 
 	return { collectionKey, isSelectMode, itemsSource, libraryKey, search,
 		tags };

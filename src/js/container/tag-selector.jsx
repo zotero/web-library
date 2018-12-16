@@ -9,7 +9,6 @@ const { deduplicateByKey, get } = require('../utils');
 const TagSelector = require('../component/tag-selector.jsx');
 const { fetchTagsInCollection, fetchTagsInLibrary } = require('../actions');
 const { makePath } = require('../common/navigation');
-const { getCurrent } = require('../common/state');
 
 class TagSelectorContainer extends React.PureComponent {
 	state = {
@@ -103,7 +102,7 @@ const mapStateToProps = state => {
 		collectionKey,
 		tags: selectedTags,
 		itemsSource
-	} = getCurrent(state);
+	} = state.current;
 	if(!libraryKey) {
 		return { isReady: false }
 	}

@@ -12,7 +12,6 @@ const TouchHeader = require('../component/touch-header');
 const { makePath } = require('../common/navigation');
 const { makeChildMap } = require('../common/collection');
 const { itemsSourceLabel } = require('../common/format');
-const { getCurrent } = require('../common/state');
 const withEditMode = require('../enhancers/with-edit-mode');
 const withSelectMode = require('../enhancers/with-select-mode');
 
@@ -156,7 +155,7 @@ const mapStateToProps = state => {
 		view,
 		itemsSource,
 		collectionKey: collection, //@TODO: rename to collectionKey
-	} = getCurrent(state);
+	} = state.current;
 	const collections = get(state, ['libraries', libraryKey, 'collections'], []);
 	const item = get(state, ['libraries', libraryKey, 'items', itemKey]);
 	const path = getCollectionsPath(state).map(

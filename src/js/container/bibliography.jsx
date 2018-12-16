@@ -6,7 +6,6 @@ const PropTypes = require('prop-types');
 const { connect } = require('react-redux');
 const { toggleModal, citeItems } = require('../actions');
 const { coreCitationStyles } = require('../../../data/citation-styles-data.json');
-const { getCurrent } = require('../common/state');
 const Bibliography = require('../component/bibliography')
 
 class BibliographyContainer extends React.PureComponent {
@@ -58,7 +57,7 @@ class BibliographyContainer extends React.PureComponent {
 
 const mapStateToProps = state => {
 	const isOpen = state.modal === 'BIBLIOGRAPHY';
-	const { itemKeys } = getCurrent(state);
+	const { itemKeys } = state.current;
 
 	return { isOpen, itemKeys };
 };
