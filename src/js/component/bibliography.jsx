@@ -60,7 +60,7 @@ class Bibliography extends React.PureComponent {
 			<Modal
 				isOpen={ isOpen }
 				contentLabel="Bibliography"
-				className={ cx('modal-lg', { loading: !isReady })}
+				className={ cx('modal-lg', 'bibliography', { loading: !isReady })}
 				onRequestClose={ this.handleCancel.bind(this) }
 			>
 				{ isReady ? this.renderModalContent() : <Spinner className="large" /> }

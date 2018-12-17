@@ -300,8 +300,8 @@ const preferenceChange = (name, value) => {
 	};
 }
 
-const toggleModal = (id, shouldOpen) => {
-	return { type: TOGGLE_MODAL, id, shouldOpen }
+const toggleModal = (id, shouldOpen, config) => {
+	return { type: TOGGLE_MODAL, id, shouldOpen, ...config }
 }
 
 const toggleTransitions = useTransitions => {

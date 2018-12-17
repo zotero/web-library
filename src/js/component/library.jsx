@@ -16,6 +16,7 @@ const TagSelectorContainer = require('../container/tag-selector');
 const { Toolbar, ToolGroup } = require('./ui/toolbars');
 const TouchHeaderContainer = require('../container/touch-header');
 const BibliographyContainer = require('../container/bibliography');
+const CollectionEditorContainer = require('../container/collection-editor');
 const withDevice = require('../enhancers/with-device');
 
 class Library extends React.PureComponent {
@@ -111,6 +112,7 @@ class Library extends React.PureComponent {
 					</section>
 				</main>
 				<BibliographyContainer />
+				<CollectionEditorContainer />
 			</div>
 		);
 	}

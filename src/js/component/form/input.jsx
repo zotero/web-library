@@ -69,6 +69,10 @@ class Input extends React.PureComponent {
 		}
 	}
 
+	get value() {
+		return this.state.value;
+	}
+
 	get hasChanged() {
 		return this.state.value !== this.props.value;
 	}

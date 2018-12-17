@@ -1,14 +1,19 @@
 'use strict';
 
-const { TOGGLE_MODAL } = require('../constants/actions.js');
+const { TOGGLE_MODAL } = require('../constants/actions');
+const { omit } = require('../common/immutable');
 
 
-const modal = (state = null, action) => {
+const modal = (state = { id: null }, action) => {
 	if(action.type == TOGGLE_MODAL && action.shouldOpen) {
-		return action.id;
+		return {
+			...omit(action, 'type')
+		}
 	}
 	if(action.type == TOGGLE_MODAL && !action.shouldOpen) {
-		return null;
+		return {
+			id: null
+		};
 	}
 
 	return state;

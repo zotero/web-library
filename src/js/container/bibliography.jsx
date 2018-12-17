@@ -7,6 +7,7 @@ const { connect } = require('react-redux');
 const { toggleModal, citeItems } = require('../actions');
 const { coreCitationStyles } = require('../../../data/citation-styles-data.json');
 const Bibliography = require('../component/bibliography')
+const { BIBLIOGRAPHY } = require('../constants/modals');
 
 class BibliographyContainer extends React.PureComponent {
 	state = {
@@ -36,7 +37,7 @@ class BibliographyContainer extends React.PureComponent {
 
 	async handleCancel() {
 		const { dispatch } = this.props;
-		await dispatch(toggleModal('BIBLIOGRAPHY', false));
+		await dispatch(toggleModal(BIBLIOGRAPHY, false));
 	}
 
 	render() {
@@ -56,7 +57,7 @@ class BibliographyContainer extends React.PureComponent {
 }
 
 const mapStateToProps = state => {
-	const isOpen = state.modal === 'BIBLIOGRAPHY';
+	const isOpen = state.modal.id === BIBLIOGRAPHY;
 	const { itemKeys } = state.current;
 
 	return { isOpen, itemKeys };

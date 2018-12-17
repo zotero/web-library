@@ -15,6 +15,7 @@ const { noop } = require('../../utils.js');
 const { makeChildMap } = require('../../common/collection');
 const { isTriggerEvent } = require('../../common/event');
 const Editable = require('../editable');
+const { COLLECTION_RENAME } = require('../../constants/modals');
 
 class CollectionTree extends React.PureComponent {
 	state = { opened: [], renaming: null }
@@ -44,9 +45,15 @@ class CollectionTree extends React.PureComponent {
 	}
 
 	handleRenameTrigger(collectionKey, ev) {
+		const { device, toggleModal } = this.props;
 		if(isTriggerEvent(ev)) {
 			ev.preventDefault();
-			this.setState({ renaming: collectionKey});
+
+			if(device.isTouchOrSmall) {
+				toggleModal(COLLECTION_RENAME, true, { collectionKey });
+			} else {
+				this.setState({ renaming: collectionKey});
+			}
 		}
 	}
 

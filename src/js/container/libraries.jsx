@@ -13,6 +13,7 @@ const {
 	createCollection,
 	updateCollection,
 	deleteCollection,
+	toggleModal,
 } = require('../actions');
 const { getCollectionsPath } = require('../common/state');
 const { get } = require('../utils');
@@ -126,7 +127,7 @@ const mapStateToProps = state => {
 };
 
 //@TODO: bind all action creators
-const mapDispatchToProps = dispatch => ({ dispatch, ...bindActionCreators({ push }, dispatch) });
+const mapDispatchToProps = dispatch => ({ dispatch, ...bindActionCreators({ push, toggleModal }, dispatch) });
 
 LibrariesContainer.propTypes = {
 	collections: PropTypes.array,

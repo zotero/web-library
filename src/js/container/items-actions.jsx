@@ -12,6 +12,7 @@ const { removeKeys } = require('../common/immutable');
 const ItemsActions = require('../component/item/actions');
 const withSelectMode = require('../enhancers/with-select-mode');
 const withDevice = require('../enhancers/with-device');
+const { BIBLIOGRAPHY } = require('../constants/modals');
 
 const {
 	createItem,
@@ -104,7 +105,7 @@ class ItemsActionsContainer extends React.PureComponent {
 
 	handleBibliographyOpen() {
 		const { dispatch } = this.props;
-		dispatch(toggleModal('BIBLIOGRAPHY', true));
+		dispatch(toggleModal(BIBLIOGRAPHY, true));
 	}
 
 	handleLibraryShow() {
