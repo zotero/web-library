@@ -5,7 +5,6 @@ const PropTypes = require('prop-types');
 
 const { isTriggerEvent } = require('../common/event');
 const Modal = require('./ui/modal');
-const Icon = require('./ui/icon');
 const Button = require('./ui/button');
 const Input = require('./form/input');
 
@@ -27,20 +26,34 @@ class CollectionEditor extends React.PureComponent {
 			<Modal
 				isOpen={ isOpen }
 				contentLabel="Collection Editor"
-				className="modal-lg collection-editor"
+				className="modal-touch modal-centered"
 				onRequestClose={ () => toggleModal(null, false) }
+				overlayClassName={ "modal-slide" }
 			>
 				<div className="modal-content" tabIndex={ -1 }>
 					<div className="modal-header">
-						<h4 className="modal-title text-truncate">
-							Rename Collection
-						</h4>
-						<Button
-							className="close"
-							onClick={ () => toggleModal(null, false) }
-						>
-							<Icon type={ '24/remove' } width="24" height="24" />
-						</Button>
+						<div className="modal-header-left">
+							<Button
+								className="btn-link"
+								onClick={ () => toggleModal(null, false) }
+							>
+								Cancel
+							</Button>
+						</div>
+						<div className="modal-header-center">
+							<h4 className="modal-title text-truncate">
+								Rename Collection
+							</h4>
+						</div>
+						<div className="modal-header-right">
+							<Button
+								className="btn-link"
+								onKeyDown={ ev => this.handleCollectionUpdate(ev) }
+								onClick={ ev => this.handleCollectionUpdate(ev) }
+							>
+								Rename
+							</Button>
+						</div>
 					</div>
 					<div className="modal-body">
 						<p>Please choose a new name</p>
@@ -52,12 +65,7 @@ class CollectionEditor extends React.PureComponent {
 								onCommit={ (_, __, ev) => this.handleCollectionUpdate(ev) }
 								value={ collection.name }
 							/>
-							<Button
-								onKeyDown={ ev => this.handleCollectionUpdate(ev) }
-								onClick={ ev => this.handleCollectionUpdate(ev) }
-							>
-								Update
-							</Button>
+
 						</div>
 					</div>
 				</div>
