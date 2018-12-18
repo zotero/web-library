@@ -2,6 +2,7 @@
 
 const React = require('react');
 const { connect } = require('react-redux');
+const { push } = require('connected-react-router');
 const hoistNonReactStatic = require('hoist-non-react-statics');
 const { triggerSelectMode } = require('../actions');
 const { makePath } = require('../common/navigation');
@@ -9,18 +10,16 @@ const { makePath } = require('../common/navigation');
 var withSelectMode = Component => {
 	class EnhancedComponent extends React.PureComponent {
 		onSelectModeToggle(isSelectMode) {
-			const { history, collectionKey: collection, libraryKey: library,
-				itemsSource, tags, search } = this.props;
+			const { collectionKey: collection, libraryKey: library,
+				itemsSource, push, triggerSelectMode, tags, search, view } = this.props;
 
-			this.props.dispatch(
-				triggerSelectMode(isSelectMode)
-			);
+			triggerSelectMode(isSelectMode)
 
 			if(isSelectMode === false) {
 				const trash = itemsSource === 'trash';
 				const publications = itemsSource === 'publications';
 				const items = [];
-				history.push(makePath({ library, search, tags, trash, publications, collection, items }));
+				push(makePath({ library, search, tags, trash, publications, collection, items, view }));
 			}
 		}
 
@@ -35,15 +34,17 @@ var withSelectMode = Component => {
 		static WrappedComponent = Component;
 	}
 
-	return connect(mapStateToProps)(hoistNonReactStatic(EnhancedComponent, Component));
+	return connect(
+			mapStateToProps, { push, triggerSelectMode }
+		)(hoistNonReactStatic(EnhancedComponent, Component));
 }
 
 const mapStateToProps = state => {
 	const { collectionKey, isSelectMode, itemsSource, libraryKey, search,
-		tags } = state;
+		tags, view } = state.current;
 
 	return { collectionKey, isSelectMode, itemsSource, libraryKey, search,
-		tags };
+		tags, view };
 }
 
 module.exports = withSelectMode;

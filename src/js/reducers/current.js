@@ -70,7 +70,7 @@ const current = (state = stateDefault, action) => {
 				collectionKey,
 				editingItemKey: state.editingItemKey,
 				isEditing: state.isEditing && view !== 'item-details',
-				isSelectMode: isSelectMode && view !== 'item-list',
+				isSelectMode: isSelectMode && view === 'item-list',
 				itemKey: itemKeys && itemKeys.length === 1 ? itemKeys.pop() : null,
 				itemKeys,
 				itemsSource,
