@@ -69,20 +69,25 @@
 	&.active {
 		@include touch-and-bp-only(md) {
 			display: block;
+
+			.icon-spin {
+				width: $icon-spin-size-lg;
+				height: $icon-spin-size-lg;
+			}
 		}
 
 		@include mouse-and-bp-up(md) {
 			display: block;
 		}
-	}
 
-	&.loading.active {
-		html:not(.specifity) & {
-			display: flex;
-			justify-content: center;
-			align-items: center;
-			height: 100%;
-			padding: 0;
+		&.loading {
+			html:not(.specifity) & {
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				height: 100%;
+				padding: 0;
+			}
 		}
 	}
 
