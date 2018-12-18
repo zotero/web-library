@@ -6,11 +6,80 @@
 	color: $placeholder-color;
 }
 
+form {
+	@include variant(".modal form") {
+		margin: ($form-section-margin - $modal-inner-padding)
+			(-$modal-inner-padding);
+	}
+}
+
+.form-group {
+	@include touch-or-bp-down(sm) {
+		display: flex;
+		padding-top: $input-border-width;
+		position: relative;
+
+		&::before,
+		&::after {
+			position: absolute;
+			left: 0;
+			right: 0;
+			height: $input-border-width;
+			background-color: $input-border-color;
+			z-index: 2;
+		}
+
+		&::before {
+			content: "";
+			top: 0;
+		}
+
+		&:last-child {
+			padding-bottom: $input-border-width;
+
+			&::after {
+				content: "";
+				bottom: 0;
+			}
+		}
+	}
+
+	@include touch-keyboard-or-bp-down(sm) {
+		&:focus-within {
+			&::before,
+			&::after {
+				content: "";
+				position: absolute;
+				left: 0;
+				right: 0;
+				height: $outline-width;
+				background-color: $focus-color;
+				z-index: 2;
+			}
+
+			&:before {
+				bottom: calc(100% - #{$input-border-width});
+			}
+
+			&:after {
+				top: calc(100% - #{$input-border-width});
+			}
+		}
+	}
+}
+
 label {
-	.editing & {
+	.editing &,
+	.form-group & {
 		@include touch-or-bp-down(sm) {
-			flex: 1 1 auto;
+			line-height: $input-btn-height-touch;
 			padding: 0 ($input-btn-padding-x-touch / 2) 0 $input-btn-padding-x-touch;
+			background-color: $input-bg;
+
+			.icon {
+				vertical-align: top;
+				margin-top: ($input-btn-height-touch - 28px) / 2;
+			}
 		}
 	}
 }
@@ -80,8 +149,15 @@ label {
 	background-color: $input-bg;
 
 	@include touch-or-bp-down(sm) {
+		height: $input-btn-height-touch;
 		padding: 0 $input-btn-padding-x-touch 0 ($input-btn-padding-x-touch / 2);
 		border: none;
+	}
+
+	@include touch-keyboard-or-bp-down(sm) {
+		&:focus {
+			outline: none;
+		}
 	}
 
 	@include mouse-and-bp-up(md) {

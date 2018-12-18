@@ -412,9 +412,17 @@
 			text-overflow: inherit;
 			white-space: inherit;
 		}
+
+		@include state(".metadata-list.editing") {
+			flex: 1 1 auto;
+		}
 	}
 
 	.form-control {
+		@include touch-or-bp-down(sm) {
+			height: auto; // Center vertically
+		}
+
 		&:not(textarea) {
 			line-height: normal;
 		}

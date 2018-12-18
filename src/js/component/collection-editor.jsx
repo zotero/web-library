@@ -7,6 +7,7 @@ const { isTriggerEvent } = require('../common/event');
 const Modal = require('./ui/modal');
 const Button = require('./ui/button');
 const Input = require('./form/input');
+const Icon = require('./ui/icon');
 
 class CollectionEditor extends React.PureComponent {
 	handleCollectionUpdate(ev) {
@@ -56,17 +57,21 @@ class CollectionEditor extends React.PureComponent {
 						</div>
 					</div>
 					<div className="modal-body">
-						<p>Please choose a new name</p>
-						<div>
-							<Input
-								autoFocus
-								selectOnFocus
-								ref={ ref => this.inputRef = ref }
-								onCommit={ (_, __, ev) => this.handleCollectionUpdate(ev) }
-								value={ collection.name }
-							/>
-
-						</div>
+						<form>
+							<div className="form-group">
+								<label>
+									<Icon type="28/folder" width="28" height="28" />
+								</label>
+								<Input
+									autoFocus
+									selectOnFocus
+									ref={ ref => this.inputRef = ref }
+									onCommit={ (_, __, ev) => this.handleCollectionUpdate(ev) }
+									value={ collection.name }
+									tabIndex={ 0 }
+								/>
+							</div>
+						</form>
 					</div>
 				</div>
 			</Modal>
