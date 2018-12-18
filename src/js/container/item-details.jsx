@@ -15,10 +15,19 @@ const withDevice = require('../enhancers/with-device');
 
 class ItemDetailsContainer extends React.PureComponent {
 	async componentDidUpdate() {
-		const { item, shouldFetchMeta, dispatch } = this.props;
-		if(item && item.key && shouldFetchMeta === true) {
-			this.props.dispatch(fetchItemTypeCreatorTypes(item.itemType));
-			this.props.dispatch(fetchItemTypeFields(item.itemType));
+		const { childItems, device, fetchChildItems, item, isLoadingChildItems, shouldFetchMeta, dispatch } = this.props;
+		if(item && item.key) {
+			const { numChildren = 0 } = item[Symbol.for('meta')];
+
+			if(shouldFetchMeta) {
+				dispatch(fetchItemTypeCreatorTypes(item.itemType));
+				dispatch(fetchItemTypeFields(item.itemType));
+			}
+
+			if(!device.shouldUseTabs && numChildren > childItems.length &&
+				!isLoadingChildItems) {
+				fetchChildItems(item.key)
+			}
 		}
 	}
 
