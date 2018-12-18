@@ -49,9 +49,7 @@ class Row extends React.PureComponent {
 			onRowMouseOver,
 			onRowRightClick,
 			rowData,
-			selectedItemKeys,
 			style,
-			text,
 		} = this.props;
 		if (
 			onRowClick ||
@@ -63,20 +61,23 @@ class Row extends React.PureComponent {
 			a11yProps['aria-label'] = 'row';
 			a11yProps.tabIndex = 0;
 
-			if (onRowClick) {
+			if(onRowClick) {
+				// Select item rows on mousedown
+				// https://github.com/zotero/web-library/issues/161
+				a11yProps.onMouseDown = event => onRowClick({event, index, rowData});
 				a11yProps.onClick = event => onRowClick({event, index, rowData});
 			}
-			if (onRowDoubleClick) {
+			if(onRowDoubleClick) {
 				a11yProps.onDoubleClick = event =>
 				onRowDoubleClick({event, index, rowData});
 			}
-			if (onRowMouseOut) {
+			if(onRowMouseOut) {
 				a11yProps.onMouseOut = event => onRowMouseOut({event, index, rowData});
 			}
-			if (onRowMouseOver) {
+			if(onRowMouseOver) {
 				a11yProps.onMouseOver = event => onRowMouseOver({event, index, rowData});
 			}
-			if (onRowRightClick) {
+			if(onRowRightClick) {
 				a11yProps.onContextMenu = event =>
 				onRowRightClick({event, index, rowData});
 			}

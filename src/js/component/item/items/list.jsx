@@ -44,15 +44,13 @@ class ItemsList extends React.PureComponent {
 		await this.props.onLoadMore({ startIndex, stopIndex });
 	}
 
-	// Identical to table.jsx
 	handleRowClick({ event, index }) {
 		if(this.props.items[index]) {
 			this.handleItemSelect(this.props.items[index], event);
 		}
 	}
 
-	//@TODO: multi select
-	handleItemSelect(item, ev) {
+	handleItemSelect(item) {
 		const { isSelectMode, selectedItemKeys } = this.props;
 		if(isSelectMode) {
 			if(selectedItemKeys.includes(item.key)) {
@@ -63,11 +61,9 @@ class ItemsList extends React.PureComponent {
 		} else {
 			this.props.onItemsSelect([item.key]);
 		}
-
-		ev.preventDefault();
 	}
 
-	renderRow({ index, isScrolling, key, style }) {
+	renderRow({ index, key, style }) {
 		const { isSelectMode, items, selectedItemKeys } = this.props;
 		const item = this.getRow({ index });
 		const isLoaded = index < items.length;

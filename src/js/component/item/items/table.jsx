@@ -22,6 +22,7 @@ class ItemsTable extends React.PureComponent {
 		this.handleMouseMove = this.handleMouseMove.bind(this);
 		this.handleMouseLeave = this.handleMouseLeave.bind(this);
 		this.state = { };
+		this.ignoreClicks = {};
 	}
 
 	static getDerivedStateFromProps({ preferences: { columns } }) {
@@ -149,7 +150,10 @@ class ItemsTable extends React.PureComponent {
 	}
 
 	handleItemSelect(item, ev) {
-		if(ev.getModifierState('Shift')) {
+		const isCtrlModifier = ev.getModifierState('Control') || ev.getModifierState('Meta');
+		const isShiftModifier = ev.getModifierState('Shift');
+
+		if(isShiftModifier) {
 			let startIndex = this.props.selectedItemKeys.length ? this.props.items.findIndex(i => i.key === this.props.selectedItemKeys[0]) : 0;
 			let endIndex = this.props.items.findIndex(i => i.key === item.key);
 			let isFlipped = false;
@@ -164,7 +168,7 @@ class ItemsTable extends React.PureComponent {
 				keys.reverse();
 			}
 			this.props.onItemsSelect(keys);
-		} else if(ev.getModifierState('Control') || ev.getModifierState('Meta')) {
+		} else if(isCtrlModifier) {
 			if(this.props.selectedItemKeys.includes(item.key)) {
 				this.props.onItemsSelect(this.props.selectedItemKeys.filter(ik => ik !== item.key))
 			} else {
@@ -173,8 +177,6 @@ class ItemsTable extends React.PureComponent {
 		} else {
 			this.props.onItemsSelect([item.key]);
 		}
-
-		ev.preventDefault();
 	}
 
 	async handleLoadMore({ startIndex, stopIndex }) {
@@ -183,9 +185,43 @@ class ItemsTable extends React.PureComponent {
 		await this.props.onLoadMore({ startIndex, stopIndex });
 	}
 
-	handleRowClick({ event, index }) {
-		if(this.props.items[index]) {
-			this.handleItemSelect(this.props.items[index], event);
+	//@NOTE: In order to allow item selection on "mousedown" (#161)
+	//		 this event fires twice, once on "mousedown", once on "click".
+	//		 Click events are discarded unless "mousedown" could
+	//		 have been triggered as a drag event in which case "mousedown"
+	//		 is ignored and "click" is used instead, if occurs.
+	handleRowMouseEvent({ event, index }) {
+		const { items, selectedItemKeys } = this.props;
+		const item = items[index];
+		if(item) {
+			const isSelected = selectedItemKeys.includes(item.key);
+			if(selectedItemKeys.length > 1 &&
+				isSelected && event.type === 'mousedown') {
+				// ignore a "mousedown" when user might want to drag items
+				return;
+			} else {
+				if(selectedItemKeys.length > 1 && isSelected &&
+					event.type === 'click') {
+					const isFollowUp = item.key in this.ignoreClicks &&
+						Date.now() - this.ignoreClicks[item.key] < 500;
+
+					if(isFollowUp) {
+						// ignore a follow-up click, it has been handled as "mousedown"
+						return;
+					} else {
+						// handle a "click" event that has been missed by "mousedown" handler
+						// in anticipation of potential drag that has never happened
+						this.handleItemSelect(item, event);
+						delete this.ignoreClicks[item.key];
+						return
+					}
+				}
+			}
+			if(event.type === 'mousedown') {
+				// finally handle mousedowns as select events
+				this.ignoreClicks[item.key] = Date.now();
+				this.handleItemSelect(item, event);
+			}
 		}
 	}
 
@@ -221,7 +257,7 @@ class ItemsTable extends React.PureComponent {
 
 		return <Row
 			onDrag={ this.props.onItemDrag }
-			{ ...{className, index, selectedItemKeys, ...opts} }
+			{ ...{className, index, ...opts} }
 		/>;
 	}
 
@@ -434,7 +470,7 @@ class ItemsTable extends React.PureComponent {
 									rowGetter={ this.getRow.bind(this) }
 									rowRenderer={ this.renderRow.bind(this) }
 									headerRowRenderer={ this.renderHeaderRow.bind(this) }
-									onRowClick={ this.handleRowClick.bind(this) }
+									onRowClick={ this.handleRowMouseEvent.bind(this) }
 									sort={ this.handleSort.bind(this) }
 									sortBy={ this.props.sortBy }
 									sortDirection={ this.props.sortDirection }
