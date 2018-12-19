@@ -22,13 +22,13 @@ class CollectionEditor extends React.PureComponent {
 
 	render() {
 		const { isOpen, toggleModal, collection } = this.props;
-		if(!collection) { return null; }
 		return (
 			<Modal
 				isOpen={ isOpen }
 				contentLabel="Collection Editor"
 				className="modal-touch modal-centered"
 				onRequestClose={ () => toggleModal(null, false) }
+				closeTimeoutMS={ 200 }
 				overlayClassName={ "modal-slide" }
 			>
 				<div className="modal-content" tabIndex={ -1 }>
@@ -67,7 +67,7 @@ class CollectionEditor extends React.PureComponent {
 									selectOnFocus
 									ref={ ref => this.inputRef = ref }
 									onCommit={ (_, __, ev) => this.handleCollectionUpdate(ev) }
-									value={ collection.name }
+									value={ collection && collection.name }
 									tabIndex={ 0 }
 								/>
 							</div>
