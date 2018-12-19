@@ -22,6 +22,7 @@ class CollectionEditor extends React.PureComponent {
 
 	render() {
 		const { isOpen, toggleModal, collection } = this.props;
+		const inputId = `collection-editor-${collection ? collection.key : 'empty'}`;
 		return (
 			<Modal
 				isOpen={ isOpen }
@@ -59,10 +60,11 @@ class CollectionEditor extends React.PureComponent {
 					<div className="modal-body">
 						<form>
 							<div className="form-group">
-								<label>
+								<label htmlFor={ inputId }>
 									<Icon type="28/folder" width="28" height="28" />
 								</label>
 								<Input
+									id={ inputId }
 									autoFocus
 									selectOnFocus
 									ref={ ref => this.inputRef = ref }
