@@ -176,7 +176,7 @@ const mapStateToProps = state => {
 			type: 'library',
 			path: { library: libraryKey, view: 'library' },
 			//@TODO: when first loading, group name is not known
-			label: libraryKey === state.config.userLibraryKey ?
+			label: libraryKey === state.current.userLibraryKey ?
 				"My Library" :
 				(state.groups.find(
 					g => g.id === parseInt(libraryKey.slice(1), 10)
