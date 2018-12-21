@@ -66,7 +66,6 @@ class CollectionEditor extends React.PureComponent {
 								<Input
 									id={ inputId }
 									autoFocus
-									selectOnFocus
 									ref={ ref => this.inputRef = ref }
 									onCommit={ (_, __, ev) => this.handleCollectionUpdate(ev) }
 									value={ collection && collection.name }
