@@ -257,7 +257,7 @@ class ItemsTable extends React.PureComponent {
 
 		return <Row
 			onDrag={ this.props.onItemDrag }
-			{ ...{className, index, ...opts} }
+			{ ...{className, index, selectedItemKeys, ...opts} }
 		/>;
 	}
 

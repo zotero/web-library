@@ -12,7 +12,6 @@ const {
 	DropTarget,
 	DropTargetConnector,
 	DropTargetMonitor,
-	ConnectDropTarget,
 } = require('react-dnd');
 
 const dndSpec = {
