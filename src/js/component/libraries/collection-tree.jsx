@@ -15,7 +15,7 @@ const { noop } = require('../../utils.js');
 const { makeChildMap } = require('../../common/collection');
 const { isTriggerEvent } = require('../../common/event');
 const Editable = require('../editable');
-const { COLLECTION_RENAME } = require('../../constants/modals');
+const { COLLECTION_RENAME, COLLECTION_ADD } = require('../../constants/modals');
 
 class CollectionTree extends React.PureComponent {
 	state = { opened: [], renaming: null }
@@ -79,16 +79,20 @@ class CollectionTree extends React.PureComponent {
 	}
 
 	handleSubcollection(collectionKey, ev) {
+		const { device, libraryKey, onAdd, toggleModal } = this.props;
+		const { opened } = this.state;
+
 		if(isTriggerEvent(ev)) {
 			ev.preventDefault();
-			const { libraryKey, onAdd } = this.props;
-			const { opened } = this.state;
+			if(device.isTouchOrSmall) {
+				toggleModal(COLLECTION_ADD, true, { parentCollectionKey: collectionKey });
+			} else {
+				if(collectionKey !== null) {
+					this.setState({ opened: [...opened, collectionKey ] });
+				}
 
-			if(collectionKey !== null) {
-				this.setState({ opened: [...opened, collectionKey ] });
+				onAdd(libraryKey, collectionKey);
 			}
-
-			onAdd(libraryKey, collectionKey);
 		}
 	}
 

@@ -3,13 +3,13 @@
 const React = require('react');
 const PropTypes = require('prop-types');
 
-const { isTriggerEvent } = require('../common/event');
-const Modal = require('./ui/modal');
-const Button = require('./ui/button');
-const Input = require('./form/input');
-const Icon = require('./ui/icon');
+const { isTriggerEvent } = require('../../common/event');
+const Modal = require('../ui/modal');
+const Button = require('../ui/button');
+const Input = require('../form/input');
+const Icon = require('../ui/icon');
 
-class CollectionEditor extends React.PureComponent {
+class CollectionRenameModal extends React.PureComponent {
 	handleCollectionUpdate(ev) {
 		const { collection, libraryKey, toggleModal, updateCollection } = this.props;
 		if(isTriggerEvent(ev)) {
@@ -58,21 +58,19 @@ class CollectionEditor extends React.PureComponent {
 						</div>
 					</div>
 					<div className="modal-body">
-						<form>
-							<div className="form-group">
-								<label htmlFor={ inputId }>
-									<Icon type="28/folder" width="28" height="28" />
-								</label>
-								<Input
-									id={ inputId }
-									autoFocus
-									ref={ ref => this.inputRef = ref }
-									onCommit={ (_, __, ev) => this.handleCollectionUpdate(ev) }
-									value={ collection && collection.name }
-									tabIndex={ 0 }
-								/>
-							</div>
-						</form>
+						<div className="form-group">
+							<label htmlFor={ inputId }>
+								<Icon type="28/folder" width="28" height="28" />
+							</label>
+							<Input
+								id={ inputId }
+								autoFocus
+								ref={ ref => this.inputRef = ref }
+								onCommit={ (_, __, ev) => this.handleCollectionUpdate(ev) }
+								value={ collection && collection.name }
+								tabIndex={ 0 }
+							/>
+						</div>
 					</div>
 				</div>
 			</Modal>
@@ -88,4 +86,4 @@ class CollectionEditor extends React.PureComponent {
 	}
 }
 
-module.exports = CollectionEditor;
+module.exports = CollectionRenameModal;

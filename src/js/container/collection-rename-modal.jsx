@@ -4,13 +4,13 @@ const React = require('react');
 
 const { connect } = require('react-redux');
 const { toggleModal, updateCollection } = require('../actions');
-const CollectionEditor = require('../component/collection-editor')
+const CollectionRenameModal = require('../component/modal/collection-rename-modal')
 const { COLLECTION_RENAME } = require('../constants/modals');
 const { get } = require('../utils');
 
-class CollectionEditorContainer extends React.PureComponent {
+class CollectionRenameModalContainer extends React.PureComponent {
 	render() {
-		return <CollectionEditor { ...this.props } />;
+		return <CollectionRenameModal { ...this.props } />;
 	}
 }
 
@@ -27,4 +27,4 @@ const mapStateToProps = state => {
 module.exports = connect(
 	mapStateToProps,
 	{ updateCollection, toggleModal }
-)(CollectionEditorContainer);
+)(CollectionRenameModalContainer);

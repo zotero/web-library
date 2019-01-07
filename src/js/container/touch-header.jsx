@@ -14,6 +14,7 @@ const { makeChildMap } = require('../common/collection');
 const { itemsSourceLabel } = require('../common/format');
 const withEditMode = require('../enhancers/with-edit-mode');
 const withSelectMode = require('../enhancers/with-select-mode');
+const { toggleModal } = require('../actions');
 
 class TouchHeaderContainer extends React.PureComponent {
 	onNavigation(path) {
@@ -196,7 +197,7 @@ const mapStateToProps = state => {
 };
 
 const TouchHeaderWrapped = withDevice(withSelectMode(withEditMode(
-	connect(mapStateToProps, { push })(TouchHeaderContainer)
+	connect(mapStateToProps, { push, toggleModal })(TouchHeaderContainer)
 )));
 
 module.exports = TouchHeaderWrapped;
