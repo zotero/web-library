@@ -16,6 +16,9 @@ const {
 	REQUEST_ITEM_TEMPLATE,
 	RECEIVE_ITEM_TEMPLATE,
 	ERROR_ITEM_TEMPLATE,
+	REQUEST_TAGS_IN_LIBRARY,
+	RECEIVE_TAGS_IN_LIBRARY,
+	ERROR_TAGS_IN_LIBRARY
 } = require('../constants/actions');
 
 const fetching = (state = {
@@ -24,6 +27,7 @@ const fetching = (state = {
 	itemTemplates: [],
 	itemTypeCreatorTypes: [],
 	itemTypeFields: [],
+	tagsInLibrary: [],
 	meta: false,
 }, action) => {
 	switch(action.type) {
@@ -53,7 +57,21 @@ const fetching = (state = {
 				collectionsInLibrary: (state.collectionsInLibrary || [])
 					.filter(key => key !== action.libraryKey)
 			};
-
+		case REQUEST_TAGS_IN_LIBRARY:
+			return {
+				...state,
+				tagsInLibrary: [
+					...(state.tagsInLibrary || []),
+					action.libraryKey
+				]
+			};
+		case RECEIVE_TAGS_IN_LIBRARY:
+		case ERROR_TAGS_IN_LIBRARY:
+			return {
+				...state,
+				tagsInLibrary: (state.tagsInLibrary || [])
+					.filter(key => key !== action.libraryKey)
+			};
 		case REQUEST_ITEM_TYPE_CREATOR_TYPES:
 			return {
 				...state,

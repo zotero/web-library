@@ -43,4 +43,10 @@
 		width: $icon-spin-size-sm;
 		height: $icon-spin-size-sm;
 	}
+
+	&.inline {
+		width: $icon-spin-size-sm;
+		height: $icon-spin-size-sm;
+		display: inline;
+	}
 }

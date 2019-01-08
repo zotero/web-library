@@ -167,20 +167,6 @@ const resizeVisibleColumns = (columns, fractionBias, invert = false) => {
 	}
 }
 
-// close-enough approximation
-// see: https://stackoverflow.com/questions/25582882/javascript-math-random-normal-distribution-gaussian-bell-curve
-const gaussianRand = () => {
-  var rand = 0;
-
-  for (var i = 0; i < 6; i += 1) {
-    rand += Math.random();
-  }
-
-  return rand / 6;
-};
-
-const gaussianRandom = (start, end) => Math.floor(start + gaussianRand() * (end - start + 1));
-
 const JSONTryParse = (json, fallback = {}) => {
 	var output;
 	try {
@@ -195,7 +181,6 @@ module.exports = {
 	deduplicate,
 	deduplicateByKey,
 	enumerateObjects,
-	gaussianRandom,
 	get,
 	indexByGeneratedKey,
 	indexByKey,

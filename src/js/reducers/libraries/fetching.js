@@ -13,12 +13,16 @@ const {
 	REQUEST_TOP_ITEMS,
 	RECEIVE_TOP_ITEMS,
 	ERROR_TOP_ITEMS,
+	REQUEST_TAGS_IN_COLLECTION,
+	RECEIVE_TAGS_IN_COLLECTION,
+	ERROR_TAGS_IN_COLLECTION,
 } = require('../../constants/actions');
 
 const fetching = (state = {
 	items: [],
 	itemsInCollection: [],
 	childItems: [],
+	tagsInCollection: [],
 	itemsTop: false,
 }, action) => {
 	switch(action.type) {
@@ -76,6 +80,21 @@ const fetching = (state = {
 			return {
 				...state,
 				itemsTop: false
+			};
+		case REQUEST_TAGS_IN_COLLECTION:
+			return {
+				...state,
+				tagsInCollection: [
+					...(state.tagsInCollection || []),
+					action.collectionKey
+				]
+			}
+		case RECEIVE_TAGS_IN_COLLECTION:
+		case ERROR_TAGS_IN_COLLECTION:
+			return {
+				...state,
+				tagsInCollection: state.tagsInCollection
+					.filter(key => key !== action.collectionKey)
 			};
 		default:
 			return state;

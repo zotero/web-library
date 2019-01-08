@@ -1,54 +1,26 @@
 const React = require('react');
 const PropTypes = require('prop-types');
 const cx = require('classnames');
-const { gaussianRandom } = require('../../utils');
-const PAGE_SIZE = 30;
-const PIXEL_BUFFER = 100;
+const PAGE_SIZE = 100;
 
 class TagList extends React.PureComponent {
-	constructor(props) {
-		super(props);
-		props.onLoadMore(0, PAGE_SIZE);
+	componentDidMount() {
+		const { onLoadMore } = this.props;
+		onLoadMore(0, PAGE_SIZE);
 	}
 
-	handleScroll(el) {
-		this.handleMaybeLoadMore(el.target.scrollTop);
-	}
+	maybeLoadMore() {
+		const { isFetching, sourceTags, totalTagCount, onLoadMore } = this.props;
+		const containerHeight = this.containerRef.getBoundingClientRect().height;
+		const totalHeight = this.listRef.getBoundingClientRect().height;
+		const scrollProgress = (this.containerRef.scrollTop + containerHeight) / totalHeight;
 
-	componentDidUpdate({ searchString: prevSearchString }) {
-		if(this.props.searchString != prevSearchString) {
-			this.handleMaybeLoadMore(this.container.scrollTop);
+		if(scrollProgress > 0.9 && !isFetching && totalTagCount > sourceTags.length) {
+			onLoadMore(sourceTags.length, PAGE_SIZE);
 		}
 	}
 
-	async handleMaybeLoadMore(scrollTop) {
-		if(this.isBusy) { return; }
-		const { tags, totalTagCount, sourceTagsCount } = this.props;
-
-		if(totalTagCount > tags.length && scrollTop + PIXEL_BUFFER > this.firstPlaceholderOffsetTop) {
-			const start = sourceTagsCount;
-			const limit = PAGE_SIZE;
-			this.isBusy = true;
-			await this.props.onLoadMore(start, limit);
-			this.isBusy = false;
-			this.handleMaybeLoadMore(this.container.scrollTop);
-		}
-	}
-
-	refFirstPlaceholder(el) {
-		if(el) {
-			this.firstPlaceholderOffsetTop = el.offsetTop;
-		}
-	}
-
-	renderTag(index) {
-		const { tags } = this.props;
-		const tag = index < tags.length ?
-			tags[index] : {
-				tag: "",
-				isPlaceholder: true
-			};
-
+	renderTag(tag) {
 		const className = cx('tag-selector-item', {
 			disabled: tag.disabled,
 			selected: tag.selected,
@@ -56,43 +28,33 @@ class TagList extends React.PureComponent {
 			placeholder: tag.isPlaceholder
 		});
 
-		let props = {
+		const props = {
 			className,
+			style: tag.color && { color: tag.color },
 			onClick: ev => this.props.onSelect(tag.tag, ev),
-			onContextMenu: ev => this.props.onTagContext(tag, ev),
-			ref: index == tags.length ? this.refFirstPlaceholder.bind(this) : undefined,
 		};
 
-		if(tag.color || tag.isPlaceholder) {
-			props['style'] = {
-				color: tag.color,
-				// to achieve realistic-looking placeholders we use gaussian function
-				// to pick length of a placeholder (in characters), then multiply by
-				// semi-accurate 7px per character to get actual width in pixels
-				width: tag.isPlaceholder ? gaussianRandom(5, 17) * 7 : undefined
-			};
-		}
-
-
 		return (
-			<li key={ index } { ...props }>
+			<li key={ tag.tag } { ...props }>
 				{ tag.tag }
 			</li>
 		);
 	}
 
 	render() {
-		const { totalTagCount } = this.props;
-		this.firstPlaceholderOffsetTop = 0;
+		const { tags } = this.props;
+
 		return (
 			<div
+				ref={ containerRef => this.containerRef = containerRef }
+				onScroll={ () => this.maybeLoadMore() }
 				className="tag-selector-container"
-				onScroll={ this.handleScroll.bind(this) }
-				ref={ ref => { this.container = ref } }>
-				<ul className="tag-selector-list">
-					{
-						[...Array(totalTagCount).keys()].map(index => this.renderTag(index))
-					}
+			>
+				<ul
+					ref={ listRef => this.listRef = listRef }
+					className="tag-selector-list"
+				>
+					{ tags.map(this.renderTag.bind(this)) }
 				</ul>
 			</div>
 		)
