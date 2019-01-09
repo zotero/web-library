@@ -9,6 +9,11 @@ const itemTypeLocalized = (item, itemTypes) => {
 	if(itemType === 'attachment') { return "Attachment" }
 	return (itemTypes.find(it => it.itemType === itemType) || {}).localized;
 }
+const dateLocalized = date => {
+	const locale = navigator.language || navigator.userLanguage;
+	// const formatter = new Intl.DateTimeFormat(locale);
+	return date.toLocaleString(navigator.language);
+}
 
 //@TODO: figure out better place for this
 const itemsSourceLabel = itemsSource => {
@@ -27,8 +32,9 @@ const itemsSourceLabel = itemsSource => {
 }
 
 module.exports = {
-	noteAsTitle,
 	creator,
-	itemTypeLocalized,
+	dateLocalized,
 	itemsSourceLabel,
+	itemTypeLocalized,
+	noteAsTitle,
 };

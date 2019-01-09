@@ -426,8 +426,7 @@ class ItemsTable extends React.PureComponent {
 			this.props.columnNames[dataKey] : dataKey;
 		const cellRenderer = dataKey === 'title' ?
 			this.renderTitleCell.bind(this) : undefined;
-		const className = dataKey === 'title' ?
-			'metadata title' : undefined;
+		const className = ['metadata', dataKey].join(' ');
 
 		return <Column
 			headerRenderer={ this.renderHeaderCell.bind(this) }

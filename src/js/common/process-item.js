@@ -1,7 +1,7 @@
 'use strict';
 
 const { baseMappings } = require('../constants/item');
-const { noteAsTitle, itemTypeLocalized } = require('./format');
+const { noteAsTitle, itemTypeLocalized, dateLocalized } = require('./format');
 const { get } = require('../utils');
 
 module.exports = (item, itemTypes, libraryTags) => {
@@ -25,8 +25,8 @@ module.exports = (item, itemTypes, libraryTags) => {
 		coloredTags,
 		creator,
 		date,
-		dateAdded,
-		dateModified,
+		dateAdded: dateLocalized(new Date(dateAdded)),
+		dateModified: dateLocalized(new Date(dateModified)),
 		extra,
 		itemType: itemTypeLocalized(item, itemTypes),
 		key: item.key,
