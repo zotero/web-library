@@ -47,6 +47,7 @@ class BoxField extends React.PureComponent {
 			onClick,
 			onFocus,
 			onBlur,
+			display: field.display,
 			isBusy: field.processing || false,
 			isDisabled: this.isDisabled
 		};

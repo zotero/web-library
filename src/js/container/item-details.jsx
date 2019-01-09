@@ -6,10 +6,10 @@ const ItemDetails = require('../component/item/details');
 const { push } = require('connected-react-router');
 const { connect } = require('react-redux');
 const { createItem, updateItem, deleteItem, fetchItemTemplate, fetchChildItems, uploadAttachment, fetchItems, fetchItemTypeCreatorTypes, fetchItemTypeFields } = require('../actions');
-const { itemProp, baseMappings } = require('../constants/item');
+const { itemProp, baseMappings, hideFields, noEditFields } = require('../constants/item');
 const { get, deduplicateByKey, mapRelationsToItemKeys, removeRelationByItemKey, reverseMap } = require('../utils');
 const { makePath } = require('../common/navigation');
-const { hideFields, noEditFields } = require('../constants/item');
+const { getFieldDisplayValue } = require('../common/item');
 const withEditMode = require('../enhancers/with-edit-mode');
 const withDevice = require('../enhancers/with-device');
 
@@ -198,7 +198,8 @@ class ItemDetailsContainer extends React.PureComponent {
 				label: f.localized,
 				readOnly: isReadOnlyMode ? true : noEditFields.includes(f),
 				processing: pendingChanges.some(({ patch }) => f.field in patch),
-				value: itemWithPendingChnages[f.field] || null,
+				display: getFieldDisplayValue(itemWithPendingChnages, f.field),
+				value: itemWithPendingChnages[f.field] || null
 			})).filter(f => !hideFields.includes(f.key)); //filter out undefined
 			extraProps['fields'] = fields;
 		}

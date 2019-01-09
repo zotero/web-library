@@ -2,9 +2,8 @@
 
 const { baseMappings } = require('../constants/item');
 const { noteAsTitle, itemTypeLocalized, dateLocalized } = require('./format');
-const { get } = require('../utils');
 
-module.exports = (item, itemTypes, libraryTags) => {
+const getFormattedTableItem = (item, itemTypes, libraryTags) => {
 	const { itemType, note, publisher, publication, dateAdded, dateModified, extra } = item;
 	const title = itemType === 'note' ?
 		noteAsTitle(note) :
@@ -37,3 +36,15 @@ module.exports = (item, itemTypes, libraryTags) => {
 	}
 };
 
+const getFieldDisplayValue = (item, field) => {
+	switch(field) {
+		case 'accessDate':
+		case 'dateAdded':
+		case 'dateModified':
+			return dateLocalized(new Date(item[field]));
+		default:
+			return null
+	}
+}
+
+module.exports = { getFormattedTableItem, getFieldDisplayValue };

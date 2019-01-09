@@ -20,7 +20,7 @@ const {
 } = require('../actions');
 const { get, sortByKey, resizeVisibleColumns } = require('../utils');
 const { makePath } = require('../common/navigation');
-const processItem = require('../common/process-item');
+const { getFormattedTableItem } = require('../common/item');
 const withDevice = require('../enhancers/with-device');
 
 class ItemsContainer extends React.PureComponent {
@@ -97,7 +97,9 @@ class ItemsContainer extends React.PureComponent {
 		const items = [...this.state.items];
 
 		for(let i = 0; i < actualLimit; i++) {
-			items[startIndex + i] = processItem(sourceItems[i], itemTypes, libraryTags) || null;
+			items[startIndex + i] = getFormattedTableItem(
+				sourceItems[i], itemTypes, libraryTags
+			) || null;
 		}
 		sortByKey(items, sort, direction);
 		this.setState({ items });
