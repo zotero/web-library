@@ -118,6 +118,7 @@ class ItemsActionsContainer extends React.PureComponent {
 			device={ this.props.device }
 			isSelectMode={ this.props.isSelectMode }
 			itemsSource={ this.props.itemsSource }
+			itemTypes={ this.props.itemTypes }
 			onBibliographyOpen={ this.handleBibliographyOpen.bind(this) }
 			onDelete={ this.handleDelete.bind(this) }
 			onDuplicate={ this.handleDuplicate.bind(this) }
@@ -136,11 +137,12 @@ class ItemsActionsContainer extends React.PureComponent {
 		collectionKey: PropTypes.string,
 		device: PropTypes.object,
 		dispatch: PropTypes.func,
-		push: PropTypes.func,
 		isSelectMode: PropTypes.bool,
 		itemsSource: PropTypes.string,
+		itemTypes: PropTypes.array,
 		libraryKey: PropTypes.string,
 		onSelectModeToggle: PropTypes.func,
+		push: PropTypes.func,
 		search: PropTypes.string,
 		selectedItemKeys: PropTypes.array,
 		tags: PropTypes.array,
@@ -164,13 +166,14 @@ const mapStateToProps = state => {
 	const item = get(state, ['libraries', libraryKey, 'items', itemKey]);
 
 	return {
-		itemKey,
 		collectionKey,
-		itemsSource,
-		tags,
-		search,
 		item,
+		itemKey,
+		itemsSource,
+		itemTypes: state.meta.itemTypes,
+		search,
 		selectedItemKeys: item ? [item.key] : state.current.itemKeys,
+		tags,
 	}
 }
 
