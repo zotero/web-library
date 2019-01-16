@@ -32,7 +32,7 @@ class ItemsTable extends React.PureComponent {
 	componentDidUpdate({ sortBy, sortDirection }) {
 		if(this.props.sortBy !== sortBy ||
 			this.props.sortDirection !== sortDirection) {
-			this.loader.resetLoadMoreRowsCache(false);
+			this.loader.resetLoadMoreRowsCache(true);
 		}
 	}
 

@@ -1,4 +1,5 @@
 'use strict';
+const { populate, inject } = require('../../common/reducers');
 const { get } = require('../../utils');
 const {
 	RECEIVE_CHILD_ITEMS,
@@ -6,6 +7,7 @@ const {
 	RECEIVE_CREATE_ITEMS,
 	RECEIVE_DELETE_ITEM,
 	RECEIVE_DELETE_ITEMS,
+	SORT_ITEMS,
 } = require('../../constants/actions.js');
 
 const itemsByParent = (state = {}, action) => {
@@ -13,13 +15,10 @@ const itemsByParent = (state = {}, action) => {
 	switch(action.type) {
 		case RECEIVE_CREATE_ITEM:
 			parentKey = get(action, 'item.parentItem');
-			if(parentKey) {
+			if(parentKey && parentKey in state) {
 				return {
 					...state,
-					[parentKey]: [
-						...(parentKey in state ? state[parentKey] : []),
-						action.item.key
-					]
+					[parentKey]: inject(state, action.item.key)
 				};
 			}
 			return state;
@@ -29,10 +28,15 @@ const itemsByParent = (state = {}, action) => {
 				...(action.items.reduce((aggr, item) => {
 					parentKey = get(action, 'item.parentItem');
 					if(parentKey) {
+						//@TODO: Optimise (inject loops over all items of the first argument)
 						if(parentKey in aggr) {
-							aggr[parentKey] = [...aggr[parentKey], item.key]
+							aggr[parentKey] = inject(
+								aggr[parentKey], item.key
+							);
 						} else if(parentKey in state) {
-							aggr[parentKey] = [...state[parentKey], item.key]
+							aggr[parentKey] = inject(
+								state[parentKey], item.key
+							);
 						}
 					}
 					return aggr;
@@ -53,10 +57,15 @@ const itemsByParent = (state = {}, action) => {
 				return aggr;
 			}, {});
 		case RECEIVE_CHILD_ITEMS:
-			return {
-				...state,
-				[action.itemKey]: action.childItems.map(item => item.key)
-			};
+			return populate(
+				state, action.items.map(item => item.key), action.start,
+				action.limit, action.totalResults
+			);
+		case SORT_ITEMS:
+			return Object.entries(state).reduce((aggr, [parentKey, itemKeys]) => {
+				aggr[parentKey] = new Array(itemKeys.length);
+				return aggr
+			}, {});
 		default:
 			return state;
 	}

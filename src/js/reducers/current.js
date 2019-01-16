@@ -40,6 +40,7 @@ const current = (state = stateDefault, action) => {
 			var tags = tagsFromUrlPart(params.tags);
 			var isSelectMode = itemKeys.length > 1 ? true : state.isSelectMode;
 			var view = params.view;
+			var libraryKey = params.library || state.defaultLibraryKey;
 			var itemsSource;
 
 			if(tags.length || search.length) {
@@ -74,7 +75,7 @@ const current = (state = stateDefault, action) => {
 				itemKey: itemKeys && itemKeys.length === 1 ? itemKeys.pop() : null,
 				itemKeys,
 				itemsSource,
-				libraryKey: params.library || state.defaultLibraryKey,
+				libraryKey,
 				search,
 				tags: tags || [],
 				useTransitions: state.useTransitions,

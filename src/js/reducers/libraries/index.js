@@ -81,6 +81,7 @@ const actions = Object.entries(require('../../constants/actions'))
 			'REQUEST_TOP_ITEMS',
 			'REQUEST_UPDATE_COLLECTION',
 			'REQUEST_UPDATE_ITEM',
+			'SORT_ITEMS',
 			'TRIGGER_EDITING_ITEM',
 	]).includes(key) ? value : false).filter(Boolean);
 

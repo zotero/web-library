@@ -64,11 +64,11 @@ const fetchItems = (
 		try {
 			const response = await api.get(queryOptions);
 			const items = extractItems(response, state);
-			const length = parseInt(response.response.headers.get('Total-Results'), 10);
+			const totalResults = parseInt(response.response.headers.get('Total-Results'), 10);
 
 			dispatch({
 				type: `RECEIVE_${type}`,
-				libraryKey, items, response, length,
+				libraryKey, items, response, totalResults,
 				...queryConfig, ...queryOptions
 			});
 
@@ -120,11 +120,16 @@ const fetchItemsByKeys = (itemKeys, queryOptions) => {
 }
 
 const sortItems = (sortBy, sortDirection) => {
-	return {
-		type: SORT_ITEMS,
-		sortBy,
-		sortDirection
-	};
+	return (dispatch, getState) => {
+		const state = getState();
+		const { libraryKey } = state.current;
+		dispatch({
+			type: SORT_ITEMS,
+			sortBy,
+			sortDirection,
+			libraryKey,
+		});
+	}
 };
 
 module.exports = {

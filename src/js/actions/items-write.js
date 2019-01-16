@@ -1,11 +1,12 @@
 'use strict';
 
 const api = require('zotero-api-client')().api;
-const { extractItems } = require('../common/actions');
 const queue = require('./queue');
 const { fetchItemTypeFields } = require('./meta');
 const { get } = require('../utils');
 const { omit } = require('../common/immutable');
+const { extractItems } = require('../common/actions');
+
 const {
 	REQUEST_CREATE_ITEMS,
 	RECEIVE_CREATE_ITEMS,
@@ -715,7 +716,6 @@ const queueRemoveFromCollection = (itemKeys, collectionKey, libraryKey, queueId)
 module.exports = {
 	addToCollection,
 	createItem,
-	createItems,
 	deleteItem,
 	deleteItems,
 	moveToTrash,

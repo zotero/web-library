@@ -18,17 +18,12 @@ const {
 	preferenceChange,
 	sortItems,
 } = require('../actions');
-const { get, sortByKey, resizeVisibleColumns } = require('../utils');
+const { get, resizeVisibleColumns } = require('../utils');
 const { makePath } = require('../common/navigation');
 const { getFormattedTableItem } = require('../common/item');
 const withDevice = require('../enhancers/with-device');
 
 class ItemsContainer extends React.PureComponent {
-	constructor(props) {
-		super(props);
-		this.state = { items: [] };
-	}
-
 	handleItemsSelect(items = []) {
 		const { push, collectionKey: collection, libraryKey: library,
 			itemsSource, tags, search } = this.props;
@@ -70,47 +65,34 @@ class ItemsContainer extends React.PureComponent {
 		let limit = (stopIndex - startIndex) + 1;
 		let direction = this.props.sortDirection.toLowerCase();
 		let tag = this.props.tags || [];
-		const { itemsSource, dispatch, libraryTags, itemTypes, collectionKey,
-			search: q, sortBy: sort,  } = this.props;
+		const { itemsSource, dispatch, collectionKey, search: q,
+			sortBy: sort,  } = this.props;
 		const sortAndDirection = { start, limit, sort, direction };
-		var sourceItems = [];
 
 		switch(itemsSource) {
 			case 'query':
-				sourceItems = await dispatch(fetchItemsQuery({ collection: collectionKey, tag, q }, sortAndDirection));
+				await dispatch(fetchItemsQuery({ collection: collectionKey, tag, q }, sortAndDirection));
 				break;
 			case 'top':
-				sourceItems = await dispatch(fetchTopItems(sortAndDirection));
+				await dispatch(fetchTopItems(sortAndDirection));
 				break;
 			case 'trash':
-				sourceItems = await dispatch(fetchTrashItems(sortAndDirection));
+				await dispatch(fetchTrashItems(sortAndDirection));
 				break;
 			case 'publications':
-				sourceItems = await dispatch(fetchPublicationsItems(sortAndDirection));
+				await dispatch(fetchPublicationsItems(sortAndDirection));
 				break;
 			case 'collection':
-				sourceItems = await dispatch(fetchItemsInCollection(collectionKey, sortAndDirection));
+				await dispatch(fetchItemsInCollection(collectionKey, sortAndDirection));
 				break;
 		}
-
-		const actualLimit = Math.min(limit, sourceItems.length);
-		const items = [...this.state.items];
-
-		for(let i = 0; i < actualLimit; i++) {
-			items[startIndex + i] = getFormattedTableItem(
-				sourceItems[i], itemTypes, libraryTags
-			) || null;
-		}
-		sortByKey(items, sort, direction);
-		this.setState({ items });
 	}
 
-	async handleSort({ sortBy, sortDirection, stopIndex }) {
+	async handleSort({ sortBy, sortDirection }) {
 		this.setState({ items: [] });
 		const { dispatch } = this.props;
 		sortDirection = sortDirection.toLowerCase(); // react-virtualised uses ASC/DESC, zotero asc/desc
 		await dispatch(sortItems(sortBy, sortDirection));
-		return await this.handleLoadMore({ startIndex: 0, stopIndex });
 	}
 
 	async handleDrag({ itemKeys, targetType, collectionKey, libraryKey }) {
@@ -122,7 +104,7 @@ class ItemsContainer extends React.PureComponent {
 
 	render() {
 		return <Items
-			items = { this.state.items }
+			items = { this.props.items }
 			{ ...this.props }
 			onColumnReorder={ this.handleColumnReorder.bind(this) }
 			onColumnResize={ this.handleColumnResize.bind(this) }
@@ -155,57 +137,64 @@ const mapStateToProps = state => {
 	const itemFields = state.meta.itemFields;
 	const itemTypes = state.meta.itemTypes;
 	const isReady = libraryKey && ((!collectionKey && itemFields) || collection !== null);
-	var totalItemsCount = 0;
+	var totalItemsCount = 0, items = [];
 
 	if(isMetaAvailable) {
 		switch(itemsSource) {
 			case 'query':
-				// items = state.queryItems;
+				items = state.queryItems;
 				totalItemsCount = state.query.totalResults;
 				totalItemsCount = totalItemsCount === null ? 50 : totalItemsCount;
 			break;
 			case 'top':
-				// items = get(state, ['libraries', libraryKey, 'itemsTop'], []);
+				items = get(state, ['libraries', libraryKey, 'itemsTop'], []);
 				totalItemsCount = get(state, ['itemCountTopByLibrary', libraryKey], 50);
 			break;
 			case 'trash':
-				// items = get(state, ['libraries', libraryKey, 'itemsTrash'], []);
+				items = get(state, ['libraries', libraryKey, 'itemsTrash'], []);
 				totalItemsCount = get(state, ['itemCountTrashByLibrary', libraryKey], 50);
 			break;
 			case 'publications':
-				// items = state.itemsPublications;
+				items = state.itemsPublications;
 				totalItemsCount = state.itemCount.publications;
 				totalItemsCount = totalItemsCount === null ? 50 : totalItemsCount;
 			break;
 			case 'collection':
-				// items = get(state, ['libraries', libraryKey, 'itemsByCollection', collectionKey], []);
+				items = get(state, ['libraries', libraryKey, 'itemsByCollection', collectionKey], []);
 				totalItemsCount = get(state, ['libraries', libraryKey, 'itemCountByCollection', collectionKey], 0)
 			break;
 		}
 	}
+
+	items = items.map(itemKey => itemKey ? getFormattedTableItem(
+		get(state, ['libraries', libraryKey, 'items', itemKey]),
+		itemTypes,
+		libraryTags
+	) : undefined);
 
 	//@TODO: indicate if isDeleting item(s) within visible set
 	// const isDeleting = get(state, ['libraries', libraryKey, 'deleting'], [])
 	// 		.some(itemKey => items.filter(i => i.key === itemKey));
 
 	return {
+		// isDeleting,
 		collection,
 		collectionKey,
-		// isDeleting,
 		isReady,
 		isSelectMode,
 		itemFields,
+		items,
 		itemsSource,
 		itemTypes,
 		libraryKey,
+		libraryTags,
 		preferences,
 		search,
 		selectedItemKeys: item ? [item.key] : itemKeys,
 		sortBy,
 		sortDirection: sortDirection.toUpperCase(),
 		tags,
-		totalItemsCount,
-		libraryTags
+		totalItemsCount
 	};
 };
 
