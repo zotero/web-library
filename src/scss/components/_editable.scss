@@ -115,6 +115,7 @@
 		.editable-control {
 			margin-top: -$editable-border-width;
 			margin-bottom: -$editable-border-width;
+			height: calc(100% + #{2 * $editable-border-width}); // Fix height in Firefox (#143)
 		}
 	}
 }
