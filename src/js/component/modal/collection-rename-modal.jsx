@@ -43,7 +43,7 @@ class CollectionRenameModal extends React.PureComponent {
 							</Button>
 						</div>
 						<div className="modal-header-center">
-							<h4 className="modal-title text-truncate">
+							<h4 className="modal-title truncate">
 								Rename Collection
 							</h4>
 						</div>

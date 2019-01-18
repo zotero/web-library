@@ -46,7 +46,7 @@ class CollectionAddModal extends React.PureComponent {
 							</Button>
 						</div>
 						<div className="modal-header-center">
-							<h4 className="modal-title text-truncate">
+							<h4 className="modal-title truncate">
 								{
 									parentCollection ?
 										`Add a new Subcollection to ${parentCollection.name}` :
@@ -65,17 +65,19 @@ class CollectionAddModal extends React.PureComponent {
 						</div>
 					</div>
 					<div className="modal-body">
-						<div className="form-group">
-							<label htmlFor={ inputId }>
-								<Icon type="28/folder" width="28" height="28" />
-							</label>
-							<Input
-								id={ inputId }
-								autoFocus
-								ref={ ref => this.inputRef = ref }
-								onCommit={ (_, __, ev) => this.handleCollectionUpdate(ev) }
-								tabIndex={ 0 }
-							/>
+						<div className="form">
+							<div className="form-group">
+								<label htmlFor={ inputId }>
+									<Icon type="28/folder" width="28" height="28" />
+								</label>
+								<Input
+									id={ inputId }
+									autoFocus
+									ref={ ref => this.inputRef = ref }
+									onCommit={ (_, __, ev) => this.handleCollectionUpdate(ev) }
+									tabIndex={ 0 }
+								/>
+							</div>
 						</div>
 					</div>
 				</div>
