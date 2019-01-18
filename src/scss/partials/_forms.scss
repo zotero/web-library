@@ -6,7 +6,7 @@
 	color: $placeholder-color;
 }
 
-form {
+.form { // We do not use a form element for its side effects
 	@include variant(".modal form") {
 		margin: ($form-section-margin - $modal-inner-padding)
 			(-$modal-inner-padding);
