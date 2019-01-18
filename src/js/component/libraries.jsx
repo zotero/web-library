@@ -200,7 +200,11 @@ class Libraries extends React.PureComponent {
 						<Icon type="28/library" className="touch" width="28" height="28" />
 						<Icon type="16/library" className="mouse" width="16" height="16" />
 						<div className="truncate">My Library</div>
-						<Button className="mouse btn-icon-plus" onClick={ this.handleAdd.bind(this, userLibraryKey, null) } >
+						<Button
+							className="mouse btn-icon-plus"
+							onClick={ this.handleAdd.bind(this, userLibraryKey, null) }
+							title="New Collection"
+						>
 							<Icon type={ '16/plus' } width="16" height="16" />
 						</Button>
 					</Node>

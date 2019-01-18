@@ -47,6 +47,7 @@ class ActionsDropdown extends React.PureComponent {
 					tabIndex={ tabIndex }
 					color={ null }
 					className="btn-icon dropdown-toggle"
+					title="More"
 				>
 					<Icon type={ '24/options-sm' } width="24" height="24" className="touch" />
 					<Icon type={ '16/options' } width="16" height="16" className="mouse" />
