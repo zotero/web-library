@@ -1,6 +1,8 @@
 'use strict';
-const { populate, inject } = require('../../common/reducers');
-const { get } = require('../../utils');
+const { populateItemKeys, filterItemKeys, sortItemKeysOrClear,
+	injectExtraItemKeys } = require('../../common/reducers');
+const { indexByKey, get } = require('../../utils');
+
 const {
 	RECEIVE_CHILD_ITEMS,
 	RECEIVE_CREATE_ITEM,
@@ -18,11 +20,16 @@ const itemsByParent = (state = {}, action) => {
 			if(parentKey && parentKey in state) {
 				return {
 					...state,
-					[parentKey]: inject(state, action.item.key)
+					[parentKey]: injectExtraItemKeys(
+						state,
+						action.item.key,
+						{ ...action.otherItems, ...indexByKey(action.items) }
+					)
 				};
 			}
 			return state;
 		case RECEIVE_CREATE_ITEMS:
+			var otherItems = { ...action.otherItems, ...indexByKey(action.items) };
 			return {
 				...state,
 				...(action.items.reduce((aggr, item) => {
@@ -30,12 +37,12 @@ const itemsByParent = (state = {}, action) => {
 					if(parentKey) {
 						//@TODO: Optimise (inject loops over all items of the first argument)
 						if(parentKey in aggr) {
-							aggr[parentKey] = inject(
-								aggr[parentKey], item.key
+							aggr[parentKey] = injectExtraItemKeys(
+								aggr[parentKey], item.key, otherItems
 							);
 						} else if(parentKey in state) {
-							aggr[parentKey] = inject(
-								state[parentKey], item.key
+							aggr[parentKey] = injectExtraItemKeys(
+								state[parentKey], item.key, otherItems
 							);
 						}
 					}
@@ -47,23 +54,29 @@ const itemsByParent = (state = {}, action) => {
 			if(parentKey) {
 				return {
 					...state,
-					[parentKey]: state[parentKey].filter(key => key !== action.item.key)
+					[parentKey]: filterItemKeys(state[parentKey] || {}, action.item.key)
 				};
 			}
 			return state;
 		case RECEIVE_DELETE_ITEMS:
 			return Object.entries(state).reduce((aggr, [parentKey, itemKeys]) => {
-				aggr[parentKey] = itemKeys.filter(key => !action.itemKeys.includes(key))
+				aggr[parentKey] = filterItemKeys(itemKeys, action.itemKeys);
 				return aggr;
 			}, {});
 		case RECEIVE_CHILD_ITEMS:
-			return populate(
-				state, action.items.map(item => item.key), action.start,
-				action.limit, action.totalResults
-			);
+			return {
+				...state,
+				[action.itemKey]: populateItemKeys(
+					state[action.itemKey] || {},
+					action.items.map(item => item.key),
+					action
+				)
+			};
 		case SORT_ITEMS:
 			return Object.entries(state).reduce((aggr, [parentKey, itemKeys]) => {
-				aggr[parentKey] = new Array(itemKeys.length);
+				aggr[parentKey] = sortItemKeysOrClear(
+					itemKeys, action.items, action.sortBy, action.sortDirection
+				);
 				return aggr
 			}, {});
 		default:

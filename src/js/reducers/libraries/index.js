@@ -3,7 +3,6 @@
 const collections = require('./collections');
 const deleting = require('./deleting');
 const fetching = require('./fetching');
-const itemCountByCollection = require('./item-count-by-collection');
 const items = require('./items');
 const itemsByCollection = require('./items-by-collection');
 const itemsByParent = require('./items-by-parent');
@@ -93,7 +92,6 @@ const libraries = (state = {}, action) => {
 				collections: collections(get(state, [action.libraryKey, 'collections']), action),
 				deleting: deleting(get(state, [action.libraryKey, 'deleting']), action),
 				fetching: fetching(get(state, [action.libraryKey, 'fetching']), action),
-				itemCountByCollection: itemCountByCollection(get(state, [action.libraryKey, 'itemCountByCollection']), action),
 				items: items(get(state, [action.libraryKey, 'items']), action),
 				itemsByCollection: itemsByCollection(get(state, [action.libraryKey, 'itemsByCollection']), action),
 				itemsByParent: itemsByParent(get(state, [action.libraryKey, 'itemsByParent']), action),

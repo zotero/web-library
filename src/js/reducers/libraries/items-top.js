@@ -1,6 +1,8 @@
 'use strict';
 
-const { populate, inject } = require('../../common/reducers');
+const { indexByKey } = require('../../utils');
+const { injectExtraItemKeys,filterItemKeys, populateItemKeys,
+	sortItemKeysOrClear } = require('../../common/reducers');
 const {
 	RECEIVE_CREATE_ITEM,
 	RECEIVE_CREATE_ITEMS,
@@ -12,30 +14,41 @@ const {
 	SORT_ITEMS,
 } = require('../../constants/actions.js');
 
-const itemsTop = (state = [], action) => {
+const itemsTop = (state = {}, action) => {
 	switch(action.type) {
 		case RECEIVE_CREATE_ITEM:
 			if(!action.item.parentItem) {
-				return inject(state, action.item.key);
+				return injectExtraItemKeys(
+					state,
+					action.item.key,
+					{ ...action.otherItems, ...indexByKey(action.items) }
+				);
 			} else {
 				return state;
 			}
 		case RECEIVE_CREATE_ITEMS:
-			return inject(state, action.items.filter(i => !i.parentItem).map(i => i.key));
+			return injectExtraItemKeys(
+				state,
+				action.items.filter(i => !i.parentItem).map(i => i.key),
+				{ ...action.otherItems, ...indexByKey(action.items) }
+			);
 		case RECEIVE_DELETE_ITEM:
-			return state.filter(key => key !== action.item.key);
+			return filterItemKeys(state, action.item.key);
 		case RECEIVE_DELETE_ITEMS:
 		case RECEIVE_MOVE_ITEMS_TRASH:
-			return state.filter(key => !action.itemKeys.includes(key));
+			return filterItemKeys(state, action.itemKeys);
 		case RECEIVE_RECOVER_ITEMS_TRASH:
-			return inject(state, action.itemKeys);
+			return injectExtraItemKeys(
+				state,
+				action.itemKeys,
+				{ ...action.otherItems, ...indexByKey(action.items) }
+			);
 		case RECEIVE_TOP_ITEMS:
-			return populate(
-				state, action.items.map(item => item.key), action.start,
-				action.limit, action.totalResults
+			return populateItemKeys(
+				state, action.items.map(item => item.key), action
 			);
 		case SORT_ITEMS:
-			return new Array(state.length);
+			return sortItemKeysOrClear(state, action.items, action.sortBy, action.sortDirection);
 		default:
 			return state;
 	}

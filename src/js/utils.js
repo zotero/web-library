@@ -99,31 +99,37 @@ const removeRelationByItemKey = (itemKey, relations, userId, relationType='dc:re
 
 const isUndefinedOrNull = value => typeof value === 'undefined' || value === null;
 
+const compare = (a, b, direction) => {
+	if(isUndefinedOrNull(a) && isUndefinedOrNull(b)) {
+		return 0;
+	}
+
+	if(typeof a !== typeof b) {
+		if(isUndefinedOrNull(a)) {
+			return direction === 'asc' ? 1 : -1;
+		}
+		if(isUndefinedOrNull(b)) {
+			return direction === 'asc' ? -1 : 1;
+		}
+	}
+
+	switch(typeof a) {
+		case 'string':
+			return direction === 'asc' ?
+				a.toUpperCase().localeCompare(b.toUpperCase()):
+				b.toUpperCase().localeCompare(a.toUpperCase());
+		case 'number':
+			return direction === 'asc' ? a - b : b - a;
+		default:
+			return 0;
+	}
+}
+
 const sortByKey = (items, key, direction) => {
 	items.sort((a, b) => {
-		if(isUndefinedOrNull(a[key]) && isUndefinedOrNull(b[key])) {
-			return 0;
-		}
-
-		if(typeof a[key] !== typeof b[key]) {
-			if(isUndefinedOrNull(a[key])) {
-				return direction === 'asc' ? 1 : -1;
-			}
-			if(isUndefinedOrNull(b[key])) {
-				return direction === 'asc' ? -1 : 1;
-			}
-		}
-
-		switch(typeof a[key]) {
-			case 'string':
-				return direction === 'asc' ?
-					a[key].toUpperCase().localeCompare(b[key].toUpperCase()):
-					b[key].toUpperCase().localeCompare(a[key].toUpperCase());
-			case 'number':
-				return direction === 'asc' ? a[key] - b[key] : b[key] - a[key];
-			default:
-				return 0;
-		}
+		let aKeyValue = typeof(key) === 'function' ? key(a) : a[key];
+		let bKeyValue = typeof(key) === 'function' ? key(b) : b[key];
+		return compare(aKeyValue, bKeyValue, direction);
 	});
 };
 
@@ -134,7 +140,7 @@ const indexByGeneratedKey = (elements, keygenerator, processor = e => e) => {
 	}, {});
 }
 
-const indexByKey = (elements, key, processor = e => e) => {
+const indexByKey = (elements, key = 'key', processor = e => e) => {
 	return elements.reduce((aggr, element) => {
 		aggr[element[key]] = processor(element);
 		return aggr;
@@ -193,4 +199,5 @@ module.exports = {
 	sortByKey,
 	splice,
 	transform,
+	compare,
 };

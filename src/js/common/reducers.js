@@ -1,6 +1,6 @@
 'use strict';
 
-const { sortByKey } = require('../utils');
+const { sortByKey, compare } = require('../utils');
 
 const replaceDuplicates = entries => {
 	const seen = [];
@@ -14,43 +14,119 @@ const replaceDuplicates = entries => {
 	return entries;
 }
 
-const populate = (prevEntries, entries, start, limit, totalResults) => {
-	const newArray = [...prevEntries];
-	const actualLimit = Math.min(limit, totalResults - start);
-	newArray.length = totalResults;
-
-	for(var i = 0; i < actualLimit; i++) {
-		newArray[start + i] = entries[i];
+const injectExtraItemKeys = (state, newKeys, items) => {
+	if(!Array.isArray(newKeys)) { newKeys = [newKeys]; }
+	if(!('totalResults' in state && 'keys' in state
+		&& 'sortBy' in state && 'sortDirection' in state)) {
+		return state;
 	}
-	return replaceDuplicates(newArray);
-}
+	const keys = [...state.keys];
+	var hasHoles = false;
 
-const inject = (prevEntries, entries, sortConfig = {}) => {
-	const newArray = [...prevEntries];
-	var firstEmptySlot;
-
-	for(var i = 0; i < newArray.length; i++) {
-		if(!newArray[i]) {
-			firstEmptySlot = i;
+	for(let i = 0; i < keys.length; i++) {
+		if(typeof(keys[i]) === 'undefined') {
+			hasHoles = true;
 			break;
 		}
 	}
-	if(firstEmptySlot) {
-		newArray.splice(firstEmptySlot, 0, ...entries);
-	} else {
-		newArray.push(...entries);
-		if('sortBy' in sortConfig && 'sortDirection' in sortConfig) {
-			sortByKey(
-				newArray,
-				sortConfig.sortBy,
-				sortConfig.sortDirection
+
+
+	const { sortBy, sortDirection } = state;
+
+	newKeys.forEach(newKey => {
+		for(let i=0; i < keys.length; i++) {
+			const comparisionResult = compare(
+				keys[i] && sortBy in items[keys[i]] && items[keys[i]][sortBy],
+				newKey && sortBy in items[newKey] && items[newKey][sortBy],
+				sortDirection
 			);
+
+			if(comparisionResult >= 0) {
+				keys.splice(i, 0, newKey);
+				break;
+			}
+		}
+	});
+
+	return {
+		...state,
+		keys,
+		unconfirmedKeys: hasHoles ? [...newKeys] : [],
+		totalResults: keys.length
+	}
+}
+
+const filterItemKeys = (state, removedKeys) => {
+	if(!Array.isArray(removedKeys)) { removedKeys = [removedKeys]; }
+	const keys = [...state.keys];
+
+	for(let i = keys.length - 1; i >= 0 ; i--) {
+		if(removedKeys.includes(keys[i])) {
+			keys.splice(i, 1);
 		}
 	}
-	return replaceDuplicates(newArray);
+
+	return {
+		...state,
+		keys,
+		totalResults: keys.length
+	}
+}
+
+const populateItemKeys = (state, newKeys, action) => {
+	const { keys: prevKeys = [] } = state;
+	const { start, totalResults, sort, direction } = action;
+
+	const keys = [...prevKeys];
+	// const actualLimit = Math.min(limit, totalResults - start);
+	keys.length = totalResults;
+
+	for(let i = 0; i < newKeys.length; i++) {
+		keys[start + i] = newKeys[i];
+	}
+
+	return {
+		...state,
+		keys: replaceDuplicates(keys),
+		totalResults,
+		sortBy: sort,
+		sortDirection: direction,
+	}
+}
+
+const sortItemKeysOrClear = (state, items, sortBy, sortDirection) => {
+	var isCompleteSet = 'totalResults' in state &&
+		'keys' in state &&
+		state.totalResults === state.keys.length;
+	var keys = [];
+
+	if('keys' in state) {
+		for(let i = 0; i < state.keys.length; i++) {
+			if(typeof(state.keys[i]) === 'undefined') {
+				isCompleteSet = false;
+				break;
+			}
+		}
+	}
+
+	if(isCompleteSet) {
+		keys = [...state.keys];
+		sortByKey(
+			keys,
+			k => sortBy === 'creator' ?
+				(items[k][Symbol.for('meta')] || {})['creatorSummary'] : items[k][sortBy],
+			sortDirection
+		);
+	} else if('totalResults' in state) {
+		keys = new Array(state.totalResults);
+	}
+
+	return { ...state, keys, sortBy, sortDirection };
 }
 
 module.exports = {
-	populate,
-	inject
+	injectExtraItemKeys,
+	filterItemKeys,
+	populateItemKeys,
+	sortItemKeysOrClear,
 }

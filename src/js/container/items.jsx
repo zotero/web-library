@@ -137,40 +137,38 @@ const mapStateToProps = state => {
 	const itemFields = state.meta.itemFields;
 	const itemTypes = state.meta.itemTypes;
 	const isReady = libraryKey && ((!collectionKey && itemFields) || collection !== null);
-	var totalItemsCount = 0, items = [];
+	var itemsData = {};
 
 	if(isMetaAvailable) {
 		switch(itemsSource) {
 			case 'query':
-				items = state.queryItems;
-				totalItemsCount = state.query.totalResults;
-				totalItemsCount = totalItemsCount === null ? 50 : totalItemsCount;
+				itemsData = state.query;
 			break;
 			case 'top':
-				items = get(state, ['libraries', libraryKey, 'itemsTop'], []);
-				totalItemsCount = get(state, ['itemCountTopByLibrary', libraryKey], 50);
+				itemsData = get(state, ['libraries', libraryKey, 'itemsTop'], {});
 			break;
 			case 'trash':
-				items = get(state, ['libraries', libraryKey, 'itemsTrash'], []);
-				totalItemsCount = get(state, ['itemCountTrashByLibrary', libraryKey], 50);
+				itemsData = get(state, ['libraries', libraryKey, 'itemsTrash'], {});
 			break;
 			case 'publications':
-				items = state.itemsPublications;
-				totalItemsCount = state.itemCount.publications;
-				totalItemsCount = totalItemsCount === null ? 50 : totalItemsCount;
+				itemsData = state.itemsPublications;
 			break;
 			case 'collection':
-				items = get(state, ['libraries', libraryKey, 'itemsByCollection', collectionKey], []);
-				totalItemsCount = get(state, ['libraries', libraryKey, 'itemCountByCollection', collectionKey], 0)
+				itemsData = get(state, ['libraries', libraryKey, 'itemsByCollection', collectionKey], {});
 			break;
 		}
 	}
 
-	items = items.map(itemKey => itemKey ? getFormattedTableItem(
+	const totalItemsCount = 'totalResults' in itemsData &&
+		typeof(itemsData.totalResults) === 'number'
+			? itemsData.totalResults : 50;
+	const items = (itemsData.keys || []).map(itemKey => itemKey ? getFormattedTableItem(
 		get(state, ['libraries', libraryKey, 'items', itemKey]),
 		itemTypes,
-		libraryTags
+		libraryTags,
+		!('unconfirmedKeys' in itemsData && itemsData.unconfirmedKeys.includes(itemKey))
 	) : undefined);
+
 
 	//@TODO: indicate if isDeleting item(s) within visible set
 	// const isDeleting = get(state, ['libraries', libraryKey, 'deleting'], [])

@@ -118,6 +118,7 @@ const createItems = (items, libraryKey) => {
 				type: RECEIVE_CREATE_ITEMS,
 				libraryKey,
 				items: createdItems,
+				otherItems: state.libraries[libraryKey].items,
 				response
 			});
 
@@ -164,6 +165,7 @@ const createItem = (properties, libraryKey) => {
 				type: RECEIVE_CREATE_ITEM,
 				libraryKey,
 				item,
+				otherItems: state.libraries[libraryKey].items,
 				response
 			});
 			return response.getEntityByIndex(0);
@@ -202,6 +204,7 @@ const deleteItem = item => {
 				type: RECEIVE_DELETE_ITEM,
 				libraryKey,
 				item,
+				otherItems: state.libraries[libraryKey].items,
 				response
 			});
 		} catch(error) {
@@ -238,6 +241,7 @@ const deleteItems = itemKeys => {
 				type: RECEIVE_DELETE_ITEMS,
 				libraryKey,
 				itemKeys,
+				otherItems: state.libraries[libraryKey].items,
 				response
 			});
 		} catch(error) {
@@ -325,7 +329,8 @@ const queueUpdateItem = (itemKey, patch, libraryKey, queueId) => {
 					libraryKey,
 					patch,
 					queueId,
-					response
+					response,
+					otherItems: state.libraries[libraryKey].items,
 				});
 
 				return updatedItem;
@@ -427,6 +432,7 @@ const queueMoveItemsToTrash = (itemKeys, libraryKey, queueId) => {
 					queueId,
 					itemKeys,
 					...itemsData,
+					otherItems: state.libraries[libraryKey].items,
 				});
 
 				if(!response.isSuccess()) {
@@ -498,6 +504,7 @@ const queueRecoverItemsFromTrash = (itemKeys, libraryKey, queueId) => {
 					queueId,
 					itemKeys,
 					...itemsData,
+					otherItems: state.libraries[libraryKey].items,
 				});
 
 				if(!response.isSuccess()) {
@@ -600,6 +607,7 @@ const queueAddToCollection = (itemKeys, collectionKey, libraryKey, queueId) => {
 					items,
 					response,
 					queueId,
+					otherItems: state.libraries[libraryKey].items,
 				});
 
 				if(!response.isSuccess()) {
@@ -683,6 +691,7 @@ const queueRemoveFromCollection = (itemKeys, collectionKey, libraryKey, queueId)
 					items,
 					response,
 					queueId,
+					otherItems: state.libraries[libraryKey].items,
 				});
 
 				if(!response.isSuccess()) {

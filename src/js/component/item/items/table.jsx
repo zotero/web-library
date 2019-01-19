@@ -29,9 +29,10 @@ class ItemsTable extends React.PureComponent {
 		return { columns };
 	}
 
-	componentDidUpdate({ sortBy, sortDirection }) {
+	componentDidUpdate({ sortBy, sortDirection, totalItemsCount }) {
 		if(this.props.sortBy !== sortBy ||
-			this.props.sortDirection !== sortDirection) {
+			this.props.sortDirection !== sortDirection ||
+			this.props.totalItemsCount !== totalItemsCount) {
 			this.loader.resetLoadMoreRowsCache(true);
 		}
 	}
@@ -243,7 +244,9 @@ class ItemsTable extends React.PureComponent {
 	}
 
 	getRowHasLoaded({ index }) {
-		return !!this.props.items[index];
+		return this.props.items[index] &&
+			typeof(this.props.items[index]) === "object" &&
+			this.props.items[index].isSynced;
 	}
 
 	renderRow({ className: otherClassName, index,...opts }) {

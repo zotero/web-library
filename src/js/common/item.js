@@ -3,7 +3,7 @@
 const { baseMappings } = require('../constants/item');
 const { noteAsTitle, itemTypeLocalized, dateLocalized } = require('./format');
 
-const getFormattedTableItem = (item, itemTypes, libraryTags) => {
+const getFormattedTableItem = (item, itemTypes, libraryTags, isSynced) => {
 	const { itemType, note, publisher, publication, dateAdded, dateModified, extra } = item;
 	const title = itemType === 'note' ?
 		noteAsTitle(note) :
@@ -33,6 +33,7 @@ const getFormattedTableItem = (item, itemTypes, libraryTags) => {
 		publisher,
 		title,
 		year,
+		isSynced,
 	}
 };
 

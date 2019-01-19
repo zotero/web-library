@@ -1,9 +1,11 @@
 'use strict';
 
+const { populateItemKeys, sortItemKeysOrClear } = require('../common/reducers');
 const deepEqual = require('deep-equal');
 const { LOCATION_CHANGE } = require('connected-react-router');
 const {
 	RECEIVE_ITEMS_BY_QUERY,
+	SORT_ITEMS
 } = require('../constants/actions.js');
 const { getParamsFromRoute } = require('../common/state');
 const { getQueryFromParams } = require('../common/navigation');
@@ -25,19 +27,18 @@ const query = (state = defaultState, action) => {
 				...state,
 				current: query,
 				totalResults: isChanged ? null : state.totalResults,
-				itemKeys: isChanged ? [] : state.itemKeys
+				keys: isChanged ? [] : state.keys
 			};
 		case RECEIVE_ITEMS_BY_QUERY:
-			return {
-				...state,
-				totalResults: parseInt(action.response.response.headers.get('Total-Results'), 10),
-				itemKeys: [
-					...(new Set([
-						...state.itemKeys,
-						...action.items.map(item => item.key)
-					]))
-				]
-			}
+			return populateItemKeys(
+				state,
+				action.items.map(item => item.key),
+				action
+			);
+		case SORT_ITEMS:
+			return sortItemKeysOrClear(
+				state, action.items, action.sortBy, action.sortDirection
+			);
 		default:
 			return state;
 	}

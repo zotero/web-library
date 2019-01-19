@@ -1,6 +1,8 @@
 'use strict';
 
-const { populate, inject } = require('../../common/reducers');
+const { indexByKey } = require('../../utils');
+const { populateItemKeys, filterItemKeys, sortItemKeysOrClear,
+	injectExtraItemKeys } = require('../../common/reducers');
 const {
 	RECEIVE_ADD_ITEMS_TO_COLLECTION,
 	RECEIVE_CREATE_ITEM,
@@ -22,14 +24,16 @@ const itemsByCollection = (state = {}, action) => {
 				...state,
 				...(action.item.collections.reduce(
 					(aggr, collectionKey) => {
-						aggr[collectionKey] = inject(
-							state[collectionKey] || [],
-							[action.item.key]
+						aggr[collectionKey] = injectExtraItemKeys(
+							state[collectionKey] || {},
+							[action.item.key],
+							{ ...action.otherItems, ...indexByKey(action.items) }
 						)
 						return aggr;
 					}, {}))
 			}
 		case RECEIVE_CREATE_ITEMS:
+			var otherItems = { ...action.otherItems, ...indexByKey(action.items) };
 			return {
 				...state,
 				...(action.items.reduce((aggr, item) => {
@@ -37,12 +41,12 @@ const itemsByCollection = (state = {}, action) => {
 						collectionKey => {
 							//@TODO: Optimise (inject loops over all items of the first argument)
 							if(collectionKey in aggr) {
-								aggr[collectionKey] = inject(
-									aggr[collectionKey], item.key
+								aggr[collectionKey] = injectExtraItemKeys(
+									aggr[collectionKey], item.key, otherItems
 								);
 							} else if(collectionKey in state) {
-								aggr[collectionKey] = inject(
-									state[collectionKey], item.key
+								aggr[collectionKey] = injectExtraItemKeys(
+									state[collectionKey], item.key, otherItems
 								);
 							}
 					});
@@ -51,51 +55,56 @@ const itemsByCollection = (state = {}, action) => {
 			};
 		case RECEIVE_DELETE_ITEM:
 			return Object.entries(state).reduce((aggr, [collectionKey, itemKeys]) => {
-				aggr[collectionKey] = itemKeys.filter(k => k !== action.item.key)
+				aggr[collectionKey] = filterItemKeys(itemKeys, action.item.key);
 				return aggr;
 			}, {});
 		case RECEIVE_DELETE_ITEMS:
 		case RECEIVE_MOVE_ITEMS_TRASH:
 			return Object.entries(state).reduce((aggr, [collectionKey, itemKeys]) => {
-				aggr[collectionKey] = itemKeys.filter(k => !action.itemKeys.includes(k))
+				aggr[collectionKey] = filterItemKeys(itemKeys, action.itemKeys);
 				return aggr;
 			}, {});
 		case RECEIVE_RECOVER_ITEMS_TRASH:
 			return Object.entries(state).reduce((aggr, [collectionKey, itemKeys]) => {
-				aggr[collectionKey] = inject(
+				aggr[collectionKey] = injectExtraItemKeys(
 					itemKeys,
-					action.itemKeysByCollection[collectionKey] || []
+					action.itemKeysByCollection[collectionKey] || [],
+					{ ...action.otherItems, ...indexByKey(action.items) }
 				);
 				return aggr;
 			}, {});
 		case RECEIVE_ADD_ITEMS_TO_COLLECTION:
 			return {
 				...state,
-				[action.collectionKey]: inject(
-					state[action.collectionKey] || [],
+				[action.collectionKey]: injectExtraItemKeys(
+					state[action.collectionKey] || {},
 					action.itemKeys.filter(iKey =>
 						action.items.find(item => item.key === iKey && !item.deleted)
-					)
+					),
+					{ ...action.otherItems, ...indexByKey(action.items) }
 				)
 			}
 		case RECEIVE_REMOVE_ITEMS_FROM_COLLECTION:
 			return {
 				...state,
-				[action.collectionKey]: (state[action.collectionKey] || [])
-					.filter(itemKey => !action.itemKeysChanged.includes(itemKey))
+				[action.collectionKey]: filterItemKeys(
+					state[action.collectionKey] || {}, action.itemKeysChanged
+				)
 			}
 		case RECEIVE_ITEMS_IN_COLLECTION:
 			return {
 				...state,
-				[action.collectionKey]: populate(
-					state[action.collectionKey] || [],
-					action.items.map(item => item.key), action.start,
-					action.limit, action.totalResults
+				[action.collectionKey]: populateItemKeys(
+					state[action.collectionKey] || {},
+					action.items.map(item => item.key),
+					action
 				)
 			};
 		case SORT_ITEMS:
 			return Object.entries(state).reduce((aggr, [collectionKey, itemKeys]) => {
-				aggr[collectionKey] = new Array(itemKeys.length);
+				aggr[collectionKey] = sortItemKeysOrClear(
+					itemKeys, action.items, action.sortBy, action.sortDirection
+				);
 				return aggr
 			}, {});
 		default:

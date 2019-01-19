@@ -128,6 +128,7 @@ const sortItems = (sortBy, sortDirection) => {
 			sortBy,
 			sortDirection,
 			libraryKey,
+			items: state.libraries[libraryKey].items
 		});
 	}
 };
