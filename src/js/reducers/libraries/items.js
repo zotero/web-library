@@ -54,7 +54,7 @@ const items = (state = {}, action) => {
 		case RECEIVE_CHILD_ITEMS:
 			return {
 				...state,
-				...indexByKey(action.childItems, 'key')
+				...indexByKey(action.items, 'key')
 			};
 		case RECEIVE_ITEMS_IN_COLLECTION:
 		case RECEIVE_FETCH_ITEMS:

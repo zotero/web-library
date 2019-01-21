@@ -232,7 +232,7 @@ const mapStateToProps = state => {
 	} = state.current;
 	const item = get(state, ['libraries', libraryKey, 'items', itemKey], null);
 	const itemType = item ? item.itemType : null;
-	const childItems = get(state, ['libraries', libraryKey, 'itemsByParent', itemKey], [])
+	const childItems = get(state, ['libraries', libraryKey, 'itemsByParent', itemKey, 'keys'], [])
 			.map(key => get(state, ['libraries', libraryKey, 'items', key], {}));
 	const isProcessingTags = get(state,
 		['libraries', libraryKey, 'updating', 'items', itemKey], []
