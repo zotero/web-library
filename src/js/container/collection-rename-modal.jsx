@@ -19,8 +19,11 @@ const mapStateToProps = state => {
 	const { libraryKey } = state.current;
 	const { collectionKey } = state.modal;
 	const collection = get(state, ['libraries', libraryKey, 'collections', collectionKey]);
+	const collections = Object.values(
+		get(state, ['libraries', libraryKey, 'collections'], {})
+	);
 
-	return { libraryKey, isOpen, collection };
+	return { libraryKey, isOpen, collection, collections };
 };
 
 

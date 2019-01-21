@@ -4,6 +4,7 @@ const React = require('react');
 const PropTypes = require('prop-types');
 
 const { isTriggerEvent } = require('../../common/event');
+const { makeChildMap } = require('../../common/collection');
 const Modal = require('../ui/modal');
 const Button = require('../ui/button');
 const Input = require('../form/input');
@@ -21,7 +22,10 @@ class CollectionRenameModal extends React.PureComponent {
 	}
 
 	render() {
-		const { isOpen, toggleModal, collection } = this.props;
+		const { isOpen, toggleModal, collection, collections } = this.props;
+		const childMap = collections.length ? makeChildMap(collections) : {};
+		const hasSubCollections = collection && collection.key in childMap;
+
 		const inputId = `collection-editor-${collection ? collection.key : 'empty'}`;
 		return (
 			<Modal
@@ -61,7 +65,7 @@ class CollectionRenameModal extends React.PureComponent {
 						<div className="form">
 							<div className="form-group">
 								<label htmlFor={ inputId }>
-									<Icon type="28/folder" width="28" height="28" />
+									<Icon type={ hasSubCollections ? '28/folders' : '28/folder' } width="28" height="28" />
 								</label>
 								<Input
 									id={ inputId }
@@ -84,7 +88,8 @@ class CollectionRenameModal extends React.PureComponent {
 		isOpen: PropTypes.bool,
 		libraryKey: PropTypes.string,
 		toggleModal: PropTypes.func.isRequired,
-		updateCollection: PropTypes.func.isRequired
+		updateCollection: PropTypes.func.isRequired,
+		collections: PropTypes.array
 	}
 }
 
