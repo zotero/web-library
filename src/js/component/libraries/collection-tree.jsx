@@ -351,8 +351,8 @@ class CollectionTree extends React.PureComponent {
 									'selected': itemsSource === 'publications'
 								})}
 								tabIndex={ shouldBeTabbable ? "0" : null }
-								onClick={ ev => this.handleSelect(this, { publications: true }, ev) }
-								onKeyDown={ ev => this.handleSelect(this, { publications: true }, ev) }
+								onClick={ ev => this.handleSelect({ publications: true }, ev) }
+								onKeyDown={ ev => this.handleSelect({ publications: true }, ev) }
 								dndTarget={ { 'targetType': 'publications', libraryKey } }
 							>
 								<Icon type="28/document" className="touch" width="28" height="28" />
