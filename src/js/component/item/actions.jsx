@@ -22,6 +22,19 @@ class ItemsActions extends React.PureComponent {
 			onSelectModeToggle(!isSelectMode)
 		}
 	}
+
+	renderDelete() {
+		const { selectedItemKeys, itemsSource, onDelete } = this.props;
+		return selectedItemKeys.length > 0 && itemsSource !== 'trash' ? (
+			<DropdownItem
+				onClick={ onDelete }
+				onKeyDown={ ev => isTriggerEvent(ev) && onDelete(ev) }
+			>
+				Delete { selectedItemKeys.length > 1 ? 'Items' : 'Item' }
+			</DropdownItem>
+		) : null;
+	}
+
 	renderPermanentlyDelete() {
 		const { selectedItemKeys, itemsSource, onPermanentlyDelete } = this.props;
 		return selectedItemKeys.length > 0 && itemsSource === 'trash' ? (
@@ -176,6 +189,7 @@ class ItemsActions extends React.PureComponent {
 						{ this.renderRemoveFromCollection() }
 						{ this.renderRestoretoLibrary() }
 						{ this.renderPermanentlyDelete() }
+						{ this.renderDelete() }
 						{ this.renderDuplicateItem() }
 						{ this.renderShowInLibrary() }
 					<DropdownItem
