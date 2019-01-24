@@ -18,6 +18,7 @@ const TouchHeaderContainer = require('../container/touch-header');
 const BibliographyContainer = require('../container/bibliography');
 const CollectionRenameModalContainer = require('../container/collection-rename-modal');
 const CollectionAddModalContainer = require('../container/collection-add-modal');
+const CollectionSelectModal = require('../container/collection-select-modal');
 const withDevice = require('../enhancers/with-device');
 
 class Library extends React.PureComponent {
@@ -115,6 +116,7 @@ class Library extends React.PureComponent {
 				<BibliographyContainer />
 				<CollectionRenameModalContainer />
 				<CollectionAddModalContainer />
+				<CollectionSelectModal />
 			</div>
 		);
 	}

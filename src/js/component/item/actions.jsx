@@ -59,6 +59,19 @@ class ItemsActions extends React.PureComponent {
 			) : null;
 	}
 
+	renderAddToCollection() {
+		const { selectedItemKeys, itemsSource,
+			onAddToCollectionModalOpen } = this.props;
+		return selectedItemKeys.length > 0 && itemsSource !== 'trash' ? (
+				<DropdownItem
+					onClick={ onAddToCollectionModalOpen }
+					onKeyDown={ ev => isTriggerEvent(ev) && onAddToCollectionModalOpen(ev) }
+				>
+					Add to Collection
+				</DropdownItem>
+			) : null;
+	}
+
 	renderRemoveFromCollection() {
 		const { selectedItemKeys, itemsSource, onRemove } = this.props;
 		return selectedItemKeys.length > 0 && itemsSource === 'collection' ? (
@@ -187,6 +200,7 @@ class ItemsActions extends React.PureComponent {
 					</DropdownItem>
 					<DropdownItem divider />
 						{ this.renderRemoveFromCollection() }
+						{ this.renderAddToCollection() }
 						{ this.renderRestoretoLibrary() }
 						{ this.renderPermanentlyDelete() }
 						{ this.renderDelete() }

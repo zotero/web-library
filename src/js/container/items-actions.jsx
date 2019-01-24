@@ -12,7 +12,7 @@ const { removeKeys } = require('../common/immutable');
 const ItemsActions = require('../component/item/actions');
 const withSelectMode = require('../enhancers/with-select-mode');
 const withDevice = require('../enhancers/with-device');
-const { BIBLIOGRAPHY } = require('../constants/modals');
+const { BIBLIOGRAPHY, COLLECTION_SELECT } = require('../constants/modals');
 
 const {
 	createItem,
@@ -108,6 +108,11 @@ class ItemsActionsContainer extends React.PureComponent {
 		dispatch(toggleModal(BIBLIOGRAPHY, true));
 	}
 
+	handleAddToCollectionModalOpen() {
+		const { dispatch } = this.props;
+		dispatch(toggleModal(COLLECTION_SELECT, true));
+	}
+
 	handleLibraryShow() {
 		const { push, selectedItemKeys, libraryKey: library } = this.props;
 		push(makePath({ library, items: selectedItemKeys[0] }));
@@ -120,6 +125,7 @@ class ItemsActionsContainer extends React.PureComponent {
 			itemsSource={ this.props.itemsSource }
 			itemTypes={ this.props.itemTypes }
 			onBibliographyOpen={ this.handleBibliographyOpen.bind(this) }
+			onAddToCollectionModalOpen={ this.handleAddToCollectionModalOpen.bind(this) }
 			onDelete={ this.handleDelete.bind(this) }
 			onDuplicate={ this.handleDuplicate.bind(this) }
 			onExport={ this.handleExport.bind(this )}
