@@ -4,34 +4,62 @@ const React = require('react');
 const PropTypes = require('prop-types');
 
 const { isTriggerEvent } = require('../../common/event');
+const { makeChildMap } = require('../../common/collection');
 const Libraries = require('../libraries');
 const Modal = require('../ui/modal');
 const Button = require('../ui/button');
-const Input = require('../form/input');
-const Icon = require('../ui/icon');
 
 class CollectionSelectModal extends React.PureComponent {
 	state = {
 		view: 'libraries',
 		libraryKey: '',
-		path: []
+		path: [],
+		picked: [],
 	}
 
-	handleCollectionSelect({ library = null,  collection = null } = {}) {
-		if(this.state.view === 'libraries') {
-			if(collection && library) {
-				this.setState({
-					view: 'collection',
-					path: [...this.state.path, collection],
-					libraryKey: library
-				})
-			} else if(library) {
-				this.setState({
-					view: 'library',
-					libraryKey: library
-				})
-			}
+	handleCollectionUpdate(ev) {
+		const { items, libraryKey, toggleModal, updateCollection } = this.props;
+
+
+		if(isTriggerEvent(ev)) {
+			//@TODO
+			console.log("add ", items, " to collections: ", this.state.picked);
+			toggleModal(null, false);
 		}
+	}
+
+	handleCollectionSelect({ library = null,  collection = null, ...rest } = {}) {
+		const { collections } = this.props;
+
+		if(collection && library) {
+			const childMap = collections.length ? makeChildMap(collections) : {};
+			const hasChildren = collection in childMap;
+			const path = [...this.state.path];
+			if(hasChildren) { path.push(collection); }
+
+			this.setState({
+				view: 'collection',
+				libraryKey: library,
+				path
+			})
+		} else if(library) {
+			this.setState({
+				view: 'library',
+				libraryKey: library
+			})
+		}
+	}
+
+	handlePick(pickedCollection) {
+		const picked = this.state.picked.filter(({ collection: c, library: l}) =>
+			!(c === pickedCollection.collection && l === pickedCollection.library)
+		);
+
+		if(picked.length === this.state.picked.length) {
+			picked.push(pickedCollection);
+		}
+
+		this.setState({ picked });
 	}
 
 	render() {
@@ -42,7 +70,7 @@ class CollectionSelectModal extends React.PureComponent {
 			<Modal
 				isOpen={ isOpen }
 				contentLabel="Select Collection"
-				className="modal-touch modal-centered"
+				className="modal-touch modal-centered collection-select-modal"
 				onRequestClose={ () => toggleModal(null, false) }
 				closeTimeoutMS={ 200 }
 				overlayClassName={ "modal-slide" }
@@ -74,6 +102,9 @@ class CollectionSelectModal extends React.PureComponent {
 					</div>
 					<div className="modal-body">
 						<Libraries
+							picked={ this.state.picked }
+							isPickerMode={ true }
+							onPickerPick={ args => this.handlePick(args) }
 							view={ this.state.view }
 							groups={ groups }
 							groupCollections={ groupCollections }

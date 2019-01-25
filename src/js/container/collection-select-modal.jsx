@@ -18,7 +18,7 @@ class CollectionRenameModalContainer extends React.PureComponent {
 const mapStateToProps = state => {
 	const isOpen = state.modal.id === COLLECTION_SELECT;
 	const { libraryKey, userLibraryKey } = state.current;
-	const { collectionKey } = state.modal;
+	const { items } = state.modal;
 	const groups = state.groups;
 	const groupCollections = state.groups.reduce((aggr, group) => {
 		aggr[`g${group.id}`] = Object.values(
@@ -26,13 +26,12 @@ const mapStateToProps = state => {
 		);
 		return aggr;
 	}, {});
-	const collection = get(state, ['libraries', libraryKey, 'collections', collectionKey]);
 	const collections = Object.values(
 		get(state, ['libraries', libraryKey, 'collections'], {})
 	);
 
-	return { libraryKey, isOpen, collection, collections, userLibraryKey,
-		groups, groupCollections };
+	return { libraryKey, isOpen, collections, userLibraryKey, groups,
+		groupCollections, items };
 };
 
 

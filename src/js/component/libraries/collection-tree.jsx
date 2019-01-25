@@ -164,7 +164,8 @@ class CollectionTree extends React.PureComponent {
 	renderCollections(collections, level, parentCollection = null) {
 		const { childMap, derivedData } = this;
 		const { libraryKey, itemsSource, isUserLibrary, isCurrentLibrary,
-			virtual, onAddCancel, device, path, view } = this.props;
+			virtual, onAddCancel, device, path, view, isPickerMode,
+			picked } = this.props;
 
 		const [selected, selectedDepth] = this.findRecursive(
 			collections,
@@ -217,7 +218,7 @@ class CollectionTree extends React.PureComponent {
 				'has-open': hasOpen, 'level-last': isLastLevel
 			}) }>
 				<ul className="nav" role="group">
-					{ device.isTouchOrSmall && level === 1 && parentCollection === null && (
+					{ !isPickerMode && device.isTouchOrSmall && level === 1 && parentCollection === null && (
 						<Node
 							className={ cx({
 								'selected': isAllItemsSelected,
@@ -231,7 +232,7 @@ class CollectionTree extends React.PureComponent {
 							<div className="truncate">All Items</div>
 						</Node>
 					) }
-					{ device.isTouchOrSmall && parentCollection && (
+					{ !isPickerMode && device.isTouchOrSmall && parentCollection && (
 						<Node
 							className={ cx({
 								'selected': isItemsSelected,
@@ -295,6 +296,15 @@ class CollectionTree extends React.PureComponent {
 									/> :
 									<React.Fragment>
 										<div className="truncate">{ collection.name }</div>
+										{ isPickerMode ? (
+											<input
+												className="checkbox"
+												type="checkbox"
+												checked={ picked.some(({ collection: c, library: l }) => l === libraryKey && c === collection.key) }
+												onChange={ ev => this.props.onPickerPick({ collection: collection.key, library: libraryKey }, ev) }
+												onClick={ ev => ev.stopPropagation() }
+											/>
+										) : (
 										<ActionsDropdown
 											tabIndex={ shouldBeTabbable ? "0" : "-1" }
 										>
@@ -317,6 +327,7 @@ class CollectionTree extends React.PureComponent {
 												New Subcollection
 											</DropdownItem>
 										</ActionsDropdown>
+										)}
 									</React.Fragment>
 								}
 
@@ -344,7 +355,7 @@ class CollectionTree extends React.PureComponent {
 						)
 					}
 					{
-						isUserLibrary && level === 1 && (
+						!isPickerMode && isUserLibrary && level === 1 && (
 							<Node
 								className={ cx({
 									'publications': true,
@@ -362,7 +373,7 @@ class CollectionTree extends React.PureComponent {
 						)
 					}
 					{
-						level === 1 && (
+						!isPickerMode && level === 1 && (
 							<Node
 								className={ cx({
 									'trash': true,
@@ -400,6 +411,7 @@ class CollectionTree extends React.PureComponent {
 		)),
 		isAdding: PropTypes.bool,
 		isAddingBusy: PropTypes.bool,
+		isPickerMode: PropTypes.bool,
 		isUserLibrary: PropTypes.bool,
 		itemsSource: PropTypes.string,
 		libraryKey: PropTypes.string.isRequired,
@@ -407,9 +419,11 @@ class CollectionTree extends React.PureComponent {
 		onAddCancel: PropTypes.func,
 		onAddCommit: PropTypes.func,
 		onDelete: PropTypes.func,
+		onPickerPick: PropTypes.func,
 		onRename: PropTypes.func,
 		onSelect: PropTypes.func,
 		path: PropTypes.array,
+		picked: PropTypes.array,
 		updating: PropTypes.array,
 		virtual: PropTypes.object,
 	};
@@ -420,10 +434,13 @@ class CollectionTree extends React.PureComponent {
 		onAddCancel: noop,
 		onAddCommit: noop,
 		onDelete: noop,
+		onPickerPick: noop,
 		onRename: noop,
 		onSelect: noop,
 		path: [],
+		picked: [],
 		updating: [],
+		virtual: null,
 	};
 }
 

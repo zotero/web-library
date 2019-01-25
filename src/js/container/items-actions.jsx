@@ -109,8 +109,8 @@ class ItemsActionsContainer extends React.PureComponent {
 	}
 
 	handleAddToCollectionModalOpen() {
-		const { dispatch } = this.props;
-		dispatch(toggleModal(COLLECTION_SELECT, true));
+		const { dispatch, selectedItemKeys } = this.props;
+		dispatch(toggleModal(COLLECTION_SELECT, true, { items: selectedItemKeys }));
 	}
 
 	handleLibraryShow() {

@@ -223,10 +223,6 @@ class Libraries extends React.PureComponent {
 
 			return (
 				<nav className="collection-tree">
-					<TouchHeaderContainer
-						variant={ TouchHeaderContainer.variants.NAVIGATION }
-						className="hidden-xs-down hidden-mouse-md-up"
-					/>
 					<div className={ `level-root ${isRootActive ? 'active' : ''}` }>
 						<div className="scroll-container" role="tree">
 							<section>
@@ -257,7 +253,8 @@ Libraries.propTypes = {
 			parentCollection: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
 			name: PropTypes.string,
 		}
-	)).isRequired
+	)).isRequired,
+	isPickerMode: PropTypes.bool
 };
 
 Libraries.defaultProps = {

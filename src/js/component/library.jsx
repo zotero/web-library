@@ -97,6 +97,10 @@ class Library extends React.PureComponent {
 						/>
 						<header className="sidebar">
 							<h2 className="offscreen">Web library</h2>
+							<TouchHeaderContainer
+								variant={ TouchHeaderContainer.variants.NAVIGATION }
+								className="hidden-xs-down hidden-mouse-md-up"
+							/>
 							<LibrariesContainer />
 							{ !device.isTouchOrSmall &&
 								<TagSelectorContainer key={ key } />
