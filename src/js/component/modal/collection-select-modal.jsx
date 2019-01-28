@@ -8,13 +8,22 @@ const { makeChildMap } = require('../../common/collection');
 const Libraries = require('../libraries');
 const Modal = require('../ui/modal');
 const Button = require('../ui/button');
+const TouchHeader = require('../touch-header.jsx');
+const defaultState = {
+	view: 'libraries',
+	libraryKey: '',
+	path: [],
+	picked: [],
+};
 
 class CollectionSelectModal extends React.PureComponent {
-	state = {
-		view: 'libraries',
-		libraryKey: '',
-		path: [],
-		picked: [],
+	state = defaultState
+
+	componentDidUpdate({ isOpen: wasOpen }) {
+		const { isOpen } = this.props;
+		if(wasOpen && !isOpen) {
+			this.setState(defaultState);
+		}
 	}
 
 	handleCollectionUpdate(ev) {
@@ -62,9 +71,47 @@ class CollectionSelectModal extends React.PureComponent {
 		this.setState({ picked });
 	}
 
+	handleNavigation(navigationData) {
+		const { path } = this.state;
+		if('collection' in navigationData) {
+			const targetIndex = path.indexOf(navigationData.collection);
+			this.setState({ path: path.slice(0, targetIndex + 1) });
+		} else if(navigationData.view === 'library') {
+			this.setState({ path: [] });
+		} else if(navigationData.view === 'libraries') {
+			this.setState({ path: [], view: 'libraries' });
+		}
+	}
+
 	render() {
 		const { device, isOpen, toggleModal, collections, libraryKey,
 			userLibraryKey, groups, groupCollections } = this.props;
+
+		const touchHeaderPath = this.state.path.map(key => ({
+				key,
+				type: 'collection',
+				label: collections.find(c => c.key === key).name,
+				path: { library: this.state.libraryKey, collection: key },
+		}));
+
+		if(this.state.view !== 'libraries') {
+			touchHeaderPath.unshift({
+				key: this.state.libraryKey,
+				type: 'library',
+				path: { library: this.state.libraryKey, view: 'library' },
+				//@TODO: when first loading, group name is not known
+				label: this.state.libraryKey === userLibraryKey ?
+					'My Library' :
+					this.state.libraryKey //@TODO: lookup name
+			});
+		}
+
+		touchHeaderPath.unshift({
+			key: 'root',
+			type: 'root',
+			path: { view: 'libraries' },
+			label: 'Libraries'
+		});
 
 		return (
 			<Modal
@@ -101,10 +148,14 @@ class CollectionSelectModal extends React.PureComponent {
 						</div>
 					</div>
 					<div className="modal-body">
+						<TouchHeader
+							path={ touchHeaderPath }
+							onNavigation={ (...args) => this.handleNavigation(...args) }
+						/>
 						<Libraries
 							picked={ this.state.picked }
 							isPickerMode={ true }
-							onPickerPick={ args => this.handlePick(args) }
+							onPickerPick={ (...args) => this.handlePick(...args) }
 							view={ this.state.view }
 							groups={ groups }
 							groupCollections={ groupCollections }
@@ -113,7 +164,7 @@ class CollectionSelectModal extends React.PureComponent {
 							device={ device }
 							collections={ collections }
 							path={ this.state.path }
-							onSelect={ args => this.handleCollectionSelect(args) }
+							onSelect={ (...args) => this.handleCollectionSelect(...args) }
 						/>
 					</div>
 				</div>
