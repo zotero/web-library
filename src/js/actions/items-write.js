@@ -539,7 +539,7 @@ const addToCollection = (itemKeys, collectionKey, targetLibraryKey) => {
 		const { libraryKey: currentLibraryKey } = getState().current;
 		const queueId = ++queue.counter;
 
-		dispatch({
+		await dispatch({
 				type: PRE_ADD_ITEMS_TO_COLLECTION,
 				itemKeys,
 				collectionKey,
@@ -548,11 +548,11 @@ const addToCollection = (itemKeys, collectionKey, targetLibraryKey) => {
 			});
 
 		if(currentLibraryKey === targetLibraryKey) {
-			dispatch(
+			await dispatch(
 				queueAddToCollection(itemKeys, collectionKey, currentLibraryKey, queueId)
 			);
 		} else {
-			dispatch(
+			await dispatch(
 				createItems(
 					itemKeys.map(ik => ({
 							...omit(

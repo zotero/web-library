@@ -8,6 +8,7 @@ const { makeChildMap } = require('../../common/collection');
 const Libraries = require('../libraries');
 const Modal = require('../ui/modal');
 const Button = require('../ui/button');
+const Spinner = require('../ui/spinner');
 const TouchHeader = require('../touch-header.jsx');
 const defaultState = {
 	view: 'libraries',
@@ -26,13 +27,20 @@ class CollectionSelectModal extends React.PureComponent {
 		}
 	}
 
-	handleCollectionUpdate(ev) {
-		const { items, libraryKey, toggleModal, updateCollection } = this.props;
+	async handleCollectionUpdate(ev) {
+		const { addToCollection, items, toggleModal } = this.props;
+		const { picked } = this.state;
 
 
-		if(isTriggerEvent(ev)) {
-			//@TODO
-			console.log("add ", items, " to collections: ", this.state.picked);
+		if(this.state.picked.length && isTriggerEvent(ev)) {
+			this.setState({ isBusy: true })
+			const promises = picked.map(
+				targetData => addToCollection(
+					items, targetData.collection, targetData.library
+				)
+			);
+			await Promise.all(promises);
+			this.setState({ isBusy: false });
 			toggleModal(null, false);
 		}
 	}
@@ -84,25 +92,26 @@ class CollectionSelectModal extends React.PureComponent {
 	}
 
 	render() {
-		const { device, isOpen, toggleModal, collections, libraryKey,
+		const { device, isOpen, toggleModal, collections,
 			userLibraryKey, groups, groupCollections } = this.props;
+		const { libraryKey, isBusy, picked } = this.state;
 
 		const touchHeaderPath = this.state.path.map(key => ({
 				key,
 				type: 'collection',
 				label: collections.find(c => c.key === key).name,
-				path: { library: this.state.libraryKey, collection: key },
+				path: { library: libraryKey, collection: key },
 		}));
 
 		if(this.state.view !== 'libraries') {
 			touchHeaderPath.unshift({
-				key: this.state.libraryKey,
+				key: libraryKey,
 				type: 'library',
 				path: { library: this.state.libraryKey, view: 'library' },
 				//@TODO: when first loading, group name is not known
-				label: this.state.libraryKey === userLibraryKey ?
+				label: libraryKey === userLibraryKey ?
 					'My Library' :
-					this.state.libraryKey //@TODO: lookup name
+					libraryKey //@TODO: lookup name
 			});
 		}
 
@@ -148,24 +157,30 @@ class CollectionSelectModal extends React.PureComponent {
 						</div>
 					</div>
 					<div className="modal-body">
-						<TouchHeader
-							path={ touchHeaderPath }
-							onNavigation={ (...args) => this.handleNavigation(...args) }
-						/>
-						<Libraries
-							picked={ this.state.picked }
-							isPickerMode={ true }
-							onPickerPick={ (...args) => this.handlePick(...args) }
-							view={ this.state.view }
-							groups={ groups }
-							groupCollections={ groupCollections }
-							userLibraryKey={ userLibraryKey }
-							libraryKey={ this.state.libraryKey }
-							device={ device }
-							collections={ collections }
-							path={ this.state.path }
-							onSelect={ (...args) => this.handleCollectionSelect(...args) }
-						/>
+						{
+							isBusy ? <Spinner className="large" /> : (
+								<React.Fragment>
+								<TouchHeader
+									path={ touchHeaderPath }
+									onNavigation={ (...args) => this.handleNavigation(...args) }
+								/>
+								<Libraries
+									picked={ picked }
+									isPickerMode={ true }
+									onPickerPick={ (...args) => this.handlePick(...args) }
+									view={ this.state.view }
+									groups={ groups }
+									groupCollections={ groupCollections }
+									userLibraryKey={ userLibraryKey }
+									libraryKey={ this.state.libraryKey }
+									device={ device }
+									collections={ collections }
+									path={ this.state.path }
+									onSelect={ (...args) => this.handleCollectionSelect(...args) }
+								/>
+								</React.Fragment>
+							)
+						}
 					</div>
 				</div>
 			</Modal>
@@ -174,9 +189,13 @@ class CollectionSelectModal extends React.PureComponent {
 
 	static propTypes = {
 		collections: PropTypes.array,
+		device: PropTypes.object,
+		groupCollections: PropTypes.object,
+		groups: PropTypes.array,
 		isOpen: PropTypes.bool,
 		libraryKey: PropTypes.string,
 		toggleModal: PropTypes.func.isRequired,
+		userLibraryKey: PropTypes.string,
 	}
 }
 

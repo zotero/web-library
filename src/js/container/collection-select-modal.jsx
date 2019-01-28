@@ -4,7 +4,7 @@ const React = require('react');
 
 const withDevice = require('../enhancers/with-device');
 const { connect } = require('react-redux');
-const { toggleModal, updateCollection } = require('../actions');
+const { toggleModal, addToCollection } = require('../actions');
 const CollectionSelectModal = require('../component/modal/collection-select-modal')
 const { COLLECTION_SELECT } = require('../constants/modals');
 const { get } = require('../utils');
@@ -37,5 +37,5 @@ const mapStateToProps = state => {
 
 module.exports = withDevice(connect(
 	mapStateToProps,
-	{ updateCollection, toggleModal }
+	{ addToCollection, toggleModal }
 )(CollectionRenameModalContainer));
