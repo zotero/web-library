@@ -34,18 +34,21 @@ const injectExtraItemKeys = (state, newKeys, items) => {
 	const { sortBy, sortDirection } = state;
 
 	newKeys.forEach(newKey => {
-		for(let i=0; i < keys.length; i++) {
+		let injected = false;
+		for(let i = 0; i < keys.length; i++) {
 			const comparisionResult = compare(
-				keys[i] && sortBy in items[keys[i]] && items[keys[i]][sortBy],
-				newKey && sortBy in items[newKey] && items[newKey][sortBy],
+				keys[i] && sortBy in items[keys[i]] ? items[keys[i]][sortBy] : null,
+				newKey && sortBy in items[newKey] ? items[newKey][sortBy] : null,
 				sortDirection
 			);
 
 			if(comparisionResult >= 0) {
 				keys.splice(i, 0, newKey);
+				injected = true;
 				break;
 			}
 		}
+		if(!injected) { keys.push(newKey); }
 	});
 
 	return {
@@ -58,7 +61,7 @@ const injectExtraItemKeys = (state, newKeys, items) => {
 
 const filterItemKeys = (state, removedKeys) => {
 	if(!Array.isArray(removedKeys)) { removedKeys = [removedKeys]; }
-	const keys = [...state.keys];
+	const keys = [...(state.keys || [])];
 
 	for(let i = keys.length - 1; i >= 0 ; i--) {
 		if(removedKeys.includes(keys[i])) {

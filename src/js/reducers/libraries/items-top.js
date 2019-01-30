@@ -21,7 +21,7 @@ const itemsTop = (state = {}, action) => {
 				return injectExtraItemKeys(
 					state,
 					action.item.key,
-					{ ...action.otherItems, ...indexByKey(action.items) }
+					{ ...action.otherItems, [action.item.key]: action.item }
 				);
 			} else {
 				return state;

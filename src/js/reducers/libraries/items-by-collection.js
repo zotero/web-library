@@ -27,7 +27,7 @@ const itemsByCollection = (state = {}, action) => {
 						aggr[collectionKey] = injectExtraItemKeys(
 							state[collectionKey] || {},
 							[action.item.key],
-							{ ...action.otherItems, ...indexByKey(action.items) }
+							{ ...action.otherItems, [action.item.key]: action.item }
 						)
 						return aggr;
 					}, {}))

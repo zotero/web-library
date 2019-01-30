@@ -23,7 +23,7 @@ const itemsByParent = (state = {}, action) => {
 					[parentKey]: injectExtraItemKeys(
 						state,
 						action.item.key,
-						{ ...action.otherItems, ...indexByKey(action.items) }
+						{ ...action.otherItems, [action.item.key]: action.item }
 					)
 				};
 			}
