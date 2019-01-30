@@ -4,7 +4,7 @@ const React = require('react');
 
 const withDevice = require('../enhancers/with-device');
 const { connect } = require('react-redux');
-const { toggleModal, addToCollection } = require('../actions');
+const { toggleModal, addToCollection, fetchCollections } = require('../actions');
 const CollectionSelectModal = require('../component/modal/collection-select-modal')
 const { COLLECTION_SELECT } = require('../constants/modals');
 const { get } = require('../utils');
@@ -19,6 +19,8 @@ const mapStateToProps = state => {
 	const isOpen = state.modal.id === COLLECTION_SELECT;
 	const { libraryKey, userLibraryKey } = state.current;
 	const { items } = state.modal;
+	const librariesWithCollectionsFetching = state.fetching.collectionsInLibrary;
+	const collectionCountByLibrary = state.collectionCountByLibrary;
 	const groups = state.groups;
 	const groupCollections = state.groups.reduce((aggr, group) => {
 		aggr[`g${group.id}`] = Object.values(
@@ -31,11 +33,12 @@ const mapStateToProps = state => {
 	);
 
 	return { libraryKey, isOpen, collections, userLibraryKey, groups,
-		groupCollections, items };
+		groupCollections, items, librariesWithCollectionsFetching,
+		collectionCountByLibrary };
 };
 
 
 module.exports = withDevice(connect(
 	mapStateToProps,
-	{ addToCollection, toggleModal }
+	{ addToCollection, toggleModal, fetchCollections }
 )(CollectionRenameModalContainer));

@@ -16,15 +16,37 @@ const defaultState = {
 	path: [],
 	picked: [],
 };
+const PAGE_SIZE = 100;
 
 class CollectionSelectModal extends React.PureComponent {
 	state = defaultState
 
-	componentDidUpdate({ isOpen: wasOpen }) {
-		const { isOpen } = this.props;
+	componentDidUpdate({ isOpen: wasOpen }, { libraryKey: prevLibraryKey }) {
+		const { isOpen, userLibraryKey, fetchCollections,
+		librariesWithCollectionsFetching, collectionCountByLibrary,
+		groupCollections } = this.props;
+		const { libraryKey } = this.state;
+
 		if(wasOpen && !isOpen) {
 			this.setState(defaultState);
 		}
+
+		if(libraryKey && libraryKey !== prevLibraryKey && userLibraryKey !== libraryKey) {
+			fetchCollections(libraryKey, { start: 0, limit: PAGE_SIZE });
+		}
+
+		const fetchNextPage = (libraryKey, collections) => {
+			if(!librariesWithCollectionsFetching.includes(libraryKey) &&
+			collectionCountByLibrary[libraryKey] > collections.length) {
+				fetchCollections(libraryKey, { start: collections.length, limit: PAGE_SIZE });
+			}
+		}
+
+		Object.keys(groupCollections).forEach(groupId => {
+			if(groupId in collectionCountByLibrary) {
+				fetchNextPage(groupId, groupCollections[groupId]);
+			}
+		});
 	}
 
 	async handleCollectionUpdate(ev) {
@@ -46,24 +68,28 @@ class CollectionSelectModal extends React.PureComponent {
 	}
 
 	handleCollectionSelect({ library = null,  collection = null, ...rest } = {}) {
-		const { collections } = this.props;
+		const { collections, groupCollections, userLibraryKey } = this.props;
 
-		if(collection && library) {
-			const childMap = collections.length ? makeChildMap(collections) : {};
-			const hasChildren = collection in childMap;
-			const path = [...this.state.path];
-			if(hasChildren) { path.push(collection); }
-
-			this.setState({
-				view: 'collection',
-				libraryKey: library,
-				path
-			})
-		} else if(library) {
-			this.setState({
-				view: 'library',
-				libraryKey: library
-			})
+		if(library) {
+			if(collection) {
+				const childMap = library === userLibraryKey ?
+				collections.length ? makeChildMap(collections) : {} :
+				library in groupCollections && groupCollections[library].length ?
+					makeChildMap(groupCollections[library]) : {};
+				const hasChildren = collection in childMap;
+				const path = [...this.state.path];
+				if(hasChildren) { path.push(collection); }
+				this.setState({
+					view: 'collection',
+					libraryKey: library,
+					path
+				})
+			} else {
+				this.setState({
+					view: 'library',
+					libraryKey: library
+				})
+			}
 		}
 	}
 
@@ -93,13 +119,16 @@ class CollectionSelectModal extends React.PureComponent {
 
 	render() {
 		const { device, isOpen, toggleModal, collections,
-			userLibraryKey, groups, groupCollections } = this.props;
+			userLibraryKey, groups, groupCollections,
+			librariesWithCollectionsFetching } = this.props;
 		const { libraryKey, isBusy, picked } = this.state;
+		const collectionsSource = libraryKey === userLibraryKey ?
+			collections : (groupCollections[libraryKey] || []);
 
 		const touchHeaderPath = this.state.path.map(key => ({
 				key,
 				type: 'collection',
-				label: collections.find(c => c.key === key).name,
+				label: collectionsSource.find(c => c.key === key).name,
 				path: { library: libraryKey, collection: key },
 		}));
 
@@ -111,7 +140,7 @@ class CollectionSelectModal extends React.PureComponent {
 				//@TODO: when first loading, group name is not known
 				label: libraryKey === userLibraryKey ?
 					'My Library' :
-					libraryKey //@TODO: lookup name
+					(groups.find(g => g.id === parseInt(libraryKey.substr(1), 10)) || {}).name || libraryKey
 			});
 		}
 
@@ -147,13 +176,15 @@ class CollectionSelectModal extends React.PureComponent {
 							</h4>
 						</div>
 						<div className="modal-header-right">
-							<Button
-								className="btn-link"
-								onKeyDown={ ev => this.handleCollectionUpdate(ev) }
-								onClick={ ev => this.handleCollectionUpdate(ev) }
-							>
-								Confirm
-							</Button>
+							{ picked.length > 0 && (
+								<Button
+									className="btn-link"
+									onKeyDown={ ev => this.handleCollectionUpdate(ev) }
+									onClick={ ev => this.handleCollectionUpdate(ev) }
+								>
+									Confirm ({ picked.length })
+								</Button>
+							)}
 						</div>
 					</div>
 					<div className="modal-body">
@@ -165,6 +196,7 @@ class CollectionSelectModal extends React.PureComponent {
 									onNavigation={ (...args) => this.handleNavigation(...args) }
 								/>
 								<Libraries
+									librariesWithCollectionsFetching={ librariesWithCollectionsFetching }
 									picked={ picked }
 									isPickerMode={ true }
 									onPickerPick={ (...args) => this.handlePick(...args) }
