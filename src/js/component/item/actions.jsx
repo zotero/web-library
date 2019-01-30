@@ -14,6 +14,7 @@ const Icon = require('../ui/icon');
 const NewItemSelector = require('./actions/new-item');
 const ExportActions = require('./actions/export');
 const { isTriggerEvent } = require('../../common/event');
+const { BIBLIOGRAPHY, COLLECTION_SELECT, NEW_ITEM } = require('../../constants/modals');
 
 class ItemsActions extends React.PureComponent {
 	handleSelectModeToggle(ev) {
@@ -21,6 +22,21 @@ class ItemsActions extends React.PureComponent {
 		if(isTriggerEvent(ev)) {
 			onSelectModeToggle(!isSelectMode)
 		}
+	}
+
+	handleAddToCollectionModalOpen() {
+		const { selectedItemKeys, toggleModal } = this.props;
+		toggleModal(COLLECTION_SELECT, true, { items: selectedItemKeys });
+	}
+
+	handleBibliographyOpen() {
+		const { toggleModal } = this.props;
+		toggleModal(BIBLIOGRAPHY, true);
+	}
+
+	handleNewItemModalOpen() {
+		const { toggleModal, collectionKey } = this.props;
+		toggleModal(NEW_ITEM, true, { collectionKey });
 	}
 
 	renderDelete() {
@@ -60,12 +76,11 @@ class ItemsActions extends React.PureComponent {
 	}
 
 	renderAddToCollection() {
-		const { selectedItemKeys, itemsSource,
-			onAddToCollectionModalOpen } = this.props;
+		const { selectedItemKeys, itemsSource } = this.props;
 		return selectedItemKeys.length > 0 && itemsSource !== 'trash' ? (
 				<DropdownItem
-					onClick={ onAddToCollectionModalOpen }
-					onKeyDown={ ev => isTriggerEvent(ev) && onAddToCollectionModalOpen(ev) }
+					onClick={ () => this.handleAddToCollectionModalOpen() }
+					onKeyDown={ ev => isTriggerEvent(ev) && this.handleAddToCollectionModalOpen() }
 				>
 					Add to Collection
 				</DropdownItem>
@@ -108,6 +123,18 @@ class ItemsActions extends React.PureComponent {
 			) : null;
 	}
 
+	renderNewItem() {
+		const { selectedItemKeys, itemsSource } = this.props;
+		return (itemsSource === 'top' || itemsSource === 'collection') && selectedItemKeys.length === 0 ? (
+				<DropdownItem
+					onClick={ () => this.handleNewItemModalOpen() }
+					onKeyDown={ ev => isTriggerEvent(ev) && this.handleNewItemModalOpen() }
+				>
+					New Item
+				</DropdownItem>
+			) : null;
+	}
+
 	get hasExtraItemOptions() {
 		const { selectedItemKeys, itemsSource } = this.props;
 		return (selectedItemKeys.length === 1 && itemsSource !== 'trash') || (
@@ -117,7 +144,7 @@ class ItemsActions extends React.PureComponent {
 
 	renderMouse() {
 		const { itemsSource, onDelete, isDeleting, selectedItemKeys,
-			onBibliographyOpen, onRemove, } = this.props;
+			onRemove, } = this.props;
 
 		return (
 			<React.Fragment>
@@ -150,8 +177,8 @@ class ItemsActions extends React.PureComponent {
 				<ToolGroup>
 					<ExportActions { ...this.props } />
 					<Button
-						onClick={ onBibliographyOpen }
-						onKeyDown={ ev => isTriggerEvent(ev) && onBibliographyOpen(ev) }
+						onClick={ () => this.handleBibliographyOpen() }
+						onKeyDown={ ev => isTriggerEvent(ev) && this.handleBibliographyOpen(ev) }
 						disabled={ selectedItemKeys.length === 0 }
 						title="Create Bibliography"
 					>
@@ -199,6 +226,7 @@ class ItemsActions extends React.PureComponent {
 						{ isSelectMode ? 'Cancel' : 'Select Items' }
 					</DropdownItem>
 					<DropdownItem divider />
+						{ this.renderNewItem() }
 						{ this.renderRemoveFromCollection() }
 						{ this.renderAddToCollection() }
 						{ this.renderRestoretoLibrary() }

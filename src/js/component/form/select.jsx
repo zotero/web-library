@@ -124,7 +124,9 @@ class SelectInput extends React.PureComponent {
 							<option key={ value } value={ value }>{ label }</option>)
 						)}
 					</select>
-					<div className={ className }>{ options.find(o => o.value === value).label }</div>
+					<div className={ className }>
+						{ (options.find(o => o.value === value) || options[0] || {}).label }
+					</div>
 				</div>
 
 			);

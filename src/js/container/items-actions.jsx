@@ -36,6 +36,7 @@ class ItemsActionsContainer extends React.PureComponent {
 		const view = 'item-list';
 		push(makePath({ library, search, tags, trash, publications, collection, items, view }));
 	}
+
 	async handleDelete() {
 		const { dispatch, selectedItemKeys } = this.props;
 
@@ -103,16 +104,6 @@ class ItemsActionsContainer extends React.PureComponent {
 		this.handleItemsSelect([newItem.key]);
 	}
 
-	handleBibliographyOpen() {
-		const { dispatch } = this.props;
-		dispatch(toggleModal(BIBLIOGRAPHY, true));
-	}
-
-	handleAddToCollectionModalOpen() {
-		const { dispatch, selectedItemKeys } = this.props;
-		dispatch(toggleModal(COLLECTION_SELECT, true, { items: selectedItemKeys }));
-	}
-
 	handleLibraryShow() {
 		const { push, selectedItemKeys, libraryKey: library } = this.props;
 		push(makePath({ library, items: selectedItemKeys[0] }));
@@ -120,12 +111,11 @@ class ItemsActionsContainer extends React.PureComponent {
 
 	render() {
 		return <ItemsActions
+			collectionKey={ this.props.collectionKey }
 			device={ this.props.device }
 			isSelectMode={ this.props.isSelectMode }
 			itemsSource={ this.props.itemsSource }
 			itemTypes={ this.props.itemTypes }
-			onBibliographyOpen={ this.handleBibliographyOpen.bind(this) }
-			onAddToCollectionModalOpen={ this.handleAddToCollectionModalOpen.bind(this) }
 			onDelete={ this.handleDelete.bind(this) }
 			onDuplicate={ this.handleDuplicate.bind(this) }
 			onExport={ this.handleExport.bind(this )}
@@ -136,6 +126,7 @@ class ItemsActionsContainer extends React.PureComponent {
 			onSelectModeToggle={ this.props.onSelectModeToggle }
 			onUndelete={ this.handleUndelete.bind(this) }
 			selectedItemKeys={ this.props.selectedItemKeys }
+			toggleModal={ this.props.toggleModal }
 		/>
 	}
 
@@ -184,7 +175,10 @@ const mapStateToProps = state => {
 }
 
 //@TODO: bind all action creators
-const mapDispatchToProps = dispatch => ({ dispatch, ...bindActionCreators({ push }, dispatch) });
+const mapDispatchToProps = dispatch => ({
+	dispatch,
+	...bindActionCreators({ push, toggleModal }, dispatch)
+});
 
 module.exports = withSelectMode(withDevice(
 	connect(mapStateToProps, mapDispatchToProps)(ItemsActionsContainer)
