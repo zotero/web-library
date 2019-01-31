@@ -48,18 +48,9 @@ class LibraryContainer extends React.PureComponent {
 		};
 
 		props.dispatch(preferencesLoad());
-
-		props.dispatch(
-			initialize()
-		);
-
-		props.dispatch(
-			fetchGroups(this.props.userLibraryKey)
-		);
-		props.dispatch(
-			fetchLibrarySettings()
-		);
-
+		props.dispatch(initialize());
+		props.dispatch(fetchGroups(this.props.userLibraryKey));
+		props.dispatch(fetchLibrarySettings());
 		this.windowResizeHandler();
 	}
 

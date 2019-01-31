@@ -10,7 +10,7 @@ module.exports = Object.freeze({
 	columnMinWidthFraction: 0.05,
 	preferences: {
 		columns: [
-			{ field: 'title', fraction: 0.5, isVisible: true },
+			{ field: 'title', fraction: 0.5, isVisible: true, sort: 'ASC' },
 			{ field: 'creator', fraction: 0.3, isVisible: true },
 			{ field: 'date', fraction: 0.2, isVisible: true },
 			{ field: 'itemType', fraction: 0.2, isVisible: false },

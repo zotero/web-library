@@ -21,6 +21,8 @@ const {
 const { get, resizeVisibleColumns } = require('../utils');
 const { makePath } = require('../common/navigation');
 const { getFormattedTableItem } = require('../common/item');
+const { omit } = require('../common/immutable');
+const defaultSort = { field: 'title', sort: 'ASC' };
 const withDevice = require('../enhancers/with-device');
 
 class ItemsContainer extends React.PureComponent {
@@ -90,9 +92,18 @@ class ItemsContainer extends React.PureComponent {
 
 	async handleSort({ sortBy, sortDirection }) {
 		this.setState({ items: [] });
-		const { dispatch } = this.props;
-		sortDirection = sortDirection.toLowerCase(); // react-virtualised uses ASC/DESC, zotero asc/desc
-		await dispatch(sortItems(sortBy, sortDirection));
+		const { dispatch, preferences } = this.props;
+		dispatch(preferenceChange('columns', preferences.columns.map(column => {
+			if(column.field === sortBy) {
+				return { ...column, sort: sortDirection }
+			} else {
+				return omit(column, 'sort');
+			}
+		})));
+		await dispatch(sortItems(
+			sortBy, sortDirection.toLowerCase() // react-virtualised uses ASC/DESC, zotero asc/desc
+		));
+
 	}
 
 	async handleDrag({ itemKeys, targetType, collectionKey, libraryKey }) {
@@ -132,11 +143,13 @@ const mapStateToProps = state => {
 	const item = get(state, ['libraries', libraryKey, 'items', itemKey]);
 	const libraryTags = get(state, ['libraries', libraryKey, 'tags']);
 	const isMetaAvailable = !state.fetching.meta;
-	const { sortBy, sortDirection } = state.config;
 	const preferences = state.preferences;
 	const itemFields = state.meta.itemFields;
 	const itemTypes = state.meta.itemTypes;
 	const isReady = libraryKey && ((!collectionKey && itemFields) || collection !== null);
+	const { field: sortBy, sort: sortDirection } = preferences.columns.find(
+		column => 'sort' in column
+	) || defaultSort
 	var itemsData = {};
 
 	if(isMetaAvailable) {
