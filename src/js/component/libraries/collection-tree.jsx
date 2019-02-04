@@ -31,7 +31,17 @@ class CollectionTree extends React.PureComponent {
 	}
 
 	handleSelect(target, ev) {
-		if(isTriggerEvent(ev)) {
+		if('collection' in target && ev.type === 'keydown') {
+			const colKey = target.collection;
+			const hasSubCollections = target.collection in this.childMap;
+			const { opened } = this.state;
+
+			if(ev.key === "ArrowLeft") {
+				this.setState({ opened: opened.filter(k => k !== colKey) });
+			} else if(ev.key === "ArrowRight") {
+				this.setState({ opened: [...opened, colKey ] });
+			}
+		} else if(isTriggerEvent(ev)) {
 			const { onSelect, libraryKey } = this.props;
 			onSelect({ library: libraryKey, ...target });
 		}
