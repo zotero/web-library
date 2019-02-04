@@ -34,12 +34,43 @@ const dndCollect = (connect, monitor) => ({
 
 @DropTarget(ITEM, dndSpec, dndCollect)
 class Node extends React.PureComponent {
-
 	handleToggleInteraction(ev) {
 		ev && ev.stopPropagation();
 		if(isTriggerEvent(ev, true)) {
 			this.props.onOpen();
 		}
+	}
+
+	handleMouseLeave() {
+		clearTimeout(this.ongoingLongPress);
+	}
+
+	handleMouseUp() {
+		if(this.isLongPress && !this.isLongPressCompleted) {
+			clearTimeout(this.ongoingLongPress);
+			this.isLongPressCompleted = false;
+		}
+	}
+
+	handleMouseClick(ev) {
+		if(!this.isLongPressCompleted) {
+			this.props.onClick(ev);
+		}
+		this.isLongPress = false;
+		this.isLongPressCompleted = false;
+	}
+
+	handleMouseDown(ev) {
+		console.log('mousedown');
+		this.isLongPress = true;
+		this.isLongPressCompleted = false;
+		ev.persist();
+		this.ongoingLongPress = setTimeout(() => {
+			this.isLongPressCompleted = true;
+			ev.preventDefault();
+			console.log("onRename");
+			this.props.onRename(ev);
+		}, 500);
 	}
 
 	render() {
@@ -67,7 +98,7 @@ class Node extends React.PureComponent {
 		const isActive = canDrop && isOver;
 		const props = omit(this.props, ["canDrop", "children", "className",
 			"connectDropTarget", "dndTarget", "hideTwisty", "isOpen", "isOver",
-			"onOpen", "subtree"
+			"onOpen", "subtree", "onClick", "onRename"
 		]);
 
 		return connectDropTarget(
@@ -78,6 +109,10 @@ class Node extends React.PureComponent {
 					className={ cx('item-container', { 'dnd-target': isActive }) }
 					role="treeitem"
 					aria-expanded={ isOpen }
+					onMouseDown={ ev => this.handleMouseDown(ev) }
+					onMouseUp={ ev => this.handleMouseUp(ev) }
+					onMouseLeave={ ev => this.handleMouseLeave(ev) }
+					onClick={ ev => this.handleMouseClick(ev) }
 					{ ...props }
 				>
 					{ subtree && !hideTwisty ? twistyButton : null }

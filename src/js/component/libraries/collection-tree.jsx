@@ -56,14 +56,12 @@ class CollectionTree extends React.PureComponent {
 
 	handleRenameTrigger(collectionKey, ev) {
 		const { device, toggleModal } = this.props;
-		if(isTriggerEvent(ev)) {
-			ev.preventDefault();
+		ev.preventDefault();
 
-			if(device.isTouchOrSmall) {
-				toggleModal(COLLECTION_RENAME, true, { collectionKey });
-			} else {
-				this.setState({ renaming: collectionKey});
-			}
+		if(device.isTouchOrSmall) {
+			toggleModal(COLLECTION_RENAME, true, { collectionKey });
+		} else {
+			this.setState({ renaming: collectionKey});
 		}
 	}
 
@@ -284,6 +282,7 @@ class CollectionTree extends React.PureComponent {
 							onOpen={ () => this.handleOpenToggle(collection.key) }
 							onClick={ ev => this.handleSelect({ collection: collection.key }, ev) }
 							onKeyDown={ ev => this.handleSelect({ collection: collection.key }, ev) }
+							onRename={ ev => device.isTouchOrSmall ? noop() : this.handleRenameTrigger(collection.key, ev) }
 							label={ collection.name }
 							isOpen={ derivedData[collection.key].isOpen }
 							tabIndex={ shouldBeTabbable ? "0" : null }
@@ -319,8 +318,8 @@ class CollectionTree extends React.PureComponent {
 											tabIndex={ shouldBeTabbable ? "0" : "-1" }
 										>
 											<DropdownItem
-												onKeyDown={ ev => this.handleRenameTrigger(collection.key, ev) }
-												onClick={ ev => this.handleRenameTrigger(collection.key, ev) }
+												onKeyDown={ ev => isTriggerEvent(ev) && this.handleRenameTrigger(collection.key, ev) }
+												onClick={ ev => isTriggerEvent(ev) && this.handleRenameTrigger(collection.key, ev) }
 											>
 												Rename
 											</DropdownItem>
