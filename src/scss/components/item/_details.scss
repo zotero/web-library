@@ -48,26 +48,26 @@
 			display: block;
 			position: relative;
 		}
+
+		.btn-edit {
+			position: absolute;
+			right: 0;
+			top: 0;
+			height: calc(100% - #{$border-width});
+			background-color: transparent;
+			color: $link-color;
+			border: 0;
+
+			&:focus {
+				.keyboard & {
+					outline-offset: -$outline-width;
+				}
+			}
+		}
 	}
 
 	.toolbar {
 		margin: $space-min 0 ($space-md - 2px);
-	}
-
-	.btn-edit {
-		position: absolute;
-		right: 0;
-		top: 0;
-		height: calc(100% - #{$border-width});
-		background-color: transparent;
-		color: $link-color;
-		border: 0;
-
-		&:focus {
-			.keyboard & {
-				outline-offset: -$outline-width;
-			}
-		}
 	}
 
 	// Two column layout for md screens

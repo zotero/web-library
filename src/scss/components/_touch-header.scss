@@ -3,6 +3,7 @@
 // --------------------------------------------------
 
 .touch-header {
+	line-height: $line-height-base; // Reset for correct outline size
 	position: relative;
 
 	@include touch-or-bp-down(sm) {
@@ -108,9 +109,13 @@
 	// Edit button
 	.btn-edit {
 		position: absolute;
-		right: 0;
-		top: 0;
-		height: 100%;
+		right: $default-padding-x-touch;
+		top:
+		($line-height-large-touch
+		- $font-size-mobile
+		* $line-height-base)
+		/ 2;
+		height: $font-size-mobile * $line-height-base;
 
 		&:active {
 			color: $btn-options-focus-color;

@@ -29,7 +29,7 @@ class TouchHeader extends React.PureComponent {
 					shouldIncludeItemListOptions && <ItemsActionsContainer />
 				}
 				{ shouldIncludeEditButton && (
-					<EditToggleButton className="btn-default btn-edit" />
+					<EditToggleButton className="btn-link btn-edit" />
 				)}
 			</header>
 		)
