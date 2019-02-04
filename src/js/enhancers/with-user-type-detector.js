@@ -7,8 +7,10 @@ const withUserTypeDetection = Component => {
 	class EnhancedComponent extends React.PureComponent {
 		state = {
 			isKeyboardUser: null,
-			isMouseUser: null,
-			isTouchUser: null,
+			isMouseUser: typeof(matchMedia) === 'function'
+				? matchMedia('(pointer:fine)').matches : null,
+			isTouchUser: typeof(matchMedia) === 'function'
+				? matchMedia('(pointer:coarse)').matches : null,
 			userType: null
 		};
 
