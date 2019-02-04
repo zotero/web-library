@@ -61,14 +61,12 @@ class Node extends React.PureComponent {
 	}
 
 	handleMouseDown(ev) {
-		console.log('mousedown');
 		this.isLongPress = true;
 		this.isLongPressCompleted = false;
 		ev.persist();
 		this.ongoingLongPress = setTimeout(() => {
 			this.isLongPressCompleted = true;
 			ev.preventDefault();
-			console.log("onRename");
 			this.props.onRename(ev);
 		}, 500);
 	}
