@@ -53,7 +53,7 @@ class Node extends React.PureComponent {
 	}
 
 	handleMouseClick(ev) {
-		if(!this.isLongPressCompleted) {
+		if(!this.isLongPress || !this.isLongPressCompleted) {
 			this.props.onClick(ev);
 		}
 		this.isLongPress = false;
@@ -61,6 +61,11 @@ class Node extends React.PureComponent {
 	}
 
 	handleMouseDown(ev) {
+		if(!('onRename' in this.props)) {
+			this.isLongPress = false;
+			return;
+		}
+
 		this.isLongPress = true;
 		this.isLongPressCompleted = false;
 		ev.persist();
