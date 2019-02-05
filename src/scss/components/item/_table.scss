@@ -32,29 +32,13 @@
 }
 
 .items-table-body {
-	overflow-y: scroll;
-	-webkit-overflow-scrolling: touch; // Momentum scrolling
-	flex: 1 1 auto;
-	background-attachment: local;
-
-	.view-item-details-active & {
-		overflow: hidden; // Prevent scrolling in inactive state
-	}
-
-	// can't use this because of virtualisation
-	// @include bp-only(sm) {
-	// 	background-image: repeating-linear-gradient(to bottom, $item-odd-bg 0,
-	// 		$item-odd-bg $item-list-row-height-sm,
-	// 		transparent $item-list-row-height-sm,
-	// 		transparent (2 * $item-list-row-height-sm));
-	// }
-
-	// @include mouse-and-bp-up(md) {
-	// 	padding-top: 3px;
-	// 	background-image: repeating-linear-gradient(to bottom, $items-odd-bg 3px,
-	// 		$items-odd-bg ($item-list-row-height-md + 3px),
-	// 		transparent ($item-list-row-height-md + 3px),
-	// 		transparent (2 * $item-list-row-height-md + 3px));
+	// overflow-y: scroll;
+	// -webkit-overflow-scrolling: touch; // Momentum scrolling
+	// flex: 1 1 auto;
+	// background-attachment: local;
+	//
+	// .view-item-details-active & {
+	// 	overflow: hidden; // Prevent scrolling in inactive state
 	// }
 }
 
@@ -63,6 +47,15 @@
 		// display: table;
 		// table-layout: fixed;
 		width: 100%;
+	}
+
+	.ReactVirtualized__Table__Grid {
+		padding-top: $space-min;
+	 	background-image: repeating-linear-gradient(to bottom, $items-odd-bg $space-min,
+	 		$items-odd-bg ($item-table-row-height + $space-min),
+	 		transparent ($item-table-row-height + $space-min),
+	 		transparent (2 * $item-table-row-height + $space-min));
+	 	background-attachment: local;
 	}
 
 	.reorder-target {
@@ -110,14 +103,6 @@
 
 		@include mouse-and-bp-up(md) {
 			// display: table-row;
-		}
-
-		&.odd { // can't use nth-child(odd) because of virtualisation
-			background: $item-odd-bg;
-
-			// @include bp-up(sm) {
-			// 	background: inherit;
-			// }
 		}
 
 		&.active {
