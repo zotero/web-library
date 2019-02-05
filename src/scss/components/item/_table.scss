@@ -144,7 +144,7 @@
 
 		@include mouse-and-bp-up(md) {
 			// display: table-cell;
-			height: $item-list-row-height-md;
+			height: $item-table-row-height;
 			vertical-align: middle;
 			padding: 0 $space-xs 0 ($space-xs + 1px);
 			@include text-truncate;

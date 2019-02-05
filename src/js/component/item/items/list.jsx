@@ -87,14 +87,16 @@ class ItemsList extends React.PureComponent {
 						checked={ active }
 					/>
 				)}
-					<div>
+					<div className="metadata title">
 						{ item.title }
 					</div>
-					<div>
-						{ item.creator}
-					</div>
-					<div>
-						{ item.date }
+					<div className="metadata creator-year">
+						<div className="creator">
+							{ item.creator}
+						</div>
+						<div className="year">
+							{ item.year }
+						</div>
 					</div>
 			</div>
 		);
@@ -127,7 +129,7 @@ class ItemsList extends React.PureComponent {
 									onRowsRendered={ onRowsRendered }
 									ref={ registerChild }
 									rowCount={ totalItemsCount }
-									rowHeight={ 88 }
+									rowHeight={ 68 }
 									width={ width }
 									rowRenderer={ this.renderRow.bind(this) }
 								/>

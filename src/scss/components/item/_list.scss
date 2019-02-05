@@ -28,23 +28,73 @@
 }
 
 .items-list {
-	.item {
-		// items in the list are fixed at 42px height
-		padding: $space-xs;
-		@include text-truncate;
+	.ReactVirtualized__Grid__innerScrollContainer {
+		background-image:
+			repeating-linear-gradient(
+				to bottom,
+				$item-odd-bg 0,
+				$item-odd-bg $item-list-row-height,
+				transparent $item-list-row-height,
+				transparent (2 * $item-list-row-height)
+			);
+	}
 
-		&.odd { // can't use nth-child(odd) because of virtualisation
-			background: $item-odd-bg;
-		}
+	.item {
+		// Items in the list are fixed at 68px height
+		padding: $item-padding-y-touch $item-padding-x-touch;
 
 		&.active {
 			color: $item-active-color;
 			background: $item-active-bg;
 		}
+	}
 
-		.checkbox {
-			pointer-events: none; // these are purely decorative
-			margin-right: $space-sm;
+	.metadata {
+		@include text-truncate;
+	}
+
+	.creator-year {
+		display: flex;
+		color: $item-creator-date-color;
+
+		.creator,
+		.year {
+			@include text-truncate;
+		}
+
+		.creator {
+			flex: 0 1 auto;
+		}
+
+		.year {
+			flex: 0 0 auto;
+
+			&:not(:empty) {
+				&::before {
+					content: "(";
+					white-space: pre;
+				}
+
+				&::after {
+					content: ")";
+				}
+			}
+		}
+
+		.creator:not(:empty) + .year:not(:empty) {
+			&::before {
+				content: " (";
+				white-space: pre;
+			}
 		}
 	}
 }
+
+//.items-list {
+//	.item {
+//		.checkbox {
+//			pointer-events: none; // these are purely decorative
+//			margin-right: $space-sm;
+//		}
+//	}
+//}
