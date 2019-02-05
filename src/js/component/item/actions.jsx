@@ -218,7 +218,7 @@ class ItemsActions extends React.PureComponent {
 				>
 					<Icon type="24/options" width="24" height="24" />
 				</DropdownToggle>
-				<DropdownMenu>
+				<DropdownMenu right>
 					<DropdownItem
 						onClick={ ev => this.handleSelectModeToggle(ev) }
 						onKeyDown={ ev => this.handleSelectModeToggle(ev) }
