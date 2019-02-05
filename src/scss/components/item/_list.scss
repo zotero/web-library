@@ -28,16 +28,15 @@
 }
 
 .items-list {
-	.ReactVirtualized__Grid__innerScrollContainer {
-		background-image:
-			repeating-linear-gradient(
-				to bottom,
-				$item-odd-bg 0,
-				$item-odd-bg $item-list-row-height,
-				transparent $item-list-row-height,
-				transparent (2 * $item-list-row-height)
-			);
-	}
+	background-image:
+		repeating-linear-gradient(
+			to bottom,
+			$item-odd-bg 0,
+			$item-odd-bg $item-list-row-height,
+			transparent $item-list-row-height,
+			transparent (2 * $item-list-row-height)
+		);
+	background-attachment: local;
 
 	.item {
 		// Items in the list are fixed at 68px height
