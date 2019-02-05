@@ -87,7 +87,15 @@ class ItemsList extends React.PureComponent {
 						checked={ active }
 					/>
 				)}
-				{ item.title }
+					<div>
+						{ item.title }
+					</div>
+					<div>
+						{ item.creator}
+					</div>
+					<div>
+						{ item.date }
+					</div>
 			</div>
 		);
 	}
@@ -119,7 +127,7 @@ class ItemsList extends React.PureComponent {
 									onRowsRendered={ onRowsRendered }
 									ref={ registerChild }
 									rowCount={ totalItemsCount }
-									rowHeight={ 42 }
+									rowHeight={ 88 }
 									width={ width }
 									rowRenderer={ this.renderRow.bind(this) }
 								/>
