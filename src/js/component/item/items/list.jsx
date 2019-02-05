@@ -3,6 +3,8 @@
 const React = require('react');
 const PropTypes = require('prop-types');
 const cx = require('classnames');
+const Icon = require('../../ui/icon');
+
 
 const { default: AutoSizer } = require('react-virtualized/dist/commonjs/AutoSizer');
 const { default: InfiniteLoader } = require('react-virtualized/dist/commonjs/InfiniteLoader');
@@ -98,6 +100,7 @@ class ItemsList extends React.PureComponent {
 							{ item.year }
 						</div>
 					</div>
+					<Icon type={ '16/chevron-13' } width="16" height="16" />
 			</div>
 		);
 	}

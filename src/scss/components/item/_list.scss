@@ -41,50 +41,69 @@
 
 	.item {
 		// Items in the list are fixed at 68px height
-		padding: $item-padding-y-touch $item-padding-x-touch;
+		padding: $item-list-padding-y $item-list-padding-x;
+		padding-right: $item-list-padding-right;
 
 		&.active {
 			color: $item-active-color;
 			background: $item-active-bg;
 		}
-	}
 
-	.metadata {
-		@include text-truncate;
-	}
-
-	.creator-year {
-		display: flex;
-		color: $item-creator-date-color;
-
-		.creator,
-		.year {
+		.metadata {
 			@include text-truncate;
+			position: relative;
 		}
 
-		.creator {
-			flex: 0 1 auto;
-		}
+		.creator-year {
+			display: flex;
+			color: $item-creator-date-color;
 
-		.year {
-			flex: 0 0 auto;
+			@include state(".item.active") {
+				color: $item-active-color;
+				opacity: 0.67;
+			}
 
-			&:not(:empty) {
-				&::before {
-					content: "(";
-					white-space: pre;
+			.creator,
+			.year {
+				@include text-truncate;
+			}
+
+			.creator {
+				flex: 0 1 auto;
+			}
+
+			.year {
+				flex: 0 0 auto;
+
+				&:not(:empty) {
+					&::before {
+						content: "(";
+						white-space: pre;
+					}
+
+					&::after {
+						content: ")";
+					}
 				}
+			}
 
-				&::after {
-					content: ")";
+			.creator:not(:empty) + .year:not(:empty) {
+				&::before {
+					content: " (";
+					white-space: pre;
 				}
 			}
 		}
 
-		.creator:not(:empty) + .year:not(:empty) {
-			&::before {
-				content: " (";
-				white-space: pre;
+		.icon-chevron-13 {
+			position: absolute;
+			right: 12px;
+			top: ($item-list-row-height - $space-md) / 2;
+			transform: rotate(90deg);
+			color: $item-list-chevron-color;
+
+			@include state(".item.active") {
+				color: $item-active-color;
 			}
 		}
 	}

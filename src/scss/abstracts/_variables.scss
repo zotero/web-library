@@ -156,8 +156,9 @@ $collection-tree-max-levels:       10;
 
 $item-list-row-height:  68px;
 $item-list-head-height: $space-lg; // 26px (content-box)
-$item-padding-y-touch:  ($space-md - 6px);
-$item-padding-x-touch:  $default-padding-x-touch;
+$item-list-padding-y:        ($space-md - 6px);
+$item-list-padding-x:        $default-padding-x-touch;
+$item-list-padding-right:    39px;
 
 $item-table-row-height: $line-height-large;
 
