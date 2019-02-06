@@ -54,7 +54,7 @@ class Abstract extends React.PureComponent {
 		const aggregatedPatch = pendingChanges.reduce(
 			(aggr, { patch }) => ({...aggr, ...patch}), {}
 		);
-		const itemWithPendingChnages = { ...item, ...aggregatedPatch};
+		const itemWithPendingChanges = { ...item, ...aggregatedPatch};
 
 		return (
 			<TextAreaInput
@@ -66,7 +66,7 @@ class Abstract extends React.PureComponent {
 				resize='vertical'
 				selectOnFocus={ !isForm }
 				tabIndex={ isForm ? 0 : null }
-				value={ itemWithPendingChnages.abstractNote }
+				value={ itemWithPendingChanges.abstractNote || '' }
 				className={ cx({
 					'form-control': isForm,
 					'form-control-sm': isForm,
