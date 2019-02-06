@@ -119,6 +119,24 @@
 		vertical-align: middle;
 	}
 
+	.placeholder-icon {
+		display: block;
+		height: 12px;
+		width: 12px;
+		display: inline-block;
+		margin-right: $space-xs;
+		vertical-align: middle;
+		background: blue;
+	}
+
+	.placeholder {
+		display: block;
+		height: 12px;
+		width: 100px;
+		background: lightgray;
+		display: inline-block;
+	}
+
 	.metadata {
 		&.title {
 			.icon {

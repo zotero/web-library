@@ -235,10 +235,11 @@ class ItemsTable extends React.PureComponent {
 			return this.props.items[index];
 		} else {
 			return {
-				title: '...',
-				creator: '...',
-				date: '...',
+				title: '',
+				creator: '',
+				date: '',
 				coloredTags: [],
+				isPlaceholder: true
 			}
 		}
 	}
@@ -372,11 +373,20 @@ class ItemsTable extends React.PureComponent {
 	}
 
 	renderTitleCell({ cellData, rowData }) {
-		let icon = rowData.itemType ?
+		if(rowData.isPlaceholder) {
+			return (
+				<React.Fragment>
+					<div className="placeholder-icon" />
+					<div className="placeholder" />
+				</React.Fragment>
+			);
+		}
+
+		const icon = rowData.itemType ?
 			<Icon type={ `16/item-types/${paramCase(rowData.itemType)}` } width="16" height="16" /> :
 			<Icon type={ `16/item-types/document` } width="16" height="16" />;
 
-		let coloredSquares = rowData.coloredTags.map(tag => (
+		const coloredSquares = rowData.coloredTags.map(tag => (
 			<div
 				key={ tag.tag }
 				className="colored-square"
@@ -390,6 +400,18 @@ class ItemsTable extends React.PureComponent {
 				{ String(cellData) }
 			</React.Fragment>
 		);
+	}
+
+	renderCell(dataKey, { cellData, rowData }) {
+		if(dataKey === 'title') {
+			return this.renderTitleCell({ cellData, rowData });
+		}
+
+		if(rowData.isPlaceholder) {
+			return <div className="placeholder" />;
+		}
+
+		return String(cellData);
 	}
 
 	renderHeaderCell({ dataKey, label, sortBy, sortDirection }) {
@@ -427,8 +449,7 @@ class ItemsTable extends React.PureComponent {
 		const key = dataKey;
 		const label = dataKey in this.props.columnNames ?
 			this.props.columnNames[dataKey] : dataKey;
-		const cellRenderer = dataKey === 'title' ?
-			this.renderTitleCell.bind(this) : undefined;
+		const cellRenderer = this.renderCell.bind(this, dataKey);
 		const className = ['metadata', dataKey].join(' ');
 
 		return <Column
