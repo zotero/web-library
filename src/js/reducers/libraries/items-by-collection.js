@@ -14,6 +14,7 @@ const {
 	RECEIVE_RECOVER_ITEMS_TRASH,
 	RECEIVE_REMOVE_ITEMS_FROM_COLLECTION,
 	SORT_ITEMS,
+	RECEIVE_COLLECTIONS_IN_LIBRARY
 } = require('../../constants/actions.js');
 
 const itemsByCollection = (state = {}, action) => {
@@ -99,6 +100,17 @@ const itemsByCollection = (state = {}, action) => {
 					action.items.map(item => item.key),
 					action
 				)
+			};
+			case RECEIVE_COLLECTIONS_IN_LIBRARY:
+		return {
+				...state,
+				...(action.response.getData().reduce((aggr, collection, index) => {
+					aggr[collection.key] = {
+						...(state[action.collectionKey] || {}),
+						totalResults: action.response.getMeta()[index].numItems
+					}
+					return aggr;
+				}, {}))
 			};
 		case SORT_ITEMS:
 			return Object.entries(state).reduce((aggr, [collectionKey, itemKeys]) => {
