@@ -15,7 +15,7 @@ class TagList extends React.PureComponent {
 		const totalHeight = this.listRef.getBoundingClientRect().height;
 		const scrollProgress = (this.containerRef.scrollTop + containerHeight) / totalHeight;
 
-		if(scrollProgress > 0.9 && !isFetching && totalTagCount > sourceTags.length) {
+		if(scrollProgress > 0.5 && !isFetching && totalTagCount > sourceTags.length) {
 			onLoadMore(sourceTags.length, PAGE_SIZE);
 		}
 	}
