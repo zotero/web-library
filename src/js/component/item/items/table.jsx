@@ -411,7 +411,9 @@ class ItemsTable extends React.PureComponent {
 			return <div className="placeholder" />;
 		}
 
-		return String(cellData);
+		return String(
+			(typeof(cellData) === 'undefined' || cellData === null) ? '' : cellData
+		);
 	}
 
 	renderHeaderCell({ dataKey, label, sortBy, sortDirection }) {
