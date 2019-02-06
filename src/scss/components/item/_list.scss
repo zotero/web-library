@@ -50,14 +50,28 @@
 
 		&.placeholder {
 			.metadata {
-				display: block;
 				height: 12px;
-				width: 100px;
-				background: lightgray;
+				border-radius: 6px;
+				background-color: $item-placeholder-color;
+			}
+
+			.title {
+				width: 80%;
+				margin-top: 6px;
+				background-color: $title-placeholder-color;
+
+				@include variant(".item.odd") {
+					width: 90%;
+				}
 			}
 
 			.creator-year {
-				background: gainsboro;
+				width: 60%;
+				margin-top: 12px;
+
+				@include variant(".item.odd") {
+					width: 70%;
+				}
 			}
 		}
 
