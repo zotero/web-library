@@ -18,7 +18,9 @@ const injectExtraItemKeys = (state, newKeys, items) => {
 	if(!Array.isArray(newKeys)) { newKeys = [newKeys]; }
 	if(!('totalResults' in state && 'keys' in state
 		&& 'sortBy' in state && 'sortDirection' in state)) {
-		return state;
+		// we don't know enough about target collection to make changes
+		// clear what we know and exit
+		return {};
 	}
 	const keys = [...state.keys];
 	var hasHoles = false;
