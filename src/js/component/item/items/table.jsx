@@ -256,6 +256,8 @@ class ItemsTable extends React.PureComponent {
 			className: otherClassName,
 			item: true,
 			odd: (index + 1) % 2 === 1,
+			'nth-3': (index + 1) % 3 === 0,
+			'nth-4': (index + 1) % 4 === 0,
 			active: items[index] && selectedItemKeys.includes(items[index].key)
 		});
 
