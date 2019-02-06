@@ -109,6 +109,50 @@
 			color: $item-active-color;
 			background: $item-active-bg;
 		}
+
+		.placeholder-icon {
+			width: $space-md;
+			height: $space-md;
+			margin-right: $space-xs;
+			background: $item-placeholder-icon-color;
+			border-radius: 4.5px;
+		}
+
+		.placeholder {
+			margin-top: 1px;
+			height: 9px;
+			width: 70%;
+			background: $item-placeholder-color;
+			border-radius: 4.5px;
+
+			@include variant(".metadata:nth-child(even) .placeholder") {
+				width: 80%;
+			}
+
+			@include variant(".item.odd") {
+				width: 90%;
+
+				@include variant(".metadata:nth-child(even) .placeholder") {
+					width: 70%;
+				}
+			}
+
+			@include variant(".item.nth-4n-1") {
+				width: 80%;
+
+				@include variant(".metadata:nth-child(even) .placeholder") {
+					width: 60%;
+				}
+			}
+
+			@include variant(".item.nth-4n") {
+				width: 60%;
+
+				@include variant(".metadata:nth-child(even) .placeholder") {
+					width: 90%;
+				}
+			}
+		}
 	}
 
 	.colored-square {
@@ -119,29 +163,14 @@
 		vertical-align: middle;
 	}
 
-	.placeholder-icon {
-		display: block;
-		height: 12px;
-		width: 12px;
-		display: inline-block;
-		margin-right: $space-xs;
-		vertical-align: middle;
-		background: blue;
-	}
-
-	.placeholder {
-		display: block;
-		height: 12px;
-		width: 100px;
-		background: lightgray;
-		display: inline-block;
-	}
-
 	.metadata {
+		display: flex;
+		align-items: center;
+
 		&.title {
 			.icon {
+				flex: 0 0 auto;
 				margin-right: $space-xs;
-				vertical-align: middle;
 			}
 		}
 
