@@ -46,7 +46,7 @@ class ItemsActions extends React.PureComponent {
 				onClick={ onDelete }
 				onKeyDown={ ev => isTriggerEvent(ev) && onDelete(ev) }
 			>
-				Delete { selectedItemKeys.length > 1 ? 'Items' : 'Item' }
+				Move { selectedItemKeys.length > 1 ? 'Items' : 'Item' } to Trash
 			</DropdownItem>
 		) : null;
 	}
@@ -124,8 +124,8 @@ class ItemsActions extends React.PureComponent {
 	}
 
 	renderNewItem() {
-		const { selectedItemKeys, itemsSource } = this.props;
-		return (itemsSource === 'top' || itemsSource === 'collection') && selectedItemKeys.length === 0 ? (
+		const { itemsSource } = this.props;
+		return (itemsSource === 'top' || itemsSource === 'collection') ? (
 				<DropdownItem
 					onClick={ () => this.handleNewItemModalOpen() }
 					onKeyDown={ ev => isTriggerEvent(ev) && this.handleNewItemModalOpen() }
