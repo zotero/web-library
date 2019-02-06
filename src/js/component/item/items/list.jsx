@@ -31,10 +31,11 @@ class ItemsList extends React.PureComponent {
 			return this.props.items[index];
 		} else {
 			return {
-				title: '...',
-				creator: '...',
-				date: '...',
+				title: '',
+				creator: '',
+				date: '',
 				coloredTags: [],
+				isPlaceholder: true
 			}
 		}
 	}
@@ -74,7 +75,7 @@ class ItemsList extends React.PureComponent {
 			active,
 			item: true,
 			odd: (index + 1) % 2 === 1,
-			placeholder: !isLoaded
+			placeholder: item.isPlaceholder
 		});
 		return (
 			<div

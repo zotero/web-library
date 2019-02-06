@@ -48,6 +48,19 @@
 			background: $item-active-bg;
 		}
 
+		&.placeholder {
+			.metadata {
+				display: block;
+				height: 12px;
+				width: 100px;
+				background: lightgray;
+			}
+
+			.creator-year {
+				background: gainsboro;
+			}
+		}
+
 		.metadata {
 			@include text-truncate;
 			position: relative;
