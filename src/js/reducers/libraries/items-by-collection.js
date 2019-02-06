@@ -106,7 +106,7 @@ const itemsByCollection = (state = {}, action) => {
 				...state,
 				...(action.response.getData().reduce((aggr, collection, index) => {
 					aggr[collection.key] = {
-						...(state[action.collectionKey] || {}),
+						...(state[collection.key] || {}),
 						totalResults: action.response.getMeta()[index].numItems
 					}
 					return aggr;
