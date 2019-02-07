@@ -7,6 +7,9 @@ const ItemsTableToolbar = require('./items/toolbar');
 const ItemsTable = require('./items/table');
 const ItemsList = require('./items/list');
 const TouchHeaderContainer = require('../../container/touch-header');
+const { Toolbar } = require('../ui/toolbars');
+const Button = require('../ui/button');
+const Icon = require('../ui/icon');
 
 class Items extends React.PureComponent {
 	state = {};
@@ -37,6 +40,17 @@ class Items extends React.PureComponent {
 						variant={ TouchHeaderContainer.variants.SOURCE }
 					/>
 					<ItemsList { ...this.props } { ...this.state } />
+					<footer className="touch-footer">
+						<Toolbar>
+							<div className="toolbar-justified">
+								<div className="tool-group">
+									<Button>
+										<Icon type={ '32/add-to-collection' } width="32" height="32" />
+									</Button>
+								</div>
+							</div>
+						</Toolbar>
+					</footer>
 				</div>
 			);
 		} else {
