@@ -41,11 +41,27 @@
 	.item {
 		// Items in the list are fixed at 68px height
 		padding: $item-list-padding-y $item-list-padding-x;
-		padding-right: $item-list-padding-right;
+		position: relative;
 
-		&.active {
-			color: $item-active-color;
-			background: $item-active-bg;
+		@include state(".items-list:not(.editing)") {
+			padding-right: $item-list-padding-right;
+
+			&.active {
+				color: $item-active-color;
+				background: $item-active-bg;
+			}
+		}
+
+		@include state(".items-list.editing") {
+			padding-left: 56px;
+			padding-right: $item-list-padding-x;
+		}
+
+		input[type="checkbox"] {
+			position: absolute;
+			left: $item-list-padding-x;
+			top: ($item-list-row-height - $space-lg) / 2;
+			pointer-events: none; // These are purely decorative
 		}
 
 		&.placeholder {
@@ -84,7 +100,7 @@
 			display: flex;
 			color: $item-creator-date-color;
 
-			@include state(".item.active") {
+			@include state(".items-list:not(.editing) .item.active") {
 				color: $item-active-color;
 				opacity: 0.67;
 			}
@@ -131,15 +147,10 @@
 			@include state(".item.active") {
 				color: $item-active-color;
 			}
+
+			@include state(".items-list.editing") {
+				display: none;
+			}
 		}
 	}
 }
-
-//.items-list {
-//	.item {
-//		.checkbox {
-//			pointer-events: none; // these are purely decorative
-//			margin-right: $space-sm;
-//		}
-//	}
-//}

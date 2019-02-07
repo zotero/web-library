@@ -84,7 +84,6 @@ class ItemsList extends React.PureComponent {
 				>
 				{ isSelectMode && isLoaded && (
 					<input
-						className="checkbox"
 						type="checkbox"
 						readOnly
 						checked={ active }
