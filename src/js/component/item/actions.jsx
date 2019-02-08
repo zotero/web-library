@@ -14,7 +14,8 @@ const Icon = require('../ui/icon');
 const NewItemSelector = require('./actions/new-item');
 const ExportActions = require('./actions/export');
 const { isTriggerEvent } = require('../../common/event');
-const { BIBLIOGRAPHY, COLLECTION_SELECT, NEW_ITEM } = require('../../constants/modals');
+const { BIBLIOGRAPHY, COLLECTION_SELECT, EXPORT,
+	NEW_ITEM } = require('../../constants/modals');
 
 class ItemsActions extends React.PureComponent {
 	handleSelectModeToggle(ev) {
@@ -32,6 +33,11 @@ class ItemsActions extends React.PureComponent {
 	handleBibliographyOpen() {
 		const { toggleModal } = this.props;
 		toggleModal(BIBLIOGRAPHY, true);
+	}
+
+	handleExportModalOpen() {
+		const { toggleModal } = this.props;
+		toggleModal(EXPORT, true);
 	}
 
 	handleNewItemModalOpen() {
@@ -135,6 +141,30 @@ class ItemsActions extends React.PureComponent {
 			) : null;
 	}
 
+	renderExport() {
+		const { itemsSource } = this.props;
+		return (itemsSource === 'top' || itemsSource === 'collection') ? (
+				<DropdownItem
+					onClick={ () => this.handleExportModalOpen() }
+					onKeyDown={ ev => isTriggerEvent(ev) && this.handleExportModalOpen() }
+				>
+					Export
+				</DropdownItem>
+			) : null;
+	}
+
+	renderBibliography() {
+		const { itemsSource } = this.props;
+		return (itemsSource === 'top' || itemsSource === 'collection') ? (
+				<DropdownItem
+					onClick={ () => this.handleBibliographyOpen() }
+					onKeyDown={ ev => isTriggerEvent(ev) && this.handleBibliographyOpen() }
+				>
+					Bibliography
+				</DropdownItem>
+			) : null;
+	}
+
 	get hasExtraItemOptions() {
 		const { selectedItemKeys, itemsSource } = this.props;
 		return (selectedItemKeys.length === 1 && itemsSource !== 'trash') || (
@@ -208,8 +238,7 @@ class ItemsActions extends React.PureComponent {
 	}
 
 	renderTouch() {
-		const { isSelectMode, onExportModalOpen,
-			onBibliographyOpen } = this.props;
+		const { isSelectMode } = this.props;
 		return (
 			<UncontrolledDropdown className="dropdown-wrapper">
 				<DropdownToggle
@@ -234,18 +263,8 @@ class ItemsActions extends React.PureComponent {
 						{ this.renderDelete() }
 						{ this.renderDuplicateItem() }
 						{ this.renderShowInLibrary() }
-					<DropdownItem
-						onClick={ onExportModalOpen }
-						onKeyDown={ ev => isTriggerEvent(ev) && onExportModalOpen(ev) }
-					>
-						Export
-					</DropdownItem>
-					<DropdownItem
-						onClick={ onBibliographyOpen }
-						onKeyDown={ ev => isTriggerEvent(ev) && onBibliographyOpen(ev) }
-					>
-						Bibliography
-					</DropdownItem>
+						{ this.renderExport() }
+						{ this.renderBibliography() }
 				</DropdownMenu>
 			</UncontrolledDropdown>
 		);

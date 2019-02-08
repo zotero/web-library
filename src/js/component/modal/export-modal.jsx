@@ -2,19 +2,21 @@
 
 const React = require('react');
 const PropTypes = require('prop-types');
+const { saveAs } = require('file-saver');
 
-const { isTriggerEvent } = require('../../common/event');
-const { makePath } = require('../../common/navigation');
 const Modal = require('../ui/modal');
 const Button = require('../ui/button');
 const Select = require('../form/select');
 const Spinner = require('../ui/spinner');
+const exportFormats = require('../../constants/export-formats');
+const { isTriggerEvent } = require('../../common/event');
+
 const defaultState = {
 	isBusy: false,
-	itemType: 'book'
+	format: exportFormats[0].key
 };
 
-class CollectionAddModal extends React.PureComponent {
+class ExportModal extends React.PureComponent {
 	state = defaultState;
 
 	componentDidUpdate({ isOpen: wasOpen }) {
@@ -24,47 +26,36 @@ class CollectionAddModal extends React.PureComponent {
 		}
 	}
 
-	async handleNewItemCreate(ev) {
-		const { createItem, fetchItemTemplate, toggleModal, push,
-			collection: { key: collection } = {} , libraryKey: library, itemsSource,
-			tags, search } = this.props;
-		const { itemType } = this.state;
-
-		if(isTriggerEvent(ev)) {
-			this.setState({ isBusy: true });
-			const template = await fetchItemTemplate(itemType);
-			const newItem = {
-				...template,
-				collections: itemsSource === 'collection' ? [collection] : []
-			};
-			const item = await createItem(newItem, library);
-
-			const trash = itemsSource === 'trash';
-			const publications = itemsSource === 'publications';
-			const view = 'item-list';
-			this.setState({ isBusy: false });
-			toggleModal(null, false);
-			push(makePath({
-				library, search, tags, trash, publications, collection,
-				items: [item.key], view
-			}));
+	handleSelect(format, hasChanged) {
+		if(hasChanged) {
+			this.setState({ format });
 		}
 	}
 
-	handleSelect(itemType, hasChanged) {
-		if(hasChanged) {
-			this.setState({ itemType });
+	async handleExport(ev) {
+		const { exportItems, itemKeys, toggleModal } = this.props;
+		const { format } = this.state;
+		const fileName = ['export-data', exportFormats.find(f => f.key === format).extension]
+			.filter(Boolean).join('.');
+
+		if(isTriggerEvent(ev)) {
+			this.setState({ isBusy: true });
+			const exportData = await exportItems(itemKeys, format);
+			saveAs(exportData, fileName);
+			this.setState({ isBusy: false });
+			toggleModal(null, false);
 		}
 	}
 
 	render() {
-		const { isOpen, toggleModal, itemTypes, collection } = this.props;
+		const { isOpen, toggleModal, itemKeys } = this.props;
 		const { isBusy } = this.state;
-		const inputId = 'collection-add-modal-input';
+		const inputId = 'collection-export-modal-input';
+
 		return (
 			<Modal
 				isOpen={ isOpen }
-				contentLabel="Create a New Item"
+				contentLabel="Export Items"
 				className="modal-touch modal-centered"
 				onRequestClose={ () => toggleModal(null, false) }
 				closeTimeoutMS={ 200 }
@@ -82,20 +73,16 @@ class CollectionAddModal extends React.PureComponent {
 						</div>
 						<div className="modal-header-center">
 							<h4 className="modal-title truncate">
-								{
-									collection ?
-										`Create a New Item in ${collection.name}` :
-										'Create a New Item'
-								}
+								Export { itemKeys.length > 1 ? 'Items' : 'Item' }
 							</h4>
 						</div>
 						<div className="modal-header-right">
 							<Button
 								className="btn-link"
-								onKeyDown={ ev => this.handleNewItemCreate(ev) }
-								onClick={ ev => this.handleNewItemCreate(ev) }
+								onKeyDown={ ev => this.handleExport(ev) }
+								onClick={ ev => this.handleExport(ev) }
 							>
-								Create
+								Export
 							</Button>
 						</div>
 					</div>
@@ -104,17 +91,17 @@ class CollectionAddModal extends React.PureComponent {
 							<div className="form">
 								<div className="form-group">
 									<label htmlFor={ inputId }>
-										Item Type
+										Export Format
 									</label>
 									<Select
 										id={ inputId }
 										className="form-control form-control-sm"
 										onChange={ () => true }
 										onCommit={ (...args) => this.handleSelect(...args) }
-										options={ itemTypes.map(({ itemType, localized }) => (
-											{ value: itemType, label: localized }
+										options={ exportFormats.map(({ key, label }) => (
+											{ value: key, label }
 										)) }
-										value={ this.state.itemType }
+										value={ this.state.format }
 										searchable={ true }
 									/>
 								</div>
@@ -127,19 +114,14 @@ class CollectionAddModal extends React.PureComponent {
 	}
 
 	static propTypes = {
-		createItem: PropTypes.func.isRequired,
-		fetchItemTemplate: PropTypes.func.isRequired,
 		isOpen: PropTypes.bool,
-		itemTypes: PropTypes.array,
-		libraryKey: PropTypes.string,
-		collection: PropTypes.object,
-		push: PropTypes.func.isRequired,
+		itemKeys: PropTypes.array,
 		toggleModal: PropTypes.func.isRequired,
 	}
 
 	static defaultProps = {
-		itemTypes: [],
+		itemKeys: [],
 	}
 }
 
-module.exports = CollectionAddModal;
+module.exports = ExportModal;

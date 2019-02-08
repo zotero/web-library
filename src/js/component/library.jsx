@@ -20,6 +20,7 @@ const CollectionRenameModalContainer = require('../container/collection-rename-m
 const CollectionAddModalContainer = require('../container/collection-add-modal');
 const CollectionSelectModal = require('../container/collection-select-modal');
 const NewItemModalContainer = require('../container/new-item-modal');
+const ExportModalContainer = require('../container/export-modal');
 const withDevice = require('../enhancers/with-device');
 
 class Library extends React.PureComponent {
@@ -123,6 +124,7 @@ class Library extends React.PureComponent {
 				<CollectionAddModalContainer />
 				<CollectionSelectModal />
 				<NewItemModalContainer />
+				<ExportModalContainer />
 			</div>
 		);
 	}

@@ -12,7 +12,6 @@ const { removeKeys } = require('../common/immutable');
 const ItemsActions = require('../component/item/actions');
 const withSelectMode = require('../enhancers/with-select-mode');
 const withDevice = require('../enhancers/with-device');
-const { BIBLIOGRAPHY, COLLECTION_SELECT } = require('../constants/modals');
 
 const {
 	createItem,
