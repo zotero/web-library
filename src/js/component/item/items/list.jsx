@@ -110,7 +110,7 @@ class ItemsList extends React.PureComponent {
 			return null;
 		}
 
-		const { totalItemsCount } = this.props;
+		const { totalItemsCount, isSelectMode } = this.props;
 
 		return (
 			<div
@@ -127,7 +127,7 @@ class ItemsList extends React.PureComponent {
 							{({onRowsRendered, registerChild}) => (
 								<List
 									{ ...this.props }
-									className="items-list"
+									className={ cx('items-list', { 'editing': isSelectMode }) }
 									height={ height }
 									onRowsRendered={ onRowsRendered }
 									ref={ registerChild }
