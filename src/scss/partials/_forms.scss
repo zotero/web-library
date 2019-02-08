@@ -220,7 +220,7 @@ input[type="checkbox"] {
 		width: $space-lg;
 		height: $space-lg;
 		border-radius: $space-lg / 2;
-		background: $input-bg;
+		background-color: transparent;
 		border: $input-border-width solid $checkbox-border-touch;
 
 		&:checked {
