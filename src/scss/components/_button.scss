@@ -94,21 +94,11 @@
 
 	.icon {
 		vertical-align: top;
-
-		&[width="20"] {
-			margin: -2px;
-		}
 	}
 
 	&:active {
 		.icon {
 			color: $icon-active-color;
-		}
-	}
-
-	&:focus {
-		@include mouse-keyboard-and-bp-up(md) {
-			box-shadow: inset 0 0 0 $input-btn-focus-width $btn-secondary-color;
 		}
 	}
 

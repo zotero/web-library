@@ -109,7 +109,7 @@ $collection-tree-dnd-target-icon-color:   $shade-0;
 $items-bg:                    $shade-0;
 $items-odd-bg:                $shade-1;
 $item-list-head-color:        $shade-8;
-$item-list-head-border:       $shade-2;
+$item-list-head-border:       $shade-1;
 $item-placeholder-color:      $shade-2;
 $item-placeholder-icon-color: mix($blue, $body-bg, 14%);
 
@@ -178,6 +178,9 @@ $touch-header-link-color: $blue;
 $btn-options-color:       $secondary;
 $btn-options-bg:          $transparent;
 $btn-options-focus-color: rgba($btn-options-color, 0.5);
+
+// Touch footer
+$touch-footer-shadow: $shade-1;
 
 // Editable
 $editable-color:        $text-color;

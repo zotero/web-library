@@ -6,14 +6,23 @@
 	display: flex;
 	justify-content: space-between;
 	align-items: stretch;
-	height: $toolbar-height;
 	flex: 0 0 auto;
-	padding: 0 $default-padding-x;
-	margin-bottom: $space-min;
+
+	@include touch-or-bp-down(sm) {
+		height: $line-height-large-touch;
+		padding: 0 $default-padding-x-touch;
+	}
+
+	@include mouse-and-bp-up(md) {
+		height: $toolbar-height;
+		padding: 0 $default-padding-x;
+		margin-bottom: $space-min;
+	}
 
 	.toolbar-left,
 	.toolbar-center,
-	.toolbar-right {
+	.toolbar-right,
+	.toolbar-justified {
 		display: flex;
 		align-items: center;
 	}
@@ -30,11 +39,28 @@
 		margin-left: auto;
 	}
 
+	.toolbar-justified {
+		flex: 1 1 auto;
+
+		@include touch-or-bp-down(sm) {
+			margin: 0 (-$default-padding-x-touch);
+		}
+	}
+
 	.tool-group {
 		display: flex;
 
+		@include variant(".toolbar .toolbar-justified") {
+			flex: 1 1 auto;
+			justify-content: space-around;
+		}
+
 		> * + * {
 			margin-left: $space-min / 2;
+
+			@include variant(".toolbar .toolbar-justified") {
+				margin: 0;
+			}
 		}
 
 		& + .tool-group {

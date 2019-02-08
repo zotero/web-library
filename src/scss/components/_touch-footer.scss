@@ -3,5 +3,6 @@
 // --------------------------------------------------
 
 .touch-footer {
-	height: 42px;
+	height: $line-height-large-touch;
+	box-shadow: -1px 0 0 1px $touch-footer-shadow;
 }
