@@ -82,7 +82,7 @@
 	 		}
 		}
 
-		@include state("li.selected > .item-container") {
+		@include state("li.selected > .item-container", "li.open > .item-container") {
 			@include touch-or-bp-down(sm) {
 				background: $touch-collection-tree-active-bg;
 
@@ -152,7 +152,7 @@
 			color: $collection-tree-color;
 			position: relative;
 
-			@include state("li.selected > .item-container") {
+			@include state("li.selected > .item-container", "li.open > .item-container") {
 				@include touch-or-bp-down(sm) {
 					color: $touch-collection-tree-active-color;
 				}
