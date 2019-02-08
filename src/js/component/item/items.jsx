@@ -47,6 +47,18 @@ class Items extends React.PureComponent {
 									<Button>
 										<Icon type={ '32/add-to-collection' } width="32" height="32" />
 									</Button>
+									<Button>
+										<Icon type={ '24/trash' } width="24" height="24" />
+									</Button>
+									<Button>
+										<Icon type={ '24/duplicate' } width="24" height="24" />
+									</Button>
+									<Button>
+										<Icon type={ '24/export' } width="24" height="24" />
+									</Button>
+									<Button>
+										<Icon type={ '24/bibliography' } width="24" height="24" />
+									</Button>
 								</div>
 							</div>
 						</Toolbar>
