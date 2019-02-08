@@ -3,7 +3,6 @@
 // --------------------------------------------------
 
 .btn {
-	border-radius: $btn-border-radius;
 	padding: $btn-padding;
 	cursor: pointer;
 	border: $border-width solid transparent;
@@ -14,13 +13,12 @@
 		border-color $btn-transition,
 		box-shadow $btn-transition;
 
-	&:focus {
-		outline: none;
+	@include mouse-and-bp-up(md) {
+		border-radius: $btn-border-radius;
+	}
 
-		.keyboard & {
-			border-color: $btn-secondary-color;
-			box-shadow: 0 0 0 $input-btn-focus-width $btn-secondary-color;
-		}
+	&:focus:not(.btn-link) {
+		outline: none;
 	}
 
 	&:not(:disabled) {
@@ -39,42 +37,6 @@
 	border: 0;
 	color: $link-color;
 	background-color: transparent;
-
-	&:focus {
-		.keyboard & {
-			box-shadow: none;
-			outline: $outline-width solid $focus-color;
-		}
-	}
-}
-
-
-// Primary button
-
-.btn-primary {
-	color: $btn-primary-color;
-	background: $btn-primary-bg;
-
-	&:focus {
-		background: darken($btn-primary-bg, 5%); // todo
-	}
-
-	&:active {
-		color: darken($btn-primary-color, 20%);
-	}
-}
-
-
-// Default button
-
-.btn-default {
-	background: $btn-default-bg;
-	transition: color $btn-transition;
-
-	&:active {
-		color: $btn-default-active-color;
-		transition: none;
-	}
 }
 
 
@@ -85,11 +47,25 @@
 	line-height: 1;
 
 	@include touch-or-bp-down(sm) {
-		padding: $space-min - $border-width;
+		padding: $input-btn-padding-y-touch $input-btn-padding-x-touch;
+	}
+
+	@include touch-keyboard-or-bp-down(sm) {
+		&:focus {
+			outline: $outline-width solid $focus-color;
+			outline-offset: -$outline-width;
+		}
 	}
 
 	@include mouse-and-bp-up(md) {
 		padding: $space-min;
+	}
+
+	@include mouse-keyboard-and-bp-up(md) {
+		&:focus {
+			border-color: $btn-secondary-color;
+			box-shadow: 0 0 0 $input-btn-focus-width $btn-secondary-color;
+		}
 	}
 
 	.icon {

@@ -54,12 +54,11 @@
 			right: 0;
 			top: 0;
 			height: calc(100% - #{$border-width});
-			background-color: transparent;
-			color: $link-color;
-			border: 0;
+			padding: 0 $default-padding-x-touch;
 
 			&:focus {
 				.keyboard & {
+					outline: $outline-width solid $focus-color;
 					outline-offset: -$outline-width;
 				}
 			}

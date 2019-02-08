@@ -136,7 +136,7 @@ class ItemDetailsTabs extends React.PureComponent {
 					</Tabs>
 						{
 							this.state.tab === 'info' && (
-								<EditToggleButton className="hidden-mouse-lg-up btn-edit" />
+								<EditToggleButton className="hidden-mouse-lg-up btn-link btn-edit" />
 							)
 						}
 				</header>
