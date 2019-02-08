@@ -40,6 +40,9 @@
 
 	.item {
 		// Items in the list are fixed at 68px height
+		display: flex;
+		flex-direction: column;
+		justify-content: center; // Center single lines
 		padding: $item-list-padding-y $item-list-padding-x;
 		position: relative;
 
