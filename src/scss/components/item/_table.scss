@@ -11,8 +11,8 @@
 	width: 100%;
 	border-spacing: 0; // border-collapse results in buggy height
 	border: {
-		top: 1px solid $item-list-head-border;
-		bottom: 1px solid $item-list-head-border;
+		top: 1px solid $item-table-head-border;
+		bottom: 1px solid $item-table-head-border;
 	}
 
 	> div {
@@ -76,7 +76,7 @@
 		width: 8px; // actual handle width for cursor grip
 
 		&::before {
-			background: $item-list-head-border;
+			background: $item-table-head-border;
 			bottom: 0;
 			content: "";
 			left: 2px;
