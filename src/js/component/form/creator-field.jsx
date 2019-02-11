@@ -293,7 +293,7 @@ class CreatorField extends React.PureComponent {
 
 		return (
 			<React.Fragment>
-			{ this.renderModal() }
+			{ isEditing && this.renderModal() }
 			<Field
 				className={ cx(this.props.className, className) }
 				index={ index }
