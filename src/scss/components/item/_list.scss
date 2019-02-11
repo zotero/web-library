@@ -16,10 +16,6 @@
 		cursor: ew-resize;
 	}
 
-	@include bp-down(sm) {
-		box-shadow: inset 0 1px $item-list-head-border;
-	}
-
 	.icon {
 		@include mouse-and-bp-up(md) {
 			color: $link-color;
@@ -28,16 +24,6 @@
 }
 
 .items-list {
-	background-image:
-		repeating-linear-gradient(
-			to bottom,
-			$item-odd-bg 0,
-			$item-odd-bg $item-list-row-height,
-			transparent $item-list-row-height,
-			transparent (2 * $item-list-row-height)
-		);
-	background-attachment: local;
-
 	.item {
 		// Items in the list are fixed at 68px height
 		display: flex;
@@ -45,19 +31,21 @@
 		justify-content: center; // Center single lines
 		padding: $item-list-padding-y $item-list-padding-x;
 		position: relative;
+		@include hairline($item-border-color, $x: $item-list-padding-x);
 
 		@include state(".items-list:not(.editing)") {
 			padding-right: $item-list-padding-right;
 
 			&.active {
 				color: $item-active-color;
-				background: $item-active-bg;
+				background: $item-active-bg; // Use background shorthand to override hairline
 			}
 		}
 
 		@include state(".items-list.editing") {
 			padding-left: 56px;
 			padding-right: $item-list-padding-x;
+			@include hairline($item-border-color, $x: 56px);
 		}
 
 		input[type="checkbox"] {

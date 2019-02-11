@@ -114,12 +114,12 @@ $item-placeholder-color:      $shade-2;
 $item-placeholder-icon-color: mix($blue, $body-bg, 14%);
 
 // Item list
-$item-odd-bg:                    $shade-1;
-$item-active-color:              $shade-0;
-$item-active-bg:                 $secondary;
-$item-creator-date-color:        $shade-6;
-$item-list-chevron-color:        $shade-4;
-$title-placeholder-color:        $shade-3;
+$item-border-color:       $shade-4;
+$item-active-color:       $shade-0;
+$item-active-bg:          $secondary;
+$item-creator-date-color: $shade-6;
+$item-list-chevron-color: $shade-4;
+$title-placeholder-color: $shade-3;
 
 // Item details
 $item-details-bg: $shade-1;
