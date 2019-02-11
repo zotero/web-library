@@ -154,11 +154,12 @@ $collection-tree-max-levels:       10;
 // Items & item list/table
 // --------------------------------------------------
 
-$item-list-row-height:  68px;
-$item-list-head-height: $space-lg; // 26px (content-box)
-$item-list-padding-y:        ($space-md - 6px);
-$item-list-padding-x:        $default-padding-x-touch;
-$item-list-padding-right:    39px;
+$item-list-row-height:     61px;
+$item-list-head-height:    $space-lg; // 26px (content-box)
+$item-list-padding-top:    ($space-sm - 5px);
+$item-list-padding-bottom: ($space-sm - 6px);
+$item-list-padding-x:      $default-padding-x-touch;
+$item-list-padding-right:  39px;
 
 $item-table-row-height: $line-height-large;
 

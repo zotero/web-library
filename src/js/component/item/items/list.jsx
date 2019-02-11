@@ -132,7 +132,7 @@ class ItemsList extends React.PureComponent {
 									onRowsRendered={ onRowsRendered }
 									ref={ registerChild }
 									rowCount={ totalItemsCount }
-									rowHeight={ 68 }
+									rowHeight={ 61 }
 									width={ width }
 									rowRenderer={ this.renderRow.bind(this) }
 								/>
