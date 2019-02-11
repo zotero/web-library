@@ -117,7 +117,7 @@ $item-placeholder-icon-color: mix($blue, $body-bg, 14%);
 $item-border-color:       $shade-4;
 $item-active-color:       $shade-0;
 $item-active-bg:          $secondary;
-$item-creator-date-color: $shade-6;
+$item-creator-date-color: mix($body-bg, $text-color, 50%);
 $item-list-chevron-color: $shade-4;
 $title-placeholder-color: $shade-3;
 
