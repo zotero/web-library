@@ -44,7 +44,7 @@ class ExportActions extends React.PureComponent {
 			>
 				<DropdownToggle
 					color={ null }
-					disabled={ this.props.selectedItemKeys.length == 0 }
+					disabled={ this.props.itemKeys.length == 0 }
 					className="btn-icon dropdown-toggle"
 					title="Export"
 				>
@@ -65,7 +65,7 @@ class ExportActions extends React.PureComponent {
 
 	static propTypes = {
 		onExport: PropTypes.func,
-		selectedItemKeys: PropTypes.array,
+		itemKeys: PropTypes.array,
 	}
 }
 

@@ -15,4 +15,16 @@ const removeKeys = (object, deleteKeys) => {
 //@TODO: rename everywhere
 const omit = removeKeys;
 
-module.exports = { removeKeys, omit };
+const pick = (object, pickKeys) => {
+	if(!Array.isArray(pickKeys)) {
+		pickKeys = [pickKeys];
+	}
+
+	return Object.entries(object)
+		.reduce((aggr, [key, value]) => {
+			if(pickKeys.includes(key)) { aggr[key] = value; }
+			return aggr;
+	}, {});
+}
+
+module.exports = { removeKeys, omit, pick };

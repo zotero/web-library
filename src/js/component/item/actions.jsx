@@ -13,6 +13,7 @@ const Spinner = require('../ui/spinner');
 const Icon = require('../ui/icon');
 const NewItemSelector = require('./actions/new-item');
 const ExportActions = require('./actions/export');
+const { pick } = require('../../common/immutable');
 const { isTriggerEvent } = require('../../common/event');
 const { BIBLIOGRAPHY, COLLECTION_SELECT, EXPORT,
 	NEW_ITEM } = require('../../constants/modals');
@@ -26,8 +27,8 @@ class ItemsActions extends React.PureComponent {
 	}
 
 	handleAddToCollectionModalOpen() {
-		const { selectedItemKeys, toggleModal } = this.props;
-		toggleModal(COLLECTION_SELECT, true, { items: selectedItemKeys });
+		const { itemKeys, toggleModal } = this.props;
+		toggleModal(COLLECTION_SELECT, true, { items: itemKeys });
 	}
 
 	handleBibliographyOpen() {
@@ -46,32 +47,32 @@ class ItemsActions extends React.PureComponent {
 	}
 
 	renderDelete() {
-		const { selectedItemKeys, itemsSource, onDelete } = this.props;
-		return selectedItemKeys.length > 0 && itemsSource !== 'trash' ? (
+		const { itemKeys, itemsSource, onDelete } = this.props;
+		return itemKeys.length > 0 && itemsSource !== 'trash' ? (
 			<DropdownItem
 				onClick={ onDelete }
 				onKeyDown={ ev => isTriggerEvent(ev) && onDelete(ev) }
 			>
-				Move { selectedItemKeys.length > 1 ? 'Items' : 'Item' } to Trash
+				Move { itemKeys.length > 1 ? 'Items' : 'Item' } to Trash
 			</DropdownItem>
 		) : null;
 	}
 
 	renderPermanentlyDelete() {
-		const { selectedItemKeys, itemsSource, onPermanentlyDelete } = this.props;
-		return selectedItemKeys.length > 0 && itemsSource === 'trash' ? (
+		const { itemKeys, itemsSource, onPermanentlyDelete } = this.props;
+		return itemKeys.length > 0 && itemsSource === 'trash' ? (
 				<DropdownItem
 					onClick={ onPermanentlyDelete }
 					onKeyDown={ ev => isTriggerEvent(ev) && onPermanentlyDelete(ev) }
 				>
-					Delete { selectedItemKeys.length > 1 ? 'Items' : 'Item' }
+					Delete { itemKeys.length > 1 ? 'Items' : 'Item' }
 				</DropdownItem>
 			) : null;
 	}
 
 	renderRestoretoLibrary() {
-		const { selectedItemKeys, itemsSource, onUndelete } = this.props;
-		return selectedItemKeys.length > 0 && itemsSource === 'trash' ? (
+		const { itemKeys, itemsSource, onUndelete } = this.props;
+		return itemKeys.length > 0 && itemsSource === 'trash' ? (
 				<DropdownItem
 					onClick={ onUndelete }
 					onKeyDown={ ev => isTriggerEvent(ev) && onUndelete(ev) }
@@ -82,8 +83,8 @@ class ItemsActions extends React.PureComponent {
 	}
 
 	renderAddToCollection() {
-		const { selectedItemKeys, itemsSource } = this.props;
-		return selectedItemKeys.length > 0 && itemsSource !== 'trash' ? (
+		const { itemKeys, itemsSource } = this.props;
+		return itemKeys.length > 0 && itemsSource !== 'trash' ? (
 				<DropdownItem
 					onClick={ () => this.handleAddToCollectionModalOpen() }
 					onKeyDown={ ev => isTriggerEvent(ev) && this.handleAddToCollectionModalOpen() }
@@ -94,8 +95,8 @@ class ItemsActions extends React.PureComponent {
 	}
 
 	renderRemoveFromCollection() {
-		const { selectedItemKeys, itemsSource, onRemove } = this.props;
-		return selectedItemKeys.length > 0 && itemsSource === 'collection' ? (
+		const { itemKeys, itemsSource, onRemove } = this.props;
+		return itemKeys.length > 0 && itemsSource === 'collection' ? (
 				<DropdownItem
 					onClick={ onRemove }
 					onKeyDown={ ev => isTriggerEvent(ev) && onRemove(ev) }
@@ -106,8 +107,8 @@ class ItemsActions extends React.PureComponent {
 	}
 
 	renderDuplicateItem() {
-		const { selectedItemKeys, onDuplicate, itemsSource } = this.props;
-		return itemsSource !== 'trash' && selectedItemKeys.length === 1 ? (
+		const { itemKeys, onDuplicate, itemsSource } = this.props;
+		return itemsSource !== 'trash' && itemKeys.length === 1 ? (
 				<DropdownItem
 					onClick={ onDuplicate }
 					onKeyDown={ ev => isTriggerEvent(ev) && onDuplicate(ev) }
@@ -118,8 +119,8 @@ class ItemsActions extends React.PureComponent {
 	}
 
 	renderShowInLibrary() {
-		const { selectedItemKeys, onLibraryShow, itemsSource } = this.props;
-		return itemsSource !== 'trash' && itemsSource !== 'top' && selectedItemKeys.length === 1 ? (
+		const { itemKeys, onLibraryShow, itemsSource } = this.props;
+		return itemsSource !== 'trash' && itemsSource !== 'top' && itemKeys.length === 1 ? (
 				<DropdownItem
 					onClick={ onLibraryShow }
 					onKeyDown={ ev => isTriggerEvent(ev) && onLibraryShow(ev) }
@@ -166,14 +167,14 @@ class ItemsActions extends React.PureComponent {
 	}
 
 	get hasExtraItemOptions() {
-		const { selectedItemKeys, itemsSource } = this.props;
-		return (selectedItemKeys.length === 1 && itemsSource !== 'trash') || (
-			selectedItemKeys.length > 0 && itemsSource === 'trash'
+		const { itemKeys, itemsSource } = this.props;
+		return (itemKeys.length === 1 && itemsSource !== 'trash') || (
+			itemKeys.length > 0 && itemsSource === 'trash'
 		);
 	}
 
 	renderMouse() {
-		const { itemsSource, onDelete, isDeleting, selectedItemKeys,
+		const { itemsSource, onDelete, isDeleting, itemKeys,
 			onRemove, } = this.props;
 
 		return (
@@ -181,12 +182,12 @@ class ItemsActions extends React.PureComponent {
 				<ToolGroup>
 					<NewItemSelector
 						disabled={ !['top', 'collection'].includes(itemsSource) }
-						{ ...this.props }
+						{ ...pick(this.props, ['itemTypes', 'onNewItemCreate']) }
 					/>
 					<Button
 						onClick={ onDelete }
 						onKeyDown={ ev => isTriggerEvent(ev) && onDelete(ev) }
-						disabled={ isDeleting || selectedItemKeys.length === 0 || itemsSource === 'trash' }
+						disabled={ isDeleting || itemKeys.length === 0 || itemsSource === 'trash' }
 						title="Move to Trash"
 					>
 						{
@@ -198,18 +199,18 @@ class ItemsActions extends React.PureComponent {
 					<Button
 						onClick={ onRemove }
 						onKeyDown={ ev => isTriggerEvent(ev) && onRemove(ev) }
-						disabled={ selectedItemKeys.length === 0 || itemsSource !== 'collection' }
+						disabled={ itemKeys.length === 0 || itemsSource !== 'collection' }
 						title="Remove from Collection"
 					>
 						<Icon type="20/remove-from-collection" width="20" height="20" />
 					</Button>
 				</ToolGroup>
 				<ToolGroup>
-					<ExportActions { ...this.props } />
+					<ExportActions { ...pick(this.props, ['onExport', 'itemKeys']) } />
 					<Button
 						onClick={ () => this.handleBibliographyOpen() }
 						onKeyDown={ ev => isTriggerEvent(ev) && this.handleBibliographyOpen(ev) }
-						disabled={ selectedItemKeys.length === 0 }
+						disabled={ itemKeys.length === 0 }
 						title="Create Bibliography"
 					>
 						<Icon type="16/bibliography" width="16" height="16" />
