@@ -27,7 +27,10 @@
 
 	@include bp-only(md) {
 		flex: 0 0 50%;
-		height: 50%;
+
+		@include state(".select-mode .item-details") {
+			display: none;
+		}
 	}
 
 	@include bp-up(lg) {
