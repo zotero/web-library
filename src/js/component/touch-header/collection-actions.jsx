@@ -31,7 +31,7 @@ class CollectionActions extends React.PureComponent {
 			>
 				<DropdownToggle
 					color={ null }
-					className="btn-icon dropdown-toggle"
+					className="btn-link dropdown-toggle"
 				>
 					<Icon type="24/options" width="24" height="24" />
 				</DropdownToggle>

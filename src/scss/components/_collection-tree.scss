@@ -191,8 +191,8 @@
 
 		.dropdown-wrapper {
 			@include touch-or-bp-down(sm) {
-				margin-left: $space-xs;
-				margin-right: -$space-min;
+				margin-left: $space-sm;
+				margin-right: 0;
 			}
 
 			@include mouse-and-bp-up(md) {
@@ -206,6 +206,9 @@
 			border-radius: 0;
 
 			@include touch-or-bp-down(sm) {
+				padding: 0; // Simulate btn-link
+				border: 0;
+
 				@include state(".dropdown-wrapper.show .dropdown-toggle") {
 					@include state("li.selected > .item-container") {
 						background-color: $body-bg;
@@ -214,6 +217,12 @@
 							color: $touch-collection-tree-active-bg;
 						}
 					}
+				}
+			}
+
+			@include touch-keyboard-or-bp-down(sm) {
+				&:focus {
+					outline-offset: $outline-offset; // Simulate btn-link
 				}
 			}
 

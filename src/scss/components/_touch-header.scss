@@ -101,9 +101,13 @@
 
 	// Options menu
 	.dropdown {
-		right: $default-padding-x-touch - $space-min;
+		right: $default-padding-x-touch;
 		display: flex;
 		align-items: center;
+
+		.icon {
+			vertical-align: top;
+		}
 	}
 
 	// Edit button
