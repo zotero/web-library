@@ -139,12 +139,13 @@ LibraryContainer.propTypes = {
 const mapStateToProps = state => {
 	const {
 		collectionKey,
+		isSelectMode,
 		itemsSource,
 		libraryKey,
-		useTransitions,
-		view,
 		search,
 		tags,
+		useTransitions,
+		view,
 	} = state.current;
 	const {
 		current: { userLibraryKey },
@@ -155,9 +156,9 @@ const mapStateToProps = state => {
 	const isFetchingCollections = collectionsInLibrary
 		.some(key => key === userLibraryKey || key === libraryKey);
 
-	return { view, userLibraryKey, api, apiKey, viewport, itemsSource,
-		collectionKey, isFetchingCollections, useTransitions, libraryKey,
-		search, tags };
+	return { view, userLibraryKey, api, apiKey, viewport, isSelectMode,
+		itemsSource, collectionKey, isFetchingCollections, useTransitions,
+		libraryKey, search, tags };
 };
 
 const LibraryContainerWrapped = withUserTypeDetection(connect(mapStateToProps)(LibraryContainer));

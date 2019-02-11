@@ -71,7 +71,7 @@ class Library extends React.PureComponent {
 			key = `${libraryKey}-${itemsSource}`;
 		}
 
-		const { useTransitions, view, device } = this.props;
+		const { device, isSelectMode, useTransitions, view } = this.props;
 		const { isNavOpened, hasUserTypeChanged } = this.state;
 		let activeViewClass = `view-${view}-active`;
 
@@ -108,7 +108,10 @@ class Library extends React.PureComponent {
 								<TagSelectorContainer key={ key } />
 							}
 						</header>
-						<section className={ `items ${ view === 'item-list' ? 'active' : '' }` }>
+						<section className={ cx('items', {
+							'active': view === 'item-list',
+							'select-mode': isSelectMode
+						})}>
 							{/* Tablet TouchHeader */}
 							<TouchHeaderContainer
 								className="hidden-xs-down hidden-md-up"
@@ -132,6 +135,7 @@ class Library extends React.PureComponent {
 
 Library.propTypes = {
 	view: PropTypes.string,
+	isSelectMode: PropTypes.bool
 };
 
 module.exports = withDevice(Library);
