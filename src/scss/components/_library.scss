@@ -52,6 +52,14 @@
 	@include bp-up(md) {
 		display: flex;
 	}
+
+	.touch-footer {
+		display: none;
+
+		@include state(".items.select-mode") {
+			display: block;
+		}
+	}
 }
 
 .items-container {
