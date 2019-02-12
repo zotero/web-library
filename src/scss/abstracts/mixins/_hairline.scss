@@ -2,20 +2,43 @@
 // Hairline
 // --------------------------------------------------
 
-@mixin hairline($color, $x: 0, $y: 0) {
+@mixin hairline($side, $color, $start: 0) {
+	$directions: (
+		top: (
+			direction: to bottom,
+			position: $start 0
+		),
+		right: (
+			direction: to left,
+			position: 0 $start
+		),
+		bottom: (
+			direction: to top,
+			position: $start 0
+		),
+		left: (
+			direction: to right,
+			position: 0 $start
+		)
+	);
+
+	$direction: map-get(map-get($directions, $side), direction);
+	$position: map-get(map-get($directions, $side), position);
+
+	border-#{$side}: $border-width solid transparent;
 	background: linear-gradient(
-		to bottom,
+		$direction,
 		rgba($color, 0.5) 0%,
 		rgba($color, 0.5) 1px,
 		transparent 1px
-	) no-repeat $x $y;
+	) no-repeat $position;
 
 	@media (min-resolution: 2dppx) {
 		background: linear-gradient(
-			to bottom,
+			$direction,
 			$color 0%,
 			$color 51%,
 			transparent 51%
-		) no-repeat $x $y / (100% 1px);
+		) no-repeat $position / (100% 1px);
 	}
 }

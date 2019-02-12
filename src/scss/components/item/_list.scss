@@ -28,7 +28,7 @@
 		// Items in the list are fixed at 61px height
 		padding: $item-list-padding-top $item-list-padding-x $item-list-padding-bottom;
 		position: relative;
-		@include hairline($item-border-color, $x: $item-list-padding-x);
+		@include hairline(top, $item-border-color, $start: $item-list-padding-x);
 
 		@include state(".items-list:not(.editing)") {
 			padding-right: $item-list-padding-right;
@@ -42,7 +42,7 @@
 		@include state(".items-list.editing") {
 			padding-left: 56px;
 			padding-right: $item-list-padding-x;
-			@include hairline($item-border-color, $x: 56px);
+			@include hairline(top, $item-border-color, $start: 56px);
 		}
 
 		input[type="checkbox"] {
