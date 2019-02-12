@@ -41,4 +41,6 @@
 			transparent 51%
 		) no-repeat $position / (100% 1px);
 	}
+
+	background-origin: border-box;
 }
