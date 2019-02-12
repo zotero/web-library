@@ -308,7 +308,7 @@ class CollectionTree extends React.PureComponent {
 												<Icon type={ '24/options-sm' } width="24" height="24" className="touch" />
 												<Icon type={ '16/options' } width="16" height="16" className="mouse" />
 											</DropdownToggle>
-											<DropdownMenu>
+											<DropdownMenu right>
 												<DropdownItem
 													onClick={ ev => this.handleRenameTrigger(collection.key, ev) }
 												>
