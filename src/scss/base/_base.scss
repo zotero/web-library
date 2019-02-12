@@ -43,6 +43,10 @@ body {
 	overflow: hidden; // Prevent any overflow
 }
 
+#zotero-web-library {
+	overflow: hidden; // Fix scaling, rendering, and positioning issues in Chrome device emulator
+}
+
 .library-container {
 	display: flex;
 	flex-direction: column;
