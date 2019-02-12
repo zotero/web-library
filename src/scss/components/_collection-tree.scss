@@ -90,7 +90,9 @@
 					content: none;
 				}
 			}
+		}
 
+		@include state("li.selected > .item-container") {
 			@include mouse-and-bp-up(md) {
 				background: $collection-tree-active-bg;
 			}
@@ -156,7 +158,9 @@
 				@include touch-or-bp-down(sm) {
 					color: $touch-collection-tree-active-color;
 				}
+			}
 
+			@include state("li.selected > .item-container") {
 				@include mouse-and-bp-up(md) {
 					color: $collection-tree-active-color;
 				}
