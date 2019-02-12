@@ -9,8 +9,6 @@ const withSelectMode = require('../enhancers/with-select-mode');
 const withDevice = require('../enhancers/with-device');
 const withItemsActions = require('../enhancers/with-items-actions');
 
-const { toggleModal } = require('../actions');
-
 class ItemsActionsContainer extends React.PureComponent {
 	render() {
 		return <ItemsActions { ...this.props } />
@@ -20,17 +18,13 @@ class ItemsActionsContainer extends React.PureComponent {
 		collectionKey: PropTypes.string,
 		device: PropTypes.object,
 		isSelectMode: PropTypes.bool,
+		itemKeys: PropTypes.array,
 		itemsSource: PropTypes.string,
 		itemTypes: PropTypes.array,
 		libraryKey: PropTypes.string,
 		onSelectModeToggle: PropTypes.func,
 		search: PropTypes.string,
-		itemKeys: PropTypes.array,
 		tags: PropTypes.array,
-	}
-
-	static defaultProps = {
-
 	}
 }
 
@@ -47,5 +41,5 @@ const mapStateToProps = state => {
 }
 
 module.exports = withItemsActions(withSelectMode(withDevice(
-	connect(mapStateToProps, { toggleModal })(ItemsActionsContainer)
+	connect(mapStateToProps)(ItemsActionsContainer)
 )));

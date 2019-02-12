@@ -14,9 +14,8 @@ const Icon = require('../ui/icon');
 const NewItemSelector = require('./actions/new-item');
 const ExportActions = require('./actions/export');
 const { pick } = require('../../common/immutable');
-const { isTriggerEvent } = require('../../common/event');
-const { BIBLIOGRAPHY, COLLECTION_SELECT, EXPORT,
-	NEW_ITEM } = require('../../constants/modals');
+const { isTriggerEvent, ifTriggerEvent } = require('../../common/event');
+
 
 class ItemsActions extends React.PureComponent {
 	handleSelectModeToggle(ev) {
@@ -26,32 +25,12 @@ class ItemsActions extends React.PureComponent {
 		}
 	}
 
-	handleAddToCollectionModalOpen() {
-		const { itemKeys, toggleModal } = this.props;
-		toggleModal(COLLECTION_SELECT, true, { items: itemKeys });
-	}
-
-	handleBibliographyOpen() {
-		const { toggleModal } = this.props;
-		toggleModal(BIBLIOGRAPHY, true);
-	}
-
-	handleExportModalOpen() {
-		const { toggleModal } = this.props;
-		toggleModal(EXPORT, true);
-	}
-
-	handleNewItemModalOpen() {
-		const { toggleModal, collectionKey } = this.props;
-		toggleModal(NEW_ITEM, true, { collectionKey });
-	}
-
 	renderDelete() {
 		const { itemKeys, itemsSource, onDelete } = this.props;
 		return itemKeys.length > 0 && itemsSource !== 'trash' ? (
 			<DropdownItem
 				onClick={ onDelete }
-				onKeyDown={ ev => isTriggerEvent(ev) && onDelete(ev) }
+				onKeyDown={ ifTriggerEvent(onDelete) }
 			>
 				Move { itemKeys.length > 1 ? 'Items' : 'Item' } to Trash
 			</DropdownItem>
@@ -63,7 +42,7 @@ class ItemsActions extends React.PureComponent {
 		return itemKeys.length > 0 && itemsSource === 'trash' ? (
 				<DropdownItem
 					onClick={ onPermanentlyDelete }
-					onKeyDown={ ev => isTriggerEvent(ev) && onPermanentlyDelete(ev) }
+					onKeyDown={ ifTriggerEvent(onPermanentlyDelete) }
 				>
 					Delete { itemKeys.length > 1 ? 'Items' : 'Item' }
 				</DropdownItem>
@@ -75,7 +54,7 @@ class ItemsActions extends React.PureComponent {
 		return itemKeys.length > 0 && itemsSource === 'trash' ? (
 				<DropdownItem
 					onClick={ onUndelete }
-					onKeyDown={ ev => isTriggerEvent(ev) && onUndelete(ev) }
+					onKeyDown={ ifTriggerEvent(onUndelete) }
 				>
 					Restore to Library
 				</DropdownItem>
@@ -83,11 +62,11 @@ class ItemsActions extends React.PureComponent {
 	}
 
 	renderAddToCollection() {
-		const { itemKeys, itemsSource } = this.props;
+		const { itemKeys, itemsSource, onAddToCollectionModalOpen } = this.props;
 		return itemKeys.length > 0 && itemsSource !== 'trash' ? (
 				<DropdownItem
-					onClick={ () => this.handleAddToCollectionModalOpen() }
-					onKeyDown={ ev => isTriggerEvent(ev) && this.handleAddToCollectionModalOpen() }
+					onClick={ onAddToCollectionModalOpen }
+					onKeyDown={ ifTriggerEvent(onAddToCollectionModalOpen) }
 				>
 					Add to Collection
 				</DropdownItem>
@@ -99,7 +78,7 @@ class ItemsActions extends React.PureComponent {
 		return itemKeys.length > 0 && itemsSource === 'collection' ? (
 				<DropdownItem
 					onClick={ onRemove }
-					onKeyDown={ ev => isTriggerEvent(ev) && onRemove(ev) }
+					onKeyDown={ ifTriggerEvent(onRemove) }
 				>
 					Remove from Collection
 				</DropdownItem>
@@ -111,7 +90,7 @@ class ItemsActions extends React.PureComponent {
 		return itemsSource !== 'trash' && itemKeys.length === 1 ? (
 				<DropdownItem
 					onClick={ onDuplicate }
-					onKeyDown={ ev => isTriggerEvent(ev) && onDuplicate(ev) }
+					onKeyDown={ ifTriggerEvent(onDuplicate) }
 				>
 					Duplicate Item
 				</DropdownItem>
@@ -123,7 +102,7 @@ class ItemsActions extends React.PureComponent {
 		return itemsSource !== 'trash' && itemsSource !== 'top' && itemKeys.length === 1 ? (
 				<DropdownItem
 					onClick={ onLibraryShow }
-					onKeyDown={ ev => isTriggerEvent(ev) && onLibraryShow(ev) }
+					onKeyDown={ ifTriggerEvent(onLibraryShow) }
 				>
 					Show In Library
 				</DropdownItem>
@@ -131,11 +110,11 @@ class ItemsActions extends React.PureComponent {
 	}
 
 	renderNewItem() {
-		const { itemsSource } = this.props;
+		const { itemsSource, onNewItemModalOpen } = this.props;
 		return (itemsSource === 'top' || itemsSource === 'collection') ? (
 				<DropdownItem
-					onClick={ () => this.handleNewItemModalOpen() }
-					onKeyDown={ ev => isTriggerEvent(ev) && this.handleNewItemModalOpen() }
+					onClick={ onNewItemModalOpen }
+					onKeyDown={ ifTriggerEvent(onNewItemModalOpen) }
 				>
 					New Item
 				</DropdownItem>
@@ -143,11 +122,11 @@ class ItemsActions extends React.PureComponent {
 	}
 
 	renderExport() {
-		const { itemsSource } = this.props;
+		const { itemsSource, onExportModalOpen } = this.props;
 		return (itemsSource === 'top' || itemsSource === 'collection') ? (
 				<DropdownItem
-					onClick={ () => this.handleExportModalOpen() }
-					onKeyDown={ ev => isTriggerEvent(ev) && this.handleExportModalOpen() }
+					onClick={ onExportModalOpen }
+					onKeyDown={ ifTriggerEvent(onExportModalOpen) }
 				>
 					Export
 				</DropdownItem>
@@ -155,11 +134,11 @@ class ItemsActions extends React.PureComponent {
 	}
 
 	renderBibliography() {
-		const { itemsSource } = this.props;
+		const { itemsSource, onBibliographyOpen } = this.props;
 		return (itemsSource === 'top' || itemsSource === 'collection') ? (
 				<DropdownItem
-					onClick={ () => this.handleBibliographyOpen() }
-					onKeyDown={ ev => isTriggerEvent(ev) && this.handleBibliographyOpen() }
+					onClick={ onBibliographyOpen }
+					onKeyDown={ ifTriggerEvent(onBibliographyOpen) }
 				>
 					Bibliography
 				</DropdownItem>
@@ -175,7 +154,7 @@ class ItemsActions extends React.PureComponent {
 
 	renderMouse() {
 		const { itemsSource, onDelete, isDeleting, itemKeys,
-			onRemove, } = this.props;
+			onRemove, onBibliographyModalOpen } = this.props;
 
 		return (
 			<React.Fragment>
@@ -186,7 +165,7 @@ class ItemsActions extends React.PureComponent {
 					/>
 					<Button
 						onClick={ onDelete }
-						onKeyDown={ ev => isTriggerEvent(ev) && onDelete(ev) }
+						onKeyDown={ ifTriggerEvent(onDelete) }
 						disabled={ isDeleting || itemKeys.length === 0 || itemsSource === 'trash' }
 						title="Move to Trash"
 					>
@@ -198,7 +177,7 @@ class ItemsActions extends React.PureComponent {
 					</Button>
 					<Button
 						onClick={ onRemove }
-						onKeyDown={ ev => isTriggerEvent(ev) && onRemove(ev) }
+						onKeyDown={ ifTriggerEvent(onRemove) }
 						disabled={ itemKeys.length === 0 || itemsSource !== 'collection' }
 						title="Remove from Collection"
 					>
@@ -208,8 +187,8 @@ class ItemsActions extends React.PureComponent {
 				<ToolGroup>
 					<ExportActions { ...pick(this.props, ['onExport', 'itemKeys']) } />
 					<Button
-						onClick={ () => this.handleBibliographyOpen() }
-						onKeyDown={ ev => isTriggerEvent(ev) && this.handleBibliographyOpen(ev) }
+						onClick={ onBibliographyModalOpen }
+						onKeyDown={ ifTriggerEvent(onBibliographyModalOpen) }
 						disabled={ itemKeys.length === 0 }
 						title="Create Bibliography"
 					>

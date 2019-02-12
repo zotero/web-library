@@ -7,11 +7,13 @@ const { push } = require('connected-react-router');
 const hoistNonReactStatic = require('hoist-non-react-statics');
 const { saveAs } = require('file-saver');
 const { moveToTrash, deleteItems, recoverFromTrash,
-	removeFromCollection, createItem, exportItems } = require('../actions');
+	removeFromCollection, createItem, exportItems, toggleModal } = require('../actions');
 const { get } = require('../utils');
 const { makePath } = require('../common/navigation');
 const { omit } = require('../common/immutable');
 const exportFormats = require('../constants/export-formats');
+const { BIBLIOGRAPHY, COLLECTION_SELECT, EXPORT,
+	NEW_ITEM } = require('../constants/modals');
 
 
 const withItemsActions = Component => {
@@ -99,6 +101,26 @@ const withItemsActions = Component => {
 			push(makePath({ library, items: itemKeys[0] }));
 		}
 
+		handleAddToCollectionModalOpen = () => {
+			const { itemKeys, toggleModal } = this.props;
+			toggleModal(COLLECTION_SELECT, true, { items: itemKeys });
+		}
+
+		handleBibliographyModalOpen = () => {
+			const { toggleModal } = this.props;
+			toggleModal(BIBLIOGRAPHY, true);
+		}
+
+		handleExportModalOpen = () => {
+			const { toggleModal } = this.props;
+			toggleModal(EXPORT, true);
+		}
+
+		handleNewItemModalOpen = () => {
+			const { toggleModal, collectionKey } = this.props;
+			toggleModal(NEW_ITEM, true, { collectionKey });
+		}
+
 		render() {
 			return <Component
 				onDelete = { this.handleDelete }
@@ -110,6 +132,10 @@ const withItemsActions = Component => {
 				onLibraryShow = { this.handleLibraryShow }
 				onNewItemCreate = { this.handleNewItemCreate }
 				onExport = { this.handleExport }
+				onAddToCollectionModalOpen = { this.handleAddToCollectionModalOpen }
+				onBibliographyModalOpen = { this.handleBibliographyModalOpen }
+				onExportModalOpen = { this.handleExportModalOpen }
+				onNewItemModalOpen = { this.handleNewItemModalOpen }
 			/>;
 		}
 
@@ -120,6 +146,7 @@ const withItemsActions = Component => {
 			createItem: PropTypes.func,
 			deleteItems: PropTypes.func,
 			exportItems: PropTypes.func,
+			itemKeys: PropTypes.array,
 			itemsSource: PropTypes.string,
 			libraryKey: PropTypes.string,
 			moveToTrash: PropTypes.func,
@@ -128,7 +155,7 @@ const withItemsActions = Component => {
 			removeFromCollection: PropTypes.func,
 			search: PropTypes.string,
 			tags: PropTypes.array,
-			itemKeys: PropTypes.array,
+			toggleModal: PropTypes.func,
 		}
 	}
 
@@ -148,6 +175,6 @@ const mapStateToProps = state => {
 }
 
 const mapDispatchToProps = { moveToTrash, deleteItems, recoverFromTrash,
-	removeFromCollection, createItem, exportItems, push };
+	removeFromCollection, createItem, exportItems, toggleModal, push };
 
 module.exports = withItemsActions;
