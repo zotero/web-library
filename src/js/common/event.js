@@ -1,14 +1,8 @@
 'use strict';
 
 
-const isTriggerEvent = (ev, shouldIgnoreButtonClickEvents = false) => ev && (ev.type === 'click' ||
-	(!shouldIgnoreButtonClickEvents || ev.target.tagName !== 'BUTTON') && ev.type === 'keydown' && (ev.key === 'Enter' || ev.key === ' '));
-
-const ifTriggerEvent = (handler, ...args) => ev => {
-	if(isTriggerEvent(ev)) { handler(...args, ev) }
-}
+const isTriggerEvent = ev => ev.type === 'keydown' && (ev.key === 'Enter' || ev.key === ' ');
 
 module.exports = {
-	isTriggerEvent,
-	ifTriggerEvent
+	isTriggerEvent
 }

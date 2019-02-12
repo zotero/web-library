@@ -4,16 +4,15 @@ const React = require('react');
 const cx = require('classnames');
 const PropTypes = require('prop-types');
 const memoize = require('memoize-one');
+const deepEqual = require('deep-equal');
+const { UncontrolledDropdown, DropdownToggle, DropdownMenu,
+	DropdownItem } = require('reactstrap/lib');
 const Node = require('./node');
 const Icon = require('../ui/icon');
 const Input = require('../form/input');
-const ActionsDropdown = require('./actions-dropdown');
-const DropdownItem = require('reactstrap/lib/DropdownItem').default;
 const { ViewportContext } = require('../../context');
-const deepEqual = require('deep-equal');
 const { noop } = require('../../utils.js');
 const { makeChildMap } = require('../../common/collection');
-const { isTriggerEvent } = require('../../common/event');
 const Editable = require('../editable');
 const { COLLECTION_RENAME, COLLECTION_ADD } = require('../../constants/modals');
 
@@ -31,32 +30,25 @@ class CollectionTree extends React.PureComponent {
 	}
 
 	handleSelect(target, ev) {
-		if('collection' in target && ev.type === 'keydown') {
-			const colKey = target.collection;
-			const hasSubCollections = target.collection in this.childMap;
-			const { opened } = this.state;
-
-			if(ev.key === "ArrowLeft") {
-				this.setState({ opened: opened.filter(k => k !== colKey) });
-			} else if(ev.key === "ArrowRight") {
-				this.setState({ opened: [...opened, colKey ] });
-			}
-		} else if(isTriggerEvent(ev)) {
-			const { onSelect, libraryKey } = this.props;
-			onSelect({ library: libraryKey, ...target });
-		}
+		const { onSelect, libraryKey } = this.props;
+		onSelect({ library: libraryKey, ...target });
 	}
 
-	handleOpenToggle(key) {
+	handleOpenToggle(key, shouldOpen = null) {
 		const { opened } = this.state;
-		opened.includes(key) ?
-			this.setState({ opened: opened.filter(k => k !== key) }) :
-			this.setState({ opened: [...opened, key ] });
+
+		if(shouldOpen == null) {
+			shouldOpen = !opened.includes(key);
+		}
+
+		shouldOpen ?
+			this.setState({ opened: [...opened, key ] }) :
+			this.setState({ opened: opened.filter(k => k !== key) });
 	}
 
 	handleRenameTrigger(collectionKey, ev) {
 		const { device, toggleModal } = this.props;
-		ev.preventDefault();
+		ev.stopPropagation();
 
 		if(device.isTouchOrSmall) {
 			toggleModal(COLLECTION_RENAME, true, { collectionKey });
@@ -79,28 +71,24 @@ class CollectionTree extends React.PureComponent {
 	}
 
 	handleDelete(collection, ev) {
-		if(isTriggerEvent(ev)) {
-			ev.preventDefault();
-			const { libraryKey, onDelete } = this.props;
-			onDelete(libraryKey, collection);
-		}
+		ev.stopPropagation();
+		const { libraryKey, onDelete } = this.props;
+		onDelete(libraryKey, collection);
 	}
 
 	handleSubcollection(collectionKey, ev) {
 		const { device, libraryKey, onAdd, toggleModal } = this.props;
 		const { opened } = this.state;
 
-		if(isTriggerEvent(ev)) {
-			ev.preventDefault();
-			if(device.isTouchOrSmall) {
-				toggleModal(COLLECTION_ADD, true, { parentCollectionKey: collectionKey });
-			} else {
-				if(collectionKey !== null) {
-					this.setState({ opened: [...opened, collectionKey ] });
-				}
-
-				onAdd(libraryKey, collectionKey);
+		ev.stopPropagation();
+		if(device.isTouchOrSmall) {
+			toggleModal(COLLECTION_ADD, true, { parentCollectionKey: collectionKey });
+		} else {
+			if(collectionKey !== null) {
+				this.setState({ opened: [...opened, collectionKey ] });
 			}
+
+			onAdd(libraryKey, collectionKey);
 		}
 	}
 
@@ -233,7 +221,6 @@ class CollectionTree extends React.PureComponent {
 							})}
 							tabIndex={ shouldBeTabbable ? "0" : null }
 							onClick={ ev => this.handleSelect({ view: 'item-list' }, ev) }
-							onKeyDown={ ev => this.handleSelect({ view: 'item-list' }, ev) }
 						>
 							<Icon type="28/document" className="touch" width="28" height="28" />
 							<Icon type="16/document" className="mouse" width="16" height="16" />
@@ -247,9 +234,6 @@ class CollectionTree extends React.PureComponent {
 							})}
 							tabIndex={ shouldBeTabbable ? "0" : null }
 							onClick={ ev => this.handleSelect(
-								{ view: 'item-list', collection: parentCollection.key }, ev
-							) }
-							onKeyDown={ ev => this.handleSelect(
 								{ view: 'item-list', collection: parentCollection.key }, ev
 							) }
 						>
@@ -279,9 +263,8 @@ class CollectionTree extends React.PureComponent {
 								) : null
 							}
 							hideTwisty={ !hasSubCollections }
-							onOpen={ () => this.handleOpenToggle(collection.key) }
+							onOpen={ shouldOpen => this.handleOpenToggle(collection.key, shouldOpen) }
 							onClick={ ev => this.handleSelect({ collection: collection.key }, ev) }
-							onKeyDown={ ev => this.handleSelect({ collection: collection.key }, ev) }
 							onRename={ ev => device.isTouchOrSmall ? noop() : this.handleRenameTrigger(collection.key, ev) }
 							label={ collection.name }
 							isOpen={ derivedData[collection.key].isOpen }
@@ -314,28 +297,35 @@ class CollectionTree extends React.PureComponent {
 												onClick={ ev => ev.stopPropagation() }
 											/>
 										) : (
-										<ActionsDropdown
-											tabIndex={ shouldBeTabbable ? "0" : "-1" }
-										>
-											<DropdownItem
-												onKeyDown={ ev => isTriggerEvent(ev) && this.handleRenameTrigger(collection.key, ev) }
-												onClick={ ev => isTriggerEvent(ev) && this.handleRenameTrigger(collection.key, ev) }
+										<UncontrolledDropdown>
+											<DropdownToggle
+												className="btn-icon dropdown-toggle"
+												color={ null }
+												tabIndex={ shouldBeTabbable ? "0" : "-1" }
+												title="More"
+												onClick={ ev => ev.stopPropagation() }
 											>
-												Rename
-											</DropdownItem>
-											<DropdownItem
-												onKeyDown={ ev => this.handleDelete(collection, ev) }
-												onClick={ ev => this.handleDelete(collection, ev) }
-											>
-												Delete
-											</DropdownItem>
-											<DropdownItem
-												onKeyDown={ ev => this.handleSubcollection(collection.key, ev) }
-												onClick={ ev => this.handleSubcollection(collection.key, ev) }
-											>
-												New Subcollection
-											</DropdownItem>
-										</ActionsDropdown>
+												<Icon type={ '24/options-sm' } width="24" height="24" className="touch" />
+												<Icon type={ '16/options' } width="16" height="16" className="mouse" />
+											</DropdownToggle>
+											<DropdownMenu>
+												<DropdownItem
+													onClick={ ev => this.handleRenameTrigger(collection.key, ev) }
+												>
+													Rename
+												</DropdownItem>
+												<DropdownItem
+													onClick={ ev => this.handleDelete(collection, ev) }
+												>
+													Delete
+												</DropdownItem>
+												<DropdownItem
+													onClick={ ev => this.handleSubcollection(collection.key, ev) }
+												>
+													New Subcollection
+												</DropdownItem>
+											</DropdownMenu>
+										</UncontrolledDropdown>
 										)}
 									</React.Fragment>
 								}
@@ -372,7 +362,6 @@ class CollectionTree extends React.PureComponent {
 								})}
 								tabIndex={ shouldBeTabbable ? "0" : null }
 								onClick={ ev => this.handleSelect({ publications: true }, ev) }
-								onKeyDown={ ev => this.handleSelect({ publications: true }, ev) }
 								dndTarget={ { 'targetType': 'publications', libraryKey } }
 							>
 								<Icon type="28/document" className="touch" width="28" height="28" />
@@ -390,7 +379,6 @@ class CollectionTree extends React.PureComponent {
 								})}
 								tabIndex={ shouldBeTabbable ? "0" : null }
 								onClick={ ev => this.handleSelect({ trash: true }, ev) }
-								onKeyDown={ ev => this.handleSelect({ trash: true }, ev) }
 								dndTarget={ { 'targetType': 'trash', libraryKey } }
 							>
 								<Icon type="28/trash" className="touch" width="28" height="28" />

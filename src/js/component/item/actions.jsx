@@ -2,11 +2,8 @@
 
 const React = require('react');
 const PropTypes = require('prop-types');
-const { UncontrolledDropdown,
-	DropdownToggle,
-	DropdownMenu,
-	DropdownItem
-} = require('reactstrap/lib');
+const { UncontrolledDropdown, DropdownToggle, DropdownMenu,
+	DropdownItem } = require('reactstrap/lib');
 const { ToolGroup } = require('../ui/toolbars');
 const Button = require('../ui/button');
 const Spinner = require('../ui/spinner');
@@ -14,24 +11,18 @@ const Icon = require('../ui/icon');
 const NewItemSelector = require('./actions/new-item');
 const ExportActions = require('./actions/export');
 const { pick } = require('../../common/immutable');
-const { isTriggerEvent, ifTriggerEvent } = require('../../common/event');
 
 
 class ItemsActions extends React.PureComponent {
-	handleSelectModeToggle(ev) {
+	handleSelectModeToggle = () => {
 		const { isSelectMode, onSelectModeToggle } = this.props;
-		if(isTriggerEvent(ev)) {
-			onSelectModeToggle(!isSelectMode)
-		}
+		onSelectModeToggle(!isSelectMode)
 	}
 
 	renderDelete() {
 		const { itemKeys, itemsSource, onDelete } = this.props;
 		return itemKeys.length > 0 && itemsSource !== 'trash' ? (
-			<DropdownItem
-				onClick={ onDelete }
-				onKeyDown={ ifTriggerEvent(onDelete) }
-			>
+			<DropdownItem onClick={ onDelete } >
 				Move { itemKeys.length > 1 ? 'Items' : 'Item' } to Trash
 			</DropdownItem>
 		) : null;
@@ -40,10 +31,7 @@ class ItemsActions extends React.PureComponent {
 	renderPermanentlyDelete() {
 		const { itemKeys, itemsSource, onPermanentlyDelete } = this.props;
 		return itemKeys.length > 0 && itemsSource === 'trash' ? (
-				<DropdownItem
-					onClick={ onPermanentlyDelete }
-					onKeyDown={ ifTriggerEvent(onPermanentlyDelete) }
-				>
+				<DropdownItem onClick={ onPermanentlyDelete } >
 					Delete { itemKeys.length > 1 ? 'Items' : 'Item' }
 				</DropdownItem>
 			) : null;
@@ -52,10 +40,7 @@ class ItemsActions extends React.PureComponent {
 	renderRestoretoLibrary() {
 		const { itemKeys, itemsSource, onUndelete } = this.props;
 		return itemKeys.length > 0 && itemsSource === 'trash' ? (
-				<DropdownItem
-					onClick={ onUndelete }
-					onKeyDown={ ifTriggerEvent(onUndelete) }
-				>
+				<DropdownItem onClick={ onUndelete } >
 					Restore to Library
 				</DropdownItem>
 			) : null;
@@ -64,10 +49,7 @@ class ItemsActions extends React.PureComponent {
 	renderAddToCollection() {
 		const { itemKeys, itemsSource, onAddToCollectionModalOpen } = this.props;
 		return itemKeys.length > 0 && itemsSource !== 'trash' ? (
-				<DropdownItem
-					onClick={ onAddToCollectionModalOpen }
-					onKeyDown={ ifTriggerEvent(onAddToCollectionModalOpen) }
-				>
+				<DropdownItem onClick={ onAddToCollectionModalOpen } >
 					Add to Collection
 				</DropdownItem>
 			) : null;
@@ -76,10 +58,7 @@ class ItemsActions extends React.PureComponent {
 	renderRemoveFromCollection() {
 		const { itemKeys, itemsSource, onRemove } = this.props;
 		return itemKeys.length > 0 && itemsSource === 'collection' ? (
-				<DropdownItem
-					onClick={ onRemove }
-					onKeyDown={ ifTriggerEvent(onRemove) }
-				>
+				<DropdownItem onClick={ onRemove } >
 					Remove from Collection
 				</DropdownItem>
 			) : null;
@@ -88,10 +67,7 @@ class ItemsActions extends React.PureComponent {
 	renderDuplicateItem() {
 		const { itemKeys, onDuplicate, itemsSource } = this.props;
 		return itemsSource !== 'trash' && itemKeys.length === 1 ? (
-				<DropdownItem
-					onClick={ onDuplicate }
-					onKeyDown={ ifTriggerEvent(onDuplicate) }
-				>
+				<DropdownItem onClick={ onDuplicate } >
 					Duplicate Item
 				</DropdownItem>
 			) : null;
@@ -100,10 +76,7 @@ class ItemsActions extends React.PureComponent {
 	renderShowInLibrary() {
 		const { itemKeys, onLibraryShow, itemsSource } = this.props;
 		return itemsSource !== 'trash' && itemsSource !== 'top' && itemKeys.length === 1 ? (
-				<DropdownItem
-					onClick={ onLibraryShow }
-					onKeyDown={ ifTriggerEvent(onLibraryShow) }
-				>
+				<DropdownItem onClick={ onLibraryShow } >
 					Show In Library
 				</DropdownItem>
 			) : null;
@@ -112,10 +85,7 @@ class ItemsActions extends React.PureComponent {
 	renderNewItem() {
 		const { itemsSource, onNewItemModalOpen } = this.props;
 		return (itemsSource === 'top' || itemsSource === 'collection') ? (
-				<DropdownItem
-					onClick={ onNewItemModalOpen }
-					onKeyDown={ ifTriggerEvent(onNewItemModalOpen) }
-				>
+				<DropdownItem onClick={ onNewItemModalOpen } >
 					New Item
 				</DropdownItem>
 			) : null;
@@ -125,9 +95,7 @@ class ItemsActions extends React.PureComponent {
 		const { itemsSource, onExportModalOpen } = this.props;
 		return (itemsSource === 'top' || itemsSource === 'collection') ? (
 				<DropdownItem
-					onClick={ onExportModalOpen }
-					onKeyDown={ ifTriggerEvent(onExportModalOpen) }
-				>
+					onClick={ onExportModalOpen } >
 					Export
 				</DropdownItem>
 			) : null;
@@ -137,9 +105,7 @@ class ItemsActions extends React.PureComponent {
 		const { itemsSource, onBibliographyOpen } = this.props;
 		return (itemsSource === 'top' || itemsSource === 'collection') ? (
 				<DropdownItem
-					onClick={ onBibliographyOpen }
-					onKeyDown={ ifTriggerEvent(onBibliographyOpen) }
-				>
+					onClick={ onBibliographyOpen } >
 					Bibliography
 				</DropdownItem>
 			) : null;
@@ -165,7 +131,6 @@ class ItemsActions extends React.PureComponent {
 					/>
 					<Button
 						onClick={ onDelete }
-						onKeyDown={ ifTriggerEvent(onDelete) }
 						disabled={ isDeleting || itemKeys.length === 0 || itemsSource === 'trash' }
 						title="Move to Trash"
 					>
@@ -177,7 +142,6 @@ class ItemsActions extends React.PureComponent {
 					</Button>
 					<Button
 						onClick={ onRemove }
-						onKeyDown={ ifTriggerEvent(onRemove) }
 						disabled={ itemKeys.length === 0 || itemsSource !== 'collection' }
 						title="Remove from Collection"
 					>
@@ -188,7 +152,6 @@ class ItemsActions extends React.PureComponent {
 					<ExportActions { ...pick(this.props, ['onExport', 'itemKeys']) } />
 					<Button
 						onClick={ onBibliographyModalOpen }
-						onKeyDown={ ifTriggerEvent(onBibliographyModalOpen) }
 						disabled={ itemKeys.length === 0 }
 						title="Create Bibliography"
 					>
@@ -228,10 +191,7 @@ class ItemsActions extends React.PureComponent {
 					<Icon type="24/options" width="24" height="24" />
 				</DropdownToggle>
 				<DropdownMenu right>
-					<DropdownItem
-						onClick={ ev => this.handleSelectModeToggle(ev) }
-						onKeyDown={ ev => this.handleSelectModeToggle(ev) }
-					>
+					<DropdownItem onClick={ this.handleSelectModeToggle } >
 						{ isSelectMode ? 'Cancel' : 'Select Items' }
 					</DropdownItem>
 					<DropdownItem divider />

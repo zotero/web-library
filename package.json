@@ -84,7 +84,7 @@
     "react-tinymce": "^0.7.0",
     "react-transition-group": "^2.5.0",
     "react-virtualized": "^9.21.0",
-    "reactstrap": "^6.5.0",
+    "reactstrap": "^7.1.0",
     "redux": "^4.0.1",
     "redux-async-queue": "^1.0.0",
     "redux-promise": "^0.6.0",

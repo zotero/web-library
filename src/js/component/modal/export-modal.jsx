@@ -9,7 +9,6 @@ const Button = require('../ui/button');
 const Select = require('../form/select');
 const Spinner = require('../ui/spinner');
 const exportFormats = require('../../constants/export-formats');
-const { isTriggerEvent } = require('../../common/event');
 
 const defaultState = {
 	isBusy: false,
@@ -32,19 +31,17 @@ class ExportModal extends React.PureComponent {
 		}
 	}
 
-	async handleExport(ev) {
+	handleExport = async () => {
 		const { exportItems, itemKeys, toggleModal } = this.props;
 		const { format } = this.state;
 		const fileName = ['export-data', exportFormats.find(f => f.key === format).extension]
 			.filter(Boolean).join('.');
 
-		if(isTriggerEvent(ev)) {
-			this.setState({ isBusy: true });
-			const exportData = await exportItems(itemKeys, format);
-			saveAs(exportData, fileName);
-			this.setState({ isBusy: false });
-			toggleModal(null, false);
-		}
+		this.setState({ isBusy: true });
+		const exportData = await exportItems(itemKeys, format);
+		saveAs(exportData, fileName);
+		this.setState({ isBusy: false });
+		toggleModal(null, false);
 	}
 
 	render() {
@@ -79,8 +76,7 @@ class ExportModal extends React.PureComponent {
 						<div className="modal-header-right">
 							<Button
 								className="btn-link"
-								onKeyDown={ ev => this.handleExport(ev) }
-								onClick={ ev => this.handleExport(ev) }
+								onClick={ this.handleExport }
 							>
 								Export
 							</Button>

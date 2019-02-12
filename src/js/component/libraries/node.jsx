@@ -4,15 +4,11 @@ const React = require('react');
 const PropTypes = require('prop-types');
 const cx = require('classnames');
 const Icon = require('../ui/icon');
+const { DropTarget } = require('react-dnd');
 const { noop } = require('../../utils');
 const { ITEM } = require('../../constants/dnd');
 const { omit } = require('../../common/immutable');
 const { isTriggerEvent } = require('../../common/event');
-const {
-	DropTarget,
-	DropTargetConnector,
-	DropTargetMonitor,
-} = require('react-dnd');
 
 const dndSpec = {
 	drop(props, monitor) {
@@ -34,25 +30,23 @@ const dndCollect = (connect, monitor) => ({
 
 @DropTarget(ITEM, dndSpec, dndCollect)
 class Node extends React.PureComponent {
-	handleToggleInteraction(ev) {
+	handleTwistyClick = ev => {
 		ev && ev.stopPropagation();
-		if(isTriggerEvent(ev, true)) {
-			this.props.onOpen();
-		}
+		this.props.onOpen();
 	}
 
-	handleMouseLeave() {
+	handleMouseLeave = () => {
 		clearTimeout(this.ongoingLongPress);
 	}
 
-	handleMouseUp() {
+	handleMouseUp = () => {
 		if(this.isLongPress && !this.isLongPressCompleted) {
 			clearTimeout(this.ongoingLongPress);
 			this.isLongPressCompleted = false;
 		}
 	}
 
-	handleMouseClick(ev) {
+	handleMouseClick = ev => {
 		if(!this.isLongPress || !this.isLongPressCompleted) {
 			this.props.onClick(ev);
 		}
@@ -60,7 +54,7 @@ class Node extends React.PureComponent {
 		this.isLongPressCompleted = false;
 	}
 
-	handleMouseDown(ev) {
+	handleMouseDown = ev => {
 		if(!('onRename' in this.props)) {
 			this.isLongPress = false;
 			return;
@@ -74,6 +68,21 @@ class Node extends React.PureComponent {
 			ev.preventDefault();
 			this.props.onRename(ev);
 		}, 500);
+	}
+
+	handleKeyDown = ev => {
+		const { onOpen } = this.props;
+		if(ev.target !== ev.currentTarget) {
+			return;
+		}
+
+		if(ev.key === "ArrowLeft") {
+			onOpen(false);
+		} else if(ev.key === "ArrowRight") {
+			onOpen(true);
+		} else if(isTriggerEvent(ev)) {
+			ev.target.click();
+		}
 	}
 
 	render() {
@@ -92,8 +101,7 @@ class Node extends React.PureComponent {
 			<button
 				type="button"
 				className="twisty"
-				onClick={ ev => this.handleToggleInteraction(ev) }
-				onKeyDown={ ev => this.handleToggleInteraction(ev) }
+				onClick={ this.handleTwistyClick }
 			>
 				<Icon type={ '16/triangle' } width="16" height="16" />
 			</button>
@@ -112,10 +120,11 @@ class Node extends React.PureComponent {
 					className={ cx('item-container', { 'dnd-target': isActive }) }
 					role="treeitem"
 					aria-expanded={ isOpen }
-					onMouseDown={ ev => this.handleMouseDown(ev) }
-					onMouseUp={ ev => this.handleMouseUp(ev) }
-					onMouseLeave={ ev => this.handleMouseLeave(ev) }
-					onClick={ ev => this.handleMouseClick(ev) }
+					onMouseDown={ this.handleMouseDown }
+					onMouseUp={ this.handleMouseUp }
+					onMouseLeave={ this.handleMouseLeave }
+					onClick={ this.handleMouseClick }
+					onKeyDown={ this.handleKeyDown }
 					{ ...props }
 				>
 					{ subtree && !hideTwisty ? twistyButton : null }
@@ -132,14 +141,12 @@ class Node extends React.PureComponent {
 		hideTwisty: PropTypes.bool,
 		isOpen: PropTypes.bool,
 		onClick: PropTypes.func,
-		onKeyPress: PropTypes.func,
 		onOpen: PropTypes.func,
 		subtree: PropTypes.oneOfType([PropTypes.element, PropTypes.array]),
 	}
 
 	static defaultProps = {
 		onClick: noop,
-		onKeyPress: noop,
 		onOpen: noop,
 	}
 }

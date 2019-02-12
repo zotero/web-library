@@ -3,7 +3,6 @@
 const React = require('react');
 const PropTypes = require('prop-types');
 
-const { isTriggerEvent } = require('../../common/event');
 const { makeChildMap } = require('../../common/collection');
 const Libraries = require('../libraries');
 const Modal = require('../ui/modal');
@@ -49,12 +48,12 @@ class CollectionSelectModal extends React.PureComponent {
 		});
 	}
 
-	async handleCollectionUpdate(ev) {
+	handleCollectionUpdate = async () => {
 		const { addToCollection, items, toggleModal } = this.props;
 		const { picked } = this.state;
 
 
-		if(this.state.picked.length && isTriggerEvent(ev)) {
+		if(this.state.picked.length) {
 			this.setState({ isBusy: true })
 			const promises = picked.map(
 				targetData => addToCollection(
@@ -67,7 +66,7 @@ class CollectionSelectModal extends React.PureComponent {
 		}
 	}
 
-	handleCollectionSelect({ library = null,  collection = null, ...rest } = {}) {
+	handleCollectionSelect = ({ library = null,  collection = null, ...rest } = {}) => {
 		const { collections, groupCollections, userLibraryKey } = this.props;
 
 		if(library) {
@@ -179,8 +178,7 @@ class CollectionSelectModal extends React.PureComponent {
 							{ picked.length > 0 && (
 								<Button
 									className="btn-link"
-									onKeyDown={ ev => this.handleCollectionUpdate(ev) }
-									onClick={ ev => this.handleCollectionUpdate(ev) }
+									onClick={ this.handleCollectionUpdate }
 								>
 									Confirm ({ picked.length })
 								</Button>
@@ -208,7 +206,7 @@ class CollectionSelectModal extends React.PureComponent {
 									device={ device }
 									collections={ collections }
 									path={ this.state.path }
-									onSelect={ (...args) => this.handleCollectionSelect(...args) }
+									onSelect={ this.handleCollectionSelect }
 								/>
 								</React.Fragment>
 							)

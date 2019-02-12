@@ -3,24 +3,21 @@
 const React = require('react');
 const PropTypes = require('prop-types');
 
-const { isTriggerEvent } = require('../../common/event');
 const Modal = require('../ui/modal');
 const Button = require('../ui/button');
 const Input = require('../form/input');
 const Icon = require('../ui/icon');
 
 class CollectionAddModal extends React.PureComponent {
-	handleCollectionUpdate(ev) {
+	handleCollectionUpdate = () => {
 		const { libraryKey, toggleModal, createCollection,
 			parentCollection } = this.props;
 
-		if(isTriggerEvent(ev)) {
-			createCollection({
-				name: this.inputRef.value,
-				parentCollection: parentCollection ? parentCollection.key : null
-			}, libraryKey);
-			toggleModal(null, false);
-		}
+		createCollection({
+			name: this.inputRef.value,
+			parentCollection: parentCollection ? parentCollection.key : null
+		}, libraryKey);
+		toggleModal(null, false);
 	}
 
 	render() {
@@ -57,8 +54,7 @@ class CollectionAddModal extends React.PureComponent {
 						<div className="modal-header-right">
 							<Button
 								className="btn-link"
-								onKeyDown={ ev => this.handleCollectionUpdate(ev) }
-								onClick={ ev => this.handleCollectionUpdate(ev) }
+								onClick={ this.handleCollectionUpdate }
 							>
 								Confirm
 							</Button>
@@ -74,7 +70,7 @@ class CollectionAddModal extends React.PureComponent {
 									id={ inputId }
 									autoFocus
 									ref={ ref => this.inputRef = ref }
-									onCommit={ (_, __, ev) => this.handleCollectionUpdate(ev) }
+									onCommit={ this.handleCollectionUpdate }
 									tabIndex={ 0 }
 								/>
 							</div>

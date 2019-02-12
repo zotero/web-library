@@ -3,7 +3,6 @@
 const React = require('react');
 const PropTypes = require('prop-types');
 
-const { isTriggerEvent } = require('../../common/event');
 const { makePath } = require('../../common/navigation');
 const Modal = require('../ui/modal');
 const Button = require('../ui/button');
@@ -24,31 +23,29 @@ class CollectionAddModal extends React.PureComponent {
 		}
 	}
 
-	async handleNewItemCreate(ev) {
+	handleNewItemCreate = async () => {
 		const { createItem, fetchItemTemplate, toggleModal, push,
 			collection: { key: collection } = {} , libraryKey: library, itemsSource,
 			tags, search } = this.props;
 		const { itemType } = this.state;
 
-		if(isTriggerEvent(ev)) {
-			this.setState({ isBusy: true });
-			const template = await fetchItemTemplate(itemType);
-			const newItem = {
-				...template,
-				collections: itemsSource === 'collection' ? [collection] : []
-			};
-			const item = await createItem(newItem, library);
+		this.setState({ isBusy: true });
+		const template = await fetchItemTemplate(itemType);
+		const newItem = {
+			...template,
+			collections: itemsSource === 'collection' ? [collection] : []
+		};
+		const item = await createItem(newItem, library);
 
-			const trash = itemsSource === 'trash';
-			const publications = itemsSource === 'publications';
-			const view = 'item-list';
-			this.setState({ isBusy: false });
-			toggleModal(null, false);
-			push(makePath({
-				library, search, tags, trash, publications, collection,
-				items: [item.key], view
-			}));
-		}
+		const trash = itemsSource === 'trash';
+		const publications = itemsSource === 'publications';
+		const view = 'item-list';
+		this.setState({ isBusy: false });
+		toggleModal(null, false);
+		push(makePath({
+			library, search, tags, trash, publications, collection,
+			items: [item.key], view
+		}));
 	}
 
 	handleSelect(itemType, hasChanged) {
@@ -92,8 +89,7 @@ class CollectionAddModal extends React.PureComponent {
 						<div className="modal-header-right">
 							<Button
 								className="btn-link"
-								onKeyDown={ ev => this.handleNewItemCreate(ev) }
-								onClick={ ev => this.handleNewItemCreate(ev) }
+								onClick={ this.handleNewItemCreate }
 							>
 								Create
 							</Button>

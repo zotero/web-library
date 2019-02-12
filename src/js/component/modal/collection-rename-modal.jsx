@@ -3,7 +3,6 @@
 const React = require('react');
 const PropTypes = require('prop-types');
 
-const { isTriggerEvent } = require('../../common/event');
 const { makeChildMap } = require('../../common/collection');
 const Modal = require('../ui/modal');
 const Button = require('../ui/button');
@@ -11,14 +10,12 @@ const Input = require('../form/input');
 const Icon = require('../ui/icon');
 
 class CollectionRenameModal extends React.PureComponent {
-	handleCollectionUpdate(ev) {
+	handleCollectionUpdate = () => {
 		const { collection, libraryKey, toggleModal, updateCollection } = this.props;
-		if(isTriggerEvent(ev)) {
-			updateCollection(
-				collection.key, { name: this.inputRef.value }, libraryKey
-			);
-			toggleModal(null, false);
-		}
+		updateCollection(
+			collection.key, { name: this.inputRef.value }, libraryKey
+		);
+		toggleModal(null, false);
 	}
 
 	render() {
@@ -54,8 +51,7 @@ class CollectionRenameModal extends React.PureComponent {
 						<div className="modal-header-right">
 							<Button
 								className="btn-link"
-								onKeyDown={ ev => this.handleCollectionUpdate(ev) }
-								onClick={ ev => this.handleCollectionUpdate(ev) }
+								onClick={ this.handleCollectionUpdate }
 							>
 								Rename
 							</Button>
@@ -71,7 +67,7 @@ class CollectionRenameModal extends React.PureComponent {
 									id={ inputId }
 									autoFocus
 									ref={ ref => this.inputRef = ref }
-									onCommit={ (_, __, ev) => this.handleCollectionUpdate(ev) }
+									onCommit={ this.handleCollectionUpdate }
 									value={ collection && collection.name }
 									tabIndex={ 0 }
 								/>

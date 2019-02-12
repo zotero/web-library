@@ -9,7 +9,6 @@ const Dropdown = require('reactstrap/lib/Dropdown').default;
 const DropdownToggle = require('reactstrap/lib/DropdownToggle').default;
 const DropdownMenu = require('reactstrap/lib/DropdownMenu').default;
 const DropdownItem = require('reactstrap/lib/DropdownItem').default;
-const { isTriggerEvent } = require('../../common/event');
 const { COLLECTION_ADD } = require('../../constants/modals');
 
 class CollectionActions extends React.PureComponent {
@@ -17,16 +16,20 @@ class CollectionActions extends React.PureComponent {
 		isOpen: false,
 	}
 
-	handleToggleDropdown() {
+	handleToggleDropdown = () => {
 		this.setState({ isOpen: !this.state.isOpen });
 	}
 
-	render() {
+	handleNewCollectionClick = () => {
 		const { toggleModal } = this.props;
+		toggleModal(COLLECTION_ADD, true)
+	}
+
+	render() {
 		return (
 			<Dropdown
 				isOpen={ this.state.isOpen }
-				toggle={ this.handleToggleDropdown.bind(this) }
+				toggle={ this.handleToggleDropdown }
 				className="dropdown-wrapper new-item-selector"
 			>
 				<DropdownToggle
@@ -36,10 +39,7 @@ class CollectionActions extends React.PureComponent {
 					<Icon type="24/options" width="24" height="24" />
 				</DropdownToggle>
 				<DropdownMenu right>
-					<DropdownItem
-						onClick={ () => toggleModal(COLLECTION_ADD, true) }
-						onKeyDown={ ev => isTriggerEvent(ev) && toggleModal(COLLECTION_ADD, true) }
-					>
+					<DropdownItem onClick={ this.handleNewCollectionClick }>
 						New Collection
 					</DropdownItem>
 				</DropdownMenu>
@@ -48,6 +48,7 @@ class CollectionActions extends React.PureComponent {
 	}
 
 	static defaultProps = {
+		toggleModal: noop
 	}
 
 	static propTypes = {
