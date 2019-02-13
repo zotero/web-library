@@ -2,45 +2,79 @@
 // Hairline
 // --------------------------------------------------
 
-@mixin hairline($side, $color, $start: 0) {
+@mixin hairline-gradient($direction, $color, $size, $position: 0 0) {
+		background: linear-gradient(
+		$direction,
+		$color 0%,
+		$color 51%,
+		transparent 51%
+	) no-repeat $position / ($size);
+}
+
+@mixin hairline($side, $color, $start: 0px) {
 	$directions: (
 		top: (
 			direction: to bottom,
-			position: $start 0
+			position: $start 0,
+			size: 100% 1px
 		),
 		right: (
 			direction: to left,
-			position: 0 $start
+			position: 0 $start,
+			size: 1px 100%
 		),
 		bottom: (
 			direction: to top,
-			position: $start 0
+			position: $start 0,
+			size: 100% 1px
 		),
 		left: (
 			direction: to right,
-			position: 0 $start
+			position: 0 $start,
+			size: 1px 100%
 		)
 	);
 
 	$direction: map-get(map-get($directions, $side), direction);
 	$position: map-get(map-get($directions, $side), position);
+	$size: map-get(map-get($directions, $side), size);
 
-	border-#{$side}: $border-width solid transparent;
-	background: linear-gradient(
-		$direction,
-		rgba($color, 0.5) 0%,
-		rgba($color, 0.5) 1px,
-		transparent 1px
-	) no-repeat $position;
+	@media (max-resolution: 1.9dppx) {
+		@if $side == top or $side == bottom {
+			border-#{$side}: $border-width solid transparent;
+			background: linear-gradient(
+				$direction,
+				rgba($color, 0.5) 0%,
+				rgba($color, 0.5) 1px,
+				transparent 1px
+			) no-repeat $position;
+			background-origin: border-box;
+		}
 
-	@media (min-resolution: 2dppx) {
-		background: linear-gradient(
-			$direction,
-			$color 0%,
-			$color 51%,
-			transparent 51%
-		) no-repeat $position / (100% 1px);
+		@if $side == left or $side == right {
+			border-#{$side}: $border-width solid rgba($color, 0.5);
+		}
 	}
 
-	background-origin: border-box;
+	@media (min-resolution: 2dppx) {
+		@if $side == top or $side == bottom {
+			border-#{$side}: $border-width solid transparent;
+			@include hairline-gradient($direction, $color, $size, $position);
+		}
+
+		@if $side == left or $side == right {
+			&::before {
+				content: "";
+				position: absolute;
+				z-index: $z-index-hairline;
+				#{$side}: 0;
+				top: $start;
+				width: 1px;
+				height: calc(100% - #{$start});
+				@include hairline-gradient($direction, $color, $size);
+			}
+		}
+	}
+
+	position: relative;
 }
