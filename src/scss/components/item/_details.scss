@@ -36,6 +36,7 @@
 	@include bp-up(lg) {
 		flex: 0 0 $item-details-width-lg;
 		min-width: 0; // Fix truncation
+		@include hairline(left, $item-details-border);
 
 		.touch & {
 			flex: 0 0 $item-details-width-lg-touch;
