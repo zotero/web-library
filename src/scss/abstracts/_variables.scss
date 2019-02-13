@@ -168,7 +168,7 @@ $item-table-row-height: $line-height-large;
 // Toolbar
 // --------------------------------------------------
 
-$toolbar-height:       $line-height-large;
+$toolbar-height:       $line-height-large + $space-min;
 $toolbar-height-touch: $line-height-large-touch;
 
 

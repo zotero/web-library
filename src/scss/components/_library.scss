@@ -3,6 +3,8 @@
 // --------------------------------------------------
 
 .library {
+	border-top: 1px solid $shade-2; // todo
+
 	@include bp-up(sm) {
 		display: flex;
 		width: 100%;

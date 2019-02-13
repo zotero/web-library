@@ -16,7 +16,6 @@
 	@include mouse-and-bp-up(md) {
 		height: $toolbar-height;
 		padding: 0 $default-padding-x;
-		margin-bottom: $space-min;
 	}
 
 	.toolbar-left,
