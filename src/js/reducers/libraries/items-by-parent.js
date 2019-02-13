@@ -10,6 +10,11 @@ const {
 	RECEIVE_DELETE_ITEM,
 	RECEIVE_DELETE_ITEMS,
 	SORT_ITEMS,
+	RECEIVE_ITEMS_IN_COLLECTION,
+	RECEIVE_FETCH_ITEMS,
+	RECEIVE_TOP_ITEMS,
+	RECEIVE_TRASH_ITEMS,
+	RECEIVE_ITEMS_BY_QUERY,
 } = require('../../constants/actions.js');
 
 const itemsByParent = (state = {}, action) => {
@@ -79,6 +84,20 @@ const itemsByParent = (state = {}, action) => {
 				);
 				return aggr
 			}, {});
+		case RECEIVE_ITEMS_IN_COLLECTION:
+		case RECEIVE_FETCH_ITEMS:
+		case RECEIVE_TOP_ITEMS:
+		case RECEIVE_TRASH_ITEMS:
+		case RECEIVE_ITEMS_BY_QUERY:
+			return {
+				...state,
+				...action.items.reduce((aggr, item, index) => {
+					aggr[item.key] = {
+						totalResults: action.response.getMeta()[index].numChildren
+					};
+					return aggr;
+				}, {})
+			}
 		default:
 			return state;
 	}

@@ -83,7 +83,6 @@ const populateItemKeys = (state, newKeys, action) => {
 	const { start, totalResults, sort, direction } = action;
 
 	const keys = [...prevKeys];
-	// const actualLimit = Math.min(limit, totalResults - start);
 	keys.length = totalResults;
 
 	for(let i = 0; i < newKeys.length; i++) {

@@ -4,32 +4,37 @@ const React = require('react');
 const Attachments = require('../../../attachments');
 const cx = require('classnames');
 const Spinner = require('../../../ui/spinner');
+const PAGE_SIZE = 100;
 
 class AttachmentsTabPane extends React.PureComponent {
 	componentDidUpdate({ prevItem, wasActive }) {
-		const { item, isActive, fetchChildItems, childItems, isLoadingChildItems } = this.props;
-		const { numChildren = 0 } = item[Symbol.for('meta')];
+		const { item, isActive, fetchChildItems, childItems,
+			isLoadingChildItems, totalChildItems } = this.props;
 
-		if(!isLoadingChildItems && isActive && numChildren > childItems.length) {
-			if(item && !prevItem || prevItem && item.key !== prevItem.key || !wasActive) {
-				fetchChildItems(item.key);
-			}
+		const hasMoreItems = totalChildItems > childItems.length ||
+			typeof(totalChildItems) === 'undefined';
+
+		const start = childItems.length;
+		const limit = PAGE_SIZE;
+
+		if(!isLoadingChildItems && isActive && hasMoreItems) {
+			fetchChildItems(item.key, { start, limit });
 		}
 	}
 
 	render() {
 		const { isActive, item, childItems, attachmentViewUrls, onAddAttachment,
 			onDeleteAttachment, isLoadingChildItems } = this.props;
-		const { numChildren = 0 } = item[Symbol.for('meta')];
+
 		return (
 			<div className={ cx({
 				'tab-pane': true,
 				'attachments': true,
 				'active': isActive,
-				'loading': numChildren > childItems.length,
+				'loading': isLoadingChildItems,
 			}) }>
 				{
-				numChildren > childItems.length ? <Spinner /> : (
+				isLoadingChildItems ? <Spinner /> : (
 					<React.Fragment>
 						<h5 className="h2 tab-pane-heading">Attachments</h5>
 						<Attachments

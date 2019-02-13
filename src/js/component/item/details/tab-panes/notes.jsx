@@ -4,32 +4,36 @@ const React = require('react');
 const cx = require('classnames');
 const Notes = require('../../../notes');
 const Spinner = require('../../../ui/spinner');
+const PAGE_SIZE = 100;
 
 class NotesTabPane extends React.PureComponent {
 	componentDidUpdate({ prevItem, wasActive }) {
-		const { item, isActive, fetchChildItems, childItems, isLoadingChildItems } = this.props;
-		const { numChildren = 0 } = item[Symbol.for('meta')];
+		const { item, isActive, fetchChildItems, childItems,
+			isLoadingChildItems, totalChildItems } = this.props;
 
-		if(!isLoadingChildItems && isActive && numChildren > childItems.length) {
-			if(item && !prevItem || prevItem && item.key !== prevItem.key || !wasActive) {
-				fetchChildItems(item.key);
-			}
+		const hasMoreItems = totalChildItems > childItems.length ||
+			typeof(totalChildItems) === 'undefined';
+
+		const start = childItems.length;
+		const limit = PAGE_SIZE;
+
+		if(!isLoadingChildItems && isActive && hasMoreItems) {
+			fetchChildItems(item.key, { start, limit });
 		}
 	}
 
 	render() {
 		const { isLoadingChildItems, isActive, item, childItems, onNoteChange,
 			onAddNote, onDeleteNote } = this.props;
-		const { numChildren = 0 } = item[Symbol.for('meta')];
 		return (
 			<div className={ cx({
 				'tab-pane': true,
 				'notes': true,
 				'active': isActive,
-				'loading': numChildren > childItems.length
+				'loading': isLoadingChildItems
 			}) }>
 				{
-					numChildren > childItems.length ? <Spinner /> : (
+					isLoadingChildItems ? <Spinner /> : (
 						<React.Fragment>
 							<h5 className="h2 tab-pane-heading">Notes</h5>
 							<Notes

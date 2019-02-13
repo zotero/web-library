@@ -12,21 +12,26 @@ const { makePath } = require('../common/navigation');
 const { getFieldDisplayValue } = require('../common/item');
 const withEditMode = require('../enhancers/with-edit-mode');
 const withDevice = require('../enhancers/with-device');
+const PAGE_SIZE = 100;
 
 class ItemDetailsContainer extends React.PureComponent {
 	async componentDidUpdate() {
-		const { childItems, device, fetchChildItems, item, isLoadingChildItems, shouldFetchMeta, dispatch } = this.props;
+		const { childItems, device, fetchChildItems, item, isLoadingChildItems,
+			shouldFetchMeta, totalChildItems, dispatch } = this.props;
+
 		if(item && item.key) {
-			const { numChildren = 0 } = item[Symbol.for('meta')];
+			const hasMoreItems = totalChildItems > childItems.length ||
+				typeof(totalChildItems) === 'undefined';
+			const start = childItems.length;
+			const limit = PAGE_SIZE;
 
 			if(shouldFetchMeta) {
 				dispatch(fetchItemTypeCreatorTypes(item.itemType));
 				dispatch(fetchItemTypeFields(item.itemType));
 			}
 
-			if(!device.shouldUseTabs && numChildren > childItems.length &&
-				!isLoadingChildItems) {
-				fetchChildItems(item.key)
+			if(!device.shouldUseTabs && hasMoreItems && !isLoadingChildItems) {
+				fetchChildItems(item.key, { start, limit })
 			}
 		}
 	}
@@ -229,11 +234,13 @@ const mapStateToProps = state => {
 		itemsSource,
 		collectionKey,
 		itemKey,
+		itemKeys,
 	} = state.current;
 	const item = get(state, ['libraries', libraryKey, 'items', itemKey], null);
 	const itemType = item ? item.itemType : null;
 	const childItems = get(state, ['libraries', libraryKey, 'itemsByParent', itemKey, 'keys'], [])
 			.map(key => get(state, ['libraries', libraryKey, 'items', key], {}));
+	const totalChildItems = get(state, ['libraries', libraryKey, 'itemsByParent', itemKey, 'totalResults']);
 	const isProcessingTags = get(state,
 		['libraries', libraryKey, 'updating', 'items', itemKey], []
 	).some(({ patch }) => 'tagd' in patch);
@@ -291,7 +298,6 @@ const mapStateToProps = state => {
 		break;
 	}
 
-	const selectedItemKeys = get(state, 'router.params.items');
 	const pendingChanges = get(state, ['libraries', libraryKey, 'updating', 'items', itemKey]) || [];
 
 	return {
@@ -306,7 +312,8 @@ const mapStateToProps = state => {
 		pendingChanges,
 		relatedItems,
 		relatedItemsKeys,
-		selectedItemKeys: selectedItemKeys ? selectedItemKeys.split(',') : [],
+		selectedItemKeys: itemKeys, //@TODO: rename
+		totalChildItems,
 		isLoadingRelatedItems,
 		shouldFetchMeta,
 		...extraProps
