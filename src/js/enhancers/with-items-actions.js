@@ -28,7 +28,7 @@ const withItemsActions = Component => {
 			push(makePath({ library, search, tags, trash, publications, collection, items, view }));
 		}
 
-		handleDelete = async () => {
+		handleTrash = async () => {
 			const { itemKeys, moveToTrash } = this.props;
 
 			do {
@@ -58,7 +58,7 @@ const withItemsActions = Component => {
 			this.handleItemsSelect();
 		}
 
-		handleRemove = async () => {
+		handleRemoveFromCollection = async () => {
 			const { itemKeys, collectionKey, removeFromCollection } = this.props;
 
 			do {
@@ -123,11 +123,11 @@ const withItemsActions = Component => {
 
 		render() {
 			return <Component
-				onDelete = { this.handleDelete }
+				onTrash = { this.handleTrash }
 				onItemsSelect = { this.handleItemsSelect }
 				onPermanentlyDelete = { this.handlePermanentlyDelete }
 				onUndelete = { this.handleUndelete }
-				onRemove = { this.handleRemove }
+				onRemoveFromCollection = { this.handleRemoveFromCollection }
 				onDuplicate = { this.handleDuplicate }
 				onLibraryShow = { this.handleLibraryShow }
 				onNewItemCreate = { this.handleNewItemCreate }
@@ -169,8 +169,8 @@ const mapStateToProps = state => {
 		search, itemKeys } = state.current;
 	const item = get(state, ['libraries', libraryKey, 'items', itemKey]);
 
-	return { collectionKey, item, itemKey, itemsSource, search, itemKeys,
-		tags
+	return { collectionKey, item, itemKey, itemsSource, libraryKey, search,
+		itemKeys, tags
 	}
 }
 

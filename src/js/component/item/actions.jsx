@@ -19,15 +19,6 @@ class ItemsActions extends React.PureComponent {
 		onSelectModeToggle(!isSelectMode)
 	}
 
-	renderDelete() {
-		const { itemKeys, itemsSource, onDelete } = this.props;
-		return itemKeys.length > 0 && itemsSource !== 'trash' ? (
-			<DropdownItem onClick={ onDelete } >
-				Move { itemKeys.length > 1 ? 'Items' : 'Item' } to Trash
-			</DropdownItem>
-		) : null;
-	}
-
 	renderPermanentlyDelete() {
 		const { itemKeys, itemsSource, onPermanentlyDelete } = this.props;
 		return itemKeys.length > 0 && itemsSource === 'trash' ? (
@@ -46,19 +37,10 @@ class ItemsActions extends React.PureComponent {
 			) : null;
 	}
 
-	renderAddToCollection() {
-		const { itemKeys, itemsSource, onAddToCollectionModalOpen } = this.props;
-		return itemKeys.length > 0 && itemsSource !== 'trash' ? (
-				<DropdownItem onClick={ onAddToCollectionModalOpen } >
-					Add to Collection
-				</DropdownItem>
-			) : null;
-	}
-
 	renderRemoveFromCollection() {
-		const { itemKeys, itemsSource, onRemove } = this.props;
+		const { itemKeys, itemsSource, onRemoveFromCollection } = this.props;
 		return itemKeys.length > 0 && itemsSource === 'collection' ? (
-				<DropdownItem onClick={ onRemove } >
+				<DropdownItem onClick={ onRemoveFromCollection } >
 					Remove from Collection
 				</DropdownItem>
 			) : null;
@@ -119,8 +101,8 @@ class ItemsActions extends React.PureComponent {
 	}
 
 	renderMouse() {
-		const { itemsSource, onDelete, isDeleting, itemKeys,
-			onRemove, onBibliographyModalOpen } = this.props;
+		const { itemsSource, onTrash, isDeleting, itemKeys,
+			onRemoveFromCollection, onBibliographyModalOpen } = this.props;
 
 		return (
 			<React.Fragment>
@@ -130,7 +112,7 @@ class ItemsActions extends React.PureComponent {
 						{ ...pick(this.props, ['itemTypes', 'onNewItemCreate']) }
 					/>
 					<Button
-						onClick={ onDelete }
+						onClick={ onTrash }
 						disabled={ isDeleting || itemKeys.length === 0 || itemsSource === 'trash' }
 						title="Move to Trash"
 					>
@@ -141,7 +123,7 @@ class ItemsActions extends React.PureComponent {
 						}
 					</Button>
 					<Button
-						onClick={ onRemove }
+						onClick={ onRemoveFromCollection }
 						disabled={ itemKeys.length === 0 || itemsSource !== 'collection' }
 						title="Remove from Collection"
 					>
@@ -169,6 +151,7 @@ class ItemsActions extends React.PureComponent {
 							<Icon type="16/options" width="16" height="16" />
 						</DropdownToggle>
 						<DropdownMenu>
+							{ this.renderRemoveFromCollection() }
 							{ this.renderRestoretoLibrary() }
 							{ this.renderPermanentlyDelete() }
 							{ this.renderDuplicateItem() }
@@ -196,13 +179,6 @@ class ItemsActions extends React.PureComponent {
 					</DropdownItem>
 					<DropdownItem divider />
 						{ this.renderNewItem() }
-						{ this.renderRemoveFromCollection() }
-						{ this.renderAddToCollection() }
-						{ this.renderRestoretoLibrary() }
-						{ this.renderPermanentlyDelete() }
-						{ this.renderDelete() }
-						{ this.renderDuplicateItem() }
-						{ this.renderShowInLibrary() }
 						{ this.renderExport() }
 						{ this.renderBibliography() }
 				</DropdownMenu>

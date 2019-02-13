@@ -2,31 +2,20 @@
 
 const React = require('react');
 const { connect } = require('react-redux');
-const { get } = require('../utils');
-const withSelectMode = require('../enhancers/with-select-mode');
+const { pick } = require('../common/immutable');
+const withItemsActions = require('../enhancers/with-items-actions');
 const TouchFooter = require('../component/touch-footer');
 
-const {	toggleModal } = require('../actions');
 
-class ItemsActionsContainer extends React.PureComponent {
-
+class TouchFooterContainer extends React.PureComponent {
 	render() {
 		return <TouchFooter { ...this.props } />
 	}
 }
 
 const mapStateToProps = state => {
-	const { libraryKey, collectionKey, itemsSource, itemKey, itemKeys, tags,
-		search } = state.current;
-
-	const item = get(state, ['libraries', libraryKey, 'items', itemKey]);
-	const itemTypes = state.meta.itemTypes;
-
-	return { collectionKey, item, itemKey, itemKeys, itemsSource, itemTypes,
-		search, tags
-	}
+	return { ...pick(state.current, 'itemKeys') }
 }
 
-module.exports = withSelectMode(
-	connect(mapStateToProps, { toggleModal })(ItemsActionsContainer)
-);
+
+module.exports = withItemsActions(connect(mapStateToProps)(TouchFooterContainer));
