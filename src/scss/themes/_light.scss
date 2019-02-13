@@ -67,7 +67,8 @@ $separator-color: $shade-3;
 $main-bg: $shade-0;
 
 // Sidebar
-$sidebar-bg: $shade-1;
+$sidebar-bg:           $shade-1;
+$sidebar-border-color: $shade-4;
 
 
 // Components
@@ -99,7 +100,7 @@ $collection-tree-focus-color:             $asphalt;
 $collection-tree-icon-color:              $shade-6;
 $touch-collection-tree-active-color:      $shade-0;
 $touch-collection-tree-active-bg:         $blue;
-$touch-collection-tree-border:            $shade-2;
+$touch-collection-tree-border:            $shade-4;
 $touch-collection-tree-separator:         $body-bg;
 $collection-tree-dnd-target-color:        $shade-0;
 $collection-tree-dnd-target-bg-color:     $blue;

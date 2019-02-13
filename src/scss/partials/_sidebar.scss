@@ -8,6 +8,7 @@
 	background: $sidebar-bg;
 	overflow: hidden;
 	position: relative;
+	@include hairline(right, $sidebar-border-color);
 
 	@include bp-down(xs) {
 		position: absolute;
