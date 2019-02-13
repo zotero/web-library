@@ -39,39 +39,41 @@
 	$position: map-get(map-get($directions, $side), position);
 	$size: map-get(map-get($directions, $side), size);
 
-	@media (max-resolution: 1.9dppx) {
-		@if $side == top or $side == bottom {
-			border-#{$side}: $border-width solid transparent;
-			background: linear-gradient(
-				$direction,
-				rgba($color, 0.5) 0%,
-				rgba($color, 0.5) 1px,
-				transparent 1px
-			) no-repeat $position;
-			background-origin: border-box;
-		}
-
-		@if $side == left or $side == right {
-			border-#{$side}: $border-width solid rgba($color, 0.5);
-		}
+	@if $side == top or $side == bottom {
+		border-#{$side}: $border-width solid transparent;
+		background: linear-gradient(
+			$direction,
+			mix($color, $body-bg, 50%) 0%,
+			mix($color, $body-bg, 50%) 1px,
+			transparent 1px
+		) no-repeat $position;
+		background-origin: border-box;
 	}
 
-	@media (min-resolution: 2dppx) {
-		@if $side == top or $side == bottom {
-			border-#{$side}: $border-width solid transparent;
-			@include hairline-gradient($direction, $color, $size, $position);
-		}
+	@if $side == left or $side == right {
+		border-#{$side}: $border-width solid mix($color, $body-bg, 50%);
+	}
 
-		@if $side == left or $side == right {
-			&::before {
-				content: "";
-				position: absolute;
-				z-index: $z-index-hairline;
-				#{$side}: 0;
-				top: $start;
-				width: 1px;
-				height: calc(100% - #{$start});
-				@include hairline-gradient($direction, $color, $size);
+	@include touch-or-bp-down(sm) {
+		@media (min-resolution: 2dppx) {
+			@if $side == top or $side == bottom {
+				border-#{$side}: $border-width solid transparent;
+				@include hairline-gradient($direction, $color, $size, $position);
+			}
+
+			@if $side == left or $side == right {
+				border-#{$side}: 0;
+
+				&::before {
+					content: "";
+					position: absolute;
+					z-index: $z-index-hairline;
+					#{$side}: 0;
+					top: $start;
+					width: 1px;
+					height: calc(100% - #{$start});
+					@include hairline-gradient($direction, $color, $size);
+				}
 			}
 		}
 	}
