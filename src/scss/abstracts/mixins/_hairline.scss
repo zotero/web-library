@@ -2,16 +2,34 @@
 // Hairline
 // --------------------------------------------------
 
-@mixin hairline-gradient($direction, $color, $size, $position: 0 0) {
+@mixin hairline-1x($side, $color, $start, $direction, $position) {
+	@if $side == top or $side == bottom {
+		border-#{$side}: $border-width solid transparent;
 		background: linear-gradient(
+			$direction,
+			mix($color, $body-bg, 50%) 0%,
+			mix($color, $body-bg, 50%) 1px,
+			transparent 1px
+		) no-repeat $position;
+		background-origin: border-box;
+	}
+
+	@if $side == left or $side == right {
+		border-#{$side}: $border-width solid mix($color, $body-bg, 50%);
+	}
+}
+
+@mixin hairline-gradient($direction, $color, $size, $position: 0 0) {
+	background: linear-gradient(
 		$direction,
 		$color 0%,
 		$color 51%,
 		transparent 51%
 	) no-repeat $position / ($size);
+	background-origin: border-box;
 }
 
-@mixin hairline($side, $color, $start: 0px) {
+@mixin hairline($side, $color, $start: 0px, $touch-only: null) {
 	$directions: (
 		top: (
 			direction: to bottom,
@@ -39,19 +57,13 @@
 	$position: map-get(map-get($directions, $side), position);
 	$size: map-get(map-get($directions, $side), size);
 
-	@if $side == top or $side == bottom {
-		border-#{$side}: $border-width solid transparent;
-		background: linear-gradient(
-			$direction,
-			mix($color, $body-bg, 50%) 0%,
-			mix($color, $body-bg, 50%) 1px,
-			transparent 1px
-		) no-repeat $position;
-		background-origin: border-box;
-	}
 
-	@if $side == left or $side == right {
-		border-#{$side}: $border-width solid mix($color, $body-bg, 50%);
+	@if $touch-only == true {
+		@include touch-or-bp-down(sm) {
+			@include hairline-1x($side, $color, $start, $direction, $position);
+		}
+	} @else {
+		@include hairline-1x($side, $color, $start, $direction, $position);
 	}
 
 	@include touch-or-bp-down(sm) {
