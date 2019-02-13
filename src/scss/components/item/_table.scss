@@ -51,8 +51,8 @@
 
 	.ReactVirtualized__Table__Grid {
 		padding-top: $space-min;
-	 	background-image: repeating-linear-gradient(to bottom, $items-odd-bg $space-min,
-	 		$items-odd-bg ($item-table-row-height + $space-min),
+	 	background-image: repeating-linear-gradient(to bottom, $item-table-odd-bg $space-min,
+	 		$item-table-odd-bg ($item-table-row-height + $space-min),
 	 		transparent ($item-table-row-height + $space-min),
 	 		transparent (2 * $item-table-row-height + $space-min));
 	 	background-attachment: local;
