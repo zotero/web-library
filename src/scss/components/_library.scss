@@ -7,6 +7,10 @@
 		display: flex;
 		width: 100%;
 	}
+
+	> .touch-header {
+		background-color: mix($shade-10, $touch-header-bg, 2%);
+	}
 }
 
 .items {

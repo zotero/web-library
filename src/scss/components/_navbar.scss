@@ -41,10 +41,6 @@
 		}
 	}
 
-	@include mouse-and-bp-up(md) {
-		margin-bottom: $space-min;
-	}
-
 	.navbar-left,
 	.navbar-right {
 		display: flex;

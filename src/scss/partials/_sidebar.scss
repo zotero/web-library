@@ -42,4 +42,8 @@
 			flex: 0 0 $sidebar-width-lg-touch;
 		}
 	}
+
+	.touch-header {
+		background-color: mix($shade-10, $touch-header-bg, 2%);
+	}
 }

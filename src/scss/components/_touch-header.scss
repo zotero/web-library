@@ -4,14 +4,11 @@
 
 .touch-header {
 	line-height: $line-height-base; // Reset for correct outline size
+	flex: 0 0 $line-height-large-touch;
+	background: $touch-header-bg;
+	color: $touch-header-color;
+	height: $line-height-large-touch;
 	position: relative;
-
-	@include touch-or-bp-down(sm) {
-		flex: 0 0 $line-height-large-touch;
-		background: $body-bg;
-		color: $touch-header-color;
-		height: $line-height-large-touch;
-	}
 
 	nav,
 	ul,
