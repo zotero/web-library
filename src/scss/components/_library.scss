@@ -41,10 +41,6 @@
   	overflow: hidden;
 	}
 
-	@include bp-up(sm) {
-		margin-left: $space-min;
-	}
-
 	@include bp-only(md) {
 		flex-direction: column;
 	}
@@ -99,6 +95,5 @@
 
 	@include bp-up(lg) {
 		flex: 1 1 auto;
-		padding-right: $space-min;
 	}
 }
