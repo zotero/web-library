@@ -23,7 +23,7 @@
 	section {
 		& + section {
 			@include touch-or-bp-down(sm) {
-				border-top: $space-min solid $touch-collection-tree-separator;
+				margin-top: $collection-tree-section-spacing;
 			}
 		}
 	}

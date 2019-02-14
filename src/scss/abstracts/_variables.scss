@@ -89,14 +89,14 @@ $grid-breakpoints: (
 // Z-index master list
 
 $z-index-mobile-nav:     0;
-$z-index-hairline:       9;
-$z-index-navbar-bg:     10;
-$z-index-main:          10;
-$z-index-level:         10;
-$z-index-level-active:  20;
-$z-index-navbar:        20;
-$z-index-menu:          30;
-$z-index-modal:			    40;
+$z-index-hairline:      10;
+$z-index-navbar-bg:     20;
+$z-index-main:          20;
+$z-index-level:         20;
+$z-index-level-active:  30;
+$z-index-navbar:        30;
+$z-index-menu:          40;
+$z-index-modal:         50;
 $z-index-drag-layer:    60;
 $z-index-loading-cover: 70;
 
@@ -144,12 +144,13 @@ $sidebar-width-lg-touch: 25%;
 // Collection tree
 // --------------------------------------------------
 
-$collection-tree-padding-left:     $space-md;
-$collection-tree-padding-x:        $space-sm;
-$collection-tree-padding-x-touch:  $space-md;
-$collection-tree-padding-y:        $space-min;
-$collection-tree-indent:           $space-sm;
-$collection-tree-max-levels:       10;
+$collection-tree-padding-left:    $space-md;
+$collection-tree-padding-x:       $space-sm;
+$collection-tree-padding-x-touch: $space-md;
+$collection-tree-padding-y:       $space-min;
+$collection-tree-indent:          $space-sm;
+$collection-tree-max-levels:      10;
+$collection-tree-section-spacing: 20px;
 
 
 // Items & item list/table

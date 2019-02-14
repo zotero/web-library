@@ -4,11 +4,13 @@
 
 .touch-header {
 	line-height: $line-height-base; // Reset for correct outline size
-	flex: 0 0 $line-height-large-touch;
+	flex: 0 0 ($line-height-large-touch + $border-width);
 	background: $touch-header-bg;
 	color: $touch-header-color;
-	height: $line-height-large-touch;
+	height: $line-height-large-touch + $border-width;
 	position: relative;
+	@include hairline(bottom, $shade-4);
+	padding-bottom: $border-width;
 
 	nav,
 	ul,
@@ -88,7 +90,7 @@
 		position: absolute;
 		top: 0;
 		height: 100%;
-		z-index: 1;
+		z-index: $z-index-menu;
 	}
 
 	.btn {

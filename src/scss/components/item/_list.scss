@@ -30,6 +30,10 @@
 		position: relative;
 		@include hairline(top, $item-border-color, $start: $item-list-padding-x);
 
+		&:first-child {
+			@include hairline-disabled;
+		}
+
 		@include state(".items-list:not(.editing)") {
 			padding-right: $item-list-padding-right;
 
