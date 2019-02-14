@@ -251,8 +251,8 @@ const mapStateToProps = state => {
 		&& !state.fetching.itemTypeFields.includes(itemType);
 	const isLoadingMeta = !isMetaAvailable;
 	const isLoadingChildItems = get(
-		state, ['libraries', libraryKey, 'fetching', 'childItems'], [])
-	.includes(itemKey);
+		state, ['libraries', libraryKey, 'itemsByParent', itemKey, 'isFetching'], false
+	);
 
 
 	const relatedItemsKeys = item ? mapRelationsToItemKeys(item.relations || {}, state.config.userId)

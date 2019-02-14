@@ -4,7 +4,9 @@ const { populateItemKeys, sortItemKeysOrClear } = require('../common/reducers');
 const deepEqual = require('deep-equal');
 const { LOCATION_CHANGE } = require('connected-react-router');
 const {
+	REQUEST_ITEMS_BY_QUERY,
 	RECEIVE_ITEMS_BY_QUERY,
+	ERROR_ITEMS_BY_QUERY,
 	SORT_ITEMS
 } = require('../constants/actions.js');
 const { getParamsFromRoute } = require('../common/state');
@@ -14,7 +16,8 @@ const { getQueryFromParams } = require('../common/navigation');
 const defaultState = {
 	current: null,
 	totalResults: null,
-	itemKeys: []
+	itemKeys: [],
+	isFetching: false,
 };
 
 const query = (state = defaultState, action) => {
@@ -27,8 +30,15 @@ const query = (state = defaultState, action) => {
 				...state,
 				current: query,
 				totalResults: isChanged ? null : state.totalResults,
-				keys: isChanged ? [] : state.keys
+				keys: isChanged ? [] : state.keys,
+				isFetching: false
 			};
+		case REQUEST_ITEMS_BY_QUERY:
+		case ERROR_ITEMS_BY_QUERY:
+			return {
+				...state,
+				isFetching: action.type === REQUEST_ITEMS_BY_QUERY
+			}
 		case RECEIVE_ITEMS_BY_QUERY:
 			return populateItemKeys(
 				state,

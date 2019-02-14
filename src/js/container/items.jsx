@@ -115,7 +115,6 @@ class ItemsContainer extends React.PureComponent {
 
 	render() {
 		return <Items
-			items = { this.props.items }
 			{ ...this.props }
 			onColumnReorder={ this.handleColumnReorder.bind(this) }
 			onColumnResize={ this.handleColumnResize.bind(this) }
@@ -171,17 +170,14 @@ const mapStateToProps = state => {
 			break;
 		}
 	}
-
-	const totalItemsCount = 'totalResults' in itemsData &&
-		typeof(itemsData.totalResults) === 'number'
-			? itemsData.totalResults : 50;
+	const totalItemsCount = itemsData.totalResults;
+	const isFetchingItems = itemsData.isFetching;
 	const items = (itemsData.keys || []).map(itemKey => itemKey ? getFormattedTableItem(
 		get(state, ['libraries', libraryKey, 'items', itemKey]),
 		itemTypes,
 		libraryTags,
 		!('unconfirmedKeys' in itemsData && itemsData.unconfirmedKeys.includes(itemKey))
 	) : undefined);
-
 
 	//@TODO: indicate if isDeleting item(s) within visible set
 	// const isDeleting = get(state, ['libraries', libraryKey, 'deleting'], [])
@@ -191,6 +187,8 @@ const mapStateToProps = state => {
 		// isDeleting,
 		collection,
 		collectionKey,
+		isFetchingItems,
+		isMetaAvailable,
 		isReady,
 		isSelectMode,
 		itemFields,
@@ -205,7 +203,7 @@ const mapStateToProps = state => {
 		sortBy,
 		sortDirection: sortDirection.toUpperCase(),
 		tags,
-		totalItemsCount
+		totalItemsCount,
 	};
 };
 
@@ -216,7 +214,7 @@ ItemsContainer.propTypes = {
   collection: PropTypes.object,
   // items: PropTypes.array.isRequired,
   selectedItemKey: PropTypes.string,
-  dispatch: PropTypes.func.isRequired
+  dispatch: PropTypes.func.isRequired,
 };
 
 module.exports = withDevice(connect(

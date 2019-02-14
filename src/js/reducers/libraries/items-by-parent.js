@@ -4,17 +4,19 @@ const { populateItemKeys, filterItemKeys, sortItemKeysOrClear,
 const { indexByKey, get } = require('../../utils');
 
 const {
+	ERROR_CHILD_ITEMS,
 	RECEIVE_CHILD_ITEMS,
 	RECEIVE_CREATE_ITEM,
 	RECEIVE_CREATE_ITEMS,
 	RECEIVE_DELETE_ITEM,
 	RECEIVE_DELETE_ITEMS,
-	SORT_ITEMS,
-	RECEIVE_ITEMS_IN_COLLECTION,
 	RECEIVE_FETCH_ITEMS,
+	RECEIVE_ITEMS_BY_QUERY,
+	RECEIVE_ITEMS_IN_COLLECTION,
 	RECEIVE_TOP_ITEMS,
 	RECEIVE_TRASH_ITEMS,
-	RECEIVE_ITEMS_BY_QUERY,
+	REQUEST_CHILD_ITEMS,
+	SORT_ITEMS,
 } = require('../../constants/actions.js');
 
 const itemsByParent = (state = {}, action) => {
@@ -68,6 +70,15 @@ const itemsByParent = (state = {}, action) => {
 				aggr[parentKey] = filterItemKeys(itemKeys, action.itemKeys);
 				return aggr;
 			}, {});
+		case REQUEST_CHILD_ITEMS:
+		case ERROR_CHILD_ITEMS:
+			return {
+				...state,
+				[action.itemKey]: {
+					...state[action.itemKey],
+					isFetching: action.type === REQUEST_CHILD_ITEMS
+				}
+			}
 		case RECEIVE_CHILD_ITEMS:
 			return {
 				...state,

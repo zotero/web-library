@@ -95,6 +95,7 @@ const populateItemKeys = (state, newKeys, action) => {
 		totalResults,
 		sortBy: sort,
 		sortDirection: direction,
+		isFetching: false
 	}
 }
 

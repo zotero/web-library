@@ -4,7 +4,9 @@ const { indexByKey } = require('../../utils');
 const { populateItemKeys, filterItemKeys, sortItemKeysOrClear,
 	injectExtraItemKeys } = require('../../common/reducers');
 const {
+	ERROR_ITEMS_IN_COLLECTION,
 	RECEIVE_ADD_ITEMS_TO_COLLECTION,
+	RECEIVE_COLLECTIONS_IN_LIBRARY,
 	RECEIVE_CREATE_ITEM,
 	RECEIVE_CREATE_ITEMS,
 	RECEIVE_DELETE_ITEM,
@@ -13,8 +15,8 @@ const {
 	RECEIVE_MOVE_ITEMS_TRASH,
 	RECEIVE_RECOVER_ITEMS_TRASH,
 	RECEIVE_REMOVE_ITEMS_FROM_COLLECTION,
+	REQUEST_ITEMS_IN_COLLECTION,
 	SORT_ITEMS,
-	RECEIVE_COLLECTIONS_IN_LIBRARY
 } = require('../../constants/actions.js');
 
 const itemsByCollection = (state = {}, action) => {
@@ -92,6 +94,15 @@ const itemsByCollection = (state = {}, action) => {
 					state[action.collectionKey] || {}, action.itemKeysChanged
 				)
 			}
+		case REQUEST_ITEMS_IN_COLLECTION:
+		case ERROR_ITEMS_IN_COLLECTION:
+			return {
+				...state,
+				[action.collectionKey]: {
+					...state[action.collectionKey],
+					isFetching: action.type === REQUEST_ITEMS_IN_COLLECTION
+				}
+			}
 		case RECEIVE_ITEMS_IN_COLLECTION:
 			return {
 				...state,
@@ -101,8 +112,8 @@ const itemsByCollection = (state = {}, action) => {
 					action
 				)
 			};
-			case RECEIVE_COLLECTIONS_IN_LIBRARY:
-		return {
+		case RECEIVE_COLLECTIONS_IN_LIBRARY:
+			return {
 				...state,
 				...(action.response.getData().reduce((aggr, collection, index) => {
 					aggr[collection.key] = {
