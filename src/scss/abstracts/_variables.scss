@@ -89,6 +89,7 @@ $grid-breakpoints: (
 // Z-index master list
 
 $z-index-mobile-nav:     0;
+$z-index-hairline:       9;
 $z-index-navbar-bg:     10;
 $z-index-main:          10;
 $z-index-level:         10;
@@ -96,7 +97,6 @@ $z-index-level-active:  20;
 $z-index-navbar:        20;
 $z-index-menu:          30;
 $z-index-modal:			    40;
-$z-index-hairline:      50;
 $z-index-drag-layer:    60;
 $z-index-loading-cover: 70;
 
@@ -157,7 +157,7 @@ $collection-tree-max-levels:       10;
 
 $item-list-row-height:     61px;
 $item-list-head-height:    $space-lg; // 26px (content-box)
-$item-list-padding-top:    ($space-sm - 6px);
+$item-list-padding-top:    ($space-sm - 5px); // Hairline
 $item-list-padding-bottom: ($space-sm - 6px);
 $item-list-padding-x:      $default-padding-x-touch;
 $item-list-padding-right:  39px;

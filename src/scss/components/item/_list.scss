@@ -35,10 +35,11 @@
 
 			&.active {
 				color: $item-active-color;
-				background: $item-active-bg; // Use background shorthand to override hairline
+				background-color: $item-active-bg;
+				@include hairline-disabled;
 
 				& + .item {
-					background: none; // Remove hairline
+					@include hairline-disabled;
 				}
 			}
 		}

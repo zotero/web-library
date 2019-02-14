@@ -23,7 +23,7 @@
 	}
 
 	@include mouse-and-bp-up(md) {
-		padding: $space-min 0;
+		padding: $space-min $border-width $space-min 0;
 	}
 
 	@include bp-up(sm) {

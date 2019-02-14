@@ -57,20 +57,20 @@
 
 		@include variant("li:first-child > .item-container") {
 			@include touch-or-bp-down(sm) {
-	 			border-top: 0;
-	 			background: none;
+	 			@include hairline-disabled;
 	 		}
 		}
 
 		@include state("li.selected > .item-container", "li.open > .item-container") {
 			@include touch-or-bp-down(sm) {
 				background: $touch-collection-tree-active-bg;
+				@include hairline-disabled;
 			}
 		}
 
 		@include state("li.selected + li > .item-container", "li.open + li > .item-container") {
 			@include touch-or-bp-down(sm) {
-				background: none;
+				@include hairline-disabled;
 			}
 		}
 
