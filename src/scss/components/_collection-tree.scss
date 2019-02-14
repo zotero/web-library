@@ -326,7 +326,7 @@
 				&.has-open {
 					transform: translate3d(0, 0, 0);
 
-					.nav {
+					> .nav {
 						overflow: hidden; // Prevent scrolling of inactive levels
 					}
 				}
