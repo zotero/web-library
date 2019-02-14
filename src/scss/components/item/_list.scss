@@ -24,6 +24,16 @@
 }
 
 .items-list {
+
+	.ReactVirtualized__Grid__innerScrollContainer {
+		// Todo: use box shadow once Safari is able to render 0.5px box-shadow
+		@include hairline(bottom, $item-border-color, $start: $item-list-padding-x);
+
+		&::before {
+			z-index: 0; // Let last active item cover the hairline
+		}
+	}
+
 	.item {
 		// Items in the list are fixed at 61px height
 		padding: $item-list-padding-top $item-list-padding-x $item-list-padding-bottom;

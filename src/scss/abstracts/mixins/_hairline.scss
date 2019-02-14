@@ -3,6 +3,7 @@
 // --------------------------------------------------
 
 // Use padding to compensate the hairline where needed
+// Todo: use 0.5px border once Chrome is ready (Chromium issue 623495)
 
 @mixin hairline-1x($side, $color, $start, $direction, $position) {
 	background: linear-gradient(
@@ -36,7 +37,7 @@
 			height: 1px
 		),
 		right: (
-			top: 0,
+			top: if($start, $start, 0),
 			right: 0,
 			bottom: auto,
 			left: auto,
@@ -50,7 +51,7 @@
 			top: auto,
 			right: auto,
 			bottom: 0,
-			left: 0,
+			left: if($start, $start, 0),
 			direction: to top,
 			position: left 0 bottom 0,
 			size: 100% 1px,
@@ -58,7 +59,7 @@
 			height: 1px
 		),
 		left: (
-			top: 0,
+			top: if($start, $start, 0),
 			right: auto,
 			bottom: auto,
 			left: 0,
