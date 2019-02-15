@@ -7,6 +7,7 @@ const withDevice = require('../enhancers/with-device');
 const { itemProp } = require('../constants/item');
 const { connect } = require('react-redux');
 const { get } = require('../utils');
+const { pick } = require('../common/immutable');
 const { getCollectionsPath } = require('../common/state');
 const TouchHeader = require('../component/touch-header');
 const { makePath } = require('../common/navigation');
@@ -17,7 +18,7 @@ const withSelectMode = require('../enhancers/with-select-mode');
 const { toggleModal } = require('../actions');
 
 class TouchHeaderContainer extends React.PureComponent {
-	onNavigation(path) {
+	handleNavigation = path => {
 		this.props.push(makePath(path));
 	}
 
@@ -79,10 +80,10 @@ class TouchHeaderContainer extends React.PureComponent {
 	}
 
 	render() {
-		const { path, variant, view, item, isSelectMode } = this.props;
+		const { path, variant, view, item, isSelectMode, itemKeys } = this.props;
 		const variants = TouchHeaderContainer.variants;
 		var touchHeaderPath, shouldIncludeEditButton, shouldIncludeItemListOptions,
-			shouldIncludeCollectionOptions;
+			shouldIncludeCollectionOptions, shouldHandleSelectMode;
 
 		switch(variant) {
 			case variants.MOBILE:
@@ -93,9 +94,11 @@ class TouchHeaderContainer extends React.PureComponent {
 					this.itemNode
 				];
 				shouldIncludeEditButton = view === 'item-details';
-				shouldIncludeItemListOptions = view === 'item-list';
+				shouldIncludeItemListOptions = view === 'item-list' && !isSelectMode;
+				shouldHandleSelectMode = view === 'item-list';
 				shouldIncludeCollectionOptions = view !== 'libraries' &&
-					!shouldIncludeEditButton && !shouldIncludeItemListOptions;
+					!shouldIncludeEditButton && !shouldIncludeItemListOptions &&
+					!shouldHandleSelectMode;
 			break;
 			case variants.NAVIGATION:
 				touchHeaderPath = [this.rootNode, ...path];
@@ -106,11 +109,13 @@ class TouchHeaderContainer extends React.PureComponent {
 			break;
 			case variants.SOURCE:
 				touchHeaderPath = [ this.selectedNode ];
-				shouldIncludeItemListOptions = true;
+				shouldIncludeItemListOptions = !isSelectMode;
+				shouldHandleSelectMode = true;
 			break;
 			case variants.SOURCE_AND_ITEM:
 				touchHeaderPath = [ this.selectedNode, this.itemNode ];
-				shouldIncludeItemListOptions = !item || (!!item && isSelectMode),
+				shouldIncludeItemListOptions = !item && !isSelectMode;
+				shouldHandleSelectMode = true;
 				shouldIncludeEditButton = !isSelectMode && !!item;
 			break;
 			case variants.ITEM:
@@ -119,14 +124,18 @@ class TouchHeaderContainer extends React.PureComponent {
 			break;
 		}
 		touchHeaderPath = touchHeaderPath.filter(Boolean);
+		const selectedItemsCount = itemKeys.length;
 
+		const props = { isSelectMode, shouldIncludeEditButton,
+			shouldIncludeItemListOptions, shouldIncludeCollectionOptions,
+			selectedItemsCount, shouldHandleSelectMode, toggleModal,
+			...pick(this.props, ['isEditing', 'className', 'onSelectModeToggle'])
+		};
 
 		return (
 			<TouchHeader
-				{ ...this.props }
-				{ ...{ shouldIncludeEditButton, shouldIncludeItemListOptions,
-					shouldIncludeCollectionOptions } }
-				onNavigation={ this.onNavigation.bind(this) }
+				{ ...props }
+				onNavigation={ this.handleNavigation }
 				path={ touchHeaderPath }
 			/>
 		);

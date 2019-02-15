@@ -86,7 +86,8 @@
 
 	// Options menu & edit button
 	.dropdown,
-	.btn-edit {
+	.btn-edit,
+	.btn-cancel {
 		position: absolute;
 		top: 0;
 		height: 100%;
@@ -110,7 +111,8 @@
 	}
 
 	// Edit button
-	.btn-edit {
+	.btn-edit,
+	.btn-cancel {
 		position: absolute;
 		right: $default-padding-x-touch;
 		top:

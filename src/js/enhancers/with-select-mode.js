@@ -41,10 +41,10 @@ var withSelectMode = Component => {
 
 const mapStateToProps = state => {
 	const { collectionKey, isSelectMode, itemsSource, libraryKey, search,
-		tags, view } = state.current;
+		tags, view, itemKeys } = state.current;
 
 	return { collectionKey, isSelectMode, itemsSource, libraryKey, search,
-		tags, view };
+		tags, view, itemKeys };
 }
 
 module.exports = withSelectMode;
