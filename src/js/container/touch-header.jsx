@@ -28,7 +28,7 @@ class TouchHeaderContainer extends React.PureComponent {
 	}
 
 	get itemsSourceNode() {
-		const { itemsSource, libraryKey, collection } = this.props;
+		const { itemsSource, libraryKey, collectionKey: collection } = this.props;
 		const label = itemsSourceLabel(itemsSource);
 		return {
 			key: itemsSource,
@@ -59,8 +59,8 @@ class TouchHeaderContainer extends React.PureComponent {
 	}
 
 	get isSelectedOpened() {
-		const { collection } = this.props;
-		const hasChildren = collection in this.childMap;
+		const { collectionKey } = this.props;
+		const hasChildren = collectionKey in this.childMap;
 		return hasChildren;
 	}
 
@@ -70,8 +70,8 @@ class TouchHeaderContainer extends React.PureComponent {
 	}
 
 	get isLastNodeCurrentlySelectedCollection() {
-		const { collection } = this.props;
-		return collection !== null && !this.isSelectedOpened;
+		const { collectionKey } = this.props;
+		return collectionKey !== null && !this.isSelectedOpened;
 	}
 
 	get selectedNode() {
@@ -80,7 +80,8 @@ class TouchHeaderContainer extends React.PureComponent {
 	}
 
 	render() {
-		const { path, variant, view, item, isSelectMode, itemKeys } = this.props;
+		const { path, variant, view, item, isSelectMode, itemKeys,
+			collectionKey } = this.props;
 		const variants = TouchHeaderContainer.variants;
 		var touchHeaderPath, shouldIncludeEditButton, shouldIncludeItemListOptions,
 			shouldIncludeCollectionOptions, shouldHandleSelectMode;
@@ -124,12 +125,15 @@ class TouchHeaderContainer extends React.PureComponent {
 			break;
 		}
 		touchHeaderPath = touchHeaderPath.filter(Boolean);
+
 		const selectedItemsCount = itemKeys.length;
+		const collectionHasChildren = collectionKey in this.childMap;
 
 		const props = { isSelectMode, shouldIncludeEditButton,
 			shouldIncludeItemListOptions, shouldIncludeCollectionOptions,
-			selectedItemsCount, shouldHandleSelectMode, toggleModal,
-			...pick(this.props, ['isEditing', 'className', 'onSelectModeToggle'])
+			selectedItemsCount, shouldHandleSelectMode, collectionHasChildren,
+			...pick(this.props, ['isEditing', 'className', 'onSelectModeToggle',
+				'collectionKey', 'toggleModal'])
 		};
 
 		return (
@@ -164,7 +168,7 @@ const mapStateToProps = state => {
 		itemKey,
 		view,
 		itemsSource,
-		collectionKey: collection, //@TODO: rename to collectionKey
+		collectionKey, //@TODO: rename to collectionKey
 	} = state.current;
 	const collections = get(state, ['libraries', libraryKey, 'collections'], []);
 	const item = get(state, ['libraries', libraryKey, 'items', itemKey]);
@@ -201,7 +205,7 @@ const mapStateToProps = state => {
 		path,
 		item,
 		itemsSource,
-		collection
+		collectionKey
 	};
 };
 

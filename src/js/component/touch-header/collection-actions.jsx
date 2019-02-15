@@ -21,11 +21,19 @@ class CollectionActions extends React.PureComponent {
 	}
 
 	handleNewCollectionClick = () => {
-		const { toggleModal } = this.props;
-		toggleModal(COLLECTION_ADD, true)
+		const { toggleModal, collectionKey, collectionHasChildren } = this.props;
+		const opts = {};
+
+		if(collectionKey && collectionHasChildren) {
+			opts['parentCollectionKey'] = collectionKey
+		}
+
+		toggleModal(COLLECTION_ADD, true, opts);
 	}
 
+
 	render() {
+		const { collectionKey, collectionHasChildren } = this.props;
 		return (
 			<Dropdown
 				isOpen={ this.state.isOpen }
@@ -40,7 +48,8 @@ class CollectionActions extends React.PureComponent {
 				</DropdownToggle>
 				<DropdownMenu right>
 					<DropdownItem onClick={ this.handleNewCollectionClick }>
-						New Collection
+						{ collectionKey && collectionHasChildren ?
+							"Add Subcollection" : "New Collection" }
 					</DropdownItem>
 				</DropdownMenu>
 			</Dropdown>
@@ -52,6 +61,8 @@ class CollectionActions extends React.PureComponent {
 	}
 
 	static propTypes = {
+		collectionHasChildren: PropTypes.bool,
+		collectionKey: PropTypes.string,
 		toggleModal: PropTypes.func.isRequired,
 	}
 }
