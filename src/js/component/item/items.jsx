@@ -72,8 +72,13 @@ class Items extends React.PureComponent {
 					</React.Fragment> :
 					<React.Fragment>
 						<ItemsTableToolbar { ...this.props } { ...this.state } />
-						{ isLoadingUncounted ?
-							<Spinner className="large" /> :
+						{ isLoadingUncounted ? (
+							<React.Fragment>
+								<div className="ReactVirtualized__Grid ReactVirtualized__Table__Grid">
+									<Spinner className="large" />
+								</div>
+							</React.Fragment>
+							) :
 							<ItemsTable { ...this.props } { ...this.state } />
 						}
 					</React.Fragment>
