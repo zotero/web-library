@@ -72,6 +72,7 @@ label {
 	.editing &,
 	.form-group & {
 		@include touch-or-bp-down(sm) {
+			flex: 0 0 auto;
 			line-height: $input-btn-height-touch;
 			padding: 0 ($input-btn-padding-x-touch / 2) 0 $input-btn-padding-x-touch;
 			background-color: $input-bg;
@@ -192,6 +193,7 @@ textarea {
 	align-items: center;
 	min-width: 0;
 	position: relative;
+	background-color: $input-bg;
 
 	select {
 		appearance: none;
@@ -210,6 +212,13 @@ textarea {
 				color: $focus-color;
 			}
 		}
+	}
+
+	.form-control {
+		@include text-truncate(clip);
+		padding-right: 0;
+		margin-right: $input-btn-padding-x-touch;
+		line-height: $input-btn-height-touch; // Center text vertically
 	}
 }
 
