@@ -60,14 +60,11 @@ body {
 
 main {
 	flex: 1 1 auto;
+	display: flex;
 	background: $main-bg;
 	position: relative;
 	z-index: $z-index-main;
 	left: 0;
-
-	@include bp-up(sm) {
-		display: flex;
-	}
 
 	@include bp-down(xs) {
 		overflow: hidden; // Do not overlap open mobile navbar nav
