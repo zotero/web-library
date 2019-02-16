@@ -76,6 +76,7 @@ label {
 			line-height: $input-btn-height-touch;
 			padding: 0 ($input-btn-padding-x-touch / 2) 0 $input-btn-padding-x-touch;
 			background-color: $input-bg;
+			color: $label-color;
 
 			.icon {
 				vertical-align: top;

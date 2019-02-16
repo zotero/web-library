@@ -299,7 +299,8 @@ $modal-exit-transition-xs:   0.2s linear;
 $abstract-margin-x-touch: $metadata-list-margin-x-touch;
 
 
-// Touch header
+// Touch header & footer
 // --------------------------------------------------
 
 $touch-header-height: $line-height-large-touch + $border-width;
+$touch-footer-height: $touch-header-height;

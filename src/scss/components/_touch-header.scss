@@ -5,11 +5,11 @@
 .touch-header {
 	line-height: $line-height-base; // Reset for correct outline size
 	flex: 0 0 ($touch-header-height);
-	background: $touch-header-bg;
+	background-color: $touch-header-bg;
 	color: $touch-header-color;
 	height: $touch-header-height;
 	position: relative;
-	@include hairline(bottom, $shade-4);
+	@include hairline(bottom, $touch-header-border);
 	padding-bottom: $border-width;
 
 	nav,
