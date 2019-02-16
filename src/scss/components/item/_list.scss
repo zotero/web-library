@@ -23,6 +23,14 @@
 	}
 }
 
+.items-list-wrap {
+	.loading & {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+}
+
 .items-list {
 	display: flex;
 	flex-direction: column;

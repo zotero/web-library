@@ -111,14 +111,4 @@
 	@include bp-up(lg) {
 		flex: 1 1 auto;
 	}
-
-	//&.loading {
-	//	position: relative;
-	//
-	//	.icon-spin {
-	//		position: absolute;
-	//		left: calc(50% - #{$icon-spin-size-lg / 2});
-	//		top: calc(50% + #{round(($touch-header-height - $icon-spin-size-lg) / 2)});
-	//	}
-	//}
 }
