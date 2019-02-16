@@ -9,7 +9,6 @@ const ItemsTable = require('./items/table');
 const ItemsList = require('./items/list');
 const TouchHeaderContainer = require('../../container/touch-header');
 const TouchFooterContainer = require('../../container/touch-footer');
-const Spinner = require('../../component/ui/spinner');
 const PAGE_SIZE = 100;
 
 class Items extends React.PureComponent {
@@ -50,8 +49,7 @@ class Items extends React.PureComponent {
 	}
 
 	render() {
-		const { device, totalItemsCount, itemsSource } = this.props;
-		// if number of total items is unknown, we display spinner instead of a table or list
+		const { device, totalItemsCount } = this.props;
 		const isLoadingUncounted = typeof(totalItemsCount) === 'undefined';
 
 		return (
@@ -64,23 +62,12 @@ class Items extends React.PureComponent {
 							className="hidden-mouse hidden-sm-down"
 							variant={ TouchHeaderContainer.variants.SOURCE }
 						/>
-						{ isLoadingUncounted ?
-							<Spinner className="large" /> :
-							<ItemsList { ...this.props } { ...this.state } />
-						}
+						<ItemsList { ...this.props } { ...this.state } />
 						<TouchFooterContainer />
 					</React.Fragment> :
 					<React.Fragment>
 						<ItemsTableToolbar { ...this.props } { ...this.state } />
-						{ isLoadingUncounted ? (
-							<React.Fragment>
-								<div className="ReactVirtualized__Grid ReactVirtualized__Table__Grid">
-									<Spinner className="large" />
-								</div>
-							</React.Fragment>
-							) :
-							<ItemsTable { ...this.props } { ...this.state } />
-						}
+						<ItemsTable { ...this.props } { ...this.state } />
 					</React.Fragment>
 				}
 			</div>

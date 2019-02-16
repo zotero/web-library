@@ -13,6 +13,7 @@ const defaultHeaderRowRenderer = require('react-virtualized/dist/commonjs/Table/
 const SortIndicator = require('react-virtualized/dist/commonjs/Table//SortIndicator').default;
 const Icon = require('../../ui/icon');
 const Row = require('./row');
+const Spinner = require('../../ui/spinner');
 const { columnMinWidthFraction } = require('../../../constants/defaults');
 
 class ItemsTable extends React.PureComponent {
@@ -466,6 +467,8 @@ class ItemsTable extends React.PureComponent {
 		if(!this.props.isReady) {
 			return null;
 		}
+		const { sortBy, sortDirection, totalItemsCount } = this.props;
+		const isLoadingUncounted = typeof(totalItemsCount) === 'undefined';
 
 		return (
 			<div
@@ -482,7 +485,7 @@ class ItemsTable extends React.PureComponent {
 							ref={ ref => this.loader = ref }
 							isRowLoaded={ this.getRowHasLoaded.bind(this) }
 							loadMoreRows={ this.handleLoadMore.bind(this) }
-							rowCount={ this.props.totalItemsCount }
+							rowCount={ totalItemsCount }
 						>
 							{({onRowsRendered, registerChild}) => (
 								<Table
@@ -491,7 +494,7 @@ class ItemsTable extends React.PureComponent {
 									width={ width }
 									height={ height }
 									onRowsRendered={ onRowsRendered }
-									rowCount={ this.props.totalItemsCount }
+									rowCount={ totalItemsCount || 0 }
 									headerHeight={ 26 }
 									rowHeight={ 26 }
 									rowGetter={ this.getRow.bind(this) }
@@ -499,22 +502,23 @@ class ItemsTable extends React.PureComponent {
 									headerRowRenderer={ this.renderHeaderRow.bind(this) }
 									onRowClick={ this.handleRowMouseEvent.bind(this) }
 									sort={ this.handleSort.bind(this) }
-									sortBy={ this.props.sortBy }
-									sortDirection={ this.props.sortDirection }
+									sortBy={ sortBy }
+									sortDirection={ sortDirection }
 								>
-										{
-											this.state.columns
-											.filter(c => c.isVisible)
-											.map(({ field, fraction }) => this.renderColumn({
-												width: Math.floor(fraction * width),
-												dataKey: field,
-											}))
-										}
+									{
+										this.state.columns
+										.filter(c => c.isVisible)
+										.map(({ field, fraction }) => this.renderColumn({
+											width: Math.floor(fraction * width),
+											dataKey: field,
+										}))
+									}
 								</Table>
 							)}
 						</InfiniteLoader>
 					)}
 				</AutoSizer>
+				{ isLoadingUncounted && <Spinner className="large" /> }
 			</div>
 		);
 	}

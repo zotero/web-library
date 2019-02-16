@@ -4,6 +4,7 @@ const React = require('react');
 const PropTypes = require('prop-types');
 const cx = require('classnames');
 const Icon = require('../../ui/icon');
+const Spinner = require('../../ui/spinner');
 
 
 const { default: AutoSizer } = require('react-virtualized/dist/commonjs/AutoSizer');
@@ -111,6 +112,7 @@ class ItemsList extends React.PureComponent {
 		}
 
 		const { totalItemsCount, isSelectMode } = this.props;
+		const isLoadingUncounted = typeof(totalItemsCount) === 'undefined';
 
 		return (
 			<div
@@ -131,7 +133,7 @@ class ItemsList extends React.PureComponent {
 									height={ height }
 									onRowsRendered={ onRowsRendered }
 									ref={ registerChild }
-									rowCount={ totalItemsCount }
+									rowCount={ totalItemsCount || 0 }
 									rowHeight={ 61 }
 									width={ width }
 									rowRenderer={ this.renderRow.bind(this) }
@@ -140,6 +142,7 @@ class ItemsList extends React.PureComponent {
 						</InfiniteLoader>
 					)}
 				</AutoSizer>
+				{ isLoadingUncounted && <Spinner className="large" /> }
 			</div>
 		);
 	}
