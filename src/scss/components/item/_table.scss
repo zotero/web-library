@@ -2,6 +2,14 @@
 // Item table
 // --------------------------------------------------
 
+.items-table-wrap {
+	.icon-spin {
+		position: absolute;
+		left: calc(50% - #{$icon-spin-size-lg / 2});
+		top: calc(50% - #{$icon-spin-size-lg / 2} + #{$line-height-large / 2});
+	}
+}
+
 .items-table-head {
 	// box-sizing: content-box; // border-box results in buggy flex layout
 	// table-layout: fixed;
