@@ -119,6 +119,10 @@
 			position: relative;
 		}
 
+		.title {
+			height: $font-size-mobile * $line-height-base; // Keep second line at the bottom
+		}
+
 		.creator-year {
 			display: flex;
 			color: $item-creator-date-color;
