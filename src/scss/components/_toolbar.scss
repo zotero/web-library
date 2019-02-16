@@ -7,6 +7,7 @@
 	justify-content: space-between;
 	align-items: stretch;
 	flex: 0 0 auto;
+	white-space: nowrap;
 
 	@include touch-or-bp-down(sm) {
 		height: $line-height-large-touch;
@@ -22,20 +23,35 @@
 	.toolbar-center,
 	.toolbar-right,
 	.toolbar-justified {
+		flex: 1 1 0;
 		display: flex;
 		align-items: center;
 	}
 
 	.toolbar-left {
 		margin-right: auto;
+
+		@include touch-or-bp-down(sm) {
+			padding-right: 3px;
+		}
 	}
 
 	.toolbar-center {
 		margin: 0 auto;
+		justify-content: center;
+
+		@include touch-or-bp-down(sm) {
+			padding: 0 3px;
+		}
 	}
 
 	.toolbar-right {
 		margin-left: auto;
+		justify-content: flex-end;
+
+		@include touch-or-bp-down(sm) {
+			padding-left: 3px;
+		}
 	}
 
 	.toolbar-justified {

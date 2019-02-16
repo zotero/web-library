@@ -7,6 +7,7 @@ const TouchNavigation = require('./touch-navigation');
 const EditToggleButton = require('./edit-toggle-button');
 const CollectionActions = require('./touch-header/collection-actions');
 const ItemsActionsContainer = require('../container/items-actions');
+const { Toolbar, ToolGroup } = require('./ui/toolbars');
 const Button = require('./ui/button');
 
 class TouchHeader extends React.PureComponent {
@@ -42,17 +43,24 @@ class TouchHeader extends React.PureComponent {
 				)}
 				{
 					shouldHandleSelectMode && isSelectMode && (
-						<React.Fragment>
-							<div className="selected-items-counter">
-								{ selectedItemsCount } Items Selected
+						<Toolbar>
+							<div className="toolbar-left" />
+							<div className="toolbar-center">
+								<ToolGroup>
+									<h3 className="toolbar-heading">
+										{ selectedItemsCount } Items Selected
+									</h3>
+								</ToolGroup>
 							</div>
-							<Button
-								className="btn-link btn-cancel"
-								onClick={ this.handleCancelClick }
-							>
-								Cancel
-							</Button>
-						</React.Fragment>
+							<div className="toolbar-right">
+								<Button
+								 className="btn-link"
+								 onClick={ this.handleCancelClick }
+								>
+								 Cancel
+								</Button>
+							</div>
+						</Toolbar>
 					)
 				}
 			</header>
