@@ -26,24 +26,47 @@ class TouchHeader extends React.PureComponent {
 
 		return (
 			<header className={ cx('touch-header', className) }>
-				{
-					!shouldHideNav && <TouchNavigation
-						path={ path }
-						onNavigation={ onNavigation }
-					/>
-				}
-				{
-					shouldIncludeCollectionOptions && <CollectionActions { ...this.props } />
-				}
-				{
-					shouldIncludeItemListOptions && <ItemsActionsContainer />
-				}
-				{ shouldIncludeEditButton && (
-					<EditToggleButton className="btn-link btn-edit" />
-				)}
+				<Toolbar>
+					{
+						!shouldHideNav && (
+							<div className="toolbar-left">
+								<TouchNavigation
+									path={ path }
+									onNavigation={ onNavigation }
+								/>
+							</div>
+						)
+					}
+					{
+						shouldIncludeCollectionOptions && (
+							<div className="toolbar-right">
+								<ToolGroup>
+									<CollectionActions { ...this.props } />
+								</ToolGroup>
+							</div>
+						)
+					}
+					{
+						shouldIncludeItemListOptions && (
+							<div className="toolbar-right">
+								<ToolGroup>
+									<ItemsActionsContainer />
+								</ToolGroup>
+							</div>
+						)
+					}
+					{
+						shouldIncludeEditButton && (
+							<div className="toolbar-right">
+								<ToolGroup>
+									<EditToggleButton className="btn-link" />
+								</ToolGroup>
+							</div>
+						)
+					}
 				{
 					shouldHandleSelectMode && isSelectMode && (
-						<Toolbar>
+						<React.Fragment>
 							<div className="toolbar-left" />
 							<div className="toolbar-center">
 								<ToolGroup>
@@ -60,9 +83,10 @@ class TouchHeader extends React.PureComponent {
 								 Cancel
 								</Button>
 							</div>
-						</Toolbar>
+						</React.Fragment>
 					)
 				}
+				</Toolbar>
 			</header>
 		)
 	}

@@ -1,0 +1,127 @@
+//
+// Touch navigation
+// --------------------------------------------------
+
+.touch-nav {
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: $line-height-large-touch;
+	z-index: 0;
+	overflow: hidden;
+
+	ul,
+	li {
+		height: 100%;
+	}
+
+	.icon-previous {
+		position: absolute;
+		left: $default-padding-x-touch;
+		top: ($line-height-large-touch - $space-md) / 2;
+		z-index: 2;
+		transform: rotate(-90deg);
+	}
+
+	ul {
+		position: relative;
+	}
+
+	.center-axis,
+	.inner {
+		height: 100%;
+		transition: transform $nav-transition;
+	}
+
+	li {
+		position: absolute;
+		left: 0;
+		top: 0;
+		width: 100%;
+		transition: transform $nav-transition, color $nav-transition,
+			opacity $nav-transition-duration ease;
+	}
+
+	.center-axis {
+		transform: translate3d(50%, 0, 0);
+	}
+
+	.inner {
+		position: absolute;
+		transform: translate3d(-50%, 0, 0);
+		display: flex;
+		align-items: center;
+		max-width: calc((100% - 4 * #{$default-padding-x-touch}) / 3 - 4px); // Todo: see #73
+	}
+
+	.before-last {
+		transform: translate3d(-100%, 0, 0);
+		opacity: 0;
+		transition: transform $nav-transition, color $nav-transition,
+			opacity $nav-transition;
+	}
+
+	.previous {
+		z-index: 1;
+		color: $touch-header-link-color;
+
+		.center-axis {
+			transform: translate3d(($default-padding-x-touch + $space-md), 0, 0);
+		}
+
+		.inner {
+			transform: translate3d(0, 0, 0);
+			cursor: pointer;
+		}
+	}
+
+	.next {
+		transform: translate3d(100%, 0, 0);
+		opacity: 0;
+		transition: transform $nav-transition, opacity $nav-transition;
+	}
+
+	// Options menu & edit button
+	.dropdown,
+	.btn-edit,
+	.btn-cancel {
+		position: absolute;
+		top: 0;
+		height: 100%;
+		z-index: $z-index-menu;
+	}
+
+	.btn {
+		color: $btn-options-color;
+		background: $btn-options-bg;
+	}
+
+	// Options menu
+	.dropdown {
+		right: $default-padding-x-touch;
+		display: flex;
+		align-items: center;
+
+		.icon {
+			vertical-align: top;
+		}
+	}
+
+	// Edit button
+	//.btn-edit,
+	//.btn-cancel {
+	//	position: absolute;
+	//	right: $default-padding-x-touch;
+	//	top:
+	//	($line-height-large-touch
+	//	- $font-size-mobile
+	//	* $line-height-base)
+	//	/ 2;
+	//	height: $font-size-mobile * $line-height-base;
+	//
+	//	&:active {
+	//		color: $btn-options-focus-color;
+	//	}
+	//}
+}

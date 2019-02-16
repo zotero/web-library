@@ -73,9 +73,9 @@
 		}
 	}
 
-	.toolbar {
-		margin: $space-min 0 ($space-md - 2px);
-	}
+	//.toolbar {
+	//	margin: $space-min 0 ($space-md - 2px);
+	//}
 
 	// Two column layout for md screens
 	@include bp-only(md) {

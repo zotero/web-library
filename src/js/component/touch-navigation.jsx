@@ -88,7 +88,7 @@ class TouchNavigation extends React.PureComponent {
 	render() {
 		const hasPrevious = this.state.headers.some(h => h.slot === 'previous' && h.key != null);
 		return (
-			<nav>
+			<nav className="touch-nav">
 				<CSSTransition
 					in={ hasPrevious }
 					timeout={ 250 }

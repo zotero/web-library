@@ -51,6 +51,7 @@
 
 		@include touch-or-bp-down(sm) {
 			padding-left: 3px;
+			position: relative; // Above touch-nav
 		}
 	}
 
