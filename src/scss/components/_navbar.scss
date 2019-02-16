@@ -100,9 +100,11 @@
 		@include bp-down(xs) {
 			transition: transform $mobile-navbar-nav-transition;
 			transform: $mobile-navbar-nav-transform;
+			opacity: 0.01;
 
 			.navbar-nav-opened & {
 				transform: translate3d(0, 0, 0);
+				opacity: 1;
 			}
 		}
 
