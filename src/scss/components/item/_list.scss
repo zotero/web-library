@@ -32,7 +32,7 @@
 	}
 
 	// Todo: use box shadow once Safari is able to render 0.5px box-shadow
-	&::after {
+	&:not(:empty)::after {
 		content: "";
 		flex: 1 1 0;
 		@include hairline-1x(to bottom, $item-border-color, 0 0);
