@@ -5,7 +5,7 @@
 // Use padding to compensate the hairline where needed
 // Todo: use 0.5px border once Chrome is ready (Chromium issue 623495)
 
-@mixin hairline-1x($side, $color, $start, $direction, $position) {
+@mixin hairline-1x($direction, $color, $position) {
 	background: linear-gradient(
 		$direction,
 		mix($color, $body-bg, 50%) 0%,
@@ -14,7 +14,7 @@
 	) no-repeat $position;
 }
 
-@mixin hairline-2x($direction, $color, $size, $position) {
+@mixin hairline-2x($direction, $color, $position, $size) {
 	background: linear-gradient(
 		$direction,
 		$color 0%,
@@ -98,19 +98,19 @@
 	@if $touch-only == true {
 		@include touch-or-bp-down(sm) {
 			&::before {
-				@include hairline-1x($side, $color, $start, $direction, $position);
+				@include hairline-1x($direction, $color, $position);
 			}
 		}
 	} @else {
 		&::before {
-			@include hairline-1x($side, $color, $start, $direction, $position);
+			@include hairline-1x($direction, $color, $position);
 		}
 	}
 
 	@include touch-or-bp-down(sm) {
 		@media (min-resolution: 2dppx) {
 			&::before {
-				@include hairline-2x($direction, $color, $size, $position);
+				@include hairline-2x($direction, $color, $position, $size);
 			}
 		}
 	}
