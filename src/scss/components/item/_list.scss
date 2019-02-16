@@ -24,13 +24,21 @@
 }
 
 .items-list {
+	display: flex;
+	flex-direction: column;
 
 	.ReactVirtualized__Grid__innerScrollContainer {
-		// Todo: use box shadow once Safari is able to render 0.5px box-shadow
-		@include hairline(bottom, $item-border-color, $start: $item-list-padding-x);
+		flex: 0 0 auto;
+	}
 
-		&::before {
-			z-index: 0; // Let last active item cover the hairline
+	// Todo: use box shadow once Safari is able to render 0.5px box-shadow
+	&::after {
+		content: "";
+		flex: 1 1 0;
+		@include hairline-1x(to bottom, $item-border-color, 0 0);
+
+		@media (min-resolution: 2dppx) {
+			@include hairline-2x(to bottom, $item-border-color, 0 0, 100% 1px);
 		}
 	}
 
