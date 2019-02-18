@@ -9,6 +9,7 @@ const CollectionActions = require('./touch-header/collection-actions');
 const ItemsActionsContainer = require('../container/items-actions');
 const { Toolbar, ToolGroup } = require('./ui/toolbars');
 const Button = require('./ui/button');
+const { pluralize } = require('../common/format');
 
 class TouchHeader extends React.PureComponent {
 	handleCancelClick = () => {
@@ -23,6 +24,13 @@ class TouchHeader extends React.PureComponent {
 
 		const shouldHideNav = (shouldIncludeEditButton && isEditing) ||
 			(shouldHandleSelectMode && isSelectMode);
+
+		const selectedLabel = selectedItemsCount === 0 ?
+			'Select Items' : [
+				selectedItemsCount,
+				pluralize('Item', selectedItemsCount),
+				'Selected'
+			].join(' ');
 
 		return (
 			<header className={ cx('touch-header', className) }>
@@ -71,16 +79,16 @@ class TouchHeader extends React.PureComponent {
 							<div className="toolbar-center">
 								<ToolGroup>
 									<h3 className="toolbar-heading">
-										{ selectedItemsCount } Items Selected
+										{ selectedLabel }
 									</h3>
 								</ToolGroup>
 							</div>
 							<div className="toolbar-right">
 								<Button
-								 className="btn-link"
-								 onClick={ this.handleCancelClick }
+									className="btn-link"
+									onClick={ this.handleCancelClick }
 								>
-								 Cancel
+									Cancel
 								</Button>
 							</div>
 						</React.Fragment>

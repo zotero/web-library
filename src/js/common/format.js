@@ -28,10 +28,14 @@ const itemsSourceLabel = itemsSource => {
 	}
 }
 
+//@TODO: placeholder, to be replaced with i18n solution
+const pluralize = (word, count) => count === 1 ? word : `${word}s`;
+
 module.exports = {
 	creator,
 	dateLocalized,
 	itemsSourceLabel,
 	itemTypeLocalized,
 	noteAsTitle,
+	pluralize,
 };

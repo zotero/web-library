@@ -2,6 +2,7 @@
 
 const React = require('react');
 const PropTypes = require('prop-types');
+const { pluralize } = require('../../../common/format');
 
 class ItemDetailsInfoView extends React.PureComponent {
 	shouldComponentUpdate({ itemsCount: nextItemsCount }) {
@@ -11,21 +12,12 @@ class ItemDetailsInfoView extends React.PureComponent {
 
 	render() {
 		const { itemsCount } = this.props;
-		var label;
-		switch(itemsCount) {
-			case null:
-				label = '';
-			break;
-			case 0:
-				label = 'No items in this view';
-			break;
-			case 1:
-				label = '1 item in this view';
-			break;
-			default:
-				label = `${itemsCount} items in this view`;
-			break;
-		}
+		const label = typeof(itemsCount) === 'number' ? [
+			itemsCount === 0 ? 'No' : itemsCount,
+			pluralize('Item', itemsCount),
+			'in this view'
+		].join(' ') : '';
+
 		return (
 			<div className="info-view">{ label }</div>
 		);
