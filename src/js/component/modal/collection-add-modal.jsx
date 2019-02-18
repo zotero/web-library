@@ -7,21 +7,39 @@ const Modal = require('../ui/modal');
 const Button = require('../ui/button');
 const Input = require('../form/input');
 const Icon = require('../ui/icon');
+const defaultState = { name: ''};
 
 class CollectionAddModal extends React.PureComponent {
+	state = defaultState;
+
+	componentDidUpdate({ isOpen: wasOpen }) {
+		const { isOpen } = this.props;
+
+		if(wasOpen && !isOpen) {
+			this.setState(defaultState);
+		}
+	}
+
 	handleCollectionUpdate = () => {
 		const { libraryKey, toggleModal, createCollection,
 			parentCollection } = this.props;
+		const { name } = this.state;
+
+		if(name.length === 0) { return; }
 
 		createCollection({
-			name: this.inputRef.value,
+			name,
 			parentCollection: parentCollection ? parentCollection.key : null
 		}, libraryKey);
 		toggleModal(null, false);
 	}
 
+	handleInputBlur = () => true
+	handleChange = name => this.setState({ name })
+
 	render() {
 		const { isOpen, toggleModal, parentCollection } = this.props;
+		const { name } = this.state;
 		const inputId = 'collection-add-modal-input';
 		return (
 			<Modal
@@ -54,6 +72,7 @@ class CollectionAddModal extends React.PureComponent {
 						<div className="modal-header-right">
 							<Button
 								className="btn-link"
+								disabled={ name.length === 0 }
 								onClick={ this.handleCollectionUpdate }
 							>
 								Confirm
@@ -67,10 +86,12 @@ class CollectionAddModal extends React.PureComponent {
 									<Icon type="28/folder" width="28" height="28" />
 								</label>
 								<Input
-									id={ inputId }
 									autoFocus
-									ref={ ref => this.inputRef = ref }
+									id={ inputId }
+									onBlur={ this.handleInputBlur }
+									onChange={ this.handleChange }
 									onCommit={ this.handleCollectionUpdate }
+									value={ name }
 									tabIndex={ 0 }
 								/>
 							</div>
