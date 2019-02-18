@@ -6,7 +6,7 @@ const { connect } = require('react-redux');
 const { push } = require('connected-react-router');
 const hoistNonReactStatic = require('hoist-non-react-statics');
 const { saveAs } = require('file-saver');
-const { moveToTrash, deleteItems, recoverFromTrash,
+const { fetchItemTemplate, moveToTrash, deleteItems, recoverFromTrash,
 	removeFromCollection, createItem, exportItems, toggleModal } = require('../actions');
 const { get } = require('../utils');
 const { makePath } = require('../common/navigation');
@@ -146,6 +146,8 @@ const withItemsActions = Component => {
 			createItem: PropTypes.func,
 			deleteItems: PropTypes.func,
 			exportItems: PropTypes.func,
+			fetchItemTemplate: PropTypes.func,
+			item: PropTypes.object,
 			itemKeys: PropTypes.array,
 			itemsSource: PropTypes.string,
 			libraryKey: PropTypes.string,
@@ -174,7 +176,8 @@ const mapStateToProps = state => {
 	}
 }
 
-const mapDispatchToProps = { moveToTrash, deleteItems, recoverFromTrash,
-	removeFromCollection, createItem, exportItems, toggleModal, push };
+const mapDispatchToProps = { fetchItemTemplate, moveToTrash, deleteItems,
+	recoverFromTrash, removeFromCollection, createItem, exportItems,
+	toggleModal, push };
 
 module.exports = withItemsActions;
