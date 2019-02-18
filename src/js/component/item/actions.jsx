@@ -77,16 +77,6 @@ class ItemsActions extends React.PureComponent {
 					</Button>
 				</ToolGroup>
 				<ToolGroup>
-					<ExportActions { ...pick(this.props, ['onExport', 'itemKeys']) } />
-					<Button
-						onClick={ onBibliographyModalOpen }
-						disabled={ itemKeys.length === 0 }
-						title="Create Bibliography"
-					>
-						<Icon type="16/bibliography" width="16" height="16" />
-					</Button>
-				</ToolGroup>
-				<ToolGroup>
 				{ itemsSource !== 'trash' && (
 					<Button
 						onClick={ onTrash }
@@ -127,6 +117,16 @@ class ItemsActions extends React.PureComponent {
 						<Icon type="20/remove-from-collection" width="20" height="20" />
 					</Button>
 				)}
+				</ToolGroup>
+				<ToolGroup>
+					<ExportActions { ...pick(this.props, ['onExport', 'itemKeys']) } />
+					<Button
+						onClick={ onBibliographyModalOpen }
+						disabled={ itemKeys.length === 0 }
+						title="Create Bibliography"
+					>
+						<Icon type="16/bibliography" width="16" height="16" />
+					</Button>
 				</ToolGroup>
 			</React.Fragment>
 		);
