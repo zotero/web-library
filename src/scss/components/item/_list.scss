@@ -43,10 +43,10 @@
 	&:not(:empty)::after {
 		content: "";
 		flex: 1 1 0;
-		@include hairline-1x(to bottom, $item-border-color, 0 0);
+		@include hairline-1x(to bottom, $item-border-color, $item-list-padding-x 0);
 
 		@media (min-resolution: 2dppx) {
-			@include hairline-2x(to bottom, $item-border-color, 0 0, 100% 1px);
+			@include hairline-2x(to bottom, $item-border-color, $item-list-padding-x 0, 100% 1px);
 		}
 	}
 
