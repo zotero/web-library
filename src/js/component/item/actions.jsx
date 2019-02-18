@@ -73,7 +73,7 @@ class ItemsActions extends React.PureComponent {
 						disabled={ itemKeys.length !== 1 || itemsSource === 'trash' }
 						title="Duplicate Item"
 					>
-						<Icon type="24/duplicate" width="16" height="16" />
+						<Icon type="16/duplicate" width="16" height="16" />
 					</Button>
 				</ToolGroup>
 				<ToolGroup>
