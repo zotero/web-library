@@ -13,14 +13,11 @@ var withSelectMode = Component => {
 			const { collectionKey: collection, libraryKey: library,
 				itemsSource, push, triggerSelectMode, tags, search, view } = this.props;
 
-			triggerSelectMode(isSelectMode)
-
-			if(isSelectMode === false) {
-				const trash = itemsSource === 'trash';
-				const publications = itemsSource === 'publications';
-				const items = [];
-				push(makePath({ library, search, tags, trash, publications, collection, items, view }));
-			}
+			const trash = itemsSource === 'trash';
+			const publications = itemsSource === 'publications';
+			const items = [];
+			push(makePath({ library, search, tags, trash, publications, collection, items, view }));
+			triggerSelectMode(isSelectMode);
 		}
 
 		render() {
