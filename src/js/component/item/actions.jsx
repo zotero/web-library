@@ -104,7 +104,7 @@ class ItemsActions extends React.PureComponent {
 							disabled={ itemKeys.length === 0 }
 							title="Restore to Library"
 						>
-							<Icon type="24/plus-circle" width="16" height="16" />
+							<Icon type="16/restore" width="16" height="16" />
 						</Button>
 					</React.Fragment>
 				)}

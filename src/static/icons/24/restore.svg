@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+	<symbol id="restore" viewBox="0 0 24 24">
+		<path fill="currenColor" d="M15.707,0H3V24H22V6.293ZM16,1.707,20.293,6H16ZM21,23H4V1H15V7h6ZM12.5,9A5.5,5.5,0,1,1,7,14.5c0-.169.01-.335.025-.5H8.051A4.342,4.342,0,0,0,8,14.5,4.5,4.5,0,1,0,12.5,10H10.707L13,12.293,12.293,13l-3.5-3.5,3.5-3.5L13,6.707,10.707,9Z"/>
+	</symbol>
+	<use xlink:href="#restore" viewBox="0 0 24 24"/>
+</svg>
