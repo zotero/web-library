@@ -93,18 +93,18 @@ class ItemsActions extends React.PureComponent {
 				{ itemsSource === 'trash' && (
 					<React.Fragment>
 						<Button
+							onClick={ onPermanentlyDelete }
+							disabled={ itemKeys.length === 0 }
+							title="Delete Item"
+						>
+							<Icon type="16/empty-trash" width="16" height="16" />
+						</Button>
+						<Button
 							onClick={ onUndelete }
 							disabled={ itemKeys.length === 0 }
 							title="Restore to Library"
 						>
 							<Icon type="24/plus-circle" width="16" height="16" />
-						</Button>
-						<Button
-							onClick={ onPermanentlyDelete }
-							disabled={ itemKeys.length === 0 }
-							title="Delete Item"
-						>
-							<Icon type="24/remove" width="16" height="16" />
 						</Button>
 					</React.Fragment>
 				)}
