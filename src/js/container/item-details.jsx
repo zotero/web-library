@@ -230,11 +230,12 @@ class ItemDetailsContainer extends React.PureComponent {
 
 const mapStateToProps = state => {
 	const {
-		libraryKey,
-		itemsSource,
 		collectionKey,
+		isSelectMode,
 		itemKey,
 		itemKeys,
+		itemsSource,
+		libraryKey,
 	} = state.current;
 	const item = get(state, ['libraries', libraryKey, 'items', itemKey], null);
 	const itemType = item ? item.itemType : null;
@@ -305,7 +306,9 @@ const mapStateToProps = state => {
 		collection: get(state, 'libraries', libraryKey, 'collections', collectionKey),
 		isLoadingChildItems,
 		isLoadingMeta,
+		isLoadingRelatedItems,
 		isProcessingTags,
+		isSelectMode,
 		item,
 		itemsCount,
 		libraryKey,
@@ -313,9 +316,8 @@ const mapStateToProps = state => {
 		relatedItems,
 		relatedItemsKeys,
 		selectedItemKeys: itemKeys, //@TODO: rename
-		totalChildItems,
-		isLoadingRelatedItems,
 		shouldFetchMeta,
+		totalChildItems,
 		...extraProps
 	};
 };

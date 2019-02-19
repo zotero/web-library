@@ -12,7 +12,7 @@ const TouchHeaderContainer = require('../../container/touch-header');
 
 class ItemDetails extends React.PureComponent {
 	render() {
-		const { item, selectedItemKeys, active, } = this.props;
+		const { device, isSelectMode, item, selectedItemKeys, active, } = this.props;
 		return (
 			<section className={ cx('item-details', { 'active': active }) }>
 				<TouchHeaderContainer
@@ -20,10 +20,10 @@ class ItemDetails extends React.PureComponent {
 					variant={ TouchHeaderContainer.variants.ITEM }
 				/>
 				{
-					item && 'key' in item ? (
+					!isSelectMode && item && 'key' in item ? (
 						<ItemDetailsTabs { ...this.props } />
 					) : (
-						selectedItemKeys.length ? (
+						!device.isTouchOrSmall && selectedItemKeys.length ? (
 							<ItemDetailsInfoSelected { ...this.props } />
 						) : (
 							<ItemDetailsInfoView { ...this.props } />
@@ -43,8 +43,10 @@ ItemDetails.defaultProps = {
 
 ItemDetails.propTypes = {
 	active: PropTypes.bool,
+	device: PropTypes.object,
+	isSelectMode: PropTypes.bool,
 	item: itemProp,
-	selectedItemKeys: PropTypes.array
+	selectedItemKeys: PropTypes.array,
 };
 
 module.exports = ItemDetails;
