@@ -30,7 +30,7 @@
 	@include bp-down(xs) {
 		position: absolute;
 		left: 0;
-		top: $line-height-large-touch;
+		top: $touch-header-height;
 		right: 0;
 		bottom: 0;
 		background: $items-bg;
@@ -82,7 +82,7 @@
 
 	@include bp-only(sm) {
 		position: absolute;
-		top: $line-height-large-touch;
+		top: $touch-header-height;
 		right: 0;
 		bottom: 0;
 		left: 0;

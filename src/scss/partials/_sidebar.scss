@@ -12,7 +12,7 @@
 
 	@include bp-down(xs) {
 		position: absolute;
-		top: $line-height-large-touch;
+		top: $touch-header-height;
 		left: 0;
 		right: 0;
 		bottom: 0;

@@ -14,7 +14,7 @@
 
 	@include bp-down(sm) {
 		@include same(right, bottom, left, 0);
-		top: $line-height-large-touch;
+		top: $touch-header-height;
 		position: absolute;
 		transform: translate3d(100%, 0, 0);
 		transition: transform $nav-transition;
