@@ -100,11 +100,9 @@
 
 	@include bp-only(md) {
 		flex: 0 0 50%;
-		padding-bottom: $space-min;
 
 		@include state(".select-mode .items-container") {
 			flex: 0 0 100%;
-			padding-bottom: 0;
 		}
 	}
 

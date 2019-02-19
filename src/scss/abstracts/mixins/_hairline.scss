@@ -84,7 +84,6 @@
 	position: relative;
 
 	&::before {
-		content: "";
 		position: absolute;
 		z-index: $z-index-hairline;
 		top: $top;
@@ -98,11 +97,13 @@
 	@if $touch-only == true {
 		@include touch-or-bp-down(sm) {
 			&::before {
+				content: "";
 				@include hairline-1x($direction, $color, $position);
 			}
 		}
 	} @else {
 		&::before {
+			content: "";
 			@include hairline-1x($direction, $color, $position);
 		}
 	}

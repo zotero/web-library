@@ -4,6 +4,13 @@
 
 .item-details {
 	background: $item-details-bg;
+	@include hairline(top, $item-details-border, $touch-only: true);
+
+	@include bp-down-normalized(sm) {
+		&::before {
+			content: none; // Remove hairline
+		}
+	}
 
 	@include bp-down(sm) {
 		@include same(right, bottom, left, 0);
@@ -27,10 +34,16 @@
 
 	@include bp-only(md) {
 		flex: 0 0 50%;
+		padding-top: $border-width;
 
 		@include state(".select-mode .item-details") {
 			display: none;
 		}
+	}
+
+	@include mouse-and-bp-only(md) {
+		padding-top: 0;
+		box-shadow: 0 -1px rgba(#000, 0.1);
 	}
 
 	@include bp-up(lg) {
