@@ -48,6 +48,14 @@
 		@media (min-resolution: 2dppx) {
 			@include hairline-2x(to bottom, $item-border-color, $item-list-padding-x 0, 100% 1px);
 		}
+
+		@include state(".items-list.editing") {
+			@include hairline-1x(to bottom, $item-border-color, (2 * $item-list-padding-x + $space-lg) 0);
+
+			@media (min-resolution: 2dppx) {
+				@include hairline-2x(to bottom, $item-border-color, (2 * $item-list-padding-x + $space-lg) 0, 100% 1px);
+			}
+		}
 	}
 
 	.item {
@@ -75,9 +83,9 @@
 		}
 
 		@include state(".items-list.editing") {
-			padding-left: 56px;
+			padding-left: 2 * $item-list-padding-x + $space-lg;
 			padding-right: $item-list-padding-x;
-			@include hairline(top, $item-border-color, $start: 56px);
+			@include hairline(top, $item-border-color, $start: (2 * $item-list-padding-x + $space-lg));
 		}
 
 		input[type="checkbox"] {
