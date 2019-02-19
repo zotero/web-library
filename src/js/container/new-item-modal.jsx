@@ -4,7 +4,8 @@ const React = require('react');
 
 const { connect } = require('react-redux');
 const { push } = require('connected-react-router');
-const { toggleModal, createItem, fetchItemTemplate } = require('../actions');
+const { toggleModal, createItem, fetchItemTemplate,
+	triggerEditingItem } = require('../actions');
 const NewItemModal = require('../component/modal/new-item-modal')
 const { NEW_ITEM } = require('../constants/modals');
 const { get } = require('../utils');
@@ -31,5 +32,5 @@ const mapStateToProps = state => {
 
 module.exports = connect(
 	mapStateToProps,
-	{ createItem, fetchItemTemplate, toggleModal, push }
+	{ createItem, fetchItemTemplate, toggleModal, triggerEditingItem, push }
 )(NewItemModalContainer);

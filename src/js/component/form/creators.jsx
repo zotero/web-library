@@ -22,6 +22,7 @@ class Creators extends React.PureComponent {
 			)
 		};
 		this.fields = {};
+		this.openOnNextRender = null;
 	}
 
 	componentWillReceiveProps(props) {
@@ -79,6 +80,8 @@ class Creators extends React.PureComponent {
 			lastName: '',
 			[Symbol.for('isVirtual')]: true
 		};
+
+		this.openOnNextRender = insertAfterIndex + 1;
 
 		this.setState({
 			creators: enumerateObjects([
@@ -172,18 +175,25 @@ class Creators extends React.PureComponent {
 				'touch-separated': this.hasVirtual && this.props.isEditing &&
 					index === this.state.creators.length - 1
 			}),
-			ref: ref => this.fields[index] = ref
+			ref: ref => this.fields[index] = ref,
+			shouldPreOpenModal: this.openOnNextRender === index,
 		};
+
+
 		return <CreatorField key={ creator.id } { ...props } />;
 	}
 
 	render() {
 		const { device, isEditing } = this.props;
-		let creators = this.state.creators;
+		const { creators } = this.state;
+		const creatorsFields = creators.map(this.renderField.bind(this));
+
+		// reset openOnNextRender
+		this.openOnNextRender = null;
 
 		return (
 			<React.Fragment>
-				{ creators.map(this.renderField.bind(this)) }
+				{ creatorsFields }
 				{ device.shouldUseEditMode && isEditing && !this.hasVirtual && (
 					<li className="metadata touch-separated has-btn-icon">
 						<Button

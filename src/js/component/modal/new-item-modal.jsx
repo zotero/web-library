@@ -2,6 +2,7 @@
 
 const React = require('react');
 const PropTypes = require('prop-types');
+const cx = require('classnames');
 
 const { makePath } = require('../../common/navigation');
 const Modal = require('../ui/modal');
@@ -26,7 +27,7 @@ class CollectionAddModal extends React.PureComponent {
 	handleNewItemCreate = async () => {
 		const { createItem, fetchItemTemplate, toggleModal, push,
 			collection: { key: collection } = {} , libraryKey: library, itemsSource,
-			tags, search } = this.props;
+			tags, triggerEditingItem, search } = this.props;
 		const { itemType } = this.state;
 
 		this.setState({ isBusy: true });
@@ -40,12 +41,14 @@ class CollectionAddModal extends React.PureComponent {
 		const trash = itemsSource === 'trash';
 		const publications = itemsSource === 'publications';
 		const view = 'item-list';
-		this.setState({ isBusy: false });
+
 		toggleModal(null, false);
 		push(makePath({
 			library, search, tags, trash, publications, collection,
 			items: [item.key], view
 		}));
+		triggerEditingItem(item.key, true);
+		this.setState({ isBusy: false });
 	}
 
 	handleSelect(itemType, hasChanged) {
@@ -62,75 +65,80 @@ class CollectionAddModal extends React.PureComponent {
 			<Modal
 				isOpen={ isOpen }
 				contentLabel="Create a New Item"
-				className="modal-touch modal-centered"
+				className={ cx('modal-touch', 'modal-centered', {
+					loading: isBusy
+				}) }
 				onRequestClose={ () => toggleModal(null, false) }
 				closeTimeoutMS={ 200 }
 				overlayClassName={ "modal-slide" }
 			>
-				<div className="modal-content" tabIndex={ -1 }>
-					<div className="modal-header">
-						<div className="modal-header-left">
-							<Button
-								className="btn-link"
-								onClick={ () => toggleModal(null, false) }
-							>
-								Cancel
-							</Button>
-						</div>
-						<div className="modal-header-center">
-							<h4 className="modal-title truncate">
-								{
-									collection ?
-										`Create a New Item in ${collection.name}` :
-										'Create a New Item'
-								}
-							</h4>
-						</div>
-						<div className="modal-header-right">
-							<Button
-								className="btn-link"
-								onClick={ this.handleNewItemCreate }
-							>
-								Create
-							</Button>
-						</div>
-					</div>
-					<div className="modal-body">
-						{ isBusy ? <Spinner className="large" /> : (
-							<div className="form">
-								<div className="form-group">
-									<label htmlFor={ inputId }>
-										Item Type
-									</label>
-									<Select
-										id={ inputId }
-										className="form-control form-control-sm"
-										onChange={ () => true }
-										onCommit={ (...args) => this.handleSelect(...args) }
-										options={ itemTypes.map(({ itemType, localized }) => (
-											{ value: itemType, label: localized }
-										)) }
-										value={ this.state.itemType }
-										searchable={ true }
-									/>
-								</div>
+				{ isBusy ? <Spinner className="large" /> : (
+					<div className="modal-content" tabIndex={ -1 }>
+						<div className="modal-header">
+							<div className="modal-header-left">
+								<Button
+									className="btn-link"
+									onClick={ () => toggleModal(null, false) }
+								>
+									Cancel
+								</Button>
 							</div>
-						)}
+							<div className="modal-header-center">
+								<h4 className="modal-title truncate">
+									{
+										collection ?
+											`Create a New Item in ${collection.name}` :
+											'Create a New Item'
+									}
+								</h4>
+							</div>
+							<div className="modal-header-right">
+								<Button
+									className="btn-link"
+									onClick={ this.handleNewItemCreate }
+								>
+									Create
+								</Button>
+							</div>
+						</div>
+						<div className="modal-body">
+							{ isBusy ? <Spinner /> : (
+								<div className="form">
+									<div className="form-group">
+										<label htmlFor={ inputId }>
+											Item Type
+										</label>
+										<Select
+											id={ inputId }
+											className="form-control form-control-sm"
+											onChange={ () => true }
+											onCommit={ (...args) => this.handleSelect(...args) }
+											options={ itemTypes.map(({ itemType, localized }) => (
+												{ value: itemType, label: localized }
+											)) }
+											value={ this.state.itemType }
+											searchable={ true }
+										/>
+									</div>
+								</div>
+							)}
+						</div>
 					</div>
-				</div>
+				)}
 			</Modal>
 		);
 	}
 
 	static propTypes = {
+		collection: PropTypes.object,
 		createItem: PropTypes.func.isRequired,
 		fetchItemTemplate: PropTypes.func.isRequired,
 		isOpen: PropTypes.bool,
 		itemTypes: PropTypes.array,
 		libraryKey: PropTypes.string,
-		collection: PropTypes.object,
 		push: PropTypes.func.isRequired,
 		toggleModal: PropTypes.func.isRequired,
+		triggerEditingItem: PropTypes.func.isRequired,
 	}
 
 	static defaultProps = {
