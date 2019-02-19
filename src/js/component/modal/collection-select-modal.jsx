@@ -49,7 +49,7 @@ class CollectionSelectModal extends React.PureComponent {
 	}
 
 	handleCollectionUpdate = async () => {
-		const { addToCollection, items, toggleModal } = this.props;
+		const { addToCollection, items, toggleModal, onSelectModeToggle } = this.props;
 		const { picked } = this.state;
 
 
@@ -63,6 +63,7 @@ class CollectionSelectModal extends React.PureComponent {
 			await Promise.all(promises);
 			this.setState({ isBusy: false });
 			toggleModal(null, false);
+			onSelectModeToggle(false);
 		}
 	}
 

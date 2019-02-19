@@ -18,4 +18,6 @@ const mapStateToProps = state => {
 }
 
 
-module.exports = withItemsActions(connect(mapStateToProps)(TouchFooterContainer));
+module.exports = withItemsActions(
+	connect(mapStateToProps)(TouchFooterContainer)
+);

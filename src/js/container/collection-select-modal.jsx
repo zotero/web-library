@@ -3,6 +3,7 @@
 const React = require('react');
 
 const withDevice = require('../enhancers/with-device');
+const withSelectMode = require('../enhancers/with-select-mode');
 const { connect } = require('react-redux');
 const { toggleModal, addToCollection, fetchCollections } = require('../actions');
 const CollectionSelectModal = require('../component/modal/collection-select-modal')
@@ -38,7 +39,7 @@ const mapStateToProps = state => {
 };
 
 
-module.exports = withDevice(connect(
+module.exports = withSelectMode(withDevice(connect(
 	mapStateToProps,
 	{ addToCollection, toggleModal, fetchCollections }
-)(CollectionRenameModalContainer));
+)(CollectionRenameModalContainer)));

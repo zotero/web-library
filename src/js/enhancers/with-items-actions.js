@@ -7,7 +7,8 @@ const { push } = require('connected-react-router');
 const hoistNonReactStatic = require('hoist-non-react-statics');
 const { saveAs } = require('file-saver');
 const { fetchItemTemplate, moveToTrash, deleteItems, recoverFromTrash,
-	removeFromCollection, createItem, exportItems, toggleModal } = require('../actions');
+	removeFromCollection, createItem, exportItems, toggleModal,
+	triggerSelectMode } = require('../actions');
 const { get } = require('../utils');
 const { makePath } = require('../common/navigation');
 const { omit } = require('../common/immutable');
@@ -19,12 +20,12 @@ const { BIBLIOGRAPHY, COLLECTION_SELECT, EXPORT,
 const withItemsActions = Component => {
 	class EnhancedComponent extends React.PureComponent {
 		//@TODO: idenitical to ItemsContainer, reduce duplication
-		handleItemsSelect(items = []) {
+		handleItemsSelect(items = [], view = 'item-list') {
 			const { push, collectionKey: collection, libraryKey: library,
-				itemsSource, tags, search } = this.props;
+				itemsSource, tags, search, triggerSelectMode } = this.props;
 			const trash = itemsSource === 'trash';
 			const publications = itemsSource === 'publications';
-			const view = 'item-list';
+			triggerSelectMode(false);
 			push(makePath({ library, search, tags, trash, publications, collection, items, view }));
 		}
 
@@ -96,11 +97,6 @@ const withItemsActions = Component => {
 			this.handleItemsSelect([newItem.key]);
 		}
 
-		handleLibraryShow = () => {
-			const { push, itemKeys, libraryKey: library } = this.props;
-			push(makePath({ library, items: itemKeys[0] }));
-		}
-
 		handleAddToCollectionModalOpen = () => {
 			const { itemKeys, toggleModal } = this.props;
 			toggleModal(COLLECTION_SELECT, true, { items: itemKeys });
@@ -129,7 +125,6 @@ const withItemsActions = Component => {
 				onUndelete = { this.handleUndelete }
 				onRemoveFromCollection = { this.handleRemoveFromCollection }
 				onDuplicate = { this.handleDuplicate }
-				onLibraryShow = { this.handleLibraryShow }
 				onNewItemCreate = { this.handleNewItemCreate }
 				onExport = { this.handleExport }
 				onAddToCollectionModalOpen = { this.handleAddToCollectionModalOpen }
@@ -158,6 +153,7 @@ const withItemsActions = Component => {
 			search: PropTypes.string,
 			tags: PropTypes.array,
 			toggleModal: PropTypes.func,
+			triggerSelectMode: PropTypes.func,
 		}
 	}
 
@@ -178,6 +174,6 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = { fetchItemTemplate, moveToTrash, deleteItems,
 	recoverFromTrash, removeFromCollection, createItem, exportItems,
-	toggleModal, push };
+	toggleModal, triggerSelectMode, push };
 
 module.exports = withItemsActions;
