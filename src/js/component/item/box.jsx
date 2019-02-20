@@ -10,7 +10,6 @@ class ItemBox extends React.PureComponent {
 	constructor(props) {
 		super(props);
 		this.state = {
-			focusedEntry: null,
 			activeEntry: null,
 			isDragging: false,
 		};
@@ -36,7 +35,6 @@ class ItemBox extends React.PureComponent {
 
 	handleFieldFocus(key) {
 		const field = this.props.fields.find(f => f.key === key);
-		this.setState({ focusedEntry: key });
 
 		if(!this.props.isForm && field.readOnly) {
 			return;
@@ -45,7 +43,7 @@ class ItemBox extends React.PureComponent {
 	}
 
 	handleFieldBlur() {
-		this.setState({ activeEntry: null, focusedEntry: null });
+		this.setState({ activeEntry: null });
 	}
 
 	handleCancel(key) {
@@ -91,7 +89,6 @@ class ItemBox extends React.PureComponent {
 				field,
 				key: field.key,
 				isActive: this.state.activeEntry === field.key,
-				isFocused: this.state.focusedEntry === field.key,
 				onClick: this.handleFieldClick.bind(this, field.key),
 				onFocus: this.handleFieldFocus.bind(this, field.key),
 				onBlur: this.handleFieldBlur.bind(this, field.key),

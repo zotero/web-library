@@ -127,13 +127,12 @@ class BoxField extends React.PureComponent {
 	}
 
 	render() {
-		const { field, isActive, isFocused } = this.props;
+		const { field, isActive } = this.props;
 		const className = {
 			[field.key]: true,
 			'empty': !field.value || !field.value.length,
 			'select': this.isSelect,
 			'editing': isActive,
-			'has-focus': isFocused,
 			'abstract': field.key === 'abstractNote',
 			'extra': field.key === 'extra',
 		};
