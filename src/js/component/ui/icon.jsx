@@ -6,13 +6,14 @@ const cx = require('classnames');
 
 class Icon extends React.PureComponent {
 	render() {
-		let style = {
+		const style = {
 			color: this.props.color,
 			...this.props.style
 		};
-		let basename = this.props.type.split(/[\\/]/).pop();
+		const basename = this.props.type.split(/[\\/]/).pop();
+		const symbol = this.props.symbol || basename;
 
-		let svgAttr = {
+		const svgAttr = {
 			className: cx(['icon', `icon-${basename}`, this.props.className]),
 			role: 'img',
 			style
@@ -24,7 +25,7 @@ class Icon extends React.PureComponent {
 
 		if(this.props.height) {
 			svgAttr['height'] = parseInt(this.props.height, 10);
-		} 
+		}
 
 		if(this.props.viewBox) {
 			svgAttr['viewBox'] = this.props.viewBox;
@@ -36,8 +37,8 @@ class Icon extends React.PureComponent {
 
 		return (
 			<svg { ...svgAttr } viewBox={ this.props.viewBox}>
-				<use 
-					xlinkHref={ `/static/icons/${this.props.type}.svg#${basename}`}
+				<use
+					xlinkHref={ `/static/icons/${this.props.type}.svg#${symbol}`}
 				/>
 			</svg>
 		);
@@ -49,6 +50,7 @@ class Icon extends React.PureComponent {
 		height: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
 		label: PropTypes.string,
 		style: PropTypes.object,
+		symbol: PropTypes.string,
 		type: PropTypes.string.isRequired,
 		viewBox: PropTypes.string,
 		width: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),

@@ -34,9 +34,10 @@ class CollectionActions extends React.PureComponent {
 
 	render() {
 		const { collectionKey, collectionHasChildren } = this.props;
+		const { isOpen } = this.state;
 		return (
 			<Dropdown
-				isOpen={ this.state.isOpen }
+				isOpen={ isOpen }
 				toggle={ this.handleToggleDropdown }
 				className="dropdown-wrapper new-item-selector"
 			>
@@ -44,7 +45,12 @@ class CollectionActions extends React.PureComponent {
 					color={ null }
 					className="btn-link dropdown-toggle"
 				>
-					<Icon type="24/options" width="24" height="24" />
+					<Icon
+						type="24/options"
+						symbol={ isOpen ? 'options-block' : 'options' }
+						width="24"
+						height="24"
+					/>
 				</DropdownToggle>
 				<DropdownMenu right>
 					<DropdownItem onClick={ this.handleNewCollectionClick }>

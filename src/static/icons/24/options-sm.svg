@@ -2,5 +2,8 @@
 	<symbol id="options-sm" viewBox="0 0 24 24">
 		<path fill="currentColor" d="M6,11a1,1,0,1,1-1,1,1,1,0,0,1,1-1m0-1a2,2,0,1,0,2,2,2,2,0,0,0-2-2Zm6,1a1,1,0,1,1-1,1,1,1,0,0,1,1-1m0-1a2,2,0,1,0,2,2,2,2,0,0,0-2-2Zm6,1a1,1,0,1,1-1,1,1,1,0,0,1,1-1m0-1a2,2,0,1,0,2,2,2,2,0,0,0-2-2Z"/>
 	</symbol>
+	<symbol id="options-sm-block" viewBox="0 0 24 24">
+		<path fill="currentColor" d="M8,12a2,2,0,1,1-2-2A2,2,0,0,1,8,12Zm4-2a2,2,0,1,0,2,2A2,2,0,0,0,12,10Zm6,0a2,2,0,1,0,2,2A2,2,0,0,0,18,10Z"/>
+	</symbol>
 	<use xlink:href="#options-sm" viewBox="0 0 24 24"/>
 </svg>

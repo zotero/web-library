@@ -146,7 +146,8 @@ class ItemsActions extends React.PureComponent {
 					className="btn-link dropdown-toggle"
 				>
 					<Icon
-						type={ isOpen ? "24/options-block" : "24/options" }
+						type="24/options"
+						symbol={ isOpen ? 'options-block' : 'options' }
 						width="24"
 						height="24"
 					/>
