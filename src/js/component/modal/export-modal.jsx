@@ -3,6 +3,7 @@
 const React = require('react');
 const PropTypes = require('prop-types');
 const { saveAs } = require('file-saver');
+const cx = require('classnames');
 
 const Modal = require('../ui/modal');
 const Button = require('../ui/button');
@@ -32,7 +33,8 @@ class ExportModal extends React.PureComponent {
 	}
 
 	handleExport = async () => {
-		const { exportItems, itemKeys, toggleModal } = this.props;
+		const { exportItems, itemKeys, toggleModal,
+			onSelectModeToggle } = this.props;
 		const { format } = this.state;
 		const fileName = ['export-data', exportFormats.find(f => f.key === format).extension]
 			.filter(Boolean).join('.');
@@ -42,6 +44,7 @@ class ExportModal extends React.PureComponent {
 		saveAs(exportData, fileName);
 		this.setState({ isBusy: false });
 		toggleModal(null, false);
+		onSelectModeToggle(false);
 	}
 
 	render() {
@@ -53,11 +56,14 @@ class ExportModal extends React.PureComponent {
 			<Modal
 				isOpen={ isOpen }
 				contentLabel="Export Items"
-				className="modal-touch modal-centered"
+				className={ cx('modal-touch', 'modal-centered', {
+					loading: isBusy
+				}) }
 				onRequestClose={ () => toggleModal(null, false) }
 				closeTimeoutMS={ 200 }
 				overlayClassName={ "modal-slide" }
 			>
+			{ isBusy ? <Spinner className="large" /> : (
 				<div className="modal-content" tabIndex={ -1 }>
 					<div className="modal-header">
 						<div className="modal-header-left">
@@ -83,35 +89,36 @@ class ExportModal extends React.PureComponent {
 						</div>
 					</div>
 					<div className="modal-body">
-						{ isBusy ? <Spinner className="large" /> : (
-							<div className="form">
-								<div className="form-group">
-									<label htmlFor={ inputId }>
-										Export Format
-									</label>
-									<Select
-										id={ inputId }
-										className="form-control form-control-sm"
-										onChange={ () => true }
-										onCommit={ (...args) => this.handleSelect(...args) }
-										options={ exportFormats.map(({ key, label }) => (
-											{ value: key, label }
-										)) }
-										value={ this.state.format }
-										searchable={ true }
-									/>
-								</div>
+						<div className="form">
+							<div className="form-group">
+								<label htmlFor={ inputId }>
+									Export Format
+								</label>
+								<Select
+									id={ inputId }
+									className="form-control form-control-sm"
+									onChange={ () => true }
+									onCommit={ (...args) => this.handleSelect(...args) }
+									options={ exportFormats.map(({ key, label }) => (
+										{ value: key, label }
+									)) }
+									value={ this.state.format }
+									searchable={ true }
+								/>
 							</div>
-						)}
+						</div>
 					</div>
 				</div>
+			)}
 			</Modal>
 		);
 	}
 
 	static propTypes = {
+		exportItems: PropTypes.func.isRequired,
 		isOpen: PropTypes.bool,
 		itemKeys: PropTypes.array,
+		onSelectModeToggle: PropTypes.func.isRequired,
 		toggleModal: PropTypes.func.isRequired,
 	}
 

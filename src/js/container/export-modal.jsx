@@ -4,6 +4,7 @@ const React = require('react');
 const PropTypes = require('prop-types');
 const { connect } = require('react-redux');
 
+const withSelectMode = require('../enhancers/with-select-mode');
 const { toggleModal, exportItems } = require('../actions');
 const ExportModal = require('../component/modal/export-modal')
 const { EXPORT } = require('../constants/modals');
@@ -33,4 +34,6 @@ const mapStateToProps = state => {
 };
 
 
-module.exports = connect(mapStateToProps, { toggleModal, exportItems })(ExportContainer);
+module.exports = withSelectMode(
+	connect(mapStateToProps, { toggleModal, exportItems })(ExportContainer)
+);
