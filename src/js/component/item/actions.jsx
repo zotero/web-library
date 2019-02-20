@@ -27,9 +27,20 @@ class ItemsActions extends React.PureComponent {
 		}));
 	}
 
+	get isNewItemAllowed() {
+		const { itemsSource } = this.props;
+		return itemsSource === 'top' || itemsSource === 'collection';
+	}
+
+	get isExportAllowed() {
+		const { itemsSource } = this.props;
+		return itemsSource === 'top' || itemsSource === 'collection' ||
+			itemsSource === 'publications';
+	}
+
 	renderNewItem() {
-		const { itemsSource, onNewItemModalOpen } = this.props;
-		return (itemsSource === 'top' || itemsSource === 'collection') ? (
+		const { onNewItemModalOpen } = this.props;
+		return this.isNewItemAllowed ? (
 				<DropdownItem onClick={ onNewItemModalOpen } >
 					New Item
 				</DropdownItem>
@@ -37,8 +48,8 @@ class ItemsActions extends React.PureComponent {
 	}
 
 	renderExport() {
-		const { itemsSource, onExportModalOpen } = this.props;
-		return (itemsSource === 'top' || itemsSource === 'collection') ? (
+		const { onExportModalOpen } = this.props;
+		return this.isExportAllowed ? (
 				<DropdownItem
 					onClick={ onExportModalOpen } >
 					Export
@@ -47,8 +58,8 @@ class ItemsActions extends React.PureComponent {
 	}
 
 	renderBibliography() {
-		const { itemsSource, onBibliographyOpen } = this.props;
-		return (itemsSource === 'top' || itemsSource === 'collection') ? (
+		const { onBibliographyOpen } = this.props;
+		return this.isExportAllowed ? (
 				<DropdownItem
 					onClick={ onBibliographyOpen } >
 					Bibliography
@@ -135,6 +146,8 @@ class ItemsActions extends React.PureComponent {
 	renderTouch() {
 		const { isSelectMode } = this.props;
 		const { isOpen } = this.state;
+		const { isNewItemAllowed, isExportAllowed } = this;
+
 		return (
 			<Dropdown
 				isOpen={ isOpen }
@@ -156,10 +169,14 @@ class ItemsActions extends React.PureComponent {
 					<DropdownItem onClick={ this.handleSelectModeToggle } >
 						{ isSelectMode ? 'Cancel' : 'Select Items' }
 					</DropdownItem>
-					<DropdownItem divider />
-						{ this.renderNewItem() }
-						{ this.renderExport() }
-						{ this.renderBibliography() }
+					{ (isNewItemAllowed || isExportAllowed) && (
+						<React.Fragment>
+							<DropdownItem divider />
+							{ this.renderNewItem() }
+							{ this.renderExport() }
+							{ this.renderBibliography() }
+						</React.Fragment>
+					)}
 				</DropdownMenu>
 			</Dropdown>
 		);
