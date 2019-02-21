@@ -97,39 +97,38 @@ const removeRelationByItemKey = (itemKey, relations, userId, relationType='dc:re
 	};
 };
 
-const isUndefinedOrNull = value => typeof value === 'undefined' || value === null;
+const isUndefinedOrNullOrEmpty = value =>
+	typeof value === 'undefined' || value === null || value === '';
 
-const compare = (a, b, direction) => {
-	if(isUndefinedOrNull(a) && isUndefinedOrNull(b)) {
+//@NOTE: compare function treats empty strings, undefined and null values
+//		 as equal to each other and indicates these should occur AFTER
+//		 any actual values
+const compare = (a, b) => {
+	if(isUndefinedOrNullOrEmpty(a) && isUndefinedOrNullOrEmpty(b)) {
 		return 0;
 	}
-
-	if(typeof a !== typeof b) {
-		if(isUndefinedOrNull(a)) {
-			return direction === 'asc' ? 1 : -1;
-		}
-		if(isUndefinedOrNull(b)) {
-			return direction === 'asc' ? -1 : 1;
-		}
+	if(isUndefinedOrNullOrEmpty(a)) {
+		return 1;
+	}
+	if(isUndefinedOrNullOrEmpty(b)) {
+		return -1;
 	}
 
-	switch(typeof a) {
-		case 'string':
-			return direction === 'asc' ?
-				a.toUpperCase().localeCompare(b.toUpperCase()):
-				b.toUpperCase().localeCompare(a.toUpperCase());
-		case 'number':
-			return direction === 'asc' ? a - b : b - a;
-		default:
-			return 0;
+	if(typeof(a) === 'number' && typeof('b') === 'number') {
+		return a - b;
 	}
+
+	return a.localeCompare(b, { sensitivity: 'accent' });
 }
 
-const sortByKey = (items, key, direction) => {
+const sortByKey = (items, key, direction = 'asc') => {
 	items.sort((a, b) => {
 		let aKeyValue = typeof(key) === 'function' ? key(a) : a[key];
 		let bKeyValue = typeof(key) === 'function' ? key(b) : b[key];
-		return compare(aKeyValue, bKeyValue, direction);
+
+		return direction === 'asc' ?
+			compare(aKeyValue, bKeyValue) :
+			compare(aKeyValue, bKeyValue) * -1;
 	});
 };
 

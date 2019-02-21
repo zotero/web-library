@@ -16,7 +16,7 @@ module.exports = Object.freeze({
 			{ field: 'itemType', fraction: 0.2, isVisible: false },
 			{ field: 'year', fraction: 0.1, isVisible: false },
 			{ field: 'publisher', fraction: 0.2, isVisible: false },
-			{ field: 'publication', fraction: 0.2, isVisible: false },
+			{ field: 'publicationTitle', fraction: 0.2, isVisible: false },
 			{ field: 'dateAdded', fraction: 0.1, isVisible: false },
 			{ field: 'dateModified', fraction: 0.1, isVisible: false },
 			{ field: 'extra', fraction: 0.2, isVisible: false },

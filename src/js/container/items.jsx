@@ -24,6 +24,7 @@ const { getFormattedTableItem } = require('../common/item');
 const { omit } = require('../common/immutable');
 const defaultSort = { field: 'title', sort: 'ASC' };
 const withDevice = require('../enhancers/with-device');
+const columnSortKeyLookup = require('../constants/column-sort-key-lookup');
 
 class ItemsContainer extends React.PureComponent {
 	handleItemsSelect(items = []) {
@@ -68,7 +69,8 @@ class ItemsContainer extends React.PureComponent {
 		let direction = this.props.sortDirection.toLowerCase();
 		let tag = this.props.tags || [];
 		const { itemsSource, dispatch, collectionKey, search: q,
-			sortBy: sort,  } = this.props;
+			sortBy  } = this.props;
+		const sort = columnSortKeyLookup[sortBy] || 'title';
 		const sortAndDirection = { start, limit, sort, direction };
 
 		switch(itemsSource) {

@@ -1,6 +1,8 @@
 'use strict';
 
+const baseMappings = require('zotero-base-mappings');
 const { sortByKey, compare } = require('../utils');
+const columnSortKeyLookup = require('../constants/column-sort-key-lookup');
 
 const replaceDuplicates = entries => {
 	const seen = [];
@@ -38,11 +40,14 @@ const injectExtraItemKeys = (state, newKeys, items) => {
 	newKeys.forEach(newKey => {
 		let injected = false;
 		for(let i = 0; i < keys.length; i++) {
-			const comparisionResult = compare(
-				keys[i] && sortBy in items[keys[i]] ? items[keys[i]][sortBy] : null,
-				newKey && sortBy in items[newKey] ? items[newKey][sortBy] : null,
-				sortDirection
+			var comparisionResult = compare(
+				getSortKeyValue(items[keys[i]], sortBy),
+				getSortKeyValue(items[newKey], sortBy)
 			);
+
+			if(sortDirection === 'desc') {
+				comparisionResult = comparisionResult * -1;
+			}
 
 			if(comparisionResult >= 0) {
 				keys.splice(i, 0, newKey);
@@ -99,6 +104,26 @@ const populateItemKeys = (state, newKeys, action) => {
 	}
 }
 
+const getSortKeyForItemType = (sortKey, itemType) => {
+	return itemType in baseMappings && sortKey in baseMappings[itemType] ?
+		baseMappings[itemType][sortKey] :
+		sortKey;
+}
+
+const getSortKeyValue = (item, sortBy) => {
+	sortBy = columnSortKeyLookup[sortBy];
+
+	if(sortBy === 'creator') {
+		return (item[Symbol.for('meta')] || {})['creatorSummary'];
+	}
+	if(sortBy === 'date') {
+		return (item[Symbol.for('meta')] || {})['parsedDate'];
+	}
+
+	const sortKey = getSortKeyForItemType(sortBy, item.itemType);
+	return item[sortKey];
+}
+
 const sortItemKeysOrClear = (state, items, sortBy, sortDirection) => {
 	var isCompleteSet = 'totalResults' in state &&
 		'keys' in state &&
@@ -118,8 +143,7 @@ const sortItemKeysOrClear = (state, items, sortBy, sortDirection) => {
 		keys = [...state.keys];
 		sortByKey(
 			keys,
-			k => sortBy === 'creator' ?
-				(items[k][Symbol.for('meta')] || {})['creatorSummary'] : items[k][sortBy],
+			itemKey => getSortKeyValue(items[itemKey], sortBy),
 			sortDirection
 		);
 	} else if('totalResults' in state) {

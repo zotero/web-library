@@ -3,11 +3,17 @@
 const { baseMappings } = require('../constants/item');
 const { noteAsTitle, itemTypeLocalized, dateLocalized } = require('./format');
 
+const getBaseMappedValue = (item, property) => {
+	const { itemType } = item;
+	return itemType in baseMappings && property in baseMappings[itemType] ?
+		item[baseMappings[itemType][property]] : item[property];
+}
+
 const getFormattedTableItem = (item, itemTypes, libraryTags, isSynced) => {
 	const { itemType, note, publisher, publication, dateAdded, dateModified, extra } = item;
 	const title = itemType === 'note' ?
 		noteAsTitle(note) :
-		item[itemType in baseMappings && baseMappings[itemType]['title'] || 'title'] || '';
+		getBaseMappedValue(item, 'title');
 	const creator = item[Symbol.for('meta')] && item[Symbol.for('meta')].creatorSummary ?
 		item[Symbol.for('meta')].creatorSummary :
 		'';
@@ -29,8 +35,8 @@ const getFormattedTableItem = (item, itemTypes, libraryTags, isSynced) => {
 		extra,
 		itemType: itemTypeLocalized(item, itemTypes),
 		key: item.key,
-		publication,
-		publisher,
+		publicationTitle: getBaseMappedValue(item, 'publicationTitle'),
+		publisher: getBaseMappedValue(item, 'publisher'),
 		title,
 		year,
 		isSynced,
