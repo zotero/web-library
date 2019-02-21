@@ -43,6 +43,10 @@
 		border-bottom: $separator-width solid $separator-color;
 		padding-bottom: 11px; // metadata-list spacing
 		margin: ($space-lg - 5px) $default-padding-x-touch 8px; // 8px: metadata-list spacing
+
+		&.placeholder {
+			color: $placeholder-color;
+		}
 	}
 
 	.tab-pane-heading {
