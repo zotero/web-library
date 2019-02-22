@@ -135,9 +135,5 @@
 			margin-bottom: 0;
 			line-height: $space-thumb;
 		}
-
-		@include mouse-and-bp-up(md) {
-			display: none;
-		}
 	}
 }
