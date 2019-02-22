@@ -54,4 +54,4 @@ const getFieldDisplayValue = (item, field) => {
 	}
 }
 
-module.exports = { getFormattedTableItem, getFieldDisplayValue };
+module.exports = { getFormattedTableItem, getFieldDisplayValue, getBaseMappedValue };

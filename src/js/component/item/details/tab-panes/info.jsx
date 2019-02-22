@@ -5,10 +5,12 @@ const cx = require('classnames');
 const ItemBox = require('../../box');
 const Abstract = require('../../abstract');
 const Spinner = require('../../../ui/spinner');
+const { getBaseMappedValue } = require('../../../../common/item');
 
 class InfoTabPane extends React.PureComponent {
 	render() {
 		const { isActive, isEditing, isLoadingMeta, item } = this.props;
+		const title = getBaseMappedValue(item, 'title') || '';
 
 		return (
 			<div className={ cx({
@@ -22,8 +24,12 @@ class InfoTabPane extends React.PureComponent {
 						<div className="row">
 							<div className="col">
 								{ !isEditing && (
-										<h5 className="h1 item-title">
-											{ item.title }
+										<h5 className={ cx(
+											'h1','item-title', {
+												placeholder: title.length === 0
+											}
+										)}>
+											{ title.length === 0 ? 'Untitled' : title }
 										</h5>
 									)
 								}
