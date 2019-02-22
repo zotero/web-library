@@ -414,7 +414,9 @@
 		}
 
 		@include state(".metadata-list.editing") {
-			flex: 1 1 auto;
+			@include touch-or-bp-down(sm) {
+				flex: 1 1 auto;
+			}
 		}
 	}
 
