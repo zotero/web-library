@@ -80,10 +80,11 @@
 	$size: map-get(map-get($specs, $side), size);
 	$width: map-get(map-get($specs, $side), width);
 	$height: map-get(map-get($specs, $side), height);
+	$pseudo-element: if($side == top or $side == left, "&::before", "&::after");
 
 	position: relative;
 
-	&::before {
+	#{$pseudo-element} {
 		position: absolute;
 		z-index: $z-index-hairline;
 		top: $top;
@@ -96,13 +97,13 @@
 
 	@if $touch-only == true {
 		@include touch-or-bp-down(sm) {
-			&::before {
+			#{$pseudo-element} {
 				content: "";
 				@include hairline-1x($direction, $color, $position);
 			}
 		}
 	} @else {
-		&::before {
+		#{$pseudo-element} {
 			content: "";
 			@include hairline-1x($direction, $color, $position);
 		}
@@ -110,7 +111,7 @@
 
 	@include touch-or-bp-down(sm) {
 		@media (min-resolution: 2dppx) {
-			&::before {
+			#{$pseudo-element} {
 				@include hairline-2x($direction, $color, $position, $size);
 			}
 		}
@@ -118,7 +119,8 @@
 }
 
 @mixin hairline-disabled {
-	&::before {
+	&::before,
+	&::after {
 		content: none !important;
 	}
 }

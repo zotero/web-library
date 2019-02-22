@@ -76,8 +76,18 @@
 	align-items: center;
 	padding: 0 $modal-header-padding $border-width;
 	background-color: $modal-header-bg;
-	height: $modal-header-height;
+	height: $modal-header-height + $border-width;
 	@include hairline(bottom, $modal-header-border);
+
+	.modal-touch & {
+		background-color: $modal-touch-header-bg;
+
+		@include bp-down(xs) {
+			@include hairline(top, $modal-header-border);
+			height: $modal-header-height + 2 * $border-width;
+			padding: $border-width $modal-header-padding;
+		}
+	}
 
 	&-left,
 	&-right {
