@@ -46,7 +46,7 @@
 		box-shadow: 0 -1px rgba(#000, 0.1);
 	}
 
-	@include bp-up(lg) {
+	@include bp-up-normalized(lg) {
 		flex: 0 0 $item-details-width-lg;
 		min-width: 0; // Fix truncation
 		@include hairline(left, $item-details-border);
