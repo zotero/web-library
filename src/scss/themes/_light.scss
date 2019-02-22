@@ -176,14 +176,16 @@ $spinner-color: $secondary;
 $touch-header-color:      $shade-8; // Better than $shade-6 to link color
 $touch-header-link-color: $blue;
 $touch-header-bg:         $shade-1;
+$touch-header-darker-bg:  shade($shade-1, 2%);
 $touch-header-border:     $shade-4;
 $btn-options-color:       $secondary;
 $btn-options-bg:          $transparent;
 $btn-options-focus-color: rgba($btn-options-color, 0.5);
 
 // Touch footer
-$touch-footer-bg:     $shade-1;
-$touch-footer-border: $shade-4;
+$touch-footer-bg:        $shade-1;
+$touch-footer-darker-bg: shade($shade-1, 2%);
+$touch-footer-border:    $shade-4;
 
 // Editable
 $editable-color:        $text-color;

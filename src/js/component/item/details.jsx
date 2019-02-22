@@ -16,7 +16,7 @@ class ItemDetails extends React.PureComponent {
 		return (
 			<section className={ cx('item-details', { 'active': active }) }>
 				<TouchHeaderContainer
-					className="hidden-mouse hidden-md-down"
+					className="hidden-mouse hidden-md-down darker"
 					variant={ TouchHeaderContainer.variants.ITEM }
 				/>
 				{

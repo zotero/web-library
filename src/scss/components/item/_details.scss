@@ -56,10 +56,6 @@
 		}
 	}
 
-	.touch-header {
-		background-color: mix($shade-10, $touch-header-bg, 2%);
-	}
-
 	.panel-header {
 		@include touch-or-bp-down(sm) {
 			display: none;

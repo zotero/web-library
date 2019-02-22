@@ -18,10 +18,6 @@
 	@include mouse-and-bp-up(md) {
 		padding-top: $border-width;
 	}
-
-	> .touch-header {
-		background-color: mix($shade-10, $touch-header-bg, 2%);
-	}
 }
 
 .items {

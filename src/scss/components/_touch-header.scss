@@ -11,4 +11,8 @@
 	position: relative;
 	@include hairline(bottom, $touch-header-border);
 	padding-bottom: $border-width;
+
+	&.darker {
+		background-color: $touch-header-darker-bg;
+	}
 }

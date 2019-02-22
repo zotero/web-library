@@ -94,14 +94,14 @@ class Library extends React.PureComponent {
 				<main>
 					<section className={ `library ${ view === 'library' ? 'active' : '' }` }>
 						<TouchHeaderContainer
-							className="hidden-sm-up"
+							className="hidden-sm-up darker"
 							variant={ TouchHeaderContainer.variants.MOBILE }
 						/>
 						<header className="sidebar">
 							<h2 className="offscreen">Web library</h2>
 							<TouchHeaderContainer
 								variant={ TouchHeaderContainer.variants.NAVIGATION }
-								className="hidden-xs-down hidden-mouse-md-up"
+								className="hidden-xs-down hidden-mouse-md-up darker"
 							/>
 							<LibrariesContainer />
 							{ !device.isTouchOrSmall &&

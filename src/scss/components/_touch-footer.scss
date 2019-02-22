@@ -7,4 +7,8 @@
 	@include hairline(top, $touch-footer-border);
 	height: $touch-footer-height;
 	background-color: $touch-footer-bg;
+
+	&.darker {
+		background-color: $touch-footer-darker-bg;
+	}
 }
