@@ -1,8 +1,6 @@
 'use strict';
 
-const baseMappings = require('zotero-base-mappings');
-const { sortByKey, compare } = require('../utils');
-const columnSortKeyLookup = require('../constants/column-sort-key-lookup');
+const { getSortKeyValue, sortItemsByKey, compareItem } = require('../utils');
 
 const replaceDuplicates = entries => {
 	const seen = [];
@@ -26,10 +24,12 @@ const injectExtraItemKeys = (state, newKeys, items) => {
 	}
 	const keys = [...state.keys];
 	var hasHoles = false;
+	var injectIterationEnd = keys.length;
 
 	for(let i = 0; i < keys.length; i++) {
 		if(typeof(keys[i]) === 'undefined') {
 			hasHoles = true;
+			injectIterationEnd = i;
 			break;
 		}
 	}
@@ -39,11 +39,10 @@ const injectExtraItemKeys = (state, newKeys, items) => {
 
 	newKeys.forEach(newKey => {
 		let injected = false;
-		for(let i = 0; i < keys.length; i++) {
-			var comparisionResult = compare(
-				getSortKeyValue(items[keys[i]], sortBy),
-				getSortKeyValue(items[newKey], sortBy)
-			);
+		for(let i = 0; i < injectIterationEnd; i++) {
+			var comparisionResult = compareItem(
+				items[keys[i]], items[newKey], sortBy
+			)
 
 			if(sortDirection === 'desc') {
 				comparisionResult = comparisionResult * -1;
@@ -104,26 +103,6 @@ const populateItemKeys = (state, newKeys, action) => {
 	}
 }
 
-const getSortKeyForItemType = (sortKey, itemType) => {
-	return itemType in baseMappings && sortKey in baseMappings[itemType] ?
-		baseMappings[itemType][sortKey] :
-		sortKey;
-}
-
-const getSortKeyValue = (item, sortBy) => {
-	sortBy = columnSortKeyLookup[sortBy];
-
-	if(sortBy === 'creator') {
-		return (item[Symbol.for('meta')] || {})['creatorSummary'];
-	}
-	if(sortBy === 'date') {
-		return (item[Symbol.for('meta')] || {})['parsedDate'];
-	}
-
-	const sortKey = getSortKeyForItemType(sortBy, item.itemType);
-	return item[sortKey];
-}
-
 const sortItemKeysOrClear = (state, items, sortBy, sortDirection) => {
 	var isCompleteSet = 'totalResults' in state &&
 		'keys' in state &&
@@ -141,10 +120,11 @@ const sortItemKeysOrClear = (state, items, sortBy, sortDirection) => {
 
 	if(isCompleteSet) {
 		keys = [...state.keys];
-		sortByKey(
+		sortItemsByKey(
 			keys,
-			itemKey => getSortKeyValue(items[itemKey], sortBy),
-			sortDirection
+			sortBy,
+			sortDirection,
+			itemKey => items[itemKey]
 		);
 	} else if('totalResults' in state) {
 		keys = new Array(state.totalResults);

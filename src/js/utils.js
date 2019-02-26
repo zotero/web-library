@@ -1,6 +1,9 @@
 'use strict';
 
+const baseMappings = require('zotero-base-mappings');
 const { columnMinWidthFraction } = require('./constants/defaults');
+const columnSortKeyLookup = require('./constants/column-sort-key-lookup');
+const { noteAsTitle } = require('./common/format');
 
 const splice = (array, at, count = 0, ...items) => {
 	if (at == null) {
@@ -97,20 +100,79 @@ const removeRelationByItemKey = (itemKey, relations, userId, relationType='dc:re
 	};
 };
 
-const isUndefinedOrNullOrEmpty = value =>
-	typeof value === 'undefined' || value === null || value === '';
+const isUndefinedOrNull = value =>
+	typeof value === 'undefined' || value === null;
+
+const getSortKeyForItemType = (sortKey, itemType) => {
+	return itemType in baseMappings && sortKey in baseMappings[itemType] ?
+		baseMappings[itemType][sortKey] : sortKey;
+}
+
+const getSortKeyValue = (item, sortBy) => {
+	sortBy = columnSortKeyLookup[sortBy];
+
+	if(item.itemType === 'note' && sortBy === 'title') {
+		return noteAsTitle(item.note || '');
+	}
+
+	if(sortBy === 'creator') {
+		return (item[Symbol.for('meta')] || {})['creatorSummary'];
+	}
+	if(sortBy === 'date') {
+		return (item[Symbol.for('meta')] || {})['parsedDate'];
+	}
+
+	const sortKey = getSortKeyForItemType(sortBy, item.itemType);
+	return item[sortKey];
+}
+
+
+
+const compareItem = (itemA, itemB, sortBy) => {
+	var a = getSortKeyValue(itemA, sortBy);
+	var b = getSortKeyValue(itemB, sortBy);
+
+	// normalize nulls and empty values, if title, empty value is treated
+	// as an empty string ("") and sorted first in ascending order
+	// (e.g. before "a"), otherwise empty value is treated as null and sorted last
+	if(sortBy === 'title') {
+		if(isUndefinedOrNull(a)) {
+			a = '';
+		}
+		if(isUndefinedOrNull(b)) {
+			b = ''
+		}
+	} else {
+		if(a == '') {
+			a = null;
+		}
+		if(b == '') {
+			b = null
+		}
+	}
+
+	const compareResult = compare(a, b);
+
+	// fallback for dateModified comparision
+	if(compareResult === 0) {
+		return compare(itemA.dateModified, itemB.dateModified);
+	} else {
+		return compareResult;
+	}
+}
+
 
 //@NOTE: compare function treats empty strings, undefined and null values
 //		 as equal to each other and indicates these should occur AFTER
 //		 any actual values
 const compare = (a, b) => {
-	if(isUndefinedOrNullOrEmpty(a) && isUndefinedOrNullOrEmpty(b)) {
+	if(isUndefinedOrNull(a) && isUndefinedOrNull(b)) {
 		return 0;
 	}
-	if(isUndefinedOrNullOrEmpty(a)) {
+	if(isUndefinedOrNull(a)) {
 		return 1;
 	}
-	if(isUndefinedOrNullOrEmpty(b)) {
+	if(isUndefinedOrNull(b)) {
 		return -1;
 	}
 
@@ -131,6 +193,13 @@ const sortByKey = (items, key, direction = 'asc') => {
 			compare(aKeyValue, bKeyValue) * -1;
 	});
 };
+
+const sortItemsByKey = (items, key, direction = 'asc', getItem = item => item) => {
+	items.sort((a, b) => direction === 'asc' ?
+			compareItem(getItem(a), getItem(b), key) :
+			compareItem(getItem(a), getItem(b), key) * -1
+		);
+}
 
 const indexByGeneratedKey = (elements, keygenerator, processor = e => e) => {
 	return elements.reduce((aggr, element) => {
@@ -183,10 +252,13 @@ const JSONTryParse = (json, fallback = {}) => {
 }
 
 module.exports = {
+	compare,
+	compareItem,
 	deduplicate,
 	deduplicateByKey,
 	enumerateObjects,
 	get,
+	getSortKeyValue,
 	indexByGeneratedKey,
 	indexByKey,
 	JSONTryParse,
@@ -196,7 +268,7 @@ module.exports = {
 	resizeVisibleColumns,
 	reverseMap,
 	sortByKey,
+	sortItemsByKey,
 	splice,
 	transform,
-	compare,
 };

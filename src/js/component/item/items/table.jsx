@@ -30,11 +30,20 @@ class ItemsTable extends React.PureComponent {
 		return { columns };
 	}
 
-	componentDidUpdate({ sortBy, sortDirection, totalItemsCount }) {
+	componentDidUpdate({ sortBy, sortDirection, totalItemsCount, items: prevItems }) {
 		if(this.props.sortBy !== sortBy ||
 			this.props.sortDirection !== sortDirection ||
 			this.props.totalItemsCount !== totalItemsCount) {
 			this.loader.resetLoadMoreRowsCache(true);
+		}
+
+		const { selectedItemKeys, items } = this.props;
+
+		if(selectedItemKeys.length > 0 && items.length !== prevItems.length) {
+			const index = items.findIndex(
+				i => i && selectedItemKeys.includes(i.key)
+			)
+			this.setState({ index });
 		}
 	}
 
@@ -504,6 +513,7 @@ class ItemsTable extends React.PureComponent {
 									sort={ this.handleSort.bind(this) }
 									sortBy={ sortBy }
 									sortDirection={ sortDirection }
+									scrollToIndex={ this.state.index }
 								>
 									{
 										this.state.columns
