@@ -190,7 +190,6 @@
 
 					@include state(".items-list:not(.editing) .item.active") {
 						color: $item-active-color;
-						opacity: 0.67;
 					}
 				}
 
