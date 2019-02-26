@@ -100,6 +100,22 @@ class ItemsList extends React.PureComponent {
 						<div className="year">
 							{ item.year }
 						</div>
+						<div className="icons">
+							<Icon type="16/attachment" width="16" height="16" />
+							<Icon type="16/note-sm" width="16" height="16" />
+							<Icon
+								type="12/circle"
+								width="12"
+								height="12"
+								style={ { color: "#f66" } }
+							/>
+							<Icon
+								type="12/crescent-circle"
+								width="8"
+								height="12"
+								style={ { color: "#5fb236" } }
+							/>
+						</div>
 					</div>
 					<Icon type={ '16/chevron-13' } width="16" height="16" />
 			</div>

@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+	<symbol id="circle" viewBox="0 0 12 12">
+		<circle fill="currentColor" cx="6" cy="6" r="6"/>
+			<circle cx="6" cy="6" r="6" opacity="0.08"/>
+		<circle fill="currentColor" cx="6" cy="6" r="5"/>
+	</symbol>
+	<use xlink:href="#circle" viewBox="0 0 12 12"/>
+</svg>

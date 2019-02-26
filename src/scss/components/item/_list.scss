@@ -95,14 +95,21 @@
 			pointer-events: none; // These are purely decorative
 		}
 
-		&.placeholder {
-			.metadata {
+		.metadata {
+			@include text-truncate;
+			position: relative;
+
+			@include state(".item.placeholder") {
 				height: 12px;
 				border-radius: 6px;
 				background-color: $item-placeholder-color;
 			}
+		}
 
-			.title {
+		.title {
+			height: $font-size-mobile * $line-height-base; // Keep second line at the bottom
+
+			@include state(".item.placeholder") {
 				width: 80%;
 				margin-top: 6px;
 				background-color: $title-placeholder-color;
@@ -111,8 +118,13 @@
 					width: 90%;
 				}
 			}
+		}
 
-			.creator-year {
+		.creator-year {
+			display: flex;
+			color: $item-creator-date-color;
+
+			@include state(".item.placeholder") {
 				width: 60%;
 				margin-top: 12px;
 
@@ -120,29 +132,15 @@
 					width: 70%;
 				}
 			}
-		}
-
-		.metadata {
-			@include text-truncate;
-			position: relative;
-		}
-
-		.title {
-			height: $font-size-mobile * $line-height-base; // Keep second line at the bottom
-		}
-
-		.creator-year {
-			display: flex;
-			color: $item-creator-date-color;
-
-			@include state(".items-list:not(.editing) .item.active") {
-				color: $item-active-color;
-				opacity: 0.67;
-			}
 
 			.creator,
 			.year {
 				@include text-truncate;
+
+				@include state(".items-list:not(.editing) .item.active") {
+					color: $item-active-color;
+					opacity: 0.67;
+				}
 			}
 
 			.creator {
@@ -168,6 +166,37 @@
 				&::before {
 					content: " (";
 					white-space: pre;
+				}
+			}
+
+			.icons {
+				flex: 0 0 auto;
+				margin-left: auto;
+				display: flex;
+				align-items: center;
+				padding-left: $space-xs;
+
+				@include state(".icons:empty", ".item.placeholder") {
+					display: none;
+				}
+
+				.icon {
+					color: $item-creator-date-color;
+				}
+
+				.icon-attachment,
+				.icon-note-sm {
+					margin-right: $space-min;
+
+					@include state(".items-list:not(.editing) .item.active") {
+						color: $item-active-color;
+						opacity: 0.67;
+					}
+				}
+
+				.icon-crescent-circle,
+				.icon-crescent-circle-active {
+					margin-left: -2px;
 				}
 			}
 		}
