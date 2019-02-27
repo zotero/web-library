@@ -25,6 +25,7 @@ const { omit } = require('../common/immutable');
 const defaultSort = { field: 'title', sort: 'ASC' };
 const withDevice = require('../enhancers/with-device');
 const columnSortKeyLookup = require('../constants/column-sort-key-lookup');
+const PAGE_SIZE = 50;
 
 class ItemsContainer extends React.PureComponent {
 	handleItemsSelect(items = []) {
@@ -66,6 +67,18 @@ class ItemsContainer extends React.PureComponent {
 	async handleLoadMore({ startIndex, stopIndex }) {
 		let start = startIndex;
 		let limit = (stopIndex - startIndex) + 1;
+
+		console.log("handleLoadMore", start, limit);
+
+		// when filling in holes, fetch PAGE_SIZE around it. Fixes rare
+		// cases where our sorting doesn't match api sorting and we miss
+		// the item that was just created.
+		if(limit === 1) {
+			start = Math.max(0, start - PAGE_SIZE / 2);
+			limit = PAGE_SIZE;
+		}
+
+
 		let direction = this.props.sortDirection.toLowerCase();
 		let tag = this.props.tags || [];
 		const { itemsSource, dispatch, collectionKey, search: q,

@@ -4,6 +4,7 @@ const React = require('react');
 const PropTypes = require('prop-types');
 const cx = require('classnames');
 const paramCase = require('param-case');
+const deepEqual = require('deep-equal');
 const { without, resizeVisibleColumns } = require('../../../utils');
 const AutoSizer = require('react-virtualized/dist/commonjs/AutoSizer').default;
 const InfiniteLoader = require('react-virtualized/dist/commonjs/InfiniteLoader').default;
@@ -30,7 +31,8 @@ class ItemsTable extends React.PureComponent {
 		return { columns };
 	}
 
-	componentDidUpdate({ sortBy, sortDirection, totalItemsCount, items: prevItems }) {
+	componentDidUpdate({ sortBy, sortDirection, totalItemsCount, items: prevItems,
+	selectedItemKeys: prevSelectedItemKeys }) {
 		if(this.props.sortBy !== sortBy ||
 			this.props.sortDirection !== sortDirection ||
 			this.props.totalItemsCount !== totalItemsCount) {
@@ -39,11 +41,13 @@ class ItemsTable extends React.PureComponent {
 
 		const { selectedItemKeys, items } = this.props;
 
-		if(selectedItemKeys.length > 0 && items.length !== prevItems.length) {
-			const index = items.findIndex(
+		if(this.tableRef && selectedItemKeys.length > 0 &&
+			(items.length !== prevItems.length ||
+			!deepEqual(selectedItemKeys, prevSelectedItemKeys))) {
+			const scrollToIndex = items.findIndex(
 				i => i && selectedItemKeys.includes(i.key)
 			)
-			this.setState({ index });
+			this.tableRef.scrollToRow(scrollToIndex);
 		}
 	}
 
@@ -477,6 +481,7 @@ class ItemsTable extends React.PureComponent {
 			return null;
 		}
 		const { sortBy, sortDirection, totalItemsCount } = this.props;
+		const { scrollToIndex } = this.state;
 		const isLoadingUncounted = typeof(totalItemsCount) === 'undefined';
 
 		return (
@@ -498,7 +503,7 @@ class ItemsTable extends React.PureComponent {
 						>
 							{({onRowsRendered, registerChild}) => (
 								<Table
-									ref={ registerChild }
+									ref={ ref => { this.tableRef = ref; registerChild(ref); } }
 									className="items-table"
 									width={ width }
 									height={ height }
@@ -513,7 +518,7 @@ class ItemsTable extends React.PureComponent {
 									sort={ this.handleSort.bind(this) }
 									sortBy={ sortBy }
 									sortDirection={ sortDirection }
-									scrollToIndex={ this.state.index }
+									scrollToIndex={ scrollToIndex }
 								>
 									{
 										this.state.columns

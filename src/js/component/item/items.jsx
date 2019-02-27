@@ -9,7 +9,7 @@ const ItemsTable = require('./items/table');
 const ItemsList = require('./items/list');
 const TouchHeaderContainer = require('../../container/touch-header');
 const TouchFooterContainer = require('../../container/touch-footer');
-const PAGE_SIZE = 100;
+const PAGE_SIZE = 50;
 
 class Items extends React.PureComponent {
 	state = {};

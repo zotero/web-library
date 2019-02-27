@@ -3,9 +3,9 @@
 const React = require('react');
 const PropTypes = require('prop-types');
 const cx = require('classnames');
+const deepEqual = require('deep-equal');
 const Icon = require('../../ui/icon');
 const Spinner = require('../../ui/spinner');
-
 
 const { default: AutoSizer } = require('react-virtualized/dist/commonjs/AutoSizer');
 const { default: InfiniteLoader } = require('react-virtualized/dist/commonjs/InfiniteLoader');
@@ -14,10 +14,22 @@ const { default: List } = require('react-virtualized/dist/commonjs/List');
 class ItemsList extends React.PureComponent {
 
 	// Identical to table.jsx
-	componentDidUpdate({ sortBy, sortDirection }) {
+	componentDidUpdate({ sortBy, sortDirection, items: prevItems,
+	selectedItemKeys: prevSelectedItemKeys }) {
 		if(this.props.sortBy !== sortBy ||
 			this.props.sortDirection !== sortDirection) {
 			this.loader.resetLoadMoreRowsCache(false);
+		}
+
+		const { selectedItemKeys, items } = this.props;
+
+		if(this.listRef && selectedItemKeys.length > 0 &&
+			(items.length !== prevItems.length ||
+			!deepEqual(selectedItemKeys, prevSelectedItemKeys))) {
+			const scrollToIndex = items.findIndex(
+				i => i && selectedItemKeys.includes(i.key)
+			)
+			this.listRef.scrollToRow(scrollToIndex);
 		}
 	}
 
@@ -148,7 +160,7 @@ class ItemsList extends React.PureComponent {
 									className={ cx('items-list', { 'editing': isSelectMode }) }
 									height={ height }
 									onRowsRendered={ onRowsRendered }
-									ref={ registerChild }
+									ref={ ref => { this.listRef = ref; registerChild(ref); } }
 									rowCount={ totalItemsCount || 0 }
 									rowHeight={ 61 }
 									width={ width }
