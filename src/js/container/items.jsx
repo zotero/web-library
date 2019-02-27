@@ -68,8 +68,6 @@ class ItemsContainer extends React.PureComponent {
 		let start = startIndex;
 		let limit = (stopIndex - startIndex) + 1;
 
-		console.log("handleLoadMore", start, limit);
-
 		// when filling in holes, fetch PAGE_SIZE around it. Fixes rare
 		// cases where our sorting doesn't match api sorting and we miss
 		// the item that was just created.
