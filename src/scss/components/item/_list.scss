@@ -60,9 +60,10 @@
 
 	.item {
 		// Items in the list are fixed at 61px height
+		display: flex;
 		padding: $item-list-padding-top $item-list-padding-x $item-list-padding-bottom;
 		position: relative;
-		@include hairline(top, $item-border-color, $start: $item-list-padding-x);
+		@include hairline(top, $item-border-color, $start: (2 * $item-list-padding-x + 28px));
 
 		&:first-child {
 			@include hairline-disabled;
@@ -85,7 +86,14 @@
 		@include state(".items-list.editing") {
 			padding-left: 2 * $item-list-padding-x + $space-lg;
 			padding-right: $item-list-padding-x;
-			@include hairline(top, $item-border-color, $start: (2 * $item-list-padding-x + $space-lg));
+			@include hairline(top, $item-border-color, $start: (3 * $item-list-padding-x + $space-lg + 28px));
+
+			@include bp-down-normalized(xs) {
+			 &::before {
+			 	left: 2 * $item-list-padding-x + $space-lg;
+			 	width: calc(100% - #{2 * $item-list-padding-x + $space-lg});
+			 }
+			}
 		}
 
 		input[type="checkbox"] {
@@ -93,6 +101,12 @@
 			left: $item-list-padding-x;
 			top: ($item-list-row-height - $border-width - $space-lg) / 2 + $border-width;
 			pointer-events: none; // These are purely decorative
+		}
+
+		.item-type {
+			flex: 0 0 auto;
+			align-self: center;
+			margin-right: $item-list-padding-x;
 		}
 
 		.metadata {
@@ -107,7 +121,7 @@
 		}
 
 		.title {
-			height: $font-size-mobile * $line-height-base; // Keep second line at the bottom
+			height: floor($font-size-mobile * $line-height-base); // Keep second line at the bottom
 
 			@include state(".item.placeholder") {
 				width: 80%;

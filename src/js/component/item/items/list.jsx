@@ -102,32 +102,35 @@ class ItemsList extends React.PureComponent {
 						checked={ active }
 					/>
 				)}
-					<div className="metadata title">
-						{ item.title }
-					</div>
-					<div className="metadata creator-year">
-						<div className="creator">
-							{ item.creator}
+					<Icon type={ '28/item-type' } width="28" height="28" className="item-type hidden-xs-down" />
+					<div className="flex-column">
+						<div className="metadata title">
+							{ item.title }
 						</div>
-						<div className="year">
-							{ item.year }
-						</div>
-						<div className="icons">
-							{
-								// currently blocked #191
-								// <Icon type="16/attachment" width="16" height="16" />
-								// <Icon type="16/note-sm" width="16" height="16" />
-							}
+						<div className="metadata creator-year">
+							<div className="creator">
+								{ item.creator}
+							</div>
+							<div className="year">
+								{ item.year }
+							</div>
+							<div className="icons">
+								{
+									// currently blocked #191
+									// <Icon type="16/attachment" width="16" height="16" />
+									// <Icon type="16/note-sm" width="16" height="16" />
+								}
 
-							{ item.coloredTags.map((tag, index) => (
-								<Icon
-									key={ tag.tag }
-									type={ index === 0 ? '12/circle' : '12/crescent-circle' }
-									width={ index === 0 ? 12 : 8 }
-									height="12"
-									style={ { color: tag.color } }
-								/>
-							))}
+								{ item.coloredTags.map((tag, index) => (
+									<Icon
+										key={ tag.tag }
+										type={ index === 0 ? '12/circle' : '12/crescent-circle' }
+										width={ index === 0 ? 12 : 8 }
+										height="12"
+										style={ { color: tag.color } }
+									/>
+								))}
+							</div>
 						</div>
 					</div>
 					<Icon type={ '16/chevron-13' } width="16" height="16" />
