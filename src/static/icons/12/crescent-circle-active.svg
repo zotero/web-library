@@ -1,7 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-	<symbol id="crescent-circle-active" viewBox="0 0 8 12">
-	<path fill="#fff" d="M2,0A5.978,5.978,0,0,0,.076.321,6.99,6.99,0,0,1,3,6,6.99,6.99,0,0,1,.076,11.679,6,6,0,1,0,2,0Z"/>
-	<path fill="currentColor" d="M2,1a5,5,0,0,0-1.008.1A6.973,6.973,0,0,1,3,6,6.973,6.973,0,0,1,.992,10.9,5,5,0,1,0,2,1Z"/>
-	</symbol>
-	<use xlink:href="#crescent-circle-active" viewBox="0 0 8 12"/>
-</svg>

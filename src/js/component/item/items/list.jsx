@@ -83,9 +83,9 @@ class ItemsList extends React.PureComponent {
 		const { isSelectMode, items, selectedItemKeys } = this.props;
 		const item = this.getRow({ index });
 		const isLoaded = index < items.length;
-		const active = selectedItemKeys.includes(item.key);
+		const isActive = selectedItemKeys.includes(item.key);
 		const className = cx({
-			active,
+			active: isActive,
 			item: true,
 			odd: (index + 1) % 2 === 1,
 			placeholder: item.isPlaceholder
@@ -99,7 +99,7 @@ class ItemsList extends React.PureComponent {
 					<input
 						type="checkbox"
 						readOnly
-						checked={ active }
+						checked={ isActive }
 					/>
 				)}
 					<Icon type={ '28/item-type' } width="28" height="28" className="item-type hidden-xs-down" />
@@ -125,6 +125,10 @@ class ItemsList extends React.PureComponent {
 									<Icon
 										key={ tag.tag }
 										type={ index === 0 ? '12/circle' : '12/crescent-circle' }
+										symbol={ index === 0 ?
+											isActive ? 'circle-active' : 'circle' :
+											isActive ? 'crescent-circle-active' : 'crescent-circle'
+										}
 										width={ index === 0 ? 12 : 8 }
 										height="12"
 										style={ { color: tag.color } }

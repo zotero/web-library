@@ -4,5 +4,9 @@
 			<circle cx="6" cy="6" r="6" opacity="0.08"/>
 		<circle fill="currentColor" cx="6" cy="6" r="5"/>
 	</symbol>
+	<symbol id="circle-active" viewBox="0 0 12 12">
+		<circle fill="#fff" cx="6" cy="6" r="6"/>
+		<circle fill="currentColor" cx="6" cy="6" r="5"/>
+	</symbol>
 	<use xlink:href="#circle" viewBox="0 0 12 12"/>
 </svg>
