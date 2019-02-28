@@ -4,7 +4,10 @@
 
 .library {
 	display: flex;
-	@include hairline(top, $shade-4);
+
+	@include touch-or-bp-down(sm) {
+		@include hairline(top, $shade-4);
+	}
 
 	@include bp-down(xs) {
 		flex: 1 1 auto;
@@ -16,7 +19,7 @@
 	}
 
 	@include mouse-and-bp-up(md) {
-		padding-top: $border-width;
+		border-top: $border-width solid tint($shade-4, 50%, $tint: $body-bg);
 	}
 }
 

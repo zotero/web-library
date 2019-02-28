@@ -4,13 +4,6 @@
 
 .item-details {
 	background: $item-details-bg;
-	@include hairline(top, $item-details-border, $touch-only: true);
-
-	@include bp-down-normalized(sm) {
-		&::before {
-			content: none; // Remove hairline
-		}
-	}
 
 	@include bp-down(sm) {
 		@include same(right, bottom, left, 0);
@@ -41,19 +34,31 @@
 		}
 	}
 
+	@include touch-and-bp-only(md) {
+		@include hairline(top, $item-details-border);
+	}
+
 	@include mouse-and-bp-only(md) {
 		padding-top: 0;
 		box-shadow: 0 -1px rgba(#000, 0.1);
+		position: relative; // Above odd rows
 	}
 
 	@include bp-up-normalized(lg) {
 		flex: 0 0 $item-details-width-lg;
 		min-width: 0; // Fix truncation
-		@include hairline(left, $item-details-border);
 
 		.touch & {
 			flex: 0 0 $item-details-width-lg-touch;
 		}
+	}
+
+	@include touch-and-bp-only(lg) {
+		@include hairline(left, $item-details-border);
+	}
+
+	@include mouse-and-bp-only(lg) {
+		border-left: $border-width solid tint($item-details-border, 50%);
 	}
 
 	.panel-header {

@@ -3,8 +3,8 @@
 // --------------------------------------------------
 
 .touch-footer {
-	padding-top: $border-width;
 	@include hairline(top, $touch-footer-border);
+	padding-top: $border-width;
 	height: $touch-footer-height;
 	background-color: $touch-footer-bg;
 

@@ -5,25 +5,7 @@
 // Use padding to compensate the hairline where needed
 // Todo: use 0.5px border once Chrome is ready (Chromium issue 623495)
 
-@mixin hairline-1x($direction, $color, $position) {
-	background: linear-gradient(
-		$direction,
-		mix($color, $body-bg, 50%) 0%,
-		mix($color, $body-bg, 50%) 1px,
-		transparent 1px
-	) no-repeat $position;
-}
-
-@mixin hairline-2x($direction, $color, $position, $size) {
-	background: linear-gradient(
-		$direction,
-		$color 0%,
-		$color 51%,
-		transparent 51%
-	) no-repeat $position / ($size);
-}
-
-@mixin hairline($side, $color, $start: null, $end: null, $touch-only: null) {
+@mixin hairline($side, $color, $start: null, $end: null) {
 	$specs: (
 		top: (
 			top: 0,
@@ -85,6 +67,7 @@
 	position: relative;
 
 	#{$pseudo-element} {
+		content: "";
 		position: absolute;
 		z-index: $z-index-hairline;
 		top: $top;
@@ -93,34 +76,25 @@
 		left: $left;
 		width: $width;
 		height: $height;
+		background-color: mix($color, $body-bg, 50%);
 	}
 
-	@if $touch-only == true {
-		@include touch-or-bp-down(sm) {
-			#{$pseudo-element} {
-				content: "";
-				@include hairline-1x($direction, $color, $position);
-			}
-		}
-	} @else {
+	@media (min-resolution: 2dppx) {
 		#{$pseudo-element} {
-			content: "";
-			@include hairline-1x($direction, $color, $position);
-		}
-	}
-
-	@include touch-or-bp-down(sm) {
-		@media (min-resolution: 2dppx) {
-			#{$pseudo-element} {
-				@include hairline-2x($direction, $color, $position, $size);
-			}
+			background: linear-gradient(
+				$direction,
+				$color 0%,
+				$color 51%,
+				transparent 51%
+			) no-repeat $position;
 		}
 	}
 }
 
-@mixin hairline-disabled {
-	&::before,
-	&::after {
+@mixin hairline-disabled($side) {
+	$pseudo-element: if($side == top or $side == left, "&::before", "&::after");
+
+	#{$pseudo-element} {
 		content: none !important;
 	}
 }

@@ -8,7 +8,6 @@
 	background: $sidebar-bg;
 	overflow: hidden;
 	position: relative;
-	@include hairline(right, $sidebar-border-color);
 
 	@include bp-down(xs) {
 		position: absolute;
@@ -20,10 +19,12 @@
 
 	@include touch-or-bp-down(sm) {
 		line-height: $line-height-large-touch;
+		@include hairline(right, $sidebar-border-color);
 	}
 
 	@include mouse-and-bp-up(md) {
-		padding: $space-min $border-width $space-min 0;
+		padding: $space-min 0;
+		border-right: $border-width solid tint($sidebar-border-color, 50%);
 	}
 
 	@include bp-up(sm) {

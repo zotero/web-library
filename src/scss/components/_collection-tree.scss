@@ -44,10 +44,10 @@
 		outline-offset: -$outline-width;
 		cursor: pointer;
 		position: relative;
-		@include hairline(top, $touch-collection-tree-border, $start: (2 * $default-padding-x-touch + 28px), $touch-only: true);
 
 		@include touch-or-bp-down(sm) {
-			padding: 0 $default-padding-x-touch;
+			padding: $border-width $default-padding-x-touch 0;
+			@include hairline(top, $touch-collection-tree-border, $start: (2 * $default-padding-x-touch + 28px));
 		}
 
 		@include mouse-and-bp-up(md) {
@@ -57,20 +57,20 @@
 
 		@include variant("li:first-child > .item-container") {
 			@include touch-or-bp-down(sm) {
-	 			@include hairline-disabled;
+	 			@include hairline-disabled(top);
 	 		}
 		}
 
 		@include state("li.selected > .item-container", "li.open > .item-container") {
 			@include touch-or-bp-down(sm) {
 				background: $touch-collection-tree-active-bg;
-				@include hairline-disabled;
+				@include hairline-disabled(top);
 			}
 		}
 
 		@include state("li.selected + li > .item-container", "li.open + li > .item-container") {
 			@include touch-or-bp-down(sm) {
-				@include hairline-disabled;
+				@include hairline-disabled(top);
 			}
 		}
 
