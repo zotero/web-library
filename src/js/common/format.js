@@ -9,8 +9,8 @@ const itemTypeLocalized = (item, itemTypes) => {
 	if(itemType === 'attachment') { return "Attachment" }
 	return (itemTypes.find(it => it.itemType === itemType) || {}).localized;
 }
-const dateLocalized = date => (date instanceof Date && !isNaN(date)) ? '' :
-	date.toLocaleString(navigator.language || navigator.userLanguage);
+const dateLocalized = date => (date instanceof Date && !isNaN(date)) ?
+	date.toLocaleString(navigator.language || navigator.userLanguage) : '';
 
 //@TODO: figure out better place for this
 const itemsSourceLabel = itemsSource => {
