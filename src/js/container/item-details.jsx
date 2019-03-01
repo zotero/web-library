@@ -6,7 +6,8 @@ const ItemDetails = require('../component/item/details');
 const { push } = require('connected-react-router');
 const { connect } = require('react-redux');
 const { createItem, updateItem, deleteItem, fetchItemTemplate, fetchChildItems, uploadAttachment, fetchItems, fetchItemTypeCreatorTypes, fetchItemTypeFields } = require('../actions');
-const { itemProp, baseMappings, hideFields, noEditFields } = require('../constants/item');
+const { itemProp, baseMappings, hideFields, noEditFields,
+	extraFields } = require('../constants/item');
 const { get, deduplicateByKey, mapRelationsToItemKeys, removeRelationByItemKey, reverseMap } = require('../utils');
 const { makePath } = require('../common/navigation');
 const { getFieldDisplayValue } = require('../common/item');
@@ -194,7 +195,8 @@ class ItemDetailsContainer extends React.PureComponent {
 				{ field: 'itemType', localized: 'Item Type' },
 				itemTypeFields[item.itemType].find(itf => itf.field === titleField),
 				{ field: 'creators', localized: 'Creators' },
-				...itemTypeFields[item.itemType].filter(itf => itf.field !== titleField)
+				...itemTypeFields[item.itemType].filter(itf => itf.field !== titleField),
+				...extraFields
 			]
 			.filter(e => e)
 			.map(f => ({

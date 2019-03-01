@@ -30,6 +30,13 @@ module.exports = Object.freeze({
 		'dateModified'
 	],
 
+	// fields that are not included in itemTypeFields responses, but should be
+	// displayed for every item
+	extraFields: [
+		{ field: 'dateAdded', localized: 'Date Added' },
+		{ field: 'dateModified', localized: 'Date Modified' },
+	],
+
 	baseMappings,
 
 	itemProp: PropTypes.shape({
