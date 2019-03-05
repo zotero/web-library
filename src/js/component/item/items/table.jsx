@@ -42,8 +42,8 @@ class ItemsTable extends React.PureComponent {
 		const { selectedItemKeys, items } = this.props;
 
 		if(this.tableRef && selectedItemKeys.length > 0 &&
-			(items.length !== prevItems.length ||
-			!deepEqual(selectedItemKeys, prevSelectedItemKeys))) {
+			(items.length !== prevItems.length || prevSelectedItemKeys.length === 0)
+		) {
 			const scrollToIndex = items.findIndex(
 				i => i && selectedItemKeys.includes(i.key)
 			)
