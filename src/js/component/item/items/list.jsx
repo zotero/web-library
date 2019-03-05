@@ -4,6 +4,7 @@ const React = require('react');
 const PropTypes = require('prop-types');
 const cx = require('classnames');
 const deepEqual = require('deep-equal');
+const paramCase = require('param-case');
 const Icon = require('../../ui/icon');
 const Spinner = require('../../ui/spinner');
 
@@ -82,7 +83,7 @@ class ItemsList extends React.PureComponent {
 	renderRow({ index, key, style }) {
 		const { isSelectMode, items, selectedItemKeys } = this.props;
 		const item = this.getRow({ index });
-		const isLoaded = index < items.length;
+		const isLoaded = this.getRowHasLoaded({ index });
 		const isActive = selectedItemKeys.includes(item.key);
 		const className = cx({
 			active: isActive,
@@ -102,7 +103,20 @@ class ItemsList extends React.PureComponent {
 						checked={ isActive }
 					/>
 				)}
-					<Icon type={ '28/item-type' } width="28" height="28" className="item-type hidden-xs-down" />
+					{ isLoaded ?
+						<Icon
+							type={ `16/item-types/${paramCase(item.itemType)}` }
+							width="28"
+							height="28"
+							className="item-type hidden-xs-down"
+						/> :
+						<Icon
+							type={ '28/item-type' }
+							width="28"
+							height="28"
+							className="item-type hidden-xs-down"
+						/>
+					}
 					<div className="flex-column">
 						<div className="metadata title">
 							{ item.title }
