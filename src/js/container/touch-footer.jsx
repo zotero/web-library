@@ -14,7 +14,7 @@ class TouchFooterContainer extends React.PureComponent {
 }
 
 const mapStateToProps = state => {
-	return { ...pick(state.current, 'itemKeys') }
+	return { ...pick(state.current, ['itemKeys', 'itemsSource']) }
 }
 
 

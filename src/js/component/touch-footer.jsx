@@ -9,7 +9,7 @@ const Button = require('./ui/button');
 
 class TouchFooter extends React.PureComponent {
 	render() {
-		const { itemKeys, onAddToCollectionModalOpen, onPermanentlyDelete, onUndelete,
+		const { itemKeys, itemsSource, onAddToCollectionModalOpen, onPermanentlyDelete, onUndelete,
 			onRemoveFromCollection, onDuplicate, onTrash, onExportModalOpen,
 			onBibliographyModalOpen } = this.props;
 		return (
@@ -17,15 +17,42 @@ class TouchFooter extends React.PureComponent {
 				<Toolbar>
 					<div className="toolbar-justified">
 						<ToolGroup>
-							<Button onClick={ onAddToCollectionModalOpen } disabled={ itemKeys.length === 0 }>
-								<Icon type={ '32/add-to-collection' } width="32" height="32" />
-							</Button>
-							<Button onClick={ onTrash } disabled={ itemKeys.length === 0 } >
-								<Icon type={ '24/trash' } width="24" height="24" />
-							</Button>
-							<Button onClick={ onDuplicate } disabled={ itemKeys.length !== 1 }>
-								<Icon type={ '24/duplicate' } width="24" height="24" />
-							</Button>
+							{
+								itemsSource !== 'trash' && (
+								<Button onClick={ onAddToCollectionModalOpen } disabled={ itemKeys.length === 0 }>
+									<Icon type={ '32/add-to-collection' } width="32" height="32" />
+								</Button>
+							)}
+							{
+								itemsSource === 'collection' && (
+									<Button onClick={ onRemoveFromCollection } disabled={ itemKeys.length === 0 }>
+										<Icon type={ '20/remove-from-collection' } width="32" height="32" />
+									</Button>
+							)}
+							{
+								itemsSource !== 'trash' && (
+									<Button onClick={ onTrash } disabled={ itemKeys.length === 0 } >
+										<Icon type={ '24/trash' } width="24" height="24" />
+									</Button>
+							)}
+							{
+								itemsSource === 'trash' && (
+									<Button onClick={ onUndelete } disabled={ itemKeys.length === 0 } >
+										<Icon type={ '24/restore' } width="24" height="24" />
+									</Button>
+							)}
+							{
+								itemsSource === 'trash' && (
+									<Button onClick={ onPermanentlyDelete } disabled={ itemKeys.length === 0 } >
+										<Icon type={ '24/empty-trash' } width="24" height="24" />
+									</Button>
+							)}
+							{
+								(itemsSource === 'collection' || itemsSource === 'top') && (
+									<Button onClick={ onDuplicate } disabled={ itemKeys.length !== 1 }>
+										<Icon type={ '24/duplicate' } width="24" height="24" />
+									</Button>
+							)}
 							<Button onClick={ onExportModalOpen } disabled={ itemKeys.length === 0 }>
 								<Icon type={ '24/export' } width="24" height="24" />
 							</Button>
@@ -40,6 +67,8 @@ class TouchFooter extends React.PureComponent {
 	}
 
 	static propTypes = {
+		itemKeys: PropTypes.array,
+		itemsSource: PropTypes.string,
 		onAddToCollectionModalOpen: PropTypes.func.isRequired,
 		onBibliographyModalOpen: PropTypes.func.isRequired,
 		onDuplicate: PropTypes.func.isRequired,
@@ -48,7 +77,6 @@ class TouchFooter extends React.PureComponent {
 		onRemoveFromCollection: PropTypes.func.isRequired,
 		onTrash: PropTypes.func.isRequired,
 		onUndelete: PropTypes.func.isRequired,
-		itemKeys: PropTypes.array,
 	}
 }
 

@@ -79,13 +79,16 @@ class ItemsActions extends React.PureComponent {
 						disabled={ !['top', 'collection'].includes(itemsSource) }
 						{ ...pick(this.props, ['itemTypes', 'onNewItemCreate']) }
 					/>
-					<Button
-						onClick={ onDuplicate }
-						disabled={ itemKeys.length !== 1 || itemsSource === 'trash' }
-						title="Duplicate Item"
-					>
-						<Icon type="16/duplicate" width="16" height="16" />
-					</Button>
+					{
+						(itemsSource === 'collection' || itemsSource === 'top') && (
+						<Button
+							onClick={ onDuplicate }
+							disabled={ itemKeys.length !== 1 || itemsSource === 'trash' }
+							title="Duplicate Item"
+						>
+							<Icon type="16/duplicate" width="16" height="16" />
+						</Button>
+					)}
 				</ToolGroup>
 				<ToolGroup>
 				{ itemsSource !== 'trash' && (
