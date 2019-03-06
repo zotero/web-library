@@ -21,7 +21,7 @@ class Bibliography extends React.PureComponent {
 	}
 
 	renderModalContent() {
-		const { citations, isUpdating } = this.props;
+		const { bibliography, isUpdating } = this.props;
 
 		return(
 			<div className="modal-content" tabIndex={ -1 }>
@@ -45,7 +45,7 @@ class Bibliography extends React.PureComponent {
 								<StyleSelector {...this.props } />
 							</div>
 							<div className="bibliography read-only"
-								dangerouslySetInnerHTML={ { __html: citations } }
+								dangerouslySetInnerHTML={ { __html: bibliography } }
 							/>
 						</React.Fragment>
 					) }

@@ -95,4 +95,50 @@ const citeItems = (itemKeys, style = 'chicago-note-bibliography') => {
 	};
 };
 
-module.exports = { exportItems, citeItems };
+const bibliographyItems = (itemKeys, style = 'chicago-note-bibliography') => {
+	return async (dispatch, getState) => {
+		const state = getState();
+		const config = state.config;
+		const { libraryKey } = state.current;
+
+		dispatch({
+			type: REQUEST_CITE_ITEMS,
+			itemKeys,
+			libraryKey,
+			style,
+		});
+
+		try {
+			const response = await api(config.apiKey, config.apiConfig)
+				.library(libraryKey)
+				.items()
+				.get({
+					itemKey: itemKeys.join(','),
+					include: 'bib',
+					style
+				});
+
+			const citations = await response.getData().map(d => d.bib)
+
+			dispatch({
+				type: RECEIVE_CITE_ITEMS,
+				itemKeys,
+				libraryKey,
+				citations,
+				response,
+			});
+
+			return citations;
+		} catch(error) {
+			dispatch({
+				type: ERROR_CITE_ITEMS,
+				error,
+				itemKeys,
+				libraryKey,
+			});
+		}
+	};
+};
+
+
+module.exports = { bibliographyItems, exportItems, citeItems };

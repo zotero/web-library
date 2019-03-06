@@ -4,7 +4,7 @@ const React = require('react');
 const PropTypes = require('prop-types');
 
 const { connect } = require('react-redux');
-const { toggleModal, citeItems } = require('../actions');
+const { toggleModal, bibliographyItems } = require('../actions');
 const { coreCitationStyles } = require('../../../data/citation-styles-data.json');
 const Bibliography = require('../component/bibliography')
 const { BIBLIOGRAPHY } = require('../constants/modals');
@@ -23,8 +23,8 @@ class BibliographyContainer extends React.PureComponent {
 		if((isOpen && !wasOpen) || citationStyle !== prevCitationStyle) {
 			this.setState({ isUpdating: true });
 			try {
-				const citations = await dispatch(citeItems(itemKeys, citationStyle));
-				this.setState({ citations });
+				const bibliography = await dispatch(bibliographyItems(itemKeys, citationStyle));
+				this.setState({ bibliography });
 			} finally {
 				this.setState({ isUpdating: false, isReady: true });
 			}
