@@ -1,0 +1,42 @@
+//
+// Bibliography & CSL
+//
+// @TODO: Adapted from:
+// 			https://github.com/zotero/bib-web/blob/master/src/scss/components/_bibliography.scss
+// 			https://raw.githubusercontent.com/zotero/bib-web/master/src/scss/layout/_csl.scss
+
+
+// CSL styles only work correctly with content-box
+.csl-entry {
+	word-wrap: break-word; // Break long URLs
+	margin: 0 !important; // Override entry-spacing defined in CSL
+
+	&,
+	* {
+		box-sizing: content-box;
+	}
+}
+
+.csl-left-margin {
+	word-wrap: normal;
+}
+
+.csl-bib-body {
+	line-height: inherit !important;
+	margin-left: 0 !important;
+	text-indent: 0 !important;
+}
+
+
+.bibliography {
+	padding: 0;
+	list-style: none;
+	text-align: left;
+
+	font-size: 18px;
+	margin-bottom: $space-xl - 7px;
+
+	// @media (min-width: $bp-md) {
+	// 	margin-bottom: $space-xxl - 7px;
+	// }
+}

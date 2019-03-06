@@ -45,7 +45,7 @@ class Bibliography extends React.PureComponent {
 								<StyleSelector {...this.props } />
 							</div>
 							<div className="bibliography read-only"
-								dangerouslySetInnerHTML={ { __html: bibliography } }
+								dangerouslySetInnerHTML={ { __html: bibliography.join('') } }
 							/>
 						</React.Fragment>
 					) }
