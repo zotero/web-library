@@ -15,19 +15,21 @@ class ColumnSelector extends React.PureComponent {
 		isOpen: false
 	}
 
-	handleSelect(field) {
+	handleSelect = field => {
 		const { columns, onColumnVisibilityChange } = this.props;
 		onColumnVisibilityChange(field, !columns.find(c => c.field === field).isVisible);
 	}
 
-	handleToggleDropdown() {
+	handleToggleDropdown = () => {
 		this.setState({ isOpen: !this.state.isOpen });
 	}
 
-	renderColumnItem(column) {
+	renderColumnItem = column => {
 		let { columnNames } = this.props;
 		return (
-			<DropdownItem key={ column.field } onClick={ this.handleSelect.bind(this, column.field) }>
+			<DropdownItem
+				key={ column.field }
+				onClick={ () => this.handleSelect(column.field) }>
 				<span className="tick">{ column.isVisible ? "✓" : "" }</span>
 				{ column.field in columnNames ? columnNames[column.field] : column.field }
 			</DropdownItem>
@@ -38,7 +40,7 @@ class ColumnSelector extends React.PureComponent {
 		return (
 			<Dropdown
 				isOpen={ this.state.isOpen }
-				toggle={ this.handleToggleDropdown.bind(this) }
+				toggle={ this.handleToggleDropdown }
 				className="dropdown-wrapper column-selector"
 			>
 				<DropdownToggle
@@ -48,7 +50,10 @@ class ColumnSelector extends React.PureComponent {
 					<Icon type={ '16/columns' } width="16" height="16" />
 				</DropdownToggle>
 				<DropdownMenu right>
-					{ this.props.columns.map(this.renderColumnItem.bind(this)) }
+					{ this.props.columns
+						.filter(c => c.field !== 'title')
+						.map(this.renderColumnItem)
+					}
 				</DropdownMenu>
 			</Dropdown>
 		);
