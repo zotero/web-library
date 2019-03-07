@@ -3,6 +3,7 @@
 // --------------------------------------------------
 
 .library .tag-selector {
+	flex: 0 0 auto;
 	height: 160px;
 	position: relative; // required for scroll offset calculation
 }

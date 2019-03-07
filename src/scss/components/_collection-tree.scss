@@ -3,12 +3,7 @@
 // --------------------------------------------------
 
 .collection-tree {
-	height: 100%;
-
-	@include mouse-and-bp-up(md) {
-		height: calc(100% - 160px); // temporary solution to stop collection tree and tag selector
-					 				// from overlapping
-	}
+	flex: 1 1 0;
 
 	@include touch-or-bp-down(sm) {
 		display: flex;
