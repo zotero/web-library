@@ -9,17 +9,17 @@
 	overflow: hidden;
 	position: relative;
 
-	@include bp-down(xs) {
+	@include touch-or-bp-down(sm) {
+		line-height: $line-height-large-touch;
+		@include hairline(right, $sidebar-border-color);
+	}
+
+	@include bp-down-normalized(xs) {
 		position: absolute;
 		top: $touch-header-height;
 		left: 0;
 		right: 0;
 		bottom: 0;
-	}
-
-	@include touch-or-bp-down(sm) {
-		line-height: $line-height-large-touch;
-		@include hairline(right, $sidebar-border-color);
 	}
 
 	@include mouse-and-bp-up(md) {
