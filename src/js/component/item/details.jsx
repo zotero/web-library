@@ -20,7 +20,8 @@ class ItemDetails extends React.PureComponent {
 					variant={ TouchHeaderContainer.variants.ITEM }
 				/>
 				{
-					!isSelectMode && item && 'key' in item ? (
+					(!device.isTouchOrSmall || (device.isTouchOrSmall && !isSelectMode))
+					&& item && 'key' in item ? (
 						<ItemDetailsTabs { ...this.props } />
 					) : (
 						!device.isTouchOrSmall && selectedItemKeys.length ? (
