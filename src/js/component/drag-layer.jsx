@@ -4,7 +4,8 @@ const React = require('react');
 const Icon = require('./ui/icon');
 const paramCase = require('param-case');
 const Field = require('./form/field');
-const { Consumer } = require('react-dnd/lib/DragDropContext'); //@NOTE: using undocumented feature
+const { DragDropContext } = require('react-dnd');
+const { Consumer } = require('react-dnd/lib/cjs/DragDropContext'); //@NOTE: using undocumented feature
 const { DragLayer } = require('react-dnd');
 const { ITEM, CREATOR } = require('../constants/dnd');
 
