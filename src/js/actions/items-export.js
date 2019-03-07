@@ -50,7 +50,7 @@ const exportItems = (itemKeys, format) => {
 	};
 };
 
-const citeItems = (itemKeys, style = 'chicago-note-bibliography') => {
+const citeItems = (itemKeys, style = 'chicago-note-bibliography', locale = 'en-US') => {
 	return async (dispatch, getState) => {
 		const state = getState();
 		const config = state.config;
@@ -70,7 +70,8 @@ const citeItems = (itemKeys, style = 'chicago-note-bibliography') => {
 				.get({
 					itemKey: itemKeys.join(','),
 					include: 'citation',
-					style
+					style,
+					locale
 				});
 
 			const citations = await response.getData().map(d => d.citation)
@@ -95,7 +96,7 @@ const citeItems = (itemKeys, style = 'chicago-note-bibliography') => {
 	};
 };
 
-const bibliographyItems = (itemKeys, style = 'chicago-note-bibliography') => {
+const bibliographyItems = (itemKeys, style = 'chicago-note-bibliography', locale = 'en-US') => {
 	return async (dispatch, getState) => {
 		const state = getState();
 		const config = state.config;
@@ -115,7 +116,8 @@ const bibliographyItems = (itemKeys, style = 'chicago-note-bibliography') => {
 				.get({
 					itemKey: itemKeys.join(','),
 					include: 'bib',
-					style
+					style,
+					locale,
 				});
 
 			const citations = await response.getData().map(d => d.bib)

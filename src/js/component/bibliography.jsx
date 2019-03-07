@@ -2,12 +2,16 @@
 
 const React = require('react');
 const PropTypes = require('prop-types');
+const { UncontrolledDropdown, DropdownToggle, DropdownMenu,
+	DropdownItem } = require('reactstrap/lib');
 const Spinner = require('./ui/spinner');
 const Button = require('./ui/button');
 const Icon = require('./ui/icon');
 const Modal = require('./ui/modal');
 const StyleSelector = require('./style-selector');
+const LocaleSelector = require('./locale-selector');
 const { noop } = require('../utils');
+const { pick } = require('../common/immutable');
 const cx = require('classnames');
 
 
@@ -16,14 +20,10 @@ class Bibliography extends React.PureComponent {
 		this.props.onCancel();
 	}
 
-	handleStyleChange() {
-		this.props.onStyleChange()
-	}
-
 	renderModalContent() {
 		const { bibliography, isUpdating } = this.props;
-
-		return(
+		const isCopied = false; //placeholder
+		return (
 			<div className="modal-content" tabIndex={ -1 }>
 				<div className="modal-header">
 					<h4 className="modal-title text-truncate">
@@ -37,18 +37,70 @@ class Bibliography extends React.PureComponent {
 					</Button>
 				</div>
 				<div className={ cx('modal-body', { loading: isUpdating }) }>
+					<div className="style-selector-container">
+						<label>Citation Style:</label>
+						<StyleSelector { ...pick(this.props,
+							['citationStyle', 'citationStyles', 'onStyleChange']
+						)} />
+					</div>
+					<div className="language-selector-container">
+						<label>Language:</label>
+						<LocaleSelector { ...pick(this.props,
+							['locale', 'onLocaleChange']
+						)} />
+					</div>
+					<hr/>
 					{ isUpdating ? (
 						<Spinner className="large" />
-					) : (
-						<React.Fragment>
-							<div className="style-selector-container">
-								<StyleSelector {...this.props } />
-							</div>
+						) : (
 							<div className="bibliography read-only"
 								dangerouslySetInnerHTML={ { __html: bibliography.join('') } }
 							/>
-						</React.Fragment>
-					) }
+						)
+					}
+				</div>
+				<div className="modal-footer">
+					<div className="export-tools">
+						<UncontrolledDropdown
+							className={ cx('btn-group', { 'success': isCopied}) }
+						>
+							<Button
+								disabled={ isUpdating }
+								className='btn btn-secondary copy-to-clipboard'
+								onClick={ this.handleCopyToClipboardClick }
+							>
+								<span className={ cx('inline-feedback', { 'active': isCopied }) }>
+									<span className="default-text" aria-hidden={ !isCopied }>
+										Copy to Clipboard
+									</span>
+									<span className="shorter feedback" aria-hidden={ isCopied }>
+										Copied!
+									</span>
+								</span>
+							</Button>
+							<DropdownToggle
+								disabled={ isUpdating }
+								className="btn btn-secondary btn-xl dropdown-toggle"
+							>
+								<span className="dropdown-caret" />
+							</DropdownToggle>
+							<DropdownMenu className="dropdown-menu">
+								<DropdownItem
+									onClick={ this.handleCopyHtml }
+									className="btn clipboard-trigger"
+								>
+									<span className={ cx('inline-feedback', { 'active': isCopied }) }>
+										<span className="default-text" aria-hidden={ !isCopied }>
+											Copy HTML
+										</span>
+										<span className="shorter feedback" aria-hidden={ isCopied }>
+											Copied!
+										</span>
+									</span>
+								</DropdownItem>
+							</DropdownMenu>
+						</UncontrolledDropdown>
+					</div>
 				</div>
 			</div>
 		);

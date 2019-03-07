@@ -12,18 +12,19 @@ const { BIBLIOGRAPHY } = require('../constants/modals');
 class BibliographyContainer extends React.PureComponent {
 	state = {
 		citationStyle: coreCitationStyles.find(cs => cs.isDefault).name,
+		locale: 'en-US',
 		isReady: false,
 		isUpdating: false
 	}
 
-	async componentDidUpdate({ isOpen: wasOpen }, { citationStyle: prevCitationStyle }) {
+	async componentDidUpdate({ isOpen: wasOpen }, { citationStyle: prevCitationStyle, locale: prevLocale }) {
 		const { dispatch, isOpen, itemKeys } = this.props;
-		const { citationStyle } = this.state;
+		const { citationStyle, locale } = this.state;
 
-		if((isOpen && !wasOpen) || citationStyle !== prevCitationStyle) {
+		if((isOpen && !wasOpen) || citationStyle !== prevCitationStyle || locale !== prevLocale) {
 			this.setState({ isUpdating: true });
 			try {
-				const bibliography = await dispatch(bibliographyItems(itemKeys, citationStyle));
+				const bibliography = await dispatch(bibliographyItems(itemKeys, citationStyle, locale));
 				this.setState({ bibliography });
 			} finally {
 				this.setState({ isUpdating: false, isReady: true });
@@ -31,11 +32,15 @@ class BibliographyContainer extends React.PureComponent {
 		}
 	}
 
-	handleCitationStyleChange(citationStyle) {
+	handleStyleChange = citationStyle => {
 		this.setState({ citationStyle });
 	}
 
-	async handleCancel() {
+	handleLocaleChange = locale => {
+		this.setState({ locale });
+	}
+
+	handleCancel = async () => {
 		const { dispatch } = this.props;
 		await dispatch(toggleModal(BIBLIOGRAPHY, false));
 	}
@@ -44,8 +49,9 @@ class BibliographyContainer extends React.PureComponent {
 		const { citationStyle } = this.state;
 
 		return <Bibliography
-			onCancel={ this.handleCancel.bind(this) }
-			onCitationStyleChanged={ this.handleCitationStyleChange.bind(this) }
+			onCancel={ this.handleCancel }
+			onStyleChange={ this.handleStyleChange }
+			onLocaleChange={ this.handleLocaleChange }
 			citationStyle={ citationStyle }
 			citationStyles={ coreCitationStyles }
 			{ ...this.props }

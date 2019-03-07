@@ -8,14 +8,16 @@ const { citationStylesCount } = require('../../../data/citation-styles-data.json
 
 class StyleSelector extends React.PureComponent {
 	render() {
+		const { className, citationStyle, citationStyles,
+			onStyleChange } = this.props;
 		return (
-			<div className={ cx('style-selector', this.props.className ) }>
+			<div className={ cx('style-selector', className ) }>
 				<Select
 					clearable={ false }
 					searchable={ false}
-					value={ this.props.citationStyle }
+					value={ citationStyle }
 					options={ [
-						...this.props.citationStyles.map(cs => ({
+						...citationStyles.map(cs => ({
 							value: cs.name,
 							label: cs.title
 						})),
@@ -25,7 +27,7 @@ class StyleSelector extends React.PureComponent {
 						}
 					] }
 					onChange={ () => true /* commit on change */ }
-					onCommit={ this.props.onCitationStyleChanged }
+					onCommit={ onStyleChange }
 				/>
 			</div>
 		);
@@ -35,7 +37,7 @@ class StyleSelector extends React.PureComponent {
 		className: PropTypes.string,
 		citationStyle: PropTypes.string,
 		citationStyles: PropTypes.array,
-		onCitationStyleChanged: PropTypes.func
+		onStyleChange: PropTypes.func
 	}
 }
 
