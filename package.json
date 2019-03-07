@@ -132,7 +132,7 @@
     "node-sass": "^4.10.0",
     "nodemon": "^1.18.10",
     "npm-run-all": "^4.1.5",
-    "nyc": "^13.2.0",
+    "nyc": "^13.3.0",
     "postcss-cli": "^6.1.1",
     "react-test-renderer": "^16.8.1",
     "redux-mock-store": "^1.5.3",
@@ -146,6 +146,6 @@
     "stylelint-scss": "^3.5.3",
     "terser": "^3.16.1",
     "uglifyify": "^5.0.1",
-    "watchify": "^3.11.0"
+    "watchify": "^3.11.1"
   }
 }
