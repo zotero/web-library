@@ -2,12 +2,15 @@
 
 const React = require('react');
 const PropTypes = require('prop-types');
+const copy = require('copy-to-clipboard');
 
 const { connect } = require('react-redux');
 const { toggleModal, bibliographyItems } = require('../actions');
 const { coreCitationStyles } = require('../../../data/citation-styles-data.json');
 const Bibliography = require('../component/bibliography')
 const { BIBLIOGRAPHY } = require('../constants/modals');
+const { stripTagsUsingDOM } = require('../common/format');
+
 
 class BibliographyContainer extends React.PureComponent {
 	state = {
@@ -15,6 +18,14 @@ class BibliographyContainer extends React.PureComponent {
 		locale: 'en-US',
 		isReady: false,
 		isUpdating: false
+	}
+
+	componentDidMount() {
+		document.addEventListener('copy', this.handleCopy);
+	}
+
+	componentWillUnmount() {
+		document.removeEventListener('copy', this.handleCopy);
 	}
 
 	async componentDidUpdate({ isOpen: wasOpen }, { citationStyle: prevCitationStyle, locale: prevLocale }) {
@@ -45,6 +56,32 @@ class BibliographyContainer extends React.PureComponent {
 		await dispatch(toggleModal(BIBLIOGRAPHY, false));
 	}
 
+	handleCopyToClipboardClick = () => {
+		const bibliography = this.state.bibliography.join('');
+		const bibliographyText = stripTagsUsingDOM(bibliography);
+
+		this.copyDataInclude = [
+			{ mime: 'text/plain', data: bibliographyText },
+			{ mime: 'text/html', data: bibliography },
+		];
+		copy(bibliographyText);
+	}
+
+	handleCopyHtmlClick = () => {
+		const bibliography = this.state.bibliography.join('');
+		copy(bibliography);
+	}
+
+	handleCopy = ev => {
+		if(this.copyDataInclude) {
+			this.copyDataInclude.forEach(copyDataFormat => {
+				ev.clipboardData.setData(copyDataFormat.mime, copyDataFormat.data);
+			});
+			ev.preventDefault();
+			delete this.copyDataInclude;
+		}
+	}
+
 	render() {
 		const { citationStyle } = this.state;
 
@@ -54,6 +91,8 @@ class BibliographyContainer extends React.PureComponent {
 			onLocaleChange={ this.handleLocaleChange }
 			citationStyle={ citationStyle }
 			citationStyles={ coreCitationStyles }
+			onCopyToClipboardClick={ this.handleCopyToClipboardClick }
+			onCopyHtmlClick={ this.handleCopyHtmlClick }
 			{ ...this.props }
 			{ ...this.state }
 		/>;

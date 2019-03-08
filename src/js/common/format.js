@@ -31,6 +31,14 @@ const itemsSourceLabel = itemsSource => {
 //@TODO: placeholder, to be replaced with i18n solution
 const pluralize = (word, count) => count === 1 ? word : `${word}s`;
 
+
+//@NOTE: should only be used for trusted/sanitized input
+const stripTagsUsingDOM = html => {
+   const tmp = document.createElement("DIV");
+   tmp.innerHTML = html;
+   return tmp.textContent || tmp.innerText || "";
+}
+
 module.exports = {
 	creator,
 	dateLocalized,
@@ -38,4 +46,5 @@ module.exports = {
 	itemTypeLocalized,
 	noteAsTitle,
 	pluralize,
+	stripTagsUsingDOM,
 };
