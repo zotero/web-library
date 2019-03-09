@@ -11,7 +11,7 @@ const withUserTypeDetection = Component => {
 				? matchMedia('(pointer:fine)').matches : null,
 			isTouchUser: typeof(matchMedia) === 'function'
 				? matchMedia('(pointer:coarse)').matches : null,
-			userType: null
+			userType: matchMedia('(pointer:coarse)').matches ? 'touch' : null
 		};
 
 		componentDidMount() {
