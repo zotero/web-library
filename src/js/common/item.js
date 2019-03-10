@@ -10,7 +10,7 @@ const getBaseMappedValue = (item, property) => {
 }
 
 const getFormattedTableItem = (item, itemTypes, libraryTags, isSynced) => {
-	const { itemType, note, publisher, publication, dateAdded, dateModified, extra } = item;
+	const { itemType, note, dateAdded, dateModified, extra } = item;
 	const title = itemType === 'note' ?
 		noteAsTitle(note) :
 		getBaseMappedValue(item, 'title') || '';

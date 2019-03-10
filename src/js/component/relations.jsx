@@ -2,10 +2,8 @@
 
 const React = require('react');
 const PropTypes = require('prop-types');
-const cx = require('classnames');
 
 const Spinner = require('./ui/spinner');
-const { Toolbar, ToolGroup } = require('./ui/toolbars');
 const Icon = require('./ui/icon');
 const Button = require('./ui/button');
 

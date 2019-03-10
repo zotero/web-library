@@ -180,7 +180,7 @@ class ItemDetailsContainer extends React.PureComponent {
 
 	render() {
 		const { isEditing, device, item, isLoadingMeta, itemTypeFields,
-			itemTypes, pendingChanges, childItems, config } = this.props;
+			itemTypes, pendingChanges } = this.props;
 		const isForm = !!(device.shouldUseEditMode && isEditing && item);
 		const isReadOnlyMode = !!(device.shouldUseEditMode && !isEditing);
 		const extraProps = { isForm, isReadOnlyMode };

@@ -62,12 +62,9 @@ class LibraryContainer extends React.PureComponent {
 		window.removeEventListener('resize', this.windowResizeHandler);
 	}
 
-	componentDidUpdate({ match: previousMatch, isFetchingCollections: wasFetchingCollections }) {
+	componentDidUpdate({ isFetchingCollections: wasFetchingCollections }) {
 		const { dispatch, isFetchingCollections } = this.props;
 
-		// if(!deepEqual(this.props.match, previousMatch)) {
-		// 	dispatch(changeRoute(this.props.match));
-		// }
 
 		if(!isFetchingCollections && wasFetchingCollections) {
 			// setTimeout required to ensure everything else in the UI had

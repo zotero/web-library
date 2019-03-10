@@ -5,15 +5,12 @@ const PropTypes = require('prop-types');
 const cx = require('classnames');
 
 const { getSerializedQuery } = require('../common/state');
-const Icon = require('./ui/icon');
 const Spinner = require('./ui/spinner');
 const LibrariesContainer = require('../container/libraries');
-const Button = require('./ui/button');
 const ItemDetailsContainer = require('../container/item-details');
 const ItemsContainer = require('../container/items');
 const Navbar = require('./ui/navbar');
 const TagSelectorContainer = require('../container/tag-selector');
-const { Toolbar, ToolGroup } = require('./ui/toolbars');
 const TouchHeaderContainer = require('../container/touch-header');
 const BibliographyContainer = require('../container/bibliography');
 const CollectionRenameModalContainer = require('../container/collection-rename-modal');

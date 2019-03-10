@@ -9,8 +9,6 @@ const { UncontrolledDropdown, DropdownToggle, DropdownMenu,
 	DropdownItem } = require('reactstrap/lib');
 const Node = require('./node');
 const Icon = require('../ui/icon');
-const Input = require('../form/input');
-const { ViewportContext } = require('../../context');
 const { noop } = require('../../utils.js');
 const { makeChildMap } = require('../../common/collection');
 const Editable = require('../editable');
@@ -29,7 +27,7 @@ class CollectionTree extends React.PureComponent {
 		}
 	}
 
-	handleSelect(target, ev) {
+	handleSelect(target) {
 		const { onSelect, libraryKey } = this.props;
 		onSelect({ library: libraryKey, ...target });
 	}

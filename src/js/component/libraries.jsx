@@ -8,7 +8,6 @@ const Button = require('./ui/button');
 const Spinner = require('./ui/spinner');
 const Node = require('./libraries/node');
 const CollectionTree = require('./libraries/collection-tree.jsx');
-const TouchHeaderContainer = require('../container/touch-header');
 
 class Libraries extends React.PureComponent {
 	constructor(props) {
@@ -214,7 +213,7 @@ class Libraries extends React.PureComponent {
 	}
 
 	render() {
-		const { userLibraryKey, libraryKey, itemsSource, view } = this.props;
+		const { view } = this.props;
 		const isRootActive = view === 'libraries';
 
 		if(this.props.isFetching) {

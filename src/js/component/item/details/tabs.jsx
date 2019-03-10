@@ -60,8 +60,7 @@ class ItemDetailsTabs extends React.PureComponent {
 	}
 
 	render() {
-		const { device, isLoadingMeta, isLoadingChildItems, isLoadingRelated,
-			isEditing, onEditModeToggle } = this.props;
+		const { device, isLoadingMeta, isLoadingChildItems, isLoadingRelated } = this.props;
 		const isLoading = isLoadingMeta || isLoadingChildItems || isLoadingRelated;
 
 		return (

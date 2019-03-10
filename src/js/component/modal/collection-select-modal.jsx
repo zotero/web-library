@@ -67,7 +67,7 @@ class CollectionSelectModal extends React.PureComponent {
 		}
 	}
 
-	handleCollectionSelect = ({ library = null,  collection = null, ...rest } = {}) => {
+	handleCollectionSelect = ({ library = null,  collection = null } = {}) => {
 		const { collections, groupCollections, userLibraryKey } = this.props;
 
 		if(library) {

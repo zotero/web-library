@@ -4,7 +4,6 @@ const memoize = require('memoize-one');
 const deepEqual = require('deep-equal');
 const { createMatchSelector } = require('connected-react-router');
 const { get } = require('../utils');
-const { tagsFromUrlPart } = require('../common/navigation');
 const routes = require('../routes');
 
 const getCollectionsPath = state => {

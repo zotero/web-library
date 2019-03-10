@@ -1,6 +1,6 @@
 'use strict';
 
-const { getSortKeyValue, sortItemsByKey, compareItem } = require('../utils');
+const { sortItemsByKey, compareItem } = require('../utils');
 
 const replaceDuplicates = entries => {
 	const seen = [];

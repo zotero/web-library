@@ -3,7 +3,6 @@
 const React = require('react');
 const PropTypes = require('prop-types');
 const cx = require('classnames');
-const deepEqual = require('deep-equal');
 const paramCase = require('param-case');
 const Icon = require('../../ui/icon');
 const Spinner = require('../../ui/spinner');
@@ -81,7 +80,7 @@ class ItemsList extends React.PureComponent {
 	}
 
 	renderRow({ index, key, style }) {
-		const { isSelectMode, items, selectedItemKeys } = this.props;
+		const { isSelectMode, selectedItemKeys } = this.props;
 		const item = this.getRow({ index });
 		const isLoaded = this.getRowHasLoaded({ index });
 		const isActive = selectedItemKeys.includes(item.key);

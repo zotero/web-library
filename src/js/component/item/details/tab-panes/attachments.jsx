@@ -7,7 +7,7 @@ const Spinner = require('../../../ui/spinner');
 const PAGE_SIZE = 100;
 
 class AttachmentsTabPane extends React.PureComponent {
-	componentDidUpdate({ prevItem, wasActive }) {
+	componentDidUpdate() {
 		const { item, isActive, fetchChildItems, childItems,
 			isLoadingChildItems, totalChildItems } = this.props;
 
@@ -23,7 +23,7 @@ class AttachmentsTabPane extends React.PureComponent {
 	}
 
 	render() {
-		const { isActive, item, childItems, attachmentViewUrls, onAddAttachment,
+		const { isActive, childItems, attachmentViewUrls, onAddAttachment,
 			onDeleteAttachment, isLoadingChildItems } = this.props;
 
 		return (

@@ -4,7 +4,6 @@ const React = require('react');
 const PropTypes = require('prop-types');
 const cx = require('classnames');
 const paramCase = require('param-case');
-const deepEqual = require('deep-equal');
 const { without, resizeVisibleColumns } = require('../../../utils');
 const AutoSizer = require('react-virtualized/dist/commonjs/AutoSizer').default;
 const InfiniteLoader = require('react-virtualized/dist/commonjs/InfiniteLoader').default;
@@ -351,7 +350,6 @@ class ItemsTable extends React.PureComponent {
 	handleMouseUp() {
 		if(this.state.isResizing) {
 			this.setState({ isResizing: false });
-			const visibleColumns = this.state.columns.filter(c => c.isVisible);
 		} else if(this.state.isReordering) {
 			const columns = [ ...this.state.columns ];
 			const indexFrom = this.reorderingColumn;
