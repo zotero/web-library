@@ -161,36 +161,12 @@ class CollectionSelectModal extends React.PureComponent {
 				overlayClassName={ "modal-slide" }
 			>
 				<div className="modal-content" tabIndex={ -1 }>
-					<div className="modal-header">
-						<div className="modal-header-left">
-							<Button
-								className="btn-link"
-								onClick={ () => toggleModal(null, false) }
-							>
-								Cancel
-							</Button>
-						</div>
-						<div className="modal-header-center">
-							<h4 className="modal-title truncate">
-								Select a Collection
-							</h4>
-						</div>
-						<div className="modal-header-right">
-							{ picked.length > 0 && (
-								<Button
-									className="btn-link"
-									onClick={ this.handleCollectionUpdate }
-								>
-									Confirm ({ picked.length })
-								</Button>
-							)}
-						</div>
-					</div>
 					<div className="modal-body">
 						{
 							isBusy ? <Spinner className="large" /> : (
 								<React.Fragment>
 								<TouchHeader
+									className="darker"
 									path={ touchHeaderPath }
 									onNavigation={ (...args) => this.handleNavigation(...args) }
 								/>
@@ -212,6 +188,31 @@ class CollectionSelectModal extends React.PureComponent {
 								</React.Fragment>
 							)
 						}
+					</div>
+					<div className="modal-footer">
+						<div className="modal-footer-left">
+							<Button
+								className="btn-link"
+								onClick={ () => toggleModal(null, false) }
+							>
+								Cancel
+							</Button>
+						</div>
+						<div className="modal-footer-center">
+							<h4 className="modal-title truncate">
+								Select a Collection
+							</h4>
+						</div>
+						<div className="modal-footer-right">
+							{ picked.length > 0 && (
+								<Button
+									className="btn-link"
+									onClick={ this.handleCollectionUpdate }
+								>
+									Confirm ({ picked.length })
+								</Button>
+							)}
+						</div>
 					</div>
 				</div>
 			</Modal>

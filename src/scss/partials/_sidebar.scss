@@ -10,7 +10,6 @@
 	position: relative;
 
 	@include touch-or-bp-down(sm) {
-		line-height: $line-height-large-touch;
 		@include hairline(right, $sidebar-border-color);
 	}
 

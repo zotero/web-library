@@ -25,8 +25,12 @@
 .modal {
 	width: auto;
 
+	//@include bp-down(xs) {
+	//	height: calc(100% - #{$navbar-height-xs});
+	//}
+
 	@include bp-down(xs) {
-		height: calc(100% - #{$navbar-height-xs});
+		height: 100%;
 	}
 
 	@include bp-up(sm) {
@@ -50,9 +54,19 @@
 	}
 
 	&.collection-select-modal {
+		align-items: normal; // Stretch modal
+
+		.modal-content {
+			display: flex;
+			flex-direction: column;
+		}
+
 		.modal-body {
-			height: 300px;
+			flex: 1 1 0;
+			display: flex;
+			flex-direction: column;
 			padding: 0;
+			overflow: hidden; // Scroll inside collection-tree
 		}
 	}
 }
@@ -71,38 +85,38 @@
 	}
 }
 
-.modal-header {
-	display: flex;
-	align-items: center;
-	padding: 0 $modal-header-padding $border-width;
-	background-color: $modal-header-bg;
-	height: $modal-header-height + $border-width;
-	@include hairline(bottom, $modal-header-border);
+@each $element in header, footer {
+	.modal-#{$element} {
+		display: flex;
+		align-items: center;
+		padding: 0 $modal-header-padding;
+		background-color: $modal-header-bg;
+		height: $modal-header-height + $border-width;
 
-	.modal-touch & {
-		background-color: $modal-touch-header-bg;
+		.modal-touch & {
+			background-color: $modal-touch-header-bg;
+		}
 
-		@include bp-down(xs) {
-			@include hairline(top, $modal-header-border);
-			height: $modal-header-height + 2 * $border-width;
-			padding: $border-width $modal-header-padding;
+		&-left,
+		&-right {
+			flex: 1 0 0;
+		}
+
+		&-center {
+			flex: 2 0 0;
+			max-width: 50%;
+			text-align: center;
+		}
+
+		&-right {
+			text-align: right;
 		}
 	}
+}
 
-	&-left,
-	&-right {
-		flex: 1 0 0;
-	}
-
-	&-center {
-		flex: 2 0 0;
-		max-width: 50%;
-		text-align: center;
-	}
-
-	&-right {
-		text-align: right;
-	}
+.modal-header {
+	@include hairline(bottom, $modal-header-border);
+	padding-bottom: $border-width;
 }
 
 .modal-body,
@@ -119,9 +133,13 @@
 }
 
 .modal-footer {
-	display: flex;
 	justify-content: flex-end;
-	border-top: $modal-footer-border-width solid $modal-footer-border-color;
+	height: $modal-header-height + $border-width;
+	@include hairline(top, $modal-header-border);
+
+	@include touch-or-bp-down(sm) {
+		padding: $border-width $modal-inner-padding 0;
+	}
 
 	.btn {
 		&:not(:first-child) {
@@ -137,7 +155,7 @@
 .modal-centered {
 	display: flex;
 	align-items: center;
-	min-height: calc(100% - #{2 * $space-xs});
+	min-height: 100%;
 
 	@include bp-up(sm) {
 		min-height: calc(100% - #{2 * $space-xl});
@@ -186,7 +204,7 @@
 
 				@include bp-down(xs) {
 					html:not(.specifity) & {
-						transform: translate3d(0, $navbar-height-xs, 0);
+						transform: translate3d(0, 0, 0);
 						transition: transform $nav-transition;
 					}
 				}

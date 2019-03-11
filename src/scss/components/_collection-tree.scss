@@ -8,6 +8,7 @@
 	@include touch-or-bp-down(sm) {
 		display: flex;
 		flex-direction: column;
+		line-height: $line-height-large-touch;
 	}
 
 	@include mouse-and-bp-up(md) {

@@ -288,7 +288,6 @@ class CollectionTree extends React.PureComponent {
 										<div className="truncate">{ collection.name }</div>
 										{ isPickerMode ? (
 											<input
-												className="checkbox"
 												type="checkbox"
 												checked={ picked.some(({ collection: c, library: l }) => l === libraryKey && c === collection.key) }
 												onChange={ ev => this.props.onPickerPick({ collection: collection.key, library: libraryKey }, ev) }
