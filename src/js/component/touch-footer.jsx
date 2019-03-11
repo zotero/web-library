@@ -26,7 +26,7 @@ class TouchFooter extends React.PureComponent {
 							{
 								itemsSource === 'collection' && (
 									<Button onClick={ onRemoveFromCollection } disabled={ itemKeys.length === 0 }>
-										<Icon type={ '20/remove-from-collection' } width="32" height="32" />
+										<Icon type={ '32/remove-from-collection' } width="32" height="32" />
 									</Button>
 							)}
 							{
