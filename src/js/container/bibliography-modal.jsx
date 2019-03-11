@@ -7,12 +7,14 @@ const copy = require('copy-to-clipboard');
 const { connect } = require('react-redux');
 const { toggleModal, bibliographyItems } = require('../actions');
 const { coreCitationStyles } = require('../../../data/citation-styles-data.json');
-const Bibliography = require('../component/bibliography')
+const BibliographyModal = require('../component/modal/bibliography');
 const { BIBLIOGRAPHY } = require('../constants/modals');
 const { stripTagsUsingDOM } = require('../common/format');
+const withDevice = require('../enhancers/with-device');
+const withSelectMode = require('../enhancers/with-select-mode');
 
 
-class BibliographyContainer extends React.PureComponent {
+class BibliographyModalContainer extends React.PureComponent {
 	state = {
 		citationStyle: coreCitationStyles.find(cs => cs.isDefault).name,
 		locale: 'en-US',
@@ -38,7 +40,7 @@ class BibliographyContainer extends React.PureComponent {
 				const bibliography = await dispatch(bibliographyItems(itemKeys, citationStyle, locale));
 				this.setState({ bibliography });
 			} finally {
-				this.setState({ isUpdating: false, isReady: true });
+				this.setState({ isUpdating: false });
 			}
 		}
 	}
@@ -85,7 +87,7 @@ class BibliographyContainer extends React.PureComponent {
 	render() {
 		const { citationStyle } = this.state;
 
-		return <Bibliography
+		return <BibliographyModal
 			onCancel={ this.handleCancel }
 			onStyleChange={ this.handleStyleChange }
 			onLocaleChange={ this.handleLocaleChange }
@@ -109,4 +111,6 @@ const mapStateToProps = state => {
 };
 
 
-module.exports = connect(mapStateToProps)(BibliographyContainer);
+module.exports = withSelectMode(withDevice(
+	connect(mapStateToProps)(BibliographyModalContainer)
+));

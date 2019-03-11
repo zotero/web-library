@@ -12,7 +12,7 @@ const ItemsContainer = require('../container/items');
 const Navbar = require('./ui/navbar');
 const TagSelectorContainer = require('../container/tag-selector');
 const TouchHeaderContainer = require('../container/touch-header');
-const BibliographyContainer = require('../container/bibliography');
+const BibliographyModalContainer = require('../container/bibliography-modal');
 const CollectionRenameModalContainer = require('../container/collection-rename-modal');
 const CollectionAddModalContainer = require('../container/collection-add-modal');
 const CollectionSelectModal = require('../container/collection-select-modal');
@@ -119,7 +119,7 @@ class Library extends React.PureComponent {
 						</section>
 					</section>
 				</main>
-				<BibliographyContainer />
+				<BibliographyModalContainer />
 				<CollectionRenameModalContainer />
 				<CollectionAddModalContainer />
 				<CollectionSelectModal />
