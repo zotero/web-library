@@ -15,9 +15,10 @@ const config = (state = defaultState, action) => {
 		case CONFIGURE_API:
 			return {
 				...state,
-				apiKey: action.apiKey,
-				userId: action.userId,
 				apiConfig: action.apiConfig,
+				apiKey: action.apiKey,
+				stylesSourceUrl: action.stylesSourceUrl,
+				userId: action.userId,
 			};
 		case SORT_ITEMS:
 			return {

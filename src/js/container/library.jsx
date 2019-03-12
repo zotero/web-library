@@ -91,7 +91,7 @@ class LibraryContainer extends React.PureComponent {
 	}
 
 	static init(element, config = {}) {
-		const { apiKey, apiConfig, userId } = {...defaults, ...config };
+		const { apiKey, apiConfig, stylesSourceUrl, userId } = {...defaults, ...config };
 		if(element) {
 			var store = createStore(
 				createReducers(history),
@@ -105,7 +105,7 @@ class LibraryContainer extends React.PureComponent {
 			);
 
 			store.dispatch(
-				configureApi(userId, apiKey, apiConfig)
+				configureApi(userId, apiKey, apiConfig, stylesSourceUrl)
 			);
 
 			ReactDOM.render(

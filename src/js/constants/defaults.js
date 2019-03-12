@@ -1,14 +1,18 @@
 'use strict';
 
+const { coreCitationStyles } = require('../../../data/citation-styles-data.json');
+
 module.exports = Object.freeze({
 	apiConfig: {
 		apiAuthorityPart: 'api.zotero.org'
 	},
+	stylesSourceUrl: 'https://www.zotero.org/styles-files/styles.json',
 	columnNames: {
 		'creator': 'Creator',
 	},
 	columnMinWidthFraction: 0.05,
 	preferences: {
+		citationStyle: coreCitationStyles.find(cs => cs.isDefault).name,
 		columns: [
 			{ field: 'title', fraction: 0.5, isVisible: true, sort: 'ASC' },
 			{ field: 'creator', fraction: 0.3, isVisible: true },

@@ -8,7 +8,7 @@ const { connect } = require('react-redux');
 const { toggleModal, bibliographyItems } = require('../actions');
 const { coreCitationStyles } = require('../../../data/citation-styles-data.json');
 const BibliographyModal = require('../component/modal/bibliography');
-const { BIBLIOGRAPHY } = require('../constants/modals');
+const { BIBLIOGRAPHY, STYLE_INSTALLER } = require('../constants/modals');
 const { stripTagsUsingDOM } = require('../common/format');
 const withDevice = require('../enhancers/with-device');
 const withSelectMode = require('../enhancers/with-select-mode');
@@ -16,6 +16,7 @@ const withSelectMode = require('../enhancers/with-select-mode');
 
 class BibliographyModalContainer extends React.PureComponent {
 	state = {
+		//@TODO: use state.preferences.citationStyle
 		citationStyle: coreCitationStyles.find(cs => cs.isDefault).name,
 		locale: 'en-US',
 		isReady: false,
@@ -45,8 +46,15 @@ class BibliographyModalContainer extends React.PureComponent {
 		}
 	}
 
-	handleStyleChange = citationStyle => {
-		this.setState({ citationStyle });
+	handleStyleChange = async citationStyle => {
+		const { dispatch } = this.props;
+		if(citationStyle === 'install') {
+			await dispatch(toggleModal(BIBLIOGRAPHY, false));
+			await dispatch(toggleModal(STYLE_INSTALLER, true));
+		} else {
+			//@TODO: use state.preference
+			this.setState({ citationStyle });
+		}
 	}
 
 	handleLocaleChange = locale => {

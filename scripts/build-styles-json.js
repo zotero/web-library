@@ -38,6 +38,7 @@ const defaultStyle = 'modern-language-association';
 			return;
 		}
 		return {
+			isCore: true,
 			isDefault: style === defaultStyle,
 			name: style,
 			title: styleMeta.title,

@@ -10,6 +10,7 @@ module.exports = {
 	...(require('./library')),
 	...(require('./meta')),
 	...(require('./preferences')),
+	...(require('./styles')),
 	...(require('./tags')),
 	...(require('./triggers')),
 }
