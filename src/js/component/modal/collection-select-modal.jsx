@@ -9,6 +9,7 @@ const Modal = require('../ui/modal');
 const Button = require('../ui/button');
 const Spinner = require('../ui/spinner');
 const TouchHeader = require('../touch-header.jsx');
+const { pluralize } = require('../../common/format');
 const defaultState = {
 	view: 'libraries',
 	libraryKey: '',
@@ -200,18 +201,21 @@ class CollectionSelectModal extends React.PureComponent {
 						</div>
 						<div className="modal-footer-center">
 							<h4 className="modal-title truncate">
-								Select a Collection
+								{
+									picked.length > 0 ?
+									`${picked.length} ${pluralize('Collection', picked.length)} Selected` :
+									'Select a Collection'
+								}
 							</h4>
 						</div>
 						<div className="modal-footer-right">
-							{ picked.length > 0 && (
-								<Button
-									className="btn-link"
-									onClick={ this.handleCollectionUpdate }
-								>
-									Confirm ({ picked.length })
-								</Button>
-							)}
+							<Button
+								disabled={ picked.length === 0}
+								className="btn-link"
+								onClick={ this.handleCollectionUpdate }
+							>
+								Add
+							</Button>
 						</div>
 					</div>
 				</div>
