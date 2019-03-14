@@ -21,6 +21,7 @@ const preferencesLoad = () => {
 
 const preferenceChange = (name, value) => {
 	const preferences = {
+		...defaultPreferences,
 		...JSONTryParse(localStorage.getItem('zotero-web-library-prefs')),
 		[name]: value
 	};

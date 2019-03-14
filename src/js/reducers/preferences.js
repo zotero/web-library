@@ -7,7 +7,7 @@ const preferences = (state = { ...defaults.preferences }, action) => {
 		case PREFERENCES_LOAD:
 			return action.preferences;
 		case PREFERENCE_CHANGE:
-			return { [action.name]: action.value }
+			return { ...state, [action.name]: action.value }
 		default:
 			return state;
 	}

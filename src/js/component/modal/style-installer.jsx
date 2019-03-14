@@ -8,6 +8,8 @@ const Modal = require('../ui/modal');
 const Button = require('../ui/button');
 const Input = require('../form/input');
 const Spinner = require('../ui/spinner');
+const { pick } = require('../../common/immutable');
+const { coreCitationStyles } = require('../../../../data/citation-styles-data.json');
 
 var SearchWorker = require('webworkify')(require('../../style-search-worker'));
 
@@ -60,15 +62,15 @@ class StyleInstallerModal extends React.PureComponent {
 	handleClose = () => {
 		clearTimeout(this.timeout);
 		delete this.timeout;
-		this.setState({
-			filterInput: '',
-			filter: ''
-		});
-		this.props.toggleModal(null, false)
-	}
+		this.props.toggleModal(null, false);
 
-	handleInputKeydown = () => {
-
+		// clear filter once modal is really closed, but not before to avoid flicker
+		this.setTimeout(() => {
+			this.setState({
+				filterInput: '',
+				filter: ''
+			});
+		}, 200);
 	}
 
 	handleFilterChange = newValue => {
@@ -89,8 +91,28 @@ class StyleInstallerModal extends React.PureComponent {
 		}
 	}
 
-	handleDelete = () => { }
-	handleInstall = () => { }
+	handleDelete = ev => {
+		const { installedCitationStyles, preferenceChange } = this.props;
+		const styleName = ev.target.value;
+		const newInstalledCitationStyles = installedCitationStyles.filter(
+			c => c.name !== styleName
+		);
+
+		preferenceChange('installedCitationStyles', newInstalledCitationStyles);
+	}
+
+	handleInstall = ev => {
+		const { matchedCitationStyles } = this.state;
+		const styleName = ev.target.value;
+		const style = matchedCitationStyles.find(c => c.name == styleName);
+		const { installedCitationStyles, preferenceChange } = this.props;
+		const newInstalledCitationStyles = [
+			...installedCitationStyles,
+			pick(style, ['title', 'name'])
+		];
+
+		preferenceChange('installedCitationStyles', newInstalledCitationStyles);
+	}
 
 	handleWorkerMessage = event => {
 		const [messageKind, payload] = event.data;
@@ -110,12 +132,13 @@ class StyleInstallerModal extends React.PureComponent {
 	}
 
 	renderStyleItem = style => {
-		const { installedCitationStyles, currentCitationStyle } = this.props;
-		const styleData = installedCitationStyles.find(cs => cs.name === style.name);
+		const { currentCitationStyle } = this.props;
+		const styleData = this.localCitationStyles.find(cs => cs.name === style.name);
 		const isInstalled = typeof styleData !== 'undefined';
 		const isCore = isInstalled && styleData.isCore || false;
 		const isActive = style.name === currentCitationStyle;
-		const isSelected = false; //this.state.matchedCitationStyles[this.state.selectedIndex] ? this.state.matchedCitationStyles[this.state.selectedIndex].name === style.name : false;
+		const isSelected = this.state.matchedCitationStyles[this.state.selectedIndex] ?
+			this.state.matchedCitationStyles[this.state.selectedIndex].name === style.name : false;
 
 		return (
 			<li
@@ -136,14 +159,14 @@ class StyleInstallerModal extends React.PureComponent {
 						</Button>
 					) : isInstalled ? (
 						<Button
-							value={ style }
+							value={ style.name }
 							className="btn btn-sm btn-outline-primary"
 							onClick={ this.handleDelete }>
 							Remove
 						</Button>
 					) : (
 						<Button
-							value={ style }
+							value={ style.name }
 							className="btn btn-sm btn-outline-secondary"
 							onClick={ this.handleInstall }>
 							Add
@@ -152,7 +175,7 @@ class StyleInstallerModal extends React.PureComponent {
 				}
 			</li>
 		);
-}
+	}
 
 	render() {
 		const { installedCitationStyles, isOpen, stylesData,
@@ -160,12 +183,13 @@ class StyleInstallerModal extends React.PureComponent {
 		const { filterInput, matchedCitationStyles, isSearching,
 			isWorkerReady } = this.state;
 		const isReady = stylesData !== null && !isFetching && isWorkerReady;
+		this.localCitationStyles = [...coreCitationStyles, ...installedCitationStyles];
 
 		return (
 			<Modal
 				isOpen={ isOpen }
 				contentLabel="Citation Style Installer"
-				className="modal-touch modal-centered"
+				className="modal-touch modal-centered style-installer"
 				onRequestClose={ this.handleClose }
 				closeTimeoutMS={ 200 }
 				overlayClassName={ "modal-slide" }
@@ -191,18 +215,18 @@ class StyleInstallerModal extends React.PureComponent {
 						<Input
 							autoFocus
 							className="form-control form-control-lg"
+							isBusy={ isSearching }
 							onChange={ this.handleFilterChange }
-							onKeyDown={ this.handleInputKeydown }
 							placeholder="Enter three or more characters to search"
+							tabIndex={ 0 }
 							type="text"
 							value={ filterInput }
-							isBusy={ isSearching }
 						/>
 						<ul className="style-list">
 							{
 								filterInput.length > 2 ?
 								matchedCitationStyles.map(this.renderStyleItem) :
-									installedCitationStyles.map(this.renderStyleItem)
+									this.localCitationStyles.map(this.renderStyleItem)
 							}
 						</ul>
 					</div>
@@ -213,12 +237,14 @@ class StyleInstallerModal extends React.PureComponent {
 	}
 
 	static propTypes = {
+		currentCitationStyle: PropTypes.string,
 		fetchStyles: PropTypes.func,
 		installedCitationStyles: PropTypes.array,
 		isFetching: PropTypes.bool,
 		isOpen: PropTypes.bool,
-		currentCitationStyle: PropTypes.string,
+		preferenceChange: PropTypes.func,
 		stylesData: PropTypes.array,
+		toggleModal: PropTypes.func,
 	}
 }
 

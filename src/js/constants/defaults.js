@@ -13,6 +13,7 @@ module.exports = Object.freeze({
 	columnMinWidthFraction: 0.05,
 	preferences: {
 		citationStyle: coreCitationStyles.find(cs => cs.isDefault).name,
+		installedCitationStyles: [],
 		columns: [
 			{ field: 'title', fraction: 0.5, isVisible: true, sort: 'ASC' },
 			{ field: 'creator', fraction: 0.3, isVisible: true },
