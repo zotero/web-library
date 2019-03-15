@@ -100,7 +100,8 @@ const itemsByCollection = (state = {}, action) => {
 				...state,
 				[action.collectionKey]: {
 					...state[action.collectionKey],
-					isFetching: action.type === REQUEST_ITEMS_IN_COLLECTION
+					isFetching: action.type === REQUEST_ITEMS_IN_COLLECTION,
+					isError: action.type === ERROR_ITEMS_IN_COLLECTION
 				}
 			}
 		case RECEIVE_ITEMS_IN_COLLECTION:

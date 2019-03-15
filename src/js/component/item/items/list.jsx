@@ -160,8 +160,8 @@ class ItemsList extends React.PureComponent {
 			return null;
 		}
 
-		const { totalItemsCount, isSelectMode } = this.props;
-		const isLoadingUncounted = typeof(totalItemsCount) === 'undefined';
+		const { totalItemsCount, isError, isSelectMode } = this.props;
+		const isLoadingUncounted = !isError && typeof(totalItemsCount) === 'undefined';
 
 		return (
 			<div

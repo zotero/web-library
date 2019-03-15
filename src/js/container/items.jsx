@@ -185,6 +185,7 @@ const mapStateToProps = state => {
 	}
 	const totalItemsCount = itemsData.totalResults;
 	const isFetchingItems = itemsData.isFetching;
+	const isError = itemsData.isError;
 	const items = (itemsData.keys || []).map(itemKey => itemKey ? getFormattedTableItem(
 		get(state, ['libraries', libraryKey, 'items', itemKey]),
 		itemTypes,
@@ -203,6 +204,7 @@ const mapStateToProps = state => {
 		isFetchingItems,
 		isMetaAvailable,
 		isReady,
+		isError,
 		isSelectMode,
 		itemFields,
 		items,

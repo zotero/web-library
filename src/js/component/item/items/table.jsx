@@ -31,7 +31,7 @@ class ItemsTable extends React.PureComponent {
 	}
 
 	componentDidUpdate({ sortBy, sortDirection, totalItemsCount, items: prevItems,
-	selectedItemKeys: prevSelectedItemKeys }) {
+		selectedItemKeys: prevSelectedItemKeys }) {
 		if(this.props.sortBy !== sortBy ||
 			this.props.sortDirection !== sortDirection ||
 			this.props.totalItemsCount !== totalItemsCount) {
@@ -478,9 +478,9 @@ class ItemsTable extends React.PureComponent {
 		if(!this.props.isReady) {
 			return null;
 		}
-		const { sortBy, sortDirection, totalItemsCount } = this.props;
+		const { isError, sortBy, sortDirection, totalItemsCount } = this.props;
 		const { scrollToIndex } = this.state;
-		const isLoadingUncounted = typeof(totalItemsCount) === 'undefined';
+		const isLoadingUncounted = !isError && typeof(totalItemsCount) === 'undefined';
 
 		return (
 			<div

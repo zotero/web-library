@@ -32,7 +32,8 @@ const itemsTrash = (state = {}, action) => {
 		case ERROR_TRASH_ITEMS:
 			return {
 				...state,
-				isFetching: action.type === REQUEST_TRASH_ITEMS
+				isFetching: action.type === REQUEST_TRASH_ITEMS,
+				isError: action.type === ERROR_TRASH_ITEMS
 			}
 		case RECEIVE_TRASH_ITEMS:
 			return populateItemKeys(

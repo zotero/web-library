@@ -76,7 +76,8 @@ const itemsByParent = (state = {}, action) => {
 				...state,
 				[action.itemKey]: {
 					...state[action.itemKey],
-					isFetching: action.type === REQUEST_CHILD_ITEMS
+					isFetching: action.type === REQUEST_CHILD_ITEMS,
+					isError: action.type === ERROR_CHILD_ITEMS
 				}
 			}
 		case RECEIVE_CHILD_ITEMS:

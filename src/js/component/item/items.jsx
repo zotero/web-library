@@ -40,10 +40,11 @@ class Items extends React.PureComponent {
 	}
 
 	componentDidUpdate() {
-		const { totalItemsCount, isFetchingItems, onLoadMore, isMetaAvailable } = this.props;
+		const { totalItemsCount, isError, isFetchingItems, onLoadMore,
+			isMetaAvailable } = this.props;
 		const isLoadingUncounted = typeof(totalItemsCount) === 'undefined';
 
-		if(isLoadingUncounted && isMetaAvailable && !isFetchingItems) {
+		if(isLoadingUncounted && isMetaAvailable && !isFetchingItems && !isError) {
 			onLoadMore({ startIndex: 0, stopIndex: 0 + PAGE_SIZE - 1 });
 		}
 	}
@@ -76,6 +77,7 @@ class Items extends React.PureComponent {
 
 	static propTypes = {
 		device: PropTypes.object,
+		isError: PropTypes.bool,
 		isFetchingItems: PropTypes.bool,
 		isMetaAvailable: PropTypes.bool,
 		onLoadMore: PropTypes.func.isRequired,

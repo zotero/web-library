@@ -49,7 +49,8 @@ const itemsTop = (state = {}, action) => {
 		case ERROR_TOP_ITEMS:
 			return {
 				...state,
-				isFetching: action.type === REQUEST_TOP_ITEMS
+				isFetching: action.type === REQUEST_TOP_ITEMS,
+				isError: action.type === ERROR_TOP_ITEMS
 			}
 		case RECEIVE_TOP_ITEMS:
 			return populateItemKeys(
