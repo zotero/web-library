@@ -7,7 +7,8 @@ const defaultState = {
 	apiConfig: {},
 	userId: null,
 	sortBy: 'title',
-	sortDirection: 'asc'
+	sortDirection: 'asc',
+	libraries: {}
 };
 
 const config = (state = defaultState, action) => {
@@ -19,6 +20,7 @@ const config = (state = defaultState, action) => {
 				apiKey: action.apiKey,
 				stylesSourceUrl: action.stylesSourceUrl,
 				userId: action.userId,
+				libraries: action.libraries,
 			};
 		case SORT_ITEMS:
 			return {

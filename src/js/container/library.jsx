@@ -47,10 +47,14 @@ class LibraryContainer extends React.PureComponent {
 			);
 		};
 
-		props.dispatch(preferencesLoad());
-		props.dispatch(initialize());
-		props.dispatch(fetchGroups(this.props.userLibraryKey));
-		props.dispatch(fetchLibrarySettings());
+		const { config, dispatch, userLibraryKey } = props;
+
+		dispatch(preferencesLoad());
+		dispatch(initialize());
+		if(config.libraries.includeUserGroups) {
+			dispatch(fetchGroups(userLibraryKey));
+		}
+		dispatch(fetchLibrarySettings());
 		this.windowResizeHandler();
 	}
 
@@ -91,7 +95,11 @@ class LibraryContainer extends React.PureComponent {
 	}
 
 	static init(element, config = {}) {
-		const { apiKey, apiConfig, stylesSourceUrl, userId } = {...defaults, ...config };
+		const libraries = { ...defaults.libraries, ...config.libraries };
+		const apiConfig = { ...defaults.apiConfig, ...config.apiConfig };
+		const { apiKey, stylesSourceUrl, userId } = {
+			...defaults, ...config
+		};
 		if(element) {
 			var store = createStore(
 				createReducers(history),
@@ -105,7 +113,7 @@ class LibraryContainer extends React.PureComponent {
 			);
 
 			store.dispatch(
-				configureApi(userId, apiKey, apiConfig, stylesSourceUrl)
+				configureApi({ userId, apiKey, apiConfig, stylesSourceUrl, libraries })
 			);
 
 			ReactDOM.render(
@@ -127,8 +135,7 @@ class LibraryContainer extends React.PureComponent {
 }
 
 LibraryContainer.propTypes = {
-	apiKey: PropTypes.string,
-	api: PropTypes.object,
+	config: PropTypes.object,
 	dispatch: PropTypes.func.isRequired,
 	view: PropTypes.string
 };
@@ -145,15 +152,15 @@ const mapStateToProps = state => {
 		view,
 	} = state.current;
 	const {
+		config,
 		current: { userLibraryKey },
-		config: { api, apiKey },
 		fetching: { collectionsInLibrary },
 		viewport,
 	} = state;
 	const isFetchingCollections = collectionsInLibrary
 		.some(key => key === userLibraryKey || key === libraryKey);
 
-	return { view, userLibraryKey, api, apiKey, viewport, isSelectMode,
+	return { config, view, userLibraryKey, viewport, isSelectMode,
 		itemsSource, collectionKey, isFetchingCollections, useTransitions,
 		libraryKey, search, tags };
 };

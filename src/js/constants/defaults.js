@@ -7,6 +7,11 @@ module.exports = Object.freeze({
 		apiAuthorityPart: 'api.zotero.org'
 	},
 	stylesSourceUrl: 'https://www.zotero.org/styles-files/styles.json',
+	libraries: {
+		includeMyLibrary: true,
+		includeUserGroups: true,
+		include: []
+	},
 	columnNames: {
 		'creator': 'Creator',
 	},
