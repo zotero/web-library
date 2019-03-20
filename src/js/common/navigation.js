@@ -11,9 +11,8 @@ const tagsToUrlPart = tags => tags.map(t => t.replace(/,/g, ',,'));
 
 const makePath = ({ library = null, collection = null, items = null, trash = false, publications = false, tags = null, search = null, view = null } = {}) => {
 	const path = [];
-	if(library && library.substr(0, 1) === 'g') {
-		path.push(library)
-	}
+
+	path.push(library);
 
 	if(trash) {
 		path.push('trash')

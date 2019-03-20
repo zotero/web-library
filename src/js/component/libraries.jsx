@@ -145,6 +145,9 @@ class Libraries extends React.PureComponent {
 	render() {
 		const { view, libraries } = this.props;
 		const isRootActive = view === 'libraries';
+		const myLibraries = libraries.filter(l => l.isMyLibrary);
+		const groupLibraries = libraries.filter(l => l.isGroupLibrary);
+		const otherLibraries = libraries.filter(l => !l.isMyLibrary && !l.isGroupLibrary);
 
 		if(this.props.isFetching) {
 			return <Spinner />;
@@ -154,23 +157,33 @@ class Libraries extends React.PureComponent {
 					<div className={ `level-root ${isRootActive ? 'active' : ''}` }>
 						<div className="scroll-container" role="tree">
 							<section>
-								<div className={ cx('level', 'level-0') }>
-									<ul className="nav" role="group">
-										{ libraries
-											.filter(l => l.isMyLibrary)
-											.map(this.renderLibrary)
-										}
-									</ul>
-								</div>
-								<h4>Group Libraries</h4>
-								<div className={ cx('level', 'level-0') }>
-									<ul className="nav" role="group">
-										{ libraries
-											.filter(l => l.isGroupLibrary)
-											.map(this.renderLibrary)
-										}
-									</ul>
-								</div>
+								{ myLibraries.length > 0 && (
+									<div className={ cx('level', 'level-0') }>
+										<ul className="nav" role="group">
+											{ myLibraries.map(this.renderLibrary) }
+										</ul>
+									</div>
+								)}
+								{ groupLibraries.length > 0 && (
+									<React.Fragment>
+										<h4>Group Libraries</h4>
+										<div className={ cx('level', 'level-0') }>
+											<ul className="nav" role="group">
+												{ groupLibraries.map(this.renderLibrary) }
+											</ul>
+										</div>
+									</React.Fragment>
+								)}
+								{ otherLibraries.length > 0 && (
+									<React.Fragment>
+										<h4>Other Libraries</h4>
+										<div className={ cx('level', 'level-0') }>
+											<ul className="nav" role="group">
+												{ otherLibraries.map(this.renderLibrary) }
+											</ul>
+										</div>
+									</React.Fragment>
+								)}
 							</section>
 						</div>
 					</div>
