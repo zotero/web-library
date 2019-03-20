@@ -2,11 +2,12 @@
 
 const React = require('react');
 const PropTypes = require('prop-types');
+const Types = require('../types');
 const ItemDetails = require('../component/item/details');
 const { push } = require('connected-react-router');
 const { connect } = require('react-redux');
 const { createItem, updateItem, deleteItem, fetchItemTemplate, fetchChildItems, uploadAttachment, fetchItems, fetchItemTypeCreatorTypes, fetchItemTypeFields } = require('../actions');
-const { itemProp, baseMappings, hideFields, noEditFields,
+const { baseMappings, hideFields, noEditFields,
 	extraFields } = require('../constants/item');
 const { get, deduplicateByKey, mapRelationsToItemKeys, removeRelationByItemKey, reverseMap } = require('../utils');
 const { makePath } = require('../common/navigation');
@@ -327,7 +328,7 @@ const mapStateToProps = state => {
 
 ItemDetailsContainer.propTypes = {
 	fields: PropTypes.array,
-	item: itemProp,
+	item: Types.item,
 	dispatch: PropTypes.func.isRequired
 };
 

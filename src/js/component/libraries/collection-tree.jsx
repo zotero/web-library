@@ -157,7 +157,7 @@ class CollectionTree extends React.PureComponent {
 
 	renderCollections(collections, level, parentCollection = null) {
 		const { childMap, derivedData } = this;
-		const { libraryKey, itemsSource, isUserLibrary, isCurrentLibrary,
+		const { libraryKey, itemsSource, isMyLibrary, isCurrentLibrary,
 			virtual, onAddCancel, device, path, view, isPickerMode,
 			picked } = this.props;
 
@@ -351,7 +351,7 @@ class CollectionTree extends React.PureComponent {
 						)
 					}
 					{
-						!isPickerMode && isUserLibrary && level === 1 && (
+						!isPickerMode && isMyLibrary && level === 1 && (
 							<Node
 								className={ cx({
 									'publications': true,
@@ -396,6 +396,7 @@ class CollectionTree extends React.PureComponent {
 	}
 
 	static propTypes = {
+		device: PropTypes.object,
 		collections: PropTypes.arrayOf(
 			PropTypes.shape({
 				key: PropTypes.string.isRequired,
@@ -405,8 +406,9 @@ class CollectionTree extends React.PureComponent {
 		)),
 		isAdding: PropTypes.bool,
 		isAddingBusy: PropTypes.bool,
+		isCurrentLibrary: PropTypes.bool,
+		isMyLibrary: PropTypes.bool,
 		isPickerMode: PropTypes.bool,
-		isUserLibrary: PropTypes.bool,
 		itemsSource: PropTypes.string,
 		libraryKey: PropTypes.string.isRequired,
 		onAdd: PropTypes.func,
@@ -419,6 +421,7 @@ class CollectionTree extends React.PureComponent {
 		path: PropTypes.array,
 		picked: PropTypes.array,
 		updating: PropTypes.array,
+		view: PropTypes.string,
 		virtual: PropTypes.object,
 	};
 

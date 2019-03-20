@@ -2,9 +2,9 @@
 
 const React = require('react');
 const PropTypes = require('prop-types');
+const Types = require('../types');
 const { push } = require('connected-react-router');
 const withDevice = require('../enhancers/with-device');
-const { itemProp } = require('../constants/item');
 const { connect } = require('react-redux');
 const { get } = require('../utils');
 const { pick } = require('../common/immutable');
@@ -150,7 +150,7 @@ class TouchHeaderContainer extends React.PureComponent {
 
 	static propTypes = {
 		path: PropTypes.array,
-		item: itemProp,
+		item: Types.item,
 	}
 
 	static variants = {

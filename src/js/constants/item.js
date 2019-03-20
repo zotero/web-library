@@ -38,10 +38,4 @@ module.exports = Object.freeze({
 	],
 
 	baseMappings,
-
-	itemProp: PropTypes.shape({
-		key: PropTypes.string,
-		get: PropTypes.func,
-		set: PropTypes.func
-	})
 });

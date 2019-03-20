@@ -2,7 +2,7 @@
 
 const React = require('react');
 const PropTypes = require('prop-types');
-
+const Types = require('../../types');
 const { makeChildMap } = require('../../common/collection');
 const Libraries = require('../libraries');
 const Modal = require('../ui/modal');
@@ -22,16 +22,15 @@ class CollectionSelectModal extends React.PureComponent {
 	state = defaultState
 
 	componentDidUpdate({ isOpen: wasOpen }, { libraryKey: prevLibraryKey }) {
-		const { isOpen, userLibraryKey, fetchCollections,
-		librariesWithCollectionsFetching, collectionCountByLibrary,
-		groupCollections } = this.props;
+		const { collections, isOpen, userLibraryKey, fetchCollections,
+		librariesWithCollectionsFetching, collectionCountByLibrary } = this.props;
 		const { libraryKey } = this.state;
 
 		if(wasOpen && !isOpen) {
 			this.setState(defaultState);
 		}
 
-		if(libraryKey && libraryKey !== prevLibraryKey && userLibraryKey !== libraryKey) {
+		if(libraryKey && libraryKey !== prevLibraryKey) {
 			fetchCollections(libraryKey, { start: 0, limit: PAGE_SIZE });
 		}
 
@@ -42,9 +41,9 @@ class CollectionSelectModal extends React.PureComponent {
 			}
 		}
 
-		Object.keys(groupCollections).forEach(groupId => {
-			if(groupId in collectionCountByLibrary) {
-				fetchNextPage(groupId, groupCollections[groupId]);
+		Object.keys(collections).forEach(libraryId => {
+			if(libraryId in collectionCountByLibrary) {
+				fetchNextPage(libraryId, collections[libraryId]);
 			}
 		});
 	}
@@ -69,14 +68,11 @@ class CollectionSelectModal extends React.PureComponent {
 	}
 
 	handleCollectionSelect = ({ library = null,  collection = null } = {}) => {
-		const { collections, groupCollections, userLibraryKey } = this.props;
+		const { collections } = this.props;
 
 		if(library) {
 			if(collection) {
-				const childMap = library === userLibraryKey ?
-				collections.length ? makeChildMap(collections) : {} :
-				library in groupCollections && groupCollections[library].length ?
-					makeChildMap(groupCollections[library]) : {};
+				const childMap = library in collections ? makeChildMap(collections[library]) : {};
 				const hasChildren = collection in childMap;
 				const path = [...this.state.path];
 				if(hasChildren) { path.push(collection); }
@@ -119,12 +115,10 @@ class CollectionSelectModal extends React.PureComponent {
 	}
 
 	render() {
-		const { device, isOpen, toggleModal, collections,
-			userLibraryKey, groups, groupCollections,
-			librariesWithCollectionsFetching } = this.props;
+		const { device, isOpen, toggleModal, collections, libraries,
+			userLibraryKey, groups, librariesWithCollectionsFetching } = this.props;
 		const { libraryKey, isBusy, picked } = this.state;
-		const collectionsSource = libraryKey === userLibraryKey ?
-			collections : (groupCollections[libraryKey] || []);
+		const collectionsSource = collections[libraryKey];
 
 		const touchHeaderPath = this.state.path.map(key => ({
 				key,
@@ -172,13 +166,13 @@ class CollectionSelectModal extends React.PureComponent {
 									onNavigation={ (...args) => this.handleNavigation(...args) }
 								/>
 								<Libraries
+									libraries={ libraries }
 									librariesWithCollectionsFetching={ librariesWithCollectionsFetching }
 									picked={ picked }
 									isPickerMode={ true }
 									onPickerPick={ (...args) => this.handlePick(...args) }
 									view={ this.state.view }
 									groups={ groups }
-									groupCollections={ groupCollections }
 									userLibraryKey={ userLibraryKey }
 									libraryKey={ this.state.libraryKey }
 									device={ device }
@@ -224,9 +218,10 @@ class CollectionSelectModal extends React.PureComponent {
 	}
 
 	static propTypes = {
-		collections: PropTypes.array,
+		collections: PropTypes.objectOf(
+			PropTypes.arrayOf(Types.collection)
+		),
 		device: PropTypes.object,
-		groupCollections: PropTypes.object,
 		groups: PropTypes.array,
 		isOpen: PropTypes.bool,
 		libraryKey: PropTypes.string,

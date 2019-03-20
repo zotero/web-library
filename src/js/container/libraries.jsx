@@ -18,12 +18,14 @@ const {
 const { getCollectionsPath } = require('../common/state');
 const { get } = require('../utils');
 const { makePath } = require('../common/navigation');
+const { getLibraries } = require('../common/state');
 const withDevice = require('../enhancers/with-device');
 const PAGE_SIZE = 100;
 
 class LibrariesContainer extends React.PureComponent {
 	constructor(props) {
 		super(props);
+
 		const { dispatch, libraryKey, userLibraryKey } = props;
 
 		dispatch(fetchCollections(userLibraryKey, { start: 0, limit: PAGE_SIZE }));
@@ -34,7 +36,7 @@ class LibrariesContainer extends React.PureComponent {
 	}
 
 	componentDidUpdate({ libraryKey: prevLibraryKey }) {
-		const { collectionCountByLibrary, collections, groupCollections, libraryKey, userLibraryKey, dispatch, librariesWithCollectionsFetching } = this.props;
+		const { collectionCountByLibrary, collections, libraryKey, userLibraryKey, dispatch, librariesWithCollectionsFetching } = this.props;
 		if(libraryKey !== prevLibraryKey && libraryKey !== userLibraryKey) {
 			dispatch(fetchCollections(libraryKey, { start: 0, limit: PAGE_SIZE }));
 		}
@@ -46,13 +48,9 @@ class LibrariesContainer extends React.PureComponent {
 			}
 		}
 
-		if(userLibraryKey in collectionCountByLibrary) {
-			fetchNextPage(userLibraryKey, collections);
-		}
-
-		Object.keys(groupCollections).forEach(groupId => {
-			if(groupId in collectionCountByLibrary) {
-				fetchNextPage(groupId, groupCollections[groupId]);
+		Object.keys(collections).forEach(libraryId => {
+			if(libraryId in collectionCountByLibrary) {
+				fetchNextPage(libraryId, collections[libraryId]);
 			}
 		});
 	}
@@ -101,23 +99,21 @@ const mapStateToProps = state => {
 		view,
 		itemsSource
 	} = state.current;
+	const libraries = getLibraries(state);
 
 	return {
-		libraryKey,
-		collections: Object.values(
-			get(state, ['libraries', userLibraryKey, 'collections'], {})
-		),
-		collectionCountByLibrary: state.collectionCountByLibrary,
-		librariesWithCollectionsFetching: state.fetching.collectionsInLibrary,
-		userLibraryKey,
-		groups: state.groups,
-		groupCollections: state.groups.reduce((aggr, group) => {
-			aggr[`g${group.id}`] = Object.values(
-				get(state, ['libraries', `g${group.id}`, 'collections'], {})
+		collections: libraries.reduce((aggr, library) => {
+			aggr[library.key] = Object.values(
+				get(state, ['libraries', library.key, 'collections'], {})
 			);
 			return aggr;
 		}, {}),
+		collectionCountByLibrary: state.collectionCountByLibrary,
+		librariesWithCollectionsFetching: state.fetching.collectionsInLibrary,
+		userLibraryKey,
 		isFetching: libraryKey in state.fetching.collectionsInLibrary,
+		libraries,
+		libraryKey,
 		selected: collectionKey,
 		path: getCollectionsPath(state),
 		view,
@@ -130,7 +126,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => ({ dispatch, ...bindActionCreators({ push, toggleModal }, dispatch) });
 
 LibrariesContainer.propTypes = {
-	collections: PropTypes.array,
+	// collections: PropTypes.object,
 	dispatch: PropTypes.func.isRequired,
 	isFetching: PropTypes.bool.isRequired,
 	itemsSource: PropTypes.string,
@@ -140,7 +136,7 @@ LibrariesContainer.propTypes = {
 };
 
 LibrariesContainer.defaultProps = {
-	collections: [],
+	collections: {},
 	path: [],
 	selected: ''
 };

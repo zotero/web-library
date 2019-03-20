@@ -3,7 +3,7 @@
 const React = require('react');
 const cx = require('classnames');
 const PropTypes = require('prop-types');
-const { itemProp } = require('../../constants/item');
+const Types = require('../../types');
 
 const ItemDetailsTabs = require('./details/tabs');
 const ItemDetailsInfoView = require('./details/info-view');
@@ -46,7 +46,7 @@ ItemDetails.propTypes = {
 	active: PropTypes.bool,
 	device: PropTypes.object,
 	isSelectMode: PropTypes.bool,
-	item: itemProp,
+	item: Types.item,
 	selectedItemKeys: PropTypes.array,
 };
 

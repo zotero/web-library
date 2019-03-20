@@ -46,5 +46,20 @@ const getParamsFromRoute = memoize(state => {
 	return {};
 }, deepEqual);
 
+const getLibraries = state => {
+	const { userLibraryKey } = state.current;
+	const { includeMyLibrary, includeUserGroups, include = [] } = state.config.libraries;
 
-module.exports = { getCollectionsPath, getSerializedQuery, getParamsFromRoute };
+	return [
+		includeMyLibrary && { key: userLibraryKey, isMyLibrary: true, name: 'My Library' },
+		...(includeUserGroups ?
+			state.groups.map(g => ({ key: `g${g.id}`, isGroupLibrary: true, name: g.name })) :
+			[]
+		),
+		...include
+	].filter(Boolean);
+}
+
+
+module.exports = { getCollectionsPath, getLibraries, getSerializedQuery,
+	getParamsFromRoute };
