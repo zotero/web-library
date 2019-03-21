@@ -12,7 +12,9 @@ const tagsToUrlPart = tags => tags.map(t => t.replace(/,/g, ',,'));
 const makePath = ({ library = null, collection = null, items = null, trash = false, publications = false, tags = null, search = null, view = null } = {}) => {
 	const path = [];
 
-	path.push(library);
+	if(library !== null) {
+		path.push(library);
+	}
 
 	if(trash) {
 		path.push('trash')
