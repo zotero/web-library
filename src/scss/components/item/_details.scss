@@ -47,14 +47,11 @@
 	@include bp-up-normalized(lg) {
 		flex: 0 0 $item-details-width-lg;
 		min-width: 0; // Fix truncation
-
-		.touch & {
-			flex: 0 0 $item-details-width-lg-touch;
-		}
 	}
 
 	@include touch-and-bp-only(lg) {
 		@include hairline(left, $item-details-border);
+		flex: 0 0 $item-details-width-lg-touch;
 	}
 
 	@include mouse-and-bp-only(lg) {
