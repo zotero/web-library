@@ -92,8 +92,11 @@ class ItemsList extends React.PureComponent {
 		});
 		return (
 			<div
-				className={ className } key={ key } style={ style }
+				className={ className }
+				key={ key }
+				style={ style }
 				onClick={ event => this.handleRowClick({ event, index }) }
+				tabIndex={ 0 }
 				>
 				{ isSelectMode && isLoaded && (
 					<input
@@ -186,6 +189,7 @@ class ItemsList extends React.PureComponent {
 									rowHeight={ 61 }
 									width={ width }
 									rowRenderer={ this.renderRow.bind(this) }
+									tabIndex={ -1 }
 								/>
 							)}
 						</InfiniteLoader>

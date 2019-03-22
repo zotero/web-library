@@ -111,6 +111,21 @@
 			}
 		}
 
+		&:focus {
+			.keyboard & {
+				outline-offset: -$outline-width;
+				@include hairline-disabled(top);
+
+				&.active {
+					outline-color: $item-active-color;
+				}
+
+				& + .item {
+					@include hairline-disabled(top);
+				}
+			}
+		}
+
 		input[type="checkbox"] {
 			position: absolute;
 			left: $item-list-padding-x;
