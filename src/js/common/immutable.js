@@ -27,4 +27,4 @@ const pick = (object, pickKeys) => {
 	}, {});
 }
 
-module.exports = { removeKeys, omit, pick };
+export { removeKeys, omit, pick };

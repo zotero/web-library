@@ -1,8 +1,6 @@
 'use strict';
 
-const {
-	RECEIVE_GROUPS,
-} = require('../constants/actions.js');
+import { RECEIVE_GROUPS } from '../constants/actions.js';
 
 const version = (state = [], action) => {
 	switch(action.type) {
@@ -13,4 +11,4 @@ const version = (state = [], action) => {
 	}
 };
 
-module.exports = version;
+export default version;

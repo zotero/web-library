@@ -2,24 +2,26 @@
 
 'use strict';
 
-const React = require('react');
-const PropTypes = require('prop-types');
-const { connect } = require('react-redux');
-const { push } = require('connected-react-router');
-const { bindActionCreators } = require('redux');
-const Libraries = require('../component/libraries');
-const {
-	fetchCollections,
-	createCollection,
-	updateCollection,
-	deleteCollection,
-	toggleModal,
-} = require('../actions');
-const { getCollectionsPath } = require('../common/state');
-const { get } = require('../utils');
-const { makePath } = require('../common/navigation');
-const { getLibraries } = require('../common/state');
-const withDevice = require('../enhancers/with-device');
+import React from 'react';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { push } from 'connected-react-router';
+import { bindActionCreators } from 'redux';
+import Libraries from '../component/libraries';
+
+import {
+    fetchCollections,
+    createCollection,
+    updateCollection,
+    deleteCollection,
+    toggleModal,
+} from '../actions';
+
+import { getCollectionsPath } from '../common/state';
+import { get } from '../utils';
+import { makePath } from '../common/navigation';
+import { getLibraries } from '../common/state';
+import withDevice from '../enhancers/with-device';
 const PAGE_SIZE = 100;
 
 class LibrariesContainer extends React.PureComponent {
@@ -141,7 +143,7 @@ LibrariesContainer.defaultProps = {
 	selected: ''
 };
 
-module.exports = withDevice(connect(
+export default withDevice(connect(
 	mapStateToProps,
 	mapDispatchToProps
 )(LibrariesContainer));

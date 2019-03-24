@@ -1,11 +1,11 @@
 'use strict';
 
-const {
-	RECEIVE_META,
-	RECEIVE_ITEM_TYPE_CREATOR_TYPES,
-	RECEIVE_ITEM_TYPE_FIELDS,
-	RECEIVE_ITEM_TEMPLATE,
-} = require('../constants/actions.js');
+import {
+    RECEIVE_META,
+    RECEIVE_ITEM_TYPE_CREATOR_TYPES,
+    RECEIVE_ITEM_TYPE_FIELDS,
+    RECEIVE_ITEM_TEMPLATE,
+} from '../constants/actions.js';
 
 const itemTypeCreatorTypes = (state = {}, action) => {
 	switch(action.type) {
@@ -76,4 +76,4 @@ const meta = (state = {
 	return state;
 };
 
-module.exports = meta;
+export default meta;

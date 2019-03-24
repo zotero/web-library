@@ -1,13 +1,13 @@
 'use strict';
 
-const React = require('react');
-const { findDOMNode } = require('react-dom');
-const PropTypes = require('prop-types');
-const cx = require('classnames');
-const Icon = require('../ui/icon');
-const { DragSource, DropTarget } = require('react-dnd');
-const { CREATOR } = require('../../constants/dnd');
-const { noop } = require('../../utils');
+import React from 'react';
+import { findDOMNode } from 'react-dom';
+import PropTypes from 'prop-types';
+import cx from 'classnames';
+import Icon from '../ui/icon';
+import { DragSource, DropTarget } from 'react-dnd';
+import { CREATOR } from '../../constants/dnd';
+import { noop } from '../../utils';
 
 //@NOTE: using findDOMNode and mutating monitor item here. Consider refactoring
 //		 Based on: https://github.com/react-dnd/react-dnd/blob/master/packages/documentation/examples/04%20Sortable/Simple/Card.tsx
@@ -146,4 +146,4 @@ class Field extends React.PureComponent {
 	}
 }
 
-module.exports = Field;
+export default Field;

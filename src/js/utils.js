@@ -1,9 +1,9 @@
 'use strict';
 
-const baseMappings = require('zotero-base-mappings');
-const { columnMinWidthFraction } = require('./constants/defaults');
-const columnSortKeyLookup = require('./constants/column-sort-key-lookup');
-const { noteAsTitle } = require('./common/format');
+import baseMappings from 'zotero-base-mappings';
+import { columnMinWidthFraction } from './constants/defaults';
+import columnSortKeyLookup from './constants/column-sort-key-lookup';
+import { noteAsTitle } from './common/format';
 
 const splice = (array, at, count = 0, ...items) => {
 	if (at == null) {
@@ -251,7 +251,7 @@ const JSONTryParse = (json, fallback = {}) => {
 	return output;
 }
 
-module.exports = {
+export {
 	compare,
 	compareItem,
 	deduplicate,

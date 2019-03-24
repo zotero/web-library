@@ -1,9 +1,9 @@
 'use strict';
 
-const React = require('react');
-const { connect } = require('react-redux');
-const hoistNonReactStatic = require('hoist-non-react-statics');
-const { triggerEditingItem } = require('../actions');
+import React from 'react';
+import { connect } from 'react-redux';
+import hoistNonReactStatic from 'hoist-non-react-statics';
+import { triggerEditingItem } from '../actions';
 
 var withEditMode = Component => {
 	class EnhancedComponent extends React.PureComponent {
@@ -33,4 +33,4 @@ const mapStateToProps = state => {
 	return { itemKey, isEditing: itemKey ? editingItemKey === itemKey : false };
 }
 
-module.exports = withEditMode;
+export default withEditMode;

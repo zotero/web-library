@@ -1,18 +1,17 @@
 'use strict';
 
-const React = require('react');
-const cx = require('classnames');
-const PropTypes = require('prop-types');
-const memoize = require('memoize-one');
-const deepEqual = require('deep-equal');
-const { UncontrolledDropdown, DropdownToggle, DropdownMenu,
-	DropdownItem } = require('reactstrap/lib');
-const Node = require('./node');
-const Icon = require('../ui/icon');
-const { noop } = require('../../utils.js');
-const { makeChildMap } = require('../../common/collection');
-const Editable = require('../editable');
-const { COLLECTION_RENAME, COLLECTION_ADD } = require('../../constants/modals');
+import React from 'react';
+import cx from 'classnames';
+import PropTypes from 'prop-types';
+import memoize from 'memoize-one';
+import deepEqual from 'deep-equal';
+import { UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap/lib';
+import Node from './node';
+import Icon from '../ui/icon';
+import { noop } from '../../utils.js';
+import { makeChildMap } from '../../common/collection';
+import Editable from '../editable';
+import { COLLECTION_RENAME, COLLECTION_ADD } from '../../constants/modals';
 
 class CollectionTree extends React.PureComponent {
 	state = { opened: [], renaming: null }
@@ -441,4 +440,4 @@ class CollectionTree extends React.PureComponent {
 	};
 }
 
-module.exports = CollectionTree;
+export default CollectionTree;

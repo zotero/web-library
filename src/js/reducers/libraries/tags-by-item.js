@@ -1,8 +1,6 @@
 'use strict';
 
-const {
-	RECEIVE_TAGS_FOR_ITEM,
-} = require('../../constants/actions');
+import { RECEIVE_TAGS_FOR_ITEM } from '../../constants/actions';
 
 const tags = (state = {}, action) => {
 	switch(action.type) {
@@ -21,4 +19,4 @@ const tags = (state = {}, action) => {
 	}
 };
 
-module.exports = tags;
+export default tags;

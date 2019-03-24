@@ -1,10 +1,10 @@
 'use strict';
 
-const {
-	RECEIVE_COLLECTIONS_IN_LIBRARY,
-	RECEIVE_CREATE_COLLECTION,
-	RECEIVE_DELETE_COLLECTION
-} = require('../constants/actions');
+import {
+    RECEIVE_COLLECTIONS_IN_LIBRARY,
+    RECEIVE_CREATE_COLLECTION,
+    RECEIVE_DELETE_COLLECTION,
+} from '../constants/actions';
 
 const itemCountTopByLibrary = (state = {}, action) => {
 	switch(action.type) {
@@ -28,4 +28,4 @@ const itemCountTopByLibrary = (state = {}, action) => {
 	}
 };
 
-module.exports = itemCountTopByLibrary;
+export default itemCountTopByLibrary;

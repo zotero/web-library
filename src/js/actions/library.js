@@ -1,10 +1,6 @@
 'use strict';
-const {
-	REQUEST_LIBRARY_SETTINGS,
-	RECEIVE_LIBRARY_SETTINGS,
-	ERROR_LIBRARY_SETTINGS,
-} = require('../constants/actions');
-const api = require('zotero-api-client')().api;
+import { REQUEST_LIBRARY_SETTINGS, RECEIVE_LIBRARY_SETTINGS, ERROR_LIBRARY_SETTINGS } from '../constants/actions';
+import api from 'zotero-api-client';
 
 const fetchLibrarySettings = () => {
 	return async (dispatch, getState) => {
@@ -42,4 +38,4 @@ const fetchLibrarySettings = () => {
 	};
 }
 
-module.exports = { fetchLibrarySettings };
+export { fetchLibrarySettings };

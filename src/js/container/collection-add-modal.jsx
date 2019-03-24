@@ -1,12 +1,11 @@
 'use strict';
 
-const React = require('react');
-
-const { connect } = require('react-redux');
-const { toggleModal, createCollection } = require('../actions');
-const CollectionAddModal = require('../component/modal/collection-add-modal')
-const { COLLECTION_ADD } = require('../constants/modals');
-const { get } = require('../utils');
+import React from 'react';
+import { connect } from 'react-redux';
+import { toggleModal, createCollection } from '../actions';
+import CollectionAddModal from '../component/modal/collection-add-modal';
+import { COLLECTION_ADD } from '../constants/modals';
+import { get } from '../utils';
 
 class CollectionAddModalContainer extends React.PureComponent {
 	render() {
@@ -24,7 +23,7 @@ const mapStateToProps = state => {
 };
 
 
-module.exports = connect(
+export default connect(
 	mapStateToProps,
 	{ createCollection, toggleModal }
 )(CollectionAddModalContainer);

@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = Object.freeze({
+export default Object.freeze({
 	title: 'title',
 	creator: 'creator',
 	date: 'date',

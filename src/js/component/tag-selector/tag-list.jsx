@@ -1,6 +1,6 @@
-const React = require('react');
-const PropTypes = require('prop-types');
-const cx = require('classnames');
+import React from 'react';
+import PropTypes from 'prop-types';
+import cx from 'classnames';
 const PAGE_SIZE = 100;
 
 class TagList extends React.PureComponent {
@@ -62,4 +62,4 @@ class TagList extends React.PureComponent {
 	}
 }
 
-module.exports = TagList;
+export default TagList;

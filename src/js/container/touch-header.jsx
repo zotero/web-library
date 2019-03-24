@@ -1,21 +1,21 @@
 'use strict';
 
-const React = require('react');
-const PropTypes = require('prop-types');
-const Types = require('../types');
-const { push } = require('connected-react-router');
-const withDevice = require('../enhancers/with-device');
-const { connect } = require('react-redux');
-const { get } = require('../utils');
-const { pick } = require('../common/immutable');
-const { getCollectionsPath } = require('../common/state');
-const TouchHeader = require('../component/touch-header');
-const { makePath } = require('../common/navigation');
-const { makeChildMap } = require('../common/collection');
-const { itemsSourceLabel } = require('../common/format');
-const withEditMode = require('../enhancers/with-edit-mode');
-const withSelectMode = require('../enhancers/with-select-mode');
-const { toggleModal } = require('../actions');
+import React from 'react';
+import PropTypes from 'prop-types';
+import Types from '../types';
+import { push } from 'connected-react-router';
+import withDevice from '../enhancers/with-device';
+import { connect } from 'react-redux';
+import { get } from '../utils';
+import { pick } from '../common/immutable';
+import { getCollectionsPath } from '../common/state';
+import TouchHeader from '../component/touch-header';
+import { makePath } from '../common/navigation';
+import { makeChildMap } from '../common/collection';
+import { itemsSourceLabel } from '../common/format';
+import withEditMode from '../enhancers/with-edit-mode';
+import withSelectMode from '../enhancers/with-select-mode';
+import { toggleModal } from '../actions';
 
 class TouchHeaderContainer extends React.PureComponent {
 	handleNavigation = path => {
@@ -213,4 +213,4 @@ const TouchHeaderWrapped = withDevice(withSelectMode(withEditMode(
 	connect(mapStateToProps, { push, toggleModal })(TouchHeaderContainer)
 )));
 
-module.exports = TouchHeaderWrapped;
+export default TouchHeaderWrapped;

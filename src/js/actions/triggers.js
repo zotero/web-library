@@ -1,12 +1,12 @@
 'use strict';
 
-const {
-	TRIGGER_EDITING_ITEM,
-	TRIGGER_SELECT_MODE,
-	TRIGGER_RESIZE_VIEWPORT,
-	TOGGLE_MODAL,
-	TOGGLE_TRANSITIONS,
-} = require('../constants/actions');
+import {
+    TRIGGER_EDITING_ITEM,
+    TRIGGER_SELECT_MODE,
+    TRIGGER_RESIZE_VIEWPORT,
+    TOGGLE_MODAL,
+    TOGGLE_TRANSITIONS,
+} from '../constants/actions';
 
 const triggerEditingItem = (itemKey, isEditing) => {
 	return async (dispatch, getState) => {
@@ -50,10 +50,10 @@ const toggleTransitions = useTransitions => {
 	return { type: TOGGLE_TRANSITIONS, useTransitions };
 }
 
-module.exports = {
+export {
 	triggerEditingItem,
 	triggerSelectMode,
 	triggerResizeViewport,
 	toggleModal,
 	toggleTransitions,
-}
+};

@@ -1,10 +1,10 @@
 'use strict';
 
-const React = require('react');
-const cx = require('classnames');
-const withDevice = require('../../enhancers/with-device');
-const Editable = require('../editable');
-const TextAreaInput = require('../form/text-area');
+import React from 'react';
+import cx from 'classnames';
+import withDevice from '../../enhancers/with-device';
+import Editable from '../editable';
+import TextAreaInput from '../form/text-area';
 
 class Abstract extends React.PureComponent {
 	state = {
@@ -88,4 +88,4 @@ class Abstract extends React.PureComponent {
 	}
 }
 
-module.exports = withDevice(Abstract);
+export default withDevice(Abstract);

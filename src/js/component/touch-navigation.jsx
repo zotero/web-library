@@ -1,10 +1,10 @@
 'use strict';
 
-const React = require('react');
-const PropTypes = require('prop-types');
-const { CSSTransition } = require('react-transition-group');
-const noop = require('../utils');
-const Icon = require('./ui/icon');
+import React from 'react';
+import PropTypes from 'prop-types';
+import { CSSTransition } from 'react-transition-group';
+import { noop } from '../utils';
+import Icon from './ui/icon';
 
 const slots = ['next', 'current', 'previous', 'before-last'];
 const empty = {
@@ -136,4 +136,4 @@ class TouchNavigation extends React.PureComponent {
 		path: [],
 	}
 }
-module.exports = TouchNavigation;
+export default TouchNavigation;

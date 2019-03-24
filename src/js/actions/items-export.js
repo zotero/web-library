@@ -1,14 +1,15 @@
 'use strict';
 
-const api = require('zotero-api-client')().api;
-const {
-	REQUEST_EXPORT_ITEMS,
-	RECEIVE_EXPORT_ITEMS,
-	ERROR_EXPORT_ITEMS,
-	REQUEST_CITE_ITEMS,
-	RECEIVE_CITE_ITEMS,
-	ERROR_CITE_ITEMS,
-} = require('../constants/actions');
+import api from 'zotero-api-client';
+
+import {
+    REQUEST_EXPORT_ITEMS,
+    RECEIVE_EXPORT_ITEMS,
+    ERROR_EXPORT_ITEMS,
+    REQUEST_CITE_ITEMS,
+    RECEIVE_CITE_ITEMS,
+    ERROR_CITE_ITEMS,
+} from '../constants/actions';
 
 const exportItems = (itemKeys, format) => {
 	return async (dispatch, getState) => {
@@ -143,4 +144,4 @@ const bibliographyItems = (itemKeys, style = 'chicago-note-bibliography', locale
 };
 
 
-module.exports = { bibliographyItems, exportItems, citeItems };
+export { bibliographyItems, exportItems, citeItems };

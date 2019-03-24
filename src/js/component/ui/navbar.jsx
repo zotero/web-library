@@ -1,8 +1,8 @@
 'use strict';
 
-const React = require('react');
-const PropTypes = require('prop-types');
-const SearchContainer = require('./../../container/search');
+import React from 'react';
+import PropTypes from 'prop-types';
+import SearchContainer from './../../container/search';
 
 class Navbar extends React.PureComponent {
 	constructor(props) {
@@ -49,4 +49,4 @@ Navbar.defaultProps = {
 	isOpened: false
 };
 
-module.exports = Navbar;
+export default Navbar;

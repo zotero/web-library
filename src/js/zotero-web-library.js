@@ -1,40 +1,37 @@
 'use strict';
 
-require('babel-regenerator-runtime');
-
-const React = require('react');
-const ReactDOM = require('react-dom');
-
-const ItemsContainer = require('./container/items');
-const LibraryContainer = require('./container/library');
-const LibrariesContainer = require('./container/libraries');
-
-const Button = require('./component/ui/button');
-const Libraries = require('./component/libraries');
-const Creators = require('./component/form/creators');
-const Editable = require('./component/editable');
-const EditableContent = require('./component/editable/content');
-const Icon = require('./component/ui/icon');
-const ItemBox = require('./component/item/box');
-const ItemDetails = require('./component/item/details');
-const Items = require('./component/item/items');
-const Library = require('./component/library');
-const Navbar = require('./component/ui/navbar');
-const Notes = require('./component/notes');
-const Tags = require('./component/tags');
-const Attachments = require('./component/attachments');
-const Relations = require('./component/relations');
-const Panel = require('./component/ui/panel');
-const RichEditor = require('./component/rich-editor');
-const Spinner = require('./component/ui/spinner');
-const TagSelector = require('./component/tag-selector');
-const TouchHeader = require('./component/touch-header');
-const TouchNavigation = require('./component/touch-navigation');
-const { Tab, Tabs } = require('./component/ui/tabs');
-const { Toolbar, ToolGroup } = require('./component/ui/toolbars');
+import 'babel-regenerator-runtime';
+import React from 'react';
+import ReactDOM from 'react-dom';
+import ItemsContainer from './container/items';
+import LibraryContainer from './container/library';
+import LibrariesContainer from './container/libraries';
+import Button from './component/ui/button';
+import Libraries from './component/libraries';
+import Creators from './component/form/creators';
+import Editable from './component/editable';
+import EditableContent from './component/editable/content';
+import Icon from './component/ui/icon';
+import ItemBox from './component/item/box';
+import ItemDetails from './component/item/details';
+import Items from './component/item/items';
+import Library from './component/library';
+import Navbar from './component/ui/navbar';
+import Notes from './component/notes';
+import Tags from './component/tags';
+import Attachments from './component/attachments';
+import Relations from './component/relations';
+import Panel from './component/ui/panel';
+import RichEditor from './component/rich-editor';
+import Spinner from './component/ui/spinner';
+import TagSelector from './component/tag-selector';
+import TouchHeader from './component/touch-header';
+import TouchNavigation from './component/touch-navigation';
+import { Tab, Tabs } from './component/ui/tabs';
+import { Toolbar, ToolGroup } from './component/ui/toolbars';
 
 //expose components & react
-module.exports = {
+export default {
 	React,
 	ReactDOM,
 	Attachments,

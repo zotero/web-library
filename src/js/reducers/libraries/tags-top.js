@@ -1,8 +1,6 @@
 'use strict';
 
-const {
-	RECEIVE_TAGS_IN_LIBRARY,
-} = require('../../constants/actions');
+import { RECEIVE_TAGS_IN_LIBRARY } from '../../constants/actions';
 
 const tagsTop = (state = [], action) => {
 	switch(action.type) {
@@ -18,4 +16,4 @@ const tagsTop = (state = [], action) => {
 	}
 };
 
-module.exports = tagsTop;
+export default tagsTop;

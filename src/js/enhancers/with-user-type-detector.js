@@ -1,7 +1,7 @@
 'use strict';
 
-const React = require('react');
-const hoistNonReactStatic = require('hoist-non-react-statics');
+import React from 'react';
+import hoistNonReactStatic from 'hoist-non-react-statics';
 
 const withUserTypeDetection = Component => {
 	class EnhancedComponent extends React.PureComponent {
@@ -72,4 +72,4 @@ const withUserTypeDetection = Component => {
 }
 
 
-module.exports = withUserTypeDetection;
+export default withUserTypeDetection;

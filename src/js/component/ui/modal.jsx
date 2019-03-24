@@ -1,9 +1,9 @@
 'use strict';
 
-const React = require('react');
-const PropTypes = require('prop-types');
-const ReactModal = require('react-modal');
-const cx = require('classnames');
+import React from 'react';
+import PropTypes from 'prop-types';
+import ReactModal from 'react-modal';
+import cx from 'classnames';
 var initialPadding;
 
 class Modal extends React.PureComponent {
@@ -76,4 +76,4 @@ class Modal extends React.PureComponent {
 	}
 }
 
-module.exports = Modal;
+export default Modal;

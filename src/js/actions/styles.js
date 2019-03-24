@@ -1,10 +1,6 @@
 'use strict';
 
-const {
-	REQUEST_FETCH_STYLES,
-	RECEIVE_FETCH_STYLES,
-	ERROR_FETCH_STYLES,
-} = require('../constants/actions');
+import { REQUEST_FETCH_STYLES, RECEIVE_FETCH_STYLES, ERROR_FETCH_STYLES } from '../constants/actions';
 
 const fetchStyles = () => {
 	return async (dispatch, getState) => {
@@ -50,4 +46,4 @@ const fetchStyles = () => {
 	}
 }
 
-module.exports = { fetchStyles };
+export { fetchStyles };

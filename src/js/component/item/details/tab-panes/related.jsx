@@ -1,9 +1,9 @@
 'use strict';
 
-const React = require('react');
-const cx = require('classnames');
-const Relations = require('../../../relations');
-const Spinner = require('../../../ui/spinner');
+import React from 'react';
+import cx from 'classnames';
+import Relations from '../../../relations';
+import Spinner from '../../../ui/spinner';
 
 class RelatedTabPane extends React.PureComponent {
 	componentDidUpdate({ prevItem, wasActive }) {
@@ -45,4 +45,4 @@ class RelatedTabPane extends React.PureComponent {
 	}
 }
 
-module.exports = RelatedTabPane;
+export default RelatedTabPane;

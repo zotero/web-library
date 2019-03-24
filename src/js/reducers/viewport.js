@@ -1,6 +1,6 @@
 'use strict';
 
-const { TRIGGER_RESIZE_VIEWPORT } = require('../constants/actions.js');
+import { TRIGGER_RESIZE_VIEWPORT } from '../constants/actions.js';
 
 const defaultState = {
 	width: 0, height: 0, xs: false, sm: false, md: false, lg: false,
@@ -23,4 +23,4 @@ const viewport = (state = defaultState, action) => {
 	}
 };
 
-module.exports = viewport;
+export default viewport;

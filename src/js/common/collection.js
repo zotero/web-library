@@ -1,7 +1,7 @@
 'use strict';
 
-const memoize = require('memoize-one');
-const deepEqual = require('deep-equal');
+import memoize from 'memoize-one';
+import deepEqual from 'deep-equal';
 
 const _makeChildMap = collections => {
 	return collections.reduce((aggr, col) => {
@@ -18,4 +18,4 @@ const _makeChildMap = collections => {
 
 const makeChildMap = memoize(_makeChildMap, deepEqual);
 
-module.exports = { makeChildMap };
+export { makeChildMap };

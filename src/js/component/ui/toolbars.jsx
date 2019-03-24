@@ -1,8 +1,8 @@
 'use strict';
 
-const React = require('react');
-const PropTypes = require('prop-types');
-const cx = require('classnames');
+import React from 'react';
+import PropTypes from 'prop-types';
+import cx from 'classnames';
 
 const Toolbar = ({ children, className }) => (
 	<div className={cx('toolbar', className)}>
@@ -26,7 +26,7 @@ ToolGroup.propTypes = {
 };
 
 
-module.exports = {
+export {
 	Toolbar,
 	ToolGroup
 };

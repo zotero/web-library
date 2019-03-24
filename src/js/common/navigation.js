@@ -52,4 +52,4 @@ const makePath = ({ library = null, collection = null, items = null, trash = fal
 	return '/' + path.join('/');
 }
 
-module.exports = { makePath, getQueryFromParams, tagsFromUrlPart, tagsToUrlPart };
+export { makePath, getQueryFromParams, tagsFromUrlPart, tagsToUrlPart };

@@ -1,21 +1,18 @@
 'use strict';
 
-const React = require('react');
-const ReactDOM = require('react-dom');
-const PropTypes = require('prop-types');
-const ReduxThunk = require('redux-thunk').default;
-const ReduxAsyncQueue = require('redux-async-queue').default;
-const { createStore, applyMiddleware, compose } = require('redux');
-const { Provider, connect } = require('react-redux');
-const withUserTypeDetection = require('../enhancers/with-user-type-detector');
-// const createHistory = require('history/createBrowserHistory');
-// const { Route } = require('react-router');
-const { createBrowserHistory } = require('history');
-const { routerMiddleware, ConnectedRouter } = require('connected-react-router');
-const { BrowserRouter, Route, Switch } = require('react-router-dom');
-// const deepEqual = require('deep-equal');
-const createReducers = require('../reducers');
-const {
+import React from 'react';
+import ReactDOM from 'react-dom';
+import PropTypes from 'prop-types';
+import ReduxThunk from 'redux-thunk';
+import ReduxAsyncQueue from 'redux-async-queue';
+import { createStore, applyMiddleware, compose } from 'redux';
+import { Provider, connect } from 'react-redux';
+import withUserTypeDetection from '../enhancers/with-user-type-detector';
+import { createBrowserHistory } from 'history';
+import { routerMiddleware, ConnectedRouter } from 'connected-react-router';
+import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import createReducers from '../reducers';
+import {
 	configureApi,
 	fetchGroups,
 	fetchLibrarySettings,
@@ -23,15 +20,19 @@ const {
 	preferencesLoad,
 	toggleTransitions,
 	triggerResizeViewport,
-} = require('../actions');
-const routes = require('../routes');
-const Library = require('../component/library');
-const defaults = require('../constants/defaults');
-const { ViewportContext, UserContext } = require('../context');
-const { DragDropContext } = require('react-dnd');
-const { default: MultiBackend } = require('react-dnd-multi-backend');
-const HTML5toTouch = require('react-dnd-multi-backend/lib/HTML5toTouch').default;
-const CustomDragLayer = require('../component/drag-layer');
+} from '../actions';
+import routes from '../routes';
+import Library from '../component/library';
+import {
+	libraries as defaultLibraries,
+	apiConfig as defaultApiConfig,
+	stylesSourceUrl as defaultStylesSourceUrl
+} from '../constants/defaults';
+import { ViewportContext, UserContext } from '../context';
+import { DragDropContext } from 'react-dnd';
+import MultiBackend from 'react-dnd-multi-backend';
+import HTML5toTouch from 'react-dnd-multi-backend/lib/HTML5toTouch';
+import CustomDragLayer from '../component/drag-layer';
 
  //@TODO: ensure this doesn't affect prod build
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
@@ -95,11 +96,11 @@ class LibraryContainer extends React.PureComponent {
 	}
 
 	static init(element, config = {}) {
-		const libraries = { ...defaults.libraries, ...config.libraries };
-		const apiConfig = { ...defaults.apiConfig, ...config.apiConfig };
-		const { apiKey, stylesSourceUrl, userId } = {
-			...defaults, ...config
-		};
+		const libraries = { ...defaultLibraries, ...config.libraries };
+		const apiConfig = { ...defaultApiConfig, ...config.apiConfig };
+		const stylesSourceUrl = defaultStylesSourceUrl || config.stylesSourceUrl;
+		const { apiKey, userId } = config;
+
 		if(element) {
 			var store = createStore(
 				createReducers(history),
@@ -167,4 +168,4 @@ const mapStateToProps = state => {
 
 const LibraryContainerWrapped = withUserTypeDetection(connect(mapStateToProps)(LibraryContainer));
 
-module.exports = LibraryContainerWrapped;
+export default LibraryContainerWrapped;

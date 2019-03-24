@@ -1,16 +1,16 @@
 'use strict';
 
-const React = require('react');
-const PropTypes = require('prop-types');
-const cx = require('classnames');
-const Field = require('./field');
-const Editable = require('../editable');
-const Button = require('../ui/button');
-const Icon = require('../ui/icon');
-const Input = require('./input');
-const SelectInput = require('./select');
-const format = require('../../common/format');
-const Modal = require('../ui/modal');
+import React from 'react';
+import PropTypes from 'prop-types';
+import cx from 'classnames';
+import Field from './field';
+import Editable from '../editable';
+import Button from '../ui/button';
+import Icon from '../ui/icon';
+import Input from './input';
+import SelectInput from './select';
+import { creator as formatCreator } from '../../common/format';
+import Modal from '../ui/modal';
 
 class CreatorField extends React.PureComponent {
 	constructor(props) {
@@ -318,7 +318,7 @@ class CreatorField extends React.PureComponent {
 						device.shouldUseModalCreatorField ? (
 							<div className="truncate">
 								{ isVirtual ? this.isDual ? 'last name, first name' : 'name' :
-									format.creator(creator)
+									formatCreator(creator)
 								}
 							</div>
 						) : (
@@ -386,4 +386,4 @@ class CreatorField extends React.PureComponent {
 	};
 }
 
-module.exports = CreatorField;
+export default CreatorField;

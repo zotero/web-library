@@ -1,9 +1,9 @@
 'use strict';
 
-const React = require('react');
-const withDevice = require('../enhancers/with-device');
-const withEditMode = require('../enhancers/with-edit-mode');
-const Button = require('./ui/button');
+import React from 'react';
+import withDevice from '../enhancers/with-device';
+import withEditMode from '../enhancers/with-edit-mode';
+import Button from './ui/button';
 
 
 class EditToggleButton extends React.PureComponent {
@@ -24,4 +24,4 @@ class EditToggleButton extends React.PureComponent {
 	}
 }
 
-module.exports = withEditMode(withDevice(EditToggleButton));
+export default withEditMode(withDevice(EditToggleButton));

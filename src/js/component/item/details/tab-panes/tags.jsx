@@ -1,8 +1,8 @@
 'use strict';
 
-const React = require('react');
-const cx = require('classnames');
-const Tags = require('../../../tags');
+import React from 'react';
+import cx from 'classnames';
+import Tags from '../../../tags';
 
 class TagsTabPane extends React.PureComponent {
 	render() {
@@ -26,4 +26,4 @@ class TagsTabPane extends React.PureComponent {
 	}
 }
 
-module.exports = TagsTabPane;
+export default TagsTabPane;

@@ -1,9 +1,7 @@
 'use strict';
 
-const { get } = require('../../utils');
-const {
-	RECEIVE_LIBRARY_SETTINGS,
-} = require('../../constants/actions');
+import { get } from '../../utils';
+import { RECEIVE_LIBRARY_SETTINGS } from '../../constants/actions';
 
 const tagsFromSettings = (state = [], action) => {
 	switch(action.type) {
@@ -14,4 +12,4 @@ const tagsFromSettings = (state = [], action) => {
 	}
 };
 
-module.exports = tagsFromSettings;
+export default tagsFromSettings;

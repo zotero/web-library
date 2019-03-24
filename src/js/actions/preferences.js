@@ -1,11 +1,8 @@
 'use strict';
 
-const { JSONTryParse } = require('../utils');
-const {
-	PREFERENCES_LOAD,
-	PREFERENCE_CHANGE,
-} = require('../constants/actions');
-const { preferences: defaultPreferences } = require('../constants/defaults');
+import { JSONTryParse } from '../utils';
+import { PREFERENCES_LOAD, PREFERENCE_CHANGE } from '../constants/actions';
+import { preferences as defaultPreferences } from '../constants/defaults';
 
 const preferencesLoad = () => {
 	const preferences = {
@@ -35,7 +32,7 @@ const preferenceChange = (name, value) => {
 	};
 }
 
-module.exports = {
+export {
 	preferencesLoad,
 	preferenceChange,
 };

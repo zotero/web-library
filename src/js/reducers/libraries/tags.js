@@ -1,12 +1,13 @@
 'use strict';
 
-const { get, indexByGeneratedKey } = require('../../utils');
-const {
-	RECEIVE_LIBRARY_SETTINGS,
-	RECEIVE_TAGS_IN_COLLECTION,
-	RECEIVE_TAGS_IN_LIBRARY,
-	RECEIVE_TAGS_FOR_ITEM,
-} = require('../../constants/actions');
+import { get, indexByGeneratedKey } from '../../utils';
+
+import {
+    RECEIVE_LIBRARY_SETTINGS,
+    RECEIVE_TAGS_IN_COLLECTION,
+    RECEIVE_TAGS_IN_LIBRARY,
+    RECEIVE_TAGS_FOR_ITEM,
+} from '../../constants/actions';
 
 const tags = (state = {}, action) => {
 	switch(action.type) {
@@ -36,4 +37,4 @@ const tags = (state = {}, action) => {
 	}
 };
 
-module.exports = tags;
+export default tags;

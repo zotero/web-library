@@ -1,12 +1,12 @@
 'use strict';
 
-const React = require('react');
-const cx = require('classnames');
-const Editable = require('../editable');
-const Field = require('../form/field');
-const Input = require('../form/input');
-const SelectInput = require('../form/select');
-const TextAreaInput = require('../form/text-area');
+import React from 'react';
+import cx from 'classnames';
+import Editable from '../editable';
+import Field from '../form/field';
+import Input from '../form/input';
+import SelectInput from '../form/select';
+import TextAreaInput from '../form/text-area';
 
 const pickInputComponent = field => {
 	switch(field.key) {
@@ -151,4 +151,4 @@ class BoxField extends React.PureComponent {
 	}
 }
 
-module.exports = BoxField;
+export default BoxField;

@@ -1,23 +1,25 @@
 'use strict';
 
-const api = require('zotero-api-client')().api;
-const {
-	REQUEST_COLLECTIONS_IN_LIBRARY,
-	RECEIVE_COLLECTIONS_IN_LIBRARY,
-	ERROR_COLLECTIONS_IN_LIBRARY,
-	REQUEST_CREATE_COLLECTION,
-	RECEIVE_CREATE_COLLECTION,
-	ERROR_CREATE_COLLECTION,
-	PRE_UPDATE_COLLECTION,
-	REQUEST_UPDATE_COLLECTION,
-	RECEIVE_UPDATE_COLLECTION,
-	ERROR_UPDATE_COLLECTION,
-	REQUEST_DELETE_COLLECTION,
-	RECEIVE_DELETE_COLLECTION,
-	ERROR_DELETE_COLLECTION,
-} = require('../constants/actions');
-const queue = require('./queue');
-const { get } = require('../utils');
+import api from 'zotero-api-client';
+
+import {
+    REQUEST_COLLECTIONS_IN_LIBRARY,
+    RECEIVE_COLLECTIONS_IN_LIBRARY,
+    ERROR_COLLECTIONS_IN_LIBRARY,
+    REQUEST_CREATE_COLLECTION,
+    RECEIVE_CREATE_COLLECTION,
+    ERROR_CREATE_COLLECTION,
+    PRE_UPDATE_COLLECTION,
+    REQUEST_UPDATE_COLLECTION,
+    RECEIVE_UPDATE_COLLECTION,
+    ERROR_UPDATE_COLLECTION,
+    REQUEST_DELETE_COLLECTION,
+    RECEIVE_DELETE_COLLECTION,
+    ERROR_DELETE_COLLECTION,
+} from '../constants/actions';
+
+import queue from './queue';
+import { get } from '../utils';
 
 const fetchCollections = (libraryKey, { start = 0, limit = 50, sort = 'dateModified', direction = "desc" } = {}) => {
 	return async (dispatch, getState) => {
@@ -214,7 +216,7 @@ const deleteCollection = (collection, libraryKey) => {
 	};
 }
 
-module.exports = {
+export {
 	fetchCollections,
 	createCollection,
 	updateCollection,

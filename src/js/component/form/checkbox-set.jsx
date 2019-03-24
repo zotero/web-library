@@ -1,9 +1,9 @@
 /* eslint-disable react/no-deprecated */
 'use strict';
 
-const React = require('react');
-const PropTypes = require('prop-types');
-const { noop } = require('../../utils');
+import React from 'react';
+import PropTypes from 'prop-types';
+import { noop } from '../../utils';
 
 
 class CheckboxSet extends React.PureComponent {
@@ -46,4 +46,4 @@ class CheckboxSet extends React.PureComponent {
 	};
 }
 
-module.exports = CheckboxSet;
+export default CheckboxSet;

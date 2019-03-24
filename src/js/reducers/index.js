@@ -1,22 +1,26 @@
 'use strict';
 
-const { combineReducers } = require('redux');
-const { connectRouter } = require('connected-react-router');
+import { combineReducers } from 'redux';
+import { connectRouter } from 'connected-react-router';
 
-module.exports = history => combineReducers({
-	collectionCountByLibrary: require('./collection-count-by-library'),
-	config: require('./config'),
-	current: require('./current'),
-	fetching: require('./fetching'),
-	groups: require('./groups'),
-	itemsPublications: require('./items-publications'),
-	libraries: require('./libraries'),
-	meta: require('./meta'),
-	modal: require('./modal'),
-	preferences: require('./preferences'),
-	query: require('./query'),
-	router: connectRouter(history),
-	styles: require('./styles'),
-	tagCountByLibrary: require('./tag-count-by-library'),
-	viewport: require('./viewport'),
+import collectionCountByLibrary from './collection-count-by-library';
+import config from './config';
+import current from './current';
+import fetching from './fetching';
+import groups from './groups';
+import itemsPublications from './items-publications';
+import libraries from './libraries';
+import meta from './meta';
+import modal from './modal';
+import preferences from './preferences';
+import query from './query';
+import styles from './styles';
+import tagCountByLibrary from './tag-count-by-library';
+import viewport from './viewport';
+
+export default history => combineReducers({
+	collectionCountByLibrary, config, current, fetching, groups,
+	itemsPublications, libraries, meta, modal, preferences, query,
+	router: connectRouter(history), styles, tagCountByLibrary,
+	viewport,
 });

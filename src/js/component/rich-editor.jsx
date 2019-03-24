@@ -1,16 +1,18 @@
 /* eslint-disable react/no-deprecated */
 'use strict';
 
-const React = require('react');
-const cx = require('classnames');
-if(typeof window === 'object' && process.env.NODE_ENV !== 'test') {
-	window.tinymce = require('tinymce');
-	require('tinymce/themes/modern');
-}
-const TinyMCE = require('react-tinymce');
-const PropTypes = require('prop-types');
-const { Toolbar, ToolGroup } = require('./ui/toolbars');
-const Button = require('./ui/button');
+import React from 'react';
+import cx from 'classnames';
+
+import tinymce from 'tinymce';
+import 'tinymce/themes/modern';
+
+import TinyMCE from 'react-tinymce';
+import PropTypes from 'prop-types';
+import { Toolbar, ToolGroup } from './ui/toolbars';
+import Button from './ui/button';
+
+window.tinymce = tinymce;
 
 class RichEditor extends React.PureComponent {
 	componentWillReceiveProps(props) {
@@ -122,4 +124,4 @@ RichEditor.propTypes = {
 
 RichEditor.defaultProps = {};
 
-module.exports = RichEditor;
+export default RichEditor;

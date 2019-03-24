@@ -1,11 +1,7 @@
 'use strict';
 
-const api = require('zotero-api-client')().api;
-const {
-	REQUEST_GROUPS,
-	RECEIVE_GROUPS,
-	ERROR_GROUPS,
-} = require('../constants/actions');
+import api from 'zotero-api-client';
+import { REQUEST_GROUPS, RECEIVE_GROUPS, ERROR_GROUPS } from '../constants/actions';
 
 
 const fetchGroups = libraryKey => {
@@ -43,5 +39,5 @@ const fetchGroups = libraryKey => {
 	};
 };
 
-module.exports = { fetchGroups };
+export { fetchGroups };
 

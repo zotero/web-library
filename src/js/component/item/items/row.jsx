@@ -1,10 +1,10 @@
 'use strict';
 
-const React = require('react');
-const PropTypes = require('prop-types');
-const { DragSource } = require('react-dnd');
-const { getEmptyImage } = require('react-dnd-html5-backend');
-const { ITEM } = require('../../../constants/dnd');
+import React from 'react';
+import PropTypes from 'prop-types';
+import { DragSource } from 'react-dnd';
+import { getEmptyImage } from 'react-dnd-html5-backend';
+import { ITEM } from '../../../constants/dnd';
 
 const dndSpec = {
 	beginDrag: ({ selectedItemKeys, rowData }) => {
@@ -102,4 +102,4 @@ class Row extends React.PureComponent {
 }
 
 
-module.exports = Row;
+export default Row;

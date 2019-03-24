@@ -1,7 +1,6 @@
 'use strict';
 
-const { REQUEST_FETCH_STYLES, RECEIVE_FETCH_STYLES,
-	ERROR_FETCH_STYLES } = require('../constants/actions.js');
+import { REQUEST_FETCH_STYLES, RECEIVE_FETCH_STYLES, ERROR_FETCH_STYLES } from '../constants/actions.js';
 const defaultState = { isFetching: false , stylesData: null }
 
 const styles = (state = defaultState, action) => {
@@ -20,4 +19,4 @@ const styles = (state = defaultState, action) => {
 	}
 };
 
-module.exports = styles;
+export default styles;

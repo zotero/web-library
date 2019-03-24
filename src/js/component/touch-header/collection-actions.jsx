@@ -1,15 +1,14 @@
 'use strict';
 
-const React = require('react');
-const PropTypes = require('prop-types');
-
-const { noop } = require('../../utils');
-const Icon = require('../../component/ui/icon');
-const Dropdown = require('reactstrap/lib/Dropdown').default;
-const DropdownToggle = require('reactstrap/lib/DropdownToggle').default;
-const DropdownMenu = require('reactstrap/lib/DropdownMenu').default;
-const DropdownItem = require('reactstrap/lib/DropdownItem').default;
-const { COLLECTION_ADD } = require('../../constants/modals');
+import React from 'react';
+import PropTypes from 'prop-types';
+import { noop } from '../../utils';
+import Icon from '../../component/ui/icon';
+import Dropdown from 'reactstrap/lib/Dropdown';
+import DropdownToggle from 'reactstrap/lib/DropdownToggle';
+import DropdownMenu from 'reactstrap/lib/DropdownMenu';
+import DropdownItem from 'reactstrap/lib/DropdownItem';
+import { COLLECTION_ADD } from '../../constants/modals';
 
 class CollectionActions extends React.PureComponent {
 	state = {
@@ -73,4 +72,4 @@ class CollectionActions extends React.PureComponent {
 	}
 }
 
-module.exports = CollectionActions;
+export default CollectionActions;

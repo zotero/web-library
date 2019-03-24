@@ -1,12 +1,11 @@
 'use strict';
 
-const React = require('react');
-const PropTypes = require('prop-types');
-
-const Modal = require('../ui/modal');
-const Button = require('../ui/button');
-const Input = require('../form/input');
-const Icon = require('../ui/icon');
+import React from 'react';
+import PropTypes from 'prop-types';
+import Modal from '../ui/modal';
+import Button from '../ui/button';
+import Input from '../form/input';
+import Icon from '../ui/icon';
 const defaultState = { name: ''};
 
 class CollectionAddModal extends React.PureComponent {
@@ -111,4 +110,4 @@ class CollectionAddModal extends React.PureComponent {
 	}
 }
 
-module.exports = CollectionAddModal;
+export default CollectionAddModal;

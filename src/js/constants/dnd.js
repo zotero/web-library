@@ -1,6 +1,4 @@
 'use strict';
 
-module.exports = Object.freeze({
-	'ITEM': 'ITEM',
-	'CREATOR': 'CREATOR'
-});
+export const ITEM = 'ITEM';
+export const CREATOR = 'CREATOR';

@@ -1,20 +1,20 @@
 'use strict';
 
-const React = require('react');
-const PropTypes = require('prop-types');
-const cx = require('classnames');
-const paramCase = require('param-case');
-const { without, resizeVisibleColumns } = require('../../../utils');
-const AutoSizer = require('react-virtualized/dist/commonjs/AutoSizer').default;
-const InfiniteLoader = require('react-virtualized/dist/commonjs/InfiniteLoader').default;
-const Table = require('react-virtualized/dist/commonjs/Table').default;
-const Column = require('react-virtualized/dist/commonjs/Table/Column').default;
-const defaultHeaderRowRenderer = require('react-virtualized/dist/commonjs/Table/defaultHeaderRowRenderer').default;
-const SortIndicator = require('react-virtualized/dist/commonjs/Table//SortIndicator').default;
-const Icon = require('../../ui/icon');
-const Row = require('./row');
-const Spinner = require('../../ui/spinner');
-const { columnMinWidthFraction } = require('../../../constants/defaults');
+import React from 'react';
+import PropTypes from 'prop-types';
+import cx from 'classnames';
+import paramCase from 'param-case';
+import { resizeVisibleColumns } from '../../../utils';
+import AutoSizer from 'react-virtualized/dist/commonjs/AutoSizer';
+import InfiniteLoader from 'react-virtualized/dist/commonjs/InfiniteLoader';
+import Table from 'react-virtualized/dist/commonjs/Table';
+import Column from 'react-virtualized/dist/commonjs/Table/Column';
+import defaultHeaderRowRenderer from 'react-virtualized/dist/commonjs/Table/defaultHeaderRowRenderer';
+import SortIndicator from 'react-virtualized/dist/commonjs/Table//SortIndicator';
+import Icon from '../../ui/icon';
+import Row from './row';
+import Spinner from '../../ui/spinner';
+import { columnMinWidthFraction } from '../../../constants/defaults';
 
 class ItemsTable extends React.PureComponent {
 	constructor(props) {
@@ -93,7 +93,7 @@ class ItemsTable extends React.PureComponent {
 					]);
 				} else {
 					this.props.onItemsSelect(
-						without(this.props.selectedItemKeys, this.props.items[index].key)
+						this.props.selectedItemKeys.filter(k => k !== this.props.items[index].key)
 					);
 				}
 			} else {
@@ -138,7 +138,7 @@ class ItemsTable extends React.PureComponent {
 					]);
 				} else {
 					this.props.onItemsSelect(
-						without(this.props.selectedItemKeys, this.props.items[index].key)
+						this.props.selectedItemKeys.filter(k => k !== this.props.items[index].key)
 					);
 				}
 			} else {
@@ -548,4 +548,4 @@ ItemsTable.defaultProps = {
 	preferences: {}
 };
 
-module.exports = ItemsTable;
+export default ItemsTable;

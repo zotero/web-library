@@ -1,10 +1,10 @@
 'use strict';
 
-const React = require('react');
-const PropTypes = require('prop-types');
-const cx = require('classnames');
-const Creators = require('../form/creators');
-const BoxField = require('./boxfield');
+import React from 'react';
+import PropTypes from 'prop-types';
+import cx from 'classnames';
+import Creators from '../form/creators';
+import BoxField from './boxfield';
 
 class ItemBox extends React.PureComponent {
 	constructor(props) {
@@ -125,4 +125,4 @@ ItemBox.propTypes = {
 	onSave: PropTypes.func
 };
 
-module.exports = ItemBox;
+export default ItemBox;

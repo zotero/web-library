@@ -1,16 +1,14 @@
 'use strict';
 
-module.exports = {
-	...(require('./collections')),
-	...(require('./groups')),
-	...(require('./init')),
-	...(require('./items-export')),
-	...(require('./items-read')),
-	...(require('./items-write')),
-	...(require('./library')),
-	...(require('./meta')),
-	...(require('./preferences')),
-	...(require('./styles')),
-	...(require('./tags')),
-	...(require('./triggers')),
-}
+export * from "./collections";
+export * from "./groups";
+export * from "./init";
+export * from "./items-export";
+export * from "./items-read";
+export * from "./items-write";
+export * from "./library";
+export * from "./meta";
+export * from "./preferences";
+export * from "./styles";
+export * from "./tags";
+export * from "./triggers";

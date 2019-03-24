@@ -1,14 +1,14 @@
 'use strict';
 
-const React = require('react');
-const PropTypes = require('prop-types');
-const cx = require('classnames');
-const Icon = require('../ui/icon');
-const { DropTarget } = require('react-dnd');
-const { noop } = require('../../utils');
-const { ITEM } = require('../../constants/dnd');
-const { omit } = require('../../common/immutable');
-const { isTriggerEvent } = require('../../common/event');
+import React from 'react';
+import PropTypes from 'prop-types';
+import cx from 'classnames';
+import Icon from '../ui/icon';
+import { DropTarget } from 'react-dnd';
+import { noop } from '../../utils';
+import { ITEM } from '../../constants/dnd';
+import { omit } from '../../common/immutable';
+import { isTriggerEvent } from '../../common/event';
 
 const dndSpec = {
 	drop(props, monitor) {
@@ -151,4 +151,4 @@ class Node extends React.PureComponent {
 	}
 }
 
-module.exports = Node;
+export default Node;

@@ -1,16 +1,16 @@
 /* eslint-disable react/no-deprecated */
 'use strict';
 
-const React = require('react');
-const cx = require('classnames');
-const PropTypes = require('prop-types');
-const deepEqual = require('deep-equal');
-const { splice } = require('../../utils');
-const { removeKeys } = require('../../common/immutable')
-const CreatorField = require('./creator-field');
-const Button = require('../ui/button');
-const Icon = require('../ui/icon');
-const { enumerateObjects } = require('../../utils');
+import React from 'react';
+import cx from 'classnames';
+import PropTypes from 'prop-types';
+import deepEqual from 'deep-equal';
+import { splice } from '../../utils';
+import { removeKeys } from '../../common/immutable';
+import CreatorField from './creator-field';
+import Button from '../ui/button';
+import Icon from '../ui/icon';
+import { enumerateObjects } from '../../utils';
 
 class Creators extends React.PureComponent {
 	constructor(props) {
@@ -225,4 +225,4 @@ class Creators extends React.PureComponent {
 	};
 }
 
-module.exports = Creators;
+export default Creators;

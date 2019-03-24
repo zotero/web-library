@@ -1,10 +1,10 @@
 'use strict';
 
-const React = require('react');
-const { connect } = require('react-redux');
-const { pick } = require('../common/immutable');
-const withItemsActions = require('../enhancers/with-items-actions');
-const TouchFooter = require('../component/touch-footer');
+import React from 'react';
+import { connect } from 'react-redux';
+import { pick } from '../common/immutable';
+import withItemsActions from '../enhancers/with-items-actions';
+import TouchFooter from '../component/touch-footer';
 
 
 class TouchFooterContainer extends React.PureComponent {
@@ -18,6 +18,6 @@ const mapStateToProps = state => {
 }
 
 
-module.exports = withItemsActions(
+export default withItemsActions(
 	connect(mapStateToProps)(TouchFooterContainer)
 );

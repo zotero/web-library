@@ -1,14 +1,14 @@
 'use strict';
 
-const React = require('react');
-const PropTypes = require('prop-types');
-const { connect } = require('react-redux');
-const { push } = require('connected-react-router');
-const { bindActionCreators } = require('redux');
-const { deduplicateByKey, get } = require('../utils');
-const TagSelector = require('../component/tag-selector.jsx');
-const { fetchTagsInCollection, fetchTagsInLibrary } = require('../actions');
-const { makePath } = require('../common/navigation');
+import React from 'react';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { push } from 'connected-react-router';
+import { bindActionCreators } from 'redux';
+import { deduplicateByKey, get } from '../utils';
+import TagSelector from '../component/tag-selector.jsx';
+import { fetchTagsInCollection, fetchTagsInLibrary } from '../actions';
+import { makePath } from '../common/navigation';
 
 class TagSelectorContainer extends React.PureComponent {
 	state = {
@@ -144,4 +144,4 @@ const mapStateToProps = state => {
 //@TODO: bind all action creators
 const mapDispatchToProps = dispatch => ({ dispatch, ...bindActionCreators({ push }, dispatch) });
 
-module.exports = connect(mapStateToProps, mapDispatchToProps)(TagSelectorContainer);
+export default connect(mapStateToProps, mapDispatchToProps)(TagSelectorContainer);

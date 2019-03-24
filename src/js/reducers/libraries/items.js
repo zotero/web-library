@@ -1,25 +1,26 @@
 'use strict';
 
-const {
-	RECEIVE_CREATE_ITEM,
-	RECEIVE_CREATE_ITEMS,
-	RECEIVE_DELETE_ITEM,
-	RECEIVE_DELETE_ITEMS,
-	RECEIVE_UPDATE_ITEM,
-	RECEIVE_CHILD_ITEMS,
-	RECEIVE_ITEMS_IN_COLLECTION,
-	RECEIVE_FETCH_ITEMS,
-	RECEIVE_TOP_ITEMS,
-	RECEIVE_TRASH_ITEMS,
-	RECEIVE_PUBLICATIONS_ITEMS,
-	RECEIVE_MOVE_ITEMS_TRASH,
-	RECEIVE_RECOVER_ITEMS_TRASH,
-	RECEIVE_ADD_ITEMS_TO_COLLECTION,
-	RECEIVE_REMOVE_ITEMS_FROM_COLLECTION,
-	RECEIVE_ITEMS_BY_QUERY,
-} = require('../../constants/actions.js');
-const { get, indexByKey } = require('../../utils');
-const { removeKeys } = require('../../common/immutable');
+import {
+    RECEIVE_CREATE_ITEM,
+    RECEIVE_CREATE_ITEMS,
+    RECEIVE_DELETE_ITEM,
+    RECEIVE_DELETE_ITEMS,
+    RECEIVE_UPDATE_ITEM,
+    RECEIVE_CHILD_ITEMS,
+    RECEIVE_ITEMS_IN_COLLECTION,
+    RECEIVE_FETCH_ITEMS,
+    RECEIVE_TOP_ITEMS,
+    RECEIVE_TRASH_ITEMS,
+    RECEIVE_PUBLICATIONS_ITEMS,
+    RECEIVE_MOVE_ITEMS_TRASH,
+    RECEIVE_RECOVER_ITEMS_TRASH,
+    RECEIVE_ADD_ITEMS_TO_COLLECTION,
+    RECEIVE_REMOVE_ITEMS_FROM_COLLECTION,
+    RECEIVE_ITEMS_BY_QUERY,
+} from '../../constants/actions.js';
+
+import { get, indexByKey } from '../../utils';
+import { removeKeys } from '../../common/immutable';
 
 const items = (state = {}, action) => {
 	switch(action.type) {
@@ -72,4 +73,4 @@ const items = (state = {}, action) => {
 	}
 };
 
-module.exports = items;
+export default items;

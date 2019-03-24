@@ -1,21 +1,31 @@
 'use strict';
 
-const React = require('react');
-const PropTypes = require('prop-types');
-const { connect } = require('react-redux');
-const { push } = require('connected-react-router');
-const hoistNonReactStatic = require('hoist-non-react-statics');
-const { saveAs } = require('file-saver');
-const { fetchItemTemplate, moveToTrash, deleteItems, recoverFromTrash,
-	removeFromCollection, createItem, exportItems, toggleModal,
-	triggerSelectMode } = require('../actions');
-const { get } = require('../utils');
-const { makePath } = require('../common/navigation');
-const { omit } = require('../common/immutable');
-const exportFormats = require('../constants/export-formats');
-const { BIBLIOGRAPHY, COLLECTION_SELECT, EXPORT,
-	NEW_ITEM } = require('../constants/modals');
+import React from 'react';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { push } from 'connected-react-router';
+import hoistNonReactStatic from 'hoist-non-react-statics';
+import fileSaver from 'file-saver';
 
+import {
+    fetchItemTemplate,
+    moveToTrash,
+    deleteItems,
+    recoverFromTrash,
+    removeFromCollection,
+    createItem,
+    exportItems,
+    toggleModal,
+    triggerSelectMode,
+} from '../actions';
+
+import { get } from '../utils';
+import { makePath } from '../common/navigation';
+import { omit } from '../common/immutable';
+import exportFormats from '../constants/export-formats';
+import { BIBLIOGRAPHY, COLLECTION_SELECT, EXPORT, NEW_ITEM } from '../constants/modals';
+
+const { saveAs } = fileSaver;
 
 const withItemsActions = Component => {
 	class EnhancedComponent extends React.PureComponent {
@@ -176,4 +186,4 @@ const mapDispatchToProps = { fetchItemTemplate, moveToTrash, deleteItems,
 	recoverFromTrash, removeFromCollection, createItem, exportItems,
 	toggleModal, triggerSelectMode, push };
 
-module.exports = withItemsActions;
+export default withItemsActions;

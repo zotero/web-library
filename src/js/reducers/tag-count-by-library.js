@@ -1,8 +1,6 @@
 'use strict';
 
-const {
-	RECEIVE_TAGS_IN_LIBRARY,
-} = require('../constants/actions.js');
+import { RECEIVE_TAGS_IN_LIBRARY } from '../constants/actions.js';
 
 const tagCountByLibrary = (state = {}, action) => {
 	switch(action.type) {
@@ -16,4 +14,4 @@ const tagCountByLibrary = (state = {}, action) => {
 	}
 };
 
-module.exports = tagCountByLibrary;
+export default tagCountByLibrary;

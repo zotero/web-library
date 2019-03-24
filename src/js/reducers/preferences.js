@@ -1,8 +1,7 @@
-const defaults = require('../constants/defaults');
+import { preferences as defaultPreferences } from '../constants/defaults';
+import { PREFERENCE_CHANGE, PREFERENCES_LOAD } from '../constants/actions.js';
 
-const { PREFERENCE_CHANGE, PREFERENCES_LOAD } = require('../constants/actions.js');
-
-const preferences = (state = { ...defaults.preferences }, action) => {
+const preferences = (state = { defaultPreferences }, action) => {
 	switch(action.type) {
 		case PREFERENCES_LOAD:
 			return action.preferences;
@@ -13,4 +12,4 @@ const preferences = (state = { ...defaults.preferences }, action) => {
 	}
 }
 
-module.exports = preferences;
+export default preferences;

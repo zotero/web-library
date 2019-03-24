@@ -1,10 +1,10 @@
 'use strict';
 
-const React = require('react');
-const PropTypes = require('prop-types');
-const TagList = require('./tag-selector/tag-list');
-const Input = require('./form/input');
-const Spinner = require('./ui/spinner');
+import React from 'react';
+import PropTypes from 'prop-types';
+import TagList from './tag-selector/tag-list';
+import Input from './form/input';
+import Spinner from './ui/spinner';
 
 class TagSelector extends React.PureComponent {
 	componentDidUpdate({ searchString: prevSearchString, sourceTags: { length: prevTagsLength } }) {
@@ -64,4 +64,4 @@ TagSelector.defaultProps = {
 	onSettings: () => Promise.resolve()
 };
 
-module.exports = TagSelector;
+export default TagSelector;

@@ -1,13 +1,14 @@
 'use strict';
 
-const { indexByKey } = require('../../utils');
-const {
-	RECEIVE_TAGS_FOR_ITEM,
-	RECEIVE_ITEMS_IN_COLLECTION,
-	RECEIVE_FETCH_ITEMS,
-	RECEIVE_TOP_ITEMS,
-	RECEIVE_TRASH_ITEMS
-} = require('../../constants/actions');
+import { indexByKey } from '../../utils';
+
+import {
+    RECEIVE_TAGS_FOR_ITEM,
+    RECEIVE_ITEMS_IN_COLLECTION,
+    RECEIVE_FETCH_ITEMS,
+    RECEIVE_TOP_ITEMS,
+    RECEIVE_TRASH_ITEMS,
+} from '../../constants/actions';
 
 const tagCountByCollection = (state = {}, action) => {
 	switch(action.type) {
@@ -29,4 +30,4 @@ const tagCountByCollection = (state = {}, action) => {
 	}
 };
 
-module.exports = tagCountByCollection;
+export default tagCountByCollection;

@@ -1,10 +1,10 @@
 'use strict';
 
-const cx = require('classnames');
-const Icon = require('./icon');
-const PropTypes = require('prop-types');
-const React = require('react');
-const { noop } = require('../../utils');
+import cx from 'classnames';
+import Icon from './icon';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { noop } from '../../utils';
 
 class Button extends React.PureComponent {
 	render() {
@@ -38,4 +38,4 @@ class Button extends React.PureComponent {
 	}
 }
 
-module.exports = Button;
+export default Button;

@@ -1,14 +1,13 @@
 'use strict';
 
-const React = require('react');
-const PropTypes = require('prop-types');
-const cx = require('classnames');
-
-const EditableContent = require('./editable/content');
-const Input = require('./form/input');
-const TextAreaInput = require('./form/text-area');
-const SelectInput = require('./form/select');
-const { noop } = require('../utils');
+import React from 'react';
+import PropTypes from 'prop-types';
+import cx from 'classnames';
+import EditableContent from './editable/content';
+import Input from './form/input';
+import TextAreaInput from './form/text-area';
+import SelectInput from './form/select';
+import { noop } from '../utils';
 
 class Editable extends React.PureComponent {
 	get isActive() {
@@ -86,4 +85,4 @@ class Editable extends React.PureComponent {
 }
 
 
-module.exports = Editable;
+export default Editable;

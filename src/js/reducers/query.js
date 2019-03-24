@@ -1,16 +1,18 @@
 'use strict';
 
-const { populateItemKeys, sortItemKeysOrClear } = require('../common/reducers');
-const deepEqual = require('deep-equal');
-const { LOCATION_CHANGE } = require('connected-react-router');
-const {
-	REQUEST_ITEMS_BY_QUERY,
-	RECEIVE_ITEMS_BY_QUERY,
-	ERROR_ITEMS_BY_QUERY,
-	SORT_ITEMS
-} = require('../constants/actions.js');
-const { getParamsFromRoute } = require('../common/state');
-const { getQueryFromParams } = require('../common/navigation');
+import { populateItemKeys, sortItemKeysOrClear } from '../common/reducers';
+import deepEqual from 'deep-equal';
+import { LOCATION_CHANGE } from 'connected-react-router';
+
+import {
+    REQUEST_ITEMS_BY_QUERY,
+    RECEIVE_ITEMS_BY_QUERY,
+    ERROR_ITEMS_BY_QUERY,
+    SORT_ITEMS,
+} from '../constants/actions.js';
+
+import { getParamsFromRoute } from '../common/state';
+import { getQueryFromParams } from '../common/navigation';
 
 
 const defaultState = {
@@ -54,4 +56,4 @@ const query = (state = defaultState, action) => {
 	}
 };
 
-module.exports = query;
+export default query;

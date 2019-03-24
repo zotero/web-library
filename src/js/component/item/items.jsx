@@ -1,14 +1,13 @@
 'use strict';
 
-const React = require('react');
-const PropTypes = require('prop-types');
-const cx = require('classnames');
-
-const ItemsTableToolbar = require('./items/toolbar');
-const ItemsTable = require('./items/table');
-const ItemsList = require('./items/list');
-const TouchHeaderContainer = require('../../container/touch-header');
-const TouchFooterContainer = require('../../container/touch-footer');
+import React from 'react';
+import PropTypes from 'prop-types';
+import cx from 'classnames';
+import ItemsTableToolbar from './items/toolbar';
+import ItemsTable from './items/table';
+import ItemsList from './items/list';
+import TouchHeaderContainer from '../../container/touch-header';
+import TouchFooterContainer from '../../container/touch-footer';
 const PAGE_SIZE = 50;
 
 class Items extends React.PureComponent {
@@ -85,4 +84,4 @@ class Items extends React.PureComponent {
 	}
 }
 
-module.exports = Items;
+export default Items;

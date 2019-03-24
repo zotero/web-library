@@ -1,11 +1,11 @@
 'use strict';
 
-const React = require('react');
-const { connect } = require('react-redux');
-const { push } = require('connected-react-router');
-const hoistNonReactStatic = require('hoist-non-react-statics');
-const { triggerSelectMode } = require('../actions');
-const { makePath } = require('../common/navigation');
+import React from 'react';
+import { connect } from 'react-redux';
+import { push } from 'connected-react-router';
+import hoistNonReactStatic from 'hoist-non-react-statics';
+import { triggerSelectMode } from '../actions';
+import { makePath } from '../common/navigation';
 
 var withSelectMode = Component => {
 	class EnhancedComponent extends React.PureComponent {
@@ -44,4 +44,4 @@ const mapStateToProps = state => {
 		tags, view, itemKeys };
 }
 
-module.exports = withSelectMode;
+export default withSelectMode;

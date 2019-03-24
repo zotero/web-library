@@ -1,20 +1,20 @@
 'use strict';
 
-const { indexByKey } = require('../../utils');
-const { injectExtraItemKeys,filterItemKeys, populateItemKeys,
-	sortItemKeysOrClear } = require('../../common/reducers');
-const {
-	ERROR_TOP_ITEMS,
-	RECEIVE_CREATE_ITEM,
-	RECEIVE_CREATE_ITEMS,
-	RECEIVE_DELETE_ITEM,
-	RECEIVE_DELETE_ITEMS,
-	RECEIVE_MOVE_ITEMS_TRASH,
-	RECEIVE_RECOVER_ITEMS_TRASH,
-	RECEIVE_TOP_ITEMS,
-	REQUEST_TOP_ITEMS,
-	SORT_ITEMS,
-} = require('../../constants/actions.js');
+import { indexByKey } from '../../utils';
+import { injectExtraItemKeys, filterItemKeys, populateItemKeys, sortItemKeysOrClear } from '../../common/reducers';
+
+import {
+    ERROR_TOP_ITEMS,
+    RECEIVE_CREATE_ITEM,
+    RECEIVE_CREATE_ITEMS,
+    RECEIVE_DELETE_ITEM,
+    RECEIVE_DELETE_ITEMS,
+    RECEIVE_MOVE_ITEMS_TRASH,
+    RECEIVE_RECOVER_ITEMS_TRASH,
+    RECEIVE_TOP_ITEMS,
+    REQUEST_TOP_ITEMS,
+    SORT_ITEMS,
+} from '../../constants/actions.js';
 
 const itemsTop = (state = {}, action) => {
 	switch(action.type) {
@@ -63,4 +63,4 @@ const itemsTop = (state = {}, action) => {
 	}
 };
 
-module.exports = itemsTop;
+export default itemsTop;

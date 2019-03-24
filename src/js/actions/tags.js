@@ -1,18 +1,19 @@
 'use strict';
 
-const api = require('zotero-api-client')().api;
-const { get } = require('../utils');
-const {
-	REQUEST_TAGS_IN_COLLECTION,
-	RECEIVE_TAGS_IN_COLLECTION,
-	ERROR_TAGS_IN_COLLECTION,
-	REQUEST_TAGS_IN_LIBRARY,
-	RECEIVE_TAGS_IN_LIBRARY,
-	ERROR_TAGS_IN_LIBRARY,
-	REQUEST_TAGS_FOR_ITEM,
-	RECEIVE_TAGS_FOR_ITEM,
-	ERROR_TAGS_FOR_ITEM,
-} = require('../constants/actions');
+import api from 'zotero-api-client';
+import { get } from '../utils';
+
+import {
+    REQUEST_TAGS_IN_COLLECTION,
+    RECEIVE_TAGS_IN_COLLECTION,
+    ERROR_TAGS_IN_COLLECTION,
+    REQUEST_TAGS_IN_LIBRARY,
+    RECEIVE_TAGS_IN_LIBRARY,
+    ERROR_TAGS_IN_LIBRARY,
+    REQUEST_TAGS_FOR_ITEM,
+    RECEIVE_TAGS_FOR_ITEM,
+    ERROR_TAGS_FOR_ITEM,
+} from '../constants/actions';
 
 const fetchTagsInCollection = (collectionKey, { start = 0, limit = 50, sort = 'title', direction = "asc" } = {}) => {
 	return async (dispatch, getState) => {
@@ -189,8 +190,8 @@ const fetchTagsForItem = (itemKey, { start = 0, limit = 50, sort = 'title', dire
 	};
 };
 
-module.exports = {
+export {
 	fetchTagsInCollection,
 	fetchTagsInLibrary,
 	fetchTagsForItem,
-}
+};

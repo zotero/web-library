@@ -1,10 +1,10 @@
 'use strict';
 
-const React = require('react');
-const PropTypes = require('prop-types');
-const cx = require('classnames');
-const Select = require('./form/select');
-const localeData = require('../../../data/locale-data.json');
+import React from 'react';
+import PropTypes from 'prop-types';
+import cx from 'classnames';
+import Select from './form/select';
+import localeData from '../../../data/locale-data.json';
 
 class LocaleSelector extends React.PureComponent {
 	render() {
@@ -34,4 +34,4 @@ class LocaleSelector extends React.PureComponent {
 }
 
 
-module.exports = LocaleSelector;
+export default LocaleSelector;

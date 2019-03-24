@@ -1,7 +1,7 @@
 'use strict';
 
-const React = require('react');
-const cx = require('classnames');
+import React from 'react';
+import cx from 'classnames';
 
 class Spinner extends React.PureComponent {
 	render() {
@@ -13,4 +13,4 @@ class Spinner extends React.PureComponent {
 	}
 }
 
-module.exports = Spinner;
+export default Spinner;

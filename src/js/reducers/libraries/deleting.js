@@ -1,13 +1,13 @@
 'use strict';
 
-const {
-	ERROR_DELETE_ITEM,
-	ERROR_DELETE_ITEMS,
-	RECEIVE_DELETE_ITEM,
-	RECEIVE_DELETE_ITEMS,
-	REQUEST_DELETE_ITEM,
-	REQUEST_DELETE_ITEMS,
-} = require('../../constants/actions');
+import {
+    ERROR_DELETE_ITEM,
+    ERROR_DELETE_ITEMS,
+    RECEIVE_DELETE_ITEM,
+    RECEIVE_DELETE_ITEMS,
+    REQUEST_DELETE_ITEM,
+    REQUEST_DELETE_ITEMS,
+} from '../../constants/actions';
 
 const deleting = (state = [], action) => {
 	switch(action.type) {
@@ -29,4 +29,4 @@ const deleting = (state = [], action) => {
 	}
 };
 
-module.exports = deleting;
+export default deleting;

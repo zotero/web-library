@@ -1,12 +1,11 @@
 'use strict';
 
-const React = require('react');
-
-const { connect } = require('react-redux');
-const { toggleModal, updateCollection } = require('../actions');
-const CollectionRenameModal = require('../component/modal/collection-rename-modal')
-const { COLLECTION_RENAME } = require('../constants/modals');
-const { get } = require('../utils');
+import React from 'react';
+import { connect } from 'react-redux';
+import { toggleModal, updateCollection } from '../actions';
+import CollectionRenameModal from '../component/modal/collection-rename-modal';
+import { COLLECTION_RENAME } from '../constants/modals';
+import { get } from '../utils';
 
 class CollectionRenameModalContainer extends React.PureComponent {
 	render() {
@@ -27,7 +26,7 @@ const mapStateToProps = state => {
 };
 
 
-module.exports = connect(
+export default connect(
 	mapStateToProps,
 	{ updateCollection, toggleModal }
 )(CollectionRenameModalContainer);

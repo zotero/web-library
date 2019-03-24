@@ -1,20 +1,19 @@
 /* eslint-disable react/no-deprecated */
 'use strict';
 
-const React = require('react');
-const PropTypes = require('prop-types');
-const cx = require('classnames');
-const Dropdown = require('reactstrap/lib/Dropdown').default;
-const DropdownToggle = require('reactstrap/lib/DropdownToggle').default;
-const DropdownMenu = require('reactstrap/lib/DropdownMenu').default;
-const DropdownItem = require('reactstrap/lib/DropdownItem').default;
-const { noteAsTitle } = require('../common/format');
-const { get } = require('../utils');
-
-const { Toolbar, ToolGroup } = require('./ui/toolbars');
-const Icon = require('./ui/icon');
-const Button = require('./ui/button');
-const RichEditor = require('./rich-editor');
+import React from 'react';
+import PropTypes from 'prop-types';
+import cx from 'classnames';
+import Dropdown from 'reactstrap/lib/Dropdown';
+import DropdownToggle from 'reactstrap/lib/DropdownToggle';
+import DropdownMenu from 'reactstrap/lib/DropdownMenu';
+import DropdownItem from 'reactstrap/lib/DropdownItem';
+import { noteAsTitle } from '../common/format';
+import { get } from '../utils';
+import { Toolbar, ToolGroup } from './ui/toolbars';
+import Icon from './ui/icon';
+import Button from './ui/button';
+import RichEditor from './rich-editor';
 
 class Notes extends React.PureComponent {
 	constructor(props) {
@@ -152,4 +151,4 @@ Notes.defaultProps = {
 	notes: []
 };
 
-module.exports = Notes;
+export default Notes;

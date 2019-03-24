@@ -1,15 +1,15 @@
 'use strict';
 
-const React = require('react');
-const cx = require('classnames');
-const PropTypes = require('prop-types');
-const TouchNavigation = require('./touch-navigation');
-const EditToggleButton = require('./edit-toggle-button');
-const CollectionActions = require('./touch-header/collection-actions');
-const ItemsActionsContainer = require('../container/items-actions');
-const { Toolbar, ToolGroup } = require('./ui/toolbars');
-const Button = require('./ui/button');
-const { pluralize } = require('../common/format');
+import React from 'react';
+import cx from 'classnames';
+import PropTypes from 'prop-types';
+import TouchNavigation from './touch-navigation';
+import EditToggleButton from './edit-toggle-button';
+import CollectionActions from './touch-header/collection-actions';
+import ItemsActionsContainer from '../container/items-actions';
+import { Toolbar, ToolGroup } from './ui/toolbars';
+import Button from './ui/button';
+import { pluralize } from '../common/format';
 
 class TouchHeader extends React.PureComponent {
 	handleCancelClick = () => {
@@ -120,4 +120,4 @@ TouchHeader.defaultProps = {
 	path: []
 };
 
-module.exports = TouchHeader;
+export default TouchHeader;

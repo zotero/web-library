@@ -1,17 +1,16 @@
 'use strict';
 
-const React = require('react');
-const PropTypes = require('prop-types');
-const copy = require('copy-to-clipboard');
-
-const { connect } = require('react-redux');
-const { toggleModal, bibliographyItems } = require('../actions');
-const { coreCitationStyles } = require('../../../data/citation-styles-data.json');
-const BibliographyModal = require('../component/modal/bibliography');
-const { BIBLIOGRAPHY, STYLE_INSTALLER } = require('../constants/modals');
-const { stripTagsUsingDOM } = require('../common/format');
-const withDevice = require('../enhancers/with-device');
-const withSelectMode = require('../enhancers/with-select-mode');
+import React from 'react';
+import PropTypes from 'prop-types';
+import copy from 'copy-to-clipboard';
+import { connect } from 'react-redux';
+import { toggleModal, bibliographyItems } from '../actions';
+import { coreCitationStyles } from '../../../data/citation-styles-data.json';
+import BibliographyModal from '../component/modal/bibliography';
+import { BIBLIOGRAPHY, STYLE_INSTALLER } from '../constants/modals';
+import { stripTagsUsingDOM } from '../common/format';
+import withDevice from '../enhancers/with-device';
+import withSelectMode from '../enhancers/with-select-mode';
 
 
 class BibliographyModalContainer extends React.PureComponent {
@@ -119,6 +118,6 @@ const mapStateToProps = state => {
 };
 
 
-module.exports = withSelectMode(withDevice(
+export default withSelectMode(withDevice(
 	connect(mapStateToProps)(BibliographyModalContainer)
 ));

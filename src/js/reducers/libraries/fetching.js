@@ -1,13 +1,13 @@
 'use strict';
 
-const {
-	REQUEST_FETCH_ITEMS,
-	RECEIVE_FETCH_ITEMS,
-	ERROR_FETCH_ITEMS,
-	REQUEST_TAGS_IN_COLLECTION,
-	RECEIVE_TAGS_IN_COLLECTION,
-	ERROR_TAGS_IN_COLLECTION,
-} = require('../../constants/actions');
+import {
+    REQUEST_FETCH_ITEMS,
+    RECEIVE_FETCH_ITEMS,
+    ERROR_FETCH_ITEMS,
+    REQUEST_TAGS_IN_COLLECTION,
+    RECEIVE_TAGS_IN_COLLECTION,
+    ERROR_TAGS_IN_COLLECTION,
+} from '../../constants/actions';
 
 const fetching = (state = {
 	items: [],
@@ -51,4 +51,4 @@ const fetching = (state = {
 	}
 }
 
-module.exports = fetching;
+export default fetching;

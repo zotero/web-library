@@ -1,8 +1,8 @@
 'use strict';
 
-const React = require('react');
-const PropTypes = require('prop-types');
-const { pluralize } = require('../../../common/format');
+import React from 'react';
+import PropTypes from 'prop-types';
+import { pluralize } from '../../../common/format';
 
 class ItemDetailsInfoView extends React.PureComponent {
 	shouldComponentUpdate({ itemsCount: nextItemsCount }) {
@@ -32,4 +32,4 @@ class ItemDetailsInfoView extends React.PureComponent {
 	}
 }
 
-module.exports = ItemDetailsInfoView;
+export default ItemDetailsInfoView;

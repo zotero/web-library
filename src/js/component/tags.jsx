@@ -1,13 +1,12 @@
 /* eslint-disable react/no-deprecated */
 'use strict';
 
-const React = require('react');
-const PropTypes = require('prop-types');
-
-const Editable = require('./editable');
-const { Toolbar, ToolGroup } = require('./ui/toolbars');
-const Icon = require('./ui/icon');
-const Button = require('./ui/button');
+import React from 'react';
+import PropTypes from 'prop-types';
+import Editable from './editable';
+import { Toolbar, ToolGroup } from './ui/toolbars';
+import Icon from './ui/icon';
+import Button from './ui/button';
 
 class Tags extends React.PureComponent {
 	constructor(props) {
@@ -163,4 +162,4 @@ Tags.defaultProps = {
 	tags: []
 };
 
-module.exports = Tags;
+export default Tags;

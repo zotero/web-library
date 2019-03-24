@@ -1,6 +1,6 @@
 'use strict';
 
-const PropTypes = require('prop-types');
+import PropTypes from 'prop-types';
 
 const collection = PropTypes.shape({
 	key: PropTypes.string.isRequired,
@@ -12,6 +12,6 @@ const item = PropTypes.shape({
 	key: PropTypes.string.isRequired
 });
 
-module.exports = {
+export default {
 	item, collection
-}
+};

@@ -1,8 +1,6 @@
 'use strict';
 
-const {
-	RECEIVE_TAGS_IN_COLLECTION,
-} = require('../../constants/actions');
+import { RECEIVE_TAGS_IN_COLLECTION } from '../../constants/actions';
 
 const tagCountByCollection = (state = {}, action) => {
 	switch(action.type) {
@@ -16,4 +14,4 @@ const tagCountByCollection = (state = {}, action) => {
 	}
 };
 
-module.exports = tagCountByCollection;
+export default tagCountByCollection;

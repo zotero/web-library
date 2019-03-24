@@ -1,19 +1,20 @@
 'use strict'
 
-const React = require('react');
+import React from 'react';
 
-module.exports = {
-	UserContext: React.createContext({
-		isKeyboardUser: false,
-		isMouseUser: false,
-		isTouchUser: false,
-		userType: 'mouse'
-	}),
-	ViewportContext: React.createContext({
-		xxs: false,
-		xs: false,
-		sm: false,
-		md: false,
-		lg: true,
-	}),
-};
+const UserContext = React.createContext({
+	isKeyboardUser: false,
+	isMouseUser: false,
+	isTouchUser: false,
+	userType: 'mouse'
+});
+
+const ViewportContext = React.createContext({
+	xxs: false,
+	xs: false,
+	sm: false,
+	md: false,
+	lg: true,
+});
+
+export { UserContext, ViewportContext };

@@ -1,10 +1,10 @@
 'use strict';
 
-const React = require('react');
-const PropTypes = require('prop-types');
-const cx = require('classnames');
-const Select = require('./form/select');
-const { citationStylesCount } = require('../../../data/citation-styles-data.json');
+import React from 'react';
+import PropTypes from 'prop-types';
+import cx from 'classnames';
+import Select from './form/select';
+import { citationStylesCount } from '../../../data/citation-styles-data.json';
 
 class StyleSelector extends React.PureComponent {
 	render() {
@@ -42,4 +42,4 @@ class StyleSelector extends React.PureComponent {
 }
 
 
-module.exports = StyleSelector;
+export default StyleSelector;

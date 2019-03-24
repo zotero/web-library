@@ -1,30 +1,31 @@
 /* eslint-disable react/no-deprecated */
 'use strict';
 
-const React = require('react');
-const PropTypes = require('prop-types');
-const { connect } = require('react-redux');
-const { push } = require('connected-react-router');
-const { bindActionCreators } = require('redux');
+import React from 'react';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { push } from 'connected-react-router';
+import { bindActionCreators } from 'redux';
+import Items from '../component/item/items';
 
-const Items = require('../component/item/items');
-const {
-	addToCollection,
-	fetchItemsInCollection,
-	fetchItemsQuery,
-	fetchPublicationsItems,
-	fetchTopItems,
-	fetchTrashItems,
-	preferenceChange,
-	sortItems,
-} = require('../actions');
-const { get, resizeVisibleColumns } = require('../utils');
-const { makePath } = require('../common/navigation');
-const { getFormattedTableItem } = require('../common/item');
-const { omit } = require('../common/immutable');
+import {
+    addToCollection,
+    fetchItemsInCollection,
+    fetchItemsQuery,
+    fetchPublicationsItems,
+    fetchTopItems,
+    fetchTrashItems,
+    preferenceChange,
+    sortItems,
+} from '../actions';
+
+import { get, resizeVisibleColumns } from '../utils';
+import { makePath } from '../common/navigation';
+import { getFormattedTableItem } from '../common/item';
+import { omit } from '../common/immutable';
 const defaultSort = { field: 'title', sort: 'ASC' };
-const withDevice = require('../enhancers/with-device');
-const columnSortKeyLookup = require('../constants/column-sort-key-lookup');
+import withDevice from '../enhancers/with-device';
+import columnSortKeyLookup from '../constants/column-sort-key-lookup';
 const PAGE_SIZE = 50;
 
 class ItemsContainer extends React.PureComponent {
@@ -232,7 +233,7 @@ ItemsContainer.propTypes = {
   dispatch: PropTypes.func.isRequired,
 };
 
-module.exports = withDevice(connect(
+export default withDevice(connect(
 	mapStateToProps,
 	mapDispatchToProps
 )(ItemsContainer));

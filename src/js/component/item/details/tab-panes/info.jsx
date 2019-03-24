@@ -1,11 +1,11 @@
 'use strict';
 
-const React = require('react');
-const cx = require('classnames');
-const ItemBox = require('../../box');
-const Abstract = require('../../abstract');
-const Spinner = require('../../../ui/spinner');
-const { getBaseMappedValue } = require('../../../../common/item');
+import React from 'react';
+import cx from 'classnames';
+import ItemBox from '../../box';
+import Abstract from '../../abstract';
+import Spinner from '../../../ui/spinner';
+import { getBaseMappedValue } from '../../../../common/item';
 
 class InfoTabPane extends React.PureComponent {
 	render() {
@@ -60,4 +60,4 @@ class InfoTabPane extends React.PureComponent {
 	}
 }
 
-module.exports = InfoTabPane;
+export default InfoTabPane;

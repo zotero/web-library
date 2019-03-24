@@ -1,15 +1,14 @@
 'use strict';
 
-const React = require('react');
-
-const withDevice = require('../enhancers/with-device');
-const withSelectMode = require('../enhancers/with-select-mode');
-const { connect } = require('react-redux');
-const { toggleModal, addToCollection, fetchCollections } = require('../actions');
-const CollectionSelectModal = require('../component/modal/collection-select-modal')
-const { COLLECTION_SELECT } = require('../constants/modals');
-const { get } = require('../utils');
-const { getLibraries } = require('../common/state');
+import React from 'react';
+import withDevice from '../enhancers/with-device';
+import withSelectMode from '../enhancers/with-select-mode';
+import { connect } from 'react-redux';
+import { toggleModal, addToCollection, fetchCollections } from '../actions';
+import CollectionSelectModal from '../component/modal/collection-select-modal';
+import { COLLECTION_SELECT } from '../constants/modals';
+import { get } from '../utils';
+import { getLibraries } from '../common/state';
 
 class CollectionSelectModalContainer extends React.PureComponent {
 	render() {
@@ -37,7 +36,7 @@ const mapStateToProps = state => {
 };
 
 
-module.exports = withSelectMode(withDevice(connect(
+export default withSelectMode(withDevice(connect(
 	mapStateToProps,
 	{ addToCollection, toggleModal, fetchCollections }
 )(CollectionSelectModalContainer)));

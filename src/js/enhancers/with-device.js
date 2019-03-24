@@ -1,8 +1,8 @@
 'use strict';
 
-const React = require('react');
-const hoistNonReactStatic = require('hoist-non-react-statics');
-const { UserContext, ViewportContext } = require('../context');
+import React from 'react';
+import hoistNonReactStatic from 'hoist-non-react-statics';
+import { UserContext, ViewportContext } from '../context';
 
 
 const withDevice = Component => {
@@ -42,4 +42,4 @@ const withDevice = Component => {
 	return C;
 };
 
-module.exports = withDevice;
+export default withDevice;

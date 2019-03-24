@@ -1,4 +1,4 @@
-module.exports = [
+export default [
 	{ extension: 'bib', key: 'bibtex', label: 'BibTeX' },
 	{ extension: 'bib', key: 'biblatex', label: 'BibLaTeX' },
 	{ extension: 'html', key: 'bookmarks', label: 'Netscape Bookmark File Format' },

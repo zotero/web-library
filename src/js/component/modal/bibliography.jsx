@@ -1,19 +1,18 @@
 'use strict';
 
-const React = require('react');
-const PropTypes = require('prop-types');
-const { Dropdown, DropdownToggle, DropdownMenu,
-	DropdownItem } = require('reactstrap/lib');
-const Spinner = require('../ui/spinner');
-const Button = require('../ui/button');
-const Icon = require('../ui/icon');
-const Modal = require('../ui/modal');
-const CheckboxSet = require('../form/checkbox-set');
-const StyleSelector = require('../style-selector');
-const LocaleSelector = require('../locale-selector');
-const { noop } = require('../../utils');
-const { pick } = require('../../common/immutable');
-const cx = require('classnames');
+import React from 'react';
+import PropTypes from 'prop-types';
+import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap/lib';
+import Spinner from '../ui/spinner';
+import Button from '../ui/button';
+import Icon from '../ui/icon';
+import Modal from '../ui/modal';
+import CheckboxSet from '../form/checkbox-set';
+import StyleSelector from '../style-selector';
+import LocaleSelector from '../locale-selector';
+import { noop } from '../../utils';
+import { pick } from '../../common/immutable';
+import cx from 'classnames';
 
 
 class BibliographyModal extends React.PureComponent {
@@ -251,4 +250,4 @@ class BibliographyModal extends React.PureComponent {
 }
 
 
-module.exports = BibliographyModal;
+export default BibliographyModal;

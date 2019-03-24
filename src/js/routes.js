@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = [
+export default [
 	'/collection/:collection/tags/:tags/items/:items',
 	'/collection/:collection/search/:search/items/:items',
 	'/collection/:collection/items/:items',

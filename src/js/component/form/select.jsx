@@ -1,14 +1,13 @@
 /* eslint-disable react/no-deprecated */
 'use strict';
 
-const React = require('react');
-const PropTypes = require('prop-types');
-const cx = require('classnames');
-const { noop } = require('../../utils');
-
-const Spinner = require('../ui/spinner');
-const Select = require('react-select').default;
-const { UserContext, ViewportContext } = require('../../context');
+import React from 'react';
+import PropTypes from 'prop-types';
+import cx from 'classnames';
+import { noop } from '../../utils';
+import Spinner from '../ui/spinner';
+import Select from 'react-select';
+import { UserContext, ViewportContext } from '../../context';
 
 class SelectInput extends React.PureComponent {
 	constructor(props) {
@@ -196,4 +195,4 @@ class SelectInput extends React.PureComponent {
 	};
 }
 
-module.exports = SelectInput;
+export default SelectInput;

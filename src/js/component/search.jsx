@@ -1,9 +1,9 @@
 'use strict';
 
-const React = require('react');
-const PropTypes = require('prop-types');
-const { DebounceInput } = require('react-debounce-input');
-const { noop } = require('../utils');
+import React from 'react';
+import PropTypes from 'prop-types';
+import { DebounceInput } from 'react-debounce-input';
+import { noop } from '../utils';
 
 class Search extends React.PureComponent {
 	render() {
@@ -31,4 +31,4 @@ class Search extends React.PureComponent {
 	};
 }
 
-module.exports = Search;
+export default Search;

@@ -1,14 +1,12 @@
 'use strict';
 
-const React = require('react');
-
-const { connect } = require('react-redux');
-const { push } = require('connected-react-router');
-const { toggleModal, createItem, fetchItemTemplate,
-	triggerEditingItem } = require('../actions');
-const NewItemModal = require('../component/modal/new-item-modal')
-const { NEW_ITEM } = require('../constants/modals');
-const { get } = require('../utils');
+import React from 'react';
+import { connect } from 'react-redux';
+import { push } from 'connected-react-router';
+import { toggleModal, createItem, fetchItemTemplate, triggerEditingItem } from '../actions';
+import NewItemModal from '../component/modal/new-item-modal';
+import { NEW_ITEM } from '../constants/modals';
+import { get } from '../utils';
 
 class NewItemModalContainer extends React.PureComponent {
 	render() {
@@ -30,7 +28,7 @@ const mapStateToProps = state => {
 };
 
 
-module.exports = connect(
+export default connect(
 	mapStateToProps,
 	{ createItem, fetchItemTemplate, toggleModal, triggerEditingItem, push }
 )(NewItemModalContainer);

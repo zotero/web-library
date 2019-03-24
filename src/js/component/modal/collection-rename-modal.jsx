@@ -1,13 +1,12 @@
 'use strict';
 
-const React = require('react');
-const PropTypes = require('prop-types');
-
-const { makeChildMap } = require('../../common/collection');
-const Modal = require('../ui/modal');
-const Button = require('../ui/button');
-const Input = require('../form/input');
-const Icon = require('../ui/icon');
+import React from 'react';
+import PropTypes from 'prop-types';
+import { makeChildMap } from '../../common/collection';
+import Modal from '../ui/modal';
+import Button from '../ui/button';
+import Input from '../form/input';
+import Icon from '../ui/icon';
 const defaultState = { name: '' };
 
 class CollectionRenameModal extends React.PureComponent {
@@ -120,4 +119,4 @@ class CollectionRenameModal extends React.PureComponent {
 	}
 }
 
-module.exports = CollectionRenameModal;
+export default CollectionRenameModal;

@@ -1,15 +1,14 @@
 'use strict';
 
-const React = require('react');
-const PropTypes = require('prop-types');
-const cx = require('classnames');
-const paramCase = require('param-case');
-const Icon = require('../../ui/icon');
-const Spinner = require('../../ui/spinner');
-
-const { default: AutoSizer } = require('react-virtualized/dist/commonjs/AutoSizer');
-const { default: InfiniteLoader } = require('react-virtualized/dist/commonjs/InfiniteLoader');
-const { default: List } = require('react-virtualized/dist/commonjs/List');
+import React from 'react';
+import PropTypes from 'prop-types';
+import cx from 'classnames';
+import paramCase from 'param-case';
+import Icon from '../../ui/icon';
+import Spinner from '../../ui/spinner';
+import { default as AutoSizer } from 'react-virtualized/dist/commonjs/AutoSizer';
+import { default as InfiniteLoader } from 'react-virtualized/dist/commonjs/InfiniteLoader';
+import { default as List } from 'react-virtualized/dist/commonjs/List';
 
 class ItemsList extends React.PureComponent {
 
@@ -201,4 +200,4 @@ class ItemsList extends React.PureComponent {
 	}
 }
 
-module.exports = ItemsList;
+export default ItemsList;

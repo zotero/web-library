@@ -1,7 +1,7 @@
 'use strict';
 
-const { baseMappings } = require('../constants/item');
-const { noteAsTitle, itemTypeLocalized, dateLocalized } = require('./format');
+import baseMappings from 'zotero-base-mappings';
+import { noteAsTitle, itemTypeLocalized, dateLocalized } from './format';
 
 const getBaseMappedValue = (item, property) => {
 	const { itemType } = item;
@@ -54,4 +54,4 @@ const getFieldDisplayValue = (item, field) => {
 	}
 }
 
-module.exports = { getFormattedTableItem, getFieldDisplayValue, getBaseMappedValue };
+export { getFormattedTableItem, getFieldDisplayValue, getBaseMappedValue };

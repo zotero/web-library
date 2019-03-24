@@ -1,16 +1,15 @@
 'use strict';
 
-const React = require('react');
-const PropTypes = require('prop-types');
-const { Dropdown, DropdownToggle, DropdownMenu,
-	DropdownItem } = require('reactstrap/lib');
-const { ToolGroup } = require('../ui/toolbars');
-const Button = require('../ui/button');
-const Spinner = require('../ui/spinner');
-const Icon = require('../ui/icon');
-const NewItemSelector = require('./actions/new-item');
-const ExportActions = require('./actions/export');
-const { pick } = require('../../common/immutable');
+import React from 'react';
+import PropTypes from 'prop-types';
+import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap/lib';
+import { ToolGroup } from '../ui/toolbars';
+import Button from '../ui/button';
+import Spinner from '../ui/spinner';
+import Icon from '../ui/icon';
+import NewItemSelector from './actions/new-item';
+import ExportActions from './actions/export';
+import { pick } from '../../common/immutable';
 
 
 class ItemsActions extends React.PureComponent {
@@ -213,4 +212,4 @@ class ItemsActions extends React.PureComponent {
 	}
 }
 
-module.exports = ItemsActions;
+export default ItemsActions;

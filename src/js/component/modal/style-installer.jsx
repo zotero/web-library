@@ -1,17 +1,16 @@
 'use strict';
 
-const React = require('react');
-const cx = require('classnames');
-const PropTypes = require('prop-types');
-
-const Modal = require('../ui/modal');
-const Button = require('../ui/button');
-const Input = require('../form/input');
-const Spinner = require('../ui/spinner');
-const { pick } = require('../../common/immutable');
-const { coreCitationStyles } = require('../../../../data/citation-styles-data.json');
-
-var SearchWorker = require('webworkify')(require('../../style-search-worker'));
+import React from 'react';
+import cx from 'classnames';
+import PropTypes from 'prop-types';
+import Modal from '../ui/modal';
+import Button from '../ui/button';
+import Input from '../form/input';
+import Spinner from '../ui/spinner';
+import { pick } from '../../common/immutable';
+import { coreCitationStyles } from '../../../../data/citation-styles-data.json';
+import SearchWorkerFactory from 'webworkify';
+const SearchWorker = SearchWorkerFactory(require('../../style-search.worker.js'));
 
 class StyleInstallerModal extends React.PureComponent {
 	state = {
@@ -248,4 +247,4 @@ class StyleInstallerModal extends React.PureComponent {
 	}
 }
 
-module.exports = StyleInstallerModal;
+export default StyleInstallerModal;

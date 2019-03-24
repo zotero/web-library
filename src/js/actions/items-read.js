@@ -1,8 +1,8 @@
 'use strict';
 
-const { SORT_ITEMS } = require('../constants/actions');
-const api = require('zotero-api-client')().api;
-const { extractItems } = require('../common/actions');
+import { SORT_ITEMS } from '../constants/actions';
+import api from 'zotero-api-client';
+import { extractItems } from '../common/actions';
 
 const getApi = ({ config, libraryKey }, requestType, queryConfig) => {
 	switch(requestType) {
@@ -133,8 +133,9 @@ const sortItems = (sortBy, sortDirection) => {
 	}
 };
 
-module.exports = {
+export {
 	fetchChildItems,
+	fetchItems,
 	fetchItemsByKeys,
 	fetchItemsInCollection,
 	fetchItemsQuery,

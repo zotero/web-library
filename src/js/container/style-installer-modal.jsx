@@ -1,13 +1,12 @@
 'use strict';
 
-const React = require('react');
-const PropTypes = require('prop-types');
-
-const { connect } = require('react-redux');
-const { toggleModal, fetchStyles, preferenceChange } = require('../actions');
-const StyleInstallerModal = require('../component/modal/style-installer');
-const { STYLE_INSTALLER } = require('../constants/modals');
-const withDevice = require('../enhancers/with-device');
+import React from 'react';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { toggleModal, fetchStyles, preferenceChange } from '../actions';
+import StyleInstallerModal from '../component/modal/style-installer';
+import { STYLE_INSTALLER } from '../constants/modals';
+import withDevice from '../enhancers/with-device';
 
 
 class StyleInstallerModalContainer extends React.PureComponent {
@@ -31,7 +30,7 @@ const mapStateToProps = state => {
 };
 
 
-module.exports = withDevice(
+export default withDevice(
 	connect(
 		mapStateToProps, { toggleModal, fetchStyles, preferenceChange }
 	)(StyleInstallerModalContainer)

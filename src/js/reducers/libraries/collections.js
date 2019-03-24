@@ -1,13 +1,14 @@
 'use strict';
 
-const {
-	RECEIVE_COLLECTIONS_IN_LIBRARY,
-	RECEIVE_CREATE_COLLECTION,
-	RECEIVE_DELETE_COLLECTION,
-	RECEIVE_UPDATE_COLLECTION,
-} = require('../../constants/actions.js');
-const { indexByKey } = require('../../utils');
-const { removeKeys } = require('../../common/immutable');
+import {
+    RECEIVE_COLLECTIONS_IN_LIBRARY,
+    RECEIVE_CREATE_COLLECTION,
+    RECEIVE_DELETE_COLLECTION,
+    RECEIVE_UPDATE_COLLECTION,
+} from '../../constants/actions.js';
+
+import { indexByKey } from '../../utils';
+import { removeKeys } from '../../common/immutable';
 
 const collections = (state = {}, action) => {
 	switch(action.type) {
@@ -29,4 +30,4 @@ const collections = (state = {}, action) => {
 	}
 };
 
-module.exports = collections;
+export default collections;

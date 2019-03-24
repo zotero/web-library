@@ -1,6 +1,6 @@
 'use strict';
 
-const { CONFIGURE_API, SORT_ITEMS } = require('../constants/actions.js');
+import { CONFIGURE_API, SORT_ITEMS } from '../constants/actions.js';
 
 const defaultState = {
 	apiKey: null,
@@ -33,4 +33,4 @@ const config = (state = defaultState, action) => {
 	}
 };
 
-module.exports = config
+export default config;

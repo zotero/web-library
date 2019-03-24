@@ -1,9 +1,9 @@
 'use strict';
 
-const React = require('react');
-const Attachments = require('../../../attachments');
-const cx = require('classnames');
-const Spinner = require('../../../ui/spinner');
+import React from 'react';
+import Attachments from '../../../attachments';
+import cx from 'classnames';
+import Spinner from '../../../ui/spinner';
 const PAGE_SIZE = 100;
 
 class AttachmentsTabPane extends React.PureComponent {
@@ -55,4 +55,4 @@ class AttachmentsTabPane extends React.PureComponent {
 	}
 }
 
-module.exports = AttachmentsTabPane;
+export default AttachmentsTabPane;

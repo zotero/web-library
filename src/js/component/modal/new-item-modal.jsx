@@ -1,14 +1,13 @@
 'use strict';
 
-const React = require('react');
-const PropTypes = require('prop-types');
-const cx = require('classnames');
-
-const { makePath } = require('../../common/navigation');
-const Modal = require('../ui/modal');
-const Button = require('../ui/button');
-const Select = require('../form/select');
-const Spinner = require('../ui/spinner');
+import React from 'react';
+import PropTypes from 'prop-types';
+import cx from 'classnames';
+import { makePath } from '../../common/navigation';
+import Modal from '../ui/modal';
+import Button from '../ui/button';
+import Select from '../form/select';
+import Spinner from '../ui/spinner';
 const defaultState = {
 	isBusy: false,
 	itemType: 'book'
@@ -146,4 +145,4 @@ class CollectionAddModal extends React.PureComponent {
 	}
 }
 
-module.exports = CollectionAddModal;
+export default CollectionAddModal;

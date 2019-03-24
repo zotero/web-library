@@ -39,7 +39,7 @@ const stripTagsUsingDOM = html => {
    return tmp.textContent || tmp.innerText || "";
 }
 
-module.exports = {
+export {
 	creator,
 	dateLocalized,
 	itemsSourceLabel,

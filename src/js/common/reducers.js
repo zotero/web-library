@@ -1,6 +1,6 @@
 'use strict';
 
-const { sortItemsByKey, compareItem } = require('../utils');
+import { sortItemsByKey, compareItem } from '../utils';
 
 const replaceDuplicates = entries => {
 	const seen = [];
@@ -134,9 +134,9 @@ const sortItemKeysOrClear = (state, items, sortBy, sortDirection) => {
 	return { ...state, keys, sortBy, sortDirection };
 }
 
-module.exports = {
+export {
 	injectExtraItemKeys,
 	filterItemKeys,
 	populateItemKeys,
 	sortItemKeysOrClear,
-}
+};

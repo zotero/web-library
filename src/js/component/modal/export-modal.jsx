@@ -1,15 +1,14 @@
 'use strict';
 
-const React = require('react');
-const PropTypes = require('prop-types');
-const { saveAs } = require('file-saver');
-const cx = require('classnames');
-
-const Modal = require('../ui/modal');
-const Button = require('../ui/button');
-const Select = require('../form/select');
-const Spinner = require('../ui/spinner');
-const exportFormats = require('../../constants/export-formats');
+import React from 'react';
+import PropTypes from 'prop-types';
+import { saveAs } from 'file-saver';
+import cx from 'classnames';
+import Modal from '../ui/modal';
+import Button from '../ui/button';
+import Select from '../form/select';
+import Spinner from '../ui/spinner';
+import exportFormats from '../../constants/export-formats';
 
 const defaultState = {
 	isBusy: false,
@@ -127,4 +126,4 @@ class ExportModal extends React.PureComponent {
 	}
 }
 
-module.exports = ExportModal;
+export default ExportModal;

@@ -1,8 +1,8 @@
 'use strict';
 
-const React = require('react');
-const PropTypes = require('prop-types');
-const { pluralize } = require('../../../common/format');
+import React from 'react';
+import PropTypes from 'prop-types';
+import { pluralize } from '../../../common/format';
 
 class ItemDetailsInfoSelected extends React.PureComponent {
 	render() {
@@ -24,4 +24,4 @@ class ItemDetailsInfoSelected extends React.PureComponent {
 	}
 }
 
-module.exports = ItemDetailsInfoSelected;
+export default ItemDetailsInfoSelected;

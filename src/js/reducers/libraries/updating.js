@@ -1,15 +1,15 @@
 'use strict';
 
-const {
-	PRE_UPDATE_ITEM,
-	REQUEST_UPDATE_ITEM,
-	RECEIVE_UPDATE_ITEM,
-	ERROR_UPDATE_ITEM,
-	PRE_UPDATE_COLLECTION,
-	REQUEST_UPDATE_COLLECTION,
-	RECEIVE_UPDATE_COLLECTION,
-	ERROR_UPDATE_COLLECTION,
-} = require('../../constants/actions');
+import {
+    PRE_UPDATE_ITEM,
+    REQUEST_UPDATE_ITEM,
+    RECEIVE_UPDATE_ITEM,
+    ERROR_UPDATE_ITEM,
+    PRE_UPDATE_COLLECTION,
+    REQUEST_UPDATE_COLLECTION,
+    RECEIVE_UPDATE_COLLECTION,
+    ERROR_UPDATE_COLLECTION,
+} from '../../constants/actions';
 
 const stateDefault = {
 	collections: {},
@@ -108,4 +108,4 @@ const updating = (state = stateDefault, action) => {
 	}
 };
 
-module.exports = updating;
+export default updating;

@@ -1,11 +1,10 @@
 'use strict';
 
-const React = require('react');
-const PropTypes = require('prop-types');
-
-const { Toolbar } = require('../../ui/toolbars');
-const ColumnSelector = require('./column-selector');
-const ItemsActionsContainer = require('../../../container/items-actions');
+import React from 'react';
+import PropTypes from 'prop-types';
+import { Toolbar } from '../../ui/toolbars';
+import ColumnSelector from './column-selector';
+import ItemsActionsContainer from '../../../container/items-actions';
 
 class ItemsTableToolbar extends React.PureComponent {
 	state = { columns: [] }
@@ -38,4 +37,4 @@ class ItemsTableToolbar extends React.PureComponent {
 	}
 }
 
-module.exports = ItemsTableToolbar;
+export default ItemsTableToolbar;

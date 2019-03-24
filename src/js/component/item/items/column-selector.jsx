@@ -1,14 +1,13 @@
 'use strict';
 
-const React = require('react');
-const PropTypes = require('prop-types');
-
-const { noop } = require('../../../utils');
-const Icon = require('../../ui/icon');
-const Dropdown = require('reactstrap/lib/Dropdown').default;
-const DropdownToggle = require('reactstrap/lib/DropdownToggle').default;
-const DropdownMenu = require('reactstrap/lib/DropdownMenu').default;
-const DropdownItem = require('reactstrap/lib/DropdownItem').default;
+import React from 'react';
+import PropTypes from 'prop-types';
+import { noop } from '../../../utils';
+import Icon from '../../ui/icon';
+import Dropdown from 'reactstrap/lib/Dropdown';
+import DropdownToggle from 'reactstrap/lib/DropdownToggle';
+import DropdownMenu from 'reactstrap/lib/DropdownMenu';
+import DropdownItem from 'reactstrap/lib/DropdownItem';
 
 class ColumnSelector extends React.PureComponent {
 	state = {
@@ -74,4 +73,4 @@ class ColumnSelector extends React.PureComponent {
 	}
 }
 
-module.exports = ColumnSelector;
+export default ColumnSelector;

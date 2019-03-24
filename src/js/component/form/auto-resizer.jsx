@@ -1,8 +1,8 @@
 'use strict'
 
-const React = require('react');
-const cx = require('classnames');
-const { bool, element, number, oneOfType, string } = require('prop-types')
+import React from 'react';
+import cx from 'classnames';
+import { bool, element, number, oneOfType, string } from 'prop-types';
 
 class AutoResizer extends React.PureComponent {
 	render() {
@@ -22,4 +22,4 @@ class AutoResizer extends React.PureComponent {
 	}
 }
 
-module.exports = AutoResizer;
+export default AutoResizer;

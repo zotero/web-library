@@ -1,11 +1,11 @@
 'use strict';
 
-const React = require('react');
-const Icon = require('./ui/icon');
-const paramCase = require('param-case');
-const { Consumer } = require('react-dnd/lib/cjs/DragDropContext'); //@NOTE: using undocumented feature
-const { DragLayer } = require('react-dnd');
-const { ITEM, CREATOR } = require('../constants/dnd');
+import React from 'react';
+import Icon from './ui/icon';
+import paramCase from 'param-case';
+import { Consumer } from 'react-dnd/lib/cjs/DragDropContext'; //@NOTE: using undocumented featue
+import { DragLayer } from 'react-dnd';
+import { ITEM, CREATOR } from '../constants/dnd';
 
 const dndCollect = monitor => ({
 	clientOffset: monitor.getClientOffset(),
@@ -135,4 +135,4 @@ class CustomDragLayer extends React.PureComponent {
 	}
 }
 
-module.exports = CustomDragLayer;
+export default CustomDragLayer;

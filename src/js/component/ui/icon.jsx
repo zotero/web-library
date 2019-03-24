@@ -1,8 +1,8 @@
 'use strict';
 
-const React = require('react');
-const PropTypes = require('prop-types');
-const cx = require('classnames');
+import React from 'react';
+import PropTypes from 'prop-types';
+import cx from 'classnames';
 
 class Icon extends React.PureComponent {
 	render() {
@@ -57,4 +57,4 @@ class Icon extends React.PureComponent {
 	}
 }
 
-module.exports = Icon;
+export default Icon;

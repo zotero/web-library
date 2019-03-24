@@ -1,12 +1,12 @@
 /* eslint-disable react/no-deprecated */
 'use strict';
 
-const React = require('react');
-const PropTypes = require('prop-types');
-const cx = require('classnames');
-const { noop } = require('../../utils');
-const AutoResizer = require('./auto-resizer');
-const Spinner = require('../ui/spinner');
+import React from 'react';
+import PropTypes from 'prop-types';
+import cx from 'classnames';
+import { noop } from '../../utils';
+import AutoResizer from './auto-resizer';
+import Spinner from '../ui/spinner';
 
 class TextAreaInput extends React.PureComponent {
 	constructor(props) {
@@ -177,4 +177,4 @@ class TextAreaInput extends React.PureComponent {
 	};
 }
 
-module.exports = TextAreaInput;
+export default TextAreaInput;

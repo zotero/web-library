@@ -1,9 +1,9 @@
 'use strict';
 
-const React = require('react');
-const cx = require('classnames');
-const Notes = require('../../../notes');
-const Spinner = require('../../../ui/spinner');
+import React from 'react';
+import cx from 'classnames';
+import Notes from '../../../notes';
+import Spinner from '../../../ui/spinner';
 const PAGE_SIZE = 100;
 
 class NotesTabPane extends React.PureComponent {
@@ -55,4 +55,4 @@ class NotesTabPane extends React.PureComponent {
 	}
 }
 
-module.exports = NotesTabPane;
+export default NotesTabPane;

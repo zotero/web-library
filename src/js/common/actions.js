@@ -12,4 +12,4 @@ const extractItems = (response, state) => {
 	}));
 }
 
-module.exports = { extractItems };
+export { extractItems };

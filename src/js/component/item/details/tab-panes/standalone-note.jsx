@@ -1,8 +1,8 @@
 'use strict';
 
-const React = require('react');
-const cx = require('classnames');
-const RichEditor = require('../../../rich-editor');
+import React from 'react';
+import cx from 'classnames';
+import RichEditor from '../../../rich-editor';
 
 class StandaloneNoteTabPane extends React.PureComponent {
 	handleChangeNote(note) {
@@ -27,4 +27,4 @@ class StandaloneNoteTabPane extends React.PureComponent {
 	}
 }
 
-module.exports = StandaloneNoteTabPane;
+export default StandaloneNoteTabPane;

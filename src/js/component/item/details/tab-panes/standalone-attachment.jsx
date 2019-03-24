@@ -1,7 +1,7 @@
 'use strict';
 
-const React = require('react');
-const cx = require('classnames');
+import React from 'react';
+import cx from 'classnames';
 
 class StandaloneAttachmentTabPane extends React.PureComponent {
 	render() {
@@ -35,4 +35,4 @@ class StandaloneAttachmentTabPane extends React.PureComponent {
 	}
 }
 
-module.exports = StandaloneAttachmentTabPane;
+export default StandaloneAttachmentTabPane;

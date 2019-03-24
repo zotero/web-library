@@ -1,23 +1,22 @@
 'use strict';
-const { populateItemKeys, filterItemKeys, sortItemKeysOrClear,
-	injectExtraItemKeys } = require('../../common/reducers');
-const { indexByKey, get } = require('../../utils');
+import { populateItemKeys, filterItemKeys, sortItemKeysOrClear, injectExtraItemKeys } from '../../common/reducers';
+import { indexByKey, get } from '../../utils';
 
-const {
-	ERROR_CHILD_ITEMS,
-	RECEIVE_CHILD_ITEMS,
-	RECEIVE_CREATE_ITEM,
-	RECEIVE_CREATE_ITEMS,
-	RECEIVE_DELETE_ITEM,
-	RECEIVE_DELETE_ITEMS,
-	RECEIVE_FETCH_ITEMS,
-	RECEIVE_ITEMS_BY_QUERY,
-	RECEIVE_ITEMS_IN_COLLECTION,
-	RECEIVE_TOP_ITEMS,
-	RECEIVE_TRASH_ITEMS,
-	REQUEST_CHILD_ITEMS,
-	SORT_ITEMS,
-} = require('../../constants/actions.js');
+import {
+    ERROR_CHILD_ITEMS,
+    RECEIVE_CHILD_ITEMS,
+    RECEIVE_CREATE_ITEM,
+    RECEIVE_CREATE_ITEMS,
+    RECEIVE_DELETE_ITEM,
+    RECEIVE_DELETE_ITEMS,
+    RECEIVE_FETCH_ITEMS,
+    RECEIVE_ITEMS_BY_QUERY,
+    RECEIVE_ITEMS_IN_COLLECTION,
+    RECEIVE_TOP_ITEMS,
+    RECEIVE_TRASH_ITEMS,
+    REQUEST_CHILD_ITEMS,
+    SORT_ITEMS,
+} from '../../constants/actions.js';
 
 const itemsByParent = (state = {}, action) => {
 	var parentKey;
@@ -115,4 +114,4 @@ const itemsByParent = (state = {}, action) => {
 	}
 };
 
-module.exports = itemsByParent;
+export default itemsByParent;

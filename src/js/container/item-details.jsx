@@ -1,19 +1,39 @@
 'use strict';
 
-const React = require('react');
-const PropTypes = require('prop-types');
-const Types = require('../types');
-const ItemDetails = require('../component/item/details');
-const { push } = require('connected-react-router');
-const { connect } = require('react-redux');
-const { createItem, updateItem, deleteItem, fetchItemTemplate, fetchChildItems, uploadAttachment, fetchItems, fetchItemTypeCreatorTypes, fetchItemTypeFields } = require('../actions');
-const { baseMappings, hideFields, noEditFields,
-	extraFields } = require('../constants/item');
-const { get, deduplicateByKey, mapRelationsToItemKeys, removeRelationByItemKey, reverseMap } = require('../utils');
-const { makePath } = require('../common/navigation');
-const { getFieldDisplayValue } = require('../common/item');
-const withEditMode = require('../enhancers/with-edit-mode');
-const withDevice = require('../enhancers/with-device');
+import React from 'react';
+import PropTypes from 'prop-types';
+import Types from '../types';
+import ItemDetails from '../component/item/details';
+import { push } from 'connected-react-router';
+import { connect } from 'react-redux';
+import baseMappings from 'zotero-base-mappings';
+
+import {
+    createItem,
+    updateItem,
+    deleteItem,
+    fetchItemTemplate,
+    fetchChildItems,
+    uploadAttachment,
+    fetchItems,
+    fetchItemTypeCreatorTypes,
+    fetchItemTypeFields,
+} from '../actions';
+
+import { hideFields, noEditFields, extraFields } from '../constants/item';
+
+import {
+    get,
+    deduplicateByKey,
+    mapRelationsToItemKeys,
+    removeRelationByItemKey,
+    reverseMap,
+} from '../utils';
+
+import { makePath } from '../common/navigation';
+import { getFieldDisplayValue } from '../common/item';
+import withEditMode from '../enhancers/with-edit-mode';
+import withDevice from '../enhancers/with-device';
 const PAGE_SIZE = 100;
 
 class ItemDetailsContainer extends React.PureComponent {
@@ -332,5 +352,5 @@ ItemDetailsContainer.propTypes = {
 	dispatch: PropTypes.func.isRequired
 };
 
-module.exports = withDevice(withEditMode(connect(
+export default withDevice(withEditMode(connect(
 	mapStateToProps, { push, fetchItems, fetchChildItems })(ItemDetailsContainer)));

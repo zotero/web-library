@@ -1,25 +1,24 @@
 'use strict';
 
-const React = require('react');
-const PropTypes = require('prop-types');
-const cx = require('classnames');
-
-const { getSerializedQuery } = require('../common/state');
-const Spinner = require('./ui/spinner');
-const LibrariesContainer = require('../container/libraries');
-const ItemDetailsContainer = require('../container/item-details');
-const ItemsContainer = require('../container/items');
-const Navbar = require('./ui/navbar');
-const TagSelectorContainer = require('../container/tag-selector');
-const TouchHeaderContainer = require('../container/touch-header');
-const BibliographyModalContainer = require('../container/bibliography-modal');
-const CollectionRenameModalContainer = require('../container/collection-rename-modal');
-const CollectionAddModalContainer = require('../container/collection-add-modal');
-const CollectionSelectModal = require('../container/collection-select-modal');
-const NewItemModalContainer = require('../container/new-item-modal');
-const ExportModalContainer = require('../container/export-modal');
-const StyleInstallerModalContainer = require('../container/style-installer-modal');
-const withDevice = require('../enhancers/with-device');
+import React from 'react';
+import PropTypes from 'prop-types';
+import cx from 'classnames';
+import { getSerializedQuery } from '../common/state';
+import Spinner from './ui/spinner';
+import LibrariesContainer from '../container/libraries';
+import ItemDetailsContainer from '../container/item-details';
+import ItemsContainer from '../container/items';
+import Navbar from './ui/navbar';
+import TagSelectorContainer from '../container/tag-selector';
+import TouchHeaderContainer from '../container/touch-header';
+import BibliographyModalContainer from '../container/bibliography-modal';
+import CollectionRenameModalContainer from '../container/collection-rename-modal';
+import CollectionAddModalContainer from '../container/collection-add-modal';
+import CollectionSelectModal from '../container/collection-select-modal';
+import NewItemModalContainer from '../container/new-item-modal';
+import ExportModalContainer from '../container/export-modal';
+import StyleInstallerModalContainer from '../container/style-installer-modal';
+import withDevice from '../enhancers/with-device';
 
 class Library extends React.PureComponent {
 	constructor(props) {
@@ -137,4 +136,4 @@ Library.propTypes = {
 	isSelectMode: PropTypes.bool
 };
 
-module.exports = withDevice(Library);
+export default withDevice(Library);

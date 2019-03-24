@@ -1,13 +1,12 @@
 'use strict';
 
-const React = require('react');
-const PropTypes = require('prop-types');
-const { connect } = require('react-redux');
-
-const withSelectMode = require('../enhancers/with-select-mode');
-const { toggleModal, exportItems } = require('../actions');
-const ExportModal = require('../component/modal/export-modal')
-const { EXPORT } = require('../constants/modals');
+import React from 'react';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import withSelectMode from '../enhancers/with-select-mode';
+import { toggleModal, exportItems } from '../actions';
+import ExportModal from '../component/modal/export-modal';
+import { EXPORT } from '../constants/modals';
 
 class ExportContainer extends React.PureComponent {
 	async handleCancel() {
@@ -34,6 +33,6 @@ const mapStateToProps = state => {
 };
 
 
-module.exports = withSelectMode(
+export default withSelectMode(
 	connect(mapStateToProps, { toggleModal, exportItems })(ExportContainer)
 );

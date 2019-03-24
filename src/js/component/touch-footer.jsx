@@ -1,11 +1,10 @@
 'use strict';
 
-const React = require('react');
-const PropTypes = require('prop-types');
-
-const { Toolbar, ToolGroup } = require('./ui/toolbars');
-const Icon = require('./ui/icon');
-const Button = require('./ui/button');
+import React from 'react';
+import PropTypes from 'prop-types';
+import { Toolbar, ToolGroup } from './ui/toolbars';
+import Icon from './ui/icon';
+import Button from './ui/button';
 
 class TouchFooter extends React.PureComponent {
 	render() {
@@ -80,4 +79,4 @@ class TouchFooter extends React.PureComponent {
 	}
 }
 
-module.exports = TouchFooter;
+export default TouchFooter;

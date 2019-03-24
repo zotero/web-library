@@ -1,88 +1,87 @@
 'use strict';
 
-const collections = require('./collections');
-const deleting = require('./deleting');
-const fetching = require('./fetching');
-const items = require('./items');
-const itemsByCollection = require('./items-by-collection');
-const itemsByParent = require('./items-by-parent');
-const itemsTop = require('./items-top');
-const itemsTrash = require('./items-trash');
-const tagCountByCollection = require('./tag-count-by-collection');
-const tagCountByItem = require('./tag-count-by-item');
-const tags = require('./tags');
-const tagsByCollection = require('./tags-by-collection');
-const tagsByItem = require('./tags-by-item');
-const tagsFromSettings = require('./tags-from-settings');
-const tagsTop = require('./tags-top');
-const updating = require('./updating');
-const version = require('./version');
-const { get } = require('../../utils');
-const actions = Object.entries(require('../../constants/actions'))
-		.map(([key, value]) => ([
-			'ERROR_CHILD_ITEMS',
-			'ERROR_COLLECTIONS_IN_LIBRARY',
-			'ERROR_CREATE_ITEM',
-			'ERROR_CREATE_ITEMS',
-			'ERROR_DELETE_COLLECTION',
-			'ERROR_DELETE_ITEM',
-			'ERROR_DELETE_ITEMS',
-			'ERROR_FETCH_ITEMS',
-			'ERROR_ITEMS_BY_QUERY',
-			'ERROR_ITEMS_IN_COLLECTION',
-			'ERROR_LIBRARY_SETTINGS',
-			'ERROR_TAGS_FOR_ITEM',
-			'ERROR_TAGS_IN_COLLECTION',
-			'ERROR_TAGS_IN_LIBRARY',
-			'ERROR_TOP_ITEMS',
-			'ERROR_UPDATE_COLLECTION',
-			'ERROR_UPDATE_ITEM',
-			'PRE_UPDATE_COLLECTION',
-			'PRE_UPDATE_ITEM',
-			'RECEIVE_ADD_ITEMS_TO_COLLECTION',
-			'RECEIVE_CHILD_ITEMS',
-			'RECEIVE_COLLECTIONS_IN_LIBRARY',
-			'RECEIVE_CREATE_COLLECTION',
-			'RECEIVE_CREATE_ITEM',
-			'RECEIVE_CREATE_ITEMS',
-			'RECEIVE_DELETE_COLLECTION',
-			'RECEIVE_DELETE_ITEM',
-			'RECEIVE_DELETE_ITEMS',
-			'RECEIVE_FETCH_ITEMS',
-			'RECEIVE_ITEMS_BY_QUERY',
-			'RECEIVE_ITEMS_IN_COLLECTION',
-			'RECEIVE_LIBRARY_SETTINGS',
-			'RECEIVE_MOVE_ITEMS_TRASH',
-			'RECEIVE_PUBLICATIONS_ITEMS',
-			'RECEIVE_RECOVER_ITEMS_TRASH',
-			'RECEIVE_REMOVE_ITEMS_FROM_COLLECTION',
-			'RECEIVE_TAGS_FOR_ITEM',
-			'RECEIVE_TAGS_IN_COLLECTION',
-			'RECEIVE_TAGS_IN_LIBRARY',
-			'RECEIVE_TOP_ITEMS',
-			'RECEIVE_TRASH_ITEMS',
-			'RECEIVE_UPDATE_COLLECTION',
-			'RECEIVE_UPDATE_ITEM',
-			'REQUEST_CHILD_ITEMS',
-			'REQUEST_COLLECTIONS_IN_LIBRARY',
-			'REQUEST_CREATE_ITEM',
-			'REQUEST_CREATE_ITEMS',
-			'REQUEST_DELETE_COLLECTION',
-			'REQUEST_DELETE_ITEM',
-			'REQUEST_DELETE_ITEMS',
-			'REQUEST_FETCH_ITEMS',
-			'REQUEST_ITEMS_BY_QUERY',
-			'REQUEST_ITEMS_IN_COLLECTION',
-			'REQUEST_LIBRARY_SETTINGS',
-			'REQUEST_TAGS_FOR_ITEM',
-			'REQUEST_TAGS_IN_COLLECTION',
-			'REQUEST_TAGS_IN_LIBRARY',
-			'REQUEST_TOP_ITEMS',
-			'REQUEST_UPDATE_COLLECTION',
-			'REQUEST_UPDATE_ITEM',
-			'SORT_ITEMS',
-			'TRIGGER_EDITING_ITEM',
-	]).includes(key) ? value : false).filter(Boolean);
+import collections from './collections';
+import deleting from './deleting';
+import fetching from './fetching';
+import items from './items';
+import itemsByCollection from './items-by-collection';
+import itemsByParent from './items-by-parent';
+import itemsTop from './items-top';
+import itemsTrash from './items-trash';
+import tagCountByCollection from './tag-count-by-collection';
+import tagCountByItem from './tag-count-by-item';
+import tags from './tags';
+import tagsByCollection from './tags-by-collection';
+import tagsByItem from './tags-by-item';
+import tagsFromSettings from './tags-from-settings';
+import tagsTop from './tags-top';
+import updating from './updating';
+import version from './version';
+import { get } from '../../utils';
+const actions = [
+	'ERROR_CHILD_ITEMS',
+	'ERROR_COLLECTIONS_IN_LIBRARY',
+	'ERROR_CREATE_ITEM',
+	'ERROR_CREATE_ITEMS',
+	'ERROR_DELETE_COLLECTION',
+	'ERROR_DELETE_ITEM',
+	'ERROR_DELETE_ITEMS',
+	'ERROR_FETCH_ITEMS',
+	'ERROR_ITEMS_BY_QUERY',
+	'ERROR_ITEMS_IN_COLLECTION',
+	'ERROR_LIBRARY_SETTINGS',
+	'ERROR_TAGS_FOR_ITEM',
+	'ERROR_TAGS_IN_COLLECTION',
+	'ERROR_TAGS_IN_LIBRARY',
+	'ERROR_TOP_ITEMS',
+	'ERROR_UPDATE_COLLECTION',
+	'ERROR_UPDATE_ITEM',
+	'PRE_UPDATE_COLLECTION',
+	'PRE_UPDATE_ITEM',
+	'RECEIVE_ADD_ITEMS_TO_COLLECTION',
+	'RECEIVE_CHILD_ITEMS',
+	'RECEIVE_COLLECTIONS_IN_LIBRARY',
+	'RECEIVE_CREATE_COLLECTION',
+	'RECEIVE_CREATE_ITEM',
+	'RECEIVE_CREATE_ITEMS',
+	'RECEIVE_DELETE_COLLECTION',
+	'RECEIVE_DELETE_ITEM',
+	'RECEIVE_DELETE_ITEMS',
+	'RECEIVE_FETCH_ITEMS',
+	'RECEIVE_ITEMS_BY_QUERY',
+	'RECEIVE_ITEMS_IN_COLLECTION',
+	'RECEIVE_LIBRARY_SETTINGS',
+	'RECEIVE_MOVE_ITEMS_TRASH',
+	'RECEIVE_PUBLICATIONS_ITEMS',
+	'RECEIVE_RECOVER_ITEMS_TRASH',
+	'RECEIVE_REMOVE_ITEMS_FROM_COLLECTION',
+	'RECEIVE_TAGS_FOR_ITEM',
+	'RECEIVE_TAGS_IN_COLLECTION',
+	'RECEIVE_TAGS_IN_LIBRARY',
+	'RECEIVE_TOP_ITEMS',
+	'RECEIVE_TRASH_ITEMS',
+	'RECEIVE_UPDATE_COLLECTION',
+	'RECEIVE_UPDATE_ITEM',
+	'REQUEST_CHILD_ITEMS',
+	'REQUEST_COLLECTIONS_IN_LIBRARY',
+	'REQUEST_CREATE_ITEM',
+	'REQUEST_CREATE_ITEMS',
+	'REQUEST_DELETE_COLLECTION',
+	'REQUEST_DELETE_ITEM',
+	'REQUEST_DELETE_ITEMS',
+	'REQUEST_FETCH_ITEMS',
+	'REQUEST_ITEMS_BY_QUERY',
+	'REQUEST_ITEMS_IN_COLLECTION',
+	'REQUEST_LIBRARY_SETTINGS',
+	'REQUEST_TAGS_FOR_ITEM',
+	'REQUEST_TAGS_IN_COLLECTION',
+	'REQUEST_TAGS_IN_LIBRARY',
+	'REQUEST_TOP_ITEMS',
+	'REQUEST_UPDATE_COLLECTION',
+	'REQUEST_UPDATE_ITEM',
+	'SORT_ITEMS',
+	'TRIGGER_EDITING_ITEM',
+];
 
 const libraries = (state = {}, action) => {
 	if(actions.includes(action.type)) {
@@ -111,4 +110,4 @@ const libraries = (state = {}, action) => {
 	} else { return state; }
 }
 
-module.exports = libraries;
+export default libraries;

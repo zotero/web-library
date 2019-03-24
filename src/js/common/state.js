@@ -1,10 +1,10 @@
 'use strict';
 
-const memoize = require('memoize-one');
-const deepEqual = require('deep-equal');
-const { createMatchSelector } = require('connected-react-router');
-const { get } = require('../utils');
-const routes = require('../routes');
+import memoize from 'memoize-one';
+import deepEqual from 'deep-equal';
+import { createMatchSelector } from 'connected-react-router';
+import { get } from '../utils';
+import routes from '../routes';
 
 const getCollectionsPath = state => {
 	const { libraryKey, collectionKey } = state.current;
@@ -61,5 +61,5 @@ const getLibraries = state => {
 }
 
 
-module.exports = { getCollectionsPath, getLibraries, getSerializedQuery,
+export { getCollectionsPath, getLibraries, getSerializedQuery,
 	getParamsFromRoute };

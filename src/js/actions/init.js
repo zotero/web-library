@@ -1,12 +1,7 @@
 'use strict';
 
-const api = require('zotero-api-client')().api;
-const {
-	REQUEST_META,
-	RECEIVE_META,
-	ERROR_META,
-	CONFIGURE_API,
-} = require('../constants/actions');
+import api from 'zotero-api-client';
+import { REQUEST_META, RECEIVE_META, ERROR_META, CONFIGURE_API } from '../constants/actions';
 
 const initialize = () => {
 	return async (dispatch, getState) => {
@@ -46,4 +41,4 @@ const configureApi = ({userId, apiKey, stylesSourceUrl, libraries = {}, apiConfi
 	};
 };
 
-module.exports = { initialize, configureApi };
+export { initialize, configureApi };

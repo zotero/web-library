@@ -1,15 +1,15 @@
 'use strict';
 
-const React = require('react');
-const PropTypes = require('prop-types');
-const Types = require('../../types');
-const { makeChildMap } = require('../../common/collection');
-const Libraries = require('../libraries');
-const Modal = require('../ui/modal');
-const Button = require('../ui/button');
-const Spinner = require('../ui/spinner');
-const TouchHeader = require('../touch-header.jsx');
-const { pluralize } = require('../../common/format');
+import React from 'react';
+import PropTypes from 'prop-types';
+import Types from '../../types';
+import { makeChildMap } from '../../common/collection';
+import Libraries from '../libraries';
+import Modal from '../ui/modal';
+import Button from '../ui/button';
+import Spinner from '../ui/spinner';
+import TouchHeader from '../touch-header.jsx';
+import { pluralize } from '../../common/format';
 const defaultState = {
 	view: 'libraries',
 	libraryKey: '',
@@ -230,4 +230,4 @@ class CollectionSelectModal extends React.PureComponent {
 	}
 }
 
-module.exports = CollectionSelectModal;
+export default CollectionSelectModal;

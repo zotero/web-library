@@ -1,15 +1,14 @@
 'use strict';
 
-const React = require('react');
-const PropTypes = require('prop-types');
-
-const { noop } = require('../../../utils');
-const Icon = require('../../ui/icon');
-const Dropdown = require('reactstrap/lib/Dropdown').default;
-const DropdownToggle = require('reactstrap/lib/DropdownToggle').default;
-const DropdownMenu = require('reactstrap/lib/DropdownMenu').default;
-const DropdownItem = require('reactstrap/lib/DropdownItem').default;
-const exportFormats = require('../../../constants/export-formats');
+import React from 'react';
+import PropTypes from 'prop-types';
+import { noop } from '../../../utils';
+import Icon from '../../ui/icon';
+import Dropdown from 'reactstrap/lib/Dropdown';
+import DropdownToggle from 'reactstrap/lib/DropdownToggle';
+import DropdownMenu from 'reactstrap/lib/DropdownMenu';
+import DropdownItem from 'reactstrap/lib/DropdownItem';
+import exportFormats from '../../../constants/export-formats';
 
 class ExportActions extends React.PureComponent {
 	state = {
@@ -69,4 +68,4 @@ class ExportActions extends React.PureComponent {
 	}
 }
 
-module.exports = ExportActions;
+export default ExportActions;

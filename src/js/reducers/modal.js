@@ -1,7 +1,7 @@
 'use strict';
 
-const { TOGGLE_MODAL } = require('../constants/actions');
-const { omit } = require('../common/immutable');
+import { TOGGLE_MODAL } from '../constants/actions';
+import { omit } from '../common/immutable';
 
 
 const modal = (state = { id: null }, action) => {
@@ -19,4 +19,4 @@ const modal = (state = { id: null }, action) => {
 	return state;
 };
 
-module.exports = modal;
+export default modal;

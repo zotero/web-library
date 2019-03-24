@@ -1,10 +1,16 @@
 'use strict';
 
-const { LOCATION_CHANGE } = require('connected-react-router');
-const { CONFIGURE_API, TRIGGER_EDITING_ITEM, TRIGGER_SELECT_MODE,
-	TOGGLE_TRANSITIONS } = require('../constants/actions');
-const { tagsFromUrlPart } = require('../common/navigation');
-const { getParamsFromRoute } = require('../common/state');
+import { LOCATION_CHANGE } from 'connected-react-router';
+
+import {
+    CONFIGURE_API,
+    TRIGGER_EDITING_ITEM,
+    TRIGGER_SELECT_MODE,
+    TOGGLE_TRANSITIONS,
+} from '../constants/actions';
+
+import { tagsFromUrlPart } from '../common/navigation';
+import { getParamsFromRoute } from '../common/state';
 
 const stateDefault = {
 	collectionKey: null,
@@ -101,4 +107,4 @@ const current = (state = stateDefault, action) => {
 	}
 }
 
-module.exports = current;
+export default current;

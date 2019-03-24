@@ -1,18 +1,19 @@
 'use strict';
 
-const {
-	REQUEST_ITEM_TYPE_CREATOR_TYPES,
-	RECEIVE_ITEM_TYPE_CREATOR_TYPES,
-	ERROR_ITEM_TYPE_CREATOR_TYPES,
-	REQUEST_ITEM_TYPE_FIELDS,
-	RECEIVE_ITEM_TYPE_FIELDS,
-	ERROR_ITEM_TYPE_FIELDS,
-	REQUEST_ITEM_TEMPLATE,
-	RECEIVE_ITEM_TEMPLATE,
-	ERROR_ITEM_TEMPLATE,
-} = require('../constants/actions');
-const cache = require('zotero-api-client-cache');
-const api = require('zotero-api-client')().use(cache()).api;
+import {
+    REQUEST_ITEM_TYPE_CREATOR_TYPES,
+    RECEIVE_ITEM_TYPE_CREATOR_TYPES,
+    ERROR_ITEM_TYPE_CREATOR_TYPES,
+    REQUEST_ITEM_TYPE_FIELDS,
+    RECEIVE_ITEM_TYPE_FIELDS,
+    ERROR_ITEM_TYPE_FIELDS,
+    REQUEST_ITEM_TEMPLATE,
+    RECEIVE_ITEM_TEMPLATE,
+    ERROR_ITEM_TEMPLATE,
+} from '../constants/actions';
+import apiBase from 'zotero-api-client';
+import cache from 'zotero-api-client-cache';
+const api = apiBase().use(cache()).api;
 
 const fetchItemTypeCreatorTypes = itemType => {
 	return async (dispatch, getState) => {
@@ -96,7 +97,7 @@ const fetchItemTemplate = (itemType, opts = {}) => {
 	};
 };
 
-module.exports = {
+export {
 	fetchItemTypeCreatorTypes,
 	fetchItemTypeFields,
 	fetchItemTemplate,

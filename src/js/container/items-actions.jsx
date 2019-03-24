@@ -1,13 +1,13 @@
 'use strict';
 
-const React = require('react');
-const PropTypes = require('prop-types');
-const { connect } = require('react-redux');
-const { get } = require('../utils');
-const ItemsActions = require('../component/item/actions');
-const withSelectMode = require('../enhancers/with-select-mode');
-const withDevice = require('../enhancers/with-device');
-const withItemsActions = require('../enhancers/with-items-actions');
+import React from 'react';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { get } from '../utils';
+import ItemsActions from '../component/item/actions';
+import withSelectMode from '../enhancers/with-select-mode';
+import withDevice from '../enhancers/with-device';
+import withItemsActions from '../enhancers/with-items-actions';
 
 class ItemsActionsContainer extends React.PureComponent {
 	render() {
@@ -40,6 +40,6 @@ const mapStateToProps = state => {
 	}
 }
 
-module.exports = withItemsActions(withSelectMode(withDevice(
+export default withItemsActions(withSelectMode(withDevice(
 	connect(mapStateToProps)(ItemsActionsContainer)
 )));

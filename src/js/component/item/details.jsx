@@ -1,14 +1,13 @@
 'use strict';
 
-const React = require('react');
-const cx = require('classnames');
-const PropTypes = require('prop-types');
-const Types = require('../../types');
-
-const ItemDetailsTabs = require('./details/tabs');
-const ItemDetailsInfoView = require('./details/info-view');
-const ItemDetailsInfoSelected = require('./details/info-selected');
-const TouchHeaderContainer = require('../../container/touch-header');
+import React from 'react';
+import cx from 'classnames';
+import PropTypes from 'prop-types';
+import Types from '../../types';
+import ItemDetailsTabs from './details/tabs';
+import ItemDetailsInfoView from './details/info-view';
+import ItemDetailsInfoSelected from './details/info-selected';
+import TouchHeaderContainer from '../../container/touch-header';
 
 class ItemDetails extends React.PureComponent {
 	render() {
@@ -50,4 +49,4 @@ ItemDetails.propTypes = {
 	selectedItemKeys: PropTypes.array,
 };
 
-module.exports = ItemDetails;
+export default ItemDetails;

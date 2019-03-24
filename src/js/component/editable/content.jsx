@@ -1,11 +1,11 @@
 'use strict';
 
-const escapeHtml = require('escape-html');
-const React = require('react');
-const PropTypes = require('prop-types');
-const cx = require('classnames');
-const TextAreaInput = require('../form/text-area');
-const Select = require('../form/select');
+import escapeHtml from 'escape-html';
+import React from 'react';
+import PropTypes from 'prop-types';
+import cx from 'classnames';
+import TextAreaInput from '../form/text-area';
+import Select from '../form/select';
 
 class EditableContent extends React.PureComponent {
 	get hasValue() {
@@ -77,4 +77,4 @@ class EditableContent extends React.PureComponent {
 	};
 }
 
-module.exports = EditableContent;
+export default EditableContent;

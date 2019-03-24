@@ -1,11 +1,10 @@
 'use strict';
 
-const React = require('react');
-const PropTypes = require('prop-types');
-
-const Spinner = require('./ui/spinner');
-const Icon = require('./ui/icon');
-const Button = require('./ui/button');
+import React from 'react';
+import PropTypes from 'prop-types';
+import Spinner from './ui/spinner';
+import Icon from './ui/icon';
+import Button from './ui/button';
 
 class Relations extends React.PureComponent {
 
@@ -60,4 +59,4 @@ class Relations extends React.PureComponent {
 	};
 }
 
-module.exports = Relations;
+export default Relations;

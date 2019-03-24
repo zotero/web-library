@@ -1,19 +1,19 @@
 /* eslint-disable react/no-deprecated */
 'use strict';
 
-const React = require('react');
-const Panel = require('../../ui/panel');
-const cx = require('classnames');
-const { Tab, Tabs } = require('../../ui/tabs');
-const InfoTabPane = require('./tab-panes/info');
-const NotesTabPane = require('./tab-panes/notes');
-const TagsTabPane = require('./tab-panes/tags');
-const AttachmentsTabPane = require('./tab-panes/attachments');
-const RelatedTabPane = require('./tab-panes/related');
-const StandaloneNoteTabPane = require('./tab-panes/standalone-note');
-const EditToggleButton = require('../../edit-toggle-button');
-const StandaloneAttachmentTabPane = require('./tab-panes/standalone-attachment');
-const Spinner = require('../../ui/spinner');
+import React from 'react';
+import Panel from '../../ui/panel';
+import cx from 'classnames';
+import { Tab, Tabs } from '../../ui/tabs';
+import InfoTabPane from './tab-panes/info';
+import NotesTabPane from './tab-panes/notes';
+import TagsTabPane from './tab-panes/tags';
+import AttachmentsTabPane from './tab-panes/attachments';
+import RelatedTabPane from './tab-panes/related';
+import StandaloneNoteTabPane from './tab-panes/standalone-note';
+import EditToggleButton from '../../edit-toggle-button';
+import StandaloneAttachmentTabPane from './tab-panes/standalone-attachment';
+import Spinner from '../../ui/spinner';
 
 class ItemDetailsTabs extends React.PureComponent {
 	constructor(props) {
@@ -190,4 +190,4 @@ class ItemDetailsTabs extends React.PureComponent {
 	}
 }
 
-module.exports = ItemDetailsTabs;
+export default ItemDetailsTabs;

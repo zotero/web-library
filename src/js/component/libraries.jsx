@@ -1,15 +1,15 @@
 'use strict';
 
-const React = require('react');
-const PropTypes = require('prop-types');
-const Types = require('../types');
-const cx = require('classnames');
-const Icon = require('./ui/icon');
-const Button = require('./ui/button');
-const Spinner = require('./ui/spinner');
-const Node = require('./libraries/node');
-const CollectionTree = require('./libraries/collection-tree.jsx');
-const { pick } = require('../common/immutable');
+import React from 'react';
+import PropTypes from 'prop-types';
+import Types from '../types';
+import cx from 'classnames';
+import Icon from './ui/icon';
+import Button from './ui/button';
+import Spinner from './ui/spinner';
+import Node from './libraries/node';
+import CollectionTree from './libraries/collection-tree.jsx';
+import { pick } from '../common/immutable';
 
 class Libraries extends React.PureComponent {
 	constructor(props) {
@@ -225,4 +225,4 @@ Libraries.defaultProps = {
 	libraries: [],
 };
 
-module.exports = Libraries;
+export default Libraries;
