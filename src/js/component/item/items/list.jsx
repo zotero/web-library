@@ -11,6 +11,7 @@ import { default as InfiniteLoader } from 'react-virtualized/dist/commonjs/Infin
 import { default as List } from 'react-virtualized/dist/commonjs/List';
 
 class ItemsList extends React.PureComponent {
+	state = {};
 
 	// Identical to table.jsx
 	componentDidUpdate({ sortBy, sortDirection, items: prevItems,
@@ -95,6 +96,8 @@ class ItemsList extends React.PureComponent {
 				key={ key }
 				style={ style }
 				onClick={ event => this.handleRowClick({ event, index }) }
+				onFocus={ () => this.setState({ focusedRow: index }) }
+				onBlur={ () => this.setState({ focusedRow: null }) }
 				tabIndex={ 0 }
 				>
 				{ isSelectMode && isLoaded && (
@@ -162,8 +165,12 @@ class ItemsList extends React.PureComponent {
 			return null;
 		}
 
-		const { totalItemsCount, isError, isSelectMode } = this.props;
+		const { totalItemsCount, isError, isSelectMode, selectedItemKeys, items } = this.props;
 		const isLoadingUncounted = !isError && typeof(totalItemsCount) === 'undefined';
+		const isLastItemFocused = totalItemsCount &&
+			this.state.focusedRow === totalItemsCount - 1;
+		const isLastItemSelected = totalItemsCount && items[totalItemsCount - 1] &&
+			selectedItemKeys.includes(items[totalItemsCount - 1].key);
 
 		return (
 			<div
@@ -180,7 +187,11 @@ class ItemsList extends React.PureComponent {
 							{({onRowsRendered, registerChild}) => (
 								<List
 									{ ...this.props }
-									className={ cx('items-list', { 'editing': isSelectMode }) }
+									className={ cx('items-list', {
+										'editing': isSelectMode,
+										'last-item-focus': isLastItemFocused,
+										'last-item-active': isLastItemSelected,
+									}) }
 									height={ height }
 									onRowsRendered={ onRowsRendered }
 									ref={ ref => { this.listRef = ref; registerChild(ref); } }
