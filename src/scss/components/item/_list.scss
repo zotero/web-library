@@ -40,7 +40,7 @@
 	}
 
 	// Todo: use box shadow once Safari is able to render 0.5px box-shadow
-	&:not(:empty)::after {
+	&:not(:empty):not(.last-item-active):not(.last-item-focus)::after {
 		content: "";
 		flex: 1 1 0;
 		background: linear-gradient(
