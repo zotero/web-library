@@ -30,6 +30,8 @@ const dndCollect = (connect, monitor) => ({
 
 @DropTarget(ITEM, dndSpec, dndCollect)
 class Node extends React.PureComponent {
+	state = {};
+
 	handleTwistyClick = ev => {
 		ev && ev.stopPropagation();
 		this.props.onOpen();
@@ -85,17 +87,22 @@ class Node extends React.PureComponent {
 		}
 	}
 
+	handleFocus = ev => {
+		if(ev.target === ev.currentTarget) {
+			this.setState({ isFocused: true });
+		}
+	}
+
+	handleBlur = ev => {
+		if(ev.target === ev.currentTarget) {
+			this.setState({ isFocused: false });
+		}
+	}
+
 	render() {
-		const {
-			canDrop,
-			children,
-			className,
-			connectDropTarget,
-			hideTwisty,
-			isOpen,
-			isOver,
-			subtree,
-		} = this.props;
+		const { canDrop, children, className, connectDropTarget, hideTwisty,
+			isOpen, isOver, subtree, } = this.props;
+		const { isFocused } = this.state;
 
 		const twistyButton = (
 			<button
@@ -114,7 +121,7 @@ class Node extends React.PureComponent {
 
 		return connectDropTarget(
 			<li
-				className={ className }
+				className={ cx(className, { focus: isFocused }) }
 				>
 				<div
 					className={ cx('item-container', { 'dnd-target': isActive }) }
@@ -124,6 +131,8 @@ class Node extends React.PureComponent {
 					onMouseUp={ this.handleMouseUp }
 					onMouseLeave={ this.handleMouseLeave }
 					onClick={ this.handleMouseClick }
+					onFocus={ this.handleFocus }
+					onBlur={ this.handleBlur }
 					onKeyDown={ this.handleKeyDown }
 					{ ...props }
 				>
