@@ -79,8 +79,17 @@ class ItemsList extends React.PureComponent {
 		}
 	}
 
+	handleKeyDown = ev => {
+		const { items } = this.props;
+		const index = ev.target.dataset.index;
+
+		if(ev.key === 'Enter' && items[index]) {
+			this.handleItemSelect(items[index]);
+		}
+	}
+
 	renderRow({ index, key, style }) {
-		const { isSelectMode, selectedItemKeys } = this.props;
+		const { isSelectMode, selectedItemKeys, onKeyNavigation } = this.props;
 		const item = this.getRow({ index });
 		const isLoaded = this.getRowHasLoaded({ index });
 		const isActive = selectedItemKeys.includes(item.key);
@@ -92,12 +101,14 @@ class ItemsList extends React.PureComponent {
 		});
 		return (
 			<div
+				data-index={ index }
 				className={ className }
 				key={ key }
 				style={ style }
 				onClick={ event => this.handleRowClick({ event, index }) }
 				onFocus={ () => this.setState({ focusedRow: index }) }
 				onBlur={ () => this.setState({ focusedRow: null }) }
+				onKeyDown={ this.handleKeyDown }
 				tabIndex={ 0 }
 				>
 				{ isSelectMode && isLoaded && (
