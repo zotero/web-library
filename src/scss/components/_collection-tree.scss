@@ -76,6 +76,22 @@
 			}
 		}
 
+		@include state(".item-container:focus") {
+			@include touch-keyboard-or-bp-down(sm) {
+				@include hairline-disabled(top);
+
+				@include state("li.selected > .item-container", "li.open > .item-container") {
+					outline-color: $sidebar-bg;
+				}
+			}
+		}
+
+		@include state("li.focus + li > .item-container") {
+			@include touch-keyboard-or-bp-down(sm) {
+				@include hairline-disabled(top);
+			}
+		}
+
 		// Revisit: dnd styling
 		@include state(".item-container.dnd-target", "li.selected > .item-container.dnd-target") {
 			@include mouse-and-bp-up(md) {
@@ -205,6 +221,10 @@
 			@include touch-keyboard-or-bp-down(sm) {
 				&:focus {
 					outline-offset: $outline-offset; // Simulate btn-link
+
+					@include state("li.selected > .item-container .dropdown-toggle", "li.open > .item-container .dropdown-toggle") {
+						outline-color: $touch-collection-tree-active-color;
+					}
 				}
 			}
 
