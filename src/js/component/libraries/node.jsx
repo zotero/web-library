@@ -87,14 +87,8 @@ class Node extends React.PureComponent {
 
 	render() {
 		const {
-			canDrop,
-			children,
-			className,
-			connectDropTarget,
-			hideTwisty,
-			isOpen,
-			isOver,
-			subtree,
+			canDrop, children, className, connectDropTarget, hideTwisty,
+			isOpen, isOver, subtree, tabIndex,
 		} = this.props;
 
 		const twistyButton = (
@@ -109,12 +103,13 @@ class Node extends React.PureComponent {
 		const isActive = canDrop && isOver;
 		const props = omit(this.props, ["canDrop", "children", "className",
 			"connectDropTarget", "dndTarget", "hideTwisty", "isOpen", "isOver",
-			"onOpen", "subtree", "onClick", "onRename"
+			"onOpen", "subtree", "onClick", "onRename", 'tabIndex'
 		]);
 
 		return connectDropTarget(
 			<li
 				className={ className }
+				tabIndex={ tabIndex }
 				>
 				<div
 					className={ cx('item-container', { 'dnd-target': isActive }) }
