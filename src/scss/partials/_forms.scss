@@ -227,16 +227,23 @@ input[type="checkbox"] {
 	@include touch-or-bp-down(sm) {
 		-webkit-appearance: none;
 		appearance: none;
-  	flex: 0 0 auto;
+		flex: 0 0 auto;
 		width: $space-lg;
 		height: $space-lg;
 		border-radius: $space-lg / 2;
-		background-color: transparent;
+		background-color: $input-bg;
 		border: $input-border-width solid $checkbox-border-touch;
 
 		&:checked {
 			border: 0;
 			background: image-url("icons/tick.svg") no-repeat 0 0 $checkbox-border-touch;
+		}
+	}
+
+	@include touch-keyboard-or-bp-down(sm) {
+		&:focus {
+			outline: none;
+			box-shadow: 0 0 0 $input-btn-focus-width $btn-secondary-color;
 		}
 	}
 }
