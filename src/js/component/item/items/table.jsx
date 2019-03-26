@@ -62,104 +62,71 @@ class ItemsTable extends React.PureComponent {
 		document.removeEventListener('mouseleave', this.handleMouseLeave);
 	}
 
-	handleKeyArrowDown(ev) {
-		const lastItemKey = this.props.selectedItemKeys[this.props.selectedItemKeys.length - 1];
-		const index = this.props.items.findIndex(i => i.key === lastItemKey);
-
-		if(index + 1 >= this.props.items.length) {
-			return;
-		}
-
-		if(ev.getModifierState('Shift')) {
-			if(this.props.selectedItemKeys.includes(this.props.items[index + 1].key)) {
-				if(this.props.items.slice(0, index).some(
-					i => this.props.selectedItemKeys.includes(i.key)
-				)) {
-					var offset = 1;
-					while(index + offset !== this.props.items.length - 1 &&
-						this.props.selectedItemKeys.includes(this.props.items[index + offset].key)
-					) {
-						offset++;
-					}
-					var consecutiveCounter = 1;
-					while(this.props.selectedItemKeys.includes(this.props.items[index + offset - consecutiveCounter].key)) {
-						consecutiveCounter++;
-					}
-					const consecutiveKeys = this.props.items.slice(index + offset - consecutiveCounter + 1, index + offset).map(i => i.key);
-					this.props.onItemsSelect([
-						...this.props.selectedItemKeys.filter(k => !consecutiveKeys.includes(k)),
-						...consecutiveKeys,
-						this.props.items[index + offset].key
-					]);
-				} else {
-					this.props.onItemsSelect(
-						this.props.selectedItemKeys.filter(k => k !== this.props.items[index].key)
-					);
-				}
-			} else {
-				this.props.onItemsSelect([
-					...this.props.selectedItemKeys,
-					this.props.items[index + 1].key
-				]);
-			}
-		} else {
-			this.props.onItemsSelect([this.props.items[index + 1].key]);
-		}
-	}
-
-	handleKeyArrowUp(ev) {
-		const lastItemKey = this.props.selectedItemKeys[this.props.selectedItemKeys.length - 1];
-		const index = this.props.items.findIndex(i => i.key === lastItemKey);
-
-		if(index - 1 < 0) {
-			return;
-		}
-
-		if(ev.getModifierState('Shift')) {
-			if(this.props.selectedItemKeys.includes(this.props.items[index - 1].key)) {
-				if(this.props.items.slice(index + 1).some(
-					i => this.props.selectedItemKeys.includes(i.key)
-				)) {
-					var offset = 1;
-					while(index - offset !== 0 &&
-						this.props.selectedItemKeys.includes(this.props.items[index - offset].key)
-					) {
-						offset++;
-					}
-					var consecutiveCounter = 1;
-					while(this.props.selectedItemKeys.includes(this.props.items[index - offset + consecutiveCounter].key)) {
-						consecutiveCounter++;
-					}
-					const consecutiveKeys = this.props.items.slice(index - offset, index - offset + consecutiveCounter).reverse().map(i => i.key);
-					this.props.onItemsSelect([
-						...this.props.selectedItemKeys.filter(k => !consecutiveKeys.includes(k)),
-						...consecutiveKeys,
-						this.props.items[index - offset].key
-					]);
-				} else {
-					this.props.onItemsSelect(
-						this.props.selectedItemKeys.filter(k => k !== this.props.items[index].key)
-					);
-				}
-			} else {
-				this.props.onItemsSelect([
-					...this.props.selectedItemKeys,
-					this.props.items[index - 1].key
-				]);
-			}
-		} else {
-			this.props.onItemsSelect([this.props.items[index - 1].key]);
-		}
-	}
-
-	//@TODO: refactor handleKeyArrowUp/handleKeyArrowDown into a signle handler
 	handleKeyDown(ev) {
+		const { items, selectedItemKeys } = this.props;
+
+		var vector;
 		if(ev.key === 'ArrowUp') {
-			this.handleKeyArrowUp(ev);
-			ev.preventDefault();
+			vector = -1;
 		} else if(ev.key === 'ArrowDown') {
-			this.handleKeyArrowDown(ev);
-			ev.preventDefault();
+			vector = 1;
+		} else {
+			return;
+		}
+
+		const lastItemKey = selectedItemKeys[selectedItemKeys.length - 1];
+		const index = items.findIndex(i => i.key === lastItemKey);
+		const nextIndex = index + vector;
+
+		//check bounds
+		if(vector > 0 && index + 1 >= this.props.items.length) {
+			return;
+		}
+
+		if(vector < 0 && index + vector < 0) {
+			return;
+		}
+
+		if(ev.getModifierState('Shift')) {
+			if(selectedItemKeys.includes(items[nextIndex].key)) {
+				if(items.slice(...(vector > 0 ? [0, index] : [index + 1])).some(
+					i => selectedItemKeys.includes(i.key)
+				)) {
+					let offset = 1;
+					let boundry = vector > 0 ? items.length - 1 : 0;
+					while(index + (offset * vector) !== boundry &&
+						selectedItemKeys.includes(items[index + (offset * vector)].key)
+					) {
+						offset++;
+					}
+					var consecutiveCounter = 1;
+					while(selectedItemKeys.includes(items[index + (offset * vector) + consecutiveCounter].key)) {
+						consecutiveCounter++;
+					}
+					var consecutiveKeys;
+					if(vector > 0) {
+						consecutiveKeys = items.slice(index + offset - consecutiveCounter + 1, index + offset).map(i => i.key);
+					} else {
+						consecutiveKeys = items.slice(index - offset, index - offset + consecutiveCounter).reverse().map(i => i.key);
+					}
+					this.props.onItemsSelect([
+						...this.props.selectedItemKeys.filter(k => !consecutiveKeys.includes(k)),
+						...consecutiveKeys,
+						this.props.items[index + (offset * vector)].key
+					]);
+				} else {
+					this.props.onItemsSelect(
+						this.props.selectedItemKeys.filter(k => k !== this.props.items[index].key)
+					);
+				}
+			} else {
+				this.props.onItemsSelect([
+					...this.props.selectedItemKeys,
+					this.props.items[nextIndex].key
+				]);
+			}
+		} else {
+			this.props.onItemsSelect([this.props.items[nextIndex].key]);
 		}
 	}
 
