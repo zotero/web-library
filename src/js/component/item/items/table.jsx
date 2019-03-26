@@ -63,7 +63,7 @@ class ItemsTable extends React.PureComponent {
 	}
 
 	handleKeyDown(ev) {
-		const { items, selectedItemKeys } = this.props;
+		const { items, selectedItemKeys, onItemsSelect } = this.props;
 
 		var vector;
 		if(ev.key === 'ArrowUp') {
@@ -109,24 +109,24 @@ class ItemsTable extends React.PureComponent {
 					} else {
 						consecutiveKeys = items.slice(index - offset, index - offset + consecutiveCounter).reverse().map(i => i.key);
 					}
-					this.props.onItemsSelect([
-						...this.props.selectedItemKeys.filter(k => !consecutiveKeys.includes(k)),
+					onItemsSelect([
+						...selectedItemKeys.filter(k => !consecutiveKeys.includes(k)),
 						...consecutiveKeys,
-						this.props.items[index + (offset * vector)].key
+						items[index + (offset * vector)].key
 					]);
 				} else {
-					this.props.onItemsSelect(
-						this.props.selectedItemKeys.filter(k => k !== this.props.items[index].key)
+					onItemsSelect(
+						selectedItemKeys.filter(k => k !== items[index].key)
 					);
 				}
 			} else {
-				this.props.onItemsSelect([
-					...this.props.selectedItemKeys,
-					this.props.items[nextIndex].key
+				onItemsSelect([
+					...selectedItemKeys,
+					items[nextIndex].key
 				]);
 			}
 		} else {
-			this.props.onItemsSelect([this.props.items[nextIndex].key]);
+			onItemsSelect([items[nextIndex].key]);
 		}
 	}
 
