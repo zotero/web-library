@@ -44,6 +44,10 @@
 			position: relative;
 			min-width: 0; // Fix truncation
 
+			&:active {
+				background-color: $item-table-head-active-bg;
+			}
+
 			.sort-indicator {
 				color: inherit;
 				margin: 0 -4px 0 -5px;

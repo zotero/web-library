@@ -120,9 +120,10 @@ $item-list-chevron-color: $shade-4;
 $title-placeholder-color: $shade-3;
 
 // Item table
-$item-table-head-color:  $shade-8;
-$item-table-head-border: $shade-2;
-$item-table-odd-bg:      mix($shade-10, $shade-1, 2%);
+$item-table-head-color:     $shade-8;
+$item-table-head-border:    $shade-2;
+$item-table-head-active-bg: $shade-1;
+$item-table-odd-bg:         mix($shade-10, $shade-1, 2%);
 
 // Item details
 $item-details-bg:        $shade-1;
