@@ -58,24 +58,7 @@
 	}
 }
 
-.items-table-body {
-	// overflow-y: scroll;
-	// -webkit-overflow-scrolling: touch; // Momentum scrolling
-	// flex: 1 1 auto;
-	// background-attachment: local;
-	//
-	// .view-item-details-active & {
-	// 	overflow: hidden; // Prevent scrolling in inactive state
-	// }
-}
-
 .items-table {
-	@include mouse-and-bp-up(md) {
-		// display: table;
-		// table-layout: fixed;
-		width: 100%;
-	}
-
 	.ReactVirtualized__Table__Grid {
 		padding-top: $space-min / 2;
 	 	background-image: repeating-linear-gradient(to bottom, $item-table-odd-bg $space-min / 2,
@@ -119,18 +102,6 @@
 		align-items: center;
 		user-select: none;
 		width: 100%;
-
-		//@include bp-down(sm) {
-		//	padding: $item-padding-y-touch $item-padding-x-touch;
-		//}
-		//
-		//@include touch-or-bp-up(md) {
-		//	padding: $item-padding-y-touch $item-padding-x-touch;
-		//}
-
-		@include mouse-and-bp-up(md) {
-			// display: table-row;
-		}
 
 		&.active {
 			color: $item-active-color;
@@ -211,34 +182,6 @@
 			vertical-align: middle;
 			padding: 0 $space-xs 0 ($space-xs + 1px);
 			@include text-truncate;
-		}
-	}
-
-	.author,
-	.year {
-		// display: inline;
-
-		@include mouse-and-bp-up(md) {
-			// display: table-cell;
-		}
-	}
-
-	.year {
-		margin-left: 4px;
-
-		&:before {
-			content: "(";
-		}
-
-		&:after {
-			content: ")";
-		}
-
-		@include mouse-and-bp-up(md) {
-			&:before,
-			&:after {
-				content: none;
-			}
 		}
 	}
 }
