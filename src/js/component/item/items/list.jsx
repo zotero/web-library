@@ -80,11 +80,12 @@ class ItemsList extends React.PureComponent {
 	}
 
 	handleKeyDown = ev => {
-		const { items } = this.props;
+		const { items, isSelectMode } = this.props;
 		const index = ev.target.dataset.index;
 
-		if(ev.key === 'Enter' && items[index]) {
+		if((ev.key === 'Enter' || (isSelectMode && ev.key === " ")) && items[index]) {
 			this.handleItemSelect(items[index]);
+			ev.preventDefault();
 		}
 	}
 
@@ -114,6 +115,8 @@ class ItemsList extends React.PureComponent {
 				onBlur={ () => this.setState({ focusedRow: null }) }
 				onKeyDown={ this.handleKeyDown }
 				tabIndex={ shouldBeTabbable ? 0 : null }
+				role={ isSelectMode ? "checkbox" : null }
+				aria-checked={ isSelectMode ? isActive ? "true" : "false" : null }
 				>
 				{ isSelectMode && isLoaded && (
 					<input
