@@ -2,28 +2,10 @@
 // Item list
 // --------------------------------------------------
 
-.items-table-wrap,
 .items-list-wrap {
 	flex: 1 1 auto;
-	// display: flex;
 	flex-direction: column;
 
-	&.reordering {
-		cursor: move;
-	}
-
-	&.resizing {
-		cursor: ew-resize;
-	}
-
-	.icon {
-		@include mouse-and-bp-up(md) {
-			color: $link-color;
-		}
-	}
-}
-
-.items-list-wrap {
 	.loading & {
 		display: flex;
 		justify-content: center;

@@ -3,6 +3,25 @@
 // --------------------------------------------------
 
 .items-table-wrap {
+	flex: 1 1 auto;
+	flex-direction: column;
+
+	&.reordering {
+		cursor: move; // IE
+		cursor: grabbing;
+	}
+
+	&.resizing {
+		cursor: ew-resize;
+	}
+
+	// Do not colorize once the new item type icons are in place
+	.icon {
+		@include mouse-and-bp-up(md) {
+			color: $link-color;
+		}
+	}
+
 	.icon-spin {
 		position: absolute;
 		left: calc(50% - #{$icon-spin-size-lg / 2});
@@ -116,6 +135,10 @@
 		&.active {
 			color: $item-active-color;
 			background: $item-active-bg;
+
+			.icon {
+				color: $item-active-color;
+			}
 		}
 
 		.placeholder-icon {
