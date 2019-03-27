@@ -34,6 +34,10 @@
 	@include bp-up(md) {
 		flex: 0 0 $sidebar-width-md;
 		line-height: $line-height-large;
+
+		.touch & {
+			flex: 0 0 $sidebar-width-md-touch;
+		}
 	}
 
 	@include bp-up(lg) {
