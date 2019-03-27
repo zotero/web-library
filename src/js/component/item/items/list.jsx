@@ -118,6 +118,7 @@ class ItemsList extends React.PureComponent {
 				{ isSelectMode && isLoaded && (
 					<input
 						type="checkbox"
+						tabIndex={ -1 }
 						readOnly
 						checked={ isActive }
 					/>
