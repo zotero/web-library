@@ -29,36 +29,27 @@
 	}
 }
 
-.items-table-head {
-	// box-sizing: content-box; // border-box results in buggy flex layout
-	// table-layout: fixed;
-	display: flex;
-	flex-direction: row;
-	align-items: center;
-	width: 100%;
-	border-spacing: 0; // border-collapse results in buggy height
-	border: {
-		top: 1px solid $item-table-head-border;
-		bottom: 1px solid $item-table-head-border;
-	}
+.items-table {
+	.items-table-head {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		border: {
+			top: 1px solid $item-table-head-border;
+			bottom: 1px solid $item-table-head-border;
+		}
 
-	> div {
-		height: $item-list-head-height;
-		text-align: left;
-		font-weight: 400;
-		padding: 0 $space-xs;
-		color: $item-list-head-color;
-		position: relative;
-		@include text-truncate;
-
-		.resizing &,
-		.reordering & {
-			user-select: none;
+		> div {
+			height: $item-list-head-height;
+			text-align: left;
+			font-weight: 400;
+			padding: 0 $space-xs;
+			color: $item-list-head-color;
+			position: relative;
+			@include text-truncate;
 		}
 	}
-}
 
-.items-table {
 	.ReactVirtualized__Table__Grid {
 		padding-top: $space-min / 2;
 	 	background-image: repeating-linear-gradient(to bottom, $item-table-odd-bg $space-min / 2,
