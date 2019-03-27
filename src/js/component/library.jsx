@@ -80,7 +80,9 @@ class Library extends React.PureComponent {
 				{
 					!useTransitions && (
 						<div className="loading-cover">
-							<Spinner className="large"/>
+							<svg width="32" height="32" viewBox="0 0 32 32">
+							  <path d="M26.4,4.873,10.011,26.409H27V30H4.266V27.127L20.658,5.591H5.1V2H26.4Z" fill="#cc2936"/>
+							</svg>
 						</div>
 					)
 				}
