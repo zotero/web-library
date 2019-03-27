@@ -15,13 +15,6 @@
 		cursor: ew-resize;
 	}
 
-	// Do not colorize once the new item type icons are in place
-	.icon {
-		@include mouse-and-bp-up(md) {
-			color: $link-color;
-		}
-	}
-
 	.icon-spin {
 		position: absolute;
 		left: calc(50% - #{$icon-spin-size-lg / 2});
@@ -39,14 +32,28 @@
 			bottom: 1px solid $item-table-head-border;
 		}
 
+		// ~th
 		> div {
-			height: $item-list-head-height;
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			height: $item-table-head-height;
 			text-align: left;
-			font-weight: 400;
 			padding: 0 $space-xs;
-			color: $item-list-head-color;
+			color: $item-table-head-color;
 			position: relative;
-			@include text-truncate;
+			min-width: 0; // Fix truncation
+
+			.sort-indicator {
+				color: inherit;
+				margin: 0 -4px 0 -5px;
+			}
+
+			&[aria-sort="descending"] {
+				.sort-indicator {
+					transform: scaleY(-1);
+				}
+			}
 		}
 	}
 

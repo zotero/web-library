@@ -108,8 +108,6 @@ $collection-tree-dnd-target-icon-color:   $shade-0;
 
 // Items
 $items-bg:                    $shade-0;
-$item-list-head-color:        $shade-8;
-$item-list-head-border:       $shade-1;
 $item-placeholder-color:      $shade-2;
 $item-placeholder-icon-color: mix($blue, $body-bg, 14%);
 
@@ -122,6 +120,7 @@ $item-list-chevron-color: $shade-4;
 $title-placeholder-color: $shade-3;
 
 // Item table
+$item-table-head-color:  $shade-8;
 $item-table-head-border: $shade-2;
 $item-table-odd-bg:      mix($shade-10, $shade-1, 2%);
 

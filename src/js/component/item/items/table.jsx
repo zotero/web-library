@@ -10,7 +10,6 @@ import InfiniteLoader from 'react-virtualized/dist/commonjs/InfiniteLoader';
 import Table from 'react-virtualized/dist/commonjs/Table';
 import Column from 'react-virtualized/dist/commonjs/Table/Column';
 import defaultHeaderRowRenderer from 'react-virtualized/dist/commonjs/Table/defaultHeaderRowRenderer';
-import SortIndicator from 'react-virtualized/dist/commonjs/Table//SortIndicator';
 import Icon from '../../ui/icon';
 import Row from './row';
 import Spinner from '../../ui/spinner';
@@ -415,14 +414,14 @@ class ItemsTable extends React.PureComponent {
 					/>
 				}
 				<span
-					className="header-label"
+					className="header-label truncate"
 					onMouseDown={ ev => this.handleReorderStart(index, ev) }
 					title={label}
 				>
 					{label}
 				</span>
 				{ isSortIndicatorVisible &&
-					<SortIndicator key="SortIndicator" sortDirection={sortDirection} />
+					<Icon type={ '16/chevron-7' } width="16" height="16" className="sort-indicator" />
 				}
 			</React.Fragment>
 		);
