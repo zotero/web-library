@@ -102,7 +102,7 @@ const withItemsActions = Component => {
 
 		handleDuplicate = async () => {
 			const { item, libraryKey: library, createItem } = this.props;
-			const copyItem = omit(item, ['key', 'version']);
+			const copyItem = omit(item, ['key', 'version', 'dateAdded', 'dateModified']);
 			const newItem = await createItem(copyItem, library);
 			this.handleItemsSelect([newItem.key]);
 		}
