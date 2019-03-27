@@ -166,20 +166,14 @@
 	.metadata {
 		display: flex;
 		align-items: center;
+		height: $item-table-row-height;
+		padding: 0 $space-xs 0 ($space-xs + 1px);
 
 		&.title {
 			.icon {
 				flex: 0 0 auto;
 				margin-right: $space-xs;
 			}
-		}
-
-		@include mouse-and-bp-up(md) {
-			// display: table-cell;
-			height: $item-table-row-height;
-			vertical-align: middle;
-			padding: 0 $space-xs 0 ($space-xs + 1px);
-			@include text-truncate;
 		}
 	}
 }

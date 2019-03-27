@@ -377,7 +377,7 @@ class ItemsTable extends React.PureComponent {
 			<React.Fragment>
 				{ icon }
 				{ coloredSquares }
-				{ String(cellData) }
+				<div className="truncate">{ String(cellData) }</div>
 			</React.Fragment>
 		);
 	}
@@ -391,8 +391,10 @@ class ItemsTable extends React.PureComponent {
 			return <div className="placeholder" />;
 		}
 
-		return String(
-			(typeof(cellData) === 'undefined' || cellData === null) ? '' : cellData
+		return (
+			<div className="truncate">
+				{	(typeof(cellData) === 'undefined' || cellData === null) ? '' : cellData }
+			</div>
 		);
 	}
 
