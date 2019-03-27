@@ -89,16 +89,20 @@ class ItemsList extends React.PureComponent {
 	}
 
 	renderRow({ index, key, style }) {
-		const { isSelectMode, selectedItemKeys, onKeyNavigation } = this.props;
+		const { device, isSelectMode, selectedItemKeys, onKeyNavigation,
+			view } = this.props;
 		const item = this.getRow({ index });
 		const isLoaded = this.getRowHasLoaded({ index });
 		const isActive = selectedItemKeys.includes(item.key);
+		const shouldBeTabbable = (device.isSingleColumn && view === 'item-list') ||
+			!device.isSingleColumn;
 		const className = cx({
 			active: isActive,
 			item: true,
 			odd: (index + 1) % 2 === 1,
 			placeholder: item.isPlaceholder
 		});
+
 		return (
 			<div
 				data-index={ index }
@@ -109,7 +113,7 @@ class ItemsList extends React.PureComponent {
 				onFocus={ () => this.setState({ focusedRow: index }) }
 				onBlur={ () => this.setState({ focusedRow: null }) }
 				onKeyDown={ this.handleKeyDown }
-				tabIndex={ 0 }
+				tabIndex={ shouldBeTabbable ? 0 : null }
 				>
 				{ isSelectMode && isLoaded && (
 					<input

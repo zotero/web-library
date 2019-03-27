@@ -198,8 +198,13 @@ class CollectionTree extends React.PureComponent {
 		const isSiblingOfSelected = selectedDepth === 0;
 		const isChildOfSelected = (parentCollection && derivedData[parentCollection.key].isSelected) ||
 			(parentCollection === null && path.length === 0 && view !== 'libraries');
+
 		const shouldBeTabbableOnTouch = isCurrentLibrary &&
-			(isChildOfSelected || (isSiblingOfSelected && !selectedHasChildren));
+			(isChildOfSelected || (isSiblingOfSelected && !selectedHasChildren)) &&
+			(!device.isSingleColumn || (device.isSingleColumn && (
+				view === 'collection' || view === 'library'))
+			);
+
 		const shouldBeTabbable = shouldBeTabbableOnTouch || !device.isTouchOrSmall;
 
 		collections.sort((c1, c2) =>

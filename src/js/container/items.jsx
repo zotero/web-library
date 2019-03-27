@@ -151,6 +151,7 @@ const mapStateToProps = state => {
 		itemKey,
 		itemKeys,
 		isSelectMode,
+		view
 	} = state.current;
 	const collection = get(state, ['libraries', libraryKey, 'collections', collectionKey]);
 	const item = get(state, ['libraries', libraryKey, 'items', itemKey]);
@@ -219,6 +220,7 @@ const mapStateToProps = state => {
 		sortBy,
 		sortDirection: sortDirection.toUpperCase(),
 		tags,
+		view,
 		totalItemsCount,
 	};
 };
