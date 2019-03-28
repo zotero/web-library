@@ -415,16 +415,20 @@ class ItemsTable extends React.PureComponent {
 						onClick={ ev => ev.stopPropagation() }
 					/>
 				}
-				<span
-					className="header-label truncate"
+				<div
 					onMouseDown={ ev => this.handleReorderStart(index, ev) }
-					title={label}
+					className="draggable-header"
 				>
-					{label}
-				</span>
-				{ isSortIndicatorVisible &&
-					<Icon type={ '16/chevron-7' } width="16" height="16" className="sort-indicator" />
-				}
+					<span
+						className="header-label truncate"
+						title={label}
+					>
+						{label}
+					</span>
+					{ isSortIndicatorVisible &&
+						<Icon type={ '16/chevron-7' } width="16" height="16" className="sort-indicator" />
+					}
+				</div>
 			</React.Fragment>
 		);
 	}
