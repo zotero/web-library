@@ -60,6 +60,16 @@
 				width: $border-width;
 			}
 
+			&::after {
+				content: "";
+				position: absolute;
+				top: 2px;
+				right: 0;
+				bottom: 2px;
+				width: $border-width;
+				box-shadow: $border-width 0 $item-table-head-border;
+			}
+
 			&:active {
 				.items-table-wrap:not(.resizing) & {
 					&::before {
