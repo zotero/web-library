@@ -12,7 +12,7 @@
 	}
 
 	&.resizing {
-		cursor: ew-resize;
+		cursor: ew-resize; // Needed when resizing is laggy
 	}
 
 	.icon-spin {
@@ -28,8 +28,8 @@
 		flex-direction: row;
 		align-items: center;
 		border: {
-			top: 1px solid $item-table-head-border;
-			bottom: 1px solid $item-table-head-border;
+			top: $border-width solid $item-table-head-border;
+			bottom: $border-width solid $item-table-head-border;
 		}
 
 		// ~th
@@ -39,13 +39,53 @@
 			align-items: center;
 			height: $item-table-head-height;
 			text-align: left;
-			padding: 0 $space-xs;
+			padding: 0 $space-xs 0 ($space-xs + $border-width);
 			color: $item-table-head-color;
 			position: relative;
 			min-width: 0; // Fix truncation
 
 			&:active {
-				background-color: $item-table-head-active-bg;
+				.items-table-wrap:not(.resizing) & {
+					background-color: $item-table-head-active-bg;
+				}
+			}
+
+			&::before {
+				content: "";
+				background: $item-table-head-border;
+				position: absolute;
+				top: 2px;
+				bottom: 2px;
+				left: 0;
+				width: $border-width;
+			}
+
+			&:active {
+				.items-table-wrap:not(.resizing) & {
+					&::before {
+						top: 0;
+						bottom: 0;
+					}
+
+					& + div {
+						&::before {
+							top: 0;
+							bottom: 0;
+						}
+					}
+				}
+			}
+
+			&:first-child {
+				padding-left: $default-padding-x;
+
+				&::before {
+					content: none;
+				}
+			}
+
+			&:last-child {
+				padding-right: $default-padding-x;
 			}
 
 			.sort-indicator {
@@ -58,6 +98,15 @@
 					transform: scaleY(-1);
 				}
 			}
+		}
+
+		.resize-handle {
+			position: absolute;
+			top: 2px;
+			bottom: 2px;
+			left: -$space-xs / 2;
+			width: $space-xs;
+			cursor: ew-resize;
 		}
 	}
 
@@ -77,25 +126,6 @@
 		}
 		left: 2px;
 		position: absolute;
-	}
-
-	.resize-handle {
-		bottom: 2px;
-		cursor: ew-resize;
-		left: 0;
-		position: absolute;
-		top: 2px;
-		width: 8px; // actual handle width for cursor grip
-
-		&::before {
-			background: $item-table-head-border;
-			bottom: 0;
-			content: "";
-			left: 2px;
-			position: absolute;
-			top: 0;
-			width: 1px; // rendered handle width for visual
-		}
 	}
 
 	.item {
@@ -171,7 +201,15 @@
 		display: flex;
 		align-items: center;
 		height: $item-table-row-height;
-		padding: 0 $space-xs 0 ($space-xs + 1px);
+		padding: 0 $space-xs 0 ($space-xs + $border-width);
+
+		&:first-child {
+			padding-left: $default-padding-x;
+		}
+
+		&:last-child {
+			padding-right: $default-padding-x;
+		}
 
 		&.title {
 			.icon {
