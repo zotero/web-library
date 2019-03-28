@@ -35,11 +35,9 @@
 		// ~th
 		> div {
 			display: flex;
-			justify-content: space-between;
-			align-items: center;
 			height: $item-table-head-height;
 			text-align: left;
-			padding: 0 $space-xs 0 ($space-xs + $border-width);
+			padding: 0 $space-min;
 			color: $item-table-head-color;
 			position: relative;
 			min-width: 0; // Fix truncation
@@ -87,15 +85,25 @@
 			}
 
 			&:first-child {
-				padding-left: $default-padding-x;
-
 				&::before {
 					content: none;
 				}
 			}
 
-			&:last-child {
-				padding-right: $default-padding-x;
+			> .draggable-header {
+				flex: 1 1 auto;
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				padding: 0 $space-min 0 ($space-min + $border-width);
+
+				@include variant("div:first-child") {
+					padding-left: $space-sm - $space-min;
+				}
+
+				@include variant("div:last-child") {
+					padding-right: $space-sm - $space-min;
+				}
 			}
 
 			.sort-indicator {
