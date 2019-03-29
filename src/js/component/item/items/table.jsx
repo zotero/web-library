@@ -18,15 +18,8 @@ import { columnMinWidthFraction } from '../../../constants/defaults';
 class ItemsTable extends React.PureComponent {
 	constructor(props) {
 		super(props);
-		this.handleMouseUp = this.handleMouseUp.bind(this);
-		this.handleMouseMove = this.handleMouseMove.bind(this);
-		this.handleMouseLeave = this.handleMouseLeave.bind(this);
 		this.state = { };
 		this.ignoreClicks = {};
-	}
-
-	static getDerivedStateFromProps({ preferences: { columns } }) {
-		return { columns };
 	}
 
 	componentDidUpdate({ sortBy, sortDirection, totalItemsCount, items: prevItems,
@@ -61,7 +54,7 @@ class ItemsTable extends React.PureComponent {
 		document.removeEventListener('mouseleave', this.handleMouseLeave);
 	}
 
-	handleKeyDown(ev) {
+	handleKeyDown = ev => {
 		const { items, selectedItemKeys, onItemsSelect } = this.props;
 
 		var vector;
@@ -129,7 +122,216 @@ class ItemsTable extends React.PureComponent {
 		}
 	}
 
-	handleItemSelect(item, ev) {
+
+	handleLoadMore = async ({ startIndex, stopIndex }) => {
+		this.startIndex = startIndex;
+		this.stopIndex = stopIndex;
+		await this.props.onLoadMore({ startIndex, stopIndex });
+	}
+
+	//@NOTE: In order to allow item selection on "mousedown" (#161)
+	//		 this event fires twice, once on "mousedown", once on "click".
+	//		 Click events are discarded unless "mousedown" could
+	//		 have been triggered as a drag event in which case "mousedown"
+	//		 is ignored and "click" is used instead, if occurs.
+	handleRowMouseEvent = ({ event, index }) => {
+		const { items, selectedItemKeys } = this.props;
+		const item = items[index];
+		if(item) {
+			const isSelected = selectedItemKeys.includes(item.key);
+			if(selectedItemKeys.length > 1 &&
+				isSelected && event.type === 'mousedown') {
+				// ignore a "mousedown" when user might want to drag items
+				return;
+			} else {
+				if(selectedItemKeys.length > 1 && isSelected &&
+					event.type === 'click') {
+					const isFollowUp = item.key in this.ignoreClicks &&
+						Date.now() - this.ignoreClicks[item.key] < 500;
+
+					if(isFollowUp) {
+						// ignore a follow-up click, it has been handled as "mousedown"
+						return;
+					} else {
+						// handle a "click" event that has been missed by "mousedown" handler
+						// in anticipation of potential drag that has never happened
+						this.selectItem(item, event);
+						delete this.ignoreClicks[item.key];
+						return
+					}
+				}
+			}
+			if(event.type === 'mousedown') {
+				// finally handle mousedowns as select events
+				this.ignoreClicks[item.key] = Date.now();
+				this.selectItem(item, event);
+			}
+		}
+	}
+
+	handleSort = ({ ...opts }) => {
+		if(this.ignoreNextSortTimeStamp && Date.now() - this.ignoreNextSortTimeStamp < 300) {
+			// triggered by reorder or resize
+			return;
+		}
+		this.props.onSort({ ...opts, startIndex: this.startIndex, stopIndex: this.stopIndex });
+	}
+
+	handleResizeStart = ev => {
+		const index = ev.target.dataset.index;
+		const rect = this.containerDom.getBoundingClientRect();
+		const visibleColumns = this.columns.filter(c => c.isVisible);
+		const column = this.columns[index];
+		// index of the column among visible columns
+		const visibleIndex = visibleColumns.findIndex(c => c.field === column.field);
+		// previous visible column is the one being resized
+		const columnToResize = visibleColumns[visibleIndex - 1];
+		let offset = rect.left;
+		this.availableWidth = rect.right - rect.left;
+
+		for(let i = 0; i < visibleIndex - 1; i++) {
+			const columnWidth = visibleColumns[i].fraction * this.availableWidth;
+			offset += columnWidth;
+		}
+
+		this.resizeOffset = offset;
+		this.resizeIndex = this.columns.findIndex(c => c.field === columnToResize.field);
+		this.setState({ isResizing: true })
+	}
+
+	handleMouseMove = ev => {
+		var isReordering;
+		if(this.mouseDownTimestamp && (Date.now() - this.mouseDownTimestamp < 300))  {
+			this.setState({ isReordering: true });
+			clearTimeout(this.mouseDownTimeout);
+			this.mouseDownTimestamp = null;
+			isReordering = true;
+		} else {
+			isReordering = this.state.isReordering;
+		}
+
+		const { isResizing } = this.state;
+
+		if(isResizing) {
+			const width = ev.clientX - this.resizeOffset;
+			const fraction = Math.max(width / this.availableWidth, columnMinWidthFraction);
+			const columns = [ ...this.columns ];
+			columns[this.resizeIndex].fraction = fraction;
+			const visibleColumns = columns.filter(c => c.isVisible);
+			const aggregatedFraction = visibleColumns.reduce(
+				(aggr, { fraction }) => aggr + fraction
+			, 0);
+			var overflowFraction = aggregatedFraction - 1.0;
+			resizeVisibleColumns(columns, -1 * overflowFraction, true);
+			this.setState({ columns });
+		} else if(isReordering) {
+			const visibleColumns = this.columns.filter(c => c.isVisible);
+			var aggregatedOffset = this.reorderOffset;
+			var targetIndex;
+
+			if(ev.clientX < aggregatedOffset) {
+				targetIndex = 0;
+			} else {
+				for (let i = 0; i < visibleColumns.length; i++) {
+					aggregatedOffset += visibleColumns[i].fraction * this.availableWidth;
+					const testOffest = aggregatedOffset - 0.5 * visibleColumns[i].fraction * this.availableWidth;
+					if(ev.clientX < testOffest) {
+						targetIndex = i;
+						break;
+					}
+				}
+			}
+
+			if(this.state.reorderTargetIndex !== targetIndex) {
+				var realReorderTargetIndex;
+				if(targetIndex === visibleColumns.length) {
+					realReorderTargetIndex = this.columns.findIndex(
+						c => c.field === visibleColumns[visibleColumns.length - 1].field
+					) + 1;
+				} else {
+					realReorderTargetIndex = this.columns.findIndex(
+						c => c.field === visibleColumns[targetIndex].field
+					);
+				}
+
+				this.setState({ reorderTargetIndex: realReorderTargetIndex })
+			}
+		}
+	}
+
+	handleMouseUp = () => {
+		const { isResizing, isReordering } = this.state;
+		const columns = [ ...this.columns ];
+
+		clearTimeout(this.mouseDownTimeout);
+		this.mouseDownTimestamp = null;
+
+		if(isResizing || isReordering) {
+			this.ignoreNextSortTimeStamp = Date.now();
+		}
+
+		if(isResizing) {
+			this.setState({ isResizing: false });
+			this.props.onColumnResize(columns);
+		} else if(isReordering) {
+			const indexFrom = this.reorderingColumn;
+			const indexTo = this.state.reorderTargetIndex;
+
+			if(columns[indexFrom] && columns[indexTo]) {
+				columns.splice(indexTo, 0, columns.splice(indexFrom, 1)[0]);
+				this.props.onColumnReorder(columns);
+			}
+
+			this.setState({
+				isReordering: false,
+				reorderTargetIndex: null,
+			});
+		}
+	}
+
+	handleMouseLeave = () => {
+		this.setState({ isResizing: false });
+		this.setState({ isReordering: false });
+	}
+
+	handleMouseDown = ev => {
+		const index = ev.target.dataset.index;
+		const rect = this.containerDom.getBoundingClientRect();
+		this.availableWidth = rect.right - rect.left;
+		this.reorderOffset = rect.left;
+		this.reorderingColumn = index;
+		this.mouseDownTimestamp = Date.now();
+		this.mouseDownTimeout = setTimeout(() => {
+			this.setState({ isReordering: true });
+		}, 300);
+	}
+
+	getRow({ index }) {
+		if (this.props.items[index]) {
+			return this.props.items[index];
+		} else {
+			return {
+				title: '',
+				creator: '',
+				date: '',
+				coloredTags: [],
+				isPlaceholder: true
+			}
+		}
+	}
+
+	getRowHasLoaded({ index }) {
+		return this.props.items[index] &&
+			typeof(this.props.items[index]) === "object" &&
+			this.props.items[index].isSynced;
+	}
+
+	renderHeaderRow({ className, ...opts }) {
+		className += ' items-table-head';
+		return defaultHeaderRowRenderer({ className, ...opts });
+	}
+
+	selectItem(item, ev) {
 		const isCtrlModifier = ev.getModifierState('Control') || ev.getModifierState('Meta');
 		const isShiftModifier = ev.getModifierState('Shift');
 
@@ -157,199 +359,6 @@ class ItemsTable extends React.PureComponent {
 		} else {
 			this.props.onItemsSelect([item.key]);
 		}
-	}
-
-	async handleLoadMore({ startIndex, stopIndex }) {
-		this.startIndex = startIndex;
-		this.stopIndex = stopIndex;
-		await this.props.onLoadMore({ startIndex, stopIndex });
-	}
-
-	//@NOTE: In order to allow item selection on "mousedown" (#161)
-	//		 this event fires twice, once on "mousedown", once on "click".
-	//		 Click events are discarded unless "mousedown" could
-	//		 have been triggered as a drag event in which case "mousedown"
-	//		 is ignored and "click" is used instead, if occurs.
-	handleRowMouseEvent({ event, index }) {
-		const { items, selectedItemKeys } = this.props;
-		const item = items[index];
-		if(item) {
-			const isSelected = selectedItemKeys.includes(item.key);
-			if(selectedItemKeys.length > 1 &&
-				isSelected && event.type === 'mousedown') {
-				// ignore a "mousedown" when user might want to drag items
-				return;
-			} else {
-				if(selectedItemKeys.length > 1 && isSelected &&
-					event.type === 'click') {
-					const isFollowUp = item.key in this.ignoreClicks &&
-						Date.now() - this.ignoreClicks[item.key] < 500;
-
-					if(isFollowUp) {
-						// ignore a follow-up click, it has been handled as "mousedown"
-						return;
-					} else {
-						// handle a "click" event that has been missed by "mousedown" handler
-						// in anticipation of potential drag that has never happened
-						this.handleItemSelect(item, event);
-						delete this.ignoreClicks[item.key];
-						return
-					}
-				}
-			}
-			if(event.type === 'mousedown') {
-				// finally handle mousedowns as select events
-				this.ignoreClicks[item.key] = Date.now();
-				this.handleItemSelect(item, event);
-			}
-		}
-	}
-
-	handleSort({ ...opts }) {
-		this.props.onSort({ ...opts, startIndex: this.startIndex, stopIndex: this.stopIndex });
-	}
-
-	getRow({ index }) {
-		if (this.props.items[index]) {
-			return this.props.items[index];
-		} else {
-			return {
-				title: '',
-				creator: '',
-				date: '',
-				coloredTags: [],
-				isPlaceholder: true
-			}
-		}
-	}
-
-	getRowHasLoaded({ index }) {
-		return this.props.items[index] &&
-			typeof(this.props.items[index]) === "object" &&
-			this.props.items[index].isSynced;
-	}
-
-	renderRow({ className: otherClassName, index,...opts }) {
-		const { selectedItemKeys, items } = this.props;
-		const className = cx({
-			className: otherClassName,
-			item: true,
-			odd: (index + 1) % 2 === 1,
-			'nth-4n-1': (index + 2) % 4 === 0,
-			'nth-4n': (index + 1) % 4 === 0,
-			active: items[index] && selectedItemKeys.includes(items[index].key)
-		});
-
-		return <Row
-			onDrag={ this.props.onItemDrag }
-			{ ...{className, index, selectedItemKeys, ...opts} }
-		/>;
-	}
-
-	handleResizeStart(index) {
-		const { columns } = this.state;
-		const rect = this.containerDom.getBoundingClientRect();
-		const visibleColumns = columns.filter(c => c.isVisible);
-		const column = this.state.columns[index];
-		// index of the column among visible columns
-		const visibleIndex = visibleColumns.findIndex(c => c.field === column.field);
-		// previous visible column is the one being resized
-		const columnToResize = visibleColumns[visibleIndex - 1];
-		let offset = rect.left;
-		this.availableWidth = rect.right - rect.left;
-
-		for(let i = 0; i < visibleIndex - 1; i++) {
-			const columnWidth = visibleColumns[i].fraction * this.availableWidth;
-			offset += columnWidth;
-		}
-
-		this.resizeOffset = offset;
-		this.resizeIndex = this.state.columns.findIndex(c => c.field === columnToResize.field);
-		this.setState({ isResizing: true })
-	}
-
-	handleMouseMove(ev) {
-		if(this.state.isResizing) {
-			const width = ev.clientX - this.resizeOffset;
-			const fraction = Math.max(width / this.availableWidth, columnMinWidthFraction);
-			const columns = [ ...this.state.columns ];
-			columns[this.resizeIndex].fraction = fraction;
-			const visibleColumns = columns.filter(c => c.isVisible);
-			const aggregatedFraction = visibleColumns.reduce(
-				(aggr, { fraction }) => aggr + fraction
-			, 0);
-			var overflowFraction = aggregatedFraction - 1.0;
-			resizeVisibleColumns(columns, -1 * overflowFraction, true);
-			this.props.onColumnResize(columns);
-		} else if(this.state.isReordering) {
-			const { columns } = this.state;
-			const visibleColumns = columns.filter(c => c.isVisible);
-			var aggregatedOffset = this.reorderOffset;
-			var targetIndex;
-
-			if(ev.clientX < aggregatedOffset) {
-				targetIndex = 0;
-			} else {
-				for (let i = 0; i < visibleColumns.length; i++) {
-					aggregatedOffset += visibleColumns[i].fraction * this.availableWidth;
-					const testOffest = aggregatedOffset - 0.5 * visibleColumns[i].fraction * this.availableWidth;
-					if(ev.clientX < testOffest) {
-						targetIndex = i;
-						break;
-					}
-					}
-			}
-
-			if(this.state.reorderTargetIndex !== targetIndex) {
-				var realReorderTargetIndex;
-				if(targetIndex === visibleColumns.length) {
-					realReorderTargetIndex = columns.findIndex(c => c.field === visibleColumns[visibleColumns.length - 1].field) + 1
-				} else {
-					realReorderTargetIndex = columns.findIndex(c => c.field === visibleColumns[targetIndex].field);
-				}
-
-				this.setState({ reorderTargetIndex: realReorderTargetIndex })
-			}
-		}
-	}
-
-	handleMouseUp() {
-		if(this.state.isResizing) {
-			this.setState({ isResizing: false });
-		} else if(this.state.isReordering) {
-			const columns = [ ...this.state.columns ];
-			const indexFrom = this.reorderingColumn;
-			const indexTo = this.state.reorderTargetIndex;
-
-			if(columns[indexFrom] && columns[indexTo]) {
-				columns.splice(indexTo, 0, columns.splice(indexFrom, 1)[0]);
-				this.props.onColumnReorder(columns);
-			}
-
-			this.setState({
-				isReordering: false,
-				reorderTargetIndex: null,
-			});
-
-		}
-	}
-
-	handleMouseLeave() {
-		this.setState({ isResizing: false });
-		this.setState({ isReordering: false });
-	}
-
-	handleReorderStart(index) {
-		const rect = this.containerDom.getBoundingClientRect();
-		this.availableWidth = rect.right - rect.left;
-		this.reorderOffset = rect.left;
-		this.reorderingColumn = index;
-		this.setState({ isReordering: true });
-	}
-
-	renderHeaderRow({ className, ...opts }) {
-		className += ' items-table-head';
-		return defaultHeaderRowRenderer({ className, ...opts });
 	}
 
 	renderTitleCell({ cellData, rowData }) {
@@ -400,7 +409,7 @@ class ItemsTable extends React.PureComponent {
 
 	renderHeaderCell({ dataKey, label, sortBy, sortDirection }) {
 		const isSortIndicatorVisible = sortBy === dataKey;
-		const index = this.state.columns.findIndex(c => c.field === dataKey);
+		const index = this.columns.findIndex(c => c.field === dataKey);
 		return (
 			<React.Fragment>
 				{
@@ -409,14 +418,15 @@ class ItemsTable extends React.PureComponent {
 				}
 				{ index !== 0 &&
 					<div
+						data-index={ index }
 						className="resize-handle"
 						key="resize-handle"
-						onMouseDown={ ev => this.handleResizeStart(index, ev) }
-						onClick={ ev => ev.stopPropagation() }
+						onMouseDown={ this.handleResizeStart }
 					/>
 				}
 				<div
-					onMouseDown={ ev => this.handleReorderStart(index, ev) }
+					data-index={ index }
+					onMouseDown={ this.handleMouseDown }
 					className="draggable-header"
 				>
 					<span
@@ -446,6 +456,28 @@ class ItemsTable extends React.PureComponent {
 		/>
 	}
 
+	renderRow({ className: otherClassName, index,...opts }) {
+		const { selectedItemKeys, items } = this.props;
+		const className = cx({
+			className: otherClassName,
+			item: true,
+			odd: (index + 1) % 2 === 1,
+			'nth-4n-1': (index + 2) % 4 === 0,
+			'nth-4n': (index + 1) % 4 === 0,
+			active: items[index] && selectedItemKeys.includes(items[index].key)
+		});
+
+		return <Row
+			onDrag={ this.props.onItemDrag }
+			{ ...{className, index, selectedItemKeys, ...opts} }
+		/>;
+	}
+
+	get columns() {
+		const { preferences } = this.props;
+		return this.state.columns || preferences.columns;
+	}
+
 	render() {
 		if(!this.props.isReady) {
 			return null;
@@ -468,7 +500,7 @@ class ItemsTable extends React.PureComponent {
 						<InfiniteLoader
 							ref={ ref => this.loader = ref }
 							isRowLoaded={ this.getRowHasLoaded.bind(this) }
-							loadMoreRows={ this.handleLoadMore.bind(this) }
+							loadMoreRows={ this.handleLoadMore }
 							rowCount={ totalItemsCount }
 						>
 							{({onRowsRendered, registerChild}) => (
@@ -484,14 +516,14 @@ class ItemsTable extends React.PureComponent {
 									rowGetter={ this.getRow.bind(this) }
 									rowRenderer={ this.renderRow.bind(this) }
 									headerRowRenderer={ this.renderHeaderRow.bind(this) }
-									onRowClick={ this.handleRowMouseEvent.bind(this) }
-									sort={ this.handleSort.bind(this) }
+									onRowClick={ this.handleRowMouseEvent }
+									sort={ this.handleSort }
 									sortBy={ sortBy }
 									sortDirection={ sortDirection }
 									scrollToIndex={ scrollToIndex }
 								>
 									{
-										this.state.columns
+										this.columns
 										.filter(c => c.isVisible)
 										.map(({ field, fraction }) => this.renderColumn({
 											width: Math.floor(fraction * width),
