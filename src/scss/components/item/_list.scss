@@ -142,7 +142,6 @@
 			@include state(".item.placeholder") {
 				width: 80%;
 				margin-top: 6px;
-				background-color: $title-placeholder-color;
 
 				@include variant(".item.odd") {
 					width: 90%;
@@ -157,6 +156,7 @@
 			@include state(".item.placeholder") {
 				width: 60%;
 				margin-top: 12px;
+				background-color: $creator-date-placeholder-color;
 
 				@include variant(".item.odd") {
 					width: 70%;

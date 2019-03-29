@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 	<symbol id="item-type" viewBox="0 0 28 28">
-  	<rect width="28" height="28" rx="6" fill="#e1e6fb"/>
+  	<rect width="28" height="28" rx="6" fill="#e6e6e6"/>
 	</symbol>
 	<use xlink:href="#item-type" viewBox="0 0 28 28" />
 </svg>

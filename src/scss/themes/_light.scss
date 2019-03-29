@@ -109,15 +109,14 @@ $collection-tree-dnd-target-icon-color:   $shade-0;
 // Items
 $items-bg:                    $shade-0;
 $item-placeholder-color:      $shade-2;
-$item-placeholder-icon-color: mix($blue, $body-bg, 14%);
 
 // Item list
-$item-border-color:       $shade-4;
-$item-active-color:       $shade-0;
-$item-active-bg:          $secondary;
-$item-creator-date-color: mix($body-bg, $text-color, 50%);
-$item-list-chevron-color: $shade-4;
-$title-placeholder-color: $shade-3;
+$item-border-color:              $shade-4;
+$item-active-color:              $shade-0;
+$item-active-bg:                 $secondary;
+$item-creator-date-color:        mix($body-bg, $text-color, 50%);
+$item-list-chevron-color:        $shade-4;
+$creator-date-placeholder-color: rgba($item-placeholder-color, 0.5);
 
 // Item table
 $item-table-head-color:     $shade-8;
