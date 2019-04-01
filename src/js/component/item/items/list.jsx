@@ -81,7 +81,7 @@ class ItemsList extends React.PureComponent {
 
 	handleKeyDown = ev => {
 		const { items, isSelectMode } = this.props;
-		const index = ev.target.dataset.index;
+		const index = ev.currentTarget.dataset.index;
 
 		if((ev.key === 'Enter' || (isSelectMode && ev.key === " ")) && items[index]) {
 			this.handleItemSelect(items[index]);

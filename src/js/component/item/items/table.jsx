@@ -178,7 +178,7 @@ class ItemsTable extends React.PureComponent {
 	}
 
 	handleResizeStart = ev => {
-		const index = ev.target.dataset.index;
+		const index = ev.currentTarget.dataset.index;
 		const rect = this.containerDom.getBoundingClientRect();
 		const visibleColumns = this.columns.filter(c => c.isVisible);
 		const column = this.columns[index];
@@ -295,11 +295,11 @@ class ItemsTable extends React.PureComponent {
 	}
 
 	handleMouseDown = ev => {
-		const index = ev.target.dataset.index;
+		const index = ev.currentTarget.dataset.index;
 		const rect = this.containerDom.getBoundingClientRect();
 		this.availableWidth = rect.right - rect.left;
 		this.reorderOffset = rect.left;
-		this.reorderingColumn = index;
+		this.reorderingColumn = parseInt(index, 10);
 		this.mouseDownTimestamp = Date.now();
 		this.mouseDownTimeout = setTimeout(() => {
 			this.setState({ isReordering: true });
@@ -410,6 +410,8 @@ class ItemsTable extends React.PureComponent {
 	renderHeaderCell({ dataKey, label, sortBy, sortDirection }) {
 		const isSortIndicatorVisible = sortBy === dataKey;
 		const index = this.columns.findIndex(c => c.field === dataKey);
+		const { isReordering } = this.state;
+
 		return (
 			<React.Fragment>
 				{
@@ -427,7 +429,9 @@ class ItemsTable extends React.PureComponent {
 				<div
 					data-index={ index }
 					onMouseDown={ this.handleMouseDown }
-					className="draggable-header"
+					className={ cx('draggable-header', {
+						'reorder-source': isReordering && this.reorderingColumn === index
+					}) }
 				>
 					<span
 						className="header-label truncate"
