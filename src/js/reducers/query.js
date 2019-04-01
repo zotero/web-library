@@ -31,7 +31,7 @@ const query = (state = defaultState, action) => {
 			return {
 				...state,
 				current: query,
-				totalResults: isChanged ? null : state.totalResults,
+				totalResults: isChanged ? undefined : state.totalResults,
 				keys: isChanged ? [] : state.keys,
 				isFetching: false
 			};
