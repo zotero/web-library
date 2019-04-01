@@ -6,7 +6,8 @@ const UserContext = React.createContext({
 	isKeyboardUser: false,
 	isMouseUser: false,
 	isTouchUser: false,
-	userType: 'mouse'
+	userType: 'mouse',
+	scrollbarWidth: 0,
 });
 
 const ViewportContext = React.createContext({

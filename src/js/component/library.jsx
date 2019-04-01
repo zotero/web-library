@@ -42,6 +42,10 @@ class Library extends React.PureComponent {
 		document.documentElement.classList.toggle('keyboard', !!device.isKeyboardUser);
 		document.documentElement.classList.toggle('mouse', !!device.isMouseUser);
 		document.documentElement.classList.toggle('touch', !!device.isTouchUser);
+		document.documentElement.classList.toggle(
+			'scrollbar-style-permanent',
+			device.scrollbarWidth > 0
+		);
 
 		if(device.isTouchOrSmall !== wasTouchOrSmall && device.userType !== previousUserType) {
 			this.setState({ hasUserTypeChanged: true });

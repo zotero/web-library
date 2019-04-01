@@ -8,7 +8,7 @@ import { UserContext, ViewportContext } from '../context';
 const withDevice = Component => {
 	const C = props => (
 		<UserContext.Consumer>
-		{ ({ userType, isKeyboardUser, isMouseUser, isTouchUser }) => (
+		{ ({ userType, isKeyboardUser, isMouseUser, isTouchUser, scrollbarWidth }) => (
 		<ViewportContext.Consumer>
 		{ viewport => {
 			const isTouchOrSmall = userType === 'touch' || viewport.xxs || viewport.xs || viewport.sm;
@@ -17,17 +17,18 @@ const withDevice = Component => {
 			const shouldUseTabs = viewport.md || (viewport.lg && userType != 'touch');
 			const isSingleColumn = viewport.xxs || viewport.xs;
 			const device = {
-				viewport,
-				userType,
 				[userType]: true,
+				isKeyboardUser,
+				isMouseUser,
 				isSingleColumn,
 				isTouchOrSmall,
+				isTouchUser,
+				scrollbarWidth,
 				shouldUseEditMode,
 				shouldUseModalCreatorField,
 				shouldUseTabs,
-				isKeyboardUser,
-				isMouseUser,
-				isTouchUser,
+				userType,
+				viewport,
 			}
 			return <Component { ...props } device={ device } />
 		}}

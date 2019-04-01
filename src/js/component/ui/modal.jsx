@@ -4,6 +4,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import ReactModal from 'react-modal';
 import cx from 'classnames';
+import { getScrollbarWidth } from '../../utils';
 var initialPadding;
 
 class Modal extends React.PureComponent {
@@ -22,17 +23,8 @@ class Modal extends React.PureComponent {
 		return rect.left + rect.right < window.innerWidth;
 	}
 
-	getScrollbarWidth() {
-		const scrollDiv = document.createElement('div');
-		scrollDiv.className = 'modal-scrollbar-measure';
-		document.body.appendChild(scrollDiv);
-		const scrollbarWidth = scrollDiv.getBoundingClientRect().width - scrollDiv.clientWidth;
-		document.body.removeChild(scrollDiv);
-		return scrollbarWidth;
-	}
-
 	setScrollbar() {
-		const calculatedPadding = this.initialPadding + this.getScrollbarWidth();
+		const calculatedPadding = this.initialPadding + getScrollbarWidth();
 		document.body.style.paddingRight = `${calculatedPadding}px`;
 	}
 

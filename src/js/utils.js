@@ -251,6 +251,15 @@ const JSONTryParse = (json, fallback = {}) => {
 	return output;
 }
 
+const getScrollbarWidth = () => {
+	const scrollDiv = document.createElement('div');
+	scrollDiv.className = 'modal-scrollbar-measure';
+	document.body.appendChild(scrollDiv);
+	const scrollbarWidth = scrollDiv.getBoundingClientRect().width - scrollDiv.clientWidth;
+	document.body.removeChild(scrollDiv);
+	return scrollbarWidth;
+}
+
 export {
 	compare,
 	compareItem,
@@ -258,6 +267,7 @@ export {
 	deduplicateByKey,
 	enumerateObjects,
 	get,
+	getScrollbarWidth,
 	getSortKeyValue,
 	indexByGeneratedKey,
 	indexByKey,

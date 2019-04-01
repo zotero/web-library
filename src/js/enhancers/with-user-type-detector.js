@@ -2,6 +2,7 @@
 
 import React from 'react';
 import hoistNonReactStatic from 'hoist-non-react-statics';
+import { getScrollbarWidth } from '../utils';
 
 const withUserTypeDetection = Component => {
 	class EnhancedComponent extends React.PureComponent {
@@ -11,7 +12,8 @@ const withUserTypeDetection = Component => {
 				? matchMedia('(pointer:fine)').matches : null,
 			isTouchUser: typeof(matchMedia) === 'function'
 				? matchMedia('(pointer:coarse)').matches : null,
-			userType: matchMedia('(pointer:coarse)').matches ? 'touch' : null
+			userType: matchMedia('(pointer:coarse)').matches ? 'touch' : null,
+			scrollbarWidth: getScrollbarWidth()
 		};
 
 		componentDidMount() {
