@@ -505,22 +505,23 @@ class ItemsTable extends React.PureComponent {
 						>
 							{({onRowsRendered, registerChild}) => (
 								<Table
-									ref={ ref => { this.tableRef = ref; registerChild(ref); } }
 									className="items-table"
-									width={ width }
-									height={ height }
-									onRowsRendered={ onRowsRendered }
-									rowCount={ totalItemsCount || 0 }
+									headerClassName="column-header"
 									headerHeight={ 26 }
-									rowHeight={ 26 }
-									rowGetter={ this.getRow.bind(this) }
-									rowRenderer={ this.renderRow.bind(this) }
 									headerRowRenderer={ this.renderHeaderRow.bind(this) }
+									height={ height }
 									onRowClick={ this.handleRowMouseEvent }
+									onRowsRendered={ onRowsRendered }
+									ref={ ref => { this.tableRef = ref; registerChild(ref); } }
+									rowCount={ totalItemsCount || 0 }
+									rowGetter={ this.getRow.bind(this) }
+									rowHeight={ 26 }
+									rowRenderer={ this.renderRow.bind(this) }
+									scrollToIndex={ scrollToIndex }
 									sort={ this.handleSort }
 									sortBy={ sortBy }
 									sortDirection={ sortDirection }
-									scrollToIndex={ scrollToIndex }
+									width={ width }
 								>
 									{
 										this.columns
