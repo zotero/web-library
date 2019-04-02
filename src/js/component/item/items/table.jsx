@@ -375,18 +375,22 @@ class ItemsTable extends React.PureComponent {
 			<Icon type={ `16/item-types/${paramCase(rowData.itemType)}` } width="16" height="16" /> :
 			<Icon type={ `16/item-types/document` } width="16" height="16" />;
 
-		const coloredSquares = rowData.coloredTags.map(tag => (
-			<div
+		const tagColors = rowData.coloredTags.map((tag, index) => (
+			<Icon
 				key={ tag.tag }
-				className="colored-square"
-				style={ { backgroundColor: tag.color } }
+				type={ index === 0 ? '10/circle' : '10/crescent-circle' }
+				width={ index === 0 ? 10 : 7 }
+				height="10"
+				style={ { color: tag.color} }
 			/>
 		));
 		return (
 			<React.Fragment>
 				{ icon }
-				{ coloredSquares }
 				<div className="truncate">{ String(cellData) }</div>
+				<div className="tag-colors">
+					{ tagColors }
+				</div>
 			</React.Fragment>
 		);
 	}

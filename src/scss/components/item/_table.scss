@@ -215,14 +215,6 @@
 		}
 	}
 
-	.colored-square {
-		width: 12px;
-		height: 12px;
-		display: inline-block;
-		margin-right: $space-xs;
-		vertical-align: middle;
-	}
-
 	.metadata {
 		display: flex;
 		align-items: center;
@@ -238,9 +230,19 @@
 		}
 
 		&.title {
-			.icon {
+			> .icon {
 				flex: 0 0 auto;
 				margin-right: $space-xs;
+			}
+
+			.truncate {
+				flex: 1 1 auto;
+			}
+
+			.tag-colors {
+				flex: 0 0 auto;
+				padding-left: $space-xs;
+				margin-left: auto; // space-between on .metadata breaks placeholders
 			}
 		}
 	}
