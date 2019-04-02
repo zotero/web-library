@@ -362,6 +362,9 @@ class ItemsTable extends React.PureComponent {
 	}
 
 	renderTitleCell({ cellData, rowData }) {
+		const { selectedItemKeys } = this.props;
+		const isActive = selectedItemKeys.includes(rowData.key);
+
 		if(rowData.isPlaceholder) {
 			return (
 				<React.Fragment>
@@ -379,6 +382,10 @@ class ItemsTable extends React.PureComponent {
 			<Icon
 				key={ tag.tag }
 				type={ index === 0 ? '10/circle' : '10/crescent-circle' }
+				symbol={ index === 0 ?
+					isActive ? 'circle-active' : 'circle' :
+					isActive ? 'crescent-circle-active' : 'crescent-circle'
+				}
 				width={ index === 0 ? 10 : 7 }
 				height="10"
 				style={ { color: tag.color} }
