@@ -3,6 +3,7 @@
 // --------------------------------------------------
 
 .icon {
+	flex: 0 0 auto; // Prevent scaling
 	display: inline-block;
 
 	@include touch-or-bp-down(sm) {
