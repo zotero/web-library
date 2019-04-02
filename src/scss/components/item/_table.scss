@@ -97,7 +97,7 @@
 				align-items: center;
 				padding: 0 $space-min 0 ($space-min + $border-width);
 
-				&.reorder-source {
+				@include state(".column-header.reorder-source") {
 					opacity: 0.5;
 				}
 
@@ -137,9 +137,19 @@
 				left: -1px;
 				width: 3px;
 				background: $sort-indicator;
+				z-index: 2;
 
 				@include variant(".column-header:first-child") {
 					left: 0;
+				}
+
+				@include variant(".reorder-source ~ .column-header") {
+					left: auto;
+					right: -2px;
+				}
+
+				@include variant(".reorder-source ~ .column-header:last-child") {
+					right: 0;
 				}
 			}
 		}
