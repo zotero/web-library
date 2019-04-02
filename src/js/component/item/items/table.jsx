@@ -443,9 +443,7 @@ class ItemsTable extends React.PureComponent {
 				<div
 					data-index={ index }
 					onMouseDown={ this.handleMouseDown }
-					className={ cx('draggable-header', {
-						'reorder-source': isReordering && this.reorderingColumn === index
-					}) }
+					className="draggable-header"
 				>
 					<span
 						className="header-label truncate"
@@ -462,15 +460,20 @@ class ItemsTable extends React.PureComponent {
 	}
 
 	renderColumn({ dataKey, ...opts }) {
+		const { isReordering } = this.state;
+		const index = this.columns.findIndex(c => c.field === dataKey);
 		const key = dataKey;
 		const label = dataKey in this.props.columnNames ?
 			this.props.columnNames[dataKey] : dataKey;
 		const cellRenderer = this.renderCell.bind(this, dataKey);
-		const className = ['metadata', dataKey].join(' ');
+		const className = cx('metadata', dataKey);
+		const headerClassName = cx({
+			'reorder-source': isReordering && this.reorderingColumn === index
+		});
 
 		return <Column
 			headerRenderer={ this.renderHeaderCell.bind(this) }
-			{ ...{ key, dataKey, className, label, cellRenderer, ...opts } }
+			{ ...{ key, dataKey, className, label, cellRenderer, headerClassName, ...opts } }
 		/>
 	}
 
