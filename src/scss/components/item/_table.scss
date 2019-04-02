@@ -90,6 +90,14 @@
 				}
 			}
 
+			&:last-child {
+				&::after {
+					html:not(.scrollbar-style-permanent) & {
+						content: none;
+					}
+				}
+			}
+
 			.draggable-header {
 				flex: 1 1 auto;
 				display: flex;
