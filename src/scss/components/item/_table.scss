@@ -96,6 +96,7 @@
 				justify-content: space-between;
 				align-items: center;
 				padding: 0 $space-min 0 ($space-min + $border-width);
+				min-width: 0; // Fix truncation
 
 				@include state(".column-header.reorder-source") {
 					opacity: 0.5;
