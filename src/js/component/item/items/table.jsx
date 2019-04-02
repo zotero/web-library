@@ -22,15 +22,17 @@ class ItemsTable extends React.PureComponent {
 		this.ignoreClicks = {};
 	}
 
-	componentDidUpdate({ sortBy, sortDirection, totalItemsCount, items: prevItems,
+	componentDidUpdate({ sortBy: prevSortBy, sortDirection: prevSortDirection,
+		totalItemsCount: prevTotalItemsCount, items: prevItems,
 		selectedItemKeys: prevSelectedItemKeys }) {
-		if(this.props.sortBy !== sortBy ||
-			this.props.sortDirection !== sortDirection ||
-			this.props.totalItemsCount !== totalItemsCount) {
+
+		const { sortBy, sortDirection, totalItemsCount, selectedItemKeys,
+		items } = this.props;
+
+		if(sortBy !== prevSortBy || sortDirection !== prevSortDirection ||
+			totalItemsCount !== prevTotalItemsCount) {
 			this.loader.resetLoadMoreRowsCache(true);
 		}
-
-		const { selectedItemKeys, items } = this.props;
 
 		if(this.tableRef && selectedItemKeys.length > 0 &&
 			(items.length !== prevItems.length || prevSelectedItemKeys.length === 0)
@@ -271,7 +273,7 @@ class ItemsTable extends React.PureComponent {
 		}
 
 		if(isResizing) {
-			this.setState({ isResizing: false });
+			this.setState({ columns, isResizing: false });
 			this.props.onColumnResize(columns);
 		} else if(isReordering) {
 			const indexFrom = this.reorderingColumn;
@@ -283,6 +285,7 @@ class ItemsTable extends React.PureComponent {
 			}
 
 			this.setState({
+				columns,
 				isReordering: false,
 				reorderTargetIndex: null,
 			});
