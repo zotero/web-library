@@ -8,7 +8,7 @@
 
 	&.reordering {
 		cursor: move; // IE
-		cursor: grabbing;
+		//cursor: grabbing; // Use when columns can be dragged
 	}
 
 	&.resizing {
@@ -32,8 +32,8 @@
 			bottom: $border-width solid $item-table-head-border;
 		}
 
-		// ~th
-		> div {
+
+		.column-header {
 			display: flex;
 			height: $item-table-head-height;
 			text-align: left;
@@ -90,18 +90,22 @@
 				}
 			}
 
-			> .draggable-header {
+			.draggable-header {
 				flex: 1 1 auto;
 				display: flex;
 				justify-content: space-between;
 				align-items: center;
 				padding: 0 $space-min 0 ($space-min + $border-width);
 
-				@include variant("div:first-child") {
+				&.reorder-source {
+					opacity: 0.5;
+				}
+
+				@include variant(".column-header:first-child") {
 					padding-left: $space-sm - $space-min;
 				}
 
-				@include variant("div:last-child") {
+				@include variant(".column-header:last-child") {
 					padding-right: $space-sm - $space-min;
 				}
 			}
@@ -116,15 +120,28 @@
 					transform: scaleY(-1);
 				}
 			}
-		}
 
-		.resize-handle {
-			position: absolute;
-			top: 2px;
-			bottom: 2px;
-			left: -$space-xs / 2;
-			width: $space-xs;
-			cursor: ew-resize;
+			.resize-handle {
+				position: absolute;
+				top: 2px;
+				bottom: 2px;
+				left: -$space-xs / 2;
+				width: $space-xs;
+				cursor: ew-resize;
+			}
+
+			.reorder-target {
+				position: absolute;
+				top: 2px;
+				bottom: 2px;
+				left: -1px;
+				width: 3px;
+				background: $sort-indicator;
+
+				@include variant(".column-header:first-child") {
+					left: 0;
+				}
+			}
 		}
 	}
 
@@ -135,15 +152,6 @@
 	 		transparent ($item-table-row-height + $space-min / 2),
 	 		transparent (2 * $item-table-row-height + $space-min / 2));
 	 	background-attachment: local;
-	}
-
-	.reorder-target {
-		&::before {
-			content: "•";
-			color: $red;
-		}
-		left: 2px;
-		position: absolute;
 	}
 
 	.item {
