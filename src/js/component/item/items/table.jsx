@@ -13,7 +13,6 @@ import defaultHeaderRowRenderer from 'react-virtualized/dist/commonjs/Table/defa
 import Icon from '../../ui/icon';
 import Row from './row';
 import Spinner from '../../ui/spinner';
-import { columnMinWidthFraction } from '../../../constants/defaults';
 
 class ItemsTable extends React.PureComponent {
 	constructor(props) {
@@ -215,9 +214,10 @@ class ItemsTable extends React.PureComponent {
 		const { isResizing } = this.state;
 
 		if(isResizing) {
-			const width = ev.clientX - this.resizeOffset;
-			const fraction = Math.max(width / this.availableWidth, columnMinWidthFraction);
 			const columns = [ ...this.columns ];
+			const width = ev.clientX - this.resizeOffset;
+			const columnMinWidthFraction = columns[this.resizeIndex].minFraction;
+			const fraction = Math.max(width / this.availableWidth, columnMinWidthFraction);
 			columns[this.resizeIndex].fraction = fraction;
 			const visibleColumns = columns.filter(c => c.isVisible);
 			const aggregatedFraction = visibleColumns.reduce(

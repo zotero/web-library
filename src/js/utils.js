@@ -1,7 +1,6 @@
 'use strict';
 
 import baseMappings from 'zotero-base-mappings';
-import { columnMinWidthFraction } from './constants/defaults';
 import columnSortKeyLookup from './constants/column-sort-key-lookup';
 import { noteAsTitle } from './common/format';
 
@@ -232,7 +231,7 @@ const resizeVisibleColumns = (columns, fractionBias, invert = false) => {
 	while (fractionBias != 0 && !isLastColumn(columnPointer)) {
 		const newFraction = Math.max(
 			visibleColumns[columnPointer].fraction + fractionBias,
-			columnMinWidthFraction
+			visibleColumns[columnPointer].minFraction
 		);
 		const adjustedFraction = newFraction - visibleColumns[columnPointer].fraction;
 		visibleColumns[columnPointer].fraction = newFraction;
