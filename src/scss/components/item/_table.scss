@@ -189,6 +189,16 @@
 			}
 		}
 
+		&:focus {
+			.keyboard & {
+				outline-offset: -$outline-width;
+
+				&.active {
+					outline-color: $item-active-color;
+				}
+			}
+		}
+
 		.placeholder-icon {
 			width: $space-md;
 			height: $space-md;
