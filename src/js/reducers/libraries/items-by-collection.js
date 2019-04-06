@@ -81,7 +81,7 @@ const itemsByCollection = (state = {}, action) => {
 				...state,
 				[action.collectionKey]: injectExtraItemKeys(
 					state[action.collectionKey] || {},
-					action.itemKeys.filter(iKey =>
+					action.itemKeysChanged.filter(iKey =>
 						action.items.find(item => item.key === iKey && !item.deleted)
 					),
 					{ ...action.otherItems, ...indexByKey(action.items) }
