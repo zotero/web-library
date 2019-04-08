@@ -33,6 +33,7 @@ import { DragDropContext } from 'react-dnd';
 import MultiBackend from 'react-dnd-multi-backend';
 import HTML5toTouch from 'react-dnd-multi-backend/lib/HTML5toTouch';
 import CustomDragLayer from '../component/drag-layer';
+import { get } from '../utils';
 
  //@TODO: ensure this doesn't affect prod build
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
@@ -48,14 +49,13 @@ class LibraryContainer extends React.PureComponent {
 			);
 		};
 
-		const { config, dispatch, userLibraryKey } = props;
+		const { config, dispatch, libraryKey, userLibraryKey } = props;
 
 		dispatch(preferencesLoad());
 		dispatch(initialize());
-		if(config.libraries.includeUserGroups) {
+		if(config.includeUserGroups) {
 			dispatch(fetchGroups(userLibraryKey));
 		}
-		dispatch(fetchLibrarySettings());
 		this.windowResizeHandler();
 	}
 
@@ -67,14 +67,18 @@ class LibraryContainer extends React.PureComponent {
 		window.removeEventListener('resize', this.windowResizeHandler);
 	}
 
-	componentDidUpdate({ isFetchingCollections: wasFetchingCollections }) {
-		const { dispatch, isFetchingCollections } = this.props;
-
+	componentDidUpdate({ isFetchingCollections: wasFetchingCollections,
+		isFetchingLibrarySettings, libraryKey: prevLibraryKey }) {
+		const { dispatch, isFetchingCollections, libraryKey } = this.props;
 
 		if(!isFetchingCollections && wasFetchingCollections) {
 			// setTimeout required to ensure everything else in the UI had
 			// a chance to update before transition are enabled
 			setTimeout(() => dispatch(toggleTransitions(true)))
+		}
+
+		if(libraryKey !== prevLibraryKey && !isFetchingLibrarySettings) {
+			dispatch(fetchLibrarySettings());
 		}
 	}
 
@@ -160,10 +164,13 @@ const mapStateToProps = state => {
 	} = state;
 	const isFetchingCollections = collectionsInLibrary
 		.some(key => key === userLibraryKey || key === libraryKey);
+	const isFetchingLibrarySettings = get(
+		state, ['libraries', libraryKey, 'fetching', 'librarySettings']
+	);
 
 	return { config, view, userLibraryKey, viewport, isSelectMode,
-		itemsSource, collectionKey, isFetchingCollections, useTransitions,
-		libraryKey, search, tags };
+		itemsSource, collectionKey, isFetchingCollections, isFetchingLibrarySettings,
+		useTransitions, libraryKey, search, tags };
 };
 
 const LibraryContainerWrapped = withUserTypeDetection(connect(mapStateToProps)(LibraryContainer));

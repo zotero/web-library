@@ -20,7 +20,6 @@ import {
 import { getCollectionsPath } from '../common/state';
 import { get } from '../utils';
 import { makePath } from '../common/navigation';
-import { getLibraries } from '../common/state';
 import withDevice from '../enhancers/with-device';
 const PAGE_SIZE = 100;
 
@@ -101,7 +100,7 @@ const mapStateToProps = state => {
 		view,
 		itemsSource
 	} = state.current;
-	const libraries = getLibraries(state);
+	const { libraries } = state.config ;
 
 	return {
 		collections: libraries.reduce((aggr, library) => {

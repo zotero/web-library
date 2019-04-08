@@ -7,6 +7,9 @@ import {
     REQUEST_TAGS_IN_COLLECTION,
     RECEIVE_TAGS_IN_COLLECTION,
     ERROR_TAGS_IN_COLLECTION,
+    REQUEST_LIBRARY_SETTINGS,
+    RECEIVE_LIBRARY_SETTINGS,
+    ERROR_LIBRARY_SETTINGS
 } from '../../constants/actions';
 
 const fetching = (state = {
@@ -14,9 +17,20 @@ const fetching = (state = {
 	itemsInCollection: [],
 	childItems: [],
 	tagsInCollection: [],
-	itemsTop: false,
+	librarySettings: false,
 }, action) => {
 	switch(action.type) {
+		case REQUEST_LIBRARY_SETTINGS:
+			return {
+				...state,
+				librarySettings: true
+			}
+		case RECEIVE_LIBRARY_SETTINGS:
+		case ERROR_LIBRARY_SETTINGS:
+			return {
+				...state,
+				librarySettings: false
+			}
 		case REQUEST_FETCH_ITEMS:
 			return {
 				...state,

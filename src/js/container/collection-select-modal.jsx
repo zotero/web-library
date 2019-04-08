@@ -8,7 +8,6 @@ import { toggleModal, addToCollection, fetchCollections } from '../actions';
 import CollectionSelectModal from '../component/modal/collection-select-modal';
 import { COLLECTION_SELECT } from '../constants/modals';
 import { get } from '../utils';
-import { getLibraries } from '../common/state';
 
 class CollectionSelectModalContainer extends React.PureComponent {
 	render() {
@@ -23,7 +22,7 @@ const mapStateToProps = state => {
 	const librariesWithCollectionsFetching = state.fetching.collectionsInLibrary;
 	const collectionCountByLibrary = state.collectionCountByLibrary;
 	const groups = state.groups;
-	const libraries = getLibraries(state);
+	const { libraries } = state.config;
 	const collections = libraries.reduce((aggr, library) => {
 		aggr[library.key] = Object.values(
 			get(state, ['libraries', library.key, 'collections'], {})
