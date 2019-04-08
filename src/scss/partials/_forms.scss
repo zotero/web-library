@@ -178,6 +178,13 @@ label {
 			padding-left: $input-btn-padding-x-touch;
 		}
 	}
+
+	&.Select {
+		@include mouse-and-bp-up(md) {
+			padding: 0;
+			border: none;
+		}
+	}
 }
 
 textarea {
