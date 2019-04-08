@@ -122,43 +122,44 @@ class BibliographyModal extends React.PureComponent {
 					</div>
 				</div>
 				<div className={ cx('modal-body', { loading: !device.isTouchOrSmall && isUpdating }) }>
-					<div className="bibliography-header">
-						<div className="style-selector-container">
-							<label>Citation Style:</label>
-							<StyleSelector { ...pick(this.props,
-								['citationStyle', 'citationStyles', 'onStyleChange']
-							)} />
+					<div className="form">
+						<div className="bibliography-options">
+							<div className="style-selector-container">
+								<label>Citation Style:</label>
+								<StyleSelector { ...pick(this.props,
+									['citationStyle', 'citationStyles', 'onStyleChange']
+								)} />
+							</div>
+							<div className="language-selector-container">
+								<label>Language:</label>
+								<LocaleSelector { ...pick(this.props,
+									['locale', 'onLocaleChange']
+								)} />
+							</div>
 						</div>
-						<div className="language-selector-container">
-							<label>Language:</label>
-							<LocaleSelector { ...pick(this.props,
-								['locale', 'onLocaleChange']
-							)} />
-						</div>
+						{ device.isTouchOrSmall && (
+							<CheckboxSet
+								onChange={ this.handleRequestedActionChange }
+								options={[
+									{ value: 'clipboard', label: 'Copy to Clipboard' },
+									{ value: 'html', label: 'Copy HTML' },
+								]}
+								value={ this.state.requestedAction }
+							/>
+						)}
+						{ !device.isTouchOrSmall && (
+							<div className="bibliography-container">
+								{ isUpdating ? (
+									<Spinner className="large" />
+									) : (
+										<div className="bibliography read-only"
+											dangerouslySetInnerHTML={ { __html: bibliography.join('') } }
+										/>
+									)
+								}
+							</div>
+						)}
 					</div>
-					{ device.isTouchOrSmall && (
-						<CheckboxSet
-							onChange={ this.handleRequestedActionChange }
-							options={[
-								{ value: 'clipboard', label: 'Copy to Clipboard' },
-								{ value: 'html', label: 'Copy HTML' },
-							]}
-							value={ this.state.requestedAction }
-						/>
-					)}
-					{ !device.isTouchOrSmall && (
-						<React.Fragment>
-							<hr/>
-							{ isUpdating ? (
-								<Spinner className="large" />
-								) : (
-									<div className="bibliography read-only"
-										dangerouslySetInnerHTML={ { __html: bibliography.join('') } }
-									/>
-								)
-							}
-						</React.Fragment>
-					)}
 				</div>
 				{ !device.isTouchOrSmall && (
 					<div className="modal-footer">

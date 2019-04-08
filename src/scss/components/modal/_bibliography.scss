@@ -16,17 +16,32 @@
 
 			&.loading {
 				display: flex;
-				justify-content: center;
-				align-items: center;
+				flex-direction: column;
 			}
 		}
 	}
 
-	.bibliography-header {
+	.form {
+		flex: 1 1 auto;
+		display: flex;
+		flex-direction: column;
+	}
+
+	.bibliography-options {
 		@include mouse-and-bp-up(md) {
+			flex: 0 0 auto;
 			position: sticky;
 			top: 0;
 			background-color: $modal-content-bg;
+		}
+	}
+
+	.bibliography-container {
+		@include state(".loading .bibliography-container") {
+			flex: 1 1 auto;
+			display: flex;
+			justify-content: center;
+			align-items: center;
 		}
 	}
 }
