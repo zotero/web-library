@@ -84,10 +84,17 @@
 		border-radius: $modal-border-radius;
 		overflow: hidden;
 	}
+
+	.modal-scrollable & {
+		display: flex;
+		flex-direction: column;
+		max-height: calc(100vh - 2 * #{$space-xl});
+	}
 }
 
 @each $element in header, footer {
 	.modal-#{$element} {
+		flex: 0 0 auto;
 		display: flex;
 		align-items: center;
 		padding: 0 $modal-header-padding;
@@ -130,6 +137,10 @@
 		height: calc(100% - #{$modal-header-height});
 		overflow-y: auto;
 		-webkit-overflow-scrolling: touch; // Momentum scrolling for iOS
+	}
+
+	.modal-scrollable & {
+		overflow-y: auto;
 	}
 }
 
