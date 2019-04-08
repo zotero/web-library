@@ -122,17 +122,19 @@ class BibliographyModal extends React.PureComponent {
 					</div>
 				</div>
 				<div className={ cx('modal-body', { loading: !device.isTouchOrSmall && isUpdating }) }>
-					<div className="style-selector-container">
-						<label>Citation Style:</label>
-						<StyleSelector { ...pick(this.props,
-							['citationStyle', 'citationStyles', 'onStyleChange']
-						)} />
-					</div>
-					<div className="language-selector-container">
-						<label>Language:</label>
-						<LocaleSelector { ...pick(this.props,
-							['locale', 'onLocaleChange']
-						)} />
+					<div className="bibliography-header">
+						<div className="style-selector-container">
+							<label>Citation Style:</label>
+							<StyleSelector { ...pick(this.props,
+								['citationStyle', 'citationStyles', 'onStyleChange']
+							)} />
+						</div>
+						<div className="language-selector-container">
+							<label>Language:</label>
+							<LocaleSelector { ...pick(this.props,
+								['locale', 'onLocaleChange']
+							)} />
+						</div>
 					</div>
 					{ device.isTouchOrSmall && (
 						<CheckboxSet

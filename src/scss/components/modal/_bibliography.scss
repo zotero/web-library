@@ -1,0 +1,32 @@
+//
+// Bibliography modal
+//
+
+.bibliography-modal {
+	.modal-content {
+		@include mouse-and-bp-up(md) {
+			min-height: calc(100vh - 2 * #{$space-xl});
+		}
+	}
+
+	.modal-body {
+		@include mouse-and-bp-up(md) {
+			flex: 1 1 auto;
+			padding-top: 0;
+
+			&.loading {
+				display: flex;
+				justify-content: center;
+				align-items: center;
+			}
+		}
+	}
+
+	.bibliography-header {
+		@include mouse-and-bp-up(md) {
+			position: sticky;
+			top: 0;
+			background-color: $modal-content-bg;
+		}
+	}
+}

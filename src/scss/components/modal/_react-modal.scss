@@ -53,28 +53,11 @@
 		width: $modal-xl;
 		max-width: calc(100% - 2 * #{$space-xl});
 	}
-
-	&.collection-select-modal {
-		align-items: normal; // Stretch modal
-
-		.modal-content {
-			display: flex;
-			flex-direction: column;
-		}
-
-		.modal-body {
-			flex: 1 1 0;
-			display: flex;
-			flex-direction: column;
-			padding: 0;
-			overflow: hidden; // Scroll inside collection-tree
-		}
-	}
 }
 
 .modal-content {
 	width: 100%;
-	background: $modal-content-bg;
+	background-color: $modal-content-bg;
 
 	@include bp-down(xs) {
 		height: 100%;
@@ -89,12 +72,6 @@
 		display: flex;
 		flex-direction: column;
 		max-height: calc(100vh - 2 * #{$space-xl});
-	}
-
-	.bibliography-modal & {
-		@include mouse-and-bp-up(md) {
-			min-height: calc(100vh - 2 * #{$space-xl});
-		}
 	}
 }
 
@@ -147,12 +124,6 @@
 
 	.modal-scrollable & {
 		overflow-y: auto;
-	}
-
-	.bibliography-modal & {
-		@include mouse-and-bp-up(md) {
-			flex: 1 1 auto;
-		}
 	}
 }
 
