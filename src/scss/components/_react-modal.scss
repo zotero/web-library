@@ -90,6 +90,10 @@
 		flex-direction: column;
 		max-height: calc(100vh - 2 * #{$space-xl});
 	}
+
+	.bibliography-modal & {
+		min-height: calc(100vh - 2 * #{$space-xl});
+	}
 }
 
 @each $element in header, footer {
@@ -141,6 +145,10 @@
 
 	.modal-scrollable & {
 		overflow-y: auto;
+	}
+
+	.bibliography-modal & {
+		flex: 1 1 auto;
 	}
 }
 

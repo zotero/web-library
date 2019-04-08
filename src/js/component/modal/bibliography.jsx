@@ -212,6 +212,7 @@ class BibliographyModal extends React.PureComponent {
 	render() {
 		const { device, isOpen, isReady } = this.props;
 		const className = cx({
+			'bibliography-modal': true,
 			'loading': !isReady,
 			'modal-centered': device.isTouchOrSmall,
 			'modal-xl modal-scrollable': !device.isTouchOrSmall,
