@@ -25,10 +25,6 @@
 .modal {
 	width: auto;
 
-	//@include bp-down(xs) {
-	//	height: calc(100% - #{$navbar-height-xs});
-	//}
-
 	@include bp-down(xs) {
 		height: 100%;
 	}
@@ -51,6 +47,11 @@
 		.icon-spin {
 			color: $modal-icon-spin-color;
 		}
+	}
+
+	&-xl {
+		width: $modal-xl;
+		max-width: calc(100% - 2 * #{$space-xl});
 	}
 
 	&.collection-select-modal {

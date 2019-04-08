@@ -214,7 +214,7 @@ class BibliographyModal extends React.PureComponent {
 		const className = cx({
 			'loading': !isReady,
 			'modal-centered': device.isTouchOrSmall,
-			'modal-lg': !device.isTouchOrSmall,
+			'modal-xl': !device.isTouchOrSmall,
 			'modal-touch': device.isTouchOrSmall,
 		});
 		return (
