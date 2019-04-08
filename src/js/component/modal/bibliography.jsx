@@ -210,10 +210,9 @@ class BibliographyModal extends React.PureComponent {
 	}
 
 	render() {
-		const { device, isOpen, isReady } = this.props;
+		const { device, isOpen } = this.props;
 		const className = cx({
 			'bibliography-modal': true,
-			'loading': !isReady,
 			'modal-centered': device.isTouchOrSmall,
 			'modal-xl modal-scrollable': !device.isTouchOrSmall,
 			'modal-touch': device.isTouchOrSmall,
@@ -236,7 +235,6 @@ class BibliographyModal extends React.PureComponent {
 		bibliography: PropTypes.array.isRequired,
 		device: PropTypes.object,
 		isOpen: PropTypes.bool,
-		isReady: PropTypes.bool,
 		isUpdating: PropTypes.bool,
 		onCancel: PropTypes.func,
 		onCopyHtmlClick: PropTypes.func.isRequired,

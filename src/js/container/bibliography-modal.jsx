@@ -18,7 +18,6 @@ class BibliographyModalContainer extends React.PureComponent {
 		//@TODO: use state.preferences.citationStyle
 		citationStyle: coreCitationStyles.find(cs => cs.isDefault).name,
 		locale: 'en-US',
-		isReady: false,
 		isUpdating: false
 	}
 
