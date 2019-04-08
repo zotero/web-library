@@ -46,17 +46,41 @@ const getParamsFromRoute = memoize(state => {
 	return {};
 }, deepEqual);
 
+const determineIfGroupIsWriteable = (group, userId) => {
+	const { libraryEditing, admins = [] } = group;
+	if(libraryEditing === "members") {
+		// you must be at least a member to have a group library listed
+		return true;
+	}
+	if(libraryEditing === "admins") {
+		// else check if admin
+		return admins.includes(userId);
+	}
+	return false;
+}
+
 const getLibraries = state => {
 	const { userLibraryKey } = state.current;
+	const { userId } = state.config;
 	const { includeMyLibrary, includeUserGroups, include = [] } = state.config.libraries;
 
 	return [
-		includeMyLibrary && { key: userLibraryKey, isMyLibrary: true, name: 'My Library' },
+		includeMyLibrary && {
+			key: userLibraryKey,
+			isMyLibrary: true,
+			isReadOnly: false,
+			name: 'My Library'
+		},
 		...(includeUserGroups ?
-			state.groups.map(g => ({ key: `g${g.id}`, isGroupLibrary: true, name: g.name })) :
+			state.groups.map(g => ({
+				key: `g${g.id}`,
+				isGroupLibrary: true,
+				isReadOnly: !determineIfGroupIsWriteable(g, userId),
+				name: g.name
+			})) :
 			[]
 		),
-		...include
+		...include.map(includeLib => ({ isReadOnly: true, ...includeLib }))
 	].filter(Boolean);
 }
 
