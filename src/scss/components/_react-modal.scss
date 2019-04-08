@@ -92,7 +92,9 @@
 	}
 
 	.bibliography-modal & {
-		min-height: calc(100vh - 2 * #{$space-xl});
+		@include mouse-and-bp-up(md) {
+			min-height: calc(100vh - 2 * #{$space-xl});
+		}
 	}
 }
 
@@ -148,7 +150,9 @@
 	}
 
 	.bibliography-modal & {
-		flex: 1 1 auto;
+		@include mouse-and-bp-up(md) {
+			flex: 1 1 auto;
+		}
 	}
 }
 
