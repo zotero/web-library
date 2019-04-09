@@ -15,10 +15,18 @@
 	}
 }
 
+fieldset {
+	border: 0;
+	margin: 0;
+	padding: 0;
+}
+
 .form-group {
 	@include touch-or-bp-down(sm) {
 		display: flex;
 		padding-top: $input-border-width;
+		padding-bottom: $input-border-width;
+		margin-bottom: $form-section-margin;
 		position: relative;
 
 		&::before,
@@ -36,13 +44,14 @@
 			top: 0;
 		}
 
-		&:last-child {
-			padding-bottom: $input-border-width;
+		&::after {
+			content: "";
+			bottom: 0;
+		}
 
-			&::after {
-				content: "";
-				bottom: 0;
-			}
+		&:last-child,
+		fieldset & {
+			margin-bottom: 0;
 		}
 	}
 

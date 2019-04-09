@@ -27,13 +27,28 @@
 		flex-direction: column;
 	}
 
-	.bibliography-options {
+	.citation-options {
+		@include touch-or-bp-down(sm) {
+			margin-bottom: $form-section-margin;
+		}
+
 		@include mouse-and-bp-up(md) {
 			flex: 0 0 auto;
+			display: flex;
 			position: sticky;
 			top: 0;
 			background-color: $modal-content-bg;
 		}
+	}
+
+	.style-selector-container {
+		flex: 1 1 auto;
+		display: flex;
+	}
+
+	.language-selector-container {
+		flex: 0 0 260px;
+		display: flex;
 	}
 
 	.bibliography-container {

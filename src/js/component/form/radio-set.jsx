@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import { noop } from '../../utils';
 
 
-class CheckboxSet extends React.PureComponent {
+class RadioSet extends React.PureComponent {
 	handleChange = ev => {
 		if(this.props.value !== ev.target.value) {
 			this.props.onChange(ev.target.value);
@@ -16,7 +16,7 @@ class CheckboxSet extends React.PureComponent {
 	render() {
 		const { options, value: selectedValue } = this.props;
 		return (
-			<div className="checkbox-set">
+			<fieldset className="form-group">
 				{ options.map(({ value, label }) => (
 					<label key={ value}>
 						<span className="label">
@@ -24,13 +24,13 @@ class CheckboxSet extends React.PureComponent {
 						</span>
 						<input
 							value={ value }
-							type="checkbox"
+							type="radio"
 							checked={ value === selectedValue }
 							onChange={ this.handleChange }
 						/>
 					</label>
 				))}
-			</div>
+			</fieldset>
 		)
 	}
 
@@ -46,4 +46,4 @@ class CheckboxSet extends React.PureComponent {
 	};
 }
 
-export default CheckboxSet;
+export default RadioSet;

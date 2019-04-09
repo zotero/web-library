@@ -7,7 +7,7 @@ import Spinner from '../ui/spinner';
 import Button from '../ui/button';
 import Icon from '../ui/icon';
 import Modal from '../ui/modal';
-import CheckboxSet from '../form/checkbox-set';
+import RadioSet from '../form/radio-set';
 import StyleSelector from '../style-selector';
 import LocaleSelector from '../locale-selector';
 import { noop } from '../../utils';
@@ -123,22 +123,22 @@ class BibliographyModal extends React.PureComponent {
 				</div>
 				<div className={ cx('modal-body', { loading: !device.isTouchOrSmall && isUpdating }) }>
 					<div className="form">
-						<div className="bibliography-options">
-							<div className="style-selector-container">
-								<label>Citation Style:</label>
+						<div className="citation-options">
+							<div className="form-group style-selector-container">
+								<label>Citation Style</label>
 								<StyleSelector { ...pick(this.props,
 									['citationStyle', 'citationStyles', 'onStyleChange']
 								)} />
 							</div>
-							<div className="language-selector-container">
-								<label>Language:</label>
+							<div className="form-group language-selector-container">
+								<label>Language</label>
 								<LocaleSelector { ...pick(this.props,
 									['locale', 'onLocaleChange']
 								)} />
 							</div>
 						</div>
 						{ device.isTouchOrSmall && (
-							<CheckboxSet
+							<RadioSet
 								onChange={ this.handleRequestedActionChange }
 								options={[
 									{ value: 'clipboard', label: 'Copy to Clipboard' },
