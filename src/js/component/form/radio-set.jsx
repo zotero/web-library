@@ -18,17 +18,17 @@ class RadioSet extends React.PureComponent {
 		return (
 			<fieldset className="form-group">
 				{ options.map(({ value, label }) => (
-					<label key={ value}>
-						<span className="label">
-							{ label }
-						</span>
+					<div className="radio">
 						<input
 							value={ value }
 							type="radio"
 							checked={ value === selectedValue }
 							onChange={ this.handleChange }
-						/>
-					</label>
+						/>					
+						<label key={ value}>
+							{ label }
+						</label>
+					</div>
 				))}
 			</fieldset>
 		)
