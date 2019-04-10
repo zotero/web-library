@@ -71,7 +71,7 @@
 		overflow: hidden;
 	}
 
-	@include mouse-and-bp-up(sm) {
+	@include mouse-and-bp-up(md) {
 		background-color: $modal-content-bg;
 	}
 

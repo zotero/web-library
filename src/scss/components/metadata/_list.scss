@@ -92,8 +92,8 @@
 				background-color: $input-bg;
 				padding-top: $input-border-width;
 				margin-bottom: 0;
-				padding-left: 0;
-				padding-right: 0;
+				padding-left: $input-btn-padding-x-touch;
+				padding-right: $input-btn-padding-x-touch;
 
 				&::before,
 				&::after {

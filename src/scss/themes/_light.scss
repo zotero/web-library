@@ -161,13 +161,14 @@ $twisty-selected-color:       $shade-7;
 $twisty-dnd-target-color:     $shade-0;
 
 // Forms
-$input-color:           $text-color;
-$input-bg:              $body-bg;
-$input-border-color:    $shade-3;
-$input-focus-color:     $secondary;
-$placeholder-color:     $shade-5;
-$checkbox-border-touch: $secondary;
-$label-color:           $shade-6;
+$input-color:              $text-color;
+$input-bg:                 $body-bg;
+$input-border-color:       $shade-3;
+$input-border-color-touch: $shade-5;
+$input-focus-color:        $secondary;
+$placeholder-color:        $shade-5;
+$checkbox-border-touch:    $secondary;
+$label-color:              $shade-6;
 
 // Spinner
 $spinner-color: $secondary;

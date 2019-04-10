@@ -24,34 +24,26 @@ fieldset {
 .form-group {
 	@include touch-or-bp-down(sm) {
 		display: flex;
-		padding-top: $input-border-width;
-		padding-bottom: $input-border-width;
+		padding: $input-border-width $input-btn-padding-x-touch;
 		margin-bottom: $form-section-margin;
+		background-color: $input-bg;
 		position: relative;
+		@include hairline(top, $input-border-color-touch);
+		@include hairline(bottom, $input-border-color-touch);
 
-		&::before,
-		&::after {
-			position: absolute;
-			left: 0;
-			right: 0;
-			height: $input-border-width;
-			background-color: $input-border-color;
-			z-index: 2;
-		}
-
-		&::before {
-			content: "";
-			top: 0;
-		}
-
-		&::after {
-			content: "";
-			bottom: 0;
-		}
-
-		&:last-child,
-		fieldset & {
+		@include variant(".form-group:last-child", "fieldset .form-group") {
 			margin-bottom: 0;
+		}
+
+		@include variant("fieldset .form-group") {
+			&:not(:first-child) {
+				@include hairline(top, $input-border-color-touch, $start: $default-padding-x-touch);
+			}
+
+			&:not(:last-child) {
+				@include hairline-disabled(bottom);
+				padding-bottom: 0;
+			}
 		}
 	}
 
@@ -85,7 +77,7 @@ label {
 		@include touch-or-bp-down(sm) {
 			flex: 0 0 auto;
 			line-height: $input-btn-height-touch;
-			padding: 0 ($input-btn-padding-x-touch / 2) 0 $input-btn-padding-x-touch;
+			padding: 0 $input-btn-padding-x-touch;
 			background-color: $input-bg;
 			color: $label-color;
 
@@ -163,7 +155,7 @@ label {
 
 	@include touch-or-bp-down(sm) {
 		height: $input-btn-height-touch;
-		padding: 0 $input-btn-padding-x-touch 0 ($input-btn-padding-x-touch / 2);
+		padding: 0 $input-btn-padding-x-touch;
 		border: none;
 	}
 
@@ -181,12 +173,6 @@ label {
 	.busy:not(.textarea) & {
 		@include touch-or-bp-down(sm) {
 			padding-right: $input-btn-padding-x-touch + $space-lg + 1px;
-		}
-	}
-
-	@at-root #{selector-append(textarea, &)} {
-		@include touch-or-bp-down(sm) {
-			padding-left: $input-btn-padding-x-touch;
 		}
 	}
 
@@ -241,6 +227,32 @@ textarea {
 	}
 }
 
+.checkbox,
+.radio {
+	@include touch-or-bp-down(sm) {
+		display: flex;
+		align-items: center;
+		padding-top: $border-width;
+
+		@include hairline(top, $input-border-color-touch, $start: $input-btn-padding-x-touch, $end: -$input-btn-padding-x-touch);
+
+		&:first-child {
+			padding-top: 0;
+			@include hairline-disabled(top);
+		}
+
+		label {
+			flex: 1 1 auto;
+			order: -1;
+			color: $text-color;
+		}
+
+		input {
+			margin: 0 $input-btn-padding-x-touch ;
+		}
+	}
+}
+
 input[type="checkbox"] {
 	@include touch-or-bp-down(sm) {
 		-webkit-appearance: none;
@@ -254,7 +266,7 @@ input[type="checkbox"] {
 
 		&:checked {
 			border: 0;
-			background: image-url("icons/tick.svg") no-repeat 0 0 $checkbox-border-touch;
+			background: image-url("icons/tick-white.svg") no-repeat 0 0 $checkbox-border-touch;
 		}
 	}
 
@@ -262,6 +274,22 @@ input[type="checkbox"] {
 		&:focus {
 			outline: none;
 			box-shadow: 0 0 0 $input-btn-focus-width $btn-secondary-color;
+		}
+	}
+}
+
+input[type="radio"] {
+	@include touch-or-bp-down(sm) {
+		-webkit-appearance: none;
+		appearance: none;
+		flex: 0 0 auto;
+		width: $space-lg;
+		height: $space-lg;
+		background-color: transparent;
+		border: 0;
+
+		&:checked {
+			background: image-url("icons/tick-blue.svg") no-repeat 0 0;
 		}
 	}
 }
