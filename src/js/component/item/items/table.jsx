@@ -63,12 +63,18 @@ class ItemsTable extends React.PureComponent {
 			vector = -1;
 		} else if(ev.key === 'ArrowDown') {
 			vector = 1;
+		} else if(ev.key === 'Enter') {
+			if('index' in ev.target.dataset) {
+				const index = parseInt(ev.target.dataset.index, 10);
+				this.selectItem(items[index], ev);
+			}
+			return;
 		} else {
 			return;
 		}
 
 		const lastItemKey = selectedItemKeys[selectedItemKeys.length - 1];
-		const index = items.findIndex(i => i.key === lastItemKey);
+		const index = items.findIndex(i => i && i.key === lastItemKey);
 		const nextIndex = index + vector;
 
 		//check bounds
@@ -122,7 +128,6 @@ class ItemsTable extends React.PureComponent {
 			onItemsSelect([items[nextIndex].key]);
 		}
 	}
-
 
 	handleLoadMore = async ({ startIndex, stopIndex }) => {
 		this.startIndex = startIndex;

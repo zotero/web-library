@@ -86,6 +86,7 @@ class Row extends React.PureComponent {
 		return connectDragSource(
 			<div
 				{...a11yProps}
+				data-index={ index }
 				className={className}
 				key={ key }
 				role="row"
