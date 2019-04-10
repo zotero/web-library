@@ -91,10 +91,12 @@
 	}
 }
 
-@mixin hairline-disabled($side) {
-	$pseudo-element: if($side == top or $side == left, "&::before", "&::after");
+@mixin hairline-disabled($sides...) {
+	@each $side in $sides {
+		$pseudo-element: if($side == top or $side == left, "&::before", "&::after");
 
-	#{$pseudo-element} {
-		content: none !important;
+		#{$pseudo-element} {
+			content: none !important;
+		}
 	}
 }

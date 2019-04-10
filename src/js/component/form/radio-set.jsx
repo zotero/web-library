@@ -16,7 +16,7 @@ class RadioSet extends React.PureComponent {
 	render() {
 		const { options, value: selectedValue } = this.props;
 		return (
-			<fieldset className="form-group">
+			<fieldset className="form-group radios">
 				{ options.map(({ value, label }) => (
 					<div className="radio">
 						<input
@@ -24,7 +24,7 @@ class RadioSet extends React.PureComponent {
 							type="radio"
 							checked={ value === selectedValue }
 							onChange={ this.handleChange }
-						/>					
+						/>
 						<label key={ value}>
 							{ label }
 						</label>

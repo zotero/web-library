@@ -48,7 +48,7 @@ fieldset {
 	}
 
 	@include touch-keyboard-or-bp-down(sm) {
-		&:focus-within {
+		&:focus-within:not(.checkboxes):not(.radios) {
 			&::before,
 			&::after {
 				content: "";
@@ -227,18 +227,31 @@ textarea {
 	}
 }
 
+.checkboxes,
+.radios {
+	@include touch-or-bp-down(sm) {
+		@include hairline-disabled(top);
+		@include hairline-disabled(bottom);
+		padding: 0;
+	}
+}
+
 .checkbox,
 .radio {
 	@include touch-or-bp-down(sm) {
 		display: flex;
 		align-items: center;
-		padding-top: $border-width;
+		padding: $border-width $input-btn-padding-x-touch;
+		@include hairline(top, $input-border-color-touch);
+		@include hairline(bottom, $input-border-color-touch);
 
-		@include hairline(top, $input-border-color-touch, $start: $input-btn-padding-x-touch, $end: -$input-btn-padding-x-touch);
+		&:not(:first-child) {
+			@include hairline(top, $input-border-color-touch, $start: $default-padding-x-touch);
+		}
 
-		&:first-child {
-			padding-top: 0;
-			@include hairline-disabled(top);
+		&:not(:last-child) {
+			@include hairline-disabled(bottom);
+			padding-bottom: 0;
 		}
 
 		label {
@@ -248,7 +261,24 @@ textarea {
 		}
 
 		input {
-			margin: 0 $input-btn-padding-x-touch ;
+			margin: 0 $input-btn-padding-x-touch;
+		}
+	}
+
+	@include touch-keyboard-or-bp-down(sm) {
+		&:focus-within {
+			outline: $outline-width solid $focus-color;
+			outline-offset: -$outline-width;
+			@include hairline-disabled(top, bottom);
+
+			& + .checkbox,
+			& + .radio {
+				@include hairline-disabled(top);
+			}
+		}
+
+		input {
+			outline: none;
 		}
 	}
 }
