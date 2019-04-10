@@ -57,7 +57,10 @@
 
 .modal-content {
 	width: 100%;
-	background-color: $modal-content-bg;
+
+	@include touch-or-bp-down(sm) {
+		background-color: $modal-content-bg-touch;
+	}
 
 	@include bp-down(xs) {
 		height: 100%;
@@ -66,6 +69,10 @@
 	@include bp-up(sm) {
 		border-radius: $modal-border-radius;
 		overflow: hidden;
+	}
+
+	@include mouse-and-bp-up(sm) {
+		background-color: $modal-content-bg;
 	}
 
 	.modal-scrollable & {
