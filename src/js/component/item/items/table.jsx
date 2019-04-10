@@ -542,6 +542,7 @@ class ItemsTable extends React.PureComponent {
 									sort={ this.handleSort }
 									sortBy={ sortBy }
 									sortDirection={ sortDirection }
+									tabIndex={ null }
 									width={ width }
 								>
 									{
