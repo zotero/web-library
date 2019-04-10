@@ -80,7 +80,7 @@ class Libraries extends React.PureComponent {
 		if(!isOpened) { onGroupOpen(groupKey); }
 	}
 
-	renderCollections({ key, isMyLibrary }) {
+	renderCollections({ key, isMyLibrary, isReadOnly }) {
 		const { collections, libraryKey } = this.props;
 		const { virtual } = this.state;
 		const props = {
@@ -89,6 +89,7 @@ class Libraries extends React.PureComponent {
 			libraryKey: key,
 			isMyLibrary,
 			isCurrentLibrary: libraryKey === key,
+			isReadOnly,
 			onAdd: this.handleAdd.bind(this),
 			onAddCancel: this.handleAddCancel.bind(this),
 			onAddCommit: this.handleAddCommit.bind(this),
@@ -100,7 +101,7 @@ class Libraries extends React.PureComponent {
 		return <CollectionTree { ...props } />;
 	}
 
-	renderLibrary = ({ key, name, isMyLibrary }) => {
+	renderLibrary = ({ key, name, isReadOnly, isMyLibrary }) => {
 		const { libraryKey, itemsSource, device, view,
 			librariesWithCollectionsFetching } = this.props;
 		const { opened } = this.state;
@@ -124,7 +125,7 @@ class Libraries extends React.PureComponent {
 				onOpen={ this.handleOpenToggle.bind(this, key) }
 				onClick={ this.handleSelect.bind(this, { library: key, view: 'library' }) }
 				onKeyPress={ this.handleKeyPress.bind(this, { library: key, view: 'library'}) }
-				subtree={ isFetching ? null : this.renderCollections({ key, isMyLibrary }) }
+				subtree={ isFetching ? null : this.renderCollections({ key, isMyLibrary, isReadOnly }) }
 				key={ key }
 			>
 				<Icon type="28/library" className="touch" width="28" height="28" />
@@ -132,7 +133,7 @@ class Libraries extends React.PureComponent {
 				<div className="truncate">{ name }</div>
 				{ isFetching && <Spinner className="small mouse" /> }
 				{
-					!isFetching && (
+					!isFetching && !isReadOnly && (
 						<Button className="mouse btn-icon-plus" onClick={ this.handleAdd.bind(this, key, null) } >
 							<Icon type={ '16/plus' } width="16" height="16" />
 						</Button>

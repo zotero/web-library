@@ -158,7 +158,7 @@ class CollectionTree extends React.PureComponent {
 		const { childMap, derivedData } = this;
 		const { libraryKey, itemsSource, isMyLibrary, isCurrentLibrary,
 			virtual, onAddCancel, device, path, view, isPickerMode,
-			picked } = this.props;
+			picked, isReadOnly } = this.props;
 
 		const [selected, selectedDepth] = this.findRecursive(
 			collections,
@@ -297,7 +297,7 @@ class CollectionTree extends React.PureComponent {
 												onChange={ ev => this.props.onPickerPick({ collection: collection.key, library: libraryKey }, ev) }
 												onClick={ ev => ev.stopPropagation() }
 											/>
-										) : (
+										) : !isReadOnly && (
 										<UncontrolledDropdown>
 											<DropdownToggle
 												className="btn-icon dropdown-toggle"
@@ -372,7 +372,7 @@ class CollectionTree extends React.PureComponent {
 						)
 					}
 					{
-						!isPickerMode && level === 1 && (
+						!isPickerMode && !isReadOnly && level === 1 && (
 							<Node
 								className={ cx({
 									'trash': true,

@@ -81,8 +81,9 @@ class TouchHeaderContainer extends React.PureComponent {
 
 	render() {
 		const { path, variant, view, item, isSelectMode, itemKeys,
-			collectionKey } = this.props;
+			libraryConfig, collectionKey } = this.props;
 		const variants = TouchHeaderContainer.variants;
+		const { isReadOnly } = libraryConfig;
 		var touchHeaderPath, shouldIncludeEditButton, shouldIncludeItemListOptions,
 			shouldIncludeCollectionOptions, shouldHandleSelectMode;
 
@@ -98,15 +99,15 @@ class TouchHeaderContainer extends React.PureComponent {
 				shouldIncludeItemListOptions = view === 'item-list' && !isSelectMode;
 				shouldHandleSelectMode = view === 'item-list';
 				shouldIncludeCollectionOptions = view !== 'libraries' &&
-					!shouldIncludeEditButton && !shouldIncludeItemListOptions &&
-					!shouldHandleSelectMode;
+					!isReadOnly && !shouldIncludeEditButton &&
+					!shouldIncludeItemListOptions && !shouldHandleSelectMode;
 			break;
 			case variants.NAVIGATION:
 				touchHeaderPath = [this.rootNode, ...path];
 				if(this.isLastNodeCurrentlySelectedCollection) {
 					touchHeaderPath.pop();
 				}
-				shouldIncludeCollectionOptions = true;
+				shouldIncludeCollectionOptions = !isReadOnly;
 			break;
 			case variants.SOURCE:
 				touchHeaderPath = [ this.selectedNode ];
@@ -170,8 +171,10 @@ const mapStateToProps = state => {
 		itemsSource,
 		collectionKey, //@TODO: rename to collectionKey
 	} = state.current;
+	const { libraries } = state.config;
 	const collections = get(state, ['libraries', libraryKey, 'collections'], []);
 	const item = get(state, ['libraries', libraryKey, 'items', itemKey]);
+	const libraryConfig = libraries.find(l => l.key === libraryKey);
 	const path = getCollectionsPath(state).map(
 		key => {
 			const { name } = collections[key]
@@ -189,12 +192,7 @@ const mapStateToProps = state => {
 			key: libraryKey,
 			type: 'library',
 			path: { library: libraryKey, view: 'library' },
-			//@TODO: when first loading, group name is not known
-			label: libraryKey === state.current.userLibraryKey ?
-				"My Library" :
-				(state.groups.find(
-					g => g.id === parseInt(libraryKey.slice(1), 10)
-				) || { name: libraryKey }).name
+			label: libraryConfig.name
 		})
 	}
 
@@ -202,6 +200,7 @@ const mapStateToProps = state => {
 		collections: Object.values(collections),
 		view,
 		libraryKey,
+		libraryConfig,
 		path,
 		item,
 		itemsSource,
