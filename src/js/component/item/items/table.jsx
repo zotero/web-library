@@ -488,6 +488,14 @@ class ItemsTable extends React.PureComponent {
 			active: items[index] && selectedItemKeys.includes(items[index].key)
 		});
 
+		//
+		// @NOTE: paddingRight provided is basically scrollbar width
+		// 		  however instead of padding, we want to reduce the actual
+		// 		  width of a row, in oder to display outline on focused rows
+		// 		  correctly. See https://github.com/zotero/web-library/issues/151#issuecomment-480270140
+		opts.style.width -= opts.style.paddingRight;
+		delete opts.style.paddingRight;
+
 		return <Row
 			onDrag={ this.props.onItemDrag }
 			{ ...{className, index, selectedItemKeys, ...opts} }
