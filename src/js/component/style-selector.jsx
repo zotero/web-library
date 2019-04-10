@@ -16,6 +16,7 @@ class StyleSelector extends React.PureComponent {
 					clearable={ false }
 					searchable={ false}
 					value={ citationStyle }
+					tabIndex={ 0 }
 					options={ [
 						...citationStyles.map(cs => ({
 							value: cs.name,
