@@ -33,6 +33,11 @@ const dndCollect = (connect, monitor) => ({
 
 @DragSource(ITEM, dndSpec, dndCollect)
 class Row extends React.PureComponent {
+	componentDidMount() {
+		const { connectDragPreview } = this.props;
+		connectDragPreview(getEmptyImage());
+	}
+
 	render() {
 		const a11yProps = {};
 		const {
@@ -96,7 +101,6 @@ class Row extends React.PureComponent {
 				} }
 			>
 				{ columns }
-				{ connectDragPreview(getEmptyImage()) }
 			</div>
 		);
 	}
