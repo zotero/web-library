@@ -38,17 +38,34 @@
 			position: sticky;
 			top: 0;
 			background-color: $modal-content-bg;
+			padding-top: $space-sm;
+			padding-bottom: $space-sm;
+			border-bottom: $border-width solid mix($modal-header-border, $modal-content-bg, 50%);
 		}
 	}
 
 	.style-selector-container {
-		flex: 1 1 auto;
-		display: flex;
+		@include mouse-and-bp-up(md) {
+			flex: 1 1 auto;
+			display: flex;
+		}
 	}
 
 	.language-selector-container {
-		flex: 0 0 260px;
-		display: flex;
+		@include mouse-and-bp-up(md) {
+			flex: 0 0 260px;
+			display: flex;
+			padding-left: $space-xs;
+		}
+	}
+
+	// Todo: remove once the wrappers do not exist anymore
+	.style-selector,
+	.locale-selector {
+		@include mouse-and-bp-up(md) {
+			flex: 1 1 auto;
+			display: flex;
+		}
 	}
 
 	.bibliography-container {

@@ -15,6 +15,15 @@
 	}
 }
 
+.form-row {
+	> .col {
+		@include mouse-and-bp-up(sm) {
+			padding-left: $form-grid-gutter-width / 2;
+			padding-right: $form-grid-gutter-width / 2;
+		}
+	}
+}
+
 fieldset {
 	border: 0;
 	margin: 0;
@@ -86,6 +95,12 @@ label {
 				margin-top: ($input-btn-height-touch - 28px) / 2;
 			}
 		}
+	}
+}
+
+.col-form-label {
+	@include mouse-and-bp-up(md) {
+		padding: ($input-btn-padding-y + $input-border-width) $space-min;
 	}
 }
 
@@ -193,37 +208,38 @@ textarea {
 }
 
 .native-select-wrap {
-	flex: 1 1 auto;
-	display: flex;
-	align-items: center;
-	min-width: 0;
-	position: relative;
-	background-color: $input-bg;
+	@include touch-or-bp-down(sm) {
+		flex: 1 1 auto;
+		display: flex;
+		align-items: center;
+		min-width: 0;
+		position: relative;
 
-	select {
-		appearance: none;
-		position: absolute;
-		left: 0;
-		top: 0;
-		width: 100%;
-		height: 100%;
-		z-index: 1;
-		opacity: 0;
+		select {
+			appearance: none;
+			position: absolute;
+			left: 0;
+			top: 0;
+			width: 100%;
+			height: 100%;
+			z-index: 1;
+			opacity: 0;
 
-		&:focus {
-			position: absolute; // Reset
+			&:focus {
+				position: absolute; // Reset
 
-			& + .form-control {
-				color: $focus-color;
+				& + .form-control {
+					color: $focus-color;
+				}
 			}
 		}
-	}
 
-	.form-control {
-		@include text-truncate(clip);
-		padding-right: 0;
-		margin-right: $input-btn-padding-x-touch;
-		line-height: $input-btn-height-touch; // Center text vertically
+		.form-control {
+			@include text-truncate(clip);
+			padding-right: 0;
+			margin-right: $input-btn-padding-x-touch;
+			line-height: $input-btn-height-touch; // Center text vertically
+		}
 	}
 }
 
