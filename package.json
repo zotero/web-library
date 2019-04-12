@@ -26,7 +26,7 @@
     "build:scss": "for f in src/scss/*.scss; do node-sass $f --output-style compressed --output build/static/; done;",
     "build:html": "mkdir -p build/ && rsync -vazL src/html/* build/",
     "build:styles-json": "node scripts/build-styles-json.js --stylesCacheTime $npm_package_config_styles_cache_time",
-    "build:locale": "node scripts/fetch-locale.js --stylesCacheTime $npm_package_config_locale_cache_time",
+    "build:locale": "node scripts/fetch-locale.js --localeCacheTime $npm_package_config_locale_cache_time",
     "build:static": "mkdir -p build/static && rsync -vazL src/static/* build/static/",
     "build:postprocess": "postcss build/static/zotero-web-library.css --use autoprefixer --no-map -r",
     "devel": "run-p 'devel:js -s' 'devel:scss -s' 'devel:html -s' 'devel:static -s'",

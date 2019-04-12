@@ -22,9 +22,15 @@ const localeCacheTime = argv['localeCacheTime'] || 0;
 		locale = await (await fetch(localeURL)).json();
 		const languageNames = Object.entries(locale['language-names'])
 			.reduce((aggr, [key, names]) => {
-				aggr[key] = names[1];
+				const value = key;
+				const label = names[1]; // names[1] for english, names[0] for native
+				aggr.push({ value, label });
 				return aggr;
-			}, {});
+			}, []);
+
+		// npm install full-icu --save-dev
+		// languageNames.sort(({ label: l1 }, { label: l2 }) => l1.localeCompare(l2));
+		languageNames.sort(({ label: l1 }, { label: l2 }) => l1 < l2 ? -1 : l1 > l2);
 		await fs.outputJson(localeJsonPath, languageNames);
 	}
 })();

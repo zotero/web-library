@@ -17,10 +17,7 @@ class LocaleSelector extends React.PureComponent {
 					searchable={ false}
 					value={ locale }
 					tabIndex={ 0 }
-					options={
-						Object.entries(localeData)
-							.map(([value, label]) => ({ value, label }))
-					}
+					options={ localeData }
 					onChange={ () => true /* commit on change */ }
 					onCommit={ onLocaleChange }
 				/>
