@@ -11,7 +11,9 @@
 
 @for $i from 1 through $grid-columns {
 	.col-#{$i} {
-		flex: 0 0 calc( 100% / (#{$grid-columns / $i}) );
-		max-width: calc( 100% / (#{$grid-columns / $i}) );
+		@include mouse-and-bp-up(sm) {
+			flex: 0 0 calc( 100% / (#{$grid-columns / $i}) );
+			max-width: calc( 100% / (#{$grid-columns / $i}) );
+		}
 	}
 }
