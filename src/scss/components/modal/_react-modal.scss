@@ -87,42 +87,52 @@
 		flex: 0 0 auto;
 		display: flex;
 		align-items: center;
-		padding: 0 $modal-header-padding;
-		background-color: $modal-header-bg;
-		height: $modal-header-height + $border-width;
+		padding-left: $modal-inner-padding;
+		padding-right: $modal-inner-padding;
 
-		.modal-touch & {
+		@include touch-or-bp-down(sm) {
+			background-color: $modal-header-bg;
+			height: $modal-header-height + $border-width;
 			background-color: $modal-touch-header-bg;
+
+			&-left,
+			&-right {
+				flex: 1 0 0;
+			}
+
+			&-center {
+				flex: 2 0 0;
+				max-width: 50%;
+				text-align: center;
+			}
+
+			&-right {
+				text-align: right;
+			}
 		}
 
-		&-left,
-		&-right {
-			flex: 1 0 0;
-		}
-
-		&-center {
-			flex: 2 0 0;
-			max-width: 50%;
-			text-align: center;
-		}
-
-		&-right {
-			text-align: right;
+		@include mouse-and-bp-up(sm) {
+			padding-top: $modal-inner-padding;
+			padding-bottom: $modal-inner-padding;
 		}
 	}
 }
 
 .modal-header {
-	@include hairline(bottom, $modal-header-border);
 	padding-bottom: $border-width;
-}
 
-.modal-body,
-.modal-footer {
-	padding: $modal-inner-padding;
+	@include touch-or-bp-down(sm) {
+		@include hairline(bottom, $modal-border-color-touch);
+	}
+
+	@include mouse-and-bp-up(md) {
+		border-bottom: $border-width solid $modal-border-color;
+	}
 }
 
 .modal-body {
+	padding: $modal-inner-padding;
+
 	@include bp-down(xs) {
 		height: calc(100% - #{$modal-header-height});
 		overflow-y: auto;
@@ -136,11 +146,14 @@
 
 .modal-footer {
 	justify-content: flex-end;
-	height: $modal-header-height + $border-width;
-	@include hairline(top, $modal-header-border);
+	padding-top: $border-width;
 
 	@include touch-or-bp-down(sm) {
-		padding: $border-width $modal-inner-padding 0;
+		@include hairline(top, $modal-border-color-touch);
+	}
+
+	@include mouse-and-bp-up(md) {
+		border-top: $border-width solid $modal-border-color;
 	}
 
 	.btn {

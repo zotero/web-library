@@ -33,18 +33,20 @@
 		}
 
 		@include mouse-and-bp-up(md) {
-			//flex: 0 0 auto;
-			//display: flex;
 			position: sticky;
 			top: 0;
 			width: 100%;
 			background-color: $modal-content-bg;
 			padding-top: $form-group-margin;
-			border-bottom: $border-width solid mix($modal-header-border, $modal-content-bg, 50%);
+			border-bottom: $border-width solid $modal-border-color;
 		}
 	}
 
 	.style-selector-container {
+		@include touch-or-bp-down(sm) {
+			margin-bottom: $form-group-margin-touch;
+		}
+
 		@include mouse-and-bp-up(md) {
 			flex: 1 1 auto;
 			display: flex;
