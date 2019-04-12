@@ -126,8 +126,21 @@
 	}
 
 	@include mouse-and-bp-up(md) {
+		justify-content: space-between;
 		border-bottom: $border-width solid $modal-border-color;
 	}
+
+	.close {
+		@include mouse-and-bp-up(md) {
+			padding: $space-min + $input-border-width + $modal-inner-padding / 2;
+			margin: -$modal-inner-padding / 2;
+			margin-right: -$modal-inner-padding / 2 + 2px; // Even spacing
+		}
+	}
+}
+
+.modal-title {
+	font-size: $modal-title-font-size;
 }
 
 .modal-body {
@@ -141,6 +154,12 @@
 
 	.modal-scrollable & {
 		overflow-y: auto;
+
+		&:focus {
+			.keyboard & {
+				outline-offset: -$outline-width;
+			}
+		}
 	}
 }
 

@@ -98,7 +98,7 @@ class BibliographyModal extends React.PureComponent {
 								</h4>
 							</div>
 						) : (
-							<h4 className="modal-title text-truncate">
+							<h4 className="modal-title truncate">
 								Bibliography
 							</h4>
 						)
@@ -118,7 +118,7 @@ class BibliographyModal extends React.PureComponent {
 									className="close"
 									onClick={ this.handleCancel }
 								>
-									<Icon type={ '24/remove' } width="24" height="24" />
+									<Icon type={ '16/close-2' } width="16" height="16" />
 								</Button>
 							)
 						}

@@ -1,6 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-	<symbol id="remove" viewBox="0 0 24 24">
-		<polygon fill="currentColor" points="20.424 4.424 19.576 3.576 12 11.152 4.424 3.576 3.576 4.424 11.152 12 3.576 19.576 4.424 20.424 12 12.848 19.576 20.424 20.424 19.576 12.848 12 20.424 4.424"/>
-	</symbol>
-	<use xlink:href="#remove" viewBox="0 0 24 24"/>
-</svg>
