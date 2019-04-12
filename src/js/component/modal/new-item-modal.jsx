@@ -8,6 +8,8 @@ import Modal from '../ui/modal';
 import Button from '../ui/button';
 import Select from '../form/select';
 import Spinner from '../ui/spinner';
+import { getUniqueId } from '../../utils';
+
 const defaultState = {
 	isBusy: false,
 	itemType: 'book'
@@ -15,6 +17,7 @@ const defaultState = {
 
 class CollectionAddModal extends React.PureComponent {
 	state = defaultState;
+	inputId = getUniqueId();
 
 	componentDidUpdate({ isOpen: wasOpen }) {
 		const { isOpen } = this.props;
@@ -59,7 +62,6 @@ class CollectionAddModal extends React.PureComponent {
 	render() {
 		const { isOpen, toggleModal, itemTypes, collection } = this.props;
 		const { isBusy } = this.state;
-		const inputId = 'collection-add-modal-input';
 		return (
 			<Modal
 				isOpen={ isOpen }
@@ -104,11 +106,11 @@ class CollectionAddModal extends React.PureComponent {
 							{ isBusy ? <Spinner /> : (
 								<div className="form">
 									<div className="form-group">
-										<label htmlFor={ inputId }>
+										<label htmlFor={ this.inputId }>
 											Item Type
 										</label>
 										<Select
-											id={ inputId }
+											id={ this.inputId }
 											className="form-control form-control-sm"
 											onChange={ () => true }
 											onCommit={ (...args) => this.handleSelect(...args) }

@@ -9,10 +9,11 @@ import { citationStylesCount } from '../../../data/citation-styles-data.json';
 class StyleSelector extends React.PureComponent {
 	render() {
 		const { className, citationStyle, citationStyles,
-			onStyleChange } = this.props;
+			onStyleChange, id } = this.props;
 		return (
 			<div className={ cx('style-selector', className ) }>
 				<Select
+					id={ id }
 					clearable={ false }
 					searchable={ false}
 					value={ citationStyle }
@@ -35,9 +36,10 @@ class StyleSelector extends React.PureComponent {
 	}
 
 	static propTypes = {
-		className: PropTypes.string,
 		citationStyle: PropTypes.string,
 		citationStyles: PropTypes.array,
+		className: PropTypes.string,
+		id: PropTypes.string,
 		onStyleChange: PropTypes.func
 	}
 }

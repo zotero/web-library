@@ -9,6 +9,7 @@ import Button from '../ui/button';
 import Select from '../form/select';
 import Spinner from '../ui/spinner';
 import exportFormats from '../../constants/export-formats';
+import { getUniqueId } from '../../utils';
 
 const defaultState = {
 	isBusy: false,
@@ -17,6 +18,7 @@ const defaultState = {
 
 class ExportModal extends React.PureComponent {
 	state = defaultState;
+	inputId = getUniqueId();
 
 	componentDidUpdate({ isOpen: wasOpen }) {
 		const { isOpen } = this.props;
@@ -49,7 +51,6 @@ class ExportModal extends React.PureComponent {
 	render() {
 		const { isOpen, toggleModal, itemKeys } = this.props;
 		const { isBusy } = this.state;
-		const inputId = 'collection-export-modal-input';
 
 		return (
 			<Modal
@@ -90,11 +91,11 @@ class ExportModal extends React.PureComponent {
 					<div className="modal-body">
 						<div className="form">
 							<div className="form-group">
-								<label htmlFor={ inputId }>
+								<label htmlFor={ this.inputId }>
 									Export Format
 								</label>
 								<Select
-									id={ inputId }
+									id={ this.inputId }
 									className="form-control form-control-sm"
 									onChange={ () => true }
 									onCommit={ (...args) => this.handleSelect(...args) }

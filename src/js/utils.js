@@ -259,6 +259,13 @@ const getScrollbarWidth = () => {
 	return scrollbarWidth;
 }
 
+let lastId = 0;
+
+const getUniqueId = (prefix = 'id') => {
+    lastId++;
+    return `${prefix}${lastId}`;
+}
+
 export {
 	compare,
 	compareItem,
@@ -268,6 +275,7 @@ export {
 	get,
 	getScrollbarWidth,
 	getSortKeyValue,
+	getUniqueId,
 	indexByGeneratedKey,
 	indexByKey,
 	JSONTryParse,

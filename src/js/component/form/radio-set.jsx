@@ -3,10 +3,12 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { noop } from '../../utils';
+import { noop, getUniqueId } from '../../utils';
 
 
 class RadioSet extends React.PureComponent {
+	baseId = getUniqueId();
+
 	handleChange = ev => {
 		if(this.props.value !== ev.target.value) {
 			this.props.onChange(ev.target.value);
@@ -17,15 +19,16 @@ class RadioSet extends React.PureComponent {
 		const { options, value: selectedValue } = this.props;
 		return (
 			<fieldset className="form-group radios">
-				{ options.map(({ value, label }) => (
-					<div className="radio">
+				{ options.map(({ value, label }, index) => (
+					<div key={ value} className="radio">
 						<input
+							id={ this.baseId + '-' + index}
 							value={ value }
 							type="radio"
 							checked={ value === selectedValue }
 							onChange={ this.handleChange }
 						/>
-						<label key={ value}>
+						<label htmlFor={ this.baseId + '-' + index} key={ value}>
 							{ label }
 						</label>
 					</div>

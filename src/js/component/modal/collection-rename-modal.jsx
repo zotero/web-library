@@ -7,10 +7,12 @@ import Modal from '../ui/modal';
 import Button from '../ui/button';
 import Input from '../form/input';
 import Icon from '../ui/icon';
+import { getUniqueId } from '../../utils';
 const defaultState = { name: '' };
 
 class CollectionRenameModal extends React.PureComponent {
 	state = defaultState;
+	inputId = getUniqueId();
 
 	componentDidUpdate({ collection: prevCollection, isOpen: wasOpen }) {
 		const { collection, isOpen } = this.props;
@@ -51,7 +53,6 @@ class CollectionRenameModal extends React.PureComponent {
 		const childMap = collections.length ? makeChildMap(collections) : {};
 		const hasSubCollections = collection && collection.key in childMap;
 
-		const inputId = `collection-editor-${collection ? collection.key : 'empty'}`;
 		return (
 			<Modal
 				isOpen={ isOpen }
@@ -89,12 +90,12 @@ class CollectionRenameModal extends React.PureComponent {
 					<div className="modal-body">
 						<div className="form">
 							<div className="form-group">
-								<label htmlFor={ inputId }>
+								<label htmlFor={ this.inputId }>
 									<Icon type={ hasSubCollections ? '28/folders' : '28/folder' } width="28" height="28" />
 								</label>
 								<Input
 									autoFocus
-									id={ inputId }
+									id={ this.inputId }
 									onBlur={ this.handleInputBlur }
 									onChange={ this.handleChange }
 									onCommit={ this.handleCollectionUpdate }

@@ -6,10 +6,12 @@ import Modal from '../ui/modal';
 import Button from '../ui/button';
 import Input from '../form/input';
 import Icon from '../ui/icon';
+import { getUniqueId } from '../../utils';
 const defaultState = { name: ''};
 
 class CollectionAddModal extends React.PureComponent {
 	state = defaultState;
+	inputId = getUniqueId();
 
 	componentDidUpdate({ isOpen: wasOpen }) {
 		const { isOpen } = this.props;
@@ -39,7 +41,6 @@ class CollectionAddModal extends React.PureComponent {
 	render() {
 		const { isOpen, toggleModal, parentCollection } = this.props;
 		const { name } = this.state;
-		const inputId = 'collection-add-modal-input';
 		return (
 			<Modal
 				isOpen={ isOpen }
@@ -81,12 +82,12 @@ class CollectionAddModal extends React.PureComponent {
 					<div className="modal-body">
 						<div className="form">
 							<div className="form-group">
-								<label htmlFor={ inputId }>
+								<label htmlFor={ this.inputId }>
 									<Icon type="28/folder" width="28" height="28" />
 								</label>
 								<Input
 									autoFocus
-									id={ inputId }
+									id={ this.inputId }
 									onBlur={ this.handleInputBlur }
 									onChange={ this.handleChange }
 									onCommit={ this.handleCollectionUpdate }

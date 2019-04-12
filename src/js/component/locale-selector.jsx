@@ -8,10 +8,11 @@ import localeData from '../../../data/locale-data.json';
 
 class LocaleSelector extends React.PureComponent {
 	render() {
-		const { className, locale, onLocaleChange } = this.props;
+		const { className, locale, onLocaleChange, id } = this.props;
 		return (
 			<div className={ cx('locale-selector', className ) }>
 				<Select
+					id={ id }
 					clearable={ false }
 					searchable={ false}
 					value={ locale }
@@ -29,6 +30,7 @@ class LocaleSelector extends React.PureComponent {
 
 	static propTypes = {
 		className: PropTypes.string,
+		id: PropTypes.string,
 		locale: PropTypes.string,
 		onLocaleChange: PropTypes.func
 	}

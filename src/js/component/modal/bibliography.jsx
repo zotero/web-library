@@ -12,6 +12,7 @@ import StyleSelector from '../style-selector';
 import LocaleSelector from '../locale-selector';
 import { noop } from '../../utils';
 import { pick } from '../../common/immutable';
+import { getUniqueId } from '../../utils';
 import cx from 'classnames';
 
 
@@ -21,6 +22,8 @@ class BibliographyModal extends React.PureComponent {
 		isClipboardCopied: false,
 		isHtmlCopied: false,
 	}
+	styleSelectorId = getUniqueId();
+	localeSelectorId = getUniqueId();
 
 	handleCancel = () => {
 		this.props.onCancel();
@@ -126,25 +129,31 @@ class BibliographyModal extends React.PureComponent {
 						<div className="citation-options">
 							<div className="form-group form-row style-selector-container">
 								<label
+									htmlFor={ this.styleSelectorId }
 									className="col-form-label"
 								>
 										Citation Style
 									</label>
 								<div className="col">
-									<StyleSelector { ...pick(this.props,
-										['citationStyle', 'citationStyles', 'onStyleChange']
+									<StyleSelector
+										id={ this.styleSelectorId }
+										{ ...pick(this.props,
+											['citationStyle', 'citationStyles', 'onStyleChange']
 									)} />
 								</div>
 							</div>
 							<div className="form-group form-row language-selector-container">
 								<label
+									htmlFor={ this.localeSelectorId }
 									className="col-form-label"
 								>
 									Language
 								</label>
 									<div className="col">
-										<LocaleSelector { ...pick(this.props,
-											['locale', 'onLocaleChange']
+										<LocaleSelector
+											id={ this.localeSelectorId }
+											{ ...pick(this.props,
+												['locale', 'onLocaleChange']
 										)} />
 									</div>
 							</div>
