@@ -16,6 +16,8 @@
 }
 
 .form-row {
+	margin: 0 (-$form-grid-gutter-width / 2);
+
 	> .col {
 		@include mouse-and-bp-up(sm) {
 			padding-left: $form-grid-gutter-width / 2;
