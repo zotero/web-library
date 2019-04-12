@@ -14,7 +14,9 @@ class TouchFooterContainer extends React.PureComponent {
 }
 
 const mapStateToProps = state => {
-	return { ...pick(state.current, ['itemKeys', 'itemsSource']) }
+	const { libraryKey } = state.current;
+	const { isReadOnly } = (state.config.libraries.find(l => l.key === libraryKey) || {});
+	return { isReadOnly, ...pick(state.current, ['itemKeys', 'itemsSource']) }
 }
 
 

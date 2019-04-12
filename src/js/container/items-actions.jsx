@@ -31,12 +31,13 @@ class ItemsActionsContainer extends React.PureComponent {
 const mapStateToProps = state => {
 	const { libraryKey, collectionKey, itemsSource, itemKey, itemKeys, tags,
 		search } = state.current;
+	const { isReadOnly } = (state.config.libraries.find(l => l.key === libraryKey) || {});
 
 	const item = get(state, ['libraries', libraryKey, 'items', itemKey]);
 	const itemTypes = state.meta.itemTypes;
 
 	return { collectionKey, item, itemKey, itemKeys, itemsSource, itemTypes,
-		search, tags
+		isReadOnly, search, tags
 	}
 }
 

@@ -27,8 +27,8 @@ class ItemsActions extends React.PureComponent {
 	}
 
 	get isNewItemAllowed() {
-		const { itemsSource } = this.props;
-		return itemsSource === 'top' || itemsSource === 'collection';
+		const { isReadOnly, itemsSource } = this.props;
+		return !isReadOnly && (itemsSource === 'top' || itemsSource === 'collection');
 	}
 
 	get isExportAllowed() {
@@ -67,70 +67,74 @@ class ItemsActions extends React.PureComponent {
 	}
 
 	renderMouse() {
-		const { itemsSource, onTrash, isDeleting, itemKeys,
+		const { itemsSource, onTrash, isDeleting, isReadOnly, itemKeys,
 			onRemoveFromCollection, onBibliographyModalOpen, onUndelete,
-			onDuplicate, onPermanentlyDelete } = this.props;
+			onDuplicate, onPermanentlyDelete, } = this.props;
 
 		return (
 			<React.Fragment>
-				<ToolGroup>
-					<NewItemSelector
-						disabled={ !['top', 'collection'].includes(itemsSource) }
-						{ ...pick(this.props, ['itemTypes', 'onNewItemCreate']) }
-					/>
-					{
-						(itemsSource === 'collection' || itemsSource === 'top') && (
+				{ !isReadOnly && (
+					<React.Fragment>
+					<ToolGroup>
+						<NewItemSelector
+							disabled={ !['top', 'collection'].includes(itemsSource) }
+							{ ...pick(this.props, ['itemTypes', 'onNewItemCreate']) }
+						/>
+						{
+							(itemsSource === 'collection' || itemsSource === 'top') && (
+							<Button
+								onClick={ onDuplicate }
+								disabled={ itemKeys.length !== 1 || itemsSource === 'trash' }
+								title="Duplicate Item"
+							>
+								<Icon type="16/duplicate" width="16" height="16" />
+							</Button>
+						)}
+					</ToolGroup>
+					<ToolGroup>
+					{ itemsSource !== 'trash' && (
 						<Button
-							onClick={ onDuplicate }
-							disabled={ itemKeys.length !== 1 || itemsSource === 'trash' }
-							title="Duplicate Item"
+							onClick={ onTrash }
+							disabled={ isDeleting || itemKeys.length === 0 }
+							title="Move to Trash"
 						>
-							<Icon type="16/duplicate" width="16" height="16" />
+						{
+							isDeleting ?
+							<Spinner /> :
+							<Icon type={ '16/trash' } width="16" height="16" />
+						}
 						</Button>
 					)}
-				</ToolGroup>
-				<ToolGroup>
-				{ itemsSource !== 'trash' && (
-					<Button
-						onClick={ onTrash }
-						disabled={ isDeleting || itemKeys.length === 0 }
-						title="Move to Trash"
-					>
-					{
-						isDeleting ?
-						<Spinner /> :
-						<Icon type={ '16/trash' } width="16" height="16" />
-					}
-					</Button>
-				)}
-				{ itemsSource === 'trash' && (
-					<React.Fragment>
+					{ itemsSource === 'trash' && (
+						<React.Fragment>
+							<Button
+								onClick={ onPermanentlyDelete }
+								disabled={ itemKeys.length === 0 }
+								title="Delete Item"
+							>
+								<Icon type="16/empty-trash" width="16" height="16" />
+							</Button>
+							<Button
+								onClick={ onUndelete }
+								disabled={ itemKeys.length === 0 }
+								title="Restore to Library"
+							>
+								<Icon type="16/restore" width="16" height="16" />
+							</Button>
+						</React.Fragment>
+					)}
+					{ itemsSource === 'collection' && (
 						<Button
-							onClick={ onPermanentlyDelete }
+							onClick={ onRemoveFromCollection }
 							disabled={ itemKeys.length === 0 }
-							title="Delete Item"
+							title="Remove from Collection"
 						>
-							<Icon type="16/empty-trash" width="16" height="16" />
+							<Icon type="20/remove-from-collection" width="20" height="20" />
 						</Button>
-						<Button
-							onClick={ onUndelete }
-							disabled={ itemKeys.length === 0 }
-							title="Restore to Library"
-						>
-							<Icon type="16/restore" width="16" height="16" />
-						</Button>
+					)}
+					</ToolGroup>
 					</React.Fragment>
-				)}
-				{ itemsSource === 'collection' && (
-					<Button
-						onClick={ onRemoveFromCollection }
-						disabled={ itemKeys.length === 0 }
-						title="Remove from Collection"
-					>
-						<Icon type="20/remove-from-collection" width="20" height="20" />
-					</Button>
-				)}
-				</ToolGroup>
+				) }
 				<ToolGroup>
 					<ExportActions { ...pick(this.props, ['onExport', 'itemKeys']) } />
 					<Button
@@ -192,6 +196,7 @@ class ItemsActions extends React.PureComponent {
 	static propTypes = {
 		device: PropTypes.object,
 		isDeleting: PropTypes.bool,
+		isReadOnly: PropTypes.bool,
 		isSelectMode: PropTypes.bool,
 		itemKeys: PropTypes.array,
 		itemsSource: PropTypes.string,
