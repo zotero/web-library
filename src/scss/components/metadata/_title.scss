@@ -9,7 +9,7 @@
 
 			@include state(".metadata-list.editing") {
 				display: flex;
-				margin-bottom: $form-section-margin;
+				margin-bottom: $form-group-margin-touch;
 				border-bottom-left-radius: $input-btn-border-radius;
 				border-bottom-right-radius: $input-btn-border-radius;
 			}

@@ -13,8 +13,8 @@
 
 	&.editing {
 		@include touch-or-bp-down(sm) {
-			margin-top: $form-section-margin;
-			margin-bottom: $form-section-margin;
+			margin-top: $form-group-margin-touch;
+			margin-bottom: $form-group-margin-touch;
 		}
 
 		@include touch-and-bp-up(sm) {
@@ -24,7 +24,7 @@
 
 		@include variant(".modal .metadata-list") {
 			html:not(.specifity) & {
-				margin: ($form-section-margin - $modal-inner-padding)
+				margin: ($form-group-margin-touch - $modal-inner-padding)
 					(-$modal-inner-padding);
 			}
 		}
@@ -202,7 +202,7 @@
 	.touch-separated {
 		@include state(".metadata-list.editing") {
 			@include touch-or-bp-down(sm) {
-				margin-bottom: $form-section-margin;
+				margin-bottom: $form-group-margin-touch;
 			}
 
 			@include bp-down(xs) {

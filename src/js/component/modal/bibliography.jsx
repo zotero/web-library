@@ -127,35 +127,41 @@ class BibliographyModal extends React.PureComponent {
 				<div className={ cx('modal-body', { loading: !device.isTouchOrSmall && isUpdating }) }>
 					<div className="form">
 						<div className="citation-options">
-							<div className="form-group form-row style-selector-container">
-								<label
-									htmlFor={ this.styleSelectorId }
-									className="col-form-label"
-								>
-										Citation Style
-									</label>
-								<div className="col">
-									<StyleSelector
-										id={ this.styleSelectorId }
-										{ ...pick(this.props,
-											['citationStyle', 'citationStyles', 'onStyleChange']
-									)} />
-								</div>
-							</div>
-							<div className="form-group form-row language-selector-container">
-								<label
-									htmlFor={ this.localeSelectorId }
-									className="col-form-label"
-								>
-									Language
-								</label>
-									<div className="col">
-										<LocaleSelector
-											id={ this.localeSelectorId }
-											{ ...pick(this.props,
-												['locale', 'onLocaleChange']
-										)} />
+							<div className="form-row">
+								<div className="col-9">
+									<div className="form-group form-row style-selector-container">
+										<label
+											htmlFor={ this.styleSelectorId }
+											className="col-form-label"
+										>
+											Citation Style
+										</label>
+										<div className="col">
+											<StyleSelector
+												id={ this.styleSelectorId }
+												{ ...pick(this.props,
+													['citationStyle', 'citationStyles', 'onStyleChange']
+											)} />
+										</div>
 									</div>
+								</div>
+								<div className="col-3">
+									<div className="form-group form-row language-selector-container">
+										<label
+											htmlFor={ this.localeSelectorId }
+											className="col-form-label"
+										>
+											Language
+										</label>
+										<div className="col">
+											<LocaleSelector
+												id={ this.localeSelectorId }
+												{ ...pick(this.props,
+													['locale', 'onLocaleChange']
+											)} />
+										</div>
+									</div>
+								</div>
 							</div>
 						</div>
 						{ device.isTouchOrSmall && (

@@ -36,8 +36,8 @@
 		}
 
 		@include touch-and-bp-only(md) {
-			margin-top: $form-section-margin;
-			margin-bottom: $form-section-margin;
+			margin-top: $form-group-margin-touch;
+			margin-bottom: $form-group-margin-touch;
 		}
 
 		@include bp-down-normalized(xs) {

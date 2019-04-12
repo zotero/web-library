@@ -75,6 +75,12 @@ $twisty-transition: 0.1s ease;
 $fade-transition: opacity 0.25s ease-in-out;
 
 
+// Grid
+// --------------------------------------------------
+
+$grid-columns: 12;
+
+
 // Grid breakpoints
 // --------------------------------------------------
 
@@ -240,8 +246,9 @@ $btn-transition: 0.15s ease;
 // Forms
 // --------------------------------------------------
 
-$form-section-margin: 20px; // todo
-$input-border-radius: $input-btn-border-radius;
+$form-group-margin:       $space-sm;
+$form-group-margin-touch: 20px; // todo
+$input-border-radius:     $input-btn-border-radius;
 
 $form-grid-gutter-width: $space-xs;
 

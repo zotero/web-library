@@ -9,16 +9,21 @@
 .form { // We do not use a form element for its side effects
 	@include variant(".modal form") {
 		@include touch-or-bp-down(sm) {
-			margin: ($form-section-margin - $modal-inner-padding)
+			margin: ($form-group-margin-touch - $modal-inner-padding)
 				(-$modal-inner-padding);
 		}
 	}
 }
 
 .form-row {
-	margin: 0 (-$form-grid-gutter-width / 2);
+	@include mouse-and-bp-up(sm) {
+		display: flex;
+		flex-wrap: wrap;
+		margin: 0 (-$form-grid-gutter-width / 2);
+	}
 
-	> .col {
+	> .col,
+	> [class*="col-"] {
 		@include mouse-and-bp-up(sm) {
 			padding-left: $form-grid-gutter-width / 2;
 			padding-right: $form-grid-gutter-width / 2;
@@ -36,7 +41,7 @@ fieldset {
 	@include touch-or-bp-down(sm) {
 		display: flex;
 		padding: $input-border-width $input-btn-padding-x-touch;
-		margin-bottom: $form-section-margin;
+		margin-bottom: $form-group-margin-touch;
 		background-color: $input-bg;
 		position: relative;
 		@include hairline(top, $input-border-color-touch);
@@ -80,6 +85,10 @@ fieldset {
 			}
 		}
 	}
+
+	@include mouse-and-bp-up(sm) {
+		margin-bottom: $form-group-margin;
+	}
 }
 
 label {
@@ -102,7 +111,8 @@ label {
 
 .col-form-label {
 	@include mouse-and-bp-up(md) {
-		padding: ($input-btn-padding-y + $input-border-width) $space-min;
+		padding-top: ($input-btn-padding-y + $input-border-width);
+		padding-bottom: ($input-btn-padding-y + $input-border-width);
 	}
 }
 
