@@ -40,6 +40,15 @@
 			padding-top: $form-group-margin;
 			border-bottom: $border-width solid $modal-border-color;
 		}
+
+		// Prevent covered outline
+		@include mouse-keyboard-and-bp-up(md) {
+			@include state(".modal-body:focus .citation-options") {
+				top: $outline-width;
+				padding-top: $form-group-margin - $outline-width;
+				margin-bottom: $outline-width;
+			}
+		}
 	}
 
 	.style-selector-container {

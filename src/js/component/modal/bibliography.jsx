@@ -124,7 +124,7 @@ class BibliographyModal extends React.PureComponent {
 						}
 					</div>
 				</div>
-				<div className={ cx('modal-body', { loading: !device.isTouchOrSmall && isUpdating }) }>
+				<div className={ cx('modal-body', { loading: !device.isTouchOrSmall && isUpdating }) } tabindex={ 0 }>
 					<div className="form">
 						<div className="citation-options">
 							<div className="form-row">
