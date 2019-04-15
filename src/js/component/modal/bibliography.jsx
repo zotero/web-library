@@ -189,50 +189,48 @@ class BibliographyModal extends React.PureComponent {
 					</div>
 				</div>
 				{ !device.isTouchOrSmall && (
-					<div className="modal-footer">
-						<div className="export-tools">
-							<Dropdown
-								isOpen={ isDropdownOpen }
-								toggle={ this.handleDropdownToggle }
-								className={ cx('btn-group', { 'success': isCopied}) }
+					<div className="modal-footer justify-content-end">
+						<Dropdown
+							isOpen={ isDropdownOpen }
+							toggle={ this.handleDropdownToggle }
+							className={ cx('btn-group', { 'success': isClipboardCopied}) }
+						>
+							<Button
+								disabled={ isUpdating }
+								className='btn btn-lg btn-secondary copy-to-clipboard'
+								onClick={ this.handleCopyToClipboardClick }
 							>
-								<Button
-									disabled={ isUpdating }
-									className='btn btn-secondary copy-to-clipboard'
-									onClick={ this.handleCopyToClipboardClick }
+								<span className={ cx('inline-feedback', { 'active': isClipboardCopied }) }>
+									<span className="default-text" aria-hidden={ !isClipboardCopied }>
+										Copy to Clipboard
+									</span>
+									<span className="shorter feedback" aria-hidden={ isClipboardCopied }>
+										Copied!
+									</span>
+								</span>
+							</Button>
+							<DropdownToggle
+								disabled={ isUpdating }
+								className="btn btn-lg btn-secondary dropdown-toggle"
+							>
+								<Icon type={ '16/chevron-9' } width="16" height="16" />
+							</DropdownToggle>
+							<DropdownMenu className="dropdown-menu">
+								<DropdownItem
+									onClick={ this.handleCopyHtmlClick }
+									className="btn clipboard-trigger"
 								>
-									<span className={ cx('inline-feedback', { 'active': isClipboardCopied }) }>
-										<span className="default-text" aria-hidden={ !isClipboardCopied }>
-											Copy to Clipboard
+									<span className={ cx('inline-feedback', { 'active': isHtmlCopied }) }>
+										<span className="default-text" aria-hidden={ !isHtmlCopied }>
+											Copy HTML
 										</span>
-										<span className="shorter feedback" aria-hidden={ isClipboardCopied }>
+										<span className="shorter feedback" aria-hidden={ isHtmlCopied }>
 											Copied!
 										</span>
 									</span>
-								</Button>
-								<DropdownToggle
-									disabled={ isUpdating }
-									className="btn btn-secondary btn-xl dropdown-toggle"
-								>
-									<Icon type={ '16/caret-16' } width="16" height="16" />
-								</DropdownToggle>
-								<DropdownMenu className="dropdown-menu">
-									<DropdownItem
-										onClick={ this.handleCopyHtmlClick }
-										className="btn clipboard-trigger"
-									>
-										<span className={ cx('inline-feedback', { 'active': isHtmlCopied }) }>
-											<span className="default-text" aria-hidden={ !isHtmlCopied }>
-												Copy HTML
-											</span>
-											<span className="shorter feedback" aria-hidden={ isHtmlCopied }>
-												Copied!
-											</span>
-										</span>
-									</DropdownItem>
-								</DropdownMenu>
-							</Dropdown>
-						</div>
+								</DropdownItem>
+							</DropdownMenu>
+						</Dropdown>
 					</div>
 				)}
 			</div>

@@ -164,7 +164,6 @@
 }
 
 .modal-footer {
-	justify-content: flex-end;
 	padding-top: $border-width;
 
 	@include touch-or-bp-down(sm) {
@@ -175,7 +174,7 @@
 		border-top: $border-width solid $modal-border-color;
 	}
 
-	.btn {
+	> .btn {
 		&:not(:first-child) {
 			margin-left: $space-sm / 2;
 		}

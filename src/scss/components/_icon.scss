@@ -5,13 +5,11 @@
 .icon {
 	flex: 0 0 auto; // Prevent scaling
 	display: inline-block;
+	vertical-align: middle;
+	color: $icon-color; // Avoid media query here so it is easier to modify the color
 
 	@include touch-or-bp-down(sm) {
 		color: $icon-color-touch;
-	}
-
-	@include mouse-and-bp-up(md) {
-		color: $icon-color;
 	}
 }
 

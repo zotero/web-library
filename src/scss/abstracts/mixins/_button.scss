@@ -1,0 +1,90 @@
+//
+// Button
+//
+
+@mixin button-variant($color, $outline: null, $inverse: null) {
+	$btn-color: if($inverse, $shade-0, $color);
+	$shade-0: if($inverse, $color, $shade-0);
+
+	background-color: if($outline, transparent, $btn-color);
+	border-color: if($outline, $btn-color, transparent);
+
+	&,
+	.icon {
+		color: if($outline, $btn-color, $shade-0);
+	}
+
+	&:hover {
+		background-color: lighten($btn-color, 4%);
+		box-shadow: 0 2px 4px $btn-box-shadow-color;
+
+		&,
+		.icon {
+			color: $shade-0;
+		}
+	}
+
+	&:active,
+	.show > &.dropdown-toggle {
+		background-color: darken($btn-color, 8%);
+		border-color: if($outline, darken($btn-color, 8%), transparent);
+		box-shadow: none;
+
+		&,
+		.icon {
+			color: $shade-0;
+		}
+	}
+
+	&:disabled {
+		background-color: if($outline, transparent, $btn-color);
+		border-color: if($outline, $btn-color, transparent);
+		box-shadow: none;
+
+		&,
+		.icon {
+			color: if($outline, $btn-color, $shade-0);
+		}
+	}
+
+	&:focus {
+		.keyboard-user & {
+			box-shadow: 0 0 0 $input-btn-focus-width $btn-color;
+
+			&:hover {
+				box-shadow:
+					0 0 0 $input-btn-focus-width $btn-color,
+					0 4px 4px $btn-box-shadow-color;
+			}
+
+			&:active {
+				box-shadow: 0 0 0 $input-btn-focus-width darken($btn-color, 8%);
+			}
+		}
+	}
+
+	&.success,
+	.btn-group.success & {
+		background-color: $btn-success-color;
+
+		&:active {
+			background-color: darken($btn-success-color, 8%);
+		}
+
+		&:focus {
+			.keyboard-user & {
+				box-shadow: 0 0 0 $input-btn-focus-width $btn-success-color;
+
+				&:hover {
+					box-shadow:
+						0 0 0 $input-btn-focus-width $btn-success-color,
+						0 4px 4px $btn-box-shadow-color;
+				}
+
+				&:active {
+					box-shadow: 0 0 0 $input-btn-focus-width darken($btn-success-color, 8%);
+				}
+			}
+		}
+	}
+}

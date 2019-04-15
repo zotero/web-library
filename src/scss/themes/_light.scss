@@ -13,6 +13,7 @@ $asphalt-light: #dadee3;
 
 $primary:   $red;
 $secondary: $blue;
+$success:   #3abd57;
 
 $blue-dark:    #333c66;
 $blue-darkest: #3d4466;
@@ -152,6 +153,8 @@ $metadata-separator-color: $shade-3;
 // Button
 $btn-primary-color:           $primary;
 $btn-secondary-color:         $secondary;
+$btn-box-shadow-color:        rgba($shade-10, 0.2);
+$btn-success-color:           $success;
 $btn-icon-bg:                 $transparent;
 $btn-icon-active-color:       $shade-7;
 $btn-icon-active-bg:          $shade-2;

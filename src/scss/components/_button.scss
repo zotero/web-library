@@ -3,7 +3,7 @@
 // --------------------------------------------------
 
 .btn {
-	padding: $btn-padding;
+	padding: $input-btn-padding-y $input-btn-padding-x;
 	cursor: pointer;
 	border: $border-width solid transparent;
 	color: $text-color;
@@ -12,6 +12,10 @@
 		background-color $btn-transition,
 		border-color $btn-transition,
 		box-shadow $btn-transition;
+
+	@include touch-or-bp-down(sm) {
+		padding: 0 $default-padding-x-touch;
+	}
 
 	@include mouse-and-bp-up(md) {
 		border-radius: $btn-border-radius;
@@ -25,7 +29,7 @@
 		cursor: pointer;
 	}
 
-	&[disabled] {
+	&:disabled {
 		opacity: 0.5;
 		cursor: default;
 	}
@@ -33,10 +37,30 @@
 
 .btn-link {
 	display: inline;
-	padding: 0;
 	border: 0;
 	color: $link-color;
 	background-color: transparent;
+
+	html:not(.specifity) & {
+		padding: 0;
+	}
+}
+
+.btn-lg {
+	font-size: $font-size-lg;
+	padding: $input-btn-padding-y-lg $input-btn-padding-x-lg;
+}
+
+.btn-xl {
+	// 48px height
+}
+
+.btn-xxl {
+	// 64px height
+}
+
+.btn-secondary {
+	@include button-variant($btn-secondary-color);
 }
 
 
@@ -106,4 +130,38 @@
 	}
 }
 
+.btn-group {
+	display: inline-flex;
 
+	> .btn {
+		position: relative;
+
+		&:hover {
+			z-index: 1;
+		}
+
+		&:not(:last-of-type) {
+			border-top-right-radius: 0;
+			border-bottom-right-radius: 0;
+		}
+
+		&:not(:first-of-type) {
+			border-top-left-radius: 0;
+			border-bottom-left-radius: 0;
+			margin-left: -$input-border-width;
+		}
+
+		// Prevent dark border due to overlap
+		& + .btn:disabled {
+			margin-left: 0;
+			border-left-width: 0;
+		}
+	}
+
+	> .dropdown-toggle {
+		&.btn-lg {
+			padding-left: $input-btn-padding-x-lg - 3px; // Square button
+			padding-right: $input-btn-padding-x-lg - 3px;
+		}
+	}
+}

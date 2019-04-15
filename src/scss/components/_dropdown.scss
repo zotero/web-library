@@ -1,13 +1,17 @@
 .dropdown {
 	.dropdown-toggle {
-		.icon {
-			vertical-align: top;
+		[class*="icon-chevron"] {
+			transform: scaleY(-1);
+			vertical-align: -2px; // Works for btn-lg
 		}
 
 		@include state(".dropdown.show") {
-			@include mouse-and-bp-up(md) {
-				.icon {
-					color: $icon-active-color;
+			&.btn-link,
+			&.btn-icon {
+				@include mouse-and-bp-up(md) {
+					.icon {
+						color: $icon-active-color;
+					}
 				}
 			}
 		}

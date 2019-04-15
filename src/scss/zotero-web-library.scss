@@ -37,8 +37,8 @@
 @import "partials/forms";
 @import "partials/loading-cover";
 @import "partials/transitions";
-@import "partials/flex";
 @import "partials/grid";
+@import "partials/inline-feedback";
 
 
 // Components
@@ -52,7 +52,6 @@
 @import "components/select";
 @import "components/editable";
 @import "components/icon";
-@import "components/inline-feedback";
 @import "components/navbar";
 @import "components/notes";
 @import "components/panel";
