@@ -116,22 +116,22 @@ const bibliographyItems = (itemKeys, style = 'chicago-note-bibliography', locale
 				.items()
 				.get({
 					itemKey: itemKeys.join(','),
-					include: 'bib',
+					format: 'bib',
 					style,
 					locale,
 				});
 
-			const citations = await response.getData().map(d => d.bib)
+			const bibliography = await response.getData().text();
 
 			dispatch({
 				type: RECEIVE_CITE_ITEMS,
 				itemKeys,
 				libraryKey,
-				citations,
+				bibliography,
 				response,
 			});
 
-			return citations;
+			return bibliography;
 		} catch(error) {
 			dispatch({
 				type: ERROR_CITE_ITEMS,

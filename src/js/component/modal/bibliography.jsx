@@ -180,7 +180,7 @@ class BibliographyModal extends React.PureComponent {
 									<Spinner className="large" />
 									) : (
 										<div className="bibliography read-only"
-											dangerouslySetInnerHTML={ { __html: bibliography.join('') } }
+											dangerouslySetInnerHTML={ { __html: bibliography } }
 										/>
 									)
 								}
@@ -260,7 +260,7 @@ class BibliographyModal extends React.PureComponent {
 	}
 
 	static propTypes = {
-		bibliography: PropTypes.array.isRequired,
+		bibliography: PropTypes.string.isRequired,
 		device: PropTypes.object,
 		isOpen: PropTypes.bool,
 		isUpdating: PropTypes.bool,
@@ -271,7 +271,7 @@ class BibliographyModal extends React.PureComponent {
 	}
 
 	static defaultProps = {
-		bibliography: [],
+		bibliography: '',
 		onCancel: noop,
 	}
 }

@@ -65,7 +65,7 @@ class BibliographyModalContainer extends React.PureComponent {
 	}
 
 	handleCopyToClipboardClick = () => {
-		const bibliography = this.state.bibliography.join('');
+		const { bibliography } = this.state;
 		const bibliographyText = stripTagsUsingDOM(bibliography);
 
 		this.copyDataInclude = [
@@ -76,8 +76,7 @@ class BibliographyModalContainer extends React.PureComponent {
 	}
 
 	handleCopyHtmlClick = () => {
-		const bibliography = this.state.bibliography.join('');
-		copy(bibliography);
+		copy(this.state.bibliography);
 	}
 
 	handleCopy = ev => {
