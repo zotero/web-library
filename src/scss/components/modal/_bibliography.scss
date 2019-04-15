@@ -47,7 +47,7 @@
 			@include state(".modal-body:focus .citation-options") {
 				top: $outline-width;
 				padding-top: $form-group-margin - $outline-width;
-				margin-bottom: $outline-width;
+				margin-bottom: $modal-inner-padding + $outline-width;
 			}
 		}
 	}
