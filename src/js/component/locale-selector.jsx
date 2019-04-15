@@ -14,7 +14,7 @@ class LocaleSelector extends React.PureComponent {
 				<Select
 					id={ id }
 					clearable={ false }
-					searchable={ false}
+					searchable={ true }
 					value={ locale }
 					tabIndex={ 0 }
 					options={ localeData }

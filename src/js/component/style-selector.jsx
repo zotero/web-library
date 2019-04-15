@@ -15,7 +15,7 @@ class StyleSelector extends React.PureComponent {
 				<Select
 					id={ id }
 					clearable={ false }
-					searchable={ false}
+					searchable={ true }
 					value={ citationStyle }
 					tabIndex={ 0 }
 					options={ [
