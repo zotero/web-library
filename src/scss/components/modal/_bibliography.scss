@@ -39,6 +39,7 @@
 			background-color: $modal-content-bg;
 			padding-top: $form-group-margin;
 			border-bottom: $border-width solid $modal-border-color;
+			margin-bottom: $modal-inner-padding;
 		}
 
 		// Prevent covered outline
@@ -80,6 +81,8 @@
 	}
 
 	.bibliography-container {
+		padding: 0 $modal-inner-padding;
+
 		@include state(".loading .bibliography-container") {
 			flex: 1 1 auto;
 			display: flex;
