@@ -136,7 +136,8 @@
 	> .btn {
 		position: relative;
 
-		&:hover {
+		&:hover,
+		&:focus {
 			z-index: 1;
 		}
 

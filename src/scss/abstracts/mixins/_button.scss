@@ -48,12 +48,12 @@
 	}
 
 	&:focus {
-		.keyboard-user & {
+		.keyboard & {
 			box-shadow: 0 0 0 $input-btn-focus-width $btn-color;
 
 			&:hover {
 				box-shadow:
-					0 0 0 $input-btn-focus-width $btn-color,
+					0 0 0 $input-btn-focus-width lighten($btn-color, 4%),
 					0 4px 4px $btn-box-shadow-color;
 			}
 
@@ -72,12 +72,12 @@
 		}
 
 		&:focus {
-			.keyboard-user & {
+			.keyboard & {
 				box-shadow: 0 0 0 $input-btn-focus-width $btn-success-color;
 
 				&:hover {
 					box-shadow:
-						0 0 0 $input-btn-focus-width $btn-success-color,
+						0 0 0 $input-btn-focus-width lighten($btn-success-color, 4%),
 						0 4px 4px $btn-box-shadow-color;
 				}
 
