@@ -17,6 +17,7 @@ class TagsTabPane extends React.PureComponent {
 					item={ this.props.item }
 					tags={ this.props.item.tags }
 					isProcessingTags={ this.props.isProcessingTags }
+					isReadOnly={ this.props.isReadOnly }
 					onAddTag={ this.props.onAddTag }
 					onDeleteTag={ this.props.onDeleteTag }
 					onUpdateTag={ this.props.onUpdateTag }

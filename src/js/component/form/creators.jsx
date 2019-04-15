@@ -169,7 +169,7 @@ class Creators extends React.PureComponent {
 			onReorder: this.handleReorder.bind(this),
 			onReorderCancel: this.handleReorderCancel.bind(this),
 			onReorderCommit: this.handleReorderCommit.bind(this),
-			readOnly: this.props.readOnly,
+			isReadOnly: this.props.isReadOnly,
 			isEditing: this.props.isEditing,
 			className: cx({
 				'touch-separated': this.hasVirtual && this.props.isEditing &&
@@ -220,7 +220,7 @@ class Creators extends React.PureComponent {
 		name: PropTypes.string,
 		onDragStatusChange: PropTypes.func,
 		onSave: PropTypes.func,
-		readOnly: PropTypes.bool,
+		isReadOnly: PropTypes.bool,
 		value: PropTypes.array,
 	};
 }

@@ -8,12 +8,11 @@ import Button from './ui/button';
 
 class EditToggleButton extends React.PureComponent {
 	render() {
-		const { isEditing, device, onEditModeToggle, className } = this.props;
-		const toggleOnLabel = device.viewport.md && !device.touch ?
-			'Show Empty Fields' : 'Edit';
-		const toggleOffLabel = device.viewport.md && !device.touch ?
-			'Hide Empty Fields' : 'Done';
-
+		const { isEditing, device, onEditModeToggle, className,
+			isReadOnly } = this.props;
+		const isShowEmptyLabel = device.viewport.md && (isReadOnly || !device.touch);
+		const toggleOnLabel = isShowEmptyLabel ? 'Show Empty Fields' : 'Edit';
+		const toggleOffLabel = isShowEmptyLabel ? 'Hide Empty Fields' : 'Done';
 		const label = isEditing ? toggleOffLabel : toggleOnLabel;
 
 		return (

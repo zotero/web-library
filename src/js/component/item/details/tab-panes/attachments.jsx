@@ -23,7 +23,7 @@ class AttachmentsTabPane extends React.PureComponent {
 	}
 
 	render() {
-		const { isActive, childItems, attachmentViewUrls, onAddAttachment,
+		const { isActive, isReadOnly, childItems, attachmentViewUrls, onAddAttachment,
 			onDeleteAttachment, isLoadingChildItems } = this.props;
 
 		return (
@@ -38,6 +38,7 @@ class AttachmentsTabPane extends React.PureComponent {
 					<React.Fragment>
 						<h5 className="h2 tab-pane-heading">Attachments</h5>
 						<Attachments
+							isReadOnly={ isReadOnly }
 							attachments={ childItems.filter(i => i.itemType === 'attachment') }
 							attachmentViewUrls={ attachmentViewUrls }
 							onAddAttachment={ onAddAttachment }

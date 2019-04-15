@@ -26,8 +26,9 @@ class CreatorField extends React.PureComponent {
 	}
 
 	focus() {
+		const { isReadOnly, isForm } = this.props;
 		const key = 'lastName' in this.props.creator ? 'lastName' : 'name';
-		if(!this.props.isForm) {
+		if(!isReadOnly && !isForm) {
 			this.setState({ active: key });
 		} else {
 			key in this.fieldComponents && this.fieldComponents[key].focus();
@@ -35,13 +36,17 @@ class CreatorField extends React.PureComponent {
 	}
 
 	handleFieldClick(key) {
-		this.setState({ active: key });
+		const { isReadOnly } = this.props;
+		if(!isReadOnly) {
+			this.setState({ active: key });
+		}
 	}
 
 	handleFieldFocus(key) {
-		this.setState({
-			active: key,
-		});
+		const { isReadOnly } = this.props;
+		if(!isReadOnly) {
+			this.setState({ active: key });
+		}
 	}
 
 	handleCancel() {
@@ -74,7 +79,8 @@ class CreatorField extends React.PureComponent {
 	}
 
 	handleModalOpen() {
-		const { device, isEditing } = this.props;
+		const { device, isEditing, isReadOnly } = this.props;
+		if(isReadOnly) { return; }
 		if(!device.shouldUseModalCreatorField) { return; }
 		if(device.shouldUseEditMode && !isEditing) { return; }
 
@@ -138,7 +144,7 @@ class CreatorField extends React.PureComponent {
 			value: creator[name],
 			'aria-label': label,
 			className: shouldUseEditable ? 'editable-control' : 'form-control form-control-sm',
-			isDisabled: this.props.readOnly,
+			isDisabled: this.props.isReadOnly,
 			resize: (!inModal && name === 'lastName') ? 'horizontal' : null,
 			ref: component => this.fieldComponents[name] = component
 		};
@@ -175,7 +181,7 @@ class CreatorField extends React.PureComponent {
 			ref={ component => this.fieldComponents['creatorType'] = component }
 			searchable={ false }
 			tabIndex = { 0 }
-			isDisabled = { this.props.readOnly }
+			isDisabled = { this.props.isReadOnly }
 			value={ creator.creatorType }
 		/>
 	}
@@ -277,7 +283,7 @@ class CreatorField extends React.PureComponent {
 			onReorder,
 			onReorderCancel,
 			onReorderCommit,
-			readOnly,
+			isReadOnly,
 		} = this.props;
 		const className = {
 			'creators-entry': true,
@@ -299,7 +305,7 @@ class CreatorField extends React.PureComponent {
 			<Field
 				className={ cx(this.props.className, className) }
 				index={ index }
-				isSortable={ !isSingle && !isVirtual && !readOnly }
+				isSortable={ !isSingle && !isVirtual && !isReadOnly }
 				key={ creator.id }
 				onClick={ this.handleModalOpen.bind(this) }
 				onReorder={ onReorder }
@@ -325,41 +331,46 @@ class CreatorField extends React.PureComponent {
 							this.isDual ? this.renderDual() : this.renderSingle()
 						)
 					}
-					<Button
-						className="btn-single-dual"
-						onClick={ this.handleCreatorTypeSwitch.bind(this) }
-					>
-						<Icon type={ this.icon } width="20" height="20" />
-					</Button>
 					{
-						this.props.isDeleteAllowed ? (
-							<Button
-								className="btn-minus"
-								onClick={ this.handleCreatorRemove.bind(this) }
-							>
-								<Icon type={ '16/minus' } width="16" height="16" />
-							</Button>
-						) : (
-							<Button className="btn-minus" disabled={ true }>
-								<Icon type={ '16/minus' } width="16" height="16" />
-							</Button>
-						)
-					}
-					{
-						this.props.isCreateAllowed ? (
-							<Button
-								className="btn-plus"
-								onClick={ this.handleCreatorAdd.bind(this) }
-							>
-								<Icon type={ '16/plus' } width="16" height="16" />
-							</Button>
-						) : (
-							<Button className="btn-plus" disabled={ true }>
-								<Icon type={ '16/plus' } width="16" height="16" />
-							</Button>
-						)
-					}
-				</React.Fragment>
+						!isReadOnly && (
+							<React.Fragment>
+								<Button
+									className="btn-single-dual"
+									onClick={ this.handleCreatorTypeSwitch.bind(this) }
+								>
+									<Icon type={ this.icon } width="20" height="20" />
+								</Button>
+								{
+									this.props.isDeleteAllowed ? (
+										<Button
+											className="btn-minus"
+											onClick={ this.handleCreatorRemove.bind(this) }
+										>
+											<Icon type={ '16/minus' } width="16" height="16" />
+										</Button>
+									) : (
+										<Button className="btn-minus" disabled={ true }>
+											<Icon type={ '16/minus' } width="16" height="16" />
+										</Button>
+									)
+								}
+								{
+									this.props.isCreateAllowed ? (
+										<Button
+											className="btn-plus"
+											onClick={ this.handleCreatorAdd.bind(this) }
+										>
+											<Icon type={ '16/plus' } width="16" height="16" />
+										</Button>
+									) : (
+										<Button className="btn-plus" disabled={ true }>
+											<Icon type={ '16/plus' } width="16" height="16" />
+										</Button>
+									)
+								}
+						</React.Fragment>
+					)}
+			</React.Fragment>
 			</Field>
 			</React.Fragment>
 		);
@@ -382,7 +393,7 @@ class CreatorField extends React.PureComponent {
 		onReorder: PropTypes.func,
 		onReorderCancel: PropTypes.func,
 		onReorderCommit: PropTypes.func,
-		readOnly: PropTypes.bool,
+		isReadOnly: PropTypes.bool,
 	};
 }
 

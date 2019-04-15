@@ -47,6 +47,7 @@ class Attachments extends React.PureComponent {
 	}
 
 	render() {
+		const { isReadOnly } = this.props;
 		return (
 			<div className="details-list attachments" key="attachments">
 				<nav>
@@ -70,9 +71,11 @@ class Attachments extends React.PureComponent {
 												</span>
 											)
 										}
-										<Button onClick={ this.handleDelete.bind(this, attachment) }>
-											<Icon type={ '16/trash' } width="16" height="16" />
-										</Button>
+										{ !isReadOnly && (
+											<Button onClick={ this.handleDelete.bind(this, attachment) }>
+												<Icon type={ '16/trash' } width="16" height="16" />
+											</Button>
+										)}
 									</li>
 								);
 							})
@@ -93,15 +96,17 @@ class Attachments extends React.PureComponent {
 					</ul>
 				</nav>
 
-				<Toolbar>
-					<div className="toolbar-left">
-						<ToolGroup>
-							<Button onClick={ this.handleAddAttachment.bind(this) }>
-								<Icon type={ '16/plus' } width="16" height="16" />
-							</Button>
-						</ToolGroup>
-					</div>
-				</Toolbar>
+				{ !isReadOnly && (
+					<Toolbar>
+						<div className="toolbar-left">
+							<ToolGroup>
+								<Button onClick={ this.handleAddAttachment.bind(this) }>
+									<Icon type={ '16/plus' } width="16" height="16" />
+								</Button>
+							</ToolGroup>
+						</div>
+					</Toolbar>
+				) }
 			</div>
 		);
 	}

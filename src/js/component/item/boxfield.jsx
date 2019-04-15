@@ -31,7 +31,7 @@ class BoxField extends React.PureComponent {
 	get isDisabled() {
 		const { field, device, isEditing } = this.props;
 		return (device.shouldUseEditMode && !isEditing) ||
-			this.isPseudoEditable || field.readOnly;
+			this.isPseudoEditable || field.isReadOnly;
 	}
 
 	get shouldUseEditable() {
@@ -64,7 +64,7 @@ class BoxField extends React.PureComponent {
 		const props = {
 			autoFocus: !isForm && InputComponent !== SelectInput,
 			display: display ? display.label : null,
-			isDisabled: this.isPseudoEditable && field.readOnly,
+			isDisabled: this.isPseudoEditable || field.isReadOnly,
 			isBusy: field.processing || false,
 			onCancel,
 			onCommit,

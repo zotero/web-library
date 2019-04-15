@@ -67,9 +67,10 @@ class Tags extends React.PureComponent {
 	}
 
 	handleEdit(tag) {
-		this.setState({
-			editingTag: tag
-		});
+		const { isReadOnly } = this.props;
+		if(!isReadOnly) {
+			this.setState({ editingTag: tag });
+		}
 	}
 
 	handleCancel() {
@@ -86,6 +87,7 @@ class Tags extends React.PureComponent {
 	}
 
 	render() {
+		const { isReadOnly } = this.props;
 		let tags = [...this.props.tags];
 		tags.sort((t1, t2) => t1.tag > t2.tag);
 		return (
@@ -104,16 +106,18 @@ class Tags extends React.PureComponent {
 												value={ tag.tag }
 												onCommit={ this.handleCommit.bind(this, tag.tag) }
 												onCancel={ this.handleCancel.bind(this) }
-												onEditableClick={ this.handleEdit.bind(this, tag.tag) }
-												onEditableFocus={ this.handleEdit.bind(this, tag.tag) }
+												onClick={ this.handleEdit.bind(this, tag.tag) }
+												onFocus={ this.handleEdit.bind(this, tag.tag) }
 											/>
-										<Button
-											className="btn-icon"
-											disabled={ this.props.isProcessingTags }
-											onClick={ () => this.handleDelete(tag.tag) }
-										>
-											<Icon type={ '16/trash' } width="16" height="16" />
-										</Button>
+										{ !isReadOnly && (
+											<Button
+												className="btn-icon"
+												disabled={ this.props.isProcessingTags }
+												onClick={ () => this.handleDelete(tag.tag) }
+											>
+												<Icon type={ '16/trash' } width="16" height="16" />
+											</Button>
+										)}
 									</li>
 								);
 							})
@@ -136,15 +140,17 @@ class Tags extends React.PureComponent {
 					</ul>
 				</nav>
 
-				<Toolbar>
-					<div className="toolbar-left">
-						<ToolGroup>
-							<Button onClick={ this.handleAddTag.bind(this) }>
-								<Icon type={ '16/plus' } width="16" height="16" />
-							</Button>
-						</ToolGroup>
-					</div>
-				</Toolbar>
+				{ !isReadOnly && (
+					<Toolbar>
+						<div className="toolbar-left">
+							<ToolGroup>
+								<Button onClick={ this.handleAddTag.bind(this) }>
+									<Icon type={ '16/plus' } width="16" height="16" />
+								</Button>
+							</ToolGroup>
+						</div>
+					</Toolbar>
+				)}
 			</div>
 		);
 	}

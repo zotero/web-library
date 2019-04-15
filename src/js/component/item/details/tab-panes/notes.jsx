@@ -23,8 +23,8 @@ class NotesTabPane extends React.PureComponent {
 	}
 
 	render() {
-		const { isLoadingChildItems, isActive, item, childItems, onNoteChange,
-			onAddNote, onDeleteNote } = this.props;
+		const { isLoadingChildItems, isReadOnly, isActive, item, childItems,
+			 onNoteChange, onAddNote, onDeleteNote } = this.props;
 		return (
 			<div className={ cx({
 				'tab-pane': true,
@@ -37,6 +37,7 @@ class NotesTabPane extends React.PureComponent {
 						<React.Fragment>
 							<h5 className="h2 tab-pane-heading">Notes</h5>
 							<Notes
+								isReadOnly={ isReadOnly }
 								item={ item }
 								notes={ childItems.filter(i => i.itemType === 'note') }
 								onChange={ onNoteChange }

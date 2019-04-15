@@ -27,7 +27,7 @@ class ItemBox extends React.PureComponent {
 
 	handleFieldClick(key) {
 		const field = this.props.fields.find(f => f.key === key);
-		if(!this.props.isForm && field.readOnly) {
+		if(!this.props.isForm && field.isReadOnly) {
 			return;
 		}
 		this.setState({ activeEntry: key });
@@ -36,7 +36,7 @@ class ItemBox extends React.PureComponent {
 	handleFieldFocus(key) {
 		const field = this.props.fields.find(f => f.key === key);
 
-		if(!this.props.isForm && field.readOnly) {
+		if(!this.props.isForm && field.isReadOnly) {
 			return;
 		}
 		this.setState({ activeEntry: key });
@@ -79,7 +79,7 @@ class ItemBox extends React.PureComponent {
 				name: field.key,
 				onDragStatusChange: this.handleDragStatusChange.bind(this),
 				onSave: this.handleCommit.bind(this, field.key),
-				readOnly: field.readOnly,
+				isReadOnly: field.isReadOnly,
 				value: field.value || [],
 			}
 			return <Creators { ...props } />;

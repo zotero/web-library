@@ -12,7 +12,10 @@ class Abstract extends React.PureComponent {
 	}
 
 	handleMakeActive() {
-		this.setState({ isActive: true });
+		const { isReadOnly } = this.props;
+		if(!isReadOnly) {
+			this.setState({ isActive: true });
+		}
 	}
 
 	handleCommit(newValue, hasChanged) {
@@ -38,11 +41,12 @@ class Abstract extends React.PureComponent {
 	}
 
 	renderEditable(input) {
-		const { device, isEditing } = this.props;
+		const { device, isEditing, isReadOnly } = this.props;
 		return <Editable
 			input={ input }
 			isActive={ this.state.isActive }
 			isBusy={ this.isBusy }
+			isReadOnly={ isReadOnly }
 			isDisabled={ device.shouldUseEditMode && !isEditing }
 			onClick={ this.handleMakeActive.bind(this) }
 			onFocus={ this.handleMakeActive.bind(this) }
@@ -50,7 +54,7 @@ class Abstract extends React.PureComponent {
 	}
 
 	renderFormField() {
-		const { pendingChanges, item, isForm } = this.props;
+		const { pendingChanges, item, isForm, isReadOnly } = this.props;
 		const aggregatedPatch = pendingChanges.reduce(
 			(aggr, { patch }) => ({...aggr, ...patch}), {}
 		);
@@ -60,6 +64,7 @@ class Abstract extends React.PureComponent {
 			<TextAreaInput
 				autoFocus={ !isForm }
 				isBusy={ this.isBusy }
+				isReadOnly={ isReadOnly }
 				onCancel={ () => this.setState({ isActive: false }) }
 				onCommit={ this.handleCommit.bind(this) }
 				placeholder={ this.placeholder }

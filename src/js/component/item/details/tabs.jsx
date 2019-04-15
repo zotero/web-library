@@ -60,7 +60,8 @@ class ItemDetailsTabs extends React.PureComponent {
 	}
 
 	render() {
-		const { device, isLoadingMeta, isLoadingChildItems, isLoadingRelated } = this.props;
+		const { device, isLoadingMeta, isLoadingChildItems, isLoadingRelated,
+			isReadOnly } = this.props;
 		const isLoading = isLoadingMeta || isLoadingChildItems || isLoadingRelated;
 
 		return (
@@ -135,7 +136,10 @@ class ItemDetailsTabs extends React.PureComponent {
 					</Tabs>
 						{
 							this.state.tab === 'info' && (
-								<EditToggleButton className="hidden-mouse-lg-up btn-link btn-edit" />
+								<EditToggleButton
+									isReadOnly={ isReadOnly }
+									className="hidden-mouse-lg-up btn-link btn-edit"
+								/>
 							)
 						}
 				</header>

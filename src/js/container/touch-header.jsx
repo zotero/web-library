@@ -95,7 +95,7 @@ class TouchHeaderContainer extends React.PureComponent {
 					this.isItemsView ? this.itemsSourceNode : null,
 					this.itemNode
 				];
-				shouldIncludeEditButton = view === 'item-details';
+				shouldIncludeEditButton = !isReadOnly && view === 'item-details';
 				shouldIncludeItemListOptions = view === 'item-list' && !isSelectMode;
 				shouldHandleSelectMode = view === 'item-list';
 				shouldIncludeCollectionOptions = view !== 'libraries' &&
@@ -118,11 +118,11 @@ class TouchHeaderContainer extends React.PureComponent {
 				touchHeaderPath = [ this.selectedNode, this.itemNode ];
 				shouldIncludeItemListOptions = !item && !isSelectMode;
 				shouldHandleSelectMode = true;
-				shouldIncludeEditButton = !isSelectMode && !!item;
+				shouldIncludeEditButton = !isReadOnly && !isSelectMode && !!item;
 			break;
 			case variants.ITEM:
 				touchHeaderPath = [ this.itemNode ];
-				shouldIncludeEditButton = !isSelectMode && !!item;
+				shouldIncludeEditButton = !isReadOnly && !isSelectMode && !!item;
 			break;
 		}
 		touchHeaderPath = touchHeaderPath.filter(Boolean);
