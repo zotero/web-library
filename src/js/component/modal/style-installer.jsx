@@ -188,7 +188,7 @@ class StyleInstallerModal extends React.PureComponent {
 			<Modal
 				isOpen={ isOpen }
 				contentLabel="Citation Style Installer"
-				className="modal-touch modal-centered style-installer"
+				className={ cx('modal-touch modal-centered style-installer', { loading: !isReady }) }
 				onRequestClose={ this.handleClose }
 				closeTimeoutMS={ 200 }
 				overlayClassName={ "modal-slide" }
