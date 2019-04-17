@@ -5,6 +5,7 @@ import cx from 'classnames';
 import PropTypes from 'prop-types';
 import Modal from '../ui/modal';
 import Button from '../ui/button';
+import Icon from '../ui/icon';
 import Input from '../form/input';
 import Spinner from '../ui/spinner';
 import { pick } from '../../common/immutable';
@@ -203,19 +204,38 @@ class StyleInstallerModal extends React.PureComponent {
 				{ isReady ? (
 				<div className="modal-content" tabIndex={ -1 }>
 					<div className="modal-header">
-						<div className="modal-header-left">
-							<Button
-								className="btn-link"
-								onClick={ this.handleClose }
-							>
-								Close
-							</Button>
-						</div>
-						<div className="modal-header-center">
-							<h4 className="modal-title truncate">
-								Citation Style Installer
-							</h4>
-						</div>
+						{
+							device.isTouchOrSmall ? (
+								<React.Fragment>
+									<div className="modal-header-left" />
+									<div className="modal-header-center">
+										<h4 className="modal-title truncate">
+											Citation Styles
+										</h4>
+									</div>
+									<div className="modal-header-right">
+										<Button
+											className="btn-link"
+											onClick={ this.handleClose }
+										>
+											Close
+										</Button>
+									</div>
+								</React.Fragment>
+							) : (
+								<React.Fragment>
+								<h4 className="modal-title truncate">
+									Citation Styles
+								</h4>
+								<Button
+									className="close"
+									onClick={ this.handleClose }
+								>
+									<Icon type={ '16/close' } width="16" height="16" />
+								</Button>
+								</React.Fragment>
+							)
+						}
 					</div>
 					<div className="modal-body">
 						<Input

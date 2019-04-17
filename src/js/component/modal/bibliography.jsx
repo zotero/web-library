@@ -138,7 +138,7 @@ class BibliographyModal extends React.PureComponent {
 									className="close"
 									onClick={ this.handleCancel }
 								>
-									<Icon type={ '16/close-2' } width="16" height="16" />
+									<Icon type={ '16/close' } width="16" height="16" />
 								</Button>
 							)
 						}
