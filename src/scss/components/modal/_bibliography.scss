@@ -54,12 +54,31 @@
 
 	.style-selector-container {
 		@include touch-or-bp-down(sm) {
+			flex-direction: column;
 			margin-bottom: $form-group-margin-touch;
 		}
 
 		@include mouse-and-bp-up(md) {
 			flex: 1 1 auto;
 			display: flex;
+		}
+
+		.input-group {
+			@include touch-or-bp-down(sm) {
+				margin-top: -6px;
+				padding-bottom: 9px;
+			}
+		}
+
+		.form-control {
+			@include touch-or-bp-down(sm) {
+				line-height: $line-height-base;
+				height: auto;
+				white-space: normal;
+				overflow: visible;
+				padding-right: $input-btn-padding-x-touch;
+				margin-right: 0;
+			}
 		}
 	}
 

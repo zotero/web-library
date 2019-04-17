@@ -134,7 +134,7 @@ label {
 	&.textarea {
 		@include touch-or-bp-down(sm) {
 			margin-top: -6px;
-			padding-bottom: 7px;
+			padding-bottom: 9px;
 		}
 	}
 
