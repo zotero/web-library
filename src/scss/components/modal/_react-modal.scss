@@ -145,7 +145,9 @@
 }
 
 .modal-title {
-	font-size: $modal-title-font-size;
+	@include mouse-and-bp-up(md) {
+		font-size: $modal-title-font-size;
+	}
 }
 
 .modal-body {
