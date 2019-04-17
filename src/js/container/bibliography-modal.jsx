@@ -4,7 +4,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import copy from 'copy-to-clipboard';
 import { connect } from 'react-redux';
-import { toggleModal, bibliographyItems } from '../actions';
+import { toggleModal, bibliographyItems, preferenceChange } from '../actions';
 import { coreCitationStyles } from '../../../data/citation-styles-data.json';
 import BibliographyModal from '../component/modal/bibliography';
 import { BIBLIOGRAPHY, STYLE_INSTALLER } from '../constants/modals';
@@ -15,9 +15,6 @@ import withSelectMode from '../enhancers/with-select-mode';
 
 class BibliographyModalContainer extends React.PureComponent {
 	state = {
-		//@TODO: use state.preferences.citationStyle
-		citationStyle: coreCitationStyles.find(cs => cs.isDefault).name,
-		locale: 'en-US',
 		isUpdating: false
 	}
 
@@ -29,39 +26,20 @@ class BibliographyModalContainer extends React.PureComponent {
 		document.removeEventListener('copy', this.handleCopy);
 	}
 
-	async componentDidUpdate({ isOpen: wasOpen }, { citationStyle: prevCitationStyle, locale: prevLocale }) {
-		const { dispatch, isOpen, itemKeys } = this.props;
-		const { citationStyle, locale } = this.state;
+	async componentDidUpdate({ isOpen: wasOpen,
+		citationStyle: prevCitationStyle, citationLocale: prevCitationLocale }) {
+		const { bibliographyItems, isOpen, itemKeys, citationStyle, citationLocale } = this.props;
 
-		if((isOpen && !wasOpen) || citationStyle !== prevCitationStyle || locale !== prevLocale) {
+		if((isOpen && !wasOpen) || citationStyle !== prevCitationStyle ||
+			citationLocale !== prevCitationLocale) {
 			this.setState({ isUpdating: true });
 			try {
-				const bibliography = await dispatch(bibliographyItems(itemKeys, citationStyle, locale));
+				const bibliography = await bibliographyItems(itemKeys, citationStyle, citationLocale);
 				this.setState({ bibliography });
 			} finally {
 				this.setState({ isUpdating: false });
 			}
 		}
-	}
-
-	handleStyleChange = async citationStyle => {
-		const { dispatch } = this.props;
-		if(citationStyle === 'install') {
-			await dispatch(toggleModal(BIBLIOGRAPHY, false));
-			await dispatch(toggleModal(STYLE_INSTALLER, true));
-		} else {
-			//@TODO: use state.preference
-			this.setState({ citationStyle });
-		}
-	}
-
-	handleLocaleChange = locale => {
-		this.setState({ locale });
-	}
-
-	handleCancel = async () => {
-		const { dispatch } = this.props;
-		await dispatch(toggleModal(BIBLIOGRAPHY, false));
 	}
 
 	handleCopyToClipboardClick = () => {
@@ -90,14 +68,14 @@ class BibliographyModalContainer extends React.PureComponent {
 	}
 
 	render() {
-		const { citationStyle } = this.state;
-
+		const { citationLocale, citationStyle, installedCitationStyles } = this.props;
 		return <BibliographyModal
 			onCancel={ this.handleCancel }
 			onStyleChange={ this.handleStyleChange }
 			onLocaleChange={ this.handleLocaleChange }
 			citationStyle={ citationStyle }
-			citationStyles={ coreCitationStyles }
+			citationLocale={ citationLocale }
+			citationStyles={ [...coreCitationStyles, ...installedCitationStyles] }
 			onCopyToClipboardClick={ this.handleCopyToClipboardClick }
 			onCopyHtmlClick={ this.handleCopyHtmlClick }
 			{ ...this.props }
@@ -106,16 +84,24 @@ class BibliographyModalContainer extends React.PureComponent {
 	}
 
 	static propTypes = {}
+	static defaultProps = {
+		installedCitationStyles: []
+	}
 }
 
 const mapStateToProps = state => {
 	const isOpen = state.modal.id === BIBLIOGRAPHY;
 	const { itemKeys } = state.current;
+	const { installedCitationStyles, citationStyle,
+		citationLocale } = state.preferences || {};
 
-	return { isOpen, itemKeys };
+	return { citationStyle, citationLocale, isOpen, itemKeys,
+		installedCitationStyles };
 };
 
 
 export default withSelectMode(withDevice(
-	connect(mapStateToProps)(BibliographyModalContainer)
+	connect(
+		mapStateToProps, { bibliographyItems, preferenceChange, toggleModal }
+	)(BibliographyModalContainer)
 ));

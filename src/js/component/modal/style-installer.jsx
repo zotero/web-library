@@ -64,12 +64,12 @@ class StyleInstallerModal extends React.PureComponent {
 		this.props.toggleModal(null, false);
 
 		// clear filter once modal is really closed, but not before to avoid flicker
-		this.setTimeout(() => {
+		setTimeout(() => {
 			this.setState({
 				filterInput: '',
 				filter: ''
 			});
-		}, 200);
+		}, 300);
 	}
 
 	handleFilterChange = newValue => {

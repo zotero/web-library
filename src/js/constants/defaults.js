@@ -17,6 +17,7 @@ export const columnNames = {
 
 export const preferences = {
 	citationStyle: coreCitationStyles.find(cs => cs.isDefault).name,
+	citationLocale: 'en-US',
 	installedCitationStyles: [],
 	columns: [
 		{

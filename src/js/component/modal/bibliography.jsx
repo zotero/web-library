@@ -13,6 +13,7 @@ import LocaleSelector from '../locale-selector';
 import { noop } from '../../utils';
 import { pick } from '../../common/immutable';
 import { getUniqueId } from '../../utils';
+import { BIBLIOGRAPHY, STYLE_INSTALLER } from '../../constants/modals';
 import cx from 'classnames';
 
 
@@ -60,21 +61,40 @@ class BibliographyModal extends React.PureComponent {
 	handleRequestedActionChange = newValue => this.setState({ requestedAction: newValue });
 
 	handleCreateClick = () => {
-		const { onSelectModeToggle, onCancel, onCopyHtmlClick,
-			onCopyToClipboardClick } = this.props;
+		const { onSelectModeToggle, onCopyHtmlClick,
+			onCopyToClipboardClick, toggleModal } = this.props;
 		if(this.state.requestedAction === 'html') {
 			onCopyHtmlClick();
 		} else {
 			onCopyToClipboardClick();
 		}
-		onCancel();
+		toggleModal(BIBLIOGRAPHY, false);
 		onSelectModeToggle(false);
+	}
+
+	handleStyleChange = async citationStyle => {
+		const { toggleModal, preferenceChange } = this.props;
+		if(citationStyle === 'install') {
+			await toggleModal(BIBLIOGRAPHY, false);
+			await toggleModal(STYLE_INSTALLER, true);
+		} else {
+			preferenceChange('citationStyle', citationStyle);
+		}
+	}
+
+	handleLocaleChange = locale => {
+		const { preferenceChange } = this.props;
+		preferenceChange('citationLocale', locale);
+	}
+
+	handleCancel = async () => {
+		const { toggleModal } = this.props;
+		await toggleModal(BIBLIOGRAPHY, false);
 	}
 
 	renderModalContent() {
 		const { device, bibliography, isUpdating } = this.props;
 		const { isClipboardCopied, isDropdownOpen, isHtmlCopied } = this.state;
-		const isCopied = false; //placeholder
 		return (
 			<div className="modal-content" tabIndex={ -1 }>
 				<div className="modal-header">
@@ -139,8 +159,9 @@ class BibliographyModal extends React.PureComponent {
 										<div className="col">
 											<StyleSelector
 												id={ this.styleSelectorId }
+												onStyleChange={ this.handleStyleChange }
 												{ ...pick(this.props,
-													['citationStyle', 'citationStyles', 'onStyleChange']
+													['citationStyle', 'citationStyles']
 											)} />
 										</div>
 									</div>
@@ -156,9 +177,9 @@ class BibliographyModal extends React.PureComponent {
 										<div className="col">
 											<LocaleSelector
 												id={ this.localeSelectorId }
-												{ ...pick(this.props,
-													['locale', 'onLocaleChange']
-											)} />
+												onLocaleChange={ this.handleLocaleChange }
+												{ ...pick(this.props, ['citationLocale'] )}
+											/>
 										</div>
 									</div>
 								</div>
@@ -268,11 +289,13 @@ class BibliographyModal extends React.PureComponent {
 		onCopyHtmlClick: PropTypes.func.isRequired,
 		onCopyToClipboardClick: PropTypes.func.isRequired,
 		onSelectModeToggle: PropTypes.func.isRequired,
+		preferenceChange: PropTypes.func.isRequired,
+		toggleModal: PropTypes.func.isRequired,
 	}
 
 	static defaultProps = {
-		bibliography: '',
 		onCancel: noop,
+		bibliography: ''
 	}
 }
 
