@@ -177,18 +177,25 @@ class StyleInstallerModal extends React.PureComponent {
 	}
 
 	render() {
+		const { device } = this.props;
 		const { installedCitationStyles, isOpen, stylesData,
 			isFetching } = this.props;
 		const { filterInput, matchedCitationStyles, isSearching,
 			isWorkerReady } = this.state;
 		const isReady = stylesData !== null && !isFetching && isWorkerReady;
+		const className = cx({
+			'style-installer': true,
+			'modal-touch': device.isTouchOrSmall,
+			'modal-lg': !device.isTouchOrSmall,
+			'loading': !isReady
+		});
 		this.localCitationStyles = [...coreCitationStyles, ...installedCitationStyles];
 
 		return (
 			<Modal
 				isOpen={ isOpen }
 				contentLabel="Citation Style Installer"
-				className={ cx('modal-touch modal-centered style-installer', { loading: !isReady }) }
+				className={ className }
 				onRequestClose={ this.handleClose }
 				closeTimeoutMS={ 200 }
 				overlayClassName={ "modal-slide" }
