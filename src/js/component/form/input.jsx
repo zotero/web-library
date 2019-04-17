@@ -77,14 +77,6 @@ class Input extends React.PureComponent {
 		return this.state.value !== this.props.value;
 	}
 
-	get className() {
-		return {
-			'input-group': true,
-			'input': true,
-			'busy': this.props.isBusy
-		};
-	}
-
 	renderInput() {
 		this.hasBeenCancelled = false;
 		this.hasBeenCommitted = false;
@@ -136,8 +128,13 @@ class Input extends React.PureComponent {
 	}
 
 	render() {
+		const className = cx({
+			'input-group': true,
+			'input': true,
+			'busy': this.props.isBusy
+		}, this.props.inputGroupClassName);
 		return (
-			<div className={ cx(this.className) }>
+			<div className={ className }>
 				{ this.renderInput() }
 				{ this.renderSpinner() }
 			</div>
@@ -161,6 +158,7 @@ class Input extends React.PureComponent {
 		className: PropTypes.string,
 		form: PropTypes.string,
 		id: PropTypes.string,
+		inputGroupClassName: PropTypes.string,
 		inputMode: PropTypes.string,
 		isBusy: PropTypes.bool,
 		isDisabled: PropTypes.bool,

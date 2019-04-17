@@ -71,14 +71,6 @@ class TextAreaInput extends React.PureComponent {
 		return this.state.value !== this.props.value;
 	}
 
-	get className() {
-		return {
-			'input-group': true,
-			'textarea': true,
-			'busy': this.props.isBusy
-		};
-	}
-
 	renderInput() {
 		const extraProps = Object.keys(this.props).reduce((aggr, key) => {
 			if(key.match(/^(aria-|data-).*/)) {
@@ -128,8 +120,13 @@ class TextAreaInput extends React.PureComponent {
 	}
 
 	render() {
+		const className = cx({
+			'input-group': true,
+			'textarea': true,
+			'busy': this.props.isBusy
+		}, this.props.inputGroupClassName);
 		return (
-			<div className={ cx(this.className) }>
+			<div className={ cx(className) }>
 				{ this.renderInput() }
 				{ this.renderSpinner() }
 			</div>
@@ -154,6 +151,7 @@ class TextAreaInput extends React.PureComponent {
 		cols: PropTypes.number,
 		form: PropTypes.string,
 		id: PropTypes.string,
+		inputGroupClassName: PropTypes.string,
 		isBusy: PropTypes.bool,
 		isDisabled: PropTypes.bool,
 		isReadOnly: PropTypes.bool,

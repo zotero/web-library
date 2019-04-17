@@ -81,14 +81,6 @@ class SelectInput extends React.PureComponent {
 		};
 	}
 
-	get className() {
-		return {
-			'input-group': true,
-			'select': true,
-			'busy': this.props.isBusy
-		};
-	}
-
 	renderInput(userType, viewport) {
 		const {
 			options,
@@ -147,12 +139,17 @@ class SelectInput extends React.PureComponent {
 	}
 
 	render() {
+		const className = cx({
+			'input-group': true,
+			'select': true,
+			'busy': this.props.isBusy
+		}, this.props.inputGroupClassName);
 		return (
 			<ViewportContext.Consumer>
 				{ viewport => (
 					<UserContext.Consumer>
 					{ ({ userType }) => (
-						<div className={ cx(this.className) }>
+						<div className={ className }>
 							{ this.renderInput(userType, viewport) }
 							{ this.renderSpinner() }
 						</div>
@@ -179,6 +176,7 @@ class SelectInput extends React.PureComponent {
 		autoFocus: PropTypes.bool,
 		className: PropTypes.string,
 		id: PropTypes.string,
+		inputGroupClassName: PropTypes.string,
 		isBusy: PropTypes.bool,
 		isDisabled: PropTypes.bool,
 		isReadOnly: PropTypes.bool,
