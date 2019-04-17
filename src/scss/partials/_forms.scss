@@ -16,7 +16,7 @@
 }
 
 .form-row {
-	@include mouse-and-bp-up(sm) {
+	@include mouse-and-bp-up(md) {
 		display: flex;
 		flex-wrap: wrap;
 		margin: 0 (-$form-grid-gutter-width / 2);
@@ -24,7 +24,7 @@
 
 	> .col,
 	> [class*="col-"] {
-		@include mouse-and-bp-up(sm) {
+		@include mouse-and-bp-up(md) {
 			padding-left: $form-grid-gutter-width / 2;
 			padding-right: $form-grid-gutter-width / 2;
 		}
