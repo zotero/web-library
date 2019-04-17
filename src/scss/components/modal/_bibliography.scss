@@ -63,6 +63,13 @@
 		}
 	}
 
+	.style-selector {
+		.Select-option:last-child {
+			color: $link-color;
+			-webkit-font-smoothing: subpixel-antialiased;
+		}
+	}
+
 	.language-selector-container {
 		@include mouse-and-bp-up(md) {
 			flex: 1 1 auto;
