@@ -97,15 +97,6 @@
 		}
 	}
 
-	// Todo: remove once the wrappers do not exist anymore
-	.style-selector,
-	.locale-selector {
-		@include mouse-and-bp-up(md) {
-			flex: 1 1 auto;
-			display: flex;
-		}
-	}
-
 	.bibliography-container {
 		padding: 0 $modal-inner-padding;
 
