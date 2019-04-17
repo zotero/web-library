@@ -11,27 +11,26 @@ class StyleSelector extends React.PureComponent {
 		const { className, citationStyle, citationStyles,
 			onStyleChange, id } = this.props;
 		return (
-			<div className={ cx('style-selector', className ) }>
-				<Select
-					id={ id }
-					clearable={ false }
-					searchable={ true }
-					value={ citationStyle }
-					tabIndex={ 0 }
-					options={ [
-						...citationStyles.map(cs => ({
-							value: cs.name,
-							label: cs.title
-						})),
-						{
-							value: 'install',
-							label: `${(Math.floor(citationStylesCount / 100) * 100).toLocaleString()}+ other styles available…`
-						}
-					] }
-					onChange={ () => true /* commit on change */ }
-					onCommit={ onStyleChange }
-				/>
-			</div>
+			<Select
+				id={ id }
+				inputGroupClassName={ cx('style-selector', className ) }
+				clearable={ false }
+				searchable={ true }
+				value={ citationStyle }
+				tabIndex={ 0 }
+				options={ [
+					...citationStyles.map(cs => ({
+						value: cs.name,
+						label: cs.title
+					})),
+					{
+						value: 'install',
+						label: `${(Math.floor(citationStylesCount / 100) * 100).toLocaleString()}+ other styles available…`
+					}
+				] }
+				onChange={ () => true /* commit on change */ }
+				onCommit={ onStyleChange }
+			/>
 		);
 	}
 

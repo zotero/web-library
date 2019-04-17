@@ -10,18 +10,17 @@ class LocaleSelector extends React.PureComponent {
 	render() {
 		const { className, citationLocale, onLocaleChange, id } = this.props;
 		return (
-			<div className={ cx('locale-selector', className ) }>
-				<Select
-					id={ id }
-					clearable={ false }
-					searchable={ true }
-					value={ citationLocale }
-					tabIndex={ 0 }
-					options={ localeData }
-					onChange={ () => true /* commit on change */ }
-					onCommit={ onLocaleChange }
-				/>
-			</div>
+			<Select
+				id={ id }
+				inputGroupClassName={ cx('locale-selector', className ) }
+				clearable={ false }
+				searchable={ true }
+				value={ citationLocale }
+				tabIndex={ 0 }
+				options={ localeData }
+				onChange={ () => true /* commit on change */ }
+				onCommit={ onLocaleChange }
+			/>
 		);
 	}
 
