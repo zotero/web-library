@@ -238,16 +238,18 @@ class StyleInstallerModal extends React.PureComponent {
 						}
 					</div>
 					<div className="modal-body">
-						<Input
-							autoFocus
-							className="form-control form-control-lg"
-							isBusy={ isSearching }
-							onChange={ this.handleFilterChange }
-							placeholder="Search"
-							tabIndex={ 0 }
-							type="text"
-							value={ filterInput }
-						/>
+						<div className="search-bar">
+							<Input
+								autoFocus
+								className="form-control form-control-lg"
+								isBusy={ isSearching }
+								onChange={ this.handleFilterChange }
+								placeholder="Search"
+								tabIndex={ 0 }
+								type="text"
+								value={ filterInput }
+							/>
+						</div>
 						<ul className="style-list">
 							{
 								filterInput.length > 2 ?

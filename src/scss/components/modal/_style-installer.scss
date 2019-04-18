@@ -3,12 +3,43 @@
 //
 
 .style-installer {
+	.modal-body {
+		padding-top: 0;
+		position: relative;
+	}
+
+	.search-bar {
+		@include mouse-and-bp-up(md) {
+			position: sticky;
+			top: 0;
+			background-color: $modal-content-bg;
+			padding-top: $modal-inner-padding;
+			z-index: 1;
+		}
+	}
 
 	.style-list {
-		margin-top: $modal-inner-padding;
+		margin-bottom: -$modal-inner-padding;
+		padding: 0 $space-xs;
 
 		&:empty {
 			display: none;
+		}
+
+		.style {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			border-top: $border-width solid $modal-border-color;
+			padding: $space-xs 0;
+
+			&:first-child {
+				border-top: none;
+			}
+
+			.btn {
+				flex: 0 0 auto;
+			}
 		}
 	}
 }
