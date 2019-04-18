@@ -86,6 +86,7 @@
 		.Select-option:last-child {
 			color: $link-color;
 			-webkit-font-smoothing: subpixel-antialiased;
+			-moz-osx-font-smoothing: grayscale;
 		}
 	}
 
