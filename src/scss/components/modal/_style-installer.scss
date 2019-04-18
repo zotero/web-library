@@ -1,0 +1,14 @@
+//
+// Style installer
+//
+
+.style-installer {
+
+	.style-list {
+		margin-top: $modal-inner-padding;
+
+		&:empty {
+			display: none;
+		}
+	}
+}

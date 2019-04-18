@@ -8,17 +8,17 @@
 	border: $border-width solid transparent;
 	color: $text-color;
 	transition:
-		color $btn-transition,
-		background-color $btn-transition,
-		border-color $btn-transition,
-		box-shadow $btn-transition;
+		color $input-btn-transition,
+		background-color $input-btn-transition,
+		border-color $input-btn-transition,
+		box-shadow $input-btn-transition;
 
 	@include touch-or-bp-down(sm) {
 		padding: 0 $default-padding-x-touch;
 	}
 
 	@include mouse-and-bp-up(md) {
-		border-radius: $btn-border-radius;
+		border-radius: $input-btn-border-radius;
 	}
 
 	&:focus:not(.btn-link) {

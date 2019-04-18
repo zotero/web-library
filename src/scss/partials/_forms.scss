@@ -186,15 +186,22 @@ label {
 		border: none;
 	}
 
-	@include touch-keyboard-or-bp-down(sm) {
-		&:focus {
-			outline: none;
-		}
-	}
-
 	@include mouse-and-bp-up(md) {
 		padding: 0 $input-btn-padding-x;
 		border: $input-border-width solid $input-border-color;
+		border-radius: $input-btn-border-radius;
+		transition:
+			border-color $input-btn-transition,
+			box-shadow $input-btn-transition;
+	}
+
+	&:focus {
+		outline: none;
+
+		@include mouse-and-bp-up(md) {
+			border: $input-border-width solid $focus-color;
+			box-shadow: 0 0 0 $input-btn-focus-width $focus-color;
+		}
 	}
 
 	.busy:not(.textarea) & {
@@ -207,6 +214,34 @@ label {
 		@include mouse-and-bp-up(md) {
 			padding: 0;
 			border: none;
+		}
+	}
+}
+
+.form-control-lg {
+	@include mouse-and-bp-up(md) {
+		font-size: $font-size-lg;
+		padding: $input-btn-padding-y-lg $input-btn-padding-x-lg;
+	}
+
+	.busy:not(.textarea) & {
+		@include mouse-and-bp-up(md) {
+			padding-right: $icon-spin-size-sm + $icon-spin-spacing-lg;
+		}
+	}
+}
+
+.icon-spin {
+	.form-control-lg + & {
+		@include mouse-and-bp-up(md) {
+			top: $icon-spin-spacing-lg;
+			right: $icon-spin-spacing-lg;
+			width: $icon-spin-size-sm;
+			height: $icon-spin-size-sm;
+
+			path {
+				stroke-width: 1.2px;
+			}
 		}
 	}
 }

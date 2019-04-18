@@ -217,6 +217,14 @@ $creators-last-name-max-width:       67%;
 $creators-value-padding-right-touch: 31px;
 
 
+// Icon
+// --------------------------------------------------
+
+$icon-spin-size-sm: $space-md;
+$icon-spin-size-md: $space-lg;
+$icon-spin-size-lg: $space-xl;
+
+
 // Buttons & forms
 // --------------------------------------------------
 
@@ -238,12 +246,7 @@ $input-btn-focus-width: 2px;
 
 $input-btn-border-radius: $border-radius-sm;
 
-
-// Buttons
-// --------------------------------------------------
-
-$btn-border-radius: $border-radius;
-$btn-transition: 0.15s ease;
+$input-btn-transition: 0.15s ease;
 
 
 // Forms
@@ -254,6 +257,14 @@ $form-group-margin-touch: 20px; // todo
 $input-border-radius:     $input-btn-border-radius;
 
 $form-grid-gutter-width: $space-xs;
+
+$icon-spin-spacing-lg:
+	(
+		floor($font-size-lg * $line-height-base)
+		+ 2 * $input-btn-padding-y-lg
+		+ 2 * $input-border-width
+		- $icon-spin-size-sm
+	) / 2;
 
 $input-transition: 0.15s ease;
 
@@ -283,14 +294,6 @@ $menu-border-radius: $border-radius-sm;
 // --------------------------------------------------
 
 $auto-resizer-vertical-rows: 3;
-
-
-// Icon
-// --------------------------------------------------
-
-$icon-spin-size-sm: $space-md;
-$icon-spin-size-md: $space-lg;
-$icon-spin-size-lg: $space-xl;
 
 
 // Modal

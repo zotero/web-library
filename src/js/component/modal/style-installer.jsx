@@ -243,7 +243,7 @@ class StyleInstallerModal extends React.PureComponent {
 							className="form-control form-control-lg"
 							isBusy={ isSearching }
 							onChange={ this.handleFilterChange }
-							placeholder="Enter three or more characters to search"
+							placeholder="Search"
 							tabIndex={ 0 }
 							type="text"
 							value={ filterInput }
