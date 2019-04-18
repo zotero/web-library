@@ -60,7 +60,7 @@
     "babel-regenerator-runtime": "^6.5.0",
     "bootstrap-sass": "^3.4.1",
     "classnames": "^2.2.6",
-    "connected-react-router": "^6.3.2",
+    "connected-react-router": "^6.4.0",
     "copy-to-clipboard": "^3.1.0",
     "deep-equal": "^1.0.1",
     "escape-html": "^1.0.3",

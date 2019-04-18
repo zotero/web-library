@@ -21,7 +21,7 @@ import {
 	toggleTransitions,
 	triggerResizeViewport,
 } from '../actions';
-import routes from '../routes';
+import { routes, redirects } from '../routes';
 import Library from '../component/library';
 import {
 	libraries as defaultLibraries,
@@ -126,10 +126,12 @@ class LibraryContainer extends React.PureComponent {
 					<ConnectedRouter history={history}>
 						<BrowserRouter>
 							<Switch>
+								{ redirects.map(redirect =>
+									<Redirect exact key={ redirect.from } from={ redirect.from } to={ redirect.to } />
+								)}
 								{ routes.map(route =>
 									<Route key={ route } path={ route } component={ LibraryContainerWrapped } />
 								)}
-								<Redirect from="/" to="/libraries"/>
 							</Switch>
 						</BrowserRouter>
 					</ConnectedRouter>

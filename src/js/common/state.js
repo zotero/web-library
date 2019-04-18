@@ -4,7 +4,7 @@ import memoize from 'memoize-one';
 import deepEqual from 'deep-equal';
 import { createMatchSelector } from 'connected-react-router';
 import { get } from '../utils';
-import routes from '../routes';
+import { routes, redirects } from '../routes';
 
 const getCollectionsPath = state => {
 	const { libraryKey, collectionKey } = state.current;
@@ -37,12 +37,19 @@ const getSerializedQuery = ({ collection = null, tag = [], q = null } = {}) => {
 //		 https://github.com/supasate/connected-react-router/issues/85
 //		 https://github.com/supasate/connected-react-router/issues/97
 const getParamsFromRoute = memoize(state => {
+	for(const redirect of redirects) {
+		const match = createMatchSelector(redirect.from)(state);
+		if(match !== null && match.isExact) {
+			return match.params;
+		}
+	}
 	for(const route of routes) {
 		const match = createMatchSelector(route)(state);
 		if(match !== null) {
 			return match.params;
 		}
 	}
+
 	return {};
 }, deepEqual);
 
