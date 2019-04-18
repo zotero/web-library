@@ -1,12 +1,12 @@
 'use strict';
 
-import React from 'react';
 import PropTypes from 'prop-types';
+import React from 'react';
+import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { push } from 'connected-react-router';
-import { bindActionCreators } from 'redux';
-import { deduplicateByKey, get } from '../utils';
 import TagSelector from '../component/tag-selector.jsx';
+import { deduplicateByKey, get } from '../utils';
 import { fetchTagsInCollection, fetchTagsInLibrary } from '../actions';
 import { makePath } from '../common/navigation';
 
@@ -20,7 +20,8 @@ class TagSelectorContainer extends React.PureComponent {
 	}
 
 	handleSelect(tagName) {
-		const { libraryKey: library, itemsSource, collectionKey, selectedTags, push } = this.props;
+		const { libraryKey: library, itemsSource, collectionKey, selectedTags,
+			makePath, push } = this.props;
 		const index = selectedTags.indexOf(tagName)
 		if(index > -1) {
 			selectedTags.splice(index, 1);
@@ -136,7 +137,8 @@ const mapStateToProps = state => {
 	return {
 		isReady: totalTagCount !== null,
 		libraryKey, sourceTags, tags, totalTagCount, itemsSource,
-		collectionKey, selectedTags, isFetching
+		makePath: makePath.bind(null, state.config), collectionKey,
+		selectedTags, isFetching
 	}
 
 };

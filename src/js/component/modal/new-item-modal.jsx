@@ -3,7 +3,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import cx from 'classnames';
-import { makePath } from '../../common/navigation';
 import Modal from '../ui/modal';
 import Button from '../ui/button';
 import Select from '../form/select';
@@ -29,7 +28,7 @@ class CollectionAddModal extends React.PureComponent {
 	handleNewItemCreate = async () => {
 		const { createItem, fetchItemTemplate, toggleModal, push,
 			collection: { key: collection } = {} , libraryKey: library, itemsSource,
-			tags, triggerEditingItem, search } = this.props;
+			makePath, tags, triggerEditingItem, search } = this.props;
 		const { itemType } = this.state;
 
 		this.setState({ isBusy: true });
@@ -137,6 +136,7 @@ class CollectionAddModal extends React.PureComponent {
 		isOpen: PropTypes.bool,
 		itemTypes: PropTypes.array,
 		libraryKey: PropTypes.string,
+		makePath: PropTypes.func.isRequired,
 		push: PropTypes.func.isRequired,
 		toggleModal: PropTypes.func.isRequired,
 		triggerEditingItem: PropTypes.func.isRequired,

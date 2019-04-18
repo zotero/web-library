@@ -31,8 +31,8 @@ const withItemsActions = Component => {
 	class EnhancedComponent extends React.PureComponent {
 		//@TODO: idenitical to ItemsContainer, reduce duplication
 		handleItemsSelect(items = [], view = 'item-list') {
-			const { push, collectionKey: collection, libraryKey: library,
-				itemsSource, tags, search, triggerSelectMode } = this.props;
+			const { collectionKey: collection, libraryKey: library, itemsSource,
+				makePath, push, tags, search, triggerSelectMode } = this.props;
 			const trash = itemsSource === 'trash';
 			const publications = itemsSource === 'publications';
 			triggerSelectMode(false);
@@ -156,6 +156,7 @@ const withItemsActions = Component => {
 			itemKeys: PropTypes.array,
 			itemsSource: PropTypes.string,
 			libraryKey: PropTypes.string,
+			makePath: PropTypes.func.isRequired,
 			moveToTrash: PropTypes.func,
 			push: PropTypes.func,
 			recoverFromTrash: PropTypes.func,
@@ -178,7 +179,7 @@ const mapStateToProps = state => {
 	const item = get(state, ['libraries', libraryKey, 'items', itemKey]);
 
 	return { collectionKey, item, itemKey, itemsSource, libraryKey, search,
-		itemKeys, tags
+		itemKeys, makePath: makePath.bind(null, state.config), tags
 	}
 }
 

@@ -8,19 +8,13 @@ import { connect } from 'react-redux';
 import { push } from 'connected-react-router';
 import { bindActionCreators } from 'redux';
 import Libraries from '../component/libraries';
-
-import {
-    fetchCollections,
-    createCollection,
-    updateCollection,
-    deleteCollection,
-    toggleModal,
-} from '../actions';
-
+import withDevice from '../enhancers/with-device';
+import { fetchCollections, createCollection, updateCollection,
+	deleteCollection, toggleModal } from '../actions';
 import { getCollectionsPath } from '../common/state';
 import { get } from '../utils';
 import { makePath } from '../common/navigation';
-import withDevice from '../enhancers/with-device';
+
 const PAGE_SIZE = 100;
 
 class LibrariesContainer extends React.PureComponent {
@@ -57,7 +51,8 @@ class LibrariesContainer extends React.PureComponent {
 	}
 
 	handleSelect(pathData) {
-		this.props.push(makePath(pathData));
+		const { makePath, push } = this.props;
+		push(makePath(pathData));
 	}
 
 	async handleCollectionAdd(libraryKey, parentCollection, name) {
@@ -115,6 +110,7 @@ const mapStateToProps = state => {
 		isFetching: libraryKey in state.fetching.collectionsInLibrary,
 		libraries,
 		libraryKey,
+		makePath: makePath.bind(null, state.config),
 		selected: collectionKey,
 		path: getCollectionsPath(state),
 		view,
@@ -132,7 +128,9 @@ LibrariesContainer.propTypes = {
 	isFetching: PropTypes.bool.isRequired,
 	itemsSource: PropTypes.string,
 	libraryKey: PropTypes.string,
+	makePath: PropTypes.func.isRequired,
 	path: PropTypes.array,
+	push: PropTypes.func.isRequired,
 	selected: PropTypes.string,
 };
 
@@ -142,7 +140,4 @@ LibrariesContainer.defaultProps = {
 	selected: ''
 };
 
-export default withDevice(connect(
-	mapStateToProps,
-	mapDispatchToProps
-)(LibrariesContainer));
+export default withDevice(connect(mapStateToProps, mapDispatchToProps)(LibrariesContainer));

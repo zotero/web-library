@@ -1,12 +1,13 @@
 'use strict';
 
-import React from 'react';
-import PropTypes from 'prop-types';
-import Types from '../types';
-import ItemDetails from '../component/item/details';
-import { push } from 'connected-react-router';
-import { connect } from 'react-redux';
 import baseMappings from 'zotero-base-mappings';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
+import { push } from 'connected-react-router';
+import ItemDetails from '../component/item/details';
+import Types from '../types';
+import { makePath } from '../common/navigation';
 
 import {
     createItem,
@@ -30,7 +31,6 @@ import {
     reverseMap,
 } from '../utils';
 
-import { makePath } from '../common/navigation';
 import { getFieldDisplayValue } from '../common/item';
 import withEditMode from '../enhancers/with-edit-mode';
 import withDevice from '../enhancers/with-device';
@@ -167,10 +167,10 @@ class ItemDetailsContainer extends React.PureComponent {
 	}
 
 	handleRelatedItemSelect(item) {
-		const { push, collection, libraryKey: library } = this.props;
+		const { collection, libraryKey: library, makePath, push } = this.props;
 		let isSameCollection = item.collections.includes(collection.key);
 		if(isSameCollection) {
-			push(makePath({ library, collection: collection.key, items: item.key }));
+			push(makePath({ library, collection: collection.key, items: item.key }))
 		} else {
 			push(makePath({ library, items: item.key }));
 		}
@@ -337,6 +337,7 @@ const mapStateToProps = state => {
 		item,
 		itemsCount,
 		libraryKey,
+		makePath: makePath.bind(null, state.config),
 		pendingChanges,
 		relatedItems,
 		relatedItemsKeys,
@@ -351,7 +352,8 @@ const mapStateToProps = state => {
 ItemDetailsContainer.propTypes = {
 	fields: PropTypes.array,
 	item: Types.item,
-	dispatch: PropTypes.func.isRequired
+	dispatch: PropTypes.func.isRequired,
+	makePath: PropTypes.func.isRequired,
 };
 
 export default withDevice(withEditMode(connect(

@@ -14,7 +14,6 @@ import { getParamsFromRoute } from '../common/state';
 
 const stateDefault = {
 	collectionKey: null,
-	defaultLibraryKey: null,
 	editingItemKey: null,
 	isEditing: false,
 	isSelectMode: false,
@@ -29,16 +28,33 @@ const stateDefault = {
 	view: 'library',
 };
 
-const current = (state = stateDefault, action) => {
+const getLibraryKey = (params, config) => {
+	if(params.groupid && params.groupslug) {
+		return `g${params.groupid}`;
+	}
+	if(params.userslug) {
+		if(params.userslug == config.userSlug) {
+			return `u${config.userId}`;
+		}
+		const otherUsersLibrary = config.libraries
+			.find(l => l.slug === params.userslug);
+		if(otherUsersLibrary) {
+			return otherUsersLibrary.key;
+		}
+	}
+	return config.defaultLibraryKey;
+}
+
+
+const current = (state = stateDefault, action, { config } = {}) => {
 	switch(action.type) {
 		case CONFIGURE_API:
-			var userLibraryKey = `u${action.userId}`;
 			return {
 				...state,
-				userLibraryKey,
-				defaultLibraryKey: userLibraryKey,
+				userLibraryKey: `u${action.userId}`,
 			}
 		case LOCATION_CHANGE:
+			if(!config) { return state; }
 			var params = getParamsFromRoute({ router: { ...action.payload } });
 			var search = params.search || '';
 			var collectionKey = params.collection || null;
@@ -46,7 +62,7 @@ const current = (state = stateDefault, action) => {
 			var tags = tagsFromUrlPart(params.tags);
 			var isSelectMode = itemKeys.length > 1 ? true : state.isSelectMode;
 			var view = params.view;
-			var libraryKey = params.library || state.defaultLibraryKey;
+			var libraryKey = getLibraryKey(params, config);
 			var itemsSource;
 
 			if(tags.length || search.length) {
@@ -68,7 +84,8 @@ const current = (state = stateDefault, action) => {
 					//@TODO: Refactor
 					view = itemKeys.length ?
 						isSelectMode ? 'item-list' : 'item-details'
-						: collectionKey ? 'collection' : params.library ? 'library' : 'libraries';
+						: collectionKey ? 'collection' :
+							(params.userslug || params.groupid) ? 'library' : 'libraries';
 				}
 			}
 

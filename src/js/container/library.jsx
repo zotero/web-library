@@ -10,7 +10,7 @@ import { Provider, connect } from 'react-redux';
 import withUserTypeDetection from '../enhancers/with-user-type-detector';
 import { createBrowserHistory } from 'history';
 import { routerMiddleware, ConnectedRouter } from 'connected-react-router';
-import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import { BrowserRouter, Route, Redirect, Switch } from 'react-router-dom';
 import createReducers from '../reducers';
 import {
 	configureApi,
@@ -103,7 +103,7 @@ class LibraryContainer extends React.PureComponent {
 		const libraries = { ...defaultLibraries, ...config.libraries };
 		const apiConfig = { ...defaultApiConfig, ...config.apiConfig };
 		const stylesSourceUrl = defaultStylesSourceUrl || config.stylesSourceUrl;
-		const { apiKey, userId } = config;
+		const { apiKey, userId, userSlug } = config;
 
 		if(element) {
 			var store = createStore(
@@ -118,7 +118,7 @@ class LibraryContainer extends React.PureComponent {
 			);
 
 			store.dispatch(
-				configureApi({ userId, apiKey, apiConfig, stylesSourceUrl, libraries })
+				configureApi({ userId, userSlug, apiKey, apiConfig, stylesSourceUrl, libraries })
 			);
 
 			ReactDOM.render(
@@ -129,6 +129,7 @@ class LibraryContainer extends React.PureComponent {
 								{ routes.map(route =>
 									<Route key={ route } path={ route } component={ LibraryContainerWrapped } />
 								)}
+								<Redirect from="/" to="/libraries"/>
 							</Switch>
 						</BrowserRouter>
 					</ConnectedRouter>

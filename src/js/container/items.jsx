@@ -1,37 +1,28 @@
 /* eslint-disable react/no-deprecated */
 'use strict';
 
-import React from 'react';
 import PropTypes from 'prop-types';
+import React from 'react';
+import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { push } from 'connected-react-router';
-import { bindActionCreators } from 'redux';
 import Items from '../component/item/items';
-
-import {
-    addToCollection,
-    fetchItemsInCollection,
-    fetchItemsQuery,
-    fetchPublicationsItems,
-    fetchTopItems,
-    fetchTrashItems,
-    preferenceChange,
-    sortItems,
-} from '../actions';
-
-import { get, resizeVisibleColumns } from '../utils';
-import { makePath } from '../common/navigation';
-import { getFormattedTableItem } from '../common/item';
-import { omit } from '../common/immutable';
-const defaultSort = { field: 'title', sort: 'ASC' };
 import withDevice from '../enhancers/with-device';
 import columnSortKeyLookup from '../constants/column-sort-key-lookup';
+import { addToCollection, fetchItemsInCollection, fetchItemsQuery,
+	fetchPublicationsItems, fetchTopItems, fetchTrashItems, preferenceChange,
+	sortItems } from '../actions';
+import { get, resizeVisibleColumns } from '../utils';
+import { getFormattedTableItem } from '../common/item';
+import { omit } from '../common/immutable';
+import { makePath } from '../common/navigation';
+const defaultSort = { field: 'title', sort: 'ASC' };
 const PAGE_SIZE = 50;
 
 class ItemsContainer extends React.PureComponent {
 	handleItemsSelect(items = []) {
-		const { push, collectionKey: collection, libraryKey: library,
-			itemsSource, tags, search } = this.props;
+		const { collectionKey: collection, libraryKey: library,
+			itemsSource, makePath, push, tags, search } = this.props;
 		const trash = itemsSource === 'trash';
 		const publications = itemsSource === 'publications';
 		const view = 'item-list';
@@ -214,6 +205,7 @@ const mapStateToProps = state => {
 		itemTypes,
 		libraryKey,
 		libraryTags,
+		makePath: makePath.bind(null, state.config),
 		preferences,
 		search,
 		selectedItemKeys: item ? [item.key] : itemKeys,
@@ -235,7 +227,4 @@ ItemsContainer.propTypes = {
   dispatch: PropTypes.func.isRequired,
 };
 
-export default withDevice(connect(
-	mapStateToProps,
-	mapDispatchToProps
-)(ItemsContainer));
+export default withDevice(connect( mapStateToProps, mapDispatchToProps)(ItemsContainer));

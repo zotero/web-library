@@ -19,7 +19,8 @@ import { toggleModal } from '../actions';
 
 class TouchHeaderContainer extends React.PureComponent {
 	handleNavigation = path => {
-		this.props.push(makePath(path));
+		const { makePath, push } = this.props;
+		push(makePath(path));
 	}
 
 	get childMap() {
@@ -174,7 +175,13 @@ const mapStateToProps = state => {
 	const { libraries } = state.config;
 	const collections = get(state, ['libraries', libraryKey, 'collections'], []);
 	const item = get(state, ['libraries', libraryKey, 'items', itemKey]);
-	const libraryConfig = libraries.find(l => l.key === libraryKey);
+
+	//@TODO: if coming straight into user's group library, libraryConfig is {}
+	//       which leads to group name rendering as empty string. This is fixed
+	//       upon first update but should be fixed as soon as the name of the
+	//       group is known (i.e. on RECEIVE_GROUPS action)
+	const libraryConfig = libraries.find(l => l.key === libraryKey) || {};
+
 	const path = getCollectionsPath(state).map(
 		key => {
 			const { name } = collections[key]
@@ -204,6 +211,7 @@ const mapStateToProps = state => {
 		path,
 		item,
 		itemsSource,
+		makePath: makePath.bind(null, state.config),
 		collectionKey
 	};
 };

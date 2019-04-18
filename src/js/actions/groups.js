@@ -17,9 +17,6 @@ const fetchGroups = libraryKey => {
 				.groups()
 				.get();
 			const groups = response.getData();
-			groups.sort(
-				(a, b) => a.name.toUpperCase().localeCompare(b.name.toUpperCase())
-			);
 
 			dispatch({
 				type: RECEIVE_GROUPS,

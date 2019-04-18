@@ -9,11 +9,16 @@ const tagsFromUrlPart = tags => tags ? tags.split(/\b,\b/).map(t => t.replace(/,
 
 const tagsToUrlPart = tags => tags.map(t => t.replace(/,/g, ',,'));
 
-const makePath = ({ library = null, collection = null, items = null, trash = false, publications = false, tags = null, search = null, view = null } = {}) => {
+const makePath = (config, { library = null, collection = null, items = null, trash = false, publications = false, tags = null, search = null, view = null } = {}) => {
 	const path = [];
 
 	if(library !== null) {
-		path.push(library);
+		const libraryData = config.libraries.find(l => l.key === library);
+		if(libraryData.isGroupLibrary) {
+			path.push('groups', libraryData.id, libraryData.slug);
+		} else {
+			path.push(libraryData.slug);
+		}
 	}
 
 	if(trash) {

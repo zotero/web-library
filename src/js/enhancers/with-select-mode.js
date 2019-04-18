@@ -11,7 +11,7 @@ var withSelectMode = Component => {
 	class EnhancedComponent extends React.PureComponent {
 		onSelectModeToggle(isSelectMode) {
 			const { collectionKey: collection, libraryKey: library,
-				itemsSource, push, triggerSelectMode, tags, search, view } = this.props;
+				itemsSource, makePath, push, triggerSelectMode, tags, search, view } = this.props;
 
 			const trash = itemsSource === 'trash';
 			const publications = itemsSource === 'publications';
@@ -41,7 +41,7 @@ const mapStateToProps = state => {
 		tags, view, itemKeys } = state.current;
 
 	return { collectionKey, isSelectMode, itemsSource, libraryKey, search,
-		tags, view, itemKeys };
+		tags, view, itemKeys, makePath: makePath.bind(null, state.config) };
 }
 
 export default withSelectMode;

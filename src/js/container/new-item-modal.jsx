@@ -4,6 +4,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { push } from 'connected-react-router';
 import { toggleModal, createItem, fetchItemTemplate, triggerEditingItem } from '../actions';
+import { makePath } from '../common/navigation';
 import NewItemModal from '../component/modal/new-item-modal';
 import { NEW_ITEM } from '../constants/modals';
 import { get } from '../utils';
@@ -24,7 +25,8 @@ const mapStateToProps = state => {
 	const itemTypes = state.meta.itemTypes;
 	const collection = get(state, ['libraries', libraryKey, 'collections', collectionKey]);
 
-	return { collection, libraryKey, itemsSource, itemTypes, isOpen, tags, search };
+	return { collection, libraryKey, itemsSource, itemTypes, isOpen,
+		makePath: makePath.bind(null, state.config), tags, search };
 };
 
 
