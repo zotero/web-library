@@ -33,7 +33,7 @@ const getApi = ({ config, libraryKey }, requestType, queryConfig) => {
 				.items()
 				.top();
 			if(queryConfig.collectionKey) {
-				configuredApi.collections(queryConfig.collectionKey)
+				configuredApi = configuredApi.collections(queryConfig.collectionKey)
 			}
 			return configuredApi;
 		case 'FETCH_ITEMS':

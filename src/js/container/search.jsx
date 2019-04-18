@@ -11,8 +11,26 @@ class SearchContainer extends React.PureComponent {
 	state = { search: '' }
 
 	handleSearch(search) {
-		const { library, collection, tags, makePath, push } = this.props;
-		push(makePath({ library, search, tags, collection }));
+		const { libraryKey: library, collectionKey: collection, tags,
+			itemsSource, makePath, push } = this.props;
+
+		switch(itemsSource) {
+			case 'top':
+				push(makePath({ library, search }));
+			break;
+			case 'trash':
+				push(makePath({ library, trash: true, search }));
+			break;
+			case 'publications':
+				push(makePath({ library, publications: true, search }));
+			break;
+			case 'collection':
+				push(makePath({ library, collection, search }));
+			break;
+			case 'query':
+				push(makePath({ library, tags, collection, search }));
+			break;
+		}
 	}
 
 	render() {
@@ -24,9 +42,9 @@ class SearchContainer extends React.PureComponent {
 }
 
 const mapStateToProps = state => {
-	const { library, collection, tags, search } = state.current;
-	return { library, collection, makePath: makePath.bind(null, state.config),
-		tags, search }
+	const { libraryKey, collectionKey, itemsSource, tags, search } = state.current;
+	return { libraryKey, collectionKey, itemsSource,
+		makePath: makePath.bind(null, state.config), tags, search }
 };
 
 export default connect(mapStateToProps, { push })(SearchContainer);

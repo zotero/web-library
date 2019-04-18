@@ -20,30 +20,30 @@ class TagSelectorContainer extends React.PureComponent {
 	}
 
 	handleSelect(tagName) {
-		const { libraryKey: library, itemsSource, collectionKey, selectedTags,
-			makePath, push } = this.props;
-		const index = selectedTags.indexOf(tagName)
+		const { libraryKey: library, itemsSource, collectionKey: collection, selectedTags: tags,
+			makePath, push, search } = this.props;
+		const index = tags.indexOf(tagName)
 		if(index > -1) {
-			selectedTags.splice(index, 1);
+			tags.splice(index, 1);
 		} else {
-			selectedTags.push(tagName);
+			tags.push(tagName);
 		}
 
 		switch(itemsSource) {
 			case 'top':
-				push(makePath({ library, tags: selectedTags }));
+				push(makePath({ library, tags }));
 			break;
 			case 'trash':
-				push(makePath({ library, trash: true }));
+				push(makePath({ library, trash: true, tags }));
 			break;
 			case 'publications':
-				push(makePath({ library, publications: true }));
+				push(makePath({ library, publications: true, tags }));
 			break;
 			case 'collection':
-				push(makePath({ library, tags: selectedTags, collection: collectionKey }));
+				push(makePath({ library, collection, tags }));
 			break;
 			case 'query':
-				push(makePath({ library, tags: selectedTags, collection: collectionKey }));
+				push(makePath({ library, collection, search, tags }));
 			break;
 		}
 	}
@@ -92,7 +92,8 @@ const mapStateToProps = state => {
 		libraryKey,
 		collectionKey,
 		tags: selectedTags,
-		itemsSource
+		itemsSource,
+		search
 	} = state.current;
 	if(!libraryKey) { return {}; }
 
@@ -136,7 +137,7 @@ const mapStateToProps = state => {
 
 	return {
 		isReady: totalTagCount !== null,
-		libraryKey, sourceTags, tags, totalTagCount, itemsSource,
+		libraryKey, sourceTags, search, tags, totalTagCount, itemsSource,
 		makePath: makePath.bind(null, state.config), collectionKey,
 		selectedTags, isFetching
 	}
