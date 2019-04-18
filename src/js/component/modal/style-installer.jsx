@@ -187,7 +187,7 @@ class StyleInstallerModal extends React.PureComponent {
 		const className = cx({
 			'style-installer': true,
 			'modal-touch': device.isTouchOrSmall,
-			'modal-lg': !device.isTouchOrSmall,
+			'modal-lg modal-scrollable': !device.isTouchOrSmall,
 			'loading': !isReady
 		});
 		this.localCitationStyles = [...coreCitationStyles, ...installedCitationStyles];
