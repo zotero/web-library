@@ -59,8 +59,20 @@
 	// 64px height
 }
 
+.btn-outline-primary {
+	@include button-variant($btn-primary-color, $outline: true);
+}
+
 .btn-secondary {
 	@include button-variant($btn-secondary-color);
+}
+
+.btn-outline-secondary {
+	@include button-variant($btn-secondary-color, $outline: true);
+}
+
+.btn-outline-light {
+	@include button-variant($btn-light-color, $outline: true);
 }
 
 

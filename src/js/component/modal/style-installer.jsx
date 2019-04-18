@@ -150,24 +150,24 @@ class StyleInstallerModal extends React.PureComponent {
 				</div>
 				{
 					isActive ? (
-						<Button className="btn btn-sm btn-outline-light" disabled>
+						<Button className="btn btn-outline-light" disabled>
 							Active
 						</Button>
 					) : isCore ? (
-						<Button className="btn btn-sm btn-outline-light" disabled>
+						<Button className="btn btn-outline-light" disabled>
 							Default
 						</Button>
 					) : isInstalled ? (
 						<Button
 							value={ style.name }
-							className="btn btn-sm btn-outline-primary"
+							className="btn btn-outline-primary"
 							onClick={ this.handleDelete }>
 							Remove
 						</Button>
 					) : (
 						<Button
 							value={ style.name }
-							className="btn btn-sm btn-outline-secondary"
+							className="btn btn-outline-secondary"
 							onClick={ this.handleInstall }>
 							Add
 						</Button>

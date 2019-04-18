@@ -19,7 +19,6 @@
 	}
 
 	.style-list {
-		margin-bottom: -$modal-inner-padding;
 		padding: 0 $space-xs;
 
 		&:empty {
@@ -39,6 +38,7 @@
 
 			.btn {
 				flex: 0 0 auto;
+				min-width: 70px;
 			}
 		}
 	}
