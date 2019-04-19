@@ -372,6 +372,7 @@ class ItemsTable extends React.PureComponent {
 	renderTitleCell({ cellData, rowData }) {
 		const { selectedItemKeys } = this.props;
 		const isActive = selectedItemKeys.includes(rowData.key);
+		const iconName = paramCase(rowData.itemType);
 
 		if(rowData.isPlaceholder) {
 			return (
@@ -384,8 +385,8 @@ class ItemsTable extends React.PureComponent {
 
 		const icon = rowData.itemType ?
 			<Icon
-				type={ `16/item-types/light/2x/${paramCase(rowData.itemType)}` }
-				symbol={ isActive ? `${paramCase(rowData.itemType)}-active` : paramCase(rowData.itemType) }
+				type={ `16/item-types/light/2x/${iconName}` }
+				symbol={ isActive ? `${iconName}-active` : iconName }
 				width="16"
 				height="16"
 			/> :
