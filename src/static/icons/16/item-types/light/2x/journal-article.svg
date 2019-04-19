@@ -1,11 +1,11 @@
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 	<symbol id="journal-article" viewBox="0 0 16 16">
-		<polygon points="2.5 15.5 2.5 0.5 10 0.5 14.5 5 14.5 15.5 2.5 15.5" fill="#fff"/>
+		<polygon points="2 15.5 2 0.5 9.5 0.5 14 5 14 15.5 2 15.5" fill="#fff"/>
 		<g opacity="0.4">
-			<polygon points="10 0.5 10 5 14.5 5 10 0.5" fill="#ccc"/>
+			<polygon points="9.5 0.5 9.5 5 14 5 9.5 0.5" fill="#ccc"/>
 		</g>
-		<path d="M8,5.5H5v-1H8ZM12,7H5V8h7Zm0,2.5H5v1h7ZM12,12H5v1h7Z" fill="#444"/>
-		<path d="M10.207,0H2V16H15V4.793ZM10.5,1.707,13.293,4.5H10.5ZM3,15V1H9.5V5.5H14V15Z" fill="#ccc"/>
+		<path d="M7.5,5.5h-3v-1h3Zm4,1.5h-7V8h7Zm0,2.5h-7v1h7Zm0,2.5h-7v1h7Z" fill="#444"/>
+		<path d="M9.707,0H1.5V16h13V4.793ZM10,1.707,12.793,4.5H10ZM2.5,15V1H9V5.5h4.5V15Z" fill="#ccc"/>
 	</symbol>
 	<symbol id="journal-article-active">
 		<g opacity="0.4">
