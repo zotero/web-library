@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+	<symbol id="book" viewBox="0 0 16 16">
+		<rect x="5" y="14" width="2.5" height="1" fill="#db2c3a"/>
+		<path d="M14,2V15H4L3,14h9a1,1,0,0,0,1-1V1a1,1,0,0,0-1-1H2A1,1,0,0,0,1,1V13a1,1,0,0,0,.293.707l2,2A1,1,0,0,0,4,16H14a1,1,0,0,0,1-1V3A1,1,0,0,0,14,2ZM2,1H12V13H2Z" fill="#4072e5"/>
+		<rect x="2" y="1" width="10" height="12" fill="#4072e5" opacity="0.4"/>
+	</symbol>
+	<symbol id="book-active">
+		<path d="M14,2V15H7.5V14H12a1,1,0,0,0,1-1V1a1,1,0,0,0-1-1H2A1,1,0,0,0,1,1V13a1,1,0,0,0,.293.707l2,2A1,1,0,0,0,4,16H14a1,1,0,0,0,1-1V3A1,1,0,0,0,14,2ZM2,1H12V13H2ZM4,15,3,14H5v1Z" fill="#fff"/>
+		<rect x="2" y="1" width="10" height="12" fill="#fff" opacity="0.4"/>
+	</symbol>
+	<use xlink:href="#book" viewBox="0 0 16 16"/>
+</svg>

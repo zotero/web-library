@@ -1,6 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-	<symbol id="tv-broadcast" viewBox="0 0 16 16">
-		<path fill="currentColor" d="M14,3H10.707L12.854.854,12.146.146,9.293,3H6.707L3.854.146,3.146.854,5.293,3H2A1,1,0,0,0,1,4V14a1,1,0,0,0,1,1H3v.5a.5.5,0,0,0,1,0V15h8v.5a.5.5,0,0,0,1,0V15h1a1,1,0,0,0,1-1V4A1,1,0,0,0,14,3Zm0,11H2V4H14ZM5,12h6a2,2,0,0,0,2-2V7a2,2,0,0,0-2-2H5A2,2,0,0,0,3,7v3A2,2,0,0,0,5,12ZM4,7A1,1,0,0,1,5,6h6a1,1,0,0,1,1,1v3a1,1,0,0,1-1,1H5a1,1,0,0,1-1-1Z"/>
-	</symbol>
-	<use xlink:href="#tv-broadcast" viewBox="0 0 16 16"/>
-</svg>

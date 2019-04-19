@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+	<symbol id="dictionary-entry" viewBox="0 0 16 16">
+		<polygon points="14.5 15.5 14.5 4.5 10.5 0.5 2.5 0.5 2.5 15.5 14.5 15.5" fill="#fff"/>
+		<g opacity="0.4">
+			<polygon points="10.5 0.5 10.5 4.5 14.5 4.5 10.5 0.5" fill="#ccc"/>
+		</g>
+		<path d="M12.036,13,9.343,6H7.657L4.964,13H4v1H7V13H6.036l.384-1h4.16l.384,1H10v1h3V13ZM6.805,11,8.343,7h.314L10.2,11Z" fill="#db2c3a"/>
+		<path d="M10.707,0H2V16H15V4.293ZM11,1.707,13.293,4H11ZM14,15H3V1h7V5h4Z" fill="#ccc"/>
+	</symbol>
+	<symbol id="dictionary-entry-active">
+		<g opacity="0.4">
+			<polygon points="10.5 0.5 10.5 4.5 14.5 4.5 10.5 0.5" fill="#fff"/>
+		</g>
+		<path d="M12.036,13,9.343,6H7.657L4.964,13H4v1H7V13H6.036l.384-1h4.16l.384,1H10v1h3V13ZM6.805,11,8.343,7h.314L10.2,11Z" fill="#fff"/>
+		<path d="M10.707,0H2V16H15V4.293ZM11,1.707,13.293,4H11ZM14,15H3V1h7V5h4Z" fill="#fff"/>
+	</symbol>
+	<use xlink:href="#dictionary-entry" viewBox="0 0 16 16"/>
+</svg>

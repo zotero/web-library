@@ -1,6 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-	<symbol id="presentation" viewBox="0 0 16 16">
-		<path fill="currentColor" d="M16,0V1H1V0ZM15,10H2V2H1v9H8v1.293L5.146,15.146a.5.5,0,0,0,.707.707L8,13.707V15.5a.5.5,0,0,0,1,0V13.707l2.146,2.146a.5.5,0,0,0,.707-.707L9,12.293V11h7V2H15Z"/>
-	</symbol>
-	<use xlink:href="#presentation" viewBox="0 0 16 16"/>
-</svg>

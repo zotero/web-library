@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+	<symbol id="conference-paper" viewBox="0 0 28 28">
+		<polygon points="1.628 3.524 3.438 13.476 7.5 13.476 7.5 7.5 20.5 7.5 20.5 13.476 24.563 13.476 26.372 3.524 1.628 3.524" fill="#cc7a52" opacity="0.4"/>
+		<path d="M17.5,4a.5.5,0,0,1-.354-.146l-3-3a.5.5,0,0,1,.708-.708l3,3A.5.5,0,0,1,17.5,4Z" fill="#444"/>
+		<path d="M25,14,27,3H1L3,14H7V27H3v1H25V27H21V14ZM3.875,12.951l-1.618-8.9H25.743l-1.618,8.9H21V7H7v5.951ZM20,27H8V8H20Z" fill="#cc7a52"/>
+		<rect x="8" y="8" width="12" height="19" fill="#d69574" opacity="0.2"/>
+	</symbol>
+	<symbol id="conference-paper-active">
+		<polygon points="1.628 3.524 3.438 13.476 7.5 13.476 7.5 7.5 20.5 7.5 20.5 13.476 24.563 13.476 26.372 3.524 1.628 3.524" fill="#fff" opacity="0.4"/>
+		<path d="M17.5,4a.5.5,0,0,1-.354-.146l-3-3a.5.5,0,0,1,.708-.708l3,3A.5.5,0,0,1,17.5,4Z" fill="#fff"/>
+		<path d="M25,14,27,3H1L3,14H7V27H3v1H25V27H21V14ZM3.875,12.951l-1.618-8.9H25.743l-1.618,8.9H21V7H7v5.951ZM20,27H8V8H20Z" fill="#fff"/>
+		<rect x="8" y="8" width="12" height="19" fill="#fff" opacity="0.2"/>
+	</symbol>
+	<use xlink:href="#conference-paper" viewBox="0 0 28 28"/>
+</svg>

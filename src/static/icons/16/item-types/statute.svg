@@ -1,6 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-	<symbol id="statute" viewBox="0 0 16 16">
-		<path fill="currentColor" d="M15,14v1H2V14H15m0-1H2a1,1,0,0,0-1,1v2H16V14a1,1,0,0,0-1-1ZM8.5,1.077l6.5,2.6V4H2V3.677l6.5-2.6M8.5,0,1,3V5H16V3L8.5,0ZM5,7v4H4V7H5M6,6H3v6H6V6ZM9,7v4H8V7H9m1-1H7v6h3V6Zm3,1v4H12V7h1m1-1H11v6h3V6Z"/>
-	</symbol>
-	<use xlink:href="#statute" viewBox="0 0 16 16"/>
-</svg>

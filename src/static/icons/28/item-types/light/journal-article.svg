@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+	<symbol id="journal-article" viewBox="0 0 28 28">
+		<path d="M25.51,7.5H18.5V.49Z" fill="#ccc" opacity="0.4"/>
+		<path d="M15,8H8V7h7Zm6,4H8v1H21Zm0,5H8v1H21Zm0,5H8v1H21Z" fill="#444"/>
+		<path d="M18.717,0H3V28H26V7.283ZM19,1.7,24.3,7H19ZM25,27H4V1H18V8h7Z" fill="#ccc"/>
+	</symbol>
+	<symbol id="journal-article-active">
+		<path d="M25.51,7.5H18.5V.49Z" fill="#fff" opacity="0.4"/>
+		<path d="M15,8H8V7h7Zm6,4H8v1H21Zm0,5H8v1H21Zm0,5H8v1H21ZM18.717,0H3V28H26V7.283ZM19,1.7,24.3,7H19ZM25,27H4V1H18V8h7Z" fill="#fff"/>
+	</symbol>
+	<use xlink:href="#journal-article" viewBox="0 0 28 28"/>
+</svg>

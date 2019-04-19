@@ -383,8 +383,18 @@ class ItemsTable extends React.PureComponent {
 		}
 
 		const icon = rowData.itemType ?
-			<Icon type={ `16/item-types/${paramCase(rowData.itemType)}` } width="16" height="16" /> :
-			<Icon type={ `16/item-types/document` } width="16" height="16" />;
+			<Icon
+				type={ `16/item-types/light/2x/${paramCase(rowData.itemType)}` }
+				symbol={ isActive ? `${paramCase(rowData.itemType)}-active` : paramCase(rowData.itemType) }
+				width="16"
+				height="16"
+			/> :
+			<Icon
+				type={ `16/item-types/light/2x/document` }
+				symbol={ isActive ? 'document-active' : 'document' }
+				width="16"
+				height="16"
+			/>;
 
 		const tagColors = rowData.coloredTags.map((tag, index) => (
 			<Icon

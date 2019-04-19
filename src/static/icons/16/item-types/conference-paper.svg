@@ -1,6 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-	<symbol id="conference-paper" viewBox="0 0 16 16">
-		<path fill="currentColor" d="M2,15H14v1H2ZM15,2,14,8H12v6H11V5H5v9H4V8H2L1,2H9.293L8.146.854A.5.5,0,0,1,8.854.146L10.707,2ZM13.82,3H2.18l.667,4H4V4h8V7h1.153Z"/>
-	</symbol>
-	<use xlink:href="#conference-paper" viewBox="0 0 16 16"/>
-</svg>

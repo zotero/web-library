@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+	<symbol id="blog-post" viewBox="0 0 28 28">
+		<path d="M24,1V27H5V1H24m1-1H4V28H25V0Z" fill="#ccc"/>
+		<rect x="8" y="4" width="13" height="6" fill="#cc7a52" opacity="0.4"/>
+		<path d="M21,4v6H8V4H21m1-1H7v8H22V3Z" fill="#cc7a52"/>
+		<path d="M16,14H7V13h9Zm-2,2H7v1h7Zm2,3H7v1h9Zm-2,3H7v1h7Z" fill="#444"/>
+		<g opacity="0.4">
+			<path d="M22,14H18V13h4Zm0,2H18v1h4Zm0,3H18v1h4Z" fill="#444"/>
+			<path d="M22,13H18v1h4V13Zm0,3H18v1h4V16Zm0,3H18v1h4V19Z" fill="#222"/>
+		</g>
+	</symbol>
+	<symbol id="blog-post-active">
+		<path d="M24,1V27H5V1H24m1-1H4V28H25V0Z" fill="#fff"/>
+		<rect x="8" y="4" width="13" height="6" fill="#fff" opacity="0.4"/>
+		<path d="M21,4v6H8V4H21m1-1H7v8H22V3Z" fill="#fff"/>
+		<path d="M16,14H7V13h9Zm-2,2H7v1h7Zm2,3H7v1h9Zm-2,3H7v1h7Z" fill="#fff"/>
+		<g opacity="0.4">
+			<path d="M22,14H18V13h4Zm0,2H18v1h4Zm0,3H18v1h4Z" fill="#fff"/>
+		</g>
+	</symbol>
+	<use xlink:href="#blog-post" viewBox="0 0 28 28"/>
+</svg>

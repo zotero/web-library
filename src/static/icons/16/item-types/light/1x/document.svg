@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+	<symbol id="document" viewBox="0 0 16 16">
+		<polygon points="14.5 15.5 14.5 5.5 9.5 0.5 2.5 0.5 2.5 15.5 14.5 15.5" fill="#fff"/>
+		<polygon points="9.5 0.5 9.5 5.5 14.5 5.5 9.5 0.5" fill="#ccc" opacity="0.4"/>
+		<path d="M9.707,0H2V16H15V5.293Zm3.586,5H10V1.707ZM14,15H3V1H9V6h5Z" fill="#ccc"/>
+	</symbol>
+	<symbol id="document-active">
+		<polygon points="9.5 0.5 9.5 5.5 14.5 5.5 9.5 0.5" fill="#fff" opacity="0.4"/>
+		<path d="M9.707,0H2V16H15V5.293Zm3.586,5H10V1.707ZM14,15H3V1H9V6h5Z" fill="#fff"/>
+	</symbol>
+	<use xlink:href="#document" viewBox="0 0 16 16"/>
+</svg>
