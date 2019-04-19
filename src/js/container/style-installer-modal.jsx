@@ -11,10 +11,7 @@ import withDevice from '../enhancers/with-device';
 
 class StyleInstallerModalContainer extends React.PureComponent {
 	render() {
-		return <StyleInstallerModal
-			{ ...this.props }
-			{ ...this.state }
-		/>;
+		return <StyleInstallerModal { ...this.props } />;
 	}
 
 	static propTypes = {}
@@ -22,8 +19,9 @@ class StyleInstallerModalContainer extends React.PureComponent {
 
 const mapStateToProps = state => {
 	const isOpen = state.modal.id === STYLE_INSTALLER;
-	const { installedCitationStyles } = state.preferences || [];
-	const { isFetching, stylesData, citationStyle: currentCitationStyle } = state.styles;
+	const { citationStyle: currentCitationStyle,
+		installedCitationStyles } = state.preferences || [];
+	const { isFetching, stylesData } = state.styles;
 
 	return { currentCitationStyle, installedCitationStyles, isOpen, isFetching,
 		stylesData };
