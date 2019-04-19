@@ -373,6 +373,7 @@ class ItemsTable extends React.PureComponent {
 		const { selectedItemKeys } = this.props;
 		const isActive = selectedItemKeys.includes(rowData.key);
 		const iconName = paramCase(rowData.itemType);
+		const dvp = Math.min(2, (window.devicePixelRatio || 1));
 
 		if(rowData.isPlaceholder) {
 			return (
@@ -383,19 +384,14 @@ class ItemsTable extends React.PureComponent {
 			);
 		}
 
-		const icon = rowData.itemType ?
+		const icon = (
 			<Icon
-				type={ `16/item-types/light/2x/${iconName}` }
+				type={ `16/item-types/light/${dvp}x/${iconName}` }
 				symbol={ isActive ? `${iconName}-active` : iconName }
 				width="16"
 				height="16"
-			/> :
-			<Icon
-				type={ `16/item-types/light/2x/document` }
-				symbol={ isActive ? 'document-active' : 'document' }
-				width="16"
-				height="16"
-			/>;
+			/>
+		);
 
 		const tagColors = rowData.coloredTags.map((tag, index) => (
 			<Icon
