@@ -13,9 +13,11 @@
 		@include mouse-and-bp-up(md) {
 			flex: 1 1 auto;
 			padding-top: 0;
+			// Stretch .form for correct .citation-options position when the
+			// bibliography is empty and the modal-body has the focus outline
+			display: flex;
 
 			&.loading {
-				display: flex;
 				flex-direction: column;
 			}
 		}
