@@ -57,6 +57,8 @@ const current = (state = stateDefault, action, { config } = {}) => {
 			if(!config) { return state; }
 			var params = getParamsFromRoute({ router: { ...action.payload } });
 			var search = params.search || '';
+			var isTrash = action.payload.location.pathname.includes('/trash');
+			var isMyPublications = action.payload.location.pathname.includes('/publications');
 			var collectionKey = params.collection || null;
 			var itemKeys = params.items ? params.items.split(',') : [];
 			var tags = tagsFromUrlPart(params.tags);
@@ -69,9 +71,9 @@ const current = (state = stateDefault, action, { config } = {}) => {
 				itemsSource = 'query';
 			} else if(collectionKey) {
 				itemsSource = 'collection';
-			} else if(action.payload.location.pathname.includes('/trash')) {
+			} else if(isTrash) {
 				itemsSource = 'trash';
-			} else if(action.payload.location.pathname.includes('/publications')) {
+			} else if(isMyPublications) {
 				itemsSource = 'publications';
 			} else {
 				itemsSource = 'top';
@@ -96,6 +98,8 @@ const current = (state = stateDefault, action, { config } = {}) => {
 				isEditing: state.isEditing && view !== 'item-details',
 				isSelectMode: isSelectMode && view === 'item-list',
 				itemKey: itemKeys && itemKeys.length === 1 ? itemKeys[0] : null,
+				isTrash,
+				isMyPublications,
 				itemKeys,
 				itemsSource,
 				libraryKey,

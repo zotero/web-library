@@ -12,25 +12,10 @@ class SearchContainer extends React.PureComponent {
 
 	handleSearch(search) {
 		const { libraryKey: library, collectionKey: collection, tags,
-			itemsSource, makePath, push } = this.props;
+			isTrash: trash, isMyPublications: publications,
+			makePath, push, view } = this.props;
 
-		switch(itemsSource) {
-			case 'top':
-				push(makePath({ library, search }));
-			break;
-			case 'trash':
-				push(makePath({ library, trash: true, search }));
-			break;
-			case 'publications':
-				push(makePath({ library, publications: true, search }));
-			break;
-			case 'collection':
-				push(makePath({ library, collection, search }));
-			break;
-			case 'query':
-				push(makePath({ library, tags, collection, search }));
-			break;
-		}
+		push(makePath({ library, tags, collection, trash, publications, search, view }));
 	}
 
 	render() {
@@ -39,12 +24,29 @@ class SearchContainer extends React.PureComponent {
 			search={ this.props.search }
 		/>;
 	}
+
+	static propTypes = {
+		collectionKey: PropTypes.string,
+		isMyPublications: PropTypes.bool,
+		isTrash: PropTypes.bool,
+		libraryKey: PropTypes.string,
+		makePath: PropTypes.func.isRequired,
+		push: PropTypes.func.isRequired,
+		search: PropTypes.string,
+		tags: PropTypes.oneOfType([ PropTypes.string, PropTypes.array]),
+		view:  PropTypes.string,
+	}
+	static defaultProps = {
+		view: 'library'
+	}
 }
 
 const mapStateToProps = state => {
-	const { libraryKey, collectionKey, itemsSource, tags, search } = state.current;
+	const { libraryKey, collectionKey, itemsSource, tags, search, isTrash,
+	isMyPublications, view } = state.current;
 	return { libraryKey, collectionKey, itemsSource,
-		makePath: makePath.bind(null, state.config), tags, search }
+		makePath: makePath.bind(null, state.config), tags, search, isTrash,
+		isMyPublications, view }
 };
 
 export default connect(mapStateToProps, { push })(SearchContainer);

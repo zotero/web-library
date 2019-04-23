@@ -31,9 +31,14 @@ const getApi = ({ config, libraryKey }, requestType, queryConfig) => {
 			var configuredApi = api(config.apiKey, config.apiConfig)
 				.library(libraryKey)
 				.items()
-				.top();
 			if(queryConfig.collectionKey) {
-				configuredApi = configuredApi.collections(queryConfig.collectionKey)
+				configuredApi = configuredApi.collections(queryConfig.collectionKey).top()
+			} else if(queryConfig.isMyPublications) {
+				configuredApi = configuredApi.publications();
+			} else if(queryConfig.isTrash) {
+				configuredApi = configuredApi.trash();
+			} else {
+				configuredApi = configuredApi.top();
 			}
 			return configuredApi;
 		case 'FETCH_ITEMS':
@@ -101,9 +106,9 @@ const fetchItemsInCollection = (collectionKey, queryOptions) => {
 }
 
 const fetchItemsQuery = (query, queryOptions) => {
-	const { collection = null, tag = null, q = null } = query;
-	const queryConfig = {};
-	if(collection) { queryConfig.collectionKey = collection; }
+	const { collectionKey = null, tag = null, q = null, isTrash,
+		isMyPublications } = query;
+	const queryConfig = { collectionKey, isTrash, isMyPublications };
 	return fetchItems(
 		'ITEMS_BY_QUERY', queryConfig, { ...queryOptions, tag, q}
 	);
