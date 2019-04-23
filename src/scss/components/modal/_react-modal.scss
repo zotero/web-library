@@ -81,9 +81,11 @@
 	}
 
 	.modal-scrollable & {
-		display: flex;
-		flex-direction: column;
-		max-height: calc(100vh - 2 * #{$space-xl});
+		@include bp-up(sm) {
+			display: flex;
+			flex-direction: column;
+			max-height: calc(100vh - 2 * #{$space-xl});
+		}
 	}
 }
 
