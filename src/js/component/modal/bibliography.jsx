@@ -30,12 +30,18 @@ class BibliographyModal extends React.PureComponent {
 		this.props.onCancel();
 	}
 
-	handleCopyToClipboardClick = () => {
-		this.props.onCopyToClipboardClick();
-		this.setState({ isClipboardCopied: true });
-		setTimeout(() => {
-			this.setState({ isClipboardCopied: false });
-		}, 1000);
+	//@NOTE: handles both click and keydown explicitely because "click" is
+	//		 also handled in containing element (Dropdown)  where
+	//		 `preventDefault` is called on this event, hence stopping
+	//		 the browser from triggering synthetic click on relevant keydowns
+	handleCopyToClipboardInteraction = ev => {
+		if(ev.type !== 'keydown' || (ev.key === 'Enter' || ev.key === ' ')) {
+			this.props.onCopyToClipboardClick();
+			this.setState({ isClipboardCopied: true });
+			setTimeout(() => {
+				this.setState({ isClipboardCopied: false });
+			}, 1000);
+		}
 	}
 
 	handleCopyHtmlClick = () => {
@@ -223,9 +229,11 @@ class BibliographyModal extends React.PureComponent {
 							className={ cx('btn-group', { 'success': isClipboardCopied}) }
 						>
 							<Button
+								type="button"
 								disabled={ isUpdating }
 								className='btn btn-lg btn-secondary copy-to-clipboard'
-								onClick={ this.handleCopyToClipboardClick }
+								onClick={ this.handleCopyToClipboardInteraction }
+								onKeyDown={ this.handleCopyToClipboardInteraction }
 							>
 								<span className={ cx('inline-feedback', { 'active': isClipboardCopied }) }>
 									<span className="default-text" aria-hidden={ !isClipboardCopied }>
