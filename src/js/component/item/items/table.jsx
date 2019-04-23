@@ -373,7 +373,7 @@ class ItemsTable extends React.PureComponent {
 		const { selectedItemKeys } = this.props;
 		const isActive = selectedItemKeys.includes(rowData.key);
 		const iconName = paramCase(rowData.itemType);
-		const dvp = Math.min(2, (window.devicePixelRatio || 1));
+		const dvp = window.devicePixelRatio >= 2 ? 2 : 1;
 
 		if(rowData.isPlaceholder) {
 			return (
