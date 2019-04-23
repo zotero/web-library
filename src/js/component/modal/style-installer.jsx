@@ -224,15 +224,15 @@ class StyleInstallerModal extends React.PureComponent {
 								</React.Fragment>
 							) : (
 								<React.Fragment>
-								<h4 className="modal-title truncate">
-									Citation Styles
-								</h4>
-								<Button
-									className="close"
-									onClick={ this.handleClose }
-								>
-									<Icon type={ '16/close' } width="16" height="16" />
-								</Button>
+									<h4 className="modal-title truncate">
+										Citation Styles
+									</h4>
+									<Button
+										className="close"
+										onClick={ this.handleClose }
+									>
+										<Icon type={ '16/close' } width="16" height="16" />
+									</Button>
 								</React.Fragment>
 							)
 						}
