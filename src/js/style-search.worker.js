@@ -7,6 +7,7 @@ module.exports = function(self) {
 	var data = [];
 	var items = [];
 	var filter = null;
+	var index = 0;
 
 	self.addEventListener('message', function(ev) {
 		const [command, payload] = ev.data;
@@ -16,19 +17,20 @@ module.exports = function(self) {
 				self.postMessage(['READY', null]);
 			break;
 			case 'FILTER':
+				index = 0;
 				filter = payload;
-				if(filter.length < 3) {
-					items = data.filter(
-						style => style.name.toLowerCase().startsWith(filter)
-							|| style.title.toLowerCase().startsWith(filter)
-							|| (style.titleShort && style.titleShort.toLowerCase().startsWith(filter))
-					);
-				} else {
-					items = data.filter(
-						style => style.name.toLowerCase().includes(filter)
-							|| style.title.toLowerCase().includes(filter)
-							|| (style.titleShort && style.titleShort.toLowerCase().includes(filter))
-					);
+				items = [];
+				for(let i = 0; i < data.length; i++) {
+					let style = data[i];
+					let styleTitle = style.title.toLowerCase();
+					if(styleTitle.startsWith(filter)){
+						items.splice(index++, 0, style);
+					} else if(styleTitle.includes(filter) ||
+						style.name.toLowerCase().includes(filter) ||
+						(style.titleShort && style.titleShort.toLowerCase().includes(filter))
+					) {
+						items.push(style);
+					}
 				}
 				self.postMessage(['FILTER_COMPLETE', items]);
 			break;
