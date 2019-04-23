@@ -105,50 +105,45 @@ class BibliographyModal extends React.PureComponent {
 			<div className="modal-content" tabIndex={ -1 }>
 				<div className="modal-header">
 					{
-						device.isTouchOrSmall && (
-							<div className="modal-header-left">
-								<Button
-									className="btn-link"
-									onClick={ this.handleCancel }
-								>
-									Cancel
-								</Button>
-							</div>
-						)
-					}
-					{
 						device.isTouchOrSmall ? (
-							<div className="modal-header-center">
+							<React.Fragment>
+								<div className="modal-header-left">
+									<Button
+										className="btn-link"
+										onClick={ this.handleCancel }
+									>
+										Cancel
+									</Button>
+								</div>
+								<div className="modal-header-center">
+									<h4 className="modal-title truncate">
+										Bibliography
+									</h4>
+								</div>
+								<div className="modal-header-right">
+									<Button
+										disabled={ isUpdating }
+										className="btn-link"
+										onClick={ this.handleCreateClick }
+									>
+										Create
+									</Button>
+								</div>
+							</React.Fragment>
+						) : (
+							<React.Fragment>
 								<h4 className="modal-title truncate">
 									Bibliography
 								</h4>
-							</div>
-						) : (
-							<h4 className="modal-title truncate">
-								Bibliography
-							</h4>
-						)
-					}
-					<div className="modal-header-right">
-						{
-							device.isTouchOrSmall ? (
-								<Button
-									disabled={ isUpdating }
-									className="btn-link"
-									onClick={ this.handleCreateClick }
-								>
-									Create
-								</Button>
-							) : (
 								<Button
 									className="close"
 									onClick={ this.handleCancel }
 								>
 									<Icon type={ '16/close' } width="16" height="16" />
 								</Button>
-							)
-						}
-					</div>
+							</React.Fragment>
+						)
+					}
 				</div>
 				<div
 					className={ cx(
