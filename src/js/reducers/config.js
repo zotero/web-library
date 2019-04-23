@@ -36,9 +36,12 @@ const determineDefaultLibraryKey = action => {
 	throw "Invalid configuration";
 }
 
-const parseSlug = url => {
-	const match = url.match(/https?:\/\/(www\.)?zotero\.org\/groups\/(.*?)($|\/)/i)
-	return match ? match[2] : null;
+const slugify = name => {
+	let slug = name.trim();
+	slug = slug.toLowerCase();
+	slug = slug.replace( /[^a-z0-9 ._-]/g , '');
+	slug = slug.replace(/\s/g, '_');
+	return slug;
 }
 
 const config = (state = defaultState, action) => {
@@ -65,7 +68,7 @@ const config = (state = defaultState, action) => {
 					},
 					...action.libraries.include.map(include => ({
 						isReadOnly: true,
-						slug: include.name.toLowerCase(),
+						slug: slugify(include.name),
 						isGroupLibrary: include.key[0] === 'g',
 						id: include.key.slice(1),
 						...include,
@@ -75,12 +78,12 @@ const config = (state = defaultState, action) => {
 		case RECEIVE_GROUPS:
 			var libraries = [
 				...state.libraries.filter(l => !action.groups.some(g => l.key === `g${g.id}`)),
-				...action.groups.map((group, index) => ({
+				...action.groups.map((group, _index) => ({
 					id: group.id,
 					key: `g${group.id}`,
 					isGroupLibrary: true,
 					name: group.name,
-					slug: parseSlug(action.response.getLinks()[index].alternate.href),
+					slug: slugify(group.name),
 					isReadOnly: !determineIfGroupIsWriteable(group, state.userId)
 				}))
 			];
