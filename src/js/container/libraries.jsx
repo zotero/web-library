@@ -20,19 +20,14 @@ const PAGE_SIZE = 100;
 class LibrariesContainer extends React.PureComponent {
 	constructor(props) {
 		super(props);
-
-		const { dispatch, libraryKey, userLibraryKey } = props;
-
-		dispatch(fetchCollections(userLibraryKey, { start: 0, limit: PAGE_SIZE }));
-
-		if(libraryKey !== userLibraryKey) {
-			dispatch(fetchCollections(libraryKey, { start: 0, limit: PAGE_SIZE }));
-		}
+		const { dispatch, libraryKey } = props;
+		dispatch(fetchCollections(libraryKey, { start: 0, limit: PAGE_SIZE }));
 	}
 
 	componentDidUpdate({ libraryKey: prevLibraryKey }) {
-		const { collectionCountByLibrary, collections, libraryKey, userLibraryKey, dispatch, librariesWithCollectionsFetching } = this.props;
-		if(libraryKey !== prevLibraryKey && libraryKey !== userLibraryKey) {
+		const { collectionCountByLibrary, collections, libraryKey, dispatch,
+			librariesWithCollectionsFetching } = this.props;
+		if(libraryKey !== prevLibraryKey) {
 			dispatch(fetchCollections(libraryKey, { start: 0, limit: PAGE_SIZE }));
 		}
 
@@ -90,7 +85,6 @@ class LibrariesContainer extends React.PureComponent {
 const mapStateToProps = state => {
 	const {
 		libraryKey,
-		userLibraryKey,
 		collectionKey,
 		view,
 		itemsSource
@@ -106,7 +100,6 @@ const mapStateToProps = state => {
 		}, {}),
 		collectionCountByLibrary: state.collectionCountByLibrary,
 		librariesWithCollectionsFetching: state.fetching.collectionsInLibrary,
-		userLibraryKey,
 		isFetching: libraryKey in state.fetching.collectionsInLibrary,
 		libraries,
 		libraryKey,
