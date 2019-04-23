@@ -13,4 +13,8 @@
 	left: 0;
 	z-index: $z-index-loading-cover;
 	background-color: $shade-0;
+
+	.icon-z {
+		color: $primary;
+	}
 }
