@@ -22,8 +22,8 @@ class CollectionSelectModal extends React.PureComponent {
 	state = defaultState
 
 	componentDidUpdate({ isOpen: wasOpen }, { libraryKey: prevLibraryKey }) {
-		const { collections, isOpen, userLibraryKey, fetchCollections,
-		librariesWithCollectionsFetching, collectionCountByLibrary } = this.props;
+		const { collections, isOpen, fetchCollections,
+			librariesWithCollectionsFetching, collectionCountByLibrary } = this.props;
 		const { libraryKey } = this.state;
 
 		if(wasOpen && !isOpen) {
@@ -128,14 +128,12 @@ class CollectionSelectModal extends React.PureComponent {
 		}));
 
 		if(this.state.view !== 'libraries') {
+			const libraryConfig = libraries.find(l => l.key === libraryKey) || {};
 			touchHeaderPath.unshift({
 				key: libraryKey,
 				type: 'library',
 				path: { library: this.state.libraryKey, view: 'library' },
-				//@TODO: when first loading, group name is not known
-				label: libraryKey === userLibraryKey ?
-					'My Library' :
-					(groups.find(g => g.id === parseInt(libraryKey.substr(1), 10)) || {}).name || libraryKey
+				label: libraryConfig.name
 			});
 		}
 
@@ -218,12 +216,14 @@ class CollectionSelectModal extends React.PureComponent {
 	}
 
 	static propTypes = {
-		collections: PropTypes.objectOf(
-			PropTypes.arrayOf(Types.collection)
-		),
+		collectionCountByLibrary: PropTypes.object,
+		collections: PropTypes.objectOf(PropTypes.arrayOf(Types.collection)),
 		device: PropTypes.object,
+		fetchCollections: PropTypes.func.isRequired,
 		groups: PropTypes.array,
 		isOpen: PropTypes.bool,
+		libraries: PropTypes.array,
+		librariesWithCollectionsFetching: PropTypes.array,
 		libraryKey: PropTypes.string,
 		toggleModal: PropTypes.func.isRequired,
 		userLibraryKey: PropTypes.string,
