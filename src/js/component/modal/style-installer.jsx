@@ -81,7 +81,7 @@ class StyleInstallerModal extends React.PureComponent {
 			filterInput: newValue
 		});
 
-		if(newValue.length > 2) {
+		if(newValue.length > 0) {
 			this.timeout = setTimeout(() => {
 				this.setState({
 					isSearching: true,
@@ -252,7 +252,7 @@ class StyleInstallerModal extends React.PureComponent {
 						</div>
 						<ul className="style-list">
 							{
-								filterInput.length > 2 ?
+								filterInput.length > 0 ?
 								matchedCitationStyles.map(this.renderStyleItem) :
 									this.localCitationStyles.map(this.renderStyleItem)
 							}

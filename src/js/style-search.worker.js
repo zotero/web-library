@@ -17,11 +17,19 @@ module.exports = function(self) {
 			break;
 			case 'FILTER':
 				filter = payload;
-				items = data.filter(
-					style => style.name.toLowerCase().includes(filter)
-						|| style.title.toLowerCase().includes(filter)
-						|| (style.titleShort && style.titleShort.toLowerCase().includes(filter))
-				);
+				if(filter.length < 3) {
+					items = data.filter(
+						style => style.name.toLowerCase().startsWith(filter)
+							|| style.title.toLowerCase().startsWith(filter)
+							|| (style.titleShort && style.titleShort.toLowerCase().startsWith(filter))
+					);
+				} else {
+					items = data.filter(
+						style => style.name.toLowerCase().includes(filter)
+							|| style.title.toLowerCase().includes(filter)
+							|| (style.titleShort && style.titleShort.toLowerCase().includes(filter))
+					);
+				}
 				self.postMessage(['FILTER_COMPLETE', items]);
 			break;
 		}
