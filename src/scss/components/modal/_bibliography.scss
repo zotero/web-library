@@ -13,11 +13,9 @@
 		@include mouse-and-bp-up(md) {
 			flex: 1 1 auto;
 			padding-top: 0;
-			// Stretch .form for correct .citation-options position when the
-			// bibliography is empty and the modal-body has the focus outline
-			display: flex;
 
 			&.loading {
+				display: flex;
 				flex-direction: column;
 			}
 		}
@@ -27,6 +25,21 @@
 		flex: 1 1 auto;
 		display: flex;
 		flex-direction: column;
+
+		// Stretch .form for correct .citation-options position when the
+		// bibliography is empty and the modal-body has the focus outline
+		@include mouse-keyboard-and-bp-up(md) {
+			@include state(".modal-body:focus .form") {
+				min-height:
+					$outline-width
+					+ 2 * $form-group-margin
+					+ 2 * $input-border-width
+					+ 2 * $input-btn-padding-y
+					+ $font-size-base * $line-height-base
+					+ $border-width
+					+ $modal-inner-padding
+			}
+		}
 	}
 
 	.citation-options {
