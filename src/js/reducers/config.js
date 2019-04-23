@@ -1,6 +1,7 @@
 'use strict';
 
 import { CONFIGURE_API, SORT_ITEMS, RECEIVE_GROUPS } from '../constants/actions.js';
+import { sortByKey } from '../utils';
 
 const defaultState = {
 	apiKey: null,
@@ -72,20 +73,19 @@ const config = (state = defaultState, action) => {
 				].filter(Boolean)
 			};
 		case RECEIVE_GROUPS:
-			return {
-				...state,
-				libraries: [
-					...state.libraries.filter(l => !action.groups.some(g => l.key === `g${g.id}`)),
-					...action.groups.map((group, index) => ({
-						id: group.id,
-						key: `g${group.id}`,
-						isGroupLibrary: true,
-						name: group.name,
-						slug: parseSlug(action.response.getLinks()[index].alternate.href),
-						isReadOnly: !determineIfGroupIsWriteable(group, state.userId)
-					}))
-				]
-			}
+			var libraries = [
+				...state.libraries.filter(l => !action.groups.some(g => l.key === `g${g.id}`)),
+				...action.groups.map((group, index) => ({
+					id: group.id,
+					key: `g${group.id}`,
+					isGroupLibrary: true,
+					name: group.name,
+					slug: parseSlug(action.response.getLinks()[index].alternate.href),
+					isReadOnly: !determineIfGroupIsWriteable(group, state.userId)
+				}))
+			];
+			sortByKey(libraries, 'name');
+			return { ...state, libraries }
 		case SORT_ITEMS:
 			return {
 				...state,
