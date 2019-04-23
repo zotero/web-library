@@ -16,6 +16,7 @@
 
 	&:hover {
 		background-color: lighten($btn-color, 4%);
+		border-color: if($outline, lighten($btn-color, 4%), transparent);
 		box-shadow: 0 2px 4px $btn-box-shadow-color;
 
 		&,
@@ -52,6 +53,7 @@
 			box-shadow: 0 0 0 $input-btn-focus-width $btn-color;
 
 			&:hover {
+				border-color: if($outline, lighten($btn-color, 4%), transparent);
 				box-shadow:
 					0 0 0 $input-btn-focus-width lighten($btn-color, 4%),
 					0 4px 4px $btn-box-shadow-color;
@@ -64,8 +66,12 @@
 	}
 
 	&.success,
-	.btn-group.success & {
+	.btn-group.success > & {
 		background-color: $btn-success-color;
+
+		&:hover {
+			background-color: lighten($btn-success-color, 4%);
+		}
 
 		&:active {
 			background-color: darken($btn-success-color, 8%);
@@ -76,6 +82,7 @@
 				box-shadow: 0 0 0 $input-btn-focus-width $btn-success-color;
 
 				&:hover {
+					border-color: if($outline, lighten($btn-color, 4%), transparent);
 					box-shadow:
 						0 0 0 $input-btn-focus-width lighten($btn-success-color, 4%),
 						0 4px 4px $btn-box-shadow-color;
