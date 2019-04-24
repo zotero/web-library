@@ -311,6 +311,7 @@ textarea {
 	@include touch-or-bp-down(sm) {
 		@include hairline-disabled(top);
 		@include hairline-disabled(bottom);
+		display: block;
 		padding: 0;
 	}
 }
