@@ -33,6 +33,10 @@
 		opacity: 0.5;
 		cursor: default;
 	}
+
+	.icon {
+		vertical-align: top;
+	}
 }
 
 .btn-link {
@@ -59,6 +63,10 @@
 	// 64px height
 }
 
+.btn-primary {
+	@include button-variant($btn-primary-color);
+}
+
 .btn-outline-primary {
 	@include button-variant($btn-primary-color, $outline: true);
 }
@@ -73,6 +81,18 @@
 
 .btn-outline-light {
 	@include button-variant($btn-light-color, $outline: true);
+}
+
+
+// Circle button
+
+.btn-circle {
+	@include touch-or-bp-down(sm) {
+		width: $space-lg;
+		height: $space-lg;
+		padding: 0;
+		border-radius: 50%;
+	}
 }
 
 
@@ -102,10 +122,6 @@
 			border-color: $btn-secondary-color;
 			box-shadow: 0 0 0 $input-btn-focus-width $btn-secondary-color;
 		}
-	}
-
-	.icon {
-		vertical-align: top;
 	}
 
 	&:active {

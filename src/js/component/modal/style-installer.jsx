@@ -132,7 +132,7 @@ class StyleInstallerModal extends React.PureComponent {
 	}
 
 	renderStyleItem = style => {
-		const { currentCitationStyle } = this.props;
+		const { currentCitationStyle, device } = this.props;
 		const styleData = this.localCitationStyles.find(cs => cs.name === style.name);
 		const isInstalled = typeof styleData !== 'undefined';
 		const isCore = isInstalled && styleData.isCore || false;
@@ -150,25 +150,33 @@ class StyleInstallerModal extends React.PureComponent {
 				</div>
 				{
 					isActive ? (
-						<Button className="btn btn-outline-light" disabled>
+						<Button
+							className={ cx({'btn-circle btn-primary': device.isTouchOrSmall}, {'btn-outline-light': !device.isTouchOrSmall}) }
+							disabled
+						>
 							Active
 						</Button>
 					) : isCore ? (
-						<Button className="btn btn-outline-light" disabled>
+						<Button
+							className={ cx({'btn-circle btn-primary': device.isTouchOrSmall}, {'btn-outline-light': !device.isTouchOrSmall}) }
+							disabled
+						>
 							Default
 						</Button>
 					) : isInstalled ? (
 						<Button
 							value={ style.name }
-							className="btn btn-outline-primary"
-							onClick={ this.handleDelete }>
+							className={ cx({'btn-circle btn-primary': device.isTouchOrSmall}, {'btn-outline-primary': !device.isTouchOrSmall}) }
+							onClick={ this.handleDelete }
+						>
 							Remove
 						</Button>
 					) : (
 						<Button
 							value={ style.name }
-							className="btn btn-outline-secondary"
-							onClick={ this.handleInstall }>
+							className={ cx({'btn-circle btn-secondary': device.isTouchOrSmall}, {'btn-outline-secondary': !device.isTouchOrSmall}) }
+							onClick={ this.handleInstall }
+						>
 							Add
 						</Button>
 					)
