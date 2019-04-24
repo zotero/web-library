@@ -53,6 +53,7 @@ class LibraryContainer extends React.PureComponent {
 
 		dispatch(preferencesLoad());
 		dispatch(initialize());
+		dispatch(fetchLibrarySettings());
 		if(config.includeUserGroups) {
 			dispatch(fetchGroups(userLibraryKey));
 		}
