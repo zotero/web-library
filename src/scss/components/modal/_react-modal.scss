@@ -147,19 +147,12 @@
 
 .modal-body {
 	padding: $modal-inner-padding;
-
-	@include touch-or-bp-down(sm) {
-		background-color: $modal-content-bg-touch; // Set content-bg on header, body, and footer explicitly for better border-radius rendering (focus border)
-	}
+	background-color: $modal-content-bg; // Set content-bg on header, body, and footer explicitly for better border-radius rendering (focus border)
 
 	@include bp-down(xs) {
 		height: calc(100% - #{$modal-header-height});
 		overflow-y: auto;
 		-webkit-overflow-scrolling: touch; // Momentum scrolling for iOS
-	}
-
-	@include mouse-and-bp-up(md) {
-		background-color: $modal-content-bg;
 	}
 
 	.modal-scrollable & {

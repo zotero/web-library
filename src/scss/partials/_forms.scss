@@ -9,8 +9,9 @@
 .form { // We do not use a form element for its side effects
 	@include variant(".modal form") {
 		@include touch-or-bp-down(sm) {
-			margin: ($form-group-margin-touch - $modal-inner-padding)
-				(-$modal-inner-padding);
+			background-color: $form-bg-touch;
+			margin: -$modal-inner-padding;
+			padding: $form-group-margin-touch 0;
 		}
 	}
 }
