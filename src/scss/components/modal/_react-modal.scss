@@ -149,7 +149,7 @@
 	padding: $modal-inner-padding;
 
 	@include touch-or-bp-down(sm) {
-		background-color: $modal-content-bg-touch;
+		background-color: $modal-content-bg-touch; // Set content-bg on header, body, and footer explicitly for better border-radius rendering (focus border)
 	}
 
 	@include bp-down(xs) {
