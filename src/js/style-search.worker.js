@@ -4,10 +4,10 @@
 // https://github.com/zotero/bib-web/blob/dab5be3df07e3e65d24f6ceddc79e3c96b94107f/src/js/search-worker.js
 
 module.exports = function(self) {
-	var data = [];
-	var items = [];
-	var filter = null;
-	var index = 0;
+	let data = [];
+	let items = [];
+	let filter = null;
+	let index = 0;
 
 	self.addEventListener('message', function(ev) {
 		const [command, payload] = ev.data;
@@ -21,8 +21,8 @@ module.exports = function(self) {
 				filter = payload;
 				items = [];
 				for(let i = 0; i < data.length; i++) {
-					let style = data[i];
-					let styleTitle = style.title.toLowerCase();
+					const style = data[i];
+					const styleTitle = style.title.toLowerCase();
 					if(styleTitle.startsWith(filter)){
 						items.splice(index++, 0, style);
 					} else if(styleTitle.includes(filter) ||
