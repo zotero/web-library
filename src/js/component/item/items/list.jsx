@@ -129,7 +129,7 @@ class ItemsList extends React.PureComponent {
 					{ isLoaded ?
 						<Icon
 							type={ `28/item-types/light/${paramCase(item.itemType)}` }
-							symbol={ isActive ? `${paramCase(item.itemType)}-active` : paramCase(item.itemType) }
+							symbol={ isActive && !isSelectMode ? `${paramCase(item.itemType)}-active` : paramCase(item.itemType) }
 							width="28"
 							height="28"
 							className="item-type hidden-xs-down"
