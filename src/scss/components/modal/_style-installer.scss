@@ -6,6 +6,15 @@
 	.modal-body {
 		padding-top: 0;
 		padding-bottom: 0;
+
+		&:focus {
+			.keyboard & {
+				padding-left: $modal-inner-padding - $outline-width;
+				padding-right: $modal-inner-padding - $outline-width;
+				border-bottom-left-radius: $modal-border-radius;
+				border-bottom-right-radius: $modal-border-radius;
+			}
+		}
 	}
 
 	.search-bar {
@@ -21,6 +30,10 @@
 		@include mouse-and-bp-up(md) {
 			background-color: $modal-content-bg;
 		}
+
+		@include state(".keyboard .style-installer .modal-body:focus") {
+			padding-top: $modal-inner-padding - $outline-width;
+		}
 	}
 
 	.style-list {
@@ -29,6 +42,10 @@
 
 		&:empty {
 			display: none;
+		}
+
+		@include state(".keyboard .style-installer .modal-body:focus") {
+			margin-bottom: $modal-inner-padding - $outline-width;
 		}
 
 		.style {

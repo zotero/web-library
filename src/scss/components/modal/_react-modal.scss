@@ -63,10 +63,6 @@
 .modal-content {
 	width: 100%;
 
-	@include touch-or-bp-down(sm) {
-		background-color: $modal-content-bg-touch;
-	}
-
 	@include bp-down(xs) {
 		height: 100%;
 	}
@@ -74,10 +70,6 @@
 	@include bp-up(sm) {
 		border-radius: $modal-border-radius;
 		overflow: hidden;
-	}
-
-	@include mouse-and-bp-up(md) {
-		background-color: $modal-content-bg;
 	}
 
 	.modal-scrollable & {
@@ -121,6 +113,7 @@
 		@include mouse-and-bp-up(sm) {
 			padding-top: $modal-inner-padding;
 			padding-bottom: $modal-inner-padding;
+			background-color: $modal-content-bg;
 		}
 	}
 }
@@ -155,10 +148,18 @@
 .modal-body {
 	padding: $modal-inner-padding;
 
+	@include touch-or-bp-down(sm) {
+		background-color: $modal-content-bg-touch;
+	}
+
 	@include bp-down(xs) {
 		height: calc(100% - #{$modal-header-height});
 		overflow-y: auto;
 		-webkit-overflow-scrolling: touch; // Momentum scrolling for iOS
+	}
+
+	@include mouse-and-bp-up(md) {
+		background-color: $modal-content-bg;
 	}
 
 	.modal-scrollable & {
@@ -167,7 +168,8 @@
 
 		&:focus {
 			.keyboard & {
-				outline-offset: -$outline-width;
+				outline: none;
+				border: $outline-width solid $focus-color;
 			}
 		}
 	}
