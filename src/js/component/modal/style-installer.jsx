@@ -241,7 +241,7 @@ class StyleInstallerModal extends React.PureComponent {
 						<div className="search-bar">
 							<Input
 								autoFocus
-								className="form-control form-control-lg"
+								className="form-control form-control-lg search-input"
 								isBusy={ isSearching }
 								onChange={ this.handleFilterChange }
 								placeholder="Search"

@@ -5,21 +5,27 @@
 .style-installer {
 	.modal-body {
 		padding-top: 0;
-		position: relative;
+		padding-bottom: 0;
 	}
 
 	.search-bar {
+		position: sticky;
+		top: 0;
+		z-index: 1;
+		padding: $modal-inner-padding 0;
+
+		@include touch-or-bp-down(sm) {
+			background-color: $modal-content-bg-touch;
+		}
+
 		@include mouse-and-bp-up(md) {
-			position: sticky;
-			top: 0;
 			background-color: $modal-content-bg;
-			padding-top: $modal-inner-padding;
-			z-index: 1;
 		}
 	}
 
 	.style-list {
 		padding: 0 $space-xs;
+		margin-bottom: $modal-inner-padding;
 
 		&:empty {
 			display: none;
@@ -38,7 +44,10 @@
 
 			.btn {
 				flex: 0 0 auto;
-				min-width: 70px;
+
+				@include mouse-and-bp-up(md) {
+					min-width: 70px;
+				}
 			}
 		}
 	}

@@ -179,6 +179,10 @@ label {
 	width: 100%;
 	color: $input-color;
 	background-color: $input-bg;
+	appearance: none;
+	transition:
+		border-color $input-btn-transition,
+		box-shadow $input-btn-transition;
 
 	@include touch-or-bp-down(sm) {
 		height: $input-btn-height-touch;
@@ -190,9 +194,6 @@ label {
 		padding: 0 $input-btn-padding-x;
 		border: $input-border-width solid $input-border-color;
 		border-radius: $input-btn-border-radius;
-		transition:
-			border-color $input-btn-transition,
-			box-shadow $input-btn-transition;
 	}
 
 	&:focus {
@@ -286,6 +287,21 @@ textarea {
 			padding-right: 0;
 			margin-right: $input-btn-padding-x-touch;
 			line-height: $input-btn-height-touch; // Center text vertically
+		}
+	}
+}
+
+.search-input {
+	@include touch-or-bp-down(sm) {
+		background-color: $search-input-bg-touch;
+		border: 0.5px solid $input-border-color-touch;
+		border-radius: $input-btn-border-radius;
+	}
+
+	@include touch-keyboard-or-bp-down(sm) {
+		&:focus {
+			border: 0.5px solid $focus-color;
+			box-shadow: 0 0 0 $input-btn-focus-width $focus-color;
 		}
 	}
 }

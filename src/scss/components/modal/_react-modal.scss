@@ -14,7 +14,7 @@
 	left: 0;
 	background-color: $modal-backdrop-bg;
 	overflow-y: auto;
-	-webkit-overflow-scrolling: touch; // Momentum scrolling for iOS
+	-webkit-overflow-scrolling: touch; // Momentum scrolling for iOS 10–
 	z-index: $z-index-modal;
 
 	@include bp-down(xs) {
@@ -163,6 +163,7 @@
 
 	.modal-scrollable & {
 		overflow-y: auto;
+		-webkit-overflow-scrolling: touch; // Momentum scrolling for iOS 10–
 
 		&:focus {
 			.keyboard & {
