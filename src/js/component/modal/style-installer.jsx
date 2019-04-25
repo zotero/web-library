@@ -151,14 +151,20 @@ class StyleInstallerModal extends React.PureComponent {
 				{
 					isActive ? (
 						<Button
-							className={ cx({'btn-circle btn-primary': device.isTouchOrSmall}, {'btn-outline-light': !device.isTouchOrSmall}) }
+							className={ cx({
+								'btn-circle btn-primary': device.isTouchOrSmall,
+								'btn-outline-light': !device.isTouchOrSmall
+							}) }
 							disabled
 						>
 							Active
 						</Button>
 					) : isCore ? (
 						<Button
-							className={ cx({'btn-circle btn-primary': device.isTouchOrSmall}, {'btn-outline-light': !device.isTouchOrSmall}) }
+							className={ cx({
+								'btn-circle btn-primary': device.isTouchOrSmall,
+								'btn-outline-light': !device.isTouchOrSmall
+							}) }
 							disabled
 						>
 							Default
@@ -166,7 +172,10 @@ class StyleInstallerModal extends React.PureComponent {
 					) : isInstalled ? (
 						<Button
 							value={ style.name }
-							className={ cx({'btn-circle btn-primary': device.isTouchOrSmall}, {'btn-outline-primary': !device.isTouchOrSmall}) }
+							className={ cx({
+								'btn-circle btn-primary': device.isTouchOrSmall,
+								'btn-outline-primary': !device.isTouchOrSmall
+							}) }
 							onClick={ this.handleDelete }
 						>
 							Remove
@@ -174,7 +183,10 @@ class StyleInstallerModal extends React.PureComponent {
 					) : (
 						<Button
 							value={ style.name }
-							className={ cx({'btn-circle btn-secondary': device.isTouchOrSmall}, {'btn-outline-secondary': !device.isTouchOrSmall}) }
+							className={ cx({
+								'btn-circle btn-secondary': device.isTouchOrSmall,
+								'btn-outline-secondary': !device.isTouchOrSmall
+							}) }
 							onClick={ this.handleInstall }
 						>
 							Add
