@@ -93,7 +93,7 @@ class StyleInstallerModal extends React.PureComponent {
 
 	handleDelete = ev => {
 		const { installedCitationStyles, preferenceChange } = this.props;
-		const styleName = ev.target.value;
+		const styleName = ev.currentTarget.value;
 		const newInstalledCitationStyles = installedCitationStyles.filter(
 			c => c.name !== styleName
 		);
@@ -103,7 +103,7 @@ class StyleInstallerModal extends React.PureComponent {
 
 	handleInstall = ev => {
 		const { matchedCitationStyles } = this.state;
-		const styleName = ev.target.value;
+		const styleName = ev.currentTarget.value;
 		const style = matchedCitationStyles.find(c => c.name == styleName);
 		const { installedCitationStyles, preferenceChange } = this.props;
 		const newInstalledCitationStyles = [
@@ -157,7 +157,11 @@ class StyleInstallerModal extends React.PureComponent {
 							}) }
 							disabled
 						>
-							Active
+							{
+								device.isTouchOrSmall ? (
+									<Icon type="24/minus" width="24" height="24" />
+								) : 'Active'
+							}
 						</Button>
 					) : isCore ? (
 						<Button
@@ -167,7 +171,11 @@ class StyleInstallerModal extends React.PureComponent {
 							}) }
 							disabled
 						>
-							Default
+							{
+								device.isTouchOrSmall ? (
+									<Icon type="24/minus" width="24" height="24" />
+								) : 'Default'
+							}
 						</Button>
 					) : isInstalled ? (
 						<Button
@@ -178,7 +186,11 @@ class StyleInstallerModal extends React.PureComponent {
 							}) }
 							onClick={ this.handleDelete }
 						>
-							Remove
+							{
+								device.isTouchOrSmall ? (
+									<Icon type="24/minus" width="24" height="24" />
+								) : 'Remove'
+							}
 						</Button>
 					) : (
 						<Button
@@ -189,7 +201,11 @@ class StyleInstallerModal extends React.PureComponent {
 							}) }
 							onClick={ this.handleInstall }
 						>
-							Add
+							{
+								device.isTouchOrSmall ? (
+									<Icon type="24/plus" width="24" height="24" />
+								) : 'Add'
+							}
 						</Button>
 					)
 				}
