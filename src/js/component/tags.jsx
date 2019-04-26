@@ -111,7 +111,7 @@ class Tags extends React.PureComponent {
 											/>
 										{ !isReadOnly && (
 											<Button
-												className="btn-icon"
+												icon
 												disabled={ this.props.isProcessingTags }
 												onClick={ () => this.handleDelete(tag.tag) }
 											>
@@ -144,7 +144,7 @@ class Tags extends React.PureComponent {
 					<Toolbar>
 						<div className="toolbar-left">
 							<ToolGroup>
-								<Button onClick={ this.handleAddTag.bind(this) }>
+								<Button icon onClick={ this.handleAddTag.bind(this) }>
 									<Icon type={ '16/plus' } width="16" height="16" />
 								</Button>
 							</ToolGroup>

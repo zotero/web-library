@@ -335,6 +335,7 @@ class CreatorField extends React.PureComponent {
 						!isReadOnly && (
 							<React.Fragment>
 								<Button
+									icon
 									className="btn-single-dual"
 									onClick={ this.handleCreatorTypeSwitch.bind(this) }
 								>
@@ -343,13 +344,14 @@ class CreatorField extends React.PureComponent {
 								{
 									this.props.isDeleteAllowed ? (
 										<Button
+											icon
 											className="btn-minus"
 											onClick={ this.handleCreatorRemove.bind(this) }
 										>
 											<Icon type={ '16/minus' } width="16" height="16" />
 										</Button>
 									) : (
-										<Button className="btn-minus" disabled={ true }>
+										<Button icon className="btn-minus" disabled={ true }>
 											<Icon type={ '16/minus' } width="16" height="16" />
 										</Button>
 									)
@@ -357,13 +359,14 @@ class CreatorField extends React.PureComponent {
 								{
 									this.props.isCreateAllowed ? (
 										<Button
+											icon
 											className="btn-plus"
 											onClick={ this.handleCreatorAdd.bind(this) }
 										>
 											<Icon type={ '16/plus' } width="16" height="16" />
 										</Button>
 									) : (
-										<Button className="btn-plus" disabled={ true }>
+										<Button icon className="btn-plus" disabled={ true }>
 											<Icon type={ '16/plus' } width="16" height="16" />
 										</Button>
 									)

@@ -86,21 +86,24 @@ class RichEditor extends React.PureComponent {
 					<div className="toolbar-left">
 						<ToolGroup>
 							<Button
-								className={ cx("btn-icon", {
+								icon
+								className={ cx({
 									active: this.isEditorCommandState('BOLD')
 								})}
 								onClick={ this.buttonHandler.bind(this, 'BOLD') }>
 								B
 							</Button>
 							<Button
-								className={ cx("btn-icon", {
+								icon
+								className={ cx({
 									active: this.isEditorCommandState('ITALIC')
 								})}
 								onClick={ this.buttonHandler.bind(this, 'ITALIC') }>
 								I
 							</Button>
 							<Button
-								className={ cx("btn-icon", {
+								icon
+								className={ cx({
 									active: this.isEditorCommandState('UNDERLINE')
 								})}
 								onClick={ this.buttonHandler.bind(this, 'UNDERLINE') }>

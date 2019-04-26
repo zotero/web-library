@@ -20,46 +20,46 @@ class TouchFooter extends React.PureComponent {
 								<React.Fragment>
 									{
 										itemsSource !== 'trash' && (
-										<Button onClick={ onAddToCollectionModalOpen } disabled={ itemKeys.length === 0 }>
+										<Button icon onClick={ onAddToCollectionModalOpen } disabled={ itemKeys.length === 0 }>
 											<Icon type={ '32/add-to-collection' } width="32" height="32" />
 										</Button>
 									)}
 									{
 										itemsSource === 'collection' && (
-											<Button onClick={ onRemoveFromCollection } disabled={ itemKeys.length === 0 }>
+											<Button icon onClick={ onRemoveFromCollection } disabled={ itemKeys.length === 0 }>
 												<Icon type={ '32/remove-from-collection' } width="32" height="32" />
 											</Button>
 									)}
 									{
 										itemsSource !== 'trash' && (
-											<Button onClick={ onTrash } disabled={ itemKeys.length === 0 } >
+											<Button icon onClick={ onTrash } disabled={ itemKeys.length === 0 } >
 												<Icon type={ '24/trash' } width="24" height="24" />
 											</Button>
 									)}
 									{
 										itemsSource === 'trash' && (
-											<Button onClick={ onUndelete } disabled={ itemKeys.length === 0 } >
+											<Button icon onClick={ onUndelete } disabled={ itemKeys.length === 0 } >
 												<Icon type={ '24/restore' } width="24" height="24" />
 											</Button>
 									)}
 									{
 										itemsSource === 'trash' && (
-											<Button onClick={ onPermanentlyDelete } disabled={ itemKeys.length === 0 } >
+											<Button icon onClick={ onPermanentlyDelete } disabled={ itemKeys.length === 0 } >
 												<Icon type={ '24/empty-trash' } width="24" height="24" />
 											</Button>
 									)}
 									{
 										(itemsSource === 'collection' || itemsSource === 'top') && (
-											<Button onClick={ onDuplicate } disabled={ itemKeys.length !== 1 }>
+											<Button icon onClick={ onDuplicate } disabled={ itemKeys.length !== 1 }>
 												<Icon type={ '24/duplicate' } width="24" height="24" />
 											</Button>
 									)}
 								</React.Fragment>
 							) }
-							<Button onClick={ onExportModalOpen } disabled={ itemKeys.length === 0 }>
+							<Button icon onClick={ onExportModalOpen } disabled={ itemKeys.length === 0 }>
 								<Icon type={ '24/export' } width="24" height="24" />
 							</Button>
-							<Button onClick={ onBibliographyModalOpen } disabled={ itemKeys.length === 0 }>
+							<Button icon onClick={ onBibliographyModalOpen } disabled={ itemKeys.length === 0 }>
 								<Icon type={ '24/bibliography' } width="24" height="24" />
 							</Button>
 						</ToolGroup>

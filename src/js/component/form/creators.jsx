@@ -197,6 +197,7 @@ class Creators extends React.PureComponent {
 				{ device.shouldUseEditMode && isEditing && !this.hasVirtual && (
 					<li className="metadata touch-separated has-btn-icon">
 						<Button
+							icon
 							className="btn-plus"
 							onClick={ this.handleCreatorAdd.bind(
 								this, creators[creators.length - 1])

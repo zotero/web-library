@@ -32,7 +32,7 @@ class Relations extends React.PureComponent {
 										<a onClick={ this.handleSelect.bind(this, item) }>
 											{ item.title }
 										</a>
-										<Button onClick={ this.handleDelete.bind(this, item) }>
+										<Button icon onClick={ this.handleDelete.bind(this, item) }>
 											<Icon type={ '16/trash' } width="16" height="16" />
 										</Button>
 									</li>

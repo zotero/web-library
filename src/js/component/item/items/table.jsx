@@ -73,6 +73,8 @@ class ItemsTable extends React.PureComponent {
 			return;
 		}
 
+		if(vector) { ev.preventDefault(); }
+
 		const lastItemKey = selectedItemKeys[selectedItemKeys.length - 1];
 		const index = items.findIndex(i => i && i.key === lastItemKey);
 		const nextIndex = index + vector;

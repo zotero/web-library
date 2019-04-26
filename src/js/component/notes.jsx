@@ -113,7 +113,7 @@ class Notes extends React.PureComponent {
 					<Toolbar>
 						<div className="toolbar-left">
 							<ToolGroup>
-								<Button onClick={ this.handleAddNote.bind(this) }>
+								<Button icon onClick={ this.handleAddNote.bind(this) }>
 									<Icon type={ '16/plus' } width="16" height="16" />
 								</Button>
 								{

@@ -83,6 +83,7 @@ class ItemsActions extends React.PureComponent {
 						{
 							(itemsSource === 'collection' || itemsSource === 'top') && (
 							<Button
+								icon
 								onClick={ onDuplicate }
 								disabled={ itemKeys.length !== 1 || itemsSource === 'trash' }
 								title="Duplicate Item"
@@ -94,6 +95,7 @@ class ItemsActions extends React.PureComponent {
 					<ToolGroup>
 					{ itemsSource !== 'trash' && (
 						<Button
+							icon
 							onClick={ onTrash }
 							disabled={ isDeleting || itemKeys.length === 0 }
 							title="Move to Trash"
@@ -108,6 +110,7 @@ class ItemsActions extends React.PureComponent {
 					{ itemsSource === 'trash' && (
 						<React.Fragment>
 							<Button
+								icon
 								onClick={ onPermanentlyDelete }
 								disabled={ itemKeys.length === 0 }
 								title="Delete Item"
@@ -115,6 +118,7 @@ class ItemsActions extends React.PureComponent {
 								<Icon type="16/empty-trash" width="16" height="16" />
 							</Button>
 							<Button
+								icon
 								onClick={ onUndelete }
 								disabled={ itemKeys.length === 0 }
 								title="Restore to Library"
@@ -125,6 +129,7 @@ class ItemsActions extends React.PureComponent {
 					)}
 					{ itemsSource === 'collection' && (
 						<Button
+							icon
 							onClick={ onRemoveFromCollection }
 							disabled={ itemKeys.length === 0 }
 							title="Remove from Collection"
@@ -138,6 +143,7 @@ class ItemsActions extends React.PureComponent {
 				<ToolGroup>
 					<ExportActions { ...pick(this.props, ['onExport', 'itemKeys']) } />
 					<Button
+						icon
 						onClick={ onBibliographyModalOpen }
 						disabled={ itemKeys.length === 0 }
 						title="Create Bibliography"

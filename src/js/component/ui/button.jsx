@@ -8,9 +8,9 @@ import { noop } from '../../utils';
 
 class Button extends React.PureComponent {
 	render() {
-		const { children, onClick, className, ...props } = this.props;
+		const { children, onClick, className, icon, ...props } = this.props;
 		const classNames = cx('btn', className, {
-			'btn-icon': React.Children.toArray(this.props.children).some(c => c.type === Icon)
+			'btn-icon': icon
 		});
 		return (
 			<button
@@ -32,6 +32,7 @@ class Button extends React.PureComponent {
 	static propTypes = {
 		children: PropTypes.node,
 		className: PropTypes.string,
+		icon: PropTypes.bool,
 		onBlur: PropTypes.func,
 		onClick: PropTypes.func,
 		onFocus: PropTypes.func,

@@ -136,6 +136,7 @@ class BibliographyModal extends React.PureComponent {
 									Bibliography
 								</h4>
 								<Button
+									icon
 									className="close"
 									onClick={ this.handleCancel }
 								>

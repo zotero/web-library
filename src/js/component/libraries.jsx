@@ -134,7 +134,11 @@ class Libraries extends React.PureComponent {
 				{ isFetching && <Spinner className="small mouse" /> }
 				{
 					!isFetching && !isReadOnly && (
-						<Button className="mouse btn-icon-plus" onClick={ this.handleAdd.bind(this, key, null) } >
+						<Button
+							icon
+							className="mouse btn-icon-plus"
+							onClick={ this.handleAdd.bind(this, key, null) }
+						>
 							<Icon type={ '16/plus' } width="16" height="16" />
 						</Button>
 					)

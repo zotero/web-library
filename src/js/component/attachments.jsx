@@ -72,7 +72,7 @@ class Attachments extends React.PureComponent {
 											)
 										}
 										{ !isReadOnly && (
-											<Button onClick={ this.handleDelete.bind(this, attachment) }>
+											<Button icon onClick={ this.handleDelete.bind(this, attachment) }>
 												<Icon type={ '16/trash' } width="16" height="16" />
 											</Button>
 										)}
@@ -100,7 +100,7 @@ class Attachments extends React.PureComponent {
 					<Toolbar>
 						<div className="toolbar-left">
 							<ToolGroup>
-								<Button onClick={ this.handleAddAttachment.bind(this) }>
+								<Button icon onClick={ this.handleAddAttachment.bind(this) }>
 									<Icon type={ '16/plus' } width="16" height="16" />
 								</Button>
 							</ToolGroup>
