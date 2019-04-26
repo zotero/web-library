@@ -1,13 +1,14 @@
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 	<symbol id="book" viewBox="0 0 16 16">
-		<polygon points="14 15 14 2 13 2 13 13 12 13 12 14 3 14 3 15 14 15" fill="#fff"/>
-		<rect x="2" y="1" width="10" height="12" fill="#4072e5" opacity="0.4"/>
-		<rect x="5" y="14" width="2" height="1" fill="#f66"/>
-		<path d="M14.707,2.293l-2-2A1,1,0,0,0,12,0H2A1,1,0,0,0,1,1V13a1,1,0,0,0,.293.707l2,2A1,1,0,0,0,4,16H14a1,1,0,0,0,1-1V3A1,1,0,0,0,14.707,2.293ZM12,1V13H4V1ZM2,1H3V13H2ZM14,15H4L3,14h9a1,1,0,0,0,1-1V2l1,1Z" fill="#4072e5"/>
+		<polygon points="13 2 13 13 12 13 12 14 3 14 3 15 14 15 14 2 13 2" fill="#fff"/>
+		<path d="M14,2H13l1,1V15H4L3,14h9a1,1,0,0,0,1-1V1a1,1,0,0,0-1-1H2A1,1,0,0,0,1,1V13a1,1,0,0,0,.293.707l2,2A1,1,0,0,0,4,16H14a1,1,0,0,0,1-1V3A1,1,0,0,0,14,2ZM4,1h8V13H4ZM2,1H3V13H2Z" fill="#4072e5"/>
+		<rect x="4" y="1" width="8" height="12" fill="#4072e5" opacity="0.4"/>
+		<rect x="2" y="1" width="1" height="12" fill="#4072e5" opacity="0.6"/>
 	</symbol>
 	<symbol id="book-active">
-		<rect x="2" y="1" width="10" height="12" fill="#fff" opacity="0.4"/>
-		<path d="M14.707,2.293l-2-2A1,1,0,0,0,12,0H2A1,1,0,0,0,1,1V13a1,1,0,0,0,.293.707l2,2A1,1,0,0,0,4,16H14a1,1,0,0,0,1-1V3A1,1,0,0,0,14.707,2.293ZM4,1h8V13H4ZM2,1H3V13H2ZM4,15,3,14H5v1Zm10,0H7.5V14H12a1,1,0,0,0,1-1V2l1,1Z" fill="#fff"/>
+		<path d="M4,1h8V13H4ZM2,1H3V13H2ZM4,15,3,14h9a1,1,0,0,0,1-1V1a1,1,0,0,0-1-1H2A1,1,0,0,0,1,1V13a1,1,0,0,0,.293.707l2,2A1,1,0,0,0,4,16H14a1,1,0,0,0,1-1V3a1,1,0,0,0-1-1H13l1,1V15Z" fill="#fff"/>
+		<rect x="4" y="1" width="8" height="12" fill="#fff" opacity="0.4"/>
+		<rect x="2" y="1" width="1" height="12" fill="#fff" opacity="0.6"/>
 	</symbol>
 	<use xlink:href="#book" viewBox="0 0 16 16"/>
 </svg>
