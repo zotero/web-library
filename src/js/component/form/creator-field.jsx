@@ -78,13 +78,14 @@ class CreatorField extends React.PureComponent {
 		this.props.onCreatorAdd(this.props.creator);
 	}
 
-	handleModalOpen() {
+	handleModalOpen = ev => {
 		const { device, isEditing, isReadOnly } = this.props;
 		if(isReadOnly) { return; }
 		if(!device.shouldUseModalCreatorField) { return; }
 		if(device.shouldUseEditMode && !isEditing) { return; }
-
-		this.setState({ isModalVisible: true })
+		if(ev.type !== 'keydown' || (ev.key === 'Enter' || ev.key === ' ')) {
+			this.setState({ isModalVisible: true });
+		}
 	}
 
 	handleModalClose() {
@@ -307,7 +308,8 @@ class CreatorField extends React.PureComponent {
 				index={ index }
 				isSortable={ !isSingle && !isVirtual && !isReadOnly }
 				key={ creator.id }
-				onClick={ this.handleModalOpen.bind(this) }
+				onClick={ this.handleModalOpen }
+				onKeyDown={ this.handleModalOpen }
 				onReorder={ onReorder }
 				onReorderCancel={ onReorderCancel }
 				onReorderCommit={ onReorderCommit }

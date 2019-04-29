@@ -108,6 +108,7 @@ class Field extends React.PureComponent {
 			<li
 				tabIndex={ this.props.tabIndex }
 				onClick={ this.props.onClick }
+				onKeyDown={ this.props.onKeyDown }
 				className={ cx('metadata', this.props.className) }
 			>
 				<div className="key">
@@ -128,21 +129,23 @@ class Field extends React.PureComponent {
 		connectDropTarget: PropTypes.func,
 		isDragging: PropTypes.bool,
 		isSortable: PropTypes.bool,
+		onClick: PropTypes.func,
 		onDragStatusChange: PropTypes.func,
+		onKeyDown: PropTypes.func,
 		onReorder: PropTypes.func,
 		onReorderCancel: PropTypes.func,
 		onReorderCommit: PropTypes.func,
-		onClick: PropTypes.func,
 		raw: PropTypes.object,
 		tabIndex: PropTypes.number,
 	};
 
 	static defaultProps = {
+		onClick: noop,
 		onDragStatusChange: noop,
+		onKeyDown: noop,
 		onReorder: noop,
 		onReorderCancel: noop,
 		onReorderCommit: noop,
-		onClick: noop,
 	}
 }
 
