@@ -17,8 +17,14 @@ const dndSpec = {
 			return dndTarget;
 		}
 	},
-	canDrop({ dndTarget = {} }) {
-		return dndTarget.targetType === 'collection';
+	canDrop({ dndTarget = {} }, monitor) {
+		const { libraryKey: sourceLibraryKey } = monitor.getItem();
+		if(dndTarget.targetType === 'library' && dndTarget.libraryKey !== sourceLibraryKey) {
+			return true;
+		}
+		if(dndTarget.targetType === 'collection') {
+			return true;
+		}
 	}
 }
 

@@ -127,6 +127,7 @@ class Libraries extends React.PureComponent {
 				onKeyPress={ this.handleKeyPress.bind(this, { library: key, view: 'library'}) }
 				subtree={ isFetching ? null : this.renderCollections({ key, isMyLibrary, isReadOnly }) }
 				key={ key }
+				dndTarget={ isReadOnly ? { } : { 'targetType': 'library', libraryKey: key } }
 			>
 				<Icon type="28/library" className="touch" width="28" height="28" />
 				<Icon type="16/library" className="mouse" width="16" height="16" />

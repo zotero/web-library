@@ -9,7 +9,7 @@ import { push } from 'connected-react-router';
 import Items from '../component/item/items';
 import withDevice from '../enhancers/with-device';
 import columnSortKeyLookup from '../constants/column-sort-key-lookup';
-import { addToCollection, fetchItemsInCollection, fetchItemsQuery,
+import { copyToLibrary, addToCollection, fetchItemsInCollection, fetchItemsQuery,
 	fetchPublicationsItems, fetchTopItems, fetchTrashItems, preferenceChange,
 	sortItems } from '../actions';
 import { get, resizeVisibleColumns } from '../utils';
@@ -111,8 +111,11 @@ class ItemsContainer extends React.PureComponent {
 
 	}
 
-	async handleDrag({ itemKeys, targetType, collectionKey, libraryKey }) {
+	async handleDrag({ itemKeys, targetType, collectionKey = null, libraryKey }) {
 		const { dispatch } = this.props;
+		if(targetType === 'library') {
+			dispatch(copyToLibrary(itemKeys, libraryKey));
+		}
 		if(targetType === 'collection') {
 			return await dispatch(addToCollection(itemKeys, collectionKey, libraryKey));
 		}

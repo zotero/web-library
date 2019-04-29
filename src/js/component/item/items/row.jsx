@@ -7,10 +7,10 @@ import { getEmptyImage } from 'react-dnd-html5-backend';
 import { ITEM } from '../../../constants/dnd';
 
 const dndSpec = {
-	beginDrag: ({ selectedItemKeys, rowData }) => {
+	beginDrag: ({ selectedItemKeys, rowData, libraryKey }) => {
 		const itemKey = rowData.key;
 		const isDraggingSelected = selectedItemKeys.includes(itemKey);
-		return { itemKey, selectedItemKeys, rowData, isDraggingSelected };
+		return { itemKey, selectedItemKeys, rowData, isDraggingSelected, libraryKey };
 	},
 	endDrag: ({ rowData, selectedItemKeys, onDrag }, monitor) => {
 		const itemKey = rowData.key;

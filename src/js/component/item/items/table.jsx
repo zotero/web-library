@@ -492,7 +492,7 @@ class ItemsTable extends React.PureComponent {
 	}
 
 	renderRow({ className: otherClassName, index,...opts }) {
-		const { selectedItemKeys, items } = this.props;
+		const { selectedItemKeys, items, libraryKey } = this.props;
 		const className = cx({
 			className: otherClassName,
 			item: true,
@@ -512,7 +512,7 @@ class ItemsTable extends React.PureComponent {
 
 		return <Row
 			onDrag={ this.props.onItemDrag }
-			{ ...{className, index, selectedItemKeys, ...opts} }
+			{ ...{className, index, selectedItemKeys, libraryKey, ...opts} }
 		/>;
 	}
 

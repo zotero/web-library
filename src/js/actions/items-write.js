@@ -638,6 +638,22 @@ const queueAddToCollection = (itemKeys, collectionKey, libraryKey, queueId) => {
 	};
 }
 
+const copyToLibrary = (itemKeys, targetLibraryKey) => {
+	return async (dispatch, getState) => {
+		const { libraryKey: currentLibraryKey } = getState().current;
+		return dispatch(
+			createItems(
+				itemKeys.map(ik => ({
+					...omit(
+						getState().libraries[currentLibraryKey].items[ik],
+							['key', 'version', 'collections', 'deleted']
+						),
+				})), targetLibraryKey
+			)
+		);
+	};
+}
+
 const removeFromCollection = (itemKeys, collectionKey) => {
 	return async (dispatch, getState) => {
 		const { libraryKey } = getState().current;
@@ -724,6 +740,7 @@ const queueRemoveFromCollection = (itemKeys, collectionKey, libraryKey, queueId)
 
 export {
 	addToCollection,
+	copyToLibrary,
 	createItem,
 	deleteItem,
 	deleteItems,
