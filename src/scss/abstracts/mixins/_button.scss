@@ -11,7 +11,9 @@
 
 	&,
 	.icon {
-		color: if($outline, $btn-color, $shade-0);
+		html:not(.specifity) & {
+			color: if($outline, $btn-color, $shade-0);
+		}
 	}
 
 	&:hover {
@@ -21,7 +23,9 @@
 
 		&,
 		.icon {
-			color: $shade-0;
+			html:not(.specifity) & {
+				color: $shade-0;
+			}
 		}
 	}
 
@@ -33,7 +37,9 @@
 
 		&,
 		.icon {
-			color: $shade-0;
+			html:not(.specifity) & {
+				color: $shade-0;
+			}
 		}
 	}
 
@@ -44,7 +50,9 @@
 
 		&,
 		.icon {
-			color: if($outline, $btn-color, $shade-0);
+			html:not(.specifity) & {
+				color: if($outline, $btn-color, $shade-0);
+			}
 		}
 	}
 

@@ -48,12 +48,6 @@
 	html:not(.specifity) & {
 		padding: 0;
 	}
-
-	.icon {
-		@include touch-or-bp-down(sm) {
-			color: inherit;
-		}
-	}
 }
 
 .btn-lg {
@@ -136,10 +130,6 @@
 	}
 
 	.icon {
-		@include touch-or-bp-down(sm) {
-			color: $icon-color-touch;
-		}
-
 		@include state(".btn-icon:active") {
 			html:not(.specifity) & {
 				color: $icon-active-color;
