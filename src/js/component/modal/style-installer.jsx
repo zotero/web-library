@@ -264,6 +264,7 @@ class StyleInstallerModal extends React.PureComponent {
 										Citation Styles
 									</h4>
 									<Button
+										icon
 										className="close"
 										onClick={ this.handleClose }
 									>
