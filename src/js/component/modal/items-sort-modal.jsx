@@ -59,7 +59,7 @@ class ItemsSortModal extends React.PureComponent {
 						</div>
 						<div className="modal-header-center">
 							<h4 className="modal-title truncate">
-								Change Sort Order
+								Sort By
 							</h4>
 						</div>
 						<div className="modal-header-right">
