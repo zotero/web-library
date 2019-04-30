@@ -161,6 +161,13 @@ class ItemsActions extends React.PureComponent {
 					<ExportActions { ...pick(this.props, ['onExport', 'itemKeys']) } />
 					<Button
 						icon
+						disabled={ itemKeys.length === 0 }
+						title="Create Citation"
+					>
+						<Icon type="16/cite" width="16" height="16" />
+					</Button>
+					<Button
+						icon
 						onClick={ onBibliographyModalOpen }
 						disabled={ itemKeys.length === 0 }
 						title="Create Bibliography"
