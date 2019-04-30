@@ -17,9 +17,11 @@
 	}
 
 	&:hover {
-		background-color: lighten($btn-color, 4%);
-		border-color: if($outline, lighten($btn-color, 4%), transparent);
-		box-shadow: 0 2px 4px $btn-box-shadow-color;
+		@media (hover: hover) {
+			background-color: lighten($btn-color, 4%);
+			border-color: if($outline, lighten($btn-color, 4%), transparent);
+			box-shadow: 0 2px 4px $btn-box-shadow-color;
+		}
 
 		&,
 		.icon {
@@ -78,7 +80,9 @@
 		background-color: $btn-success-color;
 
 		&:hover {
-			background-color: lighten($btn-success-color, 4%);
+			@media (hover: hover) {
+				background-color: lighten($btn-success-color, 4%);
+			}
 		}
 
 		&:active {
