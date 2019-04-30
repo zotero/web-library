@@ -8,6 +8,8 @@ import ItemsActions from '../component/item/actions';
 import withSelectMode from '../enhancers/with-select-mode';
 import withDevice from '../enhancers/with-device';
 import withItemsActions from '../enhancers/with-items-actions';
+import withSortItems from '../enhancers/with-sort-items';
+import { toggleModal } from '../actions';
 
 class ItemsActionsContainer extends React.PureComponent {
 	render() {
@@ -36,11 +38,11 @@ const mapStateToProps = state => {
 	const item = get(state, ['libraries', libraryKey, 'items', itemKey]);
 	const itemTypes = state.meta.itemTypes;
 
-	return { collectionKey, item, itemKey, itemKeys, itemsSource, itemTypes,
-		isReadOnly, search, tags
+	return { collectionKey, item, itemKey, itemKeys, itemsSource,
+		itemTypes, isReadOnly, search, tags
 	}
 }
 
-export default withItemsActions(withSelectMode(withDevice(
-	connect(mapStateToProps)(ItemsActionsContainer)
-)));
+export default withSortItems(withItemsActions(withSelectMode(withDevice(
+	connect(mapStateToProps, { toggleModal })(ItemsActionsContainer)
+))));

@@ -129,6 +129,7 @@ const withItemsActions = Component => {
 
 		render() {
 			return <Component
+				{ ...this.props }
 				onTrash = { this.handleTrash }
 				onItemsSelect = { this.handleItemsSelect }
 				onPermanentlyDelete = { this.handlePermanentlyDelete }

@@ -10,6 +10,8 @@ import Icon from '../ui/icon';
 import NewItemSelector from './actions/new-item';
 import ExportActions from './actions/export';
 import { pick } from '../../common/immutable';
+import columnNames from '../../constants/column-names';
+import { SORT_ITEMS } from '../../constants/modals';
 
 
 class ItemsActions extends React.PureComponent {
@@ -24,6 +26,21 @@ class ItemsActions extends React.PureComponent {
 		this.setState(({ isOpen: wasOpen }) => ({
 			isOpen: !wasOpen
 		}));
+	}
+
+	handleSortOrderToggle = () => {
+		const { onSort } = this.props;
+		const { preferences: { columns } } = this.props;
+		const sortColumn = columns.find(c => c.sort);
+		onSort({
+			sortBy: sortColumn.field,
+			sortDirection: sortColumn.sort === 'DESC' ? 'ASC' : 'DESC'
+		});
+	}
+
+	handleSortModalOpen = () => {
+		const { toggleModal } = this.props;
+		toggleModal(SORT_ITEMS, true);
 	}
 
 	get isNewItemAllowed() {
@@ -156,9 +173,13 @@ class ItemsActions extends React.PureComponent {
 	}
 
 	renderTouch() {
-		const { isSelectMode } = this.props;
+		const { isSelectMode, preferences: { columns } } = this.props;
 		const { isOpen } = this.state;
 		const { isNewItemAllowed, isExportAllowed } = this;
+		const sortColumn = columns.find(c => c.sort) || columns.find(c => c.field === 'title');
+		const sortColumnLabel = sortColumn.field in columnNames ?
+			columnNames[sortColumn.field] : sortColumn.field;
+		const sortColumnOrder = sortColumn.sort === 'DESC' ? "Descending" : "Ascending"
 
 		return (
 			<Dropdown
@@ -181,12 +202,17 @@ class ItemsActions extends React.PureComponent {
 					<DropdownItem onClick={ this.handleSelectModeToggle } >
 						{ isSelectMode ? 'Cancel' : 'Select Items' }
 					</DropdownItem>
-					{ (isNewItemAllowed || isExportAllowed) && (
+					<DropdownItem divider />
+					<DropdownItem onClick={ this.handleSortModalOpen } >
+						Sort By: { sortColumnLabel }
+					</DropdownItem>
+					<DropdownItem onClick={ this.handleSortOrderToggle } >
+						Sort Order: { sortColumnOrder }
+					</DropdownItem>
+					{ isNewItemAllowed && (
 						<React.Fragment>
 							<DropdownItem divider />
 							{ this.renderNewItem() }
-							{ this.renderExport() }
-							{ this.renderBibliography() }
 						</React.Fragment>
 					)}
 				</DropdownMenu>
@@ -214,8 +240,10 @@ class ItemsActions extends React.PureComponent {
 		onPermanentlyDelete: PropTypes.func,
 		onRemoveFromCollection: PropTypes.func,
 		onSelectModeToggle: PropTypes.func,
+		onSort: PropTypes.func,
 		onTrash: PropTypes.func,
 		onUndelete: PropTypes.func,
+		preferences: PropTypes.object,
 	}
 
 	static defaultProps = {

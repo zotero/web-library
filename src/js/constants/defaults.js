@@ -11,9 +11,6 @@ export const libraries = {
 	includeUserGroups: true,
 	include: []
 };
-export const columnNames = {
-	'creator': 'Creator',
-};
 
 export const preferences = {
 	citationStyle: coreCitationStyles.find(cs => cs.isDefault).name,

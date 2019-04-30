@@ -13,6 +13,7 @@ import defaultHeaderRowRenderer from 'react-virtualized/dist/commonjs/Table/defa
 import Icon from '../../ui/icon';
 import Row from './row';
 import Spinner from '../../ui/spinner';
+import columnNames from '../../../constants/column-names';
 
 class ItemsTable extends React.PureComponent {
 	constructor(props) {
@@ -177,12 +178,12 @@ class ItemsTable extends React.PureComponent {
 		}
 	}
 
-	handleSort = ({ ...opts }) => {
+	handleSort = sortOptions => {
 		if(this.ignoreNextSortTimeStamp && Date.now() - this.ignoreNextSortTimeStamp < 300) {
 			// triggered by reorder or resize
 			return;
 		}
-		this.props.onSort({ ...opts, startIndex: this.startIndex, stopIndex: this.stopIndex });
+		this.props.onSort(sortOptions);
 	}
 
 	handleResizeStart = ev => {
@@ -477,8 +478,7 @@ class ItemsTable extends React.PureComponent {
 		const { isReordering } = this.state;
 		const index = this.columns.findIndex(c => c.field === dataKey);
 		const key = dataKey;
-		const label = dataKey in this.props.columnNames ?
-			this.props.columnNames[dataKey] : dataKey;
+		const label = dataKey in columnNames ? columnNames[dataKey] : dataKey;
 		const cellRenderer = this.renderCell.bind(this, dataKey);
 		const className = cx('metadata', dataKey);
 		const headerClassName = cx({

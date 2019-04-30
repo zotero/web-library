@@ -18,10 +18,11 @@ class ItemsList extends React.PureComponent {
 	selectedItemKeys: prevSelectedItemKeys }) {
 		if(this.props.sortBy !== sortBy ||
 			this.props.sortDirection !== sortDirection) {
-			this.loader.resetLoadMoreRowsCache(false);
+			this.loader.resetLoadMoreRowsCache(true);
 		}
 
 		const { selectedItemKeys, items } = this.props;
+
 
 		if(this.listRef && selectedItemKeys.length > 0 &&
 			(items.length !== prevItems.length || prevSelectedItemKeys.length === 0)

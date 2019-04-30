@@ -11,24 +11,6 @@ import TouchFooterContainer from '../../container/touch-footer';
 const PAGE_SIZE = 50;
 
 class Items extends React.PureComponent {
-	state = {};
-	static getDerivedStateFromProps({ itemFields = [] }) {
-		return {
-			columnNames: {
-				...itemFields.reduce((acc, itemField) => {
-					acc[itemField.field] = itemField.localized;
-					return acc;
-				}, {}),
-				creator: 'Creator',
-				dateAdded: 'Date Added',
-				dateModified: 'Date Modified',
-				itemType: 'Item Type',
-				year: 'Year',
-				publication: 'Publication'
-			}
-		}
-	}
-
 	componentDidMount() {
 		const { totalItemsCount, isFetchingItems, onLoadMore, isMetaAvailable } = this.props;
 		const isLoadingUncounted = typeof(totalItemsCount) === 'undefined';
@@ -62,12 +44,12 @@ class Items extends React.PureComponent {
 							className="hidden-mouse hidden-sm-down"
 							variant={ TouchHeaderContainer.variants.SOURCE }
 						/>
-						<ItemsList { ...this.props } { ...this.state } />
+						<ItemsList { ...this.props } />
 						<TouchFooterContainer />
 					</React.Fragment> :
 					<React.Fragment>
-						<ItemsTableToolbar { ...this.props } { ...this.state } />
-						<ItemsTable { ...this.props } { ...this.state } />
+						<ItemsTableToolbar { ...this.props } />
+						<ItemsTable { ...this.props } />
 					</React.Fragment>
 				}
 			</div>

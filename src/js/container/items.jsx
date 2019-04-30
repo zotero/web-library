@@ -8,6 +8,7 @@ import { connect } from 'react-redux';
 import { push } from 'connected-react-router';
 import Items from '../component/item/items';
 import withDevice from '../enhancers/with-device';
+import withSortItems from '../enhancers/with-sort-items';
 import columnSortKeyLookup from '../constants/column-sort-key-lookup';
 import { copyToLibrary, addToCollection, fetchItemsInCollection, fetchItemsQuery,
 	fetchPublicationsItems, fetchTopItems, fetchTrashItems, preferenceChange,
@@ -95,22 +96,6 @@ class ItemsContainer extends React.PureComponent {
 		}
 	}
 
-	async handleSort({ sortBy, sortDirection }) {
-		this.setState({ items: [] });
-		const { dispatch, preferences } = this.props;
-		dispatch(preferenceChange('columns', preferences.columns.map(column => {
-			if(column.field === sortBy) {
-				return { ...column, sort: sortDirection }
-			} else {
-				return omit(column, 'sort');
-			}
-		})));
-		await dispatch(sortItems(
-			sortBy, sortDirection.toLowerCase() // react-virtualised uses ASC/DESC, zotero asc/desc
-		));
-
-	}
-
 	async handleDrag({ itemKeys, targetType, collectionKey = null, libraryKey }) {
 		const { dispatch } = this.props;
 		if(targetType === 'library') {
@@ -130,7 +115,6 @@ class ItemsContainer extends React.PureComponent {
 			onItemDrag={ this.handleDrag.bind(this) }
 			onItemsSelect={ this.handleItemsSelect.bind(this) }
 			onLoadMore={ this.handleLoadMore.bind(this) }
-			onSort={ this.handleSort.bind(this) }
 		/>;
 	}
 }
@@ -223,4 +207,6 @@ ItemsContainer.propTypes = {
   dispatch: PropTypes.func.isRequired,
 };
 
-export default withDevice(connect( mapStateToProps, mapDispatchToProps)(ItemsContainer));
+export default withSortItems(withDevice(
+	connect( mapStateToProps, mapDispatchToProps)(ItemsContainer))
+);
