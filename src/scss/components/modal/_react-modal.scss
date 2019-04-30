@@ -50,13 +50,17 @@
 	}
 
 	&-lg {
-		width: $modal-lg;
-		max-width: calc(100% - 2 * #{$space-xl});
+		@include bp-up(sm) {
+			width: $modal-lg;
+			max-width: calc(100% - 2 * #{$space-xl});
+		}
 	}
 
 	&-xl {
-		width: $modal-xl;
-		max-width: calc(100% - 2 * #{$space-xl});
+		@include bp-up(sm) {
+			width: $modal-xl;
+			max-width: calc(100% - 2 * #{$space-xl});
+		}
 	}
 }
 
