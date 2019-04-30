@@ -159,7 +159,7 @@ class StyleInstallerModal extends React.PureComponent {
 						>
 							{
 								device.isTouchOrSmall ? (
-									<Icon type="24/minus" width="24" height="24" />
+									<Icon type="16/minus-strong" width="16" height="16" />
 								) : 'Active'
 							}
 						</Button>
@@ -173,7 +173,7 @@ class StyleInstallerModal extends React.PureComponent {
 						>
 							{
 								device.isTouchOrSmall ? (
-									<Icon type="24/minus" width="24" height="24" />
+									<Icon type="16/minus-strong" width="16" height="16" />
 								) : 'Default'
 							}
 						</Button>
@@ -188,7 +188,7 @@ class StyleInstallerModal extends React.PureComponent {
 						>
 							{
 								device.isTouchOrSmall ? (
-									<Icon type="24/minus" width="24" height="24" />
+									<Icon type="16/minus-strong" width="16" height="16" />
 								) : 'Remove'
 							}
 						</Button>
@@ -203,7 +203,7 @@ class StyleInstallerModal extends React.PureComponent {
 						>
 							{
 								device.isTouchOrSmall ? (
-									<Icon type="24/plus" width="24" height="24" />
+									<Icon type="16/plus-strong" width="16" height="16" />
 								) : 'Add'
 							}
 						</Button>

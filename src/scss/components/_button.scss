@@ -92,6 +92,7 @@
 		height: $space-lg;
 		padding: 0;
 		border-radius: 50%;
+		line-height: 1; // Center icon vertically
 	}
 }
 
@@ -115,6 +116,10 @@
 
 	@include mouse-and-bp-up(md) {
 		padding: $space-min;
+
+		&.active {
+			background-color: $btn-icon-active-bg;
+		}
 	}
 
 	@include mouse-keyboard-and-bp-up(md) {
@@ -124,17 +129,21 @@
 		}
 	}
 
-	&:active {
-		.icon {
-			color: $icon-active-color;
+	.icon {
+		@include touch-or-bp-down(sm) {
+			color: $icon-color-touch;
 		}
-	}
 
-	&.active {
-		background: $btn-icon-active-bg;
+		@include state(".btn-icon:active") {
+			html:not(.specifity) & {
+				color: $icon-active-color;
+			}
+		}
 
-		.icon {
-			color: $btn-icon-active-color;
+		@include state(".btn-icon.active") {
+			@include mouse-and-bp-up(md) {
+				color: $btn-icon-active-color;
+			}
 		}
 	}
 }
