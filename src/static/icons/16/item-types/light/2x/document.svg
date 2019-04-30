@@ -1,12 +1,11 @@
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 	<symbol id="document" viewBox="0 0 16 16">
-		<polygon points="14 15.5 14 5.5 9 0.5 2 0.5 2 15.5 14 15.5" fill="#fff"/>
-		<polygon points="9 0.5 9 5.5 14 5.5 9 0.5" fill="#ccc" opacity="0.4"/>
-		<path d="M9.207,0H1.5V16h13V5.293Zm3.586,5H9.5V1.707ZM13.5,15H2.5V1h6V6h5Z" fill="#ccc"/>
-	</symbol>
+		<polygon points="2 15.5 2 0.5 9.5 0.5 14 5 14 15.5 2 15.5" fill="#fff"/>
+		<polygon points="9.5 0.5 9.5 5 14 5 9.5 0.5" fill="#ccc" opacity="0.4"/>
+		<path d="M9.707,0H1.5V16h13V4.793ZM10,1.707,12.793,4.5H10ZM2.5,15V1H9V5.5h4.5V15Z" fill="#ccc"/>	</symbol>
 	<symbol id="document-active">
-		<polygon points="9 0.5 9 5.5 14 5.5 9 0.5" fill="#fff" opacity="0.4"/>
-		<path d="M9.207,0H1.5V16h13V5.293Zm3.586,5H9.5V1.707ZM13.5,15H2.5V1h6V6h5Z" fill="#fff"/>
+		<polygon points="9.5 0.5 9.5 5 14 5 9.5 0.5" fill="#fff" opacity="0.4"/>
+		<path d="M9.707,0H1.5V16h13V4.793ZM10,1.707,12.793,4.5H10ZM2.5,15V1H9V5.5h4.5V15Z" fill="#fff"/>
 	</symbol>
 	<use xlink:href="#document" viewBox="0 0 16 16"/>
 </svg>
