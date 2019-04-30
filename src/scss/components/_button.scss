@@ -48,6 +48,12 @@
 	html:not(.specifity) & {
 		padding: 0;
 	}
+
+	.icon {
+		@include touch-or-bp-down(sm) {
+			color: inherit;
+		}
+	}
 }
 
 .btn-lg {
