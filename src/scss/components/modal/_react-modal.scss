@@ -215,22 +215,9 @@
 				opacity: 0;
 			}
 
-			@include bp-down(xs) {
-				html:not(.specifity) & {
-					opacity: 1; // Reset
-					transform: translate3d(0, 100%, 0);
-				}
-			}
-
 			.modal-content {
 				@include touch-or-bp-down(sm) {
 					transform: translate3d(0, 100%, 0);
-				}
-
-				@include bp-down(xs) {
-					html:not(.specifity) & {
-						transform: none; // Reset
-					}
 				}
 			}
 
@@ -238,13 +225,6 @@
 				@include touch-or-bp-down(sm) {
 					opacity: 1;
 					transition: opacity $nav-transition;
-				}
-
-				@include bp-down(xs) {
-					html:not(.specifity) & {
-						transform: translate3d(0, 0, 0);
-						transition: transform $nav-transition;
-					}
 				}
 
 				.modal-content {
@@ -261,24 +241,10 @@
 					transition: opacity $modal-exit-transition-xs;
 				}
 
-				@include bp-down(xs) {
-					html:not(.specifity) & {
-						opacity: 1; // Reset
-						transform: translate3d(0, 100%, 0);
-						transition: transform $modal-exit-transition-xs;
-					}
-				}
-
 				.modal-content {
 					@include touch-or-bp-down(sm) {
 						transform: translate3d(0, 100%, 0);
 						transition: transform $modal-exit-transition-xs;
-					}
-
-					@include bp-down(xs) {
-						html:not(.specifity) & {
-							transform: none; // Reset
-						}
 					}
 				}
 			}
