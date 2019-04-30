@@ -115,6 +115,12 @@
 			padding-bottom: $modal-inner-padding;
 			background-color: $modal-content-bg;
 		}
+
+		.modal-form & {
+			@include touch-or-bp-down(sm) {
+				background-color: $modal-form-header-bg;
+			}
+		}
 	}
 }
 
@@ -164,6 +170,12 @@
 				outline: none;
 				border: $outline-width solid $focus-color;
 			}
+		}
+	}
+
+	.modal-form & {
+		@include touch-or-bp-down(sm) {
+			background-color: $form-bg-touch;
 		}
 	}
 }

@@ -274,7 +274,7 @@ class BibliographyModal extends React.PureComponent {
 			'bibliography-modal': true,
 			'modal-centered': device.isTouchOrSmall,
 			'modal-xl modal-scrollable': !device.isTouchOrSmall,
-			'modal-touch': device.isTouchOrSmall,
+			'modal-touch modal-form': device.isTouchOrSmall,
 		});
 		return (
 			<Modal

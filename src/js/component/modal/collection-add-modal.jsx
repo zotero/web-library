@@ -45,7 +45,7 @@ class CollectionAddModal extends React.PureComponent {
 			<Modal
 				isOpen={ isOpen }
 				contentLabel="Add a New Collection"
-				className="modal-touch modal-centered"
+				className="modal-touch modal-form modal-centered"
 				onRequestClose={ () => toggleModal(null, false) }
 				closeTimeoutMS={ 200 }
 				overlayClassName={ "modal-slide" }
