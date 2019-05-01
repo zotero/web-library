@@ -64,7 +64,7 @@ class BoxField extends React.PureComponent {
 		const props = {
 			autoFocus: !isForm && InputComponent !== SelectInput,
 			display: display ? display.label : null,
-			isDisabled: this.isPseudoEditable || field.isReadOnly,
+			isDisabled: field.isReadOnly,
 			isBusy: field.processing || false,
 			onCancel,
 			onCommit,
