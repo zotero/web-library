@@ -185,7 +185,7 @@ label {
 		box-shadow $input-btn-transition;
 
 	@include touch-or-bp-down(sm) {
-		height: $input-btn-height-touch;
+		min-height: $input-btn-height-touch; // min-height: Take textarea into account
 		padding: 0 $input-btn-padding-x-touch;
 		border: none;
 	}

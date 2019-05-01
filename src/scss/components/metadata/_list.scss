@@ -421,10 +421,6 @@
 	}
 
 	.form-control {
-		@include touch-or-bp-down(sm) {
-			height: auto; // Center vertically
-		}
-
 		&:not(textarea) {
 			line-height: normal;
 		}
