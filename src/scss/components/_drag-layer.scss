@@ -54,18 +54,18 @@
 }
 
 .items-drag-indicator {
-	border-radius: $border-radius;
-	background: $shade-0;
-	padding: $space-sm;
-	border: 1px solid $asphalt;
-	display: inline-block;
+	position: absolute;
+	display: flex;
+	align-items: center;
+	height: $item-table-row-height;
+	color: $items-drag-indicator-color;
+	background-color: $items-drag-indicator-bg;
+	opacity: 0.8;
+	padding: 0 $space-sm;
+	border-radius: $item-table-row-height / 2;
+	transform: translate(-50%, -50%);
 
-	> span,
-	> svg {
-		vertical-align: middle;
-	}
-
-	> span {
-		margin-left: $space-min;
+	.icon {
+		margin-right: $space-xs;
 	}
 }

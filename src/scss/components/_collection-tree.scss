@@ -92,10 +92,9 @@
 			}
 		}
 
-		// Revisit: dnd styling
 		@include state(".item-container.dnd-target", "li.selected > .item-container.dnd-target") {
 			@include mouse-and-bp-up(md) {
-				background: $collection-tree-dnd-target-bg-color;
+				background: $collection-tree-dnd-target-bg;
 			}
 		}
 
@@ -127,7 +126,6 @@
 					}
 				}
 
-				// Rivisit: dnd styling
 				@include state(".item-container.dnd-target", "li.selected > .item-container.dnd-target") {
 					color: $collection-tree-dnd-target-color;
 				}
@@ -160,10 +158,9 @@
 				}
 			}
 
-			// Rivisit: dnd styling
 			@include state(".item-container.dnd-target", "li.selected > .item-container.dnd-target") {
 				@include mouse-and-bp-up(md) {
-					color: $collection-tree-dnd-target-icon-color;
+					color: $collection-tree-dnd-target-color;
 				}
 			}
 		}

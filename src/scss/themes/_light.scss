@@ -104,8 +104,7 @@ $touch-collection-tree-active-bg:         $blue;
 $touch-collection-tree-border:            $shade-4;
 $touch-collection-tree-separator:         $body-bg;
 $collection-tree-dnd-target-color:        $shade-0;
-$collection-tree-dnd-target-bg-color:     $blue;
-$collection-tree-dnd-target-icon-color:   $shade-0;
+$collection-tree-dnd-target-bg:           $blue;
 
 // Items
 $items-bg:                    $shade-0;
@@ -209,6 +208,8 @@ $menu-no-results-color: $shade-5;
 
 // Drag layer
 $creator-drag-preview-shadow: rgba($shade-10, 0.2);
+$items-drag-indicator-color:  $item-active-color;
+$items-drag-indicator-bg:     lighten($item-active-bg, 5%);
 
 // Modal
 $modal-backdrop-bg:           rgba($shade-10, 0.4);
