@@ -317,6 +317,14 @@ class ItemsTable extends React.PureComponent {
 		}, 300);
 	}
 
+	handleFocus = () => {
+		this.setState({ isFocused: true });
+	}
+
+	handleBlur = () => {
+		this.setState({ isFocused: false });
+	}
+
 	getRow({ index }) {
 		if (this.props.items[index]) {
 			return this.props.items[index];
@@ -536,7 +544,6 @@ class ItemsTable extends React.PureComponent {
 					resizing: this.state.isResizing,
 					reordering: this.state.isReordering,
 				}) }
-				onKeyDown={ this.handleKeyDown.bind(this) }
 			>
 				<AutoSizer>
 					{({ width, height }) => (
@@ -548,6 +555,11 @@ class ItemsTable extends React.PureComponent {
 						>
 							{({onRowsRendered, registerChild}) => (
 								<Table
+									containerProps={ {
+										onKeyDown: this.handleKeyDown.bind(this),
+										onFocus: this.handleFocus,
+										onBlur: this.handleBlur,
+									} }
 									className="items-table"
 									headerClassName="column-header"
 									headerHeight={ 26 }
@@ -564,7 +576,7 @@ class ItemsTable extends React.PureComponent {
 									sort={ this.handleSort }
 									sortBy={ sortBy }
 									sortDirection={ sortDirection }
-									tabIndex={ null }
+									tabIndex={ 0 }
 									width={ width }
 								>
 									{

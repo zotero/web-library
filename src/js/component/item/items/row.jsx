@@ -64,7 +64,6 @@ class Row extends React.PureComponent {
 			onRowRightClick
 		) {
 			a11yProps['aria-label'] = 'row';
-			a11yProps.tabIndex = 0;
 
 			if(onRowClick) {
 				// Select item rows on mousedown
