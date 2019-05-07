@@ -95,10 +95,7 @@ class Row extends React.PureComponent {
 				className={className}
 				key={ key }
 				role="row"
-				style={ {
-					...style,
-					opacity: isDragging ? 0.5 : 1
-				} }
+				style={ style }
 			>
 				{ columns }
 			</div>

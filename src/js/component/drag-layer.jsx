@@ -28,7 +28,7 @@ const getNextToCursorStyles = ({ clientOffset }) => {
 		const x = Math.round(clientOffset.x);
 		const y = Math.round(clientOffset.y);
 
-		const transform = `translate(${x + 16}px, ${y}px)`;
+		const transform = `translate(${x}px, ${y}px)`;
 		return {
 			transform: transform,
 			WebkitTransform: transform
