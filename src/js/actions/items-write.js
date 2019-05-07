@@ -305,7 +305,8 @@ const queueUpdateItem = (itemKey, patch, libraryKey, queueId) => {
 			const { libraryKey } = state.current;
 			const config = state.config;
 			const item = get(state, ['libraries', libraryKey, 'items', itemKey]);
-			const version = item.version;
+			const itemVersion = item.version;
+			const libraryVersion = state.libraries[libraryKey].version;
 
 			dispatch({
 				type: REQUEST_UPDATE_ITEM,
@@ -316,11 +317,37 @@ const queueUpdateItem = (itemKey, patch, libraryKey, queueId) => {
 			});
 
 			try {
-				const response = await api(config.apiKey, config.apiConfig).library(libraryKey).items(itemKey).version(version).patch(patch);
-				const updatedItem = {
-					...item,
-					...response.getData()
-				};
+				var updatedItem, response;
+
+				//@NOTE: When updating 'creators' or 'date' we send update using
+				//		 multi POST in order to get update meta data. Otherwise
+				//		 we use simple PATCH.
+				if('creators' in patch || 'date' in patch) {
+					response = await api(config.apiKey, config.apiConfig)
+					.library(libraryKey)
+					.version(libraryVersion)
+					.items()
+					.post([{
+						key: itemKey,
+						...patch
+					}]);
+
+					updatedItem = {
+						...item,
+						...response.getEntityByIndex(0),
+						[Symbol.for('meta')]: response.getMeta()[0]
+					};
+				} else {
+					response = await api(config.apiKey, config.apiConfig)
+						.library(libraryKey)
+						.items(itemKey)
+						.version(itemVersion)
+						.patch(patch);
+					updatedItem = {
+						...item,
+						...response.getData()
+					}
+				}
 
 				dispatch({
 					type: RECEIVE_UPDATE_ITEM,
