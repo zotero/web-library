@@ -8,6 +8,7 @@ import Dropdown from 'reactstrap/lib/Dropdown';
 import DropdownToggle from 'reactstrap/lib/DropdownToggle';
 import DropdownMenu from 'reactstrap/lib/DropdownMenu';
 import DropdownItem from 'reactstrap/lib/DropdownItem';
+import columnNames from '../../../constants/column-names';
 
 class ColumnSelector extends React.PureComponent {
 	state = {
@@ -24,7 +25,6 @@ class ColumnSelector extends React.PureComponent {
 	}
 
 	renderColumnItem = column => {
-		let { columnNames } = this.props;
 		return (
 			<DropdownItem
 				key={ column.field }
@@ -59,14 +59,12 @@ class ColumnSelector extends React.PureComponent {
 	}
 
 	static defaultProps = {
-		columnNames: {},
 		columns: [],
 		itemFields: [],
 		onColumnVisibilityChange: noop,
 	}
 
 	static propTypes = {
-		columnNames: PropTypes.object,
 		columns: PropTypes.array,
 		itemFields: PropTypes.array,
 		onColumnVisibilityChange: PropTypes.func
