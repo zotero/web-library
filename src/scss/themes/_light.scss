@@ -123,6 +123,9 @@ $item-table-head-color:     $shade-8;
 $item-table-head-border:    $shade-2;
 $item-table-head-active-bg: $shade-1;
 $item-table-odd-bg:         mix($shade-10, $shade-1, 2%);
+$item-table-active-bg:      $shade-3;
+$item-table-focus-color:    $shade-0;
+$item-table-focus-bg:       $secondary;
 $sort-indicator:            $secondary;
 
 // Item details

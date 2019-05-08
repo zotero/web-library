@@ -183,6 +183,12 @@
 	 		transparent ($item-table-row-height + $space-min / 2),
 	 		transparent (2 * $item-table-row-height + $space-min / 2));
 	 	background-attachment: local;
+
+	 	&:focus {
+			.keyboard & {
+				outline: none;
+			}
+		}
 	}
 
 	.item {
@@ -193,21 +199,11 @@
 		width: 100%;
 
 		&.active {
-			color: $item-active-color;
-			background: $item-active-bg;
+			background-color: $item-table-active-bg;
 
-			.icon {
-				color: $item-active-color;
-			}
-		}
-
-		&:focus {
-			.keyboard & {
-				outline-offset: -$outline-width;
-
-				&.active {
-					outline-color: $item-active-color;
-				}
+			@include state(".ReactVirtualized__Table__Grid:focus .item") {
+				color: $item-table-focus-color;
+				background-color: $item-table-focus-bg;
 			}
 		}
 
