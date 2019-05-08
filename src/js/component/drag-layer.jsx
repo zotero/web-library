@@ -84,7 +84,7 @@ class CustomDragLayer extends React.PureComponent {
 						<div className="items-drag-indicator multiple">
 							<Icon
 								type={`16/item-types/light/${dvp}x/document`}
-								symbol="document-active"
+								symbol="document-white"
 								width="16"
 								height="16"
 							/>
@@ -96,7 +96,7 @@ class CustomDragLayer extends React.PureComponent {
 						<div className="items-drag-indicator single">
 							<Icon
 								type={ `16/item-types/light/${dvp}x/${iconName}` }
-								symbol={ `${iconName}-active` }
+								symbol={ `${iconName}-white` }
 								width="16"
 								height="16"
 							/>
