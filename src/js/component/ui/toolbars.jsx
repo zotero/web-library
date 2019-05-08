@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import cx from 'classnames';
 
 const Toolbar = ({ children, className }) => (
-	<div className={cx('toolbar', className)}>
+	<div className={cx('toolbar', className)} role="toolbar">
 		{ children }
 	</div>
 );
