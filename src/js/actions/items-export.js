@@ -9,6 +9,12 @@ import {
     REQUEST_CITE_ITEMS,
     RECEIVE_CITE_ITEMS,
     ERROR_CITE_ITEMS,
+    REQUEST_BIBLIOGRAPHY_ITEMS,
+    RECEIVE_BIBLIOGRAPHY_ITEMS,
+    ERROR_BIBLIOGRAPHY_ITEMS,
+    REQUEST_BIBLIOGRAPHY_COLLECTION,
+    RECEIVE_BIBLIOGRAPHY_COLLECTION,
+    ERROR_BIBLIOGRAPHY_COLLECTION,
 } from '../constants/actions';
 
 const exportItems = (itemKeys, format) => {
@@ -97,14 +103,14 @@ const citeItems = (itemKeys, style = 'chicago-note-bibliography', locale = 'en-U
 	};
 };
 
-const bibliographyItems = (itemKeys, style = 'chicago-note-bibliography', locale = 'en-US') => {
+const bibliographyFromItems = (itemKeys, style = 'chicago-note-bibliography', locale = 'en-US') => {
 	return async (dispatch, getState) => {
 		const state = getState();
 		const config = state.config;
 		const { libraryKey } = state.current;
 
 		dispatch({
-			type: REQUEST_CITE_ITEMS,
+			type: REQUEST_BIBLIOGRAPHY_ITEMS,
 			itemKeys,
 			libraryKey,
 			style,
@@ -124,7 +130,7 @@ const bibliographyItems = (itemKeys, style = 'chicago-note-bibliography', locale
 			const bibliography = await response.getData().text();
 
 			dispatch({
-				type: RECEIVE_CITE_ITEMS,
+				type: RECEIVE_BIBLIOGRAPHY_ITEMS,
 				itemKeys,
 				libraryKey,
 				bibliography,
@@ -134,7 +140,7 @@ const bibliographyItems = (itemKeys, style = 'chicago-note-bibliography', locale
 			return bibliography;
 		} catch(error) {
 			dispatch({
-				type: ERROR_CITE_ITEMS,
+				type: ERROR_BIBLIOGRAPHY_ITEMS,
 				error,
 				itemKeys,
 				libraryKey,
@@ -143,5 +149,51 @@ const bibliographyItems = (itemKeys, style = 'chicago-note-bibliography', locale
 	};
 };
 
+const bibliographyFromCollection = (collectionKey, style = 'chicago-note-bibliography', locale = 'en-US') => {
+	return async (dispatch, getState) => {
+		const state = getState();
+		const config = state.config;
+		const { libraryKey } = state.current;
 
-export { bibliographyItems, exportItems, citeItems };
+		dispatch({
+			type: REQUEST_BIBLIOGRAPHY_COLLECTION,
+			collectionKey,
+			libraryKey,
+			style,
+		});
+
+		try {
+			const response = await api(config.apiKey, config.apiConfig)
+				.library(libraryKey)
+				.collections(collectionKey)
+				.items()
+				.get({
+					format: 'bib',
+					style,
+					locale,
+				});
+
+			const bibliography = await response.getData().text();
+
+			dispatch({
+				type: RECEIVE_BIBLIOGRAPHY_COLLECTION,
+				collectionKey,
+				libraryKey,
+				bibliography,
+				response,
+			});
+
+			return bibliography;
+		} catch(error) {
+			dispatch({
+				type: ERROR_BIBLIOGRAPHY_COLLECTION,
+				error,
+				collectionKey,
+				libraryKey,
+			});
+		}
+	};
+};
+
+
+export { bibliographyFromCollection, bibliographyFromItems, exportItems, citeItems };

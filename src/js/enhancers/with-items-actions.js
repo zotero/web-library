@@ -113,8 +113,8 @@ const withItemsActions = Component => {
 		}
 
 		handleBibliographyModalOpen = () => {
-			const { toggleModal } = this.props;
-			toggleModal(BIBLIOGRAPHY, true);
+			const { toggleModal, itemKeys } = this.props;
+			toggleModal(BIBLIOGRAPHY, true, { itemKeys });
 		}
 
 		handleExportModalOpen = () => {

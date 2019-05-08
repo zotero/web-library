@@ -11,7 +11,7 @@ import Icon from '../ui/icon';
 import { noop } from '../../utils.js';
 import { makeChildMap } from '../../common/collection';
 import Editable from '../editable';
-import { COLLECTION_RENAME, COLLECTION_ADD } from '../../constants/modals';
+import { BIBLIOGRAPHY, COLLECTION_RENAME, COLLECTION_ADD } from '../../constants/modals';
 
 class CollectionTree extends React.PureComponent {
 	state = { opened: [], renaming: null }
@@ -96,6 +96,15 @@ class CollectionTree extends React.PureComponent {
 		} else {
 			onAddCancel();
 		}
+	}
+
+	handleBibliography = ev => {
+		const { toggleModal } = this.props;
+		const node = ev.currentTarget.closest('[data-collection-key]');
+		const { collectionKey } = node.dataset;
+		toggleModal(BIBLIOGRAPHY, true, { collectionKey });
+		ev.preventDefault();
+		ev.stopPropagation();
 	}
 
 	//@TODO: memoize once
@@ -251,6 +260,7 @@ class CollectionTree extends React.PureComponent {
 
 						return (
 						<Node
+							data-collection-key={ collection.key }
 							key={ collection.key }
 							className={ cx({
 								'open': derivedData[collection.key].isOpen,
@@ -297,7 +307,7 @@ class CollectionTree extends React.PureComponent {
 												onChange={ ev => this.props.onPickerPick({ collection: collection.key, library: libraryKey }, ev) }
 												onClick={ ev => ev.stopPropagation() }
 											/>
-										) : !isReadOnly && (
+										) : (
 										<UncontrolledDropdown>
 											<DropdownToggle
 												className="btn-icon dropdown-toggle"
@@ -310,20 +320,35 @@ class CollectionTree extends React.PureComponent {
 												<Icon type={ '16/options' } width="16" height="16" className="mouse" />
 											</DropdownToggle>
 											<DropdownMenu right>
-												<DropdownItem
-													onClick={ ev => this.handleRenameTrigger(collection.key, ev) }
-												>
-													Rename
+												{
+													!isReadOnly && (
+														<React.Fragment>
+														<DropdownItem
+															onClick={ ev => this.handleRenameTrigger(collection.key, ev) }
+														>
+															Rename
+														</DropdownItem>
+														<DropdownItem
+															onClick={ ev => this.handleDelete(collection, ev) }
+														>
+															Delete
+														</DropdownItem>
+														<DropdownItem
+															onClick={ ev => this.handleSubcollection(collection.key, ev) }
+														>
+															New Subcollection
+														</DropdownItem>
+														<DropdownItem divider />
+														</React.Fragment>
+													)
+												}
+												<DropdownItem>
+													Export Collection
 												</DropdownItem>
 												<DropdownItem
-													onClick={ ev => this.handleDelete(collection, ev) }
+													onClick={ this.handleBibliography }
 												>
-													Delete
-												</DropdownItem>
-												<DropdownItem
-													onClick={ ev => this.handleSubcollection(collection.key, ev) }
-												>
-													New Subcollection
+													Create Bibliography
 												</DropdownItem>
 											</DropdownMenu>
 										</UncontrolledDropdown>

@@ -4,7 +4,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import copy from 'copy-to-clipboard';
 import { connect } from 'react-redux';
-import { toggleModal, bibliographyItems, preferenceChange } from '../actions';
+import { toggleModal, bibliographyFromCollection, bibliographyFromItems,
+	preferenceChange } from '../actions';
 import { coreCitationStyles } from '../../../data/citation-styles-data.json';
 import BibliographyModal from '../component/modal/bibliography';
 import { BIBLIOGRAPHY, STYLE_INSTALLER } from '../constants/modals';
@@ -26,15 +27,24 @@ class BibliographyModalContainer extends React.PureComponent {
 		document.removeEventListener('copy', this.handleCopy);
 	}
 
-	async componentDidUpdate({ isOpen: wasOpen,
-		citationStyle: prevCitationStyle, citationLocale: prevCitationLocale }) {
-		const { bibliographyItems, isOpen, itemKeys, citationStyle, citationLocale } = this.props;
+	async componentDidUpdate({
+		isOpen: wasOpen,
+		citationStyle: prevCitationStyle,
+		citationLocale: prevCitationLocale
+	}) {
+		const { collectionKey, bibliographyFromCollection, bibliographyFromItems,
+			isOpen, itemKeys, citationStyle, citationLocale } = this.props;
 
 		if((isOpen && !wasOpen) || citationStyle !== prevCitationStyle ||
 			citationLocale !== prevCitationLocale) {
 			this.setState({ isUpdating: true });
 			try {
-				const bibliography = await bibliographyItems(itemKeys, citationStyle, citationLocale);
+				var bibliography;
+				if(collectionKey) {
+					bibliography = await bibliographyFromCollection(collectionKey, citationStyle, citationLocale);
+				} else {
+					bibliography = await bibliographyFromItems(itemKeys, citationStyle, citationLocale);
+				}
 				this.setState({ bibliography });
 			} finally {
 				this.setState({ isUpdating: false });
@@ -83,7 +93,16 @@ class BibliographyModalContainer extends React.PureComponent {
 		/>;
 	}
 
-	static propTypes = {}
+	static propTypes = {
+		bibliographyFromCollection: PropTypes.func.isRequired,
+		bibliographyFromItems: PropTypes.func.isRequired,
+		citationLocale: PropTypes.string,
+		citationStyle: PropTypes.string,
+		collectionKey: PropTypes.string,
+		installedCitationStyles: PropTypes.array,
+		isOpen: PropTypes.bool,
+		itemKeys: PropTypes.array,
+	}
 	static defaultProps = {
 		installedCitationStyles: []
 	}
@@ -91,17 +110,17 @@ class BibliographyModalContainer extends React.PureComponent {
 
 const mapStateToProps = state => {
 	const isOpen = state.modal.id === BIBLIOGRAPHY;
-	const { itemKeys } = state.current;
+	const { itemKeys, collectionKey } = state.modal;
 	const { installedCitationStyles, citationStyle,
 		citationLocale } = state.preferences || {};
 
-	return { citationStyle, citationLocale, isOpen, itemKeys,
+	return { citationStyle, citationLocale, collectionKey, isOpen, itemKeys,
 		installedCitationStyles };
 };
 
 
 export default withSelectMode(withDevice(
-	connect(
-		mapStateToProps, { bibliographyItems, preferenceChange, toggleModal }
+	connect(mapStateToProps, { bibliographyFromCollection,
+		bibliographyFromItems, preferenceChange, toggleModal }
 	)(BibliographyModalContainer)
 ));
