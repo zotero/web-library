@@ -207,6 +207,7 @@ const bibliographyFromCollection = (collectionKey, libraryKey, style = 'chicago-
 				.library(libraryKey)
 				.collections(collectionKey)
 				.items()
+				.top()
 				.get({
 					format: 'bib',
 					style,
