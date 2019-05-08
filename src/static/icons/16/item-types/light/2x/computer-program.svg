@@ -2,7 +2,7 @@
 	<symbol id="computer-program" viewBox="0 0 16 16">
 		<path d="M6.111,13.388.723,8,6.111,2.611l.778.777L2.277,8l4.612,4.611ZM15.277,8,9.889,2.611l-.778.777L13.723,8,9.111,12.611l.778.777Z" fill="#39bf68"/>
 	</symbol>
-	<symbol id="computer-program-active">
+	<symbol id="computer-program-white">
 		<path d="M6.111,13.388.723,8,6.111,2.611l.778.777L2.277,8l4.612,4.611ZM15.277,8,9.889,2.611l-.778.777L13.723,8,9.111,12.611l.778.777Z" fill="#fff"/>
 	</symbol>
 	<use xlink:href="#computer-program" viewBox="0 0 16 16"/>

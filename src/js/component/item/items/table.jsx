@@ -398,7 +398,7 @@ class ItemsTable extends React.PureComponent {
 		const icon = (
 			<Icon
 				type={ `16/item-types/light/${dvp}x/${iconName}` }
-				// symbol={ isActive ? `${iconName}-active` : iconName }
+				// symbol={ isActive ? `${iconName}-white` : iconName }
 				width="16"
 				height="16"
 			/>
@@ -409,8 +409,8 @@ class ItemsTable extends React.PureComponent {
 				key={ tag.tag }
 				type={ index === 0 ? '10/circle' : '10/crescent-circle' }
 				symbol={ index === 0 ?
-					isActive ? 'circle-active' : 'circle' :
-					isActive ? 'crescent-circle-active' : 'crescent-circle'
+					isActive ? 'circle-focus' : 'circle' :
+					isActive ? 'crescent-circle-focus' : 'crescent-circle'
 				}
 				width={ index === 0 ? 10 : 7 }
 				height="10"

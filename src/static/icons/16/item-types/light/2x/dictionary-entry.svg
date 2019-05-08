@@ -7,7 +7,7 @@
 		<path d="M11.536,13,8.843,6H7.157L4.464,13H3.5v1h3V13H5.536l.384-1h4.16l.384,1H9.5v1h3V13ZM6.305,11,7.843,7h.314L9.7,11Z" fill="#db2c3a"/>
 		<path d="M10.207,0H1.5V16h13V4.293ZM10.5,1.707,12.793,4H10.5ZM13.5,15H2.5V1h7V5h4Z" fill="#ccc"/>
 	</symbol>
-	<symbol id="dictionary-entry-active">
+	<symbol id="dictionary-entry-white">
 		<g opacity="0.4">
 			<polygon points="10 0.5 10 4.5 14 4.5 10 0.5" fill="#fff"/>
 		</g>

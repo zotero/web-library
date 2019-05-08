@@ -4,7 +4,7 @@
 		<circle cx="5" cy="5" r="5" opacity="0.08"/>
 		<circle fill="currentColor" cx="5" cy="5" r="4"/>
 	</symbol>
-	<symbol id="circle-active" viewBox="0 0 10 10">
+	<symbol id="circle-focus" viewBox="0 0 10 10">
 		<circle fill="#fff" cx="5" cy="5" r="5"/>
 		<circle fill="currentColor" cx="5" cy="5" r="4"/>
 	</symbol>
