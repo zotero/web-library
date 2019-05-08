@@ -3,18 +3,21 @@
 import api from 'zotero-api-client';
 
 import {
-    REQUEST_EXPORT_ITEMS,
-    RECEIVE_EXPORT_ITEMS,
-    ERROR_EXPORT_ITEMS,
-    REQUEST_CITE_ITEMS,
-    RECEIVE_CITE_ITEMS,
-    ERROR_CITE_ITEMS,
-    REQUEST_BIBLIOGRAPHY_ITEMS,
-    RECEIVE_BIBLIOGRAPHY_ITEMS,
-    ERROR_BIBLIOGRAPHY_ITEMS,
-    REQUEST_BIBLIOGRAPHY_COLLECTION,
-    RECEIVE_BIBLIOGRAPHY_COLLECTION,
-    ERROR_BIBLIOGRAPHY_COLLECTION,
+	REQUEST_EXPORT_ITEMS,
+	RECEIVE_EXPORT_ITEMS,
+	ERROR_EXPORT_ITEMS,
+	ERROR_EXPORT_COLLECTION,
+	RECEIVE_EXPORT_COLLECTION,
+	REQUEST_EXPORT_COLLECTION,
+	REQUEST_CITE_ITEMS,
+	RECEIVE_CITE_ITEMS,
+	ERROR_CITE_ITEMS,
+	REQUEST_BIBLIOGRAPHY_ITEMS,
+	RECEIVE_BIBLIOGRAPHY_ITEMS,
+	ERROR_BIBLIOGRAPHY_ITEMS,
+	REQUEST_BIBLIOGRAPHY_COLLECTION,
+	RECEIVE_BIBLIOGRAPHY_COLLECTION,
+	ERROR_BIBLIOGRAPHY_COLLECTION,
 } from '../constants/actions';
 
 const exportItems = (itemKeys, format) => {
@@ -51,6 +54,47 @@ const exportItems = (itemKeys, format) => {
 				type: ERROR_EXPORT_ITEMS,
 				error,
 				itemKeys,
+				libraryKey
+			});
+		}
+	};
+};
+
+const exportCollection = (collectionKey, format) => {
+	return async (dispatch, getState) => {
+		const state = getState();
+		const config = state.config;
+		const { libraryKey } = state.current;
+
+		dispatch({
+			type: REQUEST_EXPORT_COLLECTION,
+			collectionKey,
+			libraryKey
+		});
+
+		try {
+			const response = await api(config.apiKey, config.apiConfig)
+				.library(libraryKey)
+				.collections(collectionKey)
+				.items()
+				.get({ format });
+
+			const exportData = await response.response.blob();
+
+			dispatch({
+				type: RECEIVE_EXPORT_COLLECTION,
+				collectionKey,
+				libraryKey,
+				exportData,
+				response
+			});
+
+			return exportData;
+		} catch(error) {
+			dispatch({
+				type: ERROR_EXPORT_COLLECTION,
+				error,
+				collectionKey,
 				libraryKey
 			});
 		}
@@ -196,4 +240,5 @@ const bibliographyFromCollection = (collectionKey, style = 'chicago-note-bibliog
 };
 
 
-export { bibliographyFromCollection, bibliographyFromItems, exportItems, citeItems };
+export { bibliographyFromCollection, bibliographyFromItems, exportCollection,
+	exportItems, citeItems };

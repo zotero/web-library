@@ -11,7 +11,8 @@ import Icon from '../ui/icon';
 import { noop } from '../../utils.js';
 import { makeChildMap } from '../../common/collection';
 import Editable from '../editable';
-import { BIBLIOGRAPHY, COLLECTION_RENAME, COLLECTION_ADD } from '../../constants/modals';
+import { BIBLIOGRAPHY, COLLECTION_RENAME, COLLECTION_ADD,
+	EXPORT } from '../../constants/modals';
 
 class CollectionTree extends React.PureComponent {
 	state = { opened: [], renaming: null }
@@ -103,6 +104,15 @@ class CollectionTree extends React.PureComponent {
 		const node = ev.currentTarget.closest('[data-collection-key]');
 		const { collectionKey } = node.dataset;
 		toggleModal(BIBLIOGRAPHY, true, { collectionKey });
+		ev.preventDefault();
+		ev.stopPropagation();
+	}
+
+	handleExport = ev => {
+		const { toggleModal } = this.props;
+		const node = ev.currentTarget.closest('[data-collection-key]');
+		const { collectionKey } = node.dataset;
+		toggleModal(EXPORT, true, { collectionKey });
 		ev.preventDefault();
 		ev.stopPropagation();
 	}
@@ -342,12 +352,10 @@ class CollectionTree extends React.PureComponent {
 														</React.Fragment>
 													)
 												}
-												<DropdownItem>
+												<DropdownItem onClick={ this.handleExport }>
 													Export Collection
 												</DropdownItem>
-												<DropdownItem
-													onClick={ this.handleBibliography }
-												>
+												<DropdownItem onClick={ this.handleBibliography }>
 													Create Bibliography
 												</DropdownItem>
 											</DropdownMenu>

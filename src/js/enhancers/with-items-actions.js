@@ -118,8 +118,8 @@ const withItemsActions = Component => {
 		}
 
 		handleExportModalOpen = () => {
-			const { toggleModal } = this.props;
-			toggleModal(EXPORT, true);
+			const { toggleModal, itemKeys } = this.props;
+			toggleModal(EXPORT, true, { itemKeys });
 		}
 
 		handleNewItemModalOpen = () => {

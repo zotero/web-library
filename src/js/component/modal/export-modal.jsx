@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import { saveAs } from 'file-saver';
 import cx from 'classnames';
 import Modal from '../ui/modal';
+import Icon from '../ui/icon';
 import Button from '../ui/button';
 import Select from '../form/select';
 import Spinner from '../ui/spinner';
@@ -34,59 +35,92 @@ class ExportModal extends React.PureComponent {
 	}
 
 	handleExport = async () => {
-		const { exportItems, itemKeys, toggleModal,
-			onSelectModeToggle } = this.props;
+		const { collectionKey, exportCollection, exportItems, itemKeys,
+			toggleModal, onSelectModeToggle } = this.props;
 		const { format } = this.state;
 		const fileName = ['export-data', exportFormats.find(f => f.key === format).extension]
 			.filter(Boolean).join('.');
 
 		this.setState({ isBusy: true });
-		const exportData = await exportItems(itemKeys, format);
+		var exportData;
+
+		if(collectionKey) {
+			exportData = await exportCollection(collectionKey, format);
+		} else {
+			exportData = await exportItems(itemKeys, format);
+		}
+
 		saveAs(exportData, fileName);
 		this.setState({ isBusy: false });
 		toggleModal(null, false);
 		onSelectModeToggle(false);
 	}
 
+	handleCancel = () => {
+		const { toggleModal } = this.props;
+		toggleModal(null, false);
+	}
+
 	render() {
-		const { isOpen, toggleModal, itemKeys } = this.props;
+		const { device, isOpen, itemKeys } = this.props;
 		const { isBusy } = this.state;
+		const className = cx({
+			'loading': isBusy,
+			'export-modal': true,
+			'modal-touch modal-centered': device.isTouchOrSmall,
+		});
 
 		return (
 			<Modal
 				isOpen={ isOpen }
 				contentLabel="Export Items"
-				className={ cx('modal-touch', 'modal-centered', {
-					loading: isBusy
-				}) }
-				onRequestClose={ () => toggleModal(null, false) }
+				className={ className }
+				onRequestClose={ this.handleCancel }
 				closeTimeoutMS={ 200 }
 				overlayClassName={ "modal-slide" }
 			>
 			{ isBusy ? <Spinner className="large" /> : (
 				<div className="modal-content" tabIndex={ -1 }>
 					<div className="modal-header">
-						<div className="modal-header-left">
-							<Button
-								className="btn-link"
-								onClick={ () => toggleModal(null, false) }
-							>
-								Cancel
-							</Button>
-						</div>
-						<div className="modal-header-center">
+						{
+							device.isTouchOrSmall ? (
+								<React.Fragment>
+								<div className="modal-header-left">
+									<Button
+										className="btn-link"
+										onClick={ this.handleCancel }
+									>
+										Cancel
+									</Button>
+								</div>
+								<div className="modal-header-center">
+									<h4 className="modal-title truncate">
+										Export { itemKeys.length > 1 ? 'Items' : 'Item' }
+									</h4>
+								</div>
+								<div className="modal-header-right">
+									<Button
+										className="btn-link"
+										onClick={ this.handleExport }
+									>
+										Export
+									</Button>
+								</div>
+								</React.Fragment>
+						) : (
+						<React.Fragment>
 							<h4 className="modal-title truncate">
-								Export { itemKeys.length > 1 ? 'Items' : 'Item' }
-							</h4>
-						</div>
-						<div className="modal-header-right">
-							<Button
-								className="btn-link"
-								onClick={ this.handleExport }
-							>
 								Export
+							</h4>
+							<Button
+								icon
+								className="close"
+								onClick={ this.handleCancel }
+							>
+								<Icon type={ '16/close' } width="16" height="16" />
 							</Button>
-						</div>
+						</React.Fragment>
+					)}
 					</div>
 					<div className="modal-body">
 						<div className="form">
@@ -108,6 +142,17 @@ class ExportModal extends React.PureComponent {
 							</div>
 						</div>
 					</div>
+					{ !device.isTouchOrSmall && (
+						<div className="modal-footer justify-content-end">
+							<Button
+								type="button"
+								className='btn btn-lg btn-secondary'
+								onClick={ this.handleExport }
+							>
+								Export
+							</Button>
+						</div>
+					)}
 				</div>
 			)}
 			</Modal>
@@ -115,6 +160,9 @@ class ExportModal extends React.PureComponent {
 	}
 
 	static propTypes = {
+		collectionKey: PropTypes.string,
+		device: PropTypes.object,
+		exportCollection: PropTypes.func.isRequired,
 		exportItems: PropTypes.func.isRequired,
 		isOpen: PropTypes.bool,
 		itemKeys: PropTypes.array,

@@ -3,20 +3,21 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import withDevice from '../enhancers/with-device';
 import withSelectMode from '../enhancers/with-select-mode';
-import { toggleModal, exportItems } from '../actions';
+import { exportCollection, exportItems, toggleModal } from '../actions';
 import ExportModal from '../component/modal/export-modal';
 import { EXPORT } from '../constants/modals';
 
 class ExportContainer extends React.PureComponent {
-	async handleCancel() {
-		const { dispatch } = this.props;
-		await dispatch(toggleModal(EXPORT, false));
+	handleCancel = async () => {
+		const { toggleModal } = this.props;
+		await toggleModal(EXPORT, false);
 	}
 
 	render() {
 		return <ExportModal
-			onCancel={ this.handleCancel.bind(this) }
+			onCancel={ this.handleCancel }
 			{ ...this.props }
 			{ ...this.state }
 		/>;
@@ -27,12 +28,12 @@ class ExportContainer extends React.PureComponent {
 
 const mapStateToProps = state => {
 	const isOpen = state.modal.id === EXPORT;
-	const { itemKeys } = state.current;
+	const { itemKeys, collectionKey } = state.modal;
 
-	return { isOpen, itemKeys };
+	return { collectionKey, isOpen, itemKeys };
 };
 
 
-export default withSelectMode(
-	connect(mapStateToProps, { toggleModal, exportItems })(ExportContainer)
-);
+export default withSelectMode(withDevice(
+	connect(mapStateToProps, { exportCollection, exportItems, toggleModal })(ExportContainer)
+));
