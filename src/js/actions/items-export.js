@@ -20,11 +20,10 @@ import {
 	ERROR_BIBLIOGRAPHY_COLLECTION,
 } from '../constants/actions';
 
-const exportItems = (itemKeys, format) => {
+const exportItems = (itemKeys, libraryKey, format) => {
 	return async (dispatch, getState) => {
 		const state = getState();
 		const config = state.config;
-		const { libraryKey } = state.current;
 
 		dispatch({
 			type: REQUEST_EXPORT_ITEMS,
@@ -60,11 +59,10 @@ const exportItems = (itemKeys, format) => {
 	};
 };
 
-const exportCollection = (collectionKey, format) => {
+const exportCollection = (collectionKey, libraryKey, format) => {
 	return async (dispatch, getState) => {
 		const state = getState();
 		const config = state.config;
-		const { libraryKey } = state.current;
 
 		dispatch({
 			type: REQUEST_EXPORT_COLLECTION,
@@ -147,11 +145,10 @@ const citeItems = (itemKeys, style = 'chicago-note-bibliography', locale = 'en-U
 	};
 };
 
-const bibliographyFromItems = (itemKeys, style = 'chicago-note-bibliography', locale = 'en-US') => {
+const bibliographyFromItems = (itemKeys, libraryKey, style = 'chicago-note-bibliography', locale = 'en-US') => {
 	return async (dispatch, getState) => {
 		const state = getState();
 		const config = state.config;
-		const { libraryKey } = state.current;
 
 		dispatch({
 			type: REQUEST_BIBLIOGRAPHY_ITEMS,
@@ -193,11 +190,10 @@ const bibliographyFromItems = (itemKeys, style = 'chicago-note-bibliography', lo
 	};
 };
 
-const bibliographyFromCollection = (collectionKey, style = 'chicago-note-bibliography', locale = 'en-US') => {
+const bibliographyFromCollection = (collectionKey, libraryKey, style = 'chicago-note-bibliography', locale = 'en-US') => {
 	return async (dispatch, getState) => {
 		const state = getState();
 		const config = state.config;
-		const { libraryKey } = state.current;
 
 		dispatch({
 			type: REQUEST_BIBLIOGRAPHY_COLLECTION,

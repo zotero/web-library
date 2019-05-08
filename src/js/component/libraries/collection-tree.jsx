@@ -100,19 +100,19 @@ class CollectionTree extends React.PureComponent {
 	}
 
 	handleBibliography = ev => {
-		const { toggleModal } = this.props;
+		const { toggleModal, libraryKey } = this.props;
 		const node = ev.currentTarget.closest('[data-collection-key]');
 		const { collectionKey } = node.dataset;
-		toggleModal(BIBLIOGRAPHY, true, { collectionKey });
+		toggleModal(BIBLIOGRAPHY, true, { libraryKey, collectionKey });
 		ev.preventDefault();
 		ev.stopPropagation();
 	}
 
 	handleExport = ev => {
-		const { toggleModal } = this.props;
+		const { libraryKey, toggleModal } = this.props;
 		const node = ev.currentTarget.closest('[data-collection-key]');
 		const { collectionKey } = node.dataset;
-		toggleModal(EXPORT, true, { collectionKey });
+		toggleModal(EXPORT, true, { libraryKey, collectionKey });
 		ev.preventDefault();
 		ev.stopPropagation();
 	}

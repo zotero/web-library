@@ -28,9 +28,9 @@ class ExportContainer extends React.PureComponent {
 
 const mapStateToProps = state => {
 	const isOpen = state.modal.id === EXPORT;
-	const { itemKeys, collectionKey } = state.modal;
+	const { itemKeys, libraryKey, collectionKey } = state.modal;
 
-	return { collectionKey, isOpen, itemKeys };
+	return { collectionKey, isOpen, itemKeys, libraryKey };
 };
 
 

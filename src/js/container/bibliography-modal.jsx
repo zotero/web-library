@@ -33,7 +33,8 @@ class BibliographyModalContainer extends React.PureComponent {
 		citationLocale: prevCitationLocale
 	}) {
 		const { collectionKey, bibliographyFromCollection, bibliographyFromItems,
-			isOpen, itemKeys, citationStyle, citationLocale } = this.props;
+			isOpen, itemKeys, libraryKey, citationStyle,
+			citationLocale } = this.props;
 
 		if((isOpen && !wasOpen) || citationStyle !== prevCitationStyle ||
 			citationLocale !== prevCitationLocale) {
@@ -41,9 +42,13 @@ class BibliographyModalContainer extends React.PureComponent {
 			try {
 				var bibliography;
 				if(collectionKey) {
-					bibliography = await bibliographyFromCollection(collectionKey, citationStyle, citationLocale);
+					bibliography = await bibliographyFromCollection(
+						collectionKey, libraryKey, citationStyle, citationLocale
+					);
 				} else {
-					bibliography = await bibliographyFromItems(itemKeys, citationStyle, citationLocale);
+					bibliography = await bibliographyFromItems(
+						itemKeys, libraryKey, citationStyle, citationLocale
+					);
 				}
 				this.setState({ bibliography });
 			} finally {
@@ -102,6 +107,7 @@ class BibliographyModalContainer extends React.PureComponent {
 		installedCitationStyles: PropTypes.array,
 		isOpen: PropTypes.bool,
 		itemKeys: PropTypes.array,
+		libraryKey: PropTypes.string,
 	}
 	static defaultProps = {
 		installedCitationStyles: []
@@ -110,12 +116,12 @@ class BibliographyModalContainer extends React.PureComponent {
 
 const mapStateToProps = state => {
 	const isOpen = state.modal.id === BIBLIOGRAPHY;
-	const { itemKeys, collectionKey } = state.modal;
+	const { collectionKey, itemKeys, libraryKey } = state.modal;
 	const { installedCitationStyles, citationStyle,
 		citationLocale } = state.preferences || {};
 
-	return { citationStyle, citationLocale, collectionKey, isOpen, itemKeys,
-		installedCitationStyles };
+	return { citationStyle, citationLocale, collectionKey, libraryKey,
+		isOpen, itemKeys, installedCitationStyles };
 };
 
 

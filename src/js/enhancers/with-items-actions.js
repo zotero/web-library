@@ -92,8 +92,8 @@ const withItemsActions = Component => {
 		}
 
 		handleExport = async (format) => {
-			const { exportItems, itemKeys } = this.props;
-			const exportData = await exportItems(itemKeys, format);
+			const { exportItems, itemKeys, libraryKey } = this.props;
+			const exportData = await exportItems(itemKeys, libraryKey, format);
 			const extension = exportFormats.find(f => f.key === format).extension;
 
 			const fileName = ['export-data', extension].filter(Boolean).join('.');
@@ -113,8 +113,8 @@ const withItemsActions = Component => {
 		}
 
 		handleBibliographyModalOpen = () => {
-			const { toggleModal, itemKeys } = this.props;
-			toggleModal(BIBLIOGRAPHY, true, { itemKeys });
+			const { toggleModal, itemKeys, libraryKey } = this.props;
+			toggleModal(BIBLIOGRAPHY, true, { itemKeys, libraryKey });
 		}
 
 		handleExportModalOpen = () => {

@@ -36,7 +36,7 @@ class ExportModal extends React.PureComponent {
 
 	handleExport = async () => {
 		const { collectionKey, exportCollection, exportItems, itemKeys,
-			toggleModal, onSelectModeToggle } = this.props;
+			libraryKey, toggleModal, onSelectModeToggle } = this.props;
 		const { format } = this.state;
 		const fileName = ['export-data', exportFormats.find(f => f.key === format).extension]
 			.filter(Boolean).join('.');
@@ -45,9 +45,9 @@ class ExportModal extends React.PureComponent {
 		var exportData;
 
 		if(collectionKey) {
-			exportData = await exportCollection(collectionKey, format);
+			exportData = await exportCollection(collectionKey, libraryKey, format);
 		} else {
-			exportData = await exportItems(itemKeys, format);
+			exportData = await exportItems(itemKeys, libraryKey, format);
 		}
 
 		saveAs(exportData, fileName);
@@ -166,6 +166,7 @@ class ExportModal extends React.PureComponent {
 		exportItems: PropTypes.func.isRequired,
 		isOpen: PropTypes.bool,
 		itemKeys: PropTypes.array,
+		libraryKey: PropTypes.string,
 		onSelectModeToggle: PropTypes.func.isRequired,
 		toggleModal: PropTypes.func.isRequired,
 	}
