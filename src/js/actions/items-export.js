@@ -75,6 +75,7 @@ const exportCollection = (collectionKey, libraryKey, format) => {
 				.library(libraryKey)
 				.collections(collectionKey)
 				.items()
+				.top()
 				.get({ format });
 
 			const exportData = await response.response.blob();
