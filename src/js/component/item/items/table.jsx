@@ -7,7 +7,7 @@ import paramCase from 'param-case';
 import { resizeVisibleColumns } from '../../../utils';
 import AutoSizer from 'react-virtualized/dist/commonjs/AutoSizer';
 import InfiniteLoader from 'react-virtualized/dist/commonjs/InfiniteLoader';
-import Table from 'react-virtualized/dist/commonjs/Table';
+import CustomTable from '../../../react-virtualized/custom-table';
 import Column from 'react-virtualized/dist/commonjs/Table/Column';
 import defaultHeaderRowRenderer from 'react-virtualized/dist/commonjs/Table/defaultHeaderRowRenderer';
 import Icon from '../../ui/icon';
@@ -59,6 +59,25 @@ class ItemsTable extends React.PureComponent {
 	handleKeyDown = ev => {
 		const { items, selectedItemKeys, onItemsSelect } = this.props;
 
+		if(document.activeElement && document.activeElement.classList.contains('column-header') &&
+			(ev.key === 'ArrowDown' || ev.key === 'ArrowRight' || ev.key === 'ArrowLeft')) {
+			if(ev.key === 'ArrowDown') {
+				this.containerDom.querySelector('[tabIndex="0"]').focus();
+			}
+			else if(ev.key === 'ArrowRight') {
+				if(document.activeElement.nextSibling) {
+					document.activeElement.nextSibling.focus();
+				}
+			}
+			if(ev.key === 'ArrowLeft') {
+				if(document.activeElement.previousSibling) {
+					document.activeElement.previousSibling.focus();
+				}
+			}
+			ev.preventDefault();
+			return;
+		}
+
 		var vector;
 		if(ev.key === 'ArrowUp') {
 			vector = -1;
@@ -86,6 +105,11 @@ class ItemsTable extends React.PureComponent {
 		}
 
 		if(vector < 0 && index + vector < 0) {
+			if(!ev.getModifierState('Shift')) {
+				onItemsSelect([]);
+				this.setState({ isFocused: false });
+				this.containerDom.querySelector('.column-header').focus();
+			}
 			return;
 		}
 
@@ -545,6 +569,7 @@ class ItemsTable extends React.PureComponent {
 		return (
 			<div
 				ref={ ref => this.containerDom = ref }
+				onKeyDown={ this.handleKeyDown.bind(this) }
 				className={cx('items-table-wrap', {
 					resizing: this.state.isResizing,
 					reordering: this.state.isReordering,
@@ -559,9 +584,8 @@ class ItemsTable extends React.PureComponent {
 							rowCount={ totalItemsCount }
 						>
 							{({onRowsRendered, registerChild}) => (
-								<Table
+								<CustomTable
 									containerProps={ {
-										onKeyDown: this.handleKeyDown.bind(this),
 										onFocus: this.handleFocus,
 										onBlur: this.handleBlur,
 									} }
@@ -592,7 +616,7 @@ class ItemsTable extends React.PureComponent {
 											dataKey: field,
 										}))
 									}
-								</Table>
+								</CustomTable>
 							)}
 						</InfiniteLoader>
 					)}
