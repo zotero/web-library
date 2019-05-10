@@ -386,6 +386,7 @@ class ItemsTable extends React.PureComponent {
 
 	renderTitleCell({ cellData, rowData }) {
 		const { selectedItemKeys } = this.props;
+		const { isFocused } = this.state;
 		const isActive = selectedItemKeys.includes(rowData.key);
 		const iconName = paramCase(rowData.itemType);
 		const dvp = window.devicePixelRatio >= 2 ? 2 : 1;
@@ -402,7 +403,7 @@ class ItemsTable extends React.PureComponent {
 		const icon = (
 			<Icon
 				type={ `16/item-types/light/${dvp}x/${iconName}` }
-				// symbol={ isActive ? `${iconName}-white` : iconName }
+				// symbol={ isFocused && isActive ? `${iconName}-white` : iconName }
 				width="16"
 				height="16"
 			/>
@@ -413,8 +414,8 @@ class ItemsTable extends React.PureComponent {
 				key={ tag.tag }
 				type={ index === 0 ? '10/circle' : '10/crescent-circle' }
 				symbol={ index === 0 ?
-					isActive ? 'circle-focus' : 'circle' :
-					isActive ? 'crescent-circle-focus' : 'crescent-circle'
+					(isFocused && isActive ? 'circle-focus' : 'circle') :
+					(isFocused && isActive ? 'crescent-circle-focus' : 'crescent-circle')
 				}
 				width={ index === 0 ? 10 : 7 }
 				height="10"
