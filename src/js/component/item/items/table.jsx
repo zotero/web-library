@@ -318,6 +318,10 @@ class ItemsTable extends React.PureComponent {
 	}
 
 	handleFocus = () => {
+		const { items, selectedItemKeys } = this.props;
+		if(selectedItemKeys.length === 0 && items.length > 0) {
+			this.props.onItemsSelect([items[0].key]);
+		}
 		this.setState({ isFocused: true });
 	}
 
