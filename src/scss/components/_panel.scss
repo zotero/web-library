@@ -29,8 +29,11 @@
 
 	.panel-body {
 		flex: 1 1 0;
-		overflow-y: scroll;
-		-webkit-overflow-scrolling: touch; // Momentum scrolling
+
+		@include mouse-and-bp-up(md) {
+			display: flex;
+			flex-direction: column;
+		}
 
 		&.loading {
 			@include touch-or-bp-down(sm) {

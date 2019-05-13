@@ -72,12 +72,10 @@ class Notes extends React.PureComponent {
 
 	renderRichEditor() {
 		return (
-			<div className="editor">
-				<RichEditor
-					value={ this.props.notes.find(n => n.key == this.state.selected).note }
-					onChange={ this.handleChangeNote.bind(this) }
-				/>
-			</div>
+			<RichEditor
+				value={ this.props.notes.find(n => n.key == this.state.selected).note }
+				onChange={ this.handleChangeNote.bind(this) }
+			/>
 		);
 	}
 
@@ -86,25 +84,27 @@ class Notes extends React.PureComponent {
 
 		return (
 			<React.Fragment>
-				<nav>
-					<ul className="note-list">
-						{
-							this.props.notes.map(note => {
-								return (
-									<li
-										className={ cx('note', {'selected': this.state.selected == note.key }) }
-										key={ note.key }
-										onClick={ ev => this.handleEditNote(note, ev) }
-									>
-										<div className="multiline-truncate">
-											{ note.note && noteAsTitle(note.note) || <em>Untitled Note</em> }
-										</div>
-									</li>
-								);
-							})
-						}
-					</ul>
-				</nav>
+				<div className="scroll-container">
+					<nav>
+						<ul className="note-list">
+							{
+								this.props.notes.map(note => {
+									return (
+										<li
+											className={ cx('note', {'selected': this.state.selected == note.key }) }
+											key={ note.key }
+											onClick={ ev => this.handleEditNote(note, ev) }
+										>
+											<div className="multiline-truncate">
+												{ note.note && noteAsTitle(note.note) || <em>Untitled Note</em> }
+											</div>
+										</li>
+									);
+								})
+							}
+						</ul>
+					</nav>
+				</div>
 
 				{ this.state.selected && this.renderRichEditor() }
 

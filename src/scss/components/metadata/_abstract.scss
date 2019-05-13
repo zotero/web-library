@@ -20,6 +20,7 @@
 
 	@include mouse-and-bp-up(md) {
 		margin: 0 $default-padding-x;
+		padding-bottom: 20px - 7px;
 	}
 
 	@include mouse-and-bp-only(lg) {

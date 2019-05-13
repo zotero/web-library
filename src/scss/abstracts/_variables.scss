@@ -34,7 +34,7 @@ $font-size-h2: 16px;
 
 
 $line-height-base:           1.539;
-$line-height-computed:       ceil($font-size-base * $line-height-base);
+$line-height-computed:       round($font-size-base * $line-height-base);
 $line-height-computed-mobile: floor($font-size-mobile * $line-height-base);
 
 // todo: line-height-small

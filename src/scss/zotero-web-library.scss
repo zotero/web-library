@@ -39,6 +39,7 @@
 @import "partials/transitions";
 @import "partials/grid";
 @import "partials/inline-feedback";
+@import "partials/scroll-container";
 
 
 // Components
@@ -78,6 +79,7 @@
 @import "components/metadata/standalone-attachment.scss";
 
 @import "components/note/list";
+@import "components/note/pane";
 
 @import "components/modal/react-modal";
 @import "components/modal/collection-select";

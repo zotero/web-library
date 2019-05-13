@@ -1,0 +1,9 @@
+//
+// Scroll container
+// --------------------------------------------------
+
+.scroll-container {
+  flex: 1 1 0;
+  overflow-y: scroll;
+	-webkit-overflow-scrolling: touch; // Momentum scrolling
+}

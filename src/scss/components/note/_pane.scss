@@ -1,0 +1,13 @@
+//
+// Note pane
+// --------------------------------------------------
+
+.tab-pane.notes {
+	.rich-editor {
+		@include mouse-and-bp-up(md) {
+			flex: 1 1 0;
+			border-top: $border-width solid $editor-border-color;
+			border-bottom: $border-width solid $editor-border-color;
+		}
+	}
+}
