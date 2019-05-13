@@ -35,7 +35,7 @@ class NotesTabPane extends React.PureComponent {
 				{
 					isLoadingChildItems ? <Spinner /> : (
 						<React.Fragment>
-							<h5 className="h2 tab-pane-heading">Notes</h5>
+							<h5 className="h2 tab-pane-heading hidden-mouse">Notes</h5>
 							<Notes
 								isReadOnly={ isReadOnly }
 								item={ item }
