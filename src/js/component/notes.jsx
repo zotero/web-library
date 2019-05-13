@@ -85,21 +85,20 @@ class Notes extends React.PureComponent {
 		const { isReadOnly } = this.props;
 
 		return (
-			<div className="details-list notes">
+			<React.Fragment>
 				<nav>
-					<ul className="nav list">
+					<ul className="note-list">
 						{
 							this.props.notes.map(note => {
 								return (
 									<li
-										className={ cx('item', {'selected': this.state.selected == note.key }) }
+										className={ cx('note', {'selected': this.state.selected == note.key }) }
 										key={ note.key }
 										onClick={ ev => this.handleEditNote(note, ev) }
 									>
-										<Icon type={ '16/item-types/note' } width="16" height="16" />
-										<a>
+										<div className="multiline-truncate">
 											{ note.note && noteAsTitle(note.note) || <em>Untitled Note</em> }
-										</a>
+										</div>
 									</li>
 								);
 							})
@@ -143,7 +142,7 @@ class Notes extends React.PureComponent {
 						</div>
 					</Toolbar>
 				)}
-			</div>
+			</React.Fragment>
 		);
 	}
 }

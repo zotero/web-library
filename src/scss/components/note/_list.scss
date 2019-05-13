@@ -1,0 +1,64 @@
+//
+// Note list
+// --------------------------------------------------
+
+.note-list {
+	.note {
+		@include mouse-and-bp-up(md) {
+			padding: ($space-md - 6px) $default-padding-x ($space-md - 6px);
+			position: relative;
+
+			&:first-child {
+				padding-top: $space-md - 7px;
+			}
+
+			&:last-child {
+				padding-bottom: $space-md - 5px;
+			}
+
+			&::before,
+			&::after {
+				position: absolute;
+				left: $default-padding-x;
+				right: $default-padding-x;
+				height: $border-width;
+				background-color: $note-active-bg;
+			}
+
+			&::before {
+				content: "";
+				top: 0;
+
+				@include variant(".note:first-child") {
+					content: none;
+				}
+			}
+
+			&::after {
+				@include variant(".note:last-child") {
+					content: "";
+					bottom: 0;
+				}
+			}
+		}
+
+		&.selected {
+			background-color: $note-active-bg;
+
+			& + .note {
+				border-top: $border-width solid $note-active-bg;
+				padding-top: $space-md - 7px;
+
+				&::before {
+					content: none;
+				}
+			}
+		}
+	}
+
+	.multiline-truncate {
+		@include mouse-and-bp-up(md) {
+			@include multiline-truncate(2);
+		}
+	}
+}
