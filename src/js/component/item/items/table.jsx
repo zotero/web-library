@@ -427,7 +427,7 @@ class ItemsTable extends React.PureComponent {
 		const icon = (
 			<Icon
 				type={ `16/item-types/light/${dvp}x/${iconName}` }
-				// symbol={ isFocused && isActive ? `${iconName}-white` : iconName }
+				symbol={ isFocused && isActive ? `${iconName}-white` : iconName }
 				width="16"
 				height="16"
 			/>
