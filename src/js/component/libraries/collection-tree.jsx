@@ -290,6 +290,7 @@ class CollectionTree extends React.PureComponent {
 							onRename={ ev => device.isTouchOrSmall ? noop() : this.handleRenameTrigger(collection.key, ev) }
 							label={ collection.name }
 							isOpen={ derivedData[collection.key].isOpen }
+							shouldBeDraggable = { this.state.renaming !== collection.key }
 							tabIndex={ shouldBeTabbable ? "0" : null }
 							icon="folder"
 							dndTarget={ { 'targetType': 'collection', collectionKey: collection.key, libraryKey } }

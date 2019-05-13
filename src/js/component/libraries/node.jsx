@@ -4,9 +4,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import cx from 'classnames';
 import Icon from '../ui/icon';
-import { DropTarget } from 'react-dnd';
+import { DragSource, DropTarget } from 'react-dnd';
 import { noop } from '../../utils';
-import { ITEM } from '../../constants/dnd';
+import { ITEM, COLLECTION } from '../../constants/dnd';
 import { omit } from '../../common/immutable';
 import { isTriggerEvent } from '../../common/event';
 
@@ -34,6 +34,21 @@ const dndCollect = (connect, monitor) => ({
 	canDrop: monitor.canDrop(),
 });
 
+const dndCollectionDragSpec = {
+	beginDrag: (props) => {
+		return {};
+	},
+	canDrag: ({ shouldBeDraggable }) => shouldBeDraggable,
+	endDrag: (props, monitor) => {
+	}
+};
+
+const dndCollectionDragCollect = (connect, monitor) => ({
+	connectDragSource: connect.dragSource(),
+	isDragging: monitor.isDragging(),
+});
+
+@DragSource(COLLECTION, dndCollectionDragSpec, dndCollectionDragCollect)
 @DropTarget(ITEM, dndSpec, dndCollect)
 class Node extends React.PureComponent {
 	state = {};
@@ -72,9 +87,12 @@ class Node extends React.PureComponent {
 		this.isLongPressCompleted = false;
 		ev.persist();
 		this.ongoingLongPress = setTimeout(() => {
+			const { isDragging } = this.props;
 			this.isLongPressCompleted = true;
 			ev.preventDefault();
-			this.props.onRename(ev);
+			if(!isDragging) {
+				this.props.onRename(ev);
+			}
 		}, 500);
 	}
 
@@ -106,8 +124,8 @@ class Node extends React.PureComponent {
 	}
 
 	render() {
-		const { canDrop, children, className, connectDropTarget, hideTwisty,
-			isOpen, isOver, subtree, } = this.props;
+		const { canDrop, children, className, connectDragSource,
+			connectDropTarget, hideTwisty, isOpen, isOver, subtree, } = this.props;
 		const { isFocused } = this.state;
 
 		const twistyButton = (
@@ -120,12 +138,13 @@ class Node extends React.PureComponent {
 			</button>
 		);
 		const isActive = canDrop && isOver;
-		const props = omit(this.props, ["canDrop", "children", "className",
-			"connectDropTarget", "dndTarget", "hideTwisty", "isOpen", "isOver",
-			"onOpen", "subtree", "onClick", "onRename"
+		const props = omit(this.props, ["canDrag", "canDrop", "children",
+			"className", "connectDragSource", "connectDropTarget", "dndTarget",
+			"hideTwisty", "isDragging", "isOpen", "isOver", "onOpen", "subtree",
+			"onClick", "onRename", "shouldBeDraggable"
 		]);
 
-		return connectDropTarget(
+		return connectDragSource(connectDropTarget(
 			<li
 				className={ cx(className, { focus: isFocused }) }
 				>
@@ -147,16 +166,22 @@ class Node extends React.PureComponent {
 				</div>
 				{ subtree }
 			</li>
-		);
+		));
 	}
 
 	static propTypes = {
+		canDrop: PropTypes.bool,
 		children: PropTypes.oneOfType([PropTypes.element, PropTypes.array]),
 		className: PropTypes.string,
+		connectDragSource: PropTypes.func,
+		connectDropTarget: PropTypes.func,
 		hideTwisty: PropTypes.bool,
+		isDragging: PropTypes.bool,
 		isOpen: PropTypes.bool,
+		isOver: PropTypes.bool,
 		onClick: PropTypes.func,
 		onOpen: PropTypes.func,
+		onRename: PropTypes.func,
 		subtree: PropTypes.oneOfType([PropTypes.element, PropTypes.array]),
 	}
 
