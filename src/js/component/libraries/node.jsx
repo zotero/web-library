@@ -18,12 +18,29 @@ const dndSpec = {
 		}
 	},
 	canDrop({ dndTarget = {} }, monitor) {
-		const { libraryKey: sourceLibraryKey } = monitor.getItem();
-		if(dndTarget.targetType === 'library' && dndTarget.libraryKey !== sourceLibraryKey) {
-			return true;
-		}
-		if(dndTarget.targetType === 'collection') {
-			return true;
+		if(monitor.getItemType() === ITEM) {
+			const { libraryKey: sourceLibraryKey } = monitor.getItem();
+			if(dndTarget.targetType === 'library' && dndTarget.libraryKey !== sourceLibraryKey) {
+				return true;
+			}
+			if(dndTarget.targetType === 'collection') {
+				return true;
+			}
+		} else if(monitor.getItemType() === COLLECTION) {
+			const {
+				collectionKey: srcCollectionKey,
+				libraryKey: srcLibraryKey
+			} = monitor.getItem();
+			const {
+				targetType,
+				collectionKey: targetCollectionKey,
+				libraryKey: targetLibraryKey
+			} = dndTarget;
+
+			if(!['collection', 'library'].includes(targetType)) {
+				return false;
+			}
+			return srcLibraryKey === targetLibraryKey && srcCollectionKey !== targetCollectionKey;
 		}
 	}
 }
@@ -36,10 +53,13 @@ const dndCollect = (connect, monitor) => ({
 
 const dndCollectionDragSpec = {
 	beginDrag: (props) => {
-		return {};
+		return props.dndTarget;
 	},
 	canDrag: ({ shouldBeDraggable }) => shouldBeDraggable,
-	endDrag: (props, monitor) => {
+	endDrag: ({ dndTarget, onDrag }, monitor) => {
+		const src = dndTarget;
+		const target = monitor.getDropResult();
+		onDrag(src, target);
 	}
 };
 
@@ -49,7 +69,7 @@ const dndCollectionDragCollect = (connect, monitor) => ({
 });
 
 @DragSource(COLLECTION, dndCollectionDragSpec, dndCollectionDragCollect)
-@DropTarget(ITEM, dndSpec, dndCollect)
+@DropTarget([COLLECTION, ITEM], dndSpec, dndCollect)
 class Node extends React.PureComponent {
 	state = {};
 
@@ -182,6 +202,7 @@ class Node extends React.PureComponent {
 		onClick: PropTypes.func,
 		onOpen: PropTypes.func,
 		onRename: PropTypes.func,
+		onDrag: PropTypes.func,
 		subtree: PropTypes.oneOfType([PropTypes.element, PropTypes.array]),
 	}
 

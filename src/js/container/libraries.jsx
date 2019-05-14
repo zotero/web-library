@@ -56,10 +56,6 @@ class LibrariesContainer extends React.PureComponent {
 		}, libraryKey));
 	}
 
-	async handleCollectionUpdate(libraryKey, collectionKey, patch) {
-		await this.props.dispatch(updateCollection(collectionKey, patch, libraryKey));
-	}
-
 	async handleCollectionDelete(libraryKey, collection) {
 		await this.props.dispatch(deleteCollection(collection, libraryKey));
 		this.props.push('/');
@@ -75,7 +71,6 @@ class LibrariesContainer extends React.PureComponent {
 			{ ...this.props }
 			onSelect={ this.handleSelect.bind(this) }
 			onCollectionAdd={ this.handleCollectionAdd.bind(this) }
-			onCollectionUpdate={ this.handleCollectionUpdate.bind(this) }
 			onCollectionDelete={ this.handleCollectionDelete.bind(this) }
 			onGroupOpen={ this.handleGroupOpen.bind(this) }
 		/>;
@@ -113,7 +108,8 @@ const mapStateToProps = state => {
 };
 
 //@TODO: bind all action creators
-const mapDispatchToProps = dispatch => ({ dispatch, ...bindActionCreators({ push, toggleModal }, dispatch) });
+const mapDispatchToProps = dispatch => ({
+	dispatch, ...bindActionCreators({ push, toggleModal, updateCollection }, dispatch) });
 
 LibrariesContainer.propTypes = {
 	// collections: PropTypes.object,

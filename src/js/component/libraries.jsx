@@ -60,10 +60,6 @@ class Libraries extends React.PureComponent {
 		this.setState({ virtual: null });
 	}
 
-	async handleRename(libraryKey, collectionKey, name) {
-		await this.props.onCollectionUpdate(libraryKey, collectionKey, { name });
-	}
-
 	async handleDelete(libraryKey, collection) {
 		await this.props.onCollectionDelete(libraryKey,collection);
 	}
@@ -94,7 +90,6 @@ class Libraries extends React.PureComponent {
 			onAddCancel: this.handleAddCancel.bind(this),
 			onAddCommit: this.handleAddCommit.bind(this),
 			onDelete: this.handleDelete.bind(this),
-			onRename: this.handleRename.bind(this),
 			onSelect: this.handleSelect.bind(this),
 			virtual: virtual != null && virtual.libraryKey === key ? virtual : null
 		}

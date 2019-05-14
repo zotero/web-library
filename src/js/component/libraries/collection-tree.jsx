@@ -60,9 +60,9 @@ class CollectionTree extends React.PureComponent {
 	}
 
 	handleRename(collectionKey, value, hasChanged) {
-		const { libraryKey, onRename } = this.props;
+		const { libraryKey, updateCollection } = this.props;
 		if(hasChanged) {
-			onRename(libraryKey, collectionKey, value);
+			updateCollection(collectionKey, { name: value }, libraryKey);
 		} else {
 			this.setState({ renaming: null });
 		}
@@ -115,6 +115,18 @@ class CollectionTree extends React.PureComponent {
 		toggleModal(EXPORT, true, { libraryKey, collectionKey });
 		ev.preventDefault();
 		ev.stopPropagation();
+	}
+
+	handleDrag = (src, target) => {
+		const { updateCollection } = this.props;
+		const patch = {
+			parentCollection: target.collectionKey || false
+		};
+		if(src.libraryKey === target.libraryKey) {
+			updateCollection(src.collectionKey, patch, src.libraryKey);
+		} else {
+			//@TODO: copy collection to another library
+		}
 	}
 
 	//@TODO: memoize once
@@ -291,6 +303,7 @@ class CollectionTree extends React.PureComponent {
 							label={ collection.name }
 							isOpen={ derivedData[collection.key].isOpen }
 							shouldBeDraggable = { this.state.renaming !== collection.key }
+							onDrag={ this.handleDrag }
 							tabIndex={ shouldBeTabbable ? "0" : null }
 							icon="folder"
 							dndTarget={ { 'targetType': 'collection', collectionKey: collection.key, libraryKey } }
@@ -454,10 +467,11 @@ class CollectionTree extends React.PureComponent {
 		onAddCommit: PropTypes.func,
 		onDelete: PropTypes.func,
 		onPickerPick: PropTypes.func,
-		onRename: PropTypes.func,
 		onSelect: PropTypes.func,
 		path: PropTypes.array,
 		picked: PropTypes.array,
+		toggleModal: PropTypes.func.isRequired,
+		updateCollection: PropTypes.func.isRequired,
 		updating: PropTypes.array,
 		view: PropTypes.string,
 		virtual: PropTypes.object,
@@ -470,7 +484,6 @@ class CollectionTree extends React.PureComponent {
 		onAddCommit: noop,
 		onDelete: noop,
 		onPickerPick: noop,
-		onRename: noop,
 		onSelect: noop,
 		path: [],
 		picked: [],
