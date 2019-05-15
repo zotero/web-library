@@ -3,13 +3,13 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { toggleModal, createCollection } from '../actions';
-import CollectionAddModal from '../component/modal/collection-add-modal';
+import NewCollectionModal from '../component/modal/new-collection';
 import { COLLECTION_ADD } from '../constants/modals';
 import { get } from '../utils';
 
-class CollectionAddModalContainer extends React.PureComponent {
+class NewCollectionModalContainer extends React.PureComponent {
 	render() {
-		return <CollectionAddModal { ...this.props } />;
+		return <NewCollectionModal { ...this.props } />;
 	}
 }
 
@@ -26,4 +26,4 @@ const mapStateToProps = state => {
 export default connect(
 	mapStateToProps,
 	{ createCollection, toggleModal }
-)(CollectionAddModalContainer);
+)(NewCollectionModalContainer);

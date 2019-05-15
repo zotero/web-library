@@ -13,7 +13,7 @@ import TagSelectorContainer from '../container/tag-selector';
 import TouchHeaderContainer from '../container/touch-header';
 import BibliographyModalContainer from '../container/bibliography-modal';
 import CollectionRenameModalContainer from '../container/collection-rename-modal';
-import CollectionAddModalContainer from '../container/collection-add-modal';
+import NewCollectionModalContainer from '../container/new-collection-modal';
 import CollectionSelectModal from '../container/collection-select-modal';
 import NewItemModalContainer from '../container/new-item-modal';
 import ExportModalContainer from '../container/export-modal';
@@ -127,7 +127,7 @@ class Library extends React.PureComponent {
 				</main>
 				<BibliographyModalContainer />
 				<CollectionRenameModalContainer />
-				<CollectionAddModalContainer />
+				<NewCollectionModalContainer />
 				<CollectionSelectModal />
 				<NewItemModalContainer />
 				<ExportModalContainer />
