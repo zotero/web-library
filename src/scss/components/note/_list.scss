@@ -5,15 +5,15 @@
 .note-list {
 	.note {
 		@include mouse-and-bp-up(md) {
-			padding: ($space-md - 6px) $default-padding-x ($space-md - 6px);
+			padding: ($space-md - 5px) $default-padding-x;
 			position: relative;
 
 			&:first-child {
-				padding-top: $space-md - 7px;
+				padding-top: $space-md - 6px;
 			}
 
 			&:last-child {
-				padding-bottom: $space-md - 5px;
+				padding-bottom: $space-md - 4px;
 			}
 
 			&::before,
@@ -22,7 +22,7 @@
 				left: $default-padding-x;
 				right: $default-padding-x;
 				height: $border-width;
-				background-color: $note-active-bg;
+				background-color: $note-border-color;
 			}
 
 			&::before {
@@ -40,17 +40,49 @@
 					bottom: 0;
 				}
 			}
-		}
 
-		&.selected {
-			background-color: $note-active-bg;
+			&.selected {
+				background-color: $note-active-bg;
 
-			& + .note {
-				border-top: $border-width solid $note-active-bg;
-				padding-top: $space-md - 7px;
-
-				&::before {
+				&::before,
+				&::after {
 					content: none;
+				}
+
+				& + .note {
+					border-top: $border-width solid $note-active-bg;
+					padding-top: $space-md - 6px;
+
+					&::before {
+						content: none;
+					}
+				}
+			}
+
+			.dropdown {
+				position: absolute;
+				top: 9px;
+				right: $default-padding-x - $space-min - $input-border-width;
+				visibility: hidden;
+
+				@include state(".note:hover", ".dropdown.show") {
+					visibility: visible;
+				}
+
+				@include state(".note.selected + .note") {
+					top: 9px - $border-width;
+				}
+
+				.dropdown-toggle {
+					background-color: $panel-bg;
+					transition:
+						color $input-btn-transition,
+						border-color $input-btn-transition,
+						box-shadow $input-btn-transition;
+
+					@include state(".note.selected") {
+						background-color: $note-active-bg;
+					}
 				}
 			}
 		}
