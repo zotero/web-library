@@ -34,8 +34,12 @@
 		cursor: default;
 	}
 
-	.icon {
-		vertical-align: top;
+	&:not(.btn-icon):not(.btn-circle) {
+		.icon {
+			position: relative;
+			top: -2px;
+			margin-right: $space-min;
+		}
 	}
 }
 
@@ -47,6 +51,10 @@
 
 	html:not(.specifity) & {
 		padding: 0;
+	}
+
+	.icon {
+		color: inherit;
 	}
 }
 

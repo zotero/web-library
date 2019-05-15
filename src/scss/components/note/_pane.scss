@@ -3,11 +3,30 @@
 // --------------------------------------------------
 
 .tab-pane.notes {
+	.scroll-container-mouse {
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+
+		.toolbar {
+			position: sticky;
+			bottom: 0;
+			background-color: $panel-bg;
+
+			.btn-link {
+				color: $icon-color;
+
+				&:active {
+					color: $icon-active-color;
+				}
+			}
+		}
+	}
+
 	.rich-editor {
 		@include mouse-and-bp-up(md) {
 			flex: 1 1 0;
 			border-top: $border-width solid $editor-border-color;
-			border-bottom: $border-width solid $editor-border-color;
 		}
 	}
 }

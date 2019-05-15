@@ -104,44 +104,47 @@ class Notes extends React.PureComponent {
 							}
 						</ul>
 					</nav>
+					{ !isReadOnly && (
+						<Toolbar>
+							<div className="toolbar-left">
+								<ToolGroup>
+									<Button
+										className="btn-link"
+										onClick={ this.handleAddNote.bind(this) }
+									>
+										<Icon type={ '16/plus' } width="16" height="16" />
+										Add Note
+									</Button>
+									{/*
+										this.state.selected &&
+										<Dropdown
+											isOpen={ this.state.isOpen }
+											toggle={ this.handleToggleDropdown.bind(this) }
+											className="dropdown-wrapper"
+										>
+											<DropdownToggle
+												color={ null }
+												className="btn-icon dropdown-toggle"
+											>
+												<Icon type={ '16/cog' } width="16" height="16" />
+											</DropdownToggle>
+											<DropdownMenu>
+												<DropdownItem onClick={ this.handleDuplicate.bind(this) }>
+													Duplicate
+												</DropdownItem>
+												<DropdownItem onClick={ this.handleDelete.bind(this) }>
+													Delete
+												</DropdownItem>
+											</DropdownMenu>
+										</Dropdown>
+									*/}
+								</ToolGroup>
+							</div>
+						</Toolbar>
+					)}
 				</div>
 
 				{ this.state.selected && this.renderRichEditor() }
-
-				{ !isReadOnly && (
-					<Toolbar>
-						<div className="toolbar-left">
-							<ToolGroup>
-								<Button icon onClick={ this.handleAddNote.bind(this) }>
-									<Icon type={ '16/plus' } width="16" height="16" />
-								</Button>
-								{
-									this.state.selected &&
-									<Dropdown
-										isOpen={ this.state.isOpen }
-										toggle={ this.handleToggleDropdown.bind(this) }
-										className="dropdown-wrapper"
-									>
-										<DropdownToggle
-											color={ null }
-											className="btn-icon dropdown-toggle"
-										>
-											<Icon type={ '16/cog' } width="16" height="16" />
-										</DropdownToggle>
-										<DropdownMenu>
-											<DropdownItem onClick={ this.handleDuplicate.bind(this) }>
-												Duplicate
-											</DropdownItem>
-											<DropdownItem onClick={ this.handleDelete.bind(this) }>
-												Delete
-											</DropdownItem>
-										</DropdownMenu>
-									</Dropdown>
-								}
-							</ToolGroup>
-						</div>
-					</Toolbar>
-				)}
 			</React.Fragment>
 		);
 	}
