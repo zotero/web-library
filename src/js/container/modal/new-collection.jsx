@@ -2,10 +2,11 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
-import { toggleModal, createCollection } from '../actions';
-import NewCollectionModal from '../component/modal/new-collection';
-import { COLLECTION_ADD } from '../constants/modals';
-import { get } from '../utils';
+
+import NewCollectionModal from '../../component/modal/new-collection';
+import { COLLECTION_ADD } from '../../constants/modals';
+import { get } from '../../utils';
+import { toggleModal, createCollection } from '../../actions';
 
 class NewCollectionModalContainer extends React.PureComponent {
 	render() {

@@ -4,14 +4,15 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import copy from 'copy-to-clipboard';
 import { connect } from 'react-redux';
+
+import BibliographyModal from '../../component/modal/bibliography';
+import withDevice from '../../enhancers/with-device';
+import withSelectMode from '../../enhancers/with-select-mode';
+import { BIBLIOGRAPHY } from '../../constants/modals';
+import { coreCitationStyles } from '../../../../data/citation-styles-data.json';
+import { stripTagsUsingDOM } from '../../common/format';
 import { toggleModal, bibliographyFromCollection, bibliographyFromItems,
-	preferenceChange } from '../actions';
-import { coreCitationStyles } from '../../../data/citation-styles-data.json';
-import BibliographyModal from '../component/modal/bibliography';
-import { BIBLIOGRAPHY, STYLE_INSTALLER } from '../constants/modals';
-import { stripTagsUsingDOM } from '../common/format';
-import withDevice from '../enhancers/with-device';
-import withSelectMode from '../enhancers/with-select-mode';
+	preferenceChange } from '../../actions';
 
 
 class BibliographyModalContainer extends React.PureComponent {

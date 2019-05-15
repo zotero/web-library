@@ -1,13 +1,14 @@
 'use strict';
 
 import React from 'react';
-import withDevice from '../enhancers/with-device';
-import withSelectMode from '../enhancers/with-select-mode';
 import { connect } from 'react-redux';
-import { toggleModal, addToCollection, fetchCollections } from '../actions';
-import AddItemsToCollectionsModal from '../component/modal/add-items-to-collections';
-import { COLLECTION_SELECT } from '../constants/modals';
-import { get } from '../utils';
+
+import AddItemsToCollectionsModal from '../../component/modal/add-items-to-collections';
+import withDevice from '../../enhancers/with-device';
+import withSelectMode from '../../enhancers/with-select-mode';
+import { COLLECTION_SELECT } from '../../constants/modals';
+import { get } from '../../utils';
+import { toggleModal, addToCollection, fetchCollections } from '../../actions';
 
 class AddItemsToCollectionsModalContainer extends React.PureComponent {
 	render() {

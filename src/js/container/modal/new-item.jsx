@@ -3,11 +3,13 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { push } from 'connected-react-router';
-import { toggleModal, createItem, fetchItemTemplate, triggerEditingItem } from '../actions';
-import { makePath } from '../common/navigation';
-import NewItemModal from '../component/modal/new-item-modal';
-import { NEW_ITEM } from '../constants/modals';
-import { get } from '../utils';
+
+import NewItemModal from '../../component/modal/new-item-modal';
+import { get } from '../../utils';
+import { makePath } from '../../common/navigation';
+import { NEW_ITEM } from '../../constants/modals';
+import { toggleModal, createItem, fetchItemTemplate,
+	triggerEditingItem } from '../../actions';
 
 class NewItemModalContainer extends React.PureComponent {
 	render() {

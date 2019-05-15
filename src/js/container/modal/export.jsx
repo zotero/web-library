@@ -3,11 +3,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import withDevice from '../enhancers/with-device';
-import withSelectMode from '../enhancers/with-select-mode';
-import { exportCollection, exportItems, toggleModal } from '../actions';
-import ExportModal from '../component/modal/export-modal';
-import { EXPORT } from '../constants/modals';
+
+import ExportModal from '../../component/modal/export-modal';
+import withDevice from '../../enhancers/with-device';
+import withSelectMode from '../../enhancers/with-select-mode';
+import { EXPORT } from '../../constants/modals';
+import { exportCollection, exportItems, toggleModal } from '../../actions';
 
 class ExportContainer extends React.PureComponent {
 	handleCancel = async () => {

@@ -2,10 +2,11 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
-import { toggleModal, updateCollection } from '../actions';
-import RenameCollectionModal from '../component/modal/rename-collection-modal';
-import { COLLECTION_RENAME } from '../constants/modals';
-import { get } from '../utils';
+
+import RenameCollectionModal from '../../component/modal/rename-collection-modal';
+import { COLLECTION_RENAME } from '../../constants/modals';
+import { get } from '../../utils';
+import { toggleModal, updateCollection } from '../../actions';
 
 class RenameCollectionModalContainer extends React.PureComponent {
 	render() {

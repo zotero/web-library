@@ -2,10 +2,11 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
-import { toggleModal, updateCollection } from '../actions';
-import ItemsSortModal from '../component/modal/items-sort-modal';
-import withSortItems from '../enhancers/with-sort-items';
-import { SORT_ITEMS } from '../constants/modals';
+
+import ItemsSortModal from '../../component/modal/items-sort-modal';
+import withSortItems from '../../enhancers/with-sort-items';
+import { SORT_ITEMS } from '../../constants/modals';
+import { toggleModal, updateCollection } from '../../actions';
 
 
 class ItemsSortModalContainer extends React.PureComponent {

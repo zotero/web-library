@@ -3,10 +3,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { toggleModal, fetchStyles, preferenceChange } from '../actions';
-import StyleInstallerModal from '../component/modal/style-installer';
-import { STYLE_INSTALLER } from '../constants/modals';
-import withDevice from '../enhancers/with-device';
+
+import StyleInstallerModal from '../../component/modal/style-installer';
+import withDevice from '../../enhancers/with-device';
+import { STYLE_INSTALLER } from '../../constants/modals';
+import { toggleModal, fetchStyles, preferenceChange } from '../../actions';
 
 
 class StyleInstallerModalContainer extends React.PureComponent {
