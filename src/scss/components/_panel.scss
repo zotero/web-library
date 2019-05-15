@@ -30,6 +30,11 @@
 	.panel-body {
 		flex: 1 1 0;
 
+		@include touch-or-bp-down(sm) {
+			overflow-y: scroll;
+			-webkit-overflow-scrolling: touch; // Momentum scrolling for iOS 10–
+		}
+
 		@include mouse-and-bp-up(md) {
 			display: flex;
 			flex-direction: column;

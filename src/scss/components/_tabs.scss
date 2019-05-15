@@ -93,13 +93,14 @@
 		}
 	}
 
-	& + .tab-pane {
+	.tab-pane-heading {
 		@include touch-or-bp-down(sm) {
-			border-top: $space-min solid $body-bg;
-		}
-
-		@include touch-and-bp-only(md) {
-			border-top: 0;
+			margin: 0;
+			line-height: $line-height-large-touch;
+			padding: $border-width $default-padding-x-touch;
+			@include hairline(top, $tab-pane-heading-border-color);
+			@include hairline(bottom, $tab-pane-heading-border-color);
+			background-color: $tab-pane-heading-bg;
 		}
 	}
 }
