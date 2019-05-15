@@ -4,6 +4,27 @@
 
 .note-list {
 	.note {
+		@include touch-or-bp-down(sm) {
+			display: flex;
+			padding: $note-list-padding-top $default-padding-x-touch $note-list-padding-bottom;
+			@include hairline(top, $note-border-color-touch, $start: (2 * $default-padding-x-touch + 28px));
+
+			&:first-child {
+				@include hairline-disabled(top);
+				padding-top: $note-list-padding-top - $border-width;
+			}
+
+			.icon-note {
+				align-self: center;
+				margin-right: $default-padding-x-touch;
+			}
+
+			.multiline-truncate {
+				flex: 1 1 auto;
+				@include multiline-truncate(2);
+			}
+		}
+
 		@include mouse-and-bp-up(md) {
 			padding: ($space-md - 5px) $default-padding-x;
 			position: relative;
@@ -89,8 +110,6 @@
 	}
 
 	.multiline-truncate {
-		@include mouse-and-bp-up(md) {
-			@include multiline-truncate(2);
-		}
+		@include multiline-truncate(2);
 	}
 }

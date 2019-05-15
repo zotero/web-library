@@ -20,6 +20,13 @@
   	overflow: hidden;
   	text-overflow: $text-overflow;
   	white-space: normal; // Reset
-		min-height: $lines * $line-height-computed;
+
+  	@include touch-or-bp-down(sm) {
+			min-height: $lines * $line-height-computed-mobile;
+		}
+
+  	@include touch-and-bp-up(md) {
+			min-height: $lines * $line-height-computed;
+		}
   }
 }
