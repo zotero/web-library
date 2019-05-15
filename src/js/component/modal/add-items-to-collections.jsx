@@ -48,7 +48,7 @@ class AddItemsToCollectionsModal extends React.PureComponent {
 		});
 	}
 
-	handleCollectionUpdate = async () => {
+	handleAddItems = async () => {
 		const { addToCollection, items, toggleModal, onSelectModeToggle } = this.props;
 		const { picked } = this.state;
 
@@ -204,7 +204,7 @@ class AddItemsToCollectionsModal extends React.PureComponent {
 							<Button
 								disabled={ picked.length === 0}
 								className="btn-link"
-								onClick={ this.handleCollectionUpdate }
+								onClick={ this.handleAddItems }
 							>
 								Add
 							</Button>
@@ -227,6 +227,9 @@ class AddItemsToCollectionsModal extends React.PureComponent {
 		libraryKey: PropTypes.string,
 		toggleModal: PropTypes.func.isRequired,
 		userLibraryKey: PropTypes.string,
+		addToCollection: PropTypes.func.isRequired,
+		items: PropTypes.array,
+		onSelectModeToggle: PropTypes.func.isRequired,
 	}
 }
 
