@@ -14,11 +14,12 @@ const defaultState = {
 	view: 'libraries',
 	libraryKey: '',
 	path: [],
-	picked: [],
+	picked: null,
 };
 const PAGE_SIZE = 100;
 
-class AddItemsToCollectionsModal extends React.PureComponent {
+//@TODO: reduce code duplication with AddItemstoCollections
+class MoveCollectionsModal extends React.PureComponent {
 	state = defaultState
 
 	componentDidUpdate({ isOpen: wasOpen }, { libraryKey: prevLibraryKey }) {
@@ -48,22 +49,21 @@ class AddItemsToCollectionsModal extends React.PureComponent {
 		});
 	}
 
-	handleAddItems = async () => {
-		const { addToCollection, items, toggleModal, onSelectModeToggle } = this.props;
+	handleMove = async () => {
+		const { collectionKey, libraryKey, toggleModal, updateCollection } = this.props;
 		const { picked } = this.state;
 
 
-		if(this.state.picked.length) {
+		if(picked && 'collectionKey' in picked) {
+			if(picked.libraryKey !== libraryKey) {
+				//@TODO: add support for copying collections across libraries
+				return;
+			}
 			this.setState({ isBusy: true })
-			const promises = picked.map(
-				targetData => addToCollection(
-					items, targetData.collectionKey, targetData.libraryKey
-				)
-			);
-			await Promise.all(promises);
+			const patch = { parentCollection: picked.collectionKey };
+			await updateCollection(collectionKey, patch, libraryKey);
 			this.setState({ isBusy: false });
 			toggleModal(null, false);
-			onSelectModeToggle(false);
 		}
 	}
 
@@ -91,15 +91,12 @@ class AddItemsToCollectionsModal extends React.PureComponent {
 	}
 
 	handlePick(pickedCollection) {
-		const picked = this.state.picked.filter(({ collectionKey: c, libraryKey: l}) =>
-			!(c === pickedCollection.collection && l === pickedCollection.library)
-		);
-
-		if(picked.length === this.state.picked.length) {
-			picked.push(pickedCollection);
+		const { picked } = this.state;
+		if(pickedCollection === picked) {
+			this.setState({ picked: null });
+		} else {
+			this.setState({ picked: pickedCollection });
 		}
-
-		this.setState({ picked });
 	}
 
 	handleNavigation(navigationData) {
@@ -166,7 +163,7 @@ class AddItemsToCollectionsModal extends React.PureComponent {
 								<Libraries
 									libraries={ libraries }
 									librariesWithCollectionsFetching={ librariesWithCollectionsFetching }
-									picked={ picked }
+									picked={ picked === null ? [] : [ picked ] }
 									isPickerMode={ true }
 									onPickerPick={ (...args) => this.handlePick(...args) }
 									view={ this.state.view }
@@ -194,19 +191,17 @@ class AddItemsToCollectionsModal extends React.PureComponent {
 						<div className="modal-footer-center">
 							<h4 className="modal-title truncate">
 								{
-									picked.length > 0 ?
-									`${picked.length} ${pluralize('Collection', picked.length)} Selected` :
-									'Select a Collection'
+									picked === null ? 'Select a Collection' : 'Confirm Move?'
 								}
 							</h4>
 						</div>
 						<div className="modal-footer-right">
 							<Button
-								disabled={ picked.length === 0}
+								disabled={ !picked }
 								className="btn-link"
-								onClick={ this.handleAddItems }
+								onClick={ this.handleMove }
 							>
-								Add
+								Move
 							</Button>
 						</div>
 					</div>
@@ -217,6 +212,7 @@ class AddItemsToCollectionsModal extends React.PureComponent {
 
 	static propTypes = {
 		collectionCountByLibrary: PropTypes.object,
+		collectionKey: PropTypes.string,
 		collections: PropTypes.objectOf(PropTypes.arrayOf(Types.collection)),
 		device: PropTypes.object,
 		fetchCollections: PropTypes.func.isRequired,
@@ -226,11 +222,9 @@ class AddItemsToCollectionsModal extends React.PureComponent {
 		librariesWithCollectionsFetching: PropTypes.array,
 		libraryKey: PropTypes.string,
 		toggleModal: PropTypes.func.isRequired,
+		updateCollection: PropTypes.func.isRequired,
 		userLibraryKey: PropTypes.string,
-		addToCollection: PropTypes.func.isRequired,
-		items: PropTypes.array,
-		onSelectModeToggle: PropTypes.func.isRequired,
 	}
 }
 
-export default AddItemsToCollectionsModal;
+export default MoveCollectionsModal;

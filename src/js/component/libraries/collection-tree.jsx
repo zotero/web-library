@@ -11,8 +11,8 @@ import Icon from '../ui/icon';
 import { noop } from '../../utils.js';
 import { makeChildMap } from '../../common/collection';
 import Editable from '../editable';
-import { BIBLIOGRAPHY, COLLECTION_RENAME, COLLECTION_ADD,
-	EXPORT } from '../../constants/modals';
+import { BIBLIOGRAPHY, COLLECTION_RENAME, COLLECTION_ADD, EXPORT,
+	MOVE_COLLECTION } from '../../constants/modals';
 
 class CollectionTree extends React.PureComponent {
 	state = { opened: [], renaming: null }
@@ -88,6 +88,13 @@ class CollectionTree extends React.PureComponent {
 
 			onAdd(libraryKey, collectionKey);
 		}
+	}
+
+	handleMoveCollection(collectionKey, ev) {
+		const { libraryKey, toggleModal } = this.props;
+
+		ev.stopPropagation();
+		toggleModal(MOVE_COLLECTION, true, { collectionKey, libraryKey });
 	}
 
 	handleAddCommit(parentCollection, name) {
@@ -327,8 +334,8 @@ class CollectionTree extends React.PureComponent {
 										{ isPickerMode ? (
 											<input
 												type="checkbox"
-												checked={ picked.some(({ collection: c, library: l }) => l === libraryKey && c === collection.key) }
-												onChange={ ev => this.props.onPickerPick({ collection: collection.key, library: libraryKey }, ev) }
+												checked={ picked.some(({ collectionKey: c, libraryKey: l }) => l === libraryKey && c === collection.key) }
+												onChange={ ev => this.props.onPickerPick({ collectionKey: collection.key, libraryKey: libraryKey }, ev) }
 												onClick={ ev => ev.stopPropagation() }
 											/>
 										) : (
@@ -362,6 +369,13 @@ class CollectionTree extends React.PureComponent {
 														>
 															New Subcollection
 														</DropdownItem>
+														{ device.isTouchOrSmall && (
+															<DropdownItem
+																onClick={ ev => this.handleMoveCollection(collection.key, ev) }
+															>
+																Move Collection
+															</DropdownItem>
+														)}
 														<DropdownItem divider />
 														</React.Fragment>
 													)
@@ -470,8 +484,8 @@ class CollectionTree extends React.PureComponent {
 		onSelect: PropTypes.func,
 		path: PropTypes.array,
 		picked: PropTypes.array,
-		toggleModal: PropTypes.func.isRequired,
-		updateCollection: PropTypes.func.isRequired,
+		toggleModal: PropTypes.func,
+		updateCollection: PropTypes.func,
 		updating: PropTypes.array,
 		view: PropTypes.string,
 		virtual: PropTypes.object,
@@ -487,6 +501,8 @@ class CollectionTree extends React.PureComponent {
 		onSelect: noop,
 		path: [],
 		picked: [],
+		toggleModal: noop,
+		updateCollection: noop,
 		updating: [],
 		virtual: null,
 	};

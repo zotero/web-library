@@ -19,6 +19,7 @@ import NewItemModalContainer from '../container/modal/new-item';
 import ExportModalContainer from '../container/modal/export';
 import StyleInstallerModalContainer from '../container/modal/style-installer';
 import ItemsSortModalContainer from '../container/modal/items-sort';
+import MoveCollectionsModalContainer from '../container/modal/move-collections';
 import withDevice from '../enhancers/with-device';
 import Icon from './ui/icon';
 
@@ -129,6 +130,7 @@ class Library extends React.PureComponent {
 				<BibliographyModalContainer />
 				<ExportModalContainer />
 				<ItemsSortModalContainer />
+				<MoveCollectionsModalContainer />
 				<NewCollectionModalContainer />
 				<NewItemModalContainer />
 				<RenameCollectionModalContainer />
