@@ -5,13 +5,13 @@ import withDevice from '../enhancers/with-device';
 import withSelectMode from '../enhancers/with-select-mode';
 import { connect } from 'react-redux';
 import { toggleModal, addToCollection, fetchCollections } from '../actions';
-import CollectionSelectModal from '../component/modal/collection-select-modal';
+import AddItemsToCollectionsModal from '../component/modal/add-items-to-collections';
 import { COLLECTION_SELECT } from '../constants/modals';
 import { get } from '../utils';
 
-class CollectionSelectModalContainer extends React.PureComponent {
+class AddItemsToCollectionsModalContainer extends React.PureComponent {
 	render() {
-		return <CollectionSelectModal { ...this.props } />;
+		return <AddItemsToCollectionsModal { ...this.props } />;
 	}
 }
 
@@ -38,4 +38,4 @@ const mapStateToProps = state => {
 export default withSelectMode(withDevice(connect(
 	mapStateToProps,
 	{ addToCollection, toggleModal, fetchCollections }
-)(CollectionSelectModalContainer)));
+)(AddItemsToCollectionsModalContainer)));

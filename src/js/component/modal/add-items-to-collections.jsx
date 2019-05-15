@@ -18,7 +18,7 @@ const defaultState = {
 };
 const PAGE_SIZE = 100;
 
-class CollectionSelectModal extends React.PureComponent {
+class AddItemsToCollectionsModal extends React.PureComponent {
 	state = defaultState
 
 	componentDidUpdate({ isOpen: wasOpen }, { libraryKey: prevLibraryKey }) {
@@ -230,4 +230,4 @@ class CollectionSelectModal extends React.PureComponent {
 	}
 }
 
-export default CollectionSelectModal;
+export default AddItemsToCollectionsModal;

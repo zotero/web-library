@@ -14,7 +14,7 @@ import TouchHeaderContainer from '../container/touch-header';
 import BibliographyModalContainer from '../container/bibliography-modal';
 import CollectionRenameModalContainer from '../container/collection-rename-modal';
 import NewCollectionModalContainer from '../container/new-collection-modal';
-import CollectionSelectModal from '../container/collection-select-modal';
+import AddItemsToCollectionsModalContainer from '../container/add-items-to-collections-modal';
 import NewItemModalContainer from '../container/new-item-modal';
 import ExportModalContainer from '../container/export-modal';
 import StyleInstallerModalContainer from '../container/style-installer-modal';
@@ -125,14 +125,14 @@ class Library extends React.PureComponent {
 						</section>
 					</section>
 				</main>
+				<AddItemsToCollectionsModalContainer />
 				<BibliographyModalContainer />
 				<CollectionRenameModalContainer />
-				<NewCollectionModalContainer />
-				<CollectionSelectModal />
-				<NewItemModalContainer />
 				<ExportModalContainer />
-				<StyleInstallerModalContainer />
 				<ItemsSortModalContainer />
+				<NewCollectionModalContainer />
+				<NewItemModalContainer />
+				<StyleInstallerModalContainer />
 			</div>
 		);
 	}
