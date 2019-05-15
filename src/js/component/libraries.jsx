@@ -156,7 +156,7 @@ class Libraries extends React.PureComponent {
 			return (
 				<nav className="collection-tree">
 					<div className={ `level-root ${isRootActive ? 'active' : ''}` }>
-						<div className="scroll-container" role="tree">
+						<div className="scroll-container-touch" role="tree">
 							<section>
 								{ myLibraries.length > 0 && (
 									<div className={ cx('level', 'level-0') }>

@@ -7,3 +7,18 @@
   overflow-y: scroll;
 	-webkit-overflow-scrolling: touch; // Momentum scrolling
 }
+
+.scroll-container-touch {
+	@include touch-or-bp-down(sm) {
+		flex: 1 1 0;
+		overflow-y: scroll;
+		-webkit-overflow-scrolling: touch;
+	}
+}
+
+.scroll-container-mouse {
+	@include mouse-and-bp-up(md) {
+  	flex: 1 1 0;
+  	overflow-y: scroll;
+  }
+}

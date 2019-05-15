@@ -275,11 +275,6 @@
 
 			&.active {
 				transform: translate3d(0, 0, 0);
-
-				.scroll-container {
-					overflow: scroll;
-					-webkit-overflow-scrolling: touch; // Momentum scrolling
-				}
 			}
 
 			// Always translate root level on phones

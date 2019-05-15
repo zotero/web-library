@@ -84,7 +84,7 @@ class Notes extends React.PureComponent {
 
 		return (
 			<React.Fragment>
-				<div className="scroll-container">
+				<div className="scroll-container-mouse">
 					<nav>
 						<ul className="note-list">
 							{

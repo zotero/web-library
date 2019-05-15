@@ -21,7 +21,7 @@ class InfoTabPane extends React.PureComponent {
 			}) }>
 				{
 					isLoadingMeta ? <Spinner /> : (
-						<div className="scroll-container">
+						<div className="scroll-container-mouse">
 							<div className="row">
 								<div className="col">
 									{ !isEditing && (
