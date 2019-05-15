@@ -95,6 +95,7 @@ class Notes extends React.PureComponent {
 											key={ note.key }
 											onClick={ ev => this.handleEditNote(note, ev) }
 										>
+											<Icon type={ '28/note'} width="28" height="28" className="hidden-mouse" />
 											<div className="multiline-truncate">
 												{ note.note && noteAsTitle(note.note) || <em>Untitled Note</em> }
 											</div>
