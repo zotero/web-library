@@ -12,7 +12,7 @@ import Navbar from './ui/navbar';
 import TagSelectorContainer from '../container/tag-selector';
 import TouchHeaderContainer from '../container/touch-header';
 import BibliographyModalContainer from '../container/bibliography-modal';
-import CollectionRenameModalContainer from '../container/collection-rename-modal';
+import RenameCollectionModalContainer from '../container/rename-collection-modal';
 import NewCollectionModalContainer from '../container/new-collection-modal';
 import AddItemsToCollectionsModalContainer from '../container/add-items-to-collections-modal';
 import NewItemModalContainer from '../container/new-item-modal';
@@ -127,11 +127,11 @@ class Library extends React.PureComponent {
 				</main>
 				<AddItemsToCollectionsModalContainer />
 				<BibliographyModalContainer />
-				<CollectionRenameModalContainer />
 				<ExportModalContainer />
 				<ItemsSortModalContainer />
 				<NewCollectionModalContainer />
 				<NewItemModalContainer />
+				<RenameCollectionModalContainer />
 				<StyleInstallerModalContainer />
 			</div>
 		);

@@ -10,7 +10,7 @@ import Icon from '../ui/icon';
 import { getUniqueId } from '../../utils';
 const defaultState = { name: '' };
 
-class CollectionRenameModal extends React.PureComponent {
+class RenameCollectionModal extends React.PureComponent {
 	state = defaultState;
 	inputId = getUniqueId();
 
@@ -120,4 +120,4 @@ class CollectionRenameModal extends React.PureComponent {
 	}
 }
 
-export default CollectionRenameModal;
+export default RenameCollectionModal;

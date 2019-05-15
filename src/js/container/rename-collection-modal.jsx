@@ -3,13 +3,13 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { toggleModal, updateCollection } from '../actions';
-import CollectionRenameModal from '../component/modal/collection-rename-modal';
+import RenameCollectionModal from '../component/modal/rename-collection-modal';
 import { COLLECTION_RENAME } from '../constants/modals';
 import { get } from '../utils';
 
-class CollectionRenameModalContainer extends React.PureComponent {
+class RenameCollectionModalContainer extends React.PureComponent {
 	render() {
-		return <CollectionRenameModal { ...this.props } />;
+		return <RenameCollectionModal { ...this.props } />;
 	}
 }
 
@@ -29,4 +29,4 @@ const mapStateToProps = state => {
 export default connect(
 	mapStateToProps,
 	{ updateCollection, toggleModal }
-)(CollectionRenameModalContainer);
+)(RenameCollectionModalContainer);
