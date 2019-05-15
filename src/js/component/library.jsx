@@ -117,7 +117,7 @@ class Library extends React.PureComponent {
 						})}>
 							{/* Tablet TouchHeader */}
 							<TouchHeaderContainer
-								className="hidden-xs-down hidden-md-up"
+								className="hidden-xs-down hidden-md-up darker"
 								variant={ TouchHeaderContainer.variants.SOURCE_AND_ITEM }
 							/>
 							<ItemsContainer key={ key } />
