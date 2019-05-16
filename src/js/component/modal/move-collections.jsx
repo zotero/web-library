@@ -115,12 +115,12 @@ class MoveCollectionsModal extends React.PureComponent {
 		const { device, isOpen, toggleModal, collections, libraries,
 			userLibraryKey, groups, librariesWithCollectionsFetching } = this.props;
 		const { libraryKey, isBusy, picked } = this.state;
-		const collectionsSource = collections[libraryKey];
+		const collectionsSource = libraryKey in collections ? collections[libraryKey] : [];
 
 		const touchHeaderPath = this.state.path.map(key => ({
 				key,
 				type: 'collection',
-				label: collectionsSource.find(c => c.key === key).name,
+				label: (collectionsSource.find(c => c.key === key) || {}).name,
 				path: { library: libraryKey, collection: key },
 		}));
 
