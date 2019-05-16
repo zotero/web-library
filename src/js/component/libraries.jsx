@@ -2,14 +2,14 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import Types from '../types';
+import Button from './ui/button';
+import CollectionTree from './libraries/collection-tree.jsx';
 import cx from 'classnames';
 import Icon from './ui/icon';
-import Button from './ui/button';
-import Spinner from './ui/spinner';
 import Node from './libraries/node';
-import CollectionTree from './libraries/collection-tree.jsx';
-import { pick } from '../common/immutable';
+import Spinner from './ui/spinner';
+import Types from '../types';
+import { stopPropagation } from '../utils';
 
 class Libraries extends React.PureComponent {
 	constructor(props) {
@@ -76,6 +76,12 @@ class Libraries extends React.PureComponent {
 		if(!isOpened) { onGroupOpen(groupKey); }
 	}
 
+	handlePickerPick = ev => {
+		const { onPickerPick } = this.props;
+		const libraryKey = ev.currentTarget.closest('[data-key]').dataset.key;
+		onPickerPick({ libraryKey }, ev);
+	}
+
 	renderCollections({ key, isMyLibrary, isReadOnly }) {
 		const { collections, libraryKey } = this.props;
 		const { virtual } = this.state;
@@ -97,8 +103,9 @@ class Libraries extends React.PureComponent {
 	}
 
 	renderLibrary = ({ key, name, isReadOnly, isMyLibrary }) => {
-		const { libraryKey, itemsSource, device, view,
-			librariesWithCollectionsFetching } = this.props;
+		const { device, isPickerMode, itemsSource, librariesWithCollectionsFetching,
+		libraryKey, pickerIncludeLibraries, picked, view,
+		} = this.props;
 		const { opened } = this.state;
 		const shouldBeTabbableOnTouch = view === 'libraries';
 		const shouldBeTabbable = shouldBeTabbableOnTouch || !device.isTouchOrSmall;
@@ -122,11 +129,20 @@ class Libraries extends React.PureComponent {
 				onKeyPress={ this.handleKeyPress.bind(this, { library: key, view: 'library'}) }
 				subtree={ isFetching ? null : this.renderCollections({ key, isMyLibrary, isReadOnly }) }
 				key={ key }
+				data-key={ key }
 				dndTarget={ isReadOnly ? { } : { 'targetType': 'library', libraryKey: key } }
 			>
 				<Icon type="28/library" className="touch" width="28" height="28" />
 				<Icon type="16/library" className="mouse" width="16" height="16" />
 				<div className="truncate">{ name }</div>
+				{ isPickerMode && pickerIncludeLibraries && !isFetching && (
+					<input
+						type="checkbox"
+						checked={ picked.some(({ collectionKey: c, libraryKey: l }) => l === key && !c) }
+						onChange={ this.handlePickerPick }
+						onClick={ stopPropagation }
+					/>
+				)}
 				{ isFetching && <Spinner className="small mouse" /> }
 				{
 					!isFetching && !isReadOnly && (
@@ -195,15 +211,18 @@ class Libraries extends React.PureComponent {
 }
 
 Libraries.propTypes = {
+	device: PropTypes.object,
 	isFetching: PropTypes.bool,
+	itemsSource: PropTypes.string,
+	librariesWithCollectionsFetching: PropTypes.arrayOf(PropTypes.string),
 	libraryKey: PropTypes.string,
+	onPickerPick: PropTypes.func,
 	onSelect: PropTypes.func,
 	path: PropTypes.array,
+	picked: PropTypes.array,
+	pickerIncludeLibraries: PropTypes.bool,
 	updating: PropTypes.array,
-	itemsSource: PropTypes.string,
-	device: PropTypes.object,
 	view: PropTypes.string,
-	librariesWithCollectionsFetching: PropTypes.arrayOf(PropTypes.string),
 	libraries: PropTypes.arrayOf(
 		PropTypes.shape({
 			key:  PropTypes.string.isRequired,

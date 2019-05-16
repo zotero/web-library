@@ -220,6 +220,8 @@ const enumerateObjects = (objects, key = 'id', start = 0) => {
 
 const noop = () => {};
 
+const stopPropagation = ev => ev.stopPropagation();
+
 // @TODO: columns util, move elsewhere?
 const resizeVisibleColumns = (columns, fractionBias, invert = false) => {
 	const visibleColumns = columns.filter(c => c.isVisible);
@@ -287,5 +289,6 @@ export {
 	sortByKey,
 	sortItemsByKey,
 	splice,
+	stopPropagation,
 	transform,
 };

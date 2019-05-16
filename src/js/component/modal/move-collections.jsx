@@ -54,13 +54,13 @@ class MoveCollectionsModal extends React.PureComponent {
 		const { picked } = this.state;
 
 
-		if(picked && 'collectionKey' in picked) {
+		if(picked && 'libraryKey' in picked) {
 			if(picked.libraryKey !== libraryKey) {
 				//@TODO: add support for copying collections across libraries
 				return;
 			}
-			this.setState({ isBusy: true })
-			const patch = { parentCollection: picked.collectionKey };
+			this.setState({ isBusy: true });
+			const patch = { parentCollection: picked.collectionKey || false };
 			await updateCollection(collectionKey, patch, libraryKey);
 			this.setState({ isBusy: false });
 			toggleModal(null, false);
@@ -161,19 +161,20 @@ class MoveCollectionsModal extends React.PureComponent {
 									onNavigation={ (...args) => this.handleNavigation(...args) }
 								/>
 								<Libraries
+									collections={ collections }
+									device={ device }
+									groups={ groups }
+									isPickerMode={ true }
 									libraries={ libraries }
 									librariesWithCollectionsFetching={ librariesWithCollectionsFetching }
-									picked={ picked === null ? [] : [ picked ] }
-									isPickerMode={ true }
-									onPickerPick={ (...args) => this.handlePick(...args) }
-									view={ this.state.view }
-									groups={ groups }
-									userLibraryKey={ userLibraryKey }
 									libraryKey={ this.state.libraryKey }
-									device={ device }
-									collections={ collections }
-									path={ this.state.path }
+									onPickerPick={ (...args) => this.handlePick(...args) }
 									onSelect={ this.handleCollectionSelect }
+									path={ this.state.path }
+									picked={ picked === null ? [] : [ picked ] }
+									pickerIncludeLibraries={ true }
+									userLibraryKey={ userLibraryKey }
+									view={ this.state.view }
 								/>
 								</React.Fragment>
 							)
