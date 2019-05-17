@@ -102,7 +102,6 @@ class ItemBox extends React.PureComponent {
 	render() {
 		return (
 			<ol className={ cx('metadata-list', {
-				editing: this.props.isEditing ,
 				'dnd-in-progress': this.state.isDragging
 			}) }>
 				{ this.props.fields.map(this.renderField.bind(this)) }
@@ -119,7 +118,6 @@ ItemBox.defaultProps = {
 ItemBox.propTypes = {
 	creatorTypes: PropTypes.array,
 	fields: PropTypes.array,
-	isEditing: PropTypes.bool, // relevant on small screens only
 	isForm: PropTypes.bool,
 	isLoading: PropTypes.bool,
 	onSave: PropTypes.func

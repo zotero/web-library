@@ -1,19 +1,21 @@
 /* eslint-disable react/no-deprecated */
 'use strict';
 
-import React from 'react';
-import Panel from '../../ui/panel';
 import cx from 'classnames';
-import { Tab, Tabs } from '../../ui/tabs';
+import Panel from '../../ui/panel';
+import PropTypes from 'prop-types';
+import React from 'react';
+
+import AttachmentsTabPane from './tab-panes/attachments';
+import EditToggleButton from '../../edit-toggle-button';
 import InfoTabPane from './tab-panes/info';
 import NotesTabPane from './tab-panes/notes';
-import TagsTabPane from './tab-panes/tags';
-import AttachmentsTabPane from './tab-panes/attachments';
 import RelatedTabPane from './tab-panes/related';
-import StandaloneNoteTabPane from './tab-panes/standalone-note';
-import EditToggleButton from '../../edit-toggle-button';
-import StandaloneAttachmentTabPane from './tab-panes/standalone-attachment';
 import Spinner from '../../ui/spinner';
+import StandaloneAttachmentTabPane from './tab-panes/standalone-attachment';
+import StandaloneNoteTabPane from './tab-panes/standalone-note';
+import TagsTabPane from './tab-panes/tags';
+import { Tab, Tabs } from '../../ui/tabs';
 
 class ItemDetailsTabs extends React.PureComponent {
 	constructor(props) {
@@ -60,19 +62,21 @@ class ItemDetailsTabs extends React.PureComponent {
 	}
 
 	render() {
-		const { device, isLoadingMeta, isLoadingChildItems, isLoadingRelated,
-			isReadOnly } = this.props;
+		const { device, isLoadingMeta, isEditing, isLoadingChildItems,
+			isLoadingRelated, isReadOnly, title, item } = this.props;
 		const isLoading = isLoadingMeta || isLoadingChildItems || isLoadingRelated;
 
 		return (
-			<Panel bodyClassName={ cx({ 'loading': isLoading && !device.shouldUseTabs }) }>
+			<Panel
+				className={ cx({ 'editing': isEditing })}
+				bodyClassName={ cx({ 'loading': isLoading && !device.shouldUseTabs }) }>
 				<header>
 					<h4 className="offscreen">
-						{ this.props.title }
+						{ title }
 					</h4>
 					<Tabs compact>
 						{
-							this.props.item.itemType === 'note' && (
+							item.itemType === 'note' && (
 								<Tab
 									isActive={ this.state.tab === 'standalone-note' }
 									onActivate={ () => this.setState({ tab: 'standalone-note' }) }
@@ -82,7 +86,7 @@ class ItemDetailsTabs extends React.PureComponent {
 							)
 						}
 						{
-							this.props.item.itemType === 'attachment' && (
+							item.itemType === 'attachment' && (
 								<Tab
 									isActive={ this.state.tab === 'standalone-attachment' }
 									onActivate={ () => this.setState({ tab: 'standalone-attachment' }) }
@@ -92,7 +96,7 @@ class ItemDetailsTabs extends React.PureComponent {
 							)
 						}
 						{
-							!['attachment', 'note'].includes(this.props.item.itemType) && (
+							!['attachment', 'note'].includes(item.itemType) && (
 								<React.Fragment>
 									<Tab
 										isActive={ this.state.tab === 'info' }
@@ -117,7 +121,7 @@ class ItemDetailsTabs extends React.PureComponent {
 							Tag
 						</Tab>
 						{
-							!['attachment', 'note'].includes(this.props.item.itemType) && (
+							!['attachment', 'note'].includes(item.itemType) && (
 								<Tab
 								isActive={ this.state.tab === 'attachments' }
 								onActivate={ () => this.setState({ tab: 'attachments' }) }
@@ -148,7 +152,7 @@ class ItemDetailsTabs extends React.PureComponent {
 					isLoading && !device.shouldUseTabs ? <Spinner className="large" /> : (
 						<React.Fragment>
 							{
-								!['attachment', 'note'].includes(this.props.item.itemType) && (
+								!['attachment', 'note'].includes(item.itemType) && (
 									<React.Fragment>
 										<InfoTabPane isActive={ this.state.tab === 'info' } { ...this.props } />
 										<NotesTabPane isActive={ this.state.tab === 'notes' } { ...this.props } />
@@ -157,7 +161,7 @@ class ItemDetailsTabs extends React.PureComponent {
 							}
 
 							{
-								this.props.item.itemType === 'note' && (
+								item.itemType === 'note' && (
 									<StandaloneNoteTabPane
 										isActive={ this.state.tab === 'standalone-note' }
 										{ ...this.props }
@@ -166,7 +170,7 @@ class ItemDetailsTabs extends React.PureComponent {
 							}
 
 							{
-								this.props.item.itemType === 'attachment' && (
+								item.itemType === 'attachment' && (
 									<StandaloneAttachmentTabPane
 										isActive={ this.state.tab === 'standalone-attachment' }
 										{ ...this.props }
@@ -176,7 +180,7 @@ class ItemDetailsTabs extends React.PureComponent {
 
 							<TagsTabPane isActive={ this.state.tab === 'tags' } { ...this.props } />
 							{
-								!['attachment', 'note'].includes(this.props.item.itemType) && (
+								!['attachment', 'note'].includes(item.itemType) && (
 									<AttachmentsTabPane isActive={ this.state.tab === 'attachments' } { ...this.props } />
 								)
 							}
@@ -187,6 +191,17 @@ class ItemDetailsTabs extends React.PureComponent {
 
 			</Panel>
 		);
+	}
+
+	static propTypes = {
+		device: PropTypes.object,
+		isEditing: PropTypes.bool,
+		isLoadingChildItems: PropTypes.bool,
+		isLoadingMeta: PropTypes.bool,
+		isLoadingRelated: PropTypes.bool,
+		isReadOnly: PropTypes.bool,
+		item: PropTypes.object,
+		title: PropTypes.string,
 	}
 
 	static defaultProps = {

@@ -328,11 +328,11 @@ const mapStateToProps = state => {
 	return {
 		childItems,
 		collection: get(state, 'libraries', libraryKey, 'collections', collectionKey),
+		isLibraryReadOnly,
 		isLoadingChildItems,
 		isLoadingMeta,
 		isLoadingRelatedItems,
 		isProcessingTags,
-		isLibraryReadOnly,
 		isSelectMode,
 		item,
 		itemsCount,
