@@ -1,25 +1,20 @@
 /* eslint-disable react/no-deprecated */
 'use strict';
 
-import React from 'react';
 import PropTypes from 'prop-types';
-import cx from 'classnames';
-import Dropdown from 'reactstrap/lib/Dropdown';
-import DropdownToggle from 'reactstrap/lib/DropdownToggle';
-import DropdownMenu from 'reactstrap/lib/DropdownMenu';
-import DropdownItem from 'reactstrap/lib/DropdownItem';
-import { noteAsTitle } from '../common/format';
+import React from 'react';
+
+import Button from './ui/button';
+import Icon from './ui/icon';
+import Note from './note';
+import RichEditor from './rich-editor';
 import { get } from '../utils';
 import { Toolbar, ToolGroup } from './ui/toolbars';
-import Icon from './ui/icon';
-import Button from './ui/button';
-import RichEditor from './rich-editor';
 
 class Notes extends React.PureComponent {
 	constructor(props) {
 		super(props);
 		this.state = {
-			isOpen: false,
 			selected: null
 		};
 	}
@@ -39,11 +34,20 @@ class Notes extends React.PureComponent {
 		}
 	}
 
-	handleEditNote(note) {
+	handleSelect = note => {
 		const { isReadOnly } = this.props;
+
 		if(!isReadOnly) {
 			this.setState({ selected: note.key });
 		}
+	}
+
+	handleDelete = note => {
+		this.props.onDeleteNote(note);
+	}
+
+	handleDuplicate = note => {
+		this.props.onAddNote(note.note);
 	}
 
 	handleChangeNote(note) {
@@ -54,21 +58,6 @@ class Notes extends React.PureComponent {
 		this.props.onAddNote();
 	}
 
-	handleDelete() {
-		let note = this.props.notes.find(n => n.key == this.state.selected);
-		this.props.onDeleteNote(note);
-	}
-
-	handleDuplicate() {
-		let note = this.props.notes.find(n => n.key == this.state.selected);
-		this.props.onAddNote(note.note);
-	}
-
-	handleToggleDropdown() {
-		this.setState({
-			isOpen: !this.state.isOpen
-		});
-	}
 
 	renderRichEditor() {
 		return (
@@ -80,7 +69,8 @@ class Notes extends React.PureComponent {
 	}
 
 	render() {
-		const { isReadOnly } = this.props;
+		const { isReadOnly, notes } = this.props;
+		const { selected } = this.state;
 
 		return (
 			<React.Fragment>
@@ -88,40 +78,17 @@ class Notes extends React.PureComponent {
 					<nav>
 						<ul className="note-list">
 							{
-								this.props.notes.map(note => {
+								notes.map(note => {
 									return (
-										<li
-											className={ cx('note', {'selected': this.state.selected == note.key }) }
+										<Note
+											isReadOnly={ isReadOnly }
+											isSelected={ selected === note.key }
 											key={ note.key }
-											onClick={ ev => this.handleEditNote(note, ev) }
-										>
-											<Icon type={ '28/note'} width="28" height="28" className="hidden-mouse" />
-											<div className="multiline-truncate">
-												{ note.note && noteAsTitle(note.note) || <em>Untitled Note</em> }
-											</div>
-											{ !isReadOnly && (
-												<Dropdown
-													isOpen={ this.state.isOpen }
-													toggle={ this.handleToggleDropdown.bind(this) }
-													className="dropdown-wrapper"
-												>
-													<DropdownToggle
-														color={ null }
-														className="btn-icon dropdown-toggle"
-													>
-														<Icon type={ '16/options' } width="16" height="16" />
-													</DropdownToggle>
-													<DropdownMenu>
-														<DropdownItem onClick={ this.handleDuplicate.bind(this) }>
-															Duplicate
-														</DropdownItem>
-														<DropdownItem onClick={ this.handleDelete.bind(this) }>
-															Delete
-														</DropdownItem>
-													</DropdownMenu>
-												</Dropdown>
-											)}
-										</li>
+											note={ note }
+											onDelete={ this.handleDelete }
+											onDuplicate={ this.handleDuplicate }
+											onSelect={ this.handleSelect }
+										/>
 									);
 								})
 							}
@@ -148,14 +115,18 @@ class Notes extends React.PureComponent {
 			</React.Fragment>
 		);
 	}
+
+	static propTypes = {
+		isReadOnly: PropTypes.bool,
+		notes: PropTypes.array,
+		onAddNote: PropTypes.func,
+		onChange: PropTypes.func,
+		onDeleteNote: PropTypes.func,
+	}
+
+	static defaultProps = {
+		notes: []
+	};
 }
-
-Notes.propTypes = {
-	notes: PropTypes.array
-};
-
-Notes.defaultProps = {
-	notes: []
-};
 
 export default Notes;
