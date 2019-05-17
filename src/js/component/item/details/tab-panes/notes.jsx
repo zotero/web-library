@@ -24,7 +24,7 @@ class NotesTabPane extends React.PureComponent {
 
 	render() {
 		const { isLoadingChildItems, isReadOnly, isActive, item, childItems,
-			 onNoteChange, onAddNote, onDeleteNote } = this.props;
+			onNoteChange, onAddNote, onDeleteNote } = this.props;
 		return (
 			<div className={ cx({
 				'tab-pane': true,

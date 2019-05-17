@@ -200,11 +200,11 @@ class ItemDetailsContainer extends React.PureComponent {
 	}
 
 	render() {
-		const { isEditing, device, item, isLoadingMeta, isReadOnly, itemTypeFields,
+		const { isEditing, device, item, isLoadingMeta, isLibraryReadOnly, itemTypeFields,
 			itemTypes, pendingChanges } = this.props;
 		const isForm = !!(device.shouldUseEditMode && isEditing && item);
-		const isReadOnlyMode = isReadOnly || !!(device.shouldUseEditMode && !isEditing);
-		const extraProps = { isForm, isReadOnlyMode };
+		const isReadOnly = isLibraryReadOnly || !!(device.shouldUseEditMode && !isEditing);
+		const extraProps = { isForm, isReadOnly };
 
 		if(!isLoadingMeta) {
 			const titleField = item.itemType in baseMappings && baseMappings[item.itemType]['title'] || 'title';
@@ -224,7 +224,7 @@ class ItemDetailsContainer extends React.PureComponent {
 				options: f.field === 'itemType' ? itemTypes : null,
 				key: f.field,
 				label: f.localized,
-				isReadOnly: isReadOnlyMode ? true : noEditFields.includes(f),
+				isReadOnly: isReadOnly ? true : noEditFields.includes(f),
 				processing: pendingChanges.some(({ patch }) => f.field in patch),
 				display: getFieldDisplayValue(itemWithPendingChnages, f.field),
 				value: itemWithPendingChnages[f.field] || null
@@ -277,7 +277,7 @@ const mapStateToProps = state => {
 	const isLoadingChildItems = get(
 		state, ['libraries', libraryKey, 'itemsByParent', itemKey, 'isFetching'], false
 	);
-	const { isReadOnly } = (state.config.libraries.find(l => l.key === libraryKey) || {});
+	const { isLibraryReadOnly } = (state.config.libraries.find(l => l.key === libraryKey) || {});
 
 	const relatedItemsKeys = item ? mapRelationsToItemKeys(item.relations || {}, state.config.userId)
 		.filter(String) : [];
@@ -332,7 +332,7 @@ const mapStateToProps = state => {
 		isLoadingMeta,
 		isLoadingRelatedItems,
 		isProcessingTags,
-		isReadOnly,
+		isLibraryReadOnly,
 		isSelectMode,
 		item,
 		itemsCount,
