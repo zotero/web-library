@@ -262,7 +262,7 @@ class CreatorField extends React.PureComponent {
 			<Modal
 				isOpen={ isModalVisible }
 				contentLabel="Edit Creator"
-				className="modal-touch modal-centered"
+				className="modal-touch modal-centered modal-form"
 				overlayClassName={ "modal-slide" }
 				closeTimeoutMS={ 600 }
 				onRequestClose={ this.handleModalClose.bind(this) }
