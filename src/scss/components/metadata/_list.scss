@@ -11,7 +11,7 @@
 		margin-bottom: $space-lg - 8px;
 	}
 
-	&.editing {
+	.panel.editing & {
 		@include touch-or-bp-down(sm) {
 			margin-top: $form-group-margin-touch;
 			margin-bottom: $form-group-margin-touch;
@@ -21,12 +21,12 @@
 			margin-left: $metadata-list-margin-x-touch;
 			margin-right: $metadata-list-margin-x-touch;
 		}
+	}
 
-		@include variant(".modal .metadata-list") {
-			html:not(.specifity) & {
-				margin: ($form-group-margin-touch - $modal-inner-padding)
-					(-$modal-inner-padding);
-			}
+	@include variant(".modal .metadata-list.editing") {
+		html:not(.specifity) & {
+			margin: ($form-group-margin-touch - $modal-inner-padding)
+				(-$modal-inner-padding);
 		}
 	}
 
@@ -62,7 +62,7 @@
 
 		&.empty {
 			@include touch-or-bp-down(md) {
-				@include state(".metadata-list:not(.editing)") {
+				@include state(".panel:not(.editing) .metadata-list") {
 					display: none;
 				}
 			}
@@ -84,7 +84,7 @@
 		}
 
 		// Edit mode
-		@include state(".metadata-list.editing") {
+		@include state(".editing .metadata-list", ".metadata-list.editing") {
 			@include touch-or-bp-down(sm) {
 				display: flex;
 				align-items: flex-start;
@@ -200,7 +200,7 @@
 	}
 
 	.touch-separated {
-		@include state(".metadata-list.editing") {
+		@include state(".panel.editing .metadata-list", ".metadata-list.editing") {
 			@include touch-or-bp-down(sm) {
 				margin-bottom: $form-group-margin-touch;
 			}
@@ -278,7 +278,7 @@
 
 	.has-btn,
 	.has-btn-icon {
-		@include state(".metadata-list.editing") {
+		@include state(".panel.editing .metadata-list", ".metadata-list.editing") {
 			@include touch-or-bp-down(sm) {
 				padding-left: 0; // Keep vertical paddings
 				padding-right: 0;
@@ -313,7 +313,7 @@
 	}
 
 	.has-btn {
-		@include state(".metadata-list.editing") {
+		@include state(".panel.editing .metadata-list", ".metadata-list.editing") {
 			&::before {
 				@include touch-or-bp-down(sm) {
 					left: $default-padding-x-touch;
@@ -327,7 +327,7 @@
 	}
 
 	.has-btn-icon {
-		@include state(".metadata-list.editing") {
+		@include state(".panel.editing .metadata-list", ".metadata-list.editing") {
 			&::before {
 				@include touch-or-bp-down(sm) {
 					left: 2 * $default-padding-x-touch + $space-lg;
@@ -362,7 +362,7 @@
 		}
 
 		// Edit mode
-		@include state(".metadata-list.editing") {
+		@include state(".panel.editing .metadata-list", ".metadata-list.editing") {
 			@include touch-or-bp-down(sm) {
 				min-height: $line-height-large-touch;
 			}
@@ -386,7 +386,7 @@
 		}
 
 		// Edit mode
-		@include state(".metadata-list.editing") {
+		@include state(".panel.editing .metadata-list", ".metadata-list.editing") {
 			@include touch-or-bp-down(sm) {
 				justify-content: flex-start;
 				padding-right: 0;
@@ -413,7 +413,7 @@
 			white-space: inherit;
 		}
 
-		@include state(".metadata-list.editing") {
+		@include state(".panel.editing .metadata-list", ".metadata-list.editing") {
 			@include touch-or-bp-down(sm) {
 				flex: 1 1 auto;
 			}
@@ -452,7 +452,7 @@
 		}
 
 		// Edit mode
-		@include state(".metadata-list.editing") {
+		@include state(".panel.editing .metadata-list", ".metadata-list.editing") {
 			@include touch-or-bp-down(sm) {
 				padding-left: 0;
 			}
@@ -472,7 +472,7 @@
 	.title,
 	.extra {
 		// Edit mode
-		@include state(".metadata-list.editing") {
+		@include state(".panel.editing .metadata-list", ".metadata-list.editing") {
 			@include touch-or-bp-down(sm) {
 				flex-direction: column;
 				align-items: normal;
@@ -488,7 +488,7 @@
 		}
 
 		.key {
-			@include state(".metadata-list.editing") {
+			@include state(".panel.editing .metadata-list", ".metadata-list.editing") {
 				@include touch-or-bp-down(sm) {
 					flex: 1 1 auto;
 					padding-right: 0;
@@ -500,7 +500,7 @@
 			line-height: $line-height-base;
 
 			// Edit mode
-			@include state(".metadata-list.editing") {
+			@include state(".panel.editing .metadata-list", ".metadata-list.editing") {
 				@include touch-or-bp-down(sm) {
 					flex: 1 1 auto;
 				}
@@ -509,7 +509,7 @@
 
 		.value {
 			// Edit mode
-			@include state(".metadata-list.editing") {
+			@include state(".panel.editing .metadata-list", ".metadata-list.editing") {
 				@include touch-or-bp-down(sm) {
 					flex: 1 1 auto;
 					padding-left: 0;

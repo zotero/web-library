@@ -7,7 +7,7 @@
 		@include touch-or-bp-down(sm) {
 			display: none;
 
-			@include state(".metadata-list.editing") {
+			@include state(".panel.editing .metadata-list") {
 				display: flex;
 				margin-bottom: $form-group-margin-touch;
 				border-bottom-left-radius: $input-btn-border-radius;
@@ -16,7 +16,7 @@
 		}
 
 		@include bp-down-normalized(xs) {
-			@include state(".metadata-list.editing") {
+			@include state(".panel.editing .metadata-list") {
 				min-height: $line-height-large-touch + 2 * $border-width;
 				padding-bottom: $border-width;
 

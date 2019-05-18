@@ -6,7 +6,7 @@
 .creators-entry {
 	position: relative;
 
-	@include state(".metadata-list.editing .creators-entry") {
+	@include state(".panel.editing .creators-entry") {
 		@include touch-or-bp-down(sm) {
 			$handle-width: 2 * $default-padding-x-touch + $space-lg + $input-border-width;
 
