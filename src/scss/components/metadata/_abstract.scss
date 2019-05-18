@@ -34,6 +34,7 @@
 			background-color: $input-bg;
 			border-radius: $input-border-radius;
 			border-top: 0;
+			padding: 0 $input-btn-padding-x-touch;
 		}
 
 		@include touch-and-bp-only(md) {
