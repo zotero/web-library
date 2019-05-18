@@ -25,7 +25,7 @@
 			min-height: $lines * $line-height-computed-mobile;
 		}
 
-  	@include touch-and-bp-up(md) {
+  	@include mouse-and-bp-up(md) {
 			min-height: $lines * $line-height-computed;
 		}
   }
