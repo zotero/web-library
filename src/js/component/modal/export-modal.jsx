@@ -67,7 +67,7 @@ class ExportModal extends React.PureComponent {
 		const className = cx({
 			'loading': isBusy,
 			'export-modal': true,
-			'modal-touch modal-centered': device.isTouchOrSmall,
+			'modal-touch modal-centered modal-form': device.isTouchOrSmall,
 		});
 
 		return (
