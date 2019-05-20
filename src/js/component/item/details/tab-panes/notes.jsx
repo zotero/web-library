@@ -4,6 +4,7 @@ import React from 'react';
 import cx from 'classnames';
 import Notes from '../../../notes';
 import Spinner from '../../../ui/spinner';
+import { pick } from '../../../../common/immutable';
 const PAGE_SIZE = 100;
 
 class NotesTabPane extends React.PureComponent {
@@ -23,7 +24,7 @@ class NotesTabPane extends React.PureComponent {
 	}
 
 	render() {
-		const { isLoadingChildItems, isReadOnly, isActive, item, childItems,
+		const { isLoadingChildItems, isReadOnly, isActive, childItems,
 			onNoteChange, onAddNote, onDeleteNote } = this.props;
 		return (
 			<div className={ cx({
@@ -37,10 +38,8 @@ class NotesTabPane extends React.PureComponent {
 						<React.Fragment>
 							<h5 className="h2 tab-pane-heading hidden-mouse">Notes</h5>
 							<Notes
-								isReadOnly={ isReadOnly }
-								item={ item }
+								{ ...pick(this.props, ['item', 'isReadOnly', 'updateItem'] ) }
 								notes={ childItems.filter(i => i.itemType === 'note') }
-								onChange={ onNoteChange }
 								onAddNote={ onAddNote }
 								onDeleteNote={ onDeleteNote }
 							/>

@@ -57,6 +57,7 @@
     ]
   },
   "dependencies": {
+    "@tinymce/tinymce-react": "^3.1.1",
     "babel-regenerator-runtime": "^6.5.0",
     "bootstrap-sass": "^3.4.1",
     "classnames": "^2.2.6",
@@ -84,7 +85,6 @@
     "react-router": "^5.0.0",
     "react-router-dom": "^5.0.0",
     "react-select": "<2.0.0",
-    "react-tinymce": "^0.7.0",
     "react-transition-group": "^4.0.0",
     "react-virtualized": "^9.21.0",
     "reactstrap": "^8.0.0",

@@ -35,11 +35,7 @@ class Notes extends React.PureComponent {
 	}
 
 	handleSelect = note => {
-		const { isReadOnly } = this.props;
-
-		if(!isReadOnly) {
-			this.setState({ selected: note.key });
-		}
+		this.setState({ selected: note.key });
 	}
 
 	handleDelete = note => {
@@ -50,20 +46,23 @@ class Notes extends React.PureComponent {
 		this.props.onAddNote(note.note);
 	}
 
-	handleChangeNote(note) {
-		this.props.onChange(this.state.selected, note);
+	handleChangeNote = newContent => {
+		const { updateItem } = this.props;
+		updateItem(this.state.selected, { note: newContent });
 	}
 
 	handleAddNote() {
 		this.props.onAddNote();
 	}
 
-
 	renderRichEditor() {
+		const { isReadOnly } = this.props;
 		return (
 			<RichEditor
+				key={ this.state.selected }
+				isReadOnly={ isReadOnly }
 				value={ this.props.notes.find(n => n.key == this.state.selected).note }
-				onChange={ this.handleChangeNote.bind(this) }
+				onChange={ this.handleChangeNote }
 			/>
 		);
 	}
@@ -122,6 +121,7 @@ class Notes extends React.PureComponent {
 		onAddNote: PropTypes.func,
 		onChange: PropTypes.func,
 		onDeleteNote: PropTypes.func,
+		updateItem: PropTypes.func,
 	}
 
 	static defaultProps = {

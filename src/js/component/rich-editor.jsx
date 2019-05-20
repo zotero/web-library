@@ -7,7 +7,7 @@ import cx from 'classnames';
 import tinymce from 'tinymce';
 import 'tinymce/themes/modern';
 
-import TinyMCE from 'react-tinymce';
+import { Editor } from '@tinymce/tinymce-react';
 import PropTypes from 'prop-types';
 import { Toolbar, ToolGroup } from './ui/toolbars';
 import Button from './ui/button';
@@ -15,40 +15,28 @@ import Button from './ui/button';
 window.tinymce = tinymce;
 
 class RichEditor extends React.PureComponent {
-	componentWillReceiveProps(props) {
-		if(this.editor && (this.props.value !== props.value)) {
-			this.editor.setContent(props.value);
+	state = { content: this.props.value };
 
-			// tinymce insists on focusing when switching readonly off
-			// it's is hardcoded with no opt out.
-			// below is a hack to prevent it from happening
-			let focus = this.editor.focus;
-			this.editor.focus = () => {};
-			this.editor.setMode('design');
-			this.editor.focus = focus;
-		}
-	}
 
-	handleEditorInit(ev, editor) {
+	handleEditorInit = (ev, editor) => {
 		this.editor = editor;
 	}
 
-	handleEditorInteraction() {
-		this.forceUpdate();
-	}
+	handleEditorChange = newContent => {
+		const { onChange } = this.props;
+		const { content } = this.state;
+		if(newContent === content) {
+			return;
+		}
+		this.setState({ content: newContent });
 
-	handleEditorFocus() {
 		clearTimeout(this.timeout);
-	}
-
-	handleEditorUpdate() {
 		this.timeout = setTimeout(() => {
-			this.editor.setMode('readonly');
-			this.props.onChange(this.editor.getContent());
-		}, 50);
+			onChange(newContent);
+		}, 500);
 	}
 
-	buttonHandler(command) {
+	handleButtonClick(command) {
 		this.editor ? this.editor.editorCommands.execCommand(command) : null;
 	}
 
@@ -59,21 +47,18 @@ class RichEditor extends React.PureComponent {
 	renderEditor() {
 		if(process.env.NODE_ENV !== 'test') {
 			return (
-				<TinyMCE
-					content={ this.props.value }
-					config={{
+				<Editor
+					disabled={ this.props.isReadOnly }
+					value={ this.state.content }
+					init={{
 						skin_url: '/static/other/lightgray',
 						branding: false,
 						toolbar: false,
 						menubar: false,
-						statusbar: false
+						statusbar: false,
 					}}
-					onInit={ this.handleEditorInit.bind(this) }
-					onChange={ this.handleEditorInteraction.bind(this) }
-					onKeyup={ this.handleEditorInteraction.bind(this) }
-					onMouseup={ this.handleEditorInteraction.bind(this) }
-					onFocus={ this.handleEditorFocus.bind(this) }
-					onBlur={ this.handleEditorUpdate.bind(this) }
+					onEditorChange={ this.handleEditorChange }
+					onInit={ this.handleEditorInit }
 				/>
 			);
 		} else return null;
@@ -90,7 +75,7 @@ class RichEditor extends React.PureComponent {
 								className={ cx({
 									active: this.isEditorCommandState('BOLD')
 								})}
-								onClick={ this.buttonHandler.bind(this, 'BOLD') }>
+								onClick={ this.handleButtonClick.bind(this, 'BOLD') }>
 								B
 							</Button>
 							<Button
@@ -98,7 +83,7 @@ class RichEditor extends React.PureComponent {
 								className={ cx({
 									active: this.isEditorCommandState('ITALIC')
 								})}
-								onClick={ this.buttonHandler.bind(this, 'ITALIC') }>
+								onClick={ this.handleButtonClick.bind(this, 'ITALIC') }>
 								I
 							</Button>
 							<Button
@@ -106,7 +91,7 @@ class RichEditor extends React.PureComponent {
 								className={ cx({
 									active: this.isEditorCommandState('UNDERLINE')
 								})}
-								onClick={ this.buttonHandler.bind(this, 'UNDERLINE') }>
+								onClick={ this.handleButtonClick.bind(this, 'UNDERLINE') }>
 								U
 							</Button>
 						</ToolGroup>
@@ -121,8 +106,9 @@ class RichEditor extends React.PureComponent {
 }
 
 RichEditor.propTypes = {
+	isReadOnly: PropTypes.bool,
+	onChange: PropTypes.func.isRequired,
 	value: PropTypes.string,
-	onChange: PropTypes.func.isRequired
 };
 
 RichEditor.defaultProps = {};
