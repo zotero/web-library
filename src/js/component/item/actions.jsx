@@ -196,7 +196,7 @@ class ItemsActions extends React.PureComponent {
 			>
 				<DropdownToggle
 					color={ null }
-					className="btn-link dropdown-toggle"
+					className="btn-link btn-icon dropdown-toggle"
 				>
 					<Icon
 						type="24/options"

@@ -7,6 +7,7 @@
 	cursor: pointer;
 	border: $border-width solid transparent;
 	color: $text-color;
+	background-color: transparent;
 	transition:
 		color $input-btn-transition,
 		background-color $input-btn-transition,
@@ -47,6 +48,53 @@
 		position: static;
 		vertical-align: top;
 		margin: 0;
+	}
+}
+
+// Icon button
+
+.btn-icon {
+	line-height: 1;
+
+	@include touch-or-bp-down(sm) {
+		padding: $input-btn-padding-y-touch $input-btn-padding-x-touch;
+	}
+
+	@include touch-keyboard-or-bp-down(sm) {
+		&:focus {
+			outline: $outline-width solid $focus-color;
+			outline-offset: -$outline-width;
+		}
+	}
+
+	@include mouse-and-bp-up(md) {
+		padding: $space-min;
+
+		&.active {
+			background-color: $btn-icon-active-bg;
+		}
+	}
+
+	@include mouse-keyboard-and-bp-up(md) {
+		&:focus {
+			border-color: $btn-secondary-color;
+			box-shadow: 0 0 0 $input-btn-focus-width $btn-secondary-color;
+		}
+	}
+
+	.icon {
+		position: static;
+		margin: 0;
+
+		@include mouse-and-bp-up(md) {
+			@include state(".btn-icon:active") {
+				color: $icon-active-color;
+			}
+
+			@include state(".btn-icon.active") {
+				color: $btn-icon-active-color;
+			}
+		}
 	}
 }
 
@@ -108,52 +156,6 @@
 		padding: 0;
 		border-radius: 50%;
 		line-height: 1; // Center icon vertically
-	}
-}
-
-
-// Icon button
-
-.btn-icon {
-	background: $btn-icon-bg;
-	line-height: 1;
-
-	@include touch-or-bp-down(sm) {
-		padding: $input-btn-padding-y-touch $input-btn-padding-x-touch;
-	}
-
-	@include touch-keyboard-or-bp-down(sm) {
-		&:focus {
-			outline: $outline-width solid $focus-color;
-			outline-offset: -$outline-width;
-		}
-	}
-
-	@include mouse-and-bp-up(md) {
-		padding: $space-min;
-
-		&.active {
-			background-color: $btn-icon-active-bg;
-		}
-	}
-
-	@include mouse-keyboard-and-bp-up(md) {
-		&:focus {
-			border-color: $btn-secondary-color;
-			box-shadow: 0 0 0 $input-btn-focus-width $btn-secondary-color;
-		}
-	}
-
-	.icon {
-		@include mouse-and-bp-up(md) {
-			@include state(".btn-icon:active") {
-				color: $icon-active-color;
-			}
-
-			@include state(".btn-icon.active") {
-				color: $btn-icon-active-color;
-			}
-		}
 	}
 }
 
