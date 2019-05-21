@@ -28,6 +28,8 @@ class Note extends React.PureComponent {
 	}
 	render() {
 		const { isSelected, isReadOnly, note } = this.props;
+		const { isOpen } = this.state;
+
 		return (
 			<li
 				className={ cx('note', { 'selected': isSelected }) }
@@ -39,7 +41,7 @@ class Note extends React.PureComponent {
 				</div>
 				{ !isReadOnly && (
 					<Dropdown
-						isOpen={ this.state.isOpen }
+						isOpen={ isOpen }
 						toggle={ this.handleToggleDropdown }
 						className="dropdown-wrapper"
 					>
@@ -47,7 +49,14 @@ class Note extends React.PureComponent {
 							color={ null }
 							className="btn-icon dropdown-toggle"
 						>
-							<Icon type={ '16/options' } width="16" height="16" />
+							<Icon
+								type={ '24/options' }
+								symbol={ isOpen ? 'options-block' : 'options' }
+								width="24"
+								height="24"
+								className="touch"
+							/>
+							<Icon type={ '16/options' } width="16" height="16" className="mouse" />
 						</DropdownToggle>
 						<DropdownMenu>
 							<DropdownItem onClick={ this.handleDuplicate }>
