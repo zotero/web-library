@@ -27,9 +27,8 @@ class Note extends React.PureComponent {
 		onDuplicate(note);
 	}
 	render() {
-		const { isSelected, isReadOnly, note } = this.props;
+		const { device, isSelected, isReadOnly, note } = this.props;
 		const { isOpen } = this.state;
-
 		return (
 			<li
 				className={ cx('note', { 'selected': isSelected }) }
@@ -47,7 +46,10 @@ class Note extends React.PureComponent {
 					>
 						<DropdownToggle
 							color={ null }
-							className="btn-icon dropdown-toggle"
+							className={ cx('dropdown-toggle', {
+								'btn-link': device.isTouchOrSmall,
+								'btn-icon': !device.isTouchOrSmall,
+							})}
 						>
 							<Icon
 								type={ '24/options' }
@@ -74,6 +76,7 @@ class Note extends React.PureComponent {
 	}
 
 	static propTypes = {
+		device: PropTypes.object,
 		isReadOnly: PropTypes.bool,
 		isSelected: PropTypes.bool,
 		note: PropTypes.object,

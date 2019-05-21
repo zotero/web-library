@@ -9,6 +9,7 @@ import Icon from './ui/icon';
 import Note from './note';
 import RichEditor from './rich-editor';
 import { get } from '../utils';
+import { pick } from '../common/immutable';
 import { Toolbar, ToolGroup } from './ui/toolbars';
 
 class Notes extends React.PureComponent {
@@ -80,7 +81,9 @@ class Notes extends React.PureComponent {
 								notes.map(note => {
 									return (
 										<Note
-											isReadOnly={ isReadOnly }
+											{ ...pick(
+												this.props, ['device', 'isReadOnly']
+											)}
 											isSelected={ selected === note.key }
 											key={ note.key }
 											note={ note }

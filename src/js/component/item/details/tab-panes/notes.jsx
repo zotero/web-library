@@ -38,7 +38,7 @@ class NotesTabPane extends React.PureComponent {
 						<React.Fragment>
 							<h5 className="h2 tab-pane-heading hidden-mouse">Notes</h5>
 							<Notes
-								{ ...pick(this.props, ['item', 'isReadOnly', 'updateItem'] ) }
+								{ ...pick(this.props, ['device', 'item', 'isReadOnly', 'updateItem'] ) }
 								notes={ childItems.filter(i => i.itemType === 'note') }
 								onAddNote={ onAddNote }
 								onDeleteNote={ onDeleteNote }
