@@ -51,7 +51,7 @@ class LibrariesContainer extends React.PureComponent {
 	}
 
 	async handleCollectionAdd(libraryKey, parentCollection, name) {
-		return await this.props.dispatch(createCollection({
+		await this.props.dispatch(createCollection({
 			name, parentCollection
 		}, libraryKey));
 	}

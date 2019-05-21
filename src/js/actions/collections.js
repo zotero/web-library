@@ -6,9 +6,9 @@ import {
     REQUEST_COLLECTIONS_IN_LIBRARY,
     RECEIVE_COLLECTIONS_IN_LIBRARY,
     ERROR_COLLECTIONS_IN_LIBRARY,
-    REQUEST_CREATE_COLLECTION,
-    RECEIVE_CREATE_COLLECTION,
-    ERROR_CREATE_COLLECTION,
+    REQUEST_CREATE_COLLECTIONS,
+    RECEIVE_CREATE_COLLECTIONS,
+    ERROR_CREATE_COLLECTIONS,
     PRE_UPDATE_COLLECTION,
     REQUEST_UPDATE_COLLECTION,
     RECEIVE_UPDATE_COLLECTION,
@@ -62,44 +62,51 @@ const fetchCollections = (libraryKey, { start = 0, limit = 50, sort = 'dateModif
 	};
 };
 
-
 const createCollection = (properties, libraryKey) => {
+	return async dispatch => {
+		const collections = await dispatch(
+			createCollections([properties], libraryKey)
+		);
+		return collections[0];
+	}
+}
+
+const createCollections = (localCollections, libraryKey) => {
 	return async (dispatch, getState) => {
 		const state = getState();
 		const config = state.config;
+
 		dispatch({
-			type: REQUEST_CREATE_COLLECTION,
+			type: REQUEST_CREATE_COLLECTIONS,
 			libraryKey,
-			properties
+			collections: localCollections
 		});
 
 		try {
-			let response = await api(config.apiKey, config.apiConfig)
+			const response = await api(config.apiKey, config.apiConfig)
 				.library(libraryKey)
 				.collections()
-				.post([properties]);
+				.post(localCollections);
 
 			if(!response.isSuccess()) {
-				throw response.getErrors()[0];
+				throw response.getErrors();
 			}
 
-			const collection = {
-				...response.getEntityByIndex(0)
-			};
+			const remoteCollections = response.getData();
 
 			dispatch({
-				type: RECEIVE_CREATE_COLLECTION,
+				type: RECEIVE_CREATE_COLLECTIONS,
 				libraryKey,
-				collection,
+				collections: remoteCollections,
 				response
 			});
-			return response.getEntityByIndex(0);
+			return remoteCollections;
 		} catch(error) {
 			dispatch({
-					type: ERROR_CREATE_COLLECTION,
+					type: ERROR_CREATE_COLLECTIONS,
 					error,
 					libraryKey,
-					properties,
+					collections: localCollections,
 				});
 			throw error;
 		}
@@ -219,6 +226,7 @@ const deleteCollection = (collection, libraryKey) => {
 export {
 	fetchCollections,
 	createCollection,
+	createCollections,
 	updateCollection,
 	queueUpdateCollection,
 	deleteCollection,

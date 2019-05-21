@@ -2,16 +2,16 @@
 
 import {
     RECEIVE_COLLECTIONS_IN_LIBRARY,
-    RECEIVE_CREATE_COLLECTION,
+    RECEIVE_CREATE_COLLECTIONS,
     RECEIVE_DELETE_COLLECTION,
 } from '../constants/actions';
 
-const itemCountTopByLibrary = (state = {}, action) => {
+const collectionCountTopByLibrary = (state = {}, action) => {
 	switch(action.type) {
-		case RECEIVE_CREATE_COLLECTION:
+		case RECEIVE_CREATE_COLLECTIONS:
 			return {
 				...state,
-				[action.libraryKey]: state[action.libraryKey] + 1
+				[action.libraryKey]: state[action.libraryKey] + action.collections.length
 			}
 		case RECEIVE_DELETE_COLLECTION:
 			return {
@@ -28,4 +28,4 @@ const itemCountTopByLibrary = (state = {}, action) => {
 	}
 };
 
-export default itemCountTopByLibrary;
+export default collectionCountTopByLibrary;
