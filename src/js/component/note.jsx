@@ -47,20 +47,19 @@ class Note extends React.PureComponent {
 						<DropdownToggle
 							color={ null }
 							className={ cx('dropdown-toggle', {
-								'btn-link': device.isTouchOrSmall,
+								'btn-circle btn-secondary': device.isTouchOrSmall,
 								'btn-icon': !device.isTouchOrSmall,
 							})}
 						>
 							<Icon
-								type={ '24/options' }
-								symbol={ isOpen ? 'options-block' : 'options' }
-								width="24"
-								height="24"
+								type={ '16/options-strong' }
+								width="16"
+								height="16"
 								className="touch"
 							/>
 							<Icon type={ '16/options' } width="16" height="16" className="mouse" />
 						</DropdownToggle>
-						<DropdownMenu>
+						<DropdownMenu right>
 							<DropdownItem onClick={ this.handleDuplicate }>
 								Duplicate
 							</DropdownItem>

@@ -34,12 +34,19 @@
 		cursor: default;
 	}
 
-	&:not(.btn-icon):not(.btn-circle):not(.btn-link) {
-		.icon {
-			position: relative;
-			top: -2px;
-			margin-right: $space-min;
-		}
+	.icon {
+		position: relative;
+		top: -2px;
+		margin-right: $space-min;
+	}
+}
+
+.btn-circle,
+.btn-icon {
+	.icon {
+		position: static;
+		vertical-align: top;
+		margin: 0;
 	}
 }
 
@@ -54,7 +61,6 @@
 	}
 
 	.icon {
-		vertical-align: top;
 		color: inherit;
 	}
 }
