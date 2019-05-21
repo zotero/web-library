@@ -59,6 +59,7 @@ class Note extends React.PureComponent {
 						</DropdownMenu>
 					</Dropdown>
 				)}
+				<Icon type={ '16/chevron-13' } width="16" height="16" className="hidden-mouse" />
 			</li>
 		);
 	}

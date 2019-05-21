@@ -23,6 +23,17 @@
 				flex: 1 1 auto;
 				@include multiline-truncate(2);
 			}
+
+			.icon-chevron-13 {
+				align-self: center;
+				transform: rotate(90deg);
+				color: $note-list-chevron-color;
+				margin: 0 (-$space-min) 0 ($space-md - 5px);
+
+				@include state(".editing .note-list") {
+					display: none;
+				}
+			}
 		}
 
 		@include mouse-and-bp-up(md) {
