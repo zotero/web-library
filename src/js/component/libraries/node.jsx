@@ -59,7 +59,9 @@ const dndCollectionDragSpec = {
 	endDrag: ({ dndTarget, onDrag }, monitor) => {
 		const src = dndTarget;
 		const target = monitor.getDropResult();
-		onDrag(src, target);
+		if(target) {
+			onDrag(src, target);
+		}
 	}
 };
 

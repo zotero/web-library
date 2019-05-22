@@ -132,7 +132,7 @@ class CollectionTree extends React.PureComponent {
 		if(src.libraryKey === target.libraryKey) {
 			updateCollection(src.collectionKey, patch, src.libraryKey);
 		} else {
-			//@TODO: copy collection to another library
+			//@TODO: Support for moving collections across libraries #227
 		}
 	}
 

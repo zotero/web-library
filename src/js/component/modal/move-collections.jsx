@@ -56,7 +56,7 @@ class MoveCollectionsModal extends React.PureComponent {
 
 		if(picked && 'libraryKey' in picked) {
 			if(picked.libraryKey !== libraryKey) {
-				//@TODO: add support for copying collections across libraries
+				//@TODO: Support for moving collections across libraries #227
 				return;
 			}
 			this.setState({ isBusy: true });
