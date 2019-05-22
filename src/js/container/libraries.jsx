@@ -61,18 +61,18 @@ class LibrariesContainer extends React.PureComponent {
 		this.props.push('/');
 	}
 
-	async handleGroupOpen(groupKey) {
+	async handleLibraryOpen(libraryKey) {
 		const { dispatch } = this.props;
-		await dispatch(fetchCollections(groupKey, { start: 0, limit: PAGE_SIZE }));
+		await dispatch(fetchCollections(libraryKey, { start: 0, limit: PAGE_SIZE }));
 	}
 
 	render() {
 		return <Libraries
 			{ ...this.props }
-			onSelect={ this.handleSelect.bind(this) }
 			onCollectionAdd={ this.handleCollectionAdd.bind(this) }
 			onCollectionDelete={ this.handleCollectionDelete.bind(this) }
-			onGroupOpen={ this.handleGroupOpen.bind(this) }
+			onLibraryOpen={ this.handleLibraryOpen.bind(this) }
+			onSelect={ this.handleSelect.bind(this) }
 		/>;
 	}
 }

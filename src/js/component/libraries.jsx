@@ -14,7 +14,6 @@ import { stopPropagation } from '../utils';
 class Libraries extends React.PureComponent {
 	constructor(props) {
 		super(props);
-
 		this.state = {
 			virtual: null,
 			opened: [props.libraryKey], // opened group libraries
@@ -34,20 +33,12 @@ class Libraries extends React.PureComponent {
 		this.props.onSelect(pathData);
 	}
 
-	handleKeyPress(pathData, ev) {
-		if(ev && (ev.key === 'Enter' || ev.key === ' ')) {
-			ev.stopPropagation();
-			this.props.onSelect(pathData);
-		}
-	}
-
 	handleAdd(libraryKey, collectionKey) {
 		const { opened } = this.state;
 		if(!opened.includes(libraryKey)) {
-			this.handleOpenToggle(libraryKey);
+			this.toggleOpen(libraryKey);
 		}
 		window.setTimeout(() => this.setState({ virtual: { libraryKey, collectionKey } }));
-		// this.setState({ virtual: { libraryKey, collectionKey } });
 	}
 
 	async handleAddCommit(libraryKey, parentCollection, name) {
@@ -64,22 +55,31 @@ class Libraries extends React.PureComponent {
 		await this.props.onCollectionDelete(libraryKey,collection);
 	}
 
-	handleOpenToggle(groupKey, ev) {
-		ev && ev.stopPropagation();
-		const { onGroupOpen } = this.props;
-		const { opened } = this.state;
-		const isOpened = opened.includes(groupKey);
-		isOpened ?
-			this.setState({ opened: opened.filter(k => k !== groupKey) }) :
-			this.setState({ opened: [...opened, groupKey ] });
-
-		if(!isOpened) { onGroupOpen(groupKey); }
+	handleOpenToggle = (ev, shouldOpen = null) => {
+		const libraryKey = ev.currentTarget.closest('[data-key]').dataset.key;
+		this.toggleOpen(libraryKey, shouldOpen);
 	}
 
 	handlePickerPick = ev => {
 		const { onPickerPick } = this.props;
 		const libraryKey = ev.currentTarget.closest('[data-key]').dataset.key;
 		onPickerPick({ libraryKey }, ev);
+	}
+
+	toggleOpen = (libraryKey, shouldOpen = null) => {
+		const { onLibraryOpen } = this.props;
+		const { opened } = this.state;
+		const isOpened = opened.includes(libraryKey);
+
+		if(shouldOpen !== null && shouldOpen === isOpened) {
+			return;
+		}
+
+		isOpened ?
+			this.setState({ opened: opened.filter(k => k !== libraryKey) }) :
+			this.setState({ opened: [...opened, libraryKey ] });
+
+		if(!isOpened) { onLibraryOpen(libraryKey); }
 	}
 
 	renderCollections({ key, isMyLibrary, isReadOnly }) {
@@ -124,9 +124,8 @@ class Libraries extends React.PureComponent {
 				}) }
 				tabIndex={ shouldBeTabbable ? "0" : null }
 				isOpen={ isOpen && !isFetching }
-				onOpen={ this.handleOpenToggle.bind(this, key) }
+				onOpen={ this.handleOpenToggle }
 				onClick={ this.handleSelect.bind(this, { library: key, view: 'library' }) }
-				onKeyPress={ this.handleKeyPress.bind(this, { library: key, view: 'library'}) }
 				subtree={ isFetching ? null : this.renderCollections({ key, isMyLibrary, isReadOnly }) }
 				key={ key }
 				data-key={ key }
@@ -223,6 +222,7 @@ Libraries.propTypes = {
 	pickerIncludeLibraries: PropTypes.bool,
 	updating: PropTypes.array,
 	view: PropTypes.string,
+	onLibraryOpen: PropTypes.func,
 	libraries: PropTypes.arrayOf(
 		PropTypes.shape({
 			key:  PropTypes.string.isRequired,

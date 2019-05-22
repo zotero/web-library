@@ -32,16 +32,18 @@ class CollectionTree extends React.PureComponent {
 		onSelect({ library: libraryKey, ...target });
 	}
 
-	handleOpenToggle(key, shouldOpen = null) {
+	handleOpenToggle = (ev, shouldOpen = null) => {
 		const { opened } = this.state;
+		const collectionKey = ev.currentTarget
+			.closest('[data-collection-key]').dataset.collectionKey;
 
-		if(shouldOpen == null) {
-			shouldOpen = !opened.includes(key);
+		if(shouldOpen === null) {
+			shouldOpen = !opened.includes(collectionKey);
 		}
 
 		shouldOpen ?
-			this.setState({ opened: [...opened, key ] }) :
-			this.setState({ opened: opened.filter(k => k !== key) });
+			this.setState({ opened: [...opened, collectionKey ] }) :
+			this.setState({ opened: opened.filter(k => k !== collectionKey) });
 	}
 
 	handleRenameTrigger(collectionKey, ev) {
@@ -304,7 +306,7 @@ class CollectionTree extends React.PureComponent {
 								) : null
 							}
 							hideTwisty={ !hasSubCollections }
-							onOpen={ shouldOpen => this.handleOpenToggle(collection.key, shouldOpen) }
+							onOpen={ this.handleOpenToggle }
 							onClick={ ev => this.handleSelect({ collection: collection.key }, ev) }
 							onRename={ ev => device.isTouchOrSmall ? noop() : this.handleRenameTrigger(collection.key, ev) }
 							label={ collection.name }

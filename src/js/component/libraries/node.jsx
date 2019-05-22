@@ -77,7 +77,7 @@ class Node extends React.PureComponent {
 
 	handleTwistyClick = ev => {
 		ev && ev.stopPropagation();
-		this.props.onOpen();
+		this.props.onOpen(ev);
 	}
 
 	handleMouseLeave = () => {
@@ -119,15 +119,19 @@ class Node extends React.PureComponent {
 	}
 
 	handleKeyDown = ev => {
-		const { onOpen } = this.props;
+		const { onNext, onOpen, onPrevious } = this.props;
 		if(ev.target !== ev.currentTarget) {
 			return;
 		}
 
 		if(ev.key === "ArrowLeft") {
-			onOpen(false);
+			onOpen(ev, false);
 		} else if(ev.key === "ArrowRight") {
-			onOpen(true);
+			onOpen(ev, true);
+		} else if(ev.key === "ArrowDown") {
+			onNext(ev);
+		} else if(ev.key === "ArrowUp") {
+			onPrevious(ev);
 		} else if(isTriggerEvent(ev)) {
 			ev.target.click();
 		}
