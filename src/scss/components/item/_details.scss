@@ -3,6 +3,8 @@
 // --------------------------------------------------
 
 .item-details {
+	display: flex;
+	flex-direction: column;
 	background: $item-details-bg;
 
 	@include bp-down(sm) {
