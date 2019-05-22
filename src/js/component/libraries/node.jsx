@@ -156,9 +156,10 @@ class Node extends React.PureComponent {
 
 		const twistyButton = (
 			<button
-				type="button"
 				className="twisty"
 				onClick={ this.handleTwistyClick }
+				tabIndex={ -1 }
+				type="button"
 			>
 				<Icon type={ '16/triangle' } width="16" height="16" />
 			</button>
@@ -166,8 +167,8 @@ class Node extends React.PureComponent {
 		const isActive = canDrop && isOver;
 		const props = omit(this.props, ["canDrag", "canDrop", "children",
 			"className", "connectDragSource", "connectDropTarget", "dndTarget",
-			"hideTwisty", "isDragging", "isOpen", "isOver", "onOpen", "subtree",
-			"onClick", "onRename", "shouldBeDraggable"
+			"hideTwisty", "isDragging", "isOpen", "isOver", "onNext", "onOpen",
+			"onPrevious", "onClick", "subtree", "onRename", "shouldBeDraggable"
 		]);
 
 		return connectDragSource(connectDropTarget(

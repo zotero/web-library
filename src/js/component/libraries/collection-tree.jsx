@@ -198,7 +198,7 @@ class CollectionTree extends React.PureComponent {
 		const { childMap, derivedData } = this;
 		const { libraryKey, itemsSource, isMyLibrary, isCurrentLibrary,
 			virtual, onAddCancel, device, path, view, isPickerMode,
-			picked, isReadOnly } = this.props;
+			picked, isReadOnly, onNext, onPrevious } = this.props;
 
 		const [selected, selectedDepth] = this.findRecursive(
 			collections,
@@ -261,7 +261,9 @@ class CollectionTree extends React.PureComponent {
 							className={ cx({
 								'selected': isAllItemsSelected,
 							})}
-							tabIndex={ shouldBeTabbable ? "0" : null }
+							tabIndex={ shouldBeTabbable ? "-2" : null }
+							onNext={ onNext }
+							onPrevious={ onPrevious }
 							onClick={ ev => this.handleSelect({ view: 'item-list' }, ev) }
 						>
 							<Icon type="28/document" className="touch" width="28" height="28" />
@@ -274,7 +276,9 @@ class CollectionTree extends React.PureComponent {
 							className={ cx({
 								'selected': isItemsSelected,
 							})}
-							tabIndex={ shouldBeTabbable ? "0" : null }
+							tabIndex={ shouldBeTabbable ? "-2" : null }
+							onNext={ onNext }
+							onPrevious={ onPrevious }
 							onClick={ ev => this.handleSelect(
 								{ view: 'item-list', collection: parentCollection.key }, ev
 							) }
@@ -313,7 +317,9 @@ class CollectionTree extends React.PureComponent {
 							isOpen={ derivedData[collection.key].isOpen }
 							shouldBeDraggable = { this.state.renaming !== collection.key }
 							onDrag={ this.handleDrag }
-							tabIndex={ shouldBeTabbable ? "0" : null }
+							tabIndex={ shouldBeTabbable ? "-2" : null }
+							onNext={ onNext }
+							onPrevious={ onPrevious }
 							icon="folder"
 							dndTarget={ { 'targetType': 'collection', collectionKey: collection.key, libraryKey } }
 						>
@@ -343,9 +349,9 @@ class CollectionTree extends React.PureComponent {
 										) : (
 										<UncontrolledDropdown>
 											<DropdownToggle
+												tabIndex={ -1 }
 												className="btn-icon dropdown-toggle"
 												color={ null }
-												tabIndex={ shouldBeTabbable ? "0" : "-1" }
 												title="More"
 												onClick={ ev => ev.stopPropagation() }
 											>
@@ -424,7 +430,9 @@ class CollectionTree extends React.PureComponent {
 									'publications': true,
 									'selected': itemsSource === 'publications'
 								})}
-								tabIndex={ shouldBeTabbable ? "0" : null }
+								tabIndex={ shouldBeTabbable ? "-2" : null }
+								onNext={ onNext }
+								onPrevious={ onPrevious }
 								onClick={ ev => this.handleSelect({ publications: true }, ev) }
 								dndTarget={ { 'targetType': 'publications', libraryKey } }
 							>
@@ -441,7 +449,9 @@ class CollectionTree extends React.PureComponent {
 									'trash': true,
 									'selected': isCurrentLibrary && itemsSource === 'trash'
 								})}
-								tabIndex={ shouldBeTabbable ? "0" : null }
+								tabIndex={ shouldBeTabbable ? "-2" : null }
+								onNext={ onNext }
+								onPrevious={ onPrevious }
 								onClick={ ev => this.handleSelect({ trash: true }, ev) }
 								dndTarget={ { 'targetType': 'trash', libraryKey } }
 							>
@@ -476,13 +486,16 @@ class CollectionTree extends React.PureComponent {
 		isCurrentLibrary: PropTypes.bool,
 		isMyLibrary: PropTypes.bool,
 		isPickerMode: PropTypes.bool,
+		isReadOnly: PropTypes.bool,
 		itemsSource: PropTypes.string,
 		libraryKey: PropTypes.string.isRequired,
 		onAdd: PropTypes.func,
 		onAddCancel: PropTypes.func,
 		onAddCommit: PropTypes.func,
 		onDelete: PropTypes.func,
+		onNext: PropTypes.func,
 		onPickerPick: PropTypes.func,
+		onPrevious: PropTypes.func,
 		onSelect: PropTypes.func,
 		path: PropTypes.array,
 		picked: PropTypes.array,
@@ -499,7 +512,9 @@ class CollectionTree extends React.PureComponent {
 		onAddCancel: noop,
 		onAddCommit: noop,
 		onDelete: noop,
+		onNext: noop,
 		onPickerPick: noop,
+		onPrevious: noop,
 		onSelect: noop,
 		path: [],
 		picked: [],

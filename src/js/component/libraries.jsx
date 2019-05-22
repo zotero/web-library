@@ -66,6 +66,45 @@ class Libraries extends React.PureComponent {
 		onPickerPick({ libraryKey }, ev);
 	}
 
+	handleFocus = ev => {
+		if(ev.target !== ev.currentTarget) {
+			return;
+		}
+		this.ref.tabIndex = -1;
+		this.ref.querySelector('[tabIndex="-2"]').focus();
+	}
+
+	handleBlur = ev => {
+		if(ev.relatedTarget &&
+			(ev.relatedTarget === this.ref || ev.relatedTarget.closest('[data-root]'))
+		) {
+			return;
+		}
+		this.ref.tabIndex = 0;
+	}
+
+	handleNext = ev => {
+		const tabbables = Array.from(
+			this.ref.querySelectorAll('[tabIndex="-2"]')
+		).filter(t => t.offsetParent);
+		const nextIndex = tabbables.findIndex(t => t === ev.currentTarget) + 1;
+		ev.preventDefault();
+		if(nextIndex < tabbables.length) {
+			tabbables[nextIndex].focus();
+		}
+	}
+
+	handlePrevious = ev => {
+		const tabbables = Array.from(
+			this.ref.querySelectorAll('[tabIndex="-2"]')
+		).filter(t => t.offsetParent);
+		const prevIndex = tabbables.findIndex(t => t === ev.currentTarget) - 1;
+		ev.preventDefault();
+		if(prevIndex >= 0) {
+			tabbables[prevIndex].focus();
+		}
+	}
+
 	toggleOpen = (libraryKey, shouldOpen = null) => {
 		const { onLibraryOpen } = this.props;
 		const { opened } = this.state;
@@ -97,6 +136,8 @@ class Libraries extends React.PureComponent {
 			onAddCommit: this.handleAddCommit.bind(this),
 			onDelete: this.handleDelete.bind(this),
 			onSelect: this.handleSelect.bind(this),
+			onNext: this.handleNext,
+			onPrevious: this.handlePrevious,
 			virtual: virtual != null && virtual.libraryKey === key ? virtual : null
 		}
 		return <CollectionTree { ...props } />;
@@ -122,10 +163,12 @@ class Libraries extends React.PureComponent {
 					'selected': isSelected,
 					'busy': isFetching
 				}) }
-				tabIndex={ shouldBeTabbable ? "0" : null }
+				tabIndex={ shouldBeTabbable ? "-2" : null }
 				isOpen={ isOpen && !isFetching }
 				onOpen={ this.handleOpenToggle }
 				onClick={ this.handleSelect.bind(this, { library: key, view: 'library' }) }
+				onNext={ this.handleNext }
+				onPrevious={ this.handlePrevious }
 				subtree={ isFetching ? null : this.renderCollections({ key, isMyLibrary, isReadOnly }) }
 				key={ key }
 				data-key={ key }
@@ -146,9 +189,10 @@ class Libraries extends React.PureComponent {
 				{
 					!isFetching && !isReadOnly && (
 						<Button
-							icon
 							className="mouse btn-icon-plus"
+							icon
 							onClick={ this.handleAdd.bind(this, key, null) }
+							tabIndex={ -1 }
 						>
 							<Icon type={ '16/plus' } width="16" height="16" />
 						</Button>
@@ -169,7 +213,13 @@ class Libraries extends React.PureComponent {
 			return <Spinner />;
 		} else {
 			return (
-				<nav className="collection-tree">
+				<nav className="collection-tree"
+					onFocus={ this.handleFocus }
+					onBlur={ this.handleBlur }
+					tabIndex={ 0 }
+					ref={ ref => this.ref = ref }
+					data-root={ 1 }
+				>
 					<div className={ `level-root ${isRootActive ? 'active' : ''}` }>
 						<div className="scroll-container-touch" role="tree">
 							<section>
