@@ -15,7 +15,31 @@
 		box-shadow $input-btn-transition;
 
 	@include touch-or-bp-down(sm) {
-		padding: 0 $default-padding-x-touch;
+		padding: $input-btn-padding-y-touch $default-padding-x-touch;
+
+		&.hairline-top {
+			@include hairline(top, #ccc);
+			border-top: none;
+			padding-top: $input-btn-padding-y-touch + 2 * $input-border-width;
+		}
+
+		&.hairline-start-padding {
+			@include hairline(top, #ccc, $start: $default-padding-x-touch);
+		}
+
+		&.hairline-start-icon-24 {
+			@include hairline(top, #ccc, $start: $default-padding-x-touch);
+
+		}
+
+		&.hairline-start-icon-28 {
+			@include hairline(top, #ccc, $start: (2 * $default-padding-x-touch + 28px));
+
+			.icon[width="24"] {
+				margin-left: 2px;
+				margin-right: $default-padding-x-touch + 2px;
+			}
+		}
 	}
 
 	@include mouse-and-bp-up(md) {
@@ -36,18 +60,30 @@
 	}
 
 	.icon {
-		position: relative;
-		top: -2px;
-		margin-right: $space-min;
+		@include touch-or-bp-down(sm) {
+			margin-right: $default-padding-x-touch;
+			vertical-align: top;
+		}
+		@include mouse-and-bp-up(md) {
+			position: relative;
+			top: -2px;
+			margin-right: $space-min;
+		}
 	}
 }
 
 .btn-circle,
 .btn-icon {
 	.icon {
-		position: static;
-		vertical-align: top;
-		margin: 0;
+		html:not(.specifity) & {
+			vertical-align: top;
+			margin: 0;
+		}
+
+
+		@include mouse-and-bp-up(md) {
+			position: static;
+		}
 	}
 }
 
@@ -142,6 +178,10 @@
 	@include button-variant($btn-secondary-color, $outline: true);
 }
 
+.btn-transparent-secondary {
+	color: $btn-secondary-color;
+}
+
 .btn-outline-light {
 	@include button-variant($btn-light-color, $outline: true);
 }
@@ -157,6 +197,13 @@
 		border-radius: 50%;
 		line-height: 1; // Center icon vertically
 	}
+}
+
+
+// Block button
+
+.btn-block {
+	display: block;
 }
 
 

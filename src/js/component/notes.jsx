@@ -97,7 +97,14 @@ class Notes extends React.PureComponent {
 						</ul>
 					</nav>
 					{ !isReadOnly && (
-						<Toolbar>
+						<Button
+							className="btn-block text-left hairline-top hairline-start-icon-28 btn-transparent-secondary"
+						>
+							<Icon type={ '24/plus-circle-strong' } width="24" height="24" />
+							Add Note
+						</Button>
+
+						/*<Toolbar>
 							<div className="toolbar-left">
 								<ToolGroup>
 									<Button
@@ -109,7 +116,7 @@ class Notes extends React.PureComponent {
 									</Button>
 								</ToolGroup>
 							</div>
-						</Toolbar>
+						</Toolbar>*/
 					)}
 				</div>
 
