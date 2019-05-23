@@ -6,7 +6,8 @@
 	.search {
 		align-self: center;
 		width: $search-width;
-		font-size: $font-size-base;
+		font-size: 14px;
+		line-height: 20px; // Special height, like Upgrade button on zotero.org
 		position: relative;
 
 		@include bp-down(xs) {
@@ -15,8 +16,8 @@
 
 		.dropdown {
 			position: absolute;
-			left: $space-min;
-			top: 0;
+			left: 7px;
+			top: 3px;
 		}
 
 		.dropdown-toggle {
@@ -24,14 +25,13 @@
 		}
 
 		.search-input {
-			padding-left: $space-xl;
-			padding-right: 20px;
+			padding: 5px 23px 5px 36px;
 		}
 
 		.clear {
 			position: absolute;
-			top: 6px;
-			right: 6px;
+			top: 9px;
+			right: 9px;
 			width: 14px;
 			height: 14px;
 			border: none;
