@@ -4,6 +4,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { DebounceInput } from 'react-debounce-input';
 import { noop } from '../utils';
+import Button from './ui/button';
+import Icon from './ui/icon';
 
 class Search extends React.PureComponent {
 	render() {
@@ -16,6 +18,9 @@ class Search extends React.PureComponent {
 						onChange={ ev => this.props.onSearch(ev.target.value) }
 						className="form-control search-input"
 					/>
+					<Button icon>
+						<Icon type={ '8/x' } width="8" height="8" />
+					</Button>
 				</div>
 		);
 	}
