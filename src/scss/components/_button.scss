@@ -8,6 +8,7 @@
 	border: $border-width solid transparent;
 	color: $text-color;
 	background-color: transparent;
+	vertical-align: middle;
 	transition:
 		color $input-btn-transition,
 		background-color $input-btn-transition,

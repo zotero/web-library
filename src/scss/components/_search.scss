@@ -1,0 +1,59 @@
+//
+// Search
+// --------------------------------------------------
+
+.navbar {
+	.search {
+		align-self: center;
+		width: $search-width;
+		font-size: $font-size-base;
+		position: relative;
+
+		@include bp-down(xs) {
+			display: none;
+		}
+
+		.dropdown {
+			position: absolute;
+			left: $space-min;
+			top: 0;
+		}
+
+		.dropdown-toggle {
+			padding: 0;
+		}
+
+		.search-input {
+			padding-left: $space-xl;
+			padding-right: 20px;
+		}
+
+		.clear {
+			position: absolute;
+			top: 6px;
+			right: 6px;
+			width: 14px;
+			height: 14px;
+			border: none;
+			padding: 0;
+			background-color: $icon-color;
+			border-radius: 50%;
+
+			&:active {
+				background-color: $icon-active-color;
+			}
+
+			.icon {
+				position: absolute;
+				left: 50%;
+				top: 50%;
+				transform: translate(-50%, -50%);
+				color: $input-bg;
+
+				@include state(".btn-icon:active") {
+					color: $input-bg;
+				}
+			}
+		}
+	}
+}
