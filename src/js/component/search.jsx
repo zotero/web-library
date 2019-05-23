@@ -8,15 +8,15 @@ import { noop } from '../utils';
 class Search extends React.PureComponent {
 	render() {
 		return (
-			<div className="search-container">
-				<DebounceInput
-					type="search"
-					debounceTimeout={ 300 }
-					value={ this.props.search }
-					onChange={ ev => this.props.onSearch(ev.target.value) }
-					className="search"
-				/>
-			</div>
+				<div className="search">
+					<DebounceInput
+						type="search"
+						debounceTimeout={ 300 }
+						value={ this.props.search }
+						onChange={ ev => this.props.onSearch(ev.target.value) }
+						className="form-control search-input"
+					/>
+				</div>
 		);
 	}
 

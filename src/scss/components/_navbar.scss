@@ -167,6 +167,8 @@
 
 	.search {
 		align-self: center;
+		width: $search-width;
+		font-size: $font-size-base;
 
 		@include bp-down(xs) {
 			display: none;

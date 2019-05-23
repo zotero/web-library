@@ -191,7 +191,7 @@ label {
 	}
 
 	@include mouse-and-bp-up(md) {
-		padding: 0 $input-btn-padding-x;
+		padding: $input-btn-padding-y $input-btn-padding-x;
 		border: $input-border-width solid $input-border-color;
 		border-radius: $input-btn-border-radius;
 	}
