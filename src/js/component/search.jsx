@@ -2,31 +2,48 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { DebounceInput } from 'react-debounce-input';
 import { noop } from '../utils';
 import Button from './ui/button';
 import Icon from './ui/icon';
 
 class Search extends React.PureComponent {
+	state = { searchValue: this.props.search }
+
+	handleSearchChange = ev => {
+		const newValue = ev.currentTarget.value;
+		this.setState({ searchValue: newValue });
+		clearTimeout(this.timeout);
+		this.timeout = setTimeout(() => {
+			this.props.onSearch(newValue);
+		}, 300);
+	}
+
+	handleSearchClear = () => {
+		clearTimeout(this.timeout);
+		this.setState({ searchValue: '' });
+		this.props.onSearch('');
+	}
+
 	render() {
 		return (
-				<div className="search">
-					<div className="dropdown">
-						<Button icon className="dropdown-toggle">
-							<Icon type={ '24/search-options' } width="24" height="24" />
-						</Button>
-					</div>
-					<DebounceInput
-						type="search"
-						debounceTimeout={ 300 }
-						value={ this.props.search }
-						onChange={ ev => this.props.onSearch(ev.target.value) }
-						className="form-control search-input"
-					/>
-					<Button icon className="clear">
-						<Icon type={ '8/x' } width="8" height="8" />
+			<div className="search">
+				<div className="dropdown">
+					<Button icon className="dropdown-toggle">
+						<Icon type={ '24/search-options' } width="24" height="24" />
 					</Button>
 				</div>
+				<input
+					className="form-control search-input"
+					onChange={ this.handleSearchChange }
+					type="search"
+					value={ this.state.searchValue }
+				/>
+				{ this.state.searchValue.length > 0 && (
+					<Button icon className="clear" onClick={ this.handleSearchClear }>
+						<Icon type={ '8/x' } width="8" height="8" />
+					</Button>
+				)}
+			</div>
 		);
 	}
 

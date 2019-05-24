@@ -73,7 +73,6 @@
     "param-case": "^2.1.1",
     "prop-types": "^15.7.2",
     "react": "^16.8.6",
-    "react-debounce-input": "^3.2.0",
     "react-dnd": "^7.4.5",
     "react-dnd-html5-backend": "^7.4.4",
     "react-dnd-multi-backend": "^3.2.1",
