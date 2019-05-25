@@ -98,34 +98,25 @@ const mapStateToProps = state => {
 	if(!libraryKey) { return {}; }
 
 	const tagsFromSettings = [...get(state, ['libraries', libraryKey, 'tagsFromSettings'], [])];
-	var totalTagCount;
-	var sourceTags;
-	var isFetching;
+	var tagsData;
 
 	switch(itemsSource) {
 		case 'query':
 		case 'trash':
 		case 'publications':
 			//@TODO: these requires a special request
-			sourceTags = [];
-			totalTagCount = 0;
-			isFetching = false;
+			tagsData = {}
 		break;
 		case 'collection':
-			sourceTags = get(state, ['libraries', libraryKey, 'tagsByCollection', collectionKey], []);
-			totalTagCount = get(state, ['libraries', libraryKey, 'tagCountByCollection', collectionKey], null);
-			isFetching = get(state, ['libraries', libraryKey, 'fetching', 'tagsInCollection'], [])
-				.includes(collectionKey);
+			tagsData = get(state, ['libraries', libraryKey, 'tagsByCollection', collectionKey], []);
 		break;
 		case 'top':
 		default:
-			sourceTags = get(state, ['libraries', libraryKey, 'tagsTop'], []);
-			totalTagCount = get(state, ['tagCountByLibrary', libraryKey], null);
-			isFetching = get(state, ['fetching', 'tagsInLibrary'], [])
-				.includes(libraryKey);
+			tagsData = get(state, ['libraries', libraryKey, 'tagsTop'], []);
 		break;
 	}
 
+	const { isFetching = false, tags: sourceTags = [], totalResults: totalTagCount = null } = tagsData;
 	const sourceTagsFiltered = sourceTags.filter(t => !tagsFromSettings.includes(t));
 	const tags = [ ...tagsFromSettings, ...sourceTagsFiltered ].map(tag => ({
 		...state.libraries[libraryKey].tags[tag],

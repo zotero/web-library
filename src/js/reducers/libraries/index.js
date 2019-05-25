@@ -8,8 +8,6 @@ import itemsByCollection from './items-by-collection';
 import itemsByParent from './items-by-parent';
 import itemsTop from './items-top';
 import itemsTrash from './items-trash';
-import tagCountByCollection from './tag-count-by-collection';
-import tagCountByItem from './tag-count-by-item';
 import tags from './tags';
 import tagsByCollection from './tags-by-collection';
 import tagsByItem from './tags-by-item';
@@ -96,8 +94,6 @@ const libraries = (state = {}, action) => {
 				itemsByParent: itemsByParent(get(state, [action.libraryKey, 'itemsByParent']), action),
 				itemsTop: itemsTop(get(state, [action.libraryKey, 'itemsTop']), action),
 				itemsTrash: itemsTrash(get(state, [action.libraryKey, 'itemsTrash']), action),
-				tagCountByCollection: tagCountByCollection(get(state, [action.libraryKey, 'tagCountByCollection']), action),
-				tagCountByItem: tagCountByItem(get(state, [action.libraryKey, 'tagCountByItem']), action),
 				tags: tags(get(state, [action.libraryKey, 'tags']), action),
 				tagsByCollection: tagsByCollection(get(state, [action.libraryKey, 'tagsByCollection']), action),
 				tagsByItem: tagsByItem(get(state, [action.libraryKey, 'tagsByItem']), action),

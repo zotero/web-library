@@ -1,18 +1,42 @@
 'use strict';
 
-import { RECEIVE_TAGS_IN_COLLECTION } from '../../constants/actions';
+import {
+	ERROR_TAGS_IN_COLLECTION,
+	RECEIVE_TAGS_IN_COLLECTION,
+	REQUEST_TAGS_IN_COLLECTION,
+} from '../../constants/actions';
 
 const tags = (state = {}, action) => {
 	switch(action.type) {
+		case REQUEST_TAGS_IN_COLLECTION:
+			return {
+				...state,
+				[action.collectionKey]: {
+					...(state[action.collectionKey] || {}),
+					isFetching: true
+				}
+			}
 		case RECEIVE_TAGS_IN_COLLECTION:
 			return {
 				...state,
-				[action.collectionKey]: [
-					...(new Set([
-						...(state[action.collectionKey] || []),
+				[action.collectionKey]: {
+					isFetching: false,
+					totalResults: parseInt(
+						action.response.response.headers.get('Total-Results'), 10
+					),
+					tags: [...(new Set([
+						...(state[action.collectionKey].tags || []),
 						...action.tags.map(tag => `${tag.tag}-${tag[Symbol.for('meta')].type}`)
-					]))
-				]
+					]))]
+				}
+			}
+		case ERROR_TAGS_IN_COLLECTION:
+			return {
+				...state,
+				[action.collectionKey]: {
+					...(state[action.collectionKey] || {}),
+					isFetching: false
+				}
 			}
 		default:
 			return state;

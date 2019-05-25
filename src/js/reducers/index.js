@@ -16,7 +16,6 @@ import modal from './modal';
 import preferences from './preferences';
 import query from './query';
 import styles from './styles';
-import tagCountByLibrary from './tag-count-by-library';
 import viewport from './viewport';
 import { LOCATION_CHANGE } from 'connected-react-router';
 
@@ -35,6 +34,5 @@ function crossSliceReducers(state = {}, action) {
 export default history => reduceReducers(crossSliceReducers, combineReducers({
 		collectionCountByLibrary, config, current, fetching, groups,
 		itemsPublications, libraries, meta, modal, preferences, query,
-		router: connectRouter(history), styles, tagCountByLibrary,
-		viewport,
+		router: connectRouter(history), styles, viewport,
 	}));
