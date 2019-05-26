@@ -51,8 +51,8 @@ class ItemDetailsContainer extends React.PureComponent {
 				dispatch(fetchItemTypeCreatorTypes(item.itemType));
 				dispatch(fetchItemTypeFields(item.itemType));
 			}
-
-			if(!device.shouldUseTabs && hasMoreItems && !isLoadingChildItems) {
+			if(!device.shouldUseTabs && hasMoreItems && !isLoadingChildItems &&
+				!['attachment', 'note'].includes(item.itemType)) {
 				fetchChildItems(item.key, { start, limit })
 			}
 		}
