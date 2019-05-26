@@ -9,6 +9,9 @@ import {
     RECEIVE_ITEMS_BY_QUERY,
     ERROR_ITEMS_BY_QUERY,
     SORT_ITEMS,
+	REQUEST_TAGS_IN_ITEMS_BY_QUERY,
+	RECEIVE_TAGS_IN_ITEMS_BY_QUERY,
+	ERROR_TAGS_IN_ITEMS_BY_QUERY,
 } from '../constants/actions.js';
 
 import { getParamsFromRoute } from '../common/state';
@@ -17,9 +20,10 @@ import { getQueryFromParams } from '../common/navigation';
 
 const defaultState = {
 	current: null,
-	totalResults: null,
-	itemKeys: [],
 	isFetching: false,
+	itemKeys: [],
+	tags: {},
+	totalResults: null,
 };
 
 const query = (state = defaultState, action) => {
@@ -33,7 +37,8 @@ const query = (state = defaultState, action) => {
 				current: query,
 				totalResults: isChanged ? undefined : state.totalResults,
 				keys: isChanged ? [] : state.keys,
-				isFetching: false
+				isFetching: false,
+				tags: isChanged ? {} : state.tags
 			};
 		case REQUEST_ITEMS_BY_QUERY:
 		case ERROR_ITEMS_BY_QUERY:
@@ -51,6 +56,37 @@ const query = (state = defaultState, action) => {
 			return sortItemKeysOrClear(
 				state, action.items, action.sortBy, action.sortDirection
 			);
+		case REQUEST_TAGS_IN_ITEMS_BY_QUERY:
+			return {
+				...state,
+				tags: {
+					...state.tags,
+					isFetching: true
+				}
+			}
+		case RECEIVE_TAGS_IN_ITEMS_BY_QUERY:
+			return {
+				...state,
+				tags: {
+					...state.tags,
+					isFetching: false,
+					totalResults: parseInt(
+						action.response.response.headers.get('Total-Results'), 10
+					),
+					tags: [...(new Set([
+						...(state.tags.tags || []),
+						...action.tags.map(tag => `${tag.tag}-${tag[Symbol.for('meta')].type}`),
+					]))],
+				}
+			};
+		case ERROR_TAGS_IN_ITEMS_BY_QUERY:
+			return {
+				...state,
+				tags: {
+					...state.tags,
+					isFetching: false
+				}
+			};
 		default:
 			return state;
 	}

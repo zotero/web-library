@@ -13,6 +13,8 @@ import tagsByCollection from './tags-by-collection';
 import tagsByItem from './tags-by-item';
 import tagsFromSettings from './tags-from-settings';
 import tagsTop from './tags-top';
+import tagsInTrashItems from './tags-in-trash-items';
+import tagsInPublicationsItems from './tags-in-publications-items';
 import updating from './updating';
 import version from './version';
 import { get } from '../../utils';
@@ -55,7 +57,10 @@ const actions = [
 	'RECEIVE_REMOVE_ITEMS_FROM_COLLECTION',
 	'RECEIVE_TAGS_FOR_ITEM',
 	'RECEIVE_TAGS_IN_COLLECTION',
+	'RECEIVE_TAGS_IN_ITEMS_BY_QUERY',
 	'RECEIVE_TAGS_IN_LIBRARY',
+	'RECEIVE_TAGS_IN_PUBLICATIONS_ITEMS',
+	'RECEIVE_TAGS_IN_TRASH_ITEMS',
 	'RECEIVE_TOP_ITEMS',
 	'RECEIVE_TRASH_ITEMS',
 	'RECEIVE_UPDATE_COLLECTION',
@@ -77,6 +82,9 @@ const actions = [
 	'REQUEST_TOP_ITEMS',
 	'REQUEST_UPDATE_COLLECTION',
 	'REQUEST_UPDATE_ITEM',
+	'REQUEST_TAGS_IN_TOP_ITEMS',
+	'RECEIVE_TAGS_IN_TOP_ITEMS',
+	'ERROR_TAGS_IN_TOP_ITEMS',
 	'SORT_ITEMS',
 	'TRIGGER_EDITING_ITEM',
 ];
@@ -97,6 +105,8 @@ const libraries = (state = {}, action) => {
 				tags: tags(get(state, [action.libraryKey, 'tags']), action),
 				tagsByCollection: tagsByCollection(get(state, [action.libraryKey, 'tagsByCollection']), action),
 				tagsByItem: tagsByItem(get(state, [action.libraryKey, 'tagsByItem']), action),
+				tagsInTrashItems: tagsInTrashItems(get(state, [action.libraryKey, 'tagsInTrashItems']), action),
+				tagsInPublicationsItems: tagsInPublicationsItems(get(state, [action.libraryKey, 'tagsInPublicationsItems']), action),
 				tagsFromSettings: tagsFromSettings(get(state, [action.libraryKey, 'tagsFromSettings']), action),
 				tagsTop: tagsTop(get(state, [action.libraryKey, 'tagsTop']), action),
 				updating: updating(get(state, [action.libraryKey, 'updating']), action),

@@ -1,197 +1,140 @@
 'use strict';
 
 import api from 'zotero-api-client';
-import { get } from '../utils';
 
-import {
-    REQUEST_TAGS_IN_COLLECTION,
-    RECEIVE_TAGS_IN_COLLECTION,
-    ERROR_TAGS_IN_COLLECTION,
-    REQUEST_TAGS_IN_LIBRARY,
-    RECEIVE_TAGS_IN_LIBRARY,
-    ERROR_TAGS_IN_LIBRARY,
-    REQUEST_TAGS_FOR_ITEM,
-    RECEIVE_TAGS_FOR_ITEM,
-    ERROR_TAGS_FOR_ITEM,
-} from '../constants/actions';
+const getApi = ({ config, libraryKey }, requestType, queryConfig) => {
+	switch(requestType) {
+		case 'TAGS_IN_COLLECTION':
+			return api(config.apiKey, config.apiConfig)
+				.library(libraryKey)
+				.collections(queryConfig.collectionKey)
+				.items()
+				.top()
+				.tags();
+		case 'TAGS_IN_TRASH_ITEMS':
+			return api(config.apiKey, config.apiConfig)
+				.library(libraryKey)
+				.items()
+				.trash()
+				.tags()
+		case 'TAGS_IN_PUBLICATIONS_ITEMS':
+			return api(config.apiKey, config.apiConfig)
+				.library(libraryKey)
+				.items()
+				.publications()
+				.tags()
+		case 'TAGS_IN_ITEMS_BY_QUERY':
+			var configuredApi = api(config.apiKey, config.apiConfig)
+				.library(libraryKey)
+				.items()
+			if(queryConfig.collectionKey) {
+				configuredApi = configuredApi.collections(queryConfig.collectionKey).top()
+			} else if(queryConfig.isMyPublications) {
+				configuredApi = configuredApi.publications();
+			} else if(queryConfig.isTrash) {
+				configuredApi = configuredApi.trash();
+			} else {
+				configuredApi = configuredApi.top();
+			}
+			return configuredApi.tags();
+		case 'TAGS_FOR_ITEM':
+			return api(config.apiKey, config.apiConfig)
+				.library(libraryKey)
+				.items(queryConfig.itemKey)
+				.top()
+				.tags();
+		case 'TAGS_IN_TOP_ITEMS':
+			return api(config.apiKey, config.apiConfig)
+				.library(libraryKey)
+				.items()
+				.top()
+				.tags();
+		default:
+		case 'TAGS_IN_LIBRARY':
+			return api(config.apiKey, config.apiConfig)
+				.library(libraryKey)
+				.tags();
+	}
+}
 
-const fetchTagsInCollection = (collectionKey, { start = 0, limit = 50, sort = 'title', direction = "asc" } = {}) => {
+const fetchTags = (type, queryConfig, queryOptions = {}) => {
 	return async (dispatch, getState) => {
 		const state = getState();
 		const config = state.config;
 		const { libraryKey } = state.current;
-		const totalTagsCount = get(state, ['libraries', libraryKey, 'tagsCountByCollection', collectionKey]);
-		const knownTags = get(state, ['libraries', libraryKey, 'tagsByCollection', collectionKey], []);
-
-		if(knownTags.length === totalTagsCount) {
-			return knownTags.map(key => get(state, ['libraries', libraryKey, 'tags', key]))
-		}
+		const api = getApi({ config, libraryKey }, type, queryConfig);
 
 		dispatch({
-			type: REQUEST_TAGS_IN_COLLECTION,
-			libraryKey,
-			start,
-			limit,
-			sort,
-			direction,
-			collectionKey
+			type: `REQUEST_${type}`,
+			libraryKey, ...queryConfig, ...queryOptions
 		});
 
 		try {
-			const response = await api(config.apiKey, config.apiConfig)
-				.library(libraryKey)
-				.collections(collectionKey)
-				.tags()
-				.get({ start, limit, sort, direction });
-
+			const response = await api.get(queryOptions);
 			const tags = response.getData().map((tagData, index) => ({
 				tag: tagData.tag,
 				[Symbol.for('meta')]: response.getMeta()[index] || {}
 			}));
+			const totalResults = parseInt(response.response.headers.get('Total-Results'), 10);
 
 			dispatch({
-				type: RECEIVE_TAGS_IN_COLLECTION,
-				libraryKey,
-				collectionKey,
-				tags,
-				response,
-				start,
-				limit,
+				type: `RECEIVE_${type}`,
+				libraryKey, tags, response, totalResults,
+				...queryConfig,...queryOptions
 			});
 
 			return tags;
 		} catch(error) {
 			dispatch({
-				type: ERROR_TAGS_IN_COLLECTION,
-				libraryKey,
-				collectionKey,
-				error,
-				start,
-				limit,
+				type: `ERROR_${type}`,
+				libraryKey, error, ...queryConfig, ...queryOptions
 			});
 
 			throw error;
 		}
-	};
+	}
+}
+
+const fetchTagsInCollection = (collectionKey, queryOptions) => {
+	return fetchTags('TAGS_IN_COLLECTION', { collectionKey }, queryOptions);
 };
 
-const fetchTagsInLibrary = ({ start = 0, limit = 50, sort = 'title', direction = "asc" } = {}) => {
-	return async (dispatch, getState) => {
-		const state = getState();
-		const config = state.config;
-		const { libraryKey } = state.current;
-		const totalTagsCount = state.tagsCountByLibrary;
-		const knownTags = get(state, ['tagsByLibrary', libraryKey], []);
-
-		if(knownTags.length === totalTagsCount) {
-			return knownTags.map(key => get(state, ['libraries', libraryKey, 'tags', key]))
-		}
-
-		dispatch({
-			type: REQUEST_TAGS_IN_LIBRARY,
-			libraryKey,
-			start,
-			limit,
-			sort,
-			direction,
-		});
-
-		try {
-			const response = await api(config.apiKey, config.apiConfig)
-				.library(libraryKey)
-				.tags()
-				.get({ start, limit, sort, direction });
-
-			const tags = response.getData().map((tagData, index) => ({
-				tag: tagData.tag,
-				[Symbol.for('meta')]: response.getMeta()[index] || {}
-			}));
-
-			dispatch({
-				type: RECEIVE_TAGS_IN_LIBRARY,
-				libraryKey,
-				tags,
-				response,
-				start, limit, sort, direction
-			});
-
-			return tags;
-		} catch(error) {
-			dispatch({
-				type: ERROR_TAGS_IN_LIBRARY,
-				libraryKey,
-				error,
-				start, limit, sort, direction
-			});
-
-			throw error;
-		}
-	};
+const fetchTagsInLibrary = queryOptions => {
+	return fetchTags('TAGS_IN_LIBRARY', { }, queryOptions);
 };
 
-const fetchTagsForItem = (itemKey, { start = 0, limit = 50, sort = 'title', direction = "asc" } = {}) => {
-	return async (dispatch, getState) => {
-		const state = getState();
-		const config = state.config;
-		const { libraryKey } = state.current;
-		const totalTagsCount = get(state, ['libraries', libraryKey, 'tagsCountByItem', itemKey]);
-		const knownTags = get(state, ['libraries', libraryKey, 'tagsByItem', itemKey], []);
-
-		if(knownTags.length === totalTagsCount) {
-			return knownTags.map(key => get(state, ['libraries', libraryKey, 'tags', key]))
-		}
-
-		dispatch({
-			type: REQUEST_TAGS_FOR_ITEM,
-			libraryKey,
-			itemKey,
-			start,
-			limit,
-			sort,
-			direction,
-
-		});
-
-		try {
-			const response = await api(config.apiKey, config.apiConfig)
-				.library(libraryKey)
-				.items(itemKey)
-				.tags()
-				.get({ start, limit, sort, direction });
-
-			const tags = response.getData().map((tagData, index) => ({
-				tag: tagData.tag,
-				[Symbol.for('meta')]: response.getMeta()[index] || {}
-			}));
-
-			dispatch({
-				type: RECEIVE_TAGS_FOR_ITEM,
-				libraryKey,
-				itemKey,
-				tags,
-				response,
-				start,
-				limit,
-			});
-
-			return tags;
-		} catch(error) {
-			dispatch({
-				type: ERROR_TAGS_FOR_ITEM,
-				libraryKey,
-				itemKey,
-				error,
-				start,
-				limit,
-			});
-
-			throw error;
-		}
-	};
+const fetchTagsForItem = (itemKey, queryOptions) => {
+	return fetchTags('TAGS_FOR_ITEM', { itemKey }, queryOptions);
 };
+
+const fetchTagsForTrashItems = queryOptions => {
+	return fetchTags('TAGS_IN_TRASH_ITEMS', {}, queryOptions);
+};
+
+const fetchTagsForPublicationsItems = queryOptions => {
+	return fetchTags('TAGS_IN_PUBLICATIONS_ITEMS', {}, queryOptions);
+};
+
+const fetchTagsForTopItems = queryOptions => {
+	return fetchTags('TAGS_IN_TOP_ITEMS', { }, queryOptions);
+};
+
+const fetchTagsForItemsByQuery = (query, queryOptions) => {
+	const { collectionKey = null, itemTag = null, itemQ = null, isTrash,
+		isMyPublications } = query;
+	const queryConfig = { collectionKey, isTrash, isMyPublications };
+
+	return fetchTags(
+		'TAGS_IN_ITEMS_BY_QUERY', queryConfig, { ...queryOptions, itemTag, itemQ }
+	);
+}
 
 export {
+	fetchTagsForItem,
+	fetchTagsForItemsByQuery,
+	fetchTagsForPublicationsItems,
+	fetchTagsForTopItems,
+	fetchTagsForTrashItems,
 	fetchTagsInCollection,
 	fetchTagsInLibrary,
-	fetchTagsForItem,
 };

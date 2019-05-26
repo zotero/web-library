@@ -7,6 +7,10 @@ import {
     RECEIVE_TAGS_IN_COLLECTION,
     RECEIVE_TAGS_IN_LIBRARY,
     RECEIVE_TAGS_FOR_ITEM,
+	RECEIVE_TAGS_IN_ITEMS_BY_QUERY,
+	RECEIVE_TAGS_IN_PUBLICATIONS_ITEMS,
+	RECEIVE_TAGS_IN_TRASH_ITEMS,
+	RECEIVE_TAGS_IN_TOP_ITEMS,
 } from '../../constants/actions';
 
 const tags = (state = {}, action) => {
@@ -23,6 +27,10 @@ const tags = (state = {}, action) => {
 		case RECEIVE_TAGS_IN_LIBRARY:
 		case RECEIVE_TAGS_IN_COLLECTION:
 		case RECEIVE_TAGS_FOR_ITEM:
+		case RECEIVE_TAGS_IN_ITEMS_BY_QUERY:
+		case RECEIVE_TAGS_IN_PUBLICATIONS_ITEMS:
+		case RECEIVE_TAGS_IN_TRASH_ITEMS:
+		case RECEIVE_TAGS_IN_TOP_ITEMS:
 			return {
 				...state,
 				...indexByGeneratedKey(action.tags,

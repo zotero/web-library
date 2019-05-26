@@ -7,7 +7,8 @@ import { connect } from 'react-redux';
 import { push } from 'connected-react-router';
 import TagSelector from '../component/tag-selector.jsx';
 import { deduplicateByKey, get } from '../utils';
-import { fetchTagsInCollection, fetchTagsInLibrary } from '../actions';
+import { fetchTagsInCollection, fetchTagsForTopItems, fetchTagsForTrashItems,
+	fetchTagsForPublicationsItems, fetchTagsForItemsByQuery } from '../actions';
 import { makePath } from '../common/navigation';
 
 class TagSelectorContainer extends React.PureComponent {
@@ -21,7 +22,7 @@ class TagSelectorContainer extends React.PureComponent {
 
 	handleSelect(tagName) {
 		const { libraryKey: library, itemsSource, collectionKey: collection, selectedTags: tags,
-			makePath, push, search } = this.props;
+			makePath, push, search, isMyPublications, isTrash } = this.props;
 		const index = tags.indexOf(tagName)
 		if(index > -1) {
 			tags.splice(index, 1);
@@ -43,27 +44,33 @@ class TagSelectorContainer extends React.PureComponent {
 				push(makePath({ library, collection, tags }));
 			break;
 			case 'query':
-				push(makePath({ library, collection, search, tags }));
+				push(makePath({ library, collection, search, tags, trash: isTrash,
+					publications: isMyPublications }));
 			break;
 		}
 	}
 
 	async handleLoadMore(start, limit) {
-		const { itemsSource, dispatch, collectionKey } = this.props;
+		const { collectionKey, dispatch, itemsSource, isMyPublications,
+			isTrash, selectedTags, search } = this.props;
 
 		switch(itemsSource) {
 			case 'top':
-				return await dispatch(fetchTagsInLibrary({ start, limit }));
+				return await dispatch(fetchTagsForTopItems({ start, limit }));
 			case 'trash':
-				//@TODO;
-				return;
+				return await dispatch(fetchTagsForTrashItems({ start, limit }));
 			case 'publications':
-				//@TODO
-				return;
+				return await dispatch(fetchTagsForPublicationsItems({ start, limit }));
 			case 'collection':
 				return await dispatch(fetchTagsInCollection(collectionKey, { start, limit }));
 			case 'query':
-				//@TODO;
+				return await dispatch(fetchTagsForItemsByQuery({
+					isTrash,
+					isMyPublications,
+					collectionKey,
+					itemQ: search,
+					itemTag: selectedTags
+				}, { start, limit }));
 		}
 	}
 
@@ -93,7 +100,9 @@ const mapStateToProps = state => {
 		collectionKey,
 		tags: selectedTags,
 		itemsSource,
-		search
+		search,
+		isMyPublications,
+		isTrash
 	} = state.current;
 	if(!libraryKey) { return {}; }
 
@@ -102,10 +111,13 @@ const mapStateToProps = state => {
 
 	switch(itemsSource) {
 		case 'query':
+			tagsData = state.query.tags;
+		break;
 		case 'trash':
+			tagsData = get(state, ['libraries', libraryKey, 'tagsInTrashItems'], []);
+		break;
 		case 'publications':
-			//@TODO: these requires a special request
-			tagsData = {}
+			tagsData = get(state, ['libraries', libraryKey, 'tagsInPublicationsItems'], []);
 		break;
 		case 'collection':
 			tagsData = get(state, ['libraries', libraryKey, 'tagsByCollection', collectionKey], []);
@@ -130,7 +142,7 @@ const mapStateToProps = state => {
 		isReady: totalTagCount !== null,
 		libraryKey, sourceTags, search, tags, totalTagCount, itemsSource,
 		makePath: makePath.bind(null, state.config), collectionKey,
-		selectedTags, isFetching
+		selectedTags, isFetching, isMyPublications, isTrash
 	}
 
 };

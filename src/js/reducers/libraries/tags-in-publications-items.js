@@ -1,19 +1,19 @@
 'use strict';
 
 import {
-	REQUEST_TAGS_IN_TOP_ITEMS,
-	RECEIVE_TAGS_IN_TOP_ITEMS,
-	ERROR_TAGS_IN_TOP_ITEMS,
+	ERROR_TAGS_IN_PUBLICATIONS_ITEMS,
+	RECEIVE_TAGS_IN_PUBLICATIONS_ITEMS,
+	REQUEST_TAGS_IN_PUBLICATIONS_ITEMS,
 } from '../../constants/actions';
 
-const tagsTop = (state = {}, action) => {
+const tagsInPublicationsItems = (state = {}, action) => {
 	switch(action.type) {
-		case REQUEST_TAGS_IN_TOP_ITEMS:
+		case REQUEST_TAGS_IN_PUBLICATIONS_ITEMS:
 			return {
 				...state,
 				isFetching: true
 			}
-		case RECEIVE_TAGS_IN_TOP_ITEMS:
+		case RECEIVE_TAGS_IN_PUBLICATIONS_ITEMS:
 			return {
 				isFetching: false,
 				totalResults: parseInt(
@@ -24,11 +24,11 @@ const tagsTop = (state = {}, action) => {
 					...action.tags.map(tag => `${tag.tag}-${tag[Symbol.for('meta')].type}`),
 				]))],
 			};
-		case ERROR_TAGS_IN_TOP_ITEMS:
+		case ERROR_TAGS_IN_PUBLICATIONS_ITEMS:
 			return { ...state, isFetching: false };
 		default:
 			return state;
 	}
 };
 
-export default tagsTop;
+export default tagsInPublicationsItems;

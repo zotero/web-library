@@ -80,15 +80,12 @@ const current = (state = stateDefault, action, { config } = {}) => {
 			}
 
 			if(!view) {
-				if(['query', 'trash', 'publications'].includes(itemsSource)) {
-					view = 'item-list';
-				} else {
-					//@TODO: Refactor
-					view = itemKeys.length ?
-						isSelectMode ? 'item-list' : 'item-details'
-						: collectionKey ? 'collection' :
-							(params.userslug || params.groupid) ? 'library' : 'libraries';
-				}
+				//@TODO: Refactor
+				view = itemKeys.length ?
+					isSelectMode ? 'item-list' : 'item-details'
+					: itemsSource === 'collection' && collectionKey ? 'collection' :
+					['query', 'trash', 'publications'].includes(itemsSource) ? 'item-list' :
+					(params.userslug || params.groupid) ? 'library' : 'libraries';
 			}
 
 			return {
