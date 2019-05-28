@@ -47,6 +47,7 @@
 	}
 
 	.navbar-brand,
+	.search-toggle,
 	.navbar-toggle {
 		position: relative;
 		z-index: $z-index-navbar;
@@ -177,10 +178,14 @@
 		}
 	}
 
+	.search-toggle {
+		.icon {
+			color: $navbar-link-color;
+		}
+	}
+
 	.navbar-toggle {
-		border: none;
-		background: transparent;
-		padding: 0 $navbar-toggle-padding-x;
+		margin-right: $default-padding-x-touch / 2;
 
 		&:focus {
 			outline: none;
@@ -191,10 +196,6 @@
 			width: $icon-bar-width;
 			height: $icon-bar-height;
 			background: $icon-bar-bg;
-
-			@include state(".navbar-toggle:focus") {
-				background: $icon-bar-bg-focus;
-			}
 
 			& + .icon-bar {
 				margin-top: $icon-bar-spacing;

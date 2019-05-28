@@ -3,6 +3,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import SearchContainer from './../../container/search';
+import Button from './button';
+import Icon from './icon';
 
 class Navbar extends React.PureComponent {
 	constructor(props) {
@@ -29,11 +31,14 @@ class Navbar extends React.PureComponent {
 				<div className="navbar-right">
 					<SearchContainer />
 					<a href="#" className="user-profile-link"></a>
-					<button className="navbar-toggle" onClick={ ev => this.props.onToggle(ev) }>
+					<Button icon className="search-toggle hidden-sm-up">
+						<Icon type={ '24/search' } width="24" height="24" />
+					</Button>
+					<Button icon className="navbar-toggle" onClick={ ev => this.props.onToggle(ev) }>
 						<span className="icon-bar"></span>
 						<span className="icon-bar"></span>
 						<span className="icon-bar"></span>
-					</button>
+					</Button>
 				</div>
 			</header>
 		);

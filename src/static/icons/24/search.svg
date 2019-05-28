@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+	<symbol id="search" viewBox="0 0 24 24">
+    <path fill="currentColor" d="M22.707,21.293l-5.679-5.679a9.012,9.012,0,1,0-1.414,1.414l5.679,5.679a1,1,0,0,0,1.414-1.414ZM10,17a7,7,0,1,1,7-7A7.008,7.008,0,0,1,10,17Z"/>
+	</symbol>
+	<use xlink:href="#search" viewBox="0 0 24 24"/>
+</svg>
+
