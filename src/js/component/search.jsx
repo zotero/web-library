@@ -37,6 +37,7 @@ class Search extends React.PureComponent {
 					onChange={ this.handleSearchChange }
 					type="search"
 					value={ this.state.searchValue }
+					placeholder="Search"
 				/>
 				{ this.state.searchValue.length > 0 && (
 					<Button icon className="clear" onClick={ this.handleSearchClear }>

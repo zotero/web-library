@@ -9,6 +9,7 @@ import CollectionActions from './touch-header/collection-actions';
 import ItemsActionsContainer from '../container/items-actions';
 import { Toolbar, ToolGroup } from './ui/toolbars';
 import Button from './ui/button';
+import Icon from './ui/icon';
 import { pluralize } from '../common/format';
 
 class TouchHeader extends React.PureComponent {
@@ -42,6 +43,17 @@ class TouchHeader extends React.PureComponent {
 									path={ path }
 									onNavigation={ onNavigation }
 								/>
+								<div className="searchbar">
+									<div className="input-group search">
+										<input type="text" className="form-control search-input" placeholder="Search" />
+										<Button icon className="clear" onClick={ this.handleSearchClear }>
+											<Icon type={ '8/x' } width="8" height="8" />
+										</Button>
+									</div>
+									<Button className="btn-link">
+										Cancel
+									</Button>
+								</div>
 							</div>
 						)
 					}
