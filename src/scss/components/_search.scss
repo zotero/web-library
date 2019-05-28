@@ -18,14 +18,33 @@
 			position: absolute;
 			left: 7px;
 			top: 3px;
+			z-index: 1;
 		}
 
 		.dropdown-toggle {
 			padding: 0;
 		}
 
+		.icon-search-options {
+			@include touch-or-bp-down(sm) {
+				color: $icon-color; // Reset
+			}
+		}
+
 		.search-input {
 			padding: 5px 23px 5px 36px;
+
+			@include touch-or-bp-down(sm) {
+				min-height: auto; // Reset
+				border: $input-border-width solid $input-border-color; // …
+				background-color: $input-bg; // …
+			}
+
+			@include touch-keyboard-or-bp-down(sm) {
+				&:focus {
+					border: $input-border-width solid $focus-color;
+				}
+			}
 		}
 
 		.clear {
@@ -37,10 +56,9 @@
 			border: none;
 			padding: 0;
 			border-radius: 50%;
+			background-color: $icon-color;
 
 			@include mouse-and-bp-up(md) {
-				background-color: $icon-color;
-
 				&:active {
 					background-color: $icon-active-color;
 				}
