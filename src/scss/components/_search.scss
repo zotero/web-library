@@ -36,11 +36,14 @@
 			height: 14px;
 			border: none;
 			padding: 0;
-			background-color: $icon-color;
 			border-radius: 50%;
 
-			&:active {
-				background-color: $icon-active-color;
+			@include mouse-and-bp-up(md) {
+				background-color: $icon-color;
+
+				&:active {
+					background-color: $icon-active-color;
+				}
 			}
 
 			.icon {
@@ -50,7 +53,7 @@
 				transform: translate(-50%, -50%);
 				color: $input-bg;
 
-				@include state(".btn-icon:active") {
+				@include state(".clear:active .icon") {
 					color: $input-bg;
 				}
 			}
