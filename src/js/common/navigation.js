@@ -1,15 +1,17 @@
 'use strict';
 
 const getQueryFromParams = params => {
-	const { collection, tags, search = '' } = params;
-	return { collection, tag: tagsFromUrlPart(tags), q: search };
+	const { collection, tags, search = '', qmode } = params;
+	return { collection, tag: tagsFromUrlPart(tags), q: search, qmode };
 }
 
 const tagsFromUrlPart = tags => tags ? tags.split(/\b,\b/).map(t => t.replace(/,,/g, ',')) : [];
 
 const tagsToUrlPart = tags => tags.map(t => t.replace(/,/g, ',,'));
 
-const makePath = (config, { library = null, collection = null, items = null, trash = false, publications = false, tags = null, search = null, view = null } = {}) => {
+const makePath = (config, { library = null, collection = null,
+	items = null, trash = false, publications = false, tags = null,
+	search = null, qmode = null, view = null } = {}) => {
 	const path = [];
 
 	if(library !== null) {
@@ -38,8 +40,14 @@ const makePath = (config, { library = null, collection = null, items = null, tra
 		}
 	}
 
-	if(search) {
-		path.push('search', search);
+	if(search || qmode) {
+		if(!search) {
+			search = '';
+		}
+		if(!qmode) {
+			qmode = 'titleCreatorYear';
+		}
+		path.push('search', search, qmode);
 	}
 
 	if(items && items.length) {

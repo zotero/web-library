@@ -72,14 +72,14 @@ class ItemsContainer extends React.PureComponent {
 		let direction = this.props.sortDirection.toLowerCase();
 		let tag = this.props.tags || [];
 		const { itemsSource, dispatch, collectionKey, search: q,
-			sortBy, isTrash, isMyPublications  } = this.props;
+			sortBy, isTrash, isMyPublications, qmode  } = this.props;
 		const sort = columnSortKeyLookup[sortBy] || 'title';
 		const sortAndDirection = { start, limit, sort, direction };
 
 		switch(itemsSource) {
 			case 'query':
 				await dispatch(fetchItemsQuery({ collectionKey, isMyPublications,
-					isTrash, q, tag, }, sortAndDirection));
+					isTrash, q, tag, qmode }, sortAndDirection));
 				break;
 			case 'top':
 				await dispatch(fetchTopItems(sortAndDirection));
@@ -121,7 +121,7 @@ class ItemsContainer extends React.PureComponent {
 
 const mapStateToProps = state => {
 	const { collectionKey, isMyPublications, isSelectMode, isTrash, itemKey,
-		itemKeys, itemsSource, libraryKey, search, tags, view, } = state.current;
+		itemKeys, itemsSource, libraryKey, search, tags, view, qmode } = state.current;
 	const collection = get(state, ['libraries', libraryKey, 'collections', collectionKey]);
 	const item = get(state, ['libraries', libraryKey, 'items', itemKey]);
 	const libraryTags = get(state, ['libraries', libraryKey, 'tags']);
@@ -194,6 +194,7 @@ const mapStateToProps = state => {
 		tags,
 		totalItemsCount,
 		view,
+		qmode,
 	};
 };
 

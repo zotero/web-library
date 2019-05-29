@@ -4,11 +4,11 @@ const getVariants = prefix => {
 	return [
 		`${prefix}/tags/:tags/search/:search/items/:items`,
 		`${prefix}/tags/:tags/items/:items`,
-		`${prefix}/search/:search/items/:items`,
+		`${prefix}/search/:search/:qmode/items/:items`,
 		`${prefix}/items/:items`,
-		`${prefix}/tags/:tags/search/:search`,
+		`${prefix}/tags/:tags/search/:search/:qmode`,
 		`${prefix}/tags/:tags`,
-		`${prefix}/search/:search`,
+		`${prefix}/search/:search/:qmode`,
 		`${prefix}/:view(library|collection|item-list|item-details)?`,
 	];
 }

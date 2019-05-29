@@ -22,6 +22,7 @@ const stateDefault = {
 	itemsSource: null,
 	libraryKey: null,
 	search: '',
+	qmode: 'titleCreatorYear',
 	tags: [],
 	userLibraryKey: null,
 	useTransitions: false,
@@ -57,6 +58,7 @@ const current = (state = stateDefault, action, { config } = {}) => {
 			if(!config) { return state; }
 			var params = getParamsFromRoute({ router: { ...action.payload } });
 			var search = params.search || '';
+			var qmode = params.qmode || 'titleCreatorYear';
 			var isTrash = action.payload.location.pathname.includes('/trash');
 			var isMyPublications = action.payload.location.pathname.includes('/publications');
 			var collectionKey = params.collection || null;
@@ -101,6 +103,7 @@ const current = (state = stateDefault, action, { config } = {}) => {
 				itemsSource,
 				libraryKey,
 				search,
+				qmode,
 				tags: tags || [],
 				useTransitions: state.useTransitions,
 				view,

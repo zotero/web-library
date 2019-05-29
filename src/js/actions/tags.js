@@ -120,12 +120,12 @@ const fetchTagsForTopItems = queryOptions => {
 };
 
 const fetchTagsForItemsByQuery = (query, queryOptions) => {
-	const { collectionKey = null, itemTag = null, itemQ = null, isTrash,
-		isMyPublications } = query;
+	const { collectionKey = null, itemTag = null, itemQ = null, itemQMode = null,
+		isTrash, isMyPublications } = query;
 	const queryConfig = { collectionKey, isTrash, isMyPublications };
 
 	return fetchTags(
-		'TAGS_IN_ITEMS_BY_QUERY', queryConfig, { ...queryOptions, itemTag, itemQ }
+		'TAGS_IN_ITEMS_BY_QUERY', queryConfig, { ...queryOptions, itemTag, itemQ, itemQMode }
 	);
 }
 

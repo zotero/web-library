@@ -22,7 +22,7 @@ class TagSelectorContainer extends React.PureComponent {
 
 	handleSelect(tagName) {
 		const { libraryKey: library, itemsSource, collectionKey: collection, selectedTags: tags,
-			makePath, push, search, isMyPublications, isTrash } = this.props;
+			makePath, push, search, isMyPublications, isTrash, qmode } = this.props;
 		const index = tags.indexOf(tagName)
 		if(index > -1) {
 			tags.splice(index, 1);
@@ -44,7 +44,7 @@ class TagSelectorContainer extends React.PureComponent {
 				push(makePath({ library, collection, tags }));
 			break;
 			case 'query':
-				push(makePath({ library, collection, search, tags, trash: isTrash,
+				push(makePath({ library, collection, search, tags, qmode, trash: isTrash,
 					publications: isMyPublications }));
 			break;
 		}
@@ -52,7 +52,7 @@ class TagSelectorContainer extends React.PureComponent {
 
 	async handleLoadMore(start, limit) {
 		const { collectionKey, dispatch, itemsSource, isMyPublications,
-			isTrash, selectedTags, search } = this.props;
+			isTrash, selectedTags, search, qmode } = this.props;
 
 		switch(itemsSource) {
 			case 'top':
@@ -69,6 +69,7 @@ class TagSelectorContainer extends React.PureComponent {
 					isMyPublications,
 					collectionKey,
 					itemQ: search,
+					itemQMode: qmode,
 					itemTag: selectedTags
 				}, { start, limit }));
 		}
@@ -102,7 +103,8 @@ const mapStateToProps = state => {
 		itemsSource,
 		search,
 		isMyPublications,
-		isTrash
+		isTrash,
+		qmode,
 	} = state.current;
 	if(!libraryKey) { return {}; }
 
@@ -142,7 +144,7 @@ const mapStateToProps = state => {
 		isReady: totalTagCount !== null,
 		libraryKey, sourceTags, search, tags, totalTagCount, itemsSource,
 		makePath: makePath.bind(null, state.config), collectionKey,
-		selectedTags, isFetching, isMyPublications, isTrash
+		selectedTags, isFetching, isMyPublications, isTrash, qmode
 	}
 
 };

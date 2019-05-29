@@ -106,11 +106,11 @@ const fetchItemsInCollection = (collectionKey, queryOptions) => {
 }
 
 const fetchItemsQuery = (query, queryOptions) => {
-	const { collectionKey = null, tag = null, q = null, isTrash,
+	const { collectionKey = null, tag = null, q = null, qmode = null, isTrash,
 		isMyPublications } = query;
 	const queryConfig = { collectionKey, isTrash, isMyPublications };
 	return fetchItems(
-		'ITEMS_BY_QUERY', queryConfig, { ...queryOptions, tag, q}
+		'ITEMS_BY_QUERY', queryConfig, { ...queryOptions, tag, q, qmode }
 	);
 }
 

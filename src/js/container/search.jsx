@@ -10,18 +10,19 @@ import { makePath } from '../common/navigation';
 class SearchContainer extends React.PureComponent {
 	state = { search: '' }
 
-	handleSearch(search) {
+	handleSearch(search, qmode) {
 		const { libraryKey: library, collectionKey: collection, tags,
 			isTrash: trash, isMyPublications: publications,
 			makePath, push, view } = this.props;
 
-		push(makePath({ library, tags, collection, trash, publications, search, view }));
+		push(makePath({ library, tags, collection, trash, publications, search, view, qmode }));
 	}
 
 	render() {
 		return <Search
 			onSearch={ this.handleSearch.bind(this) }
 			search={ this.props.search }
+			qmode={ this.props.qmode }
 		/>;
 	}
 
@@ -32,6 +33,7 @@ class SearchContainer extends React.PureComponent {
 		libraryKey: PropTypes.string,
 		makePath: PropTypes.func.isRequired,
 		push: PropTypes.func.isRequired,
+		qmode: PropTypes.oneOf(['titleCreatorYear', 'everything']),
 		search: PropTypes.string,
 		tags: PropTypes.oneOfType([ PropTypes.string, PropTypes.array]),
 		view:  PropTypes.string,
@@ -43,10 +45,10 @@ class SearchContainer extends React.PureComponent {
 
 const mapStateToProps = state => {
 	const { libraryKey, collectionKey, itemsSource, tags, search, isTrash,
-	isMyPublications, view } = state.current;
+	isMyPublications, view, qmode } = state.current;
 	return { libraryKey, collectionKey, itemsSource,
 		makePath: makePath.bind(null, state.config), tags, search, isTrash,
-		isMyPublications, view }
+		isMyPublications, view, qmode }
 };
 
 export default connect(mapStateToProps, { push })(SearchContainer);

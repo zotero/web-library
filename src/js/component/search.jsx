@@ -2,42 +2,81 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
+import { UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap/lib';
 import { noop } from '../utils';
 import Button from './ui/button';
 import Icon from './ui/icon';
+const modes = {
+	titleCreatorYear: "Title, Creator, Year",
+	everything: "Everything"
+};
 
 class Search extends React.PureComponent {
-	state = { searchValue: this.props.search }
+	state = {
+		searchValue: this.props.search,
+		qmode: this.props.qmode || 'titleCreatorYear'
+	}
+
+	componentDidUpdate(_, { qmode: prevQmode }) {
+		const { qmode, searchValue } = this.state;
+		if(searchValue && qmode !== prevQmode) {
+			this.props.onSearch(searchValue, qmode);
+		}
+	}
 
 	handleSearchChange = ev => {
 		const newValue = ev.currentTarget.value;
 		this.setState({ searchValue: newValue });
 		clearTimeout(this.timeout);
 		this.timeout = setTimeout(() => {
-			this.props.onSearch(newValue);
+			this.props.onSearch(newValue, newValue ? this.state.qmode : null);
 		}, 300);
 	}
 
 	handleSearchClear = () => {
 		clearTimeout(this.timeout);
 		this.setState({ searchValue: '' });
-		this.props.onSearch('');
+		this.props.onSearch();
+	}
+
+	handleSelectMode = ev => {
+		const qmode = ev.currentTarget.dataset.qmode;
+		this.setState({ qmode });
 	}
 
 	render() {
 		return (
 			<div className="search">
-				<div className="dropdown">
-					<Button icon className="dropdown-toggle">
+				<UncontrolledDropdown
+					className="dropdown dropdown-wrapper"
+				>
+					<DropdownToggle
+						color={ null }
+						className="btn-link btn-icon dropdown-toggle"
+					>
 						<Icon type={ '24/search-options' } width="24" height="24" />
-					</Button>
-				</div>
+					</DropdownToggle>
+					<DropdownMenu>
+						<DropdownItem
+							data-qmode="titleCreatorYear"
+							onClick={ this.handleSelectMode }
+						>
+							{ modes['titleCreatorYear'] }
+						</DropdownItem>
+						<DropdownItem
+							data-qmode="everything"
+							onClick={ this.handleSelectMode }
+						>
+							{ modes['everything'] }
+						</DropdownItem>
+					</DropdownMenu>
+				</UncontrolledDropdown>
 				<input
 					className="form-control search-input"
 					onChange={ this.handleSearchChange }
 					type="search"
 					value={ this.state.searchValue }
-					placeholder="Search"
+					placeholder={ modes[this.state.qmode] }
 				/>
 				{ this.state.searchValue.length > 0 && (
 					<Button icon className="clear" onClick={ this.handleSearchClear }>
@@ -50,6 +89,7 @@ class Search extends React.PureComponent {
 
 	static propTypes = {
 		onSearch: PropTypes.func,
+		qmode: PropTypes.oneOf(['titleCreatorYear', 'everything']),
 		search: PropTypes.string,
 	};
 
