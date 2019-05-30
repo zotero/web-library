@@ -94,7 +94,7 @@ class BoxField extends React.PureComponent {
 			props['resize'] = 'vertical';
 
 			if(field.key === 'title') {
-				props['shouldEnterCommit'] = true;
+				props['isSingleLine'] = true;
 			}
 		}
 
