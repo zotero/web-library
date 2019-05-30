@@ -27,8 +27,8 @@ const getCollectionsPath = state => {
 };
 
 
-const getSerializedQuery = ({ collection = null, tag = [], q = null } = {}) => {
-	return `${collection}-${tag.join('-')}-${q}`;
+const getSerializedQuery = ({ collection = null, tag = [], q = null, qmode = null } = {}) => {
+	return `${collection}-${tag.join('-')}-${q}-${qmode}`;
 }
 
 //@NOTE: ideally we shouldn't need to match or at least should know which path

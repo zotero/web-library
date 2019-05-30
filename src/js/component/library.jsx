@@ -65,12 +65,14 @@ class Library extends React.PureComponent {
 	}
 
 	render() {
-		const { libraryKey, collectionKey = '', itemsSource, search, tags } = this.props;
+		const { libraryKey, collectionKey = '', itemsSource, search, tags, qmode } = this.props;
 		var key;
 		if(itemsSource == 'collection') {
 			key = `${libraryKey}-${collectionKey}`;
 		} else if(itemsSource == 'query') {
-			key = `${libraryKey}-query-${getSerializedQuery({ collection: collectionKey, tag: tags, q: search })}`;
+			key = `${libraryKey}-query-${getSerializedQuery(
+				{ collection: collectionKey, tag: tags, q: search, qmode }
+			)}`;
 		} else {
 			key = `${libraryKey}-${itemsSource}`;
 		}
