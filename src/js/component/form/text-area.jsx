@@ -53,12 +53,14 @@ class TextAreaInput extends React.PureComponent {
 	}
 
 	handleKeyDown(event) {
+		const { shouldEnterCommit } = this.props;
 		switch (event.key) {
 			case 'Escape':
 				this.cancel(event);
 			break;
 			case 'Enter':
-				if(event.shiftKey) {
+				if((shouldEnterCommit && !event.shiftKey) || (!shouldEnterCommit && event.shiftKey)) {
+					event.preventDefault();
 					this.commit(event);
 				}
 			break;
@@ -168,6 +170,7 @@ class TextAreaInput extends React.PureComponent {
 		resize: PropTypes.oneOfType([PropTypes.bool, PropTypes.string]),
 		rows: PropTypes.number,
 		selectOnFocus: PropTypes.bool,
+		shouldEnterCommit: PropTypes.bool,
 		spellCheck: PropTypes.bool,
 		tabIndex: PropTypes.number,
 		value: PropTypes.string.isRequired,

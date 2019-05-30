@@ -92,6 +92,10 @@ class BoxField extends React.PureComponent {
 
 		if(InputComponent === TextAreaInput) {
 			props['resize'] = 'vertical';
+
+			if(field.key === 'title') {
+				props['shouldEnterCommit'] = true;
+			}
 		}
 
 		if(InputComponent === SelectInput) {
