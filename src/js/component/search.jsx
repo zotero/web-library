@@ -52,7 +52,7 @@ class Search extends React.PureComponent {
 				>
 					<DropdownToggle
 						color={ null }
-						className="btn-link btn-icon dropdown-toggle"
+						className="btn-icon dropdown-toggle"
 					>
 						<Icon type={ '24/search-options' } width="24" height="24" />
 					</DropdownToggle>

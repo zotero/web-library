@@ -18,7 +18,7 @@
 			position: absolute;
 			left: 7px;
 			top: 3px;
-			z-index: $z-index-dropdown;
+			z-index: $z-index-menu; // We need to set the z-index here because the dropdown-menu expects a static wrapper
 		}
 
 		.dropdown-toggle {
