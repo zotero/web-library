@@ -17,10 +17,15 @@ class Search extends React.PureComponent {
 		qmode: this.props.qmode || 'titleCreatorYear'
 	}
 
-	componentDidUpdate(_, { qmode: prevQmode }) {
+	componentDidUpdate({ itemsSource: prevItemsSource }, { qmode: prevQmode }) {
+		const { itemsSource } = this.props;
 		const { qmode, searchValue } = this.state;
+
 		if(searchValue && qmode !== prevQmode) {
 			this.props.onSearch(searchValue, qmode);
+		}
+		if(itemsSource !== prevItemsSource && itemsSource !== 'query') {
+			this.setState({ searchValue: '' });
 		}
 	}
 
@@ -91,6 +96,7 @@ class Search extends React.PureComponent {
 		onSearch: PropTypes.func,
 		qmode: PropTypes.oneOf(['titleCreatorYear', 'everything']),
 		search: PropTypes.string,
+		itemsSource: PropTypes.string,
 	};
 
 	static defaultProps = {

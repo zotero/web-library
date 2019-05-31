@@ -23,6 +23,7 @@ class SearchContainer extends React.PureComponent {
 			onSearch={ this.handleSearch.bind(this) }
 			search={ this.props.search }
 			qmode={ this.props.qmode }
+			itemsSource={ this.props.itemsSource }
 		/>;
 	}
 
