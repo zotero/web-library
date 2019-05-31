@@ -32,16 +32,30 @@
 		top: $touch-header-height;
 		right: 0;
 		bottom: 0;
-		background: $items-bg;
+		background-color: $items-bg;
 		transform: translate3d(100%, 0, 0);
 		transition: transform $nav-transition;
 
-		.view-item-list-active & {
+		.view-item-list-active &,
+		.search-active & {
 			transform: translate3d(0, 0, 0);
 		}
 
 		.view-item-details-active & {
 			transform: translate3d(-25%, 0, 0);
+		}
+
+		.search-active & {
+			background-color: rgba($items-bg, 0.5);
+		}
+
+		.search-active.view-item-list-active & {
+			background-color: $items-bg;
+
+			.items-container {
+				opacity: 0.5;
+				transition: $fade-transition;
+			}
 		}
 	}
 
