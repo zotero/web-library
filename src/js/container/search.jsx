@@ -31,6 +31,7 @@ class SearchContainer extends React.PureComponent {
 		collectionKey: PropTypes.string,
 		isMyPublications: PropTypes.bool,
 		isTrash: PropTypes.bool,
+		itemsSource: PropTypes.string,
 		libraryKey: PropTypes.string,
 		makePath: PropTypes.func.isRequired,
 		push: PropTypes.func.isRequired,
