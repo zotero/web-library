@@ -15,7 +15,7 @@ import { makeChildMap } from '../common/collection';
 import { itemsSourceLabel } from '../common/format';
 import withEditMode from '../enhancers/with-edit-mode';
 import withSelectMode from '../enhancers/with-select-mode';
-import { toggleModal } from '../actions';
+import { toggleModal, triggerSearchMode } from '../actions';
 
 class TouchHeaderContainer extends React.PureComponent {
 	handleNavigation = path => {
@@ -131,11 +131,9 @@ class TouchHeaderContainer extends React.PureComponent {
 		const selectedItemsCount = itemKeys.length;
 		const collectionHasChildren = collectionKey in this.childMap;
 
-		const props = { isSelectMode, shouldIncludeEditButton,
+		const props = { ...this.props, isSelectMode, shouldIncludeEditButton,
 			shouldIncludeItemListOptions, shouldIncludeCollectionOptions,
 			selectedItemsCount, shouldHandleSelectMode, collectionHasChildren,
-			...pick(this.props, ['isEditing', 'className', 'onSelectModeToggle',
-				'collectionKey', 'toggleModal'])
 		};
 
 		return (
@@ -166,11 +164,12 @@ class TouchHeaderContainer extends React.PureComponent {
 
 const mapStateToProps = state => {
 	const {
-		libraryKey,
+		collectionKey,
+		isSearchMode,
 		itemKey,
-		view,
 		itemsSource,
-		collectionKey, //@TODO: rename to collectionKey
+		libraryKey,
+		view,
 	} = state.current;
 	const { libraries } = state.config;
 	const collections = get(state, ['libraries', libraryKey, 'collections'], []);
@@ -211,13 +210,14 @@ const mapStateToProps = state => {
 		path,
 		item,
 		itemsSource,
+		isSearchMode,
 		makePath: makePath.bind(null, state.config),
 		collectionKey
 	};
 };
 
 const TouchHeaderWrapped = withDevice(withSelectMode(withEditMode(
-	connect(mapStateToProps, { push, toggleModal })(TouchHeaderContainer)
+	connect(mapStateToProps, { push, toggleModal, triggerSearchMode })(TouchHeaderContainer)
 )));
 
 export default TouchHeaderWrapped;

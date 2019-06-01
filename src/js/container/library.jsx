@@ -5,6 +5,7 @@ import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 import ReduxThunk from 'redux-thunk';
 import ReduxAsyncQueue from 'redux-async-queue';
+import { bindActionCreators } from 'redux';
 import { createStore, applyMiddleware, compose } from 'redux';
 import { Provider, connect } from 'react-redux';
 import withUserTypeDetection from '../enhancers/with-user-type-detector';
@@ -20,6 +21,7 @@ import {
 	preferencesLoad,
 	toggleTransitions,
 	triggerResizeViewport,
+	triggerSearchMode,
 } from '../actions';
 import { routes, redirects } from '../routes';
 import Library from '../component/library';
@@ -155,11 +157,11 @@ const mapStateToProps = state => {
 		isSelectMode,
 		itemsSource,
 		libraryKey,
+		qmode,
 		search,
 		tags,
 		useTransitions,
 		view,
-		qmode,
 	} = state.current;
 	const {
 		config,
@@ -178,6 +180,10 @@ const mapStateToProps = state => {
 		useTransitions, libraryKey, search, tags, qmode };
 };
 
-const LibraryContainerWrapped = withUserTypeDetection(connect(mapStateToProps)(LibraryContainer));
+//@TODO: bind all action creators
+const mapDispatchToProps = dispatch => ({ dispatch, ...bindActionCreators({ triggerSearchMode }, dispatch) });
+
+
+const LibraryContainerWrapped = withUserTypeDetection(connect(mapStateToProps, mapDispatchToProps)(LibraryContainer));
 
 export default LibraryContainerWrapped;

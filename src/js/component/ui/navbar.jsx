@@ -14,6 +14,10 @@ class Navbar extends React.PureComponent {
 		};
 	}
 
+	handleSearchButtonClick = () => {
+		this.props.triggerSearchMode(true);
+	}
+
 	render() {
 		return (
 			<header className="navbar">
@@ -31,7 +35,11 @@ class Navbar extends React.PureComponent {
 				<div className="navbar-right">
 					<SearchContainer />
 					<a href="#" className="user-profile-link"></a>
-					<Button icon className="search-toggle hidden-sm-up">
+					<Button
+						onClick={ this.handleSearchButtonClick }
+						icon
+						className="search-toggle hidden-sm-up"
+					>
 						<Icon type={ '24/search' } width="24" height="24" />
 					</Button>
 					<Button icon className="navbar-toggle" onClick={ ev => this.props.onToggle(ev) }>

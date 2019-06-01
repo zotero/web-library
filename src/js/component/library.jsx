@@ -95,7 +95,8 @@ class Library extends React.PureComponent {
 				}
 				<Navbar
 					isOpened = { isNavOpened }
-					onToggle = { this.handleNavToggle.bind(this) }  />
+					onToggle = { this.handleNavToggle.bind(this) }
+					triggerSearchMode = { this.props.triggerSearchMode }  />
 				<div className="nav-cover" />
 				<main>
 					<section className={ `library ${ view === 'library' ? 'active' : '' }` }>

@@ -3,8 +3,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { CSSTransition } from 'react-transition-group';
-import { noop } from '../utils';
-import Icon from './ui/icon';
+import { noop } from '../../utils';
+import Icon from '../ui/icon';
 
 const slots = ['next', 'current', 'previous', 'before-last'];
 const empty = {

@@ -3,14 +3,15 @@
 import React from 'react';
 import cx from 'classnames';
 import PropTypes from 'prop-types';
-import TouchNavigation from './touch-navigation';
+import TouchNavigation from './touch-header/touch-navigation';
+import Searchbar from './touch-header/searchbar';
 import EditToggleButton from './edit-toggle-button';
 import CollectionActions from './touch-header/collection-actions';
 import ItemsActionsContainer from '../container/items-actions';
 import { Toolbar, ToolGroup } from './ui/toolbars';
 import Button from './ui/button';
-import Icon from './ui/icon';
 import { pluralize } from '../common/format';
+import { pick } from '../common/immutable';
 
 class TouchHeader extends React.PureComponent {
 	handleCancelClick = () => {
@@ -43,17 +44,9 @@ class TouchHeader extends React.PureComponent {
 									path={ path }
 									onNavigation={ onNavigation }
 								/>
-								<div className="searchbar">
-									<div className="input-group search">
-										<input type="text" className="form-control search-input" placeholder="Search" />
-										<Button icon className="clear" onClick={ this.handleSearchClear }>
-											<Icon type={ '8/x' } width="8" height="8" />
-										</Button>
-									</div>
-									<Button className="btn-link">
-										Cancel
-									</Button>
-								</div>
+								<Searchbar
+									{ ...pick(this.props, ['isSearchMode', 'triggerSearchMode'] )}
+								/>
 							</div>
 						)
 					}

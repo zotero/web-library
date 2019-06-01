@@ -7,6 +7,7 @@ import {
     TRIGGER_EDITING_ITEM,
     TRIGGER_SELECT_MODE,
     TOGGLE_TRANSITIONS,
+    TRIGGER_SEARCH_MODE,
 } from '../constants/actions';
 
 import { tagsFromUrlPart } from '../common/navigation';
@@ -122,6 +123,11 @@ const current = (state = stateDefault, action, { config } = {}) => {
 			return {
 				...state,
 				isSelectMode: action.isSelectMode
+			}
+		case TRIGGER_SEARCH_MODE:
+			return {
+				...state,
+				isSearchMode: action.isSearchMode
 			}
 		default:
 			return state;

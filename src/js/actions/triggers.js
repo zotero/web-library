@@ -1,11 +1,12 @@
 'use strict';
 
 import {
-    TRIGGER_EDITING_ITEM,
-    TRIGGER_SELECT_MODE,
-    TRIGGER_RESIZE_VIEWPORT,
     TOGGLE_MODAL,
     TOGGLE_TRANSITIONS,
+    TRIGGER_EDITING_ITEM,
+    TRIGGER_RESIZE_VIEWPORT,
+    TRIGGER_SEARCH_MODE,
+    TRIGGER_SELECT_MODE,
 } from '../constants/actions';
 
 const triggerEditingItem = (itemKey, isEditing) => {
@@ -33,6 +34,11 @@ const triggerSelectMode = (isSelectMode) => {
 	}
 };
 
+const triggerSearchMode = isSearchMode => ({
+	type: TRIGGER_SEARCH_MODE,
+	isSearchMode
+});
+
 const triggerResizeViewport = (width, height) => {
 	return {
 		type: TRIGGER_RESIZE_VIEWPORT,
@@ -51,9 +57,10 @@ const toggleTransitions = useTransitions => {
 }
 
 export {
-	triggerEditingItem,
-	triggerSelectMode,
-	triggerResizeViewport,
 	toggleModal,
 	toggleTransitions,
+	triggerEditingItem,
+	triggerResizeViewport,
+	triggerSelectMode,
+	triggerSearchMode,
 };
