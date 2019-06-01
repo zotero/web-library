@@ -2,17 +2,13 @@
 // Search
 // --------------------------------------------------
 
-.navbar {
+.navbar, .searchbar {
 	.search {
 		align-self: center;
 		width: $search-width;
 		font-size: 14px;
 		line-height: 20px; // Special height, like Upgrade button on zotero.org
 		position: relative;
-
-		@include bp-down(xs) {
-			display: none;
-		}
 
 		.dropdown {
 			position: absolute;
@@ -76,5 +72,11 @@
 				}
 			}
 		}
+	}
+}
+
+.navbar .search {
+	@include bp-down(xs) {
+		display: none;
 	}
 }

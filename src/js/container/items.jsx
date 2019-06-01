@@ -107,8 +107,17 @@ class ItemsContainer extends React.PureComponent {
 	}
 
 	render() {
+		const { device, isSearchMode, itemsSource } = this.props;
+		let { items, totalItemsCount } = this.props;
+
+		if(device.isTouchOrSmall && isSearchMode && itemsSource !== 'query') {
+			items = [];
+			totalItemsCount = 0;
+		}
 		return <Items
 			{ ...this.props }
+			items = { items }
+			totalItemsCount = { totalItemsCount }
 			onColumnReorder={ this.handleColumnReorder.bind(this) }
 			onColumnResize={ this.handleColumnResize.bind(this) }
 			onColumnVisibilityChange={ this.handleColumnVisibilityChange.bind(this) }
@@ -120,7 +129,7 @@ class ItemsContainer extends React.PureComponent {
 }
 
 const mapStateToProps = state => {
-	const { collectionKey, isMyPublications, isSelectMode, isTrash, itemKey,
+	const { collectionKey, isMyPublications, isSearchMode, isSelectMode, isTrash, itemKey,
 		itemKeys, itemsSource, libraryKey, search, tags, view, qmode } = state.current;
 	const collection = get(state, ['libraries', libraryKey, 'collections', collectionKey]);
 	const item = get(state, ['libraries', libraryKey, 'items', itemKey]);
@@ -178,6 +187,7 @@ const mapStateToProps = state => {
 		isMyPublications,
 		isReady,
 		isSelectMode,
+		isSearchMode,
 		isTrash,
 		itemFields,
 		items,

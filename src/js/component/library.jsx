@@ -77,14 +77,15 @@ class Library extends React.PureComponent {
 			key = `${libraryKey}-${itemsSource}`;
 		}
 
-		const { device, isSelectMode, useTransitions, view } = this.props;
+		const { device, isSearchMode, isSelectMode, useTransitions, view } = this.props;
 		const { isNavOpened, hasUserTypeChanged } = this.state;
 		let activeViewClass = `view-${view}-active`;
 
 		return (
 			<div className={ cx('library-container', activeViewClass, {
 					'navbar-nav-opened': isNavOpened,
-					'no-transitions': !useTransitions || hasUserTypeChanged
+					'no-transitions': !useTransitions || hasUserTypeChanged,
+					'search-active': isSearchMode
 				}) }>
 				{
 					!useTransitions && (
