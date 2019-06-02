@@ -26,7 +26,7 @@ import RichEditor from './component/rich-editor';
 import Spinner from './component/ui/spinner';
 import TagSelector from './component/tag-selector';
 import TouchHeader from './component/touch-header';
-import TouchNavigation from './component/touch-navigation';
+import TouchNavigation from './component/touch-header/touch-navigation';
 import { Tab, Tabs } from './component/ui/tabs';
 import { Toolbar, ToolGroup } from './component/ui/toolbars';
 
