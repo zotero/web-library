@@ -97,6 +97,7 @@ const current = (state = stateDefault, action, { config } = {}) => {
 				editingItemKey: state.editingItemKey,
 				isEditing: state.isEditing && view !== 'item-details',
 				isSelectMode: isSelectMode && view === 'item-list',
+				isSearchMode: itemsSource === 'query' || state.isSearchMode,
 				itemKey: itemKeys && itemKeys.length === 1 ? itemKeys[0] : null,
 				isTrash,
 				isMyPublications,

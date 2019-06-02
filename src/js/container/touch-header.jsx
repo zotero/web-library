@@ -2,6 +2,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
+import { bindActionCreators } from 'redux';
 import Types from '../types';
 import { push } from 'connected-react-router';
 import withDevice from '../enhancers/with-device';
@@ -18,18 +19,14 @@ import withSelectMode from '../enhancers/with-select-mode';
 import { toggleModal, triggerSearchMode } from '../actions';
 
 class TouchHeaderContainer extends React.PureComponent {
-	handleNavigation = path => {
-		const { makePath, push } = this.props;
-		push(makePath(path));
-	}
-
 	get childMap() {
 		const { collections } = this.props;
 		return collections.length ? makeChildMap(collections) : {};
 	}
 
 	get itemsSourceNode() {
-		const { itemsSource, libraryKey, collectionKey: collection } = this.props;
+		const { libraryKey, collectionKey: collection, search, qmode, isTrash,
+			isMyPublications, itemsSource } = this.props;
 		const label = itemsSourceLabel(itemsSource);
 		return {
 			key: itemsSource,
@@ -37,9 +34,11 @@ class TouchHeaderContainer extends React.PureComponent {
 			path: {
 				library: libraryKey,
 				view: 'item-list',
-				trash: itemsSource === 'trash',
-				publications: itemsSource === 'publications',
-				collection
+				trash: isTrash,
+				publications: isMyPublications,
+				search,
+				qmode,
+				collection,
 			},
 			label
 		}
@@ -139,7 +138,6 @@ class TouchHeaderContainer extends React.PureComponent {
 		return (
 			<TouchHeader
 				{ ...props }
-				onNavigation={ this.handleNavigation }
 				path={ touchHeaderPath }
 			/>
 		);
@@ -169,7 +167,11 @@ const mapStateToProps = state => {
 		itemKey,
 		itemsSource,
 		libraryKey,
+		qmode,
+		search,
 		view,
+		isTrash,
+		isMyPublications,
 	} = state.current;
 	const { libraries } = state.config;
 	const collections = get(state, ['libraries', libraryKey, 'collections'], []);
@@ -209,15 +211,26 @@ const mapStateToProps = state => {
 		libraryConfig,
 		path,
 		item,
+		search,
+		qmode,
 		itemsSource,
 		isSearchMode,
+		isTrash,
+		isMyPublications,
 		makePath: makePath.bind(null, state.config),
 		collectionKey
 	};
 };
 
+const mapDispatchToProps = (dispatch, ownProps) => {
+	return {
+		...bindActionCreators({ toggleModal, triggerSearchMode }, dispatch),
+		navigate: path => dispatch(push(ownProps.makePath(path)))
+	}
+}
+
 const TouchHeaderWrapped = withDevice(withSelectMode(withEditMode(
-	connect(mapStateToProps, { push, toggleModal, triggerSearchMode })(TouchHeaderContainer)
+	connect(mapStateToProps, mapDispatchToProps)(TouchHeaderContainer)
 )));
 
 export default TouchHeaderWrapped;

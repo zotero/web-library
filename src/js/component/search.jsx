@@ -50,6 +50,7 @@ class Search extends React.PureComponent {
 	}
 
 	render() {
+		const { autoFocus } = this.props;
 		return (
 			<div className="search">
 				<UncontrolledDropdown
@@ -77,6 +78,7 @@ class Search extends React.PureComponent {
 					</DropdownMenu>
 				</UncontrolledDropdown>
 				<input
+					autoFocus={ autoFocus }
 					className="form-control search-input"
 					onChange={ this.handleSearchChange }
 					type="search"
@@ -93,6 +95,7 @@ class Search extends React.PureComponent {
 	}
 
 	static propTypes = {
+		autoFocus: PropTypes.bool,
 		onSearch: PropTypes.func,
 		qmode: PropTypes.oneOf(['titleCreatorYear', 'everything']),
 		search: PropTypes.string,

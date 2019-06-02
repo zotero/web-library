@@ -23,9 +23,9 @@ const PAGE_SIZE = 50;
 class ItemsContainer extends React.PureComponent {
 	handleItemsSelect(items = []) {
 		const { collectionKey: collection, libraryKey: library,
-			itemsSource, makePath, push, tags, search } = this.props;
-		const trash = itemsSource === 'trash';
-		const publications = itemsSource === 'publications';
+			isTrash, isMyPublications, makePath, push, tags, search } = this.props;
+		const trash = isTrash;
+		const publications = isMyPublications;
 		const view = 'item-list';
 		push(makePath({ library, search, tags, trash, publications, collection, items, view }));
 	}

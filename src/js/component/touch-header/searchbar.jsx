@@ -6,22 +6,30 @@ import SearchContainer from '../../container/search';
 import Button from '../ui/button';
 
 class SearchBar extends React.PureComponent {
-
 	handleCancelSearchClick = () => {
-		this.props.triggerSearchMode(false);
+		const {
+			collectionKey, isMyPublications, isTrash, libraryKey, navigate, triggerSearchMode,
+		} = this.props;
+		triggerSearchMode(false);
+		navigate({
+			library: libraryKey,
+			collection: collectionKey,
+			trash: isTrash,
+			publications: isMyPublications,
+		});
 	}
 
 	render() {
-		const { isSearchMode } = this.props;
+		const { isSearchMode, view } = this.props;
 		return (
 			<CSSTransition
-				in={ isSearchMode }
+				in={ isSearchMode && view !== 'item-details' }
 				timeout={ 250 }
 				classNames="fade"
 				unmountOnExit
 			>
 				<div className="searchbar">
-					<SearchContainer />
+					<SearchContainer autoFocus />
 					<Button onClick={ this.handleCancelSearchClick } className="btn-link">
 						Cancel
 					</Button>
@@ -31,8 +39,14 @@ class SearchBar extends React.PureComponent {
 	}
 
 	static propTypes = {
+		collectionKey: PropTypes.string,
+		isMyPublications: PropTypes.bool,
 		isSearchMode: PropTypes.bool,
-		triggerSearchMode: PropTypes.func.isRequired
+		isTrash: PropTypes.bool,
+		libraryKey: PropTypes.string,
+		navigate: PropTypes.func,
+		triggerSearchMode: PropTypes.func.isRequired,
+		view: PropTypes.string,
 	}
 }
 

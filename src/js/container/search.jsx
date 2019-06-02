@@ -20,6 +20,7 @@ class SearchContainer extends React.PureComponent {
 
 	render() {
 		return <Search
+			{ ...this.props }
 			onSearch={ this.handleSearch.bind(this) }
 			search={ this.props.search }
 			qmode={ this.props.qmode }

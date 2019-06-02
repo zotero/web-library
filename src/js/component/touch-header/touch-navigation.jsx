@@ -81,7 +81,7 @@ class TouchNavigation extends React.PureComponent {
 		ev.preventDefault();
 		if(ev.type === 'click' ||
 			(ev.type === 'keypress' && (ev.key === 'Enter' || ev.key === ' '))) {
-			this.props.onNavigation(path, ev);
+			this.props.navigate(path, ev);
 		}
 	}
 
@@ -127,12 +127,12 @@ class TouchNavigation extends React.PureComponent {
 	}
 
 	static propTypes = {
-		onNavigation: PropTypes.func,
+		navigate: PropTypes.func,
 		path: PropTypes.array,
 	}
 
 	static defaultProps = {
-		onNavigation: noop,
+		navigate: noop,
 		path: [],
 	}
 }

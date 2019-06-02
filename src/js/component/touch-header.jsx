@@ -19,7 +19,7 @@ class TouchHeader extends React.PureComponent {
 	}
 
 	render() {
-		const { isEditing, path, className, onNavigation,
+		const { isEditing, path, className, navigate,
 			shouldIncludeEditButton, shouldIncludeItemListOptions,
 			shouldIncludeCollectionOptions, shouldHandleSelectMode,
 			isSelectMode, selectedItemsCount } = this.props;
@@ -42,10 +42,13 @@ class TouchHeader extends React.PureComponent {
 							<div className="toolbar-left">
 								<TouchNavigation
 									path={ path }
-									onNavigation={ onNavigation }
+									navigate={ navigate }
 								/>
 								<Searchbar
-									{ ...pick(this.props, ['isSearchMode', 'triggerSearchMode'] )}
+									{ ...pick(this.props, ['view', 'isSearchMode',
+										'triggerSearchMode', 'navigate', 'isTrash', 'isMyPublications',
+										'libraryKey', 'collectionKey',
+									])}
 								/>
 							</div>
 						)
@@ -109,8 +112,8 @@ TouchHeader.propTypes = {
 	className: PropTypes.string,
 	isEditing: PropTypes.bool,
 	isSelectMode: PropTypes.bool,
+	navigate: PropTypes.func,
 	onEditModeToggle: PropTypes.func,
-	onNavigation: PropTypes.func,
 	onSelectModeToggle: PropTypes.func,
 	path: PropTypes.array,
 	selectedItemsCount: PropTypes.number,

@@ -20,7 +20,7 @@ const itemsSourceLabel = itemsSource => {
 		case 'publications':
 			return "My Publications";
 		case 'query':
-			return "Search results"; //@NOTE: currently not in use
+			return "Search Results";
 		case 'top':
 			return "All Items";
 		default:
