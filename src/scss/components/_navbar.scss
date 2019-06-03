@@ -196,29 +196,23 @@
 	}
 
 	.navbar-toggle {
-		margin-right: $default-padding-x-touch / 2;
+		margin-right: $space-xs;
 
-		&:focus {
-			outline: none;
+		@include bp-up-normalized(sm) {
+			align-self: center;
+			padding: $space-xs;
+			margin-left: $space-xs;
 		}
 
 		.icon-bar {
-			display: block;
-			width: $icon-bar-width;
-			height: $icon-bar-height;
-			background: $icon-bar-bg;
+		 display: block;
+		 width: $icon-bar-width;
+		 height: $icon-bar-height;
+		 background: $icon-bar-bg;
 
-			& + .icon-bar {
-				margin-top: $icon-bar-spacing;
-			}
-		}
-	}
-
-	.navbar-toggle {
-		height: $navbar-height-xs;
-
-		@include bp-up(sm) {
-			height: $navbar-height-sm;
+		 & + .icon-bar {
+		 	margin-top: $icon-bar-spacing;
+		 }
 		}
 	}
 }
