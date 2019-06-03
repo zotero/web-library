@@ -19,7 +19,7 @@ class TouchHeader extends React.PureComponent {
 	}
 
 	render() {
-		const { isEditing, path, className, navigate,
+		const { device, isEditing, path, className, navigate,
 			shouldIncludeEditButton, shouldIncludeItemListOptions,
 			shouldIncludeCollectionOptions, shouldHandleSelectMode,
 			isSelectMode, selectedItemsCount } = this.props;
@@ -37,18 +37,20 @@ class TouchHeader extends React.PureComponent {
 		return (
 			<header className={ cx('touch-header', className) }>
 				<Toolbar>
+					{ device.isSingleColumn && (
+						<Searchbar
+							{ ...pick(this.props, ['view', 'isSearchMode',
+								'triggerSearchMode', 'navigate', 'isTrash', 'isMyPublications',
+								'libraryKey', 'collectionKey',
+							])}
+						/>
+					)}
 					{
 						!shouldHideNav && (
 							<div className="toolbar-left">
 								<TouchNavigation
 									path={ path }
 									navigate={ navigate }
-								/>
-								<Searchbar
-									{ ...pick(this.props, ['view', 'isSearchMode',
-										'triggerSearchMode', 'navigate', 'isTrash', 'isMyPublications',
-										'libraryKey', 'collectionKey',
-									])}
 								/>
 							</div>
 						)
