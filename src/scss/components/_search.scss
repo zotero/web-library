@@ -8,6 +8,11 @@
 		left: 7px;
 		top: 3px;
 		z-index: $z-index-menu; // We need to set the z-index here because the dropdown-menu expects a static wrapper
+
+		@include bp-down(xs) {
+			left: 8px;
+			top: 4px;
+		}
 	}
 
 	.dropdown-toggle {
@@ -21,7 +26,7 @@
 	}
 
 	.search-input {
-		padding: 5px 23px 5px 36px;
+		padding: 5px 24px 5px 36px;
 
 		@include touch-or-bp-down(sm) {
 			min-height: auto; // Reset
@@ -34,18 +39,27 @@
 				border: $input-border-width solid $focus-color;
 			}
 		}
+
+		@include bp-down-normalized(xs) {
+			padding: 5px 25px 5px 38px;
+		}
 	}
 
 	.clear {
 		position: absolute;
-		top: 9px;
-		right: 9px;
-		width: 14px;
-		height: 14px;
+		top: 8px;
+		right: 8px;
+		width: $space-md;
+		height: $space-md;
 		border: none;
 		padding: 0;
 		border-radius: 50%;
 		background-color: $icon-color;
+
+		@include bp-down(xs) {
+			top: 9px;
+			right: 9px;
+		}
 
 		@include mouse-and-bp-up(md) {
 			&:active {

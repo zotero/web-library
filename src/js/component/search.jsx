@@ -87,7 +87,7 @@ class Search extends React.PureComponent {
 				/>
 				{ this.state.searchValue.length > 0 && (
 					<Button icon className="clear" onClick={ this.handleSearchClear }>
-						<Icon type={ '8/x' } width="8" height="8" />
+						<Icon type={ '10/x' } width="10" height="10" />
 					</Button>
 				)}
 			</div>

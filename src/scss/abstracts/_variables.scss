@@ -328,5 +328,5 @@ $abstract-margin-x-touch: $metadata-list-margin-x-touch;
 // Touch header & footer
 // --------------------------------------------------
 
-$touch-header-height: $line-height-large-touch + $border-width;
+$touch-header-height: $line-height-large-touch + 2 * $border-width;
 $touch-footer-height: $touch-header-height;

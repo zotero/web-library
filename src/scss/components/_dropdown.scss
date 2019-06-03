@@ -1,5 +1,9 @@
 .dropdown {
 	.dropdown-toggle {
+		&.btn-icon {
+			vertical-align: top;
+		}
+
 		[class*="icon-chevron"] {
 			transform: scaleY(-1);
 			vertical-align: -2px; // Works for btn-lg

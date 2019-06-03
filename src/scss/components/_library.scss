@@ -5,9 +5,9 @@
 .library {
 	display: flex;
 
-	@include touch-or-bp-down(sm) {
-		@include hairline(top, $shade-4);
-	}
+	//@include touch-or-bp-down(sm) {
+	//	@include hairline(top, $shade-4);
+	//}
 
 	@include bp-down(xs) {
 		flex: 1 1 auto;
