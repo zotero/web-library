@@ -85,7 +85,8 @@ class Library extends React.PureComponent {
 			<div className={ cx('library-container', activeViewClass, {
 					'navbar-nav-opened': isNavOpened,
 					'no-transitions': !useTransitions || hasUserTypeChanged,
-					'search-active': isSearchMode
+					'search-active': isSearchMode && itemsSource !== 'query',
+					'search-results': isSearchMode && itemsSource === 'query',
 				}) }>
 				{
 					!useTransitions && (
