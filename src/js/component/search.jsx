@@ -52,7 +52,7 @@ class Search extends React.PureComponent {
 	render() {
 		const { autoFocus } = this.props;
 		return (
-			<div className="search">
+			<div className="search input-group">
 				<UncontrolledDropdown
 					className="dropdown dropdown-wrapper"
 				>

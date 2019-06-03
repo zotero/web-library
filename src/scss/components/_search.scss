@@ -2,81 +2,67 @@
 // Search
 // --------------------------------------------------
 
-.navbar, .searchbar {
-	.search {
-		align-self: center;
-		width: $search-width;
-		font-size: 14px;
-		line-height: 20px; // Special height, like Upgrade button on zotero.org
-		position: relative;
+.input-group.search {
+	.dropdown {
+		position: absolute;
+		left: 7px;
+		top: 3px;
+		z-index: $z-index-menu; // We need to set the z-index here because the dropdown-menu expects a static wrapper
+	}
 
-		.dropdown {
-			position: absolute;
-			left: 7px;
-			top: 3px;
-			z-index: $z-index-menu; // We need to set the z-index here because the dropdown-menu expects a static wrapper
+	.dropdown-toggle {
+		padding: 0;
+	}
+
+	.icon-search-options {
+		@include touch-or-bp-down(sm) {
+			color: $icon-color; // Reset
+		}
+	}
+
+	.search-input {
+		padding: 5px 23px 5px 36px;
+
+		@include touch-or-bp-down(sm) {
+			min-height: auto; // Reset
+			border: $input-border-width solid $input-border-color; // …
+			background-color: $input-bg; // …
 		}
 
-		.dropdown-toggle {
-			padding: 0;
-		}
-
-		.icon-search-options {
-			@include touch-or-bp-down(sm) {
-				color: $icon-color; // Reset
-			}
-		}
-
-		.search-input {
-			padding: 5px 23px 5px 36px;
-
-			@include touch-or-bp-down(sm) {
-				min-height: auto; // Reset
-				border: $input-border-width solid $input-border-color; // …
-				background-color: $input-bg; // …
-			}
-
-			@include touch-keyboard-or-bp-down(sm) {
-				&:focus {
-					border: $input-border-width solid $focus-color;
-				}
-			}
-		}
-
-		.clear {
-			position: absolute;
-			top: 9px;
-			right: 9px;
-			width: 14px;
-			height: 14px;
-			border: none;
-			padding: 0;
-			border-radius: 50%;
-			background-color: $icon-color;
-
-			@include mouse-and-bp-up(md) {
-				&:active {
-					background-color: $icon-active-color;
-				}
-			}
-
-			.icon {
-				position: absolute;
-				left: 50%;
-				top: 50%;
-				transform: translate(-50%, -50%);
-				color: $input-bg;
-
-				@include state(".clear:active .icon") {
-					color: $input-bg;
-				}
+		@include touch-keyboard-or-bp-down(sm) {
+			&:focus {
+				border: $input-border-width solid $focus-color;
 			}
 		}
 	}
-}
 
-.navbar .search {
-	@include bp-down(xs) {
-		display: none;
+	.clear {
+		position: absolute;
+		top: 9px;
+		right: 9px;
+		width: 14px;
+		height: 14px;
+		border: none;
+		padding: 0;
+		border-radius: 50%;
+		background-color: $icon-color;
+
+		@include mouse-and-bp-up(md) {
+			&:active {
+				background-color: $icon-active-color;
+			}
+		}
+
+		.icon {
+			position: absolute;
+			left: 50%;
+			top: 50%;
+			transform: translate(-50%, -50%);
+			color: $input-bg;
+
+			@include state(".clear:active .icon") {
+				color: $input-bg;
+			}
+		}
 	}
 }

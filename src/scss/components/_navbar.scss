@@ -178,6 +178,17 @@
 		}
 	}
 
+	.search {
+		align-self: center;
+		width: $search-width;
+		font-size: 14px;
+		line-height: 20px; // Special height, like Upgrade button on zotero.org
+
+		@include bp-down(xs) {
+			display: none;
+		}
+	}
+
 	.search-toggle {
 		.icon {
 			color: $navbar-link-color;

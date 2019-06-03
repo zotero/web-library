@@ -3,6 +3,8 @@
 // --------------------------------------------------
 
 .searchbar {
+	@include hairline(top, $touch-header-border);
+	@include hairline(bottom, $touch-header-border);
 	position: absolute;
 	top: 0;
 	right: 0;
@@ -12,8 +14,7 @@
 	align-items: center;
 	padding: 0 $default-padding-x-touch;
 	background: #f5f5f5;
-	z-index: 2;
-	display: none; // todo
+	z-index: $z-index-search-bar;
 
 	.search {
 		margin: 0 $default-padding-x-touch 0 (-$default-padding-x-touch + $space-min);
@@ -56,6 +57,3 @@
 	}
 }
 
-.library > .touch-header .searchbar {
-	display: flex; // todo
-}

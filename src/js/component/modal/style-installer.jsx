@@ -274,7 +274,7 @@ class StyleInstallerModal extends React.PureComponent {
 						}
 					</div>
 					<div className="modal-body" tabIndex={ 0 }>
-						<div className="search-bar">
+						<div className="style-search">
 							<Input
 								autoFocus
 								className="form-control form-control-lg search-input"
