@@ -3,6 +3,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import cx from 'classnames';
+import { CSSTransition } from 'react-transition-group';
+
 import { getSerializedQuery } from '../common/state';
 import Spinner from './ui/spinner';
 import LibrariesContainer from '../container/libraries';
@@ -117,18 +119,26 @@ class Library extends React.PureComponent {
 								<TagSelectorContainer key={ key } />
 							}
 						</header>
-						<section className={ cx('items', {
-							'active': view === 'item-list',
-							'select-mode': isSelectMode
-						})}>
-							{/* Tablet TouchHeader */}
-							<TouchHeaderContainer
-								className="hidden-xs-down hidden-md-up darker"
-								variant={ TouchHeaderContainer.variants.SOURCE_AND_ITEM }
-							/>
-							<ItemsContainer key={ key } />
-							<ItemDetailsContainer active={ view === 'item-details' } />
-						</section>
+						<CSSTransition
+								in={ device.isSingleColumn && isSearchMode || !device.isSingleColumn }
+								timeout={ 250 }
+								classNames="fade"
+								enter={ device.isSingleColumn && view !== 'item-list' }
+								exit={ device.isSingleColumn && view !== 'item-list' }
+							>
+							<section className={ cx('items', {
+								'active': view === 'item-list',
+								'select-mode': isSelectMode
+							})}>
+								{/* Tablet TouchHeader */}
+								<TouchHeaderContainer
+									className="hidden-xs-down hidden-md-up darker"
+									variant={ TouchHeaderContainer.variants.SOURCE_AND_ITEM }
+								/>
+								<ItemsContainer key={ key } />
+								<ItemDetailsContainer active={ view === 'item-details' } />
+							</section>
+						</CSSTransition>
 					</section>
 				</main>
 				<AddItemsToCollectionsModalContainer />

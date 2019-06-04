@@ -3,6 +3,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import cx from 'classnames';
+
 import ItemsTableToolbar from './items/toolbar';
 import ItemsTable from './items/table';
 import ItemsList from './items/list';
@@ -31,7 +32,7 @@ class Items extends React.PureComponent {
 	}
 
 	render() {
-		const { device, totalItemsCount } = this.props;
+		const { device, totalItemsCount, isSearchMode } = this.props;
 		const isLoadingUncounted = typeof(totalItemsCount) === 'undefined';
 
 		return (
