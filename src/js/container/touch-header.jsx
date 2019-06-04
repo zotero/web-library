@@ -2,13 +2,10 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { bindActionCreators } from 'redux';
 import Types from '../types';
-import { push } from 'connected-react-router';
 import withDevice from '../enhancers/with-device';
 import { connect } from 'react-redux';
 import { get } from '../utils';
-import { pick } from '../common/immutable';
 import { getCollectionsPath } from '../common/state';
 import TouchHeader from '../component/touch-header';
 import { makePath } from '../common/navigation';
@@ -16,7 +13,7 @@ import { makeChildMap } from '../common/collection';
 import { itemsSourceLabel } from '../common/format';
 import withEditMode from '../enhancers/with-edit-mode';
 import withSelectMode from '../enhancers/with-select-mode';
-import { toggleModal, triggerSearchMode } from '../actions';
+import { navigate, toggleModal, triggerSearchMode } from '../actions';
 
 class TouchHeaderContainer extends React.PureComponent {
 	get childMap() {
@@ -204,33 +201,14 @@ const mapStateToProps = state => {
 		})
 	}
 
-	return {
-		collections: Object.values(collections),
-		view,
-		libraryKey,
-		libraryConfig,
-		path,
-		item,
-		search,
-		qmode,
-		itemsSource,
-		isSearchMode,
-		isTrash,
-		isMyPublications,
-		makePath: makePath.bind(null, state.config),
-		collectionKey
+	return { collectionKey, collections: Object.values(collections), isMyPublications,
+		isSearchMode, isTrash, item, itemsSource, libraryConfig, libraryKey, path,
+		qmode, search, view,
 	};
 };
 
-const mapDispatchToProps = (dispatch, ownProps) => {
-	return {
-		...bindActionCreators({ toggleModal, triggerSearchMode }, dispatch),
-		navigate: path => dispatch(push(ownProps.makePath(path)))
-	}
-}
-
 const TouchHeaderWrapped = withDevice(withSelectMode(withEditMode(
-	connect(mapStateToProps, mapDispatchToProps)(TouchHeaderContainer)
+	connect(mapStateToProps, { toggleModal, triggerSearchMode, navigate })(TouchHeaderContainer)
 )));
 
 export default TouchHeaderWrapped;

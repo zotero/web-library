@@ -24,6 +24,7 @@ import ItemsSortModalContainer from '../container/modal/items-sort';
 import MoveCollectionsModalContainer from '../container/modal/move-collections';
 import withDevice from '../enhancers/with-device';
 import Icon from './ui/icon';
+import { pick } from '../common/immutable';
 
 class Library extends React.PureComponent {
 	constructor(props) {
@@ -100,7 +101,11 @@ class Library extends React.PureComponent {
 				<Navbar
 					isOpened = { isNavOpened }
 					onToggle = { this.handleNavToggle.bind(this) }
-					triggerSearchMode = { this.props.triggerSearchMode }  />
+					{...pick(this.props, ['libraryKey', 'collectionKey',
+						'tags', 'isTrash', 'isMyPublications', 'qmode',
+						'navigate', 'view', 'triggerSearchMode', 'search',
+					])}
+				/>
 				<div className="nav-cover" />
 				<main>
 					<section className={ `library ${ view === 'library' ? 'active' : '' }` }>

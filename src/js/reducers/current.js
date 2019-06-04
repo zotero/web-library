@@ -123,7 +123,7 @@ const current = (state = stateDefault, action, { config } = {}) => {
 		case TRIGGER_SELECT_MODE:
 			return {
 				...state,
-				isSelectMode: action.isSelectMode
+				isSelectMode: action.isSelectMode,
 			}
 		case TRIGGER_SEARCH_MODE:
 			return {
