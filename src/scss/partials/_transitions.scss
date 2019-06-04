@@ -10,7 +10,7 @@
 
 		&-active {
 			opacity: 1 !important;
-			transition: $fade-transition !important;
+			transition: opacity $fade-transition !important;
 		}
 	}
 
@@ -19,7 +19,7 @@
 
 		&-active {
 			opacity: 0 !important;
-			transition: $fade-transition !important;
+			transition: opacity $fade-transition !important;
 		}
 	}
 }

@@ -46,15 +46,50 @@
 		}
 
 		.search-active & {
-			background-color: rgba($items-bg, 0.5);
+			background-color: $modal-backdrop-bg;
+			transition: background-color $fade-transition;
 		}
 
 		.search-active.view-item-list-active & {
 			background-color: $items-bg;
+		}
 
-			.items-container {
-				opacity: 0.5;
-				transition: $fade-transition;
+		.search-results & {
+			background-color: $body-bg;
+			transition: background-color $fade-transition;
+		}
+
+		@keyframes remove {
+			100% {
+				top: auto;
+				right: auto;
+				bottom: auto;
+				left: auto;
+			}
+		}
+
+		&::after {
+			content: "";
+			position: absolute;
+			background-color: $modal-backdrop-bg;
+			opacity: 0;
+			transition: opacity $fade-transition;
+
+			.search-active.view-item-list-active &,
+			.search-results.view-item-list-active & {
+				top: 0;
+				right: 0;
+				bottom: 0;
+				left: 0;
+			}
+
+			.search-active.view-item-list-active & {
+				opacity: 1;
+			}
+
+			.search-results.view-item-list-active & {
+				opacity: 0;
+				animation: remove 0.25s linear 0.25s forwards;
 			}
 		}
 	}
