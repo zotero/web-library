@@ -142,6 +142,7 @@ class Library extends React.PureComponent {
 								/>
 								<ItemsContainer key={ key } />
 								<ItemDetailsContainer active={ view === 'item-details' } />
+								<div className="search-backdrop" />
 							</section>
 						</CSSTransition>
 					</section>
