@@ -42,6 +42,7 @@ class Search extends React.PureComponent {
 		clearTimeout(this.timeout);
 		this.setState({ searchValue: '' });
 		this.props.onSearch();
+		this.inputRef.focus();
 	}
 
 	handleSelectMode = ev => {
@@ -81,9 +82,10 @@ class Search extends React.PureComponent {
 					autoFocus={ autoFocus }
 					className="form-control search-input"
 					onChange={ this.handleSearchChange }
+					placeholder={ modes[this.state.qmode] }
+					ref={ ref => this.inputRef = ref }
 					type="search"
 					value={ this.state.searchValue }
-					placeholder={ modes[this.state.qmode] }
 				/>
 				{ this.state.searchValue.length > 0 && (
 					<Button icon className="clear" onClick={ this.handleSearchClear }>
