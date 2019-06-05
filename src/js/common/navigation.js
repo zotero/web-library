@@ -40,10 +40,7 @@ const makePath = (config, { library = null, collection = null,
 		}
 	}
 
-	if(search || qmode) {
-		if(!search) {
-			search = '';
-		}
+	if(search && search.length) {
 		if(!qmode) {
 			qmode = 'titleCreatorYear';
 		}

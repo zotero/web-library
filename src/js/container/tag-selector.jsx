@@ -4,12 +4,10 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { push } from 'connected-react-router';
 import TagSelector from '../component/tag-selector.jsx';
 import { deduplicateByKey, get } from '../utils';
 import { fetchTagsInCollection, fetchTagsForTopItems, fetchTagsForTrashItems,
-	fetchTagsForPublicationsItems, fetchTagsForItemsByQuery } from '../actions';
-import { makePath } from '../common/navigation';
+	fetchTagsForPublicationsItems, fetchTagsForItemsByQuery, navigate } from '../actions';
 
 class TagSelectorContainer extends React.PureComponent {
 	state = {
@@ -21,33 +19,19 @@ class TagSelectorContainer extends React.PureComponent {
 	}
 
 	handleSelect(tagName) {
-		const { libraryKey: library, itemsSource, collectionKey: collection, selectedTags: tags,
-			makePath, push, search, isMyPublications, isTrash, qmode } = this.props;
-		const index = tags.indexOf(tagName)
+		const { libraryKey: library, collectionKey: collection, selectedTags: tags = [],
+			search, qmode, isTrash: trash, isMyPublications: publications, view,
+			navigate } = this.props;
+
+		const index = tags.indexOf(tagName);
 		if(index > -1) {
 			tags.splice(index, 1);
 		} else {
 			tags.push(tagName);
 		}
 
-		switch(itemsSource) {
-			case 'top':
-				push(makePath({ library, tags }));
-			break;
-			case 'trash':
-				push(makePath({ library, trash: true, tags }));
-			break;
-			case 'publications':
-				push(makePath({ library, publications: true, tags }));
-			break;
-			case 'collection':
-				push(makePath({ library, collection, tags }));
-			break;
-			case 'query':
-				push(makePath({ library, collection, search, tags, qmode, trash: isTrash,
-					publications: isMyPublications }));
-			break;
-		}
+		navigate({ library, tags, collection, trash,
+			publications, search, view, qmode });
 	}
 
 	async handleLoadMore(start, limit) {
@@ -142,14 +126,13 @@ const mapStateToProps = state => {
 
 	return {
 		isReady: totalTagCount !== null,
-		libraryKey, sourceTags, search, tags, totalTagCount, itemsSource,
-		makePath: makePath.bind(null, state.config), collectionKey,
+		libraryKey, sourceTags, search, tags, totalTagCount, itemsSource, collectionKey,
 		selectedTags, isFetching, isMyPublications, isTrash, qmode
 	}
 
 };
 
 //@TODO: bind all action creators
-const mapDispatchToProps = dispatch => ({ dispatch, ...bindActionCreators({ push }, dispatch) });
+const mapDispatchToProps = dispatch => ({ dispatch, ...bindActionCreators({ navigate }, dispatch) });
 
 export default connect(mapStateToProps, mapDispatchToProps)(TagSelectorContainer);
