@@ -37,7 +37,8 @@
 		transition: transform $nav-transition;
 
 		.view-item-list-active &,
-		.search-active & {
+		.search-active &,
+		.search-results & {
 			transform: translate3d(0, 0, 0);
 		}
 
@@ -66,6 +67,10 @@
 			bottom: 0;
 			left: 0;
 			background-color: $modal-backdrop-bg;
+
+			.search-active.view-item-details-active & {
+				transform: translateX(25%);
+			}
 		}
 	}
 

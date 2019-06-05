@@ -17,6 +17,11 @@
 		.view-item-details-active & {
 			transform: translate3d(0, 0, 0);
 		}
+
+		.search-results & {
+			opacity: 0;
+			transition: opacity $fade-transition;
+		}
 	}
 
 	@include bp-down(xs) {
