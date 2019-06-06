@@ -8,7 +8,8 @@ import Button from '../ui/button';
 class SearchBar extends React.PureComponent {
 	handleCancelSearchClick = () => {
 		const {
-			collectionKey, isMyPublications, isTrash, libraryKey, navigate, triggerSearchMode, view
+			collectionKey, isMyPublications, isTrash, libraryKey, navigate, searchTriggerView,
+			triggerSearchMode, view
 		} = this.props;
 		triggerSearchMode(false);
 		navigate({
@@ -16,7 +17,7 @@ class SearchBar extends React.PureComponent {
 			collection: collectionKey,
 			trash: isTrash,
 			publications: isMyPublications,
-			view
+			view: searchTriggerView ? searchTriggerView : view
 		});
 	}
 

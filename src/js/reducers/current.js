@@ -22,8 +22,9 @@ const stateDefault = {
 	itemKeys: [],
 	itemsSource: null,
 	libraryKey: null,
-	search: '',
 	qmode: 'titleCreatorYear',
+	search: '',
+	searchTriggerView: null,
 	tags: [],
 	userLibraryKey: null,
 	useTransitions: false,
@@ -128,7 +129,8 @@ const current = (state = stateDefault, action, { config } = {}) => {
 		case TRIGGER_SEARCH_MODE:
 			return {
 				...state,
-				isSearchMode: action.isSearchMode
+				isSearchMode: action.isSearchMode,
+				searchTriggerView: action.isSearchMode ? state.view : null
 			}
 		default:
 			return state;

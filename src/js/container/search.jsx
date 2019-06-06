@@ -13,9 +13,9 @@ class SearchContainer extends React.PureComponent {
 	handleSearch(search, qmode) {
 		const { libraryKey: library, collectionKey: collection, tags,
 			isTrash: trash, isMyPublications: publications,
-			makePath, push, view } = this.props;
+			makePath, push } = this.props;
 
-		push(makePath({ library, tags, collection, trash, publications, search, view, qmode }));
+		push(makePath({ library, tags, collection, trash, publications, search, qmode, view: 'item-list' }));
 	}
 
 	render() {

@@ -41,7 +41,7 @@ class TouchHeader extends React.PureComponent {
 						<Searchbar
 							{ ...pick(this.props, ['view', 'isSearchMode',
 								'triggerSearchMode', 'navigate', 'isTrash', 'isMyPublications',
-								'libraryKey', 'collectionKey',
+								'libraryKey', 'collectionKey', 'searchTriggerView'
 							])}
 						/>
 					)}
