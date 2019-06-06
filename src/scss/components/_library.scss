@@ -47,7 +47,7 @@
 		}
 
 		.search-active & {
-			background-color: $modal-backdrop-bg;
+			background-color: rgba($body-bg, 0);
 			transition: background-color $fade-transition;
 		}
 
