@@ -101,9 +101,9 @@ class Library extends React.PureComponent {
 				<Navbar
 					isOpened = { isNavOpened }
 					onToggle = { this.handleNavToggle.bind(this) }
-					{...pick(this.props, ['libraryKey', 'collectionKey',
-						'tags', 'isTrash', 'isMyPublications', 'qmode',
-						'navigate', 'view', 'triggerSearchMode', 'search',
+					{...pick(this.props, ['collectionKey', 'isMyPublications', 'isTrash',
+						'itemsSource', 'libraryKey', 'navigate', 'qmode', 'search', 'tags',
+						'triggerSearchMode', 'view',
 					])}
 				/>
 				<div className="nav-cover" />

@@ -203,7 +203,7 @@ const mapStateToProps = state => {
 	}
 
 	return { collectionKey, collections: Object.values(collections), isMyPublications,
-		isSearchMode, isTrash, item, itemsSource, libraryConfig, libraryKey, path,
+		isSearchMode, isTrash, itemKey, item, itemsSource, libraryConfig, libraryKey, path,
 		qmode, search, searchTriggerView, view,
 	};
 };

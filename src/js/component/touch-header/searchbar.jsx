@@ -9,23 +9,24 @@ class SearchBar extends React.PureComponent {
 	handleCancelSearchClick = () => {
 		const {
 			collectionKey, isMyPublications, isTrash, libraryKey, navigate, searchTriggerView,
-			triggerSearchMode, view
+			triggerSearchMode, view, itemKey
 		} = this.props;
 		triggerSearchMode(false);
 		navigate({
 			library: view === 'libraries' ? null : libraryKey,
 			collection: collectionKey,
+			items: itemKey,
 			trash: isTrash,
 			publications: isMyPublications,
-			view: searchTriggerView ? searchTriggerView : view
+			view: searchTriggerView ? searchTriggerView === 'item-details' && !itemKey ? 'item-list' : searchTriggerView : view
 		});
 	}
 
 	render() {
-		const { isSearchMode, view } = this.props;
+		const { isSearchMode, view, itemsSource } = this.props;
 		return (
 			<CSSTransition
-				in={ isSearchMode && view !== 'item-details' }
+				in={ isSearchMode && ((view === 'item-details' && itemsSource !== 'query') || view !== 'item-details') }
 				timeout={ 250 }
 				classNames="fade"
 				unmountOnExit
@@ -45,8 +46,11 @@ class SearchBar extends React.PureComponent {
 		isMyPublications: PropTypes.bool,
 		isSearchMode: PropTypes.bool,
 		isTrash: PropTypes.bool,
+		itemKey: PropTypes.string,
+		itemsSource: PropTypes.string,
 		libraryKey: PropTypes.string,
 		navigate: PropTypes.func,
+		searchTriggerView: PropTypes.string,
 		triggerSearchMode: PropTypes.func.isRequired,
 		view: PropTypes.string,
 	}

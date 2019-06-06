@@ -17,11 +17,11 @@ class Navbar extends React.PureComponent {
 	handleSearchButtonClick = () => {
 		const { libraryKey: library, collectionKey: collection, tags,
 			isTrash: trash, isMyPublications: publications, qmode,
-			navigate, view, triggerSearchMode, search } = this.props;
+			navigate, view, triggerSearchMode, search, itemsSource } = this.props;
 
 		triggerSearchMode(true);
 
-		if(view === 'item-details') {
+		if(itemsSource === 'query' && view === 'item-details') {
 			navigate({ library, tags, collection, trash, publications, search, qmode, view: 'item-list' });
 		}
 	}
@@ -66,6 +66,7 @@ Navbar.propTypes = {
 	isMyPublications: PropTypes.bool,
 	isOpened: PropTypes.bool,
 	isTrash: PropTypes.bool,
+	itemsSource: PropTypes.string,
 	libraryKey: PropTypes.string,
 	navigate: PropTypes.func,
 	onToggle: PropTypes.func.isRequired,
