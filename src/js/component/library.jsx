@@ -125,12 +125,12 @@ class Library extends React.PureComponent {
 							}
 						</header>
 						<CSSTransition
-								in={ device.isSingleColumn && isSearchMode || !device.isSingleColumn }
-								timeout={ 250 }
-								classNames="fade"
-								enter={ device.isSingleColumn && view !== 'item-list' }
-								exit={ device.isSingleColumn && view !== 'item-list' }
-							>
+							in={ (device.isSingleColumn && isSearchMode) || !device.isSingleColumn }
+							timeout={ 250 }
+							classNames="fade"
+							enter={ device.isSingleColumn && view !== 'item-list' }
+							exit={ device.isSingleColumn && view !== 'item-list' }
+						>
 							<section className={ cx('items', {
 								'active': view === 'item-list',
 								'select-mode': isSelectMode
@@ -142,7 +142,14 @@ class Library extends React.PureComponent {
 								/>
 								<ItemsContainer key={ key } />
 								<ItemDetailsContainer active={ view === 'item-details' } />
-								<div className="search-backdrop" />
+								<CSSTransition
+									in={ device.isSingleColumn && isSearchMode && itemsSource !== 'query' }
+									timeout={ 250 }
+									classNames="fade"
+									unmountOnExit
+								>
+									<div className="search-backdrop" />
+								</CSSTransition>
 							</section>
 						</CSSTransition>
 					</section>
