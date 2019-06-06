@@ -128,8 +128,8 @@ class Library extends React.PureComponent {
 							in={ (device.isSingleColumn && isSearchMode) || !device.isSingleColumn }
 							timeout={ 250 }
 							classNames="fade"
-							enter={ device.isSingleColumn && view !== 'item-list' }
-							exit={ device.isSingleColumn && view !== 'item-list' }
+							enter={ device.isSingleColumn && (view !== 'item-list' && view !== 'item-details') }
+							exit={ device.isSingleColumn && (view !== 'item-list' && view !== 'item-details') }
 						>
 							<section className={ cx('items', {
 								'active': view === 'item-list',
