@@ -148,14 +148,15 @@ LibraryContainer.propTypes = {
 const mapStateToProps = state => {
 	const {
 		collectionKey,
+		isMyPublications,
 		isSearchMode,
 		isSelectMode,
+		isTrash,
 		itemsSource,
 		libraryKey,
 		qmode,
-		isTrash,
-		isMyPublications,
 		search,
+		searchState,
 		tags,
 		useTransitions,
 		view,
@@ -174,7 +175,8 @@ const mapStateToProps = state => {
 
 	return { config, view, userLibraryKey, viewport, isSearchMode, isSelectMode,
 		itemsSource, collectionKey, isFetchingCollections, isFetchingLibrarySettings,
-		isMyPublications, isTrash, useTransitions, libraryKey, search, tags, qmode,
+		isMyPublications, isTrash, useTransitions, libraryKey, search, searchState,
+		tags, qmode,
 	};
 };
 

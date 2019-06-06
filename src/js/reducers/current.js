@@ -24,7 +24,7 @@ const stateDefault = {
 	libraryKey: null,
 	qmode: 'titleCreatorYear',
 	search: '',
-	searchTriggerView: null,
+	searchState: {},
 	tags: [],
 	userLibraryKey: null,
 	useTransitions: false,
@@ -70,6 +70,7 @@ const current = (state = stateDefault, action, { config } = {}) => {
 			var view = params.view;
 			var libraryKey = getLibraryKey(params, config);
 			var itemsSource;
+			var searchState = state.searchState;
 
 			if(tags.length || search.length) {
 				itemsSource = 'query';
@@ -92,21 +93,26 @@ const current = (state = stateDefault, action, { config } = {}) => {
 					(params.userslug || params.groupid) ? 'library' : 'libraries';
 			}
 
+			if(view === 'item-details' && searchState.triggerView) {
+				searchState.hasViewedResult = true;
+			}
+
 			return {
 				...state,
 				collectionKey,
 				editingItemKey: state.editingItemKey,
 				isEditing: state.isEditing && view !== 'item-details',
-				isSelectMode: isSelectMode && view === 'item-list',
-				isSearchMode: itemsSource === 'query' || state.isSearchMode,
-				itemKey: itemKeys && itemKeys.length === 1 ? itemKeys[0] : null,
-				isTrash,
 				isMyPublications,
+				isSearchMode: itemsSource === 'query' || state.isSearchMode,
+				isSelectMode: isSelectMode && view === 'item-list',
+				isTrash,
+				itemKey: itemKeys && itemKeys.length === 1 ? itemKeys[0] : null,
 				itemKeys,
 				itemsSource,
 				libraryKey,
-				search,
 				qmode,
+				search,
+				searchState,
 				tags: tags || [],
 				useTransitions: state.useTransitions,
 				view,
@@ -130,7 +136,11 @@ const current = (state = stateDefault, action, { config } = {}) => {
 			return {
 				...state,
 				isSearchMode: action.isSearchMode,
-				searchTriggerView: action.isSearchMode ? state.view : null
+				searchState: action.isSearchMode ? {
+					hasViewedResult: false,
+					triggerItem: state.itemKey,
+					triggerView: state.view,
+				} : {}
 			}
 		default:
 			return state;

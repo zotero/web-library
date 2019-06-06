@@ -8,17 +8,19 @@ import Button from '../ui/button';
 class SearchBar extends React.PureComponent {
 	handleCancelSearchClick = () => {
 		const {
-			collectionKey, isMyPublications, isTrash, libraryKey, navigate, searchTriggerView,
+			collectionKey, isMyPublications, isTrash, libraryKey, navigate, searchState,
 			triggerSearchMode, view, itemKey
 		} = this.props;
 		triggerSearchMode(false);
 		navigate({
 			library: view === 'libraries' ? null : libraryKey,
 			collection: collectionKey,
-			items: itemKey,
+			items: searchState.triggerView === 'item-details' && searchState.triggerItem ? searchState.triggerItem : itemKey,
 			trash: isTrash,
 			publications: isMyPublications,
-			view: searchTriggerView ? searchTriggerView === 'item-details' && !itemKey ? 'item-list' : searchTriggerView : view
+			view: searchState.triggerView ?
+				searchState.triggerView === 'item-details' && searchState.triggerItem ? 'item-details' : 'item-list'
+				: view
 		});
 	}
 
@@ -50,7 +52,7 @@ class SearchBar extends React.PureComponent {
 		itemsSource: PropTypes.string,
 		libraryKey: PropTypes.string,
 		navigate: PropTypes.func,
-		searchTriggerView: PropTypes.string,
+		searchState: PropTypes.object,
 		triggerSearchMode: PropTypes.func.isRequired,
 		view: PropTypes.string,
 	}

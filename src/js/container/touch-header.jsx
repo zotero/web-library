@@ -168,7 +168,7 @@ const mapStateToProps = state => {
 		libraryKey,
 		qmode,
 		search,
-		searchTriggerView,
+		searchState,
 		view,
 	} = state.current;
 	const { libraries } = state.config;
@@ -204,7 +204,7 @@ const mapStateToProps = state => {
 
 	return { collectionKey, collections: Object.values(collections), isMyPublications,
 		isSearchMode, isTrash, itemKey, item, itemsSource, libraryConfig, libraryKey, path,
-		qmode, search, searchTriggerView, view,
+		qmode, search, searchState, view,
 	};
 };
 
