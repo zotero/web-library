@@ -89,7 +89,7 @@ class Library extends React.PureComponent {
 					'navbar-nav-opened': isNavOpened,
 					'no-transitions': !useTransitions || hasUserTypeChanged,
 					'search-active': isSearchMode && itemsSource !== 'query',
-					'search-results': isSearchMode && itemsSource === 'query',
+					'search-results': isSearchMode && itemsSource === 'query' && view !== 'item-details',
 				}) }>
 				{
 					!useTransitions && (
