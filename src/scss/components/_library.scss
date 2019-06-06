@@ -46,18 +46,17 @@
 			transform: translate3d(-25%, 0, 0);
 		}
 
-		.search-active & {
+		.search-active.view-library-active & {
 			background-color: rgba($body-bg, 0);
-			transition: background-color $fade-transition;
 		}
 
 		.search-active.view-item-list-active & {
 			background-color: $items-bg;
 		}
 
-		.search-results & {
+		.search-init & {
 			background-color: $body-bg;
-			transition: background-color $fade-transition;
+			transition: none;
 		}
 
 		.search-backdrop {
