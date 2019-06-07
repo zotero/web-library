@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 	<symbol id="library" viewBox="0 0 28 28">
-		<path fill="currentColor" d="M14,1.1,24,5.644V8H4V5.644L14,1.1M14,0,3,5V9H25V5L14,0ZM27,27H1v1H27Zm-2-3H3v1H25ZM7,11H6V22H7Zm3,0H9V22h1Zm3,0H12V22h1Zm3,0H15V22h1Zm3,0H18V22h1Zm3,0H21V22h1ZM14,4a1,1,0,1,1-1,1,1,1,0,0,1,1-1m0-1a2,2,0,1,0,2,2,2,2,0,0,0-2-2Z"/>
+		<path fill="currentColor" d="M26,25V23H24V9h2V5L14.5,0,3,5V9H5V23H3v2H1v3H28V25ZM10,9h2V23H10Zm3,0h3V23H13Zm4,0h2V23H17Zm3,0h3V23H20ZM4,8V5.656L14.5,1.09,25,5.656V8ZM9,9V23H6V9ZM4,24H25v1H4Zm23,3H2V26H27ZM14.5,3a2,2,0,1,0,2,2A2,2,0,0,0,14.5,3Zm0,3a1,1,0,1,1,1-1A1,1,0,0,1,14.5,6Z"/>
 	</symbol>
 	<use xlink:href="#library" viewBox="0 0 28 28" />
 </svg>
