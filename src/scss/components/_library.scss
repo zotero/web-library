@@ -36,27 +36,12 @@
 		transform: translate3d(100%, 0, 0);
 		transition: transform $nav-transition;
 
-		.view-item-list-active &,
-		.search-active &,
-		.search-results & {
+		.view-item-list-active & {
 			transform: translate3d(0, 0, 0);
 		}
 
 		.view-item-details-active & {
 			transform: translate3d(-25%, 0, 0);
-		}
-
-		.search-active.view-library-active & {
-			background-color: rgba($body-bg, 0);
-		}
-
-		.search-active.view-item-list-active & {
-			background-color: $items-bg;
-		}
-
-		.search-init & {
-			background-color: $body-bg;
-			transition: none;
 		}
 
 		.search-backdrop {
@@ -66,11 +51,98 @@
 			bottom: 0;
 			left: 0;
 			background-color: $modal-backdrop-bg;
-
-			.search-active.view-item-details-active & {
-				transform: translateX(25%);
-			}
 		}
+
+		// Search library view init
+
+		.search-active.view-library-active & {
+			transform: translate3d(0, 0, 0);
+			background-color: transparent;
+			transition: none;
+		}
+
+		// Search library view results
+
+		.search-results.view-items-list-active & {
+			background-color: $items-bg;
+			transform: translate3d(0, 0, 0);
+			transition: background-color $fade-transition;
+		}
+
+		// Search library cancel library view
+
+		.search-cancel.view-library-active & {
+			transform: translate3d(0, 0, 0);
+			background-color: transparent; // This is not correct in the items list view, we would need .search-results.search-cancel to differentiate that
+			transition-property: opacity; // Reset
+		}
+
+		&.fade-exit-done {
+			transform: translate3d(100%, 0, 0);
+			transition: none;
+		}
+
+
+		//.view-item-list-active &,
+		//.search-active &,
+		//.search-results & {
+		//	transform: translate3d(0, 0, 0);
+		//}
+		//
+		//.view-item-details-active & {
+		//	transform: translate3d(-25%, 0, 0);
+		//}
+		//
+		//.search-active.view-item-details-active & {
+		//	transform: translate3d(0, 0, 0);
+		//}
+		//
+		//.search-active.view-library-active & {
+		//	background-color: rgba($body-bg, 0);
+		//}
+		//
+		//.search-active.view-item-list-active & {
+		//	background-color: $items-bg;
+		//}
+		//
+		//.search-init & {
+		//	background-color: $body-bg;
+		//	transition: none;
+		//}
+		//
+		//// Search cancel
+		//
+		//.search-cancel & {
+		//	transition: none;
+		//}
+		//
+		//.search-cancel.view-item-details-active & {
+		//	transform: translate3d(-25%, 0, 0);
+		//	transition: transform 0 linear $fade-transition-duration;
+		//}
+		//
+		//.search-cancel.view-library-active & {
+		//	transform: translate3d(0, 0, 0);
+		//}
+		//
+		//// Search backdrop
+		//
+		//.search-backdrop {
+		//	position: absolute;
+		//	top: 0;
+		//	right: 0;
+		//	bottom: 0;
+		//	left: 0;
+		//	background-color: $modal-backdrop-bg;
+		//
+		//	.search-active.view-item-details-active & {
+		//		//transform: translateX(25%);
+		//	}
+		//
+		//	.search-cancel.view-item-details-active & {
+		//		transform: translateX(25%);
+		//	}
+		//}
 	}
 
 	@include bp-up(sm) {

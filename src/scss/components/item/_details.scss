@@ -17,14 +17,6 @@
 		.view-item-details-active & {
 			transform: translate3d(0, 0, 0);
 		}
-
-		.search-results.search-init & {
-			opacity: 0;
-			transform: translate3d(100%, 0, 0);
-			transition:
-				opacity $fade-transition,
-				transform $fade-transition $fade-transition-duration;
-		}
 	}
 
 	@include bp-down(xs) {
@@ -33,6 +25,30 @@
 		.view-item-details-active & {
 			transform: translate3d(25%, 0, 0);
 		}
+
+		//.search-active.view-item-details-active & {
+		//	transform: translate3d(0, 0, 0);
+		//}
+		//
+		//.search-results.search-init & {
+		//	opacity: 0;
+		//	transform: translate3d(100%, 0, 0);
+		//	transition:
+		//		opacity $fade-transition,
+		//		transform $fade-transition $fade-transition-duration;
+		//}
+		//
+		//.search-active.view-items-list-active {
+		//	opacity: 0;
+		//}
+		//
+		//// Search cancel
+		//
+		//.view-item-details-active.search-cancel & {
+		//	transform: translate3d(25%, 0, 0);
+		//	opacity: 1;
+		//	transition: opacity $fade-transition;
+		//}
 	}
 
 	@include bp-only(md) {

@@ -6,20 +6,20 @@
 	will-change: opacity;
 
 	&-enter {
-		opacity: 0 !important;
+		opacity: 0;
 
 		&-active {
-			opacity: 1 !important;
-			transition: opacity $fade-transition !important;
+			opacity: 1;
+			transition: opacity $fade-transition;
 		}
 	}
 
 	&-exit {
-		opacity: 1 !important;
+		opacity: 1;
 
 		&-active {
-			opacity: 0 !important;
-			transition: opacity $fade-transition !important;
+			opacity: 0;
+			transition: opacity $fade-transition;
 		}
 	}
 }
