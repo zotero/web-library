@@ -37,13 +37,19 @@ class Library extends React.PureComponent {
 
 	handleNavToggle() {
 		this.setState({
-			isNavOpened: !this.state.isNavOpened
+			isNavOpened: !this.state.isNavOpened,
+			isSearchModeTransitioning: false,
 		});
 	}
 
-	componentDidUpdate({ device: { isTouchOrSmall: wasTouchOrSmall, userType: previousUserType } }) {
-		const { device } = this.props;
-		const { hasUserTypeChanged } = this.state;
+	componentDidUpdate({
+			device: { isTouchOrSmall: wasTouchOrSmall, userType: previousUserType },
+			isSearchMode: wasSearchMode }, {
+			isSearchModeTransitioning: wasSearchModeTransitioning
+		}) {
+
+		const { device, isSearchMode } = this.props;
+		const { hasUserTypeChanged, isSearchModeTransitioning } = this.state;
 
 		document.documentElement.classList.toggle('keyboard', !!device.isKeyboardUser);
 		document.documentElement.classList.toggle('mouse', !!device.isMouseUser);
@@ -58,6 +64,12 @@ class Library extends React.PureComponent {
 		}
 		if(hasUserTypeChanged === true) {
 			window.setTimeout(() => this.setState({ hasUserTypeChanged: false }));
+		}
+		if(wasSearchMode !== isSearchMode) {
+			this.setState({ isSearchModeTransitioning: true });
+		}
+		if(isSearchModeTransitioning && !wasSearchModeTransitioning) {
+			setTimeout(() => this.setState({ isSearchModeTransitioning: false }), 250);
 		}
 	}
 
@@ -81,7 +93,7 @@ class Library extends React.PureComponent {
 		}
 
 		const { device, isSearchMode, isSelectMode, searchState, useTransitions, view } = this.props;
-		const { isNavOpened, hasUserTypeChanged } = this.state;
+		const { hasUserTypeChanged, isNavOpened, isSearchModeTransitioning } = this.state;
 		let activeViewClass = `view-${view}-active`;
 
 		return (
@@ -90,7 +102,8 @@ class Library extends React.PureComponent {
 					'no-transitions': !useTransitions || hasUserTypeChanged,
 					'search-active': isSearchMode && itemsSource !== 'query',
 					'search-results': isSearchMode && itemsSource === 'query',
-					'search-init': isSearchMode && !searchState.hasViewedResult
+					'search-init': isSearchMode && !searchState.hasViewedResult,
+					'search-cancel': isSearchModeTransitioning
 				}) }>
 				{
 					!useTransitions && (
