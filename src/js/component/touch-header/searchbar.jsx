@@ -12,6 +12,7 @@ class SearchBar extends React.PureComponent {
 			triggerSearchMode, view, itemKey
 		} = this.props;
 		triggerSearchMode(false);
+
 		navigate({
 			library: view === 'libraries' ? null : libraryKey,
 			collection: collectionKey,
@@ -19,7 +20,9 @@ class SearchBar extends React.PureComponent {
 			trash: isTrash,
 			publications: isMyPublications,
 			view: searchState.triggerView ?
-				searchState.triggerView === 'item-details' && searchState.triggerItem ? 'item-details' : 'item-list'
+				searchState.triggerView === 'item-details' ?
+					searchState.triggerItem ? 'item-details' : 'item-list'
+					: searchState.triggerView
 				: view
 		});
 	}
