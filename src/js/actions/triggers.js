@@ -2,6 +2,7 @@
 
 import {
     TOGGLE_MODAL,
+    TOGGLE_NAVBAR,
     TOGGLE_TRANSITIONS,
     TRIGGER_EDITING_ITEM,
     TRIGGER_RESIZE_VIEWPORT,
@@ -47,6 +48,9 @@ const triggerResizeViewport = (width, height) => {
 	};
 };
 
+const toggleNavbar = isOpen => {
+	return { type: TOGGLE_NAVBAR, isOpen };
+}
 
 const toggleModal = (id, shouldOpen, config) => {
 	return { type: TOGGLE_MODAL, id, shouldOpen, ...config }
@@ -60,7 +64,8 @@ export {
 	toggleModal,
 	toggleTransitions,
 	triggerEditingItem,
+	toggleNavbar,
 	triggerResizeViewport,
-	triggerSelectMode,
 	triggerSearchMode,
+	triggerSelectMode,
 };

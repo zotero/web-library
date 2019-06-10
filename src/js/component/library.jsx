@@ -6,7 +6,6 @@ import cx from 'classnames';
 import { CSSTransition } from 'react-transition-group';
 
 import { getSerializedQuery } from '../common/state';
-import Spinner from './ui/spinner';
 import LibrariesContainer from '../container/libraries';
 import ItemDetailsContainer from '../container/item-details';
 import ItemsContainer from '../container/items';
@@ -30,16 +29,9 @@ class Library extends React.PureComponent {
 	constructor(props) {
 		super(props);
 		this.state = {
-			isNavOpened: false,
-			hasUserTypeChanged: false
-		};
-	}
-
-	handleNavToggle() {
-		this.setState({
-			isNavOpened: !this.state.isNavOpened,
+			hasUserTypeChanged: false,
 			isSearchModeTransitioning: false,
-		});
+		};
 	}
 
 	componentDidUpdate({
@@ -92,13 +84,14 @@ class Library extends React.PureComponent {
 			key = `${libraryKey}-${itemsSource}`;
 		}
 
-		const { device, isSearchMode, isSelectMode, searchState, useTransitions, view } = this.props;
-		const { hasUserTypeChanged, isNavOpened, isSearchModeTransitioning } = this.state;
+		const { device, isSearchMode, isNavBarOpen, isSelectMode, searchState,
+			toggleNavbar, useTransitions, view } = this.props;
+		const { hasUserTypeChanged, isSearchModeTransitioning } = this.state;
 		let activeViewClass = `view-${view}-active`;
 
 		return (
 			<div className={ cx('library-container', activeViewClass, {
-					'navbar-nav-opened': isNavOpened,
+					'navbar-nav-opened': isNavBarOpen,
 					'no-transitions': !useTransitions || hasUserTypeChanged,
 					'search-active': isSearchMode && itemsSource !== 'query',
 					'search-results': isSearchMode && itemsSource === 'query',
@@ -113,14 +106,15 @@ class Library extends React.PureComponent {
 					)
 				}
 				<Navbar
-					isOpened = { isNavOpened }
-					onToggle = { this.handleNavToggle.bind(this) }
-					{...pick(this.props, ['collectionKey', 'isMyPublications', 'isTrash',
-						'itemsSource', 'libraryKey', 'navigate', 'qmode', 'search', 'tags',
+					{...pick(this.props, ['collectionKey', 'isNavBarOpen', 'isMyPublications', 'isTrash',
+						'itemsSource', 'libraryKey', 'navigate', 'qmode', 'search', 'tags', 'toggleNavbar',
 						'triggerSearchMode', 'view',
 					])}
 				/>
-				<div className="nav-cover" />
+				<div
+					className="nav-cover"
+					onClick={ toggleNavbar }
+				/>
 				<main>
 					<section className={ `library ${ view === 'library' ? 'active' : '' }` }>
 						<TouchHeaderContainer

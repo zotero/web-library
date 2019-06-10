@@ -8,6 +8,7 @@ import {
     TRIGGER_SELECT_MODE,
     TOGGLE_TRANSITIONS,
     TRIGGER_SEARCH_MODE,
+    TOGGLE_NAVBAR,
 } from '../constants/actions';
 
 import { tagsFromUrlPart } from '../common/navigation';
@@ -18,6 +19,7 @@ const stateDefault = {
 	editingItemKey: null,
 	isEditing: false,
 	isSelectMode: false,
+	isNavBarOpen: false,
 	itemKey: null,
 	itemKeys: [],
 	itemsSource: null,
@@ -141,6 +143,11 @@ const current = (state = stateDefault, action, { config } = {}) => {
 					triggerItem: state.itemKey,
 					triggerView: state.view,
 				} : {}
+			}
+		case TOGGLE_NAVBAR:
+			return {
+				...state,
+				isNavBarOpen: typeof(action.isOpen) === 'boolean' ? action.isOpen : !state.isNavBarOpen
 			}
 		default:
 			return state;

@@ -14,8 +14,8 @@ import { routerMiddleware, ConnectedRouter } from 'connected-react-router';
 import { BrowserRouter, Route, Redirect, Switch } from 'react-router-dom';
 import createReducers from '../reducers';
 import { configureApi, fetchGroups, fetchLibrarySettings, initialize,
-	preferencesLoad, toggleTransitions, triggerResizeViewport, triggerSearchMode,
-	navigate
+	preferencesLoad, toggleNavbar, toggleTransitions, triggerResizeViewport,
+	triggerSearchMode, navigate
 } from '../actions';
 import { routes, redirects } from '../routes';
 import Library from '../component/library';
@@ -149,6 +149,7 @@ const mapStateToProps = state => {
 	const {
 		collectionKey,
 		isMyPublications,
+		isNavBarOpen,
 		isSearchMode,
 		isSelectMode,
 		isTrash,
@@ -175,15 +176,15 @@ const mapStateToProps = state => {
 
 	return { config, view, userLibraryKey, viewport, isSearchMode, isSelectMode,
 		itemsSource, collectionKey, isFetchingCollections, isFetchingLibrarySettings,
-		isMyPublications, isTrash, useTransitions, libraryKey, search, searchState,
-		tags, qmode,
+		isNavBarOpen, isMyPublications, isTrash, useTransitions, libraryKey, search,
+		searchState, tags, qmode,
 	};
 };
 
 
 //@TODO: bind all action creators
 const mapDispatchToProps = dispatch => ({
-	...bindActionCreators({ navigate, triggerSearchMode }, dispatch),
+	...bindActionCreators({ navigate, triggerSearchMode, toggleNavbar }, dispatch),
 	dispatch,
 });
 

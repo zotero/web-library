@@ -7,13 +7,6 @@ import Button from './button';
 import Icon from './icon';
 
 class Navbar extends React.PureComponent {
-	constructor(props) {
-		super(props);
-		this.state = {
-			navOpened: false
-		};
-	}
-
 	handleSearchButtonClick = () => {
 		const { libraryKey: library, collectionKey: collection, tags,
 			isTrash: trash, isMyPublications: publications, qmode,
@@ -27,6 +20,7 @@ class Navbar extends React.PureComponent {
 	}
 
 	render() {
+		const { toggleNavbar } = this.props;
 		return (
 			<header className="navbar">
 				<div className="navbar-left">
@@ -50,7 +44,7 @@ class Navbar extends React.PureComponent {
 					>
 						<Icon type={ '24/search' } width="24" height="24" />
 					</Button>
-					<Button icon className="navbar-toggle" onClick={ ev => this.props.onToggle(ev) }>
+					<Button icon className="navbar-toggle" onClick={ toggleNavbar }>
 						<span className="icon-bar"></span>
 						<span className="icon-bar"></span>
 						<span className="icon-bar"></span>
@@ -64,21 +58,17 @@ class Navbar extends React.PureComponent {
 Navbar.propTypes = {
 	collectionKey: PropTypes.string,
 	isMyPublications: PropTypes.bool,
-	isOpened: PropTypes.bool,
+	isNavBarOpen: PropTypes.bool,
 	isTrash: PropTypes.bool,
 	itemsSource: PropTypes.string,
 	libraryKey: PropTypes.string,
 	navigate: PropTypes.func,
-	onToggle: PropTypes.func.isRequired,
 	qmode: PropTypes.string,
 	search: PropTypes.string,
 	tags: PropTypes.array,
 	triggerSearchMode: PropTypes.func,
+	toggleNavbar: PropTypes.func,
 	view: PropTypes.string,
-};
-
-Navbar.defaultProps = {
-	isOpened: false
 };
 
 export default Navbar;
