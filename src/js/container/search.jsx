@@ -12,10 +12,23 @@ class SearchContainer extends React.PureComponent {
 
 	handleSearch(search, qmode) {
 		const { libraryKey: library, collectionKey: collection, tags,
-			isTrash: trash, isMyPublications: publications,
-			makePath, push } = this.props;
+			isTrash: trash, isMyPublications: publications, searchState,
+			makePath, push,  } = this.props;
+		var view = 'item-list';
+		var items = null;
 
-		push(makePath({ library, tags, collection, trash, publications, search, qmode, view: 'item-list' }));
+		if(!search) {
+			// if search is not empty, go back to the view that triggered the search
+			view = searchState.triggerView ?
+				searchState.triggerView === 'item-details' ?
+					searchState.triggerItem ? 'item-details' : 'item-list'
+					: searchState.triggerView
+				: view
+			items = searchState.triggerView === 'item-details' && searchState.triggerItem ?
+				searchState.triggerItem : null;
+		}
+
+		push(makePath({ library, tags, collection, items, trash, publications, search, qmode, view }));
 	}
 
 	render() {
@@ -47,11 +60,11 @@ class SearchContainer extends React.PureComponent {
 }
 
 const mapStateToProps = state => {
-	const { libraryKey, collectionKey, itemsSource, tags, search, isTrash,
-	isMyPublications, view, qmode } = state.current;
+	const { libraryKey, collectionKey, itemKey, itemsSource, tags, search, searchState,
+		isTrash, isMyPublications, view, qmode } = state.current;
 	return { libraryKey, collectionKey, itemsSource,
-		makePath: makePath.bind(null, state.config), tags, search, isTrash,
-		isMyPublications, view, qmode }
+		makePath: makePath.bind(null, state.config), tags, searchState, search,
+		itemKey, isTrash, isMyPublications, view, qmode }
 };
 
 export default connect(mapStateToProps, { push })(SearchContainer);
