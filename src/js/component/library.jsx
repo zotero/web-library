@@ -95,7 +95,7 @@ class Library extends React.PureComponent {
 					'no-transitions': !useTransitions || hasUserTypeChanged,
 					'search-active': isSearchMode && itemsSource !== 'query',
 					'search-results': isSearchMode && itemsSource === 'query',
-					'search-init': isSearchModeTransitioning && isSearchMode,
+					'search-init': isSearchMode && !searchState.hasViewedResult,
 					'search-cancel': isSearchModeTransitioning && !isSearchMode
 				}) }>
 				{
