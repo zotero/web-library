@@ -77,9 +77,11 @@
 			transition-property: opacity; // Reset
 		}
 
-		&.fade-exit-done {
-			transform: translate3d(100%, 0, 0);
-			transition: none;
+		.view-library-active & {
+			&.fade-exit-done {
+				transform: translate3d(100%, 0, 0);
+				transition: none;
+			}
 		}
 
 
