@@ -31,12 +31,13 @@ class Library extends React.PureComponent {
 		this.state = {
 			hasUserTypeChanged: false,
 			isSearchModeTransitioning: false,
+			prevItemsSource: null,
 		};
 	}
 
 	componentDidUpdate({
 			device: { isTouchOrSmall: wasTouchOrSmall, userType: previousUserType },
-			isSearchMode: wasSearchMode }, {
+			isSearchMode: wasSearchMode, itemsSource: prevItemsSource }, {
 			isSearchModeTransitioning: wasSearchModeTransitioning
 		}) {
 
@@ -59,6 +60,11 @@ class Library extends React.PureComponent {
 		}
 		if(wasSearchMode !== isSearchMode) {
 			this.setState({ isSearchModeTransitioning: true });
+			if(wasSearchMode) {
+				this.setState({ prevItemsSource });
+			} else {
+				this.setState({ prevItemsSource: null });
+			}
 		}
 		if(isSearchModeTransitioning && !wasSearchModeTransitioning) {
 			setTimeout(() => this.setState({ isSearchModeTransitioning: false }), 250);
@@ -86,17 +92,17 @@ class Library extends React.PureComponent {
 
 		const { device, isSearchMode, isNavBarOpen, isSelectMode, searchState,
 			toggleNavbar, useTransitions, view } = this.props;
-		const { hasUserTypeChanged, isSearchModeTransitioning } = this.state;
+		const { hasUserTypeChanged, isSearchModeTransitioning, prevItemsSource } = this.state;
 		let activeViewClass = `view-${view}-active`;
 
 		return (
 			<div className={ cx('library-container', activeViewClass, {
 					'navbar-nav-opened': isNavBarOpen,
 					'no-transitions': !useTransitions || hasUserTypeChanged,
-					'search-active': isSearchMode && itemsSource !== 'query',
-					'search-results': isSearchMode && itemsSource === 'query',
+					'search-active': (isSearchMode || (!isSearchMode && isSearchModeTransitioning)) && (itemsSource !== 'query' && prevItemsSource !== 'query'),
+					'search-results': (isSearchMode || (!isSearchMode && isSearchModeTransitioning)) && (itemsSource === 'query' || prevItemsSource === 'query'),
 					'search-init': isSearchMode && !searchState.hasViewedResult,
-					'search-cancel': isSearchModeTransitioning && !isSearchMode
+					'search-cancel': isSearchModeTransitioning && !isSearchMode,
 				}) }>
 				{
 					!useTransitions && (
