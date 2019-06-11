@@ -148,7 +148,7 @@ class Library extends React.PureComponent {
 									className="hidden-xs-down hidden-md-up darker"
 									variant={ TouchHeaderContainer.variants.SOURCE_AND_ITEM }
 								/>
-								<ItemsContainer key={ key } />
+								<ItemsContainer key={ key } { ...{isSearchModeTransitioning} } />
 								<ItemDetailsContainer active={ view === 'item-details' } />
 								<CSSTransition
 									in={ device.isSingleColumn && isSearchMode && itemsSource !== 'query' }

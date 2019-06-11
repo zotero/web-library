@@ -107,13 +107,15 @@ class ItemsContainer extends React.PureComponent {
 	}
 
 	render() {
-		const { device, isSearchMode, itemsSource, view } = this.props;
+		const { device, isSearchMode, itemsSource, view, isSearchModeTransitioning } = this.props;
 		let { items, totalItemsCount } = this.props;
+		const isSearchModeTransitioningOut = !isSearchMode && isSearchModeTransitioning;
 
-		if(device.isSingleColumn && isSearchMode && itemsSource !== 'query' && view !== 'item-list') {
+		if(device.isSingleColumn && (isSearchMode || isSearchModeTransitioningOut) && itemsSource !== 'query' && view !== 'item-list') {
 			items = [];
 			totalItemsCount = 0;
 		}
+
 		return <Items
 			{ ...this.props }
 			items = { items }
