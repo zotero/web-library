@@ -65,7 +65,7 @@
 
 		// Search results
 
-		.search-results.view-item-list-active & {
+		.search-results.search-init.view-item-list-active & {
 			background-color: $items-bg;
 			transform: translate3d(0, 0, 0);
 			transition: background-color $fade-transition;
@@ -106,7 +106,7 @@
 
 		// Search results
 
-		.search-results.view-item-list-active & {
+		.search-results.search-init.view-item-list-active & {
 			background-color: $items-bg;
 			transform: translate3d(0, 0, 0);
 			transition: background-color $fade-transition;
