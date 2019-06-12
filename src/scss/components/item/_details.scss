@@ -26,29 +26,42 @@
 			transform: translate3d(25%, 0, 0);
 		}
 
-		//.search-active.view-item-details-active & {
-		//	transform: translate3d(0, 0, 0);
-		//}
-		//
-		//.search-results.search-init & {
-		//	opacity: 0;
-		//	transform: translate3d(100%, 0, 0);
-		//	transition:
-		//		opacity $fade-transition,
-		//		transform $fade-transition $fade-transition-duration;
-		//}
-		//
-		//.search-active.view-items-list-active {
-		//	opacity: 0;
-		//}
-		//
-		//// Search cancel
-		//
-		//.view-item-details-active.search-cancel & {
-		//	transform: translate3d(25%, 0, 0);
-		//	opacity: 1;
-		//	transition: opacity $fade-transition;
-		//}
+		// Start searching in item details view
+
+		// Init
+
+		.search-active.view-item-details-active & {
+			transform: translate3d(0, 0, 0);
+			transition: none;
+		}
+
+		// Search results
+
+		.search-results.search-init.view-item-list-active & {
+			transform: translate3d(100%, 0, 0);
+			opacity: 0;
+			transition: opacity $fade-transition, transform $fade-transition $fade-transition-duration;
+		}
+
+		// Cancel search
+
+		.search-cancel.search-active.view-item-details-active & {
+			transform: translate3d(0, 0, 0);
+			transition: none;
+		}
+
+		@keyframes fade-in-item-details {
+			100% {
+				opacity: 1;
+			}
+		}
+
+		.search-cancel.search-results.view-item-details-active & {
+			transform: translate3d(0, 0, 0);
+			opacity: 0;
+			transition: none;
+			animation: fade-in-item-details $fade-transition-duration ease-in-out forwards; // We need an animation here to ensure that opacity is 0 at the start.
+		}
 	}
 
 	@include bp-only(md) {

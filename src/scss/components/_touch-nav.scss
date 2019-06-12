@@ -32,6 +32,10 @@
 	.inner {
 		height: 100%;
 		transition: transform $nav-transition;
+
+		.search-cancel & {
+			transition: none;
+		}
 	}
 
 	li {
@@ -41,6 +45,10 @@
 		width: 100%;
 		transition: transform $nav-transition, color $nav-transition,
 			opacity $nav-transition-duration ease;
+
+		.search-cancel & {
+			transition: none;
+		}
 	}
 
 	.center-axis {
@@ -60,6 +68,10 @@
 		opacity: 0;
 		transition: transform $nav-transition, color $nav-transition,
 			opacity $nav-transition;
+
+		.search-cancel & {
+			transition: none;
+		}
 	}
 
 	.previous {
@@ -80,6 +92,10 @@
 		transform: translate3d(100%, 0, 0);
 		opacity: 0;
 		transition: transform $nav-transition, opacity $nav-transition;
+
+		.search-cancel & {
+			transition: none;
+		}
 	}
 
 	// Options menu & edit button
