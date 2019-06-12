@@ -383,8 +383,8 @@ class ItemsTable extends React.PureComponent {
 		const isShiftModifier = ev.getModifierState('Shift');
 
 		if(isShiftModifier) {
-			let startIndex = this.props.selectedItemKeys.length ? this.props.items.findIndex(i => i.key === this.props.selectedItemKeys[0]) : 0;
-			let endIndex = this.props.items.findIndex(i => i.key === item.key);
+			let startIndex = this.props.selectedItemKeys.length ? this.props.items.findIndex(i => i && i.key === this.props.selectedItemKeys[0]) : 0;
+			let endIndex = this.props.items.findIndex(i => i && i.key === item.key);
 			let isFlipped = false;
 			if(startIndex > endIndex) {
 				[startIndex, endIndex] = [endIndex, startIndex];
