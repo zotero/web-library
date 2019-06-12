@@ -157,6 +157,7 @@ class MoveCollectionsModal extends React.PureComponent {
 								<React.Fragment>
 								<TouchHeader
 									className="darker"
+									device={ device }
 									path={ touchHeaderPath }
 									onNavigation={ (...args) => this.handleNavigation(...args) }
 								/>

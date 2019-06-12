@@ -52,7 +52,6 @@ class AddItemsToCollectionsModal extends React.PureComponent {
 		const { addToCollection, items, toggleModal, onSelectModeToggle } = this.props;
 		const { picked } = this.state;
 
-
 		if(this.state.picked.length) {
 			this.setState({ isBusy: true })
 			const promises = picked.map(
@@ -160,6 +159,7 @@ class AddItemsToCollectionsModal extends React.PureComponent {
 								<React.Fragment>
 								<TouchHeader
 									className="darker"
+									device={ device }
 									path={ touchHeaderPath }
 									onNavigation={ (...args) => this.handleNavigation(...args) }
 								/>
