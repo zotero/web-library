@@ -10,6 +10,7 @@ import Button from '../ui/button';
 import Spinner from '../ui/spinner';
 import TouchHeader from '../touch-header.jsx';
 import { pluralize } from '../../common/format';
+import { sequentialChunkedAcion } from '../../common/actions';
 const defaultState = {
 	view: 'libraries',
 	libraryKey: '',
@@ -55,8 +56,8 @@ class AddItemsToCollectionsModal extends React.PureComponent {
 		if(this.state.picked.length) {
 			this.setState({ isBusy: true })
 			const promises = picked.map(
-				targetData => addToCollection(
-					items, targetData.collectionKey, targetData.libraryKey
+				targetData => sequentialChunkedAcion(
+					addToCollection, items, [targetData.collectionKey, targetData.libraryKey]
 				)
 			);
 			await Promise.all(promises);

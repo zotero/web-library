@@ -12,4 +12,11 @@ const extractItems = (response, state) => {
 	}));
 }
 
-export { extractItems };
+const sequentialChunkedAcion = async (action, itemKeys, extraArgs) => {
+	do {
+		const itemKeysChunk = itemKeys.splice(0, 50);
+		await action(itemKeysChunk, ...extraArgs);
+	} while (itemKeys.length > 0);
+}
+
+export { extractItems, sequentialChunkedAcion };

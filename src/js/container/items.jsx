@@ -17,6 +17,7 @@ import { get, resizeVisibleColumns } from '../utils';
 import { getFormattedTableItem } from '../common/item';
 import { omit } from '../common/immutable';
 import { makePath } from '../common/navigation';
+import { sequentialChunkedAcion } from '../common/actions';
 const defaultSort = { field: 'title', sort: 'ASC' };
 const PAGE_SIZE = 50;
 
@@ -97,12 +98,12 @@ class ItemsContainer extends React.PureComponent {
 	}
 
 	async handleDrag({ itemKeys, targetType, collectionKey = null, libraryKey }) {
-		const { dispatch } = this.props;
+		const { addToCollection, copyToLibrary } = this.props;
 		if(targetType === 'library') {
-			dispatch(copyToLibrary(itemKeys, libraryKey));
+			return await sequentialChunkedAcion(copyToLibrary, itemKeys, [libraryKey]);
 		}
 		if(targetType === 'collection') {
-			return await dispatch(addToCollection(itemKeys, collectionKey, libraryKey));
+			return await sequentialChunkedAcion(addToCollection, itemKeys, [collectionKey, libraryKey]);
 		}
 	}
 
@@ -211,7 +212,9 @@ const mapStateToProps = state => {
 };
 
 //@TODO: bind all action creators
-const mapDispatchToProps = dispatch => ({ dispatch, ...bindActionCreators({ push }, dispatch) });
+const mapDispatchToProps = dispatch => ({
+	dispatch, ...bindActionCreators({ addToCollection, copyToLibrary, push }, dispatch)
+});
 
 ItemsContainer.propTypes = {
   collection: PropTypes.object,

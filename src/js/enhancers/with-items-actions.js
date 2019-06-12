@@ -22,6 +22,7 @@ import {
 import { get } from '../utils';
 import { makePath } from '../common/navigation';
 import { omit } from '../common/immutable';
+import { sequentialChunkedAcion } from '../common/actions';
 import exportFormats from '../constants/export-formats';
 import { BIBLIOGRAPHY, COLLECTION_SELECT, EXPORT, NEW_ITEM } from '../constants/modals';
 
@@ -41,41 +42,25 @@ const withItemsActions = Component => {
 
 		handleTrash = async () => {
 			const { itemKeys, moveToTrash } = this.props;
-
-			do {
-				const itemKeysChunk = itemKeys.splice(0, 50);
-				await moveToTrash(itemKeysChunk);
-			} while (itemKeys.length > 50);
+			await sequentialChunkedAcion(moveToTrash, itemKeys);
 			this.handleItemsSelect();
 		}
 
 		handlePermanentlyDelete = async () =>  {
 			const { deleteItems, itemKeys } = this.props;
-
-			do {
-				const itemKeysChunk = itemKeys.splice(0, 50);
-				await deleteItems(itemKeysChunk);
-			} while (itemKeys.length > 50);
+			await sequentialChunkedAcion(deleteItems, itemKeys);
 			this.handleItemsSelect();
 		}
 
 		handleUndelete = async () => {
 			const { itemKeys, recoverFromTrash } = this.props;
-
-			do {
-				const itemKeysChunk = itemKeys.splice(0, 50);
-				await recoverFromTrash(itemKeysChunk);
-			} while (itemKeys.length > 50);
+			await sequentialChunkedAcion(recoverFromTrash, itemKeys);
 			this.handleItemsSelect();
 		}
 
 		handleRemoveFromCollection = async () => {
 			const { itemKeys, collectionKey, removeFromCollection } = this.props;
-
-			do {
-				const itemKeysChunk = itemKeys.splice(0, 50);
-				await removeFromCollection(itemKeysChunk, collectionKey);
-			} while (itemKeys.length > 50);
+			await sequentialChunkedAcion(removeFromCollection, itemKeys, [collectionKey]);
 			this.handleItemsSelect();
 		}
 
