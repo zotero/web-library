@@ -20,7 +20,7 @@ class Navbar extends React.PureComponent {
 	}
 
 	render() {
-		const { toggleNavbar } = this.props;
+		const { toggleNavbar, view } = this.props;
 		return (
 			<header className="navbar">
 				<div className="navbar-left">
@@ -37,13 +37,15 @@ class Navbar extends React.PureComponent {
 				<div className="navbar-right">
 					<SearchContainer />
 					<a href="#" className="user-profile-link"></a>
-					<Button
-						onClick={ this.handleSearchButtonClick }
-						icon
-						className="search-toggle hidden-sm-up"
-					>
-						<Icon type={ '24/search' } width="24" height="24" />
-					</Button>
+					{ view !== 'libraries' && (
+						<Button
+							onClick={ this.handleSearchButtonClick }
+							icon
+							className="search-toggle hidden-sm-up"
+						>
+							<Icon type={ '24/search' } width="24" height="24" />
+						</Button>
+					) }
 					<Button icon className="navbar-toggle" onClick={ toggleNavbar }>
 						<span className="icon-bar"></span>
 						<span className="icon-bar"></span>
