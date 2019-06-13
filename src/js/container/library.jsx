@@ -100,8 +100,8 @@ class LibraryContainer extends React.PureComponent {
 	static init(element, config = {}) {
 		const libraries = { ...defaultLibraries, ...config.libraries };
 		const apiConfig = { ...defaultApiConfig, ...config.apiConfig };
-		const stylesSourceUrl = defaultStylesSourceUrl || config.stylesSourceUrl;
-		const translateUrl = defaultTranslateUrl || config.translateUrl;
+		const stylesSourceUrl = config.stylesSourceUrl || defaultStylesSourceUrl;
+		const translateUrl = config.translateUrl || defaultTranslateUrl;
 		const { apiKey, userId, userSlug } = config;
 
 		if(element) {
