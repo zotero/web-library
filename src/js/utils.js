@@ -268,6 +268,12 @@ const getUniqueId = (prefix = 'id') => {
     return `${prefix}${lastId}`;
 }
 
+const isLikeURL = identifier => {
+	// https://stackoverflow.com/a/3809435, modified to allow up to 9-char TLDs and IP addresses
+	const urlRE = /^(https?:\/\/)?([-a-zA-Z0-9@:%._+~#=]{2,256}\.[a-z]{2,9}\b|((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.|\b)){4})(\S*)$/i;
+	return !!identifier.match(urlRE);
+}
+
 export {
 	compare,
 	compareItem,
@@ -280,6 +286,7 @@ export {
 	getUniqueId,
 	indexByGeneratedKey,
 	indexByKey,
+	isLikeURL,
 	JSONTryParse,
 	mapRelationsToItemKeys,
 	noop,

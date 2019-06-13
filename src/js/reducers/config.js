@@ -53,6 +53,7 @@ const config = (state = defaultState, action) => {
 				apiKey: action.apiKey,
 				defaultLibraryKey:determineDefaultLibraryKey(action),
 				stylesSourceUrl: action.stylesSourceUrl,
+				translateUrl: action.translateUrl,
 				userSlug: action.userSlug,
 				userId: action.userId,
 				includeMyLibrary: action.libraries.includeMyLibrary,

@@ -24,7 +24,8 @@ import { makePath } from '../common/navigation';
 import { omit } from '../common/immutable';
 import { sequentialChunkedAcion } from '../common/actions';
 import exportFormats from '../constants/export-formats';
-import { BIBLIOGRAPHY, COLLECTION_SELECT, EXPORT, NEW_ITEM } from '../constants/modals';
+import { ADD_BY_IDENTIFIER, BIBLIOGRAPHY, COLLECTION_SELECT, EXPORT,
+	NEW_ITEM } from '../constants/modals';
 
 const { saveAs } = fileSaver;
 
@@ -112,6 +113,11 @@ const withItemsActions = Component => {
 			toggleModal(NEW_ITEM, true, { collectionKey });
 		}
 
+		handleAddByIdentifierModalOpen = () => {
+			const { toggleModal } = this.props;
+			toggleModal(ADD_BY_IDENTIFIER, true);
+		}
+
 		render() {
 			return <Component
 				{ ...this.props }
@@ -127,6 +133,7 @@ const withItemsActions = Component => {
 				onBibliographyModalOpen = { this.handleBibliographyModalOpen }
 				onExportModalOpen = { this.handleExportModalOpen }
 				onNewItemModalOpen = { this.handleNewItemModalOpen }
+				onAddByIdentifierModalOpen= { this.handleAddByIdentifierModalOpen }
 			/>;
 		}
 

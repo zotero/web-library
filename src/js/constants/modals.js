@@ -9,3 +9,4 @@ export const MOVE_COLLECTION = 'MOVE COLLECTION';
 export const NEW_ITEM = 'NEW_ITEM';
 export const SORT_ITEMS = 'SORT_ITEMS';
 export const STYLE_INSTALLER = 'STYLE_INSTALLER';
+export const ADD_BY_IDENTIFIER = 'ADD_BY_IDENTIFIER';

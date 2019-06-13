@@ -39,9 +39,36 @@ const stripTagsUsingDOM = html => {
    return tmp.textContent || tmp.innerText || "";
 }
 
+const formatCreator = creator => {
+	return creator.name || (creator.firstName + ' ' + creator.lastName).trim();
+}
+
+const formatByline = item => {
+	if (!item.creators) {
+		return '';
+	}
+	const authors = item.creators.filter(c => c.creatorType == 'author');
+
+	if (authors.length === 1) {
+		return formatCreator(authors[0]);
+	} else if (authors.length === 2) {
+		return authors.map(c => formatCreator(c)).join(' and ');
+	} else {
+		let fc = authors.map(c => formatCreator(c));
+		if (authors.length === 3) {
+			return `${fc[0]}, ${fc[1]}, and ${fc[2]}`;
+		} else if (authors.length) {
+			return `${fc[0]} et al.`;
+		}
+	}
+
+	return '';
+}
+
 export {
 	creator,
 	dateLocalized,
+	formatByline,
 	itemsSourceLabel,
 	itemTypeLocalized,
 	noteAsTitle,

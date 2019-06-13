@@ -30,7 +30,7 @@ const initialize = () => {
 	};
 };
 
-const configureApi = ({userId, userSlug, apiKey, stylesSourceUrl, libraries = {}, apiConfig = {} }) => {
+const configureApi = ({userId, userSlug, apiKey, stylesSourceUrl, libraries = {}, apiConfig = {}, translateUrl }) => {
 	return {
 		type: CONFIGURE_API,
 		apiKey,
@@ -38,7 +38,8 @@ const configureApi = ({userId, userSlug, apiKey, stylesSourceUrl, libraries = {}
 		userSlug,
 		apiConfig,
 		stylesSourceUrl,
-		libraries
+		libraries,
+		translateUrl,
 	};
 };
 

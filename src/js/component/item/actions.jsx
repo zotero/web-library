@@ -11,7 +11,7 @@ import NewItemSelector from './actions/new-item';
 import ExportActions from './actions/export';
 import { pick } from '../../common/immutable';
 import columnNames from '../../constants/column-names';
-import { SORT_ITEMS } from '../../constants/modals';
+import { ADD_BY_IDENTIFIER, SORT_ITEMS } from '../../constants/modals';
 
 
 class ItemsActions extends React.PureComponent {
@@ -43,6 +43,11 @@ class ItemsActions extends React.PureComponent {
 		toggleModal(SORT_ITEMS, true);
 	}
 
+	handleAddByIdentifierClick = () => {
+		const { toggleModal } = this.props;
+		toggleModal(ADD_BY_IDENTIFIER, true);
+	}
+
 	get isNewItemAllowed() {
 		const { isReadOnly, itemsSource } = this.props;
 		return !isReadOnly && (itemsSource === 'top' || itemsSource === 'collection');
@@ -52,15 +57,6 @@ class ItemsActions extends React.PureComponent {
 		const { itemsSource } = this.props;
 		return itemsSource === 'top' || itemsSource === 'collection' ||
 			itemsSource === 'publications';
-	}
-
-	renderNewItem() {
-		const { onNewItemModalOpen } = this.props;
-		return this.isNewItemAllowed ? (
-				<DropdownItem onClick={ onNewItemModalOpen } >
-					New Item
-				</DropdownItem>
-			) : null;
 	}
 
 	renderExport() {
@@ -84,9 +80,10 @@ class ItemsActions extends React.PureComponent {
 	}
 
 	renderMouse() {
-		const { itemsSource, onTrash, isDeleting, isReadOnly, itemKeys,
-			onRemoveFromCollection, onBibliographyModalOpen, onUndelete,
-			onDuplicate, onPermanentlyDelete, } = this.props;
+		const { itemsSource, onAddByIdentifierModalOpen, onTrash, isDeleting,
+			isReadOnly, itemKeys, onRemoveFromCollection,
+			onBibliographyModalOpen, onUndelete, onDuplicate,
+			onPermanentlyDelete, } = this.props;
 
 		return (
 			<React.Fragment>
@@ -97,6 +94,16 @@ class ItemsActions extends React.PureComponent {
 							disabled={ !['top', 'collection'].includes(itemsSource) }
 							{ ...pick(this.props, ['itemTypes', 'onNewItemCreate']) }
 						/>
+						{
+							(itemsSource === 'collection' || itemsSource === 'top') && (
+							<Button
+								icon
+								onClick={ onAddByIdentifierModalOpen }
+								title="Add By Identifier"
+							>
+								<Icon type="16/plus" width="16" height="16" />
+							</Button>
+						)}
 						{
 							(itemsSource === 'collection' || itemsSource === 'top') && (
 							<Button
@@ -182,7 +189,7 @@ class ItemsActions extends React.PureComponent {
 	}
 
 	renderTouch() {
-		const { isSelectMode, preferences: { columns } } = this.props;
+		const { isSelectMode, preferences: { columns }, onNewItemModalOpen } = this.props;
 		const { isOpen } = this.state;
 		const { isNewItemAllowed, isExportAllowed } = this;
 		const sortColumn = columns.find(c => c.sort) || columns.find(c => c.field === 'title');
@@ -221,7 +228,12 @@ class ItemsActions extends React.PureComponent {
 					{ isNewItemAllowed && (
 						<React.Fragment>
 							<DropdownItem divider />
-							{ this.renderNewItem() }
+							<DropdownItem onClick={ onNewItemModalOpen } >
+								New Item
+							</DropdownItem>
+							<DropdownItem onClick={ this.handleAddByIdentifierClick } >
+								Add By Identifier
+							</DropdownItem>
 						</React.Fragment>
 					)}
 				</DropdownMenu>
@@ -241,6 +253,7 @@ class ItemsActions extends React.PureComponent {
 		isSelectMode: PropTypes.bool,
 		itemKeys: PropTypes.array,
 		itemsSource: PropTypes.string,
+		onAddByIdentifierModalOpen: PropTypes.func,
 		onBibliographyModalOpen: PropTypes.func,
 		onBibliographyOpen: PropTypes.func,
 		onDuplicate: PropTypes.func,

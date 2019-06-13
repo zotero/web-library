@@ -22,7 +22,8 @@ import Library from '../component/library';
 import {
 	libraries as defaultLibraries,
 	apiConfig as defaultApiConfig,
-	stylesSourceUrl as defaultStylesSourceUrl
+	stylesSourceUrl as defaultStylesSourceUrl,
+	translateUrl as defaultTranslateUrl
 } from '../constants/defaults';
 import { ViewportContext, UserContext } from '../context';
 import { DragDropContext } from 'react-dnd';
@@ -100,6 +101,7 @@ class LibraryContainer extends React.PureComponent {
 		const libraries = { ...defaultLibraries, ...config.libraries };
 		const apiConfig = { ...defaultApiConfig, ...config.apiConfig };
 		const stylesSourceUrl = defaultStylesSourceUrl || config.stylesSourceUrl;
+		const translateUrl = defaultTranslateUrl || config.translateUrl;
 		const { apiKey, userId, userSlug } = config;
 
 		if(element) {
@@ -115,7 +117,7 @@ class LibraryContainer extends React.PureComponent {
 			);
 
 			store.dispatch(
-				configureApi({ userId, userSlug, apiKey, apiConfig, stylesSourceUrl, libraries })
+				configureApi({ userId, userSlug, apiKey, apiConfig, stylesSourceUrl, libraries, translateUrl })
 			);
 
 			ReactDOM.render(

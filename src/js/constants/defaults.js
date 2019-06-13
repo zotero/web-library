@@ -3,9 +3,10 @@
 import { coreCitationStyles } from '../../../data/citation-styles-data.json';
 
 export const apiConfig = {
-	apiAuthorityPart: 'api.zotero.org'
+	apiAuthorityPart: 'api.zotero.org',
 };
 export const stylesSourceUrl = 'https://www.zotero.org/styles-files/styles.json';
+export const translateUrl = window.location.origin;
 export const libraries = {
 	includeMyLibrary: true,
 	includeUserGroups: true,

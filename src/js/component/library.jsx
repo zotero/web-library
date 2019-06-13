@@ -21,6 +21,7 @@ import ExportModalContainer from '../container/modal/export';
 import StyleInstallerModalContainer from '../container/modal/style-installer';
 import ItemsSortModalContainer from '../container/modal/items-sort';
 import MoveCollectionsModalContainer from '../container/modal/move-collections';
+import AddByIdentifierModalContainer from '../container/modal/add-by-identifier';
 import withDevice from '../enhancers/with-device';
 import Icon from './ui/icon';
 import { pick } from '../common/immutable';
@@ -177,6 +178,7 @@ class Library extends React.PureComponent {
 				<NewItemModalContainer />
 				<RenameCollectionModalContainer />
 				<StyleInstallerModalContainer />
+				<AddByIdentifierModalContainer />
 			</div>
 		);
 	}
