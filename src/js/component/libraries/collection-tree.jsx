@@ -198,7 +198,7 @@ class CollectionTree extends React.PureComponent {
 		const { childMap, derivedData } = this;
 		const { libraryKey, itemsSource, isMyLibrary, isCurrentLibrary,
 			virtual, onAddCancel, device, path, view, isPickerMode,
-			picked, isReadOnly, onNext, onPrevious } = this.props;
+			picked, isReadOnly, onFocusNext, onFocusPrev } = this.props;
 
 		const [selected, selectedDepth] = this.findRecursive(
 			collections,
@@ -262,8 +262,8 @@ class CollectionTree extends React.PureComponent {
 								'selected': isAllItemsSelected,
 							})}
 							tabIndex={ shouldBeTabbable ? "-2" : null }
-							onNext={ onNext }
-							onPrevious={ onPrevious }
+							onFocusNext={ onFocusNext }
+							onFocusPrev={ onFocusPrev }
 							onClick={ ev => this.handleSelect({ view: 'item-list' }, ev) }
 						>
 							<Icon type="28/document" className="touch" width="28" height="28" />
@@ -277,8 +277,8 @@ class CollectionTree extends React.PureComponent {
 								'selected': isItemsSelected,
 							})}
 							tabIndex={ shouldBeTabbable ? "-2" : null }
-							onNext={ onNext }
-							onPrevious={ onPrevious }
+							onFocusNext={ onFocusNext }
+							onFocusPrev={ onFocusPrev }
 							onClick={ ev => this.handleSelect(
 								{ view: 'item-list', collection: parentCollection.key }, ev
 							) }
@@ -318,8 +318,8 @@ class CollectionTree extends React.PureComponent {
 							shouldBeDraggable = { this.state.renaming !== collection.key }
 							onDrag={ this.handleDrag }
 							tabIndex={ shouldBeTabbable ? "-2" : null }
-							onNext={ onNext }
-							onPrevious={ onPrevious }
+							onFocusNext={ onFocusNext }
+							onFocusPrev={ onFocusPrev }
 							icon="folder"
 							dndTarget={ { 'targetType': 'collection', collectionKey: collection.key, libraryKey } }
 						>
@@ -431,8 +431,8 @@ class CollectionTree extends React.PureComponent {
 									'selected': itemsSource === 'publications'
 								})}
 								tabIndex={ shouldBeTabbable ? "-2" : null }
-								onNext={ onNext }
-								onPrevious={ onPrevious }
+								onFocusNext={ onFocusNext }
+								onFocusPrev={ onFocusPrev }
 								onClick={ ev => this.handleSelect({ publications: true }, ev) }
 								dndTarget={ { 'targetType': 'publications', libraryKey } }
 							>
@@ -450,8 +450,8 @@ class CollectionTree extends React.PureComponent {
 									'selected': isCurrentLibrary && itemsSource === 'trash'
 								})}
 								tabIndex={ shouldBeTabbable ? "-2" : null }
-								onNext={ onNext }
-								onPrevious={ onPrevious }
+								onFocusNext={ onFocusNext }
+								onFocusPrev={ onFocusPrev }
 								onClick={ ev => this.handleSelect({ trash: true }, ev) }
 								dndTarget={ { 'targetType': 'trash', libraryKey } }
 							>
@@ -493,9 +493,9 @@ class CollectionTree extends React.PureComponent {
 		onAddCancel: PropTypes.func,
 		onAddCommit: PropTypes.func,
 		onDelete: PropTypes.func,
-		onNext: PropTypes.func,
+		onFocusNext: PropTypes.func,
 		onPickerPick: PropTypes.func,
-		onPrevious: PropTypes.func,
+		onFocusPrev: PropTypes.func,
 		onSelect: PropTypes.func,
 		path: PropTypes.array,
 		picked: PropTypes.array,
@@ -512,9 +512,9 @@ class CollectionTree extends React.PureComponent {
 		onAddCancel: noop,
 		onAddCommit: noop,
 		onDelete: noop,
-		onNext: noop,
+		onFocusNext: noop,
 		onPickerPick: noop,
-		onPrevious: noop,
+		onFocusPrev: noop,
 		onSelect: noop,
 		path: [],
 		picked: [],

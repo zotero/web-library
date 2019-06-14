@@ -119,7 +119,7 @@ class Node extends React.PureComponent {
 	}
 
 	handleKeyDown = ev => {
-		const { onNext, onOpen, onPrevious } = this.props;
+		const { onFocusNext, onOpen, onFocusPrev } = this.props;
 		if(ev.target !== ev.currentTarget) {
 			return;
 		}
@@ -129,9 +129,9 @@ class Node extends React.PureComponent {
 		} else if(ev.key === "ArrowRight") {
 			onOpen(ev, true);
 		} else if(ev.key === "ArrowDown") {
-			onNext(ev);
+			onFocusNext(ev);
 		} else if(ev.key === "ArrowUp") {
-			onPrevious(ev);
+			onFocusPrev(ev);
 		} else if(isTriggerEvent(ev)) {
 			ev.target.click();
 		}
@@ -167,8 +167,8 @@ class Node extends React.PureComponent {
 		const isActive = canDrop && isOver;
 		const props = omit(this.props, ["canDrag", "canDrop", "children",
 			"className", "connectDragSource", "connectDropTarget", "dndTarget",
-			"hideTwisty", "isDragging", "isOpen", "isOver", "onNext", "onOpen",
-			"onPrevious", "onClick", "subtree", "onRename", "shouldBeDraggable"
+			"hideTwisty", "isDragging", "isOpen", "isOver", "onFocusNext", "onOpen",
+			"onFocusPrev", "onClick", "subtree", "onRename", "shouldBeDraggable"
 		]);
 
 		return connectDragSource(connectDropTarget(
@@ -207,9 +207,11 @@ class Node extends React.PureComponent {
 		isOpen: PropTypes.bool,
 		isOver: PropTypes.bool,
 		onClick: PropTypes.func,
+		onDrag: PropTypes.func,
+		onFocusNext: PropTypes.func,
+		onFocusPrev: PropTypes.func,
 		onOpen: PropTypes.func,
 		onRename: PropTypes.func,
-		onDrag: PropTypes.func,
 		subtree: PropTypes.oneOfType([PropTypes.element, PropTypes.array]),
 	}
 

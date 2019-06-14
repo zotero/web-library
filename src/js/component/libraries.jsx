@@ -10,6 +10,7 @@ import Node from './libraries/node';
 import Spinner from './ui/spinner';
 import Types from '../types';
 import { stopPropagation } from '../utils';
+import withFocusManager from '../enhancers/with-focus-manager';
 
 class Libraries extends React.PureComponent {
 	constructor(props) {
@@ -66,45 +67,6 @@ class Libraries extends React.PureComponent {
 		onPickerPick({ libraryKey }, ev);
 	}
 
-	handleFocus = ev => {
-		if(ev.target !== ev.currentTarget) {
-			return;
-		}
-		this.ref.tabIndex = -1;
-		this.ref.querySelector('[tabIndex="-2"]').focus();
-	}
-
-	handleBlur = ev => {
-		if(ev.relatedTarget &&
-			(ev.relatedTarget === this.ref || ev.relatedTarget.closest('[data-root]'))
-		) {
-			return;
-		}
-		this.ref.tabIndex = 0;
-	}
-
-	handleNext = ev => {
-		const tabbables = Array.from(
-			this.ref.querySelectorAll('[tabIndex="-2"]')
-		).filter(t => t.offsetParent);
-		const nextIndex = tabbables.findIndex(t => t === ev.currentTarget) + 1;
-		ev.preventDefault();
-		if(nextIndex < tabbables.length) {
-			tabbables[nextIndex].focus();
-		}
-	}
-
-	handlePrevious = ev => {
-		const tabbables = Array.from(
-			this.ref.querySelectorAll('[tabIndex="-2"]')
-		).filter(t => t.offsetParent);
-		const prevIndex = tabbables.findIndex(t => t === ev.currentTarget) - 1;
-		ev.preventDefault();
-		if(prevIndex >= 0) {
-			tabbables[prevIndex].focus();
-		}
-	}
-
 	toggleOpen = (libraryKey, shouldOpen = null) => {
 		const { onLibraryOpen } = this.props;
 		const { opened } = this.state;
@@ -136,8 +98,6 @@ class Libraries extends React.PureComponent {
 			onAddCommit: this.handleAddCommit.bind(this),
 			onDelete: this.handleDelete.bind(this),
 			onSelect: this.handleSelect.bind(this),
-			onNext: this.handleNext,
-			onPrevious: this.handlePrevious,
 			virtual: virtual != null && virtual.libraryKey === key ? virtual : null
 		}
 		return <CollectionTree { ...props } />;
@@ -167,8 +127,8 @@ class Libraries extends React.PureComponent {
 				isOpen={ isOpen && !isFetching }
 				onOpen={ this.handleOpenToggle }
 				onClick={ this.handleSelect.bind(this, { library: key, view: 'library' }) }
-				onNext={ this.handleNext }
-				onPrevious={ this.handlePrevious }
+				onFocusNext={ this.props.onFocusNext }
+				onFocusPrev={ this.props.onFocusPrev }
 				subtree={ isFetching ? null : this.renderCollections({ key, isMyLibrary, isReadOnly }) }
 				key={ key }
 				data-key={ key }
@@ -203,7 +163,7 @@ class Libraries extends React.PureComponent {
 	}
 
 	render() {
-		const { view, libraries } = this.props;
+		const { view, libraries, onFocus, onBlur, registerFocusRoot } = this.props;
 		const isRootActive = view === 'libraries';
 		const myLibraries = libraries.filter(l => l.isMyLibrary);
 		const groupLibraries = libraries.filter(l => l.isGroupLibrary);
@@ -214,11 +174,10 @@ class Libraries extends React.PureComponent {
 		} else {
 			return (
 				<nav className="collection-tree"
-					onFocus={ this.handleFocus }
-					onBlur={ this.handleBlur }
+					onFocus={ onFocus }
+					onBlur={ onBlur }
 					tabIndex={ 0 }
-					ref={ ref => this.ref = ref }
-					data-root={ 1 }
+					ref={ ref => registerFocusRoot(ref) }
 				>
 					<div className={ `level-root ${isRootActive ? 'active' : ''}` }>
 						<div className="scroll-container-touch" role="tree">
@@ -295,4 +254,4 @@ Libraries.defaultProps = {
 	libraries: [],
 };
 
-export default Libraries;
+export default withFocusManager(Libraries);
