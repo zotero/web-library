@@ -36,6 +36,19 @@ class NewItemSelector extends React.PureComponent {
 		ev.preventDefault();
 	}
 
+	handleKeyDown = ev => {
+		const { onFocusNext, onFocusPrev } = this.props;
+		if(ev.target !== ev.currentTarget) {
+			return;
+		}
+
+		if(ev.key === 'ArrowRight') {
+			onFocusNext(ev);
+		} else if(ev.key === 'ArrowLeft') {
+			onFocusPrev(ev);
+		}
+	}
+
 	renderItemType(itemTypeDesc) {
 		const { itemType, localized } = itemTypeDesc;
 		return (
@@ -54,14 +67,16 @@ class NewItemSelector extends React.PureComponent {
 		);
 		return (
 			<Dropdown
+				className="dropdown-wrapper new-item-selector"
 				isOpen={ this.state.isOpen }
 				toggle={ this.handleToggleDropdown.bind(this) }
-				className="dropdown-wrapper new-item-selector"
 			>
 			<DropdownToggle
+				className="btn-icon dropdown-toggle"
 				color={ null }
 				disabled={ this.props.disabled }
-				className="btn-icon dropdown-toggle"
+				onKeyDown={ this.handleKeyDown }
+				tabIndex={ this.props.tabIndex }
 				title="New Item"
 			>
 				<Icon type={ '16/plus' } width="16" height="16" />
@@ -98,13 +113,18 @@ class NewItemSelector extends React.PureComponent {
 
 	static defaultProps = {
 		itemTypes: [],
+		onFocusNext: noop,
+		onFocusPrev: noop,
 		onNewItemCreate: noop,
 	}
 
 	static propTypes = {
 		disabled: PropTypes.bool,
 		itemTypes: PropTypes.array,
+		onFocusNext: PropTypes.func,
+		onFocusPrev: PropTypes.func,
 		onNewItemCreate: PropTypes.func,
+		tabIndex: PropTypes.number,
 	}
 }
 

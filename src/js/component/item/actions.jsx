@@ -10,6 +10,7 @@ import Icon from '../ui/icon';
 import NewItemSelector from './actions/new-item';
 import ExportActions from './actions/export';
 import { pick } from '../../common/immutable';
+import { noop } from '../../utils';
 import columnNames from '../../constants/column-names';
 import { ADD_BY_IDENTIFIER, SORT_ITEMS } from '../../constants/modals';
 
@@ -46,6 +47,19 @@ class ItemsActions extends React.PureComponent {
 	handleAddByIdentifierClick = () => {
 		const { toggleModal } = this.props;
 		toggleModal(ADD_BY_IDENTIFIER, true);
+	}
+
+	handleKeyDown = ev => {
+		const { onFocusNext, onFocusPrev } = this.props;
+		if(ev.target !== ev.currentTarget) {
+			return;
+		}
+
+		if(ev.key === 'ArrowRight') {
+			onFocusNext(ev);
+		} else if(ev.key === 'ArrowLeft') {
+			onFocusPrev(ev);
+		}
 	}
 
 	get isNewItemAllowed() {
@@ -91,14 +105,18 @@ class ItemsActions extends React.PureComponent {
 					<React.Fragment>
 					<ToolGroup>
 						<NewItemSelector
+							tabIndex={ -2 }
 							disabled={ !['top', 'collection'].includes(itemsSource) }
-							{ ...pick(this.props, ['itemTypes', 'onNewItemCreate']) }
+							{ ...pick(this.props, ['itemTypes', 'onFocusNext',
+								'onFocusPrev', 'onNewItemCreate']) }
 						/>
 						{
 							(itemsSource === 'collection' || itemsSource === 'top') && (
 							<Button
 								icon
 								onClick={ onAddByIdentifierModalOpen }
+								onKeyDown={ this.handleKeyDown }
+								tabIndex={ -2 }
 								title="Add By Identifier"
 							>
 								<Icon type="16/plus" width="16" height="16" />
@@ -107,9 +125,11 @@ class ItemsActions extends React.PureComponent {
 						{
 							(itemsSource === 'collection' || itemsSource === 'top') && (
 							<Button
+								disabled={ itemKeys.length !== 1 || itemsSource === 'trash' }
 								icon
 								onClick={ onDuplicate }
-								disabled={ itemKeys.length !== 1 || itemsSource === 'trash' }
+								onKeyDown={ this.handleKeyDown }
+								tabIndex={ -2 }
 								title="Duplicate Item"
 							>
 								<Icon type="16/duplicate" width="16" height="16" />
@@ -119,9 +139,11 @@ class ItemsActions extends React.PureComponent {
 					<ToolGroup>
 					{ itemsSource !== 'trash' && (
 						<Button
+							disabled={ isDeleting || itemKeys.length === 0 }
 							icon
 							onClick={ onTrash }
-							disabled={ isDeleting || itemKeys.length === 0 }
+							onKeyDown={ this.handleKeyDown }
+							tabIndex={ -2 }
 							title="Move to Trash"
 						>
 						{
@@ -134,17 +156,21 @@ class ItemsActions extends React.PureComponent {
 					{ itemsSource === 'trash' && (
 						<React.Fragment>
 							<Button
+								disabled={ itemKeys.length === 0 }
 								icon
 								onClick={ onPermanentlyDelete }
-								disabled={ itemKeys.length === 0 }
+								onKeyDown={ this.handleKeyDown }
+								tabIndex={ -2 }
 								title="Delete Item"
 							>
 								<Icon type="16/empty-trash" width="16" height="16" />
 							</Button>
 							<Button
+								disabled={ itemKeys.length === 0 }
 								icon
 								onClick={ onUndelete }
-								disabled={ itemKeys.length === 0 }
+								onKeyDown={ this.handleKeyDown }
+								tabIndex={ -2 }
 								title="Restore to Library"
 							>
 								<Icon type="16/restore" width="16" height="16" />
@@ -153,9 +179,11 @@ class ItemsActions extends React.PureComponent {
 					)}
 					{ itemsSource === 'collection' && (
 						<Button
+							disabled={ itemKeys.length === 0 }
 							icon
 							onClick={ onRemoveFromCollection }
-							disabled={ itemKeys.length === 0 }
+							onKeyDown={ this.handleKeyDown }
+							tabIndex={ -2 }
 							title="Remove from Collection"
 						>
 							<Icon type="20/remove-from-collection" width="20" height="20" />
@@ -165,7 +193,10 @@ class ItemsActions extends React.PureComponent {
 					</React.Fragment>
 				) }
 				<ToolGroup>
-					<ExportActions { ...pick(this.props, ['onExport', 'itemKeys']) } />
+					<ExportActions
+						tabIndex={ -2 }
+						{ ...pick(this.props, ['onFocusNext', 'onFocusPrev',
+						'onExport', 'itemKeys']) } />
 					{/*
 					<Button
 						icon
@@ -176,9 +207,11 @@ class ItemsActions extends React.PureComponent {
 					</Button>
 					*/}
 					<Button
+						disabled={ itemKeys.length === 0 }
 						icon
 						onClick={ onBibliographyModalOpen }
-						disabled={ itemKeys.length === 0 }
+						onKeyDown={ this.handleKeyDown }
+						tabIndex={ -2 }
 						title="Create Bibliography"
 					>
 						<Icon type="16/bibliography" width="16" height="16" />
@@ -258,6 +291,8 @@ class ItemsActions extends React.PureComponent {
 		onBibliographyOpen: PropTypes.func,
 		onDuplicate: PropTypes.func,
 		onExportModalOpen: PropTypes.func,
+		onFocusNext: PropTypes.func,
+		onFocusPrev: PropTypes.func,
 		onNewItemModalOpen: PropTypes.func,
 		onPermanentlyDelete: PropTypes.func,
 		onRemoveFromCollection: PropTypes.func,
@@ -266,10 +301,12 @@ class ItemsActions extends React.PureComponent {
 		onTrash: PropTypes.func,
 		onUndelete: PropTypes.func,
 		preferences: PropTypes.object,
+		toggleModal: PropTypes.func,
 	}
 
 	static defaultProps = {
-
+		onFocusPrev: noop,
+		onFocusPrev: noop,
 	}
 }
 

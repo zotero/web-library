@@ -24,6 +24,19 @@ class ColumnSelector extends React.PureComponent {
 		this.setState({ isOpen: !this.state.isOpen });
 	}
 
+	handleKeyDown = ev => {
+		const { onFocusNext, onFocusPrev } = this.props;
+		if(ev.target !== ev.currentTarget) {
+			return;
+		}
+
+		if(ev.key === 'ArrowRight') {
+			onFocusNext(ev);
+		} else if(ev.key === 'ArrowLeft') {
+			onFocusPrev(ev);
+		}
+	}
+
 	renderColumnItem = column => {
 		return (
 			<DropdownItem
@@ -43,8 +56,10 @@ class ColumnSelector extends React.PureComponent {
 				className="dropdown-wrapper column-selector"
 			>
 				<DropdownToggle
-					color={ null }
 					className="btn-icon dropdown-toggle"
+					color={ null }
+					onKeyDown={ this.handleKeyDown }
+					tabIndex={ this.props.tabIndex }
 				>
 					<Icon type={ '16/columns' } width="16" height="16" />
 				</DropdownToggle>
@@ -62,12 +77,17 @@ class ColumnSelector extends React.PureComponent {
 		columns: [],
 		itemFields: [],
 		onColumnVisibilityChange: noop,
+		onFocusNext: noop,
+		onFocusPrev: noop,
 	}
 
 	static propTypes = {
 		columns: PropTypes.array,
 		itemFields: PropTypes.array,
-		onColumnVisibilityChange: PropTypes.func
+		onColumnVisibilityChange: PropTypes.func,
+		onFocusNext: PropTypes.func,
+		onFocusPrev: PropTypes.func,
+		tabIndex: PropTypes.number,
 	}
 }
 

@@ -23,6 +23,19 @@ class ExportActions extends React.PureComponent {
 		this.props.onExport(format);
 	}
 
+	handleKeyDown = ev => {
+		const { onFocusNext, onFocusPrev } = this.props;
+		if(ev.target !== ev.currentTarget) {
+			return;
+		}
+
+		if(ev.key === 'ArrowRight') {
+			onFocusNext(ev);
+		} else if(ev.key === 'ArrowLeft') {
+			onFocusPrev(ev);
+		}
+	}
+
 	renderItemType(exportFormat) {
 		return (
 			<DropdownItem
@@ -37,14 +50,16 @@ class ExportActions extends React.PureComponent {
 	render() {
 		return (
 			<Dropdown
+				className="dropdown-wrapper new-item-selector"
 				isOpen={ this.state.isOpen }
 				toggle={ this.handleToggleDropdown.bind(this) }
-				className="dropdown-wrapper new-item-selector"
 			>
 				<DropdownToggle
+					className="btn-icon dropdown-toggle"
 					color={ null }
 					disabled={ this.props.itemKeys.length == 0 }
-					className="btn-icon dropdown-toggle"
+					onKeyDown={ this.handleKeyDown }
+					tabIndex={ this.props.tabIndex }
 					title="Export"
 				>
 					<Icon type={ '16/export' } width="16" height="16" />
@@ -60,11 +75,16 @@ class ExportActions extends React.PureComponent {
 
 	static defaultProps = {
 		onExport: noop,
+		onFocusNext: noop,
+		onFocusPrev: noop,
 	}
 
 	static propTypes = {
-		onExport: PropTypes.func,
 		itemKeys: PropTypes.array,
+		onExport: PropTypes.func,
+		onFocusNext: PropTypes.func,
+		onFocusPrev: PropTypes.func,
+		tabIndex: PropTypes.number,
 	}
 }
 
