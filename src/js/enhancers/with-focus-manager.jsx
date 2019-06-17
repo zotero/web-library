@@ -7,7 +7,7 @@ const withFocusManager = Component => {
 	class EnhancedComponent extends React.PureComponent {
 		handleNext = ev => {
 			const tabbables = Array.from(
-				this.ref.querySelectorAll('[tabIndex="-2"]')
+				this.ref.querySelectorAll('[tabIndex="-2"]:not([disabled])')
 			).filter(t => t.offsetParent);
 			const nextIndex = tabbables.findIndex(t => t === ev.currentTarget) + 1;
 			ev.preventDefault();
@@ -18,7 +18,7 @@ const withFocusManager = Component => {
 
 		handlePrevious = ev => {
 			const tabbables = Array.from(
-				this.ref.querySelectorAll('[tabIndex="-2"]')
+				this.ref.querySelectorAll('[tabIndex="-2"]:not([disabled])')
 			).filter(t => t.offsetParent);
 			const prevIndex = tabbables.findIndex(t => t === ev.currentTarget) - 1;
 			ev.preventDefault();
@@ -32,7 +32,7 @@ const withFocusManager = Component => {
 				return;
 			}
 			this.ref.tabIndex = -1;
-			this.ref.querySelector('[tabIndex="-2"]').focus();
+			this.ref.querySelector('[tabIndex="-2"]:not([disabled])').focus();
 		}
 
 		handleBlur = ev => {
