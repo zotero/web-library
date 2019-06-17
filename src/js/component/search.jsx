@@ -50,6 +50,19 @@ class Search extends React.PureComponent {
 		this.setState({ qmode });
 	}
 
+	handleKeyDown = ev => {
+		const { onFocusNext, onFocusPrev } = this.props;
+		if(ev.target !== ev.currentTarget) {
+			return;
+		}
+
+		if(ev.key === 'ArrowRight') {
+			onFocusNext(ev);
+		} else if(ev.key === 'ArrowLeft') {
+			onFocusPrev(ev);
+		}
+	}
+
 	render() {
 		const { autoFocus } = this.props;
 		return (
@@ -60,6 +73,8 @@ class Search extends React.PureComponent {
 					<DropdownToggle
 						color={ null }
 						className="btn-icon dropdown-toggle"
+						tabIndex={ -2 }
+						onKeyDown={ this.handleKeyDown }
 					>
 						<Icon type={ '24/search-options' } width="24" height="24" />
 					</DropdownToggle>
@@ -79,16 +94,23 @@ class Search extends React.PureComponent {
 					</DropdownMenu>
 				</UncontrolledDropdown>
 				<input
-					autoFocus={ autoFocus }
 					className="form-control search-input"
 					onChange={ this.handleSearchChange }
+					onKeyDown={ this.handleKeyDown }
 					placeholder={ modes[this.state.qmode] }
 					ref={ ref => this.inputRef = ref }
 					type="search"
 					value={ this.state.searchValue }
+					tabIndex={ -2 }
 				/>
 				{ this.state.searchValue.length > 0 && (
-					<Button icon className="clear" onClick={ this.handleSearchClear }>
+					<Button
+						icon
+						className="clear"
+						onClick={ this.handleSearchClear }
+						tabIndex={ -2 }
+						onKeyDown={ this.handleKeyDown }
+					>
 						<Icon type={ '10/x' } width="10" height="10" />
 					</Button>
 				)}

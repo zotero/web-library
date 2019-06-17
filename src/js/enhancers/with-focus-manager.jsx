@@ -37,7 +37,7 @@ const withFocusManager = Component => {
 
 		handleBlur = ev => {
 			if(ev.relatedTarget &&
-				(ev.relatedTarget === this.ref || ev.relatedTarget.closest('[data-focus-root]'))
+				(ev.relatedTarget === this.ref || ev.relatedTarget.closest('[data-focus-root]') === this.ref)
 			) {
 				return;
 			}
