@@ -64,9 +64,9 @@ class Input extends React.PureComponent {
 			case 'Enter':
 				this.commit(event);
 			break;
-		default:
-			return;
 		}
+		this.props.onKeyDown(event);
+
 	}
 
 	get value() {
@@ -148,6 +148,7 @@ class Input extends React.PureComponent {
 		onChange: noop,
 		onCommit: noop,
 		onFocus: noop,
+		onKeyDown: noop,
 		tabIndex: -1,
 		type: 'text',
 		value: '',
@@ -174,6 +175,7 @@ class Input extends React.PureComponent {
 		onChange: PropTypes.func.isRequired,
 		onCommit: PropTypes.func.isRequired,
 		onFocus: PropTypes.func.isRequired,
+		onKeyDown: PropTypes.func,
 		placeholder: PropTypes.string,
 		resize: PropTypes.oneOfType([PropTypes.bool, PropTypes.string]),
 		selectOnFocus: PropTypes.bool,
