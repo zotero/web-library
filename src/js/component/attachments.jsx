@@ -6,6 +6,8 @@ import cx from 'classnames';
 import { Toolbar, ToolGroup } from './ui/toolbars';
 import Icon from './ui/icon';
 import Button from './ui/button';
+import withFocusManager from '../enhancers/with-focus-manager';
+
 
 class Attachments extends React.PureComponent {
 	state = {
@@ -46,14 +48,35 @@ class Attachments extends React.PureComponent {
 		this.props.onDeleteAttachment(attachment);
 	}
 
+	handleKeyDown = ev => {
+		const { onFocusNext, onFocusPrev } = this.props;
+		if(ev.target !== ev.currentTarget) {
+			return;
+		}
+
+		if(ev.key === 'ArrowDown') {
+			onFocusNext(ev);
+		} else if(ev.key === 'ArrowUp') {
+			onFocusPrev(ev);
+		}
+	}
+
 	render() {
-		const { isReadOnly } = this.props;
+		const { attachments, isReadOnly, onFocusNext, onFocusPrev, onFocus,
+			onBlur, registerFocusRoot } = this.props;
 		return (
-			<div className="details-list attachments" key="attachments">
+			<div
+				className="details-list attachments"
+				key="attachments"
+				onBlur={ onBlur }
+				onFocus={ onFocus }
+				ref={ ref => registerFocusRoot(ref) }
+				tabIndex={ 0 }
+			>
 				<nav>
 					<ul className="nav list">
 						{
-							this.props.attachments.map(attachment => {
+							attachments.map(attachment => {
 								return (
 									<li
 										className={ cx('item', {'selected': this.state.selected == attachment.key }) }
@@ -62,17 +85,28 @@ class Attachments extends React.PureComponent {
 										<Icon type={ '16/item-types/attachment' } width="16" height="16" />
 										{
 											attachment[Symbol.for('attachmentUrl')] ? (
-												<a href={ attachment[Symbol.for('attachmentUrl')] }>
+												<a
+													href={ attachment[Symbol.for('attachmentUrl')] }
+													onKeyDown={ this.handleKeyDown }
+													tabIndex={ -2 }
+												>
 													{ attachment.title || attachment.filename }
 												</a>
 											) : (
-												<span>
+												<span
+													onKeyDown={ this.handleKeyDown }
+													tabIndex={ -2 }
+												>
 													{ attachment.title || attachment.filename }
 												</span>
 											)
 										}
 										{ !isReadOnly && (
-											<Button icon onClick={ this.handleDelete.bind(this, attachment) }>
+											<Button
+												icon
+												onClick={ this.handleDelete.bind(this, attachment) }
+												tabIndex={ -1 }
+											>
 												<Icon type={ '16/trash' } width="16" height="16" />
 											</Button>
 										)}
@@ -100,7 +134,12 @@ class Attachments extends React.PureComponent {
 					<Toolbar>
 						<div className="toolbar-left">
 							<ToolGroup>
-								<Button icon onClick={ this.handleAddAttachment.bind(this) }>
+								<Button
+									icon
+									onClick={ this.handleAddAttachment.bind(this) }
+									onKeyDown={ this.handleKeyDown }
+									tabIndex={ -2 }
+								>
 									<Icon type={ '16/plus' } width="16" height="16" />
 								</Button>
 							</ToolGroup>
@@ -121,4 +160,4 @@ Attachments.defaultProps = {
 	attachmentViewUrls: {}
 };
 
-export default Attachments;
+export default withFocusManager(Attachments);
