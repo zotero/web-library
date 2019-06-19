@@ -68,7 +68,7 @@ class TagSelector extends React.PureComponent {
 		onFocus: PropTypes.func,
 		onFocusNext: PropTypes.func,
 		onFocusPrev: PropTypes.func,
-		onLoadMore: PropTypes.func.isRequired,
+		fetchTags: PropTypes.func.isRequired,
 		onSearch: PropTypes.func,
 		onSelect: PropTypes.func,
 		onSettings: PropTypes.func,

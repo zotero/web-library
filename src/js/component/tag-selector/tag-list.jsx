@@ -3,29 +3,36 @@ import PropTypes from 'prop-types';
 import cx from 'classnames';
 import withFocusManager from '../../enhancers/with-focus-manager';
 import { isTriggerEvent } from '../../common/event';
-const PAGE_SIZE = 100;
+const PAGE_SIZE = 10;
 
 class TagList extends React.PureComponent {
 	componentDidMount() {
-		const { onLoadMore } = this.props;
-		onLoadMore(0, PAGE_SIZE);
+		const { checkColoredTags, fetchTags, sourceTags, totalTagCount } = this.props;
+		fetchTags({ start: 0, limit: PAGE_SIZE });
+		if(sourceTags.length < totalTagCount) {
+			checkColoredTags();
+		}
 	}
 
-	componentDidUpdate({ searchString: prevSearchString, sourceTags: { length: prevTagsLength } }) {
-		const { searchString, sourceTags: { length: tagsLength} } = this.props;
+	componentDidUpdate({ searchString: prevSearchString,
+		sourceTags: { length: prevTagsLength }, totalTagCount: prevTotalTagCount }) {
+		const { checkColoredTags, searchString, sourceTags: { length: tagsLength}, totalTagCount } = this.props;
 		if(searchString !== prevSearchString || prevTagsLength !== tagsLength) {
 			this.maybeLoadMore();
+		}
+		if(totalTagCount !== prevTotalTagCount && totalTagCount > PAGE_SIZE) {
+			checkColoredTags();
 		}
 	}
 
 	maybeLoadMore = () => {
-		const { isFetching, sourceTags, totalTagCount, onLoadMore } = this.props;
+		const { isFetching, sourceTags, totalTagCount, fetchTags } = this.props;
 		const containerHeight = this.containerRef.getBoundingClientRect().height;
 		const totalHeight = this.listRef.getBoundingClientRect().height;
 		const scrollProgress = (this.containerRef.scrollTop + containerHeight) / totalHeight;
 
 		if(scrollProgress > 0.5 && !isFetching && totalTagCount > sourceTags.length) {
-			onLoadMore(sourceTags.length, PAGE_SIZE);
+			fetchTags({ start: sourceTags.length, limit: PAGE_SIZE });
 		}
 	}
 
@@ -102,7 +109,7 @@ class TagList extends React.PureComponent {
 		onFocus: PropTypes.func,
 		onFocusNext: PropTypes.func,
 		onFocusPrev: PropTypes.func,
-		onLoadMore: PropTypes.func,
+		fetchTags: PropTypes.func,
 		onSelect: PropTypes.func,
 		registerFocusRoot: PropTypes.func,
 		searchString: PropTypes.string,

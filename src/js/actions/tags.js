@@ -57,7 +57,7 @@ const getApi = ({ config, libraryKey }, requestType, queryConfig) => {
 	}
 }
 
-const fetchTags = (type, queryConfig, queryOptions = {}) => {
+const fetchTagsBase = (type, queryConfig, queryOptions = {}) => {
 	return async (dispatch, getState) => {
 		const state = getState();
 		const config = state.config;
@@ -66,7 +66,7 @@ const fetchTags = (type, queryConfig, queryOptions = {}) => {
 
 		dispatch({
 			type: `REQUEST_${type}`,
-			libraryKey, ...queryConfig, ...queryOptions
+			libraryKey, ...queryConfig, queryOptions
 		});
 
 		try {
@@ -80,14 +80,14 @@ const fetchTags = (type, queryConfig, queryOptions = {}) => {
 			dispatch({
 				type: `RECEIVE_${type}`,
 				libraryKey, tags, response, totalResults,
-				...queryConfig,...queryOptions
+				...queryConfig, queryOptions
 			});
 
 			return tags;
 		} catch(error) {
 			dispatch({
 				type: `ERROR_${type}`,
-				libraryKey, error, ...queryConfig, ...queryOptions
+				libraryKey, error, ...queryConfig, queryOptions
 			});
 
 			throw error;
@@ -96,27 +96,27 @@ const fetchTags = (type, queryConfig, queryOptions = {}) => {
 }
 
 const fetchTagsInCollection = (collectionKey, queryOptions) => {
-	return fetchTags('TAGS_IN_COLLECTION', { collectionKey }, queryOptions);
+	return fetchTagsBase('TAGS_IN_COLLECTION', { collectionKey }, queryOptions);
 };
 
 const fetchTagsInLibrary = queryOptions => {
-	return fetchTags('TAGS_IN_LIBRARY', { }, queryOptions);
+	return fetchTagsBase('TAGS_IN_LIBRARY', { }, queryOptions);
 };
 
 const fetchTagsForItem = (itemKey, queryOptions) => {
-	return fetchTags('TAGS_FOR_ITEM', { itemKey }, queryOptions);
+	return fetchTagsBase('TAGS_FOR_ITEM', { itemKey }, queryOptions);
 };
 
 const fetchTagsForTrashItems = queryOptions => {
-	return fetchTags('TAGS_IN_TRASH_ITEMS', {}, queryOptions);
+	return fetchTagsBase('TAGS_IN_TRASH_ITEMS', {}, queryOptions);
 };
 
 const fetchTagsForPublicationsItems = queryOptions => {
-	return fetchTags('TAGS_IN_PUBLICATIONS_ITEMS', {}, queryOptions);
+	return fetchTagsBase('TAGS_IN_PUBLICATIONS_ITEMS', {}, queryOptions);
 };
 
 const fetchTagsForTopItems = queryOptions => {
-	return fetchTags('TAGS_IN_TOP_ITEMS', { }, queryOptions);
+	return fetchTagsBase('TAGS_IN_TOP_ITEMS', { }, queryOptions);
 };
 
 const fetchTagsForItemsByQuery = (query, queryOptions) => {
@@ -124,12 +124,54 @@ const fetchTagsForItemsByQuery = (query, queryOptions) => {
 		isTrash, isMyPublications } = query;
 	const queryConfig = { collectionKey, isTrash, isMyPublications };
 
-	return fetchTags(
+	return fetchTagsBase(
 		'TAGS_IN_ITEMS_BY_QUERY', queryConfig, { ...queryOptions, itemTag, itemQ, itemQMode }
 	);
 }
 
+const fetchTags = queryOptions => {
+	return async (dispatch, getState) => {
+		const state = getState();
+		const { collectionKey, tags, itemsSource, search, isMyPublications,
+			isTrash, qmode, } = state.current;
+
+		switch(itemsSource) {
+			case 'top':
+				return await dispatch(fetchTagsForTopItems(queryOptions));
+			case 'trash':
+				return await dispatch(fetchTagsForTrashItems(queryOptions));
+			case 'publications':
+				return await dispatch(fetchTagsForPublicationsItems(queryOptions));
+			case 'collection':
+				return await dispatch(fetchTagsInCollection(collectionKey, queryOptions));
+			case 'query':
+				return await dispatch(fetchTagsForItemsByQuery({
+					isTrash,
+					isMyPublications,
+					collectionKey,
+					itemQ: search,
+					itemQMode: qmode,
+					itemTag: tags
+				}, queryOptions));
+		}
+	}
+}
+
+const checkColoredTags = queryOptions => {
+	return async (dispatch, getState) => {
+		const state = getState();
+		const { libraryKey } = state.current;
+		const coloredTags = state.libraries[libraryKey].tagsFromSettings
+			.map(tid => state.libraries[libraryKey].tags[tid].tag);
+		if(coloredTags.length === 0) { return; }
+		const tagQuery = coloredTags.join(' || ');
+		return await dispatch(fetchTags({ ...queryOptions, tag: tagQuery }));
+	}
+}
+
 export {
+	checkColoredTags,
+	fetchTags,
 	fetchTagsForItem,
 	fetchTagsForItemsByQuery,
 	fetchTagsForPublicationsItems,

@@ -21,9 +21,7 @@ const tags = (state = {}, action) => {
 				...state,
 				[action.collectionKey]: {
 					isFetching: false,
-					totalResults: parseInt(
-						action.response.response.headers.get('Total-Results'), 10
-					),
+					totalResults: action.queryOptions.tag ? state.totalResults : action.totalResults,
 					tags: [...(new Set([
 						...(state[action.collectionKey].tags || []),
 						...action.tags.map(tag => `${tag.tag}-${tag[Symbol.for('meta')].type}`)

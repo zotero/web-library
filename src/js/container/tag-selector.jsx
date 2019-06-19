@@ -2,12 +2,10 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
-import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import TagSelector from '../component/tag-selector.jsx';
 import { deduplicateByKey, get } from '../utils';
-import { fetchTagsInCollection, fetchTagsForTopItems, fetchTagsForTrashItems,
-	fetchTagsForPublicationsItems, fetchTagsForItemsByQuery, navigate } from '../actions';
+import { checkColoredTags, fetchTags, navigate } from '../actions';
 
 class TagSelectorContainer extends React.PureComponent {
 	state = {
@@ -34,31 +32,6 @@ class TagSelectorContainer extends React.PureComponent {
 			publications, search, view, qmode });
 	}
 
-	async handleLoadMore(start, limit) {
-		const { collectionKey, dispatch, itemsSource, isMyPublications,
-			isTrash, selectedTags, search, qmode } = this.props;
-
-		switch(itemsSource) {
-			case 'top':
-				return await dispatch(fetchTagsForTopItems({ start, limit }));
-			case 'trash':
-				return await dispatch(fetchTagsForTrashItems({ start, limit }));
-			case 'publications':
-				return await dispatch(fetchTagsForPublicationsItems({ start, limit }));
-			case 'collection':
-				return await dispatch(fetchTagsInCollection(collectionKey, { start, limit }));
-			case 'query':
-				return await dispatch(fetchTagsForItemsByQuery({
-					isTrash,
-					isMyPublications,
-					collectionKey,
-					itemQ: search,
-					itemQMode: qmode,
-					itemTag: selectedTags
-				}, { start, limit }));
-		}
-	}
-
 	render() {
 		let { tags, ...props } = this.props;
 
@@ -70,7 +43,6 @@ class TagSelectorContainer extends React.PureComponent {
 
 		return <TagSelector
 			onSearch={ this.handleSearch.bind(this) }
-			onLoadMore={ this.handleLoadMore.bind(this) }
 			onSelect={ this.handleSelect.bind(this) }
 			tags={ tags }
 			searchString={ this.state.searchString }
@@ -132,7 +104,6 @@ const mapStateToProps = state => {
 
 };
 
-//@TODO: bind all action creators
-const mapDispatchToProps = dispatch => ({ dispatch, ...bindActionCreators({ navigate }, dispatch) });
+const mapDispatchToProps = { checkColoredTags, fetchTags, navigate };
 
 export default connect(mapStateToProps, mapDispatchToProps)(TagSelectorContainer);
