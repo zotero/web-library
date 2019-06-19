@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import cx from 'classnames';
 import withFocusManager from '../../enhancers/with-focus-manager';
 import { isTriggerEvent } from '../../common/event';
-const PAGE_SIZE = 10;
+const PAGE_SIZE = 100;
 
 class TagList extends React.PureComponent {
 	componentDidMount() {
@@ -104,17 +104,23 @@ class TagList extends React.PureComponent {
 	}
 
 	static propTypes = {
+		checkColoredTags: PropTypes.func,
+		fetchTags: PropTypes.func,
 		isFetching: PropTypes.bool,
 		onBlur: PropTypes.func,
 		onFocus: PropTypes.func,
 		onFocusNext: PropTypes.func,
 		onFocusPrev: PropTypes.func,
-		fetchTags: PropTypes.func,
 		onSelect: PropTypes.func,
 		registerFocusRoot: PropTypes.func,
 		searchString: PropTypes.string,
 		sourceTags: PropTypes.array,
-		tags: PropTypes.array,
+		tags: PropTypes.arrayOf(PropTypes.shape({
+			name: PropTypes.string,
+			selected: PropTypes.bool,
+			color: PropTypes.string,
+			disabled: PropTypes.bool
+		})),
 		totalTagCount: PropTypes.number,
 	}
 }

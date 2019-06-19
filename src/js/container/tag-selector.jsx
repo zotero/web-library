@@ -49,6 +49,19 @@ class TagSelectorContainer extends React.PureComponent {
 			{ ...props }
 		/>;
 	}
+
+	static propTypes = {
+		collectionKey: PropTypes.string,
+		isMyPublications: PropTypes.bool,
+		isTrash: PropTypes.bool,
+		libraryKey: PropTypes.string,
+		navigate: PropTypes.func,
+		qmode: PropTypes.string,
+		search: PropTypes.string,
+		selectedTags: PropTypes.array,
+		tags: PropTypes.array,
+		view: PropTypes.string,
+	}
 }
 
 const mapStateToProps = state => {

@@ -4,8 +4,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import TagList from './tag-selector/tag-list';
 import Input from './form/input';
-import Spinner from './ui/spinner';
 import withFocusManager from '../enhancers/with-focus-manager';
+import { pick } from '../common/immutable';
+import { noop } from '../utils';
 
 class TagSelector extends React.PureComponent {
 	handleKeyDown = ev => {
@@ -20,12 +21,17 @@ class TagSelector extends React.PureComponent {
 			onFocusPrev(ev);
 		}
 	};
+
 	render() {
-		const { sourceTags, totalTagCount, tags, isFetching, onFocus,
-			onBlur, registerFocusRoot } = this.props;
+		const { isFetching, onFocus, onBlur, registerFocusRoot } = this.props;
 		return (
 			<div className="tag-selector">
-				<TagList ref={ tagListRef => this.tagListRef = tagListRef } { ...this.props } />
+				<TagList
+					{ ...pick(this.props, ['checkColoredTags', 'fetchTags',
+						'isFetching', 'onSelect', 'searchString', 'sourceTags',
+						'tags', 'totalTagCount'])
+					}
+				/>
 				<div
 					className="tag-selector-filter-container"
 					onBlur={ onBlur }
@@ -34,35 +40,26 @@ class TagSelector extends React.PureComponent {
 					tabIndex={ 0 }
 				>
 					<Input
-						className="tag-selector-filter"
+						className="tag-selector-filter form-control form-control-lg"
 						onChange={ this.props.onSearch }
 						onKeyDown={ this.handleKeyDown }
 						tabIndex={ -2 }
 						type="search"
 						value={ this.props.searchString }
+						isBusy={ isFetching }
 					/>
 					<button
 						className="tag-selector-actions"
-						onClick={ ev => this.props.onSettings(ev) }
+						onClick={ this.props.onSettings }
 						onKeyDown={ this.handleKeyDown }
 						tabIndex={ -2 }
 					/>
-				</div>
-				<div className="tag-selector-status">
-					Tags loaded: { sourceTags.length } / { totalTagCount }; Visible: { tags.length }
-					{ isFetching && <Spinner className="inline" /> }
 				</div>
 			</div>
 		);
 	}
 
 	static propTypes = {
-		tags: PropTypes.arrayOf(PropTypes.shape({
-			name: PropTypes.string,
-			selected: PropTypes.bool,
-			color: PropTypes.string,
-			disabled: PropTypes.bool
-		})),
 		isFetching: PropTypes.bool,
 		onBlur: PropTypes.func,
 		onFocus: PropTypes.func,
@@ -70,23 +67,15 @@ class TagSelector extends React.PureComponent {
 		onFocusPrev: PropTypes.func,
 		fetchTags: PropTypes.func.isRequired,
 		onSearch: PropTypes.func,
-		onSelect: PropTypes.func,
 		onSettings: PropTypes.func,
-		onTagContext: PropTypes.func,
 		registerFocusRoot: PropTypes.func,
 		searchString: PropTypes.string,
-		shouldFocus: PropTypes.bool,
-		totalTagCount: PropTypes.number,
 	}
 
 	static defaultProps = {
-		tags: [],
+		onSearch: noop,
+		onSettings: noop,
 		searchString: '',
-		shouldFocus: false,
-		onSelect: () => Promise.resolve(),
-		onTagContext: () => Promise.resolve(),
-		onSearch: () => Promise.resolve(),
-		onSettings: () => Promise.resolve()
 	}
 }
 
