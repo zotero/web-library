@@ -8,13 +8,12 @@ import itemsByCollection from './items-by-collection';
 import itemsByParent from './items-by-parent';
 import itemsTop from './items-top';
 import itemsTrash from './items-trash';
-import tags from './tags';
+import tagColors from './tag-colors';
 import tagsByCollection from './tags-by-collection';
 import tagsByItem from './tags-by-item';
-import tagsFromSettings from './tags-from-settings';
-import tagsTop from './tags-top';
-import tagsInTrashItems from './tags-in-trash-items';
 import tagsInPublicationsItems from './tags-in-publications-items';
+import tagsInTrashItems from './tags-in-trash-items';
+import tagsTop from './tags-top';
 import updating from './updating';
 import version from './version';
 import { get } from '../../utils';
@@ -102,12 +101,11 @@ const libraries = (state = {}, action) => {
 				itemsByParent: itemsByParent(get(state, [action.libraryKey, 'itemsByParent']), action),
 				itemsTop: itemsTop(get(state, [action.libraryKey, 'itemsTop']), action),
 				itemsTrash: itemsTrash(get(state, [action.libraryKey, 'itemsTrash']), action),
-				tags: tags(get(state, [action.libraryKey, 'tags']), action),
+				tagColors: tagColors(get(state, [action.libraryKey, 'tagColors']), action),
 				tagsByCollection: tagsByCollection(get(state, [action.libraryKey, 'tagsByCollection']), action),
 				tagsByItem: tagsByItem(get(state, [action.libraryKey, 'tagsByItem']), action),
-				tagsInTrashItems: tagsInTrashItems(get(state, [action.libraryKey, 'tagsInTrashItems']), action),
 				tagsInPublicationsItems: tagsInPublicationsItems(get(state, [action.libraryKey, 'tagsInPublicationsItems']), action),
-				tagsFromSettings: tagsFromSettings(get(state, [action.libraryKey, 'tagsFromSettings']), action),
+				tagsInTrashItems: tagsInTrashItems(get(state, [action.libraryKey, 'tagsInTrashItems']), action),
 				tagsTop: tagsTop(get(state, [action.libraryKey, 'tagsTop']), action),
 				updating: updating(get(state, [action.libraryKey, 'updating']), action),
 				version: version(get(state, [action.libraryKey, 'version']), action)

@@ -6,6 +6,7 @@ import {
 	RECEIVE_TRASH_ITEMS,
 } from '../../constants/actions';
 import { indexByKey } from '../../utils';
+import { deduplicateByHash } from '../../utils';
 
 const tags = (state = {}, action) => {
 	switch(action.type) {
@@ -33,11 +34,11 @@ const tags = (state = {}, action) => {
 				...state,
 				[action.itemKey]: {
 					isFetching: false,
-					totalResults: action.queryOptions.tag ? state.totalResults : action.totalResults,
-					tags: [...(new Set([
-						...(state[action.itemKey].tags || []),
-						...action.tags.map(tag => `${tag.tag}-${tag[Symbol.for('meta')].type}`)
-					]))]
+					pointer: ('start' in action.queryOptions && 'limit' in action.queryOptions
+						&& !('tag' in action.queryOptions))
+						? action.queryOptions.start + action.queryOptions.limit : state[action.itemKey].pointer,
+					totalResults: action.queryOptions.tag ? state[action.itemKey].totalResults : action.totalResults,
+					tags: deduplicateByHash([...(state[action.itemKey].tags || []), ...action.tags], t => t.tag + t.type),
 				}
 			}
 		case ERROR_TAGS_FOR_ITEM:

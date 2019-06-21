@@ -28,7 +28,7 @@ class TagSelector extends React.PureComponent {
 			<div className="tag-selector">
 				<TagList
 					{ ...pick(this.props, ['checkColoredTags', 'fetchTags',
-						'isFetching', 'onSelect', 'searchString', 'sourceTags',
+						'isFetching', 'onSelect', 'searchString', 'sourceTagsPointer',
 						'tags', 'totalTagCount'])
 					}
 				/>

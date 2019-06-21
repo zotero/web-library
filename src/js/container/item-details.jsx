@@ -121,8 +121,7 @@ class ItemDetailsContainer extends React.PureComponent {
 	}
 
 	async handleAddTag(tag) {
-		let tags = [...this.props.item.tags, { tag }];
-		deduplicateByKey(tags, 'tag');
+		let tags = deduplicateByKey([...this.props.item.tags, { tag }], 'tag');
 		let patch = { tags };
 
 		await this.props.dispatch(updateItem(this.props.item.key, patch));
@@ -137,11 +136,10 @@ class ItemDetailsContainer extends React.PureComponent {
 	}
 
 	async handleUpdateTag(tag, newTag) {
-		let tags = [
+		let tags = deduplicateByKey([
 			...this.props.item.tags.filter(t => t.tag != tag), {
 			tag: newTag
-		}];
-		deduplicateByKey(tags, 'tag');
+		}], 'tag');
 		let patch = { tags };
 		await this.props.dispatch(updateItem(this.props.item.key, patch));
 	}

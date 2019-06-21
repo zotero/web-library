@@ -9,7 +9,7 @@ const getBaseMappedValue = (item, property) => {
 		item[baseMappings[itemType][property]] : property in item ? item[property] : null;
 }
 
-const getFormattedTableItem = (item, itemTypes, libraryTags, isSynced) => {
+const getFormattedTableItem = (item, itemTypes, tagColors, isSynced) => {
 	const { itemType, note, dateAdded, dateModified, extra } = item;
 	const title = itemType === 'note' ?
 		noteAsTitle(note) :
@@ -20,14 +20,20 @@ const getFormattedTableItem = (item, itemTypes, libraryTags, isSynced) => {
 	const date = item[Symbol.for('meta')] && item[Symbol.for('meta')].parsedDate ?
 		item[Symbol.for('meta')].parsedDate :
 		'';
-	const coloredTags = item.tags
-		.map(tag => libraryTags[`${tag.tag}-0`])
-		.filter(tag => tag && tag.color);
+	const colors = item.tags.reduce(
+		(acc, { tag }) => {
+			if(tag in tagColors) {
+				acc.push(tagColors[tag]);
+			}
+			return acc;
+		}, []
+	);
+
 	// same logic as https://github.com/zotero/zotero/blob/6abfd3b5b03969564424dc03313d63ae1de86100/chrome/content/zotero/xpcom/itemTreeView.js#L1062
 	const year = date.substr(0, 4);
 
 	return {
-		coloredTags,
+		colors,
 		creator,
 		date,
 		dateAdded: dateLocalized(new Date(dateAdded)),

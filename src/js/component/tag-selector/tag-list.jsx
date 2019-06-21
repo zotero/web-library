@@ -7,17 +7,17 @@ const PAGE_SIZE = 100;
 
 class TagList extends React.PureComponent {
 	componentDidMount() {
-		const { checkColoredTags, fetchTags, sourceTags, totalTagCount } = this.props;
-		fetchTags({ start: 0, limit: PAGE_SIZE });
-		if(sourceTags.length < totalTagCount) {
+		const { checkColoredTags, fetchTags, sourceTagsPointer, totalTagCount } = this.props;
+		fetchTags({ start: 0, limit: PAGE_SIZE, sort: 'title' });
+		if(sourceTagsPointer < totalTagCount) {
 			checkColoredTags();
 		}
 	}
 
 	componentDidUpdate({ searchString: prevSearchString,
-		sourceTags: { length: prevTagsLength }, totalTagCount: prevTotalTagCount }) {
-		const { checkColoredTags, searchString, sourceTags: { length: tagsLength}, totalTagCount } = this.props;
-		if(searchString !== prevSearchString || prevTagsLength !== tagsLength) {
+		sourceTagsPointer: prevSourceTagsPointer, totalTagCount: prevTotalTagCount }) {
+		const { checkColoredTags, searchString, sourceTagsPointer, totalTagCount } = this.props;
+		if(searchString !== prevSearchString || prevSourceTagsPointer !== sourceTagsPointer) {
 			this.maybeLoadMore();
 		}
 		if(totalTagCount !== prevTotalTagCount && totalTagCount > PAGE_SIZE) {
@@ -26,13 +26,13 @@ class TagList extends React.PureComponent {
 	}
 
 	maybeLoadMore = () => {
-		const { isFetching, sourceTags, totalTagCount, fetchTags } = this.props;
+		const { isFetching, sourceTagsPointer, totalTagCount, fetchTags } = this.props;
 		const containerHeight = this.containerRef.getBoundingClientRect().height;
 		const totalHeight = this.listRef.getBoundingClientRect().height;
 		const scrollProgress = (this.containerRef.scrollTop + containerHeight) / totalHeight;
 
-		if(scrollProgress > 0.5 && !isFetching && totalTagCount > sourceTags.length) {
-			fetchTags({ start: sourceTags.length, limit: PAGE_SIZE });
+		if(scrollProgress > 0.5 && !isFetching && totalTagCount > sourceTagsPointer) {
+			fetchTags({ start: sourceTagsPointer, limit: PAGE_SIZE });
 		}
 	}
 
@@ -114,7 +114,7 @@ class TagList extends React.PureComponent {
 		onSelect: PropTypes.func,
 		registerFocusRoot: PropTypes.func,
 		searchString: PropTypes.string,
-		sourceTags: PropTypes.array,
+		sourceTagsPointer: PropTypes.number,
 		tags: PropTypes.arrayOf(PropTypes.shape({
 			name: PropTypes.string,
 			selected: PropTypes.bool,

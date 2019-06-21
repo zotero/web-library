@@ -57,21 +57,20 @@ const reverseMap = map => {
 
 const deduplicate = array => [...(new Set(array))];
 
-const deduplicateByKey = (array, key) => {
-	const seen = [];
-	let i = array.length;
-	let removedCounter = 0;
+const deduplicateByKey = (array, key) => deduplicateByHash(array, item => item[key]);
 
-	while(i--) {
-		if(seen.includes(array[i][key])) {
-			array.splice(i, 1);
-			removedCounter++;
+const deduplicateByHash = (array, hasher) => {
+	const seen = {};
+
+	return array.filter(i => {
+		if(hasher(i) in seen) {
+			return false;
+		} else {
+			seen[hasher(i)] = true;
+			return true;
 		}
-		seen.push(array[i][key]);
-	}
-
-	return removedCounter;
-};
+	});
+}
 
 const mapRelationsToItemKeys = (relations, userId, relationType='dc:relation') => {
 	if(!('dc:relation' in relations)) {
@@ -278,6 +277,7 @@ export {
 	compare,
 	compareItem,
 	deduplicate,
+	deduplicateByHash,
 	deduplicateByKey,
 	enumerateObjects,
 	get,

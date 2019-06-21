@@ -48,7 +48,7 @@ class ItemsList extends React.PureComponent {
 				title: '',
 				creator: '',
 				date: '',
-				coloredTags: [],
+				colors: [],
 				isPlaceholder: true
 			}
 		}
@@ -160,9 +160,9 @@ class ItemsList extends React.PureComponent {
 									// <Icon type="16/note-sm" width="16" height="16" />
 								}
 
-								{ item.coloredTags.map((tag, index) => (
+								{ item.colors.map((color, index) => (
 									<Icon
-										key={ tag.tag }
+										key={ color }
 										type={ index === 0 ? '12/circle' : '12/crescent-circle' }
 										symbol={ index === 0 ?
 											isActive ? 'circle-active' : 'circle' :
@@ -170,7 +170,7 @@ class ItemsList extends React.PureComponent {
 										}
 										width={ index === 0 ? 12 : 8 }
 										height="12"
-										style={ { color: tag.color } }
+										style={ { color } }
 									/>
 								))}
 							</div>

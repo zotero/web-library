@@ -433,9 +433,9 @@ class ItemsTable extends React.PureComponent {
 			/>
 		);
 
-		const tagColors = rowData.coloredTags.map((tag, index) => (
+		const tagColors = rowData.colors.map((color, index) => (
 			<Icon
-				key={ tag.tag }
+				key={ color }
 				type={ index === 0 ? '10/circle' : '10/crescent-circle' }
 				symbol={ index === 0 ?
 					(isFocused && isActive ? 'circle-focus' : 'circle') :
@@ -443,7 +443,7 @@ class ItemsTable extends React.PureComponent {
 				}
 				width={ index === 0 ? 10 : 7 }
 				height="10"
-				style={ { color: tag.color} }
+				style={ { color } }
 			/>
 		));
 		return (

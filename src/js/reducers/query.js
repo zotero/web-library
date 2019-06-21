@@ -16,6 +16,7 @@ import {
 
 import { getParamsFromRoute } from '../common/state';
 import { getQueryFromParams } from '../common/navigation';
+import { deduplicateByHash } from '../utils';
 
 
 const defaultState = {
@@ -70,13 +71,13 @@ const query = (state = defaultState, action) => {
 				tags: {
 					...state.tags,
 					isFetching: false,
+					pointer: ('start' in action.queryOptions && 'limit' in action.queryOptions
+						&& !('tag' in action.queryOptions))
+						? action.queryOptions.start + action.queryOptions.limit : state.pointer,
 					totalResults: parseInt(
 						action.response.response.headers.get('Total-Results'), 10
 					),
-					tags: [...(new Set([
-						...(state.tags.tags || []),
-						...action.tags.map(tag => `${tag.tag}-${tag[Symbol.for('meta')].type}`),
-					]))],
+					tags: deduplicateByHash([...(state.tags.tags || []), ...action.tags], t => t.tag + t.type),
 				}
 			};
 		case ERROR_TAGS_IN_ITEMS_BY_QUERY:

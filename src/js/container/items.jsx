@@ -136,7 +136,7 @@ const mapStateToProps = state => {
 		itemKeys, itemsSource, libraryKey, search, tags, view, qmode } = state.current;
 	const collection = get(state, ['libraries', libraryKey, 'collections', collectionKey]);
 	const item = get(state, ['libraries', libraryKey, 'items', itemKey]);
-	const libraryTags = get(state, ['libraries', libraryKey, 'tags']);
+	const tagColors = get(state, ['libraries', libraryKey, 'tagColors']);
 	const isMetaAvailable = !state.fetching.meta;
 	const preferences = state.preferences;
 	const itemFields = state.meta.itemFields;
@@ -171,8 +171,7 @@ const mapStateToProps = state => {
 	const isError = itemsData.isError;
 	const items = (itemsData.keys || []).map(itemKey => itemKey ? getFormattedTableItem(
 		get(state, ['libraries', libraryKey, 'items', itemKey]),
-		itemTypes,
-		libraryTags,
+		itemTypes, tagColors,
 		!('unconfirmedKeys' in itemsData && itemsData.unconfirmedKeys.includes(itemKey))
 	) : undefined);
 
@@ -197,7 +196,7 @@ const mapStateToProps = state => {
 		itemsSource,
 		itemTypes,
 		libraryKey,
-		libraryTags,
+		tagColors,
 		makePath: makePath.bind(null, state.config),
 		preferences,
 		search,

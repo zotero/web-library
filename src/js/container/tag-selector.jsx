@@ -77,7 +77,7 @@ const mapStateToProps = state => {
 	} = state.current;
 	if(!libraryKey) { return {}; }
 
-	const tagsFromSettings = [...get(state, ['libraries', libraryKey, 'tagsFromSettings'], [])];
+	const tagColors = get(state, ['libraries', libraryKey, 'tagColors'], []);
 	var tagsData;
 
 	switch(itemsSource) {
@@ -99,20 +99,21 @@ const mapStateToProps = state => {
 		break;
 	}
 
-	const { isFetching = false, tags: sourceTags = [], totalResults: totalTagCount = null } = tagsData;
-	const sourceTagsFiltered = sourceTags.filter(t => !tagsFromSettings.includes(t));
-	const tags = [ ...tagsFromSettings, ...sourceTagsFiltered ].map(tag => ({
-		...state.libraries[libraryKey].tags[tag],
-		disabled: tagsFromSettings.includes(tag) && !sourceTags.includes(tag),
-		selected: selectedTags.includes(state.libraries[libraryKey].tags[tag].tag)
-	}));
-
-	deduplicateByKey(tags, 'tag');
+	const { isFetching = false, pointer: sourceTagsPointer = 0, tags: sourceTags = [], totalResults: totalTagCount = null } = tagsData;
+	const tags = deduplicateByKey([
+		...Object.keys(tagColors).map(tag => ({ tag })),
+		...sourceTags
+	].map(({ tag }) => ({
+		tag,
+		color: tag in tagColors ? tagColors[tag] : null,
+		disabled: tag in tagColors && !sourceTags.some(t => t.tag === tag),
+		selected: selectedTags.includes(tag)
+	})), 'tag');
 
 	return {
 		isReady: totalTagCount !== null,
-		libraryKey, sourceTags, search, tags, totalTagCount, itemsSource, collectionKey,
-		selectedTags, isFetching, isMyPublications, isTrash, qmode
+		libraryKey, sourceTags, search, selectedTags, tags, totalTagCount, itemsSource, collectionKey,
+		sourceTagsPointer, isFetching, isMyPublications, isTrash, qmode
 	}
 
 };

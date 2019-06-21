@@ -73,7 +73,7 @@ const fetchTagsBase = (type, queryConfig, queryOptions = {}) => {
 			const response = await api.get(queryOptions);
 			const tags = response.getData().map((tagData, index) => ({
 				tag: tagData.tag,
-				[Symbol.for('meta')]: response.getMeta()[index] || {}
+				type: response.getMeta()[index]['type']
 			}));
 			const totalResults = parseInt(response.response.headers.get('Total-Results'), 10);
 
@@ -161,8 +161,7 @@ const checkColoredTags = queryOptions => {
 	return async (dispatch, getState) => {
 		const state = getState();
 		const { libraryKey } = state.current;
-		const coloredTags = state.libraries[libraryKey].tagsFromSettings
-			.map(tid => state.libraries[libraryKey].tags[tid].tag);
+		const coloredTags = Object.keys(state.libraries[libraryKey].tagColors);
 		if(coloredTags.length === 0) { return; }
 		const tagQuery = coloredTags.join(' || ');
 		return await dispatch(fetchTags({ ...queryOptions, tag: tagQuery }));

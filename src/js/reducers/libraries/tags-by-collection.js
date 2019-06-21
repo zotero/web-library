@@ -5,6 +5,7 @@ import {
 	RECEIVE_TAGS_IN_COLLECTION,
 	REQUEST_TAGS_IN_COLLECTION,
 } from '../../constants/actions';
+import { deduplicateByHash } from '../../utils';
 
 const tags = (state = {}, action) => {
 	switch(action.type) {
@@ -21,11 +22,11 @@ const tags = (state = {}, action) => {
 				...state,
 				[action.collectionKey]: {
 					isFetching: false,
-					totalResults: action.queryOptions.tag ? state.totalResults : action.totalResults,
-					tags: [...(new Set([
-						...(state[action.collectionKey].tags || []),
-						...action.tags.map(tag => `${tag.tag}-${tag[Symbol.for('meta')].type}`)
-					]))]
+					pointer: ('start' in action.queryOptions && 'limit' in action.queryOptions
+						&& !('tag' in action.queryOptions))
+						? action.queryOptions.start + action.queryOptions.limit : state[action.collectionKey].pointer,
+					totalResults: action.queryOptions.tag ? state[action.collectionKey].totalResults : action.totalResults,
+					tags: deduplicateByHash([...(state[action.collectionKey].tags || []), ...action.tags], t => t.tag + t.type),
 				}
 			}
 		case ERROR_TAGS_IN_COLLECTION:
@@ -36,6 +37,15 @@ const tags = (state = {}, action) => {
 					isFetching: false
 				}
 			}
+		// case RECEIVE_ADD_ITEMS_TO_COLLECTION:
+		// 	return {
+		// 		...state,
+		// 		[action.collectionKey]: {
+		// 			...(state[action.collectionKey] || {}),
+		// 			totalResults: null,
+		// 			tags
+		// 		}
+		// 	}
 		default:
 			return state;
 	}
