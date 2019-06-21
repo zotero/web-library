@@ -32,7 +32,7 @@ class TagList extends React.PureComponent {
 		const scrollProgress = (this.containerRef.scrollTop + containerHeight) / totalHeight;
 
 		if(scrollProgress > 0.5 && !isFetching && totalTagCount > sourceTagsPointer) {
-			fetchTags({ start: sourceTagsPointer, limit: PAGE_SIZE });
+			fetchTags({ start: sourceTagsPointer, limit: PAGE_SIZE, sort: 'title' });
 		}
 	}
 

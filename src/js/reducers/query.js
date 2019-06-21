@@ -16,7 +16,7 @@ import {
 
 import { getParamsFromRoute } from '../common/state';
 import { getQueryFromParams } from '../common/navigation';
-import { deduplicateByHash } from '../utils';
+import { deduplicate } from '../utils';
 
 
 const defaultState = {
@@ -77,7 +77,7 @@ const query = (state = defaultState, action) => {
 					totalResults: parseInt(
 						action.response.response.headers.get('Total-Results'), 10
 					),
-					tags: deduplicateByHash([...(state.tags.tags || []), ...action.tags], t => t.tag + t.type),
+					tags: deduplicate([...(state.tags || []), ...action.tags.map(t => t.tag)]),
 				}
 			};
 		case ERROR_TAGS_IN_ITEMS_BY_QUERY:

@@ -6,7 +6,7 @@ import {
 	RECEIVE_TRASH_ITEMS,
 } from '../../constants/actions';
 import { indexByKey } from '../../utils';
-import { deduplicateByHash } from '../../utils';
+import { deduplicate } from '../../utils';
 
 const tags = (state = {}, action) => {
 	switch(action.type) {
@@ -38,7 +38,7 @@ const tags = (state = {}, action) => {
 						&& !('tag' in action.queryOptions))
 						? action.queryOptions.start + action.queryOptions.limit : state[action.itemKey].pointer,
 					totalResults: action.queryOptions.tag ? state[action.itemKey].totalResults : action.totalResults,
-					tags: deduplicateByHash([...(state[action.itemKey].tags || []), ...action.tags], t => t.tag + t.type),
+					tags: deduplicate([...(state.tags || []), ...action.tags.map(t => t.tag)]),
 				}
 			}
 		case ERROR_TAGS_FOR_ITEM:

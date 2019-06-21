@@ -101,9 +101,9 @@ const mapStateToProps = state => {
 
 	const { isFetching = false, pointer: sourceTagsPointer = 0, tags: sourceTags = [], totalResults: totalTagCount = null } = tagsData;
 	const tags = deduplicateByKey([
-		...Object.keys(tagColors).map(tag => ({ tag })),
+		...Object.keys(tagColors),
 		...sourceTags
-	].map(({ tag }) => ({
+	].map(tag => ({
 		tag,
 		color: tag in tagColors ? tagColors[tag] : null,
 		disabled: tag in tagColors && !sourceTags.some(t => t.tag === tag),

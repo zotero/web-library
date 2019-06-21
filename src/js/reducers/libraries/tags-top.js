@@ -5,7 +5,7 @@ import {
 	RECEIVE_TAGS_IN_TOP_ITEMS,
 	ERROR_TAGS_IN_TOP_ITEMS,
 } from '../../constants/actions';
-import { deduplicateByHash } from '../../utils';
+import { deduplicate } from '../../utils';
 
 const tagsTop = (state = {}, action) => {
 	switch(action.type) {
@@ -21,7 +21,7 @@ const tagsTop = (state = {}, action) => {
 					&& !('tag' in action.queryOptions))
 					? action.queryOptions.start + action.queryOptions.limit : state.pointer,
 				totalResults: action.queryOptions.tag ? state.totalResults : action.totalResults,
-				tags: deduplicateByHash([...(state.tags || []), ...action.tags], t => t.tag + t.type),
+				tags: deduplicate([...(state.tags || []), ...action.tags.map(t => t.tag)]),
 			};
 		case ERROR_TAGS_IN_TOP_ITEMS:
 			return { ...state, isFetching: false };

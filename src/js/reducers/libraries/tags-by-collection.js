@@ -5,7 +5,7 @@ import {
 	RECEIVE_TAGS_IN_COLLECTION,
 	REQUEST_TAGS_IN_COLLECTION,
 } from '../../constants/actions';
-import { deduplicateByHash } from '../../utils';
+import { deduplicate } from '../../utils';
 
 const tags = (state = {}, action) => {
 	switch(action.type) {
@@ -26,7 +26,7 @@ const tags = (state = {}, action) => {
 						&& !('tag' in action.queryOptions))
 						? action.queryOptions.start + action.queryOptions.limit : state[action.collectionKey].pointer,
 					totalResults: action.queryOptions.tag ? state[action.collectionKey].totalResults : action.totalResults,
-					tags: deduplicateByHash([...(state[action.collectionKey].tags || []), ...action.tags], t => t.tag + t.type),
+					tags: deduplicate([...(state.tags || []), ...action.tags.map(t => t.tag)]),
 				}
 			}
 		case ERROR_TAGS_IN_COLLECTION:
