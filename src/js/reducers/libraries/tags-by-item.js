@@ -38,7 +38,7 @@ const tags = (state = {}, action) => {
 						&& !('tag' in action.queryOptions))
 						? action.queryOptions.start + action.queryOptions.limit : state[action.itemKey].pointer,
 					totalResults: action.queryOptions.tag ? state[action.itemKey].totalResults : action.totalResults,
-					tags: deduplicate([...(state.tags || []), ...action.tags.map(t => t.tag)]),
+					tags: deduplicate([...(state[action.itemKey].tags || []), ...action.tags.map(t => t.tag)]),
 				}
 			}
 		case ERROR_TAGS_FOR_ITEM:

@@ -106,7 +106,7 @@ const mapStateToProps = state => {
 	].map(tag => ({
 		tag,
 		color: tag in tagColors ? tagColors[tag] : null,
-		disabled: tag in tagColors && !sourceTags.some(t => t.tag === tag),
+		disabled: tag in tagColors && !sourceTags.includes(tag),
 		selected: selectedTags.includes(tag)
 	})), 'tag');
 
