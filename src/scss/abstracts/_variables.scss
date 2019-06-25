@@ -118,11 +118,11 @@ $navbar-height-xs:            $space-thumb;
 $navbar-height-sm:            $space-max;
 $navbar-font-size:            $space-md;
 $navbar-margin-bottom:        $space-min;
-$navbar-padding-x:            $space-md;
+$navbar-padding-x:            $space-sm;
+$navbar-padding-y:            $space-sm;
 $navbar-padding-top:          21px;
 $navbar-padding-bottom:       21px;
-$navbar-active-indicator:     3px;
-$navbar-breakpoint:           map-get($grid-breakpoints, sm);
+$navbar-breakpoint:           map-get($grid-breakpoints, lg);
 $navbar-toggle-padding-x:     $space-md;
 $icon-bar-width:              $space-lg;
 $icon-bar-height:             2px;
@@ -138,9 +138,9 @@ $search-width:                240px;
 // --------------------------------------------------
 
 $navbar-brand-width-xs:  72px;
-$navbar-brand-height-xs: 17px;
+$navbar-brand-height-xs: 20px;
 $navbar-brand-width-sm:  96px;
-$navbar-brand-height-sm: 23px;
+$navbar-brand-height-sm: 26px;
 
 
 // Sidebar

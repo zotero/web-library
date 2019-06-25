@@ -45,78 +45,103 @@ class Navbar extends React.PureComponent {
 				ref={ ref => registerFocusRoot(ref) }
 				tabIndex={ 0 }
 			>
-				<div className="navbar-left">
-					<h1 className="navbar-brand">
-						<a
-							href="/"
-							onKeyDown={ this.handleKeyDown }
-							tabIndex={ -2 }
-						>
-							Zotero
-						</a>
-					</h1>
-					<h2 className="offscreen">Site navigation</h2>
-					<nav className="navbar-nav">
-						<ul className="nav">
-							<li>
-								<a
-									href="#"
-									onKeyDown={ this.handleKeyDown }
-									tabIndex={ -2 }
-								>
-									Feed
-								</a>
-							</li>
-							<li className="active">
-								<a
-									href="#"
-									onKeyDown={ this.handleKeyDown }
-									tabIndex={ -2 }
-								>
-									Library
-								</a>
-							</li>
-							<li>
-								<a
-									href="#"
-									onKeyDown={ this.handleKeyDown }
-									tabIndex={ -2 }
-								>
-									Groups
-								</a>
-							</li>
-						</ul>
-					</nav>
-				</div>
-				<div className="navbar-right">
-					<SearchContainer { ...pick(this.props, ['onFocusNext', 'onFocusPrev']) } />
+				<h1 className="navbar-brand">
 					<a
-						className="user-profile-link"
-						href="#"
-						onKeyDown={ this.handleKeyDown }
-						tabIndex={ -2 }
-					/>
-					{ view !== 'libraries' && (
-						<Button
-							onClick={ this.handleSearchButtonClick }
-							icon
-							className="search-toggle hidden-sm-up"
-						>
-							<Icon type={ '24/search' } width="24" height="24" />
-						</Button>
-					) }
-					<Button
-						icon
-						className="navbar-toggle"
-						onClick={ toggleNavbar }
+						href="/"
 						onKeyDown={ this.handleKeyDown }
 						tabIndex={ -2 }
 					>
-						<span className="icon-bar"></span>
-						<span className="icon-bar"></span>
-						<span className="icon-bar"></span>
+						Zotero
+					</a>
+				</h1>
+				<h2 className="offscreen">Site navigation</h2>
+				<nav className="navbar-nav">
+					<ul className="nav">
+						<li className="active">
+							<a
+								href="#"
+								onKeyDown={ this.handleKeyDown }
+								tabIndex={ -2 }
+							>
+								My Library
+							</a>
+						</li>
+						<li>
+							<a
+								href="#"
+								onKeyDown={ this.handleKeyDown }
+								tabIndex={ -2 }
+							>
+								Groups
+							</a>
+						</li>
+						<li>
+							<a
+								href="#"
+								onKeyDown={ this.handleKeyDown }
+								tabIndex={ -2 }
+							>
+								Documentation
+							</a>
+						</li>
+						<li>
+							<a
+								href="#"
+								onKeyDown={ this.handleKeyDown }
+								tabIndex={ -2 }
+							>
+								Forums
+							</a>
+						</li>
+						<li>
+							<a
+								href="#"
+								onKeyDown={ this.handleKeyDown }
+								tabIndex={ -2 }
+							>
+								Get Involved
+							</a>
+						</li>
+						<li>
+							<a
+								href="#"
+								onKeyDown={ this.handleKeyDown }
+								tabIndex={ -2 }
+							>
+								User Name
+							</a>
+						</li>
+
+					</ul>
+				</nav>
+
+				<SearchContainer { ...pick(this.props, ['onFocusNext', 'onFocusPrev']) } />
+				{ view !== 'libraries' && (
+					<Button
+						onClick={ this.handleSearchButtonClick }
+						icon
+						className="search-toggle hidden-sm-up"
+					>
+						<Icon type={ '24/search' } width="24" height="24" />
 					</Button>
-				</div>
+				) }
+				<Button
+					icon
+					className="navbar-toggle hidden-lg-up"
+					onClick={ toggleNavbar }
+					onKeyDown={ this.handleKeyDown }
+					tabIndex={ -2 }
+				>
+					<span className="icon-bar"></span>
+					<span className="icon-bar"></span>
+					<span className="icon-bar"></span>
+				</Button>
+				<Button
+					className="btn-secondary hidden-md-down upgrade-storage"
+					tabIndex={ -2 }
+				>
+					Upgrade Storage
+				</Button>
 			</header>
 		);
 	}

@@ -3,14 +3,15 @@
 // --------------------------------------------------
 
 .navbar {
-	display: flex;
-	justify-content: space-between;
 	flex: 0 0 auto;
+	display: flex;
+	align-items: center;
 	font-size: $navbar-font-size;
 	width: 100%;
 	height: $navbar-height-xs;
 	position: relative;
 	left: 0;
+	padding: 0 $space-md;
 
 	&:before {
 		content: " ";
@@ -41,11 +42,6 @@
 		}
 	}
 
-	.navbar-left,
-	.navbar-right {
-		display: flex;
-	}
-
 	.navbar-brand,
 	.search-toggle,
 	.navbar-toggle {
@@ -65,26 +61,27 @@
 	.navbar-brand {
 		display: flex;
 		margin: 0;
-
-		@include bp-down(xs) {
-			margin-right: auto; // Fix flex layout in Firefox
-		}
+		margin-right: auto;
 
 		a {
 			display: block;
-			background: url("./images/zotero-logo.svg") center 11px no-repeat;
-			background-size: $navbar-brand-width-xs $navbar-brand-height-xs;
+			background: url("./images/zotero-logo.svg") 0 0 no-repeat;
+			background-size: 100%;
 			text-indent: 100%;
 			white-space: nowrap;
-			width: $navbar-brand-width-xs + 2 * $navbar-padding-x;
+			width: $navbar-brand-width-xs;
+			height: $navbar-brand-height-xs;
 			overflow: hidden;
 
 			@include bp-up(sm) {
-				background: {
-					position: center 18px;
-					size: $navbar-brand-width-sm $navbar-brand-height-sm;
+				width: $navbar-brand-width-sm;
+				height: $navbar-brand-height-sm;
+			}
+
+			&:focus {
+				.keyboard & {
+					outline-offset: 8px;
 				}
-				width: $navbar-brand-width-sm + 2 * $navbar-padding-x;
 			}
 		}
 	}
@@ -98,7 +95,7 @@
 		bottom: 0;
 		width: $navbar-nav-mobile-width;
 
-		@include bp-down(xs) {
+		@media (max-width: $navbar-breakpoint - 1px) {
 			transition: transform $mobile-navbar-nav-transition;
 			transform: $mobile-navbar-nav-transform;
 			opacity: 0.01;
@@ -113,8 +110,8 @@
 			background-color: transparent;
 			display: flex;
 			position: static;
-			margin-right: auto;
 			z-index: auto;
+			width: auto;
 		}
 
 		ul {
@@ -133,56 +130,60 @@
 		}
 
 		a {
-			line-height: $space-thumb;
-			padding: 0 $space-md;
+			display: block;
 
-			@include bp-up(sm) {
-				align-items: center;
-				display: flex;
-				padding: 0 $navbar-padding-x;
-				line-height: inherit;
+			@media (min-width: $navbar-breakpoint) {
+				padding: $navbar-padding-y $navbar-padding-x;
 			}
 
-			&:hover {
-				background: $navbar-link-active-color;
-			}
-		}
-
-		.active a,
-		a:hover {
-			background: $navbar-link-active-color;
-			color: $navbar-link-mobile-active-color;
-
-			@include bp-up(sm) {
-				background: transparent;
-				color: $navbar-link-active-color;
+			&:focus {
+				.keyboard & {
+					outline-offset: -$outline-width;
+				}
 			}
 		}
 
 		.active a {
-			@include bp-up(sm) {
-				box-shadow: inset 0 (-$navbar-active-indicator) $navbar-link-active-color;
+			@media (min-width: $navbar-breakpoint) {
+				color: $navbar-link-active-color;
 			}
 		}
-	}
 
-	.user-profile-link {
-		width: $space-xl;
-		height: $space-xl;
-		background: $user-profile-link-bg;
-		align-self: center;
-		margin-left: $space-xl;
+		//a {
+		//	line-height: $space-thumb;
+		//	padding: 0 $space-md;
+		//
+		//	@include bp-up(sm) {
+		//		align-items: center;
+		//		display: flex;
+		//		padding: $navbar-padding-y $navbar-padding-x;
+		//		line-height: inherit;
+		//	}
+		//
+		//	&:hover {
+		//		background: $navbar-link-active-color;
+		//	}
+		//}
 
-		@include bp-down(xs) {
-			display: none;
-		}
+		//.active a,
+		//a:hover {
+		//	background: $navbar-link-active-color;
+		//	color: $navbar-link-mobile-active-color;
+		//
+		//	@include bp-up(sm) {
+		//		background: transparent;
+		//		color: $navbar-link-active-color;
+		//	}
+		//}
 	}
 
 	.search {
+		flex: 0 0 auto;
 		align-self: center;
 		width: $search-width;
 		font-size: 14px;
 		line-height: 20px; // Special height, like Upgrade button on zotero.org
+		margin-left: $navbar-padding-x;
 
 		@include bp-down(xs) {
 			display: none;
@@ -214,6 +215,12 @@
 		 	margin-top: $icon-bar-spacing;
 		 }
 		}
+	}
+
+	.upgrade-storage {
+		font-size: 14px;
+		padding: 4.5px $space-sm;
+		margin-left: 2 * $navbar-padding-x;
 	}
 }
 
