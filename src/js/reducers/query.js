@@ -12,6 +12,7 @@ import {
 	REQUEST_TAGS_IN_ITEMS_BY_QUERY,
 	RECEIVE_TAGS_IN_ITEMS_BY_QUERY,
 	ERROR_TAGS_IN_ITEMS_BY_QUERY,
+	RECEIVE_UPDATE_ITEM,
 } from '../constants/actions.js';
 
 import { getParamsFromRoute } from '../common/state';
@@ -77,7 +78,7 @@ const query = (state = defaultState, action) => {
 					totalResults: parseInt(
 						action.response.response.headers.get('Total-Results'), 10
 					),
-					tags: deduplicate([...(state.tags || []), ...action.tags.map(t => t.tag)]),
+					tags: deduplicate([...(state.tags.tags || []), ...action.tags.map(t => t.tag)]),
 				}
 			};
 		case ERROR_TAGS_IN_ITEMS_BY_QUERY:
@@ -88,6 +89,8 @@ const query = (state = defaultState, action) => {
 					isFetching: false
 				}
 			};
+		case RECEIVE_UPDATE_ITEM:
+			return 'tags' in action.patch ? {} : state;
 		default:
 			return state;
 	}

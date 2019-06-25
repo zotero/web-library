@@ -3,6 +3,7 @@
 import {
 	ERROR_TAGS_IN_PUBLICATIONS_ITEMS,
 	RECEIVE_TAGS_IN_PUBLICATIONS_ITEMS,
+	RECEIVE_UPDATE_ITEM,
 	REQUEST_TAGS_IN_PUBLICATIONS_ITEMS,
 } from '../../constants/actions';
 import { deduplicate } from '../../utils';
@@ -25,6 +26,8 @@ const tagsInPublicationsItems = (state = {}, action) => {
 			};
 		case ERROR_TAGS_IN_PUBLICATIONS_ITEMS:
 			return { ...state, isFetching: false };
+		case RECEIVE_UPDATE_ITEM:
+			return 'tags' in action.patch ? {} : state;
 		default:
 			return state;
 	}

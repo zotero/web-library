@@ -2,7 +2,10 @@
 
 import {
 	ERROR_TAGS_IN_TRASH_ITEMS,
+	RECEIVE_MOVE_ITEMS_TRASH,
+	RECEIVE_RECOVER_ITEMS_TRASH,
 	RECEIVE_TAGS_IN_TRASH_ITEMS,
+	RECEIVE_UPDATE_ITEM,
 	REQUEST_TAGS_IN_TRASH_ITEMS,
 } from '../../constants/actions';
 import { deduplicate } from '../../utils';
@@ -25,6 +28,12 @@ const tagsInTrashItems = (state = {}, action) => {
 			};
 		case ERROR_TAGS_IN_TRASH_ITEMS:
 			return { ...state, isFetching: false };
+		case RECEIVE_MOVE_ITEMS_TRASH:
+		case RECEIVE_RECOVER_ITEMS_TRASH:
+			return action.items.some(item => 'tags' in item && item.tags.length > 0) ?
+				{} : state;
+		case RECEIVE_UPDATE_ITEM:
+			return action.item.deleted === 1 && 'tags' in action.patch ? {} : state;
 		default:
 			return state;
 	}

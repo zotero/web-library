@@ -12,7 +12,7 @@ const extractItems = (response, state) => {
 	}));
 }
 
-const sequentialChunkedAcion = async (action, itemKeys, extraArgs) => {
+const sequentialChunkedAcion = async (action, itemKeys, extraArgs = []) => {
 	do {
 		const itemKeysChunk = itemKeys.splice(0, 50);
 		await action(itemKeysChunk, ...extraArgs);

@@ -8,7 +8,9 @@ const PAGE_SIZE = 100;
 class TagList extends React.PureComponent {
 	componentDidMount() {
 		const { checkColoredTags, fetchTags, sourceTagsPointer, totalTagCount } = this.props;
-		fetchTags({ start: 0, limit: PAGE_SIZE, sort: 'title' });
+		if(totalTagCount === null) {
+			fetchTags({ start: 0, limit: PAGE_SIZE, sort: 'title' });
+		}
 		if(sourceTagsPointer < totalTagCount) {
 			checkColoredTags();
 		}
@@ -31,7 +33,7 @@ class TagList extends React.PureComponent {
 		const totalHeight = this.listRef.getBoundingClientRect().height;
 		const scrollProgress = (this.containerRef.scrollTop + containerHeight) / totalHeight;
 
-		if(scrollProgress > 0.5 && !isFetching && totalTagCount > sourceTagsPointer) {
+		if(scrollProgress > 0.5 && !isFetching && (totalTagCount > sourceTagsPointer) || (totalTagCount === null)) {
 			fetchTags({ start: sourceTagsPointer, limit: PAGE_SIZE, sort: 'title' });
 		}
 	}
