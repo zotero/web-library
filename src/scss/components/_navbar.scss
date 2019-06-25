@@ -49,15 +49,6 @@
 		z-index: $z-index-navbar;
 	}
 
-	a {
-		color: $navbar-link-color;
-
-		&:hover {
-			color: $navbar-link-active-color;
-			text-decoration: none;
-		}
-	}
-
 	.navbar-brand {
 		display: flex;
 		margin: 0;
@@ -130,7 +121,7 @@
 		}
 
 		a {
-			display: block;
+			color: $navbar-link-color;
 
 			@media (min-width: $navbar-breakpoint) {
 				padding: $navbar-padding-y $navbar-padding-x;
