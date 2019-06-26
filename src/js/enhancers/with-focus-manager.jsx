@@ -27,6 +27,27 @@ const withFocusManager = Component => {
 			}
 		}
 
+		handleDrillDownNext = ev => {
+			const drillables = Array.from(
+				ev.currentTarget.querySelectorAll('[tabIndex="-3"]:not([disabled])')
+			).filter(t => t.offsetParent);
+			const nextIndex = drillables.findIndex(t => t === ev.currentTarget) + 1;
+			if(nextIndex < drillables.length) {
+				drillables[nextIndex].focus();
+			}
+		}
+		handleDrillDownPrev = ev => {
+			const drillables = Array.from(
+				ev.currentTarget.querySelectorAll('[tabIndex="-3"]:not([disabled])')
+			).filter(t => t.offsetParent);
+			const prevIndex = drillables.findIndex(t => t === ev.currentTarget) - 1;
+			if(prevIndex >= 0) {
+				drillables[prevIndex].focus();
+			} else {
+				ev.currentTarget.focus();
+			}
+		}
+
 		handleFocus = ev => {
 			if(ev.target !== ev.currentTarget) {
 				return;
@@ -41,7 +62,7 @@ const withFocusManager = Component => {
 			) {
 				return;
 			}
-			this.ref.tabIndex = 0;
+			ev.currentTarget.tabIndex = 0;
 		}
 
 		registerFocusRoot = ref => {
@@ -58,6 +79,8 @@ const withFocusManager = Component => {
 				onFocusPrev={ this.handlePrevious }
 				onFocus={ this.handleFocus }
 				onBlur={ this.handleBlur }
+				onDrillDownNext={ this.handleDrillDownNext }
+				onDrillDownPrev={ this.handleDrillDownPrev }
 				registerFocusRoot={ this.registerFocusRoot }
 			/>;
 		}

@@ -119,22 +119,21 @@ class Node extends React.PureComponent {
 	}
 
 	handleKeyDown = ev => {
-		const { onFocusNext, onOpen, onFocusPrev } = this.props;
-		if(ev.target !== ev.currentTarget) {
-			return;
-		}
+		const { hideTwisty, onFocusNext, onOpen, onFocusPrev, isOpen,
+			onDrillDownNext, onDrillDownPrev } = this.props;
 
 		if(ev.key === "ArrowLeft") {
-			onOpen(ev, false);
+			ev.target === ev.currentTarget ? onOpen(ev, false) : onDrillDownPrev(ev);
 		} else if(ev.key === "ArrowRight") {
-			onOpen(ev, true);
+			isOpen || hideTwisty ? onDrillDownNext(ev) : onOpen(ev, true);
 		} else if(ev.key === "ArrowDown") {
-			onFocusNext(ev);
+			ev.target === ev.currentTarget && onFocusNext(ev);
 		} else if(ev.key === "ArrowUp") {
-			onFocusPrev(ev);
+			ev.target === ev.currentTarget && onFocusPrev(ev);
 		} else if(isTriggerEvent(ev)) {
-			ev.target.click();
+			ev.target === ev.currentTarget && ev.target.click();
 		}
+		this.props.onKeyDown(ev);
 	}
 
 	handleFocus = ev => {
@@ -165,10 +164,12 @@ class Node extends React.PureComponent {
 			</button>
 		);
 		const isActive = canDrop && isOver;
+		//@TODO: use "pick" instead of "omit"
 		const props = omit(this.props, ["canDrag", "canDrop", "children",
 			"className", "connectDragSource", "connectDropTarget", "dndTarget",
 			"hideTwisty", "isDragging", "isOpen", "isOver", "onFocusNext", "onOpen",
-			"onFocusPrev", "onClick", "subtree", "onRename", "shouldBeDraggable"
+			"onFocusPrev", "onClick", "subtree", "onRename", "shouldBeDraggable",
+			"onDrillDownNext", "onDrillDownPrev", 'onKeyDown'
 		]);
 
 		return connectDragSource(connectDropTarget(
@@ -176,6 +177,7 @@ class Node extends React.PureComponent {
 				className={ cx(className, { focus: isFocused }) }
 				>
 				<div
+					{ ...props }
 					className={ cx('item-container', { 'dnd-target': isActive }) }
 					role="treeitem"
 					aria-expanded={ isOpen }
@@ -186,7 +188,6 @@ class Node extends React.PureComponent {
 					onFocus={ this.handleFocus }
 					onBlur={ this.handleBlur }
 					onKeyDown={ this.handleKeyDown }
-					{ ...props }
 				>
 					{ subtree && !hideTwisty ? twistyButton : null }
 					{ children }
@@ -208,8 +209,11 @@ class Node extends React.PureComponent {
 		isOver: PropTypes.bool,
 		onClick: PropTypes.func,
 		onDrag: PropTypes.func,
+		onDrillDownNext: PropTypes.func,
+		onDrillDownPrev: PropTypes.func,
 		onFocusNext: PropTypes.func,
 		onFocusPrev: PropTypes.func,
+		onKeyDown: PropTypes.func,
 		onOpen: PropTypes.func,
 		onRename: PropTypes.func,
 		subtree: PropTypes.oneOfType([PropTypes.element, PropTypes.array]),
@@ -217,6 +221,11 @@ class Node extends React.PureComponent {
 
 	static defaultProps = {
 		onClick: noop,
+		onDrillDownNext: noop,
+		onDrillDownPrev: noop,
+		onFocusNext: noop,
+		onFocusPrev: noop,
+		onKeyDown: noop,
 		onOpen: noop,
 	}
 }

@@ -5,7 +5,7 @@ import cx from 'classnames';
 import PropTypes from 'prop-types';
 import memoize from 'memoize-one';
 import deepEqual from 'deep-equal';
-import { UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap/lib';
+import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap/lib';
 import Node from './node';
 import Icon from '../ui/icon';
 import { noop } from '../../utils.js';
@@ -15,7 +15,7 @@ import { BIBLIOGRAPHY, COLLECTION_RENAME, COLLECTION_ADD, EXPORT,
 	MOVE_COLLECTION } from '../../constants/modals';
 
 class CollectionTree extends React.PureComponent {
-	state = { opened: [], renaming: null }
+	state = { opened: [], renaming: null, dropDownOpen: null }
 
 	componentDidUpdate({ updating: wasUpdating }) {
 		const { updating } = this.props;
@@ -138,6 +138,29 @@ class CollectionTree extends React.PureComponent {
 		}
 	}
 
+	handleNodeKeyDown = ev => {
+		if(['ArrowLeft', 'ArrowRight'].includes(ev.key)) {
+			this.setState({ dropDownOpen: null });
+		}
+	}
+
+	handleDropdownToggle = ev => {
+		if(ev.currentTarget === window.document) {
+			this.setState({ dropDownOpen: null });
+			return;
+
+		}
+		const node = ev.currentTarget.closest('[data-collection-key]');
+		const { collectionKey } = node.dataset;
+		this.setState({
+			dropDownOpen: this.state.dropDownOpen === collectionKey ? null : collectionKey
+		});
+
+		if(ev.type === 'click') {
+			ev.stopPropagation();
+		}
+	}
+
 	//@TODO: memoize once
 	collectionsFromKeys(collections) {
 		return collections.map(
@@ -198,7 +221,7 @@ class CollectionTree extends React.PureComponent {
 		const { childMap, derivedData } = this;
 		const { libraryKey, itemsSource, isMyLibrary, isCurrentLibrary,
 			virtual, onAddCancel, device, path, view, isPickerMode,
-			picked, isReadOnly, onFocusNext, onFocusPrev } = this.props;
+			picked, isReadOnly, onFocusNext, onFocusPrev, onDrillDownNext, onDrillDownPrev } = this.props;
 
 		const [selected, selectedDepth] = this.findRecursive(
 			collections,
@@ -320,6 +343,9 @@ class CollectionTree extends React.PureComponent {
 							tabIndex={ shouldBeTabbable ? "-2" : null }
 							onFocusNext={ onFocusNext }
 							onFocusPrev={ onFocusPrev }
+							onDrillDownNext={ onDrillDownNext }
+							onDrillDownPrev={ onDrillDownPrev }
+							onKeyDown={ this.handleNodeKeyDown }
 							icon="folder"
 							dndTarget={ { 'targetType': 'collection', collectionKey: collection.key, libraryKey } }
 						>
@@ -347,13 +373,16 @@ class CollectionTree extends React.PureComponent {
 												onClick={ ev => ev.stopPropagation() }
 											/>
 										) : (
-										<UncontrolledDropdown>
+										<Dropdown
+											isOpen={ this.state.dropDownOpen === collection.key }
+											toggle={ this.handleDropdownToggle }
+										>
 											<DropdownToggle
-												tabIndex={ -1 }
+												tabIndex={ -3 }
 												className="btn-icon dropdown-toggle"
 												color={ null }
 												title="More"
-												onClick={ ev => ev.stopPropagation() }
+												onClick={ this.handleDropdownToggle }
 											>
 												<Icon type={ '24/options-sm' } width="24" height="24" className="touch" />
 												<Icon type={ '16/options' } width="16" height="16" className="mouse" />
@@ -395,7 +424,7 @@ class CollectionTree extends React.PureComponent {
 													Create Bibliography
 												</DropdownItem>
 											</DropdownMenu>
-										</UncontrolledDropdown>
+										</Dropdown>
 										)}
 									</React.Fragment>
 								}

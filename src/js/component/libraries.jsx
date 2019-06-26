@@ -10,6 +10,7 @@ import Node from './libraries/node';
 import Spinner from './ui/spinner';
 import Types from '../types';
 import { stopPropagation } from '../utils';
+import { pick } from '../common/immutable';
 import withFocusManager from '../enhancers/with-focus-manager';
 
 class Libraries extends React.PureComponent {
@@ -127,12 +128,11 @@ class Libraries extends React.PureComponent {
 				isOpen={ isOpen && !isFetching }
 				onOpen={ this.handleOpenToggle }
 				onClick={ this.handleSelect.bind(this, { library: key, view: 'library' }) }
-				onFocusNext={ this.props.onFocusNext }
-				onFocusPrev={ this.props.onFocusPrev }
 				subtree={ isFetching ? null : this.renderCollections({ key, isMyLibrary, isReadOnly }) }
 				key={ key }
 				data-key={ key }
 				dndTarget={ isReadOnly ? { } : { 'targetType': 'library', libraryKey: key } }
+				{ ...pick(this.props, ['onDrillDownNext', 'onDrillDownPrev', 'onFocusNext', 'onFocusPrev'])}
 			>
 				<Icon type="28/library" className="touch" width="28" height="28" />
 				<Icon type="16/library" className="mouse" width="16" height="16" />
@@ -152,7 +152,7 @@ class Libraries extends React.PureComponent {
 							className="mouse btn-icon-plus"
 							icon
 							onClick={ this.handleAdd.bind(this, key, null) }
-							tabIndex={ -1 }
+							tabIndex={ -3 }
 						>
 							<Icon type={ '16/plus' } width="16" height="16" />
 						</Button>
