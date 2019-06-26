@@ -202,12 +202,15 @@
 	}
 
 	.navbar-toggle {
-		//margin-right: $space-xs;
-		//
-		//@include bp-up-normalized(sm) {
-		//	padding: $space-xs;
-		//	margin-left: $space-xs;
-		//}
+		@include bp-down-normalized(xs) {
+			padding: 11px 8px;
+			margin-right: -$space-xs;
+		}
+
+		@include bp-up-normalized(sm) {
+			padding: 6px 7px;
+			margin: 0 (-$space-xs) 0 (2 * $navbar-padding-x - $space-xs);
+		}
 
 		.icon-bar {
 			display: block;
