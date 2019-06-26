@@ -144,6 +144,7 @@ class Navbar extends React.PureComponent {
 				</Button>
 				<Button
 					className="btn-secondary hidden-md-down upgrade-storage"
+					onKeyDown={ this.handleKeyDown }
 					tabIndex={ -2 }
 				>
 					Upgrade Storage
