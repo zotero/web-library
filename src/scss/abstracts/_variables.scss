@@ -129,10 +129,10 @@ $navbar-toggle-padding-x:     $space-md;
 $icon-bar-width:              $space-lg;
 $icon-bar-height:             2px;
 $icon-bar-spacing:            6px;
-$navbar-nav-mobile-width:     calc(100% - #{$icon-bar-width + 2 * $navbar-toggle-padding-x + $space-min});
-$content-transform:           calc(-100% + #{$icon-bar-width + 2 * $navbar-toggle-padding-x});
+$navbar-nav-mobile-width:     280px;
+$content-transform:           -$navbar-nav-mobile-width;
 $mobile-navbar-nav-transform: translate3d(25%, 0, 0);
-$nav-cover-width:             $icon-bar-width + 2 * $navbar-toggle-padding-x;
+$nav-cover-width:             calc(100% - 280px);
 $search-width:                240px;
 
 

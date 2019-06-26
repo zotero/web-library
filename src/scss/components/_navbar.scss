@@ -32,6 +32,12 @@
 		}
 	}
 
+	@media (max-width: 360px - 1px) {
+		.navbar-nav-opened & {
+			left: -264px; // 4" devices
+		}
+	}
+
 	@include bp-up(sm) {
 		flex: 0 0 auto;
 		height: $navbar-height-sm;
@@ -102,6 +108,10 @@
 				transform: translate3d(0, 0, 0);
 				opacity: 1;
 			}
+		}
+
+		@media (max-width: 360px - 1px) {
+			width: 264px; // 4" devices
 		}
 
 		@media (min-width: $navbar-breakpoint) {

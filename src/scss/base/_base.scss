@@ -75,4 +75,10 @@ main {
 			left: $content-transform;
 		}
 	}
+
+	@media (max-width: 360px - 1px) {
+		.navbar-nav-opened & {
+			left: -264px; // 4" devices
+		}
+	}
 }
