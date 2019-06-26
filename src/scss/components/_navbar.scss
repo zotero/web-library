@@ -100,13 +100,16 @@
 		width: $navbar-nav-mobile-width;
 
 		@media (max-width: $navbar-breakpoint - 1px) {
-			transition: transform $mobile-navbar-nav-transition;
 			transform: $mobile-navbar-nav-transform;
 			opacity: 0.01;
+			transition:
+				transform $mobile-navbar-nav-transition,
+				opacity 0s $nav-transition-duration linear;
 
 			.navbar-nav-opened & {
 				transform: translate3d(0, 0, 0);
 				opacity: 1;
+				transition: transform $mobile-navbar-nav-transition;
 			}
 		}
 
