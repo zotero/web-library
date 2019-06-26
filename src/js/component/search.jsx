@@ -57,9 +57,23 @@ class Search extends React.PureComponent {
 		}
 
 		if(ev.key === 'ArrowRight') {
-			onFocusNext(ev);
+			if(ev.target === this.inputRef) {
+				const { selectionStart, selectionEnd, value } = ev.target;
+				if(selectionStart === selectionEnd && selectionStart === value.length) {
+					onFocusNext(ev);
+				}
+			} else {
+				onFocusNext(ev);
+			}
 		} else if(ev.key === 'ArrowLeft') {
-			onFocusPrev(ev);
+			if(ev.target === this.inputRef) {
+				const { selectionStart, selectionEnd } = ev.target;
+				if(selectionStart === selectionEnd && selectionStart === 0) {
+					onFocusPrev(ev);
+				}
+			} else {
+				onFocusPrev(ev);
+			}
 		}
 	}
 
