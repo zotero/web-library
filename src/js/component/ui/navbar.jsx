@@ -55,7 +55,7 @@ class Navbar extends React.PureComponent {
 					</a>
 				</h1>
 				<h2 className="offscreen">Site navigation</h2>
-				<nav className="navbar-nav">
+				<nav>
 					<ul className="main-nav">
 						<li className="nav-item active">
 							<a
@@ -110,14 +110,13 @@ class Navbar extends React.PureComponent {
 						<li className="nav-item">
 							<a
 								href="#"
-								className="nav-link separated"
+								className="nav-link"
 								onKeyDown={ this.handleKeyDown }
 								tabIndex={ -2 }
 							>
 								User Name
 							</a>
 						</li>
-
 					</ul>
 				</nav>
 

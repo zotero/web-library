@@ -10,6 +10,7 @@ import LibrariesContainer from '../container/libraries';
 import ItemDetailsContainer from '../container/item-details';
 import ItemsContainer from '../container/items';
 import Navbar from './ui/navbar';
+import MobileNav from './ui/mobile-nav';
 import TagSelectorContainer from '../container/tag-selector';
 import TouchHeaderContainer from '../container/touch-header';
 import BibliographyModalContainer from '../container/modal/bibliography';
@@ -113,63 +114,66 @@ class Library extends React.PureComponent {
 						</div>
 					)
 				}
-				<Navbar
-					{...pick(this.props, ['collectionKey', 'isNavBarOpen', 'isMyPublications', 'isTrash',
-						'itemsSource', 'libraryKey', 'navigate', 'qmode', 'search', 'tags', 'toggleNavbar',
-						'triggerSearchMode', 'view',
-					])}
-				/>
+				<MobileNav />
 				<div
 					className="nav-cover"
 					onClick={ toggleNavbar }
 				/>
-				<main>
-					<section className={ `library ${ view === 'library' ? 'active' : '' }` }>
-						<TouchHeaderContainer
-							className="hidden-sm-up darker"
-							variant={ TouchHeaderContainer.variants.MOBILE }
-						/>
-						<header className="sidebar">
-							<h2 className="offscreen">Web library</h2>
+				<div className="site-wrapper">
+					<Navbar
+						{...pick(this.props, ['collectionKey', 'isNavBarOpen', 'isMyPublications', 'isTrash',
+							'itemsSource', 'libraryKey', 'navigate', 'qmode', 'search', 'tags', 'toggleNavbar',
+							'triggerSearchMode', 'view',
+						])}
+					/>
+					<main>
+						<section className={ `library ${ view === 'library' ? 'active' : '' }` }>
 							<TouchHeaderContainer
-								variant={ TouchHeaderContainer.variants.NAVIGATION }
-								className="hidden-xs-down hidden-mouse-md-up darker"
+								className="hidden-sm-up darker"
+								variant={ TouchHeaderContainer.variants.MOBILE }
 							/>
-							<LibrariesContainer />
-							{ !device.isTouchOrSmall &&
-								<TagSelectorContainer key={ key } />
-							}
-						</header>
-						<CSSTransition
-							in={ (device.isSingleColumn && isSearchMode) || !device.isSingleColumn }
-							timeout={ 250 }
-							classNames="fade"
-							enter={ device.isSingleColumn && (view !== 'item-list' && view !== 'item-details') }
-							exit={ device.isSingleColumn && (view !== 'item-list' && view !== 'item-details') }
-						>
-							<section className={ cx('items', {
-								'active': view === 'item-list',
-								'select-mode': isSelectMode
-							})}>
-								{/* Tablet TouchHeader */}
+							<header className="sidebar">
+								<h2 className="offscreen">Web library</h2>
 								<TouchHeaderContainer
-									className="hidden-xs-down hidden-md-up darker"
-									variant={ TouchHeaderContainer.variants.SOURCE_AND_ITEM }
+									variant={ TouchHeaderContainer.variants.NAVIGATION }
+									className="hidden-xs-down hidden-mouse-md-up darker"
 								/>
-								<ItemsContainer key={ key } { ...{isSearchModeTransitioning} } />
-								<ItemDetailsContainer active={ view === 'item-details' } />
-								<CSSTransition
-									in={ device.isSingleColumn && isSearchMode && itemsSource !== 'query' }
-									timeout={ 250 }
-									classNames="fade"
-									unmountOnExit
-								>
-									<SearchBackdrop { ...pick(this.props, ['triggerSearchMode']) } />
-								</CSSTransition>
-							</section>
-						</CSSTransition>
-					</section>
-				</main>
+								<LibrariesContainer />
+								{ !device.isTouchOrSmall &&
+									<TagSelectorContainer key={ key } />
+								}
+							</header>
+							<CSSTransition
+								in={ (device.isSingleColumn && isSearchMode) || !device.isSingleColumn }
+								timeout={ 250 }
+								classNames="fade"
+								enter={ device.isSingleColumn && (view !== 'item-list' && view !== 'item-details') }
+								exit={ device.isSingleColumn && (view !== 'item-list' && view !== 'item-details') }
+							>
+								<section className={ cx('items', {
+									'active': view === 'item-list',
+									'select-mode': isSelectMode
+								})}>
+									{/* Tablet TouchHeader */}
+									<TouchHeaderContainer
+										className="hidden-xs-down hidden-md-up darker"
+										variant={ TouchHeaderContainer.variants.SOURCE_AND_ITEM }
+									/>
+									<ItemsContainer key={ key } { ...{isSearchModeTransitioning} } />
+									<ItemDetailsContainer active={ view === 'item-details' } />
+									<CSSTransition
+										in={ device.isSingleColumn && isSearchMode && itemsSource !== 'query' }
+										timeout={ 250 }
+										classNames="fade"
+										unmountOnExit
+									>
+										<SearchBackdrop { ...pick(this.props, ['triggerSearchMode']) } />
+									</CSSTransition>
+								</section>
+							</CSSTransition>
+						</section>
+					</main>
+				</div>
 				<AddItemsToCollectionsModalContainer />
 				<BibliographyModalContainer />
 				<ExportModalContainer />

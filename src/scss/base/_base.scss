@@ -59,26 +59,31 @@ body {
 	}
 }
 
+.site-wrapper {
+	flex: 1 1 auto;
+	display: flex;
+	flex-direction: column;
+}
+
 main {
 	flex: 1 1 auto;
 	display: flex;
 	background: $main-bg;
 	position: relative;
 	z-index: $z-index-main;
-	left: 0;
 
 	@media (max-width: $navbar-breakpoint - 1px) {
 		overflow: hidden; // Do not overlap open mobile navbar nav
-		transition: left $mobile-navbar-nav-transition;
+		transition: transform $mobile-navbar-nav-transition;
 
 		.navbar-nav-opened & {
-			left: $content-transform;
+			transform: translate3d($content-transform, 0, 0);
 		}
 	}
 
 	@media (max-width: 360px - 1px) {
 		.navbar-nav-opened & {
-			left: -264px; // 4" devices
+			transform: translate3d(-264px, 0, 0); // 4" devices
 		}
 	}
 }

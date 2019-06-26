@@ -1,0 +1,60 @@
+//
+// Nav sidebar
+// --------------------------------------------------
+
+.nav-sidebar {
+	position: fixed;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	width: $navbar-nav-mobile-width;
+	z-index: $z-index-mobile-nav;
+	background-color: $navbar-nav-mobile-bg;
+	overflow-y: scroll;
+	font-size: $navbar-font-size;
+	transform: $mobile-navbar-nav-transform;
+	visibility: hidden;
+	transition:
+		transform $mobile-navbar-nav-transition,
+		visibility 0s linear $nav-transition-duration;
+
+	.navbar-nav-opened & {
+		transform: translate3d(0, 0, 0);
+		visibility: visible;
+		transition: transform $mobile-navbar-nav-transition;
+	}
+
+	.mobile-nav {
+		margin: ($space-xxl - 6px) 0 ($space-xxl - 2px);
+	}
+
+	.nav-link {
+		color: $navbar-link-mobile-color;
+		padding: $navbar-padding-y-touch $navbar-padding-x-touch;
+		position: relative;
+
+		&:focus {
+			.keyboard & {
+				outline-offset: -$outline-width;
+			}
+		}
+
+		&.separated {
+			padding-top: $navbar-padding-y-touch + 1px;
+
+			&::before {
+				content: "";
+				position: absolute;
+				top: 0;
+				left: $space-xl;
+				right: 0;
+				border-top: 1px solid lighten($shade-9, 8%);
+				z-index: -1;
+			}
+		}
+	}
+
+	.active .nav-link {
+		color: $navbar-link-mobile-active-color;
+	}
+}
