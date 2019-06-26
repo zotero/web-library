@@ -137,8 +137,12 @@
 
 	.upgrade-storage {
 		font-size: 14px;
-		padding: 4.5px $space-sm;
 		margin-left: 2 * $navbar-padding-x;
+
+		html:not(.specifity) & {
+			padding: 4.5px $space-sm;
+			border-radius: $input-btn-border-radius;
+		}
 	}
 }
 
