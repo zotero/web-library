@@ -5,7 +5,7 @@
 .input-group.search {
 	.dropdown {
 		position: absolute;
-		left: 7px;
+		left: 5px;
 		top: 3px;
 		z-index: $z-index-menu; // We need to set the z-index here because the dropdown-menu expects a static wrapper
 
@@ -16,7 +16,8 @@
 	}
 
 	.dropdown-toggle {
-		padding: 0;
+		padding: 0 2px; // Simulate outline-offset
+		border-radius: 0;
 	}
 
 	.icon-search-options {
