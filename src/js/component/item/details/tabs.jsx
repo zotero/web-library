@@ -56,6 +56,15 @@ class ItemDetailsTabs extends React.PureComponent {
 				return 'info';
 		}
 	}
+	handleKeyDown = ev => {
+		if(ev.key === 'ArrowDown' && ev.target.closest('.tab')) {
+			ev.currentTarget.querySelector('.tab-pane.active [tabIndex]').focus();
+		}
+		if(ev.key === 'Escape') {
+			//@TODO: do this in a more elegant way
+			document.querySelector('.items-table [tabIndex="0"]').focus();
+		}
+	}
 
 	get defaultActiveTab() {
 		return this.pickDefaultActiveTab(this.props.item.itemType);
@@ -69,7 +78,9 @@ class ItemDetailsTabs extends React.PureComponent {
 		return (
 			<Panel
 				className={ cx({ 'editing': isEditing })}
-				bodyClassName={ cx({ 'loading': isLoading && !device.shouldUseTabs }) }>
+				bodyClassName={ cx({ 'loading': isLoading && !device.shouldUseTabs }) }
+				onKeyDown={ this.handleKeyDown }
+			>
 				<header>
 					<h4 className="offscreen">
 						{ title }

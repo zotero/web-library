@@ -3,9 +3,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import cx from 'classnames';
+import { pick } from '../../common/immutable';
 
 class Panel extends React.PureComponent {
-
 	renderHeader(header) {
 		if(header.type === 'header') {
 			return React.cloneElement(header, {
@@ -19,7 +19,6 @@ class Panel extends React.PureComponent {
 			);
 		}
 	}
-
 	renderBody(body) {
 		return (
 			<div className={ cx('panel-body', this.props.bodyClassName) }>
@@ -27,12 +26,12 @@ class Panel extends React.PureComponent {
 			</div>
 		);
 	}
-
 	render() {
 		const [header, ...body] = React.Children.toArray(this.props.children);
+		const props = pick(this.props, ['onClick', 'onKeyDown']);
 
 		return (
-			<section className={ `panel ${this.props.className}` }>
+			<section { ...props } className={ `panel ${this.props.className}` }>
 				{ this.renderHeader(header) }
 				{ this.renderBody(body) }
 			</section>
