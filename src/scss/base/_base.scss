@@ -67,7 +67,7 @@ main {
 	z-index: $z-index-main;
 	left: 0;
 
-	@include bp-down(xs) {
+	@media (max-width: $navbar-breakpoint - 1px) {
 		overflow: hidden; // Do not overlap open mobile navbar nav
 		transition: left $mobile-navbar-nav-transition;
 

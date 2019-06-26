@@ -56,55 +56,61 @@ class Navbar extends React.PureComponent {
 				</h1>
 				<h2 className="offscreen">Site navigation</h2>
 				<nav className="navbar-nav">
-					<ul className="nav">
-						<li className="active">
+					<ul className="main-nav">
+						<li className="nav-item active">
 							<a
 								href="#"
+								className="nav-link"
 								onKeyDown={ this.handleKeyDown }
 								tabIndex={ -2 }
 							>
 								My Library
 							</a>
 						</li>
-						<li>
+						<li className="nav-item">
 							<a
 								href="#"
+								className="nav-link"
 								onKeyDown={ this.handleKeyDown }
 								tabIndex={ -2 }
 							>
 								Groups
 							</a>
 						</li>
-						<li>
+						<li className="nav-item">
 							<a
 								href="#"
+								className="nav-link"
 								onKeyDown={ this.handleKeyDown }
 								tabIndex={ -2 }
 							>
 								Documentation
 							</a>
 						</li>
-						<li>
+						<li className="nav-item">
 							<a
 								href="#"
+								className="nav-link"
 								onKeyDown={ this.handleKeyDown }
 								tabIndex={ -2 }
 							>
 								Forums
 							</a>
 						</li>
-						<li>
+						<li className="nav-item">
 							<a
 								href="#"
+								className="nav-link"
 								onKeyDown={ this.handleKeyDown }
 								tabIndex={ -2 }
 							>
 								Get Involved
 							</a>
 						</li>
-						<li>
+						<li className="nav-item">
 							<a
 								href="#"
+								className="nav-link separated"
 								onKeyDown={ this.handleKeyDown }
 								tabIndex={ -2 }
 							>
