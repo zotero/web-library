@@ -62,6 +62,14 @@
 			right: 9px;
 		}
 
+		html:not(.specifity).keyboard & {
+			&:focus {
+				border-color: $icon-color;
+				box-shadow: 0 0 0 $input-btn-focus-width $icon-color;
+				outline: none;
+			}
+		}
+
 		@include mouse-and-bp-up(md) {
 			&:active {
 				background-color: $icon-active-color;
