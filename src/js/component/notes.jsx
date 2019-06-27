@@ -98,25 +98,12 @@ class Notes extends React.PureComponent {
 					</nav>
 					{ !isReadOnly && (
 						<Button
+							onClick={ this.handleAddNote.bind(this) }
 							className="btn-block text-left hairline-top hairline-start-icon-28 btn-transparent-secondary"
 						>
 							<Icon type={ '24/plus-circle-strong' } width="24" height="24" />
 							Add Note
 						</Button>
-
-						/*<Toolbar>
-							<div className="toolbar-left">
-								<ToolGroup>
-									<Button
-										className="btn-link"
-										onClick={ this.handleAddNote.bind(this) }
-									>
-										<Icon type={ '16/plus' } width="16" height="16" />
-										Add Note
-									</Button>
-								</ToolGroup>
-							</div>
-						</Toolbar>*/
 					)}
 				</div>
 

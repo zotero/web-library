@@ -10,13 +10,14 @@ import React from 'react';
 
 import Icon from './ui/icon';
 import { noteAsTitle } from '../common/format';
+import { isTriggerEvent } from '../common/event';
 
 class Note extends React.PureComponent {
 	state = { isOpen: false }
 	handleToggleDropdown = () => this.setState({ isOpen: !this.state.isOpen })
-	handleSelect = () => {
+	handleSelect = ev => {
 		const { note, onSelect } = this.props;
-		onSelect(note);
+		if(isTriggerEvent(ev)) { onSelect(note) }
 	}
 	handleDelete = () => {
 		const { note, onDelete } = this.props;
@@ -33,6 +34,8 @@ class Note extends React.PureComponent {
 			<li
 				className={ cx('note', { 'selected': isSelected }) }
 				onClick={ this.handleSelect }
+				onKeyDown={ this.handleSelect }
+				tabIndex={ 0 }
 			>
 				<Icon type={ '28/note'} width="28" height="28" className="hidden-mouse" />
 				<div className="multiline-truncate">
