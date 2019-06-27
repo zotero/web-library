@@ -71,12 +71,12 @@ const tags = (state = {}, action) => {
 		case RECEIVE_UPDATE_ITEM:
 			return {
 				...state,
-				...action.item.collections.reduce(
+				...('collections' in action.item ? action.item.collections.reduce(
 					(acc, colKey) => {
 						acc[colKey] = 'tags' in action.patch ? {} : state[colKey];
 						return acc;
 					}, {}
-				)
+				) : {})
 			}
 		default:
 			return state;
