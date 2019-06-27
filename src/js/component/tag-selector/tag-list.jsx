@@ -76,7 +76,7 @@ class TagList extends React.PureComponent {
 				onClick={ this.handleClick }
 				onKeyDown={ this.handleKeyDown }
 				style={ tag.color && { color: tag.color } }
-				tabIndex={ -2 }
+				tabIndex={ tag.disabled ? null : -2 }
 			>
 				{ tag.tag }
 			</li>
