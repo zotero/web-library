@@ -19,13 +19,18 @@ class Note extends React.PureComponent {
 		const { note, onSelect } = this.props;
 		if(isTriggerEvent(ev)) { onSelect(note) }
 	}
-	handleDelete = () => {
+	handleDelete = ev => {
 		const { note, onDelete } = this.props;
 		onDelete(note);
+		ev.stopPropagation();
 	}
-	handleDuplicate = () => {
+	handleDuplicate = ev => {
 		const { note, onDuplicate } = this.props;
 		onDuplicate(note);
+		ev.stopPropagation();
+	}
+	handleToggleDropdownClick = ev => {
+		ev.stopPropagation();
 	}
 	render() {
 		const { device, isSelected, isReadOnly, note } = this.props;
@@ -49,6 +54,7 @@ class Note extends React.PureComponent {
 					>
 						<DropdownToggle
 							color={ null }
+							onClick={ this.handleToggleDropdownClick }
 							className={ cx('dropdown-toggle', {
 								'btn-circle btn-secondary': device.isTouchOrSmall,
 								'btn-icon': !device.isTouchOrSmall,

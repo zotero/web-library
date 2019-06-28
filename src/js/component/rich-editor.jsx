@@ -65,38 +65,41 @@ class RichEditor extends React.PureComponent {
 	}
 
 	render() {
+		const { isReadOnly } = this.props;
 		return (
 			<div className="rich-editor">
-				<Toolbar>
-					<div className="toolbar-left">
-						<ToolGroup>
-							<Button
-								icon
-								className={ cx({
-									active: this.isEditorCommandState('BOLD')
-								})}
-								onClick={ this.handleButtonClick.bind(this, 'BOLD') }>
-								B
-							</Button>
-							<Button
-								icon
-								className={ cx({
-									active: this.isEditorCommandState('ITALIC')
-								})}
-								onClick={ this.handleButtonClick.bind(this, 'ITALIC') }>
-								I
-							</Button>
-							<Button
-								icon
-								className={ cx({
-									active: this.isEditorCommandState('UNDERLINE')
-								})}
-								onClick={ this.handleButtonClick.bind(this, 'UNDERLINE') }>
-								U
-							</Button>
-						</ToolGroup>
-					</div>
-				</Toolbar>
+				{ !isReadOnly && (
+						<Toolbar>
+						<div className="toolbar-left">
+							<ToolGroup>
+								<Button
+									icon
+									className={ cx({
+										active: this.isEditorCommandState('BOLD')
+									})}
+									onClick={ this.handleButtonClick.bind(this, 'BOLD') }>
+									B
+								</Button>
+								<Button
+									icon
+									className={ cx({
+										active: this.isEditorCommandState('ITALIC')
+									})}
+									onClick={ this.handleButtonClick.bind(this, 'ITALIC') }>
+									I
+								</Button>
+								<Button
+									icon
+									className={ cx({
+										active: this.isEditorCommandState('UNDERLINE')
+									})}
+									onClick={ this.handleButtonClick.bind(this, 'UNDERLINE') }>
+									U
+								</Button>
+							</ToolGroup>
+						</div>
+					</Toolbar>
+				)}
 				<div className="editor-container">
 					{ this.renderEditor() }
 				</div>

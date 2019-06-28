@@ -1,0 +1,13 @@
+.modal-notes {
+	.icon-previous {
+		position: absolute;
+		left: $default-padding-x-touch;
+		top: ($line-height-large-touch - $space-md) / 2;
+		z-index: 2;
+		transform: rotate(-90deg);
+	}
+
+	.btn-link-label {
+		padding-left: $default-padding-x-touch;
+	}
+}
