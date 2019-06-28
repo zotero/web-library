@@ -1,14 +1,16 @@
 'use strict';
 
 import React from 'react';
+import PropTypes from 'prop-types';
 import cx from 'classnames';
+
 import Notes from '../../../notes';
 import Spinner from '../../../ui/spinner';
 import { pick } from '../../../../common/immutable';
 const PAGE_SIZE = 100;
 
 class NotesTabPane extends React.PureComponent {
-	componentDidUpdate({ prevItem, wasActive }) {
+	componentDidUpdate() {
 		const { item, isActive, fetchChildItems, childItems,
 			isLoadingChildItems, totalChildItems } = this.props;
 
@@ -24,8 +26,7 @@ class NotesTabPane extends React.PureComponent {
 	}
 
 	render() {
-		const { isLoadingChildItems, isReadOnly, isActive, childItems,
-			onNoteChange, onAddNote, onDeleteNote } = this.props;
+		const { isLoadingChildItems, item, isActive, childItems } = this.props;
 		return (
 			<div className={ cx({
 				'tab-pane': true,
@@ -38,16 +39,26 @@ class NotesTabPane extends React.PureComponent {
 						<React.Fragment>
 							<h5 className="h2 tab-pane-heading hidden-mouse">Notes</h5>
 							<Notes
-								{ ...pick(this.props, ['device', 'item', 'isReadOnly', 'updateItem'] ) }
+								key={ item.key }
 								notes={ childItems.filter(i => i.itemType === 'note') }
-								onAddNote={ onAddNote }
-								onDeleteNote={ onDeleteNote }
+								{ ...pick(this.props, ['device', 'item', 'isReadOnly',
+									'updateItem', 'onAddNote', 'onDeleteNote'] ) }
 							/>
 						</React.Fragment>
 					)
 				}
 			</div>
 		);
+	}
+
+	static propTypes = {
+		childItems: PropTypes.array,
+		fetchChildItems: PropTypes.func,
+		isActive: PropTypes.bool,
+		isLoadingChildItems: PropTypes.bool,
+		isReadOnly: PropTypes.bool,
+		item: PropTypes.object,
+		totalChildItems: PropTypes.number,
 	}
 
 	static defaultProps = {

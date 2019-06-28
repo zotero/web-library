@@ -1,4 +1,3 @@
-/* eslint-disable react/no-deprecated */
 'use strict';
 
 import PropTypes from 'prop-types';
@@ -20,21 +19,6 @@ class Notes extends React.PureComponent {
 		};
 	}
 
-	componentWillReceiveProps(props) {
-		const itemKey = get(props, 'item.key');
-		if(itemKey && get(this.props, 'item.key') !== itemKey) {
-			this.setState({
-				selected: null
-			});
-		}
-
-		if(!props.notes.find(n => n.key == this.state.selected)) {
-			this.setState({
-				selected: null
-			});
-		}
-	}
-
 	handleSelect = note => {
 		this.setState({ selected: note.key });
 	}
@@ -54,18 +38,6 @@ class Notes extends React.PureComponent {
 
 	handleAddNote() {
 		this.props.onAddNote();
-	}
-
-	renderRichEditor() {
-		const { isReadOnly } = this.props;
-		return (
-			<RichEditor
-				key={ this.state.selected }
-				isReadOnly={ isReadOnly }
-				value={ this.props.notes.find(n => n.key == this.state.selected).note }
-				onChange={ this.handleChangeNote }
-			/>
-		);
 	}
 
 	render() {
@@ -107,7 +79,14 @@ class Notes extends React.PureComponent {
 					)}
 				</div>
 
-				{ this.state.selected && this.renderRichEditor() }
+				{ this.state.selected && (
+					<RichEditor
+						key={ this.state.selected }
+						isReadOnly={ isReadOnly }
+						value={ this.props.notes.find(n => n.key == this.state.selected).note }
+						onChange={ this.handleChangeNote }
+					/>
+				) }
 			</React.Fragment>
 		);
 	}
