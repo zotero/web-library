@@ -13,6 +13,8 @@ const withFocusManager = Component => {
 			ev.preventDefault();
 			if(nextIndex < tabbables.length) {
 				tabbables[nextIndex].focus();
+			} else {
+				tabbables[0].focus();
 			}
 		}
 
@@ -24,6 +26,8 @@ const withFocusManager = Component => {
 			ev.preventDefault();
 			if(prevIndex >= 0) {
 				tabbables[prevIndex].focus();
+			} else {
+				tabbables[tabbables.length - 1].focus();
 			}
 		}
 
