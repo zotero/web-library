@@ -4,6 +4,8 @@ import React from 'react';
 import hoistNonReactStatic from 'hoist-non-react-statics';
 import { getScrollbarWidth } from '../utils';
 
+const keysToTriggerKeyboardMode = ['Tab', 'ArrowLeft', 'ArrowRight', 'ArrowDown', 'ArrowUp'];
+
 const withUserTypeDetection = Component => {
 	class EnhancedComponent extends React.PureComponent {
 		state = {
@@ -32,7 +34,7 @@ const withUserTypeDetection = Component => {
 		}
 
 		handleKeyboard(ev) {
-			if(ev.key === 'Tab') {
+			if(keysToTriggerKeyboardMode.includes(ev.key)) {
 				this.setState({
 					'isKeyboardUser': true,
 				});
