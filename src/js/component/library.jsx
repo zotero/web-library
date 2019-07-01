@@ -38,13 +38,13 @@ class Library extends React.PureComponent {
 		};
 	}
 
-	componentDidUpdate({
-			device: { isTouchOrSmall: wasTouchOrSmall, userType: previousUserType },
-			isSearchMode: wasSearchMode, itemsSource: prevItemsSource }, {
+	componentDidUpdate({ device: prevDevice, isSearchMode: wasSearchMode,
+			itemsSource: prevItemsSource }, {
 			isSearchModeTransitioning: wasSearchModeTransitioning
 		}) {
-
-		const { device, isSearchMode } = this.props;
+		const wasTouchOrSmall = prevDevice.isTouchOrSmall;
+		const prevUserType = prevDevice.userType;
+		const { device, isSearchMode, toggleNavbar } = this.props;
 		const { hasUserTypeChanged, isSearchModeTransitioning } = this.state;
 
 		document.documentElement.classList.toggle('keyboard', !!device.isKeyboardUser);
@@ -55,7 +55,7 @@ class Library extends React.PureComponent {
 			device.scrollbarWidth > 0
 		);
 
-		if(device.isTouchOrSmall !== wasTouchOrSmall && device.userType !== previousUserType) {
+		if(device.isTouchOrSmall !== wasTouchOrSmall && device.userType !== prevUserType) {
 			this.setState({ hasUserTypeChanged: true });
 		}
 		if(hasUserTypeChanged === true) {
@@ -71,6 +71,9 @@ class Library extends React.PureComponent {
 		}
 		if(isSearchModeTransitioning && !wasSearchModeTransitioning) {
 			setTimeout(() => this.setState({ isSearchModeTransitioning: false }), 250);
+		}
+		if(!device.shouldUseSidebar && prevDevice.shouldUseSidebar) {
+			toggleNavbar(false);
 		}
 	}
 

@@ -16,6 +16,7 @@ const withDevice = Component => {
 			const shouldUseModalCreatorField = isTouchOrSmall;
 			const shouldUseTabs = viewport.md || (viewport.lg && userType != 'touch');
 			const isSingleColumn = viewport.xxs || viewport.xs;
+			const shouldUseSidebar = !viewport.lg;
 			const device = {
 				[userType]: true,
 				isKeyboardUser,
@@ -26,6 +27,7 @@ const withDevice = Component => {
 				scrollbarWidth,
 				shouldUseEditMode,
 				shouldUseModalCreatorField,
+				shouldUseSidebar,
 				shouldUseTabs,
 				userType,
 				viewport,
