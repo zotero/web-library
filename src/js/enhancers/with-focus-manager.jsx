@@ -87,6 +87,10 @@ const withFocusManager = Component => {
 			}
 		}
 
+		registerAutoFocus = ref => {
+			this.lastFocused = ref;
+		}
+
 		render() {
 			return <Component
 				{...this.props }
@@ -97,6 +101,7 @@ const withFocusManager = Component => {
 				onDrillDownNext={ this.handleDrillDownNext }
 				onDrillDownPrev={ this.handleDrillDownPrev }
 				registerFocusRoot={ this.registerFocusRoot }
+				registerAutoFocus={ this.registerAutoFocus }
 			/>;
 		}
 

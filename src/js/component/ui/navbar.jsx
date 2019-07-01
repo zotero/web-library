@@ -120,7 +120,10 @@ class Navbar extends React.PureComponent {
 					</ul>
 				</nav>
 
-				<SearchContainer { ...pick(this.props, ['onFocusNext', 'onFocusPrev']) } />
+				<SearchContainer
+					autoFocus
+					{ ...pick(this.props, ['onFocusNext', 'onFocusPrev', 'registerAutoFocus']) }
+				/>
 				{ view !== 'libraries' && (
 					<Button
 						onClick={ this.handleSearchButtonClick }

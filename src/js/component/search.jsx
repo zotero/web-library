@@ -78,7 +78,7 @@ class Search extends React.PureComponent {
 	}
 
 	render() {
-		const { autoFocus } = this.props;
+		const { autoFocus, registerAutoFocus } = this.props;
 		return (
 			<div className="search input-group">
 				<UncontrolledDropdown
@@ -108,11 +108,12 @@ class Search extends React.PureComponent {
 					</DropdownMenu>
 				</UncontrolledDropdown>
 				<input
+					autoFocus={ autoFocus }
 					className="form-control search-input"
 					onChange={ this.handleSearchChange }
 					onKeyDown={ this.handleKeyDown }
 					placeholder={ modes[this.state.qmode] }
-					ref={ ref => this.inputRef = ref }
+					ref={ ref => { autoFocus && registerAutoFocus(ref); this.inputRef = ref } }
 					type="search"
 					value={ this.state.searchValue }
 					tabIndex={ -2 }
@@ -134,14 +135,16 @@ class Search extends React.PureComponent {
 
 	static propTypes = {
 		autoFocus: PropTypes.bool,
+		itemsSource: PropTypes.string,
 		onSearch: PropTypes.func,
 		qmode: PropTypes.oneOf(['titleCreatorYear', 'everything']),
+		registerAutoFocus: PropTypes.func,
 		search: PropTypes.string,
-		itemsSource: PropTypes.string,
 	};
 
 	static defaultProps = {
 		onSearch: noop,
+		registerAutoFocus: noop,
 		search: '',
 	};
 }
