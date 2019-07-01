@@ -14,20 +14,6 @@
 	padding: 0 $space-md;
 	background-color: $navbar-bg;
 
-	@media (max-width: $navbar-breakpoint - 1px) {
-		transition: transform $mobile-navbar-nav-transition;
-
-		.navbar-nav-opened & {
-			transform: translate3d($content-transform, 0, 0);
-		}
-	}
-
-	@media (max-width: 360px - 1px) {
-		.navbar-nav-opened & {
-			transform: translate3d(-264px, 0, 0); // 4" devices
-		}
-	}
-
 	@include bp-up(sm) {
 		flex: 0 0 auto;
 		height: $navbar-height-sm;
@@ -147,7 +133,7 @@
 }
 
 .nav-cover {
-	position: fixed;
+	position: absolute;
 	top: 0;
 	right: 0;
 	bottom: 0;
@@ -156,20 +142,12 @@
 	background-color: rgba(0, 0, 0, 0);
 	visibility: hidden;
 		transition:
-			transform $mobile-navbar-nav-transition,
 			background-color $mobile-navbar-nav-transition,
 			visibility 0s linear $nav-transition-duration;
 
 	.navbar-nav-opened & {
-		transform: translate3d($content-transform, 0, 0);
 		background-color: rgba(0, 0, 0, 0.1);
 		visibility: visible;
-		transition:
-			transform $mobile-navbar-nav-transition,
-			background-color $mobile-navbar-nav-transition;
-
-		@media (max-width: 360px - 1px) {
-			transform: translate3d(-264px, 0, 0); // 4" devices
-		}
+		transition: background-color $mobile-navbar-nav-transition;
 	}
 }

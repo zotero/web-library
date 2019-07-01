@@ -63,14 +63,6 @@ body {
 	flex: 1 1 auto;
 	display: flex;
 	flex-direction: column;
-}
-
-main {
-	flex: 1 1 auto;
-	display: flex;
-	background: $main-bg;
-	position: relative;
-	z-index: $z-index-main;
 
 	@media (max-width: $navbar-breakpoint - 1px) {
 		overflow: hidden; // Do not overlap open mobile navbar nav
@@ -86,4 +78,12 @@ main {
 			transform: translate3d(-264px, 0, 0); // 4" devices
 		}
 	}
+}
+
+main {
+	flex: 1 1 auto;
+	display: flex;
+	background: $main-bg;
+	position: relative;
+	z-index: $z-index-main;
 }

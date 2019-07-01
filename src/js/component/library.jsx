@@ -115,10 +115,6 @@ class Library extends React.PureComponent {
 					)
 				}
 				<MobileNav />
-				<div
-					className="nav-cover"
-					onClick={ toggleNavbar }
-				/>
 				<div className="site-wrapper">
 					<Navbar
 						{...pick(this.props, ['collectionKey', 'isNavBarOpen', 'isMyPublications', 'isTrash',
@@ -173,6 +169,10 @@ class Library extends React.PureComponent {
 							</CSSTransition>
 						</section>
 					</main>
+					<div
+						className="nav-cover"
+						onClick={ toggleNavbar }
+					/>
 				</div>
 				<AddItemsToCollectionsModalContainer />
 				<BibliographyModalContainer />
