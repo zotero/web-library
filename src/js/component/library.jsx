@@ -44,7 +44,7 @@ class Library extends React.PureComponent {
 		}) {
 		const wasTouchOrSmall = prevDevice.isTouchOrSmall;
 		const prevUserType = prevDevice.userType;
-		const { device, isSearchMode, toggleNavbar } = this.props;
+		const { device, isSearchMode, toggleNavbar, isNavBarOpen } = this.props;
 		const { hasUserTypeChanged, isSearchModeTransitioning } = this.state;
 
 		document.documentElement.classList.toggle('keyboard', !!device.isKeyboardUser);
@@ -72,7 +72,8 @@ class Library extends React.PureComponent {
 		if(isSearchModeTransitioning && !wasSearchModeTransitioning) {
 			setTimeout(() => this.setState({ isSearchModeTransitioning: false }), 250);
 		}
-		if(!device.shouldUseSidebar && prevDevice.shouldUseSidebar) {
+
+		if(isNavBarOpen && !device.shouldUseSidebar && prevDevice.shouldUseSidebar) {
 			toggleNavbar(false);
 		}
 	}
