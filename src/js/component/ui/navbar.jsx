@@ -2,11 +2,13 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import SearchContainer from './../../container/search';
+
 import Button from './button';
 import Icon from './icon';
+import SearchContainer from './../../container/search';
 import withFocusManager from '../../enhancers/with-focus-manager.jsx';
 import { pick } from '../../common/immutable';
+import { UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap/lib';
 
 class Navbar extends React.PureComponent {
 	handleSearchButtonClick = () => {
@@ -108,14 +110,33 @@ class Navbar extends React.PureComponent {
 							</a>
 						</li>
 						<li className="nav-item">
-							<a
-								href="#"
-								className="nav-link"
-								onKeyDown={ this.handleKeyDown }
-								tabIndex={ -2 }
-							>
-								User Name
-							</a>
+							<UncontrolledDropdown className="dropdown dropdown-wrapper">
+								<DropdownToggle
+									tag="a"
+									href="#"
+									className="dropdown-toggle nav-link"
+									onKeyDown={ this.handleKeyDown }
+									tabIndex={ -2 }
+								>
+									User Name
+								</DropdownToggle>
+								<DropdownMenu>
+									<DropdownItem>
+										My Profile
+									</DropdownItem>
+									<DropdownItem divider />
+									<DropdownItem>
+										Inbox
+									</DropdownItem>
+									<DropdownItem divider />
+									<DropdownItem>
+										Settings
+									</DropdownItem>
+									<DropdownItem>
+										Log Out
+									</DropdownItem>
+								</DropdownMenu>
+							</UncontrolledDropdown>
 						</li>
 					</ul>
 				</nav>
