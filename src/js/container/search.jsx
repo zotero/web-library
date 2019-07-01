@@ -4,6 +4,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { push } from 'connected-react-router';
+import { triggerSearchMode } from '../actions';
 import Search from '../component/search.jsx';
 import { makePath } from '../common/navigation';
 
@@ -13,7 +14,7 @@ class SearchContainer extends React.PureComponent {
 	handleSearch(search, qmode) {
 		const { libraryKey: library, collectionKey: collection, tags,
 			isTrash: trash, isMyPublications: publications, searchState,
-			makePath, push,  } = this.props;
+			makePath, push, triggerSearchMode } = this.props;
 		var view = 'item-list';
 		var items = null;
 
@@ -26,6 +27,8 @@ class SearchContainer extends React.PureComponent {
 				: view
 			items = searchState.triggerView === 'item-details' && searchState.triggerItem ?
 				searchState.triggerItem : null;
+
+			triggerSearchMode(false);
 		}
 
 		push(makePath({ library, tags, collection, items, trash, publications, search, qmode, view }));
@@ -51,7 +54,9 @@ class SearchContainer extends React.PureComponent {
 		push: PropTypes.func.isRequired,
 		qmode: PropTypes.oneOf(['titleCreatorYear', 'everything']),
 		search: PropTypes.string,
+		searchState: PropTypes.object,
 		tags: PropTypes.oneOfType([ PropTypes.string, PropTypes.array]),
+		triggerSearchMode: PropTypes.func,
 		view:  PropTypes.string,
 	}
 	static defaultProps = {
@@ -67,4 +72,4 @@ const mapStateToProps = state => {
 		itemKey, isTrash, isMyPublications, view, qmode }
 };
 
-export default connect(mapStateToProps, { push })(SearchContainer);
+export default connect(mapStateToProps, { push, triggerSearchMode })(SearchContainer);

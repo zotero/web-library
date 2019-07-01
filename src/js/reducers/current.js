@@ -95,7 +95,7 @@ const current = (state = stateDefault, action, { config } = {}) => {
 					(params.userslug || params.groupid) ? 'library' : 'libraries';
 			}
 
-			if(view === 'item-details' && searchState.triggerView) {
+			if(view === 'item-details' && state.isSearchMode) {
 				searchState.hasViewedResult = true;
 			}
 
