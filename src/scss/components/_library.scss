@@ -92,7 +92,7 @@
 			}
 		}
 
-		// Search item list view
+		// Start searching in item list view
 		// => No styles needed
 
 		// Start searching in item details view
@@ -134,6 +134,35 @@
 		height: 100%;
 		position: relative;
   	overflow: hidden;
+
+  	// Start searching in item details view
+
+  	// Init
+
+  	.search-init & {
+	  	.touch-nav {
+		  	.center-axis,
+		  	.inner {
+			  	transition: none;
+		  	}
+
+				.icon-previous + ul .current { // Hack: restrict animation to searches started in item details view
+					.center-axis {
+						@keyframes fade-in-search-results {
+							0% {
+								opacity: 0;
+							}
+
+							100% {
+								opacity: 1;
+							}
+						}
+
+						animation: fade-in-search-results $fade-transition-duration ease-in-out forwards;
+					}
+				}
+	  	}
+  	}
 	}
 
 	@include bp-only(md) {
