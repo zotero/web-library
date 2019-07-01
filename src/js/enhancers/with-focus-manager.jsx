@@ -5,6 +5,8 @@ import hoistNonReactStatic from 'hoist-non-react-statics';
 
 const withFocusManager = Component => {
 	class EnhancedComponent extends React.PureComponent {
+		lastFocused = null;
+
 		handleNext = ev => {
 			const tabbables = Array.from(
 				this.ref.querySelectorAll('[tabIndex="-2"]:not([disabled])')
@@ -13,8 +15,10 @@ const withFocusManager = Component => {
 			ev.preventDefault();
 			if(nextIndex < tabbables.length) {
 				tabbables[nextIndex].focus();
+				this.lastFocused = tabbables[nextIndex];
 			} else {
 				tabbables[0].focus();
+				this.lastFocused = tabbables[0];
 			}
 		}
 
@@ -26,8 +30,10 @@ const withFocusManager = Component => {
 			ev.preventDefault();
 			if(prevIndex >= 0) {
 				tabbables[prevIndex].focus();
+				this.lastFocused = tabbables[prevIndex];
 			} else {
 				tabbables[tabbables.length - 1].focus();
+				this.lastFocused = tabbables[0];
 			}
 		}
 
@@ -57,7 +63,12 @@ const withFocusManager = Component => {
 				return;
 			}
 			this.ref.tabIndex = -1;
-			this.ref.querySelector('[tabIndex="-2"]:not([disabled])').focus();
+			const candidates = Array.from(this.ref.querySelectorAll('[tabIndex="-2"]:not([disabled])'));
+			if(this.lastFocused !== null && candidates.includes(this.lastFocused)) {
+				this.lastFocused.focus();
+			} else {
+				candidates[0].focus();
+			}
 		}
 
 		handleBlur = ev => {
