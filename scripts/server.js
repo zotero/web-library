@@ -24,6 +24,7 @@ const handler = (req, resp) => {
 		proxy.web(req, resp, {
 			changeOrigin: true,
 			target: 'https://zotero.org/',
+			followRedirects: true,
 		});
 		proxy.on('error', () => {
 			resp.statusCode = 502;
