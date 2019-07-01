@@ -121,6 +121,26 @@
 		}
 	}
 
+	html:not(.specifity) & {
+		.dropdown-menu {
+			padding: $space-xs 0;
+			min-width: 160px;
+			margin: 2px 0 0;
+			box-shadow: none;
+			background-clip: padding-box;
+			border: 1px solid rgba(0, 0, 0, 0.15);
+			border-radius: 4px;
+
+			.dropdown-item {
+				padding: $space-min $space-lg;
+			}
+
+			.dropdown-divider {
+				margin: $space-xs 0;
+			}
+		}
+	}
+
 	.upgrade-storage {
 		font-size: 14px;
 		margin-left: 2 * $navbar-padding-x;

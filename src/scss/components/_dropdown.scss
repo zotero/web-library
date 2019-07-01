@@ -52,6 +52,7 @@
 		background-color: transparent;
 		margin: 0;
 		white-space: nowrap; // Prevent line break due to positioned dropdown-wrapper
+		color: $menu-color;
 		cursor: pointer;
 
 		@include touch-or-bp-down(sm) {
