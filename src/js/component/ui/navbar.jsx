@@ -119,6 +119,7 @@ class Navbar extends React.PureComponent {
 									tabIndex={ -2 }
 								>
 									User Name
+									<Icon type="16/chevron-9" width="16" height="16" />
 								</DropdownToggle>
 								<DropdownMenu>
 									<DropdownItem>

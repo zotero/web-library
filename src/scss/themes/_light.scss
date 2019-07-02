@@ -81,14 +81,16 @@ $icon-color-touch:  $link-color;
 $icon-active-color: $shade-9;
 
 // Navbar
-$navbar-bg:                       $body-bg;
-$navbar-nav-mobile-bg:            $shade-9;
-$navbar-border-color:             $shade-0;
-$navbar-link-color:               $shade-9;
-$navbar-link-mobile-color:        $shade-0;
-$navbar-link-active-color:        $secondary;
-$navbar-link-mobile-active-color: rgba($shade-0, 0.5);
-$icon-bar-bg:                     $shade-8;
+$navbar-bg:                           $body-bg;
+$navbar-nav-mobile-bg:                $shade-9;
+$navbar-border-color:                 $shade-0;
+$navbar-link-color:                   $shade-9;
+$navbar-link-mobile-color:            $shade-0;
+$navbar-link-active-color:            $secondary;
+$navbar-link-mobile-active-color:     rgba($shade-0, 0.5);
+$navbar-dropdown-toggle-active-color: $shade-6;
+$icon-bar-bg:                         $shade-8;
+
 
 // Collection tree
 $collection-tree-headings-color:          $shade-6;

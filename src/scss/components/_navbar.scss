@@ -124,6 +124,16 @@
 		}
 	}
 
+	.dropdown-toggle {
+		@include state(".show .dropdown-toggle") {
+			color: $navbar-dropdown-toggle-active-color;
+		}
+
+		.icon {
+			color: inherit;
+		}
+	}
+
 	html:not(.specifity) & {
 		.dropdown-menu {
 			padding: $space-xs 0;
