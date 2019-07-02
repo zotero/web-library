@@ -13,6 +13,9 @@
 	left: 0;
 	padding: 0 $space-md;
 	background-color: $navbar-bg;
+	font-family: "AvenirNextLTPro", $font-family-sans-serif;
+	-webkit-font-smoothing: auto;
+	-moz-osx-font-smoothing: auto;
 
 	@include bp-up(sm) {
 		flex: 0 0 auto;

@@ -1,0 +1,60 @@
+//
+// Fonts
+//
+
+/**
+ * @license
+ * MyFonts Webfont Build ID 3582978, 2018-05-18T05:46:06-0400
+ *
+ * The fonts listed in this notice are subject to the End User License
+ * Agreement(s) entered into by the website owner. All other parties are
+ * explicitly restricted from using the Licensed Webfonts(s).
+ *
+ * You may obtain a valid license at the URLs below.
+ *
+ * Webfont: AvenirNextLTPro-DemiIt by Linotype
+ * URL: https://www.myfonts.com/fonts/linotype/avenir-next-pro/pro-demi-italic/
+ * Copyright: Copyright &#x00A9; 2004 - 2017 Monotype GmbH. All rights reserved.
+ *
+ * Webfont: AvenirNextLTPro-Demi by Linotype
+ * URL: https://www.myfonts.com/fonts/linotype/avenir-next-pro/pro-demi/
+ * Copyright: Copyright &#x00A9; 2004 - 2017 Monotype GmbH. All rights reserved.
+ *
+ * Webfont: AvenirNextLTPro-It by Linotype
+ * URL: https://www.myfonts.com/fonts/linotype/avenir-next-pro/pro-italic/
+ * Copyright: Copyright &#x00A9; 2004 - 2017 Monotype GmbH. All rights reserved.
+ *
+ * Webfont: AvenirNextLTPro-LightIt by Linotype
+ * URL: https://www.myfonts.com/fonts/linotype/avenir-next-pro/pro-light-italic/
+ * Copyright: Copyright &#x00A9; 2012 - 2017 Monotype GmbH. All rights reserved.
+ *
+ * Webfont: AvenirNextLTPro-Light by Linotype
+ * URL: https://www.myfonts.com/fonts/linotype/avenir-next-pro/pro-light/
+ * Copyright: Copyright &#x00A9; 2012 - 2017 Monotype GmbH. All rights reserved.
+ *
+ * Webfont: AvenirNextLTPro-Regular by Linotype
+ * URL: https://www.myfonts.com/fonts/linotype/avenir-next-pro/pro-regular/
+ * Copyright: Copyright &#x00A9; 2004 - 2017 Monotype GmbH. All rights reserved.
+ *
+ *
+ * License: https://www.myfonts.com/viewlicense?type=web&buildid=3582978
+ * Licensed pageviews: 250,000
+ *
+ * © 2018 MyFonts Inc
+*/
+
+/* @import must be at top of file, otherwise CSS will not work */
+@import url("//hello.myfonts.net/count/36ac02");
+
+@font-face {
+  font-family: 'AvenirNextLTPro';
+  font-weight: 400;
+  font-style: normal;
+  src: url('http://localhost:8001/static/fonts/36AC02_5_0.eot');
+  src:
+    url('http://localhost:8001/static/fonts/36AC02_5_0.eot?#iefix') format('embedded-opentype'),
+    url('http://localhost:8001/static/fonts/36AC02_5_0.woff2') format('woff2'),
+    url('http://localhost:8001/static/fonts/36AC02_5_0.woff') format('woff'),
+    url('http://localhost:8001/static/fonts/36AC02_5_0.ttf') format('truetype'),
+    url('http://localhost:8001/static/fonts/36AC02_5_0.svg#wf') format('svg');
+}

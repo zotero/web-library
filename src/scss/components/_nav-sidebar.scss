@@ -11,6 +11,9 @@
 	z-index: $z-index-mobile-nav;
 	background-color: $navbar-nav-mobile-bg;
 	overflow-y: scroll;
+	font-family: "AvenirNextLTPro", $font-family-sans-serif;
+	-webkit-font-smoothing: auto;
+	-moz-osx-font-smoothing: auto;
 	font-size: $navbar-font-size;
 	transform: $mobile-navbar-nav-transform;
 	visibility: hidden;
