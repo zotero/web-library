@@ -118,7 +118,7 @@ class Library extends React.PureComponent {
 						</div>
 					)
 				}
-				<MobileNav />
+				<MobileNav {...pick(this.props, ['toggleNavbar']) } />
 				<div className="site-wrapper">
 					<Navbar
 						{...pick(this.props, ['collectionKey', 'isNavBarOpen', 'isMyPublications', 'isTrash',

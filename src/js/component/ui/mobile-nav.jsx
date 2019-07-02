@@ -1,11 +1,45 @@
 'use strict';
 
 import React from 'react';
+import PropTypes from 'prop-types';
+import withFocusManager from '../../enhancers/with-focus-manager';
 
 class MobileNav extends React.PureComponent {
+	handleKeyDown = ev => {
+		const { onFocusNext, onFocusPrev } = this.props;
+		if(ev.target !== ev.currentTarget) {
+			return;
+		}
+
+		if(ev.key === 'ArrowDown') {
+			onFocusNext(ev);
+		} else if(ev.key === 'ArrowUp') {
+			onFocusPrev(ev);
+		}
+	}
+
+	handleBlur = ev => {
+		const { onBlur, toggleNavbar } = this.props;
+		onBlur(ev);
+
+		if(ev.relatedTarget &&
+			(ev.relatedTarget === this.ref || ev.relatedTarget.closest('[data-focus-root]') === this.ref)
+		) {
+				return;
+		}
+		toggleNavbar(false);
+	}
+
 	render() {
+		const { onFocus, onBlur, registerFocusRoot } = this.props;
 		return (
-			<header className="nav-sidebar">
+			<header
+				className="nav-sidebar"
+				onBlur={ this.handleBlur }
+				onFocus={ onFocus }
+				ref={ ref => { this.ref = ref; registerFocusRoot(ref); } }
+				tabIndex={ -1 }
+			>
 				<nav>
 					<ul className="mobile-nav">
 						<li className="nav-item active">
@@ -113,6 +147,15 @@ class MobileNav extends React.PureComponent {
 			</header>
 		);
 	}
+
+	static propTypes = {
+		onBlur: PropTypes.func,
+		onFocus: PropTypes.func,
+		onFocusNext: PropTypes.func,
+		onFocusPrev: PropTypes.func,
+		registerFocusRoot: PropTypes.func,
+		toggleNavbar: PropTypes.bool,
+	}
 }
 
-export default MobileNav;
+export default withFocusManager(MobileNav);

@@ -7,6 +7,7 @@ import Button from './button';
 import Icon from './icon';
 import SearchContainer from './../../container/search';
 import withFocusManager from '../../enhancers/with-focus-manager.jsx';
+import { isTriggerEvent } from '../../common/event';
 import { pick } from '../../common/immutable';
 import { UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap/lib';
 
@@ -29,7 +30,11 @@ class Navbar extends React.PureComponent {
 			return;
 		}
 
-		if(ev.key === 'ArrowRight') {
+		if(isTriggerEvent(ev) && ev.target.dataset.navbarToggle) {
+			setTimeout(() => {
+				document.querySelector('.nav-sidebar').focus();
+			}, 200);
+		} else if(ev.key === 'ArrowRight') {
 			onFocusNext(ev);
 		} else if(ev.key === 'ArrowLeft') {
 			onFocusPrev(ev);
@@ -157,6 +162,7 @@ class Navbar extends React.PureComponent {
 				) }
 				<Button
 					icon
+					data-navbar-toggle
 					className="navbar-toggle hidden-lg-up"
 					onClick={ toggleNavbar }
 					onKeyDown={ this.handleKeyDown }
@@ -186,11 +192,16 @@ Navbar.propTypes = {
 	itemsSource: PropTypes.string,
 	libraryKey: PropTypes.string,
 	navigate: PropTypes.func,
+	onBlur: PropTypes.func,
+	onFocus: PropTypes.func,
+	onFocusNext: PropTypes.func,
+	onFocusPrev: PropTypes.func,
 	qmode: PropTypes.string,
+	registerFocusRoot: PropTypes.func,
 	search: PropTypes.string,
 	tags: PropTypes.array,
-	triggerSearchMode: PropTypes.func,
 	toggleNavbar: PropTypes.func,
+	triggerSearchMode: PropTypes.func,
 	view: PropTypes.string,
 };
 

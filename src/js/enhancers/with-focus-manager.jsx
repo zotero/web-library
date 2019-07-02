@@ -6,6 +6,7 @@ import hoistNonReactStatic from 'hoist-non-react-statics';
 const withFocusManager = Component => {
 	class EnhancedComponent extends React.PureComponent {
 		lastFocused = null;
+		originalTabIndex = null;
 
 		handleNext = ev => {
 			const tabbables = Array.from(
@@ -73,16 +74,18 @@ const withFocusManager = Component => {
 
 		handleBlur = ev => {
 			if(ev.relatedTarget &&
-				(ev.relatedTarget === this.ref || ev.relatedTarget.closest('[data-focus-root]') === this.ref)
+				(ev.relatedTarget === this.ref || (
+				!ev.relatedTarget.dataFocusRoot && ev.relatedTarget.closest('[data-focus-root]') === this.ref))
 			) {
 				return;
 			}
-			ev.currentTarget.tabIndex = 0;
+			ev.currentTarget.tabIndex = this.originalTabIndex;
 		}
 
 		registerFocusRoot = ref => {
 			this.ref = ref;
 			if(ref) {
+				this.originalTabIndex = this.originalTabIndex === null ? ref.tabIndex : this.originalTabIndex;
 				ref.dataset.focusRoot = '';
 			}
 		}
