@@ -42,8 +42,10 @@ class Navbar extends React.PureComponent {
 		}
 	}
 
+	handleNavbarToggle = () => this.props.toggleNavbar(null);
+
 	render() {
-		const { entries, toggleNavbar, view } = this.props;
+		const { entries, view } = this.props;
 		const { onFocus, onBlur, registerFocusRoot } = this.props;
 
 		return (
@@ -90,7 +92,7 @@ class Navbar extends React.PureComponent {
 					icon
 					data-navbar-toggle
 					className="navbar-toggle hidden-lg-up"
-					onClick={ toggleNavbar }
+					onClick={ this.handleNavbarToggle }
 					onKeyDown={ this.handleKeyDown }
 					tabIndex={ -2 }
 				>

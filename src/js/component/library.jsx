@@ -84,6 +84,8 @@ class Library extends React.PureComponent {
 		document.documentElement.classList.toggle('touch', false);
 	}
 
+	handleNavbarToggle = () => this.props.toggleNavbar(null);
+
 	render() {
 		const { libraryKey, collectionKey = '', itemsSource, search, tags, qmode } = this.props;
 		var key;
@@ -179,7 +181,7 @@ class Library extends React.PureComponent {
 					</main>
 					<div
 						className="nav-cover"
-						onClick={ toggleNavbar }
+						onClick={ this.handleNavbarToggle }
 					/>
 				</div>
 				<AddItemsToCollectionsModalContainer />
