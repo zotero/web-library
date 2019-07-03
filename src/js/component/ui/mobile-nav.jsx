@@ -4,7 +4,38 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import withFocusManager from '../../enhancers/with-focus-manager';
 
+import { NavItem, NavLink } from 'reactstrap/lib';
+import cx from 'classnames';
+
+class MobileMenuEntry extends React.PureComponent {
+	render() {
+		const {label, href, separated, handleKeyDown} = this.props;
+		return (
+			<NavItem>
+				<NavLink href={href} className={cx({separated})} onKeyDown={ handleKeyDown } tabIndex={ -2 }>{label}</NavLink>
+			</NavItem>
+		);
+	}
+}
+MobileMenuEntry.propTypes = {
+	label: PropTypes.string,
+	href: PropTypes.string,
+	handleKeyDown: PropTypes.func,
+	dropdown: PropTypes.bool,
+	entries: PropTypes.array,
+	separated: PropTypes.bool,
+}
+
 class MobileNav extends React.PureComponent {
+	constructor(props) {
+		super(props);
+		const menuConfigDom = document.getElementById('zotero-web-library-menu-config');
+		const config = menuConfigDom ? JSON.parse(menuConfigDom.textContent) : {};
+
+		this.state = {
+			menus: config
+		};
+	}
 	handleKeyDown = ev => {
 		const { onFocusNext, onFocusPrev } = this.props;
 		if(ev.target !== ev.currentTarget) {
@@ -32,6 +63,11 @@ class MobileNav extends React.PureComponent {
 
 	render() {
 		const { onFocus, onBlur, registerFocusRoot } = this.props;
+		const {menus} = this.state;
+		const mobileMenuEntries = menus.mobile.map((entry) => {
+			return <MobileMenuEntry key={entry.href} {...entry} handleKeyDown={this.handleKeyDown} />;
+		})
+		
 		return (
 			<header
 				className="nav-sidebar"
@@ -42,99 +78,10 @@ class MobileNav extends React.PureComponent {
 			>
 				<nav>
 					<ul className="mobile-nav">
-						<li className="nav-item active">
-							<a
-								href="#"
-								className="nav-link"
-								onKeyDown={ this.handleKeyDown }
-								tabIndex={ -2 }
-							>
-								My Library
-							</a>
-						</li>
+						{mobileMenuEntries}
 						<li className="nav-item">
 							<a
-								href="#"
-								className="nav-link"
-								onKeyDown={ this.handleKeyDown }
-								tabIndex={ -2 }
-							>
-								Groups
-							</a>
-						</li>
-						<li className="nav-item">
-							<a
-								href="#"
-								className="nav-link"
-								onKeyDown={ this.handleKeyDown }
-								tabIndex={ -2 }
-							>
-								Documentation
-							</a>
-						</li>
-						<li className="nav-item">
-							<a
-								href="#"
-								className="nav-link"
-								onKeyDown={ this.handleKeyDown }
-								tabIndex={ -2 }
-							>
-								Forums
-							</a>
-						</li>
-						<li className="nav-item">
-							<a
-								href="#"
-								className="nav-link"
-								onKeyDown={ this.handleKeyDown }
-								tabIndex={ -2 }
-							>
-								Get Involved
-							</a>
-						</li>
-						<li className="nav-item">
-							<a
-								href="#"
-								className="nav-link separated"
-								onKeyDown={ this.handleKeyDown }
-								tabIndex={ -2 }
-							>
-								User Name
-							</a>
-						</li>
-						<li className="nav-item">
-							<a
-								href="#"
-								className="nav-link separated"
-								onKeyDown={ this.handleKeyDown }
-								tabIndex={ -2 }
-							>
-								Inbox
-							</a>
-						</li>
-						<li className="nav-item">
-							<a
-								href="#"
-								className="nav-link separated"
-								onKeyDown={ this.handleKeyDown }
-								tabIndex={ -2 }
-							>
-								Settings
-							</a>
-						</li>
-						<li className="nav-item">
-							<a
-								href="#"
-								className="nav-link"
-								onKeyDown={ this.handleKeyDown }
-								tabIndex={ -2 }
-							>
-								Log Out
-							</a>
-						</li>
-						<li className="nav-item">
-							<a
-								href="#"
+								href="/settings/storage"
 								className="nav-link separated"
 								onKeyDown={ this.handleKeyDown }
 								tabIndex={ -2 }
@@ -154,7 +101,7 @@ class MobileNav extends React.PureComponent {
 		onFocusNext: PropTypes.func,
 		onFocusPrev: PropTypes.func,
 		registerFocusRoot: PropTypes.func,
-		toggleNavbar: PropTypes.bool,
+		toggleNavbar: PropTypes.func,
 	}
 }
 

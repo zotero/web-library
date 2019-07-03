@@ -9,9 +9,67 @@ import SearchContainer from './../../container/search';
 import withFocusManager from '../../enhancers/with-focus-manager.jsx';
 import { isTriggerEvent } from '../../common/event';
 import { pick } from '../../common/immutable';
-import { UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap/lib';
+import { Nav, NavItem, NavLink, UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap/lib';
+
+class MenuEntry extends React.PureComponent {
+	render() {
+		const {label, href, handleKeyDown, dropdown, entries, active} = this.props;
+		if (dropdown) {
+			let dropdownEntries = entries.map((entry, ind) => {
+				if (entry.separator) {
+					return <DropdownItem key={`divider-${ind}`} divider />;
+				}
+				return <DropdownItem key={entry.href} href={entry.href}>{entry.label}</DropdownItem>
+			});
+			
+			return (<NavItem active={active}>
+				<UncontrolledDropdown className="dropdown dropdown-wrapper">
+					<DropdownToggle
+						tag="a"
+						href="#"
+						className="dropdown-toggle nav-link"
+						onKeyDown={ handleKeyDown }
+						tabIndex={ -2 }
+					>
+						{label}
+						<Icon type="16/chevron-9" width="16" height="16" />
+					</DropdownToggle>
+					<DropdownMenu>
+						{dropdownEntries}
+					</DropdownMenu>
+				</UncontrolledDropdown>
+			</NavItem>);
+		}
+		return (
+			<NavItem active={active}>
+				<NavLink href={href} onKeyDown={ handleKeyDown } tabIndex={ -2 }>{label}</NavLink>
+			</NavItem>
+		);
+	}
+}
+MenuEntry.propTypes = {
+	label: PropTypes.string,
+	href: PropTypes.string,
+	handleKeyDown: PropTypes.func,
+	dropdown: PropTypes.bool,
+	entries: PropTypes.array,
+	active: PropTypes.bool,
+};
+MenuEntry.defaultProps = {
+	active:false
+};
 
 class Navbar extends React.PureComponent {
+	constructor(props) {
+		super(props);
+		const menuConfigDom = document.getElementById('zotero-web-library-menu-config');
+		const config = menuConfigDom ? JSON.parse(menuConfigDom.textContent) : {};
+
+		this.state = {
+			menus: config
+		};
+	}
+
 	handleSearchButtonClick = () => {
 		const { libraryKey: library, collectionKey: collection, tags,
 			isTrash: trash, isMyPublications: publications, qmode,
@@ -44,6 +102,11 @@ class Navbar extends React.PureComponent {
 	render() {
 		const { toggleNavbar, view } = this.props;
 		const { onFocus, onBlur, registerFocusRoot } = this.props;
+		
+		const {menus} = this.state;
+		const desktopMenuEntries = menus.desktop.map((entry) => {
+			return <MenuEntry key={entry.href || entry.label} {...entry} handleKeyDown={this.handleKeyDown} />;
+		})
 		return (
 			<header
 				className="navbar"
@@ -62,91 +125,9 @@ class Navbar extends React.PureComponent {
 					</a>
 				</h1>
 				<h2 className="offscreen">Site navigation</h2>
-				<nav>
-					<ul className="main-nav">
-						<li className="nav-item active">
-							<a
-								href="#"
-								className="nav-link"
-								onKeyDown={ this.handleKeyDown }
-								tabIndex={ -2 }
-							>
-								My Library
-							</a>
-						</li>
-						<li className="nav-item">
-							<a
-								href="#"
-								className="nav-link"
-								onKeyDown={ this.handleKeyDown }
-								tabIndex={ -2 }
-							>
-								Groups
-							</a>
-						</li>
-						<li className="nav-item">
-							<a
-								href="#"
-								className="nav-link"
-								onKeyDown={ this.handleKeyDown }
-								tabIndex={ -2 }
-							>
-								Documentation
-							</a>
-						</li>
-						<li className="nav-item">
-							<a
-								href="#"
-								className="nav-link"
-								onKeyDown={ this.handleKeyDown }
-								tabIndex={ -2 }
-							>
-								Forums
-							</a>
-						</li>
-						<li className="nav-item">
-							<a
-								href="#"
-								className="nav-link"
-								onKeyDown={ this.handleKeyDown }
-								tabIndex={ -2 }
-							>
-								Get Involved
-							</a>
-						</li>
-						<li className="nav-item">
-							<UncontrolledDropdown className="dropdown dropdown-wrapper">
-								<DropdownToggle
-									tag="a"
-									href="#"
-									className="dropdown-toggle nav-link"
-									onKeyDown={ this.handleKeyDown }
-									tabIndex={ -2 }
-								>
-									User Name
-									<Icon type="16/chevron-9" width="16" height="16" />
-								</DropdownToggle>
-								<DropdownMenu>
-									<DropdownItem>
-										My Profile
-									</DropdownItem>
-									<DropdownItem divider />
-									<DropdownItem>
-										Inbox
-									</DropdownItem>
-									<DropdownItem divider />
-									<DropdownItem>
-										Settings
-									</DropdownItem>
-									<DropdownItem>
-										Log Out
-									</DropdownItem>
-								</DropdownMenu>
-							</UncontrolledDropdown>
-						</li>
-					</ul>
-				</nav>
-
+				<Nav className='main-nav'>
+					{desktopMenuEntries}
+				</Nav>
 				<SearchContainer
 					autoFocus
 					{ ...pick(this.props, ['onFocusNext', 'onFocusPrev', 'registerAutoFocus']) }
