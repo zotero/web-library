@@ -52,16 +52,6 @@ class MobileNav extends React.PureComponent {
 								{...entry}
 							/>
 						))}
-						<li className="nav-item">
-							<a
-								href="/settings/storage"
-								className="nav-link separated"
-								onKeyDown={ this.handleKeyDown }
-								tabIndex={ -2 }
-							>
-								Upgrade Storage
-							</a>
-						</li>
 					</ul>
 				</nav>
 			</header>

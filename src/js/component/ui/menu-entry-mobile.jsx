@@ -1,22 +1,21 @@
 'use strict';
 
-import cx from 'classnames';
 import PropTypes from 'prop-types';
 import React from 'react';
 
 import { NavItem, NavLink } from 'reactstrap/lib';
-
+import { pick } from '../../common/immutable';
 
 export default class MobileMenuEntry extends React.PureComponent {
 	render() {
-		const { label, href, separated, onKeyDown } = this.props;
+		const { label } = this.props;
+
 		return (
 			<NavItem>
 				<NavLink
-					href={ href }
-					className={ cx({ separated }) }
-					onKeyDown={ onKeyDown }
-					tabIndex={ -2 }>
+					{ ...pick(this.props, ['className', 'href', 'onKeyDown']) }
+					tabIndex={ -2 }
+				>
 						{ label }
 					</NavLink>
 			</NavItem>

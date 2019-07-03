@@ -66,8 +66,8 @@ class Navbar extends React.PureComponent {
 					</a>
 				</h1>
 				<h2 className="offscreen">Site navigation</h2>
-				<Nav className='main-nav'>
-					{ entries.map( entry => (
+				<Nav className="main-nav">
+					{ entries.filter(e => e.position === 'left' || !e.position).map( entry => (
 						<MenuEntry
 							key={ entry.href || entry.label }
 							handleKeyDown={this.handleKeyDown}
@@ -100,13 +100,15 @@ class Navbar extends React.PureComponent {
 					<span className="icon-bar"></span>
 					<span className="icon-bar"></span>
 				</Button>
-				<Button
-					className="btn-secondary hidden-md-down upgrade-storage"
-					onKeyDown={ this.handleKeyDown }
-					tabIndex={ -2 }
-				>
-					Upgrade Storage
-				</Button>
+				<Nav className="main-nav">
+					{ entries.filter(e => e.position === 'right').map( entry => (
+						<MenuEntry
+							key={ entry.href || entry.label }
+							onKeyDown={ this.handleKeyDown }
+							{ ...entry }
+						/>
+					)) }
+				</Nav>
 			</header>
 		);
 	}

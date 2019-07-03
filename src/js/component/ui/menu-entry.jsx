@@ -5,10 +5,11 @@ import PropTypes from 'prop-types';
 import { NavItem, NavLink, UncontrolledDropdown, DropdownToggle,
 	DropdownMenu, DropdownItem } from 'reactstrap/lib';
 import Icon from './icon';
+import { pick } from '../../common/immutable'
 
 class MenuEntry extends React.PureComponent {
 	render() {
-		const { label, href, handleKeyDown, dropdown, entries, active } = this.props;
+		const { label, onKeyDown, dropdown, entries, active } = this.props;
 
 		return dropdown ? (
 			<NavItem active={active}>
@@ -17,7 +18,7 @@ class MenuEntry extends React.PureComponent {
 						tag="a"
 						href="#"
 						className="dropdown-toggle nav-link"
-						onKeyDown={ handleKeyDown }
+						onKeyDown={ onKeyDown }
 						tabIndex={ -2 }
 					>
 						{ label }
@@ -37,9 +38,9 @@ class MenuEntry extends React.PureComponent {
 		) : (
 			<NavItem active={ active }>
 				<NavLink
-					href={ href }
-					onKeyDown={ handleKeyDown }
-					tabIndex={ -2 }>
+					{ ...pick(this.props, ['className', 'href', 'onKeyDown']) }
+					tabIndex={ -2 }
+				>
 					{ label }
 				</NavLink>
 			</NavItem>
@@ -49,7 +50,7 @@ class MenuEntry extends React.PureComponent {
 	static propTypes = {
 		label: PropTypes.string,
 		href: PropTypes.string,
-		handleKeyDown: PropTypes.func,
+		onKeyDown: PropTypes.func,
 		dropdown: PropTypes.bool,
 		entries: PropTypes.array,
 		active: PropTypes.bool,
