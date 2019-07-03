@@ -70,7 +70,7 @@ class Navbar extends React.PureComponent {
 					{ entries.filter(e => e.position === 'left' || !e.position).map( entry => (
 						<MenuEntry
 							key={ entry.href || entry.label }
-							handleKeyDown={this.handleKeyDown}
+							onKeyDown={this.handleKeyDown}
 							{ ...entry }
 						/>
 					)) }
@@ -100,15 +100,17 @@ class Navbar extends React.PureComponent {
 					<span className="icon-bar"></span>
 					<span className="icon-bar"></span>
 				</Button>
-				<Nav className="main-nav">
-					{ entries.filter(e => e.position === 'right').map( entry => (
-						<MenuEntry
-							key={ entry.href || entry.label }
-							onKeyDown={ this.handleKeyDown }
-							{ ...entry }
-						/>
-					)) }
-				</Nav>
+				<nav>
+					<Nav className="main-nav">
+						{ entries.filter(e => e.position === 'right').map( entry => (
+							<MenuEntry
+								key={ entry.href || entry.label }
+								onKeyDown={ this.handleKeyDown }
+								{ ...entry }
+							/>
+						)) }
+					</Nav>
+				</nav>
 			</header>
 		);
 	}
