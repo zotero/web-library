@@ -144,8 +144,16 @@
 			border: 1px solid rgba(0, 0, 0, 0.15);
 			border-radius: 4px;
 
+			@include variant(".search .dropdown-menu") {
+				padding: $space-min 0;
+			}
+
 			.dropdown-item {
-				padding: $space-min $space-lg;
+				padding: $space-min $space-md;
+
+				@include variant(".search .dropdown-menu") {
+					padding: (4.5px + $input-border-width) $space-sm;
+				}
 			}
 
 			.dropdown-divider {
