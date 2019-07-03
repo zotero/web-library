@@ -63,6 +63,15 @@
 			padding: ($input-btn-padding-y + $input-border-width) $input-btn-padding-x;
 		}
 
+		&.disabled {
+			color: $menu-color-disabled;
+
+			&:hover,
+			&:focus {
+				background-color: transparent;
+			}
+		}
+
 		&:hover,
 		&:focus {
 			background-color: $menu-item-hover-bg;

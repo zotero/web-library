@@ -214,6 +214,7 @@ $editable-border-color: $secondary;
 
 // Menu (select, dropdown, …)
 $menu-color:            $text-color;
+$menu-color-disabled:   lighten($text-color, 33%);
 $menu-bg:               $body-bg;
 $menu-box-shadow:       0 0 0 1px rgba(0, 0, 0, 0.08), 0 3px 8px rgba(0, 0, 0, 0.2);
 $menu-item-hover-bg:    mix($shade-10, $shade-1, 2%);
