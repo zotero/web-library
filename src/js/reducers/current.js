@@ -3,7 +3,7 @@
 import { LOCATION_CHANGE } from 'connected-react-router';
 
 import {
-    CONFIGURE_API,
+    CONFIGURE,
     TRIGGER_EDITING_ITEM,
     TRIGGER_SELECT_MODE,
     TOGGLE_TRANSITIONS,
@@ -53,7 +53,7 @@ const getLibraryKey = (params, config) => {
 
 const current = (state = stateDefault, action, { config } = {}) => {
 	switch(action.type) {
-		case CONFIGURE_API:
+		case CONFIGURE:
 			return {
 				...state,
 				userLibraryKey: `u${action.userId}`,

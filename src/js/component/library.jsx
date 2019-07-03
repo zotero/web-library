@@ -97,7 +97,7 @@ class Library extends React.PureComponent {
 			key = `${libraryKey}-${itemsSource}`;
 		}
 
-		const { device, isSearchMode, isNavBarOpen, isSelectMode, searchState,
+		const { config, device, isSearchMode, isNavBarOpen, isSelectMode, searchState,
 			toggleNavbar, useTransitions, view } = this.props;
 		const { hasUserTypeChanged, isSearchModeTransitioning, prevItemsSource } = this.state;
 		let activeViewClass = `view-${view}-active`;
@@ -118,9 +118,13 @@ class Library extends React.PureComponent {
 						</div>
 					)
 				}
-				<MobileNav {...pick(this.props, ['toggleNavbar']) } />
+				<MobileNav
+					entries={ config.menus.mobile }
+					{...pick(this.props, ['toggleNavbar']) }
+				/>
 				<div className="site-wrapper">
 					<Navbar
+						entries={ config.menus.desktop }
 						{...pick(this.props, ['collectionKey', 'isNavBarOpen', 'isMyPublications', 'isTrash',
 							'itemsSource', 'libraryKey', 'navigate', 'qmode', 'search', 'tags', 'toggleNavbar',
 							'triggerSearchMode', 'view',
@@ -194,8 +198,9 @@ class Library extends React.PureComponent {
 }
 
 Library.propTypes = {
+	config: PropTypes.object.isRequired,
+	isSelectMode: PropTypes.bool,
 	view: PropTypes.string,
-	isSelectMode: PropTypes.bool
 };
 
 export default withDevice(Library);

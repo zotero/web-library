@@ -7,69 +7,12 @@ import Button from './button';
 import Icon from './icon';
 import SearchContainer from './../../container/search';
 import withFocusManager from '../../enhancers/with-focus-manager.jsx';
+import MenuEntry from './menu-entry';
 import { isTriggerEvent } from '../../common/event';
 import { pick } from '../../common/immutable';
-import { Nav, NavItem, NavLink, UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap/lib';
-
-class MenuEntry extends React.PureComponent {
-	render() {
-		const {label, href, handleKeyDown, dropdown, entries, active} = this.props;
-		if (dropdown) {
-			let dropdownEntries = entries.map((entry, ind) => {
-				if (entry.separator) {
-					return <DropdownItem key={`divider-${ind}`} divider />;
-				}
-				return <DropdownItem key={entry.href} href={entry.href}>{entry.label}</DropdownItem>
-			});
-			
-			return (<NavItem active={active}>
-				<UncontrolledDropdown className="dropdown dropdown-wrapper">
-					<DropdownToggle
-						tag="a"
-						href="#"
-						className="dropdown-toggle nav-link"
-						onKeyDown={ handleKeyDown }
-						tabIndex={ -2 }
-					>
-						{label}
-						<Icon type="16/chevron-9" width="16" height="16" />
-					</DropdownToggle>
-					<DropdownMenu>
-						{dropdownEntries}
-					</DropdownMenu>
-				</UncontrolledDropdown>
-			</NavItem>);
-		}
-		return (
-			<NavItem active={active}>
-				<NavLink href={href} onKeyDown={ handleKeyDown } tabIndex={ -2 }>{label}</NavLink>
-			</NavItem>
-		);
-	}
-}
-MenuEntry.propTypes = {
-	label: PropTypes.string,
-	href: PropTypes.string,
-	handleKeyDown: PropTypes.func,
-	dropdown: PropTypes.bool,
-	entries: PropTypes.array,
-	active: PropTypes.bool,
-};
-MenuEntry.defaultProps = {
-	active:false
-};
+import { Nav } from 'reactstrap/lib';
 
 class Navbar extends React.PureComponent {
-	constructor(props) {
-		super(props);
-		const menuConfigDom = document.getElementById('zotero-web-library-menu-config');
-		const config = menuConfigDom ? JSON.parse(menuConfigDom.textContent) : {};
-
-		this.state = {
-			menus: config
-		};
-	}
-
 	handleSearchButtonClick = () => {
 		const { libraryKey: library, collectionKey: collection, tags,
 			isTrash: trash, isMyPublications: publications, qmode,
@@ -100,13 +43,9 @@ class Navbar extends React.PureComponent {
 	}
 
 	render() {
-		const { toggleNavbar, view } = this.props;
+		const { entries, toggleNavbar, view } = this.props;
 		const { onFocus, onBlur, registerFocusRoot } = this.props;
-		
-		const {menus} = this.state;
-		const desktopMenuEntries = menus.desktop.map((entry) => {
-			return <MenuEntry key={entry.href || entry.label} {...entry} handleKeyDown={this.handleKeyDown} />;
-		})
+
 		return (
 			<header
 				className="navbar"
@@ -126,7 +65,13 @@ class Navbar extends React.PureComponent {
 				</h1>
 				<h2 className="offscreen">Site navigation</h2>
 				<Nav className='main-nav'>
-					{desktopMenuEntries}
+					{ entries.map( entry => (
+						<MenuEntry
+							key={ entry.href || entry.label }
+							handleKeyDown={this.handleKeyDown}
+							{ ...entry }
+						/>
+					)) }
 				</Nav>
 				<SearchContainer
 					autoFocus
@@ -163,27 +108,31 @@ class Navbar extends React.PureComponent {
 			</header>
 		);
 	}
-}
 
-Navbar.propTypes = {
-	collectionKey: PropTypes.string,
-	isMyPublications: PropTypes.bool,
-	isNavBarOpen: PropTypes.bool,
-	isTrash: PropTypes.bool,
-	itemsSource: PropTypes.string,
-	libraryKey: PropTypes.string,
-	navigate: PropTypes.func,
-	onBlur: PropTypes.func,
-	onFocus: PropTypes.func,
-	onFocusNext: PropTypes.func,
-	onFocusPrev: PropTypes.func,
-	qmode: PropTypes.string,
-	registerFocusRoot: PropTypes.func,
-	search: PropTypes.string,
-	tags: PropTypes.array,
-	toggleNavbar: PropTypes.func,
-	triggerSearchMode: PropTypes.func,
-	view: PropTypes.string,
-};
+	static propTypes = {
+		collectionKey: PropTypes.string,
+		entries: PropTypes.array,
+		isMyPublications: PropTypes.bool,
+		isNavBarOpen: PropTypes.bool,
+		isTrash: PropTypes.bool,
+		itemsSource: PropTypes.string,
+		libraryKey: PropTypes.string,
+		navigate: PropTypes.func,
+		onBlur: PropTypes.func,
+		onFocus: PropTypes.func,
+		onFocusNext: PropTypes.func,
+		onFocusPrev: PropTypes.func,
+		qmode: PropTypes.string,
+		registerFocusRoot: PropTypes.func,
+		search: PropTypes.string,
+		tags: PropTypes.array,
+		toggleNavbar: PropTypes.func,
+		triggerSearchMode: PropTypes.func,
+		view: PropTypes.string,
+	}
+	static defaultProps = {
+		entries: []
+	}
+}
 
 export default withFocusManager(Navbar);

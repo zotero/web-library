@@ -1,6 +1,6 @@
 'use strict';
 
-import { CONFIGURE_API, SORT_ITEMS, RECEIVE_GROUPS } from '../constants/actions.js';
+import { CONFIGURE, SORT_ITEMS, RECEIVE_GROUPS } from '../constants/actions.js';
 import { sortByKey } from '../utils';
 
 const defaultState = {
@@ -46,16 +46,16 @@ const slugify = name => {
 
 const config = (state = defaultState, action) => {
 	switch(action.type) {
-		case CONFIGURE_API:
+		case CONFIGURE:
 			return {
 				...state,
-				apiConfig: action.apiConfig,
-				apiKey: action.apiKey,
-				defaultLibraryKey:determineDefaultLibraryKey(action),
-				stylesSourceUrl: action.stylesSourceUrl,
-				translateUrl: action.translateUrl,
-				userSlug: action.userSlug,
-				userId: action.userId,
+				apiConfig: action.apiConfig || {},
+				apiKey: action.apiKey || '',
+				defaultLibraryKey: determineDefaultLibraryKey(action),
+				stylesSourceUrl: action.stylesSourceUrl || '',
+				translateUrl: action.translateUrl || '',
+				userSlug: action.userSlug || '',
+				userId: action.userId || 0,
 				includeMyLibrary: action.libraries.includeMyLibrary,
 				includeUserGroups: action.libraries.includeUserGroups,
 				libraries: [
@@ -74,7 +74,8 @@ const config = (state = defaultState, action) => {
 						id: include.key.slice(1),
 						...include,
 					}))
-				].filter(Boolean)
+				].filter(Boolean),
+				menus: action.menus || { desktop: [], mobile: [] },
 			};
 		case RECEIVE_GROUPS:
 			var libraries = [

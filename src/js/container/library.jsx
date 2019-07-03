@@ -13,7 +13,7 @@ import { createBrowserHistory } from 'history';
 import { routerMiddleware, ConnectedRouter } from 'connected-react-router';
 import { BrowserRouter, Route, Redirect, Switch } from 'react-router-dom';
 import createReducers from '../reducers';
-import { configureApi, fetchGroups, fetchLibrarySettings, initialize,
+import { configure, fetchGroups, fetchLibrarySettings, initialize,
 	preferencesLoad, toggleNavbar, toggleTransitions, triggerResizeViewport,
 	triggerSearchMode, navigate
 } from '../actions';
@@ -102,7 +102,6 @@ class LibraryContainer extends React.PureComponent {
 		const apiConfig = { ...defaultApiConfig, ...config.apiConfig };
 		const stylesSourceUrl = config.stylesSourceUrl || defaultStylesSourceUrl;
 		const translateUrl = config.translateUrl || defaultTranslateUrl;
-		const { apiKey, userId, userSlug } = config;
 
 		if(element) {
 			var store = createStore(
@@ -117,7 +116,7 @@ class LibraryContainer extends React.PureComponent {
 			);
 
 			store.dispatch(
-				configureApi({ userId, userSlug, apiKey, apiConfig, stylesSourceUrl, libraries, translateUrl })
+				configure({ ...config, apiConfig, stylesSourceUrl, libraries, translateUrl })
 			);
 
 			ReactDOM.render(
