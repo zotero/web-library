@@ -26,6 +26,10 @@ class RichEditor extends React.PureComponent {
 	handleEditorChange = newContent => {
 		const { onChange } = this.props;
 		const { content } = this.state;
+
+		// force re-render so that formatting buttons are correctly highlighted
+		this.forceUpdate();
+
 		if(newContent === content) {
 			return;
 		}
