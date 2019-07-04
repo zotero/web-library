@@ -1,6 +1,14 @@
 .rich-editor {
 	background-color: #fff;
 
+	.toolbar {
+		.tool-group {
+			& + .tool-group {
+				margin-left: 0;
+			}
+		}
+	}
+
 	.editor-container {
 		background-color: $shade-0;
 		margin: 0.5em 1em;

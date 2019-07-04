@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+	<symbol id="fore-color" viewBox="0 0 16 16">
+		<path fill="currentColor" d="M7,4H3V2H13V4H9v8H7Zm8,9v3H1V13Zm-1,1H2v1H14Z"/>
+	</symbol>
+	<use xlink:href="#fore-color" viewBox="0 0 16 16"/>
+</svg>
