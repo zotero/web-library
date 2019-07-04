@@ -1,17 +1,20 @@
 /* eslint-disable react/no-deprecated */
 'use strict';
 
-import React from 'react';
-import cx from 'classnames';
 
+//TinyMCE import, do not reorder
 import tinymce from 'tinymce';
 import 'tinymce/themes/modern';
-
 import { Editor } from '@tinymce/tinymce-react';
+
+import cx from 'classnames';
 import PropTypes from 'prop-types';
-import { Toolbar, ToolGroup } from './ui/toolbars';
+import React from 'react';
+import { UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap/lib';
+
 import Button from './ui/button';
 import Icon from './ui/icon';
+import { Toolbar, ToolGroup } from './ui/toolbars';
 
 window.tinymce = tinymce;
 
@@ -181,9 +184,39 @@ class RichEditor extends React.PureComponent {
 						<Toolbar>
 							<div className="toolbar-left">
 								<ToolGroup>
-									<div className="dropdown dropdown-wrapper">
-										Paragraph
-									</div>
+								<UncontrolledDropdown className="dropdown dropdown-wrapper">
+										<DropdownToggle
+											className="dropdown-toggle"
+										>
+											Paragraph
+										</DropdownToggle>
+										<DropdownMenu>
+											<DropdownItem>
+												Paragraph
+											</DropdownItem>
+											<DropdownItem>
+												Heading 1
+											</DropdownItem>
+											<DropdownItem>
+												Heading 2
+											</DropdownItem>
+											<DropdownItem>
+												Heading 3
+											</DropdownItem>
+											<DropdownItem>
+												Heading 4
+											</DropdownItem>
+											<DropdownItem>
+												Heading 5
+											</DropdownItem>
+											<DropdownItem>
+												Heading 6
+											</DropdownItem>
+											<DropdownItem>
+												<pre>Preformatted</pre>
+											</DropdownItem>
+										</DropdownMenu>
+								</UncontrolledDropdown>
 								</ToolGroup>
 								<ToolGroup>
 									<Button
