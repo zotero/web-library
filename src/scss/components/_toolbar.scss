@@ -19,6 +19,12 @@
 		padding: 0 $default-padding-x;
 	}
 
+	@include variant(".toolbar.dense") {
+		@include mouse-and-bp-up(md) {
+			padding: 0 ($default-padding-x - $space-min - $input-border-width);
+		}
+	}
+
 	.toolbar-left,
 	.toolbar-center,
 	.toolbar-right,
