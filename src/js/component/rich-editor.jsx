@@ -184,7 +184,7 @@ class RichEditor extends React.PureComponent {
 						<Toolbar className="dense">
 							<div className="toolbar-left">
 								<ToolGroup>
-								<UncontrolledDropdown className="dropdown dropdown-wrapper">
+								<UncontrolledDropdown className="dropdown-wrapper">
 										<DropdownToggle
 											color={ null }
 											className="dropdown-toggle btn-icon"
