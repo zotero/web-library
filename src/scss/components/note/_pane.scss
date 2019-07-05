@@ -3,6 +3,11 @@
 // --------------------------------------------------
 
 .tab-pane.notes {
+	@include mouse-and-bp-only(md) {
+		flex-direction: row;
+		height: 100%;
+	}
+
 	.scroll-container-mouse {
 		display: flex;
 		flex-direction: column;
