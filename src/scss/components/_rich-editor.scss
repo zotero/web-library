@@ -1,6 +1,12 @@
 .rich-editor {
 	background-color: #fff;
 
+	.btn-icon {
+		&:hover {
+			background-color: $btn-icon-hover-bg;;
+		}
+	}
+
 	.dropdown {
 		pre {
 			margin: 0;
