@@ -78,7 +78,7 @@ class RichEditor extends React.PureComponent {
 			<div className="rich-editor">
 				{ !isReadOnly && (
 					<React.Fragment>
-						<Toolbar>
+						<Toolbar className="dense">
 							<div className="toolbar-left">
 								<ToolGroup>
 									<Button
@@ -181,7 +181,7 @@ class RichEditor extends React.PureComponent {
 								</ToolGroup>
 							</div>
 						</Toolbar>
-						<Toolbar>
+						<Toolbar className="dense">
 							<div className="toolbar-left">
 								<ToolGroup>
 								<UncontrolledDropdown className="dropdown dropdown-wrapper">

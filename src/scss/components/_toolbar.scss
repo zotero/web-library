@@ -82,5 +82,24 @@
 		& + .tool-group {
 			margin-left: $space-lg;
 		}
+
+		@include variant(".toolbar.dense") {
+			position: relative;
+
+			& + .tool-group {
+				margin-left: $space-min / 2;
+				padding-left: $space-min / 2 + $border-width;
+
+				&::before {
+					content: "";
+					position: absolute;
+					left: 0;
+					top: 2px;
+					bottom: 2px;
+					width: $border-width;
+					background-color: $tool-group-separator-color;
+				}
+			}
+		}
 	}
 }
