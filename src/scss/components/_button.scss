@@ -81,7 +81,6 @@
 			margin: 0;
 		}
 
-
 		@include mouse-and-bp-up(md) {
 			position: static;
 		}
@@ -91,7 +90,8 @@
 // Icon button
 
 .btn-icon {
-	line-height: 1;
+	color: $icon-color;
+	line-height: $space-md;
 
 	@include touch-or-bp-down(sm) {
 		padding: $input-btn-padding-y-touch $input-btn-padding-x-touch;
@@ -122,13 +122,19 @@
 	.icon {
 		position: static;
 		margin: 0;
+	}
 
-		@include mouse-and-bp-up(md) {
-			@include state(".btn-icon:active") {
+	@include mouse-and-bp-up(md) {
+		@include state(".btn-icon:active") {
+			&,
+			.icon {
 				color: $icon-active-color;
 			}
+		}
 
-			@include state(".btn-icon.active") {
+		@include state(".btn-icon.active") {
+			&,
+			.icon {
 				color: $btn-icon-active-color;
 			}
 		}

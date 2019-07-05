@@ -13,6 +13,8 @@
 			&.btn-link,
 			&.btn-icon {
 				@include mouse-and-bp-up(md) {
+					color: $icon-active-color;
+
 					.icon {
 						color: $icon-active-color;
 					}

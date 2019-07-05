@@ -186,9 +186,11 @@ class RichEditor extends React.PureComponent {
 								<ToolGroup>
 								<UncontrolledDropdown className="dropdown dropdown-wrapper">
 										<DropdownToggle
-											className="dropdown-toggle"
+											color={ null }
+											className="dropdown-toggle btn-icon"
 										>
 											Paragraph
+											<Icon type="16/chevron-7" width="16" height="16" />
 										</DropdownToggle>
 										<DropdownMenu>
 											<DropdownItem>
