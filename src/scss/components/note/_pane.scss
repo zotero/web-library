@@ -22,11 +22,4 @@
 			}
 		}
 	}
-
-	.rich-editor {
-		@include mouse-and-bp-up(md) {
-			flex: 1 1 0;
-			border-top: $border-width solid $editor-border-color;
-		}
-	}
 }
