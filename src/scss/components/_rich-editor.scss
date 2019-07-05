@@ -35,8 +35,16 @@
 	}
 
 	.btn-icon {
-		&:hover {
+		@include state(".btn-icon:hover", ".btn-group:hover .btn-icon") {
 			background-color: $btn-icon-hover-bg;;
+		}
+	}
+
+	.btn-group {
+		[class*="icon-chevron"] {
+			@include mouse-and-bp-up(md) {
+				margin: 0 -4px;
+			}
 		}
 	}
 

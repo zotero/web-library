@@ -133,22 +133,38 @@ class RichEditor extends React.PureComponent {
 									</Button>
 								</ToolGroup>
 								<ToolGroup>
-									<Button
-										icon
-										className={ cx({
-											active: this.isEditorCommandState('FORECOLOR')
-										})}
-										onClick={ this.handleButtonClick.bind(this, 'FORECOLOR') }>
-										<Icon type="16/editor/fore-color" width="16" height="16" />
-									</Button>
-									<Button
-										icon
-										className={ cx({
-											active: this.isEditorCommandState('BACKCOLOR')
-										})}
-										onClick={ this.handleButtonClick.bind(this, 'BACKCOLOR') }>
-										<Icon type="16/editor/back-color" width="16" height="16" />
-									</Button>
+									<UncontrolledDropdown className="dropdown-wrapper btn-group">
+										<Button
+											icon
+											className={ cx({
+												active: this.isEditorCommandState('FORECOLOR')
+											})}
+											onClick={ this.handleButtonClick.bind(this, 'FORECOLOR') }>
+											<Icon type="16/editor/fore-color" width="16" height="16" />
+										</Button>
+										<DropdownToggle
+											color={ null }
+											className="btn-icon dropdown-toggle"
+										>
+											<Icon type="16/chevron-7" width="16" height="16" />
+										</DropdownToggle>
+									</UncontrolledDropdown>
+									<UncontrolledDropdown className="dropdown-wrapper btn-group">
+										<Button
+											icon
+											className={ cx({
+												active: this.isEditorCommandState('BACKCOLOR')
+											})}
+											onClick={ this.handleButtonClick.bind(this, 'BACKCOLOR') }>
+											<Icon type="16/editor/back-color" width="16" height="16" />
+										</Button>
+										<DropdownToggle
+											color={ null }
+											className="btn-icon dropdown-toggle"
+										>
+											<Icon type="16/chevron-7" width="16" height="16" />
+										</DropdownToggle>
+									</UncontrolledDropdown>
 								</ToolGroup>
 								<ToolGroup>
 									<Button
