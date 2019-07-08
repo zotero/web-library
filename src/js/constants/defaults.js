@@ -4,6 +4,7 @@ import { coreCitationStyles } from '../../../data/citation-styles-data.json';
 
 export const apiConfig = {
 	apiAuthorityPart: 'api.zotero.org',
+	retry: 2,
 };
 export const stylesSourceUrl = 'https://www.zotero.org/styles-files/styles.json';
 export const translateUrl = window.location.origin;

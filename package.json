@@ -95,7 +95,7 @@
     "redux-thunk": "^2.3.0",
     "tinymce": "<5.0.0",
     "webworkify": "^1.5.0",
-    "zotero-api-client": "^0.24.0",
+    "zotero-api-client": "^0.25.0",
     "zotero-api-client-cache": "^0.7.0",
     "zotero-base-mappings": "0.0.2"
   },
