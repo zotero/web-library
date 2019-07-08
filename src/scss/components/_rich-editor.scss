@@ -41,6 +41,24 @@
 	}
 
 	.btn-group {
+		.btn-icon {
+			&:last-child {
+				margin-left: 0;
+
+				@include state(".btn-group:hover") {
+					&::before {
+						content: "";
+						position: absolute;
+						top: 2px;
+						bottom: 2px;
+						left: 0;
+						width: $input-border-width;
+						background: $btn-icon-separator-color;
+					}
+				}
+			}
+		}
+
 		[class*="icon-chevron"] {
 			@include mouse-and-bp-up(md) {
 				margin: 0 -4px;
