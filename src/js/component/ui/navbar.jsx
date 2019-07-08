@@ -66,15 +66,17 @@ class Navbar extends React.PureComponent {
 					</a>
 				</h1>
 				<h2 className="offscreen">Site navigation</h2>
-				<Nav className="main-nav">
-					{ entries.filter(e => e.position === 'left' || !e.position).map( entry => (
-						<MenuEntry
-							key={ entry.href || entry.label }
-							onKeyDown={this.handleKeyDown}
-							{ ...entry }
-						/>
-					)) }
-				</Nav>
+				<nav>
+					<Nav className="main-nav">
+						{ entries.filter(e => e.position === 'left' || !e.position).map( entry => (
+							<MenuEntry
+								key={ entry.href || entry.label }
+								onKeyDown={this.handleKeyDown}
+								{ ...entry }
+							/>
+						)) }
+					</Nav>
+				</nav>
 				<SearchContainer
 					autoFocus
 					{ ...pick(this.props, ['onFocusNext', 'onFocusPrev', 'registerAutoFocus']) }
@@ -100,17 +102,13 @@ class Navbar extends React.PureComponent {
 					<span className="icon-bar"></span>
 					<span className="icon-bar"></span>
 				</Button>
-				<nav>
-					<Nav className="main-nav">
-						{ entries.filter(e => e.position === 'right').map( entry => (
-							<MenuEntry
-								key={ entry.href || entry.label }
-								onKeyDown={ this.handleKeyDown }
-								{ ...entry }
-							/>
-						)) }
-					</Nav>
-				</nav>
+				{ entries.filter(e => e.position === 'right').map( entry => (
+					<MenuEntry
+						key={ entry.href || entry.label }
+						onKeyDown={ this.handleKeyDown }
+						{ ...entry }
+					/>
+				)) }
 			</header>
 		);
 	}

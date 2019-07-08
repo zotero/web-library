@@ -9,10 +9,11 @@ import { pick } from '../../common/immutable'
 
 class MenuEntry extends React.PureComponent {
 	render() {
-		const { label, onKeyDown, dropdown, entries, active } = this.props;
+		const { label, onKeyDown, dropdown, entries, active, position } = this.props;
+		const ContainerTag = position === 'right' ? React.Fragment : NavItem;
 
 		return dropdown ? (
-			<NavItem active={active}>
+			<ContainerTag active={active}>
 				<UncontrolledDropdown className="dropdown dropdown-wrapper">
 					<DropdownToggle
 						tag="a"
@@ -34,26 +35,27 @@ class MenuEntry extends React.PureComponent {
 						))}
 					</DropdownMenu>
 				</UncontrolledDropdown>
-			</NavItem>
+			</ContainerTag>
 		) : (
-			<NavItem active={ active }>
+			<ContainerTag active={ active }>
 				<NavLink
 					{ ...pick(this.props, ['className', 'href', 'onKeyDown']) }
 					tabIndex={ -2 }
 				>
 					{ label }
 				</NavLink>
-			</NavItem>
+			</ContainerTag>
 		);
 	}
 
 	static propTypes = {
-		label: PropTypes.string,
-		href: PropTypes.string,
-		onKeyDown: PropTypes.func,
+		active: PropTypes.bool,
 		dropdown: PropTypes.bool,
 		entries: PropTypes.array,
-		active: PropTypes.bool,
+		href: PropTypes.string,
+		label: PropTypes.string,
+		onKeyDown: PropTypes.func,
+		position: PropTypes.oneOf(["left", "right"]),
 	}
 
 	static defaultProps = {
