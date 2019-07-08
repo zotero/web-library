@@ -21,7 +21,7 @@
 
 	@include variant(".toolbar.dense") {
 		@include mouse-and-bp-up(md) {
-			padding: 0 ($default-padding-x - $space-min - $input-border-width);
+			padding: 0 ($space-min / 2);
 		}
 	}
 
