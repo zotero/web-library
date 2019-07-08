@@ -293,7 +293,7 @@ class RichEditor extends React.PureComponent {
 											active: this.isEditorCommandState('OUTDENT')
 										})}
 										onClick={ this.handleButtonClick.bind(this, 'OUTDENT') }>
-										<Icon type="16/editor/indent" width="16" height="16" />
+										<Icon type="16/editor/outdent" width="16" height="16" />
 									</Button>
 								</ToolGroup>
 								<ToolGroup>
