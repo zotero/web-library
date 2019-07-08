@@ -86,6 +86,7 @@ class Navbar extends React.PureComponent {
 						onClick={ this.handleSearchButtonClick }
 						icon
 						className="search-toggle hidden-sm-up"
+						aria-label="Toggle search"
 					>
 						<Icon type={ '24/search' } width="24" height="24" />
 					</Button>
@@ -94,6 +95,7 @@ class Navbar extends React.PureComponent {
 					icon
 					data-navbar-toggle
 					className="navbar-toggle hidden-lg-up"
+					aria-label="Toggle navigation"
 					onClick={ this.handleNavbarToggle }
 					onKeyDown={ this.handleKeyDown }
 					tabIndex={ -2 }
