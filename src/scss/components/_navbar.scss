@@ -165,6 +165,7 @@
 	.upgrade-storage {
 		font-size: 14px;
 		margin-left: 2 * $navbar-padding-x;
+		text-decoration: none;
 
 		html:not(.specifity) & {
 			padding: 4.5px $space-sm;
