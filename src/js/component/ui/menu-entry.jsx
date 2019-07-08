@@ -11,9 +11,10 @@ class MenuEntry extends React.PureComponent {
 	render() {
 		const { label, onKeyDown, dropdown, entries, active, position } = this.props;
 		const ContainerTag = position === 'right' ? React.Fragment : NavItem;
+		const containerProps = position === 'right' ? {} : { active };
 
 		return dropdown ? (
-			<ContainerTag active={active}>
+			<ContainerTag { ...containerProps }>
 				<UncontrolledDropdown className="dropdown dropdown-wrapper">
 					<DropdownToggle
 						tag="a"
@@ -37,7 +38,7 @@ class MenuEntry extends React.PureComponent {
 				</UncontrolledDropdown>
 			</ContainerTag>
 		) : (
-			<ContainerTag active={ active }>
+			<ContainerTag { ...containerProps }>
 				<NavLink
 					{ ...pick(this.props, ['className', 'href', 'onKeyDown']) }
 					tabIndex={ -2 }
