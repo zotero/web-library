@@ -4,7 +4,9 @@
 
 //TinyMCE import, do not reorder
 import tinymce from 'tinymce';
-import 'tinymce/themes/modern';
+import 'tinymce/plugins/link';
+import 'tinymce/plugins/searchreplace';
+import 'tinymce/themes/silver';
 import { Editor } from '@tinymce/tinymce-react';
 
 import cx from 'classnames';
@@ -44,7 +46,8 @@ class RichEditor extends React.PureComponent {
 		}, 500);
 	}
 
-	handleButtonClick(command) {
+	handleButtonClick = ev => {
+		const { command } = ev.currentTarget.dataset;
 		this.editor ? this.editor.editorCommands.execCommand(command) : null;
 	}
 
@@ -59,7 +62,9 @@ class RichEditor extends React.PureComponent {
 					disabled={ this.props.isReadOnly }
 					value={ this.state.content }
 					init={{
-						skin_url: '/static/other/lightgray',
+						height: '100%',
+						base_url: '/static/other/tinymce',
+						plugins: 'link searchreplace',
 						branding: false,
 						toolbar: false,
 						menubar: false,
@@ -84,33 +89,41 @@ class RichEditor extends React.PureComponent {
 									<Button
 										icon
 										className={ cx({
-											active: this.isEditorCommandState('BOLD')
+											active: this.isEditorCommandState('bold')
 										})}
-										onClick={ this.handleButtonClick.bind(this, 'BOLD') }>
+										title="Bold"
+										data-command="bold"
+										onClick={ this.handleButtonClick }>
 										<Icon type="16/editor/b" width="16" height="16" />
 									</Button>
 									<Button
 										icon
 										className={ cx({
-											active: this.isEditorCommandState('ITALIC')
+											active: this.isEditorCommandState('italic')
 										})}
-										onClick={ this.handleButtonClick.bind(this, 'ITALIC') }>
+										title="Italic"
+										data-command="italic"
+										onClick={ this.handleButtonClick }>
 										<Icon type="16/editor/i" width="16" height="16" />
 									</Button>
 									<Button
 										icon
 										className={ cx({
-											active: this.isEditorCommandState('UNDERLINE')
+											active: this.isEditorCommandState('underline')
 										})}
-										onClick={ this.handleButtonClick.bind(this, 'UNDERLINE') }>
+										title="Underline"
+										data-command="underline"
+										onClick={ this.handleButtonClick }>
 										<Icon type="16/editor/u" width="16" height="16" />
 									</Button>
 									<Button
 										icon
 										className={ cx({
-											active: this.isEditorCommandState('STRIKETHROUGH')
+											active: this.isEditorCommandState('strikethrough')
 										})}
-										onClick={ this.handleButtonClick.bind(this, 'STRIKETHROUGH') }>
+										title="strikethrough"
+										data-command="strikethrough"
+										onClick={ this.handleButtonClick }>
 										<Icon type="16/editor/s" width="16" height="16" />
 									</Button>
 								</ToolGroup>
@@ -118,17 +131,21 @@ class RichEditor extends React.PureComponent {
 									<Button
 										icon
 										className={ cx({
-											active: this.isEditorCommandState('SUBSCRIPT')
+											active: this.isEditorCommandState('subscript')
 										})}
-										onClick={ this.handleButtonClick.bind(this, 'SUBSCRIPT') }>
+										title="Subscript"
+										data-command="subscript"
+										onClick={ this.handleButtonClick }>
 										<Icon type="16/editor/sub" width="16" height="16" />
 									</Button>
 									<Button
 										icon
 										className={ cx({
-											active: this.isEditorCommandState('SUPERSCRIPT')
+											active: this.isEditorCommandState('superscript')
 										})}
-										onClick={ this.handleButtonClick.bind(this, 'SUPERSCRIPT') }>
+										title="Superscript"
+										data-command="superscript"
+										onClick={ this.handleButtonClick }>
 										<Icon type="16/editor/sup" width="16" height="16" />
 									</Button>
 								</ToolGroup>
@@ -136,10 +153,8 @@ class RichEditor extends React.PureComponent {
 									<UncontrolledDropdown className="dropdown-wrapper btn-group">
 										<Button
 											icon
-											className={ cx({
-												active: this.isEditorCommandState('FORECOLOR')
-											})}
-											onClick={ this.handleButtonClick.bind(this, 'FORECOLOR') }>
+											data-command="forecolor"
+											>
 											<Icon type="16/editor/fore-color" width="16" height="16" />
 										</Button>
 										<DropdownToggle
@@ -152,10 +167,7 @@ class RichEditor extends React.PureComponent {
 									<UncontrolledDropdown className="dropdown-wrapper btn-group">
 										<Button
 											icon
-											className={ cx({
-												active: this.isEditorCommandState('BACKCOLOR')
-											})}
-											onClick={ this.handleButtonClick.bind(this, 'BACKCOLOR') }>
+											data-command="backcolor">
 											<Icon type="16/editor/back-color" width="16" height="16" />
 										</Button>
 										<DropdownToggle
@@ -169,31 +181,27 @@ class RichEditor extends React.PureComponent {
 								<ToolGroup>
 									<Button
 										icon
-										className={ cx({
-											active: this.isEditorCommandState('REMOVEFORMAT')
-										})}
-										onClick={ this.handleButtonClick.bind(this, 'REMOVEFORMAT') }>
+										title="Clear formatting"
+										data-command="removeformat"
+										onClick={ this.handleButtonClick }>
 										<Icon type="16/editor/remove-format" width="16" height="16" />
 									</Button>
 								</ToolGroup>
 								<ToolGroup>
 									<Button
 										icon
-										className={ cx({
-											active: this.isEditorCommandState('BLOCKQUOTE')
-										})}
-										onClick={ this.handleButtonClick.bind(this, 'BLOCKQUOTE') }>
+										title="Blockquote"
+										data-command="mceblockquote"
+										onClick={ this.handleButtonClick }>
 										<Icon type="16/editor/blockquote" width="16" height="16" />
 									</Button>
 									<Button
 										icon
-										className={ cx({
-											active: this.isEditorCommandState('LINK')
-										})}
-										onClick={ this.handleButtonClick.bind(this, 'LINK') }>
+										title="Insert/edit link"
+										data-command="mceLink"
+										onClick={ this.handleButtonClick }>
 										<Icon type="16/editor/link" width="16" height="16" />
 									</Button>
-
 								</ToolGroup>
 							</div>
 						</Toolbar>
@@ -240,25 +248,31 @@ class RichEditor extends React.PureComponent {
 									<Button
 										icon
 										className={ cx({
-											active: this.isEditorCommandState('ALIGNLEFT')
+											active: this.isEditorCommandState('justifyleft')
 										})}
-										onClick={ this.handleButtonClick.bind(this, 'ALIGNLEFT') }>
+										title="Align left"
+										data-command="justifyleft"
+										onClick={ this.handleButtonClick }>
 										<Icon type="16/editor/align-left" width="16" height="16" />
 									</Button>
 									<Button
 										icon
 										className={ cx({
-											active: this.isEditorCommandState('ALIGNCENTER')
+											active: this.isEditorCommandState('justifycenter')
 										})}
-										onClick={ this.handleButtonClick.bind(this, 'ALIGNCENTER') }>
+										title="Align center"
+										data-command="justifycenter"
+										onClick={ this.handleButtonClick }>
 										<Icon type="16/editor/align-center" width="16" height="16" />
 									</Button>
 									<Button
 										icon
 										className={ cx({
-											active: this.isEditorCommandState('ALIGNCENTER')
+											active: this.isEditorCommandState('justifyright')
 										})}
-										onClick={ this.handleButtonClick.bind(this, 'ALIGNRIGHT') }>
+										title="Align right"
+										data-command="justifyright"
+										onClick={ this.handleButtonClick }>
 										<Icon type="16/editor/align-right" width="16" height="16" />
 									</Button>
 								</ToolGroup>
@@ -266,43 +280,50 @@ class RichEditor extends React.PureComponent {
 									<Button
 										icon
 										className={ cx({
-											active: this.isEditorCommandState('BULLIST')
+											active: this.isEditorCommandState('insertunorderedlist')
 										})}
-										onClick={ this.handleButtonClick.bind(this, 'BULLIST') }>
+										title="Bullet list"
+										data-command="insertunorderedlist"
+										onClick={ this.handleButtonClick }>
 										<Icon type="16/editor/bullet-list" width="16" height="16" />
 									</Button>
 									<Button
 										icon
 										className={ cx({
-											active: this.isEditorCommandState('NUMLIST')
+											active: this.isEditorCommandState('insertorderedlist')
 										})}
-										onClick={ this.handleButtonClick.bind(this, 'NUMLIST') }>
+										title="Numbered list"
+										data-command="insertorderedlist"
+										onClick={ this.handleButtonClick }>
 										<Icon type="16/editor/numbered-list" width="16" height="16" />
 									</Button>
 									<Button
 										icon
 										className={ cx({
-											active: this.isEditorCommandState('INDENT')
+											active: this.isEditorCommandState('indent')
 										})}
-										onClick={ this.handleButtonClick.bind(this, 'INDENT') }>
+										title="Decrease indent"
+										data-command="indent"
+										onClick={ this.handleButtonClick }>
 										<Icon type="16/editor/indent" width="16" height="16" />
 									</Button>
 									<Button
 										icon
 										className={ cx({
-											active: this.isEditorCommandState('OUTDENT')
+											active: this.isEditorCommandState('outdent')
 										})}
-										onClick={ this.handleButtonClick.bind(this, 'OUTDENT') }>
+										title="Increase indent"
+										data-command="outdent"
+										onClick={ this.handleButtonClick }>
 										<Icon type="16/editor/outdent" width="16" height="16" />
 									</Button>
 								</ToolGroup>
 								<ToolGroup>
 									<Button
 										icon
-										className={ cx({
-											active: this.isEditorCommandState('SEARCHREPLACE')
-										})}
-										onClick={ this.handleButtonClick.bind(this, 'SEARCHREPLACE') }>
+										title="Find and replace"
+										data-command="searchreplace"
+										onClick={ this.handleButtonClick }>
 										<Icon type="16/magnifier" width="16" height="16" />
 									</Button>
 								</ToolGroup>

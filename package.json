@@ -93,7 +93,7 @@
     "redux-async-queue": "^1.0.0",
     "redux-promise": "^0.6.0",
     "redux-thunk": "^2.3.0",
-    "tinymce": "<5.0.0",
+    "tinymce": "5.0.11",
     "webworkify": "^1.5.0",
     "zotero-api-client": "^0.25.0",
     "zotero-api-client-cache": "^0.7.0",
