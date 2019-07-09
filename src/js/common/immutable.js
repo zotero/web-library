@@ -16,6 +16,13 @@ const removeKeys = (object, deleteKeys) => {
 const omit = removeKeys;
 
 const pick = (object, pickKeys) => {
+	if(typeof(pickKeys) === 'function') {
+		return Object.entries(object)
+			.reduce((aggr, [key, value]) => {
+				if(pickKeys(key)) { aggr[key] = value; }
+				return aggr;
+		}, {});
+	}
 	if(!Array.isArray(pickKeys)) {
 		pickKeys = [pickKeys];
 	}

@@ -41,6 +41,7 @@ class MenuEntry extends React.PureComponent {
 			<ContainerTag { ...containerProps }>
 				<NavLink
 					{ ...pick(this.props, ['className', 'href', 'onKeyDown']) }
+					{ ...pick(this.props, k => k.startsWith('aria-')) }
 					tabIndex={ -2 }
 				>
 					{ label }
