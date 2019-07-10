@@ -20,17 +20,12 @@
 		flex-direction: column;
 	}
 
-	.editor-container {
-		border-top: $border-width solid #e6e6e6;
-	}
-
-	.mce-container {
-		box-shadow: none;
+	.tox-tinymce {
 		border: none;
 	}
 
-	iframe {
-		flex: 1 1 0;
+	.tox-edit-area {
+		border-top-color: $tox-edit-area-border-color !important;
 	}
 
 	.btn-icon {
