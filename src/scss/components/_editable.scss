@@ -57,7 +57,7 @@
 
 		@include state(".busy .editable-control") {
 			margin: -$editable-border-width;
-			padding-right: $icon-spin-size-sm + 1px;
+			padding-right: $icon-spin-size-sm + $editable-padding + 1px;
 			border: $input-border-width solid transparent;
 			background-color: transparent;
 			text-overflow: ellipsis;
