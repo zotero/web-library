@@ -51,9 +51,20 @@ class RichEditor extends React.PureComponent {
 		this.editor ? this.editor.editorCommands.execCommand(command) : null;
 	}
 
-	isEditorCommandState(command) {
-		return this.editor && this.editor.editorCommands.queryCommandState(command);
+	handleFocus = () => {
+		this.setState({ isEditorFocused: true });
 	}
+
+	handleBlur = () => {
+		this.setState({ isEditorFocused: false });
+	}
+
+	isEditorCommandState(command) {
+		return this.editor && this.state.isEditorFocused &&
+			this.editor.editorCommands.queryCommandState(command);
+	}
+
+	refreshEditor = () => this.forceUpdate();
 
 	renderEditor() {
 		if(process.env.NODE_ENV !== 'test') {
@@ -71,6 +82,9 @@ class RichEditor extends React.PureComponent {
 						statusbar: false,
 					}}
 					onEditorChange={ this.handleEditorChange }
+					onFocus={ this.handleFocus }
+					onBlur={ this.handleBlur }
+					onClick={ this.refreshEditor }
 					onInit={ this.handleEditorInit }
 				/>
 			);
