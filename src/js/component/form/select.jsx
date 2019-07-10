@@ -135,7 +135,7 @@ class SelectInput extends React.PureComponent {
 	}
 
 	renderSpinner() {
-		return this.props.isBusy ? <Spinner /> : null;
+		return this.props.isBusy ? <Spinner className="small" /> : null;
 	}
 
 	render() {

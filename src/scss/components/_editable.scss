@@ -159,7 +159,7 @@
 					padding-right: $space-md;
 
 					@include state(".busy .pseudo-editable") {
-						padding-right: $space-xl;
+						padding-right: $icon-spin-size-sm + $editable-padding + 1px;
 					}
 				}
 			}
@@ -167,7 +167,6 @@
 
 		.Select-arrow {
 			display: none;
-			margin-right: 2px; // Tweak optical arrow position
 		}
 
 		&.is-focused {
@@ -179,6 +178,10 @@
 
 			.Select-arrow {
 				display: block;
+
+				@include state(".busy .pseudo-editable") {
+					display: none;
+				}
 			}
 		}
 
@@ -190,6 +193,6 @@
 	}
 
 	& + .icon-spin {
-		right: $space-md - 1px;
+		right: 0;
 	}
 }
