@@ -42,6 +42,10 @@
 
 			@include mouse-and-bp-up(md) {
 				min-height: round($auto-resizer-vertical-rows * $font-size-base * $line-height-base);
+
+				@include state(".busy .auto-resizer") {
+					min-height: auto;
+				}
 			}
 		}
 	}

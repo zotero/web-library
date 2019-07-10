@@ -164,7 +164,7 @@ label {
 			@include mouse-and-bp-up(md) {
 				&::after,
 				.icon-spin {
-					bottom: 1px;
+					bottom: 2px;
 					width: $icon-spin-size-sm;
 					height: $icon-spin-size-sm;
 				}

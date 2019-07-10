@@ -57,12 +57,12 @@
 
 		@include state(".busy .editable-control") {
 			margin: -$editable-border-width;
+			width: calc(
+				100% + #{2 * ($input-border-width + $editable-padding)}
+			);
 			padding-right: $icon-spin-size-sm + $editable-padding + 1px;
 			border: $input-border-width solid transparent;
 			background-color: transparent;
-			text-overflow: ellipsis;
-			white-space: nowrap;
-			overflow: hidden;
 
 			@include state(".editable:hover") {
 				@include mouse-and-bp-up(md) {
@@ -75,6 +75,12 @@
 	&:not(.textarea) {
 		.editable-content {
 			@include text-truncate;
+		}
+
+		.busy {
+			.editable-control {
+				@include text-truncate;
+			}
 		}
 	}
 
@@ -105,6 +111,12 @@
 			margin-top: -$editable-border-width;
 			margin-bottom: -$editable-border-width;
 			height: calc(100% + #{2 * $editable-border-width}); // Fix height in Firefox (#143)
+
+			@include state(".busy .editable-control") {
+				border: $input-border-width solid transparent;
+				margin-top: -1px;
+				margin-bottom: -1px;
+			}
 		}
 	}
 }
