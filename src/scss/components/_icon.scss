@@ -41,6 +41,10 @@
 	&.small {
 		width: $icon-spin-size-sm;
 		height: $icon-spin-size-sm;
+
+		path {
+			stroke-width: 1.2px;
+		}
 	}
 
 	&.inline {
