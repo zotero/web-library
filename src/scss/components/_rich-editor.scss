@@ -73,5 +73,9 @@
 			top: $space-min;
 			color: transparent;
 		}
+
+		&[style*="rgb(255, 255, 255)"] {
+			opacity: 0.75;
+		}
 	}
 }
