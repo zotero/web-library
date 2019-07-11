@@ -21,6 +21,17 @@ import ColorPicker from './ui/color-picker';
 
 window.tinymce = tinymce;
 
+const formatBlocks = [
+	{ value: 'p', Tag: 'p', label: 'Paragraph' },
+	{ value: 'h1', Tag: 'p', label: 'Heading 1' },
+	{ value: 'h2', Tag: 'p', label: 'Heading 2' },
+	{ value: 'h3', Tag: 'p', label: 'Heading 3' },
+	{ value: 'h4', Tag: 'p', label: 'Heading 4' },
+	{ value: 'h5', Tag: 'p', label: 'Heading 5' },
+	{ value: 'h6', Tag: 'p', label: 'Heading 6' },
+	{ value: 'pre', Tag: 'pre', label: 'Preformatted' },
+];
+
 class RichEditor extends React.PureComponent {
 	state = {
 		hilitecolor: null,
@@ -52,12 +63,12 @@ class RichEditor extends React.PureComponent {
 
 	handleButtonClick = ev => {
 		if(!this.editor) { return; }
-		const { command } = ev.currentTarget.dataset;
+		const { command, value } = ev.currentTarget.dataset;
 
 		if(command === 'forecolor' || command === 'hilitecolor') {
 			this.setColor(command, this.state[command]);
 		} else {
-			this.editor.editorCommands.execCommand(command);
+			this.editor.editorCommands.execCommand(command, undefined, value);
 		}
 	}
 
@@ -94,6 +105,11 @@ class RichEditor extends React.PureComponent {
 	isEditorCommandState(command) {
 		return this.editor && this.state.isEditorFocused &&
 			this.editor.editorCommands.queryCommandState(command);
+	}
+
+	queryFormatBlock() {
+		const formatBlock = this.editor && this.editor.editorCommands.queryCommandValue('formatblock') || 'p';
+		return formatBlocks.find(fb => fb.value === formatBlock).label;
 	}
 
 	refreshEditor = () => this.forceUpdate();
@@ -274,34 +290,22 @@ class RichEditor extends React.PureComponent {
 											color={ null }
 											className="dropdown-toggle btn-icon"
 										>
-											Paragraph
+											{ this.queryFormatBlock() }
 											<Icon type="16/chevron-7" width="16" height="16" />
 										</DropdownToggle>
 										<DropdownMenu>
-											<DropdownItem>
-												Paragraph
-											</DropdownItem>
-											<DropdownItem>
-												Heading 1
-											</DropdownItem>
-											<DropdownItem>
-												Heading 2
-											</DropdownItem>
-											<DropdownItem>
-												Heading 3
-											</DropdownItem>
-											<DropdownItem>
-												Heading 4
-											</DropdownItem>
-											<DropdownItem>
-												Heading 5
-											</DropdownItem>
-											<DropdownItem>
-												Heading 6
-											</DropdownItem>
-											<DropdownItem>
-												<pre>Preformatted</pre>
-											</DropdownItem>
+											{
+												formatBlocks.map(({ value, label, Tag }) => (
+													<DropdownItem
+														onClick={ this.handleButtonClick }
+														data-command="formatblock"
+														data-value={ value }
+														key={ value }
+													>
+														<Tag>{ label }</Tag>
+													</DropdownItem>
+												))
+											}
 										</DropdownMenu>
 								</UncontrolledDropdown>
 								</ToolGroup>
