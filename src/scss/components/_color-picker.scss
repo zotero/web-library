@@ -1,25 +1,35 @@
+//
+// Color picker
+// --------------------------------------------------
 
-.dropdown.show .dropdown-menu.color-picker {
-	padding: $space-xs;
-	display: grid;
-	grid-template-columns: repeat(8, 20px);
-	grid-template-rows: repeat(5, 20px);
+.dropdown {
+	.color-picker {
+		@include mouse-and-bp-up(md) {
+			grid-template-columns: repeat(8, $space-md);
+			grid-template-rows: repeat(5, $space-md);
+			grid-gap: $space-min;
+			padding: $space-min;
+		}
+
+		@include state(".dropdown.show") {
+			display: grid;
+		}
+	}
 
 	.color-picker-option {
-		width: 16px;
-		height: 16px;
-		border: 1px solid $shade-4;
-		position: relative;
+		@include mouse-and-bp-up(md) {
+			width: 100%;
+			height: 100%;
 
-		&.clear:before {
-			content: "X";
-			position: absolute;
-			top: 0;
-			left: 0;
-			right: 0;
-			bottom: 0;
-			text-align: center;
-			line-height: 16px;
+			&[data-color="#ffffff"],
+			&.clear {
+				padding: 0;
+				border: $border-width solid #ddd;
+			}
+
+			&.clear {
+				background:	image-url("icons/x.svg") center center no-repeat;
+			}
 		}
 	}
 }
