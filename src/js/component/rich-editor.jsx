@@ -12,7 +12,7 @@ import { Editor } from '@tinymce/tinymce-react';
 import cx from 'classnames';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap/lib';
+import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap/lib';
 
 import Button from './ui/button';
 import Icon from './ui/icon';
@@ -32,11 +32,18 @@ const formatBlocks = [
 	{ value: 'pre', Tag: 'pre', label: 'Preformatted' },
 ];
 
+const dropdowns = {
+	forecolor: false,
+	hilitecolor: false,
+	formatblock: false,
+};
+
 class RichEditor extends React.PureComponent {
 	state = {
 		hilitecolor: null,
 		content: this.props.value,
 		forecolor: null,
+		dropdowns,
 	};
 
 	handleEditorInit = (ev, editor) => {
@@ -73,7 +80,10 @@ class RichEditor extends React.PureComponent {
 	}
 
 	handleFocus = () => {
-		this.setState({ isEditorFocused: true });
+		this.setState({
+			dropdowns,
+			isEditorFocused: true,
+		});
 	}
 
 	handleBlur = () => {
@@ -91,6 +101,26 @@ class RichEditor extends React.PureComponent {
 	handleHiLiteColorPicked = color => {
 		this.setState({ hilitecolor: color });
 		this.setColor('hilitecolor', color);
+	}
+
+	handleDropdownToggle = ev => {
+		const dropdown = 'closest' in ev.currentTarget && ev.currentTarget.closest('[data-dropdown]');
+		if(dropdown) {
+			const dropdownName = ev.currentTarget.closest('[data-dropdown]').dataset.dropdown;
+			this.setState({ dropdowns: {
+				...dropdowns,
+				[dropdownName]: !this.state.dropdowns[dropdownName]
+			}});
+		} else {
+			this.setState({ dropdowns });
+		}
+	}
+
+	handleDropdownKeyDown = ev => {
+		if(ev.key === 'Escape') {
+			this.setState({ dropdowns });
+			ev.stopPropagation();
+		}
 	}
 
 	setColor = (which, color) => {
@@ -134,6 +164,7 @@ class RichEditor extends React.PureComponent {
 					onBlur={ this.handleBlur }
 					onClick={ this.refreshEditor }
 					onInit={ this.handleEditorInit }
+					onKeyDown={ ev => console.log }
 				/>
 			);
 		} else return null;
@@ -212,7 +243,12 @@ class RichEditor extends React.PureComponent {
 									</Button>
 								</ToolGroup>
 								<ToolGroup>
-									<UncontrolledDropdown className="dropdown-wrapper btn-group">
+									<Dropdown
+										isOpen={ this.state.dropdowns['forecolor'] }
+										toggle={ this.handleDropdownToggle }
+										data-dropdown="forecolor"
+										className="dropdown-wrapper btn-group"
+									>
 										<Button
 											icon
 											data-command="forecolor"
@@ -228,13 +264,19 @@ class RichEditor extends React.PureComponent {
 										</Button>
 										<DropdownToggle
 											color={ null }
+											onKeyDown={ this.handleDropdownKeyDown }
 											className="btn-icon dropdown-toggle"
 										>
 											<Icon type="16/chevron-7" width="16" height="16" />
 										</DropdownToggle>
 										<ColorPicker onColorPicked={ this.handleForeColorPicked } />
-									</UncontrolledDropdown>
-									<UncontrolledDropdown className="dropdown-wrapper btn-group">
+									</Dropdown>
+									<Dropdown
+										isOpen={ this.state.dropdowns['hilitecolor'] }
+										toggle={ this.handleDropdownToggle }
+										data-dropdown="hilitecolor"
+										className="dropdown-wrapper btn-group"
+									>
 										<Button
 											icon
 											data-command="hilitecolor"
@@ -250,12 +292,13 @@ class RichEditor extends React.PureComponent {
 										</Button>
 										<DropdownToggle
 											color={ null }
+											onKeyDown={ this.handleDropdownKeyDown }
 											className="btn-icon dropdown-toggle"
 										>
 											<Icon type="16/chevron-7" width="16" height="16" />
 										</DropdownToggle>
 										<ColorPicker onColorPicked={ this.handleHiLiteColorPicked } />
-									</UncontrolledDropdown>
+									</Dropdown>
 								</ToolGroup>
 								<ToolGroup>
 									<Button
@@ -287,9 +330,15 @@ class RichEditor extends React.PureComponent {
 						<Toolbar className="dense">
 							<div className="toolbar-left">
 								<ToolGroup>
-								<UncontrolledDropdown className="dropdown-wrapper">
+								<Dropdown
+									isOpen={ this.state.dropdowns['formatblock'] }
+									toggle={ this.handleDropdownToggle }
+									data-dropdown="formatblock"
+									className="dropdown-wrapper"
+								>
 										<DropdownToggle
 											color={ null }
+											onKeyDown={ this.handleDropdownKeyDown }
 											className="dropdown-toggle btn-icon"
 										>
 											{ this.queryFormatBlock() }
@@ -309,7 +358,7 @@ class RichEditor extends React.PureComponent {
 												))
 											}
 										</DropdownMenu>
-								</UncontrolledDropdown>
+								</Dropdown>
 								</ToolGroup>
 								<ToolGroup>
 									<Button
