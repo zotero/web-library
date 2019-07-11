@@ -17,11 +17,16 @@ import { UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem } from
 import Button from './ui/button';
 import Icon from './ui/icon';
 import { Toolbar, ToolGroup } from './ui/toolbars';
+import ColorPicker from './ui/color-picker';
 
 window.tinymce = tinymce;
 
 class RichEditor extends React.PureComponent {
-	state = { content: this.props.value };
+	state = {
+		hilitecolor: null,
+		content: this.props.value,
+		forecolor: null,
+	};
 
 	handleEditorInit = (ev, editor) => {
 		this.editor = editor;
@@ -46,8 +51,14 @@ class RichEditor extends React.PureComponent {
 	}
 
 	handleButtonClick = ev => {
+		if(!this.editor) { return; }
 		const { command } = ev.currentTarget.dataset;
-		this.editor ? this.editor.editorCommands.execCommand(command) : null;
+
+		if(command === 'forecolor' || command === 'hilitecolor') {
+			this.setColor(command, this.state[command]);
+		} else {
+			this.editor.editorCommands.execCommand(command);
+		}
 	}
 
 	handleFocus = () => {
@@ -59,6 +70,25 @@ class RichEditor extends React.PureComponent {
 			return;
 		}
 		this.setState({ isEditorFocused: false });
+	}
+
+	handleForeColorPicked = color => {
+		this.setState({ forecolor: color });
+		this.setColor('forecolor', color);
+	}
+
+	handleHiLiteColorPicked = color => {
+		this.setState({ hilitecolor: color });
+		this.setColor('hilitecolor', color);
+	}
+
+	setColor = (which, color) => {
+		if(!color) {
+			this.editor.editorCommands.execCommand('mceRemoveTextcolor', which);
+		} else {
+			this.editor.editorCommands.execCommand(which, undefined, color);
+		}
+
 	}
 
 	isEditorCommandState(command) {
@@ -170,8 +200,14 @@ class RichEditor extends React.PureComponent {
 										<Button
 											icon
 											data-command="forecolor"
-											>
-											<Icon type="16/editor/fore-color" width="16" height="16" />
+											onClick={ this.handleButtonClick }
+										>
+											<Icon
+												color={ this.state.forecolor }
+												height="16"
+												type="16/editor/fore-color"
+												width="16"
+											/>
 										</Button>
 										<DropdownToggle
 											color={ null }
@@ -179,12 +215,20 @@ class RichEditor extends React.PureComponent {
 										>
 											<Icon type="16/chevron-7" width="16" height="16" />
 										</DropdownToggle>
+										<ColorPicker onColorPicked={ this.handleForeColorPicked } />
 									</UncontrolledDropdown>
 									<UncontrolledDropdown className="dropdown-wrapper btn-group">
 										<Button
 											icon
-											data-command="backcolor">
-											<Icon type="16/editor/back-color" width="16" height="16" />
+											data-command="hilitecolor"
+											onClick={ this.handleButtonClick }
+										>
+											<Icon
+												color={ this.state.hilitecolor }
+												height="16"
+												type="16/editor/back-color"
+												width="16"
+											/>
 										</Button>
 										<DropdownToggle
 											color={ null }
@@ -192,6 +236,7 @@ class RichEditor extends React.PureComponent {
 										>
 											<Icon type="16/chevron-7" width="16" height="16" />
 										</DropdownToggle>
+										<ColorPicker onColorPicked={ this.handleHiLiteColorPicked } />
 									</UncontrolledDropdown>
 								</ToolGroup>
 								<ToolGroup>

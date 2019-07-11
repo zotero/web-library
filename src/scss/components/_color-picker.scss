@@ -1,0 +1,25 @@
+
+.dropdown.show .dropdown-menu.color-picker {
+	padding: $space-xs;
+	display: grid;
+	grid-template-columns: repeat(8, 20px);
+	grid-template-rows: repeat(5, 20px);
+
+	.color-picker-option {
+		width: 16px;
+		height: 16px;
+		border: 1px solid $shade-4;
+		position: relative;
+
+		&.clear:before {
+			content: "X";
+			position: absolute;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			text-align: center;
+			line-height: 16px;
+		}
+	}
+}
