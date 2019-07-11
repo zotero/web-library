@@ -65,4 +65,13 @@
 			margin: 0;
 		}
 	}
+
+	.icon-color-swatch {
+		@include mouse-and-bp-up(md) {
+			position: absolute;
+			left: $space-min;
+			top: $space-min;
+			color: transparent;
+		}
+	}
 }

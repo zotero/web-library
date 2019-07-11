@@ -218,10 +218,11 @@ class RichEditor extends React.PureComponent {
 											data-command="forecolor"
 											onClick={ this.handleButtonClick }
 										>
+											<Icon type="16/editor/fore-color" width="16" height="16" />
 											<Icon
 												color={ this.state.forecolor }
 												height="16"
-												type="16/editor/fore-color"
+												type="16/editor/color-swatch"
 												width="16"
 											/>
 										</Button>
@@ -239,10 +240,11 @@ class RichEditor extends React.PureComponent {
 											data-command="hilitecolor"
 											onClick={ this.handleButtonClick }
 										>
+											<Icon type="16/editor/back-color" width="16" height="16" />
 											<Icon
 												color={ this.state.hilitecolor }
 												height="16"
-												type="16/editor/back-color"
+												type="16/editor/color-swatch"
 												width="16"
 											/>
 										</Button>
