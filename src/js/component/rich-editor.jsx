@@ -23,7 +23,6 @@ window.tinymce = tinymce;
 class RichEditor extends React.PureComponent {
 	state = { content: this.props.value };
 
-
 	handleEditorInit = (ev, editor) => {
 		this.editor = editor;
 	}
@@ -56,6 +55,9 @@ class RichEditor extends React.PureComponent {
 	}
 
 	handleBlur = () => {
+		if(document.activeElement && document.activeElement.closest('.rich-editor')) {
+			return;
+		}
 		this.setState({ isEditorFocused: false });
 	}
 
