@@ -95,6 +95,15 @@ const current = (state = stateDefault, action, { config } = {}) => {
 					(params.userslug || params.groupid) ? 'library' : 'libraries';
 			}
 
+			if(!state.isSearchMode && itemsSource === 'query') {
+				// record searchState on devices with no explicit "search mode" button
+				searchState = {
+					hasViewedResult: false,
+					triggerItem: state.itemKey,
+					triggerView: state.view,
+				}
+			}
+
 			if(view === 'item-details' && state.isSearchMode) {
 				searchState.hasViewedResult = true;
 			}
