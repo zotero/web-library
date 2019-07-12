@@ -80,17 +80,7 @@ class RichEditor extends React.PureComponent {
 	}
 
 	handleFocus = () => {
-		this.setState({
-			dropdowns,
-			isEditorFocused: true,
-		});
-	}
-
-	handleBlur = () => {
-		if(document.activeElement && document.activeElement.closest('.rich-editor')) {
-			return;
-		}
-		this.setState({ isEditorFocused: false });
+		this.setState({ dropdowns });
 	}
 
 	handleForeColorPicked = color => {
@@ -133,8 +123,7 @@ class RichEditor extends React.PureComponent {
 	}
 
 	isEditorCommandState(command) {
-		return this.editor && this.state.isEditorFocused &&
-			this.editor.editorCommands.queryCommandState(command);
+		return this.editor && this.editor.editorCommands.queryCommandState(command);
 	}
 
 	queryFormatBlock() {
@@ -159,12 +148,10 @@ class RichEditor extends React.PureComponent {
 						menubar: false,
 						statusbar: false,
 					}}
+					onClick={ this.refreshEditor }
 					onEditorChange={ this.handleEditorChange }
 					onFocus={ this.handleFocus }
-					onBlur={ this.handleBlur }
-					onClick={ this.refreshEditor }
 					onInit={ this.handleEditorInit }
-					onKeyDown={ ev => console.log }
 				/>
 			);
 		} else return null;
@@ -312,6 +299,9 @@ class RichEditor extends React.PureComponent {
 								<ToolGroup>
 									<Button
 										icon
+										className={ cx({
+											active: this.isEditorCommandState('mceblockquote')
+										})}
 										title="Blockquote"
 										data-command="mceblockquote"
 										onClick={ this.handleButtonClick }>
