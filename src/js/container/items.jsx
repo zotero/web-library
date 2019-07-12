@@ -22,12 +22,11 @@ const defaultSort = { field: 'title', sort: 'ASC' };
 const PAGE_SIZE = 50;
 
 class ItemsContainer extends React.PureComponent {
-	handleItemsSelect(items = []) {
+	handleItemsSelect(items = [], view = 'item-list') {
 		const { collectionKey: collection, libraryKey: library,
 			isTrash, isMyPublications, makePath, push, tags, search } = this.props;
 		const trash = isTrash;
 		const publications = isMyPublications;
-		const view = 'item-list';
 		push(makePath({ library, search, tags, trash, publications, collection, items, view }));
 	}
 

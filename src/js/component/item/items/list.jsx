@@ -76,7 +76,7 @@ class ItemsList extends React.PureComponent {
 				this.props.onItemsSelect([...selectedItemKeys, item.key]);
 			}
 		} else {
-			this.props.onItemsSelect([item.key]);
+			this.props.onItemsSelect([item.key], 'item-details');
 		}
 	}
 
