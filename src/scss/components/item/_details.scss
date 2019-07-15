@@ -70,6 +70,12 @@
 
 		// Search results
 
+		.search-results.view-item-list-active & {
+			transform: translate3d(100%, 0, 0);
+			opacity: 0;
+			transition: transform $nav-transition, opacity 0s linear $nav-transition-duration;
+		}
+
 		.search-results.search-init.view-item-list-active & {
 			transform: translate3d(100%, 0, 0);
 			opacity: 0;
@@ -90,13 +96,21 @@
 			}
 		}
 
-		.search-results.search-cancel.view-item-list-active & {
+		.search-cancel.search-results.view-item-list-active & {
 			transform: translate3d(0, 0, 0);
 			transition: none;
 			// We need an animation here to override the default transition
 			animation:
 				fade-out-item-details ($fade-transition-duration - 0.1) linear forwards,
 				translate-item-details 0s linear ($fade-transition-duration - 0.1) forwards; // Must be a bit faster than JS class change
+		}
+
+		// Cancel search in item list view (going back to item details view)
+
+		.search-cancel.search-results.view-item-details-active & {
+			transform: translate3d(0, 0, 0);
+			opacity: 1;
+			transition: opacity $fade-transition;
 		}
 	}
 

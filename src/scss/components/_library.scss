@@ -200,6 +200,13 @@
 		.view-item-details-active & {
 			transform: translate3d(-25%, 0, 0);
 		}
+
+		// Cancel search in item list view (going back to item details)
+
+		.search-cancel.search-results.view-item-details-active & {
+			transform: translate3d(0, 0, 0);
+			transition: none;
+		}
 	}
 
 	@include bp-up(sm) {
