@@ -15,7 +15,7 @@ import tagsInPublicationsItems from './tags-in-publications-items';
 import tagsInTrashItems from './tags-in-trash-items';
 import tagsTop from './tags-top';
 import updating from './updating';
-import version from './version';
+import sync from './sync';
 import { get } from '../../utils';
 const actions = [
 	'ERROR_CHILD_ITEMS',
@@ -108,7 +108,7 @@ const libraries = (state = {}, action) => {
 				tagsInTrashItems: tagsInTrashItems(get(state, [action.libraryKey, 'tagsInTrashItems']), action),
 				tagsTop: tagsTop(get(state, [action.libraryKey, 'tagsTop']), action),
 				updating: updating(get(state, [action.libraryKey, 'updating']), action),
-				version: version(get(state, [action.libraryKey, 'version']), action)
+				sync: sync(get(state, [action.libraryKey, 'sync']), action),
 			}
 		}
 	} else { return state; }

@@ -48,7 +48,7 @@ import {
 const postItemsMultiPatch = async (state, multiPatch) => {
 	const config = state.config;
 	const { libraryKey } = state.current;
-	const version = state.libraries[libraryKey].version;
+	const version = state.libraries[libraryKey].sync.version;
 	const response = await api(config.apiKey, config.apiConfig)
 		.library(libraryKey)
 		.version(version)
@@ -306,7 +306,7 @@ const queueUpdateItem = (itemKey, patch, libraryKey, queueId) => {
 			const config = state.config;
 			const item = get(state, ['libraries', libraryKey, 'items', itemKey]);
 			const itemVersion = item.version;
-			const libraryVersion = state.libraries[libraryKey].version;
+			const libraryVersion = state.libraries[libraryKey].sync.version;
 
 			dispatch({
 				type: REQUEST_UPDATE_ITEM,
