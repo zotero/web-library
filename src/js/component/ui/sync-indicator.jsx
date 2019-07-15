@@ -2,20 +2,69 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import cx from 'classnames';
 import Spinner from './spinner';
+import Button from './button';
+import Icon from './icon';
+import { noop } from '../../utils';
 
 class SyncIndicator extends React.PureComponent {
-	render() {
-		const { version, isSynced, requestsPending, tabIndex } = this.props;
-		if(requestsPending > 0) {
-			return <Spinner tabIndex={ tabIndex } className="small" />;
+	handleResyncClick = () => {
+		const { isSynced, libraryKey } = this.props;
+		if(isSynced) {
+			return;
 		}
+		this.props.resetLibrary(libraryKey);
+	}
+
+	handleKeyDown = ev => {
+		const { onFocusNext, onFocusPrev } = this.props;
+		if(ev.target !== ev.currentTarget) {
+			return;
+		}
+
+		if(ev.key === 'ArrowRight') {
+			onFocusNext(ev);
+		} else if(ev.key === 'ArrowLeft') {
+			onFocusPrev(ev);
+		}
+	}
+
+	render() {
+		const { isSynced, requestsPending, tabIndex } = this.props;
+
 		return (
-			<div tabIndex={ tabIndex }>
-				{ isSynced ? '✓' : '❌' }
-			</div>
-		)
+			<Button
+				icon
+				tabIndex={ tabIndex }
+				type="button"
+				onClick={ this.handleResyncClick }
+				onKeyDown={ this.handleKeyDown }
+			>
+				{ requestsPending > 0 ?
+					<Spinner tabIndex={ tabIndex } className="small" /> :
+					<Icon
+						type="16/library"
+						color={ isSynced ? 'green' : 'red' }
+						width="16"
+						height="16"
+					/>
+				}
+			</Button>
+		);
+	}
+	static propTypes = {
+		isSynced: PropTypes.bool,
+		requestsPending: PropTypes.number,
+		tabIndex: PropTypes.number,
+		onFocusNext: PropTypes.func.isRequired,
+		onFocusPrev: PropTypes.func.isRequired,
+		libraryKey: PropTypes.string,
+		resetLibrary: PropTypes.func.isRequired,
+	}
+	static defaultProps = {
+		onFocusNext: noop,
+		onFocusPrev: noop,
+		resetLibrary: noop,
 	}
 }
 

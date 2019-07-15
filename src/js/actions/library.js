@@ -1,5 +1,10 @@
 'use strict';
-import { REQUEST_LIBRARY_SETTINGS, RECEIVE_LIBRARY_SETTINGS, ERROR_LIBRARY_SETTINGS } from '../constants/actions';
+import {
+	REQUEST_LIBRARY_SETTINGS,
+	RECEIVE_LIBRARY_SETTINGS,
+	ERROR_LIBRARY_SETTINGS,
+	RESET_LIBRARY
+} from '../constants/actions';
 import api from 'zotero-api-client';
 
 const fetchLibrarySettings = () => {
@@ -38,4 +43,13 @@ const fetchLibrarySettings = () => {
 	};
 }
 
-export { fetchLibrarySettings };
+const resetLibrary = libraryKey => {
+	return async dispatch => {
+		dispatch({
+			type: RESET_LIBRARY,
+			libraryKey
+		});
+	};
+}
+
+export { fetchLibrarySettings, resetLibrary };

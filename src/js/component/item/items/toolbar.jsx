@@ -25,7 +25,10 @@ class ItemsTableToolbar extends React.PureComponent {
 						<ItemsActionsContainer { ...pick(this.props, ['onFocusNext', 'onFocusPrev']) } />
 					</div>
 					<div className="toolbar-right">
-						<SyncIndicatorContainer tabIndex={ -2 } />
+						<SyncIndicatorContainer
+							tabIndex={ -2 }
+							{ ...pick(this.props, ['onFocusNext', 'onFocusPrev']) }
+						/>
 						<ColumnSelector
 							tabIndex={ -2 }
 							columns = { preferences.columns }

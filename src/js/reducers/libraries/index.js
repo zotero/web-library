@@ -17,6 +17,7 @@ import tagsTop from './tags-top';
 import updating from './updating';
 import sync from './sync';
 import { get } from '../../utils';
+import { omit } from '../../common/immutable';
 const actions = [
 	'ERROR_CHILD_ITEMS',
 	'ERROR_COLLECTIONS_IN_LIBRARY',
@@ -86,10 +87,13 @@ const actions = [
 	'ERROR_TAGS_IN_TOP_ITEMS',
 	'SORT_ITEMS',
 	'TRIGGER_EDITING_ITEM',
+	'RESET_LIBRARY',
 ];
 
 const libraries = (state = {}, action) => {
-	if(actions.includes(action.type)) {
+	if(action.type === 'RESET_LIBRARY') {
+		return omit(state, action.libraryKey);
+	} else if(actions.includes(action.type)) {
 		return {
 			...state,
 			[action.libraryKey]: {
