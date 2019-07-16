@@ -23,6 +23,7 @@ import StyleInstallerModalContainer from '../container/modal/style-installer';
 import ItemsSortModalContainer from '../container/modal/items-sort';
 import MoveCollectionsModalContainer from '../container/modal/move-collections';
 import AddByIdentifierModalContainer from '../container/modal/add-by-identifier';
+import ErrorsContainer from '../container/errors';
 import SearchBackdrop from './search-backdrop';
 import withDevice from '../enhancers/with-device';
 import Icon from './ui/icon';
@@ -204,6 +205,7 @@ class Library extends React.PureComponent {
 				<RenameCollectionModalContainer />
 				<StyleInstallerModalContainer />
 				<AddByIdentifierModalContainer />
+				<ErrorsContainer />
 			</div>
 		);
 	}

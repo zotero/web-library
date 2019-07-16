@@ -1,6 +1,7 @@
 'use strict';
 
 import {
+    DISMISS_ERROR,
     TOGGLE_MODAL,
     TOGGLE_NAVBAR,
     TOGGLE_TRANSITIONS,
@@ -60,11 +61,16 @@ const toggleTransitions = useTransitions => {
 	return { type: TOGGLE_TRANSITIONS, useTransitions };
 }
 
+const dismissError = errorId => {
+	return { type: DISMISS_ERROR, errorId };
+}
+
 export {
+	dismissError,
 	toggleModal,
+	toggleNavbar,
 	toggleTransitions,
 	triggerEditingItem,
-	toggleNavbar,
 	triggerResizeViewport,
 	triggerSearchMode,
 	triggerSelectMode,
