@@ -3,6 +3,9 @@
 const ERRORS_STORED_COUNT = 10; //how many errors are stored before oldest are discarded
 var errorCounter = 0;
 
+const isDuplicate = (error, prevError) =>
+	error && prevError && error.message === prevError.message && !prevError.isDismissed;
+
 const getErrorMessage = error => {
 	if(error instanceof Error && error.message.startsWith('Failed to fetch')) {
 		return 'Unable to communicate with Zotero server. Please check your connection.';
@@ -21,6 +24,7 @@ const processError = error => ({
 	timestamp: Date.now(),
 	id: ++errorCounter,
 	isDismissed: false,
+	timesOccurred: 1,
 });
 
 const errors = (state = [], action) => {
@@ -32,9 +36,17 @@ const errors = (state = [], action) => {
 			// discard 412, these are handled separately in libraries/sync
 			return state;
 		}
+		const processedError = processError(action.error);
+
+		if(isDuplicate(processedError, state[0])) {
+			return [
+				{ ...state[0], timesOccurred: state[0].timesOccurred + 1 },
+				...state.slice(1, ERRORS_STORED_COUNT - 1)
+			];
+		}
 
 		return [
-			processError(action.error),
+			processedError,
 			...state.slice(0, ERRORS_STORED_COUNT - 1)
 		];
 	}
