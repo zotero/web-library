@@ -84,6 +84,7 @@ class Library extends React.PureComponent {
 				isSearchModeTransitioning: true
 			}
 		}
+		return null;
 	}
 
 	componentWillUnmount() {
