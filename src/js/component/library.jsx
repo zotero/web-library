@@ -62,7 +62,6 @@ class Library extends React.PureComponent {
 			window.setTimeout(() => this.setState({ hasUserTypeChanged: false }));
 		}
 		if(wasSearchMode !== isSearchMode) {
-			this.setState({ isSearchModeTransitioning: true });
 			if(wasSearchMode) {
 				this.setState({ prevItemsSource });
 			} else {
@@ -75,6 +74,15 @@ class Library extends React.PureComponent {
 
 		if(isNavBarOpen && !device.shouldUseSidebar && prevDevice.shouldUseSidebar) {
 			toggleNavbar(false);
+		}
+	}
+
+	static getDerivedStateFromProps({ isSearchMode }, { isSearchMode: wasSearchMode, isSearchModeTransitioning }) {
+		if(wasSearchMode !== isSearchMode) {
+			return {
+				isSearchMode,
+				isSearchModeTransitioning: true
+			}
 		}
 	}
 
