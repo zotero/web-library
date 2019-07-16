@@ -119,6 +119,11 @@ class LibraryContainer extends React.PureComponent {
 				configure({ ...config, apiConfig, stylesSourceUrl, libraries, translateUrl })
 			);
 
+			if(process.env.NODE_ENV === 'development') {
+				// only in development, expose redux store
+				window.WebLibStore = store;
+			}
+
 			ReactDOM.render(
 				<Provider store={store}>
 					<ConnectedRouter history={history}>
