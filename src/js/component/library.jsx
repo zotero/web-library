@@ -167,6 +167,7 @@ class Library extends React.PureComponent {
 									/>
 									<ItemsContainer key={ key } { ...{isSearchModeTransitioning} } />
 									<ItemDetailsContainer active={ view === 'item-details' } />
+									<section className="rich-editor-touch hidden-mouse">Touch Editor</section>
 									<CSSTransition
 										in={ device.isSingleColumn && isSearchMode && itemsSource !== 'query' }
 										timeout={ 250 }

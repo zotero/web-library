@@ -97,17 +97,18 @@ $grid-breakpoints: (
 
 // Z-index master list
 
-$z-index-mobile-nav:     0;
-$z-index-hairline:      10;
-$z-index-search-bar:    20;
-$z-index-main:          20;
-$z-index-level:         20;
-$z-index-level-active:  30;
-$z-index-navbar:        30;
-$z-index-menu:          40;
-$z-index-modal:         50;
-$z-index-drag-layer:    60;
-$z-index-loading-cover: 70;
+$z-index-mobile-nav:         0;
+$z-index-hairline:          10;
+$z-index-search-bar:        20;
+$z-index-main:              20;
+$z-index-level:             20;
+$z-index-rich-editor-touch: 20;
+$z-index-level-active:      30;
+$z-index-navbar:            30;
+$z-index-menu:              40;
+$z-index-modal:             50;
+$z-index-drag-layer:        60;
+$z-index-loading-cover:     70;
 
 
 // Navbbar

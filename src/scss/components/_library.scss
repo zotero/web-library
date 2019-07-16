@@ -25,6 +25,7 @@
 
 .items {
 	min-width: 0; // Fix truncation of long values in metadata list
+	position: relative;
 
 	@include bp-down(xs) {
 		position: absolute;
@@ -132,7 +133,6 @@
 
 	@include bp-only(sm) {
 		height: 100%;
-		position: relative;
   	overflow: hidden;
 
   	// Start searching in item details view

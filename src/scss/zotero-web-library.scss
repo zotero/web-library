@@ -55,7 +55,6 @@
 @import "components/editable";
 @import "components/icon";
 @import "components/panel";
-@import "components/rich-editor";
 @import "components/tabs";
 @import "components/tag-selector";
 @import "components/toolbar";
@@ -93,3 +92,6 @@
 @import "components/modal/note";
 
 @import "components/drag-layer";
+
+@import "components/rich-editor/rich-editor";
+@import "components/rich-editor/rich-editor-touch";
