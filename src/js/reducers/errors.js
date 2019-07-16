@@ -10,10 +10,13 @@ const getErrorMessage = error => {
 	if(error instanceof Error && error.message.startsWith('Failed to fetch')) {
 		return 'Unable to communicate with Zotero server. Please check your connection.';
 	}
-	if('getResponseType' in error && error.getResponseType() === 'ErrorResponse') {
+	if(typeof error === 'object' && 'getResponseType' in error && error.getResponseType() === 'ErrorResponse') {
 		return error.reason ?
 			`Received error from Zotero server: ${error.reason}.` :
 			'Received error from Zotero server.'
+	}
+	if(typeof error === 'string') {
+		return error;
 	}
 	return 'Unexpected error.';
 }

@@ -22,7 +22,7 @@ const Errors = ({ dismissError, errors }) => {
 			{
 				errors.filter(error => !error.isDismissed).map(error => (
 					<Error
-						key={ error.errorId }
+						key={ error.id }
 						dismissError={ dismissError }
 						{ ...error }
 					/>
