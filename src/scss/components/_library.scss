@@ -204,8 +204,7 @@
 		// Cancel search in item list view (going back to item details)
 
 		.search-cancel.search-results.view-item-details-active & {
-			transform: translate3d(0, 0, 0);
-			transition: none;
+			display: none; // Hack: ideally we would keep showing the search results in this state
 		}
 	}
 
