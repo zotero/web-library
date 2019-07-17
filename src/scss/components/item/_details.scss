@@ -84,25 +84,10 @@
 
 		// Cancel search in item details view (going back to item list view)
 
-		@keyframes fade-out-item-details {
-			100% {
-				opacity: 0;
-			}
-		}
-
-		@keyframes translate-item-details {
-			100% {
-				transform: translate3d(100%, 0, 0);
-			}
-		}
-
-		.search-cancel.search-results.view-item-list-active & {
-			transform: translate3d(0, 0, 0);
-			transition: none;
-			// We need an animation here to override the default transition
-			animation:
-				fade-out-item-details ($fade-transition-duration - 0.1) linear forwards,
-				translate-item-details 0s linear ($fade-transition-duration - 0.1) forwards; // Must be a bit faster than JS class change
+		.search-cancel.view-item-list-active & {
+			transform: translate3d(100%, 0, 0);
+			opacity: 0;
+			transition: opacity ($fade-transition-duration - 0.1) ease-in-out, transform 0s linear ($fade-transition-duration - 0.1); // Must be a bit faster than JS class change
 		}
 
 		// Cancel search in item list view (going back to item details view)
