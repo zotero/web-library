@@ -88,6 +88,10 @@
 			transform: translate3d(100%, 0, 0);
 			opacity: 0;
 			transition: opacity ($fade-transition-duration - 0.1) ease-in-out, transform 0s linear ($fade-transition-duration - 0.1); // Must be a bit faster than JS class change
+
+			.info-view {
+				display: none; // Hack: ideally we would keep showing the item details of a search result
+			}
 		}
 
 		// Cancel search in item list view (going back to item details view)
