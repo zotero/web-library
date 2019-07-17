@@ -51,8 +51,27 @@ class TouchHeaderContainer extends React.PureComponent {
 	}
 
 	get itemNode() {
-		const { item, isSelectMode } = this.props;
-		return (item && !isSelectMode) ? { key: '', label: '' } : null;
+		const { item, isSelectMode, noteKey } = this.props;
+		if(!item || isSelectMode) {
+			return null;
+		}
+
+		return noteKey ? {
+			key: item.key,
+			label: 'Back',
+			path: {
+				...this.itemsSourceNode.path,
+				view: 'item-details',
+				items: [item.key]
+			} } : { key: item.key, label: '' };
+	}
+
+	get noteNode() {
+		const { item, isSelectMode, noteKey } = this.props;
+		if(!noteKey || !item || isSelectMode) {
+			return null;
+		}
+		return noteKey ? { key: noteKey, label: 'Note' } : null;
 	}
 
 	get isSelectedOpened() {
@@ -90,7 +109,8 @@ class TouchHeaderContainer extends React.PureComponent {
 					this.rootNode,
 					...path,
 					this.isItemsView ? this.itemsSourceNode : null,
-					this.itemNode
+					this.itemNode,
+					this.noteNode
 				];
 				shouldIncludeEditButton = !isReadOnly && view === 'item-details';
 				shouldIncludeItemListOptions = view === 'item-list' && !isSelectMode;
@@ -112,13 +132,13 @@ class TouchHeaderContainer extends React.PureComponent {
 				shouldHandleSelectMode = true;
 			break;
 			case variants.SOURCE_AND_ITEM:
-				touchHeaderPath = [ this.selectedNode, this.itemNode ];
+				touchHeaderPath = [ this.selectedNode, this.itemNode, this.noteNode ];
 				shouldIncludeItemListOptions = !item && !isSelectMode;
 				shouldHandleSelectMode = true;
 				shouldIncludeEditButton = !isReadOnly && !isSelectMode && !!item;
 			break;
 			case variants.ITEM:
-				touchHeaderPath = [ this.itemNode ];
+				touchHeaderPath = [ this.itemNode, this.noteNode ];
 				shouldIncludeEditButton = !isReadOnly && !isSelectMode && !!item;
 			break;
 		}
@@ -166,6 +186,7 @@ const mapStateToProps = state => {
 		itemKey,
 		itemsSource,
 		libraryKey,
+		noteKey,
 		qmode,
 		search,
 		searchState,
@@ -203,8 +224,8 @@ const mapStateToProps = state => {
 	}
 
 	return { collectionKey, collections: Object.values(collections), isMyPublications,
-		isSearchMode, isTrash, itemKey, item, itemsSource, libraryConfig, libraryKey, path,
-		qmode, search, searchState, view,
+		isSearchMode, isTrash, itemKey, item, itemsSource, libraryConfig, libraryKey, noteKey,
+		path, qmode, search, searchState, view,
 	};
 };
 

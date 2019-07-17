@@ -161,6 +161,7 @@ const mapStateToProps = state => {
 		isTrash,
 		itemsSource,
 		libraryKey,
+		noteKey,
 		qmode,
 		search,
 		searchState,
@@ -182,8 +183,8 @@ const mapStateToProps = state => {
 
 	return { config, view, userLibraryKey, viewport, isSearchMode, isSelectMode,
 		itemsSource, collectionKey, isFetchingCollections, isFetchingLibrarySettings,
-		isNavBarOpen, isMyPublications, isTrash, useTransitions, libraryKey, search,
-		searchState, tags, qmode,
+		isNavBarOpen, isMyPublications, isTrash, useTransitions, libraryKey, noteKey,
+		search, searchState, tags, qmode,
 	};
 };
 

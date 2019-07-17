@@ -14,14 +14,12 @@ import { Nav } from 'reactstrap/lib';
 
 class Navbar extends React.PureComponent {
 	handleSearchButtonClick = () => {
-		const { libraryKey: library, collectionKey: collection, tags,
-			isTrash: trash, isMyPublications: publications, qmode,
-			navigate, view, triggerSearchMode, search, itemsSource } = this.props;
+		const { navigate, view, triggerSearchMode, itemsSource } = this.props;
 
 		triggerSearchMode(true);
 
 		if(itemsSource === 'query' && view === 'item-details') {
-			navigate({ library, tags, collection, trash, publications, search, qmode, view: 'item-list' });
+			navigate({ view: 'item-list' });
 		}
 	}
 

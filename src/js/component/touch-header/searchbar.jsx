@@ -24,7 +24,7 @@ class SearchBar extends React.PureComponent {
 					searchState.triggerItem ? 'item-details' : 'item-list'
 					: searchState.triggerView
 				: view
-		});
+		}, true);
 	}
 
 	render() {

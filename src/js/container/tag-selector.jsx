@@ -17,9 +17,7 @@ class TagSelectorContainer extends React.PureComponent {
 	}
 
 	handleSelect(tagName) {
-		const { libraryKey: library, collectionKey: collection, selectedTags: tags = [],
-			search, qmode, isTrash: trash, isMyPublications: publications, view,
-			navigate } = this.props;
+		const { selectedTags: tags = [], navigate } = this.props;
 
 		const index = tags.indexOf(tagName);
 		if(index > -1) {
@@ -28,8 +26,7 @@ class TagSelectorContainer extends React.PureComponent {
 			tags.push(tagName);
 		}
 
-		navigate({ library, tags, collection, trash,
-			publications, search, view, qmode });
+		navigate({ tags });
 	}
 
 	render() {

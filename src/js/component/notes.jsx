@@ -8,30 +8,20 @@ import Icon from './ui/icon';
 import Modal from './ui/modal';
 import Note from './note';
 import RichEditor from './rich-editor';
-import withDevice from '../enhancers/with-device';
 import withEditMode from '../enhancers/with-edit-mode';
 import { pick } from '../common/immutable';
 import { Toolbar, ToolGroup } from './ui/toolbars';
 
 class Notes extends React.PureComponent {
-	state = {
-		isModalVisible: false,
-		selected: null
-	};
-
 	handleSelect = note => {
-		const { device } = this.props;
-		this.setState({ selected: note.key });
-		if(device.isTouchOrSmall) {
-			this.setState({  isModalVisible: true });
-		}
+		const { navigate } = this.props;
+		navigate({ noteKey: note.key });
 	}
 
 	handleDelete = note => {
-		if(this.state.selected === note.key) {
-			this.setState({ selected: null });
-		}
+		const { navigate } = this.props;
 		this.props.onDeleteNote(note);
+		navigate({ note: null });
 	}
 
 	handleDuplicate = note => {
@@ -39,16 +29,12 @@ class Notes extends React.PureComponent {
 	}
 
 	handleChangeNote = newContent => {
-		const { updateItem } = this.props;
-		updateItem(this.state.selected, { note: newContent });
+		const { noteKey, updateItem } = this.props;
+		updateItem(noteKey, { note: newContent });
 	}
 
 	handleAddNote = () => {
 		this.props.onAddNote();
-	}
-
-	handleModalClose = () => {
-		this.setState({ isModalVisible: false });
 	}
 
 	handleEditToggle = () => {
@@ -56,60 +42,9 @@ class Notes extends React.PureComponent {
 		onEditModeToggle(!isEditing);
 	}
 
-	renderModal() {
-		const { isModalVisible } = this.state;
-		const { isEditing } = this.props;
-		const selectedNote = this.props.notes.find(n => n.key == this.state.selected);
-
-		return (
-			<Modal
-				isOpen={ isModalVisible }
-				contentLabel="Edit Note"
-				className="modal-touch modal-centered modal-form modal-notes"
-				overlayClassName={ "modal-slide" }
-				closeTimeoutMS={ 600 }
-				onRequestClose={ this.handleModalClose }
-			>
-				<div className="modal-content" tabIndex={ -1 }>
-				<div className="modal-header">
-					<div className="modal-header-left">
-						<Button
-							className="btn-link"
-							onClick={ this.handleModalClose }
-						>
-							<Icon type={ '16/caret-16' } width="16" height="16" className="icon-previous" />
-							<span className="btn-link-label">Notes</span>
-						</Button>
-					</div>
-					<div className="modal-header-center" />
-					<div className="modal-header-right">
-						<Button
-							className="btn-link"
-							onClick={ this.handleEditToggle }
-						>
-							{ isEditing ? 'Done' : 'Edit' }
-						</Button>
-					</div>
-				</div>
-				<div className="modal-body">
-					{ this.state.selected && selectedNote && (
-						<RichEditor
-							key={ this.state.selected }
-							isReadOnly={ !isEditing }
-							value={ this.props.notes.find(n => n.key == this.state.selected).note }
-							onChange={ this.handleChangeNote }
-						/>
-					) }
-				</div>
-			</div>
-			</Modal>
-		);
-	}
-
 	render() {
-		const { device, isReadOnly, notes } = this.props;
-		const { selected } = this.state;
-		const selectedNote = this.props.notes.find(n => n.key == this.state.selected);
+		const { device, isReadOnly, notes, noteKey } = this.props;
+		const selectedNote = this.props.notes.find(n => n.key === noteKey);
 
 		return (
 			<React.Fragment>
@@ -123,7 +58,7 @@ class Notes extends React.PureComponent {
 											{ ...pick(
 												this.props, ['device', 'isReadOnly']
 											)}
-											isSelected={ selected === note.key }
+											isSelected={ noteKey === note.key }
 											key={ note.key }
 											note={ note }
 											onDelete={ this.handleDelete }
@@ -162,15 +97,14 @@ class Notes extends React.PureComponent {
 					)}
 				</div>
 
-				{ !device.isTouchOrSmall && this.state.selected && selectedNote && (
+				{ !device.isTouchOrSmall && selectedNote && (
 					<RichEditor
-						key={ this.state.selected }
+						key={ selectedNote.key }
 						isReadOnly={ isReadOnly }
 						value={ selectedNote.note }
 						onChange={ this.handleChangeNote }
 					/>
 				) }
-			{ this.renderModal() }
 			</React.Fragment>
 		);
 	}

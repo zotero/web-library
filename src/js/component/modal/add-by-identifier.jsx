@@ -65,7 +65,7 @@ class AddByIdentifierModal extends React.PureComponent {
 			collection: collectionKey,
 			items: [item.key],
 			view: 'item-list'
-		});
+		}, true);
 	}
 
 	renderModalContent() {

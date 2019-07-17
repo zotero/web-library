@@ -42,7 +42,8 @@ class NotesTabPane extends React.PureComponent {
 								key={ item.key }
 								notes={ childItems.filter(i => i.itemType === 'note') }
 								{ ...pick(this.props, ['device', 'item', 'isReadOnly',
-									'updateItem', 'onAddNote', 'onDeleteNote'] ) }
+									'noteKey', 'navigate', 'updateItem', 'onAddNote',
+									'onDeleteNote'] ) }
 							/>
 						</React.Fragment>
 					)

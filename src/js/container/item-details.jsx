@@ -19,6 +19,7 @@ import {
     fetchItems,
     fetchItemTypeCreatorTypes,
     fetchItemTypeFields,
+    navigate,
 } from '../actions';
 
 import { hideFields, noEditFields, extraFields } from '../constants/item';
@@ -252,6 +253,7 @@ const mapStateToProps = state => {
 		itemKeys,
 		itemsSource,
 		libraryKey,
+		noteKey,
 	} = state.current;
 	const item = get(state, ['libraries', libraryKey, 'items', itemKey], null);
 	const itemType = item ? item.itemType : null;
@@ -330,6 +332,7 @@ const mapStateToProps = state => {
 		item,
 		itemsCount,
 		libraryKey,
+		noteKey,
 		makePath: makePath.bind(null, state.config),
 		pendingChanges,
 		relatedItems,
@@ -350,4 +353,4 @@ ItemDetailsContainer.propTypes = {
 };
 
 export default withDevice(withEditMode(connect(
-	mapStateToProps, { push, fetchItems, fetchChildItems, updateItem })(ItemDetailsContainer)));
+	mapStateToProps, { push, fetchItems, fetchChildItems, updateItem, navigate })(ItemDetailsContainer)));

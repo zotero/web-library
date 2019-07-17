@@ -25,9 +25,8 @@ class TagSelector extends React.PureComponent {
 	};
 
 	handleDeselectClick = () => {
-		const { libraryKey: library, collectionKey: collection, search, qmode,
-			isTrash: trash, isMyPublications: publications, view, navigate } = this.props;
-		navigate({ library, collection, trash, publications, search, view, qmode, tags: [] });
+		const {  navigate } = this.props;
+		navigate({ tags: [] });
 	}
 
 	render() {

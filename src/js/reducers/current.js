@@ -67,6 +67,7 @@ const current = (state = stateDefault, action, { config } = {}) => {
 			var isMyPublications = action.payload.location.pathname.includes('/publications');
 			var collectionKey = params.collection || null;
 			var itemKeys = params.items ? params.items.split(',') : [];
+			var noteKey = params.note || null;
 			var tags = tagsFromUrlPart(params.tags);
 			var isSelectMode = itemKeys.length > 1 ? true : state.isSelectMode;
 			var view = params.view;
@@ -121,6 +122,7 @@ const current = (state = stateDefault, action, { config } = {}) => {
 				itemKeys,
 				itemsSource,
 				libraryKey,
+				noteKey,
 				qmode,
 				search,
 				searchState,

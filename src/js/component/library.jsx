@@ -97,7 +97,7 @@ class Library extends React.PureComponent {
 	handleNavbarToggle = () => this.props.toggleNavbar(null);
 
 	render() {
-		const { libraryKey, collectionKey = '', itemsSource, search, tags, qmode } = this.props;
+		const { libraryKey, noteKey, collectionKey = '', itemsSource, search, tags, qmode } = this.props;
 		var key;
 		if(itemsSource == 'collection') {
 			key = `${libraryKey}-${collectionKey}`;
@@ -112,10 +112,11 @@ class Library extends React.PureComponent {
 		const { config, device, isSearchMode, isNavBarOpen, isSelectMode, searchState,
 			toggleNavbar, useTransitions, view } = this.props;
 		const { hasUserTypeChanged, isSearchModeTransitioning, prevItemsSource } = this.state;
-		let activeViewClass = `view-${view}-active`;
 
 		return (
-			<div className={ cx('library-container', activeViewClass, {
+			<div className={ cx('library-container', {
+					[`view-${view}-active`]: true,
+					'view-note-active': noteKey,
 					'navbar-nav-opened': isNavBarOpen,
 					'no-transitions': !useTransitions || hasUserTypeChanged,
 					'search-active': (isSearchMode || (!isSearchMode && isSearchModeTransitioning)) && (itemsSource !== 'query' && prevItemsSource !== 'query'),
