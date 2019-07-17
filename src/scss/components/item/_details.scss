@@ -106,8 +106,8 @@
 		}
 
 		// Cancel search in item list view (going back to item details view)
-
-		.search-cancel.search-results.view-item-details-active & {
+		// Used for either .search-init or .search-results set
+		.search-cancel.view-item-details-active & {
 			transform: translate3d(0, 0, 0);
 			opacity: 1;
 			transition: opacity $fade-transition;
