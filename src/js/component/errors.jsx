@@ -6,19 +6,20 @@ import Button from './ui/button';
 import Icon from './ui/icon';
 
 const Error = ({ id, message, dismissError }) => (
-	<div className="error">
-		<div className="header">
-			<Button icon onClick={ () => dismissError(id) }>
-				<Icon type={ '16/close' } width="16" height="16" />
-			</Button>
-		</div>
+	<li className="error">
+		<header>
+			Error
+		</header>
 		{ message }
-	</div>
+		<Button icon onClick={ () => dismissError(id) }>
+			<Icon type={ '16/close' } width="16" height="16" />
+		</Button>
+	</li>
 )
 
 const Errors = ({ dismissError, errors }) => {
 	return (
-		<div className="errors">
+		<ul className="errors">
 			{
 				errors.filter(error => !error.isDismissed).map(error => (
 					<Error
@@ -28,7 +29,7 @@ const Errors = ({ dismissError, errors }) => {
 					/>
 				))
 			}
-		</div>
+		</ul>
 	);
 }
 

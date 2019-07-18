@@ -1,0 +1,49 @@
+//
+// Errors
+// --------------------------------------------------
+
+.errors {
+	position: fixed;
+	top: 0;
+	right: -$permanent-toolbar-width;
+	z-index: $z-index-menu;
+	overflow: auto;
+	width: calc(100% + #{$permanent-toolbar-width});
+	max-height: 100%;
+	padding-bottom: $space-min; // Prevent clipping of box-shadow
+
+	@include bp-up(sm) {
+		width: $error-width + 2 * $error-spacing + $permanent-toolbar-width;
+	}
+
+	&:empty {
+		display: none;
+	}
+
+	.error {
+		width: calc(100% - #{2 * $error-spacing + $permanent-toolbar-width});
+		background: $error-bg;
+		padding: $space-xs;
+		padding-right: $line-height-large + $space-xs;
+		border-left: 3px solid $red;
+		box-shadow: $menu-box-shadow;
+		border-radius: $menu-border-radius;
+		margin: $error-spacing;
+		position: relative;
+
+		@include bp-up(sm) {
+			width: $error-width;
+		}
+	}
+
+	header {
+		font-weight: 700;
+	}
+
+	.btn {
+		position: absolute;
+		top: 0;
+		right: 0;
+		bottom: 0;
+	}
+}

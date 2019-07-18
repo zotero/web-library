@@ -33,8 +33,8 @@ $font-size-h1: 20px;
 $font-size-h2: 16px;
 
 
-$line-height-base:           1.539;
-$line-height-computed:       round($font-size-base * $line-height-base);
+$line-height-base:            1.539;
+$line-height-computed:        round($font-size-base * $line-height-base);
 $line-height-computed-mobile: floor($font-size-mobile * $line-height-base);
 
 // todo: line-height-small
@@ -43,9 +43,9 @@ $line-height-large-touch: $space-thumb;
 
 $link-hover-decoration: underline;
 
-$headings-font-family:    inherit;
-$headings-font-weight:    400;
-$headings-line-height:    1.2;
+$headings-font-family: inherit;
+$headings-font-weight: 400;
+$headings-line-height: 1.2;
 
 
 // Components
@@ -332,3 +332,11 @@ $abstract-margin-x-touch: $metadata-list-margin-x-touch;
 
 $touch-header-height: $line-height-large-touch + 2 * $border-width;
 $touch-footer-height: $touch-header-height;
+
+
+// Errors
+// --------------------------------------------------
+
+$error-width: 320px;
+$error-spacing: $space-xs;
+$permanent-toolbar-width: 15px;
