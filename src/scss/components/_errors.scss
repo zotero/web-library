@@ -6,7 +6,7 @@
 	position: fixed;
 	top: 0;
 	right: -$permanent-toolbar-width;
-	z-index: $z-index-menu;
+	z-index: $z-index-errors;
 	overflow: auto;
 	width: calc(100% + #{$permanent-toolbar-width});
 	max-height: 100%;
