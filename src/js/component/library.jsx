@@ -24,6 +24,7 @@ import ItemsSortModalContainer from '../container/modal/items-sort';
 import MoveCollectionsModalContainer from '../container/modal/move-collections';
 import AddByIdentifierModalContainer from '../container/modal/add-by-identifier';
 import ErrorsContainer from '../container/errors';
+import TouchNoteContainer from '../container/touch-note';
 import SearchBackdrop from './search-backdrop';
 import withDevice from '../enhancers/with-device';
 import Icon from './ui/icon';
@@ -184,7 +185,7 @@ class Library extends React.PureComponent {
 									/>
 									<ItemsContainer key={ key } { ...{isSearchModeTransitioning} } />
 									<ItemDetailsContainer active={ view === 'item-details' } />
-									<section className="rich-editor-touch hidden-mouse">Touch Editor</section>
+									<TouchNoteContainer />
 									<CSSTransition
 										in={ device.isSingleColumn && isSearchMode && itemsSource !== 'query' }
 										timeout={ 250 }
