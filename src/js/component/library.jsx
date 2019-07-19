@@ -62,13 +62,7 @@ class Library extends React.PureComponent {
 		if(hasUserTypeChanged === true) {
 			window.setTimeout(() => this.setState({ hasUserTypeChanged: false }));
 		}
-		if(wasSearchMode !== isSearchMode) {
-			if(wasSearchMode) {
-				this.setState({ prevItemsSource });
-			} else {
-				this.setState({ prevItemsSource: null });
-			}
-		}
+
 		if(isSearchModeTransitioning && !wasSearchModeTransitioning) {
 			setTimeout(() => this.setState({ isSearchModeTransitioning: false }), 250);
 		}
@@ -78,14 +72,26 @@ class Library extends React.PureComponent {
 		}
 	}
 
-	static getDerivedStateFromProps({ isSearchMode }, { isSearchMode: wasSearchMode, isSearchModeTransitioning }) {
+	static getDerivedStateFromProps(
+		{ isSearchMode, itemsSource },
+		{ isSearchMode: wasSearchMode, cachedItemsSource, prevItemsSource, isSearchModeTransitioning }
+	) {
+		var stateOverrides = {};
+		if(itemsSource !== cachedItemsSource) {
+			stateOverrides = {
+				...stateOverrides,
+				cachedItemsSource: itemsSource,
+				prevItemsSource: cachedItemsSource
+			}
+		}
 		if(wasSearchMode !== isSearchMode) {
-			return {
+			stateOverrides = {
+				...stateOverrides,
 				isSearchMode,
 				isSearchModeTransitioning: true
 			}
 		}
-		return null;
+		return stateOverrides;
 	}
 
 	componentWillUnmount() {

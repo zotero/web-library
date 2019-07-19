@@ -153,7 +153,7 @@ const current = (state = stateDefault, action, { config } = {}) => {
 					hasViewedResult: false,
 					triggerItem: state.itemKey,
 					triggerView: state.view,
-				} : {}
+				} : state.searchState
 			}
 		case TOGGLE_NAVBAR:
 			return {
