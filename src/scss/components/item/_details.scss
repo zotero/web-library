@@ -6,6 +6,7 @@
 	display: flex;
 	flex-direction: column;
 	background: $item-details-bg;
+	overflow: hidden;
 
 	@include bp-down(sm) {
 		@include same(right, bottom, left, 0);
@@ -134,6 +135,16 @@
 
 	@include mouse-and-bp-only(lg) {
 		border-left: $border-width solid tint($item-details-border, 50%);
+	}
+
+	.panel {
+		transition: transform $nav-transition;
+
+		.view-note-active & {
+			@include touch-and-bp-up(lg) {
+				transform: translate3d(-25%, 0, 0);
+			}
+		}
 	}
 
 	.panel-header {
