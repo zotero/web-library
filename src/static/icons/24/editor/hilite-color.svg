@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+	<symbol id="hilite-color" viewBox="0 0 24 24">
+		<path fill="currentColor" d="M11,18V7H6V4H19V7H14V18Zm12,1v5H2V19Zm-1,1H3v3H22ZM2,0V18H3V1H22V18h1V0Z"/>
+	</symbol>
+	<use xlink:href="#hilite-color" viewBox="0 0 24 24"/>
+</svg>

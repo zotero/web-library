@@ -70,7 +70,20 @@
 		}
 	}
 
+	.icon {
+		@include touch-or-bp-down(sm) {
+			color: $icon-color;
+		}
+	}
+
 	.icon-color-swatch {
+		@include touch-or-bp-down(sm) {
+			position: absolute;
+			left: $space-xs;
+			top: $space-xs;
+			color: transparent;
+		}
+
 		@include mouse-and-bp-up(md) {
 			position: absolute;
 			left: $space-min;

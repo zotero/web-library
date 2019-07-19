@@ -174,7 +174,8 @@ class RichEditor extends React.PureComponent {
 										title="Bold"
 										data-command="bold"
 										onClick={ this.handleButtonClick }>
-										<Icon type="16/editor/b" width="16" height="16" />
+										<Icon type="24/editor/b" className="touch" width="24" height="24" />
+										<Icon type="16/editor/b" className="mouse" width="16" height="16" />
 									</Button>
 									<Button
 										icon
@@ -184,7 +185,8 @@ class RichEditor extends React.PureComponent {
 										title="Italic"
 										data-command="italic"
 										onClick={ this.handleButtonClick }>
-										<Icon type="16/editor/i" width="16" height="16" />
+										<Icon type="24/editor/i" className="touch" width="24" height="24" />
+										<Icon type="16/editor/i" className="mouse" width="16" height="16" />
 									</Button>
 									<Button
 										icon
@@ -194,7 +196,8 @@ class RichEditor extends React.PureComponent {
 										title="Underline"
 										data-command="underline"
 										onClick={ this.handleButtonClick }>
-										<Icon type="16/editor/u" width="16" height="16" />
+										<Icon type="24/editor/u" className="touch" width="24" height="24" />
+										<Icon type="16/editor/u" className="mouse" width="16" height="16" />
 									</Button>
 									<Button
 										icon
@@ -204,7 +207,8 @@ class RichEditor extends React.PureComponent {
 										title="strikethrough"
 										data-command="strikethrough"
 										onClick={ this.handleButtonClick }>
-										<Icon type="16/editor/s" width="16" height="16" />
+										<Icon type="24/editor/s" className="touch" width="24" height="24" />
+										<Icon type="16/editor/s" className="mouse" width="16" height="16" />
 									</Button>
 								</ToolGroup>
 								<ToolGroup>
@@ -216,7 +220,8 @@ class RichEditor extends React.PureComponent {
 										title="Subscript"
 										data-command="subscript"
 										onClick={ this.handleButtonClick }>
-										<Icon type="16/editor/sub" width="16" height="16" />
+										<Icon type="24/editor/sub" className="touch" width="24" height="24" />
+										<Icon type="16/editor/sub" className="mouse" width="16" height="16" />
 									</Button>
 									<Button
 										icon
@@ -226,7 +231,8 @@ class RichEditor extends React.PureComponent {
 										title="Superscript"
 										data-command="superscript"
 										onClick={ this.handleButtonClick }>
-										<Icon type="16/editor/sup" width="16" height="16" />
+										<Icon type="24/editor/sup" className="touch" width="24" height="24" />
+										<Icon type="16/editor/sup" className="mouse" width="16" height="16" />
 									</Button>
 								</ToolGroup>
 								<ToolGroup>
@@ -241,12 +247,21 @@ class RichEditor extends React.PureComponent {
 											data-command="forecolor"
 											onClick={ this.handleButtonClick }
 										>
-											<Icon type="16/editor/fore-color" width="16" height="16" />
+											<Icon type="24/editor/fore-color" className="touch" width="24" height="24" />
+											<Icon type="16/editor/fore-color" className="mouse" width="16" height="16" />
 											<Icon
+												type="24/editor/color-swatch"
+												className="touch"
 												color={ this.state.forecolor }
-												height="16"
+												width="24"
+												height="24"
+											/>
+											<Icon
 												type="16/editor/color-swatch"
+												className="mouse"
+												color={ this.state.forecolor }
 												width="16"
+												height="16"
 											/>
 										</Button>
 										<DropdownToggle
@@ -269,12 +284,21 @@ class RichEditor extends React.PureComponent {
 											data-command="hilitecolor"
 											onClick={ this.handleButtonClick }
 										>
-											<Icon type="16/editor/back-color" width="16" height="16" />
+											<Icon type="24/editor/hilite-color" className="touch" width="24" height="24" />
+											<Icon type="16/editor/hilite-color" className="mouse" width="16" height="16" />
 											<Icon
+												type="24/editor/color-swatch"
+												className="touch"
 												color={ this.state.hilitecolor }
-												height="16"
+												width="24"
+												height="24"
+											/>
+											<Icon
 												type="16/editor/color-swatch"
+												className="mouse"
+												color={ this.state.hilitecolor }
 												width="16"
+												height="16"
 											/>
 										</Button>
 										<DropdownToggle
@@ -293,7 +317,8 @@ class RichEditor extends React.PureComponent {
 										title="Clear formatting"
 										data-command="removeformat"
 										onClick={ this.handleButtonClick }>
-										<Icon type="16/editor/remove-format" width="16" height="16" />
+										<Icon type="24/editor/remove-format" className="touch" width="24" height="24" />
+										<Icon type="16/editor/remove-format" className="mouse" width="16" height="16" />
 									</Button>
 								</ToolGroup>
 								<ToolGroup>
@@ -305,14 +330,16 @@ class RichEditor extends React.PureComponent {
 										title="Blockquote"
 										data-command="mceblockquote"
 										onClick={ this.handleButtonClick }>
-										<Icon type="16/editor/blockquote" width="16" height="16" />
+										<Icon type="24/editor/blockquote" className="touch" width="24" height="24" />
+										<Icon type="16/editor/blockquote" className="mouse" width="16" height="16" />
 									</Button>
 									<Button
 										icon
 										title="Insert/edit link"
 										data-command="mceLink"
 										onClick={ this.handleButtonClick }>
-										<Icon type="16/editor/link" width="16" height="16" />
+										<Icon type="24/editor/link" className="touch" width="24" height="24" />
+										<Icon type="16/editor/link" className="mouse" width="16" height="16" />
 									</Button>
 								</ToolGroup>
 							</div>
@@ -332,7 +359,8 @@ class RichEditor extends React.PureComponent {
 											className="dropdown-toggle btn-icon"
 										>
 											{ this.queryFormatBlock() }
-											<Icon type="16/chevron-7" width="16" height="16" />
+											<Icon type="16/chevron-9" className="touch" width="16" height="16" />
+											<Icon type="16/chevron-7" className="mouse" width="16" height="16" />
 										</DropdownToggle>
 										<DropdownMenu>
 											{
@@ -359,7 +387,8 @@ class RichEditor extends React.PureComponent {
 										title="Align left"
 										data-command="justifyleft"
 										onClick={ this.handleButtonClick }>
-										<Icon type="16/editor/align-left" width="16" height="16" />
+										<Icon type="24/editor/align-left" className="touch" width="24" height="24" />
+										<Icon type="16/editor/align-left" className="mouse" width="16" height="16" />
 									</Button>
 									<Button
 										icon
@@ -369,7 +398,8 @@ class RichEditor extends React.PureComponent {
 										title="Align center"
 										data-command="justifycenter"
 										onClick={ this.handleButtonClick }>
-										<Icon type="16/editor/align-center" width="16" height="16" />
+										<Icon type="24/editor/align-center" className="touch" width="24" height="24" />
+										<Icon type="16/editor/align-center" className="mouse" width="16" height="16" />
 									</Button>
 									<Button
 										icon
@@ -379,7 +409,8 @@ class RichEditor extends React.PureComponent {
 										title="Align right"
 										data-command="justifyright"
 										onClick={ this.handleButtonClick }>
-										<Icon type="16/editor/align-right" width="16" height="16" />
+										<Icon type="24/editor/align-right" className="touch" width="24" height="24" />
+										<Icon type="16/editor/align-right" className="mouse" width="16" height="16" />
 									</Button>
 								</ToolGroup>
 								<ToolGroup>
@@ -391,7 +422,8 @@ class RichEditor extends React.PureComponent {
 										title="Bullet list"
 										data-command="insertunorderedlist"
 										onClick={ this.handleButtonClick }>
-										<Icon type="16/editor/bullet-list" width="16" height="16" />
+										<Icon type="24/editor/bullet-list" className="touch" width="24" height="24" />
+										<Icon type="16/editor/bullet-list" className="mouse" width="16" height="16" />
 									</Button>
 									<Button
 										icon
@@ -401,7 +433,8 @@ class RichEditor extends React.PureComponent {
 										title="Numbered list"
 										data-command="insertorderedlist"
 										onClick={ this.handleButtonClick }>
-										<Icon type="16/editor/numbered-list" width="16" height="16" />
+										<Icon type="24/editor/numbered-list" className="touch" width="24" height="24" />
+										<Icon type="16/editor/numbered-list" className="mouse" width="16" height="16" />
 									</Button>
 									<Button
 										icon
@@ -411,7 +444,8 @@ class RichEditor extends React.PureComponent {
 										title="Decrease indent"
 										data-command="indent"
 										onClick={ this.handleButtonClick }>
-										<Icon type="16/editor/indent" width="16" height="16" />
+										<Icon type="24/editor/indent" className="touch" width="24" height="24" />
+										<Icon type="16/editor/indent" className="mouse" width="16" height="16" />
 									</Button>
 									<Button
 										icon
@@ -421,7 +455,8 @@ class RichEditor extends React.PureComponent {
 										title="Increase indent"
 										data-command="outdent"
 										onClick={ this.handleButtonClick }>
-										<Icon type="16/editor/outdent" width="16" height="16" />
+										<Icon type="24/editor/outdent" className="touch" width="24" height="24" />
+										<Icon type="16/editor/outdent" className="mouse" width="16" height="16" />
 									</Button>
 								</ToolGroup>
 								<ToolGroup>
@@ -430,7 +465,8 @@ class RichEditor extends React.PureComponent {
 										title="Find and replace"
 										data-command="searchreplace"
 										onClick={ this.handleButtonClick }>
-										<Icon type="16/magnifier" width="16" height="16" />
+										<Icon type="24/editor/magnifier" className="touch" width="24" height="24" />
+										<Icon type="16/magnifier" className="mouse" width="16" height="16" />
 									</Button>
 								</ToolGroup>
 							</div>

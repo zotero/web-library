@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+	<symbol id="align-center" viewBox="0 0 24 24">
+		<path fill="currentColor" d="M20,5H4V4H20Zm0,7H4v1H20Zm0,8H4v1H20ZM23,8H1V9H23Zm0,8H1v1H23Z"/>
+	</symbol>
+	<use xlink:href="#align-center" viewBox="0 0 24 24"/>
+</svg>
