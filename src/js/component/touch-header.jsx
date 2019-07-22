@@ -62,6 +62,7 @@ class TouchHeader extends React.PureComponent {
 							<div className="toolbar-right">
 								<ToolGroup>
 									<CollectionActions { ...this.props } />
+									{ shouldIncludeSyncIndicator && <SyncIndicatorContainer /> }
 								</ToolGroup>
 							</div>
 						)
@@ -71,6 +72,7 @@ class TouchHeader extends React.PureComponent {
 							<div className="toolbar-right">
 								<ToolGroup>
 									<ItemsActionsContainer />
+									{ shouldIncludeSyncIndicator && <SyncIndicatorContainer /> }
 								</ToolGroup>
 							</div>
 						)
@@ -80,6 +82,7 @@ class TouchHeader extends React.PureComponent {
 							<div className="toolbar-right">
 								<ToolGroup>
 									<EditToggleButton className="btn-link" />
+									{ shouldIncludeSyncIndicator && <SyncIndicatorContainer /> }
 								</ToolGroup>
 							</div>
 						)
@@ -102,13 +105,11 @@ class TouchHeader extends React.PureComponent {
 								>
 									Cancel
 								</Button>
+								{ shouldIncludeSyncIndicator && <SyncIndicatorContainer /> }
 							</div>
 						</React.Fragment>
 					)
 				}
-					{ shouldIncludeSyncIndicator && (
-						<SyncIndicatorContainer />
-					) }
 				</Toolbar>
 			</header>
 		)
