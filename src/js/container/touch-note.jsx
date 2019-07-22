@@ -14,7 +14,6 @@ const TouchNoteContainer = props => <TouchNote { ...props } />;
 const mapStateToProps = state => {
 	const { libraryKey, noteKey } = state.current;
 	const note = get(state, ['libraries', libraryKey, 'items', noteKey], null);
-	console.log(note);
 	return { libraryKey, note };
 }
 
