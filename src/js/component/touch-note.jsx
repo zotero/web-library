@@ -16,8 +16,6 @@ const TouchNote = ({ note, isEditing, updateItem }) => {
 		'editing': isEditing
 	})
 
-	console.log(note);
-
 	return (
 		<section className={ className }>
 			{ note && (
