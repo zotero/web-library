@@ -31,8 +31,9 @@ class SyncIndicator extends React.PureComponent {
 
 	render() {
 		const { isSynced, requestsPending, tabIndex } = this.props;
+		const isSyncError = !isSynced;
 
-		return (
+		return (isSyncError || requestsPending > 0) ? (
 			<Button
 				icon
 				tabIndex={ tabIndex }
@@ -44,13 +45,13 @@ class SyncIndicator extends React.PureComponent {
 					<Spinner tabIndex={ tabIndex } className="small" /> :
 					<Icon
 						type="16/library"
-						color={ isSynced ? 'green' : 'red' }
+						color="orange"
 						width="16"
 						height="16"
 					/>
 				}
 			</Button>
-		);
+		) : null;
 	}
 	static propTypes = {
 		isSynced: PropTypes.bool,

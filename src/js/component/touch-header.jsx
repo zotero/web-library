@@ -3,15 +3,17 @@
 import React from 'react';
 import cx from 'classnames';
 import PropTypes from 'prop-types';
-import TouchNavigation from './touch-header/touch-navigation';
-import Searchbar from './touch-header/searchbar';
-import EditToggleButton from './edit-toggle-button';
-import CollectionActions from './touch-header/collection-actions';
-import ItemsActionsContainer from '../container/items-actions';
-import { Toolbar, ToolGroup } from './ui/toolbars';
+
 import Button from './ui/button';
-import { pluralize } from '../common/format';
+import CollectionActions from './touch-header/collection-actions';
+import EditToggleButton from './edit-toggle-button';
+import ItemsActionsContainer from '../container/items-actions';
+import Searchbar from './touch-header/searchbar';
+import SyncIndicatorContainer from '../container/sync-indicator';
+import TouchNavigation from './touch-header/touch-navigation';
 import { pick } from '../common/immutable';
+import { pluralize } from '../common/format';
+import { Toolbar, ToolGroup } from './ui/toolbars';
 
 class TouchHeader extends React.PureComponent {
 	handleCancelClick = () => {
@@ -22,7 +24,7 @@ class TouchHeader extends React.PureComponent {
 		const { device, isEditing, path, className, navigate,
 			shouldIncludeEditButton, shouldIncludeItemListOptions,
 			shouldIncludeCollectionOptions, shouldHandleSelectMode,
-			isSelectMode, selectedItemsCount } = this.props;
+			isSelectMode, selectedItemsCount, shouldIncludeSyncIndicator } = this.props;
 
 		const shouldHideNav = (shouldIncludeEditButton && isEditing) ||
 			(shouldHandleSelectMode && isSelectMode);
@@ -104,6 +106,9 @@ class TouchHeader extends React.PureComponent {
 						</React.Fragment>
 					)
 				}
+					{ shouldIncludeSyncIndicator && (
+						<SyncIndicatorContainer />
+					) }
 				</Toolbar>
 			</header>
 		)
