@@ -123,6 +123,10 @@
 		}
 
 		[class*="icon-chevron"] {
+			@include touch-or-bp-down(sm) {
+				margin: 0 -3px;
+			}
+
 			@include mouse-and-bp-up(md) {
 				margin: 0 -4px;
 			}

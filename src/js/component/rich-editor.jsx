@@ -269,7 +269,8 @@ class RichEditor extends React.PureComponent {
 											onKeyDown={ this.handleDropdownKeyDown }
 											className="btn-icon dropdown-toggle"
 										>
-											<Icon type="16/chevron-7" width="16" height="16" />
+											<Icon type="16/chevron-9" className="touch" width="16" height="16" />
+											<Icon type="16/chevron-7" className="mouse" width="16" height="16" />
 										</DropdownToggle>
 										<ColorPicker onColorPicked={ this.handleForeColorPicked } />
 									</Dropdown>
@@ -306,7 +307,8 @@ class RichEditor extends React.PureComponent {
 											onKeyDown={ this.handleDropdownKeyDown }
 											className="btn-icon dropdown-toggle"
 										>
-											<Icon type="16/chevron-7" width="16" height="16" />
+											<Icon type="16/chevron-9" className="touch" width="16" height="16" />
+											<Icon type="16/chevron-7" className="mouse" width="16" height="16" />
 										</DropdownToggle>
 										<ColorPicker onColorPicked={ this.handleHiLiteColorPicked } />
 									</Dropdown>
