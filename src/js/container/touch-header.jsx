@@ -131,12 +131,14 @@ class TouchHeaderContainer extends React.PureComponent {
 				touchHeaderPath = [ this.selectedNode ];
 				shouldIncludeItemListOptions = !isSelectMode;
 				shouldHandleSelectMode = true;
+				shouldIncludeSyncIndicator = true;
 			break;
 			case variants.SOURCE_AND_ITEM:
 				touchHeaderPath = [ this.selectedNode, this.itemNode, this.noteNode ];
 				shouldIncludeItemListOptions = !item && !isSelectMode;
 				shouldHandleSelectMode = true;
 				shouldIncludeEditButton = !isReadOnly && !isSelectMode && !!item;
+				shouldIncludeSyncIndicator = true;
 			break;
 			case variants.ITEM:
 				touchHeaderPath = [ this.itemNode, this.noteNode ];
