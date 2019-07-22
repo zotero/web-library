@@ -69,9 +69,13 @@
 	}
 
 	.tox-edit-area {
-		.panel.editing & {
+		@include touch-or-bp-down(sm) {
+			border-top: none !important;
+		}
+
+		.editing & {
 			@include touch-or-bp-down(sm) {
-				border-top-color: $tox-edit-area-border-color !important;
+				border-top: $border-width solid $tox-edit-area-border-color !important;
 			}
 		}
 
