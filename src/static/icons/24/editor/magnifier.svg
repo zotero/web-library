@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-	<symbol id="outdent" viewBox="0 0 24 24">
-		<path fill="currentColor" d="M21,5H14V4h7Zm0,7H14v1h7Zm0,8H14v1h7ZM24,8H14V9H24Zm0,8H14v1H24ZM12,2H11V23h1ZM9,12H1.707L4,9.707,3.293,9l-3.5,3.5,3.5,3.5L4,15.293,1.707,13H9Z"/>
+	<symbol id="magnifier" viewBox="0 0 24 24">
+		<path fill="currentcolor" d="M23.824,22.977l-7.2-7.2a9.525,9.525,0,1,0-.848.848l7.2,7.2a.6.6,0,0,0,.847-.847ZM1.2,9.5a8.3,8.3,0,1,1,8.3,8.3A8.309,8.309,0,0,1,1.2,9.5Z"/>
 	</symbol>
-	<use xlink:href="#outdent" viewBox="0 0 24 24"/>
+	<use xlink:href="#magnifier" viewBox="0 0 24 24"/>
 </svg>
