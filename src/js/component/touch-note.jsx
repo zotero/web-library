@@ -13,7 +13,7 @@ const TouchNote = ({ note, isEditing, updateItem }) => {
 	console.log(note);
 
 	return (
-		<section className="rich-editor-touch hidden-mouse">
+		<section className="rich-editor-container hidden-mouse">
 			{ note && (
 				<RichEditor
 					key={ note.key }
