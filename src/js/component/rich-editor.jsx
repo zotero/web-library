@@ -440,25 +440,19 @@ class RichEditor extends React.PureComponent {
 									</Button>
 									<Button
 										icon
-										className={ cx({
-											active: this.isEditorCommandState('indent')
-										})}
 										title="Decrease indent"
-										data-command="indent"
-										onClick={ this.handleButtonClick }>
-										<Icon type="24/editor/indent" className="touch" width="24" height="24" />
-										<Icon type="16/editor/indent" className="mouse" width="16" height="16" />
-									</Button>
-									<Button
-										icon
-										className={ cx({
-											active: this.isEditorCommandState('outdent')
-										})}
-										title="Increase indent"
 										data-command="outdent"
 										onClick={ this.handleButtonClick }>
 										<Icon type="24/editor/outdent" className="touch" width="24" height="24" />
 										<Icon type="16/editor/outdent" className="mouse" width="16" height="16" />
+									</Button>
+									<Button
+										icon
+										title="Increase indent"
+										data-command="indent"
+										onClick={ this.handleButtonClick }>
+										<Icon type="24/editor/indent" className="touch" width="24" height="24" />
+										<Icon type="16/editor/indent" className="mouse" width="16" height="16" />
 									</Button>
 								</ToolGroup>
 								<ToolGroup>
