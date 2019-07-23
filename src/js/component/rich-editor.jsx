@@ -344,6 +344,14 @@ class RichEditor extends React.PureComponent {
 										<Icon type="16/editor/link" className="mouse" width="16" height="16" />
 									</Button>
 								</ToolGroup>
+								<ToolGroup>
+									<DropdownToggle
+										color={ null }
+										className="btn-icon dropdown-toggle"
+									>
+										<Icon type="24/options" width="24" height="24" />
+									</DropdownToggle>
+								</ToolGroup>
 							</div>
 						</Toolbar>
 						<Toolbar className="dense">
@@ -358,7 +366,7 @@ class RichEditor extends React.PureComponent {
 										<DropdownToggle
 											color={ null }
 											onKeyDown={ this.handleDropdownKeyDown }
-											className="dropdown-toggle btn-icon"
+											className="dropdown-toggle btn-icon format-block"
 										>
 											{ this.queryFormatBlock() }
 											<Icon type="16/chevron-9" className="touch" width="16" height="16" />
@@ -464,6 +472,14 @@ class RichEditor extends React.PureComponent {
 										<Icon type="24/editor/magnifier" className="touch" width="24" height="24" />
 										<Icon type="16/magnifier" className="mouse" width="16" height="16" />
 									</Button>
+								</ToolGroup>
+								<ToolGroup>
+									<DropdownToggle
+										color={ null }
+										className="btn-icon dropdown-toggle"
+									>
+										<Icon type="24/options" width="24" height="24" />
+									</DropdownToggle>
 								</ToolGroup>
 							</div>
 						</Toolbar>

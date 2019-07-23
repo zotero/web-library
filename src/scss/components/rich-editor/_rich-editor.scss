@@ -137,6 +137,19 @@
 		}
 	}
 
+	// Keep stable width
+	.dropdown-toggle.format-block {
+		@include touch-or-bp-down(sm) {
+			min-width: 130px;
+			text-align: left;
+
+			.icon {
+				position: absolute;
+				right: $input-btn-padding-x-touch;
+			}
+		}
+	}
+
 	.dropdown {
 		pre {
 			margin: 0;

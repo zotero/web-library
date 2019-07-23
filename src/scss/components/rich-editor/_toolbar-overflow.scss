@@ -1,0 +1,96 @@
+//
+// Toolbar overflow
+// --------------------------------------------------
+
+// Handle toolbar overflow on touch devices
+.rich-editor {
+		.toolbar {
+		&:first-child {
+			.tool-group {
+				&:nth-child(2) {
+					@include touch-and-bp-up(lg) {
+						display: none;
+					}
+
+					html.touch & {
+						@media (min-width: 1678px) {
+							display: block;
+						}
+					}
+				}
+
+				&:nth-child(4) {
+					@include touch-and-bp-up(lg) {
+						display: none;
+					}
+
+					html.touch & {
+						@media (min-width: 1270px) {
+							display: block;
+						}
+					}
+				}
+
+				&:nth-child(5) {
+					@include touch-and-bp-up(lg) {
+						display: none;
+					}
+
+					html.touch & {
+						@media (min-width: 1544px) {
+							display: block;
+						}
+					}
+				}
+
+				&:last-child {
+					@include mouse-and-bp-up(md) {
+						display: none;
+					}
+
+					@include bp-only-normalized(md) {
+						display: none;
+					}
+
+					html.touch & {
+						@media (min-width: 1678px) {
+							display: none;
+						}
+					}
+				}
+			}
+		}
+
+		&:nth-child(2) {
+			.tool-group {
+				&:nth-child(3) {
+					@include touch-and-bp-up(lg) {
+						display: none;
+					}
+
+					html.touch & {
+						@media (min-width: 1500px) {
+							display: block;
+						}
+					}
+				}
+
+				&:last-child {
+					@include mouse-and-bp-up(md) {
+						display: none;
+					}
+
+					@include bp-only-normalized(md) {
+						display: none;
+					}
+
+					html.touch & {
+						@media (min-width: 1500px) {
+							display: none;
+						}
+					}
+				}
+			}
+		}
+	}
+}
