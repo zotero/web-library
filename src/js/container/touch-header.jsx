@@ -101,7 +101,7 @@ class TouchHeaderContainer extends React.PureComponent {
 		const variants = TouchHeaderContainer.variants;
 		const { isReadOnly } = libraryConfig;
 		var touchHeaderPath, shouldIncludeEditButton, shouldIncludeItemListOptions,
-			shouldIncludeCollectionOptions, shouldHandleSelectMode, shouldIncludeSyncIndicator;
+			shouldIncludeCollectionOptions, shouldHandleSelectMode;
 
 		switch(variant) {
 			case variants.MOBILE:
@@ -118,7 +118,6 @@ class TouchHeaderContainer extends React.PureComponent {
 				shouldIncludeCollectionOptions = view !== 'libraries' &&
 					!isReadOnly && !shouldIncludeEditButton &&
 					!shouldIncludeItemListOptions && !shouldHandleSelectMode;
-				shouldIncludeSyncIndicator = true;
 			break;
 			case variants.NAVIGATION:
 				touchHeaderPath = [this.rootNode, ...path];
@@ -131,14 +130,12 @@ class TouchHeaderContainer extends React.PureComponent {
 				touchHeaderPath = [ this.selectedNode ];
 				shouldIncludeItemListOptions = !isSelectMode;
 				shouldHandleSelectMode = true;
-				shouldIncludeSyncIndicator = true;
 			break;
 			case variants.SOURCE_AND_ITEM:
 				touchHeaderPath = [ this.selectedNode, this.itemNode, this.noteNode ];
 				shouldIncludeItemListOptions = !item && !isSelectMode;
 				shouldHandleSelectMode = true;
 				shouldIncludeEditButton = !isReadOnly && !isSelectMode && !!item;
-				shouldIncludeSyncIndicator = true;
 			break;
 			case variants.ITEM:
 				touchHeaderPath = [ this.itemNode, this.noteNode ];
@@ -153,7 +150,6 @@ class TouchHeaderContainer extends React.PureComponent {
 		const props = { ...this.props, isSelectMode, shouldIncludeEditButton,
 			shouldIncludeItemListOptions, shouldIncludeCollectionOptions,
 			selectedItemsCount, shouldHandleSelectMode, collectionHasChildren,
-			shouldIncludeSyncIndicator
 		};
 
 		return (

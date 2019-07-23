@@ -9,7 +9,6 @@ import CollectionActions from './touch-header/collection-actions';
 import EditToggleButton from './edit-toggle-button';
 import ItemsActionsContainer from '../container/items-actions';
 import Searchbar from './touch-header/searchbar';
-import SyncIndicatorContainer from '../container/sync-indicator';
 import TouchNavigation from './touch-header/touch-navigation';
 import { pick } from '../common/immutable';
 import { pluralize } from '../common/format';
@@ -24,7 +23,7 @@ class TouchHeader extends React.PureComponent {
 		const { device, isEditing, path, className, navigate,
 			shouldIncludeEditButton, shouldIncludeItemListOptions,
 			shouldIncludeCollectionOptions, shouldHandleSelectMode,
-			isSelectMode, selectedItemsCount, shouldIncludeSyncIndicator } = this.props;
+			isSelectMode, selectedItemsCount } = this.props;
 
 		const shouldHideNav = (shouldIncludeEditButton && isEditing) ||
 			(shouldHandleSelectMode && isSelectMode);
@@ -62,7 +61,6 @@ class TouchHeader extends React.PureComponent {
 							<div className="toolbar-right">
 								<ToolGroup>
 									<CollectionActions { ...this.props } />
-									{ shouldIncludeSyncIndicator && <SyncIndicatorContainer /> }
 								</ToolGroup>
 							</div>
 						)
@@ -72,7 +70,6 @@ class TouchHeader extends React.PureComponent {
 							<div className="toolbar-right">
 								<ToolGroup>
 									<ItemsActionsContainer />
-									{ shouldIncludeSyncIndicator && <SyncIndicatorContainer /> }
 								</ToolGroup>
 							</div>
 						)
@@ -82,7 +79,6 @@ class TouchHeader extends React.PureComponent {
 							<div className="toolbar-right">
 								<ToolGroup>
 									<EditToggleButton className="btn-link" />
-									{ shouldIncludeSyncIndicator && <SyncIndicatorContainer /> }
 								</ToolGroup>
 							</div>
 						)
@@ -105,7 +101,6 @@ class TouchHeader extends React.PureComponent {
 								>
 									Cancel
 								</Button>
-								{ shouldIncludeSyncIndicator && <SyncIndicatorContainer /> }
 							</div>
 						</React.Fragment>
 					)

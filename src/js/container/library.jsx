@@ -15,7 +15,7 @@ import { BrowserRouter, Route, Redirect, Switch } from 'react-router-dom';
 import createReducers from '../reducers';
 import { configure, fetchGroups, fetchLibrarySettings, initialize,
 	preferencesLoad, toggleNavbar, toggleTransitions, triggerResizeViewport,
-	triggerSearchMode, navigate
+	triggerSearchMode, navigate, resetLibrary
 } from '../actions';
 import { routes, redirects } from '../routes';
 import Library from '../component/library';
@@ -66,13 +66,17 @@ class LibraryContainer extends React.PureComponent {
 	}
 
 	componentDidUpdate({ isFetchingCollections: wasFetchingCollections,
-		isFetchingLibrarySettings, libraryKey: prevLibraryKey }) {
-		const { dispatch, isFetchingCollections, libraryKey } = this.props;
+		isFetchingLibrarySettings, libraryKey: prevLibraryKey, isSynced: wasSynced }) {
+		const { dispatch, isFetchingCollections, isSynced, libraryKey, resetLibrary } = this.props;
 
 		if(!isFetchingCollections && wasFetchingCollections) {
 			// setTimeout required to ensure everything else in the UI had
 			// a chance to update before transition are enabled
 			setTimeout(() => dispatch(toggleTransitions(true)))
+		}
+
+		if(!isSynced && wasSynced) {
+			resetLibrary(libraryKey);
 		}
 
 		if(libraryKey !== prevLibraryKey && !isFetchingLibrarySettings) {
@@ -169,6 +173,7 @@ const mapStateToProps = state => {
 		useTransitions,
 		view,
 	} = state.current;
+	const { isSynced } = get(state, ['libraries', libraryKey, 'sync'], {});
 	const {
 		config,
 		current: { userLibraryKey },
@@ -183,15 +188,15 @@ const mapStateToProps = state => {
 
 	return { config, view, userLibraryKey, viewport, isSearchMode, isSelectMode,
 		itemsSource, collectionKey, isFetchingCollections, isFetchingLibrarySettings,
-		isNavBarOpen, isMyPublications, isTrash, useTransitions, libraryKey, noteKey,
-		search, searchState, tags, qmode,
+		isNavBarOpen, isMyPublications, isSynced, isTrash, useTransitions, libraryKey,
+		noteKey, search, searchState, tags, qmode,
 	};
 };
 
 
 //@TODO: bind all action creators
 const mapDispatchToProps = dispatch => ({
-	...bindActionCreators({ navigate, triggerSearchMode, toggleNavbar }, dispatch),
+	...bindActionCreators({ navigate, resetLibrary, triggerSearchMode, toggleNavbar }, dispatch),
 	dispatch,
 });
 

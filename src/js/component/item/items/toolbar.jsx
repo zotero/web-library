@@ -5,7 +5,6 @@ import PropTypes from 'prop-types';
 import { Toolbar } from '../../ui/toolbars';
 import ColumnSelector from './column-selector';
 import ItemsActionsContainer from '../../../container/items-actions';
-import SyncIndicatorContainer from '../../../container/sync-indicator';
 import withFocusManager from '../../../enhancers/with-focus-manager';
 import { pick } from '../../../common/immutable';
 
@@ -25,10 +24,6 @@ class ItemsTableToolbar extends React.PureComponent {
 						<ItemsActionsContainer { ...pick(this.props, ['onFocusNext', 'onFocusPrev']) } />
 					</div>
 					<div className="toolbar-right">
-						<SyncIndicatorContainer
-							tabIndex={ -2 }
-							{ ...pick(this.props, ['onFocusNext', 'onFocusPrev']) }
-						/>
 						<ColumnSelector
 							tabIndex={ -2 }
 							columns = { preferences.columns }
