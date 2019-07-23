@@ -108,7 +108,7 @@ class ItemsActions extends React.PureComponent {
 							tabIndex={ -2 }
 							disabled={ !['top', 'collection'].includes(itemsSource) }
 							{ ...pick(this.props, ['itemTypes', 'onFocusNext',
-								'onFocusPrev', 'onNewItemCreate']) }
+								'onFocusPrev', 'onNewItemCreate', 'onNewFileModalOpen']) }
 						/>
 						{
 							(itemsSource === 'collection' || itemsSource === 'top') && (
@@ -222,7 +222,7 @@ class ItemsActions extends React.PureComponent {
 	}
 
 	renderTouch() {
-		const { isSelectMode, preferences: { columns }, onNewItemModalOpen } = this.props;
+		const { isSelectMode, preferences: { columns }, onNewItemModalOpen, onNewFileModalOpen } = this.props;
 		const { isOpen } = this.state;
 		const { isNewItemAllowed, isExportAllowed } = this;
 		const sortColumn = columns.find(c => c.sort) || columns.find(c => c.field === 'title');
@@ -264,6 +264,9 @@ class ItemsActions extends React.PureComponent {
 							<DropdownItem onClick={ onNewItemModalOpen } >
 								New Item
 							</DropdownItem>
+							<DropdownItem onClick={ onNewFileModalOpen } >
+								Store Copy of File
+							</DropdownItem>
 							<DropdownItem onClick={ this.handleAddByIdentifierClick } >
 								Add By Identifier
 							</DropdownItem>
@@ -293,6 +296,7 @@ class ItemsActions extends React.PureComponent {
 		onExportModalOpen: PropTypes.func,
 		onFocusNext: PropTypes.func,
 		onFocusPrev: PropTypes.func,
+		onNewFileModalOpen: PropTypes.func,
 		onNewItemModalOpen: PropTypes.func,
 		onPermanentlyDelete: PropTypes.func,
 		onRemoveFromCollection: PropTypes.func,

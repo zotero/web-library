@@ -25,7 +25,7 @@ import { omit } from '../common/immutable';
 import { sequentialChunkedAcion } from '../common/actions';
 import exportFormats from '../constants/export-formats';
 import { ADD_BY_IDENTIFIER, BIBLIOGRAPHY, COLLECTION_SELECT, EXPORT,
-	NEW_ITEM } from '../constants/modals';
+	NEW_ITEM, NEW_FILE } from '../constants/modals';
 
 const { saveAs } = fileSaver;
 
@@ -113,6 +113,11 @@ const withItemsActions = Component => {
 			toggleModal(NEW_ITEM, true, { collectionKey });
 		}
 
+		handleNewFileModalOpen = () => {
+			const { toggleModal, collectionKey } = this.props;
+			toggleModal(NEW_FILE, true, { collectionKey });
+		}
+
 		handleAddByIdentifierModalOpen = () => {
 			const { toggleModal } = this.props;
 			toggleModal(ADD_BY_IDENTIFIER, true);
@@ -122,18 +127,19 @@ const withItemsActions = Component => {
 			return <Component
 				{ ...this.props }
 				onTrash = { this.handleTrash }
-				onItemsSelect = { this.handleItemsSelect }
-				onPermanentlyDelete = { this.handlePermanentlyDelete }
-				onUndelete = { this.handleUndelete }
-				onRemoveFromCollection = { this.handleRemoveFromCollection }
-				onDuplicate = { this.handleDuplicate }
-				onNewItemCreate = { this.handleNewItemCreate }
-				onExport = { this.handleExport }
+				onAddByIdentifierModalOpen= { this.handleAddByIdentifierModalOpen }
 				onAddToCollectionModalOpen = { this.handleAddToCollectionModalOpen }
 				onBibliographyModalOpen = { this.handleBibliographyModalOpen }
+				onDuplicate = { this.handleDuplicate }
+				onExport = { this.handleExport }
 				onExportModalOpen = { this.handleExportModalOpen }
+				onItemsSelect = { this.handleItemsSelect }
+				onNewFileModalOpen = { this.handleNewFileModalOpen }
+				onNewItemCreate = { this.handleNewItemCreate }
 				onNewItemModalOpen = { this.handleNewItemModalOpen }
-				onAddByIdentifierModalOpen= { this.handleAddByIdentifierModalOpen }
+				onPermanentlyDelete = { this.handlePermanentlyDelete }
+				onRemoveFromCollection = { this.handleRemoveFromCollection }
+				onUndelete = { this.handleUndelete }
 			/>;
 		}
 

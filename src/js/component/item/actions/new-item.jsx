@@ -59,6 +59,7 @@ class NewItemSelector extends React.PureComponent {
 	}
 
 	render() {
+		const { onNewFileModalOpen } = this.props;
 		const primaryItemTypesDesc = this.props.itemTypes.filter(
 			it => primaryItemTypes.includes(it.itemType)
 		);
@@ -100,6 +101,10 @@ class NewItemSelector extends React.PureComponent {
 			>
 			{ primaryItemTypesDesc.map(this.renderItemType.bind(this)) }
 			<DropdownItem divider />
+				<DropdownItem onClick={ onNewFileModalOpen } >
+					Store Copy of File
+				</DropdownItem>
+			<DropdownItem divider />
 			{ this.state.isSecondaryVisible ?
 				secondaryItemTypesDesc.map(this.renderItemType.bind(this)) :
 				<DropdownItem data-more onClick={ this.handleToggleMore.bind(this) }>
@@ -123,6 +128,7 @@ class NewItemSelector extends React.PureComponent {
 		itemTypes: PropTypes.array,
 		onFocusNext: PropTypes.func,
 		onFocusPrev: PropTypes.func,
+		onNewFileModalOpen: PropTypes.func,
 		onNewItemCreate: PropTypes.func,
 		tabIndex: PropTypes.number,
 	}

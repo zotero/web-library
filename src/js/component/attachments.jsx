@@ -7,6 +7,7 @@ import { Toolbar, ToolGroup } from './ui/toolbars';
 import Icon from './ui/icon';
 import Button from './ui/button';
 import withFocusManager from '../enhancers/with-focus-manager';
+import { getFileData } from '../common/event';
 
 
 class Attachments extends React.PureComponent {
@@ -27,17 +28,9 @@ class Attachments extends React.PureComponent {
 		});
 	}
 
-	handleFileSelect(ev) {
-		let fileName = ev.target.files[0].name;
-		let mtime = ev.target.files[0].lastModified;
-		let contentType = ev.target.files[0].type;
-		let reader = new FileReader();
-		reader.onload = ev => {
-			let file = ev.target.result;
-			let fileData = { file, fileName, mtime, contentType };
-			this.setState({ fileData });
-		};
-		reader.readAsArrayBuffer(ev.target.files[0]);
+	handleFileSelect = async ev => {
+		const fileData = await getFileData(ev);
+		this.setState({ fileData });
 	}
 
 	handleFileUpload() {
@@ -117,7 +110,7 @@ class Attachments extends React.PureComponent {
 						{
 							this.state.isAddingAttachment && (
 								<li>
-									<input onChange={ this.handleFileSelect.bind(this) } type="file" />
+									<input onChange={ this.handleFileSelect } type="file" />
 									<Button
 										disabled={ !this.state.fileData }
 										onClick={ this.handleFileUpload.bind(this) }
