@@ -1,6 +1,6 @@
 'use strict';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import cx from 'classnames';
 
@@ -13,11 +13,29 @@ import { getFilesData } from '../../common/event';
 import Dropzone from '../dropzone';
 var fileCounter = 0;
 
-const NewFileModal = ({ createItems, fetchItemTemplate, collection, isOpen,
+const NewFileModal = ({ createItems, fetchItemTemplate, files, collection, isOpen,
 	libraryKey, toggleModal, uploadAttachment }) => {
 	const inputId = getUniqueId();
 	const [isBusy, setBusy] = useState(false);
 	const [filesData, setFilesData] = useState([]);
+
+	useEffect(() => {
+		(async () => {
+			if(files) {
+				const newFilesData = await getFilesData(files);
+				setFilesData([
+					...filesData,
+					...newFilesData.map(fd => ({ ...fd, key: ++fileCounter}))
+				]);
+			}
+		})();
+	}, [files]);
+
+
+	const closeModal = () => {
+		toggleModal(null, false);
+		setFilesData([]);
+	}
 
 	const handleCreateFileClick = async () => {
 		setBusy(true);
@@ -73,7 +91,7 @@ const NewFileModal = ({ createItems, fetchItemTemplate, collection, isOpen,
 			className={ cx('modal-touch', 'modal-centered', {
 				loading: isBusy
 			}) }
-			onRequestClose={ () => toggleModal(null, false) }
+			onRequestClose={ closeModal }
 			closeTimeoutMS={ 200 }
 			overlayClassName={ "modal-slide" }
 		>
@@ -84,7 +102,7 @@ const NewFileModal = ({ createItems, fetchItemTemplate, collection, isOpen,
 							<Button
 								className="btn-link"
 								disabled={ isBusy }
-								onClick={ () => toggleModal(null, false) }
+								onClick={ closeModal }
 							>
 								Cancel
 							</Button>
@@ -145,6 +163,7 @@ NewFileModal.propTypes = {
 	collection: PropTypes.object,
 	createItems: PropTypes.func,
 	fetchItemTemplate: PropTypes.func,
+	files: PropTypes.array,
 	isOpen: PropTypes.bool,
 	libraryKey: PropTypes.string,
 	toggleModal: PropTypes.func,

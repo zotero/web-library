@@ -12,11 +12,11 @@ const NewFileModalContainer = props => <NewFileModal { ...props } />;
 
 const mapStateToProps = state => {
 	const isOpen = state.modal.id === NEW_FILE;
-	const { libraryKey } = state.current;
-	const { collectionKey } = state.modal;
+	const { collectionKey, libraryKey } = state.current;
+	const { files } = state.modal;
 	const collection = get(state, ['libraries', libraryKey, 'collections', collectionKey]);
 
-	return { collection, libraryKey, isOpen };
+	return { collection, files, libraryKey, isOpen };
 };
 
 

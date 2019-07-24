@@ -30,6 +30,7 @@ import SearchBackdrop from './search-backdrop';
 import withDevice from '../enhancers/with-device';
 import Icon from './ui/icon';
 import { pick } from '../common/immutable';
+import { NEW_FILE } from '../constants/modals'
 
 class Library extends React.PureComponent {
 	constructor(props) {
@@ -103,6 +104,12 @@ class Library extends React.PureComponent {
 	}
 
 	handleNavbarToggle = () => this.props.toggleNavbar(null);
+	handleDrop = ev => {
+		const files = Array.from(ev.dataTransfer.files);
+		if(files.length) {
+			this.props.toggleModal(NEW_FILE, true, { files });
+		}
+	}
 
 	render() {
 		const { libraryKey, noteKey, collectionKey = '', itemsSource, search, tags, qmode } = this.props;
@@ -122,7 +129,7 @@ class Library extends React.PureComponent {
 		const { hasUserTypeChanged, isSearchModeTransitioning, prevItemsSource } = this.state;
 
 		return (
-			<div className={ cx('library-container', {
+			<div onDrop={ this.handleDrop } className={ cx('library-container', {
 					[`view-${view}-active`]: true,
 					'view-note-active': noteKey,
 					'navbar-nav-opened': isNavBarOpen,
