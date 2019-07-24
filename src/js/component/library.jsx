@@ -186,7 +186,7 @@ class Library extends React.PureComponent {
 									/>
 									<ItemsContainer key={ key } { ...{isSearchModeTransitioning} } />
 									<ItemDetailsContainer active={ view === 'item-details' } />
-									<TouchNoteContainer />
+									{ device.isTouchOrSmall && <TouchNoteContainer /> }
 									<CSSTransition
 										in={ device.isSingleColumn && isSearchMode && itemsSource !== 'query' }
 										timeout={ 250 }
