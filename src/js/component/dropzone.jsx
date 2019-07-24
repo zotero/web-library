@@ -31,10 +31,14 @@ const Dropzone = ({ onFilesDrop }) => {
 			onDragLeave={ handleDragLeave }
 		>
 			<span>
-				{ filesOver > 0  ? `Store ${filesOver} files` : "Drag files here" }
+				{ filesOver > 0  ? `Add ${filesOver} files` : "Drag files here" }
 			</span>
 		</div>
 	);
+}
+
+Dropzone.propTypes = {
+	onFilesDrop: PropTypes.func.isRequired
 }
 
 export default Dropzone;
