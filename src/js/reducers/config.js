@@ -2,6 +2,7 @@
 
 import { CONFIGURE, SORT_ITEMS, RECEIVE_GROUPS } from '../constants/actions.js';
 import { sortByKey } from '../utils';
+import { pick } from '../common/immutable';
 
 const defaultState = {
 	apiKey: null,
@@ -49,13 +50,9 @@ const config = (state = defaultState, action) => {
 		case CONFIGURE:
 			return {
 				...state,
-				apiConfig: action.apiConfig || {},
-				apiKey: action.apiKey || '',
+				...pick(action, ['apiConfig', 'apiKey', 'menus', 'stylesSourceUrl',
+					'translateUrl', 'userId', 'userSlug', 'tinymceRoot']),
 				defaultLibraryKey: determineDefaultLibraryKey(action),
-				stylesSourceUrl: action.stylesSourceUrl || '',
-				translateUrl: action.translateUrl || '',
-				userSlug: action.userSlug || '',
-				userId: action.userId || 0,
 				includeMyLibrary: action.libraries.includeMyLibrary,
 				includeUserGroups: action.libraries.includeUserGroups,
 				libraries: [
@@ -75,7 +72,6 @@ const config = (state = defaultState, action) => {
 						...include,
 					}))
 				].filter(Boolean),
-				menus: action.menus || { desktop: [], mobile: [] },
 			};
 		case RECEIVE_GROUPS:
 			var libraries = [

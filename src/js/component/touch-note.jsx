@@ -2,7 +2,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import RichEditor from './rich-editor';
+import RichEditorContainer from '../container/rich-editor';
 import cx from 'classnames';
 
 const TouchNote = ({ note, isEditing, updateItem }) => {
@@ -19,7 +19,7 @@ const TouchNote = ({ note, isEditing, updateItem }) => {
 	return (
 		<section className={ className }>
 			{ note && (
-				<RichEditor
+				<RichEditorContainer
 					key={ note.key }
 					isReadOnly={ !isEditing }
 					value={ note.note }

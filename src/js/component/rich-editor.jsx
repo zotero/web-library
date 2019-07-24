@@ -46,7 +46,7 @@ class RichEditor extends React.PureComponent {
 
 	async componentDidMount() {
 		if(!window.tinymce) {
-			await loadJs('/static/other/tinymce/tinymce.min.js');
+			await loadJs(`${this.props.tinymceRoot}/tinymce.min.js`);
 			this.forceUpdate();
 		}
 	}
@@ -142,7 +142,7 @@ class RichEditor extends React.PureComponent {
 					value={ this.state.content }
 					init={{
 						height: '100%',
-						base_url: '/static/other/tinymce',
+						base_url: this.props.tinymceRoot,
 						plugins: 'link searchreplace',
 						branding: false,
 						toolbar: false,
@@ -502,9 +502,12 @@ class RichEditor extends React.PureComponent {
 RichEditor.propTypes = {
 	isReadOnly: PropTypes.bool,
 	onChange: PropTypes.func.isRequired,
+	tinymceRoot: PropTypes.string,
 	value: PropTypes.string,
 };
 
-RichEditor.defaultProps = {};
+RichEditor.defaultProps = {
+	tinymceRoot: '/'
+};
 
 export default RichEditor;

@@ -8,11 +8,15 @@ export const apiConfig = {
 };
 export const stylesSourceUrl = 'https://www.zotero.org/styles-files/styles.json';
 export const translateUrl = window.location.origin;
+export const tinymceRoot = '/static/other/tinymce/';
 export const libraries = {
 	includeMyLibrary: true,
 	includeUserGroups: true,
 	include: []
 };
+export const menus = { desktop: [], mobile: [] };
+export const userId = 0;
+export const userSlug = '';
 
 export const preferences = {
 	citationStyle: coreCitationStyles.find(cs => cs.isDefault).name,

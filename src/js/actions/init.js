@@ -1,7 +1,6 @@
 'use strict';
 
 import api from 'zotero-api-client';
-import { pick } from '../common/immutable';
 import { REQUEST_META, RECEIVE_META, ERROR_META, CONFIGURE } from '../constants/actions';
 
 const initialize = () => {
@@ -33,9 +32,7 @@ const initialize = () => {
 
 const configure = config => {
 	return {
-		...pick(config, ['apiConfig', 'apiKey', 'libraries', 'menus', 'stylesSourceUrl',
-			'translateUrl', 'userId', 'userSlug']
-		),
+		...config,
 		type: CONFIGURE,
 	};
 };

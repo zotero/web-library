@@ -19,12 +19,7 @@ import { configure, fetchGroups, fetchLibrarySettings, initialize,
 } from '../actions';
 import { routes, redirects } from '../routes';
 import Library from '../component/library';
-import {
-	libraries as defaultLibraries,
-	apiConfig as defaultApiConfig,
-	stylesSourceUrl as defaultStylesSourceUrl,
-	translateUrl as defaultTranslateUrl
-} from '../constants/defaults';
+import * as defaults from '../constants/defaults';
 import { ViewportContext, UserContext } from '../context';
 import { DragDropContext } from 'react-dnd';
 import MultiBackend from 'react-dnd-multi-backend';
@@ -102,10 +97,8 @@ class LibraryContainer extends React.PureComponent {
 	}
 
 	static init(element, config = {}) {
-		const libraries = { ...defaultLibraries, ...config.libraries };
-		const apiConfig = { ...defaultApiConfig, ...config.apiConfig };
-		const stylesSourceUrl = config.stylesSourceUrl || defaultStylesSourceUrl;
-		const translateUrl = config.translateUrl || defaultTranslateUrl;
+		const libraries = { ...defaults.libraries, ...config.libraries };
+		const apiConfig = { ...defaults.apiConfig, ...config.apiConfig };
 
 		if(element) {
 			var store = createStore(
@@ -120,7 +113,7 @@ class LibraryContainer extends React.PureComponent {
 			);
 
 			store.dispatch(
-				configure({ ...config, apiConfig, stylesSourceUrl, libraries, translateUrl })
+				configure({ ...defaults, ...config, apiConfig, libraries })
 			);
 
 			if(process.env.NODE_ENV === 'development') {

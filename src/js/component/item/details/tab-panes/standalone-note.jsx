@@ -2,7 +2,7 @@
 
 import React from 'react';
 import cx from 'classnames';
-import RichEditor from '../../../rich-editor';
+import RichEditorContainer from '../../../../container/rich-editor';
 
 class StandaloneNoteTabPane extends React.PureComponent {
 	handleChangeNote(note) {
@@ -17,7 +17,7 @@ class StandaloneNoteTabPane extends React.PureComponent {
 				'active': this.props.isActive
 			}) }>
 				<div className="editor">
-				<RichEditor
+				<RichEditorContainer
 					value={ this.props.item.note }
 					onChange={ this.handleChangeNote.bind(this) }
 				/>

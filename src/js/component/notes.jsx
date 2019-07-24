@@ -7,7 +7,7 @@ import Button from './ui/button';
 import Icon from './ui/icon';
 import Modal from './ui/modal';
 import Note from './note';
-import RichEditor from './rich-editor';
+import RichEditorContainer from '../container/rich-editor';
 import withEditMode from '../enhancers/with-edit-mode';
 import { pick } from '../common/immutable';
 import { Toolbar, ToolGroup } from './ui/toolbars';
@@ -98,7 +98,7 @@ class Notes extends React.PureComponent {
 				</div>
 
 				{ !device.isTouchOrSmall && selectedNote && (
-					<RichEditor
+					<RichEditorContainer
 						key={ selectedNote.key }
 						isReadOnly={ isReadOnly }
 						value={ selectedNote.note }
