@@ -1,12 +1,6 @@
 /* eslint-disable react/no-deprecated */
 'use strict';
 
-
-//TinyMCE import, do not reorder
-import tinymce from 'tinymce';
-import 'tinymce/plugins/link';
-import 'tinymce/plugins/searchreplace';
-import 'tinymce/themes/silver';
 import { Editor } from '@tinymce/tinymce-react';
 
 import cx from 'classnames';
@@ -18,8 +12,8 @@ import Button from './ui/button';
 import Icon from './ui/icon';
 import { Toolbar, ToolGroup } from './ui/toolbars';
 import ColorPicker from './ui/color-picker';
-
-window.tinymce = tinymce;
+import Spinner from './ui/spinner';
+import { loadJs } from '../utils';
 
 const formatBlocks = [
 	{ value: 'p', Tag: 'p', label: 'Paragraph' },
@@ -48,6 +42,13 @@ class RichEditor extends React.PureComponent {
 
 	handleEditorInit = (ev, editor) => {
 		this.editor = editor;
+	}
+
+	async componentDidMount() {
+		if(!window.tinymce) {
+			await loadJs('/static/other/tinymce/tinymce.min.js');
+			this.forceUpdate();
+		}
 	}
 
 	handleEditorChange = newContent => {
@@ -147,6 +148,8 @@ class RichEditor extends React.PureComponent {
 						toolbar: false,
 						menubar: false,
 						statusbar: false,
+						theme: 'silver',
+						mobile: { theme: 'silver' }
 					}}
 					onClick={ this.refreshEditor }
 					onEditorChange={ this.handleEditorChange }
@@ -159,6 +162,9 @@ class RichEditor extends React.PureComponent {
 
 	render() {
 		const { isReadOnly } = this.props;
+		if(!window.tinymce) {
+			return <Spinner />;
+		}
 		return (
 			<div className="rich-editor">
 				{ !isReadOnly && (

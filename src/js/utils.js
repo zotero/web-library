@@ -273,6 +273,16 @@ const isLikeURL = identifier => {
 	return !!identifier.match(urlRE);
 }
 
+const loadJs = async path => {
+	return new Promise((resolve, reject) => {
+		const script = document.createElement('script');
+		script.onload = resolve;
+		script.onerror = reject;
+		script.src = path;
+		document.head.appendChild(script);
+	});
+}
+
 export {
 	compare,
 	compareItem,
@@ -288,6 +298,7 @@ export {
 	indexByKey,
 	isLikeURL,
 	JSONTryParse,
+	loadJs,
 	mapRelationsToItemKeys,
 	noop,
 	removeRelationByItemKey,
