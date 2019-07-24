@@ -129,7 +129,7 @@ class RichEditor extends React.PureComponent {
 
 	queryFormatBlock() {
 		const formatBlock = this.editor && this.editor.editorCommands.queryCommandValue('formatblock') || 'p';
-		return formatBlocks.find(fb => fb.value === formatBlock).label;
+		return (formatBlocks.find(fb => fb.value === formatBlock) || {}).label;
 	}
 
 	refreshEditor = () => this.forceUpdate();
@@ -351,12 +351,67 @@ class RichEditor extends React.PureComponent {
 									</Button>
 								</ToolGroup>
 								<ToolGroup>
-									<DropdownToggle
-										color={ null }
-										className="btn-icon dropdown-toggle"
+									<Dropdown
+										isOpen={ this.state.dropdowns['overflow-1'] }
+										toggle={ this.handleDropdownToggle}
+										data-dropdown="overflow-1"
+										className="dropdown-wrapper"
 									>
+										<DropdownToggle
+											color={ null }
+											className="btn-icon dropdown-toggle"
+										>
 										<Icon type="24/options" width="24" height="24" />
-									</DropdownToggle>
+										</DropdownToggle>
+										<DropdownMenu>
+											<DropdownItem
+												tag={ Button }
+												icon
+												title="Subscript"
+												data-command="subscript"
+												onClick={ this.handleButtonClick }
+											>
+												<Icon type="24/editor/sub" className="touch" width="24" height="24" />
+											</DropdownItem>
+											<DropdownItem
+												tag={ Button }
+												icon
+												title="Superscript"
+												data-command="superscript"
+												onClick={ this.handleButtonClick }
+											>
+												<Icon type="24/editor/sup" className="touch" width="24" height="24" />
+											</DropdownItem>
+											<DropdownItem divider />
+											<DropdownItem
+												tag={ Button }
+												icon
+												title="Clear formatting"
+												data-command="removeformat"
+												onClick={ this.handleButtonClick }
+											>
+												<Icon type="24/editor/remove-format" className="touch" width="24" height="24" />
+											</DropdownItem>
+											<DropdownItem
+												tag={ Button }
+												icon
+												title="Blockquote"
+												data-command="mceblockquote"
+												onClick={ this.handleButtonClick }
+											>
+												<Icon type="24/editor/blockquote" className="touch" width="24" height="24" />
+											</DropdownItem>
+											<DropdownItem
+												tag={ Button }
+												icon
+												title="Insert/edit link"
+												data-command="mceLink"
+												onClick={ this.handleButtonClick }
+											>
+												<Icon type="24/editor/link" className="touch" width="24" height="24" />
+											</DropdownItem>
+										</DropdownMenu>
+									</Dropdown>
 								</ToolGroup>
 							</div>
 						</Toolbar>
@@ -480,12 +535,58 @@ class RichEditor extends React.PureComponent {
 									</Button>
 								</ToolGroup>
 								<ToolGroup>
-									<DropdownToggle
-										color={ null }
-										className="btn-icon dropdown-toggle"
+									<Dropdown
+										isOpen={ this.state.dropdowns['overflow-2'] }
+										toggle={ this.handleDropdownToggle}
+										data-dropdown="overflow-2"
+										className="dropdown-wrapper"
 									>
+										<DropdownToggle
+											color={ null }
+											className="btn-icon dropdown-toggle"
+										>
 										<Icon type="24/options" width="24" height="24" />
-									</DropdownToggle>
+										</DropdownToggle>
+										<DropdownMenu>
+											<DropdownItem
+												tag={ Button }
+												icon
+												title="Bullet list"
+												data-command="insertunorderedlist"
+												onClick={ this.handleButtonClick }
+											>
+												<Icon type="24/editor/bullet-list" className="touch" width="24" height="24" />
+											</DropdownItem>
+											<DropdownItem
+												tag={ Button }
+												icon
+												title="Numbered list"
+												data-command="insertorderedlist"
+												onClick={ this.handleButtonClick }
+											>
+												<Icon type="24/editor/numbered-list" className="touch" width="24" height="24" />
+											</DropdownItem>
+											<DropdownItem divider />
+											<DropdownItem
+												tag={ Button }
+												icon
+												title="Decrease indent"
+												data-command="outdent"
+												onClick={ this.handleButtonClick }
+											>
+												<Icon type="24/editor/outdent" className="touch" width="24" height="24" />
+											</DropdownItem>
+											<DropdownItem
+												tag={ Button }
+												icon
+												title="Increase indent"
+												data-command="indent"
+												onClick={ this.handleButtonClick }
+											>
+												<Icon type="24/editor/indent" className="touch" width="24" height="24" />
+											</DropdownItem>
+										</DropdownMenu>
+									</Dropdown>
 								</ToolGroup>
 							</div>
 						</Toolbar>
