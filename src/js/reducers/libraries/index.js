@@ -88,6 +88,7 @@ const actions = [
 	'SORT_ITEMS',
 	'TRIGGER_EDITING_ITEM',
 	'RESET_LIBRARY',
+	'RECEIVE_UPLOAD_ATTACHMENT',
 ];
 
 const libraries = (state = {}, action) => {

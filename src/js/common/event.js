@@ -5,11 +5,12 @@ const isTriggerEvent = ev => ev.type === 'click' ||
 	(ev.type === 'keydown' && (ev.key === 'Enter' || ev.key === ' '));
 
 
-const getFileData = ev => {
+
+const getFilesData = fileObjs => Promise.all(fileObjs.map(getFileData));
+
+const getFileData = fileObj => {
 	return new Promise((resolve, reject) => {
-		let fileName = ev.target.files[0].name;
-		let mtime = ev.target.files[0].lastModified;
-		let contentType = ev.target.files[0].type;
+		const { name: fileName, lastModified: mtime, type: contentType } = fileObj;
 		let reader = new FileReader();
 		reader.onerror = ev => {
 			reject(ev);
@@ -19,11 +20,12 @@ const getFileData = ev => {
 			let fileData = { file, fileName, mtime, contentType };
 			resolve(fileData);
 		};
-		reader.readAsArrayBuffer(ev.target.files[0]);
+		reader.readAsArrayBuffer(fileObj);
 	});
 }
 
 export {
 	isTriggerEvent,
-	getFileData
+	getFileData,
+	getFilesData
 };

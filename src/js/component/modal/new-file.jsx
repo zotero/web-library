@@ -7,33 +7,63 @@ import cx from 'classnames';
 import Modal from '../ui/modal';
 import Button from '../ui/button';
 import Spinner from '../ui/spinner';
+import Icon from '../ui/icon';
 import { getUniqueId } from '../../utils';
-import { getFileData } from '../../common/event';
+import { getFilesData } from '../../common/event';
+import Dropzone from '../dropzone';
+var fileCounter = 0;
 
-const NewFileModal = ({ createItem, fetchItemTemplate, collection, isOpen,
+const NewFileModal = ({ createItems, fetchItemTemplate, collection, isOpen,
 	libraryKey, toggleModal, uploadAttachment }) => {
 	const inputId = getUniqueId();
 	const [isBusy, setBusy] = useState(false);
-	const [fileData, setFileData] = useState({});
+	const [filesData, setFilesData] = useState([]);
 
 	const handleCreateFileClick = async () => {
 		setBusy(true);
 		const attachmentTemplate = await fetchItemTemplate('attachment', { linkMode: 'imported_file' });
-		const attachment = {
+		const attachmentItems = filesData.map(fd => ({
 			...attachmentTemplate,
 			collections: collection ? [collection.key] : [],
-			filename: fileData.fileName,
-			contentType: fileData.contentType
-		};
-		const item = await createItem(attachment, libraryKey);
-		await uploadAttachment(item.key, fileData);
-		setBusy(false);
+			title: fd.fileName,
+			filename: fd.fileName,
+			contentType: fd.contentType
+		}));
+
+		const createdItems = await createItems(attachmentItems, libraryKey);
+		const uploadPromises = createdItems.map(async (item, index) => {
+			const fd = filesData[index];
+			await uploadAttachment(item.key, fd);
+		});
+
+		await Promise.all(uploadPromises);
+
 		toggleModal(null, false)
+		setBusy(false);
+		setFilesData([]);
 	}
 
 	const handleFileSelected = async ev => {
-		const fileData = await getFileData(ev);
-		setFileData(fileData);
+		const input = ev.currentTarget;
+		const newFilesData = await getFilesData(Array.from(ev.currentTarget.files));
+		input.value = null;
+		setFilesData([
+			...filesData,
+			...newFilesData.map(fd => ({ ...fd, key: ++fileCounter}))
+		]);
+	}
+
+	const handleFilesDrop = async files => {
+		const newFilesData = await getFilesData(files);
+		setFilesData([
+			...filesData,
+			...newFilesData.map(fd => ({ ...fd, key: ++fileCounter}))
+		]);
+	}
+
+	const handleRemoveFileClick = ev => {
+		const key = parseInt(ev.currentTarget.dataset.key, 10);
+		setFilesData(filesData.filter(f => f.key !== key));
 	}
 
 	return (
@@ -81,11 +111,26 @@ const NewFileModal = ({ createItem, fetchItemTemplate, collection, isOpen,
 					<div className="modal-body">
 						{ isBusy ? <Spinner /> : (
 							<div className="form">
+								<ul>
+									{ filesData.map(fd => (
+										<li key={ fd.key }>
+											{ fd.fileName }
+											<Button
+												icon
+												data-key={ fd.key }
+												onClick={ handleRemoveFileClick }
+											>
+												<Icon type={ '16/trash' } width="16" height="16" />
+											</Button>
+										</li>
+									)) }
+								</ul>
+								<Dropzone onFilesDrop={ handleFilesDrop } />
 								<div className="form-group">
 									<label htmlFor={ inputId }>
-										Select file
+										Or Select file
 									</label>
-									<input onChange={ handleFileSelected } type="file" />
+									<input onChange={ handleFileSelected } type="file" multiple="multiple" />
 								</div>
 							</div>
 						)}
@@ -98,7 +143,7 @@ const NewFileModal = ({ createItem, fetchItemTemplate, collection, isOpen,
 
 NewFileModal.propTypes = {
 	collection: PropTypes.object,
-	createItem: PropTypes.func,
+	createItems: PropTypes.func,
 	fetchItemTemplate: PropTypes.func,
 	isOpen: PropTypes.bool,
 	libraryKey: PropTypes.string,

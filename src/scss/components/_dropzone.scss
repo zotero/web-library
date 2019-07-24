@@ -1,0 +1,16 @@
+.dropzone {
+	min-height: 200px;
+	width: 100%;
+	margin: 1em auto;
+	border: 3px dashed blue;
+	background: lightgray;
+	color: white;
+	font-weight: bold;
+	display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &.filesOver {
+		background: lightblue;
+    }
+}

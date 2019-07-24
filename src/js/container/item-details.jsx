@@ -151,6 +151,7 @@ class ItemDetailsContainer extends React.PureComponent {
 			...attachmentTemplate,
 			parentItem: this.props.item.key,
 			filename: fileData.fileName,
+			title: fileData.fileName,
 			contentType: fileData.contentType
 		};
 		let item = await this.props.dispatch(createItem(attachment, this.props.libraryKey));

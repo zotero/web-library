@@ -161,6 +161,7 @@ const createItem = (properties, libraryKey) => {
 				[Symbol.for('meta')]: response.getMeta()[0] || {}
 			};
 
+
 			dispatch({
 				type: RECEIVE_CREATE_ITEM,
 				libraryKey,
@@ -769,6 +770,7 @@ export {
 	addToCollection,
 	copyToLibrary,
 	createItem,
+	createItems,
 	deleteItem,
 	deleteItems,
 	moveToTrash,

@@ -1,6 +1,7 @@
 'use strict';
 
 import { sortItemsByKey, compareItem } from '../utils';
+import { omit } from '../common/immutable';
 
 const replaceDuplicates = entries => {
 	const seen = [];
@@ -40,9 +41,20 @@ const injectExtraItemKeys = (state, newKeys, items) => {
 	newKeys.forEach(newKey => {
 		let injected = false;
 		for(let i = 0; i < injectIterationEnd; i++) {
+
+			if(process.env.NODE_ENV === 'development') {
+				if(!items[keys[i]]) {
+					console.warn(`Key ${keys[i]} encountered but no item by that key exists in registry. This is probably a race condition.`);
+				}
+
+				if(!items[newKey]) {
+					console.warn(`Key ${keys[i]} encountered but no item by that key exists in registry. This is probably a race condition.`);
+				}
+			}
+
 			var comparisionResult = compareItem(
-				items[keys[i]], items[newKey], sortBy
-			)
+				items[keys[i]] || {}, items[newKey] || {}, sortBy
+			);
 
 			if(sortDirection === 'desc') {
 				comparisionResult = comparisionResult * -1;
@@ -68,6 +80,9 @@ const injectExtraItemKeys = (state, newKeys, items) => {
 const filterItemKeys = (state, removedKeys) => {
 	if(!Array.isArray(removedKeys)) { removedKeys = [removedKeys]; }
 	const keys = [...(state.keys || [])];
+	var isCompleteSet = 'totalResults' in state &&
+		'keys' in state &&
+		state.totalResults === state.keys.length;
 
 	for(let i = keys.length - 1; i >= 0 ; i--) {
 		if(removedKeys.includes(keys[i])) {
@@ -75,10 +90,17 @@ const filterItemKeys = (state, removedKeys) => {
 		}
 	}
 
-	return {
-		...state,
-		keys,
-		totalResults: keys.length
+	if(isCompleteSet) {
+		return {
+			...state,
+			keys,
+			totalResults: keys.length
+		}
+	} else {
+		return {
+			...omit(state, 'totalResults'),
+			keys
+		}
 	}
 }
 
