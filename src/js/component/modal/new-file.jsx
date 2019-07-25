@@ -14,7 +14,7 @@ import Dropzone from '../dropzone';
 var fileCounter = 0;
 
 const NewFileModal = ({ createItems, fetchItemTemplate, files, collection, isOpen,
-	libraryKey, toggleModal, uploadAttachment }) => {
+	libraryKey, toggleModal, uploadAttachment, navigate }) => {
 	const inputId = getUniqueId();
 	const [isBusy, setBusy] = useState(false);
 	const [filesData, setFilesData] = useState([]);
@@ -59,6 +59,11 @@ const NewFileModal = ({ createItems, fetchItemTemplate, files, collection, isOpe
 		toggleModal(null, false)
 		setBusy(false);
 		setFilesData([]);
+		navigate({
+			library: libraryKey,
+			collection: collection ? collection.key : null,
+			items: createdItems.map(c => c.key)
+		}, true);
 	}
 
 	const handleFileSelected = async ev => {
@@ -166,6 +171,7 @@ NewFileModal.propTypes = {
 	files: PropTypes.array,
 	isOpen: PropTypes.bool,
 	libraryKey: PropTypes.string,
+	navigate: PropTypes.func,
 	toggleModal: PropTypes.func,
 	uploadAttachment: PropTypes.func,
 }
