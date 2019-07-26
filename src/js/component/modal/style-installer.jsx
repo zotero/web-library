@@ -2,6 +2,8 @@
 
 import React from 'react';
 import cx from 'classnames';
+import { CSSTransition } from 'react-transition-group';
+
 import PropTypes from 'prop-types';
 import Modal from '../ui/modal';
 import Button from '../ui/button';
@@ -234,68 +236,75 @@ class StyleInstallerModal extends React.PureComponent {
 				className={ className }
 				onRequestClose={ this.handleClose }
 				closeTimeoutMS={ 200 }
-				overlayClassName={ "modal-slide" }
 			>
-				{ isReady ? (
-				<div className="modal-content" tabIndex={ -1 }>
-					<div className="modal-header">
-						{
-							device.isTouchOrSmall ? (
-								<React.Fragment>
-									<div className="modal-header-left" />
-									<div className="modal-header-center">
+				<CSSTransition
+					in={ isReady }
+					timeout={ 200 }
+					classNames="slide"
+					mountOnEnter
+					unmountOnExit
+					exit={ false }
+				>
+					<div className="modal-content" tabIndex={ -1 }>
+						<div className="modal-header">
+							{
+								device.isTouchOrSmall ? (
+									<React.Fragment>
+										<div className="modal-header-left" />
+										<div className="modal-header-center">
+											<h4 className="modal-title truncate">
+												Citation Styles
+											</h4>
+										</div>
+										<div className="modal-header-right">
+											<Button
+												className="btn-link"
+												onClick={ this.handleClose }
+											>
+												Close
+											</Button>
+										</div>
+									</React.Fragment>
+								) : (
+									<React.Fragment>
 										<h4 className="modal-title truncate">
 											Citation Styles
 										</h4>
-									</div>
-									<div className="modal-header-right">
 										<Button
-											className="btn-link"
+											icon
+											className="close"
 											onClick={ this.handleClose }
 										>
-											Close
+											<Icon type={ '16/close' } width="16" height="16" />
 										</Button>
-									</div>
-								</React.Fragment>
-							) : (
-								<React.Fragment>
-									<h4 className="modal-title truncate">
-										Citation Styles
-									</h4>
-									<Button
-										icon
-										className="close"
-										onClick={ this.handleClose }
-									>
-										<Icon type={ '16/close' } width="16" height="16" />
-									</Button>
-								</React.Fragment>
-							)
-						}
-					</div>
-					<div className="modal-body" tabIndex={ 0 }>
-						<div className="style-search">
-							<Input
-								autoFocus
-								className="form-control form-control-lg search-input"
-								isBusy={ isSearching }
-								onChange={ this.handleFilterChange }
-								placeholder="Search"
-								tabIndex={ 0 }
-								type="text"
-								value={ filterInput }
-							/>
-						</div>
-						<ul className="style-list">
-							{
-								filterInput.length > 0 ?
-								matchedCitationStyles.map(this.renderStyleItem) :
-									this.localCitationStyles.map(this.renderStyleItem)
+									</React.Fragment>
+								)
 							}
-						</ul>
+						</div>
+						<div className="modal-body" tabIndex={ 0 }>
+							<div className="style-search">
+								<Input
+									autoFocus
+									className="form-control form-control-lg search-input"
+									isBusy={ isSearching }
+									onChange={ this.handleFilterChange }
+									placeholder="Search"
+									tabIndex={ 0 }
+									type="text"
+									value={ filterInput }
+								/>
+							</div>
+							<ul className="style-list">
+								{
+									filterInput.length > 0 ?
+									matchedCitationStyles.map(this.renderStyleItem) :
+										this.localCitationStyles.map(this.renderStyleItem)
+								}
+							</ul>
+						</div>
 					</div>
-				</div>
-				) : <Spinner className="large" /> }
+				</CSSTransition>
+				{ !isReady && <Spinner className="large" /> }
 			</Modal>
 		);
 	}
