@@ -95,4 +95,10 @@
 			margin: $space-min 0;
 		}
 	}
+
+	.icon {
+		@include touch-or-bp-down(sm) {
+			margin-right: $space-xs;
+		}
+	}
 }

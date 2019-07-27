@@ -363,52 +363,53 @@ class RichEditor extends React.PureComponent {
 										>
 										<Icon type="24/options" width="24" height="24" />
 										</DropdownToggle>
-										<DropdownMenu>
+										<DropdownMenu right>
 											<DropdownItem
 												tag={ Button }
-												icon
 												title="Subscript"
 												data-command="subscript"
 												onClick={ this.handleButtonClick }
 											>
 												<Icon type="24/editor/sub" className="touch" width="24" height="24" />
+												Subscript
 											</DropdownItem>
 											<DropdownItem
 												tag={ Button }
-												icon
 												title="Superscript"
 												data-command="superscript"
 												onClick={ this.handleButtonClick }
 											>
 												<Icon type="24/editor/sup" className="touch" width="24" height="24" />
+												Superscript
 											</DropdownItem>
 											<DropdownItem divider />
 											<DropdownItem
 												tag={ Button }
-												icon
 												title="Clear formatting"
 												data-command="removeformat"
 												onClick={ this.handleButtonClick }
 											>
 												<Icon type="24/editor/remove-format" className="touch" width="24" height="24" />
+												Clear Formatting
 											</DropdownItem>
+											<DropdownItem divider />
 											<DropdownItem
 												tag={ Button }
-												icon
 												title="Blockquote"
 												data-command="mceblockquote"
 												onClick={ this.handleButtonClick }
 											>
 												<Icon type="24/editor/blockquote" className="touch" width="24" height="24" />
+												Blockquote
 											</DropdownItem>
 											<DropdownItem
 												tag={ Button }
-												icon
 												title="Insert/edit link"
 												data-command="mceLink"
 												onClick={ this.handleButtonClick }
 											>
 												<Icon type="24/editor/link" className="touch" width="24" height="24" />
+												Insert&#8202;/&#8202;Edit Link
 											</DropdownItem>
 										</DropdownMenu>
 									</Dropdown>
@@ -547,43 +548,43 @@ class RichEditor extends React.PureComponent {
 										>
 										<Icon type="24/options" width="24" height="24" />
 										</DropdownToggle>
-										<DropdownMenu>
+										<DropdownMenu right>
 											<DropdownItem
 												tag={ Button }
-												icon
 												title="Bullet list"
 												data-command="insertunorderedlist"
 												onClick={ this.handleButtonClick }
 											>
 												<Icon type="24/editor/bullet-list" className="touch" width="24" height="24" />
+												Bullet List
 											</DropdownItem>
 											<DropdownItem
 												tag={ Button }
-												icon
 												title="Numbered list"
 												data-command="insertorderedlist"
 												onClick={ this.handleButtonClick }
 											>
 												<Icon type="24/editor/numbered-list" className="touch" width="24" height="24" />
+												Numbered List
 											</DropdownItem>
 											<DropdownItem divider />
 											<DropdownItem
 												tag={ Button }
-												icon
 												title="Decrease indent"
 												data-command="outdent"
 												onClick={ this.handleButtonClick }
 											>
 												<Icon type="24/editor/outdent" className="touch" width="24" height="24" />
+												Decrease Indent
 											</DropdownItem>
 											<DropdownItem
 												tag={ Button }
-												icon
 												title="Increase indent"
 												data-command="indent"
 												onClick={ this.handleButtonClick }
 											>
 												<Icon type="24/editor/indent" className="touch" width="24" height="24" />
+												Increase Indent
 											</DropdownItem>
 										</DropdownMenu>
 									</Dropdown>
