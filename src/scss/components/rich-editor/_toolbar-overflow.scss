@@ -8,6 +8,16 @@
 		&:first-child {
 			.tool-group {
 				&:nth-child(2) {
+					@include touch-and-bp-up(sm) {
+						display: none;
+					}
+
+					html.touch & {
+						@media (min-width: 874px) {
+							display: block;
+						}
+					}
+
 					@include touch-and-bp-up(lg) {
 						display: none;
 					}
@@ -32,6 +42,16 @@
 				}
 
 				&:nth-child(5) {
+					@include touch-and-bp-up(sm) {
+						display: none;
+					}
+
+					html.touch & {
+						@media (min-width: 830px) {
+							display: block;
+						}
+					}
+
 					@include touch-and-bp-up(lg) {
 						display: none;
 					}
@@ -53,6 +73,10 @@
 					}
 
 					html.touch & {
+						@media (min-width: 874px) {
+							display: none;
+						}
+
 						@media (min-width: 1678px) {
 							display: none;
 						}
@@ -60,6 +84,10 @@
 
 					.remove-format,
 					.dropdown-divider:first-of-type {
+						@include bp-only-normalized(sm) {
+							display: none;
+						}
+
 						@media (min-width: 1270px) {
 							display: none;
 						}
@@ -68,6 +96,10 @@
 					.blockquote,
 					.link,
 					.dropdown-divider:last-of-type {
+						@media (min-width: 830px) {
+							display: none;
+						}
+
 						@media (min-width: 1544px) {
 							display: none;
 						}
@@ -79,6 +111,16 @@
 		&:nth-child(2) {
 			.tool-group {
 				&:nth-child(3) {
+					@include touch-and-bp-up(sm) {
+						display: none;
+					}
+
+					html.touch & {
+						@media (min-width: 815px) {
+							display: block;
+						}
+					}
+
 					@include touch-and-bp-up(lg) {
 						display: none;
 					}
@@ -100,6 +142,10 @@
 					}
 
 					html.touch & {
+						@media (min-width: 815px) {
+							display: none;
+						}
+
 						@media (min-width: 1500px) {
 							display: none;
 						}
