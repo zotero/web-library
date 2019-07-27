@@ -13,7 +13,7 @@
 					}
 
 					html.touch & {
-						@media (min-width: 874px) {
+						@media (min-width: $bp-sub-sup-sm) {
 							display: block;
 						}
 					}
@@ -23,7 +23,7 @@
 					}
 
 					html.touch & {
-						@media (min-width: 1678px) {
+						@media (min-width: $bp-sub-sup-lg) {
 							display: block;
 						}
 					}
@@ -35,7 +35,7 @@
 					}
 
 					html.touch & {
-						@media (min-width: 1270px) {
+						@media (min-width: $bp-remove-format-lg) {
 							display: block;
 						}
 					}
@@ -47,7 +47,7 @@
 					}
 
 					html.touch & {
-						@media (min-width: 830px) {
+						@media (min-width: $bp-blockquote-link-sm) {
 							display: block;
 						}
 					}
@@ -57,7 +57,7 @@
 					}
 
 					html.touch & {
-						@media (min-width: 1544px) {
+						@media (min-width: $bp-blockquote-link-lg) {
 							display: block;
 						}
 					}
@@ -73,11 +73,17 @@
 					}
 
 					html.touch & {
-						@media (min-width: 874px) {
+						@media (min-width: $bp-sub-sup-sm) {
 							display: none;
 						}
+					}
 
-						@media (min-width: 1678px) {
+					@include touch-and-bp-up(lg) {
+						display: block;
+					}
+
+					html.touch & {
+						@media (min-width: $bp-sub-sup-lg) {
 							display: none;
 						}
 					}
@@ -88,7 +94,7 @@
 							display: none;
 						}
 
-						@media (min-width: 1270px) {
+						@media (min-width: $bp-remove-format-lg) {
 							display: none;
 						}
 					}
@@ -96,11 +102,15 @@
 					.blockquote,
 					.link,
 					.dropdown-divider:last-of-type {
-						@media (min-width: 830px) {
+						@media (min-width: $bp-blockquote-link-sm) {
 							display: none;
 						}
 
-						@media (min-width: 1544px) {
+						@include touch-and-bp-up(lg) {
+							display: block;
+						}
+
+						@media (min-width: $bp-blockquote-link-lg) {
 							display: none;
 						}
 					}
@@ -116,7 +126,7 @@
 					}
 
 					html.touch & {
-						@media (min-width: 815px) {
+						@media (min-width: $bp-lists-sm) {
 							display: block;
 						}
 					}
@@ -126,7 +136,7 @@
 					}
 
 					html.touch & {
-						@media (min-width: 1500px) {
+						@media (min-width: $bp-lists-lg) {
 							display: block;
 						}
 					}
@@ -142,11 +152,17 @@
 					}
 
 					html.touch & {
-						@media (min-width: 815px) {
+						@media (min-width: $bp-lists-sm) {
 							display: none;
 						}
+					}
 
-						@media (min-width: 1500px) {
+					@include touch-and-bp-up(lg) {
+						display: block;
+					}
+
+					html.touch & {
+						@media (min-width: $bp-lists-lg) {
 							display: none;
 						}
 					}
