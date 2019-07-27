@@ -82,6 +82,12 @@
 		&:focus {
 			outline: none;
 		}
+
+		.icon {
+			@include touch-or-bp-down(sm) {
+				margin-right: $space-xs;
+			}
+		}
 	}
 
 	.dropdown-divider {
@@ -93,12 +99,6 @@
 
 		@include mouse-and-bp-up(md) {
 			margin: $space-min 0;
-		}
-	}
-
-	.icon {
-		@include touch-or-bp-down(sm) {
-			margin-right: $space-xs;
 		}
 	}
 }

@@ -57,6 +57,21 @@
 							display: none;
 						}
 					}
+
+					.remove-format,
+					.dropdown-divider:first-of-type {
+						@media (min-width: 1270px) {
+							display: none;
+						}
+					}
+
+					.blockquote,
+					.link,
+					.dropdown-divider:last-of-type {
+						@media (min-width: 1544px) {
+							display: none;
+						}
+					}
 				}
 			}
 		}

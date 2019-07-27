@@ -385,6 +385,7 @@ class RichEditor extends React.PureComponent {
 											<DropdownItem divider />
 											<DropdownItem
 												tag={ Button }
+												className="remove-format"
 												title="Clear formatting"
 												data-command="removeformat"
 												onClick={ this.handleButtonClick }
@@ -395,6 +396,7 @@ class RichEditor extends React.PureComponent {
 											<DropdownItem divider />
 											<DropdownItem
 												tag={ Button }
+												className="blockquote"
 												title="Blockquote"
 												data-command="mceblockquote"
 												onClick={ this.handleButtonClick }
@@ -404,6 +406,7 @@ class RichEditor extends React.PureComponent {
 											</DropdownItem>
 											<DropdownItem
 												tag={ Button }
+												className="link"
 												title="Insert/edit link"
 												data-command="mceLink"
 												onClick={ this.handleButtonClick }
@@ -551,6 +554,7 @@ class RichEditor extends React.PureComponent {
 										<DropdownMenu right>
 											<DropdownItem
 												tag={ Button }
+												className="bullet-list"
 												title="Bullet list"
 												data-command="insertunorderedlist"
 												onClick={ this.handleButtonClick }
@@ -560,6 +564,7 @@ class RichEditor extends React.PureComponent {
 											</DropdownItem>
 											<DropdownItem
 												tag={ Button }
+												className="numbered-list"
 												title="Numbered list"
 												data-command="insertorderedlist"
 												onClick={ this.handleButtonClick }
@@ -567,9 +572,9 @@ class RichEditor extends React.PureComponent {
 												<Icon type="24/editor/numbered-list" className="touch" width="24" height="24" />
 												Numbered List
 											</DropdownItem>
-											<DropdownItem divider />
 											<DropdownItem
 												tag={ Button }
+												className="outdent"
 												title="Decrease indent"
 												data-command="outdent"
 												onClick={ this.handleButtonClick }
@@ -579,6 +584,7 @@ class RichEditor extends React.PureComponent {
 											</DropdownItem>
 											<DropdownItem
 												tag={ Button }
+												className="indent"
 												title="Increase indent"
 												data-command="indent"
 												onClick={ this.handleButtonClick }
