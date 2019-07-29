@@ -45,7 +45,8 @@
     "watch:stylelint": "nodemon -q -w src/scss --ext 'scss' --exec 'npm run stylelint'",
     "watch:eslint": "nodemon -q -w src/js --ext 'js,jsx' --exec 'npm run eslint'",
     "watch:lint": "run-p 'watch:stylelint -s' 'watch:eslint -s'",
-    "test": "nyc mocha 'test/**/*.spec.+(js|jsx)'"
+    "test": "nyc mocha 'test/**/*.spec.+(js|jsx)'",
+    "add-license": "node scripts/add-license.js"
   },
   "keywords": [
     "Zotero"
@@ -129,6 +130,7 @@
     "eslint": "^6.0.1",
     "eslint-plugin-react": "^7.14.2",
     "fetch-mock": "^7.3.7",
+    "glob": "^7.1.4",
     "http-proxy": "^1.17.0",
     "mapstraction": "^1.0.1",
     "merge-stream": "^2.0.0",
