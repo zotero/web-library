@@ -1,3 +1,4 @@
+<!-- This file is part of Zotero. It is distributed under the GNU Affero General Public License version 3. -->
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 	<symbol id="dictionary-entry" viewBox="0 0 16 16">
 		<polygon points="10.707 0 2 0 2 16 15 16 15 4.293 10.707 0 10.707 0" fill="#fff" opacity="0.5"/>

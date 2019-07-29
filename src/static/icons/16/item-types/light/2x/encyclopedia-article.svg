@@ -1,3 +1,4 @@
+<!-- This file is part of Zotero. It is distributed under the GNU Affero General Public License version 3. -->
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 	<symbol id="encyclopedia-article" viewBox="0 0 16 16">
 		<path d="M15,1V14a19,19,0,0,0-6.707,1.077c-.1.047-.2.1-.293.145-.091-.049-.189-.1-.293-.145A19,19,0,0,0,1,14V1c3.456.053,5.89.657,6.719,1.219L8,2.414l.281-.191C9.11,1.661,11.544,1.057,15,1" fill="#fff"/>

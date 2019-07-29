@@ -1,3 +1,4 @@
+<!-- This file is part of Zotero. It is distributed under the GNU Affero General Public License version 3. -->
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 	<symbol id="tag" viewBox="0 0 28 28">
 		<path fill="currentColor" d="M10.961,1,26.586,16.625l-9.961,9.961L1,10.961V1h9.961m0-1H1A1,1,0,0,0,0,1v9.961a1,1,0,0,0,.293.707L15.918,27.293a1,1,0,0,0,1.414,0l9.961-9.961a1,1,0,0,0,0-1.414L11.668.293A1,1,0,0,0,10.961,0ZM7,4.813A2.188,2.188,0,1,1,4.813,7,2.188,2.188,0,0,1,7,4.813m0-1A3.188,3.188,0,1,0,10.188,7,3.191,3.191,0,0,0,7,3.813Z"/>

@@ -1,3 +1,4 @@
+<!-- This file is part of Zotero. It is distributed under the GNU Affero General Public License version 3. -->
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 	<symbol id="book-section" viewBox="0 0 16 16">
 		<path d="M7.938,1.872l-.219-.149C6.789,1.092,4.3.607,1.516.517L1,.5v13l.485.015a19.589,19.589,0,0,1,5.839.914L8,14.684V2.179Z" fill="#b3c7f5"/>

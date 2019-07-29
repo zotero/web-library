@@ -1,3 +1,4 @@
+<!-- This file is part of Zotero. It is distributed under the GNU Affero General Public License version 3. -->
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 	<symbol id="bullet-list" viewBox="0 0 24 24">
 		<path fill="currentColor" d="M23,5H8V4H23ZM20,8H8V9H20Zm3,8H8v1H23Zm-3,4H8v1H20ZM3,4A2,2,0,1,0,5,6,2,2,0,0,0,3,4ZM3,16a2,2,0,1,0,2,2A2,2,0,0,0,3,16Z"/>
