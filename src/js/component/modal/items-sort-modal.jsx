@@ -9,16 +9,30 @@ import columnNames from '../../constants/column-names';
 
 class ItemsSortModal extends React.PureComponent {
 	state = { sortColumn: null }
-	componentDidUpdate({ isOpen: wasOpen }) {
-		const { isOpen, preferences: { columns } } = this.props;
-		const sortColumn = columns.find(c => c.sort) || columns.find(c => c.field === 'title');
 
-		if(!wasOpen && isOpen) {
-			this.setState({ sortColumn: sortColumn.field });
+	componentDidUpdate(_prevProps, { sortColumn: prevSortColumn }) {
+		const { device } = this.props;
+		const { sortColumn } = this.state;
+		if(sortColumn !== prevSortColumn && !device.isKeyboardUser) {
+			this.changeSortColumn();
 		}
 	}
 
-	handleConfirmSortChange = () => {
+	static getDerivedStateFromProps({ preferences: { columns } }, { sortColumn }) {
+		if(sortColumn) {
+			return null;
+		}
+
+		return {
+			sortColumn: (columns.find(c => c.sort) || columns.find(c => c.field === 'title') || {}).field
+		}
+	}
+
+	handleSortChange = newSortColumn => {
+		this.setState({ sortColumn: newSortColumn });
+	}
+
+	changeSortColumn = () => {
 		const { onSort, toggleModal } = this.props;
 		const { preferences: { columns } } = this.props;
 		const sortColumn = columns.find(c => c.sort);
@@ -27,10 +41,6 @@ class ItemsSortModal extends React.PureComponent {
 			sortDirection: 'ASC'
 		});
 		toggleModal(null, false);
-	}
-
-	handleSortChange = newSortColumn => {
-		this.setState({ sortColumn: newSortColumn });
 	}
 
 	render() {
@@ -65,7 +75,7 @@ class ItemsSortModal extends React.PureComponent {
 						<div className="modal-header-right">
 							<Button
 								className="btn-link"
-								onClick={ this.handleConfirmSortChange }
+								onClick={ this.changeSortColumn }
 							>
 								Confirm
 							</Button>
@@ -86,6 +96,7 @@ class ItemsSortModal extends React.PureComponent {
 	}
 
 	static propTypes = {
+		device: PropTypes.object,
 		isOpen: PropTypes.bool,
 		onSort: PropTypes.func.isRequired,
 		preferences: PropTypes.object,
