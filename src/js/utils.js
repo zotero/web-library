@@ -2,6 +2,7 @@
 
 import baseMappings from 'zotero-base-mappings';
 import columnSortKeyLookup from './constants/column-sort-key-lookup';
+import { noteAsTitle } from './common/format';
 
 const splice = (array, at, count = 0, ...items) => {
 	if (at == null) {
