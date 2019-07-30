@@ -4,6 +4,7 @@ import React from 'react';
 import Attachments from '../../../attachments';
 import cx from 'classnames';
 import Spinner from '../../../ui/spinner';
+import { pick } from '../../../../common/immutable';
 const PAGE_SIZE = 100;
 
 class AttachmentsTabPane extends React.PureComponent {
@@ -23,8 +24,8 @@ class AttachmentsTabPane extends React.PureComponent {
 	}
 
 	render() {
-		const { isActive, isReadOnly, childItems, attachmentViewUrls, onAddAttachment,
-			onDeleteAttachment, isLoadingChildItems } = this.props;
+		const { isActive, isReadOnly, childItems, onAddAttachment,
+			onDeleteAttachment, isLoadingChildItems, uploads } = this.props;
 
 		return (
 			<div className={ cx({
@@ -38,11 +39,8 @@ class AttachmentsTabPane extends React.PureComponent {
 					<React.Fragment>
 						<h5 className="h2 tab-pane-heading">Attachments</h5>
 						<Attachments
-							isReadOnly={ isReadOnly }
 							attachments={ childItems.filter(i => i.itemType === 'attachment') }
-							attachmentViewUrls={ attachmentViewUrls }
-							onAddAttachment={ onAddAttachment }
-							onDeleteAttachment={ onDeleteAttachment }
+							{ ...pick(this.props, ['isReadOnly', 'onAddAttachment', 'onDeleteAttachment', 'uploads']) }
 						/>
 					</React.Fragment>
 					)

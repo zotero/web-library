@@ -264,6 +264,7 @@ const mapStateToProps = state => {
 	const isProcessingTags = get(state,
 		['libraries', libraryKey, 'updating', 'items', itemKey], []
 	).some(({ patch }) => 'tags' in patch);
+	const uploads = get(state, ['libraries', libraryKey, 'updating', 'uploads'], []);
 	const isMetaAvailable = itemType in state.meta.itemTypeCreatorTypes &&
 		itemType in state.meta.itemTypeFields;
 	const shouldFetchMeta = !isMetaAvailable
@@ -333,14 +334,15 @@ const mapStateToProps = state => {
 		item,
 		itemsCount,
 		libraryKey,
-		noteKey,
 		makePath: makePath.bind(null, state.config),
+		noteKey,
 		pendingChanges,
 		relatedItems,
 		relatedItemsKeys,
 		selectedItemKeys: itemKeys, //@TODO: rename
 		shouldFetchMeta,
 		totalChildItems,
+		uploads,
 		...extraProps
 	};
 };

@@ -7,6 +7,7 @@ import { Toolbar, ToolGroup } from './ui/toolbars';
 import Icon from './ui/icon';
 import Button from './ui/button';
 import withFocusManager from '../enhancers/with-focus-manager';
+import Spinner from './ui/spinner';
 import { getFileData } from '../common/event';
 
 
@@ -56,7 +57,7 @@ class Attachments extends React.PureComponent {
 
 	render() {
 		const { attachments, isReadOnly, onFocusNext, onFocusPrev, onFocus,
-			onBlur, registerFocusRoot } = this.props;
+			onBlur, registerFocusRoot, uploads } = this.props;
 		return (
 			<div
 				className="details-list attachments"
@@ -70,6 +71,7 @@ class Attachments extends React.PureComponent {
 					<ul className="nav list">
 						{
 							attachments.map(attachment => {
+								const isStillUploading = uploads.includes(attachment.key);
 								return (
 									<li
 										className={ cx('item', {'selected': this.state.selected == attachment.key }) }
@@ -77,7 +79,7 @@ class Attachments extends React.PureComponent {
 									>
 										<Icon type={ '16/item-types/attachment' } width="16" height="16" />
 										{
-											attachment[Symbol.for('attachmentUrl')] ? (
+											!isStillUploading && attachment[Symbol.for('attachmentUrl')] ? (
 												<a
 													href={ attachment[Symbol.for('attachmentUrl')] }
 													onKeyDown={ this.handleKeyDown }
@@ -91,6 +93,7 @@ class Attachments extends React.PureComponent {
 													tabIndex={ -2 }
 												>
 													{ attachment.title || attachment.filename }
+													{ isStillUploading && <Spinner className="small" /> }
 												</span>
 											)
 										}
@@ -150,7 +153,6 @@ Attachments.propTypes = {
 
 Attachments.defaultProps = {
 	attachments: [],
-	attachmentViewUrls: {}
 };
 
 export default withFocusManager(Attachments);

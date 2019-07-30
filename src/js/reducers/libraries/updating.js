@@ -1,19 +1,23 @@
 'use strict';
 
 import {
-    PRE_UPDATE_ITEM,
-    REQUEST_UPDATE_ITEM,
-    RECEIVE_UPDATE_ITEM,
+	ERROR_UPLOAD_ATTACHMENT,
+	RECEIVE_UPLOAD_ATTACHMENT,
+    ERROR_UPDATE_COLLECTION,
     ERROR_UPDATE_ITEM,
     PRE_UPDATE_COLLECTION,
-    REQUEST_UPDATE_COLLECTION,
+    PRE_UPDATE_ITEM,
     RECEIVE_UPDATE_COLLECTION,
-    ERROR_UPDATE_COLLECTION,
+    RECEIVE_UPDATE_ITEM,
+    REQUEST_UPDATE_COLLECTION,
+    REQUEST_UPDATE_ITEM,
+    REQUEST_UPLOAD_ATTACHMENT,
 } from '../../constants/actions';
 
 const stateDefault = {
 	collections: {},
 	items: {},
+	uploads: []
 };
 
 const updating = (state = stateDefault, action) => {
@@ -103,6 +107,17 @@ const updating = (state = stateDefault, action) => {
 				delete newState.collections[action.collectionKey];
 			}
 			return newState;
+		case REQUEST_UPLOAD_ATTACHMENT:
+			return {
+				...state,
+				uploads: [...state.uploads, action.itemKey]
+			};
+		case RECEIVE_UPLOAD_ATTACHMENT:
+		case ERROR_UPLOAD_ATTACHMENT:
+			return {
+				...state,
+				uploads: state.uploads.filter(k => k !== action.itemKey)
+			};
 		default:
 			return state;
 	}
