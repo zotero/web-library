@@ -29,7 +29,7 @@ class Attachments extends React.PureComponent {
 	}
 
 	handleFileSelect = async ev => {
-		const fileData = await getFileData(ev);
+		const fileData = await getFileData(ev.currentTarget.files[0]);
 		this.setState({ fileData });
 	}
 
