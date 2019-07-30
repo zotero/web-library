@@ -263,7 +263,7 @@ const mapStateToProps = state => {
 	const totalChildItems = get(state, ['libraries', libraryKey, 'itemsByParent', itemKey, 'totalResults']);
 	const isProcessingTags = get(state,
 		['libraries', libraryKey, 'updating', 'items', itemKey], []
-	).some(({ patch }) => 'tagd' in patch);
+	).some(({ patch }) => 'tags' in patch);
 	const isMetaAvailable = itemType in state.meta.itemTypeCreatorTypes &&
 		itemType in state.meta.itemTypeFields;
 	const shouldFetchMeta = !isMetaAvailable
