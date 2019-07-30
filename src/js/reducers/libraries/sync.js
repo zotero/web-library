@@ -13,8 +13,8 @@ const sync = (state = defaultState, action) => {
 		newState.requestsPending++;
 	} else if(action.type && action.type.startsWith('RECEIVE_')) {
 		newState.requestsPending--;
-		if(action.response && action.response.response) {
-			newState.version = parseInt(action.response.response.headers.get('Last-Modified-Version'), 10);
+		if(action.response && action.response.response && action.response.response.headers.has('Last-Modified-Version')) {
+			newState.version =  parseInt(action.response.response.headers.get('Last-Modified-Version'), 10);
 		}
 	} else if(action.type && action.type.startsWith('ERROR_')) {
 		newState.requestsPending--;
