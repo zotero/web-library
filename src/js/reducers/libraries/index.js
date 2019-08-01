@@ -87,7 +87,6 @@ const actions = [
 	'ERROR_TAGS_IN_TOP_ITEMS',
 	'SORT_ITEMS',
 	'TRIGGER_EDITING_ITEM',
-	'RESET_LIBRARY',
 	'REQUEST_UPLOAD_ATTACHMENT',
 	'RECEIVE_UPLOAD_ATTACHMENT',
 ];
@@ -95,7 +94,7 @@ const actions = [
 const libraries = (state = {}, action) => {
 	if(action.type === 'RESET_LIBRARY') {
 		return omit(state, action.libraryKey);
-	} else if(actions.includes(action.type)) {
+	} else if(action.libraryKey) {
 		return {
 			...state,
 			[action.libraryKey]: {

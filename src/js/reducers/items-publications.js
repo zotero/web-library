@@ -4,15 +4,21 @@ import { indexByKey } from '../utils';
 import { filterItemKeys, injectExtraItemKeys, populateItemKeys, sortItemKeysOrClear } from '../common/reducers';
 
 import {
-    RECEIVE_RECOVER_ITEMS_TRASH,
-    RECEIVE_PUBLICATIONS_ITEMS,
+	REQUEST_PUBLICATIONS_ITEMS,
     RECEIVE_DELETE_ITEMS,
     RECEIVE_MOVE_ITEMS_TRASH,
+    RECEIVE_PUBLICATIONS_ITEMS,
+    RECEIVE_RECOVER_ITEMS_TRASH,
     SORT_ITEMS,
 } from '../constants/actions.js';
 
 const itemsPublications = (state = {}, action) => {
 	switch(action.type) {
+		case REQUEST_PUBLICATIONS_ITEMS:
+			return {
+				...state,
+				isFetching: true
+			}
 		case RECEIVE_PUBLICATIONS_ITEMS:
 			return populateItemKeys(
 				state,
