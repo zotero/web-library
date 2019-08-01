@@ -70,7 +70,7 @@ class LibraryContainer extends React.PureComponent {
 			setTimeout(() => dispatch(toggleTransitions(true)))
 		}
 
-		if(!isSynced && wasSynced) {
+		if(!isSynced && wasSynced && libraryKey === prevLibraryKey) {
 			resetLibrary(libraryKey);
 		}
 
