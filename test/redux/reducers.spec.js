@@ -1,51 +1,30 @@
 'use strict';
 
-const assert = require('chai').assert;
-const { configureApi } = require('../../src/js/actions');
-const reducers = require('../../src/js/reducers');
-const {
-	ERROR_COLLECTIONS_IN_LIBRARY,
-	PRE_UPDATE_COLLECTION,
-	PRE_UPDATE_ITEM,
-	RECEIVE_ADD_ITEMS_TO_COLLECTION,
-	RECEIVE_CHILD_ITEMS,
-	RECEIVE_COLLECTIONS_IN_LIBRARY,
-	RECEIVE_CREATE_COLLECTION,
-	RECEIVE_CREATE_ITEM,
-	RECEIVE_DELETE_ITEMS,
-	RECEIVE_ITEM_TYPE_CREATOR_TYPES,
-	RECEIVE_ITEM_TYPE_FIELDS,
-	RECEIVE_ITEMS_IN_COLLECTION,
-	RECEIVE_META,
-	RECEIVE_MOVE_ITEMS_TRASH,
-	RECEIVE_RECOVER_ITEMS_TRASH,
-	RECEIVE_UPDATE_COLLECTION,
-	RECEIVE_UPDATE_ITEM,
-	REQUEST_CHILD_ITEMS,
-	REQUEST_COLLECTIONS_IN_LIBRARY,
-	REQUEST_ITEM_TYPE_CREATOR_TYPES,
-	REQUEST_ITEM_TYPE_FIELDS,
-	REQUEST_ITEMS_IN_COLLECTION,
-	REQUEST_META,
-	REQUEST_UPDATE_COLLECTION,
-	REQUEST_UPDATE_ITEM,
-	RECEIVE_DELETE_COLLECTION,
-	RECEIVE_LIBRARY_SETTINGS,
-	RECEIVE_TAGS_IN_COLLECTION,
-	RECEIVE_TAGS_IN_LIBRARY,
-	RECEIVE_TAGS_FOR_ITEM,
-	RECEIVE_ITEMS_BY_QUERY,
-	RECEIVE_GROUPS,
-	RECEIVE_CREATE_ITEMS,
-	QUERY_CHANGE,
+import { assert } from 'chai';
+import { configure } from '../../src/js/actions';
+import createReducers from '../../src/js/reducers';
+import {
+	ERROR_COLLECTIONS_IN_LIBRARY, PRE_UPDATE_COLLECTION, PRE_UPDATE_ITEM,
+	RECEIVE_ADD_ITEMS_TO_COLLECTION, RECEIVE_CHILD_ITEMS,
+	RECEIVE_COLLECTIONS_IN_LIBRARY, RECEIVE_CREATE_COLLECTIONS,
+	RECEIVE_CREATE_ITEM, RECEIVE_DELETE_ITEMS,
+	RECEIVE_ITEM_TYPE_CREATOR_TYPES, RECEIVE_ITEM_TYPE_FIELDS,
+	RECEIVE_ITEMS_IN_COLLECTION, RECEIVE_META, RECEIVE_MOVE_ITEMS_TRASH,
+	RECEIVE_RECOVER_ITEMS_TRASH, RECEIVE_UPDATE_COLLECTION,
+	RECEIVE_UPDATE_ITEM, REQUEST_CHILD_ITEMS, REQUEST_COLLECTIONS_IN_LIBRARY,
+	REQUEST_ITEM_TYPE_CREATOR_TYPES, REQUEST_ITEM_TYPE_FIELDS,
+	REQUEST_ITEMS_IN_COLLECTION, REQUEST_META, REQUEST_UPDATE_COLLECTION,
+	REQUEST_UPDATE_ITEM, RECEIVE_DELETE_COLLECTION, RECEIVE_LIBRARY_SETTINGS,
+	RECEIVE_TAGS_IN_COLLECTION, RECEIVE_TAGS_IN_LIBRARY,
+	RECEIVE_TAGS_FOR_ITEM, RECEIVE_GROUPS, RECEIVE_CREATE_ITEMS,
 	RECEIVE_REMOVE_ITEMS_FROM_COLLECTION
-} = require('../../src/js/constants/actions.js');
-const stateFixture = require('../fixtures/state.json');
-const settingsFixture = require('../fixtures/settings.json');
-const tagsResponseFixture = require('../fixtures/tags-response');
-const { combineReducers } = require('redux');
-const reduce = combineReducers(reducers);
+} from '../../src/js/constants/actions';
+import stateFixture from '../fixtures/state.json';
+import settingsFixture from '../fixtures/settings.json';
+import tagsResponseFixture from '../fixtures/tags-response';
 
+
+const reduce = createReducers({});
 const getTestState = () => JSON.parse(JSON.stringify(stateFixture));
 const mockResponse = {
 	getData: () => [],
@@ -69,8 +48,10 @@ const itemsData = [
 
 describe('reducers', () => {
 	it('config', () => {
-		const action = configureApi('u123', 'API_KEY', {
-			apiAuthorityPart: 'apidev.zotero.org'
+		const action = configure({
+			userId: 123,
+			apiKey: 'API_KEY',
+			apiConfig: { apiAuthorityPart: 'apidev.zotero.org' }
 		});
 		const state = reduce({}, action);
 		assert.equal(state.config.apiKey, 'API_KEY');
@@ -884,7 +865,7 @@ describe('reducers', () => {
 			state.libraries[libraryKey].itemsByCollection
 		)[0];
 		state = reduce(state, {
-			type: RECEIVE_CREATE_COLLECTION,
+			type: RECEIVE_CREATE_COLLECTIONS,
 			collection: {
 				key: 'COLCOL11',
 				version: 1337,
@@ -1121,107 +1102,107 @@ describe('reducers', () => {
 		);
 	});
 
-	it('fetching items by query', () => {
-		var state = getTestState();
-		const libraryKey = state.current.library;
+	// it('fetching items by query', () => {
+	// 	var state = getTestState();
+	// 	const libraryKey = state.current.library;
 
-		const mockResponseWithHeader = {
-			...mockResponse,
-			response: new Response('', { headers: { 'Total-Results': 4 } })
-		};
+	// 	const mockResponseWithHeader = {
+	// 		...mockResponse,
+	// 		response: new Response('', { headers: { 'Total-Results': 4 } })
+	// 	};
 
-		const otherMockResponseWithHeader = {
-			...mockResponse,
-			response: new Response('', { headers: { 'Total-Results': 2 } })
-		};
-		const moreItemsData = [
-			{
-				key: 'ITEM3333',
-				version: 1,
-				tags: [],
-				title: 'item 3'
-			},
-			{
-				key: 'ITEM4444',
-				version: 1,
-				tags: [],
-				title: 'item 4'
-			}
-		];
+	// 	const otherMockResponseWithHeader = {
+	// 		...mockResponse,
+	// 		response: new Response('', { headers: { 'Total-Results': 2 } })
+	// 	};
+	// 	const moreItemsData = [
+	// 		{
+	// 			key: 'ITEM3333',
+	// 			version: 1,
+	// 			tags: [],
+	// 			title: 'item 3'
+	// 		},
+	// 		{
+	// 			key: 'ITEM4444',
+	// 			version: 1,
+	// 			tags: [],
+	// 			title: 'item 4'
+	// 		}
+	// 	];
 
-		const otherItemsData = [
-			{
-				key: 'ITEM5555',
-				version: 1,
-				tags: [],
-				title: 'item 5'
-			},
-			{
-				key: 'ITEM6666',
-				version: 1,
-				tags: [],
-				title: 'item 6'
-			}
-		];
+	// 	const otherItemsData = [
+	// 		{
+	// 			key: 'ITEM5555',
+	// 			version: 1,
+	// 			tags: [],
+	// 			title: 'item 5'
+	// 		},
+	// 		{
+	// 			key: 'ITEM6666',
+	// 			version: 1,
+	// 			tags: [],
+	// 			title: 'item 6'
+	// 		}
+	// 	];
 
-		state = reduce(state, {
-			type: QUERY_CHANGE,
-			oldQuery: null,
-			newQuery: { tag: ['tag1', 'tag2'] },
-		});
+	// 	state = reduce(state, {
+	// 		type: QUERY_CHANGE,
+	// 		oldQuery: null,
+	// 		newQuery: { tag: ['tag1', 'tag2'] },
+	// 	});
 
-		state = reduce(state, {
-			type: RECEIVE_ITEMS_BY_QUERY,
-			libraryKey: libraryKey,
-			query: { tag: ['tag1', 'tag2'] },
-			isQueryChanged: true,
-			items: itemsData,
-			response: mockResponseWithHeader
-		});
+	// 	state = reduce(state, {
+	// 		type: RECEIVE_ITEMS_BY_QUERY,
+	// 		libraryKey: libraryKey,
+	// 		query: { tag: ['tag1', 'tag2'] },
+	// 		isQueryChanged: true,
+	// 		items: itemsData,
+	// 		response: mockResponseWithHeader
+	// 	});
 
-		assert.deepEqual(state.query, { tag: ['tag1', 'tag2'] });
-		assert.deepEqual(state.queryItems, ['ITEM1111', 'ITEM2222']);
-		assert.deepEqual(state.queryItemCount, 4);
-		assert.deepEqual(state.libraries[libraryKey].items['ITEM1111'], itemsData[0]);
-		assert.deepEqual(state.libraries[libraryKey].items['ITEM2222'], itemsData[1]);
+	// 	assert.deepEqual(state.query, { tag: ['tag1', 'tag2'] });
+	// 	assert.deepEqual(state.queryItems, ['ITEM1111', 'ITEM2222']);
+	// 	assert.deepEqual(state.queryItemCount, 4);
+	// 	assert.deepEqual(state.libraries[libraryKey].items['ITEM1111'], itemsData[0]);
+	// 	assert.deepEqual(state.libraries[libraryKey].items['ITEM2222'], itemsData[1]);
 
-		state = reduce(state, {
-			type: RECEIVE_ITEMS_BY_QUERY,
-			libraryKey: libraryKey,
-			query: { tag: ['tag1', 'tag2'] },
-			isQueryChanged: false,
-			items: moreItemsData,
-			response: mockResponseWithHeader
-		});
+	// 	state = reduce(state, {
+	// 		type: RECEIVE_ITEMS_BY_QUERY,
+	// 		libraryKey: libraryKey,
+	// 		query: { tag: ['tag1', 'tag2'] },
+	// 		isQueryChanged: false,
+	// 		items: moreItemsData,
+	// 		response: mockResponseWithHeader
+	// 	});
 
-		assert.deepEqual(state.query, { tag: ['tag1', 'tag2'] });
-		assert.deepEqual(state.queryItems, ['ITEM1111', 'ITEM2222', 'ITEM3333', 'ITEM4444']);
-		assert.deepEqual(state.queryItemCount, 4);
-		assert.deepEqual(state.libraries[libraryKey].items['ITEM3333'], moreItemsData[0]);
-		assert.deepEqual(state.libraries[libraryKey].items['ITEM4444'], moreItemsData[1]);
+	// 	assert.deepEqual(state.query, { tag: ['tag1', 'tag2'] });
+	// 	assert.deepEqual(state.queryItems, ['ITEM1111', 'ITEM2222', 'ITEM3333', 'ITEM4444']);
+	// 	assert.deepEqual(state.queryItemCount, 4);
+	// 	assert.deepEqual(state.libraries[libraryKey].items['ITEM3333'], moreItemsData[0]);
+	// 	assert.deepEqual(state.libraries[libraryKey].items['ITEM4444'], moreItemsData[1]);
 
-		state = reduce(state, {
-			type: QUERY_CHANGE,
-			oldQuery: { tag: ['tag1', 'tag2'] },
-			newQuery: { tag: ['tag3'] },
-		});
+	// 	state = reduce(state, {
+	// 		type: QUERY_CHANGE,
+	// 		oldQuery: { tag: ['tag1', 'tag2'] },
+	// 		newQuery: { tag: ['tag3'] },
+	// 	});
 
-		state = reduce(state, {
-			type: RECEIVE_ITEMS_BY_QUERY,
-			libraryKey: libraryKey,
-			query: { tag: ['tag3'] },
-			isQueryChanged: true,
-			items: otherItemsData,
-			response: otherMockResponseWithHeader
-		});
+	// 	state = reduce(state, {
+	// 		type: RECEIVE_ITEMS_BY_QUERY,
+	// 		libraryKey: libraryKey,
+	// 		query: { tag: ['tag3'] },
+	// 		isQueryChanged: true,
+	// 		items: otherItemsData,
+	// 		response: otherMockResponseWithHeader
+	// 	});
 
-		assert.deepEqual(state.query, { tag: ['tag3'] });
-		assert.deepEqual(state.queryItems, ['ITEM5555', 'ITEM6666']);
-		assert.deepEqual(state.queryItemCount, 2);
-		assert.deepEqual(state.libraries[libraryKey].items['ITEM5555'], otherItemsData[0]);
-		assert.deepEqual(state.libraries[libraryKey].items['ITEM6666'], otherItemsData[1]);
+	// 	assert.deepEqual(state.query, { tag: ['tag3'] });
+	// 	assert.deepEqual(state.queryItems, ['ITEM5555', 'ITEM6666']);
+	// 	assert.deepEqual(state.queryItemCount, 2);
+	// 	assert.deepEqual(state.libraries[libraryKey].items['ITEM5555'], otherItemsData[0]);
+	// 	assert.deepEqual(state.libraries[libraryKey].items['ITEM6666'], otherItemsData[1]);
 
-	});
+	// });
 
 	it('groups', () => {
 		const groupsData = [
