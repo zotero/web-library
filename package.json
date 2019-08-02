@@ -8,6 +8,7 @@
     "src/scss",
     "build"
   ],
+  "type": "module",
   "config": {
     "port": "8001",
     "styles_cache_time": "86400000",
@@ -129,6 +130,7 @@
     "enzyme-adapter-react-16": "^1.14.0",
     "eslint": "^6.0.1",
     "eslint-plugin-react": "^7.14.2",
+    "esm": "^3.2.25",
     "fetch-mock": "^7.3.7",
     "glob": "^7.1.4",
     "http-proxy": "^1.17.0",

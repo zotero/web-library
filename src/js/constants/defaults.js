@@ -7,7 +7,7 @@ export const apiConfig = {
 	retry: 2,
 };
 export const stylesSourceUrl = 'https://www.zotero.org/styles-files/styles.json';
-export const translateUrl = window.location.origin;
+export const translateUrl = 'location' in window ? window.location.origin : '';
 export const tinymceRoot = '/static/other/tinymce/';
 export const libraries = {
 	includeMyLibrary: true,

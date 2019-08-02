@@ -8,7 +8,7 @@ const ReduxAsyncQueue = require('redux-async-queue').default;
 const fetchMock = require('fetch-mock');
 const { URL } = require('url');
 
-const {
+import {
 	addToCollection,
 	createCollection,
 	createItem,
@@ -34,7 +34,7 @@ const {
 	removeFromCollection,
 	updateCollection,
 	updateItem,
-} = require('../../src/js/actions.js');
+} from '../../src/js/actions';
 const {
 	REQUEST_META,
 	RECEIVE_META,
