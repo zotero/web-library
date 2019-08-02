@@ -27,7 +27,10 @@ class LibrariesContainer extends React.PureComponent {
 	componentDidUpdate({ libraryKey: prevLibraryKey }) {
 		const { collectionCountByLibrary, collections, libraryKey, dispatch,
 			librariesWithCollectionsFetching } = this.props;
-		if(libraryKey !== prevLibraryKey) {
+
+		const isKnown = libraryKey in collectionCountByLibrary;
+
+		if(libraryKey !== prevLibraryKey && !isKnown) {
 			dispatch(fetchCollections(libraryKey, { start: 0, limit: PAGE_SIZE }));
 		}
 
