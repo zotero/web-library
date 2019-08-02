@@ -31,10 +31,10 @@ const determineDefaultLibraryKey = action => {
 	if(action.userId) {
 		return `u${action.userId}`;
 	}
-	if(action.libraries.include.length) {
-		return action.libraries.include[0].key
+	if('libraries' in action && action.libraries.include.length) {
+		return action.libraries.include[0].key;
 	}
-	throw "Invalid configuration";
+	throw new Error("Invalid configuration");
 }
 
 const slugify = name => {
@@ -48,6 +48,7 @@ const slugify = name => {
 const config = (state = defaultState, action) => {
 	switch(action.type) {
 		case CONFIGURE:
+			action.libraries = action.libraries || {};
 			return {
 				...state,
 				...pick(action, ['apiConfig', 'apiKey', 'menus', 'stylesSourceUrl',
@@ -64,7 +65,7 @@ const config = (state = defaultState, action) => {
 						name: 'My Library',
 						slug: action.userSlug
 					},
-					...action.libraries.include.map(include => ({
+					...(action.libraries.include || []).map(include => ({
 						isReadOnly: true,
 						slug: slugify(include.name),
 						isGroupLibrary: include.key[0] === 'g',
