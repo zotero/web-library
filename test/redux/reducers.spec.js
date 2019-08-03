@@ -45,6 +45,12 @@ const itemsData = [
 		title: 'item 2'
 	}
 ];
+const commonQueryConfig = {
+	start: 0,
+	totalResults: 1,
+	sort: 'title',
+	direction: 'asc',
+}
 
 describe('reducers', () => {
 	it('config', () => {
@@ -171,24 +177,25 @@ describe('reducers', () => {
 		var state = {};
 
 		state = reduce(state, {
+			...commonQueryConfig,
 			type: REQUEST_ITEMS_IN_COLLECTION,
 			libraryKey: 'u123',
 			collectionKey: 'CLECTION',
 		});
 
-		assert.sameMembers(state.libraries.u123.fetching.itemsInCollection, ['CLECTION']);
+		assert.isTrue(state.libraries.u123.itemsByCollection['CLECTION'].isFetching);
 		assert.isEmpty(state.libraries.u123.items);
 
 		state = reduce(state, {
+			...commonQueryConfig,
 			type: RECEIVE_ITEMS_IN_COLLECTION,
 			collectionKey: 'CLECTION',
 			libraryKey: 'u123',
 			items: itemsData,
-			receivedAt: 1499438101816,
 			response: mockResponse
 		});
 
-		assert.isEmpty(state.libraries.u123.fetching.itemsInCollection, []);
+		assert.isFalse(state.libraries.u123.itemsByCollection['CLECTION'].isFetching);
 		assert.deepEqual(state.libraries.u123.items['ITEM1111'], itemsData[0]);
 		assert.deepEqual(state.libraries.u123.items['ITEM2222'], itemsData[1]);
 		assert.sameOrderedMembers(

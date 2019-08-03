@@ -2,7 +2,6 @@
 
 import collections from './collections';
 import deleting from './deleting';
-import fetching from './fetching';
 import items from './items';
 import itemsByCollection from './items-by-collection';
 import itemsByParent from './items-by-parent';
@@ -100,7 +99,6 @@ const libraries = (state = {}, action) => {
 			[action.libraryKey]: {
 				collections: collections(get(state, [action.libraryKey, 'collections']), action),
 				deleting: deleting(get(state, [action.libraryKey, 'deleting']), action),
-				fetching: fetching(get(state, [action.libraryKey, 'fetching']), action),
 				items: items(get(state, [action.libraryKey, 'items']), action),
 				itemsByCollection: itemsByCollection(get(state, [action.libraryKey, 'itemsByCollection']), action),
 				itemsByParent: itemsByParent(get(state, [action.libraryKey, 'itemsByParent']), action),
