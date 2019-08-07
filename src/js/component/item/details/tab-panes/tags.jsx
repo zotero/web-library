@@ -21,6 +21,7 @@ class TagsTabPane extends React.PureComponent {
 					onAddTag={ this.props.onAddTag }
 					onDeleteTag={ this.props.onDeleteTag }
 					onUpdateTag={ this.props.onUpdateTag }
+					tagColors={ this.props.tagColors }
 				/>
 			</div>
 		);

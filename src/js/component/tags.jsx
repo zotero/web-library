@@ -87,9 +87,10 @@ class Tags extends React.PureComponent {
 	}
 
 	render() {
-		const { isReadOnly } = this.props;
+		const { isReadOnly, tagColors } = this.props;
 		let tags = [...this.props.tags];
 		tags.sort((t1, t2) => t1.tag > t2.tag);
+
 		return (
 			<div className="scroll-container-mouse">
 				<nav>
@@ -99,8 +100,9 @@ class Tags extends React.PureComponent {
 								return (
 									<li className="tag" key={ tag.tag } >
 										<Icon
+											color={ tag.tag in tagColors ? tagColors[tag.tag] : null }
 											type="12/circle"
-											symbol="circle-empty"
+											symbol={ tag.tag in tagColors ? 'circle' : 'circle-empty' }
 											width="12"
 											height="12"
 										/>

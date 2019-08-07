@@ -284,7 +284,7 @@ const mapStateToProps = state => {
 	const isLoadingRelatedItems = get(
 		state, ['libraries', libraryKey, 'fetching', 'items'], [])
 	.some(loadedItemKey => relatedItemsKeys.includes(loadedItemKey));
-
+	const tagColors = get(state, ['libraries', libraryKey, 'tagColors']);
 
 	const extraProps = [];
 
@@ -342,6 +342,7 @@ const mapStateToProps = state => {
 		selectedItemKeys: itemKeys, //@TODO: rename
 		shouldFetchMeta,
 		totalChildItems,
+		tagColors,
 		uploads,
 		...extraProps
 	};
