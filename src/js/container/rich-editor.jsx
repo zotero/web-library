@@ -4,6 +4,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import RichEditor from '../component/rich-editor';
+import withDevice from '../enhancers/with-device';
 
 const RichEditorContainer = props => <RichEditor { ...props } />;
 
@@ -13,4 +14,4 @@ const mapStateToProps = state => {
 };
 
 
-export default connect(mapStateToProps)(RichEditorContainer);
+export default withDevice(connect(mapStateToProps)(RichEditorContainer));

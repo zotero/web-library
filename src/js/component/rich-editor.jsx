@@ -161,13 +161,13 @@ class RichEditor extends React.PureComponent {
 	}
 
 	render() {
-		const { isReadOnly } = this.props;
+		const { device, isReadOnly } = this.props;
 		if(!window.tinymce) {
 			return <Spinner />;
 		}
 		return (
 			<div className="rich-editor">
-				{ !isReadOnly && (
+				{ device.isSingleColumn || !isReadOnly && (
 					<React.Fragment>
 						<Toolbar className="dense">
 							<div className="toolbar-left">
@@ -609,6 +609,7 @@ class RichEditor extends React.PureComponent {
 
 RichEditor.propTypes = {
 	isReadOnly: PropTypes.bool,
+	device: PropTypes.object,
 	onChange: PropTypes.func.isRequired,
 	tinymceRoot: PropTypes.string,
 	value: PropTypes.string,
