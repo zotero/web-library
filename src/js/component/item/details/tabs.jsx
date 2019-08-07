@@ -129,7 +129,7 @@ class ItemDetailsTabs extends React.PureComponent {
 							isActive={ this.state.tab === 'tags' }
 							onActivate={ () => this.setState({ tab: 'tags' }) }
 						>
-							Tag
+							Tags
 						</Tab>
 						{
 							!['attachment', 'note'].includes(item.itemType) && (
