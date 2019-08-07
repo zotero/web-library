@@ -9,5 +9,8 @@
 		<circle fill="#fff" cx="6" cy="6" r="6"/>
 		<circle fill="currentColor" cx="6" cy="6" r="5"/>
 	</symbol>
+	<symbol id="circle-empty" viewBox="0 0 12 12">
+		<path fill="currentColor" d="M6,1A5,5,0,1,1,1,6,5.006,5.006,0,0,1,6,1M6,0a6,6,0,1,0,6,6A6,6,0,0,0,6,0Z"/>
+	</symbol>
 	<use xlink:href="#circle" viewBox="0 0 12 12"/>
 </svg>

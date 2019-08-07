@@ -91,14 +91,20 @@ class Tags extends React.PureComponent {
 		let tags = [...this.props.tags];
 		tags.sort((t1, t2) => t1.tag > t2.tag);
 		return (
-			<div className="details-list tags">
-				<nav>
-					<ul className="nav list">
-						{
-							tags.map(tag => {
-								return (
-									<li className="item" key={ tag.tag } >
-										<Icon type={ '16/tag' } width="16" height="16" />
+			<React.Fragment>
+				<div className="scroll-container-mouse">
+					<nav>
+						<ul className="details-list tag-list">
+							{
+								tags.map(tag => {
+									return (
+										<li className="tag" key={ tag.tag } >
+											<Icon
+												type="12/circle"
+												symbol="circle-empty"
+												width="12"
+												height="12"
+											/>
 											<Editable
 												autoFocus
 												isBusy={ this.state.processingTag === tag.tag }
@@ -109,49 +115,58 @@ class Tags extends React.PureComponent {
 												onClick={ this.handleEdit.bind(this, tag.tag) }
 												onFocus={ this.handleEdit.bind(this, tag.tag) }
 											/>
-										{ !isReadOnly && (
-											<Button
-												icon
-												disabled={ this.props.isProcessingTags }
-												onClick={ () => this.handleDelete(tag.tag) }
-											>
-												<Icon type={ '16/trash' } width="16" height="16" />
-											</Button>
-										)}
+											{ !isReadOnly && (
+												<Button
+													icon
+													disabled={ this.props.isProcessingTags }
+													onClick={ () => this.handleDelete(tag.tag) }
+												>
+													<Icon type="16/minus-circle" width="16" height="16" />
+												</Button>
+											)}
+										</li>
+									);
+								})
+							}
+							{
+								this.state.virtualTag !== null && (
+									<li className="tag virtual">
+										<Icon
+											type="12/circle"
+											symbol="circle-empty"
+											width="12"
+											height="12"
+										/>
+										<Editable
+											autoFocus
+											isBusy={ this.state.virtualTag !== '' }
+											isActive={ this.state.editingTag === '' }
+											value={ this.state.virtualTag }
+											onCancel={ this.handleCancelAddTag.bind(this) }
+											onCommit={ newValue => this.handlePersistAddTag(newValue) }
+										/>
 									</li>
-								);
-							})
-						}
-						{
-							this.state.virtualTag !== null && (
-								<li className="item virtual">
-									<Icon type={ '16/tag' } width="16" height="16" />
-									<Editable
-										autoFocus
-										isBusy={ this.state.virtualTag !== '' }
-										isActive={ this.state.editingTag === '' }
-										value={ this.state.virtualTag }
-										onCancel={ this.handleCancelAddTag.bind(this) }
-										onCommit={ newValue => this.handlePersistAddTag(newValue) }
-									/>
-								</li>
-							)
-						}
-					</ul>
-				</nav>
-
+								)
+							}
+						</ul>
+					</nav>
+				</div>
 				{ !isReadOnly && (
 					<Toolbar>
 						<div className="toolbar-left">
 							<ToolGroup>
-								<Button icon onClick={ this.handleAddTag.bind(this) }>
+								<Button
+									className="btn-link"
+									onClick={ this.handleAddTag.bind(this) }
+								>
 									<Icon type={ '16/plus' } width="16" height="16" />
+									Add Tag
 								</Button>
 							</ToolGroup>
 						</div>
 					</Toolbar>
 				)}
-			</div>
+			</React.Fragment>
 		);
 	}
 }

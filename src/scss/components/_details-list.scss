@@ -1,80 +1,118 @@
-// Todo: rework
+//
+// Details list
+// --------------------------------------------------
+
 .details-list {
-	display: flex;
-	flex-direction: column;
+	margin: $space-xs 0;
 
-	.list {
-		flex: 1 1 auto;
-	}
-
-	.toolbar {
-		flex: 0 0 auto;
-	}
-
-	.item {
-		outline: none;
+	li {
 		display: flex;
 		align-items: center;
-		position: relative;
-		cursor: pointer;
-		padding-left: 12px;
-		padding-right: 12px;
-		min-height: 26px;
 
-		&.selected {
-			@include touch-or-bp-down(sm) {
-				background: $touch-collection-tree-active-bg;
+		@include mouse-and-bp-up(md) {
+			height: $line-height-large;
+			padding: 0 ($default-padding-x - $space-min - $input-border-width) 0 $default-padding-x;
 
-				.icon.touch {
-					color: $touch-collection-tree-active-color;
-				}
-
-				> a {
-					color: $touch-collection-tree-active-color;
+			> .icon {
+				&:first-child {
+					margin-right: $space-xs;
 				}
 			}
 
-			@include mouse-and-bp-up(md) {
-				background: $collection-tree-active-bg;
+			> .btn {
+				&:last-child {
+					margin-left: 1px; // Optical $space-xs
 
-				.icon {
-					color: $collection-tree-active-icon-color;
+					@include state("li:not(:focus-within)") {
+						visibility: hidden;
+					}
+
+					@include state("li:hover", "li:focus-within") {
+						visibility: visible;
+					}
 				}
-
-				> a {
-					color: $collection-tree-active-color;
-				}
 			}
-		}
-
-		a {
-			flex: 1 1 auto;
-			color: $collection-tree-color;
-			position: relative;
-			@include text-truncate;
-		}
-
-		.icon {
-			flex: 0 0 auto;
-			margin-right: $space-xs;
-
-			&.touch {
-				margin-right: $space-md;
-			}
-		}
-
-		.icon-trash {
-			display: none;
-
-			&.touch {
-				display: block;
-			}
-		}
-
-		&:hover .icon-trash,
-		.btn:focus .icon-trash,
-		.editable.editing + .btn .icon-trash {
-			display: block;
 		}
 	}
 }
+
+// Todo: rework
+//.details-list {
+//	display: flex;
+//	flex-direction: column;
+//
+//	.list {
+//		flex: 1 1 auto;
+//	}
+//
+//	.toolbar {
+//		flex: 0 0 auto;
+//	}
+//
+//	.item {
+//		outline: none;
+//		display: flex;
+//		align-items: center;
+//		position: relative;
+//		cursor: pointer;
+//		padding-left: 12px;
+//		padding-right: 12px;
+//		min-height: 26px;
+//
+//		&.selected {
+//			@include touch-or-bp-down(sm) {
+//				background: $touch-collection-tree-active-bg;
+//
+//				.icon.touch {
+//					color: $touch-collection-tree-active-color;
+//				}
+//
+//				> a {
+//					color: $touch-collection-tree-active-color;
+//				}
+//			}
+//
+//			@include mouse-and-bp-up(md) {
+//				background: $collection-tree-active-bg;
+//
+//				.icon {
+//					color: $collection-tree-active-icon-color;
+//				}
+//
+//				> a {
+//					color: $collection-tree-active-color;
+//				}
+//			}
+//		}
+//
+//		a {
+//			flex: 1 1 auto;
+//			color: $collection-tree-color;
+//			position: relative;
+//			@include text-truncate;
+//		}
+//
+//		.icon {
+//			flex: 0 0 auto;
+//			margin-right: $space-xs;
+//
+//			&.touch {
+//				margin-right: $space-md;
+//			}
+//		}
+//
+//		.icon-trash {
+//			display: none;
+//
+//			&.touch {
+//				display: block;
+//			}
+//		}
+//
+//		&:hover .icon-trash,
+//		.btn:focus .icon-trash,
+//		.editable.editing + .btn .icon-trash {
+//			display: block;
+//		}
+//	}
+//}

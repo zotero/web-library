@@ -1,0 +1,29 @@
+//
+// Tag pane
+// --------------------------------------------------
+
+.tab-pane.tags {
+	.scroll-container-mouse {
+		@include mouse-and-bp-up(md) {
+			flex: 1 1 0;
+		}
+	}
+
+	.toolbar {
+		@include mouse-and-bp-up(md) {
+			flex: 0 0 auto;
+			height: $toolbar-height + $border-width;
+			border-top: $border-width solid #ddd;
+		}
+
+		.btn-link {
+			@include mouse-and-bp-up(md) {
+				color: $icon-color;
+
+				&:active {
+					color: $icon-active-color;
+				}
+			}
+		}
+	}
+}

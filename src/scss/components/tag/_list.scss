@@ -1,0 +1,13 @@
+//
+// Tag list
+// --------------------------------------------------
+
+.tag-list {
+	li {
+		&.virtual {
+			@include mouse-and-bp-up(md) {
+				padding-right: $default-padding-x;
+			}
+		}
+	}
+}
