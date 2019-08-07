@@ -12,7 +12,7 @@ class TagsTabPane extends React.PureComponent {
 				'tags': true,
 				'active': this.props.isActive
 			}) }>
-				<h5 className="h2 tab-pane-heading">Tags</h5>
+				<h5 className="h2 tab-pane-heading hidden-mouse">Tags</h5>
 				<Tags
 					item={ this.props.item }
 					tags={ this.props.item.tags }
