@@ -16,12 +16,10 @@ class StandaloneNoteTabPane extends React.PureComponent {
 				'notes': true,
 				'active': this.props.isActive
 			}) }>
-				<div className="editor">
 				<RichEditorContainer
 					value={ this.props.item.note }
 					onChange={ this.handleChangeNote.bind(this) }
 				/>
-			</div>
 			</div>
 		);
 	}
