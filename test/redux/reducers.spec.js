@@ -26,11 +26,15 @@ import tagsResponseFixture from '../fixtures/tags-response';
 
 const reduce = createReducers({});
 const getTestState = () => JSON.parse(JSON.stringify(stateFixture));
-const mockResponse = {
-	getData: () => [],
-	getMeta: () => [],
-	response: new Response('', { headers: { 'Last-Modified-Version': 1337 } })
-};
+const makeMockResponse = (data = [], meta = null, version = 0, totalResults = null) => ({
+	getData: () => data,
+	getMeta: () => meta || data.map(() => ({ numChildren: 0, numItems: 0 })),
+	response: new Response('', { headers: {
+		'Last-Modified-Version': version,
+		'Total-Results': totalResults === null ? data.length : totalResults }
+	})
+});
+
 const itemsData = [
 	{
 		key: 'ITEM1111',
@@ -146,7 +150,7 @@ describe('reducers', () => {
 			libraryKey: 'u123',
 			collections: collectionData,
 			receivedAt: 1499438101816,
-			response: mockResponse
+			response: makeMockResponse()
 		});
 
 		assert.isEmpty(state.fetching.collectionsInLibrary);
@@ -192,14 +196,14 @@ describe('reducers', () => {
 			collectionKey: 'CLECTION',
 			libraryKey: 'u123',
 			items: itemsData,
-			response: mockResponse
+			response: makeMockResponse(itemsData)
 		});
 
 		assert.isFalse(state.libraries.u123.itemsByCollection['CLECTION'].isFetching);
 		assert.deepEqual(state.libraries.u123.items['ITEM1111'], itemsData[0]);
 		assert.deepEqual(state.libraries.u123.items['ITEM2222'], itemsData[1]);
 		assert.sameOrderedMembers(
-			state.libraries.u123.itemsByCollection['CLECTION'],
+			state.libraries.u123.itemsByCollection['CLECTION'].keys,
 			['ITEM1111', 'ITEM2222']
 		);
 	});
@@ -279,7 +283,7 @@ describe('reducers', () => {
 				title: 'foobar'
 			},
 			queueId: 1,
-			response: mockResponse
+			response: makeMockResponse()
 		});
 
 		assert.strictEqual(state.libraries.u123.items['ITEM1111'].version, 2);
@@ -300,7 +304,7 @@ describe('reducers', () => {
 				publisher: 'lorem'
 			},
 			queueId: 2,
-			response: mockResponse
+			response: makeMockResponse()
 		});
 
 		assert.isEmpty(state.libraries.u123.updating.items);
@@ -316,23 +320,25 @@ describe('reducers', () => {
 			libraryKey: 'u123'
 		});
 
-		assert.sameMembers(state.libraries.u123.fetching.childItems, ['ITEM0000']);
+		assert.isTrue(state.libraries.u123.itemsByParent['ITEM0000'].isFetching)
 
 		state = reduce(state, {
 			type: RECEIVE_CHILD_ITEMS,
 			itemKey: 'ITEM0000',
 			libraryKey: 'u123',
-			childItems: itemsData,
-			response: mockResponse
+			items: itemsData,
+			response: makeMockResponse(itemsData),
+			totalResults: itemsData.length,
+			start: 0,
+			stop: 2,
+			sort: 'title',
+			direction: 'desc',
 		});
 
-		assert.isEmpty(state.libraries.u123.fetching.childItems);
 		assert.deepEqual(state.libraries.u123.items['ITEM1111'], itemsData[0]);
 		assert.deepEqual(state.libraries.u123.items['ITEM2222'], itemsData[1]);
-		assert.sameOrderedMembers(
-			state.libraries.u123.itemsByParent['ITEM0000'],
-			['ITEM1111', 'ITEM2222']
-		);
+		assert.isFalse(state.libraries.u123.itemsByParent['ITEM0000'].isFetching)
+		assert.sameOrderedMembers(state.libraries.u123.itemsByParent['ITEM0000'].keys, ['ITEM1111', 'ITEM2222']);
 	});
 
 	it('moving items to trash', () => {
@@ -364,7 +370,7 @@ describe('reducers', () => {
 			},
 			itemKeysTop: itemsToTrashTop,
 			libraryKey,
-			response: mockResponse
+			response: makeMockResponse()
 		});
 
 		assert.notIncludeMembers(
@@ -434,7 +440,7 @@ describe('reducers', () => {
 			},
 			itemKeysTop: itemKeysTrashedFromTop,
 			libraryKey,
-			response: mockResponse
+			response: makeMockResponse()
 		});
 
 		assert.includeMembers(
@@ -481,7 +487,7 @@ describe('reducers', () => {
 			type: RECEIVE_DELETE_ITEMS,
 			itemKeys: itemKeysTrashed,
 			libraryKey,
-			response: mockResponse,
+			response: makeMockResponse(),
 		});
 
 		assert.isEmpty(state.libraries[libraryKey].itemsTrash);
@@ -527,7 +533,7 @@ describe('reducers', () => {
 			itemKeysChanged: itemKeys,
 			collectionKey,
 			libraryKey,
-			response: mockResponse
+			response: makeMockResponse()
 		});
 
 		itemKeys.forEach(itemKey => {
@@ -594,7 +600,7 @@ describe('reducers', () => {
 			itemKeysChanged: itemKeysTrashed,
 			targetCollectionKey,
 			libraryKey,
-			response: mockResponse
+			response: makeMockResponse()
 		});
 
 		// added items to targetCollection, but items are still trashed
@@ -639,7 +645,7 @@ describe('reducers', () => {
 			},
 			itemKeysTop: [],
 			libraryKey,
-			response: mockResponse
+			response: makeMockResponse()
 		});
 
 		// untrashed items should appear in the original collection
@@ -706,7 +712,7 @@ describe('reducers', () => {
 			itemKeysChanged: itemKeys,
 			collectionKey,
 			libraryKey,
-			response: mockResponse
+			response: makeMockResponse()
 		});
 
 		itemKeys.forEach(itemKey => {
@@ -752,7 +758,7 @@ describe('reducers', () => {
 				'relations' : {}
 			},
 			libraryKey,
-			response: mockResponse
+			response: makeMockResponse()
 		});
 
 		assert.strictEqual(
@@ -828,7 +834,7 @@ describe('reducers', () => {
 			'relations' : {}
 		}],
 			libraryKey,
-			response: mockResponse
+			response: makeMockResponse()
 		});
 
 		assert.strictEqual(
@@ -881,7 +887,7 @@ describe('reducers', () => {
 				relations : {}
 			},
 			libraryKey,
-			response: mockResponse
+			response: makeMockResponse()
 		});
 
 		assert.strictEqual(
@@ -942,7 +948,7 @@ describe('reducers', () => {
 				version: 3,
 				name: 'foobar'
 			},
-			response: mockResponse
+			response: makeMockResponse()
 		});
 
 		assert.isEmpty(state.libraries[libraryKey].updating.collections);
@@ -965,7 +971,7 @@ describe('reducers', () => {
 			type: RECEIVE_DELETE_COLLECTION,
 			collection: { ...state.libraries[libraryKey].collections[collectionKey] },
 			libraryKey,
-			response: mockResponse,
+			response: makeMockResponse(),
 		});
 
 		assert.notProperty(
@@ -989,7 +995,7 @@ describe('reducers', () => {
 			type: RECEIVE_LIBRARY_SETTINGS,
 			settings: settingsFixture,
 			libraryKey,
-			response: mockResponse,
+			response: makeMockResponse(),
 		});
 
 		assert.strictEqual(state.libraries[libraryKey].tags[tagName].tag, settingsFixture.tagColors.value[0].name);
@@ -1013,10 +1019,7 @@ describe('reducers', () => {
 			tags: tagsResponseFixture.map(t => ({ tag: t.tag, [Symbol.for('meta')]: t.meta })),
 			libraryKey,
 			collectionKey,
-			response: {
-				...mockResponse,
-				response: new Response('', { headers: { 'Total-Results': tagsResponseFixture.length } })
-			},
+			response: makeMockResponse(null, null, 0, tagsResponseFixture.length),
 		});
 
 		assert.strictEqual(state.libraries[libraryKey].tags[tagName].tag, tagsResponseFixture[0].tag);
@@ -1039,10 +1042,7 @@ describe('reducers', () => {
 			type: RECEIVE_TAGS_IN_LIBRARY,
 			tags: tagsResponseFixture.map(t => ({ tag: t.tag, [Symbol.for('meta')]: t.meta })),
 			libraryKey,
-			response: {
-				...mockResponse,
-				response: new Response('', { headers: { 'Total-Results': tagsResponseFixture.length } })
-			},
+			response: makeMockResponse(null, null, 0, tagsResponseFixture.length),
 		});
 
 		assert.strictEqual(state.libraries[libraryKey].tags[tagName].tag, tagsResponseFixture[0].tag);
@@ -1063,7 +1063,7 @@ describe('reducers', () => {
 			type: RECEIVE_LIBRARY_SETTINGS,
 			settings: settingsFixture,
 			libraryKey,
-			response: mockResponse,
+			response: makeMockResponse(),
 		});
 
 		assert.strictEqual(state.libraries[libraryKey].tags[tagName].color, tagColor);
@@ -1072,10 +1072,7 @@ describe('reducers', () => {
 			type: RECEIVE_TAGS_IN_LIBRARY,
 			tags: [{ tag: tagName, [Symbol.for('meta')]: { type: 0 } }],
 			libraryKey,
-			response: {
-				...mockResponse,
-				response: new Response('', { headers: { 'Total-Results': tagsResponseFixture.length } })
-			},
+			response: makeMockResponse(null, null, 0, tagsResponseFixture.length)
 		});
 
 		assert.strictEqual(state.libraries[libraryKey].tags[tagName].color, tagColor);
@@ -1092,10 +1089,7 @@ describe('reducers', () => {
 			tags: tagsResponseFixture.map(t => ({ tag: t.tag, [Symbol.for('meta')]: t.meta })),
 			libraryKey,
 			itemKey,
-			response: {
-				...mockResponse,
-				response: new Response('', { headers: { 'Total-Results': tagsResponseFixture.length } })
-			},
+			response: makeMockResponse(null, null, 0, tagsResponseFixture.length)
 		});
 
 		assert.strictEqual(state.libraries[libraryKey].tags[tagName].tag, tagsResponseFixture[0].tag);
@@ -1228,7 +1222,7 @@ describe('reducers', () => {
 			type: RECEIVE_GROUPS,
 			libraryKey: 'u123',
 			groups: groupsData,
-			response: mockResponse
+			response: makeMockResponse()
 		});
 
 		assert.deepEqual(state.groups, groupsData);
