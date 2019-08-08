@@ -91,7 +91,6 @@ class Tags extends React.PureComponent {
 		let tags = [...this.props.tags];
 		tags.sort((t1, t2) => t1.tag > t2.tag);
 		return (
-			<React.Fragment>
 				<div className="scroll-container-mouse">
 					<nav>
 						<ul className="details-list tag-list">
@@ -150,23 +149,22 @@ class Tags extends React.PureComponent {
 							}
 						</ul>
 					</nav>
+					{ !isReadOnly && (
+						<Toolbar>
+							<div className="toolbar-left">
+								<ToolGroup>
+									<Button
+										className="btn-link"
+										onClick={ this.handleAddTag.bind(this) }
+									>
+										<Icon type={ '16/plus' } width="16" height="16" />
+										Add Tag
+									</Button>
+								</ToolGroup>
+							</div>
+						</Toolbar>
+					)}
 				</div>
-				{ !isReadOnly && (
-					<Toolbar>
-						<div className="toolbar-left">
-							<ToolGroup>
-								<Button
-									className="btn-link"
-									onClick={ this.handleAddTag.bind(this) }
-								>
-									<Icon type={ '16/plus' } width="16" height="16" />
-									Add Tag
-								</Button>
-							</ToolGroup>
-						</div>
-					</Toolbar>
-				)}
-			</React.Fragment>
 		);
 	}
 }

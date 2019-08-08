@@ -4,20 +4,16 @@
 
 .tab-pane.tags {
 	.scroll-container-mouse {
-		@include mouse-and-bp-up(md) {
-			flex: 1 1 0;
-		}
-	}
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
 
-	.toolbar {
-		@include mouse-and-bp-up(md) {
-			flex: 0 0 auto;
-			height: $toolbar-height + $border-width;
-			border-top: $border-width solid #ddd;
-		}
+		.toolbar {
+			position: sticky;
+			bottom: 0;
+			background-color: $panel-bg;
 
-		.btn-link {
-			@include mouse-and-bp-up(md) {
+			.btn-link {
 				color: $icon-color;
 
 				&:active {
