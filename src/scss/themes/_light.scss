@@ -150,7 +150,6 @@ $tab-pane-heading-bg:           shade($shade-1, 4%);
 
 // Metadata list
 $key-color:                $shade-6;
-$editable-hover-bg:        rgba($shade-10, 0.04);
 $handle-color-touch:       $shade-4;
 $handle-color-mouse:       $shade-6;
 $metadata-heading-color:   $shade-5;
@@ -212,9 +211,13 @@ $touch-footer-darker-bg: shade($shade-1, 2%);
 $touch-footer-border:    $shade-4;
 
 // Editable
-$editable-color:        $text-color;
-$editable-bg:           $shade-0;
-$editable-border-color: $secondary;
+$editable-color:             $text-color;
+$editable-bg:                $shade-0;
+$editable-border-color:      $secondary;
+$editable-hover-percent:     0.04;
+$editable-hover-bg:          rgba($shade-10, $editable-hover-percent);
+$editable-backdrop-bg:       $shade-1;
+$editable-backdrop-hover-bg: darken($shade-1, ($editable-hover-percent * 100%));
 
 // Menu (select, dropdown, …)
 $menu-color:            $text-color;

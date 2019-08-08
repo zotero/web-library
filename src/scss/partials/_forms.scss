@@ -136,15 +136,13 @@ label {
 			margin-top: -6px;
 			padding-bottom: 9px;
 		}
-	}
 
-	&.busy {
-		&.textarea {
+		&.busy {
 			&::after {
 				content: "";
 				position: absolute;
 				right: 0;
-				background: $body-bg;
+				background-color: $body-bg;
 			}
 
 			.icon-spin {

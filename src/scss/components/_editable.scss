@@ -60,7 +60,6 @@
 			width: calc(
 				100% + #{2 * ($input-border-width + $editable-padding)}
 			);
-			padding-right: $icon-spin-size-sm + $editable-padding + 1px;
 			border: $input-border-width solid transparent;
 			background-color: transparent;
 
@@ -69,6 +68,10 @@
 					background-color: $editable-hover-bg;
 				}
 			}
+		}
+
+		@include state(".busy:not(.textarea)") {
+			padding-right: $icon-spin-size-sm + $editable-padding + 1px;
 		}
 	}
 
@@ -91,6 +94,22 @@
 
 	// Textarea
 	&.textarea {
+
+		// Correct shade for 'backdrop'
+		.input-group {
+			&.busy {
+				&::after {
+					@include mouse-and-bp-up(md) {
+						background-color: $editable-backdrop-bg;
+
+						@include state(".editable:hover") {
+							background-color: $editable-backdrop-hover-bg;
+						}
+					}
+				}
+			}
+		}
+
 		// Same height for textarea editable-content hover state like other editables
 		// No padding for visual 2px padding between border and text selection in editable-control
 		.editable-content,
@@ -110,7 +129,10 @@
 		.editable-control {
 			margin-top: -$editable-border-width;
 			margin-bottom: -$editable-border-width;
-			height: calc(100% + #{2 * $editable-border-width}); // Fix height in Firefox (#143)
+
+			@include state(".input-group:not(.busy) .editable-control") {
+				height: calc(100% + #{2 * $editable-border-width}); // Fix height in Firefox (#143)
+			}
 
 			@include state(".busy .editable-control") {
 				border: $input-border-width solid transparent;
