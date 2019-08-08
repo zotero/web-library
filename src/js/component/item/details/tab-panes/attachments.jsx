@@ -37,7 +37,7 @@ class AttachmentsTabPane extends React.PureComponent {
 				{
 				isLoadingChildItems ? <Spinner /> : (
 					<React.Fragment>
-						<h5 className="h2 tab-pane-heading">Attachments</h5>
+						<h5 className="h2 tab-pane-heading hidden-mouse">Attachments</h5>
 						<Attachments
 							attachments={ childItems.filter(i => i.itemType === 'attachment') }
 							{ ...pick(this.props, ['isReadOnly', 'onAddAttachment', 'onDeleteAttachment', 'uploads']) }
