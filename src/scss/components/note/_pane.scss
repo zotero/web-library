@@ -16,6 +16,7 @@
 		.toolbar {
 			position: sticky;
 			bottom: 0;
+			height: $toolbar-height-touch;
 			background-color: $panel-bg;
 
 			.btn-link {
