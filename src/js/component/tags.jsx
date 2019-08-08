@@ -1,126 +1,97 @@
-/* eslint-disable react/no-deprecated */
-'use strict';
-
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import Editable from './editable';
-import { Toolbar, ToolGroup } from './ui/toolbars';
-import Icon from './ui/icon';
+
 import Button from './ui/button';
+import Editable from './editable';
+import Icon from './ui/icon';
+import { Toolbar, ToolGroup } from './ui/toolbars';
+import { deduplicateByKey, sortByKey } from '../utils';
+import { pick } from '../common/immutable';
 
-class Tags extends React.PureComponent {
-	constructor(props) {
-		super(props);
-		this.state = {
-			editingTag: null,
-			processingTag: null,
-			virtualTag: null
-		};
-	}
+var nextId = 0;
 
-	componentWillReceiveProps(props) {
-		if(this.props.tags != props.tags) {
-			this.setState({
-				virtualTag: null,
-			});
-		}
+const Tags = ({ tagColors, itemKey, tags: initalTags, isReadOnly, updateItem }) => {
+	const [tags, setTags] = useState(initalTags.map(t => ({ ...t, id: ++nextId })));
+	const [tagRedacted, setTagRedacted] = useState(null);
 
-		if(this.props.isProcessingTags && !props.isProcessingTags) {
-			this.setState({
-				processingTag: null
-			});
-		}
-	}
+	const handleCommit = async (newTagValue, hasChanged, ev) => {
+		const tag = ev.currentTarget.closest('[data-tag]').dataset.tag;
+		setTagRedacted(null);
 
-	handleAddTag() {
-		this.setState({
-			virtualTag: '',
-			editingTag: '',
-		});
-	}
-
-	handlePersistAddTag(newTag) {
-		if(newTag === '') {
-			this.handleCancelAddTag();
+		if(!hasChanged) {
+			setTags(tags.filter(t => t.tag !== ''));
 			return;
 		}
-		this.setState({
-			virtualTag: newTag
-		});
-		this.props.onAddTag(newTag);
-	}
 
-	handleCancelAddTag() {
-		if(this.state.virtualTag == '') {
-			this.setState({
-				processingTag: null,
-				virtualTag: null
-			});
+		const updatedTags = deduplicateByKey(
+			newTagValue === '' ?
+				tags.filter(t => t.tag !== tag) :
+				tags.map(t => t.tag === tag ? { tag: newTagValue, id: ++nextId } : t),
+			'tag'
+		);
+
+		sortByKey(updatedTags, 'tag');
+		updateItem(itemKey, { tags: updatedTags.map(t => pick(t, ['tag'])) });
+
+		if(tag === '') {
+			// if adding a new tag, automatically create input for another one
+			updatedTags.push({ tag: '', id: ++nextId });
+			setTagRedacted('');
 		}
+
+		setTags(updatedTags);
 	}
 
-	handleDelete(tag) {
-		this.setState({
-			processingTag: tag
-		});
-		this.props.onDeleteTag(tag);
+	const handleCancel = () => {
+		setTagRedacted(null);
+		setTags(tags.filter(t => t.tag !== ''));
 	}
 
-	handleEdit(tag) {
-		const { isReadOnly } = this.props;
-		if(!isReadOnly) {
-			this.setState({ editingTag: tag });
-		}
+	const handleEdit = ev => {
+		const tag = ev.currentTarget.closest('[data-tag]').dataset.tag;
+		setTagRedacted(tag);
 	}
 
-	handleCancel() {
-		this.setState({ editingTag: null });
+	const handleDelete = ev => {
+		const tag = ev.currentTarget.closest('[data-tag]').dataset.tag;
+		const updatedTags = tags.filter(t => t.tag !== tag);
+		setTags(updatedTags);
+		updateItem(itemKey, { tags: updatedTags.map(t => pick(t, ['tag'])) });
 	}
 
-	async handleCommit(tag, newTag, hasChanged) {
-		this.setState({ editingTag: null });
-		if(!hasChanged) { return; }
-		this.setState({
-			processingTag: tag
-		});
-		await this.props.onUpdateTag(tag, newTag);
+	const handleAddTag = () => {
+		setTags([...tags.filter(t => t.tag !== ''), { tag: '', id: ++nextId }]);
+		setTagRedacted('');
 	}
 
-	render() {
-		const { isReadOnly, tagColors } = this.props;
-		let tags = [...this.props.tags];
-		tags.sort((t1, t2) => t1.tag > t2.tag);
-
-		return (
+	return (
 			<div className="scroll-container-mouse">
 				<nav>
 					<ul className="details-list tag-list">
 						{
 							tags.map(tag => {
 								return (
-									<li className="tag" key={ tag.tag } >
+									<li className="tag" data-tag={ tag.tag } data-key={ tag.id } key={ tag.id } >
 										<Icon
 											color={ tag.tag in tagColors ? tagColors[tag.tag] : null }
-											type="12/circle"
-											symbol={ tag.tag in tagColors ? 'circle' : 'circle-empty' }
-											width="12"
 											height="12"
+											symbol={ tag.tag in tagColors ? 'circle' : 'circle-empty' }
+											type="12/circle"
+											width="12"
 										/>
 										<Editable
 											autoFocus
-											isBusy={ this.state.processingTag === tag.tag }
-											isActive={ this.state.editingTag === tag.tag }
+											isActive={ tag.tag === tagRedacted }
 											value={ tag.tag }
-											onCommit={ this.handleCommit.bind(this, tag.tag) }
-											onCancel={ this.handleCancel.bind(this) }
-											onClick={ this.handleEdit.bind(this, tag.tag) }
-											onFocus={ this.handleEdit.bind(this, tag.tag) }
+											onCommit={ handleCommit }
+											onCancel={ handleCancel }
+											onClick={ handleEdit }
+											onFocus={ handleEdit }
 										/>
 										{ !isReadOnly && (
 											<Button
 												icon
-												disabled={ this.props.isProcessingTags }
-												onClick={ () => this.handleDelete(tag.tag) }
+												onClick={ handleDelete }
 											>
 												<Icon type="16/minus-circle" width="16" height="16" />
 											</Button>
@@ -129,26 +100,6 @@ class Tags extends React.PureComponent {
 								);
 							})
 						}
-						{
-							this.state.virtualTag !== null && (
-								<li className="tag virtual">
-									<Icon
-										type="12/circle"
-										symbol="circle-empty"
-										width="12"
-										height="12"
-									/>
-									<Editable
-										autoFocus
-										isBusy={ this.state.virtualTag !== '' }
-										isActive={ this.state.editingTag === '' }
-										value={ this.state.virtualTag }
-										onCancel={ this.handleCancelAddTag.bind(this) }
-										onCommit={ newValue => this.handlePersistAddTag(newValue) }
-									/>
-								</li>
-							)
-						}
 					</ul>
 				</nav>
 				{ !isReadOnly && (
@@ -156,8 +107,9 @@ class Tags extends React.PureComponent {
 						<div className="toolbar-left">
 							<ToolGroup>
 								<Button
+									disabled={ tagRedacted !== null }
 									className="btn-link"
-									onClick={ this.handleAddTag.bind(this) }
+									onClick={ handleAddTag }
 								>
 									<Icon type={ '16/plus' } width="16" height="16" />
 									Add Tag
@@ -166,21 +118,16 @@ class Tags extends React.PureComponent {
 						</div>
 					</Toolbar>
 				)}
-			</div>
-		);
-	}
+		</div>
+	)
 }
 
 Tags.propTypes = {
-	onAddTag: PropTypes.func.isRequired,
-	onDeleteTag: PropTypes.func.isRequired,
-	onUpdateTag: PropTypes.func.isRequired,
-	isProcessingTags: PropTypes.bool,
+	isReadOnly: PropTypes.bool,
+	itemKey: PropTypes.string,
+	tagColors: PropTypes.object,
 	tags: PropTypes.array,
-};
-
-Tags.defaultProps = {
-	tags: []
-};
+	updateItem: PropTypes.func.isRequired,
+}
 
 export default Tags;
