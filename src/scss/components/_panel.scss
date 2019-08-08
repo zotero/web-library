@@ -38,6 +38,7 @@
 		@include mouse-and-bp-up(md) {
 			display: flex;
 			flex-direction: column;
+			overflow: hidden; // Fix scrolling on md screens (or min-height: 0)
 		}
 
 		&.loading {
