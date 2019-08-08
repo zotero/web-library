@@ -91,45 +91,13 @@ class Tags extends React.PureComponent {
 		let tags = [...this.props.tags];
 		tags.sort((t1, t2) => t1.tag > t2.tag);
 		return (
-				<div className="scroll-container-mouse">
-					<nav>
-						<ul className="details-list tag-list">
-							{
-								tags.map(tag => {
-									return (
-										<li className="tag" key={ tag.tag } >
-											<Icon
-												type="12/circle"
-												symbol="circle-empty"
-												width="12"
-												height="12"
-											/>
-											<Editable
-												autoFocus
-												isBusy={ this.state.processingTag === tag.tag }
-												isActive={ this.state.editingTag === tag.tag }
-												value={ tag.tag }
-												onCommit={ this.handleCommit.bind(this, tag.tag) }
-												onCancel={ this.handleCancel.bind(this) }
-												onClick={ this.handleEdit.bind(this, tag.tag) }
-												onFocus={ this.handleEdit.bind(this, tag.tag) }
-											/>
-											{ !isReadOnly && (
-												<Button
-													icon
-													disabled={ this.props.isProcessingTags }
-													onClick={ () => this.handleDelete(tag.tag) }
-												>
-													<Icon type="16/minus-circle" width="16" height="16" />
-												</Button>
-											)}
-										</li>
-									);
-								})
-							}
-							{
-								this.state.virtualTag !== null && (
-									<li className="tag virtual">
+			<div className="scroll-container-mouse">
+				<nav>
+					<ul className="details-list tag-list">
+						{
+							tags.map(tag => {
+								return (
+									<li className="tag" key={ tag.tag } >
 										<Icon
 											type="12/circle"
 											symbol="circle-empty"
@@ -138,33 +106,65 @@ class Tags extends React.PureComponent {
 										/>
 										<Editable
 											autoFocus
-											isBusy={ this.state.virtualTag !== '' }
-											isActive={ this.state.editingTag === '' }
-											value={ this.state.virtualTag }
-											onCancel={ this.handleCancelAddTag.bind(this) }
-											onCommit={ newValue => this.handlePersistAddTag(newValue) }
+											isBusy={ this.state.processingTag === tag.tag }
+											isActive={ this.state.editingTag === tag.tag }
+											value={ tag.tag }
+											onCommit={ this.handleCommit.bind(this, tag.tag) }
+											onCancel={ this.handleCancel.bind(this) }
+											onClick={ this.handleEdit.bind(this, tag.tag) }
+											onFocus={ this.handleEdit.bind(this, tag.tag) }
 										/>
+										{ !isReadOnly && (
+											<Button
+												icon
+												disabled={ this.props.isProcessingTags }
+												onClick={ () => this.handleDelete(tag.tag) }
+											>
+												<Icon type="16/minus-circle" width="16" height="16" />
+											</Button>
+										)}
 									</li>
-								)
-							}
-						</ul>
-					</nav>
-					{ !isReadOnly && (
-						<Toolbar>
-							<div className="toolbar-left">
-								<ToolGroup>
-									<Button
-										className="btn-link"
-										onClick={ this.handleAddTag.bind(this) }
-									>
-										<Icon type={ '16/plus' } width="16" height="16" />
-										Add Tag
-									</Button>
-								</ToolGroup>
-							</div>
-						</Toolbar>
-					)}
-				</div>
+								);
+							})
+						}
+						{
+							this.state.virtualTag !== null && (
+								<li className="tag virtual">
+									<Icon
+										type="12/circle"
+										symbol="circle-empty"
+										width="12"
+										height="12"
+									/>
+									<Editable
+										autoFocus
+										isBusy={ this.state.virtualTag !== '' }
+										isActive={ this.state.editingTag === '' }
+										value={ this.state.virtualTag }
+										onCancel={ this.handleCancelAddTag.bind(this) }
+										onCommit={ newValue => this.handlePersistAddTag(newValue) }
+									/>
+								</li>
+							)
+						}
+					</ul>
+				</nav>
+				{ !isReadOnly && (
+					<Toolbar>
+						<div className="toolbar-left">
+							<ToolGroup>
+								<Button
+									className="btn-link"
+									onClick={ this.handleAddTag.bind(this) }
+								>
+									<Icon type={ '16/plus' } width="16" height="16" />
+									Add Tag
+								</Button>
+							</ToolGroup>
+						</div>
+					</Toolbar>
+				)}
+			</div>
 		);
 	}
 }
