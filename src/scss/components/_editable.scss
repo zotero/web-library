@@ -70,7 +70,7 @@
 			}
 		}
 
-		@include state(".busy:not(.textarea)") {
+		@include state(".busy:not(.textarea) .editable-control") {
 			padding-right: $icon-spin-size-sm + $editable-padding + 1px;
 		}
 	}
