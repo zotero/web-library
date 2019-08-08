@@ -1,0 +1,10 @@
+//
+// Attachment list
+// --------------------------------------------------
+
+.attachment-list {
+	a {
+		flex: 1 1 auto;
+		@include text-truncate;
+	}
+}

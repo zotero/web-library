@@ -82,11 +82,14 @@
 @import "components/metadata/creators";
 @import "components/metadata/standalone-attachment.scss";
 
-@import "components/note/list";
 @import "components/note/pane";
+@import "components/note/list";
 
-@import "components/tag/list";
 @import "components/tag/pane";
+@import "components/tag/list";
+
+@import "components/attachment/pane";
+@import "components/attachment/list";
 
 @import "components/modal/react-modal";
 @import "components/modal/collection-select";

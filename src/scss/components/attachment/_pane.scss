@@ -1,0 +1,25 @@
+//
+// Attachment pane
+// --------------------------------------------------
+
+.tab-pane.attachments {
+	.scroll-container-mouse {
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+
+		.toolbar {
+			position: sticky;
+			bottom: 0;
+			background-color: $panel-bg;
+
+			.btn-link {
+				color: $icon-color;
+
+				&:active {
+					color: $icon-active-color;
+				}
+			}
+		}
+	}
+}

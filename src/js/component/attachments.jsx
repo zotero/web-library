@@ -60,7 +60,7 @@ class Attachments extends React.PureComponent {
 			onBlur, registerFocusRoot, uploads } = this.props;
 		return (
 			<div
-				className="details-list attachments"
+				className="scroll-container-mouse"
 				key="attachments"
 				onBlur={ onBlur }
 				onFocus={ onFocus }
@@ -68,16 +68,16 @@ class Attachments extends React.PureComponent {
 				tabIndex={ 0 }
 			>
 				<nav>
-					<ul className="nav list">
+					<ul className="details-list attachment-list">
 						{
 							attachments.map(attachment => {
 								const isStillUploading = uploads.includes(attachment.key);
 								return (
 									<li
-										className={ cx('item', {'selected': this.state.selected == attachment.key }) }
+										className={ cx('attachment', {'selected': this.state.selected == attachment.key }) }
 										key={ attachment.key }
 									>
-										<Icon type={ '16/item-types/attachment' } width="16" height="16" />
+										<Icon type={ '16/attachment' } width="16" height="16" />
 										{
 											!isStillUploading && attachment[Symbol.for('attachmentUrl')] ? (
 												<a
@@ -103,7 +103,7 @@ class Attachments extends React.PureComponent {
 												onClick={ this.handleDelete.bind(this, attachment) }
 												tabIndex={ -1 }
 											>
-												<Icon type={ '16/trash' } width="16" height="16" />
+												<Icon type={ '16/minus-circle' } width="16" height="16" />
 											</Button>
 										)}
 									</li>
@@ -131,12 +131,13 @@ class Attachments extends React.PureComponent {
 						<div className="toolbar-left">
 							<ToolGroup>
 								<Button
-									icon
+									className="btn-link"
 									onClick={ this.handleAddAttachment.bind(this) }
 									onKeyDown={ this.handleKeyDown }
 									tabIndex={ -2 }
 								>
 									<Icon type={ '16/plus' } width="16" height="16" />
+									Add Attachment
 								</Button>
 							</ToolGroup>
 						</div>
