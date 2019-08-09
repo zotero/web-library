@@ -47,6 +47,10 @@
 	display: flex;
 	flex-direction: column;
 
+	@include mouse-and-bp-only(md) {
+		border-left: $border-width solid $editor-border-color;
+	}
+
 	@include mouse-and-bp-up(md) {
 		background-color: $editor-bg;
 	}
