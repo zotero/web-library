@@ -20,7 +20,7 @@ import Navbar from './component/ui/navbar';
 import Notes from './component/notes';
 import Tags from './component/tags';
 import Attachments from './component/attachments';
-import Relations from './component/relations';
+import Related from './component/related';
 import Panel from './component/ui/panel';
 import RichEditor from './component/rich-editor';
 import Spinner from './component/ui/spinner';
@@ -51,7 +51,7 @@ export default {
 	Navbar,
 	Notes,
 	Panel,
-	Relations,
+	Related,
 	RichEditor,
 	Spinner,
 	Tab,
