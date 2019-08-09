@@ -5,6 +5,7 @@ import deleting from './deleting';
 import items from './items';
 import itemsByCollection from './items-by-collection';
 import itemsByParent from './items-by-parent';
+import itemsRelated from './items-related';
 import itemsTop from './items-top';
 import itemsTrash from './items-trash';
 import sync from './sync';
@@ -30,6 +31,7 @@ const libraries = (state = {}, action) => {
 				items: items(get(state, [action.libraryKey, 'items']), action),
 				itemsByCollection: itemsByCollection(get(state, [action.libraryKey, 'itemsByCollection']), action),
 				itemsByParent: itemsByParent(get(state, [action.libraryKey, 'itemsByParent']), action),
+				itemsRelated: itemsRelated(get(state, [action.libraryKey, 'itemsRelated']), action),
 				itemsTop: itemsTop(get(state, [action.libraryKey, 'itemsTop']), action),
 				itemsTrash: itemsTrash(get(state, [action.libraryKey, 'itemsTrash']), action),
 				tagColors: tagColors(get(state, [action.libraryKey, 'tagColors']), action),

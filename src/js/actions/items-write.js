@@ -3,7 +3,7 @@
 import api from 'zotero-api-client';
 import queue from './queue';
 import { fetchItemTypeFields } from './meta';
-import { get } from '../utils';
+import { get, removeRelationByItemKey } from '../utils';
 import { omit } from '../common/immutable';
 import { extractItems } from '../common/actions';
 
@@ -766,6 +766,53 @@ const queueRemoveFromCollection = (itemKeys, collectionKey, libraryKey, queueId)
 	};
 }
 
+const removeRelatedItem = (itemKey, relatedItemKey) => {
+	return async (dispatch, getState) => {
+		const state = getState();
+		const { userId } = state.config;
+		const { libraryKey } = state.current;
+		const item = get(state, ['libraries', libraryKey, 'items', itemKey], null);
+		const relatedItem = get(state, ['libraries', libraryKey, 'items', relatedItemKey], null);
+
+		if(!item) {
+			dispatch({
+				type: 'ERROR_REMOVE_RELATED_ITEMS',
+				error: `Item ${itemKey} is not found in local state`,
+			});
+			throw new Error(`Item ${itemKey} is not found in local state`);
+		}
+
+		if(!relatedItem) {
+			dispatch({
+				type: 'ERROR_REMOVE_RELATED_ITEMS',
+				error: `Item ${relatedItemKey} is not found in local state`,
+			});
+			throw new Error(`Item ${relatedItemKey} is not found in local state`);
+		}
+
+		const patch1 = {
+			relations: removeRelationByItemKey(
+				relatedItemKey,
+				item.relations,
+				userId
+			)
+		};
+
+		const patch2 = {
+			relations: removeRelationByItemKey(
+				itemKey,
+				relatedItem.relations,
+				userId
+			)
+		};
+
+		await Promise.all([
+			dispatch(updateItem(itemKey, patch1)),
+			dispatch(updateItem(relatedItemKey, patch2)),
+		]);
+	};
+}
+
 export {
 	addToCollection,
 	copyToLibrary,
@@ -776,6 +823,7 @@ export {
 	moveToTrash,
 	recoverFromTrash,
 	removeFromCollection,
+	removeRelatedItem,
 	updateItem,
 	uploadAttachment,
 };

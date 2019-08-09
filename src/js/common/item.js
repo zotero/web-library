@@ -9,11 +9,12 @@ const getBaseMappedValue = (item, property) => {
 		item[baseMappings[itemType][property]] : property in item ? item[property] : null;
 }
 
+const getItemTitle = item => item.itemType === 'note' ?
+	noteAsTitle : getBaseMappedValue(item, 'title') || '';
+
 const getFormattedTableItem = (item, itemTypes, tagColors, isSynced) => {
 	const { itemType, note, dateAdded, dateModified, extra } = item;
-	const title = itemType === 'note' ?
-		noteAsTitle(note) :
-		getBaseMappedValue(item, 'title') || '';
+	const title = getItemTitle(item);
 	const creator = item[Symbol.for('meta')] && item[Symbol.for('meta')].creatorSummary ?
 		item[Symbol.for('meta')].creatorSummary :
 		'';
@@ -60,4 +61,4 @@ const getFieldDisplayValue = (item, field) => {
 	}
 }
 
-export { getFormattedTableItem, getFieldDisplayValue, getBaseMappedValue };
+export { getFormattedTableItem, getFieldDisplayValue, getBaseMappedValue, getItemTitle };

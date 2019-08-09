@@ -16,7 +16,6 @@ import {
     fetchItemTemplate,
     fetchChildItems,
     uploadAttachment,
-    fetchItems,
     fetchItemTypeCreatorTypes,
     fetchItemTypeFields,
     navigate,
@@ -162,39 +161,6 @@ class ItemDetailsContainer extends React.PureComponent {
 		await this.props.dispatch(deleteItem(attachment));
 	}
 
-	handleRelatedItemSelect(item) {
-		const { collection, libraryKey: library, makePath, push } = this.props;
-		let isSameCollection = item.collections.includes(collection.key);
-		if(isSameCollection) {
-			push(makePath({ library, collection: collection.key, items: item.key }))
-		} else {
-			push(makePath({ library, items: item.key }));
-		}
-	}
-
-	async handleRelatedItemDelete(relatedItem) {
-		let patch1 = {
-			relations: removeRelationByItemKey(
-				relatedItem.key,
-				this.props.item.relations,
-				this.props.config.userId
-			)
-		};
-
-		let patch2 = {
-			relations: removeRelationByItemKey(
-				this.props.item.key,
-				relatedItem.relations,
-				this.props.config.userId
-			)
-		};
-
-		await Promise.all([
-			this.props.dispatch(updateItem(this.props.item.key, patch1)),
-			this.props.dispatch(updateItem(relatedItem.key, patch2)),
-		]);
-	}
-
 	render() {
 		const { isEditing, device, item, isLoadingMeta, isLibraryReadOnly, itemTypeFields,
 			itemTypes, pendingChanges } = this.props;
@@ -236,8 +202,6 @@ class ItemDetailsContainer extends React.PureComponent {
 				onUpdateTag = { this.handleUpdateTag.bind(this) }
 				onAddAttachment = { this.handleAddAttachment.bind(this) }
 				onDeleteAttachment = { this.handleDeleteAttachment.bind(this) }
-				onRelatedItemSelect = { this.handleRelatedItemSelect.bind(this) }
-				onRelatedItemDelete = { this.handleRelatedItemDelete.bind(this) }
 				onSave = { this.handleItemUpdated.bind(this) }
 				{ ...this.props }
 				{ ...this.state }
@@ -275,15 +239,6 @@ const mapStateToProps = state => {
 		state, ['libraries', libraryKey, 'itemsByParent', itemKey, 'isFetching'], false
 	);
 	const { isLibraryReadOnly } = (state.config.libraries.find(l => l.key === libraryKey) || {});
-
-	const relatedItemsKeys = item ? mapRelationsToItemKeys(item.relations || {}, state.config.userId)
-		.filter(String) : [];
-	const relatedItems = relatedItemsKeys
-			.map(key => get(state, ['libraries', libraryKey, 'items', key]))
-			.filter(Boolean);
-	const isLoadingRelatedItems = get(
-		state, ['libraries', libraryKey, 'fetching', 'items'], [])
-	.some(loadedItemKey => relatedItemsKeys.includes(loadedItemKey));
 	const tagColors = get(state, ['libraries', libraryKey, 'tagColors']);
 
 	const extraProps = [];
@@ -328,7 +283,6 @@ const mapStateToProps = state => {
 		isLibraryReadOnly,
 		isLoadingChildItems,
 		isLoadingMeta,
-		isLoadingRelatedItems,
 		isProcessingTags,
 		isSelectMode,
 		item,
@@ -337,8 +291,6 @@ const mapStateToProps = state => {
 		makePath: makePath.bind(null, state.config),
 		noteKey,
 		pendingChanges,
-		relatedItems,
-		relatedItemsKeys,
 		selectedItemKeys: itemKeys, //@TODO: rename
 		shouldFetchMeta,
 		totalChildItems,
@@ -357,4 +309,4 @@ ItemDetailsContainer.propTypes = {
 };
 
 export default withDevice(withEditMode(connect(
-	mapStateToProps, { push, fetchItems, fetchChildItems, updateItem, navigate })(ItemDetailsContainer)));
+	mapStateToProps, { push, fetchChildItems, updateItem, navigate })(ItemDetailsContainer)));

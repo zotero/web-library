@@ -3,6 +3,7 @@
 import { SORT_ITEMS } from '../constants/actions';
 import api from 'zotero-api-client';
 import { extractItems } from '../common/actions';
+import { mapRelationsToItemKeys } from '../utils';
 
 const getApi = ({ config, libraryKey }, requestType, queryConfig) => {
 	switch(requestType) {
@@ -41,12 +42,16 @@ const getApi = ({ config, libraryKey }, requestType, queryConfig) => {
 				configuredApi = configuredApi.top();
 			}
 			return configuredApi;
-		case 'FETCH_ITEMS':
 		case 'TOP_ITEMS':
 			return api(config.apiKey, config.apiConfig)
 				.library(libraryKey)
 				.items()
 				.top();
+		case 'FETCH_ITEMS':
+		case 'RELATED_ITEMS':
+			return api(config.apiKey, config.apiConfig)
+				.library(libraryKey)
+				.items()
 	}
 }
 
@@ -63,7 +68,7 @@ const fetchItems = (
 
 		dispatch({
 			type: `REQUEST_${type}`,
-			libraryKey, ...queryConfig, ...queryOptions
+			libraryKey, ...queryConfig, queryOptions
 		});
 
 		try {
@@ -74,14 +79,14 @@ const fetchItems = (
 			dispatch({
 				type: `RECEIVE_${type}`,
 				libraryKey, items, response, totalResults,
-				...queryConfig, ...queryOptions
+				...queryConfig, queryOptions
 			});
 
 			return items;
 		} catch(error) {
 			dispatch({
 				type: `ERROR_${type}`,
-				libraryKey, error, ...queryConfig, ...queryOptions
+				libraryKey, error, ...queryConfig, queryOptions
 			});
 
 			throw error;
@@ -120,8 +125,41 @@ const fetchChildItems = (itemKey, queryOptions) => {
 
 const fetchItemsByKeys = (itemKeys, queryOptions) => {
 	return fetchItems(
-		'FETCH_ITEMS', {}, { queryOptions, itemKeys: itemKeys.join(','), }
+		'FETCH_ITEMS', {}, { ...queryOptions, itemKey: itemKeys.join(','), }
 	);
+}
+
+const fetchRelatedItems = (itemKey, queryOptions) => {
+	return async (dispatch, getState) => {
+		const state = getState();
+		const { libraryKey } = state.current;
+		const item = state.libraries[libraryKey].items[itemKey];
+		const userId = state.config.userId;
+
+		if(!item) {
+			dispatch({
+				type: 'ERROR_RELATED_ITEMS',
+				error: `Item ${itemKey} is not found in local state`,
+			});
+			throw new Error(`Item ${itemKey} is not found in local state`);
+		}
+
+		const relatedItemsKeys = mapRelationsToItemKeys(item.relations || {}, userId);
+
+		if(relatedItemsKeys.length === 0) {
+			dispatch({
+				type: 'REQUEST_RELATED_ITEMS', itemKey, libraryKey,...queryOptions
+			});
+			dispatch({
+				type: 'RECEIVE_RELATED_ITEMS', itemKey, libraryKey,...queryOptions, items: []
+			});
+			return [];
+		}
+
+		dispatch(fetchItems(
+			'RELATED_ITEMS', { itemKey }, { ...queryOptions, itemKey: relatedItemsKeys.join(',') }
+		));
+	}
 }
 
 const sortItems = (sortBy, sortDirection) => {
@@ -140,11 +178,11 @@ const sortItems = (sortBy, sortDirection) => {
 
 export {
 	fetchChildItems,
-	fetchItems,
 	fetchItemsByKeys,
 	fetchItemsInCollection,
 	fetchItemsQuery,
 	fetchPublicationsItems,
+	fetchRelatedItems,
 	fetchTopItems,
 	fetchTrashItems,
 	sortItems,

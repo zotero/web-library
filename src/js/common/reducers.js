@@ -106,7 +106,8 @@ const filterItemKeys = (state, removedKeys) => {
 
 const populateItemKeys = (state, newKeys, action) => {
 	const { keys: prevKeys = [] } = state;
-	const { start, totalResults, sort, direction } = action;
+	const { queryOptions, totalResults } = action;
+	const { start, sort, direction } = queryOptions;
 
 	const keys = [...prevKeys];
 	keys.length = totalResults;
