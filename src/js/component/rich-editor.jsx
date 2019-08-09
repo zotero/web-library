@@ -17,12 +17,12 @@ import { loadJs } from '../utils';
 
 const formatBlocks = [
 	{ value: 'p', Tag: 'p', label: 'Paragraph' },
-	{ value: 'h1', Tag: 'p', label: 'Heading 1' },
-	{ value: 'h2', Tag: 'p', label: 'Heading 2' },
-	{ value: 'h3', Tag: 'p', label: 'Heading 3' },
-	{ value: 'h4', Tag: 'p', label: 'Heading 4' },
-	{ value: 'h5', Tag: 'p', label: 'Heading 5' },
-	{ value: 'h6', Tag: 'p', label: 'Heading 6' },
+	{ value: 'h1', Tag: 'h1', label: 'Heading 1' },
+	{ value: 'h2', Tag: 'h2', label: 'Heading 2' },
+	{ value: 'h3', Tag: 'h3', label: 'Heading 3' },
+	{ value: 'h4', Tag: 'h4', label: 'Heading 4' },
+	{ value: 'h5', Tag: 'h5', label: 'Heading 5' },
+	{ value: 'h6', Tag: 'h6', label: 'Heading 6' },
 	{ value: 'pre', Tag: 'pre', label: 'Preformatted' },
 ];
 

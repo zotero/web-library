@@ -14,12 +14,16 @@ body {
 // Headings
 
 h1, h2, h3, h4, h5, h6 {
-  font-family: $headings-font-family;
-  font-weight: $headings-font-weight;
-  color: $headings-color;
-  font-size: inherit;
-  line-height: inherit;
-  margin: 0;
+	font-family: $headings-font-family;
+	color: $headings-color;
+	margin: 0;
+
+	// Exclude rich editor dropdown menu
+	:not(button) > & {
+		font-weight: $headings-font-weight;
+		font-size: inherit;
+		line-height: inherit;
+	}
 }
 
 .h1, .h2 {
