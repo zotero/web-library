@@ -30,13 +30,13 @@ const Related = ({ fetchRelatedItems, itemKey, isFetched, isFetching, libraryKey
 	}
 
 	return isFetched ? (
-		<div className="details-list relations">
+		<div className="scroll-container-mouse">
 			<nav>
-				<ul className="nav list">
+				<ul className="details-list related-list">
 					{
 						relatedItems.map(relatedItem => (
 							<li
-								className="item"
+								className="related"
 								data-key={ relatedItem.key }
 								key={ relatedItem.key }
 							>
@@ -45,7 +45,7 @@ const Related = ({ fetchRelatedItems, itemKey, isFetched, isFetching, libraryKey
 									{ getItemTitle(relatedItem) }
 								</a>
 								<Button icon onClick={ handleDelete }>
-									<Icon type={ '16/trash' } width="16" height="16" />
+									<Icon type={ '16/minus-circle' } width="16" height="16" />
 								</Button>
 							</li>
 						))

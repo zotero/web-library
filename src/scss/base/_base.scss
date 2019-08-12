@@ -40,6 +40,10 @@ body {
 	user-select: none;
 }
 
+a {
+	cursor: pointer;
+}
+
 [data-widget="library"] {
 	overflow: hidden; // Prevent any overflow
 }

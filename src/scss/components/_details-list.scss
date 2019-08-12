@@ -10,7 +10,7 @@
 		align-items: center;
 
 		@include mouse-and-bp-up(md) {
-			height: $line-height-large;
+			line-height: $line-height-large; // Prevent flickering between cursor default/pointer states
 			padding: 0 ($default-padding-x - $space-min - $input-border-width) 0 $default-padding-x;
 
 			> .icon {
