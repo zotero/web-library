@@ -2,13 +2,14 @@
 
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
-import Spinner from './ui/spinner';
 import Icon from './ui/icon';
 import Button from './ui/button';
 import { getItemTitle } from '../common/item';
+import { TabPane } from './ui/tabs';
+import { pick } from '../common/immutable';
 
 const Related = ({ fetchRelatedItems, itemKey, isFetched, isFetching, libraryKey,
-	navigate, relatedItems, removeRelatedItem }) => {
+	navigate, relatedItems, removeRelatedItem, ...props }) => {
 
 	useEffect(() => {
 		if(!isFetching && !isFetched) {
@@ -29,31 +30,34 @@ const Related = ({ fetchRelatedItems, itemKey, isFetched, isFetching, libraryKey
 		removeRelatedItem(itemKey, relatedItemKey);
 	}
 
-	return isFetched ? (
-		<div className="scroll-container-mouse">
-			<nav>
-				<ul className="details-list related-list">
-					{
-						relatedItems.map(relatedItem => (
-							<li
-								className="related"
-								data-key={ relatedItem.key }
-								key={ relatedItem.key }
-							>
-								<Icon type={ '16/document' } width="16" height="16" />
-								<a onClick={ handleSelect }>
-									{ getItemTitle(relatedItem) }
-								</a>
-								<Button icon onClick={ handleDelete }>
-									<Icon type={ '16/minus-circle' } width="16" height="16" />
-								</Button>
-							</li>
-						))
-					}
-				</ul>
-			</nav>
-		</div>
-	) : <Spinner />;
+	return (
+		<TabPane { ...pick(props, ['isActive']) } isLoading={ !isFetched }>
+			<h5 className="h2 tab-pane-heading hidden-mouse">Related</h5>
+			<div className="scroll-container-mouse">
+				<nav>
+					<ul className="details-list related-list">
+						{
+							relatedItems.map(relatedItem => (
+								<li
+									className="related"
+									data-key={ relatedItem.key }
+									key={ relatedItem.key }
+								>
+									<Icon type={ '16/document' } width="16" height="16" />
+									<a onClick={ handleSelect }>
+										{ getItemTitle(relatedItem) }
+									</a>
+									<Button icon onClick={ handleDelete }>
+										<Icon type={ '16/minus-circle' } width="16" height="16" />
+									</Button>
+								</li>
+							))
+						}
+					</ul>
+				</nav>
+			</div>
+		</TabPane>
+	);
 }
 
 Related.propTypes = {

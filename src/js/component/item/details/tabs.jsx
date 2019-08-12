@@ -1,4 +1,3 @@
-/* eslint-disable react/no-deprecated */
 'use strict';
 
 import cx from 'classnames';
@@ -10,13 +9,14 @@ import AttachmentsTabPane from './tab-panes/attachments';
 import EditToggleButton from '../../edit-toggle-button';
 import InfoTabPane from './tab-panes/info';
 import NotesTabPane from './tab-panes/notes';
-import RelatedTabPane from './tab-panes/related';
 import Spinner from '../../ui/spinner';
 import StandaloneAttachmentTabPane from './tab-panes/standalone-attachment';
 import StandaloneNoteTabPane from './tab-panes/standalone-note';
 import TagsTabPane from './tab-panes/tags';
 import { Tab, Tabs } from '../../ui/tabs';
+import RelatedContainer from '../../../container/related';
 
+//@TODO: container for other tabs as well
 class ItemDetailsTabs extends React.PureComponent {
 	constructor(props) {
 		super(props);
@@ -195,7 +195,10 @@ class ItemDetailsTabs extends React.PureComponent {
 									<AttachmentsTabPane isActive={ this.state.tab === 'attachments' } { ...this.props } />
 								)
 							}
-							<RelatedTabPane isActive={ this.state.tab === 'related' } { ...this.props } />
+							<RelatedContainer
+								key={ item.key }
+								isActive={ this.state.tab === 'related' }
+							/>
 						</React.Fragment>
 					)
 				}

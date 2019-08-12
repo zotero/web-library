@@ -4,6 +4,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import cx from 'classnames';
 import withFocusManager from '../../enhancers/with-focus-manager';
+import Spinner from '../ui/spinner';
 
 const Tab = ({ children, isActive, isDisabled, onActivate, onFocusNext, onFocusPrev }) => {
 	const handleKeyDown = ev => {
@@ -83,8 +84,26 @@ Tabs.propTypes = {
 	justified: PropTypes.bool
 };
 
+const TabPane = ({ children, isActive, isLoading, className }) => (
+	<div className={ cx(className, {
+		'tab-pane': true,
+		'active': isActive,
+		'loading': isLoading
+	}) }>
+		{ isLoading ? <Spinner /> : children  }
+	</div>
+);
+
+TabPane.propTypes = {
+	children: PropTypes.oneOfType([PropTypes.element, PropTypes.array]),
+	className: PropTypes.string,
+	isActive: PropTypes.bool,
+	isLoading: PropTypes.bool,
+};
+
 
 export {
 	Tab,
-	Tabs
+	Tabs,
+	TabPane
 };
