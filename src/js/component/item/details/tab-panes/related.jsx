@@ -14,7 +14,7 @@ const RelatedTabPane = ({ isActive, item }) => (
 		{
 			isActive && (
 				<React.Fragment>
-					<h5 className="h2 tab-pane-heading">Related</h5>
+					<h5 className="h2 tab-pane-heading hidden-mouse">Related</h5>
 					<RelationsContainer key={ item.key } />
 				</React.Fragment>
 			)
