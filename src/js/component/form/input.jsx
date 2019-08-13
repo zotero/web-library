@@ -34,7 +34,7 @@ class Input extends React.PureComponent {
 		}
 	}
 
-	componentWillReceiveProps({ value }) {
+	UNSAFE_componentWillReceiveProps({ value }) {
 		if (value !== this.props.value) {
 			this.setState({ value });
 		}

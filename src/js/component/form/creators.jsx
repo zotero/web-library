@@ -25,7 +25,7 @@ class Creators extends React.PureComponent {
 		this.openOnNextRender = null;
 	}
 
-	componentWillReceiveProps(props) {
+	UNSAFE_componentWillReceiveProps(props) {
 		let creators = this.state.creators;
 		if(!deepEqual(this.props.value, props.value)) {
 			creators = props.value.length ? props.value : [this.newCreator];
