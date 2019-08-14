@@ -13,7 +13,7 @@ const withFocusManager = Component => {
 
 		handleNext = ev => {
 			const tabbables = Array.from(
-				this.ref.querySelectorAll('[tabIndex="-2"]:not([disabled])')
+				this.ref.querySelectorAll('[tabIndex="-2"]:not([disabled]):not(.offscreen)')
 			).filter(t => t.offsetParent);
 			const nextIndex = tabbables.findIndex(t => t === ev.currentTarget) + 1;
 			if(isModifierKey(ev)) {
@@ -32,7 +32,7 @@ const withFocusManager = Component => {
 
 		handlePrevious = ev => {
 			const tabbables = Array.from(
-				this.ref.querySelectorAll('[tabIndex="-2"]:not([disabled])')
+				this.ref.querySelectorAll('[tabIndex="-2"]:not([disabled]):not(.offscreen)')
 			).filter(t => t.offsetParent);
 			const prevIndex = tabbables.findIndex(t => t === ev.currentTarget) - 1;
 			if(isModifierKey(ev)) {
