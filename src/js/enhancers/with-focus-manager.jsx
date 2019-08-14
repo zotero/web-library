@@ -4,6 +4,9 @@ import React from 'react';
 import hoistNonReactStatic from 'hoist-non-react-statics';
 
 const withFocusManager = Component => {
+	const isModifierKey = ev => ev.getModifierState("Meta") || ev.getModifierState("Alt") ||
+		ev.getModifierState("Control") || ev.getModifierState("OS");
+
 	class EnhancedComponent extends React.PureComponent {
 		lastFocused = null;
 		originalTabIndex = null;
@@ -13,6 +16,10 @@ const withFocusManager = Component => {
 				this.ref.querySelectorAll('[tabIndex="-2"]:not([disabled])')
 			).filter(t => t.offsetParent);
 			const nextIndex = tabbables.findIndex(t => t === ev.currentTarget) + 1;
+			if(isModifierKey(ev)) {
+				// ignore key navigation with modifier keys. See #252
+				return;
+			}
 			ev.preventDefault();
 			if(nextIndex < tabbables.length) {
 				tabbables[nextIndex].focus();
@@ -28,6 +35,10 @@ const withFocusManager = Component => {
 				this.ref.querySelectorAll('[tabIndex="-2"]:not([disabled])')
 			).filter(t => t.offsetParent);
 			const prevIndex = tabbables.findIndex(t => t === ev.currentTarget) - 1;
+			if(isModifierKey(ev)) {
+				// ignore key navigation with modifier keys. See #252
+				return;
+			}
 			ev.preventDefault();
 			if(prevIndex >= 0) {
 				tabbables[prevIndex].focus();
