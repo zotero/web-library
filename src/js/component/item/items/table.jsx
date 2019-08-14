@@ -4,6 +4,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import cx from 'classnames';
 import paramCase from 'param-case';
+import deepEqual from 'deep-equal';
 import { resizeVisibleColumns } from '../../../utils';
 import AutoSizer from 'react-virtualized/dist/commonjs/AutoSizer';
 import InfiniteLoader from 'react-virtualized/dist/commonjs/InfiniteLoader';
@@ -34,13 +35,13 @@ class ItemsTable extends React.PureComponent {
 			this.loader.resetLoadMoreRowsCache(true);
 		}
 
-		if(this.tableRef && selectedItemKeys.length > 0 &&
-			(items.length !== prevItems.length || prevSelectedItemKeys.length === 0)
-		) {
+		if(!deepEqual(selectedItemKeys, prevSelectedItemKeys)) {
 			const scrollToIndex = items.findIndex(
 				i => i && selectedItemKeys.includes(i.key)
-			)
-			this.tableRef.scrollToRow(scrollToIndex);
+			);
+			if(scrollToIndex >= 0) {
+				this.tableRef.scrollToRow(scrollToIndex);
+			}
 		}
 	}
 
@@ -601,7 +602,6 @@ class ItemsTable extends React.PureComponent {
 									rowGetter={ this.getRow.bind(this) }
 									rowHeight={ 26 }
 									rowRenderer={ this.renderRow.bind(this) }
-									scrollToIndex={ scrollToIndex }
 									sort={ this.handleSort }
 									sortBy={ sortBy }
 									sortDirection={ sortDirection }

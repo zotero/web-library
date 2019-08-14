@@ -4,6 +4,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import cx from 'classnames';
 import paramCase from 'param-case';
+import deepEqual from 'deep-equal';
 import Icon from '../../ui/icon';
 import Spinner from '../../ui/spinner';
 import { default as AutoSizer } from 'react-virtualized/dist/commonjs/AutoSizer';
@@ -23,14 +24,13 @@ class ItemsList extends React.PureComponent {
 
 		const { selectedItemKeys, items } = this.props;
 
-
-		if(this.listRef && selectedItemKeys.length > 0 &&
-			(items.length !== prevItems.length || prevSelectedItemKeys.length === 0)
-		) {
+		if(!deepEqual(selectedItemKeys, prevSelectedItemKeys)) {
 			const scrollToIndex = items.findIndex(
 				i => i && selectedItemKeys.includes(i.key)
-			)
-			this.listRef.scrollToRow(scrollToIndex);
+			);
+			if(scrollToIndex >= 0) {
+				this.listRef.scrollToRow(scrollToIndex);
+			}
 		}
 	}
 
