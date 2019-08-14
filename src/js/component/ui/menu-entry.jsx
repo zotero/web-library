@@ -17,9 +17,10 @@ class MenuEntry extends React.PureComponent {
 			<ContainerTag { ...containerProps }>
 				<UncontrolledDropdown className="dropdown dropdown-wrapper">
 					<DropdownToggle
-						className="dropdown-toggle nav-link"
+						className="dropdown-toggle nav-link btn-link"
 						onKeyDown={ onKeyDown }
 						tabIndex={ -2 }
+						color={ null }
 					>
 						{ label }
 						<Icon type="16/chevron-9" width="16" height="16" />

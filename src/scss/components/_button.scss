@@ -65,10 +65,11 @@
 			margin-right: $default-padding-x-touch;
 			vertical-align: top;
 		}
-		@include mouse-and-bp-up(md) {
-			position: relative;
-			top: -2px;
-			margin-right: $space-min;
+
+		@include variant(".btn.icon-left") {
+			@include mouse-and-bp-up(md) {
+				margin-right: $space-min;
+			}
 		}
 	}
 }

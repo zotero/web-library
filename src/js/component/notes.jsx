@@ -75,12 +75,14 @@ class Notes extends React.PureComponent {
 							<div className="toolbar-left">
 								<ToolGroup>
 									<Button
-										className="btn-link"
+										className="btn-link icon-left"
 										onClick={ this.handleAddNote }
 										disabled={ isReadOnly }
 									>
-										<Icon type={ '16/plus' } width="16" height="16" />
-										Add Note
+										<span className="flex-row align-items-center">
+											<Icon type={ '16/plus' } width="16" height="16" />
+											Add Note
+										</span>
 									</Button>
 								</ToolGroup>
 							</div>
