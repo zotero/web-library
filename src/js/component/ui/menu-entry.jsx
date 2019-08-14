@@ -17,8 +17,6 @@ class MenuEntry extends React.PureComponent {
 			<ContainerTag { ...containerProps }>
 				<UncontrolledDropdown className="dropdown dropdown-wrapper">
 					<DropdownToggle
-						tag="a"
-						href="#"
 						className="dropdown-toggle nav-link"
 						onKeyDown={ onKeyDown }
 						tabIndex={ -2 }
