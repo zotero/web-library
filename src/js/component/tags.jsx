@@ -108,11 +108,13 @@ const Tags = ({ tagColors, itemKey, tags: initalTags, isReadOnly, updateItem }) 
 							<ToolGroup>
 								<Button
 									disabled={ tagRedacted !== null }
-									className="btn-link"
+									className="btn-link icon-left"
 									onClick={ handleAddTag }
 								>
-									<Icon type={ '16/plus' } width="16" height="16" />
-									Add Tag
+									<span className="flex-row align-items-center">
+										<Icon type={ '16/plus' } width="16" height="16" />
+										Add Tag
+									</span>
 								</Button>
 							</ToolGroup>
 						</div>

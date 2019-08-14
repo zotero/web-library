@@ -131,13 +131,15 @@ class Attachments extends React.PureComponent {
 						<div className="toolbar-left">
 							<ToolGroup>
 								<Button
-									className="btn-link"
+									className="btn-link icon-left"
 									onClick={ this.handleAddAttachment.bind(this) }
 									onKeyDown={ this.handleKeyDown }
 									tabIndex={ -2 }
 								>
-									<Icon type={ '16/plus' } width="16" height="16" />
-									Add Attachment
+									<span className="flex-row align-items-center">
+										<Icon type={ '16/plus' } width="16" height="16" />
+										Add Attachment
+									</span>
 								</Button>
 							</ToolGroup>
 						</div>
