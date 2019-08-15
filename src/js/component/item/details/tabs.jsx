@@ -5,16 +5,17 @@ import Panel from '../../ui/panel';
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import AttachmentsTabPane from './tab-panes/attachments';
+import AttachmentsContainer from '../../../container/attachments';
 import EditToggleButton from '../../edit-toggle-button';
 import InfoTabPane from './tab-panes/info';
 import NotesTabPane from './tab-panes/notes';
+import RelatedContainer from '../../../container/related';
 import Spinner from '../../ui/spinner';
 import StandaloneAttachmentTabPane from './tab-panes/standalone-attachment';
 import StandaloneNoteTabPane from './tab-panes/standalone-note';
 import TagsTabPane from './tab-panes/tags';
+import { pick } from '../../../common/immutable';
 import { Tab, Tabs } from '../../ui/tabs';
-import RelatedContainer from '../../../container/related';
 
 //@TODO: container for other tabs as well
 class ItemDetailsTabs extends React.PureComponent {
@@ -192,11 +193,15 @@ class ItemDetailsTabs extends React.PureComponent {
 							<TagsTabPane isActive={ this.state.tab === 'tags' } { ...this.props } />
 							{
 								!['attachment', 'note'].includes(item.itemType) && (
-									<AttachmentsTabPane isActive={ this.state.tab === 'attachments' } { ...this.props } />
+									<AttachmentsContainer
+										key={ 'attachments-' + item.key }
+										isActive={ this.state.tab === 'attachments' }
+										{ ... pick(this.props, ['isReadOnly', 'onBlur', 'onFocus', 'registerFocusRoot']) }
+									/>
 								)
 							}
 							<RelatedContainer
-								key={ item.key }
+								key={ 'related-' + item.key }
 								isActive={ this.state.tab === 'related' }
 							/>
 						</React.Fragment>

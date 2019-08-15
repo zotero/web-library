@@ -144,23 +144,6 @@ class ItemDetailsContainer extends React.PureComponent {
 		await this.props.dispatch(updateItem(this.props.item.key, patch));
 	}
 
-	async handleAddAttachment(fileData) {
-		const attachmentTemplate = await this.props.dispatch(fetchItemTemplate('attachment', { linkMode: 'imported_file' }));
-		const attachment = {
-			...attachmentTemplate,
-			parentItem: this.props.item.key,
-			filename: fileData.fileName,
-			title: fileData.fileName,
-			contentType: fileData.contentType
-		};
-		let item = await this.props.dispatch(createItem(attachment, this.props.libraryKey));
-		await this.props.dispatch(uploadAttachment(item.key, fileData));
-	}
-
-	async handleDeleteAttachment(attachment) {
-		await this.props.dispatch(deleteItem(attachment));
-	}
-
 	render() {
 		const { isEditing, device, item, isLoadingMeta, isLibraryReadOnly, itemTypeFields,
 			itemTypes, pendingChanges } = this.props;
@@ -200,8 +183,6 @@ class ItemDetailsContainer extends React.PureComponent {
 				onAddTag = { this.handleAddTag.bind(this) }
 				onDeleteTag = { this.handleDeleteTag.bind(this) }
 				onUpdateTag = { this.handleUpdateTag.bind(this) }
-				onAddAttachment = { this.handleAddAttachment.bind(this) }
-				onDeleteAttachment = { this.handleDeleteAttachment.bind(this) }
 				onSave = { this.handleItemUpdated.bind(this) }
 				{ ...this.props }
 				{ ...this.state }
@@ -228,7 +209,6 @@ const mapStateToProps = state => {
 	const isProcessingTags = get(state,
 		['libraries', libraryKey, 'updating', 'items', itemKey], []
 	).some(({ patch }) => 'tags' in patch);
-	const uploads = get(state, ['libraries', libraryKey, 'updating', 'uploads'], []);
 	const isMetaAvailable = itemType in state.meta.itemTypeCreatorTypes &&
 		itemType in state.meta.itemTypeFields;
 	const shouldFetchMeta = !isMetaAvailable
@@ -295,7 +275,6 @@ const mapStateToProps = state => {
 		shouldFetchMeta,
 		totalChildItems,
 		tagColors,
-		uploads,
 		...extraProps
 	};
 };
