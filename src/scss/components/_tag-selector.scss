@@ -8,6 +8,7 @@
 	flex-direction: column;
 	border-top: $border-width solid $tag-selector-border-color;
 	line-height: $line-height-base;
+	color: $tag-selector-color;
 	min-height: 0;
 
 	&.collapsed {
@@ -62,12 +63,22 @@
 		@include text-truncate;
 
 		&:hover {
-			background-color: $shade-2;
+			background-color:$tag-hover-bg;
+		}
+
+		&:active {
+			color: $tag-selected-color;
+			background-color: $tag-selected-bg;
 		}
 
 		&.selected {
 			color: $tag-selected-color;
 			background-color: $tag-selected-bg;
+
+			&:active {
+				color: inherit;
+				background-color: $tag-hover-bg;
+			}
 		}
 
 		&.disabled {
