@@ -2,6 +2,8 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
+import cx from 'classnames';
+import Button from './ui/button';
 import Icon from './ui/icon';
 import Input from './form/input';
 import TagList from './tag-selector/tag-list';
@@ -11,6 +13,10 @@ import { pick } from '../common/immutable';
 import { UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap/lib';
 
 class TagSelector extends React.PureComponent {
+	state = {
+		isCollapsed: false
+	}
+
 	handleKeyDown = ev => {
 		const { onFocusNext, onFocusPrev } = this.props;
 		if(ev.target !== ev.currentTarget) {
@@ -29,50 +35,66 @@ class TagSelector extends React.PureComponent {
 		navigate({ tags: [] });
 	}
 
+	handleCollapse = ev => {
+		const { isCollapsed } = this.state;
+		this.setState({ isCollapsed: !isCollapsed });
+	}
+
 	render() {
 		const { isFetching, onFocus, onBlur, registerFocusRoot, selectedTags } = this.props;
 		return (
-			<div className="tag-selector">
-				<TagList
-					{ ...pick(this.props, ['checkColoredTags', 'fetchTags',
-						'isFetching', 'onSelect', 'searchString', 'sourceTagsPointer',
-						'tags', 'totalTagCount'])
-					}
-				/>
-				<div
-					className="tag-selector-filter-container"
-					onBlur={ onBlur }
-					onFocus={ onFocus }
-					ref={ ref => registerFocusRoot(ref) }
-					tabIndex={ 0 }
+			<div
+				className={ cx('tag-selector', { 'collapsed': this.state.isCollapsed }) }
 				>
-					<Input
-						className="tag-selector-filter form-control form-control-lg"
-						onChange={ this.props.onSearch }
-						onKeyDown={ this.handleKeyDown }
-						tabIndex={ -2 }
-						type="search"
-						value={ this.props.searchString }
-						isBusy={ isFetching }
+				<div className="scroll-container">
+					<Button
+						className="tag-selector-toggle"
+						onClick={ this.handleCollapse }
+					>
+						<Icon type="16/grip" width="16" height="2" />
+					</Button>
+					<TagList
+						{ ...pick(this.props, ['checkColoredTags', 'fetchTags',
+							'isFetching', 'onSelect', 'searchString', 'sourceTagsPointer',
+							'tags', 'totalTagCount'])
+						}
 					/>
-					<UncontrolledDropdown className="dropdown dropdown-wrapper">
-							<DropdownToggle
-								href="#"
-								className="btn-link btn-icon dropdown-toggle tag-selector-actions"
-								onKeyDown={ this.handleKeyDown }
-								tabIndex={ -2 }
-							>
-								<Icon type="16/chevron-9" width="16" height="16" />
-							</DropdownToggle>
-							<DropdownMenu right>
-								<DropdownItem disabled>
-									{ selectedTags.length } tag selected
-								</DropdownItem>
-								<DropdownItem onClick={ this.handleDeselectClick } >
-									Deselect All
-								</DropdownItem>
-							</DropdownMenu>
-					</UncontrolledDropdown>
+					<div
+						className="tag-selector-filter-container"
+						onBlur={ onBlur }
+						onFocus={ onFocus }
+						ref={ ref => registerFocusRoot(ref) }
+						tabIndex={ 0 }
+					>
+						<Input
+							className="tag-selector-filter form-control"
+							onChange={ this.props.onSearch }
+							onKeyDown={ this.handleKeyDown }
+							tabIndex={ -2 }
+							type="search"
+							value={ this.props.searchString }
+							isBusy={ isFetching }
+							placeholder="Filter Tags"
+						/>
+						<UncontrolledDropdown className="dropdown dropdown-wrapper">
+								<DropdownToggle
+									className="btn-icon dropdown-toggle tag-selector-actions"
+									onKeyDown={ this.handleKeyDown }
+									tabIndex={ -2 }
+									color={ null }
+								>
+									<Icon type="16/options" width="16" height="16" />
+								</DropdownToggle>
+								<DropdownMenu right>
+									<DropdownItem disabled>
+										{ selectedTags.length } tag selected
+									</DropdownItem>
+									<DropdownItem onClick={ this.handleDeselectClick } >
+										Deselect All
+									</DropdownItem>
+								</DropdownMenu>
+						</UncontrolledDropdown>
+					</div>
 				</div>
 			</div>
 		);

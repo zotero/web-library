@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import cx from 'classnames';
 import withFocusManager from '../../enhancers/with-focus-manager';
 import { isTriggerEvent } from '../../common/event';
+import Icon from '../ui/icon';
 const PAGE_SIZE = 100;
 
 class TagList extends React.PureComponent {
@@ -61,7 +62,7 @@ class TagList extends React.PureComponent {
 	}
 
 	renderTag(tag) {
-		const className = cx('tag-selector-item', {
+		const className = cx('tag', {
 			disabled: tag.disabled,
 			selected: tag.selected,
 			colored: tag.color,
@@ -75,9 +76,19 @@ class TagList extends React.PureComponent {
 				data-tag={ tag.tag }
 				onClick={ this.handleClick }
 				onKeyDown={ this.handleKeyDown }
-				style={ tag.color && { color: tag.color } }
 				tabIndex={ tag.disabled ? null : -2 }
 			>
+				{
+					tag.color && (
+						<Icon
+							color={ tag.color }
+							height="10"
+							symbol={ tag.selected ? 'circle-focus' : 'circle' }
+							type="10/circle"
+							width="10"
+						/>
+					)
+				}
 				{ tag.tag }
 			</li>
 		);

@@ -129,6 +129,11 @@ label {
 			right: $input-btn-padding-x-touch;
 			top: calc(50% - #{$space-lg / 2});
 		}
+
+		@include mouse-and-bp-up(md) {
+			right: $space-min + $input-border-width;
+			top: $space-min + $input-border-width;
+		}
 	}
 
 	&.textarea {
@@ -206,6 +211,10 @@ label {
 	.busy:not(.textarea) & {
 		@include touch-or-bp-down(sm) {
 			padding-right: $input-btn-padding-x-touch + $space-lg + 1px;
+		}
+
+		@include mouse-and-bp-up(md) {
+			padding-right: $space-min + $icon-spin-size-sm + 1px;
 		}
 	}
 

@@ -67,6 +67,7 @@ a {
 	flex: 1 1 auto;
 	display: flex;
 	flex-direction: column;
+	min-height: 0;
 
 	@media (max-width: $navbar-breakpoint - 1px) {
 		overflow: hidden; // Do not overlap open mobile navbar nav
@@ -90,4 +91,5 @@ main {
 	background: $main-bg;
 	position: relative;
 	z-index: $z-index-main;
+	min-height: 0;
 }

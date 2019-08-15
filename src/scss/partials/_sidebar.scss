@@ -8,6 +8,7 @@
 	background: $sidebar-bg;
 	overflow: hidden;
 	position: relative;
+	min-height: 0;
 
 	@include touch-or-bp-down(sm) {
 		@include hairline(right, $sidebar-border-color);
@@ -23,7 +24,6 @@
 	}
 
 	@include mouse-and-bp-up(md) {
-		padding: $space-min 0;
 		border-right: $border-width solid tint($sidebar-border-color, 50%);
 	}
 

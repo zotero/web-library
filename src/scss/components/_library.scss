@@ -4,6 +4,7 @@
 
 .library {
 	display: flex;
+	min-height: 0;
 
 	//@include touch-or-bp-down(sm) {
 	//	@include hairline(top, $shade-4);

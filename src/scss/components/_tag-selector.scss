@@ -2,92 +2,102 @@
 // Tag selector
 // --------------------------------------------------
 
-.library .tag-selector {
-	flex: 0 0 auto;
-	height: 160px;
-	position: relative; // required for scroll offset calculation
-}
-
 .tag-selector {
+	flex: 0 0 $tag-selector-height;
 	display: flex;
 	flex-direction: column;
-	overflow: hidden;
+	border-top: $border-width solid $tag-selector-border-color;
+	line-height: $line-height-base;
+	min-height: 0;
 
-	@include bp-down(xs) {
-		display: none; // Dev only
+	&.collapsed {
+		flex: 0 0 $tag-selector-collapsed-height;
 	}
-}
 
-.tag-selector-container {
-	flex: 1 1 auto;
-	justify-content: space-between;
-	overflow: auto;
-	height: auto;
-	// max-height: 160px;
-}
+	.tag-selector-toggle {
+		display: block;
+		position: sticky;
+		top: 0;
+		width: 100%;
+		border: 0;
+		padding: 3px;
+		line-height: 2px;
+		background-color: $sidebar-bg;
 
-.tag-selector-filter-container {
-	height: auto;
-	flex: 0 0 2.5em;
-	display: flex;
-	flex-direction: row;
-	padding: .5em .25em;
-}
-
-.tag-selector-list {
-	list-style: none;
-	display: inline-block;
-	margin: 0;
-	padding: 0;
-}
-
-.tag-selector-filter {
-	flex: 1 0 40px;
-	min-width: 40px;
-}
-
-.tag-selector-actions {
-	flex: 0 0 32px;
-}
-
-.tag-selector-item {
-	border-radius: 1em;
-	border: 1px solid transparent;
-	cursor: pointer;
-	display: inline-block;
-	padding: .05em .5em;
-	margin: 0;
-
-	&.placeholder {
-		position: relative;
-		vertical-align: middle;
-		&::before {
-			content: " ";
-			background: $shade-3;
-			width: 100%;
-			position: absolute;
-			height: 1rem;
-			top: -.5rem;
+		.icon {
+			vertical-align: top;
+			color: $tag-selector-grip-color;
 		}
 	}
 
-	&.selected {
-		background-color: $secondary;
-		border: 1px solid $secondary;
+	.scroll-container {
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
 	}
 
-	&.colored {
-		font-weight: bold;
+	.tag-selector-container {
+		@include state(".tag-selector.collapsed") {
+			display: none;
+		}
 	}
 
-	&.disabled {
-		opacity: .6;
-		cursor: auto;
-		pointer-events: none;
+	.tag-selector-list {
+		display: flex;
+		flex-wrap: wrap;
+		align-content: flex-start;
+		height: 100%;
+		font-size: $font-size-small;
+		padding: 1px ($default-padding-x - 7px) $space-min ($space-md - 7px);
 	}
 
-	&:not(.disabled):hover {
-		background-color: lighten($secondary, 15%);
-		border: 1px solid $secondary;
+	.tag {
+		flex: 0 1 auto;
+		display: flex;
+		align-items: center;
+		padding: 0 $tag-padding-x;
+		margin: $space-min ($space-min / 4);
+		border-radius: $tag-border-radius;
+		cursor: pointer;
+		@include text-truncate;
+
+		&:hover {
+			background-color: $shade-2;
+		}
+
+		&.selected {
+			color: $tag-selected-color;
+			background-color: $tag-selected-bg;
+		}
+
+		&.disabled {
+			opacity: 0.5;
+			cursor: auto;
+			pointer-events: none;
+		}
+
+		.icon {
+			margin-right: $space-min;
+		}
+	}
+
+	.tag-selector-filter-container {
+		position: sticky;
+		bottom: 0;
+		display: flex;
+		align-items: center;
+		background: $sidebar-bg;
+		padding: $space-min $default-padding-x $space-min $space-md;
+		margin-top: auto;
+
+		@include state(".tag-selector.collapsed") {
+			display: none;
+		}
+	}
+
+	.dropdown {
+		flex: 0 0 auto;
+		margin-left: 5px;
+		margin-right: -$space-min - 2px;
 	}
 }
