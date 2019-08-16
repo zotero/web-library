@@ -54,6 +54,7 @@ const Notes = ({ device, childItems, isActive, isFetching, isFetched,
 
 	return (
 		<TabPane
+			className="notes"
 			isActive={ isActive }
 			isLoading={ typeof(isFetching) === 'undefined' ? true : isFetching }
 		>
