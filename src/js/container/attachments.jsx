@@ -11,7 +11,6 @@ const AttachmentsContainer = props => <Attachments { ...props } />;
 
 const mapStateToProps = state => {
 	const { libraryKey, itemKey } = state.current;
-	const { relations } = get(state, ['libraries', libraryKey, 'items', itemKey], {});
 	const childItemsData = get(state, ['libraries', libraryKey, 'itemsByParent', itemKey], {});
 	const { isFetching, pointer, keys, totalResults } = childItemsData;
 	const childItems = (keys || []).map(key => get(state, ['libraries', libraryKey, 'items', key], {}));
@@ -19,7 +18,9 @@ const mapStateToProps = state => {
 	const hasMoreItems = typeof(pointer) === 'undefined' || pointer < totalResults;
 	const isFetched = !isFetching && !hasMoreItems;
 
-	return { childItems, libraryKey, itemKey, isFetched, isFetching, uploads, pointer, relations, totalResults };
+	return { childItems, libraryKey, itemKey, isFetched, isFetching, uploads, pointer, totalResults };
 }
 
-export default connect(mapStateToProps, { deleteItem, createItem, uploadAttachment, fetchChildItems, fetchItemTemplate })(AttachmentsContainer)
+export default connect(mapStateToProps,
+	{ deleteItem, createItem, uploadAttachment, fetchChildItems, fetchItemTemplate }
+)(AttachmentsContainer)
