@@ -106,20 +106,6 @@ class ItemDetailsContainer extends React.PureComponent {
 		await this.props.dispatch(updateItem(item.key, patch));
 	}
 
-	async handleAddNote(note = '') {
-		const noteTemplate = await this.props.dispatch(fetchItemTemplate('note'));
-		const item = {
-			...noteTemplate,
-			parentItem: this.props.item.key,
-			note
-		};
-		await this.props.dispatch(createItem(item, this.props.libraryKey));
-	}
-
-	async handleDeleteNote(note) {
-		await this.props.dispatch(deleteItem(note));
-	}
-
 	async handleAddTag(tag) {
 		let tags = deduplicateByKey([...this.props.item.tags, { tag }], 'tag');
 		let patch = { tags };
@@ -178,8 +164,6 @@ class ItemDetailsContainer extends React.PureComponent {
 		}
 
 		return <ItemDetails
-				onAddNote={ this.handleAddNote.bind(this) }
-				onDeleteNote = { this.handleDeleteNote.bind(this) }
 				onAddTag = { this.handleAddTag.bind(this) }
 				onDeleteTag = { this.handleDeleteTag.bind(this) }
 				onUpdateTag = { this.handleUpdateTag.bind(this) }

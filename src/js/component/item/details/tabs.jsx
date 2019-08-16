@@ -8,7 +8,7 @@ import React from 'react';
 import AttachmentsContainer from '../../../container/attachments';
 import EditToggleButton from '../../edit-toggle-button';
 import InfoTabPane from './tab-panes/info';
-import NotesTabPane from './tab-panes/notes';
+import NotesContainer from '../../../container/notes';
 import RelatedContainer from '../../../container/related';
 import Spinner from '../../ui/spinner';
 import StandaloneAttachmentTabPane from './tab-panes/standalone-attachment';
@@ -167,7 +167,11 @@ class ItemDetailsTabs extends React.PureComponent {
 								!['attachment', 'note'].includes(item.itemType) && (
 									<React.Fragment>
 										<InfoTabPane isActive={ this.state.tab === 'info' } { ...this.props } />
-										<NotesTabPane isActive={ this.state.tab === 'notes' } { ...this.props } />
+										<NotesContainer
+											key={ 'notes-' + item.key }
+											isActive={ this.state.tab === 'notes' }
+											{ ... pick(this.props, ['isReadOnly', 'onBlur', 'onFocus', 'registerFocusRoot']) }
+										/>
 									</React.Fragment>
 								)
 							}
