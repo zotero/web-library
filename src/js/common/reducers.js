@@ -107,7 +107,7 @@ const filterItemKeys = (state, removedKeys) => {
 const populateItemKeys = (state, newKeys, action) => {
 	const { keys: prevKeys = [] } = state;
 	const { queryOptions, totalResults } = action;
-	const { start, sort, direction } = queryOptions;
+	const { start, limit, sort, direction } = queryOptions;
 
 	const keys = [...prevKeys];
 	keys.length = totalResults;
@@ -124,6 +124,7 @@ const populateItemKeys = (state, newKeys, action) => {
 		sortDirection: direction,
 		isFetching: false,
 		isError: false,
+		pointer: start + limit,
 	}
 }
 

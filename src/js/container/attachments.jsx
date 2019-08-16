@@ -12,17 +12,14 @@ const AttachmentsContainer = props => <Attachments { ...props } />;
 const mapStateToProps = state => {
 	const { libraryKey, itemKey } = state.current;
 	const { relations } = get(state, ['libraries', libraryKey, 'items', itemKey], {});
-	const childItems = get(state, ['libraries', libraryKey, 'itemsByParent', itemKey, 'keys'], [])
-			.map(key => get(state, ['libraries', libraryKey, 'items', key], {}));
-	const totalResults = get(state, ['libraries', libraryKey, 'itemsByParent', itemKey, 'totalResults']);
-	const isFetching = get(
-		state, ['libraries', libraryKey, 'itemsByParent', itemKey, 'isFetching'], true
-	);
+	const childItemsData = get(state, ['libraries', libraryKey, 'itemsByParent', itemKey], {});
+	const { isFetching, pointer, keys, totalResults } = childItemsData;
+	const childItems = (keys || []).map(key => get(state, ['libraries', libraryKey, 'items', key], {}));
 	const uploads = get(state, ['libraries', libraryKey, 'updating', 'uploads'], []);
-	const hasMoreItems = totalResults > childItems.length || typeof(totalResults) === 'undefined';
+	const hasMoreItems = typeof(pointer) === 'undefined' || pointer < totalResults;
 	const isFetched = !isFetching && !hasMoreItems;
 
-	return { childItems, libraryKey, itemKey, isFetched, isFetching, uploads, relations, totalResults };
+	return { childItems, libraryKey, itemKey, isFetched, isFetching, uploads, pointer, relations, totalResults };
 }
 
 export default connect(mapStateToProps, { deleteItem, createItem, uploadAttachment, fetchChildItems, fetchItemTemplate })(AttachmentsContainer)

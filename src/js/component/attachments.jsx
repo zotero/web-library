@@ -12,7 +12,9 @@ import { pick } from '../common/immutable';
 import { TabPane } from './ui/tabs';
 import { Toolbar, ToolGroup } from './ui/toolbars';
 
-const Attachment = ({ attachment, deleteItem, isReadOnly, isUploading, onKeyDown }) => {
+const Attachment = ({ attachment, deleteItem, isReadOnly, isUploading,
+	onKeyDown }) => {
+
 	const handleDelete = () => {
 		deleteItem(attachment);
 	}
@@ -65,22 +67,27 @@ Attachment.propTypes = {
 
 const PAGE_SIZE = 100;
 
-const Attachments = ({ childItems, isFetched, isFetching, isReadOnly, itemKey, createItem, uploadAttachment,
-	onFocusNext, onFocusPrev, fetchChildItems, fetchItemTemplate, uploads, isActive, libraryKey, onBlur, onFocus,
-	registerFocusRoot, ...props }) => {
+const Attachments = ({ childItems, isFetched, isFetching, isReadOnly, itemKey,
+	createItem, uploadAttachment, onFocusNext, onFocusPrev, fetchChildItems,
+	fetchItemTemplate, uploads, isActive, libraryKey, onBlur, onFocus,
+	pointer, registerFocusRoot, ...props }) => {
 
 	useEffect(() => {
-		if(isActive && !isFetched) {
-			const start = childItems.length;
+		if(isActive && !isFetching && !isFetched) {
+			const start = pointer || 0;
 			const limit = PAGE_SIZE;
 			fetchChildItems(itemKey, { start, limit });
 		}
-	}, [isActive, isFetched]);
+	}, [isActive, isFetching, isFetched, childItems]);
 
 	const handleFileInputChange = async ev => {
 		const fileDataPromise = getFileData(ev.currentTarget.files[0]);
-		const attachmentTemplatePromise = fetchItemTemplate('attachment', { linkMode: 'imported_file' });
-		const [fileData, attachmentTemplate] = await Promise.all([fileDataPromise, attachmentTemplatePromise]);
+		const attachmentTemplatePromise = fetchItemTemplate(
+			'attachment', { linkMode: 'imported_file' }
+		);
+		const [fileData, attachmentTemplate] = await Promise.all(
+			[fileDataPromise, attachmentTemplatePromise]
+		);
 
 		const attachment = {
 			...attachmentTemplate,
@@ -106,7 +113,10 @@ const Attachments = ({ childItems, isFetched, isFetching, isReadOnly, itemKey, c
 	}
 
 	return (
-		<TabPane isActive={ isActive } isLoading={ isFetching }>
+		<TabPane
+			isActive={ isActive }
+			isLoading={ typeof(isFetching) === 'undefined' ? true : isFetching }
+		>
 			<h5 className="h2 tab-pane-heading hidden-mouse">Attachments</h5>
 			<div
 				className="scroll-container-mouse"
@@ -163,10 +173,22 @@ const Attachments = ({ childItems, isFetched, isFetching, isReadOnly, itemKey, c
 
 Attachments.propTypes = {
 	childItems: PropTypes.array,
+	createItem: PropTypes.func,
+	fetchChildItems: PropTypes.func,
+	fetchItemTemplate: PropTypes.func,
+	isActive: PropTypes.bool,
+	isFetched: PropTypes.bool,
 	isFetching: PropTypes.bool,
 	isReadOnly: PropTypes.bool,
+	itemKey: PropTypes.string,
+	libraryKey: PropTypes.string,
+	onBlur: PropTypes.func,
+	onFocus: PropTypes.func,
 	onFocusNext: PropTypes.func,
 	onFocusPrev: PropTypes.func,
+	pointer: PropTypes.number,
+	registerFocusRoot: PropTypes.func,
+	uploadAttachment: PropTypes.func,
 	uploads: PropTypes.array,
 };
 
