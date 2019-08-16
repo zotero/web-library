@@ -114,6 +114,7 @@ const Attachments = ({ childItems, isFetched, isFetching, isReadOnly, itemKey,
 
 	return (
 		<TabPane
+			className="attachments"
 			isActive={ isActive }
 			isLoading={ typeof(isFetching) === 'undefined' ? true : isFetching }
 		>
@@ -145,13 +146,7 @@ const Attachments = ({ childItems, isFetched, isFetching, isReadOnly, itemKey,
 					<Toolbar>
 						<div className="toolbar-left">
 							<ToolGroup>
-								<div className="add-file-button">
-									<input
-										onChange={ handleFileInputChange }
-										onKeyDown={ handleKeyDown }
-										tabIndex={ -2 }
-										type="file"
-									/>
+								<div className="btn-file">
 									<Button
 										className="btn-link icon-left"
 										tabIndex={ -1 }
@@ -161,6 +156,12 @@ const Attachments = ({ childItems, isFetched, isFetching, isReadOnly, itemKey,
 											Add Attachment
 										</span>
 									</Button>
+									<input
+										onChange={ handleFileInputChange }
+										onKeyDown={ handleKeyDown }
+										tabIndex={ -2 }
+										type="file"
+									/>
 								</div>
 							</ToolGroup>
 						</div>

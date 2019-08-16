@@ -17,7 +17,7 @@
 			.btn-link {
 				color: $icon-color;
 
-				&:active {
+				@include state(".btn-file:active .btn-link") {
 					color: $icon-active-color;
 				}
 			}

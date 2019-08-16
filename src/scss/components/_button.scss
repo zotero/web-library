@@ -269,3 +269,27 @@
 		}
 	}
 }
+
+// File upload button
+
+::-webkit-file-upload-button {
+	@include mouse-and-bp-up(md) {
+  	-webkit-appearance: initial; // Reset normalize
+  	font: initial; // Reset normalize
+  }
+}
+
+.btn-file {
+	display: flex;
+	overflow: hidden;
+	position: relative;
+
+	input {
+		position: absolute;
+		left: 0;
+		top: 0;
+		font-size: 10rem;
+		opacity: 0;
+		cursor: pointer;
+	}
+}
