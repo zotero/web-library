@@ -49,7 +49,7 @@ class NewItemSelector extends React.PureComponent {
 		}
 	}
 
-	renderItemType(itemTypeDesc) {
+	renderItemType = itemTypeDesc => {
 		const { itemType, localized } = itemTypeDesc;
 		return (
 			<DropdownItem key={ itemType } onClick={ this.handleSelect.bind(this, itemType) }>
@@ -64,8 +64,9 @@ class NewItemSelector extends React.PureComponent {
 			it => primaryItemTypes.includes(it.itemType)
 		);
 		const secondaryItemTypesDesc = this.props.itemTypes.filter(
-			it => !primaryItemTypes.includes(it.itemType)
+			it => it.itemType !== 'note' && !primaryItemTypes.includes(it.itemType)
 		);
+		const noteItemType = this.props.itemTypes.find(it => it.itemType === 'note');
 		return (
 			<Dropdown
 				className="dropdown-wrapper new-item-selector"
@@ -99,14 +100,20 @@ class NewItemSelector extends React.PureComponent {
 				},
 			}}
 			>
-			{ primaryItemTypesDesc.map(this.renderItemType.bind(this)) }
-			<DropdownItem divider />
+			{ primaryItemTypesDesc.map(this.renderItemType) }
+			{ noteItemType && (
+				<React.Fragment>
+					<DropdownItem divider />
+						{ this.renderItemType(noteItemType) }
+					<DropdownItem divider />
+				</React.Fragment>
+			)}
 				<DropdownItem onClick={ onNewFileModalOpen } >
 					Store Copy of File
 				</DropdownItem>
 			<DropdownItem divider />
 			{ this.state.isSecondaryVisible ?
-				secondaryItemTypesDesc.map(this.renderItemType.bind(this)) :
+				secondaryItemTypesDesc.map(this.renderItemType) :
 				<DropdownItem data-more onClick={ this.handleToggleMore.bind(this) }>
 					More
 				</DropdownItem>
