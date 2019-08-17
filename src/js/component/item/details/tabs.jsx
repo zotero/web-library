@@ -12,7 +12,7 @@ import NotesContainer from '../../../container/notes';
 import RelatedContainer from '../../../container/related';
 import Spinner from '../../ui/spinner';
 import StandaloneAttachmentTabPane from './tab-panes/standalone-attachment';
-import StandaloneNoteTabPane from './tab-panes/standalone-note';
+import StandaloneNoteContainer from '../../../container/standalone-note';
 import TagsTabPane from './tab-panes/tags';
 import { pick } from '../../../common/immutable';
 import { Tab, Tabs } from '../../ui/tabs';
@@ -178,9 +178,9 @@ class ItemDetailsTabs extends React.PureComponent {
 
 							{
 								item.itemType === 'note' && (
-									<StandaloneNoteTabPane
+									<StandaloneNoteContainer
+										key={ 'standalone-note-' + item.key }
 										isActive={ this.state.tab === 'standalone-note' }
-										{ ...this.props }
 									/>
 								)
 							}
