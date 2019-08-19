@@ -66,7 +66,6 @@ class NewItemSelector extends React.PureComponent {
 		const secondaryItemTypesDesc = this.props.itemTypes.filter(
 			it => it.itemType !== 'note' && !primaryItemTypes.includes(it.itemType)
 		);
-		const noteItemType = this.props.itemTypes.find(it => it.itemType === 'note');
 		return (
 			<Dropdown
 				className="dropdown-wrapper new-item-selector"
@@ -101,16 +100,10 @@ class NewItemSelector extends React.PureComponent {
 			}}
 			>
 			{ primaryItemTypesDesc.map(this.renderItemType) }
-			{ noteItemType && (
-				<React.Fragment>
-					<DropdownItem divider />
-						{ this.renderItemType(noteItemType) }
-					<DropdownItem divider />
-				</React.Fragment>
-			)}
-				<DropdownItem onClick={ onNewFileModalOpen } >
-					Store Copy of File
-				</DropdownItem>
+			<DropdownItem divider />
+			<DropdownItem onClick={ onNewFileModalOpen } >
+				Store Copy of File
+			</DropdownItem>
 			<DropdownItem divider />
 			{ this.state.isSecondaryVisible ?
 				secondaryItemTypesDesc.map(this.renderItemType) :

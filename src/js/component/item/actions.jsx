@@ -97,7 +97,7 @@ class ItemsActions extends React.PureComponent {
 		const { itemsSource, onAddByIdentifierModalOpen, onTrash, isDeleting,
 			isReadOnly, itemKeys, onRemoveFromCollection,
 			onBibliographyModalOpen, onUndelete, onDuplicate,
-			onPermanentlyDelete, } = this.props;
+			onPermanentlyDelete, onNewItemCreate, } = this.props;
 
 		return (
 			<React.Fragment>
@@ -120,6 +120,18 @@ class ItemsActions extends React.PureComponent {
 								title="Add By Identifier"
 							>
 								<Icon type="16/magic-wand" width="16" height="16" />
+							</Button>
+						)}
+						{
+							(itemsSource === 'collection' || itemsSource === 'top') && (
+							<Button
+								icon
+								onClick={ () => onNewItemCreate('note') }
+								onKeyDown={ this.handleKeyDown }
+								tabIndex={ -2 }
+								title="New Standalone Note"
+							>
+								<Icon type="16/note" width="16" height="16" />
 							</Button>
 						)}
 						{
