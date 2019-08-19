@@ -813,8 +813,41 @@ const removeRelatedItem = (itemKey, relatedItemKey) => {
 	};
 }
 
+const chunkedAction = (action, itemKeys, ...args) => {
+	return async dispatch => {
+		do {
+			const itemKeysChunk = itemKeys.splice(0, 50);
+			await dispatch(action(itemKeysChunk, ...args))
+		} while (itemKeys.length > 0);
+	}
+}
+
+const chunkedDeleteItems = (itemKeys, ...args) => chunkedAction(deleteItems, itemKeys, ...args);
+
+const chunkedMoveToTrash = (itemKeys, ...args) => chunkedAction(moveToTrash, itemKeys, ...args);
+
+const chunkedRecoverFromTrash = (itemKeys, ...args) => chunkedAction(recoverFromTrash, itemKeys, ...args);
+
+const chunkedRemoveFromCollection = (itemKeys, ...args) =>chunkedAction(removeFromCollection, itemKeys, ...args);
+
+const chunkedTrashOrDelete = (itemKeys, ...args) => {
+	return async (dispatch, getState) => {
+		const { itemsSource } = getState().current;
+		if(itemsSource === 'trash') {
+			return await dispatch(chunkedDeleteItems(itemKeys, ...args));
+		} else {
+			return await dispatch(chunkedMoveToTrash(itemKeys, ...args));
+		}
+	}
+}
+
 export {
 	addToCollection,
+	chunkedDeleteItems,
+	chunkedMoveToTrash,
+	chunkedRecoverFromTrash,
+	chunkedRemoveFromCollection,
+	chunkedTrashOrDelete,
 	copyToLibrary,
 	createItem,
 	createItems,

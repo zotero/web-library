@@ -58,7 +58,7 @@ class ItemsTable extends React.PureComponent {
 	}
 
 	handleKeyDown = ev => {
-		const { items, selectedItemKeys, onItemsSelect } = this.props;
+		const { chunkedTrashOrDelete, items, selectedItemKeys, onItemsSelect } = this.props;
 
 		if(document.activeElement && document.activeElement.classList.contains('column-header') &&
 			(ev.key === 'ArrowDown' || ev.key === 'ArrowRight' || ev.key === 'ArrowLeft')) {
@@ -89,6 +89,9 @@ class ItemsTable extends React.PureComponent {
 				const index = parseInt(ev.target.dataset.index, 10);
 				this.selectItem(items[index], ev);
 			}
+			return;
+		} else if(ev.key === 'Backspace') {
+			chunkedTrashOrDelete(selectedItemKeys);
 			return;
 		} else {
 			return;
@@ -628,9 +631,10 @@ class ItemsTable extends React.PureComponent {
 }
 
 ItemsTable.propTypes = {
+	chunkedTrashOrDelete: PropTypes.func,
 	items: PropTypes.array,
+	onItemsSelect: PropTypes.func,
 	selectedItemKeys: PropTypes.array,
-	onItemsSelect: PropTypes.func
 };
 
 ItemsTable.defaultProps = {

@@ -11,6 +11,7 @@ const extractItems = (response, state) => {
 	}));
 }
 
+//@TODO: deprecate in favour of items-write.jsx chunkedAction()
 const sequentialChunkedAcion = async (action, itemKeys, extraArgs = []) => {
 	do {
 		const itemKeysChunk = itemKeys.splice(0, 50);
