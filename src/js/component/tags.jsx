@@ -7,10 +7,11 @@ import Icon from './ui/icon';
 import { Toolbar, ToolGroup } from './ui/toolbars';
 import { deduplicateByKey, sortByKey } from '../utils';
 import { pick } from '../common/immutable';
+import { TabPane } from './ui/tabs';
 
 var nextId = 0;
 
-const Tags = ({ tagColors, itemKey, tags: initalTags, isReadOnly, updateItem }) => {
+const Tags = ({ tagColors, itemKey, tags: initalTags, isActive, isReadOnly, updateItem }) => {
 	const [tags, setTags] = useState(initalTags.map(t => ({ ...t, id: ++nextId })));
 	const [tagRedacted, setTagRedacted] = useState(null);
 
@@ -65,7 +66,12 @@ const Tags = ({ tagColors, itemKey, tags: initalTags, isReadOnly, updateItem }) 
 	}
 
 	return (
+		<TabPane
+			className="tags"
+			isActive={ isActive }
+		>
 			<div className="scroll-container-mouse">
+				<h5 className="h2 tab-pane-heading hidden-mouse">Tags</h5>
 				<nav>
 					<ul className="details-list tag-list">
 						{
@@ -120,11 +126,13 @@ const Tags = ({ tagColors, itemKey, tags: initalTags, isReadOnly, updateItem }) 
 						</div>
 					</Toolbar>
 				)}
-		</div>
+			</div>
+		</TabPane>
 	)
 }
 
 Tags.propTypes = {
+	isActive: PropTypes.bool,
 	isReadOnly: PropTypes.bool,
 	itemKey: PropTypes.string,
 	tagColors: PropTypes.object,

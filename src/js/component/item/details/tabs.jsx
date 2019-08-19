@@ -13,7 +13,7 @@ import RelatedContainer from '../../../container/related';
 import Spinner from '../../ui/spinner';
 import StandaloneAttachmentTabPane from './tab-panes/standalone-attachment';
 import StandaloneNoteContainer from '../../../container/standalone-note';
-import TagsTabPane from './tab-panes/tags';
+import TagsContainer from '../../../container/tags';
 import { pick } from '../../../common/immutable';
 import { Tab, Tabs } from '../../ui/tabs';
 
@@ -194,7 +194,7 @@ class ItemDetailsTabs extends React.PureComponent {
 								)
 							}
 
-							<TagsTabPane isActive={ this.state.tab === 'tags' } { ...this.props } />
+							<TagsContainer key={ item.key } isActive={ this.state.tab === 'tags' } />
 							{
 								!['attachment', 'note'].includes(item.itemType) && (
 									<AttachmentsContainer
