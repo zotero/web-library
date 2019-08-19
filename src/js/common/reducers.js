@@ -40,6 +40,9 @@ const injectExtraItemKeys = (state, newKeys, items) => {
 
 	newKeys.forEach(newKey => {
 		let injected = false;
+		if(keys.includes(newKey)) {
+			return;
+		}
 		for(let i = 0; i < injectIterationEnd; i++) {
 
 			if(process.env.NODE_ENV === 'development') {
