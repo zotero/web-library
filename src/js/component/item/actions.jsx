@@ -119,7 +119,7 @@ class ItemsActions extends React.PureComponent {
 								tabIndex={ -2 }
 								title="Add By Identifier"
 							>
-								<Icon type="16/plus" width="16" height="16" />
+								<Icon type="16/magic-wand" width="16" height="16" />
 							</Button>
 						)}
 						{
