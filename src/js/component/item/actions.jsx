@@ -234,7 +234,7 @@ class ItemsActions extends React.PureComponent {
 	}
 
 	renderTouch() {
-		const { isSelectMode, preferences: { columns }, onNewItemModalOpen, onNewFileModalOpen } = this.props;
+		const { isSelectMode, preferences: { columns }, onNewItemModalOpen, onNewFileModalOpen, onNewItemCreate } = this.props;
 		const { isOpen } = this.state;
 		const { isNewItemAllowed, isExportAllowed } = this;
 		const sortColumn = columns.find(c => c.sort) || columns.find(c => c.field === 'title');
@@ -275,6 +275,9 @@ class ItemsActions extends React.PureComponent {
 							<DropdownItem divider />
 							<DropdownItem onClick={ onNewItemModalOpen } >
 								New Item
+							</DropdownItem>
+							<DropdownItem onClick={ () => onNewItemCreate('note') } >
+								New Standalone Note
 							</DropdownItem>
 							<DropdownItem onClick={ onNewFileModalOpen } >
 								Store Copy of File
