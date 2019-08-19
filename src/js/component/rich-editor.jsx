@@ -13,7 +13,6 @@ import Icon from './ui/icon';
 import { Toolbar, ToolGroup } from './ui/toolbars';
 import ColorPicker from './ui/color-picker';
 import Spinner from './ui/spinner';
-import { loadJs } from '../utils';
 
 const formatBlocks = [
 	{ value: 'p', Tag: 'p', label: 'Paragraph' },
@@ -45,9 +44,9 @@ class RichEditor extends React.PureComponent {
 	}
 
 	async componentDidMount() {
-		if(!window.tinymce) {
-			await loadJs(`${this.props.tinymceRoot}/tinymce.min.js`);
-			this.forceUpdate();
+		const { isTinymceFetched, isTinymceFetching, sourceFile } = this.props;
+		if(!isTinymceFetched && !isTinymceFetching) {
+			sourceFile('tinymce');
 		}
 	}
 
@@ -161,8 +160,8 @@ class RichEditor extends React.PureComponent {
 	}
 
 	render() {
-		const { device, isReadOnly } = this.props;
-		if(!window.tinymce) {
+		const { device, isReadOnly, isTinymceFetched } = this.props;
+		if(!isTinymceFetched) {
 			return <Spinner />;
 		}
 		return (
@@ -608,9 +607,12 @@ class RichEditor extends React.PureComponent {
 }
 
 RichEditor.propTypes = {
-	isReadOnly: PropTypes.bool,
 	device: PropTypes.object,
+	isReadOnly: PropTypes.bool,
+	isTinymceFetched: PropTypes.bool,
+	isTinymceFetching: PropTypes.bool,
 	onChange: PropTypes.func.isRequired,
+	sourceFile: PropTypes.func,
 	tinymceRoot: PropTypes.string,
 	value: PropTypes.string,
 };

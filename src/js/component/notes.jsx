@@ -12,8 +12,15 @@ import { TabPane } from './ui/tabs';
 const PAGE_SIZE = 100;
 
 const Notes = ({ device, childItems, isActive, isFetching, isFetched,
-	updateItem, navigate, fetchItemTemplate, isReadOnly, itemKey, noteKey, createItem,
-	libraryKey, deleteItem, pointer, fetchChildItems }) => {
+	updateItem, navigate, fetchItemTemplate, isReadOnly, isTinymceFetched,
+	isTinymceFetching, itemKey, noteKey, createItem, libraryKey, deleteItem,
+	pointer, sourceFile, fetchChildItems }) => {
+
+	useEffect(() => {
+		if(!isTinymceFetched && !isTinymceFetching) {
+			sourceFile('tinymce');
+		}
+	}, []);
 
 	useEffect(() => {
 		if(isActive && !isFetching && !isFetched) {
@@ -129,11 +136,14 @@ Notes.propTypes = {
 	isFetched: PropTypes.bool,
 	isFetching: PropTypes.bool,
 	isReadOnly: PropTypes.bool,
+	isTinymceFetched: PropTypes.bool,
+	isTinymceFetching: PropTypes.bool,
 	itemKey: PropTypes.string,
 	libraryKey: PropTypes.string,
 	navigate: PropTypes.func,
 	noteKey: PropTypes.string,
 	pointer: PropTypes.number,
+	sourceFile: PropTypes.func,
 	updateItem: PropTypes.func,
 }
 
