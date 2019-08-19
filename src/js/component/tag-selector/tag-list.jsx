@@ -77,19 +77,9 @@ class TagList extends React.PureComponent {
 				onClick={ this.handleClick }
 				onKeyDown={ this.handleKeyDown }
 				tabIndex={ tag.disabled ? null : -2 }
+				style={ tag.color && { color: tag.color} }
 			>
-				{
-					tag.color && (
-						<Icon
-							color={ tag.color }
-							height="10"
-							symbol={ tag.selected ? 'circle-focus' : 'circle' }
-							type="10/circle"
-							width="10"
-						/>
-					)
-				}
-				{ tag.tag }
+				<span className="tag-label">{ tag.tag }</span>
 			</li>
 		);
 	}

@@ -8,7 +8,6 @@
 	flex-direction: column;
 	border-top: $border-width solid $tag-selector-border-color;
 	line-height: $line-height-base;
-	color: $tag-selector-color;
 	min-height: 0;
 
 	&.collapsed {
@@ -67,16 +66,24 @@
 		}
 
 		&:active {
-			color: $tag-selected-color;
 			background-color: $tag-selected-bg;
 		}
 
 		&.selected {
-			color: $tag-selected-color;
 			background-color: $tag-selected-bg;
 
 			&:active {
-				color: inherit;
+				background-color: $tag-hover-bg;
+			}
+		}
+
+		&.colored {
+			&.selected,
+			&:active {
+				background-color: currentColor;
+			}
+
+			&.selected:active {
 				background-color: $tag-hover-bg;
 			}
 		}
@@ -87,8 +94,37 @@
 			pointer-events: none;
 		}
 
-		.icon {
-			margin-right: $space-min;
+		.tag-label {
+			color: $tag-selector-color;
+
+			@include state(".tag.selected", ".tag:active") {
+				color: $tag-selected-color;
+			}
+
+			@include state(".tag.selected:active") {
+				color: $tag-selector-color;
+			}
+		}
+
+		&::before {
+			@include variant(".tag.colored") {
+				content: "";
+				display: block;
+				width: 10px;
+				height: 10px;
+				background-color: currentColor;
+				margin-right: $space-min;
+				border-radius: 5px;
+				border: $border-width solid rgba($shade-10, 0.08);
+
+				@include state(".colored.selected", ".colored:active") {
+					border-color: $shade-0;
+				}
+
+				@include state(".colored.selected:active") {
+					border-color: rgba($shade-10, 0.08);
+				}
+			}
 		}
 	}
 
