@@ -81,6 +81,11 @@
 			&.selected {
 				background-color: $note-active-bg;
 
+				&:focus-within {
+					color: $note-focus-color;
+					background-color: $note-focus-bg;
+				}
+
 				&::before,
 				&::after {
 					content: none;
@@ -89,6 +94,10 @@
 				& + .note {
 					border-top: $border-width solid $note-active-bg;
 					padding-top: $space-md - 6px;
+
+					@include state(".selected:focus-within") {
+						border-top-color: $note-focus-bg;
+					}
 
 					&::before {
 						content: none;
@@ -119,6 +128,14 @@
 
 					@include state(".note.selected") {
 						background-color: $note-active-bg;
+					}
+
+					@include state(".note.selected:focus-within") {
+						background-color: $note-focus-bg;
+
+						.icon {
+							color: $note-focus-color;
+						}
 					}
 				}
 			}
