@@ -53,7 +53,7 @@ class ColumnSelector extends React.PureComponent {
 			<Dropdown
 				isOpen={ this.state.isOpen }
 				toggle={ this.handleToggleDropdown }
-				className="dropdown-wrapper column-selector"
+				className="column-selector"
 			>
 				<DropdownToggle
 					className="btn-icon dropdown-toggle"

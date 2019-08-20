@@ -245,7 +245,7 @@ class RichEditor extends React.PureComponent {
 										isOpen={ this.state.dropdowns['forecolor'] }
 										toggle={ this.handleDropdownToggle }
 										data-dropdown="forecolor"
-										className="dropdown-wrapper btn-group"
+										className="btn-group"
 									>
 										<Button
 											icon
@@ -283,7 +283,7 @@ class RichEditor extends React.PureComponent {
 										isOpen={ this.state.dropdowns['hilitecolor'] }
 										toggle={ this.handleDropdownToggle }
 										data-dropdown="hilitecolor"
-										className="dropdown-wrapper btn-group"
+										className="btn-group"
 									>
 										<Button
 											icon
@@ -354,7 +354,6 @@ class RichEditor extends React.PureComponent {
 										isOpen={ this.state.dropdowns['overflow-1'] }
 										toggle={ this.handleDropdownToggle}
 										data-dropdown="overflow-1"
-										className="dropdown-wrapper"
 									>
 										<DropdownToggle
 											color={ null }
@@ -425,7 +424,6 @@ class RichEditor extends React.PureComponent {
 									isOpen={ this.state.dropdowns['formatblock'] }
 									toggle={ this.handleDropdownToggle }
 									data-dropdown="formatblock"
-									className="dropdown-wrapper"
 								>
 										<DropdownToggle
 											color={ null }
@@ -542,7 +540,6 @@ class RichEditor extends React.PureComponent {
 										isOpen={ this.state.dropdowns['overflow-2'] }
 										toggle={ this.handleDropdownToggle}
 										data-dropdown="overflow-2"
-										className="dropdown-wrapper"
 									>
 										<DropdownToggle
 											color={ null }

@@ -68,7 +68,7 @@ class NewItemSelector extends React.PureComponent {
 		);
 		return (
 			<Dropdown
-				className="dropdown-wrapper new-item-selector"
+				className="new-item-selector"
 				isOpen={ this.state.isOpen }
 				toggle={ this.handleToggleDropdown.bind(this) }
 			>

@@ -246,7 +246,6 @@ class ItemsActions extends React.PureComponent {
 			<Dropdown
 				isOpen={ isOpen }
 				toggle={ this.handleDropdownToggle }
-				className="dropdown-wrapper"
 			>
 				<DropdownToggle
 					color={ null }

@@ -15,7 +15,7 @@ class MenuEntry extends React.PureComponent {
 
 		return dropdown ? (
 			<ContainerTag { ...containerProps }>
-				<UncontrolledDropdown className="dropdown dropdown-wrapper">
+				<UncontrolledDropdown className="dropdown">
 					<DropdownToggle
 						className="dropdown-toggle nav-link btn-link"
 						onKeyDown={ onKeyDown }

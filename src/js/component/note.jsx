@@ -50,7 +50,6 @@ class Note extends React.PureComponent {
 					<Dropdown
 						isOpen={ isOpen }
 						toggle={ this.handleToggleDropdown }
-						className="dropdown-wrapper"
 					>
 						<DropdownToggle
 							color={ null }

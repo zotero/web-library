@@ -38,7 +38,7 @@ class CollectionActions extends React.PureComponent {
 			<Dropdown
 				isOpen={ isOpen }
 				toggle={ this.handleToggleDropdown }
-				className="dropdown-wrapper new-item-selector"
+				className="new-item-selector"
 			>
 				<DropdownToggle
 					color={ null }

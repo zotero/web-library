@@ -82,7 +82,7 @@ class Search extends React.PureComponent {
 		return (
 			<div className="search input-group">
 				<UncontrolledDropdown
-					className="dropdown dropdown-wrapper"
+					className="dropdown"
 				>
 					<DropdownToggle
 						color={ null }

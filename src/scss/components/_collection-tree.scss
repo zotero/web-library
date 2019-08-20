@@ -183,7 +183,7 @@
 			}
 		}
 
-		.dropdown-wrapper {
+		.dropdown {
 			@include touch-or-bp-down(sm) {
 				margin-left: $space-sm;
 				margin-right: 0;
@@ -193,58 +193,58 @@
 				margin-left: $space-xs;
 				margin-right: -$space-min - $input-border-width;
 			}
-		}
 
-		.dropdown-toggle {
-			display: block;
-			border-radius: 0;
+			.dropdown-toggle {
+				display: block;
+				border-radius: 0;
 
-			@include touch-or-bp-down(sm) {
-				padding: 0; // Simulate btn-link
-				border: 0;
+				@include touch-or-bp-down(sm) {
+					padding: 0; // Simulate btn-link
+					border: 0;
 
-				@include state(".dropdown-wrapper.show .dropdown-toggle") {
-					@include state("li.selected > .item-container") {
-						background-color: $body-bg;
+					@include state(".dropdown.show .dropdown-toggle") {
+						@include state("li.selected > .item-container") {
+							background-color: $body-bg;
 
-						.icon {
-							color: $touch-collection-tree-active-bg;
+							.icon {
+								color: $touch-collection-tree-active-bg;
+							}
 						}
 					}
 				}
-			}
 
-			@include touch-keyboard-or-bp-down(sm) {
-				&:focus {
-					outline-offset: $outline-offset; // Simulate btn-link
+				@include touch-keyboard-or-bp-down(sm) {
+					&:focus {
+						outline-offset: $outline-offset; // Simulate btn-link
 
-					@include state("li.selected > .item-container .dropdown-toggle", "li.open > .item-container .dropdown-toggle") {
-						outline-color: $touch-collection-tree-active-color;
+						@include state("li.selected > .item-container .dropdown-toggle", "li.open > .item-container .dropdown-toggle") {
+							outline-color: $touch-collection-tree-active-color;
+						}
 					}
 				}
-			}
 
-			@include mouse-and-bp-up(md) {
-				@include state(".item-container:not(:focus-within)", "html:not(.keyboard)") {
-					visibility: hidden;
-				}
+				@include mouse-and-bp-up(md) {
+					@include state(".item-container:not(:focus-within)", "html:not(.keyboard)") {
+						visibility: hidden;
+					}
 
-				@include state(".item-container:hover") {
-					visibility: visible;
-				}
+					@include state(".item-container:hover") {
+						visibility: visible;
+					}
 
-				@include state(".dropdown-wrapper.show .dropdown-toggle") {
-					visibility: visible;
+					@include state(".dropdown.show .dropdown-toggle") {
+						visibility: visible;
 
-					.icon {
-						color: $icon-active-color;
+						.icon {
+							color: $icon-active-color;
+						}
 					}
 				}
-			}
 
-			@include mouse-keyboard-and-bp-up(md) {
-				&:focus {
-					box-shadow: inset 0 0 0 $input-btn-focus-width $btn-secondary-color; // Align with twisty and item-container outline
+				@include mouse-keyboard-and-bp-up(md) {
+					&:focus {
+						box-shadow: inset 0 0 0 $input-btn-focus-width $btn-secondary-color; // Align with twisty and item-container outline
+					}
 				}
 			}
 		}

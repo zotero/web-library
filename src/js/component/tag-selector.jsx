@@ -76,7 +76,7 @@ class TagSelector extends React.PureComponent {
 							isBusy={ isFetching }
 							placeholder="Filter Tags"
 						/>
-						<UncontrolledDropdown className="dropdown dropdown-wrapper">
+						<UncontrolledDropdown className="dropdown">
 								<DropdownToggle
 									className="btn-icon dropdown-toggle tag-selector-actions"
 									onKeyDown={ this.handleKeyDown }
