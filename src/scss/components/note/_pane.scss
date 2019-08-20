@@ -13,6 +13,10 @@
 		flex-direction: column;
 		justify-content: space-between;
 
+		@include mouse-and-bp-only(md) {
+			flex: 0 0 50%;
+		}
+
 		.toolbar {
 			position: sticky;
 			bottom: 0;
@@ -26,6 +30,12 @@
 					color: $icon-active-color;
 				}
 			}
+		}
+	}
+
+	.rich-editor {
+		@include mouse-and-bp-only(md) {
+			flex: 0 0 50%;
 		}
 	}
 }
