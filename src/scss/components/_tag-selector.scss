@@ -134,7 +134,7 @@
 		display: flex;
 		align-items: center;
 		background: $sidebar-bg;
-		padding: $space-min $default-padding-x $space-min $space-md;
+		padding: $space-min $default-padding-x $space-min;
 		margin-top: auto;
 
 		@include state(".tag-selector.collapsed") {
