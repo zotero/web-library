@@ -167,7 +167,7 @@ class RichEditor extends React.PureComponent {
 		return (
 			<div className="rich-editor">
 				{ device.isSingleColumn || !isReadOnly && (
-					<React.Fragment>
+					<div className="toolbar-container">
 						<Toolbar className="dense">
 							<div className="toolbar-left">
 								<ToolGroup>
@@ -596,7 +596,7 @@ class RichEditor extends React.PureComponent {
 								</ToolGroup>
 							</div>
 						</Toolbar>
-					</React.Fragment>
+					</div>
 				)}
 				<div className="editor-container">
 					{ this.renderEditor() }

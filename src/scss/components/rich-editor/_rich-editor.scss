@@ -94,6 +94,16 @@
 		background-color: transparent !important;
 	}
 
+	.toolbar-container {
+		flex: 0 0 auto;
+		display: flex;
+		flex-direction: column;
+
+		@include mouse-and-bp-only(md) {
+			flex-direction: row;
+		}
+	}
+
 	.toolbar {
 		@include touch-or-bp-down(sm) {
 			height: $line-height-large-touch + $space-min;
@@ -103,6 +113,27 @@
 			& + .toolbar {
 				padding-top: 0;
 				height: $line-height-large-touch + $space-min / 2;
+			}
+		}
+
+		@include mouse-and-bp-only(md) {
+			&:first-child {
+				padding-right: 0;
+			}
+
+			&:nth-child(2) {
+				padding-left: 0;
+
+				.tool-group {
+					&:first-child {
+						margin-left: $space-min / 2;
+						padding-left: $space-min / 2 + $border-width;
+
+						&::before {
+							content: "";
+						}
+					}
+				}
 			}
 		}
 	}
