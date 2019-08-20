@@ -11,7 +11,7 @@ import InfoTabPane from './tab-panes/info';
 import NotesContainer from '../../../container/notes';
 import RelatedContainer from '../../../container/related';
 import Spinner from '../../ui/spinner';
-import StandaloneAttachmentTabPane from './tab-panes/standalone-attachment';
+import StandaloneAttachmentContainer from '../../../container/standalone-attachment';
 import StandaloneNoteContainer from '../../../container/standalone-note';
 import TagsContainer from '../../../container/tags';
 import { pick } from '../../../common/immutable';
@@ -187,10 +187,7 @@ class ItemDetailsTabs extends React.PureComponent {
 
 							{
 								item.itemType === 'attachment' && (
-									<StandaloneAttachmentTabPane
-										isActive={ this.state.tab === 'standalone-attachment' }
-										{ ...this.props }
-									/>
+									<StandaloneAttachmentContainer isActive={ this.state.tab === 'standalone-attachment' } />
 								)
 							}
 
