@@ -8,14 +8,12 @@
 		&:first-child {
 			.tool-group {
 				&:nth-child(2) {
-					@include touch-and-bp-up(sm) {
+					@include bp-up(sm) {
 						display: none;
 					}
 
-					html.touch & {
-						@media (min-width: $bp-sub-sup-sm) {
-							display: block;
-						}
+					@media (min-width: $bp-sub-sup-sm) {
+						display: block;
 					}
 
 					@include touch-and-bp-up(lg) {
@@ -42,14 +40,12 @@
 				}
 
 				&:nth-child(5) {
-					@include touch-and-bp-up(sm) {
+					@include bp-up(sm) {
 						display: none;
 					}
 
-					html.touch & {
-						@media (min-width: $bp-blockquote-link-sm) {
-							display: block;
-						}
+					@media (min-width: $bp-blockquote-link-sm) {
+						display: block;
 					}
 
 					@include touch-and-bp-up(lg) {
@@ -72,10 +68,8 @@
 						display: none;
 					}
 
-					html.touch & {
-						@media (min-width: $bp-sub-sup-sm) {
-							display: none;
-						}
+					@media (min-width: $bp-sub-sup-sm) {
+						display: none;
 					}
 
 					@include touch-and-bp-up(lg) {
@@ -121,14 +115,12 @@
 		&:nth-child(2) {
 			.tool-group {
 				&:nth-child(3) {
-					@include touch-and-bp-up(sm) {
+					@include bp-up(sm) {
 						display: none;
 					}
 
-					html.touch & {
-						@media (min-width: $bp-lists-sm) {
-							display: block;
-						}
+					@media (min-width: $bp-lists-sm) {
+						display: block;
 					}
 
 					@include touch-and-bp-up(lg) {
@@ -151,10 +143,8 @@
 						display: none;
 					}
 
-					html.touch & {
-						@media (min-width: $bp-lists-sm) {
-							display: none;
-						}
+					@media (min-width: $bp-lists-sm) {
+						display: none;
 					}
 
 					@include touch-and-bp-up(lg) {
