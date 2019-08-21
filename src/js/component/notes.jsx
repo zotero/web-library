@@ -5,6 +5,7 @@ import Button from './ui/button';
 import Icon from './ui/icon';
 import Note from './note';
 import RichEditorContainer from '../container/rich-editor';
+import withDevice from '../enhancers/with-device';
 import withEditMode from '../enhancers/with-edit-mode';
 import { Toolbar, ToolGroup } from './ui/toolbars';
 import { TabPane } from './ui/tabs';
@@ -61,8 +62,9 @@ const Notes = ({ device, childItems, isActive, isFetching, isFetched,
 		<TabPane
 			className="notes"
 			isActive={ isActive }
-			isLoading={ typeof(isFetching) === 'undefined' ? true : isFetching }
+			isLoading={ device.shouldUseTabs && (typeof(isFetching) === 'undefined' ? true : isFetching) }
 		>
+			<h5 className="h2 tab-pane-heading hidden-mouse">Notes</h5>
 			<div className="scroll-container-mouse">
 				<nav>
 					<ul className="note-list">
@@ -147,4 +149,4 @@ Notes.propTypes = {
 	updateItem: PropTypes.func,
 }
 
-export default  withEditMode(Notes);
+export default  withDevice(withEditMode(Notes));

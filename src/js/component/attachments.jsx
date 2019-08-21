@@ -5,6 +5,7 @@ import Button from './ui/button';
 import Icon from './ui/icon';
 import Spinner from './ui/spinner';
 import withFocusManager from '../enhancers/with-focus-manager';
+import withDevice from '../enhancers/with-device';
 import { getFileData } from '../common/event';
 import { pick } from '../common/immutable';
 import { TabPane } from './ui/tabs';
@@ -65,7 +66,7 @@ Attachment.propTypes = {
 
 const PAGE_SIZE = 100;
 
-const Attachments = ({ childItems, isFetched, isFetching, isReadOnly, itemKey,
+const Attachments = ({ childItems, device, isFetched, isFetching, isReadOnly, itemKey,
 	createItem, uploadAttachment, onFocusNext, onFocusPrev, fetchChildItems,
 	fetchItemTemplate, uploads, isActive, libraryKey, onBlur, onFocus,
 	pointer, registerFocusRoot, ...props }) => {
@@ -114,7 +115,7 @@ const Attachments = ({ childItems, isFetched, isFetching, isReadOnly, itemKey,
 		<TabPane
 			className="attachments"
 			isActive={ isActive }
-			isLoading={ typeof(isFetching) === 'undefined' ? true : isFetching }
+			isLoading={ device.shouldUseTabs && typeof(isFetching) === 'undefined' ? true : isFetching }
 		>
 			<h5 className="h2 tab-pane-heading hidden-mouse">Attachments</h5>
 			<div
@@ -173,6 +174,7 @@ const Attachments = ({ childItems, isFetched, isFetching, isReadOnly, itemKey,
 Attachments.propTypes = {
 	childItems: PropTypes.array,
 	createItem: PropTypes.func,
+	device: PropTypes.object,
 	fetchChildItems: PropTypes.func,
 	fetchItemTemplate: PropTypes.func,
 	isActive: PropTypes.bool,
@@ -191,4 +193,4 @@ Attachments.propTypes = {
 	uploads: PropTypes.array,
 };
 
-export default withFocusManager(Attachments);
+export default withDevice(withFocusManager(Attachments));

@@ -10,15 +10,12 @@ import Types from '../types';
 import { makePath } from '../common/navigation';
 
 import {
-    createItem,
     updateItem,
-    deleteItem,
-    fetchItemTemplate,
     fetchChildItems,
-    uploadAttachment,
     fetchItemTypeCreatorTypes,
     fetchItemTypeFields,
     navigate,
+    sourceFile,
 } from '../actions';
 
 import { hideFields, noEditFields, extraFields } from '../constants/item';
@@ -26,8 +23,6 @@ import { hideFields, noEditFields, extraFields } from '../constants/item';
 import {
     get,
     deduplicateByKey,
-    mapRelationsToItemKeys,
-    removeRelationByItemKey,
     reverseMap,
 } from '../utils';
 
@@ -38,22 +33,24 @@ const PAGE_SIZE = 100;
 
 class ItemDetailsContainer extends React.PureComponent {
 	async componentDidUpdate() {
-		const { childItems, device, fetchChildItems, item, isLoadingChildItems,
-			shouldFetchMeta, totalChildItems, dispatch } = this.props;
+		const { childItems, device, fetchChildItems, item, isFetched, isFetching,
+			shouldFetchMeta, totalChildItems, dispatch, isTinymceFetched, isTinymceFetching, sourceFile } = this.props;
+
 
 		if(item && item.key) {
-			const hasMoreItems = totalChildItems > childItems.length ||
-				typeof(totalChildItems) === 'undefined';
-			const start = childItems.length;
-			const limit = PAGE_SIZE;
+			if(!isTinymceFetched && !isTinymceFetching) {
+				sourceFile('tinymce');
+			}
+
+			if(!isFetching && !isFetched && !['attachment', 'note'].includes(item.itemType)) {
+				const start = childItems.length;
+				const limit = PAGE_SIZE;
+				fetchChildItems(item.key, { start, limit })
+			}
 
 			if(shouldFetchMeta) {
 				dispatch(fetchItemTypeCreatorTypes(item.itemType));
 				dispatch(fetchItemTypeFields(item.itemType));
-			}
-			if(!device.shouldUseTabs && hasMoreItems && !isLoadingChildItems &&
-				!['attachment', 'note'].includes(item.itemType)) {
-				fetchChildItems(item.key, { start, limit })
 			}
 		}
 	}
@@ -185,24 +182,29 @@ const mapStateToProps = state => {
 		libraryKey,
 		noteKey,
 	} = state.current;
+	const { isLibraryReadOnly } = (state.config.libraries.find(l => l.key === libraryKey) || {});
 	const item = get(state, ['libraries', libraryKey, 'items', itemKey], null);
 	const itemType = item ? item.itemType : null;
-	const childItems = get(state, ['libraries', libraryKey, 'itemsByParent', itemKey, 'keys'], [])
-			.map(key => get(state, ['libraries', libraryKey, 'items', key], {}));
-	const totalChildItems = get(state, ['libraries', libraryKey, 'itemsByParent', itemKey, 'totalResults']);
+	const childItemsData = get(state, ['libraries', libraryKey, 'itemsByParent', itemKey], {});
+	const { isFetching, pointer, keys, totalResults } = childItemsData;
+	const childItems = (keys || []).map(key => get(state, ['libraries', libraryKey, 'items', key], {}));
+	const hasMoreItems = totalResults > 0 && (typeof(pointer) === 'undefined' || pointer < totalResults);
+	const isFetched = !isFetching && !hasMoreItems;
+
+	const isTinymceFetched = state.sources.fetched.includes('tinymce');
+	const isTinymceFetching = state.sources.fetching.includes('tinymce');
+
 	const isProcessingTags = get(state,
 		['libraries', libraryKey, 'updating', 'items', itemKey], []
 	).some(({ patch }) => 'tags' in patch);
+
 	const isMetaAvailable = itemType in state.meta.itemTypeCreatorTypes &&
 		itemType in state.meta.itemTypeFields;
 	const shouldFetchMeta = !isMetaAvailable
 		&& !state.fetching.itemTypeCreatorTypes.includes(itemType)
 		&& !state.fetching.itemTypeFields.includes(itemType);
 	const isLoadingMeta = !isMetaAvailable;
-	const isLoadingChildItems = get(
-		state, ['libraries', libraryKey, 'itemsByParent', itemKey, 'isFetching'], false
-	);
-	const { isLibraryReadOnly } = (state.config.libraries.find(l => l.key === libraryKey) || {});
+
 	const tagColors = get(state, ['libraries', libraryKey, 'tagColors']);
 
 	const extraProps = [];
@@ -244,21 +246,25 @@ const mapStateToProps = state => {
 	return {
 		childItems,
 		collection: get(state, 'libraries', libraryKey, 'collections', collectionKey),
+		isFetched,
+		isFetching,
 		isLibraryReadOnly,
-		isLoadingChildItems,
 		isLoadingMeta,
 		isProcessingTags,
 		isSelectMode,
+		isTinymceFetched,
+		isTinymceFetching,
 		item,
 		itemsCount,
 		libraryKey,
 		makePath: makePath.bind(null, state.config),
 		noteKey,
 		pendingChanges,
+		pointer,
 		selectedItemKeys: itemKeys, //@TODO: rename
 		shouldFetchMeta,
-		totalChildItems,
 		tagColors,
+		totalResults,
 		...extraProps
 	};
 };
@@ -272,4 +278,4 @@ ItemDetailsContainer.propTypes = {
 };
 
 export default withDevice(withEditMode(connect(
-	mapStateToProps, { push, fetchChildItems, updateItem, navigate })(ItemDetailsContainer)));
+	mapStateToProps, { push, fetchChildItems, updateItem, navigate, sourceFile })(ItemDetailsContainer)));

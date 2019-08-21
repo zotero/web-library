@@ -5,9 +5,11 @@ import PropTypes from 'prop-types';
 import Icon from './ui/icon';
 import Button from './ui/button';
 import paramCase from 'param-case';
+import withDevice from '../enhancers/with-device';
 import { getItemTitle } from '../common/item';
 import { TabPane } from './ui/tabs';
 import { pick } from '../common/immutable';
+
 
 const RelatedItem = ({ parentItemKey, relatedItem, libraryKey, removeRelatedItem, navigate }) => {
 	const handleSelect = ev => {
@@ -58,7 +60,7 @@ RelatedItem.propTypes = {
 	removeRelatedItem: PropTypes.func.isRequired,
 }
 
-const Related = ({ fetchRelatedItems, itemKey, isFetched, isFetching, relatedItems, ...props }) => {
+const Related = ({ device, fetchRelatedItems, itemKey, isFetched, isFetching, relatedItems, ...props }) => {
 
 	useEffect(() => {
 		if(!isFetching && !isFetched) {
@@ -67,7 +69,7 @@ const Related = ({ fetchRelatedItems, itemKey, isFetched, isFetching, relatedIte
 	}, []);
 
 	return (
-		<TabPane { ...pick(props, ['isActive']) } isLoading={ !isFetched }>
+		<TabPane { ...pick(props, ['isActive']) } isLoading={ device.shouldUseTabs && !isFetched }>
 			<h5 className="h2 tab-pane-heading hidden-mouse">Related</h5>
 			<div className="scroll-container-mouse">
 				<nav>
@@ -97,4 +99,4 @@ Related.propTypes = {
 	relatedItems: PropTypes.array,
 }
 
-export default Related;
+export default withDevice(Related);
