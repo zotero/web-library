@@ -3,8 +3,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { dateLocalized } from '../common/format';
-import { TabPane } from './ui/tabs';
+import { dateLocalized } from '../../common/format';
+import { TabPane } from '../ui/tabs';
 
 const StandaloneAttachmentTabPane = ({ isActive, item }) => {
 	return (

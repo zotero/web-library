@@ -3,9 +3,9 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import Notes from '../component/notes';
-import { deleteItem, createItem, updateItem, sourceFile, fetchChildItems, fetchItemTemplate, navigate } from '../actions/';
-import { get } from '../utils';
+import Notes from '../../component/item-details/notes';
+import { deleteItem, createItem, updateItem, sourceFile, fetchChildItems, fetchItemTemplate, navigate } from '../../actions';
+import { get } from '../../utils';
 
 const NotesContainer = props => <Notes { ...props } />;
 

@@ -4,9 +4,9 @@ import React from 'react';
 import cx from 'classnames';
 import PropTypes from 'prop-types';
 import Types from '../../types';
-import ItemDetailsTabs from './details/tabs';
-import ItemDetailsInfoView from './details/info-view';
-import ItemDetailsInfoSelected from './details/info-selected';
+import ItemDetailsTabs from '../item-details/tabs';
+import ItemDetailsInfoView from '../item-details/info-view';
+import ItemDetailsInfoSelected from '../item-details/info-selected';
 import TouchHeaderContainer from '../../container/touch-header';
 
 class ItemDetails extends React.PureComponent {

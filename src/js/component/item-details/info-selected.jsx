@@ -2,7 +2,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { pluralize } from '../../../common/format';
+import { pluralize } from '../../common/format';
 
 class ItemDetailsInfoSelected extends React.PureComponent {
 	render() {

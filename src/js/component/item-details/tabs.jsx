@@ -1,23 +1,24 @@
 'use strict';
 
 import cx from 'classnames';
-import Panel from '../../ui/panel';
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import AttachmentsContainer from '../../../container/attachments';
-import EditToggleButton from '../../edit-toggle-button';
-import InfoTabPane from './tab-panes/info';
-import NotesContainer from '../../../container/notes';
-import RelatedContainer from '../../../container/related';
-import Spinner from '../../ui/spinner';
-import StandaloneAttachmentContainer from '../../../container/standalone-attachment';
-import StandaloneNoteContainer from '../../../container/standalone-note';
-import TagsContainer from '../../../container/tags';
-import { pick } from '../../../common/immutable';
-import { Tab, Tabs } from '../../ui/tabs';
+import AttachmentsContainer from '../../container/item-details/attachments';
+import EditToggleButton from '../edit-toggle-button';
+import InfoContainer from '../../container/item-details/info';
+import NotesContainer from '../../container/item-details/notes';
+import Panel from '../ui/panel';
+import RelatedContainer from '../../container/item-details/related';
+import Spinner from '../ui/spinner';
+import StandaloneAttachmentContainer from '../../container/item-details/standalone-attachment';
+import StandaloneNoteContainer from '../../container/item-details/standalone-note';
+import TagsContainer from '../../container/item-details/tags';
+import { pick } from '../../common/immutable';
+import { Tab, Tabs } from '../ui/tabs';
 
-//@TODO: container for other tabs as well
+
+// @TODO: Refactor so InfoContainer doesn't take props
 class ItemDetailsTabs extends React.PureComponent {
 	constructor(props) {
 		super(props);
@@ -166,7 +167,11 @@ class ItemDetailsTabs extends React.PureComponent {
 							{
 								!['attachment', 'note'].includes(item.itemType) && (
 									<React.Fragment>
-										<InfoTabPane isActive={ this.state.tab === 'info' } { ...this.props } />
+										<InfoContainer
+											key={ 'info-' + item.key }
+											isActive={ this.state.tab === 'info' }
+											{ ...this.props }
+										/>
 										<NotesContainer
 											key={ 'notes-' + item.key }
 											isActive={ this.state.tab === 'notes' }

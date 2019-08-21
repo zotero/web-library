@@ -3,9 +3,9 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import Attachments from '../component/attachments';
-import { deleteItem, createItem, uploadAttachment, fetchChildItems, fetchItemTemplate } from '../actions/';
-import { get } from '../utils';
+import Attachments from '../../component/item-details/attachments';
+import { deleteItem, createItem, uploadAttachment, fetchChildItems, fetchItemTemplate } from '../../actions';
+import { get } from '../../utils';
 
 const AttachmentsContainer = props => <Attachments { ...props } />;
 

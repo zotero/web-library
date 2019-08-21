@@ -2,9 +2,9 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
-import { fetchRelatedItems, navigate, removeRelatedItem } from '../actions/';
-import { get, mapRelationsToItemKeys } from '../utils';
-import Related from '../component/related';
+import { fetchRelatedItems, navigate, removeRelatedItem } from '../../actions';
+import { get, mapRelationsToItemKeys } from '../../utils';
+import Related from '../../component/item-details/related';
 
 const RelatedContainer = props => <Related { ...props } />;
 

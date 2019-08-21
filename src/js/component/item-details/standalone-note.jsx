@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 
-import { TabPane } from './ui/tabs';
-import RichEditorContainer from '../container/rich-editor';
+import { TabPane } from '../ui/tabs';
+import RichEditorContainer from '../../container/rich-editor';
 
 const StandaloneNote = ({ isActive, item, isTinymceFetched, isTinymceFetching, sourceFile, updateItem }) => {
 	useEffect(() => {

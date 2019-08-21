@@ -2,9 +2,9 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
-import { updateItem } from '../actions/';
-import { get } from '../utils';
-import Tags from '../component/tags';
+import { updateItem } from '../../actions';
+import { get } from '../../utils';
+import Tags from '../../component/item-details/tags';
 
 const TagsContainer = props => <Tags { ...props } />;
 

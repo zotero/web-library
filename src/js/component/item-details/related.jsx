@@ -1,14 +1,15 @@
 'use strict';
 
-import React, { useEffect } from 'react';
-import PropTypes from 'prop-types';
-import Icon from './ui/icon';
-import Button from './ui/button';
 import paramCase from 'param-case';
-import withDevice from '../enhancers/with-device';
-import { getItemTitle } from '../common/item';
-import { TabPane } from './ui/tabs';
-import { pick } from '../common/immutable';
+import PropTypes from 'prop-types';
+import React, { useEffect } from 'react';
+
+import Button from '../ui/button';
+import Icon from '../ui/icon';
+import withDevice from '../../enhancers/with-device';
+import { getItemTitle } from '../../common/item';
+import { pick } from '../../common/immutable';
+import { TabPane } from '../ui/tabs';
 
 
 const RelatedItem = ({ parentItemKey, relatedItem, libraryKey, removeRelatedItem, navigate }) => {

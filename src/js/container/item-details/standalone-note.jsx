@@ -3,9 +3,9 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import StandaloneNote from '../component/standalone-note';
-import { sourceFile, updateItem } from '../actions/';
-import { get } from '../utils';
+import StandaloneNote from '../../component/item-details/standalone-note';
+import { sourceFile, updateItem } from '../../actions';
+import { get } from '../../utils';
 
 const StandaloneNoteContainer = props => <StandaloneNote { ...props } />;
 

@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
-import Button from './ui/button';
-import Editable from './editable';
-import Icon from './ui/icon';
-import { Toolbar, ToolGroup } from './ui/toolbars';
-import { deduplicateByKey, sortByKey } from '../utils';
-import { pick } from '../common/immutable';
-import { TabPane } from './ui/tabs';
+import Button from '../ui/button';
+import Editable from '../editable';
+import Icon from '../ui/icon';
+import { deduplicateByKey, sortByKey } from '../../utils';
+import { pick } from '../../common/immutable';
+import { TabPane } from '../ui/tabs';
+import { Toolbar, ToolGroup } from '../ui/toolbars';
 
 var nextId = 0;
 

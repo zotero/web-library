@@ -1,15 +1,15 @@
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 
-import Button from './ui/button';
-import Icon from './ui/icon';
-import Spinner from './ui/spinner';
-import withFocusManager from '../enhancers/with-focus-manager';
-import withDevice from '../enhancers/with-device';
-import { getFileData } from '../common/event';
-import { pick } from '../common/immutable';
-import { TabPane } from './ui/tabs';
-import { Toolbar, ToolGroup } from './ui/toolbars';
+import Button from '../ui/button';
+import Icon from '../ui/icon';
+import Spinner from '../ui/spinner';
+import withFocusManager from '../../enhancers/with-focus-manager';
+import withDevice from '../../enhancers/with-device';
+import { getFileData } from '../../common/event';
+import { pick } from '../../common/immutable';
+import { TabPane } from '../ui/tabs';
+import { Toolbar, ToolGroup } from '../ui/toolbars';
 
 const Attachment = ({ attachment, deleteItem, isReadOnly, isUploading,
 	onKeyDown }) => {
@@ -115,7 +115,7 @@ const Attachments = ({ childItems, device, isFetched, isFetching, isReadOnly, it
 		<TabPane
 			className="attachments"
 			isActive={ isActive }
-			isLoading={ device.shouldUseTabs && typeof(isFetching) === 'undefined' ? true : isFetching }
+			isLoading={ device.shouldUseTabs && !isFetched }
 		>
 			<h5 className="h2 tab-pane-heading hidden-mouse">Attachments</h5>
 			<div

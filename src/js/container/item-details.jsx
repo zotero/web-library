@@ -42,7 +42,7 @@ class ItemDetailsContainer extends React.PureComponent {
 				sourceFile('tinymce');
 			}
 
-			if(!isFetching && !isFetched && !['attachment', 'note'].includes(item.itemType)) {
+			if(!device.shouldUseTabs && !isFetching && !isFetched && !['attachment', 'note'].includes(item.itemType)) {
 				const start = childItems.length;
 				const limit = PAGE_SIZE;
 				fetchChildItems(item.key, { start, limit })
