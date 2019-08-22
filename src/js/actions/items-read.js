@@ -1,6 +1,6 @@
 'use strict';
 
-import { SORT_ITEMS } from '../constants/actions';
+import { SORT_ITEMS, REQUEST_ATTACHMENT_URL, RECEIVE_ATTACHMENT_URL, ERROR_ATTACHMENT_URL } from '../constants/actions';
 import api from 'zotero-api-client';
 import { extractItems } from '../common/actions';
 import { mapRelationsToItemKeys } from '../utils';
@@ -176,6 +176,45 @@ const sortItems = (sortBy, sortDirection) => {
 	}
 };
 
+const getAttachmentUrl = itemKey => {
+	return async (dispatch, getState) => {
+		const state = getState();
+		const { libraryKey } = state.current;
+
+		dispatch({
+			type: REQUEST_ATTACHMENT_URL,
+			libraryKey,
+			itemKey
+		});
+
+		try {
+			const response = await api(state.config.apiKey, state.config.apiConfig)
+				.library(libraryKey)
+				.items(itemKey)
+				.attachmentUrl()
+				.get();
+
+			const url = response.getData();
+
+			dispatch({
+				type: RECEIVE_ATTACHMENT_URL,
+				libraryKey,
+				itemKey,
+				url
+			});
+
+			return url;
+		} catch(error) {
+			dispatch({
+				type: ERROR_ATTACHMENT_URL,
+				libraryKey, itemKey, error,
+			});
+
+			throw error;
+		}
+	}
+}
+
 export {
 	fetchChildItems,
 	fetchItemsByKeys,
@@ -185,5 +224,6 @@ export {
 	fetchRelatedItems,
 	fetchTopItems,
 	fetchTrashItems,
+	getAttachmentUrl,
 	sortItems,
 };

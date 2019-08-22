@@ -10,12 +10,27 @@ import { getFileData } from '../../common/event';
 import { pick } from '../../common/immutable';
 import { TabPane } from '../ui/tabs';
 import { Toolbar, ToolGroup } from '../ui/toolbars';
+import { isTriggerEvent } from '../../common/event';
 
-const Attachment = ({ attachment, deleteItem, isReadOnly, isUploading,
-	onKeyDown }) => {
+const Attachment = ({ attachment, deleteItem, isReadOnly, isUploading, getAttachmentUrl, onKeyDown }) => {
 
 	const handleDelete = () => {
 		deleteItem(attachment);
+	}
+
+	const handleKeyDownOrClick = ev => {
+		if(isTriggerEvent(ev)) {
+			ev.preventDefault();
+			const { key } = ev.currentTarget.closest('[data-key]').dataset;
+			openAttachment(key);
+		} else if(ev.type === 'keydown') {
+			onKeyDown(ev);
+		}
+	}
+
+	const openAttachment = async key => {
+		const url = await getAttachmentUrl(key);
+		window.location = url;
 	}
 
 	return (
@@ -27,8 +42,8 @@ const Attachment = ({ attachment, deleteItem, isReadOnly, isUploading,
 			{
 				!isUploading && attachment[Symbol.for('attachmentUrl')] ? (
 					<a
-						href={ attachment[Symbol.for('attachmentUrl')] }
-						onKeyDown={ onKeyDown }
+						onClick={ handleKeyDownOrClick }
+						onKeyDown={ handleKeyDownOrClick }
 						tabIndex={ -2 }
 					>
 						{ attachment.title || attachment.filename }
@@ -59,9 +74,10 @@ const Attachment = ({ attachment, deleteItem, isReadOnly, isUploading,
 Attachment.propTypes = {
 	attachment: PropTypes.object,
 	deleteItem: PropTypes.func,
+	getAttachmentUrl: PropTypes.func.isRequired,
 	isReadOnly: PropTypes.bool,
 	isUploading: PropTypes.bool,
-	onKeyDown: PropTypes.func,
+	onKeyDown: PropTypes.func.isRequired,
 }
 
 const PAGE_SIZE = 100;
@@ -135,7 +151,7 @@ const Attachments = ({ childItems, device, isFetched, isFetching, isReadOnly, it
 									key={ attachment.key }
 									isUploading={ isUploading }
 									onKeyDown={ handleKeyDown }
-									{ ...pick(props, ['deleteItem']) }
+									{ ...pick(props, ['deleteItem', 'getAttachmentUrl']) }
 								/>
 							})
 						}
