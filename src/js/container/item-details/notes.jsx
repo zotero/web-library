@@ -18,7 +18,8 @@ const mapStateToProps = state => {
 	const hasMoreItems = totalResults > 0 && (typeof(pointer) === 'undefined' || pointer < totalResults);
 	const isTinymceFetched = state.sources.fetched.includes('tinymce');
 	const isTinymceFetching = state.sources.fetching.includes('tinymce');
-	const isFetched = !isFetching && !hasMoreItems && isTinymceFetched;
+	const hasChecked = typeof(totalResults) !== 'undefined';
+	const isFetched = hasChecked && !isFetching && !hasMoreItems && isTinymceFetched;
 
 	return { childItems, libraryKey, itemKey, noteKey, isFetched, isFetching,
 		isTinymceFetched, isTinymceFetching, uploads, pointer, totalResults };

@@ -15,8 +15,9 @@ const mapStateToProps = state => {
 	const { isFetching, pointer, keys, totalResults } = childItemsData;
 	const childItems = (keys || []).map(key => get(state, ['libraries', libraryKey, 'items', key], {}));
 	const uploads = get(state, ['libraries', libraryKey, 'updating', 'uploads'], []);
+	const hasChecked = typeof(totalResults) !== 'undefined';
 	const hasMoreItems = totalResults > 0 && (typeof(pointer) === 'undefined' || pointer < totalResults);
-	const isFetched = !isFetching && !hasMoreItems;
+	const isFetched = hasChecked && !isFetching && !hasMoreItems;
 
 	return { childItems, libraryKey, itemKey, isFetched, isFetching, uploads, pointer, totalResults };
 }
