@@ -35,7 +35,7 @@ class TagSelector extends React.PureComponent {
 		navigate({ tags: [] });
 	}
 
-	handleCollapse = ev => {
+	handleCollapseClick = () => {
 		const { isCollapsed } = this.state;
 		this.setState({ isCollapsed: !isCollapsed });
 	}
@@ -49,7 +49,7 @@ class TagSelector extends React.PureComponent {
 				<div className="scroll-container">
 					<Button
 						className="tag-selector-toggle"
-						onClick={ this.handleCollapse }
+						onClick={ this.handleCollapseClick }
 					>
 						<Icon type="16/grip" width="16" height="2" />
 					</Button>
