@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 
 import StandaloneAttachment from '../../component/item-details/standalone-attachment';
 import { get } from '../../utils';
+import { getAttachmentUrl } from '../../actions';
 
 const StandaloneAttachmentContainer = props => <StandaloneAttachment { ...props } />;
 
@@ -15,4 +16,4 @@ const mapStateToProps = state => {
 	return { item };
 }
 
-export default connect(mapStateToProps)(StandaloneAttachmentContainer)
+export default connect(mapStateToProps, { getAttachmentUrl })(StandaloneAttachmentContainer)

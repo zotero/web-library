@@ -6,7 +6,17 @@ import PropTypes from 'prop-types';
 import { dateLocalized } from '../../common/format';
 import { TabPane } from '../ui/tabs';
 
-const StandaloneAttachmentTabPane = ({ isActive, item }) => {
+const StandaloneAttachmentTabPane = ({ isActive, item, getAttachmentUrl }) => {
+	const handleClick = ev => {
+		ev.preventDefault();
+		openAttachment(item.key);
+	}
+
+	const openAttachment = async key => {
+		const url = await getAttachmentUrl(key);
+		window.location = url;
+	}
+
 	return (
 		<TabPane className="standalone-attachment" isActive={ isActive } >
 			<div className="standalone-attachment">
@@ -26,11 +36,9 @@ const StandaloneAttachmentTabPane = ({ isActive, item }) => {
 						<React.Fragment>
 							<dt>Filename</dt>
 							<dd>
-								{ item[Symbol.for('attachmentUrl')] ? (
-									<a href={ item[Symbol.for('attachmentUrl')] }>
-										{ item.filename }
-									</a>
-								) : item.filename }
+								<a onClick={ handleClick }>
+									{ item.filename }
+								</a>
 							</dd>
 						</React.Fragment>
 					)}
@@ -53,6 +61,7 @@ const StandaloneAttachmentTabPane = ({ isActive, item }) => {
 }
 
 StandaloneAttachmentTabPane.propTypes = {
+	getAttachmentUrl: PropTypes.func,
 	isActive: PropTypes.bool,
 	item: PropTypes.object,
 }

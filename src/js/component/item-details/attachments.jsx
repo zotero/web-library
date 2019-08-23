@@ -40,7 +40,7 @@ const Attachment = ({ attachment, deleteItem, isReadOnly, isUploading, getAttach
 		>
 			<Icon type={ '16/attachment' } width="16" height="16" />
 			{
-				!isUploading && attachment[Symbol.for('attachmentUrl')] ? (
+				!isUploading ? (
 					<a
 						onClick={ handleKeyDownOrClick }
 						onKeyDown={ handleKeyDownOrClick }
