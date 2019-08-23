@@ -28,7 +28,7 @@ const makePath = (config, { library = null, collection = null,
 	} else if (publications) {
 		path.push('publications');
 	} else if(collection) {
-		path.push('collection', collection);
+		path.push('collections', collection);
 	}
 
 	if(tags && tags.length) {
