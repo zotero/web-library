@@ -4,7 +4,7 @@ const getVariants = prefix => {
 	return [
 		`${prefix}/tags/:tags/search/:search/items/:items/note/:note`,
 		`${prefix}/tags/:tags/search/:search/items/:items`,
-		`${prefix}/tags/:tags/items/:items/note:note`,
+		`${prefix}/tags/:tags/items/:items/note/:note`,
 		`${prefix}/tags/:tags/items/:items`,
 		`${prefix}/search/:search/:qmode/items/:items/note/:note`,
 		`${prefix}/search/:search/:qmode/items/:items`,
