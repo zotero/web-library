@@ -1,35 +1,28 @@
-'use strict';
-
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { pluralize } from '../../common/format';
 
-class ItemDetailsInfoView extends React.PureComponent {
-	shouldComponentUpdate({ itemsCount: nextItemsCount }) {
-		const { itemsCount } = this.props;
-		return itemsCount !== nextItemsCount;
-	}
+const ItemDetailsInfoView = ({ itemsCount }) => {
+	const [label, setLabel] = useState('');
 
-	render() {
-		const { itemsCount } = this.props;
+	useEffect(() => {
 		const label = typeof(itemsCount) === 'number' ? [
 			itemsCount === 0 ? 'No' : itemsCount,
 			pluralize('Item', itemsCount),
 			'in this view'
 		].join(' ') : '';
+		setLabel(label);
+	}, [itemsCount]);
 
-		return (
-			<div className="info-view">{ label }</div>
-		);
-	}
+	return <div className="info-view">{ label }</div>;
+}
 
-	static propTypes = {
-		itemsCount: PropTypes.number
-	}
+ItemDetailsInfoView.propTypes = {
+	itemsCount: PropTypes.number
+}
 
-	static defaultProps = {
-		itemsCount: null
-	}
+ItemDetailsInfoView.defaultProps = {
+	itemsCount: null
 }
 
 export default ItemDetailsInfoView;

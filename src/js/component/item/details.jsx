@@ -3,11 +3,13 @@
 import React from 'react';
 import cx from 'classnames';
 import PropTypes from 'prop-types';
-import Types from '../../types';
-import ItemDetailsTabs from '../item-details/tabs';
-import ItemDetailsInfoView from '../item-details/info-view';
+
 import ItemDetailsInfoSelected from '../item-details/info-selected';
+import ItemDetailsInfoView from '../item-details/info-view';
+import ItemDetailsTabs from '../item-details/tabs';
 import TouchHeaderContainer from '../../container/touch-header';
+import Types from '../../types';
+import { pick } from '../../common/immutable';
 
 class ItemDetails extends React.PureComponent {
 	render() {
@@ -26,7 +28,7 @@ class ItemDetails extends React.PureComponent {
 						!device.isTouchOrSmall && selectedItemKeys.length ? (
 							<ItemDetailsInfoSelected { ...this.props } />
 						) : (
-							<ItemDetailsInfoView { ...this.props } />
+							<ItemDetailsInfoView { ...pick(this.props, ['itemsCount']) } />
 						)
 					)
 				}
