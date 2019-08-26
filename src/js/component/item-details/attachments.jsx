@@ -48,6 +48,10 @@ const Attachment = ({ attachment, deleteItem, isReadOnly, isUploading, getAttach
 					>
 						{ attachment.title || attachment.filename }
 					</a>
+				) : attachment.linkMode === 'linked_url' ? (
+					<a href={ attachment.url }>
+						{ attachment.title || attachment.url }
+					</a>
 				) : (
 					<span
 						onKeyDown={ onKeyDown }
