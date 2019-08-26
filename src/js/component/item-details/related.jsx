@@ -2,13 +2,14 @@
 
 import paramCase from 'param-case';
 import PropTypes from 'prop-types';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import Button from '../ui/button';
 import Icon from '../ui/icon';
 import withDevice from '../../enhancers/with-device';
 import { getItemTitle } from '../../common/item';
 import { pick } from '../../common/immutable';
+import { sortItemsByKey } from '../../utils';
 import { TabPane } from '../ui/tabs';
 
 
@@ -62,12 +63,19 @@ RelatedItem.propTypes = {
 }
 
 const Related = ({ device, fetchRelatedItems, itemKey, isFetched, isFetching, relatedItems, ...props }) => {
+	const [sortedRelatedItems, setSortedRelatedItems] = useState([]);
 
 	useEffect(() => {
 		if(!isFetching && !isFetched) {
 			fetchRelatedItems(itemKey);
 		}
 	}, []);
+
+	useEffect(() => {
+		const sortedRelatedItems = [...relatedItems];
+		sortItemsByKey(sortedRelatedItems, 'title');
+		setSortedRelatedItems(sortedRelatedItems);
+	}, [relatedItems])
 
 	return (
 		<TabPane { ...pick(props, ['isActive']) } isLoading={ device.shouldUseTabs && !isFetched }>
@@ -76,7 +84,7 @@ const Related = ({ device, fetchRelatedItems, itemKey, isFetched, isFetching, re
 				<nav>
 					<ul className="details-list related-list">
 						{
-							relatedItems.map(relatedItem => (
+							sortedRelatedItems.map(relatedItem => (
 								<RelatedItem
 									key={ relatedItem.key }
 									relatedItem={ relatedItem }
@@ -93,6 +101,7 @@ const Related = ({ device, fetchRelatedItems, itemKey, isFetched, isFetching, re
 }
 
 Related.propTypes = {
+	device: PropTypes.object,
 	fetchRelatedItems: PropTypes.func.isRequired,
 	isFetched: PropTypes.bool,
 	isFetching: PropTypes.bool,
