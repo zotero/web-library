@@ -11,6 +11,7 @@ import { pick } from '../../common/immutable';
 import { TabPane } from '../ui/tabs';
 import { Toolbar, ToolGroup } from '../ui/toolbars';
 import { isTriggerEvent } from '../../common/event';
+import { openAttachment } from '../../utils';
 
 const Attachment = ({ attachment, deleteItem, isReadOnly, isUploading, getAttachmentUrl, onKeyDown }) => {
 
@@ -18,19 +19,17 @@ const Attachment = ({ attachment, deleteItem, isReadOnly, isUploading, getAttach
 		deleteItem(attachment);
 	}
 
-	const handleKeyDownOrClick = ev => {
-		if(isTriggerEvent(ev)) {
+	const handleLinkInteraction = ev => {
+		const { key } = ev.currentTarget.closest('[data-key]').dataset;
+		if(ev.type === 'mousedown' && ev.button === 1) {
 			ev.preventDefault();
-			const { key } = ev.currentTarget.closest('[data-key]').dataset;
-			openAttachment(key);
+			openAttachment(key, getAttachmentUrl, true);
+		} else if(isTriggerEvent(ev)) {
+			ev.preventDefault();
+			openAttachment(key, getAttachmentUrl, ev.getModifierState('Meta'));
 		} else if(ev.type === 'keydown') {
 			onKeyDown(ev);
 		}
-	}
-
-	const openAttachment = async key => {
-		const url = await getAttachmentUrl(key);
-		window.location = url;
 	}
 
 	return (
@@ -42,8 +41,9 @@ const Attachment = ({ attachment, deleteItem, isReadOnly, isUploading, getAttach
 			{
 				!isUploading ? (
 					<a
-						onClick={ handleKeyDownOrClick }
-						onKeyDown={ handleKeyDownOrClick }
+						onClick={ handleLinkInteraction }
+						onMouseDown={ handleLinkInteraction }
+						onKeyDown={ handleLinkInteraction }
 						tabIndex={ -2 }
 					>
 						{ attachment.title || attachment.filename }

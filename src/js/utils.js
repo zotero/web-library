@@ -282,6 +282,15 @@ const loadJs = async path => {
 	});
 }
 
+const openAttachment = async (key, getAttachmentUrl, isNewTab=false) => {
+	const url = await getAttachmentUrl(key);
+	if(isNewTab) {
+		window.open(url);
+	} else {
+		window.location = url;
+	}
+}
+
 export {
 	compare,
 	compareItem,
@@ -300,6 +309,7 @@ export {
 	loadJs,
 	mapRelationsToItemKeys,
 	noop,
+	openAttachment,
 	removeRelationByItemKey,
 	resizeVisibleColumns,
 	reverseMap,
