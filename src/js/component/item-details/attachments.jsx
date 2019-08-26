@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 
 import Button from '../ui/button';
@@ -11,7 +11,7 @@ import { pick } from '../../common/immutable';
 import { TabPane } from '../ui/tabs';
 import { Toolbar, ToolGroup } from '../ui/toolbars';
 import { isTriggerEvent } from '../../common/event';
-import { openAttachment } from '../../utils';
+import { openAttachment, sortByKey } from '../../utils';
 
 const Attachment = ({ attachment, deleteItem, isReadOnly, isUploading, getAttachmentUrl, onKeyDown }) => {
 
@@ -91,6 +91,8 @@ const Attachments = ({ childItems, device, isFetched, isFetching, isReadOnly, it
 	fetchItemTemplate, uploads, isActive, libraryKey, onBlur, onFocus,
 	pointer, registerFocusRoot, ...props }) => {
 
+	const [attachments, setAttachments] = useState([]);
+
 	useEffect(() => {
 		if(isActive && !isFetching && !isFetched) {
 			const start = pointer || 0;
@@ -98,6 +100,12 @@ const Attachments = ({ childItems, device, isFetched, isFetching, isReadOnly, it
 			fetchChildItems(itemKey, { start, limit });
 		}
 	}, [isActive, isFetching, isFetched, childItems]);
+
+	useEffect(() => {
+		const attachments = childItems.filter(i => i.itemType === 'attachment');
+		sortByKey(attachments, a => a.title || a.fileName)
+		setAttachments(attachments);
+	}, [childItems]);
 
 	const handleFileInputChange = async ev => {
 		const fileDataPromise = getFileData(ev.currentTarget.files[0]);
@@ -148,7 +156,7 @@ const Attachments = ({ childItems, device, isFetched, isFetching, isReadOnly, it
 				<nav>
 					<ul className="details-list attachment-list">
 						{
-							childItems.filter(i => i.itemType === 'attachment').map(attachment => {
+							attachments.map(attachment => {
 								const isUploading = uploads.includes(attachment.key);
 								return <Attachment
 									attachment={ attachment }

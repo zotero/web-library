@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import cx from 'classnames';
 import Dropdown from 'reactstrap/lib/Dropdown';
 import DropdownItem from 'reactstrap/lib/DropdownItem';
@@ -14,6 +14,7 @@ import withDevice from '../../enhancers/with-device';
 import withEditMode from '../../enhancers/with-edit-mode';
 import { isTriggerEvent } from '../../common/event';
 import { noteAsTitle } from '../../common/format';
+import { sortByKey } from '../../utils';
 import { TabPane } from '../ui/tabs';
 import { Toolbar, ToolGroup } from '../ui/toolbars';
 
@@ -105,6 +106,8 @@ const Notes = ({ device, childItems, isActive, isFetching, isFetched,
 	isTinymceFetching, itemKey, noteKey, createItem, libraryKey, deleteItem,
 	pointer, sourceFile, fetchChildItems }) => {
 
+	const [notes, setNotes] = useState([]);
+
 	useEffect(() => {
 		if(!isTinymceFetched && !isTinymceFetching) {
 			sourceFile('tinymce');
@@ -118,6 +121,12 @@ const Notes = ({ device, childItems, isActive, isFetching, isFetched,
 			fetchChildItems(itemKey, { start, limit });
 		}
 	}, [isActive, isFetching, isFetched, childItems]);
+
+	useEffect(() => {
+		const notes = childItems.filter(i => i.itemType === 'note');
+		sortByKey(notes, n => noteAsTitle(n.note));
+		setNotes(notes);
+	}, [childItems]);
 
 	const handleChangeNote = newContent => {
 		updateItem(noteKey, { note: newContent });
@@ -157,7 +166,7 @@ const Notes = ({ device, childItems, isActive, isFetching, isFetched,
 				<nav>
 					<ul className="note-list">
 						{
-							childItems.filter(i => i.itemType === 'note').map(note => {
+							notes.map(note => {
 								return (
 									<Note
 										device={ device }
