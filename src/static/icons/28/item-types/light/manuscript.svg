@@ -1,0 +1,26 @@
+<!-- This file is part of Zotero. It is distributed under the GNU Affero General Public License version 3. -->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+	<symbol id="manuscript" viewBox="0 0 28 28">
+		<rect y="2" width="21" height="26" fill="#fff" opacity="0.5"/>
+		<rect x="1" y="3" width="19" height="24" fill="#fff"/>
+		<path d="M20,3V27H1V3H20m1-1H0V28H21V2Z" opacity="0.2"/>
+		<polygon points="22.5 10 12.5 20 13.688 21.188 15 22.5 25 12.5 22.5 10" fill="#e0af97"/>
+		<rect x="22.668" y="9.345" width="1.414" height="1.061" transform="translate(-0.136 19.421) rotate(-45)" fill="#fff" opacity="0.5"/>
+		<rect x="22.668" y="9.345" width="1.414" height="1.061" transform="translate(-0.136 19.421) rotate(-45)" opacity="0.2"/>
+		<rect x="23.543" y="10.043" width="1.414" height="1.414" transform="translate(-0.499 20.296) rotate(-45)" fill="#f5f5f5"/>
+		<rect x="24.418" y="11.095" width="1.414" height="1.061" transform="translate(-0.861 21.171) rotate(-45)" fill="#fff" opacity="0.5"/>
+		<rect x="24.418" y="11.095" width="1.414" height="1.061" transform="translate(-0.861 21.171) rotate(-45)" opacity="0.2"/>
+		<path d="M25.5,7.414a1,1,0,0,0-.707.293L23.5,9,26,11.5l1.292-1.292a1,1,0,0,0,0-1.414L26.206,7.707a1,1,0,0,0-.707-.293Z" fill="#db2c3a"/>
+		<polygon points="24.25 11.75 14.49 21.509 13.291 21.709 13.491 20.51 23.25 10.75 22.5 10 12.5 20 12 23 15 22.5 25 12.5 24.25 11.75" fill="#cc7a52"/>
+		<polygon points="13.491 20.51 13.75 20.25 14.75 21.25 14.49 21.509 13.291 21.709 13.491 20.51" fill="#f5e4dc"/>
+		<polyline points="25.499 8.5 26.5 9.501 25.25 10.75 24.25 9.75 25.499 8.5" fill="#ea8089"/>
+	</symbol>
+	<symbol id="manuscript-active">
+		<polygon points="22.5 10 13 19.5 14.188 20.688 15.5 22 25 12.5 22.5 10" fill="#fff" opacity="0.6"/>
+		<rect x="23.543" y="10.043" width="1.414" height="1.414" transform="translate(-0.499 20.296) rotate(-45)" fill="#fff" opacity="0.2"/>
+		<polygon points="13.491 20.51 13.75 20.25 14.75 21.25 14.49 21.509 13.291 21.709 13.491 20.51" fill="#fff" opacity="0.2"/>
+		<path d="M27.293,8.794,26.206,7.707a1,1,0,0,0-1.414,0L23.5,9,21,11.5V2H0V28H21V16.5l5-5h0l1.292-1.292A1,1,0,0,0,27.293,8.794ZM20,27H1V3H20v9.5L12.5,20,12,23l3-.5,5-5Zm5.25-16.25h0L14.49,21.509l-1.2.2.2-1.2L24.25,9.75h0L25.5,8.5l1,1Z" fill="#fff"/>
+		<polyline points="25.499 8.5 26.5 9.501 25.25 10.75 24.25 9.75 25.499 8.5" fill="#fff" opacity="0.6"/>
+	</symbol>
+	<use xlink:href="#manuscript" viewBox="0 0 28 28"/>
+</svg>

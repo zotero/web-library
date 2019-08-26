@@ -1,0 +1,21 @@
+<!-- This file is part of Zotero. It is distributed under the GNU Affero General Public License version 3. -->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+	<symbol id="manuscript" viewBox="0 0 16 16">
+		<rect y="1" width="12" height="15" fill="#fff" opacity="0.5"/>
+		<path d="M11,2V15H1V2H11m1-1H0V16H12V1Z" opacity="0.2"/>
+		<rect x="1" y="2" width="10" height="13" fill="#fff"/>
+		<rect x="13.146" y="5.146" width="0.707" height="0.707" transform="translate(0.065 11.157) rotate(-45)" fill="#fff" opacity="0.5"/>
+		<rect x="13.146" y="5.146" width="0.707" height="0.707" transform="translate(0.065 11.157) rotate(-45)" opacity="0.2"/>
+		<rect x="13.646" y="5.646" width="0.707" height="0.707" transform="translate(-0.142 11.657) rotate(-45)" fill="#fff"/>
+		<rect x="14.146" y="6.146" width="0.707" height="0.707" transform="translate(-0.349 12.157) rotate(-45)" fill="#fff" opacity="0.5"/>
+		<rect x="14.146" y="6.146" width="0.707" height="0.707" transform="translate(-0.349 12.157) rotate(-45)" opacity="0.2"/>
+		<rect x="14.043" y="4.189" width="1.414" height="2.121" transform="translate(0.608 11.967) rotate(-45)" fill="#db2c3a"/>
+		<polygon points="9 12.5 14.5 7 13 5.5 7.5 11 7 13 9 12.5" fill="#cc7a52"/>
+		<polygon points="8.375 11.125 8.138 11.361 7.972 12.028 8.639 11.862 8.875 11.625 8.375 11.125" fill="#f5e4dc"/>
+	</symbol>
+	<symbol id="manuscript-white">
+		<path d="M16,5.5,14.5,4,12,6.5V1H0V16H12V9.5Zm-2,0,.5.5-.5.5L13.5,6ZM11,15H1V2H11V7.5L7.5,11,7,13l2-.5,2-2ZM8.875,11.625l-.236.237-.667.166.166-.667.237-.236Z" fill="#fff"/>
+		<polygon points="8.375 11.125 8.138 11.361 7.972 12.028 8.639 11.862 8.875 11.625 8.375 11.125" fill="#fff" opacity="0.2"/>
+	</symbol>
+	<use xlink:href="#manuscript" viewBox="0 0 16 16"/>
+</svg>
