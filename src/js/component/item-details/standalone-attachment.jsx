@@ -31,9 +31,8 @@ const StandaloneAttachmentTabPane = ({ isActive, item, getAttachmentUrl }) => {
 								</a>
 							</dd>
 						</React.Fragment>
-					)}
-
-					{item.filename && (
+					) }
+					{ item.filename && item.linkMode.startsWith('imported') && (
 						<React.Fragment>
 							<dt>Filename</dt>
 							<dd>
@@ -42,19 +41,19 @@ const StandaloneAttachmentTabPane = ({ isActive, item, getAttachmentUrl }) => {
 								</a>
 							</dd>
 						</React.Fragment>
-					)}
-					{item.accessDate && (
+					) }
+					{ item.accessDate && (
 						<React.Fragment>
 							<dt>Access Time</dt>
 							<dd>{ dateLocalized(new Date((item.accessDate))) }</dd>
 						</React.Fragment>
-					)}
-					{item.dateModified && (
+					) }
+					{ item.dateModified && (
 						<React.Fragment>
 							<dt>Modified Time</dt>
 							<dd>{ dateLocalized(new Date((item.dateModified))) }</dd>
 						</React.Fragment>
-					)}
+					) }
 				</dl>
 			</div>
 		</TabPane>

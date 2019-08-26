@@ -39,7 +39,7 @@ const Attachment = ({ attachment, deleteItem, isReadOnly, isUploading, getAttach
 		>
 			<Icon type={ '16/attachment' } width="16" height="16" />
 			{
-				!isUploading ? (
+				attachment.linkMode.startsWith('imported') && !isUploading ? (
 					<a
 						onClick={ handleLinkInteraction }
 						onMouseDown={ handleLinkInteraction }
