@@ -44,7 +44,7 @@ class ItemsSortModal extends React.PureComponent {
 	}
 
 	render() {
-		const { isOpen, toggleModal } = this.props;
+		const { isOpen, toggleModal, device } = this.props;
 		const radioSetOptions = Object.entries(columnNames)
 			.map(([value, label]) => ({ value, label }));
 
@@ -73,12 +73,16 @@ class ItemsSortModal extends React.PureComponent {
 							</h4>
 						</div>
 						<div className="modal-header-right">
-							<Button
-								className="btn-link"
-								onClick={ this.changeSortColumn }
-							>
-								Confirm
-							</Button>
+							{
+								device.isKeyboardUser && (
+									<Button
+										className="btn-link"
+										onClick={ this.changeSortColumn }
+									>
+										Confirm
+									</Button>
+								)
+							}
 						</div>
 					</div>
 					<div className="modal-body">
