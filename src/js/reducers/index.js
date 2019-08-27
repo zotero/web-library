@@ -1,7 +1,6 @@
 'use strict';
 
-import { combineReducers } from 'redux';
-import reduceReducers from 'reduce-reducers';
+import combineSectionReducers from 'combine-section-reducers';
 import { connectRouter } from 'connected-react-router';
 
 import collectionCountByLibrary from './collection-count-by-library';
@@ -20,22 +19,10 @@ import query from './query';
 import sources from './sources'
 import styles from './styles';
 import viewport from './viewport';
-import { LOCATION_CHANGE } from 'connected-react-router';
 
-function crossSliceReducers(state = {}, action) {
-	switch(action.type) {
-		case LOCATION_CHANGE:
-			return {
-				...state,
-				current: current(state.current, action, { config: state.config })
-			}
-		default:
-			return state;
-	}
-}
 
-export default history => reduceReducers(crossSliceReducers, combineReducers({
-		collectionCountByLibrary, config, current, errors, fetching, groups,
-		identifier, itemsPublications, libraries, meta, modal, preferences, query,
-		router: connectRouter(history), sources, styles, viewport,
-	}));
+export default history => combineSectionReducers({
+	collectionCountByLibrary, config, current, errors, fetching, groups,
+	identifier, itemsPublications, libraries, meta, modal, preferences, query,
+	router: connectRouter(history), sources, styles, viewport,
+});

@@ -12,7 +12,8 @@ const getBaseMappedValue = (item, property) => {
 const getItemTitle = item => item.itemType === 'note' ?
 	noteAsTitle(item.note) : getBaseMappedValue(item, 'title') || '';
 
-const getFormattedTableItem = (item, itemTypes, tagColors, isSynced) => {
+
+const getDerivedData = (item, itemTypes, tagColors) => {
 	const { itemType, note, dateAdded, dateModified, extra } = item;
 	const title = getItemTitle(item);
 	const creator = item[Symbol.for('meta')] && item[Symbol.for('meta')].creatorSummary ?
@@ -46,7 +47,6 @@ const getFormattedTableItem = (item, itemTypes, tagColors, isSynced) => {
 		publisher: getBaseMappedValue(item, 'publisher'),
 		title,
 		year,
-		isSynced,
 	}
 };
 
@@ -61,4 +61,4 @@ const getFieldDisplayValue = (item, field) => {
 	}
 }
 
-export { getFormattedTableItem, getFieldDisplayValue, getBaseMappedValue, getItemTitle };
+export { getDerivedData, getFieldDisplayValue, getBaseMappedValue, getItemTitle };

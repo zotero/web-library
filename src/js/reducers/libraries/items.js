@@ -22,13 +22,23 @@ import {
 
 import { get, indexByKey } from '../../utils';
 import { removeKeys } from '../../common/immutable';
+import { getDerivedData } from '../../common/item';
 
-const items = (state = {}, action) => {
+const calculateDerivedData = (item, { meta, tagColors }) => {
+	if(Array.isArray(item)) {
+		return item.map(i => calculateDerivedData(i, { meta, tagColors }));
+	}
+
+	item[Symbol.for('derived')] = getDerivedData(item, meta.itemTypes, tagColors);
+	return item;
+}
+
+const items = (state = {}, action, metaAndTags) => {
 	switch(action.type) {
 		case RECEIVE_CREATE_ITEM:
 			return {
 				...state,
-				[action.item.key]: action.item
+				[action.item.key]: calculateDerivedData(action.item, metaAndTags)
 			};
 		case RECEIVE_DELETE_ITEM:
 			return removeKeys(state, action.item.key);
@@ -37,10 +47,10 @@ const items = (state = {}, action) => {
 		case RECEIVE_UPDATE_ITEM:
 			return {
 				...state,
-				[action.itemKey]: {
+				[action.itemKey]: calculateDerivedData({
 					...get(state, action.itemKey, {}),
 					...action.item
-				}
+				}, metaAndTags)
 			};
 		case RECEIVE_MOVE_ITEMS_TRASH:
 		case RECEIVE_RECOVER_ITEMS_TRASH:
@@ -48,15 +58,15 @@ const items = (state = {}, action) => {
 		case RECEIVE_REMOVE_ITEMS_FROM_COLLECTION:
 			return {
 				...state,
-				...indexByKey(Object.values(action.items), 'key', item => ({
+				...indexByKey(Object.values(action.items), 'key', item => (calculateDerivedData({
 					...state[item.key],
 					...item
-				}))
+				}, metaAndTags)))
 			}
 		case RECEIVE_CHILD_ITEMS:
 			return {
 				...state,
-				...indexByKey(action.items, 'key')
+				...indexByKey(calculateDerivedData(action.items, metaAndTags), 'key')
 			};
 		case RECEIVE_CREATE_ITEMS:
 		case RECEIVE_FETCH_ITEMS:
@@ -68,7 +78,7 @@ const items = (state = {}, action) => {
 		case RECEIVE_TRASH_ITEMS:
 			return {
 				...state,
-				...indexByKey(action.items, 'key')
+				...indexByKey(calculateDerivedData(action.items, metaAndTags), 'key')
 			};
 		default:
 			return state;

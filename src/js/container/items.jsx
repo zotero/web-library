@@ -14,7 +14,6 @@ import { copyToLibrary, addToCollection, fetchItemsInCollection, fetchItemsQuery
 	fetchPublicationsItems, fetchTopItems, fetchTrashItems, preferenceChange,
 	sortItems, chunkedTrashOrDelete } from '../actions';
 import { get, resizeVisibleColumns } from '../utils';
-import { getFormattedTableItem } from '../common/item';
 import { omit } from '../common/immutable';
 import { makePath } from '../common/navigation';
 import { sequentialChunkedAcion } from '../common/actions';
@@ -168,11 +167,12 @@ const mapStateToProps = state => {
 	const totalItemsCount = itemsData.totalResults;
 	const isFetchingItems = itemsData.isFetching;
 	const isError = itemsData.isError;
-	const items = (itemsData.keys || []).map(itemKey => itemKey ? getFormattedTableItem(
-		get(state, ['libraries', libraryKey, 'items', itemKey]),
-		itemTypes, tagColors,
-		!('unconfirmedKeys' in itemsData && itemsData.unconfirmedKeys.includes(itemKey))
-	) : undefined);
+
+	const items = (itemsData.keys || []).map(
+		itemKey => itemKey ? ({
+			...get(state, ['libraries', libraryKey, 'items', itemKey])[Symbol.for('derived')],
+			isSynced: !('unconfirmedKeys' in itemsData && itemsData.unconfirmedKeys.includes(itemKey))
+	}) : undefined);
 
 	//@TODO: indicate if isDeleting item(s) within visible set
 	// const isDeleting = get(state, ['libraries', libraryKey, 'deleting'], [])
