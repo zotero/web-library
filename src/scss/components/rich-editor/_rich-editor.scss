@@ -62,9 +62,8 @@
 	}
 
 	.editor-container,
-	.mce-tinymce,
-	.mce-stack-layout,
-	.mce-edit-area {
+	.tox-tinymce,
+	.tox-edit-area {
 		flex: 1 1 0;
 		display: flex;
 		flex-direction: column;
