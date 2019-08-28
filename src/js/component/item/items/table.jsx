@@ -3,7 +3,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import cx from 'classnames';
-import paramCase from 'param-case';
 import deepEqual from 'deep-equal';
 import { resizeVisibleColumns } from '../../../utils';
 import AutoSizer from 'react-virtualized/dist/commonjs/AutoSizer';
@@ -416,7 +415,7 @@ class ItemsTable extends React.PureComponent {
 		const { selectedItemKeys } = this.props;
 		const { isFocused } = this.state;
 		const isActive = selectedItemKeys.includes(rowData.key);
-		const iconName = paramCase(rowData.itemType);
+		const { iconName } = rowData;
 		const dvp = window.devicePixelRatio >= 2 ? 2 : 1;
 
 		if(rowData.isPlaceholder) {

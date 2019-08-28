@@ -3,7 +3,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import cx from 'classnames';
-import paramCase from 'param-case';
 import deepEqual from 'deep-equal';
 import Icon from '../../ui/icon';
 import Spinner from '../../ui/spinner';
@@ -93,9 +92,9 @@ class ItemsList extends React.PureComponent {
 	renderRow({ index, key, style }) {
 		const { device, isSelectMode, selectedItemKeys, onKeyNavigation,
 			view } = this.props;
-		const item = this.getRow({ index });
+		const { colors, creator, iconName, title, year } = this.getRow({ index });
 		const isLoaded = this.getRowHasLoaded({ index });
-		const isActive = selectedItemKeys.includes(item.key);
+		const isActive = selectedItemKeys.includes(key);
 		const shouldBeTabbable = (device.isSingleColumn && view === 'item-list') ||
 			!device.isSingleColumn;
 		const className = cx({
@@ -129,8 +128,8 @@ class ItemsList extends React.PureComponent {
 				)}
 					{ isLoaded ?
 						<Icon
-							type={ `28/item-types/light/${paramCase(item.itemType)}` }
-							symbol={ isActive && !isSelectMode ? `${paramCase(item.itemType)}-active` : paramCase(item.itemType) }
+							type={ `28/item-types/light/${iconName}` }
+							symbol={ isActive && !isSelectMode ? `${iconName}-active` : iconName }
 							width="28"
 							height="28"
 							className="item-type hidden-xs-down"
@@ -144,14 +143,14 @@ class ItemsList extends React.PureComponent {
 					}
 					<div className="flex-column">
 						<div className="metadata title">
-							{ item.title }
+							{ title }
 						</div>
 						<div className="metadata creator-year">
 							<div className="creator">
-								{ item.creator}
+								{ creator}
 							</div>
 							<div className="year">
-								{ item.year }
+								{ year }
 							</div>
 							<div className="icons">
 								{
@@ -160,7 +159,7 @@ class ItemsList extends React.PureComponent {
 									// <Icon type="16/note-sm" width="16" height="16" />
 								}
 
-								{ item.colors.map((color, index) => (
+								{ colors.map((color, index) => (
 									<Icon
 										key={ color }
 										type={ index === 0 ? '12/circle' : '12/crescent-circle' }

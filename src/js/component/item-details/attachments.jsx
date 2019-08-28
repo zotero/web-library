@@ -32,12 +32,18 @@ const Attachment = ({ attachment, deleteItem, isReadOnly, isUploading, getAttach
 		}
 	}
 
+	const getItemIcon = item => {
+		const { iconName } = item[Symbol.for('derived')];
+		const dvp = window.devicePixelRatio >= 2 ? 2 : 1;
+		return `16/item-types/light/${dvp}x/${iconName}`;
+	}
+
 	return (
 		<li
 			data-key={ attachment.key }
 			className="attachment"
 		>
-			<Icon type={ '16/attachment' } width="16" height="16" />
+			<Icon type={ getItemIcon(attachment) } width="16" height="16" />
 			{
 				attachment.linkMode.startsWith('imported') && !isUploading ? (
 					<a

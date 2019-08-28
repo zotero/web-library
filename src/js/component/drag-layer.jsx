@@ -2,7 +2,6 @@
 
 import React from 'react';
 import Icon from './ui/icon';
-import paramCase from 'param-case';
 import { Consumer } from 'react-dnd/lib/cjs/DragDropContext'; //@NOTE: using undocumented featue
 import { DragLayer } from 'react-dnd';
 import { ITEM, CREATOR } from '../constants/dnd';
@@ -76,7 +75,7 @@ class CustomDragLayer extends React.PureComponent {
 			case ITEM:
 				// for items dragging we always use custom preview
 				var { isDraggingSelected, selectedItemKeys, rowData } = props;
-				var iconName = paramCase(rowData.itemType);
+				var { iconName } = rowData;
 				var dvp = window.devicePixelRatio >= 2 ? 2 : 1;
 
 				if(isDraggingSelected && selectedItemKeys.length > 1) {

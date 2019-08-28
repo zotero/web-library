@@ -1,6 +1,5 @@
 'use strict';
 
-import paramCase from 'param-case';
 import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
 
@@ -28,7 +27,7 @@ const RelatedItem = ({ parentItemKey, relatedItem, libraryKey, removeRelatedItem
 	}
 
 	const getItemIcon = item => {
-		const iconName = paramCase(item.itemType);
+		const { iconName } = item[Symbol.for('derived')];
 		const dvp = window.devicePixelRatio >= 2 ? 2 : 1;
 		return `16/item-types/light/${dvp}x/${iconName}`;
 	}
