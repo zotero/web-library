@@ -54,6 +54,7 @@ const Attachment = ({ attachment, deleteItem, isReadOnly, isUploading, getAttach
 					</a>
 				) : (
 					<span
+						className="no-link"
 						onKeyDown={ onKeyDown }
 						tabIndex={ -2 }
 					>
