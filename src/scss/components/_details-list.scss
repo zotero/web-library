@@ -36,10 +36,13 @@
 		}
 
 		a {
+			flex: 1 1 auto;
 			color: $details-list-link-color;
+			@include text-truncate;
 		}
 
 		.no-link {
+			flex: 1 1 auto;
 			color: $details-list-no-link-color;
 		}
 	}
