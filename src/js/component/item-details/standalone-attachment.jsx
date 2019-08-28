@@ -20,42 +20,61 @@ const StandaloneAttachmentTabPane = ({ isActive, item, getAttachmentUrl }) => {
 
 	return (
 		<TabPane className="standalone-attachment" isActive={ isActive } >
-			<div className="standalone-attachment">
-				<dl>
-					{ item.url && (
-						<React.Fragment>
-							<dt>Original URL</dt>
-							<dd>
-								<a href={ item.url }>
-									{ item.url }
-								</a>
-							</dd>
-						</React.Fragment>
-					) }
-					{ item.filename && item.linkMode.startsWith('imported') && (
-						<React.Fragment>
-							<dt>Filename</dt>
-							<dd>
-								<a onMouseDown={ handleLinkInteraction } onClick={ handleLinkInteraction }>
-									{ item.filename }
-								</a>
-							</dd>
-						</React.Fragment>
-					) }
-					{ item.accessDate && (
-						<React.Fragment>
-							<dt>Access Time</dt>
-							<dd>{ dateLocalized(new Date((item.accessDate))) }</dd>
-						</React.Fragment>
-					) }
-					{ item.dateModified && (
-						<React.Fragment>
-							<dt>Modified Time</dt>
-							<dd>{ dateLocalized(new Date((item.dateModified))) }</dd>
-						</React.Fragment>
-					) }
-				</dl>
-			</div>
+			<ol className="metadata-list">
+				{ item.url && (
+					<li className="metadata">
+						<div className="key">
+							<div className="truncate">Original URL</div>
+						</div>
+						<div className="value">
+							<a
+								href={ item.url }
+								className="truncate"
+							>
+								{ item.url }
+							</a>
+						</div>
+					</li>
+				) }
+				{ item.filename && item.linkMode.startsWith('imported') && (
+					<li className="metadata">
+						<div className="key">
+							<div className="truncate">Filename</div>
+						</div>
+						<div className="value">
+							<a
+								className="truncate"
+								onMouseDown={ handleLinkInteraction }
+								onClick={ handleLinkInteraction }
+							>
+								{ item.filename }
+							</a>
+						</div>
+					</li>
+				) }
+				{ item.accessDate && (
+					<li className="metadata">
+						<div className="key">
+							<div className="truncate">
+								Access Time
+							</div>
+						</div>
+						<div className="value">
+							<div className="truncate">{ dateLocalized(new Date((item.accessDate))) }</div>
+						</div>
+					</li>
+				) }
+				{ item.dateModified && (
+					<li className="metadata">
+						<div className="key">
+							<div className="truncate">Modified Time</div>
+						</div>
+						<div className="value">
+							<div className="truncate">{ dateLocalized(new Date((item.dateModified))) }</div>
+						</div>
+					</li>
+				) }
+			</ol>
 		</TabPane>
 	);
 }

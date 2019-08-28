@@ -104,7 +104,7 @@ class ItemDetailsTabs extends React.PureComponent {
 									isActive={ this.state.tab === 'standalone-attachment' }
 									onActivate={ () => this.setState({ tab: 'standalone-attachment' }) }
 									>
-										Attachment
+										Info
 								</Tab>
 							)
 						}
