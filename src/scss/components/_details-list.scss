@@ -11,7 +11,7 @@
 
 		@include mouse-and-bp-up(md) {
 			line-height: $line-height-large; // Prevent flickering between cursor default/pointer states
-			padding: 0 ($default-padding-x - $space-min - $input-border-width) 0 $default-padding-x;
+			padding: 0 $default-padding-x;
 
 			> .icon {
 				&:first-child {
@@ -22,6 +22,7 @@
 			> .btn {
 				&:last-child {
 					margin-left: 1px; // Optical $space-xs
+					margin-right: -$space-min - $input-border-width;
 
 					@include state("li:not(:focus-within)") {
 						visibility: hidden;
