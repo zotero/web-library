@@ -7,8 +7,8 @@ const http = require('http');
 const httpProxy = require('http-proxy');
 const serveStatic = require('serve-static');
 const argv = require('minimist')(process.argv.slice(2));
-const translateURL = argv['t'] || 'http://localhost:1969';
-const port = argv['p'] || 8001;
+const translateURL = argv['t'] && argv['t'].length ? argv['t'] : 'http://localhost:1969';
+const port = parseInt(argv['p'], 10) || 8001;
 
 const serve = serveStatic(path.join(__dirname, '..', 'build'), { 'index': false });
 const proxy = httpProxy.createProxyServer();
