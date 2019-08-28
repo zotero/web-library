@@ -35,7 +35,9 @@ class ItemsList extends React.PureComponent {
 
 	// Identical to table.jsx
 	getRowHasLoaded({ index }) {
-		return !!this.props.items[index];
+		return this.props.items[index] &&
+			typeof(this.props.items[index]) === "object" &&
+			this.props.items[index].isSynced;
 	}
 
 	// Identical to table.jsx
@@ -92,7 +94,7 @@ class ItemsList extends React.PureComponent {
 	renderRow({ index, key, style }) {
 		const { device, isSelectMode, selectedItemKeys, onKeyNavigation,
 			view } = this.props;
-		const { colors, creator, iconName, title, year } = this.getRow({ index });
+		const { colors, creator, iconName, title, year, isPlaceholder } = this.getRow({ index });
 		const isLoaded = this.getRowHasLoaded({ index });
 		const isActive = selectedItemKeys.includes(key);
 		const shouldBeTabbable = (device.isSingleColumn && view === 'item-list') ||
@@ -101,7 +103,7 @@ class ItemsList extends React.PureComponent {
 			active: isActive,
 			item: true,
 			odd: (index + 1) % 2 === 1,
-			placeholder: item.isPlaceholder
+			placeholder: isPlaceholder
 		});
 
 		return (
