@@ -10,7 +10,7 @@ class EditToggleButton extends React.PureComponent {
 	render() {
 		const { isEditing, device, onEditModeToggle, className,
 			isReadOnly } = this.props;
-		const isShowEmptyLabel = device.viewport.md && (isReadOnly || !device.touch);
+		const isShowEmptyLabel = device.viewport.md && (isReadOnly || !device.userType === 'touch');
 		const toggleOnLabel = isShowEmptyLabel ? 'Show Empty Fields' : 'Edit';
 		const toggleOffLabel = isShowEmptyLabel ? 'Hide Empty Fields' : 'Done';
 		const label = isEditing ? toggleOffLabel : toggleOnLabel;
