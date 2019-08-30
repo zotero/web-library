@@ -5,15 +5,15 @@
 .errors {
 	position: fixed;
 	top: 0;
-	right: -$permanent-toolbar-width;
+	right: -$permanent-scrollbar-width;
 	z-index: $z-index-errors;
 	overflow: auto;
-	width: calc(100% + #{$permanent-toolbar-width});
+	width: calc(100% + #{$permanent-scrollbar-width});
 	max-height: 100%;
 	padding-bottom: $space-min; // Prevent clipping of box-shadow
 
 	@include bp-up(sm) {
-		width: $error-width + 2 * $error-spacing + $permanent-toolbar-width;
+		width: $error-width + 2 * $error-spacing + $permanent-scrollbar-width;
 	}
 
 	&:empty {
@@ -21,10 +21,10 @@
 	}
 
 	.error {
-		width: calc(100% - #{2 * $error-spacing + $permanent-toolbar-width});
+		width: calc(100% - #{2 * $error-spacing + $permanent-scrollbar-width});
 		background: $error-bg;
-		padding: $space-xs;
-		padding-right: $line-height-large + $space-xs;
+		padding: $space-xs $default-padding-x;
+		padding-right: $space-md + 2 * $default-padding-x;
 		border-left: 3px solid $red;
 		box-shadow: $menu-box-shadow;
 		border-radius: $menu-border-radius;
@@ -45,5 +45,9 @@
 		top: 0;
 		right: 0;
 		bottom: 0;
+
+		@include mouse-and-bp-up(md) {
+			padding: 0 ($space-sm - $input-border-width);
+		}
 	}
 }
