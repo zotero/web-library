@@ -41,7 +41,6 @@ const fetchCollections = (libraryKey, { start = 0, limit = 50, sort = 'dateModif
 
 			dispatch({
 				type: RECEIVE_COLLECTIONS_IN_LIBRARY,
-				receivedAt: Date.now(),
 				libraryKey,
 				collections,
 				response,
@@ -50,7 +49,7 @@ const fetchCollections = (libraryKey, { start = 0, limit = 50, sort = 'dateModif
 				sort,
 				direction,
 			});
-			return collections;
+			return { collections, response };
 		} catch(error) {
 			dispatch({
 				type: ERROR_COLLECTIONS_IN_LIBRARY,
@@ -61,6 +60,21 @@ const fetchCollections = (libraryKey, { start = 0, limit = 50, sort = 'dateModif
 		}
 	};
 };
+
+const fetchAllCollections = (libraryKey, { sort = 'dateModified', direction = "desc" } = {}) => {
+	return async dispatch => {
+		var pointer = 0;
+		const limit = 100;
+		var hasMore = false;
+
+		do {
+			const { response } = await dispatch(fetchCollections(libraryKey, { start: pointer, limit, sort, direction }));
+			const totalResults = parseInt(response.response.headers.get('Total-Results'), 10);
+			hasMore = totalResults > pointer + limit;
+			pointer += limit;
+		} while(hasMore === true)
+	}
+}
 
 const createCollection = (properties, libraryKey) => {
 	return async dispatch => {
@@ -225,6 +239,7 @@ const deleteCollection = (collection, libraryKey) => {
 
 export {
 	fetchCollections,
+	fetchAllCollections,
 	createCollection,
 	createCollections,
 	updateCollection,

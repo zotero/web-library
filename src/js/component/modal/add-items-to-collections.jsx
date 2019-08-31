@@ -30,23 +30,6 @@ class AddItemsToCollectionsModal extends React.PureComponent {
 		if(wasOpen && !isOpen) {
 			this.setState(defaultState);
 		}
-
-		if(libraryKey && libraryKey !== prevLibraryKey) {
-			fetchCollections(libraryKey, { start: 0, limit: PAGE_SIZE });
-		}
-
-		const fetchNextPage = (libraryKey, collections) => {
-			if(!librariesWithCollectionsFetching.includes(libraryKey) &&
-			collectionCountByLibrary[libraryKey] > collections.length) {
-				fetchCollections(libraryKey, { start: collections.length, limit: PAGE_SIZE });
-			}
-		}
-
-		Object.keys(collections).forEach(libraryId => {
-			if(libraryId in collectionCountByLibrary) {
-				fetchNextPage(libraryId, collections[libraryId]);
-			}
-		});
 	}
 
 	handleAddItems = async () => {
@@ -116,7 +99,7 @@ class AddItemsToCollectionsModal extends React.PureComponent {
 
 	render() {
 		const { device, isOpen, toggleModal, collections, libraries,
-			userLibraryKey, groups, librariesWithCollectionsFetching } = this.props;
+			userLibraryKey, groups, librariesWithCollectionsFetching, fetchAllCollections } = this.props;
 		const { libraryKey, isBusy, picked } = this.state;
 		const collectionsSource = collections[libraryKey];
 
@@ -165,6 +148,7 @@ class AddItemsToCollectionsModal extends React.PureComponent {
 									onNavigation={ (...args) => this.handleNavigation(...args) }
 								/>
 								<Libraries
+									fetchAllCollections={ fetchAllCollections }
 									libraries={ libraries }
 									librariesWithCollectionsFetching={ librariesWithCollectionsFetching }
 									picked={ picked }
@@ -220,7 +204,7 @@ class AddItemsToCollectionsModal extends React.PureComponent {
 		collectionCountByLibrary: PropTypes.object,
 		collections: PropTypes.objectOf(PropTypes.arrayOf(Types.collection)),
 		device: PropTypes.object,
-		fetchCollections: PropTypes.func.isRequired,
+		fetchAllCollections: PropTypes.func.isRequired,
 		groups: PropTypes.array,
 		isOpen: PropTypes.bool,
 		libraries: PropTypes.array,
