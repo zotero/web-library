@@ -29,6 +29,7 @@
 		box-shadow: $menu-box-shadow;
 		border-radius: $menu-border-radius;
 		margin: $error-spacing;
+		user-select: text;
 		position: relative;
 
 		@include bp-up(sm) {
