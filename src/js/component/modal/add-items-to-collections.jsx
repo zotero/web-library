@@ -17,15 +17,11 @@ const defaultState = {
 	path: [],
 	picked: [],
 };
-const PAGE_SIZE = 100;
-
 class AddItemsToCollectionsModal extends React.PureComponent {
 	state = defaultState
 
-	componentDidUpdate({ isOpen: wasOpen }, { libraryKey: prevLibraryKey }) {
-		const { collections, isOpen, fetchCollections,
-			librariesWithCollectionsFetching, collectionCountByLibrary } = this.props;
-		const { libraryKey } = this.state;
+	componentDidUpdate({ isOpen: wasOpen }) {
+		const { isOpen } = this.props;
 
 		if(wasOpen && !isOpen) {
 			this.setState(defaultState);
@@ -50,9 +46,9 @@ class AddItemsToCollectionsModal extends React.PureComponent {
 		}
 	}
 
-	handleCollectionSelect = ({ library = null,  collection = null } = {}) => {
+	//@TODO: merge functions navigateLocal* below (renamed from legacy functions) into a single "navigateLocal"
+	navigateLocalFromCollectionTree = ({ library = null,  collection = null } = {}) => {
 		const { collections } = this.props;
-
 		if(library) {
 			if(collection) {
 				const childMap = library in collections ? makeChildMap(collections[library]) : {};
@@ -73,19 +69,7 @@ class AddItemsToCollectionsModal extends React.PureComponent {
 		}
 	}
 
-	handlePick(pickedCollection) {
-		const picked = this.state.picked.filter(({ collectionKey: c, libraryKey: l}) =>
-			!(c === pickedCollection.collection && l === pickedCollection.library)
-		);
-
-		if(picked.length === this.state.picked.length) {
-			picked.push(pickedCollection);
-		}
-
-		this.setState({ picked });
-	}
-
-	handleNavigation(navigationData) {
+	navigateLocalFromTouchHeader = navigationData => {
 		const { path } = this.state;
 		if('collection' in navigationData) {
 			const targetIndex = path.indexOf(navigationData.collection);
@@ -97,10 +81,22 @@ class AddItemsToCollectionsModal extends React.PureComponent {
 		}
 	}
 
+	pickerPick = pickedData => {
+		const picked = this.state.picked.filter(({ collectionKey: c, libraryKey: l}) =>
+			!(c === pickedData.collectionKey && l === pickedData.libraryKey)
+		);
+
+		if(picked.length === this.state.picked.length) {
+			picked.push(pickedData);
+		}
+
+		this.setState({ picked });
+	}
+
 	render() {
 		const { device, isOpen, toggleModal, collections, libraries,
 			userLibraryKey, groups, librariesWithCollectionsFetching, fetchAllCollections } = this.props;
-		const { libraryKey, isBusy, picked } = this.state;
+		const { libraryKey, isBusy, picked, path, view } = this.state;
 		const collectionsSource = collections[libraryKey];
 
 		const touchHeaderPath = this.state.path.map(key => ({
@@ -109,6 +105,7 @@ class AddItemsToCollectionsModal extends React.PureComponent {
 				label: collectionsSource.find(c => c.key === key).name,
 				path: { library: libraryKey, collection: key },
 		}));
+		const selectedCollectionKey = view === 'collection' ? path[path.length - 1] : null;
 
 		if(this.state.view !== 'libraries') {
 			const libraryConfig = libraries.find(l => l.key === libraryKey) || {};
@@ -145,23 +142,23 @@ class AddItemsToCollectionsModal extends React.PureComponent {
 									className="darker"
 									device={ device }
 									path={ touchHeaderPath }
-									onNavigation={ (...args) => this.handleNavigation(...args) }
+									navigate={ this.navigateLocalFromTouchHeader }
 								/>
 								<Libraries
+									collections={ collections }
+									device={ device }
 									fetchAllCollections={ fetchAllCollections }
+									groups={ groups }
+									isPickerMode={ true }
 									libraries={ libraries }
 									librariesWithCollectionsFetching={ librariesWithCollectionsFetching }
+									navigate={ this.navigateLocalFromCollectionTree }
+									pickerPick={ this.pickerPick }
 									picked={ picked }
-									isPickerMode={ true }
-									onPickerPick={ (...args) => this.handlePick(...args) }
-									view={ this.state.view }
-									groups={ groups }
+									selectedCollectionKey={ selectedCollectionKey }
+									selectedLibraryKey={ this.state.libraryKey }
 									userLibraryKey={ userLibraryKey }
-									libraryKey={ this.state.libraryKey }
-									device={ device }
-									collections={ collections }
-									path={ this.state.path }
-									onSelect={ this.handleCollectionSelect }
+									view={ this.state.view }
 								/>
 								</React.Fragment>
 							)

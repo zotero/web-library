@@ -78,7 +78,7 @@ const withFocusManager = Component => {
 			const candidates = Array.from(this.ref.querySelectorAll('[tabIndex="-2"]:not([disabled])'));
 			if(this.lastFocused !== null && candidates.includes(this.lastFocused)) {
 				this.lastFocused.focus();
-			} else {
+			} else if(candidates.length > 0) {
 				candidates[0].focus();
 			}
 		}

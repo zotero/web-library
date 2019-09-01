@@ -8,7 +8,7 @@ import withDevice from '../../enhancers/with-device';
 import withSelectMode from '../../enhancers/with-select-mode';
 import { MOVE_COLLECTION } from '../../constants/modals';
 import { get } from '../../utils';
-import { toggleModal, updateCollection, fetchCollections } from '../../actions';
+import { toggleModal, updateCollection, fetchAllCollections } from '../../actions';
 
 class MoveCollectionsModalContainer extends React.PureComponent {
 	render() {
@@ -39,5 +39,5 @@ const mapStateToProps = state => {
 
 export default withSelectMode(withDevice(connect(
 	mapStateToProps,
-	{ fetchCollections, updateCollection, toggleModal }
+	{ fetchAllCollections, updateCollection, toggleModal }
 )(MoveCollectionsModalContainer)));

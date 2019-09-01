@@ -1,6 +1,6 @@
 'use strict';
 
-import React, { useState, useEffect } from 'react';
+import React, { useCallback, useState, useEffect, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import Button from './ui/button';
 import CollectionTreeContainer from '../container/collection-tree';
@@ -16,33 +16,33 @@ import withDevice from '../enhancers/with-device';
 const LibraryNode = props => {
 	const {
 		addVirtual, isFetching, isOpen, isPickerMode, isReadOnly, isSelected,
-		libraryKey, name, navigate, onPickerPick, picked, pickerIncludeLibraries,
-		shouldBeTabbable, toggleOpen,
+		libraryKey, name, navigate, pickerPick, picked, pickerIncludeLibraries,
+		shouldBeTabbable, toggleOpen
 	} = props;
 
-	const handleClick = () => {
+	const handleClick = useCallback(() => {
 		navigate({ library: libraryKey, view: 'library' }, true);
-	}
+	});
 
-	const handlePickerPick = ev => {
-		onPickerPick({ libraryKey }, ev);
-	}
+	const handlePickerPick = useCallback(() => {
+		pickerPick({ libraryKey });
+	});
 
-	const handleAddVirtualClick = () => {
+	const handleAddVirtualClick = useCallback(() => {
 		addVirtual(libraryKey);
-	}
+	});
 
-	const handleOpenToggle = (ev, shouldOpen = null) => {
+	const handleOpenToggle = useCallback((ev, shouldOpen = null) => {
 		toggleOpen(libraryKey, shouldOpen);
-	}
+	});
 
 	const getTreeProps = () => {
 		const parentLibraryKey = libraryKey;
 
 		return {
-			...pick(props, ['addVirtual', 'cancelAdd', 'commitAdd', 'onDrillDownNext',
-			'onDrillDownPrev', 'onFocusNext', 'onFocusPrev', 'virtual']),
-			parentLibraryKey
+			...pick(props, ['addVirtual', 'cancelAdd', 'commitAdd',
+			'onDrillDownNext', 'onDrillDownPrev', 'onFocusNext', 'onFocusPrev', 'selectedCollectionKey', 'virtual']),
+			isPickerMode, parentLibraryKey, picked, pickerPick, navigate
 		}
 	}
 
@@ -57,6 +57,9 @@ const LibraryNode = props => {
 			isOpen={ isOpen && !isFetching }
 			onOpen={ handleOpenToggle }
 			onClick={ handleClick }
+			data-is-picker-mode={ isPickerMode }
+			data-is-fetching={ isFetching }
+			data-is-open={ isOpen }
 			subtree={ isFetching ? null : isOpen ? <CollectionTreeContainer { ...getTreeProps() } /> : null }
 			data-key={ libraryKey }
 			dndTarget={ isReadOnly ? { } : { 'targetType': 'library', libraryKey: libraryKey } }
@@ -68,7 +71,7 @@ const LibraryNode = props => {
 			{ isPickerMode && pickerIncludeLibraries && !isFetching && (
 				<input
 					type="checkbox"
-					checked={ picked.some(({ collectionKey: c, libraryKey: l }) => l === key && !c) }
+					checked={ picked.some(({ collectionKey: c, libraryKey: l }) => l === libraryKey && !c) }
 					onChange={ handlePickerPick }
 					onClick={ stopPropagation }
 				/>
@@ -100,9 +103,9 @@ LibraryNode.propTypes = {
 	libraryKey: PropTypes.string,
 	name: PropTypes.string,
 	navigate: PropTypes.func,
-	onPickerPick: PropTypes.func,
 	picked: PropTypes.array,
 	pickerIncludeLibraries: PropTypes.bool,
+	pickerPick: PropTypes.func,
 	shouldBeTabbable: PropTypes.bool,
 	toggleOpen: PropTypes.func,
 };
@@ -110,21 +113,32 @@ LibraryNode.propTypes = {
 const Libraries = props => {
 	const {
 		createCollection, device, fetchAllCollections, isFetching, itemsSource,
-		libraries, librariesWithCollectionsFetching, selectedLibraryKey, onBlur,
-		onFocus, registerFocusRoot, view,
+		libraries, librariesWithCollectionsFetching, onBlur,
+		onFocus, registerFocusRoot, selectedLibraryKey, view
 	} = props;
-	const isRootActive = view === 'libraries';
 
-	//useMemo
-	const myLibraries = libraries.filter(l => l.isMyLibrary);
-	const groupLibraries = libraries.filter(l => l.isGroupLibrary);
-	const otherLibraries = libraries.filter(l => !l.isMyLibrary && !l.isGroupLibrary);
+	const myLibraries = useMemo(
+		() => libraries.filter(l => l.isMyLibrary),
+		[libraries]
+	);
+	const groupLibraries = useMemo(
+		() => libraries.filter(l => l.isGroupLibrary),
+		[libraries]
+	);
+	const otherLibraries = useMemo(
+		() => libraries.filter(l => !l.isMyLibrary && !l.isGroupLibrary),
+		[libraries]
+	);
 
 	const [opened, setOpened] = useState([]);
 	const [virtual, setVirtual] = useState(null);
 
+	const isRootActive = view === 'libraries';
+
 	useEffect(() => {
-		toggleOpen(selectedLibraryKey);
+		if(selectedLibraryKey) {
+			toggleOpen(selectedLibraryKey);
+		}
 	}, [selectedLibraryKey]);
 
 	const cancelAdd = () => {
@@ -169,13 +183,15 @@ const Libraries = props => {
 			(device.isTouchOrSmall && view !== 'libraries' && selectedLibraryKey == key);
 		const isSelected = !device.isTouchOrSmall && selectedLibraryKey === key && itemsSource === 'top';
 		const isFetching = !device.isTouchOrSmall && librariesWithCollectionsFetching.includes(key);
+
 		return {
-			libraryKey: key,
+			libraryKey: key, shouldBeTabbableOnTouch, shouldBeTabbable, isOpen, isSelected, isFetching,
 			addVirtual, commitAdd, cancelAdd, toggleOpen, virtual,
 			...rest,
 			...pick(props, ['picked', 'pickerIncludeLibraries', 'onDrillDownNext',
-				'onDrillDownPrev', 'onFocusNext', 'onFocusPrev', 'isPickerMode', 'navigate']),
-			shouldBeTabbableOnTouch, shouldBeTabbable, isOpen, isSelected, isFetching,
+				'onDrillDownPrev', 'onFocusNext', 'onFocusPrev', 'navigate', 'isPickerMode', 'selectedCollectionKey',
+				'pickerPick'
+			])
 		}
 	}
 

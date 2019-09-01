@@ -2,6 +2,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
+import deepEqual from 'deep-equal';
 import Types from '../../types';
 import { makeChildMap } from '../../common/collection';
 import Libraries from '../libraries';
@@ -9,67 +10,30 @@ import Modal from '../ui/modal';
 import Button from '../ui/button';
 import Spinner from '../ui/spinner';
 import TouchHeader from '../touch-header.jsx';
-import { pluralize } from '../../common/format';
+
 const defaultState = {
 	view: 'libraries',
 	libraryKey: '',
 	path: [],
 	picked: null,
 };
-const PAGE_SIZE = 100;
 
 //@TODO: reduce code duplication with AddItemstoCollections
 class MoveCollectionsModal extends React.PureComponent {
 	state = defaultState
 
-	componentDidUpdate({ isOpen: wasOpen }, { libraryKey: prevLibraryKey }) {
-		const { collections, isOpen, fetchCollections,
-			librariesWithCollectionsFetching, collectionCountByLibrary } = this.props;
-		const { libraryKey } = this.state;
+	componentDidUpdate({ isOpen: wasOpen }) {
+		const { isOpen } = this.props;
 
 		if(wasOpen && !isOpen) {
 			this.setState(defaultState);
 		}
-
-		if(libraryKey && libraryKey !== prevLibraryKey) {
-			fetchCollections(libraryKey, { start: 0, limit: PAGE_SIZE });
-		}
-
-		const fetchNextPage = (libraryKey, collections) => {
-			if(!librariesWithCollectionsFetching.includes(libraryKey) &&
-			collectionCountByLibrary[libraryKey] > collections.length) {
-				fetchCollections(libraryKey, { start: collections.length, limit: PAGE_SIZE });
-			}
-		}
-
-		Object.keys(collections).forEach(libraryId => {
-			if(libraryId in collectionCountByLibrary) {
-				fetchNextPage(libraryId, collections[libraryId]);
-			}
-		});
 	}
 
-	handleMove = async () => {
-		const { collectionKey, libraryKey, toggleModal, updateCollection } = this.props;
-		const { picked } = this.state;
-
-
-		if(picked && 'libraryKey' in picked) {
-			if(picked.libraryKey !== libraryKey) {
-				//@TODO: Support for moving collections across libraries #227
-				return;
-			}
-			this.setState({ isBusy: true });
-			const patch = { parentCollection: picked.collectionKey || false };
-			await updateCollection(collectionKey, patch, libraryKey);
-			this.setState({ isBusy: false });
-			toggleModal(null, false);
-		}
-	}
-
-	handleCollectionSelect = ({ library = null,  collection = null } = {}) => {
+	//@TODO: merge functions navigateLocal* below (renamed from legacy functions) into a single "navigateLocal"
+	//@TODO: deduplicate with add-items-to-collections
+	navigateLocalFromCollectionTree = ({ library = null,  collection = null } = {}) => {
 		const { collections } = this.props;
-
 		if(library) {
 			if(collection) {
 				const childMap = library in collections ? makeChildMap(collections[library]) : {};
@@ -90,16 +54,7 @@ class MoveCollectionsModal extends React.PureComponent {
 		}
 	}
 
-	handlePick(pickedCollection) {
-		const { picked } = this.state;
-		if(pickedCollection === picked) {
-			this.setState({ picked: null });
-		} else {
-			this.setState({ picked: pickedCollection });
-		}
-	}
-
-	handleNavigation(navigationData) {
+	navigateLocalFromTouchHeader = navigationData => {
 		const { path } = this.state;
 		if('collection' in navigationData) {
 			const targetIndex = path.indexOf(navigationData.collection);
@@ -111,11 +66,39 @@ class MoveCollectionsModal extends React.PureComponent {
 		}
 	}
 
+	pickerPick = newPicked => {
+		const { picked } = this.state;
+		if(deepEqual(picked, newPicked)) {
+			this.setState({ picked: null });
+		} else {
+			this.setState({ picked: newPicked });
+		}
+	}
+
+	handleMove = async () => {
+		const { collectionKey, libraryKey, toggleModal, updateCollection } = this.props;
+		const { picked } = this.state;
+
+
+		if(picked && 'libraryKey' in picked) {
+			if(picked.libraryKey !== libraryKey) {
+				//@TODO: Support for moving collections across libraries #227
+				return;
+			}
+			this.setState({ isBusy: true });
+			const patch = { parentCollection: picked.collectionKey || false };
+			await updateCollection(collectionKey, patch, libraryKey);
+			this.setState({ isBusy: false });
+			toggleModal(null, false);
+		}
+	}
+
 	render() {
 		const { device, isOpen, toggleModal, collections, libraries,
-			userLibraryKey, groups, librariesWithCollectionsFetching } = this.props;
-		const { libraryKey, isBusy, picked } = this.state;
+			userLibraryKey, groups, librariesWithCollectionsFetching, fetchAllCollections } = this.props;
+		const { libraryKey, isBusy, picked, view, path } = this.state;
 		const collectionsSource = libraryKey in collections ? collections[libraryKey] : [];
+		const selectedCollectionKey = view === 'collection' ? path[path.length - 1] : null;
 
 		const touchHeaderPath = this.state.path.map(key => ({
 				key,
@@ -159,21 +142,22 @@ class MoveCollectionsModal extends React.PureComponent {
 									className="darker"
 									device={ device }
 									path={ touchHeaderPath }
-									onNavigation={ (...args) => this.handleNavigation(...args) }
+									navigate={ this.navigateLocalFromTouchHeader }
 								/>
 								<Libraries
 									collections={ collections }
 									device={ device }
+									fetchAllCollections={ fetchAllCollections }
 									groups={ groups }
 									isPickerMode={ true }
 									libraries={ libraries }
 									librariesWithCollectionsFetching={ librariesWithCollectionsFetching }
-									libraryKey={ this.state.libraryKey }
-									onPickerPick={ (...args) => this.handlePick(...args) }
-									onSelect={ this.handleCollectionSelect }
-									path={ this.state.path }
+									navigate={ this.navigateLocalFromCollectionTree }
 									picked={ picked === null ? [] : [ picked ] }
 									pickerIncludeLibraries={ true }
+									pickerPick={ this.pickerPick }
+									selectedCollectionKey={ selectedCollectionKey }
+									selectedLibraryKey={ this.state.libraryKey }
 									userLibraryKey={ userLibraryKey }
 									view={ this.state.view }
 								/>
@@ -217,7 +201,7 @@ class MoveCollectionsModal extends React.PureComponent {
 		collectionKey: PropTypes.string,
 		collections: PropTypes.objectOf(PropTypes.arrayOf(Types.collection)),
 		device: PropTypes.object,
-		fetchCollections: PropTypes.func.isRequired,
+		fetchAllCollections: PropTypes.func.isRequired,
 		groups: PropTypes.array,
 		isOpen: PropTypes.bool,
 		libraries: PropTypes.array,

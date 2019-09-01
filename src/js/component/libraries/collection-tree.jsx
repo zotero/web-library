@@ -115,12 +115,12 @@ const ItemsNode = withDevice(({ isPickerMode, device, parentCollectionKey, selec
 });
 
 
-const VirtualCollectionNode = ({ virtual, cancelAdd, commitAdd, parentLibraryKey, parentCollectionKey }) => {
+const VirtualCollectionNode = ({ isPickerMode, virtual, cancelAdd, commitAdd, parentLibraryKey, parentCollectionKey }) => {
 	const handleEditableCommit = useCallback(newValue => {
 		commitAdd(parentLibraryKey, parentCollectionKey, newValue);
 	});
 
-	if(!virtual) {
+	if(isPickerMode || !virtual) {
 		return null;
 	}
 
@@ -146,10 +146,14 @@ const VirtualCollectionNode = ({ virtual, cancelAdd, commitAdd, parentLibraryKey
 	);
 }
 
-const PublicationsNode = ({ isSelected, shouldBeTabbable, parentLibraryKey, selectNode, ...rest }) => {
+const PublicationsNode = ({ isPickerMode, isSelected, shouldBeTabbable, parentLibraryKey, selectNode, ...rest }) => {
 	const handleClick = useCallback(() => {
 		selectNode({ publications: true });
 	}, []);
+
+	if(isPickerMode) {
+		return null;
+	}
 
 	return (
 		<Node
@@ -169,10 +173,14 @@ const PublicationsNode = ({ isSelected, shouldBeTabbable, parentLibraryKey, sele
 	);
 }
 
-const TrashNode = ({ isSelected, shouldBeTabbable, parentLibraryKey, selectNode, ...rest }) => {
+const TrashNode = ({ isPickerMode, isSelected, shouldBeTabbable, parentLibraryKey, selectNode, ...rest }) => {
 	const handleClick = useCallback(() => {
 		selectNode({ trash: true });
 	}, []);
+
+	if(isPickerMode) {
+		return null;
+	}
 
 	return (
 		<Node
@@ -308,9 +316,9 @@ setOpened, setRenaming, addVirtual, toggleModal }) => {
 	);
 });
 
-const PickerCheckbox = ({ collectionKey, onPickerPick, picked, parentLibraryKey }) => {
-	const handleChange = useCallback(ev => {
-		onPickerPick({ collectionKey, libraryKey: parentLibraryKey }, ev);
+const PickerCheckbox = ({ collectionKey, pickerPick, picked, parentLibraryKey }) => {
+	const handleChange = useCallback(() => {
+		pickerPick({ collectionKey, libraryKey: parentLibraryKey });
 	});
 
 	const isChecked = useMemo(() =>
@@ -411,12 +419,13 @@ parentLibraryKey, renaming, setRenaming, updateCollection, isPickerMode, ...rest
 				<LevelWrapper hasOpen={ hasOpen } level={ level } isLastLevel={ isLastLevel }>
 					<CollectionsNodeList
 						{ ...rest }
+						allCollections={ allCollections }
+						collections = { collections }
+						derivedData={ derivedData }
+						isPickerMode={ isPickerMode }
+						level={ level + 1 }
 						parentCollectionKey={ collection.key }
 						parentLibraryKey={ parentLibraryKey }
-						collections = { collections }
-						allCollections={ allCollections }
-						derivedData={ derivedData }
-						level={ level + 1 }
 						selectedCollectionKey={ selectedCollectionKey }
 					/>
 				</LevelWrapper>
@@ -441,7 +450,7 @@ parentLibraryKey, renaming, setRenaming, updateCollection, isPickerMode, ...rest
 							<PickerCheckbox
 								collectionKey = { collection.key }
 								parentLibraryKey = { parentLibraryKey }
-								{ ...pick(rest, ['onPickerPick', 'picked']) }
+								{ ...pick(rest, ['pickerPick', 'picked']) }
 							/>
 						) : (
 							<DotMenu
@@ -475,21 +484,19 @@ const CollectionsNodeList = ({ collections, parentCollectionKey, ...rest }) => {
 			) }
 			<VirtualCollectionNode
 				parentCollectionKey= { parentCollectionKey }
-				{ ...pick(rest, ['virtual', 'cancelAdd', 'commitAdd', 'parentLibraryKey'] )}
+				{ ...pick(rest, ['virtual', 'cancelAdd', 'commitAdd', 'parentLibraryKey', 'isPickerMode'] )}
 			/>
 		</React.Fragment>
 	)
 }
 
 const CollectionTree = withDevice(props => {
-	// check if all collections in given library has been fetched, skip rendering otherwise
-	// memoize collections array and all the other params, or perhaps rendered tree?
-	//
 	const { device, parentLibraryKey, libraries, librariesData, selectedCollectionKey,
-		selectedLibraryKey, itemsSource, view, collectionCountByLibrary, ...rest } = props;
+		selectedLibraryKey, itemsSource, view, collectionCountByLibrary, navigate, ...rest } = props;
 
 	const collectionsTotalCount = collectionCountByLibrary[parentLibraryKey];
-	const collectionsCurrentCount = (Object.values(librariesData[parentLibraryKey].collections) || []).length;
+	const collectionsCurrentCount = parentLibraryKey in librariesData ?
+		Object.values(librariesData[parentLibraryKey].collections).length : 0;
 	const hasFetchedAllCollections = collectionsCurrentCount === collectionsTotalCount;
 
 	if(!hasFetchedAllCollections) {
@@ -497,12 +504,12 @@ const CollectionTree = withDevice(props => {
 		return null;
 	}
 
-	const handleOpenToggle = (ev, shouldOpen = null) => {
+	const handleOpenToggle = useCallback((ev, shouldOpen = null) => {
 		const collectionKey = ev.currentTarget.closest('[data-collection-key]').dataset.collectionKey;
 		toggleOpen(collectionKey, shouldOpen);
-	}
+	});
 
-	const toggleOpen = (collectionKey, shouldOpen = null) => {
+	const toggleOpen = useCallback((collectionKey, shouldOpen = null) => {
 		if(shouldOpen === null) {
 			shouldOpen = !opened.includes(collectionKey);
 		}
@@ -510,13 +517,12 @@ const CollectionTree = withDevice(props => {
 		shouldOpen ?
 			setOpened([...opened, collectionKey ]) :
 			setOpened(opened.filter(k => k !== collectionKey));
-	}
+	})
 
-	const selectNode = partialPath => {
-		const { navigate } = props;
+	const selectNode = useCallback(partialPath => {
 		const path = { ...partialPath, library: parentLibraryKey }
 		navigate(path, true);
-	}
+	});
 
 	const isCurrentLibrary = parentLibraryKey === selectedLibraryKey;
 
@@ -559,6 +565,7 @@ const CollectionTree = withDevice(props => {
 				isReadOnly={ isReadOnly }
 				itemsSource={ itemsSource }
 				level={ 2 }
+				navigate={ navigate }
 				onOpen={ handleOpenToggle }
 				opened={ opened }
 				parentLibraryKey = { parentLibraryKey }
@@ -569,10 +576,8 @@ const CollectionTree = withDevice(props => {
 				setOpened={ setOpened }
 				setRenaming={ setRenaming }
 				view={ view }
-				{ ...pick(rest, ['addVirtual', 'commitAdd', 'cancelAdd', 'deleteCollection',
-				'isPickerMode', 'navigate', 'onPickerPick', 'picked', 'onDrillDownNext',
-				'onDrillDownPrev', 'onFocusNext', 'onFocusPrev', 'toggleModal', 'updateCollection',
-				'virtual']) }
+				{ ...pick(rest, ['addVirtual', 'commitAdd', 'cancelAdd', 'deleteCollection', 'navigate', 'pickerPick', 'picked', 'onDrillDownNext',
+				'onDrillDownPrev', 'onFocusNext', 'onFocusPrev', 'toggleModal', 'updateCollection', 'virtual', 'isPickerMode']) }
 			/>
 			<PublicationsNode
 				isSelected = { isCurrentLibrary && itemsSource === 'publications' }
