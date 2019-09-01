@@ -352,7 +352,7 @@ const PickerCheckbox = ({ collectionKey, pickerPick, picked, parentLibraryKey })
 const CollectionNode = withDevice(props => {
 	const { allCollections, derivedData, collection, device, level, selectedCollectionKey,
 		isCurrentLibrary, view, parentLibraryKey, renaming, setRenaming, updateCollection,
-		isPickerMode, ...rest }  = props;
+		updating, isPickerMode, ...rest }  = props;
 
 	const handleClick = useCallback(() => {
 		const { selectNode } = rest;
@@ -367,10 +367,11 @@ const CollectionNode = withDevice(props => {
 	});
 
 	const handleRenameCancel = useCallback(() => {
+		console.log('handleRenameCancel');
 		setRenaming(null);
 	});
 
-	const handleRenameCommit = useCallback(newValue => {
+	const handleRenameCommit = useCallback(async newValue => {
 		updateCollection(collection.key, { name: newValue }, parentLibraryKey);
 		setRenaming(null);
 	});
@@ -415,6 +416,9 @@ const CollectionNode = withDevice(props => {
 		);
 
 	const shouldBeTabbable = shouldBeTabbableOnTouch || !device.isTouchOrSmall;
+	const collectionName = collection.key in updating ?
+		updating[collection.key][updating[collection.key].length - 1].patch.name || collection.name :
+		collection.name
 
 	return (
 		<Node
@@ -443,6 +447,8 @@ const CollectionNode = withDevice(props => {
 						parentCollectionKey={ collection.key }
 						parentLibraryKey={ parentLibraryKey }
 						selectedCollectionKey={ selectedCollectionKey }
+						updating = { updating }
+						renaming = { renaming }
 					/>
 				</LevelWrapper>
 			) : null }
@@ -454,14 +460,14 @@ const CollectionNode = withDevice(props => {
 					autoFocus
 					selectOnFocus
 					isActive={ true }
-					isBusy={ false /* TODO: Show spinner when busy */ }
+					isBusy={ false }
 					onBlur={ () => false /* commit on blur */ }
 					onCancel={ handleRenameCancel }
 					onCommit={ handleRenameCommit }
-					value={ collection.name }
+					value={ collectionName }
 				/> ) : (
 					<React.Fragment>
-						<div className="truncate">{ collection.name }</div>
+						<div className="truncate">{ collectionName }</div>
 						{ isPickerMode ? (
 							<PickerCheckbox
 								collectionKey = { collection.key }
@@ -598,8 +604,10 @@ const CollectionTree = withDevice(props => {
 				setOpened={ setOpened }
 				setRenaming={ setRenaming }
 				view={ view }
-				{ ...pick(rest, ['addVirtual', 'commitAdd', 'cancelAdd', 'deleteCollection', 'navigate', 'pickerPick', 'picked', 'onDrillDownNext',
-				'onDrillDownPrev', 'onFocusNext', 'onFocusPrev', 'toggleModal', 'updateCollection', 'virtual', 'isPickerMode']) }
+				{ ...pick(rest, ['addVirtual', 'commitAdd', 'cancelAdd', 'deleteCollection',
+				'navigate', 'pickerPick', 'picked', 'onDrillDownNext', 'onDrillDownPrev',
+				'onFocusNext', 'onFocusPrev', 'toggleModal', 'updateCollection', 'updating',
+				'virtual', 'isPickerMode']) }
 			/>
 			<PublicationsNode
 				isSelected = { isCurrentLibrary && itemsSource === 'publications' }
@@ -607,7 +615,8 @@ const CollectionTree = withDevice(props => {
 				selectNode = { selectNode }
 				shouldBeTabbable = { shouldBeTabbable }
 				isMyLibrary = { isMyLibrary }
-				{ ...pick(rest, ['isPickerMode', 'onDrillDownNext', 'onDrillDownPrev', 'onFocusNext', 'onFocusPrev']) }
+				{ ...pick(rest, ['isPickerMode', 'onDrillDownNext', 'onDrillDownPrev',
+				'onFocusNext', 'onFocusPrev']) }
 			/>
 			<TrashNode
 				isSelected = { isCurrentLibrary && itemsSource === 'trash' }
@@ -615,7 +624,8 @@ const CollectionTree = withDevice(props => {
 				selectNode = { selectNode }
 				shouldBeTabbable = { shouldBeTabbable }
 				isReadOnly = { isReadOnly }
-				{ ...pick(rest, ['isPickerMode', 'onDrillDownNext', 'onDrillDownPrev', 'onFocusNext', 'onFocusPrev']) }
+				{ ...pick(rest, ['isPickerMode', 'onDrillDownNext', 'onDrillDownPrev',
+				'onFocusNext', 'onFocusPrev']) }
 			/>
 		</LevelWrapper>
 	);

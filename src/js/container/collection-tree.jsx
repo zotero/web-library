@@ -17,6 +17,7 @@ const mapStateToProps = (state, ownProps) => {
 
 	return {
 		collectionsTotalCount: state.collectionCountByLibrary[parentLibraryKey],
+		updating: parentLibraryKey in state.libraries ? state.libraries[parentLibraryKey].updating.collections : {},
 		collections: parentLibraryKey in state.libraries ? state.libraries[ownProps.parentLibraryKey].collections : {},
 		itemsSource,
 		libraries,
