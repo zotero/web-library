@@ -15,7 +15,6 @@ const CollectionTreeContainer = props => <CollectionTree { ...props } />;
 const mapStateToProps = (state, ownProps) => {
 	const { collectionKey, itemsSource, libraryKey, view } = state.current;
 	const { parentLibraryKey } = ownProps;
-	const librariesData = state.libraries;
 	const { libraries } = state.config ;
 
 	return {

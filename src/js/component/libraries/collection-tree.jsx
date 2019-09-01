@@ -63,8 +63,13 @@ const makeDerivedData = (collections, path = [], opened, isTouchOrSmall) => {
 	return derivedData;
 }
 
-const makeCollectionsPath = (collectionKey, allCollections) => {
+const makeCollectionsPath = (collectionKey, allCollections, isCurrentLibrary) => {
 	const path = [];
+
+	if(!isCurrentLibrary) {
+		return path;
+	}
+
 	var nextKey = collectionKey;
 	while(nextKey) {
 		const collection = allCollections[nextKey];
@@ -146,12 +151,12 @@ const VirtualCollectionNode = ({ isPickerMode, virtual, cancelAdd, commitAdd, pa
 	);
 }
 
-const PublicationsNode = ({ isPickerMode, isSelected, shouldBeTabbable, parentLibraryKey, selectNode, ...rest }) => {
+const PublicationsNode = ({ isMyLibrary, isPickerMode, isSelected, shouldBeTabbable, parentLibraryKey, selectNode, ...rest }) => {
 	const handleClick = useCallback(() => {
 		selectNode({ publications: true });
 	}, []);
 
-	if(isPickerMode) {
+	if(!isMyLibrary || isPickerMode) {
 		return null;
 	}
 
@@ -173,12 +178,12 @@ const PublicationsNode = ({ isPickerMode, isSelected, shouldBeTabbable, parentLi
 	);
 }
 
-const TrashNode = ({ isPickerMode, isSelected, shouldBeTabbable, parentLibraryKey, selectNode, ...rest }) => {
+const TrashNode = ({ isPickerMode, isReadOnly, isSelected, shouldBeTabbable, parentLibraryKey, selectNode, ...rest }) => {
 	const handleClick = useCallback(() => {
 		selectNode({ trash: true });
 	}, []);
 
-	if(isPickerMode) {
+	if(isReadOnly || isPickerMode) {
 		return null;
 	}
 
@@ -336,23 +341,6 @@ const PickerCheckbox = ({ collectionKey, pickerPick, picked, parentLibraryKey })
 	);
 }
 
-function useTraceUpdate(props) {
-  const prev = useRef(props);
-  useEffect(() => {
-    const changedProps = Object.entries(props).reduce((ps, [k, v]) => {
-      if (prev.current[k] !== v) {
-        ps[k] = [prev.current[k], v];
-      }
-      return ps;
-    }, {});
-    if (Object.keys(changedProps).length > 0) {
-      console.log('Changed props:', changedProps);
-    }
-    prev.current = props;
-  });
-}
-
-
 const CollectionNode = withDevice(props => {
 	const { allCollections, derivedData, collection, device, level, selectedCollectionKey,
 		isCurrentLibrary, view, parentLibraryKey, renaming, setRenaming, updateCollection,
@@ -393,7 +381,8 @@ const CollectionNode = withDevice(props => {
 	const collections = allCollections.filter(c => c.parentCollection === collection.key );
 	const hasSubCollections = (device.isSingleColumn || collections.length > 0);
 	const { selectedDepth } = derivedData[collection.key];
-	const selectedHasChildren = selectedCollectionKey && derivedData[selectedCollectionKey].hasChildren;
+
+	const selectedHasChildren = isCurrentLibrary && selectedCollectionKey && derivedData[selectedCollectionKey].hasChildren;
 
 	// if isSelected is deeper in this tree, hasOpen is true
 	// if isSelected is a directly in collections, hasOpen is only true
@@ -490,10 +479,18 @@ const CollectionNode = withDevice(props => {
 });
 
 const CollectionsNodeList = ({ collections, parentCollectionKey, ...rest }) => {
+	const sortedCollections = useMemo(() => {
+		const copiedCollections = [ ...collections ];
+		copiedCollections.sort((c1, c2) =>
+			c1.name.toUpperCase().localeCompare(c2.name.toUpperCase())
+		);
+		return copiedCollections;
+	});
+
 	return (
 		<React.Fragment>
 			<ItemsNode parentCollectionKey={ parentCollectionKey } { ...rest } />
-			{ collections.map(c =>
+			{ sortedCollections.map(c =>
 				<CollectionNode
 					key={ c.key }
 					collection={ c }
@@ -512,8 +509,6 @@ const CollectionsNodeList = ({ collections, parentCollectionKey, ...rest }) => {
 const CollectionTree = withDevice(props => {
 	const { collections, device, parentLibraryKey, libraries, selectedCollectionKey,
 		selectedLibraryKey, itemsSource, view, collectionsTotalCount, navigate, ...rest } = props;
-
-	useTraceUpdate(props);
 
 	const collectionsCurrentCount = Object.values(collections).length;
 	const hasFetchedAllCollections = collectionsCurrentCount === collectionsTotalCount;
@@ -548,8 +543,8 @@ const CollectionTree = withDevice(props => {
 	const allCollections = (Object.values(collections) || []);
 
 	const path = useMemo(() => makeCollectionsPath(
-		selectedCollectionKey, collections),
-		[allCollections, selectedCollectionKey]
+		selectedCollectionKey, collections, isCurrentLibrary),
+		[allCollections, selectedCollectionKey, isCurrentLibrary]
 	);
 
 	const [opened, setOpened] = useState(path.slice(0, -1));
@@ -557,12 +552,12 @@ const CollectionTree = withDevice(props => {
 	const [dotMenuFor, setDotMenuFor] = useState(null);
 
 	const derivedData = useMemo(
-		() => makeDerivedData(collections, path, opened, device.isTouchOrSmall),
-		[allCollections, path, opened, device]
+		() => makeDerivedData(collections, path, opened, device.isTouchOrSmall, isCurrentLibrary),
+		[collections, path, opened, device]
 	);
 
 	const selectedDepth = path.length;
-	const selectedHasChildren = selectedCollectionKey && (derivedData[selectedCollectionKey] || {}).hasChildren;
+	const selectedHasChildren = isCurrentLibrary && selectedCollectionKey && (derivedData[selectedCollectionKey] || {}).hasChildren;
 	const hasOpen = selectedDepth > 0 && selectedHasChildren || selectedDepth > 1;
 
 	const topLevelCollections = allCollections.filter(c => c.parentCollection === false );
@@ -571,7 +566,7 @@ const CollectionTree = withDevice(props => {
 	const shouldBeTabbableOnTouch = isCurrentLibrary && !selectedCollectionKey;
 	const shouldBeTabbable = shouldBeTabbableOnTouch || !device.isTouchOrSmall;
 
-	const { isReadOnly } = libraries.find(l => l.key === parentLibraryKey);
+	const { isReadOnly, isMyLibrary } = libraries.find(l => l.key === parentLibraryKey);
 
 	return (
 		<LevelWrapper level={ 1 } hasOpen={ hasOpen } isLastLevel={ isLastLevel }>
@@ -603,6 +598,7 @@ const CollectionTree = withDevice(props => {
 				parentLibraryKey = { parentLibraryKey }
 				selectNode = { selectNode }
 				shouldBeTabbable = { shouldBeTabbable }
+				isMyLibrary = { isMyLibrary }
 				{ ...pick(rest, ['isPickerMode', 'onDrillDownNext', 'onDrillDownPrev', 'onFocusNext', 'onFocusPrev']) }
 			/>
 			<TrashNode
@@ -610,6 +606,7 @@ const CollectionTree = withDevice(props => {
 				parentLibraryKey = { parentLibraryKey }
 				selectNode = { selectNode }
 				shouldBeTabbable = { shouldBeTabbable }
+				isReadOnly = { isReadOnly }
 				{ ...pick(rest, ['isPickerMode', 'onDrillDownNext', 'onDrillDownPrev', 'onFocusNext', 'onFocusPrev']) }
 			/>
 		</LevelWrapper>
