@@ -1,6 +1,6 @@
 'use strict';
 
-import React, { useMemo, useState, useCallback } from 'react';
+import React, { useMemo, useState, useCallback, useRef, useEffect } from 'react';
 import cx from 'classnames';
 import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap/lib';
 import Node from './node';
@@ -336,9 +336,28 @@ const PickerCheckbox = ({ collectionKey, pickerPick, picked, parentLibraryKey })
 	);
 }
 
-const CollectionNode = withDevice(({ allCollections, derivedData, collection,
-device, level, selectedCollectionKey, isCurrentLibrary, view,
-parentLibraryKey, renaming, setRenaming, updateCollection, isPickerMode, ...rest }) => {
+function useTraceUpdate(props) {
+  const prev = useRef(props);
+  useEffect(() => {
+    const changedProps = Object.entries(props).reduce((ps, [k, v]) => {
+      if (prev.current[k] !== v) {
+        ps[k] = [prev.current[k], v];
+      }
+      return ps;
+    }, {});
+    if (Object.keys(changedProps).length > 0) {
+      console.log('Changed props:', changedProps);
+    }
+    prev.current = props;
+  });
+}
+
+
+const CollectionNode = withDevice(props => {
+	const { allCollections, derivedData, collection, device, level, selectedCollectionKey,
+		isCurrentLibrary, view, parentLibraryKey, renaming, setRenaming, updateCollection,
+		isPickerMode, ...rest }  = props;
+
 	const handleClick = useCallback(() => {
 		const { selectNode } = rest;
 		selectNode({ collection: collection.key });
@@ -491,12 +510,12 @@ const CollectionsNodeList = ({ collections, parentCollectionKey, ...rest }) => {
 }
 
 const CollectionTree = withDevice(props => {
-	const { device, parentLibraryKey, libraries, librariesData, selectedCollectionKey,
-		selectedLibraryKey, itemsSource, view, collectionCountByLibrary, navigate, ...rest } = props;
+	const { collections, device, parentLibraryKey, libraries, selectedCollectionKey,
+		selectedLibraryKey, itemsSource, view, collectionsTotalCount, navigate, ...rest } = props;
 
-	const collectionsTotalCount = collectionCountByLibrary[parentLibraryKey];
-	const collectionsCurrentCount = parentLibraryKey in librariesData ?
-		Object.values(librariesData[parentLibraryKey].collections).length : 0;
+	useTraceUpdate(props);
+
+	const collectionsCurrentCount = Object.values(collections).length;
 	const hasFetchedAllCollections = collectionsCurrentCount === collectionsTotalCount;
 
 	if(!hasFetchedAllCollections) {
@@ -526,10 +545,10 @@ const CollectionTree = withDevice(props => {
 
 	const isCurrentLibrary = parentLibraryKey === selectedLibraryKey;
 
-	const allCollections = (Object.values(librariesData[parentLibraryKey].collections) || []);
+	const allCollections = (Object.values(collections) || []);
 
 	const path = useMemo(() => makeCollectionsPath(
-		selectedCollectionKey, librariesData[parentLibraryKey].collections),
+		selectedCollectionKey, collections),
 		[allCollections, selectedCollectionKey]
 	);
 
@@ -538,7 +557,7 @@ const CollectionTree = withDevice(props => {
 	const [dotMenuFor, setDotMenuFor] = useState(null);
 
 	const derivedData = useMemo(
-		() => makeDerivedData(librariesData[parentLibraryKey].collections, path, opened, device.isTouchOrSmall),
+		() => makeDerivedData(collections, path, opened, device.isTouchOrSmall),
 		[allCollections, path, opened, device]
 	);
 
@@ -546,7 +565,7 @@ const CollectionTree = withDevice(props => {
 	const selectedHasChildren = selectedCollectionKey && (derivedData[selectedCollectionKey] || {}).hasChildren;
 	const hasOpen = selectedDepth > 0 && selectedHasChildren || selectedDepth > 1;
 
-	const collections = allCollections.filter(c => c.parentCollection === false );
+	const topLevelCollections = allCollections.filter(c => c.parentCollection === false );
 	const isLastLevel = device.isSingleColumn ? false : collections.length === 0;
 
 	const shouldBeTabbableOnTouch = isCurrentLibrary && !selectedCollectionKey;
@@ -558,7 +577,7 @@ const CollectionTree = withDevice(props => {
 		<LevelWrapper level={ 1 } hasOpen={ hasOpen } isLastLevel={ isLastLevel }>
 			<CollectionsNodeList
 				allCollections={ allCollections }
-				collections={ collections }
+				collections={ topLevelCollections }
 				derivedData={ derivedData }
 				dotMenuFor={ dotMenuFor }
 				isCurrentLibrary = { isCurrentLibrary }

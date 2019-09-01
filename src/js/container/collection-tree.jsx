@@ -14,14 +14,15 @@ const CollectionTreeContainer = props => <CollectionTree { ...props } />;
 
 const mapStateToProps = (state, ownProps) => {
 	const { collectionKey, itemsSource, libraryKey, view } = state.current;
+	const { parentLibraryKey } = ownProps;
 	const librariesData = state.libraries;
 	const { libraries } = state.config ;
 
 	return {
-		collectionCountByLibrary: state.collectionCountByLibrary,
+		collectionsTotalCount: state.collectionCountByLibrary[parentLibraryKey],
+		collections: parentLibraryKey in state.libraries ? state.libraries[ownProps.parentLibraryKey].collections : {},
 		itemsSource,
 		libraries,
-		librariesData,
 		selectedCollectionKey: collectionKey,
 		selectedLibraryKey: libraryKey,
 		view,
