@@ -1,5 +1,3 @@
-/* eslint-disable react/no-deprecated */
-
 'use strict';
 
 import React from 'react';

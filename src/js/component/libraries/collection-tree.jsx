@@ -1,15 +1,16 @@
 'use strict';
 
-import React, { useMemo, useState, useCallback, useRef, useEffect } from 'react';
 import cx from 'classnames';
+import React, { useMemo, useState, useCallback } from 'react';
 import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap/lib';
-import Node from './node';
-import Icon from '../ui/icon';
-import withDevice from '../../enhancers/with-device';
-import { stopPropagation } from '../../utils.js';
-import { pick } from '../../common/immutable';
+
 import Editable from '../editable';
+import Icon from '../ui/icon';
+import Node from './node';
+import withDevice from '../../enhancers/with-device';
 import { BIBLIOGRAPHY, COLLECTION_RENAME, COLLECTION_ADD, EXPORT, MOVE_COLLECTION } from '../../constants/modals';
+import { pick } from '../../common/immutable';
+import { stopPropagation } from '../../utils.js';
 
 const makeDerivedData = (collections, path = [], opened, isTouchOrSmall) => {
 	const selectedParentKey = path[path.length - 2];
@@ -84,7 +85,10 @@ const makeCollectionsPath = (collectionKey, allCollections, isCurrentLibrary) =>
 	return path.reverse();
 }
 
-const ItemsNode = withDevice(({ isPickerMode, device, parentCollectionKey, selectedCollectionKey, itemsSource, selectNode, ...rest }) => {
+const ItemsNode = withDevice(props => {
+	const { isPickerMode, device, parentCollectionKey, selectedCollectionKey, itemsSource,
+		selectNode, ...rest } = props;
+
 	if(isPickerMode || !device.isTouchOrSmall) {
 		return null;
 	}
@@ -120,7 +124,10 @@ const ItemsNode = withDevice(({ isPickerMode, device, parentCollectionKey, selec
 });
 
 
-const VirtualCollectionNode = ({ isPickerMode, virtual, cancelAdd, commitAdd, parentLibraryKey, parentCollectionKey }) => {
+const VirtualCollectionNode = props => {
+	const { isPickerMode, virtual, cancelAdd, commitAdd, parentLibraryKey,
+			parentCollectionKey } = props;
+
 	const handleEditableCommit = useCallback(newValue => {
 		commitAdd(parentLibraryKey, parentCollectionKey, newValue);
 	});
@@ -218,9 +225,10 @@ const LevelWrapper = ({ children, level, hasOpen, isLastLevel }) => {
 }
 
 
-const DotMenu = withDevice(({ collection, deleteCollection, device,
-dotMenuFor, isReadOnly, navigate, opened, parentLibraryKey, setDotMenuFor,
-setOpened, setRenaming, addVirtual, toggleModal }) => {
+const DotMenu = withDevice(props => {
+	const { collection, deleteCollection, device, dotMenuFor, isReadOnly, navigate, opened,
+		parentLibraryKey, setDotMenuFor, setOpened, setRenaming, addVirtual, toggleModal } = props;
+
 	const isOpen = dotMenuFor === collection.key;
 
 	const handleToggle = useCallback(ev => {
@@ -613,5 +621,4 @@ const CollectionTree = withDevice(props => {
 	);
 });
 
-
-export default CollectionTree;
+export default React.memo(CollectionTree);

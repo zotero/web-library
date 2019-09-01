@@ -264,4 +264,4 @@ Libraries.propTypes = {
 	view: PropTypes.string,
 }
 
-export default withDevice(withFocusManager(Libraries));
+export default React.memo(withDevice(withFocusManager(Libraries)));
