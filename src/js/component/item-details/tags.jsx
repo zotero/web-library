@@ -94,7 +94,7 @@ const Tags = ({ tagColors, itemKey, tags: initalTags, isActive, isReadOnly, upda
 											onClick={ handleEdit }
 											onFocus={ handleEdit }
 										/>
-										{ !isReadOnly && (
+										{ !(tag.tag === tagRedacted && tagRedacted === '') && !isReadOnly && (
 											<Button
 												icon
 												onClick={ handleDelete }
