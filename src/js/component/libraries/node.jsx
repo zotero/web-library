@@ -164,14 +164,13 @@ class Node extends React.PureComponent {
 			</button>
 		);
 		const isActive = canDrop && isOver;
-		//@TODO: use "pick" instead of "omit"
 
 		return connectDragSource(connectDropTarget(
 			<li
 				className={ cx(className, { focus: isFocused }) }
 				>
 				<div
-					{ ...pick(this.props, ['tabIndex']) }
+					{ ...pick(this.props, propName => propName.startsWith('data-') || ['tabIndex'].includes(propName)) }
 					className={ cx('item-container', { 'dnd-target': isActive }) }
 					role="treeitem"
 					aria-expanded={ isOpen }
