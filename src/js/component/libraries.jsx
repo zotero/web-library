@@ -57,9 +57,6 @@ const LibraryNode = props => {
 			isOpen={ isOpen && !isFetching }
 			onOpen={ handleOpenToggle }
 			onClick={ handleClick }
-			data-is-picker-mode={ isPickerMode }
-			data-is-fetching={ isFetching }
-			data-is-open={ isOpen }
 			subtree={ isFetching ? null : isOpen ? <CollectionTreeContainer { ...getTreeProps() } /> : null }
 			data-key={ libraryKey }
 			dndTarget={ isReadOnly ? { } : { 'targetType': 'library', libraryKey: libraryKey } }

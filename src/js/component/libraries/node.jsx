@@ -7,7 +7,7 @@ import Icon from '../ui/icon';
 import { DragSource, DropTarget } from 'react-dnd';
 import { noop } from '../../utils';
 import { ITEM, COLLECTION } from '../../constants/dnd';
-import { omit } from '../../common/immutable';
+import { pick } from '../../common/immutable';
 import { isTriggerEvent } from '../../common/event';
 
 const dndSpec = {
@@ -100,7 +100,7 @@ class Node extends React.PureComponent {
 	}
 
 	handleMouseDown = ev => {
-		if(!('onRename' in this.props)) {
+		if(!this.props.onRename) {
 			this.isLongPress = false;
 			return;
 		}
@@ -165,19 +165,13 @@ class Node extends React.PureComponent {
 		);
 		const isActive = canDrop && isOver;
 		//@TODO: use "pick" instead of "omit"
-		const props = omit(this.props, ["canDrag", "canDrop", "children",
-			"className", "connectDragSource", "connectDropTarget", "dndTarget",
-			"hideTwisty", "isDragging", "isOpen", "isOver", "onFocusNext", "onOpen",
-			"onFocusPrev", "onClick", "subtree", "onRename", "shouldBeDraggable",
-			"onDrillDownNext", "onDrillDownPrev", 'onKeyDown'
-		]);
 
 		return connectDragSource(connectDropTarget(
 			<li
 				className={ cx(className, { focus: isFocused }) }
 				>
 				<div
-					{ ...props }
+					{ ...pick(this.props, ['tabIndex']) }
 					className={ cx('item-container', { 'dnd-target': isActive }) }
 					role="treeitem"
 					aria-expanded={ isOpen }

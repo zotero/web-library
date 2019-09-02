@@ -87,18 +87,15 @@ const makeCollectionsPath = (collectionKey, allCollections, isCurrentLibrary) =>
 
 const ItemsNode = withDevice(props => {
 	const { isPickerMode, device, parentCollectionKey, selectedCollectionKey, itemsSource,
-		selectNode, ...rest } = props;
+		selectNode, shouldBeTabbable, ...rest } = props;
 
 	if(isPickerMode || !device.isTouchOrSmall) {
 		return null;
 	}
 
-	const isSelected = !['trash', 'publications', 'query'].includes(itemsSource) && (
+	const isSelected = !device.isSingleColumn && !['trash', 'publications', 'query'].includes(itemsSource) && (
 		parentCollectionKey === selectedCollectionKey || (!parentCollectionKey && !selectedCollectionKey)
 	);
-
-	const shouldBeTabbableOnTouch = parentCollectionKey === selectedCollectionKey; //@TODO: cover leaf-node-on-tablet scenario
-	const shouldBeTabbable = shouldBeTabbableOnTouch || !device.isTouchOrSmall;
 
 	const handleClick = useCallback(() => {
 		selectNode({
@@ -351,8 +348,8 @@ const PickerCheckbox = ({ collectionKey, pickerPick, picked, parentLibraryKey })
 
 const CollectionNode = withDevice(props => {
 	const { allCollections, derivedData, collection, device, level, selectedCollectionKey,
-		isCurrentLibrary, view, parentLibraryKey, renaming, setRenaming, updateCollection,
-		updating, isPickerMode, ...rest }  = props;
+		isCurrentLibrary, parentLibraryKey, renaming, setRenaming, updateCollection,
+		updating, isPickerMode, shouldBeTabbable, ...rest }  = props;
 
 	const handleClick = useCallback(() => {
 		const { selectNode } = rest;
@@ -367,7 +364,6 @@ const CollectionNode = withDevice(props => {
 	});
 
 	const handleRenameCancel = useCallback(() => {
-		console.log('handleRenameCancel');
 		setRenaming(null);
 	});
 
@@ -393,29 +389,22 @@ const CollectionNode = withDevice(props => {
 
 	const selectedHasChildren = isCurrentLibrary && selectedCollectionKey && derivedData[selectedCollectionKey].hasChildren;
 
-	// if isSelected is deeper in this tree, hasOpen is true
-	// if isSelected is a directly in collections, hasOpen is only true
-	// if selected item has subcollections (otherwise it's selected but not open)
-	const hasOpen = selectedDepth > 0;
+	// if isSelected is a nested child, hasOpen is true
+	// if isSelected is a direct child, hasOpen is only true if
+	// either selected is not a leaf node or we're in singleColumn mode (where there is always estra "Items" node)
+	const hasOpen = selectedDepth > 0 && !(selectedDepth === 1 && (!selectedHasChildren && !device.isSingleColumn));
 
 	// at least one collection contains subcollections
-	const hasNested = collections.some(c => derivedData[c.key].hasChildren );
+	const hasNested = !!collections.find(c => derivedData[c.key].hasChildren);
 
 	// on mobiles, there is extra level that only contains "items"
 	const isLastLevel = device.isSingleColumn ? collections.length === 0 : !hasNested;
 
-	// used to decide whether nodes are tabbable on touch devices
-	const isSiblingOfSelected = selectedDepth === 0;
-	const isChildOfSelected = (collection.parentCollection && derivedData[collection.parentCollection].isSelected);
-		// || (collection.parentCollection === null && path.length === 0 && view !== 'libraries');
+	// subtree nodes are tabbable if
+	const shouldSubtreeNodesBeTabbableOnTouch = isCurrentLibrary && derivedData[collection.key].isSelected ||
+		selectedDepth === 1 && !selectedHasChildren;
+	const shouldSubtreeNodesBeTabbable = shouldSubtreeNodesBeTabbableOnTouch || !device.isTouchOrSmall;
 
-	const shouldBeTabbableOnTouch = isCurrentLibrary &&
-		(isChildOfSelected || (isSiblingOfSelected && !selectedHasChildren)) &&
-		(!device.isSingleColumn || (device.isSingleColumn && (
-			view === 'collection' || view === 'library'))
-		);
-
-	const shouldBeTabbable = shouldBeTabbableOnTouch || !device.isTouchOrSmall;
 	const collectionName = collection.key in updating ?
 		updating[collection.key][updating[collection.key].length - 1].patch.name || collection.name :
 		collection.name
@@ -432,7 +421,7 @@ const CollectionNode = withDevice(props => {
 			isOpen={ derivedData[collection.key].isOpen }
 			onClick={ handleClick }
 			onDrag={ handleDrag }
-			onRename={ handleRenameTrigger }
+			onRename={ device.isTouchOrSmall ? null : handleRenameTrigger }
 			tabIndex={ shouldBeTabbable ? "-2" : null }
 			{ ...pick(rest, ['onOpen', 'onDrillDownNext', 'onDrillDownPrev', 'onFocusNext', 'onFocusPrev']) }
 			subtree={ hasSubCollections ? (
@@ -442,13 +431,15 @@ const CollectionNode = withDevice(props => {
 						allCollections={ allCollections }
 						collections = { collections }
 						derivedData={ derivedData }
+						isCurrentLibrary = { isCurrentLibrary }
 						isPickerMode={ isPickerMode }
 						level={ level + 1 }
 						parentCollectionKey={ collection.key }
 						parentLibraryKey={ parentLibraryKey }
-						selectedCollectionKey={ selectedCollectionKey }
-						updating = { updating }
 						renaming = { renaming }
+						selectedCollectionKey={ selectedCollectionKey }
+						shouldBeTabbable = { shouldSubtreeNodesBeTabbable }
+						updating = { updating }
 					/>
 				</LevelWrapper>
 			) : null }
@@ -522,7 +513,7 @@ const CollectionsNodeList = ({ collections, parentCollectionKey, ...rest }) => {
 
 const CollectionTree = withDevice(props => {
 	const { collections, device, parentLibraryKey, libraries, selectedCollectionKey,
-		selectedLibraryKey, itemsSource, view, collectionsTotalCount, navigate, ...rest } = props;
+		selectedLibraryKey, itemsSource, collectionsTotalCount, navigate, ...rest } = props;
 
 	const collectionsCurrentCount = Object.values(collections).length;
 	const hasFetchedAllCollections = collectionsCurrentCount === collectionsTotalCount;
@@ -572,7 +563,7 @@ const CollectionTree = withDevice(props => {
 
 	const selectedDepth = path.length;
 	const selectedHasChildren = isCurrentLibrary && selectedCollectionKey && (derivedData[selectedCollectionKey] || {}).hasChildren;
-	const hasOpen = selectedDepth > 0 && selectedHasChildren || selectedDepth > 1;
+	const hasOpen = (selectedDepth > 0 && (selectedHasChildren || device.isSingleColumn)) || selectedDepth > 1;
 
 	const topLevelCollections = allCollections.filter(c => c.parentCollection === false );
 	const isLastLevel = device.isSingleColumn ? false : collections.length === 0;
@@ -603,7 +594,7 @@ const CollectionTree = withDevice(props => {
 				setDotMenuFor={ setDotMenuFor }
 				setOpened={ setOpened }
 				setRenaming={ setRenaming }
-				view={ view }
+				shouldBeTabbable={ shouldBeTabbable }
 				{ ...pick(rest, ['addVirtual', 'commitAdd', 'cancelAdd', 'deleteCollection',
 				'navigate', 'pickerPick', 'picked', 'onDrillDownNext', 'onDrillDownPrev',
 				'onFocusNext', 'onFocusPrev', 'toggleModal', 'updateCollection', 'updating',
