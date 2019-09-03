@@ -61,8 +61,16 @@ const fetchCollections = (libraryKey, { start = 0, limit = 50, sort = 'dateModif
 	};
 };
 
-const fetchAllCollections = (libraryKey, { sort = 'dateModified', direction = "desc" } = {}) => {
-	return async dispatch => {
+const fetchAllCollections = (libraryKey, { sort = 'dateModified', direction = "desc", shouldAlwaysFetch = false } = {}) => {
+	return async (dispatch, getState) => {
+		const state = getState();
+		const isKnown = libraryKey in state.collectionCountByLibrary;
+
+		if(!shouldAlwaysFetch && isKnown && state.collectionCountByLibrary[libraryKey] === Object.keys(state.libraries[libraryKey].collections).length) {
+			// skip fetching if we already know these libraries
+			return;
+		}
+
 		var pointer = 0;
 		const limit = 100;
 		var hasMore = false;
