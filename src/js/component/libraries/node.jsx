@@ -150,7 +150,7 @@ class Node extends React.PureComponent {
 
 	render() {
 		const { canDrop, children, className, connectDragSource,
-			connectDropTarget, hideTwisty, isOpen, isOver, subtree, } = this.props;
+			connectDropTarget, showTwisty, isOpen, isOver, subtree, } = this.props;
 		const { isFocused } = this.state;
 
 		const twistyButton = (
@@ -163,6 +163,7 @@ class Node extends React.PureComponent {
 				<Icon type={ '16/triangle' } width="16" height="16" />
 			</button>
 		);
+
 		const isActive = canDrop && isOver;
 
 		return connectDragSource(connectDropTarget(
@@ -182,7 +183,7 @@ class Node extends React.PureComponent {
 					onBlur={ this.handleBlur }
 					onKeyDown={ this.handleKeyDown }
 				>
-					{ subtree && !hideTwisty ? twistyButton : null }
+					{ subtree || showTwisty ? twistyButton : null }
 					{ children }
 				</div>
 				{ subtree }
@@ -196,7 +197,6 @@ class Node extends React.PureComponent {
 		className: PropTypes.string,
 		connectDragSource: PropTypes.func,
 		connectDropTarget: PropTypes.func,
-		hideTwisty: PropTypes.bool,
 		isDragging: PropTypes.bool,
 		isOpen: PropTypes.bool,
 		isOver: PropTypes.bool,
@@ -209,6 +209,7 @@ class Node extends React.PureComponent {
 		onKeyDown: PropTypes.func,
 		onOpen: PropTypes.func,
 		onRename: PropTypes.func,
+		showTwisty: PropTypes.bool,
 		subtree: PropTypes.oneOfType([PropTypes.element, PropTypes.array]),
 	}
 
