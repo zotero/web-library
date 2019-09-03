@@ -135,7 +135,7 @@ const Libraries = props => {
 
 	useEffect(() => {
 		if(selectedLibraryKey) {
-			toggleOpen(selectedLibraryKey);
+			toggleOpen(selectedLibraryKey, true);
 		}
 	}, [selectedLibraryKey]);
 
