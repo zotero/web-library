@@ -7,6 +7,7 @@ import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap
 import Editable from '../editable';
 import Icon from '../ui/icon';
 import Node from './node';
+import Spinner from '../../component/ui/spinner';
 import withDevice from '../../enhancers/with-device';
 import { BIBLIOGRAPHY, COLLECTION_RENAME, COLLECTION_ADD, EXPORT, MOVE_COLLECTION } from '../../constants/modals';
 import { pick } from '../../common/immutable';
@@ -525,7 +526,16 @@ const CollectionTree = withDevice(props => {
 	const hasFetchedAllCollections = collectionsCurrentCount === collectionsTotalCount;
 
 	if(!hasFetchedAllCollections) {
-		// Only render tree once all collections are fetched. No need to show spinner, this is handled by parent
+		// while fetching collections:
+		// On touch we allow animating into next level and render a spinner
+		if(device.isTouchOrSmall) {
+			return (
+				<div className="level level-1 level-last loading">
+					<Spinner className="large" />
+				</div>
+			);
+		}
+		// On desktop no need to render anything, spinner shows next to the library node
 		return null;
 	}
 

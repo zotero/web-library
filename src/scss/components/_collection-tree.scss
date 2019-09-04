@@ -294,6 +294,14 @@
 		z-index: $z-index-level;
 		transition: transform $nav-transition;
 
+		&.loading {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			height: 100%;
+			padding: 0;
+		}
+
 		.level {
 			@include touch-or-bp-down(sm) {
 				position: absolute;
