@@ -161,7 +161,6 @@ const Libraries = props => {
 			setOpened([...opened, libraryKey ]);
 
 		if(!isOpened) {
-			//@TODO: fetch only if needed?
 			fetchAllCollections(libraryKey);
 		}
 	}

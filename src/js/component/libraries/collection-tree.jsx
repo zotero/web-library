@@ -409,6 +409,11 @@ const CollectionNode = withDevice(props => {
 		updating[collection.key][updating[collection.key].length - 1].patch.name || collection.name :
 		collection.name
 
+	//optimsation: skips rendering subtrees that are not visible nor relevant for transitions
+	const shouldRenderSubtree =
+		(device.isTouchOrSmall && (shouldSubtreeNodesBeTabbableOnTouch || selectedDepth !== -1)) ||
+		(!device.isTouchOrSmall && derivedData[collection.key].isOpen);
+
 	return (
 		<Node
 			className={ cx({
@@ -423,8 +428,9 @@ const CollectionNode = withDevice(props => {
 			onDrag={ handleDrag }
 			onRename={ device.isTouchOrSmall ? null : handleRenameTrigger }
 			tabIndex={ shouldBeTabbable ? "-2" : null }
+			showTwisty={ hasSubCollections }
 			{ ...pick(rest, ['onOpen', 'onDrillDownNext', 'onDrillDownPrev', 'onFocusNext', 'onFocusPrev']) }
-			subtree={ hasSubCollections ? (
+			subtree={ (shouldRenderSubtree && hasSubCollections) ? (
 				<LevelWrapper hasOpen={ hasOpen } level={ level } isLastLevel={ isLastLevel }>
 					<CollectionsNodeList
 						{ ...rest }
