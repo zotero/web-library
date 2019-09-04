@@ -144,13 +144,15 @@ const Notes = ({ device, childItems, isActive, isFetching, isFetched,
 	const handleDuplicate = async note => {
 		const noteTemplate = await fetchItemTemplate('note');
 		const item = { ...noteTemplate, parentItem: itemKey, note: note.note };
-		await createItem(item, libraryKey);
+		const createdItem = await createItem(item, libraryKey);
+		navigate({ noteKey: createdItem.key });
 	}
 
 	const handleAddNote = async () => {
 		const noteTemplate = await fetchItemTemplate('note');
 		const item = { ...noteTemplate, parentItem: itemKey, note: '' };
-		await createItem(item, libraryKey);
+		const createdItem = await createItem(item, libraryKey);
+		navigate({ noteKey: createdItem.key });
 	}
 
 	const selectedNote = childItems.find(n => n.key === noteKey);
