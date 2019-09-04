@@ -31,6 +31,7 @@ const dropdowns = {
 	formatblock: false,
 };
 
+//@NOTE: exposes focus() method
 class RichEditor extends React.PureComponent {
 	state = {
 		hilitecolor: null,
@@ -41,6 +42,18 @@ class RichEditor extends React.PureComponent {
 
 	handleEditorInit = (ev, editor) => {
 		this.editor = editor;
+		if(this.wantsFocus) {
+			this.editor.focus();
+			this.wantsFocus = false;
+		}
+	}
+
+	focus = () => {
+		if(this.editor) {
+			this.editor.focus();
+		} else {
+			this.wantsFocus = true;
+		}
 	}
 
 	async componentDidMount() {

@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import cx from 'classnames';
 import Dropdown from 'reactstrap/lib/Dropdown';
 import DropdownItem from 'reactstrap/lib/DropdownItem';
@@ -108,6 +108,9 @@ const Notes = ({ device, childItems, isActive, isFetching, isFetched,
 
 	const [notes, setNotes] = useState([]);
 
+	const editorRef = useRef();
+	const addedNoteKey = useRef();
+
 	useEffect(() => {
 		if(!isTinymceFetched && !isTinymceFetching) {
 			sourceFile('tinymce');
@@ -128,6 +131,13 @@ const Notes = ({ device, childItems, isActive, isFetching, isFetched,
 		setNotes(notes);
 	}, [childItems]);
 
+	useEffect(() => {
+		if(isActive && noteKey && editorRef.current && addedNoteKey.current === noteKey) {
+			editorRef.current.focus();
+			addedNoteKey.current = null;
+		}
+	}, [childItems]);
+
 	const handleChangeNote = newContent => {
 		updateItem(noteKey, { note: newContent });
 	}
@@ -145,6 +155,7 @@ const Notes = ({ device, childItems, isActive, isFetching, isFetched,
 		const noteTemplate = await fetchItemTemplate('note');
 		const item = { ...noteTemplate, parentItem: itemKey, note: note.note };
 		const createdItem = await createItem(item, libraryKey);
+		addedNoteKey.current = createdItem.key;
 		navigate({ noteKey: createdItem.key });
 	}
 
@@ -152,6 +163,7 @@ const Notes = ({ device, childItems, isActive, isFetching, isFetched,
 		const noteTemplate = await fetchItemTemplate('note');
 		const item = { ...noteTemplate, parentItem: itemKey, note: '' };
 		const createdItem = await createItem(item, libraryKey);
+		addedNoteKey.current = createdItem.key;
 		navigate({ noteKey: createdItem.key });
 	}
 
@@ -216,6 +228,7 @@ const Notes = ({ device, childItems, isActive, isFetching, isFetched,
 
 			{ !device.isTouchOrSmall && selectedNote && (
 				<RichEditorContainer
+					ref={ editorRef }
 					key={ selectedNote.key }
 					isReadOnly={ isReadOnly }
 					value={ selectedNote.note }

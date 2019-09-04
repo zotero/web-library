@@ -7,7 +7,11 @@ import { sourceFile } from '../actions';
 import RichEditor from '../component/rich-editor';
 import withDevice from '../enhancers/with-device';
 
-const RichEditorContainer = props => <RichEditor { ...props } />;
+const RichEditorContainer = React.forwardRef(
+	(props, ref) => <RichEditor { ...props } ref={ ref } />
+);
+
+RichEditorContainer.displayName = 'RichEditorContainer';
 
 const mapStateToProps = state => {
 	const { tinymceRoot } = state.config;
@@ -18,4 +22,4 @@ const mapStateToProps = state => {
 };
 
 
-export default withDevice(connect(mapStateToProps, { sourceFile })(RichEditorContainer));
+export default withDevice(connect(mapStateToProps, { sourceFile }, null, { forwardRef: true })(RichEditorContainer));

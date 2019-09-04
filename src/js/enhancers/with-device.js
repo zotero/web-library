@@ -20,7 +20,7 @@ const device = {
 };
 
 const withDevice = Component => {
-	const C = props => (
+	const C = React.forwardRef((props, ref) => (
 		<UserContext.Consumer>
 		{ ({ userType, isKeyboardUser, isMouseUser, isTouchUser, scrollbarWidth }) => (
 		<ViewportContext.Consumer>
@@ -45,12 +45,12 @@ const withDevice = Component => {
 			device['userType'] = userType;
 			device['viewport'] = viewport;
 
-			return <Component { ...props } device={ device } />
+			return <Component { ...props } device={ device } ref={ ref } />
 		}}
 		</ViewportContext.Consumer>
 		)}
 		</UserContext.Consumer>
-	);
+	));
 
 	C.displayName = `withDevice(${Component.displayName || Component.name})`;
 	C.WrappedComponent = Component;
