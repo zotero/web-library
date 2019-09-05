@@ -131,8 +131,14 @@ label {
 		}
 
 		@include mouse-and-bp-up(md) {
+			width: $icon-spin-size-sm;
+			height: $icon-spin-size-sm;
 			right: $space-min + $input-border-width;
 			top: $space-min + $input-border-width;
+
+			path {
+				stroke-width: 1.2px;
+			}
 		}
 	}
 
