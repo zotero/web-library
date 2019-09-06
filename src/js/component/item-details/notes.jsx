@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useCallback, useEffect, useMemo, useState, useRef } from 'react';
 import cx from 'classnames';
 import Dropdown from 'reactstrap/lib/Dropdown';
 import DropdownItem from 'reactstrap/lib/DropdownItem';
@@ -14,102 +14,103 @@ import withDevice from '../../enhancers/with-device';
 import withEditMode from '../../enhancers/with-edit-mode';
 import { isTriggerEvent } from '../../common/event';
 import { noteAsTitle } from '../../common/format';
-import { sortByKey } from '../../utils';
+import { sortByKey, stopPropagation } from '../../utils';
 import { TabPane } from '../ui/tabs';
 import { Toolbar, ToolGroup } from '../ui/toolbars';
 
 const PAGE_SIZE = 100;
 
-class Note extends React.PureComponent {
-	state = { isOpen: false }
-	handleToggleDropdown = () => this.setState({ isOpen: !this.state.isOpen })
-	handleSelect = ev => {
-		const { note, onSelect } = this.props;
+const Note = props => {
+	const { device, isSelected, isReadOnly, note, onDelete, onDuplicate, onSelect } = props;
+	const [isDropdownOpen, setDropdownOpen] = useState(false);
+
+	const handleToggleDropdown = useCallback(() => setDropdownOpen(!isDropdownOpen));
+
+	const handleSelect = useCallback(ev => {
 		if(isTriggerEvent(ev)) { onSelect(note) }
-	}
-	handleDelete = ev => {
-		const { note, onDelete } = this.props;
+	});
+
+	const handleDelete = useCallback(ev => {
 		onDelete(note);
 		ev.stopPropagation();
-	}
-	handleDuplicate = ev => {
-		const { note, onDuplicate } = this.props;
+	});
+
+	const handleDuplicate = useCallback(ev => {
 		onDuplicate(note);
 		ev.stopPropagation();
-	}
-	handleToggleDropdownClick = ev => {
-		ev.stopPropagation();
-	}
-	render() {
-		const { device, isSelected, isReadOnly, note } = this.props;
-		const { isOpen } = this.state;
-		return (
-			<li
-				className={ cx('note', { 'selected': isSelected }) }
-				onClick={ this.handleSelect }
-				onKeyDown={ this.handleSelect }
-				tabIndex={ 0 }
-			>
-				<Icon type={ '28/note'} width="28" height="28" className="hidden-mouse" />
-				<div className="multiline-truncate">
-					{ note.note && noteAsTitle(note.note) || <em>Untitled Note</em> }
-				</div>
-				{ !isReadOnly && (
-					<Dropdown
-						isOpen={ isOpen }
-						toggle={ this.handleToggleDropdown }
-					>
-						<DropdownToggle
-							color={ null }
-							onClick={ this.handleToggleDropdownClick }
-							className={ cx('dropdown-toggle', {
-								'btn-circle btn-secondary': device.isTouchOrSmall,
-								'btn-icon': !device.isTouchOrSmall,
-							})}
-						>
-							<Icon
-								type={ '16/options-strong' }
-								width="16"
-								height="16"
-								className="touch"
-							/>
-							<Icon type={ '16/options' } width="16" height="16" className="mouse" />
-						</DropdownToggle>
-						<DropdownMenu right>
-							<DropdownItem onClick={ this.handleDuplicate }>
-								Duplicate
-							</DropdownItem>
-							<DropdownItem onClick={ this.handleDelete }>
-								Delete
-							</DropdownItem>
-						</DropdownMenu>
-					</Dropdown>
-				)}
-				<Icon type={ '16/chevron-13' } width="16" height="16" className="hidden-mouse" />
-			</li>
-		);
-	}
+	});
 
-	static propTypes = {
-		device: PropTypes.object,
-		isReadOnly: PropTypes.bool,
-		isSelected: PropTypes.bool,
-		note: PropTypes.object,
-		onDelete: PropTypes.func,
-		onDuplicate: PropTypes.func,
-		onSelect: PropTypes.func,
-	}
+	return (
+		<li
+			className={ cx('note', { 'selected': isSelected }) }
+			onClick={ handleSelect }
+			onKeyDown={ handleSelect }
+			tabIndex={ 0 }
+		>
+			<Icon type={ '28/note'} width="28" height="28" className="hidden-mouse" />
+			<div className="multiline-truncate">
+				{ note.note && noteAsTitle(note.note) || <em>Untitled Note</em> }
+			</div>
+			{ !isReadOnly && (
+				<Dropdown
+					isOpen={ isDropdownOpen }
+					toggle={ handleToggleDropdown }
+				>
+					<DropdownToggle
+						color={ null }
+						onClick={ stopPropagation }
+						className={ cx('dropdown-toggle', {
+							'btn-circle btn-secondary': device.isTouchOrSmall,
+							'btn-icon': !device.isTouchOrSmall,
+						})}
+					>
+						<Icon
+							type={ '16/options-strong' }
+							width="16"
+							height="16"
+							className="touch"
+						/>
+						<Icon type={ '16/options' } width="16" height="16" className="mouse" />
+					</DropdownToggle>
+					<DropdownMenu right>
+						<DropdownItem onClick={ handleDuplicate }>
+							Duplicate
+						</DropdownItem>
+						<DropdownItem onClick={ handleDelete }>
+							Delete
+						</DropdownItem>
+					</DropdownMenu>
+				</Dropdown>
+			)}
+			<Icon type={ '16/chevron-13' } width="16" height="16" className="hidden-mouse" />
+		</li>
+	);
 }
 
-const Notes = ({ device, childItems, isActive, isFetching, isFetched,
-	updateItem, navigate, fetchItemTemplate, isReadOnly, isTinymceFetched,
-	isTinymceFetching, itemKey, noteKey, createItem, libraryKey, deleteItem,
-	pointer, sourceFile, fetchChildItems }) => {
+Note.propTypes = {
+	device: PropTypes.object,
+	isReadOnly: PropTypes.bool,
+	isSelected: PropTypes.bool,
+	note: PropTypes.object,
+	onDelete: PropTypes.func,
+	onDuplicate: PropTypes.func,
+	onSelect: PropTypes.func,
+}
+
+const Notes = props => {
+	const { device, childItems, isActive, isFetching, isFetched, updateItem, navigate,
+	fetchItemTemplate, isReadOnly, isTinymceFetched, isTinymceFetching, itemKey, noteKey,
+	createItem, libraryKey, deleteItem, pointer, sourceFile, fetchChildItems } = props;
 
 	const [notes, setNotes] = useState([]);
 
 	const editorRef = useRef();
 	const addedNoteKey = useRef();
+
+	const selectedNote = useMemo(
+		() => childItems.find(n => n.key === noteKey),
+		[childItems, noteKey]
+	);
 
 	useEffect(() => {
 		if(!isTinymceFetched && !isTinymceFetching) {
@@ -166,8 +167,6 @@ const Notes = ({ device, childItems, isActive, isFetching, isFetched,
 		addedNoteKey.current = createdItem.key;
 		navigate({ noteKey: createdItem.key });
 	}
-
-	const selectedNote = childItems.find(n => n.key === noteKey);
 
 	return (
 		<TabPane
