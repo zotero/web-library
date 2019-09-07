@@ -1,17 +1,19 @@
-import PropTypes from 'prop-types';
-import React, { useCallback, useEffect, useMemo, useState, useRef } from 'react';
 import cx from 'classnames';
 import Dropdown from 'reactstrap/lib/Dropdown';
 import DropdownItem from 'reactstrap/lib/DropdownItem';
 import DropdownMenu from 'reactstrap/lib/DropdownMenu';
 import DropdownToggle from 'reactstrap/lib/DropdownToggle';
-
+import PropTypes from 'prop-types';
+import React, { useCallback, useEffect, useMemo, useState, useRef } from 'react';
+import { useSelector } from 'react-redux'
 
 import Button from '../ui/button';
 import Icon from '../ui/icon';
 import RichEditorContainer from '../../container/rich-editor';
 import withDevice from '../../enhancers/with-device';
 import withEditMode from '../../enhancers/with-edit-mode';
+
+import { get } from '../../utils';
 import { isTriggerEvent } from '../../common/event';
 import { noteAsTitle } from '../../common/format';
 import { sortByKey, stopPropagation } from '../../utils';
@@ -20,9 +22,22 @@ import { Toolbar, ToolGroup } from '../ui/toolbars';
 
 const PAGE_SIZE = 100;
 
+//@TODO: convert to useDispatch hook
 const Note = props => {
-	const { device, isSelected, isReadOnly, note, onDelete, onDuplicate, onSelect } = props;
+	const { device, deleteItem, isReadOnly, noteKey, onDelete, onDuplicate, onSelect } = props;
 	const [isDropdownOpen, setDropdownOpen] = useState(false);
+
+	const { note, isUpdating, isSelected } = useSelector(state => ({
+		note: get(state, ['libraries', state.current.libraryKey, 'items', noteKey], {}),
+		isUpdating: noteKey in get(state, ['libraries', state.current.libraryKey, 'updating', 'items'], {}),
+		isSelected: noteKey === state.current.noteKey
+	}));
+
+	useEffect(() => {
+		if(!isSelected && !isUpdating && note.note === '') {
+			deleteItem(note);
+		}
+	}, [isSelected]);
 
 	const handleToggleDropdown = useCallback(() => setDropdownOpen(!isDropdownOpen));
 
@@ -91,7 +106,7 @@ Note.propTypes = {
 	device: PropTypes.object,
 	isReadOnly: PropTypes.bool,
 	isSelected: PropTypes.bool,
-	note: PropTypes.object,
+	noteKey: PropTypes.string,
 	onDelete: PropTypes.func,
 	onDuplicate: PropTypes.func,
 	onSelect: PropTypes.func,
@@ -184,12 +199,12 @@ const Notes = props => {
 									<Note
 										device={ device }
 										isReadOnly={ isReadOnly }
-										isSelected={ noteKey === note.key }
 										key={ note.key }
-										note={ note }
+										noteKey={ note.key }
 										onDelete={ handleDelete }
 										onDuplicate={ handleDuplicate }
 										onSelect={ handleSelect }
+										deleteItem={ deleteItem }
 									/>
 								);
 							})
