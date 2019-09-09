@@ -283,9 +283,13 @@
 				}
 			}
 
-			.scroll-container {
+			.scroll-container-touch {
 				overflow: hidden; // Prevent scrolling of inactive levels
 				height: 100%;
+
+				@include state(".level-root.active") {
+					overflow: scroll;
+				}
 			}
 		}
 	}
