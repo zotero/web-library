@@ -31,6 +31,51 @@ const dropdowns = {
 	formatblock: false,
 };
 
+const validElements = '@[id|class|style|title|dir<ltr?rtl|lang|xml::lang],'
+	+ 'a[rel|rev|charset|hreflang|tabindex|accesskey|type|name|href|target|title|class],'
+	+ 'strong/b,'
+	+ 'em/i,'
+	+ 'strike,'
+	+ 'u,'
+	+ '#p,'
+	+ '-ol[type|compact],'
+	+ '-ul[type|compact],'
+	+ '-li,'
+	+ 'br,'
+	+ 'img[longdesc|usemap|src|border|alt=|title|hspace|vspace|width|height|align],'
+	+ '-sub,-sup,'
+	+ '-blockquote[cite],'
+	+ '-table[border=0|cellspacing|cellpadding|width|frame|rules|height|align|summary|bgcolor|background|bordercolor],'
+	+ '-tr[rowspan|width|height|align|valign|bgcolor|background|bordercolor],'
+	+ 'tbody,thead,tfoot,'
+	+ '#td[colspan|rowspan|width|height|align|valign|bgcolor|background|bordercolor|scope],'
+	+ '#th[colspan|rowspan|width|height|align|valign|scope],'
+	+ 'caption,'
+	+ '-div,'
+	+ '-span,'
+	+ '-code,'
+	+ '-pre,'
+	+ 'address,'
+	+ '-h1,-h2,-h3,-h4,-h5,-h6,'
+	+ 'hr[size|noshade],'
+	+ '-font[face|size|color],'
+	+ 'dd,dl,dt,'
+	+ 'cite,'
+	+ 'abbr,'
+	+ 'acronym,'
+	+ 'del[datetime|cite],ins[datetime|cite],'
+	+ 'bdo,'
+	+ 'col[align|char|charoff|span|valign|width],colgroup[align|char|charoff|span|valign|width],'
+	+ 'dfn,'
+	+ 'kbd,'
+	+ 'label[for],'
+	+ 'legend,'
+	+ 'q[cite],'
+	+ 'samp,'
+	+ 'var,';
+
+const invalidElements = 'iframe';
+
 //@NOTE: exposes focus() method
 class RichEditor extends React.PureComponent {
 	state = {
@@ -161,7 +206,9 @@ class RichEditor extends React.PureComponent {
 						menubar: false,
 						statusbar: false,
 						theme: 'silver',
-						mobile: { theme: 'silver' }
+						mobile: { theme: 'silver' },
+						valid_elements: validElements,
+						invalid_elements: invalidElements
 					}}
 					onClick={ this.refreshEditor }
 					onEditorChange={ this.handleEditorChange }
