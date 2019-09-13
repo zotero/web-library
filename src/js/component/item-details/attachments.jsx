@@ -21,12 +21,9 @@ const Attachment = ({ attachment, deleteItem, isReadOnly, isUploading, getAttach
 
 	const handleLinkInteraction = ev => {
 		const { key } = ev.currentTarget.closest('[data-key]').dataset;
-		if(ev.type === 'mousedown' && ev.button === 1) {
+		if(isTriggerEvent(ev) || (ev.type === 'mousedown' && ev.button === 1)) {
 			ev.preventDefault();
 			openAttachment(key, getAttachmentUrl, true);
-		} else if(isTriggerEvent(ev)) {
-			ev.preventDefault();
-			openAttachment(key, getAttachmentUrl, ev.getModifierState('Meta'));
 		} else if(ev.type === 'keydown') {
 			onKeyDown(ev);
 		}

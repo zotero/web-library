@@ -9,13 +9,8 @@ import { openAttachment } from '../../utils';
 
 const StandaloneAttachmentTabPane = ({ isActive, item, getAttachmentUrl }) => {
 	const handleLinkInteraction = ev => {
-		if(ev.type === 'mousedown' && ev.button === 1) {
-			ev.preventDefault();
-			openAttachment(item.key, getAttachmentUrl, true);
-		} else if(ev.type === 'click') {
-			ev.preventDefault();
-			openAttachment(item.key, getAttachmentUrl, ev.getModifierState('Meta'));
-		}
+		ev.preventDefault();
+		openAttachment(item.key, getAttachmentUrl, true);
 	}
 
 	return (
