@@ -9,7 +9,8 @@ import Abstract from './abstract';
 import { getBaseMappedValue } from '../../common/item';
 import { TabPane } from '../ui/tabs';
 
-const Info = ({ isActive, isEditing, isLoadingMeta, item, ...props }) => {
+const Info = props => {
+	const { isActive, isEditing, isLoadingMeta, item } = props;
 	const title = getBaseMappedValue(item, 'title') || '';
 
 	return (
