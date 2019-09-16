@@ -1,6 +1,5 @@
 'use strict';
 
-import escapeHtml from 'escape-html';
 import React from 'react';
 import PropTypes from 'prop-types';
 import cx from 'classnames';
@@ -36,11 +35,7 @@ class EditableContent extends React.PureComponent {
 			return displayValue ? displayValue.label : value;
 		}
 
-		if(this.isTextarea) {
-			return escapeHtml(value).replace(/\n/g, '<br />');
-		} else {
-			return value;
-		}
+		return value;
 	}
 
 	render() {
@@ -49,14 +44,7 @@ class EditableContent extends React.PureComponent {
 			'placeholder': !this.hasValue
 		};
 
-		if(this.isTextarea) {
-			return <div
-				className={ cx(className) }
-				dangerouslySetInnerHTML={ { __html: this.displayValue } }
-			/>;
-		} else {
-			return <div className={ cx(className) }>{ this.displayValue }</div>;
-		}
+		return <div className={ cx(className) }>{ this.displayValue }</div>;
 	}
 
 	static defaultProps = {
