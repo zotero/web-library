@@ -8,6 +8,7 @@ import ItemBox from './box';
 import Abstract from './abstract';
 import { getBaseMappedValue } from '../../common/item';
 import { TabPane } from '../ui/tabs';
+import withEditMode from '../../enhancers/with-edit-mode.js';
 
 const Info = props => {
 	const { isActive, isEditing, isLoadingMeta, item } = props;
@@ -65,5 +66,5 @@ Info.propTypes = {
 }
 
 
-export default Info;
+export default withEditMode(Info);
 

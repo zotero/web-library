@@ -37,20 +37,30 @@ class SelectInput extends React.PureComponent {
 		}
 	}
 
-	handleChange(value) {
+	handleChange(value, ev) {
 		value = value !== null || (value === null && this.props.clearable) ?
 			value : this.props.value;
 		this.setState({ value });
 
 		if(this.props.onChange(value) || this.forceCommitOnNextChange) {
-			this.commit(null, value, value !== this.props.value);
+			if(!ev) {
+				//@NOTE: this is using undocumeneted feature of react-selct v1, but see #131
+				const source = typeof this.input.input.getInput === 'function' ?
+					this.input.input.getInput() : this.input.input;
+				ev = {
+					type: 'change',
+					currentTarget: source,
+					target: source
+				}
+			}
+			this.commit(ev, value, value !== this.props.value);
 		}
 		this.forceCommitOnNextChange = false;
 	}
 
 	handleBlur(event) {
 		this.props.onBlur(event);
-		this.cancel();
+		this.cancel(event);
 		if(this.props.autoBlur) {
 			this.forceCommitOnNextChange = true;
 		}

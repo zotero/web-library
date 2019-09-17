@@ -1,11 +1,13 @@
 'use strict';
 
 import api from 'zotero-api-client';
+import baseMappings from 'zotero-base-mappings';
 import queue from './queue';
 import { fetchItemTypeFields } from './meta';
-import { get, removeRelationByItemKey } from '../utils';
+import { get, removeRelationByItemKey, reverseMap } from '../utils';
 import { omit } from '../common/immutable';
 import { extractItems } from '../common/actions';
+import { fetchItemTypeCreatorTypes } from '.';
 
 import {
     REQUEST_CREATE_ITEMS,
@@ -841,6 +843,56 @@ const chunkedTrashOrDelete = (itemKeys, ...args) => {
 	}
 }
 
+const updateItemWithMapping = (item, fieldKey, newValue) => {
+	var patch = {
+		[fieldKey]: newValue
+	};
+
+	return async dispatch => {
+		// when changing itemType, map fields to base types and back to item-specific types
+		if(fieldKey === 'itemType') {
+			const baseValues = {};
+			if(item.itemType in baseMappings) {
+				const namedToBaseMap = reverseMap(baseMappings[item.itemType]);
+				Object.keys(item).forEach(fieldName => {
+					if(fieldName in namedToBaseMap) {
+						if(item[fieldName].toString().length > 0) {
+							baseValues[namedToBaseMap[fieldName]] = item[fieldName];
+						}
+					}
+				});
+			}
+
+			patch = { ...patch, ...baseValues };
+
+			if(newValue in baseMappings) {
+				const namedToBaseMap = baseMappings[newValue];
+				const itemWithBaseValues = { ...item, ...baseValues };
+				Object.keys(itemWithBaseValues).forEach(fieldName => {
+					if(fieldName in namedToBaseMap) {
+						patch[namedToBaseMap[fieldName]] = itemWithBaseValues[fieldName];
+						patch[fieldName] = '';
+					}
+				});
+			}
+
+			//@TODO: only fetchItemTypeCreatorTypes when required
+			const targetTypeCreatorTypes = await dispatch(fetchItemTypeCreatorTypes(item.itemType));
+
+			//convert item creators to match creators appropriate for this item type
+			if(item.creators && Array.isArray(item.creators)) {
+				for(var creator of item.creators) {
+					if(typeof targetTypeCreatorTypes.find(c => c.creatorType === creator.creatorType) === 'undefined') {
+						creator.creatorType = targetTypeCreatorTypes[0].creatorType;
+					}
+				}
+			}
+		}
+
+		dispatch(updateItem(item.key, patch));
+	}
+}
+
 export {
 	addToCollection,
 	chunkedDeleteItems,
@@ -858,5 +910,6 @@ export {
 	removeFromCollection,
 	removeRelatedItem,
 	updateItem,
+	updateItemWithMapping,
 	uploadAttachment,
 };

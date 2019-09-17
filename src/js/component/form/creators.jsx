@@ -11,6 +11,8 @@ import CreatorField from './creator-field';
 import Button from '../ui/button';
 import Icon from '../ui/icon';
 import { enumerateObjects } from '../../utils';
+import withDevice from '../../enhancers/with-device';
+import withEditMode from '../../enhancers/with-edit-mode';
 
 class Creators extends React.PureComponent {
 	constructor(props) {
@@ -226,4 +228,4 @@ class Creators extends React.PureComponent {
 	};
 }
 
-export default Creators;
+export default withDevice(withEditMode(Creators));

@@ -7,6 +7,7 @@ import Field from '../form/field';
 import Input from '../form/input';
 import SelectInput from '../form/select';
 import TextAreaInput from '../form/text-area';
+import withDevice from '../../enhancers/with-device';
 
 const pickInputComponent = field => {
 	switch(field.key) {
@@ -62,7 +63,7 @@ class BoxField extends React.PureComponent {
 			null;
 		const InputComponent = pickInputComponent(field);
 		const props = {
-			autoFocus: !isForm && InputComponent !== SelectInput,
+			autoFocus: !isForm && !field.processing && InputComponent !== SelectInput,
 			display: display ? display.label : null,
 			isDisabled: field.isReadOnly,
 			isBusy: field.processing || false,
@@ -144,7 +145,7 @@ class BoxField extends React.PureComponent {
 		const formField = this.renderFormField(field);
 
 		return (
-			<Field key={ field.key } className={ cx(className) }>
+			<Field data-key={ field.key } className={ cx(className) }>
 				<label htmlFor={ field.key} >
 					{ this.renderLabelContent(field) }
 				</label>
@@ -156,4 +157,4 @@ class BoxField extends React.PureComponent {
 	}
 }
 
-export default BoxField;
+export default withDevice(BoxField);

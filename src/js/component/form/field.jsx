@@ -8,6 +8,7 @@ import Icon from '../ui/icon';
 import { DragSource, DropTarget } from 'react-dnd';
 import { CREATOR } from '../../constants/dnd';
 import { noop } from '../../utils';
+import { pick } from '../../common/immutable';
 
 //@NOTE: using findDOMNode and mutating monitor item here. Consider refactoring
 //		 Based on: https://github.com/react-dnd/react-dnd/blob/master/packages/documentation/examples/04%20Sortable/Simple/Card.tsx
@@ -87,6 +88,7 @@ class Field extends React.PureComponent {
 						'dnd-target': isDragTarget,
 						'dnd-source': isDragging
 					}) }
+					{ ...pick(this.props, p => p.startsWith('data-')) }
 				>
 					<div className="key">
 						{ label }
@@ -110,6 +112,7 @@ class Field extends React.PureComponent {
 				onClick={ this.props.onClick }
 				onKeyDown={ this.props.onKeyDown }
 				className={ cx('metadata', this.props.className) }
+				{ ...pick(this.props, p => p.startsWith('data-')) }
 			>
 				<div className="key">
 					{ label }

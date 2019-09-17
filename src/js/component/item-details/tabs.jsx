@@ -18,7 +18,6 @@ import { pick } from '../../common/immutable';
 import { Tab, Tabs } from '../ui/tabs';
 
 
-// @TODO: Refactor so InfoContainer doesn't take props
 class ItemDetailsTabs extends React.PureComponent {
 	constructor(props) {
 		super(props);
@@ -170,12 +169,12 @@ class ItemDetailsTabs extends React.PureComponent {
 										<InfoContainer
 											key={ 'info-' + item.key }
 											isActive={ this.state.tab === 'info' }
-											{ ...this.props }
+											isReadOnly={ isReadOnly }
 										/>
 										<NotesContainer
 											key={ 'notes-' + item.key }
 											isActive={ this.state.tab === 'notes' }
-											{ ... pick(this.props, ['isReadOnly', 'onBlur', 'onFocus', 'registerFocusRoot']) }
+											{ ...pick(this.props, ['isReadOnly', 'onBlur', 'onFocus', 'registerFocusRoot']) }
 										/>
 									</React.Fragment>
 								)

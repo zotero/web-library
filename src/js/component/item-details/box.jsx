@@ -1,126 +1,176 @@
 'use strict';
 
-import React from 'react';
+import React, { useCallback, useMemo, useState, useEffect, } from 'react';
+import baseMappings from 'zotero-base-mappings';
 import PropTypes from 'prop-types';
 import cx from 'classnames';
-import Creators from '../form/creators';
+
 import BoxField from './boxfield';
+import Creators from '../form/creators';
+import withDevice from '../../enhancers/with-device';
+import withEditMode from '../../enhancers/with-edit-mode';
+import { getFieldDisplayValue } from '../../common/item';
+import { hideFields, noEditFields, extraFields } from '../../constants/item';
 
-class ItemBox extends React.PureComponent {
-	constructor(props) {
-		super(props);
-		this.state = {
-			activeEntry: null,
-			isDragging: false,
-		};
-		this.fieldComponents = {};
-	}
+const makeFields = (item, pendingChanges, itemTypes, itemTypeFields, isReadOnly) => {
+	const titleField = item.itemType in baseMappings && baseMappings[item.itemType]['title'] || 'title';
+	const aggregatedPatch = pendingChanges.reduce(
+		(aggr, { patch }) => ({...aggr, ...patch}), {}
+	);
+	const itemWithPendingChnages = { ...item, ...aggregatedPatch };
 
-	focusField(name = 'itemType') {
-		if(name in this.fieldComponents) {
-			this.fieldComponents[name].focus();
-			return true;
-		} else {
-			return false;
-		}
-	}
-
-	handleFieldClick(key) {
-		const field = this.props.fields.find(f => f.key === key);
-		if(!this.props.isForm && field.isReadOnly) {
-			return;
-		}
-		this.setState({ activeEntry: key });
-	}
-
-	handleFieldFocus(key) {
-		const field = this.props.fields.find(f => f.key === key);
-
-		if(!this.props.isForm && field.isReadOnly) {
-			return;
-		}
-		this.setState({ activeEntry: key });
-	}
-
-	handleFieldBlur() {
-		this.setState({ activeEntry: null });
-	}
-
-	handleCancel(key) {
-		if(key === this.state.activeEntry) {
-			this.setState({ activeEntry: null });
-		}
-	}
-
-	handleCommit(key, newValue, isChanged, srcEvent) {
-		if(isChanged) {
-			this.props.onSave(key, newValue);
-		}
-		if(key === this.state.activeEntry) {
-			this.setState({ activeEntry: null });
-		}
-		if(this.props.isForm && srcEvent) {
-			if(srcEvent.type == 'keydown' && srcEvent.key == 'Enter') {
-				srcEvent.target.blur();
-			}
-		}
-	}
-
-	handleDragStatusChange(isDragging) {
-		this.setState({ isDragging });
-	}
-
-	renderField(field) {
-		if(field.key === 'creators') {
-			const props = {
-				...this.props,
-				creatorTypes: this.props.creatorTypes,
-				key: field.key,
-				name: field.key,
-				onDragStatusChange: this.handleDragStatusChange.bind(this),
-				onSave: this.handleCommit.bind(this, field.key),
-				isReadOnly: field.isReadOnly,
-				value: field.value || [],
-			}
-			return <Creators { ...props } />;
-		} else {
-			const props = {
-				...this.props,
-				field,
-				key: field.key,
-				isActive: this.state.activeEntry === field.key,
-				onClick: this.handleFieldClick.bind(this, field.key),
-				onFocus: this.handleFieldFocus.bind(this, field.key),
-				onBlur: this.handleFieldBlur.bind(this, field.key),
-				onCancel: this.handleCancel.bind(this, field.key),
-				onCommit: this.handleCommit.bind(this, field.key),
-			};
-			return <BoxField { ...props } />;
-		}
-	}
-
-	render() {
-		return (
-			<ol className={ cx('metadata-list', {
-				'dnd-in-progress': this.state.isDragging
-			}) }>
-				{ this.props.fields.map(this.renderField.bind(this)) }
-			</ol>
-		);
-	}
+	return [
+		{ field: 'itemType', localized: 'Item Type' },
+		itemTypeFields[item.itemType].find(itf => itf.field === titleField),
+		{ field: 'creators', localized: 'Creators' },
+		...itemTypeFields[item.itemType].filter(itf => itf.field !== titleField && !hideFields.includes(itf.field)),
+		...extraFields
+	].map(f => ({
+		options: f.field === 'itemType' ? itemTypes : null,
+		key: f.field,
+		label: f.localized,
+		isReadOnly: isReadOnly ? true : noEditFields.includes(f),
+		processing: pendingChanges.some(({ patch }) => f.field in patch),
+		display: getFieldDisplayValue(itemWithPendingChnages, f.field),
+		value: itemWithPendingChnages[f.field] || null
+	}));
 }
 
-ItemBox.defaultProps = {
-	fields: [],
-	onSave: v => Promise.resolve(v)
-};
+const ItemBox = props => {
+	const { creatorTypes, device, fetchItemTypeCreatorTypes, fetchItemTypeFields, isEditing,
+		isLibraryReadOnly, isReadOnly, item, itemTypeFields, itemTypes, pendingChanges, shouldFetchMeta,
+		updateItemWithMapping, } = props;
+
+	const isForm = !!(device.shouldUseEditMode && isEditing && item);
+
+	//@TODO: mapping should be handled by <Creators />
+	//@TODO: even better, we should store this mapped already
+	const creatorTypeOptions = useMemo(() => creatorTypes.map(ct => ({
+		value: ct.creatorType,
+		label: ct.localized
+	})));
+	const itemTypeOptions = useMemo(() => itemTypes.map(it => ({
+			value: it.itemType,
+			label: it.localized
+		}))
+		.filter(it => it.value !== 'note')
+	);
+
+	const fields = useMemo(
+		() => makeFields(item, pendingChanges, itemTypeOptions, itemTypeFields, isReadOnly),
+		[item, pendingChanges, itemTypeOptions, itemTypeFields, isReadOnly]
+	);
+
+	const [activeEntry, setActiveEntry] = useState(null);
+	const [isDragging, setIsDragging] = useState(false);
+
+	useEffect(() => {
+		if(shouldFetchMeta) {
+			fetchItemTypeCreatorTypes(item.itemType);
+			fetchItemTypeFields(item.itemType);
+		}
+	}, [shouldFetchMeta]);
+
+	const handleFieldClick = useCallback(ev => {
+		const key = ev.currentTarget.closest('[data-key]').dataset.key;
+		const field = fields.find(f => f.key === key);
+		if(!isForm && field.isReadOnly) {
+			return;
+		}
+		setActiveEntry(key);
+	});
+
+	const handleFieldFocus = useCallback(ev => {
+		const key = ev.currentTarget.closest('[data-key]').dataset.key;
+		const field = fields.find(f => f.key === key);
+
+		if(!isForm && field.isReadOnly) {
+			return;
+		}
+		setActiveEntry(key);
+	});
+
+	const handleFieldBlur = useCallback(() => {
+		setActiveEntry(null)
+	});
+
+	const handleCancel = useCallback((isChanged, ev) => {
+		const key = ev.currentTarget.closest('[data-key]').dataset.key;
+		if(key === activeEntry) {
+			setActiveEntry(null);
+		}
+	});
+
+	const handleCommit = useCallback((newValue, isChanged, ev) => {
+		const key = ev.currentTarget.closest('[data-key]').dataset.key;
+		if(isChanged) {
+			updateItemWithMapping(item, key, newValue);
+		}
+
+		if(key === activeEntry) {
+			setActiveEntry(null);
+		}
+
+		if(isForm && ev) {
+			if(ev.type == 'keydown' && ev.key == 'Enter') {
+				ev.target.blur();
+			}
+		}
+	});
+
+	const handleSaveCreators = useCallback((newValue, isChanged) => {
+		if(isChanged) {
+			updateItemWithMapping(item, 'creators', newValue);
+		}
+	});
+
+	const handleDragStatusChange = useCallback(
+		isDragging => setIsDragging(isDragging)
+	);
+
+	return (
+		<ol className={ cx('metadata-list', {
+			'dnd-in-progress': isDragging
+		}) }>
+			{ fields.map(field =>
+				field.key === 'creators' ? (
+					<Creators
+						creatorTypes = { creatorTypeOptions }
+						isForm = { isForm }
+						isReadOnly = { field.isReadOnly }
+						key = { field.key }
+						name = { field.key }
+						onDragStatusChange = { handleDragStatusChange }
+						onSave = { handleSaveCreators }
+						value = { field.value || [] }
+					/>
+				) : (
+					<BoxField
+						field = { field }
+						isActive = { activeEntry === field.key }
+						isForm = { isForm }
+						key = { field.key }
+						onBlur = { handleFieldBlur }
+						onCancel = { handleCancel }
+						onClick = { handleFieldClick }
+						onCommit = { handleCommit }
+						onFocus = { handleFieldFocus }
+					/>
+				)
+			) }
+		</ol>
+	);
+}
 
 ItemBox.propTypes = {
 	creatorTypes: PropTypes.array,
-	fields: PropTypes.array,
 	isForm: PropTypes.bool,
-	isLoading: PropTypes.bool,
-	onSave: PropTypes.func
+	isReadOnly: PropTypes.bool,
+	item: PropTypes.object,
+	itemTypeFields: PropTypes.object,
+	itemTypes: PropTypes.array,
+	pendingChanges: PropTypes.array,
+	updateItemWithMapping: PropTypes.func,
 };
 
-export default ItemBox;
+export default withDevice(withEditMode(ItemBox));
