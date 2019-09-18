@@ -6,7 +6,7 @@ import { pluralize } from '../../common/format';
 
 class ItemDetailsInfoSelected extends React.PureComponent {
 	render() {
-		const { selectedItemKeys: { length: count } } = this.props;
+		const { itemKeys: { length: count } } = this.props;
 		const label = [
 			count === 0 ? 'No' : count,
 			pluralize('Item', count),
@@ -20,7 +20,7 @@ class ItemDetailsInfoSelected extends React.PureComponent {
 	}
 
 	static propTypes = {
-		selectedItemKeys: PropTypes.array.isRequired
+		itemKeys: PropTypes.array.isRequired
 	}
 }
 

@@ -8,39 +8,38 @@ import ItemDetailsInfoSelected from '../item-details/info-selected';
 import ItemDetailsInfoView from '../item-details/info-view';
 import ItemDetailsTabs from '../item-details/tabs';
 import TouchHeaderContainer from '../../container/touch-header';
+import withDevice from '../../enhancers/with-device';
 import Types from '../../types';
-import { pick } from '../../common/immutable';
 
-class ItemDetails extends React.PureComponent {
-	render() {
-		const { device, isSelectMode, item, selectedItemKeys, active, } = this.props;
-		return (
-			<section className={ cx('item-details', { 'active': active }) }>
-				<TouchHeaderContainer
-					className="hidden-mouse hidden-md-down darker"
-					variant={ TouchHeaderContainer.variants.ITEM }
-				/>
-				{
-					(!device.isTouchOrSmall || (device.isTouchOrSmall && !isSelectMode))
-					&& item && 'key' in item ? (
-						<ItemDetailsTabs { ...this.props } />
+const ItemDetails = props => {
+	const { device, isSelectMode, item, itemKeys, itemsCount, active } = props;
+
+	return (
+		<section className={ cx('item-details', { 'active': active }) }>
+			<TouchHeaderContainer
+				className="hidden-mouse hidden-md-down darker"
+				variant={ TouchHeaderContainer.variants.ITEM }
+			/>
+			{
+				(!device.isTouchOrSmall || (device.isTouchOrSmall && !isSelectMode))
+				&& item ? (
+					<ItemDetailsTabs { ...props } />
+				) : (
+					!device.isTouchOrSmall && itemKeys.length ? (
+						<ItemDetailsInfoSelected itemKeys={ itemKeys } />
 					) : (
-						!device.isTouchOrSmall && selectedItemKeys.length ? (
-							<ItemDetailsInfoSelected { ...this.props } />
-						) : (
-							<ItemDetailsInfoView { ...pick(this.props, ['itemsCount']) } />
-						)
+						<ItemDetailsInfoView itemsCount={ itemsCount } />
 					)
-				}
-			</section>
-		);
-	}
+				)
+			}
+		</section>
+	);
 }
 
 ItemDetails.defaultProps = {
 	item: {},
 	active: false,
-	selectedItemKeys: []
+	itemKeys: []
 };
 
 ItemDetails.propTypes = {
@@ -48,7 +47,8 @@ ItemDetails.propTypes = {
 	device: PropTypes.object,
 	isSelectMode: PropTypes.bool,
 	item: Types.item,
-	selectedItemKeys: PropTypes.array,
+	itemKeys: PropTypes.array,
+	itemsCount: PropTypes.number,
 };
 
-export default ItemDetails;
+export default withDevice(ItemDetails);

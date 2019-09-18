@@ -1,6 +1,6 @@
 'use strict';
 
-import React, { useCallback, useMemo, useState, useEffect, } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import baseMappings from 'zotero-base-mappings';
 import PropTypes from 'prop-types';
 import cx from 'classnames';
@@ -37,9 +37,8 @@ const makeFields = (item, pendingChanges, itemTypes, itemTypeFields, isReadOnly)
 }
 
 const ItemBox = props => {
-	const { creatorTypes, device, fetchItemTypeCreatorTypes, fetchItemTypeFields, isEditing,
-		isLibraryReadOnly, isReadOnly, item, itemTypeFields, itemTypes, pendingChanges, shouldFetchMeta,
-		updateItemWithMapping, } = props;
+	const { creatorTypes, device, isEditing, isReadOnly, item, itemTypeFields, itemTypes,
+		pendingChanges, updateItemWithMapping, } = props;
 
 	const isForm = !!(device.shouldUseEditMode && isEditing && item);
 
@@ -63,13 +62,6 @@ const ItemBox = props => {
 
 	const [activeEntry, setActiveEntry] = useState(null);
 	const [isDragging, setIsDragging] = useState(false);
-
-	useEffect(() => {
-		if(shouldFetchMeta) {
-			fetchItemTypeCreatorTypes(item.itemType);
-			fetchItemTypeFields(item.itemType);
-		}
-	}, [shouldFetchMeta]);
 
 	const handleFieldClick = useCallback(ev => {
 		const key = ev.currentTarget.closest('[data-key]').dataset.key;

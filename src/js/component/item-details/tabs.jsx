@@ -14,8 +14,9 @@ import Spinner from '../ui/spinner';
 import StandaloneAttachmentContainer from '../../container/item-details/standalone-attachment';
 import StandaloneNoteContainer from '../../container/item-details/standalone-note';
 import TagsContainer from '../../container/item-details/tags';
-import { pick } from '../../common/immutable';
 import { Tab, Tabs } from '../ui/tabs';
+import withEditMode from '../../enhancers/with-edit-mode';
+import withDevice from '../../enhancers/with-device';
 
 
 class ItemDetailsTabs extends React.PureComponent {
@@ -72,8 +73,9 @@ class ItemDetailsTabs extends React.PureComponent {
 	}
 
 	render() {
-		const { device, isLoadingMeta, isEditing, isFetching, isTinymceFetching,
-			isLoadingRelated, isReadOnly, title, item } = this.props;
+		const { device, isLibraryReadOnly, isLoadingMeta, isEditing, isFetching, isTinymceFetching,
+			isLoadingRelated, title, item } = this.props;
+		const isReadOnly = isLibraryReadOnly || !!(device.shouldUseEditMode && !isEditing);
 		const isLoading = isLoadingMeta || isFetching || isLoadingRelated || isTinymceFetching;
 
 		return (
@@ -174,7 +176,7 @@ class ItemDetailsTabs extends React.PureComponent {
 										<NotesContainer
 											key={ 'notes-' + item.key }
 											isActive={ this.state.tab === 'notes' }
-											{ ...pick(this.props, ['isReadOnly', 'onBlur', 'onFocus', 'registerFocusRoot']) }
+											isReadOnly={ isReadOnly }
 										/>
 									</React.Fragment>
 								)
@@ -201,7 +203,7 @@ class ItemDetailsTabs extends React.PureComponent {
 									<AttachmentsContainer
 										key={ 'attachments-' + item.key }
 										isActive={ this.state.tab === 'attachments' }
-										{ ... pick(this.props, ['isReadOnly', 'onBlur', 'onFocus', 'registerFocusRoot']) }
+										isReadOnly={ isReadOnly }
 									/>
 								)
 							}
@@ -233,4 +235,4 @@ class ItemDetailsTabs extends React.PureComponent {
 	}
 }
 
-export default ItemDetailsTabs;
+export default withDevice(withEditMode(ItemDetailsTabs));

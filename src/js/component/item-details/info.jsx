@@ -1,6 +1,6 @@
 'use strict';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import cx from 'classnames';
 
@@ -11,8 +11,16 @@ import { TabPane } from '../ui/tabs';
 import withEditMode from '../../enhancers/with-edit-mode.js';
 
 const Info = props => {
-	const { isActive, isEditing, isLoadingMeta, item } = props;
+	const { fetchItemTypeCreatorTypes, fetchItemTypeFields, isActive, isEditing, isLoadingMeta,
+		item, shouldFetchMeta } = props;
 	const title = getBaseMappedValue(item, 'title') || '';
+
+	useEffect(() => {
+		if(shouldFetchMeta) {
+			fetchItemTypeCreatorTypes(item.itemType);
+			fetchItemTypeFields(item.itemType);
+		}
+	}, [shouldFetchMeta]);
 
 	return (
 		<TabPane
