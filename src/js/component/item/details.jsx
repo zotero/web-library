@@ -1,6 +1,6 @@
 'use strict';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import cx from 'classnames';
 import PropTypes from 'prop-types';
 
@@ -12,7 +12,13 @@ import withDevice from '../../enhancers/with-device';
 import Types from '../../types';
 
 const ItemDetails = props => {
-	const { device, isSelectMode, item, itemKeys, itemsCount, active } = props;
+	const { device, fetchItemsByKeys, isSelectMode, item, itemKey, itemKeys, itemsCount, active } = props;
+
+	useEffect(() => {
+		if(itemKey && !item) {
+			fetchItemsByKeys([itemKey]);
+		}
+	}, [itemKey]);
 
 	return (
 		<section className={ cx('item-details', { 'active': active }) }>
@@ -25,9 +31,9 @@ const ItemDetails = props => {
 				&& item ? (
 					<ItemDetailsTabs { ...props } />
 				) : (
-					!device.isTouchOrSmall && itemKeys.length ? (
+					!device.isTouchOrSmall && itemKeys.length > 1 ? (
 						<ItemDetailsInfoSelected itemKeys={ itemKeys } />
-					) : (
+					) : !itemKey && (
 						<ItemDetailsInfoView itemsCount={ itemsCount } />
 					)
 				)
@@ -45,8 +51,10 @@ ItemDetails.defaultProps = {
 ItemDetails.propTypes = {
 	active: PropTypes.bool,
 	device: PropTypes.object,
+	fetchItemsByKeys: PropTypes.func,
 	isSelectMode: PropTypes.bool,
 	item: Types.item,
+	itemKey: PropTypes.string,
 	itemKeys: PropTypes.array,
 	itemsCount: PropTypes.number,
 };

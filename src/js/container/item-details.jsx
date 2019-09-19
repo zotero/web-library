@@ -4,6 +4,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import ItemDetails from '../component/item/details';
+import { fetchItemsByKeys } from '../actions/items-read';
 import { get } from '../utils'
 
 const ItemDetailsContainer = props => <ItemDetails { ...props } />;
@@ -29,7 +30,7 @@ const mapStateToProps = state => {
 		break;
 	}
 
-	return { isLibraryReadOnly, isSelectMode, item, itemKeys, itemsCount };
+	return { isLibraryReadOnly, isSelectMode, item, itemKey, itemKeys, itemsCount };
 }
 
-export default connect(mapStateToProps)(ItemDetailsContainer)
+export default connect(mapStateToProps, { fetchItemsByKeys })(ItemDetailsContainer)
