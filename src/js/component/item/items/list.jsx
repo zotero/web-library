@@ -92,11 +92,10 @@ class ItemsList extends React.PureComponent {
 	}
 
 	renderRow({ index, key, style }) {
-		const { device, isSelectMode, selectedItemKeys, onKeyNavigation,
-			view } = this.props;
-		const { colors, creator, iconName, title, year, isPlaceholder } = this.getRow({ index });
+		const { device, isSelectMode, selectedItemKeys, onKeyNavigation, view } = this.props;
+		const { colors, creator, iconName, title, year, isPlaceholder, key: itemKey } = this.getRow({ index });
 		const isLoaded = this.getRowHasLoaded({ index });
-		const isActive = selectedItemKeys.includes(key);
+		const isActive = selectedItemKeys.includes(itemKey);
 		const shouldBeTabbable = (device.isSingleColumn && view === 'item-list') ||
 			!device.isSingleColumn;
 		const className = cx({
