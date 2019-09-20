@@ -37,9 +37,9 @@ import CustomDragLayer from '../component/drag-layer';
 
 
 const Library = props => {
-	const { collectionKey, config, device, isNavBarOpen, isSearchMode, isSelectMode, itemsSource,
-	libraryKey, noteKey, search, searchState, tags, toggleModal, toggleNavbar, useTransitions,
-	qmode, view } = props;
+	const { collectionKey, config, device, isNavBarOpen, isSearchMode, isSelectMode, isSynced,
+	itemsSource, libraryKey, noteKey, resetLibrary, search, searchState, tags, toggleModal,
+	toggleNavbar, useTransitions, qmode, view } = props;
 
 	const [hasUserTypeChanged, setHasUserTypeChanged] = useState(false);
 	const [isSearchModeTransitioning, setIsSearchModeTransitioning] = useState(false);
@@ -47,6 +47,7 @@ const Library = props => {
 	const prevShouldUseSidebar = useRef(device.shouldUseSidebar);
 	const wasSearchMode = useRef(isSearchMode);
 	const prevItemsSource = useRef(itemsSource);
+	const wasSynced = useRef(isSynced);
 
 	useEffect(() => {
 		if(device.userType !== prevUserType.current) {
@@ -77,6 +78,13 @@ const Library = props => {
 	useEffect(() => {
 		prevItemsSource.current = itemsSource
 	}, [itemsSource]);
+
+	useEffect(() => {
+		if(!isSynced && wasSynced.current) {
+			resetLibrary(libraryKey);
+		}
+		wasSynced.current = isSynced;
+	}, [isSynced])
 
 	const handleNavbarToggle = useCallback(
 		() => toggleNavbar(null)
@@ -202,10 +210,12 @@ Library.propTypes = {
 	isNavBarOpen: PropTypes.bool,
 	isSearchMode: PropTypes.bool,
 	isSelectMode: PropTypes.bool,
+	isSynced: PropTypes.bool,
 	itemsSource: PropTypes.string,
 	libraryKey: PropTypes.string,
 	noteKey: PropTypes.string,
 	qmode: PropTypes.string,
+	resetLibrary: PropTypes.func,
 	search: PropTypes.string,
 	searchState: PropTypes.object,
 	tags: PropTypes.array,
