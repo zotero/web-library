@@ -10,7 +10,7 @@ import { get } from '../utils'
 const ItemDetailsContainer = props => <ItemDetails { ...props } />;
 
 const mapStateToProps = state => {
-	const { collectionKey, libraryKey, isSelectMode, itemKey, itemKeys, itemsSource } = state.current;
+	const { collectionKey, libraryKey, isSelectMode, itemKey, itemKeys, itemsSource, noteKey } = state.current;
 	const { isLibraryReadOnly } = (state.config.libraries.find(l => l.key === libraryKey) || {});
 	const item = get(state, ['libraries', libraryKey, 'items', itemKey], null);
 	var itemsCount;
@@ -30,7 +30,7 @@ const mapStateToProps = state => {
 		break;
 	}
 
-	return { isLibraryReadOnly, isSelectMode, item, itemKey, itemKeys, itemsCount };
+	return { isLibraryReadOnly, isSelectMode, item, itemKey, itemKeys, itemsCount, noteKey };
 }
 
 export default connect(mapStateToProps, { fetchItemsByKeys })(ItemDetailsContainer)

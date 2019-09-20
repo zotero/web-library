@@ -49,13 +49,14 @@ class ItemDetailsTabs extends React.PureComponent {
 	}
 
 	pickDefaultActiveTab(itemType) {
+		const { noteKey } = this.props;
 		switch(itemType) {
 			case 'note':
 				return 'standalone-note';
 			case 'attachment':
 				return 'standalone-attachment';
 			default:
-				return 'info';
+				return noteKey ? 'notes' : 'info';
 		}
 	}
 	handleKeyDown = ev => {
@@ -74,7 +75,7 @@ class ItemDetailsTabs extends React.PureComponent {
 
 	render() {
 		const { device, isLibraryReadOnly, isLoadingMeta, isEditing, isFetching, isTinymceFetching,
-			isLoadingRelated, title, item } = this.props;
+			isLoadingRelated, noteKey, title, item } = this.props;
 		const isReadOnly = isLibraryReadOnly || !!(device.shouldUseEditMode && !isEditing);
 		const isLoading = isLoadingMeta || isFetching || isLoadingRelated || isTinymceFetching;
 
@@ -227,6 +228,7 @@ class ItemDetailsTabs extends React.PureComponent {
 		isLoadingRelated: PropTypes.bool,
 		isReadOnly: PropTypes.bool,
 		item: PropTypes.object,
+		noteKey: PropTypes.string,
 		title: PropTypes.string,
 	}
 
