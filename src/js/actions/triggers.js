@@ -9,6 +9,7 @@ import {
     TRIGGER_RESIZE_VIEWPORT,
     TRIGGER_SEARCH_MODE,
     TRIGGER_SELECT_MODE,
+    TRIGGER_USER_TYPE_CHANGE,
 } from '../constants/actions';
 
 const triggerEditingItem = (itemKey, isEditing) => {
@@ -49,6 +50,13 @@ const triggerResizeViewport = (width, height) => {
 	};
 };
 
+const triggerUserTypeChange = userType => {
+	return {
+		type: TRIGGER_USER_TYPE_CHANGE,
+		...userType
+	}
+}
+
 const toggleNavbar = isOpen => {
 	return { type: TOGGLE_NAVBAR, isOpen };
 }
@@ -74,4 +82,5 @@ export {
 	triggerResizeViewport,
 	triggerSearchMode,
 	triggerSelectMode,
+	triggerUserTypeChange,
 };

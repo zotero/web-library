@@ -1,199 +1,31 @@
 'use strict';
 
 import React from 'react';
-import ReactDOM from 'react-dom';
-import PropTypes from 'prop-types';
-import ReduxThunk from 'redux-thunk';
-import ReduxAsyncQueue from 'redux-async-queue';
-import { bindActionCreators } from 'redux';
-import { createStore, applyMiddleware, compose } from 'redux';
-import { Provider, connect } from 'react-redux';
-import withUserTypeDetection from '../enhancers/with-user-type-detector';
-import { createBrowserHistory } from 'history';
-import { routerMiddleware, ConnectedRouter } from 'connected-react-router';
-import { BrowserRouter, Route, Redirect, Switch } from 'react-router-dom';
-import createReducers from '../reducers';
-import { configure, fetchGroups, fetchLibrarySettings, initialize,
-	preferencesLoad, toggleModal, toggleNavbar, toggleTransitions,
-	triggerResizeViewport, triggerSearchMode, navigate, resetLibrary
-} from '../actions';
-import { routes, redirects } from '../routes';
+import { connect } from 'react-redux';
+
+import {  toggleModal, toggleNavbar, triggerSearchMode, navigate, resetLibrary } from '../actions';
 import Library from '../component/library';
-import * as defaults from '../constants/defaults';
-import { ViewportContext, UserContext } from '../context';
-import { DragDropContext } from 'react-dnd';
-import MultiBackend from 'react-dnd-multi-backend';
-import HTML5toTouch from 'react-dnd-multi-backend/lib/HTML5toTouch';
-import CustomDragLayer from '../component/drag-layer';
 import { get } from '../utils';
 
- //@TODO: ensure this doesn't affect prod build
-const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
-const history = createBrowserHistory();
-
-@DragDropContext(MultiBackend(HTML5toTouch))
-class LibraryContainer extends React.PureComponent {
-	constructor(props) {
-		super(props);
-		this.windowResizeHandler = () => {
-			this.props.dispatch(
-				triggerResizeViewport(window.innerWidth, window.innerHeight)
-			);
-		};
-
-		const { config, dispatch, libraryKey, userLibraryKey } = props;
-
-		dispatch(preferencesLoad());
-		dispatch(initialize());
-		dispatch(fetchLibrarySettings());
-		if(config.includeUserGroups) {
-			dispatch(fetchGroups(userLibraryKey));
-		}
-		this.windowResizeHandler();
-	}
-
-	async componentDidMount() {
-		window.addEventListener('resize', this.windowResizeHandler);
-	}
-
-	componentWillUnmount() {
-		window.removeEventListener('resize', this.windowResizeHandler);
-	}
-
-	componentDidUpdate({ isFetchingCollections: wasFetchingCollections,
-		isFetchingLibrarySettings, libraryKey: prevLibraryKey, isSynced: wasSynced }) {
-		const { dispatch, isFetchingCollections, isSynced, libraryKey, resetLibrary } = this.props;
-
-		if(!isFetchingCollections && wasFetchingCollections) {
-			// setTimeout required to ensure everything else in the UI had
-			// a chance to update before transition are enabled
-			setTimeout(() => dispatch(toggleTransitions(true)))
-		}
-
-		if(!isSynced && wasSynced && libraryKey === prevLibraryKey) {
-			resetLibrary(libraryKey);
-		}
-
-		if(libraryKey !== prevLibraryKey && !isFetchingLibrarySettings) {
-			dispatch(fetchLibrarySettings());
-		}
-	}
-
-	render() {
-		const { user, viewport, libraryKey } = this.props;
-
-		if(libraryKey) {
-			return (
-				<ViewportContext.Provider value={ viewport }>
-				<UserContext.Provider value={ user }>
-					<CustomDragLayer />
-					<Library { ...this.props } />
-				</UserContext.Provider>
-				</ViewportContext.Provider>
-			);
-		} else {
-			return null;
-		}
-	}
-
-	static init(element, config = {}) {
-		const libraries = { ...defaults.libraries, ...config.libraries };
-		const apiConfig = { ...defaults.apiConfig, ...config.apiConfig };
-
-		if(element) {
-			var store = createStore(
-				createReducers(history),
-				composeEnhancers(
-					applyMiddleware(
-						routerMiddleware(history),
-						ReduxThunk,
-						ReduxAsyncQueue
-					)
-				)
-			);
-
-			store.dispatch(
-				configure({ ...defaults, ...config, apiConfig, libraries })
-			);
-
-			if(process.env.NODE_ENV === 'development') {
-				// only in development, expose redux store
-				window.WebLibStore = store;
-			}
-
-			ReactDOM.render(
-				<Provider store={store}>
-					<ConnectedRouter history={history}>
-						<BrowserRouter>
-							<Switch>
-								{ redirects.map(redirect =>
-									<Redirect exact key={ redirect.from } from={ redirect.from } to={ redirect.to } />
-								)}
-								{ routes.map(route =>
-									<Route key={ route } path={ route } component={ LibraryContainerWrapped } />
-								)}
-							</Switch>
-						</BrowserRouter>
-					</ConnectedRouter>
-				</Provider>
-				, element
-			);
-		}
-	}
-}
-
-LibraryContainer.propTypes = {
-	config: PropTypes.object,
-	dispatch: PropTypes.func.isRequired,
-	view: PropTypes.string
-};
+const LibraryContainer = props => <Library { ...props } />
 
 const mapStateToProps = state => {
-	const {
-		collectionKey,
-		isMyPublications,
-		isNavBarOpen,
-		isSearchMode,
-		isSelectMode,
-		isTrash,
-		itemsSource,
-		libraryKey,
-		noteKey,
-		qmode,
-		search,
-		searchState,
-		tags,
-		useTransitions,
-		view,
+	const { collectionKey, isMyPublications, isNavBarOpen, isSearchMode, isSelectMode, isTrash,
+		itemsSource, libraryKey, noteKey, qmode, search, searchState, tags, useTransitions, userLibraryKey, view
 	} = state.current;
+	const { itemTypes } = state.meta;
 	const { isSynced } = get(state, ['libraries', libraryKey, 'sync'], {});
-	const {
-		config,
-		current: { userLibraryKey },
-		fetching: { collectionsInLibrary },
-		viewport,
-	} = state;
-	const isFetchingCollections = collectionsInLibrary
-		.some(key => key === userLibraryKey || key === libraryKey);
-	const isFetchingLibrarySettings = get(
-		state, ['libraries', libraryKey, 'fetching', 'librarySettings']
-	);
+	const { config, fetching: { collectionsInLibrary }, viewport } = state;
+	const isFetchingCollections = collectionsInLibrary.some(key => key === userLibraryKey || key === libraryKey);
+	const isFetchingLibrarySettings = get(state, ['libraries', libraryKey, 'fetching', 'librarySettings']);
 
-	return { config, view, userLibraryKey, viewport, isSearchMode, isSelectMode,
-		itemsSource, collectionKey, isFetchingCollections, isFetchingLibrarySettings,
-		isNavBarOpen, isMyPublications, isSynced, isTrash, useTransitions, libraryKey,
-		noteKey, search, searchState, tags, qmode,
+	return { config, view, userLibraryKey, viewport, isSearchMode, isSelectMode, itemsSource,
+		collectionKey, isFetchingCollections, isFetchingLibrarySettings, isNavBarOpen,
+		isMyPublications, isSynced, itemTypes, isTrash, useTransitions, libraryKey, noteKey, search,
+		searchState, tags, qmode,
 	};
 };
 
-
-//@TODO: bind all action creators
-const mapDispatchToProps = dispatch => ({
-	...bindActionCreators({ navigate, resetLibrary, triggerSearchMode, toggleModal, toggleNavbar }, dispatch),
-	dispatch,
-});
-
-
-const LibraryContainerWrapped = withUserTypeDetection(connect(mapStateToProps, mapDispatchToProps)(LibraryContainer));
-
-export default LibraryContainerWrapped;
+export default connect(
+	mapStateToProps, { navigate, resetLibrary, triggerSearchMode, toggleModal, toggleNavbar }
+)(LibraryContainer);

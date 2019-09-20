@@ -1,10 +1,11 @@
 'use strict';
 
 import React from 'react';
+import { useSelector } from 'react-redux';
+import deepEqual from 'deep-equal';
 import hoistNonReactStatic from 'hoist-non-react-statics';
-import { UserContext, ViewportContext } from '../context';
 
-const device = {
+var device = {
 	isKeyboardUser: false,
 	isMouseUser: false,
 	isSingleColumn: false,
@@ -20,37 +21,29 @@ const device = {
 };
 
 const withDevice = Component => {
-	const C = React.forwardRef((props, ref) => (
-		<UserContext.Consumer>
-		{ ({ userType, isKeyboardUser, isMouseUser, isTouchUser, scrollbarWidth }) => (
-		<ViewportContext.Consumer>
-		{ viewport => {
-			const isTouchOrSmall = userType === 'touch' || viewport.xxs || viewport.xs || viewport.sm;
-			const shouldUseEditMode = isTouchOrSmall;
-			const shouldUseModalCreatorField = isTouchOrSmall;
-			const shouldUseTabs = viewport.md || (viewport.lg && userType != 'touch');
-			const isSingleColumn = viewport.xxs || viewport.xs;
-			const shouldUseSidebar = !viewport.lg;
+	const C = React.forwardRef((props, ref) => {
+		const userTypeData = useSelector(state => state.userType);
+		const viewport = useSelector(state => state.viewport);
 
-			device['isKeyboardUser'] = isKeyboardUser;
-			device['isMouseUser'] = isMouseUser;
-			device['isSingleColumn'] = isSingleColumn;
-			device['isTouchOrSmall'] = isTouchOrSmall;
-			device['isTouchUser'] = isTouchUser;
-			device['scrollbarWidth'] = scrollbarWidth;
-			device['shouldUseEditMode'] = shouldUseEditMode;
-			device['shouldUseModalCreatorField'] = shouldUseModalCreatorField;
-			device['shouldUseSidebar'] = shouldUseSidebar;
-			device['shouldUseTabs'] = shouldUseTabs;
-			device['userType'] = userType;
-			device['viewport'] = viewport;
+		const { isKeyboardUser, isMouseUser, isTouchUser, scrollbarWidth, userType } = userTypeData;
+		const isTouchOrSmall = userType === 'touch' || viewport.xxs || viewport.xs || viewport.sm;
+		const shouldUseEditMode = isTouchOrSmall;
+		const shouldUseModalCreatorField = isTouchOrSmall;
+		const shouldUseTabs = viewport.md || (viewport.lg && userType != 'touch');
+		const isSingleColumn = viewport.xxs || viewport.xs;
+		const shouldUseSidebar = !viewport.lg;
 
-			return <Component { ...props } device={ device } ref={ ref } />
-		}}
-		</ViewportContext.Consumer>
-		)}
-		</UserContext.Consumer>
-	));
+		const newDevice = { isKeyboardUser, isMouseUser, isSingleColumn, isTouchOrSmall,
+			isTouchUser, scrollbarWidth, shouldUseEditMode, shouldUseModalCreatorField,
+			shouldUseSidebar, shouldUseTabs, userType, viewport
+		};
+
+		if(!deepEqual(device, newDevice)) {
+			device = newDevice;
+		}
+
+		return <Component { ...props } device={ device } ref={ ref } />
+	});
 
 	C.displayName = `withDevice(${Component.displayName || Component.name})`;
 	C.WrappedComponent = Component;

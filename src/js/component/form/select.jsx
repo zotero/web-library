@@ -7,7 +7,7 @@ import cx from 'classnames';
 import { noop } from '../../utils';
 import Spinner from '../ui/spinner';
 import Select from 'react-select';
-import { UserContext, ViewportContext } from '../../context';
+import withDevice from '../../enhancers/with-device';
 
 class SelectInput extends React.PureComponent {
 	constructor(props) {
@@ -149,24 +149,17 @@ class SelectInput extends React.PureComponent {
 	}
 
 	render() {
+		const { userType, viewport } = this.props.device;
 		const className = cx({
 			'input-group': true,
 			'select': true,
 			'busy': this.props.isBusy
 		}, this.props.inputGroupClassName);
 		return (
-			<ViewportContext.Consumer>
-				{ viewport => (
-					<UserContext.Consumer>
-					{ ({ userType }) => (
-						<div className={ className }>
-							{ this.renderInput(userType, viewport) }
-							{ this.renderSpinner() }
-						</div>
-					)}
-					</UserContext.Consumer>
-				)}
-			</ViewportContext.Consumer>
+			<div className={ className }>
+				{ this.renderInput(userType, viewport) }
+				{ this.renderSpinner() }
+			</div>
 		);
 	}
 
@@ -203,4 +196,4 @@ class SelectInput extends React.PureComponent {
 	};
 }
 
-export default SelectInput;
+export default withDevice(SelectInput);

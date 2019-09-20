@@ -19,10 +19,11 @@ import query from './query';
 import sources from './sources'
 import styles from './styles';
 import viewport from './viewport';
+import userType from './user-type';
 
 
 export default history => combineSectionReducers({
 	collectionCountByLibrary, config, current, errors, fetching, groups,
 	identifier, itemsPublications, libraries, meta, modal, preferences, query,
-	router: connectRouter(history), sources, styles, viewport,
+	router: connectRouter(history), sources, styles, viewport, userType,
 });

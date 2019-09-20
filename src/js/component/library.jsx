@@ -1,9 +1,11 @@
 'use strict';
 
-import React from 'react';
+import React, { useCallback, useEffect, useState, useRef } from 'react';
 import PropTypes from 'prop-types';
 import cx from 'classnames';
 import { CSSTransition } from 'react-transition-group';
+import MultiBackend from 'react-dnd-multi-backend';
+import HTML5toTouch from 'react-dnd-multi-backend/lib/HTML5toTouch';
 
 import { getSerializedQuery } from '../common/state';
 import LibrariesContainer from '../container/libraries';
@@ -28,132 +30,97 @@ import ErrorsContainer from '../container/errors';
 import TouchNoteContainer from '../container/touch-note';
 import SearchBackdrop from './search-backdrop';
 import withDevice from '../enhancers/with-device';
-import Icon from './ui/icon';
 import { pick } from '../common/immutable';
 import { NEW_FILE } from '../constants/modals'
+import { DragDropContext } from 'react-dnd';
+import CustomDragLayer from '../component/drag-layer';
 
-class Library extends React.PureComponent {
-	constructor(props) {
-		super(props);
-		this.state = {
-			hasUserTypeChanged: false,
-			isSearchModeTransitioning: false,
-			prevItemsSource: null,
-		};
-	}
 
-	componentDidUpdate({ device: prevDevice, isSearchMode: wasSearchMode,
-			itemsSource: prevItemsSource }, {
-			isSearchModeTransitioning: wasSearchModeTransitioning
-		}) {
-		const wasTouchOrSmall = prevDevice.isTouchOrSmall;
-		const prevUserType = prevDevice.userType;
-		const { device, isSearchMode, toggleNavbar, isNavBarOpen } = this.props;
-		const { hasUserTypeChanged, isSearchModeTransitioning } = this.state;
+const Library = props => {
+	const { collectionKey, config, device, isNavBarOpen, isSearchMode, isSelectMode, itemsSource,
+	libraryKey, noteKey, search, searchState, tags, toggleModal, toggleNavbar, useTransitions,
+	qmode, view } = props;
+
+	const [hasUserTypeChanged, setHasUserTypeChanged] = useState(false);
+	const [isSearchModeTransitioning, setIsSearchModeTransitioning] = useState(false);
+	const prevUserType = useRef(device.userType);
+	const prevShouldUseSidebar = useRef(device.shouldUseSidebar);
+	const wasSearchMode = useRef(isSearchMode);
+	const prevItemsSource = useRef(itemsSource);
+
+	useEffect(() => {
+		if(device.userType !== prevUserType.current) {
+			setHasUserTypeChanged(true);
+			setTimeout(() => setHasUserTypeChanged(false), 0);
+		}
+
+		if(isNavBarOpen && !device.shouldUseSidebar && prevShouldUseSidebar.current) {
+			toggleNavbar(false);
+		}
 
 		document.documentElement.classList.toggle('keyboard', !!device.isKeyboardUser);
 		document.documentElement.classList.toggle('mouse', !!device.isMouseUser);
 		document.documentElement.classList.toggle('touch', !!device.isTouchUser);
-		document.documentElement.classList.toggle(
-			'scrollbar-style-permanent',
-			device.scrollbarWidth > 0
-		);
+		document.documentElement.classList.toggle('scrollbar-style-permanent', device.scrollbarWidth > 0);
 
-		if(device.isTouchOrSmall !== wasTouchOrSmall && device.userType !== prevUserType) {
-			this.setState({ hasUserTypeChanged: true });
-		}
-		if(hasUserTypeChanged === true) {
-			window.setTimeout(() => this.setState({ hasUserTypeChanged: false }));
-		}
+		prevUserType.current = device.userType;
+	}, [device]);
 
-		if(isSearchModeTransitioning && !wasSearchModeTransitioning) {
-			setTimeout(() => this.setState({ isSearchModeTransitioning: false }), 250);
+	useEffect(() => {
+		if(isSearchMode && !wasSearchMode.current) {
+			setIsSearchModeTransitioning(true);
+			setTimeout(() => setIsSearchModeTransitioning(false), 250);
 		}
+		wasSearchMode.current = isSearchMode;
+	}, [isSearchMode]);
 
-		if(isNavBarOpen && !device.shouldUseSidebar && prevDevice.shouldUseSidebar) {
-			toggleNavbar(false);
-		}
-	}
+	useEffect(() => {
+		prevItemsSource.current = itemsSource
+	}, [itemsSource]);
 
-	static getDerivedStateFromProps(
-		{ isSearchMode, itemsSource },
-		{ isSearchMode: wasSearchMode, cachedItemsSource, prevItemsSource, isSearchModeTransitioning }
-	) {
-		var stateOverrides = {};
-		if(itemsSource !== cachedItemsSource) {
-			stateOverrides = {
-				...stateOverrides,
-				cachedItemsSource: itemsSource,
-				prevItemsSource: cachedItemsSource
-			}
-		}
-		if(wasSearchMode !== isSearchMode) {
-			stateOverrides = {
-				...stateOverrides,
-				isSearchMode,
-				isSearchModeTransitioning: true
-			}
-		}
-		return stateOverrides;
-	}
+	const handleNavbarToggle = useCallback(
+		() => toggleNavbar(null)
+	);
 
-	componentWillUnmount() {
-		document.documentElement.classList.toggle('keyboard', false);
-		document.documentElement.classList.toggle('mouse', false);
-		document.documentElement.classList.toggle('touch', false);
-	}
-
-	handleNavbarToggle = () => this.props.toggleNavbar(null);
-	handleDrop = ev => {
+	const handleDrop = useCallback(ev => {
 		const files = Array.from(ev.dataTransfer.files);
 		if(files.length) {
-			this.props.toggleModal(NEW_FILE, true, { files });
+			toggleModal(NEW_FILE, true, { files });
 		}
+	});
+
+	var key;
+	if(itemsSource == 'collection') {
+		key = `${libraryKey}-${collectionKey}`;
+	} else if(itemsSource == 'query') {
+		key = `${libraryKey}-query-${getSerializedQuery(
+			{ collection: collectionKey, tag: tags, q: search, qmode }
+		)}`;
+	} else {
+		key = `${libraryKey}-${itemsSource}`;
 	}
 
-	render() {
-		const { libraryKey, noteKey, collectionKey = '', itemsSource, search, tags, qmode } = this.props;
-		var key;
-		if(itemsSource == 'collection') {
-			key = `${libraryKey}-${collectionKey}`;
-		} else if(itemsSource == 'query') {
-			key = `${libraryKey}-query-${getSerializedQuery(
-				{ collection: collectionKey, tag: tags, q: search, qmode }
-			)}`;
-		} else {
-			key = `${libraryKey}-${itemsSource}`;
-		}
-
-		const { config, device, isSearchMode, isNavBarOpen, isSelectMode, searchState,
-			toggleNavbar, useTransitions, view } = this.props;
-		const { hasUserTypeChanged, isSearchModeTransitioning, prevItemsSource } = this.state;
-
-		return (
-			<div onDrop={ this.handleDrop } className={ cx('library-container', {
+	return (
+		<React.Fragment>
+			<CustomDragLayer />
+			<div onDrop={ handleDrop } className={ cx('library-container', {
 					[`view-${view}-active`]: true,
 					'view-note-active': noteKey,
 					'navbar-nav-opened': isNavBarOpen,
 					'no-transitions': !useTransitions || hasUserTypeChanged,
-					'search-active': (isSearchMode || (!isSearchMode && isSearchModeTransitioning)) && (itemsSource !== 'query' && prevItemsSource !== 'query'),
-					'search-results': (isSearchMode || (!isSearchMode && isSearchModeTransitioning)) && (itemsSource === 'query' || prevItemsSource === 'query'),
+					'search-active': (isSearchMode || (!isSearchMode && isSearchModeTransitioning)) && (itemsSource !== 'query' && prevItemsSource.current !== 'query'),
+					'search-results': (isSearchMode || (!isSearchMode && isSearchModeTransitioning)) && (itemsSource === 'query' || prevItemsSource.current === 'query'),
 					'search-init': (isSearchMode && !searchState.hasViewedResult) || (isSearchModeTransitioning && !isSearchMode),
 					'search-cancel': isSearchModeTransitioning && !isSearchMode,
 				}) }>
-				{
-					!useTransitions && (
-						<div className="loading-cover">
-							<Icon type={ '32/z' } width="32" height="32" />
-						</div>
-					)
-				}
 				<MobileNav
 					entries={ config.menus.mobile }
-					{...pick(this.props, ['toggleNavbar']) }
+					{...pick(props, ['toggleNavbar']) }
 				/>
 				<div className="site-wrapper">
 					<Navbar
 						entries={ config.menus.desktop }
-						{...pick(this.props, ['collectionKey', 'isNavBarOpen', 'isMyPublications', 'isTrash',
+						{...pick(props, ['collectionKey', 'isNavBarOpen', 'isMyPublications', 'isTrash',
 							'itemsSource', 'libraryKey', 'navigate', 'qmode', 'search', 'tags', 'toggleNavbar',
 							'triggerSearchMode', 'view',
 						])}
@@ -200,7 +167,7 @@ class Library extends React.PureComponent {
 										classNames="fade"
 										unmountOnExit
 									>
-										<SearchBackdrop { ...pick(this.props, ['triggerSearchMode']) } />
+										<SearchBackdrop { ...pick(props, ['triggerSearchMode']) } />
 									</CSSTransition>
 								</section>
 							</CSSTransition>
@@ -208,7 +175,7 @@ class Library extends React.PureComponent {
 					</main>
 					<div
 						className="nav-cover"
-						onClick={ this.handleNavbarToggle }
+						onClick={ handleNavbarToggle }
 					/>
 				</div>
 				<AddItemsToCollectionsModalContainer />
@@ -224,14 +191,28 @@ class Library extends React.PureComponent {
 				<NewFileModalContainer />
 				<ErrorsContainer />
 			</div>
-		);
-	}
+		</React.Fragment>
+	);
 }
 
 Library.propTypes = {
+	collectionKey: PropTypes.string,
 	config: PropTypes.object.isRequired,
+	device: PropTypes.object,
+	isNavBarOpen: PropTypes.bool,
+	isSearchMode: PropTypes.bool,
 	isSelectMode: PropTypes.bool,
+	itemsSource: PropTypes.string,
+	libraryKey: PropTypes.string,
+	noteKey: PropTypes.string,
+	qmode: PropTypes.string,
+	search: PropTypes.string,
+	searchState: PropTypes.object,
+	tags: PropTypes.array,
+	toggleModal: PropTypes.func,
+	toggleNavbar: PropTypes.func,
+	useTransitions: PropTypes.bool,
 	view: PropTypes.string,
 };
 
-export default withDevice(Library);
+export default withDevice(DragDropContext(MultiBackend(HTML5toTouch))(Library));
