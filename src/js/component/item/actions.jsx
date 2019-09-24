@@ -13,6 +13,7 @@ import { pick } from '../../common/immutable';
 import { noop } from '../../utils';
 import columnNames from '../../constants/column-names';
 import { ADD_BY_IDENTIFIER, SORT_ITEMS } from '../../constants/modals';
+import AddByIdentifier from './actions/add-by-identifier';
 
 
 class ItemsActions extends React.PureComponent {
@@ -112,15 +113,11 @@ class ItemsActions extends React.PureComponent {
 						/>
 						{
 							(itemsSource === 'collection' || itemsSource === 'top') && (
-							<Button
-								icon
+							<AddByIdentifier
 								onClick={ onAddByIdentifierModalOpen }
 								onKeyDown={ this.handleKeyDown }
 								tabIndex={ -2 }
-								title="Add By Identifier"
-							>
-								<Icon type="16/magic-wand" width="16" height="16" />
-							</Button>
+							/>
 						)}
 						{
 							(itemsSource === 'collection' || itemsSource === 'top') && (

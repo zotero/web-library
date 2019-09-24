@@ -48,6 +48,7 @@ const searchIdentifier = identifier => {
 			dispatch({
 				type: RECEIVE_ADD_BY_IDENTIFIER, item, identifier, response
 			});
+			return item;
 		} catch(error) {
 			dispatchError(error);
 			throw error;

@@ -268,3 +268,10 @@ $tag-selector-grip-color:   $shade-4;
 // Details list
 $details-list-link-color:    $text-color;
 $details-list-no-link-color: rgba($text-color, 0.5);
+
+// Popover
+$popover-bg: $body-bg;
+$popover-border-color: $shade-2;
+$popover-arrow-color: $shade-2;
+$popover-arrow-outer-color: lighten($popover-border-color, 10%);
+$popover-title-bg: $shade-0;
