@@ -28,13 +28,12 @@ const AddByIdentifier = props => {
 		}
 	});
 
-	const handleInputChange = useCallback(identifier => {
-		setIdentifier(identifier);
+	const handleInputChange = useCallback(newIdentifier => {
+		setIdentifier(newIdentifier);
 	});
 
-	const handleInputCommit = useCallback(identifier => {
-		setIdentifier(identifier);
-		addItem(identifier);
+	const handleInputCommit = useCallback(newIdentifier => {
+		addItem(newIdentifier);
 	})
 
 	const handleInputBlur = useCallback(() => true);
@@ -46,11 +45,11 @@ const AddByIdentifier = props => {
 	})
 	const addItem = useCallback(async itemIdentifier => {
 		if(itemIdentifier) {
+			setIsBusy(true);
 			const reviewItem = await dispatch(searchIdentifier(itemIdentifier));
 			if(itemsSource === 'collection' && collectionKey) {
 				reviewItem.collections = [collectionKey];
 			}
-			setIsBusy(true);
 			const item = await dispatch(createItem(reviewItem, libraryKey));
 			setIsBusy(false);
 			setIsOpen(false);
@@ -94,11 +93,13 @@ const AddByIdentifier = props => {
 						<Input
 							autoFocus
 							id={ `${id.current}-input` }
+							isBusy={ isBusy }
+							isDisabled={ isBusy }
+							onBlur={ handleInputBlur }
 							onChange={ handleInputChange }
 							onCommit={ handleInputCommit }
-							onBlur={ handleInputBlur }
-							value={ identifier }
 							tabIndex={ 0 }
+							value={ identifier }
 						/>
 						<Button onClick={ handleSearch } >Search</Button>
 					</div>
