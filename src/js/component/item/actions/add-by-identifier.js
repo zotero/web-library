@@ -34,15 +34,19 @@ const AddByIdentifier = props => {
 
 	const handleInputCommit = useCallback(newIdentifier => {
 		addItem(newIdentifier);
-	})
+	});
 
 	const handleInputBlur = useCallback(() => true);
 
-	const toggleOpen = useCallback(() => setIsOpen(!isOpen));
+	const toggleOpen = useCallback(() => {
+		dispatch(resetIdentifier());
+		setIsOpen(!isOpen);
+	});
 
 	const handleSearch = useCallback(() => {
 		addItem(identifier);
-	})
+	});
+
 	const addItem = useCallback(async itemIdentifier => {
 		if(itemIdentifier) {
 			setIsBusy(true);
@@ -53,6 +57,7 @@ const AddByIdentifier = props => {
 			const item = await dispatch(createItem(reviewItem, libraryKey));
 			setIsBusy(false);
 			setIsOpen(false);
+			dispatch(resetIdentifier());
 			dispatch(navigate({
 				library: libraryKey,
 				collection: collectionKey,
