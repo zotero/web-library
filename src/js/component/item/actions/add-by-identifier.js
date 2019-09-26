@@ -89,12 +89,11 @@ const AddByIdentifier = props => {
 			>
 				<PopoverHeader>
 					<label htmlFor={ `${id.current}-input` }>
-						Enter a URL, ISBN, DOI, PMID, or arXiv ID:
+						Enter a URL, ISBN, DOI, PMID, or arXiv ID
 					</label>
 				</PopoverHeader>
 				<PopoverBody>
 					<div className="form">
-
 						<Input
 							autoFocus
 							id={ `${id.current}-input` }
@@ -106,7 +105,6 @@ const AddByIdentifier = props => {
 							tabIndex={ 0 }
 							value={ identifier }
 						/>
-						<Button onClick={ handleSearch } >Search</Button>
 					</div>
 				</PopoverBody>
 			</Popover>

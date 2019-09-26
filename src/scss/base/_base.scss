@@ -91,7 +91,5 @@ main {
 	flex: 1 1 auto;
 	display: flex;
 	background: $main-bg;
-	position: relative;
-	z-index: $z-index-main;
 	min-height: 0;
 }

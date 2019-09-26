@@ -102,16 +102,15 @@ $z-index-mobile-nav:         0;
 $z-index-rich-editor-touch: 10;
 $z-index-hairline:          20;
 $z-index-search-bar:        30;
-$z-index-main:              30;
 $z-index-level:             30;
 $z-index-level-active:      40;
 $z-index-navbar:            40;
 $z-index-menu:              50;
-$z-index-popover:			60;
-$z-index-modal:             70;
-$z-index-drag-layer:        80;
-$z-index-errors:            90;
-$z-index-loading-cover:     100;
+$z-index-popover:						60;
+$z-index-modal:             60;
+$z-index-drag-layer:        60;
+$z-index-errors:            70;
+$z-index-loading-cover:     80;
 
 
 // Navbbar
@@ -369,6 +368,13 @@ $tag-border-radius:             $border-radius-sm;
 // Popover
 // --------------------------------------------------
 
-$popover-max-width: 400px;
-$popover-arrow-width: 10px;
-$popover-arrow-outer-width: $popover-arrow-width +1;
+$popover-max-width:        400px;
+$popover-header-padding-y: $space-xs;
+$popover-header-padding-x: $space-sm;
+$popover-body-padding-y:   $space-xs;
+$popover-body-padding-x:   $space-sm;
+$popover-header-font-size: 14px;
+$popover-border-radius:    $border-radius-sm;
+$popover-arrow-width:      $space-md;
+$popover-arrow-height:     $space-xs;
+$popover-border-width:     $border-width;

@@ -270,8 +270,11 @@ $details-list-link-color:    $text-color;
 $details-list-no-link-color: rgba($text-color, 0.5);
 
 // Popover
-$popover-bg: $body-bg;
-$popover-border-color: $shade-2;
-$popover-arrow-color: $shade-2;
-$popover-arrow-outer-color: lighten($popover-border-color, 10%);
-$popover-title-bg: $shade-0;
+$popover-bg:                  $body-bg;
+$popover-body-color:          $text-color;
+$popover-header-bg:           $body-bg;
+$popover-header-color:        $shade-8;
+$popover-header-border-color: $shade-2;
+$popover-box-shadow:          0 0 0 1px rgba(0, 0, 0, 0.08), 0 3px 8px rgba(0, 0, 0, 0.2);
+$popover-arrow-color:         $body-bg;
+$popover-arrow-outer-color:   rgba(0, 0, 0, 0.2);

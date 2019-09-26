@@ -3,7 +3,7 @@
 // --------------------------------------------------
 
 ::placeholder {
-	color: $placeholder-color;
+	color: #777;
 }
 
 .form { // We do not use a form element for its side effects
@@ -12,6 +12,10 @@
 			margin: -$modal-inner-padding;
 			padding: $form-group-margin-touch 0;
 		}
+	}
+
+	@include variant(".popover form") {
+		margin: $space-min 0;
 	}
 }
 
