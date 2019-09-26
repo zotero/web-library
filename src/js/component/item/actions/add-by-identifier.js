@@ -1,23 +1,23 @@
-import React, { useCallback, useRef, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
+import React, { useCallback, useRef, useState } from 'react';
+import { Popover, PopoverHeader, PopoverBody } from 'reactstrap';
+import { useDispatch, useSelector } from 'react-redux';
 
 import Button from '../../ui/button';
 import Icon from '../../ui/icon';
-import withDevice from '../../../enhancers/with-device';
-import { getUniqueId } from '../../../utils';
-import { Popover, PopoverHeader, PopoverBody } from 'reactstrap';
 import Input from '../../form/input';
+import withDevice from '../../../enhancers/with-device';
 import { createItem, searchIdentifier, navigate, resetIdentifier } from '../../../actions';
+import { getUniqueId } from '../../../utils';
 
 const AddByIdentifier = props => {
 	const { device, onAddByIdentifierModalOpen, onKeyDown } = props;
 	const [isOpen, setIsOpen] = useState(false);
 	const [isBusy, setIsBusy] = useState(false);
 	const [identifier, setIdentifier] = useState('');
+	const inputEl = useRef(null);
 	const id = useRef(getUniqueId());
 	const dispatch = useDispatch();
-	const { isError, reviewItem, isSearching } = useSelector(state => state.identifier);
 	const { collectionKey, itemsSource, libraryKey } = useSelector(state => state.current);
 
 	const handleClick = useCallback(ev => {
@@ -43,27 +43,30 @@ const AddByIdentifier = props => {
 		setIsOpen(!isOpen);
 	});
 
-	const handleSearch = useCallback(() => {
-		addItem(identifier);
-	});
-
 	const addItem = useCallback(async itemIdentifier => {
 		if(itemIdentifier) {
 			setIsBusy(true);
-			const reviewItem = await dispatch(searchIdentifier(itemIdentifier));
-			if(itemsSource === 'collection' && collectionKey) {
-				reviewItem.collections = [collectionKey];
+			try {
+				const reviewItem = await dispatch(searchIdentifier(itemIdentifier));
+				if(itemsSource === 'collection' && collectionKey) {
+					reviewItem.collections = [collectionKey];
+				}
+				const item = await dispatch(createItem(reviewItem, libraryKey));
+				setIsBusy(false);
+				setIsOpen(false);
+				dispatch(resetIdentifier());
+				dispatch(navigate({
+					library: libraryKey,
+					collection: collectionKey,
+					items: [item.key],
+					view: 'item-list'
+				}, true));
+			} catch(_) {
+				setIsBusy(false);
+				setIdentifier('');
+				inputEl.current.focus();
+				return;
 			}
-			const item = await dispatch(createItem(reviewItem, libraryKey));
-			setIsBusy(false);
-			setIsOpen(false);
-			dispatch(resetIdentifier());
-			dispatch(navigate({
-				library: libraryKey,
-				collection: collectionKey,
-				items: [item.key],
-				view: 'item-list'
-			}, true));
 		}
 	});
 
@@ -71,21 +74,21 @@ const AddByIdentifier = props => {
 		<React.Fragment>
 			<Button
 				icon
+				id={ id.current }
 				onClick={ handleClick }
 				onKeyDown={ onKeyDown }
 				tabIndex={ -2 }
 				title="Add By Identifier"
-				id={ id.current }
 			>
 				<Icon type="16/magic-wand" width="16" height="16" />
 			</Button>
 			<Popover
+				className="popover-container"
 				isOpen={ isOpen }
-				toggle={ toggleOpen }
-				trigger="legacy"
 				placement="bottom"
 				target={ id.current }
-				className="popover-container"
+				toggle={ toggleOpen }
+				trigger="legacy"
 			>
 				<PopoverHeader>
 					<label htmlFor={ `${id.current}-input` }>
@@ -102,6 +105,7 @@ const AddByIdentifier = props => {
 							onBlur={ handleInputBlur }
 							onChange={ handleInputChange }
 							onCommit={ handleInputCommit }
+							ref={ inputEl }
 							tabIndex={ 0 }
 							value={ identifier }
 						/>
@@ -110,6 +114,12 @@ const AddByIdentifier = props => {
 			</Popover>
 		</React.Fragment>
 	);
+}
+
+AddByIdentifier.propTypes = {
+	device: PropTypes.object,
+	onAddByIdentifierModalOpen: PropTypes.func,
+	onKeyDown: PropTypes.func,
 }
 
 

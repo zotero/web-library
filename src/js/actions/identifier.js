@@ -7,8 +7,8 @@ import { ERROR_ADD_BY_IDENTIFIER, REQUEST_ADD_BY_IDENTIFIER,
 
 const searchIdentifier = identifier => {
 	return async (dispatch, getState) => {
-		const dispatchError = (error, response) => {
-			dispatch({ type: ERROR_ADD_BY_IDENTIFIER, error, identifier, response });
+		const dispatchError = ({ message, response }) => {
+			dispatch({ type: ERROR_ADD_BY_IDENTIFIER, error: message, identifier, response });
 		}
 
 		const { config } = getState();
@@ -24,22 +24,20 @@ const searchIdentifier = identifier => {
 			});
 
 			if (!response.headers.get('content-type').startsWith('application/json')) {
-				dispatchError(
-					`Invalid response from translation-server: ${(await response.text())}`,
-					response
-				);
-				return;
+				const message = `Invalid response from translation-server: ${(await response.text())}`;
+				throw ({ message, response });
 			} else if (response.status === 501) {
-				dispatchError('Not Found', identifier, response);
-				return;
+				const message = 'Not Found';
+				throw ({ message, response });
 			} else if(response.status !== 200) {
-				dispatchError('Unexpected Response', response);
-				return;
+				const message = 'Unexpected Response';
+				throw ({ message, response });
 			}
 
 			const json = await response.json();
 			if (!json.length) {
-				dispatchError('Not Found', response);
+				const message = 'Not Found';
+				throw ({ message, response });
 			}
 			const item = json[0];
 			delete item.key;
