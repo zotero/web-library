@@ -7,8 +7,8 @@ import { ERROR_ADD_BY_IDENTIFIER, REQUEST_ADD_BY_IDENTIFIER,
 
 const searchIdentifier = identifier => {
 	return async (dispatch, getState) => {
-		const dispatchError = ({ message, response }) => {
-			dispatch({ type: ERROR_ADD_BY_IDENTIFIER, error: message, identifier, response });
+		const dispatchError = ({ message, response, errorType }) => {
+			dispatch({ type: ERROR_ADD_BY_IDENTIFIER, error: message, errorType, identifier, response });
 		}
 
 		const { config } = getState();
@@ -23,22 +23,28 @@ const searchIdentifier = identifier => {
 				body: identifier
 			});
 
+			if (response.status === 501) {
+				const message = 'Zotero could not find any identifiers in your input. Please verify your input and try again.';
+				throw ({ message, response, errorType: 'info' });
+			}
+
+			if(response.status !== 200) {
+				const message = 'Unexpected response from the server.';
+				throw ({ message, response });
+			}
+
 			if (!response.headers.get('content-type').startsWith('application/json')) {
-				const message = `Invalid response from translation-server: ${(await response.text())}`;
-				throw ({ message, response });
-			} else if (response.status === 501) {
-				const message = 'Not Found';
-				throw ({ message, response });
-			} else if(response.status !== 200) {
-				const message = 'Unexpected Response';
+				console.error(await response.text());
+				const message = 'Unexpected response from the server.';
 				throw ({ message, response });
 			}
 
 			const json = await response.json();
 			if (!json.length) {
-				const message = 'Not Found';
-				throw ({ message, response });
+				const message = 'Zotero could not find any identifiers in your input. Please verify your input and try again.';
+				throw ({ message, response, errorType: 'info' });
 			}
+
 			const item = json[0];
 			delete item.key;
 			delete item.version;

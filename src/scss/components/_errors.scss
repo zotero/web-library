@@ -20,17 +20,24 @@
 		display: none;
 	}
 
-	.error {
+	.message {
 		width: calc(100% - #{2 * $error-spacing + $permanent-scrollbar-width});
 		background: $error-bg;
 		padding: $space-xs $default-padding-x;
 		padding-right: $space-md + 2 * $default-padding-x;
-		border-left: 3px solid $red;
 		box-shadow: $menu-box-shadow;
 		border-radius: $menu-border-radius;
 		margin: $error-spacing;
 		user-select: text;
 		position: relative;
+
+		&.error {
+			border-left: 3px solid $red;
+		}
+
+		&.info {
+			border-left: 3px solid $blue;
+		}
 
 		@include bp-up(sm) {
 			width: $error-width;

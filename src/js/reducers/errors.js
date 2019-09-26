@@ -5,7 +5,8 @@ const ERRORS_STORED_COUNT = 10; //how many errors are stored before oldest are d
 var errorCounter = 0;
 
 const isDuplicate = (error, prevError) =>
-	error && prevError && error.message === prevError.message && !prevError.isDismissed;
+	error && prevError && error.message === prevError.message &&
+	error.type === prevError.type && !prevError.isDismissed;
 
 const getErrorMessage = error => {
 	if(error instanceof Error && error.message.startsWith('Failed to fetch')) {
@@ -22,13 +23,14 @@ const getErrorMessage = error => {
 	return 'Unexpected error.';
 }
 
-const processError = error => ({
-	message: getErrorMessage(error),
-	raw: JSON.stringify(error),
-	timestamp: Date.now(),
+const processError = ({ error, errorType }) => ({
 	id: ++errorCounter,
 	isDismissed: false,
+	message: getErrorMessage(error),
+	raw: JSON.stringify(error),
 	timesOccurred: 1,
+	timestamp: Date.now(),
+	type: errorType || 'error'
 });
 
 const errors = (state = [], action) => {
@@ -40,7 +42,7 @@ const errors = (state = [], action) => {
 			// discard 412, these will trigger RESET_LIBRARY which is handled below
 			return state;
 		}
-		const processedError = processError(action.error);
+		const processedError = processError(action);
 
 		if(isDuplicate(processedError, state[0])) {
 			return [
@@ -56,12 +58,13 @@ const errors = (state = [], action) => {
 	}
 	if(action.type === RESET_LIBRARY) {
 		return [{
-				message: "Current library has been modified outside of Web Library and had to be reset to remote state to allow editing.",
-				raw: {},
-				timestamp: Date.now(),
 				id: ++errorCounter,
 				isDismissed: false,
+				message: "Current library has been modified outside of Web Library and had to be reset to remote state to allow editing.",
+				raw: {},
 				timesOccurred: 1,
+				timestamp: Date.now(),
+				type: 'error',
 			},
 			...state.slice(0, ERRORS_STORED_COUNT - 1)
 		];

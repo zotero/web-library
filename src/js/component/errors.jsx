@@ -1,14 +1,16 @@
 'use strict';
 
-import React from 'react';
+import cx from 'classnames';
 import PropTypes from 'prop-types';
+import React from 'react';
+
 import Button from './ui/button';
 import Icon from './ui/icon';
 
-const Error = ({ id, message, dismissError }) => (
-	<li className="error">
+const Message = ({ type, id, message, dismissError }) => (
+	<li className={ cx('message', { [type]: true }) }>
 		<header>
-			Error
+			{ type.charAt(0).toUpperCase() + type.slice(1) }
 		</header>
 		{ message }
 		<Button icon onClick={ () => dismissError(id) }>
@@ -22,7 +24,7 @@ const Errors = ({ dismissError, errors }) => {
 		<ul className="errors">
 			{
 				errors.filter(error => !error.isDismissed).map(error => (
-					<Error
+					<Message
 						key={ error.id }
 						dismissError={ dismissError }
 						{ ...error }
@@ -33,10 +35,11 @@ const Errors = ({ dismissError, errors }) => {
 	);
 }
 
-Error.propTypes = {
-	id: PropTypes.number,
+Message.propTypes = {
 	dismissError: PropTypes.func,
-	message :PropTypes.string
+	id: PropTypes.number,
+	message :PropTypes.string,
+	type: PropTypes.string,
 }
 
 Errors.propTypes = {
