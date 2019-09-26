@@ -39,6 +39,7 @@ const AddByIdentifier = props => {
 	const handleInputBlur = useCallback(() => true);
 
 	const toggleOpen = useCallback(() => {
+		setIdentifier('');
 		dispatch(resetIdentifier());
 		setIsOpen(!isOpen);
 	});
