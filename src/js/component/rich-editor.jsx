@@ -208,7 +208,8 @@ class RichEditor extends React.PureComponent {
 						theme: 'silver',
 						mobile: { theme: 'silver' },
 						valid_elements: validElements,
-						invalid_elements: invalidElements
+						invalid_elements: invalidElements,
+						content_css: `/static/tinymce-content.css`,
 					}}
 					onClick={ this.refreshEditor }
 					onEditorChange={ this.handleEditorChange }
