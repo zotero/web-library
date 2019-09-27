@@ -66,7 +66,8 @@ const fetchAllCollections = (libraryKey, { sort = 'dateModified', direction = "d
 		const state = getState();
 		const isKnown = libraryKey in state.collectionCountByLibrary;
 		const expectedCount = state.collectionCountByLibrary[libraryKey];
-		const actualCount = Object.keys(state.libraries[libraryKey].collections).length;
+		const collections = get(state, ['libraries', libraryKey, 'collections'], {});
+		const actualCount = Object.keys(collections).length;
 		const isCountCorrect = expectedCount === actualCount
 
 		if(!shouldAlwaysFetch && isKnown && isCountCorrect) {

@@ -76,11 +76,11 @@ const Library = props => {
 	}, [isSearchMode]);
 
 	useEffect(() => {
-		prevItemsSource.current = itemsSource
+		prevItemsSource.current = itemsSource;
 	}, [itemsSource]);
 
 	useEffect(() => {
-		if(!isSynced && wasSynced.current) {
+		if(isSynced === false && wasSynced.current === true) {
 			resetLibrary(libraryKey);
 		}
 		wasSynced.current = isSynced;
