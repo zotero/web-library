@@ -81,7 +81,7 @@ const Library = props => {
 
 	useEffect(() => {
 		if(isSynced === false && wasSynced.current === true) {
-			resetLibrary(libraryKey);
+			setTimeout(() => resetLibrary(libraryKey), 0);
 		}
 		wasSynced.current = isSynced;
 	}, [isSynced])

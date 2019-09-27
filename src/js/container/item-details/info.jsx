@@ -9,7 +9,7 @@ const InfoContainer = props => <Info { ...props } />;
 
 const mapStateToProps = state => {
 	const { libraryKey, itemKey } = state.current;
-	const item = get(state, ['libraries', libraryKey, 'items', itemKey], {});
+	const item = get(state, ['libraries', libraryKey, 'items', itemKey], null);
 	const { itemType } = item;
 	const { isReadOnly: isLibraryReadOnly } = (state.config.libraries.find(l => l.key === libraryKey) || {});
 	const pendingChanges = get(state, ['libraries', libraryKey, 'updating', 'items', itemKey]) || [];
