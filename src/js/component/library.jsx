@@ -1,39 +1,39 @@
 'use strict';
 
-import React, { useCallback, useEffect, useState, useRef } from 'react';
-import PropTypes from 'prop-types';
 import cx from 'classnames';
-import { CSSTransition } from 'react-transition-group';
-import MultiBackend from 'react-dnd-multi-backend';
 import HTML5toTouch from 'react-dnd-multi-backend/lib/HTML5toTouch';
+import MultiBackend from 'react-dnd-multi-backend';
+import PropTypes from 'prop-types';
+import React, { useCallback, useEffect, useState, useRef } from 'react';
+import { CSSTransition } from 'react-transition-group';
 
-import { getSerializedQuery } from '../common/state';
-import LibrariesContainer from '../container/libraries';
+import AddByIdentifierModalContainer from '../container/modal/add-by-identifier';
+import AddItemsToCollectionsModalContainer from '../container/modal/add-items-to-collections';
+import BibliographyModalContainer from '../container/modal/bibliography';
+import CustomDragLayer from '../component/drag-layer';
+import ExportModalContainer from '../container/modal/export';
 import ItemDetailsContainer from '../container/item-details';
 import ItemsContainer from '../container/items';
-import Navbar from './ui/navbar';
+import ItemsSortModalContainer from '../container/modal/items-sort';
+import LibrariesContainer from '../container/libraries';
+import Messages from '../component/messages';
 import MobileNav from './ui/mobile-nav';
+import MoveCollectionsModalContainer from '../container/modal/move-collections';
+import Navbar from './ui/navbar';
+import NewCollectionModalContainer from '../container/modal/new-collection';
+import NewFileModalContainer from '../container/modal/new-file';
+import NewItemModalContainer from '../container/modal/new-item';
+import RenameCollectionModalContainer from '../container/modal/rename-collection';
+import SearchBackdrop from './search-backdrop';
+import StyleInstallerModalContainer from '../container/modal/style-installer';
 import TagSelectorContainer from '../container/tag-selector';
 import TouchHeaderContainer from '../container/touch-header';
-import BibliographyModalContainer from '../container/modal/bibliography';
-import RenameCollectionModalContainer from '../container/modal/rename-collection';
-import NewCollectionModalContainer from '../container/modal/new-collection';
-import AddItemsToCollectionsModalContainer from '../container/modal/add-items-to-collections';
-import NewItemModalContainer from '../container/modal/new-item';
-import ExportModalContainer from '../container/modal/export';
-import StyleInstallerModalContainer from '../container/modal/style-installer';
-import ItemsSortModalContainer from '../container/modal/items-sort';
-import MoveCollectionsModalContainer from '../container/modal/move-collections';
-import AddByIdentifierModalContainer from '../container/modal/add-by-identifier';
-import NewFileModalContainer from '../container/modal/new-file';
-import ErrorsContainer from '../container/errors';
 import TouchNoteContainer from '../container/touch-note';
-import SearchBackdrop from './search-backdrop';
 import withDevice from '../enhancers/with-device';
-import { pick } from '../common/immutable';
-import { NEW_FILE } from '../constants/modals'
 import { DragDropContext } from 'react-dnd';
-import CustomDragLayer from '../component/drag-layer';
+import { getSerializedQuery } from '../common/state';
+import { NEW_FILE } from '../constants/modals'
+import { pick } from '../common/immutable';
 
 
 const Library = props => {
@@ -197,7 +197,7 @@ const Library = props => {
 				<StyleInstallerModalContainer />
 				<AddByIdentifierModalContainer />
 				<NewFileModalContainer />
-				<ErrorsContainer />
+				<Messages />
 			</div>
 		</React.Fragment>
 	);
