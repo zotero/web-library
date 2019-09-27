@@ -1,8 +1,8 @@
 //
-// Errors
+// Messages
 // --------------------------------------------------
 
-.errors {
+.messages {
 	position: fixed;
 	top: 0;
 	right: -$permanent-scrollbar-width;
@@ -22,9 +22,10 @@
 
 	.message {
 		width: calc(100% - #{2 * $error-spacing + $permanent-scrollbar-width});
-		background: $error-bg;
+		background: $message-bg;
 		padding: $space-xs $default-padding-x;
 		padding-right: $space-md + 2 * $default-padding-x;
+		border-left: 3px solid;
 		box-shadow: $menu-box-shadow;
 		border-radius: $menu-border-radius;
 		margin: $error-spacing;
@@ -32,11 +33,11 @@
 		position: relative;
 
 		&.error {
-			border-left: 3px solid $red;
+			border-left-color: $error;
 		}
 
 		&.info {
-			border-left: 3px solid $blue;
+			border-left-color: $info;
 		}
 
 		@include bp-up(sm) {

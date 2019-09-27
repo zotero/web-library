@@ -21,7 +21,7 @@ const Message = ({ type, id, message, dismissError }) => (
 
 const Errors = ({ dismissError, errors }) => {
 	return (
-		<ul className="errors">
+		<ul className="messages">
 			{
 				errors.filter(error => !error.isDismissed).map(error => (
 					<Message
