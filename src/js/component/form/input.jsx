@@ -5,15 +5,19 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import cx from 'classnames';
 import { noop } from '../../utils';
+import { pick } from '../../common/immutable';
 import AutoResizer from './auto-resizer';
 import Spinner from '../ui/spinner';
+import Suggestions from './suggestions';
 
 class Input extends React.PureComponent {
 	constructor(props) {
 		super(props);
 		this.state = {
+			hasCancelledSuggestions: false,
 			value: props.value
 		};
+		this.suggestions = React.createRef();
 	}
 
 	cancel(event = null) {
@@ -41,11 +45,17 @@ class Input extends React.PureComponent {
 	}
 
 	handleChange({ target }) {
-		this.setState({ value: target.value });
+		this.setState({
+			hasCancelledSuggestions: false,
+			value: target.value,
+		});
 		this.props.onChange(target.value);
 	}
 
 	handleBlur(event) {
+		if(event.relatedTarget && event.relatedTarget.dataset.suggestion) {
+			return;
+		}
 		const shouldCancel = this.props.onBlur(event);
 		if (this.hasBeenCancelled || this.hasBeenCommitted) { return; }
 		shouldCancel ? this.cancel(event) : this.commit(event);
@@ -57,16 +67,33 @@ class Input extends React.PureComponent {
 	}
 
 	handleKeyDown(event) {
+		const { suggestions } = this.props;
+		const { hasCancelledSuggestions } = this.state;
 		switch (event.key) {
 			case 'Escape':
-				this.cancel(event);
+				if(suggestions.length && !hasCancelledSuggestions) {
+					this.setState({ hasCancelledSuggestions: true });
+					event.stopPropagation();
+				} else {
+					this.cancel(event);
+				}
 			break;
 			case 'Enter':
-				this.commit(event);
+				if(suggestions.length && !hasCancelledSuggestions) {
+					const value = this.suggestions.current.getSuggestion();
+					event.persist();
+					this.setState({ value }, () => this.commit(event));
+				} else {
+					this.commit(event);
+				}
 			break;
 		}
 		this.props.onKeyDown(event);
+	}
 
+	handleSuggestionSelect = (suggestion, event) => {
+		event.persist();
+		this.setState({ value: suggestion }, () => this.commit(event));
 	}
 
 	get value() {
@@ -80,13 +107,15 @@ class Input extends React.PureComponent {
 	renderInput() {
 		this.hasBeenCancelled = false;
 		this.hasBeenCommitted = false;
+
 		const extraProps = Object.keys(this.props).reduce((aggr, key) => {
 			if(key.match(/^(aria-|data-).*/)) {
 				aggr[key] = this.props[key];
 			}
 			return aggr;
 		}, {});
-		const input = <input
+
+		let input = <input
 			autoFocus={ this.props.autoFocus }
 			className={ this.props.className }
 			disabled={ this.props.isDisabled }
@@ -113,14 +142,31 @@ class Input extends React.PureComponent {
 			value={ this.state.value }
 			{ ...extraProps }
 		/>;
-		return this.props.resize ?
-			<AutoResizer
-				content={ this.state.value }
-				vertical={ this.props.resize === 'vertical' }
-			>
-				{ input }
-			</AutoResizer> :
-			input;
+
+		if(!this.state.hasCancelledSuggestions && this.props.suggestions.length) {
+			input = (
+				<Suggestions
+					onSelect={ this.handleSuggestionSelect }
+					ref={ this.suggestions }
+					{ ...pick(this.props, ['suggestions']) }
+				>
+					{ input }
+				</Suggestions>
+			);
+		}
+
+		if(this.props.resize) {
+			input = (
+				<AutoResizer
+					content={ this.state.value }
+					vertical={ this.props.resize === 'vertical' }
+				>
+					{ input }
+				</AutoResizer>
+			);
+		}
+
+		return input;
 	}
 
 	renderSpinner() {
@@ -152,6 +198,7 @@ class Input extends React.PureComponent {
 		tabIndex: -1,
 		type: 'text',
 		value: '',
+		suggestions: []
 	};
 
 	static propTypes = {
@@ -184,6 +231,7 @@ class Input extends React.PureComponent {
 		tabIndex: PropTypes.number,
 		type: PropTypes.string.isRequired,
 		value: PropTypes.string.isRequired,
+		suggestions: PropTypes.array,
 	};
 }
 

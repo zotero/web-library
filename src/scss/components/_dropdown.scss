@@ -75,7 +75,8 @@
 		}
 
 		&:hover,
-		&:focus {
+		&:focus,
+		&.active {
 			background-color: $menu-item-hover-bg;
 		}
 
