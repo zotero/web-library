@@ -168,6 +168,22 @@ const checkColoredTags = queryOptions => {
 	}
 }
 
+const fetchTagSuggestions = (searchString, { qmode = 'startswith', start = 0, limit = 10 } = {}) => {
+	return async (_, getState) => {
+		const state = getState();
+		const config = state.config;
+		const { libraryKey } = state.current;
+		const q = searchString;
+
+		const response = await api(config.apiKey, config.apiConfig)
+			.library(libraryKey)
+			.tags()
+			.get({ q, qmode, start, limit });
+
+		return response.getData();
+	}
+}
+
 export {
 	checkColoredTags,
 	fetchTags,
@@ -178,4 +194,5 @@ export {
 	fetchTagsForTrashItems,
 	fetchTagsInCollection,
 	fetchTagsInLibrary,
+	fetchTagSuggestions,
 };

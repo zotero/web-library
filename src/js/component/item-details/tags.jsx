@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
 import PropTypes from 'prop-types';
+import React, { useCallback, useState } from 'react';
+import { useDispatch } from 'react-redux';
 
 import Button from '../ui/button';
 import Editable from '../editable';
@@ -8,16 +9,20 @@ import { deduplicateByKey, sortByKey } from '../../utils';
 import { pick } from '../../common/immutable';
 import { TabPane } from '../ui/tabs';
 import { Toolbar, ToolGroup } from '../ui/toolbars';
+import { fetchTagSuggestions } from '../../actions';
 
 var nextId = 0;
 
 const Tags = ({ tagColors, itemKey, tags: initalTags, isActive, isReadOnly, updateItem }) => {
 	const [tags, setTags] = useState(initalTags.map(t => ({ ...t, id: ++nextId })));
 	const [tagRedacted, setTagRedacted] = useState(null);
+	const [suggestions, setSuggestions] = useState([]);
+	const dispatch = useDispatch();
 
 	const handleCommit = async (newTagValue, hasChanged, ev) => {
-		const tag = ev.currentTarget.closest('[data-tag]').dataset.tag;
+		const tag = (ev.currentTarget || ev.target).closest('[data-tag]').dataset.tag;
 		setTagRedacted(null);
+		setSuggestions([]);
 
 		if(!hasChanged) {
 			setTags(tags.filter(t => t.tag !== ''));
@@ -45,6 +50,7 @@ const Tags = ({ tagColors, itemKey, tags: initalTags, isActive, isReadOnly, upda
 
 	const handleCancel = () => {
 		setTagRedacted(null);
+		setSuggestions([]);
 		setTags(tags.filter(t => t.tag !== ''));
 	}
 
@@ -65,6 +71,18 @@ const Tags = ({ tagColors, itemKey, tags: initalTags, isActive, isReadOnly, upda
 		setTagRedacted('');
 	}
 
+	const handleChange = async newValue => {
+		if(newValue.length > 0) {
+			const rawSuggestions = await dispatch(fetchTagSuggestions(newValue));
+			const processedSuggestions = [...(new Set(rawSuggestions.map(s => s.tag)))];
+			const filteredSuggestions = processedSuggestions.filter(s => !tags.some(t => t.tag === s));
+
+			setSuggestions(filteredSuggestions);
+		} else {
+			setSuggestions([]);
+		}
+	}
+
 	return (
 		<TabPane
 			className="tags"
@@ -77,7 +95,12 @@ const Tags = ({ tagColors, itemKey, tags: initalTags, isActive, isReadOnly, upda
 						{
 							tags.map(tag => {
 								return (
-									<li className="tag" data-tag={ tag.tag } data-key={ tag.id } key={ tag.id } >
+									<li
+										className="tag"
+										data-key={ tag.id }
+										data-tag={ tag.tag }
+										key={ tag.id }
+									>
 										<Icon
 											color={ tag.tag in tagColors ? tagColors[tag.tag] : null }
 											height="12"
@@ -88,11 +111,14 @@ const Tags = ({ tagColors, itemKey, tags: initalTags, isActive, isReadOnly, upda
 										<Editable
 											autoFocus
 											isActive={ tag.tag === tagRedacted }
-											value={ tag.tag }
-											onCommit={ handleCommit }
 											onCancel={ handleCancel }
+											onChange={ handleChange }
 											onClick={ handleEdit }
+											onCommit={ handleCommit }
 											onFocus={ handleEdit }
+
+											suggestions={ suggestions }
+											value={ tag.tag }
 										/>
 										{ !(tag.tag === tagRedacted && tagRedacted === '') && !isReadOnly && (
 											<Button
