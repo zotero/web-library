@@ -168,7 +168,8 @@ const checkColoredTags = queryOptions => {
 	}
 }
 
-const fetchTagSuggestions = (searchString, { qmode = 'startswith', start = 0, limit = 10 } = {}) => {
+const fetchTagSuggestions = (searchString, queryOptions = {}) => {
+	const { qmode = 'startswith', start = 0, limit = 10, sort = 'title', direction = 'asc' } = queryOptions;
 	return async (_, getState) => {
 		const state = getState();
 		const config = state.config;
@@ -178,7 +179,7 @@ const fetchTagSuggestions = (searchString, { qmode = 'startswith', start = 0, li
 		const response = await api(config.apiKey, config.apiConfig)
 			.library(libraryKey)
 			.tags()
-			.get({ q, qmode, start, limit });
+			.get({ direction, q, qmode, start, limit, sort });
 
 		return response.getData();
 	}
