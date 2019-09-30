@@ -291,6 +291,19 @@ const openAttachment = async (key, getAttachmentUrl, isNewTab=false) => {
 	}
 }
 
+const scrollIntoViewIfNeeded = (element, container) => {
+	const containerTop = container.scrollTop;
+	const containerBottom = containerTop + container.clientHeight;
+	const elementTop = element.offsetTop;
+	const elementBottom = elementTop + element.clientHeight;
+
+	if(elementTop < containerTop) {
+		container.scrollTop -= (containerTop - elementTop);
+	} else if(elementBottom > containerBottom) {
+		container.scrollTop += (elementBottom - containerBottom);
+	}
+}
+
 export {
 	compare,
 	compareItem,
@@ -313,6 +326,7 @@ export {
 	removeRelationByItemKey,
 	resizeVisibleColumns,
 	reverseMap,
+	scrollIntoViewIfNeeded,
 	sortByKey,
 	sortItemsByKey,
 	splice,

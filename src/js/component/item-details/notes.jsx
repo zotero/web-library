@@ -13,7 +13,7 @@ import RichEditorContainer from '../../container/rich-editor';
 import withDevice from '../../enhancers/with-device';
 import withEditMode from '../../enhancers/with-edit-mode';
 
-import { get } from '../../utils';
+import { get, scrollIntoViewIfNeeded } from '../../utils';
 import { isTriggerEvent } from '../../common/event';
 import { noteAsTitle } from '../../common/format';
 import { sortByKey, stopPropagation } from '../../utils';
@@ -61,6 +61,7 @@ const Note = props => {
 			onClick={ handleSelect }
 			onKeyDown={ handleSelect }
 			tabIndex={ 0 }
+			data-key={ note.key }
 		>
 			<Icon type={ '28/note'} width="28" height="28" className="hidden-mouse" />
 			<div className="multiline-truncate">
@@ -121,6 +122,7 @@ const Notes = props => {
 
 	const editorRef = useRef();
 	const addedNoteKey = useRef();
+	const notesEl = useRef(null);
 
 	const selectedNote = useMemo(
 		() => childItems.find(n => n.key === noteKey),
@@ -153,6 +155,20 @@ const Notes = props => {
 			addedNoteKey.current = null;
 		}
 	}, [childItems]);
+
+	useEffect(() => {
+		setTimeout(() => {
+			if(!notesEl.current || !selectedNote) {
+				return;
+			}
+
+			const selectedNoteEl = notesEl.current.querySelector(`[data-key="${selectedNote.key}"]`);
+
+			if(selectedNoteEl) {
+				scrollIntoViewIfNeeded(selectedNoteEl, notesEl.current);
+			}
+		}, 0);
+	}, [selectedNote]);
 
 	const handleChangeNote = newContent => {
 		updateItem(noteKey, { note: newContent });
@@ -190,9 +206,9 @@ const Notes = props => {
 			isLoading={ device.shouldUseTabs && !isFetched }
 		>
 			<h5 className="h2 tab-pane-heading hidden-mouse">Notes</h5>
-			<div className="scroll-container-mouse">
+			<div className="scroll-container-mouse" ref={ notesEl }>
 				<nav>
-					<ul className="note-list">
+					<ul className="note-list" >
 						{
 							notes.map(note => {
 								return (
