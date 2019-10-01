@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
 import Button from '../ui/button';
@@ -18,11 +18,14 @@ const Tags = ({ tagColors, itemKey, tags: initalTags, isActive, isReadOnly, upda
 	const [tagRedacted, setTagRedacted] = useState(null);
 	const [suggestions, setSuggestions] = useState([]);
 	const dispatch = useDispatch();
+	const requestId = useRef(1);
+
 
 	const handleCommit = async (newTagValue, hasChanged, ev) => {
 		const tag = (ev.currentTarget || ev.target).closest('[data-tag]').dataset.tag;
 		setTagRedacted(null);
 		setSuggestions([]);
+		requestId.current += 1;
 
 		if(!hasChanged) {
 			setTags(tags.filter(t => t.tag !== ''));
@@ -51,6 +54,7 @@ const Tags = ({ tagColors, itemKey, tags: initalTags, isActive, isReadOnly, upda
 	const handleCancel = () => {
 		setTagRedacted(null);
 		setSuggestions([]);
+		requestId.current += 1;
 		setTags(tags.filter(t => t.tag !== ''));
 	}
 
@@ -72,8 +76,14 @@ const Tags = ({ tagColors, itemKey, tags: initalTags, isActive, isReadOnly, upda
 	}
 
 	const handleChange = async newValue => {
+		requestId.current += 1;
+		const currentRequest = requestId.current;
 		if(newValue.length > 0) {
 			const rawSuggestions = await dispatch(fetchTagSuggestions(newValue));
+			if(currentRequest !== requestId.current) {
+				// These suggestions are now outdated as the input has been changed, commited or cancelled, discard...
+				return;
+			}
 			const processedSuggestions = [...(new Set(rawSuggestions.map(s => s.tag)))];
 			const filteredSuggestions = processedSuggestions.filter(s => !tags.some(t => t.tag === s));
 			setSuggestions(filteredSuggestions);
