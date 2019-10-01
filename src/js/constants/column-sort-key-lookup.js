@@ -11,4 +11,5 @@ export default Object.freeze({
 	dateAdded: 'dateAdded',
 	dateModified: 'dateModified',
 	extra: false,
+	attachment: false,
 });

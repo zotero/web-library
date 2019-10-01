@@ -4,6 +4,7 @@ import baseMappings from 'zotero-base-mappings';
 import paramCase from 'param-case';
 
 import { noteAsTitle, itemTypeLocalized, dateLocalized } from './format';
+import { get } from '../utils';
 
 const getBaseMappedValue = (item, property) => {
 	const { itemType } = item;
@@ -47,11 +48,16 @@ const getDerivedData = (item, itemTypes, tagColors) => {
 	);
 	const itemTypeName = itemTypeLocalized(item, itemTypes);
 	const iconName = item.itemType === 'attachment' ? getAttachmentIcon(item) : paramCase(itemTypeName);
+	const attachment = get(item, [Symbol.for('links'), 'attachment'], null);
 
 	// same logic as https://github.com/zotero/zotero/blob/6abfd3b5b03969564424dc03313d63ae1de86100/chrome/content/zotero/xpcom/itemTreeView.js#L1062
 	const year = date.substr(0, 4);
 
 	return {
+		attachmentUrl: attachment ? attachment.href : null,
+		attachmentIconName: attachment ? getAttachmentIcon({
+			linkMode: 'imported_file', contentType: attachment.attachmentType }
+		) : null,
 		colors,
 		creator,
 		date,

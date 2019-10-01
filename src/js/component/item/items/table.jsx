@@ -465,6 +465,24 @@ class ItemsTable extends React.PureComponent {
 			return this.renderTitleCell({ cellData, rowData });
 		}
 
+		if(dataKey === 'attachment') {
+			const { selectedItemKeys } = this.props;
+			const { isFocused } = this.state;
+
+			const dvp = window.devicePixelRatio >= 2 ? 2 : 1;
+			const iconName = rowData.attachmentIconName;
+			const isActive = selectedItemKeys.includes(rowData.key);
+
+			return (
+				<Icon
+					type={ `16/item-types/light/${dvp}x/${iconName}` }
+					symbol={ isFocused && isActive ? `${iconName}-white` : iconName }
+					width="16"
+					height="16"
+				/>
+			);
+		}
+
 		if(rowData.isPlaceholder) {
 			return <div className="placeholder" />;
 		}
