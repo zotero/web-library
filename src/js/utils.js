@@ -297,10 +297,8 @@ const scrollIntoViewIfNeeded = (element, container) => {
 	const elementTop = element.offsetTop;
 	const elementBottom = elementTop + element.clientHeight;
 
-	if(elementTop < containerTop) {
-		container.scrollTop -= (containerTop - elementTop);
-	} else if(elementBottom > containerBottom) {
-		container.scrollTop += (elementBottom - containerBottom);
+	if(elementTop < containerTop || elementBottom > containerBottom) {
+		element.scrollIntoView();
 	}
 }
 
