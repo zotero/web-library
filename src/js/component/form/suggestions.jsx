@@ -1,9 +1,27 @@
-import React, { forwardRef, useCallback, useState, useImperativeHandle } from 'react';
+import cx from 'classnames';
 import PropTypes from 'prop-types';
-
+import React, { forwardRef, useCallback, useState, useImperativeHandle } from 'react';
 import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap/lib';
 
-const Suggestions = forwardRef(({ children, suggestions, onSelect }, ref) => {
+import { omit } from '../../common/immutable';
+
+// workaround for DropdownToggle not allowing childless element
+// https://github.com/reactstrap/reactstrap/blob/dc0b8ae45136e4aecb055c929b0b6424c4d9a771/src/DropdownToggle.js#L63
+const DropChildren = ({ innerRef, ...props }) => (
+	<input ref={ innerRef } { ...omit(props, ['children'])} />
+);
+
+DropChildren.displayName = 'DropChildren';
+
+DropChildren.propTypes = {
+	innerRef: PropTypes.oneOfType([
+		PropTypes.func,
+		PropTypes.shape({ current: PropTypes.instanceOf(Element) })
+	])
+};
+
+const Suggestions = forwardRef((props, ref) => {
+	const { children, inputProps, suggestions, onSelect } = props;
 	const [isOpen, setIsOpen] = useState(false);
 	const [highlighted, setHighlighted] = useState(null);
 
@@ -20,7 +38,7 @@ const Suggestions = forwardRef(({ children, suggestions, onSelect }, ref) => {
 		return currentIndex === -1 ? indexIfNotFound : currentIndex;
 	}
 
-	const handleKeyDown = useCallback(() => {
+	const handleKeyDown = useCallback(event => {
 		switch (event.key) {
 			case 'ArrowDown':
 				setHighlighted(suggestions[getCurrentIndex(-1) + 1]);
@@ -28,6 +46,9 @@ const Suggestions = forwardRef(({ children, suggestions, onSelect }, ref) => {
 			case 'ArrowUp':
 				setHighlighted(suggestions[getCurrentIndex(suggestions.length) - 1]);
 			break;
+		}
+		if(inputProps.onKeyDown) {
+			inputProps.onKeyDown(event);
 		}
 	});
 
@@ -44,11 +65,11 @@ const Suggestions = forwardRef(({ children, suggestions, onSelect }, ref) => {
 			toggle={ handleToggle }
 		>
 			<DropdownToggle
-				tag="div"
-				className="suggestions"
+				tag={ DropChildren }
+				{ ...inputProps }
+				className={ cx('suggestions', inputProps.className) }
 				onKeyDown={ handleKeyDown }
 			>
-			{ children }
 			</DropdownToggle>
 			<DropdownMenu
 				flip={ false }

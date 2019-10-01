@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React, { useCallback, useState } from 'react';
+import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 
 import Button from '../ui/button';
@@ -76,7 +76,6 @@ const Tags = ({ tagColors, itemKey, tags: initalTags, isActive, isReadOnly, upda
 			const rawSuggestions = await dispatch(fetchTagSuggestions(newValue));
 			const processedSuggestions = [...(new Set(rawSuggestions.map(s => s.tag)))];
 			const filteredSuggestions = processedSuggestions.filter(s => !tags.some(t => t.tag === s));
-
 			setSuggestions(filteredSuggestions);
 		} else {
 			setSuggestions([]);
@@ -116,7 +115,6 @@ const Tags = ({ tagColors, itemKey, tags: initalTags, isActive, isReadOnly, upda
 											onClick={ handleEdit }
 											onCommit={ handleCommit }
 											onFocus={ handleEdit }
-
 											suggestions={ suggestions }
 											value={ tag.tag }
 										/>

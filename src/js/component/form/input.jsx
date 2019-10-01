@@ -80,7 +80,7 @@ class Input extends React.PureComponent {
 			break;
 			case 'Enter':
 				if(suggestions.length && !hasCancelledSuggestions) {
-					const value = this.suggestions.current.getSuggestion();
+					const value = this.suggestions.current.getSuggestion() || this.state.value;
 					event.persist();
 					this.setState({ value }, () => this.commit(event));
 				} else {
@@ -108,52 +108,34 @@ class Input extends React.PureComponent {
 		this.hasBeenCancelled = false;
 		this.hasBeenCommitted = false;
 
-		const extraProps = Object.keys(this.props).reduce((aggr, key) => {
-			if(key.match(/^(aria-|data-).*/)) {
-				aggr[key] = this.props[key];
-			}
-			return aggr;
-		}, {});
+		const inputProps = {
+			disabled: this.props.isDisabled,
+			onBlur: this.handleBlur.bind(this),
+			onChange: this.handleChange.bind(this),
+			onFocus: this.handleFocus.bind(this),
+			onKeyDown: this.handleKeyDown.bind(this),
+			readOnly: this.props.isReadOnly,
+			ref: input => this.input = input,
+			required: this.props.isRequired,
+			value: this.state.value,
+			...pick(this.props, ['autoFocus', 'className', 'form', 'id', 'inputMode', 'max',
+				'maxLength', 'min', 'minLength', 'name', 'placeholder', 'type', 'spellCheck',
+				'step', 'tabIndex']),
+			...pick(this.props, key => key.match(/^(aria-|data-).*/))
+		};
 
-		let input = <input
-			autoFocus={ this.props.autoFocus }
-			className={ this.props.className }
-			disabled={ this.props.isDisabled }
-			form={ this.props.form }
-			id={ this.props.id }
-			inputMode={ this.props.inputMode }
-			max={ this.props.max }
-			maxLength={ this.props.maxLength }
-			min={ this.props.min }
-			minLength={ this.props.minLength }
-			name={ this.props.name }
-			onBlur={ this.handleBlur.bind(this) }
-			onChange={ this.handleChange.bind(this) }
-			onFocus={ this.handleFocus.bind(this) }
-			onKeyDown={ this.handleKeyDown.bind(this) }
-			placeholder={ this.props.placeholder }
-			readOnly={ this.props.isReadOnly }
-			ref={ input => this.input = input }
-			required={ this.props.isRequired }
-			spellCheck={ this.props.spellCheck }
-			step={ this.props.step }
-			tabIndex={ this.props.tabIndex }
-			type={ this.props.type }
-			value={ this.state.value }
-			{ ...extraProps }
-		/>;
+		const shouldUseSuggestions = !this.state.hasCancelledSuggestions && this.props.suggestions.length;
 
-		if(!this.state.hasCancelledSuggestions && this.props.suggestions.length) {
-			input = (
-				<Suggestions
-					onSelect={ this.handleSuggestionSelect }
-					ref={ this.suggestions }
-					{ ...pick(this.props, ['suggestions']) }
-				>
-					{ input }
-				</Suggestions>
-			);
-		}
+		var input = shouldUseSuggestions ? (
+			<Suggestions
+				onSelect={ this.handleSuggestionSelect }
+				ref={ this.suggestions }
+				inputProps={ inputProps }
+				{ ...pick(this.props, ['suggestions']) }
+			/>
+		) : (
+			<input { ...inputProps } />
+		);
 
 		if(this.props.resize) {
 			input = (
