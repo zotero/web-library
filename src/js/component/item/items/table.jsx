@@ -14,6 +14,7 @@ import Icon from '../../ui/icon';
 import Row from './row';
 import Spinner from '../../ui/spinner';
 import columnNames from '../../../constants/column-names';
+import columnSortKeyLookup from '../../../constants/column-sort-key-lookup';
 
 class ItemsTable extends React.PureComponent {
 	constructor(props) {
@@ -212,6 +213,10 @@ class ItemsTable extends React.PureComponent {
 		if(this.ignoreNextSortTimeStamp && Date.now() - this.ignoreNextSortTimeStamp < 300) {
 			// triggered by reorder or resize
 			return;
+		}
+		if(!columnSortKeyLookup[sortOptions.sortBy]) {
+			// unsortable column, ignore
+			return
 		}
 		this.props.onSort(sortOptions);
 	}

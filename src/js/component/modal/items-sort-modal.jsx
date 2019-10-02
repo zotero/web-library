@@ -6,6 +6,7 @@ import Modal from '../ui/modal';
 import Button from '../ui/button';
 import RadioSet from '../form/radio-set';
 import columnNames from '../../constants/column-names';
+import columnSortKeyLookup from '../../constants/column-sort-key-lookup';
 
 class ItemsSortModal extends React.PureComponent {
 	state = { sortColumn: null }
@@ -46,7 +47,8 @@ class ItemsSortModal extends React.PureComponent {
 	render() {
 		const { isOpen, toggleModal, device } = this.props;
 		const radioSetOptions = Object.entries(columnNames)
-			.map(([value, label]) => ({ value, label }));
+			.map(([value, label]) => ({ value, label }))
+			.filter(({ value }) => columnSortKeyLookup[value]);
 
 		return (
 			<Modal
