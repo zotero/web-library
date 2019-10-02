@@ -4,7 +4,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import cx from 'classnames';
 import deepEqual from 'deep-equal';
-import { resizeVisibleColumns } from '../../../utils';
+import { openAttachment, resizeVisibleColumns } from '../../../utils';
 import AutoSizer from 'react-virtualized/dist/commonjs/AutoSizer';
 import InfiniteLoader from 'react-virtualized/dist/commonjs/InfiniteLoader';
 import CustomTable from '../../../react-virtualized/custom-table';
@@ -171,7 +171,7 @@ class ItemsTable extends React.PureComponent {
 	//		 have been triggered as a drag event in which case "mousedown"
 	//		 is ignored and "click" is used instead, if occurs.
 	handleRowMouseEvent = ({ event, index }) => {
-		const { items, selectedItemKeys } = this.props;
+		const { items, selectedItemKeys, getAttachmentUrl } = this.props;
 		const item = items[index];
 		if(item) {
 			const isSelected = selectedItemKeys.includes(item.key);
@@ -195,6 +195,9 @@ class ItemsTable extends React.PureComponent {
 						delete this.ignoreClicks[item.key];
 						return
 					}
+				}
+				if(event.type === 'dblclick' && item.attachmentItemKey) {
+					openAttachment(item.attachmentItemKey, getAttachmentUrl, true);
 				}
 			}
 			if(event.type === 'mousedown') {
@@ -616,6 +619,7 @@ class ItemsTable extends React.PureComponent {
 									headerRowRenderer={ this.renderHeaderRow.bind(this) }
 									height={ height }
 									onRowClick={ this.handleRowMouseEvent }
+									onRowDoubleClick={ this.handleRowMouseEvent }
 									onRowsRendered={ onRowsRendered }
 									ref={ ref => { this.tableRef = ref; registerChild(ref); } }
 									rowCount={ totalItemsCount || 0 }
@@ -649,6 +653,7 @@ class ItemsTable extends React.PureComponent {
 
 ItemsTable.propTypes = {
 	chunkedTrashOrDelete: PropTypes.func,
+	getAttachmentUrl: PropTypes.func,
 	items: PropTypes.array,
 	onItemsSelect: PropTypes.func,
 	selectedItemKeys: PropTypes.array,

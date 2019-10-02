@@ -160,9 +160,9 @@ const createItem = (properties, libraryKey) => {
 
 			const item = {
 				...response.getEntityByIndex(0),
-				[Symbol.for('meta')]: response.getMeta()[0] || {}
+				[Symbol.for('meta')]: response.getMeta()[0] || {},
+				[Symbol.for('links')]: response.getLinks()[0] || {}
 			};
-
 
 			dispatch({
 				type: RECEIVE_CREATE_ITEM,

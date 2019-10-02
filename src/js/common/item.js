@@ -29,6 +29,14 @@ const getAttachmentIcon = ({ linkMode, contentType }) => {
 	}
 }
 
+const extractItemKey = url => {
+	const matchResult = url.match(/\/items\/([A-Z0-9]{8})/);
+	if(matchResult) {
+		return matchResult[1];
+	}
+	return null;
+}
+
 const getDerivedData = (item, itemTypes, tagColors) => {
 	const { itemType, note, dateAdded, dateModified, extra } = item;
 	const title = getItemTitle(item);
@@ -54,7 +62,7 @@ const getDerivedData = (item, itemTypes, tagColors) => {
 	const year = date.substr(0, 4);
 
 	return {
-		attachmentUrl: attachment ? attachment.href : null,
+		attachmentItemKey: attachment ? extractItemKey(attachment.href) : null,
 		attachmentIconName: attachment ? getAttachmentIcon({
 			linkMode: 'imported_file', contentType: attachment.attachmentType }
 		) : null,

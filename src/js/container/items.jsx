@@ -12,7 +12,7 @@ import withSortItems from '../enhancers/with-sort-items';
 import columnSortKeyLookup from '../constants/column-sort-key-lookup';
 import { copyToLibrary, addToCollection, fetchItemsInCollection, fetchItemsQuery,
 	fetchPublicationsItems, fetchTopItems, fetchTrashItems, preferenceChange,
-	sortItems, chunkedTrashOrDelete } from '../actions';
+	getAttachmentUrl, chunkedTrashOrDelete } from '../actions';
 import { get, resizeVisibleColumns } from '../utils';
 import { omit } from '../common/immutable';
 import { makePath } from '../common/navigation';
@@ -211,7 +211,8 @@ const mapStateToProps = state => {
 
 //@TODO: bind all action creators
 const mapDispatchToProps = dispatch => ({
-	dispatch, ...bindActionCreators({ chunkedTrashOrDelete, addToCollection, copyToLibrary, push }, dispatch)
+	dispatch, ...bindActionCreators({ chunkedTrashOrDelete, addToCollection, copyToLibrary,
+	getAttachmentUrl, push }, dispatch)
 });
 
 ItemsContainer.propTypes = {
