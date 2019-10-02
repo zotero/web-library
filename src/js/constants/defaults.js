@@ -86,7 +86,7 @@ export const preferences = {
 		},
 		{
 			field: 'attachment',
-			fraction: 0.1,
+			fraction: 0.05,
 			isVisible: false,
 			minFraction: 0.05,
 		},

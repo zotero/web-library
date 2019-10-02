@@ -523,9 +523,13 @@ class ItemsTable extends React.PureComponent {
 				>
 					<span
 						className="header-label truncate"
-						title={label}
+						title={ label }
 					>
-						{label}
+						{
+							dataKey === 'attachment' ?
+							<Icon type={ '16/attachment' } width="16" height="16" /> :
+							label
+						}
 					</span>
 					{ isSortIndicatorVisible &&
 						<Icon type={ '16/chevron-7' } width="16" height="16" className="sort-indicator" />
