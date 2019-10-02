@@ -72,7 +72,6 @@ const Suggestions = forwardRef((props, ref) => {
 			>
 			</DropdownToggle>
 			<DropdownMenu
-				flip={ false }
 				modifiers={{
 					preventOverflow: { enabled: false }
 				}}
