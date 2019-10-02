@@ -88,13 +88,6 @@ const itemsByParent = (state = {}, action) => {
 					action
 				)
 			};
-		case SORT_ITEMS:
-			return Object.entries(state).reduce((aggr, [parentKey, itemKeys]) => {
-				aggr[parentKey] = sortItemKeysOrClear(
-					itemKeys, action.items, action.sortBy, action.sortDirection
-				);
-				return aggr
-			}, {});
 		case RECEIVE_ITEMS_IN_COLLECTION:
 		case RECEIVE_FETCH_ITEMS:
 		case RECEIVE_TOP_ITEMS:
