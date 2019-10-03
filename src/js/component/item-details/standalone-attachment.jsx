@@ -37,13 +37,19 @@ const StandaloneAttachmentTabPane = ({ isActive, item, getAttachmentUrl }) => {
 							<div className="truncate">Filename</div>
 						</div>
 						<div className="value">
-							<a
-								className="truncate"
-								onMouseDown={ handleLinkInteraction }
-								onClick={ handleLinkInteraction }
-							>
-								{ item.filename }
-							</a>
+							{ item[Symbol.for('links')].enclosure ? (
+								<a
+									className="truncate"
+									onMouseDown={ handleLinkInteraction }
+									onClick={ handleLinkInteraction }
+								>
+									{ item.filename }
+								</a>
+							) : (
+								<span className="truncate no-link">
+									{ item.filename }
+								</span>
+							) }
 						</div>
 					</li>
 				) }
