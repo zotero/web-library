@@ -282,13 +282,42 @@ const loadJs = async path => {
 	});
 }
 
-const openAttachment = async (key, getAttachmentUrl, isNewTab=false) => {
-	const url = await getAttachmentUrl(key);
-	if(isNewTab) {
-		window.open(url);
-	} else {
-		window.location = url;
+const openAttachment = (key, getAttachmentUrl, isNewTab = false) => {
+	const isChrome = /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor);
+	isChrome || !isNewTab ?
+		openAttachmentSimple(key, getAttachmentUrl, isNewTab) :
+		openAttachmentBlockerWorkaround(key, getAttachmentUrl);
+}
+
+const openAttachmentSimple = async (key, getAttachmentUrl, isNewTab = false) => {
+	const url = await getAttachmentUrl(key, getAttachmentUrl);
+	isNewTab ? window.open(url) : window.location = url;
+}
+
+const openAttachmentBlockerWorkaround = (key, getAttachmentUrl) => {
+	const pollInterval = 100;
+	const checks = [];
+	let checkTime = pollInterval;
+	let url;
+
+	const promise = getAttachmentUrl(key).then(obtainedUrl => url = obtainedUrl);
+
+	const openIfReady = () => {
+		if(url) {
+			window.open(url);
+			checks.forEach(check => clearTimeout(check))
+		}
 	}
+
+	while(checkTime < 1000) {
+		checks.push(setTimeout(openIfReady, checkTime));
+		checkTime += pollInterval
+	}
+
+	// this last-resort check is guaranteed to trigger a popup blocker
+	checks.push(setTimeout(() => {
+		promise.then(url => window.open(url));
+	}, checkTime));
 }
 
 const scrollIntoViewIfNeeded = (element, container) => {
