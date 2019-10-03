@@ -5,7 +5,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import TagSelector from '../component/tag-selector.jsx';
 import { deduplicateByKey, get } from '../utils';
-import { checkColoredTags, fetchTags, navigate } from '../actions';
+import { checkColoredTags, fetchTags, navigate, toggleTagSelector } from '../actions';
 
 class TagSelectorContainer extends React.PureComponent {
 	state = {
@@ -63,14 +63,15 @@ class TagSelectorContainer extends React.PureComponent {
 
 const mapStateToProps = state => {
 	const {
-		libraryKey,
 		collectionKey,
-		tags: selectedTags,
-		itemsSource,
-		search,
 		isMyPublications,
+		isTagSelectorOpen,
 		isTrash,
+		itemsSource,
+		libraryKey,
 		qmode,
+		search,
+		tags: selectedTags,
 	} = state.current;
 	if(!libraryKey) { return {}; }
 
@@ -110,11 +111,11 @@ const mapStateToProps = state => {
 	return {
 		isReady: totalTagCount !== null,
 		libraryKey, sourceTags, search, selectedTags, tags, totalTagCount, itemsSource, collectionKey,
-		sourceTagsPointer, isFetching, isMyPublications, isTrash, qmode
+		sourceTagsPointer, isFetching, isMyPublications, isTagSelectorOpen, isTrash, qmode
 	}
 
 };
 
-const mapDispatchToProps = { checkColoredTags, fetchTags, navigate };
+const mapDispatchToProps = { checkColoredTags, fetchTags, navigate, toggleTagSelector };
 
 export default connect(mapStateToProps, mapDispatchToProps)(TagSelectorContainer);

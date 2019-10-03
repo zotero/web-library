@@ -4,6 +4,7 @@ import {
     DISMISS_ERROR,
     TOGGLE_MODAL,
     TOGGLE_NAVBAR,
+    TOGGLE_TAG_SELECTOR,
     TOGGLE_TRANSITIONS,
     TRIGGER_EDITING_ITEM,
     TRIGGER_RESIZE_VIEWPORT,
@@ -57,12 +58,16 @@ const triggerUserTypeChange = userType => {
 	}
 }
 
+const toggleModal = (id, shouldOpen, config) => {
+	return { type: TOGGLE_MODAL, id, shouldOpen, ...config }
+}
+
 const toggleNavbar = isOpen => {
 	return { type: TOGGLE_NAVBAR, isOpen };
 }
 
-const toggleModal = (id, shouldOpen, config) => {
-	return { type: TOGGLE_MODAL, id, shouldOpen, ...config }
+const toggleTagSelector = isOpen => {
+	return { type: TOGGLE_TAG_SELECTOR, isOpen };
 }
 
 const toggleTransitions = useTransitions => {
@@ -77,6 +82,7 @@ export {
 	dismissError,
 	toggleModal,
 	toggleNavbar,
+	toggleTagSelector,
 	toggleTransitions,
 	triggerEditingItem,
 	triggerResizeViewport,

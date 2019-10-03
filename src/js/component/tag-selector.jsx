@@ -13,10 +13,6 @@ import { pick } from '../common/immutable';
 import { UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap/lib';
 
 class TagSelector extends React.PureComponent {
-	state = {
-		isCollapsed: false
-	}
-
 	handleKeyDown = ev => {
 		const { onFocusNext, onFocusPrev } = this.props;
 		if(ev.target !== ev.currentTarget) {
@@ -36,15 +32,15 @@ class TagSelector extends React.PureComponent {
 	}
 
 	handleCollapseClick = () => {
-		const { isCollapsed } = this.state;
-		this.setState({ isCollapsed: !isCollapsed });
+		const { isTagSelectorOpen, toggleTagSelector } = this.props;
+		toggleTagSelector(!isTagSelectorOpen);
 	}
 
 	render() {
 		const { isFetching, onFocus, onBlur, registerFocusRoot, selectedTags } = this.props;
 		return (
 			<div
-				className={ cx('tag-selector', { 'collapsed': this.state.isCollapsed }) }
+				className={ cx('tag-selector', { 'collapsed': !this.props.isTagSelectorOpen }) }
 				>
 				<div className="scroll-container">
 					<Button
@@ -105,6 +101,7 @@ class TagSelector extends React.PureComponent {
 		fetchTags: PropTypes.func.isRequired,
 		isFetching: PropTypes.bool,
 		isMyPublications: PropTypes.bool,
+		isTagSelectorOpen: PropTypes.bool,
 		isTrash: PropTypes.bool,
 		libraryKey: PropTypes.string,
 		navigate: PropTypes.func,
@@ -119,6 +116,7 @@ class TagSelector extends React.PureComponent {
 		search: PropTypes.string,
 		searchString: PropTypes.string,
 		selectedTags: PropTypes.array,
+		toggleTagSelector: PropTypes.func,
 		view: PropTypes.string,
 	}
 

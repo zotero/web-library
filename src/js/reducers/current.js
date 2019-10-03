@@ -4,11 +4,12 @@ import { LOCATION_CHANGE } from 'connected-react-router';
 
 import {
     CONFIGURE,
-    TRIGGER_EDITING_ITEM,
-    TRIGGER_SELECT_MODE,
-    TOGGLE_TRANSITIONS,
-    TRIGGER_SEARCH_MODE,
     TOGGLE_NAVBAR,
+    TOGGLE_TAG_SELECTOR,
+    TOGGLE_TRANSITIONS,
+    TRIGGER_EDITING_ITEM,
+    TRIGGER_SEARCH_MODE,
+    TRIGGER_SELECT_MODE,
 } from '../constants/actions';
 
 import { tagsFromUrlPart } from '../common/navigation';
@@ -20,6 +21,7 @@ const stateDefault = {
 	isEditing: false,
 	isSelectMode: false,
 	isNavBarOpen: false,
+	isTagSelectorOpen: true,
 	itemKey: null,
 	itemKeys: [],
 	itemsSource: null,
@@ -159,6 +161,11 @@ const current = (state = stateDefault, action, { config } = {}) => {
 			return {
 				...state,
 				isNavBarOpen: typeof(action.isOpen) === 'boolean' ? action.isOpen : !state.isNavBarOpen
+			}
+		case TOGGLE_TAG_SELECTOR:
+			return {
+				...state,
+				isTagSelectorOpen: typeof(action.isOpen) === 'boolean' ? action.isOpen : !state.isTagSelectorOpen
 			}
 		default:
 			return state;
