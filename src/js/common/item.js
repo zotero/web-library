@@ -15,17 +15,23 @@ const getBaseMappedValue = (item, property) => {
 const getItemTitle = item => item.itemType === 'note' ?
 	noteAsTitle(item.note) : getBaseMappedValue(item, 'title') || '';
 
+// logic based on:
+// https://github.com/zotero/zotero/blob/26ee0e294b604ed9ea473c76bb072715c318eac2/chrome/content/zotero/xpcom/data/item.js#L3697
 const getAttachmentIcon = ({ linkMode, contentType }) => {
+	if(contentType === 'application/pdf') {
+		return linkMode === 'linked_file' ? 'pdf-linked' : 'pdf';
+	}
+
 	switch(linkMode) {
 		case 'linked_url':
 			return 'web-page-linked';
 		case 'imported_url':
 			return 'web-page-snapshot';
 		case 'linked_file':
-			return contentType === 'application/pdf' ? 'pdf-linked' : 'document-linked';
+			return 'document-linked';
 		case 'imported_file':
 		default:
-			return contentType === 'application/pdf' ? 'pdf' : 'document';
+			return 'document';
 	}
 }
 
