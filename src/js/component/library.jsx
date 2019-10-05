@@ -26,7 +26,7 @@ import NewItemModalContainer from '../container/modal/new-item';
 import RenameCollectionModalContainer from '../container/modal/rename-collection';
 import SearchBackdrop from './search-backdrop';
 import StyleInstallerModalContainer from '../container/modal/style-installer';
-import TagSelectorContainer from '../container/tag-selector';
+import TagSelector from '../component/tag-selector';
 import TouchHeaderContainer from '../container/touch-header';
 import TouchNoteContainer from '../container/touch-note';
 import withDevice from '../enhancers/with-device';
@@ -147,7 +147,7 @@ const Library = props => {
 								/>
 								<LibrariesContainer />
 								{ !device.isTouchOrSmall &&
-									<TagSelectorContainer key={ key } />
+									<TagSelector key={ key } />
 								}
 							</header>
 							<CSSTransition

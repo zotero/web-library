@@ -53,6 +53,23 @@ const getParamsFromRoute = memoize(state => {
 	return {};
 }, deepEqual);
 
+const getTagsData = state => {
+	const { collectionKey, itemsSource, libraryKey } = state.current;
+
+	switch(itemsSource) {
+		case 'query':
+			return state.query.tags;
+		case 'trash':
+			return get(state, ['libraries', libraryKey, 'tagsInTrashItems'], []);
+		case 'publications':
+			return get(state, ['libraries', libraryKey, 'tagsInPublicationsItems'], []);
+		case 'collection':
+			return get(state, ['libraries', libraryKey, 'tagsByCollection', collectionKey], []);
+		case 'top':
+		default:
+			return get(state, ['libraries', libraryKey, 'tagsTop'], []);
+	}
+}
 
 
-export { getCollectionsPath, getSerializedQuery, getParamsFromRoute };
+export { getCollectionsPath, getSerializedQuery, getParamsFromRoute, getTagsData };

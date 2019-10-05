@@ -1,6 +1,7 @@
 'use strict';
 
 import api from 'zotero-api-client';
+import { FILTER_TAGS } from '../constants/actions';
 
 const getApi = ({ config, libraryKey }, requestType, queryConfig) => {
 	switch(requestType) {
@@ -185,6 +186,13 @@ const fetchTagSuggestions = (searchString, queryOptions = {}) => {
 	}
 }
 
+const filterTags = tagsSearchString => {
+	return {
+		type: FILTER_TAGS,
+		tagsSearchString
+	}
+}
+
 export {
 	checkColoredTags,
 	fetchTags,
@@ -196,4 +204,5 @@ export {
 	fetchTagsInCollection,
 	fetchTagsInLibrary,
 	fetchTagSuggestions,
+	filterTags,
 };

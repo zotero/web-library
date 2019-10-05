@@ -1,9 +1,8 @@
-'use strict';
-
 import { LOCATION_CHANGE } from 'connected-react-router';
 
 import {
     CONFIGURE,
+    FILTER_TAGS,
     TOGGLE_NAVBAR,
     TOGGLE_TAG_SELECTOR,
     TOGGLE_TRANSITIONS,
@@ -19,8 +18,8 @@ const stateDefault = {
 	collectionKey: null,
 	editingItemKey: null,
 	isEditing: false,
-	isSelectMode: false,
 	isNavBarOpen: false,
+	isSelectMode: false,
 	isTagSelectorOpen: true,
 	itemKey: null,
 	itemKeys: [],
@@ -30,6 +29,7 @@ const stateDefault = {
 	search: '',
 	searchState: {},
 	tags: [],
+	tagsSearchString: '',
 	userLibraryKey: null,
 	useTransitions: false,
 	view: 'library',
@@ -166,6 +166,11 @@ const current = (state = stateDefault, action, { config } = {}) => {
 			return {
 				...state,
 				isTagSelectorOpen: typeof(action.isOpen) === 'boolean' ? action.isOpen : !state.isTagSelectorOpen
+			}
+		case FILTER_TAGS:
+			return {
+				...state,
+				tagsSearchString: action.tagsSearchString
 			}
 		default:
 			return state;

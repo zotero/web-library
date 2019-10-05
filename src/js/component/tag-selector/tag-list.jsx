@@ -1,46 +1,72 @@
-import React from 'react';
-import PropTypes from 'prop-types';
 import cx from 'classnames';
+import PropTypes from 'prop-types';
+import React, { useCallback, useEffect, useMemo, useRef } from 'react';
+import { useDispatch, useSelector, shallowEqual } from 'react-redux';
+
 import withFocusManager from '../../enhancers/with-focus-manager';
+import { checkColoredTags, fetchTags, navigate } from '../../actions';
+import { deduplicateByKey, get } from '../../utils';
+import { getTagsData } from '../../common/state';
 import { isTriggerEvent } from '../../common/event';
-import Icon from '../ui/icon';
+
 const PAGE_SIZE = 100;
 
-class TagList extends React.PureComponent {
-	componentDidMount() {
-		const { checkColoredTags, fetchTags, sourceTagsPointer, totalTagCount } = this.props;
-		if(totalTagCount === null) {
-			fetchTags({ start: 0, limit: PAGE_SIZE, sort: 'title' });
-		}
-		if(sourceTagsPointer < totalTagCount) {
-			checkColoredTags();
-		}
-	}
+const TagList = props => {
+	const { onBlur, onFocus, onFocusNext, onFocusPrev, registerFocusRoot } = props; // FocusManager
+	const tagsSearchString = useSelector(state => state.current.tagsSearchString);
+	const selectedTags = useSelector(state => state.current.tags, shallowEqual);
+	const { isFetching, pointer: sourceTagsPointer = 0, tags: sourceTags = [], totalResults: totalTagCount = null } =
+		useSelector(state => getTagsData(state), shallowEqual);
+	const tagColors = useSelector(state =>  get(state, ['libraries', state.current.libraryKey, 'tagColors'], {}), shallowEqual);
+	const dispatch = useDispatch();
 
-	componentDidUpdate({ searchString: prevSearchString,
-		sourceTagsPointer: prevSourceTagsPointer, totalTagCount: prevTotalTagCount }) {
-		const { checkColoredTags, searchString, sourceTagsPointer, totalTagCount } = this.props;
-		if(searchString !== prevSearchString || prevSourceTagsPointer !== sourceTagsPointer) {
-			this.maybeLoadMore();
-		}
-		if(totalTagCount !== prevTotalTagCount && totalTagCount > PAGE_SIZE) {
-			checkColoredTags();
-		}
-	}
+	const containerRef = useRef(null);
+	const listRef = useRef(null);
 
-	maybeLoadMore = () => {
-		const { isFetching, sourceTagsPointer, totalTagCount, fetchTags } = this.props;
-		const containerHeight = this.containerRef.getBoundingClientRect().height;
-		const totalHeight = this.listRef.getBoundingClientRect().height;
-		const scrollProgress = (this.containerRef.scrollTop + containerHeight) / totalHeight;
+	const containerRefCb = useCallback(node => {
+		registerFocusRoot(node);
+		containerRef.current = node;
+	});
+
+	const tags = useMemo(() => {
+		const tagsSearchStringLC = tagsSearchString.toLowerCase();
+		const newTags = deduplicateByKey([
+			...Object.keys(tagColors),
+			...(tagsSearchString === '' ? sourceTags : sourceTags.filter(
+				tag => tag.toLowerCase().includes(tagsSearchStringLC)
+			))
+		].map(tag => ({
+			tag,
+			color: tag in tagColors ? tagColors[tag] : null,
+			disabled: tag in tagColors && !sourceTags.includes(tag),
+			selected: selectedTags.includes(tag)
+		})), 'tag');
+
+		return newTags;
+	}, [sourceTags, tagColors, tagsSearchString]);
+
+	const maybeLoadMore = useCallback(() => {
+		const containerHeight = containerRef.current.getBoundingClientRect().height;
+		const totalHeight = listRef.current.getBoundingClientRect().height;
+		const scrollProgress = (containerRef.current.scrollTop + containerHeight) / totalHeight;
 
 		if(scrollProgress > 0.5 && !isFetching && (totalTagCount > sourceTagsPointer) || (totalTagCount === null)) {
-			fetchTags({ start: sourceTagsPointer, limit: PAGE_SIZE, sort: 'title' });
+			dispatch(fetchTags({ start: sourceTagsPointer, limit: PAGE_SIZE, sort: 'title' }));
 		}
-	}
+	});
 
-	handleKeyDown = ev => {
-		const { onFocusNext, onFocusPrev, onSelect } = this.props;
+	const toggleTag = useCallback(tagName => {
+		const index = selectedTags.indexOf(tagName);
+		if(index > -1) {
+			selectedTags.splice(index, 1);
+		} else {
+			selectedTags.push(tagName);
+		}
+
+		dispatch(navigate({ tags: selectedTags }));
+	});
+
+	const handleKeyDown = useCallback(ev => {
 		if(ev.target !== ev.currentTarget) {
 			return;
 		}
@@ -51,81 +77,81 @@ class TagList extends React.PureComponent {
 			onFocusPrev(ev);
 		} else if(isTriggerEvent(ev)) {
 			const tag = ev.currentTarget.dataset.tag;
-			onSelect(tag, ev);
+			toggleTag(tag);
 		}
-	};
+	});
 
-	handleClick = ev => {
-		const { onSelect } = this.props;
+	const handleClick = useCallback(ev => {
 		const tag = ev.currentTarget.dataset.tag;
-		onSelect(tag, ev);
-	}
+		toggleTag(tag);
+	});
 
-	renderTag(tag) {
-		const className = cx('tag', {
-			disabled: tag.disabled,
-			selected: tag.selected,
-			colored: tag.color,
-			placeholder: tag.isPlaceholder
-		});
+	useEffect(() => {
+		if(totalTagCount === null) {
+			dispatch(fetchTags({ start: 0, limit: PAGE_SIZE, sort: 'title' }));
+		}
+	}, [totalTagCount]);
 
-		return (
-			<li
-				className={ className }
-				key={ tag.tag }
-				data-tag={ tag.tag }
-				onClick={ this.handleClick }
-				onKeyDown={ this.handleKeyDown }
-				tabIndex={ tag.disabled ? null : -2 }
-				style={ tag.color && { color: tag.color} }
+
+	useEffect(() => {
+		if(sourceTagsPointer < totalTagCount) {
+			dispatch(checkColoredTags());
+		}
+	}, []);
+
+	useEffect(() => {
+		if(totalTagCount > PAGE_SIZE) {
+			dispatch(checkColoredTags());
+		}
+	}, [totalTagCount]);
+
+	useEffect(() => {
+		setTimeout(maybeLoadMore, 0);
+	}, [tagsSearchString, sourceTagsPointer]);
+
+	return (
+		<div
+			className="tag-selector-container"
+			onBlur={ onBlur }
+			onFocus={ onFocus }
+			onScroll={ maybeLoadMore }
+			ref={ containerRefCb }
+			tabIndex={ 0 }
+		>
+			<ul
+				ref={ listRef }
+				className="tag-selector-list"
 			>
-				<span className="tag-label">{ tag.tag }</span>
-			</li>
-		);
-	}
-
-	render() {
-		const { onFocus, onBlur, registerFocusRoot, tags } = this.props;
-
-		return (
-			<div
-				className="tag-selector-container"
-				onBlur={ onBlur }
-				onFocus={ onFocus }
-				onScroll={ this.maybeLoadMore }
-				ref={ ref => { this.containerRef = ref; registerFocusRoot(ref); } }
-				tabIndex={ 0 }
-			>
-				<ul
-					ref={ listRef => this.listRef = listRef }
-					className="tag-selector-list"
-				>
-					{ tags.map(this.renderTag.bind(this)) }
-				</ul>
-			</div>
-		)
-	}
-
-	static propTypes = {
-		checkColoredTags: PropTypes.func,
-		fetchTags: PropTypes.func,
-		isFetching: PropTypes.bool,
-		onBlur: PropTypes.func,
-		onFocus: PropTypes.func,
-		onFocusNext: PropTypes.func,
-		onFocusPrev: PropTypes.func,
-		onSelect: PropTypes.func,
-		registerFocusRoot: PropTypes.func,
-		searchString: PropTypes.string,
-		sourceTagsPointer: PropTypes.number,
-		tags: PropTypes.arrayOf(PropTypes.shape({
-			name: PropTypes.string,
-			selected: PropTypes.bool,
-			color: PropTypes.string,
-			disabled: PropTypes.bool
-		})),
-		totalTagCount: PropTypes.number,
-	}
+				{ tags.map(tag => (
+					<li
+						className={ cx('tag', {
+							disabled: tag.disabled,
+							selected: tag.selected,
+							colored: tag.color,
+							placeholder: tag.isPlaceholder
+						}) }
+						key={ tag.tag }
+						data-tag={ tag.tag }
+						onClick={ handleClick }
+						onKeyDown={ handleKeyDown }
+						tabIndex={ tag.disabled ? null : -2 }
+						style={ tag.color && { color: tag.color} }
+					>
+						<span className="tag-label">{ tag.tag }</span>
+					</li>
+				)) }
+			</ul>
+		</div>
+	);
 }
 
-export default withFocusManager(TagList);
+TagList.propTypes = {
+	onBlur: PropTypes.func,
+	onFocus: PropTypes.func,
+	onFocusNext: PropTypes.func,
+	onFocusPrev: PropTypes.func,
+	registerFocusRoot: PropTypes.func,
+	tagsSearchString: PropTypes.string,
+};
+
+export default React.memo(withFocusManager(TagList));
