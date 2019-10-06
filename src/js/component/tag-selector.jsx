@@ -45,53 +45,49 @@ const TagSelector = props => {
 	});
 
 	return (
-		<div
-			className={ cx('tag-selector', { 'collapsed': !isTagSelectorOpen }) }
+		<div className={ cx('tag-selector', { 'collapsed': !isTagSelectorOpen }) }>
+			<Button
+				className="tag-selector-toggle"
+				onClick={ handleCollapseClick }
 			>
-			<div className="scroll-container">
-				<Button
-					className="tag-selector-toggle"
-					onClick={ handleCollapseClick }
-				>
-					<Icon type="16/grip" width="16" height="2" />
-				</Button>
-				<TagList />
-				<div
-					className="tag-selector-filter-container"
-					onBlur={ onBlur }
-					onFocus={ onFocus }
-					ref={ ref => registerFocusRoot(ref) }
-					tabIndex={ 0 }
-				>
-					<Input
-						className="tag-selector-filter form-control"
-						onChange={ handleSearchChange }
-						onKeyDown={ handleKeyDown }
-						tabIndex={ -2 }
-						type="search"
-						value={ tagsSearchString }
-						isBusy={ isFetching }
-						placeholder="Filter Tags"
-					/>
-					<UncontrolledDropdown className="dropdown">
-							<DropdownToggle
-								className="btn-icon dropdown-toggle tag-selector-actions"
-								onKeyDown={ handleKeyDown }
-								tabIndex={ -2 }
-								color={ null }
-							>
-								<Icon type="16/options" width="16" height="16" />
-							</DropdownToggle>
-							<DropdownMenu right>
-								<DropdownItem disabled>
-									{ selectedTags.length } tag selected
-								</DropdownItem>
-								<DropdownItem onClick={ handleDeselectClick } >
-									Deselect All
-								</DropdownItem>
-							</DropdownMenu>
-					</UncontrolledDropdown>
-				</div>
+				<Icon type="16/grip" width="16" height="2" />
+			</Button>
+			<TagList />
+			<div
+				className="tag-selector-filter-container"
+				onBlur={ onBlur }
+				onFocus={ onFocus }
+				ref={ ref => registerFocusRoot(ref) }
+				tabIndex={ 0 }
+			>
+				<Input
+					className="tag-selector-filter form-control"
+					onChange={ handleSearchChange }
+					onKeyDown={ handleKeyDown }
+					tabIndex={ -2 }
+					type="search"
+					value={ tagsSearchString }
+					isBusy={ isFetching }
+					placeholder="Filter Tags"
+				/>
+				<UncontrolledDropdown className="dropdown">
+						<DropdownToggle
+							className="btn-icon dropdown-toggle tag-selector-actions"
+							onKeyDown={ handleKeyDown }
+							tabIndex={ -2 }
+							color={ null }
+						>
+							<Icon type="16/options" width="16" height="16" />
+						</DropdownToggle>
+						<DropdownMenu right>
+							<DropdownItem disabled>
+								{ selectedTags.length } tag selected
+							</DropdownItem>
+							<DropdownItem onClick={ handleDeselectClick } >
+								Deselect All
+							</DropdownItem>
+						</DropdownMenu>
+				</UncontrolledDropdown>
 			</div>
 		</div>
 	);

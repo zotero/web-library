@@ -23,9 +23,8 @@ const TagList = props => {
 	const containerRef = useRef(null);
 	const listRef = useRef(null);
 
-	const containerRefCb = useCallback(node => {
+	const tagContainerRefCb = useCallback(node => {
 		registerFocusRoot(node);
-		containerRef.current = node;
 	});
 
 	const tags = useMemo(() => {
@@ -111,36 +110,41 @@ const TagList = props => {
 
 	return (
 		<div
-			className="tag-selector-container"
-			onBlur={ onBlur }
-			onFocus={ onFocus }
+			className="scroll-container"
 			onScroll={ maybeLoadMore }
-			ref={ containerRefCb }
-			tabIndex={ 0 }
+			ref={ containerRef }
 		>
-			<ul
-				ref={ listRef }
-				className="tag-selector-list"
+			<div
+				className="tag-selector-container"
+				onBlur={ onBlur }
+				onFocus={ onFocus }
+				ref={ tagContainerRefCb }
+				tabIndex={ 0 }
 			>
-				{ tags.map(tag => (
-					<li
-						className={ cx('tag', {
-							disabled: tag.disabled,
-							selected: tag.selected,
-							colored: tag.color,
-							placeholder: tag.isPlaceholder
-						}) }
-						key={ tag.tag }
-						data-tag={ tag.tag }
-						onClick={ handleClick }
-						onKeyDown={ handleKeyDown }
-						tabIndex={ tag.disabled ? null : -2 }
-						style={ tag.color && { color: tag.color} }
-					>
-						<span className="tag-label">{ tag.tag }</span>
-					</li>
-				)) }
-			</ul>
+				<ul
+					ref={ listRef }
+					className="tag-selector-list"
+				>
+					{ tags.map(tag => (
+						<li
+							className={ cx('tag', {
+								disabled: tag.disabled,
+								selected: tag.selected,
+								colored: tag.color,
+								placeholder: tag.isPlaceholder
+							}) }
+							key={ tag.tag }
+							data-tag={ tag.tag }
+							onClick={ handleClick }
+							onKeyDown={ handleKeyDown }
+							tabIndex={ tag.disabled ? null : -2 }
+							style={ tag.color && { color: tag.color} }
+						>
+							<span className="tag-label">{ tag.tag }</span>
+						</li>
+					)) }
+				</ul>
+			</div>
 		</div>
 	);
 }
