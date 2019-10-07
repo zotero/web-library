@@ -56,6 +56,12 @@ export const redirects = [
 	{ 	from: 	 '/:userslug/items/action/newItem/collectionKey/:collection/:optional?/:mode?',
 		to: 	 '/:userslug/collections/:collection'
 	},
+	{ 	from: 	 '/:userslug/items/itemKey/trash/:optional?/:mode?',
+		to: 	 '/:userslug/trash'
+	},
+	{ 	from: 	 '/:userslug/items/itemKey/publications/:optional?/:mode?',
+		to: 	 '/:userslug/publications'
+	},
 	{ 	from: 	 '/:userslug/items/itemKey/:items/:optional?/:mode?',
 		to: 	 '/:userslug/items/:items'
 	},
@@ -95,6 +101,12 @@ export const redirects = [
 	},
 	{ 	from: 	 '/groups/:groupid/:groupslug/items/action/newItem/collectionKey/:collection/:optional?/:mode?',
 		to: 	 '/groups/:groupid/:groupslug/collections/:collection'
+	},
+	{ 	from: 	 '/groups/:groupid/:groupslug/items/itemKey/trash/:optional?/:mode?',
+		to: 	 '/groups/:groupid/:groupslug/trash'
+	},
+	{ 	from: 	 '/groups/:groupid/:groupslug/items/itemKey/publications/:optional?/:mode?',
+		to: 	 '/groups/:groupid/:groupslug/publications'
 	},
 	{ 	from: 	 '/groups/:groupid/:groupslug/items/itemKey/:items/:optional?/:mode?',
 		to: 	 '/groups/:groupid/:groupslug/items/:items'
