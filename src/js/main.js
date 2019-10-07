@@ -1,7 +1,3 @@
-'use strict';
-
-import 'babel-regenerator-runtime';
-
 import init from './init';
 
 const targetDom = document.getElementById('zotero-web-library');
