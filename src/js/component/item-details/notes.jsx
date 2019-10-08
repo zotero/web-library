@@ -5,7 +5,7 @@ import DropdownMenu from 'reactstrap/lib/DropdownMenu';
 import DropdownToggle from 'reactstrap/lib/DropdownToggle';
 import PropTypes from 'prop-types';
 import React, { useCallback, useEffect, useMemo, useState, useRef } from 'react';
-import { useSelector } from 'react-redux'
+import { useSelector } from 'react-redux';
 
 import Button from '../ui/button';
 import Icon from '../ui/icon';
