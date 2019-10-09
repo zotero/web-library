@@ -31,7 +31,6 @@ const dndCollect = (connect, monitor) => ({
 	isDragging: monitor.isDragging(),
 });
 
-@DragSource(ITEM, dndSpec, dndCollect)
 class Row extends React.PureComponent {
 	componentDidMount() {
 		const { connectDragPreview } = this.props;
@@ -103,4 +102,4 @@ class Row extends React.PureComponent {
 }
 
 
-export default Row;
+export default DragSource(ITEM, dndSpec, dndCollect)(Row);

@@ -53,7 +53,6 @@ const getRelativeToOriginalStyles = ({ differenceFromInitialOffset }, sourceRect
 		};
 }
 
-@DragLayer(dndCollect)
 class CustomDragLayer extends React.PureComponent {
 
 	renderItem(type, props, isPreviewRequired) {
@@ -143,4 +142,4 @@ class CustomDragLayer extends React.PureComponent {
 	}
 }
 
-export default CustomDragLayer;
+export default DragLayer(dndCollect)(CustomDragLayer);

@@ -57,8 +57,6 @@ const dndSourceCollect = (connect, monitor) => ({
 	isDragging: monitor.isDragging(),
 });
 
-@DropTarget(CREATOR, dndTargetSpec, dndTargetCollect)
-@DragSource(CREATOR, dndSourceSpec, dndSourceCollect)
 class Field extends React.PureComponent {
 	componentDidUpdate({ isDragging: wasDragging }) {
 		const { isDragging, onDragStatusChange } = this.props;
@@ -152,4 +150,4 @@ class Field extends React.PureComponent {
 	}
 }
 
-export default Field;
+export default DropTarget(CREATOR, dndTargetSpec, dndTargetCollect)(DragSource(CREATOR, dndSourceSpec, dndSourceCollect)(Field));

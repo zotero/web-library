@@ -70,8 +70,6 @@ const dndCollectionDragCollect = (connect, monitor) => ({
 	isDragging: monitor.isDragging(),
 });
 
-@DragSource(COLLECTION, dndCollectionDragSpec, dndCollectionDragCollect)
-@DropTarget([COLLECTION, ITEM], dndSpec, dndCollect)
 class Node extends React.PureComponent {
 	state = {};
 
@@ -224,4 +222,6 @@ class Node extends React.PureComponent {
 	}
 }
 
-export default Node;
+export default DragSource(COLLECTION, dndCollectionDragSpec, dndCollectionDragCollect)(
+	DropTarget([COLLECTION, ITEM], dndSpec, dndCollect)(Node)
+);
