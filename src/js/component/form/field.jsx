@@ -5,7 +5,7 @@ import { findDOMNode } from 'react-dom';
 import PropTypes from 'prop-types';
 import cx from 'classnames';
 import Icon from '../ui/icon';
-import { DragSource, DropTarget } from 'react-dnd';
+import { DragSource, DropTarget } from 'react-dnd-cjs';
 import { CREATOR } from '../../constants/dnd';
 import { noop } from '../../utils';
 import { pick } from '../../common/immutable';

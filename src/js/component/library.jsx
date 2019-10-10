@@ -1,6 +1,7 @@
 'use strict';
 
 import cx from 'classnames';
+import { DndProvider } from 'react-dnd-cjs';
 import HTML5toTouch from 'react-dnd-multi-backend/lib/HTML5toTouch';
 import MultiBackend from 'react-dnd-multi-backend';
 import PropTypes from 'prop-types';
@@ -30,7 +31,6 @@ import TagSelector from '../component/tag-selector';
 import TouchHeaderContainer from '../container/touch-header';
 import TouchNoteContainer from '../container/touch-note';
 import withDevice from '../enhancers/with-device';
-import { DragDropContext } from 'react-dnd';
 import { getSerializedQuery } from '../common/state';
 import { NEW_FILE } from '../constants/modals'
 import { pick } from '../common/immutable';
@@ -90,13 +90,6 @@ const Library = props => {
 		() => toggleNavbar(null)
 	);
 
-	const handleDrop = useCallback(ev => {
-		const files = Array.from(ev.dataTransfer.files);
-		if(files.length) {
-			toggleModal(NEW_FILE, true, { files });
-		}
-	});
-
 	var key;
 	if(itemsSource == 'collection') {
 		key = `${libraryKey}-${collectionKey}`;
@@ -110,8 +103,9 @@ const Library = props => {
 
 	return (
 		<React.Fragment>
+			<DndProvider backend={ MultiBackend } options={ HTML5toTouch }>
 			<CustomDragLayer />
-			<div onDrop={ handleDrop } className={ cx('library-container', {
+			<div className={ cx('library-container', {
 					[`view-${view}-active`]: true,
 					'view-note-active': noteKey,
 					'navbar-nav-opened': isNavBarOpen,
@@ -199,6 +193,7 @@ const Library = props => {
 				<NewFileModalContainer />
 				<Messages />
 			</div>
+			</DndProvider>
 		</React.Fragment>
 	);
 }
@@ -225,4 +220,4 @@ Library.propTypes = {
 	view: PropTypes.string,
 };
 
-export default withDevice(DragDropContext(MultiBackend(HTML5toTouch))(Library));
+export default withDevice(Library);

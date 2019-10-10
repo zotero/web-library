@@ -207,6 +207,10 @@
 			}
 		}
 
+		&.dnd-target {
+			background-color: $item-table-dnd-target-bg;
+		}
+
 		.placeholder-icon {
 			width: $space-md;
 			height: $space-md;

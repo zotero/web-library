@@ -1,9 +1,10 @@
 'use strict';
 
 import React from 'react';
+import cx from 'classnames';
 import PropTypes from 'prop-types';
-import { DragSource } from 'react-dnd';
-import { getEmptyImage } from 'react-dnd-html5-backend';
+import { DragSource, DropTarget } from 'react-dnd-cjs';
+import { getEmptyImage, NativeTypes } from 'react-dnd-html5-backend-cjs';
 import { ITEM } from '../../../constants/dnd';
 
 const dndSpec = {
@@ -31,6 +32,18 @@ const dndCollect = (connect, monitor) => ({
 	isDragging: monitor.isDragging(),
 });
 
+const fileTarget = {
+	drop(props, monitor) {
+		//@TODO: handle file drop
+	}
+};
+
+const fileCollect = (connect, monitor) => ({
+	connectDropTarget: connect.dropTarget(),
+	isOver: monitor.isOver({ shallow: true }),
+	canDrop: monitor.canDrop(),
+});
+
 class Row extends React.PureComponent {
 	componentDidMount() {
 		const { connectDragPreview } = this.props;
@@ -42,6 +55,7 @@ class Row extends React.PureComponent {
 		const {
 			className,
 			columns,
+			connectDropTarget,
 			connectDragSource,
 			connectDragPreview,
 			index,
@@ -54,6 +68,8 @@ class Row extends React.PureComponent {
 			onRowRightClick,
 			rowData,
 			style,
+			isOver,
+			canDrop,
 		} = this.props;
 		if (
 			onRowClick ||
@@ -86,20 +102,19 @@ class Row extends React.PureComponent {
 			}
 		}
 
-		return connectDragSource(
+		return connectDropTarget(connectDragSource(
 			<div
 				{...a11yProps}
 				data-index={ index }
-				className={className}
+				className={ cx(className, { 'dnd-target': canDrop && isOver }) }
 				key={ key }
 				role="row"
 				style={ style }
 			>
 				{ columns }
 			</div>
-		);
+		));
 	}
 }
 
-
-export default DragSource(ITEM, dndSpec, dndCollect)(Row);
+export default DragSource(ITEM, dndSpec, dndCollect)(DropTarget(NativeTypes.FILE, fileTarget, fileCollect)(Row));

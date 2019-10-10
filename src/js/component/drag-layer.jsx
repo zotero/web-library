@@ -2,9 +2,9 @@
 
 import React from 'react';
 import Icon from './ui/icon';
-import { Consumer } from 'react-dnd/lib/cjs/DragDropContext'; //@NOTE: using undocumented featue
-import { DragLayer } from 'react-dnd';
+import { DragLayer } from 'react-dnd-cjs';
 import { ITEM, CREATOR } from '../constants/dnd';
+import withDevice from '../enhancers/with-device';
 
 const dndCollect = monitor => ({
 	clientOffset: monitor.getClientOffset(),
@@ -54,26 +54,28 @@ const getRelativeToOriginalStyles = ({ differenceFromInitialOffset }, sourceRect
 }
 
 class CustomDragLayer extends React.PureComponent {
+	renderItem(type, itemProps) {
+		const { device } = this.props;
 
-	renderItem(type, props, isPreviewRequired) {
 		switch (type) {
 			case CREATOR:
-				var { raw } = props;
-				if(!isPreviewRequired) {
-					// on desktops we use html5 backend
-					return null
-				}
-				return (
-					<div className="metadata creators creator-drag-preview">
-						<div className="creator-type truncate">{ raw.creatorType }</div>
-						<div className="name truncate">
-							{ 'name' in raw ? raw.name : raw.lastName + ', ' + raw.firstName }
+				var { raw } = itemProps;
+				if(device.isTouchOrSmall) {
+					return (
+						<div className="metadata creators creator-drag-preview">
+							<div className="creator-type truncate">{ raw.creatorType }</div>
+							<div className="name truncate">
+								{ 'name' in raw ? raw.name : raw.lastName + ', ' + raw.firstName }
+							</div>
 						</div>
-					</div>
-				)
+					);
+				} else {
+					// on desktops we use html5 backend
+					return null;
+				}
 			case ITEM:
 				// for items dragging we always use custom preview
-				var { isDraggingSelected, selectedItemKeys, rowData } = props;
+				var { isDraggingSelected, selectedItemKeys, rowData } = itemProps;
 				var { iconName } = rowData;
 				var dvp = window.devicePixelRatio >= 2 ? 2 : 1;
 
@@ -123,23 +125,13 @@ class CustomDragLayer extends React.PureComponent {
 		}
 
 		return (
-			<Consumer>
-			{({ dragDropManager }) => {
-				return (
-					<div className="drag-layer">
-						<div style={ style }>
-							{ this.renderItem(
-								itemType,
-								item,
-								dragDropManager.backend.previewEnabled()
-							) }
-						</div>
-					</div>
-				);
-			}}
-			</Consumer>
+			<div className="drag-layer">
+				<div style={ style }>
+					{ this.renderItem(itemType, item) }
+				</div>
+			</div>
 		);
 	}
 }
 
-export default DragLayer(dndCollect)(CustomDragLayer);
+export default withDevice(DragLayer(dndCollect)(CustomDragLayer));

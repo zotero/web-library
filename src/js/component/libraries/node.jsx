@@ -4,7 +4,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import cx from 'classnames';
 import Icon from '../ui/icon';
-import { DragSource, DropTarget } from 'react-dnd';
+import { DragSource, DropTarget } from 'react-dnd-cjs';
 import { noop } from '../../utils';
 import { ITEM, COLLECTION } from '../../constants/dnd';
 import { pick } from '../../common/immutable';
