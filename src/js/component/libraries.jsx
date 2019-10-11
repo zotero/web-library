@@ -42,7 +42,7 @@ const LibraryNode = props => {
 		return {
 			...pick(props, ['addVirtual', 'cancelAdd', 'commitAdd',
 			'onDrillDownNext', 'onDrillDownPrev', 'onFocusNext', 'onFocusPrev', 'selectedCollectionKey', 'virtual']),
-			isPickerMode, parentLibraryKey, picked, pickerPick, navigate
+			isPickerMode, parentLibraryKey, picked, pickerPick
 		}
 	}
 

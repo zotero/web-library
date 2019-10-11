@@ -428,8 +428,9 @@ const CollectionNode = withDevice(props => {
 			onClick={ handleClick }
 			onDrag={ handleDrag }
 			onRename={ device.isTouchOrSmall ? null : handleRenameTrigger }
-			tabIndex={ shouldBeTabbable ? "-2" : null }
+			shouldBeDraggable={ renaming !== collection.key }
 			showTwisty={ hasSubCollections }
+			tabIndex={ shouldBeTabbable ? "-2" : null }
 			{ ...pick(rest, ['onOpen', 'onDrillDownNext', 'onDrillDownPrev', 'onFocusNext', 'onFocusPrev']) }
 			subtree={ (shouldRenderSubtree && hasSubCollections) ? (
 				<LevelWrapper hasOpen={ hasOpen } level={ level } isLastLevel={ isLastLevel }>
@@ -447,6 +448,7 @@ const CollectionNode = withDevice(props => {
 						selectedCollectionKey={ selectedCollectionKey }
 						shouldBeTabbable = { shouldSubtreeNodesBeTabbable }
 						updating = { updating }
+						updateCollection = { updateCollection }
 					/>
 				</LevelWrapper>
 			) : null }

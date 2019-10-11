@@ -2,11 +2,11 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 
 import CollectionTree from '../component/libraries/collection-tree';
+import { fetchCollections, createCollection, updateCollection, deleteCollection, toggleModal,
+	navigate } from '../actions';
 import { pick } from '../common/immutable';
-import { fetchCollections, createCollection, updateCollection, deleteCollection, toggleModal, navigate } from '../actions';
 
 const CollectionTreeContainer = props => <CollectionTree { ...props } />;
 
@@ -28,12 +28,7 @@ const mapStateToProps = (state, ownProps) => {
 	};
 };
 
-const mapDispatchToProps = (dispatch, ownProps) => {
-	return {
-		...bindActionCreators({ fetchCollections, createCollection, updateCollection,
-			deleteCollection, toggleModal, navigate }, dispatch),
-		...pick(ownProps, ['navigate'])
-	};
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(CollectionTreeContainer);
+export default connect(
+	mapStateToProps,
+	{ fetchCollections, createCollection, updateCollection, deleteCollection, toggleModal, navigate }
+)(CollectionTreeContainer);
