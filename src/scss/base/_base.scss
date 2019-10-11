@@ -92,4 +92,5 @@ main {
 	display: flex;
 	background: $main-bg;
 	min-height: 0;
+	position: relative; // Needed to fix weird touch layout in Chrome’s device emulator
 }
