@@ -117,13 +117,13 @@ class Node extends React.PureComponent {
 	}
 
 	handleKeyDown = ev => {
-		const { hideTwisty, onFocusNext, onOpen, onFocusPrev, isOpen,
+		const { showTwisty, onFocusNext, onOpen, onFocusPrev, isOpen,
 			onDrillDownNext, onDrillDownPrev } = this.props;
 
 		if(ev.key === "ArrowLeft") {
 			ev.target === ev.currentTarget ? onOpen(ev, false) : onDrillDownPrev(ev);
 		} else if(ev.key === "ArrowRight") {
-			isOpen || hideTwisty ? onDrillDownNext(ev) : onOpen(ev, true);
+			isOpen || !showTwisty ? onDrillDownNext(ev) : onOpen(ev, true);
 		} else if(ev.key === "ArrowDown") {
 			ev.target === ev.currentTarget && onFocusNext(ev);
 		} else if(ev.key === "ArrowUp") {
