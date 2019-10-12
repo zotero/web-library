@@ -1,20 +1,28 @@
 'use strict';
 
-import React from 'react';
-import PropTypes from 'prop-types';
 import cx from 'classnames';
-import Icon from '../ui/icon';
+import PropTypes from 'prop-types';
+import React from 'react';
 import { DragSource, DropTarget } from 'react-dnd-cjs';
-import { noop } from '../../utils';
-import { ITEM, COLLECTION } from '../../constants/dnd';
-import { pick } from '../../common/immutable';
+import { NativeTypes } from 'react-dnd-html5-backend-cjs';
+
+import Icon from '../ui/icon';
 import { isTriggerEvent } from '../../common/event';
+import { ITEM, COLLECTION } from '../../constants/dnd';
+import { noop } from '../../utils';
+import { pick } from '../../common/immutable';
 
 const dndSpec = {
 	drop(props, monitor) {
 		if(monitor.isOver({ shallow: true })) {
-			const { dndTarget } = props;
-			return dndTarget;
+			if(monitor.getItemType() === NativeTypes.FILE) {
+				//@TODO: handle file drop
+				console.log('drop', { monitor });
+			} else {
+				// ITEM OR COLLECTION, both handled in endDrag on the other side
+				const { dndTarget } = props;
+				return dndTarget;
+			}
 		}
 	},
 	canDrop({ dndTarget = {} }, monitor) {
@@ -41,6 +49,11 @@ const dndSpec = {
 				return false;
 			}
 			return srcLibraryKey === targetLibraryKey && srcCollectionKey !== targetCollectionKey;
+		} else if(monitor.getItemType() === NativeTypes.FILE) {
+			if(!['collection', 'library'].includes(dndTarget.targetType)) {
+				return false;
+			}
+			return true;
 		}
 	}
 }
@@ -223,5 +236,5 @@ class Node extends React.PureComponent {
 }
 
 export default DragSource(COLLECTION, dndCollectionDragSpec, dndCollectionDragCollect)(
-	DropTarget([COLLECTION, ITEM], dndSpec, dndCollect)(Node)
+	DropTarget([COLLECTION, ITEM, NativeTypes.FILE], dndSpec, dndCollect)(Node)
 );
