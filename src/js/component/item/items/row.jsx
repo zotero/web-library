@@ -1,148 +1,118 @@
-'use strict';
-
-import React from 'react';
 import cx from 'classnames';
 import PropTypes from 'prop-types';
-import { DragSource, DropTarget } from 'react-dnd-cjs';
+import React, { useCallback, useEffect, useState, useRef } from 'react';
 import { getEmptyImage, NativeTypes } from 'react-dnd-html5-backend-cjs';
+
 import { ITEM } from '../../../constants/dnd';
+import { noop } from '../../../utils';
+import { useDrag, useDrop } from 'react-dnd-cjs'
 
 const DROP_MARGIN_EDGE = 5; // how many pixels from top/bottom of the row triggers "in-between" drop
 
-const dndSpec = {
-	beginDrag: ({ selectedItemKeys, rowData, libraryKey }) => {
-		const itemKey = rowData.key;
-		const isDraggingSelected = selectedItemKeys.includes(itemKey);
-		return { itemKey, selectedItemKeys, rowData, isDraggingSelected, libraryKey };
-	},
-	endDrag: ({ rowData, selectedItemKeys, onDrag }, monitor) => {
-		const itemKey = rowData.key;
-		const isDraggingSelected = selectedItemKeys.includes(itemKey);
-		const dropResult = monitor.getDropResult();
-		if(dropResult) {
-			onDrag({
-				itemKeys: isDraggingSelected ? selectedItemKeys : [itemKey],
-				...dropResult
-			});
-		}
-	}
-};
+const Row = props => {
+	const { className, columns, index, libraryKey, rowData, onDrag, selectedItemKeys, style } = props;
+	const itemKey = rowData.key;
+	const rowRef = useRef();
+	const [dropZone, setDropZone] = useState(null);
 
-const dndCollect = (connect, monitor) => ({
-	connectDragSource: connect.dragSource(),
-	connectDragPreview: connect.dragPreview(),
-	isDragging: monitor.isDragging(),
-});
+	const [_, drag, preview] = useDrag({ // eslint-disable-line no-unused-vars
+		item: { type: ITEM },
+		begin: () => {
+			const isDraggingSelected = selectedItemKeys.includes(itemKey);
+			return { itemKey, selectedItemKeys, rowData, isDraggingSelected, libraryKey }
+		},
+		end: (item, monitor) => {
+			const isDraggingSelected = selectedItemKeys.includes(itemKey);
+			const dropResult = monitor.getDropResult();
 
-const fileTarget = {
-	drop(props, monitor) {
-		//@TODO: handle file drop
-	},
-	hover(props, monitor, component) {
-		if(component.ref.current && monitor.getClientOffset()) {
-			const cursor = monitor.getClientOffset();
-			const rect = component.ref.current.getBoundingClientRect();
-			const offsetTop = cursor.y - rect.y;
-			const offsetBottom = (rect.y + rect.height) - cursor.y;
-
-			if(offsetTop < DROP_MARGIN_EDGE) {
-				component.setState({ 'dropZone': 'top' });
-			} else if(offsetBottom < DROP_MARGIN_EDGE) {
-				component.setState({ 'dropZone': 'bottom' });
-			} else {
-				component.setState({ 'dropZone': null });
+			if(dropResult) {
+				onDrag({
+					itemKeys: isDraggingSelected ? selectedItemKeys : [itemKey],
+					...dropResult
+				});
 			}
 		}
-	}
-};
+	});
 
-const fileCollect = (connect, monitor) => ({
-	connectDropTarget: connect.dropTarget(),
-	isOver: monitor.isOver({ shallow: true }),
-	canDrop: monitor.canDrop(),
-});
+	const [{ isOver, canDrop }, drop] = useDrop({
+		accept: NativeTypes.FILE,
+		collect: monitor => ({
+			isOver: monitor.isOver({ shallow: true }),
+			canDrop: monitor.canDrop(),
+		}),
+		drop: (item, monitor) => {
+			//@TODO;
+		},
+		hover: (item, monitor) => {
+			if(rowRef.current && monitor.getClientOffset()) {
+				const cursor = monitor.getClientOffset();
+				const rect = rowRef.current.getBoundingClientRect();
+				const offsetTop = cursor.y - rect.y;
+				const offsetBottom = (rect.y + rect.height) - cursor.y;
 
-class Row extends React.PureComponent {
-	state = { dropZone: null };
-	ref = React.createRef();
-
-	componentDidMount() {
-		const { connectDragPreview } = this.props;
-		connectDragPreview(getEmptyImage());
-	}
-
-	render() {
-		const a11yProps = {};
-		const {
-			className,
-			columns,
-			connectDropTarget,
-			connectDragSource,
-			connectDragPreview,
-			index,
-			isDragging,
-			key,
-			onRowClick,
-			onRowDoubleClick,
-			onRowMouseOut,
-			onRowMouseOver,
-			onRowRightClick,
-			rowData,
-			style,
-			isOver,
-			canDrop,
-		} = this.props;
-		const { dropZone } = this.state;
-
-		if (
-			onRowClick ||
-			onRowDoubleClick ||
-			onRowMouseOut ||
-			onRowMouseOver ||
-			onRowRightClick
-		) {
-			a11yProps['aria-label'] = 'row';
-
-			if(onRowClick) {
-				// Select item rows on mousedown
-				// https://github.com/zotero/web-library/issues/161
-				a11yProps.onMouseDown = event => onRowClick({event, index, rowData});
-				a11yProps.onClick = event => onRowClick({event, index, rowData});
-			}
-			if(onRowDoubleClick) {
-				a11yProps.onDoubleClick = event =>
-				onRowDoubleClick({event, index, rowData});
-			}
-			if(onRowMouseOut) {
-				a11yProps.onMouseOut = event => onRowMouseOut({event, index, rowData});
-			}
-			if(onRowMouseOver) {
-				a11yProps.onMouseOver = event => onRowMouseOver({event, index, rowData});
-			}
-			if(onRowRightClick) {
-				a11yProps.onContextMenu = event =>
-				onRowRightClick({event, index, rowData});
+				if(offsetTop < DROP_MARGIN_EDGE) {
+					setDropZone('top');
+				} else if(offsetBottom < DROP_MARGIN_EDGE) {
+					setDropZone('bottom');
+				} else {
+					setDropZone(null);
+				}
 			}
 		}
+	});
 
-		return connectDropTarget(connectDragSource(
-			<div
-				{...a11yProps}
-				className={ cx(className, {
-					'dnd-target': canDrop && isOver && dropZone === null,
-					'dnd-target-top': canDrop && isOver && dropZone === 'top',
-					'dnd-target-bottom': canDrop && isOver && dropZone === 'bottom',
-				}) }
-				data-index={ index }
-				key={ key }
-				ref={ this.ref }
-				role="row"
-				style={ style }
-			>
-				{ columns }
-			</div>
-		));
-	}
+	const onMouseDown = props.onRowClick ? useCallback(event => props.onRowClick({event, index, rowData})) : noop;
+	const onClick = props.onRowClick ? useCallback(event => props.onRowClick({event, index, rowData})) : noop;
+	const onDoubleClick = props.onRowDoubleClick ? useCallback(event => props.onRowDoubleClick({event, index, rowData})) : noop;
+	const onMouseOut = props.onRowMouseOut ? useCallback(event => props.onRowMouseOut({event, index, rowData})) : noop;
+	const onMouseOver = props.onRowMouseOver ? useCallback(event => props.onRowMouseOver({event, index, rowData})) : noop;
+	const onContextMenu = props.onRowRightClick ? useCallback(event => props.onRowRightClick({event, index, rowData})) : noop;
+
+	useEffect(() => {
+		preview(getEmptyImage(), { captureDraggingState: true })
+	}, []);
+
+	return (
+		<React.Fragment>
+			{ drag(drop(
+				<div
+					onMouseDown={ onMouseDown }
+					onClick={ onClick }
+					onDoubleClick={ onDoubleClick }
+					onMouseOut={ onMouseOut }
+					onMouseOver={ onMouseOver }
+					onContextMenu={ onContextMenu }
+					className={ cx(className, {
+						'dnd-target': canDrop && isOver && dropZone === null,
+						'dnd-target-top': canDrop && isOver && dropZone === 'top',
+						'dnd-target-bottom': canDrop && isOver && dropZone === 'bottom',
+					}) }
+					data-index={ index }
+					ref={ rowRef }
+					role="row"
+					style={ style }
+				>
+					{ columns }
+				</div>
+			)) }
+		</React.Fragment>
+	);
 }
 
-export default DragSource(ITEM, dndSpec, dndCollect)(DropTarget(NativeTypes.FILE, fileTarget, fileCollect)(Row));
+Row.propTypes = {
+	className: PropTypes.string,
+	columns: PropTypes.array,
+	index: PropTypes.number,
+	libraryKey: PropTypes.string,
+	onDrag: PropTypes.func,
+	onRowClick: PropTypes.func,
+	onRowDoubleClick: PropTypes.func,
+	onRowMouseOut: PropTypes.func,
+	onRowMouseOver: PropTypes.func,
+	onRowRightClick: PropTypes.func,
+	rowData: PropTypes.object,
+	selectedItemKeys: PropTypes.array,
+	style: PropTypes.object,
+};
+
+export default Row;
