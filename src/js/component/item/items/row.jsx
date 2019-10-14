@@ -7,6 +7,8 @@ import { DragSource, DropTarget } from 'react-dnd-cjs';
 import { getEmptyImage, NativeTypes } from 'react-dnd-html5-backend-cjs';
 import { ITEM } from '../../../constants/dnd';
 
+const DROP_MARGIN_EDGE = 5; // how many pixels from top/bottom of the row triggers "in-between" drop
+
 const dndSpec = {
 	beginDrag: ({ selectedItemKeys, rowData, libraryKey }) => {
 		const itemKey = rowData.key;
@@ -35,6 +37,22 @@ const dndCollect = (connect, monitor) => ({
 const fileTarget = {
 	drop(props, monitor) {
 		//@TODO: handle file drop
+	},
+	hover(props, monitor, component) {
+		if(component.ref.current && monitor.getClientOffset()) {
+			const cursor = monitor.getClientOffset();
+			const rect = component.ref.current.getBoundingClientRect();
+			const offsetTop = cursor.y - rect.y;
+			const offsetBottom = (rect.y + rect.height) - cursor.y;
+
+			if(offsetTop < DROP_MARGIN_EDGE) {
+				component.setState({ 'dropZone': 'top' });
+			} else if(offsetBottom < DROP_MARGIN_EDGE) {
+				component.setState({ 'dropZone': 'bottom' });
+			} else {
+				component.setState({ 'dropZone': null });
+			}
+		}
 	}
 };
 
@@ -45,6 +63,9 @@ const fileCollect = (connect, monitor) => ({
 });
 
 class Row extends React.PureComponent {
+	state = { dropZone: null };
+	ref = React.createRef();
+
 	componentDidMount() {
 		const { connectDragPreview } = this.props;
 		connectDragPreview(getEmptyImage());
@@ -71,6 +92,8 @@ class Row extends React.PureComponent {
 			isOver,
 			canDrop,
 		} = this.props;
+		const { dropZone } = this.state;
+
 		if (
 			onRowClick ||
 			onRowDoubleClick ||
@@ -105,9 +128,14 @@ class Row extends React.PureComponent {
 		return connectDropTarget(connectDragSource(
 			<div
 				{...a11yProps}
+				className={ cx(className, {
+					'dnd-target': canDrop && isOver && dropZone === null,
+					'dnd-target-top': canDrop && isOver && dropZone === 'top',
+					'dnd-target-bottom': canDrop && isOver && dropZone === 'bottom',
+				}) }
 				data-index={ index }
-				className={ cx(className, { 'dnd-target': canDrop && isOver }) }
 				key={ key }
+				ref={ this.ref }
 				role="row"
 				style={ style }
 			>

@@ -211,6 +211,18 @@
 			background-color: $item-table-dnd-target-bg;
 		}
 
+		&.dnd-target-top, &.dnd-target-bottom + .item {
+			&::before {
+				content: "";
+				background: $item-table-dnd-target-bg;
+				position: absolute;
+				top: 0px;
+				width: 80px;
+				left: 10px;
+				height: 2px;
+			}
+		}
+
 		.placeholder-icon {
 			width: $space-md;
 			height: $space-md;
