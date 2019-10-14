@@ -563,8 +563,7 @@ class ItemsTable extends React.PureComponent {
 
 	renderRow({ className: otherClassName, index,...opts }) {
 		const { selectedItemKeys, items, libraryKey } = this.props;
-		const className = cx({
-			className: otherClassName,
+		const className = cx(otherClassName, {
 			item: true,
 			odd: (index + 1) % 2 === 1,
 			'nth-4n-1': (index + 2) % 4 === 0,
