@@ -10,7 +10,6 @@ import Node from './node';
 import Spinner from '../../component/ui/spinner';
 import withDevice from '../../enhancers/with-device';
 import { BIBLIOGRAPHY, COLLECTION_RENAME, COLLECTION_ADD, EXPORT, MOVE_COLLECTION } from '../../constants/modals';
-import { getFilesData } from '../../common/event';
 import { pick } from '../../common/immutable';
 import { stopPropagation } from '../../utils.js';
 
@@ -349,7 +348,7 @@ const PickerCheckbox = ({ collectionKey, pickerPick, picked, parentLibraryKey })
 }
 
 const CollectionNode = withDevice(props => {
-	const { allCollections, derivedData, createAttachments, collection, device, level,
+	const { allCollections, derivedData, createAttachmentsFromDropped, collection, device, level,
 		selectedCollectionKey, isCurrentLibrary, parentLibraryKey, renaming, setRenaming,
 		updateCollection, updating, isPickerMode, shouldBeTabbable, ...rest }  = props;
 
@@ -386,8 +385,7 @@ const CollectionNode = withDevice(props => {
 	});
 
 	const handleDrop = useCallback(async droppedFiles => {
-		const filesData = await getFilesData(droppedFiles);
-		await createAttachments(filesData, { collection: collection.key });
+		await createAttachmentsFromDropped(droppedFiles, { collection: collection.key });
 	});
 
 	const collections = allCollections.filter(c => c.parentCollection === collection.key );
@@ -445,7 +443,7 @@ const CollectionNode = withDevice(props => {
 						{ ...rest }
 						allCollections={ allCollections }
 						collections = { collections }
-						createAttachments= { createAttachments }
+						createAttachmentsFromDropped= { createAttachmentsFromDropped }
 						derivedData={ derivedData }
 						isCurrentLibrary = { isCurrentLibrary }
 						isPickerMode={ isPickerMode }
@@ -621,7 +619,7 @@ const CollectionTree = withDevice(props => {
 				setOpened={ setOpened }
 				setRenaming={ setRenaming }
 				shouldBeTabbable={ shouldBeTabbable }
-				{ ...pick(rest, ['addVirtual', 'commitAdd', 'cancelAdd', 'createAttachments',
+				{ ...pick(rest, ['addVirtual', 'commitAdd', 'cancelAdd', 'createAttachmentsFromDropped',
 				'deleteCollection', 'navigate', 'pickerPick', 'picked', 'onDrillDownNext',
 				'onDrillDownPrev', 'onFocusNext', 'onFocusPrev', 'toggleModal', 'updateCollection',
 				'updating', 'virtual', 'isPickerMode']) }

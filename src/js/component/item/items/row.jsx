@@ -5,7 +5,7 @@ import { getEmptyImage, NativeTypes } from 'react-dnd-html5-backend-cjs';
 import { useDispatch, useSelector } from 'react-redux';
 import { useDrag, useDrop } from 'react-dnd-cjs'
 
-import { createAttachments } from '../../../actions';
+import { createAttachmentsFromDropped } from '../../../actions';
 import { getFilesData } from '../../../common/event';
 import { ITEM } from '../../../constants/dnd';
 import { noop } from '../../../utils';
@@ -42,6 +42,9 @@ const Row = props => {
 
 	const [{ isOver, canDrop }, drop] = useDrop({
 		accept: NativeTypes.FILE,
+		// canDrop: (item, monitor) => {
+			// @TODO: check if target item isn't an attachment
+		// },
 		collect: monitor => ({
 			isOver: monitor.isOver({ shallow: true }),
 			canDrop: monitor.canDrop(),
@@ -50,8 +53,7 @@ const Row = props => {
 			const parentItem = dropZone === null ? itemKey : null;
 			const collection = parentItem === null ? collectionKey : null;
 			if(item.files && item.files.length) {
-				const filesData = await getFilesData(item.files);
-				dispatch(createAttachments(filesData, { collection, parentItem }));
+				dispatch(createAttachmentsFromDropped(item.files, { collection, parentItem }));
 			}
 		},
 		hover: (item, monitor) => {

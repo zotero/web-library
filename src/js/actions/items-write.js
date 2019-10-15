@@ -5,6 +5,7 @@ import baseMappings from 'zotero-base-mappings';
 import queue from './queue';
 import { fetchItemTypeFields } from './meta';
 import { get, removeRelationByItemKey, reverseMap } from '../utils';
+import { getFilesData } from '../common/event';
 import { omit } from '../common/immutable';
 import { extractItems } from '../common/actions';
 import { fetchItemTemplate, fetchItemTypeCreatorTypes } from '.';
@@ -924,6 +925,13 @@ const createAttachments = (filesData, { collection = null, parentItem = null } =
 	}
 }
 
+const createAttachmentsFromDropped = (droppedFiles, ...rest) => {
+	return async dispatch => {
+		const filesData = await getFilesData(droppedFiles);
+		return await dispatch(createAttachments(filesData, ...rest));
+	}
+}
+
 export {
 	addToCollection,
 	chunkedDeleteItems,
@@ -933,6 +941,7 @@ export {
 	chunkedTrashOrDelete,
 	copyToLibrary,
 	createAttachments,
+	createAttachmentsFromDropped,
 	createItem,
 	createItems,
 	deleteItem,

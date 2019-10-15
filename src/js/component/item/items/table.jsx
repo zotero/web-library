@@ -4,6 +4,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import cx from 'classnames';
 import deepEqual from 'deep-equal';
+import { DropTarget } from 'react-dnd-cjs';
+import { NativeTypes } from 'react-dnd-html5-backend-cjs';
+
 import { openAttachment, resizeVisibleColumns } from '../../../utils';
 import AutoSizer from 'react-virtualized/dist/commonjs/AutoSizer';
 import InfiniteLoader from 'react-virtualized/dist/commonjs/InfiniteLoader';
@@ -15,6 +18,25 @@ import Row from './row';
 import Spinner from '../../ui/spinner';
 import columnNames from '../../../constants/column-names';
 import columnSortKeyLookup from '../../../constants/column-sort-key-lookup';
+
+const dndSpec = {
+	drop: (props, monitor) => {
+		if(monitor.isOver({ shallow: true }) && monitor.getItemType() === NativeTypes.FILE) {
+			const item = monitor.getItem();
+			if(item.files && item.files.length) {
+				const { createAttachmentsFromDropped, collection } = props;
+				createAttachmentsFromDropped(item.files, { collection: collection.key });
+			}
+		}
+	}
+}
+
+const dndCollect = (connect, monitor) => ({
+	connectDropTarget: connect.dropTarget(),
+	isOver: monitor.isOver({ shallow: true }),
+	canDrop: monitor.canDrop(),
+});
+
 
 class ItemsTable extends React.PureComponent {
 	constructor(props) {
@@ -595,16 +617,18 @@ class ItemsTable extends React.PureComponent {
 			return null;
 		}
 		const { isError, sortBy, sortDirection, totalItemsCount } = this.props;
+		const { connectDropTarget, isOver, canDrop } = this.props;
 		const { scrollToIndex } = this.state;
 		const isLoadingUncounted = !isError && typeof(totalItemsCount) === 'undefined';
 
-		return (
+		return connectDropTarget(
 			<div
 				ref={ ref => this.containerDom = ref }
 				onKeyDown={ this.handleKeyDown.bind(this) }
 				className={cx('items-table-wrap', {
 					resizing: this.state.isResizing,
 					reordering: this.state.isReordering,
+					'dnd-target': isOver && canDrop
 				}) }
 			>
 				<AutoSizer>
@@ -672,4 +696,4 @@ ItemsTable.defaultProps = {
 	preferences: {}
 };
 
-export default ItemsTable;
+export default DropTarget([NativeTypes.FILE], dndSpec, dndCollect)(ItemsTable);

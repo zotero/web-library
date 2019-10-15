@@ -20,6 +20,10 @@
 		left: calc(50% - #{$icon-spin-size-lg / 2});
 		top: calc(50% - #{$icon-spin-size-lg / 2} + #{$line-height-large / 2});
 	}
+
+	&.dnd-target {
+		outline: 1px solid $item-table-dnd-target-bg;
+	}
 }
 
 .items-table {

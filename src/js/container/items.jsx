@@ -10,8 +10,8 @@ import Items from '../component/item/items';
 import withDevice from '../enhancers/with-device';
 import withSortItems from '../enhancers/with-sort-items';
 import columnSortKeyLookup from '../constants/column-sort-key-lookup';
-import { copyToLibrary, addToCollection, fetchItemsInCollection, fetchItemsQuery,
-	fetchPublicationsItems, fetchTopItems, fetchTrashItems, preferenceChange,
+import { copyToLibrary, createAttachmentsFromDropped, addToCollection, fetchItemsInCollection,
+	fetchItemsQuery, fetchPublicationsItems, fetchTopItems, fetchTrashItems, preferenceChange,
 	getAttachmentUrl, chunkedTrashOrDelete } from '../actions';
 import { get, resizeVisibleColumns } from '../utils';
 import { omit } from '../common/immutable';
@@ -211,7 +211,7 @@ const mapStateToProps = state => {
 
 //@TODO: bind all action creators
 const mapDispatchToProps = dispatch => ({
-	dispatch, ...bindActionCreators({ chunkedTrashOrDelete, addToCollection, copyToLibrary,
+	dispatch, ...bindActionCreators({ createAttachmentsFromDropped, chunkedTrashOrDelete, addToCollection, copyToLibrary,
 	getAttachmentUrl, push }, dispatch)
 });
 
