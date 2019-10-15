@@ -7,7 +7,7 @@ import { fetchItemTypeFields } from './meta';
 import { get, removeRelationByItemKey, reverseMap } from '../utils';
 import { omit } from '../common/immutable';
 import { extractItems } from '../common/actions';
-import { fetchItemTypeCreatorTypes } from '.';
+import { fetchItemTemplate, fetchItemTypeCreatorTypes } from '.';
 
 import {
     REQUEST_CREATE_ITEMS,
@@ -893,6 +893,37 @@ const updateItemWithMapping = (item, fieldKey, newValue) => {
 	}
 }
 
+const createAttachments = (filesData, { collection = null, parentItem = null } = {}) => {
+	return async (dispatch, getState) => {
+		const state = getState();
+		const { libraryKey } = state.current;
+		const attachmentTemplate = await dispatch(
+			fetchItemTemplate('attachment', { linkMode: 'imported_file' })
+		);
+		const attachmentItems = filesData.map(fd => ({
+			...attachmentTemplate,
+			collections: collection ? [collection] : [],
+			contentType: fd.contentType,
+			filename: fd.fileName,
+			parentItem: parentItem || false,
+			title: fd.fileName,
+		}));
+
+		const createdItems = await dispatch(
+			createItems(attachmentItems, libraryKey)
+		);
+
+		const uploadPromises = createdItems.map(async (item, index) => {
+			const fd = filesData[index];
+			await dispatch(uploadAttachment(item.key, fd));
+		});
+
+		await Promise.all(uploadPromises);
+
+		return createdItems;
+	}
+}
+
 export {
 	addToCollection,
 	chunkedDeleteItems,
@@ -901,6 +932,7 @@ export {
 	chunkedRemoveFromCollection,
 	chunkedTrashOrDelete,
 	copyToLibrary,
+	createAttachments,
 	createItem,
 	createItems,
 	deleteItem,

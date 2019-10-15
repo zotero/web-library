@@ -4,8 +4,8 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import CollectionTree from '../component/libraries/collection-tree';
-import { fetchCollections, createCollection, updateCollection, deleteCollection, toggleModal,
-	navigate } from '../actions';
+import { createAttachments, fetchCollections, createCollection, updateCollection, deleteCollection,
+	toggleModal, navigate } from '../actions';
 import { pick } from '../common/immutable';
 
 const CollectionTreeContainer = props => <CollectionTree { ...props } />;
@@ -30,5 +30,5 @@ const mapStateToProps = (state, ownProps) => {
 
 export default connect(
 	mapStateToProps,
-	{ fetchCollections, createCollection, updateCollection, deleteCollection, toggleModal, navigate }
+	{ fetchCollections, createAttachments, createCollection, updateCollection, deleteCollection, toggleModal, navigate }
 )(CollectionTreeContainer);

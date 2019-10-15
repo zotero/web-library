@@ -16,8 +16,11 @@ const dndSpec = {
 	drop(props, monitor) {
 		if(monitor.isOver({ shallow: true })) {
 			if(monitor.getItemType() === NativeTypes.FILE) {
-				//@TODO: handle file drop
-				console.log('drop', { monitor });
+				const { onDrop } = props;
+				const item = monitor.getItem();
+				if(item.files && item.files.length) {
+					onDrop(item.files);
+				}
 			} else {
 				// ITEM OR COLLECTION, both handled in endDrag on the other side
 				const { dndTarget } = props;

@@ -10,6 +10,7 @@ import Node from './node';
 import Spinner from '../../component/ui/spinner';
 import withDevice from '../../enhancers/with-device';
 import { BIBLIOGRAPHY, COLLECTION_RENAME, COLLECTION_ADD, EXPORT, MOVE_COLLECTION } from '../../constants/modals';
+import { getFilesData } from '../../common/event';
 import { pick } from '../../common/immutable';
 import { stopPropagation } from '../../utils.js';
 
@@ -348,9 +349,9 @@ const PickerCheckbox = ({ collectionKey, pickerPick, picked, parentLibraryKey })
 }
 
 const CollectionNode = withDevice(props => {
-	const { allCollections, derivedData, collection, device, level, selectedCollectionKey,
-		isCurrentLibrary, parentLibraryKey, renaming, setRenaming, updateCollection,
-		updating, isPickerMode, shouldBeTabbable, ...rest }  = props;
+	const { allCollections, derivedData, createAttachments, collection, device, level,
+		selectedCollectionKey, isCurrentLibrary, parentLibraryKey, renaming, setRenaming,
+		updateCollection, updating, isPickerMode, shouldBeTabbable, ...rest }  = props;
 
 	const handleClick = useCallback(() => {
 		const { selectNode } = rest;
@@ -368,7 +369,7 @@ const CollectionNode = withDevice(props => {
 		setRenaming(null);
 	});
 
-	const handleRenameCommit = useCallback(async newValue => {
+	const handleRenameCommit = useCallback(newValue => {
 		updateCollection(collection.key, { name: newValue }, parentLibraryKey);
 		setRenaming(null);
 	});
@@ -382,6 +383,11 @@ const CollectionNode = withDevice(props => {
 		} else {
 			//@TODO: Support for moving collections across libraries #227
 		}
+	});
+
+	const handleDrop = useCallback(async droppedFiles => {
+		const filesData = await getFilesData(droppedFiles);
+		await createAttachments(filesData, { collection: collection.key });
 	});
 
 	const collections = allCollections.filter(c => c.parentCollection === collection.key );
@@ -427,6 +433,7 @@ const CollectionNode = withDevice(props => {
 			isOpen={ derivedData[collection.key].isOpen }
 			onClick={ handleClick }
 			onDrag={ handleDrag }
+			onDrop={ handleDrop }
 			onRename={ device.isTouchOrSmall ? null : handleRenameTrigger }
 			shouldBeDraggable={ renaming !== collection.key }
 			showTwisty={ hasSubCollections }
@@ -438,6 +445,7 @@ const CollectionNode = withDevice(props => {
 						{ ...rest }
 						allCollections={ allCollections }
 						collections = { collections }
+						createAttachments= { createAttachments }
 						derivedData={ derivedData }
 						isCurrentLibrary = { isCurrentLibrary }
 						isPickerMode={ isPickerMode }
@@ -447,8 +455,8 @@ const CollectionNode = withDevice(props => {
 						renaming = { renaming }
 						selectedCollectionKey={ selectedCollectionKey }
 						shouldBeTabbable = { shouldSubtreeNodesBeTabbable }
-						updating = { updating }
 						updateCollection = { updateCollection }
+						updating = { updating }
 					/>
 				</LevelWrapper>
 			) : null }
@@ -613,10 +621,10 @@ const CollectionTree = withDevice(props => {
 				setOpened={ setOpened }
 				setRenaming={ setRenaming }
 				shouldBeTabbable={ shouldBeTabbable }
-				{ ...pick(rest, ['addVirtual', 'commitAdd', 'cancelAdd', 'deleteCollection',
-				'navigate', 'pickerPick', 'picked', 'onDrillDownNext', 'onDrillDownPrev',
-				'onFocusNext', 'onFocusPrev', 'toggleModal', 'updateCollection', 'updating',
-				'virtual', 'isPickerMode']) }
+				{ ...pick(rest, ['addVirtual', 'commitAdd', 'cancelAdd', 'createAttachments',
+				'deleteCollection', 'navigate', 'pickerPick', 'picked', 'onDrillDownNext',
+				'onDrillDownPrev', 'onFocusNext', 'onFocusPrev', 'toggleModal', 'updateCollection',
+				'updating', 'virtual', 'isPickerMode']) }
 			/>
 			<PublicationsNode
 				isSelected = { isCurrentLibrary && itemsSource === 'publications' }

@@ -13,8 +13,8 @@ import { getFilesData } from '../../common/event';
 import Dropzone from '../dropzone';
 var fileCounter = 0;
 
-const NewFileModal = ({ createItems, fetchItemTemplate, files, collection, isOpen,
-	libraryKey, toggleModal, uploadAttachment, navigate }) => {
+const NewFileModal = props => {
+	const { createAttachments, files, collection, isOpen, libraryKey, toggleModal, navigate } = props;
 	const inputId = getUniqueId();
 	const [isBusy, setBusy] = useState(false);
 	const [filesData, setFilesData] = useState([]);
@@ -39,23 +39,9 @@ const NewFileModal = ({ createItems, fetchItemTemplate, files, collection, isOpe
 
 	const handleCreateFileClick = async () => {
 		setBusy(true);
-		const attachmentTemplate = await fetchItemTemplate('attachment', { linkMode: 'imported_file' });
-		const attachmentItems = filesData.map(fd => ({
-			...attachmentTemplate,
-			collections: collection ? [collection.key] : [],
-			title: fd.fileName,
-			filename: fd.fileName,
-			contentType: fd.contentType
-		}));
-
-		const createdItems = await createItems(attachmentItems, libraryKey);
-		const uploadPromises = createdItems.map(async (item, index) => {
-			const fd = filesData[index];
-			await uploadAttachment(item.key, fd);
-		});
-
-		await Promise.all(uploadPromises);
-
+		const createdItems = await createAttachments(
+			filesData, { collection: collection ? collection.key : null }
+		);
 		toggleModal(null, false)
 		setBusy(false);
 		setFilesData([]);
@@ -166,14 +152,12 @@ const NewFileModal = ({ createItems, fetchItemTemplate, files, collection, isOpe
 
 NewFileModal.propTypes = {
 	collection: PropTypes.object,
-	createItems: PropTypes.func,
-	fetchItemTemplate: PropTypes.func,
+	createAttachments: PropTypes.func,
 	files: PropTypes.array,
 	isOpen: PropTypes.bool,
 	libraryKey: PropTypes.string,
 	navigate: PropTypes.func,
 	toggleModal: PropTypes.func,
-	uploadAttachment: PropTypes.func,
 }
 
 export default NewFileModal;

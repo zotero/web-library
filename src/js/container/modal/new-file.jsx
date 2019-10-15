@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import NewFileModal from '../../component/modal/new-file';
 import { get } from '../../utils';
 import { NEW_FILE } from '../../constants/modals';
-import { toggleModal, createItems, fetchItemTemplate, uploadAttachment, navigate } from '../../actions';
+import { toggleModal, createItems, fetchItemTemplate, createAttachments, navigate } from '../../actions';
 
 const NewFileModalContainer = props => <NewFileModal { ...props } />;
 
@@ -22,5 +22,5 @@ const mapStateToProps = state => {
 
 export default connect(
 	mapStateToProps,
-	{ createItems, fetchItemTemplate, toggleModal, uploadAttachment, navigate }
+	{ createItems, fetchItemTemplate, toggleModal, createAttachments, navigate }
 )(NewFileModalContainer);

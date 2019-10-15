@@ -2,10 +2,14 @@ import cx from 'classnames';
 import PropTypes from 'prop-types';
 import React, { useCallback, useEffect, useState, useRef } from 'react';
 import { getEmptyImage, NativeTypes } from 'react-dnd-html5-backend-cjs';
+import { useDispatch, useSelector } from 'react-redux';
+import { useDrag, useDrop } from 'react-dnd-cjs'
 
+import { createAttachments } from '../../../actions';
+import { getFilesData } from '../../../common/event';
 import { ITEM } from '../../../constants/dnd';
 import { noop } from '../../../utils';
-import { useDrag, useDrop } from 'react-dnd-cjs'
+
 
 const DROP_MARGIN_EDGE = 5; // how many pixels from top/bottom of the row triggers "in-between" drop
 
@@ -14,6 +18,8 @@ const Row = props => {
 	const itemKey = rowData.key;
 	const rowRef = useRef();
 	const [dropZone, setDropZone] = useState(null);
+	const dispatch = useDispatch();
+	const collectionKey = useSelector(state => state.current.collectionKey);
 
 	const [_, drag, preview] = useDrag({ // eslint-disable-line no-unused-vars
 		item: { type: ITEM },
@@ -40,8 +46,13 @@ const Row = props => {
 			isOver: monitor.isOver({ shallow: true }),
 			canDrop: monitor.canDrop(),
 		}),
-		drop: (item, monitor) => {
-			//@TODO;
+		drop: async item => {
+			const parentItem = dropZone === null ? itemKey : null;
+			const collection = parentItem === null ? collectionKey : null;
+			if(item.files && item.files.length) {
+				const filesData = await getFilesData(item.files);
+				dispatch(createAttachments(filesData, { collection, parentItem }));
+			}
 		},
 		hover: (item, monitor) => {
 			if(rowRef.current && monitor.getClientOffset()) {
