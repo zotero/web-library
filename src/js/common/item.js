@@ -80,6 +80,7 @@ const getDerivedData = (item, itemTypes, tagColors) => {
 		extra,
 		iconName,
 		itemType: itemTypeName,
+		itemTypeRaw: itemType,
 		key: item.key,
 		publicationTitle: getBaseMappedValue(item, 'publicationTitle'),
 		publisher: getBaseMappedValue(item, 'publisher'),

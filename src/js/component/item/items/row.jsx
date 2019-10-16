@@ -42,9 +42,6 @@ const Row = props => {
 
 	const [{ isOver, canDrop }, drop] = useDrop({
 		accept: NativeTypes.FILE,
-		// canDrop: (item, monitor) => {
-			// @TODO: check if target item isn't an attachment
-		// },
 		collect: monitor => ({
 			isOver: monitor.isOver({ shallow: true }),
 			canDrop: monitor.canDrop(),
@@ -52,7 +49,8 @@ const Row = props => {
 		drop: async item => {
 			const parentItem = dropZone === null ? itemKey : null;
 			const collection = parentItem === null ? collectionKey : null;
-			if(item.files && item.files.length) {
+			const isAttachmentOnAttachment = parentItem !== null && rowData.itemTypeRaw === 'attachment';
+			if(!isAttachmentOnAttachment && item.files && item.files.length) {
 				dispatch(createAttachmentsFromDropped(item.files, { collection, parentItem }));
 			}
 		},
@@ -62,10 +60,11 @@ const Row = props => {
 				const rect = rowRef.current.getBoundingClientRect();
 				const offsetTop = cursor.y - rect.y;
 				const offsetBottom = (rect.y + rect.height) - cursor.y;
+				const margin = rowData.itemTypeRaw === 'attachment' ? Math.floor(rect.height / 2) : DROP_MARGIN_EDGE;
 
-				if(offsetTop < DROP_MARGIN_EDGE) {
+				if(offsetTop < margin) {
 					setDropZone('top');
-				} else if(offsetBottom < DROP_MARGIN_EDGE) {
+				} else if(offsetBottom < margin) {
 					setDropZone('bottom');
 				} else {
 					setDropZone(null);
@@ -96,7 +95,7 @@ const Row = props => {
 					onMouseOver={ onMouseOver }
 					onContextMenu={ onContextMenu }
 					className={ cx(className, {
-						'dnd-target': canDrop && isOver && dropZone === null,
+						'dnd-target': canDrop && rowData.itemTypeRaw !== 'attachment' && isOver && dropZone === null,
 						'dnd-target-top': canDrop && isOver && dropZone === 'top',
 						'dnd-target-bottom': canDrop && isOver && dropZone === 'bottom',
 					}) }
