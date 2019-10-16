@@ -39,9 +39,9 @@ const itemsByParent = (state = {}, action) => {
 			return {
 				...state,
 				...(action.items.reduce((aggr, item) => {
-					parentKey = get(action, 'item.parentItem');
+					parentKey = item.parentItem;
 					if(parentKey) {
-						//@TODO: Optimise (inject loops over all items of the first argument)
+						// @TODO: Optimise (inject loops over all items of the first argument)
 						if(parentKey in aggr) {
 							aggr[parentKey] = injectExtraItemKeys(
 								aggr[parentKey], item.key, otherItems

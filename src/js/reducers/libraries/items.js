@@ -18,6 +18,7 @@ import {
     RECEIVE_TOP_ITEMS,
     RECEIVE_TRASH_ITEMS,
     RECEIVE_UPDATE_ITEM,
+    RECEIVE_UPLOAD_ATTACHMENT,
 } from '../../constants/actions.js';
 
 import { get, indexByKey } from '../../utils';
@@ -80,6 +81,19 @@ const items = (state = {}, action, metaAndTags) => {
 				...state,
 				...indexByKey(calculateDerivedData(action.items, metaAndTags), 'key')
 			};
+		case RECEIVE_UPLOAD_ATTACHMENT:
+			return {
+				...state,
+				[action.itemKey]: {
+					...(state[action.itemKey] || {}),
+					[Symbol.for('links')]: {
+						...(state[action.itemKey][Symbol.for('links')] || {}),
+						//@TODO: could copy actual value from action.response.registerResponse for responses with register step
+						//		 (i.e. where file did not exist before)
+						enclosure: true
+					}
+				}
+			}
 		default:
 			return state;
 	}
