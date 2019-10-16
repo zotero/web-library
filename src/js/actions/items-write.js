@@ -4,11 +4,12 @@ import api from 'zotero-api-client';
 import baseMappings from 'zotero-base-mappings';
 import queue from './queue';
 import { fetchItemTypeFields } from './meta';
-import { get, removeRelationByItemKey, reverseMap } from '../utils';
+import { get, getUniqueId, removeRelationByItemKey, reverseMap } from '../utils';
 import { getFilesData } from '../common/event';
 import { omit } from '../common/immutable';
 import { extractItems } from '../common/actions';
 import { fetchItemTemplate, fetchItemTypeCreatorTypes } from '.';
+import { COMPLETE_ONGOING, BEGIN_ONGOING } from '../constants/actions';
 
 import {
     REQUEST_CREATE_ITEMS,
@@ -897,31 +898,50 @@ const updateItemWithMapping = (item, fieldKey, newValue) => {
 const createAttachments = (filesData, { collection = null, parentItem = null } = {}) => {
 	return async (dispatch, getState) => {
 		const state = getState();
+		const id = getUniqueId();
 		const { libraryKey } = state.current;
-		const attachmentTemplate = await dispatch(
-			fetchItemTemplate('attachment', { linkMode: 'imported_file' })
-		);
-		const attachmentItems = filesData.map(fd => ({
-			...attachmentTemplate,
-			collections: collection ? [collection] : [],
-			contentType: fd.contentType,
-			filename: fd.fileName,
-			parentItem: parentItem || false,
-			title: fd.fileName,
-		}));
 
-		const createdItems = await dispatch(
-			createItems(attachmentItems, libraryKey)
-		);
-
-		const uploadPromises = createdItems.map(async (item, index) => {
-			const fd = filesData[index];
-			await dispatch(uploadAttachment(item.key, fd));
+		dispatch({
+			count: filesData.length,
+			id,
+			kind: 'upload',
+			libraryKey,
+			type: BEGIN_ONGOING,
 		});
 
-		await Promise.all(uploadPromises);
+		try {
+			const attachmentTemplate = await dispatch(
+				fetchItemTemplate('attachment', { linkMode: 'imported_file' })
+			);
+			const attachmentItems = filesData.map(fd => ({
+				...attachmentTemplate,
+				collections: collection ? [collection] : [],
+				contentType: fd.contentType,
+				filename: fd.fileName,
+				parentItem: parentItem || false,
+				title: fd.fileName,
+			}));
 
-		return createdItems;
+			const createdItems = await dispatch(
+				createItems(attachmentItems, libraryKey)
+			);
+
+			const uploadPromises = createdItems.map(async (item, index) => {
+				const fd = filesData[index];
+				await dispatch(uploadAttachment(item.key, fd));
+			});
+
+			await Promise.all(uploadPromises);
+
+			return createdItems;
+		} finally {
+			dispatch({
+				id,
+				kind: 'upload',
+				libraryKey,
+				type: COMPLETE_ONGOING,
+			});
+		}
 	}
 }
 

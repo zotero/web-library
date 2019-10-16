@@ -14,16 +14,15 @@ import itemsPublications from './items-publications';
 import libraries from './libraries';
 import meta from './meta';
 import modal from './modal';
+import ongoing from './ongoing';
 import preferences from './preferences';
 import query from './query';
 import sources from './sources'
 import styles from './styles';
+import userType from './user-type'
 import viewport from './viewport';
-import userType from './user-type';
 
 
-export default history => combineSectionReducers({
-	collectionCountByLibrary, config, current, errors, fetching, groups,
-	identifier, itemsPublications, libraries, meta, modal, preferences, query,
-	router: connectRouter(history), sources, styles, viewport, userType,
-});
+export default history => combineSectionReducers({ collectionCountByLibrary, config, current,
+	errors, fetching, groups, identifier, itemsPublications, libraries, meta, modal, ongoing,
+	preferences, query, router: connectRouter(history), sources, styles, viewport, userType, });

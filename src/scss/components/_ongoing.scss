@@ -1,0 +1,9 @@
+.ongoing {
+	display: flex;
+	height: 32px;
+	padding: $space-min $space-md;
+
+	> .label {
+		flex: auto;
+	}
+}

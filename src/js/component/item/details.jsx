@@ -7,9 +7,10 @@ import PropTypes from 'prop-types';
 import ItemDetailsInfoSelected from '../item-details/info-selected';
 import ItemDetailsInfoView from '../item-details/info-view';
 import ItemDetailsTabs from '../item-details/tabs';
+import Ongoing from '../ongoing';
 import TouchHeaderContainer from '../../container/touch-header';
-import withDevice from '../../enhancers/with-device';
 import Types from '../../types';
+import withDevice from '../../enhancers/with-device';
 
 const ItemDetails = props => {
 	const { device, fetchItemsByKeys, isSelectMode, item, itemKey, itemKeys, itemsCount, active } = props;
@@ -38,6 +39,7 @@ const ItemDetails = props => {
 					)
 				)
 			}
+			<Ongoing />
 		</section>
 	);
 }
