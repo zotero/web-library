@@ -6,7 +6,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useDrag, useDrop } from 'react-dnd-cjs'
 
 import { createAttachmentsFromDropped } from '../../../actions';
-import { getFilesData } from '../../../common/event';
 import { ITEM } from '../../../constants/dnd';
 import { noop } from '../../../utils';
 

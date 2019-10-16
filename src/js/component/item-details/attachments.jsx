@@ -1,19 +1,23 @@
-import React, { useEffect, useState } from 'react';
+import cx from 'classnames';
 import PropTypes from 'prop-types';
+import React, { useEffect, useState } from 'react';
+import { NativeTypes } from 'react-dnd-html5-backend-cjs';
+import { useDrop } from 'react-dnd-cjs'
 
 import Button from '../ui/button';
 import Icon from '../ui/icon';
 import Spinner from '../ui/spinner';
-import withFocusManager from '../../enhancers/with-focus-manager';
 import withDevice from '../../enhancers/with-device';
+import withFocusManager from '../../enhancers/with-focus-manager';
 import { getFileData } from '../../common/event';
+import { isTriggerEvent } from '../../common/event';
+import { openAttachment, sortByKey } from '../../utils';
 import { pick } from '../../common/immutable';
 import { TabPane } from '../ui/tabs';
 import { Toolbar, ToolGroup } from '../ui/toolbars';
-import { isTriggerEvent } from '../../common/event';
-import { openAttachment, sortByKey } from '../../utils';
 
-const Attachment = ({ attachment, deleteItem, isReadOnly, isUploading, getAttachmentUrl, onKeyDown }) => {
+const Attachment = props => {
+	const { attachment, deleteItem, isReadOnly, isUploading, getAttachmentUrl, onKeyDown } = props;
 
 	const handleDelete = () => {
 		deleteItem(attachment);
@@ -90,12 +94,26 @@ Attachment.propTypes = {
 
 const PAGE_SIZE = 100;
 
-const Attachments = ({ childItems, device, isFetched, isFetching, isReadOnly, itemKey,
-	createItem, uploadAttachment, onFocusNext, onFocusPrev, fetchChildItems,
-	fetchItemTemplate, uploads, isActive, libraryKey, onBlur, onFocus,
-	pointer, registerFocusRoot, ...props }) => {
+const Attachments = props => {
+	const { childItems, createAttachmentsFromDropped, device, isFetched, isFetching, isReadOnly,
+	itemKey, createItem, uploadAttachment, onFocusNext, onFocusPrev, fetchChildItems,
+	fetchItemTemplate, uploads, isActive, libraryKey, onBlur, onFocus, pointer, registerFocusRoot,
+	...rest } = props;
 
 	const [attachments, setAttachments] = useState([]);
+
+	const [{ isOver, canDrop }, drop] = useDrop({
+		accept: NativeTypes.FILE,
+		collect: monitor => ({
+			isOver: monitor.isOver({ shallow: true }),
+			canDrop: monitor.canDrop(),
+		}),
+		drop: async item => {
+			if(item.files && item.files.length) {
+				createAttachmentsFromDropped(item.files, { parentItem: itemKey });
+			}
+		},
+	});
 
 	useEffect(() => {
 		if(isActive && !isFetching && !isFetched) {
@@ -145,9 +163,10 @@ const Attachments = ({ childItems, device, isFetched, isFetching, isReadOnly, it
 
 	return (
 		<TabPane
-			className="attachments"
+			className={ cx("attachments", { 'dnd-target': canDrop && isOver }) }
 			isActive={ isActive }
 			isLoading={ device.shouldUseTabs && !isFetched }
+			ref={ drop }
 		>
 			<h5 className="h2 tab-pane-heading hidden-mouse">Attachments</h5>
 			<div
@@ -164,10 +183,10 @@ const Attachments = ({ childItems, device, isFetched, isFetching, isReadOnly, it
 								const isUploading = uploads.includes(attachment.key);
 								return <Attachment
 									attachment={ attachment }
-									key={ attachment.key }
 									isUploading={ isUploading }
+									key={ attachment.key }
 									onKeyDown={ handleKeyDown }
-									{ ...pick(props, ['deleteItem', 'getAttachmentUrl']) }
+									{ ...pick(rest, ['deleteItem', 'getAttachmentUrl']) }
 								/>
 							})
 						}
@@ -205,6 +224,7 @@ const Attachments = ({ childItems, device, isFetched, isFetching, isReadOnly, it
 
 Attachments.propTypes = {
 	childItems: PropTypes.array,
+	createAttachmentsFromDropped: PropTypes.func,
 	createItem: PropTypes.func,
 	device: PropTypes.object,
 	fetchChildItems: PropTypes.func,

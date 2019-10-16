@@ -4,7 +4,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import Attachments from '../../component/item-details/attachments';
-import { createItem, deleteItem, getAttachmentUrl, uploadAttachment, fetchChildItems, fetchItemTemplate } from '../../actions';
+import { createAttachmentsFromDropped, createItem, deleteItem, getAttachmentUrl, uploadAttachment, fetchChildItems, fetchItemTemplate } from '../../actions';
 import { get } from '../../utils';
 
 const AttachmentsContainer = props => <Attachments { ...props } />;
@@ -23,5 +23,5 @@ const mapStateToProps = state => {
 }
 
 export default connect(mapStateToProps,
-	{ createItem, deleteItem, getAttachmentUrl, uploadAttachment, fetchChildItems, fetchItemTemplate }
+	{ createAttachmentsFromDropped, createItem, deleteItem, getAttachmentUrl, uploadAttachment, fetchChildItems, fetchItemTemplate }
 )(AttachmentsContainer)
