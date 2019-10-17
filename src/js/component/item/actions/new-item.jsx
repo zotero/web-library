@@ -130,7 +130,7 @@ const NewItemSelector = props => {
 					tabIndex={ -1 }
 				>
 				<span className="flex-row align-items-center">
-					Store Copy of File
+					Upload File
 				</span>
 				</Button>
 				<input

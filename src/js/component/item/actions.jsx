@@ -275,7 +275,7 @@ class ItemsActions extends React.PureComponent {
 								New Standalone Note
 							</DropdownItem>
 							<DropdownItem onClick={ onNewFileModalOpen } >
-								Store Copy of File
+								Upload File
 							</DropdownItem>
 							<DropdownItem onClick={ this.handleAddByIdentifierClick } >
 								Add By Identifier
