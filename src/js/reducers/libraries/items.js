@@ -86,7 +86,7 @@ const items = (state = {}, action, metaAndTags) => {
 				...state,
 				[action.itemKey]: {
 					...(state[action.itemKey] || {}),
-					version: parseInt(action.response.response.headers.get('Last-Modified-Version'), 10) || state[action.itemKey].version,
+					version: action.response.getVersion() || state[action.itemKey].version,
 					[Symbol.for('links')]: {
 						...(state[action.itemKey][Symbol.for('links')] || {}),
 						//@TODO: could copy actual value from action.response.registerResponse for responses with register step
