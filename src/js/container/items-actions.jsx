@@ -1,7 +1,6 @@
 'use strict';
 
 import React from 'react';
-import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { get } from '../utils';
 import ItemsActions from '../component/item/actions';
@@ -11,24 +10,7 @@ import withItemsActions from '../enhancers/with-items-actions';
 import withSortItems from '../enhancers/with-sort-items';
 import { toggleModal } from '../actions';
 
-class ItemsActionsContainer extends React.PureComponent {
-	render() {
-		return <ItemsActions { ...this.props } />
-	}
-
-	static propTypes = {
-		collectionKey: PropTypes.string,
-		device: PropTypes.object,
-		isSelectMode: PropTypes.bool,
-		itemKeys: PropTypes.array,
-		itemsSource: PropTypes.string,
-		itemTypes: PropTypes.array,
-		libraryKey: PropTypes.string,
-		onSelectModeToggle: PropTypes.func,
-		search: PropTypes.string,
-		tags: PropTypes.array,
-	}
-}
+const ItemsActionsContainer = props => <ItemsActions { ...props } />;
 
 const mapStateToProps = state => {
 	const { libraryKey, collectionKey, itemsSource, itemKey, itemKeys, tags,
@@ -36,11 +18,8 @@ const mapStateToProps = state => {
 	const { isReadOnly } = (state.config.libraries.find(l => l.key === libraryKey) || {});
 
 	const item = get(state, ['libraries', libraryKey, 'items', itemKey]);
-	const itemTypes = state.meta.itemTypes;
 
-	return { collectionKey, item, itemKey, itemKeys, itemsSource,
-		itemTypes, isReadOnly, search, tags
-	}
+	return { collectionKey, item, itemKey, itemKeys, itemsSource, isReadOnly, search, tags };
 }
 
 export default withSortItems(withItemsActions(withSelectMode(withDevice(

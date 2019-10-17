@@ -1,43 +1,62 @@
-'use strict';
-
-import React from 'react';
 import PropTypes from 'prop-types';
-import { noop } from '../../../utils';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
+import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap/lib';
+import { useDispatch, useSelector } from 'react-redux';
+
+import Button from '../../ui/button';
 import Icon from '../../ui/icon';
-import Dropdown from 'reactstrap/lib/Dropdown';
-import DropdownToggle from 'reactstrap/lib/DropdownToggle';
-import DropdownMenu from 'reactstrap/lib/DropdownMenu';
-import DropdownItem from 'reactstrap/lib/DropdownItem';
 import primaryItemTypes from '../../../constants/primary-item-types';
+import { createAttachments } from '../../../actions';
+import { getFilesData } from '../../../common/event';
+import { noop } from '../../../utils';
 
-class NewItemSelector extends React.PureComponent {
-	state = {
-		isOpen: false,
-		isSecondaryVisible: false
-	}
+const DropdownItemType = props => {
+	const { itemTypeSpec, onNewItemCreate } = props;
+	const { itemType, localized } = itemTypeSpec;
 
-	handleSelect(itemType) {
-		this.props.onNewItemCreate(itemType);
-	}
+	const handleSelect = useCallback(() => {
+		onNewItemCreate(itemType);
+	});
 
-	handleToggleDropdown(ev) {
-		if(this.props.disabled || (ev.target && ev.target.dataset.more)) {
+	return (
+		<DropdownItem onClick={ handleSelect }>
+			{ localized }
+		</DropdownItem>
+	);
+}
+
+const NewItemSelector = props => {
+	const { disabled, onNewItemCreate, tabIndex } = props;
+	const [isOpen, setIsOpen] = useState(false);
+	const [isSecondaryVisible, setIsSecondaryVisible] = useState(false);
+	const fileInputRef = useRef(null);
+	const itemTypes = useSelector(state => state.meta.itemTypes);
+	const collectionKey = useSelector(state => state.current.collectionKey);
+	const dispatch = useDispatch();
+
+	const primaryItemTypesDesc = useMemo(() => itemTypes.filter(
+		it => primaryItemTypes.includes(it.itemType)
+	), [itemTypes]);
+	const secondaryItemTypesDesc = useMemo(() => itemTypes.filter(
+		it => it.itemType !== 'note' && !primaryItemTypes.includes(it.itemType)
+	), [itemTypes]);
+
+	const handleToggleDropdown = useCallback(ev => {
+		if(disabled || (ev.target && ev.target.dataset.noToggle)) {
 			return;
 		}
 
-		this.setState({
-			isOpen: !this.state.isOpen,
-			isSecondaryVisible: false
-		});
-	}
+		setIsOpen(!isOpen);
+		setIsSecondaryVisible(false);
+	});
 
-	handleToggleMore(ev) {
-		this.setState({ isSecondaryVisible: true });
+	const handleToggleMore = useCallback(ev => {
+		setIsSecondaryVisible(true);
 		ev.preventDefault();
-	}
+	});
 
-	handleKeyDown = ev => {
-		const { onFocusNext, onFocusPrev } = this.props;
+	const handleKeyDown = useCallback(ev => {
+		const { onFocusNext, onFocusPrev } = props;
 		if(ev.target !== ev.currentTarget) {
 			return;
 		}
@@ -47,37 +66,34 @@ class NewItemSelector extends React.PureComponent {
 		} else if(ev.key === 'ArrowLeft') {
 			onFocusPrev(ev);
 		}
-	}
+	});
 
-	renderItemType = itemTypeDesc => {
-		const { itemType, localized } = itemTypeDesc;
-		return (
-			<DropdownItem key={ itemType } onClick={ this.handleSelect.bind(this, itemType) }>
-				{ localized }
-			</DropdownItem>
-		);
-	}
+	const handleFileInputChange = useCallback(async ev => {
+		const filesData = await getFilesData(Array.from(ev.currentTarget.files));
+		dispatch(createAttachments(filesData, { collection: collectionKey }));
+		setIsOpen(!isOpen);
+		setIsSecondaryVisible(false);
+	});
 
-	render() {
-		const { onNewFileModalOpen } = this.props;
-		const primaryItemTypesDesc = this.props.itemTypes.filter(
-			it => primaryItemTypes.includes(it.itemType)
-		);
-		const secondaryItemTypesDesc = this.props.itemTypes.filter(
-			it => it.itemType !== 'note' && !primaryItemTypes.includes(it.itemType)
-		);
-		return (
-			<Dropdown
-				className="new-item-selector"
-				isOpen={ this.state.isOpen }
-				toggle={ this.handleToggleDropdown.bind(this) }
-			>
+	const handleClick = useCallback(ev => {
+		if(ev.currentTarget === ev.target) {
+			fileInputRef.current.click();
+		}
+		ev.stopPropagation();
+	});
+
+	return (
+		<Dropdown
+			className="new-item-selector"
+			isOpen={ isOpen }
+			toggle={ handleToggleDropdown }
+		>
 			<DropdownToggle
 				className="btn-icon dropdown-toggle"
 				color={ null }
-				disabled={ this.props.disabled }
-				onKeyDown={ this.handleKeyDown }
-				tabIndex={ this.props.tabIndex }
+				disabled={ disabled }
+				onKeyDown={ handleKeyDown }
+				tabIndex={ tabIndex }
 				title="New Item"
 			>
 				<Icon type={ '16/plus' } width="16" height="16" />
@@ -99,39 +115,70 @@ class NewItemSelector extends React.PureComponent {
 				},
 			}}
 			>
-			{ primaryItemTypesDesc.map(this.renderItemType) }
+
+			{ primaryItemTypesDesc.map(itemTypeSpec => (
+				<DropdownItemType
+					itemTypeSpec={ itemTypeSpec }
+					key={ itemTypeSpec.itemType }
+					onNewItemCreate={ onNewItemCreate }
+				/>
+			)) }
 			<DropdownItem divider />
-			<DropdownItem onClick={ onNewFileModalOpen } >
-				Store Copy of File
+			<DropdownItem data-no-toggle onClick={ handleClick } tag="div" className="btn-file">
+				<Button
+					className="btn-link upload-file icon-left"
+					tabIndex={ -1 }
+				>
+				<span className="flex-row align-items-center">
+					Store Copy of File
+				</span>
+				</Button>
+				<input
+					data-no-toggle
+					multiple={ true }
+					onChange={ handleFileInputChange }
+					ref={ fileInputRef }
+					tabIndex={ -1 }
+					type="file"
+				/>
 			</DropdownItem>
 			<DropdownItem divider />
-			{ this.state.isSecondaryVisible ?
-				secondaryItemTypesDesc.map(this.renderItemType) :
-				<DropdownItem data-more onClick={ this.handleToggleMore.bind(this) }>
+			{ isSecondaryVisible ?
+				secondaryItemTypesDesc.map(itemTypeSpec => (
+					<DropdownItemType
+						itemTypeSpec={ itemTypeSpec }
+						key={ itemTypeSpec.itemType }
+						onNewItemCreate={ onNewItemCreate }
+					/>
+				)) :
+				<DropdownItem data-no-toggle onClick={ handleToggleMore }>
 					More
 				</DropdownItem>
 			}
 			</DropdownMenu>
-			</Dropdown>
-			);
-	}
-
-	static defaultProps = {
-		itemTypes: [],
-		onFocusNext: noop,
-		onFocusPrev: noop,
-		onNewItemCreate: noop,
-	}
-
-	static propTypes = {
-		disabled: PropTypes.bool,
-		itemTypes: PropTypes.array,
-		onFocusNext: PropTypes.func,
-		onFocusPrev: PropTypes.func,
-		onNewFileModalOpen: PropTypes.func,
-		onNewItemCreate: PropTypes.func,
-		tabIndex: PropTypes.number,
-	}
+		</Dropdown>
+	);
 }
+
+DropdownItemType.propTypes = {
+	itemTypeSpec: PropTypes.object,
+	onNewItemCreate: PropTypes.func,
+};
+
+NewItemSelector.defaultProps = {
+	itemTypes: [],
+	onFocusNext: noop,
+	onFocusPrev: noop,
+	onNewItemCreate: noop,
+};
+
+NewItemSelector.propTypes = {
+	disabled: PropTypes.bool,
+	itemTypes: PropTypes.array,
+	onFocusNext: PropTypes.func,
+	onFocusPrev: PropTypes.func,
+	onNewItemCreate: PropTypes.func,
+	tabIndex: PropTypes.number,
+};
 
 export default NewItemSelector;

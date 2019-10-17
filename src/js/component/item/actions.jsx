@@ -108,8 +108,7 @@ class ItemsActions extends React.PureComponent {
 						<NewItemSelector
 							tabIndex={ -2 }
 							disabled={ !['top', 'collection'].includes(itemsSource) }
-							{ ...pick(this.props, ['itemTypes', 'onFocusNext',
-								'onFocusPrev', 'onNewItemCreate', 'onNewFileModalOpen']) }
+							{ ...pick(this.props, ['onFocusNext', 'onFocusPrev', 'onNewItemCreate']) }
 						/>
 						{
 							(itemsSource === 'collection' || itemsSource === 'top') && (
