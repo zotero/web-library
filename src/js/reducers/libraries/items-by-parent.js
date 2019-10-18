@@ -1,6 +1,7 @@
 'use strict';
 import { populateItemKeys, filterItemKeys, sortItemKeysOrClear, injectExtraItemKeys } from '../../common/reducers';
 import { indexByKey, get } from '../../utils';
+import { mapObject } from '../../common/immutable';
 
 import {
     ERROR_CHILD_ITEMS,
@@ -14,6 +15,7 @@ import {
     RECEIVE_ITEMS_IN_COLLECTION,
     RECEIVE_TOP_ITEMS,
     RECEIVE_TRASH_ITEMS,
+    RECEIVE_UPDATE_ITEM,
     REQUEST_CHILD_ITEMS,
     SORT_ITEMS,
 } from '../../constants/actions.js';
@@ -102,6 +104,22 @@ const itemsByParent = (state = {}, action) => {
 					return aggr;
 				}, {})
 			}
+		case RECEIVE_UPDATE_ITEM:
+			if(!('parentItem' in action.patch)) {
+				return state;
+			}
+			parentKey = get(action, 'item.parentItem');
+			return mapObject(state, (pk, childKeys) => {
+				if(pk === parentKey) {
+					return [pk, injectExtraItemKeys(
+						childKeys,
+						action.item.key,
+						{ ...action.otherItems, [action.item.key]: action.item }
+					)];
+				} else {
+					return [pk, filterItemKeys(childKeys, action.item.key)];
+				}
+			});
 		default:
 			return state;
 	}

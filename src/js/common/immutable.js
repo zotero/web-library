@@ -34,4 +34,8 @@ const pick = (object, pickKeys) => {
 	}, {});
 }
 
-export { removeKeys, omit, pick };
+const mapObject = (object, mappingFunc) => Object.fromEntries(
+	Object.entries(object).map(([k, v]) => mappingFunc(k, v))
+);
+
+export { mapObject, removeKeys, omit, pick };

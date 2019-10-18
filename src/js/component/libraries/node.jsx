@@ -8,28 +8,35 @@ import { NativeTypes } from 'react-dnd-html5-backend-cjs';
 
 import Icon from '../ui/icon';
 import { isTriggerEvent } from '../../common/event';
-import { ITEM, COLLECTION } from '../../constants/dnd';
+import { ATTACHMENT, ITEM, COLLECTION } from '../../constants/dnd';
 import { noop } from '../../utils';
 import { pick } from '../../common/immutable';
 
 const dndSpec = {
 	drop(props, monitor) {
 		if(monitor.isOver({ shallow: true })) {
-			if(monitor.getItemType() === NativeTypes.FILE) {
+			const itemType = monitor.getItemType();
+			if(itemType === NativeTypes.FILE) {
 				const { onDrop } = props;
 				const item = monitor.getItem();
 				if(item.files && item.files.length) {
 					onDrop(item.files);
 				}
-			} else {
-				// ITEM OR COLLECTION, both handled in endDrag on the other side
+				return;
+			}
+			if(itemType === ATTACHMENT) {
+				const { dndTarget } = props;
+				return { library: dndTarget.libraryKey, collection: dndTarget.collectionKey };
+			}
+			if(itemType === ATTACHMENT || itemType === COLLECTION) {
 				const { dndTarget } = props;
 				return dndTarget;
 			}
 		}
 	},
 	canDrop({ dndTarget = {} }, monitor) {
-		if(monitor.getItemType() === ITEM) {
+		const itemType = monitor.getItemType();
+		if(itemType === ITEM) {
 			const { libraryKey: sourceLibraryKey } = monitor.getItem();
 			if(dndTarget.targetType === 'library' && dndTarget.libraryKey !== sourceLibraryKey) {
 				return true;
@@ -37,7 +44,7 @@ const dndSpec = {
 			if(dndTarget.targetType === 'collection') {
 				return true;
 			}
-		} else if(monitor.getItemType() === COLLECTION) {
+		} else if(itemType === COLLECTION) {
 			const {
 				collectionKey: srcCollectionKey,
 				libraryKey: srcLibraryKey
@@ -52,7 +59,14 @@ const dndSpec = {
 				return false;
 			}
 			return srcLibraryKey === targetLibraryKey && srcCollectionKey !== targetCollectionKey;
-		} else if(monitor.getItemType() === NativeTypes.FILE) {
+		} else if(itemType === ATTACHMENT) {
+			const { libraryKey: srcLibraryKey } = monitor.getItem();
+			const { libraryKey: targetLibraryKey, targetType } = dndTarget;
+			if(!['collection', 'library'].includes(targetType)) {
+				return false;
+			}
+			return srcLibraryKey === targetLibraryKey;
+		} else if(itemType === NativeTypes.FILE) {
 			if(!['collection', 'library'].includes(dndTarget.targetType)) {
 				return false;
 			}
@@ -239,5 +253,5 @@ class Node extends React.PureComponent {
 }
 
 export default DragSource(COLLECTION, dndCollectionDragSpec, dndCollectionDragCollect)(
-	DropTarget([COLLECTION, ITEM, NativeTypes.FILE], dndSpec, dndCollect)(Node)
+	DropTarget([ATTACHMENT, COLLECTION, ITEM, NativeTypes.FILE], dndSpec, dndCollect)(Node)
 );

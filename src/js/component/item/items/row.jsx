@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useDrag, useDrop } from 'react-dnd-cjs'
 
 import { createAttachmentsFromDropped } from '../../../actions';
-import { ITEM } from '../../../constants/dnd';
+import { ATTACHMENT, ITEM } from '../../../constants/dnd';
 import { noop } from '../../../utils';
 
 
@@ -40,17 +40,23 @@ const Row = props => {
 	});
 
 	const [{ isOver, canDrop }, drop] = useDrop({
-		accept: NativeTypes.FILE,
+		accept: [ATTACHMENT, NativeTypes.FILE],
 		collect: monitor => ({
 			isOver: monitor.isOver({ shallow: true }),
 			canDrop: monitor.canDrop(),
 		}),
-		drop: async item => {
-			const parentItem = dropZone === null ? itemKey : null;
-			const collection = parentItem === null ? collectionKey : null;
-			const isAttachmentOnAttachment = parentItem !== null && rowData.itemTypeRaw === 'attachment';
-			if(!isAttachmentOnAttachment && item.files && item.files.length) {
-				dispatch(createAttachmentsFromDropped(item.files, { collection, parentItem }));
+		drop: (item, monitor) => {
+			const itemType = monitor.getItemType();
+			if(itemType === NativeTypes.FILE) {
+				const parentItem = dropZone === null ? itemKey : null;
+				const collection = parentItem === null ? collectionKey : null;
+				const isAttachmentOnAttachment = parentItem !== null && rowData.itemTypeRaw === 'attachment';
+				if(!isAttachmentOnAttachment && item.files && item.files.length) {
+					dispatch(createAttachmentsFromDropped(item.files, { collection, parentItem }));
+				}
+			}
+			if(itemType === ATTACHMENT) {
+				return dropZone === null ? { item: itemKey } : { collection: collectionKey };
 			}
 		},
 		hover: (item, monitor) => {

@@ -1,23 +1,41 @@
 import cx from 'classnames';
 import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { NativeTypes } from 'react-dnd-html5-backend-cjs';
-import { useDrop } from 'react-dnd-cjs'
+import { useDrag, useDrop } from 'react-dnd-cjs'
 
 import Button from '../ui/button';
 import Icon from '../ui/icon';
 import Spinner from '../ui/spinner';
 import withDevice from '../../enhancers/with-device';
 import withFocusManager from '../../enhancers/with-focus-manager';
+import { ATTACHMENT } from '../../constants/dnd';
 import { getFileData } from '../../common/event';
 import { isTriggerEvent } from '../../common/event';
 import { openAttachment, sortByKey } from '../../utils';
 import { pick } from '../../common/immutable';
 import { TabPane } from '../ui/tabs';
 import { Toolbar, ToolGroup } from '../ui/toolbars';
+import { updateItem } from '../../actions';
 
 const Attachment = props => {
-	const { attachment, deleteItem, isReadOnly, isUploading, getAttachmentUrl, onKeyDown } = props;
+	const { attachment, deleteItem, itemKey, isReadOnly, isUploading, libraryKey, getAttachmentUrl,
+		onKeyDown } = props;
+	const dispatch = useDispatch();
+	const [_, drag] = useDrag({ // eslint-disable-line no-unused-vars
+		item: { type: ATTACHMENT, itemKey, libraryKey },
+		end: (item, monitor) => {
+			const dropResult = monitor.getDropResult();
+			if(dropResult) {
+				const patch = dropResult.item ?
+					{ parentItem: dropResult.item } : dropResult.collection ?
+						{ parentItem: false, collections: [dropResult.collection] } :
+						{ parentItem: false, collections: [] };
+				dispatch(updateItem(itemKey, patch));
+			}
+		}
+	});
 
 	const handleDelete = () => {
 		deleteItem(attachment);
@@ -41,8 +59,9 @@ const Attachment = props => {
 
 	return (
 		<li
-			data-key={ attachment.key }
 			className="attachment"
+			data-key={ attachment.key }
+			ref={ drag }
 		>
 			<Icon type={ getItemIcon(attachment) } width="16" height="16" />
 			{
@@ -89,6 +108,7 @@ Attachment.propTypes = {
 	getAttachmentUrl: PropTypes.func.isRequired,
 	isReadOnly: PropTypes.bool,
 	isUploading: PropTypes.bool,
+	itemKey: PropTypes.string,
 	onKeyDown: PropTypes.func.isRequired,
 }
 
@@ -184,7 +204,9 @@ const Attachments = props => {
 								return <Attachment
 									attachment={ attachment }
 									isUploading={ isUploading }
+									itemKey={ attachment.key }
 									key={ attachment.key }
+									libraryKey={ libraryKey }
 									onKeyDown={ handleKeyDown }
 									{ ...pick(rest, ['deleteItem', 'getAttachmentUrl']) }
 								/>

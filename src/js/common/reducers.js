@@ -86,11 +86,17 @@ const filterItemKeys = (state, removedKeys) => {
 	var isCompleteSet = 'totalResults' in state &&
 		'keys' in state &&
 		state.totalResults === state.keys.length;
+	var counter = 0;
 
 	for(let i = keys.length - 1; i >= 0 ; i--) {
 		if(removedKeys.includes(keys[i])) {
 			keys.splice(i, 1);
+			counter++;
 		}
+	}
+
+	if(counter === 0) {
+		return state;
 	}
 
 	if(isCompleteSet) {
@@ -162,8 +168,8 @@ const sortItemKeysOrClear = (state, items, sortBy, sortDirection) => {
 }
 
 export {
-	injectExtraItemKeys,
 	filterItemKeys,
+	injectExtraItemKeys,
 	populateItemKeys,
 	sortItemKeysOrClear,
 };

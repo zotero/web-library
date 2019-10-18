@@ -1,31 +1,40 @@
 'use strict';
 
-import React from 'react';
-import PropTypes from 'prop-types';
 import cx from 'classnames';
 import deepEqual from 'deep-equal';
+import PropTypes from 'prop-types';
+import React from 'react';
 import { DropTarget } from 'react-dnd-cjs';
 import { NativeTypes } from 'react-dnd-html5-backend-cjs';
 
-import { openAttachment, resizeVisibleColumns } from '../../../utils';
 import AutoSizer from 'react-virtualized/dist/commonjs/AutoSizer';
-import InfiniteLoader from 'react-virtualized/dist/commonjs/InfiniteLoader';
-import CustomTable from '../../../react-virtualized/custom-table';
 import Column from 'react-virtualized/dist/commonjs/Table/Column';
-import defaultHeaderRowRenderer from 'react-virtualized/dist/commonjs/Table/defaultHeaderRowRenderer';
-import Icon from '../../ui/icon';
-import Row from './row';
-import Spinner from '../../ui/spinner';
 import columnNames from '../../../constants/column-names';
 import columnSortKeyLookup from '../../../constants/column-sort-key-lookup';
+import CustomTable from '../../../react-virtualized/custom-table';
+import defaultHeaderRowRenderer from 'react-virtualized/dist/commonjs/Table/defaultHeaderRowRenderer';
+import Icon from '../../ui/icon';
+import InfiniteLoader from 'react-virtualized/dist/commonjs/InfiniteLoader';
+import Row from './row';
+import Spinner from '../../ui/spinner';
+import { ATTACHMENT } from '../../../constants/dnd';
+import { openAttachment, resizeVisibleColumns } from '../../../utils';
 
 const dndSpec = {
 	drop: (props, monitor) => {
-		if(monitor.isOver({ shallow: true }) && monitor.getItemType() === NativeTypes.FILE) {
+		if(monitor.isOver({ shallow: true })) {
+			const itemType = monitor.getItemType();
 			const item = monitor.getItem();
-			if(item.files && item.files.length) {
-				const { createAttachmentsFromDropped, collection } = props;
+
+			if(itemType === ATTACHMENT) {
+				const { collection, libraryKey } = props;
+				return { collection: collection.key, library: libraryKey };
+			}
+
+			if(itemType === NativeTypes.FILE) {
+					const { createAttachmentsFromDropped, collection } = props;
 				createAttachmentsFromDropped(item.files, { collection: collection.key });
+				return;
 			}
 		}
 	}
@@ -696,4 +705,4 @@ ItemsTable.defaultProps = {
 	preferences: {}
 };
 
-export default DropTarget([NativeTypes.FILE], dndSpec, dndCollect)(ItemsTable);
+export default DropTarget([ATTACHMENT, NativeTypes.FILE], dndSpec, dndCollect)(ItemsTable);

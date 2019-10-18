@@ -1,6 +1,7 @@
 'use strict';
 
 import { indexByKey } from '../../utils';
+import { mapObject } from '../../common/immutable';
 import { populateItemKeys, filterItemKeys, sortItemKeysOrClear, injectExtraItemKeys } from '../../common/reducers';
 
 import {
@@ -15,6 +16,7 @@ import {
     RECEIVE_MOVE_ITEMS_TRASH,
     RECEIVE_RECOVER_ITEMS_TRASH,
     RECEIVE_REMOVE_ITEMS_FROM_COLLECTION,
+    RECEIVE_UPDATE_ITEM,
     REQUEST_ITEMS_IN_COLLECTION,
     SORT_ITEMS,
 } from '../../constants/actions.js';
@@ -124,6 +126,21 @@ const itemsByCollection = (state = {}, action) => {
 					return aggr;
 				}, {}))
 			};
+		case RECEIVE_UPDATE_ITEM:
+			if(!('collections' in action.patch)) {
+				return state;
+			}
+			return mapObject(state, (colKey, itemKeys) => {
+				if(action.item.collections.includes(colKey)) {
+					return [colKey, injectExtraItemKeys(
+						itemKeys,
+						action.item.key,
+						{ ...action.otherItems, [action.item.key]: action.item }
+					)];
+				} else {
+					return [colKey, filterItemKeys(itemKeys, action.item.key)];
+				}
+			});
 		case SORT_ITEMS:
 			return Object.entries(state).reduce((aggr, [collectionKey, itemKeys]) => {
 				aggr[collectionKey] = sortItemKeysOrClear(
