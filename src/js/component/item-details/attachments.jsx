@@ -225,7 +225,7 @@ const Attachments = props => {
 									>
 										<span className="flex-row align-items-center">
 											<Icon type={ '16/plus' } width="16" height="16" />
-											Add Attachment
+											Add File Attachment
 										</span>
 									</Button>
 									<input
