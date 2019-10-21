@@ -7,7 +7,6 @@ import PropTypes from 'prop-types';
 import ItemDetailsInfoSelected from '../item-details/info-selected';
 import ItemDetailsInfoView from '../item-details/info-view';
 import ItemDetailsTabs from '../item-details/tabs';
-import Ongoing from '../ongoing';
 import TouchHeaderContainer from '../../container/touch-header';
 import Types from '../../types';
 import withDevice from '../../enhancers/with-device';
@@ -39,7 +38,6 @@ const ItemDetails = props => {
 					)
 				)
 			}
-			<Ongoing />
 		</section>
 	);
 }

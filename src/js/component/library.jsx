@@ -24,6 +24,7 @@ import Navbar from './ui/navbar';
 import NewCollectionModalContainer from '../container/modal/new-collection';
 import NewFileModalContainer from '../container/modal/new-file';
 import NewItemModalContainer from '../container/modal/new-item';
+import Ongoing from './ongoing';
 import RenameCollectionModalContainer from '../container/modal/rename-collection';
 import SearchBackdrop from './search-backdrop';
 import StyleInstallerModalContainer from '../container/modal/style-installer';
@@ -32,14 +33,13 @@ import TouchHeaderContainer from '../container/touch-header';
 import TouchNoteContainer from '../container/touch-note';
 import withDevice from '../enhancers/with-device';
 import { getSerializedQuery } from '../common/state';
-import { NEW_FILE } from '../constants/modals'
 import { pick } from '../common/immutable';
 
 
 const Library = props => {
 	const { collectionKey, config, device, isNavBarOpen, isSearchMode, isSelectMode, isSynced,
-	itemsSource, libraryKey, noteKey, resetLibrary, search, searchState, tags, toggleModal,
-	toggleNavbar, useTransitions, qmode, view } = props;
+	itemsSource, libraryKey, noteKey, resetLibrary, search, searchState, tags, toggleNavbar,
+	useTransitions, qmode, view } = props;
 
 	const [hasUserTypeChanged, setHasUserTypeChanged] = useState(false);
 	const [isSearchModeTransitioning, setIsSearchModeTransitioning] = useState(false);
@@ -143,6 +143,7 @@ const Library = props => {
 								{ !device.isTouchOrSmall &&
 									<TagSelector key={ key } />
 								}
+								<Ongoing />
 							</header>
 							<CSSTransition
 								in={ (device.isSingleColumn && isSearchMode) || !device.isSingleColumn }
