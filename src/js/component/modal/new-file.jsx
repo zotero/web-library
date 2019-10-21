@@ -10,7 +10,6 @@ import Spinner from '../ui/spinner';
 import Icon from '../ui/icon';
 import { getUniqueId } from '../../utils';
 import { getFilesData } from '../../common/event';
-import Dropzone from '../dropzone';
 var fileCounter = 0;
 
 const NewFileModal = props => {
@@ -56,14 +55,6 @@ const NewFileModal = props => {
 		const input = ev.currentTarget;
 		const newFilesData = await getFilesData(Array.from(ev.currentTarget.files));
 		input.value = null;
-		setFilesData([
-			...filesData,
-			...newFilesData.map(fd => ({ ...fd, key: ++fileCounter}))
-		]);
-	}
-
-	const handleFilesDrop = async files => {
-		const newFilesData = await getFilesData(files);
 		setFilesData([
 			...filesData,
 			...newFilesData.map(fd => ({ ...fd, key: ++fileCounter}))
@@ -134,7 +125,6 @@ const NewFileModal = props => {
 										</li>
 									)) }
 								</ul>
-								<Dropzone onFilesDrop={ handleFilesDrop } />
 								<div className="form-group">
 									<label htmlFor={ inputId }>
 										Or Select file
