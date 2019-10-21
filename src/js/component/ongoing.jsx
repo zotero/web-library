@@ -7,25 +7,25 @@ import Spinner from './ui/spinner';
 
 const getMessage = ongoing => {
 	// we currently only support one ongoing kind - upload
-	return `Uploading ${ongoing.count} Files`;
+	return `Uploading ${ongoing.count} files`;
 }
 
 const Ongoing = () => {
 	const processes = useSelector(state => state.ongoing);
 
 	return (
-		<div className="ongoing hidden-touch hidden-sm-down">
+		<div className="ongoing-pane hidden-touch hidden-sm-down">
 			{ processes.length > 1 ? (
-				<React.Fragment>
-					<div className="label">Multiple Ongoing Operations</div>
+				<div className="process">
 					<Spinner className="small" />
-				</React.Fragment>
+					<div className="ongoing-text">Multiple ongoing operations …</div>
+				</div>
 			) : null }
 			{ processes.length === 1 ? (
-				<React.Fragment>
-					<div className="label">{ getMessage(processes[0]) }</div>
+				<div className="process">
 					<Spinner className="small" />
-				</React.Fragment>
+					<div className="ongoing-text">{ getMessage(processes[0]) }</div>
+				</div>
 			) : null }
 		</div>
 	);

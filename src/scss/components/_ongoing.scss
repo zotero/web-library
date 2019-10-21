@@ -1,9 +1,26 @@
-.ongoing {
-	display: flex;
-	height: 32px;
-	padding: $space-min $space-md;
+.ongoing-pane {
+	flex: 0 0 auto;
+	height: 43px;
+	overflow: hidden;
+	transition: height $ongoing-transition;
 
-	> .label {
+	&:empty {
+		height: 0;
+	}
+
+	.process {
+		padding: $space-xs $default-padding-x;
+		border-top: $border-width solid $ongoing-border-color;
+		display: flex;
+		align-items: center;
+		color: $ongoing-color;
+	}
+
+	.icon-spin {
+		margin-right: $space-xs;
+	}
+
+	.ongoing-text {
 		flex: auto;
 	}
 }
