@@ -22,7 +22,14 @@
 	}
 
 	&.dnd-target {
-		outline: 1px solid $item-table-dnd-target-bg;
+		@include dnd-target;
+
+		&::after {
+			pointer-events: none;
+			background-color: transparent;
+			outline: 3px solid tint($secondary, 75%);
+			outline-offset: -3px;
+		}
 	}
 }
 
@@ -212,15 +219,17 @@
 		}
 
 		&.dnd-target {
-			background-color: $item-table-dnd-target-bg;
+			@include dnd-target;
 		}
 
 		&.dnd-target-top, &.dnd-target-bottom + .item {
+			overflow: visible !important;
+
 			&::before {
 				content: "";
 				background: $item-table-dnd-target-bg;
 				position: absolute;
-				top: 0px;
+				top: -1px;
 				width: 80px;
 				left: 10px;
 				height: 2px;

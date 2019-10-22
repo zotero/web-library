@@ -3,6 +3,12 @@
 // --------------------------------------------------
 
 
+// Theme
+// --------------------------------------------------
+
+@import "themes/light";
+
+
 // Abstracts
 // --------------------------------------------------
 
@@ -11,12 +17,6 @@
 @import "abstracts/mixins";
 @import "abstracts/placeholders";
 @import "abstracts/utilities";
-
-
-// Theme
-// --------------------------------------------------
-
-@import "themes/light";
 
 
 // Base

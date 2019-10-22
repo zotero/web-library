@@ -5,17 +5,7 @@
 .tab-pane.attachments {
 	&.dnd-target {
 		position: relative;
-
-		&::before {
-			background-color: $shade-4;
-			bottom: 0;
-			content: "";
-			left: 0;
-			opacity: 0.5;
-			position: absolute;
-			right: 0;
-			top: 0;
-		}
+		@include dnd-target;
 	}
 
 	.scroll-container-mouse {

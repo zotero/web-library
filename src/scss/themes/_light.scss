@@ -105,8 +105,6 @@ $touch-collection-tree-active-color:      $shade-0;
 $touch-collection-tree-active-bg:         $blue;
 $touch-collection-tree-border:            $shade-4;
 $touch-collection-tree-separator:         $body-bg;
-$collection-tree-dnd-target-color:        $shade-0;
-$collection-tree-dnd-target-bg:           $blue;
 
 // Items
 $items-bg:                    $shade-0;
@@ -285,3 +283,6 @@ $popover-arrow-outer-color:   rgba(0, 0, 0, 0.2);
 // Oncoing
 $ongoing-border-color: $shade-3;
 $ongoing-color: $shade-8;
+
+// Drag and drop target
+$dnd-target-color: rgba($secondary, 0.25);
