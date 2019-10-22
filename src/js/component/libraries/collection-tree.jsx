@@ -430,8 +430,8 @@ const CollectionNode = withDevice(props => {
 			dndTarget={ { 'targetType': 'collection', collectionKey: collection.key, libraryKey: parentLibraryKey } }
 			isOpen={ derivedData[collection.key].isOpen }
 			onClick={ handleClick }
-			onDrag={ handleDrag }
-			onDrop={ handleDrop }
+			onDrag={ device.isTouchOrSmall ? null : handleDrag }
+			onDrop={ device.isTouchOrSmall ? null : handleDrop }
 			onRename={ device.isTouchOrSmall ? null : handleRenameTrigger }
 			shouldBeDraggable={ renaming !== collection.key }
 			showTwisty={ hasSubCollections }

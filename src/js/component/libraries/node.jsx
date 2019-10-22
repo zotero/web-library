@@ -7,8 +7,8 @@ import { DragSource, DropTarget } from 'react-dnd-cjs';
 import { NativeTypes } from 'react-dnd-html5-backend-cjs';
 
 import Icon from '../ui/icon';
-import { isTriggerEvent } from '../../common/event';
 import { ATTACHMENT, ITEM, COLLECTION } from '../../constants/dnd';
+import { isTriggerEvent } from '../../common/event';
 import { noop } from '../../utils';
 import { pick } from '../../common/immutable';
 
@@ -177,8 +177,8 @@ class Node extends React.PureComponent {
 	}
 
 	render() {
-		const { canDrop, children, className, connectDragSource,
-			connectDropTarget, showTwisty, isOpen, isOver, subtree, } = this.props;
+		const { canDrop, children, className, connectDragSource, connectDropTarget, dndTarget,
+			showTwisty, isOpen, isOver, onDrag, onDrop, subtree, } = this.props;
 		const { isFocused } = this.state;
 
 		const twistyButton = (
@@ -194,7 +194,7 @@ class Node extends React.PureComponent {
 
 		const isActive = canDrop && isOver;
 
-		return connectDragSource(connectDropTarget(
+		let node = (
 			<li
 				className={ cx(className, { focus: isFocused }) }
 				>
@@ -216,7 +216,17 @@ class Node extends React.PureComponent {
 				</div>
 				{ subtree }
 			</li>
-		));
+		);
+
+		if(onDrop || dndTarget) {
+			node = connectDropTarget(node);
+		}
+
+		if(onDrag) {
+			node = connectDragSource(node);
+		}
+
+		return node;
 	}
 
 	static propTypes = {
@@ -225,6 +235,7 @@ class Node extends React.PureComponent {
 		className: PropTypes.string,
 		connectDragSource: PropTypes.func,
 		connectDropTarget: PropTypes.func,
+		dndTarget: PropTypes.object,
 		isDragging: PropTypes.bool,
 		isOpen: PropTypes.bool,
 		isOver: PropTypes.bool,
@@ -232,6 +243,7 @@ class Node extends React.PureComponent {
 		onDrag: PropTypes.func,
 		onDrillDownNext: PropTypes.func,
 		onDrillDownPrev: PropTypes.func,
+		onDrop: PropTypes.func,
 		onFocusNext: PropTypes.func,
 		onFocusPrev: PropTypes.func,
 		onKeyDown: PropTypes.func,
