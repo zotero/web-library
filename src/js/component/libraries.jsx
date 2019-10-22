@@ -145,8 +145,11 @@ const Libraries = props => {
 
 	const commitAdd = async (libraryKey, parentCollection, name) => {
 		setVirtual({ ...virtual, isBusy: true });
-		await createCollection({ name, parentCollection }, libraryKey);
-		setVirtual(null);
+		try {
+			await createCollection({ name, parentCollection }, libraryKey);
+		} finally {
+			setVirtual(null);
+		}
 	}
 
 	const toggleOpen = (libraryKey, shouldOpen = null) => {
