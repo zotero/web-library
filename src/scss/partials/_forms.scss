@@ -7,14 +7,14 @@
 }
 
 .form { // We do not use a form element for its side effects
-	@include variant(".modal form") {
+	@include variant(".modal .form") {
 		@include touch-or-bp-down(sm) {
 			margin: -$modal-inner-padding;
 			padding: $form-group-margin-touch 0;
 		}
 	}
 
-	@include variant(".popover form") {
+	@include variant(".popover .form") {
 		margin: $space-min 0;
 	}
 }
