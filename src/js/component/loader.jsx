@@ -3,7 +3,8 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import Icon from './ui/icon';
 import LibraryContainer from '../container/library';
-import { preferencesLoad, initialize, fetchLibrarySettings, fetchAllCollections, fetchGroups, toggleTransitions } from '../actions';
+import { preferencesLoad, initialize, fetchLibrarySettings, fetchAllCollections, fetchGroups,
+toggleTransitions, triggerResizeViewport } from '../actions';
 import { get } from '../utils';
 
 const LoadingCover = () => (
@@ -34,6 +35,7 @@ const Loader = () => {
 	useEffect(() => {
 		dispatch(preferencesLoad());
 		dispatch(initialize());
+		dispatch(triggerResizeViewport(window.innerWidth, window.innerHeight));
 		dispatch(fetchLibrarySettings());
 		dispatch(toggleTransitions(true));
 		dispatch(fetchAllCollections(libraryKey));
