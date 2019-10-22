@@ -115,7 +115,7 @@ class BoxField extends React.PureComponent {
 	renderLabelContent(field) {
 		if(field.key === 'url' && field.value) {
 			return (
-				<a rel='nofollow' href={ field.value }>
+				<a target="_blank" rel="nofollow noopener noreferrer" href={ field.value }>
 					{ field.label }
 				</a>
 			);
@@ -123,7 +123,7 @@ class BoxField extends React.PureComponent {
 
 		if(field.key === 'DOI' && field.value) {
 			return (
-				<a rel='nofollow' href={ 'http://dx.doi.org/' + field.value }>
+				<a target="_blank" rel="nofollow noopener noreferrer" href={ 'http://dx.doi.org/' + field.value }>
 					{ field.label }
 				</a>
 			);
