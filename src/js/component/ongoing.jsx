@@ -2,12 +2,13 @@ import cx from 'classnames';
 import PropTypes from 'prop-types';
 import React, { useCallback, useEffect, useState, useRef } from 'react';
 import { useSelector } from 'react-redux';
+import { pluralize } from '../common/format';
 
 import Spinner from './ui/spinner';
 
 const getMessage = ongoing => {
 	// we currently only support one ongoing kind - upload
-	return `Uploading ${ongoing.count} files`;
+	return `Uploading ${ongoing.count} ${pluralize('file', ongoing.count)}`;
 }
 
 const Ongoing = () => {
