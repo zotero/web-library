@@ -156,7 +156,7 @@ class ItemDetailsTabs extends React.PureComponent {
 						{
 							this.state.tab === 'info' && (
 								<EditToggleButton
-									isReadOnly={ isReadOnly }
+									isReadOnly={ isLibraryReadOnly }
 									className="hidden-mouse-lg-up btn-link btn-edit"
 								/>
 							)
