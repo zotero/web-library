@@ -75,7 +75,7 @@ const Attachment = props => {
 						{ attachment.title || attachment.filename }
 					</a>
 				) : attachment.linkMode === 'linked_url' ? (
-					<a href={ attachment.url }>
+					<a target="_blank" rel="noopener noreferrer" href={ attachment.url }>
 						{ attachment.title || attachment.url }
 					</a>
 				) : (

@@ -23,6 +23,7 @@ const StandaloneAttachmentTabPane = ({ isActive, item, getAttachmentUrl }) => {
 						</div>
 						<div className="value">
 							<a
+								target="_blank" rel="noopener noreferrer"
 								href={ item.url }
 								className="truncate"
 							>
