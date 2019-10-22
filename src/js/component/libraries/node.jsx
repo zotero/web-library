@@ -28,7 +28,7 @@ const dndSpec = {
 				const { dndTarget } = props;
 				return { library: dndTarget.libraryKey, collection: dndTarget.collectionKey };
 			}
-			if(itemType === ATTACHMENT || itemType === COLLECTION) {
+			if(itemType === ITEM || itemType === COLLECTION) {
 				const { dndTarget } = props;
 				return dndTarget;
 			}
