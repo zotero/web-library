@@ -144,6 +144,11 @@ const Libraries = props => {
 	}
 
 	const commitAdd = async (libraryKey, parentCollection, name) => {
+		if(name === '') {
+			setVirtual(null);
+			return;
+		}
+
 		setVirtual({ ...virtual, isBusy: true });
 		try {
 			await createCollection({ name, parentCollection }, libraryKey);
