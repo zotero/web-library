@@ -15,7 +15,11 @@ const defaultState = {
 };
 
 const determineIfGroupIsWriteable = (group, userId) => {
-	const { libraryEditing, admins = [] } = group;
+	const { libraryEditing, owner, admins = [] } = group;
+	if(userId === owner) {
+		//owner always has access, but is not in members/admins arrays
+		return true;
+	}
 	if(libraryEditing === "members") {
 		// you must be at least a member to have a group library listed
 		return true;
