@@ -369,8 +369,16 @@ const CollectionNode = withDevice(props => {
 	});
 
 	const handleRenameCommit = useCallback(newValue => {
-		updateCollection(collection.key, { name: newValue }, parentLibraryKey);
-		setRenaming(null);
+		if(newValue === '') {
+			setRenaming(null);
+			return;
+		}
+
+		try {
+			updateCollection(collection.key, { name: newValue }, parentLibraryKey);
+		} finally {
+			setRenaming(null);
+		}
 	});
 
 	const handleDrag = useCallback((src, target) => {
@@ -454,6 +462,7 @@ const CollectionNode = withDevice(props => {
 						parentLibraryKey={ parentLibraryKey }
 						renaming = { renaming }
 						selectedCollectionKey={ selectedCollectionKey }
+						setRenaming = { setRenaming }
 						shouldBeTabbable = { shouldSubtreeNodesBeTabbable }
 						updateCollection = { updateCollection }
 						updating = { updating }
