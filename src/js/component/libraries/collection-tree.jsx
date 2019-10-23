@@ -381,6 +381,10 @@ const CollectionNode = withDevice(props => {
 		}
 	});
 
+	const handleRenameKeyDown = useCallback(ev => {
+		ev.stopPropagation();
+	});
+
 	const handleDrag = useCallback((src, target) => {
 		const patch = {
 			parentCollection: target.collectionKey || false
@@ -482,6 +486,7 @@ const CollectionNode = withDevice(props => {
 					onBlur={ () => false /* commit on blur */ }
 					onCancel={ handleRenameCancel }
 					onCommit={ handleRenameCommit }
+					onKeyDown={ handleRenameKeyDown }
 					value={ collectionName }
 				/> ) : (
 					<React.Fragment>
