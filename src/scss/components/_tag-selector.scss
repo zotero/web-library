@@ -59,7 +59,7 @@
 		margin: $space-min ($space-min / 4);
 		border-radius: $tag-border-radius;
 		cursor: pointer;
-		@include text-truncate;
+		min-width: 0;
 
 		&:hover {
 			background-color:$tag-hover-bg;
@@ -96,6 +96,7 @@
 
 		.tag-label {
 			color: $tag-selector-color;
+			@include text-truncate;
 
 			@include state(".tag.selected", ".tag:active") {
 				color: $tag-selected-color;
