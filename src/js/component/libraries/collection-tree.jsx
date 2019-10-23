@@ -350,7 +350,7 @@ const PickerCheckbox = ({ collectionKey, pickerPick, picked, parentLibraryKey })
 const CollectionNode = withDevice(props => {
 	const { allCollections, derivedData, createAttachmentsFromDropped, collection, device, level,
 		selectedCollectionKey, isCurrentLibrary, parentLibraryKey, renaming, setRenaming,
-		updateCollection, updating, isPickerMode, shouldBeTabbable, ...rest }  = props;
+		updateCollection, updating, virtual, isPickerMode, shouldBeTabbable, ...rest }  = props;
 
 	const handleClick = useCallback(() => {
 		const { selectNode } = rest;
@@ -414,6 +414,8 @@ const CollectionNode = withDevice(props => {
 		updating[collection.key][updating[collection.key].length - 1].patch.name || collection.name :
 		collection.name
 
+	const hasVirtual = virtual && virtual.collectionKey === collection.key;
+
 	//optimsation: skips rendering subtrees that are not visible nor relevant for transitions
 	const shouldRenderSubtree =
 		(device.isTouchOrSmall && (shouldSubtreeNodesBeTabbableOnTouch || selectedDepth !== -1)) ||
@@ -437,7 +439,7 @@ const CollectionNode = withDevice(props => {
 			showTwisty={ hasSubCollections }
 			tabIndex={ shouldBeTabbable ? "-2" : null }
 			{ ...pick(rest, ['onOpen', 'onDrillDownNext', 'onDrillDownPrev', 'onFocusNext', 'onFocusPrev']) }
-			subtree={ (shouldRenderSubtree && hasSubCollections) ? (
+			subtree={ (shouldRenderSubtree && (hasSubCollections || hasVirtual)) ? (
 				<LevelWrapper hasOpen={ hasOpen } level={ level } isLastLevel={ isLastLevel }>
 					<CollectionsNodeList
 						{ ...rest }
@@ -455,6 +457,7 @@ const CollectionNode = withDevice(props => {
 						shouldBeTabbable = { shouldSubtreeNodesBeTabbable }
 						updateCollection = { updateCollection }
 						updating = { updating }
+						virtual = { virtual }
 					/>
 				</LevelWrapper>
 			) : null }
