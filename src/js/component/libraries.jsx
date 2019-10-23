@@ -17,7 +17,7 @@ const LibraryNode = props => {
 	const {
 		addVirtual, isFetching, isOpen, isPickerMode, isReadOnly, isSelected,
 		libraryKey, name, navigate, pickerPick, picked, pickerIncludeLibraries,
-		shouldBeTabbable, toggleOpen
+		shouldBeTabbable, toggleOpen, virtual
 	} = props;
 
 	const handleClick = useCallback(() => {
@@ -38,11 +38,13 @@ const LibraryNode = props => {
 
 	const getTreeProps = () => {
 		const parentLibraryKey = libraryKey;
+		const isVirtualInThisTree = virtual && virtual.libraryKey === libraryKey;
 
 		return {
 			...pick(props, ['addVirtual', 'cancelAdd', 'commitAdd',
-			'onDrillDownNext', 'onDrillDownPrev', 'onFocusNext', 'onFocusPrev', 'selectedCollectionKey', 'virtual']),
-			isPickerMode, parentLibraryKey, picked, pickerPick
+			'onDrillDownNext', 'onDrillDownPrev', 'onFocusNext', 'onFocusPrev', 'selectedCollectionKey']),
+			isPickerMode, parentLibraryKey, picked, pickerPick,
+			virtual: isVirtualInThisTree ? virtual : null,
 		}
 	}
 
@@ -106,6 +108,7 @@ LibraryNode.propTypes = {
 	pickerPick: PropTypes.func,
 	shouldBeTabbable: PropTypes.bool,
 	toggleOpen: PropTypes.func,
+	virtual: PropTypes.object,
 };
 
 const Libraries = props => {
