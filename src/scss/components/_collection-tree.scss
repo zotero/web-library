@@ -9,6 +9,7 @@
 		display: flex;
 		flex-direction: column;
 		line-height: $line-height-large-touch;
+		min-height: 0; // #290 Fix height in short viewports
 	}
 
 	@include mouse-and-bp-up(md) {
