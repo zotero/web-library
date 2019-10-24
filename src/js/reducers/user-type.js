@@ -18,6 +18,7 @@ const userType = (state = defaultState, action) => {
 	switch(action.type) {
 		case TRIGGER_USER_TYPE_CHANGE:
 			return {
+				...state,
 				...pick(action, ['isKeyboardUser', 'isMouseUser', 'isTouchUser', 'userType', 'scrollbarWidth'])
 			}
 		default:
