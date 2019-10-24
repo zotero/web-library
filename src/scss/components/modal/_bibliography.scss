@@ -6,6 +6,14 @@
 	.modal-content {
 		@include mouse-and-bp-up(md) {
 			min-height: calc(100vh - 2 * #{$space-xl});
+			overflow: visible; // Modal needs overflow for split button dropdown, so we need to reset the border-radius
+		}
+	}
+
+	.modal-header {
+		@include mouse-and-bp-up(md) {
+			border-top-left-radius: $modal-border-radius;
+			border-top-right-radius: $modal-border-radius;
 		}
 	}
 
@@ -26,6 +34,11 @@
 				padding-right: $modal-inner-padding - $outline-width;
 			}
 		}
+	}
+
+	.modal-footer {
+		border-bottom-left-radius: $modal-border-radius;
+		border-bottom-right-radius: $modal-border-radius;
 	}
 
 	.form {

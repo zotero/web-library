@@ -243,7 +243,7 @@ class BibliographyModal extends React.PureComponent {
 							<DropdownToggle
 								color={ null }
 								disabled={ isUpdating }
-								className="btn btn-icon btn-lg btn-secondary dropdown-toggle"
+								className="btn-lg btn-secondary dropdown-toggle"
 							>
 								<Icon type={ '16/chevron-9' } width="16" height="16" />
 							</DropdownToggle>
