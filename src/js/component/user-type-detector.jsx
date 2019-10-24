@@ -21,6 +21,7 @@ const UserTypeDetector = () => {
 		// prevent simulated mouse events triggering mouse user
 		if(!lastTouchStartEvent.current || ev.timeStamp - lastTouchStartEvent.current > 500) {
 			dispatch(triggerUserTypeChange({
+				'isKeyboardUser': false,
 				'isMouseUser': true,
 				'isTouchUser': false,
 				'userType': 'mouse'
@@ -31,6 +32,7 @@ const UserTypeDetector = () => {
 	const handleTouch = useCallback(ev => {
 		lastTouchStartEvent.current = ev.timeStamp;
 		dispatch(triggerUserTypeChange({
+			'isKeyboardUser': false,
 			'isMouseUser': false,
 			'isTouchUser': true,
 			'userType': 'touch'
