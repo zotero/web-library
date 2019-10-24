@@ -207,6 +207,24 @@ const Notes = props => {
 		>
 			<h5 className="h2 tab-pane-heading hidden-mouse">Notes</h5>
 			<div className="scroll-container-mouse" ref={ notesEl }>
+				{ !device.isTouchOrSmall && (
+					<Toolbar>
+						<div className="toolbar-left">
+							<div className="counter">
+								0 notes
+							</div>
+							<ToolGroup>
+								<Button
+									className="btn-default"
+									onClick={ handleAddNote }
+									disabled={ isReadOnly }
+								>
+									Add Note
+								</Button>
+							</ToolGroup>
+						</div>
+					</Toolbar>
+				) }
 				<nav>
 					<ul className="note-list" >
 						{
@@ -227,24 +245,6 @@ const Notes = props => {
 						}
 					</ul>
 				</nav>
-				{ !device.isTouchOrSmall && (
-					<Toolbar>
-						<div className="toolbar-left">
-							<ToolGroup>
-								<Button
-									className="btn-link icon-left"
-									onClick={ handleAddNote }
-									disabled={ isReadOnly }
-								>
-									<span className="flex-row align-items-center">
-										<Icon type={ '16/plus' } width="16" height="16" />
-										Add Note
-									</span>
-								</Button>
-							</ToolGroup>
-						</div>
-					</Toolbar>
-				) }
 				{ device.isTouchOrSmall && !isReadOnly && (
 					<Button
 						onClick={ handleAddNote }

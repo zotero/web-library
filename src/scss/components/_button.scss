@@ -194,6 +194,50 @@
 	@include button-variant($btn-light-color, $outline: true);
 }
 
+.btn-default {
+	color: #222;
+	border-color: #ddd;
+
+	@include state(".btn-default:hover, .btn-file input:hover + .btn-default") {
+		background-color: #fff;
+		box-shadow: 0 2px 4px  rgba($shade-10, 0.06);
+	}
+
+	@include state(".btn-default:active, .btn-file input:active + .btn-default") {
+		background-color: darken($shade-1, 4%);
+		box-shadow: none;
+	}
+
+	@include state(".btn-default:disabled, .btn-file input:disabled + .btn-default") {
+		box-shadow: none;
+	}
+
+	.keyboard & {
+		@include state(".btn-default:focus, .btn-file input:focus + .btn-default") {
+			border-color: $secondary;
+			box-shadow: 0 0 0 $input-btn-focus-width $secondary;
+		}
+
+		@include state(
+			".btn-default:focus:hover,
+			.btn-file input:focus:hover + .btn-default"
+		) {
+			border-color: lighten($secondary, 4%);
+	 		box-shadow:
+	 			0 0 0 $input-btn-focus-width lighten($secondary, 4%),
+	 			0 4px 4px $btn-box-shadow-color;
+		}
+
+		@include state(
+			".btn-default:focus:active,
+			.btn-file input:focus:active + .btn-default"
+		) {
+			border-color: darken($secondary, 8%);
+			box-shadow: 0 0 0 $input-btn-focus-width darken($secondary, 8%);
+		}
+	}
+}
+
 
 // Circle button
 
@@ -212,6 +256,7 @@
 
 .btn-block {
 	display: block;
+	width: 100%;
 }
 
 
@@ -281,15 +326,20 @@
 
 .btn-file {
 	display: flex;
-	overflow: hidden;
 	position: relative;
 
 	input {
 		position: absolute;
 		left: 0;
 		top: 0;
-		font-size: 10rem;
+		width: 100%;
+		height: 100%;
+		z-index: 1;
 		opacity: 0;
 		cursor: pointer;
+
+		&:focus {
+			position: absolute; // Reset
+		}
 	}
 }

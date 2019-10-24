@@ -11,7 +11,6 @@
 	.scroll-container-mouse {
 		display: flex;
 		flex-direction: column;
-		justify-content: space-between;
 
 		@include mouse-and-bp-only(md) {
 			flex: 0 0 50%;
@@ -19,17 +18,14 @@
 
 		.toolbar {
 			position: sticky;
-			bottom: 0;
+			top: 0;
+			z-index: 1;
 			height: $toolbar-height-touch;
 			background-color: $panel-bg;
+		}
 
-			.btn-link {
-				color: $icon-color;
-
-				&:active {
-					color: $icon-active-color;
-				}
-			}
+		.counter {
+			margin-right: $space-xs;
 		}
 	}
 

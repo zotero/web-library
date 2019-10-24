@@ -45,10 +45,6 @@
 			padding: ($space-md - 5px) $default-padding-x;
 			position: relative;
 
-			&:first-child {
-				padding-top: $space-md - 6px;
-			}
-
 			&:last-child {
 				padding-bottom: $space-md - 4px;
 			}
@@ -65,10 +61,6 @@
 			&::before {
 				content: "";
 				top: 0;
-
-				@include variant(".note:first-child") {
-					content: none;
-				}
 			}
 
 			&::after {

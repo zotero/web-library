@@ -188,7 +188,6 @@ const Attachments = props => {
 			isLoading={ device.shouldUseTabs && !isFetched }
 			ref={ drop }
 		>
-			<h5 className="h2 tab-pane-heading hidden-mouse">Attachments</h5>
 			<div
 				className="scroll-container-mouse"
 				onBlur={ onBlur }
@@ -196,6 +195,31 @@ const Attachments = props => {
 				ref={ ref => registerFocusRoot(ref) }
 				tabIndex={ 0 }
 			>
+				<h5 className="h2 tab-pane-heading hidden-mouse">Attachments</h5>
+				{ !isReadOnly && (
+					<Toolbar>
+						<div className="toolbar-left">
+							<div className="counter">
+								0 attachments
+							</div>
+							<ToolGroup>
+								<div className="btn-file">
+									<input
+										onChange={ handleFileInputChange }
+										onKeyDown={ handleKeyDown }
+										type="file"
+									/>
+									<Button
+										className="btn-default"
+										tabIndex={ -1 }
+									>
+										Add File Attachment
+									</Button>
+								</div>
+							</ToolGroup>
+						</div>
+					</Toolbar>
+				) }
 				<nav>
 					<ul className="details-list attachment-list">
 						{
@@ -214,31 +238,6 @@ const Attachments = props => {
 						}
 					</ul>
 				</nav>
-				{ !isReadOnly && (
-					<Toolbar>
-						<div className="toolbar-left">
-							<ToolGroup>
-								<div className="btn-file">
-									<Button
-										className="btn-link icon-left"
-										tabIndex={ -1 }
-									>
-										<span className="flex-row align-items-center">
-											<Icon type={ '16/plus' } width="16" height="16" />
-											Add File Attachment
-										</span>
-									</Button>
-									<input
-										onChange={ handleFileInputChange }
-										onKeyDown={ handleKeyDown }
-										tabIndex={ -2 }
-										type="file"
-									/>
-								</div>
-							</ToolGroup>
-						</div>
-					</Toolbar>
-				) }
 			</div>
 		</TabPane>
 	);

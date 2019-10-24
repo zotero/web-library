@@ -97,8 +97,26 @@ const Tags = ({ tagColors, itemKey, tags: initalTags, isActive, isReadOnly, upda
 			className="tags"
 			isActive={ isActive }
 		>
+			<h5 className="h2 tab-pane-heading hidden-mouse">Tags</h5>
 			<div className="scroll-container-mouse">
-				<h5 className="h2 tab-pane-heading hidden-mouse">Tags</h5>
+				{ !isReadOnly && (
+					<Toolbar>
+						<div className="toolbar-left">
+							<div className="counter">
+								0 tags
+							</div>
+							<ToolGroup>
+								<Button
+									disabled={ tagRedacted !== null }
+									className="btn-default"
+									onClick={ handleAddTag }
+								>
+										Add Tag
+								</Button>
+							</ToolGroup>
+						</div>
+					</Toolbar>
+				) }
 				<nav>
 					<ul className="details-list tag-list">
 						{
@@ -142,24 +160,6 @@ const Tags = ({ tagColors, itemKey, tags: initalTags, isActive, isReadOnly, upda
 						}
 					</ul>
 				</nav>
-				{ !isReadOnly && (
-					<Toolbar>
-						<div className="toolbar-left">
-							<ToolGroup>
-								<Button
-									disabled={ tagRedacted !== null }
-									className="btn-link icon-left"
-									onClick={ handleAddTag }
-								>
-									<span className="flex-row align-items-center">
-										<Icon type={ '16/plus' } width="16" height="16" />
-										Add Tag
-									</span>
-								</Button>
-							</ToolGroup>
-						</div>
-					</Toolbar>
-				)}
 			</div>
 		</TabPane>
 	)

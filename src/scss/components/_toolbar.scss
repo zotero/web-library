@@ -17,6 +17,7 @@
 	@include mouse-and-bp-up(md) {
 		height: $toolbar-height;
 		padding: 0 $default-padding-x;
+		color: $toolbar-color;
 	}
 
 	@include variant(".toolbar.dense") {

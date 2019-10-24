@@ -11,21 +11,22 @@
 	.scroll-container-mouse {
 		display: flex;
 		flex-direction: column;
-		justify-content: space-between;
 
 		.toolbar {
 			position: sticky;
-			bottom: 0;
+			top: 0;
 			height: $toolbar-height-touch;
 			background-color: $panel-bg;
+		}
 
-			.btn-link {
-				color: $icon-color;
+			.btn-default {
 
-				@include state(".btn-file:active .btn-link") {
+				@include state(".btn-file:active .btn-default") {
 					color: $icon-active-color;
 				}
 			}
+		.counter {
+			margin-right: $space-xs;
 		}
 	}
 }
