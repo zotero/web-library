@@ -5,15 +5,17 @@ import { useDispatch } from 'react-redux';
 import Button from '../ui/button';
 import Editable from '../editable';
 import Icon from '../ui/icon';
+import withDevice from '../../enhancers/with-device';
 import { deduplicateByKey, sortByKey } from '../../utils';
+import { fetchTagSuggestions } from '../../actions';
 import { pick } from '../../common/immutable';
 import { TabPane } from '../ui/tabs';
 import { Toolbar, ToolGroup } from '../ui/toolbars';
-import { fetchTagSuggestions } from '../../actions';
 
 var nextId = 0;
 
-const Tags = ({ tagColors, itemKey, tags: initalTags, isActive, isReadOnly, updateItem }) => {
+const Tags = props => {
+	const { device, tagColors, itemKey, tags: initalTags, isActive, isReadOnly, updateItem } = props;
 	const [tags, setTags] = useState(initalTags.map(t => ({ ...t, id: ++nextId })));
 	const [tagRedacted, setTagRedacted] = useState(null);
 	const [suggestions, setSuggestions] = useState([]);
@@ -166,6 +168,7 @@ const Tags = ({ tagColors, itemKey, tags: initalTags, isActive, isReadOnly, upda
 }
 
 Tags.propTypes = {
+	device: PropTypes.object,
 	isActive: PropTypes.bool,
 	isReadOnly: PropTypes.bool,
 	itemKey: PropTypes.string,
@@ -174,4 +177,4 @@ Tags.propTypes = {
 	updateItem: PropTypes.func.isRequired,
 }
 
-export default Tags;
+export default withDevice(Tags);
