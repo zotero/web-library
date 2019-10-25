@@ -200,7 +200,7 @@ const Attachments = props => {
 					<Toolbar>
 						<div className="toolbar-left">
 							<div className="counter">
-								0 attachments
+								{ attachments.length } attachments
 							</div>
 							<ToolGroup>
 								<div className="btn-file">
