@@ -229,11 +229,13 @@ const deleteItems = itemKeys => {
 		const state = getState();
 		const { libraryKey } = state.current;
 		const { config } = getState(state);
+		const items = itemKeys.map(ik => state.libraries[libraryKey].items[ik]);
 
 		dispatch({
 			type: REQUEST_DELETE_ITEMS,
 			libraryKey,
-			itemKeys
+			itemKeys,
+			items
 		});
 
 		try {
@@ -243,11 +245,12 @@ const deleteItems = itemKeys => {
 				.delete(itemKeys);
 
 			dispatch({
-				type: RECEIVE_DELETE_ITEMS,
-				libraryKey,
 				itemKeys,
+				items,
+				libraryKey,
 				otherItems: state.libraries[libraryKey].items,
-				response
+				response,
+				type: RECEIVE_DELETE_ITEMS,
 			});
 		} catch(error) {
 			dispatch({
