@@ -2,6 +2,7 @@
 
 import {
 	ERROR_TAGS_IN_TRASH_ITEMS,
+	RECEIVE_DELETE_ITEMS,
 	RECEIVE_MOVE_ITEMS_TRASH,
 	RECEIVE_RECOVER_ITEMS_TRASH,
 	RECEIVE_TAGS_IN_TRASH_ITEMS,
@@ -28,6 +29,7 @@ const tagsInTrashItems = (state = {}, action) => {
 			};
 		case ERROR_TAGS_IN_TRASH_ITEMS:
 			return { ...state, isFetching: false };
+		case RECEIVE_DELETE_ITEMS:
 		case RECEIVE_MOVE_ITEMS_TRASH:
 		case RECEIVE_RECOVER_ITEMS_TRASH:
 			return action.items.some(item => 'tags' in item && item.tags.length > 0) ?
