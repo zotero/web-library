@@ -82,6 +82,7 @@ const Suggestions = forwardRef((props, ref) => {
 						data-suggestion={ s }
 						key={ s }
 						onClick={ handleClick }
+						tag="div"
 					>
 						{ s }
 					</DropdownItem>
