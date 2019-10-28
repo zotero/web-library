@@ -291,4 +291,4 @@ Notes.propTypes = {
 	updateItem: PropTypes.func,
 }
 
-export default  withDevice(withEditMode(Notes));
+export default withDevice(withEditMode(Notes));

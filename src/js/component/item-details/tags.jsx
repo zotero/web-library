@@ -6,6 +6,7 @@ import Button from '../ui/button';
 import Editable from '../editable';
 import Icon from '../ui/icon';
 import withDevice from '../../enhancers/with-device';
+import withEditMode from '../../enhancers/with-edit-mode';
 import { deduplicateByKey, sortByKey } from '../../utils';
 import { fetchTagSuggestions } from '../../actions';
 import { pick } from '../../common/immutable';
@@ -102,7 +103,7 @@ const Tags = props => {
 		>
 			<h5 className="h2 tab-pane-heading hidden-mouse">Tags</h5>
 			<div className="scroll-container-mouse">
-				{ !isReadOnly && (
+				{ !device.isTouchOrSmall && (
 					<Toolbar>
 						<div className="toolbar-left">
 							<div className="counter">
@@ -163,6 +164,15 @@ const Tags = props => {
 						}
 					</ul>
 				</nav>
+				{ device.isTouchOrSmall && !isReadOnly && (
+					<Button
+						onClick={ handleAddTag }
+						className="btn-block text-left hairline-top hairline-start-icon-28 btn-transparent-secondary"
+					>
+						<Icon type={ '24/plus-circle-strong' } width="24" height="24" />
+						Add Tag
+					</Button>
+				)}
 			</div>
 		</TabPane>
 	)
@@ -178,4 +188,4 @@ Tags.propTypes = {
 	updateItem: PropTypes.func.isRequired,
 }
 
-export default withDevice(Tags);
+export default withDevice(withEditMode(Tags));

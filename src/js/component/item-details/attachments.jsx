@@ -10,6 +10,7 @@ import Icon from '../ui/icon';
 import Spinner from '../ui/spinner';
 import withDevice from '../../enhancers/with-device';
 import withFocusManager from '../../enhancers/with-focus-manager';
+import withEditMode from '../../enhancers/with-edit-mode';
 import { ATTACHMENT } from '../../constants/dnd';
 import { getFileData } from '../../common/event';
 import { isTriggerEvent } from '../../common/event';
@@ -197,7 +198,7 @@ const Attachments = props => {
 				tabIndex={ 0 }
 			>
 				<h5 className="h2 tab-pane-heading hidden-mouse">Attachments</h5>
-				{ !isReadOnly && (
+				{ !device.isTouchOrSmall && (
 					<Toolbar>
 						<div className="toolbar-left">
 							<div className="counter">
@@ -239,6 +240,22 @@ const Attachments = props => {
 						}
 					</ul>
 				</nav>
+				{ device.isTouchOrSmall && !isReadOnly && (
+					<div className="btn-file">
+						<input
+							onChange={ handleFileInputChange }
+							onKeyDown={ handleKeyDown }
+							type="file"
+						/>
+						<Button
+							className="btn-block text-left hairline-top hairline-start-icon-28 btn-transparent-secondary"
+							tabIndex={ -1 }
+						>
+							<Icon type={ '24/plus-circle-strong' } width="24" height="24" />
+							Add File Attachment
+						</Button>
+					</div>
+				)}
 			</div>
 		</TabPane>
 	);
@@ -267,4 +284,4 @@ Attachments.propTypes = {
 	uploads: PropTypes.array,
 };
 
-export default withDevice(withFocusManager(Attachments));
+export default withDevice(withFocusManager(withEditMode(Attachments)));
