@@ -198,7 +198,11 @@ class ItemDetailsTabs extends React.PureComponent {
 								)
 							}
 
-							<TagsContainer key={ item.key } isActive={ this.state.tab === 'tags' } />
+							<TagsContainer
+								key={ item.key }
+								isActive={ this.state.tab === 'tags' }
+								isReadOnly={ isReadOnly }
+							/>
 							{
 								!['attachment', 'note'].includes(item.itemType) && (
 									<AttachmentsContainer
