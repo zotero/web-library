@@ -11,6 +11,7 @@ import { fetchTagSuggestions } from '../../actions';
 import { pick } from '../../common/immutable';
 import { TabPane } from '../ui/tabs';
 import { Toolbar, ToolGroup } from '../ui/toolbars';
+import { pluralize } from '../../common/format';
 
 var nextId = 0;
 
@@ -105,7 +106,7 @@ const Tags = props => {
 					<Toolbar>
 						<div className="toolbar-left">
 							<div className="counter">
-								0 tags
+								{ `${tags.length} ${pluralize('tag', tags.length)}` }
 							</div>
 							<ToolGroup>
 								<Button

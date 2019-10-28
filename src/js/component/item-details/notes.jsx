@@ -15,7 +15,7 @@ import withEditMode from '../../enhancers/with-edit-mode';
 
 import { get, scrollIntoViewIfNeeded } from '../../utils';
 import { isTriggerEvent } from '../../common/event';
-import { noteAsTitle } from '../../common/format';
+import { noteAsTitle, pluralize } from '../../common/format';
 import { sortByKey, stopPropagation } from '../../utils';
 import { TabPane } from '../ui/tabs';
 import { Toolbar, ToolGroup } from '../ui/toolbars';
@@ -211,7 +211,7 @@ const Notes = props => {
 					<Toolbar>
 						<div className="toolbar-left">
 							<div className="counter">
-								0 notes
+								{ `${notes.length} ${pluralize('note', notes.length)}` }
 							</div>
 							<ToolGroup>
 								<Button

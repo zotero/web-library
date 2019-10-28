@@ -18,6 +18,7 @@ import { pick } from '../../common/immutable';
 import { TabPane } from '../ui/tabs';
 import { Toolbar, ToolGroup } from '../ui/toolbars';
 import { updateItem } from '../../actions';
+import { pluralize } from '../../common/format';
 
 const Attachment = props => {
 	const { attachment, deleteItem, itemKey, isReadOnly, isUploading, libraryKey, getAttachmentUrl,
@@ -200,7 +201,7 @@ const Attachments = props => {
 					<Toolbar>
 						<div className="toolbar-left">
 							<div className="counter">
-								{ attachments.length } attachments
+								{ `${attachments.length} ${pluralize('attachment', attachments.length)}` }
 							</div>
 							<ToolGroup>
 								<div className="btn-file">
