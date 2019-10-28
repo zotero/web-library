@@ -77,7 +77,13 @@ const Attachment = props => {
 						{ attachment.title || attachment.filename }
 					</a>
 				) : attachment.linkMode === 'linked_url' ? (
-					<a target="_blank" rel="nofollow noopener noreferrer" href={ attachment.url }>
+					<a
+						href={ attachment.url }
+						onKeyDown={ onKeyDown }
+						rel="nofollow noopener noreferrer"
+						tabIndex={ -2 }
+						target="_blank"
+					>
 						{ attachment.title || attachment.url }
 					</a>
 				) : (
