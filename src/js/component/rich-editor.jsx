@@ -192,6 +192,7 @@ class RichEditor extends React.PureComponent {
 	refreshEditor = () => this.forceUpdate();
 
 	renderEditor() {
+		const { device } = this.props;
 		if(process.env.NODE_ENV !== 'test') {
 			return (
 				<Editor
@@ -210,6 +211,7 @@ class RichEditor extends React.PureComponent {
 						valid_elements: validElements,
 						invalid_elements: invalidElements,
 						content_css: `/static/tinymce-content.css`,
+						body_class: cx({ 'touch': device.isTouchOrSmall })
 					}}
 					onClick={ this.refreshEditor }
 					onEditorChange={ this.handleEditorChange }
