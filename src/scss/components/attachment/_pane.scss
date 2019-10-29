@@ -19,14 +19,14 @@
 			background-color: $panel-bg;
 		}
 
-			.btn-default {
-
-				@include state(".btn-file:active .btn-default") {
-					color: $icon-active-color;
-				}
-			}
 		.counter {
 			margin-right: $space-xs;
+		}
+
+		.btn-default {
+			@include state(".btn-file:active .btn-default") {
+				color: $icon-active-color;
+			}
 		}
 	}
 }
