@@ -34,12 +34,17 @@ html {
 body {
 	background: $body-bg;
 	color: $text-color;
-	font: {
-		family: $font-family-base;
-	}
-	line-height: $line-height-base;
+	font-family: $font-family-base;
 	cursor: default;
 	user-select: none;
+
+	@include touch-or-bp-down(sm) {
+		line-height: $line-height-base-mobile;
+	}
+
+	@include mouse-and-bp-up(sm) {
+		line-height: $line-height-base;
+	}
 }
 
 a {

@@ -37,6 +37,8 @@ $font-size-h2: 16px;
 
 $line-height-base:            1.539;
 $line-height-computed:        round($font-size-base * $line-height-base);
+
+$line-height-base-mobile:     1.5;
 $line-height-computed-mobile: floor($font-size-mobile * $line-height-base);
 
 // todo: line-height-small
@@ -368,13 +370,14 @@ $note-h4-font-size: 1em;
 $note-h5-font-size: 0.9em;
 $note-h6-font-size: 0.8em;
 
-$note-h1-margin: 0.83em;
-$note-h2-margin: 1.1em;
-$note-h3-margin: 1.24em;
-$note-h4-margin: 1.44em;
-$note-h5-margin: 1.67em;
-$note-h6-margin: 1.83em;
+$note-h1-margin: 1em;
+$note-h2-margin: 1.27em;
+$note-h3-margin: 1.48em;
+$note-h4-margin: 1.625em;
+$note-h5-margin: 1.875em;
+$note-h6-margin: 2.11em;
 
+$note-headings-line-height: 1.25;
 $note-headings-font-weight: 700;
 
 
