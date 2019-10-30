@@ -8,6 +8,10 @@
 		height: 100%;
 	}
 
+	@include mouse-and-bp-up(lg) {
+		height: 100%; // Fix rich-editor height in Safari
+	}
+
 	.scroll-container-mouse {
 		display: flex;
 		flex-direction: column;
