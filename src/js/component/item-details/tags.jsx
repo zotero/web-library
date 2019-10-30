@@ -147,6 +147,7 @@ const Tags = props => {
 											onClick={ handleEdit }
 											onCommit={ handleCommit }
 											onFocus={ handleEdit }
+											selectOnFocus
 											suggestions={ suggestions }
 											value={ tag.tag }
 										/>
