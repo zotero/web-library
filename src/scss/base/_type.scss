@@ -15,15 +15,11 @@ body {
 
 h1, h2, h3, h4, h5, h6 {
 	font-family: $headings-font-family;
-	color: $headings-color;
+	color: #000;
 	margin: 0;
-
-	// Exclude rich editor dropdown menu
-	:not(button) > & {
-		font-weight: $headings-font-weight;
-		font-size: inherit;
-		line-height: inherit;
-	}
+	font-weight: $headings-font-weight;
+	font-size: inherit;
+	line-height: inherit;
 }
 
 .h1, .h2 {

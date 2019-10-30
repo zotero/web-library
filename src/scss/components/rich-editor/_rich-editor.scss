@@ -204,11 +204,46 @@
 	}
 
 	.dropdown-menu {
-		font-size: medium;
+		@include touch-or-bp-down(sm) {
+			font-size: $font-size-mobile;
+		}
+
+		@include mouse-and-bp-up(md) {
+			font-size: $font-size-base;
+		}
 
 		button {
 			* {
 				margin: 0;
+			}
+
+			h1, h2, h3, h4, h5, h6 {
+				color: $note-headings-color;
+				font-weight: $note-headings-font-weight;
+			}
+
+			h1 {
+				font-size: $note-h1-font-size;
+			}
+
+			h2 {
+				font-size: $note-h2-font-size;
+			}
+
+			h3 {
+				font-size: $note-h3-font-size;
+			}
+
+			h4 {
+				font-size: $note-h4-font-size;
+			}
+
+			h5 {
+				font-size: $note-h5-font-size;
+			}
+
+			h6 {
+				font-size: $note-h6-font-size;
 			}
 		}
 	}

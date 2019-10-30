@@ -163,8 +163,13 @@ $note-border-color-touch: $shade-4;
 $note-list-chevron-color: $shade-4;
 
 // Rich editor
+$editor-bg: $shade-0;
 $editor-border-color:        $shade-3;
 $tox-edit-area-border-color: $shade-2;
+
+// Note
+$note-headings-color:     $headings-color;
+$blockquote-border-color: $shade-3;
 
 // Button
 $btn-primary-color:           $primary;
@@ -249,12 +254,6 @@ $modal-icon-spin-color:       $shade-0;
 // Toolbar
 $toolbar-color:              $icon-color;
 $tool-group-separator-color: $shade-2;
-
-// Editor
-$editor-bg: $shade-0;
-
-// Note
-$blockquote-border-color: $shade-3;
 
 // Messages
 $message-bg: $body-bg;
