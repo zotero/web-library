@@ -25,11 +25,11 @@
 					margin-right: -$space-min - $input-border-width;
 
 					@include state("li:not(:focus-within)") {
-						visibility: hidden;
+						opacity: 0.01;
 					}
 
 					@include state("li:hover", "li:focus-within") {
-						visibility: visible;
+						opacity: 1;
 					}
 				}
 			}
