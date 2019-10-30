@@ -1,2 +1,110 @@
+//
+// Note styles
+// --------------------------------------------------
+
 @import "abstracts/variables";
+@import "abstracts/functions";
+@import "abstracts/mixins";
+@import "abstracts/placeholders";
+@import "abstracts/utilities";
+
 @import "themes/light";
+
+* {
+	box-sizing: border-box;
+}
+
+html {
+  -webkit-tap-highlight-color: rgba($shade-10, 0); // Transparent highlight color
+}
+
+body {
+	margin: $default-padding-x;
+	color: $text-color;
+	font-family: $font-family-base;
+	font-size: $font-size-base;
+	line-height: $line-height-base;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+
+	&.touch {
+		margin: $default-padding-x-touch;
+		font-size: $font-size-mobile;
+	}
+}
+
+h1, h2, h3, h4, h5, h6 {
+	font-weight: $note-headings-font-weight;
+}
+
+h1 {
+	font-size: $note-h1-font-size;
+	margin: $note-h1-margin 0;
+}
+
+h2 {
+	font-size: $note-h2-font-size;
+	margin: $note-h2-margin 0;
+}
+
+h3 {
+	font-size: $note-h3-font-size;
+	margin: $note-h3-margin 0;
+}
+
+h4 {
+	font-size: $note-h4-font-size;
+	margin: $note-h4-margin 0;
+}
+
+h5 {
+	font-size: $note-h5-font-size;
+	margin: $note-h5-margin 0;
+}
+
+h6 {
+	font-size: $note-h6-font-size;
+	margin: $note-h6-margin 0;
+}
+
+p {
+	line-height: inherit !important;
+}
+
+pre {
+	font-family: $font-family-monospace;
+}
+
+blockquote {
+	margin: 1em 0;
+	padding-left: 0.75em;
+	border-left: 3px solid $blockquote-border-color;
+
+	[dir="rtl"] & {
+		padding-left: 0;
+		border-left: 0;
+		padding-right: 0.75em;
+		border-right: 3px solid $blockquote-border-color;
+	}
+}
+
+a {
+	color: $link-color;
+	text-decoration: none;
+
+	&:hover {
+		.meta-key & {
+			color: $link-hover-color;
+			text-decoration: $link-hover-decoration;
+			cursor: pointer;
+		}
+	}
+}
+
+strong {
+	font-weight: 700;
+}
+
+em {
+	font-style: italic;
+}
