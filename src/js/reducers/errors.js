@@ -20,6 +20,9 @@ const getErrorMessage = error => {
 	if(typeof error === 'string') {
 		return error;
 	}
+	if('message' in error && error.message) {
+		return `Unexpected error: ${error.message}`;
+	}
 	return 'Unexpected error.';
 }
 
