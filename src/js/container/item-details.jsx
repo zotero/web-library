@@ -11,7 +11,7 @@ const ItemDetailsContainer = props => <ItemDetails { ...props } />;
 
 const mapStateToProps = state => {
 	const { collectionKey, libraryKey, isSelectMode, itemKey, itemKeys, itemsSource, noteKey } = state.current;
-	const { isLibraryReadOnly } = (state.config.libraries.find(l => l.key === libraryKey) || {});
+	const { isReadOnly: isLibraryReadOnly } = (state.config.libraries.find(l => l.key === libraryKey) || {});
 	const item = get(state, ['libraries', libraryKey, 'items', itemKey], null);
 	var itemsCount;
 
