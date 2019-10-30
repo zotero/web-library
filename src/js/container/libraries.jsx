@@ -3,8 +3,8 @@ import { connect } from 'react-redux';
 
 import Libraries from '../component/libraries';
 import withDevice from '../enhancers/with-device';
-import { createCollection, deleteCollection, fetchAllCollections,
-	navigate, toggleModal, updateCollection, } from '../actions';
+import { createCollection, deleteCollection, fetchAllCollections, fetchLibrarySettings, navigate,
+	toggleModal, updateCollection, } from '../actions';
 
 const LibrariesContainer = props => <Libraries { ...props } />;
 
@@ -22,5 +22,6 @@ const mapStateToProps = state => {
 };
 
 export default withDevice(connect(mapStateToProps, {
-	navigate, toggleModal, updateCollection, fetchAllCollections, createCollection, deleteCollection,
+	fetchLibrarySettings, navigate, toggleModal, updateCollection, fetchAllCollections,
+	createCollection, deleteCollection,
 })(LibrariesContainer));

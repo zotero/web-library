@@ -7,11 +7,10 @@ import {
 } from '../constants/actions';
 import api from 'zotero-api-client';
 
-const fetchLibrarySettings = () => {
+const fetchLibrarySettings = libraryKey => {
 	return async (dispatch, getState) => {
 		const state = getState();
 		const config = state.config;
-		const { libraryKey } = state.current;
 
 		dispatch({
 			type: REQUEST_LIBRARY_SETTINGS,

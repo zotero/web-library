@@ -10,6 +10,7 @@ import {
     RECEIVE_FETCH_ITEMS,
     RECEIVE_ITEMS_BY_QUERY,
     RECEIVE_ITEMS_IN_COLLECTION,
+    RECEIVE_LIBRARY_SETTINGS,
     RECEIVE_MOVE_ITEMS_TRASH,
     RECEIVE_PUBLICATIONS_ITEMS,
     RECEIVE_RECOVER_ITEMS_TRASH,
@@ -22,7 +23,7 @@ import {
 } from '../../constants/actions.js';
 
 import { get, indexByKey } from '../../utils';
-import { removeKeys } from '../../common/immutable';
+import { mapObject, removeKeys } from '../../common/immutable';
 import { getDerivedData } from '../../common/item';
 
 const calculateDerivedData = (item, { meta, tagColors }) => {
@@ -95,6 +96,8 @@ const items = (state = {}, action, metaAndTags) => {
 					}
 				}
 			}
+		case RECEIVE_LIBRARY_SETTINGS:
+			return mapObject(state, (itemKey, item) => [itemKey, calculateDerivedData(item, metaAndTags)])
 		default:
 			return state;
 	}

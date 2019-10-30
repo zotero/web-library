@@ -113,9 +113,9 @@ LibraryNode.propTypes = {
 
 const Libraries = props => {
 	const {
-		createCollection, device, fetchAllCollections, isFetching, itemsSource,
-		libraries, librariesWithCollectionsFetching, onBlur,
-		onFocus, registerFocusRoot, selectedLibraryKey, view
+		createCollection, device, fetchAllCollections, fetchLibrarySettings, isFetching,
+		itemsSource, libraries, librariesWithCollectionsFetching, onBlur, onFocus,
+		registerFocusRoot, selectedLibraryKey, view
 	} = props;
 
 	const myLibraries = useMemo(
@@ -139,6 +139,8 @@ const Libraries = props => {
 	useEffect(() => {
 		if(selectedLibraryKey) {
 			toggleOpen(selectedLibraryKey, true);
+			//@TODO: Minor opitimisation: only fetch library settings if needed
+			fetchLibrarySettings(selectedLibraryKey);
 		}
 	}, [selectedLibraryKey]);
 

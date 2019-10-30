@@ -36,7 +36,7 @@ const Loader = () => {
 		dispatch(preferencesLoad());
 		dispatch(initialize());
 		dispatch(triggerResizeViewport(window.innerWidth, window.innerHeight));
-		dispatch(fetchLibrarySettings());
+		dispatch(fetchLibrarySettings(libraryKey));
 		dispatch(toggleTransitions(true));
 		dispatch(fetchAllCollections(libraryKey));
 
