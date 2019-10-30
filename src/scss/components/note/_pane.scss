@@ -33,5 +33,9 @@
 		@include mouse-and-bp-only(md) {
 			flex: 0 0 50%;
 		}
+
+		@include mouse-and-bp-up(lg) {
+			flex: 0 0 calc(50% + #{$space-md});
+		}
 	}
 }
