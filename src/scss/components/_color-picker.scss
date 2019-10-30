@@ -5,16 +5,17 @@
 .dropdown {
 	.color-picker {
 		grid-gap: $space-min;
-		padding: $space-min;
 
 		@include touch-or-bp-down(sm) {
 			grid-template-columns: repeat(8, $space-thumb);
 			grid-template-rows: repeat(5, $space-thumb);
+			padding: $space-min;
 		}
 
 		@include mouse-and-bp-up(md) {
 			grid-template-columns: repeat(8, $space-md);
 			grid-template-rows: repeat(5, $space-md);
+			padding: $space-min;
 		}
 
 		@include state(".dropdown.show") {
