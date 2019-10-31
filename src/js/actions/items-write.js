@@ -592,7 +592,7 @@ const addToCollection = (itemKeys, collectionKey, targetLibraryKey) => {
 					itemKeys.map(ik => ({
 							...omit(
 								getState().libraries[currentLibraryKey].items[ik],
-								['key', 'version']
+								['key', 'version', 'deleted', 'dateAdded', 'dateModified']
 							),
 							collections: [collectionKey]
 						})
@@ -681,7 +681,7 @@ const copyToLibrary = (itemKeys, targetLibraryKey) => {
 				itemKeys.map(ik => ({
 					...omit(
 						getState().libraries[currentLibraryKey].items[ik],
-							['key', 'version', 'collections', 'deleted']
+							['key', 'version', 'collections', 'deleted', 'dateAdded', 'dateModified']
 						),
 				})), targetLibraryKey
 			)
