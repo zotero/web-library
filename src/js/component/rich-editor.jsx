@@ -199,19 +199,20 @@ class RichEditor extends React.PureComponent {
 					disabled={ this.props.isReadOnly }
 					value={ this.state.content }
 					init={{
-						height: '100%',
 						base_url: this.props.tinymceRoot,
-						plugins: 'link searchreplace',
+						body_class: cx({ 'touch': device.isTouchOrSmall }),
 						branding: false,
-						toolbar: false,
+						content_css: '/static/tinymce-content.css',
+						height: '100%',
+						invalid_elements: invalidElements,
+						link_context_toolbar: true,
 						menubar: false,
+						mobile: { theme: 'silver' },
+						plugins: 'link searchreplace',
 						statusbar: false,
 						theme: 'silver',
-						mobile: { theme: 'silver' },
+						toolbar: false,
 						valid_elements: validElements,
-						invalid_elements: invalidElements,
-						content_css: `/static/tinymce-content.css`,
-						body_class: cx({ 'touch': device.isTouchOrSmall })
 					}}
 					onClick={ this.refreshEditor }
 					onEditorChange={ this.handleEditorChange }
