@@ -171,6 +171,18 @@ class RichEditor extends React.PureComponent {
 		}
 	}
 
+	handleKeyDown = ev => {
+		if(ev.key === 'Meta' && this.editor) {
+			this.editor.iframeElement.contentDocument.body.classList.add('meta-key');
+		}
+	}
+
+	handleKeyUp = ev => {
+		if(ev.key === 'Meta' && this.editor) {
+			this.editor.iframeElement.contentDocument.body.classList.remove('meta-key');
+		}
+	}
+
 	setColor = (which, color) => {
 		if(!color) {
 			this.editor.editorCommands.execCommand('mceRemoveTextcolor', which);
@@ -218,6 +230,8 @@ class RichEditor extends React.PureComponent {
 					onEditorChange={ this.handleEditorChange }
 					onFocus={ this.handleFocus }
 					onInit={ this.handleEditorInit }
+					onKeyDown={ this.handleKeyDown }
+					onKeyUp={ this.handleKeyUp }
 				/>
 			);
 		} else return null;
