@@ -253,7 +253,7 @@ class RichEditor extends React.PureComponent {
 									<Button
 										icon
 										className={ cx({
-											active: this.isEditorCommandState('bold')
+											selected: this.isEditorCommandState('bold')
 										})}
 										title="Bold"
 										data-command="bold"
@@ -264,7 +264,7 @@ class RichEditor extends React.PureComponent {
 									<Button
 										icon
 										className={ cx({
-											active: this.isEditorCommandState('italic')
+											selected: this.isEditorCommandState('italic')
 										})}
 										title="Italic"
 										data-command="italic"
@@ -275,7 +275,7 @@ class RichEditor extends React.PureComponent {
 									<Button
 										icon
 										className={ cx({
-											active: this.isEditorCommandState('underline')
+											selected: this.isEditorCommandState('underline')
 										})}
 										title="Underline"
 										data-command="underline"
@@ -286,7 +286,7 @@ class RichEditor extends React.PureComponent {
 									<Button
 										icon
 										className={ cx({
-											active: this.isEditorCommandState('strikethrough')
+											selected: this.isEditorCommandState('strikethrough')
 										})}
 										title="strikethrough"
 										data-command="strikethrough"
@@ -299,7 +299,7 @@ class RichEditor extends React.PureComponent {
 									<Button
 										icon
 										className={ cx({
-											active: this.isEditorCommandState('subscript')
+											selected: this.isEditorCommandState('subscript')
 										})}
 										title="Subscript"
 										data-command="subscript"
@@ -310,7 +310,7 @@ class RichEditor extends React.PureComponent {
 									<Button
 										icon
 										className={ cx({
-											active: this.isEditorCommandState('superscript')
+											selected: this.isEditorCommandState('superscript')
 										})}
 										title="Superscript"
 										data-command="superscript"
@@ -411,7 +411,7 @@ class RichEditor extends React.PureComponent {
 									<Button
 										icon
 										className={ cx({
-											active: this.isEditorCommandState('mceblockquote')
+											selected: this.isEditorCommandState('mceblockquote')
 										})}
 										title="Blockquote"
 										data-command="mceblockquote"
@@ -521,7 +521,7 @@ class RichEditor extends React.PureComponent {
 														data-command="formatblock"
 														data-value={ value }
 														key={ value }
-														className={ cx({ active: value === currentFormatBlock })}
+														className={ cx({ selected: value === currentFormatBlock })}
 													>
 														<Tag>{ label }</Tag>
 													</DropdownItem>
@@ -534,7 +534,7 @@ class RichEditor extends React.PureComponent {
 									<Button
 										icon
 										className={ cx({
-											active: this.isEditorCommandState('justifyleft')
+											selected: this.isEditorCommandState('justifyleft')
 										})}
 										title="Align left"
 										data-command="justifyleft"
@@ -545,7 +545,7 @@ class RichEditor extends React.PureComponent {
 									<Button
 										icon
 										className={ cx({
-											active: this.isEditorCommandState('justifycenter')
+											selected: this.isEditorCommandState('justifycenter')
 										})}
 										title="Align center"
 										data-command="justifycenter"
@@ -556,7 +556,7 @@ class RichEditor extends React.PureComponent {
 									<Button
 										icon
 										className={ cx({
-											active: this.isEditorCommandState('justifyright')
+											selected: this.isEditorCommandState('justifyright')
 										})}
 										title="Align right"
 										data-command="justifyright"
@@ -569,7 +569,7 @@ class RichEditor extends React.PureComponent {
 									<Button
 										icon
 										className={ cx({
-											active: this.isEditorCommandState('insertunorderedlist')
+											selected: this.isEditorCommandState('insertunorderedlist')
 										})}
 										title="Bullet list"
 										data-command="insertunorderedlist"
@@ -580,7 +580,7 @@ class RichEditor extends React.PureComponent {
 									<Button
 										icon
 										className={ cx({
-											active: this.isEditorCommandState('insertorderedlist')
+											selected: this.isEditorCommandState('insertorderedlist')
 										})}
 										title="Numbered list"
 										data-command="insertorderedlist"

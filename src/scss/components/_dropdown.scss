@@ -76,14 +76,24 @@
 			}
 		}
 
+		&:focus {
+			outline: none;
+		}
+
 		&:hover,
 		&:focus,
 		&.active {
 			background-color: $menu-item-hover-bg;
 		}
 
-		&:focus {
-			outline: none;
+		&.selected {
+			background-color: $menu-item-selected-bg;
+
+			&:hover,
+			&:focus,
+			&.active {
+				background-color: $menu-item-selected-hover-bg;
+			}
 		}
 
 		.icon {
