@@ -363,15 +363,15 @@ $bp-lists-lg:           1500px;
 // Note styles
 // --------------------------------------------------
 
-$note-h1-font-size: 1.5em;
-$note-h2-font-size: 1.23em;
-$note-h3-font-size: 1.1em;
+$note-h1-font-size: 1.5em;  /* h1–h3 sizing is interpolated */
+$note-h2-font-size: 1.28em;
+$note-h3-font-size: 1.1em;  /* h4–h6 sizing is linear */
 $note-h4-font-size: 1em;
 $note-h5-font-size: 0.9em;
 $note-h6-font-size: 0.8em;
 
 $note-h1-margin: 1em;
-$note-h2-margin: 1.27em;
+$note-h2-margin: 1.17em;
 $note-h3-margin: 1.48em;
 $note-h4-margin: 1.625em;
 $note-h5-margin: 1.875em;
