@@ -198,7 +198,7 @@ class RichEditor extends React.PureComponent {
 
 	queryFormatBlock() {
 		const formatBlock = this.editor && this.editor.editorCommands.queryCommandValue('formatblock') || 'p';
-		return (formatBlocks.find(fb => fb.value === formatBlock) || {}).label;
+		return [formatBlock, (formatBlocks.find(fb => fb.value === formatBlock) || {}).label];
 	}
 
 	refreshEditor = () => this.forceUpdate();
@@ -242,6 +242,7 @@ class RichEditor extends React.PureComponent {
 		if(!isTinymceFetched) {
 			return <Spinner />;
 		}
+		const [currentFormatBlock, currentFormatBlockLabel] = this.queryFormatBlock();
 		return (
 			<div className="rich-editor">
 				{ device.isSingleColumn || !isReadOnly && (
@@ -508,7 +509,7 @@ class RichEditor extends React.PureComponent {
 											onKeyDown={ this.handleDropdownKeyDown }
 											className="dropdown-toggle btn-icon format-block"
 										>
-											{ this.queryFormatBlock() }
+											{ currentFormatBlockLabel }
 											<Icon type="16/chevron-9" className="touch" width="16" height="16" />
 											<Icon type="16/chevron-7" className="mouse" width="16" height="16" />
 										</DropdownToggle>
@@ -520,6 +521,7 @@ class RichEditor extends React.PureComponent {
 														data-command="formatblock"
 														data-value={ value }
 														key={ value }
+														className={ cx({ active: value === currentFormatBlock })}
 													>
 														<Tag>{ label }</Tag>
 													</DropdownItem>
