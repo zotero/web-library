@@ -13,8 +13,6 @@ const Abstract = props => {
 	const { updateItemWithMapping } = props;
 	const [isActive, setIsActive] = useState(false);
 
-	console.log({ pendingChanges });
-
 	const placeholder = !device.shouldUseEditMode || (device.shouldUseEditMode && isEditing) ?
 		'Add abstract…' : '';
 
@@ -30,14 +28,12 @@ const Abstract = props => {
 	});
 
 	const handleMakeActive = useCallback(() => {
-		console.log('make active', { isReadOnly } );
 		if(!isReadOnly) {
 			setIsActive(true);
 		}
 	});
 
 	const handleCommit = useCallback((newValue, hasChanged) => {
-		console.log('handleCommit');
 		if(hasChanged) {
 			updateItemWithMapping(item, 'abstractNote', newValue);
 		}
@@ -45,11 +41,8 @@ const Abstract = props => {
 	});
 
 	const handleCancel = useCallback(() => {
-		console.log('handleCancel');
 		setIsActive(false);
 	});
-
-	console.log({ isActive, isEditing });
 
 	const input = (
 		<TextAreaInput
