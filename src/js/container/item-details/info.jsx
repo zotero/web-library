@@ -12,7 +12,7 @@ const mapStateToProps = state => {
 	const item = get(state, ['libraries', libraryKey, 'items', itemKey], null);
 	const { itemType } = item;
 	const { isReadOnly } = (state.config.libraries.find(l => l.key === libraryKey) || {});
-	const pendingChanges = get(state, ['libraries', libraryKey, 'updating', 'items', itemKey]) || [];
+	const pendingChanges = get(state, ['libraries', libraryKey, 'updating', 'items', itemKey], []);
 
 	const isMetaAvailable = itemType in state.meta.itemTypeCreatorTypes &&
 		itemType in state.meta.itemTypeFields;
