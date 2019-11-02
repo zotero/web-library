@@ -60,14 +60,14 @@ const getTagsData = state => {
 		case 'query':
 			return state.query.tags;
 		case 'trash':
-			return get(state, ['libraries', libraryKey, 'tagsInTrashItems'], []);
+			return get(state, ['libraries', libraryKey, 'tagsInTrashItems'], {});
 		case 'publications':
-			return get(state, ['libraries', libraryKey, 'tagsInPublicationsItems'], []);
+			return get(state, ['libraries', libraryKey, 'tagsInPublicationsItems'], {});
 		case 'collection':
-			return get(state, ['libraries', libraryKey, 'tagsByCollection', collectionKey], []);
+			return get(state, ['libraries', libraryKey, 'tagsByCollection', collectionKey], {});
 		case 'top':
 		default:
-			return get(state, ['libraries', libraryKey, 'tagsTop'], []);
+			return get(state, ['libraries', libraryKey, 'tagsTop'], {});
 	}
 }
 
