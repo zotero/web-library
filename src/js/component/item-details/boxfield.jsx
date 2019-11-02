@@ -12,10 +12,8 @@ import withDevice from '../../enhancers/with-device';
 const pickInputComponent = field => {
 	switch(field.key) {
 		case 'itemType': return SelectInput;
-		case 'abstractNote': return TextAreaInput;
-		case 'extra': return TextAreaInput;
-		case 'title': return TextAreaInput;
-		default: return Input;
+		case 'url': return Input;
+		default: return TextAreaInput;
 	}
 };
 
@@ -93,10 +91,7 @@ class BoxField extends React.PureComponent {
 
 		if(InputComponent === TextAreaInput) {
 			props['resize'] = 'vertical';
-
-			if(field.key === 'title') {
-				props['isSingleLine'] = true;
-			}
+			props['isSingleLine'] = field.key !== 'extra';
 		}
 
 		if(InputComponent === SelectInput) {
