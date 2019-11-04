@@ -21,6 +21,7 @@
 
 		.textarea & {
 			white-space: pre-wrap;
+			word-wrap: break-word;
 
 			.editing & {
 				@include touch-or-bp-down(sm) {

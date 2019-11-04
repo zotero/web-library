@@ -96,6 +96,9 @@
 
 	// Textarea
 	&.textarea {
+		.editable-content {
+			word-wrap: break-word;
+		}
 
 		// Correct shade for 'backdrop'
 		.input-group {
