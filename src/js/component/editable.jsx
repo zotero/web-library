@@ -61,7 +61,7 @@ class Editable extends React.PureComponent {
 				tabIndex={ isDisabled ? null : this.isActive ? null : 0 }
 				onClick={ event => this.props.onClick(event) }
 				onFocus={ event => this.props.onFocus(event) }
-				className={ cx(this.className) }
+				className={ cx(this.className, { 'disabled': isDisabled }) }
 			>
 				{ this.isActive ? this.renderControls() : this.renderContent() }
 			</div>
