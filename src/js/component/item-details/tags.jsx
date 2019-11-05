@@ -114,7 +114,7 @@ const Tags = props => {
 							</div>
 							<ToolGroup>
 								<Button
-									disabled={ tagRedacted !== null }
+									disabled={ isReadOnly || tagRedacted !== null }
 									className="btn-default"
 									onClick={ handleAddTag }
 								>

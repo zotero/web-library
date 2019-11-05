@@ -218,6 +218,7 @@ const Attachments = props => {
 										type="file"
 									/>
 									<Button
+										disabled={ isReadOnly }
 										className="btn-default"
 										tabIndex={ -1 }
 									>
