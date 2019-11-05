@@ -37,9 +37,9 @@ import { pick } from '../common/immutable';
 
 
 const Library = props => {
-	const { collectionKey, config, device, isNavBarOpen, isSearchMode, isSelectMode, isSynced,
-	itemsSource, libraryKey, noteKey, resetLibrary, search, searchState, tags, toggleNavbar,
-	useTransitions, qmode, view } = props;
+	const { collectionKey, config, device, isLibraryReadOnly, isNavBarOpen, isSearchMode,
+	isSelectMode, isSynced, itemsSource, libraryKey, noteKey, resetLibrary, search, searchState,
+	tags, toggleNavbar, useTransitions, qmode, view } = props;
 
 	const [hasUserTypeChanged, setHasUserTypeChanged] = useState(false);
 	const [isSearchModeTransitioning, setIsSearchModeTransitioning] = useState(false);
@@ -154,7 +154,8 @@ const Library = props => {
 							>
 								<section className={ cx('items', {
 									'active': view === 'item-list',
-									'select-mode': isSelectMode
+									'select-mode': isSelectMode,
+									'read-only': isLibraryReadOnly,
 								})}>
 									{/* Tablet TouchHeader */}
 									<TouchHeaderContainer
@@ -203,6 +204,7 @@ Library.propTypes = {
 	collectionKey: PropTypes.string,
 	config: PropTypes.object.isRequired,
 	device: PropTypes.object,
+	isLibraryReadOnly: PropTypes.bool,
 	isNavBarOpen: PropTypes.bool,
 	isSearchMode: PropTypes.bool,
 	isSelectMode: PropTypes.bool,

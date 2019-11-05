@@ -10,8 +10,8 @@ import { get } from '../utils'
 const ItemDetailsContainer = props => <ItemDetails { ...props } />;
 
 const mapStateToProps = state => {
-	const { collectionKey, libraryKey, isSelectMode, itemKey, itemKeys, itemsSource, noteKey } = state.current;
-	const { isReadOnly: isLibraryReadOnly } = (state.config.libraries.find(l => l.key === libraryKey) || {});
+	const { collectionKey, libraryKey, isLibraryReadOnly, isSelectMode, itemKey, itemKeys,
+	itemsSource, noteKey } = state.current;
 	const item = get(state, ['libraries', libraryKey, 'items', itemKey], null);
 	var itemsCount;
 

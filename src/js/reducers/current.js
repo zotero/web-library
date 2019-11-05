@@ -18,6 +18,7 @@ const stateDefault = {
 	collectionKey: null,
 	editingItemKey: null,
 	isEditing: false,
+	isLibraryReadOnly: false,
 	isNavBarOpen: false,
 	isSelectMode: false,
 	isTagSelectorOpen: true,
@@ -74,6 +75,7 @@ const current = (state = stateDefault, action, { config } = {}) => {
 			var isSelectMode = itemKeys.length > 1 ? true : state.isSelectMode;
 			var view = params.view;
 			var libraryKey = getLibraryKey(params, config);
+			var isLibraryReadOnly = (config.libraries.find(l => l.key === libraryKey) || {}).isReadOnly;
 			var itemsSource;
 			var searchState = state.searchState;
 
@@ -116,6 +118,7 @@ const current = (state = stateDefault, action, { config } = {}) => {
 				collectionKey,
 				editingItemKey: state.editingItemKey,
 				isEditing: state.isEditing && view !== 'item-details',
+				isLibraryReadOnly,
 				isMyPublications,
 				isSearchMode: itemsSource === 'query' || state.isSearchMode,
 				isSelectMode: isSelectMode && view === 'item-list',

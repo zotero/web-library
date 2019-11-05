@@ -10,9 +10,9 @@ import { get } from '../utils';
 const LibraryContainer = props => <Library { ...props } />
 
 const mapStateToProps = state => {
-	const { collectionKey, isMyPublications, isNavBarOpen, isSearchMode, isSelectMode, isTrash,
-		itemsSource, libraryKey, noteKey, qmode, search, searchState, tags, useTransitions, userLibraryKey, view
-	} = state.current;
+	const { collectionKey, isLibraryReadOnly, isMyPublications, isNavBarOpen, isSearchMode,
+		isSelectMode, isTrash, itemsSource, libraryKey, noteKey, qmode, search, searchState, tags,
+		useTransitions, userLibraryKey, view } = state.current;
 	const { itemTypes } = state.meta;
 	const { isSynced } = get(state, ['libraries', libraryKey, 'sync'], {});
 	const { config, fetching: { collectionsInLibrary }, viewport } = state;
@@ -22,8 +22,7 @@ const mapStateToProps = state => {
 	return { config, view, userLibraryKey, viewport, isSearchMode, isSelectMode, itemsSource,
 		collectionKey, isFetchingCollections, isFetchingLibrarySettings, isNavBarOpen,
 		isMyPublications, isSynced, itemTypes, isTrash, useTransitions, libraryKey, noteKey, search,
-		searchState, tags, qmode,
-	};
+		searchState, tags, qmode, isLibraryReadOnly, };
 };
 
 export default connect(
