@@ -73,7 +73,6 @@
     "history": "^4.9.0",
     "hoist-non-react-statics": "^3.3.0",
     "memoize-one": "^5.0.5",
-    "moment": "^2.24.0",
     "param-case": "^2.1.1",
     "prop-types": "^15.7.2",
     "react": "^16.9.0",
