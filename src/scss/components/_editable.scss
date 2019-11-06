@@ -177,10 +177,17 @@
 			background-color: transparent;
 			transition: none;
 
-			@include state(".pseudo-editable:hover:not(.is-disabled)") {
+			// Do not increase specificity with :not(.is-disabled)
+			@include state(".pseudo-editable:hover") {
 				cursor: pointer;
 				background-color: $editable-hover-bg;
 				border-color: transparent;
+			}
+
+			@include state(".pseudo-editable.is-disabled") {
+				cursor: unset;
+				background-color: transparent;
+				border: $input-border-width solid transparent;
 			}
 		}
 
