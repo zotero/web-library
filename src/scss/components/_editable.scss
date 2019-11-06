@@ -18,11 +18,9 @@
 		margin: -$editable-border-width;
 		border-radius: $editable-border-radius;
 
-		@include state(".editable:not(.disabled)") {
-			cursor: pointer;
-		}
-
 		@include state(".editable:hover:not(.disabled)") {
+			cursor: pointer;
+
 			@include mouse-and-bp-up(md) {
 				background-color: $editable-hover-bg; // Use transparency so you can see through the comma between last and first name
 			}
@@ -177,12 +175,10 @@
 			width: calc(100% + #{2 * $editable-border-width});
 			margin: -$editable-border-width;
 			background-color: transparent;
-			cursor: pointer;
 			transition: none;
-		}
 
-		&:hover {
-			.Select-control {
+			@include state(".pseudo-editable:hover:not(.is-disabled)") {
+				cursor: pointer;
 				background-color: $editable-hover-bg;
 				border-color: transparent;
 			}
