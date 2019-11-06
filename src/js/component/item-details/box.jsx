@@ -83,7 +83,7 @@ const ItemBox = props => {
 	});
 
 	const handleFieldBlur = useCallback(() => {
-		setActiveEntry(null)
+		setActiveEntry(null);
 	});
 
 	const handleCancel = useCallback((isChanged, ev) => {
