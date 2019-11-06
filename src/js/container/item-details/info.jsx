@@ -11,7 +11,6 @@ const mapStateToProps = state => {
 	const { libraryKey, itemKey } = state.current;
 	const item = get(state, ['libraries', libraryKey, 'items', itemKey], null);
 	const { itemType } = item;
-	const { isReadOnly } = (state.config.libraries.find(l => l.key === libraryKey) || {});
 	const pendingChanges = get(state, ['libraries', libraryKey, 'updating', 'items', itemKey], []);
 
 	const isMetaAvailable = itemType in state.meta.itemTypeCreatorTypes &&
@@ -29,8 +28,8 @@ const mapStateToProps = state => {
 	const itemTypeFields = state.meta.itemTypeFields;
 	const itemTypes = state.meta.itemTypes;
 
-	return { creatorTypes, isReadOnly, isLoadingMeta, item, itemTypeFields, itemTypes,
-		pendingChanges, shouldFetchMeta, }
+	return { creatorTypes, isLoadingMeta, item, itemTypeFields, itemTypes, pendingChanges,
+		shouldFetchMeta }
 
 }
 

@@ -69,8 +69,7 @@ const Abstract = props => {
 			input={ input }
 			isActive={ isActive }
 			isBusy={ isBusy }
-			isDisabled={ device.shouldUseEditMode && !isEditing }
-			isReadOnly={ isReadOnly }
+			isDisabled={ isReadOnly }
 			onClick={ handleMakeActive }
 			onFocus={ handleMakeActive }
 		/>

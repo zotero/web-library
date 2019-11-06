@@ -126,6 +126,7 @@ class CreatorField extends React.PureComponent {
 			onClick: this.handleFieldClick.bind(this, name),
 			onFocus: this.handleFieldFocus.bind(this, name),
 			isActive: this.state.active === name,
+			isDisabled: this.props.isReadOnly,
 			input
 		};
 
