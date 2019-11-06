@@ -17,9 +17,12 @@
 		width: calc(100% + #{2 * $editable-border-width});
 		margin: -$editable-border-width;
 		border-radius: $editable-border-radius;
-		cursor: pointer;
 
-		@include state(".editable:hover") {
+		@include state(".editable:not(.disabled)") {
+			cursor: pointer;
+		}
+
+		@include state(".editable:hover:not(.disabled)") {
 			@include mouse-and-bp-up(md) {
 				background-color: $editable-hover-bg; // Use transparency so you can see through the comma between last and first name
 			}
