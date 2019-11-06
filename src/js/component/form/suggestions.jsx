@@ -39,13 +39,15 @@ const Suggestions = forwardRef((props, ref) => {
 	}
 
 	const handleKeyDown = useCallback(event => {
-		switch (event.key) {
-			case 'ArrowDown':
-				setHighlighted(suggestions[getCurrentIndex(-1) + 1]);
-			break;
-			case 'ArrowUp':
-				setHighlighted(suggestions[getCurrentIndex(suggestions.length) - 1]);
-			break;
+		if(suggestions.length > 0) {
+			switch (event.key) {
+				case 'ArrowDown':
+					setHighlighted(suggestions[getCurrentIndex(-1) + 1]);
+				break;
+				case 'ArrowUp':
+					setHighlighted(suggestions[getCurrentIndex(suggestions.length) - 1]);
+				break;
+			}
 		}
 		if(inputProps.onKeyDown) {
 			inputProps.onKeyDown(event);

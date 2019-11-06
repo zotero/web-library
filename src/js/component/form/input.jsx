@@ -92,6 +92,13 @@ class Input extends React.PureComponent {
 					this.commit(event);
 				}
 			break;
+			case 'ArrowDown':
+			case 'ArrowUp':
+				if(suggestions.length && !hasCancelledSuggestions) {
+					// stop cursor from jumping to the begining/end of the input when showing suggestions
+					event.preventDefault();
+				}
+			break;
 		}
 		this.props.onKeyDown(event);
 	}
