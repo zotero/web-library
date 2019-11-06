@@ -63,8 +63,11 @@ const Tags = props => {
 	}
 
 	const handleEdit = ev => {
+		if(ev.target !== ev.currentTarget) {
+			return;
+		}
 		if(isReadOnly) {
-			return false;
+			return;
 		}
 		const tag = ev.currentTarget.closest('[data-tag]').dataset.tag;
 		setTagRedacted(tag);

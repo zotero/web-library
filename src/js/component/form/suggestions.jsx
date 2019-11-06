@@ -61,7 +61,7 @@ const Suggestions = forwardRef((props, ref) => {
 	return (
 		<Dropdown
 			direction="down"
-			isOpen={ true }
+			isOpen={ suggestions.length > 0 }
 			toggle={ handleToggle }
 		>
 			<DropdownToggle

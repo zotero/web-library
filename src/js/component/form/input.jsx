@@ -18,12 +18,16 @@ class Input extends React.PureComponent {
 			value: props.value
 		};
 		this.suggestions = React.createRef();
+		this.input = React.createRef();
 	}
 
 	cancel(event = null) {
 		this.props.onCancel(this.hasChanged, event);
 		this.hasBeenCancelled = true;
-		this.input.blur();
+		if(this.input.current !== null && 'blur' in this.input.current) {
+			// if suggestions, input might be a DropdownToggle with no blur()
+			this.input.current.blur();
+		}
 	}
 
 	commit(event = null) {
@@ -32,9 +36,10 @@ class Input extends React.PureComponent {
 	}
 
 	focus() {
-		if(this.input != null) {
-			this.input.focus();
-			this.props.selectOnFocus && this.input.select();
+		if(this.input.current !== null && 'focus' in this.input.current) {
+			// if suggestions, input might be a DropdownToggle with no focus()
+			this.input.current.focus();
+			this.props.selectOnFocus && this.input.current.select();
 		}
 	}
 
@@ -115,7 +120,7 @@ class Input extends React.PureComponent {
 			onFocus: this.handleFocus.bind(this),
 			onKeyDown: this.handleKeyDown.bind(this),
 			readOnly: this.props.isReadOnly,
-			ref: input => this.input = input,
+			ref: this.input,
 			required: this.props.isRequired,
 			value: this.state.value,
 			...pick(this.props, ['autoFocus', 'className', 'form', 'id', 'inputMode', 'max',
@@ -124,14 +129,12 @@ class Input extends React.PureComponent {
 			...pick(this.props, key => key.match(/^(aria-|data-).*/))
 		};
 
-		const shouldUseSuggestions = !this.state.hasCancelledSuggestions && this.props.suggestions.length;
-
-		var input = shouldUseSuggestions ? (
+		var input = this.props.suggestions !== null ? (
 			<Suggestions
 				onSelect={ this.handleSuggestionSelect }
 				ref={ this.suggestions }
 				inputProps={ inputProps }
-				{ ...pick(this.props, ['suggestions']) }
+				suggestions={ this.state.hasCancelledSuggestions ? [] : this.props.suggestions }
 			/>
 		) : (
 			<input { ...inputProps } />
