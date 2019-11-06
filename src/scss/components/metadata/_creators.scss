@@ -100,11 +100,13 @@
 					background-color: transparent;
 					border: none;
 					padding: 0;
-					cursor: pointer;
 					box-shadow: none;
 
 					@include state(".Select:hover", ".Select.is-focused") {
-						color: $link-color;
+						@include state(".Select:not(.is-disabled)") {
+							cursor: pointer;
+							color: $link-color;
+						}
 					}
 				}
 
@@ -133,7 +135,9 @@
 					display: none;
 
 					@include state(".creators-entry:hover") {
-						display: block;
+						@include state(".Select:not(.is-disabled)") {
+							display: block;
+						}
 					}
 
 					@include state(".Select:hover") {
