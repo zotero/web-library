@@ -112,15 +112,17 @@ const Tags = props => {
 							<div className="counter">
 								{ `${tags.length} ${pluralize('tag', tags.length)}` }
 							</div>
+							{ !isReadOnly && (
 							<ToolGroup>
 								<Button
-									disabled={ isReadOnly || tagRedacted !== null }
+									disabled={ tagRedacted !== null }
 									className="btn-default"
 									onClick={ handleAddTag }
 								>
 										Add Tag
 								</Button>
 							</ToolGroup>
+							) }
 						</div>
 					</Toolbar>
 				) }

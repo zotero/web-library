@@ -210,6 +210,7 @@ const Attachments = props => {
 							<div className="counter">
 								{ `${attachments.length} ${pluralize('attachment', attachments.length)}` }
 							</div>
+							{ !isReadOnly && (
 							<ToolGroup>
 								<div className="btn-file">
 									<input
@@ -226,6 +227,7 @@ const Attachments = props => {
 									</Button>
 								</div>
 							</ToolGroup>
+							) }
 						</div>
 					</Toolbar>
 				) }

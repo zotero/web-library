@@ -213,6 +213,7 @@ const Notes = props => {
 							<div className="counter">
 								{ `${notes.length} ${pluralize('note', notes.length)}` }
 							</div>
+							{ !isReadOnly && (
 							<ToolGroup>
 								<Button
 									className="btn-default"
@@ -222,6 +223,7 @@ const Notes = props => {
 									Add Note
 								</Button>
 							</ToolGroup>
+							) }
 						</div>
 					</Toolbar>
 				) }
