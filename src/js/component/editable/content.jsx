@@ -44,7 +44,7 @@ class EditableContent extends React.PureComponent {
 			'placeholder': !this.hasValue
 		};
 
-		return <div className={ cx(className) }>{ this.displayValue }</div>;
+		return <div title={ this.props.title } className={ cx(className) }>{ this.displayValue }</div>;
 	}
 
 	static defaultProps = {

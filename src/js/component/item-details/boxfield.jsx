@@ -39,17 +39,9 @@ class BoxField extends React.PureComponent {
 	}
 
 	renderEditable(field, input) {
-		const { onClick, isActive, onFocus, onBlur } = this.props;
-		const props = {
-			isActive,
-			input,
-			onClick,
-			onFocus,
-			onBlur,
-			display: field.display,
-			isBusy: field.processing || false,
-			isDisabled: this.isDisabled
-		};
+		const { onClick, isActive, onFocus, onBlur, title } = this.props;
+		const props = { display: field.display, input, isActive, isBusy: field.processing || false,
+		isDisabled: this.isDisabled, onBlur, onClick, onFocus, title: field.title, };
 
 		return <Editable { ...props } />
 	}

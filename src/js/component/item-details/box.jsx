@@ -32,7 +32,8 @@ const makeFields = (item, pendingChanges, itemTypes, itemTypeFields, isReadOnly)
 		isReadOnly: isReadOnly ? true : noEditFields.includes(f),
 		processing: pendingChanges.some(({ patch }) => f.field in patch),
 		display: getFieldDisplayValue(itemWithPendingChnages, f.field),
-		value: itemWithPendingChnages[f.field] || null
+		value: itemWithPendingChnages[f.field] || null,
+		title: f.field === 'url' ? itemWithPendingChnages[f.field] || null : null
 	}));
 }
 
