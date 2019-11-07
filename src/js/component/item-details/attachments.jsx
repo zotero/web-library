@@ -22,7 +22,7 @@ import { updateItem } from '../../actions';
 import { pluralize } from '../../common/format';
 
 const Attachment = props => {
-	const { attachment, deleteItem, itemKey, isReadOnly, isUploading, libraryKey, getAttachmentUrl,
+	const { attachment, moveToTrash, itemKey, isReadOnly, isUploading, libraryKey, getAttachmentUrl,
 		onKeyDown } = props;
 	const dispatch = useDispatch();
 	const [_, drag] = useDrag({ // eslint-disable-line no-unused-vars
@@ -40,7 +40,7 @@ const Attachment = props => {
 	});
 
 	const handleDelete = () => {
-		deleteItem(attachment);
+		moveToTrash([attachment.key]);
 	}
 
 	const handleLinkInteraction = ev => {
@@ -112,7 +112,7 @@ const Attachment = props => {
 
 Attachment.propTypes = {
 	attachment: PropTypes.object,
-	deleteItem: PropTypes.func,
+	moveToTrash: PropTypes.func,
 	getAttachmentUrl: PropTypes.func.isRequired,
 	isReadOnly: PropTypes.bool,
 	isUploading: PropTypes.bool,
@@ -243,7 +243,7 @@ const Attachments = props => {
 									key={ attachment.key }
 									libraryKey={ libraryKey }
 									onKeyDown={ handleKeyDown }
-									{ ...pick(rest, ['deleteItem', 'getAttachmentUrl']) }
+									{ ...pick(rest, ['moveToTrash', 'getAttachmentUrl']) }
 								/>
 							})
 						}
