@@ -11,8 +11,8 @@ import { TabPane } from '../ui/tabs';
 import withEditMode from '../../enhancers/with-edit-mode.js';
 
 const Info = props => {
-	const { fetchItemTypeCreatorTypes, fetchItemTypeFields, isActive, isEditing, isLoadingMeta,
-		item, shouldFetchMeta } = props;
+	const { fetchItemTypeCreatorTypes, fetchItemTypeFields, isActive, isEditing, isLibraryReadOnly,
+		isLoadingMeta, item, shouldFetchMeta } = props;
 	const title = getBaseMappedValue(item, 'title') || '';
 
 	useEffect(() => {
@@ -46,20 +46,22 @@ const Info = props => {
 							hiddenFields={ [ 'abstractNote' ] }
 						/>
 					</div>
-					<div className="col">
-						<section className={ cx({
-							'empty-abstract': !item.abstractNote,
-							abstract: true,
-							editing: isEditing,
-						}) }>
-							<h6 className="h2 abstract-heading">
-								Abstract
-							</h6>
-							<div className="abstract-body">
-								<Abstract { ...props } />
-							</div>
-						</section>
-					</div>
+					{ (!isLibraryReadOnly || item.abstractNote) && (
+						<div className="col">
+							<section className={ cx({
+								'empty-abstract': !item.abstractNote,
+								abstract: true,
+								editing: isEditing,
+							}) }>
+								<h6 className="h2 abstract-heading">
+									Abstract
+								</h6>
+								<div className="abstract-body">
+									<Abstract { ...props } />
+								</div>
+							</section>
+						</div>
+					) }
 				</div>
 			</div>
 		</TabPane>

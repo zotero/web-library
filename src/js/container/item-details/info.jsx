@@ -8,7 +8,7 @@ import { fetchItemTypeCreatorTypes, fetchItemTypeFields, updateItemWithMapping }
 const InfoContainer = props => <Info { ...props } />;
 
 const mapStateToProps = state => {
-	const { libraryKey, itemKey } = state.current;
+	const { libraryKey, isLibraryReadOnly, itemKey } = state.current;
 	const item = get(state, ['libraries', libraryKey, 'items', itemKey], null);
 	const { itemType } = item;
 	const pendingChanges = get(state, ['libraries', libraryKey, 'updating', 'items', itemKey], []);
@@ -28,9 +28,8 @@ const mapStateToProps = state => {
 	const itemTypeFields = state.meta.itemTypeFields;
 	const itemTypes = state.meta.itemTypes;
 
-	return { creatorTypes, isLoadingMeta, item, itemTypeFields, itemTypes, pendingChanges,
-		shouldFetchMeta }
-
+	return { creatorTypes, isLibraryReadOnly, isLoadingMeta, item, itemTypeFields, itemTypes,
+		pendingChanges, shouldFetchMeta };
 }
 
 export default connect(
