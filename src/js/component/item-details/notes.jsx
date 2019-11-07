@@ -114,9 +114,9 @@ Note.propTypes = {
 }
 
 const Notes = props => {
-	const { device, childItems, isActive, isFetching, isFetched, updateItem, navigate,
-	fetchItemTemplate, isReadOnly, isTinymceFetched, isTinymceFetching, itemKey, noteKey,
-	createItem, libraryKey, deleteItem, pointer, sourceFile, fetchChildItems } = props;
+	const { deleteItem, device, childItems, isActive, isFetching, isFetched, updateItem, navigate,
+	fetchItemTemplate, isReadOnly, isTinymceFetched, isTinymceFetching, itemKey, moveToTrash,
+	noteKey, createItem, libraryKey, pointer, sourceFile, fetchChildItems } = props;
 
 	const [notes, setNotes] = useState([]);
 
@@ -179,7 +179,7 @@ const Notes = props => {
 	}
 
 	const handleDelete = note => {
-		deleteItem(note);
+		moveToTrash([note.key]);
 		navigate({ note: null });
 	}
 

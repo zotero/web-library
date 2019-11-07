@@ -4,6 +4,7 @@ import { indexByKey, get } from '../../utils';
 import { mapObject } from '../../common/immutable';
 
 import {
+	RECEIVE_RECOVER_ITEMS_TRASH,
     ERROR_CHILD_ITEMS,
     RECEIVE_CHILD_ITEMS,
     RECEIVE_CREATE_ITEM,
@@ -13,6 +14,7 @@ import {
     RECEIVE_FETCH_ITEMS,
     RECEIVE_ITEMS_BY_QUERY,
     RECEIVE_ITEMS_IN_COLLECTION,
+    RECEIVE_MOVE_ITEMS_TRASH,
     RECEIVE_TOP_ITEMS,
     RECEIVE_TRASH_ITEMS,
     RECEIVE_UPDATE_ITEM,
@@ -36,6 +38,7 @@ const itemsByParent = (state = {}, action) => {
 				};
 			}
 			return state;
+		case RECEIVE_RECOVER_ITEMS_TRASH:
 		case RECEIVE_CREATE_ITEMS:
 			var otherItems = { ...action.otherItems, ...indexByKey(action.items) };
 			return {
@@ -66,6 +69,7 @@ const itemsByParent = (state = {}, action) => {
 				};
 			}
 			return state;
+		case RECEIVE_MOVE_ITEMS_TRASH:
 		case RECEIVE_DELETE_ITEMS:
 			return Object.entries(state).reduce((aggr, [parentKey, itemKeys]) => {
 				aggr[parentKey] = filterItemKeys(itemKeys, action.itemKeys);

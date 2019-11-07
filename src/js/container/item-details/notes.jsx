@@ -4,7 +4,8 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import Notes from '../../component/item-details/notes';
-import { deleteItem, createItem, updateItem, sourceFile, fetchChildItems, fetchItemTemplate, navigate } from '../../actions';
+import { deleteItem, createItem, updateItem, sourceFile, fetchChildItems, fetchItemTemplate,
+	moveToTrash, navigate } from '../../actions';
 import { get } from '../../utils';
 
 const NotesContainer = props => <Notes { ...props } />;
@@ -26,5 +27,5 @@ const mapStateToProps = state => {
 }
 
 export default connect(
-	mapStateToProps, { deleteItem, createItem, updateItem, fetchChildItems, fetchItemTemplate, navigate, sourceFile }
+	mapStateToProps, { deleteItem, createItem, updateItem, fetchChildItems, fetchItemTemplate, moveToTrash, navigate, sourceFile }
 )(NotesContainer)
