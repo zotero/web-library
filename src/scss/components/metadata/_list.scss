@@ -398,6 +398,10 @@
 			}
 		}
 
+		.read-only & {
+			pointer-events: none; // Allow click drag for text selection to start in labels
+		}
+
 		a[href]:hover {
 			color: $link-color;
 		}
@@ -406,6 +410,7 @@
 	label {
 		@include text-truncate;
 		line-height: normal; // Flex alignment is more stable
+		user-select: none; // Reset
 
 		&[for="url"] {
 			overflow: inherit;

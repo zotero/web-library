@@ -3,6 +3,11 @@
 // --------------------------------------------------
 
 .info {
+	.read-only & {
+		user-select: text;
+		cursor: auto;
+	}
+
 	@include touch-or-bp-down(sm) {
 		padding-bottom: $space-lg - 14px;
 	}

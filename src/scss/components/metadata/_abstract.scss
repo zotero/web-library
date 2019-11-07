@@ -91,6 +91,9 @@
 
 .abstract-heading {
 	color: $key-color;
+	cursor: default; // Reset
+	user-select: none; // Reset
+	pointer-events: none;
 
 	@include touch-or-bp-down(sm) {
 		margin-top: 0;
