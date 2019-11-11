@@ -79,11 +79,10 @@
 	.icon {
 		html:not(.specifity) & {
 			vertical-align: top;
-			margin: 0;
 		}
 
-		@include mouse-and-bp-up(md) {
-			position: static;
+		@include touch-or-bp-down(sm) {
+			margin: 0;
 		}
 	}
 }
