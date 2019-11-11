@@ -61,12 +61,12 @@
 	}
 
 	.icon {
-		@include touch-or-bp-down(sm) {
-			margin-right: $default-padding-x-touch;
-			vertical-align: top;
-		}
-
 		@include variant(".btn.icon-left") {
+			@include touch-or-bp-down(sm) {
+				margin-right: $default-padding-x-touch;
+				vertical-align: top;
+			}
+
 			@include mouse-and-bp-up(md) {
 				margin-right: $space-min;
 			}
@@ -79,10 +79,6 @@
 	.icon {
 		html:not(.specifity) & {
 			vertical-align: top;
-		}
-
-		@include touch-or-bp-down(sm) {
-			margin: 0;
 		}
 	}
 }

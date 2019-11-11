@@ -135,6 +135,14 @@
 			&.touch {
 				margin-right: $space-md;
 			}
+
+			&.icon-library-read-only {
+				margin-right: $space-xs - 2px;
+
+				&.touch {
+					margin-right: $space-md - 2px;
+				}
+			}
 		}
 
 		> .truncate {
