@@ -66,6 +66,10 @@
 					display: none;
 				}
 			}
+
+			.read-only & {
+				display: none;
+			}
 		}
 
 		&.dnd-source {
