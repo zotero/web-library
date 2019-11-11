@@ -221,9 +221,8 @@ class RichEditor extends React.PureComponent {
 						menubar: false,
 						mobile: { theme: 'silver' },
 						plugins: 'link searchreplace',
-						skin: false,
 						statusbar: false,
-						theme: null,
+						theme: 'silver',
 						toolbar: false,
 						valid_elements: validElements,
 					}}
