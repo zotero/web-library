@@ -125,7 +125,7 @@ const Notes = props => {
 	const notesEl = useRef(null);
 
 	const selectedNote = useMemo(
-		() => childItems.find(n => n.key === noteKey),
+		() => childItems.find(n => n && n.key === noteKey),
 		[childItems, noteKey]
 	);
 
