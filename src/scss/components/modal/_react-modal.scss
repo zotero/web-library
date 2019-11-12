@@ -114,7 +114,7 @@
 			}
 		}
 
-		@include mouse-and-bp-up(sm) {
+		@include mouse-and-bp-up(md) {
 			padding-top: $modal-inner-padding;
 			padding-bottom: $modal-inner-padding;
 			background-color: $modal-content-bg;
