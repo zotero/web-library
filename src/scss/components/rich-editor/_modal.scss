@@ -2,181 +2,232 @@
 // TinyMCE modal
 // --------------------------------------------------
 
-body { // We need to override the skin styles
-	.tox {
-		box-sizing: border-box;
+.tox.tox.tox { // We need to override the skin styles
+	box-sizing: border-box;
+	font-size: inherit;
+	line-height: inherit;
 
-		.tox-dialog-wrap {
-			align-items: center;
-			bottom: 0;
-			display: flex;
-			justify-content: center;
-			left: 0;
-			position: fixed;
-			right: 0;
-			top: 0;
-			z-index: $z-index-modal;
+	.tox-dialog-wrap {
+		align-items: center;
+		bottom: 0;
+		display: flex;
+		justify-content: center;
+		left: 0;
+		position: fixed;
+		right: 0;
+		top: 0;
+		z-index: $z-index-modal;
+	}
+
+	.tox-dialog-wrap__backdrop {
+		background-color: $modal-backdrop-bg;
+		bottom: 0;
+		left: 0;
+		position: absolute;
+		right: 0;
+		top: 0;
+		z-index: 0;
+	}
+
+	.tox-dialog {
+		background-color: $modal-content-bg;
+		border-color: transparent;
+		border-radius: $modal-border-radius;
+		border-style: solid;
+		border-width: 0;
+		box-shadow: none;
+		display: flex;
+		flex-direction: column;
+		max-height: 100%;
+
+		@include bp-up(sm) {
+			max-width: $modal-md;
 		}
 
-		.tox-dialog-wrap__backdrop {
-			background-color: $modal-backdrop-bg;
-			bottom: 0;
-			left: 0;
-			position: absolute;
-			right: 0;
-			top: 0;
-			z-index: 0;
-		}
+		overflow: hidden;
+		position: relative;
+		width: 100%;
+		z-index: 1;
 
-		.tox-dialog {
-			background-color: $modal-content-bg;
-			border-color: transparent;
-			border-radius: $modal-border-radius;
-			border-style: solid;
-			border-width: 0;
-			box-shadow: none;
-			display: flex;
-			flex-direction: column;
-			max-height: 100%;
-
-			@include bp-up(sm) {
-				max-width: $modal-md;
-			}
-
-			overflow: hidden;
-			position: relative;
-			width: 100%;
-			z-index: 1;
-
-			@include bp-down(sm) {
-				body:not(.tox-force-desktop) & {
-					align-self: flex-start;
-					margin: 0;
-					width: 100%;
-				}
-			}
-		}
-
-		// This is needed for inline dialogs, since they don't use the wrapper/backdrop
-		.tox-dialog-inline {
-			z-index: $z-index-modal;
-		}
-
-		.tox-dialog__header {
-			align-items: center;
-			border-bottom: 0;
-			color: $headings-color;
-			display: flex;
-			font-size: $font-size-mobile;
-			justify-content: space-between;
-			position: relative;
-
-			@include touch-or-bp-down(sm) {
-				background-color: $modal-form-header-bg;
-				height: $modal-header-height + $border-width;
-				padding: 0 $modal-inner-padding $border-width;
-				@include hairline(bottom, $modal-border-color-touch);
-
-				&::before {
-					content: "";
-					width: 44px;
-					margin-left: -$modal-inner-padding / 2 + 2px; // Even spacing
-				}
-			}
-
-			@include mouse-and-bp-up(md) {
-				background-color: $modal-content-bg;
-				border-bottom: $border-width solid $modal-border-color;
-				font-size: $modal-title-font-size;
-				padding: $modal-inner-padding;
+		@include bp-down(xs) {
+			body:not(.tox-force-desktop) & {
+				align-self: flex-start;
+				margin: 0;
+				width: 100%;
 			}
 		}
+	}
 
-		.tox-dialog__header .tox-button {
-			z-index: 1;
-		}
+	// This is needed for inline dialogs, since they don't use the wrapper/backdrop
+	.tox-dialog-inline {
+		z-index: $z-index-modal;
+	}
 
-		.tox-dialog__title {
-			font-family: $headings-font-family;
-			font-size: inherit;
-			font-style: normal;
-			font-weight: $headings-font-weight;
-			line-height: $headings-line-height;
-			min-width: 0;
-			text-align: left;
-			text-transform: none;
-		}
+	.tox-dialog__header {
+		align-items: center;
+		border-bottom: 0;
+		color: $headings-color;
+		display: flex;
+		font-size: $font-size-mobile;
+		justify-content: space-between;
+		position: relative;
 
-		.tox-button.tox-button--icon[title="Close"] {
-			@include touch-or-bp-down(sm) {
-				border: 0;
-				padding: 0;
-				color: $link-color;
-				font-size: inherit;
-				font-weight: inherit;
+		@include touch-or-bp-down(sm) {
+			background-color: $modal-form-header-bg;
+			height: $modal-header-height + $border-width;
+			padding: 0 $modal-inner-padding $border-width;
+			@include hairline(bottom, $modal-border-color-touch);
 
-				&::before {
-					content: "Close";
-				}
-			}
-
-			@include mouse-and-bp-up(md) {
+			&::before {
+				content: "";
 				width: 44px;
-				height: 44px;
-				margin: -$modal-inner-padding / 2;
-				margin-right: -$modal-inner-padding / 2 + 2px; // Even spacing
-				background: image-url("icons/close.svg") no-repeat center center;
+				margin-left: -$modal-inner-padding / 2 + 2px; // Even spacing
+			}
+		}
+
+		@include mouse-and-bp-up(md) {
+			background-color: $modal-content-bg;
+			border-bottom: $border-width solid $modal-border-color;
+			font-size: $modal-title-font-size;
+			padding: $modal-inner-padding;
+		}
+	}
+
+	.tox-dialog__header .tox-button {
+		z-index: 1;
+	}
+
+	.tox-dialog__title {
+		font-family: $headings-font-family;
+		font-size: inherit;
+		font-style: normal;
+		font-weight: $headings-font-weight;
+		line-height: $headings-line-height;
+		min-width: 0;
+		text-align: left;
+		text-transform: none;
+	}
+
+	.tox-button.tox-button--icon[title="Close"] {
+		@include touch-or-bp-down(sm) {
+			border: 0;
+			padding: 0;
+			color: $link-color;
+			font-size: inherit;
+			font-weight: inherit;
+
+			&::before {
+				content: "Close";
+			}
+		}
+
+		@include mouse-and-bp-up(md) {
+			width: 44px;
+			height: 44px;
+			margin: -$modal-inner-padding / 2;
+			margin-right: -$modal-inner-padding / 2 + 2px; // Even spacing
+			background: image-url("icons/close.svg") no-repeat center center;
+		}
+
+		&:hover:not(:disabled) {
+			background-color: transparent;
+			border-color: transparent;
+
+			@include mouse-and-bp-up(md) {
+				background-image: image-url("icons/close.svg");
+			}
+		}
+
+		&:focus:not(:disabled) {
+			background-color: transparent;
+			border-color: transparent;
+
+			@include mouse-and-bp-up(md) {
+				background-image: image-url("icons/close.svg");
+			}
+		}
+
+		&:active:not(:disabled) {
+			background-color: transparent;
+			border-color: transparent;
+
+			@include mouse-and-bp-up(md) {
+				background-image: image-url("icons/close-active.svg");
+			}
+		}
+
+		.tox-icon {
+			display: none;
+		}
+	}
+
+	.tox-dialog__footer {
+		align-items: center;
+		display: flex;
+		justify-content: space-between;
+
+		@include touch-or-bp-down(sm) {
+			background-color: $modal-form-header-bg;
+			border-top: 0;
+			height: $modal-header-height + $border-width;
+			padding: $border-width $modal-inner-padding 0;
+			@include hairline(top, $modal-border-color-touch);
+		}
+
+		@include mouse-and-bp-up(md) {
+			background-color: $modal-content-bg;
+			border-top: $border-width solid $modal-border-color;
+			padding: $modal-inner-padding;
+		}
+
+		.tox-button {
+			@extend .btn;
+			line-height: inherit;
+			font-weight: inherit;
+			min-width: 80px;
+
+			&:first-child {
+				margin-left: 0;
 			}
 
-			&:hover:not(:disabled) {
-				background-color: transparent;
-				border-color: transparent;
-
-				@include mouse-and-bp-up(md) {
-					background-image: image-url("icons/close.svg");
-				}
+			&:not(:first-child) {
+				margin-left: $space-sm / 2;
 			}
 
-			&:focus:not(:disabled) {
-				background-color: transparent;
-				border-color: transparent;
-
-				@include mouse-and-bp-up(md) {
-					background-image: image-url("icons/close.svg");
-				}
+			&:not(:last-child) {
+				margin-right: $space-sm / 2;
 			}
+		}
 
-			&:active:not(:disabled) {
-				background-color: transparent;
-				border-color: transparent;
+		.tox-button:not(.tox-button--secondary) {
+			@extend .btn-secondary;
+		}
 
-				@include mouse-and-bp-up(md) {
-					background-image: image-url("icons/close-active.svg");
-				}
-			}
+		.tox-button--secondary {
+			@extend .btn-default;
+		}
+
+		.tox-button--icon {
+			width: $space-md + 2 * $space-min + 2 * $input-border-width;
+			height: $space-md + 2 * $space-min + 2 * $input-border-width;
+			background-repeat: no-repeat;
+			background-position: center center;
+			min-width: 0;
 
 			.tox-icon {
 				display: none;
 			}
 		}
 
-		.tox-dialog__footer {
-			align-items: center;
-			display: flex;
-			justify-content: space-between;
-
-			@include touch-or-bp-down(sm) {
-				background-color: $modal-form-header-bg;
-				border-top: 0;
-				height: $modal-header-height + $border-width;
-				padding: $border-width $modal-inner-padding 0;
-				@include hairline(top, $modal-border-color-touch);
-			}
-
+		.tox-button--icon[title="Previous"] {
 			@include mouse-and-bp-up(md) {
-				background-color: $modal-content-bg;
-				border-top: $border-width solid $modal-border-color;
-				padding: $modal-inner-padding;
+				background-image: image-url("icons/previous.svg");
+			}
+		}
+
+		.tox-button--icon[title="Next"] {
+			@include mouse-and-bp-up(md) {
+				background-image: image-url("icons/next.svg");
 			}
 		}
 	}

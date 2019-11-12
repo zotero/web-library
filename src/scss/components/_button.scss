@@ -190,11 +190,11 @@
 }
 
 .btn-default {
-	color: #222;
-	border-color: #ddd;
+	color: $btn-default-color;
+	border-color: $btn-default-border-color;
 
 	@include state(".btn-default:hover, .btn-file input:hover + .btn-default") {
-		background-color: #fff;
+		background-color: $btn-default-hover-bg;
 		box-shadow: 0 2px 4px  rgba($shade-10, 0.06);
 	}
 
