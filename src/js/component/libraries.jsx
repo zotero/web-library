@@ -65,8 +65,17 @@ const LibraryNode = props => {
 			dndTarget={ isReadOnly ? { } : { 'targetType': 'library', libraryKey: libraryKey } }
 			{ ...pick(props, ['onDrillDownNext', 'onDrillDownPrev', 'onFocusNext', 'onFocusPrev'])}
 		>
-			<Icon type="28/library" className="touch" width="28" height="28" />
-			<Icon type="16/library" className="mouse" width="16" height="16" />
+			{ isReadOnly ? (
+				<React.Fragment>
+					<Icon type="32/library-read-only" className="touch" width="32" height="32" />
+					<Icon type="20/library-read-only" className="mouse" width="20" height="20" />
+				</React.Fragment>
+			) : (
+				<React.Fragment>
+					<Icon type="28/library" className="touch" width="28" height="28" />
+					<Icon type="16/library" className="mouse" width="16" height="16" />
+				</React.Fragment>
+			) }
 			<div className="truncate">{ name }</div>
 			{ isPickerMode && pickerIncludeLibraries && !isFetching && (
 				<input
