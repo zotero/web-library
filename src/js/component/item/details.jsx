@@ -11,14 +11,30 @@ import TouchHeaderContainer from '../../container/touch-header';
 import Types from '../../types';
 import withDevice from '../../enhancers/with-device';
 
+const PAGE_SIZE = 100;
+
 const ItemDetails = props => {
-	const { device, fetchItemsByKeys, isSelectMode, item, itemKey, itemKeys, itemsCount, active } = props;
+	const { active, device, fetchChildItems, fetchItemsByKeys, isFetching, isFetched, isSelectMode,
+	item, itemKey, itemKeys, itemsCount, pointer } = props;
+
 
 	useEffect(() => {
 		if(itemKey && !item) {
 			fetchItemsByKeys([itemKey]);
 		}
 	}, [itemKey]);
+
+	useEffect(() => {
+		if(device.shouldUseTabs) {
+			// don't do the fetch, child items are fetched when user opens notes or attachments tab
+			return;
+		}
+		if(itemKey && !isFetching && !isFetched) {
+			const start = pointer || 0;
+			const limit = PAGE_SIZE;
+			fetchChildItems(itemKey, { start, limit });
+		}
+	}, [device, isFetching, isFetched, itemKey, pointer]);
 
 	return (
 		<section className={ cx('item-details', { 'active': active }) }>
