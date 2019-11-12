@@ -182,6 +182,7 @@
 
 		.tox-button {
 			@extend .btn;
+			font-size: inherit;
 			line-height: inherit;
 			font-weight: inherit;
 			min-width: 80px;
