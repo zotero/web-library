@@ -18,7 +18,6 @@ body { // We need to override the skin styles
 			z-index: $z-index-modal;
 		}
 
-
 		.tox-dialog-wrap__backdrop {
 			background-color: $modal-backdrop-bg;
 			bottom: 0;
@@ -65,7 +64,6 @@ body { // We need to override the skin styles
 
 		.tox-dialog__header {
 			align-items: center;
-			background-color: $modal-content-bg;
 			border-bottom: 0;
 			color: $headings-color;
 			display: flex;
@@ -87,6 +85,7 @@ body { // We need to override the skin styles
 			}
 
 			@include mouse-and-bp-up(md) {
+				background-color: $modal-content-bg;
 				border-bottom: $border-width solid $modal-border-color;
 				font-size: $modal-title-font-size;
 				padding: $modal-inner-padding;
@@ -158,6 +157,26 @@ body { // We need to override the skin styles
 
 			.tox-icon {
 				display: none;
+			}
+		}
+
+		.tox-dialog__footer {
+			align-items: center;
+			display: flex;
+			justify-content: space-between;
+
+			@include touch-or-bp-down(sm) {
+				background-color: $modal-form-header-bg;
+				border-top: 0;
+				height: $modal-header-height + $border-width;
+				padding: $border-width $modal-inner-padding 0;
+				@include hairline(top, $modal-border-color-touch);
+			}
+
+			@include mouse-and-bp-up(md) {
+				background-color: $modal-content-bg;
+				border-top: $border-width solid $modal-border-color;
+				padding: $modal-inner-padding;
 			}
 		}
 	}
