@@ -60,7 +60,8 @@
 			padding-right: ($metadata-list-gutter + 1px);
 		}
 
-		&.empty {
+		&.empty,
+		&.virtual {
 			@include touch-or-bp-down(md) {
 				@include state(".panel:not(.editing) .metadata-list") {
 					display: none;
