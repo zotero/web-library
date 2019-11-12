@@ -94,20 +94,6 @@ const itemsByParent = (state = {}, action) => {
 					action
 				)
 			};
-		case RECEIVE_ITEMS_IN_COLLECTION:
-		case RECEIVE_FETCH_ITEMS:
-		case RECEIVE_TOP_ITEMS:
-		case RECEIVE_TRASH_ITEMS:
-		case RECEIVE_ITEMS_BY_QUERY:
-			return {
-				...state,
-				...action.items.reduce((aggr, item, index) => {
-					aggr[item.key] = {
-						totalResults: action.response.getMeta()[index].numChildren
-					};
-					return aggr;
-				}, {})
-			}
 		case RECEIVE_UPDATE_ITEM:
 			if(!('parentItem' in action.patch)) {
 				return state;
