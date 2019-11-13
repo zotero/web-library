@@ -882,7 +882,7 @@ const updateItemWithMapping = (item, fieldKey, newValue) => {
 			}
 
 			//@TODO: only fetchItemTypeCreatorTypes when required
-			const targetTypeCreatorTypes = await dispatch(fetchItemTypeCreatorTypes(item.itemType));
+			const targetTypeCreatorTypes = await dispatch(fetchItemTypeCreatorTypes(newValue));
 
 			//convert item creators to match creators appropriate for this item type
 			if(item.creators && Array.isArray(item.creators)) {
