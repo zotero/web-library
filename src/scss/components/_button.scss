@@ -30,7 +30,6 @@
 
 		&.hairline-start-icon-24 {
 			@include hairline(top, #ccc, $start: $default-padding-x-touch);
-
 		}
 
 		&.hairline-start-icon-28 {
@@ -143,7 +142,7 @@
 	color: $link-color;
 	background-color: transparent;
 
-	html:not(.specifity) & {
+	&:not(.specifity) {
 		padding: 0;
 	}
 

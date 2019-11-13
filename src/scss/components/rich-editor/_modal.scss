@@ -181,39 +181,137 @@
 		}
 
 		.tox-button {
-			@extend .btn;
 			font-size: inherit;
 			line-height: inherit;
 			font-weight: inherit;
-			min-width: 80px;
+
+			@include touch-or-bp-down(sm) {
+				display: inline;
+				border: 0;
+				color: $link-color;
+				background-color: transparent;
+				padding: 0;
+
+				&:not(.specifity) {
+					padding: 0;
+				}
+
+				.icon {
+					color: inherit;
+				}
+			}
+
+			@include mouse-and-bp-up(md) {
+				padding: $input-btn-padding-y $input-btn-padding-x;
+				cursor: pointer;
+				border: $border-width solid transparent;
+				color: $text-color;
+				background-color: transparent;
+				vertical-align: middle;
+				transition:
+					color $input-btn-transition,
+					background-color $input-btn-transition,
+					border-color $input-btn-transition,
+					box-shadow $input-btn-transition;
+				min-width: 80px;
+			}
+
+			&:disabled {
+				opacity: 0.5;
+				cursor: default !important;
+			}
 
 			&:first-child {
 				margin-left: 0;
 			}
 
 			&:not(:first-child) {
-				margin-left: $space-sm / 2;
+				@include touch-or-bp-down(sm) {
+					margin-left: $space-md / 2;
+				}
+
+				@include mouse-and-bp-up(md) {
+					margin-left: $space-sm / 2;
+				}
 			}
 
 			&:not(:last-child) {
-				margin-right: $space-sm / 2;
+				@include touch-or-bp-down(sm) {
+					margin-right: $space-md / 2;
+				}
+
+				@include mouse-and-bp-up(md) {
+					margin-right: $space-sm / 2;
+				}
 			}
 		}
 
 		.tox-button:not(.tox-button--secondary) {
-			@extend .btn-secondary;
+			@include touch-or-bp-down(sm) {
+				font-weight: 600;
+			}
+
+			@include mouse-and-bp-up(md) {
+				@include button-variant($btn-secondary-color);
+			}
 		}
 
 		.tox-button--secondary {
-			@extend .btn-default;
+			@include mouse-and-bp-up(md) {
+				color: $btn-default-color;
+				border-color: $btn-default-border-color;
+
+				&:hover {
+					background-color: $btn-default-hover-bg;
+					box-shadow: 0 2px 4px  rgba($shade-10, 0.06);
+				}
+
+				&:active {
+					background-color: darken($shade-1, 4%);
+					box-shadow: none;
+				}
+
+				&:disabled {
+					box-shadow: none;
+				}
+
+				@include state("html.keyboard") {
+					&:focus {
+						border-color: $secondary;
+						box-shadow: 0 0 0 $input-btn-focus-width $secondary;
+
+						&:hover {
+							border-color: lighten($secondary, 4%);
+							box-shadow:
+								0 0 0 $input-btn-focus-width lighten($secondary, 4%),
+								0 4px 4px $btn-box-shadow-color;
+						}
+
+						&:active {
+							border-color: darken($secondary, 8%);
+							box-shadow: 0 0 0 $input-btn-focus-width darken($secondary, 8%);
+						}
+					}
+				}
+			}
 		}
 
 		.tox-button--icon {
-			width: $space-md + 2 * $space-min + 2 * $input-border-width;
-			height: $space-md + 2 * $space-min + 2 * $input-border-width;
-			background-repeat: no-repeat;
-			background-position: center center;
-			min-width: 0;
+			html:not(.specifity) & {
+				background-repeat: no-repeat;
+				background-position: center center;
+				min-width: 0;
+			}
+
+			@include touch-or-bp-down(sm) {
+				width: $space-thumb;
+				height: $space-thumb;
+			}
+
+			@include mouse-and-bp-up(md) {
+				width: $space-md + 2 * $space-min + 2 * $input-border-width;
+				height: $space-md + 2 * $space-min + 2 * $input-border-width;
+			}
 
 			.tox-icon {
 				display: none;
@@ -221,6 +319,10 @@
 		}
 
 		.tox-button--icon[title="Previous"] {
+			@include touch-or-bp-down(sm) {
+				background-image: image-url("icons/previous-touch.svg");
+			}
+
 			@include mouse-and-bp-up(md) {
 				background-image: image-url("icons/previous.svg");
 
@@ -231,12 +333,27 @@
 		}
 
 		.tox-button--icon[title="Next"] {
+			@include touch-or-bp-down(sm) {
+				background-image: image-url("icons/next-touch.svg");
+			}
+
 			@include mouse-and-bp-up(md) {
 				background-image: image-url("icons/next.svg");
 
 				&:active {
 					background-image: image-url("icons/next-active.svg");
 				}
+			}
+		}
+	}
+
+	.tox-dialog__footer-start {
+		&:empty {
+			display: none;
+
+			& + .tox-dialog__footer-end {
+				flex: 1 1 auto;
+				justify-content: space-between;
 			}
 		}
 	}
