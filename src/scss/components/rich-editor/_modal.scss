@@ -223,12 +223,20 @@
 		.tox-button--icon[title="Previous"] {
 			@include mouse-and-bp-up(md) {
 				background-image: image-url("icons/previous.svg");
+
+				&:active {
+					background-image: image-url("icons/previous-active.svg");
+				}
 			}
 		}
 
 		.tox-button--icon[title="Next"] {
 			@include mouse-and-bp-up(md) {
 				background-image: image-url("icons/next.svg");
+
+				&:active {
+					background-image: image-url("icons/next-active.svg");
+				}
 			}
 		}
 	}
