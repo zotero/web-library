@@ -277,28 +277,6 @@ const updateItem = (itemKey, patch) => {
 			queueId
 		});
 
-		if('itemType' in patch) {
-			// when changing itemType, we may need to remove some fields
-			// from the patch to avoid 400. Usually these are the base-mapped
-			// fields from the source type that are illegal in the target type
-			await dispatch(
-				fetchItemTypeFields(patch.itemType)
-			);
-
-			let itemTypeFields = get(getState(), ['meta', 'itemTypeFields', patch.itemType]);
-			if(itemTypeFields) {
-				itemTypeFields = [
-					'itemType',
-					...itemTypeFields.map(fieldDetails => fieldDetails.field)
-				];
-				Object.keys(patch).forEach(patchedKey => {
-					if(!itemTypeFields.includes(patchedKey)) {
-						delete patch[patchedKey];
-					}
-				});
-			}
-		}
-
 		dispatch(
 			queueUpdateItem(itemKey, patch, libraryKey, queueId)
 		);
@@ -854,8 +832,14 @@ const updateItemWithMapping = (item, fieldKey, newValue) => {
 	};
 
 	return async dispatch => {
-		// when changing itemType, map fields to base types and back to item-specific types
+		// when changing itemType, map fields from old type-specific to base types and then back to new item-specific types
 		if(fieldKey === 'itemType') {
+			//@TODO: maybe check state if this data is already fetched, then skip
+			const [targetTypeFields, targetTypeCreatorTypes] = await Promise.all([
+				dispatch(fetchItemTypeFields(newValue)),
+				dispatch(fetchItemTypeCreatorTypes(newValue))
+			]);
+
 			const baseValues = {};
 			if(item.itemType in baseMappings) {
 				const namedToBaseMap = reverseMap(baseMappings[item.itemType]);
@@ -881,19 +865,26 @@ const updateItemWithMapping = (item, fieldKey, newValue) => {
 				});
 			}
 
-			//@TODO: only fetchItemTypeCreatorTypes when required
-			const targetTypeCreatorTypes = await dispatch(fetchItemTypeCreatorTypes(newValue));
+			// patch may now contain base-type keys mapped from old-item type-specific fields
+			// but not present and not mapped to the target item type
+			// these keys need to be removed in order to avoid triggering error 400
+			const allowedFields = ['itemType', ...targetTypeFields.map(fieldDetails => fieldDetails.field)];
+			Object.keys(patch).forEach(patchedKey => {
+				if(!allowedFields.includes(patchedKey)) {
+					delete patch[patchedKey];
+				}
+			});
 
-			//convert item creators to match creators appropriate for this item type
+			//if creator is invalid in target item type, pick first valid creator type
 			if(item.creators && Array.isArray(item.creators)) {
-				for(var creator of item.creators) {
+				patch.creators = item.creators.map(creator => {
 					if(typeof targetTypeCreatorTypes.find(c => c.creatorType === creator.creatorType) === 'undefined') {
 						creator.creatorType = targetTypeCreatorTypes[0].creatorType;
 					}
-				}
+					return creator;
+				});
 			}
 		}
-
 		dispatch(updateItem(item.key, patch));
 	}
 }
