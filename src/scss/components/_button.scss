@@ -142,7 +142,7 @@
 	color: $link-color;
 	background-color: transparent;
 
-	&:not(.specifity) {
+	html:not(.specifity) & {
 		padding: 0;
 	}
 
