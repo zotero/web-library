@@ -4,18 +4,29 @@
 
 .badge {
 	display: inline-block;
-	padding: $badge-padding-y $badge-padding-x;
-	font-size: $badge-font-size;
 	font-weight: $badge-font-weight;
 	line-height: 1;
 	text-align: center;
 	white-space: nowrap;
 	vertical-align: baseline;
 	border-radius: $badge-border-radius;
+
+	@include touch-or-bp-down(sm) {
+		font-size: $badge-font-size-mobile;
+		padding: $badge-padding-y-mobile $badge-padding-x-mobile;
+	}
+
+	@include mouse-and-bp-up(md) {
+		font-size: $badge-font-size;
+		padding: $badge-padding-y $badge-padding-x;
+	}
 }
 
 .badge-pill {
-	padding-right: $badge-pill-padding-x;
-	padding-left: $badge-pill-padding-x;
 	border-radius: $badge-pill-border-radius;
+
+	html:not(.specifity) & {
+		padding-right: $badge-pill-padding-x;
+		padding-left: $badge-pill-padding-x;
+	}
 }
