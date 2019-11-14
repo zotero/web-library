@@ -1,0 +1,21 @@
+//
+// Badge
+// --------------------------------------------------
+
+.badge {
+	display: inline-block;
+	padding: $badge-padding-y $badge-padding-x;
+	font-size: $badge-font-size;
+	font-weight: $badge-font-weight;
+	line-height: 1;
+	text-align: center;
+	white-space: nowrap;
+	vertical-align: baseline;
+	border-radius: $badge-border-radius;
+}
+
+.badge-pill {
+	padding-right: $badge-pill-padding-x;
+	padding-left: $badge-pill-padding-x;
+	border-radius: $badge-pill-border-radius;
+}

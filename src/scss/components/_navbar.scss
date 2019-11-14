@@ -155,6 +155,9 @@
 
 			.dropdown-item {
 				padding: $space-min $space-md;
+				display: flex;
+				align-items: center;
+				justify-content: space-between;
 
 				@include variant(".search .dropdown-menu") {
 					padding: (4.5px + $input-border-width) $space-sm;
@@ -163,6 +166,11 @@
 
 			.dropdown-divider {
 				margin: $space-xs 0;
+			}
+
+			.badge {
+				background-color: $shade-6;
+				color: $shade-0;
 			}
 		}
 	}
