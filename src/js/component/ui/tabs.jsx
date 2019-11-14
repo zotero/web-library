@@ -1,13 +1,16 @@
 'use strict';
 
-import React from 'react';
+import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
 import cx from 'classnames';
 import withFocusManager from '../../enhancers/with-focus-manager';
 import Spinner from '../ui/spinner';
+import { pick } from '../../common/immutable';
 
-const Tab = ({ children, isActive, isDisabled, onActivate, onFocusNext, onFocusPrev }) => {
-	const handleKeyDown = ev => {
+const Tab = props => {
+	const { children, isActive, isDisabled, onActivate, onFocusNext, onFocusPrev, ...rest } = props;
+
+	const handleKeyDown = useCallback(ev => {
 		if(ev.target !== ev.currentTarget) {
 			return;
 		}
@@ -17,7 +20,16 @@ const Tab = ({ children, isActive, isDisabled, onActivate, onFocusNext, onFocusP
 		} else if(ev.key === 'ArrowLeft') {
 			onFocusPrev(ev);
 		}
-	};
+	});
+
+	const handleClick = useCallback(ev => {
+		ev.preventDefault();
+		if(isDisabled) {
+			return;
+		}
+		onActivate(ev);
+	});
+
 	return (
 		<li
 			className={ cx({
@@ -25,10 +37,10 @@ const Tab = ({ children, isActive, isDisabled, onActivate, onFocusNext, onFocusP
 				active: isActive,
 				disabled: isDisabled
 			}) }
-			onClick={ isDisabled ? null : onActivate }
 		>
 			<a href=""
-				onClick={ ev => { ev.preventDefault(); isDisabled ? null : onActivate(); } }
+				{ ... pick(rest, p => p.startsWith('data-')) }
+				onClick={ handleClick }
 				tabIndex={ -2 }
 				onKeyDown={ handleKeyDown }
 			>
