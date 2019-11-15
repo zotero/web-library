@@ -13,7 +13,7 @@ import AddItemsToCollectionsModalContainer from '../container/modal/add-items-to
 import BibliographyModalContainer from '../container/modal/bibliography';
 import CustomDragLayer from '../component/drag-layer';
 import ExportModalContainer from '../container/modal/export';
-import ItemDetailsContainer from '../container/item-details';
+import ItemDetails from '../component/item/details';
 import ItemsContainer from '../container/items';
 import ItemsSortModalContainer from '../container/modal/items-sort';
 import LibrariesContainer from '../container/libraries';
@@ -163,7 +163,7 @@ const Library = props => {
 										variant={ TouchHeaderContainer.variants.SOURCE_AND_ITEM }
 									/>
 									<ItemsContainer key={ key } { ...{isSearchModeTransitioning} } />
-									<ItemDetailsContainer active={ view === 'item-details' } />
+									<ItemDetails active={ view === 'item-details' } />
 									{ device.isTouchOrSmall && <TouchNoteContainer /> }
 									<CSSTransition
 										in={ device.isSingleColumn && isSearchMode && itemsSource !== 'query' }

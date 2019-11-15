@@ -3,6 +3,7 @@
 import cx from 'classnames';
 import PropTypes from 'prop-types';
 import React, { useCallback, useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 import AttachmentsContainer from '../../container/item-details/attachments';
 import EditToggleButton from '../edit-toggle-button';
@@ -15,8 +16,10 @@ import StandaloneAttachmentContainer from '../../container/item-details/standalo
 import StandaloneNoteContainer from '../../container/item-details/standalone-note';
 import TagsContainer from '../../container/item-details/tags';
 import { Tab, Tabs } from '../ui/tabs';
-import withEditMode from '../../enhancers/with-edit-mode';
 import withDevice from '../../enhancers/with-device';
+import { useEditMode, useFetchingState, useMetaState } from '../../hooks';
+import { get } from '../../utils';
+import { fetchChildItems } from '../../actions';
 
 const pickDefaultActiveTab = (itemType, noteKey) => {
 	switch(itemType) {
@@ -29,12 +32,39 @@ const pickDefaultActiveTab = (itemType, noteKey) => {
 	}
 }
 
+const PAGE_SIZE = 100;
+
 const ItemDetailsTabs = props => {
-	const { device, isLibraryReadOnly, isLoadingMeta, isEditing, isFetching, isTinymceFetching,
-			isLoadingRelated, noteKey, title, item } = props;
+	const { device } = props;
+	const dispatch = useDispatch();
+
+	const isLibraryReadOnly = useSelector(state => state.current.isLibraryReadOnly);
+	const libraryKey = useSelector(state => state.current.libraryKey);
+	const itemKey = useSelector(state => state.current.itemKey);
+	const noteKey = useSelector(state => state.current.noteKey);
+	const item = useSelector(state => get(state, ['libraries', libraryKey, 'items', itemKey], {}));
+	const isTinymceFetching = useSelector(state => state.sources.fetching.includes('tinymce'));
+	const childItemsState = useFetchingState(['libraries', libraryKey, 'itemsByParent', itemKey]);
+	const relatedItemsState = useFetchingState(['libraries', libraryKey, 'itemsRelated', itemKey]);
+	const { isMetaFetching } = useMetaState();
+
+	const [isEditing, ] = useEditMode();
 	const isReadOnly = isLibraryReadOnly || !!(device.shouldUseEditMode && !isEditing);
-	const isLoading = isLoadingMeta || isFetching || isLoadingRelated || isTinymceFetching;
+	const isLoading = childItemsState.isFetching || relatedItemsState.isFetching || isTinymceFetching || isMetaFetching;
 	const [activeTab, setActiveTab] = useState(pickDefaultActiveTab(item.itemType, noteKey));
+
+	useEffect(() => {
+		// fetch child items on devices that don't use tabs, unless item type cannot have child items
+		if(device.shouldUseTabs || !item || ['attachment', 'note'].includes(item.itemType)) {
+			return;
+		}
+
+		if(itemKey && !childItemsState.isFetching && !childItemsState.isFetched) {
+			const start = childItemsState.pointer || 0;
+			const limit = PAGE_SIZE;
+			dispatch(fetchChildItems(itemKey, { start, limit }));
+		}
+	}, [childItemsState, device, itemKey]);
 
 	const handleKeyDown = useCallback(ev => {
 		if(ev.key === 'ArrowDown' && ev.target.closest('.tab')) {
@@ -74,7 +104,7 @@ const ItemDetailsTabs = props => {
 		>
 			<header>
 				<h4 className="offscreen">
-					{ title }
+					{ item.title }
 				</h4>
 				<Tabs compact>
 					{
@@ -220,18 +250,6 @@ const ItemDetailsTabs = props => {
 
 ItemDetailsTabs.propTypes = {
 	device: PropTypes.object,
-	isEditing: PropTypes.bool,
-	isLoadingChildItems: PropTypes.bool,
-	isLoadingMeta: PropTypes.bool,
-	isLoadingRelated: PropTypes.bool,
-	isReadOnly: PropTypes.bool,
-	item: PropTypes.object,
-	noteKey: PropTypes.string,
-	title: PropTypes.string,
 };
 
-ItemDetailsTabs.defaultProps = {
-	item: {}
-};
-
-export default withDevice(withEditMode(ItemDetailsTabs));
+export default withDevice(ItemDetailsTabs);

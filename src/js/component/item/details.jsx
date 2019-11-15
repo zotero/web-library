@@ -1,40 +1,28 @@
-'use strict';
-
-import React, { useEffect } from 'react';
 import cx from 'classnames';
 import PropTypes from 'prop-types';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
-import ItemDetailsInfoSelected from '../item-details/info-selected';
 import ItemDetailsInfoView from '../item-details/info-view';
 import ItemDetailsTabs from '../item-details/tabs';
 import TouchHeaderContainer from '../../container/touch-header';
-import Types from '../../types';
 import withDevice from '../../enhancers/with-device';
-
-const PAGE_SIZE = 100;
+import { fetchItemsByKeys } from '../../actions';
+import { get } from '../../utils';
 
 const ItemDetails = props => {
-	const { active, device, fetchChildItems, fetchItemsByKeys, isFetching, isFetched, isSelectMode,
-	item, itemKey, itemKeys, itemsCount, pointer } = props;
-
+	const { active, device } = props;
+	const dispatch = useDispatch();
+	const itemKey = useSelector(state => state.current.itemKey);
+	const libraryKey = useSelector(state => state.current.libraryKey);
+	const item = useSelector(state => get(state, ['libraries', libraryKey, 'items', itemKey], null));
+	const isSelectMode = useSelector(state => state.current.isSelectMode);
 
 	useEffect(() => {
 		if(itemKey && !item) {
-			fetchItemsByKeys([itemKey]);
+			dispatch(fetchItemsByKeys([itemKey]));
 		}
-	}, [itemKey]);
-
-	useEffect(() => {
-		if(device.shouldUseTabs) {
-			// don't do the fetch, child items are fetched when user opens notes or attachments tab
-			return;
-		}
-		if(itemKey && !isFetching && !isFetched) {
-			const start = pointer || 0;
-			const limit = PAGE_SIZE;
-			fetchChildItems(itemKey, { start, limit });
-		}
-	}, [device, isFetching, isFetched, itemKey, pointer]);
+	}, [item, itemKey]);
 
 	return (
 		<section className={ cx('item-details', { 'active': active }) }>
@@ -45,13 +33,9 @@ const ItemDetails = props => {
 			{
 				(!device.isTouchOrSmall || (device.isTouchOrSmall && !isSelectMode))
 				&& item ? (
-					<ItemDetailsTabs { ...props } />
+					<ItemDetailsTabs />
 				) : (
-					!device.isTouchOrSmall && itemKeys.length > 1 ? (
-						<ItemDetailsInfoSelected itemKeys={ itemKeys } />
-					) : !itemKey && (
-						<ItemDetailsInfoView itemsCount={ itemsCount } />
-					)
+					<ItemDetailsInfoView />
 				)
 			}
 		</section>
@@ -59,20 +43,12 @@ const ItemDetails = props => {
 }
 
 ItemDetails.defaultProps = {
-	item: {},
 	active: false,
-	itemKeys: []
 };
 
 ItemDetails.propTypes = {
 	active: PropTypes.bool,
 	device: PropTypes.object,
-	fetchItemsByKeys: PropTypes.func,
-	isSelectMode: PropTypes.bool,
-	item: Types.item,
-	itemKey: PropTypes.string,
-	itemKeys: PropTypes.array,
-	itemsCount: PropTypes.number,
 };
 
 export default withDevice(ItemDetails);
