@@ -154,7 +154,7 @@ const Library = props => {
 							>
 								<section className={ cx('items', {
 									'active': view === 'item-list',
-									'select-mode': isSelectMode,
+									'select-mode': device.isTouchOrSmall && isSelectMode,
 									'read-only': isLibraryReadOnly,
 								})}>
 									{/* Tablet TouchHeader */}
