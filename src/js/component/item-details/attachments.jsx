@@ -22,8 +22,8 @@ import { updateItem } from '../../actions';
 import { pluralize } from '../../common/format';
 
 const Attachment = props => {
-	const { attachment, moveToTrash, itemKey, isReadOnly, isUploading, libraryKey, getAttachmentUrl,
-		onKeyDown } = props;
+	const { attachment, device, moveToTrash, itemKey, isReadOnly, isUploading, libraryKey,
+		getAttachmentUrl, onKeyDown } = props;
 	const dispatch = useDispatch();
 	const [_, drag] = useDrag({ // eslint-disable-line no-unused-vars
 		item: { type: ATTACHMENT, itemKey, libraryKey },
@@ -38,6 +38,7 @@ const Attachment = props => {
 			}
 		}
 	});
+	const iconSize = device.isTouchOrSmall ? '28' : '16';
 
 	const handleDelete = () => {
 		moveToTrash([attachment.key]);
@@ -56,7 +57,8 @@ const Attachment = props => {
 	const getItemIcon = item => {
 		const { iconName } = item[Symbol.for('derived')];
 		const dvp = window.devicePixelRatio >= 2 ? 2 : 1;
-		return `16/item-types/light/${dvp}x/${iconName}`;
+		return device.isTouchOrSmall ?
+			`28/item-types/light/${iconName}` : `16/item-types/light/${dvp}x/${iconName}`;
 	}
 
 	return (
@@ -65,7 +67,7 @@ const Attachment = props => {
 			data-key={ attachment.key }
 			ref={ drag }
 		>
-			<Icon type={ getItemIcon(attachment) } width="16" height="16" />
+			<Icon type={ getItemIcon(attachment) } width={ iconSize } height={ iconSize } />
 			{
 				attachment.linkMode.startsWith('imported') && attachment[Symbol.for('links')].enclosure && !isUploading ? (
 					<a
@@ -112,11 +114,12 @@ const Attachment = props => {
 
 Attachment.propTypes = {
 	attachment: PropTypes.object,
-	moveToTrash: PropTypes.func,
+	device: PropTypes.object.isRequired,
 	getAttachmentUrl: PropTypes.func.isRequired,
 	isReadOnly: PropTypes.bool,
 	isUploading: PropTypes.bool,
 	itemKey: PropTypes.string,
+	moveToTrash: PropTypes.func,
 	onKeyDown: PropTypes.func.isRequired,
 }
 
@@ -239,6 +242,7 @@ const Attachments = props => {
 									const isUploading = uploads.includes(attachment.key);
 									return <Attachment
 										attachment={ attachment }
+										device={ device }
 										isUploading={ isUploading }
 										itemKey={ attachment.key }
 										key={ attachment.key }

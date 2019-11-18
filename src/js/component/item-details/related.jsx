@@ -12,7 +12,8 @@ import { sortItemsByKey } from '../../utils';
 import { TabPane } from '../ui/tabs';
 
 
-const RelatedItem = ({ parentItemKey, relatedItem, libraryKey, removeRelatedItem, navigate }) => {
+const RelatedItem = props => {
+	const { device, parentItemKey, relatedItem, libraryKey, removeRelatedItem, navigate } = props;
 	const handleSelect = ev => {
 		const relatedItemKey = ev.currentTarget.closest('[data-key]').dataset.key;
 		navigate({
@@ -20,6 +21,7 @@ const RelatedItem = ({ parentItemKey, relatedItem, libraryKey, removeRelatedItem
 			items: relatedItemKey
 		}, true);
 	}
+	const iconSize = device.isTouchOrSmall ? '28' : '16';
 
 	const handleDelete = ev => {
 		const relatedItemKey = ev.currentTarget.closest('[data-key]').dataset.key;
@@ -29,7 +31,8 @@ const RelatedItem = ({ parentItemKey, relatedItem, libraryKey, removeRelatedItem
 	const getItemIcon = item => {
 		const { iconName } = item[Symbol.for('derived')];
 		const dvp = window.devicePixelRatio >= 2 ? 2 : 1;
-		return `16/item-types/light/${dvp}x/${iconName}`;
+		return device.isTouchOrSmall ?
+			`28/item-types/light/${iconName}` : `16/item-types/light/${dvp}x/${iconName}`;
 	}
 
 	return (
@@ -40,8 +43,8 @@ const RelatedItem = ({ parentItemKey, relatedItem, libraryKey, removeRelatedItem
 			>
 				<Icon
 					type={ getItemIcon(relatedItem) }
-					width="16"
-					height="16"
+					width={ iconSize }
+					height={ iconSize }
 				/>
 				<a onClick={ handleSelect }>
 					{ getItemTitle(relatedItem) }
@@ -54,6 +57,7 @@ const RelatedItem = ({ parentItemKey, relatedItem, libraryKey, removeRelatedItem
 }
 
 RelatedItem.propTypes = {
+	device: PropTypes.object.isRequired,
 	libraryKey: PropTypes.string,
 	navigate: PropTypes.func.isRequired,
 	parentItemKey: PropTypes.string,
@@ -86,9 +90,10 @@ const Related = ({ device, fetchRelatedItems, itemKey, isFetched, isFetching, re
 							{
 								sortedRelatedItems.map(relatedItem => (
 									<RelatedItem
+										device={ device }
 										key={ relatedItem.key }
-										relatedItem={ relatedItem }
 										parentItemKey={ itemKey }
+										relatedItem={ relatedItem }
 										{ ...pick(props, ['libraryKey', 'navigate', 'removeRelatedItem']) }
 									/>
 								))
