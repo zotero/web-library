@@ -2,8 +2,8 @@
 
 import cx from 'classnames';
 import PropTypes from 'prop-types';
-import React, { useCallback, useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { useDispatch, useSelector, shallowCompare } from 'react-redux';
 
 import AttachmentsContainer from '../../container/item-details/attachments';
 import EditToggleButton from '../edit-toggle-button';
@@ -18,7 +18,7 @@ import TagsContainer from '../../container/item-details/tags';
 import { Tab, Tabs } from '../ui/tabs';
 import withDevice from '../../enhancers/with-device';
 import { useEditMode, useFetchingState, useMetaState } from '../../hooks';
-import { get } from '../../utils';
+import { get, mapRelationsToItemKeys } from '../../utils';
 import { fetchChildItems } from '../../actions';
 
 const pickDefaultActiveTab = (itemType, noteKey) => {
@@ -40,18 +40,39 @@ const ItemDetailsTabs = props => {
 
 	const isLibraryReadOnly = useSelector(state => state.current.isLibraryReadOnly);
 	const libraryKey = useSelector(state => state.current.libraryKey);
+	const userId = useSelector(state => state.config.userId);
 	const itemKey = useSelector(state => state.current.itemKey);
 	const noteKey = useSelector(state => state.current.noteKey);
 	const item = useSelector(state => get(state, ['libraries', libraryKey, 'items', itemKey], {}));
+	const items = useSelector(state => get(state, ['libraries', libraryKey, 'items'], {}), shallowCompare);
 	const isTinymceFetching = useSelector(state => state.sources.fetching.includes('tinymce'));
 	const childItemsState = useFetchingState(['libraries', libraryKey, 'itemsByParent', itemKey]);
 	const relatedItemsState = useFetchingState(['libraries', libraryKey, 'itemsRelated', itemKey]);
 	const { isMetaFetching } = useMetaState();
 
+	const { attachments, notes } = useMemo(() => {
+		return (childItemsState.keys || []).reduce((acc, childItemKey) => {
+			const item = items[childItemKey];
+			if(item.itemType === 'attachment') {
+				acc.attachments.push(item);
+			}
+			if(item.itemType === 'note') {
+				acc.notes.push(item);
+			}
+			return acc;
+		}, { attachments: [], notes: [] })
+	}, [childItemsState.keys, itemKey, items]);
+	const relatedKeys = mapRelationsToItemKeys(item.relations || {}, userId);
+
 	const [isEditing, ] = useEditMode();
 	const isReadOnly = isLibraryReadOnly || !!(device.shouldUseEditMode && !isEditing);
 	const isLoading = childItemsState.isFetching || relatedItemsState.isFetching || isTinymceFetching || isMetaFetching;
 	const [activeTab, setActiveTab] = useState(pickDefaultActiveTab(item.itemType, noteKey));
+
+	const shouldShowAttachmentsTab = device.shouldUseTabs || (!device.shouldUseTabs && (!isReadOnly || attachments.length > 0));
+	const shouldShowNotesTab = device.shouldUseTabs || (!device.shouldUseTabs && (!isReadOnly || notes.length > 0));
+	const shouldShowRelatedTab = device.shouldUseTabs || (!device.shouldUseTabs && (!isReadOnly || relatedKeys.length > 0));
+	const shouldShowTagsTab = device.shouldUseTabs || (!device.shouldUseTabs && (!isReadOnly || item.tags.length > 0));
 
 	useEffect(() => {
 		// fetch child items on devices that don't use tabs, unless item type cannot have child items
@@ -139,26 +160,30 @@ const ItemDetailsTabs = props => {
 								>
 									Info
 								</Tab>
-								<Tab
-									data-tab-name="notes"
-									isActive={ activeTab === 'notes' }
-									onActivate={ handleSelectTab }
-									>
-										Notes
-								</Tab>
+								{ shouldShowNotesTab && (
+									<Tab
+										data-tab-name="notes"
+										isActive={ activeTab === 'notes' }
+										onActivate={ handleSelectTab }
+										>
+											Notes
+									</Tab>
+								) }
 							</React.Fragment>
 						)
 					}
 
-					<Tab
-						data-tab-name="tags"
-						isActive={ activeTab === 'tags' }
-						onActivate={ handleSelectTab }
-					>
-						Tags
-					</Tab>
+					{ shouldShowTagsTab && (
+							<Tab
+							data-tab-name="tags"
+							isActive={ activeTab === 'tags' }
+							onActivate={ handleSelectTab }
+						>
+							Tags
+						</Tab>
+					) }
 					{
-						!['attachment', 'note'].includes(item.itemType) && (
+						shouldShowAttachmentsTab && !['attachment', 'note'].includes(item.itemType) && (
 							<Tab
 							data-tab-name="attachments"
 							isActive={ activeTab === 'attachments' }
@@ -169,13 +194,15 @@ const ItemDetailsTabs = props => {
 						)
 					}
 
-					<Tab
-						data-tab-name="related"
-						isActive={ activeTab === 'related' }
-						onActivate={ handleSelectTab }
-					>
-						Related
-					</Tab>
+					{ shouldShowRelatedTab && (
+						<Tab
+							data-tab-name="related"
+							isActive={ activeTab === 'related' }
+							onActivate={ handleSelectTab }
+						>
+							Related
+						</Tab>
+					) }
 				</Tabs>
 					{
 						activeTab === 'info' && (
@@ -198,11 +225,12 @@ const ItemDetailsTabs = props => {
 										isActive={ activeTab === 'info' }
 										isReadOnly={ isReadOnly }
 									/>
-									<NotesContainer
+									{ shouldShowNotesTab && ( <NotesContainer
 										key={ 'notes-' + item.key }
 										isActive={ activeTab === 'notes' }
 										isReadOnly={ isReadOnly }
 									/>
+									) }
 								</React.Fragment>
 							)
 						}
@@ -222,13 +250,15 @@ const ItemDetailsTabs = props => {
 							)
 						}
 
-						<TagsContainer
-							key={ item.key }
-							isActive={ activeTab === 'tags' }
-							isReadOnly={ isReadOnly }
-						/>
+						{ shouldShowTagsTab && (
+								<TagsContainer
+								key={ item.key }
+								isActive={ activeTab === 'tags' }
+								isReadOnly={ isReadOnly }
+							/>
+						) }
 						{
-							!['attachment', 'note'].includes(item.itemType) && (
+							shouldShowAttachmentsTab && !['attachment', 'note'].includes(item.itemType) && (
 								<AttachmentsContainer
 									key={ 'attachments-' + item.key }
 									isActive={ activeTab === 'attachments' }
@@ -236,10 +266,12 @@ const ItemDetailsTabs = props => {
 								/>
 							)
 						}
-						<RelatedContainer
-							key={ 'related-' + item.key }
-							isActive={ activeTab === 'related' }
-						/>
+						{ shouldShowRelatedTab && (
+							<RelatedContainer
+								key={ 'related-' + item.key }
+								isActive={ activeTab === 'related' }
+							/>
+						) }
 					</React.Fragment>
 				)
 			}
