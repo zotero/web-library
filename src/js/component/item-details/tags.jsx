@@ -129,50 +129,52 @@ const Tags = props => {
 						</div>
 					</Toolbar>
 				) }
-				<nav>
-					<ul className="details-list tag-list">
-						{
-							tags.map(tag => {
-								return (
-									<li
-										className="tag"
-										data-key={ tag.id }
-										data-tag={ tag.tag }
-										key={ tag.id }
-									>
-										<Icon
-											color={ tag.tag in tagColors ? tagColors[tag.tag] : null }
-											height="12"
-											symbol={ tag.tag in tagColors ? 'circle' : 'circle-empty' }
-											type="12/circle"
-											width="12"
-										/>
-										<Editable
-											autoFocus
-											isActive={ tag.tag === tagRedacted }
-											onCancel={ handleCancel }
-											onChange={ handleChange }
-											onClick={ handleEdit }
-											onCommit={ handleCommit }
-											onFocus={ handleEdit }
-											selectOnFocus
-											suggestions={ suggestions }
-											value={ tag.tag }
-										/>
-										{ !(tag.tag === tagRedacted && tagRedacted === '') && !isReadOnly && (
-											<Button
-												icon
-												onClick={ handleDelete }
-											>
-												<Icon type="16/minus-circle" width="16" height="16" />
-											</Button>
-										)}
-									</li>
-								);
-							})
-						}
-					</ul>
-				</nav>
+				{ tags.length > 0 && (
+					<nav>
+						<ul className="details-list tag-list">
+							{
+								tags.map(tag => {
+									return (
+										<li
+											className="tag"
+											data-key={ tag.id }
+											data-tag={ tag.tag }
+											key={ tag.id }
+										>
+											<Icon
+												color={ tag.tag in tagColors ? tagColors[tag.tag] : null }
+												height="12"
+												symbol={ tag.tag in tagColors ? 'circle' : 'circle-empty' }
+												type="12/circle"
+												width="12"
+											/>
+											<Editable
+												autoFocus
+												isActive={ tag.tag === tagRedacted }
+												onCancel={ handleCancel }
+												onChange={ handleChange }
+												onClick={ handleEdit }
+												onCommit={ handleCommit }
+												onFocus={ handleEdit }
+												selectOnFocus
+												suggestions={ suggestions }
+												value={ tag.tag }
+											/>
+											{ !(tag.tag === tagRedacted && tagRedacted === '') && !isReadOnly && (
+												<Button
+													icon
+													onClick={ handleDelete }
+												>
+													<Icon type="16/minus-circle" width="16" height="16" />
+												</Button>
+											)}
+										</li>
+									);
+								})
+							}
+						</ul>
+					</nav>
+				) }
 				{ device.isTouchOrSmall && !isReadOnly && (
 					<Button
 						onClick={ handleAddTag }

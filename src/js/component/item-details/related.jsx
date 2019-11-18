@@ -80,20 +80,22 @@ const Related = ({ device, fetchRelatedItems, itemKey, isFetched, isFetching, re
 		<TabPane { ...pick(props, ['isActive']) } isLoading={ device.shouldUseTabs && !isFetched }>
 			<h5 className="h2 tab-pane-heading hidden-mouse">Related</h5>
 			<div className="scroll-container-mouse">
-				<nav>
-					<ul className="details-list related-list">
-						{
-							sortedRelatedItems.map(relatedItem => (
-								<RelatedItem
-									key={ relatedItem.key }
-									relatedItem={ relatedItem }
-									parentItemKey={ itemKey }
-									{ ...pick(props, ['libraryKey', 'navigate', 'removeRelatedItem']) }
-								/>
-							))
-						}
-					</ul>
-				</nav>
+				{ sortedRelatedItems.length > 0 && (
+					<nav>
+						<ul className="details-list related-list">
+							{
+								sortedRelatedItems.map(relatedItem => (
+									<RelatedItem
+										key={ relatedItem.key }
+										relatedItem={ relatedItem }
+										parentItemKey={ itemKey }
+										{ ...pick(props, ['libraryKey', 'navigate', 'removeRelatedItem']) }
+									/>
+								))
+							}
+						</ul>
+					</nav>
+				) }
 			</div>
 		</TabPane>
 	);

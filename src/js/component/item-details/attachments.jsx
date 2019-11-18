@@ -231,24 +231,26 @@ const Attachments = props => {
 						</div>
 					</Toolbar>
 				) }
-				<nav>
-					<ul className="details-list attachment-list">
-						{
-							attachments.map(attachment => {
-								const isUploading = uploads.includes(attachment.key);
-								return <Attachment
-									attachment={ attachment }
-									isUploading={ isUploading }
-									itemKey={ attachment.key }
-									key={ attachment.key }
-									libraryKey={ libraryKey }
-									onKeyDown={ handleKeyDown }
-									{ ...pick(rest, ['moveToTrash', 'getAttachmentUrl']) }
-								/>
-							})
-						}
-					</ul>
-				</nav>
+				{ attachments.length > 0 && (
+					<nav>
+						<ul className="details-list attachment-list">
+							{
+								attachments.map(attachment => {
+									const isUploading = uploads.includes(attachment.key);
+									return <Attachment
+										attachment={ attachment }
+										isUploading={ isUploading }
+										itemKey={ attachment.key }
+										key={ attachment.key }
+										libraryKey={ libraryKey }
+										onKeyDown={ handleKeyDown }
+										{ ...pick(rest, ['moveToTrash', 'getAttachmentUrl']) }
+									/>
+								})
+							}
+						</ul>
+					</nav>
+				) }
 				{ device.isTouchOrSmall && !isReadOnly && (
 					<div className="btn-file">
 						<input

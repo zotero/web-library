@@ -227,26 +227,28 @@ const Notes = props => {
 						</div>
 					</Toolbar>
 				) }
-				<nav>
-					<ul className="note-list" >
-						{
-							notes.map(note => {
-								return (
-									<Note
-										device={ device }
-										isReadOnly={ isReadOnly }
-										key={ note.key }
-										noteKey={ note.key }
-										onDelete={ handleDelete }
-										onDuplicate={ handleDuplicate }
-										onSelect={ handleSelect }
-										deleteItem={ deleteItem }
-									/>
-								);
-							})
-						}
-					</ul>
-				</nav>
+				{ notes.length > 0 && (
+					<nav>
+						<ul className="note-list" >
+							{
+								notes.map(note => {
+									return (
+										<Note
+											device={ device }
+											isReadOnly={ isReadOnly }
+											key={ note.key }
+											noteKey={ note.key }
+											onDelete={ handleDelete }
+											onDuplicate={ handleDuplicate }
+											onSelect={ handleSelect }
+											deleteItem={ deleteItem }
+										/>
+									);
+								})
+							}
+						</ul>
+					</nav>
+				) }
 				{ device.isTouchOrSmall && !isReadOnly && (
 					<Button
 						onClick={ handleAddNote }
