@@ -92,6 +92,10 @@ fieldset {
 
 	@include mouse-and-bp-up(sm) {
 		margin-bottom: $form-group-margin;
+
+		&:last-child {
+			margin-bottom: 0;
+		}
 	}
 }
 

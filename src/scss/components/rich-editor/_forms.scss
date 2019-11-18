@@ -1,0 +1,46 @@
+//
+// TinyMCE forms
+// --------------------------------------------------
+
+.tox.tox.tox {
+	.tox-form__group {
+		@extend .form-group;
+		display: flex;
+	}
+
+	.tox-label,
+	.tox-textfield,
+	select {
+		@include mouse-and-bp-up(md) {
+			font-size: $font-size-base;
+			line-height: $line-height-base;
+		}
+	}
+
+	.tox-form__controls-h-stack,
+	.tox-selectfield {
+		flex: 1 1 auto;
+	}
+
+	.tox-label {
+		@extend .col-form-label;
+		flex: 0 0 25%;
+		text-align: right;
+		color: $text-color;
+	}
+
+	.tox-textfield {
+		@extend .form-control;
+	}
+
+	select {
+		@extend .form-control;
+		background-image: image-url("icons/chevron-7.svg");
+		background-repeat: no-repeat;
+		background-position: right #{$space-min} center;
+	}
+
+	.tox-selectfield__icon-js {
+		display: none;
+	}
+}
