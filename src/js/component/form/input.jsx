@@ -190,7 +190,7 @@ class Input extends React.PureComponent {
 		tabIndex: -1,
 		type: 'text',
 		value: '',
-		suggestions: []
+		suggestions: null
 	};
 
 	static propTypes = {
