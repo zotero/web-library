@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import React, { useCallback } from 'react';
 import { UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap/lib';
 import { useDispatch, useSelector } from 'react-redux';
+import { useDebounce } from "use-debounce";
 
 import Button from './ui/button';
 import Icon from './ui/icon';
@@ -12,13 +13,15 @@ import Input from './form/input';
 import TagList from './tag-selector/tag-list';
 import withFocusManager from '../enhancers/with-focus-manager';
 import { filterTags, navigate, toggleTagSelector } from '../actions';
-import { getTagsData } from '../common/state';
+import { useTagsData } from '../hooks';
+
 
 const TagSelector = props => {
 	const { onBlur, onFocus, onFocusNext, onFocusPrev, registerFocusRoot } = props; //FocusManager
-	const { isFetching } = useSelector(state => getTagsData(state));
+	const { isFetching } = useTagsData();
 	const { tagsSearchString, tags: selectedTags, isTagSelectorOpen } = useSelector(state => state.current);
 	const dispatch = useDispatch();
+	const [isBusy] = useDebounce(isFetching, 100);
 
 	const handleKeyDown = useCallback(ev => {
 		if(ev.target !== ev.currentTarget) {
@@ -67,7 +70,7 @@ const TagSelector = props => {
 					tabIndex={ -2 }
 					type="search"
 					value={ tagsSearchString }
-					isBusy={ isFetching }
+					isBusy={ isBusy }
 					placeholder="Filter Tags"
 				/>
 				<UncontrolledDropdown className="dropdown">

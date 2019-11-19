@@ -6,8 +6,8 @@ import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import withFocusManager from '../../enhancers/with-focus-manager';
 import { checkColoredTags, fetchTags, navigate } from '../../actions';
 import { deduplicateByKey, get } from '../../utils';
-import { getTagsData } from '../../common/state';
 import { isTriggerEvent } from '../../common/event';
+import { useTagsData } from '../../hooks';
 
 const PAGE_SIZE = 100;
 
@@ -15,8 +15,8 @@ const TagList = props => {
 	const { onBlur, onFocus, onFocusNext, onFocusPrev, registerFocusRoot } = props; // FocusManager
 	const tagsSearchString = useSelector(state => state.current.tagsSearchString);
 	const selectedTags = useSelector(state => state.current.tags, shallowEqual);
-	const { isFetching, pointer: sourceTagsPointer = 0, tags: sourceTags = [], totalResults: totalTagCount = null } =
-		useSelector(state => getTagsData(state), shallowEqual);
+	const { isFetching, pointer: sourceTagsPointer = 0, tags: sourceTags = [], totalResults: totalTagCount = null, hasChecked } =
+		useTagsData();
 	const tagColors = useSelector(state =>  get(state, ['libraries', state.current.libraryKey, 'tagColors'], {}), shallowEqual);
 	const dispatch = useDispatch();
 
@@ -93,16 +93,10 @@ const TagList = props => {
 
 
 	useEffect(() => {
-		if(sourceTagsPointer < totalTagCount) {
+		if(hasChecked && totalTagCount > PAGE_SIZE) {
 			dispatch(checkColoredTags());
 		}
-	}, []);
-
-	useEffect(() => {
-		if(totalTagCount > PAGE_SIZE) {
-			dispatch(checkColoredTags());
-		}
-	}, [totalTagCount]);
+	}, [hasChecked, totalTagCount]);
 
 	useEffect(() => {
 		setTimeout(maybeLoadMore, 0);
