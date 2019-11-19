@@ -161,6 +161,12 @@
 		}
 	}
 
+	.tox-dialog__body {
+		@include touch-or-bp-down(sm) {
+			background-color: $form-bg-touch;
+		}
+	}
+
 	.tox-dialog__footer {
 		align-items: center;
 		display: flex;
