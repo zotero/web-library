@@ -197,6 +197,14 @@
 				}
 			}
 
+			@include touch-keyboard-or-bp-down(sm) {
+				&:focus {
+					outline: $outline-width solid $focus-color;
+					outline-offset: $outline-offset;
+					position: relative;
+				}
+			}
+
 			@include mouse-and-bp-up(md) {
 				padding: $input-btn-padding-y $input-btn-padding-x;
 				cursor: pointer;
@@ -242,13 +250,14 @@
 			}
 		}
 
-		.tox-button:not(.tox-button--secondary) {
-			@include touch-or-bp-down(sm) {
-				font-weight: 600;
-			}
+		.tox-button.tox-button:not(.tox-button--secondary) {
+			@include button-variant($btn-secondary-color); // Mixin does not work with media query
 
-			@include mouse-and-bp-up(md) {
-				@include button-variant($btn-secondary-color);
+			@include touch-or-bp-down(sm) {
+				color: $secondary !important;
+				background: none;
+				box-shadow: none !important;
+				font-weight: 600;
 			}
 		}
 
@@ -301,7 +310,7 @@
 
 			@include touch-or-bp-down(sm) {
 				width: $space-thumb;
-				height: $space-thumb;
+				height: $space-lg;
 			}
 
 			@include mouse-and-bp-up(md) {
