@@ -90,7 +90,7 @@ fieldset {
 		}
 	}
 
-	@include mouse-and-bp-up(sm) {
+	@include mouse-and-bp-up(md) {
 		margin-bottom: $form-group-margin;
 
 		&:last-child {
