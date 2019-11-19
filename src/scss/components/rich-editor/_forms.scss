@@ -3,6 +3,13 @@
 // --------------------------------------------------
 
 .tox.tox.tox {
+	.tox-form {
+		@include touch-or-bp-down(sm) {
+			margin: -$modal-inner-padding;
+			padding: $form-group-margin-touch 0;
+		}
+	}
+
 	.tox-form__group {
 		@extend .form-group;
 		display: flex;
