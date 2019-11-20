@@ -152,8 +152,11 @@ label {
 
 	&.textarea {
 		@include touch-or-bp-down(sm) {
-			margin-top: -6px;
-			padding-bottom: 9px;
+			$textarea-padding:
+				($space-thumb - $font-size-mobile * $line-height-base-mobile) / 2;
+
+			padding-top: $textarea-padding;
+			padding-bottom: $textarea-padding;
 		}
 
 		&.busy {

@@ -60,6 +60,7 @@
 
 		@include variant(".auto-resizer.vertical") {
 			@include touch-or-bp-down(sm) {
+				min-height: 0;
 				height: 100%; // Address #196
 			}
 		}
