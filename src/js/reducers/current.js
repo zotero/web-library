@@ -17,7 +17,6 @@ import { getParamsFromRoute } from '../common/state';
 const stateDefault = {
 	collectionKey: null,
 	editingItemKey: null,
-	isEditing: false,
 	isLibraryReadOnly: false,
 	isNavBarOpen: false,
 	isSelectMode: false,
@@ -78,6 +77,7 @@ const current = (state = stateDefault, action, { config } = {}) => {
 			var isLibraryReadOnly = (config.libraries.find(l => l.key === libraryKey) || {}).isReadOnly;
 			var itemsSource;
 			var searchState = state.searchState;
+			var itemKey = itemKeys && itemKeys.length === 1 ? itemKeys[0] : null
 
 			if(tags.length || search.length) {
 				itemsSource = 'query';
@@ -116,14 +116,13 @@ const current = (state = stateDefault, action, { config } = {}) => {
 			return {
 				...state,
 				collectionKey,
-				editingItemKey: state.editingItemKey,
-				isEditing: state.isEditing && view !== 'item-details',
+				editingItemKey: itemKey === state.editingItemKey ? state.editingItemKey : null,
 				isLibraryReadOnly,
 				isMyPublications,
 				isSearchMode: itemsSource === 'query' || state.isSearchMode,
 				isSelectMode: isSelectMode && view === 'item-list',
 				isTrash,
-				itemKey: itemKeys && itemKeys.length === 1 ? itemKeys[0] : null,
+				itemKey,
 				itemKeys,
 				itemsSource,
 				libraryKey,

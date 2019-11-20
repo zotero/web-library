@@ -13,13 +13,13 @@ import {
     TRIGGER_USER_TYPE_CHANGE,
 } from '../constants/actions';
 
-const triggerEditingItem = (itemKey, toggleValue = null) => {
+const triggerEditingItem = (itemKey, toggleValue) => {
 	return async (dispatch, getState) => {
-		const { libraryKey, isEditing } = getState().current;
+		const { libraryKey } = getState().current;
 
 		return dispatch({
 			type: TRIGGER_EDITING_ITEM,
-			isEditing: toggleValue === null ? !isEditing : toggleValue,
+			isEditing: toggleValue,
 			itemKey,
 			libraryKey,
 		});
