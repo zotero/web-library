@@ -38,7 +38,7 @@
 			line-height: $line-height-base;
 
 			@include touch-or-bp-down(sm) {
-				min-height: round($auto-resizer-vertical-rows * $font-size-mobile * $line-height-base);
+				min-height: round($auto-resizer-vertical-rows * $font-size-mobile * $line-height-base-mobile);
 			}
 
 			@include mouse-and-bp-up(md) {
