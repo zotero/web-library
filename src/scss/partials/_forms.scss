@@ -243,6 +243,12 @@ label {
 			border: none;
 		}
 	}
+
+	@at-root select#{&} {
+		&:focus {
+			color: $focus-color;
+		}
+	}
 }
 
 .form-control-lg {

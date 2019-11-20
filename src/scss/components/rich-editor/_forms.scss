@@ -52,9 +52,12 @@
 
 	select {
 		@extend .form-control;
-		background-image: image-url("icons/chevron-7.svg");
-		background-repeat: no-repeat;
-		background-position: right #{$space-min} center;
+
+		@include mouse-and-bp-up(md) {
+			background-image: image-url("icons/chevron-7.svg");
+			background-repeat: no-repeat;
+			background-position: right #{$space-min} center;
+		}
 	}
 
 	.tox-selectfield__icon-js {
