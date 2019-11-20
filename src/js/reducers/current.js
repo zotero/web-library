@@ -9,6 +9,7 @@ import {
     TRIGGER_EDITING_ITEM,
     TRIGGER_SEARCH_MODE,
     TRIGGER_SELECT_MODE,
+    TRIGGER_USER_TYPE_CHANGE,
 } from '../constants/actions';
 
 import { tagsFromUrlPart } from '../common/navigation';
@@ -173,6 +174,11 @@ const current = (state = stateDefault, action, { config } = {}) => {
 			return {
 				...state,
 				tagsSearchString: action.tagsSearchString
+			}
+		case TRIGGER_USER_TYPE_CHANGE:
+			return {
+				...state,
+				editingItemKey: action.userType === 'mouse' ? null : state.editingItemKey
 			}
 		default:
 			return state;
