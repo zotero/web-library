@@ -13,6 +13,23 @@
 	.tox-form__group {
 		@extend .form-group;
 		display: flex;
+
+		// Nest for specificity
+		.tox-label {
+			@extend .col-form-label;
+			@include text-truncate;
+
+			@include touch-or-bp-down(sm) {
+				font-size: $font-size-mobile;
+				flex: 0 0 33%;
+			}
+
+			@include mouse-and-bp-up(md) {
+				flex: 0 0 25%;
+				color: $text-color;
+				text-align: right;
+			}
+		}
 	}
 
 	.tox-label,
@@ -27,13 +44,6 @@
 	.tox-form__controls-h-stack,
 	.tox-selectfield {
 		flex: 1 1 auto;
-	}
-
-	.tox-label {
-		@extend .col-form-label;
-		flex: 0 0 25%;
-		text-align: right;
-		color: $text-color;
 	}
 
 	.tox-textfield {
