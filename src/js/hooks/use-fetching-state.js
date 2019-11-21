@@ -18,7 +18,7 @@ const useTagsData = () => {
 
 	switch(itemsSource) {
 		case 'query':
-			data = useSelector(state => state.query.tags, shallowEqual);
+			data = useSelector(state => state.query.tags || {}, shallowEqual);
 		break;
 		case 'trash':
 			data = useSelector(state => get(state, ['libraries', libraryKey, 'tagsInTrashItems'], {}), shallowEqual);
