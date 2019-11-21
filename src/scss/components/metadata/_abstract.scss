@@ -81,6 +81,11 @@
 			border-bottom-left-radius: $input-border-radius;
 			border-bottom-right-radius: $input-border-radius;
 			overflow: hidden;
+
+			.input-group.textarea {
+				margin-top: -6px;
+				padding-top: 0;
+			}
 		}
 
 		@include bp-down-normalized(xs) {
