@@ -19,7 +19,7 @@ const getItemTitle = item => item.itemType === 'note' ?
 // https://github.com/zotero/zotero/blob/26ee0e294b604ed9ea473c76bb072715c318eac2/chrome/content/zotero/xpcom/data/item.js#L3697
 const getAttachmentIcon = ({ linkMode, contentType }) => {
 	if(contentType === 'application/pdf') {
-		return linkMode === 'linked_file' ? 'pdf-linked' : 'pdf';
+		return ['linked_file', 'linked_url'].includes(linkMode) ? 'pdf-linked' : 'pdf';
 	}
 
 	switch(linkMode) {
