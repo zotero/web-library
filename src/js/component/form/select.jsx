@@ -91,7 +91,7 @@ class SelectInput extends React.PureComponent {
 		};
 	}
 
-	renderInput(userType, viewport) {
+	renderInput(device) {
 		const {
 			options,
 			autoFocus,
@@ -111,7 +111,7 @@ class SelectInput extends React.PureComponent {
 			required: this.props.isRequired,
 		};
 
-		if(userType === 'touch' || viewport.xxs || viewport.xs || viewport.sm) {
+		if(device.isTouchOrSmall) {
 			const props = {
 				...commonProps,
 				onKeyDown: this.handleKeyDown.bind(this),
@@ -149,7 +149,6 @@ class SelectInput extends React.PureComponent {
 	}
 
 	render() {
-		const { userType, viewport } = this.props.device;
 		const className = cx({
 			'input-group': true,
 			'select': true,
@@ -157,7 +156,7 @@ class SelectInput extends React.PureComponent {
 		}, this.props.inputGroupClassName);
 		return (
 			<div className={ className }>
-				{ this.renderInput(userType, viewport) }
+				{ this.renderInput(this.props.device) }
 				{ this.renderSpinner() }
 			</div>
 		);

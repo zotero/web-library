@@ -6,6 +6,7 @@ import { connectRouter } from 'connected-react-router';
 import collectionCountByLibrary from './collection-count-by-library';
 import config from './config';
 import current from './current';
+import device from './device';
 import errors from './errors';
 import fetching from './fetching';
 import groups from './groups';
@@ -19,10 +20,9 @@ import preferences from './preferences';
 import query from './query';
 import sources from './sources'
 import styles from './styles';
-import userType from './user-type'
 import viewport from './viewport';
 
 
 export default history => combineSectionReducers({ collectionCountByLibrary, config, current,
-	errors, fetching, groups, identifier, itemsPublications, libraries, meta, modal, ongoing,
-	preferences, query, router: connectRouter(history), sources, styles, viewport, userType, });
+	device, errors, fetching, groups, identifier, itemsPublications, libraries, meta, modal,
+	ongoing, preferences, query, router: connectRouter(history), sources, styles, viewport, });

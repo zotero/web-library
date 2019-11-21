@@ -15,11 +15,11 @@ const mapStateToProps = state => {
 		useTransitions, userLibraryKey, view } = state.current;
 	const { itemTypes } = state.meta;
 	const { isSynced } = get(state, ['libraries', libraryKey, 'sync'], {});
-	const { config, fetching: { collectionsInLibrary }, viewport } = state;
+	const { config, fetching: { collectionsInLibrary } } = state;
 	const isFetchingCollections = collectionsInLibrary.some(key => key === userLibraryKey || key === libraryKey);
 	const isFetchingLibrarySettings = get(state, ['libraries', libraryKey, 'fetching', 'librarySettings']);
 
-	return { config, view, userLibraryKey, viewport, isSearchMode, isSelectMode, itemsSource,
+	return { config, view, userLibraryKey, isSearchMode, isSelectMode, itemsSource,
 		collectionKey, isFetchingCollections, isFetchingLibrarySettings, isNavBarOpen,
 		isMyPublications, isSynced, itemTypes, isTrash, useTransitions, libraryKey, noteKey, search,
 		searchState, tags, qmode, isLibraryReadOnly, };

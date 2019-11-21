@@ -1,26 +1,35 @@
-'use strict';
+import PropTypes from 'prop-types';
+import React, { useCallback } from 'react';
+import { useSelector } from 'react-redux';
 
-import React from 'react';
-import withDevice from '../enhancers/with-device';
-import withEditMode from '../enhancers/with-edit-mode';
 import Button from './ui/button';
+import { useEditMode } from '../hooks';
 
+const EditToggleButton = props => {
+	const { className, isReadOnly } = props;
+	const isTouchUser = useSelector(state => state.device.isTouchUser);
+	const md = useSelector(state => state.viewport.md);
+	const [isEditing, dispatchTriggerEditingItem] = useEditMode();
+	const shouldShowEmptyLabel = md && (isReadOnly || !isTouchUser);
+	const toggleOnLabel = shouldShowEmptyLabel ? 'Show Empty Fields' : 'Edit';
+	const toggleOffLabel = shouldShowEmptyLabel ? 'Hide Empty Fields' : 'Done';
+	const label = isEditing ? toggleOffLabel : toggleOnLabel;
 
-class EditToggleButton extends React.PureComponent {
-	render() {
-		const { isEditing, device, onEditModeToggle, className,
-			isReadOnly } = this.props;
-		const isShowEmptyLabel = device.viewport.md && (isReadOnly || !device.isTouchUser);
-		const toggleOnLabel = isShowEmptyLabel ? 'Show Empty Fields' : 'Edit';
-		const toggleOffLabel = isShowEmptyLabel ? 'Hide Empty Fields' : 'Done';
-		const label = isEditing ? toggleOffLabel : toggleOnLabel;
+	const handleClick = useCallback(() => {
+		dispatchTriggerEditingItem(!isEditing);
+	});
 
-		return (
-			<Button className={ className} onClick={ () => onEditModeToggle(!isEditing) }>
-				{ label }
-			</Button>
-		);
-	}
+	return (
+		<Button className={ className} onClick={ handleClick }>
+			{ label }
+		</Button>
+	);
+
 }
 
-export default withEditMode(withDevice(EditToggleButton));
+EditToggleButton.propTypes = {
+	className: PropTypes.string,
+	isReadOnly: PropTypes.bool,
+}
+
+export default EditToggleButton;
