@@ -6,7 +6,7 @@ import {
     RECEIVE_DELETE_COLLECTION,
 } from '../constants/actions';
 
-const collectionCountTopByLibrary = (state = {}, action) => {
+const collectionCountByLibrary = (state = {}, action) => {
 	switch(action.type) {
 		case RECEIVE_CREATE_COLLECTIONS:
 			return {
@@ -28,4 +28,4 @@ const collectionCountTopByLibrary = (state = {}, action) => {
 	}
 };
 
-export default collectionCountTopByLibrary;
+export default collectionCountByLibrary;

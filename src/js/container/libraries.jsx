@@ -11,8 +11,10 @@ const LibrariesContainer = props => <Libraries { ...props } />;
 const mapStateToProps = state => {
 	const { libraryKey, view, itemsSource } = state.current;
 	const { libraries } = state.config ;
+	const collectionCountByLibrary = state.collectionCountByLibrary || {};
 
 	return {
+		collectionCountByLibrary,
 		itemsSource,
 		libraries,
 		librariesWithCollectionsFetching: state.fetching.collectionsInLibrary,

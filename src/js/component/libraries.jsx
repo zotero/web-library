@@ -15,10 +15,15 @@ import withDevice from '../enhancers/with-device';
 
 const LibraryNode = props => {
 	const {
-		addVirtual, isFetching, isOpen, isPickerMode, isReadOnly, isSelected,
-		libraryKey, name, navigate, pickerPick, picked, pickerIncludeLibraries,
-		shouldBeTabbable, toggleOpen, virtual
+		device, addVirtual, collectionsCount, isFetching, isOpen, isPickerMode, isReadOnly, isSelected,
+		libraryKey, name, navigate, pickerPick, picked, pickerIncludeLibraries, shouldBeTabbable,
+		toggleOpen, virtual
 	} = props;
+
+
+	// no nodes inside if device is non-touch (no "All Items" node) and library is read-only (no
+	// trash) and has no collections
+	const isConfirmedEmpty = isReadOnly && !device.isTouchOrSmall && collectionsCount === 0;
 
 	const handleClick = useCallback(() => {
 		navigate({ library: libraryKey, view: 'library' }, true);
@@ -59,8 +64,8 @@ const LibraryNode = props => {
 			isOpen={ isOpen && !isFetching }
 			onOpen={ handleOpenToggle }
 			onClick={ handleClick }
-			showTwisty={ true }
-			subtree={ isFetching ? null : isOpen ? <CollectionTreeContainer { ...getTreeProps() } /> : null }
+			showTwisty={ !isConfirmedEmpty }
+			subtree={ isFetching || isConfirmedEmpty ? null : isOpen ? <CollectionTreeContainer { ...getTreeProps() } /> : null }
 			data-key={ libraryKey }
 			dndTarget={ isReadOnly ? { } : { 'targetType': 'library', libraryKey: libraryKey } }
 			{ ...pick(props, ['onDrillDownNext', 'onDrillDownPrev', 'onFocusNext', 'onFocusPrev'])}
@@ -104,6 +109,8 @@ const LibraryNode = props => {
 
 LibraryNode.propTypes = {
 	addVirtual: PropTypes.func,
+	collectionsCount: PropTypes.number,
+	device: PropTypes.object,
 	isFetching: PropTypes.bool,
 	isOpen: PropTypes.bool,
 	isPickerMode: PropTypes.bool,
@@ -122,8 +129,8 @@ LibraryNode.propTypes = {
 
 const Libraries = props => {
 	const {
-		createCollection, device, fetchAllCollections, fetchLibrarySettings, isFetching,
-		itemsSource, libraries, librariesWithCollectionsFetching, onBlur, onFocus,
+		collectionCountByLibrary, createCollection, device, fetchAllCollections, fetchLibrarySettings,
+		isFetching, itemsSource, libraries, librariesWithCollectionsFetching, onBlur, onFocus,
 		registerFocusRoot, selectedLibraryKey, view
 	} = props;
 
@@ -202,12 +209,13 @@ const Libraries = props => {
 			(device.isTouchOrSmall && view !== 'libraries' && selectedLibraryKey == key);
 		const isSelected = !device.isTouchOrSmall && selectedLibraryKey === key && itemsSource === 'top';
 		const isFetching = !device.isTouchOrSmall && librariesWithCollectionsFetching.includes(key);
+		const collectionsCount = key in collectionCountByLibrary ? collectionCountByLibrary[key] : null;
 
 		return {
-			libraryKey: key, shouldBeTabbableOnTouch, shouldBeTabbable, isOpen, isSelected, isFetching,
+			collectionsCount, libraryKey: key, shouldBeTabbableOnTouch, shouldBeTabbable, isOpen, isSelected, isFetching,
 			addVirtual, commitAdd, cancelAdd, toggleOpen, virtual,
 			...rest,
-			...pick(props, ['picked', 'pickerIncludeLibraries', 'onDrillDownNext',
+			...pick(props, ['device', 'picked', 'pickerIncludeLibraries', 'onDrillDownNext',
 				'onDrillDownPrev', 'onFocusNext', 'onFocusPrev', 'navigate', 'isPickerMode', 'selectedCollectionKey',
 				'pickerPick'
 			])
@@ -269,17 +277,19 @@ const Libraries = props => {
 }
 
 Libraries.propTypes = {
+	collectionCountByLibrary: PropTypes.object,
 	createCollection: PropTypes.func,
 	device: PropTypes.object,
 	fetchAllCollections: PropTypes.func,
+	fetchLibrarySettings: PropTypes.func,
 	isFetching: PropTypes.bool,
 	itemsSource: PropTypes.string,
 	libraries: PropTypes.array,
 	librariesWithCollectionsFetching: PropTypes.array,
-	selectedLibraryKey: PropTypes.string,
 	onBlur: PropTypes.func,
 	onFocus: PropTypes.func,
 	registerFocusRoot: PropTypes.func,
+	selectedLibraryKey: PropTypes.string,
 	view: PropTypes.string,
 }
 
