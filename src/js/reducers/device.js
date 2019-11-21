@@ -14,6 +14,11 @@ const defaultState = {
 	shouldUseSidebar: false,
 	shouldUseTabs: false,
 	userType: matchMedia('(pointer:coarse)').matches ? 'touch' : null,
+	xxs: false,
+	xs: false,
+	sm: false,
+	md: false,
+	lg: false,
 };
 
 const getDevice = ({ userType }, viewport) => {
@@ -22,19 +27,33 @@ const getDevice = ({ userType }, viewport) => {
 	const shouldUseEditMode = isTouchOrSmall;
 	const shouldUseModalCreatorField = isTouchOrSmall;
 	const shouldUseSidebar = !viewport.lg;
-	const shouldUseTabs = viewport.md || (viewport.lg && userType != 'touch');
+	const shouldUseTabs = viewport.md || (viewport.lg && userType !== 'touch');
+
 	return { isSingleColumn, isTouchOrSmall, shouldUseEditMode, shouldUseModalCreatorField,
-	shouldUseSidebar, shouldUseTabs }
+		shouldUseSidebar, shouldUseTabs };
 };
 
-const device = (state = defaultState, action, { viewport = {} } = {}) => {
+const getViewport = ({ width }) => {
+	return {
+		xxs: width < 480,
+		xs: width >= 480 && width < 768,
+		sm: width >= 768 && width < 992,
+		md: width >= 992 && width < 1200,
+		lg: width >= 1200
+	};
+}
+
+const device = (state = defaultState, action) => {
+	var viewport;
 	switch(action.type) {
 		case TRIGGER_RESIZE_VIEWPORT:
 		case TRIGGER_USER_TYPE_CHANGE:
+			viewport = action.type === TRIGGER_RESIZE_VIEWPORT ? getViewport(action) : pick(state, ['xxs', 'xs', 'sm', 'md', 'lg']);
 			return {
 				...state,
 				...pick(action, ['isKeyboardUser', 'isMouseUser', 'isTouchUser', 'userType', 'scrollbarWidth']),
 				...getDevice(action, viewport),
+				...viewport
 			}
 		default:
 			return state;

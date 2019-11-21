@@ -54,7 +54,7 @@ const getLibraryKey = (params, config) => {
 }
 
 
-const current = (state = stateDefault, action, { config = {}, viewport = {} } = {}) => {
+const current = (state = stateDefault, action, { config = {}, device = {} } = {}) => {
 	switch(action.type) {
 		case CONFIGURE:
 			return {
@@ -178,8 +178,8 @@ const current = (state = stateDefault, action, { config = {}, viewport = {} } = 
 		case TRIGGER_USER_TYPE_CHANGE:
 			return {
 				...state,
-				editingItemKey: action.userType === 'mouse' && !viewport.xxs && !viewport.xs &&
-					!viewport.sm ? null : state.editingItemKey
+				editingItemKey: action.userType === 'mouse' && !device.xxs && !device.xs &&
+					!device.sm ? null : state.editingItemKey
 			}
 		default:
 			return state;

@@ -20,9 +20,8 @@ import preferences from './preferences';
 import query from './query';
 import sources from './sources'
 import styles from './styles';
-import viewport from './viewport';
 
 
 export default history => combineSectionReducers({ collectionCountByLibrary, config, current,
 	device, errors, fetching, groups, identifier, itemsPublications, libraries, meta, modal,
-	ongoing, preferences, query, router: connectRouter(history), sources, styles, viewport, });
+	ongoing, preferences, query, router: connectRouter(history), sources, styles, });
