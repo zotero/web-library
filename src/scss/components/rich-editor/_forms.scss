@@ -32,6 +32,15 @@
 		}
 	}
 
+	.tox-form__grid--2col {
+		margin-left: 25%;
+		flex-direction: column;
+
+		.tox-checkbox:not(:last-child) {
+			margin-bottom: $form-group-margin;
+		}
+	}
+
 	.tox-label,
 	.tox-textfield,
 	select {
@@ -62,5 +71,54 @@
 
 	.tox-selectfield__icon-js {
 		display: none;
+	}
+
+	.tox-checkbox {
+		@extend .checkbox;
+		align-items: flex-start;
+		cursor: auto;
+		height: auto;
+		min-width: 0;
+		line-height: $line-height-base;
+
+		.tox-checkbox__input {
+			@extend input[type="checkbox"];
+			height: auto;
+			left: auto;
+			overflow: auto;
+			position: static;
+			top: auto;
+			width: auto;
+
+			// Chrome & Edge do not render the auto outline because of the negative tabindex
+			@include mouse-keyboard-and-bp-up(md) {
+				&:focus {
+
+					// Target Chrome only
+					@supports (-webkit-appearance:none) and (not (overflow:-webkit-marquee))
+						and (not (-ms-ime-align:auto)) and (not (-moz-appearance:none))
+					{
+						outline: $outline-width solid $focus-color;
+						outline-offset: $outline-offset;
+					}
+
+					// Target Edge only
+					@supports (-ms-ime-align: auto) {
+						outline: $outline-width solid $focus-color;
+						outline-offset: $outline-offset;
+					}
+				}
+			}
+		}
+
+		.tox-checkbox__icons {
+			display: none;
+		}
+
+		.tox-checkbox__label {
+			font-size: $font-size-base;
+			color: $text-color;
+			margin-left: 0;
+		}
 	}
 }

@@ -396,6 +396,11 @@ textarea {
 			outline: none;
 		}
 	}
+
+	// todo
+	@include mouse-and-bp-up(md) {
+		display: flex;
+	}
 }
 
 input[type="checkbox"] {
@@ -419,6 +424,23 @@ input[type="checkbox"] {
 		&:focus {
 			outline: none;
 			box-shadow: 0 0 0 $input-btn-focus-width $btn-secondary-color;
+		}
+	}
+
+	// todo
+	@include mouse-and-bp-up(md) {
+		font-size: 16px;
+		margin: 2px 6px 0 0;
+	}
+
+	@include mouse-keyboard-and-bp-up(md) {
+		&:focus {
+			outline: auto;
+
+			// Target Firefox only (nicer outline)
+			@supports (-moz-appearance: none) {
+				outline: initial;
+			}
 		}
 	}
 }

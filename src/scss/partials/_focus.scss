@@ -2,8 +2,8 @@
 // Keyboard focus
 // --------------------------------------------------
 
-.mouse :focus,
-.touch :focus {
+.mouse:not(.keyboard) :focus,
+.touch:not(.keyboard) :focus {
 	outline: none;
 }
 
