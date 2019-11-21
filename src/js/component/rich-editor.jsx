@@ -101,7 +101,7 @@ class RichEditor extends React.PureComponent {
 		}
 	}
 
-	async componentDidMount() {
+	componentDidMount() {
 		const { isTinymceFetched, isTinymceFetching, sourceFile } = this.props;
 		if(!isTinymceFetched && !isTinymceFetching) {
 			sourceFile('tinymce');

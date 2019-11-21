@@ -19,7 +19,8 @@ import { Tab, Tabs } from '../ui/tabs';
 import withDevice from '../../enhancers/with-device';
 import { useEditMode, useFetchingState, useMetaState } from '../../hooks';
 import { get, mapRelationsToItemKeys } from '../../utils';
-import { fetchChildItems } from '../../actions';
+import { fetchChildItems, fetchItemTypeCreatorTypes, fetchItemTypeFields, fetchRelatedItems,
+	sourceFile } from '../../actions';
 
 const pickDefaultActiveTab = (itemType, noteKey) => {
 	switch(itemType) {
@@ -46,9 +47,10 @@ const ItemDetailsTabs = props => {
 	const item = useSelector(state => get(state, ['libraries', libraryKey, 'items', itemKey], {}));
 	const items = useSelector(state => get(state, ['libraries', libraryKey, 'items'], {}), shallowCompare);
 	const isTinymceFetching = useSelector(state => state.sources.fetching.includes('tinymce'));
+	const isTinymceFetched = useSelector(state => state.sources.fetched.includes('tinymce'));
 	const childItemsState = useFetchingState(['libraries', libraryKey, 'itemsByParent', itemKey]);
-	const relatedItemsState = useFetchingState(['libraries', libraryKey, 'itemsRelated', itemKey]);
-	const { isMetaFetching } = useMetaState();
+	const relatedItemsState = useSelector(state => get(state, ['libraries', libraryKey, 'itemsRelated', itemKey], {}), shallowCompare);
+	const { isMetaFetching, isMetaAvailable } = useMetaState();
 
 	const { attachments, notes } = useMemo(() => {
 		return (childItemsState.keys || []).reduce((acc, childItemKey) => {
@@ -66,7 +68,10 @@ const ItemDetailsTabs = props => {
 
 	const [isEditing, ] = useEditMode();
 	const isReadOnly = isLibraryReadOnly || !!(device.shouldUseEditMode && !isEditing);
-	const isLoading = childItemsState.isFetching || relatedItemsState.isFetching || isTinymceFetching || isMetaFetching;
+	const isReady = device.shouldUseTabs || (
+		!device.shouldUseTabs && childItemsState.hasChecked && relatedItemsState.isFetched &&
+		isTinymceFetched && isMetaAvailable
+	);
 	const [activeTab, setActiveTab] = useState(pickDefaultActiveTab(item.itemType, noteKey));
 
 	const shouldShowAttachmentsTab = device.shouldUseTabs || (!device.shouldUseTabs && (!isReadOnly || attachments.length > 0));
@@ -85,7 +90,26 @@ const ItemDetailsTabs = props => {
 			const limit = PAGE_SIZE;
 			dispatch(fetchChildItems(itemKey, { start, limit }));
 		}
-	}, [childItemsState, device, itemKey]);
+		if(itemKey && !relatedItemsState.isFetching && !relatedItemsState.isFetched) {
+			dispatch(fetchRelatedItems(itemKey));
+		}
+
+	}, [childItemsState, relatedItemsState, device, itemKey]);
+
+	useEffect(() => {
+		// fetch meta on non-tab devices
+		if(!device.shouldUseTabs && !isMetaAvailable && !isMetaFetching) {
+			dispatch(fetchItemTypeCreatorTypes(item.itemType));
+			dispatch(fetchItemTypeFields(item.itemType));
+		}
+	}, [isMetaFetching, isMetaAvailable, device]);
+
+	useEffect(() => {
+		// fetch tinymce on non-tab devices
+		if(!device.shouldUseTabs && !isTinymceFetched && !isTinymceFetching) {
+			dispatch(sourceFile('tinymce'));
+		}
+	}, [device]);
 
 	const handleKeyDown = useCallback(ev => {
 		if(ev.key === 'ArrowDown' && ev.target.closest('.tab')) {
@@ -117,10 +141,11 @@ const ItemDetailsTabs = props => {
 		}
 	}, [item]);
 
+
 	return (
 		<Panel
 			className={ cx({ 'editing': isEditing })}
-			bodyClassName={ cx({ 'loading': isLoading && !device.shouldUseTabs }) }
+			bodyClassName={ cx({ 'loading': !isReady }) }
 			onKeyDown={ handleKeyDown }
 		>
 			<header>
@@ -215,7 +240,7 @@ const ItemDetailsTabs = props => {
 			</header>
 			{
 				// on small devices, where tabs are not used, we display single spinner
-				isLoading && !device.shouldUseTabs ? <Spinner className="large" /> : (
+				!isReady ? <Spinner className="large" /> : (
 					<React.Fragment>
 						{
 							!['attachment', 'note'].includes(item.itemType) && (
