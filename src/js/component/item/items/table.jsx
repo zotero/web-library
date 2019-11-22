@@ -395,6 +395,11 @@ class ItemsTable extends React.PureComponent {
 		this.setState({ isFocused: false });
 	}
 
+	handleFileHoverOnRow = (isOverRow, dropZone) => {
+		// @TODO: improve performance
+		this.setState({ isHoveringBetweenRows: isOverRow && dropZone !== null });
+	}
+
 	getRow({ index }) {
 		if (this.props.items[index]) {
 			return this.props.items[index];
@@ -612,6 +617,7 @@ class ItemsTable extends React.PureComponent {
 
 		return <Row
 			onDrag={ this.props.onItemDrag }
+			onFileHoverOnRow={ this.handleFileHoverOnRow }
 			{ ...{className, index, selectedItemKeys, libraryKey, ...opts} }
 		/>;
 	}
@@ -627,7 +633,7 @@ class ItemsTable extends React.PureComponent {
 		}
 		const { isError, sortBy, sortDirection, totalItemsCount } = this.props;
 		const { connectDropTarget, isOver, canDrop } = this.props;
-		const { scrollToIndex } = this.state;
+		const { isHoveringBetweenRows, scrollToIndex } = this.state;
 		const isLoadingUncounted = !isError && typeof(totalItemsCount) === 'undefined';
 
 		return connectDropTarget(
@@ -637,7 +643,7 @@ class ItemsTable extends React.PureComponent {
 				className={cx('items-table-wrap', {
 					resizing: this.state.isResizing,
 					reordering: this.state.isReordering,
-					'dnd-target': isOver && canDrop
+					'dnd-target': (isOver && canDrop) || isHoveringBetweenRows
 				}) }
 			>
 				<AutoSizer>

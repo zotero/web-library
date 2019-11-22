@@ -13,7 +13,8 @@ import { noop } from '../../../utils';
 const DROP_MARGIN_EDGE = 5; // how many pixels from top/bottom of the row triggers "in-between" drop
 
 const Row = props => {
-	const { className, columns, index, libraryKey, rowData, onDrag, selectedItemKeys, style } = props;
+	const { className, columns, index, libraryKey, rowData, onDrag, onFileHoverOnRow,
+	selectedItemKeys, style } = props;
 	const itemKey = rowData.key;
 	const rowRef = useRef();
 	const [dropZone, setDropZone] = useState(null);
@@ -88,6 +89,10 @@ const Row = props => {
 	useEffect(() => {
 		preview(getEmptyImage(), { captureDraggingState: true })
 	}, []);
+
+	useEffect(() => {
+		onFileHoverOnRow(isOver, dropZone);
+	}, [isOver, dropZone]);
 
 	return (
 		<React.Fragment>
