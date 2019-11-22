@@ -382,9 +382,25 @@ textarea {
 
 	@include touch-keyboard-or-bp-down(sm) {
 		&:focus-within {
-			outline: $outline-width solid $focus-color;
-			outline-offset: -$outline-width;
-			@include hairline-disabled(top, bottom);
+			&::before,
+			&::after {
+				content: "";
+				position: absolute;
+				left: 0;
+				right: 0;
+				height: $outline-width;
+				background-color: $focus-color;
+				z-index: 2;
+				width: 100%; // Reset hairline styles
+			}
+
+			&:before {
+				bottom: calc(100% - #{$input-border-width});
+			}
+
+			&:after {
+				top: calc(100% - #{$input-border-width});
+			}
 
 			& + .checkbox,
 			& + .radio {
@@ -417,14 +433,6 @@ input[type="checkbox"] {
 		&:checked {
 			border: 0;
 			background: image-url("icons/tick-white.svg") no-repeat 0 0 $checkbox-checked-bg-touch;
-		}
-	}
-
-	@include touch-keyboard-or-bp-down(sm) {
-		&:focus {
-			outline: none;
-			border-color: $focus-color;
-			box-shadow: 0 0 0 $input-btn-focus-width $btn-secondary-color;
 		}
 	}
 

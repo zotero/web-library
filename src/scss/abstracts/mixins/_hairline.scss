@@ -96,7 +96,7 @@
 		$pseudo-element: if($side == top or $side == left, "&::before", "&::after");
 
 		#{$pseudo-element} {
-			content: none !important;
+			content: none;
 		}
 	}
 }
