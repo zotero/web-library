@@ -33,11 +33,18 @@
 	}
 
 	.tox-form__grid--2col {
-		margin-left: 25%;
 		flex-direction: column;
 
-		.tox-checkbox:not(:last-child) {
-			margin-bottom: $form-group-margin;
+		@include touch-or-bp-down(sm) {
+			background-color: $input-bg;
+		}
+
+		@include mouse-and-bp-up(md) {
+			margin-left: 25%;
+
+			.tox-checkbox:not(:last-child) {
+				margin-bottom: $form-group-margin;
+			}
 		}
 	}
 
@@ -116,9 +123,16 @@
 		}
 
 		.tox-checkbox__label {
-			font-size: $font-size-base;
 			color: $text-color;
 			margin-left: 0;
+			line-height: $input-btn-height-touch;
+			padding: 0 $input-btn-padding-x-touch;
+			flex: 1 1 auto;
+			order: -1;
+
+			@include mouse-and-bp-up(md) {
+				font-size: $font-size-base;
+			}
 		}
 	}
 }
