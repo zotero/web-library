@@ -125,10 +125,13 @@
 		.tox-checkbox__label {
 			color: $text-color;
 			margin-left: 0;
-			line-height: $input-btn-height-touch;
-			padding: 0 $input-btn-padding-x-touch;
-			flex: 1 1 auto;
-			order: -1;
+
+			@include touch-or-bp-down(sm) {
+				line-height: $input-btn-height-touch;
+				padding: 0 $input-btn-padding-x-touch;
+				flex: 1 1 auto;
+				order: -1;
+			}
 
 			@include mouse-and-bp-up(md) {
 				font-size: $font-size-base;
