@@ -126,7 +126,7 @@
 			height: 44px;
 			margin: -$modal-inner-padding / 2;
 			margin-right: -$modal-inner-padding / 2 + 2px; // Even spacing
-			background: image-url("icons/close.svg") no-repeat center center / $space-md; // size is required for Edge
+			background: image-url("icons/close.svg") no-repeat center center;
 		}
 
 		&:hover:not(:disabled) {
