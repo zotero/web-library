@@ -76,7 +76,7 @@ class Input extends React.PureComponent {
 		const { hasCancelledSuggestions } = this.state;
 		switch (event.key) {
 			case 'Escape':
-				if(suggestions.length && !hasCancelledSuggestions) {
+				if(suggestions && suggestions.length && !hasCancelledSuggestions) {
 					this.setState({ hasCancelledSuggestions: true });
 					event.stopPropagation();
 				} else {
@@ -84,7 +84,7 @@ class Input extends React.PureComponent {
 				}
 			break;
 			case 'Enter':
-				if(suggestions.length && !hasCancelledSuggestions) {
+				if(suggestions && suggestions.length && !hasCancelledSuggestions) {
 					const value = this.suggestions.current.getSuggestion() || this.state.value;
 					event.persist();
 					this.setState({ value }, () => this.commit(event));
@@ -94,7 +94,7 @@ class Input extends React.PureComponent {
 			break;
 			case 'ArrowDown':
 			case 'ArrowUp':
-				if(suggestions.length && !hasCancelledSuggestions) {
+				if(suggestions && suggestions.length && !hasCancelledSuggestions) {
 					// stop cursor from jumping to the begining/end of the input when showing suggestions
 					event.preventDefault();
 				}
