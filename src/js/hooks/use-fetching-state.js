@@ -35,7 +35,7 @@ const useTagsData = () => {
 		break;
 	}
 
-	const { isFetching, tags, pointer, totalResults } = data;
+	const { isFetching = false, tags = [], pointer = null, totalResults = null } = data;
 	const hasMoreItems = totalResults > 0 && (typeof(pointer) === 'undefined' || pointer < totalResults);
 	const hasChecked = typeof(totalResults) !== 'undefined';
 	const isFetched = hasChecked && !isFetching && !hasMoreItems;
