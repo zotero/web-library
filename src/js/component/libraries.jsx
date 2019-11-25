@@ -129,9 +129,10 @@ LibraryNode.propTypes = {
 
 const Libraries = props => {
 	const {
-		collectionCountByLibrary, createCollection, device, fetchAllCollections, fetchLibrarySettings,
-		isFetching, itemsSource, libraries, librariesWithCollectionsFetching, onBlur, onFocus,
-		registerFocusRoot, selectedLibraryKey, view
+		collectionCountByLibrary, createCollection, device, fetchAllCollections,
+		fetchLibrarySettings, hasMoreCollections, isFetching, itemsSource, libraries,
+		librariesWithCollectionsFetching, onBlur, onFocus, registerFocusRoot, selectedLibraryKey,
+		view
 	} = props;
 
 	const myLibraries = useMemo(
@@ -159,6 +160,14 @@ const Libraries = props => {
 			fetchLibrarySettings(selectedLibraryKey);
 		}
 	}, [selectedLibraryKey]);
+
+	useEffect(() => {
+		//@NOTE: this should only trigger when library is reset. Otherwise collections are fetched
+		//		 by loader or when library is first opened. See #289
+		if(hasMoreCollections) {
+			fetchAllCollections(selectedLibraryKey);
+		}
+	}, [hasMoreCollections]);
 
 	const cancelAdd = () => {
 		setVirtual(null);
@@ -282,6 +291,7 @@ Libraries.propTypes = {
 	device: PropTypes.object,
 	fetchAllCollections: PropTypes.func,
 	fetchLibrarySettings: PropTypes.func,
+	hasMoreCollections: PropTypes.bool,
 	isFetching: PropTypes.bool,
 	itemsSource: PropTypes.string,
 	libraries: PropTypes.array,
