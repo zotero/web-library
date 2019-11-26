@@ -141,6 +141,21 @@
 	}
 }
 
+.bs-popover-auto {
+  &[x-placement^="top"] {
+    @extend .bs-popover-top;
+  }
+  &[x-placement^="right"] {
+    @extend .bs-popover-right;
+  }
+  &[x-placement^="bottom"] {
+    @extend .bs-popover-bottom;
+  }
+  &[x-placement^="left"] {
+    @extend .bs-popover-left;
+  }
+}
+
 .popover-header {
 	padding: $popover-header-padding-y $popover-header-padding-x;
 	font-size: $popover-header-font-size;
