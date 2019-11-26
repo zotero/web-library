@@ -4,6 +4,9 @@
 
 .tox.tox.tox {
 	.tox-pop__dialog {
+		border: 0;
+		box-shadow: $menu-box-shadow;
+
 		.tox-toolbar {
 			height: $toolbar-height;
 			align-items: center;
@@ -12,11 +15,10 @@
 
 		.tox-toolbar__group {
 			border-right: 0;
-			padding: 0;
+			padding: 0 2px;
 			position: relative;
 
 			& + .tox-toolbar__group {
-				margin-left: 2px;
 				padding-left: 3px;
 
 				&::before {
@@ -31,21 +33,25 @@
 			}
 		}
 
-		input {
-			display: none;
+		.tox-toolbar-textfield {
+			width: 192px;
+			font-size: $font-size-base;
+			line-height: $line-height-base;
+			color: $text-color;
+			padding: $input-btn-padding-y $input-btn-padding-x;
+			margin: 0;
 		}
 
 		.tox-tbtn {
+			@extend .btn;
+			@extend .btn-icon;
 			width: $line-height-large;
 			height: $line-height-large;
 			background-repeat: no-repeat;
 			background-position: center center;
 			margin: 0;
 			cursor: pointer;
-
-			&:active {
-				background-color: transparent;
-			}
+			background-origin: border-box; // Fixes jumping icon on focus in Chrome
 
 			&:hover {
 				background-color: $btn-icon-hover-bg;

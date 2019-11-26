@@ -1,0 +1,42 @@
+//
+// TinyMCE pop
+// --------------------------------------------------
+
+.tox.tox.tox {
+	.tox-pop {
+		&::before {
+			border-width: $popover-arrow-height;
+		}
+
+		&.tox-pop--top,
+		&.tox-pop--bottom {
+			&::before {
+				margin-left: -$popover-arrow-height;
+			}
+		}
+
+		// Default (bottom) pointing arrow
+		&.tox-pop--bottom {
+			&::before {
+				border-top-color: #b2b2b2;
+				margin-top: 1px;
+			}
+
+			&::after {
+				margin-top: 0;
+			}
+		}
+
+		// Top pointing arrow
+		&.tox-pop--top {
+			&::before {
+				border-bottom-color: $popover-arrow-outer-color;
+				margin-top: -1px;
+			}
+
+			&::after {
+				margin-top: 0;
+			}
+		}
+	}
+}
