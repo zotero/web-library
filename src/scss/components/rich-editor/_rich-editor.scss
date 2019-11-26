@@ -143,7 +143,7 @@
 
 	.btn-icon {
 		@include state(".btn-icon:hover", ".btn-group:hover .btn-icon") {
-			background-color: $btn-icon-hover-bg;;
+			background-color: $btn-icon-hover-bg;
 		}
 	}
 
