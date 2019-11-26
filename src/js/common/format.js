@@ -1,6 +1,22 @@
 'use strict';
 
-const noteAsTitle = note => note.split('\n')[0].replace(/<(?:.|\n)*?>/gm, '');
+const entityToChar = str => {
+	const textarea = document.createElement('textarea');
+	textarea.innerHTML = str;
+	return textarea.value;
+};
+
+const noteAsTitle = note => {
+	return entityToChar( // replace entities (e.g. &nbsp; or &#NNN) to unicode char
+		note
+			.replace(/<\s*\/?br\s*[/]?>/gi, ' ') // replace <br /> to spaces
+			.replace(/<(?:.|\n)*?>/gm, '') // remove html tags. This is still going to be sanitized by React.
+		).replace(/[\u202F\u00A0]/g, ' ') // replace no-break spaces to normal spaces
+		.replace(/ +/g, " ") // remove series of spaces with just one
+		.substring(0, 180); // truncate to 180 chars
+};
+
+
 const creator = creator => 'lastName' in creator ?
 	[creator.lastName, creator.firstName].filter(s => s.trim().length).join(', ') : creator.name;
 const itemTypeLocalized = (item, itemTypes) => {
