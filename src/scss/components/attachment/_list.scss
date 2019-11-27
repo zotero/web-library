@@ -1,0 +1,24 @@
+//
+// Attachment list
+// --------------------------------------------------
+
+.attachment-list {
+	.attachment {
+		&.selected {
+			background-color: $attachment-selected-bg;
+
+			&:focus-within {
+				color: $attachment-focus-color;
+				background-color: $attachment-focus-bg;
+
+				.icon {
+					color: $attachment-focus-color;
+				}
+			}
+		}
+
+		.truncate {
+			flex: 1 1 auto;
+		}
+	}
+}
