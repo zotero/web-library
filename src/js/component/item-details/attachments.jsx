@@ -100,13 +100,20 @@ const Attachment = props => {
 				)
 			}
 			{ !isReadOnly && (
-				<Button
-					icon
-					onClick={ handleDelete }
-					tabIndex={ -1 }
-				>
-					<Icon type={ '16/minus-circle' } width="16" height="16" />
-				</Button>
+				<React.Fragment>
+					<Button
+						icon
+					>
+						<Icon type={ '16/open-link' } width="16" height="16" />
+					</Button>
+					<Button
+						icon
+						onClick={ handleDelete }
+						tabIndex={ -1 }
+					>
+						<Icon type={ '16/minus-circle' } width="16" height="16" />
+					</Button>
+				</React.Fragment>
 			)}
 		</li>
 	);
