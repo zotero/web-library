@@ -10,21 +10,37 @@
 		align-items: center;
 
 		@include touch-or-bp-down(sm) {
-			height: $line-height-large-touch;
-			padding: 0 $default-padding-x-touch;
+			height: $line-height-large-touch + $border-width;
+			padding: $border-width $default-padding-x-touch 0;
+			@include hairline(top, $details-list-border-color, $start: (2 * $default-padding-x-touch + 28px));
 		}
 
 		@include mouse-and-bp-up(md) {
 			height: $line-height-large;
 			padding: 0 $default-padding-x;
+		}
 
-			> .icon {
-				&:first-child {
+		&:first-child {
+			@include touch-or-bp-down(sm) {
+				@include hairline-disabled(top);
+				padding-top: 0;
+			}
+		}
+
+		> .icon {
+			&:first-child {
+				@include touch-or-bp-down(sm) {
+					margin-right: $default-padding-x-touch;
+				}
+
+				@include mouse-and-bp-up(md) {
 					margin-right: $space-xs;
 				}
 			}
+		}
 
-			> .btn {
+		> .btn {
+			@include mouse-and-bp-up(md) {
 				flex: 0 0 auto;
 
 				@include state("li:not(:focus-within)") {
