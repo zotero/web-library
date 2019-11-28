@@ -279,6 +279,13 @@ const Attachments = props => {
 					</div>
 				)}
 			</div>
+			{
+				attachments.length > 0 && (
+					<div className="attachment-details no-selection">
+						<div className="placeholder">No attachment selected</div>
+					</div>
+				)
+			}
 		</TabPane>
 	);
 }

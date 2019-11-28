@@ -163,9 +163,11 @@ $note-border-color-touch: $shade-4;
 $note-list-chevron-color: $shade-4;
 
 // Attachment list
-$attachment-selected-bg: $shade-3;
-$attachment-focus-color: $shade-0;
-$attachment-focus-bg:    $secondary;
+$attachment-selected-bg:          $shade-3;
+$attachment-focus-color:          $shade-0;
+$attachment-focus-bg:             $secondary;
+$attachment-details-border-color: $shade-3;
+$attachment-placeholder-color:    $shade-5;
 
 // Rich editor
 $editor-bg: $shade-0;

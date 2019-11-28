@@ -9,6 +9,7 @@
 	}
 
 	.scroll-container-mouse {
+		flex: 1 1 0;
 		display: flex;
 		flex-direction: column;
 
@@ -28,5 +29,21 @@
 				color: $icon-active-color;
 			}
 		}
+	}
+
+	.attachment-details {
+		flex: 0 0 calc(50% + #{$space-md});
+		border-top: $border-width solid $attachment-details-border-color;
+
+		&.no-selection {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+		}
+	}
+
+	.placeholder {
+		font-size: $font-size-h1;
+		color: $attachment-placeholder-color;
 	}
 }
