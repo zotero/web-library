@@ -33,10 +33,11 @@
 
 	.attachment-details {
 		flex: 0 0 calc(50% + #{$space-md});
+		display: flex;
+		flex-direction: column;
 		border-top: $border-width solid $attachment-details-border-color;
 
 		&.no-selection {
-			display: flex;
 			justify-content: center;
 			align-items: center;
 		}
