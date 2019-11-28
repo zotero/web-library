@@ -206,6 +206,7 @@ const Attachments = props => {
 			isLoading={ device.shouldUseTabs && !isFetched }
 			ref={ drop }
 		>
+			<h5 className="h2 tab-pane-heading hidden-mouse">Attachments</h5>
 			<div
 				className="scroll-container-mouse"
 				onBlur={ onBlur }
@@ -213,7 +214,6 @@ const Attachments = props => {
 				ref={ ref => registerFocusRoot(ref) }
 				tabIndex={ 0 }
 			>
-				<h5 className="h2 tab-pane-heading hidden-mouse">Attachments</h5>
 				{ !device.isTouchOrSmall && (
 					<Toolbar>
 						<div className="toolbar-left">
