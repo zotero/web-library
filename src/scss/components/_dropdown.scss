@@ -52,7 +52,6 @@
 		width: 100%;
 		border: none;
 		text-align: left;
-		line-height: $line-height-base; // Prevent inheritance
 		background-color: transparent;
 		margin: 0;
 		white-space: nowrap; // Prevent line break due to positioned dropdown-wrapper
@@ -60,10 +59,12 @@
 		cursor: pointer;
 
 		@include touch-or-bp-down(sm) {
-			padding: $input-btn-padding-y-touch $input-btn-padding-x-touch;
+			line-height: $line-height-base-mobile; // Prevent inheritance
+			padding: $dropdown-item-padding-y-touch $dropdown-item-padding-x-touch;
 		}
 
 		@include mouse-and-bp-up(md) {
+			line-height: $line-height-base; // Prevent inheritance
 			padding: ($input-btn-padding-y + $input-border-width) $input-btn-padding-x;
 		}
 
@@ -97,6 +98,8 @@
 		}
 
 		.icon {
+			vertical-align: top;
+
 			@include touch-or-bp-down(sm) {
 				margin-right: $space-xs;
 			}
