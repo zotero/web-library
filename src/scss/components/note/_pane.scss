@@ -38,6 +38,13 @@
 			flex: 0 0 50%;
 		}
 
+		// Standalone note
+		@include mouse-and-bp-up(md) {
+			&:only-child {
+				flex: 1 1 auto;
+			}
+		}
+
 		@include mouse-and-bp-up(lg) {
 			flex: 0 0 calc(50% + #{$space-md});
 		}
