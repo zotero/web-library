@@ -3,6 +3,15 @@
 // --------------------------------------------------
 
 .tab-pane.attachments {
+	@include mouse-and-bp-only(md) {
+		flex-direction: row;
+		height: 100%;
+	}
+
+	@include mouse-and-bp-up(lg) {
+		height: 100%; // Fix rich-editor height in Safari
+	}
+
 	&.dnd-target {
 		position: relative;
 		@include dnd-target;
@@ -32,10 +41,18 @@
 	}
 
 	.attachment-details {
-		flex: 0 0 calc(50% + #{$space-md});
 		display: flex;
 		flex-direction: column;
-		border-top: $border-width solid $attachment-details-border-color;
+
+		@include mouse-and-bp-only(md) {
+			flex: 0 0 50%;
+			border-left: $border-width solid $attachment-details-border-color;
+		}
+
+		@include mouse-and-bp-up(lg) {
+			flex: 0 0 calc(50% + #{$space-md});
+			border-top: $border-width solid $attachment-details-border-color;
+		}
 
 		&.no-selection {
 			justify-content: center;
