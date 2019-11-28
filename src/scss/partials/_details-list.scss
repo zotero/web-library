@@ -9,6 +9,11 @@
 		display: flex;
 		align-items: center;
 
+		@include touch-or-bp-down(sm) {
+			height: $line-height-large-touch;
+			padding: 0 $default-padding-x-touch;
+		}
+
 		@include mouse-and-bp-up(md) {
 			height: $line-height-large;
 			padding: 0 $default-padding-x;
