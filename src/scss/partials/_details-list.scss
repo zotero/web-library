@@ -3,7 +3,9 @@
 // --------------------------------------------------
 
 .details-list {
-	margin: 0 0 $space-xs;
+	@include mouse-and-bp-up(md) {
+		margin-bottom: $space-xs;
+	}
 
 	li {
 		display: flex;
