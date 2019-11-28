@@ -76,7 +76,7 @@ const ItemDetailsTabs = props => {
 
 	const shouldShowAttachmentsTab = device.shouldUseTabs || (!device.shouldUseTabs && (!isReadOnly || attachments.length > 0));
 	const shouldShowNotesTab = device.shouldUseTabs || (!device.shouldUseTabs && (!isReadOnly || notes.length > 0));
-	const shouldShowRelatedTab = device.shouldUseTabs || (!device.shouldUseTabs && (!isReadOnly || relatedKeys.length > 0));
+	const shouldShowRelatedTab = device.shouldUseTabs || (!device.shouldUseTabs && (relatedKeys.length > 0));
 	const shouldShowTagsTab = device.shouldUseTabs || (!device.shouldUseTabs && (!isReadOnly || item.tags.length > 0));
 
 	useEffect(() => {
