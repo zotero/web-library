@@ -250,6 +250,7 @@ const Attachments = props => {
 									return <Attachment
 										attachment={ attachment }
 										device={ device }
+										isReadOnly={ isReadOnly }
 										isUploading={ isUploading }
 										itemKey={ attachment.key }
 										key={ attachment.key }
