@@ -280,7 +280,7 @@ const Attachments = props => {
 				)}
 			</div>
 			{
-				attachments.length > 0 && (
+				(!device.isTouchOrSmall && attachments.length > 0) && (
 					<div className="attachment-details no-selection">
 						<div className="placeholder">No attachment selected</div>
 					</div>
