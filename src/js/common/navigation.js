@@ -11,7 +11,7 @@ const tagsToUrlPart = tags => tags.map(t => t.replace(/,/g, ',,'));
 
 const makePath = (config, { library = null, collection = null,
 	items = null, trash = false, publications = false, tags = null,
-	search = null, qmode = null, view = null, noteKey = null } = {}) => {
+	search = null, qmode = null, view = null, noteKey = null, attachmentKey = null } = {}) => {
 	const path = [];
 
 	if(library !== null) {
@@ -57,6 +57,10 @@ const makePath = (config, { library = null, collection = null,
 
 	if(noteKey) {
 		path.push('note', noteKey);
+	}
+
+	if(attachmentKey) {
+		path.push('attachment', attachmentKey);
 	}
 
 	if(view) {

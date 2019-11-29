@@ -1,7 +1,7 @@
 import cx from 'classnames';
 import PropTypes from 'prop-types';
-import React, { useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import React, { useCallback, useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { NativeTypes } from 'react-dnd-html5-backend-cjs';
 import { useDrag, useDrop } from 'react-dnd-cjs'
 
@@ -18,8 +18,54 @@ import { openAttachment, sortByKey } from '../../utils';
 import { pick } from '../../common/immutable';
 import { TabPane } from '../ui/tabs';
 import { Toolbar, ToolGroup } from '../ui/toolbars';
-import { updateItem } from '../../actions';
+import { updateItem, navigate } from '../../actions';
 import { pluralize } from '../../common/format';
+import AttachmentDetails from './attachment-details';
+
+const AttachmentDownloadIcon = props => {
+	const { attachment, device, isUploading, getAttachmentUrl } = props;
+	const iconSize = device.isTouchOrSmall ? '24' : '16';
+
+	const handleLinkInteraction = useCallback(ev => {
+		const { key } = ev.currentTarget.closest('[data-key]').dataset;
+		if(isTriggerEvent(ev) || (ev.type === 'mousedown' && ev.button === 1)) {
+			ev.preventDefault();
+			openAttachment(key, getAttachmentUrl, true);
+		}
+	});
+
+	return (
+		attachment.linkMode.startsWith('imported') && attachment[Symbol.for('links')].enclosure && !isUploading ? (
+			<a
+				onClick={ handleLinkInteraction }
+				onMouseDown={ handleLinkInteraction }
+				onKeyDown={ handleLinkInteraction }
+			>
+				<Button icon>
+					<Icon type={ `${iconSize}/open-link` } width={ iconSize } height={ iconSize } />
+				</Button>
+			</a>
+		) : attachment.linkMode === 'linked_url' ? (
+			<a
+				href={ attachment.url }
+				rel="nofollow noopener noreferrer"
+				tabIndex={ -2 }
+				target="_blank"
+			>
+				<Button icon>
+					<Icon type={ `${iconSize}/open-link` } width={ iconSize } height={ iconSize } />
+				</Button>
+			</a>
+		) : null
+	);
+}
+
+AttachmentDownloadIcon.propTypes = {
+	attachment: PropTypes.object,
+	device: PropTypes.object.isRequired,
+	getAttachmentUrl: PropTypes.func.isRequired,
+	isUploading: PropTypes.bool,
+}
 
 const Attachment = props => {
 	const { attachment, device, moveToTrash, itemKey, isReadOnly, isUploading, libraryKey,
@@ -44,15 +90,11 @@ const Attachment = props => {
 		moveToTrash([attachment.key]);
 	}
 
-	const handleLinkInteraction = ev => {
-		const { key } = ev.currentTarget.closest('[data-key]').dataset;
-		if(isTriggerEvent(ev) || (ev.type === 'mousedown' && ev.button === 1)) {
-			ev.preventDefault();
-			openAttachment(key, getAttachmentUrl, true);
-		} else if(ev.type === 'keydown') {
-			onKeyDown(ev);
-		}
-	}
+	const handleKeyDown = () => useCallback(ev => onKeyDown(ev));
+
+	const handleAttachmentSelect = useCallback(() => {
+		dispatch(navigate({ attachmentKey: attachment.key }));
+	});
 
 	const getItemIcon = item => {
 		const { iconName } = item[Symbol.for('derived')];
@@ -77,56 +119,33 @@ const Attachment = props => {
 				</Button>
 			) }
 			<Icon type={ getItemIcon(attachment) } width={ iconSize } height={ iconSize } />
-			{
-				attachment.linkMode.startsWith('imported') && attachment[Symbol.for('links')].enclosure && !isUploading ? (
-					<a
-						onClick={ handleLinkInteraction }
-						onMouseDown={ handleLinkInteraction }
-						onKeyDown={ handleLinkInteraction }
-						tabIndex={ -2 }
-					>
-						{ attachment.title || attachment.filename }
-					</a>
-				) : attachment.linkMode === 'linked_url' ? (
-					<a
-						href={ attachment.url }
-						onKeyDown={ onKeyDown }
-						rel="nofollow noopener noreferrer"
-						tabIndex={ -2 }
-						target="_blank"
-					>
-						{ attachment.title || attachment.url }
-					</a>
-				) : (
-					<span
-						className="no-link"
-						onKeyDown={ onKeyDown }
-						tabIndex={ -2 }
-					>
-						{ attachment.title || attachment.filename }
-						{ isUploading && <Spinner className="small" /> }
-					</span>
-				)
-			}
-			{ device.isTouchOrSmall && (
-				<Button icon>
-					<Icon type="24/open-link" width="24" height="24" />
-				</Button>
-			) }
+			<a
+				onClick={ handleAttachmentSelect }
+				onKeyDown={ handleKeyDown }
+				tabIndex={ -2 }
+			>
+				{ attachment.title ||
+					(attachment.linkMode === 'linked_url' ? attachment.url : attachment.filename)
+				}
+				{ isUploading && <Spinner className="small" /> }
+			</a>
+
+			<AttachmentDownloadIcon
+				attachment={ attachment }
+				device={ device }
+				isUploading={ isUploading }
+				getAttachmentUrl={ getAttachmentUrl }
+			/>
+
 			{ (!device.isTouchOrSmall && !isReadOnly) && (
-				<React.Fragment>
-					<Button icon>
-						<Icon type={ '16/open-link' } width="16" height="16" />
-					</Button>
-					<Button
-						icon
-						onClick={ handleDelete }
-						tabIndex={ -1 }
-					>
-						<Icon type={ '16/minus-circle' } width="16" height="16" />
-					</Button>
-				</React.Fragment>
-			) }
+				<Button
+					icon
+					onClick={ handleDelete }
+					tabIndex={ -1 }
+				>
+					<Icon type={ '16/minus-circle' } width="16" height="16" />
+				</Button>
+			)}
 		</li>
 	);
 }
@@ -142,11 +161,29 @@ Attachment.propTypes = {
 	onKeyDown: PropTypes.func.isRequired,
 }
 
+const AttachmentDetailsWrap = () => {
+	const attachmentKey = useSelector(state => state.current.attachmentKey);
+
+	if(attachmentKey) {
+		return (
+			<div className="attachment-details">
+				<AttachmentDetails attachmentKey={ attachmentKey } />
+			</div>
+		);
+	} else {
+		return (
+			<div className="attachment-details no-selection">
+				<div className="placeholder">No attachment selected</div>
+			</div>
+		);
+	}
+}
+
 const PAGE_SIZE = 100;
 
 const Attachments = props => {
-	const { childItems, createAttachmentsFromDropped, device, isFetched, isFetching, isReadOnly,
-	itemKey, createItem, uploadAttachment, onFocusNext, onFocusPrev, fetchChildItems,
+	const { childItems, createAttachmentsFromDropped, device, isFetched, isFetching,
+	isReadOnly, itemKey, createItem, uploadAttachment, onFocusNext, onFocusPrev, fetchChildItems,
 	fetchItemTemplate, uploads, isActive, libraryKey, onBlur, onFocus, pointer, registerFocusRoot,
 	...rest } = props;
 
@@ -293,11 +330,7 @@ const Attachments = props => {
 				)}
 			</div>
 			{
-				(!device.isTouchOrSmall && attachments.length > 0) && (
-					<div className="attachment-details no-selection">
-						<div className="placeholder">No attachment selected</div>
-					</div>
-				)
+				(!device.isTouchOrSmall && attachments.length > 0) && <AttachmentDetailsWrap />
 			}
 		</TabPane>
 	);

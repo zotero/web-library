@@ -12,7 +12,7 @@ import NotesContainer from '../../container/item-details/notes';
 import Panel from '../ui/panel';
 import RelatedContainer from '../../container/item-details/related';
 import Spinner from '../ui/spinner';
-import StandaloneAttachmentContainer from '../../container/item-details/standalone-attachment';
+import StandaloneAttachmentTabPane from '../../component/item-details/standalone-attachment';
 import StandaloneNoteContainer from '../../container/item-details/standalone-note';
 import TagsContainer from '../../container/item-details/tags';
 import { Tab, Tabs } from '../ui/tabs';
@@ -68,6 +68,7 @@ const ItemDetailsTabs = props => {
 
 	const [isEditing, ] = useEditMode();
 	const isReadOnly = isLibraryReadOnly || !!(device.shouldUseEditMode && !isEditing);
+
 	const isReady = device.shouldUseTabs || (
 		!device.shouldUseTabs && childItemsState.hasChecked && relatedItemsState.isFetched &&
 		isTinymceFetched && isMetaAvailable
@@ -271,7 +272,9 @@ const ItemDetailsTabs = props => {
 
 						{
 							item.itemType === 'attachment' && (
-								<StandaloneAttachmentContainer isActive={ activeTab === 'standalone-attachment' } />
+								<StandaloneAttachmentTabPane
+									isActive={ activeTab === 'standalone-attachment' }
+								/>
 							)
 						}
 

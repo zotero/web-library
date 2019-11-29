@@ -71,6 +71,7 @@ const current = (state = stateDefault, action, { config = {}, device = {} } = {}
 			var collectionKey = params.collection || null;
 			var itemKeys = params.items ? params.items.split(',') : [];
 			var noteKey = params.note || null;
+			var attachmentKey = params.attachment || null;
 			var tags = tagsFromUrlPart(params.tags);
 			var isSelectMode = itemKeys.length > 1 ? true : state.isSelectMode;
 			var view = params.view;
@@ -116,6 +117,7 @@ const current = (state = stateDefault, action, { config = {}, device = {} } = {}
 
 			return {
 				...state,
+				attachmentKey,
 				collectionKey,
 				editingItemKey: itemKey === state.editingItemKey ? state.editingItemKey : null,
 				isLibraryReadOnly,

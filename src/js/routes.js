@@ -3,12 +3,16 @@
 const getVariants = prefix => {
 	return [
 		`${prefix}/tags/:tags/search/:search/items/:items/note/:note`,
+		`${prefix}/tags/:tags/search/:search/items/:items/attachment/:attachment`,
 		`${prefix}/tags/:tags/search/:search/items/:items`,
 		`${prefix}/tags/:tags/items/:items/note/:note`,
+		`${prefix}/tags/:tags/items/:items/attachment/:attachment`,
 		`${prefix}/tags/:tags/items/:items`,
 		`${prefix}/search/:search/:qmode/items/:items/note/:note`,
+		`${prefix}/search/:search/:qmode/items/:items/attachment/:attachment`,
 		`${prefix}/search/:search/:qmode/items/:items`,
 		`${prefix}/items/:items/note/:note`,
+		`${prefix}/items/:items/attachment/:attachment`,
 		`${prefix}/items/:items`,
 		`${prefix}/tags/:tags/search/:search/:qmode`,
 		`${prefix}/tags/:tags`,
