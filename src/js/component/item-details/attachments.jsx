@@ -67,6 +67,15 @@ const Attachment = props => {
 			data-key={ attachment.key }
 			ref={ drag }
 		>
+			{ (device.isTouchOrSmall && !isReadOnly) && (
+				<Button
+					className="btn-circle btn-primary"
+					onClick={ handleDelete }
+					tabIndex={ -1 }
+				>
+					<Icon type="16/minus-strong" width="16" height="16" />
+				</Button>
+			) }
 			<Icon type={ getItemIcon(attachment) } width={ iconSize } height={ iconSize } />
 			{
 				attachment.linkMode.startsWith('imported') && attachment[Symbol.for('links')].enclosure && !isUploading ? (
@@ -100,20 +109,9 @@ const Attachment = props => {
 				)
 			}
 			{ device.isTouchOrSmall && (
-				<React.Fragment>
-					<Button icon>
-						<Icon type="24/open-link" width="24" height="24" />
-					</Button>
-					{ !isReadOnly && (
-						<Button
-							icon
-							onClick={ handleDelete }
-							tabIndex={ -1 }
-						>
-							<Icon type="24/minus-circle-strong" width="24" height="24" />
-						</Button>
-					) }
-				</React.Fragment>
+				<Button icon>
+					<Icon type="24/open-link" width="24" height="24" />
+				</Button>
 			) }
 			{ (!device.isTouchOrSmall && !isReadOnly) && (
 				<React.Fragment>
