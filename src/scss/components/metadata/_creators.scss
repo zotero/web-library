@@ -290,12 +290,12 @@
 				@include state(".editing .creators-entry") {
 					display: block;
 					position: absolute;
-					left: $default-padding-x-touch + 1px;
-					top: ($line-height-large-touch - 23px) / 2;
+					left: $default-padding-x-touch;
+					top: ($line-height-large-touch - $space-lg) / 2;
 					margin-right: $default-padding-x-touch;
-					width: 23px;
-					height: 23px;
-					background: image-url("icons/minus-touch.svg") no-repeat -2px -1px $input-bg;
+					width: $space-lg;
+					height: $space-lg;
+					background: image-url("icons/24/minus-circle-strong.svg") no-repeat center center;
 					border: 1px solid $red;
 					border-radius: 50%;
 				}

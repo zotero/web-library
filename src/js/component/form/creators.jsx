@@ -205,7 +205,7 @@ class Creators extends React.PureComponent {
 								this, creators[creators.length - 1])
 							}
 						>
-							<Icon type={ '24/plus-circle' } width="24" height="24" />
+							<Icon type={ '24/plus-circle-strong' } width="24" height="24" />
 							Add Creator …
 						</Button>
 					</li>
