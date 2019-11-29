@@ -22,14 +22,14 @@ import { get, mapRelationsToItemKeys } from '../../utils';
 import { fetchChildItems, fetchItemTypeCreatorTypes, fetchItemTypeFields, fetchRelatedItems,
 	sourceFile } from '../../actions';
 
-const pickDefaultActiveTab = (itemType, noteKey) => {
+const pickDefaultActiveTab = (itemType, attachmentKey, noteKey) => {
 	switch(itemType) {
 		case 'note':
 			return 'standalone-note';
 		case 'attachment':
 			return 'standalone-attachment';
 		default:
-			return noteKey ? 'notes' : 'info';
+			return attachmentKey ? 'attachments' : noteKey ? 'notes' : 'info';
 	}
 }
 
@@ -44,6 +44,7 @@ const ItemDetailsTabs = props => {
 	const userId = useSelector(state => state.config.userId);
 	const itemKey = useSelector(state => state.current.itemKey);
 	const noteKey = useSelector(state => state.current.noteKey);
+	const attachmentKey = useSelector(state => state.current.attachmentKey);
 	const item = useSelector(state => get(state, ['libraries', libraryKey, 'items', itemKey], {}));
 	const items = useSelector(state => get(state, ['libraries', libraryKey, 'items'], {}), shallowCompare);
 	const isTinymceFetching = useSelector(state => state.sources.fetching.includes('tinymce'));
@@ -73,7 +74,7 @@ const ItemDetailsTabs = props => {
 		!device.shouldUseTabs && childItemsState.hasChecked && relatedItemsState.isFetched &&
 		isTinymceFetched && isMetaAvailable
 	);
-	const [activeTab, setActiveTab] = useState(pickDefaultActiveTab(item.itemType, noteKey));
+	const [activeTab, setActiveTab] = useState(pickDefaultActiveTab(item.itemType, attachmentKey, noteKey));
 
 	const shouldShowAttachmentsTab = device.shouldUseTabs || (!device.shouldUseTabs && (!isReadOnly || attachments.length > 0));
 	const shouldShowNotesTab = device.shouldUseTabs || (!device.shouldUseTabs && (!isReadOnly || notes.length > 0));
@@ -130,15 +131,15 @@ const ItemDetailsTabs = props => {
 		const { itemType } = item;
 
 		if(activeTab === 'standalone-note' && itemType !== 'note') {
-			setActiveTab(pickDefaultActiveTab(itemType, noteKey));
+			setActiveTab(pickDefaultActiveTab(item.itemType, attachmentKey, noteKey));
 		}
 		if(activeTab === 'standalone-attachment' && itemType !== 'attachment') {
-			setActiveTab(pickDefaultActiveTab(itemType, noteKey));
+			setActiveTab(pickDefaultActiveTab(item.itemType, attachmentKey, noteKey));
 		}
 
 		if(['info', 'notes', 'attachments'].includes(activeTab) &&
 			['note', 'attachment'].includes(itemType)) {
-			setActiveTab(pickDefaultActiveTab(itemType, noteKey));
+			setActiveTab(pickDefaultActiveTab(item.itemType, attachmentKey, noteKey));
 		}
 	}, [item]);
 
