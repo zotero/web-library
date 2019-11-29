@@ -1,0 +1,8 @@
+<!-- This file is part of Zotero. It is distributed under the GNU Affero General Public License version 3. -->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+	<symbol id="minus-circle-strong" viewBox="0 0 24 24">
+		<circle fill="currentColor" cx="12" cy="12" r="12"/>
+		<rect x="6" y="11" width="12" height="2" fill="#fff"/>
+	</symbol>
+	<use xlink:href="#minus-circle-strong" viewBox="0 0 24 24"/>
+</svg>

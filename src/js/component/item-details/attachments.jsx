@@ -99,11 +99,25 @@ const Attachment = props => {
 					</span>
 				)
 			}
-			{ !isReadOnly && (
+			{ device.isTouchOrSmall && (
 				<React.Fragment>
-					<Button
-						icon
-					>
+					<Button icon>
+						<Icon type="24/open-link" width="24" height="24" />
+					</Button>
+					{ !isReadOnly && (
+						<Button
+							icon
+							onClick={ handleDelete }
+							tabIndex={ -1 }
+						>
+							<Icon type="24/minus-circle-strong" width="24" height="24" />
+						</Button>
+					) }
+				</React.Fragment>
+			) }
+			{ (!device.isTouchOrSmall && !isReadOnly) && (
+				<React.Fragment>
+					<Button icon>
 						<Icon type={ '16/open-link' } width="16" height="16" />
 					</Button>
 					<Button
@@ -114,7 +128,7 @@ const Attachment = props => {
 						<Icon type={ '16/minus-circle' } width="16" height="16" />
 					</Button>
 				</React.Fragment>
-			)}
+			) }
 		</li>
 	);
 }
