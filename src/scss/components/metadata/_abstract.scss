@@ -20,11 +20,10 @@
 
 	@include mouse-and-bp-up(md) {
 		margin: 0 $default-padding-x;
-		padding-bottom: 20px - 7px;
+		padding-bottom: 15px - 7px;
 	}
 
 	@include mouse-and-bp-only(lg) {
-		margin-top: 15px - 7px;
 		border-top: 1px solid $metadata-separator-color;
 	}
 
@@ -114,7 +113,7 @@
 	@include mouse-and-bp-up(md) {
 		font-size: $font-size-base;
 		line-height: $metadata-list-line-height;
-		margin-top: $space-sm;
+		margin-top: 15px - 8px;
 		margin-bottom: 0;
 		padding-bottom: 2px;
 	}

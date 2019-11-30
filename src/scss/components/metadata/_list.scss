@@ -4,7 +4,8 @@
 
 .metadata-list {
 	@include mouse-and-bp-up(md) {
-		margin-top: $space-sm;
+		margin-top: 15px - 8px;
+		margin-bottom: 15px - 7px;
 	}
 
 	@include touch-and-bp-only(md) {
