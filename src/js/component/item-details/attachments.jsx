@@ -37,24 +37,22 @@ const AttachmentDownloadIcon = props => {
 	return (
 		attachment.linkMode.startsWith('imported') && attachment[Symbol.for('links')].enclosure && !isUploading ? (
 			<a
+				className="btn btn-icon"
 				onClick={ handleLinkInteraction }
 				onMouseDown={ handleLinkInteraction }
 				onKeyDown={ handleLinkInteraction }
 			>
-				<Button icon>
-					<Icon type={ `${iconSize}/open-link` } width={ iconSize } height={ iconSize } />
-				</Button>
+				<Icon type={ `${iconSize}/open-link` } width={ iconSize } height={ iconSize } />
 			</a>
 		) : attachment.linkMode === 'linked_url' ? (
 			<a
 				href={ attachment.url }
+				className="btn btn-icon"
 				rel="nofollow noopener noreferrer"
 				tabIndex={ -2 }
 				target="_blank"
 			>
-				<Button icon>
-					<Icon type={ `${iconSize}/open-link` } width={ iconSize } height={ iconSize } />
-				</Button>
+				<Icon type={ `${iconSize}/open-link` } width={ iconSize } height={ iconSize } />
 			</a>
 		) : null
 	);
