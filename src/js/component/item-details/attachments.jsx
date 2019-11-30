@@ -117,7 +117,8 @@ const Attachment = props => {
 				</Button>
 			) }
 			<Icon type={ getItemIcon(attachment) } width={ iconSize } height={ iconSize } />
-			<a
+			<div
+				className="truncate"
 				onClick={ handleAttachmentSelect }
 				onKeyDown={ handleKeyDown }
 				tabIndex={ -2 }
@@ -125,9 +126,8 @@ const Attachment = props => {
 				{ attachment.title ||
 					(attachment.linkMode === 'linked_url' ? attachment.url : attachment.filename)
 				}
-				{ isUploading && <Spinner className="small" /> }
-			</a>
-
+			</div>
+			{ isUploading && <Spinner className="small" /> }
 			<AttachmentDownloadIcon
 				attachment={ attachment }
 				device={ device }
