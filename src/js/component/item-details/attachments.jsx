@@ -86,11 +86,11 @@ const Attachment = props => {
 	const iconSize = device.isTouchOrSmall ? '28' : '16';
 	const isSelected = attachmentKey === attachment.key;
 
-	const handleDelete = () => {
+	const handleDelete = useCallback(() => {
 		moveToTrash([attachment.key]);
-	}
+	});
 
-	const handleKeyDown = () => useCallback(ev => onKeyDown(ev));
+	const handleKeyDown = useCallback(ev => onKeyDown(ev));
 
 	const handleAttachmentSelect = useCallback(() => {
 		dispatch(navigate({ attachmentKey: attachment.key }));
