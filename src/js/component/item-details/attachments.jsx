@@ -18,7 +18,7 @@ import { openAttachment, sortByKey } from '../../utils';
 import { pick } from '../../common/immutable';
 import { TabPane } from '../ui/tabs';
 import { Toolbar, ToolGroup } from '../ui/toolbars';
-import { updateItem, navigate } from '../../actions';
+import { navigate, sourceFile, updateItem } from '../../actions';
 import { pluralize } from '../../common/format';
 import AttachmentDetails from './attachment-details';
 
@@ -189,8 +189,12 @@ const Attachments = props => {
 	isReadOnly, itemKey, createItem, uploadAttachment, onFocusNext, onFocusPrev, fetchChildItems,
 	fetchItemTemplate, uploads, isActive, libraryKey, onBlur, onFocus, pointer, registerFocusRoot,
 	...rest } = props;
+	const dispatch = useDispatch();
 
 	const [attachments, setAttachments] = useState([]);
+
+	const isTinymceFetching = useSelector(state => state.sources.fetching.includes('tinymce'));
+	const isTinymceFetched = useSelector(state => state.sources.fetched.includes('tinymce'));
 
 	const [{ isOver, canDrop }, drop] = useDrop({
 		accept: NativeTypes.FILE,
@@ -218,6 +222,12 @@ const Attachments = props => {
 		sortByKey(attachments, a => a.title || a.fileName)
 		setAttachments(attachments);
 	}, [childItems]);
+
+	useEffect(() => {
+		if(!isTinymceFetched && !isTinymceFetching) {
+			dispatch(sourceFile('tinymce'));
+		}
+	}, []);
 
 	const handleFileInputChange = async ev => {
 		const fileDataPromise = getFileData(ev.currentTarget.files[0]);
@@ -255,7 +265,7 @@ const Attachments = props => {
 		<TabPane
 			className={ cx("attachments", { 'dnd-target': canDrop && isOver }) }
 			isActive={ isActive }
-			isLoading={ device.shouldUseTabs && !isFetched }
+			isLoading={ device.shouldUseTabs && !(isFetched && isTinymceFetched) }
 			ref={ drop }
 		>
 			<h5 className="h2 tab-pane-heading hidden-mouse">Attachments</h5>
