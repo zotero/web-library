@@ -161,13 +161,16 @@ Attachment.propTypes = {
 	onKeyDown: PropTypes.func.isRequired,
 }
 
-const AttachmentDetailsWrap = () => {
+const AttachmentDetailsWrap = ({ isReadOnly }) => {
 	const attachmentKey = useSelector(state => state.current.attachmentKey);
 
 	if(attachmentKey) {
 		return (
 			<div className="attachment-details">
-				<AttachmentDetails attachmentKey={ attachmentKey } />
+				<AttachmentDetails
+					isReadyOnly={ isReadOnly }
+					attachmentKey={ attachmentKey }
+				/>
 			</div>
 		);
 	} else {
@@ -330,7 +333,9 @@ const Attachments = props => {
 				)}
 			</div>
 			{
-				(!device.isTouchOrSmall && attachments.length > 0) && <AttachmentDetailsWrap />
+				(!device.isTouchOrSmall && attachments.length > 0) && (
+					<AttachmentDetailsWrap isReadOnly={ isReadOnly } />
+				)
 			}
 		</TabPane>
 	);

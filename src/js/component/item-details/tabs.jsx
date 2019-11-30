@@ -275,6 +275,7 @@ const ItemDetailsTabs = props => {
 							item.itemType === 'attachment' && (
 								<StandaloneAttachmentTabPane
 									isActive={ activeTab === 'standalone-attachment' }
+									isReadOnly={ isReadOnly }
 								/>
 							)
 						}

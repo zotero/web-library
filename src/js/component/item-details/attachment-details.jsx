@@ -2,12 +2,13 @@ import React, { useCallback } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import PropTypes from 'prop-types';
 
-import { getAttachmentUrl } from '../../actions/';
+import RichEditorContainer from '../../container/rich-editor';
 import { dateLocalized } from '../../common/format';
 import { get, openAttachment } from '../../utils';
+import { getAttachmentUrl, updateItem } from '../../actions/';
 
 
-const AttachmentDetails = ({ attachmentKey }) => {
+const AttachmentDetails = ({ attachmentKey, isReadOnly }) => {
 	const dispatch = useDispatch();
 	const dispatchGetAttachmentUrl = useCallback((...args) => dispatch(getAttachmentUrl(...args)));
 	const item = useSelector(
@@ -20,7 +21,12 @@ const AttachmentDetails = ({ attachmentKey }) => {
 		openAttachment(item.key, dispatchGetAttachmentUrl, true);
 	});
 
+	const handleChangeNote = newContent => {
+		dispatch(updateItem(attachmentKey, { note: newContent }));
+	}
+
 	return (
+		<React.Fragment>
 		<ol className="metadata-list">
 			{ item.url && (
 				<li className="metadata">
@@ -83,11 +89,19 @@ const AttachmentDetails = ({ attachmentKey }) => {
 				</li>
 			) }
 		</ol>
+		<RichEditorContainer
+			key={ item.key }
+			isReadOnly={ isReadOnly }
+			value={ item.note }
+			onChange={ handleChangeNote }
+		/>
+		</React.Fragment>
 	);
 }
 
 AttachmentDetails.propTypes = {
 	attachmentKey: PropTypes.string.isRequired,
+	isReadOnly: PropTypes.bool,
 }
 
 export default AttachmentDetails;
