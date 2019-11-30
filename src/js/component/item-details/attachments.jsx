@@ -68,6 +68,7 @@ AttachmentDownloadIcon.propTypes = {
 const Attachment = props => {
 	const { attachment, device, moveToTrash, itemKey, isReadOnly, isUploading, libraryKey,
 		getAttachmentUrl, onKeyDown } = props;
+	const attachmentKey = useSelector(state => state.current.attachmentKey);
 	const dispatch = useDispatch();
 	const [_, drag] = useDrag({ // eslint-disable-line no-unused-vars
 		item: { type: ATTACHMENT, itemKey, libraryKey },
@@ -83,6 +84,7 @@ const Attachment = props => {
 		}
 	});
 	const iconSize = device.isTouchOrSmall ? '28' : '16';
+	const isSelected = attachmentKey === attachment.key;
 
 	const handleDelete = () => {
 		moveToTrash([attachment.key]);
@@ -103,7 +105,7 @@ const Attachment = props => {
 
 	return (
 		<li
-			className="attachment"
+			className={ cx('attachment', { 'selected': isSelected }) }
 			data-key={ attachment.key }
 			ref={ drag }
 		>
