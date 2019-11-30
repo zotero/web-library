@@ -85,6 +85,10 @@ const Attachment = props => {
 	});
 	const iconSize = device.isTouchOrSmall ? '28' : '16';
 	const isSelected = attachmentKey === attachment.key;
+	const isFile = attachment.linkMode.startsWith('imported') &&
+		attachment[Symbol.for('links')].enclosure;
+	const isLink = attachment.linkMode === 'linked_url';
+	const hasLink = isFile || isLink;
 
 	const handleDelete = useCallback(() => {
 		moveToTrash([attachment.key]);
@@ -120,7 +124,7 @@ const Attachment = props => {
 			) }
 			<Icon type={ getItemIcon(attachment) } width={ iconSize } height={ iconSize } />
 			<div
-				className="truncate"
+				className={ cx('truncate', { 'no-link': !hasLink }) }
 				onClick={ handleAttachmentSelect }
 				onKeyDown={ handleKeyDown }
 				tabIndex={ -2 }
