@@ -108,6 +108,10 @@ const Attachment = props => {
 			`28/item-types/light/${iconName}` : `16/item-types/light/${dvp}x/${iconName}`;
 	}
 
+	const handleFocus = useCallback(() => {
+		dispatch(navigate({ attachmentKey: attachment.key }));
+	});
+
 	return (
 		<li
 			className={ cx('attachment', { 'selected': isSelected, 'no-link': !hasLink }) }
@@ -115,6 +119,7 @@ const Attachment = props => {
 			ref={ drag }
 			onKeyDown={ handleKeyDown }
 			onClick={ handleAttachmentSelect }
+			onFocus={ handleFocus }
 			tabIndex={ -2 }
 		>
 			{ (device.isTouchOrSmall && !isReadOnly) && (
