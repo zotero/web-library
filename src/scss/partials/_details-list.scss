@@ -44,11 +44,15 @@
 
 			@include mouse-and-bp-up(md) {
 				background-color: $details-list-selected-bg;
+			}
+		}
 
-				&:focus-within {
-					color: $details-list-focus-color;
-					background-color: $details-list-focus-bg;
-				}
+		&:focus {
+			outline: none;
+
+			@include mouse-and-bp-up(md) {
+				color: $details-list-focus-color;
+				background-color: $details-list-focus-bg;
 			}
 		}
 
@@ -59,7 +63,7 @@
 				}
 			}
 
-			@include state("li.selected:focus-within") {
+			@include state("li:focus") {
 				color: $details-list-focus-color;
 			}
 		}
@@ -91,6 +95,15 @@
 				&:last-child {
 					margin-left: 1px; // Optical $space-xs
 					margin-right: -$space-min - $input-border-width;
+				}
+			}
+
+			@include mouse-keyboard-and-bp-up(md) {
+				&:focus {
+					box-shadow: none;
+					border-color: transparent;
+					outline: $outline-width solid $focus-color;
+					outline-offset: -$outline-width;
 				}
 			}
 		}
