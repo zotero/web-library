@@ -90,7 +90,6 @@ const AttachmentDetails = ({ attachmentKey, isReadOnly }) => {
 			) }
 		</ol>
 		<RichEditorContainer
-			key={ item.key }
 			isReadOnly={ isReadOnly }
 			value={ item.note }
 			onChange={ handleChangeNote }

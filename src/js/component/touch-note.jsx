@@ -20,7 +20,6 @@ const TouchNote = ({ note, isEditing, updateItem }) => {
 		<section className={ className }>
 			{ note && (
 				<RichEditorContainer
-					key={ note.key }
 					isReadOnly={ !isEditing }
 					value={ note.note }
 					onChange={ handleNoteChange }

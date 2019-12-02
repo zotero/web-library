@@ -263,7 +263,6 @@ const Notes = props => {
 			{ !device.isTouchOrSmall && selectedNote && (
 				<RichEditorContainer
 					ref={ editorRef }
-					key={ selectedNote.key }
 					isReadOnly={ isReadOnly }
 					value={ selectedNote.note }
 					onChange={ handleChangeNote }

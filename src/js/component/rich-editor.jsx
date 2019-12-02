@@ -1,4 +1,3 @@
-/* eslint-disable react/no-deprecated */
 'use strict';
 
 import { Editor } from '@tinymce/tinymce-react';
@@ -105,6 +104,12 @@ class RichEditor extends React.PureComponent {
 		const { isTinymceFetched, isTinymceFetching, sourceFile } = this.props;
 		if(!isTinymceFetched && !isTinymceFetching) {
 			sourceFile('tinymce');
+		}
+	}
+
+	componentDidUpdate({ value }) {
+		if(value !== this.props.value) {
+			this.setState({ content: this.props.value });
 		}
 	}
 
