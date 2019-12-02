@@ -41,6 +41,7 @@ const AttachmentDownloadIcon = props => {
 				onClick={ handleLinkInteraction }
 				onMouseDown={ handleLinkInteraction }
 				onKeyDown={ handleLinkInteraction }
+				tabIndex={ -3 }
 			>
 				<Icon type={ `${iconSize}/open-link` } width={ iconSize } height={ iconSize } />
 			</a>
@@ -49,8 +50,8 @@ const AttachmentDownloadIcon = props => {
 				href={ attachment.url }
 				className="btn btn-icon"
 				rel="nofollow noopener noreferrer"
-				tabIndex={ -2 }
 				target="_blank"
+				tabIndex={ -3 }
 			>
 				<Icon type={ `${iconSize}/open-link` } width={ iconSize } height={ iconSize } />
 			</a>
@@ -112,6 +113,9 @@ const Attachment = props => {
 			className={ cx('attachment', { 'selected': isSelected, 'no-link': !hasLink }) }
 			data-key={ attachment.key }
 			ref={ drag }
+			onKeyDown={ handleKeyDown }
+			onClick={ handleAttachmentSelect }
+			tabIndex={ -2 }
 		>
 			{ (device.isTouchOrSmall && !isReadOnly) && (
 				<Button
@@ -123,12 +127,7 @@ const Attachment = props => {
 				</Button>
 			) }
 			<Icon type={ getItemIcon(attachment) } width={ iconSize } height={ iconSize } />
-			<div
-				className="truncate"
-				onClick={ handleAttachmentSelect }
-				onKeyDown={ handleKeyDown }
-				tabIndex={ -2 }
-			>
+			<div className="truncate">
 				{ attachment.title ||
 					(attachment.linkMode === 'linked_url' ? attachment.url : attachment.filename)
 				}
@@ -145,7 +144,7 @@ const Attachment = props => {
 				<Button
 					icon
 					onClick={ handleDelete }
-					tabIndex={ -1 }
+					tabIndex={ -3 }
 				>
 					<Icon type={ '16/minus-circle' } width="16" height="16" />
 				</Button>
@@ -189,10 +188,10 @@ const AttachmentDetailsWrap = ({ isReadOnly }) => {
 const PAGE_SIZE = 100;
 
 const Attachments = props => {
-	const { childItems, createAttachmentsFromDropped, device, isFetched, isFetching,
-	isReadOnly, itemKey, createItem, uploadAttachment, onFocusNext, onFocusPrev, fetchChildItems,
-	fetchItemTemplate, uploads, isActive, libraryKey, onBlur, onFocus, pointer, registerFocusRoot,
-	...rest } = props;
+	const { childItems, createAttachmentsFromDropped, device, isFetched, isFetching, isReadOnly,
+	itemKey, createItem, uploadAttachment, onDrillDownPrev, onDrillDownNext, onFocusNext,
+	onFocusPrev, fetchChildItems, fetchItemTemplate, uploads, isActive, libraryKey, onBlur, onFocus,
+	pointer, registerFocusRoot, ...rest } = props;
 	const dispatch = useDispatch();
 
 	const [attachments, setAttachments] = useState([]);
@@ -254,14 +253,16 @@ const Attachments = props => {
 	}
 
 	const handleKeyDown = ev => {
-		if(ev.target !== ev.currentTarget) {
-			return;
-		}
-
-		if(ev.key === 'ArrowDown') {
-			onFocusNext(ev);
+		if(ev.key === "ArrowLeft") {
+			onDrillDownPrev(ev);
+		} else if(ev.key === "ArrowRight") {
+			onDrillDownNext(ev);
+		} else if(ev.key === 'ArrowDown') {
+			ev.target === ev.currentTarget && onFocusNext(ev);
 		} else if(ev.key === 'ArrowUp') {
-			onFocusPrev(ev);
+			ev.target === ev.currentTarget && onFocusPrev(ev);
+		} else if(isTriggerEvent(ev)) {
+			dispatch(navigate({ attachmentKey: ev.currentTarget.dataset.key }));
 		}
 	}
 

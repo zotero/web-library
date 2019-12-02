@@ -53,16 +53,17 @@ const withFocusManager = Component => {
 			const drillables = Array.from(
 				ev.currentTarget.querySelectorAll('[tabIndex="-3"]:not([disabled])')
 			).filter(t => t.offsetParent);
-			const nextIndex = drillables.findIndex(t => t === ev.currentTarget) + 1;
+			const nextIndex = drillables.findIndex(t => t === ev.target) + 1;
 			if(nextIndex < drillables.length) {
 				drillables[nextIndex].focus();
 			}
 		}
+
 		handleDrillDownPrev = ev => {
 			const drillables = Array.from(
 				ev.currentTarget.querySelectorAll('[tabIndex="-3"]:not([disabled])')
 			).filter(t => t.offsetParent);
-			const prevIndex = drillables.findIndex(t => t === ev.currentTarget) - 1;
+			const prevIndex = drillables.findIndex(t => t === ev.target) - 1;
 			if(prevIndex >= 0) {
 				drillables[prevIndex].focus();
 			} else {
