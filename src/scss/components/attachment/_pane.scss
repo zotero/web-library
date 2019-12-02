@@ -50,7 +50,7 @@
 		}
 
 		@include mouse-and-bp-up(lg) {
-			flex: 0 0 calc(50% + #{$space-md});
+			flex: 0 0 calc(50% + 42px); // Same size for scrollable area in attachment-list and rich-editor for an average of a 2 line metadata-list
 			border-top: $border-width solid $attachment-details-border-color;
 		}
 
