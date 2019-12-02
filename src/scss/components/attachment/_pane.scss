@@ -27,6 +27,7 @@
 			top: 0;
 			height: $toolbar-height-touch;
 			background-color: $panel-bg;
+			z-index: 1;
 		}
 
 		.counter {
