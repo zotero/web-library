@@ -2,26 +2,35 @@ import { TRIGGER_USER_TYPE_CHANGE, TRIGGER_RESIZE_VIEWPORT } from '../constants/
 import { getScrollbarWidth } from '../utils';
 import { pick } from '../common/immutable';
 
+const isInitiallyMouse = typeof(matchMedia) === 'function' ? matchMedia('(pointer:fine)').matches : null;
+const isInitiallyTouch = typeof(matchMedia) === 'function' ? matchMedia('(pointer:coarse)').matches : null;
+
+const getViewport = ({ width }) => {
+	return {
+		xxs: width < 480,
+		xs: width >= 480 && width < 768,
+		sm: width >= 768 && width < 992,
+		md: width >= 992 && width < 1200,
+		lg: width >= 1200
+	};
+};
+
 const defaultState = {
 	isKeyboardUser: null,
-	isMouseUser: typeof(matchMedia) === 'function' ? matchMedia('(pointer:fine)').matches : null,
+	isMouseUser: isInitiallyMouse,
 	isSingleColumn: false,
 	isTouchOrSmall: false,
-	isTouchUser: typeof(matchMedia) === 'function' ? matchMedia('(pointer:coarse)').matches : null,
+	isTouchUser: isInitiallyTouch,
 	scrollbarWidth: getScrollbarWidth(),
 	shouldUseEditMode: false,
 	shouldUseModalCreatorField: false,
 	shouldUseSidebar: false,
 	shouldUseTabs: false,
-	userType: matchMedia('(pointer:coarse)').matches ? 'touch' : null,
-	xxs: false,
-	xs: false,
-	sm: false,
-	md: false,
-	lg: false,
+	userType: isInitiallyTouch ? 'touch' : 'mouse',
+	...getViewport(window.innerWidth)
 };
 
-const getDevice = ({ userType }, viewport) => {
+const getDevice = (userType, viewport) => {
 	const isSingleColumn = viewport.xxs || viewport.xs;
 	const isTouchOrSmall = userType === 'touch' || viewport.xxs || viewport.xs || viewport.sm;
 	const shouldUseEditMode = isTouchOrSmall;
@@ -33,16 +42,6 @@ const getDevice = ({ userType }, viewport) => {
 		shouldUseSidebar, shouldUseTabs };
 };
 
-const getViewport = ({ width }) => {
-	return {
-		xxs: width < 480,
-		xs: width >= 480 && width < 768,
-		sm: width >= 768 && width < 992,
-		md: width >= 992 && width < 1200,
-		lg: width >= 1200
-	};
-}
-
 const device = (state = defaultState, action) => {
 	var viewport;
 	switch(action.type) {
@@ -52,7 +51,7 @@ const device = (state = defaultState, action) => {
 			return {
 				...state,
 				...pick(action, ['isKeyboardUser', 'isMouseUser', 'isTouchUser', 'userType', 'scrollbarWidth']),
-				...getDevice(action, viewport),
+				...getDevice('userType' in action ? action.userType : state.userType, viewport),
 				...viewport
 			}
 		default:
