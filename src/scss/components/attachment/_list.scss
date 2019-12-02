@@ -17,6 +17,13 @@
 			}
 		}
 
+		> .icon:first-child,
+		.truncate {
+			@include variant(".attachment.no-link") {
+				opacity: $no-link-opacity;
+			}
+		}
+
 		.truncate {
 			flex: 1 1 auto;
 		}

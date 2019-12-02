@@ -109,7 +109,7 @@ const Attachment = props => {
 
 	return (
 		<li
-			className={ cx('attachment', { 'selected': isSelected }) }
+			className={ cx('attachment', { 'selected': isSelected, 'no-link': !hasLink }) }
 			data-key={ attachment.key }
 			ref={ drag }
 		>
@@ -124,7 +124,7 @@ const Attachment = props => {
 			) }
 			<Icon type={ getItemIcon(attachment) } width={ iconSize } height={ iconSize } />
 			<div
-				className={ cx('truncate', { 'no-link': !hasLink }) }
+				className="truncate"
 				onClick={ handleAttachmentSelect }
 				onKeyDown={ handleKeyDown }
 				tabIndex={ -2 }

@@ -168,6 +168,7 @@ $attachment-focus-color:          $shade-0;
 $attachment-focus-bg:             $secondary;
 $attachment-details-border-color: $shade-3;
 $attachment-placeholder-color:    $shade-5;
+$no-link-opacity:                 0.5;
 
 // Rich editor
 $editor-bg: $shade-0;
@@ -283,7 +284,6 @@ $tag-selector-grip-color:   $shade-4;
 
 // Details list
 $details-list-link-color:    $text-color;
-$details-list-no-link-color: rgba($text-color, 0.5);
 $details-list-border-color:  $shade-4;
 
 // Popover

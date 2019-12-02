@@ -66,11 +66,6 @@
 			@include text-truncate;
 		}
 
-		.no-link {
-			flex: 1 1 auto;
-			color: $details-list-no-link-color;
-		}
-
 		.icon-minus-circle-strong {
 			@include touch-or-bp-down(sm) {
 				color: $btn-primary-color;
