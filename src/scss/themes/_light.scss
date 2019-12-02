@@ -71,6 +71,12 @@ $main-bg: $shade-0;
 $sidebar-bg:           $shade-1;
 $sidebar-border-color: $shade-4;
 
+// Details list
+$details-list-link-color:    $text-color;
+$details-list-border-color:  $shade-4;
+$details-list-selected-bg:   $shade-3;
+$details-list-focus-color:   $shade-0;
+$details-list-focus-bg:      $focus-color;
 
 // Components
 // --------------------------------------------------
@@ -163,9 +169,6 @@ $note-border-color-touch: $shade-4;
 $note-list-chevron-color: $shade-4;
 
 // Attachment list
-$attachment-selected-bg:          $shade-3;
-$attachment-focus-color:          $shade-0;
-$attachment-focus-bg:             $secondary;
 $attachment-details-border-color: $shade-3;
 $attachment-placeholder-color:    $shade-5;
 $no-link-opacity:                 0.5;
@@ -281,10 +284,6 @@ $tag-selected-color:        $shade-0;
 $tag-selected-bg:           $shade-6;
 $tag-selected-active-bg:    $shade-7;
 $tag-selector-grip-color:   $shade-4;
-
-// Details list
-$details-list-link-color:    $text-color;
-$details-list-border-color:  $shade-4;
 
 // Popover
 $popover-bg:                  $body-bg;

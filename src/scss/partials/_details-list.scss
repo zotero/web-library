@@ -29,6 +29,41 @@
 			}
 		}
 
+		&.selected {
+			@include touch-or-bp-down(sm) {
+				background-color: $focus-color;
+				color: $shade-0;
+				@include hairline-disabled(top);
+
+				& + li {
+					padding-top: 0;
+					border-top: $border-width solid $focus-color;
+					@include hairline-disabled(top);
+				}
+			}
+
+			@include mouse-and-bp-up(md) {
+				background-color: $details-list-selected-bg;
+
+				&:focus-within {
+					color: $details-list-focus-color;
+					background-color: $details-list-focus-bg;
+				}
+			}
+		}
+
+		.icon {
+			@include state("li.selected") {
+				@include touch-or-bp-down(sm) {
+					color: $details-list-focus-color;
+				}
+			}
+
+			@include state("li.selected:focus-within") {
+				color: $details-list-focus-color;
+			}
+		}
+
 		> .icon {
 			&:first-child {
 				@include touch-or-bp-down(sm) {
@@ -58,6 +93,10 @@
 					margin-right: -$space-min - $input-border-width;
 				}
 			}
+		}
+
+		.truncate {
+			flex: 1 1 auto;
 		}
 
 		a {
