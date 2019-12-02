@@ -26,13 +26,13 @@ const ItemDetailsInfoView = () => {
 		if(itemKeys.length > 0) {
 			setLabel([
 				itemKeys.length,
-				pluralize('Item', itemKeys.length),
-				'Selected'
+				pluralize('item', itemKeys.length),
+				'selected'
 			].join(' '));
 		} else if(!itemKey && itemsCount !== null) {
 			setLabel([
 				itemsCount === 0 ? 'No' : itemsCount,
-				pluralize('Item', itemsCount),
+				pluralize('item', itemsCount),
 				'in this view'
 			].join(' '));
 		} else {
