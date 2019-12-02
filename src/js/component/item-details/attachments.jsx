@@ -262,7 +262,8 @@ const Attachments = props => {
 		} else if(ev.key === 'ArrowUp') {
 			ev.target === ev.currentTarget && onFocusPrev(ev);
 		} else if(isTriggerEvent(ev)) {
-			dispatch(navigate({ attachmentKey: ev.currentTarget.dataset.key }));
+			ev.target.click();
+			ev.preventDefault();
 		}
 	}
 
@@ -292,8 +293,9 @@ const Attachments = props => {
 								<div className="btn-file">
 									<input
 										onChange={ handleFileInputChange }
-										onKeyDown={ handleKeyDown }
 										type="file"
+										tabIndex={ -2 }
+										onKeyDown={ handleKeyDown }
 									/>
 									<Button
 										disabled={ isReadOnly }
