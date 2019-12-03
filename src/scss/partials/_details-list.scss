@@ -84,6 +84,9 @@
 			flex: 0 0 auto;
 
 			@include mouse-and-bp-up(md) {
+				padding: 0;
+				border: 0;
+
 				@include state("li:not(:focus-within)") {
 					opacity: 0.01;
 				}
@@ -92,9 +95,8 @@
 					opacity: 1;
 				}
 
-				&:last-child {
-					margin-left: 1px; // Optical $space-xs
-					margin-right: -$space-min - $input-border-width;
+				&:not(:last-child) {
+					margin-right: 6px; // Like 8px for 14px icons
 				}
 			}
 
@@ -103,9 +105,13 @@
 					box-shadow: none;
 					border-color: transparent;
 					outline: $outline-width solid $focus-color;
-					outline-offset: -$outline-width;
 				}
 			}
+		}
+
+		.truncate,
+		a {
+			margin-right: $space-xs;
 		}
 
 		.truncate {
@@ -116,6 +122,10 @@
 			flex: 1 1 auto;
 			color: $details-list-link-color;
 			@include text-truncate;
+		}
+
+		.editable {
+			margin-right: 6px; // Optical $space-xs
 		}
 
 		.icon-minus-circle-strong {
