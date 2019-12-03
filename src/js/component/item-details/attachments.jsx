@@ -1,6 +1,6 @@
 import cx from 'classnames';
 import PropTypes from 'prop-types';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { NativeTypes } from 'react-dnd-html5-backend-cjs';
 import { useDrag, useDrop } from 'react-dnd-cjs'
@@ -223,6 +223,7 @@ const Attachments = props => {
 	pointer, registerFocusRoot, ...rest } = props;
 	const dispatch = useDispatch();
 
+	const fileInput = useRef(null);
 	const [attachments, setAttachments] = useState([]);
 
 	const isTinymceFetching = useSelector(state => state.sources.fetching.includes('tinymce'));
@@ -290,6 +291,12 @@ const Attachments = props => {
 			ev.target === ev.currentTarget && onFocusNext(ev);
 		} else if(ev.key === 'ArrowUp') {
 			ev.target === ev.currentTarget && onFocusPrev(ev);
+		} else if(ev.key === 'Tab') {
+			const isFileInput = ev.currentTarget === fileInput.current;
+			const isShift = ev.getModifierState('Shift');
+			if(isFileInput && !isShift) {
+				ev.target === ev.currentTarget && onFocusNext(ev);
+			}
 		} else if(isTriggerEvent(ev)) {
 			ev.target.click();
 			ev.preventDefault();
@@ -322,9 +329,10 @@ const Attachments = props => {
 								<div className="btn-file">
 									<input
 										onChange={ handleFileInputChange }
-										type="file"
-										tabIndex={ -2 }
 										onKeyDown={ handleKeyDown }
+										ref={ fileInput }
+										tabIndex={ -2 }
+										type="file"
 									/>
 									<Button
 										disabled={ isReadOnly }
