@@ -116,6 +116,7 @@ const ItemDetailsTabs = props => {
 	const handleKeyDown = useCallback(ev => {
 		if(ev.key === 'ArrowDown' && ev.target.closest('.tab')) {
 			ev.currentTarget.querySelector('.tab-pane.active [tabIndex]').focus();
+			ev.preventDefault();
 		}
 		if(ev.key === 'Escape') {
 			//@TODO: do this in a more elegant way
