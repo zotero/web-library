@@ -4,7 +4,8 @@ import { Editor } from '@tinymce/tinymce-react';
 
 import cx from 'classnames';
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { useCallback, useEffect, useRef, useState, useImperativeHandle } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap/lib';
 
 import Button from './ui/button';
@@ -12,6 +13,8 @@ import Icon from './ui/icon';
 import { Toolbar, ToolGroup } from './ui/toolbars';
 import ColorPicker from './ui/color-picker';
 import Spinner from './ui/spinner';
+import { sourceFile } from '../actions';
+import { useForceUpdate } from '../hooks';
 
 const formatBlocks = [
 	{ value: 'p', Tag: 'p', label: 'Paragraph' },
@@ -24,7 +27,7 @@ const formatBlocks = [
 	{ value: 'pre', Tag: 'pre', label: 'Preformatted' },
 ];
 
-const dropdowns = {
+const defaultDropdowns = {
 	forecolor: false,
 	hilitecolor: false,
 	formatblock: false,
@@ -75,632 +78,625 @@ const validElements = '@[id|class|style|title|dir<ltr?rtl|lang|xml::lang],'
 
 const invalidElements = 'iframe';
 
-//@NOTE: exposes focus() method
-class RichEditor extends React.PureComponent {
-	state = {
-		hilitecolor: null,
-		content: this.props.value,
-		forecolor: null,
-		dropdowns,
-	};
-
-	handleEditorInit = (ev, editor) => {
-		this.editor = editor;
-		if(this.wantsFocus) {
-			this.editor.focus();
-			this.wantsFocus = false;
-		}
-	}
-
-	focus = () => {
-		if(this.editor) {
-			this.editor.focus();
-		} else {
-			this.wantsFocus = true;
-		}
-	}
-
-	componentDidMount() {
-		const { isTinymceFetched, isTinymceFetching, sourceFile } = this.props;
-		if(!isTinymceFetched && !isTinymceFetching) {
-			sourceFile('tinymce');
-		}
-	}
-
-	componentDidUpdate({ value }) {
-		if(value !== this.props.value) {
-			this.setState({ content: this.props.value });
-		}
-	}
-
-	handleEditorChange = newContent => {
-		const { onChange } = this.props;
-		const { content } = this.state;
-
-		// force re-render so that formatting buttons are correctly highlighted
-		this.forceUpdate();
-
-		if(newContent === content) {
-			return;
-		}
-		this.setState({ content: newContent });
-
-		clearTimeout(this.timeout);
-		this.timeout = setTimeout(() => {
-			onChange(newContent);
-		}, 500);
-	}
-
-	handleButtonClick = ev => {
-		if(!this.editor) { return; }
-		const { command, value } = ev.currentTarget.dataset;
-
-		if(command === 'forecolor' || command === 'hilitecolor') {
-			this.setColor(command, this.state[command]);
-		} else {
-			this.editor.editorCommands.execCommand(command, undefined, value);
-		}
-	}
-
-	handleFocus = () => {
-		this.setState({ dropdowns });
-	}
-
-	handleForeColorPicked = color => {
-		this.setState({ forecolor: color });
-		this.setColor('forecolor', color);
-	}
-
-	handleHiLiteColorPicked = color => {
-		this.setState({ hilitecolor: color });
-		this.setColor('hilitecolor', color);
-	}
-
-	handleDropdownToggle = ev => {
-		const dropdown = 'closest' in ev.currentTarget && ev.currentTarget.closest('[data-dropdown]');
-		if(dropdown) {
-			const dropdownName = ev.currentTarget.closest('[data-dropdown]').dataset.dropdown;
-			this.setState({ dropdowns: {
-				...dropdowns,
-				[dropdownName]: !this.state.dropdowns[dropdownName]
-			}});
-		} else {
-			this.setState({ dropdowns });
-		}
-	}
-
-	handleDropdownKeyDown = ev => {
-		if(ev.key === 'Escape') {
-			this.setState({ dropdowns });
-			ev.stopPropagation();
-		}
-	}
-
-	handleKeyDown = ev => {
-		if(ev.key === 'Meta' && this.editor) {
-			this.editor.iframeElement.contentDocument.body.classList.add('meta-key');
-		}
-	}
-
-	handleKeyUp = ev => {
-		if(ev.key === 'Meta' && this.editor) {
-			this.editor.iframeElement.contentDocument.body.classList.remove('meta-key');
-		}
-	}
-
-	setColor = (which, color) => {
-		if(!color) {
-			this.editor.editorCommands.execCommand('mceRemoveTextcolor', which);
-		} else {
-			this.editor.editorCommands.execCommand(which, undefined, color);
-		}
-
-	}
-
-	isEditorCommandState(command) {
-		return this.editor && this.editor.editorCommands.queryCommandState(command);
-	}
-
-	queryFormatBlock() {
-		const formatBlock = this.editor && this.editor.editorCommands.queryCommandValue('formatblock') || 'p';
-		return [formatBlock, (formatBlocks.find(fb => fb.value === formatBlock) || {}).label];
-	}
-
-	refreshEditor = () => this.forceUpdate();
-
-	renderEditor() {
-		const { device } = this.props;
-		if(process.env.NODE_ENV !== 'test') {
-			return (
-				<Editor
-					disabled={ this.props.isReadOnly }
-					value={ this.state.content }
-					init={{
-						base_url: this.props.tinymceRoot,
-						body_class: cx({ 'touch': device.isTouchOrSmall }),
-						branding: false,
-						content_css: '/static/tinymce-content.css',
-						height: '100%',
-						invalid_elements: invalidElements,
-						link_context_toolbar: true,
-						menubar: false,
-						mobile: { theme: 'silver' },
-						plugins: 'link searchreplace',
-						statusbar: false,
-						theme: 'silver',
-						toolbar: false,
-						valid_elements: validElements,
-					}}
-					onClick={ this.refreshEditor }
-					onEditorChange={ this.handleEditorChange }
-					onFocus={ this.handleFocus }
-					onInit={ this.handleEditorInit }
-					onKeyDown={ this.handleKeyDown }
-					onKeyUp={ this.handleKeyUp }
-				/>
-			);
-		} else return null;
-	}
-
-	render() {
-		const { device, isReadOnly, isTinymceFetched } = this.props;
-		if(!isTinymceFetched) {
-			return <Spinner />;
-		}
-		const [currentFormatBlock, currentFormatBlockLabel] = this.queryFormatBlock();
-		return (
-			<div className="rich-editor">
-				{ device.isSingleColumn || !isReadOnly && (
-					<div className="toolbar-container">
-						<Toolbar className="dense">
-							<div className="toolbar-left">
-								<ToolGroup>
-									<Button
-										icon
-										className={ cx({
-											active: this.isEditorCommandState('bold')
-										})}
-										title="Bold"
-										data-command="bold"
-										onClick={ this.handleButtonClick }>
-										<Icon type="24/editor/b" className="touch" width="24" height="24" />
-										<Icon type="16/editor/b" className="mouse" width="16" height="16" />
-									</Button>
-									<Button
-										icon
-										className={ cx({
-											active: this.isEditorCommandState('italic')
-										})}
-										title="Italic"
-										data-command="italic"
-										onClick={ this.handleButtonClick }>
-										<Icon type="24/editor/i" className="touch" width="24" height="24" />
-										<Icon type="16/editor/i" className="mouse" width="16" height="16" />
-									</Button>
-									<Button
-										icon
-										className={ cx({
-											active: this.isEditorCommandState('underline')
-										})}
-										title="Underline"
-										data-command="underline"
-										onClick={ this.handleButtonClick }>
-										<Icon type="24/editor/u" className="touch" width="24" height="24" />
-										<Icon type="16/editor/u" className="mouse" width="16" height="16" />
-									</Button>
-									<Button
-										icon
-										className={ cx({
-											active: this.isEditorCommandState('strikethrough')
-										})}
-										title="strikethrough"
-										data-command="strikethrough"
-										onClick={ this.handleButtonClick }>
-										<Icon type="24/editor/s" className="touch" width="24" height="24" />
-										<Icon type="16/editor/s" className="mouse" width="16" height="16" />
-									</Button>
-								</ToolGroup>
-								<ToolGroup>
-									<Button
-										icon
-										className={ cx({
-											active: this.isEditorCommandState('subscript')
-										})}
-										title="Subscript"
-										data-command="subscript"
-										onClick={ this.handleButtonClick }>
-										<Icon type="24/editor/sub" className="touch" width="24" height="24" />
-										<Icon type="16/editor/sub" className="mouse" width="16" height="16" />
-									</Button>
-									<Button
-										icon
-										className={ cx({
-											active: this.isEditorCommandState('superscript')
-										})}
-										title="Superscript"
-										data-command="superscript"
-										onClick={ this.handleButtonClick }>
-										<Icon type="24/editor/sup" className="touch" width="24" height="24" />
-										<Icon type="16/editor/sup" className="mouse" width="16" height="16" />
-									</Button>
-								</ToolGroup>
-								<ToolGroup>
-									<Dropdown
-										isOpen={ this.state.dropdowns['forecolor'] }
-										toggle={ this.handleDropdownToggle }
-										data-dropdown="forecolor"
-										className="btn-group"
-									>
-										<Button
-											icon
-											data-command="forecolor"
-											onClick={ this.handleButtonClick }
-										>
-											<Icon type="24/editor/fore-color" className="touch" width="24" height="24" />
-											<Icon type="16/editor/fore-color" className="mouse" width="16" height="16" />
-											<Icon
-												type="24/editor/color-swatch"
-												className="touch"
-												color={ this.state.forecolor }
-												width="24"
-												height="24"
-											/>
-											<Icon
-												type="16/editor/color-swatch"
-												className="mouse"
-												color={ this.state.forecolor }
-												width="16"
-												height="16"
-											/>
-										</Button>
-										<DropdownToggle
-											color={ null }
-											onKeyDown={ this.handleDropdownKeyDown }
-											className="btn-icon dropdown-toggle"
-										>
-											<Icon type="16/chevron-9" className="touch" width="16" height="16" />
-											<Icon type="16/chevron-7" className="mouse" width="16" height="16" />
-										</DropdownToggle>
-										<ColorPicker onColorPicked={ this.handleForeColorPicked } />
-									</Dropdown>
-									<Dropdown
-										isOpen={ this.state.dropdowns['hilitecolor'] }
-										toggle={ this.handleDropdownToggle }
-										data-dropdown="hilitecolor"
-										className="btn-group"
-									>
-										<Button
-											icon
-											data-command="hilitecolor"
-											onClick={ this.handleButtonClick }
-										>
-											<Icon type="24/editor/hilite-color" className="touch" width="24" height="24" />
-											<Icon type="16/editor/hilite-color" className="mouse" width="16" height="16" />
-											<Icon
-												type="24/editor/color-swatch"
-												className="touch"
-												color={ this.state.hilitecolor }
-												width="24"
-												height="24"
-											/>
-											<Icon
-												type="16/editor/color-swatch"
-												className="mouse"
-												color={ this.state.hilitecolor }
-												width="16"
-												height="16"
-											/>
-										</Button>
-										<DropdownToggle
-											color={ null }
-											onKeyDown={ this.handleDropdownKeyDown }
-											className="btn-icon dropdown-toggle"
-										>
-											<Icon type="16/chevron-9" className="touch" width="16" height="16" />
-											<Icon type="16/chevron-7" className="mouse" width="16" height="16" />
-										</DropdownToggle>
-										<ColorPicker onColorPicked={ this.handleHiLiteColorPicked } />
-									</Dropdown>
-								</ToolGroup>
-								<ToolGroup>
-									<Button
-										icon
-										title="Clear formatting"
-										data-command="removeformat"
-										onClick={ this.handleButtonClick }>
-										<Icon type="24/editor/remove-format" className="touch" width="24" height="24" />
-										<Icon type="16/editor/remove-format" className="mouse" width="16" height="16" />
-									</Button>
-								</ToolGroup>
-								<ToolGroup>
-									<Button
-										icon
-										className={ cx({
-											active: this.isEditorCommandState('mceblockquote')
-										})}
-										title="Blockquote"
-										data-command="mceblockquote"
-										onClick={ this.handleButtonClick }>
-										<Icon type="24/editor/blockquote" className="touch" width="24" height="24" />
-										<Icon type="16/editor/blockquote" className="mouse" width="16" height="16" />
-									</Button>
-									<Button
-										icon
-										title="Insert/edit link"
-										data-command="mceLink"
-										onClick={ this.handleButtonClick }>
-										<Icon type="24/editor/link" className="touch" width="24" height="24" />
-										<Icon type="16/editor/link" className="mouse" width="16" height="16" />
-									</Button>
-								</ToolGroup>
-								<ToolGroup>
-									<Dropdown
-										isOpen={ this.state.dropdowns['overflow-1'] }
-										toggle={ this.handleDropdownToggle}
-										data-dropdown="overflow-1"
-									>
-										<DropdownToggle
-											color={ null }
-											className="btn-icon dropdown-toggle"
-										>
-										<Icon type="24/options" width="24" height="24" />
-										</DropdownToggle>
-										<DropdownMenu right>
-											<DropdownItem
-												tag={ Button }
-												title="Subscript"
-												data-command="subscript"
-												onClick={ this.handleButtonClick }
-											>
-												<Icon type="24/editor/sub" className="touch" width="24" height="24" />
-												Subscript
-											</DropdownItem>
-											<DropdownItem
-												tag={ Button }
-												title="Superscript"
-												data-command="superscript"
-												onClick={ this.handleButtonClick }
-											>
-												<Icon type="24/editor/sup" className="touch" width="24" height="24" />
-												Superscript
-											</DropdownItem>
-											<DropdownItem divider />
-											<DropdownItem
-												tag={ Button }
-												className="remove-format"
-												title="Clear formatting"
-												data-command="removeformat"
-												onClick={ this.handleButtonClick }
-											>
-												<Icon type="24/editor/remove-format" className="touch" width="24" height="24" />
-												Clear Formatting
-											</DropdownItem>
-											<DropdownItem divider />
-											<DropdownItem
-												tag={ Button }
-												className="blockquote"
-												title="Blockquote"
-												data-command="mceblockquote"
-												onClick={ this.handleButtonClick }
-											>
-												<Icon type="24/editor/blockquote" className="touch" width="24" height="24" />
-												Blockquote
-											</DropdownItem>
-											<DropdownItem
-												tag={ Button }
-												className="link"
-												title="Insert/edit link"
-												data-command="mceLink"
-												onClick={ this.handleButtonClick }
-											>
-												<Icon type="24/editor/link" className="touch" width="24" height="24" />
-												Insert&#8202;/&#8202;Edit Link
-											</DropdownItem>
-										</DropdownMenu>
-									</Dropdown>
-								</ToolGroup>
-							</div>
-						</Toolbar>
-						<Toolbar className="dense">
-							<div className="toolbar-left">
-								<ToolGroup>
-								<Dropdown
-									isOpen={ this.state.dropdowns['formatblock'] }
-									toggle={ this.handleDropdownToggle }
-									data-dropdown="formatblock"
-								>
-										<DropdownToggle
-											color={ null }
-											onKeyDown={ this.handleDropdownKeyDown }
-											className="dropdown-toggle btn-icon format-block"
-										>
-											{ currentFormatBlockLabel }
-											<Icon type="16/chevron-9" className="touch" width="16" height="16" />
-											<Icon type="16/chevron-7" className="mouse" width="16" height="16" />
-										</DropdownToggle>
-										<DropdownMenu>
-											{
-												formatBlocks.map(({ value, label, Tag }) => (
-													<DropdownItem
-														onClick={ this.handleButtonClick }
-														data-command="formatblock"
-														data-value={ value }
-														key={ value }
-														className={ cx({ selected: value === currentFormatBlock })}
-													>
-														<Tag>{ label }</Tag>
-													</DropdownItem>
-												))
-											}
-										</DropdownMenu>
-								</Dropdown>
-								</ToolGroup>
-								<ToolGroup>
-									<Button
-										icon
-										className={ cx({
-											active: this.isEditorCommandState('justifyleft')
-										})}
-										title="Align left"
-										data-command="justifyleft"
-										onClick={ this.handleButtonClick }>
-										<Icon type="24/editor/align-left" className="touch" width="24" height="24" />
-										<Icon type="16/editor/align-left" className="mouse" width="16" height="16" />
-									</Button>
-									<Button
-										icon
-										className={ cx({
-											active: this.isEditorCommandState('justifycenter')
-										})}
-										title="Align center"
-										data-command="justifycenter"
-										onClick={ this.handleButtonClick }>
-										<Icon type="24/editor/align-center" className="touch" width="24" height="24" />
-										<Icon type="16/editor/align-center" className="mouse" width="16" height="16" />
-									</Button>
-									<Button
-										icon
-										className={ cx({
-											active: this.isEditorCommandState('justifyright')
-										})}
-										title="Align right"
-										data-command="justifyright"
-										onClick={ this.handleButtonClick }>
-										<Icon type="24/editor/align-right" className="touch" width="24" height="24" />
-										<Icon type="16/editor/align-right" className="mouse" width="16" height="16" />
-									</Button>
-								</ToolGroup>
-								<ToolGroup>
-									<Button
-										icon
-										className={ cx({
-											active: this.isEditorCommandState('insertunorderedlist')
-										})}
-										title="Bullet list"
-										data-command="insertunorderedlist"
-										onClick={ this.handleButtonClick }>
-										<Icon type="24/editor/bullet-list" className="touch" width="24" height="24" />
-										<Icon type="16/editor/bullet-list" className="mouse" width="16" height="16" />
-									</Button>
-									<Button
-										icon
-										className={ cx({
-											active: this.isEditorCommandState('insertorderedlist')
-										})}
-										title="Numbered list"
-										data-command="insertorderedlist"
-										onClick={ this.handleButtonClick }>
-										<Icon type="24/editor/numbered-list" className="touch" width="24" height="24" />
-										<Icon type="16/editor/numbered-list" className="mouse" width="16" height="16" />
-									</Button>
-									<Button
-										icon
-										title="Decrease indent"
-										data-command="outdent"
-										onClick={ this.handleButtonClick }>
-										<Icon type="24/editor/outdent" className="touch" width="24" height="24" />
-										<Icon type="16/editor/outdent" className="mouse" width="16" height="16" />
-									</Button>
-									<Button
-										icon
-										title="Increase indent"
-										data-command="indent"
-										onClick={ this.handleButtonClick }>
-										<Icon type="24/editor/indent" className="touch" width="24" height="24" />
-										<Icon type="16/editor/indent" className="mouse" width="16" height="16" />
-									</Button>
-								</ToolGroup>
-								<ToolGroup>
-									<Button
-										icon
-										title="Find and replace"
-										data-command="searchreplace"
-										onClick={ this.handleButtonClick }>
-										<Icon type="24/editor/magnifier" className="touch" width="24" height="24" />
-										<Icon type="16/magnifier" className="mouse" width="16" height="16" />
-									</Button>
-								</ToolGroup>
-								<ToolGroup>
-									<Dropdown
-										isOpen={ this.state.dropdowns['overflow-2'] }
-										toggle={ this.handleDropdownToggle}
-										data-dropdown="overflow-2"
-									>
-										<DropdownToggle
-											color={ null }
-											className="btn-icon dropdown-toggle"
-										>
-										<Icon type="24/options" width="24" height="24" />
-										</DropdownToggle>
-										<DropdownMenu right>
-											<DropdownItem
-												tag={ Button }
-												className="bullet-list"
-												title="Bullet list"
-												data-command="insertunorderedlist"
-												onClick={ this.handleButtonClick }
-											>
-												<Icon type="24/editor/bullet-list" className="touch" width="24" height="24" />
-												Bullet List
-											</DropdownItem>
-											<DropdownItem
-												tag={ Button }
-												className="numbered-list"
-												title="Numbered list"
-												data-command="insertorderedlist"
-												onClick={ this.handleButtonClick }
-											>
-												<Icon type="24/editor/numbered-list" className="touch" width="24" height="24" />
-												Numbered List
-											</DropdownItem>
-											<DropdownItem
-												tag={ Button }
-												className="outdent"
-												title="Decrease indent"
-												data-command="outdent"
-												onClick={ this.handleButtonClick }
-											>
-												<Icon type="24/editor/outdent" className="touch" width="24" height="24" />
-												Decrease Indent
-											</DropdownItem>
-											<DropdownItem
-												tag={ Button }
-												className="indent"
-												title="Increase indent"
-												data-command="indent"
-												onClick={ this.handleButtonClick }
-											>
-												<Icon type="24/editor/indent" className="touch" width="24" height="24" />
-												Increase Indent
-											</DropdownItem>
-										</DropdownMenu>
-									</Dropdown>
-								</ToolGroup>
-							</div>
-						</Toolbar>
-					</div>
-				)}
-				<div className="editor-container">
-					{ this.renderEditor() }
-				</div>
-			</div>
-		);
+const setColor = (editorRef, which, color) => {
+	if(!color) {
+		editorRef.editorCommands.execCommand('mceRemoveTextcolor', which);
+	} else {
+		editorRef.editorCommands.execCommand(which, undefined, color);
 	}
 }
 
+const isEditorCommandState = (editorRef, command) => {
+	return editorRef && editorRef.editorCommands.queryCommandState(command);
+}
+
+const queryFormatBlock = (editorRef) => {
+	const formatBlock = editorRef && editorRef.editorCommands.queryCommandValue('formatblock') || 'p';
+	return [formatBlock, (formatBlocks.find(fb => fb.value === formatBlock) || {}).label];
+}
+
+const RichEditor = React.memo(React.forwardRef((props, ref) => {
+	const { id, isReadOnly, onChange, value } = props;
+	const [hilitecolor, setHilitecolor] = useState(null);
+	const [content, setContent] = useState(value);
+	const [forecolor, setForecolor] = useState(null);
+	const [dropdowns, setDropdowns] = useState(defaultDropdowns);
+	const editor = useRef(null);
+	const wantsFocus = useRef(false);
+	const timer = useRef(null);
+	const dispatch = useDispatch();
+	const forceUpdate = useForceUpdate();
+	const tinymceRoot = useSelector(state => state.config.tinymceRoot);
+	const isTinymceFetching = useSelector(state => state.sources.fetching.includes('tinymce'));
+	const isTinymceFetched = useSelector(state => state.sources.fetched.includes('tinymce'));
+	const isSingleColumn = useSelector(state => state.device.isSingleColumn);
+	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
+	const [currentFormatBlock, currentFormatBlockLabel] = queryFormatBlock(editor.current);
+
+	useImperativeHandle(ref, () => ({
+		focus: () => {
+			if(editor.current) {
+				editor.current.focus();
+			} else {
+				wantsFocus.current = true;
+			}
+		}
+	}));
+
+	useEffect(() => {
+		if(!isTinymceFetched && !isTinymceFetching) {
+			dispatch(sourceFile('tinymce'));
+		}
+	}, []);
+
+	useEffect(() => {
+		// only reset content on "id" change, (not on "value" change which we actually use)
+		// normally we would key RichEditor with the value of id but this triggers TinyMCE
+		// to reinitialize which is costly. Thus instead we take id property and update
+		// content only when id changes. This allows us to re-use RichEditor but avoid
+		// updating content mid-edit (See #333)
+		setContent(value);
+	}, [id]);
+
+	const handleEditorInit = useCallback((ev, editorRef) => {
+		editor.current = editorRef;
+		if(wantsFocus.current) {
+			editorRef.focus();
+			wantsFocus.current = false;
+		}
+	});
+
+	const handleEditorChange = useCallback(newContent => {
+		if(newContent === content) {
+			return;
+		}
+
+		setContent(newContent);
+
+		clearTimeout(timer.current);
+		timer.current = setTimeout(() => {
+			onChange(newContent);
+		}, 500);
+	});
+
+	const handleButtonClick = useCallback(ev => {
+		if(!editor.current) { return; }
+		const { command, value } = ev.currentTarget.dataset;
+
+		if(command === 'forecolor') {
+			setColor(editor.current, command, forecolor);
+		} else if(command === 'hilitecolor') {
+			setColor(editor.current, command, hilitecolor);
+		} else {
+			editor.current.editorCommands.execCommand(command, undefined, value);
+		}
+	});
+
+	const handleFocus = useCallback(() => {
+		setDropdowns(defaultDropdowns);
+	});
+
+	const handleForeColorPicked = useCallback(color => {
+		setForecolor(color);
+		setColor(editor.current, 'forecolor', color);
+	});
+
+	const handleHiLiteColorPicked = useCallback(color => {
+		setHilitecolor(color);
+		setColor(editor.current, 'hilitecolor', color);
+	});
+
+	const handleDropdownToggle = useCallback(ev => {
+		const dropdown = 'closest' in ev.currentTarget && ev.currentTarget.closest('[data-dropdown]');
+		if(dropdown) {
+			const dropdownName = ev.currentTarget.closest('[data-dropdown]').dataset.dropdown;
+			setDropdowns({
+				...defaultDropdowns,
+				[dropdownName]: !dropdowns[dropdownName]
+			});
+		} else {
+			setDropdowns(defaultDropdowns);
+		}
+	});
+
+	const handleDropdownKeyDown = useCallback(ev => {
+		if(ev.key === 'Escape') {
+			setDropdowns(defaultDropdowns);
+			ev.stopPropagation();
+		}
+	});
+
+	const handleKeyDown = useCallback(ev => {
+		if(ev.key === 'Meta' && editor.current) {
+			editor.current.iframeElement.contentDocument.body.classList.add('meta-key');
+		}
+	});
+
+	const handleKeyUp = useCallback(ev => {
+		if(ev.key === 'Meta' && editor.current) {
+			editor.current.iframeElement.contentDocument.body.classList.remove('meta-key');
+		}
+	});
+
+	if(!isTinymceFetched) {
+		return <Spinner />;
+	}
+
+	return (
+		<div className="rich-editor">
+			{ isSingleColumn || !isReadOnly && (
+				<div className="toolbar-container">
+					<Toolbar className="dense">
+						<div className="toolbar-left">
+							<ToolGroup>
+								<Button
+									icon
+									className={ cx({
+										active: isEditorCommandState(editor.current, 'bold')
+									})}
+									title="Bold"
+									data-command="bold"
+									onClick={ handleButtonClick }>
+									<Icon type="24/editor/b" className="touch" width="24" height="24" />
+									<Icon type="16/editor/b" className="mouse" width="16" height="16" />
+								</Button>
+								<Button
+									icon
+									className={ cx({
+										active: isEditorCommandState(editor.current, 'italic')
+									})}
+									title="Italic"
+									data-command="italic"
+									onClick={ handleButtonClick }>
+									<Icon type="24/editor/i" className="touch" width="24" height="24" />
+									<Icon type="16/editor/i" className="mouse" width="16" height="16" />
+								</Button>
+								<Button
+									icon
+									className={ cx({
+										active: isEditorCommandState(editor.current, 'underline')
+									})}
+									title="Underline"
+									data-command="underline"
+									onClick={ handleButtonClick }>
+									<Icon type="24/editor/u" className="touch" width="24" height="24" />
+									<Icon type="16/editor/u" className="mouse" width="16" height="16" />
+								</Button>
+								<Button
+									icon
+									className={ cx({
+										active: isEditorCommandState(editor.current, 'strikethrough')
+									})}
+									title="strikethrough"
+									data-command="strikethrough"
+									onClick={ handleButtonClick }>
+									<Icon type="24/editor/s" className="touch" width="24" height="24" />
+									<Icon type="16/editor/s" className="mouse" width="16" height="16" />
+								</Button>
+							</ToolGroup>
+							<ToolGroup>
+								<Button
+									icon
+									className={ cx({
+										active: isEditorCommandState(editor.current, 'subscript')
+									})}
+									title="Subscript"
+									data-command="subscript"
+									onClick={ handleButtonClick }>
+									<Icon type="24/editor/sub" className="touch" width="24" height="24" />
+									<Icon type="16/editor/sub" className="mouse" width="16" height="16" />
+								</Button>
+								<Button
+									icon
+									className={ cx({
+										active: isEditorCommandState(editor.current, 'superscript')
+									})}
+									title="Superscript"
+									data-command="superscript"
+									onClick={ handleButtonClick }>
+									<Icon type="24/editor/sup" className="touch" width="24" height="24" />
+									<Icon type="16/editor/sup" className="mouse" width="16" height="16" />
+								</Button>
+							</ToolGroup>
+							<ToolGroup>
+								<Dropdown
+									isOpen={ dropdowns['forecolor'] }
+									toggle={ handleDropdownToggle }
+									data-dropdown="forecolor"
+									className="btn-group"
+								>
+									<Button
+										icon
+										data-command="forecolor"
+										onClick={ handleButtonClick }
+									>
+										<Icon type="24/editor/fore-color" className="touch" width="24" height="24" />
+										<Icon type="16/editor/fore-color" className="mouse" width="16" height="16" />
+										<Icon
+											type="24/editor/color-swatch"
+											className="touch"
+											color={ forecolor }
+											width="24"
+											height="24"
+										/>
+										<Icon
+											type="16/editor/color-swatch"
+											className="mouse"
+											color={ forecolor }
+											width="16"
+											height="16"
+										/>
+									</Button>
+									<DropdownToggle
+										color={ null }
+										onKeyDown={ handleDropdownKeyDown }
+										className="btn-icon dropdown-toggle"
+									>
+										<Icon type="16/chevron-9" className="touch" width="16" height="16" />
+										<Icon type="16/chevron-7" className="mouse" width="16" height="16" />
+									</DropdownToggle>
+									<ColorPicker onColorPicked={ handleForeColorPicked } />
+								</Dropdown>
+								<Dropdown
+									isOpen={ dropdowns['hilitecolor'] }
+									toggle={ handleDropdownToggle }
+									data-dropdown="hilitecolor"
+									className="btn-group"
+								>
+									<Button
+										icon
+										data-command="hilitecolor"
+										onClick={ handleButtonClick }
+									>
+										<Icon type="24/editor/hilite-color" className="touch" width="24" height="24" />
+										<Icon type="16/editor/hilite-color" className="mouse" width="16" height="16" />
+										<Icon
+											type="24/editor/color-swatch"
+											className="touch"
+											color={ hilitecolor }
+											width="24"
+											height="24"
+										/>
+										<Icon
+											type="16/editor/color-swatch"
+											className="mouse"
+											color={ hilitecolor }
+											width="16"
+											height="16"
+										/>
+									</Button>
+									<DropdownToggle
+										color={ null }
+										onKeyDown={ handleDropdownKeyDown }
+										className="btn-icon dropdown-toggle"
+									>
+										<Icon type="16/chevron-9" className="touch" width="16" height="16" />
+										<Icon type="16/chevron-7" className="mouse" width="16" height="16" />
+									</DropdownToggle>
+									<ColorPicker onColorPicked={ handleHiLiteColorPicked } />
+								</Dropdown>
+							</ToolGroup>
+							<ToolGroup>
+								<Button
+									icon
+									title="Clear formatting"
+									data-command="removeformat"
+									onClick={ handleButtonClick }>
+									<Icon type="24/editor/remove-format" className="touch" width="24" height="24" />
+									<Icon type="16/editor/remove-format" className="mouse" width="16" height="16" />
+								</Button>
+							</ToolGroup>
+							<ToolGroup>
+								<Button
+									icon
+									className={ cx({
+										active: isEditorCommandState(editor.current, 'mceblockquote')
+									})}
+									title="Blockquote"
+									data-command="mceblockquote"
+									onClick={ handleButtonClick }>
+									<Icon type="24/editor/blockquote" className="touch" width="24" height="24" />
+									<Icon type="16/editor/blockquote" className="mouse" width="16" height="16" />
+								</Button>
+								<Button
+									icon
+									title="Insert/edit link"
+									data-command="mceLink"
+									onClick={ handleButtonClick }>
+									<Icon type="24/editor/link" className="touch" width="24" height="24" />
+									<Icon type="16/editor/link" className="mouse" width="16" height="16" />
+								</Button>
+							</ToolGroup>
+							<ToolGroup>
+								<Dropdown
+									isOpen={ dropdowns['overflow-1'] }
+									toggle={ handleDropdownToggle }
+									data-dropdown="overflow-1"
+								>
+									<DropdownToggle
+										color={ null }
+										className="btn-icon dropdown-toggle"
+									>
+									<Icon type="24/options" width="24" height="24" />
+									</DropdownToggle>
+									<DropdownMenu right>
+										<DropdownItem
+											tag={ Button }
+											title="Subscript"
+											data-command="subscript"
+											onClick={ handleButtonClick }
+										>
+											<Icon type="24/editor/sub" className="touch" width="24" height="24" />
+											Subscript
+										</DropdownItem>
+										<DropdownItem
+											tag={ Button }
+											title="Superscript"
+											data-command="superscript"
+											onClick={ handleButtonClick }
+										>
+											<Icon type="24/editor/sup" className="touch" width="24" height="24" />
+											Superscript
+										</DropdownItem>
+										<DropdownItem divider />
+										<DropdownItem
+											tag={ Button }
+											className="remove-format"
+											title="Clear formatting"
+											data-command="removeformat"
+											onClick={ handleButtonClick }
+										>
+											<Icon type="24/editor/remove-format" className="touch" width="24" height="24" />
+											Clear Formatting
+										</DropdownItem>
+										<DropdownItem divider />
+										<DropdownItem
+											tag={ Button }
+											className="blockquote"
+											title="Blockquote"
+											data-command="mceblockquote"
+											onClick={ handleButtonClick }
+										>
+											<Icon type="24/editor/blockquote" className="touch" width="24" height="24" />
+											Blockquote
+										</DropdownItem>
+										<DropdownItem
+											tag={ Button }
+											className="link"
+											title="Insert/edit link"
+											data-command="mceLink"
+											onClick={ handleButtonClick }
+										>
+											<Icon type="24/editor/link" className="touch" width="24" height="24" />
+											Insert&#8202;/&#8202;Edit Link
+										</DropdownItem>
+									</DropdownMenu>
+								</Dropdown>
+							</ToolGroup>
+						</div>
+					</Toolbar>
+					<Toolbar className="dense">
+						<div className="toolbar-left">
+							<ToolGroup>
+							<Dropdown
+								isOpen={ dropdowns['formatblock'] }
+								toggle={ handleDropdownToggle }
+								data-dropdown="formatblock"
+							>
+									<DropdownToggle
+										color={ null }
+										onKeyDown={ handleDropdownKeyDown }
+										className="dropdown-toggle btn-icon format-block"
+									>
+										{ currentFormatBlockLabel }
+										<Icon type="16/chevron-9" className="touch" width="16" height="16" />
+										<Icon type="16/chevron-7" className="mouse" width="16" height="16" />
+									</DropdownToggle>
+									<DropdownMenu>
+										{
+											formatBlocks.map(({ value, label, Tag }) => (
+												<DropdownItem
+													onClick={ handleButtonClick }
+													data-command="formatblock"
+													data-value={ value }
+													key={ value }
+													className={ cx({ selected: value === currentFormatBlock })}
+												>
+													<Tag>{ label }</Tag>
+												</DropdownItem>
+											))
+										}
+									</DropdownMenu>
+							</Dropdown>
+							</ToolGroup>
+							<ToolGroup>
+								<Button
+									icon
+									className={ cx({
+										active: isEditorCommandState(editor.current, 'justifyleft')
+									})}
+									title="Align left"
+									data-command="justifyleft"
+									onClick={ handleButtonClick }>
+									<Icon type="24/editor/align-left" className="touch" width="24" height="24" />
+									<Icon type="16/editor/align-left" className="mouse" width="16" height="16" />
+								</Button>
+								<Button
+									icon
+									className={ cx({
+										active: isEditorCommandState(editor.current, 'justifycenter')
+									})}
+									title="Align center"
+									data-command="justifycenter"
+									onClick={ handleButtonClick }>
+									<Icon type="24/editor/align-center" className="touch" width="24" height="24" />
+									<Icon type="16/editor/align-center" className="mouse" width="16" height="16" />
+								</Button>
+								<Button
+									icon
+									className={ cx({
+										active: isEditorCommandState(editor.current, 'justifyright')
+									})}
+									title="Align right"
+									data-command="justifyright"
+									onClick={ handleButtonClick }>
+									<Icon type="24/editor/align-right" className="touch" width="24" height="24" />
+									<Icon type="16/editor/align-right" className="mouse" width="16" height="16" />
+								</Button>
+							</ToolGroup>
+							<ToolGroup>
+								<Button
+									icon
+									className={ cx({
+										active: isEditorCommandState(editor.current, 'insertunorderedlist')
+									})}
+									title="Bullet list"
+									data-command="insertunorderedlist"
+									onClick={ handleButtonClick }>
+									<Icon type="24/editor/bullet-list" className="touch" width="24" height="24" />
+									<Icon type="16/editor/bullet-list" className="mouse" width="16" height="16" />
+								</Button>
+								<Button
+									icon
+									className={ cx({
+										active: isEditorCommandState(editor.current, 'insertorderedlist')
+									})}
+									title="Numbered list"
+									data-command="insertorderedlist"
+									onClick={ handleButtonClick }>
+									<Icon type="24/editor/numbered-list" className="touch" width="24" height="24" />
+									<Icon type="16/editor/numbered-list" className="mouse" width="16" height="16" />
+								</Button>
+								<Button
+									icon
+									title="Decrease indent"
+									data-command="outdent"
+									onClick={ handleButtonClick }>
+									<Icon type="24/editor/outdent" className="touch" width="24" height="24" />
+									<Icon type="16/editor/outdent" className="mouse" width="16" height="16" />
+								</Button>
+								<Button
+									icon
+									title="Increase indent"
+									data-command="indent"
+									onClick={ handleButtonClick }>
+									<Icon type="24/editor/indent" className="touch" width="24" height="24" />
+									<Icon type="16/editor/indent" className="mouse" width="16" height="16" />
+								</Button>
+							</ToolGroup>
+							<ToolGroup>
+								<Button
+									icon
+									title="Find and replace"
+									data-command="searchreplace"
+									onClick={ handleButtonClick }>
+									<Icon type="24/editor/magnifier" className="touch" width="24" height="24" />
+									<Icon type="16/magnifier" className="mouse" width="16" height="16" />
+								</Button>
+							</ToolGroup>
+							<ToolGroup>
+								<Dropdown
+									isOpen={ dropdowns['overflow-2'] }
+									toggle={ handleDropdownToggle}
+									data-dropdown="overflow-2"
+								>
+									<DropdownToggle
+										color={ null }
+										className="btn-icon dropdown-toggle"
+									>
+									<Icon type="24/options" width="24" height="24" />
+									</DropdownToggle>
+									<DropdownMenu right>
+										<DropdownItem
+											tag={ Button }
+											className="bullet-list"
+											title="Bullet list"
+											data-command="insertunorderedlist"
+											onClick={ handleButtonClick }
+										>
+											<Icon type="24/editor/bullet-list" className="touch" width="24" height="24" />
+											Bullet List
+										</DropdownItem>
+										<DropdownItem
+											tag={ Button }
+											className="numbered-list"
+											title="Numbered list"
+											data-command="insertorderedlist"
+											onClick={ handleButtonClick }
+										>
+											<Icon type="24/editor/numbered-list" className="touch" width="24" height="24" />
+											Numbered List
+										</DropdownItem>
+										<DropdownItem
+											tag={ Button }
+											className="outdent"
+											title="Decrease indent"
+											data-command="outdent"
+											onClick={ handleButtonClick }
+										>
+											<Icon type="24/editor/outdent" className="touch" width="24" height="24" />
+											Decrease Indent
+										</DropdownItem>
+										<DropdownItem
+											tag={ Button }
+											className="indent"
+											title="Increase indent"
+											data-command="indent"
+											onClick={ handleButtonClick }
+										>
+											<Icon type="24/editor/indent" className="touch" width="24" height="24" />
+											Increase Indent
+										</DropdownItem>
+									</DropdownMenu>
+								</Dropdown>
+							</ToolGroup>
+						</div>
+					</Toolbar>
+				</div>
+			)}
+			<div className="editor-container">
+				{
+					process.env.NODE_ENV === 'test' ? null : (
+						<Editor
+							disabled={ isReadOnly }
+							value={ content }
+							init={{
+								base_url: tinymceRoot,
+								body_class: cx({ 'touch': isTouchOrSmall }),
+								branding: false,
+								content_css: '/static/tinymce-content.css',
+								height: '100%',
+								invalid_elements: invalidElements,
+								link_context_toolbar: true,
+								menubar: false,
+								mobile: { theme: 'silver' },
+								plugins: 'link searchreplace',
+								statusbar: false,
+								theme: 'silver',
+								toolbar: false,
+								valid_elements: validElements,
+							}}
+							onEditorChange={ handleEditorChange }
+							onFocus={ handleFocus }
+							onInit={ handleEditorInit }
+							onKeyDown={ handleKeyDown }
+							onKeyUp={ handleKeyUp }
+							onSelectionChange={ forceUpdate }
+						/>
+					)
+				}
+			</div>
+		</div>
+	);
+}));
+
 RichEditor.propTypes = {
-	device: PropTypes.object,
+	id: PropTypes.string,
 	isReadOnly: PropTypes.bool,
-	isTinymceFetched: PropTypes.bool,
-	isTinymceFetching: PropTypes.bool,
 	onChange: PropTypes.func.isRequired,
-	sourceFile: PropTypes.func,
-	tinymceRoot: PropTypes.string,
 	value: PropTypes.string,
 };
 
-RichEditor.defaultProps = {
-	tinymceRoot: '/'
-};
+RichEditor.displayName = 'RichEditor';
 
 export default RichEditor;

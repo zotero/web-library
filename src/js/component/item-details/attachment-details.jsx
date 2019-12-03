@@ -2,11 +2,10 @@ import React, { useCallback } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import PropTypes from 'prop-types';
 
-import RichEditorContainer from '../../container/rich-editor';
+import RichEditor from '../../component/rich-editor';
 import { dateLocalized } from '../../common/format';
 import { get, openAttachment } from '../../utils';
 import { getAttachmentUrl, updateItem } from '../../actions/';
-
 
 const AttachmentDetails = ({ attachmentKey, isReadOnly }) => {
 	const dispatch = useDispatch();
@@ -21,9 +20,9 @@ const AttachmentDetails = ({ attachmentKey, isReadOnly }) => {
 		openAttachment(item.key, dispatchGetAttachmentUrl, true);
 	});
 
-	const handleChangeNote = newContent => {
+	const handleChangeNote = useCallback(newContent => {
 		dispatch(updateItem(attachmentKey, { note: newContent }));
-	}
+	});
 
 	return (
 		<React.Fragment>
@@ -89,7 +88,8 @@ const AttachmentDetails = ({ attachmentKey, isReadOnly }) => {
 				</li>
 			) }
 		</ol>
-		<RichEditorContainer
+		<RichEditor
+			id={ item.key }
 			isReadOnly={ isReadOnly }
 			value={ item.note }
 			onChange={ handleChangeNote }
@@ -103,4 +103,4 @@ AttachmentDetails.propTypes = {
 	isReadOnly: PropTypes.bool,
 }
 
-export default AttachmentDetails;
+export default React.memo(AttachmentDetails);

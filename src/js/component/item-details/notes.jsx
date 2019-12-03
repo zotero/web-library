@@ -9,7 +9,7 @@ import { useSelector } from 'react-redux';
 
 import Button from '../ui/button';
 import Icon from '../ui/icon';
-import RichEditorContainer from '../../container/rich-editor';
+import RichEditor from '../../component/rich-editor';
 import withDevice from '../../enhancers/with-device';
 import withEditMode from '../../enhancers/with-edit-mode';
 
@@ -170,34 +170,34 @@ const Notes = props => {
 		}, 0);
 	}, [selectedNote]);
 
-	const handleChangeNote = newContent => {
+	const handleChangeNote = useCallback(newContent => {
 		updateItem(noteKey, { note: newContent });
-	}
+	});
 
-	const handleSelect = note => {
+	const handleSelect = useCallback(note => {
 		navigate({ noteKey: note.key });
-	}
+	});
 
-	const handleDelete = note => {
+	const handleDelete = useCallback(note => {
 		moveToTrash([note.key]);
 		navigate({ note: null });
-	}
+	});
 
-	const handleDuplicate = async note => {
+	const handleDuplicate = useCallback(async note => {
 		const noteTemplate = await fetchItemTemplate('note');
 		const item = { ...noteTemplate, parentItem: itemKey, note: note.note };
 		const createdItem = await createItem(item, libraryKey);
 		addedNoteKey.current = createdItem.key;
 		navigate({ noteKey: createdItem.key });
-	}
+	});
 
-	const handleAddNote = async () => {
+	const handleAddNote = useCallback(async () => {
 		const noteTemplate = await fetchItemTemplate('note');
 		const item = { ...noteTemplate, parentItem: itemKey, note: '' };
 		const createdItem = await createItem(item, libraryKey);
 		addedNoteKey.current = createdItem.key;
 		navigate({ noteKey: createdItem.key });
-	}
+	});
 
 	return (
 		<TabPane
@@ -261,11 +261,12 @@ const Notes = props => {
 			</div>
 
 			{ !device.isTouchOrSmall && selectedNote && (
-				<RichEditorContainer
-					ref={ editorRef }
+				<RichEditor
+					id={ noteKey }
 					isReadOnly={ isReadOnly }
-					value={ selectedNote.note }
 					onChange={ handleChangeNote }
+					ref={ editorRef }
+					value={ selectedNote.note }
 				/>
 			) }
 		</TabPane>
