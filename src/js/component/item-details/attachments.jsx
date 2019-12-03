@@ -22,6 +22,24 @@ import { navigate, sourceFile, updateItem } from '../../actions';
 import { pluralize } from '../../common/format';
 import AttachmentDetails from './attachment-details';
 
+const AttachmentIcon = ({ device, isActive, item, size }) => {
+	const { iconName } = item[Symbol.for('derived')];
+	const suffix = device.isTouchOrSmall ? 'active' : 'white';
+	const symbol = isActive ? `${iconName}-${suffix}` : iconName;
+	const dvp = window.devicePixelRatio >= 2 ? 2 : 1;
+	const path = device.isTouchOrSmall ?
+		`28/item-types/light/${iconName}` : `16/item-types/light/${dvp}x/${iconName}`;
+
+	return <Icon type={ path } symbol={ symbol} width={ size } height={ size } />
+};
+
+AttachmentIcon.propTypes = {
+	device: PropTypes.object.isRequired,
+	isActive: PropTypes.bool,
+	item: PropTypes.object.isRequired,
+	size: PropTypes.string.isRequired,
+};
+
 const AttachmentDownloadIcon = props => {
 	const { attachment, device, isUploading, getAttachmentUrl } = props;
 	const iconSize = device.isTouchOrSmall ? '24' : '16';
@@ -57,20 +75,21 @@ const AttachmentDownloadIcon = props => {
 			</a>
 		) : null
 	);
-}
+};
 
 AttachmentDownloadIcon.propTypes = {
 	attachment: PropTypes.object,
 	device: PropTypes.object.isRequired,
 	getAttachmentUrl: PropTypes.func.isRequired,
 	isUploading: PropTypes.bool,
-}
+};
 
 const Attachment = props => {
 	const { attachment, device, moveToTrash, itemKey, isReadOnly, isUploading, libraryKey,
 		getAttachmentUrl, onKeyDown } = props;
 	const attachmentKey = useSelector(state => state.current.attachmentKey);
 	const dispatch = useDispatch();
+	const [isFocused, setIsFocused] = useState(false);
 	const [_, drag] = useDrag({ // eslint-disable-line no-unused-vars
 		item: { type: ATTACHMENT, itemKey, libraryKey },
 		end: (item, monitor) => {
@@ -101,15 +120,13 @@ const Attachment = props => {
 		dispatch(navigate({ attachmentKey: attachment.key }));
 	});
 
-	const getItemIcon = item => {
-		const { iconName } = item[Symbol.for('derived')];
-		const dvp = window.devicePixelRatio >= 2 ? 2 : 1;
-		return device.isTouchOrSmall ?
-			`28/item-types/light/${iconName}` : `16/item-types/light/${dvp}x/${iconName}`;
-	}
-
 	const handleFocus = useCallback(() => {
 		dispatch(navigate({ attachmentKey: attachment.key }));
+		setIsFocused(true);
+	});
+
+	const handleBlur = useCallback(() => {
+		setIsFocused(false);
 	});
 
 	return (
@@ -120,6 +137,7 @@ const Attachment = props => {
 			onKeyDown={ handleKeyDown }
 			onClick={ handleAttachmentSelect }
 			onFocus={ handleFocus }
+			onBlur={ handleBlur }
 			tabIndex={ -2 }
 		>
 			{ (device.isTouchOrSmall && !isReadOnly) && (
@@ -131,7 +149,12 @@ const Attachment = props => {
 					<Icon type="16/minus-strong" width="16" height="16" />
 				</Button>
 			) }
-			<Icon type={ getItemIcon(attachment) } width={ iconSize } height={ iconSize } />
+			<AttachmentIcon
+				item={ attachment }
+				size={ iconSize }
+				device={ device }
+				isActive={ isFocused && isSelected }
+			/>
 			<div className="truncate">
 				{ attachment.title ||
 					(attachment.linkMode === 'linked_url' ? attachment.url : attachment.filename)
@@ -156,7 +179,7 @@ const Attachment = props => {
 			)}
 		</li>
 	);
-}
+};
 
 Attachment.propTypes = {
 	attachment: PropTypes.object,
@@ -165,9 +188,10 @@ Attachment.propTypes = {
 	isReadOnly: PropTypes.bool,
 	isUploading: PropTypes.bool,
 	itemKey: PropTypes.string,
+	libraryKey: PropTypes.string,
 	moveToTrash: PropTypes.func,
 	onKeyDown: PropTypes.func.isRequired,
-}
+};
 
 const AttachmentDetailsWrap = ({ isReadOnly }) => {
 	const attachmentKey = useSelector(state => state.current.attachmentKey);
@@ -188,7 +212,7 @@ const AttachmentDetailsWrap = ({ isReadOnly }) => {
 			</div>
 		);
 	}
-}
+};
 
 const PAGE_SIZE = 100;
 
@@ -237,7 +261,7 @@ const Attachments = props => {
 		}
 	}, []);
 
-	const handleFileInputChange = async ev => {
+	const handleFileInputChange = useCallback(async ev => {
 		const fileDataPromise = getFileData(ev.currentTarget.files[0]);
 		const attachmentTemplatePromise = fetchItemTemplate(
 			'attachment', { linkMode: 'imported_file' }
@@ -255,9 +279,9 @@ const Attachments = props => {
 		};
 		const item = await createItem(attachment, libraryKey);
 		await uploadAttachment(item.key, fileData);
-	}
+	});
 
-	const handleKeyDown = ev => {
+	const handleKeyDown = useCallback(ev => {
 		if(ev.key === "ArrowLeft") {
 			onDrillDownPrev(ev);
 		} else if(ev.key === "ArrowRight") {
@@ -270,7 +294,7 @@ const Attachments = props => {
 			ev.target.click();
 			ev.preventDefault();
 		}
-	}
+	});
 
 	return (
 		<TabPane
@@ -361,7 +385,7 @@ const Attachments = props => {
 			}
 		</TabPane>
 	);
-}
+};
 
 Attachments.propTypes = {
 	childItems: PropTypes.array,
@@ -377,6 +401,8 @@ Attachments.propTypes = {
 	itemKey: PropTypes.string,
 	libraryKey: PropTypes.string,
 	onBlur: PropTypes.func,
+	onDrillDownNext: PropTypes.func,
+	onDrillDownPrev: PropTypes.func,
 	onFocus: PropTypes.func,
 	onFocusNext: PropTypes.func,
 	onFocusPrev: PropTypes.func,
