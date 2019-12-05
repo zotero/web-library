@@ -14,7 +14,7 @@ import BibliographyModalContainer from '../container/modal/bibliography';
 import CustomDragLayer from '../component/drag-layer';
 import ExportModalContainer from '../container/modal/export';
 import ItemDetails from '../component/item/details';
-import ItemsContainer from '../container/items';
+import Items from '../component/item/items2';
 import ItemsSortModalContainer from '../container/modal/items-sort';
 import LibrariesContainer from '../container/libraries';
 import Messages from '../component/messages';
@@ -162,7 +162,7 @@ const Library = props => {
 										className="hidden-xs-down hidden-md-up darker"
 										variant={ TouchHeaderContainer.variants.SOURCE_AND_ITEM }
 									/>
-									<ItemsContainer key={ key } { ...{isSearchModeTransitioning} } />
+									<Items key={ key } isSearchModeTransitioning={ isSearchModeTransitioning } />
 									<ItemDetails active={ view === 'item-details' } />
 									{ device.isTouchOrSmall && <TouchNoteContainer /> }
 									<CSSTransition

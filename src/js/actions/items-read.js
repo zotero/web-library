@@ -4,6 +4,7 @@ import { SORT_ITEMS, REQUEST_ATTACHMENT_URL, RECEIVE_ATTACHMENT_URL, ERROR_ATTAC
 import api from 'zotero-api-client';
 import { extractItems } from '../common/actions';
 import { mapRelationsToItemKeys } from '../utils';
+import columnSortKeyLookup from '../constants/column-sort-key-lookup';
 
 const getApi = ({ config, libraryKey }, requestType, queryConfig) => {
 	switch(requestType) {
@@ -215,6 +216,45 @@ const getAttachmentUrl = itemKey => {
 	}
 }
 
+const PAGE_SIZE = 100;
+const fetchSource = (startIndex, stopIndex) => {
+	let start = startIndex;
+	let limit = (stopIndex - startIndex) + 1;
+	// when filling in holes, fetch PAGE_SIZE around it. Fixes rare
+	// cases where our sorting doesn't match api sorting and we miss
+	// the item that was just created.
+	if(limit === 1) {
+		start = Math.max(0, start - PAGE_SIZE / 2);
+		limit = PAGE_SIZE;
+	}
+
+	return async (dispatch, getState) => {
+		const state = getState();
+		const { collectionKey, isTrash, isMyPublications, itemsSource, search: q, qmode,
+			tags: tag = [] } = state.current;
+		const { field: sortBy, sort: sortDirection } = state.preferences.columns.find(
+			column => 'sort' in column) || { field: 'title', sort: 'ASC' };
+
+		const direction = sortDirection.toLowerCase();
+		const sort = columnSortKeyLookup[sortBy] || 'title';
+		const sortAndDirection = { start, limit, sort, direction };
+
+		switch(itemsSource) {
+			case 'query':
+				return await dispatch(fetchItemsQuery({ collectionKey, isMyPublications,
+					isTrash, q, tag, qmode }, sortAndDirection));
+			case 'top':
+				return await dispatch(fetchTopItems(sortAndDirection));
+			case 'trash':
+				return await dispatch(fetchTrashItems(sortAndDirection));
+			case 'publications':
+				return await dispatch(fetchPublicationsItems(sortAndDirection));
+			case 'collection':
+				return await dispatch(fetchItemsInCollection(collectionKey, sortAndDirection));
+		}
+	}
+}
+
 export {
 	fetchChildItems,
 	fetchItemsByKeys,
@@ -222,6 +262,7 @@ export {
 	fetchItemsQuery,
 	fetchPublicationsItems,
 	fetchRelatedItems,
+	fetchSource,
 	fetchTopItems,
 	fetchTrashItems,
 	getAttachmentUrl,

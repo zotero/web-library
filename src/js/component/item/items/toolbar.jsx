@@ -24,13 +24,16 @@ class ItemsTableToolbar extends React.PureComponent {
 						<ItemsActionsContainer { ...pick(this.props, ['onFocusNext', 'onFocusPrev']) } />
 					</div>
 					<div className="toolbar-right">
-						<ColumnSelector
-							tabIndex={ -2 }
-							columns = { preferences.columns }
-							{ ...pick(this.props, ['itemFields', 'onColumnVisibilityChange',
-								'onFocusNext', 'onFocusPrev'])
-							}
-					/>
+						{
+						//@TODO COLUMN SELECTOR
+						// <ColumnSelector
+						// 	tabIndex={ -2 }
+						// 	columns = { preferences.columns }
+						// 	{ ...pick(this.props, ['itemFields', 'onColumnVisibilityChange',
+						// 		'onFocusNext', 'onFocusPrev'])
+						// 	}
+						}
+					COLUMNS
 					</div>
 				</Toolbar>
 			</header>

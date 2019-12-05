@@ -10,6 +10,33 @@ const useFetchingState = path => {
 	return { isFetching, isFetched, keys, hasChecked, hasMoreItems, pointer, totalResults };
 };
 
+const useSourceData = () => {
+	const collectionKey = useSelector(state => state.current.collectionKey);
+	const itemsSource = useSelector(state => state.current.itemsSource);
+	const libraryKey = useSelector(state => state.current.libraryKey);
+	var path;
+
+	switch(itemsSource) {
+		case 'query':
+			path = ['query'];
+		break;
+		case 'top':
+			path = ['libraries', libraryKey, 'itemsTop'];
+		break;
+		case 'trash':
+			path = ['libraries', libraryKey, 'itemsTrash'];
+		break;
+		case 'publications':
+			path = ['itemsPublications'];
+		break;
+		case 'collection':
+			path = ['libraries', libraryKey, 'itemsByCollection', collectionKey];
+		break;
+	}
+
+	return useFetchingState(path);
+};
+
 const useTagsData = () => {
 	const collectionKey = useSelector(state => state.current.collectionKey);
 	const itemsSource = useSelector(state => state.current.itemsSource);
@@ -43,4 +70,4 @@ const useTagsData = () => {
 	return { isFetching, isFetched, tags, hasChecked, hasMoreItems, pointer, totalResults };
 }
 
-export { useFetchingState, useTagsData };
+export { useFetchingState, useSourceData, useTagsData };

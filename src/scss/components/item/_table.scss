@@ -187,7 +187,7 @@
 		}
 	}
 
-	.ReactVirtualized__Table__Grid {
+	.items-table-body {
 		padding-top: $space-min / 2;
 	 	background-image: repeating-linear-gradient(to bottom, $item-table-odd-bg $space-min / 2,
 	 		$item-table-odd-bg ($item-table-row-height + $space-min / 2),
@@ -212,7 +212,7 @@
 		&.active {
 			background-color: $item-table-active-bg;
 
-			@include state(".ReactVirtualized__Table__Grid:focus .item") {
+			@include state(".items-table-body:focus .item") {
 				color: $item-table-focus-color;
 				background-color: $item-table-focus-bg;
 			}
