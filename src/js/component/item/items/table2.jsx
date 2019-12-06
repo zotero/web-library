@@ -7,7 +7,7 @@ import InfiniteLoader from "react-window-infinite-loader";
 import { FixedSizeList as List } from 'react-window';
 
 import columnNames from '../../../constants/column-names';
-import { fetchSource, openAttachment } from '../../../actions';
+import { fetchSource, navigate, openAttachment } from '../../../actions';
 import { useSourceData } from '../../../hooks';
 import Icon from '../../ui/icon';
 // import CustomTable from '../../../react-virtualized/custom-table';
@@ -105,30 +105,111 @@ const PlaceholderCell = props => {
 	);
 }
 
+const selectItem = (itemKey, ev, keys, selectedItemKeys, dispatch) => {
+	const isCtrlModifier = ev.getModifierState('Control') || ev.getModifierState('Meta');
+	const isShiftModifier = ev.getModifierState('Shift');
+	var newKeys;
+
+	if(isShiftModifier) {
+		let startIndex = selectedItemKeys.length ? keys.findIndex(key => key && key === selectedItemKeys[0]) : 0;
+		let endIndex = keys.findIndex(key => key && key === itemKey);
+		let isFlipped = false;
+		if(startIndex > endIndex) {
+			[startIndex, endIndex] = [endIndex, startIndex];
+			isFlipped = true;
+		}
+
+		endIndex++;
+		newKeys = keys.slice(startIndex, endIndex);
+		if(isFlipped) {
+			newKeys.reverse();
+		}
+	} else if(isCtrlModifier) {
+		if(selectedItemKeys.includes(itemKey)) {
+			newKeys = selectedItemKeys.filter(key => key !== itemKey);
+		} else {
+			newKeys = [...(new Set([...selectedItemKeys, itemKey]))];
+		}
+	} else {
+		newKeys = [itemKey];
+	}
+	dispatch(navigate({ items: newKeys }));
+}
+
 const Row = props => {
+	const dispatch = useDispatch();
+	const ignoreClicks = useRef({});
 	const { data, index, style } = props;
-	const { keys, width, columns } = data;
-	const itemKey = keys[index];
+	const { isFocused, keys, width, columns } = data;
+	const itemKey = keys ? keys[index] : null;
 	const itemData = useSelector(
 		state => itemKey ?
 			state.libraries[state.current.libraryKey].items[itemKey][Symbol.for('derived')]
 			: null
 	);
+	const selectedItemKeys = useSelector(state => state.current.itemKey ?
+		[state.current.itemKey] : state.current.itemKeys,
+		shallowEqual
+	);
+	const isActive = itemKey && selectedItemKeys.includes(itemKey);
 
 	const className = cx('item', {
 		odd: (index + 1) % 2 === 1,
 		'nth-4n-1': (index + 2) % 4 === 0,
 		'nth-4n': (index + 1) % 4 === 0,
-		// active: items[index] && selectedItemKeys.includes(items[index].key)
+		active: isActive
 	});
-	const isFocused = false; //@TODO
-	const isActive = false; //@TODO
+
+	//@NOTE: In order to allow item selection on "mousedown" (#161)
+	//		 this event fires twice, once on "mousedown", once on "click".
+	//		 Click events are discarded unless "mousedown" could
+	//		 have been triggered as a drag event in which case "mousedown"
+	//		 is ignored and "click" is used instead, if occurs.
+	const handleMouseEvent = event => {
+		if(itemData) {
+			const isSelected = selectedItemKeys.includes(itemKey);
+			if(selectedItemKeys.length > 1 &&
+				isSelected && event.type === 'mousedown') {
+				// ignore a "mousedown" when user might want to drag items
+				return;
+			} else {
+				if(selectedItemKeys.length > 1 && isSelected &&
+					event.type === 'click') {
+					const isFollowUp = itemKey in ignoreClicks.current &&
+						Date.now() - ignoreClicks.current[itemKey] < 500;
+
+					if(isFollowUp) {
+						// ignore a follow-up click, it has been handled as "mousedown"
+						return;
+					} else {
+						// handle a "click" event that has been missed by "mousedown" handler
+						// in anticipation of potential drag that has never happened
+						selectItem(itemKey, event, keys, selectedItemKeys, dispatch);
+						delete ignoreClicks.current[itemKey];
+						return
+					}
+				}
+				//@TODO: handle double click to open attachment
+				// if(event.type === 'dblclick' && item.attachmentItemKey) {
+				// 	openAttachment(item.attachmentItemKey, getAttachmentUrl, true);
+				// }
+			}
+			if(event.type === 'mousedown') {
+				// finally handle mousedowns as select events
+				ignoreClicks.current[itemKey] = Date.now();
+				selectItem(itemKey, event, keys, selectedItemKeys, dispatch);
+			}
+		}
+	}
 
 	return (
 		<div
 			className={ className }
 			style={ style }
 			data-index={ index }
+			onClick={ handleMouseEvent }
+			onDoubleClick={ handleMouseEvent }
+			onMouseDown={ handleMouseEvent }
 		>
 			{ columns.map((c, colIndex) => itemData ? (
 				<DataCell
@@ -153,9 +234,9 @@ const Row = props => {
 const Table = props => {
 	const containerDom = useRef(null);
 	const loader = useRef(null);
-	const ignoreClicks = useRef({});
 	const [isResizing, setIsResizing] = useState(false);
 	const [isReordering, setIsReordering] = useState(false);
+	const [isFocused, setIsFocused] = useState(false);
 	const { hasChecked, isFetching, keys, totalResults } = useSourceData();
 	const columnsData = useSelector(state => state.preferences.columns, shallowEqual);
 	const columns = useMemo(() => columnsData.filter(c => c.isVisible), [columnsData]);
@@ -170,9 +251,21 @@ const Table = props => {
 
 	const dispatch = useDispatch();
 	const handleKeyDown = useCallback(() => {});
-	const handleFocus = useCallback(() => {});
-	const handleBlur = useCallback(() => {});
-	const handleIsItemLoaded = useCallback(index => !!keys[index]);
+	const handleFocus = useCallback(ev => {
+		ev.preventDefault();
+		if(selectedItemKeys.length === 0 && keys.length > 0) {
+			dispatch(navigate({
+				items: [keys[0]]
+			}));
+		}
+		setIsFocused(true);
+	});
+
+	const handleBlur = useCallback(() => {
+		setIsFocused(false);
+	});
+
+	const handleIsItemLoaded = useCallback(index => keys && !!keys[index]);
 	const handleLoadMore = useCallback((startIndex, stopIndex) => {
 		dispatch(fetchSource(startIndex, stopIndex))
 	});
@@ -203,7 +296,12 @@ const Table = props => {
 						loadMoreItems={ handleLoadMore }
 					>
 						{({ onItemsRendered, ref }) => (
-							<div className="items-table">
+							<div
+								className="items-table"
+								onFocus={ handleFocus }
+								onBlur={ handleBlur }
+								tabIndex={ 0 }
+							>
 								<HeaderRow
 									columns={ columns }
 									width={ width }
@@ -212,7 +310,7 @@ const Table = props => {
 									className="items-table-body"
 									height={ height }
 									itemCount={ totalResults }
-									itemData={ { columns, width, keys } }
+									itemData={ { isFocused, columns, width, keys } }
 									itemSize={ ROWHEIGHT }
 									onItemsRendered={ onItemsRendered }
 									ref={ ref }

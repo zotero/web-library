@@ -34,6 +34,12 @@
 }
 
 .items-table {
+	&:focus {
+		.keyboard & {
+			outline: none;
+		}
+	}
+
 	.items-table-head {
 		display: flex;
 		flex-direction: row;
@@ -194,12 +200,6 @@
 	 		transparent ($item-table-row-height + $space-min / 2),
 	 		transparent (2 * $item-table-row-height + $space-min / 2));
 	 	background-attachment: local;
-
-	 	&:focus {
-			.keyboard & {
-				outline: none;
-			}
-		}
 	}
 
 	.item {
@@ -212,7 +212,7 @@
 		&.active {
 			background-color: $item-table-active-bg;
 
-			@include state(".items-table-body:focus .item") {
+			@include state(".items-table:focus .item") {
 				color: $item-table-focus-color;
 				background-color: $item-table-focus-bg;
 			}
