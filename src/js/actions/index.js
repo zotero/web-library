@@ -1,10 +1,9 @@
-'use strict';
-
 export * from "./collections";
 export * from "./groups";
 export * from "./identifier";
 export * from "./init";
 export * from "./items-export";
+export * from "./items-other";
 export * from "./items-read";
 export * from "./items-write";
 export * from "./library";

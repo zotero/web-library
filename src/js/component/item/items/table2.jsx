@@ -7,21 +7,25 @@ import InfiniteLoader from "react-window-infinite-loader";
 import { FixedSizeList as List } from 'react-window';
 
 import columnNames from '../../../constants/column-names';
-import { fetchSource, navigate, openAttachment } from '../../../actions';
+import { fetchSource, navigate, openAttachment, updateItemsSorting } from
+	'../../../actions';
 import { useSourceData } from '../../../hooks';
 import Icon from '../../ui/icon';
-// import CustomTable from '../../../react-virtualized/custom-table';
+import { pick } from '../../../common/immutable';
 
 const ROWHEIGHT = 26;
 
 const Cell = props => {
-	const { width, index, children, columnName } = props;
+	const { className, width, onClick, index, children, columnName } = props;
 
 	return (
 		<div
-			style={ { width } }
 			aria-colindex={ index }
-			className={ cx('metadata', columnName) }
+			className={ cx('metadata', columnName, className) }
+			data-column-name={ columnName }
+			style={ { width } }
+			onClick={ onClick }
+			{ ...pick(props, key => key.match(/^(aria-|data-).*/)) }
 		>
 			{ children }
 		</div>
@@ -29,20 +33,41 @@ const Cell = props => {
 }
 
 const HeaderRow = props => {
-	const { columns, width } = props;
+	const dispatch = useDispatch();
+	const { columns, width, sortBy, sortDirection } = props;
+
+	const handleClick = ev => {
+		const { columnName } = ev.currentTarget.dataset;
+		dispatch(
+			updateItemsSorting(
+				columnName,
+				columnName === sortBy ? sortDirection === 'asc' ? 'desc' : 'asc' : 'desc'
+			)
+		);
+	}
 
 	return (
 		<div className="items-table-head" style={ { height: ROWHEIGHT, width } }>
 			{ columns.map((c, colIndex) => (
 				<Cell
-					width={ c.fraction * width }
-					key={ c.field }
+					aria-sort={ sortDirection === 'asc' ? 'ascending' : 'descending' }
+					className='column-header'
 					columnName={ c.field }
 					index={ colIndex }
+					key={ c.field }
+					onClick={ handleClick }
+					width={ c.fraction * width }
 				>
 					<div className="header-label truncate">
-						{ c.field in columnNames ? columnNames[c.field] : c.field }
+						{
+							c.field === 'attachment' ?
+								<Icon type={ '16/attachment' } width="16" height="16" /> :
+								c.field in columnNames ? columnNames[c.field] : c.field
+						}
 					</div>
+					{ sortBy === c.field &&
+						<Icon type={ '16/chevron-7' } width="16" height="16" className="sort-indicator" />
+					}
 				</Cell>
 			))}
 		</div>
@@ -269,13 +294,18 @@ const Table = props => {
 	const handleLoadMore = useCallback((startIndex, stopIndex) => {
 		dispatch(fetchSource(startIndex, stopIndex))
 	});
-	const handleRowMouseEvent = useCallback(() => {});
 
 	useEffect(() => {
 		if(!hasChecked && !isFetching) {
 			dispatch(fetchSource(0, 50));
 		}
 	}, []);
+
+	useEffect(() => {
+		if(loader.current) {
+			loader.current.resetloadMoreItemsCache(true);
+		}
+	}, [sortBy, sortDirection, totalResults]);
 
 	return (
 		<div
@@ -291,6 +321,7 @@ const Table = props => {
 				<AutoSizer>
 				{({ height, width }) => (
 					<InfiniteLoader
+						ref={ loader }
 						isItemLoaded={ handleIsItemLoaded }
 						itemCount={ totalResults }
 						loadMoreItems={ handleLoadMore }
@@ -304,6 +335,8 @@ const Table = props => {
 							>
 								<HeaderRow
 									columns={ columns }
+									sortBy={ sortBy }
+									sortDirection={ sortDirection }
 									width={ width }
 								/>
 								<List

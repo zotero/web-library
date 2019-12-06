@@ -4,23 +4,13 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import hoistNonReactStatic from 'hoist-non-react-statics';
-import { preferenceChange, sortItems } from '../actions';
-import { omit } from '../common/immutable';
+import { preferenceChange, sortItems, updateItemsSorting } from '../actions';
 
+//@NOTE: legacy enhancer component, updateItemsSorting directly
 var withSortItems = Component => {
 	class EnhancedComponent extends React.PureComponent {
 		handleSort = async ({ sortBy, sortDirection }) => {
-			const { preferences, preferenceChange, sortItems } = this.props;
-			preferenceChange('columns', preferences.columns.map(column => {
-				if(column.field === sortBy) {
-					return { ...column, sort: sortDirection }
-				} else {
-					return omit(column, 'sort');
-				}
-			}));
-			await sortItems(
-				sortBy, sortDirection.toLowerCase() // react-virtualised uses ASC/DESC, zotero asc/desc
-			);
+			return updateItemsSorting(sortBy, sortDirection);
 		}
 
 		render() {
@@ -41,7 +31,7 @@ var withSortItems = Component => {
 	}
 
 	return connect(
-			mapStateToProps, { preferenceChange, sortItems }
+			mapStateToProps, { preferenceChange, sortItems, updateItemsSorting }
 		)(hoistNonReactStatic(EnhancedComponent, Component));
 }
 
