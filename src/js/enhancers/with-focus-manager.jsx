@@ -3,6 +3,7 @@
 import React from 'react';
 import hoistNonReactStatic from 'hoist-non-react-statics';
 
+//@TODO: Migrate enhanced components to use useFocusManager hook
 const withFocusManager = Component => {
 	const isModifierKey = ev => ev.getModifierState("Meta") || ev.getModifierState("Alt") ||
 		ev.getModifierState("Control") || ev.getModifierState("OS");

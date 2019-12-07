@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { forwardRef, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import cx from 'classnames';
 
@@ -7,16 +7,16 @@ import InfiniteLoader from "react-window-infinite-loader";
 import { FixedSizeList as List } from 'react-window';
 
 import columnNames from '../../../constants/column-names';
-import { fetchSource, navigate, openAttachment, updateItemsSorting } from
+import { chunkedTrashOrDelete, fetchSource, navigate, openAttachment, updateItemsSorting } from
 	'../../../actions';
-import { useSourceData } from '../../../hooks';
+import { useFocusManager, useSourceData } from '../../../hooks';
 import Icon from '../../ui/icon';
 import { pick } from '../../../common/immutable';
 
 const ROWHEIGHT = 26;
 
 const Cell = props => {
-	const { className, width, onClick, index, children, columnName } = props;
+	const { children, className, columnName, index, width } = props;
 
 	return (
 		<div
@@ -24,7 +24,7 @@ const Cell = props => {
 			className={ cx('metadata', columnName, className) }
 			data-column-name={ columnName }
 			style={ { width } }
-			onClick={ onClick }
+			{ ...pick(props, ['onClick', 'onKeyDown', 'tabIndex']) }
 			{ ...pick(props, key => key.match(/^(aria-|data-).*/)) }
 		>
 			{ children }
@@ -32,9 +32,10 @@ const Cell = props => {
 	)
 }
 
-const HeaderRow = props => {
+const HeaderRow = forwardRef((props, ref) => {
 	const dispatch = useDispatch();
 	const { columns, width, sortBy, sortDirection } = props;
+	const { handleFocus, handleBlur, handleNext, handlePrevious } = useFocusManager(ref);
 
 	const handleClick = ev => {
 		const { columnName } = ev.currentTarget.dataset;
@@ -46,8 +47,32 @@ const HeaderRow = props => {
 		);
 	}
 
+	const handleKeyDown = ev => {
+		if((ev.key === 'ArrowDown' || ev.key === 'ArrowRight' || ev.key === 'ArrowLeft')) {
+			if(ev.key === 'ArrowDown') {
+				ev.currentTarget.closest('[tabIndex="0"]').focus();
+			}
+			else if(ev.key === 'ArrowRight') {
+				handleNext(ev, false);
+			}
+			else if(ev.key === 'ArrowLeft') {
+				handlePrevious(ev, false);
+			}
+			ev.preventDefault();
+			return;
+		}
+	}
+
 	return (
-		<div className="items-table-head" style={ { height: ROWHEIGHT, width } }>
+		<div
+			tabIndex={ -1 }
+			ref={ ref }
+			className="items-table-head"
+			style={ { height: ROWHEIGHT, width } }
+			onKeyDown={ handleKeyDown }
+			onFocus={ handleFocus }
+			onBlur={ handleBlur }
+		>
 			{ columns.map((c, colIndex) => (
 				<Cell
 					aria-sort={ sortDirection === 'asc' ? 'ascending' : 'descending' }
@@ -57,6 +82,7 @@ const HeaderRow = props => {
 					key={ c.field }
 					onClick={ handleClick }
 					width={ c.fraction * width }
+					tabIndex={ -2 }
 				>
 					<div className="header-label truncate">
 						{
@@ -72,7 +98,9 @@ const HeaderRow = props => {
 			))}
 		</div>
 	);
-}
+});
+
+HeaderRow.displayName = 'HeaderRow';
 
 const DataCell = props => {
 	const { columnName, colIndex, width, isFocused, isActive, itemData } = props;
@@ -134,6 +162,7 @@ const selectItem = (itemKey, ev, keys, selectedItemKeys, dispatch) => {
 	const isCtrlModifier = ev.getModifierState('Control') || ev.getModifierState('Meta');
 	const isShiftModifier = ev.getModifierState('Shift');
 	var newKeys;
+
 
 	if(isShiftModifier) {
 		let startIndex = selectedItemKeys.length ? keys.findIndex(key => key && key === selectedItemKeys[0]) : 0;
@@ -258,6 +287,7 @@ const Row = props => {
 
 const Table = props => {
 	const containerDom = useRef(null);
+	const headerRef = useRef(null);
 	const loader = useRef(null);
 	const [isResizing, setIsResizing] = useState(false);
 	const [isReordering, setIsReordering] = useState(false);
@@ -275,8 +305,11 @@ const Table = props => {
 	);
 
 	const dispatch = useDispatch();
-	const handleKeyDown = useCallback(() => {});
+
 	const handleFocus = useCallback(ev => {
+		if(ev.currentTarget !== ev.target) {
+			return;
+		}
 		ev.preventDefault();
 		if(selectedItemKeys.length === 0 && keys.length > 0) {
 			dispatch(navigate({
@@ -293,6 +326,84 @@ const Table = props => {
 	const handleIsItemLoaded = useCallback(index => keys && !!keys[index]);
 	const handleLoadMore = useCallback((startIndex, stopIndex) => {
 		dispatch(fetchSource(startIndex, stopIndex))
+	});
+
+	const handleKeyDown = useCallback(ev => {
+		var vector;
+		if(ev.key === 'ArrowUp') {
+			vector = -1;
+		} else if(ev.key === 'ArrowDown') {
+			vector = 1;
+		} else if(ev.key === 'Backspace') {
+			dispatch(chunkedTrashOrDelete(selectedItemKeys));
+			dispatch(navigate({ items: [] }));
+			return;
+		} else {
+			return;
+		}
+
+		if(!vector) {
+			return;
+		}
+
+		ev.preventDefault();
+
+		const lastItemKey = selectedItemKeys[selectedItemKeys.length - 1];
+		const index = keys.findIndex(key => key && key === lastItemKey);
+		const nextIndex = index + vector;
+
+		//check bounds
+		if(vector > 0 && index + 1 >= keys.length) {
+			return;
+		}
+
+		var nextKeys;
+
+		if(vector < 0 && index + vector < 0) {
+			if(!ev.getModifierState('Shift')) {
+				nextKeys = [];
+				setIsFocused(false);
+				headerRef.current.focus();
+			}
+		} else {
+			if(ev.getModifierState('Shift')) {
+				if(selectedItemKeys.includes(keys[nextIndex])) {
+					if(keys.slice(...(vector > 0 ? [0, index] : [index + 1])).some(
+						key => selectedItemKeys.includes(key)
+					)) {
+						let offset = 1;
+						let boundry = vector > 0 ? keys.length - 1 : 0;
+						while(index + (offset * vector) !== boundry &&
+							selectedItemKeys.includes(keys[index + (offset * vector)].key)
+						) {
+							offset++;
+						}
+						var consecutiveCounter = 1;
+						while(selectedItemKeys.includes(keys[index + (offset * vector) + consecutiveCounter].key)) {
+							consecutiveCounter++;
+						}
+						var consecutiveKeys;
+						if(vector > 0) {
+							consecutiveKeys = keys.slice(index + offset - consecutiveCounter + 1, index + offset);
+						} else {
+							consecutiveKeys = keys.slice(index - offset, index - offset + consecutiveCounter).reverse();
+						}
+						nextKeys = [
+							...selectedItemKeys.filter(k => !consecutiveKeys.includes(k)),
+							...consecutiveKeys,
+							keys[index + (offset * vector)]
+						];
+					} else {
+						nextKeys = selectedItemKeys.filter(k => k !== keys[index]);
+					}
+				} else {
+					nextKeys = [...selectedItemKeys, keys[nextIndex]];
+				}
+			} else {
+				nextKeys = [keys[nextIndex]];
+			}
+		}
+		dispatch(navigate({ items: nextKeys }));
 	});
 
 	useEffect(() => {
@@ -332,8 +443,10 @@ const Table = props => {
 								onFocus={ handleFocus }
 								onBlur={ handleBlur }
 								tabIndex={ 0 }
+								onKeyDown={ handleKeyDown }
 							>
 								<HeaderRow
+									ref={ headerRef }
 									columns={ columns }
 									sortBy={ sortBy }
 									sortDirection={ sortDirection }
