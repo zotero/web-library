@@ -1,4 +1,4 @@
-import React, { forwardRef, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { forwardRef, memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import cx from 'classnames';
 
@@ -7,11 +7,12 @@ import InfiniteLoader from "react-window-infinite-loader";
 import { FixedSizeList as List } from 'react-window';
 
 import columnNames from '../../../constants/column-names';
-import { chunkedTrashOrDelete, fetchSource, navigate, openAttachment, updateItemsSorting } from
-	'../../../actions';
+import { chunkedTrashOrDelete, fetchSource, navigate, openAttachment, preferenceChange,
+	updateItemsSorting } from '../../../actions';
 import { useFocusManager, useSourceData } from '../../../hooks';
 import Icon from '../../ui/icon';
 import { pick } from '../../../common/immutable';
+import { resizeVisibleColumns2 } from '../../../utils';
 
 const ROWHEIGHT = 26;
 
@@ -32,13 +33,15 @@ const Cell = props => {
 	)
 }
 
-const HeaderRow = forwardRef((props, ref) => {
+const HeaderRow = memo(forwardRef((props, ref) => {
 	const dispatch = useDispatch();
-	const { columns, width, sortBy, sortDirection } = props;
+	const { columns, width, isResizing, onResize, sortBy, sortDirection } = props;
 	const { handleFocus, handleBlur, handleNext, handlePrevious } = useFocusManager(ref);
 
 	const handleClick = ev => {
 		const { columnName } = ev.currentTarget.dataset;
+		if(isResizing) { return; }
+
 		dispatch(
 			updateItemsSorting(
 				columnName,
@@ -81,9 +84,17 @@ const HeaderRow = forwardRef((props, ref) => {
 					index={ colIndex }
 					key={ c.field }
 					onClick={ handleClick }
-					width={ c.fraction * width }
+					width={ `var(--col-${colIndex}-width)` }
 					tabIndex={ -2 }
 				>
+					{ colIndex !== 0 &&
+						<div
+							data-index={ colIndex }
+							className="resize-handle"
+							key="resize-handle"
+							onMouseDown={ onResize }
+						/>
+					}
 					<div className="header-label truncate">
 						{
 							c.field === 'attachment' ?
@@ -98,7 +109,7 @@ const HeaderRow = forwardRef((props, ref) => {
 			))}
 		</div>
 	);
-});
+}));
 
 HeaderRow.displayName = 'HeaderRow';
 
@@ -190,7 +201,9 @@ const selectItem = (itemKey, ev, keys, selectedItemKeys, dispatch) => {
 	dispatch(navigate({ items: newKeys }));
 }
 
-const Row = props => {
+const getColumnCssVars = (columns, width) => Object.fromEntries(columns.map((c, i) => [`--col-${i}-width`, `${c.fraction * width}px`]))
+
+const Row = memo(props => {
 	const dispatch = useDispatch();
 	const ignoreClicks = useRef({});
 	const { data, index, style } = props;
@@ -273,22 +286,24 @@ const Row = props => {
 					isActive={ isActive }
 					isFocused={ isFocused }
 					itemData={ itemData }
-					width={ c.fraction * width }
+					width={ `var(--col-${colIndex}-width)` }
 				/>
 			) : <PlaceholderCell
 				key={ c.field }
-				width={ c.fraction * width }
+				width={ `var(--col-${colIndex}-width)` }
 				colIndex={ colIndex }
 				columnName={ c.field }
 			/> ) }
 		</div>
 	);
-}
+});
 
 const Table = props => {
 	const containerDom = useRef(null);
 	const headerRef = useRef(null);
+	const tableRef = useRef(null);
 	const loader = useRef(null);
+	const resizing = useRef(null);
 	const [isResizing, setIsResizing] = useState(false);
 	const [isReordering, setIsReordering] = useState(false);
 	const [isFocused, setIsFocused] = useState(false);
@@ -406,6 +421,41 @@ const Table = props => {
 		dispatch(navigate({ items: nextKeys }));
 	});
 
+	const handleResize = useCallback(ev => {
+		const index = ev.currentTarget.dataset.index - 1;
+		const { width } = containerDom.current.getBoundingClientRect();
+		setIsResizing(true);
+		resizing.current = { origin: ev.clientX, index, width };
+	});
+
+	const handleMouseMove = useCallback(ev => {
+		if(resizing.current !== null) {
+			const { origin, index, width } = resizing.current;
+			const offsetPixels = ev.clientX - origin;
+			const offset = offsetPixels / width;
+			const newColumns = columns.map(c => ({ ...c }));
+			newColumns[index].fraction = columns[index].fraction + offset;
+			resizeVisibleColumns2(newColumns, -offset, true);
+
+			resizing.current.newColumns = newColumns;
+			const style = getColumnCssVars(newColumns, width);
+
+			Object.entries(style).forEach(([name, value]) =>
+				tableRef.current.style.setProperty(name, value)
+			);
+
+		}
+	});
+	const handleMouseUp = useCallback(ev => {
+		if(isResizing) {
+			ev.preventDefault();
+			dispatch(preferenceChange('columns', resizing.current.newColumns));
+			resizing.current = null;
+			setTimeout(() => setIsResizing(false));
+		}
+	});
+
+
 	useEffect(() => {
 		if(!hasChecked && !isFetching) {
 			dispatch(fetchSource(0, 50));
@@ -439,11 +489,15 @@ const Table = props => {
 					>
 						{({ onItemsRendered, ref }) => (
 							<div
+								ref={ tableRef }
 								className="items-table"
 								onFocus={ handleFocus }
 								onBlur={ handleBlur }
 								tabIndex={ 0 }
 								onKeyDown={ handleKeyDown }
+								onMouseMove={ handleMouseMove }
+								onMouseUp={ handleMouseUp }
+								style={ getColumnCssVars(columns, width) }
 							>
 								<HeaderRow
 									ref={ headerRef }
@@ -451,6 +505,8 @@ const Table = props => {
 									sortBy={ sortBy }
 									sortDirection={ sortDirection }
 									width={ width }
+									onResize={ handleResize }
+									isResizing={ isResizing }
 								/>
 								<List
 									className="items-table-body"

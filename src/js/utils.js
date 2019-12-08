@@ -240,6 +240,24 @@ const resizeVisibleColumns = (columns, fractionBias, invert = false) => {
 	}
 }
 
+const resizeVisibleColumns2 = (visibleColumns, fractionBias, invert = false) => {
+	const isLastColumn = cp => invert ? cp === 0 : cp === visibleColumns.length - 1;
+	const adjustColumnuPointer = cp => invert ? cp - 1 : cp + 1;
+
+	var columnPointer = invert ? visibleColumns.length -1 : 0;
+
+	while (fractionBias != 0 && !isLastColumn(columnPointer)) {
+		const newFraction = Math.max(
+			visibleColumns[columnPointer].fraction + fractionBias,
+			visibleColumns[columnPointer].minFraction
+		);
+		const adjustedFraction = newFraction - visibleColumns[columnPointer].fraction;
+		visibleColumns[columnPointer].fraction = newFraction;
+		fractionBias -= adjustedFraction;
+		columnPointer = adjustColumnuPointer(columnPointer);
+	}
+}
+
 const JSONTryParse = (json, fallback = {}) => {
 	var output;
 	try {
@@ -359,4 +377,5 @@ export {
 	splice,
 	stopPropagation,
 	transform,
+	resizeVisibleColumns2
 };
