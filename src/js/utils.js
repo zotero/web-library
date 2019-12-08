@@ -246,7 +246,7 @@ const resizeVisibleColumns2 = (visibleColumns, fractionBias, invert = false) => 
 
 	var columnPointer = invert ? visibleColumns.length -1 : 0;
 
-	while (fractionBias != 0 && !isLastColumn(columnPointer)) {
+	while (fractionBias !== 0 && !isLastColumn(columnPointer)) {
 		const newFraction = Math.max(
 			visibleColumns[columnPointer].fraction + fractionBias,
 			visibleColumns[columnPointer].minFraction

@@ -21,6 +21,7 @@ const Cell = props => {
 
 	return (
 		<div
+			data-colindex={ index }
 			aria-colindex={ index }
 			className={ cx('metadata', columnName, className) }
 			data-column-name={ columnName }
@@ -33,14 +34,16 @@ const Cell = props => {
 	)
 }
 
+
 const HeaderRow = memo(forwardRef((props, ref) => {
 	const dispatch = useDispatch();
-	const { columns, width, isResizing, onResize, sortBy, sortDirection } = props;
+	const mouseState = useRef(null);
+	const { columns, width, isReordering, isResizing, onReorder, onResize, reorderTargetIndex, sortBy, sortDirection } = props;
 	const { handleFocus, handleBlur, handleNext, handlePrevious } = useFocusManager(ref);
 
 	const handleClick = ev => {
 		const { columnName } = ev.currentTarget.dataset;
-		if(isResizing) { return; }
+		if(isResizing || isReordering) { return; }
 
 		dispatch(
 			updateItemsSorting(
@@ -66,6 +69,39 @@ const HeaderRow = memo(forwardRef((props, ref) => {
 		}
 	}
 
+	const handleMouseDown = useCallback(ev => {
+		if('resizeHandle' in ev.target.dataset) {
+			return;
+		}
+		ev.persist();
+		const timeout = setTimeout(() => {
+			if(!isReordering && mouseState.current !== null) {
+				onReorder(ev);
+			}
+		}, 300);
+		mouseState.current = { x: ev.clientX, y: ev.clientY, stamp: Date.now(), triggerEvent: ev, timeout };
+	});
+
+	const handleMouseUp = useCallback(ev => {
+		mouseState.current = null;
+	});
+
+	const handleMouseMove = useCallback(ev => {
+		if(mouseState.current !== null) {
+			const { triggerEvent, x, y } = mouseState.current;
+			const pixelsTravelled = Math.abs(ev.clientX - x) + Math.abs(ev.clientY - y);
+			if(pixelsTravelled > 10) {
+				clearTimeout(mouseState.current.timeout);
+				onReorder(triggerEvent);
+				mouseState.current = null;
+			}
+		}
+	});
+
+	useEffect(() => {
+		mouseState.current = null;
+	}, [isReordering])
+
 	return (
 		<div
 			tabIndex={ -1 }
@@ -75,6 +111,9 @@ const HeaderRow = memo(forwardRef((props, ref) => {
 			onKeyDown={ handleKeyDown }
 			onFocus={ handleFocus }
 			onBlur={ handleBlur }
+			onMouseDown={ handleMouseDown }
+			onMouseMove={ handleMouseMove }
+			onMouseUp = { handleMouseUp }
 		>
 			{ columns.map((c, colIndex) => (
 				<Cell
@@ -87,9 +126,12 @@ const HeaderRow = memo(forwardRef((props, ref) => {
 					width={ `var(--col-${colIndex}-width)` }
 					tabIndex={ -2 }
 				>
+					{ colIndex === reorderTargetIndex &&
+						<div className="reorder-target" />
+					}
 					{ colIndex !== 0 &&
 						<div
-							data-index={ colIndex }
+							data-resize-handle
 							className="resize-handle"
 							key="resize-handle"
 							onMouseDown={ onResize }
@@ -304,8 +346,10 @@ const Table = props => {
 	const tableRef = useRef(null);
 	const loader = useRef(null);
 	const resizing = useRef(null);
+	const reordering = useRef(null);
 	const [isResizing, setIsResizing] = useState(false);
 	const [isReordering, setIsReordering] = useState(false);
+	const [reorderTargetIndex, setReorderTargetIndex] = useState(null);
 	const [isFocused, setIsFocused] = useState(false);
 	const { hasChecked, isFetching, keys, totalResults } = useSourceData();
 	const columnsData = useSelector(state => state.preferences.columns, shallowEqual);
@@ -422,10 +466,19 @@ const Table = props => {
 	});
 
 	const handleResize = useCallback(ev => {
-		const index = ev.currentTarget.dataset.index - 1;
+		const columnDom = ev.target.closest(['[data-colindex]']);
+		const index = columnDom.dataset.colindex - 1;
 		const { width } = containerDom.current.getBoundingClientRect();
 		setIsResizing(true);
 		resizing.current = { origin: ev.clientX, index, width };
+	});
+
+	const handleReorder = useCallback(ev => {
+		const columnDom = ev.target.closest(['[data-colindex]']);
+		const index = columnDom.dataset.colindex;
+		const { left, width } = containerDom.current.getBoundingClientRect();
+		setIsReordering(true);
+		reordering.current = { index, left, width };
 	});
 
 	const handleMouseMove = useCallback(ev => {
@@ -434,7 +487,10 @@ const Table = props => {
 			const offsetPixels = ev.clientX - origin;
 			const offset = offsetPixels / width;
 			const newColumns = columns.map(c => ({ ...c }));
-			newColumns[index].fraction = columns[index].fraction + offset;
+			newColumns[index].fraction = Math.max(
+				columns[index].fraction + offset,
+				columns[index].minFraction
+			);
 			resizeVisibleColumns2(newColumns, -offset, true);
 
 			resizing.current.newColumns = newColumns;
@@ -443,18 +499,57 @@ const Table = props => {
 			Object.entries(style).forEach(([name, value]) =>
 				tableRef.current.style.setProperty(name, value)
 			);
-
+		} else if(reordering.current !== null) {
+			const { index, left, width } = reordering.current;
+			var targetIndex;
+			if(ev.clientX < left) {
+				targetIndex = 0;
+			} else {
+				let columnLeft = left;
+				for (let i = 0; i < columns.length; i++) {
+					const columnWidth = columns[i].fraction * width;
+					columnLeft += columnWidth;
+					const testOffest = columnLeft - 0.5 * columnWidth;
+					if(ev.clientX < testOffest) {
+						targetIndex = i;
+						break;
+					}
+				}
+			}
+			if(targetIndex !== index) {
+				setReorderTargetIndex(targetIndex);
+			}
 		}
 	});
 	const handleMouseUp = useCallback(ev => {
 		if(isResizing) {
 			ev.preventDefault();
 			dispatch(preferenceChange('columns', resizing.current.newColumns));
-			resizing.current = null;
-			setTimeout(() => setIsResizing(false));
+		} else if(isReordering) {
+			const indexFrom = reordering.current.index;
+			const indexTo = reorderTargetIndex;
+
+
+			if(columns[indexFrom] && columns[indexTo]) {
+				const newColumns = columns.map(c => ({ ...c }));
+				newColumns.splice(indexTo, 0, newColumns.splice(indexFrom, 1)[0]);
+				dispatch(preferenceChange('columns', newColumns));
+			}
 		}
+
+		resizing.current = null;
+		reordering.current = null;
+
+		setTimeout(() => { setIsResizing(false); setIsReordering(false); setReorderTargetIndex(null) });
 	});
 
+	const handleMouseLeave = useCallback(ev => {
+		setIsReordering(false);
+		setIsResizing(false);
+		setReorderTargetIndex(null);
+		resizing.current = null;
+		reordering.current = null;
+	});
 
 	useEffect(() => {
 		if(!hasChecked && !isFetching) {
@@ -467,6 +562,20 @@ const Table = props => {
 			loader.current.resetloadMoreItemsCache(true);
 		}
 	}, [sortBy, sortDirection, totalResults]);
+
+	useEffect(() => {
+		// register global mouse events so that dragging outside of table doesn't break resizing/reordering
+		document.addEventListener('mouseup', handleMouseUp);
+		document.addEventListener('mousemove', handleMouseMove);
+		document.addEventListener('mouseleave', handleMouseLeave);
+		return () => {
+			document.removeEventListener('mouseup', handleMouseUp)
+			document.removeEventListener('mousemove', handleMouseMove);
+			document.removeEventListener('mouseleave', handleMouseLeave);
+		}
+		// new event handlers need to be installed every time any of these changes
+		// otherwise it will have access to old values
+	}, [isResizing, isReordering, columns, reorderTargetIndex]);
 
 	return (
 		<div
@@ -495,8 +604,6 @@ const Table = props => {
 								onBlur={ handleBlur }
 								tabIndex={ 0 }
 								onKeyDown={ handleKeyDown }
-								onMouseMove={ handleMouseMove }
-								onMouseUp={ handleMouseUp }
 								style={ getColumnCssVars(columns, width) }
 							>
 								<HeaderRow
@@ -506,7 +613,10 @@ const Table = props => {
 									sortDirection={ sortDirection }
 									width={ width }
 									onResize={ handleResize }
+									onReorder={ handleReorder }
 									isResizing={ isResizing }
+									isReordering={ isReordering }
+									reorderTargetIndex= { reorderTargetIndex }
 								/>
 								<List
 									className="items-table-body"
