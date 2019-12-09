@@ -429,6 +429,7 @@ const Table = props => {
 	const loader = useRef(null);
 	const resizing = useRef(null);
 	const reordering = useRef(null);
+	const mouseUpTimeout = useRef(null);
 	const [isResizing, setIsResizing] = useState(false);
 	const [isReordering, setIsReordering] = useState(false);
 	const [reorderTargetIndex, setReorderTargetIndex] = useState(null);
@@ -648,7 +649,7 @@ const Table = props => {
 		resizing.current = null;
 		reordering.current = null;
 
-		setTimeout(() => { setIsResizing(false); setIsReordering(false); setReorderTargetIndex(null) });
+		mouseUpTimeout.current = setTimeout(() => { setIsResizing(false); setIsReordering(false); setReorderTargetIndex(null) });
 	});
 
 	const handleMouseLeave = useCallback(ev => {
@@ -666,6 +667,11 @@ const Table = props => {
 	useEffect(() => {
 		if(!hasChecked && !isFetching) {
 			dispatch(fetchSource(0, 50));
+		}
+		return () => {
+			if(mouseUpTimeout.current) {
+				clearTimeout(mouseUpTimeout.current);
+			}
 		}
 	}, []);
 
