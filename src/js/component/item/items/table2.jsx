@@ -129,27 +129,29 @@ const HeaderRow = memo(forwardRef((props, ref) => {
 					width={ `var(--col-${colIndex}-width)` }
 					tabIndex={ -2 }
 				>
-					{ colIndex === reorderTargetIndex &&
-						<div className="reorder-target" />
-					}
-					{ colIndex !== 0 &&
-						<div
-							data-resize-handle
-							className="resize-handle"
-							key="resize-handle"
-							onMouseDown={ onResize }
-						/>
-					}
-					<div className="header-label truncate">
-						{
-							c.field === 'attachment' ?
-								<Icon type={ '16/attachment' } width="16" height="16" /> :
-								c.field in columnNames ? columnNames[c.field] : c.field
+					<div className="header-content">
+						{ colIndex === reorderTargetIndex &&
+							<div className="reorder-target" />
+						}
+						{ colIndex !== 0 &&
+							<div
+								data-resize-handle
+								className="resize-handle"
+								key="resize-handle"
+								onMouseDown={ onResize }
+							/>
+						}
+						<div className="header-label truncate">
+							{
+								c.field === 'attachment' ?
+									<Icon type={ '16/attachment' } width="16" height="16" /> :
+									c.field in columnNames ? columnNames[c.field] : c.field
+							}
+						</div>
+						{ sortBy === c.field &&
+							<Icon type={ '16/chevron-7' } width="16" height="16" className="sort-indicator" />
 						}
 					</div>
-					{ sortBy === c.field &&
-						<Icon type={ '16/chevron-7' } width="16" height="16" className="sort-indicator" />
-					}
 				</Cell>
 			))}
 		</div>
