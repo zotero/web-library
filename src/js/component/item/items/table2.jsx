@@ -10,7 +10,7 @@ import { FixedSizeList as List } from 'react-window';
 
 import columnNames from '../../../constants/column-names';
 import { chunkedTrashOrDelete, createAttachmentsFromDropped, fetchSource, navigate, openAttachment, preferenceChange,
-	updateItemsSorting } from '../../../actions';
+	updateItemsSorting, chunkedCopyToLibrary, chunkedAddToCollection } from '../../../actions';
 import { useFocusManager, useSourceData } from '../../../hooks';
 import Icon from '../../ui/icon';
 import { pick } from '../../../common/immutable';
@@ -278,14 +278,17 @@ const Row = memo(props => {
 		},
 		end: (item, monitor) => {
 			const isDraggingSelected = selectedItemKeys.includes(itemKey);
+			const sourceItemKeys = isDraggingSelected ? selectedItemKeys : [itemKey];
 			const dropResult = monitor.getDropResult();
 
 			if(dropResult) {
-				//@TODO: on drag
-				// onDrag({
-				// 	itemKeys: isDraggingSelected ? selectedItemKeys : [itemKey],
-				// 	...dropResult
-				// });
+				const { targetType, collectionKey: targetCollectionKey, libraryKey: targetLibraryKey } = dropResult;
+				if(targetType === 'library') {
+					dispatch(chunkedCopyToLibrary(sourceItemKeys, targetLibraryKey));
+				}
+				if(targetType === 'collection') {
+					dispatch(chunkedAddToCollection(sourceItemKeys, targetCollectionKey, targetLibraryKey));
+				}
 			}
 		}
 	});
@@ -389,7 +392,7 @@ const Row = memo(props => {
 		onFileHoverOnRow(isOver, dropZone);
 	}, [isOver, dropZone]);
 
-	return drop(
+	return drag(drop(
 		<div
 			ref={ ref }
 			className={ className }
@@ -416,7 +419,7 @@ const Row = memo(props => {
 				columnName={ c.field }
 			/> ) }
 		</div>
-	);
+	));
 });
 
 const Table = props => {

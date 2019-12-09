@@ -75,8 +75,8 @@ class CustomDragLayer extends React.PureComponent {
 				}
 			case ITEM:
 				// for items dragging we always use custom preview
-				var { isDraggingSelected, selectedItemKeys, rowData } = itemProps;
-				var { iconName } = rowData;
+				var { isDraggingSelected, selectedItemKeys, itemData } = itemProps;
+				var { iconName, title } = itemData;
 				var dvp = window.devicePixelRatio >= 2 ? 2 : 1;
 
 				if(isDraggingSelected && selectedItemKeys.length > 1) {
@@ -100,7 +100,7 @@ class CustomDragLayer extends React.PureComponent {
 								width="16"
 								height="16"
 							/>
-							<span>{ rowData.title }</span>
+							<span>{ title }</span>
 						</div>
 					);
 				}

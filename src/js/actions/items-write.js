@@ -813,7 +813,7 @@ const chunkedMoveToTrash = (itemKeys, ...args) => chunkedAction(moveToTrash, ite
 
 const chunkedRecoverFromTrash = (itemKeys, ...args) => chunkedAction(recoverFromTrash, itemKeys, ...args);
 
-const chunkedRemoveFromCollection = (itemKeys, ...args) =>chunkedAction(removeFromCollection, itemKeys, ...args);
+const chunkedRemoveFromCollection = (itemKeys, ...args) => chunkedAction(removeFromCollection, itemKeys, ...args);
 
 const chunkedTrashOrDelete = (itemKeys, ...args) => {
 	return async (dispatch, getState) => {
@@ -825,6 +825,10 @@ const chunkedTrashOrDelete = (itemKeys, ...args) => {
 		}
 	}
 }
+
+const chunkedCopyToLibrary = (itemKeys, ...args) => chunkedAction(copyToLibrary, itemKeys, ...args);
+
+const chunkedAddToCollection = (itemKeys, ...args) => chunkedAction(addToCollection, itemKeys, ...args);
 
 const updateItemWithMapping = (item, fieldKey, newValue) => {
 	var patch = {
@@ -948,6 +952,8 @@ const createAttachmentsFromDropped = (droppedFiles, ...rest) => {
 
 export {
 	addToCollection,
+	chunkedAddToCollection,
+	chunkedCopyToLibrary,
 	chunkedDeleteItems,
 	chunkedMoveToTrash,
 	chunkedRecoverFromTrash,
