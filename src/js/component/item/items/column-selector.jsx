@@ -1,31 +1,49 @@
-'use strict';
-
-import React from 'react';
 import PropTypes from 'prop-types';
-import { noop } from '../../../utils';
-import Icon from '../../ui/icon';
-import Dropdown from 'reactstrap/lib/Dropdown';
-import DropdownToggle from 'reactstrap/lib/DropdownToggle';
-import DropdownMenu from 'reactstrap/lib/DropdownMenu';
-import DropdownItem from 'reactstrap/lib/DropdownItem';
+import React, { useCallback, useState } from 'react';
+import { useSelector, useDispatch, shallowEqual } from 'react-redux';
+
 import columnNames from '../../../constants/column-names';
+import Dropdown from 'reactstrap/lib/Dropdown';
+import DropdownItem from 'reactstrap/lib/DropdownItem';
+import DropdownMenu from 'reactstrap/lib/DropdownMenu';
+import DropdownToggle from 'reactstrap/lib/DropdownToggle';
+import Icon from '../../ui/icon';
+import { applyChangesToVisibleColumns, resizeVisibleColumns2 } from '../../../utils';
+import { preferenceChange } from '../../../actions';
 
-class ColumnSelector extends React.PureComponent {
-	state = {
-		isOpen: false
-	}
+const ColumnSelector = props => {
+	const { tabIndex } = props;
+	const { onFocusNext, onFocusPrev } = props;
+	const [isOpen, setIsOpen] = useState(false);
+	const dispatch = useDispatch();
+	const columns = useSelector(state => state.preferences.columns, shallowEqual);
 
-	handleSelect = field => {
-		const { columns, onColumnVisibilityChange } = this.props;
-		onColumnVisibilityChange(field, !columns.find(c => c.field === field).isVisible);
-	}
+	const handleSelect = useCallback(ev => {
+		const { field } = ev.currentTarget.dataset;
 
-	handleToggleDropdown = () => {
-		this.setState({ isOpen: !this.state.isOpen });
-	}
+		const newColumns = columns.map(c => ({ ...c }));
+		const columnIndex = newColumns.findIndex(c => c.field === field);
+		const shouldBeVisible = !newColumns[columnIndex].isVisible;
+		newColumns[columnIndex].isVisible = shouldBeVisible;
 
-	handleKeyDown = ev => {
-		const { onFocusNext, onFocusPrev } = this.props;
+		if(columnIndex === -1) {
+			return;
+		}
+
+		const fractionBias = newColumns[columnIndex].isVisible ?
+			newColumns[columnIndex].fraction * -1 :
+			newColumns[columnIndex].fraction;
+
+		const visibleColumns = newColumns.filter(c => c.isVisible);
+		resizeVisibleColumns2(visibleColumns, fractionBias);
+		return dispatch(preferenceChange('columns', applyChangesToVisibleColumns(visibleColumns, newColumns)));
+	});
+
+	const handleToggleDropdown = useCallback(() => {
+		setIsOpen(!isOpen);
+	});
+
+	const handleKeyDown = useCallback(ev => {
 		if(ev.target !== ev.currentTarget) {
 			return;
 		}
@@ -35,60 +53,45 @@ class ColumnSelector extends React.PureComponent {
 		} else if(ev.key === 'ArrowLeft') {
 			onFocusPrev(ev);
 		}
-	}
+	});
 
-	renderColumnItem = column => {
-		return (
-			<DropdownItem
-				key={ column.field }
-				onClick={ () => this.handleSelect(column.field) }>
-				<span className="tick">{ column.isVisible ? "✓" : "" }</span>
-				{ column.field in columnNames ? columnNames[column.field] : column.field }
-			</DropdownItem>
-		);
-	}
-
-	render() {
-		return (
-			<Dropdown
-				isOpen={ this.state.isOpen }
-				toggle={ this.handleToggleDropdown }
-				className="column-selector"
+	return (
+		<Dropdown
+			isOpen={ isOpen }
+			toggle={ handleToggleDropdown }
+			className="column-selector"
+		>
+			<DropdownToggle
+				className="btn-icon dropdown-toggle"
+				color={ null }
+				onKeyDown={ handleKeyDown }
+				tabIndex={ tabIndex }
 			>
-				<DropdownToggle
-					className="btn-icon dropdown-toggle"
-					color={ null }
-					onKeyDown={ this.handleKeyDown }
-					tabIndex={ this.props.tabIndex }
-				>
-					<Icon type={ '16/columns' } width="16" height="16" />
-				</DropdownToggle>
-				<DropdownMenu right>
-					{ this.props.columns
-						.filter(c => c.field !== 'title')
-						.map(this.renderColumnItem)
-					}
-				</DropdownMenu>
-			</Dropdown>
-		);
-	}
+				<Icon type={ '16/columns' } width="16" height="16" />
+			</DropdownToggle>
+			<DropdownMenu right>
+				{ columns
+					.filter(c => c.field !== 'title')
+					.map(column => (
+						<DropdownItem
+							data-field={ column.field }
+							key={ column.field }
+							onClick={ handleSelect }
+						>
+							<span className="tick">{ column.isVisible ? "✓" : "" }</span>
+							{ column.field in columnNames ? columnNames[column.field] : column.field }
+						</DropdownItem>
+					))
+				}
+			</DropdownMenu>
+		</Dropdown>
+	);
+}
 
-	static defaultProps = {
-		columns: [],
-		itemFields: [],
-		onColumnVisibilityChange: noop,
-		onFocusNext: noop,
-		onFocusPrev: noop,
-	}
-
-	static propTypes = {
-		columns: PropTypes.array,
-		itemFields: PropTypes.array,
-		onColumnVisibilityChange: PropTypes.func,
-		onFocusNext: PropTypes.func,
-		onFocusPrev: PropTypes.func,
-		tabIndex: PropTypes.number,
-	}
+ColumnSelector.propTypes = {
+	onFocusNext: PropTypes.func,
+	onFocusPrev: PropTypes.func,
+	tabIndex: PropTypes.number,
 }
 
 export default ColumnSelector;

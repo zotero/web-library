@@ -14,7 +14,7 @@ import { chunkedTrashOrDelete, createAttachmentsFromDropped, fetchSource, naviga
 import { useFocusManager, useSourceData } from '../../../hooks';
 import Icon from '../../ui/icon';
 import { pick } from '../../../common/immutable';
-import { resizeVisibleColumns2 } from '../../../utils';
+import { applyChangesToVisibleColumns, resizeVisibleColumns2 } from '../../../utils';
 import { ATTACHMENT, ITEM } from '../../../constants/dnd';
 import Spinner from '../../ui/spinner';
 
@@ -37,7 +37,6 @@ const Cell = props => {
 		</div>
 	)
 }
-
 
 const HeaderRow = memo(forwardRef((props, ref) => {
 	const dispatch = useDispatch();
@@ -634,14 +633,16 @@ const Table = props => {
 	const handleMouseUp = useCallback(ev => {
 		if(isResizing) {
 			ev.preventDefault();
-			dispatch(preferenceChange('columns', resizing.current.newColumns));
+			const newColumns = columnsData.map(c => ({ ...c }));
+			dispatch(preferenceChange('columns', applyChangesToVisibleColumns(resizing.current.newColumns, newColumns)));
 		} else if(isReordering) {
-			const indexFrom = reordering.current.index;
-			const indexTo = reorderTargetIndex;
+			const fieldFrom = columns[reordering.current.index].field;
+			const fieldTo = columns[reorderTargetIndex].field;
+			const indexFrom = columnsData.findIndex(c => c.field === fieldFrom);
+			const indexTo = columnsData.findIndex(c => c.field === fieldTo);
 
-
-			if(columns[indexFrom] && columns[indexTo]) {
-				const newColumns = columns.map(c => ({ ...c }));
+			if(indexFrom > -1 && indexTo > -1) {
+				const newColumns = columnsData.map(c => ({ ...c }));
 				newColumns.splice(indexTo, 0, newColumns.splice(indexFrom, 1)[0]);
 				dispatch(preferenceChange('columns', newColumns));
 			}

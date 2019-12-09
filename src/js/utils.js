@@ -258,6 +258,16 @@ const resizeVisibleColumns2 = (visibleColumns, fractionBias, invert = false) => 
 	}
 }
 
+const applyChangesToVisibleColumns = (visibleColumns, allColumns) => {
+	visibleColumns.forEach(visibleColumn => {
+		const targetColumnIndex = allColumns.findIndex(c => c.field == visibleColumn.field);
+		if(targetColumnIndex > -1) {
+			allColumns[targetColumnIndex] = visibleColumn;
+		}
+	});
+	return allColumns;
+}
+
 const JSONTryParse = (json, fallback = {}) => {
 	var output;
 	try {
@@ -350,6 +360,7 @@ const scrollIntoViewIfNeeded = (element, container) => {
 }
 
 export {
+	applyChangesToVisibleColumns,
 	compare,
 	compareItem,
 	deduplicate,
@@ -370,6 +381,7 @@ export {
 	openAttachment,
 	removeRelationByItemKey,
 	resizeVisibleColumns,
+	resizeVisibleColumns2,
 	reverseMap,
 	scrollIntoViewIfNeeded,
 	sortByKey,
@@ -377,5 +389,4 @@ export {
 	splice,
 	stopPropagation,
 	transform,
-	resizeVisibleColumns2
 };
