@@ -1,18 +1,21 @@
 import React, { forwardRef, memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import cx from 'classnames';
+import { useDrag, useDrop } from 'react-dnd-cjs'
+import { getEmptyImage, NativeTypes } from 'react-dnd-html5-backend-cjs';
 
 import AutoSizer from 'react-virtualized-auto-sizer';
 import InfiniteLoader from "react-window-infinite-loader";
 import { FixedSizeList as List } from 'react-window';
 
 import columnNames from '../../../constants/column-names';
-import { chunkedTrashOrDelete, fetchSource, navigate, openAttachment, preferenceChange,
+import { chunkedTrashOrDelete, createAttachmentsFromDropped, fetchSource, navigate, openAttachment, preferenceChange,
 	updateItemsSorting } from '../../../actions';
 import { useFocusManager, useSourceData } from '../../../hooks';
 import Icon from '../../ui/icon';
 import { pick } from '../../../common/immutable';
 import { resizeVisibleColumns2 } from '../../../utils';
+import { ATTACHMENT, ITEM } from '../../../constants/dnd';
 
 const ROWHEIGHT = 26;
 
@@ -244,13 +247,18 @@ const selectItem = (itemKey, ev, keys, selectedItemKeys, dispatch) => {
 }
 
 const getColumnCssVars = (columns, width) => Object.fromEntries(columns.map((c, i) => [`--col-${i}-width`, `${c.fraction * width}px`]))
+const DROP_MARGIN_EDGE = 5; // how many pixels from top/bottom of the row triggers "in-between" drop
 
 const Row = memo(props => {
 	const dispatch = useDispatch();
+	const ref = useRef();
 	const ignoreClicks = useRef({});
+	const [dropZone, setDropZone] = useState(null);
 	const { data, index, style } = props;
-	const { isFocused, keys, width, columns } = data;
+	const { onFileHoverOnRow, isFocused, keys, width, columns } = data;
 	const itemKey = keys ? keys[index] : null;
+	const libraryKey = useSelector(state => state.current.libraryKey);
+	const collectionKey = useSelector(state => state.current.collectionKey);
 	const itemData = useSelector(
 		state => itemKey ?
 			state.libraries[state.current.libraryKey].items[itemKey][Symbol.for('derived')]
@@ -262,11 +270,73 @@ const Row = memo(props => {
 	);
 	const isActive = itemKey && selectedItemKeys.includes(itemKey);
 
+	const [_, drag, preview] = useDrag({ // eslint-disable-line no-unused-vars
+		item: { type: ITEM },
+		begin: () => {
+			const isDraggingSelected = selectedItemKeys.includes(itemKey);
+			return { itemKey, selectedItemKeys, itemData, isDraggingSelected, libraryKey }
+		},
+		end: (item, monitor) => {
+			const isDraggingSelected = selectedItemKeys.includes(itemKey);
+			const dropResult = monitor.getDropResult();
+
+			if(dropResult) {
+				//@TODO: on drag
+				// onDrag({
+				// 	itemKeys: isDraggingSelected ? selectedItemKeys : [itemKey],
+				// 	...dropResult
+				// });
+			}
+		}
+	});
+
+	const [{ isOver, canDrop }, drop] = useDrop({
+		accept: [ATTACHMENT, NativeTypes.FILE],
+		collect: monitor => ({
+			isOver: monitor.isOver({ shallow: true }),
+			canDrop: monitor.canDrop(),
+		}),
+		drop: (item, monitor) => {
+			const itemType = monitor.getItemType();
+			if(itemType === NativeTypes.FILE) {
+				const parentItem = dropZone === null ? itemKey : null;
+				const collection = parentItem === null ? collectionKey : null;
+				const isAttachmentOnAttachment = parentItem !== null && itemData.itemTypeRaw === 'attachment';
+				if(!isAttachmentOnAttachment && item.files && item.files.length) {
+					dispatch(createAttachmentsFromDropped(item.files, { collection, parentItem }));
+				}
+			}
+			if(itemType === ATTACHMENT) {
+				return dropZone === null ? { item: itemKey } : { collection: collectionKey };
+			}
+		},
+		hover: (item, monitor) => {
+			if(ref.current && monitor.getClientOffset()) {
+				const cursor = monitor.getClientOffset();
+				const rect = ref.current.getBoundingClientRect();
+				const offsetTop = cursor.y - rect.y;
+				const offsetBottom = (rect.y + rect.height) - cursor.y;
+				const margin = itemData.itemTypeRaw === 'attachment' ? Math.floor(rect.height / 2) : DROP_MARGIN_EDGE;
+
+				if(offsetTop < margin) {
+					setDropZone('top');
+				} else if(offsetBottom < margin) {
+					setDropZone('bottom');
+				} else {
+					setDropZone(null);
+				}
+			}
+		}
+	});
+
 	const className = cx('item', {
 		odd: (index + 1) % 2 === 1,
 		'nth-4n-1': (index + 2) % 4 === 0,
 		'nth-4n': (index + 1) % 4 === 0,
-		active: isActive
+		active: isActive,
+		'dnd-target': canDrop && itemData && itemData.itemTypeRaw !== 'attachment' && isOver && dropZone === null,
+		'dnd-target-top': canDrop && isOver && dropZone === 'top',
+		'dnd-target-bottom': canDrop && isOver && dropZone === 'bottom',
 	});
 
 	//@NOTE: In order to allow item selection on "mousedown" (#161)
@@ -311,8 +381,17 @@ const Row = memo(props => {
 		}
 	}
 
-	return (
+	useEffect(() => {
+		preview(getEmptyImage(), { captureDraggingState: true })
+	}, []);
+
+	useEffect(() => {
+		onFileHoverOnRow(isOver, dropZone);
+	}, [isOver, dropZone]);
+
+	return drop(
 		<div
+			ref={ ref }
 			className={ className }
 			style={ style }
 			data-index={ index }
@@ -351,19 +430,45 @@ const Table = props => {
 	const [isReordering, setIsReordering] = useState(false);
 	const [reorderTargetIndex, setReorderTargetIndex] = useState(null);
 	const [isFocused, setIsFocused] = useState(false);
+	const [isHoveringBetweenRows, setIsHoveringBetweenRows] = useState(false);
 	const { hasChecked, isFetching, keys, totalResults } = useSourceData();
+	const collectionKey = useSelector(state => state.current.collectionKey);
+	const libraryKey = useSelector(state => state.current.libraryKey);
 	const columnsData = useSelector(state => state.preferences.columns, shallowEqual);
+	const selectedItemKeys = useSelector(state => state.current.itemKey ?
+		[state.current.itemKey] : state.current.itemKeys,
+		shallowEqual
+	);
 	const columns = useMemo(() => columnsData.filter(c => c.isVisible), [columnsData]);
 	const { field: sortBy, sort: sortDirection } = useMemo(() =>
 		columnsData.find(column => 'sort' in column) || { field: 'title', sort: 'ASC' },
 		[columnsData]
 	);
-	const selectedItemKeys = useSelector(state => state.current.itemKey ?
-		[state.current.itemKey] : state.current.itemKeys,
-		shallowEqual
-	);
 
 	const dispatch = useDispatch();
+
+	const [{ isOver, canDrop }, drop] = useDrop({
+		accept: [ATTACHMENT, NativeTypes.FILE],
+		collect: monitor => ({
+			isOver: monitor.isOver({ shallow: true }),
+			canDrop: monitor.canDrop(),
+		}),
+		drop: (props, monitor) => {
+			if(monitor.isOver({ shallow: true })) { //ignore if dropped on a row (which is handled there)
+				const itemType = monitor.getItemType();
+				const item = monitor.getItem();
+
+				if(itemType === ATTACHMENT) {
+					return { collection: collectionKey, library: libraryKey };
+				}
+
+				if(itemType === NativeTypes.FILE) {
+					dispatch(createAttachmentsFromDropped(item.files, { collection: collectionKey }));
+					return;
+				}
+			}
+		}
+	});
 
 	const handleFocus = useCallback(ev => {
 		if(ev.currentTarget !== ev.target) {
@@ -551,6 +656,10 @@ const Table = props => {
 		reordering.current = null;
 	});
 
+	const handleFileHoverOnRow = useCallback((isOverRow, dropZone) => {
+		setIsHoveringBetweenRows(isOverRow && dropZone !== null);
+	});
+
 	useEffect(() => {
 		if(!hasChecked && !isFetching) {
 			dispatch(fetchSource(0, 50));
@@ -577,14 +686,14 @@ const Table = props => {
 		// otherwise it will have access to old values
 	}, [isResizing, isReordering, columns, reorderTargetIndex]);
 
-	return (
+	return drop(
 		<div
 			ref={ containerDom }
 			onKeyDown={ handleKeyDown }
 			className={cx('items-table-wrap', {
 				resizing: isResizing,
 				reordering: isReordering,
-				// 'dnd-target': (isOver && canDrop) || isHoveringBetweenRows
+				'dnd-target': (isOver && canDrop) || isHoveringBetweenRows
 			}) }
 		>
 			{ hasChecked ? (
@@ -622,7 +731,7 @@ const Table = props => {
 									className="items-table-body"
 									height={ height }
 									itemCount={ totalResults }
-									itemData={ { isFocused, columns, width, keys } }
+									itemData={ { onFileHoverOnRow: handleFileHoverOnRow, isFocused, columns, width, keys } }
 									itemSize={ ROWHEIGHT }
 									onItemsRendered={ onItemsRendered }
 									ref={ ref }
