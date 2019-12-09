@@ -16,6 +16,7 @@ import Icon from '../../ui/icon';
 import { pick } from '../../../common/immutable';
 import { resizeVisibleColumns2 } from '../../../utils';
 import { ATTACHMENT, ITEM } from '../../../constants/dnd';
+import Spinner from '../../ui/spinner';
 
 const ROWHEIGHT = 26;
 
@@ -705,55 +706,54 @@ const Table = props => {
 				'dnd-target': (isOver && canDrop) || isHoveringBetweenRows
 			}) }
 		>
-			{ hasChecked ? (
-				<AutoSizer>
-				{({ height, width }) => (
-					<InfiniteLoader
-						ref={ loader }
-						isItemLoaded={ handleIsItemLoaded }
-						itemCount={ totalResults }
-						loadMoreItems={ handleLoadMore }
-					>
-						{({ onItemsRendered, ref }) => (
-							<div
-								ref={ tableRef }
-								className="items-table"
-								onFocus={ handleFocus }
-								onBlur={ handleBlur }
-								tabIndex={ 0 }
-								onKeyDown={ handleKeyDown }
-								style={ getColumnCssVars(columns, width) }
+			<AutoSizer>
+			{({ height, width }) => (
+				<InfiniteLoader
+					ref={ loader }
+					isItemLoaded={ handleIsItemLoaded }
+					itemCount={ hasChecked ? totalResults : 0 }
+					loadMoreItems={ handleLoadMore }
+				>
+					{({ onItemsRendered, ref }) => (
+						<div
+							ref={ tableRef }
+							className="items-table"
+							onFocus={ handleFocus }
+							onBlur={ handleBlur }
+							tabIndex={ 0 }
+							onKeyDown={ handleKeyDown }
+							style={ getColumnCssVars(columns, width) }
+						>
+							<HeaderRow
+								ref={ headerRef }
+								columns={ columns }
+								sortBy={ sortBy }
+								sortDirection={ sortDirection }
+								width={ width }
+								onResize={ handleResize }
+								onReorder={ handleReorder }
+								isResizing={ isResizing }
+								isReordering={ isReordering }
+								reorderTargetIndex= { reorderTargetIndex }
+							/>
+							<List
+								className="items-table-body"
+								height={ height }
+								itemCount={ hasChecked ? totalResults : 0 }
+								itemData={ { onFileHoverOnRow: handleFileHoverOnRow, isFocused, columns, width, keys } }
+								itemSize={ ROWHEIGHT }
+								onItemsRendered={ onItemsRendered }
+								ref={ ref }
+								width={ width }
 							>
-								<HeaderRow
-									ref={ headerRef }
-									columns={ columns }
-									sortBy={ sortBy }
-									sortDirection={ sortDirection }
-									width={ width }
-									onResize={ handleResize }
-									onReorder={ handleReorder }
-									isResizing={ isResizing }
-									isReordering={ isReordering }
-									reorderTargetIndex= { reorderTargetIndex }
-								/>
-								<List
-									className="items-table-body"
-									height={ height }
-									itemCount={ totalResults }
-									itemData={ { onFileHoverOnRow: handleFileHoverOnRow, isFocused, columns, width, keys } }
-									itemSize={ ROWHEIGHT }
-									onItemsRendered={ onItemsRendered }
-									ref={ ref }
-									width={ width }
-								>
-									{ Row }
-								</List>
-							</div>
-						)}
-					</InfiniteLoader>
-				)}
-				</AutoSizer>
-			) : null }
+								{ Row }
+							</List>
+						</div>
+					)}
+				</InfiniteLoader>
+			)}
+			</AutoSizer>
+			{ !hasChecked && <Spinner className="large" /> }
 		</div>
 	)
 }
