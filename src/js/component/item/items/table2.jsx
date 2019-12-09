@@ -258,7 +258,7 @@ const Row = memo(props => {
 	const [dropZone, setDropZone] = useState(null);
 	const { data, index, style } = props;
 	const { onFileHoverOnRow, isFocused, keys, width, columns } = data;
-	const itemKey = keys ? keys[index] : null;
+	const itemKey = keys && keys[index] ? keys[index] : null;
 	const libraryKey = useSelector(state => state.current.libraryKey);
 	const collectionKey = useSelector(state => state.current.collectionKey);
 	const itemData = useSelector(
@@ -758,7 +758,7 @@ const Table = props => {
 			</AutoSizer>
 			{ !hasChecked && <Spinner className="large" /> }
 		</div>
-	)
+	);
 }
 
 export default Table;

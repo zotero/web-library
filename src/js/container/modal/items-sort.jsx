@@ -5,9 +5,8 @@ import { connect } from 'react-redux';
 
 import ItemsSortModal from '../../component/modal/items-sort-modal';
 import withDevice from '../../enhancers/with-device.js';
-import withSortItems from '../../enhancers/with-sort-items';
 import { SORT_ITEMS } from '../../constants/modals';
-import { toggleModal, updateCollection } from '../../actions';
+import { toggleModal, updateItemsSorting, updateCollection } from '../../actions';
 
 
 class ItemsSortModalContainer extends React.PureComponent {
@@ -18,10 +17,11 @@ class ItemsSortModalContainer extends React.PureComponent {
 
 const mapStateToProps = state => {
 	const isOpen = state.modal.id === SORT_ITEMS;
-	return { isOpen };
+	const preferences = state.preferences;
+	return { preferences, isOpen };
 };
 
 
-export default withDevice(withSortItems(
-	connect(mapStateToProps, { updateCollection, toggleModal }
-)(ItemsSortModalContainer)));
+export default withDevice(
+	connect(mapStateToProps, { updateCollection, updateItemsSorting, toggleModal }
+)(ItemsSortModalContainer));

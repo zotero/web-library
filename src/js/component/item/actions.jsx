@@ -31,13 +31,10 @@ class ItemsActions extends React.PureComponent {
 	}
 
 	handleSortOrderToggle = () => {
-		const { onSort } = this.props;
+		const { updateItemsSorting } = this.props;
 		const { preferences: { columns } } = this.props;
 		const sortColumn = columns.find(c => c.sort);
-		onSort({
-			sortBy: sortColumn.field,
-			sortDirection: sortColumn.sort === 'DESC' ? 'ASC' : 'DESC'
-		});
+		updateItemsSorting(sortColumn.field, sortColumn.sort === 'desc' ? 'asc' : 'desc');
 	}
 
 	handleSortModalOpen = () => {
@@ -311,11 +308,11 @@ class ItemsActions extends React.PureComponent {
 		onPermanentlyDelete: PropTypes.func,
 		onRemoveFromCollection: PropTypes.func,
 		onSelectModeToggle: PropTypes.func,
-		onSort: PropTypes.func,
 		onTrash: PropTypes.func,
 		onUndelete: PropTypes.func,
 		preferences: PropTypes.object,
 		toggleModal: PropTypes.func,
+		updateItemsSorting: PropTypes.func,
 	}
 
 	static defaultProps = {

@@ -7,7 +7,7 @@ import { useSelector } from 'react-redux';
 
 import ItemsTableToolbar from './items/toolbar';
 import ItemsTable from './items/table2';
-import ItemsList from './items/list';
+import ItemsList from './items/list2';
 import TouchHeaderContainer from '../../container/touch-header';
 import TouchFooterContainer from '../../container/touch-footer';
 import { useSourceData } from '../../hooks';
@@ -22,8 +22,12 @@ const Items = () => {
 		}>
 			{ isTouchOrSmall ?
 				<React.Fragment>
-					<div>TOUCH IS</div>
-					<div>TODO</div>
+					<TouchHeaderContainer
+							className="hidden-mouse hidden-sm-down"
+							variant={ TouchHeaderContainer.variants.SOURCE }
+						/>
+						<ItemsList />
+						<TouchFooterContainer />
 				</React.Fragment> :
 				<React.Fragment>
 					<ItemsTableToolbar />

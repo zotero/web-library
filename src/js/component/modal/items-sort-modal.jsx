@@ -34,13 +34,15 @@ class ItemsSortModal extends React.PureComponent {
 	}
 
 	changeSortColumn = () => {
-		const { onSort, toggleModal } = this.props;
+		const { toggleModal, updateItemsSorting } = this.props;
 		const { preferences: { columns } } = this.props;
 		const sortColumn = columns.find(c => c.sort);
-		onSort({
-			sortBy: this.state.sortColumn || sortColumn.field,
-			sortDirection: 'ASC'
-		});
+
+		updateItemsSorting(
+			this.state.sortColumn || sortColumn.field,
+			'asc'
+		)
+
 		toggleModal(null, false);
 	}
 
@@ -104,9 +106,9 @@ class ItemsSortModal extends React.PureComponent {
 	static propTypes = {
 		device: PropTypes.object,
 		isOpen: PropTypes.bool,
-		onSort: PropTypes.func.isRequired,
 		preferences: PropTypes.object,
 		toggleModal: PropTypes.func.isRequired,
+		updateItemsSorting: PropTypes.func.isRequired,
 	}
 }
 
