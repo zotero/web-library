@@ -4,6 +4,7 @@ import { useDispatch } from 'react-redux';
 
 import Cell from './table-cell';
 import columnNames from '../../../constants/column-names';
+import columnSortKeyLookup from '../../../constants/column-sort-key-lookup';
 import Icon from '../../ui/icon';
 import { isTriggerEvent } from '../../../common/event';
 import { updateItemsSorting } from '../../../actions';
@@ -20,7 +21,9 @@ const HeaderRow = memo(forwardRef((props, ref) => {
 	const handleCellClickAndKeyDown = ev => {
 		if(isTriggerEvent(ev)) {
 			const { columnName } = ev.currentTarget.dataset;
-			if(isResizing || isReordering) { return; }
+			if(isResizing || isReordering || !columnSortKeyLookup[columnName]) {
+				return;
+			}
 
 			dispatch(updateItemsSorting(
 				columnName,
