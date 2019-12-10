@@ -340,7 +340,7 @@ const Table = memo(() => {
 							/>
 							<List
 								className="items-table-body"
-								height={ height }
+								height={ height - ROWHEIGHT } // add margin for HeaderRow
 								itemCount={ hasChecked ? totalResults : 0 }
 								itemData={ { onFileHoverOnRow: handleFileHoverOnRow, isFocused, columns, keys } }
 								itemSize={ ROWHEIGHT }
