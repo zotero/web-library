@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React, { forwardRef, memo, useCallback, useEffect, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 
@@ -56,7 +57,7 @@ const HeaderRow = memo(forwardRef((props, ref) => {
 		mouseState.current = { x: ev.clientX, y: ev.clientY, stamp: Date.now(), triggerEvent: ev, timeout };
 	});
 
-	const handleMouseUp = useCallback(ev => {
+	const handleMouseUp = useCallback(() => {
 		mouseState.current = null;
 	});
 
@@ -130,5 +131,17 @@ const HeaderRow = memo(forwardRef((props, ref) => {
 }));
 
 HeaderRow.displayName = 'HeaderRow';
+
+HeaderRow.propTypes = {
+	columns: PropTypes.array,
+	isReordering: PropTypes.bool,
+	isResizing: PropTypes.bool,
+	onReorder: PropTypes.func,
+	onResize: PropTypes.func,
+	reorderTargetIndex: PropTypes.number,
+	sortBy: PropTypes.string,
+	sortDirection: PropTypes.oneOf(['asc', 'desc']),
+	width: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+};
 
 export default HeaderRow;

@@ -1,4 +1,5 @@
 import cx from 'classnames';
+import PropTypes from 'prop-types';
 import React, { memo, useEffect, useRef, useState } from 'react';
 import { getEmptyImage, NativeTypes } from 'react-dnd-html5-backend-cjs';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
@@ -82,7 +83,17 @@ const DataCell = props => {
 			) }
 		</Cell>
 	);
-}
+};
+
+DataCell.propTypes = {
+	colIndex: PropTypes.number,
+	columnName: PropTypes.string,
+	isActive: PropTypes.bool,
+	isFocused: PropTypes.bool,
+	itemData: PropTypes.object,
+	width: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+};
+
 
 const PlaceholderCell = props => {
 	const { columnName, colIndex, width } = props;
@@ -98,13 +109,19 @@ const PlaceholderCell = props => {
 	);
 }
 
+PlaceholderCell.propTypes = {
+	colIndex: PropTypes.number,
+	columnName: PropTypes.string,
+	width: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+};
+
 const TableRow = memo(props => {
 	const dispatch = useDispatch();
 	const ref = useRef();
 	const ignoreClicks = useRef({});
 	const [dropZone, setDropZone] = useState(null);
 	const { data, index, style } = props;
-	const { onFileHoverOnRow, isFocused, keys, width, columns } = data;
+	const { onFileHoverOnRow, isFocused, keys, columns } = data;
 	const itemKey = keys && keys[index] ? keys[index] : null;
 	const libraryKey = useSelector(state => state.current.libraryKey);
 	const collectionKey = useSelector(state => state.current.collectionKey);
@@ -270,5 +287,16 @@ const TableRow = memo(props => {
 		</div>
 	));
 });
+
+TableRow.propTypes = {
+	data: PropTypes.shape({
+		onFileHoverOnRow: PropTypes.func,
+		isFocused: PropTypes.bool,
+		keys: PropTypes.array,
+		columns: PropTypes.array,
+	}),
+	index: PropTypes.number,
+	style: PropTypes.object,
+};
 
 export default TableRow;

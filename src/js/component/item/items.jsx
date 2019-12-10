@@ -37,4 +37,8 @@ const Items = ({ isSearchModeTransitioning }) => {
 	);
 }
 
+Items.propTypes = {
+	isSearchModeTransitioning: PropTypes.bool,
+}
+
 export default Items;

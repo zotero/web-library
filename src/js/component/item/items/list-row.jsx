@@ -139,4 +139,14 @@ const ListRow = memo(props => {
 
 ListRow.displayName = 'ListRow';
 
+ListRow.propTypes = {
+	data: PropTypes.shape({
+		handleBlur: PropTypes.func,
+		handleFocus: PropTypes.func,
+		keys: PropTypes.array,
+	}),
+	index: PropTypes.number,
+	style: PropTypes.object,
+};
+
 export default ListRow;

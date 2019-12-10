@@ -1,5 +1,6 @@
 import cx from 'classnames';
 import React from 'react';
+import PropTypes from 'prop-types';
 import { pick } from '../../../common/immutable';
 
 const Cell = props => {
@@ -19,5 +20,13 @@ const Cell = props => {
 		</div>
 	)
 }
+
+Cell.propTypes = {
+	children: PropTypes.oneOfType([PropTypes.element, PropTypes.array]),
+	className: PropTypes.string,
+	columnName: PropTypes.string,
+	index: PropTypes.number,
+	width: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+};
 
 export default Cell;

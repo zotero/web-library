@@ -10,7 +10,7 @@ import { pick } from '../../../common/immutable';
 
 class ItemsTableToolbar extends React.PureComponent {
 	render() {
-		const { onFocus, onBlur, preferences, registerFocusRoot } = this.props;
+		const { onFocus, onBlur, registerFocusRoot } = this.props;
 		return (
 			<header className="hidden-sm-down">
 				<Toolbar
@@ -37,7 +37,6 @@ class ItemsTableToolbar extends React.PureComponent {
 	static propTypes = {
 		onBlur: PropTypes.func.isRequired,
 		onFocus: PropTypes.func.isRequired,
-		preferences: PropTypes.object,
 		registerFocusRoot: PropTypes.func.isRequired,
 	}
 

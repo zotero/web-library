@@ -252,7 +252,7 @@ const Table = memo(() => {
 		mouseUpTimeout.current = setTimeout(() => { setIsResizing(false); setIsReordering(false); setReorderTargetIndex(null) });
 	});
 
-	const handleMouseLeave = useCallback(ev => {
+	const handleMouseLeave = useCallback(() => {
 		setIsReordering(false);
 		setIsResizing(false);
 		setReorderTargetIndex(null);
@@ -342,7 +342,7 @@ const Table = memo(() => {
 								className="items-table-body"
 								height={ height }
 								itemCount={ hasChecked ? totalResults : 0 }
-								itemData={ { onFileHoverOnRow: handleFileHoverOnRow, isFocused, columns, width, keys } }
+								itemData={ { onFileHoverOnRow: handleFileHoverOnRow, isFocused, columns, keys } }
 								itemSize={ ROWHEIGHT }
 								onItemsRendered={ onItemsRendered }
 								ref={ ref }
