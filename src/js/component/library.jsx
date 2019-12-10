@@ -14,7 +14,7 @@ import BibliographyModalContainer from '../container/modal/bibliography';
 import CustomDragLayer from '../component/drag-layer';
 import ExportModalContainer from '../container/modal/export';
 import ItemDetails from '../component/item/details';
-import Items from '../component/item/items2';
+import Items from '../component/item/items';
 import ItemsSortModalContainer from '../container/modal/items-sort';
 import LibrariesContainer from '../container/libraries';
 import Messages from '../component/messages';

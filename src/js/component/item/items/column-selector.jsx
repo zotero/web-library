@@ -8,7 +8,7 @@ import DropdownItem from 'reactstrap/lib/DropdownItem';
 import DropdownMenu from 'reactstrap/lib/DropdownMenu';
 import DropdownToggle from 'reactstrap/lib/DropdownToggle';
 import Icon from '../../ui/icon';
-import { applyChangesToVisibleColumns, resizeVisibleColumns2 } from '../../../utils';
+import { applyChangesToVisibleColumns, resizeVisibleColumns } from '../../../utils';
 import { preferenceChange } from '../../../actions';
 
 const ColumnSelector = props => {
@@ -35,7 +35,7 @@ const ColumnSelector = props => {
 			newColumns[columnIndex].fraction;
 
 		const visibleColumns = newColumns.filter(c => c.isVisible);
-		resizeVisibleColumns2(visibleColumns, fractionBias);
+		resizeVisibleColumns(visibleColumns, fractionBias);
 		return dispatch(preferenceChange('columns', applyChangesToVisibleColumns(visibleColumns, newColumns)));
 	});
 

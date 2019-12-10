@@ -1,235 +1,117 @@
-'use strict';
-
-import React from 'react';
+import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import PropTypes from 'prop-types';
 import cx from 'classnames';
-import deepEqual from 'deep-equal';
-import Icon from '../../ui/icon';
+
+import AutoSizer from 'react-virtualized-auto-sizer';
+import InfiniteLoader from "react-window-infinite-loader";
+import { FixedSizeList as List } from 'react-window';
+
 import Spinner from '../../ui/spinner';
-import { default as AutoSizer } from 'react-virtualized/dist/commonjs/AutoSizer';
-import { default as InfiniteLoader } from 'react-virtualized/dist/commonjs/InfiniteLoader';
-import { default as List } from 'react-virtualized/dist/commonjs/List';
+import { useSourceData } from '../../../hooks';
+import { fetchSource } from '../../../actions';
+import ListRow from './list-row';
 
-class ItemsList extends React.PureComponent {
-	state = {};
+const ROWHEIGHT = 61;
 
-	// Identical to table.jsx
-	componentDidUpdate({ sortBy, sortDirection, items: prevItems,
-	selectedItemKeys: prevSelectedItemKeys }) {
-		if(this.props.sortBy !== sortBy ||
-			this.props.sortDirection !== sortDirection) {
-			this.loader.resetLoadMoreRowsCache(true);
+const ItemsList = memo(props => {
+	const { isSearchModeTransitioning } = props;
+	const loader = useRef(null);
+	const [focusedRow, setFocusedRow] = useState(null);
+	const dispatch = useDispatch();
+	const { hasChecked, isFetching, keys, totalResults } = useSourceData();
+	const isSearchMode = useSelector(state => state.current.isSearchMode);
+	const isSelectMode = useSelector(state => state.current.isSelectMode);
+	const itemsSource = useSelector(state => state.current.itemsSource);
+	const isSingleColumn = useSelector(state => state.device.isSingleColumn);
+	const view = useSelector(state => state.current.view);
+	const columnsData = useSelector(state => state.preferences.columns, shallowEqual);
+	const isSearchModeTransitioningOut = !isSearchMode && isSearchModeTransitioning;
+
+	//@NOTE: On mobiles (single-column) we have a dedicated search mode where. To prevent visual glitches
+	//		 where current items overlap empty search prompt we need the following hack. See #230
+	const isSearchModeHack = isSingleColumn && (isSearchMode || isSearchModeTransitioningOut) &&
+		itemsSource !== 'query' && view !== 'item-list';
+
+	const { field: sortBy, sort: sortDirection } = useMemo(() =>
+		columnsData.find(column => 'sort' in column) || { field: 'title', sort: 'ASC' },
+		[columnsData]
+	);
+
+	const selectedItemKeys = useSelector(state => state.current.itemKey ?
+		[state.current.itemKey] : state.current.itemKeys,
+		shallowEqual
+	);
+
+	const isLastItemFocused = totalResults && focusedRow === totalResults - 1;
+	const isLastItemSelected = totalResults && keys && keys[totalResults - 1] &&
+		selectedItemKeys.includes(keys[totalResults - 1]);
+
+	const handleIsItemLoaded = useCallback(index => keys && !!keys[index]);
+	const handleLoadMore = useCallback((startIndex, stopIndex) => {
+		dispatch(fetchSource(startIndex, stopIndex))
+	});
+
+	const handleFocus = useCallback(ev => {
+		const index = parseInt(ev.currentTarget.dataset.index, 10);
+		setFocusedRow(index);
+	});
+	const handleBlur = useCallback(() => {
+		setFocusedRow(null);
+	});
+
+	useEffect(() => {
+		if(!hasChecked && !isFetching) {
+			dispatch(fetchSource(0, 50));
 		}
+	}, []);
 
-		const { selectedItemKeys, items } = this.props;
-
-		if(!deepEqual(selectedItemKeys, prevSelectedItemKeys)) {
-			const scrollToIndex = items.findIndex(
-				i => i && selectedItemKeys.includes(i.key)
-			);
-			if(scrollToIndex >= 0) {
-				this.listRef.scrollToRow(scrollToIndex);
-			}
+	useEffect(() => {
+		if(loader.current) {
+			loader.current.resetloadMoreItemsCache(true);
 		}
-	}
+	}, [sortBy, sortDirection, totalResults]);
 
-	// Identical to table.jsx
-	getRowHasLoaded({ index }) {
-		return this.props.items[index] &&
-			typeof(this.props.items[index]) === "object" &&
-			this.props.items[index].isSynced;
-	}
-
-	// Identical to table.jsx
-	getRow({ index }) {
-		if (this.props.items[index]) {
-			return this.props.items[index];
-		} else {
-			return {
-				title: '',
-				creator: '',
-				date: '',
-				colors: [],
-				isPlaceholder: true
-			}
-		}
-	}
-
-	// Identical to table.jsx
-	async handleLoadMore({ startIndex, stopIndex }) {
-		this.startIndex = startIndex;
-		this.stopIndex = stopIndex;
-		await this.props.onLoadMore({ startIndex, stopIndex });
-	}
-
-	handleRowClick({ event, index }) {
-		if(this.props.items[index]) {
-			this.handleItemSelect(this.props.items[index], event);
-		}
-	}
-
-	handleItemSelect(item) {
-		const { isSelectMode, selectedItemKeys } = this.props;
-		if(isSelectMode) {
-			if(selectedItemKeys.includes(item.key)) {
-				this.props.onItemsSelect(selectedItemKeys.filter(key => key !== item.key));
-			} else {
-				this.props.onItemsSelect([...selectedItemKeys, item.key]);
-			}
-		} else {
-			this.props.onItemsSelect([item.key], 'item-details');
-		}
-	}
-
-	handleKeyDown = ev => {
-		const { items, isSelectMode } = this.props;
-		const index = ev.currentTarget.dataset.index;
-
-		if((ev.key === 'Enter' || (isSelectMode && ev.key === " ")) && items[index]) {
-			this.handleItemSelect(items[index]);
-			ev.preventDefault();
-		}
-	}
-
-	renderRow({ index, key, style }) {
-		const { device, isSelectMode, selectedItemKeys, onKeyNavigation, view } = this.props;
-		const { colors, creator, iconName, title, year, isPlaceholder, key: itemKey } = this.getRow({ index });
-		const isLoaded = this.getRowHasLoaded({ index });
-		const isActive = selectedItemKeys.includes(itemKey);
-		const shouldBeTabbable = (device.isSingleColumn && view === 'item-list') ||
-			!device.isSingleColumn;
-		const className = cx({
-			active: isActive,
-			item: true,
-			odd: (index + 1) % 2 === 1,
-			placeholder: isPlaceholder
-		});
-
-		return (
-			<div
-				data-index={ index }
-				className={ className }
-				key={ key }
-				style={ style }
-				onClick={ event => this.handleRowClick({ event, index }) }
-				onFocus={ () => this.setState({ focusedRow: index }) }
-				onBlur={ () => this.setState({ focusedRow: null }) }
-				onKeyDown={ this.handleKeyDown }
-				tabIndex={ shouldBeTabbable ? 0 : null }
-				role={ isSelectMode ? "checkbox" : null }
-				aria-checked={ isSelectMode ? isActive ? "true" : "false" : null }
+	return (
+		<div className="items-list-wrap">
+			<AutoSizer>
+			{({ height, width }) => (
+				<InfiniteLoader
+					ref={ loader }
+					isItemLoaded={ handleIsItemLoaded }
+					itemCount={ hasChecked && !isSearchModeHack ? totalResults : 0 }
+					loadMoreItems={ handleLoadMore }
 				>
-				{ isSelectMode && isLoaded && (
-					<input
-						type="checkbox"
-						tabIndex={ -1 }
-						readOnly
-						checked={ isActive }
-					/>
-				)}
-					{ isLoaded ?
-						<Icon
-							type={ `28/item-types/light/${iconName}` }
-							symbol={ isActive && !isSelectMode ? `${iconName}-active` : iconName }
-							width="28"
-							height="28"
-							className="item-type hidden-xs-down"
-						/> :
-						<Icon
-							type={ '28/item-type' }
-							width="28"
-							height="28"
-							className="item-type hidden-xs-down"
-						/>
-					}
-					<div className="flex-column">
-						<div className="metadata title">
-							{ title }
-						</div>
-						<div className="metadata creator-year">
-							<div className="creator">
-								{ creator}
-							</div>
-							<div className="year">
-								{ year }
-							</div>
-							<div className="icons">
-								{
-									// currently blocked #191
-									// <Icon type="16/attachment" width="16" height="16" />
-									// <Icon type="16/note-sm" width="16" height="16" />
-								}
-
-								{ colors.map((color, index) => (
-									<Icon
-										key={ color }
-										type={ index === 0 ? '12/circle' : '12/crescent-circle' }
-										symbol={ index === 0 ?
-											isActive ? 'circle-active' : 'circle' :
-											isActive ? 'crescent-circle-active' : 'crescent-circle'
-										}
-										width={ index === 0 ? 12 : 8 }
-										height="12"
-										style={ { color } }
-									/>
-								))}
-							</div>
-						</div>
-					</div>
-					<Icon type={ '16/chevron-13' } width="16" height="16" />
-			</div>
-		);
-	}
-
-	render() {
-		if(!this.props.isReady) {
-			return null;
-		}
-
-		const { totalItemsCount, isError, isSelectMode, selectedItemKeys, items } = this.props;
-		const isLoadingUncounted = !isError && typeof(totalItemsCount) === 'undefined';
-		const isLastItemFocused = totalItemsCount &&
-			this.state.focusedRow === totalItemsCount - 1;
-		const isLastItemSelected = totalItemsCount && items[totalItemsCount - 1] &&
-			selectedItemKeys.includes(items[totalItemsCount - 1].key);
-
-		return (
-			<div
-				className='items-list-wrap'
-			>
-				<AutoSizer>
-					{({ width, height }) => (
-						<InfiniteLoader
-							ref={ ref => this.loader = ref }
-							isRowLoaded={ this.getRowHasLoaded.bind(this) }
-							loadMoreRows={ this.handleLoadMore.bind(this) }
-							rowCount={ totalItemsCount }
+					{({ onItemsRendered, ref }) => (
+						<List
+							className={ cx('items-list', {
+								'editing': isSelectMode,
+								'last-item-focus': isLastItemFocused,
+								'last-item-active': isLastItemSelected,
+							}) }
+							height={ height }
+							itemCount={ hasChecked && !isSearchModeHack ? totalResults : 0 }
+							itemData={ { handleFocus, handleBlur, keys } }
+							itemSize={ ROWHEIGHT }
+							onItemsRendered={ onItemsRendered }
+							ref={ ref }
+							width={ width }
 						>
-							{({onRowsRendered, registerChild}) => (
-								<List
-									{ ...this.props }
-									className={ cx('items-list', {
-										'editing': isSelectMode,
-										'last-item-focus': isLastItemFocused,
-										'last-item-active': isLastItemSelected,
-									}) }
-									height={ height }
-									onRowsRendered={ onRowsRendered }
-									ref={ ref => { this.listRef = ref; registerChild(ref); } }
-									rowCount={ totalItemsCount || 0 }
-									rowHeight={ 61 }
-									width={ width }
-									rowRenderer={ this.renderRow.bind(this) }
-									tabIndex={ -1 }
-								/>
-							)}
-						</InfiniteLoader>
+							{ ListRow }
+						</List>
 					)}
-				</AutoSizer>
-				{ isLoadingUncounted && <Spinner className="large" /> }
-			</div>
-		);
-	}
+				</InfiniteLoader>
+			)}
+			</AutoSizer>
+			{ !hasChecked && !isSearchModeHack && <Spinner className="large" /> }
+		</div>
+	);
+});
+
+ItemsList.displayName = 'ItemsList';
+
+ItemsList.propTypes = {
+	isSearchModeTransitioning: PropTypes.bool,
 }
 
 export default ItemsList;
