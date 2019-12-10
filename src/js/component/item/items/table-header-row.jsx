@@ -5,6 +5,7 @@ import { useDispatch } from 'react-redux';
 import Cell from './table-cell';
 import columnNames from '../../../constants/column-names';
 import Icon from '../../ui/icon';
+import { isTriggerEvent } from '../../../common/event';
 import { updateItemsSorting } from '../../../actions';
 import { useFocusManager } from '../../../hooks';
 
@@ -16,16 +17,17 @@ const HeaderRow = memo(forwardRef((props, ref) => {
 	const { columns, width, isReordering, isResizing, onReorder, onResize, reorderTargetIndex, sortBy, sortDirection } = props;
 	const { handleFocus, handleBlur, handleNext, handlePrevious } = useFocusManager(ref);
 
-	const handleClick = ev => {
-		const { columnName } = ev.currentTarget.dataset;
-		if(isResizing || isReordering) { return; }
+	const handleCellClickAndKeyDown = ev => {
+		if(isTriggerEvent(ev)) {
+			const { columnName } = ev.currentTarget.dataset;
+			if(isResizing || isReordering) { return; }
 
-		dispatch(
-			updateItemsSorting(
+			dispatch(updateItemsSorting(
 				columnName,
 				columnName === sortBy ? sortDirection === 'asc' ? 'desc' : 'asc' : 'desc'
-			)
-		);
+			));
+			ev.preventDefault();
+		}
 	}
 
 	const handleKeyDown = ev => {
@@ -97,7 +99,8 @@ const HeaderRow = memo(forwardRef((props, ref) => {
 					columnName={ c.field }
 					index={ colIndex }
 					key={ c.field }
-					onClick={ handleClick }
+					onClick={ handleCellClickAndKeyDown }
+					onKeyDown={ handleCellClickAndKeyDown }
 					width={ `var(--col-${colIndex}-width)` }
 					tabIndex={ -2 }
 				>
