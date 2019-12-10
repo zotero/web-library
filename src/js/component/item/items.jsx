@@ -1,6 +1,4 @@
-'use strict';
-
-import React from 'react';
+import React, { memo } from 'react';
 import PropTypes from 'prop-types';
 import cx from 'classnames';
 import { useSelector } from 'react-redux';
@@ -12,7 +10,7 @@ import TouchHeaderContainer from '../../container/touch-header';
 import TouchFooterContainer from '../../container/touch-footer';
 import { useSourceData } from '../../hooks';
 
-const Items = ({ isSearchModeTransitioning }) => {
+const Items = memo(({ isSearchModeTransitioning }) => {
 	const { isFetching, hasChecked } = useSourceData();
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
 	return (
@@ -35,7 +33,9 @@ const Items = ({ isSearchModeTransitioning }) => {
 			}
 		</div>
 	);
-}
+});
+
+Items.displayName = 'Items';
 
 Items.propTypes = {
 	isSearchModeTransitioning: PropTypes.bool,
