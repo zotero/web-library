@@ -77,7 +77,7 @@ const Table = memo(() => {
 			return;
 		}
 		ev.preventDefault();
-		if(selectedItemKeys.length === 0 && keys.length > 0) {
+		if(selectedItemKeys && keys && selectedItemKeys.length === 0 && keys.length > 0) {
 			dispatch(navigate({
 				items: [keys[0]]
 			}));
@@ -268,6 +268,9 @@ const Table = memo(() => {
 		if(!hasChecked && !isFetching) {
 			dispatch(fetchSource(0, 50));
 		}
+	}, [hasChecked]);
+
+	useEffect(() => {
 		return () => {
 			if(mouseUpTimeout.current) {
 				clearTimeout(mouseUpTimeout.current);
