@@ -34,7 +34,7 @@ const ItemsList = memo(props => {
 		itemsSource !== 'query' && view !== 'item-list';
 
 	const { field: sortBy, sort: sortDirection } = useMemo(() =>
-		columnsData.find(column => 'sort' in column) || { field: 'title', sort: 'ASC' },
+		columnsData.find(column => 'sort' in column) || { field: 'title', sort: 'asc' },
 		[columnsData]
 	);
 

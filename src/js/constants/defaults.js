@@ -28,7 +28,7 @@ export const preferences = {
 			fraction: 0.5,
 			isVisible: true,
 			minFraction: 0.1,
-			sort: 'ASC',
+			sort: 'asc',
 		},
 		{
 			field: 'creator',

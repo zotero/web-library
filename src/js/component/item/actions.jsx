@@ -233,7 +233,7 @@ class ItemsActions extends React.PureComponent {
 		const sortColumn = columns.find(c => c.sort) || columns.find(c => c.field === 'title');
 		const sortColumnLabel = sortColumn.field in columnNames ?
 			columnNames[sortColumn.field] : sortColumn.field;
-		const sortColumnOrder = sortColumn.sort === 'DESC' ? "Descending" : "Ascending"
+		const sortColumnOrder = sortColumn.sort === 'desc' ? "Descending" : "Ascending"
 
 		return (
 			<Dropdown

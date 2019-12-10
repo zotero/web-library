@@ -13,7 +13,7 @@ const updateItemsSorting = (sortBy, sortDirection) => {
 		})));
 
 		dispatch(sortItems(
-			sortBy, sortDirection.toLowerCase() // react-virtualised uses ASC/DESC, zotero asc/desc
+			sortBy, sortDirection.toLowerCase()
 		));
 	}
 };

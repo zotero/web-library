@@ -43,7 +43,7 @@ const Table = memo(() => {
 	);
 	const columns = useMemo(() => columnsData.filter(c => c.isVisible), [columnsData]);
 	const { field: sortBy, sort: sortDirection } = useMemo(() =>
-		columnsData.find(column => 'sort' in column) || { field: 'title', sort: 'ASC' },
+		columnsData.find(column => 'sort' in column) || { field: 'title', sort: 'asc' },
 		[columnsData]
 	);
 

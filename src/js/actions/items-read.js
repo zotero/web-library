@@ -233,7 +233,7 @@ const fetchSource = (startIndex, stopIndex) => {
 		const { collectionKey, isTrash, isMyPublications, itemsSource, search: q, qmode,
 			tags: tag = [] } = state.current;
 		const { field: sortBy, sort: sortDirection } = state.preferences.columns.find(
-			column => 'sort' in column) || { field: 'title', sort: 'ASC' };
+			column => 'sort' in column) || { field: 'title', sort: 'asc' };
 
 		const direction = sortDirection.toLowerCase();
 		const sort = columnSortKeyLookup[sortBy] || 'title';
