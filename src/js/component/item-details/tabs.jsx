@@ -56,10 +56,10 @@ const ItemDetailsTabs = props => {
 	const { attachments, notes } = useMemo(() => {
 		return (childItemsState.keys || []).reduce((acc, childItemKey) => {
 			const item = items[childItemKey];
-			if(item.itemType === 'attachment') {
+			if(item && item.itemType === 'attachment') {
 				acc.attachments.push(item);
 			}
-			if(item.itemType === 'note') {
+			if(item && item.itemType === 'note') {
 				acc.notes.push(item);
 			}
 			return acc;
