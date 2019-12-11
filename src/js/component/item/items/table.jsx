@@ -33,7 +33,7 @@ const Table = memo(() => {
 	const [reorderTargetIndex, setReorderTargetIndex] = useState(null);
 	const [isFocused, setIsFocused] = useState(false);
 	const [isHoveringBetweenRows, setIsHoveringBetweenRows] = useState(false);
-	const { hasChecked, isFetching, keys, totalResults } = useSourceData();
+	const { hasChecked, isFetching, keys, requests, totalResults } = useSourceData();
 	const collectionKey = useSelector(state => state.current.collectionKey);
 	const libraryKey = useSelector(state => state.current.libraryKey);
 	const columnsData = useSelector(state => state.preferences.columns, shallowEqual);
@@ -89,7 +89,13 @@ const Table = memo(() => {
 		setIsFocused(false);
 	});
 
-	const handleIsItemLoaded = useCallback(index => keys && !!keys[index]);
+	const handleIsItemLoaded = useCallback(index => {
+		if(keys && !!keys[index]) {
+			return true; // loaded
+		}
+		return requests.some(r => index >= r[0] && index < r[1]); // loading
+	});
+
 	const handleLoadMore = useCallback((startIndex, stopIndex) => {
 		dispatch(fetchSource(startIndex, stopIndex))
 	});

@@ -1,7 +1,7 @@
 'use strict';
 
 import { indexByKey } from '../../utils';
-import { injectExtraItemKeys, filterItemKeys, populateItemKeys, sortItemKeysOrClear } from '../../common/reducers';
+import { injectExtraItemKeys, filterItemKeys, populateItemKeys, sortItemKeysOrClear, updateFetchingState } from '../../common/reducers';
 
 import {
     ERROR_TOP_ITEMS,
@@ -46,16 +46,21 @@ const itemsTop = (state = {}, action) => {
 				{ ...action.otherItems, ...indexByKey(action.items) }
 			);
 		case REQUEST_TOP_ITEMS:
+			return {
+				...state,
+				...updateFetchingState(state, action)
+			}
+		case RECEIVE_TOP_ITEMS:
+			return {
+				...populateItemKeys(state, action.items.map(item => item.key), action),
+				...updateFetchingState(state, action),
+			}
 		case ERROR_TOP_ITEMS:
 			return {
 				...state,
-				isFetching: action.type === REQUEST_TOP_ITEMS,
-				isError: action.type === ERROR_TOP_ITEMS
+				...updateFetchingState(state, action),
+				isError: true
 			}
-		case RECEIVE_TOP_ITEMS:
-			return populateItemKeys(
-				state, action.items.map(item => item.key), action
-			);
 		case SORT_ITEMS:
 			return sortItemKeysOrClear(state, action.items, action.sortBy, action.sortDirection);
 		default:

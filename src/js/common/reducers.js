@@ -137,6 +137,20 @@ const populateItemKeys = (state, newKeys, action) => {
 	}
 }
 
+const updateFetchingState = ({ requests: prevRequests = [] }, action) => {
+	const start = 'queryOptions' in action ? action.queryOptions.start : null;
+	const limit = 'queryOptions' in action ? action.queryOptions.limit : null;
+	const end = start + limit;
+	const requests = action.type.startsWith('REQUEST') ?
+		[...prevRequests, [start, end]] :
+		prevRequests.filter(r => !(r[0] === start && r[1] === end));
+
+	return {
+		requests,
+		isFetching: requests.length > 0
+	}
+}
+
 const sortItemKeysOrClear = (state, items, sortBy, sortDirection) => {
 	var isCompleteSet = 'totalResults' in state &&
 		'keys' in state &&
@@ -172,4 +186,5 @@ export {
 	injectExtraItemKeys,
 	populateItemKeys,
 	sortItemKeysOrClear,
+	updateFetchingState,
 };

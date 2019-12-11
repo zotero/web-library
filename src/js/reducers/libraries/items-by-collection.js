@@ -2,7 +2,7 @@
 
 import { indexByKey } from '../../utils';
 import { mapObject } from '../../common/immutable';
-import { populateItemKeys, filterItemKeys, sortItemKeysOrClear, injectExtraItemKeys } from '../../common/reducers';
+import { populateItemKeys, filterItemKeys, sortItemKeysOrClear, injectExtraItemKeys, updateFetchingState } from '../../common/reducers';
 
 import {
     ERROR_ITEMS_IN_COLLECTION,
@@ -97,24 +97,34 @@ const itemsByCollection = (state = {}, action) => {
 				)
 			}
 		case REQUEST_ITEMS_IN_COLLECTION:
-		case ERROR_ITEMS_IN_COLLECTION:
 			return {
 				...state,
 				[action.collectionKey]: {
 					...state[action.collectionKey],
-					isFetching: action.type === REQUEST_ITEMS_IN_COLLECTION,
-					isError: action.type === ERROR_ITEMS_IN_COLLECTION
+					...updateFetchingState(state[action.collectionKey] || {}, action),
 				}
 			}
 		case RECEIVE_ITEMS_IN_COLLECTION:
 			return {
 				...state,
-				[action.collectionKey]: populateItemKeys(
-					state[action.collectionKey] || {},
-					action.items.map(item => item.key),
-					action
-				)
+				[action.collectionKey]: {
+					...populateItemKeys(
+						state[action.collectionKey] || {},
+						action.items.map(item => item.key),
+						action
+					),
+					...updateFetchingState(state[action.collectionKey] || {}, action)
+				}
 			};
+		case ERROR_ITEMS_IN_COLLECTION:
+			return {
+				...state,
+				[action.collectionKey]: {
+					...state[action.collectionKey],
+					...updateFetchingState(state[action.collectionKey] || {}, action),
+					isError: true
+				}
+			}
 		case RECEIVE_COLLECTIONS_IN_LIBRARY:
 			return {
 				...state,

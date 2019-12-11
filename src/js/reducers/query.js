@@ -1,6 +1,6 @@
 'use strict';
 
-import { populateItemKeys, sortItemKeysOrClear } from '../common/reducers';
+import { populateItemKeys, sortItemKeysOrClear, updateFetchingState } from '../common/reducers';
 import deepEqual from 'deep-equal';
 import { LOCATION_CHANGE } from 'connected-react-router';
 
@@ -24,6 +24,7 @@ const defaultState = {
 	current: null,
 	isFetching: false,
 	itemKeys: [],
+	requests: [],
 	tags: {},
 	totalResults: null,
 };
@@ -43,17 +44,21 @@ const query = (state = defaultState, action) => {
 				tags: isChanged ? {} : state.tags
 			};
 		case REQUEST_ITEMS_BY_QUERY:
+			return {
+				...state,
+				...updateFetchingState(state, action)
+			}
+		case RECEIVE_ITEMS_BY_QUERY:
+			return {
+				...populateItemKeys(state, action.items.map(item => item.key), action),
+				...updateFetchingState(state, action)
+			}
 		case ERROR_ITEMS_BY_QUERY:
 			return {
 				...state,
-				isFetching: action.type === REQUEST_ITEMS_BY_QUERY
+				...updateFetchingState(state, action),
+				isError: true
 			}
-		case RECEIVE_ITEMS_BY_QUERY:
-			return populateItemKeys(
-				state,
-				action.items.map(item => item.key),
-				action
-			);
 		case SORT_ITEMS:
 			return sortItemKeysOrClear(
 				state, action.items, action.sortBy, action.sortDirection

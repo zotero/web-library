@@ -19,7 +19,7 @@ const ItemsList = memo(props => {
 	const loader = useRef(null);
 	const [focusedRow, setFocusedRow] = useState(null);
 	const dispatch = useDispatch();
-	const { hasChecked, isFetching, keys, totalResults } = useSourceData();
+	const { hasChecked, isFetching, keys, requests, totalResults } = useSourceData();
 	const isSearchMode = useSelector(state => state.current.isSearchMode);
 	const isSelectMode = useSelector(state => state.current.isSelectMode);
 	const itemsSource = useSelector(state => state.current.itemsSource);
@@ -47,7 +47,13 @@ const ItemsList = memo(props => {
 	const isLastItemSelected = totalResults && keys && keys[totalResults - 1] &&
 		selectedItemKeys.includes(keys[totalResults - 1]);
 
-	const handleIsItemLoaded = useCallback(index => keys && !!keys[index]);
+	const handleIsItemLoaded = useCallback(index => {
+		if(keys && !!keys[index]) {
+			return true; // loaded
+		}
+		return requests.some(r => index >= r[0] && index < r[1]); // loading
+	});
+
 	const handleLoadMore = useCallback((startIndex, stopIndex) => {
 		dispatch(fetchSource(startIndex, stopIndex))
 	});

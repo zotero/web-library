@@ -1,5 +1,5 @@
 'use strict';
-import { populateItemKeys, filterItemKeys, sortItemKeysOrClear, injectExtraItemKeys } from '../../common/reducers';
+import { populateItemKeys, filterItemKeys, sortItemKeysOrClear, injectExtraItemKeys, updateFetchingState } from '../../common/reducers';
 import { indexByKey, get } from '../../utils';
 import { mapObject } from '../../common/immutable';
 
@@ -76,24 +76,34 @@ const itemsByParent = (state = {}, action) => {
 				return aggr;
 			}, {});
 		case REQUEST_CHILD_ITEMS:
-		case ERROR_CHILD_ITEMS:
 			return {
 				...state,
 				[action.itemKey]: {
 					...state[action.itemKey],
-					isFetching: action.type === REQUEST_CHILD_ITEMS,
-					isError: action.type === ERROR_CHILD_ITEMS
+					...updateFetchingState(state[action.itemKey] || {}, action),
 				}
 			}
 		case RECEIVE_CHILD_ITEMS:
 			return {
 				...state,
-				[action.itemKey]: populateItemKeys(
-					state[action.itemKey] || {},
-					action.items.map(item => item.key),
-					action
-				)
+				[action.itemKey]: {
+					...populateItemKeys(
+						state[action.itemKey] || {},
+						action.items.map(item => item.key),
+						action
+					),
+					...updateFetchingState(state[action.itemKey] || {}, action),
+				}
 			};
+		case ERROR_CHILD_ITEMS:
+			return {
+				...state,
+				[action.itemKey]: {
+					...state[action.itemKey],
+					...updateFetchingState(state[action.itemKey] || {}, action),
+					isError: true
+				}
+			}
 		case RECEIVE_UPDATE_ITEM:
 			if(!('parentItem' in action.patch)) {
 				return state;
