@@ -72,7 +72,7 @@ const config = (state = defaultState, action) => {
 					...(action.libraries.include || []).map(include => ({
 						isReadOnly: true,
 						slug: slugify(include.name),
-						isGroupLibrary: include.key[0] === 'g',
+						isGroupLibrary: false,
 						id: include.key.slice(1),
 						...include,
 					}))
