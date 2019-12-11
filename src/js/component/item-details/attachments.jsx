@@ -120,7 +120,11 @@ const Attachment = props => {
 		dispatch(navigate({ attachmentKey: attachment.key }));
 	});
 
-	const handleFocus = useCallback(() => {
+	const handleFocus = useCallback(ev => {
+		if(ev.target !== ev.currentTarget) {
+			return;
+		}
+
 		dispatch(navigate({ attachmentKey: attachment.key }));
 		setIsFocused(true);
 	});
