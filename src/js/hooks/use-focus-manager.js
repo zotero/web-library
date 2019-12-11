@@ -102,7 +102,7 @@ const useFocusManager = (ref, overrideFocusRef = null) => {
 	}, [ref && ref.current]);
 
 	useEffect(() => {
-		if(overrideFocusRef && overrideFocusRef.current) {
+		if(overrideFocusRef !== null) {
 			lastFocused.current = overrideFocusRef.current;
 		}
 	}, [overrideFocusRef && overrideFocusRef.current])
