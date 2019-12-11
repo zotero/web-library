@@ -200,6 +200,10 @@
 	 		transparent ($item-table-row-height + $space-min / 2),
 	 		transparent (2 * $item-table-row-height + $space-min / 2));
 	 	background-attachment: local;
+
+	 	> div {
+		 	position: relative;
+	 	}
 	}
 
 	.item {
