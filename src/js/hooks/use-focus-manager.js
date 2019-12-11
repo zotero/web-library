@@ -1,10 +1,10 @@
-import React, { useEffect, useCallback, useRef } from 'react';
+import { useEffect, useCallback, useRef } from 'react';
 
 const isModifierKey = ev => ev.getModifierState("Meta") || ev.getModifierState("Alt") ||
 		ev.getModifierState("Control") || ev.getModifierState("OS");
 
 
-const useFocusManager = (ref, shouldAutoFocus = false) => {
+const useFocusManager = (ref, overrideFocusRef = null) => {
 	const lastFocused = useRef(null);
 	const originalTabIndex = useRef(null);
 
@@ -98,11 +98,14 @@ const useFocusManager = (ref, shouldAutoFocus = false) => {
 		if(ref && ref.current) {
 			originalTabIndex.current = originalTabIndex.current === null ? ref.current.tabIndex : originalTabIndex.current;
 			ref.current.dataset.focusRoot = '';
-			if(shouldAutoFocus) {
-				lastFocused.current = ref.current;
-			}
 		}
 	}, [ref && ref.current]);
+
+	useEffect(() => {
+		if(overrideFocusRef && overrideFocusRef.current) {
+			lastFocused.current = overrideFocusRef.current;
+		}
+	}, [overrideFocusRef && overrideFocusRef.current])
 
 	return { handleNext, handlePrevious, handleDrillDownNext, handleDrillDownPrev, handleFocus, handleBlur };
 };

@@ -1,6 +1,6 @@
 import cx from 'classnames';
 import PropTypes from 'prop-types';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { forwardRef, useCallback, useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { NativeTypes } from 'react-dnd-html5-backend-cjs';
 import { useDrag, useDrop } from 'react-dnd-cjs'
@@ -9,7 +9,6 @@ import Button from '../ui/button';
 import Icon from '../ui/icon';
 import Spinner from '../ui/spinner';
 import withDevice from '../../enhancers/with-device';
-import withFocusManager from '../../enhancers/with-focus-manager';
 import withEditMode from '../../enhancers/with-edit-mode';
 import { ATTACHMENT } from '../../constants/dnd';
 import { getFileData } from '../../common/event';
@@ -21,6 +20,7 @@ import { Toolbar, ToolGroup } from '../ui/toolbars';
 import { navigate, sourceFile, updateItem } from '../../actions';
 import { pluralize } from '../../common/format';
 import AttachmentDetails from './attachment-details';
+import { useFocusManager } from '../../hooks';
 
 const AttachmentIcon = ({ device, isActive, item, size }) => {
 	const { iconName } = item[Symbol.for('derived')];
@@ -84,7 +84,7 @@ AttachmentDownloadIcon.propTypes = {
 	isUploading: PropTypes.bool,
 };
 
-const Attachment = props => {
+const Attachment = forwardRef((props, ref) => {
 	const { attachment, device, moveToTrash, itemKey, isReadOnly, isUploading, libraryKey,
 		getAttachmentUrl, onKeyDown } = props;
 	const attachmentKey = useSelector(state => state.current.attachmentKey);
@@ -133,11 +133,13 @@ const Attachment = props => {
 		setIsFocused(false);
 	});
 
+	drag(ref);
+
 	return (
 		<li
 			className={ cx('attachment', { 'selected': isSelected, 'no-link': !hasLink }) }
 			data-key={ attachment.key }
-			ref={ drag }
+			ref={ ref }
 			onKeyDown={ handleKeyDown }
 			onClick={ handleAttachmentSelect }
 			onFocus={ handleFocus }
@@ -183,7 +185,7 @@ const Attachment = props => {
 			)}
 		</li>
 	);
-};
+});
 
 Attachment.propTypes = {
 	attachment: PropTypes.object,
@@ -222,16 +224,20 @@ const PAGE_SIZE = 100;
 
 const Attachments = props => {
 	const { childItems, createAttachmentsFromDropped, device, isFetched, isFetching, isReadOnly,
-	itemKey, createItem, uploadAttachment, onDrillDownPrev, onDrillDownNext, onFocusNext,
-	onFocusPrev, fetchChildItems, fetchItemTemplate, uploads, isActive, libraryKey, onBlur, onFocus,
-	pointer, registerFocusRoot, ...rest } = props;
+	itemKey, createItem, uploadAttachment, fetchChildItems, fetchItemTemplate, uploads, isActive,
+	libraryKey, pointer, ...rest } = props;
 	const dispatch = useDispatch();
+	const ref = useRef();
+	const selectedAttachmentRef = useRef();
+	const { handleNext, handlePrevious, handleDrillDownNext, handleDrillDownPrev, handleFocus,
+		handleBlur } = useFocusManager(ref, selectedAttachmentRef);
 
 	const fileInput = useRef(null);
 	const [attachments, setAttachments] = useState([]);
 
 	const isTinymceFetching = useSelector(state => state.sources.fetching.includes('tinymce'));
 	const isTinymceFetched = useSelector(state => state.sources.fetched.includes('tinymce'));
+	const selectedAttachmentKey = useSelector(state => state.current.attachmentKey);
 
 	const [{ isOver, canDrop }, drop] = useDrop({
 		accept: NativeTypes.FILE,
@@ -245,6 +251,8 @@ const Attachments = props => {
 			}
 		},
 	});
+
+	drop(ref);
 
 	useEffect(() => {
 		if(isActive && !isFetching && !isFetched) {
@@ -288,18 +296,18 @@ const Attachments = props => {
 
 	const handleKeyDown = useCallback(ev => {
 		if(ev.key === "ArrowLeft") {
-			onDrillDownPrev(ev);
+			handleDrillDownPrev(ev);
 		} else if(ev.key === "ArrowRight") {
-			onDrillDownNext(ev);
+			handleDrillDownNext(ev);
 		} else if(ev.key === 'ArrowDown') {
-			ev.target === ev.currentTarget && onFocusNext(ev);
+			ev.target === ev.currentTarget && handleNext(ev);
 		} else if(ev.key === 'ArrowUp') {
-			ev.target === ev.currentTarget && onFocusPrev(ev);
+			ev.target === ev.currentTarget && handlePrevious(ev);
 		} else if(ev.key === 'Tab') {
 			const isFileInput = ev.currentTarget === fileInput.current;
 			const isShift = ev.getModifierState('Shift');
 			if(isFileInput && !isShift) {
-				ev.target === ev.currentTarget && onFocusNext(ev);
+				ev.target === ev.currentTarget && handleNext(ev);
 			}
 		} else if(isTriggerEvent(ev)) {
 			ev.target.click();
@@ -312,10 +320,10 @@ const Attachments = props => {
 			className={ cx("attachments", { 'dnd-target': canDrop && isOver }) }
 			isActive={ isActive }
 			isLoading={ device.shouldUseTabs && !(isFetched && isTinymceFetched) }
-			onBlur={ onBlur }
-			onFocus={ onFocus }
+			onBlur={ handleBlur }
+			onFocus={ handleFocus }
 			tabIndex={ 0 }
-			ref={ ref => { drop(ref); registerFocusRoot(ref); } }
+			ref={ ref }
 		>
 			<h5 className="h2 tab-pane-heading hidden-mouse">Attachments</h5>
 			{ !device.isTouchOrSmall && (
@@ -365,6 +373,7 @@ const Attachments = props => {
 										key={ attachment.key }
 										libraryKey={ libraryKey }
 										onKeyDown={ handleKeyDown }
+										ref={ selectedAttachmentKey === attachment.key ? selectedAttachmentRef : null }
 										{ ...pick(rest, ['moveToTrash', 'getAttachmentUrl']) }
 									/>
 								})
@@ -423,4 +432,4 @@ Attachments.propTypes = {
 	uploads: PropTypes.array,
 };
 
-export default withDevice(withFocusManager(withEditMode(Attachments)));
+export default withDevice(withEditMode(Attachments));
