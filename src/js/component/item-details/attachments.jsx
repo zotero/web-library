@@ -312,7 +312,10 @@ const Attachments = props => {
 			className={ cx("attachments", { 'dnd-target': canDrop && isOver }) }
 			isActive={ isActive }
 			isLoading={ device.shouldUseTabs && !(isFetched && isTinymceFetched) }
-			ref={ drop }
+			onBlur={ onBlur }
+			onFocus={ onFocus }
+			tabIndex={ 0 }
+			ref={ ref => { drop(ref); registerFocusRoot(ref); } }
 		>
 			<h5 className="h2 tab-pane-heading hidden-mouse">Attachments</h5>
 			{ !device.isTouchOrSmall && (
@@ -346,10 +349,6 @@ const Attachments = props => {
 			) }
 			<div
 				className="scroll-container-mouse"
-				onBlur={ onBlur }
-				onFocus={ onFocus }
-				ref={ ref => registerFocusRoot(ref) }
-				tabIndex={ 0 }
 			>
 				{ attachments.length > 0 && (
 					<nav>

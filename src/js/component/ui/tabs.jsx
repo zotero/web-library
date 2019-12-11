@@ -96,12 +96,12 @@ Tabs.propTypes = {
 	justified: PropTypes.bool
 };
 
-const TabPane = React.forwardRef(({ children, isActive, isLoading, className }, ref) => (
+const TabPane = React.forwardRef(({ children, isActive, isLoading, className, ...rest }, ref) => (
 	<div ref={ ref } className={ cx(className, {
 		'tab-pane': true,
 		'active': isActive,
 		'loading': isLoading
-	}) }>
+	}) } { ...rest }>
 		{ isLoading ? <Spinner /> : children  }
 	</div>
 ));
