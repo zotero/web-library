@@ -1,0 +1,33 @@
+//
+// Scrollbar
+// --------------------------------------------------
+
+.scrollbar-style-permanent {
+	::-webkit {
+		&-scrollbar {
+			width: $scrollbar-size;
+			height: $scrollbar-size;
+
+			&-track {
+				background-color: $scrollbar-bg;
+			}
+
+			&-thumb {
+				background-color: $scrollbar-color;
+				border-radius: 6px;
+				border: $space-min solid $scrollbar-bg;
+				background-clip: content-box;
+				min-width: $space-lg + 2 * $space-min;
+				min-height: $space-lg + 2 * $space-min;
+
+				&:active {
+					border-width: $space-min / 2;
+				}
+			}
+
+			&-corner {
+				background: $scrollbar-bg;
+			}
+		}
+	}
+}

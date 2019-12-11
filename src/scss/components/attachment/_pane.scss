@@ -20,9 +20,11 @@
 	> .toolbar {
 		height: $toolbar-height-touch;
 
-		.scrollbar-style-permanent & {
-			height: $toolbar-height-touch + $border-width;
-			border-bottom: $border-width solid $attachments-toolbar-border-color;
+		@supports not (-webkit-font-smoothing: subpixel-antialiased) {
+			.scrollbar-style-permanent & {
+				height: $toolbar-height-touch + $border-width;
+				border-bottom: $border-width solid $attachments-toolbar-border-color;
+			}
 		}
 
 		.counter {
@@ -39,8 +41,10 @@
 	.scroll-container-mouse {
 		flex: 1 1 0;
 
-		.scrollbar-style-permanent & {
-			padding-top: $space-min / 2;
+		@supports not (-webkit-font-smoothing: subpixel-antialiased) {
+			.scrollbar-style-permanent & {
+				padding-top: $space-min / 2;
+			}
 		}
 	}
 
