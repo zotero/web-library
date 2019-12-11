@@ -17,27 +17,30 @@
 		@include dnd-target;
 	}
 
-	.scroll-container-mouse {
-		flex: 1 1 0;
-		display: flex;
-		flex-direction: column;
+	> .toolbar {
+		height: $toolbar-height-touch;
 
-		.toolbar {
-			position: sticky;
-			top: 0;
-			height: $toolbar-height-touch;
-			background-color: $panel-bg;
-			z-index: 1;
+		.scrollbar-style-permanent & {
+			height: $toolbar-height-touch + $border-width;
+			border-bottom: $border-width solid $attachments-toolbar-border-color;
 		}
 
 		.counter {
 			margin-right: $space-xs;
 		}
 
-		.btn-default {
+		> .btn-default {
 			@include state(".btn-file:active .btn-default") {
 				color: $icon-active-color;
 			}
+		}
+	}
+
+	.scroll-container-mouse {
+		flex: 1 1 0;
+
+		.scrollbar-style-permanent & {
+			padding-top: $space-min / 2;
 		}
 	}
 

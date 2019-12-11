@@ -311,6 +311,35 @@ const Attachments = props => {
 			ref={ drop }
 		>
 			<h5 className="h2 tab-pane-heading hidden-mouse">Attachments</h5>
+			{ !device.isTouchOrSmall && (
+				<Toolbar>
+					<div className="toolbar-left">
+						<div className="counter">
+							{ `${attachments.length} ${pluralize('attachment', attachments.length)}` }
+						</div>
+						{ !isReadOnly && (
+						<ToolGroup>
+							<div className="btn-file">
+								<input
+									onChange={ handleFileInputChange }
+									onKeyDown={ handleKeyDown }
+									ref={ fileInput }
+									tabIndex={ -2 }
+									type="file"
+								/>
+								<Button
+									disabled={ isReadOnly }
+									className="btn-default"
+									tabIndex={ -1 }
+								>
+									Add File Attachment
+								</Button>
+							</div>
+						</ToolGroup>
+						) }
+					</div>
+				</Toolbar>
+			) }
 			<div
 				className="scroll-container-mouse"
 				onBlur={ onBlur }
@@ -318,35 +347,6 @@ const Attachments = props => {
 				ref={ ref => registerFocusRoot(ref) }
 				tabIndex={ 0 }
 			>
-				{ !device.isTouchOrSmall && (
-					<Toolbar>
-						<div className="toolbar-left">
-							<div className="counter">
-								{ `${attachments.length} ${pluralize('attachment', attachments.length)}` }
-							</div>
-							{ !isReadOnly && (
-							<ToolGroup>
-								<div className="btn-file">
-									<input
-										onChange={ handleFileInputChange }
-										onKeyDown={ handleKeyDown }
-										ref={ fileInput }
-										tabIndex={ -2 }
-										type="file"
-									/>
-									<Button
-										disabled={ isReadOnly }
-										className="btn-default"
-										tabIndex={ -1 }
-									>
-										Add File Attachment
-									</Button>
-								</div>
-							</ToolGroup>
-							) }
-						</div>
-					</Toolbar>
-				) }
 				{ attachments.length > 0 && (
 					<nav>
 						<ul className="details-list attachment-list">
