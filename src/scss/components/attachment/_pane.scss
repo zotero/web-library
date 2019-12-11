@@ -4,7 +4,10 @@
 
 .tab-pane.attachments {
 	@include mouse-and-bp-only(md) {
-		flex-direction: row;
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		grid-template-rows: min-content auto;
+		grid-auto-flow: column;
 		height: 100%;
 	}
 
@@ -53,9 +56,9 @@
 		flex-direction: column;
 
 		@include mouse-and-bp-only(md) {
-			flex: 0 0 50%;
 			border-left: $border-width solid $attachment-details-border-color;
-			min-width: 0;
+			grid-column: 2;
+			grid-row: 1 / 3;
 		}
 
 		@include mouse-and-bp-up(lg) {
