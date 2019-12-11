@@ -120,7 +120,7 @@ const ItemDetailsTabs = props => {
 		}
 		if(ev.key === 'Escape') {
 			//@TODO: do this in a more elegant way
-			document.querySelector('.items-table [tabIndex="0"]').focus();
+			document.querySelector('.items-table[tabIndex="0"]').focus();
 		}
 	});
 
