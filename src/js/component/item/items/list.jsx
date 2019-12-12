@@ -7,16 +7,17 @@ import AutoSizer from 'react-virtualized-auto-sizer';
 import InfiniteLoader from "react-window-infinite-loader";
 import { FixedSizeList as List } from 'react-window';
 
-import Spinner from '../../ui/spinner';
-import { useSourceData } from '../../../hooks';
-import { fetchSource } from '../../../actions';
 import ListRow from './list-row';
+import Spinner from '../../ui/spinner';
+import { fetchSource } from '../../../actions';
+import { useSourceData } from '../../../hooks';
 
 const ROWHEIGHT = 61;
 
 const ItemsList = memo(props => {
 	const { isSearchModeTransitioning } = props;
 	const loader = useRef(null);
+	const listRef = useRef(null);
 	const [focusedRow, setFocusedRow] = useState(null);
 	const dispatch = useDispatch();
 	const { hasChecked, isFetching, keys, requests, totalResults } = useSourceData();
@@ -38,10 +39,7 @@ const ItemsList = memo(props => {
 		[columnsData]
 	);
 
-	const selectedItemKeys = useSelector(state => state.current.itemKey ?
-		[state.current.itemKey] : state.current.itemKeys,
-		shallowEqual
-	);
+	const selectedItemKeys = useSelector(state => state.current.itemKeys, shallowEqual);
 
 	const isLastItemFocused = totalResults && focusedRow === totalResults - 1;
 	const isLastItemSelected = totalResults && keys && keys[totalResults - 1] &&
@@ -78,12 +76,21 @@ const ItemsList = memo(props => {
 		}
 	}, [sortBy, sortDirection, totalResults]);
 
+	useEffect(() => {
+		if(listRef.current && selectedItemKeys.length && keys) {
+			const itemKey = selectedItemKeys[selectedItemKeys.length - 1];
+			const itemKeyIndex = keys.findIndex(k => k === itemKey);
+			listRef.current.scrollToItem(itemKeyIndex);
+		}
+	}, [selectedItemKeys]);
+
 	return (
 		<div className="items-list-wrap">
 			<AutoSizer>
 			{({ height, width }) => (
 				<InfiniteLoader
 					ref={ loader }
+					listRef={ listRef }
 					isItemLoaded={ handleIsItemLoaded }
 					itemCount={ hasChecked && !isSearchModeHack ? totalResults : 0 }
 					loadMoreItems={ handleLoadMore }
@@ -100,7 +107,7 @@ const ItemsList = memo(props => {
 							itemData={ { handleFocus, handleBlur, keys } }
 							itemSize={ ROWHEIGHT }
 							onItemsRendered={ onItemsRendered }
-							ref={ ref }
+							ref={ r => { ref(r); listRef.current = r; } }
 							width={ width }
 						>
 							{ ListRow }

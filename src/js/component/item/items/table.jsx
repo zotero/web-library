@@ -24,6 +24,7 @@ const Table = memo(() => {
 	const containerDom = useRef(null);
 	const headerRef = useRef(null);
 	const tableRef = useRef(null);
+	const listRef = useRef(null);
 	const loader = useRef(null);
 	const resizing = useRef(null);
 	const reordering = useRef(null);
@@ -37,10 +38,7 @@ const Table = memo(() => {
 	const collectionKey = useSelector(state => state.current.collectionKey);
 	const libraryKey = useSelector(state => state.current.libraryKey);
 	const columnsData = useSelector(state => state.preferences.columns, shallowEqual);
-	const selectedItemKeys = useSelector(state => state.current.itemKey ?
-		[state.current.itemKey] : state.current.itemKeys,
-		shallowEqual
-	);
+	const selectedItemKeys = useSelector(state => state.current.itemKeys, shallowEqual);
 	const columns = useMemo(() => columnsData.filter(c => c.isVisible), [columnsData]);
 	const { field: sortBy, sort: sortDirection } = useMemo(() =>
 		columnsData.find(column => 'sort' in column) || { field: 'title', sort: 'asc' },
@@ -304,6 +302,14 @@ const Table = memo(() => {
 		// otherwise it will have access to old values
 	}, [isResizing, isReordering, columns, reorderTargetIndex]);
 
+	useEffect(() => {
+		if(listRef.current && selectedItemKeys.length && keys) {
+			const itemKey = selectedItemKeys[selectedItemKeys.length - 1];
+			const itemKeyIndex = keys.findIndex(k => k === itemKey);
+			listRef.current.scrollToItem(itemKeyIndex);
+		}
+	}, [selectedItemKeys]);
+
 	return drop(
 		<div
 			ref={ containerDom }
@@ -317,10 +323,11 @@ const Table = memo(() => {
 			<AutoSizer>
 			{({ height, width }) => (
 				<InfiniteLoader
-					ref={ loader }
 					isItemLoaded={ handleIsItemLoaded }
 					itemCount={ hasChecked ? totalResults : 0 }
+					listRef={ listRef }
 					loadMoreItems={ handleLoadMore }
+					ref={ loader }
 				>
 					{({ onItemsRendered, ref }) => (
 						<div
@@ -351,7 +358,7 @@ const Table = memo(() => {
 								itemData={ { onFileHoverOnRow: handleFileHoverOnRow, isFocused, columns, keys } }
 								itemSize={ ROWHEIGHT }
 								onItemsRendered={ onItemsRendered }
-								ref={ ref }
+								ref={ r => { ref(r); listRef.current = r; } }
 								width={ width }
 							>
 								{ TableRow }
