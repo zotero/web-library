@@ -69,7 +69,7 @@
 		}
 
 		> .icon {
-			&:first-child {
+			&:first-of-type {
 				@include touch-or-bp-down(sm) {
 					margin-right: $default-padding-x-touch;
 				}
@@ -106,6 +106,11 @@
 					border-color: transparent;
 					outline: $outline-width solid $focus-color;
 				}
+			}
+
+			&.btn-circle {
+				margin-left: 2px;
+				margin-right: $default-padding-x-touch + 2px;
 			}
 		}
 
