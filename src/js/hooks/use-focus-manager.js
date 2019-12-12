@@ -71,10 +71,12 @@ const useFocusManager = (ref, overrideFocusRef = null) => {
 	});
 
 	const handleFocus = useCallback(ev => {
+		ref.current.tabIndex = -1;
+
 		if(ev.target !== ev.currentTarget) {
 			return;
 		}
-		ref.current.tabIndex = -1;
+
 		const candidates = Array.from(ref.current.querySelectorAll('[tabIndex="-2"]:not([disabled])'));
 		if(lastFocused.current !== null && candidates.includes(lastFocused.current)) {
 			lastFocused.current.focus();
