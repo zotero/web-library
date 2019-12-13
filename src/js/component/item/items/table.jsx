@@ -25,6 +25,8 @@ const Table = memo(() => {
 	const headerRef = useRef(null);
 	const tableRef = useRef(null);
 	const listRef = useRef(null);
+	const innerRef = useRef(null);
+	const outerRef = useRef(null);
 	const loader = useRef(null);
 	const resizing = useRef(null);
 	const reordering = useRef(null);
@@ -108,6 +110,29 @@ const Table = memo(() => {
 			dispatch(chunkedTrashOrDelete(selectedItemKeys));
 			dispatch(navigate({ items: [] }));
 			return;
+		} else if(ev.key === 'PageDown') {
+			if(outerRef.current && listRef.current && innerRef.current) {
+				listRef.current.scrollTo(
+					Math.min(
+						outerRef.current.scrollTop + listRef.current.props.height,
+						innerRef.current.clientHeight - listRef.current.props.height
+					)
+				);
+			}
+			return;
+		} else if(ev.key === 'PageUp') {
+			if(outerRef.current && listRef.current) {
+				listRef.current.scrollTo(Math.max(outerRef.current.scrollTop - listRef.current.props.height, 0));
+			}
+			return;
+		} else if(ev.key === 'Home' && keys) {
+			if(keys[0]) {
+				dispatch(navigate({ items: [keys[0]] }));
+			}
+		} else if(ev.key === 'End') {
+			if(keys[keys.length - 1]) {
+				dispatch(navigate({ items: [keys[keys.length - 1]] }));
+			}
 		} else {
 			return;
 		}
@@ -313,7 +338,6 @@ const Table = memo(() => {
 	return drop(
 		<div
 			ref={ containerDom }
-			onKeyDown={ handleKeyDown }
 			className={cx('items-table-wrap', {
 				resizing: isResizing,
 				reordering: isReordering,
@@ -359,6 +383,8 @@ const Table = memo(() => {
 								itemSize={ ROWHEIGHT }
 								onItemsRendered={ onItemsRendered }
 								ref={ r => { ref(r); listRef.current = r; } }
+								outerRef={ outerRef }
+								innerRef={ innerRef }
 								width={ width }
 							>
 								{ TableRow }
