@@ -8,17 +8,17 @@ import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { useDrop } from 'react-dnd-cjs'
 
 import HeaderRow from './table-header-row';
-import TableRow from './table-row';
 import Spinner from '../../ui/spinner';
+import TableBody from './table-body';
+import TableRow from './table-row';
 import { applyChangesToVisibleColumns, resizeVisibleColumns } from '../../../utils';
 import { ATTACHMENT } from '../../../constants/dnd';
-import { chunkedTrashOrDelete, createAttachmentsFromDropped, fetchSource, navigate, preferenceChange } from '../../../actions';
+import { createAttachmentsFromDropped, fetchSource, preferenceChange } from '../../../actions';
 import { useSourceData } from '../../../hooks';
 
 const ROWHEIGHT = 26;
 
 const getColumnCssVars = (columns, width) => Object.fromEntries(columns.map((c, i) => [`--col-${i}-width`, `${c.fraction * width}px`]))
-
 
 const Table = memo(() => {
 	const containerDom = useRef(null);
@@ -34,7 +34,6 @@ const Table = memo(() => {
 	const [isResizing, setIsResizing] = useState(false);
 	const [isReordering, setIsReordering] = useState(false);
 	const [reorderTargetIndex, setReorderTargetIndex] = useState(null);
-	const [isFocused, setIsFocused] = useState(false);
 	const [isHoveringBetweenRows, setIsHoveringBetweenRows] = useState(false);
 	const { hasChecked, isFetching, keys, requests, totalResults } = useSourceData();
 	const collectionKey = useSelector(state => state.current.collectionKey);
@@ -72,23 +71,6 @@ const Table = memo(() => {
 		}
 	});
 
-	const handleFocus = useCallback(ev => {
-		if(ev.currentTarget !== ev.target) {
-			return;
-		}
-		ev.preventDefault();
-		if(selectedItemKeys && keys && selectedItemKeys.length === 0 && keys.length > 0) {
-			dispatch(navigate({
-				items: [keys[0]]
-			}));
-		}
-		setIsFocused(true);
-	});
-
-	const handleBlur = useCallback(() => {
-		setIsFocused(false);
-	});
-
 	const handleIsItemLoaded = useCallback(index => {
 		if(keys && !!keys[index]) {
 			return true; // loaded
@@ -98,107 +80,6 @@ const Table = memo(() => {
 
 	const handleLoadMore = useCallback((startIndex, stopIndex) => {
 		dispatch(fetchSource(startIndex, stopIndex))
-	});
-
-	const handleKeyDown = useCallback(ev => {
-		var vector;
-		if(ev.key === 'ArrowUp') {
-			vector = -1;
-		} else if(ev.key === 'ArrowDown') {
-			vector = 1;
-		} else if(ev.key === 'Backspace') {
-			dispatch(chunkedTrashOrDelete(selectedItemKeys));
-			dispatch(navigate({ items: [] }));
-			return;
-		} else if(ev.key === 'PageDown') {
-			if(outerRef.current && listRef.current && innerRef.current) {
-				listRef.current.scrollTo(
-					Math.min(
-						outerRef.current.scrollTop + listRef.current.props.height,
-						innerRef.current.clientHeight - listRef.current.props.height
-					)
-				);
-			}
-			return;
-		} else if(ev.key === 'PageUp') {
-			if(outerRef.current && listRef.current) {
-				listRef.current.scrollTo(Math.max(outerRef.current.scrollTop - listRef.current.props.height, 0));
-			}
-			return;
-		} else if(ev.key === 'Home' && keys) {
-			if(keys[0]) {
-				dispatch(navigate({ items: [keys[0]] }));
-			}
-		} else if(ev.key === 'End') {
-			if(keys[keys.length - 1]) {
-				dispatch(navigate({ items: [keys[keys.length - 1]] }));
-			}
-		} else {
-			return;
-		}
-
-		if(!vector) {
-			return;
-		}
-
-		ev.preventDefault();
-
-		const lastItemKey = selectedItemKeys[selectedItemKeys.length - 1];
-		const index = keys.findIndex(key => key && key === lastItemKey);
-		const nextIndex = index + vector;
-
-		//check bounds
-		if(vector > 0 && index + 1 >= keys.length) {
-			return;
-		}
-
-		var nextKeys;
-
-		if(vector < 0 && index + vector < 0) {
-			if(!ev.getModifierState('Shift')) {
-				nextKeys = [];
-				setIsFocused(false);
-				headerRef.current.focus();
-			}
-		} else {
-			if(ev.getModifierState('Shift')) {
-				if(selectedItemKeys.includes(keys[nextIndex])) {
-					if(keys.slice(...(vector > 0 ? [0, index] : [index + 1])).some(
-						key => selectedItemKeys.includes(key)
-					)) {
-						let offset = 1;
-						let boundry = vector > 0 ? keys.length - 1 : 0;
-						while(index + (offset * vector) !== boundry &&
-							selectedItemKeys.includes(keys[index + (offset * vector)].key)
-						) {
-							offset++;
-						}
-						var consecutiveCounter = 1;
-						while(selectedItemKeys.includes(keys[index + (offset * vector) + consecutiveCounter].key)) {
-							consecutiveCounter++;
-						}
-						var consecutiveKeys;
-						if(vector > 0) {
-							consecutiveKeys = keys.slice(index + offset - consecutiveCounter + 1, index + offset);
-						} else {
-							consecutiveKeys = keys.slice(index - offset, index - offset + consecutiveCounter).reverse();
-						}
-						nextKeys = [
-							...selectedItemKeys.filter(k => !consecutiveKeys.includes(k)),
-							...consecutiveKeys,
-							keys[index + (offset * vector)]
-						];
-					} else {
-						nextKeys = selectedItemKeys.filter(k => k !== keys[index]);
-					}
-				} else {
-					nextKeys = [...selectedItemKeys, keys[nextIndex]];
-				}
-			} else {
-				nextKeys = [keys[nextIndex]];
-			}
-		}
-		dispatch(navigate({ items: nextKeys }));
 	});
 
 	const handleResize = useCallback(ev => {
@@ -349,7 +230,6 @@ const Table = memo(() => {
 				<InfiniteLoader
 					isItemLoaded={ handleIsItemLoaded }
 					itemCount={ hasChecked ? totalResults : 0 }
-					listRef={ listRef }
 					loadMoreItems={ handleLoadMore }
 					ref={ loader }
 				>
@@ -357,10 +237,6 @@ const Table = memo(() => {
 						<div
 							ref={ tableRef }
 							className="items-table"
-							onFocus={ handleFocus }
-							onBlur={ handleBlur }
-							tabIndex={ 0 }
-							onKeyDown={ handleKeyDown }
 							style={ getColumnCssVars(columns, width) }
 						>
 							<HeaderRow
@@ -376,13 +252,14 @@ const Table = memo(() => {
 								reorderTargetIndex= { reorderTargetIndex }
 							/>
 							<List
+								outerElementType={ TableBody }
 								className="items-table-body"
 								height={ height - ROWHEIGHT } // add margin for HeaderRow
 								itemCount={ hasChecked ? totalResults : 0 }
-								itemData={ { onFileHoverOnRow: handleFileHoverOnRow, isFocused, columns, keys } }
+								itemData={ { onFileHoverOnRow: handleFileHoverOnRow, columns, keys } }
 								itemSize={ ROWHEIGHT }
 								onItemsRendered={ onItemsRendered }
-								ref={ r => { ref(r); listRef.current = r; } }
+								ref={ r => { ref(r); listRef.current = r } }
 								outerRef={ outerRef }
 								innerRef={ innerRef }
 								width={ width }

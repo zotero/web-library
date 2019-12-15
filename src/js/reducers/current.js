@@ -1,15 +1,16 @@
 import { LOCATION_CHANGE } from 'connected-react-router';
 
 import {
-    CONFIGURE,
-    FILTER_TAGS,
-    TOGGLE_NAVBAR,
-    TOGGLE_TAG_SELECTOR,
-    TOGGLE_TRANSITIONS,
-    TRIGGER_EDITING_ITEM,
-    TRIGGER_SEARCH_MODE,
-    TRIGGER_SELECT_MODE,
-    TRIGGER_USER_TYPE_CHANGE,
+	CONFIGURE,
+	FILTER_TAGS,
+	TOGGLE_NAVBAR,
+	TOGGLE_TAG_SELECTOR,
+	TOGGLE_TRANSITIONS,
+	TRIGGER_EDITING_ITEM,
+	TRIGGER_FOCUS,
+	TRIGGER_SEARCH_MODE,
+	TRIGGER_SELECT_MODE,
+	TRIGGER_USER_TYPE_CHANGE,
 } from '../constants/actions';
 
 import { tagsFromUrlPart } from '../common/navigation';
@@ -182,6 +183,11 @@ const current = (state = stateDefault, action, { config = {}, device = {} } = {}
 				...state,
 				editingItemKey: action.userType === 'mouse' && !device.xxs && !device.xs &&
 					!device.sm ? null : state.editingItemKey
+			}
+		case TRIGGER_FOCUS:
+			return {
+				...state,
+				isItemsTableFocused: action.section === 'items-table' && action.isOn
 			}
 		default:
 			return state;

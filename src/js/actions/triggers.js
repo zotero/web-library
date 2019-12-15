@@ -1,16 +1,17 @@
 'use strict';
 
 import {
-    DISMISS_ERROR,
-    TOGGLE_MODAL,
-    TOGGLE_NAVBAR,
-    TOGGLE_TAG_SELECTOR,
-    TOGGLE_TRANSITIONS,
-    TRIGGER_EDITING_ITEM,
-    TRIGGER_RESIZE_VIEWPORT,
-    TRIGGER_SEARCH_MODE,
-    TRIGGER_SELECT_MODE,
-    TRIGGER_USER_TYPE_CHANGE,
+	DISMISS_ERROR,
+	TOGGLE_MODAL,
+	TOGGLE_NAVBAR,
+	TOGGLE_TAG_SELECTOR,
+	TOGGLE_TRANSITIONS,
+	TRIGGER_EDITING_ITEM,
+	TRIGGER_FOCUS,
+	TRIGGER_RESIZE_VIEWPORT,
+	TRIGGER_SEARCH_MODE,
+	TRIGGER_SELECT_MODE,
+	TRIGGER_USER_TYPE_CHANGE,
 } from '../constants/actions';
 
 const triggerEditingItem = (itemKey, toggleValue) => {
@@ -78,6 +79,10 @@ const dismissError = errorId => {
 	return { type: DISMISS_ERROR, errorId };
 }
 
+const triggerFocus = (section, isOn) => {
+	return { type: TRIGGER_FOCUS, section, isOn }	;
+}
+
 export {
 	dismissError,
 	toggleModal,
@@ -85,6 +90,7 @@ export {
 	toggleTagSelector,
 	toggleTransitions,
 	triggerEditingItem,
+	triggerFocus,
 	triggerResizeViewport,
 	triggerSearchMode,
 	triggerSelectMode,

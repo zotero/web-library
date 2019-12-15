@@ -129,10 +129,11 @@ const TableRow = memo(props => {
 	const ignoreClicks = useRef({});
 	const [dropZone, setDropZone] = useState(null);
 	const { data, index, style } = props;
-	const { onFileHoverOnRow, isFocused, keys, columns } = data;
+	const { onFileHoverOnRow, keys, columns } = data;
 	const itemKey = keys && keys[index] ? keys[index] : null;
 	const libraryKey = useSelector(state => state.current.libraryKey);
 	const collectionKey = useSelector(state => state.current.collectionKey);
+	const isFocused = useSelector(state => state.current.isItemsTableFocused);
 	const itemData = useSelector(
 		state => itemKey ?
 			state.libraries[state.current.libraryKey].items[itemKey][Symbol.for('derived')]

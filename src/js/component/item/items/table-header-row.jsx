@@ -36,7 +36,7 @@ const HeaderRow = memo(forwardRef((props, ref) => {
 	const handleKeyDown = ev => {
 		if((ev.key === 'ArrowDown' || ev.key === 'ArrowRight' || ev.key === 'ArrowLeft')) {
 			if(ev.key === 'ArrowDown') {
-				ev.currentTarget.closest('[tabIndex="0"]').focus();
+				ref.current.closest('.items-table').querySelector('.items-table-body').focus();
 			}
 			else if(ev.key === 'ArrowRight') {
 				handleNext(ev, false);
