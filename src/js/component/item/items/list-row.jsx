@@ -9,12 +9,12 @@ import { navigate } from '../../../actions';
 const selectItem = (itemKey, selectedItemKeys, isSelectMode, dispatch) => {
 	if(isSelectMode) {
 		if(selectedItemKeys.includes(itemKey)) {
-			dispatch(navigate({ items: selectedItemKeys.filter(key => key !== itemKey) }));
+			dispatch(navigate({ items: selectedItemKeys.filter(key => key !== itemKey), noteKey: null, attachmentKey: null }));
 		} else {
-			dispatch(navigate({ items: [...selectedItemKeys, itemKey] }));
+			dispatch(navigate({ items: [...selectedItemKeys, itemKey], noteKey: null, attachmentKey: null }));
 		}
 	} else {
-		dispatch(navigate({ items: [itemKey], view: 'item-details' }));
+		dispatch(navigate({ items: [itemKey], view: 'item-details', noteKey: null, attachmentKey: null }));
 	}
 }
 

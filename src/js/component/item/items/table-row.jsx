@@ -40,7 +40,7 @@ const selectItem = (itemKey, ev, keys, selectedItemKeys, dispatch) => {
 	} else {
 		newKeys = [itemKey];
 	}
-	dispatch(navigate({ items: newKeys }));
+	dispatch(navigate({ items: newKeys, noteKey: null, attachmentKey: null }));
 }
 
 const DataCell = props => {
