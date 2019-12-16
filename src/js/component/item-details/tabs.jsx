@@ -1,9 +1,7 @@
-'use strict';
-
 import cx from 'classnames';
 import PropTypes from 'prop-types';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { useDispatch, useSelector, shallowCompare } from 'react-redux';
+import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 
 import AttachmentsContainer from '../../container/item-details/attachments';
 import EditToggleButton from '../edit-toggle-button';
@@ -16,7 +14,6 @@ import StandaloneAttachmentTabPane from '../../component/item-details/standalone
 import StandaloneNoteContainer from '../../container/item-details/standalone-note';
 import TagsContainer from '../../container/item-details/tags';
 import { Tab, Tabs } from '../ui/tabs';
-import withDevice from '../../enhancers/with-device';
 import { useEditMode, useFetchingState, useMetaState } from '../../hooks';
 import { get, mapRelationsToItemKeys } from '../../utils';
 import { fetchChildItems, fetchItemTypeCreatorTypes, fetchItemTypeFields, fetchRelatedItems,
@@ -35,8 +32,7 @@ const pickDefaultActiveTab = (itemType, attachmentKey, noteKey) => {
 
 const PAGE_SIZE = 100;
 
-const ItemDetailsTabs = props => {
-	const { device } = props;
+const ItemDetailsTabs = () => {
 	const dispatch = useDispatch();
 
 	const isLibraryReadOnly = useSelector(state => state.current.isLibraryReadOnly);
@@ -46,11 +42,14 @@ const ItemDetailsTabs = props => {
 	const noteKey = useSelector(state => state.current.noteKey);
 	const attachmentKey = useSelector(state => state.current.attachmentKey);
 	const item = useSelector(state => get(state, ['libraries', libraryKey, 'items', itemKey], {}));
-	const items = useSelector(state => get(state, ['libraries', libraryKey, 'items'], {}), shallowCompare);
+	const items = useSelector(state => get(state, ['libraries', libraryKey, 'items'], {}), shallowEqual);
 	const isTinymceFetching = useSelector(state => state.sources.fetching.includes('tinymce'));
 	const isTinymceFetched = useSelector(state => state.sources.fetched.includes('tinymce'));
 	const childItemsState = useFetchingState(['libraries', libraryKey, 'itemsByParent', itemKey]);
-	const relatedItemsState = useSelector(state => get(state, ['libraries', libraryKey, 'itemsRelated', itemKey], {}), shallowCompare);
+	const relatedItemsState = useSelector(state => get(state, ['libraries', libraryKey, 'itemsRelated', itemKey], {}), shallowEqual);
+	const shouldUseTabs = useSelector(state => state.device.shouldUseTabs);
+	const shouldUseEditMode = useSelector(state => state.device.shouldUseEditMode);
+	const shouldFetchChildItems = !['attachment', 'note'].includes(item.itemType);
 	const { isMetaFetching, isMetaAvailable } = useMetaState();
 
 	const { attachments, notes } = useMemo(() => {
@@ -68,22 +67,22 @@ const ItemDetailsTabs = props => {
 	const relatedKeys = mapRelationsToItemKeys(item.relations || {}, userId);
 
 	const [isEditing, ] = useEditMode();
-	const isReadOnly = isLibraryReadOnly || !!(device.shouldUseEditMode && !isEditing);
+	const isReadOnly = isLibraryReadOnly || !!(shouldUseEditMode && !isEditing);
 
-	const isReady = device.shouldUseTabs || (
-		!device.shouldUseTabs && childItemsState.hasChecked && relatedItemsState.isFetched &&
+	const isReady = shouldUseTabs || (
+		!shouldUseTabs && (!shouldFetchChildItems || childItemsState.hasChecked) && relatedItemsState.isFetched &&
 		isTinymceFetched && isMetaAvailable
 	);
 	const [activeTab, setActiveTab] = useState(pickDefaultActiveTab(item.itemType, attachmentKey, noteKey));
 
-	const shouldShowAttachmentsTab = device.shouldUseTabs || (!device.shouldUseTabs && (!isReadOnly || attachments.length > 0));
-	const shouldShowNotesTab = device.shouldUseTabs || (!device.shouldUseTabs && (!isReadOnly || notes.length > 0));
-	const shouldShowRelatedTab = device.shouldUseTabs || (!device.shouldUseTabs && (relatedKeys.length > 0));
-	const shouldShowTagsTab = device.shouldUseTabs || (!device.shouldUseTabs && (!isReadOnly || item.tags.length > 0));
+	const shouldShowAttachmentsTab = shouldUseTabs || (!shouldUseTabs && (!isReadOnly || attachments.length > 0));
+	const shouldShowNotesTab = shouldUseTabs || (!shouldUseTabs && (!isReadOnly || notes.length > 0));
+	const shouldShowRelatedTab = shouldUseTabs || (!shouldUseTabs && (relatedKeys.length > 0));
+	const shouldShowTagsTab = shouldUseTabs || (!shouldUseTabs && (!isReadOnly || item.tags.length > 0));
 
 	useEffect(() => {
 		// fetch child items on devices that don't use tabs, unless item type cannot have child items
-		if(device.shouldUseTabs || !item || ['attachment', 'note'].includes(item.itemType)) {
+		if(shouldUseTabs || !shouldFetchChildItems) {
 			return;
 		}
 
@@ -92,26 +91,42 @@ const ItemDetailsTabs = props => {
 			const limit = PAGE_SIZE;
 			dispatch(fetchChildItems(itemKey, { start, limit }));
 		}
+
+	}, [childItemsState, shouldUseTabs, itemKey]);
+
+	useEffect(() => {
+		// fetch related items on devices that don't use tabs
+		if(shouldUseTabs) {
+			return;
+		}
+
 		if(itemKey && !relatedItemsState.isFetching && !relatedItemsState.isFetched) {
 			dispatch(fetchRelatedItems(itemKey));
 		}
-
-	}, [childItemsState, relatedItemsState, device, itemKey]);
+	}, [relatedItemsState])
 
 	useEffect(() => {
-		// fetch meta on non-tab devices
-		if(!device.shouldUseTabs && !isMetaAvailable && !isMetaFetching) {
+		// fetch meta on devices that don't use tabs
+		if(shouldUseTabs || !item.itemType) {
+			return;
+		}
+
+		if(!isMetaAvailable && !isMetaFetching) {
 			dispatch(fetchItemTypeCreatorTypes(item.itemType));
 			dispatch(fetchItemTypeFields(item.itemType));
 		}
-	}, [isMetaFetching, isMetaAvailable, device]);
+	}, [isMetaFetching, isMetaAvailable, shouldUseTabs]);
 
 	useEffect(() => {
-		// fetch tinymce on non-tab devices
-		if(!device.shouldUseTabs && !isTinymceFetched && !isTinymceFetching) {
+		// fetch tinymce on devices that don't use tabs
+		if(shouldUseTabs) {
+			return;
+		}
+
+		if(!isTinymceFetched && !isTinymceFetching) {
 			dispatch(sourceFile('tinymce'));
 		}
-	}, [device]);
+	}, [shouldUseTabs, isTinymceFetched, isTinymceFetching]);
 
 	const handleKeyDown = useCallback(ev => {
 		if(ev.key === 'ArrowDown' && ev.target.closest('.tab')) {
@@ -316,4 +331,4 @@ ItemDetailsTabs.propTypes = {
 	device: PropTypes.object,
 };
 
-export default withDevice(ItemDetailsTabs);
+export default ItemDetailsTabs;
