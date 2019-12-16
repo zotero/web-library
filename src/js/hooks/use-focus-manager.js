@@ -4,7 +4,7 @@ const isModifierKey = ev => ev.getModifierState("Meta") || ev.getModifierState("
 		ev.getModifierState("Control") || ev.getModifierState("OS");
 
 
-const useFocusManager = (ref, overrideFocusRef = null) => {
+const useFocusManager = (ref, { overrideFocusRef = null, isCarousel = true } = {}) => {
 	const lastFocused = useRef(null);
 	const originalTabIndex = useRef(null);
 
@@ -22,7 +22,7 @@ const useFocusManager = (ref, overrideFocusRef = null) => {
 		if(nextIndex < tabbables.length) {
 			tabbables[nextIndex].focus();
 			lastFocused.current = tabbables[nextIndex];
-		} else {
+		} else if(isCarousel) {
 			tabbables[0].focus();
 			lastFocused.current = tabbables[0];
 		}
@@ -42,7 +42,7 @@ const useFocusManager = (ref, overrideFocusRef = null) => {
 		if(prevIndex >= 0) {
 			tabbables[prevIndex].focus();
 			lastFocused.current = tabbables[prevIndex];
-		} else {
+		} else if(isCarousel) {
 			tabbables[tabbables.length - 1].focus();
 			lastFocused.current = tabbables[0];
 		}
@@ -106,6 +106,7 @@ const useFocusManager = (ref, overrideFocusRef = null) => {
 	useEffect(() => {
 		if(overrideFocusRef !== null) {
 			lastFocused.current = overrideFocusRef.current;
+			console.log({ overrideFocusRef });
 		}
 	}, [overrideFocusRef && overrideFocusRef.current])
 

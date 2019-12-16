@@ -230,7 +230,7 @@ const Attachments = props => {
 	const ref = useRef();
 	const selectedAttachmentRef = useRef();
 	const { handleNext, handlePrevious, handleDrillDownNext, handleDrillDownPrev, handleFocus,
-		handleBlur } = useFocusManager(ref, selectedAttachmentRef);
+		handleBlur } = useFocusManager(ref, { overrideFocusRef: selectedAttachmentRef, isCarousel: false });
 
 	const fileInput = useRef(null);
 	const [attachments, setAttachments] = useState([]);
