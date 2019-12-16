@@ -106,7 +106,6 @@ const useFocusManager = (ref, { overrideFocusRef = null, isCarousel = true } = {
 	useEffect(() => {
 		if(overrideFocusRef !== null) {
 			lastFocused.current = overrideFocusRef.current;
-			console.log({ overrideFocusRef });
 		}
 	}, [overrideFocusRef && overrideFocusRef.current])
 
