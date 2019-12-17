@@ -39,10 +39,10 @@ const HeaderRow = memo(forwardRef((props, ref) => {
 				ref.current.closest('.items-table').querySelector('.items-table-body').focus();
 			}
 			else if(ev.key === 'ArrowRight') {
-				handleNext(ev, false);
+				handleNext(ev,  { useCurrentTarget: false });
 			}
 			else if(ev.key === 'ArrowLeft') {
-				handlePrevious(ev, false);
+				handlePrevious(ev,  { useCurrentTarget: false });
 			}
 			ev.preventDefault();
 			return;

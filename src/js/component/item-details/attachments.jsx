@@ -227,10 +227,10 @@ const Attachments = props => {
 	itemKey, createItem, uploadAttachment, fetchChildItems, fetchItemTemplate, uploads, isActive,
 	libraryKey, pointer, ...rest } = props;
 	const dispatch = useDispatch();
-	const ref = useRef();
-	const selectedAttachmentRef = useRef();
+	const scrollContainerRef = useRef(null);
+	const selectedAttachmentRef = useRef(null);
 	const { handleNext, handlePrevious, handleDrillDownNext, handleDrillDownPrev, handleFocus,
-		handleBlur } = useFocusManager(ref, { overrideFocusRef: selectedAttachmentRef, isCarousel: false });
+		handleBlur } = useFocusManager(scrollContainerRef, { overrideFocusRef: selectedAttachmentRef, isCarousel: false });
 
 	const fileInput = useRef(null);
 	const [attachments, setAttachments] = useState([]);
@@ -251,8 +251,6 @@ const Attachments = props => {
 			}
 		},
 	});
-
-	drop(ref);
 
 	useEffect(() => {
 		if(isActive && !isFetching && !isFetched) {
@@ -302,7 +300,7 @@ const Attachments = props => {
 		} else if(ev.key === 'ArrowDown') {
 			ev.target === ev.currentTarget && handleNext(ev);
 		} else if(ev.key === 'ArrowUp') {
-			ev.target === ev.currentTarget && handlePrevious(ev);
+			ev.target === ev.currentTarget && handlePrevious(ev, { targetEnd: fileInput.current });
 		} else if(ev.key === 'Tab') {
 			const isFileInput = ev.currentTarget === fileInput.current;
 			const isShift = ev.getModifierState('Shift');
@@ -320,10 +318,7 @@ const Attachments = props => {
 			className={ cx("attachments", { 'dnd-target': canDrop && isOver }) }
 			isActive={ isActive }
 			isLoading={ device.shouldUseTabs && !(isFetched && isTinymceFetched) }
-			onBlur={ handleBlur }
-			onFocus={ handleFocus }
-			tabIndex={ 0 }
-			ref={ ref }
+			ref={ drop }
 		>
 			<h5 className="h2 tab-pane-heading hidden-mouse">Attachments</h5>
 			{ !device.isTouchOrSmall && (
@@ -357,6 +352,10 @@ const Attachments = props => {
 			) }
 			<div
 				className="scroll-container-mouse"
+				onBlur={ handleBlur }
+				onFocus={ handleFocus }
+				tabIndex={ 0 }
+				ref={ scrollContainerRef }
 			>
 				{ attachments.length > 0 && (
 					<nav>

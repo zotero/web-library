@@ -8,7 +8,7 @@ const useFocusManager = (ref, { overrideFocusRef = null, isCarousel = true } = {
 	const lastFocused = useRef(null);
 	const originalTabIndex = useRef(null);
 
-	const handleNext = useCallback((ev, useCurrentTarget = true) => {
+	const handleNext = useCallback((ev, { useCurrentTarget = true, targetEnd = null } = {}) => {
 		const tabbables = Array.from(
 			ref.current.querySelectorAll('[tabIndex="-2"]:not([disabled]):not(.offscreen)')
 		).filter(t => t.offsetParent);
@@ -22,13 +22,16 @@ const useFocusManager = (ref, { overrideFocusRef = null, isCarousel = true } = {
 		if(nextIndex < tabbables.length) {
 			tabbables[nextIndex].focus();
 			lastFocused.current = tabbables[nextIndex];
+		} else if (targetEnd !== null) {
+			targetEnd.focus();
+			lastFocused.current = null;
 		} else if(isCarousel) {
 			tabbables[0].focus();
 			lastFocused.current = tabbables[0];
 		}
 	})
 
-	const handlePrevious = useCallback((ev, useCurrentTarget = true) => {
+	const handlePrevious = useCallback((ev, { useCurrentTarget = true, targetEnd = null } = {}) => {
 		const tabbables = Array.from(
 			ref.current.querySelectorAll('[tabIndex="-2"]:not([disabled]):not(.offscreen)')
 		).filter(t => t.offsetParent);
@@ -42,6 +45,9 @@ const useFocusManager = (ref, { overrideFocusRef = null, isCarousel = true } = {
 		if(prevIndex >= 0) {
 			tabbables[prevIndex].focus();
 			lastFocused.current = tabbables[prevIndex];
+		} else if (targetEnd !== null) {
+			targetEnd.focus();
+			lastFocused.current = null;
 		} else if(isCarousel) {
 			tabbables[tabbables.length - 1].focus();
 			lastFocused.current = tabbables[0];
@@ -72,7 +78,6 @@ const useFocusManager = (ref, { overrideFocusRef = null, isCarousel = true } = {
 
 	const handleFocus = useCallback(ev => {
 		ref.current.tabIndex = -1;
-
 		if(ev.target !== ev.currentTarget) {
 			return;
 		}
