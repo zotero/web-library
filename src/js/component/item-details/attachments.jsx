@@ -313,6 +313,13 @@ const Attachments = props => {
 		}
 	});
 
+	const handleFileInputKeyDown = useCallback(ev => {
+		if(ev.key === 'ArrowDown') {
+			scrollContainerRef.current.focus();
+			ev.preventDefault();
+		}
+	});
+
 	return (
 		<TabPane
 			className={ cx("attachments", { 'dnd-target': canDrop && isOver }) }
@@ -332,9 +339,9 @@ const Attachments = props => {
 							<div className="btn-file">
 								<input
 									onChange={ handleFileInputChange }
-									onKeyDown={ handleKeyDown }
+									onKeyDown={ handleFileInputKeyDown }
 									ref={ fileInput }
-									tabIndex={ -2 }
+									tabIndex={ 0 }
 									type="file"
 								/>
 								<Button

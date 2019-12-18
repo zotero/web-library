@@ -1,10 +1,11 @@
-import { useEffect, useCallback, useRef } from 'react';
+import { useEffect, useCallback, useRef, useState } from 'react';
 
 const isModifierKey = ev => ev.getModifierState("Meta") || ev.getModifierState("Alt") ||
 		ev.getModifierState("Control") || ev.getModifierState("OS");
 
 
 const useFocusManager = (ref, { overrideFocusRef = null, isCarousel = true } = {}) => {
+	const [isFocused, setIsFocused] = useState(false);
 	const lastFocused = useRef(null);
 	const originalTabIndex = useRef(null);
 
@@ -29,7 +30,7 @@ const useFocusManager = (ref, { overrideFocusRef = null, isCarousel = true } = {
 			tabbables[0].focus();
 			lastFocused.current = tabbables[0];
 		}
-	})
+	});
 
 	const handlePrevious = useCallback((ev, { useCurrentTarget = true, targetEnd = null } = {}) => {
 		const tabbables = Array.from(
@@ -77,10 +78,12 @@ const useFocusManager = (ref, { overrideFocusRef = null, isCarousel = true } = {
 	});
 
 	const handleFocus = useCallback(ev => {
-		ref.current.tabIndex = -1;
-		if(ev.target !== ev.currentTarget) {
+		if(isFocused) {
 			return;
 		}
+
+		setIsFocused(true);
+		ref.current.tabIndex = -1;
 
 		const candidates = Array.from(ref.current.querySelectorAll('[tabIndex="-2"]:not([disabled])'));
 		if(lastFocused.current !== null && candidates.includes(lastFocused.current)) {
@@ -97,6 +100,7 @@ const useFocusManager = (ref, { overrideFocusRef = null, isCarousel = true } = {
 		) {
 			return;
 		}
+		setIsFocused(false);
 		ev.currentTarget.tabIndex = originalTabIndex.current;
 	});
 
@@ -111,6 +115,9 @@ const useFocusManager = (ref, { overrideFocusRef = null, isCarousel = true } = {
 	useEffect(() => {
 		if(overrideFocusRef !== null) {
 			lastFocused.current = overrideFocusRef.current;
+			if(lastFocused.current) {
+				lastFocused.current.focus();
+			}
 		}
 	}, [overrideFocusRef && overrideFocusRef.current])
 
