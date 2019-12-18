@@ -3,149 +3,155 @@
 // --------------------------------------------------
 
 .tag-selector {
-	flex: 0 0 $tag-selector-height;
-	display: flex;
-	flex-direction: column;
-	border-top: $border-width solid $tag-selector-border-color;
-	line-height: $line-height-base;
-	min-height: 0;
-
-	&.collapsed {
-		flex: 0 0 $tag-selector-collapsed-height;
-	}
-
-	.tag-selector-toggle {
-		display: block;
-		position: sticky;
-		top: 0;
-		width: 100%;
-		border: 0;
-		padding: 3px;
-		line-height: 2px;
-		background-color: $sidebar-bg;
-
-		.icon {
-			vertical-align: top;
-			color: $tag-selector-grip-color;
-		}
-	}
-
-	.scroll-container {
+	@include mouse-and-bp-up(md) {
+		flex: 0 0 $tag-selector-height;
 		display: flex;
 		flex-direction: column;
-		justify-content: space-between;
-	}
+		border-top: $border-width solid $tag-selector-border-color;
+		line-height: $line-height-base;
+		min-height: 0;
 
-	.tag-selector-container {
-		@include state(".tag-selector.collapsed") {
-			display: none;
-		}
-	}
-
-	.tag-selector-list {
-		display: flex;
-		flex-wrap: wrap;
-		align-content: flex-start;
-		height: 100%;
-		font-size: $font-size-small;
-		padding: 1px ($default-padding-x - 7px) $space-min ($space-md - 7px);
-	}
-
-	.tag {
-		flex: 0 1 auto;
-		display: flex;
-		align-items: center;
-		padding: 0 $tag-padding-x;
-		margin: $space-min ($space-min / 4);
-		border-radius: $tag-border-radius;
-		cursor: pointer;
-		min-width: 0;
-
-		&:hover {
-			background-color:$tag-hover-bg;
+		&.collapsed {
+			flex: 0 0 $tag-selector-collapsed-height;
 		}
 
-		&:active {
-			background-color: $tag-selected-bg;
+		.tag-selector-toggle {
+			flex: 0 0 auto;
+			width: 100%;
+			border: 0;
+			padding: 3px;
+			line-height: 2px;
+			background-color: $sidebar-bg;
+			border-radius: 0;
+
+			@supports not (-webkit-font-smoothing: subpixel-antialiased) {
+				@include variant("html.scrollbar-style-permanent") {
+					border-bottom: $border-width solid $tag-selector-border-color;
+				}
+			}
+
+			.icon {
+				vertical-align: top;
+				color: $tag-selector-grip-color;
+			}
 		}
 
-		&.selected {
-			background-color: $tag-selected-bg;
+		.tag-selector-container {
+			@include state(".tag-selector.collapsed") {
+				display: none;
+			}
+		}
+
+		.tag-selector-list {
+			display: flex;
+			flex-wrap: wrap;
+			align-content: flex-start;
+			height: 100%;
+			font-size: $font-size-small;
+			padding: 1px ($default-padding-x - 7px) $space-min ($space-md - 7px);
+		}
+
+		.tag {
+			flex: 0 1 auto;
+			display: flex;
+			align-items: center;
+			padding: 0 $tag-padding-x;
+			margin: $space-min ($space-min / 4);
+			border-radius: $tag-border-radius;
+			cursor: pointer;
+			min-width: 0;
+
+			&:hover {
+				background-color:$tag-hover-bg;
+			}
 
 			&:active {
-				background-color: $tag-hover-bg;
-			}
-		}
-
-		&.colored {
-			&.selected,
-			&:active {
-				background-color: currentColor;
+				background-color: $tag-selected-bg;
 			}
 
-			&.selected:active {
-				background-color: $tag-hover-bg;
-			}
-		}
+			&.selected {
+				background-color: $tag-selected-bg;
 
-		&.disabled {
-			opacity: 0.5;
-			cursor: auto;
-			pointer-events: none;
-		}
-
-		.tag-label {
-			color: $tag-selector-color;
-			@include text-truncate;
-
-			@include state(".tag.selected", ".tag:active") {
-				color: $tag-selected-color;
+				&:active {
+					background-color: $tag-hover-bg;
+				}
 			}
 
-			@include state(".tag.selected:active") {
+			&.colored {
+				&.selected,
+				&:active {
+					background-color: currentColor;
+				}
+
+				&.selected:active {
+					background-color: $tag-hover-bg;
+				}
+			}
+
+			&.disabled {
+				opacity: 0.5;
+				cursor: auto;
+				pointer-events: none;
+			}
+
+			.tag-label {
 				color: $tag-selector-color;
+				@include text-truncate;
+
+				@include state(".tag.selected", ".tag:active") {
+					color: $tag-selected-color;
+				}
+
+				@include state(".tag.selected:active") {
+					color: $tag-selector-color;
+				}
+			}
+
+			&::before {
+				@include variant(".tag.colored") {
+					content: "";
+					display: block;
+					width: 10px;
+					height: 10px;
+					background-color: currentColor;
+					margin-right: $space-min;
+					border-radius: 5px;
+					border: $border-width solid rgba($shade-10, 0.08);
+
+					@include state(".colored.selected", ".colored:active") {
+						border-color: $shade-0;
+					}
+
+					@include state(".colored.selected:active") {
+						border-color: rgba($shade-10, 0.08);
+					}
+				}
 			}
 		}
 
-		&::before {
-			@include variant(".tag.colored") {
-				content: "";
-				display: block;
-				width: 10px;
-				height: 10px;
-				background-color: currentColor;
-				margin-right: $space-min;
-				border-radius: 5px;
-				border: $border-width solid rgba($shade-10, 0.08);
+		.tag-selector-filter-container {
+			flex: 0 0 auto;
+			display: flex;
+			align-items: center;
+			background: $sidebar-bg;
+			padding: $space-min $default-padding-x $space-min;
+			margin-top: auto;
 
-				@include state(".colored.selected", ".colored:active") {
-					border-color: $shade-0;
-				}
+			@include state(".tag-selector.collapsed") {
+				display: none;
+			}
 
-				@include state(".colored.selected:active") {
-					border-color: rgba($shade-10, 0.08);
+			@supports not (-webkit-font-smoothing: subpixel-antialiased) {
+				@include variant("html.scrollbar-style-permanent") {
+					border-top: $border-width solid $tag-selector-border-color;
 				}
 			}
 		}
-	}
 
-	.tag-selector-filter-container {
-		position: sticky;
-		bottom: 0;
-		display: flex;
-		align-items: center;
-		background: $sidebar-bg;
-		padding: $space-min $default-padding-x $space-min;
-		margin-top: auto;
-
-		@include state(".tag-selector.collapsed") {
-			display: none;
+		.dropdown {
+			flex: 0 0 auto;
+			margin-left: 5px;
+			margin-right: -$space-min - 2px;
 		}
-	}
-
-	.dropdown {
-		flex: 0 0 auto;
-		margin-left: 5px;
-		margin-right: -$space-min - 2px;
 	}
 }
