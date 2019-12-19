@@ -10,7 +10,7 @@ const InfoContainer = props => <Info { ...props } />;
 const mapStateToProps = state => {
 	const { libraryKey, isLibraryReadOnly, itemKey } = state.current;
 	const item = get(state, ['libraries', libraryKey, 'items', itemKey], null);
-	const { itemType } = item;
+	const { itemType = null } = item || {};
 	const pendingChanges = get(state, ['libraries', libraryKey, 'updating', 'items', itemKey], []);
 
 	const isMetaAvailable = itemType in state.meta.itemTypeCreatorTypes &&
