@@ -4,7 +4,7 @@ import api from 'zotero-api-client';
 import baseMappings from 'zotero-base-mappings';
 import queue from './queue';
 import { fetchItemTypeFields } from './meta';
-import { get, getUniqueId, removeRelationByItemKey, reverseMap } from '../utils';
+import { get, getItemCanonicalUrl, getUniqueId, removeRelationByItemKey, reverseMap } from '../utils';
 import { getFilesData } from '../common/event';
 import { omit } from '../common/immutable';
 import { extractItems } from '../common/actions';
@@ -118,11 +118,14 @@ const createItems = (items, libraryKey) => {
 
 			const createdItems = extractItems(response, state);
 
+			//@TODO: refactor
+			const otherItems = state.libraries[libraryKey] ? state.libraries[libraryKey].items : [];
+
 			dispatch({
 				type: RECEIVE_CREATE_ITEMS,
 				libraryKey,
 				items: createdItems,
-				otherItems: state.libraries[libraryKey].items,
+				otherItems,
 				response
 			});
 
@@ -653,17 +656,62 @@ const queueAddToCollection = (itemKeys, collectionKey, libraryKey, queueId) => {
 
 const copyToLibrary = (itemKeys, targetLibraryKey) => {
 	return async (dispatch, getState) => {
-		const { libraryKey: currentLibraryKey } = getState().current;
-		return dispatch(
+		const state = getState();
+		const { libraryKey: sourceLibraryKey } = state.current;
+		const { libraries } = state.config;
+
+		const sourceLibrary = libraries.find(l => l.key === sourceLibraryKey);
+		const targetLibrary = libraries.find(l => l.key === targetLibraryKey);
+
+
+		// If one of the libraries is a personal library, store the relation with that item, whether
+		// source or target, pointing to the URI of the other item. If both are groups, store the
+		// relation on the new, copied item, since that's what the user definitely has access to.
+		var shouldStoreRelationInSource;
+
+		if(!sourceLibrary.isMyLibrary && !targetLibrary.isMyLibrary) {
+			shouldStoreRelationInSource = false;
+		} else {
+			if(sourceLibrary.isMyLibrary) {
+				shouldStoreRelationInSource = true;
+			} else {
+				shouldStoreRelationInSource = false;
+			}
+		}
+
+		const newItems = await dispatch(
 			createItems(
-				itemKeys.map(ik => ({
-					...omit(
-						getState().libraries[currentLibraryKey].items[ik],
-							['key', 'version', 'collections', 'deleted', 'dateAdded', 'dateModified']
-						),
-				})), targetLibraryKey
+				itemKeys.map(ik => {
+					const sourceItem = getState().libraries[sourceLibraryKey].items[ik];
+					const newRelations = shouldStoreRelationInSource ? sourceItem.relations : {
+							...sourceItem.relations,
+							'owl:sameAs': getItemCanonicalUrl({ libraryKey: sourceLibraryKey, itemKey: sourceItem.key })
+						};
+					return {
+						...omit(sourceItem, ['key', 'version', 'collections', 'deleted', 'dateAdded', 'dateModified']),
+						relations: newRelations
+					};
+				}), targetLibraryKey
 			)
 		);
+
+		if(shouldStoreRelationInSource) {
+			const multiPatch = itemKeys.map((ik, index) => {
+				const sourceItem = getState().libraries[sourceLibraryKey].items[ik];
+				const newItem = newItems[index];
+				return {
+					key: sourceItem.key,
+					version: sourceItem.version,
+						relations: {
+						...sourceItem.relations,
+						'owl:sameAs': getItemCanonicalUrl({ libraryKey: targetLibraryKey, itemKey: newItem.key })
+					}
+				}
+			});
+			await postItemsMultiPatch(state, multiPatch);
+		}
+
+		return newItems;
 	};
 }
 

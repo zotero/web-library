@@ -70,7 +70,10 @@ const deduplicateByHash = (array, hasher) => {
 			return true;
 		}
 	});
-}
+};
+
+const getItemCanonicalUrl = ({ libraryKey, itemKey }) =>
+	`http://zotero.org/${libraryKey.startsWith('u') ? 'user' : 'groups'}/${libraryKey.slice(1)}/items/${itemKey}`;
 
 const mapRelationsToItemKeys = (relations, userId, relationType='dc:relation') => {
 	if(!('dc:relation' in relations)) {
@@ -353,6 +356,7 @@ export {
 	deduplicateByKey,
 	enumerateObjects,
 	get,
+	getItemCanonicalUrl,
 	getScrollbarWidth,
 	getSortKeyValue,
 	getUniqueId,
