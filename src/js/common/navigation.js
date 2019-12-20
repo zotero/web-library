@@ -5,9 +5,9 @@ const getQueryFromParams = params => {
 	return { collection, tag: tagsFromUrlPart(tags), q: search, qmode };
 }
 
-const tagsFromUrlPart = tags => tags ? tags.split(/\b,\b/).map(t => t.replace(/,,/g, ',')) : [];
+const tagsFromUrlPart = tags => tags ? tags.split(',').map(t => decodeURIComponent(t)) : [];
 
-const tagsToUrlPart = tags => tags.map(t => t.replace(/,/g, ',,'));
+const tagsToUrlPart = tags => tags.map(t => encodeURIComponent(t)).join(',');
 
 const makePath = (config, { library = null, collection = null,
 	items = null, trash = false, publications = false, tags = null,
@@ -34,9 +34,9 @@ const makePath = (config, { library = null, collection = null,
 	if(tags && tags.length) {
 		if(Array.isArray(tags)) {
 			tags.sort();
-			path.push('tags', tagsToUrlPart(tags).join());
+			path.push('tags', tagsToUrlPart(tags));
 		} else {
-			path.push('tags', tags);
+			path.push('tags', encodeURIComponent(tags));
 		}
 	}
 
@@ -44,7 +44,7 @@ const makePath = (config, { library = null, collection = null,
 		if(!qmode) {
 			qmode = 'titleCreatorYear';
 		}
-		path.push('search', search, qmode);
+		path.push('search', encodeURIComponent(search), qmode);
 	}
 
 	if(items && items.length) {
