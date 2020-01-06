@@ -179,8 +179,8 @@ const TableRow = memo(props => {
 			if(itemType === NativeTypes.FILE) {
 				const parentItem = dropZone === null ? itemKey : null;
 				const collection = parentItem === null ? collectionKey : null;
-				const isAttachmentOnAttachment = parentItem !== null && itemData.itemTypeRaw === 'attachment';
-				if(!isAttachmentOnAttachment && item.files && item.files.length) {
+				const shouldIgnoreDrop = parentItem !== null && ['attachment', 'note'].includes(itemData.itemTypeRaw);
+				if(!shouldIgnoreDrop && item.files && item.files.length) {
 					dispatch(createAttachmentsFromDropped(item.files, { collection, parentItem }));
 				}
 			}
@@ -194,7 +194,7 @@ const TableRow = memo(props => {
 				const rect = ref.current.getBoundingClientRect();
 				const offsetTop = cursor.y - rect.y;
 				const offsetBottom = (rect.y + rect.height) - cursor.y;
-				const margin = itemData.itemTypeRaw === 'attachment' ? Math.floor(rect.height / 2) : DROP_MARGIN_EDGE;
+				const margin = ['attachment', 'note'].includes(itemData.itemTypeRaw) ? Math.floor(rect.height / 2) : DROP_MARGIN_EDGE;
 
 				if(offsetTop < margin) {
 					setDropZone('top');
@@ -212,7 +212,7 @@ const TableRow = memo(props => {
 		'nth-4n-1': (index + 2) % 4 === 0,
 		'nth-4n': (index + 1) % 4 === 0,
 		active: isActive,
-		'dnd-target': canDrop && itemData && itemData.itemTypeRaw !== 'attachment' && isOver && dropZone === null,
+		'dnd-target': canDrop && itemData && !(['attachment', 'note'].includes(itemData.itemTypeRaw)) && isOver && dropZone === null,
 		'dnd-target-top': canDrop && isOver && dropZone === 'top',
 		'dnd-target-bottom': canDrop && isOver && dropZone === 'bottom',
 	});
