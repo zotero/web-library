@@ -38,6 +38,11 @@ const Table = memo(() => {
 	const { hasChecked, isFetching, keys, requests, totalResults } = useSourceData();
 	const collectionKey = useSelector(state => state.current.collectionKey);
 	const libraryKey = useSelector(state => state.current.libraryKey);
+	const isFileUploadAllowed = useSelector(
+		state => (state.config.libraries.find(
+			l => l.key === state.current.libraryKey
+		) || {}).isFileUploadAllowed
+	);
 	const columnsData = useSelector(state => state.preferences.columns, shallowEqual);
 	const selectedItemKeys = useSelector(state => state.current.itemKeys, shallowEqual);
 	const columns = useMemo(() => columnsData.filter(c => c.isVisible), [columnsData]);
@@ -50,6 +55,7 @@ const Table = memo(() => {
 
 	const [{ isOver, canDrop }, drop] = useDrop({
 		accept: [ATTACHMENT, NativeTypes.FILE],
+		canDrop: () => isFileUploadAllowed,
 		collect: monitor => ({
 			isOver: monitor.isOver({ shallow: true }),
 			canDrop: monitor.canDrop(),

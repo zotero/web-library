@@ -132,6 +132,11 @@ const TableRow = memo(props => {
 	const { onFileHoverOnRow, keys, columns } = data;
 	const itemKey = keys && keys[index] ? keys[index] : null;
 	const libraryKey = useSelector(state => state.current.libraryKey);
+	const isFileUploadAllowed = useSelector(
+		state => (state.config.libraries.find(
+			l => l.key === state.current.libraryKey
+		) || {}).isFileUploadAllowed
+	);
 	const collectionKey = useSelector(state => state.current.collectionKey);
 	const isFocused = useSelector(state => state.current.isItemsTableFocused);
 	const itemData = useSelector(
@@ -170,6 +175,7 @@ const TableRow = memo(props => {
 
 	const [{ isOver, canDrop }, drop] = useDrop({
 		accept: [ATTACHMENT, NativeTypes.FILE],
+		canDrop: () => isFileUploadAllowed,
 		collect: monitor => ({
 			isOver: monitor.isOver({ shallow: true }),
 			canDrop: monitor.canDrop(),
@@ -264,8 +270,8 @@ const TableRow = memo(props => {
 	}, []);
 
 	useEffect(() => {
-		onFileHoverOnRow(isOver, dropZone);
-	}, [isOver, dropZone]);
+		isFileUploadAllowed && onFileHoverOnRow(isOver, dropZone);
+	}, [isOver, dropZone, isFileUploadAllowed]);
 
 	return drag(drop(
 		<div
