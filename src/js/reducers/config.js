@@ -14,22 +14,31 @@ const defaultState = {
 	libraries: []
 };
 
-const determineIfGroupIsWriteable = (group, userId) => {
-	const { libraryEditing, owner, admins = [] } = group;
-	if(userId === owner) {
+const determineIfWriteable = (userId, ownerId, writeability, admins) => {
+	if(userId === ownerId) {
 		//owner always has access, but is not in members/admins arrays
 		return true;
 	}
-	if(libraryEditing === "members") {
+	if(writeability === "members") {
 		// you must be at least a member to have a group library listed
 		return true;
 	}
-	if(libraryEditing === "admins") {
+	if(writeability === "admins") {
 		// else check if admin
 		return admins.includes(userId);
 	}
 	return false;
-}
+};
+
+const determineIfGroupIsWriteable = (group, userId) => {
+	const { libraryEditing, owner, admins = [] } = group;
+	return determineIfWriteable(userId, owner, libraryEditing, admins);
+};
+
+const determineIfGroupAllowsUploads = (group, userId) => {
+	const { fileEditing, owner, admins = [] } = group;
+	return determineIfWriteable(userId, owner, fileEditing, admins);
+};
 
 const determineDefaultLibraryKey = action => {
 	if(action.userId) {
@@ -39,7 +48,7 @@ const determineDefaultLibraryKey = action => {
 		return action.libraries.include[0].key;
 	}
 	throw new Error("Invalid configuration");
-}
+};
 
 const slugify = name => {
 	let slug = name.trim();
@@ -47,7 +56,7 @@ const slugify = name => {
 	slug = slug.replace( /[^a-z0-9 ._-]/g , '');
 	slug = slug.replace(/\s/g, '_');
 	return slug;
-}
+};
 
 const config = (state = defaultState, action) => {
 	switch(action.type) {
@@ -66,11 +75,13 @@ const config = (state = defaultState, action) => {
 						key: `u${action.userId}`,
 						isMyLibrary: true,
 						isReadOnly: false,
+						isFileUploadAllowed: true,
 						name: 'My Library',
 						slug: action.userSlug
 					},
 					...(action.libraries.include || []).map(include => ({
 						isReadOnly: true,
+						isFileUploadAllowed: false,
 						slug: slugify(include.name),
 						isGroupLibrary: false,
 						id: include.key.slice(1),
@@ -81,13 +92,14 @@ const config = (state = defaultState, action) => {
 		case RECEIVE_GROUPS:
 			var libraries = [
 				...state.libraries.filter(l => !action.groups.some(g => l.key === `g${g.id}`)),
-				...action.groups.map((group, _index) => ({
+				...action.groups.map(group => ({
 					id: group.id,
 					key: `g${group.id}`,
 					isGroupLibrary: true,
 					name: group.name,
 					slug: slugify(group.name),
-					isReadOnly: !determineIfGroupIsWriteable(group, state.userId)
+					isReadOnly: !determineIfGroupIsWriteable(group, state.userId),
+					isFileUploadAllowed: determineIfGroupAllowsUploads(group, state.userId),
 				}))
 			];
 			sortByKey(libraries, 'name');
