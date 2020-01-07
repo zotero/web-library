@@ -1,7 +1,5 @@
 'use strict';
 
-require('babel-regenerator-runtime');
-
 const React = require('react');
 const ReactDOM = require('react-dom');
 
