@@ -32,43 +32,6 @@
 			@include hairline(top, $item-border-color, $start: $item-list-padding-x);
 		}
 
-		&:first-child {
-			@include hairline-disabled(top);
-		}
-
-		&:last-child:not(.active):not(:focus) {
-			background-color: $body-bg;
-
-			// Use box shadow once Safari is able to render 0.5px box-shadow
-			&::after {
-				content: "";
-				position: absolute;
-				z-index: -1;
-				right: 0;
-				bottom: 0;
-				left: 2 * $item-list-padding-x + 28px;
-				height: 1px;
-				box-shadow: 0 1px mix($item-border-color, $body-bg, 50%);
-
-				@media (min-resolution: 2dppx) {
-					box-shadow: 0 1px $item-border-color;
-					transform: translateY(-0.5px);
-				}
-
-				@include bp-down(xs) {
-					left: $item-list-padding-x;
-				}
-
-				@include state(".items-list.editing") {
-					left: 3 * $item-list-padding-x + $space-lg + 28px;
-
-					@include bp-down(xs) {
-						left: 2 * $item-list-padding-x + 28px;
-					}
-				}
-			}
-		}
-
 		@include state(".items-list:not(.editing)") {
 			padding-right: $item-list-padding-right;
 
@@ -107,6 +70,47 @@
 				& + .item {
 					@include state(".items-list:not(.editing)") {
 						@include hairline-disabled(top);
+					}
+				}
+			}
+		}
+
+		&:first-child {
+			@include hairline-disabled(top);
+
+			@include state(".items-list.editing") {
+				@include hairline-disabled(top);
+			}
+		}
+
+		&:last-child:not(.active):not(:focus) {
+			background-color: $body-bg;
+
+			// Use box shadow once Safari is able to render 0.5px box-shadow
+			&::after {
+				content: "";
+				position: absolute;
+				z-index: -1;
+				right: 0;
+				bottom: 0;
+				left: 2 * $item-list-padding-x + 28px;
+				height: 1px;
+				box-shadow: 0 1px mix($item-border-color, $body-bg, 50%);
+
+				@media (min-resolution: 2dppx) {
+					box-shadow: 0 1px $item-border-color;
+					transform: translateY(-0.5px);
+				}
+
+				@include bp-down(xs) {
+					left: $item-list-padding-x;
+				}
+
+				@include state(".items-list.editing") {
+					left: 3 * $item-list-padding-x + $space-lg + 28px;
+
+					@include bp-down(xs) {
+						left: 2 * $item-list-padding-x + 28px;
 					}
 				}
 			}
