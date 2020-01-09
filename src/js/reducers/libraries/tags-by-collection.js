@@ -29,13 +29,14 @@ const tags = (state = {}, action) => {
 				...state,
 				[action.collectionKey]: {
 					...(state[action.collectionKey] || {}),
-					...updateFetchingState(state[action.collectionKey], action),
+					...(action.queryOptions.tag ? {} : updateFetchingState(state[action.collectionKey], action)),
 				}
 			}
 		case RECEIVE_TAGS_IN_COLLECTION:
 			return {
 				...state,
 				[action.collectionKey]: {
+					...state[action.collectionKey],
 					pointer: ('start' in action.queryOptions && 'limit' in action.queryOptions
 						&& !('tag' in action.queryOptions))
 						? action.queryOptions.start + action.queryOptions.limit : state[action.collectionKey].pointer,
@@ -49,7 +50,7 @@ const tags = (state = {}, action) => {
 				...state,
 				[action.collectionKey]: {
 					...(state[action.collectionKey] || {}),
-					...updateFetchingState(state[action.collectionKey], action),
+					...(action.queryOptions.tag ? {} : updateFetchingState(state[action.collectionKey], action)),
 				}
 			}
 		case RECEIVE_ADD_ITEMS_TO_COLLECTION:

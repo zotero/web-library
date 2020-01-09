@@ -130,7 +130,8 @@ const fetchTagsForItemsByQuery = (query, queryOptions) => {
 	);
 }
 
-const fetchTags = queryOptions => {
+const fetchCurrentTags = queryOptions => {
+	console.log('fetchCurrentTags', queryOptions);
 	return async (dispatch, getState) => {
 		const state = getState();
 		const { collectionKey, tags, itemsSource, search, isMyPublications,
@@ -158,6 +159,13 @@ const fetchTags = queryOptions => {
 	}
 }
 
+const fetchTags = (startIndex, stopIndex, queryOptions = { }) => {
+	const start = startIndex;
+	const limit = (stopIndex - startIndex) + 1;
+
+	return fetchCurrentTags({ sort: 'title',...queryOptions, start, limit });
+}
+
 const checkColoredTags = queryOptions => {
 	return async (dispatch, getState) => {
 		const state = getState();
@@ -165,7 +173,7 @@ const checkColoredTags = queryOptions => {
 		const coloredTags = Object.keys(state.libraries[libraryKey].tagColors);
 		if(coloredTags.length === 0) { return; }
 		const tagQuery = coloredTags.join(' || ');
-		return await dispatch(fetchTags({ ...queryOptions, tag: tagQuery }));
+		return await dispatch(fetchCurrentTags({ ...queryOptions, tag: tagQuery }));
 	}
 }
 

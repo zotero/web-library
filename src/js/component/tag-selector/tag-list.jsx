@@ -31,7 +31,7 @@ const TagList = props => {
 		const scrollProgress = (containerRef.current.scrollTop + containerHeight) / totalHeight;
 
 		if(pointer && scrollProgress > 0.5 && !isFetching && ((totalResults > pointer) || (totalResults === null))) {
-			dispatch(fetchTags({ start: pointer, limit: PAGE_SIZE, sort: 'title' }));
+			dispatch(fetchTags(pointer, pointer + PAGE_SIZE - 1));
 		}
 	});
 
@@ -68,7 +68,7 @@ const TagList = props => {
 
 	useEffect(() => {
 		if(totalResults === null) {
-			dispatch(fetchTags({ start: 0, limit: PAGE_SIZE, sort: 'title' }));
+			dispatch(fetchTags(0, PAGE_SIZE - 1));
 		}
 	}, [totalResults]);
 

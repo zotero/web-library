@@ -17,10 +17,11 @@ const tagsInTrashItems = (state = {}, action) => {
 		case REQUEST_TAGS_IN_TRASH_ITEMS:
 			return {
 				...state,
-				...updateFetchingState(state, action),
+				...(action.queryOptions.tag ? {} : updateFetchingState(state, action)),
 			}
 		case RECEIVE_TAGS_IN_TRASH_ITEMS:
 			return {
+				...state,
 				pointer: ('start' in action.queryOptions && 'limit' in action.queryOptions
 					&& !('tag' in action.queryOptions))
 					? action.queryOptions.start + action.queryOptions.limit : state.pointer,
@@ -29,7 +30,10 @@ const tagsInTrashItems = (state = {}, action) => {
 				...(action.queryOptions.tag ? {} : updateFetchingState(state, action)),
 			};
 		case ERROR_TAGS_IN_TRASH_ITEMS:
-			return { ...state, ...updateFetchingState(state, action) };
+			return {
+				...state,
+				...(action.queryOptions.tag ? {} : updateFetchingState(state, action)),
+			};
 		case RECEIVE_DELETE_ITEMS:
 		case RECEIVE_MOVE_ITEMS_TRASH:
 		case RECEIVE_RECOVER_ITEMS_TRASH:

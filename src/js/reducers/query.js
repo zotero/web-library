@@ -68,7 +68,7 @@ const query = (state = defaultState, action) => {
 				...state,
 				tags: {
 					...state.tags,
-					...updateFetchingState(state.tags, action),
+					...(action.queryOptions.tag ? {} : updateFetchingState(state.tags, action)),
 				}
 			}
 		case RECEIVE_TAGS_IN_ITEMS_BY_QUERY:
@@ -89,7 +89,7 @@ const query = (state = defaultState, action) => {
 				...state,
 				tags: {
 					...state.tags,
-					...updateFetchingState(state.tags, action),
+					...(action.queryOptions.tag ? {} : updateFetchingState(state.tags, action)),
 				}
 			};
 		case RECEIVE_UPDATE_ITEM:

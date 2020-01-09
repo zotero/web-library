@@ -14,10 +14,11 @@ const tagsInPublicationsItems = (state = {}, action) => {
 		case REQUEST_TAGS_IN_PUBLICATIONS_ITEMS:
 			return {
 				...state,
-				...updateFetchingState(state, action),
+				...(action.queryOptions.tag ? {} : updateFetchingState(state, action)),
 			}
 		case RECEIVE_TAGS_IN_PUBLICATIONS_ITEMS:
 			return {
+				...state,
 				pointer: ('start' in action.queryOptions && 'limit' in action.queryOptions
 					&& !('tag' in action.queryOptions))
 					? action.queryOptions.start + action.queryOptions.limit : state.pointer,
@@ -26,7 +27,10 @@ const tagsInPublicationsItems = (state = {}, action) => {
 				...(action.queryOptions.tag ? {} : updateFetchingState(state, action)),
 			};
 		case ERROR_TAGS_IN_PUBLICATIONS_ITEMS:
-			return { ...state, ...updateFetchingState(state, action), };
+			return {
+				...state,
+				...(action.queryOptions.tag ? {} : updateFetchingState(state, action)),
+			};
 		case RECEIVE_UPDATE_ITEM:
 			return 'tags' in action.patch ? {} : state;
 		default:

@@ -63,17 +63,17 @@ const useTagsData = () => {
 		break;
 	}
 
-	const { isFetching = false, tags = [], pointer = null, totalResults = null } = data;
+	const { isFetching = false, tags = [], pointer, requests, totalResults } = data;
 	const hasMoreItems = totalResults > 0 && (typeof(pointer) === 'undefined' || pointer < totalResults);
 	const hasChecked = typeof(totalResults) !== 'undefined';
 	const isFetched = hasChecked && !isFetching && !hasMoreItems;
 
-	return { isFetching, isFetched, tags, hasChecked, hasMoreItems, pointer, totalResults };
+	return { isFetching, isFetched, tags, hasChecked, hasMoreItems, pointer, requests, totalResults };
 }
 
-const useTags = () => {
+const useTags = (shouldSkipDisabled = false) => {
 	const tagsSearchString = useSelector(state => state.current.tagsSearchString);
-	const { isFetching, pointer = 0, tags: sourceTags = [], totalResults = null, hasChecked, hasMoreItems } = useTagsData();
+	const { isFetching, pointer = 0, tags: sourceTags = [], totalResults = null, requests, hasChecked, hasMoreItems } = useTagsData();
 	const tagColors = useSelector(state =>  get(state, ['libraries', state.current.libraryKey, 'tagColors'], {}), shallowEqual);
 	const selectedTags = useSelector(state => state.current.tags, shallowEqual);
 	const tags = useMemo(() => {
@@ -90,9 +90,13 @@ const useTags = () => {
 			selected: selectedTags.includes(tag)
 		})), 'tag');
 
+		if(shouldSkipDisabled) {
+			return newTags.filter(t => !t.disabled);
+		}
+
 		return newTags;
 	}, [sourceTags, tagColors, tagsSearchString]);
-	return { tags, isFetching, pointer, totalResults, hasChecked, hasMoreItems, tagsSearchString };
+	return { tags, isFetching, pointer, requests, totalResults, hasChecked, hasMoreItems, tagsSearchString };
 }
 
 export { useFetchingState, useSourceData, useTagsData, useTags };
