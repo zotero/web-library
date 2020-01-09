@@ -34,6 +34,7 @@
 
 	.tag {
 		display: flex;
+		justify-content: space-between;
 		align-items: center;
 		height: $line-height-large-touch + $border-width;
 		padding: $border-width $default-padding-x-touch 0;
@@ -46,9 +47,14 @@
 		&:first-child {
 			@include hairline-disabled(top);
 		}
+
+		.truncate {
+			flex: 1 1 0;
+		}
 	}
 
 	.tag-color {
+		flex: 0 0 auto;
 		width: $space-md;
 		height: $space-md;
 		border-radius: 50%;
@@ -68,6 +74,11 @@
 			&::before,
 			.tag-color:not([style*="color"]) {
 				mix-blend-mode: multiply;
+			}
+
+			.btn-circle {
+				flex: 0 0 auto;
+				margin-left: $default-padding-x-touch;
 			}
 		}
 	}

@@ -38,34 +38,40 @@ const TouchTagSelector = props => {
 					<ul className="selected-tags">
 						<li className="tag">
 							<div className="tag-color" />
-							Carbon Dioxide
+							<div className="truncate">Carbon Dioxide</div>
+							<Button className="btn-circle btn-secondary">
+								<Icon type="16/minus-strong" width="16" height="16" />
+							</Button>
 						</li>
 						<li className="tag">
 							<div className="tag-color" />
-							Carbonic Anhydrases
+							<div className="truncate">Carbonic Anhydrases</div>
+							<Button className="btn-circle btn-secondary">
+								<Icon type="16/minus-strong" width="16" height="16" />
+							</Button>
 						</li>
 					</ul>
 					<div className="scroll-container">
 						<ul className="tag-selector-list">
 							<li className="tag">
 								<div className="tag-color" style={{color: 'rgb(95, 178, 54)'}} />
-								green-tag2
+								<div className="truncate">green-tag2</div>
 							</li>
 							<li className="tag">
 								<div className="tag-color" style={{color: 'rgb(255, 102, 102)'}} />
-								red-tag
+								<div className="truncate">red-tag</div>
 							</li>
 							<li className="tag">
 								<div className="tag-color" style={{color: 'rgb(46, 168, 229)'}} />
-								Aldehyde Oxidoreductases
+								<div className="truncate">Aldehyde Oxidoreductases</div>
 							</li>
 							<li className="tag">
 								<div className="tag-color" style={{color: 'rgb(162, 138, 229)'}} />
-								purple-tag
+								<div className="truncate">purple-tag</div>
 							</li>
 							<li className="tag">
 								<div className="tag-color" />
-								Adenosine Triphosphate
+								<div className="truncate">Adenosine Triphosphate</div>
 							</li>
 						</ul>
 					</div>
