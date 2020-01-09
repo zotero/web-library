@@ -36,11 +36,28 @@
 		display: flex;
 		align-items: center;
 		height: $line-height-large-touch + $border-width;
-		@include hairline(top, $touch-tag-selector-border-color, $start: $default-padding-x-touch);
 		padding: $border-width $default-padding-x-touch 0;
+		@include hairline(
+			top,
+			$touch-tag-selector-border-color,
+			$start: (2 * $default-padding-x-touch + $space-md)
+		);
 
 		&:first-child {
 			@include hairline-disabled(top);
+		}
+	}
+
+	.tag-color {
+		width: $space-md;
+		height: $space-md;
+		border-radius: 50%;
+		border: $border-width solid $tag-color-border-color;
+		margin-right: $default-padding-x-touch;
+
+		&[style*="color"] {
+			background-color: currentColor;
+			border: $border-width solid rgba($shade-10, 0.08);
 		}
 	}
 
@@ -48,7 +65,8 @@
 		background-color: $touch-tag-selected-bg;
 
 		.tag {
-			&::before {
+			&::before,
+			.tag-color:not([style*="color"]) {
 				mix-blend-mode: multiply;
 			}
 		}
@@ -70,7 +88,7 @@
 					z-index: -1;
 					right: 0;
 					bottom: 0;
-					left: $default-padding-x-touch;
+					left:  2 * $default-padding-x-touch + $space-md;
 					height: 1px;
 					box-shadow: 0 1px mix($touch-tag-selector-border-color, $body-bg, 50%);
 

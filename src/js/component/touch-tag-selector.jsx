@@ -36,16 +36,37 @@ const TouchTagSelector = props => {
 						<input type="text" className="form-control" placeholder="Filter Tags" />
 					</div>
 					<ul className="selected-tags">
-						<li className="tag">Carbon Dioxide</li>
-						<li className="tag">Carbonic Anhydrases</li>
+						<li className="tag">
+							<div className="tag-color" />
+							Carbon Dioxide
+						</li>
+						<li className="tag">
+							<div className="tag-color" />
+							Carbonic Anhydrases
+						</li>
 					</ul>
 					<div className="scroll-container">
 						<ul className="tag-selector-list">
-							<li className="tag">green-tag2</li>
-							<li className="tag">red-tag</li>
-							<li className="tag">Aldehyde Oxidoreductases</li>
-							<li className="tag">purple-tag</li>
-							<li className="tag">Adenosine Triphosphate</li>
+							<li className="tag">
+								<div className="tag-color" style={{color: 'rgb(95, 178, 54)'}} />
+								green-tag2
+							</li>
+							<li className="tag">
+								<div className="tag-color" style={{color: 'rgb(255, 102, 102)'}} />
+								red-tag
+							</li>
+							<li className="tag">
+								<div className="tag-color" style={{color: 'rgb(46, 168, 229)'}} />
+								Aldehyde Oxidoreductases
+							</li>
+							<li className="tag">
+								<div className="tag-color" style={{color: 'rgb(162, 138, 229)'}} />
+								purple-tag
+							</li>
+							<li className="tag">
+								<div className="tag-color" />
+								Adenosine Triphosphate
+							</li>
 						</ul>
 					</div>
 					<footer className="touch-footer">
