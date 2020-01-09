@@ -1,5 +1,6 @@
+import { useMemo } from 'react';
 import { useSelector, shallowEqual } from 'react-redux';
-import { get } from '../utils';
+import { deduplicateByKey, get } from '../utils';
 
 const useFetchingState = path => {
 	const { isFetching, keys, pointer, totalResults, requests = [] } = useSelector(state => get(state, path, {}), shallowEqual);
@@ -70,4 +71,28 @@ const useTagsData = () => {
 	return { isFetching, isFetched, tags, hasChecked, hasMoreItems, pointer, totalResults };
 }
 
-export { useFetchingState, useSourceData, useTagsData };
+const useTags = () => {
+	const tagsSearchString = useSelector(state => state.current.tagsSearchString);
+	const { isFetching, pointer = 0, tags: sourceTags = [], totalResults = null, hasChecked, hasMoreItems } = useTagsData();
+	const tagColors = useSelector(state =>  get(state, ['libraries', state.current.libraryKey, 'tagColors'], {}), shallowEqual);
+	const selectedTags = useSelector(state => state.current.tags, shallowEqual);
+	const tags = useMemo(() => {
+		const tagsSearchStringLC = tagsSearchString.toLowerCase();
+		const newTags = deduplicateByKey([
+			...Object.keys(tagColors),
+			...(tagsSearchString === '' ? sourceTags : sourceTags.filter(
+				tag => tag.toLowerCase().includes(tagsSearchStringLC)
+			))
+		].map(tag => ({
+			tag,
+			color: tag in tagColors ? tagColors[tag] : null,
+			disabled: tag in tagColors && !sourceTags.includes(tag),
+			selected: selectedTags.includes(tag)
+		})), 'tag');
+
+		return newTags;
+	}, [sourceTags, tagColors, tagsSearchString]);
+	return { tags, isFetching, pointer, totalResults, hasChecked, hasMoreItems, tagsSearchString };
+}
+
+export { useFetchingState, useSourceData, useTagsData, useTags };

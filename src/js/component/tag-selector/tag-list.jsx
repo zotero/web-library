@@ -5,9 +5,8 @@ import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 
 import withFocusManager from '../../enhancers/with-focus-manager';
 import { checkColoredTags, fetchTags, navigate } from '../../actions';
-import { deduplicateByKey, get } from '../../utils';
 import { isTriggerEvent } from '../../common/event';
-import { useTagsData } from '../../hooks';
+import { useTags } from '../../hooks';
 
 const PAGE_SIZE = 100;
 
@@ -15,9 +14,6 @@ const TagList = props => {
 	const { onBlur, onFocus, onFocusNext, onFocusPrev, registerFocusRoot } = props; // FocusManager
 	const tagsSearchString = useSelector(state => state.current.tagsSearchString);
 	const selectedTags = useSelector(state => state.current.tags, shallowEqual);
-	const { isFetching, pointer: sourceTagsPointer = 0, tags: sourceTags = [], totalResults: totalTagCount = null, hasChecked } =
-		useTagsData();
-	const tagColors = useSelector(state =>  get(state, ['libraries', state.current.libraryKey, 'tagColors'], {}), shallowEqual);
 	const dispatch = useDispatch();
 
 	const containerRef = useRef(null);
@@ -27,30 +23,15 @@ const TagList = props => {
 		registerFocusRoot(node);
 	});
 
-	const tags = useMemo(() => {
-		const tagsSearchStringLC = tagsSearchString.toLowerCase();
-		const newTags = deduplicateByKey([
-			...Object.keys(tagColors),
-			...(tagsSearchString === '' ? sourceTags : sourceTags.filter(
-				tag => tag.toLowerCase().includes(tagsSearchStringLC)
-			))
-		].map(tag => ({
-			tag,
-			color: tag in tagColors ? tagColors[tag] : null,
-			disabled: tag in tagColors && !sourceTags.includes(tag),
-			selected: selectedTags.includes(tag)
-		})), 'tag');
-
-		return newTags;
-	}, [sourceTags, tagColors, tagsSearchString]);
+	const { isFetching, pointer, tags, totalResults, hasChecked } = useTags();
 
 	const maybeLoadMore = useCallback(() => {
 		const containerHeight = containerRef.current.getBoundingClientRect().height;
 		const totalHeight = listRef.current.getBoundingClientRect().height;
 		const scrollProgress = (containerRef.current.scrollTop + containerHeight) / totalHeight;
 
-		if(sourceTagsPointer && scrollProgress > 0.5 && !isFetching && ((totalTagCount > sourceTagsPointer) || (totalTagCount === null))) {
-			dispatch(fetchTags({ start: sourceTagsPointer, limit: PAGE_SIZE, sort: 'title' }));
+		if(pointer && scrollProgress > 0.5 && !isFetching && ((totalResults > pointer) || (totalResults === null))) {
+			dispatch(fetchTags({ start: pointer, limit: PAGE_SIZE, sort: 'title' }));
 		}
 	});
 
@@ -86,21 +67,21 @@ const TagList = props => {
 	});
 
 	useEffect(() => {
-		if(totalTagCount === null) {
+		if(totalResults === null) {
 			dispatch(fetchTags({ start: 0, limit: PAGE_SIZE, sort: 'title' }));
 		}
-	}, [totalTagCount]);
+	}, [totalResults]);
 
 
 	useEffect(() => {
-		if(hasChecked && totalTagCount > PAGE_SIZE) {
+		if(hasChecked && totalResults > PAGE_SIZE) {
 			dispatch(checkColoredTags());
 		}
-	}, [hasChecked, totalTagCount]);
+	}, [hasChecked, totalResults]);
 
 	useEffect(() => {
 		setTimeout(maybeLoadMore, 0);
-	}, [tagsSearchString, sourceTagsPointer]);
+	}, [tagsSearchString, pointer]);
 
 	return (
 		<div
