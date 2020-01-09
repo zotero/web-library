@@ -60,7 +60,7 @@ const TouchTagSelector = props => {
 			<footer className="touch-footer darker">
 				<Toolbar>
 					<div className="toolbar-left">
-						<Button className="btn-link" onClick={ handleClick }>
+						<Button className="btn-icon" onClick={ handleClick }>
 							<Icon type="24/tag" width="24" height="24" />
 						</Button>
 					</div>

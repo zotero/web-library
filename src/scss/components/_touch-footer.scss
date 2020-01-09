@@ -5,7 +5,7 @@
 .touch-footer {
 	flex: 0 0 auto;
 	@include hairline(top, $touch-footer-border);
-	padding-top: $border-width;
+	padding: $border-width 0;
 	height: $touch-footer-height;
 	background-color: $touch-footer-bg;
 	color: $touch-footer-color;
