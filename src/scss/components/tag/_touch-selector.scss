@@ -1,0 +1,83 @@
+//
+// Touch Tag selector
+// --------------------------------------------------
+
+.touch-tag-selector {
+	flex: 0 0 auto;
+
+	@include bp-down(xs) {
+		position: absolute;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		z-index: $z-index-search-bar;
+	}
+
+	.pane {
+		display: flex;
+		flex-direction: column;
+		position: absolute;
+		top: 0;
+		right: 0;
+		bottom: 44px;
+		left: 0;
+		background-color: $touch-tag-selector-pane-bg;
+	}
+
+	.filter-container {
+		flex: 0 0 auto;
+		height: $line-height-large-touch + $border-width;
+		@include hairline(bottom, $touch-tag-selector-border-color);
+	}
+
+	.tag {
+		display: flex;
+		align-items: center;
+		height: $line-height-large-touch + $border-width;
+		@include hairline(top, $touch-tag-selector-border-color, $start: $default-padding-x-touch);
+		padding: $border-width $default-padding-x-touch 0;
+
+		&:first-child {
+			@include hairline-disabled(top);
+		}
+	}
+
+	.selected-tags {
+		background-color: $touch-tag-selected-bg;
+
+		.tag {
+			&::before {
+				mix-blend-mode: multiply;
+			}
+		}
+	}
+
+	.tag-selector-list {
+		position: relative; // Needed for last child hairline hack
+		z-index: 0; // …
+
+		.tag {
+			// Use box shadow once Safari is able to render 0.5px box-shadow
+			&:last-child {
+				background-color: $touch-tag-selector-pane-bg;
+				position: relative;
+
+				&::after {
+					content: "";
+					position: absolute;
+					z-index: -1;
+					right: 0;
+					bottom: 0;
+					left: $default-padding-x-touch;
+					height: 1px;
+					box-shadow: 0 1px mix($touch-tag-selector-border-color, $body-bg, 50%);
+
+					@media (min-resolution: 2dppx) {
+						box-shadow: 0 1px $touch-tag-selector-border-color;
+						transform: translateY(-0.5px);
+					}
+				}
+			}
+		}
+	}
+}

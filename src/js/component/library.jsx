@@ -34,6 +34,9 @@ import TouchNoteContainer from '../container/touch-note';
 import withDevice from '../enhancers/with-device';
 import { getSerializedQuery } from '../common/state';
 import { pick } from '../common/immutable';
+import { Toolbar, ToolGroup } from './ui/toolbars';
+import Button from './ui/button';
+import Icon from './ui/icon';
 
 
 const Library = props => {
@@ -140,9 +143,61 @@ const Library = props => {
 									className="hidden-xs-down hidden-mouse-md-up darker"
 								/>
 								<LibrariesContainer />
-								{ !device.isTouchOrSmall &&
+								{ device.isTouchOrSmall ? (
+									<div className="touch-tag-selector">
+										<div className="pane">
+											<header className="touch-header">
+												<Toolbar>
+													<div className="toolbar-left" />
+													<div className="toolbar-center">
+														2 Tags Selected
+													</div>
+													<div className="toolbar-right">
+														<Button className="btn-link">Done</Button>
+													</div>
+												</Toolbar>
+											</header>
+											<div className="filter-container">
+												<input type="text" className="form-control" placeholder="Filter Tags" />
+											</div>
+											<ul className="selected-tags">
+												<li className="tag">Carbon Dioxide</li>
+												<li className="tag">Carbonic Anhydrases</li>
+											</ul>
+											<div className="scroll-container">
+												<ul className="tag-selector-list">
+													<li className="tag">green-tag2</li>
+													<li className="tag">red-tag</li>
+													<li className="tag">Aldehyde Oxidoreductases</li>
+													<li className="tag">purple-tag</li>
+													<li className="tag">Adenosine Triphosphate</li>
+												</ul>
+											</div>
+											<footer className="touch-footer">
+												<Toolbar>
+													<div className="toolbar-center">
+														<Button className="btn-link">Deselect All</Button>
+													</div>
+												</Toolbar>
+											</footer>
+										</div>
+										<footer className="touch-footer darker">
+											<Toolbar>
+												<div className="toolbar-left">
+													<Button className="btn-link">
+														<Icon type="24/tag" width="24" height="24" />
+													</Button>
+												</div>
+												<div className="toolbar-center">
+												 2 Tags Selected
+												</div>
+												<div className="toolbar-right" />
+											</Toolbar>
+										</footer>
+									</div>
+								) : (
 									<TagSelector key={ key } />
-								}
+								) }
 								<Ongoing />
 							</header>
 							<CSSTransition

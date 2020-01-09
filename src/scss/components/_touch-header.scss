@@ -3,8 +3,8 @@
 // --------------------------------------------------
 
 .touch-header {
+	flex: 0 0 auto;
 	line-height: $line-height-base; // Reset for correct outline size
-	flex: 0 0 ($touch-header-height);
 	background-color: $touch-header-bg;
 	color: $touch-header-color;
 	height: $touch-header-height;

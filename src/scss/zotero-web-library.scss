@@ -58,7 +58,6 @@
 @import "components/icon";
 @import "components/panel";
 @import "components/tabs";
-@import "components/tag-selector";
 @import "components/toolbar";
 @import "components/touch-header";
 @import "components/touch-footer";
@@ -88,6 +87,8 @@
 
 @import "components/tag/pane";
 @import "components/tag/list";
+@import "components/tag/selector";
+@import "components/tag/touch-selector";
 
 @import "components/attachment/pane";
 @import "components/attachment/list";

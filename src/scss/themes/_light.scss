@@ -233,6 +233,7 @@ $btn-options-bg:          $transparent;
 $btn-options-focus-color: rgba($btn-options-color, 0.5);
 
 // Touch footer
+$touch-footer-color:     $shade-8;
 $touch-footer-bg:        $shade-1;
 $touch-footer-darker-bg: shade($shade-1, 2%);
 $touch-footer-border:    $shade-4;
@@ -290,6 +291,11 @@ $tag-selected-color:        $shade-0;
 $tag-selected-bg:           $shade-6;
 $tag-selected-active-bg:    $shade-7;
 $tag-selector-grip-color:   $shade-4;
+
+// Touch tag selector
+$touch-tag-selector-pane-bg:      $shade-0;
+$touch-tag-selector-border-color: $shade-4;
+$touch-tag-selected-bg:           $shade-3;
 
 // Popover
 $popover-bg:                  $body-bg;
