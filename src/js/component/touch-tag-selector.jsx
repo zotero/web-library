@@ -15,8 +15,8 @@ const TouchTagSelector = props => {
 		<div className="touch-tag-selector">
 			<CSSTransition
 				in={ isOpen }
-				timeout={ 200 }
-				classNames="slide"
+				timeout={ 600 }
+				classNames="slide-up"
 				mountOnEnter
 				unmountOnExit
 			>
