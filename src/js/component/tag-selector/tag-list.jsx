@@ -49,7 +49,7 @@ const TagList = props => {
 		const totalHeight = listRef.current.getBoundingClientRect().height;
 		const scrollProgress = (containerRef.current.scrollTop + containerHeight) / totalHeight;
 
-		if(scrollProgress > 0.5 && !isFetching && (totalTagCount > sourceTagsPointer) || (totalTagCount === null)) {
+		if(sourceTagsPointer && scrollProgress > 0.5 && !isFetching && ((totalTagCount > sourceTagsPointer) || (totalTagCount === null))) {
 			dispatch(fetchTags({ start: sourceTagsPointer, limit: PAGE_SIZE, sort: 'title' }));
 		}
 	});

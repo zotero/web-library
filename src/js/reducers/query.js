@@ -46,7 +46,7 @@ const query = (state = defaultState, action) => {
 		case REQUEST_ITEMS_BY_QUERY:
 			return {
 				...state,
-				...updateFetchingState(state, action)
+				...updateFetchingState(state, action),
 			}
 		case RECEIVE_ITEMS_BY_QUERY:
 			return {
@@ -68,7 +68,7 @@ const query = (state = defaultState, action) => {
 				...state,
 				tags: {
 					...state.tags,
-					isFetching: true
+					...updateFetchingState(state.tags, action),
 				}
 			}
 		case RECEIVE_TAGS_IN_ITEMS_BY_QUERY:
@@ -76,14 +76,12 @@ const query = (state = defaultState, action) => {
 				...state,
 				tags: {
 					...state.tags,
-					isFetching: false,
 					pointer: ('start' in action.queryOptions && 'limit' in action.queryOptions
 						&& !('tag' in action.queryOptions))
 						? action.queryOptions.start + action.queryOptions.limit : state.pointer,
-					totalResults: parseInt(
-						action.response.response.headers.get('Total-Results'), 10
-					),
+					totalResults: action.queryOptions.tag ? state.totalResults : action.totalResults,
 					tags: deduplicate([...(state.tags.tags || []), ...action.tags.map(t => t.tag)]),
+					...(action.queryOptions.tag ? {} : updateFetchingState(state.tags, action)),
 				}
 			};
 		case ERROR_TAGS_IN_ITEMS_BY_QUERY:
@@ -91,7 +89,7 @@ const query = (state = defaultState, action) => {
 				...state,
 				tags: {
 					...state.tags,
-					isFetching: false
+					...updateFetchingState(state.tags, action),
 				}
 			};
 		case RECEIVE_UPDATE_ITEM:

@@ -137,9 +137,10 @@ const populateItemKeys = (state, newKeys, action) => {
 	}
 }
 
-const updateFetchingState = ({ requests: prevRequests = [] }, action) => {
+const updateFetchingState = ({ requests: prevRequests = [] } = {}, action) => {
 	const start = 'queryOptions' in action ? action.queryOptions.start : null;
 	const limit = 'queryOptions' in action ? action.queryOptions.limit : null;
+
 	const end = start + limit;
 	const requests = action.type.startsWith('REQUEST') ?
 		[...prevRequests, [start, end]] :
@@ -148,7 +149,7 @@ const updateFetchingState = ({ requests: prevRequests = [] }, action) => {
 	return {
 		requests,
 		isFetching: requests.length > 0
-	}
+	};
 }
 
 const sortItemKeysOrClear = (state, items, sortBy, sortDirection) => {
