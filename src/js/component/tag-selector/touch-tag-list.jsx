@@ -12,7 +12,7 @@ const ROWHEIGHT = 43;
 
 const TouchTagListRow = props => {
 	const { data, index, style } = props;
-	const { tags } = data;
+	const { tags, toggleTag } = data;
 	const tag = tags[index];
 
 	const className = cx({
@@ -21,8 +21,14 @@ const TouchTagListRow = props => {
 		placeholder: tag === null
 	});
 
+	const handleClick =  useCallback(() => toggleTag(tag.tag));
+
 	return (
-		<li style={ style } className={ className } >
+		<li
+			style={ style }
+			className={ className }
+			onClick={ handleClick }
+		>
 			{ tag && (
 				<React.Fragment>
 				<div className="tag-color" style={ tag.color && { color: tag.color } } />
@@ -34,6 +40,7 @@ const TouchTagListRow = props => {
 }
 
 const TouchTagList = props => {
+	const { toggleTag } = props;
 	const dispatch = useDispatch();
 	const loader = useRef(null);
 
@@ -51,7 +58,6 @@ const TouchTagList = props => {
 	});
 
 	useEffect(() => {
-		console.log({ hasChecked, isFetching });
 		if(!hasChecked && !isFetching) {
 			dispatch(fetchTags(0, 49));
 			dispatch(checkColoredTags());
@@ -72,7 +78,7 @@ const TouchTagList = props => {
 						className="tag-selector-list"
 						height={ height }
 						itemCount={ hasChecked ? totalResults : 0 }
-						itemData={ { tags } }
+						itemData={ { tags, toggleTag } }
 						itemSize={ ROWHEIGHT }
 						onItemsRendered={ onItemsRendered }
 						ref={ ref }

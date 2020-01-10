@@ -131,7 +131,6 @@ const fetchTagsForItemsByQuery = (query, queryOptions) => {
 }
 
 const fetchCurrentTags = queryOptions => {
-	console.log('fetchCurrentTags', queryOptions);
 	return async (dispatch, getState) => {
 		const state = getState();
 		const { collectionKey, tags, itemsSource, search, isMyPublications,

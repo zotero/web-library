@@ -71,7 +71,7 @@ const useTagsData = () => {
 	return { isFetching, isFetched, tags, hasChecked, hasMoreItems, pointer, requests, totalResults };
 }
 
-const useTags = (shouldSkipDisabled = false) => {
+const useTags = (shouldSkipDisabledAndSelected = false) => {
 	const tagsSearchString = useSelector(state => state.current.tagsSearchString);
 	const { isFetching, pointer = 0, tags: sourceTags = [], totalResults = null, requests, hasChecked, hasMoreItems } = useTagsData();
 	const tagColors = useSelector(state =>  get(state, ['libraries', state.current.libraryKey, 'tagColors'], {}), shallowEqual);
@@ -90,13 +90,13 @@ const useTags = (shouldSkipDisabled = false) => {
 			selected: selectedTags.includes(tag)
 		})), 'tag');
 
-		if(shouldSkipDisabled) {
-			return newTags.filter(t => !t.disabled);
+		if(shouldSkipDisabledAndSelected) {
+			return newTags.filter(t => !t.disabled && !selectedTags.includes(t.tag));
 		}
 
 		return newTags;
-	}, [sourceTags, tagColors, tagsSearchString]);
-	return { tags, isFetching, pointer, requests, totalResults, hasChecked, hasMoreItems, tagsSearchString };
+	}, [shouldSkipDisabledAndSelected, sourceTags, tagColors, tagsSearchString]);
+	return { tags, isFetching, pointer, requests, totalResults, hasChecked, hasMoreItems, selectedTags, tagsSearchString };
 }
 
 export { useFetchingState, useSourceData, useTagsData, useTags };
