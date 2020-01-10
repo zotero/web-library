@@ -40,6 +40,10 @@
 				margin-right: $default-padding-x-touch + 2px;
 			}
 		}
+
+		&[class*="hairline"]:only-child {
+			@include hairline-disabled(top);
+		}
 	}
 
 	@include mouse-and-bp-up(md) {
