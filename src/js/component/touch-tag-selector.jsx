@@ -32,6 +32,11 @@ const TouchTagSelector = props => {
 	const handleClick = useCallback(() => {
 		setIsOpen(!isOpen);
 	});
+
+	const handleDeselectClick = useCallback(() => {
+		dispatch(navigate({ tags: null }));
+	});
+
 	const { tags, selectedTags: selectedTagNames } = useTags(false);
 	const selectedTags = useMemo(() => tags.filter(tag => tag.selected), [tags]);
 
@@ -81,7 +86,11 @@ const TouchTagSelector = props => {
 					<footer className="touch-footer">
 						<Toolbar>
 							<div className="toolbar-center">
-								<Button className="btn-link">Deselect All</Button>
+								<Button
+									onClick={ handleDeselectClick }
+									className="btn-link">
+										Deselect All
+									</Button>
 							</div>
 						</Toolbar>
 					</footer>
