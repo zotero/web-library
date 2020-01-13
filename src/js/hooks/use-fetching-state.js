@@ -96,7 +96,25 @@ const useTags = (shouldSkipDisabledAndSelected = false) => {
 
 		return newTags;
 	}, [shouldSkipDisabledAndSelected, sourceTags, tagColors, tagsSearchString]);
+
 	return { tags, isFetching, pointer, requests, totalResults, hasChecked, hasMoreItems, selectedTags, tagsSearchString };
 }
 
-export { useFetchingState, useSourceData, useTagsData, useTags };
+const useSourceSignature = () => {
+	const itemsSource = useSelector(s => s.current.itemsSource);
+	const libraryKey = useSelector(s => s.current.libraryKey);
+	const collectionKey = useSelector(s => s.current.collectionKey);
+	const search = useSelector(s => s.current.search);
+	const qmode = useSelector(s => s.current.qmode);
+	const tags = useSelector(s => s.current.tags, shallowEqual);
+
+	if(itemsSource == 'collection') {
+		return `${libraryKey}-${collectionKey}`;
+	} else if(itemsSource == 'query') {
+		return `${libraryKey}-query-${collectionKey}-${tags.join('-')}-${search}-${qmode}`;
+	} else {
+		return `${libraryKey}-${itemsSource}`;
+	}
+}
+
+export { useFetchingState, useSourceSignature, useSourceData, useTagsData, useTags };

@@ -94,6 +94,7 @@ const Library = props => {
 		() => toggleNavbar(null)
 	);
 
+	//@TODO: use `useSourceSignature` hook inside components instead
 	var key;
 	if(itemsSource == 'collection') {
 		key = `${libraryKey}-${collectionKey}`;
@@ -144,7 +145,7 @@ const Library = props => {
 									className="hidden-xs-down hidden-mouse-md-up darker"
 								/>
 								<LibrariesContainer />
-								{ device.isTouchOrSmall ? <TouchTagSelector key={ key } /> : <TagSelector key={ key } /> }
+								{ device.isTouchOrSmall ? <TouchTagSelector /> : <TagSelector key={ key } /> }
 								<Ongoing />
 							</header>
 							<CSSTransition

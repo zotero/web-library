@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { CSSTransition } from 'react-transition-group';
 
 import Button from './ui/button';
@@ -77,9 +77,7 @@ const TouchTagSelector = props => {
 							toggleTag={ toggleTag }
 						/>) }
 					</ul>
-					<div className="scroll-container">
-						<TouchTagList toggleTag={ toggleTag } />
-					</div>
+					<TouchTagList toggleTag={ toggleTag } />
 					<footer className="touch-footer">
 						<Toolbar>
 							<div className="toolbar-center">

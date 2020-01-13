@@ -78,8 +78,8 @@ const query = (state = defaultState, action) => {
 					...state.tags,
 					pointer: ('start' in action.queryOptions && 'limit' in action.queryOptions
 						&& !('tag' in action.queryOptions))
-						? action.queryOptions.start + action.queryOptions.limit : state.pointer,
-					totalResults: action.queryOptions.tag ? state.totalResults : action.totalResults,
+						? action.queryOptions.start + action.queryOptions.limit : state.tags.pointer,
+					totalResults: action.queryOptions.tag ? state.tags.totalResults : action.totalResults,
 					tags: deduplicate([...(state.tags.tags || []), ...action.tags.map(t => t.tag)]),
 					...(action.queryOptions.tag ? {} : updateFetchingState(state.tags, action)),
 				}

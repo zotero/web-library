@@ -5,8 +5,9 @@ import InfiniteLoader from "react-window-infinite-loader";
 import { FixedSizeList as List } from 'react-window';
 import cx from 'classnames';
 
-import { useTags } from '../../hooks';
+import { useSourceSignature, useTags } from '../../hooks';
 import { checkColoredTags, fetchTags } from '../../actions';
+import Spinner from '../ui/spinner';
 
 const ROWHEIGHT = 43;
 
@@ -45,6 +46,7 @@ const TouchTagList = props => {
 	const loader = useRef(null);
 
 	const { isFetching, requests, tags, totalResults, hasChecked } = useTags(true);
+	const sourceSignature = useSourceSignature();
 
 	const handleIsItemLoaded = useCallback(index => {
 		if(tags && !!tags[index]) {
@@ -62,34 +64,37 @@ const TouchTagList = props => {
 			dispatch(fetchTags(0, 49));
 			dispatch(checkColoredTags());
 		}
-	}, []);
+	}, [sourceSignature]);
 
 	return (
-		<AutoSizer>
-		{({ height, width }) => (
-			<InfiniteLoader
-				ref={ loader }
-				isItemLoaded={ handleIsItemLoaded }
-				itemCount={ totalResults }
-				loadMoreItems={ handleLoadMore }
-			>
-				{({ onItemsRendered, ref }) => (
-					<List
-						className="tag-selector-list"
-						height={ height }
-						itemCount={ hasChecked ? totalResults : 0 }
-						itemData={ { tags, toggleTag } }
-						itemSize={ ROWHEIGHT }
-						onItemsRendered={ onItemsRendered }
-						ref={ ref }
-						width={ width }
-					>
-						{ TouchTagListRow }
-					</List>
-				)}
-			</InfiniteLoader>
-		)}
-		</AutoSizer>
+		<div className="scroll-container">
+			<AutoSizer>
+			{({ height, width }) => (
+				<InfiniteLoader
+					ref={ loader }
+					isItemLoaded={ handleIsItemLoaded }
+					itemCount={ totalResults }
+					loadMoreItems={ handleLoadMore }
+				>
+					{({ onItemsRendered, ref }) => (
+						<List
+							className="tag-selector-list"
+							height={ height }
+							itemCount={ hasChecked ? totalResults : 0 }
+							itemData={ { tags, toggleTag } }
+							itemSize={ ROWHEIGHT }
+							onItemsRendered={ onItemsRendered }
+							ref={ ref }
+							width={ width }
+						>
+							{ TouchTagListRow }
+						</List>
+					)}
+				</InfiniteLoader>
+			)}
+			</AutoSizer>
+		{ !hasChecked && <Spinner className="large" /> }
+		</div>
 	);
 }
 
