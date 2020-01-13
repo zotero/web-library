@@ -19,7 +19,7 @@ const TouchTagListRow = props => {
 	const className = cx({
 		tag: true,
 		odd: (index + 1) % 2 === 1,
-		placeholder: tag === null
+		placeholder: !tag
 	});
 
 	const handleClick =  useCallback(() => toggleTag(tag.tag));
