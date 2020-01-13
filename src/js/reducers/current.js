@@ -5,6 +5,7 @@ import {
 	FILTER_TAGS,
 	TOGGLE_NAVBAR,
 	TOGGLE_TAG_SELECTOR,
+	TOGGLE_TOUCH_TAG_SELECTOR,
 	TOGGLE_TRANSITIONS,
 	TRIGGER_EDITING_ITEM,
 	TRIGGER_FOCUS,
@@ -23,6 +24,7 @@ const stateDefault = {
 	isNavBarOpen: false,
 	isSelectMode: false,
 	isTagSelectorOpen: true,
+	isTouchTagSelectorOpen: false,
 	itemKey: null,
 	itemKeys: [],
 	itemsSource: null,
@@ -172,6 +174,11 @@ const current = (state = stateDefault, action, { config = {}, device = {} } = {}
 			return {
 				...state,
 				isTagSelectorOpen: typeof(action.isOpen) === 'boolean' ? action.isOpen : !state.isTagSelectorOpen
+			}
+		case TOGGLE_TOUCH_TAG_SELECTOR:
+			return {
+				...state,
+				isTouchTagSelectorOpen: typeof(action.isOpen) === 'boolean' ? action.isOpen : !state.isTouchTagSelectorOpen
 			}
 		case FILTER_TAGS:
 			return {

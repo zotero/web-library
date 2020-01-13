@@ -28,7 +28,7 @@ const TouchTagListRow = props => {
 		<li
 			style={ style }
 			className={ className }
-			onClick={ handleClick }
+			onClick={ tag && handleClick }
 		>
 			{ tag && (
 				<React.Fragment>

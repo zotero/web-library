@@ -1,13 +1,14 @@
-import React, { useCallback, useMemo, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { useCallback, useMemo } from 'react';
+import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { CSSTransition } from 'react-transition-group';
 
 import Button from './ui/button';
 import { Toolbar } from './ui/toolbars';
 import Icon from './ui/icon';
 import TouchTagList from './tag-selector/touch-tag-list';
-import { navigate } from '../actions';
+import { navigate, toggleTouchTagSelector } from '../actions';
 import { useTags } from '../hooks';
+import { pluralize } from '../common/format';
 
 const SelectedTagRow = ({ tag, toggleTag }) => {
 	const handleClick = useCallback(() => toggleTag(tag.tag));
@@ -28,16 +29,19 @@ const SelectedTagRow = ({ tag, toggleTag }) => {
 
 const TouchTagSelector = props => {
 	const dispatch = useDispatch();
-	const [isOpen, setIsOpen] = useState(false);
+	const isOpen = useSelector(state => state.current.isTouchTagSelectorOpen);
+
 	const handleClick = useCallback(() => {
-		setIsOpen(!isOpen);
+		dispatch(toggleTouchTagSelector(false));
 	});
 
 	const handleDeselectClick = useCallback(() => {
 		dispatch(navigate({ tags: null }));
 	});
 
-	const { tags, selectedTags: selectedTagNames } = useTags(false);
+	const selectedTagNames = useSelector(state => state.current.tags, shallowEqual);
+
+	const { tags } = useTags(false);
 	const selectedTags = useMemo(() => tags.filter(tag => tag.selected), [tags]);
 
 	const toggleTag = useCallback(tagName => {
@@ -65,7 +69,10 @@ const TouchTagSelector = props => {
 						<Toolbar>
 							<div className="toolbar-left" />
 							<div className="toolbar-center">
-								2 Tags Selected
+								{ selectedTagNames.length == 0 ?
+									'No Tags Selected' :
+									`${selectedTagNames.length} ${pluralize('Tag', selectedTagNames.length)} Selected`
+								}
 							</div>
 							<div className="toolbar-right">
 								<Button className="btn-link" onClick={ handleClick }>Done</Button>
@@ -96,19 +103,6 @@ const TouchTagSelector = props => {
 					</footer>
 				</div>
 			</CSSTransition>
-			<footer className="touch-footer darker">
-				<Toolbar>
-					<div className="toolbar-left">
-						<Button className="btn-icon" onClick={ handleClick }>
-							<Icon type="24/tag" width="24" height="24" />
-						</Button>
-					</div>
-					<div className="toolbar-center">
-						2 Tags Selected
-					</div>
-					<div className="toolbar-right" />
-				</Toolbar>
-			</footer>
 		</div>
 	);
 }

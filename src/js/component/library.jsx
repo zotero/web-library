@@ -34,6 +34,7 @@ import TagSelector from '../component/tag-selector';
 import TouchHeaderContainer from '../container/touch-header';
 import TouchNoteContainer from '../container/touch-note';
 import TouchTagSelector from '../component/touch-tag-selector';
+import TouchSideFooter from '../component/touch-side-footer';
 import withDevice from '../enhancers/with-device';
 import { getSerializedQuery } from '../common/state';
 import { pick } from '../common/immutable';
@@ -145,7 +146,12 @@ const Library = props => {
 									className="hidden-xs-down hidden-mouse-md-up darker"
 								/>
 								<LibrariesContainer />
-								{ device.isTouchOrSmall ? <TouchTagSelector /> : <TagSelector key={ key } /> }
+								{ device.isTouchOrSmall ? (
+									<React.Fragment>
+										<TouchTagSelector />
+										<TouchSideFooter />
+									</React.Fragment>
+									) : <TagSelector key={ key } /> }
 								<Ongoing />
 							</header>
 							<CSSTransition

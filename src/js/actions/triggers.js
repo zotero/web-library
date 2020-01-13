@@ -5,6 +5,7 @@ import {
 	TOGGLE_MODAL,
 	TOGGLE_NAVBAR,
 	TOGGLE_TAG_SELECTOR,
+	TOGGLE_TOUCH_TAG_SELECTOR,
 	TOGGLE_TRANSITIONS,
 	TRIGGER_EDITING_ITEM,
 	TRIGGER_FOCUS,
@@ -71,6 +72,10 @@ const toggleTagSelector = isOpen => {
 	return { type: TOGGLE_TAG_SELECTOR, isOpen };
 }
 
+const toggleTouchTagSelector = isOpen => {
+	return { type: TOGGLE_TOUCH_TAG_SELECTOR, isOpen };
+}
+
 const toggleTransitions = useTransitions => {
 	return { type: TOGGLE_TRANSITIONS, useTransitions };
 }
@@ -88,6 +93,7 @@ export {
 	toggleModal,
 	toggleNavbar,
 	toggleTagSelector,
+	toggleTouchTagSelector,
 	toggleTransitions,
 	triggerEditingItem,
 	triggerFocus,
