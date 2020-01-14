@@ -6,7 +6,7 @@ import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import withFocusManager from '../../enhancers/with-focus-manager';
 import { checkColoredTags, fetchTags, navigate } from '../../actions';
 import { isTriggerEvent } from '../../common/event';
-import { useTags } from '../../hooks';
+import { useSourceSignature, useTags } from '../../hooks';
 
 const PAGE_SIZE = 100;
 
@@ -24,6 +24,7 @@ const TagList = props => {
 	});
 
 	const { isFetching, pointer, tags, totalResults, hasChecked } = useTags();
+	const sourceSignature = useSourceSignature();
 
 	const maybeLoadMore = useCallback(() => {
 		const containerHeight = containerRef.current.getBoundingClientRect().height;
@@ -72,16 +73,12 @@ const TagList = props => {
 		}
 	}, [totalResults]);
 
-
 	useEffect(() => {
-		if(hasChecked && totalResults > PAGE_SIZE) {
+		if(!hasChecked && !isFetching) {
+			dispatch(fetchTags(0, PAGE_SIZE - 1));
 			dispatch(checkColoredTags());
 		}
-	}, [hasChecked, totalResults]);
-
-	useEffect(() => {
-		setTimeout(maybeLoadMore, 0);
-	}, [tagsSearchString, pointer]);
+	}, [sourceSignature]);
 
 	return (
 		<div
@@ -100,7 +97,7 @@ const TagList = props => {
 					ref={ listRef }
 					className="tag-selector-list"
 				>
-					{ tags.map(tag => (
+					{ tags.filter(t => !!t).map(tag => (
 						<li
 							className={ cx('tag', {
 								disabled: tag.disabled,

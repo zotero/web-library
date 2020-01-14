@@ -9,31 +9,32 @@ import {
 	REQUEST_TAGS_IN_TOP_ITEMS,
 	RECEIVE_MOVE_ITEMS_TRASH,
 	RECEIVE_UPDATE_ITEM,
+	RECEIVE_COLORED_TAGS_IN_TOP_ITEMS,
 } from '../../constants/actions';
-import { deduplicate } from '../../utils';
-import { updateFetchingState } from '../../common/reducers';
+import { populateTags, updateFetchingState } from '../../common/reducers';
 
 const tagsTop = (state = {}, action) => {
 	switch(action.type) {
 		case REQUEST_TAGS_IN_TOP_ITEMS:
 			return {
 				...state,
-				...(action.queryOptions.tag ? {} : updateFetchingState(state, action)),
+				...updateFetchingState(state, action),
 			}
 		case RECEIVE_TAGS_IN_TOP_ITEMS:
 			return {
 				...state,
-				pointer: ('start' in action.queryOptions && 'limit' in action.queryOptions
-					&& !('tag' in action.queryOptions))
-					? action.queryOptions.start + action.queryOptions.limit : state.pointer,
-				totalResults: action.queryOptions.tag ? state.totalResults : action.totalResults,
-				tags: deduplicate([...(state.tags || []), ...action.tags.map(t => t.tag)]),
-				...(action.queryOptions.tag ? {} : updateFetchingState(state, action)),
+				...populateTags(state, action.tags, action),
+				...updateFetchingState(state, action),
 			};
+		case RECEIVE_COLORED_TAGS_IN_TOP_ITEMS:
+			return {
+				...state,
+				coloredTags: action.tags.map(t => t.tag)
+			}
 		case ERROR_TAGS_IN_TOP_ITEMS:
 			return {
 				...state,
-				...(action.queryOptions.tag ? {} : updateFetchingState(state, action)),
+				...updateFetchingState(state, action),
 			};
 		case RECEIVE_CREATE_ITEM:
 			return 'tags' in action.item && action.item.tags.length > 0 ?

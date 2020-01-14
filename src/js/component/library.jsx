@@ -151,7 +151,7 @@ const Library = props => {
 										<TouchTagSelector />
 										<TouchSideFooter />
 									</React.Fragment>
-									) : <TagSelector key={ key } /> }
+									) : <TagSelector /> }
 								<Ongoing />
 							</header>
 							<CSSTransition

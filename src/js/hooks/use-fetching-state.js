@@ -38,7 +38,7 @@ const useSourceData = () => {
 	return useFetchingState(path);
 };
 
-const useTagsData = () => {
+const useTags = (shouldSkipDisabledAndSelected = false) => {
 	const collectionKey = useSelector(state => state.current.collectionKey);
 	const itemsSource = useSelector(state => state.current.itemsSource);
 	const libraryKey = useSelector(state => state.current.libraryKey);
@@ -63,41 +63,62 @@ const useTagsData = () => {
 		break;
 	}
 
-	const { isFetching = false, tags = [], pointer, requests, totalResults } = data;
+	const { coloredTags = [], isFetching = false, tags: sourceTags = [], pointer = 0, requests, totalResults, duplicatesCount } = data;
 	const hasMoreItems = totalResults > 0 && (typeof(pointer) === 'undefined' || pointer < totalResults);
 	const hasChecked = typeof(totalResults) !== 'undefined';
 	const isFetched = hasChecked && !isFetching && !hasMoreItems;
-
-	return { isFetching, isFetched, tags, hasChecked, hasMoreItems, pointer, requests, totalResults };
-}
-
-const useTags = (shouldSkipDisabledAndSelected = false) => {
 	const tagsSearchString = useSelector(state => state.current.tagsSearchString);
-	const { isFetching, pointer = 0, tags: sourceTags = [], totalResults = null, requests, hasChecked, hasMoreItems } = useTagsData();
 	const tagColors = useSelector(state =>  get(state, ['libraries', state.current.libraryKey, 'tagColors'], {}), shallowEqual);
 	const selectedTags = useSelector(state => state.current.tags, shallowEqual);
+
 	const tags = useMemo(() => {
 		const tagsSearchStringLC = tagsSearchString.toLowerCase();
-		const newTags = deduplicateByKey([
-			...Object.keys(tagColors),
-			...(tagsSearchString === '' ? sourceTags : sourceTags.filter(
-				tag => tag.toLowerCase().includes(tagsSearchStringLC)
-			))
-		].map(tag => ({
-			tag,
-			color: tag in tagColors ? tagColors[tag] : null,
-			disabled: tag in tagColors && !sourceTags.includes(tag),
-			selected: selectedTags.includes(tag)
-		})), 'tag');
+		const tags = [];
 
-		if(shouldSkipDisabledAndSelected) {
-			return newTags.filter(t => !t.disabled && !selectedTags.includes(t.tag));
+		for(let [tag, color] of Object.entries(tagColors)) {
+			const isDisabled = !coloredTags.includes(tag);
+			const isSelected = selectedTags.includes(tag);
+
+			if(shouldSkipDisabledAndSelected && (isDisabled || isSelected)) {
+				continue;
+			}
+
+			tags.push({
+				tag, color, disabled: isDisabled, selected: isSelected
+			})
 		}
 
-		return newTags;
-	}, [shouldSkipDisabledAndSelected, sourceTags, tagColors, tagsSearchString]);
+		for(let tag of sourceTags) {
+			if(typeof(tag) === 'undefined') {
+				tags.push(undefined); //placeholder
+				continue;
+			}
 
-	return { tags, isFetching, pointer, requests, totalResults, hasChecked, hasMoreItems, selectedTags, tagsSearchString };
+			if(tagsSearchStringLC !== '' && !tag.toLowerCase().includes(tagsSearchStringLC)) {
+				// apply filter
+				continue;
+			}
+
+			if(tag in tagColors) {
+				// skip colored tags
+				continue;
+			}
+
+			const isSelected = selectedTags.includes(tag);
+
+			if(shouldSkipDisabledAndSelected && isSelected) {
+				continue;
+			}
+
+			tags.push({
+				tag, color: null, disabled: false, selected: isSelected
+			});
+		}
+
+		return tags;
+	}, [coloredTags, shouldSkipDisabledAndSelected, sourceTags, tagColors, tagsSearchString]);
+
+	return { isFetched, duplicatesCount, tags, isFetching, pointer, requests, totalResults, hasChecked, hasMoreItems, selectedTags, tagsSearchString };
 }
 
 const useSourceSignature = () => {
@@ -117,4 +138,4 @@ const useSourceSignature = () => {
 	}
 }
 
-export { useFetchingState, useSourceSignature, useSourceData, useTagsData, useTags };
+export { useFetchingState, useSourceSignature, useSourceData, useTags };

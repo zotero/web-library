@@ -45,7 +45,8 @@ const TouchTagList = props => {
 	const dispatch = useDispatch();
 	const loader = useRef(null);
 
-	const { isFetching, requests, tags, totalResults, hasChecked } = useTags(true);
+	const { duplicatesCount, isFetching, requests, tags, totalResults, selectedTags, hasChecked } = useTags(true);
+	const selectedTagsCount = selectedTags.length;
 	const sourceSignature = useSourceSignature();
 
 	const handleIsItemLoaded = useCallback(index => {
@@ -68,6 +69,8 @@ const TouchTagList = props => {
 
 	return (
 		<div className="scroll-container">
+			<div>
+			</div>
 			<AutoSizer>
 			{({ height, width }) => (
 				<InfiniteLoader
@@ -80,7 +83,7 @@ const TouchTagList = props => {
 						<List
 							className="tag-selector-list"
 							height={ height }
-							itemCount={ hasChecked ? totalResults : 0 }
+							itemCount={ hasChecked ? totalResults - duplicatesCount - selectedTagsCount : 0 }
 							itemData={ { tags, toggleTag } }
 							itemSize={ ROWHEIGHT }
 							onItemsRendered={ onItemsRendered }

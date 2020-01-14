@@ -1,23 +1,23 @@
 'use strict';
 
-import { populateItemKeys, sortItemKeysOrClear, updateFetchingState } from '../common/reducers';
 import deepEqual from 'deep-equal';
 import { LOCATION_CHANGE } from 'connected-react-router';
 
 import {
-    REQUEST_ITEMS_BY_QUERY,
-    RECEIVE_ITEMS_BY_QUERY,
-    ERROR_ITEMS_BY_QUERY,
-    SORT_ITEMS,
-	REQUEST_TAGS_IN_ITEMS_BY_QUERY,
-	RECEIVE_TAGS_IN_ITEMS_BY_QUERY,
+	ERROR_ITEMS_BY_QUERY,
 	ERROR_TAGS_IN_ITEMS_BY_QUERY,
+	RECEIVE_COLORED_TAGS_IN_ITEMS_BY_QUERY,
+	RECEIVE_ITEMS_BY_QUERY,
+	RECEIVE_TAGS_IN_ITEMS_BY_QUERY,
 	RECEIVE_UPDATE_ITEM,
+	REQUEST_ITEMS_BY_QUERY,
+	REQUEST_TAGS_IN_ITEMS_BY_QUERY,
+	SORT_ITEMS,
 } from '../constants/actions.js';
 
 import { getParamsFromRoute } from '../common/state';
 import { getQueryFromParams } from '../common/navigation';
-import { deduplicate } from '../utils';
+import { populateTags, populateItemKeys, sortItemKeysOrClear, updateFetchingState } from '../common/reducers';
 
 
 const defaultState = {
@@ -68,7 +68,7 @@ const query = (state = defaultState, action) => {
 				...state,
 				tags: {
 					...state.tags,
-					...(action.queryOptions.tag ? {} : updateFetchingState(state.tags, action)),
+					...updateFetchingState(state.tags, action),
 				}
 			}
 		case RECEIVE_TAGS_IN_ITEMS_BY_QUERY:
@@ -76,12 +76,16 @@ const query = (state = defaultState, action) => {
 				...state,
 				tags: {
 					...state.tags,
-					pointer: ('start' in action.queryOptions && 'limit' in action.queryOptions
-						&& !('tag' in action.queryOptions))
-						? action.queryOptions.start + action.queryOptions.limit : state.tags.pointer,
-					totalResults: action.queryOptions.tag ? state.tags.totalResults : action.totalResults,
-					tags: deduplicate([...(state.tags.tags || []), ...action.tags.map(t => t.tag)]),
-					...(action.queryOptions.tag ? {} : updateFetchingState(state.tags, action)),
+					...populateTags(state.tags, action.tags, action),
+					...updateFetchingState(state.tags, action),
+				}
+			};
+		case RECEIVE_COLORED_TAGS_IN_ITEMS_BY_QUERY:
+			return {
+				...state,
+				tags: {
+					...state.tags,
+					coloredTags: action.tags.map(t => t.tag)
 				}
 			};
 		case ERROR_TAGS_IN_ITEMS_BY_QUERY:
@@ -89,7 +93,7 @@ const query = (state = defaultState, action) => {
 				...state,
 				tags: {
 					...state.tags,
-					...(action.queryOptions.tag ? {} : updateFetchingState(state.tags, action)),
+					...updateFetchingState(state.tags, action),
 				}
 			};
 		case RECEIVE_UPDATE_ITEM:

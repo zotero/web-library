@@ -13,12 +13,12 @@ import Input from './form/input';
 import TagList from './tag-selector/tag-list';
 import withFocusManager from '../enhancers/with-focus-manager';
 import { filterTags, navigate, toggleTagSelector } from '../actions';
-import { useTagsData } from '../hooks';
+import { useTags } from '../hooks';
 
 
 const TagSelector = props => {
 	const { onBlur, onFocus, onFocusNext, onFocusPrev, registerFocusRoot } = props; //FocusManager
-	const { isFetching } = useTagsData();
+	const { isFetching } = useTags();
 	const { tagsSearchString, tags: selectedTags, isTagSelectorOpen } = useSelector(state => state.current);
 	const dispatch = useDispatch();
 	const [isBusy] = useDebounce(isFetching, 100);

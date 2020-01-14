@@ -3,11 +3,14 @@
 import { sortItemsByKey, compareItem } from '../utils';
 import { omit } from '../common/immutable';
 
-const replaceDuplicates = entries => {
+const replaceDuplicates = (entries, comparer = null, useSplice = false) => {
 	const seen = [];
+	const compareFn = comparer ? a => seen.some(b => comparer(a,b)) : a => seen.includes(a);
+	const deleteFn = useSplice ? i => entries.splice(i, 1) : i => delete entries[i] ;
+
 	for(let i = 0; i < entries.length; i++) {
-		if(!!entries[i] && seen.includes(entries[i])) {
-			delete entries[i];
+		if(!!entries[i] && compareFn(entries[i])) {
+			deleteFn(i);
 		} else {
 			seen.push(entries[i]);
 		}
@@ -113,21 +116,21 @@ const filterItemKeys = (state, removedKeys) => {
 	}
 }
 
-const populateItemKeys = (state, newKeys, action) => {
-	const { keys: prevKeys = [] } = state;
+const populate = (state, newItems, action, keyName, comparer = null) => {
+	const { [keyName]: prevItems = [] } = state;
 	const { queryOptions, totalResults } = action;
 	const { start, limit, sort, direction } = queryOptions;
 
-	const keys = [...prevKeys];
-	keys.length = totalResults;
+	const items = [...prevItems];
+	items.length = totalResults;
 
-	for(let i = 0; i < newKeys.length; i++) {
-		keys[start + i] = newKeys[i];
+	for(let i = 0; i < newItems.length; i++) {
+		items[start + i] = newItems[i];
 	}
 
 	return {
 		...state,
-		keys: replaceDuplicates(keys),
+		[keyName]: replaceDuplicates(items, comparer),
 		totalResults,
 		sortBy: sort,
 		sortDirection: direction,
@@ -135,6 +138,27 @@ const populateItemKeys = (state, newKeys, action) => {
 		isError: false,
 		pointer: start + limit,
 	}
+}
+
+const populateItemKeys = (state, newKeys, action) => {
+	return populate(state, newKeys, action, 'keys');
+}
+
+const populateTags = (state, newTags, action) => {
+	const data = populate(state, newTags, action, 'rawTags', (a, b) => a && b && a.tag === b.tag && a.type === b.type);
+	const tags = replaceDuplicates(data.rawTags.map(t => typeof(t) === 'undefined' ? undefined : t.tag), null, true);
+	const duplicatesCount = data.rawTags.length - tags.length;
+	const pointer =('start' in action.queryOptions && 'limit' in action.queryOptions && !('tag' in action.queryOptions)) ?
+		data.pointer : state.pointer;
+	const totalResults = action.queryOptions.tag ? state.totalResults : action.totalResults;
+
+	return {
+		...data,
+		tags,
+		duplicatesCount,
+		pointer,
+		totalResults
+	};
 }
 
 const updateFetchingState = ({ requests: prevRequests = [] } = {}, action) => {
@@ -186,6 +210,7 @@ export {
 	filterItemKeys,
 	injectExtraItemKeys,
 	populateItemKeys,
+	populateTags,
 	sortItemKeysOrClear,
 	updateFetchingState,
 };

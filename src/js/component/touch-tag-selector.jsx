@@ -42,7 +42,7 @@ const TouchTagSelector = props => {
 	const selectedTagNames = useSelector(state => state.current.tags, shallowEqual);
 
 	const { tags } = useTags(false);
-	const selectedTags = useMemo(() => tags.filter(tag => tag.selected), [tags]);
+	const selectedTags = useMemo(() => tags.filter(tag => tag && tag.selected), [tags]);
 
 	const toggleTag = useCallback(tagName => {
 		const index = selectedTagNames.indexOf(tagName);

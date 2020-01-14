@@ -5,6 +5,7 @@ import { FILTER_TAGS } from '../constants/actions';
 
 const getApi = ({ config, libraryKey }, requestType, queryConfig) => {
 	switch(requestType) {
+		case 'COLORED_TAGS_IN_COLLECTION':
 		case 'TAGS_IN_COLLECTION':
 			return api(config.apiKey, config.apiConfig)
 				.library(libraryKey)
@@ -12,18 +13,21 @@ const getApi = ({ config, libraryKey }, requestType, queryConfig) => {
 				.items()
 				.top()
 				.tags();
+		case 'COLORED_TAGS_IN_TRASH_ITEMS':
 		case 'TAGS_IN_TRASH_ITEMS':
 			return api(config.apiKey, config.apiConfig)
 				.library(libraryKey)
 				.items()
 				.trash()
 				.tags()
+		case 'COLORED_TAGS_IN_PUBLICATIONS_ITEMS':
 		case 'TAGS_IN_PUBLICATIONS_ITEMS':
 			return api(config.apiKey, config.apiConfig)
 				.library(libraryKey)
 				.items()
 				.publications()
 				.tags()
+		case 'COLORED_TAGS_IN_ITEMS_BY_QUERY':
 		case 'TAGS_IN_ITEMS_BY_QUERY':
 			var configuredApi = api(config.apiKey, config.apiConfig)
 				.library(libraryKey)
@@ -44,6 +48,7 @@ const getApi = ({ config, libraryKey }, requestType, queryConfig) => {
 				.items(queryConfig.itemKey)
 				.top()
 				.tags();
+		case 'COLORED_TAGS_IN_TOP_ITEMS':
 		case 'TAGS_IN_TOP_ITEMS':
 			return api(config.apiKey, config.apiConfig)
 				.library(libraryKey)
@@ -96,41 +101,41 @@ const fetchTagsBase = (type, queryConfig, queryOptions = {}) => {
 	}
 }
 
-const fetchTagsInCollection = (collectionKey, queryOptions) => {
-	return fetchTagsBase('TAGS_IN_COLLECTION', { collectionKey }, queryOptions);
+const fetchTagsInCollection = (collectionKey, queryOptions, prefix = 'TAGS') => {
+	return fetchTagsBase(`${prefix}_IN_COLLECTION`, { collectionKey }, queryOptions);
 };
 
-const fetchTagsInLibrary = queryOptions => {
-	return fetchTagsBase('TAGS_IN_LIBRARY', { }, queryOptions);
+const fetchTagsInLibrary = (queryOptions, prefix = 'TAGS') => {
+	return fetchTagsBase(`${prefix}_IN_LIBRARY`, { }, queryOptions);
 };
 
-const fetchTagsForItem = (itemKey, queryOptions) => {
-	return fetchTagsBase('TAGS_FOR_ITEM', { itemKey }, queryOptions);
+// const fetchTagsForItem = (itemKey, queryOptions, prefix = 'TAGS') => {
+// 	return fetchTagsBase(`${prefix}_FOR_ITEM`, { itemKey }, queryOptions);
+// };
+
+const fetchTagsForTrashItems = (queryOptions, prefix = 'TAGS') => {
+	return fetchTagsBase(`${prefix}_IN_TRASH_ITEMS`, {}, queryOptions);
 };
 
-const fetchTagsForTrashItems = queryOptions => {
-	return fetchTagsBase('TAGS_IN_TRASH_ITEMS', {}, queryOptions);
+const fetchTagsForPublicationsItems = (queryOptions, prefix = 'TAGS') => {
+	return fetchTagsBase(`${prefix}_IN_PUBLICATIONS_ITEMS`, {}, queryOptions);
 };
 
-const fetchTagsForPublicationsItems = queryOptions => {
-	return fetchTagsBase('TAGS_IN_PUBLICATIONS_ITEMS', {}, queryOptions);
+const fetchTagsForTopItems = (queryOptions, prefix = 'TAGS') => {
+	return fetchTagsBase(`${prefix}_IN_TOP_ITEMS`, { }, queryOptions);
 };
 
-const fetchTagsForTopItems = queryOptions => {
-	return fetchTagsBase('TAGS_IN_TOP_ITEMS', { }, queryOptions);
-};
-
-const fetchTagsForItemsByQuery = (query, queryOptions) => {
+const fetchTagsForItemsByQuery = (query, queryOptions, prefix = 'TAGS') => {
 	const { collectionKey = null, itemTag = null, itemQ = null, itemQMode = null,
 		isTrash, isMyPublications } = query;
 	const queryConfig = { collectionKey, isTrash, isMyPublications };
 
 	return fetchTagsBase(
-		'TAGS_IN_ITEMS_BY_QUERY', queryConfig, { ...queryOptions, itemTag, itemQ, itemQMode }
+		`${prefix}_IN_ITEMS_BY_QUERY`, queryConfig, { ...queryOptions, itemTag, itemQ, itemQMode }
 	);
 }
 
-const fetchCurrentTags = queryOptions => {
+const fetchCurrentTags = (queryOptions, prefix) => {
 	return async (dispatch, getState) => {
 		const state = getState();
 		const { collectionKey, tags, itemsSource, search, isMyPublications,
@@ -138,13 +143,13 @@ const fetchCurrentTags = queryOptions => {
 
 		switch(itemsSource) {
 			case 'top':
-				return await dispatch(fetchTagsForTopItems(queryOptions));
+				return await dispatch(fetchTagsForTopItems(queryOptions, prefix));
 			case 'trash':
-				return await dispatch(fetchTagsForTrashItems(queryOptions));
+				return await dispatch(fetchTagsForTrashItems(queryOptions, prefix));
 			case 'publications':
-				return await dispatch(fetchTagsForPublicationsItems(queryOptions));
+				return await dispatch(fetchTagsForPublicationsItems(queryOptions, prefix));
 			case 'collection':
-				return await dispatch(fetchTagsInCollection(collectionKey, queryOptions));
+				return await dispatch(fetchTagsInCollection(collectionKey, queryOptions, prefix));
 			case 'query':
 				return await dispatch(fetchTagsForItemsByQuery({
 					isTrash,
@@ -153,7 +158,7 @@ const fetchCurrentTags = queryOptions => {
 					itemQ: search,
 					itemQMode: qmode,
 					itemTag: tags
-				}, queryOptions));
+				}, queryOptions, prefix));
 		}
 	}
 }
@@ -162,7 +167,7 @@ const fetchTags = (startIndex, stopIndex, queryOptions = { }) => {
 	const start = startIndex;
 	const limit = (stopIndex - startIndex) + 1;
 
-	return fetchCurrentTags({ sort: 'title',...queryOptions, start, limit });
+	return fetchCurrentTags({ sort: 'title',...queryOptions, start, limit }, 'TAGS');
 }
 
 const checkColoredTags = queryOptions => {
@@ -172,7 +177,7 @@ const checkColoredTags = queryOptions => {
 		const coloredTags = Object.keys(state.libraries[libraryKey].tagColors);
 		if(coloredTags.length === 0) { return; }
 		const tagQuery = coloredTags.join(' || ');
-		return await dispatch(fetchCurrentTags({ ...queryOptions, tag: tagQuery }));
+		return await dispatch(fetchCurrentTags({ ...queryOptions, tag: tagQuery }, 'COLORED_TAGS'));
 	}
 }
 
@@ -203,7 +208,7 @@ const filterTags = tagsSearchString => {
 export {
 	checkColoredTags,
 	fetchTags,
-	fetchTagsForItem,
+	// fetchTagsForItem,
 	fetchTagsForItemsByQuery,
 	fetchTagsForPublicationsItems,
 	fetchTagsForTopItems,
