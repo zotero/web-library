@@ -110,9 +110,11 @@ const TouchTagSelector = props => {
 						<div className="toolbar-center">
 							<Button
 								onClick={ handleDeselectClick }
-								className="btn-link">
-									Deselect All
-								</Button>
+								className="btn-link"
+								disabled={ selectedTagNames.length == 0 }
+							>
+								Deselect All
+							</Button>
 						</div>
 					</Toolbar>
 				</footer>
