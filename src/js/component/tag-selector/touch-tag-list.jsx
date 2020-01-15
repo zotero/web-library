@@ -68,9 +68,7 @@ const TouchTagList = props => {
 	}, [sourceSignature]);
 
 	return (
-		<div className="scroll-container">
-			<div>
-			</div>
+		<div className={ cx('scroll-container', { loading: !hasChecked }) }>
 			<AutoSizer>
 			{({ height, width }) => (
 				<InfiniteLoader
