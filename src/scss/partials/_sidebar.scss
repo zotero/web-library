@@ -55,5 +55,9 @@
 			left: 0;
 			z-index: $z-index-search-bar;
 		}
+
+		.btn {
+			margin-left: -7px; // Center with collection icons
+		}
 	}
 }
