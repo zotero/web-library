@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { useSelector, shallowEqual } from 'react-redux';
-import { deduplicateByKey, get } from '../utils';
+import { get } from '../utils';
 
 const useFetchingState = path => {
 	const { isFetching, keys, pointer, totalResults, requests = [] } = useSelector(state => get(state, path, {}), shallowEqual);
@@ -80,6 +80,11 @@ const useTags = (shouldSkipDisabledAndSelected = false) => {
 			const isSelected = selectedTags.includes(tag);
 
 			if(shouldSkipDisabledAndSelected && (isDisabled || isSelected)) {
+				continue;
+			}
+
+			if(tagsSearchStringLC !== '' && !tag.toLowerCase().includes(tagsSearchStringLC)) {
+				// apply filter
 				continue;
 			}
 
