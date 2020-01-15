@@ -30,12 +30,8 @@ const TouchTagListRow = props => {
 			className={ className }
 			onClick={ tag && handleClick }
 		>
-			{ tag && (
-				<React.Fragment>
-				<div className="tag-color" style={ tag.color && { color: tag.color } } />
-				<div className="truncate">{ tag.tag }</div>
-				</React.Fragment>
-			) }
+			<div className="tag-color" style={ tag && (tag.color && { color: tag.color }) } />
+			<div className="truncate">{ tag && tag.tag }</div>
 		</li>
 	);
 }

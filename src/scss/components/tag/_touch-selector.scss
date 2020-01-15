@@ -97,6 +97,20 @@
 					}
 				}
 			}
+
+			.truncate {
+				@include state(".tag.placeholder") {
+					flex: 0 0 calc(70% - 32px);
+					margin-right: auto;
+					height: $space-sm;
+					border-radius: $space-sm / 2;
+					background-color: $touch-tag-placeholder-bg;
+
+					@include variant(".tag.odd") {
+						flex: 0 0 calc(85% - 32px);
+					}
+				}
+			}
 		}
 	}
 
