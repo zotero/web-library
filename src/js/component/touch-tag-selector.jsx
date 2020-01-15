@@ -93,7 +93,7 @@ const TouchTagSelector = props => {
 						onChange={ handleSearchChange }
 						type="search"
 						value={ tagsSearchString }
-						isBusy={ isBusy }
+						isBusy={ tagsSearchString !== '' && isBusy }
 						placeholder="Filter Tags"
 					/>
 				</div>
