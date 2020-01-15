@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import AutoSizer from 'react-virtualized-auto-sizer';
 import InfiniteLoader from "react-window-infinite-loader";
 import { FixedSizeList as List } from 'react-window';
@@ -10,6 +10,7 @@ import { checkColoredTags, fetchTags } from '../../actions';
 import Spinner from '../ui/spinner';
 
 const ROWHEIGHT = 43;
+const PAGESIZE = 100;
 
 const TouchTagListRow = props => {
 	const { data, index, style } = props;
@@ -41,7 +42,9 @@ const TouchTagList = props => {
 	const dispatch = useDispatch();
 	const loader = useRef(null);
 
-	const { duplicatesCount, isFetching, requests, tags, totalResults, selectedTags, hasChecked } = useTags(true);
+	const { duplicatesCount, hasMoreItems, isFetching, pointer, requests, tags, totalResults, selectedTags, hasChecked } = useTags(true);
+	const tagsSearchString = useSelector(state => state.current.tagsSearchString);
+	const isFiltering = tagsSearchString != '';
 	const selectedTagsCount = selectedTags.length;
 	const sourceSignature = useSourceSignature();
 
@@ -58,10 +61,16 @@ const TouchTagList = props => {
 
 	useEffect(() => {
 		if(!hasChecked && !isFetching) {
-			dispatch(fetchTags(0, 49));
+			dispatch(fetchTags(0, PAGESIZE - 1));
 			dispatch(checkColoredTags());
 		}
 	}, [sourceSignature]);
+
+	useEffect(() => {
+		if(isFiltering && !isFetching && hasMoreItems) {
+			dispatch(fetchTags(pointer, pointer + PAGESIZE - 1));
+		}
+	}, [isFiltering, isFetching, hasMoreItems]);
 
 	return (
 		<div className={ cx('scroll-container', { loading: !hasChecked }) }>
@@ -70,14 +79,14 @@ const TouchTagList = props => {
 				<InfiniteLoader
 					ref={ loader }
 					isItemLoaded={ handleIsItemLoaded }
-					itemCount={ totalResults }
+					itemCount={ isFiltering ? tags.length : totalResults }
 					loadMoreItems={ handleLoadMore }
 				>
 					{({ onItemsRendered, ref }) => (
 						<List
 							className="tag-selector-list"
 							height={ height }
-							itemCount={ hasChecked ? totalResults - duplicatesCount - selectedTagsCount : 0 }
+							itemCount={ isFiltering ? tags.length : hasChecked ? totalResults - duplicatesCount - selectedTagsCount : 0 }
 							itemData={ { tags, toggleTag } }
 							itemSize={ ROWHEIGHT }
 							onItemsRendered={ onItemsRendered }

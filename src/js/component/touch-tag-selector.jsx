@@ -1,14 +1,16 @@
 import React, { useCallback, useMemo } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { CSSTransition } from 'react-transition-group';
+import { useDebounce } from "use-debounce";
 
 import Button from './ui/button';
 import { Toolbar } from './ui/toolbars';
 import Icon from './ui/icon';
 import TouchTagList from './tag-selector/touch-tag-list';
-import { navigate, toggleTouchTagSelector } from '../actions';
+import { filterTags, navigate, toggleTouchTagSelector } from '../actions';
 import { useTags } from '../hooks';
 import { pluralize } from '../common/format';
+import Input from './form/input';
 
 const SelectedTagRow = ({ tag, toggleTag }) => {
 	const handleClick = useCallback(() => toggleTag(tag.tag));
@@ -30,6 +32,9 @@ const SelectedTagRow = ({ tag, toggleTag }) => {
 const TouchTagSelector = props => {
 	const dispatch = useDispatch();
 	const isOpen = useSelector(state => state.current.isTouchTagSelectorOpen);
+	const tagsSearchString = useSelector(state => state.current.tagsSearchString);
+	const { isFetching } = useTags();
+	const [isBusy] = useDebounce(isFetching, 100);
 
 	const handleClick = useCallback(() => {
 		dispatch(toggleTouchTagSelector(false));
@@ -37,6 +42,10 @@ const TouchTagSelector = props => {
 
 	const handleDeselectClick = useCallback(() => {
 		dispatch(navigate({ tags: null }));
+	});
+
+	const handleSearchChange = useCallback(newValue => {
+		dispatch(filterTags(newValue))
 	});
 
 	const selectedTagNames = useSelector(state => state.current.tags, shallowEqual);
@@ -79,7 +88,14 @@ const TouchTagSelector = props => {
 					</Toolbar>
 				</header>
 				<div className="filter-container">
-					<input type="text" className="form-control" placeholder="Filter Tags" />
+					<Input
+						className="tag-selector-filter form-control"
+						onChange={ handleSearchChange }
+						type="search"
+						value={ tagsSearchString }
+						isBusy={ isBusy }
+						placeholder="Filter Tags"
+					/>
 				</div>
 				<ul className="selected-tags">
 					{ selectedTags.map(tag => <SelectedTagRow

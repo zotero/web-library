@@ -23,7 +23,7 @@ const TouchSideFooter = memo(() => {
 					<Button className="btn-icon" onClick={ handleClick }>
 						<Icon
 							type="24/tag"
-							symbol={ selectedTagNames.length == 0 ? 'tag' : 'tag-block' }
+							symbol={ selectedTagNames.length === 0 ? 'tag' : 'tag-block' }
 							width="24"
 							height="24"
 						/>
