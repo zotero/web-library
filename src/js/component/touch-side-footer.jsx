@@ -21,7 +21,12 @@ const TouchSideFooter = memo(() => {
 			<Toolbar>
 				<div className="toolbar-left">
 					<Button className="btn-icon" onClick={ handleClick }>
-						<Icon type="24/tag" width="24" height="24" />
+						<Icon
+							type="24/tag"
+							symbol={ selectedTagNames.length == 0 ? 'tag' : 'tag-block' }
+							width="24"
+							height="24"
+						/>
 					</Button>
 				</div>
 				<div className="toolbar-center">
