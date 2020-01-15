@@ -3,28 +3,16 @@
 // --------------------------------------------------
 
 .touch-tag-selector {
-	flex: 0 0 auto;
-
-	@include bp-down(xs) {
-		position: absolute;
-		left: 0;
-		right: 0;
-		bottom: 0;
-		z-index: $z-index-search-bar;
-	}
-
-	.pane {
-		display: flex;
-		flex-direction: column;
-		@include hairline(right, $touch-tag-selector-border-color);
-		position: absolute; // Override position relative from hairline mixin
-		top: 0;
-		right: 0;
-		bottom: 0;
-		left: 0;
-		z-index: $z-index-search-bar;
-		background-color: $touch-tag-selector-pane-bg;
-	}
+	display: flex;
+	flex-direction: column;
+	@include hairline(right, $touch-tag-selector-border-color);
+	position: absolute; // Override position relative from hairline mixin
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	z-index: $z-index-search-bar;
+	background-color: $touch-tag-selector-pane-bg;
 
 	.filter-container {
 		flex: 0 0 auto;

@@ -46,4 +46,14 @@
 			flex: 0 0 $sidebar-width-lg-touch;
 		}
 	}
+
+	.touch-footer {
+		@include bp-down(xs) {
+			position: absolute;
+			right: 0;
+			bottom: 0;
+			left: 0;
+			z-index: $z-index-search-bar;
+		}
+	}
 }

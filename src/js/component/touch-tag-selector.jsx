@@ -56,54 +56,52 @@ const TouchTagSelector = props => {
 	});
 
 	return (
-		<div className="touch-tag-selector">
-			<CSSTransition
-				in={ isOpen }
-				timeout={ 600 }
-				classNames="slide-up"
-				mountOnEnter
-				unmountOnExit
-			>
-				<div className="pane">
-					<header className="touch-header">
-						<Toolbar>
-							<div className="toolbar-left" />
-							<div className="toolbar-center">
-								{ selectedTagNames.length == 0 ?
-									'No Tags Selected' :
-									`${selectedTagNames.length} ${pluralize('Tag', selectedTagNames.length)} Selected`
-								}
-							</div>
-							<div className="toolbar-right">
-								<Button className="btn-link" onClick={ handleClick }>Done</Button>
-							</div>
-						</Toolbar>
-					</header>
-					<div className="filter-container">
-						<input type="text" className="form-control" placeholder="Filter Tags" />
-					</div>
-					<ul className="selected-tags">
-						{ selectedTags.map(tag => <SelectedTagRow
-							key={ tag.tag }
-							tag={ tag }
-							toggleTag={ toggleTag }
-						/>) }
-					</ul>
-					<TouchTagList toggleTag={ toggleTag } />
-					<footer className="touch-footer">
-						<Toolbar>
-							<div className="toolbar-center">
-								<Button
-									onClick={ handleDeselectClick }
-									className="btn-link">
-										Deselect All
-									</Button>
-							</div>
-						</Toolbar>
-					</footer>
+		<CSSTransition
+			in={ isOpen }
+			timeout={ 600 }
+			classNames="slide-up"
+			mountOnEnter
+			unmountOnExit
+		>
+			<div className="touch-tag-selector">
+				<header className="touch-header">
+					<Toolbar>
+						<div className="toolbar-left" />
+						<div className="toolbar-center">
+							{ selectedTagNames.length == 0 ?
+								'No Tags Selected' :
+								`${selectedTagNames.length} ${pluralize('Tag', selectedTagNames.length)} Selected`
+							}
+						</div>
+						<div className="toolbar-right">
+							<Button className="btn-link" onClick={ handleClick }>Done</Button>
+						</div>
+					</Toolbar>
+				</header>
+				<div className="filter-container">
+					<input type="text" className="form-control" placeholder="Filter Tags" />
 				</div>
-			</CSSTransition>
-		</div>
+				<ul className="selected-tags">
+					{ selectedTags.map(tag => <SelectedTagRow
+						key={ tag.tag }
+						tag={ tag }
+						toggleTag={ toggleTag }
+					/>) }
+				</ul>
+				<TouchTagList toggleTag={ toggleTag } />
+				<footer className="touch-footer">
+					<Toolbar>
+						<div className="toolbar-center">
+							<Button
+								onClick={ handleDeselectClick }
+								className="btn-link">
+									Deselect All
+								</Button>
+						</div>
+					</Toolbar>
+				</footer>
+			</div>
+		</CSSTransition>
 	);
 }
 
