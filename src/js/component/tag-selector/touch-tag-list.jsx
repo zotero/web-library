@@ -73,7 +73,7 @@ const TouchTagList = props => {
 	}, [isFiltering, isFetching, hasMoreItems]);
 
 	return (
-		<div className={ cx('scroll-container', { loading: !hasChecked }) }>
+		<div className="scroll-container">
 			<AutoSizer>
 			{({ height, width }) => (
 				<InfiniteLoader
@@ -99,7 +99,7 @@ const TouchTagList = props => {
 				</InfiniteLoader>
 			)}
 			</AutoSizer>
-		{ !hasChecked && <Spinner className="large" /> }
+		{ !hasChecked && <Spinner className="large centered" /> }
 		</div>
 	);
 }
