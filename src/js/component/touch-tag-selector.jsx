@@ -78,7 +78,7 @@ const TouchTagSelector = props => {
 						<div className="toolbar-left" />
 						<div className="toolbar-center">
 							{ selectedTagNames.length == 0 ?
-								'No Tags Selected' :
+								'Tags' :
 								`${selectedTagNames.length} ${pluralize('Tag', selectedTagNames.length)} Selected`
 							}
 						</div>

@@ -30,8 +30,7 @@ const TouchSideFooter = memo(() => {
 					</Button>
 				</div>
 				<div className="toolbar-center">
-					{ selectedTagNames.length == 0 ?
-						'No Tags Selected' :
+					{ selectedTagNames.length != 0 &&
 						`${selectedTagNames.length} ${pluralize('Tag', selectedTagNames.length)} Selected`
 					}
 				</div>
