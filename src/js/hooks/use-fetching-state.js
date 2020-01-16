@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { useSelector, shallowEqual } from 'react-redux';
-import { get } from '../utils';
+import { get, sortByKey } from '../utils';
 
 const useFetchingState = path => {
 	const { isFetching, keys, pointer, totalResults, requests = [] } = useSelector(state => get(state, path, {}), shallowEqual);
@@ -69,7 +69,21 @@ const useTags = (shouldSkipDisabledAndSelected = false) => {
 	const isFetched = hasChecked && !isFetching && !hasMoreItems;
 	const tagsSearchString = useSelector(state => state.current.tagsSearchString);
 	const tagColors = useSelector(state =>  get(state, ['libraries', state.current.libraryKey, 'tagColors'], {}), shallowEqual);
-	const selectedTags = useSelector(state => state.current.tags, shallowEqual);
+	const selectedTagNames = useSelector(state => state.current.tags, shallowEqual)
+	const selectedTags = useMemo(() => {
+		const tags = selectedTagNames.map(tagName => ({
+			tag: tagName,
+			color: tagColors[tagName] || null,
+			selected: true,
+			disabled: !coloredTags.includes(tagName)
+		}));
+		tags.sort((a, b) => {
+			if(a.color && !b.color) { return -1; }
+			if(b.color && !a.color) { return 1; }
+			return a.tag.localeCompare(b.tag, { sensitivity: 'accent' });
+		});
+		return tags;
+	}, [selectedTagNames, tagColors, coloredTags]);
 
 	const tags = useMemo(() => {
 		const tagsSearchStringLC = tagsSearchString.toLowerCase();
@@ -77,7 +91,7 @@ const useTags = (shouldSkipDisabledAndSelected = false) => {
 
 		for(let [tag, color] of Object.entries(tagColors)) {
 			const isDisabled = !coloredTags.includes(tag);
-			const isSelected = selectedTags.includes(tag);
+			const isSelected = selectedTagNames.includes(tag);
 
 			if(shouldSkipDisabledAndSelected && (isDisabled || isSelected)) {
 				continue;
@@ -109,7 +123,7 @@ const useTags = (shouldSkipDisabledAndSelected = false) => {
 				continue;
 			}
 
-			const isSelected = selectedTags.includes(tag);
+			const isSelected = selectedTagNames.includes(tag);
 
 			if(shouldSkipDisabledAndSelected && isSelected) {
 				continue;

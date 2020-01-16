@@ -33,7 +33,7 @@ const TouchTagSelector = props => {
 	const dispatch = useDispatch();
 	const isOpen = useSelector(state => state.current.isTouchTagSelectorOpen);
 	const tagsSearchString = useSelector(state => state.current.tagsSearchString);
-	const { isFetching } = useTags();
+	const { isFetching, selectedTags } = useTags();
 	const [isBusy] = useDebounce(isFetching, 100);
 
 	const handleClick = useCallback(() => {
@@ -51,7 +51,6 @@ const TouchTagSelector = props => {
 	const selectedTagNames = useSelector(state => state.current.tags, shallowEqual);
 
 	const { tags } = useTags(false);
-	const selectedTags = useMemo(() => tags.filter(tag => tag && tag.selected), [tags]);
 
 	const toggleTag = useCallback(tagName => {
 		const index = selectedTagNames.indexOf(tagName);
