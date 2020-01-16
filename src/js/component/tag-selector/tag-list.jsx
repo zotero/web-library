@@ -80,6 +80,11 @@ const TagList = props => {
 		}
 	}, [sourceSignature]);
 
+
+	useEffect(() => {
+		setTimeout(maybeLoadMore, 0);
+	}, [tagsSearchString, pointer]);
+
 	return (
 		<div
 			className="scroll-container"
