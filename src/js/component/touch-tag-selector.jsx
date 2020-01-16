@@ -1,7 +1,6 @@
 import React, { useCallback, useMemo } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { CSSTransition } from 'react-transition-group';
-import { useDebounce } from "use-debounce";
 
 import Button from './ui/button';
 import { Toolbar } from './ui/toolbars';
@@ -33,8 +32,7 @@ const TouchTagSelector = props => {
 	const dispatch = useDispatch();
 	const isOpen = useSelector(state => state.current.isTouchTagSelectorOpen);
 	const tagsSearchString = useSelector(state => state.current.tagsSearchString);
-	const { isFetching, selectedTags } = useTags();
-	const [isBusy] = useDebounce(isFetching, 100);
+	const { selectedTags } = useTags();
 
 	const handleClick = useCallback(() => {
 		dispatch(toggleTouchTagSelector(false));
@@ -49,8 +47,6 @@ const TouchTagSelector = props => {
 	});
 
 	const selectedTagNames = useSelector(state => state.current.tags, shallowEqual);
-
-	const { tags } = useTags(false);
 
 	const toggleTag = useCallback(tagName => {
 		const index = selectedTagNames.indexOf(tagName);
@@ -92,7 +88,6 @@ const TouchTagSelector = props => {
 						onChange={ handleSearchChange }
 						type="search"
 						value={ tagsSearchString }
-						isBusy={ tagsSearchString !== '' && isBusy }
 						placeholder="Filter Tags"
 					/>
 				</div>
@@ -110,7 +105,7 @@ const TouchTagSelector = props => {
 							<Button
 								onClick={ handleDeselectClick }
 								className="btn-link"
-								disabled={ selectedTagNames.length == 0 }
+								disabled={ selectedTagNames.length === 0 }
 							>
 								Deselect All
 							</Button>

@@ -70,6 +70,7 @@ const useTags = (shouldSkipDisabledAndSelected = false) => {
 	const tagsSearchString = useSelector(state => state.current.tagsSearchString);
 	const tagColors = useSelector(state =>  get(state, ['libraries', state.current.libraryKey, 'tagColors'], {}), shallowEqual);
 	const selectedTagNames = useSelector(state => state.current.tags, shallowEqual)
+	const isFiltering = tagsSearchString !== '';
 	const selectedTags = useMemo(() => {
 		const tags = selectedTagNames.map(tagName => ({
 			tag: tagName,
@@ -109,11 +110,15 @@ const useTags = (shouldSkipDisabledAndSelected = false) => {
 
 		for(let tag of sourceTags) {
 			if(typeof(tag) === 'undefined') {
+				if(isFiltering && shouldSkipDisabledAndSelected) {
+					continue;
+				}
+
 				tags.push(undefined); //placeholder
 				continue;
 			}
 
-			if(tagsSearchStringLC !== '' && !tag.toLowerCase().includes(tagsSearchStringLC)) {
+			if(isFiltering && !tag.toLowerCase().includes(tagsSearchStringLC)) {
 				// apply filter
 				continue;
 			}

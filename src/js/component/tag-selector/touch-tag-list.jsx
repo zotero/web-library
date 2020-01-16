@@ -4,6 +4,7 @@ import AutoSizer from 'react-virtualized-auto-sizer';
 import InfiniteLoader from "react-window-infinite-loader";
 import { FixedSizeList as List } from 'react-window';
 import cx from 'classnames';
+import { useDebounce } from "use-debounce";
 
 import { useSourceSignature, useTags } from '../../hooks';
 import { checkColoredTags, fetchTags } from '../../actions';
@@ -44,9 +45,11 @@ const TouchTagList = props => {
 
 	const { duplicatesCount, hasMoreItems, isFetching, pointer, requests, tags, totalResults, selectedTags, hasChecked } = useTags(true);
 	const tagsSearchString = useSelector(state => state.current.tagsSearchString);
-	const isFiltering = tagsSearchString != '';
+	const isFiltering = tagsSearchString !== '';
 	const selectedTagsCount = selectedTags.length;
 	const sourceSignature = useSourceSignature();
+
+	const [isBusy] = useDebounce(!hasChecked || (isFetching && isFiltering), 100);
 
 	const handleIsItemLoaded = useCallback(index => {
 		if(tags && !!tags[index]) {
@@ -99,7 +102,7 @@ const TouchTagList = props => {
 				</InfiniteLoader>
 			)}
 			</AutoSizer>
-		{ !hasChecked && <Spinner className="large centered" /> }
+		{ isBusy && <Spinner className="large centered" /> }
 		</div>
 	);
 }
