@@ -77,32 +77,35 @@ const TouchTagList = props => {
 
 	return (
 		<div className="scroll-container">
-			<AutoSizer>
-			{({ height, width }) => (
-				<InfiniteLoader
-					ref={ loader }
-					isItemLoaded={ handleIsItemLoaded }
-					itemCount={ isFiltering ? tags.length : totalResults }
-					loadMoreItems={ handleLoadMore }
-				>
-					{({ onItemsRendered, ref }) => (
-						<List
-							className="tag-selector-list"
-							height={ height }
-							itemCount={ isFiltering ? tags.length : hasChecked ? totalResults - duplicatesCount - selectedTagsCount : 0 }
-							itemData={ { tags, toggleTag } }
-							itemSize={ ROWHEIGHT }
-							onItemsRendered={ onItemsRendered }
-							ref={ ref }
-							width={ width }
-						>
-							{ TouchTagListRow }
-						</List>
-					)}
-				</InfiniteLoader>
-			)}
-			</AutoSizer>
-		{ isBusy && <Spinner className="large centered" /> }
+			{ !isBusy ? (
+				<AutoSizer>
+				{({ height, width }) => (
+					<InfiniteLoader
+						ref={ loader }
+						isItemLoaded={ handleIsItemLoaded }
+						itemCount={ isFiltering ? tags.length : totalResults }
+						loadMoreItems={ handleLoadMore }
+					>
+						{({ onItemsRendered, ref }) => (
+							<List
+								className="tag-selector-list"
+								height={ height }
+								itemCount={ isFiltering ? tags.length : hasChecked ? totalResults - duplicatesCount - selectedTagsCount : 0 }
+								itemData={ { tags, toggleTag } }
+								itemSize={ ROWHEIGHT }
+								onItemsRendered={ onItemsRendered }
+								ref={ ref }
+								width={ width }
+							>
+								{ TouchTagListRow }
+							</List>
+						)}
+					</InfiniteLoader>
+				)}
+				</AutoSizer>
+			) : (
+				<Spinner className="large centered" />
+			) }
 		</div>
 	);
 }
