@@ -16,11 +16,21 @@
 .icon-spin {
 	@keyframes spin {
 		0% {
-			transform: rotate(0);
+			transform: rotate(0deg);
 		}
 
 		100% {
 			transform: rotate(360deg);
+		}
+	}
+
+	@keyframes spin-centered {
+		0% {
+			transform: translate(-50%, -50%) rotate(0deg);
+		}
+
+		100% {
+			transform: translate(-50%, -50%) rotate(360deg);
 		}
 	}
 
@@ -57,7 +67,7 @@
 		position: absolute;
 		left: 50%;
 		top: 50%;
-		transform: translate(-50%, -50%);
+		animation: spin-centered 1s linear infinite;
 	}
 }
 
