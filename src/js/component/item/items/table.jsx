@@ -244,6 +244,7 @@ const Table = memo(() => {
 							ref={ tableRef }
 							className="items-table"
 							style={ getColumnCssVars(columns, width) }
+							role="table"
 						>
 							<HeaderRow
 								ref={ headerRef }

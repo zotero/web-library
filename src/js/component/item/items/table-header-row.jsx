@@ -94,6 +94,7 @@ const HeaderRow = memo(forwardRef((props, ref) => {
 			onMouseDown={ handleMouseDown }
 			onMouseMove={ handleMouseMove }
 			onMouseUp = { handleMouseUp }
+			role="row"
 		>
 			{ columns.map((c, colIndex) => (
 				<Cell
@@ -104,8 +105,9 @@ const HeaderRow = memo(forwardRef((props, ref) => {
 					key={ c.field }
 					onClick={ handleCellClickAndKeyDown }
 					onKeyDown={ handleCellClickAndKeyDown }
-					width={ `var(--col-${colIndex}-width)` }
+					role="columnheader"
 					tabIndex={ -2 }
+					width={ `var(--col-${colIndex}-width)` }
 				>
 					<div className="header-content">
 						{ colIndex === reorderTargetIndex &&

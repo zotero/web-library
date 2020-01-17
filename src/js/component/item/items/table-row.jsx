@@ -282,6 +282,7 @@ const TableRow = memo(props => {
 			onClick={ handleMouseEvent }
 			onDoubleClick={ handleMouseEvent }
 			onMouseDown={ handleMouseEvent }
+			role="row"
 		>
 			{ columns.map((c, colIndex) => itemData ? (
 				<DataCell

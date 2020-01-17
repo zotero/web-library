@@ -8,12 +8,13 @@ const Cell = props => {
 
 	return (
 		<div
-			data-colindex={ index }
 			aria-colindex={ index }
 			className={ cx('metadata', columnName, className) }
+			data-colindex={ index }
 			data-column-name={ columnName }
+			role="cell"
 			style={ { width } }
-			{ ...pick(props, ['onClick', 'onKeyDown', 'tabIndex']) }
+			{ ...pick(props, ['onClick', 'onKeyDown', 'tabIndex', 'role']) }
 			{ ...pick(props, key => key.match(/^(aria-|data-).*/)) }
 		>
 			{ children }
