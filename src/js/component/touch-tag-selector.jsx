@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useRef } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { CSSTransition } from 'react-transition-group';
 
@@ -9,7 +9,6 @@ import TouchTagList from './tag-selector/touch-tag-list';
 import { filterTags, navigate, toggleTouchTagSelector } from '../actions';
 import { useTags } from '../hooks';
 import { pluralize } from '../common/format';
-import Input from './form/input';
 
 const SelectedTagRow = ({ tag, toggleTag }) => {
 	const handleClick = useCallback(() => toggleTag(tag.tag));
@@ -30,6 +29,7 @@ const SelectedTagRow = ({ tag, toggleTag }) => {
 
 const TouchTagSelector = props => {
 	const dispatch = useDispatch();
+	const inputRef = useRef(null);
 	const isOpen = useSelector(state => state.current.isTouchTagSelectorOpen);
 	const tagsSearchString = useSelector(state => state.current.tagsSearchString);
 	const { selectedTags } = useTags();
@@ -42,8 +42,16 @@ const TouchTagSelector = props => {
 		dispatch(navigate({ tags: null }));
 	});
 
-	const handleSearchChange = useCallback(newValue => {
-		dispatch(filterTags(newValue))
+	const handleSearchChange = useCallback(ev => {
+		const newValue = ev.currentTarget.value;
+		dispatch(filterTags(newValue));
+	});
+
+	const handleSearchClear = useCallback(() => {
+		dispatch(filterTags(''));
+		if(inputRef.current) {
+			inputRef.current.focus();
+		}
 	});
 
 	const selectedTagNames = useSelector(state => state.current.tags, shallowEqual);
@@ -83,13 +91,25 @@ const TouchTagSelector = props => {
 					</Toolbar>
 				</header>
 				<div className="filter-container">
-					<Input
-						className="tag-selector-filter form-control"
-						onChange={ handleSearchChange }
-						type="search"
-						value={ tagsSearchString }
-						placeholder="Filter Tags"
-					/>
+					<div className="search input-group">
+						<input
+							className="form-control tag-selector-filter"
+							onChange={ handleSearchChange }
+							placeholder="Filter Tags"
+							ref={ inputRef }
+							type="search"
+							value={ tagsSearchString }
+						/>
+						{ tagsSearchString.length > 0 && (
+							<Button
+								icon
+								className="clear"
+								onClick={ handleSearchClear }
+							>
+								<Icon type={ '10/x' } width="10" height="10" />
+							</Button>
+						)}
+					</div>
 				</div>
 				<ul className="selected-tags">
 					{ selectedTags.map(tag => <SelectedTagRow
