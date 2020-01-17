@@ -326,21 +326,6 @@ textarea {
 	}
 }
 
-.search-input {
-	@include touch-or-bp-down(sm) {
-		background-color: $search-input-bg-touch;
-		border: 0.5px solid $input-border-color-touch;
-		border-radius: $input-btn-border-radius;
-	}
-
-	@include touch-keyboard-or-bp-down(sm) {
-		&:focus {
-			border: 0.5px solid $focus-color;
-			box-shadow: 0 0 0 $input-btn-focus-width $focus-color;
-		}
-	}
-}
-
 .checkboxes,
 .radios {
 	@include touch-or-bp-down(sm) {

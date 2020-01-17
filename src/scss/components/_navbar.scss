@@ -97,7 +97,7 @@
 		}
 	}
 
-	.search {
+	.input-group.search {
 		flex: 0 0 auto;
 		align-self: center;
 		width: $search-width;
@@ -107,6 +107,18 @@
 
 		@include bp-down(xs) {
 			display: none;
+		}
+
+		.dropdown {
+			position: absolute;
+			left: 5px;
+			top: 3px;
+		}
+
+		.form-control {
+			html:not(.specifity) & {
+				padding: 5px 25px 5px 36px;
+			}
 		}
 	}
 

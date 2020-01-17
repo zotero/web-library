@@ -5,14 +5,9 @@
 .input-group.search {
 	.dropdown {
 		position: absolute;
-		left: 5px;
-		top: 3px;
+		left: 6px;
+		top: 4px;
 		z-index: $z-index-menu; // We need to set the z-index here because the dropdown-menu expects a static wrapper
-
-		@include bp-down(xs) {
-			left: 8px;
-			top: 4px;
-		}
 	}
 
 	.dropdown-toggle {
@@ -26,41 +21,34 @@
 		}
 	}
 
-	.search-input {
-		padding: 5px 24px 5px 36px;
-
+	.form-control {
 		@include touch-or-bp-down(sm) {
 			min-height: auto; // Reset
+			padding: 4px 25px 4px $input-btn-padding-x-touch;
 			border: $input-border-width solid $input-border-color; // …
 			background-color: $input-bg; // …
+			border-radius: $input-btn-border-radius;
 		}
 
 		@include touch-keyboard-or-bp-down(sm) {
 			&:focus {
 				border: $input-border-width solid $focus-color;
+				box-shadow: 0 0 0 $input-btn-focus-width $focus-color;
 			}
-		}
-
-		@include bp-down-normalized(xs) {
-			padding: 5px 25px 5px 38px;
 		}
 	}
 
 	.clear {
 		position: absolute;
-		top: 8px;
-		right: 8px;
+		top: 50%;
+		transform: translateY(-50%);
+		right: $space-xs + $border-width;
 		width: $space-md;
 		height: $space-md;
 		border: none;
 		padding: 0;
 		border-radius: 50%;
 		background-color: $icon-color;
-
-		@include bp-down(xs) {
-			top: 9px;
-			right: 9px;
-		}
 
 		html:not(.specifity).keyboard & {
 			&:focus {

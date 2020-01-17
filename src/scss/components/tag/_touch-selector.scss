@@ -16,7 +16,10 @@
 
 	.filter-container {
 		flex: 0 0 auto;
+		display: flex;
+		align-items: center;
 		height: $line-height-large-touch + $border-width;
+		padding: 0 $space-min $border-width;
 		@include hairline(bottom, $touch-tag-selector-border-color);
 	}
 

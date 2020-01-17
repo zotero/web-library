@@ -16,42 +16,13 @@
 	background: #f5f5f5;
 	z-index: $z-index-search-bar;
 
-	.search {
+	.input-group.search {
 		margin: 0 $default-padding-x-touch 0 (-$default-padding-x-touch + $space-min);
 		position: relative;
-	}
 
-	.search-input {
-		@include bp-down-normalized(xs) {
-			height: $line-height-large-touch - 2 * $space-min;
-			min-height: auto;
-			background-color: #fff;
-			padding-right: 26px;
-		}
-	}
-
-	.clear {
-		@include touch-or-bp-down(sm) {
-			position: absolute;
-			top: 9px;
-			right: 9px;
-			width: $space-md;
-			height: $space-md;
-			border: none;
-			padding: 0;
-			border-radius: 50%;
-			background-color: $icon-color;
-
-			.icon {
-				position: absolute;
-				left: 50%;
-				top: 50%;
-				transform: translate(-50%, -50%);
-				color: $input-bg;
-
-				@include state(".clear:active .icon") {
-					color: $input-bg;
-				}
+		.form-control {
+			@include bp-down-normalized(xs) {
+				padding-left: 38px;
 			}
 		}
 	}
