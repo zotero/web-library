@@ -118,6 +118,10 @@ const current = (state = stateDefault, action, { config = {}, device = {} } = {}
 				searchState.hasViewedResult = true;
 			}
 
+			if(device.isSingleColumn) {
+				isSelectMode = isSelectMode && view === 'item-list';
+			}
+
 			return {
 				...state,
 				attachmentKey,
@@ -126,7 +130,7 @@ const current = (state = stateDefault, action, { config = {}, device = {} } = {}
 				isLibraryReadOnly,
 				isMyPublications,
 				isSearchMode: itemsSource === 'query' || state.isSearchMode,
-				isSelectMode: isSelectMode && view === 'item-list',
+				isSelectMode,
 				isTrash,
 				itemKey,
 				itemKeys,
