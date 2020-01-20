@@ -64,7 +64,7 @@ const TouchTagSelector = props => {
 			selectedTagNames.push(tagName);
 		}
 
-		dispatch(navigate({ tags: selectedTagNames }));
+		dispatch(navigate({ tags: selectedTagNames, view: 'item-list' }));
 	});
 
 	return (
