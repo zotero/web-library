@@ -13,11 +13,4 @@
 	&.darker {
 		background-color: $touch-footer-darker-bg;
 	}
-
-	// Make 6 buttons fit into the touch-footer on 4" phones
-	@include bp-down-normalized(xs) {
-		.btn-icon {
-			padding: $input-btn-padding-y-touch ($input-btn-padding-x-touch - $space-min);
-		}
-	}
 }
