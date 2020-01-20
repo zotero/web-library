@@ -149,19 +149,7 @@ const Library = props => {
 								{ device.isTouchOrSmall ? (
 									<React.Fragment>
 										<TouchTagSelector />
-										{ device.isSingleColumn ? (
-											<CSSTransition
-												in={ isSearchMode && view !== 'item-details' }
-												timeout={ 250 }
-												classNames="fade"
-												mountOnEnter
-												unmountOnExit
-											>
-												<TouchSideFooter />
-											</CSSTransition>
-										) : (
-											<TouchSideFooter />
-										) }
+										<TouchSideFooter />
 									</React.Fragment>
 									) : <TagSelector /> }
 								<Ongoing />
