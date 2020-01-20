@@ -21,6 +21,7 @@
 		right: 0;
 		bottom: 0;
 		@include hairline-disabled(right);
+		overflow: visible; // Allow touch-tag-selector to overflow
 	}
 
 	@include mouse-and-bp-up(md) {

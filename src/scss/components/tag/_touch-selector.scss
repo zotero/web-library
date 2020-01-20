@@ -14,6 +14,19 @@
 	z-index: $z-index-touch-tag-selector;
 	background-color: $touch-tag-selector-pane-bg;
 
+	@include bp-down(xs) {
+		@include hairline-disabled(right);
+		top: -$touch-header-height - $navbar-height-xs;
+	}
+
+	.touch-header {
+		@include bp-down(xs) {
+			@include hairline-disabled(top);
+			padding-top: 0;
+			height: $line-height-large-touch + $border-width;
+		}
+	}
+
 	.filter-container {
 		flex: 0 0 auto;
 		display: flex;
