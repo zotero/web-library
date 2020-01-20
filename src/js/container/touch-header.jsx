@@ -22,20 +22,21 @@ class TouchHeaderContainer extends React.PureComponent {
 	}
 
 	get itemsSourceNode() {
-		const { libraryKey, collectionKey: collection, search, qmode, isTrash,
-			isMyPublications, itemsSource } = this.props;
+		const { libraryKey, collectionKey: collection, search, tags, qmode, isTrash,
+		isMyPublications, itemsSource } = this.props;
 		const label = itemsSourceLabel(itemsSource);
 		return {
 			key: itemsSource,
 			type: 'itemsSource',
 			path: {
-				library: libraryKey,
-				view: 'item-list',
-				trash: isTrash,
-				publications: isMyPublications,
-				search,
-				qmode,
 				collection,
+				library: libraryKey,
+				publications: isMyPublications,
+				qmode,
+				search,
+				tags,
+				trash: isTrash,
+				view: 'item-list',
 			},
 			label
 		}
@@ -191,6 +192,7 @@ const mapStateToProps = state => {
 		search,
 		searchState,
 		view,
+		tags,
 	} = state.current;
 	const { libraries } = state.config;
 	const collections = get(state, ['libraries', libraryKey, 'collections'], []);
@@ -225,7 +227,7 @@ const mapStateToProps = state => {
 
 	return { collectionKey, collections: Object.values(collections), isMyPublications,
 		isSearchMode, isTrash, itemKey, item, itemsSource, libraryConfig, libraryKey, noteKey,
-		path, qmode, search, searchState, view,
+		path, qmode, search, searchState, tags, view
 	};
 };
 
