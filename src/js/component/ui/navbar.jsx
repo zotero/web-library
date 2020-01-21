@@ -80,14 +80,23 @@ class Navbar extends React.PureComponent {
 					{ ...pick(this.props, ['onFocusNext', 'onFocusPrev', 'registerAutoFocus']) }
 				/>
 				{ view !== 'libraries' && (
-					<Button
-						onClick={ this.handleSearchButtonClick }
-						icon
-						className="search-toggle hidden-sm-up"
-						aria-label="Toggle search"
-					>
-						<Icon type={ '24/search' } width="24" height="24" />
-					</Button>
+					<React.Fragment>
+						<Button
+							onClick={ this.handleSearchButtonClick }
+							icon
+							className="search-toggle hidden-sm-up"
+							aria-label="Toggle search"
+						>
+							<Icon type={ '24/search' } width="24" height="24" />
+						</Button>
+						<Button
+							icon
+							className="touch-tag-selector-toggle hidden-sm-up"
+							aria-label="Toggle tag selector"
+						>
+							<Icon type="24/tag-strong" width="24" height="24" />
+						</Button>
+					</React.Fragment>
 				) }
 				<Button
 					icon

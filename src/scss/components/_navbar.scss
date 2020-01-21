@@ -122,9 +122,10 @@
 		}
 	}
 
-	.search-toggle {
+	.search-toggle,
+	.touch-tag-selector-toggle {
 		.icon {
-			color: $navbar-link-color;
+			color: $icon-bar-bg;
 		}
 	}
 
