@@ -11,14 +11,12 @@ import { CSSTransition } from 'react-transition-group';
 import AddByIdentifierModalContainer from '../container/modal/add-by-identifier';
 import AddItemsToCollectionsModalContainer from '../container/modal/add-items-to-collections';
 import BibliographyModalContainer from '../container/modal/bibliography';
-import Button from './ui/button';
 import CustomDragLayer from '../component/drag-layer';
 import ExportModalContainer from '../container/modal/export';
-import Icon from './ui/icon';
 import ItemDetails from '../component/item/details';
 import Items from '../component/item/items';
 import ItemsSortModalContainer from '../container/modal/items-sort';
-import LibrariesContainer from '../container/libraries';
+import Libraries from '../component/libraries';
 import Messages from '../component/messages';
 import MobileNav from './ui/mobile-nav';
 import MoveCollectionsModalContainer from '../container/modal/move-collections';
@@ -38,7 +36,6 @@ import TouchSideFooter from '../component/touch-side-footer';
 import withDevice from '../enhancers/with-device';
 import { getSerializedQuery } from '../common/state';
 import { pick } from '../common/immutable';
-import { Toolbar, ToolGroup } from './ui/toolbars';
 
 
 const Library = props => {
@@ -145,7 +142,7 @@ const Library = props => {
 									variant={ TouchHeaderContainer.variants.NAVIGATION }
 									className="hidden-xs-down hidden-mouse-md-up darker"
 								/>
-								<LibrariesContainer />
+								<Libraries />
 								{ device.isTouchOrSmall ? (
 									<React.Fragment>
 										<TouchTagSelector />

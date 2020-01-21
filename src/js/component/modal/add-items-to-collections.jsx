@@ -2,15 +2,17 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
+import deepEqual from 'deep-equal';
+
 import Types from '../../types';
 import { makeChildMap } from '../../common/collection';
-import Libraries from '../libraries';
+import Libraries from '../../component/libraries';
 import Modal from '../ui/modal';
 import Button from '../ui/button';
 import Spinner from '../ui/spinner';
 import TouchHeader from '../touch-header.jsx';
 import { pluralize } from '../../common/format';
-// import { sequentialChunkedAcion } from '../../common/actions';
+
 const defaultState = {
 	view: 'libraries',
 	libraryKey: '',
@@ -29,7 +31,7 @@ class AddItemsToCollectionsModal extends React.PureComponent {
 	}
 
 	handleAddItems = async () => {
-		const { chunkedCopyToLibrary, chunkedAddToCollection, items, libraryKey,
+		const { chunkedCopyToLibrary, chunkedAddToCollection, items: sourceItemKeys, libraryKey,
 			toggleModal, onSelectModeToggle } = this.props;
 		const { picked } = this.state;
 
@@ -37,22 +39,21 @@ class AddItemsToCollectionsModal extends React.PureComponent {
 			return;
 		}
 
-		const targetLibraryKey = picked[0].libraryKey;
-		const targetCollectionKeys = picked.map(pickedData => pickedData.collectionKey).filter(Boolean);
+		const { libraryKey: targetLibraryKey, collectionKey: targetCollectionKey } = picked[0];
 
 		this.setState({ isBusy: true });
 		if(targetLibraryKey === libraryKey) {
-			await chunkedAddToCollection(sourceItemKeys, collections);
+			await chunkedAddToCollection(sourceItemKeys, targetCollectionKey);
 		} else {
-			await chunkedCopyToLibrary(sourceItemKeys, targetData.libraryKey, collections);
+			await chunkedCopyToLibrary(sourceItemKeys, targetLibraryKey, targetCollectionKey);
 		}
 		this.setState({ isBusy: false });
 		toggleModal(null, false);
 		onSelectModeToggle(false);
 	}
 
-	//@TODO: merge functions navigateLocal* below (renamed from legacy functions) into a single "navigateLocal"
-	navigateLocalFromCollectionTree = ({ library = null,  collection = null } = {}) => {
+	// @TODO: merge functions navigateLocal* below (renamed from legacy functions) into a single "navigateLocal"
+	navigateLocalFromCollectionTree = ({ library = null, collection = null } = {}) => {
 		const { collections } = this.props;
 		if(library) {
 			if(collection) {
@@ -63,12 +64,14 @@ class AddItemsToCollectionsModal extends React.PureComponent {
 				this.setState({
 					view: 'collection',
 					libraryKey: library,
+					collectionKey: collection,
 					path
 				})
 			} else {
 				this.setState({
 					view: 'library',
-					libraryKey: library
+					libraryKey: library,
+					collectionKey: null
 				})
 			}
 		}
@@ -78,40 +81,25 @@ class AddItemsToCollectionsModal extends React.PureComponent {
 		const { path } = this.state;
 		if('collection' in navigationData) {
 			const targetIndex = path.indexOf(navigationData.collection);
-			this.setState({ path: path.slice(0, targetIndex + 1) });
+			this.setState({ collectionKey: navigationData.collection, path: path.slice(0, targetIndex + 1) });
 		} else if(navigationData.view === 'library') {
-			this.setState({ path: [] });
+			this.setState({ collectionKey: null, path: [] });
 		} else if(navigationData.view === 'libraries') {
-			this.setState({ path: [], view: 'libraries' });
+			this.setState({ collectionKey: null, libraryKey: null, path: [], view: 'libraries' });
 		}
 	}
 
-	pickerPick = pickedData => {
-		var hasRemovedPicked = false;
-		const picked = this.state.picked.filter(({ collectionKey, libraryKey }) => {
-			if(collectionKey === pickedData.collectionKey && libraryKey === pickedData.libraryKey) {
-				// Unselect picked collection/library
-				hasRemovedPicked = true;
-				return false;
-			}
-			if(libraryKey !== pickedData.libraryKey) {
-				// Unselect all collections in libraries other than latest selection
-				// @TODO: Support multi-items to multi-library copy or explain this limitation better in the UI
-				return false;
-			}
-			return true;
-		});
-
-		if(!hasRemovedPicked) {
-			picked.push(pickedData);
+	pickerPick = newPicked => {
+		const { picked } = this.state;
+		if(deepEqual(picked, newPicked)) {
+			this.setState({ picked: [] });
+		} else {
+			this.setState({ picked: [newPicked] });
 		}
-
-		this.setState({ picked });
 	}
 
 	render() {
-		const { device, isOpen, toggleModal, collections, libraries,
-			userLibraryKey, groups, librariesWithCollectionsFetching, fetchAllCollections } = this.props;
+		const { device, isOpen, toggleModal, collections, libraries } = this.props;
 		const { libraryKey, isBusy, picked, path, view } = this.state;
 		const collectionsSource = collections[libraryKey];
 
@@ -161,20 +149,11 @@ class AddItemsToCollectionsModal extends React.PureComponent {
 									navigate={ this.navigateLocalFromTouchHeader }
 								/>
 								<Libraries
-									collections={ collections }
-									device={ device }
-									fetchAllCollections={ fetchAllCollections }
-									groups={ groups }
 									isPickerMode={ true }
-									libraries={ libraries }
-									librariesWithCollectionsFetching={ librariesWithCollectionsFetching }
-									navigate={ this.navigateLocalFromCollectionTree }
 									pickerPick={ this.pickerPick }
 									picked={ picked }
-									selectedCollectionKey={ selectedCollectionKey }
-									selectedLibraryKey={ this.state.libraryKey }
-									userLibraryKey={ userLibraryKey }
-									view={ this.state.view }
+									pickerNavigate={ this.navigateLocalFromCollectionTree }
+									pickerState= { this.state }
 								/>
 								</React.Fragment>
 							)
@@ -193,7 +172,7 @@ class AddItemsToCollectionsModal extends React.PureComponent {
 							<h4 className="modal-title truncate">
 								{
 									picked.length > 0 ?
-									`${picked.length} ${pluralize('Collection', picked.length)} Selected` :
+									'Confirm Add to Collection?' :
 									'Select a Collection'
 								}
 							</h4>
@@ -214,20 +193,21 @@ class AddItemsToCollectionsModal extends React.PureComponent {
 	}
 
 	static propTypes = {
+		chunkedAddToCollection: PropTypes.func.isRequired,
+		chunkedCopyToLibrary: PropTypes.func.isRequired,
 		collectionCountByLibrary: PropTypes.object,
 		collections: PropTypes.objectOf(PropTypes.arrayOf(Types.collection)),
 		device: PropTypes.object,
 		fetchAllCollections: PropTypes.func.isRequired,
 		groups: PropTypes.array,
 		isOpen: PropTypes.bool,
+		items: PropTypes.array,
 		libraries: PropTypes.array,
 		librariesWithCollectionsFetching: PropTypes.array,
 		libraryKey: PropTypes.string,
+		onSelectModeToggle: PropTypes.func.isRequired,
 		toggleModal: PropTypes.func.isRequired,
 		userLibraryKey: PropTypes.string,
-		addToCollection: PropTypes.func.isRequired,
-		items: PropTypes.array,
-		onSelectModeToggle: PropTypes.func.isRequired,
 	}
 }
 

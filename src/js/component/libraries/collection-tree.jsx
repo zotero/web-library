@@ -1,7 +1,6 @@
-'use strict';
-
 import cx from 'classnames';
 import React, { useMemo, useState, useCallback } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap/lib';
 
 import Editable from '../editable';
@@ -12,6 +11,7 @@ import withDevice from '../../enhancers/with-device';
 import { BIBLIOGRAPHY, COLLECTION_RENAME, COLLECTION_ADD, EXPORT, MOVE_COLLECTION } from '../../constants/modals';
 import { pick } from '../../common/immutable';
 import { stopPropagation } from '../../utils.js';
+import { createAttachmentsFromDropped, deleteCollection, toggleModal, updateCollection, navigate } from '../../actions';
 
 const makeDerivedData = (collections, path = [], opened, isTouchOrSmall) => {
 	const selectedParentKey = path[path.length - 2];
@@ -224,8 +224,9 @@ const LevelWrapper = ({ children, level, hasOpen, isLastLevel }) => {
 
 
 const DotMenu = withDevice(props => {
-	const { collection, deleteCollection, device, dotMenuFor, isReadOnly, navigate, opened,
-		parentLibraryKey, setDotMenuFor, setOpened, setRenaming, addVirtual, toggleModal } = props;
+	const { collection, device, dotMenuFor, isReadOnly, opened,
+		parentLibraryKey, setDotMenuFor, setOpened, setRenaming, addVirtual } = props;
+	const dispatch = useDispatch();
 
 	const isOpen = dotMenuFor === collection.key;
 
@@ -238,21 +239,21 @@ const DotMenu = withDevice(props => {
 
 	const handleRenameClick = useCallback(() => {
 		if(device.isTouchOrSmall) {
-			toggleModal(COLLECTION_RENAME, true, { collectionKey: collection.key });
+			dispatch(toggleModal(COLLECTION_RENAME, true, { collectionKey: collection.key }));
 		} else {
 			setRenaming(collection.key);
 		}
 	});
 
 	const handleDeleteClick = useCallback(() => {
-		deleteCollection(collection, parentLibraryKey);
-		navigate({}, true);
+		dispatch(deleteCollection(collection, parentLibraryKey));
+		dispatch(navigate({}, true));
 	});
 
 	const handleSubcollectionClick = useCallback(ev => {
 		ev.stopPropagation();
 		if(device.isTouchOrSmall) {
-			toggleModal(COLLECTION_ADD, true, { parentCollectionKey: collection.key });
+			dispatch(toggleModal(COLLECTION_ADD, true, { parentCollectionKey: collection.key }));
 		} else {
 			setOpened([...opened, collection.key ]);
 			addVirtual(parentLibraryKey, collection.key);
@@ -260,15 +261,15 @@ const DotMenu = withDevice(props => {
 	});
 
 	const handleMoveCollectionClick = useCallback(() => {
-		toggleModal( MOVE_COLLECTION, true, { collectionKey: collection.key, libraryKey: parentLibraryKey } );
+		dispatch(toggleModal( MOVE_COLLECTION, true, { collectionKey: collection.key, libraryKey: parentLibraryKey } ));
 	});
 
 	const handleExportClick = useCallback(() => {
-		toggleModal(EXPORT, true, { collectionKey: collection.key, libraryKey: parentLibraryKey } );
+		dispatch(toggleModal(EXPORT, true, { collectionKey: collection.key, libraryKey: parentLibraryKey } ));
 	});
 
 	const handleBibliographyClick = useCallback(() => {
-		toggleModal(BIBLIOGRAPHY, true, { collectionKey: collection.key, libraryKey: parentLibraryKey } );
+		dispatch(toggleModal(BIBLIOGRAPHY, true, { collectionKey: collection.key, libraryKey: parentLibraryKey } ));
 	});
 
 	return (
@@ -348,9 +349,11 @@ const PickerCheckbox = ({ collectionKey, pickerPick, picked, parentLibraryKey })
 }
 
 const CollectionNode = withDevice(props => {
-	const { allCollections, derivedData, createAttachmentsFromDropped, collection, device, level,
+	const { allCollections, derivedData, collection, device, level,
 		selectedCollectionKey, isCurrentLibrary, parentLibraryKey, renaming, setRenaming,
-		updateCollection, updating, virtual, isPickerMode, shouldBeTabbable, ...rest }  = props;
+		virtual, isPickerMode, shouldBeTabbable, ...rest }  = props;
+	const dispatch = useDispatch();
+	const updating = useSelector(state => parentLibraryKey in state.libraries ? state.libraries[parentLibraryKey].updating.collections : {});
 
 	const handleClick = useCallback(() => {
 		const { selectNode } = rest;
@@ -375,7 +378,7 @@ const CollectionNode = withDevice(props => {
 		}
 
 		try {
-			updateCollection(collection.key, { name: newValue }, parentLibraryKey);
+			dispatch(updateCollection(collection.key, { name: newValue }, parentLibraryKey));
 		} finally {
 			setRenaming(null);
 		}
@@ -390,14 +393,14 @@ const CollectionNode = withDevice(props => {
 			parentCollection: target.collectionKey || false
 		};
 		if(src.libraryKey === target.libraryKey) {
-			updateCollection(src.collectionKey, patch, src.libraryKey);
+			dispatch(updateCollection(src.collectionKey, patch, src.libraryKey));
 		} else {
 			//@TODO: Support for moving collections across libraries #227
 		}
 	});
 
 	const handleDrop = useCallback(async droppedFiles => {
-		await createAttachmentsFromDropped(droppedFiles, { collection: collection.key });
+		await dispatch(createAttachmentsFromDropped(droppedFiles, { collection: collection.key }));
 	});
 
 	const collections = allCollections.filter(c => c.parentCollection === collection.key );
@@ -457,7 +460,6 @@ const CollectionNode = withDevice(props => {
 						{ ...rest }
 						allCollections={ allCollections }
 						collections = { collections }
-						createAttachmentsFromDropped= { createAttachmentsFromDropped }
 						derivedData={ derivedData }
 						isCurrentLibrary = { isCurrentLibrary }
 						isPickerMode={ isPickerMode }
@@ -468,7 +470,6 @@ const CollectionNode = withDevice(props => {
 						selectedCollectionKey={ selectedCollectionKey }
 						setRenaming = { setRenaming }
 						shouldBeTabbable = { shouldSubtreeNodesBeTabbable }
-						updateCollection = { updateCollection }
 						updating = { updating }
 						virtual = { virtual }
 					/>
@@ -503,9 +504,8 @@ const CollectionNode = withDevice(props => {
 								setRenaming = { setRenaming }
 								parentLibraryKey = { parentLibraryKey }
 								{ ...pick(rest, ['addVirtual', 'commitAdd', 'cancelAdd',
-								'deleteCollection', 'dotMenuFor', 'isReadOnly', 'navigate',
-								'opened', 'setDotMenuFor', 'setOpened',
-								'toggleModal']) }
+								'dotMenuFor', 'isReadOnly',
+								'opened', 'setDotMenuFor', 'setOpened']) }
 							/>
 						) }
 					</React.Fragment>
@@ -543,26 +543,25 @@ const CollectionsNodeList = ({ collections, parentCollectionKey, ...rest }) => {
 	)
 }
 
-const CollectionTree = withDevice(props => {
-	const { collections, device, parentLibraryKey, libraries, selectedCollectionKey,
-		selectedLibraryKey, itemsSource, collectionsTotalCount, navigate, ...rest } = props;
+const CollectionTree = props => {
+	const { parentLibraryKey, isPickerMode, pickerNavigate, pickerState, ...rest } = props;
+	const dispatch = useDispatch();
+	const collections = useSelector(
+		state => parentLibraryKey in state.libraries ? state.libraries[parentLibraryKey].collections : {}
+	);
+	const libraries = useSelector(state => state.config.libraries);
+	const collectionsTotalCount = useSelector(state => state.collectionCountByLibrary[parentLibraryKey]);
+	const itemsSource = useSelector(state => state.current.itemsSource);
+	const stateSelectedCollectionKey = useSelector(state => state.current.collectionKey);
+	const selectedCollectionKey = isPickerMode ? pickerState.collectionKey : stateSelectedCollectionKey;
+	const stateSelectedLibraryKey = useSelector(state => state.current.libraryKey);
+	const selectedLibraryKey = isPickerMode ? pickerState.libraryKey : stateSelectedLibraryKey;
+
+	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
+	const isSingleColumn = useSelector(state => state.device.isSingleColumn);
 
 	const collectionsCurrentCount = Object.values(collections).length;
 	const hasFetchedAllCollections = collectionsCurrentCount === collectionsTotalCount;
-
-	if(!hasFetchedAllCollections) {
-		// while fetching collections:
-		// On touch we allow animating into next level and render a spinner
-		if(device.isTouchOrSmall) {
-			return (
-				<div className="level level-1 level-last loading">
-					<Spinner className="large" />
-				</div>
-			);
-		}
-		// On desktop no need to render anything, spinner shows next to the library node
-		return null;
-	}
 
 	const handleOpenToggle = useCallback((ev, shouldOpen = null) => {
 		const collectionKey = ev.currentTarget.closest('[data-collection-key]').dataset.collectionKey;
@@ -581,7 +580,7 @@ const CollectionTree = withDevice(props => {
 
 	const selectNode = useCallback(partialPath => {
 		const path = { ...partialPath, library: parentLibraryKey }
-		navigate(path, true);
+		isPickerMode ? pickerNavigate(path) : dispatch(navigate(path, true));
 	});
 
 	const isCurrentLibrary = parentLibraryKey === selectedLibraryKey;
@@ -598,21 +597,35 @@ const CollectionTree = withDevice(props => {
 	const [dotMenuFor, setDotMenuFor] = useState(null);
 
 	const derivedData = useMemo(
-		() => makeDerivedData(collections, path, opened, device.isTouchOrSmall, isCurrentLibrary),
-		[collections, path, opened, device]
+		() => makeDerivedData(collections, path, opened, isTouchOrSmall, isCurrentLibrary),
+		[collections, path, opened, isTouchOrSmall]
 	);
 
 	const selectedDepth = path.length;
 	const selectedHasChildren = isCurrentLibrary && selectedCollectionKey && (derivedData[selectedCollectionKey] || {}).hasChildren;
-	const hasOpen = (selectedDepth > 0 && (selectedHasChildren || device.isSingleColumn)) || selectedDepth > 1;
+	const hasOpen = (selectedDepth > 0 && (selectedHasChildren || isSingleColumn)) || selectedDepth > 1;
 
 	const topLevelCollections = allCollections.filter(c => c.parentCollection === false );
-	const isLastLevel = device.isSingleColumn ? false : collections.length === 0;
+	const isLastLevel = isSingleColumn ? false : collections.length === 0;
 
 	const shouldBeTabbableOnTouch = isCurrentLibrary && !selectedCollectionKey;
-	const shouldBeTabbable = shouldBeTabbableOnTouch || !device.isTouchOrSmall;
+	const shouldBeTabbable = shouldBeTabbableOnTouch || !isTouchOrSmall;
 
 	const { isReadOnly, isMyLibrary } = libraries.find(l => l.key === parentLibraryKey);
+
+	if(!hasFetchedAllCollections) {
+		// while fetching collections:
+		// On touch we allow animating into next level and render a spinner
+		if(isTouchOrSmall) {
+			return (
+				<div className="level level-1 level-last loading">
+					<Spinner className="large" />
+				</div>
+			);
+		}
+		// On desktop no need to render anything, spinner shows next to the library node
+		return null;
+	}
 
 	return (
 		<LevelWrapper level={ 1 } hasOpen={ hasOpen } isLastLevel={ isLastLevel }>
@@ -622,10 +635,10 @@ const CollectionTree = withDevice(props => {
 				derivedData={ derivedData }
 				dotMenuFor={ dotMenuFor }
 				isCurrentLibrary = { isCurrentLibrary }
+				isPickerMode={ isPickerMode }
 				isReadOnly={ isReadOnly }
 				itemsSource={ itemsSource }
 				level={ 2 }
-				navigate={ navigate }
 				onOpen={ handleOpenToggle }
 				opened={ opened }
 				parentLibraryKey = { parentLibraryKey }
@@ -636,31 +649,32 @@ const CollectionTree = withDevice(props => {
 				setOpened={ setOpened }
 				setRenaming={ setRenaming }
 				shouldBeTabbable={ shouldBeTabbable }
-				{ ...pick(rest, ['addVirtual', 'commitAdd', 'cancelAdd', 'createAttachmentsFromDropped',
-				'deleteCollection', 'navigate', 'pickerPick', 'picked', 'onDrillDownNext',
-				'onDrillDownPrev', 'onFocusNext', 'onFocusPrev', 'toggleModal', 'updateCollection',
-				'updating', 'virtual', 'isPickerMode']) }
+				{ ...pick(rest, ['addVirtual', 'commitAdd', 'cancelAdd',
+				'pickerPick', 'picked', 'onDrillDownNext',
+				'onDrillDownPrev', 'onFocusNext', 'onFocusPrev', 'virtual']) }
 			/>
 			<PublicationsNode
+				isMyLibrary = { isMyLibrary }
+				isPickerMode={ isPickerMode }
 				isSelected = { isCurrentLibrary && itemsSource === 'publications' }
 				parentLibraryKey = { parentLibraryKey }
 				selectNode = { selectNode }
 				shouldBeTabbable = { shouldBeTabbable }
-				isMyLibrary = { isMyLibrary }
-				{ ...pick(rest, ['isPickerMode', 'onDrillDownNext', 'onDrillDownPrev',
+				{ ...pick(rest, ['onDrillDownNext', 'onDrillDownPrev',
 				'onFocusNext', 'onFocusPrev']) }
 			/>
 			<TrashNode
+				isPickerMode={ isPickerMode }
+				isReadOnly = { isReadOnly }
 				isSelected = { isCurrentLibrary && itemsSource === 'trash' }
 				parentLibraryKey = { parentLibraryKey }
 				selectNode = { selectNode }
 				shouldBeTabbable = { shouldBeTabbable }
-				isReadOnly = { isReadOnly }
-				{ ...pick(rest, ['isPickerMode', 'onDrillDownNext', 'onDrillDownPrev',
+				{ ...pick(rest, ['onDrillDownNext', 'onDrillDownPrev',
 				'onFocusNext', 'onFocusPrev']) }
 			/>
 		</LevelWrapper>
 	);
-});
+};
 
 export default React.memo(CollectionTree);
