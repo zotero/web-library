@@ -10,7 +10,7 @@ import Button from '../ui/button';
 import Spinner from '../ui/spinner';
 import TouchHeader from '../touch-header.jsx';
 import { pluralize } from '../../common/format';
-import { sequentialChunkedAcion } from '../../common/actions';
+// import { sequentialChunkedAcion } from '../../common/actions';
 const defaultState = {
 	view: 'libraries',
 	libraryKey: '',
@@ -29,21 +29,26 @@ class AddItemsToCollectionsModal extends React.PureComponent {
 	}
 
 	handleAddItems = async () => {
-		const { addToCollection, items, toggleModal, onSelectModeToggle } = this.props;
+		const { chunkedCopyToLibrary, chunkedAddToCollection, items, libraryKey,
+			toggleModal, onSelectModeToggle } = this.props;
 		const { picked } = this.state;
 
-		if(this.state.picked.length) {
-			this.setState({ isBusy: true })
-			const promises = picked.map(
-				targetData => sequentialChunkedAcion(
-					addToCollection, items, [targetData.collectionKey, targetData.libraryKey]
-				)
-			);
-			await Promise.all(promises);
-			this.setState({ isBusy: false });
-			toggleModal(null, false);
-			onSelectModeToggle(false);
+		if(picked.length === 0) {
+			return;
 		}
+
+		const targetLibraryKey = picked[0].libraryKey;
+		const targetCollectionKeys = picked.map(pickedData => pickedData.collectionKey).filter(Boolean);
+
+		this.setState({ isBusy: true });
+		if(targetLibraryKey === libraryKey) {
+			await chunkedAddToCollection(sourceItemKeys, collections);
+		} else {
+			await chunkedCopyToLibrary(sourceItemKeys, targetData.libraryKey, collections);
+		}
+		this.setState({ isBusy: false });
+		toggleModal(null, false);
+		onSelectModeToggle(false);
 	}
 
 	//@TODO: merge functions navigateLocal* below (renamed from legacy functions) into a single "navigateLocal"
@@ -82,11 +87,22 @@ class AddItemsToCollectionsModal extends React.PureComponent {
 	}
 
 	pickerPick = pickedData => {
-		const picked = this.state.picked.filter(({ collectionKey: c, libraryKey: l}) =>
-			!(c === pickedData.collectionKey && l === pickedData.libraryKey)
-		);
+		var hasRemovedPicked = false;
+		const picked = this.state.picked.filter(({ collectionKey, libraryKey }) => {
+			if(collectionKey === pickedData.collectionKey && libraryKey === pickedData.libraryKey) {
+				// Unselect picked collection/library
+				hasRemovedPicked = true;
+				return false;
+			}
+			if(libraryKey !== pickedData.libraryKey) {
+				// Unselect all collections in libraries other than latest selection
+				// @TODO: Support multi-items to multi-library copy or explain this limitation better in the UI
+				return false;
+			}
+			return true;
+		});
 
-		if(picked.length === this.state.picked.length) {
+		if(!hasRemovedPicked) {
 			picked.push(pickedData);
 		}
 

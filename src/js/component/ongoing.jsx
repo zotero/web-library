@@ -7,8 +7,12 @@ import { pluralize } from '../common/format';
 import Spinner from './ui/spinner';
 
 const getMessage = ongoing => {
-	// we currently only support one ongoing kind - upload
-	return `Uploading ${ongoing.count} ${pluralize('file', ongoing.count)}`;
+	switch(ongoing.kind) {
+		case 'upload':
+			return `Uploading ${ongoing.count} ${pluralize('file', ongoing.count)}`;
+		case 'cross-library-copy-items':
+			return `Copying ${ongoing.count} ${pluralize('item', ongoing.count)}`;
+	}
 }
 
 const Ongoing = () => {

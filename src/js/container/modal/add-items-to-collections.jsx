@@ -8,7 +8,7 @@ import withDevice from '../../enhancers/with-device';
 import withSelectMode from '../../enhancers/with-select-mode';
 import { COLLECTION_SELECT } from '../../constants/modals';
 import { get } from '../../utils';
-import { toggleModal, addToCollection, fetchAllCollections } from '../../actions';
+import { chunkedCopyToLibrary, chunkedAddToCollection, fetchAllCollections, toggleModal } from '../../actions';
 
 class AddItemsToCollectionsModalContainer extends React.PureComponent {
 	render() {
@@ -38,5 +38,5 @@ const mapStateToProps = state => {
 
 export default withSelectMode(withDevice(connect(
 	mapStateToProps,
-	{ addToCollection, toggleModal, fetchAllCollections }
+	{ chunkedCopyToLibrary, chunkedAddToCollection, fetchAllCollections, toggleModal }
 )(AddItemsToCollectionsModalContainer)));

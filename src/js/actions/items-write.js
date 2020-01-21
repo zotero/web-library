@@ -12,41 +12,44 @@ import { fetchItemTemplate, fetchItemTypeCreatorTypes } from '.';
 import { COMPLETE_ONGOING, BEGIN_ONGOING } from '../constants/actions';
 
 import {
-    REQUEST_CREATE_ITEMS,
-    RECEIVE_CREATE_ITEMS,
-    ERROR_CREATE_ITEMS,
-    REQUEST_CREATE_ITEM,
-    RECEIVE_CREATE_ITEM,
-    ERROR_CREATE_ITEM,
-    REQUEST_DELETE_ITEM,
-    RECEIVE_DELETE_ITEM,
-    ERROR_DELETE_ITEM,
-    REQUEST_DELETE_ITEMS,
-    RECEIVE_DELETE_ITEMS,
-    ERROR_DELETE_ITEMS,
-    PRE_UPDATE_ITEM,
-    REQUEST_UPDATE_ITEM,
-    RECEIVE_UPDATE_ITEM,
-    ERROR_UPDATE_ITEM,
-    REQUEST_UPLOAD_ATTACHMENT,
-    RECEIVE_UPLOAD_ATTACHMENT,
-    ERROR_UPLOAD_ATTACHMENT,
-    PRE_MOVE_ITEMS_TRASH,
-    REQUEST_MOVE_ITEMS_TRASH,
-    RECEIVE_MOVE_ITEMS_TRASH,
-    ERROR_MOVE_ITEMS_TRASH,
-    PRE_RECOVER_ITEMS_TRASH,
-    REQUEST_RECOVER_ITEMS_TRASH,
-    RECEIVE_RECOVER_ITEMS_TRASH,
-    ERROR_RECOVER_ITEMS_TRASH,
-    PRE_ADD_ITEMS_TO_COLLECTION,
-    REQUEST_ADD_ITEMS_TO_COLLECTION,
-    RECEIVE_ADD_ITEMS_TO_COLLECTION,
-    ERROR_ADD_ITEMS_TO_COLLECTION,
-    PRE_REMOVE_ITEMS_FROM_COLLECTION,
-    REQUEST_REMOVE_ITEMS_FROM_COLLECTION,
-    RECEIVE_REMOVE_ITEMS_FROM_COLLECTION,
-    ERROR_REMOVE_ITEMS_FROM_COLLECTION,
+	ERROR_STORE_RELATIONS_IN_SOURCE,
+	RECEIVE_STORE_RELATIONS_IN_SOURCE,
+	ERROR_ADD_ITEMS_TO_COLLECTION,
+	ERROR_CREATE_ITEM,
+	ERROR_CREATE_ITEMS,
+	ERROR_DELETE_ITEM,
+	ERROR_DELETE_ITEMS,
+	ERROR_MOVE_ITEMS_TRASH,
+	ERROR_RECOVER_ITEMS_TRASH,
+	ERROR_REMOVE_ITEMS_FROM_COLLECTION,
+	ERROR_UPDATE_ITEM,
+	ERROR_UPLOAD_ATTACHMENT,
+	PRE_ADD_ITEMS_TO_COLLECTION,
+	PRE_MOVE_ITEMS_TRASH,
+	PRE_RECOVER_ITEMS_TRASH,
+	PRE_REMOVE_ITEMS_FROM_COLLECTION,
+	PRE_UPDATE_ITEM,
+	RECEIVE_ADD_ITEMS_TO_COLLECTION,
+	RECEIVE_CREATE_ITEM,
+	RECEIVE_CREATE_ITEMS,
+	RECEIVE_DELETE_ITEM,
+	RECEIVE_DELETE_ITEMS,
+	RECEIVE_MOVE_ITEMS_TRASH,
+	RECEIVE_RECOVER_ITEMS_TRASH,
+	RECEIVE_REMOVE_ITEMS_FROM_COLLECTION,
+	RECEIVE_UPDATE_ITEM,
+	RECEIVE_UPLOAD_ATTACHMENT,
+	REQUEST_ADD_ITEMS_TO_COLLECTION,
+	REQUEST_CREATE_ITEM,
+	REQUEST_CREATE_ITEMS,
+	REQUEST_DELETE_ITEM,
+	REQUEST_DELETE_ITEMS,
+	REQUEST_MOVE_ITEMS_TRASH,
+	REQUEST_RECOVER_ITEMS_TRASH,
+	REQUEST_REMOVE_ITEMS_FROM_COLLECTION,
+	REQUEST_STORE_RELATIONS_IN_SOURCE,
+	REQUEST_UPDATE_ITEM,
+	REQUEST_UPLOAD_ATTACHMENT,
 } from '../constants/actions';
 
 const postItemsMultiPatch = async (state, multiPatch) => {
@@ -550,37 +553,21 @@ const queueRecoverItemsFromTrash = (itemKeys, libraryKey, queueId) => {
 	};
 }
 
-const addToCollection = (itemKeys, collectionKey, targetLibraryKey) => {
+const addToCollection = (itemKeys, collectionKey) => {
 	return async (dispatch, getState) => {
-		const { libraryKey: currentLibraryKey } = getState().current;
+		const { libraryKey } = getState().current;
 		const queueId = ++queue.counter;
 
 		await dispatch({
 				type: PRE_ADD_ITEMS_TO_COLLECTION,
 				itemKeys,
 				collectionKey,
-				libraryKey: targetLibraryKey,
+				libraryKey,
 				queueId
 			});
-
-		if(currentLibraryKey === targetLibraryKey) {
-			await dispatch(
-				queueAddToCollection(itemKeys, collectionKey, currentLibraryKey, queueId)
-			);
-		} else {
-			await dispatch(
-				createItems(
-					itemKeys.map(ik => ({
-							...omit(
-								getState().libraries[currentLibraryKey].items[ik],
-								['key', 'version', 'deleted', 'dateAdded', 'dateModified']
-							),
-							collections: [collectionKey]
-						})
-					), targetLibraryKey
-				)
-			);
-		}
+		await dispatch(
+			queueAddToCollection(itemKeys, collectionKey, libraryKey, queueId)
+		);
 	};
 }
 
@@ -654,7 +641,15 @@ const queueAddToCollection = (itemKeys, collectionKey, libraryKey, queueId) => {
 	};
 }
 
-const copyToLibrary = (itemKeys, targetLibraryKey) => {
+const copyToLibrary = (itemKeys, targetLibraryKey, targetCollectionKeys = []) => {
+	if(!Array.isArray(targetCollectionKeys)) {
+		if(targetCollectionKeys === null) {
+			targetCollectionKeys = [];
+		} else {
+			targetCollectionKeys = [targetCollectionKeys];
+		}
+	}
+
 	return async (dispatch, getState) => {
 		const state = getState();
 		const { libraryKey: sourceLibraryKey } = state.current;
@@ -689,6 +684,7 @@ const copyToLibrary = (itemKeys, targetLibraryKey) => {
 						};
 					return {
 						...omit(sourceItem, ['key', 'version', 'collections', 'deleted', 'dateAdded', 'dateModified']),
+						collections: targetCollectionKeys,
 						relations: newRelations
 					};
 				}), targetLibraryKey
@@ -708,7 +704,30 @@ const copyToLibrary = (itemKeys, targetLibraryKey) => {
 					}
 				}
 			});
-			await postItemsMultiPatch(state, multiPatch);
+			dispatch({
+				itemKeys,
+				libraryKey: sourceLibraryKey,
+				targetLibraryKey,
+				type: REQUEST_STORE_RELATIONS_IN_SOURCE,
+			});
+			try {
+				const { response } = await postItemsMultiPatch(state, multiPatch);
+				dispatch({
+					itemKeys,
+					libraryKey: sourceLibraryKey,
+					response,
+					targetLibraryKey,
+					type: RECEIVE_STORE_RELATIONS_IN_SOURCE,
+				});
+			} catch(error) {
+				dispatch({
+					error,
+					libraryKey: sourceLibraryKey,
+					targetLibraryKey,
+					type: ERROR_STORE_RELATIONS_IN_SOURCE,
+				});
+				throw error;
+			}
 		}
 
 		return newItems;
@@ -874,7 +893,32 @@ const chunkedTrashOrDelete = (itemKeys, ...args) => {
 	}
 }
 
-const chunkedCopyToLibrary = (itemKeys, ...args) => chunkedAction(copyToLibrary, itemKeys, ...args);
+const chunkedCopyToLibrary = (itemKeys, ...args) => {
+	return async (dispatch, getState) => {
+		const state = getState();
+		const id = getUniqueId();
+		const { libraryKey } = state.current;
+
+		dispatch({
+			count: itemKeys.length,
+			id,
+			kind: 'cross-library-copy-items',
+			libraryKey,
+			type: BEGIN_ONGOING,
+		});
+
+		try {
+			await dispatch(chunkedAction(copyToLibrary, itemKeys, ...args));
+		} finally {
+			dispatch({
+				id,
+				kind: 'cross-library-copy-items',
+				libraryKey,
+				type: COMPLETE_ONGOING,
+			});
+		}
+	}
+}
 
 const chunkedAddToCollection = (itemKeys, ...args) => chunkedAction(addToCollection, itemKeys, ...args);
 
