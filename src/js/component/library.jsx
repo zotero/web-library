@@ -109,14 +109,15 @@ const Library = props => {
 			<DndProvider backend={ MultiBackend } options={ HTML5toTouch }>
 			<CustomDragLayer />
 			<div className={ cx('library-container', {
-					[`view-${view}-active`]: true,
-					'view-note-active': noteKey,
 					'navbar-nav-opened': isNavBarOpen,
 					'no-transitions': !useTransitions || hasUserTypeChanged,
 					'search-active': (isSearchMode || (!isSearchMode && isSearchModeTransitioning)) && (itemsSource !== 'query' && prevItemsSource.current !== 'query'),
-					'search-results': (isSearchMode || (!isSearchMode && isSearchModeTransitioning)) && (itemsSource === 'query' || prevItemsSource.current === 'query'),
-					'search-init': (isSearchMode && !searchState.hasViewedResult) || (isSearchModeTransitioning && !isSearchMode),
 					'search-cancel': isSearchModeTransitioning && !isSearchMode,
+					'search-init': (isSearchMode && !searchState.hasViewedResult) || (isSearchModeTransitioning && !isSearchMode),
+					'search-results': (isSearchMode || (!isSearchMode && isSearchModeTransitioning)) && (itemsSource === 'query' || prevItemsSource.current === 'query'),
+					'touch-tag-selector-active': tags.length > 0,
+					'view-note-active': noteKey,
+					[`view-${view}-active`]: true,
 				}) }>
 				<MobileNav
 					entries={ config.menus.mobile }

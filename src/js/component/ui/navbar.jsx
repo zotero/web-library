@@ -8,7 +8,7 @@ import Icon from './icon';
 import SearchContainer from './../../container/search';
 import MenuEntry from './menu-entry';
 import { isTriggerEvent } from '../../common/event';
-import { navigate, toggleNavbar, triggerSearchMode } from '../../actions';
+import { navigate, toggleNavbar, triggerSearchMode, toggleTouchTagSelector } from '../../actions';
 import { useFocusManager } from '../../hooks';
 
 
@@ -30,7 +30,7 @@ const Navbar = memo(props => {
 	});
 
 	const handleTagSelectorClick = useCallback(() => {
-
+		dispatch(toggleTouchTagSelector());
 	});
 
 	const handleKeyDown = useCallback(ev => {
