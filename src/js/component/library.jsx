@@ -123,13 +123,7 @@ const Library = props => {
 					{...pick(props, ['toggleNavbar']) }
 				/>
 				<div className="site-wrapper">
-					<Navbar
-						entries={ config.menus.desktop }
-						{...pick(props, ['collectionKey', 'isNavBarOpen', 'isMyPublications', 'isTrash',
-							'itemsSource', 'libraryKey', 'navigate', 'qmode', 'search', 'tags', 'toggleNavbar',
-							'triggerSearchMode', 'view',
-						])}
-					/>
+					<Navbar entries={ config.menus.desktop } />
 					<main>
 						<section className={ `library ${ view === 'library' ? 'active' : '' }` }>
 							<TouchHeaderContainer

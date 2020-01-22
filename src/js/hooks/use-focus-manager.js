@@ -77,8 +77,13 @@ const useFocusManager = (ref, { overrideFocusRef = null, isCarousel = true } = {
 		}
 	});
 
-	const handleFocus = useCallback(ev => {
+	const handleFocus = useCallback(() => {
 		if(isFocused) {
+			return;
+		}
+
+		if(ref.current === null) {
+			setTimeout(handleFocus);
 			return;
 		}
 
@@ -104,6 +109,15 @@ const useFocusManager = (ref, { overrideFocusRef = null, isCarousel = true } = {
 		ev.currentTarget.tabIndex = originalTabIndex.current;
 	});
 
+	const registerAutoFocus = useCallback(ref => {
+		if(ref === null) {
+			return;
+		}
+
+		if(ref instanceof Element) {
+			lastFocused.current = ref;
+		}
+	});
 
 	useEffect(() => {
 		if(ref && ref.current) {
@@ -121,7 +135,7 @@ const useFocusManager = (ref, { overrideFocusRef = null, isCarousel = true } = {
 		}
 	}, [overrideFocusRef && overrideFocusRef.current])
 
-	return { handleNext, handlePrevious, handleDrillDownNext, handleDrillDownPrev, handleFocus, handleBlur };
+	return { handleNext, handlePrevious, handleDrillDownNext, handleDrillDownPrev, handleFocus, handleBlur, registerAutoFocus };
 };
 
 export { useFocusManager };
