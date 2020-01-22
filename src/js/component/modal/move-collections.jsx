@@ -43,12 +43,14 @@ class MoveCollectionsModal extends React.PureComponent {
 				this.setState({
 					view: 'collection',
 					libraryKey: library,
+					collectionKey: collection,
 					path
 				})
 			} else {
 				this.setState({
 					view: 'library',
-					libraryKey: library
+					libraryKey: library,
+					collectionKey: null
 				})
 			}
 		}
@@ -58,11 +60,11 @@ class MoveCollectionsModal extends React.PureComponent {
 		const { path } = this.state;
 		if('collection' in navigationData) {
 			const targetIndex = path.indexOf(navigationData.collection);
-			this.setState({ path: path.slice(0, targetIndex + 1) });
+			this.setState({ collectionKey: navigationData.collection, path: path.slice(0, targetIndex + 1) });
 		} else if(navigationData.view === 'library') {
-			this.setState({ path: [] });
+			this.setState({ collectionKey: null, path: [] });
 		} else if(navigationData.view === 'libraries') {
-			this.setState({ path: [], view: 'libraries' });
+			this.setState({ collectionKey: null, libraryKey: null, path: [], view: 'libraries' });
 		}
 	}
 
@@ -145,21 +147,12 @@ class MoveCollectionsModal extends React.PureComponent {
 									navigate={ this.navigateLocalFromTouchHeader }
 								/>
 								<Libraries
-									collections={ collections }
-									device={ device }
-									fetchAllCollections={ fetchAllCollections }
-									groups={ groups }
-									isPickerMode={ true }
-									libraries={ libraries }
-									librariesWithCollectionsFetching={ librariesWithCollectionsFetching }
-									navigate={ this.navigateLocalFromCollectionTree }
-									picked={ picked === null ? [] : [ picked ] }
 									pickerIncludeLibraries={ true }
+									isPickerMode={ true }
 									pickerPick={ this.pickerPick }
-									selectedCollectionKey={ selectedCollectionKey }
-									selectedLibraryKey={ this.state.libraryKey }
-									userLibraryKey={ userLibraryKey }
-									view={ this.state.view }
+									picked={ picked === null ? [] : [ picked ] }
+									pickerNavigate={ this.navigateLocalFromCollectionTree }
+									pickerState= { this.state }
 								/>
 								</React.Fragment>
 							)
