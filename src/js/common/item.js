@@ -1,7 +1,7 @@
 'use strict';
 
 import baseMappings from 'zotero-base-mappings';
-import paramCase from 'param-case';
+import { paramCase } from 'param-case';
 
 import { noteAsTitle, itemTypeLocalized, dateLocalized } from './format';
 import { get } from '../utils';

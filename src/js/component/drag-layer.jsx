@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Icon from './ui/icon';
-import { DragLayer } from 'react-dnd-cjs';
+import { DragLayer } from 'react-dnd';
 import { ITEM, CREATOR } from '../constants/dnd';
 import withDevice from '../enhancers/with-device';
 

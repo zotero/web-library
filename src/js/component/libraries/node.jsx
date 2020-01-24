@@ -3,8 +3,8 @@
 import cx from 'classnames';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { DragSource, DropTarget } from 'react-dnd-cjs';
-import { NativeTypes } from 'react-dnd-html5-backend-cjs';
+import { DragSource, DropTarget } from 'react-dnd';
+import { NativeTypes } from 'react-dnd-html5-backend';
 
 import Icon from '../ui/icon';
 import { ATTACHMENT, ITEM, COLLECTION } from '../../constants/dnd';

@@ -1,8 +1,8 @@
 'use strict';
 
 import cx from 'classnames';
-import { DndProvider } from 'react-dnd-cjs';
-import HTML5toTouch from 'react-dnd-multi-backend/lib/HTML5toTouch';
+import { DndProvider } from 'react-dnd';
+import HTML5toTouch from 'react-dnd-multi-backend/dist/cjs/HTML5toTouch';
 import MultiBackend from 'react-dnd-multi-backend';
 import PropTypes from 'prop-types';
 import React, { useCallback, useEffect, useState, useRef } from 'react';

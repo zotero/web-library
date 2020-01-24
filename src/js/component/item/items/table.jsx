@@ -3,9 +3,9 @@ import cx from 'classnames';
 import InfiniteLoader from "react-window-infinite-loader";
 import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { FixedSizeList as List } from 'react-window';
-import { NativeTypes } from 'react-dnd-html5-backend-cjs';
+import { NativeTypes } from 'react-dnd-html5-backend';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
-import { useDrop } from 'react-dnd-cjs'
+import { useDrop } from 'react-dnd';
 
 import HeaderRow from './table-header-row';
 import Spinner from '../../ui/spinner';

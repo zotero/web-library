@@ -1,9 +1,9 @@
 import cx from 'classnames';
 import PropTypes from 'prop-types';
 import React, { memo, useEffect, useRef, useState } from 'react';
-import { getEmptyImage, NativeTypes } from 'react-dnd-html5-backend-cjs';
+import { getEmptyImage, NativeTypes } from 'react-dnd-html5-backend';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
-import { useDrag, useDrop } from 'react-dnd-cjs'
+import { useDrag, useDrop } from 'react-dnd'
 
 import Cell from './table-cell';
 import Icon from '../../ui/icon';
