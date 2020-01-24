@@ -21,11 +21,11 @@ class BibliographyModalContainer extends React.PureComponent {
 	}
 
 	componentDidMount() {
-		document.addEventListener('copy', this.handleCopy);
+		document.addEventListener('copy', this.handleCopy, true);
 	}
 
 	componentWillUnmount() {
-		document.removeEventListener('copy', this.handleCopy);
+		document.removeEventListener('copy', this.handleCopy, true);
 	}
 
 	async componentDidUpdate({
