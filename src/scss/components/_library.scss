@@ -46,11 +46,16 @@
 			transform: translate3d(-25%, 0, 0);
 		}
 
+		.touch-tag-selector-active & {
+			bottom: $touch-footer-height;
+			z-index: $z-index-touch-side-footer;
+		}
+
 		.search-backdrop {
 			position: absolute;
 			top: 0;
 			right: 0;
-			bottom: $touch-footer-height;
+			bottom: 0;
 			left: 0;
 			background-color: $modal-backdrop-bg;
 		}

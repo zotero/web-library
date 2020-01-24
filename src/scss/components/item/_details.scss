@@ -18,6 +18,10 @@
 		.view-item-details-active & {
 			transform: translate3d(0, 0, 0);
 		}
+
+		.touch-tag-selector-active & {
+			bottom: -$touch-footer-height;
+		}
 	}
 
 	@include bp-down(xs) {

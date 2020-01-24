@@ -54,7 +54,12 @@
 			right: 0;
 			bottom: 0;
 			left: 0;
-			z-index: $z-index-search-bar;
+			z-index: $z-index-touch-side-footer;
+			transition: transform $nav-transition;
+
+			.touch-tag-selector-active.view-item-details-active & {
+				transform: translate3d(-25%, 0, 0);
+			}
 		}
 
 		.btn {
