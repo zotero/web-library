@@ -8,7 +8,7 @@ import { get, getItemCanonicalUrl, getUniqueId, removeRelationByItemKey, reverse
 import { getFilesData } from '../common/event';
 import { omit } from '../common/immutable';
 import { extractItems } from '../common/actions';
-import { fetchItemTemplate, fetchItemTypeCreatorTypes } from '.';
+import { fetchChildItems, fetchItemTemplate, fetchItemTypeCreatorTypes } from '.';
 import { COMPLETE_ONGOING, BEGIN_ONGOING } from '../constants/actions';
 
 import {
@@ -641,7 +641,7 @@ const queueAddToCollection = (itemKeys, collectionKey, libraryKey, queueId) => {
 	};
 }
 
-const copyToLibrary = (itemKeys, targetLibraryKey, targetCollectionKeys = []) => {
+const copyToLibrary = (itemKeys, targetLibraryKey, targetCollectionKeys = [], extraProperties = {}) => {
 	if(!Array.isArray(targetCollectionKeys)) {
 		if(targetCollectionKeys === null) {
 			targetCollectionKeys = [];
@@ -677,13 +677,14 @@ const copyToLibrary = (itemKeys, targetLibraryKey, targetCollectionKeys = []) =>
 		const newItems = await dispatch(
 			createItems(
 				itemKeys.map(ik => {
-					const sourceItem = getState().libraries[sourceLibraryKey].items[ik];
+					const sourceItem = state.libraries[sourceLibraryKey].items[ik];
 					const newRelations = shouldStoreRelationInSource ? sourceItem.relations : {
 							...sourceItem.relations,
 							'owl:sameAs': getItemCanonicalUrl({ libraryKey: sourceLibraryKey, itemKey: sourceItem.key })
 						};
 					return {
 						...omit(sourceItem, ['key', 'version', 'collections', 'deleted', 'dateAdded', 'dateModified']),
+						...extraProperties,
 						collections: targetCollectionKeys,
 						relations: newRelations
 					};
@@ -729,6 +730,23 @@ const copyToLibrary = (itemKeys, targetLibraryKey, targetCollectionKeys = []) =>
 				throw error;
 			}
 		}
+
+		const childItemsCopyPromises = itemKeys.map(async (ik, index) => {
+			const newItem = newItems[index];
+			const canHaveChildItems = !['attachment', 'note'].includes(newItem.itemType);
+			if(!canHaveChildItems) {
+				return [];
+			}
+			const childItems = await dispatch(fetchChildItems(ik, { start: 0, limit: 100 }));
+			const childItemsKeys = childItems.map(c => c.key);
+			const patch = { parentItem: newItem.key };
+			if(childItemsKeys && childItemsKeys.length) {
+				return await dispatch(chunkedAction(copyToLibrary, childItemsKeys, targetLibraryKey, [], patch));
+			}
+			return [];
+		});
+
+		await Promise.all(childItemsCopyPromises);
 
 		return newItems;
 	};
@@ -909,6 +927,8 @@ const chunkedCopyToLibrary = (itemKeys, ...args) => {
 
 		try {
 			await dispatch(chunkedAction(copyToLibrary, itemKeys, ...args));
+		} catch(e) {
+			console.error(e);
 		} finally {
 			dispatch({
 				id,
