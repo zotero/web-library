@@ -145,6 +145,10 @@
 		transition: transform $nav-transition;
 
 		.view-note-active & {
+			@include bp-down(sm) {
+				transform: translate3d(-25%, 0, 0);
+			}
+
 			@include touch-and-bp-up(lg) {
 				transform: translate3d(-25%, 0, 0);
 			}
