@@ -63,7 +63,7 @@ const Note = props => {
 			tabIndex={ 0 }
 			data-key={ note.key }
 		>
-			<Icon type={ '28/note'} width="28" height="28" className="hidden-mouse" />
+			<Icon type={ '28/item-types/light/note'} width="28" height="28" className="hidden-mouse" />
 			<div className="multiline-truncate">
 				{ note.note && noteAsTitle(note.note) || <em>Untitled Note</em> }
 			</div>
