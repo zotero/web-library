@@ -4,11 +4,14 @@
 
 .tab-pane.attachments {
 	@include mouse-and-bp-only(md) {
-		display: grid;
 		grid-template-columns: 1fr 1fr;
 		grid-template-rows: min-content auto;
 		grid-auto-flow: column;
 		height: 100%;
+
+		&.active {
+			display: grid;
+		}
 	}
 
 	@include mouse-and-bp-up(lg) {
