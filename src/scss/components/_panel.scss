@@ -60,4 +60,9 @@
 			}
 		}
 	}
+
+	.panel-backdrop {
+		position: absolute;
+		background-color: $panel-backdrop-bg;
+	}
 }

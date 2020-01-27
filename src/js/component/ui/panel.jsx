@@ -34,6 +34,7 @@ class Panel extends React.PureComponent {
 			<section { ...props } className={ `panel ${this.props.className}` }>
 				{ this.renderHeader(header) }
 				{ this.renderBody(body) }
+				<div className="panel-backdrop" />
 			</section>
 		);
 	}
