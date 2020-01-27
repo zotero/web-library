@@ -336,6 +336,7 @@
 		font-size: 10rem; // Needed for pointer cursor
 		opacity: 0;
 		cursor: pointer;
+		overflow: hidden; // Fix overflow in mobile browsers
 
 		&:focus {
 			position: absolute; // Reset
