@@ -36,7 +36,7 @@ const getDevice = (userType, viewport) => {
 	const shouldUseEditMode = isTouchOrSmall;
 	const shouldUseModalCreatorField = isTouchOrSmall;
 	const shouldUseSidebar = !viewport.lg;
-	const shouldUseTabs = viewport.md || (viewport.lg && userType !== 'touch');
+	const shouldUseTabs = (viewport.md || viewport.lg) && userType !== 'touch';
 
 	return { isSingleColumn, isTouchOrSmall, shouldUseEditMode, shouldUseModalCreatorField,
 		shouldUseSidebar, shouldUseTabs };
