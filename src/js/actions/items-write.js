@@ -652,6 +652,7 @@ const copyToLibrary = (itemKeys, targetLibraryKey, targetCollectionKeys = [], ex
 
 	return async (dispatch, getState) => {
 		const state = getState();
+		const config = state.config;
 		const { libraryKey: sourceLibraryKey } = state.current;
 		const { libraries } = state.config;
 
@@ -730,6 +731,28 @@ const copyToLibrary = (itemKeys, targetLibraryKey, targetCollectionKeys = [], ex
 				throw error;
 			}
 		}
+
+		const registerUploadsPromises = newItems.map(async (newItem, index) => {
+			if(newItem.itemType !== 'attachment') {
+				return Promise.resolve();
+			}
+			const oldItem = state.libraries[sourceLibraryKey].items[itemKeys[index]];
+
+			const { mtime, md5, filename } = oldItem;
+			const fileSize = get(oldItem, [Symbol.for('links'), 'enclosure', 'length'], null);
+
+			if(!mtime || !md5 || !filename || !fileSize) {
+				return Promise.resolve();
+			}
+
+			return await api(config.apiKey, config.apiConfig)
+				.library(targetLibraryKey)
+				.items(newItem.key)
+				.registerAttachment(filename, fileSize, mtime, md5)
+				.post();
+		});
+
+		await Promise.all(registerUploadsPromises);
 
 		const childItemsCopyPromises = itemKeys.map(async (ik, index) => {
 			const newItem = newItems[index];

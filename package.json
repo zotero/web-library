@@ -102,7 +102,7 @@
     "tinymce": "5.0.11",
     "use-debounce": "^3.3.0",
     "webworkify": "^1.5.0",
-    "zotero-api-client": "^0.27.0",
+    "zotero-api-client": "^0.28.0",
     "zotero-api-client-cache": "^0.7.0",
     "zotero-base-mappings": "0.0.2"
   },
