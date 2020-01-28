@@ -20,7 +20,7 @@
 		transform: translate3d(125%, 0, 0);
 	}
 
-	@include bp-only(md) {
+	@include mouse-and-bp-only(md) {
 		top: calc(50% + #{$touch-header-height});
 	}
 

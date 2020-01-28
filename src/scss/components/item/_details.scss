@@ -14,12 +14,32 @@
 		position: absolute;
 		transform: translate3d(100%, 0, 0);
 		transition: transform $nav-transition;
+	}
 
-		.view-item-details-active & {
+	@include touch-and-bp-only(md) {
+		@include same(right, bottom, left, 0);
+		top: $touch-header-height;
+		position: absolute;
+		transform: translate3d(100%, 0, 0);
+		transition: transform $nav-transition;
+	}
+
+	.view-item-details-active & {
+		@include bp-down(sm) {
 			transform: translate3d(0, 0, 0);
 		}
 
-		.touch-tag-selector-active & {
+		@include touch-and-bp-only(md) {
+			transform: translate3d(0, 0, 0);
+		}
+	}
+
+	.touch-tag-selector-active & {
+		@include bp-down(sm) {
+			bottom: -$touch-footer-height;
+		}
+
+		@include touch-and-bp-only(md) {
 			bottom: -$touch-footer-height;
 		}
 	}
@@ -69,19 +89,19 @@
 		}
 	}
 
-	@include bp-only(sm) {
+	@include tablet {
 
 		// Start searching in item details view
 
 		// Search results
 
-		.search-results.view-item-list-active & {
+		@include state(".search-results.view-item-list-active .item-details") {
 			transform: translate3d(100%, 0, 0);
 			opacity: 0;
 			transition: transform $nav-transition, opacity 0s linear $nav-transition-duration;
 		}
 
-		.search-results.search-init.view-item-list-active & {
+		@include state(".search-results.search-init.view-item-list-active .item-details") {
 			transform: translate3d(100%, 0, 0);
 			opacity: 0;
 			transition: opacity $fade-transition, transform $fade-transition $fade-transition-duration;
@@ -89,7 +109,7 @@
 
 		// Cancel search in item details view (going back to item list view)
 
-		.search-cancel.view-item-list-active & {
+		@include state(".search-cancel.view-item-list-active .item-details") {
 			transform: translate3d(100%, 0, 0);
 			opacity: 0;
 			transition: opacity ($fade-transition-duration - 0.1) ease-in-out, transform 0s linear ($fade-transition-duration - 0.1); // Must be a bit faster than JS class change
@@ -101,24 +121,16 @@
 
 		// Cancel search in item list view (going back to item details view)
 		// Used for either .search-init or .search-results set
-		.search-cancel.view-item-details-active & {
+		@include state(".search-cancel.view-item-details-active .item-details") {
 			transform: translate3d(0, 0, 0);
 			opacity: 1;
 			transition: opacity $fade-transition;
 		}
 	}
 
-	@include bp-only(md) {
+	@include mouse-and-bp-only(md) {
 		flex: 0 0 50%;
 		padding-top: $border-width;
-
-		@include state(".select-mode .item-details") {
-			display: none;
-		}
-	}
-
-	@include touch-and-bp-only(md) {
-		@include hairline(top, $item-details-border);
 	}
 
 	@include mouse-and-bp-only(md) {
@@ -149,7 +161,7 @@
 				transform: translate3d(-25%, 0, 0);
 			}
 
-			@include touch-and-bp-up(lg) {
+			@include touch-and-bp-up(md) {
 				transform: translate3d(-25%, 0, 0);
 			}
 		}
@@ -158,11 +170,6 @@
 	.panel-header {
 		@include touch-or-bp-down(sm) {
 			display: none;
-		}
-
-		@include touch-and-bp-only(md) {
-			display: block;
-			position: relative;
 		}
 
 		.btn-edit {
@@ -186,7 +193,7 @@
 	//}
 
 	// Two column layout for md screens
-	@include bp-only(md) {
+	@include mouse-and-bp-only(md) {
 
 		// Optimize tabs layout
 		.tabs.compact {

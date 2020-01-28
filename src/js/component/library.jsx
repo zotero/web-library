@@ -160,7 +160,7 @@ const Library = props => {
 								})}>
 									{/* Tablet TouchHeader */}
 									<TouchHeaderContainer
-										className="hidden-xs-down hidden-md-up darker"
+										className="hidden-xs-down hidden-lg-up hidden-mouse darker"
 										variant={ TouchHeaderContainer.variants.SOURCE_AND_ITEM }
 									/>
 									<Items key={ key } isSearchModeTransitioning={ isSearchModeTransitioning } />

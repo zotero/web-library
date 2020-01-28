@@ -137,7 +137,7 @@
 		flex: 1 1 auto;
 	}
 
-	@include bp-only(sm) {
+	@include tablet {
 		height: 100%;
   	overflow: hidden;
 
@@ -145,14 +145,14 @@
 
   	// Init
 
-  	.search-init & {
+  	@include state(".search-init .items") {
 	  	.touch-nav {
 		  	.center-axis,
 		  	.inner {
 			  	transition: none;
 		  	}
 
-				.icon-previous + ul .current { // Hack: restrict animation to searches started in item details view
+				.icon-previous + ul .current { // Hack: restrict animation to searches started in item details view on tablets
 					.center-axis {
 						@keyframes fade-in-search-results {
 							0% {
@@ -196,29 +196,19 @@
 }
 
 .items-container {
-	@include bp-down(xs) {
-		display: flex;
-		height: 100%;
-		flex-direction: column;
-	}
-
-	@include bp-only(sm) {
+	@include tablet {
 		position: absolute;
 		top: $touch-header-height;
 		right: 0;
 		bottom: 0;
 		left: 0;
 		transition: transform $nav-transition;
+	}
 
-		.view-item-details-active & {
-			transform: translate3d(-25%, 0, 0);
-		}
-
-		// Cancel search in item list view (going back to item details)
-
-		.search-cancel.search-results.view-item-details-active & {
-			display: none; // Hack: ideally we would keep showing the search results in this state
-		}
+	@include bp-down(xs) {
+		display: flex;
+		height: 100%;
+		flex-direction: column;
 	}
 
 	@include bp-up(sm) {
@@ -226,15 +216,33 @@
 		flex-direction: column;
 	}
 
-	@include bp-only(md) {
+	@include mouse-and-bp-only(md) {
 		flex: 0 0 50%;
+	}
 
-		@include state(".select-mode .items-container") {
-			flex: 0 0 100%;
+	@include bp-up-normalized(lg) {
+		flex: 1 1 auto;
+	}
+
+	.view-item-details-active & {
+		@include bp-only(sm) {
+			transform: translate3d(-25%, 0, 0);
+		}
+
+		@include touch-and-bp-only(md) {
+			transform: translate3d(-25%, 0, 0);
 		}
 	}
 
-	@include bp-up(lg) {
-		flex: 1 1 auto;
+	// Cancel search in item list view (going back to item details)
+
+	.search-cancel.search-results.view-item-details-active & {
+		@include bp-only(sm) {
+			display: none; // Hack: ideally we would keep showing the search results in this state
+		}
+
+		@include touch-and-bp-only(md) {
+			display: none; // Hack: ideally we would keep showing the search results in this state
+		}
 	}
 }

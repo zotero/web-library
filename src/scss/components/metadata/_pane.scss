@@ -8,15 +8,11 @@
 		cursor: auto;
 	}
 
-	@include touch-or-bp-down(sm) {
+	@include touch-or-bp-down(md) {
 		padding-bottom: $space-lg - 14px;
 	}
 
-	@include touch-and-bp-only(md) {
-		padding-bottom: 0;
-	}
-
-	@include bp-only(md) {
+	@include mouse-and-bp-only(md) {
 		position: relative;
 		min-height: 100%;
 

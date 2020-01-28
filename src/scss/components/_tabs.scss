@@ -58,24 +58,11 @@
 }
 
 .tab-pane {
-	@include touch-and-bp-only(md) {
-		display: none;
-	}
-
 	@include mouse-and-bp-up(md) {
 		display: none;
 	}
 
 	&.active {
-		@include touch-and-bp-only(md) {
-			display: block;
-
-			.icon-spin {
-				width: $icon-spin-size-lg;
-				height: $icon-spin-size-lg;
-			}
-		}
-
 		@include mouse-and-bp-up(md) {
 			flex: 1 1 auto;
 			display: flex;

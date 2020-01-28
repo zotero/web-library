@@ -8,10 +8,6 @@
 		margin-bottom: 15px - 7px;
 	}
 
-	@include touch-and-bp-only(md) {
-		margin-bottom: $space-lg - 8px;
-	}
-
 	.panel.editing & {
 		@include touch-or-bp-down(sm) {
 			margin-top: $form-group-margin-touch;

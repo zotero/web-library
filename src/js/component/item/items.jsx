@@ -20,7 +20,7 @@ const Items = memo(({ isSearchModeTransitioning }) => {
 			{ isTouchOrSmall ?
 				<React.Fragment>
 					<TouchHeaderContainer
-							className="hidden-mouse hidden-sm-down"
+							className="hidden-mouse hidden-md-down"
 							variant={ TouchHeaderContainer.variants.SOURCE }
 						/>
 						<ItemsList isSearchModeTransitioning={ isSearchModeTransitioning } />

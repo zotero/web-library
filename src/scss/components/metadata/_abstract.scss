@@ -12,12 +12,6 @@
 		border-top: 0;
 	}
 
-	@include touch-and-bp-only(md) {
-		margin-top: 0;
-		margin-bottom: 18px; // 24px
-		border-top: 0;
-	}
-
 	@include mouse-and-bp-up(md) {
 		margin: 0 $default-padding-x;
 		padding-bottom: 15px - 7px;
@@ -102,12 +96,6 @@
 		margin-top: 0;
 		padding-top: 0;
 		margin-bottom: 0;
-	}
-
-	@include touch-and-bp-only(md) {
-		margin-top: 0;
-		border-top: 0;
-		padding-top: $space-lg - 6px;
 	}
 
 	@include mouse-and-bp-up(md) {
