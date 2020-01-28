@@ -90,4 +90,12 @@
 			background-color: $tab-pane-heading-bg;
 		}
 	}
+
+	.rich-editor {
+		@include mouse-and-bp-up(lg) {
+			&:not(:only-child) {
+				border-top: $border-width solid $editor-border-color;
+			}
+		}
+	}
 }

@@ -59,10 +59,6 @@
 
 		@include mouse-and-bp-up(lg) {
 			flex: 0 0 calc(50% + #{$space-md});
-
-			&:not(:only-child) {
-				border-top: $border-width solid $editor-border-color;
-			}
 		}
 
 		.tox-edit-area {
