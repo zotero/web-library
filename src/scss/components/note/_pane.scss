@@ -43,6 +43,14 @@
 		}
 
 		// Standalone note
+		@include touch-or-bp-down(sm) {
+			min-height: calc(50vh - (#{$navbar-height-sm + $touch-header-height}));
+		}
+
+		@include bp-down-normalized(xs) {
+			min-height: calc(50vh - (#{$navbar-height-xs + $touch-header-height}));
+		}
+
 		@include mouse-and-bp-up(md) {
 			&:only-child {
 				flex: 1 1 auto;
@@ -54,6 +62,12 @@
 
 			&:not(:only-child) {
 				border-top: $border-width solid $editor-border-color;
+			}
+		}
+
+		.tox-edit-area {
+			@include touch-or-bp-down(sm) {
+				border-top: $border-width solid $tox-edit-area-border-color !important;
 			}
 		}
 	}
