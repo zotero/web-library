@@ -77,10 +77,11 @@ const useFocusManager = (ref, { overrideFocusRef = null, isCarousel = true } = {
 		}
 	});
 
-	const handleFocus = useCallback(() => {
+	const handleFocus = useCallback(ev => {
 		if(isFocused) {
 			return;
 		}
+
 
 		if(ref.current === null) {
 			setTimeout(handleFocus);
@@ -93,7 +94,10 @@ const useFocusManager = (ref, { overrideFocusRef = null, isCarousel = true } = {
 		const candidates = Array.from(ref.current.querySelectorAll('[tabIndex="-2"]:not([disabled])'));
 		if(lastFocused.current !== null && candidates.includes(lastFocused.current)) {
 			lastFocused.current.focus();
-		} else if(candidates.length > 0) {
+		} else if(ev.target !== ev.currentTarget && candidates.includes(ev.target)) {
+			// keep the focus on the candidate pressed
+			return;
+		} else if(ev.target === ev.currentTarget && candidates.length > 0) {
 			candidates[0].focus();
 		}
 	})
