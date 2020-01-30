@@ -99,7 +99,7 @@
     "redux-async-queue": "^1.0.0",
     "redux-promise": "^0.6.0",
     "redux-thunk": "^2.3.0",
-    "tinymce": "5.0.11",
+    "tinymce": "5.1.4",
     "use-debounce": "^3.3.0",
     "webworkify": "^1.5.0",
     "zotero-api-client": "^0.28.0",
