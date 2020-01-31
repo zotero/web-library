@@ -1,6 +1,5 @@
-'use strict';
-
 import { coreCitationStyles } from '../../../data/citation-styles-data.json';
+export { version } from '../../../data/version.json';
 
 export const apiConfig = {
 	apiAuthorityPart: 'api.zotero.org',

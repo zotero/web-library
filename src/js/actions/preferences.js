@@ -1,8 +1,6 @@
-'use strict';
-
 import { JSONTryParse } from '../utils';
 import { PREFERENCES_LOAD, PREFERENCE_CHANGE } from '../constants/actions';
-import { preferences as defaultPreferences } from '../constants/defaults';
+import { preferences as defaultPreferences, version } from '../constants/defaults';
 
 const preferencesLoad = () => {
 	const preferences = {
@@ -23,7 +21,8 @@ const preferenceChange = (name, value) => {
 				const preferences = {
 					...defaultPreferences,
 					...JSONTryParse(localStorage.getItem('zotero-web-library-prefs')),
-					[name]: value
+					[name]: value,
+					version
 				};
 
 				localStorage.setItem('zotero-web-library-prefs', JSON.stringify(preferences));
