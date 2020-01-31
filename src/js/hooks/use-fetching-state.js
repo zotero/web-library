@@ -42,7 +42,7 @@ const useTags = (shouldSkipDisabledAndSelected = false) => {
 	const collectionKey = useSelector(state => state.current.collectionKey);
 	const itemsSource = useSelector(state => state.current.itemsSource);
 	const libraryKey = useSelector(state => state.current.libraryKey);
-	var data;
+	var data = {};
 
 	switch(itemsSource) {
 		case 'query':

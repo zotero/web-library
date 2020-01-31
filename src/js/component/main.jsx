@@ -29,8 +29,9 @@ const Main = ({ store, history }) => {
 							<Redirect exact key={ redirect.from } from={ redirect.from } to={ redirect.to } />
 						)}
 						{ routes.map(route =>
-							<Route key={ route } path={ route } component={ Wrapper } />
+							<Route key={ route } path={ route } component={ Wrapper } exact />
 						)}
+						<Redirect from="/*" to="/" />
 					</Switch>
 				</BrowserRouter>
 			</ConnectedRouter>

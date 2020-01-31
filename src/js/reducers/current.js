@@ -68,12 +68,16 @@ const current = (state = stateDefault, action, { config = {}, device = {} } = {}
 		case LOCATION_CHANGE:
 			if(!config) { return state; }
 			var params = getParamsFromRoute({ router: { ...action.payload } });
+
+			// need to validate params.items because routes is incapable of handling groups in regexp, see routes.js
+			var isValidItemsKey = !(params.items && params.items.match(/^(?:[a-zA-Z0-9]{8},?)+$/) === null);
+
 			var search = params.search || '';
 			var qmode = params.qmode || 'titleCreatorYear';
 			var isTrash = action.payload.location.pathname.includes('/trash');
 			var isMyPublications = action.payload.location.pathname.includes('/publications');
 			var collectionKey = params.collection || null;
-			var itemKeys = params.items ? params.items.split(',') : [];
+			var itemKeys = params.items && isValidItemsKey ? params.items.split(',') : [];
 			var noteKey = params.note || null;
 			var attachmentKey = params.attachment || null;
 			var tags = tagsFromUrlPart(params.tags);
