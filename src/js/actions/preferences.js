@@ -2,11 +2,41 @@ import { JSONTryParse } from '../utils';
 import { PREFERENCES_LOAD, PREFERENCE_CHANGE } from '../constants/actions';
 import { preferences as defaultPreferences, version } from '../constants/defaults';
 
+
+// Prior to 0.11.13 we stored sorting order in uppercase, afterwards it's inline with Zotero API
+const fixUpperCaseSort = oldPreferences => ({
+	...oldPreferences,
+	columns: oldPreferences.columns.map(column => {
+		if('sort' in column) {
+			return { ...column, sort: column.sort.toLowerCase() }
+		} else {
+			return column;
+		}
+	})
+});
+
+// Add missing "Added By" column, introduced in 0.12.0
+const addAddedByColumn = oldPreferences => ({
+	...oldPreferences,
+	columns: [
+		...oldPreferences.columns.slice(0, 9),
+		defaultPreferences.columns[10],
+		...oldPreferences.columns.splice(9)
+	]
+});
+
 const preferencesLoad = () => {
-	const preferences = {
-		...defaultPreferences,
-		...JSONTryParse(localStorage.getItem('zotero-web-library-prefs'))
-	};
+	var userPreferences = JSONTryParse(localStorage.getItem('zotero-web-library-prefs'));
+	if(userPreferences && userPreferences.version !== version) {
+		if(!('version' in userPreferences && userPreferences.columns.length === 11))  {
+			// we didn't store version in localStorage prior to 0.12.0
+			userPreferences = {
+				...addAddedByColumn(fixUpperCaseSort(userPreferences)),
+				version
+			}
+		}
+	}
+	const preferences = { ...defaultPreferences,...userPreferences };
 
 	return {
 		type: PREFERENCES_LOAD,
