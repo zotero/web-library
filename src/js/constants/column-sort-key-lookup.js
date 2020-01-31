@@ -1,15 +1,16 @@
 'use strict';
 
 export default Object.freeze({
-	title: 'title',
+	attachment: false,
+	createdByUser: 'addedBy',
 	creator: 'creator',
 	date: 'date',
-	itemType: 'itemType',
-	year: 'date',
-	publisher: 'publisher',
-	publicationTitle: 'publicationTitle',
 	dateAdded: 'dateAdded',
 	dateModified: 'dateModified',
 	extra: false,
-	attachment: false,
+	itemType: 'itemType',
+	publicationTitle: 'publicationTitle',
+	publisher: 'publisher',
+	title: 'title',
+	year: 'date',
 });

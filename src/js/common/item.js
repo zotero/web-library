@@ -60,6 +60,9 @@ const getDerivedData = (item, itemTypes, tagColors) => {
 			return acc;
 		}, []
 	);
+	const createdByUser = item[Symbol.for('meta')] && item[Symbol.for('meta')].createdByUser ?
+		item[Symbol.for('meta')].createdByUser.username :
+		'';
 	const itemTypeName = itemTypeLocalized(item, itemTypes);
 	const iconName = item.itemType === 'attachment' ? getAttachmentIcon(item) : paramCase(itemTypeName);
 	const attachment = get(item, [Symbol.for('links'), 'attachment'], null);
@@ -73,6 +76,7 @@ const getDerivedData = (item, itemTypes, tagColors) => {
 			linkMode: 'imported_file', contentType: attachment.attachmentType }
 		) : null,
 		colors,
+		createdByUser,
 		creator,
 		date,
 		dateAdded: dateLocalized(new Date(dateAdded)),

@@ -1,5 +1,6 @@
 export default {
 	'attachment': 'Attachment',
+	'createdByUser': 'Added By',
 	'creator': 'Creator',
 	'date': 'Date',
 	'dateAdded': 'Date Added',
