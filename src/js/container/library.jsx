@@ -3,7 +3,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import {  toggleModal, toggleNavbar, triggerSearchMode, navigate, resetLibrary } from '../actions';
+import { fetchLibrarySettings, toggleModal, toggleNavbar, triggerSearchMode, navigate, resetLibrary } from '../actions';
 import Library from '../component/library';
 import { get } from '../utils';
 
@@ -26,5 +26,5 @@ const mapStateToProps = state => {
 };
 
 export default connect(
-	mapStateToProps, { navigate, resetLibrary, triggerSearchMode, toggleModal, toggleNavbar }
+	mapStateToProps, { fetchLibrarySettings, navigate, resetLibrary, triggerSearchMode, toggleModal, toggleNavbar }
 )(LibraryContainer);

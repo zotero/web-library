@@ -39,9 +39,9 @@ import { pick } from '../common/immutable';
 
 
 const Library = props => {
-	const { collectionKey, config, device, isLibraryReadOnly, isNavBarOpen, isSearchMode,
-	isSelectMode, isSynced, itemsSource, libraryKey, noteKey, resetLibrary, search, searchState,
-	tags, toggleNavbar, useTransitions, qmode, view } = props;
+	const { collectionKey, config, device, fetchLibrarySettings, isLibraryReadOnly, isNavBarOpen,
+	isSearchMode, isSelectMode, isSynced, itemsSource, libraryKey, noteKey, resetLibrary, search,
+	searchState, tags, toggleNavbar, useTransitions, qmode, view } = props;
 
 	const [hasUserTypeChanged, setHasUserTypeChanged] = useState(false);
 	const [isSearchModeTransitioning, setIsSearchModeTransitioning] = useState(false);
@@ -83,10 +83,14 @@ const Library = props => {
 
 	useEffect(() => {
 		if(isSynced === false && wasSynced.current === true) {
-			setTimeout(() => resetLibrary(libraryKey), 0);
+			setTimeout(() => {
+				resetLibrary(libraryKey);
+				setTimeout(() => fetchLibrarySettings(libraryKey), 0);
+			}, 0);
 		}
 		wasSynced.current = isSynced;
 	}, [isSynced])
+
 
 	const handleNavbarToggle = useCallback(
 		() => toggleNavbar(null)

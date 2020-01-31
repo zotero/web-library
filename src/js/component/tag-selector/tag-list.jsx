@@ -14,6 +14,7 @@ const TagList = props => {
 	const { onBlur, onFocus, onFocusNext, onFocusPrev, registerFocusRoot } = props; // FocusManager
 	const tagsSearchString = useSelector(state => state.current.tagsSearchString);
 	const selectedTags = useSelector(state => state.current.tags, shallowEqual);
+	const tagColors = useSelector(state => state.libraries[state.current.libraryKey].tagColors, shallowEqual);
 	const dispatch = useDispatch();
 
 	const containerRef = useRef(null);
@@ -78,8 +79,11 @@ const TagList = props => {
 			dispatch(fetchTags(0, PAGE_SIZE - 1));
 			dispatch(checkColoredTags());
 		}
-	}, [sourceSignature]);
+	}, [sourceSignature, hasChecked]);
 
+	useEffect(() => {
+		dispatch(checkColoredTags());
+	}, [tagColors])
 
 	useEffect(() => {
 		setTimeout(maybeLoadMore, 0);
