@@ -4,7 +4,7 @@ import { SORT_ITEMS, REQUEST_ATTACHMENT_URL, RECEIVE_ATTACHMENT_URL, ERROR_ATTAC
 import api from 'zotero-api-client';
 import { extractItems } from '../common/actions';
 import { mapRelationsToItemKeys } from '../utils';
-import columnSortKeyLookup from '../constants/column-sort-key-lookup';
+import columnProperties from '../constants/column-properties';
 
 const getApi = ({ config, libraryKey }, requestType, queryConfig) => {
 	switch(requestType) {
@@ -236,7 +236,7 @@ const fetchSource = (startIndex, stopIndex) => {
 			column => 'sort' in column) || { field: 'title', sort: 'asc' };
 
 		const direction = sortDirection.toLowerCase();
-		const sort = columnSortKeyLookup[sortBy] || 'title';
+		const sort = (sortBy in columnProperties && columnProperties[sortBy].sortKey) || 'title';
 		const sortAndDirection = { start, limit, sort, direction };
 
 		switch(itemsSource) {

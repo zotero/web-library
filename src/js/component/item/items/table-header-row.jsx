@@ -3,8 +3,7 @@ import React, { forwardRef, memo, useCallback, useEffect, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 
 import Cell from './table-cell';
-import columnNames from '../../../constants/column-names';
-import columnSortKeyLookup from '../../../constants/column-sort-key-lookup';
+import columnProperties from '../../../constants/column-properties';
 import Icon from '../../ui/icon';
 import { isTriggerEvent } from '../../../common/event';
 import { updateItemsSorting } from '../../../actions';
@@ -21,7 +20,7 @@ const HeaderRow = memo(forwardRef((props, ref) => {
 	const handleCellClickAndKeyDown = ev => {
 		if(isTriggerEvent(ev)) {
 			const { columnName } = ev.currentTarget.dataset;
-			if(isResizing || isReordering || !columnSortKeyLookup[columnName]) {
+			if(isResizing || isReordering || !(columnName in columnProperties) || !columnProperties[columnName].sortKey) {
 				return;
 			}
 
@@ -125,7 +124,7 @@ const HeaderRow = memo(forwardRef((props, ref) => {
 							{
 								c.field === 'attachment' ?
 									<Icon type={ '16/attachment' } width="16" height="16" /> :
-									c.field in columnNames ? columnNames[c.field] : c.field
+									c.field in columnProperties ? columnProperties[c.field].name : c.field
 							}
 						</div>
 						{ sortBy === c.field &&

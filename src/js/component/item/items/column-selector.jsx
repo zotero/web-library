@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React, { useCallback, useState } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 
-import columnNames from '../../../constants/column-names';
+import columnProperties from '../../../constants/column-properties';
 import Dropdown from 'reactstrap/lib/Dropdown';
 import DropdownItem from 'reactstrap/lib/DropdownItem';
 import DropdownMenu from 'reactstrap/lib/DropdownMenu';
@@ -79,7 +79,7 @@ const ColumnSelector = props => {
 							onClick={ handleSelect }
 						>
 							<span className="tick">{ column.isVisible ? "✓" : "" }</span>
-							{ column.field in columnNames ? columnNames[column.field] : column.field }
+							{ column.field in columnProperties ? columnProperties[column.field].name : column.field }
 						</DropdownItem>
 					))
 				}

@@ -11,7 +11,7 @@ import NewItemSelector from './actions/new-item';
 import ExportActions from './actions/export';
 import { pick } from '../../common/immutable';
 import { noop } from '../../utils';
-import columnNames from '../../constants/column-names';
+import columnProperties from '../../constants/column-properties';
 import { ADD_BY_IDENTIFIER, SORT_ITEMS } from '../../constants/modals';
 import AddByIdentifier from './actions/add-by-identifier';
 
@@ -231,8 +231,8 @@ class ItemsActions extends React.PureComponent {
 		const { isOpen } = this.state;
 		const { isNewItemAllowed, isExportAllowed } = this;
 		const sortColumn = columns.find(c => c.sort) || columns.find(c => c.field === 'title');
-		const sortColumnLabel = sortColumn.field in columnNames ?
-			columnNames[sortColumn.field] : sortColumn.field;
+		const sortColumnLabel = sortColumn.field in columnProperties ?
+			columnProperties[sortColumn.field].name : sortColumn.field;
 		const sortColumnOrder = sortColumn.sort === 'desc' ? "Descending" : "Ascending"
 
 		return (
