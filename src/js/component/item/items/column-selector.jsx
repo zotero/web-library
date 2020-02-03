@@ -17,6 +17,9 @@ const ColumnSelector = props => {
 	const [isOpen, setIsOpen] = useState(false);
 	const dispatch = useDispatch();
 	const columns = useSelector(state => state.preferences.columns, shallowEqual);
+	const isMyLibrary = useSelector(state =>
+		(state.config.libraries.find(l => l.key === state.current.libraryKey) || {}).isMyLibrary
+	);
 
 	const handleSelect = useCallback(ev => {
 		const { field } = ev.currentTarget.dataset;
@@ -72,6 +75,7 @@ const ColumnSelector = props => {
 			<DropdownMenu right>
 				{ columns
 					.filter(c => c.field !== 'title')
+					.filter(c => !isMyLibrary || (isMyLibrary && !(c.field in columnProperties && columnProperties[c.field].excludeInMyLibrary)))
 					.map(column => (
 						<DropdownItem
 							data-field={ column.field }

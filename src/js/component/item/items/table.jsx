@@ -7,6 +7,7 @@ import { NativeTypes } from 'react-dnd-html5-backend';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { useDrop } from 'react-dnd';
 
+import columnProperties from '../../../constants/column-properties';
 import HeaderRow from './table-header-row';
 import Spinner from '../../ui/spinner';
 import TableBody from './table-body';
@@ -45,7 +46,13 @@ const Table = memo(() => {
 	);
 	const columnsData = useSelector(state => state.preferences.columns, shallowEqual);
 	const selectedItemKeys = useSelector(state => state.current.itemKeys, shallowEqual);
-	const columns = useMemo(() => columnsData.filter(c => c.isVisible), [columnsData]);
+	const isMyLibrary = useSelector(state =>
+		(state.config.libraries.find(l => l.key === state.current.libraryKey) || {}).isMyLibrary
+	);
+	const columns = useMemo(() => columnsData
+		.filter(c => c.isVisible)
+		.filter(c => !isMyLibrary || (isMyLibrary && !(c.field in columnProperties && columnProperties[c.field].excludeInMyLibrary)))
+	, [columnsData, isMyLibrary]);
 	const { field: sortBy, sort: sortDirection } = useMemo(() =>
 		columnsData.find(column => 'sort' in column) || { field: 'title', sort: 'asc' },
 		[columnsData]

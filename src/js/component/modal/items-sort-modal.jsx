@@ -46,10 +46,11 @@ class ItemsSortModal extends React.PureComponent {
 	}
 
 	render() {
-		const { isOpen, toggleModal, device } = this.props;
+		const { isOpen, toggleModal, device, isMyLibrary } = this.props;
 		const radioSetOptions = Object.entries(columnProperties)
 			.map(([value, properties]) => ({ value, label: properties.name }))
-			.filter(({ value }) => columnProperties[value].sortKey); // skip unsortable columns
+			.filter(({ value }) => columnProperties[value].sortKey) // skip unsortable columns
+			.filter(({ value }) => !isMyLibrary || (isMyLibrary && !columnProperties[value].excludeInMyLibrary));
 
 		return (
 			<Modal

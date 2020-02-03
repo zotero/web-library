@@ -18,7 +18,8 @@ class ItemsSortModalContainer extends React.PureComponent {
 const mapStateToProps = state => {
 	const isOpen = state.modal.id === SORT_ITEMS;
 	const preferences = state.preferences;
-	return { preferences, isOpen };
+	const isMyLibrary = (state.config.libraries.find(l => l.key === state.current.libraryKey) || {}).isMyLibrary;
+	return { preferences, isOpen, isMyLibrary };
 };
 
 
