@@ -28,8 +28,11 @@ const addAddedByColumn = oldPreferences => ({
 const preferencesLoad = () => {
 	var userPreferences = JSONTryParse(localStorage.getItem('zotero-web-library-prefs'));
 	if(userPreferences && userPreferences.version !== version) {
-		if(!('version' in userPreferences && userPreferences.columns.length === 11))  {
-			// we didn't store version in localStorage prior to 0.12.0
+		if(
+			!('version' in userPreferences) && // we didn't store version in localStorage prior to 0.12.0
+			userPreferences.columns.length === 11 && // ensure that columns are as expected
+			typeof(userPreferences.columns.find(c => c.field === 'createdByUser')) === 'undefined'
+		)  {
 			userPreferences = {
 				...addAddedByColumn(fixUpperCaseSort(userPreferences)),
 				version
