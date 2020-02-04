@@ -34,8 +34,7 @@ const PAGE_SIZE = 100;
 
 const ItemDetailsTabs = () => {
 	const dispatch = useDispatch();
-
-	const isLibraryReadOnly = useSelector(state => state.current.isLibraryReadOnly);
+	const isLibraryReadOnly = useSelector(state => (state.config.libraries.find(l => l.key === state.current.libraryKey) || {}).isReadOnly);
 	const libraryKey = useSelector(state => state.current.libraryKey);
 	const userId = useSelector(state => state.config.userId);
 	const itemKey = useSelector(state => state.current.itemKey);

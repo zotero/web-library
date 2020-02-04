@@ -19,6 +19,9 @@ import {
     REQUEST_TAGS_IN_LIBRARY,
     RECEIVE_TAGS_IN_LIBRARY,
     ERROR_TAGS_IN_LIBRARY,
+    REQUEST_GROUPS,
+    RECEIVE_GROUPS,
+    ERROR_GROUPS,
 } from '../constants/actions';
 
 const fetching = (state = {
@@ -29,6 +32,7 @@ const fetching = (state = {
 	itemTypeFields: [],
 	tagsInLibrary: [],
 	meta: false,
+	groups: false,
 }, action) => {
 	switch(action.type) {
 		case REQUEST_META:
@@ -115,6 +119,17 @@ const fetching = (state = {
 				itemTemplates: state.itemTemplates
 					.filter(it => it !== action.itemType)
 			};
+		case REQUEST_GROUPS:
+			return {
+				...state,
+				groups: true
+			}
+		case RECEIVE_GROUPS:
+		case ERROR_GROUPS:
+			return {
+				...state,
+				groups: false,
+			}
 		default:
 			return state;
 	}

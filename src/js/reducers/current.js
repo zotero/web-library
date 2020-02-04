@@ -20,7 +20,6 @@ import { getParamsFromRoute } from '../common/state';
 const stateDefault = {
 	collectionKey: null,
 	editingItemKey: null,
-	isLibraryReadOnly: false,
 	isNavBarOpen: false,
 	isSelectMode: false,
 	isSearchMode: false,
@@ -84,7 +83,6 @@ const current = (state = stateDefault, action, { config = {}, device = {} } = {}
 			var isSelectMode = itemKeys.length > 1 ? true : state.isSelectMode;
 			var view = params.view;
 			var libraryKey = getLibraryKey(params, config);
-			var isLibraryReadOnly = (config.libraries.find(l => l.key === libraryKey) || {}).isReadOnly;
 			var itemsSource;
 			var searchState = state.searchState;
 			var itemKey = itemKeys && itemKeys.length === 1 ? itemKeys[0] : null
@@ -132,7 +130,6 @@ const current = (state = stateDefault, action, { config = {}, device = {} } = {}
 				attachmentKey,
 				collectionKey,
 				editingItemKey: itemKey === state.editingItemKey ? state.editingItemKey : null,
-				isLibraryReadOnly,
 				isMyPublications,
 				isSearchMode: (itemsSource === 'query' && search.length > 0) || state.isSearchMode,
 				isSelectMode,

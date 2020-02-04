@@ -22,15 +22,16 @@ const Loader = () => {
 	const tagColors = useSelector(state => get(state, ['libraries', libraryKey, 'tagColors'], null));
 	const collections = useSelector(state => get(state, ['libraries', libraryKey, 'collections'], null));
 	const expectedCount = useSelector(state => get(state, ['collectionCountByLibrary', libraryKey], null));
+	const isFetchingGroups = useSelector(state => state.fetching.groups);
 	const isFetchingCollections = expectedCount === null || (collections !== null && expectedCount > Object.keys(collections).length);
 
 	const [isReady, setIsReady] = useState(false);
 
 	useEffect(() => {
-		if(itemTypes && itemFields && creatorFields && tagColors && collections && !isFetchingCollections) {
+		if(itemTypes && itemFields && creatorFields && tagColors && collections && !isFetchingCollections && !isFetchingGroups) {
 			setIsReady(true);
 		}
-	}, [collections, itemTypes, itemFields, creatorFields, tagColors, isFetchingCollections]);
+	}, [collections, itemTypes, itemFields, creatorFields, tagColors, isFetchingCollections, isFetchingGroups]);
 
 	useEffect(() => {
 		dispatch(preferencesLoad());

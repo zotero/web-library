@@ -8,10 +8,11 @@ import { fetchItemTypeCreatorTypes, fetchItemTypeFields, updateItemWithMapping }
 const InfoContainer = props => <Info { ...props } />;
 
 const mapStateToProps = state => {
-	const { libraryKey, isLibraryReadOnly, itemKey } = state.current;
+	const { libraryKey, itemKey } = state.current;
 	const item = get(state, ['libraries', libraryKey, 'items', itemKey], null);
 	const { itemType = null } = item || {};
 	const pendingChanges = get(state, ['libraries', libraryKey, 'updating', 'items', itemKey], []);
+	const isLibraryReadOnly = (state.config.libraries.find(l => l.key === libraryKey) || {}).isReadOnly;
 
 	const isMetaAvailable = itemType in state.meta.itemTypeCreatorTypes &&
 		itemType in state.meta.itemTypeFields;
