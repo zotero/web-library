@@ -144,6 +144,10 @@ const populateItemKeys = (state, newKeys, action) => {
 	return populate(state, newKeys, action, 'keys');
 }
 
+const populateGroups = (state, newGroups, action) => {
+	return populate(state, newGroups, action, 'groups', (a, b) => a && b && a.id === b.id);
+}
+
 const populateTags = (state, newTags, action) => {
 	const data = populate(state, newTags, action, 'rawTags', (a, b) => a && b && a.tag === b.tag && a.type === b.type);
 	const tags = replaceDuplicates(data.rawTags.map(t => typeof(t) === 'undefined' ? undefined : t.tag), null, true);
@@ -209,6 +213,7 @@ const sortItemKeysOrClear = (state, items, sortBy, sortDirection) => {
 export {
 	filterItemKeys,
 	injectExtraItemKeys,
+	populateGroups,
 	populateItemKeys,
 	populateTags,
 	sortItemKeysOrClear,

@@ -22,7 +22,7 @@ const mapStateToProps = state => {
 	const { collectionKey, libraryKey } = state.modal;
 	const librariesWithCollectionsFetching = state.fetching.collectionsInLibrary;
 	const collectionCountByLibrary = state.collectionCountByLibrary;
-	const groups = state.groups;
+	const groups = state.groups.groups;
 	const library = state.config.libraries.find(l => l.key === libraryKey);
 	const libraries = library ? [library] : [];
 	const collections = libraries.reduce((aggr, library) => {

@@ -1,11 +1,10 @@
-'use strict';
-
-import { RECEIVE_GROUPS } from '../constants/actions.js';
+import { RECEIVE_GROUPS } from '../constants/actions';
+import { populateGroups } from '../common/reducers'
 
 const version = (state = [], action) => {
 	switch(action.type) {
 		case RECEIVE_GROUPS:
-			return action.groups;
+			return populateGroups(state, action.groups, action);
 		default:
 			return state;
 	}

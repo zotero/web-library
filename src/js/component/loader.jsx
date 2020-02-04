@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import Icon from './ui/icon';
 import LibraryContainer from '../container/library';
-import { preferencesLoad, initialize, fetchLibrarySettings, fetchAllCollections, fetchGroups,
+import { preferencesLoad, initialize, fetchLibrarySettings, fetchAllCollections, fetchAllGroups,
 toggleTransitions, triggerResizeViewport } from '../actions';
 import { get } from '../utils';
 
@@ -22,7 +22,7 @@ const Loader = () => {
 	const tagColors = useSelector(state => get(state, ['libraries', libraryKey, 'tagColors'], null));
 	const collections = useSelector(state => get(state, ['libraries', libraryKey, 'collections'], null));
 	const expectedCount = useSelector(state => get(state, ['collectionCountByLibrary', libraryKey], null));
-	const isFetchingGroups = useSelector(state => state.fetching.groups);
+	const isFetchingGroups = useSelector(state => state.fetching.allGroups);
 	const isFetchingCollections = expectedCount === null || (collections !== null && expectedCount > Object.keys(collections).length);
 
 	const [isReady, setIsReady] = useState(false);
@@ -42,7 +42,7 @@ const Loader = () => {
 		dispatch(fetchAllCollections(libraryKey));
 
 		if(config.includeUserGroups) {
-			dispatch(fetchGroups(userLibraryKey));
+			dispatch(fetchAllGroups(userLibraryKey));
 		}
 	}, []);
 
