@@ -15,7 +15,7 @@
     "locale_cache_time": "86400000",
     "translation_server": ""
   },
-  "browserslist": "last 1 years",
+  "browserslist": "last 2 versions",
   "scripts": {
     "serve": "node scripts/server.cjs -p $npm_package_config_port -t $npm_package_config_translation_server",
     "prepack": "run-s clean build",
