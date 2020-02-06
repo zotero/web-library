@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { pick } from '../../../common/immutable';
 
 const Cell = props => {
-	const { children, className, columnName, index, width } = props;
+	const { children, className, columnName, index, width, style = {} } = props;
 
 	return (
 		<div
@@ -13,7 +13,7 @@ const Cell = props => {
 			data-colindex={ index }
 			data-column-name={ columnName }
 			role="cell"
-			style={ { width } }
+			style={ { ...style, width } }
 			{ ...pick(props, ['onClick', 'onKeyDown', 'tabIndex', 'role']) }
 			{ ...pick(props, key => key.match(/^(aria-|data-).*/)) }
 		>
