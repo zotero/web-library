@@ -406,7 +406,7 @@
 		}
 	}
 
-	.metadata:not(.interactable) .key {
+	.metadata:not(.interactable) .read-only .key {
 		 // Allow click drag for text selection to start in labels except on clickable fields
 		pointer-events: none;
 	}
