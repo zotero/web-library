@@ -50,9 +50,10 @@ const device = (state = defaultState, action) => {
 			viewport = action.type === TRIGGER_RESIZE_VIEWPORT ? getViewport(action) : pick(state, ['xxs', 'xs', 'sm', 'md', 'lg']);
 			return {
 				...state,
-				...pick(action, ['isKeyboardUser', 'isMouseUser', 'isTouchUser', 'userType', 'scrollbarWidth']),
+				...pick(action, ['isKeyboardUser', 'isMouseUser', 'isTouchUser', 'userType']),
 				...getDevice('userType' in action ? action.userType : state.userType, viewport),
-				...viewport
+				...viewport,
+				scrollbarWidth: state.userType === 'touch' && action.userType === 'mouse' ? getScrollbarWidth() : state.scrollbarWidth
 			}
 		default:
 			return state;
