@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import React, { forwardRef, memo, useCallback, useEffect, useRef } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
 import Cell from './table-cell';
 import columnProperties from '../../../constants/column-properties';
@@ -14,7 +14,6 @@ const ROWHEIGHT = 26;
 const HeaderRow = memo(forwardRef((props, ref) => {
 	const dispatch = useDispatch();
 	const mouseState = useRef(null);
-	const scrollbarWidth = useSelector(state => state.device.scrollbarWidth);
 	const { columns, width, isReordering, isResizing, onReorder, onResize, reorderTargetIndex, sortBy, sortDirection } = props;
 	const { handleFocus, handleBlur, handleNext, handlePrevious } = useFocusManager(ref);
 
@@ -107,7 +106,7 @@ const HeaderRow = memo(forwardRef((props, ref) => {
 					onKeyDown={ handleCellClickAndKeyDown }
 					role="columnheader"
 					tabIndex={ -2 }
-					width={ colIndex === columns.length - 1 ? `calc(var(--col-${colIndex}-width) + ${scrollbarWidth}px)` :`var(--col-${colIndex}-width)` }
+					width={ `var(--col-${colIndex}-width)` }
 				>
 					<div className="header-content">
 						{ colIndex === reorderTargetIndex &&

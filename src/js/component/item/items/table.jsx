@@ -19,7 +19,11 @@ import { useSourceData } from '../../../hooks';
 
 const ROWHEIGHT = 26;
 
-const getColumnCssVars = (columns, width) => Object.fromEntries(columns.map((c, i) => [`--col-${i}-width`, `${c.fraction * width}px`]))
+const getColumnCssVars = (columns, width, scrollbarWidth) =>
+	Object.fromEntries(columns.map((c, i) => [
+		`--col-${i}-width`,
+		i === columns.length - 1 ? `${c.fraction * width - scrollbarWidth}px` : `${c.fraction * width}px`
+	]));
 
 const Table = memo(() => {
 	const containerDom = useRef(null);
@@ -49,6 +53,7 @@ const Table = memo(() => {
 	const isMyLibrary = useSelector(state =>
 		(state.config.libraries.find(l => l.key === state.current.libraryKey) || {}).isMyLibrary
 	);
+	const scrollbarWidth = useSelector(state => state.device.scrollbarWidth);
 	const columns = useMemo(() => columnsData
 		.filter(c => c.isVisible)
 		.filter(c => !isMyLibrary || (isMyLibrary && !(c.field in columnProperties && columnProperties[c.field].excludeInMyLibrary)))
@@ -124,8 +129,7 @@ const Table = memo(() => {
 			resizeVisibleColumns(newColumns, -offset, true);
 
 			resizing.current.newColumns = newColumns;
-			const style = getColumnCssVars(newColumns, width);
-
+			const style = getColumnCssVars(newColumns, width, scrollbarWidth);
 			Object.entries(style).forEach(([name, value]) =>
 				tableRef.current.style.setProperty(name, value)
 			);
@@ -250,7 +254,7 @@ const Table = memo(() => {
 						<div
 							ref={ tableRef }
 							className="items-table"
-							style={ getColumnCssVars(columns, width) }
+							style={ getColumnCssVars(columns, width, scrollbarWidth) }
 							role="table"
 						>
 							<HeaderRow
