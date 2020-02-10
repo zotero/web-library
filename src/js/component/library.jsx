@@ -36,6 +36,7 @@ import TouchSideFooter from '../component/touch-side-footer';
 import withDevice from '../enhancers/with-device';
 import { getSerializedQuery } from '../common/state';
 import { pick } from '../common/immutable';
+import ZoteroConnectorNotifier from './zotero-connector-notifier';
 
 
 const Library = props => {
@@ -201,6 +202,7 @@ const Library = props => {
 				<Messages />
 			</div>
 			</DndProvider>
+			<ZoteroConnectorNotifier />
 		</React.Fragment>
 	);
 }
