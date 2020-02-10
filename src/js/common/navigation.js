@@ -1,7 +1,7 @@
 'use strict';
 
 const getQueryFromParams = params => {
-	const { collection, tags, search = '', qmode } = params;
+	const { collection, tags, search = '', qmode = 'titleCreatorYear' } = params;
 	return { collection, tag: tagsFromUrlPart(tags), q: search, qmode };
 }
 

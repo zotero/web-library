@@ -1,6 +1,7 @@
 'use strict';
 
 import deepEqual from 'deep-equal';
+import { shallowEqual } from 'react-redux';
 import { LOCATION_CHANGE } from 'connected-react-router';
 
 import {
@@ -19,6 +20,10 @@ import { getParamsFromRoute } from '../common/state';
 import { getQueryFromParams } from '../common/navigation';
 import { populateTags, populateItemKeys, sortItemKeysOrClear, updateFetchingState } from '../common/reducers';
 
+const isMatchingQuery = (action, state) => {
+	const { q, qmode, tag } = action.queryOptions;
+	return state.current.q === q && state.current.qmode === qmode && shallowEqual(tag, state.current.tag);
+}
 
 const defaultState = {
 	current: null,
@@ -50,7 +55,7 @@ const query = (state = defaultState, action) => {
 			}
 		case RECEIVE_ITEMS_BY_QUERY:
 			return {
-				...populateItemKeys(state, action.items.map(item => item.key), action),
+				...(isMatchingQuery(action, state) ? populateItemKeys(state, action.items.map(item => item.key), action) : state),
 				...updateFetchingState(state, action)
 			}
 		case ERROR_ITEMS_BY_QUERY:
