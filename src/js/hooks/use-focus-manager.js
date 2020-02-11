@@ -9,12 +9,12 @@ const useFocusManager = (ref, { overrideFocusRef = null, isCarousel = true } = {
 	const lastFocused = useRef(null);
 	const originalTabIndex = useRef(null);
 
-	const handleNext = useCallback((ev, { useCurrentTarget = true, targetEnd = null } = {}) => {
+	const handleNext = useCallback((ev, { useCurrentTarget = true, targetEnd = null, offset = 1 } = {}) => {
 		const tabbables = Array.from(
 			ref.current.querySelectorAll('[tabIndex="-2"]:not([disabled]):not(.offscreen)')
 		).filter(t => t.offsetParent);
 		const target = useCurrentTarget ? ev.currentTarget : ev.target;
-		const nextIndex = tabbables.findIndex(t => t === target) + 1;
+		const nextIndex = tabbables.findIndex(t => t === target) + offset;
 		if(isModifierKey(ev)) {
 			// ignore key navigation with modifier keys. See #252
 			return;
@@ -32,12 +32,12 @@ const useFocusManager = (ref, { overrideFocusRef = null, isCarousel = true } = {
 		}
 	});
 
-	const handlePrevious = useCallback((ev, { useCurrentTarget = true, targetEnd = null } = {}) => {
+	const handlePrevious = useCallback((ev, { useCurrentTarget = true, targetEnd = null, offset = 1 } = {}) => {
 		const tabbables = Array.from(
 			ref.current.querySelectorAll('[tabIndex="-2"]:not([disabled]):not(.offscreen)')
 		).filter(t => t.offsetParent);
 		const target = useCurrentTarget ? ev.currentTarget : ev.target;
-		const prevIndex = tabbables.findIndex(t => t === target) - 1;
+		const prevIndex = tabbables.findIndex(t => t === target) - offset;
 		if(isModifierKey(ev)) {
 			// ignore key navigation with modifier keys. See #252
 			return;
@@ -55,25 +55,27 @@ const useFocusManager = (ref, { overrideFocusRef = null, isCarousel = true } = {
 		}
 	});
 
-	const handleDrillDownNext = useCallback(ev => {
+	const handleDrillDownNext = useCallback((ev, offset = 1) => {
 		const drillables = Array.from(
 			ev.currentTarget.querySelectorAll('[tabIndex="-3"]:not([disabled])')
 		).filter(t => t.offsetParent);
-		const nextIndex = drillables.findIndex(t => t === ev.target) + 1;
+		const nextIndex = drillables.findIndex(t => t === ev.target) + offset;
 		if(nextIndex < drillables.length) {
 			drillables[nextIndex].focus();
+		} else {
+			drillables[drillables.length - 1].focus();
 		}
 	});
 
-	const handleDrillDownPrev = useCallback(ev => {
+	const handleDrillDownPrev = useCallback((ev, offset = 1) => {
 		const drillables = Array.from(
 			ev.currentTarget.querySelectorAll('[tabIndex="-3"]:not([disabled])')
 		).filter(t => t.offsetParent);
-		const prevIndex = drillables.findIndex(t => t === ev.target) - 1;
+		const prevIndex = drillables.findIndex(t => t === ev.target) - offset;
 		if(prevIndex >= 0) {
 			drillables[prevIndex].focus();
 		} else {
-			ev.currentTarget.focus();
+			drillables[0].focus();
 		}
 	});
 
