@@ -113,7 +113,7 @@ const RichEditor = React.memo(React.forwardRef((props, ref) => {
 	const isSingleColumn = useSelector(state => state.device.isSingleColumn);
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
 	const [currentFormatBlock, currentFormatBlockLabel] = queryFormatBlock(editor.current);
-	const { handleFocus, handleBlur, handleNext, handlePrevious } = useFocusManager(toolbarRef);
+	const { handleFocus, handleBlur, handleNext, handlePrevious, handleDrillDownPrev, handleDrillDownNext } = useFocusManager(toolbarRef);
 
 	useImperativeHandle(ref, () => ({
 		focus: () => {
@@ -366,7 +366,11 @@ const RichEditor = React.memo(React.forwardRef((props, ref) => {
 										<Icon type="16/chevron-9" className="touch" width="16" height="16" />
 										<Icon type="16/chevron-7" className="mouse" width="16" height="16" />
 									</DropdownToggle>
-									<ColorPicker onColorPicked={ handleForeColorPicked } />
+									<ColorPicker
+										onColorPicked={ handleForeColorPicked }
+										onDrillDownPrev={ handleDrillDownPrev }
+										onDrillDownNext={ handleDrillDownNext }
+									/>
 								</Dropdown>
 								<Dropdown
 									isOpen={ dropdowns['hilitecolor'] }
@@ -407,7 +411,11 @@ const RichEditor = React.memo(React.forwardRef((props, ref) => {
 										<Icon type="16/chevron-9" className="touch" width="16" height="16" />
 										<Icon type="16/chevron-7" className="mouse" width="16" height="16" />
 									</DropdownToggle>
-									<ColorPicker onColorPicked={ handleHiLiteColorPicked } />
+									<ColorPicker
+										onColorPicked={ handleHiLiteColorPicked }
+										onDrillDownPrev={ handleDrillDownPrev }
+										onDrillDownNext={ handleDrillDownNext }
+									/>
 								</Dropdown>
 							</ToolGroup>
 							<ToolGroup>
