@@ -14,7 +14,7 @@ import { Toolbar, ToolGroup } from './ui/toolbars';
 import ColorPicker from './ui/color-picker';
 import Spinner from './ui/spinner';
 import { sourceFile } from '../actions';
-import { useForceUpdate } from '../hooks';
+import { useFocusManager, useForceUpdate } from '../hooks';
 
 const formatBlocks = [
 	{ value: 'p', Tag: 'p', label: 'Paragraph' },
@@ -104,6 +104,7 @@ const RichEditor = React.memo(React.forwardRef((props, ref) => {
 	const editor = useRef(null);
 	const wantsFocus = useRef(false);
 	const timer = useRef(null);
+	const toolbarRef = useRef(null);
 	const dispatch = useDispatch();
 	const forceUpdate = useForceUpdate();
 	const tinymceRoot = useSelector(state => state.config.tinymceRoot);
@@ -112,6 +113,7 @@ const RichEditor = React.memo(React.forwardRef((props, ref) => {
 	const isSingleColumn = useSelector(state => state.device.isSingleColumn);
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
 	const [currentFormatBlock, currentFormatBlockLabel] = queryFormatBlock(editor.current);
+	const { handleFocus, handleBlur, handleNext, handlePrevious } = useFocusManager(toolbarRef);
 
 	useImperativeHandle(ref, () => ({
 		focus: () => {
@@ -172,7 +174,7 @@ const RichEditor = React.memo(React.forwardRef((props, ref) => {
 		}
 	});
 
-	const handleFocus = useCallback(() => {
+	const handleEditorFocus = useCallback(() => {
 		setDropdowns(defaultDropdowns);
 	});
 
@@ -199,13 +201,6 @@ const RichEditor = React.memo(React.forwardRef((props, ref) => {
 		}
 	});
 
-	const handleDropdownKeyDown = useCallback(ev => {
-		if(ev.key === 'Escape') {
-			setDropdowns(defaultDropdowns);
-			ev.stopPropagation();
-		}
-	});
-
 	const handleKeyDown = useCallback(ev => {
 		if(ev.key === 'Meta' && editor.current) {
 			editor.current.iframeElement.contentDocument.body.classList.add('meta-key');
@@ -218,6 +213,21 @@ const RichEditor = React.memo(React.forwardRef((props, ref) => {
 		}
 	});
 
+	const handleToolbarButtonKeyDown = ev => {
+		if(ev.target !== ev.currentTarget) {
+			return;
+		}
+
+		if(ev.key === 'ArrowRight') {
+			handleNext(ev);
+		} else if(ev.key === 'ArrowLeft') {
+			handlePrevious(ev);
+		} else if(ev.key === 'Escape') {
+			setDropdowns(defaultDropdowns);
+			ev.stopPropagation();
+		}
+	}
+
 	if(!isTinymceFetched) {
 		return <Spinner />;
 	}
@@ -225,7 +235,13 @@ const RichEditor = React.memo(React.forwardRef((props, ref) => {
 	return (
 		<div className="rich-editor">
 			{ isSingleColumn || !isReadOnly && (
-				<div className="toolbar-container">
+				<div
+					className="toolbar-container"
+					onBlur={ handleBlur }
+					onFocus={ handleFocus }
+					ref={ toolbarRef }
+					tabIndex={ 0 }
+				>
 					<Toolbar className="dense">
 						<div className="toolbar-left">
 							<ToolGroup>
@@ -236,7 +252,9 @@ const RichEditor = React.memo(React.forwardRef((props, ref) => {
 									})}
 									title="Bold"
 									data-command="bold"
-									onClick={ handleButtonClick }>
+									onClick={ handleButtonClick }
+									onKeyDown={ handleToolbarButtonKeyDown }
+									tabIndex={ -2 }>
 									<Icon type="24/editor/b" className="touch" width="24" height="24" />
 									<Icon type="16/editor/b" className="mouse" width="16" height="16" />
 								</Button>
@@ -247,7 +265,9 @@ const RichEditor = React.memo(React.forwardRef((props, ref) => {
 									})}
 									title="Italic"
 									data-command="italic"
-									onClick={ handleButtonClick }>
+									onClick={ handleButtonClick }
+									onKeyDown={ handleToolbarButtonKeyDown }
+									tabIndex={ -2 }>
 									<Icon type="24/editor/i" className="touch" width="24" height="24" />
 									<Icon type="16/editor/i" className="mouse" width="16" height="16" />
 								</Button>
@@ -258,7 +278,9 @@ const RichEditor = React.memo(React.forwardRef((props, ref) => {
 									})}
 									title="Underline"
 									data-command="underline"
-									onClick={ handleButtonClick }>
+									onClick={ handleButtonClick }
+									onKeyDown={ handleToolbarButtonKeyDown }
+									tabIndex={ -2 }>
 									<Icon type="24/editor/u" className="touch" width="24" height="24" />
 									<Icon type="16/editor/u" className="mouse" width="16" height="16" />
 								</Button>
@@ -269,7 +291,9 @@ const RichEditor = React.memo(React.forwardRef((props, ref) => {
 									})}
 									title="strikethrough"
 									data-command="strikethrough"
-									onClick={ handleButtonClick }>
+									onClick={ handleButtonClick }
+									onKeyDown={ handleToolbarButtonKeyDown }
+									tabIndex={ -2 }>
 									<Icon type="24/editor/s" className="touch" width="24" height="24" />
 									<Icon type="16/editor/s" className="mouse" width="16" height="16" />
 								</Button>
@@ -282,7 +306,9 @@ const RichEditor = React.memo(React.forwardRef((props, ref) => {
 									})}
 									title="Subscript"
 									data-command="subscript"
-									onClick={ handleButtonClick }>
+									onClick={ handleButtonClick }
+									onKeyDown={ handleToolbarButtonKeyDown }
+									tabIndex={ -2 }>
 									<Icon type="24/editor/sub" className="touch" width="24" height="24" />
 									<Icon type="16/editor/sub" className="mouse" width="16" height="16" />
 								</Button>
@@ -293,7 +319,9 @@ const RichEditor = React.memo(React.forwardRef((props, ref) => {
 									})}
 									title="Superscript"
 									data-command="superscript"
-									onClick={ handleButtonClick }>
+									onClick={ handleButtonClick }
+									onKeyDown={ handleToolbarButtonKeyDown }
+									tabIndex={ -2 }>
 									<Icon type="24/editor/sup" className="touch" width="24" height="24" />
 									<Icon type="16/editor/sup" className="mouse" width="16" height="16" />
 								</Button>
@@ -309,6 +337,8 @@ const RichEditor = React.memo(React.forwardRef((props, ref) => {
 										icon
 										data-command="forecolor"
 										onClick={ handleButtonClick }
+										onKeyDown={ handleToolbarButtonKeyDown }
+										tabIndex={ -2 }
 									>
 										<Icon type="24/editor/fore-color" className="touch" width="24" height="24" />
 										<Icon type="16/editor/fore-color" className="mouse" width="16" height="16" />
@@ -329,8 +359,9 @@ const RichEditor = React.memo(React.forwardRef((props, ref) => {
 									</Button>
 									<DropdownToggle
 										color={ null }
-										onKeyDown={ handleDropdownKeyDown }
 										className="btn-icon dropdown-toggle"
+										onKeyDown={ handleToolbarButtonKeyDown }
+										tabIndex={ -2 }
 									>
 										<Icon type="16/chevron-9" className="touch" width="16" height="16" />
 										<Icon type="16/chevron-7" className="mouse" width="16" height="16" />
@@ -347,6 +378,8 @@ const RichEditor = React.memo(React.forwardRef((props, ref) => {
 										icon
 										data-command="hilitecolor"
 										onClick={ handleButtonClick }
+										onKeyDown={ handleToolbarButtonKeyDown }
+										tabIndex={ -2 }
 									>
 										<Icon type="24/editor/hilite-color" className="touch" width="24" height="24" />
 										<Icon type="16/editor/hilite-color" className="mouse" width="16" height="16" />
@@ -367,8 +400,9 @@ const RichEditor = React.memo(React.forwardRef((props, ref) => {
 									</Button>
 									<DropdownToggle
 										color={ null }
-										onKeyDown={ handleDropdownKeyDown }
 										className="btn-icon dropdown-toggle"
+										onKeyDown={ handleToolbarButtonKeyDown }
+										tabIndex={ -2 }
 									>
 										<Icon type="16/chevron-9" className="touch" width="16" height="16" />
 										<Icon type="16/chevron-7" className="mouse" width="16" height="16" />
@@ -381,7 +415,9 @@ const RichEditor = React.memo(React.forwardRef((props, ref) => {
 									icon
 									title="Clear formatting"
 									data-command="removeformat"
-									onClick={ handleButtonClick }>
+									onClick={ handleButtonClick }
+									onKeyDown={ handleToolbarButtonKeyDown }
+									tabIndex={ -2 }>
 									<Icon type="24/editor/remove-format" className="touch" width="24" height="24" />
 									<Icon type="16/editor/remove-format" className="mouse" width="16" height="16" />
 								</Button>
@@ -394,7 +430,9 @@ const RichEditor = React.memo(React.forwardRef((props, ref) => {
 									})}
 									title="Blockquote"
 									data-command="mceblockquote"
-									onClick={ handleButtonClick }>
+									onClick={ handleButtonClick }
+									onKeyDown={ handleToolbarButtonKeyDown }
+									tabIndex={ -2 }>
 									<Icon type="24/editor/blockquote" className="touch" width="24" height="24" />
 									<Icon type="16/editor/blockquote" className="mouse" width="16" height="16" />
 								</Button>
@@ -402,7 +440,9 @@ const RichEditor = React.memo(React.forwardRef((props, ref) => {
 									icon
 									title="Insert/edit link"
 									data-command="mceLink"
-									onClick={ handleButtonClick }>
+									onClick={ handleButtonClick }
+									onKeyDown={ handleToolbarButtonKeyDown }
+									tabIndex={ -2 }>
 									<Icon type="24/editor/link" className="touch" width="24" height="24" />
 									<Icon type="16/editor/link" className="mouse" width="16" height="16" />
 								</Button>
@@ -416,8 +456,10 @@ const RichEditor = React.memo(React.forwardRef((props, ref) => {
 									<DropdownToggle
 										color={ null }
 										className="btn-icon dropdown-toggle"
+										onKeyDown={ handleToolbarButtonKeyDown }
+										tabIndex={ -2 }
 									>
-									<Icon type="24/options" width="24" height="24" />
+										<Icon type="24/options" width="24" height="24" />
 									</DropdownToggle>
 									<DropdownMenu right>
 										<DropdownItem
@@ -485,8 +527,9 @@ const RichEditor = React.memo(React.forwardRef((props, ref) => {
 							>
 									<DropdownToggle
 										color={ null }
-										onKeyDown={ handleDropdownKeyDown }
 										className="dropdown-toggle btn-icon format-block"
+										onKeyDown={ handleToolbarButtonKeyDown }
+										tabIndex={ -2 }
 									>
 										{ currentFormatBlockLabel }
 										<Icon type="16/chevron-9" className="touch" width="16" height="16" />
@@ -517,7 +560,9 @@ const RichEditor = React.memo(React.forwardRef((props, ref) => {
 									})}
 									title="Align left"
 									data-command="justifyleft"
-									onClick={ handleButtonClick }>
+									onClick={ handleButtonClick }
+									onKeyDown={ handleToolbarButtonKeyDown }
+									tabIndex={ -2 }>
 									<Icon type="24/editor/align-left" className="touch" width="24" height="24" />
 									<Icon type="16/editor/align-left" className="mouse" width="16" height="16" />
 								</Button>
@@ -528,7 +573,9 @@ const RichEditor = React.memo(React.forwardRef((props, ref) => {
 									})}
 									title="Align center"
 									data-command="justifycenter"
-									onClick={ handleButtonClick }>
+									onClick={ handleButtonClick }
+									onKeyDown={ handleToolbarButtonKeyDown }
+									tabIndex={ -2 }>
 									<Icon type="24/editor/align-center" className="touch" width="24" height="24" />
 									<Icon type="16/editor/align-center" className="mouse" width="16" height="16" />
 								</Button>
@@ -539,7 +586,9 @@ const RichEditor = React.memo(React.forwardRef((props, ref) => {
 									})}
 									title="Align right"
 									data-command="justifyright"
-									onClick={ handleButtonClick }>
+									onClick={ handleButtonClick }
+									onKeyDown={ handleToolbarButtonKeyDown }
+									tabIndex={ -2 }>
 									<Icon type="24/editor/align-right" className="touch" width="24" height="24" />
 									<Icon type="16/editor/align-right" className="mouse" width="16" height="16" />
 								</Button>
@@ -552,7 +601,9 @@ const RichEditor = React.memo(React.forwardRef((props, ref) => {
 									})}
 									title="Bullet list"
 									data-command="insertunorderedlist"
-									onClick={ handleButtonClick }>
+									onClick={ handleButtonClick }
+									onKeyDown={ handleToolbarButtonKeyDown }
+									tabIndex={ -2 }>
 									<Icon type="24/editor/bullet-list" className="touch" width="24" height="24" />
 									<Icon type="16/editor/bullet-list" className="mouse" width="16" height="16" />
 								</Button>
@@ -563,7 +614,9 @@ const RichEditor = React.memo(React.forwardRef((props, ref) => {
 									})}
 									title="Numbered list"
 									data-command="insertorderedlist"
-									onClick={ handleButtonClick }>
+									onClick={ handleButtonClick }
+									onKeyDown={ handleToolbarButtonKeyDown }
+									tabIndex={ -2 }>
 									<Icon type="24/editor/numbered-list" className="touch" width="24" height="24" />
 									<Icon type="16/editor/numbered-list" className="mouse" width="16" height="16" />
 								</Button>
@@ -571,7 +624,9 @@ const RichEditor = React.memo(React.forwardRef((props, ref) => {
 									icon
 									title="Decrease indent"
 									data-command="outdent"
-									onClick={ handleButtonClick }>
+									onClick={ handleButtonClick }
+									onKeyDown={ handleToolbarButtonKeyDown }
+									tabIndex={ -2 }>
 									<Icon type="24/editor/outdent" className="touch" width="24" height="24" />
 									<Icon type="16/editor/outdent" className="mouse" width="16" height="16" />
 								</Button>
@@ -579,7 +634,9 @@ const RichEditor = React.memo(React.forwardRef((props, ref) => {
 									icon
 									title="Increase indent"
 									data-command="indent"
-									onClick={ handleButtonClick }>
+									onClick={ handleButtonClick }
+									onKeyDown={ handleToolbarButtonKeyDown }
+									tabIndex={ -2 }>
 									<Icon type="24/editor/indent" className="touch" width="24" height="24" />
 									<Icon type="16/editor/indent" className="mouse" width="16" height="16" />
 								</Button>
@@ -589,7 +646,9 @@ const RichEditor = React.memo(React.forwardRef((props, ref) => {
 									icon
 									title="Find and replace"
 									data-command="searchreplace"
-									onClick={ handleButtonClick }>
+									onClick={ handleButtonClick }
+									onKeyDown={ handleToolbarButtonKeyDown }
+									tabIndex={ -2 }>
 									<Icon type="24/editor/magnifier" className="touch" width="24" height="24" />
 									<Icon type="16/magnifier" className="mouse" width="16" height="16" />
 								</Button>
@@ -603,6 +662,8 @@ const RichEditor = React.memo(React.forwardRef((props, ref) => {
 									<DropdownToggle
 										color={ null }
 										className="btn-icon dropdown-toggle"
+										onKeyDown={ handleToolbarButtonKeyDown }
+										tabIndex={ -2 }
 									>
 									<Icon type="24/options" width="24" height="24" />
 									</DropdownToggle>
@@ -677,7 +738,7 @@ const RichEditor = React.memo(React.forwardRef((props, ref) => {
 								valid_elements: validElements,
 							}}
 							onEditorChange={ handleEditorChange }
-							onFocus={ handleFocus }
+							onFocus={ handleEditorFocus }
 							onInit={ handleEditorInit }
 							onKeyDown={ handleKeyDown }
 							onKeyUp={ handleKeyUp }
