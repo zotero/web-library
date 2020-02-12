@@ -109,7 +109,7 @@ const getSortKeyForItemType = (sortKey, itemType) => {
 		baseMappings[itemType][sortKey] : sortKey;
 }
 
-const getSortKeyValue = (item, sortBy) => {
+const getSortKeyValue = (item, sortBy = 'title') => {
 	sortBy = columnProperties[sortBy].sortKey;
 	if(item.itemType === 'note' && sortBy === 'title') {
 		return noteAsTitle(item.note || '');
