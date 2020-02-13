@@ -278,6 +278,7 @@ const TableRow = memo(props => {
 			className={ className }
 			style={ style }
 			data-index={ index }
+			data-key={ itemKey }
 			onClick={ handleMouseEvent }
 			onDoubleClick={ handleMouseEvent }
 			onMouseDown={ handleMouseEvent }
