@@ -65,6 +65,7 @@ const ListRow = memo(props => {
 	return (
 		<div
 			data-index={ index }
+			data-key={ itemKey }
 			className={ className }
 			style={ style }
 			onClick={ handleClick }
