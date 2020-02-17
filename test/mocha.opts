@@ -1,4 +1,0 @@
---require esm
---require test/support/env.js
---require test/support/enzyme
---require test/support/local-storage

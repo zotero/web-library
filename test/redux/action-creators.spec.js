@@ -17,13 +17,11 @@ import {
 	fetchChildItems,
 	fetchCollections,
 	fetchGroups,
-	fetchItems,
 	fetchItemsInCollection,
 	fetchItemsQuery,
 	fetchItemTypeCreatorTypes,
 	fetchItemTypeFields,
 	fetchLibrarySettings,
-	fetchTagsForItem,
 	fetchTagsInCollection,
 	fetchTagsInLibrary,
 	fetchTopItems,
@@ -933,26 +931,6 @@ describe('action creators', () => {
 			);
 			assert.typeOf(store.getActions()[1].response.response, 'object');
 	});
-	it('fetchTagsForItem', async () => {
-			fetchMock.get(/https:\/\/api\.zotero\.org\/users\/123\/items\/ITEM1111\??.*/, tagsResponseFixture);
-			const store = mockStore(initialState);
-			const action = fetchTagsForItem('ITEM1111');
-			await store.dispatch(action);
-
-			assert.strictEqual(store.getActions()[0].type, REQUEST_TAGS_FOR_ITEM);
-			assert.strictEqual(store.getActions()[0].libraryKey, 'u123');
-			assert.strictEqual(store.getActions()[0].itemKey, 'ITEM1111');
-
-			assert.strictEqual(store.getActions()[1].type, RECEIVE_TAGS_FOR_ITEM);
-			assert.strictEqual(store.getActions()[1].libraryKey, 'u123');
-			assert.strictEqual(store.getActions()[1].itemKey, 'ITEM1111');
-			assert.deepEqual(store.getActions()[1].tags, tagsResponseFixture.map(t => ({ tag: t.tag })));
-			assert.deepEqual(
-				store.getActions()[1].tags[0][Symbol.for('meta')],
-				tagsResponseFixture[0].meta
-			);
-			assert.typeOf(store.getActions()[1].response.response, 'object');
-	})
 
 	it('fetchItemsQuery', async () => {
 		fetchMock.mock(

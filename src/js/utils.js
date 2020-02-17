@@ -263,6 +263,9 @@ const JSONTryParse = (json, fallback = {}) => {
 }
 
 const getScrollbarWidth = () => {
+	if(process.env.NODE_ENV === 'test') {
+		return 0;
+	}
 	const scrollDiv = document.createElement('div');
 	scrollDiv.className = 'modal-scrollbar-measure';
 	document.body.appendChild(scrollDiv);

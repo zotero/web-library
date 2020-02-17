@@ -27,7 +27,7 @@ const defaultState = {
 	shouldUseSidebar: false,
 	shouldUseTabs: false,
 	userType: isInitiallyTouch ? 'touch' : 'mouse',
-	...getViewport(window.innerWidth)
+	...getViewport(process.env.NODE_ENV === 'test' ? {} : window.innerWidth)
 };
 
 const getDevice = (userType, viewport) => {

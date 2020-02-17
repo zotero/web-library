@@ -1,0 +1,8 @@
+{
+	"require": [
+		"esm",
+		"test/support/env.js",
+		"test/support/enzyme",
+		"test/support/local-storage"
+	]
+}
