@@ -38,11 +38,6 @@ const ItemDetails = props => {
 					<ItemDetailsInfoView />
 				)
 			}
-			{ item && (
-				<script key={ item.key } type="application/vnd.zotero.data+json">
-					{ JSON.stringify(item) }
-				</script>
-			) }
 		</section>
 	);
 }
