@@ -1,7 +1,9 @@
 import React, { useEffect } from 'react';
 import { useSelector, shallowEqual } from 'react-redux';
+import { useDebouncedCallback } from 'use-debounce';
 import { useSourceData } from '../hooks';
 import { get } from '../utils';
+
 
 const mapItemKeysToTitles = (keys, state) => {
 	const libraryKey = state.current.libraryKey;
@@ -43,16 +45,14 @@ const ZoteroConnectorNotifier = () => {
 		return {};
 	});
 
+	const [debouncedNotify] = useDebouncedCallback(() => {
+		document.dispatchEvent(new Event('ZoteroItemUpdated', {
+			bubbles: true,
+			cancelable: true
+		}));
+	}, 250);
 
-	useEffect(() => {
-		// add timeout so that the event is fired after rendering is complete
-		setTimeout(() => {
-			document.dispatchEvent(new Event('ZoteroItemUpdated', {
-				bubbles: true,
-				cancelable: true
-			}))
-		});
-	}, [collectionKey, itemTitles, libraryKey, tags]);
+	useEffect(debouncedNotify, [collectionKey, itemTitles, libraryKey, tags]);
 
 	return (
 		<React.Fragment>
