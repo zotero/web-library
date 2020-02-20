@@ -13,8 +13,13 @@ body,
 #zotero-web-library,
 .library-container {
 	height: 100%;
-	min-width: 240px;
-	min-height: 180px;
+
+	// Zotero translators use hidden browser that has height of 0px. At this size auto-sized dynamic
+	// lists and tables won't render, causing translators to fail in some cases. This query targets
+	// Zotero Translators hidden browser and fixes this issue.
+	@media(height:0px){
+		min-height: 200px;
+	}
 }
 
 html {
