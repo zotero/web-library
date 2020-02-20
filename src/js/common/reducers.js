@@ -8,7 +8,9 @@ const replaceDuplicates = (entries, comparer = null, useSplice = false) => {
 	const compareFn = comparer ? a => seen.some(b => comparer(a,b)) : a => seen.includes(a);
 	const deleteFn = useSplice ? i => entries.splice(i, 1) : i => delete entries[i] ;
 
-	for(let i = 0; i < entries.length; i++) {
+	let i = entries.length;
+
+	while(i--) {
 		if(!!entries[i] && compareFn(entries[i])) {
 			deleteFn(i);
 		} else {
