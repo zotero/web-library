@@ -1,6 +1,6 @@
 import cx from 'classnames';
 import PropTypes from 'prop-types';
-import React, { memo, useEffect, useRef, useState } from 'react';
+import React, { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { getEmptyImage, NativeTypes } from 'react-dnd-html5-backend';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { useDrag, useDrop } from 'react-dnd'
@@ -8,7 +8,9 @@ import { useDrag, useDrop } from 'react-dnd'
 import Cell from './table-cell';
 import Icon from '../../ui/icon';
 import { ATTACHMENT, ITEM } from '../../../constants/dnd';
-import { createAttachmentsFromDropped, chunkedCopyToLibrary, chunkedAddToCollection, navigate } from '../../../actions';
+import { createAttachmentsFromDropped, chunkedCopyToLibrary, chunkedAddToCollection,
+	getAttachmentUrl, navigate } from '../../../actions';
+import { openAttachment } from '../../../utils';
 
 const DROP_MARGIN_EDGE = 5; // how many pixels from top/bottom of the row triggers "in-between" drop
 
@@ -149,6 +151,7 @@ const TableRow = memo(props => {
 		shallowEqual
 	);
 	const isActive = itemKey && selectedItemKeys.includes(itemKey);
+	const dispatchGetAttachmentUrl = useCallback((...args) => dispatch(getAttachmentUrl(...args)));
 
 	const [_, drag, preview] = useDrag({ // eslint-disable-line no-unused-vars
 		item: { type: ITEM },
@@ -251,15 +254,14 @@ const TableRow = memo(props => {
 						return
 					}
 				}
-				//@TODO: handle double click to open attachment
-				// if(event.type === 'dblclick' && item.attachmentItemKey) {
-				// 	openAttachment(item.attachmentItemKey, getAttachmentUrl, true);
-				// }
 			}
 			if(event.type === 'mousedown') {
 				// finally handle mousedowns as select events
 				ignoreClicks.current[itemKey] = Date.now();
 				selectItem(itemKey, event, keys, selectedItemKeys, dispatch);
+			}
+			if(event.type === 'dblclick' && itemData.attachmentItemKey) {
+				openAttachment(itemData.attachmentItemKey, dispatchGetAttachmentUrl, true);
 			}
 		}
 	}
