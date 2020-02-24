@@ -8,6 +8,7 @@ import { useDrag, useDrop } from 'react-dnd'
 import Cell from './table-cell';
 import Icon from '../../ui/icon';
 import { ATTACHMENT, ITEM } from '../../../constants/dnd';
+import colorNames from '../../../constants/color-names';
 import { createAttachmentsFromDropped, chunkedCopyToLibrary, chunkedAddToCollection,
 	getAttachmentUrl, navigate } from '../../../actions';
 import { openAttachment } from '../../../utils';
@@ -57,6 +58,7 @@ const DataCell = props => {
 		>
 			{ columnName === 'title' && (
 				<Icon
+					label={ `${itemData.itemType} icon` }
 					type={ `16/item-types/light/${dvp}x/${itemData.iconName}` }
 					symbol={ isFocused && isActive ? `${itemData.iconName}-white` : itemData.iconName }
 					width="16"
@@ -70,6 +72,7 @@ const DataCell = props => {
 				<div className="tag-colors">
 					{ itemData.colors.map((color, index) => (
 						<Icon
+							label={ `${colorNames[color] || ''} circle icon` }
 							key={ color }
 							type={ index === 0 ? '10/circle' : '10/crescent-circle' }
 							symbol={ index === 0 ?
@@ -276,6 +279,7 @@ const TableRow = memo(props => {
 
 	return drag(drop(
 		<div
+			aria-selected={ isActive }
 			ref={ ref }
 			className={ className }
 			style={ style }
