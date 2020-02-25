@@ -21,8 +21,11 @@ import { getQueryFromParams } from '../common/navigation';
 import { populateTags, populateItemKeys, sortItemKeysOrClear, updateFetchingState } from '../common/reducers';
 
 const isMatchingQuery = (action, state) => {
-	const { q, qmode, tag } = action.queryOptions;
-	return state.current.q === q && state.current.qmode === qmode && shallowEqual(tag, state.current.tag);
+	const { q = '', qmode, tag = [] } = action.queryOptions;
+
+	return decodeURIComponent(q) === state.current.q &&
+		state.current.qmode === qmode &&
+		shallowEqual(tag.map(t => decodeURIComponent(t)), state.current.tag);
 }
 
 const defaultState = {

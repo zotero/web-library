@@ -131,8 +131,12 @@ const fetchTagsForItemsByQuery = (query, queryOptions, prefix = 'TAGS') => {
 	const queryConfig = { collectionKey, isTrash, isMyPublications };
 
 	return fetchTagsBase(
-		`${prefix}_IN_ITEMS_BY_QUERY`, queryConfig, { ...queryOptions, itemTag, itemQ, itemQMode }
-	);
+		`${prefix}_IN_ITEMS_BY_QUERY`, queryConfig, {
+			...queryOptions,
+			itemTag: itemTag.map(t => encodeURIComponent(t)),
+			itemQ: encodeURIComponent(itemQ),
+			itemQMode
+	});
 }
 
 const fetchCurrentTags = (queryOptions, prefix) => {

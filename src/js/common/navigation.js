@@ -2,7 +2,7 @@
 
 const getQueryFromParams = params => {
 	const { collection, tags, search = '', qmode = 'titleCreatorYear' } = params;
-	return { collection, tag: tagsFromUrlPart(tags), q: search, qmode };
+	return { collection, tag: tagsFromUrlPart(tags), q: decodeURIComponent(search), qmode };
 }
 
 const tagsFromUrlPart = tags => tags ? tags.split(',').map(t => decodeURIComponent(t)) : [];
