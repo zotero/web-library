@@ -223,6 +223,7 @@ const TableRow = memo(props => {
 		'nth-4n-1': (index + 2) % 4 === 0,
 		'nth-4n': (index + 1) % 4 === 0,
 		active: isActive,
+		focused: isFocused,
 		'dnd-target': canDrop && itemData && !(['attachment', 'note'].includes(itemData.itemTypeRaw)) && isOver && dropZone === null,
 		'dnd-target-top': canDrop && isOver && dropZone === 'top',
 		'dnd-target-bottom': canDrop && isOver && dropZone === 'bottom',
@@ -280,6 +281,7 @@ const TableRow = memo(props => {
 	return drag(drop(
 		<div
 			aria-selected={ isActive }
+			aria-rowindex={ index }
 			ref={ ref }
 			className={ className }
 			style={ style }
@@ -289,6 +291,7 @@ const TableRow = memo(props => {
 			onDoubleClick={ handleMouseEvent }
 			onMouseDown={ handleMouseEvent }
 			role="row"
+			tabIndex={ -2 }
 		>
 			{ columns.map((c, colIndex) => itemData ? (
 				<DataCell

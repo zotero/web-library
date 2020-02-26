@@ -12,7 +12,7 @@ const Cell = props => {
 			className={ cx('metadata', columnName, className) }
 			data-colindex={ index }
 			data-column-name={ columnName }
-			role="cell"
+			role="gridcell"
 			style={ { ...style, width } }
 			{ ...pick(props, ['onClick', 'onKeyDown', 'tabIndex', 'role']) }
 			{ ...pick(props, key => key.match(/^(aria-|data-).*/)) }

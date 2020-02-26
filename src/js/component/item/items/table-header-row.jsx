@@ -7,7 +7,6 @@ import columnProperties from '../../../constants/column-properties';
 import Icon from '../../ui/icon';
 import { isTriggerEvent } from '../../../common/event';
 import { updateItemsSorting } from '../../../actions';
-import { useFocusManager } from '../../../hooks';
 
 const ROWHEIGHT = 26;
 
@@ -15,7 +14,7 @@ const HeaderRow = memo(forwardRef((props, ref) => {
 	const dispatch = useDispatch();
 	const mouseState = useRef(null);
 	const { columns, width, isReordering, isResizing, onReorder, onResize, reorderTargetIndex, sortBy, sortDirection } = props;
-	const { handleFocus, handleBlur, handleNext, handlePrevious } = useFocusManager(ref);
+	const { handleFocusNext, handleFocusPrev } = props; // drilldown focus management on table
 
 	const handleCellClickAndKeyDown = ev => {
 		if(isTriggerEvent(ev)) {
@@ -38,15 +37,21 @@ const HeaderRow = memo(forwardRef((props, ref) => {
 				ref.current.closest('.items-table').querySelector('.items-table-body').focus();
 			}
 			else if(ev.key === 'ArrowRight') {
-				handleNext(ev,  { useCurrentTarget: false });
+				handleFocusNext(ev);
 			}
 			else if(ev.key === 'ArrowLeft') {
-				handlePrevious(ev,  { useCurrentTarget: false });
+				handleFocusPrev(ev);
 			}
 			ev.preventDefault();
 			return;
 		}
 	}
+
+	const handleFocus = useCallback(ev => {
+		if(ev.currentTarget === ev.target) {
+			handleFocusNext(ev);
+		}
+	});
 
 	const handleMouseDown = useCallback(ev => {
 		if('resizeHandle' in ev.target.dataset) {
@@ -83,16 +88,15 @@ const HeaderRow = memo(forwardRef((props, ref) => {
 
 	return (
 		<div
-			tabIndex={ -1 }
+			tabIndex={ -2 }
 			ref={ ref }
 			className="items-table-head"
 			style={ { height: ROWHEIGHT, width } }
 			onKeyDown={ handleKeyDown }
-			onFocus={ handleFocus }
-			onBlur={ handleBlur }
 			onMouseDown={ handleMouseDown }
 			onMouseMove={ handleMouseMove }
 			onMouseUp = { handleMouseUp }
+			onFocus={ handleFocus }
 			role="row"
 		>
 			{ columns.map((c, colIndex) => (
@@ -105,7 +109,7 @@ const HeaderRow = memo(forwardRef((props, ref) => {
 					onClick={ handleCellClickAndKeyDown }
 					onKeyDown={ handleCellClickAndKeyDown }
 					role="columnheader"
-					tabIndex={ -2 }
+					tabIndex={ -3 }
 					width={ `var(--col-${colIndex}-width)` }
 				>
 					<div className="header-content">

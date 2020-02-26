@@ -195,11 +195,6 @@
 	 		transparent (2 * $item-table-row-height + $space-min / 2));
 	 	background-attachment: local;
 
-	 	&:focus {
-			.keyboard & {
-				outline: none;
-			}
-		}
 
 	 	> div {
 		 	position: relative;
@@ -216,9 +211,15 @@
 		&.active {
 			background-color: $item-table-active-bg;
 
-			@include state(".items-table-body:focus .item") {
+			&.focused {
 				color: $item-table-focus-color;
 				background-color: $item-table-focus-bg;
+			}
+		}
+
+		&:focus {
+			.keyboard & {
+				outline: none;
 			}
 		}
 
