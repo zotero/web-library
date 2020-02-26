@@ -23,9 +23,9 @@ import { populateTags, populateItemKeys, sortItemKeysOrClear, updateFetchingStat
 const isMatchingQuery = (action, state) => {
 	const { q = '', qmode, tag = [] } = action.queryOptions;
 
-	return decodeURIComponent(q) === state.current.q &&
+	return q === state.current.q &&
 		state.current.qmode === qmode &&
-		shallowEqual(tag.map(t => decodeURIComponent(t)), state.current.tag);
+		shallowEqual(tag, state.current.tag);
 }
 
 const defaultState = {

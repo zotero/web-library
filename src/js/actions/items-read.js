@@ -242,7 +242,7 @@ const fetchSource = (startIndex, stopIndex) => {
 		switch(itemsSource) {
 			case 'query':
 				return await dispatch(fetchItemsQuery({ collectionKey, isMyPublications,
-					isTrash, q: encodeURIComponent(q), tag: tag.map(t => encodeURIComponent(t)), qmode }, sortAndDirection));
+					isTrash, q, tag, qmode }, sortAndDirection));
 			case 'top':
 				return await dispatch(fetchTopItems(sortAndDirection));
 			case 'trash':

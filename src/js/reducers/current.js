@@ -70,7 +70,6 @@ const current = (state = stateDefault, action, { config = {}, device = {} } = {}
 
 			// need to validate params.items because routes is incapable of handling groups in regexp, see routes.js
 			var isValidItemsKey = !(params.items && params.items.match(/^(?:[a-zA-Z0-9]{8},?)+$/) === null);
-
 			var search = params.search ? decodeURIComponent(params.search) : '';
 			var qmode = params.qmode || 'titleCreatorYear';
 			var isTrash = action.payload.location.pathname.includes('/trash');

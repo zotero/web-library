@@ -133,8 +133,8 @@ const fetchTagsForItemsByQuery = (query, queryOptions, prefix = 'TAGS') => {
 	return fetchTagsBase(
 		`${prefix}_IN_ITEMS_BY_QUERY`, queryConfig, {
 			...queryOptions,
-			itemTag: itemTag.map(t => encodeURIComponent(t)),
-			itemQ: encodeURIComponent(itemQ),
+			itemTag: itemTag,
+			itemQ: itemQ,
 			itemQMode
 	});
 }
