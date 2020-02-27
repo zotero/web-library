@@ -194,7 +194,7 @@ const current = (state = stateDefault, action, { config = {}, device = {} } = {}
 			return {
 				...state,
 				editingItemKey: action.userType === 'mouse' && !device.xxs && !device.xs &&
-					!device.sm ? null : state.editingItemKey
+					!device.sm && !device.md ? null : state.editingItemKey
 			}
 		case TRIGGER_FOCUS:
 			return {
