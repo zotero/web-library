@@ -42,7 +42,7 @@ const useTags = (shouldSkipDisabledAndSelected = false) => {
 	const collectionKey = useSelector(state => state.current.collectionKey);
 	const itemsSource = useSelector(state => state.current.itemsSource);
 	const libraryKey = useSelector(state => state.current.libraryKey);
-	var data = {};
+	var data;
 
 	switch(itemsSource) {
 		case 'query':
@@ -63,7 +63,7 @@ const useTags = (shouldSkipDisabledAndSelected = false) => {
 		break;
 	}
 
-	const { coloredTags = [], isFetching = false, tags: sourceTags = [], pointer = 0, requests, totalResults, duplicatesCount } = data;
+	const { coloredTags = [], isFetching = false, tags: sourceTags = [], pointer = 0, requests, totalResults, duplicatesCount } = (data || {});
 	const hasMoreItems = totalResults > 0 && (typeof(pointer) === 'undefined' || pointer < totalResults);
 	const hasChecked = typeof(totalResults) !== 'undefined';
 	const isFetched = hasChecked && !isFetching && !hasMoreItems;
