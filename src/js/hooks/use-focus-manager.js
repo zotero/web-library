@@ -6,11 +6,10 @@ const isModifierKey = ev => ev.getModifierState("Meta") || ev.getModifierState("
 
 //@TODO: rename functions from handleABC to focusABC, e.g. handleNext should be FocusNext,
 
-const useFocusManager = (ref, { overrideFocusRef = null, initialFocusPicker = null, isCarousel = true } = {}) => {
+const useFocusManager = (ref, { overrideFocusRef = null, initialFocusPickerRef = {}, isCarousel = true } = {}) => {
 	const [isFocused, setIsFocused] = useState(false);
 	const lastFocused = useRef(null);
 	const originalTabIndex = useRef(null);
-	const initialFocusPickerRef = useRef(initialFocusPicker);
 
 	const handleNext = useCallback((ev, { useCurrentTarget = true, targetEnd = null, offset = 1 } = {}) => {
 		const tabbables = Array.from(
@@ -104,6 +103,12 @@ const useFocusManager = (ref, { overrideFocusRef = null, initialFocusPicker = nu
 			return;
 		}
 
+		if(!ref.current.dataset.focusRoot) {
+			// we have not yet focused on this item yet, store original tabIndex and mark as focus root
+			ref.current.dataset.focusRoot = '';
+			originalTabIndex.current = originalTabIndex.current === null ? ref.current.tabIndex : originalTabIndex.current;
+		}
+
 		setIsFocused(true);
 		ref.current.tabIndex = -1;
 
@@ -149,13 +154,6 @@ const useFocusManager = (ref, { overrideFocusRef = null, initialFocusPicker = nu
 			lastFocused.current = ref;
 		}
 	});
-
-	useEffect(() => {
-		if(ref && ref.current) {
-			originalTabIndex.current = originalTabIndex.current === null ? ref.current.tabIndex : originalTabIndex.current;
-			ref.current.dataset.focusRoot = '';
-		}
-	}, [ref && ref.current]);
 
 	useEffect(() => {
 		if(overrideFocusRef !== null) {
