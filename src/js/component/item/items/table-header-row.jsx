@@ -145,6 +145,8 @@ HeaderRow.displayName = 'HeaderRow';
 
 HeaderRow.propTypes = {
 	columns: PropTypes.array,
+	handleFocusNext: PropTypes.func,
+	handleFocusPrev: PropTypes.func,
 	isReordering: PropTypes.bool,
 	isResizing: PropTypes.bool,
 	onReorder: PropTypes.func,

@@ -64,27 +64,39 @@ const Table = memo(() => {
 		[columnsData]
 	);
 
-	const focusOnSelected = () => {
+	// focusOnSelected is used to pick which rows should focused on when table receives focus
+	// we also use it to auto-select first item if none is selected
+	// it needs to be passed to focus manager as a ref, otherwise it will use outdated closure
+	const focusOnSelected = useCallback(() => {
 		if(tableRef.current) {
 			const cursorEl = tableRef.current.querySelector('[aria-selected="true"]');
 			if(cursorEl) {
 				return cursorEl;
 			} else {
 				if(selectedItemKeys && keys && selectedItemKeys.length === 0 && keys.length > 0) {
+					// auto-select first key
 					dispatch(navigate({ items: [keys[0]] }));
 					const cursorEl = tableRef.current.querySelector(`[aria-rowindex="0"]`);
 					if(cursorEl) {
 						return cursorEl;
 					}
 				} else {
-					return tableRef;
+					return tableRef.current;
 				}
 			}
+		} else {
+			return null;
 		}
-	};
+	}, [keys, selectedItemKeys, tableRef]);
+
+	const initialFocusPickerRef = useRef(focusOnSelected);
+
+	useEffect(() => {
+		initialFocusPickerRef.current = focusOnSelected;
+	}, [focusOnSelected]);
 
 	const { handleFocus, handleBlur, handleBySelector, handleDrillDownNext, handleDrillDownPrev } = useFocusManager(tableRef,
-		{ isCarousel: false, initialFocusPicker: focusOnSelected }
+		{ isCarousel: false, initialFocusPickerRef }
 	);
 
 	const dispatch = useDispatch();
