@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useEffect, useMemo } from 'react';
+import React, { useCallback, useState, useEffect, useMemo, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 import Button from './ui/button';
@@ -7,7 +7,7 @@ import cx from 'classnames';
 import Icon from './ui/icon';
 import Node from './libraries/node';
 import Spinner from './ui/spinner';
-import { get, stopPropagation } from '../utils';
+import { get, stopPropagation, getUniqueId } from '../utils';
 import { pick } from '../common/immutable';
 import withFocusManager from '../enhancers/with-focus-manager';
 import { createCollection, fetchAllCollections, fetchLibrarySettings, navigate } from '../actions';
@@ -21,6 +21,7 @@ const LibraryNode = props => {
 	} = props;
 	const dispatch = useDispatch();
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
+	const id = useRef(getUniqueId('library-'));
 
 
 	// no nodes inside if device is non-touch (no "All Items" node) and library is read-only (no
@@ -66,6 +67,7 @@ const LibraryNode = props => {
 				'selected': isSelected,
 				'busy': isFetching
 			}) }
+			aria-labelledby={ id.current }
 			tabIndex={ shouldBeTabbable ? "-2" : null }
 			isOpen={ isOpen && !isFetching }
 			onOpen={ handleOpenToggle }
@@ -87,7 +89,7 @@ const LibraryNode = props => {
 					<Icon type="16/library" className="mouse" width="16" height="16" />
 				</React.Fragment>
 			) }
-			<div className="truncate">{ name }</div>
+			<div className="truncate" id={ id.current }>{ name }</div>
 			{ isPickerMode && pickerIncludeLibraries && !isFetching && (
 				<input
 					type="checkbox"
@@ -100,6 +102,7 @@ const LibraryNode = props => {
 			{
 				!isFetching && !isReadOnly && (
 					<Button
+						aria-label="add collection"
 						className="mouse btn-icon-plus"
 						icon
 						onClick={ handleAddVirtualClick }
@@ -244,7 +247,9 @@ const Libraries = props => {
 	}
 
 	return (
-		<nav className="collection-tree"
+		<nav
+			aria-label="collection tree"
+			className="collection-tree"
 			onFocus={ onFocus }
 			onBlur={ onBlur }
 			tabIndex={ 0 }

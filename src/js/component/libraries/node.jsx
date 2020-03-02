@@ -199,10 +199,10 @@ class Node extends React.PureComponent {
 				className={ cx(className, { focus: isFocused }) }
 				>
 				<div
-					{ ...pick(this.props, propName => propName.startsWith('data-') || ['tabIndex'].includes(propName)) }
+					{ ...pick(this.props, propName => propName.startsWith('data-') || propName.startsWith('aria-') || propName === 'tabIndex') }
 					className={ cx('item-container', { 'dnd-target': isActive }) }
-					role="treeitem"
-					aria-expanded={ isOpen }
+					role="treeitem button"
+					aria-expanded={ (subtree || showTwisty) ? isOpen : null }
 					onMouseDown={ this.handleMouseDown }
 					onMouseUp={ this.handleMouseUp }
 					onMouseLeave={ this.handleMouseLeave }

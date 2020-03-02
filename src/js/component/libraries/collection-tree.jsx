@@ -1,5 +1,5 @@
 import cx from 'classnames';
-import React, { useMemo, useState, useCallback } from 'react';
+import React, { useMemo, useState, useCallback, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap/lib';
 
@@ -10,7 +10,7 @@ import Spinner from '../../component/ui/spinner';
 import withDevice from '../../enhancers/with-device';
 import { BIBLIOGRAPHY, COLLECTION_RENAME, COLLECTION_ADD, EXPORT, MOVE_COLLECTION } from '../../constants/modals';
 import { pick } from '../../common/immutable';
-import { stopPropagation } from '../../utils.js';
+import { stopPropagation, getUniqueId } from '../../utils.js';
 import { createAttachmentsFromDropped, deleteCollection, toggleModal, updateCollection, navigate } from '../../actions';
 
 const makeDerivedData = (collections, path = [], opened, isTouchOrSmall) => {
@@ -89,6 +89,7 @@ const makeCollectionsPath = (collectionKey, allCollections, isCurrentLibrary) =>
 const ItemsNode = withDevice(props => {
 	const { isPickerMode, device, parentCollectionKey, selectedCollectionKey, itemsSource,
 		selectNode, shouldBeTabbable, ...rest } = props;
+	const id = useRef(getUniqueId());
 
 	if(isPickerMode || !device.isTouchOrSmall) {
 		return null;
@@ -107,6 +108,7 @@ const ItemsNode = withDevice(props => {
 
 	return (
 		<Node
+			aria-labelledby={ id.current }
 			className={ cx({ 'selected': isSelected })}
 			tabIndex={ shouldBeTabbable ? "-2" : null }
 			onClick={ handleClick }
@@ -114,7 +116,7 @@ const ItemsNode = withDevice(props => {
 		>
 			<Icon type="28/document" className="touch" width="28" height="28" />
 			<Icon type="16/document" className="mouse" width="16" height="16" />
-			<div className="truncate">
+			<div className="truncate" id={ id.current }>
 				{ parentCollectionKey ? 'Items' : 'All Items' }
 			</div>
 		</Node>
@@ -157,6 +159,7 @@ const VirtualCollectionNode = props => {
 }
 
 const PublicationsNode = ({ isMyLibrary, isPickerMode, isSelected, shouldBeTabbable, parentLibraryKey, selectNode, ...rest }) => {
+	const id = useRef(getUniqueId());
 	const handleClick = useCallback(() => {
 		selectNode({ publications: true });
 	}, []);
@@ -167,6 +170,7 @@ const PublicationsNode = ({ isMyLibrary, isPickerMode, isSelected, shouldBeTabba
 
 	return (
 		<Node
+			aria-labelledby={ id.current }
 			className={ cx({
 				'publications': true,
 				'selected': isSelected
@@ -178,12 +182,13 @@ const PublicationsNode = ({ isMyLibrary, isPickerMode, isSelected, shouldBeTabba
 		>
 			<Icon type="28/document" className="touch" width="28" height="28" />
 			<Icon type="16/document" className="mouse" width="16" height="16" />
-			<div className="truncate">My Publications</div>
+			<div className="truncate" id={ id.current }>My Publications</div>
 		</Node>
 	);
 }
 
 const TrashNode = ({ isPickerMode, isReadOnly, isSelected, shouldBeTabbable, parentLibraryKey, selectNode, ...rest }) => {
+	const id = useRef(getUniqueId());
 	const handleClick = useCallback(() => {
 		selectNode({ trash: true });
 	}, []);
@@ -194,6 +199,7 @@ const TrashNode = ({ isPickerMode, isReadOnly, isSelected, shouldBeTabbable, par
 
 	return (
 		<Node
+			aria-labelledby={ id.current }
 			className={ cx({
 				'trash': true,
 				'selected': isSelected
@@ -205,7 +211,7 @@ const TrashNode = ({ isPickerMode, isReadOnly, isSelected, shouldBeTabbable, par
 		>
 			<Icon type="28/trash" className="touch" width="28" height="28" />
 			<Icon type="16/trash" className="mouse" width="16" height="16" />
-			<div className="truncate">Trash</div>
+			<div className="truncate" id={ id.current } >Trash</div>
 		</Node>
 	);
 }
@@ -353,6 +359,7 @@ const CollectionNode = withDevice(props => {
 		selectedCollectionKey, isCurrentLibrary, parentLibraryKey, renaming, setRenaming,
 		virtual, isPickerMode, shouldBeTabbable, ...rest }  = props;
 	const dispatch = useDispatch();
+	const id = useRef(getUniqueId('tree-node-'));
 	const updating = useSelector(state => parentLibraryKey in state.libraries ? state.libraries[parentLibraryKey].updating.collections : {});
 
 	const handleClick = useCallback(() => {
@@ -443,6 +450,7 @@ const CollectionNode = withDevice(props => {
 				'selected': derivedData[collection.key].isSelected,
 				'collection': true,
 			})}
+			aria-labelledby={ id.current }
 			data-collection-key={ collection.key }
 			dndTarget={ { 'targetType': 'collection', collectionKey: collection.key, libraryKey: parentLibraryKey } }
 			isOpen={ derivedData[collection.key].isOpen }
@@ -491,7 +499,7 @@ const CollectionNode = withDevice(props => {
 					value={ collectionName }
 				/> ) : (
 					<React.Fragment>
-						<div className="truncate">{ collectionName }</div>
+						<div className="truncate" id={ id.current }>{ collectionName }</div>
 						{ isPickerMode ? (
 							<PickerCheckbox
 								collectionKey = { collection.key }
