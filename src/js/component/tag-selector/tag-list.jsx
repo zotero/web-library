@@ -101,6 +101,7 @@ const TagList = props => {
 				onFocus={ onFocus }
 				ref={ tagContainerRefCb }
 				tabIndex={ 0 }
+				aria-label="tag selector"
 			>
 				<ul
 					ref={ listRef }
@@ -114,12 +115,13 @@ const TagList = props => {
 								colored: tag.color,
 								placeholder: tag.isPlaceholder
 							}) }
-							key={ tag.tag }
 							data-tag={ tag.tag }
+							key={ tag.tag }
 							onClick={ handleClick }
 							onKeyDown={ handleKeyDown }
-							tabIndex={ tag.disabled ? null : -2 }
+							role="button"
 							style={ tag.color && { color: tag.color} }
+							tabIndex={ tag.disabled ? null : -2 }
 						>
 							<span className="tag-label">{ tag.tag }</span>
 						</li>

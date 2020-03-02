@@ -2,7 +2,7 @@
 
 import cx from 'classnames';
 import PropTypes from 'prop-types';
-import React, { useCallback } from 'react';
+import React, { useCallback, useRef } from 'react';
 import { UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap/lib';
 import { useDispatch, useSelector } from 'react-redux';
 import { useDebounce } from "use-debounce";
@@ -14,7 +14,7 @@ import TagList from './tag-selector/tag-list';
 import withFocusManager from '../enhancers/with-focus-manager';
 import { filterTags, navigate, toggleTagSelector } from '../actions';
 import { useTags } from '../hooks';
-
+import { getUniqueId } from '../utils';
 
 const TagSelector = props => {
 	const { onBlur, onFocus, onFocusNext, onFocusPrev, registerFocusRoot } = props; //FocusManager
@@ -22,6 +22,7 @@ const TagSelector = props => {
 	const { tagsSearchString, tags: selectedTags, isTagSelectorOpen } = useSelector(state => state.current);
 	const dispatch = useDispatch();
 	const [isBusy] = useDebounce(isFetching, 100);
+	const id = useRef(getUniqueId('tag-selector-'));
 
 	const handleKeyDown = useCallback(ev => {
 		if(ev.target !== ev.currentTarget) {
@@ -48,8 +49,14 @@ const TagSelector = props => {
 	});
 
 	return (
-		<div className={ cx('tag-selector', { 'collapsed': !isTagSelectorOpen }) }>
+		<div
+			id={ id.current }
+			className={ cx('tag-selector', { 'collapsed': !isTagSelectorOpen }) }
+		>
 			<Button
+				aria-controls={ id.current }
+				aria-expanded={ isTagSelectorOpen }
+				aria-label={ `${isTagSelectorOpen ? 'collapse' : 'show'} tag selector` }
 				className="tag-selector-toggle"
 				onClick={ handleCollapseClick }
 			>
