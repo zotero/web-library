@@ -159,9 +159,11 @@ const Tags = props => {
 												selectOnFocus
 												suggestions={ suggestions }
 												value={ tag.tag }
+												aria-label="tag name"
 											/>
 											{ !(tag.tag === tagRedacted && tagRedacted === '') && !isReadOnly && (
 												<Button
+													aria-label="remove tag"
 													icon
 													onClick={ handleDelete }
 												>

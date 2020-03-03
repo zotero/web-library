@@ -13,7 +13,7 @@ import withEditMode from '../../enhancers/with-edit-mode';
 import { ATTACHMENT } from '../../constants/dnd';
 import { getFileData } from '../../common/event';
 import { isTriggerEvent } from '../../common/event';
-import { openAttachment, sortByKey } from '../../utils';
+import { openAttachment, sortByKey, getUniqueId } from '../../utils';
 import { pick } from '../../common/immutable';
 import { TabPane } from '../ui/tabs';
 import { Toolbar, ToolGroup } from '../ui/toolbars';
@@ -55,21 +55,25 @@ const AttachmentDownloadIcon = props => {
 	return (
 		attachment.linkMode.startsWith('imported') && attachment[Symbol.for('links')].enclosure && !isUploading ? (
 			<a
+				aria-label="download attachment"
 				className="btn btn-icon"
 				onClick={ handleLinkInteraction }
-				onMouseDown={ handleLinkInteraction }
 				onKeyDown={ handleLinkInteraction }
+				onMouseDown={ handleLinkInteraction }
+				role="button"
 				tabIndex={ -3 }
 			>
 				<Icon type={ `${iconSize}/open-link` } width={ iconSize } height={ iconSize } />
 			</a>
 		) : attachment.linkMode === 'linked_url' ? (
 			<a
-				href={ attachment.url }
+				aria-label="download attachment"
 				className="btn btn-icon"
+				href={ attachment.url }
 				rel="nofollow noopener noreferrer"
-				target="_blank"
+				role="button"
 				tabIndex={ -3 }
+				target="_blank"
 			>
 				<Icon type={ `${iconSize}/open-link` } width={ iconSize } height={ iconSize } />
 			</a>
@@ -103,6 +107,7 @@ const Attachment = forwardRef((props, ref) => {
 			}
 		}
 	});
+	const id = useRef(getUniqueId('attachment-'));
 	const iconSize = device.isTouchOrSmall ? '28' : '16';
 	const isSelected = attachmentKey === attachment.key;
 	const isFile = attachment.linkMode.startsWith('imported') &&
@@ -137,20 +142,24 @@ const Attachment = forwardRef((props, ref) => {
 
 	return (
 		<li
+			aria-labelledby={ id.current }
 			className={ cx('attachment', { 'selected': isSelected, 'no-link': !hasLink }) }
 			data-key={ attachment.key }
-			ref={ ref }
-			onKeyDown={ handleKeyDown }
+			onBlur={ handleBlur }
 			onClick={ handleAttachmentSelect }
 			onFocus={ handleFocus }
-			onBlur={ handleBlur }
+			onKeyDown={ handleKeyDown }
+			ref={ ref }
+			role="listitem"
 			tabIndex={ -2 }
 		>
 			{ (device.isTouchOrSmall && !isReadOnly) && (
-				<Button
+			<Button
+					aria-label="delete attachment"
 					className="btn-circle btn-primary"
 					onClick={ handleDelete }
 					tabIndex={ -1 }
+
 				>
 					<Icon type="16/minus-strong" width="16" height="16" />
 				</Button>
@@ -161,7 +170,7 @@ const Attachment = forwardRef((props, ref) => {
 				device={ device }
 				isActive={ isFocused && isSelected }
 			/>
-			<div className="truncate">
+			<div className="truncate" id={ id.current }>
 				{ attachment.title ||
 					(attachment.linkMode === 'linked_url' ? attachment.url : attachment.filename)
 				}
@@ -176,6 +185,7 @@ const Attachment = forwardRef((props, ref) => {
 
 			{ (!device.isTouchOrSmall && !isReadOnly) && (
 				<Button
+					aria-label="delete attachment"
 					icon
 					onClick={ handleDelete }
 					tabIndex={ -3 }
@@ -358,11 +368,13 @@ const Attachments = props => {
 				</Toolbar>
 			) }
 			<div
+				aria-label="attachments list"
 				className="scroll-container-mouse"
 				onBlur={ handleBlur }
 				onFocus={ handleFocus }
-				tabIndex={ 0 }
 				ref={ scrollContainerRef }
+				role="list"
+				tabIndex={ 0 }
 			>
 				{ attachments.length > 0 && (
 					<nav>
