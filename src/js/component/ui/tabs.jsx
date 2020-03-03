@@ -41,8 +41,9 @@ const Tab = props => {
 			<a href=""
 				{ ... pick(rest, p => p.startsWith('data-')) }
 				onClick={ handleClick }
-				tabIndex={ -2 }
 				onKeyDown={ handleKeyDown }
+				role="tab"
+				tabIndex={ -2 }
 			>
 				{ children }
 			</a>
@@ -75,10 +76,11 @@ const Tabs = withFocusManager(({ children, justified, compact, onFocus, onBlur,
 	<nav>
 		<ul
 			className={ cx('nav', 'tabs', { justified, compact }) }
-			onFocus={ onFocus }
 			onBlur={ onBlur }
-			tabIndex={ 0 }
+			onFocus={ onFocus }
 			ref={ ref => registerFocusRoot(ref) }
+			role="tablist"
+			tabIndex={ 0 }
 		>
 			{
 				mapChildren(children, child =>
