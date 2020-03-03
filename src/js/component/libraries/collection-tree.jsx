@@ -91,10 +91,6 @@ const ItemsNode = withDevice(props => {
 		selectNode, shouldBeTabbable, ...rest } = props;
 	const id = useRef(getUniqueId());
 
-	if(isPickerMode || !device.isTouchOrSmall) {
-		return null;
-	}
-
 	const isSelected = !device.isSingleColumn && !['trash', 'publications', 'query'].includes(itemsSource) && (
 		parentCollectionKey === selectedCollectionKey || (!parentCollectionKey && !selectedCollectionKey)
 	);
@@ -105,6 +101,10 @@ const ItemsNode = withDevice(props => {
 			collection: parentCollectionKey
 		});
 	}, []);
+
+	if(isPickerMode || !device.isTouchOrSmall) {
+		return null;
+	}
 
 	return (
 		<Node
