@@ -6,7 +6,7 @@ const isModifierKey = ev => ev.getModifierState("Meta") || ev.getModifierState("
 
 //@TODO: rename functions from handleABC to focusABC, e.g. handleNext should be FocusNext,
 
-const useFocusManager = (ref, { overrideFocusRef = null, initialFocusPickerRef = {}, isCarousel = true } = {}) => {
+const useFocusManager = (ref, { overrideFocusRef = null, initialFocusPickerRef = {}, isCarousel = true, isDrillDownCarousel = false } = {}) => {
 	const [isFocused, setIsFocused] = useState(false);
 	const lastFocused = useRef(null);
 	const originalTabIndex = useRef(null);
@@ -65,7 +65,11 @@ const useFocusManager = (ref, { overrideFocusRef = null, initialFocusPickerRef =
 		if(nextIndex < drillables.length) {
 			drillables[nextIndex].focus();
 		} else {
-			drillables[drillables.length - 1].focus();
+			if(isDrillDownCarousel) {
+				drillables[0].focus();
+			} else {
+				drillables[drillables.length - 1].focus();
+			}
 		}
 	});
 
@@ -77,7 +81,11 @@ const useFocusManager = (ref, { overrideFocusRef = null, initialFocusPickerRef =
 		if(prevIndex >= 0) {
 			drillables[prevIndex].focus();
 		} else {
-			drillables[0].focus();
+			if(isDrillDownCarousel) {
+				drillables[drillables.length - 1].focus();
+			} else {
+				ev.currentTarget.focus();
+			}
 		}
 	});
 

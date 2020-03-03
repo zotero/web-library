@@ -96,7 +96,7 @@ const Table = memo(() => {
 	}, [focusOnSelected]);
 
 	const { handleFocus, handleBlur, handleBySelector, handleDrillDownNext, handleDrillDownPrev } = useFocusManager(tableRef,
-		{ isCarousel: false, initialFocusPickerRef }
+		{ isCarousel: false, isDrillDownCarousel: true, initialFocusPickerRef }
 	);
 
 	const dispatch = useDispatch();
