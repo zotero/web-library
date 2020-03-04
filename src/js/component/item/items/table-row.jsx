@@ -281,7 +281,7 @@ const TableRow = memo(props => {
 	return drag(drop(
 		<div
 			aria-selected={ isActive }
-			aria-rowindex={ index }
+			aria-rowindex={ index + 1 }
 			ref={ ref }
 			className={ className }
 			style={ style }

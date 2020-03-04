@@ -76,7 +76,7 @@ const Table = memo(() => {
 				if(selectedItemKeys && keys && selectedItemKeys.length === 0 && keys.length > 0) {
 					// auto-select first key
 					dispatch(navigate({ items: [keys[0]] }));
-					const cursorEl = tableRef.current.querySelector(`[aria-rowindex="0"]`);
+					const cursorEl = tableRef.current.querySelector(`[data-index="0"]`);
 					if(cursorEl) {
 						return cursorEl;
 					}
