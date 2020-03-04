@@ -65,6 +65,7 @@ const ColumnSelector = props => {
 			className="column-selector"
 		>
 			<DropdownToggle
+				aria-label="column selector"
 				className="btn-icon dropdown-toggle"
 				color={ null }
 				onKeyDown={ handleKeyDown }
