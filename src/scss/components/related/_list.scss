@@ -4,4 +4,8 @@
 
 .related-list {
 	margin-top: $space-xs;
+
+	li a {
+		color: inherit;
+	}
 }
