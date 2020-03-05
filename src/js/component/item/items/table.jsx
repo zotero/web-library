@@ -323,7 +323,7 @@ const Table = memo(() => {
 		if(cursorIndex === -1) {
 			handleBySelector(ev, '.items-table-head');
 		} else {
-			handleBySelector(ev, `[aria-rowindex="${cursorIndex}"]`);
+			handleBySelector(ev, `[data-index="${cursorIndex}"]`);
 		}
 	});
 
