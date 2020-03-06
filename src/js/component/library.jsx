@@ -37,6 +37,7 @@ import withDevice from '../enhancers/with-device';
 import { getSerializedQuery } from '../common/state';
 import { pick } from '../common/immutable';
 import ZoteroConnectorNotifier from './zotero-connector-notifier';
+import TitleUpdater from './title-updater';
 
 
 const Library = props => {
@@ -203,6 +204,7 @@ const Library = props => {
 			</div>
 			</DndProvider>
 			<ZoteroConnectorNotifier />
+			<TitleUpdater />
 		</React.Fragment>
 	);
 }
