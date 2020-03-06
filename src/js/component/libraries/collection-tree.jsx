@@ -270,13 +270,14 @@ const DotMenu = withDevice(props => {
 		dispatch(toggleModal( MOVE_COLLECTION, true, { collectionKey: collection.key, libraryKey: parentLibraryKey } ));
 	});
 
-	const handleExportClick = useCallback(() => {
-		dispatch(toggleModal(EXPORT, true, { collectionKey: collection.key, libraryKey: parentLibraryKey } ));
-	});
+	// disabled, because of 100 items limit https://github.com/zotero/web-library/issues/367
+	// const handleExportClick = useCallback(() => {
+	// 	dispatch(toggleModal(EXPORT, true, { collectionKey: collection.key, libraryKey: parentLibraryKey } ));
+	// });
 
-	const handleBibliographyClick = useCallback(() => {
-		dispatch(toggleModal(BIBLIOGRAPHY, true, { collectionKey: collection.key, libraryKey: parentLibraryKey } ));
-	});
+	// const handleBibliographyClick = useCallback(() => {
+	// 	dispatch(toggleModal(BIBLIOGRAPHY, true, { collectionKey: collection.key, libraryKey: parentLibraryKey } ));
+	// });
 
 	return (
 		<Dropdown
@@ -319,16 +320,9 @@ const DotMenu = withDevice(props => {
 								Move Collection
 							</DropdownItem>
 						)}
-						<DropdownItem divider />
 						</React.Fragment>
 					)
 				}
-				<DropdownItem onClick={ handleExportClick }>
-					Export Collection
-				</DropdownItem>
-				<DropdownItem onClick={ handleBibliographyClick }>
-					Create Bibliography
-				</DropdownItem>
 			</DropdownMenu>
 		</Dropdown>
 	);
