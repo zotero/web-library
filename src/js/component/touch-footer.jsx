@@ -64,7 +64,7 @@ class TouchFooter extends React.PureComponent {
 								<Icon type={ '24/cite' } width="24" height="24" />
 							</Button>
 							*/}
-							<Button icon onClick={ onBibliographyModalOpen } disabled={ itemKeys.length === 0 || itemKeys.length > 150 }>
+							<Button icon onClick={ onBibliographyModalOpen } disabled={ itemKeys.length === 0 || itemKeys.length > 100 }>
 								<Icon type={ '24/bibliography' } width="24" height="24" />
 							</Button>
 						</ToolGroup>
