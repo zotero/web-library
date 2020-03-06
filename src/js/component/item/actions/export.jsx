@@ -50,14 +50,13 @@ class ExportActions extends React.PureComponent {
 	render() {
 		return (
 			<Dropdown
-				className="new-item-selector"
 				isOpen={ this.state.isOpen }
 				toggle={ this.handleToggleDropdown.bind(this) }
 			>
 				<DropdownToggle
 					className="btn-icon dropdown-toggle"
 					color={ null }
-					disabled={ this.props.itemKeys.length == 0 }
+					disabled={ this.props.itemKeys.length === 0 || this.props.itemKeys.length > 100 }
 					onKeyDown={ this.handleKeyDown }
 					tabIndex={ this.props.tabIndex }
 					title="Export"

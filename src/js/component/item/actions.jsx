@@ -212,7 +212,7 @@ class ItemsActions extends React.PureComponent {
 					</Button>
 					*/}
 					<Button
-						disabled={ itemKeys.length === 0 }
+						disabled={ itemKeys.length === 0 || itemKeys.length > 150 }
 						icon
 						onClick={ onBibliographyModalOpen }
 						onKeyDown={ this.handleKeyDown }

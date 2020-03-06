@@ -56,7 +56,7 @@ class TouchFooter extends React.PureComponent {
 									)}
 								</React.Fragment>
 							) }
-							<Button icon onClick={ onExportModalOpen } disabled={ itemKeys.length === 0 }>
+							<Button icon onClick={ onExportModalOpen } disabled={ itemKeys.length === 0 || itemKeys.length > 100 }>
 								<Icon type={ '24/export' } width="24" height="24" />
 							</Button>
 							{/*
@@ -64,7 +64,7 @@ class TouchFooter extends React.PureComponent {
 								<Icon type={ '24/cite' } width="24" height="24" />
 							</Button>
 							*/}
-							<Button icon onClick={ onBibliographyModalOpen } disabled={ itemKeys.length === 0 }>
+							<Button icon onClick={ onBibliographyModalOpen } disabled={ itemKeys.length === 0 || itemKeys.length > 150 }>
 								<Icon type={ '24/bibliography' } width="24" height="24" />
 							</Button>
 						</ToolGroup>
