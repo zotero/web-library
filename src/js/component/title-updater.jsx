@@ -38,7 +38,7 @@ const TitleUpdater = () => {
 		}
 
 		if(item) {
-			title.push(item.title);
+			title.push((item[Symbol.for('derived')] || {}).title);
 		} else if(selectedItemsKeys.length > 0) {
 			title.push(`${selectedItemsKeys.length} items selected`);
 		}
