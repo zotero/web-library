@@ -20,7 +20,7 @@ const selectItem = (itemKey, selectedItemKeys, isSelectMode, dispatch) => {
 
 const ListRow = memo(props => {
 	const { data, index, style } = props;
-	const { handleFocus, handleBlur, keys } = data;
+	const { keys } = data;
 	const itemKey = keys && keys[index] ? keys[index] : null;
 	const dispatch = useDispatch();
 	const itemData = useSelector(
@@ -69,8 +69,6 @@ const ListRow = memo(props => {
 			className={ className }
 			style={ style }
 			onClick={ handleClick }
-			onFocus={ handleFocus }
-			onBlur={ handleBlur }
 			onKeyDown={ handleKeyDown }
 			tabIndex={ shouldBeTabbable ? 0 : null }
 			role={ isSelectMode ? "checkbox" : null }

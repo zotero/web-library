@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { memo, useCallback, useEffect, useMemo, useRef } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import PropTypes from 'prop-types';
 import cx from 'classnames';
@@ -18,7 +18,6 @@ const ItemsList = memo(props => {
 	const { isSearchModeTransitioning } = props;
 	const loader = useRef(null);
 	const listRef = useRef(null);
-	const [focusedRow, setFocusedRow] = useState(null);
 	const dispatch = useDispatch();
 	const { hasChecked, isFetching, keys, requests, totalResults } = useSourceData();
 	const isSearchMode = useSelector(state => state.current.isSearchMode);
@@ -41,10 +40,6 @@ const ItemsList = memo(props => {
 
 	const selectedItemKeys = useSelector(state => state.current.itemKeys, shallowEqual);
 
-	const isLastItemFocused = totalResults && focusedRow === totalResults - 1;
-	const isLastItemSelected = totalResults && keys && keys[totalResults - 1] &&
-		selectedItemKeys.includes(keys[totalResults - 1]);
-
 	const handleIsItemLoaded = useCallback(index => {
 		if(keys && !!keys[index]) {
 			return true; // loaded
@@ -54,14 +49,6 @@ const ItemsList = memo(props => {
 
 	const handleLoadMore = useCallback((startIndex, stopIndex) => {
 		dispatch(fetchSource(startIndex, stopIndex))
-	});
-
-	const handleFocus = useCallback(ev => {
-		const index = parseInt(ev.currentTarget.dataset.index, 10);
-		setFocusedRow(index);
-	});
-	const handleBlur = useCallback(() => {
-		setFocusedRow(null);
 	});
 
 	useEffect(() => {
@@ -99,12 +86,10 @@ const ItemsList = memo(props => {
 						<List
 							className={ cx('items-list', {
 								'editing': isSelectMode,
-								'last-item-focus': isLastItemFocused,
-								'last-item-active': isLastItemSelected,
 							}) }
 							height={ height }
 							itemCount={ hasChecked && !isSearchModeHack ? totalResults : 0 }
-							itemData={ { handleFocus, handleBlur, keys } }
+							itemData={ { keys } }
 							itemSize={ ROWHEIGHT }
 							onItemsRendered={ onItemsRendered }
 							ref={ r => { ref(r); listRef.current = r; } }
