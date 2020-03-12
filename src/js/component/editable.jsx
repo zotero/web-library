@@ -55,10 +55,10 @@ class Editable extends React.PureComponent {
 	}
 
 	render() {
-		const { isDisabled } = this.props;
+		const { isDisabled, tabIndex } = this.props;
 		return (
 			<div
-				tabIndex={ isDisabled ? null : this.isActive ? null : 0 }
+				tabIndex={ isDisabled ? null : this.isActive ? null : tabIndex }
 				onClick={ event => this.props.onClick(event) }
 				onFocus={ event => this.props.onFocus(event) }
 				className={ cx(this.className, { 'disabled': isDisabled }) }
@@ -71,9 +71,11 @@ class Editable extends React.PureComponent {
 		inputComponent: Input,
 		onClick: noop,
 		onFocus: noop,
+		tabIndex: 0,
 	};
 
 	static propTypes = {
+		tabIndex: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
 		children: PropTypes.oneOfType([PropTypes.element, PropTypes.array]),
 		input: PropTypes.element,
 		inputComponent: PropTypes.func,

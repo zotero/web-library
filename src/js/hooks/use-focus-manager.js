@@ -90,7 +90,8 @@ const useFocusManager = (ref, { overrideFocusRef = null, initialFocusPickerRef =
 	});
 
 	const handleBySelector = useCallback((ev, selector) => {
-		const nextEl = ev.currentTarget.querySelector(selector);
+		const nextEl = ref.current.querySelector(selector);
+
 		if(nextEl) {
 			nextEl.focus();
 			lastFocused.current = nextEl;

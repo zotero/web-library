@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React, { useRef, useState } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
 import Button from '../ui/button';
@@ -13,6 +13,8 @@ import { pick } from '../../common/immutable';
 import { TabPane } from '../ui/tabs';
 import { Toolbar, ToolGroup } from '../ui/toolbars';
 import { pluralize } from '../../common/format';
+import { useFocusManager } from '../../hooks';
+import { isTriggerEvent } from '../../common/event';
 
 var nextId = 0;
 
@@ -23,6 +25,9 @@ const Tags = props => {
 	const [suggestions, setSuggestions] = useState([]);
 	const dispatch = useDispatch();
 	const requestId = useRef(1);
+	const scrollContainerRef = useRef(null);
+	const { handleBlur, handleDrillDownPrev, handleDrillDownNext, handleFocus, handleNext,
+		handlePrevious, handleBySelector } = useFocusManager(scrollContainerRef, { isCarousel: false });
 
 
 	const handleCommit = async (newTagValue, hasChanged, ev) => {
@@ -102,13 +107,37 @@ const Tags = props => {
 		}
 	}
 
+	const handleKeyDown = useCallback(ev => {
+		if(ev.key === "ArrowLeft") {
+			handleDrillDownPrev(ev);
+		} else if(ev.key === "ArrowRight") {
+			handleDrillDownNext(ev);
+		} else if(ev.key === 'ArrowDown') {
+			ev.target === ev.currentTarget && handleNext(ev);
+		} else if(ev.key === 'ArrowUp') {
+			ev.target === ev.currentTarget && handlePrevious(ev);
+		} else if(isTriggerEvent(ev)) {
+			if(ev.currentTarget === ev.target && ev.target.dataset.tag) {
+				setTagRedacted(ev.target.dataset.tag);
+			}
+		} else if(ev.key === 'Escape' && tagRedacted !== null) {
+			ev.stopPropagation();
+			ev.currentTarget.focus();
+		}
+	});
+
 	return (
 		<TabPane
 			className="tags"
 			isActive={ isActive }
 		>
 			<h5 className="h2 tab-pane-heading hidden-mouse">Tags</h5>
-			<div className="scroll-container-mouse">
+			<div
+				onBlur={ handleBlur }
+				onFocus={ handleFocus }
+				ref={ scrollContainerRef }
+				tabIndex={ 0 }
+			>
 				{ !device.isTouchOrSmall && (
 					<Toolbar>
 						<div className="toolbar-left">
@@ -118,9 +147,11 @@ const Tags = props => {
 							{ !isReadOnly && (
 							<ToolGroup>
 								<Button
+									className="btn-default add-tag"
 									disabled={ tagRedacted !== null }
-									className="btn-default"
 									onClick={ handleAddTag }
+									onKeyDown={ handleKeyDown }
+									tabIndex={ -2 }
 								>
 										Add Tag
 								</Button>
@@ -140,6 +171,8 @@ const Tags = props => {
 											data-key={ tag.id }
 											data-tag={ tag.tag }
 											key={ tag.id }
+											onKeyDown={ handleKeyDown }
+											tabIndex={ -2 }
 										>
 											<Icon
 												color={ tag.tag in tagColors ? tagColors[tag.tag] : null }
@@ -160,12 +193,14 @@ const Tags = props => {
 												suggestions={ suggestions }
 												value={ tag.tag }
 												aria-label="tag name"
+												tabIndex={ -1 }
 											/>
 											{ !(tag.tag === tagRedacted && tagRedacted === '') && !isReadOnly && (
 												<Button
 													aria-label="remove tag"
 													icon
 													onClick={ handleDelete }
+													tabIndex={ -3 }
 												>
 													<Icon type="16/minus-circle" width="16" height="16" />
 												</Button>
