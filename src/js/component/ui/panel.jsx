@@ -1,55 +1,79 @@
-'use strict';
-
 import React from 'react';
 import PropTypes from 'prop-types';
 import cx from 'classnames';
-import { pick } from '../../common/immutable';
+import { CSSTransition } from 'react-transition-group';
 
-class Panel extends React.PureComponent {
-	renderHeader(header) {
-		if(header.type === 'header') {
-			return React.cloneElement(header, {
-				className: 'panel-header'
-			});
-		} else {
-			return (
-				<header className={ cx('panel-header', this.props.headerClassName) }>
-					{ React.cloneElement(header) }
-				</header>
-			);
-		}
-	}
-	renderBody(body) {
-		return (
-			<div className={ cx('panel-body', this.props.bodyClassName) }>
-				{ body }
-			</div>
-		);
-	}
-	render() {
-		const [header, ...body] = React.Children.toArray(this.props.children);
-		const props = pick(this.props, ['onClick', 'onKeyDown']);
+const PanelHeader = props => {
+	const { className, children: header } = props;
 
+	if(header.type === 'header') {
+		return React.cloneElement(header, {
+			className: cx('panel-header', className)
+		});
+	} else {
 		return (
-			<section { ...props } className={ `panel ${this.props.className}` }>
-				{ this.renderHeader(header) }
-				{ this.renderBody(body) }
-				<div className="panel-backdrop" />
-			</section>
+			<header className={ cx('panel-header', className) }>
+				{ React.cloneElement(header) }
+			</header>
 		);
 	}
 }
 
+const PanelBody = props => {
+	const { className, children: body } = props;
+	return (
+		<div className={ cx('panel-body', className) }>
+			{ body }
+		</div>
+	);
+}
+
+const Panel = props => {
+	const [header, ...body] = props.children;
+	const { bodyClassName, className, isBackdrop, headerClassName, onClick, onKeyDown } = props;
+
+	return (
+		<section
+			className={ `panel ${className}` }
+			onClick={ onClick }
+			onKeyDown={ onKeyDown }
+		>
+			<PanelHeader className={ headerClassName }>{ header }</PanelHeader>
+			<PanelBody className={ bodyClassName} >{ body }</PanelBody>
+			<CSSTransition
+				in={ isBackdrop }
+				timeout={ 250 }
+				classNames="nav-fade"
+			>
+				<div className="panel-backdrop" />
+			</CSSTransition>
+		</section>
+	);
+}
+
 Panel.propTypes = {
+	bodyClassName: PropTypes.string,
 	children: PropTypes.node,
 	className: PropTypes.string,
-	bodyClassName: PropTypes.string,
 	headerClassName: PropTypes.string,
+	isBackdrop: PropTypes.bool,
+	onClick: PropTypes.func,
+	onKeyDown: PropTypes.func,
 };
 
 Panel.defaultProps = {
 	children: null,
 	className: ''
 };
+
+PanelBody.propTypes = {
+	children: PropTypes.node,
+	className: PropTypes.string,
+}
+
+PanelHeader.propTypes = {
+	children: PropTypes.node,
+	className: PropTypes.string,
+}
 
 export default Panel;
