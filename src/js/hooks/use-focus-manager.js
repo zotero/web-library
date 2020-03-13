@@ -15,6 +15,9 @@ const useFocusManager = (ref, { overrideFocusRef = null, initialFocusPickerRef =
 		const tabbables = Array.from(
 			ref.current.querySelectorAll('[tabIndex="-2"]:not([disabled]):not(.offscreen)')
 		).filter(t => t.offsetParent);
+		if(tabbables.length === 0) {
+			return;
+		}
 		const target = useCurrentTarget ? ev.currentTarget : ev.target;
 		const nextIndex = tabbables.findIndex(t => t === target) + offset;
 		if(isModifierKey(ev)) {
@@ -38,6 +41,9 @@ const useFocusManager = (ref, { overrideFocusRef = null, initialFocusPickerRef =
 		const tabbables = Array.from(
 			ref.current.querySelectorAll('[tabIndex="-2"]:not([disabled]):not(.offscreen)')
 		).filter(t => t.offsetParent);
+		if(tabbables.length === 0) {
+			return;
+		}
 		const target = useCurrentTarget ? ev.currentTarget : ev.target;
 		const prevIndex = tabbables.findIndex(t => t === target) - offset;
 		if(isModifierKey(ev)) {
@@ -61,6 +67,9 @@ const useFocusManager = (ref, { overrideFocusRef = null, initialFocusPickerRef =
 		const drillables = Array.from(
 			ev.currentTarget.querySelectorAll('[tabIndex="-3"]:not([disabled])')
 		).filter(t => t.offsetParent);
+		if(drillables.length === 0 ) {
+			return;
+		}
 		const nextIndex = drillables.findIndex(t => t === ev.target) + offset;
 		if(nextIndex < drillables.length) {
 			drillables[nextIndex].focus();
@@ -77,6 +86,9 @@ const useFocusManager = (ref, { overrideFocusRef = null, initialFocusPickerRef =
 		const drillables = Array.from(
 			ev.currentTarget.querySelectorAll('[tabIndex="-3"]:not([disabled])')
 		).filter(t => t.offsetParent);
+		if(drillables.length === 0 ) {
+			return;
+		}
 		const prevIndex = drillables.findIndex(t => t === ev.target) - offset;
 		if(prevIndex >= 0) {
 			drillables[prevIndex].focus();
