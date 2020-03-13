@@ -3,16 +3,17 @@
 // --------------------------------------------------
 
 .tab-pane.tags {
+
+	.toolbar {
+		position: sticky;
+		top: 0;
+		height: $toolbar-height-touch;
+		background-color: $panel-bg;
+	}
+
 	.scroll-container-mouse {
 		display: flex;
 		flex-direction: column;
-
-		.toolbar {
-			position: sticky;
-			top: 0;
-			height: $toolbar-height-touch;
-			background-color: $panel-bg;
-		}
 
 		.counter {
 			margin-right: $space-xs;

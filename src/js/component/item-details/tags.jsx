@@ -25,9 +25,10 @@ const Tags = props => {
 	const [suggestions, setSuggestions] = useState([]);
 	const dispatch = useDispatch();
 	const requestId = useRef(1);
+	const addTagRef = useRef(null);
 	const scrollContainerRef = useRef(null);
 	const { handleBlur, handleDrillDownPrev, handleDrillDownNext, handleFocus, handleNext,
-		handlePrevious, handleBySelector } = useFocusManager(scrollContainerRef, { isCarousel: false });
+		handlePrevious, handleBySelector, focusOnLast, resetLastFocused } = useFocusManager(scrollContainerRef, { isCarousel: false });
 
 
 	const handleCommit = async (newTagValue, hasChanged, ev) => {
@@ -60,17 +61,25 @@ const Tags = props => {
 		setTags(updatedTags);
 	}
 
-	const handleCancel = () => {
+	const handleCancel = (_, ev) => {
 		setTagRedacted(null);
 		setSuggestions([]);
 		requestId.current += 1;
 		setTags(tags.filter(t => t.tag !== ''));
+
+		ev.stopPropagation();
+
+		if(tagRedacted === '') {
+			setTimeout(() => { addTagRef.current.focus(); });
+		} else {
+			setTimeout(() => { focusOnLast(); });
+		}
 	}
 
 	const handleEdit = ev => {
-		if(ev.target !== ev.currentTarget) {
-			return;
-		}
+		// if(ev.target !== ev.currentTarget) {
+		// 	return;
+		// }
 		if(isReadOnly) {
 			return;
 		}
@@ -85,7 +94,7 @@ const Tags = props => {
 		updateItem(itemKey, { tags: updatedTags.map(t => pick(t, ['tag'])) });
 	}
 
-	const handleAddTag = () => {
+	const handleAddTag = ev => {
 		setTags([...tags.filter(t => t.tag !== ''), { tag: '', id: ++nextId }]);
 		setTagRedacted('');
 	}
@@ -108,6 +117,9 @@ const Tags = props => {
 	}
 
 	const handleKeyDown = useCallback(ev => {
+		if(ev.target.nodeName === 'INPUT') {
+			return;
+		}
 		if(ev.key === "ArrowLeft") {
 			handleDrillDownPrev(ev);
 		} else if(ev.key === "ArrowRight") {
@@ -115,20 +127,33 @@ const Tags = props => {
 		} else if(ev.key === 'ArrowDown') {
 			ev.target === ev.currentTarget && handleNext(ev);
 		} else if(ev.key === 'ArrowUp') {
-			ev.target === ev.currentTarget && handlePrevious(ev);
+			ev.target === ev.currentTarget && handlePrevious(ev, { targetEnd: addTagRef.current });
 		} else if(isTriggerEvent(ev)) {
-			if(ev.currentTarget === ev.target && ev.target.dataset.tag) {
+			const isAddButton = ev.currentTarget === addTagRef.current;
+			if(!isAddButton && ev.currentTarget === ev.target && ev.target.dataset.tag) {
 				setTagRedacted(ev.target.dataset.tag);
 			}
-		} else if(ev.key === 'Escape' && tagRedacted !== null) {
-			ev.stopPropagation();
-
-			if(tagRedacted === '') {
-				setTimeout(() => { handleBySelector(null, '.add-tag'); });
-			} else {
-				ev.currentTarget.focus();
+		} else if(ev.key === 'Home') {
+			resetLastFocused();
+			addTagRef.current.focus();
+			ev.preventDefault();
+		} else if(ev.key === 'End') {
+			handleBySelector('.tag:last-child');
+			ev.preventDefault();
+		} else if(ev.key === 'Tab') {
+			const isAddButton = ev.currentTarget === addTagRef.current;
+			const isShift = ev.getModifierState('Shift');
+			if(isAddButton && !isShift) {
+				ev.target === ev.currentTarget && handleNext(ev);
 			}
 		}
+	});
+
+	const handleFocusOnContainer = useCallback(ev => {
+		if(ev.target.nodeName === 'INPUT') {
+			return;
+		}
+		handleFocus(ev);
 	});
 
 	return (
@@ -137,13 +162,7 @@ const Tags = props => {
 			isActive={ isActive }
 		>
 			<h5 className="h2 tab-pane-heading hidden-mouse">Tags</h5>
-			<div
-				onBlur={ handleBlur }
-				onFocus={ handleFocus }
-				ref={ scrollContainerRef }
-				tabIndex={ 0 }
-			>
-				{ !device.isTouchOrSmall && (
+			{ !device.isTouchOrSmall && (
 					<Toolbar>
 						<div className="toolbar-left">
 							<div className="counter">
@@ -156,7 +175,8 @@ const Tags = props => {
 									disabled={ tagRedacted !== null }
 									onClick={ handleAddTag }
 									onKeyDown={ handleKeyDown }
-									tabIndex={ -2 }
+									ref={ addTagRef }
+									tabIndex={ 0 }
 								>
 										Add Tag
 								</Button>
@@ -165,6 +185,13 @@ const Tags = props => {
 						</div>
 					</Toolbar>
 				) }
+			<div
+				className="scroll-container-mouse"
+				onBlur={ handleBlur }
+				onFocus={ handleFocusOnContainer }
+				ref={ scrollContainerRef }
+				tabIndex={ 0 }
+			>
 				{ tags.length > 0 && (
 					<nav>
 						<ul className="details-list tag-list">
@@ -193,7 +220,6 @@ const Tags = props => {
 												onChange={ handleChange }
 												onClick={ handleEdit }
 												onCommit={ handleCommit }
-												onFocus={ handleEdit }
 												selectOnFocus
 												suggestions={ suggestions }
 												value={ tag.tag }

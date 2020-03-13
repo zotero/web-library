@@ -101,14 +101,24 @@ const useFocusManager = (ref, { overrideFocusRef = null, initialFocusPickerRef =
 		}
 	});
 
-	const handleBySelector = useCallback((ev, selector) => {
+	const handleBySelector = useCallback(selector => {
 		const nextEl = ref.current.querySelector(selector);
 
 		if(nextEl) {
-			nextEl.focus();
 			lastFocused.current = nextEl;
+			nextEl.focus();
 		}
 	});
+
+	const focusOnLast  = useCallback(() => {
+		if(lastFocused.current) {
+			lastFocused.current.focus();
+		}
+	});
+
+	const resetLastFocused = useCallback(() => {
+		lastFocused.current = null;
+	})
 
 	const handleFocus = useCallback((ev, isBounced = false) => {
 		if(isFocused) {
@@ -186,7 +196,7 @@ const useFocusManager = (ref, { overrideFocusRef = null, initialFocusPickerRef =
 	}, [overrideFocusRef && overrideFocusRef.current])
 
 	return { handleNext, handlePrevious, handleDrillDownNext, handleDrillDownPrev, handleFocus,
-		handleBlur, handleBySelector, registerAutoFocus };
+		handleBlur, handleBySelector, focusOnLast, registerAutoFocus, resetLastFocused };
 };
 
 export { useFocusManager };

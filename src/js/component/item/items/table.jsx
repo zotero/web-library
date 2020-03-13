@@ -321,9 +321,9 @@ const Table = memo(() => {
 
 		dispatch(navigate({ items: nextKeys }));
 		if(cursorIndex === -1) {
-			handleBySelector(ev, '.items-table-head');
+			handleBySelector('.items-table-head');
 		} else {
-			handleBySelector(ev, `[data-index="${cursorIndex}"]`);
+			handleBySelector(`[data-index="${cursorIndex}"]`);
 		}
 	});
 
