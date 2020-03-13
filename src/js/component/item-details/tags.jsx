@@ -122,7 +122,12 @@ const Tags = props => {
 			}
 		} else if(ev.key === 'Escape' && tagRedacted !== null) {
 			ev.stopPropagation();
-			ev.currentTarget.focus();
+
+			if(tagRedacted === '') {
+				setTimeout(() => { handleBySelector(null, '.add-tag'); });
+			} else {
+				ev.currentTarget.focus();
+			}
 		}
 	});
 
