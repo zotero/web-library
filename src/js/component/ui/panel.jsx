@@ -42,8 +42,10 @@ const Panel = props => {
 			<PanelBody className={ bodyClassName} >{ body }</PanelBody>
 			<CSSTransition
 				in={ isBackdrop }
-				timeout={ 250 }
+				timeout={ 500 }
 				classNames="nav-fade"
+				mountOnEnter
+				unmountOnExit
 			>
 				<div className="panel-backdrop" />
 			</CSSTransition>

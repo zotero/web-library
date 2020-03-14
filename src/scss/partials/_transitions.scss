@@ -24,6 +24,28 @@
 	}
 }
 
+.nav-fade {
+	will-change: opacity;
+
+	&-enter {
+		opacity: 0;
+
+		&-active {
+			opacity: 1;
+			transition: opacity $nav-fade-transition;
+		}
+	}
+
+	&-exit {
+		opacity: 1;
+
+		&-active {
+			opacity: 0;
+			transition: opacity $nav-fade-transition;
+		}
+	}
+}
+
 .slide-up {
 	will-change: transform;
 
