@@ -45,6 +45,10 @@
 			padding: ($space-md - 5px) $default-padding-x;
 			position: relative;
 
+			&:focus {
+				outline: none;
+			}
+
 			&:last-child {
 				padding-bottom: $space-md - 4px;
 			}
@@ -101,10 +105,10 @@
 				position: absolute;
 				top: 9px;
 				right: $default-padding-x - $space-min - $input-border-width;
-				visibility: hidden;
+				opacity: 0.01;
 
-				@include state(".note:hover", ".dropdown.show") {
-					visibility: visible;
+				@include state(".note:hover", ".dropdown.show", '.note.selected', ".note:focus") {
+					opacity: 1;
 				}
 
 				@include state(".note.selected + .note") {

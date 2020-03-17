@@ -4,8 +4,8 @@ import DropdownItem from 'reactstrap/lib/DropdownItem';
 import DropdownMenu from 'reactstrap/lib/DropdownMenu';
 import DropdownToggle from 'reactstrap/lib/DropdownToggle';
 import PropTypes from 'prop-types';
-import React, { useCallback, useEffect, useMemo, useState, useRef } from 'react';
-import { useSelector } from 'react-redux';
+import React, { forwardRef, useCallback, useEffect, useMemo, useState, useRef } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 import Button from '../ui/button';
 import Icon from '../ui/icon';
@@ -19,12 +19,15 @@ import { noteAsTitle, pluralize } from '../../common/format';
 import { sortByKey, stopPropagation } from '../../utils';
 import { TabPane } from '../ui/tabs';
 import { Toolbar, ToolGroup } from '../ui/toolbars';
+import { useFocusManager } from '../../hooks';
+import { navigate } from '../../actions';
 
 const PAGE_SIZE = 100;
 
 //@TODO: convert to useDispatch hook
-const Note = props => {
-	const { device, deleteItem, isReadOnly, noteKey, onDelete, onDuplicate, onSelect } = props;
+const Note = forwardRef((props, ref) => {
+	const { device, deleteItem, isReadOnly, noteKey, onDelete, onDuplicate, onSelect, onKeyDown } = props;
+	const dispatch = useDispatch();
 	const [isDropdownOpen, setDropdownOpen] = useState(false);
 
 	const { note, isUpdating, isSelected } = useSelector(state => ({
@@ -55,13 +58,31 @@ const Note = props => {
 		ev.stopPropagation();
 	});
 
+	const handleFocus = useCallback(ev => {
+		if(ev.target !== ev.currentTarget) {
+			return;
+		}
+
+		dispatch(navigate({ noteKey: note.key }));
+	});
+
+	const handleKeyDown = useCallback(ev => {
+		if(ev.key === 'Escape' && isDropdownOpen) {
+			// Escape should not move focus back to the list in this case
+			ev.stopPropagation();
+		}
+		onKeyDown(ev);
+	});
+
 	return (
 		<li
 			className={ cx('note', { 'selected': isSelected }) }
 			onClick={ handleSelect }
-			onKeyDown={ handleSelect }
-			tabIndex={ 0 }
+			onKeyDown={ handleKeyDown }
+			tabIndex={ -2 }
 			data-key={ note.key }
+			ref={ ref }
+			onFocus={ handleFocus }
 		>
 			<Icon type={ '28/item-types/light/note'} width="28" height="28" className="hidden-mouse" />
 			<div className="multiline-truncate">
@@ -74,6 +95,7 @@ const Note = props => {
 				>
 					<DropdownToggle
 						color={ null }
+						tabIndex={ -3 }
 						onClick={ stopPropagation }
 						className={ cx('dropdown-toggle', {
 							'btn-circle btn-secondary': device.isTouchOrSmall,
@@ -101,7 +123,9 @@ const Note = props => {
 			<Icon type={ '16/chevron-13' } width="16" height="16" className="hidden-mouse" />
 		</li>
 	);
-}
+});
+
+Note.displayName = 'Note';
 
 Note.propTypes = {
 	device: PropTypes.object,
@@ -117,12 +141,17 @@ const Notes = props => {
 	const { deleteItem, device, childItems, isActive, isFetching, isFetched, updateItem, navigate,
 	fetchItemTemplate, isReadOnly, isTinymceFetched, isTinymceFetching, itemKey, moveToTrash,
 	noteKey, createItem, libraryKey, pointer, sourceFile, fetchChildItems } = props;
-
-	const [notes, setNotes] = useState([]);
-
 	const editorRef = useRef();
 	const addedNoteKey = useRef();
 	const notesEl = useRef(null);
+	const selectedNoteRef = useRef(null);
+	const addNoteRef = useRef(null);
+
+	const { handleNext, handlePrevious, handleDrillDownNext, handleDrillDownPrev, handleFocus,
+		handleBlur, handleBySelector } = useFocusManager(notesEl, { overrideFocusRef:
+		selectedNoteRef, isCarousel: false });
+
+	const [notes, setNotes] = useState([]);
 
 	const selectedNote = useMemo(
 		() => childItems.find(n => n && n.key === noteKey),
@@ -199,6 +228,43 @@ const Notes = props => {
 		navigate({ noteKey: createdItem.key });
 	});
 
+	const handleKeyDown = useCallback(ev => {
+		if(ev.key === "ArrowLeft") {
+			handleDrillDownPrev(ev);
+		} else if(ev.key === "ArrowRight") {
+			handleDrillDownNext(ev);
+		} else if(ev.key === 'ArrowDown') {
+			ev.target === ev.currentTarget && handleNext(ev);
+		} else if(ev.key === 'ArrowUp') {
+			ev.target === ev.currentTarget && handlePrevious(ev, { targetEnd: addNoteRef.current });
+		} else if(ev.key === 'Home') {
+			addNoteRef.current.focus();
+			ev.preventDefault();
+		} else if(ev.key === 'End') {
+			handleBySelector('.note:last-child');
+			ev.preventDefault();
+		} else if(ev.key === 'Tab') {
+			const isFileInput = ev.currentTarget === addNoteRef.current;
+			const isShift = ev.getModifierState('Shift');
+			if(isFileInput && !isShift) {
+				ev.target === ev.currentTarget && handleNext(ev);
+			}
+		} else if(isTriggerEvent(ev)) {
+			ev.target.click();
+			ev.preventDefault();
+		}
+	});
+
+	const handleButtonKeyDown = useCallback(ev => {
+		if(ev.key === 'ArrowDown') {
+			notesEl.current.focus();
+			ev.preventDefault();
+		} else if(ev.key === 'End') {
+			handleBySelector('.note:last-child');
+			ev.preventDefault();
+		}
+	});
+
 	return (
 		<TabPane
 			className="notes"
@@ -206,27 +272,36 @@ const Notes = props => {
 			isLoading={ device.shouldUseTabs && !isFetched }
 		>
 			<h5 className="h2 tab-pane-heading hidden-mouse">Notes</h5>
-			<div className="scroll-container-mouse" ref={ notesEl }>
-				{ !device.isTouchOrSmall && (
-					<Toolbar>
-						<div className="toolbar-left">
-							<div className="counter">
-								{ `${notes.length} ${pluralize('note', notes.length)}` }
-							</div>
-							{ !isReadOnly && (
-							<ToolGroup>
-								<Button
-									className="btn-default"
-									onClick={ handleAddNote }
-									disabled={ isReadOnly }
-								>
-									Add Note
-								</Button>
-							</ToolGroup>
-							) }
+			{ !device.isTouchOrSmall && (
+				<Toolbar>
+					<div className="toolbar-left">
+						<div className="counter">
+							{ `${notes.length} ${pluralize('note', notes.length)}` }
 						</div>
-					</Toolbar>
-				) }
+						{ !isReadOnly && (
+						<ToolGroup>
+							<Button
+								className="btn-default"
+								disabled={ isReadOnly }
+								onClick={ handleAddNote }
+								onKeyDown={ handleButtonKeyDown }
+								ref={ addNoteRef }
+								tabIndex="0"
+							>
+								Add Note
+							</Button>
+						</ToolGroup>
+						) }
+					</div>
+				</Toolbar>
+			)}
+			<div
+				className="scroll-container-mouse"
+				onBlur={ handleBlur }
+				onFocus={ handleFocus }
+				ref={ notesEl }
+				tabIndex={ 0 }
+			>
 				{ notes.length > 0 && (
 					<nav>
 						<ul className="note-list" >
@@ -242,6 +317,8 @@ const Notes = props => {
 											onDuplicate={ handleDuplicate }
 											onSelect={ handleSelect }
 											deleteItem={ deleteItem }
+											onKeyDown={ handleKeyDown }
+											ref={ noteKey === note.key ? selectedNoteRef : null }
 										/>
 									);
 								})
