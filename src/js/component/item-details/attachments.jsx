@@ -335,6 +335,9 @@ const Attachments = props => {
 		if(ev.key === 'ArrowDown') {
 			scrollContainerRef.current.focus();
 			ev.preventDefault();
+		} else if(ev.key === 'End') {
+			handleBySelector('.attachment:last-child');
+			ev.preventDefault();
 		}
 	});
 
