@@ -9,14 +9,14 @@
 		top: 0;
 		height: $toolbar-height-touch;
 		background-color: $panel-bg;
+
+		.counter {
+			margin-right: $space-xs;
+		}
 	}
 
 	.scroll-container-mouse {
 		display: flex;
 		flex-direction: column;
-
-		.counter {
-			margin-right: $space-xs;
-		}
 	}
 }

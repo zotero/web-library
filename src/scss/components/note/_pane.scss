@@ -19,8 +19,9 @@
 		@include mouse-and-bp-only(md) {
 			flex: 0 0 50%;
 		}
+	}
 
-		.toolbar {
+	.toolbar {
 			position: sticky;
 			top: 0;
 			z-index: 1;
@@ -31,7 +32,6 @@
 		.counter {
 			margin-right: $space-xs;
 		}
-	}
 
 	.rich-editor {
 		@include mouse-and-bp-only(md) {
