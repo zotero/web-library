@@ -10,7 +10,7 @@ import { getItemTitle } from '../../common/item';
 import { getUniqueId } from '../../utils';
 import { isTriggerEvent } from '../../common/event';
 import { pick } from '../../common/immutable';
-import { sortItemsByKey } from '../../utils';
+import { getScrollContainerPageCount, sortItemsByKey } from '../../utils';
 import { TabPane } from '../ui/tabs';
 import { useFocusManager } from '../../hooks';
 
@@ -105,6 +105,22 @@ const Related = ({ device, fetchRelatedItems, itemKey, isFetched, isFetching, re
 			ev.target === ev.currentTarget && handleNext(ev);
 		} else if(ev.key === 'ArrowUp') {
 			ev.target === ev.currentTarget && handlePrevious(ev);
+		} else if(ev.key === 'Home' && scrollContainerRef.current) {
+			handlePrevious(ev, { offset: Infinity });
+			ev.preventDefault();
+		} else if(ev.key === 'End' && scrollContainerRef.current) {
+			handleNext(ev, { offset: Infinity });
+			ev.preventDefault();
+		} else if(ev.key === 'PageDown' && scrollContainerRef.current) {
+			const containerEl = scrollContainerRef.current;
+			const itemEl = containerEl.querySelector('.related');
+			handleNext(ev, { offset: getScrollContainerPageCount(itemEl, containerEl) });
+			ev.preventDefault();
+		} else if(ev.key === 'PageUp' && scrollContainerRef.current) {
+			const containerEl = scrollContainerRef.current;
+			const itemEl = containerEl.querySelector('.related');
+			handlePrevious(ev, { offset: getScrollContainerPageCount(itemEl, containerEl) });
+			ev.preventDefault();
 		} else if(isTriggerEvent(ev)) {
 			ev.target.querySelector('a').click();
 			ev.preventDefault();

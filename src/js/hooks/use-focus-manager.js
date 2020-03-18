@@ -34,6 +34,9 @@ const useFocusManager = (ref, { overrideFocusRef = null, initialFocusPickerRef =
 		} else if(isCarousel) {
 			tabbables[0].focus();
 			lastFocused.current = tabbables[0];
+		} else {
+			tabbables[tabbables.length - 1].focus();
+			lastFocused.current = tabbables[tabbables.length - 1];
 		}
 	});
 
@@ -59,6 +62,9 @@ const useFocusManager = (ref, { overrideFocusRef = null, initialFocusPickerRef =
 			lastFocused.current = null;
 		} else if(isCarousel) {
 			tabbables[tabbables.length - 1].focus();
+			lastFocused.current = tabbables[0];
+		} else {
+			tabbables[0].focus();
 			lastFocused.current = tabbables[0];
 		}
 	});

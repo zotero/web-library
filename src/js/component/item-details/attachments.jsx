@@ -13,7 +13,7 @@ import withEditMode from '../../enhancers/with-edit-mode';
 import { ATTACHMENT } from '../../constants/dnd';
 import { getFileData } from '../../common/event';
 import { isTriggerEvent } from '../../common/event';
-import { openAttachment, sortByKey, getUniqueId } from '../../utils';
+import { getScrollContainerPageCount, getUniqueId, openAttachment, sortByKey } from '../../utils';
 import { pick } from '../../common/immutable';
 import { TabPane } from '../ui/tabs';
 import { Toolbar, ToolGroup } from '../ui/toolbars';
@@ -318,6 +318,16 @@ const Attachments = props => {
 			ev.preventDefault();
 		} else if(ev.key === 'End') {
 			handleBySelector('.attachment:last-child');
+			ev.preventDefault();
+		} else if(ev.key === 'PageDown' && scrollContainerRef.current) {
+			const containerEl = scrollContainerRef.current;
+			const itemEl = containerEl.querySelector('.attachment');
+			handleNext(ev, { offset: getScrollContainerPageCount(itemEl, containerEl) });
+			ev.preventDefault();
+		} else if(ev.key === 'PageUp' && scrollContainerRef.current) {
+			const containerEl = scrollContainerRef.current;
+			const itemEl = containerEl.querySelector('.attachment');
+			handlePrevious(ev, { offset: getScrollContainerPageCount(itemEl, containerEl) });
 			ev.preventDefault();
 		} else if(ev.key === 'Tab') {
 			const isFileInput = ev.currentTarget === fileInput.current;

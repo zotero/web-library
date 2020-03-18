@@ -7,7 +7,7 @@ import Editable from '../editable';
 import Icon from '../ui/icon';
 import withDevice from '../../enhancers/with-device';
 import withEditMode from '../../enhancers/with-edit-mode';
-import { deduplicateByKey, sortByKey } from '../../utils';
+import { deduplicateByKey, getScrollContainerPageCount, sortByKey } from '../../utils';
 import { fetchTagSuggestions } from '../../actions';
 import { pick } from '../../common/immutable';
 import { TabPane } from '../ui/tabs';
@@ -139,6 +139,16 @@ const Tags = props => {
 			ev.preventDefault();
 		} else if(ev.key === 'End') {
 			handleBySelector('.tag:last-child');
+			ev.preventDefault();
+		} else if(ev.key === 'PageDown' && scrollContainerRef.current) {
+			const containerEl = scrollContainerRef.current;
+			const itemEl = containerEl.querySelector('.tag');
+			handleNext(ev, { offset: getScrollContainerPageCount(itemEl, containerEl) });
+			ev.preventDefault();
+		} else if(ev.key === 'PageUp' && scrollContainerRef.current) {
+			const containerEl = scrollContainerRef.current;
+			const itemEl = containerEl.querySelector('.tag');
+			handlePrevious(ev, { offset: getScrollContainerPageCount(itemEl, containerEl) });
 			ev.preventDefault();
 		} else if(ev.key === 'Tab') {
 			const isAddButton = ev.currentTarget === addTagRef.current;

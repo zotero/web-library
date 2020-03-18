@@ -350,6 +350,12 @@ const scrollIntoViewIfNeeded = (element, container, opts = {}) => {
 	return 0;
 }
 
+const getScrollContainerPageCount = (itemEl, containerEl) => {
+	const containerHeight = containerEl.getBoundingClientRect().height;
+	const itemHeight = itemEl.getBoundingClientRect().height;
+	return Math.floor(containerHeight / itemHeight);
+}
+
 export {
 	applyChangesToVisibleColumns,
 	compare,
@@ -361,6 +367,7 @@ export {
 	get,
 	getItemCanonicalUrl,
 	getScrollbarWidth,
+	getScrollContainerPageCount,
 	getSortKeyValue,
 	getUniqueId,
 	indexByGeneratedKey,

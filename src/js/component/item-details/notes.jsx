@@ -16,7 +16,7 @@ import withEditMode from '../../enhancers/with-edit-mode';
 import { get, scrollIntoViewIfNeeded } from '../../utils';
 import { isTriggerEvent } from '../../common/event';
 import { noteAsTitle, pluralize } from '../../common/format';
-import { sortByKey, stopPropagation } from '../../utils';
+import { getScrollContainerPageCount, sortByKey, stopPropagation } from '../../utils';
 import { TabPane } from '../ui/tabs';
 import { Toolbar, ToolGroup } from '../ui/toolbars';
 import { useFocusManager } from '../../hooks';
@@ -242,6 +242,16 @@ const Notes = props => {
 			ev.preventDefault();
 		} else if(ev.key === 'End') {
 			handleBySelector('.note:last-child');
+			ev.preventDefault();
+		} else if(ev.key === 'PageDown' && notesEl.current) {
+			const containerEl = notesEl.current;
+			const itemEl = containerEl.querySelector('.note');
+			handleNext(ev, { offset: getScrollContainerPageCount(itemEl, containerEl) });
+			ev.preventDefault();
+		} else if(ev.key === 'PageUp' && notesEl.current) {
+			const containerEl = notesEl.current;
+			const itemEl = containerEl.querySelector('.note');
+			handlePrevious(ev, { offset: getScrollContainerPageCount(itemEl, containerEl) });
 			ev.preventDefault();
 		} else if(ev.key === 'Tab') {
 			const isFileInput = ev.currentTarget === addNoteRef.current;
