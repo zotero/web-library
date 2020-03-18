@@ -77,7 +77,7 @@
 			&.selected {
 				background-color: $note-active-bg;
 
-				&:focus-within {
+				&:focus {
 					color: $note-focus-color;
 					background-color: $note-focus-bg;
 				}
@@ -91,7 +91,7 @@
 					border-top: $border-width solid $note-active-bg;
 					padding-top: $space-md - 6px;
 
-					@include state(".selected:focus-within") {
+					@include state(".selected:focus") {
 						border-top-color: $note-focus-bg;
 					}
 
