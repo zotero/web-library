@@ -1,7 +1,4 @@
-'use strict';
-
 import cx from 'classnames';
-import PropTypes from 'prop-types';
 import React, { useCallback, useRef } from 'react';
 import { UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap/lib';
 import { useDispatch, useSelector } from 'react-redux';
@@ -11,18 +8,20 @@ import Button from './ui/button';
 import Icon from './ui/icon';
 import Input from './form/input';
 import TagList from './tag-selector/tag-list';
-import withFocusManager from '../enhancers/with-focus-manager';
 import { filterTags, navigate, toggleTagSelector } from '../actions';
-import { useTags } from '../hooks';
+import { useTags, useFocusManager } from '../hooks';
 import { getUniqueId } from '../utils';
 
-const TagSelector = props => {
-	const { onBlur, onFocus, onFocusNext, onFocusPrev, registerFocusRoot } = props; //FocusManager
+const TagSelector = () => {
 	const { isFetching } = useTags();
 	const { tagsSearchString, tags: selectedTags, isTagSelectorOpen } = useSelector(state => state.current);
 	const dispatch = useDispatch();
 	const [isBusy] = useDebounce(isFetching, 100);
 	const id = useRef(getUniqueId('tag-selector-'));
+	const filterToolbarRef = useRef(null);
+	const { receiveBlur, receiveFocus, focusNext, focusPrev } = useFocusManager(
+		filterToolbarRef, { isCarousel: true }
+	);
 
 	const handleKeyDown = useCallback(ev => {
 		if(ev.target !== ev.currentTarget) {
@@ -30,9 +29,9 @@ const TagSelector = props => {
 		}
 
 		if(ev.key === 'ArrowRight') {
-			onFocusNext(ev);
+			focusNext(ev);
 		} else if(ev.key === 'ArrowLeft') {
-			onFocusPrev(ev);
+			focusPrev(ev);
 		}
 	});
 
@@ -65,9 +64,9 @@ const TagSelector = props => {
 			<TagList />
 			<div
 				className="tag-selector-filter-container"
-				onBlur={ onBlur }
-				onFocus={ onFocus }
-				ref={ ref => registerFocusRoot(ref) }
+				onBlur={ receiveBlur }
+				onFocus={ receiveFocus }
+				ref={ filterToolbarRef }
 				tabIndex={ 0 }
 			>
 				<Input
@@ -103,12 +102,4 @@ const TagSelector = props => {
 	);
 }
 
-TagSelector.propTypes = {
-	onBlur: PropTypes.func,
-	onFocus: PropTypes.func,
-	onFocusNext: PropTypes.func,
-	onFocusPrev: PropTypes.func,
-	registerFocusRoot: PropTypes.func,
-}
-
-export default withFocusManager(TagSelector);
+export default TagSelector;

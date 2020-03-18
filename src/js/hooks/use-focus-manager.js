@@ -4,8 +4,6 @@ const isModifierKey = ev => ev.getModifierState("Meta") || ev.getModifierState("
 		ev.getModifierState("Control") || ev.getModifierState("OS");
 
 
-//@TODO: rename functions from handleABC to focusABC, e.g. handleNext should be FocusNext,
-
 const useFocusManager = (ref, { overrideFocusRef = null, initialFocusPickerRef = {}, isCarousel = true, isDrillDownCarousel = false } = {}) => {
 	const [isFocused, setIsFocused] = useState(false);
 	const lastFocused = useRef(null);
@@ -201,8 +199,19 @@ const useFocusManager = (ref, { overrideFocusRef = null, initialFocusPickerRef =
 		}
 	}, [overrideFocusRef && overrideFocusRef.current])
 
-	return { handleNext, handlePrevious, handleDrillDownNext, handleDrillDownPrev, handleFocus,
-		handleBlur, handleBySelector, focusOnLast, registerAutoFocus, resetLastFocused };
+	//@TODO: migrate to new function names
+
+	const focusNext = handleNext;
+	const focusPrev = handlePrevious;
+	const focusDrillDownNext = handleDrillDownNext;
+	const focusDrillDownPrev = handleDrillDownPrev;
+	const focusBySelector = handleBySelector;
+	const receiveFocus = handleFocus;
+	const receiveBlur = handleBlur;
+
+	return { focusNext, focusPrev, focusDrillDownNext, focusDrillDownPrev, focusBySelector,
+		handleNext, handlePrevious, handleDrillDownNext, handleDrillDownPrev, handleFocus, handleBlur,
+		handleBySelector, focusOnLast, receiveFocus, receiveBlur, registerAutoFocus, resetLastFocused };
 };
 
 export { useFocusManager };

@@ -1,28 +1,25 @@
 import cx from 'classnames';
-import PropTypes from 'prop-types';
-import React, { useCallback, useEffect, useMemo, useRef } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 
-import withFocusManager from '../../enhancers/with-focus-manager';
 import { checkColoredTags, fetchTags, navigate } from '../../actions';
 import { isTriggerEvent } from '../../common/event';
-import { useSourceSignature, useTags } from '../../hooks';
+import { useFocusManager, useSourceSignature, useTags } from '../../hooks';
 
 const PAGE_SIZE = 100;
 
-const TagList = props => {
-	const { onBlur, onFocus, onFocusNext, onFocusPrev, registerFocusRoot } = props; // FocusManager
+const TagList = () => {
 	const tagsSearchString = useSelector(state => state.current.tagsSearchString);
 	const selectedTags = useSelector(state => state.current.tags, shallowEqual);
 	const tagColors = useSelector(state => state.libraries[state.current.libraryKey].tagColors, shallowEqual);
 	const dispatch = useDispatch();
+	const tagContainerRef = useRef(null);
+	const { receiveBlur, receiveFocus, focusNext, focusPrev } = useFocusManager(
+		tagContainerRef, { isCarousel: false }
+	);
 
 	const containerRef = useRef(null);
 	const listRef = useRef(null);
-
-	const tagContainerRefCb = useCallback(node => {
-		registerFocusRoot(node);
-	});
 
 	const { isFetching, pointer, tags, totalResults, hasChecked } = useTags();
 	const sourceSignature = useSourceSignature();
@@ -54,9 +51,9 @@ const TagList = props => {
 		}
 
 		if(ev.key === 'ArrowRight' || ev.key === 'ArrowDown') {
-			onFocusNext(ev);
+			focusNext(ev);
 		} else if(ev.key === 'ArrowLeft' || ev.key === 'ArrowUp') {
-			onFocusPrev(ev);
+			focusPrev(ev);
 		} else if(isTriggerEvent(ev)) {
 			const tag = ev.currentTarget.dataset.tag;
 			toggleTag(tag);
@@ -97,9 +94,9 @@ const TagList = props => {
 		>
 			<div
 				className="tag-selector-container"
-				onBlur={ onBlur }
-				onFocus={ onFocus }
-				ref={ tagContainerRefCb }
+				onBlur={ receiveBlur }
+				onFocus={ receiveFocus }
+				ref={ tagContainerRef }
 				tabIndex={ 0 }
 				aria-label="tag selector"
 			>
@@ -132,13 +129,4 @@ const TagList = props => {
 	);
 }
 
-TagList.propTypes = {
-	onBlur: PropTypes.func,
-	onFocus: PropTypes.func,
-	onFocusNext: PropTypes.func,
-	onFocusPrev: PropTypes.func,
-	registerFocusRoot: PropTypes.func,
-	tagsSearchString: PropTypes.string,
-};
-
-export default React.memo(withFocusManager(TagList));
+export default React.memo(TagList);
