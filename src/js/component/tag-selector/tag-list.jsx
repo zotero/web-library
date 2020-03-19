@@ -55,13 +55,16 @@ const TagList = () => {
 		} else if(ev.key === 'ArrowLeft' || ev.key === 'ArrowUp') {
 			focusPrev(ev);
 		} else if(isTriggerEvent(ev)) {
-			const tag = ev.currentTarget.dataset.tag;
-			toggleTag(tag);
+			handleClick(ev);
 		}
 	});
 
 	const handleClick = useCallback(ev => {
 		const tag = ev.currentTarget.dataset.tag;
+		// @NOTE: the <li> element in this event will be removed while new tags are fetched as a
+		// result of toggleTag(). Need to trigger blur() so that container can accept focus again.
+		// See #372
+		ev.currentTarget.blur();
 		toggleTag(tag);
 	});
 
