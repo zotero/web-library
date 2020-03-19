@@ -39,7 +39,7 @@ const TouchTagSelector = props => {
 	});
 
 	const handleDeselectClick = useCallback(() => {
-		dispatch(navigate({ tags: null }));
+		dispatch(navigate({ tags: null, items: null }));
 	});
 
 	const handleSearchChange = useCallback(ev => {
@@ -64,7 +64,7 @@ const TouchTagSelector = props => {
 			selectedTagNames.push(tagName);
 		}
 
-		dispatch(navigate({ tags: selectedTagNames, view: 'item-list' }));
+		dispatch(navigate({ tags: selectedTagNames, items: null, view: 'item-list' }));
 	});
 
 	return (

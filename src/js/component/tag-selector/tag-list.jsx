@@ -42,7 +42,7 @@ const TagList = () => {
 			selectedTags.push(tagName);
 		}
 
-		dispatch(navigate({ tags: selectedTags }));
+		dispatch(navigate({ tags: selectedTags, items: null }));
 	});
 
 	const handleKeyDown = useCallback(ev => {
