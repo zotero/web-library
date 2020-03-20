@@ -165,8 +165,8 @@ const ItemDetailsTabs = () => {
 
 	return (
 		<Panel
-			// isBackdrop={ !shouldUseTabs && (noteKey || attachmentKey) } // we don't have slide-in view for attachments yet
-			isBackdrop={ !shouldUseTabs && noteKey }
+			// isBackdrop={ !shouldUseTabs && (!!noteKey || !!attachmentKey) } // we don't have slide-in view for attachments yet
+			isBackdrop={ !shouldUseTabs && !!noteKey }
 			className={ cx({ 'editing': isEditing })}
 			bodyClassName={ cx({ 'loading': !isReady }) }
 			onKeyDown={ handleKeyDown }
