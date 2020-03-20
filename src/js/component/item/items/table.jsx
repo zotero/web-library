@@ -12,7 +12,7 @@ import HeaderRow from './table-header-row';
 import Spinner from '../../ui/spinner';
 import TableBody from './table-body';
 import TableRow from './table-row';
-import { applyChangesToVisibleColumns, resizeVisibleColumns } from '../../../utils';
+import { applyChangesToVisibleColumns, clamp, resizeVisibleColumns } from '../../../utils';
 import { ATTACHMENT } from '../../../constants/dnd';
 import { chunkedTrashOrDelete, createAttachmentsFromDropped, fetchSource, navigate,
 	preferenceChange, triggerFocus } from '../../../actions';
@@ -228,11 +228,11 @@ const Table = memo(() => {
 	});
 
 	const handleKeyDown = useCallback(ev => {
-		var vector;
+		var direction, magnitude = 1;
 		if(ev.key === 'ArrowUp') {
-			vector = -1;
+			direction = -1;
 		} else if(ev.key === 'ArrowDown') {
-			vector = 1;
+			direction = 1;
 		} else if(ev.key === 'Backspace') {
 			dispatch(chunkedTrashOrDelete(selectedItemKeys));
 			dispatch(navigate({ items: [] }));
@@ -245,69 +245,76 @@ const Table = memo(() => {
 			if(keys[keys.length - 1]) {
 				dispatch(navigate({ items: [keys[keys.length - 1]] }));
 			}
+		} else if(ev.key === 'PageUp' && outerRef.current) {
+			direction = -1;
+			magnitude = Math.floor(outerRef.current.getBoundingClientRect().height / ROWHEIGHT)
+			ev.preventDefault();
+		} else if(ev.key === 'PageDown' && outerRef.current) {
+			direction = 1;
+			magnitude = Math.floor(outerRef.current.getBoundingClientRect().height / ROWHEIGHT);
+			ev.preventDefault();
 		} else {
 			return;
 		}
 
-		if(!vector) {
+		if(!direction) {
 			return;
 		}
 
 		ev.preventDefault();
 
+		const vector = direction * magnitude;
 		const lastItemKey = selectedItemKeys[selectedItemKeys.length - 1];
 		const index = keys.findIndex(key => key && key === lastItemKey);
-		const nextIndex = index + vector;
-
-		//check bounds
-		if(vector > 0 && index + 1 >= keys.length) {
-			return;
-		}
 
 		var nextKeys;
 		var cursorIndex;
 
-		if(vector < 0 && index + vector < 0) {
-			if(!ev.getModifierState('Shift')) {
-				nextKeys = [];
-				cursorIndex = -1;
-			}
+		if(direction === -1 && magnitude === 1 && index + vector < 0 && !ev.getModifierState('Shift')) {
+			nextKeys = [];
+			cursorIndex = -1;
 		} else {
+			const nextIndex = clamp(index + vector, 0, keys.length -1);
+			cursorIndex = nextIndex;
 			if(ev.getModifierState('Shift')) {
-				if(selectedItemKeys.includes(keys[nextIndex])) {
-					if(keys.slice(...(vector > 0 ? [0, index] : [index + 1])).some(
-						key => selectedItemKeys.includes(key)
-					)) {
-						let offset = 1;
-						let boundry = vector > 0 ? keys.length - 1 : 0;
-						while(index + (offset * vector) !== boundry &&
-							selectedItemKeys.includes(keys[index + (offset * vector)].key)
-						) {
-							offset++;
-						}
-						var consecutiveCounter = 1;
-						while(selectedItemKeys.includes(keys[index + (offset * vector) + consecutiveCounter].key)) {
-							consecutiveCounter++;
-						}
-						var consecutiveKeys;
-						if(vector > 0) {
-							consecutiveKeys = keys.slice(index + offset - consecutiveCounter + 1, index + offset);
-						} else {
-							consecutiveKeys = keys.slice(index - offset, index - offset + consecutiveCounter).reverse();
-						}
-						nextKeys = [
-							...selectedItemKeys.filter(k => !consecutiveKeys.includes(k)),
-							...consecutiveKeys,
-							keys[index + (offset * vector)]
-						];
-						cursorIndex = index + (offset * vector);
-					} else {
-						nextKeys = selectedItemKeys.filter(k => k !== keys[index]);
-						cursorIndex = index + vector;
+				let counter = 1;
+				let alreadySelectedCounter = 0;
+				let newKeys = [];
+
+				while(index + counter * direction !== nextIndex + direction) {
+					const nextKey = keys[index + counter * direction];
+					newKeys.push(nextKey);
+					if(selectedItemKeys.includes(nextKey)) {
+						alreadySelectedCounter++;
 					}
+					counter++;
+				}
+
+				const shouldUnselect = alreadySelectedCounter === magnitude;
+
+				if(shouldUnselect) {
+					nextKeys = selectedItemKeys.filter(k => k === keys[nextIndex] || (!newKeys.includes(k) && k !== keys[index]));
 				} else {
-					nextKeys = [...selectedItemKeys, keys[nextIndex]];
-					cursorIndex = nextIndex;
+					var invertedDirection = direction * -1;
+					var consecutiveSelectedItemKeys = [];
+					var reverseCounter = 0;
+					var boundry = invertedDirection > 0 ? keys.length - 1 : 0;
+
+					while(index + reverseCounter * invertedDirection !== boundry) {
+						const nextKey = keys[index + reverseCounter * invertedDirection];
+						if(selectedItemKeys.includes(nextKey)) {
+							consecutiveSelectedItemKeys.push(nextKey);
+							reverseCounter++;
+						} else {
+							break;
+						}
+					}
+					consecutiveSelectedItemKeys.reverse();
+					nextKeys = [...consecutiveSelectedItemKeys, ...newKeys];
+				}
+
+				if(nextKeys.length === 0) {
+					nextKeys = [keys[nextIndex]];
 				}
 			} else {
 				nextKeys = [keys[nextIndex]];

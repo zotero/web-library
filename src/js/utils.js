@@ -356,8 +356,11 @@ const getScrollContainerPageCount = (itemEl, containerEl) => {
 	return Math.floor(containerHeight / itemHeight);
 }
 
+const clamp = (number, min, max) => Math.max(min, Math.min(number, max));
+
 export {
 	applyChangesToVisibleColumns,
+	clamp,
 	compare,
 	compareItem,
 	deduplicate,
