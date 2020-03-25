@@ -11,7 +11,7 @@ import Panel from '../ui/panel';
 import RelatedContainer from '../../container/item-details/related';
 import Spinner from '../ui/spinner';
 import StandaloneAttachmentTabPane from '../../component/item-details/standalone-attachment';
-import StandaloneNoteContainer from '../../container/item-details/standalone-note';
+import StandaloneNote from '../../component/item-details/standalone-note';
 import TagsContainer from '../../container/item-details/tags';
 import { Tab, Tabs } from '../ui/tabs';
 import { useEditMode, useFetchingState, useMetaState } from '../../hooks';
@@ -285,9 +285,10 @@ const ItemDetailsTabs = () => {
 
 						{
 							item.itemType === 'note' && (
-								<StandaloneNoteContainer
+								<StandaloneNote
 									key={ 'standalone-note-' + item.key }
 									isActive={ activeTab === 'standalone-note' }
+									isReadOnly={ isReadOnly }
 								/>
 							)
 						}
