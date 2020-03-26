@@ -216,7 +216,7 @@ const AttachmentDetailsWrap = ({ isReadOnly }) => {
 		return (
 			<div className="attachment-details">
 				<AttachmentDetails
-					isReadyOnly={ isReadOnly }
+					isReadOnly={ isReadOnly }
 					attachmentKey={ attachmentKey }
 				/>
 			</div>
