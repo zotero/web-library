@@ -282,60 +282,62 @@ const Notes = props => {
 			isLoading={ device.shouldUseTabs && !isFetched }
 		>
 			<h5 className="h2 tab-pane-heading hidden-mouse">Notes</h5>
-			{ !device.isTouchOrSmall && (
-				<Toolbar>
-					<div className="toolbar-left">
-						<div className="counter">
-							{ `${notes.length} ${pluralize('note', notes.length)}` }
+			<div className="toolbar-list-container">
+				{ !device.isTouchOrSmall && (
+					<Toolbar>
+						<div className="toolbar-left">
+							<div className="counter">
+								{ `${notes.length} ${pluralize('note', notes.length)}` }
+							</div>
+							{ !isReadOnly && (
+							<ToolGroup>
+								<Button
+									className="btn-default"
+									disabled={ isReadOnly }
+									onClick={ handleAddNote }
+									onKeyDown={ handleButtonKeyDown }
+									ref={ addNoteRef }
+									tabIndex="0"
+								>
+									Add Note
+								</Button>
+							</ToolGroup>
+							) }
 						</div>
-						{ !isReadOnly && (
-						<ToolGroup>
-							<Button
-								className="btn-default"
-								disabled={ isReadOnly }
-								onClick={ handleAddNote }
-								onKeyDown={ handleButtonKeyDown }
-								ref={ addNoteRef }
-								tabIndex="0"
-							>
-								Add Note
-							</Button>
-						</ToolGroup>
-						) }
-					</div>
-				</Toolbar>
-			)}
-			<div
-				className="scroll-container-mouse"
-				onBlur={ handleBlur }
-				onFocus={ handleFocus }
-				ref={ notesEl }
-				tabIndex={ 0 }
-			>
-				{ notes.length > 0 && (
-					<nav>
-						<ul className="note-list" >
-							{
-								notes.map(note => {
-									return (
-										<Note
-											device={ device }
-											isReadOnly={ isReadOnly }
-											key={ note.key }
-											noteKey={ note.key }
-											onDelete={ handleDelete }
-											onDuplicate={ handleDuplicate }
-											onSelect={ handleSelect }
-											deleteItem={ deleteItem }
-											onKeyDown={ handleKeyDown }
-											ref={ noteKey === note.key ? selectedNoteRef : null }
-										/>
-									);
-								})
-							}
-						</ul>
-					</nav>
-				) }
+					</Toolbar>
+				)}
+				<div
+					className="scroll-container-mouse"
+					onBlur={ handleBlur }
+					onFocus={ handleFocus }
+					ref={ notesEl }
+					tabIndex={ 0 }
+				>
+					{ notes.length > 0 && (
+						<nav>
+							<ul className="note-list" >
+								{
+									notes.map(note => {
+										return (
+											<Note
+												device={ device }
+												isReadOnly={ isReadOnly }
+												key={ note.key }
+												noteKey={ note.key }
+												onDelete={ handleDelete }
+												onDuplicate={ handleDuplicate }
+												onSelect={ handleSelect }
+												deleteItem={ deleteItem }
+												onKeyDown={ handleKeyDown }
+												ref={ noteKey === note.key ? selectedNoteRef : null }
+											/>
+										);
+									})
+								}
+							</ul>
+						</nav>
+					) }
+				</div>
 				{ device.isTouchOrSmall && !isReadOnly && (
 					<Button
 						onClick={ handleAddNote }
@@ -355,6 +357,11 @@ const Notes = props => {
 					ref={ editorRef }
 					value={ selectedNote.note }
 				/>
+			) }
+			{ !device.isTouchOrSmall && !selectedNote && (
+				<div className="no-selection-placeholder">
+					No note selected
+				</div>
 			) }
 		</TabPane>
 	);
