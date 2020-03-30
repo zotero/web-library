@@ -1,19 +1,28 @@
-'use strict';
-
 import React, { useCallback } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import RichEditor from '../component/rich-editor';
 import cx from 'classnames';
+import { get } from '../utils';
+import { updateItem } from '../actions';
+import { useEditMode } from '../hooks';
 
-const TouchNote = ({ note, isEditing, updateItem }) => {
+const TouchNote = () => {
+	const dispatch = useDispatch();
+	const note = useSelector(state => get(state, [
+		'libraries', state.current.libraryKey, 'items', state.current.noteKey
+	], null));
+	const [isEditing, ] = useEditMode();
 
 	const handleNoteChange = useCallback(content => {
-		updateItem(note.key, { note: content });
+		dispatch(updateItem(note.key, { note: content }));
 	});
 
 	const className = cx({
-		'rich-editor-container hidden-mouse': true,
-		'editing': isEditing
+		'editing': isEditing,
+		'hidden-mouse': true,
+		'touch-details-drilldown': true,
+		'touch-note': true,
 	});
 
 	return (
@@ -28,13 +37,6 @@ const TouchNote = ({ note, isEditing, updateItem }) => {
 			)}
 		</section>
 	);
-}
-
-
-TouchNote.propTypes = {
-	note: PropTypes.object,
-	isEditing: PropTypes.bool,
-	updateItem: PropTypes.func.isRequired
 }
 
 export default TouchNote;

@@ -2,46 +2,6 @@
 // Rich editor
 // --------------------------------------------------
 
-.rich-editor-container {
-	display: flex;
-	flex-direction: column;
-	position: absolute;
-	top: $touch-header-height;
-	right: 0;
-	bottom: 0;
-	left: 0;
-	z-index: $z-index-rich-editor-touch;
-	background-color: $panel-bg;
-	transform: translate3d(100%, 0, 0);
-	transition: transform $nav-transition;
-
-	@include bp-down(xs) {
-		top: 0;
-		transform: translate3d(125%, 0, 0);
-	}
-
-	@include mouse-and-bp-only(md) {
-		top: calc(50% + #{$touch-header-height});
-	}
-
-	@include bp-up(lg) {
-		left: auto;
-		width: $item-details-width-lg-touch;
-	}
-
-	.view-note-active & {
-		transform: translate3d(0, 0, 0);
-
-		@include bp-down(xs) {
-			transform: translate3d(25%, 0, 0);
-		}
-	}
-
-	&.editing {
-		background-color: $body-bg;
-	}
-}
-
 .rich-editor {
 	flex: 1 1 0;
 	display: flex;

@@ -30,7 +30,7 @@ import SearchBackdrop from './search-backdrop';
 import StyleInstallerModalContainer from '../container/modal/style-installer';
 import TagSelector from '../component/tag-selector';
 import TouchHeaderContainer from '../container/touch-header';
-import TouchNoteContainer from '../container/touch-note';
+import TouchNote from '../component/touch-note';
 import TouchTagSelector from '../component/touch-tag-selector';
 import TouchSideFooter from '../component/touch-side-footer';
 import withDevice from '../enhancers/with-device';
@@ -171,7 +171,7 @@ const Library = props => {
 									/>
 									<Items key={ key } isSearchModeTransitioning={ isSearchModeTransitioning } />
 									<ItemDetails active={ view === 'item-details' } />
-									{ device.isTouchOrSmall && <TouchNoteContainer /> }
+									{ device.isTouchOrSmall && <TouchNote /> }
 									<CSSTransition
 										in={ device.isSingleColumn && isSearchMode && itemsSource !== 'query' }
 										timeout={ 250 }
