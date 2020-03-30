@@ -10,7 +10,7 @@ import { get } from '../utils';
 const LibraryContainer = props => <Library { ...props } />
 
 const mapStateToProps = state => {
-	const { collectionKey, isMyPublications, isNavBarOpen, isSearchMode,
+	const { attachmentKey, collectionKey, isMyPublications, isNavBarOpen, isSearchMode,
 		isSelectMode, isTouchTagSelectorOpen, isTrash, itemsSource, libraryKey, noteKey, qmode,
 		search, searchState, tags, useTransitions, userLibraryKey, view } = state.current;
 	const { itemTypes } = state.meta;
@@ -20,7 +20,7 @@ const mapStateToProps = state => {
 	const isFetchingLibrarySettings = get(state, ['libraries', libraryKey, 'fetching', 'librarySettings']);
 	const isLibraryReadOnly = (state.config.libraries.find(l => l.key === libraryKey) || {}).isReadOnly;
 
-	return { config, view, userLibraryKey, isSearchMode, isSelectMode, itemsSource, collectionKey,
+	return { attachmentKey, config, view, userLibraryKey, isSearchMode, isSelectMode, itemsSource, collectionKey,
 		isFetchingCollections, isFetchingLibrarySettings, isNavBarOpen, isMyPublications, isSynced,
 		isTouchTagSelectorOpen, isTrash, itemTypes, useTransitions, libraryKey, noteKey, search,
 		searchState, tags, qmode, isLibraryReadOnly, };

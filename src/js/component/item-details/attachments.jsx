@@ -13,7 +13,7 @@ import withEditMode from '../../enhancers/with-edit-mode';
 import { ATTACHMENT } from '../../constants/dnd';
 import { getFileData } from '../../common/event';
 import { isTriggerEvent } from '../../common/event';
-import { getScrollContainerPageCount, getUniqueId, openAttachment, sortByKey } from '../../utils';
+import { getScrollContainerPageCount, getUniqueId, openAttachment, stopPropagation, sortByKey } from '../../utils';
 import { pick } from '../../common/immutable';
 import { TabPane } from '../ui/tabs';
 import { Toolbar, ToolGroup } from '../ui/toolbars';
@@ -47,6 +47,7 @@ const AttachmentDownloadIcon = props => {
 	const handleLinkInteraction = useCallback(ev => {
 		const { key } = ev.currentTarget.closest('[data-key]').dataset;
 		if(isTriggerEvent(ev) || (ev.type === 'mousedown' && ev.button === 1)) {
+			ev.stopPropagation();
 			ev.preventDefault();
 			openAttachment(key, getAttachmentUrl, true);
 		}
@@ -70,6 +71,7 @@ const AttachmentDownloadIcon = props => {
 				aria-label="download attachment"
 				className="btn btn-icon"
 				href={ attachment.url }
+				onClick={ stopPropagation }
 				rel="nofollow noopener noreferrer"
 				role="button"
 				tabIndex={ -3 }

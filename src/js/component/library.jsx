@@ -31,6 +31,7 @@ import StyleInstallerModalContainer from '../container/modal/style-installer';
 import TagSelector from '../component/tag-selector';
 import TouchHeaderContainer from '../container/touch-header';
 import TouchNote from '../component/touch-note';
+import TouchAttachment from '../component/touch-attachment';
 import TouchTagSelector from '../component/touch-tag-selector';
 import TouchSideFooter from '../component/touch-side-footer';
 import withDevice from '../enhancers/with-device';
@@ -41,9 +42,9 @@ import TitleUpdater from './title-updater';
 
 
 const Library = props => {
-	const { collectionKey, config, device, fetchLibrarySettings, isLibraryReadOnly, isNavBarOpen,
-	isSearchMode, isSelectMode, isSynced, itemsSource, libraryKey, noteKey, resetLibrary, search,
-	searchState, tags, toggleNavbar, useTransitions, qmode, view } = props;
+	const { attachmentKey, collectionKey, config, device, fetchLibrarySettings, isLibraryReadOnly,
+	isNavBarOpen, isSearchMode, isSelectMode, isSynced, itemsSource, libraryKey, noteKey,
+	resetLibrary, search, searchState, tags, toggleNavbar, useTransitions, qmode, view } = props;
 
 	const [hasUserTypeChanged, setHasUserTypeChanged] = useState(false);
 	const [isSearchModeTransitioning, setIsSearchModeTransitioning] = useState(false);
@@ -123,6 +124,7 @@ const Library = props => {
 					'search-results': (isSearchMode || (!isSearchMode && isSearchModeTransitioning)) && (itemsSource === 'query' || prevItemsSource.current === 'query'),
 					'touch-tag-selector-active': tags.length > 0,
 					'view-note-active': noteKey,
+					'view-attachment-active': attachmentKey,
 					[`view-${view}-active`]: true,
 				}) }>
 				<MobileNav
@@ -172,6 +174,7 @@ const Library = props => {
 									<Items key={ key } isSearchModeTransitioning={ isSearchModeTransitioning } />
 									<ItemDetails active={ view === 'item-details' } />
 									{ device.isTouchOrSmall && <TouchNote /> }
+									{ device.isTouchOrSmall && <TouchAttachment /> }
 									<CSSTransition
 										in={ device.isSingleColumn && isSearchMode && itemsSource !== 'query' }
 										timeout={ 250 }

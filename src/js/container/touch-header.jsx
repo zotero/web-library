@@ -52,27 +52,52 @@ class TouchHeaderContainer extends React.PureComponent {
 	}
 
 	get itemNode() {
-		const { item, isSelectMode, noteKey } = this.props;
+		const { attachmentKey, item, isSelectMode, noteKey } = this.props;
 		if(!item || isSelectMode) {
 			return null;
 		}
 
-		return noteKey ? {
-			key: item.key,
-			label: 'Back',
-			path: {
-				...this.itemsSourceNode.path,
-				view: 'item-details',
-				items: [item.key]
-			} } : { key: item.key, label: '' };
+		if(attachmentKey) {
+			return {
+				key: item.key,
+				label: 'Back',
+				path: {
+					...this.itemsSourceNode.path,
+					view: 'item-details',
+					items: [item.key]
+				} }
+		}
+
+		if(noteKey) {
+			return {
+				key: item.key,
+				label: 'Back',
+				path: {
+					...this.itemsSourceNode.path,
+					view: 'item-details',
+					items: [item.key]
+				} }
+		}
+
+		return { key: item.key, label: '' };
 	}
 
-	get noteNode() {
-		const { item, isSelectMode, noteKey } = this.props;
-		if(!noteKey || !item || isSelectMode) {
+	get drilldownNode() {
+		const { attachmentKey, item, isSelectMode, noteKey } = this.props;
+		const isDrillDown = attachmentKey || noteKey;
+		if(!isDrillDown || !item || isSelectMode) {
 			return null;
 		}
-		return noteKey ? { key: noteKey, label: 'Note' } : null;
+
+		if(attachmentKey) {
+			return { key: attachmentKey, label: 'Attachment' }
+		}
+
+		if(noteKey) {
+			return { key: noteKey, label: 'Note' };
+		}
+
+		return null;
 	}
 
 	get isSelectedOpened() {
@@ -111,7 +136,7 @@ class TouchHeaderContainer extends React.PureComponent {
 					...path,
 					this.isItemsView ? this.itemsSourceNode : null,
 					this.itemNode,
-					this.noteNode
+					this.drilldownNode
 				];
 				shouldIncludeEditButton = !isReadOnly && view === 'item-details';
 				shouldIncludeItemListOptions = view === 'item-list' && !isSelectMode;
@@ -133,13 +158,13 @@ class TouchHeaderContainer extends React.PureComponent {
 				shouldHandleSelectMode = true;
 			break;
 			case variants.SOURCE_AND_ITEM:
-				touchHeaderPath = [ this.selectedNode, this.itemNode, this.noteNode ];
+				touchHeaderPath = [ this.selectedNode, this.itemNode, this.drilldownNode ];
 				shouldIncludeItemListOptions = !item && !isSelectMode;
 				shouldHandleSelectMode = true;
 				shouldIncludeEditButton = !isReadOnly && !isSelectMode && !!item;
 			break;
 			case variants.ITEM:
-				touchHeaderPath = [ this.itemNode, this.noteNode ];
+				touchHeaderPath = [ this.itemNode, this.drilldownNode ];
 				shouldIncludeEditButton = !isReadOnly && !isSelectMode && !!item;
 			break;
 		}
@@ -180,6 +205,7 @@ class TouchHeaderContainer extends React.PureComponent {
 
 const mapStateToProps = state => {
 	const {
+		attachmentKey,
 		collectionKey,
 		isMyPublications,
 		isSearchMode,
@@ -225,9 +251,9 @@ const mapStateToProps = state => {
 		})
 	}
 
-	return { collectionKey, collections: Object.values(collections), isMyPublications,
-		isSearchMode, isTrash, itemKey, item, itemsSource, libraryConfig, libraryKey, noteKey,
-		path, qmode, search, searchState, tags, view
+	return { attachmentKey, collectionKey, collections: Object.values(collections),
+		isMyPublications, isSearchMode, isTrash, itemKey, item, itemsSource, libraryConfig,
+		libraryKey, noteKey, path, qmode, search, searchState, tags, view
 	};
 };
 
