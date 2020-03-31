@@ -4,6 +4,7 @@ import React, { forwardRef, useCallback, useEffect, useRef, useState } from 'rea
 import { useDispatch, useSelector } from 'react-redux';
 import { NativeTypes } from 'react-dnd-html5-backend';
 import { useDrag, useDrop } from 'react-dnd';
+import { CSSTransition } from 'react-transition-group';
 
 import Button from '../ui/button';
 import Icon from '../ui/icon';
@@ -17,10 +18,11 @@ import { getScrollContainerPageCount, getUniqueId, openAttachment, stopPropagati
 import { pick } from '../../common/immutable';
 import { TabPane } from '../ui/tabs';
 import { Toolbar, ToolGroup } from '../ui/toolbars';
-import { navigate, sourceFile, updateItem } from '../../actions';
+import { createLinkedUrlAttachments, navigate, sourceFile, updateItem } from '../../actions';
 import { pluralize } from '../../common/format';
 import AttachmentDetails from './attachment-details';
 import { useFocusManager } from '../../hooks';
+import Input from '../form/input';
 
 const AttachmentIcon = ({ device, isActive, item, size }) => {
 	const { iconName } = item[Symbol.for('derived')];
@@ -234,6 +236,81 @@ const AttachmentDetailsWrap = ({ isReadOnly }) => {
 
 const PAGE_SIZE = 100;
 
+const AddLinkedUrlForm = ({ onClose }) => {
+	const dispatch = useDispatch();
+	const itemKey = useSelector(state => state.current.itemKey);
+	const [isBusy, setBusy] = useState(false);
+	const [url, setUrl] = useState('');
+	const [title, setTitle] = useState('');
+
+	const handleLinkedFileConfirmClick = useCallback(async () => {
+		setBusy(true);
+		await dispatch(createLinkedUrlAttachments({ url, title }, { parentItem: itemKey }));
+		setBusy(false);
+		onClose();
+	});
+
+	const handleUrlChange = useCallback(newValue => setUrl(newValue));
+	const handleTitleChange = useCallback(newValue => setTitle(newValue));
+
+	return (
+		<div className="add-linked-url form">
+			<div className="form-group form-row">
+				<label className="col-form-label" htmlFor="linked-url-form-url">Link</label>
+				<div className="col">
+					<Input
+						autoFocus
+						id="linked-url-form-url"
+						onChange={ handleUrlChange }
+						placeholder="Enter or paste URL"
+						tabIndex={ 0 }
+						value={ url }
+					/>
+				</div>
+			</div>
+			<div className="form-group form-row">
+				<label className="col-form-label" htmlFor="linked-url-form-title">Title</label>
+				<div className="col">
+					<Input
+						id="linked-url-form-title"
+						onChange={ handleTitleChange }
+						placeholder="(Optional)"
+						tabIndex={ 0 }
+						value={ title }
+					/>
+				</div>
+			</div>
+			<Toolbar>
+				<div className="toolbar-right">
+					{isBusy ? <Spinner className="small" /> : (
+					<React.Fragment>
+						<Button
+							onClick={ onClose }
+							className="btn-default"
+							tabIndex={ 0 }
+						>
+							Cancel
+						</Button>
+						<Button
+							onClick={ handleLinkedFileConfirmClick }
+							className="btn-default"
+							tabIndex={ 0 }
+						>
+							Add
+						</Button>
+					</React.Fragment>
+					)}
+				</div>
+			</Toolbar>
+		</div>
+	);
+}
+
+AddLinkedUrlForm.propTypes = {
+	onClose: PropTypes.func.isRequired
+}
+
+//@TODO: migrate to non-container component
 const Attachments = props => {
 	const { childItems, createAttachmentsFromDropped, device, isFetched, isFetching, isReadOnly,
 	itemKey, createItem, uploadAttachment, fetchChildItems, fetchItemTemplate, uploads, isActive,
@@ -248,6 +325,7 @@ const Attachments = props => {
 
 	const fileInput = useRef(null);
 	const [attachments, setAttachments] = useState([]);
+	const [isAddingLinkedUrl, setIsAddingLinkedUrl] = useState(false);
 
 	const isTinymceFetching = useSelector(state => state.sources.fetching.includes('tinymce'));
 	const isTinymceFetched = useSelector(state => state.sources.fetched.includes('tinymce'));
@@ -353,6 +431,14 @@ const Attachments = props => {
 		}
 	});
 
+	const handleLinkedFileClick = useCallback(ev => {
+		setIsAddingLinkedUrl(true);
+	});
+
+	const handleLinkedFileCancel = useCallback(ev => {
+		setIsAddingLinkedUrl(false);
+	});
+
 	return (
 		<TabPane
 			className={ cx("attachments", { 'dnd-target': canDrop && isOver }) }
@@ -360,6 +446,15 @@ const Attachments = props => {
 			isLoading={ device.shouldUseTabs && !(isFetched && isTinymceFetched) }
 			ref={ drop }
 		>
+			<CSSTransition
+				in={ isAddingLinkedUrl }
+				timeout={ 500 }
+				classNames="slide-down"
+				mountOnEnter
+				unmountOnExit
+			>
+				<AddLinkedUrlForm onClose={ handleLinkedFileCancel } />
+			</CSSTransition>
 			<h5 className="h2 tab-pane-heading hidden-mouse">Attachments</h5>
 			{ !device.isTouchOrSmall && (
 				<Toolbar>
@@ -371,6 +466,7 @@ const Attachments = props => {
 						<ToolGroup>
 							<div className="btn-file">
 								<input
+									disabled={ isReadOnly || isAddingLinkedUrl }
 									className="add-attachment"
 									onChange={ handleFileInputChange }
 									onKeyDown={ handleFileInputKeyDown }
@@ -379,13 +475,22 @@ const Attachments = props => {
 									type="file"
 								/>
 								<Button
-									disabled={ isReadOnly }
+									disabled={ isReadOnly || isAddingLinkedUrl }
 									className="btn-default"
 									tabIndex={ -1 }
 								>
-									Add File Attachment
+									Add File
 								</Button>
 							</div>
+							<Button
+								onClick={ handleLinkedFileClick }
+								disabled={ isReadOnly }
+								className="btn-default"
+								tabIndex={ -1 }
+							>
+								Add Linked URL
+							</Button>
+
 						</ToolGroup>
 						) }
 					</div>
@@ -424,20 +529,29 @@ const Attachments = props => {
 					</nav>
 				) }
 				{ device.isTouchOrSmall && !isReadOnly && (
-					<div className="btn-file">
-						<input
-							onChange={ handleFileInputChange }
-							onKeyDown={ handleKeyDown }
-							type="file"
-						/>
+					<React.Fragment>
+						<div className="btn-file">
+							<input
+								onChange={ handleFileInputChange }
+								onKeyDown={ handleKeyDown }
+								type="file"
+							/>
+							<Button
+								className="btn-block text-left hairline-top hairline-start-icon-28 btn-transparent-secondary"
+								tabIndex={ -1 }
+							>
+								<Icon type={ '24/plus-circle-strong' } width="24" height="24" />
+								Add File Attachment
+							</Button>
+						</div>
 						<Button
 							className="btn-block text-left hairline-top hairline-start-icon-28 btn-transparent-secondary"
 							tabIndex={ -1 }
 						>
 							<Icon type={ '24/plus-circle-strong' } width="24" height="24" />
-							Add File Attachment
+							Add Linked URL
 						</Button>
-					</div>
+					</React.Fragment>
 				)}
 			</div>
 			{

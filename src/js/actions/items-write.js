@@ -1085,6 +1085,33 @@ const createAttachmentsFromDropped = (droppedFiles, ...rest) => {
 	}
 }
 
+const createLinkedUrlAttachments = (linkedUrlItems, { collection = null, parentItem = null } = {}) => {
+	return async (dispatch, getState) => {
+		const state = getState();
+		const { libraryKey } = state.current;
+
+		if(linkedUrlItems && !Array.isArray(linkedUrlItems)) {
+			linkedUrlItems = [linkedUrlItems];
+		}
+
+		const attachmentTemplate = await dispatch(
+			fetchItemTemplate('attachment', { linkMode: 'linked_url' })
+		);
+		const attachmentItems = linkedUrlItems.map(({ url, title = '' }) => ({
+			...attachmentTemplate,
+			collections: collection ? [collection] : [],
+			parentItem: parentItem || false,
+			url, title
+		}));
+
+		const createdItems = await dispatch(
+			createItems(attachmentItems, libraryKey)
+		);
+
+		return createdItems;
+	}
+}
+
 export {
 	addToCollection,
 	chunkedAddToCollection,
@@ -1099,6 +1126,7 @@ export {
 	createAttachmentsFromDropped,
 	createItem,
 	createItems,
+	createLinkedUrlAttachments,
 	deleteItem,
 	deleteItems,
 	moveToTrash,

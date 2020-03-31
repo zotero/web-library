@@ -3,6 +3,8 @@
 // --------------------------------------------------
 
 .tab-pane.attachments {
+	position: relative;
+
 	@include mouse-and-bp-only(md) {
 		grid-template-columns: 1fr 1fr;
 		grid-template-rows: min-content auto;
@@ -83,6 +85,19 @@
 	.rich-editor {
 		@include mouse-and-bp-up(md) {
 			border-top: $border-width solid $editor-border-color;
+		}
+	}
+
+	.add-linked-url {
+		background-color: $panel-bg;
+		padding: $space-sm;
+		position: absolute;
+		width: 100%;
+		border-bottom: $border-width solid $attachment-details-border-color;
+		z-index: 2;
+
+		.btn {
+			margin-left: $space-min;
 		}
 	}
 }
