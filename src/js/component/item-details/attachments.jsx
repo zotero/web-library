@@ -252,9 +252,15 @@ const AddLinkedUrlForm = ({ onClose }) => {
 
 	const handleUrlChange = useCallback(newValue => setUrl(newValue));
 	const handleTitleChange = useCallback(newValue => setTitle(newValue));
+	const handleKeyDown = useCallback(ev => {
+		if(ev.key === 'Escape') {
+			ev.stopPropagation();
+			onClose();
+		}
+	});
 
 	return (
-		<div className="add-linked-url form">
+		<div className="add-linked-url form" onKeyDown={ handleKeyDown }>
 			<div className="form-group form-row">
 				<label className="col-form-label" htmlFor="linked-url-form-url">Link</label>
 				<div className="col">
@@ -324,6 +330,7 @@ const Attachments = props => {
 		);
 
 	const fileInput = useRef(null);
+	const addLinkedUrlButtonRef = useRef(null);
 	const [attachments, setAttachments] = useState([]);
 	const [isAddingLinkedUrl, setIsAddingLinkedUrl] = useState(false);
 
@@ -422,7 +429,11 @@ const Attachments = props => {
 	});
 
 	const handleFileInputKeyDown = useCallback(ev => {
-		if(ev.key === 'ArrowDown') {
+		if(ev.key === 'ArrowLeft' || ev.key === 'ArrowRight') {
+			ev.currentTarget === fileInput.current ?
+				addLinkedUrlButtonRef.current.focus() :
+				fileInput.current.focus();
+		} else if(ev.key === 'ArrowDown') {
 			scrollContainerRef.current.focus();
 			ev.preventDefault();
 		} else if(ev.key === 'End') {
@@ -463,11 +474,11 @@ const Attachments = props => {
 							{ `${attachments.length} ${pluralize('attachment', attachments.length)}` }
 						</div>
 						{ !isReadOnly && (
-						<ToolGroup>
+						<ToolGroup tabIndex>
 							<div className="btn-file">
 								<input
 									disabled={ isReadOnly || isAddingLinkedUrl }
-									className="add-attachment"
+									className="add-attachment toolbar-focusable"
 									onChange={ handleFileInputChange }
 									onKeyDown={ handleFileInputKeyDown }
 									ref={ fileInput }
@@ -483,14 +494,15 @@ const Attachments = props => {
 								</Button>
 							</div>
 							<Button
-								onClick={ handleLinkedFileClick }
+								className="btn-default toolbar-focusable"
 								disabled={ isReadOnly }
-								className="btn-default"
-								tabIndex={ -1 }
+								onClick={ handleLinkedFileClick }
+								onKeyDown={ handleFileInputKeyDown }
+								tabIndex={ -3 }
+								ref={ addLinkedUrlButtonRef }
 							>
 								Add Linked URL
 							</Button>
-
 						</ToolGroup>
 						) }
 					</div>
