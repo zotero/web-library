@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types';
+import cx from 'classnames';
 import React, { forwardRef, useCallback, useImperativeHandle, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -7,6 +8,7 @@ import Spinner from '../ui/spinner';
 import { Toolbar } from '../ui/toolbars';
 import { createLinkedUrlAttachments } from '../../actions';
 import Input from '../form/input';
+import { cleanURL } from '../../utils';
 
 const AddLinkedUrlForm = forwardRef(({ onClose }, ref) => {
 	const dispatch = useDispatch();
@@ -15,20 +17,35 @@ const AddLinkedUrlForm = forwardRef(({ onClose }, ref) => {
 	const [isBusy, setBusy] = useState(false);
 	const [url, setUrl] = useState('');
 	const [title, setTitle] = useState('');
+	const [isValid, setIsValid] = useState(true);
+
+	const submit = useCallback(async () => {
+		var cleanedUrl = cleanURL(url, true);
+		if(!cleanedUrl) {
+			setIsValid(false);
+			return false;
+		}
+
+		await dispatch(createLinkedUrlAttachments({ url: cleanedUrl, title }, { parentItem: itemKey }));
+		return true;
+	});
 
 	// Allow submiting form by parent
-	useImperativeHandle(ref, () => ({
-		submit: handleLinkedFileConfirmClick
-	}));
+	useImperativeHandle(ref, () => ({ submit }));
 
 	const handleLinkedFileConfirmClick = useCallback(async () => {
 		setBusy(true);
-		await dispatch(createLinkedUrlAttachments({ url, title }, { parentItem: itemKey }));
+		const isSuccess = await submit();
 		setBusy(false);
-		onClose();
+		if(isSuccess) {
+			onClose();
+		}
 	});
 
-	const handleUrlChange = useCallback(newValue => setUrl(newValue));
+	const handleUrlChange = useCallback(newValue => {
+		setIsValid(true);
+		setUrl(newValue);
+	});
 	const handleTitleChange = useCallback(newValue => setTitle(newValue));
 	const handleKeyDown = useCallback(ev => {
 		if(ev.key === 'Escape') {
@@ -49,6 +66,8 @@ const AddLinkedUrlForm = forwardRef(({ onClose }, ref) => {
 						placeholder="Enter or paste URL"
 						tabIndex={ 0 }
 						value={ url }
+						className={ cx('form-control') }
+						validationError={ isValid ? null : 'Invalid URL' }
 					/>
 				</div>
 			</div>

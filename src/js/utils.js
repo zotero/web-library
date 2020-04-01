@@ -287,6 +287,23 @@ const isLikeURL = identifier => {
 	return !!identifier.match(urlRE);
 }
 
+// https://github.com/zotero/zotero/blob/d3601bba24a83b3930711cc664e8ffad2ee41fd8/chrome/content/zotero/xpcom/utilities.js#L200
+const cleanURL = (url, shouldTryHttp = false) => {
+	url = url.trim();
+
+	try {
+		return (new URL(url)).href;
+	} catch(e) {
+		if (shouldTryHttp && /\w\.\w/.test(url)) {
+			try {
+				return (new URL('http://' + url)).href;
+			} catch(e) {}
+		}
+	}
+
+	return false;
+}
+
 const loadJs = async path => {
 	return new Promise((resolve, reject) => {
 		const script = document.createElement('script');
@@ -361,6 +378,7 @@ const clamp = (number, min, max) => Math.max(min, Math.min(number, max));
 export {
 	applyChangesToVisibleColumns,
 	clamp,
+	cleanURL,
 	compare,
 	compareItem,
 	deduplicate,

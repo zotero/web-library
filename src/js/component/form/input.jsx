@@ -43,10 +43,15 @@ class Input extends React.PureComponent {
 		}
 	}
 
-	UNSAFE_componentWillReceiveProps({ value }) {
+	UNSAFE_componentWillReceiveProps({ value, validationError }) {
 		if (value !== this.props.value) {
 			this.setState({ value });
 		}
+
+		if(validationError !== this.props.validationError) {
+			validationError ? this.input.current.setCustomValidity(validationError) : this.input.current.setCustomValidity('');
+		}
+
 	}
 
 	handleChange({ target }) {
@@ -220,10 +225,11 @@ class Input extends React.PureComponent {
 		selectOnFocus: PropTypes.bool,
 		spellCheck: PropTypes.bool,
 		step: PropTypes.number,
+		suggestions: PropTypes.array,
 		tabIndex: PropTypes.number,
 		type: PropTypes.string.isRequired,
+		validationError: PropTypes.string,
 		value: PropTypes.string.isRequired,
-		suggestions: PropTypes.array,
 	};
 }
 
