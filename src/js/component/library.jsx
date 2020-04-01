@@ -39,6 +39,7 @@ import { getSerializedQuery } from '../common/state';
 import { pick } from '../common/immutable';
 import ZoteroConnectorNotifier from './zotero-connector-notifier';
 import TitleUpdater from './title-updater';
+import AddLinkedUrlTouchModal from './modal/add-linked-url-touch';
 
 
 const Library = props => {
@@ -204,6 +205,7 @@ const Library = props => {
 				<AddByIdentifierModalContainer />
 				<NewFileModalContainer />
 				<Messages />
+				<AddLinkedUrlTouchModal />
 			</div>
 			</DndProvider>
 			<ZoteroConnectorNotifier />

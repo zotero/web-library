@@ -1,5 +1,3 @@
-'use strict';
-
 export const BIBLIOGRAPHY = 'BIBLIOGRAPHY';
 export const COLLECTION_ADD = 'COLLECTION_ADD';
 export const COLLECTION_RENAME = 'COLLECTION_RENAME';
@@ -11,3 +9,4 @@ export const SORT_ITEMS = 'SORT_ITEMS';
 export const STYLE_INSTALLER = 'STYLE_INSTALLER';
 export const ADD_BY_IDENTIFIER = 'ADD_BY_IDENTIFIER';
 export const NEW_FILE = 'NEW_FILE';
+export const ADD_LINKED_URL_TOUCH = 'ADD_LINKED_URL_TOUCH';

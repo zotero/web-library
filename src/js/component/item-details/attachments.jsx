@@ -18,11 +18,12 @@ import { getScrollContainerPageCount, getUniqueId, openAttachment, stopPropagati
 import { pick } from '../../common/immutable';
 import { TabPane } from '../ui/tabs';
 import { Toolbar, ToolGroup } from '../ui/toolbars';
-import { createLinkedUrlAttachments, navigate, sourceFile, updateItem } from '../../actions';
+import { navigate, sourceFile, toggleModal, updateItem } from '../../actions';
 import { pluralize } from '../../common/format';
 import AttachmentDetails from './attachment-details';
 import { useFocusManager } from '../../hooks';
-import Input from '../form/input';
+import AddLinkedUrlForm from './add-linked-url-form';
+import { ADD_LINKED_URL_TOUCH } from '../../constants/modals';
 
 const AttachmentIcon = ({ device, isActive, item, size }) => {
 	const { iconName } = item[Symbol.for('derived')];
@@ -119,7 +120,8 @@ const Attachment = forwardRef((props, ref) => {
 	const isLink = attachment.linkMode === 'linked_url';
 	const hasLink = isFile || isLink;
 
-	const handleDelete = useCallback(() => {
+	const handleDelete = useCallback(ev => {
+		ev.stopPropagation();
 		moveToTrash([attachment.key]);
 	});
 
@@ -158,7 +160,7 @@ const Attachment = forwardRef((props, ref) => {
 			tabIndex={ -2 }
 		>
 			{ (device.isTouchOrSmall && !isReadOnly) && (
-			<Button
+				<Button
 					aria-label="delete attachment"
 					className="btn-circle btn-primary"
 					onClick={ handleDelete }
@@ -235,86 +237,6 @@ const AttachmentDetailsWrap = ({ isReadOnly }) => {
 };
 
 const PAGE_SIZE = 100;
-
-const AddLinkedUrlForm = ({ onClose }) => {
-	const dispatch = useDispatch();
-	const itemKey = useSelector(state => state.current.itemKey);
-	const [isBusy, setBusy] = useState(false);
-	const [url, setUrl] = useState('');
-	const [title, setTitle] = useState('');
-
-	const handleLinkedFileConfirmClick = useCallback(async () => {
-		setBusy(true);
-		await dispatch(createLinkedUrlAttachments({ url, title }, { parentItem: itemKey }));
-		setBusy(false);
-		onClose();
-	});
-
-	const handleUrlChange = useCallback(newValue => setUrl(newValue));
-	const handleTitleChange = useCallback(newValue => setTitle(newValue));
-	const handleKeyDown = useCallback(ev => {
-		if(ev.key === 'Escape') {
-			ev.stopPropagation();
-			onClose();
-		}
-	});
-
-	return (
-		<div className="add-linked-url form" onKeyDown={ handleKeyDown }>
-			<div className="form-group form-row">
-				<label className="col-form-label" htmlFor="linked-url-form-url">Link</label>
-				<div className="col">
-					<Input
-						autoFocus
-						id="linked-url-form-url"
-						onChange={ handleUrlChange }
-						placeholder="Enter or paste URL"
-						tabIndex={ 0 }
-						value={ url }
-					/>
-				</div>
-			</div>
-			<div className="form-group form-row">
-				<label className="col-form-label" htmlFor="linked-url-form-title">Title</label>
-				<div className="col">
-					<Input
-						id="linked-url-form-title"
-						onChange={ handleTitleChange }
-						placeholder="(Optional)"
-						tabIndex={ 0 }
-						value={ title }
-					/>
-				</div>
-			</div>
-			<Toolbar>
-				<div className="toolbar-right">
-					{isBusy ? <Spinner className="small" /> : (
-					<React.Fragment>
-						<Button
-							onClick={ onClose }
-							className="btn-default"
-							tabIndex={ 0 }
-						>
-							Cancel
-						</Button>
-						<Button
-							onClick={ handleLinkedFileConfirmClick }
-							className="btn-default"
-							tabIndex={ 0 }
-						>
-							Add
-						</Button>
-					</React.Fragment>
-					)}
-				</div>
-			</Toolbar>
-		</div>
-	);
-}
-
-AddLinkedUrlForm.propTypes = {
-	onClose: PropTypes.func.isRequired
-}
 
 //@TODO: migrate to non-container component
 const Attachments = props => {
@@ -442,6 +364,10 @@ const Attachments = props => {
 		}
 	});
 
+	const handleAddLinkedUrlTouchClick = useCallback(ev => {
+		dispatch(toggleModal(ADD_LINKED_URL_TOUCH, true));
+	});
+
 	const handleLinkedFileClick = useCallback(ev => {
 		setIsAddingLinkedUrl(true);
 	});
@@ -557,6 +483,7 @@ const Attachments = props => {
 							</Button>
 						</div>
 						<Button
+							onClick={ handleAddLinkedUrlTouchClick }
 							className="btn-block text-left hairline-top hairline-start-icon-28 btn-transparent-secondary"
 							tabIndex={ -1 }
 						>
