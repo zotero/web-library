@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import cx from 'classnames';
-import React, { forwardRef, useCallback, useImperativeHandle, useState } from 'react';
+import React, { forwardRef, useCallback, useImperativeHandle, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import Button from '../ui/button';
@@ -9,6 +9,7 @@ import { Toolbar } from '../ui/toolbars';
 import { createLinkedUrlAttachments } from '../../actions';
 import Input from '../form/input';
 import { cleanURL } from '../../utils';
+import { useFocusManager } from '../../hooks';
 
 const AddLinkedUrlForm = forwardRef(({ onClose }, ref) => {
 	const dispatch = useDispatch();
@@ -18,6 +19,8 @@ const AddLinkedUrlForm = forwardRef(({ onClose }, ref) => {
 	const [url, setUrl] = useState('');
 	const [title, setTitle] = useState('');
 	const [isValid, setIsValid] = useState(true);
+	const toolbarRef = useRef(null);
+	const { focusNext, focusPrev, receiveBlur, receiveFocus } = useFocusManager(toolbarRef);
 
 	const submit = useCallback(async () => {
 		var cleanedUrl = cleanURL(url, true);
@@ -54,6 +57,14 @@ const AddLinkedUrlForm = forwardRef(({ onClose }, ref) => {
 		}
 	});
 
+	const handleToolbarKeyDown = useCallback(ev => {
+		if(ev.key === "ArrowLeft") {
+			focusPrev(ev)
+		} else if(ev.key === "ArrowRight") {
+			focusNext(ev);
+		}
+	});
+
 	return (
 		<div className="add-linked-url form" onKeyDown={ handleKeyDown }>
 			<div className="form-group form-row">
@@ -84,21 +95,28 @@ const AddLinkedUrlForm = forwardRef(({ onClose }, ref) => {
 				</div>
 			</div>
 			{ !isTouchOrSmall && (
-				<Toolbar>
+				<Toolbar
+					onBlur={ receiveBlur }
+					onFocus={ receiveFocus }
+					ref={ toolbarRef }
+					tabIndex="0"
+				>
 					<div className="toolbar-right">
 						{ isBusy ? <Spinner className="small" /> : (
 						<React.Fragment>
 							<Button
-								onClick={ onClose }
 								className="btn-default"
-								tabIndex={ 0 }
+								onClick={ onClose }
+								onKeyDown={ handleToolbarKeyDown }
+								tabIndex={ -2 }
 							>
 								Cancel
 							</Button>
 							<Button
-								onClick={ handleLinkedFileConfirmClick }
 								className="btn-default"
-								tabIndex={ 0 }
+								onClick={ handleLinkedFileConfirmClick }
+								onKeyDown={ handleToolbarKeyDown }
+								tabIndex={ -2 }
 							>
 								Add
 							</Button>
