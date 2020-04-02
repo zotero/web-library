@@ -384,10 +384,12 @@ const Attachments = props => {
 			ref={ drop }
 		>
 			<CSSTransition
-				in={ isAddingLinkedUrl }
-				timeout={ 500 }
 				classNames="slide-down"
+				enter={ !device.isTouchOrSmall }
+				exit={ !device.isTouchOrSmall }
+				in={ !device.isTouchOrSmall && isAddingLinkedUrl }
 				mountOnEnter
+				timeout={ 500 }
 				unmountOnExit
 			>
 				<AddLinkedUrlForm onClose={ handleLinkedFileCancel } />

@@ -12,7 +12,7 @@ import { toggleModal } from '../../actions';
 const AddLinkedUrlTouchModal = () => {
 	const dispatch = useDispatch();
 	const formRef = useRef(null);
-	const isOpen = useSelector(state => state.modal.id === ADD_LINKED_URL_TOUCH);
+	const isOpen = useSelector(state => state.modal.id === ADD_LINKED_URL_TOUCH && state.device.isTouchOrSmall);
 	const [isBusy, setIsBusy] = useState(false);
 
 	const handleClose = useCallback(() => {
