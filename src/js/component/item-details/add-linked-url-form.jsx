@@ -72,13 +72,13 @@ const AddLinkedUrlForm = forwardRef(({ onClose }, ref) => {
 				<div className="col">
 					<Input
 						autoFocus
+						className={ cx('form-control') }
 						id="linked-url-form-url"
 						onChange={ handleUrlChange }
 						placeholder="Enter or paste URL"
 						tabIndex={ 0 }
-						value={ url }
-						className={ cx('form-control') }
 						validationError={ isValid ? null : 'Invalid URL' }
+						value={ url }
 					/>
 				</div>
 			</div>
@@ -101,8 +101,8 @@ const AddLinkedUrlForm = forwardRef(({ onClose }, ref) => {
 					ref={ toolbarRef }
 					tabIndex="0"
 				>
-					<div className="toolbar-right">
-						{ isBusy ? <Spinner className="small" /> : (
+					{ isBusy && <Spinner className="small" /> }
+					<div className={ cx('toolbar-right', { 'hidden': isBusy }) }>
 						<React.Fragment>
 							<Button
 								className="btn-default"
@@ -121,7 +121,6 @@ const AddLinkedUrlForm = forwardRef(({ onClose }, ref) => {
 								Add
 							</Button>
 						</React.Fragment>
-						)}
 					</div>
 				</Toolbar>
 			) }
