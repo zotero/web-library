@@ -44,6 +44,20 @@ class BoxField extends React.PureComponent {
 		const props = { display: field.display, input, isActive, isBusy: field.processing || false,
 		isDisabled: this.isDisabled, onBlur, onClick, onFocus, title: field.title, };
 
+		if(field.isReadOnly && field.value && ['url', 'DOI'].includes(field.key)) {
+			return (
+				<Editable { ...props }>
+					<a
+						target="_blank"
+						rel="nofollow noopener noreferrer"
+						href={ field.key === 'DOI' ? 'http://dx.doi.org/' + field.value : field.value }
+					>
+						{ field.value }
+					</a>
+				</Editable>
+			)
+		}
+
 		return <Editable { ...props } />
 	}
 
