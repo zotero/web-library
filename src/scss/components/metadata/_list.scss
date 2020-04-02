@@ -427,6 +427,16 @@
 				flex: 1 1 auto;
 			}
 		}
+
+		> a {
+			.icon {
+				color: inherit;
+			}
+
+			@include mouse-and-bp-up(md) {
+				vertical-align: middle;
+			}
+		}
 	}
 
 	.form-control {

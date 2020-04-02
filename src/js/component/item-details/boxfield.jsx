@@ -8,6 +8,7 @@ import Input from '../form/input';
 import SelectInput from '../form/select';
 import TextAreaInput from '../form/text-area';
 import withDevice from '../../enhancers/with-device';
+import Icon from '../ui/icon';
 
 const pickInputComponent = field => {
 	switch(field.key) {
@@ -104,6 +105,8 @@ class BoxField extends React.PureComponent {
 			return (
 				<a target="_blank" rel="nofollow noopener noreferrer" href={ field.value }>
 					{ field.label }
+					<Icon type={ '16/open-link' } className="mouse" width="12" height="12"/>
+					<Icon type={ '16/open-link' } className="touch" width="16" height="16"/>
 				</a>
 			);
 		}
@@ -112,6 +115,8 @@ class BoxField extends React.PureComponent {
 			return (
 				<a target="_blank" rel="nofollow noopener noreferrer" href={ 'http://dx.doi.org/' + field.value }>
 					{ field.label }
+					<Icon type={ '16/open-link' } className="mouse" width="12" height="12"/>
+					<Icon type={ '16/open-link' } className="touch" width="16" height="16"/>
 				</a>
 			);
 		}
