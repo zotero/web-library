@@ -101,7 +101,7 @@ const AddLinkedUrlForm = forwardRef(({ onClose }, ref) => {
 					ref={ toolbarRef }
 					tabIndex="0"
 				>
-					{ isBusy && <Spinner className="small" /> }
+					{ isBusy && <div className="toolbar-right"><Spinner className="small" /></div> }
 					<div className={ cx('toolbar-right', { 'hidden': isBusy }) }>
 						<React.Fragment>
 							<Button
