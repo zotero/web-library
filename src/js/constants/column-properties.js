@@ -26,7 +26,7 @@ export default Object.freeze({
 	},
 	extra: {
 		name: 'Extra',
-		sortKey: false,
+		sortKey: 'extra',
 	},
 	itemType: {
 		name: 'Item Type',
