@@ -8,7 +8,7 @@ import { get, getItemCanonicalUrl, getUniqueId, removeRelationByItemKey, reverse
 import { getFilesData } from '../common/event';
 import { omit } from '../common/immutable';
 import { extractItems } from '../common/actions';
-import { fetchChildItems, fetchItemTemplate, fetchItemTypeCreatorTypes } from '.';
+import { fetchItemsByKeys, fetchChildItems, fetchItemTemplate, fetchItemTypeCreatorTypes } from '.';
 import { COMPLETE_ONGOING, BEGIN_ONGOING } from '../constants/actions';
 
 import {
@@ -444,6 +444,10 @@ const queueMoveItemsToTrash = (itemKeys, libraryKey, queueId) => {
 			try {
 				const { response, itemKeys, ...itemsData } = await postItemsMultiPatch(state, multiPatch);
 
+				const affectedParentItemKeys = itemKeys
+					.map(ik => get(state, ['libraries', libraryKey, 'items', ik, 'parentItem']))
+					.filter(Boolean);
+
 				dispatch({
 					type: RECEIVE_MOVE_ITEMS_TRASH,
 					libraryKey,
@@ -453,6 +457,10 @@ const queueMoveItemsToTrash = (itemKeys, libraryKey, queueId) => {
 					...itemsData,
 					otherItems: state.libraries[libraryKey].items,
 				});
+
+				if(affectedParentItemKeys.length > 0) {
+					dispatch(fetchItemsByKeys(affectedParentItemKeys));
+				}
 
 				if(!response.isSuccess()) {
 					dispatch({
