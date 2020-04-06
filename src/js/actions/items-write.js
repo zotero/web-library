@@ -458,7 +458,7 @@ const queueMoveItemsToTrash = (itemKeys, libraryKey, queueId) => {
 					otherItems: state.libraries[libraryKey].items,
 				});
 
-				if(affectedParentItemKeys.length > 0) {
+				if(response.isSuccess() && affectedParentItemKeys.length > 0) {
 					dispatch(fetchItemsByKeys(affectedParentItemKeys));
 				}
 
@@ -524,6 +524,10 @@ const queueRecoverItemsFromTrash = (itemKeys, libraryKey, queueId) => {
 			try {
 				const { response, itemKeys, ...itemsData } = await postItemsMultiPatch(state, multiPatch);
 
+				const affectedParentItemKeys = itemKeys
+					.map(ik => get(state, ['libraries', libraryKey, 'items', ik, 'parentItem']))
+					.filter(Boolean);
+
 				dispatch({
 					type: RECEIVE_RECOVER_ITEMS_TRASH,
 					libraryKey,
@@ -533,6 +537,10 @@ const queueRecoverItemsFromTrash = (itemKeys, libraryKey, queueId) => {
 					...itemsData,
 					otherItems: state.libraries[libraryKey].items,
 				});
+
+				if(response.isSuccess() && affectedParentItemKeys.length > 0) {
+					dispatch(fetchItemsByKeys(affectedParentItemKeys));
+				}
 
 				if(!response.isSuccess()) {
 					dispatch({
