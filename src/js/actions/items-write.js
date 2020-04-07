@@ -389,6 +389,12 @@ const uploadAttachment = (itemKey, fileData) => {
 				.attachment(fileData.fileName, fileData.file)
 				.post();
 
+			const affectedParentItemKey = get(state, ['libraries', libraryKey, 'items', itemKey, 'parentItem']);
+
+			if(affectedParentItemKey) {
+				dispatch(fetchItemsByKeys([affectedParentItemKey]));
+			}
+
 			dispatch({
 				type: RECEIVE_UPLOAD_ATTACHMENT,
 				libraryKey,
