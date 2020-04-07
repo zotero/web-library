@@ -389,11 +389,6 @@ const uploadAttachment = (itemKey, fileData) => {
 				.attachment(fileData.fileName, fileData.file)
 				.post();
 
-			const affectedParentItemKey = get(state, ['libraries', libraryKey, 'items', itemKey, 'parentItem']);
-
-			if(affectedParentItemKey) {
-				dispatch(fetchItemsByKeys([affectedParentItemKey]));
-			}
 
 			dispatch({
 				type: RECEIVE_UPLOAD_ATTACHMENT,
@@ -1087,6 +1082,12 @@ const createAttachments = (filesData, { collection = null, parentItem = null } =
 			});
 
 			await Promise.all(uploadPromises);
+
+			const affectedParentItemKeys = createdItems.map(i => i.parentItem).filter(Boolean);
+
+			if(affectedParentItemKeys.length > 0) {
+				dispatch(fetchItemsByKeys(affectedParentItemKeys));
+			}
 
 			return createdItems;
 		} finally {
