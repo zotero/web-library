@@ -25,7 +25,7 @@ const HeaderRow = memo(forwardRef((props, ref) => {
 
 			dispatch(updateItemsSorting(
 				columnName,
-				columnName === sortBy ? sortDirection === 'asc' ? 'desc' : 'asc' : 'desc'
+				columnName === sortBy ? sortDirection === 'asc' ? 'desc' : 'asc' : 'asc'
 			));
 			ev.preventDefault();
 		}
