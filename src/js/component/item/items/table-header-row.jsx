@@ -13,7 +13,7 @@ const ROWHEIGHT = 26;
 const HeaderRow = memo(forwardRef((props, ref) => {
 	const dispatch = useDispatch();
 	const mouseState = useRef(null);
-	const { columns, width, isReordering, isResizing, onReorder, onResize, reorderTargetIndex, sortBy, sortDirection } = props;
+	const { columns, width, isReordering, isResizing, onReorder, onResize, reorderTarget, sortBy, sortDirection } = props;
 	const { handleFocusNext, handleFocusPrev } = props; // drilldown focus management on table
 
 	const handleCellClickAndKeyDown = ev => {
@@ -113,8 +113,8 @@ const HeaderRow = memo(forwardRef((props, ref) => {
 					width={ `var(--col-${colIndex}-width)` }
 				>
 					<div className="header-content">
-						{ colIndex === reorderTargetIndex &&
-							<div className="reorder-target" />
+						{ reorderTarget && colIndex === reorderTarget.index && reorderTarget.isMovingLeft &&
+							<div className="reorder-target reorder-left" />
 						}
 						{ colIndex !== 0 &&
 							<div
@@ -134,6 +134,9 @@ const HeaderRow = memo(forwardRef((props, ref) => {
 						{ sortBy === c.field &&
 							<Icon type={ '16/chevron-7' } width="16" height="16" className="sort-indicator" />
 						}
+						{ reorderTarget && colIndex === reorderTarget.index && reorderTarget.isMovingRight &&
+							<div className="reorder-target reorder-right" />
+						}
 					</div>
 				</Cell>
 			))}
@@ -151,7 +154,7 @@ HeaderRow.propTypes = {
 	isResizing: PropTypes.bool,
 	onReorder: PropTypes.func,
 	onResize: PropTypes.func,
-	reorderTargetIndex: PropTypes.number,
+	reorderTarget: PropTypes.object,
 	sortBy: PropTypes.string,
 	sortDirection: PropTypes.oneOf(['asc', 'desc']),
 	width: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),

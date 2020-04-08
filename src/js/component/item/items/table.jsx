@@ -39,7 +39,7 @@ const Table = memo(() => {
 	const mouseUpTimeout = useRef(null);
 	const [isResizing, setIsResizing] = useState(false);
 	const [isReordering, setIsReordering] = useState(false);
-	const [reorderTargetIndex, setReorderTargetIndex] = useState(null);
+	const [reorderTarget, setReorderTarget] = useState(null);
 	const [isHoveringBetweenRows, setIsHoveringBetweenRows] = useState(false);
 	const { hasChecked, isFetching, keys, requests, totalResults } = useSourceData();
 	const collectionKey = useSelector(state => state.current.collectionKey);
@@ -146,7 +146,7 @@ const Table = memo(() => {
 
 	const handleReorder = useCallback(ev => {
 		const columnDom = ev.target.closest(['[data-colindex]']);
-		const index = columnDom.dataset.colindex;
+		const index = parseInt(columnDom.dataset.colindex, 10);
 		const { left, width } = containerDom.current.getBoundingClientRect();
 		setIsReordering(true);
 		reordering.current = { index, left, width };
@@ -171,23 +171,39 @@ const Table = memo(() => {
 			);
 		} else if(reordering.current !== null) {
 			const { index, left, width } = reordering.current;
+			var prevColumnEdge = left, columnEdge = left;
+			var columnWidth;
 			var targetIndex;
+
 			if(ev.clientX < left) {
 				targetIndex = 0;
 			} else {
-				let columnLeft = left;
+
 				for (let i = 0; i < columns.length; i++) {
-					const columnWidth = columns[i].fraction * width;
-					columnLeft += columnWidth;
-					const testOffest = columnLeft - 0.5 * columnWidth;
+					columnWidth = columns[i].fraction * width;
+					prevColumnEdge = columnEdge;
+					columnEdge += columnWidth;
+					const testOffest = columnEdge;
 					if(ev.clientX < testOffest) {
 						targetIndex = i;
 						break;
 					}
 				}
 			}
-			if(targetIndex !== index) {
-				setReorderTargetIndex(targetIndex);
+			const isMovingRight = targetIndex > index;
+			const isMovingLeft = targetIndex < index;
+
+			if(isMovingRight && ev.clientX < prevColumnEdge + 0.5 * columnWidth) {
+				targetIndex--;
+			}
+			if(isMovingLeft && ev.clientX > columnEdge - 0.5 * columnWidth) {
+				targetIndex++;
+			}
+
+			if(targetIndex === index) {
+				setReorderTarget(null);
+			} else {
+				setReorderTarget({ index: targetIndex , isMovingRight, isMovingLeft });
 			}
 		}
 	});
@@ -196,9 +212,9 @@ const Table = memo(() => {
 			ev.preventDefault();
 			const newColumns = columnsData.map(c => ({ ...c }));
 			dispatch(preferenceChange('columns', applyChangesToVisibleColumns(resizing.current.newColumns, newColumns)));
-		} else if(isReordering && reorderTargetIndex) {
+		} else if(isReordering && reorderTarget && typeof(reorderTarget.index) === 'number' && reordering.current && typeof(reordering.current.index) === 'number') {
 			const fieldFrom = columns[reordering.current.index].field;
-			const fieldTo = columns[reorderTargetIndex].field;
+			const fieldTo = columns[reorderTarget.index].field;
 			const indexFrom = columnsData.findIndex(c => c.field === fieldFrom);
 			const indexTo = columnsData.findIndex(c => c.field === fieldTo);
 
@@ -212,13 +228,13 @@ const Table = memo(() => {
 		resizing.current = null;
 		reordering.current = null;
 
-		mouseUpTimeout.current = setTimeout(() => { setIsResizing(false); setIsReordering(false); setReorderTargetIndex(null) });
+		mouseUpTimeout.current = setTimeout(() => { setIsResizing(false); setIsReordering(false); setReorderTarget(null) });
 	});
 
 	const handleMouseLeave = useCallback(() => {
 		setIsReordering(false);
 		setIsResizing(false);
-		setReorderTargetIndex(null);
+		setReorderTarget(null);
 		resizing.current = null;
 		reordering.current = null;
 	});
@@ -383,7 +399,7 @@ const Table = memo(() => {
 		}
 		// new event handlers need to be installed every time any of these changes
 		// otherwise it will have access to old values
-	}, [isResizing, isReordering, columns, reorderTargetIndex]);
+	}, [isResizing, isReordering, columns, reorderTarget && reorderTarget.index]);
 
 	useEffect(() => {
 		if(listRef.current && selectedItemKeys.length && keys) {
@@ -435,7 +451,7 @@ const Table = memo(() => {
 								onReorder={ handleReorder }
 								isResizing={ isResizing }
 								isReordering={ isReordering }
-								reorderTargetIndex= { reorderTargetIndex }
+								reorderTarget= { reorderTarget }
 								handleFocusNext={ handleDrillDownNext }
 								handleFocusPrev={ handleDrillDownPrev }
 							/>

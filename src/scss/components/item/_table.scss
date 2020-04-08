@@ -166,22 +166,16 @@
 				position: absolute;
 				top: 2px;
 				bottom: 2px;
-				left: -1px;
 				width: 3px;
 				background: $sort-indicator;
 				z-index: 2;
 
-				@include variant(".column-header:first-child") {
-					left: 0;
+				&.reorder-left {
+					left: -1px;
 				}
 
-				@include variant(".reorder-source ~ .column-header") {
-					left: auto;
-					right: -2px;
-				}
-
-				@include variant(".reorder-source ~ .column-header:last-child") {
-					right: 0;
+				&.reorder-right {
+					right: 0px;
 				}
 			}
 		}
