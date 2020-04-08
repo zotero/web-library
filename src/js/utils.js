@@ -240,6 +240,11 @@ const resizeVisibleColumns = (visibleColumns, fractionBias, invert = false) => {
 		fractionBias -= adjustedFraction;
 		columnPointer = adjustColumnuPointer(columnPointer);
 	}
+
+	// in edge cases, remove overflow from the last column
+	const totalFraction = visibleColumns.reduce((acc, vc) => acc + vc.fraction, 0);
+	const overflow = -(1 - totalFraction);
+	visibleColumns[visibleColumns.length - 1].fraction -= overflow;
 }
 
 const applyChangesToVisibleColumns = (visibleColumns, allColumns) => {
