@@ -196,7 +196,7 @@ const Table = memo(() => {
 			ev.preventDefault();
 			const newColumns = columnsData.map(c => ({ ...c }));
 			dispatch(preferenceChange('columns', applyChangesToVisibleColumns(resizing.current.newColumns, newColumns)));
-		} else if(isReordering) {
+		} else if(isReordering && reorderTargetIndex) {
 			const fieldFrom = columns[reordering.current.index].field;
 			const fieldTo = columns[reorderTargetIndex].field;
 			const indexFrom = columnsData.findIndex(c => c.field === fieldFrom);
