@@ -36,7 +36,6 @@ const ItemDetailsTabs = () => {
 	const dispatch = useDispatch();
 	const isLibraryReadOnly = useSelector(state => (state.config.libraries.find(l => l.key === state.current.libraryKey) || {}).isReadOnly);
 	const libraryKey = useSelector(state => state.current.libraryKey);
-	const userId = useSelector(state => state.config.userId);
 	const itemKey = useSelector(state => state.current.itemKey);
 	const noteKey = useSelector(state => state.current.noteKey);
 	const attachmentKey = useSelector(state => state.current.attachmentKey);
@@ -63,7 +62,7 @@ const ItemDetailsTabs = () => {
 			return acc;
 		}, { attachments: [], notes: [] })
 	}, [childItemsState.keys, itemKey, items]);
-	const relatedKeys = mapRelationsToItemKeys(item.relations || {}, userId);
+	const relatedKeys = mapRelationsToItemKeys(item.relations || {}, libraryKey);
 
 	const [isEditing, ] = useEditMode();
 	const isReadOnly = isLibraryReadOnly || !!(shouldUseEditMode && !isEditing);

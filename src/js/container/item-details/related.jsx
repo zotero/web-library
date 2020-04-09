@@ -11,7 +11,7 @@ const RelatedContainer = props => <Related { ...props } />;
 const mapStateToProps = state => {
 	const { libraryKey, itemKey } = state.current;
 	const { relations } = get(state, ['libraries', libraryKey, 'items', itemKey], {});
-	const relatedKeys = mapRelationsToItemKeys(relations || {}, state.config.userId);
+	const relatedKeys = mapRelationsToItemKeys(relations || {}, libraryKey);
 	const { isFetching, isFetched } = get(state, ['libraries', libraryKey, 'itemsRelated', itemKey], {});
 	const relatedItems = (relatedKeys || [])
 		.map(relatedKey => get(state, ['libraries', libraryKey, 'items', relatedKey], null))

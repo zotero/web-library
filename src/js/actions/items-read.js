@@ -135,7 +135,6 @@ const fetchRelatedItems = (itemKey, queryOptions) => {
 		const state = getState();
 		const { libraryKey } = state.current;
 		const item = state.libraries[libraryKey].items[itemKey];
-		const userId = state.config.userId;
 
 		if(!item) {
 			dispatch({
@@ -145,7 +144,7 @@ const fetchRelatedItems = (itemKey, queryOptions) => {
 			throw new Error(`Item ${itemKey} is not found in local state`);
 		}
 
-		const relatedItemsKeys = mapRelationsToItemKeys(item.relations || {}, userId);
+		const relatedItemsKeys = mapRelationsToItemKeys(item.relations || {}, libraryKey);
 
 		if(relatedItemsKeys.length === 0) {
 			dispatch({

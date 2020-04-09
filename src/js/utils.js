@@ -75,19 +75,22 @@ const deduplicateByHash = (array, hasher) => {
 const getItemCanonicalUrl = ({ libraryKey, itemKey }) =>
 	`http://zotero.org/${libraryKey.startsWith('u') ? 'user' : 'groups'}/${libraryKey.slice(1)}/items/${itemKey}`;
 
-const mapRelationsToItemKeys = (relations, userId, relationType='dc:relation') => {
+const mapRelationsToItemKeys = (relations, libraryKey, relationType='dc:relation', shouldRemoveEmpty = true) => {
 	if(!('dc:relation' in relations)) {
 		return [];
 	}
 	var relatedUrls = Array.isArray(relations[relationType]) ? relations[relationType] : [relations[relationType]];
-	return relatedUrls.map(relatedUrl => {
-		let match = relatedUrl.match(`https?://zotero.org/users/${userId}/items/([A-Z0-9]{8})`);
+
+	const relatedItemKeys = relatedUrls.map(relatedUrl => {
+		let match = relatedUrl.match(`https?://zotero.org/(?:users|groups)/${libraryKey.slice(1)}/items/([A-Z0-9]{8})`);
 		return match ? match[1] : null;
 	});
+
+	return shouldRemoveEmpty ? relatedItemKeys.filter(Boolean) : relatedItemKeys;
 };
 
-const removeRelationByItemKey = (itemKey, relations, userId, relationType='dc:relation') => {
-	let relatedItemKeys = mapRelationsToItemKeys(relations, userId, relationType);
+const removeRelationByItemKey = (itemKey, relations, libraryKey, relationType='dc:relation') => {
+	let relatedItemKeys = mapRelationsToItemKeys(relations, libraryKey, relationType, false);
 	let index = relatedItemKeys.indexOf(itemKey);
 	if(index === -1) {
 		return relations;

@@ -879,7 +879,6 @@ const queueRemoveFromCollection = (itemKeys, collectionKey, libraryKey, queueId)
 const removeRelatedItem = (itemKey, relatedItemKey) => {
 	return async (dispatch, getState) => {
 		const state = getState();
-		const { userId } = state.config;
 		const { libraryKey } = state.current;
 		const item = get(state, ['libraries', libraryKey, 'items', itemKey], null);
 		const relatedItem = get(state, ['libraries', libraryKey, 'items', relatedItemKey], null);
@@ -904,7 +903,7 @@ const removeRelatedItem = (itemKey, relatedItemKey) => {
 			relations: removeRelationByItemKey(
 				relatedItemKey,
 				item.relations,
-				userId
+				libraryKey
 			)
 		};
 
@@ -912,7 +911,7 @@ const removeRelatedItem = (itemKey, relatedItemKey) => {
 			relations: removeRelationByItemKey(
 				itemKey,
 				relatedItem.relations,
-				userId
+				libraryKey
 			)
 		};
 
