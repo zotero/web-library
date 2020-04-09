@@ -4,12 +4,11 @@ import PropTypes from 'prop-types';
 
 import RichEditor from '../../component/rich-editor';
 import { dateLocalized } from '../../common/format';
-import { get, openAttachment } from '../../utils';
-import { getAttachmentUrl, updateItem } from '../../actions/';
+import { get } from '../../utils';
+import { openAttachment, updateItem } from '../../actions/';
 
 const AttachmentDetails = ({ attachmentKey, isReadOnly }) => {
 	const dispatch = useDispatch();
-	const dispatchGetAttachmentUrl = useCallback((...args) => dispatch(getAttachmentUrl(...args)));
 	const item = useSelector(
 		state => get(state, ['libraries', state.current.libraryKey, 'items', attachmentKey], {}),
 		shallowEqual
@@ -17,7 +16,7 @@ const AttachmentDetails = ({ attachmentKey, isReadOnly }) => {
 
 	const handleLinkInteraction = useCallback(ev => {
 		ev.preventDefault();
-		openAttachment(item.key, dispatchGetAttachmentUrl, true);
+		dispatch(openAttachment(item.key));
 	});
 
 	const handleChangeNote = useCallback(newContent => {

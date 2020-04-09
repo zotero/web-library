@@ -9,9 +9,8 @@ import Cell from './table-cell';
 import Icon from '../../ui/icon';
 import { ATTACHMENT, ITEM } from '../../../constants/dnd';
 import colorNames from '../../../constants/color-names';
-import { createAttachmentsFromDropped, chunkedCopyToLibrary, chunkedAddToCollection,
-	getAttachmentUrl, navigate } from '../../../actions';
-import { openAttachment } from '../../../utils';
+import { createAttachmentsFromDropped, chunkedCopyToLibrary, chunkedAddToCollection, navigate,
+openBestAttachment, openBestAttachmentFallback } from '../../../actions';
 
 const DROP_MARGIN_EDGE = 5; // how many pixels from top/bottom of the row triggers "in-between" drop
 
@@ -154,7 +153,6 @@ const TableRow = memo(props => {
 		shallowEqual
 	);
 	const isActive = itemKey && selectedItemKeys.includes(itemKey);
-	const dispatchGetAttachmentUrl = useCallback((...args) => dispatch(getAttachmentUrl(...args)));
 
 	const [_, drag, preview] = useDrag({ // eslint-disable-line no-unused-vars
 		item: { type: ITEM },
@@ -264,8 +262,12 @@ const TableRow = memo(props => {
 				ignoreClicks.current[itemKey] = Date.now();
 				selectItem(itemKey, event, keys, selectedItemKeys, dispatch);
 			}
-			if(event.type === 'dblclick' && itemData.attachmentItemKey) {
-				openAttachment(itemData.attachmentItemKey, dispatchGetAttachmentUrl, true);
+			if(event.type === 'dblclick') {
+				if(itemData.attachmentIconName) {
+					dispatch(openBestAttachment(itemKey));
+				} else {
+					dispatch(openBestAttachmentFallback(itemKey));
+				}
 			}
 		}
 	}

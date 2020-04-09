@@ -14,11 +14,11 @@ import withEditMode from '../../enhancers/with-edit-mode';
 import { ATTACHMENT } from '../../constants/dnd';
 import { getFileData } from '../../common/event';
 import { isTriggerEvent } from '../../common/event';
-import { getScrollContainerPageCount, getUniqueId, openAttachment, stopPropagation, sortByKey } from '../../utils';
+import { getScrollContainerPageCount, getUniqueId, stopPropagation, sortByKey } from '../../utils';
 import { pick } from '../../common/immutable';
 import { TabPane } from '../ui/tabs';
 import { Toolbar, ToolGroup } from '../ui/toolbars';
-import { navigate, sourceFile, toggleModal, updateItem } from '../../actions';
+import { navigate, sourceFile, openAttachment, toggleModal, updateItem } from '../../actions';
 import { pluralize } from '../../common/format';
 import AttachmentDetails from './attachment-details';
 import { useFocusManager } from '../../hooks';
@@ -44,7 +44,8 @@ AttachmentIcon.propTypes = {
 };
 
 const AttachmentDownloadIcon = props => {
-	const { attachment, device, isUploading, getAttachmentUrl } = props;
+	const { attachment, device, isUploading } = props;
+	const dispatch = useDispatch();
 	const iconSize = device.isTouchOrSmall ? '24' : '16';
 
 	const handleLinkInteraction = useCallback(ev => {
@@ -52,7 +53,7 @@ const AttachmentDownloadIcon = props => {
 		if(isTriggerEvent(ev) || (ev.type === 'mousedown' && ev.button === 1)) {
 			ev.stopPropagation();
 			ev.preventDefault();
-			openAttachment(key, getAttachmentUrl, true);
+			dispatch(openAttachment(key));
 		}
 	});
 

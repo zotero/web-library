@@ -14,3 +14,4 @@ export * from "./source";
 export * from "./styles";
 export * from "./tags";
 export * from "./triggers";
+export * from "./attachments";
