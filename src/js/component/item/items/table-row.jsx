@@ -85,7 +85,7 @@ const DataCell = props => {
 					)) }
 				</div>
 			) }
-			{ columnName === 'attachment' && (
+			{ columnName === 'attachment' && itemData.attachmentIconName && (
 				<Icon
 					type={ `16/item-types/light/${dvp}x/${itemData.attachmentIconName}` }
 					symbol={ isFocused && isActive ? `${itemData.attachmentIconName}-white` : itemData.attachmentIconName }
