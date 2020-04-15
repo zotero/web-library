@@ -156,6 +156,9 @@ const TableRow = memo(props => {
 
 	const [_, drag, preview] = useDrag({ // eslint-disable-line no-unused-vars
 		item: { type: ITEM },
+		options: {
+			dropEffect: 'copy'
+		},
 		begin: () => {
 			const isDraggingSelected = selectedItemKeys.includes(itemKey);
 			return { itemKey, selectedItemKeys, itemData, isDraggingSelected, libraryKey }
@@ -280,11 +283,16 @@ const TableRow = memo(props => {
 		isFileUploadAllowed && onFileHoverOnRow(isOver, dropZone);
 	}, [isOver, dropZone, isFileUploadAllowed]);
 
-	return drag(drop(
+	const attach = useCallback((domElement) => {
+		drag(domElement);
+		drop(domElement);
+		ref.current = domElement;
+	}, [drag, drop]);
+
+	return (
 		<div
 			aria-selected={ isActive }
 			aria-rowindex={ index + 1 }
-			ref={ ref }
 			className={ className }
 			style={ style }
 			data-index={ index }
@@ -293,6 +301,7 @@ const TableRow = memo(props => {
 			onDoubleClick={ handleMouseEvent }
 			onMouseDown={ handleMouseEvent }
 			role="row"
+			ref={ attach }
 			tabIndex={ -2 }
 		>
 			{ columns.map((c, colIndex) => itemData ? (
@@ -312,7 +321,7 @@ const TableRow = memo(props => {
 				columnName={ c.field }
 			/> ) }
 		</div>
-	));
+	);
 });
 
 TableRow.propTypes = {
