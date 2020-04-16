@@ -171,7 +171,7 @@ const TableRow = memo(props => {
 			if(dropResult) {
 				const { targetType, collectionKey: targetCollectionKey, libraryKey: targetLibraryKey } = dropResult;
 				if(targetLibraryKey && targetLibraryKey !== libraryKey) {
-					dispatch(chunkedCopyToLibrary(sourceItemKeys, targetLibraryKey, targetType === 'collection' ? targetCollectionKey : null));
+					dispatch(chunkedCopyToLibrary(sourceItemKeys, libraryKey, targetLibraryKey, targetType === 'collection' ? targetCollectionKey : null));
 				} else {
 					dispatch(chunkedAddToCollection(sourceItemKeys, targetCollectionKey));
 				}

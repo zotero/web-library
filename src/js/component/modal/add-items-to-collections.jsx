@@ -45,7 +45,7 @@ class AddItemsToCollectionsModal extends React.PureComponent {
 		if(targetLibraryKey === libraryKey) {
 			await chunkedAddToCollection(sourceItemKeys, targetCollectionKey);
 		} else {
-			await chunkedCopyToLibrary(sourceItemKeys, targetLibraryKey, targetCollectionKey);
+			await chunkedCopyToLibrary(sourceItemKeys, libraryKey, targetLibraryKey, targetCollectionKey);
 		}
 		this.setState({ isBusy: false });
 		toggleModal(null, false);

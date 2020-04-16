@@ -50,6 +50,9 @@ import {
 	REQUEST_STORE_RELATIONS_IN_SOURCE,
 	REQUEST_UPDATE_ITEM,
 	REQUEST_UPLOAD_ATTACHMENT,
+	REQUEST_REGISTER_FILE_ATTACHMENTS,
+	RECEIVE_REGISTER_FILE_ATTACHMENTS,
+	ERROR_REGISTER_FILE_ATTACHMENTS,
 } from '../constants/actions';
 
 const postItemsMultiPatch = async (state, multiPatch) => {
@@ -370,10 +373,9 @@ const queueUpdateItem = (itemKey, patch, libraryKey, queueId) => {
 	};
 }
 
-const uploadAttachment = (itemKey, fileData) => {
+const uploadAttachment = (itemKey, fileData, libraryKey) => {
 	return async (dispatch, getState) => {
 		const state = getState();
-		const { libraryKey } = state.current;
 		const config = state.config;
 		dispatch({
 			type: REQUEST_UPLOAD_ATTACHMENT,
@@ -658,7 +660,7 @@ const queueAddToCollection = (itemKeys, collectionKey, libraryKey, queueId) => {
 	};
 }
 
-const copyToLibrary = (itemKeys, targetLibraryKey, targetCollectionKeys = [], extraProperties = {}) => {
+const copyToLibrary = (itemKeys, sourceLibraryKey, targetLibraryKey, targetCollectionKeys = [], extraProperties = {}) => {
 	if(!Array.isArray(targetCollectionKeys)) {
 		if(targetCollectionKeys === null) {
 			targetCollectionKeys = [];
@@ -670,7 +672,6 @@ const copyToLibrary = (itemKeys, targetLibraryKey, targetCollectionKeys = [], ex
 	return async (dispatch, getState) => {
 		const state = getState();
 		const config = state.config;
-		const { libraryKey: sourceLibraryKey } = state.current;
 		const { libraries } = state.config;
 
 		const sourceLibrary = libraries.find(l => l.key === sourceLibraryKey);
@@ -767,9 +768,30 @@ const copyToLibrary = (itemKeys, targetLibraryKey, targetCollectionKeys = [], ex
 				.items(newItem.key)
 				.registerAttachment(filename, fileSize, mtime, md5)
 				.post();
+		}).filter(Boolean);
+
+		dispatch({
+			type: REQUEST_REGISTER_FILE_ATTACHMENTS,
+			libraryKey: targetLibraryKey,
 		});
 
-		await Promise.all(registerUploadsPromises);
+		try {
+			const responses = (await Promise.all(registerUploadsPromises)).filter(Boolean);
+			responses.sort((a, b) => a.getVersion() - b.getVersion());
+
+			dispatch({
+				type: RECEIVE_REGISTER_FILE_ATTACHMENTS,
+				libraryKey: targetLibraryKey,
+				responses
+			});
+		} catch(error) {
+			dispatch({
+				type: ERROR_REGISTER_FILE_ATTACHMENTS,
+				libraryKey: targetLibraryKey,
+				error
+			});
+			throw error;
+		}
 
 		const childItemsCopyPromises = itemKeys.map(async (ik, index) => {
 			const newItem = newItems[index];
@@ -777,11 +799,11 @@ const copyToLibrary = (itemKeys, targetLibraryKey, targetCollectionKeys = [], ex
 			if(!canHaveChildItems) {
 				return [];
 			}
-			const childItems = await dispatch(fetchChildItems(ik, { start: 0, limit: 100 }));
+			const childItems = await dispatch(fetchChildItems(ik, { start: 0, limit: 100 }, { current: { libraryKey: sourceLibraryKey }}));
 			const childItemsKeys = childItems.map(c => c.key);
 			const patch = { parentItem: newItem.key };
 			if(childItemsKeys && childItemsKeys.length) {
-				return await dispatch(chunkedAction(copyToLibrary, childItemsKeys, targetLibraryKey, [], patch));
+				return await dispatch(chunkedAction(copyToLibrary, childItemsKeys, sourceLibraryKey, targetLibraryKey, [], patch));
 			}
 			return [];
 		});
@@ -950,29 +972,27 @@ const chunkedTrashOrDelete = (itemKeys, ...args) => {
 	}
 }
 
-const chunkedCopyToLibrary = (itemKeys, ...args) => {
-	return async (dispatch, getState) => {
-		const state = getState();
+const chunkedCopyToLibrary = (itemKeys, sourceLibraryKey, ...args) => {
+	return async dispatch => {
 		const id = getUniqueId();
-		const { libraryKey } = state.current;
 
 		dispatch({
 			count: itemKeys.length,
 			id,
 			kind: 'cross-library-copy-items',
-			libraryKey,
+			libraryKey: sourceLibraryKey,
 			type: BEGIN_ONGOING,
 		});
 
 		try {
-			await dispatch(chunkedAction(copyToLibrary, itemKeys, ...args));
+			await dispatch(chunkedAction(copyToLibrary, itemKeys, sourceLibraryKey, ...args));
 		} catch(e) {
 			console.error(e);
 		} finally {
 			dispatch({
 				id,
 				kind: 'cross-library-copy-items',
-				libraryKey,
+				libraryKey: sourceLibraryKey,
 				type: COMPLETE_ONGOING,
 			});
 		}
@@ -1077,7 +1097,7 @@ const createAttachments = (filesData, { collection = null, parentItem = null } =
 
 			const uploadPromises = createdItems.map(async (item, index) => {
 				const fd = filesData[index];
-				await dispatch(uploadAttachment(item.key, fd));
+				await dispatch(uploadAttachment(item.key, fd, libraryKey));
 			});
 
 			await Promise.all(uploadPromises);
@@ -1085,7 +1105,7 @@ const createAttachments = (filesData, { collection = null, parentItem = null } =
 			const affectedParentItemKeys = createdItems.map(i => i.parentItem).filter(Boolean);
 
 			if(affectedParentItemKeys.length > 0) {
-				dispatch(fetchItemsByKeys(affectedParentItemKeys));
+				dispatch(fetchItemsByKeys(affectedParentItemKeys, {}, { current: { libraryKey }}));
 			}
 
 			return createdItems;

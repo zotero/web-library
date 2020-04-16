@@ -311,7 +311,7 @@ const Attachments = props => {
 			contentType: fileData.contentType
 		};
 		const item = await createItem(attachment, libraryKey);
-		await uploadAttachment(item.key, fileData);
+		await uploadAttachment(item.key, fileData, libraryKey);
 	});
 
 	const handleKeyDown = useCallback(ev => {

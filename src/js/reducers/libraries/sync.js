@@ -13,8 +13,12 @@ const sync = (state = defaultState, action) => {
 		newState.requestsPending++;
 	} else if(action.type && action.type.startsWith('RECEIVE_')) {
 		newState.requestsPending--;
-		if(action.response && action.response.response) {
-			newState.version = action.response.getVersion() || state.version;
+		if('responses' in action && action.responses && action.responses.length) {
+			newState.version = (action.responses.reduce((curMax, response) =>
+				response.getVersion() > curMax.getVersion() ? response : curMax, action.responses[0])
+			).getVersion();
+		} else if(action.response && action.response.response) {
+			newState.version = Math.max(action.response.getVersion(), state.version);
 		}
 	} else if(action.type && action.type.startsWith('ERROR_')) {
 		newState.requestsPending--;

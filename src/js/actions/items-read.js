@@ -59,12 +59,13 @@ const getApi = ({ config, libraryKey }, requestType, queryConfig) => {
 const fetchItems = (
 	type,
 	queryConfig,
-	queryOptions = {}
+	queryOptions = {},
+	overrides = {}
 ) => {
 	return async (dispatch, getState) => {
 		const state = getState();
-		const config = state.config;
-		const { libraryKey } = state.current;
+		const config = 'config' in overrides ? overrides.config : state.config;
+		const { libraryKey } = 'current' in overrides ? overrides.current : state.current;
 		const api = getApi({ config, libraryKey }, type, queryConfig);
 
 		dispatch({
@@ -95,42 +96,42 @@ const fetchItems = (
 	}
 }
 
-const fetchTopItems = queryOptions => {
-	return fetchItems('TOP_ITEMS', {}, queryOptions);
+const fetchTopItems = (queryOptions, overrides) => {
+	return fetchItems('TOP_ITEMS', {}, queryOptions, overrides);
 }
 
-const fetchTrashItems = queryOptions => {
-	return fetchItems('TRASH_ITEMS', {}, queryOptions);
+const fetchTrashItems = (queryOptions, overrides) => {
+	return fetchItems('TRASH_ITEMS', {}, queryOptions, overrides);
 }
 
-const fetchPublicationsItems = queryOptions => {
-	return fetchItems('PUBLICATIONS_ITEMS', {}, queryOptions);
+const fetchPublicationsItems = (queryOptions, overrides) => {
+	return fetchItems('PUBLICATIONS_ITEMS', {}, queryOptions, overrides);
 }
 
-const fetchItemsInCollection = (collectionKey, queryOptions) => {
-	return fetchItems('ITEMS_IN_COLLECTION', { collectionKey }, queryOptions);
+const fetchItemsInCollection = (collectionKey, queryOptions, overrides) => {
+	return fetchItems('ITEMS_IN_COLLECTION', { collectionKey }, queryOptions, overrides);
 }
 
-const fetchItemsQuery = (query, queryOptions) => {
+const fetchItemsQuery = (query, queryOptions, overrides) => {
 	const { collectionKey = null, tag = null, q = null, qmode = null, isTrash,
 		isMyPublications } = query;
 	const queryConfig = { collectionKey, isTrash, isMyPublications };
 	return fetchItems(
-		'ITEMS_BY_QUERY', queryConfig, { ...queryOptions, tag, q, qmode }
+		'ITEMS_BY_QUERY', queryConfig, { ...queryOptions, tag, q, qmode }, overrides
 	);
 }
 
-const fetchChildItems = (itemKey, queryOptions) => {
-	return fetchItems('CHILD_ITEMS', { itemKey }, queryOptions);
+const fetchChildItems = (itemKey, queryOptions, overrides) => {
+	return fetchItems('CHILD_ITEMS', { itemKey }, queryOptions, overrides);
 }
 
-const fetchItemsByKeys = (itemKeys, queryOptions) => {
+const fetchItemsByKeys = (itemKeys, queryOptions, overrides) => {
 	return fetchItems(
-		'FETCH_ITEMS', {}, { ...queryOptions, itemKey: itemKeys.join(','), }
+		'FETCH_ITEMS', {}, { ...queryOptions, itemKey: itemKeys.join(','), }, overrides
 	);
 }
 
-const fetchRelatedItems = (itemKey, queryOptions) => {
+const fetchRelatedItems = (itemKey, queryOptions, overrides) => {
 	return async (dispatch, getState) => {
 		const state = getState();
 		const { libraryKey } = state.current;
@@ -157,7 +158,7 @@ const fetchRelatedItems = (itemKey, queryOptions) => {
 		}
 
 		dispatch(fetchItems(
-			'RELATED_ITEMS', { itemKey }, { ...queryOptions, itemKey: relatedItemsKeys.join(',') }
+			'RELATED_ITEMS', { itemKey }, { ...queryOptions, itemKey: relatedItemsKeys.join(',') }, overrides
 		));
 	}
 }
