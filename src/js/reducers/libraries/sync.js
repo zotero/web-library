@@ -17,7 +17,7 @@ const sync = (state = defaultState, action) => {
 			newState.version = (action.responses.reduce((curMax, response) =>
 				response.getVersion() > curMax.getVersion() ? response : curMax, action.responses[0])
 			).getVersion();
-		} else if(action.response && action.response.response) {
+		} else if(action.response && action.response.getVersion && typeof(action.response.getVersion()) === 'number' && !Number.isNaN(action.response.getVersion())) {
 			newState.version = Math.max(action.response.getVersion(), state.version);
 		}
 	} else if(action.type && action.type.startsWith('ERROR_')) {
