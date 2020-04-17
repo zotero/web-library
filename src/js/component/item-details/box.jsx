@@ -29,7 +29,7 @@ const makeFields = (item, pendingChanges, itemTypes, itemTypeFields, isReadOnly)
 		options: f.field === 'itemType' ? itemTypes : null,
 		key: f.field,
 		label: f.localized,
-		isReadOnly: isReadOnly ? true : noEditFields.includes(f),
+		isReadOnly: isReadOnly ? true : noEditFields.includes(f.field),
 		processing: pendingChanges.some(({ patch }) => f.field in patch),
 		display: getFieldDisplayValue(itemWithPendingChnages, f.field),
 		value: itemWithPendingChnages[f.field] || null,
