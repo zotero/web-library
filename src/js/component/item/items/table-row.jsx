@@ -10,7 +10,7 @@ import Icon from '../../ui/icon';
 import { ATTACHMENT, ITEM } from '../../../constants/dnd';
 import colorNames from '../../../constants/color-names';
 import { createAttachmentsFromDropped, chunkedCopyToLibrary, chunkedAddToCollection, navigate,
-openBestAttachment, openBestAttachmentFallback } from '../../../actions';
+openAttachment, openBestAttachment, openBestAttachmentFallback } from '../../../actions';
 
 const DROP_MARGIN_EDGE = 5; // how many pixels from top/bottom of the row triggers "in-between" drop
 
@@ -265,8 +265,10 @@ const TableRow = memo(props => {
 				ignoreClicks.current[itemKey] = Date.now();
 				selectItem(itemKey, event, keys, selectedItemKeys, dispatch);
 			}
-			if(event.type === 'dblclick') {
-				if(itemData.attachmentIconName) {
+			if(event.type === 'dblclick' && itemData.itemTypeRaw !== 'note') {
+				if(itemData.itemTypeRaw === 'attachment') {
+					dispatch(openAttachment(itemData.key));
+				} else if(itemData.attachmentIconName) {
 					dispatch(openBestAttachment(itemKey));
 				} else {
 					dispatch(openBestAttachmentFallback(itemKey));
