@@ -5,6 +5,7 @@ import baseMappings from 'zotero-base-mappings';
 import queue from './queue';
 import { fetchItemTypeFields } from './meta';
 import { get, getItemCanonicalUrl, getUniqueId, removeRelationByItemKey, reverseMap } from '../utils';
+import { parseDescriptiveString } from '../common/format';
 import { getFilesData } from '../common/event';
 import { omit } from '../common/immutable';
 import { extractItems } from '../common/actions';
@@ -1060,6 +1061,13 @@ const updateItemWithMapping = (item, fieldKey, newValue) => {
 				});
 			}
 		}
+
+		else if(fieldKey === 'accessDate' || fieldKey === 'date'||
+			(item.itemType in baseMappings && 'date' in baseMappings[item.itemType] && fieldKey === baseMappings[item.itemType]['date'])
+		) {
+			patch[fieldKey] = parseDescriptiveString(patch[fieldKey]);
+		}
+
 		dispatch(updateItem(item.key, patch));
 	}
 }

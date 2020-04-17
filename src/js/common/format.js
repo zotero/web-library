@@ -81,13 +81,49 @@ const formatByline = item => {
 	return '';
 }
 
+const lpad = (string, pad, length) => {
+	string = string ? string + '' : '';
+	while(string.length < length) {
+		string = pad + string;
+	}
+	return string;
+}
+
+// returns YYYY-MM-DD
+const formatDate = date =>
+	[lpad(date.getFullYear(), '0', 4), lpad(date.getMonth() + 1, '0', 2), lpad(date.getDate(), '0', 2)].join('-')
+
+// returns YYYY-MM-DD hh:mm:dd
+const formatDateTime = date =>
+	formatDate(date) + " " + [lpad(date.getHours(), '0', 2), lpad(date.getMinutes(), '0', 2), lpad(date.getSeconds(), '0', 2)].join(':')
+
+
+
+const parseDescriptiveString = str => {
+	var lc = str.toLowerCase().trim();
+	switch(lc) {
+		case 'yesterday':
+			return formatDate(new Date(new Date().getTime() - 86400000));
+		case 'today':
+			return formatDate(new Date());
+		case 'tomorrow':
+			return formatDate(new Date(new Date().getTime() + 86400000));
+		case 'now':
+			return formatDateTime(new Date());
+	}
+	return str;
+}
+
 export {
 	creator,
 	dateLocalized,
 	formatByline,
+	formatDate,
+	formatDateTime,
 	itemsSourceLabel,
 	itemTypeLocalized,
 	noteAsTitle,
+	parseDescriptiveString,
 	pluralize,
 	stripTagsUsingDOM,
 };
