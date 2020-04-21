@@ -207,6 +207,7 @@ const Notes = props => {
 	});
 
 	const handleSelect = useCallback(note => {
+		hasScrolledIntoViewRef.current = true;
 		navigate({ noteKey: note.key });
 	});
 
