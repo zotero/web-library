@@ -39,6 +39,12 @@
 			}
 		}
 
+		@include bp-down(xs) {
+			html:not(.specifity) .editing & {
+				border-top: none !important;
+			}
+		}
+
 		@include mouse-and-bp-up(md) {
 			border-top-color: $tox-edit-area-border-color !important;
 		}
