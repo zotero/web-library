@@ -21,6 +21,13 @@
 	> .toolbar {
 		height: $toolbar-height-touch;
 
+		@supports not (-webkit-font-smoothing: subpixel-antialiased) {
+			.scrollbar-style-permanent & {
+				height: $toolbar-height-touch + $border-width;
+				border-bottom: $border-width solid $notes-toolbar-border-color;
+			}
+		}
+
 		.counter {
 			margin-right: $space-xs;
 		}

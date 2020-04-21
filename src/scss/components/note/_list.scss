@@ -49,6 +49,12 @@
 				outline: none;
 			}
 
+			&:first-child {
+				@supports not (-webkit-font-smoothing: subpixel-antialiased) {
+					padding-top: $space-md - 5px - $border-width;
+				}
+			}
+
 			&::before,
 			&::after {
 				position: absolute;
@@ -61,6 +67,16 @@
 			&::before {
 				content: "";
 				top: 0;
+			}
+
+			&::before {
+				@include variant(".note:first-child") {
+					@supports not (-webkit-font-smoothing: subpixel-antialiased) {
+						@include variant("html.scrollbar-style-permanent") {
+							content: none;
+						}
+					}
+				}
 			}
 
 			&::after {
