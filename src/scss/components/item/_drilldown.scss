@@ -16,11 +16,7 @@
 		transform: translate3d(125%, 0, 0);
 	}
 
-	@include mouse-and-bp-only(md) {
-		top: calc(50% + #{$touch-header-height});
-	}
-
-	@include bp-up(lg) {
+	@include touch-and-bp-up(lg) {
 		left: auto;
 		width: $item-details-width-lg-touch;
 	}
@@ -32,9 +28,5 @@
 		@include bp-down(xs) {
 			transform: translate3d(25%, 0, 0);
 		}
-	}
-
-	&.editing {
-		background-color: $body-bg;
 	}
 }
