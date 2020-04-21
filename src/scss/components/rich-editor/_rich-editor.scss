@@ -17,6 +17,11 @@
 		flex: 1 1 0;
 		display: flex;
 		flex-direction: column;
+
+		&.autoresize {
+			display: block;
+			flex: initial;
+		}
 	}
 
 	.tox-tinymce {

@@ -96,7 +96,7 @@ const queryFormatBlock = (editorRef) => {
 }
 
 const RichEditor = React.memo(React.forwardRef((props, ref) => {
-	const { id, isReadOnly, onChange, value } = props;
+	const { autoresize, id, isReadOnly, onChange, value } = props;
 	const [hilitecolor, setHilitecolor] = useState(null);
 	const [content, setContent] = useState(value);
 	const [forecolor, setForecolor] = useState(null);
@@ -723,7 +723,7 @@ const RichEditor = React.memo(React.forwardRef((props, ref) => {
 					</Toolbar>
 				</div>
 			)}
-			<div className="editor-container">
+			<div className={ cx('editor-container', { autoresize }) } >
 				{
 					process.env.NODE_ENV === 'test' ? null : (
 						<Editor
@@ -734,12 +734,12 @@ const RichEditor = React.memo(React.forwardRef((props, ref) => {
 								body_class: cx({ 'touch': isTouchOrSmall }),
 								branding: false,
 								content_css: '/static/tinymce-content.css',
-								height: '100%',
+								height: autoresize ? 'auto' : '100%',
 								invalid_elements: invalidElements,
 								link_context_toolbar: true,
 								menubar: false,
 								mobile: { theme: 'silver' },
-								plugins: 'link searchreplace',
+								plugins: cx('link', 'searchreplace', { autoresize }),
 								statusbar: false,
 								theme: 'silver',
 								toolbar: false,
@@ -760,6 +760,7 @@ const RichEditor = React.memo(React.forwardRef((props, ref) => {
 }));
 
 RichEditor.propTypes = {
+	autoresize: PropTypes.bool,
 	id: PropTypes.string,
 	isReadOnly: PropTypes.bool,
 	onChange: PropTypes.func.isRequired,

@@ -32,8 +32,9 @@ const StandaloneNote = ({ isActive, isReadOnly }) => {
 			isLoading={ !isTinymceFetched }
 		>
 			<RichEditor
-				isReadOnly={ isReadOnly }
+				autoresize={ true }
 				id={ item.key }
+				isReadOnly={ isReadOnly }
 				onChange={ handleNoteChange }
 				value={ item.note }
 			/>

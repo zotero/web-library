@@ -68,11 +68,6 @@
 			}
 		}
 
-		// Standalone note
-		@include touch-or-bp-down(sm) {
-			min-height: calc(50vh - (#{$navbar-height-sm + $touch-header-height}));
-		}
-
 		@include bp-down-normalized(xs) {
 			min-height: calc(50vh - (#{$navbar-height-xs + $touch-header-height}));
 		}
