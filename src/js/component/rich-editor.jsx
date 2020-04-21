@@ -735,6 +735,7 @@ const RichEditor = React.memo(React.forwardRef((props, ref) => {
 								branding: false,
 								content_css: '/static/tinymce-content.css',
 								height: autoresize ? 'auto' : '100%',
+								autoresize_bottom_margin: 0,
 								invalid_elements: invalidElements,
 								link_context_toolbar: true,
 								menubar: false,
