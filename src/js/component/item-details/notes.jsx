@@ -146,6 +146,7 @@ const Notes = props => {
 	const notesEl = useRef(null);
 	const selectedNoteRef = useRef(null);
 	const addNoteRef = useRef(null);
+	const hasScrolledIntoViewRef = useRef(false);
 
 	const { handleNext, handlePrevious, handleDrillDownNext, handleDrillDownPrev, handleFocus,
 		handleBlur, handleBySelector } = useFocusManager(notesEl, { overrideFocusRef:
@@ -185,6 +186,7 @@ const Notes = props => {
 		}
 	}, [childItems]);
 
+	// Scroll selected note into view when it's first ready.
 	useEffect(() => {
 		setTimeout(() => {
 			if(!notesEl.current || !selectedNote) {
@@ -193,8 +195,9 @@ const Notes = props => {
 
 			const selectedNoteEl = notesEl.current.querySelector(`[data-key="${selectedNote.key}"]`);
 
-			if(selectedNoteEl) {
+			if(selectedNoteEl && !hasScrolledIntoViewRef.current) {
 				scrollIntoViewIfNeeded(selectedNoteEl, notesEl.current);
+				hasScrolledIntoViewRef.current = true;
 			}
 		}, 0);
 	}, [selectedNote]);
