@@ -88,6 +88,7 @@ const AttachmentDetails = ({ attachmentKey, isReadOnly }) => {
 			) }
 		</ol>
 		<RichEditor
+			autoresize={ true }
 			id={ item.key }
 			isReadOnly={ isReadOnly }
 			value={ item.note }
