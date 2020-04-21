@@ -14,6 +14,7 @@ const StandaloneNote = ({ isActive, isReadOnly }) => {
 	const item = useSelector(state => get(state, ['libraries', libraryKey, 'items', itemKey], {}));
 	const isTinymceFetched = useSelector(state => state.sources.fetched.includes('tinymce'));
 	const isTinymceFetching = useSelector(state => state.sources.fetching.includes('tinymce'));
+	const shouldUseTabs = useSelector(state => state.device.shouldUseTabs);
 
 	useEffect(() => {
 		if(!isTinymceFetched && !isTinymceFetching) {
@@ -32,7 +33,7 @@ const StandaloneNote = ({ isActive, isReadOnly }) => {
 			isLoading={ !isTinymceFetched }
 		>
 			<RichEditor
-				autoresize={ true }
+				autoresize={ shouldUseTabs ? false : true }
 				id={ item.key }
 				isReadOnly={ isReadOnly }
 				onChange={ handleNoteChange }

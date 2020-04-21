@@ -9,6 +9,7 @@ import { openAttachment, updateItem } from '../../actions/';
 
 const AttachmentDetails = ({ attachmentKey, isReadOnly }) => {
 	const dispatch = useDispatch();
+	const shouldUseTabs = useSelector(state => state.device.shouldUseTabs);
 	const item = useSelector(
 		state => get(state, ['libraries', state.current.libraryKey, 'items', attachmentKey], {}),
 		shallowEqual
@@ -88,7 +89,7 @@ const AttachmentDetails = ({ attachmentKey, isReadOnly }) => {
 			) }
 		</ol>
 		<RichEditor
-			autoresize={ true }
+			autoresize={ shouldUseTabs ? false : true }
 			id={ item.key }
 			isReadOnly={ isReadOnly }
 			value={ item.note }
