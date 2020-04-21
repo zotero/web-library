@@ -356,7 +356,7 @@ const Notes = props => {
 					value={ selectedNote.note }
 				/>
 			) }
-			{ !device.isTouchOrSmall && !selectedNote && (
+			{ !device.isTouchOrSmall && !selectedNote && notes.length > 0 && (
 				<div className="no-selection-placeholder">
 					No note selected
 				</div>
