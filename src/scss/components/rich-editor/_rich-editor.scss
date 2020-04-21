@@ -22,30 +22,28 @@
 	.tox-tinymce {
 		border: none;
 
-		@include variant (".autoresize .tox-tinymce") {
-			flex: 0 0 auto;
-		}
-	}
-
-	.tox-edit-area {
 		@include touch-or-bp-down(sm) {
-			border-top: none !important;
+			border-top: none;
 		}
 
 		.editing & {
 			@include touch-or-bp-down(sm) {
-				border-top: $border-width solid $tox-edit-area-border-color !important;
+				border-top: $border-width solid $tox-edit-area-border-color;
 			}
 		}
 
 		@include bp-down(xs) {
 			html:not(.specifity) .editing & {
-				border-top: none !important;
+				border-top: none;
 			}
 		}
 
 		@include mouse-and-bp-up(md) {
-			border-top-color: $tox-edit-area-border-color !important;
+			border-top: $border-width solid $tox-edit-area-border-color;
+		}
+
+		@include variant (".autoresize .tox-tinymce") {
+			flex: 0 0 auto;
 		}
 	}
 
