@@ -68,10 +68,6 @@
 			}
 		}
 
-		@include bp-down-normalized(xs) {
-			min-height: calc(50vh - (#{$navbar-height-xs + $touch-header-height}));
-		}
-
 		@include mouse-and-bp-up(md) {
 			&:only-child {
 				flex: 1 1 auto;
@@ -80,6 +76,27 @@
 
 		@include mouse-and-bp-up(lg) {
 			flex: 0 0 calc(50% + #{$space-md});
+		}
+
+		.autoresize {
+			.tox-tinymce {
+				@include touch-or-bp-down(sm) {
+					min-height: calc(50vh - 77px);
+				}
+
+				.editing & {
+					@include touch-or-bp-down(sm) {
+						min-height: calc(50vh - 167px);
+					}
+				}
+
+				&,
+				.editing & {
+					@include bp-down-normalized(xs) {
+						min-height: calc(50vh - (#{$navbar-height-xs / 2 + $touch-header-height}));
+					}
+				}
+			}
 		}
 	}
 }
