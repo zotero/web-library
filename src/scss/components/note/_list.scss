@@ -49,10 +49,6 @@
 				outline: none;
 			}
 
-			&:last-child {
-				padding-bottom: $space-md - 4px;
-			}
-
 			&::before,
 			&::after {
 				position: absolute;
@@ -71,6 +67,8 @@
 				@include variant(".note:last-child") {
 					content: "";
 					bottom: 0;
+					background-color: transparent;
+					box-shadow: 0 1px $note-border-color;
 				}
 			}
 
