@@ -11,6 +11,8 @@ const searchIdentifier = identifier => {
 			dispatch({ type: ERROR_ADD_BY_IDENTIFIER, error: message, errorType, identifier, response });
 		}
 
+		identifier = identifier.trim();
+
 		const { config } = getState();
 		const { translateUrl } = config;
 		const url = `${translateUrl}/${((isLikeURL(identifier) ? 'web?single=1' : 'search?text=0'))}`;
