@@ -5,7 +5,7 @@ import { useSourceData } from '../hooks';
 import { get } from '../utils';
 
 
-const mapItemKeysToTitles = (keys, state) => {
+const mapItemKeysToTitles = (keys, selectedItemsKeys = [], state) => {
 	const libraryKey = state.current.libraryKey;
 
 	if(!(libraryKey in state.libraries)) {
@@ -17,7 +17,8 @@ const mapItemKeysToTitles = (keys, state) => {
 			return acc;
 		}
 		const title = state.libraries[libraryKey].items[ik][Symbol.for('derived')].title;
-		acc[ik] = title;
+		const checked = selectedItemsKeys.includes(ik);
+		acc[ik] = { title, checked };
 
 		return acc;
 	}, {});
@@ -33,13 +34,10 @@ const ZoteroConnectorNotifier = () => {
 	const { keys: itemKeysCurrentSource } = useSourceData();
 	const item = useSelector(state => get(state, ['libraries', libraryKey, 'items', selectedItemKey], null));
 	const itemTitles = useSelector(state => {
-		if(selectedItemsKeys && selectedItemsKeys.length > 0) {
-			return mapItemKeysToTitles(selectedItemsKeys, state);
-		}
 
 		if(itemKeysCurrentSource) {
 			// no key selected, offer all items we are aware of in current view
-			return mapItemKeysToTitles(itemKeysCurrentSource, state);
+			return mapItemKeysToTitles(itemKeysCurrentSource, selectedItemsKeys, state);
 		}
 
 		return {};
