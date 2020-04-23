@@ -9,8 +9,8 @@ const isDuplicate = (error, prevError) =>
 	error.type === prevError.type && !prevError.isDismissed;
 
 const getErrorMessage = error => {
-	if(error instanceof TypeError) {
-		return `Unable to communicate with Zotero server. Please check your connection. ${error.message}.`;
+	if(error instanceof TypeError && (error.message === 'Failed to fetch' || error.nessage.startsWith('NetworkError'))) {
+		return `Unable to communicate with Zotero server. Please check your connection.`;
 	}
 	if(typeof error === 'object' && 'getResponseType' in error && error.getResponseType() === 'ErrorResponse') {
 		return error.reason ?
