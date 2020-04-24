@@ -21,25 +21,31 @@ const addAddedByColumn = oldPreferences => ({
 	columns: [
 		...oldPreferences.columns.slice(0, 9),
 		defaultPreferences.columns[10],
-		...oldPreferences.columns.splice(9)
+		...oldPreferences.columns.slice(9)
 	]
 });
 
 const preferencesLoad = () => {
 	var userPreferences = JSONTryParse(localStorage.getItem('zotero-web-library-prefs'));
-	if(userPreferences && userPreferences.version !== version) {
-		if(
-			!('version' in userPreferences) && // we didn't store version in localStorage prior to 0.12.0
-			userPreferences.columns.length === 11 && // ensure that columns are as expected
-			typeof(userPreferences.columns.find(c => c.field === 'createdByUser')) === 'undefined'
-		)  {
-			userPreferences = {
-				...addAddedByColumn(fixUpperCaseSort(userPreferences)),
-				version
+	var preferences;
+	try {
+		if(userPreferences && userPreferences.version !== version) {
+			if(
+				!('version' in userPreferences) && // we didn't store version in localStorage prior to 0.12.0
+				userPreferences.columns.length === 11 && // ensure that columns are as expected
+				typeof(userPreferences.columns.find(c => c.field === 'createdByUser')) === 'undefined'
+			)  {
+				userPreferences = {
+					...addAddedByColumn(fixUpperCaseSort(userPreferences)),
+					version
+				}
 			}
 		}
+		preferences = { ...defaultPreferences,...userPreferences };
+	} catch(e) {
+		console.error('Preferences from localStorage appear to be corrupted.');
+		preferences = { ...defaultPreferences };
 	}
-	const preferences = { ...defaultPreferences,...userPreferences };
 
 	return {
 		type: PREFERENCES_LOAD,
