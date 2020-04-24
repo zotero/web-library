@@ -36,7 +36,6 @@ const ZoteroConnectorNotifier = () => {
 	const itemTitles = useSelector(state => {
 
 		if(itemKeysCurrentSource) {
-			// no key selected, offer all items we are aware of in current view
 			return mapItemKeysToTitles(itemKeysCurrentSource, selectedItemsKeys, state);
 		}
 
