@@ -77,7 +77,21 @@ const preferenceChange = (name, value) => {
 	}
 }
 
+const restoreColumnsOrder = () => {
+	return async (dispatch, getState) => {
+		const userColumns = getState().preferences.columns;
+		const columns = defaultPreferences.columns.map(defaultColumn => ({
+			...defaultColumn,
+			fraction: (userColumns.find(uc => uc.field === defaultColumn.field) || defaultColumn).fraction,
+			isVisible: (userColumns.find(uc => uc.field === defaultColumn.field) || defaultColumn).isVisible,
+		}));
+
+		await dispatch(preferenceChange('columns', columns));
+	}
+}
+
 export {
 	preferencesLoad,
 	preferenceChange,
+	restoreColumnsOrder,
 };

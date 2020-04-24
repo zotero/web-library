@@ -9,7 +9,7 @@ import DropdownMenu from 'reactstrap/lib/DropdownMenu';
 import DropdownToggle from 'reactstrap/lib/DropdownToggle';
 import Icon from '../../ui/icon';
 import { applyChangesToVisibleColumns, resizeVisibleColumns } from '../../../utils';
-import { preferenceChange } from '../../../actions';
+import { preferenceChange, restoreColumnsOrder } from '../../../actions';
 
 const ColumnSelector = props => {
 	const { tabIndex } = props;
@@ -58,6 +58,10 @@ const ColumnSelector = props => {
 		}
 	});
 
+	const handleRestoreClick = useCallback(() => {
+		dispatch(restoreColumnsOrder())
+	}, [dispatch]);
+
 	return (
 		<Dropdown
 			isOpen={ isOpen }
@@ -88,6 +92,10 @@ const ColumnSelector = props => {
 						</DropdownItem>
 					))
 				}
+				<DropdownItem divider />
+				<DropdownItem onClick={ handleRestoreClick }>
+					Restore Column Order
+				</DropdownItem>
 			</DropdownMenu>
 		</Dropdown>
 	);
