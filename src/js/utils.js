@@ -347,6 +347,17 @@ const clamp = (number, min, max) => Math.max(min, Math.min(number, max));
 
 const getDOIURL = doi => 'http://dx.doi.org/' + doi;
 
+const getLibraryKeyFromTopic = topic => {
+	if(typeof topic !== 'string') {
+		return null;
+	}
+	const matches = topic.match(/\/(users|groups)\/(\d+)/);
+	if(matches) {
+		return (matches[1] === 'groups' ? 'g' : 'u') + matches[2];
+	}
+	return null;
+}
+
 export {
 	applyChangesToVisibleColumns,
 	clamp,
@@ -360,6 +371,7 @@ export {
 	get,
 	getDOIURL,
 	getItemCanonicalUrl,
+	getLibraryKeyFromTopic,
 	getScrollbarWidth,
 	getScrollContainerPageCount,
 	getSortKeyValue,

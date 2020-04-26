@@ -40,6 +40,7 @@ import { pick } from '../common/immutable';
 import ZoteroConnectorNotifier from './zotero-connector-notifier';
 import TitleUpdater from './title-updater';
 import AddLinkedUrlTouchModal from './modal/add-linked-url-touch';
+import ZoteroStreamingClient from './zotero-streaming-client';
 
 
 const Library = props => {
@@ -210,6 +211,7 @@ const Library = props => {
 			</DndProvider>
 			<ZoteroConnectorNotifier />
 			<TitleUpdater />
+			<ZoteroStreamingClient />
 		</React.Fragment>
 	);
 }
