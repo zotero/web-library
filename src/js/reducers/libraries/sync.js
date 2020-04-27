@@ -1,5 +1,3 @@
-'use strict';
-
 const defaultState = {
 	version: 0,
 	isSynced: true,
@@ -25,6 +23,8 @@ const sync = (state = defaultState, action) => {
 		if(action.error && action.error.response && action.error.response.status === 412) {
 			newState.isSynced = false;
 		}
+	} else if(action.type === 'STREAMING_REMOTE_LIBRARY_UPDATE') {
+		newState.version = Math.max(action.version, state.version);
 	}
 	return newState;
 };

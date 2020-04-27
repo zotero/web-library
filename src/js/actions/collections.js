@@ -21,7 +21,7 @@ import {
 import queue from './queue';
 import { get } from '../utils';
 
-const fetchCollections = (libraryKey, { start = 0, limit = 50, sort = 'dateModified', direction = "desc" } = {}) => {
+const fetchCollections = (libraryKey, { start = 0, limit = 50, sort = 'dateModified', direction = "desc", ...rest } = {}) => {
 	return async (dispatch, getState) => {
 		dispatch({
 			type: REQUEST_COLLECTIONS_IN_LIBRARY,
@@ -30,13 +30,14 @@ const fetchCollections = (libraryKey, { start = 0, limit = 50, sort = 'dateModif
 			limit,
 			sort,
 			direction,
+			...rest
 		});
 		try {
 			const { config } = getState();
 			const response = await api(config.apiKey, config.apiConfig)
 				.library(libraryKey)
 				.collections()
-				.get({ start, limit, sort, direction });
+				.get({ start, limit, sort, direction, ...rest });
 			const collections = response.getData();
 
 			dispatch({
@@ -48,6 +49,7 @@ const fetchCollections = (libraryKey, { start = 0, limit = 50, sort = 'dateModif
 				limit,
 				sort,
 				direction,
+				...rest
 			});
 			return { collections, response };
 		} catch(error) {
@@ -81,6 +83,21 @@ const fetchAllCollections = (libraryKey, { sort = 'dateModified', direction = "d
 
 		do {
 			const { response } = await dispatch(fetchCollections(libraryKey, { start: pointer, limit, sort, direction }));
+			const totalResults = parseInt(response.response.headers.get('Total-Results'), 10);
+			hasMore = totalResults > pointer + limit;
+			pointer += limit;
+		} while(hasMore === true)
+	}
+}
+
+const fetchAllCollectionsSince = (version, libraryKey) => {
+	return async dispatch => {
+		var pointer = 0;
+		const limit = 100;
+		var hasMore = false;
+
+		do {
+			const { response } = await dispatch(fetchCollections(libraryKey, { start: pointer, limit, since: version }));
 			const totalResults = parseInt(response.response.headers.get('Total-Results'), 10);
 			hasMore = totalResults > pointer + limit;
 			pointer += limit;
@@ -250,11 +267,12 @@ const deleteCollection = (collection, libraryKey) => {
 }
 
 export {
-	fetchCollections,
-	fetchAllCollections,
 	createCollection,
 	createCollections,
-	updateCollection,
-	queueUpdateCollection,
 	deleteCollection,
+	fetchAllCollections,
+	fetchAllCollectionsSince,
+	fetchCollections,
+	queueUpdateCollection,
+	updateCollection,
 };

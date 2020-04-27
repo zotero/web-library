@@ -19,6 +19,10 @@ const collectionCountByLibrary = (state = {}, action) => {
 				[action.libraryKey]: state[action.libraryKey] - 1
 			}
 		case RECEIVE_COLLECTIONS_IN_LIBRARY:
+			if('since' in action) {
+				// ignore requests for partial updates
+				return state;
+			}
 			return {
 				...state,
 				[action.libraryKey]: parseInt(action.response.response.headers.get('Total-Results'), 10)

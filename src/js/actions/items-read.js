@@ -131,6 +131,22 @@ const fetchItemsByKeys = (itemKeys, queryOptions, overrides) => {
 	);
 }
 
+const fetchAllItemsSince = (version, queryOptions, overrides) => {
+	return async dispatch => {
+		var pointer = 0;
+		const limit = 100;
+		var hasMore = false;
+
+		do {
+			const { totalResults } = await dispatch(
+				fetchItems('FETCH_ITEMS', {}, { ...queryOptions, start: pointer, limit, since: version }, overrides )
+			);
+			hasMore = totalResults > pointer + limit;
+			pointer += limit;
+		} while(hasMore === true)
+	}
+}
+
 const fetchRelatedItems = (itemKey, queryOptions, overrides) => {
 	return async (dispatch, getState) => {
 		const state = getState();
@@ -256,6 +272,7 @@ const fetchSource = (startIndex, stopIndex) => {
 }
 
 export {
+	fetchAllItemsSince,
 	fetchChildItems,
 	fetchItemsByKeys,
 	fetchItemsInCollection,
