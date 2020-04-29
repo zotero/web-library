@@ -1,5 +1,3 @@
-'use strict';
-
 import { indexByKey } from '../../utils';
 import { mapObject } from '../../common/immutable';
 import { populateItemKeys, filterItemKeys, sortItemKeysOrClear, injectExtraItemKeys, updateFetchingState } from '../../common/reducers';
@@ -18,10 +16,35 @@ import {
     RECEIVE_REMOVE_ITEMS_FROM_COLLECTION,
     RECEIVE_UPDATE_ITEM,
     REQUEST_ITEMS_IN_COLLECTION,
+    RECEIVE_FETCH_ITEMS,
     SORT_ITEMS,
 } from '../../constants/actions.js';
 
-const itemsByCollection = (state = {}, action) => {
+const detectChangesInMembership = (action, state, items) => {
+	const newState = { ...state };
+
+	action.items.forEach(item => {
+		item.collections.forEach(collectionKey => {
+			if(collectionKey in newState && 'keys' in newState[collectionKey] && !newState[collectionKey].keys.includes(item.key)) {
+				// updated item now belongs to collectionKey
+				console.log(`detectChangesInMembership: inject ${item.key} into ${collectionKey}`);
+				newState[collectionKey] = injectExtraItemKeys(newState[collectionKey], item.key, items);
+			}
+		});
+		Object.entries(newState).forEach(([collectionKey, itemKeysData]) => {
+			if('keys' in itemKeysData && itemKeysData.keys.includes(item.key) && !item.collections.includes(collectionKey)) {
+				// updated item has been removed from collectionKey
+				console.log(`detectChangesInMembership: remove ${item.key} from ${collectionKey}`);
+				newState[collectionKey] = filterItemKeys(itemKeysData, item.key);
+			}
+		})
+	});
+
+	return newState;
+}
+
+const itemsByCollection = (state = {}, action, items) => {
+	//@TODO: action.otherItems is deprecated, use items
 	switch(action.type) {
 		case RECEIVE_CREATE_ITEM:
 			if(action.item.parentItem) { return state; }
@@ -158,6 +181,8 @@ const itemsByCollection = (state = {}, action) => {
 				);
 				return aggr
 			}, {});
+		case RECEIVE_FETCH_ITEMS:
+			return detectChangesInMembership(action, state, items);
 		default:
 			return state;
 	}
