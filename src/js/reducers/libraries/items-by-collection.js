@@ -25,19 +25,20 @@ const detectChangesInMembership = (action, state, items) => {
 
 	action.items.forEach(item => {
 		item.collections.forEach(collectionKey => {
-			if(collectionKey in newState && 'keys' in newState[collectionKey] && !newState[collectionKey].keys.includes(item.key)) {
-				// updated item now belongs to collectionKey
+			if(collectionKey in newState && 'keys' in newState[collectionKey] && !newState[collectionKey].keys.includes(item.key) && !item.deleted) {
+				// updated item now belongs to collectionKey (or has been recovered from trash)
 				console.log(`detectChangesInMembership: inject ${item.key} into ${collectionKey}`);
 				newState[collectionKey] = injectExtraItemKeys(newState[collectionKey], item.key, items);
 			}
 		});
+
 		Object.entries(newState).forEach(([collectionKey, itemKeysData]) => {
-			if('keys' in itemKeysData && itemKeysData.keys.includes(item.key) && !item.collections.includes(collectionKey)) {
-				// updated item has been removed from collectionKey
+			if('keys' in itemKeysData && itemKeysData.keys.includes(item.key) && (!item.collections.includes(collectionKey) || item.deleted)) {
+				// updated item has been removed from collectionKey (or deleted)
 				console.log(`detectChangesInMembership: remove ${item.key} from ${collectionKey}`);
 				newState[collectionKey] = filterItemKeys(itemKeysData, item.key);
 			}
-		})
+		});
 	});
 
 	return newState;
