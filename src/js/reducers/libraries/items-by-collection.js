@@ -20,7 +20,7 @@ import {
     SORT_ITEMS,
 } from '../../constants/actions.js';
 
-const detectChangesInMembership = (action, state, items) => {
+const detectChangesInMembership = (state, action, items) => {
 	const newState = { ...state };
 
 	action.items.forEach(item => {
@@ -44,7 +44,7 @@ const detectChangesInMembership = (action, state, items) => {
 	return newState;
 }
 
-const itemsByCollection = (state = {}, action, items) => {
+const itemsByCollection = (state = {}, action, { items }) => {
 	//@TODO: action.otherItems is deprecated, use items
 	switch(action.type) {
 		case RECEIVE_CREATE_ITEM:
@@ -183,7 +183,7 @@ const itemsByCollection = (state = {}, action, items) => {
 				return aggr
 			}, {});
 		case RECEIVE_FETCH_ITEMS:
-			return detectChangesInMembership(action, state, items);
+			return detectChangesInMembership(state, action, items);
 		default:
 			return state;
 	}

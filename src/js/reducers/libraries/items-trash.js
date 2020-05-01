@@ -11,10 +11,31 @@ import {
     RECEIVE_RECOVER_ITEMS_TRASH,
     RECEIVE_TRASH_ITEMS,
     REQUEST_TRASH_ITEMS,
+    RECEIVE_FETCH_ITEMS,
     SORT_ITEMS,
 } from '../../constants/actions.js';
 
-const itemsTrash = (state = {}, action) => {
+const detectChangesInTrash = (state, action, items) => {
+	if(!('keys' in state)) {
+		return state;
+	}
+
+	var newState = { ...state };
+
+	action.items.forEach(item => {
+		if(item.deleted && !newState.keys.includes(item.key)) {
+			console.log(`inject ${item.key} into trash`);
+			newState = injectExtraItemKeys(newState, item.key, items);
+		} else if(!item.deleted && newState.keys.includes(item.key)) {
+			console.log(`remove ${item.key} from trash`);
+			newState = filterItemKeys(newState, item.key)
+		}
+	});
+
+	return newState;
+}
+
+const itemsTrash = (state = {}, action, { items }) => {
 	switch(action.type) {
 		case RECEIVE_DELETE_ITEM:
 			return filterItemKeys(state, action.item.key);
@@ -48,6 +69,8 @@ const itemsTrash = (state = {}, action) => {
 			return sortItemKeysOrClear(
 				state, action.items, action.sortBy, action.sortDirection
 			);
+		case RECEIVE_FETCH_ITEMS:
+			return detectChangesInTrash(state, action, items);
 		default:
 			return state;
 	}
