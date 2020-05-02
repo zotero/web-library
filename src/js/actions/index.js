@@ -16,3 +16,4 @@ export * from "./tags";
 export * from "./triggers";
 export * from "./attachments";
 export * from "./remote";
+export * from "./deleted";

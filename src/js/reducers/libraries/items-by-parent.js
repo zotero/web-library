@@ -11,6 +11,7 @@ import {
     RECEIVE_CREATE_ITEMS,
     RECEIVE_DELETE_ITEM,
     RECEIVE_DELETE_ITEMS,
+    RECEIVE_DELETED_CONTENT,
     RECEIVE_FETCH_ITEMS,
     RECEIVE_ITEMS_BY_QUERY,
     RECEIVE_ITEMS_IN_COLLECTION,
@@ -71,6 +72,7 @@ const itemsByParent = (state = {}, action) => {
 			return state;
 		case RECEIVE_MOVE_ITEMS_TRASH:
 		case RECEIVE_DELETE_ITEMS:
+		case RECEIVE_DELETED_CONTENT:
 			return Object.entries(state).reduce((aggr, [parentKey, itemKeys]) => {
 				aggr[parentKey] = filterItemKeys(itemKeys, action.itemKeys);
 				return aggr;

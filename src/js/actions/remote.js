@@ -1,6 +1,6 @@
 import { STREAMING_REMOTE_LIBRARY_UPDATE } from '../constants/actions';
 import { get } from '../utils';
-import { fetchAllCollectionsSince, fetchAllItemsSince } from '.';
+import { fetchDeletedContentSince, fetchAllCollectionsSince, fetchAllItemsSince } from '.';
 
 const remoteLibraryUpdate = (libraryKey, version) => {
 	return async (dispatch, getState) => {
@@ -10,6 +10,7 @@ const remoteLibraryUpdate = (libraryKey, version) => {
 			dispatch({ type: STREAMING_REMOTE_LIBRARY_UPDATE, libraryKey, version });
 			dispatch(fetchAllItemsSince(oldVersion, { includeTrashed: 1 }, { current: { libraryKey } }));
 			dispatch(fetchAllCollectionsSince(oldVersion, libraryKey));
+			dispatch(fetchDeletedContentSince(oldVersion, libraryKey));
 		}
 	}
 }

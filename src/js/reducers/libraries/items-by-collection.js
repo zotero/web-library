@@ -10,13 +10,14 @@ import {
     RECEIVE_CREATE_ITEMS,
     RECEIVE_DELETE_ITEM,
     RECEIVE_DELETE_ITEMS,
+    RECEIVE_DELETED_CONTENT,
+    RECEIVE_FETCH_ITEMS,
     RECEIVE_ITEMS_IN_COLLECTION,
     RECEIVE_MOVE_ITEMS_TRASH,
     RECEIVE_RECOVER_ITEMS_TRASH,
     RECEIVE_REMOVE_ITEMS_FROM_COLLECTION,
     RECEIVE_UPDATE_ITEM,
     REQUEST_ITEMS_IN_COLLECTION,
-    RECEIVE_FETCH_ITEMS,
     SORT_ITEMS,
 } from '../../constants/actions.js';
 
@@ -89,6 +90,7 @@ const itemsByCollection = (state = {}, action, { items }) => {
 			}, {});
 		case RECEIVE_DELETE_ITEMS:
 		case RECEIVE_MOVE_ITEMS_TRASH:
+		case RECEIVE_DELETED_CONTENT:
 			return Object.entries(state).reduce((aggr, [collectionKey, itemKeys]) => {
 				aggr[collectionKey] = filterItemKeys(itemKeys, action.itemKeys);
 				return aggr;

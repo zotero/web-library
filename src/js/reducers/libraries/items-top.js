@@ -9,6 +9,7 @@ import {
     RECEIVE_CREATE_ITEMS,
     RECEIVE_DELETE_ITEM,
     RECEIVE_DELETE_ITEMS,
+    RECEIVE_DELETED_CONTENT,
     RECEIVE_MOVE_ITEMS_TRASH,
     RECEIVE_RECOVER_ITEMS_TRASH,
     RECEIVE_TOP_ITEMS,
@@ -38,6 +39,7 @@ const itemsTop = (state = {}, action) => {
 			return filterItemKeys(state, action.item.key);
 		case RECEIVE_DELETE_ITEMS:
 		case RECEIVE_MOVE_ITEMS_TRASH:
+		case RECEIVE_DELETED_CONTENT:
 			return filterItemKeys(state, action.itemKeys);
 		case RECEIVE_RECOVER_ITEMS_TRASH:
 			return injectExtraItemKeys(
