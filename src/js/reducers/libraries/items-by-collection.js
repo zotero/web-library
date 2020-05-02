@@ -23,13 +23,14 @@ import {
 
 const detectChangesInMembership = (state, action, items) => {
 	const newState = { ...state };
+	const allItems = { ...items, ...indexByKey(action.items) };
 
 	action.items.forEach(item => {
 		item.collections.forEach(collectionKey => {
 			if(collectionKey in newState && 'keys' in newState[collectionKey] && !newState[collectionKey].keys.includes(item.key) && !item.deleted) {
 				// updated item now belongs to collectionKey (or has been recovered from trash)
 				console.log(`detectChangesInMembership: inject ${item.key} into ${collectionKey}`);
-				newState[collectionKey] = injectExtraItemKeys(newState[collectionKey], item.key, items);
+				newState[collectionKey] = injectExtraItemKeys(newState[collectionKey], item.key, allItems);
 			}
 		});
 

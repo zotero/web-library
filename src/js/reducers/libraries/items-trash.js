@@ -22,16 +22,25 @@ const detectChangesInTrash = (state, action, items) => {
 	}
 
 	var newState = { ...state };
+	const keysToInject = [];
+	const keysToRemove = [];
 
 	action.items.forEach(item => {
 		if(item.deleted && !newState.keys.includes(item.key)) {
-			console.log(`inject ${item.key} into trash`, { items });
-			newState = injectExtraItemKeys(newState, item.key, items);
+			keysToInject.push(item.key);
 		} else if(!item.deleted && newState.keys.includes(item.key)) {
-			console.log(`remove ${item.key} from trash`);
-			newState = filterItemKeys(newState, item.key)
+			keysToRemove.push(item.key);
 		}
 	});
+
+	if(keysToInject.length > 0) {
+		const allItems = { ...items, ...indexByKey(action.items) };
+		newState = injectExtraItemKeys(newState, keysToInject, allItems);
+	}
+
+	if(keysToRemove.length > 0) {
+		newState = filterItemKeys(newState, keysToRemove)
+	}
 
 	return newState;
 }
