@@ -1,9 +1,8 @@
-'use strict';
-
 import {
     RECEIVE_COLLECTIONS_IN_LIBRARY,
     RECEIVE_CREATE_COLLECTIONS,
     RECEIVE_DELETE_COLLECTION,
+    RECEIVE_DELETED_CONTENT,
     RECEIVE_UPDATE_COLLECTION,
 } from '../../constants/actions.js';
 
@@ -25,6 +24,8 @@ const collections = (state = {}, action) => {
 			};
 		case RECEIVE_DELETE_COLLECTION:
 			return removeKeys(state, action.collection.key);
+		case RECEIVE_DELETED_CONTENT:
+			return removeKeys(state, action.collectionKeys)
 		default:
 			return state;
 	}
