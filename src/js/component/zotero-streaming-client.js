@@ -12,10 +12,20 @@ const ZoteroStreamingClient = () => {
 	const handleMessage = useCallback(ev => {
 		try {
 			const message = JSON.parse(ev.data);
-			const libraryKey = getLibraryKeyFromTopic(message.topic);
 
-			if(message.event === 'topicUpdated' && libraryKey) {
-				dispatch(remoteLibraryUpdate(libraryKey, message.version))
+			if(message.event === 'connected') {
+				console.log("WS connected");
+				ws.current.send(JSON.stringify({
+					'action': 'createSubscriptions',
+					'subscriptions': [{ apiKey }],
+				}));
+			} else if(message.event === 'subscriptionsCreated') {
+				console.log('WS subscriptions created');
+			} else if(message.event === 'topicUpdated') {
+				const libraryKey = getLibraryKeyFromTopic(message.topic);
+				if(libraryKey) {
+					dispatch(remoteLibraryUpdate(libraryKey, message.version))
+				}
 			}
 		} catch(c) {
 			// console.error(c);
@@ -41,7 +51,7 @@ const ZoteroStreamingClient = () => {
 
 	useEffect(() => {
 		console.log('WS setup');
-		ws.current = new WebSocket(`wss://stream.zotero.org/?key=${apiKey}`);
+		ws.current = new WebSocket(`wss://stream.zotero.org/`);
 
 		ws.current.onmessage = handleMessage;
 		ws.current.onopen = handleOpen;
