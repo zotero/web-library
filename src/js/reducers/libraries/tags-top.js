@@ -1,19 +1,19 @@
-'use strict';
-
+import deepEqual from 'deep-equal';
 import {
 	ERROR_TAGS_IN_TOP_ITEMS,
+	RECEIVE_COLORED_TAGS_IN_TOP_ITEMS,
 	RECEIVE_CREATE_ITEM,
 	RECEIVE_CREATE_ITEMS,
+	RECEIVE_FETCH_ITEMS,
+	RECEIVE_MOVE_ITEMS_TRASH,
 	RECEIVE_RECOVER_ITEMS_TRASH,
 	RECEIVE_TAGS_IN_TOP_ITEMS,
-	REQUEST_TAGS_IN_TOP_ITEMS,
-	RECEIVE_MOVE_ITEMS_TRASH,
 	RECEIVE_UPDATE_ITEM,
-	RECEIVE_COLORED_TAGS_IN_TOP_ITEMS,
+	REQUEST_TAGS_IN_TOP_ITEMS,
 } from '../../constants/actions';
-import { populateTags, updateFetchingState } from '../../common/reducers';
+import { detectIfItemsChanged, populateTags, updateFetchingState } from '../../common/reducers';
 
-const tagsTop = (state = {}, action) => {
+const tagsTop = (state = {}, action, { items } = {}) => {
 	switch(action.type) {
 		case REQUEST_TAGS_IN_TOP_ITEMS:
 			return {
@@ -46,6 +46,11 @@ const tagsTop = (state = {}, action) => {
 				{} : state;
 		case RECEIVE_UPDATE_ITEM:
 			return 'tags' in action.patch ? {} : state;
+		case RECEIVE_FETCH_ITEMS:
+			return detectIfItemsChanged(
+				action, items,
+				(newItem, oldItem = {}) => (!newItem.deleted && !oldItem.deleted) && (!deepEqual(newItem.tags, oldItem.tags))
+			) ? {} : state
 		default:
 			return state;
 	}

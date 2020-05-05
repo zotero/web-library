@@ -1,7 +1,7 @@
-'use strict';
-
 import { sortItemsByKey, compareItem } from '../utils';
 import { omit } from '../common/immutable';
+import { shallowEqual } from 'react-redux';
+import { get } from '../utils';
 
 const replaceDuplicates = (entries, comparer = null, useSplice = false) => {
 	const seen = [];
@@ -212,7 +212,23 @@ const sortItemKeysOrClear = (state, items, sortBy, sortDirection) => {
 	return { ...state, keys, sortBy, sortDirection };
 }
 
+const detectItemsChanged = ({ items, libraryKey }, allItems = {}, check = () => true) => {
+	if(!items || !libraryKey) {
+		return false;
+	}
+	return items.filter(newItem => check(newItem, allItems[newItem.key]));
+}
+
+const detectIfItemsChanged = ({ items, libraryKey }, allItems = {}, check = () => true) => {
+	if(!items || !libraryKey) {
+		return [];
+	}
+	return items.some(newItem => check(newItem, allItems[newItem.key]));
+}
+
 export {
+	detectIfItemsChanged,
+	detectItemsChanged,
 	filterItemKeys,
 	injectExtraItemKeys,
 	populateGroups,

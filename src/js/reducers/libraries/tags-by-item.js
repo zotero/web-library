@@ -3,7 +3,7 @@
 import {
 	REQUEST_TAGS_FOR_ITEM, RECEIVE_TAGS_FOR_ITEM, ERROR_TAGS_FOR_ITEM,
 	RECEIVE_FETCH_ITEMS, RECEIVE_ITEMS_IN_COLLECTION, RECEIVE_TOP_ITEMS,
-	RECEIVE_TRASH_ITEMS,
+	RECEIVE_TRASH_ITEMS
 } from '../../constants/actions';
 import { indexByKey } from '../../utils';
 import { deduplicate } from '../../utils';

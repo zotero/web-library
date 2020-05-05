@@ -19,7 +19,7 @@ import updating from './updating';
 import { get } from '../../utils';
 import { omit } from '../../common/immutable';
 
-const libraries = (state = {}, action, { meta } = {})  => {
+const libraries = (state = {}, action, { itemsPublications, meta } = {})  => {
 	if(action.type === 'RESET_LIBRARY') {
 		return omit(state, action.libraryKey);
 	} else if(action.libraryKey) {
@@ -36,17 +36,25 @@ const libraries = (state = {}, action, { meta } = {})  => {
 				}),
 				itemsByParent: itemsByParent(get(state, [action.libraryKey, 'itemsByParent']), action),
 				itemsRelated: itemsRelated(get(state, [action.libraryKey, 'itemsRelated']), action),
-				itemsTop: itemsTop(get(state, [action.libraryKey, 'itemsTop']), action),
+				itemsTop: itemsTop(get(state, [action.libraryKey, 'itemsTop']), action, {}),
 				itemsTrash: itemsTrash(get(state, [action.libraryKey, 'itemsTrash']), action, {
 					items: (state[action.libraryKey] || {}).items
 				}),
 				sync: sync(get(state, [action.libraryKey, 'sync']), action),
 				tagColors: tagColors(get(state, [action.libraryKey, 'tagColors']), action),
-				tagsByCollection: tagsByCollection(get(state, [action.libraryKey, 'tagsByCollection']), action),
+				tagsByCollection: tagsByCollection(get(state, [action.libraryKey, 'tagsByCollection']), action, {
+					items: (state[action.libraryKey] || {}).items
+				}),
 				tagsByItem: tagsByItem(get(state, [action.libraryKey, 'tagsByItem']), action),
-				tagsInPublicationsItems: tagsInPublicationsItems(get(state, [action.libraryKey, 'tagsInPublicationsItems']), action),
-				tagsInTrashItems: tagsInTrashItems(get(state, [action.libraryKey, 'tagsInTrashItems']), action),
-				tagsTop: tagsTop(get(state, [action.libraryKey, 'tagsTop']), action),
+				tagsInPublicationsItems: tagsInPublicationsItems(get(state, [action.libraryKey, 'tagsInPublicationsItems']), action, {
+					itemsPublications, items: (state[action.libraryKey] || {}).items
+				}),
+				tagsInTrashItems: tagsInTrashItems(get(state, [action.libraryKey, 'tagsInTrashItems']), action, {
+					items: (state[action.libraryKey] || {}).items
+				}),
+				tagsTop: tagsTop(get(state, [action.libraryKey, 'tagsTop']), action, {
+					items: (state[action.libraryKey] || {}).items
+				}),
 				updating: updating(get(state, [action.libraryKey, 'updating']), action),
 			}
 		}

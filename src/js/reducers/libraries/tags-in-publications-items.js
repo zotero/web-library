@@ -1,15 +1,16 @@
-'use strict';
-
+import deepEqual from 'deep-equal';
 import {
 	ERROR_TAGS_IN_PUBLICATIONS_ITEMS,
 	RECEIVE_COLORED_TAGS_IN_PUBLICATIONS_ITEMS,
 	RECEIVE_TAGS_IN_PUBLICATIONS_ITEMS,
 	RECEIVE_UPDATE_ITEM,
 	REQUEST_TAGS_IN_PUBLICATIONS_ITEMS,
+	RECEIVE_FETCH_ITEMS,
 } from '../../constants/actions';
-import { populateTags, updateFetchingState } from '../../common/reducers';
+import { detectIfItemsChanged, populateTags, updateFetchingState } from '../../common/reducers';
 
-const tagsInPublicationsItems = (state = {}, action) => {
+
+const tagsInPublicationsItems = (state = {}, action, { items, itemsPublications } = {}) => {
 	switch(action.type) {
 		case REQUEST_TAGS_IN_PUBLICATIONS_ITEMS:
 			return {
@@ -34,6 +35,11 @@ const tagsInPublicationsItems = (state = {}, action) => {
 			};
 		case RECEIVE_UPDATE_ITEM:
 			return 'tags' in action.patch ? {} : state;
+		case RECEIVE_FETCH_ITEMS:
+			return detectIfItemsChanged(
+				action, items,
+				(newItem, oldItem = {}) => (('keys' in itemsPublications ? itemsPublications.keys : []).includes(newItem.key)) && (!deepEqual(newItem.tags, oldItem.tags))
+			) ? {} : state;
 		default:
 			return state;
 	}
