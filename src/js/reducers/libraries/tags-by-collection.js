@@ -29,7 +29,7 @@ const getResetTagCollections = (action, isCreateItems = false, items) => {
 			return true;
 		}
 
-		return deepEqual(newItem.tags, oldItem.tags);
+		return !deepEqual(newItem.tags, oldItem.tags);
 	});
 
 	const overrides = {};
