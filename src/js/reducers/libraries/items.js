@@ -97,7 +97,10 @@ const items = (state = {}, action, metaAndTags) => {
 				}
 			}
 		case RECEIVE_LIBRARY_SETTINGS:
-			return mapObject(state, (itemKey, item) => [itemKey, calculateDerivedData(item, metaAndTags)])
+			return mapObject(state, (itemKey, item) => [itemKey, calculateDerivedData(item, {
+					meta: metaAndTags.meta,
+					tagColors: indexByKey(get(action, 'settings.tagColors.value', []), 'name', ({ color }) => color)
+			})])
 		default:
 			return state;
 	}

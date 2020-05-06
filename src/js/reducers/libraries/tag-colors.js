@@ -1,5 +1,3 @@
-'use strict';
-
 import { get, indexByKey } from '../../utils';
 
 import {
@@ -10,7 +8,6 @@ const tagColors = (state = {}, action) => {
 	switch(action.type) {
 		case RECEIVE_LIBRARY_SETTINGS:
 			return {
-				...state,
 				...indexByKey(
 					get(action.settings, 'tagColors.value', []),
 					'name',
