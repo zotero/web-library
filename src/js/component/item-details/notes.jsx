@@ -26,7 +26,7 @@ const PAGE_SIZE = 100;
 
 //@TODO: convert to useDispatch hook
 const Note = forwardRef((props, ref) => {
-	const { device, deleteItem, isReadOnly, noteKey, onDelete, onDuplicate, onSelect, onKeyDown } = props;
+	const { device, isReadOnly, noteKey, onDelete, onDuplicate, onSelect, onKeyDown } = props;
 	const dispatch = useDispatch();
 	const [isDropdownOpen, setDropdownOpen] = useState(false);
 
@@ -38,7 +38,7 @@ const Note = forwardRef((props, ref) => {
 
 	useEffect(() => {
 		if(!isSelected && !isUpdating && note.note === '') {
-			deleteItem(note);
+			onDelete(note, true);
 		}
 	}, [isSelected]);
 
@@ -147,6 +147,7 @@ const Notes = props => {
 	const selectedNoteRef = useRef(null);
 	const addNoteRef = useRef(null);
 	const hasScrolledIntoViewRef = useRef(false);
+	const noteKeyToAutoDelete = useRef(null);
 
 	const { handleNext, handlePrevious, handleDrillDownNext, handleDrillDownPrev, handleFocus,
 		handleBlur, handleBySelector } = useFocusManager(notesEl, { overrideFocusRef:
@@ -203,6 +204,7 @@ const Notes = props => {
 	}, [selectedNote]);
 
 	const handleChangeNote = useCallback(newContent => {
+		noteKeyToAutoDelete.current = null;
 		updateItem(noteKey, { note: newContent });
 	});
 
@@ -211,9 +213,14 @@ const Notes = props => {
 		navigate({ noteKey: note.key });
 	});
 
-	const handleDelete = useCallback(note => {
-		moveToTrash([note.key]);
-		navigate({ note: null });
+	const handleDelete = useCallback((note, isAutoDelete = false) => {
+		if(isAutoDelete && noteKeyToAutoDelete.current === note.key) {
+			deleteItem(note);
+			noteKeyToAutoDelete.current = null;
+		} else if(!isAutoDelete) {
+			moveToTrash([note.key]);
+			navigate({ note: null });
+		}
 	});
 
 	const handleDuplicate = useCallback(async note => {
@@ -229,6 +236,7 @@ const Notes = props => {
 		const item = { ...noteTemplate, parentItem: itemKey, note: '' };
 		const createdItem = await createItem(item, libraryKey);
 		addedNoteKey.current = createdItem.key;
+		noteKeyToAutoDelete.current = createdItem.key;
 		navigate({ noteKey: createdItem.key });
 	});
 
@@ -330,7 +338,6 @@ const Notes = props => {
 											onDelete={ handleDelete }
 											onDuplicate={ handleDuplicate }
 											onSelect={ handleSelect }
-											deleteItem={ deleteItem }
 											onKeyDown={ handleKeyDown }
 											ref={ noteKey === note.key ? selectedNoteRef : null }
 										/>
