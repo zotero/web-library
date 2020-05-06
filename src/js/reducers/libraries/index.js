@@ -34,7 +34,9 @@ const libraries = (state = {}, action, { itemsPublications, meta } = {})  => {
 				itemsByCollection: itemsByCollection(get(state, [action.libraryKey, 'itemsByCollection']), action, {
 					items: (state[action.libraryKey] || {}).items
 				}),
-				itemsByParent: itemsByParent(get(state, [action.libraryKey, 'itemsByParent']), action),
+				itemsByParent: itemsByParent(get(state, [action.libraryKey, 'itemsByParent']), action, {
+					items: (state[action.libraryKey] || {}).items
+				}),
 				itemsRelated: itemsRelated(get(state, [action.libraryKey, 'itemsRelated']), action),
 				itemsTop: itemsTop(get(state, [action.libraryKey, 'itemsTop']), action, {}),
 				itemsTrash: itemsTrash(get(state, [action.libraryKey, 'itemsTrash']), action, {

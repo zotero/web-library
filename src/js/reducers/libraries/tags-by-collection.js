@@ -35,6 +35,9 @@ const getResetTagCollections = (action, isCreateItems = false, items) => {
 	const overrides = {};
 
 	itemsChanged.forEach(item => {
+		if(!('collections' in item)) {
+			return;
+		}
 		item.collections.forEach(col => overrides[col] = {});
 	});
 

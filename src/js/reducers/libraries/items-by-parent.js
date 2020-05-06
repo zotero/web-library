@@ -13,17 +13,33 @@ import {
     RECEIVE_DELETE_ITEMS,
     RECEIVE_DELETED_CONTENT,
     RECEIVE_FETCH_ITEMS,
-    RECEIVE_ITEMS_BY_QUERY,
-    RECEIVE_ITEMS_IN_COLLECTION,
     RECEIVE_MOVE_ITEMS_TRASH,
-    RECEIVE_TOP_ITEMS,
-    RECEIVE_TRASH_ITEMS,
     RECEIVE_UPDATE_ITEM,
     REQUEST_CHILD_ITEMS,
-    SORT_ITEMS,
 } from '../../constants/actions.js';
 
-const itemsByParent = (state = {}, action) => {
+const detectChangesInParent = (state, action, items) => {
+	const newState = { ...state };
+	const allItems = { ...items, ...indexByKey(action.items) };
+
+	action.items.forEach(item => {
+		if(item.parentItem && !get(newState, [item.parentItem, 'keys'], []).includes(item.key) && !item.deleted) {
+			console.log(`detectChangesInParent: add ${item.key} to ${item.parentItem}`);
+			newState[item.parentItem] = injectExtraItemKeys(newState[item.parentItem], item.key, allItems);
+		}
+
+		Object.entries(newState).forEach(([parentKey, itemKeysData]) => {
+			if('keys' in itemKeysData && itemKeysData.keys.includes(item.key) && (!item.parentItem === parentKey || item.deleted)) {
+				console.log(`detectChangesInParent: remove ${item.key} from ${parentKey}`);
+				newState[parentKey] = filterItemKeys(itemKeysData, item.key);
+			}
+		});
+	});
+
+	return newState;
+}
+
+const itemsByParent = (state = {}, action, { items }) => {
 	var parentKey;
 	switch(action.type) {
 		case RECEIVE_CREATE_ITEM:
@@ -122,6 +138,11 @@ const itemsByParent = (state = {}, action) => {
 					return [pk, filterItemKeys(childKeys, action.item.key)];
 				}
 			});
+		case RECEIVE_FETCH_ITEMS:
+			return {
+				...state,
+				...detectChangesInParent(state, action, items)
+			}
 		default:
 			return state;
 	}

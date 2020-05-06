@@ -26,6 +26,9 @@ const detectChangesInMembership = (state, action, items) => {
 	const allItems = { ...items, ...indexByKey(action.items) };
 
 	action.items.forEach(item => {
+		if(!('collections' in item)) {
+			return;
+		}
 		item.collections.forEach(collectionKey => {
 			if(collectionKey in newState && 'keys' in newState[collectionKey] && !newState[collectionKey].keys.includes(item.key) && !item.deleted) {
 				// updated item now belongs to collectionKey (or has been recovered from trash)
