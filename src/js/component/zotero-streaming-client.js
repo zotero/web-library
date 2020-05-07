@@ -8,6 +8,7 @@ const ZoteroStreamingClient = () => {
 	const dispatch = useDispatch();
 	const apiKey = useSelector(state => state.config.apiKey);
 	const ws = useRef(null);
+	const isTearDown = useRef(false);
 
 	const handleMessage = useCallback(ev => {
 		try {
@@ -33,36 +34,30 @@ const ZoteroStreamingClient = () => {
 		}
 	}, [dispatch])
 
-	const handleOpen = useCallback(ev => {
-
-	}, [])
-
 	const handleClose = useCallback(ev => {
-
-	}, [])
+		if(!isTearDown.current) {
+			connect();
+		}
+		console.log('WS close', ev);
+	}, []);
 
 	const handleError = useCallback(ev => {
+		console.log('WS error', ev);
+	}, []);
 
-	}, [])
-
-	const handleUnload = useCallback(ev => {
-
-	}, [])
-
-	useEffect(() => {
+	const connect = useCallback(() => {
 		console.log('WS setup');
 		ws.current = new WebSocket(`wss://stream.zotero.org/`);
-
 		ws.current.onmessage = handleMessage;
-		ws.current.onopen = handleOpen;
 		ws.current.onerror = handleError;
 		ws.current.onclose = handleClose;
+	}, []);
 
-		document.addEventListener('unload', handleUnload);
-
+	useEffect(() => {
+		connect();
 		return () => {
 			console.log('WS teardown');
-			document.removeEventListener('unload', handleUnload);
+			isTearDown.current = true;
 			ws.current.close();
 		}
 	}, []);
