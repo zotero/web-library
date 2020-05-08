@@ -97,7 +97,7 @@ class MoveCollectionsModal extends React.PureComponent {
 
 	render() {
 		const { device, isOpen, toggleModal, collections, libraries,
-			userLibraryKey, groups, librariesWithCollectionsFetching, fetchAllCollections } = this.props;
+			userLibraryKey, groups, fetchAllCollections } = this.props;
 		const { libraryKey, isBusy, picked, view, path } = this.state;
 		const collectionsSource = libraryKey in collections ? collections[libraryKey] : [];
 		const selectedCollectionKey = view === 'collection' ? path[path.length - 1] : null;
@@ -190,7 +190,6 @@ class MoveCollectionsModal extends React.PureComponent {
 	}
 
 	static propTypes = {
-		collectionCountByLibrary: PropTypes.object,
 		collectionKey: PropTypes.string,
 		collections: PropTypes.objectOf(PropTypes.arrayOf(Types.collection)),
 		device: PropTypes.object,
@@ -198,7 +197,6 @@ class MoveCollectionsModal extends React.PureComponent {
 		groups: PropTypes.array,
 		isOpen: PropTypes.bool,
 		libraries: PropTypes.array,
-		librariesWithCollectionsFetching: PropTypes.array,
 		libraryKey: PropTypes.string,
 		toggleModal: PropTypes.func.isRequired,
 		updateCollection: PropTypes.func.isRequired,

@@ -195,7 +195,6 @@ class AddItemsToCollectionsModal extends React.PureComponent {
 	static propTypes = {
 		chunkedAddToCollection: PropTypes.func.isRequired,
 		chunkedCopyToLibrary: PropTypes.func.isRequired,
-		collectionCountByLibrary: PropTypes.object,
 		collections: PropTypes.objectOf(PropTypes.arrayOf(Types.collection)),
 		device: PropTypes.object,
 		fetchAllCollections: PropTypes.func.isRequired,
@@ -203,7 +202,6 @@ class AddItemsToCollectionsModal extends React.PureComponent {
 		isOpen: PropTypes.bool,
 		items: PropTypes.array,
 		libraries: PropTypes.array,
-		librariesWithCollectionsFetching: PropTypes.array,
 		libraryKey: PropTypes.string,
 		onSelectModeToggle: PropTypes.func.isRequired,
 		toggleModal: PropTypes.func.isRequired,

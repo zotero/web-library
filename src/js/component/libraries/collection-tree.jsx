@@ -549,10 +549,15 @@ const CollectionTree = props => {
 	const { parentLibraryKey, isPickerMode, pickerNavigate, pickerState, ...rest } = props;
 	const dispatch = useDispatch();
 	const collections = useSelector(
-		state => parentLibraryKey in state.libraries ? state.libraries[parentLibraryKey].collections : {}
+		state => parentLibraryKey in state.libraries ? state.libraries[parentLibraryKey].collections.data : {}
 	);
 	const libraries = useSelector(state => state.config.libraries);
-	const collectionsTotalCount = useSelector(state => state.collectionCountByLibrary[parentLibraryKey]);
+	const collectionsTotalCount = useSelector(
+		state => parentLibraryKey in state.libraries ? state.libraries[parentLibraryKey].collections.totalResults : null
+	);
+	const isFetchingAllCollections = useSelector(
+		state => parentLibraryKey in state.libraries ? state.libraries[parentLibraryKey].collections.isFetchingAll : false
+	);
 	const itemsSource = useSelector(state => state.current.itemsSource);
 	const stateSelectedCollectionKey = useSelector(state => state.current.collectionKey);
 	const selectedCollectionKey = isPickerMode ? pickerState.collectionKey : stateSelectedCollectionKey;
@@ -561,9 +566,6 @@ const CollectionTree = props => {
 
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
 	const isSingleColumn = useSelector(state => state.device.isSingleColumn);
-
-	const collectionsCurrentCount = Object.values(collections).length;
-	const hasFetchedAllCollections = collectionsCurrentCount === collectionsTotalCount;
 
 	const handleOpenToggle = useCallback((ev, shouldOpen = null) => {
 		const collectionKey = ev.currentTarget.closest('[data-collection-key]').dataset.collectionKey;
@@ -615,7 +617,7 @@ const CollectionTree = props => {
 
 	const { isReadOnly, isMyLibrary } = libraries.find(l => l.key === parentLibraryKey);
 
-	if(!hasFetchedAllCollections) {
+	if(isFetchingAllCollections) {
 		// while fetching collections:
 		// On touch we allow animating into next level and render a spinner
 		if(isTouchOrSmall) {

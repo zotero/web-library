@@ -20,19 +20,16 @@ const mapStateToProps = state => {
 	const isOpen = state.modal.id === COLLECTION_SELECT;
 	const { libraryKey, userLibraryKey } = state.current;
 	const { items } = state.modal;
-	const librariesWithCollectionsFetching = state.fetching.collectionsInLibrary;
-	const collectionCountByLibrary = state.collectionCountByLibrary;
 	const groups = state.groups.groups;
 	const libraries = state.config.libraries.filter(l => !l.isReadOnly);
 	const collections = libraries.reduce((aggr, library) => {
 		aggr[library.key] = Object.values(
-			get(state, ['libraries', library.key, 'collections'], {})
+			get(state, ['libraries', library.key, 'collections', 'data'], {})
 		);
 		return aggr;
 	}, {});
 
-	return { libraries, libraryKey, isOpen, collections, userLibraryKey, groups,
-		items, librariesWithCollectionsFetching, collectionCountByLibrary };
+	return { libraries, libraryKey, isOpen, collections, userLibraryKey, groups, items };
 };
 
 

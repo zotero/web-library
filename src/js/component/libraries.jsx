@@ -15,18 +15,23 @@ import { createCollection, fetchAllCollections, fetchLibrarySettings, navigate }
 
 const LibraryNode = props => {
 	const {
-		addVirtual, collectionsCount, isFetching, isOpen, isPickerMode, isReadOnly, isSelected,
-		libraryKey, name, pickerNavigate, pickerPick, pickerState, picked, pickerIncludeLibraries, shouldBeTabbable,
-		toggleOpen, virtual
+		addVirtual, isOpen, isPickerMode, isReadOnly, isSelected, libraryKey,
+		name, pickerNavigate, pickerPick, pickerState, picked, pickerIncludeLibraries,
+		shouldBeTabbable, toggleOpen, virtual
 	} = props;
 	const dispatch = useDispatch();
+	// const isFetching = useSelector(state => get(state, ['libraries', libraryKey, 'collections', 'isFetching'], null));
+	const isFetchingAll = useSelector(state => get(state, ['libraries', libraryKey, 'collections', 'isFetchingAll'], false));
+	const totalResults = useSelector(state => get(state, ['libraries', libraryKey, 'collections', 'totalResults'], null));
+	const isCurrent = useSelector(state => libraryKey === state.current.libraryKey);
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
 	const id = useRef(getUniqueId('library-'));
+	const hasChecked = totalResults !== null;
 
 
 	// no nodes inside if device is non-touch (no "All Items" node) and library is read-only (no
 	// trash) and has no collections
-	const isConfirmedEmpty = isReadOnly && !isTouchOrSmall && collectionsCount === 0;
+	const isConfirmedEmpty = isReadOnly && !isTouchOrSmall && totalResults === 0;
 
 	const handleClick = useCallback(() => {
 		if(isPickerMode) {
@@ -48,6 +53,15 @@ const LibraryNode = props => {
 		toggleOpen(libraryKey, shouldOpen);
 	});
 
+	useEffect(() => {
+		//@NOTE: this should only trigger when library is reset. Otherwise collections are fetched
+		//		 by loader or when library is first opened. See #289
+		if(isCurrent && !hasChecked && !isFetchingAll) {
+			console.log('fetchAllCollections from libraries effect');
+			dispatch(fetchAllCollections(libraryKey));
+		}
+	}, [isCurrent, hasChecked, libraryKey, isFetchingAll]);
+
 	const getTreeProps = () => {
 		const parentLibraryKey = libraryKey;
 		const isVirtualInThisTree = virtual && virtual.libraryKey === libraryKey;
@@ -60,20 +74,22 @@ const LibraryNode = props => {
 		}
 	}
 
+	console.log({ isConfirmedEmpty, isOpen, isFetchingAll });
+
 	return (
 		<Node
 			className={ cx({
-				'open': isOpen && !isFetching,
+				'open': isOpen && !isFetchingAll,
 				'selected': isSelected,
-				'busy': isFetching
+				'busy': isFetchingAll
 			}) }
 			aria-labelledby={ id.current }
 			tabIndex={ shouldBeTabbable ? "-2" : null }
-			isOpen={ isOpen && !isFetching }
+			isOpen={ isOpen && !isFetchingAll }
 			onOpen={ handleOpenToggle }
 			onClick={ handleClick }
 			showTwisty={ !isConfirmedEmpty }
-			subtree={ isFetching || isConfirmedEmpty ? null : isOpen ? <CollectionTree { ...getTreeProps() } /> : null }
+			subtree={ isConfirmedEmpty ? null : isOpen ? <CollectionTree { ...getTreeProps() } /> : null }
 			data-key={ libraryKey }
 			dndTarget={ isReadOnly ? { } : { 'targetType': 'library', libraryKey: libraryKey } }
 			{ ...pick(props, ['onDrillDownNext', 'onDrillDownPrev', 'onFocusNext', 'onFocusPrev'])}
@@ -90,7 +106,7 @@ const LibraryNode = props => {
 				</React.Fragment>
 			) }
 			<div className="truncate" id={ id.current }>{ name }</div>
-			{ isPickerMode && pickerIncludeLibraries && !isFetching && (
+			{ isPickerMode && pickerIncludeLibraries && !isFetchingAll && (
 				<input
 					type="checkbox"
 					checked={ picked.some(({ collectionKey: c, libraryKey: l }) => l === libraryKey && !c) }
@@ -98,9 +114,9 @@ const LibraryNode = props => {
 					onClick={ stopPropagation }
 				/>
 			)}
-			{ isFetching && <Spinner className="small mouse" /> }
+			{ isFetchingAll && <Spinner className="small mouse" /> }
 			{
-				!isFetching && !isReadOnly && (
+				!isFetchingAll && !isReadOnly && (
 					<Button
 						aria-label="add collection"
 						className="mouse btn-icon-plus"
@@ -118,8 +134,6 @@ const LibraryNode = props => {
 
 LibraryNode.propTypes = {
 	addVirtual: PropTypes.func,
-	collectionsCount: PropTypes.number,
-	isFetching: PropTypes.bool,
 	isOpen: PropTypes.bool,
 	isPickerMode: PropTypes.bool,
 	isReadOnly: PropTypes.bool,
@@ -140,17 +154,12 @@ const Libraries = props => {
 	const { onBlur, onFocus, registerFocusRoot, isPickerMode, pickerState } = props;
 	const dispatch = useDispatch();
 	const libraries = useSelector(state => state.config.libraries);
-	const librariesWithCollectionsFetching = useSelector(state => state.fetching.collectionsInLibrary);
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
 	const stateSelectedLibraryKey = useSelector(state => state.current.libraryKey);
 	const selectedLibraryKey = isPickerMode ? pickerState.libraryKey : stateSelectedLibraryKey;
 	const stateView = useSelector(state => state.current.view);
 	const view = isPickerMode ? pickerState.view : stateView;
 	const itemsSource = useSelector(state => state.current.itemsSource);
-	const collectionCountByLibrary = useSelector(state => state.collectionCountByLibrary);
-	const hasMoreCollections = useSelector(state =>
-		Object.keys(get(state, ['libraries', selectedLibraryKey, 'collections'], {})) < collectionCountByLibrary[selectedLibraryKey]
-	);
 
 	const myLibraries = useMemo(
 		() => libraries.filter(l => l.isMyLibrary),
@@ -177,14 +186,6 @@ const Libraries = props => {
 			dispatch(fetchLibrarySettings(selectedLibraryKey));
 		}
 	}, [selectedLibraryKey]);
-
-	useEffect(() => {
-		//@NOTE: this should only trigger when library is reset. Otherwise collections are fetched
-		//		 by loader or when library is first opened. See #289
-		if(hasMoreCollections) {
-			dispatch(fetchAllCollections(selectedLibraryKey));
-		}
-	}, [hasMoreCollections]);
 
 	const cancelAdd = () => {
 		setVirtual(null);
@@ -215,7 +216,8 @@ const Libraries = props => {
 			setOpened([...opened, libraryKey ]);
 
 		if(!isOpened) {
-			dispatch(fetchAllCollections(libraryKey));
+			console.log('fetchAllCollections from libraries::toggleOpen');
+			// dispatch(fetchAllCollections(libraryKey));
 		}
 	}
 
@@ -233,11 +235,9 @@ const Libraries = props => {
 		const isOpen = (!isTouchOrSmall && opened.includes(key)) ||
 			(isTouchOrSmall && view !== 'libraries' && selectedLibraryKey == key);
 		const isSelected = !isTouchOrSmall && selectedLibraryKey === key && itemsSource === 'top';
-		const isFetching = !isTouchOrSmall && librariesWithCollectionsFetching.includes(key);
-		const collectionsCount = key in collectionCountByLibrary ? collectionCountByLibrary[key] : null;
 
 		return {
-			collectionsCount, libraryKey: key, shouldBeTabbableOnTouch, shouldBeTabbable, isOpen, isSelected, isFetching,
+			libraryKey: key, shouldBeTabbableOnTouch, shouldBeTabbable, isOpen, isSelected,
 			addVirtual, commitAdd, cancelAdd, toggleOpen, virtual,
 			...rest,
 			...pick(props, ['picked', 'pickerIncludeLibraries', 'onDrillDownNext',

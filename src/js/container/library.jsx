@@ -15,15 +15,13 @@ const mapStateToProps = state => {
 		search, searchState, tags, useTransitions, userLibraryKey, view } = state.current;
 	const { itemTypes } = state.meta;
 	const { isSynced } = get(state, ['libraries', libraryKey, 'sync'], {});
-	const { config, fetching: { collectionsInLibrary } } = state;
-	const isFetchingCollections = collectionsInLibrary.some(key => key === userLibraryKey || key === libraryKey);
-	const isFetchingLibrarySettings = get(state, ['libraries', libraryKey, 'fetching', 'librarySettings']);
+	const { config } = state;
 	const isLibraryReadOnly = (state.config.libraries.find(l => l.key === libraryKey) || {}).isReadOnly;
 
-	return { attachmentKey, config, view, userLibraryKey, isSearchMode, isSelectMode, itemsSource, collectionKey,
-		isFetchingCollections, isFetchingLibrarySettings, isNavBarOpen, isMyPublications, isSynced,
-		isTouchTagSelectorOpen, isTrash, itemTypes, useTransitions, libraryKey, noteKey, search,
-		searchState, tags, qmode, isLibraryReadOnly, };
+	return { attachmentKey, config, view, userLibraryKey, isSearchMode, isSelectMode, itemsSource,
+		collectionKey, isNavBarOpen, isMyPublications, isSynced, isTouchTagSelectorOpen, isTrash,
+		itemTypes, useTransitions, libraryKey, noteKey, search, searchState, tags, qmode,
+		isLibraryReadOnly, };
 };
 
 export default connect(

@@ -1,31 +1,25 @@
-'use strict';
-
 import {
-    REQUEST_META,
-    RECEIVE_META,
-    ERROR_META,
-    REQUEST_COLLECTIONS_IN_LIBRARY,
-    RECEIVE_COLLECTIONS_IN_LIBRARY,
-    ERROR_COLLECTIONS_IN_LIBRARY,
-    REQUEST_ITEM_TYPE_CREATOR_TYPES,
-    RECEIVE_ITEM_TYPE_CREATOR_TYPES,
-    ERROR_ITEM_TYPE_CREATOR_TYPES,
-    REQUEST_ITEM_TYPE_FIELDS,
-    RECEIVE_ITEM_TYPE_FIELDS,
-    ERROR_ITEM_TYPE_FIELDS,
-    REQUEST_ITEM_TEMPLATE,
-    RECEIVE_ITEM_TEMPLATE,
-    ERROR_ITEM_TEMPLATE,
-    REQUEST_TAGS_IN_LIBRARY,
-    RECEIVE_TAGS_IN_LIBRARY,
-    ERROR_TAGS_IN_LIBRARY,
-    REQUEST_ALL_GROUPS,
-    RECEIVE_ALL_GROUPS,
-    ERROR_ALL_GROUPS,
+	REQUEST_META,
+	RECEIVE_META,
+	ERROR_META,
+	REQUEST_ITEM_TYPE_CREATOR_TYPES,
+	RECEIVE_ITEM_TYPE_CREATOR_TYPES,
+	ERROR_ITEM_TYPE_CREATOR_TYPES,
+	REQUEST_ITEM_TYPE_FIELDS,
+	RECEIVE_ITEM_TYPE_FIELDS,
+	ERROR_ITEM_TYPE_FIELDS,
+	REQUEST_ITEM_TEMPLATE,
+	RECEIVE_ITEM_TEMPLATE,
+	ERROR_ITEM_TEMPLATE,
+	REQUEST_TAGS_IN_LIBRARY,
+	RECEIVE_TAGS_IN_LIBRARY,
+	ERROR_TAGS_IN_LIBRARY,
+	REQUEST_ALL_GROUPS,
+	RECEIVE_ALL_GROUPS,
+	ERROR_ALL_GROUPS,
 } from '../constants/actions';
 
 const fetching = (state = {
-	collectionsInLibrary: [],
 	creatorTypes: [],
 	itemTemplates: [],
 	itemTypeCreatorTypes: [],
@@ -45,21 +39,6 @@ const fetching = (state = {
 			return {
 				...state,
 				meta: false
-			};
-		case REQUEST_COLLECTIONS_IN_LIBRARY:
-			return {
-				...state,
-				collectionsInLibrary: [
-					...(state.collectionsInLibrary || []),
-					action.libraryKey
-				]
-			};
-		case RECEIVE_COLLECTIONS_IN_LIBRARY:
-		case ERROR_COLLECTIONS_IN_LIBRARY:
-			return {
-				...state,
-				collectionsInLibrary: (state.collectionsInLibrary || [])
-					.filter(key => key !== action.libraryKey)
 			};
 		case REQUEST_TAGS_IN_LIBRARY:
 			return {

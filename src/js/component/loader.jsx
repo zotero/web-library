@@ -20,18 +20,22 @@ const Loader = () => {
 	const config = useSelector(state => state.config);
 	const { itemTypes, itemFields, creatorFields } = useSelector(state => state.meta)
 	const tagColors = useSelector(state => get(state, ['libraries', libraryKey, 'tagColors'], null));
-	const collections = useSelector(state => get(state, ['libraries', libraryKey, 'collections'], null));
-	const expectedCount = useSelector(state => get(state, ['collectionCountByLibrary', libraryKey], null));
 	const isFetchingGroups = useSelector(state => state.fetching.allGroups);
-	const isFetchingCollections = expectedCount === null || (collections !== null && expectedCount > Object.keys(collections).length);
+	const isFetchingAllCollections = useSelector(
+		state => get(state, ['libraries', libraryKey, 'collections', 'isFetchingAll'], null)
+	);
+	const hasCheckedCollections = useSelector(
+		state => get(state, ['libraries', libraryKey, 'collections', 'totalResults'], null) !== null
+	);
+	const isWaitingForCollections = !hasCheckedCollections || isFetchingAllCollections;
 
 	const [isReady, setIsReady] = useState(false);
 
 	useEffect(() => {
-		if(itemTypes && itemFields && creatorFields && tagColors && collections && !isFetchingCollections && !isFetchingGroups) {
+		if(itemTypes && itemFields && creatorFields && tagColors && !isWaitingForCollections && !isFetchingGroups) {
 			setIsReady(true);
 		}
-	}, [collections, itemTypes, itemFields, creatorFields, tagColors, isFetchingCollections, isFetchingGroups]);
+	}, [itemTypes, itemFields, creatorFields, tagColors, isWaitingForCollections, isFetchingGroups]);
 
 	useEffect(() => {
 		dispatch(preferencesLoad());

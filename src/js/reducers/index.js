@@ -1,9 +1,6 @@
-'use strict';
-
 import combineSectionReducers from 'combine-section-reducers';
 import { connectRouter } from 'connected-react-router';
 
-import collectionCountByLibrary from './collection-count-by-library';
 import config from './config';
 import current from './current';
 import device from './device';
@@ -22,6 +19,6 @@ import sources from './sources'
 import styles from './styles';
 
 
-export default history => combineSectionReducers({ collectionCountByLibrary, config, current,
-	device, errors, fetching, groups, identifier, itemsPublications, libraries, meta, modal,
-	ongoing, preferences, query, router: connectRouter(history), sources, styles, });
+export default history => combineSectionReducers({ config, current, device, errors, fetching,
+	groups, identifier, itemsPublications, libraries, meta, modal, ongoing, preferences, query,
+	router: connectRouter(history), sources, styles, });

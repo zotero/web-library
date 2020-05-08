@@ -16,6 +16,8 @@ import {
     REQUEST_DELETE_COLLECTION,
     RECEIVE_DELETE_COLLECTION,
     ERROR_DELETE_COLLECTION,
+    BEGIN_FETCH_ALL_COLLECTIONS,
+    COMPLETE_FETCH_ALL_COLLECTIONS,
 } from '../constants/actions';
 
 import queue from './queue';
@@ -66,27 +68,47 @@ const fetchCollections = (libraryKey, { start = 0, limit = 50, sort = 'dateModif
 const fetchAllCollections = (libraryKey, { sort = 'dateModified', direction = "desc", shouldAlwaysFetch = false } = {}) => {
 	return async (dispatch, getState) => {
 		const state = getState();
-		const isKnown = libraryKey in state.collectionCountByLibrary;
-		const expectedCount = state.collectionCountByLibrary[libraryKey];
-		const collections = get(state, ['libraries', libraryKey, 'collections'], {});
+		const expectedCount = get(state, ['libraries', libraryKey, 'collections', 'totalResults'], null);
+		const isKnown = expectedCount !== null;
+		const collections = get(state, ['libraries', libraryKey, 'collections', 'data'], {});
+		const isFetchingAll = get(state, ['libraries', libraryKey, 'collections', 'isFetchingAll'], null);
 		const actualCount = Object.keys(collections).length;
 		const isCountCorrect = expectedCount === actualCount
+
+		if(isFetchingAll) {
+			// skip fetching if already in progress
+			return;
+		}
+
+		console.log({ shouldAlwaysFetch, isKnown, isCountCorrect, expectedCount, actualCount });
 
 		if(!shouldAlwaysFetch && isKnown && isCountCorrect) {
 			// skip fetching if we already know these libraries
 			return;
 		}
 
+		dispatch({
+			type: BEGIN_FETCH_ALL_COLLECTIONS,
+			libraryKey
+		});
+
 		var pointer = 0;
 		const limit = 100;
 		var hasMore = false;
 
-		do {
-			const { response } = await dispatch(fetchCollections(libraryKey, { start: pointer, limit, sort, direction }));
-			const totalResults = parseInt(response.response.headers.get('Total-Results'), 10);
-			hasMore = totalResults > pointer + limit;
-			pointer += limit;
-		} while(hasMore === true)
+		try {
+			do {
+				const { response } = await dispatch(fetchCollections(libraryKey, { start: pointer, limit, sort, direction }));
+				const totalResults = parseInt(response.response.headers.get('Total-Results'), 10);
+				hasMore = totalResults > pointer + limit;
+				pointer += limit;
+			} while(hasMore === true);
+		} finally {
+			dispatch({
+				type: COMPLETE_FETCH_ALL_COLLECTIONS,
+				libraryKey
+			});
+		}
 	}
 }
 
@@ -180,7 +202,7 @@ const queueUpdateCollection = (collectionKey, patch, libraryKey, queueId) => {
 		callback: async (next, dispatch, getState) => {
 			const state = getState();
 			const config = state.config;
-			const collection = get(state, ['libraries', libraryKey, 'collections', collectionKey]);
+			const collection = get(state, ['libraries', libraryKey, 'collections', 'data', collectionKey]);
 			const version = collection.version;
 
 			dispatch({
