@@ -20,7 +20,6 @@ const LibraryNode = props => {
 		shouldBeTabbable, toggleOpen, virtual
 	} = props;
 	const dispatch = useDispatch();
-	// const isFetching = useSelector(state => get(state, ['libraries', libraryKey, 'collections', 'isFetching'], null));
 	const isFetchingAll = useSelector(state => get(state, ['libraries', libraryKey, 'collections', 'isFetchingAll'], false));
 	const totalResults = useSelector(state => get(state, ['libraries', libraryKey, 'collections', 'totalResults'], null));
 	const isCurrent = useSelector(state => libraryKey === state.current.libraryKey);
@@ -58,7 +57,6 @@ const LibraryNode = props => {
 		//@NOTE: this should only trigger when library is reset. Otherwise collections are fetched
 		//		 by loader or when library is first opened. See #289
 		if(isCurrent && !hasChecked && !isFetchingAll) {
-			console.log('fetchAllCollections from libraries effect');
 			dispatch(fetchAllCollections(libraryKey));
 		}
 	}, [isCurrent, hasChecked, libraryKey, isFetchingAll]);
@@ -215,8 +213,7 @@ const Libraries = props => {
 			setOpened([...opened, libraryKey ]);
 
 		if(!isOpened) {
-			console.log('fetchAllCollections from libraries::toggleOpen');
-			// dispatch(fetchAllCollections(libraryKey));
+			dispatch(fetchAllCollections(libraryKey));
 		}
 	}
 

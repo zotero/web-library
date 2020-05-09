@@ -16,7 +16,6 @@ const ZoteroStreamingClient = () => {
 			const message = JSON.parse(ev.data);
 
 			if(message.event === 'connected') {
-				console.log("WS connected", { externalLibraries });
 				ws.current.send(JSON.stringify({
 					'action': 'createSubscriptions',
 					'subscriptions': [
@@ -25,7 +24,6 @@ const ZoteroStreamingClient = () => {
 					],
 				}));
 			} else if(message.event === 'subscriptionsCreated') {
-				console.log('WS subscriptions created');
 			} else if(message.event === 'topicUpdated') {
 				const libraryKey = getLibraryKeyFromTopic(message.topic);
 				if(libraryKey) {
@@ -42,15 +40,12 @@ const ZoteroStreamingClient = () => {
 		if(!isTearDown.current) {
 			connect();
 		}
-		console.log('WS close', ev);
 	}, []);
 
 	const handleError = useCallback(ev => {
-		console.log('WS error', ev);
 	}, []);
 
 	const connect = useCallback(() => {
-		console.log('WS setup');
 		ws.current = new WebSocket(`wss://stream.zotero.org/`);
 		ws.current.onmessage = handleMessage;
 		ws.current.onerror = handleError;
@@ -60,7 +55,6 @@ const ZoteroStreamingClient = () => {
 	useEffect(() => {
 		connect();
 		return () => {
-			console.log('WS teardown');
 			isTearDown.current = true;
 			ws.current.close();
 		}

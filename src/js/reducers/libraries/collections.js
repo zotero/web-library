@@ -26,8 +26,6 @@ const countNewCollections = (action, state) => {
 	const count = action.collections
 		.filter(collection => !(collection.key in state.data))
 		.length;
-
-	console.log(`countNewCollections in ${action.libraryKey}: ${count}`);
 	return count;
 }
 
@@ -40,8 +38,6 @@ const countRemovedCollections = (action, state) => {
 	const count = action.collectionKeys
 		.filter(collectionKey => (collectionKey in state.data))
 		.length;
-
-	console.log(`countRemovedCollections in ${action.libraryKey}: ${count}`);
 	return count;
 }
 

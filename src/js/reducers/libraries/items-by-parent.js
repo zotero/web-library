@@ -24,13 +24,11 @@ const detectChangesInParent = (state, action, items) => {
 
 	action.items.forEach(item => {
 		if(item.parentItem && !get(newState, [item.parentItem, 'keys'], []).includes(item.key) && !item.deleted) {
-			console.log(`detectChangesInParent: add ${item.key} to ${item.parentItem}`);
 			newState[item.parentItem] = injectExtraItemKeys(newState[item.parentItem], item.key, allItems);
 		}
 
 		Object.entries(newState).forEach(([parentKey, itemKeysData]) => {
 			if('keys' in itemKeysData && itemKeysData.keys.includes(item.key) && (!item.parentItem === parentKey || item.deleted)) {
-				console.log(`detectChangesInParent: remove ${item.key} from ${parentKey}`);
 				newState[parentKey] = filterItemKeys(itemKeysData, item.key);
 			}
 		});

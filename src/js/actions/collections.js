@@ -80,8 +80,6 @@ const fetchAllCollections = (libraryKey, { sort = 'dateModified', direction = "d
 			return;
 		}
 
-		console.log({ shouldAlwaysFetch, isKnown, isCountCorrect, expectedCount, actualCount });
-
 		if(!shouldAlwaysFetch && isKnown && isCountCorrect) {
 			// skip fetching if we already know these libraries
 			return;
