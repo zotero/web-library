@@ -7,6 +7,7 @@ import { getLibraryKeyFromTopic } from '../utils';
 const ZoteroStreamingClient = () => {
 	const dispatch = useDispatch();
 	const apiKey = useSelector(state => state.config.apiKey);
+	const externalLibraries = useSelector(state => state.config.libraries.filter(l => l.isExternal));
 	const ws = useRef(null);
 	const isTearDown = useRef(false);
 
@@ -15,10 +16,13 @@ const ZoteroStreamingClient = () => {
 			const message = JSON.parse(ev.data);
 
 			if(message.event === 'connected') {
-				console.log("WS connected");
+				console.log("WS connected", { externalLibraries });
 				ws.current.send(JSON.stringify({
 					'action': 'createSubscriptions',
-					'subscriptions': [{ apiKey }],
+					'subscriptions': [
+						{ apiKey },
+						{ topics: externalLibraries.map(l => `/${l.isGroupLibrary ? 'groups' : 'users'}/${l.id}`) }
+					],
 				}));
 			} else if(message.event === 'subscriptionsCreated') {
 				console.log('WS subscriptions created');

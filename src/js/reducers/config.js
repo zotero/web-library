@@ -77,6 +77,7 @@ const config = (state = defaultState, action) => {
 						isReadOnly: false,
 						isFileUploadAllowed: true,
 						name: 'My Library',
+						isExternal: false,
 						slug: action.userSlug
 					},
 					...(action.libraries.include || []).map(include => ({
@@ -85,6 +86,7 @@ const config = (state = defaultState, action) => {
 						slug: slugify(include.name),
 						isGroupLibrary: false,
 						id: include.key.slice(1),
+						isExternal: true,
 						...include,
 					}))
 				].filter(Boolean),
@@ -100,6 +102,7 @@ const config = (state = defaultState, action) => {
 					slug: slugify(group.name),
 					isReadOnly: !determineIfGroupIsWriteable(group, state.userId),
 					isFileUploadAllowed: determineIfGroupAllowsUploads(group, state.userId),
+					isExternal: false,
 				}))
 			];
 			sortByKey(libraries, 'name');
