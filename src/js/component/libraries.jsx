@@ -27,6 +27,7 @@ const LibraryNode = props => {
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
 	const id = useRef(getUniqueId('library-'));
 	const hasChecked = totalResults !== null;
+	const shouldShowSpinner = !isTouchOrSmall && isFetchingAll;
 
 
 	// no nodes inside if device is non-touch (no "All Items" node) and library is read-only (no
@@ -74,18 +75,16 @@ const LibraryNode = props => {
 		}
 	}
 
-	console.log({ isConfirmedEmpty, isOpen, isFetchingAll });
-
 	return (
 		<Node
 			className={ cx({
-				'open': isOpen && !isFetchingAll,
+				'open': isOpen && !shouldShowSpinner,
 				'selected': isSelected,
-				'busy': isFetchingAll
+				'busy': shouldShowSpinner
 			}) }
 			aria-labelledby={ id.current }
 			tabIndex={ shouldBeTabbable ? "-2" : null }
-			isOpen={ isOpen && !isFetchingAll }
+			isOpen={ isOpen && !shouldShowSpinner }
 			onOpen={ handleOpenToggle }
 			onClick={ handleClick }
 			showTwisty={ !isConfirmedEmpty }
@@ -106,7 +105,7 @@ const LibraryNode = props => {
 				</React.Fragment>
 			) }
 			<div className="truncate" id={ id.current }>{ name }</div>
-			{ isPickerMode && pickerIncludeLibraries && !isFetchingAll && (
+			{ isPickerMode && pickerIncludeLibraries && !shouldShowSpinner && (
 				<input
 					type="checkbox"
 					checked={ picked.some(({ collectionKey: c, libraryKey: l }) => l === libraryKey && !c) }
@@ -114,9 +113,9 @@ const LibraryNode = props => {
 					onClick={ stopPropagation }
 				/>
 			)}
-			{ isFetchingAll && <Spinner className="small mouse" /> }
+			{ shouldShowSpinner && <Spinner className="small mouse" /> }
 			{
-				!isFetchingAll && !isReadOnly && (
+				!shouldShowSpinner && !isReadOnly && (
 					<Button
 						aria-label="add collection"
 						className="mouse btn-icon-plus"
