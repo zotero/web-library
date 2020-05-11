@@ -408,7 +408,7 @@ const CollectionNode = withDevice(props => {
 	const hasSubCollections = (device.isSingleColumn || collections.length > 0);
 	const { selectedDepth } = derivedData[collection.key];
 
-	const selectedHasChildren = isCurrentLibrary && selectedCollectionKey && derivedData[selectedCollectionKey].hasChildren;
+	const selectedHasChildren = isCurrentLibrary && selectedCollectionKey && (derivedData[selectedCollectionKey] || {}).hasChildren;
 
 	// if isSelected is a nested child, hasOpen is true
 	// if isSelected is a direct child, hasOpen is only true if
