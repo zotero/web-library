@@ -29,7 +29,7 @@ const isMatchingQuery = (action, state) => {
 }
 
 const defaultState = {
-	current: null,
+	current: {},
 	isFetching: false,
 	itemKeys: [],
 	requests: [],
@@ -105,7 +105,7 @@ const query = (state = defaultState, action) => {
 				}
 			};
 		case RECEIVE_UPDATE_ITEM:
-			return 'tags' in action.patch ? {} : state;
+			return 'tags' in action.patch ? { ...state, tags: {} } : state;
 		default:
 			return state;
 	}
