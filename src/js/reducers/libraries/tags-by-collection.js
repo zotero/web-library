@@ -11,6 +11,7 @@ import {
 	RECEIVE_UPDATE_ITEM,
 	REQUEST_TAGS_IN_COLLECTION,
 } from '../../constants/actions';
+import { get } from '../../utils';
 import { detectItemsChanged, populateTags, updateFetchingState } from '../../common/reducers';
 
 
@@ -35,10 +36,8 @@ const getResetTagCollections = (action, isCreateItems = false, items) => {
 	const overrides = {};
 
 	itemsChanged.forEach(item => {
-		if(!('collections' in item)) {
-			return;
-		}
-		item.collections.forEach(col => overrides[col] = {});
+		const collections = [...(item.collections || []), ...get(items, [item.key, 'collections'], [])];
+		collections.forEach(col => overrides[col] = {});
 	});
 
 	return overrides;
