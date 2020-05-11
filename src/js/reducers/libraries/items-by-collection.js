@@ -30,7 +30,7 @@ const detectChangesInMembership = (state, action, items) => {
 			return;
 		}
 		item.collections.forEach(collectionKey => {
-			if(collectionKey in newState && 'keys' in newState[collectionKey] && !newState[collectionKey].keys.includes(item.key) && !item.deleted) {
+			if(collectionKey in newState && (!('keys' in newState[collectionKey]) || !newState[collectionKey].keys.includes(item.key)) && !item.deleted) {
 				// updated item now belongs to collectionKey (or has been recovered from trash)
 				newState[collectionKey] = injectExtraItemKeys(newState[collectionKey], item.key, allItems);
 			}

@@ -26,9 +26,9 @@ const detectChangesInTop = (state, action, items) => {
 	const keysToRemove = [];
 
 	action.items.forEach(item => {
-		if(!item.deleted && !newState.keys.includes(item.key)) {
+		if(!item.deleted && !item.parentItem && !newState.keys.includes(item.key)) {
 			keysToInject.push(item.key);
-		} else if(item.deleted && newState.keys.includes(item.key)) {
+		} else if((item.deleted || item.parentItem) && newState.keys.includes(item.key)) {
 			keysToRemove.push(item.key);
 		}
 	});

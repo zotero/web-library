@@ -23,7 +23,7 @@ const detectChangesInParent = (state, action, items) => {
 	const allItems = { ...items, ...indexByKey(action.items) };
 
 	action.items.forEach(item => {
-		if(item.parentItem && !get(newState, [item.parentItem, 'keys'], []).includes(item.key) && !item.deleted) {
+		if(item.parentItem && item.parentItem in newState && !get(newState, [item.parentItem, 'keys'], []).includes(item.key) && !item.deleted) {
 			newState[item.parentItem] = injectExtraItemKeys(newState[item.parentItem], item.key, allItems);
 		}
 
