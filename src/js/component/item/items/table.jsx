@@ -55,10 +55,21 @@ const Table = memo(() => {
 		(state.config.libraries.find(l => l.key === state.current.libraryKey) || {}).isMyLibrary
 	);
 	const scrollbarWidth = useSelector(state => state.device.scrollbarWidth);
-	const columns = useMemo(() => columnsData
+	const columns = useMemo(() => {
+		const columns = columnsData
 		.filter(c => c.isVisible)
-		.filter(c => !isMyLibrary || (isMyLibrary && !(c.field in columnProperties && columnProperties[c.field].excludeInMyLibrary)))
-	, [columnsData, isMyLibrary]);
+		.filter(c => !isMyLibrary || (isMyLibrary && !(c.field in columnProperties && columnProperties[c.field].excludeInMyLibrary)));
+
+		var sumOfFractions = columns.reduce((aggr, c) => aggr + c.fraction, 0);
+		if(sumOfFractions > 1) {
+			const reduceBy = (sumOfFractions - 1) / columns.length;
+			columns.forEach(c => c.fraction -= reduceBy);
+		} else if (sumOfFractions < 1) {
+			const increaseBy = (1 - sumOfFractions) / columns.length;
+			columns.forEach(c => c.fraction += increaseBy);
+		}
+		return columns;
+	}, [columnsData, isMyLibrary]);
 	const { field: sortBy, sort: sortDirection } = useMemo(() =>
 		columnsData.find(column => 'sort' in column) || { field: 'title', sort: 'asc' },
 		[columnsData]
