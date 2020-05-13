@@ -13,7 +13,7 @@ const getCollectionsPath = state => {
 		var nextKey = collectionKey;
 
 		while(nextKey) {
-			const collection = get(state, ['libraries', libraryKey, 'collections', nextKey]);
+			const collection = get(state, ['libraries', libraryKey, 'collections', 'data', nextKey]);
 			if(collection) {
 				path.push(collection.key);
 				nextKey = collection.parentCollection;

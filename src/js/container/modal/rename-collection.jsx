@@ -18,9 +18,9 @@ const mapStateToProps = state => {
 	const isOpen = state.modal.id === COLLECTION_RENAME;
 	const { libraryKey } = state.current;
 	const { collectionKey } = state.modal;
-	const collection = get(state, ['libraries', libraryKey, 'collections', collectionKey]);
+	const collection = get(state, ['libraries', libraryKey, 'collections', 'data', collectionKey]);
 	const collections = Object.values(
-		get(state, ['libraries', libraryKey, 'collections'], {})
+		get(state, ['libraries', libraryKey, 'collections', 'data'], {})
 	);
 
 	return { libraryKey, isOpen, collection, collections };

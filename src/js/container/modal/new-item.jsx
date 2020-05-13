@@ -25,7 +25,7 @@ const mapStateToProps = state => {
 	const { libraryKey, itemsSource, tags, search } = state.current;
 	const { collectionKey } = state.modal;
 	const itemTypes = state.meta.itemTypes;
-	const collection = get(state, ['libraries', libraryKey, 'collections', collectionKey]);
+	const collection = get(state, ['libraries', libraryKey, 'collections', 'data', collectionKey]);
 
 	return { collection, libraryKey, itemsSource, itemTypes, isOpen,
 		makePath: makePath.bind(null, state.config), tags, search };

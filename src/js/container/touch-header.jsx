@@ -221,7 +221,7 @@ const mapStateToProps = state => {
 		tags,
 	} = state.current;
 	const { libraries } = state.config;
-	const collections = get(state, ['libraries', libraryKey, 'collections'], []);
+	const collections = get(state, ['libraries', libraryKey, 'collections', 'data'], []);
 	const item = get(state, ['libraries', libraryKey, 'items', itemKey]);
 
 	//@TODO: if coming straight into user's group library, libraryConfig is {}

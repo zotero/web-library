@@ -18,7 +18,7 @@ const mapStateToProps = state => {
 	const isOpen = state.modal.id === COLLECTION_ADD;
 	const { libraryKey } = state.current;
 	const { parentCollectionKey } = state.modal;
-	const parentCollection = get(state, ['libraries', libraryKey, 'collections', parentCollectionKey]);
+	const parentCollection = get(state, ['libraries', libraryKey, 'collections', 'data', parentCollectionKey]);
 
 	return { libraryKey, isOpen, parentCollection };
 };

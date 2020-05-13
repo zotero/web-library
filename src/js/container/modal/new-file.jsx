@@ -14,7 +14,7 @@ const mapStateToProps = state => {
 	const isOpen = state.modal.id === NEW_FILE;
 	const { collectionKey, libraryKey } = state.current;
 	const { files } = state.modal;
-	const collection = get(state, ['libraries', libraryKey, 'collections', collectionKey]);
+	const collection = get(state, ['libraries', libraryKey, 'collections', 'data', collectionKey]);
 
 	return { collection, files, libraryKey, isOpen };
 };
