@@ -7,17 +7,8 @@ import { push } from 'connected-react-router';
 import hoistNonReactStatic from 'hoist-non-react-statics';
 import fileSaver from 'file-saver';
 
-import {
-    fetchItemTemplate,
-    moveToTrash,
-    deleteItems,
-    recoverFromTrash,
-    removeFromCollection,
-    createItem,
-    exportItems,
-    toggleModal,
-    triggerSelectMode,
-} from '../actions';
+import { fetchItemTemplate, moveToTrash, deleteItems, recoverFromTrash, removeFromCollection,
+createItem, exportItems, toggleModal, triggerSelectMode, triggerEditingItem, } from '../actions';
 
 import { get } from '../utils';
 import { makePath } from '../common/navigation';
@@ -67,14 +58,15 @@ const withItemsActions = Component => {
 
 		handleNewItemCreate = async (itemType) =>  {
 			const { itemsSource, fetchItemTemplate, collectionKey,
-				libraryKey, createItem } = this.props;
+				libraryKey, createItem, triggerEditingItem } = this.props;
 			const template = await fetchItemTemplate(itemType);
 			const newItem = {
 				...template,
 				collections: itemsSource === 'collection' ? [collectionKey] : []
 			};
 			const item = await createItem(newItem, libraryKey);
-			this.handleItemsSelect([item.key]);
+			this.handleItemsSelect([item.key], 'item-details');
+			triggerEditingItem(item.key, true);
 		}
 
 		handleExport = async (format) => {
@@ -164,6 +156,7 @@ const withItemsActions = Component => {
 			tags: PropTypes.array,
 			toggleModal: PropTypes.func,
 			triggerSelectMode: PropTypes.func,
+			triggerEditingItem: PropTypes.func,
 		}
 	}
 
@@ -184,6 +177,6 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = { fetchItemTemplate, moveToTrash, deleteItems,
 	recoverFromTrash, removeFromCollection, createItem, exportItems,
-	toggleModal, triggerSelectMode, push };
+	toggleModal, triggerSelectMode, triggerEditingItem, push };
 
 export default withItemsActions;

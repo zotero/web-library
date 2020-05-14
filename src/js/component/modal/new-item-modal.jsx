@@ -41,7 +41,7 @@ class CollectionAddModal extends React.PureComponent {
 
 		const trash = itemsSource === 'trash';
 		const publications = itemsSource === 'publications';
-		const view = 'item-list';
+		const view = 'item-details';
 
 		toggleModal(null, false);
 		push(makePath({
