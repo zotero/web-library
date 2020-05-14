@@ -233,6 +233,8 @@ const DotMenu = withDevice(props => {
 	const { collection, device, dotMenuFor, isReadOnly, opened,
 		parentLibraryKey, setDotMenuFor, setOpened, setRenaming, addVirtual } = props;
 	const dispatch = useDispatch();
+	const currentLibraryKey = useSelector(state => state.current.libraryKey);
+	const currentCollectionKey = useSelector(state => state.current.collectionKey);
 
 	const isOpen = dotMenuFor === collection.key;
 
@@ -253,8 +255,16 @@ const DotMenu = withDevice(props => {
 
 	const handleDeleteClick = useCallback(() => {
 		dispatch(deleteCollection(collection, parentLibraryKey));
-		dispatch(navigate({}, true));
-	});
+
+		if(currentLibraryKey === parentLibraryKey && collection.key === currentCollectionKey) {
+			if(collection.parentCollection) {
+				dispatch(navigate({ library: currentLibraryKey, collection: collection.parentCollection }, true));
+			} else {
+				dispatch(navigate({ library: currentLibraryKey }, true));
+			}
+		}
+
+	}, [collection, parentLibraryKey, currentLibraryKey, currentCollectionKey]);
 
 	const handleSubcollectionClick = useCallback(ev => {
 		ev.stopPropagation();
