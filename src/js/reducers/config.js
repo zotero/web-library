@@ -5,13 +5,14 @@ import { sortByKey } from '../utils';
 import { pick } from '../common/immutable';
 
 const defaultState = {
-	apiKey: null,
 	apiConfig: {},
+	apiKey: null,
 	defaultLibraryKey: null,
-	userId: null,
+	libraries: [],
 	sortBy: 'title',
 	sortDirection: 'asc',
-	libraries: []
+	streamingApiUrl: '',
+	userId: null,
 };
 
 const determineIfWriteable = (userId, ownerId, writeability, admins) => {
@@ -65,7 +66,7 @@ const config = (state = defaultState, action) => {
 			return {
 				...state,
 				...pick(action, ['apiConfig', 'apiKey', 'menus', 'stylesSourceUrl',
-					'translateUrl', 'userId', 'userSlug', 'tinymceRoot']),
+					'streamingApiUrl', 'translateUrl', 'userId', 'userSlug', 'tinymceRoot']),
 				defaultLibraryKey: determineDefaultLibraryKey(action),
 				includeMyLibrary: action.libraries.includeMyLibrary,
 				includeUserGroups: action.libraries.includeUserGroups,

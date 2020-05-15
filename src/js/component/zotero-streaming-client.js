@@ -7,6 +7,7 @@ import { getLibraryKeyFromTopic } from '../utils';
 const ZoteroStreamingClient = () => {
 	const dispatch = useDispatch();
 	const apiKey = useSelector(state => state.config.apiKey);
+	const streamingApiUrl = useSelector(state => state.config.streamingApiUrl);
 	const externalLibraries = useSelector(state => state.config.libraries.filter(l => l.isExternal));
 	const ws = useRef(null);
 	const isTearDown = useRef(false);
@@ -24,6 +25,7 @@ const ZoteroStreamingClient = () => {
 					],
 				}));
 			} else if(message.event === 'subscriptionsCreated') {
+				//
 			} else if(message.event === 'topicUpdated') {
 				const libraryKey = getLibraryKeyFromTopic(message.topic);
 				if(libraryKey) {
@@ -46,10 +48,14 @@ const ZoteroStreamingClient = () => {
 	}, []);
 
 	const connect = useCallback(() => {
-		ws.current = new WebSocket(`wss://stream.zotero.org/`);
-		ws.current.onmessage = handleMessage;
-		ws.current.onerror = handleError;
-		ws.current.onclose = handleClose;
+		try {
+			ws.current = new WebSocket(streamingApiUrl);
+			ws.current.onmessage = handleMessage;
+			ws.current.onerror = handleError;
+			ws.current.onclose = handleClose;
+		} catch(e) {
+			console.error('Failed to estabilish connection to the streaming API.');
+		}
 	}, []);
 
 	useEffect(() => {
