@@ -20,6 +20,7 @@ const TagList = () => {
 
 	const containerRef = useRef(null);
 	const listRef = useRef(null);
+	const isCheckingColoredTags = useRef(false);
 
 	const { isFetching, pointer, tags, totalResults, hasChecked } = useTags();
 	const sourceSignature = useSourceSignature();
@@ -33,6 +34,14 @@ const TagList = () => {
 			dispatch(fetchTags(pointer, pointer + PAGE_SIZE - 1));
 		}
 	});
+
+	const maybeCheckColoredTags = useCallback(async (force = false) => {
+		if(force || !isCheckingColoredTags.current) {
+			isCheckingColoredTags.current = true;
+			await dispatch(checkColoredTags());
+			isCheckingColoredTags.current = false;
+		}
+	}, []);
 
 	const toggleTag = useCallback(tagName => {
 		const index = selectedTags.indexOf(tagName);
@@ -77,12 +86,12 @@ const TagList = () => {
 	useEffect(() => {
 		if(!hasChecked && !isFetching) {
 			dispatch(fetchTags(0, PAGE_SIZE - 1));
-			dispatch(checkColoredTags());
+			maybeCheckColoredTags(true);
 		}
 	}, [sourceSignature, hasChecked]);
 
 	useEffect(() => {
-		dispatch(checkColoredTags());
+		maybeCheckColoredTags();
 	}, [tagColors])
 
 	useEffect(() => {
