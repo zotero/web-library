@@ -92,10 +92,9 @@ class ItemsActions extends React.PureComponent {
 	}
 
 	renderMouse() {
-		const { itemsSource, onAddByIdentifierModalOpen, onTrash, isDeleting,
-			isReadOnly, itemKeys, onRemoveFromCollection,
-			onBibliographyModalOpen, onUndelete, onDuplicate,
-			onPermanentlyDelete, onNewItemCreate, } = this.props;
+		const { itemsSource, onAddToCollectionModalOpen, onAddByIdentifierModalOpen, onTrash,
+			isDeleting, isReadOnly, itemKeys, onRemoveFromCollection, onBibliographyModalOpen,
+			onUndelete, onDuplicate, onPermanentlyDelete, onNewItemCreate, } = this.props;
 
 		return (
 			<React.Fragment>
@@ -143,20 +142,44 @@ class ItemsActions extends React.PureComponent {
 					</ToolGroup>
 					<ToolGroup>
 					{ itemsSource !== 'trash' && (
-						<Button
-							disabled={ isDeleting || itemKeys.length === 0 }
-							icon
-							onClick={ onTrash }
-							onKeyDown={ this.handleKeyDown }
-							tabIndex={ -2 }
-							title="Move to Trash"
-						>
-						{
-							isDeleting ?
-							<Spinner /> :
-							<Icon type={ '16/trash' } width="16" height="16" />
-						}
-						</Button>
+						<React.Fragment>
+							<Button
+								disabled={ itemKeys.length === 0 }
+								icon
+								onClick={ onAddToCollectionModalOpen }
+								onKeyDown={ this.handleKeyDown }
+								tabIndex={ -2 }
+								title="Add To Collection"
+							>
+								<Icon type="20/add-collection" width="20" height="20" />
+							</Button>
+							{ itemsSource === 'collection' && (
+								<Button
+									disabled={ itemKeys.length === 0 }
+									icon
+									onClick={ onRemoveFromCollection }
+									onKeyDown={ this.handleKeyDown }
+									tabIndex={ -2 }
+									title="Remove from Collection"
+								>
+									<Icon type="20/remove-from-collection" width="20" height="20" />
+								</Button>
+							)}
+							<Button
+								disabled={ isDeleting || itemKeys.length === 0 }
+								icon
+								onClick={ onTrash }
+								onKeyDown={ this.handleKeyDown }
+								tabIndex={ -2 }
+								title="Move to Trash"
+							>
+							{
+								isDeleting ?
+								<Spinner /> :
+								<Icon type={ '16/trash' } width="16" height="16" />
+							}
+							</Button>
+						</React.Fragment>
 					)}
 					{ itemsSource === 'trash' && (
 						<React.Fragment>
@@ -181,18 +204,6 @@ class ItemsActions extends React.PureComponent {
 								<Icon type="16/restore" width="16" height="16" />
 							</Button>
 						</React.Fragment>
-					)}
-					{ itemsSource === 'collection' && (
-						<Button
-							disabled={ itemKeys.length === 0 }
-							icon
-							onClick={ onRemoveFromCollection }
-							onKeyDown={ this.handleKeyDown }
-							tabIndex={ -2 }
-							title="Remove from Collection"
-						>
-							<Icon type="20/remove-from-collection" width="20" height="20" />
-						</Button>
 					)}
 					</ToolGroup>
 					</React.Fragment>

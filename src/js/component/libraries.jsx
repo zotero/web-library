@@ -77,7 +77,7 @@ const LibraryNode = props => {
 		<Node
 			className={ cx({
 				'open': isOpen && !shouldShowSpinner,
-				'selected': isSelected,
+				'selected': isSelected && !isPickerMode,
 				'busy': shouldShowSpinner
 			}) }
 			aria-labelledby={ id.current }

@@ -9,7 +9,7 @@ import React, { useCallback, useEffect, useState, useRef } from 'react';
 import { CSSTransition } from 'react-transition-group';
 
 import AddByIdentifierModalContainer from '../container/modal/add-by-identifier';
-import AddItemsToCollectionsModalContainer from '../container/modal/add-items-to-collections';
+import AddItemsToCollectionsModal from '../component/modal/add-items-to-collections';
 import BibliographyModalContainer from '../container/modal/bibliography';
 import CustomDragLayer from '../component/drag-layer';
 import ExportModalContainer from '../container/modal/export';
@@ -194,7 +194,7 @@ const Library = props => {
 						onClick={ handleNavbarToggle }
 					/>
 				</div>
-				<AddItemsToCollectionsModalContainer />
+				<AddItemsToCollectionsModal />
 				<BibliographyModalContainer />
 				<ExportModalContainer />
 				<ItemsSortModalContainer />

@@ -1,5 +1,3 @@
-'use strict';
-
 import {
 	DISMISS_ERROR,
 	TOGGLE_MODAL,
@@ -15,6 +13,8 @@ import {
 	TRIGGER_USER_TYPE_CHANGE,
 } from '../constants/actions';
 
+import { navigate } from './';
+
 const triggerEditingItem = (itemKey, toggleValue) => {
 	return async (dispatch, getState) => {
 		const { libraryKey } = getState().current;
@@ -28,9 +28,18 @@ const triggerEditingItem = (itemKey, toggleValue) => {
 	}
 };
 
-const triggerSelectMode = (isSelectMode) => {
+const triggerSelectMode = (isSelectMode, shouldNavigate = false) => {
 	return async (dispatch, getState) => {
-		const { libraryKey } = getState().current;
+		const { collectionKey, itemsSource, libraryKey, search, tags, view } = getState().current;
+
+		if(shouldNavigate) {
+			const trash = itemsSource === 'trash';
+			const publications = itemsSource === 'publications';
+			const items = [];
+			dispatch(
+				navigate({ library: libraryKey, search, tags, trash, publications, collection: collectionKey, items, view }, true)
+			);
+		}
 
 		return dispatch({
 			type: TRIGGER_SELECT_MODE,

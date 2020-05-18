@@ -350,18 +350,19 @@ const PickerCheckbox = ({ collectionKey, pickerPick, picked, parentLibraryKey })
 
 	return (
 		<input
-			type="checkbox"
 			checked={ isChecked }
 			onChange={ handleChange }
 			onClick={ stopPropagation }
+			tabIndex={ -1 }
+			type="checkbox"
 		/>
 	);
 }
 
 const CollectionNode = withDevice(props => {
 	const { allCollections, derivedData, collection, device, level,
-		selectedCollectionKey, isCurrentLibrary, parentLibraryKey, renaming, setRenaming,
-		virtual, isPickerMode, shouldBeTabbable, ...rest }  = props;
+		selectedCollectionKey, isCurrentLibrary, parentLibraryKey, renaming, setRenaming, virtual,
+		isPickerMode, shouldBeTabbable, pickerPick, ...rest }  = props;
 	const dispatch = useDispatch();
 	const id = useRef(getUniqueId('tree-node-'));
 	const updating = useSelector(state => parentLibraryKey in state.libraries ? state.libraries[parentLibraryKey].updating.collections : {});
@@ -414,6 +415,13 @@ const CollectionNode = withDevice(props => {
 		await dispatch(createAttachmentsFromDropped(droppedFiles, { collection: collection.key }));
 	});
 
+	const handleNodeKeyDown = useCallback(ev => {
+		if(isPickerMode && ev.type === 'keydown' && (ev.key === 'Enter' || ev.key === ' ')) {
+			pickerPick({ collectionKey: collection.key, libraryKey: parentLibraryKey });
+			ev.preventDefault();
+		}
+	}, [pickerPick, isPickerMode, parentLibraryKey]);
+
 	const collections = allCollections.filter(c => c.parentCollection === collection.key );
 	const hasSubCollections = (device.isSingleColumn || collections.length > 0);
 	const { selectedDepth } = derivedData[collection.key];
@@ -451,7 +459,7 @@ const CollectionNode = withDevice(props => {
 		<Node
 			className={ cx({
 				'open': derivedData[collection.key].isOpen,
-				'selected': derivedData[collection.key].isSelected,
+				'selected': !isPickerMode && derivedData[collection.key].isSelected,
 				'collection': true,
 			})}
 			aria-labelledby={ id.current }
@@ -462,6 +470,7 @@ const CollectionNode = withDevice(props => {
 			onDrag={ device.isTouchOrSmall ? null : handleDrag }
 			onDrop={ device.isTouchOrSmall ? null : handleDrop }
 			onRename={ device.isTouchOrSmall ? null : handleRenameTrigger }
+			onKeyDown={ handleNodeKeyDown }
 			shouldBeDraggable={ renaming !== collection.key }
 			showTwisty={ hasSubCollections }
 			tabIndex={ shouldBeTabbable ? "-2" : null }
@@ -484,6 +493,7 @@ const CollectionNode = withDevice(props => {
 						shouldBeTabbable = { shouldSubtreeNodesBeTabbable }
 						updating = { updating }
 						virtual = { virtual }
+						pickerPick= { pickerPick }
 					/>
 				</LevelWrapper>
 			) : null }
@@ -508,7 +518,8 @@ const CollectionNode = withDevice(props => {
 							<PickerCheckbox
 								collectionKey = { collection.key }
 								parentLibraryKey = { parentLibraryKey }
-								{ ...pick(rest, ['pickerPick', 'picked']) }
+								pickerPick = { pickerPick }
+								{ ...pick(rest, ['picked']) }
 							/>
 						) : (
 							<DotMenu
