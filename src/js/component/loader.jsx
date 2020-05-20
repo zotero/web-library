@@ -16,9 +16,13 @@ const LoadingCover = () => (
 const Loader = () => {
 	const dispatch = useDispatch();
 
-	const { libraryKey, userLibraryKey } = useSelector(state => state.current);
+	const libraryKey = useSelector(state => state.current.libraryKey);
+	const userLibraryKey = useSelector(state => state.current.userLibraryKey);
 	const config = useSelector(state => state.config);
-	const { itemTypes, itemFields, creatorFields } = useSelector(state => state.meta)
+	const itemTypes = useSelector(state => state.meta.itemTypes);
+	const itemFields = useSelector(state => state.meta.itemFields);
+	const creatorFields = useSelector(state => state.meta.creatorFields);
+
 	const tagColors = useSelector(state => get(state, ['libraries', libraryKey, 'tagColors'], null));
 	const isFetchingGroups = useSelector(state => state.fetching.allGroups);
 	const isFetchingAllCollections = useSelector(
