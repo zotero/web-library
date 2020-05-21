@@ -9,7 +9,7 @@ import SelectInput from '../form/select';
 import TextAreaInput from '../form/text-area';
 import withDevice from '../../enhancers/with-device';
 import Icon from '../ui/icon';
-import { getDOIURL } from '../../utils';
+import { cleanDOI, cleanURL, getDOIURL } from '../../utils';
 
 const pickInputComponent = field => {
 	switch(field.key) {
@@ -44,14 +44,26 @@ class BoxField extends React.PureComponent {
 		const { onClick, isActive, onFocus, onBlur, title } = this.props;
 		const props = { display: field.display, input, isActive, isBusy: field.processing || false,
 		isDisabled: this.isDisabled, onBlur, onClick, onFocus, title: field.title, };
+		var url = null;
 
-		if(field.isReadOnly && field.value && ['url', 'DOI'].includes(field.key)) {
+		if(field.isReadOnly && field.value && field.key === 'url') {
+			url = cleanURL(field.value, true);
+		}
+
+		if(field.isReadOnly && field.value && field.key === 'DOI') {
+			const doi = cleanDOI(field.value);
+			if(doi) {
+				url = getDOIURL(doi);
+			}
+		}
+
+		if(url) {
 			return (
 				<Editable { ...props }>
 					<a
 						target="_blank"
 						rel="nofollow noopener noreferrer"
-						href={ field.key === 'DOI' ? getDOIURL(field.value) : field.value }
+						href={ url }
 					>
 						{ field.value }
 					</a>
@@ -117,23 +129,29 @@ class BoxField extends React.PureComponent {
 
 	renderLabelContent(field) {
 		if(field.key === 'url' && field.value) {
-			return (
-				<a target="_blank" rel="nofollow noopener noreferrer" href={ field.value }>
-					{ field.label }
-					<Icon type={ '16/open-link' } className="mouse" width="12" height="12"/>
-					<Icon type={ '16/open-link' } className="touch" width="16" height="16"/>
-				</a>
-			);
+			const url = cleanURL(field.value, true);
+			if(url) {
+				return (
+					<a target="_blank" rel="nofollow noopener noreferrer" href={ url }>
+						{ field.label }
+						<Icon type={ '16/open-link' } className="mouse" width="12" height="12"/>
+						<Icon type={ '16/open-link' } className="touch" width="16" height="16"/>
+					</a>
+				);
+			}
 		}
 
 		if(field.key === 'DOI' && field.value) {
-			return (
-				<a target="_blank" rel="nofollow noopener noreferrer" href={ getDOIURL(field.value) }>
-					{ field.label }
-					<Icon type={ '16/open-link' } className="mouse" width="12" height="12"/>
-					<Icon type={ '16/open-link' } className="touch" width="16" height="16"/>
-				</a>
-			);
+			const doi = cleanDOI(field.value);
+			if(doi) {
+				return (
+					<a target="_blank" rel="nofollow noopener noreferrer" href={ getDOIURL(doi) }>
+						{ field.label }
+						<Icon type={ '16/open-link' } className="mouse" width="12" height="12"/>
+						<Icon type={ '16/open-link' } className="touch" width="16" height="16"/>
+					</a>
+				);
+			}
 		}
 
 		return field.label;

@@ -345,7 +345,24 @@ const getScrollContainerPageCount = (itemEl, containerEl) => {
 
 const clamp = (number, min, max) => Math.max(min, Math.min(number, max));
 
-const getDOIURL = doi => 'http://dx.doi.org/' + doi;
+// https://github.com/zotero/zotero/blob/5bb2486040fa1fc617c81b4aea756ba338584f6b/chrome/content/zotero/bindings/itembox.xml#L428-L440
+const getDOIURL = doi => 'https://doi.org/'
+									// Encode some characters that are technically valid in DOIs,
+									// though generally not used. '/' doesn't need to be encoded.
+									+  doi.replace(/#/g, '%23')
+										.replace(/\?/g, '%3f')
+										.replace(/%/g, '%25')
+										.replace(/"/g, '%22');
+
+// https://github.com/zotero/zotero/blob/5bb2486040fa1fc617c81b4aea756ba338584f6b/chrome/content/zotero/xpcom/utilities.js#L238-L249
+const cleanDOI = doi => {
+	if(typeof(doi) != "string") {
+		throw new Error("cleanDOI: argument must be a string");
+	}
+
+	const doiMatches = doi.match(/10(?:\.[0-9]{4,})?\/[^\s]*[^\s\.,]/);
+	return doiMatches ? doiMatches[0] : null;
+}
 
 const getLibraryKeyFromTopic = topic => {
 	if(typeof topic !== 'string') {
@@ -361,6 +378,7 @@ const getLibraryKeyFromTopic = topic => {
 export {
 	applyChangesToVisibleColumns,
 	clamp,
+	cleanDOI,
 	cleanURL,
 	compare,
 	compareItem,

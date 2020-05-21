@@ -1,5 +1,5 @@
 import { fetchChildItems, getAttachmentUrl } from '.';
-import { get, getDOIURL } from '../utils';
+import { cleanDOI, cleanURL, get, getDOIURL } from '../utils';
 
 const extractItemKey = url => {
 	const matchResult = url.match(/\/items\/([A-Z0-9]{8})/);
@@ -149,13 +149,24 @@ const openBestAttachmentFallback = itemKey => {
 	return async (dispatch, getState) => {
 		const state = getState();
 		const item = get(state, ['libraries', state.current.libraryKey, 'items', itemKey], null);
+
 		if(item.url) {
-			window.open(item.url);
-		} else if(item.DOI) {
-			window.open(getDOIURL(item.DOI));
-		} else {
-			dispatch(openFirstLink(itemKey));
+			const url = cleanURL(item.url, true);
+			if(url) {
+				window.open(url);
+				return;
+			}
 		}
+
+		if(item.DOI) {
+			const doi = cleanDOI(item.DOI);
+			if(doi) {
+				window.open(getDOIURL(doi));
+				return;
+			}
+		}
+
+		dispatch(openFirstLink(itemKey));
 	}
 }
 
