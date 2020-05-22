@@ -7,7 +7,6 @@ import Editable from '../editable';
 import Icon from '../ui/icon';
 import Node from './node';
 import Spinner from '../../component/ui/spinner';
-import withDevice from '../../enhancers/with-device';
 import { BIBLIOGRAPHY, COLLECTION_RENAME, COLLECTION_ADD, EXPORT, MOVE_COLLECTION } from '../../constants/modals';
 import { pick } from '../../common/immutable';
 import { stopPropagation, getUniqueId } from '../../utils.js';
@@ -86,12 +85,14 @@ const makeCollectionsPath = (collectionKey, allCollections, isCurrentLibrary) =>
 	return path.reverse();
 }
 
-const ItemsNode = withDevice(props => {
-	const { isPickerMode, device, parentCollectionKey, selectedCollectionKey, itemsSource,
+const ItemsNode = props => {
+	const { isPickerMode, parentCollectionKey, selectedCollectionKey, itemsSource,
 		selectNode, shouldBeTabbable, ...rest } = props;
 	const id = useRef(getUniqueId());
+	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
+	const isSingleColumn = useSelector(state => state.device.isSingleColumn);
 
-	const isSelected = !device.isSingleColumn && !['trash', 'publications', 'query'].includes(itemsSource) && (
+	const isSelected = !isSingleColumn && !['trash', 'publications', 'query'].includes(itemsSource) && (
 		parentCollectionKey === selectedCollectionKey || (!parentCollectionKey && !selectedCollectionKey)
 	);
 
@@ -102,7 +103,7 @@ const ItemsNode = withDevice(props => {
 		});
 	}, []);
 
-	if(isPickerMode || !device.isTouchOrSmall) {
+	if(isPickerMode || !isTouchOrSmall) {
 		return null;
 	}
 
@@ -121,7 +122,7 @@ const ItemsNode = withDevice(props => {
 			</div>
 		</Node>
 	);
-});
+};
 
 
 const VirtualCollectionNode = props => {
@@ -229,12 +230,13 @@ const LevelWrapper = ({ children, level, hasOpen, isLastLevel }) => {
 }
 
 
-const DotMenu = withDevice(props => {
-	const { collection, device, dotMenuFor, isReadOnly, opened,
+const DotMenu = props => {
+	const { collection, dotMenuFor, isReadOnly, opened,
 		parentLibraryKey, setDotMenuFor, setOpened, setRenaming, addVirtual } = props;
 	const dispatch = useDispatch();
 	const currentLibraryKey = useSelector(state => state.current.libraryKey);
 	const currentCollectionKey = useSelector(state => state.current.collectionKey);
+	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
 
 	const isOpen = dotMenuFor === collection.key;
 
@@ -246,7 +248,7 @@ const DotMenu = withDevice(props => {
 	});
 
 	const handleRenameClick = useCallback(() => {
-		if(device.isTouchOrSmall) {
+		if(isTouchOrSmall) {
 			dispatch(toggleModal(COLLECTION_RENAME, true, { collectionKey: collection.key }));
 		} else {
 			setRenaming(collection.key);
@@ -268,7 +270,7 @@ const DotMenu = withDevice(props => {
 
 	const handleSubcollectionClick = useCallback(ev => {
 		ev.stopPropagation();
-		if(device.isTouchOrSmall) {
+		if(isTouchOrSmall) {
 			dispatch(toggleModal(COLLECTION_ADD, true, { parentCollectionKey: collection.key }));
 		} else {
 			setOpened([...opened, collection.key ]);
@@ -323,7 +325,7 @@ const DotMenu = withDevice(props => {
 						>
 							New Subcollection
 						</DropdownItem>
-						{ device.isTouchOrSmall && (
+						{ isTouchOrSmall && (
 							<DropdownItem
 								onClick={ handleMoveCollectionClick }
 							>
@@ -336,7 +338,7 @@ const DotMenu = withDevice(props => {
 			</DropdownMenu>
 		</Dropdown>
 	);
-});
+};
 
 const PickerCheckbox = ({ collectionKey, pickerPick, picked, parentLibraryKey }) => {
 	const handleChange = useCallback(() => {
@@ -359,13 +361,15 @@ const PickerCheckbox = ({ collectionKey, pickerPick, picked, parentLibraryKey })
 	);
 }
 
-const CollectionNode = withDevice(props => {
-	const { allCollections, derivedData, collection, device, level,
-		selectedCollectionKey, isCurrentLibrary, parentLibraryKey, renaming, setRenaming, virtual,
-		isPickerMode, shouldBeTabbable, pickerPick, ...rest }  = props;
+const CollectionNode = props => {
+	const { allCollections, derivedData, collection, level, selectedCollectionKey, isCurrentLibrary,
+		parentLibraryKey, renaming, setRenaming, virtual, isPickerMode, shouldBeTabbable,
+		pickerPick, ...rest }  = props;
 	const dispatch = useDispatch();
 	const id = useRef(getUniqueId('tree-node-'));
 	const updating = useSelector(state => parentLibraryKey in state.libraries ? state.libraries[parentLibraryKey].updating.collections : {});
+	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
+	const isSingleColumn = useSelector(state => state.device.isSingleColumn);
 
 	const handleClick = useCallback(() => {
 		const { selectNode } = rest;
@@ -373,7 +377,7 @@ const CollectionNode = withDevice(props => {
 	});
 
 	const handleRenameTrigger = useCallback(() => {
-		if(device.isTouchOrSmall) {
+		if(isTouchOrSmall) {
 			return;
 		}
 		setRenaming(collection.key);
@@ -423,7 +427,7 @@ const CollectionNode = withDevice(props => {
 	}, [pickerPick, isPickerMode, parentLibraryKey]);
 
 	const collections = allCollections.filter(c => c.parentCollection === collection.key );
-	const hasSubCollections = (device.isSingleColumn || collections.length > 0);
+	const hasSubCollections = (isSingleColumn || collections.length > 0);
 	const { selectedDepth } = derivedData[collection.key];
 
 	const selectedHasChildren = isCurrentLibrary && selectedCollectionKey && (derivedData[selectedCollectionKey] || {}).hasChildren;
@@ -431,18 +435,18 @@ const CollectionNode = withDevice(props => {
 	// if isSelected is a nested child, hasOpen is true
 	// if isSelected is a direct child, hasOpen is only true if
 	// either selected is not a leaf node or we're in singleColumn mode (where there is always estra "Items" node)
-	const hasOpen = selectedDepth > 0 && !(selectedDepth === 1 && (!selectedHasChildren && !device.isSingleColumn));
+	const hasOpen = selectedDepth > 0 && !(selectedDepth === 1 && (!selectedHasChildren && !isSingleColumn));
 
 	// at least one collection contains subcollections
 	const hasNested = !!collections.find(c => derivedData[c.key].hasChildren);
 
 	// on mobiles, there is extra level that only contains "items"
-	const isLastLevel = device.isSingleColumn ? collections.length === 0 : !hasNested;
+	const isLastLevel = isSingleColumn ? collections.length === 0 : !hasNested;
 
 	// subtree nodes are tabbable if
 	const shouldSubtreeNodesBeTabbableOnTouch = isCurrentLibrary && derivedData[collection.key].isSelected ||
 		selectedDepth === 1 && !selectedHasChildren;
-	const shouldSubtreeNodesBeTabbable = shouldSubtreeNodesBeTabbableOnTouch || !device.isTouchOrSmall;
+	const shouldSubtreeNodesBeTabbable = shouldSubtreeNodesBeTabbableOnTouch || !isTouchOrSmall;
 
 	const collectionName = collection.key in updating ?
 		updating[collection.key][updating[collection.key].length - 1].patch.name || collection.name :
@@ -452,8 +456,8 @@ const CollectionNode = withDevice(props => {
 
 	//optimsation: skips rendering subtrees that are not visible nor relevant for transitions
 	const shouldRenderSubtree =
-		(device.isTouchOrSmall && (shouldSubtreeNodesBeTabbableOnTouch || selectedDepth !== -1)) ||
-		(!device.isTouchOrSmall && derivedData[collection.key].isOpen);
+		(isTouchOrSmall && (shouldSubtreeNodesBeTabbableOnTouch || selectedDepth !== -1)) ||
+		(!isTouchOrSmall && derivedData[collection.key].isOpen);
 
 	return (
 		<Node
@@ -467,9 +471,9 @@ const CollectionNode = withDevice(props => {
 			dndTarget={ { 'targetType': 'collection', collectionKey: collection.key, libraryKey: parentLibraryKey } }
 			isOpen={ derivedData[collection.key].isOpen }
 			onClick={ handleClick }
-			onDrag={ device.isTouchOrSmall ? null : handleDrag }
-			onDrop={ device.isTouchOrSmall ? null : handleDrop }
-			onRename={ device.isTouchOrSmall ? null : handleRenameTrigger }
+			onDrag={ isTouchOrSmall ? null : handleDrag }
+			onDrop={ isTouchOrSmall ? null : handleDrop }
+			onRename={ isTouchOrSmall ? null : handleRenameTrigger }
 			onKeyDown={ handleNodeKeyDown }
 			shouldBeDraggable={ renaming !== collection.key }
 			showTwisty={ hasSubCollections }
@@ -536,7 +540,7 @@ const CollectionNode = withDevice(props => {
 			}
 		</Node>
 	);
-});
+};
 
 const CollectionsNodeList = ({ collections, parentCollectionKey, ...rest }) => {
 	const sortedCollections = useMemo(() => {
