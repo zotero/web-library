@@ -137,16 +137,20 @@ const Library = props => {
 					<Navbar entries={ config.menus.desktop } />
 					<main>
 						<section className={ `library ${ view === 'library' ? 'active' : '' }` }>
-							<TouchHeaderContainer
-								className="hidden-sm-up darker"
-								variant={ TouchHeaderContainer.variants.MOBILE }
-							/>
+							{ device.isTouchOrSmall && (
+								<TouchHeaderContainer
+									className="hidden-sm-up darker"
+									variant={ TouchHeaderContainer.variants.MOBILE }
+								/>
+							) }
 							<header className="sidebar">
 								<h2 className="offscreen">Web library</h2>
-								<TouchHeaderContainer
-									variant={ TouchHeaderContainer.variants.NAVIGATION }
-									className="hidden-xs-down hidden-mouse-md-up darker"
-								/>
+								{ device.isTouchOrSmall && (
+									<TouchHeaderContainer
+										variant={ TouchHeaderContainer.variants.NAVIGATION }
+										className="hidden-xs-down hidden-mouse-md-up darker"
+									/>
+								) }
 								<Libraries />
 								{ device.isTouchOrSmall ? (
 									<React.Fragment>
@@ -169,10 +173,12 @@ const Library = props => {
 									'read-only': isLibraryReadOnly,
 								})}>
 									{/* Tablet TouchHeader */}
-									<TouchHeaderContainer
-										className="hidden-xs-down hidden-lg-up hidden-mouse darker"
-										variant={ TouchHeaderContainer.variants.SOURCE_AND_ITEM }
-									/>
+									{ device.isTouchOrSmall && (
+										<TouchHeaderContainer
+											className="hidden-xs-down hidden-lg-up hidden-mouse darker"
+											variant={ TouchHeaderContainer.variants.SOURCE_AND_ITEM }
+										/>
+									) }
 									<Items key={ key } isSearchModeTransitioning={ isSearchModeTransitioning } />
 									<ItemDetails active={ view === 'item-details' } />
 									{ device.isTouchOrSmall && <TouchNote /> }
