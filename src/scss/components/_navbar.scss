@@ -95,6 +95,13 @@
 				}
 			}
 		}
+
+		.truncate {
+			@include text-truncate;
+			display: inline-block;
+			vertical-align: middle;
+			max-width: 9vw;
+		}
 	}
 
 	.input-group.search {

@@ -9,7 +9,7 @@ import { pick } from '../../common/immutable'
 
 class MenuEntry extends React.PureComponent {
 	render() {
-		const { label, onKeyDown, dropdown, entries, active, position } = this.props;
+		const { label, onKeyDown, dropdown, entries, active, position, truncate } = this.props;
 		const ContainerTag = position === 'right' ? React.Fragment : NavItem;
 		const containerProps = position === 'right' ? {} : { active };
 
@@ -22,7 +22,7 @@ class MenuEntry extends React.PureComponent {
 						tabIndex={ -2 }
 						color={ null }
 					>
-						{ label }
+						{ truncate ? <span className="truncate">{ label }</span> : label }
 						<Icon type="16/chevron-9" width="16" height="16" />
 					</DropdownToggle>
 					<DropdownMenu>
@@ -43,7 +43,7 @@ class MenuEntry extends React.PureComponent {
 					{ ...pick(this.props, k => k.startsWith('aria-')) }
 					tabIndex={ -2 }
 				>
-					{ label }
+					{ truncate ? <span className="truncate">{ label }</span> : label }
 				</NavLink>
 			</ContainerTag>
 		);
@@ -57,6 +57,7 @@ class MenuEntry extends React.PureComponent {
 		label: PropTypes.string,
 		onKeyDown: PropTypes.func,
 		position: PropTypes.oneOf(["left", "right"]),
+		truncate: PropTypes.bool,
 	}
 
 	static defaultProps = {
