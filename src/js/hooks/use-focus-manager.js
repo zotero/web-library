@@ -36,7 +36,7 @@ const useFocusManager = (ref, { overrideFocusRef = null, initialFocusPickerRef =
 			tabbables[tabbables.length - 1].focus();
 			lastFocused.current = tabbables[tabbables.length - 1];
 		}
-	});
+	}, [isCarousel]);
 
 	const handlePrevious = useCallback((ev, { useCurrentTarget = true, targetEnd = null, offset = 1 } = {}) => {
 		const tabbables = Array.from(
@@ -65,7 +65,7 @@ const useFocusManager = (ref, { overrideFocusRef = null, initialFocusPickerRef =
 			tabbables[0].focus();
 			lastFocused.current = tabbables[0];
 		}
-	});
+	}, [isCarousel]);
 
 	const handleDrillDownNext = useCallback((ev, offset = 1) => {
 		const drillables = Array.from(
@@ -84,7 +84,7 @@ const useFocusManager = (ref, { overrideFocusRef = null, initialFocusPickerRef =
 				drillables[drillables.length - 1].focus();
 			}
 		}
-	});
+	}, [isDrillDownCarousel]);
 
 	const handleDrillDownPrev = useCallback((ev, offset = 1) => {
 		const drillables = Array.from(
@@ -103,7 +103,7 @@ const useFocusManager = (ref, { overrideFocusRef = null, initialFocusPickerRef =
 				ev.currentTarget.focus();
 			}
 		}
-	});
+	}, [isDrillDownCarousel]);
 
 	const handleBySelector = useCallback(selector => {
 		const nextEl = ref.current.querySelector(selector);
@@ -112,17 +112,17 @@ const useFocusManager = (ref, { overrideFocusRef = null, initialFocusPickerRef =
 			lastFocused.current = nextEl;
 			nextEl.focus();
 		}
-	});
+	}, []);
 
 	const focusOnLast  = useCallback(() => {
 		if(lastFocused.current) {
 			lastFocused.current.focus();
 		}
-	});
+	}, []);
 
 	const resetLastFocused = useCallback(() => {
 		lastFocused.current = null;
-	})
+	}, []);
 
 	const handleFocus = useCallback((ev, isBounced = false) => {
 		if(isFocused) {
@@ -166,7 +166,7 @@ const useFocusManager = (ref, { overrideFocusRef = null, initialFocusPickerRef =
 			candidates[0].focus();
 			return true;
 		}
-	});
+	}, [isFocused]);
 
 	const handleBlur = useCallback(ev => {
 		if(ev.relatedTarget &&
@@ -178,7 +178,7 @@ const useFocusManager = (ref, { overrideFocusRef = null, initialFocusPickerRef =
 		setIsFocused(false);
 		ev.currentTarget.tabIndex = originalTabIndex.current;
 		return true;
-	});
+	}, []);
 
 	const registerAutoFocus = useCallback(ref => {
 		if(ref === null) {
@@ -188,7 +188,7 @@ const useFocusManager = (ref, { overrideFocusRef = null, initialFocusPickerRef =
 		if(ref instanceof Element) {
 			lastFocused.current = ref;
 		}
-	});
+	}, []);
 
 	useEffect(() => {
 		if(overrideFocusRef !== null) {
