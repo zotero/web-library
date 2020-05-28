@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import React, { useCallback, useEffect, useState, useRef } from 'react';
 import { CSSTransition } from 'react-transition-group';
 
-import AddByIdentifierModalContainer from '../container/modal/add-by-identifier';
+import AddByIdentifierModal from '../component/modal/add-by-identifier';
 import AddItemsToCollectionsModal from '../component/modal/add-items-to-collections';
 import BibliographyModalContainer from '../container/modal/bibliography';
 import CustomDragLayer from '../component/drag-layer';
@@ -209,7 +209,7 @@ const Library = props => {
 				<NewItemModalContainer />
 				<RenameCollectionModalContainer />
 				<StyleInstallerModalContainer />
-				<AddByIdentifierModalContainer />
+				<AddByIdentifierModal />
 				<NewFileModalContainer />
 				<Messages />
 				<AddLinkedUrlTouchModal />

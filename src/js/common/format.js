@@ -59,28 +59,6 @@ const formatCreator = creator => {
 	return creator.name || (creator.firstName + ' ' + creator.lastName).trim();
 }
 
-const formatByline = item => {
-	if (!item.creators) {
-		return '';
-	}
-	const authors = item.creators.filter(c => c.creatorType == 'author');
-
-	if (authors.length === 1) {
-		return formatCreator(authors[0]);
-	} else if (authors.length === 2) {
-		return authors.map(c => formatCreator(c)).join(' and ');
-	} else {
-		let fc = authors.map(c => formatCreator(c));
-		if (authors.length === 3) {
-			return `${fc[0]}, ${fc[1]}, and ${fc[2]}`;
-		} else if (authors.length) {
-			return `${fc[0]} et al.`;
-		}
-	}
-
-	return '';
-}
-
 const lpad = (string, pad, length) => {
 	string = string ? string + '' : '';
 	while(string.length < length) {
@@ -117,7 +95,6 @@ const parseDescriptiveString = str => {
 export {
 	creator,
 	dateLocalized,
-	formatByline,
 	formatDate,
 	formatDateTime,
 	itemsSourceLabel,
