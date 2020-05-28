@@ -25,7 +25,7 @@ import NewCollectionModalContainer from '../container/modal/new-collection';
 import NewFileModalContainer from '../container/modal/new-file';
 import NewItemModalContainer from '../container/modal/new-item';
 import Ongoing from './ongoing';
-import RenameCollectionModalContainer from '../container/modal/rename-collection';
+import RenameCollectionModal from '../component/modal/rename-collection';
 import SearchBackdrop from './search-backdrop';
 import StyleInstallerModalContainer from '../container/modal/style-installer';
 import TagSelector from '../component/tag-selector';
@@ -207,7 +207,7 @@ const Library = props => {
 				<MoveCollectionsModalContainer />
 				<NewCollectionModalContainer />
 				<NewItemModalContainer />
-				<RenameCollectionModalContainer />
+				<RenameCollectionModal />
 				<StyleInstallerModalContainer />
 				<AddByIdentifierModal />
 				<NewFileModalContainer />

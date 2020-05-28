@@ -9,6 +9,7 @@ if (process.env.NODE_ENV === 'development') {
 		onlyLogs: true,
 		titleColor: '#957DAD',
 		diffNameColor: '#FFDFD3',
+		// logOnDifferentValues: true,
 		// trackAllPureComponents: true,
 		trackExtraHooks: [
 			[ReactRedux, 'useSelector'],
