@@ -1,4 +1,5 @@
 import { LOCATION_CHANGE } from 'connected-react-router';
+import { shallowEqual } from 'react-redux';
 
 import {
 	CONFIGURE,
@@ -141,7 +142,7 @@ const current = (state = stateDefault, action, { config = {}, device = {} } = {}
 				qmode,
 				search,
 				searchState,
-				tags: tags || [],
+				tags: shallowEqual(tags, state.tags) ? state.tags : tags,
 				useTransitions: state.useTransitions,
 				view,
 			}

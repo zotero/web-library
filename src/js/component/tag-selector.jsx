@@ -1,7 +1,7 @@
 import cx from 'classnames';
-import React, { useCallback, useRef } from 'react';
+import React, { useCallback, useRef, memo } from 'react';
 import { UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap/lib';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { useDebounce } from "use-debounce";
 
 import Button from './ui/button';
@@ -14,7 +14,9 @@ import { getUniqueId } from '../utils';
 
 const TagSelector = () => {
 	const { isFetching } = useTags();
-	const { tagsSearchString, tags: selectedTags, isTagSelectorOpen } = useSelector(state => state.current);
+	const tagsSearchString = useSelector(state => state.current.tagsSearchString);
+	const isTagSelectorOpen = useSelector(state => state.current.isTagSelectorOpen);
+	const selectedTags = useSelector(state => state.current.tags, shallowEqual);
 	const dispatch = useDispatch();
 	const [isBusy] = useDebounce(isFetching, 100);
 	const id = useRef(getUniqueId('tag-selector-'));
@@ -33,19 +35,19 @@ const TagSelector = () => {
 		} else if(ev.key === 'ArrowLeft') {
 			focusPrev(ev);
 		}
-	});
+	}, [focusNext, focusPrev]);
 
 	const handleDeselectClick = useCallback(() => {
 		dispatch(navigate({ tags: [] }));
-	});
+	}, [dispatch]);
 
 	const handleCollapseClick = useCallback(() => {
 		dispatch(toggleTagSelector(!isTagSelectorOpen));
-	});
+	}, [dispatch, isTagSelectorOpen]);
 
 	const handleSearchChange = useCallback(newValue => {
 		dispatch(filterTags(newValue))
-	});
+	}, [dispatch]);
 
 	return (
 		<div
@@ -100,6 +102,6 @@ const TagSelector = () => {
 			</div>
 		</div>
 	);
-}
+};
 
-export default TagSelector;
+export default memo(TagSelector);
