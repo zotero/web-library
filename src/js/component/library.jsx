@@ -12,7 +12,7 @@ import AddByIdentifierModal from '../component/modal/add-by-identifier';
 import AddItemsToCollectionsModal from '../component/modal/add-items-to-collections';
 import BibliographyModalContainer from '../container/modal/bibliography';
 import CustomDragLayer from '../component/drag-layer';
-import ExportModalContainer from '../container/modal/export';
+import ExportModal from '../component/modal/export';
 import ItemDetails from '../component/item/details';
 import Items from '../component/item/items';
 import ItemsSortModalContainer from '../container/modal/items-sort';
@@ -202,7 +202,7 @@ const Library = props => {
 				</div>
 				<AddItemsToCollectionsModal />
 				<BibliographyModalContainer />
-				<ExportModalContainer />
+				<ExportModal />
 				<ItemsSortModalContainer />
 				<MoveCollectionsModalContainer />
 				<NewCollectionModalContainer />
