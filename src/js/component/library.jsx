@@ -15,7 +15,7 @@ import CustomDragLayer from '../component/drag-layer';
 import ExportModal from '../component/modal/export';
 import ItemDetails from '../component/item/details';
 import Items from '../component/item/items';
-import ItemsSortModalContainer from '../container/modal/items-sort';
+import ItemsSortModal from '../component/modal/items-sort';
 import Libraries from '../component/libraries';
 import Messages from '../component/messages';
 import MobileNav from './ui/mobile-nav';
@@ -203,7 +203,7 @@ const Library = props => {
 				<AddItemsToCollectionsModal />
 				<BibliographyModalContainer />
 				<ExportModal />
-				<ItemsSortModalContainer />
+				<ItemsSortModal />
 				<MoveCollectionsModalContainer />
 				<NewCollectionModalContainer />
 				<NewItemModalContainer />

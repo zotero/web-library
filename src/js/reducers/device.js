@@ -16,7 +16,7 @@ const getViewport = ({ width }) => {
 };
 
 const defaultState = {
-	isKeyboardUser: null,
+	isKeyboardUser: false,
 	isMouseUser: isInitiallyMouse,
 	isSingleColumn: false,
 	isTouchOrSmall: false,
