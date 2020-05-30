@@ -23,7 +23,7 @@ import MoveCollectionsModalContainer from '../container/modal/move-collections';
 import Navbar from './ui/navbar';
 import NewCollectionModalContainer from '../container/modal/new-collection';
 import NewFileModalContainer from '../container/modal/new-file';
-import NewItemModalContainer from '../container/modal/new-item';
+import NewItemModal from '../component/modal/new-item';
 import Ongoing from './ongoing';
 import RenameCollectionModal from '../component/modal/rename-collection';
 import SearchBackdrop from './search-backdrop';
@@ -206,7 +206,7 @@ const Library = props => {
 				<ItemsSortModal />
 				<MoveCollectionsModalContainer />
 				<NewCollectionModalContainer />
-				<NewItemModalContainer />
+				<NewItemModal />
 				<RenameCollectionModal />
 				<StyleInstallerModalContainer />
 				<AddByIdentifierModal />
