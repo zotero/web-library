@@ -1,114 +1,109 @@
-'use strict';
+import React, { memo, useCallback, useEffect, useRef, useState } from 'react';
+import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 
-import React from 'react';
-import PropTypes from 'prop-types';
-import Modal from '../ui/modal';
 import Button from '../ui/button';
-import Input from '../form/input';
 import Icon from '../ui/icon';
-import { getUniqueId } from '../../utils';
-const defaultState = { name: ''};
+import Input from '../form/input';
+import Modal from '../ui/modal';
+import { COLLECTION_ADD } from '../../constants/modals';
+import { get, getUniqueId } from '../../utils';
+import { toggleModal, createCollection } from '../../actions';
 
-class CollectionAddModal extends React.PureComponent {
-	state = defaultState;
-	inputId = getUniqueId();
+const NewCollectionModal = () => {
+	const dispatch = useDispatch();
+	const [name, setName] = useState('');
+	const libraryKey = useSelector(state => state.current.libraryKey);
+	const parentCollection = useSelector(state =>
+		get(state, ['libraries', libraryKey, 'collections', 'data', state.modal.parentCollectionKey]),
+		shallowEqual
+	);
 
-	componentDidUpdate({ isOpen: wasOpen }) {
-		const { isOpen } = this.props;
+	const isOpen = useSelector(state => state.modal.id === COLLECTION_ADD);
+	const inputId = useRef(getUniqueId());
 
-		if(wasOpen && !isOpen) {
-			this.setState(defaultState);
+	const handleCollectionUpdate = useCallback(() => {
+		if(name.length === 0) {
+			return;
 		}
-	}
 
-	handleCollectionUpdate = () => {
-		const { libraryKey, toggleModal, createCollection,
-			parentCollection } = this.props;
-		const { name } = this.state;
-
-		if(name.length === 0) { return; }
-
-		createCollection({
+		dispatch(createCollection({
 			name,
 			parentCollection: parentCollection ? parentCollection.key : null
-		}, libraryKey);
-		toggleModal(null, false);
-	}
+		}, libraryKey));
+		dispatch(toggleModal(COLLECTION_ADD, false));
+	}, [dispatch, libraryKey, name, parentCollection]);
 
-	handleInputBlur = () => true
-	handleChange = name => this.setState({ name })
+	const handleInputBlur = useCallback(() => true, []);
+	const handleChange = useCallback(newName => setName(newName), []);
+	const handleCancel = useCallback(() => dispatch(toggleModal(COLLECTION_ADD, false)), [dispatch]);
 
-	render() {
-		const { isOpen, toggleModal, parentCollection } = this.props;
-		const { name } = this.state;
-		return (
-			<Modal
-				isOpen={ isOpen }
-				contentLabel="Add a New Collection"
-				className="modal-touch modal-form modal-centered"
-				onRequestClose={ () => toggleModal(null, false) }
-				closeTimeoutMS={ 200 }
-				overlayClassName={ "modal-slide" }
-			>
-				<div className="modal-content" tabIndex={ -1 }>
-					<div className="modal-header">
-						<div className="modal-header-left">
-							<Button
-								className="btn-link"
-								onClick={ () => toggleModal(null, false) }
-							>
-								Cancel
-							</Button>
-						</div>
-						<div className="modal-header-center">
-							<h4 className="modal-title truncate">
-								{
-									parentCollection ?
-										`Add a new Subcollection to ${parentCollection.name}` :
-										'Add a new Collection'
-								}
-							</h4>
-						</div>
-						<div className="modal-header-right">
-							<Button
-								className="btn-link"
-								disabled={ name.length === 0 }
-								onClick={ this.handleCollectionUpdate }
-							>
-								Confirm
-							</Button>
-						</div>
+	useEffect(() => {
+		if(!isOpen) {
+			setName('');
+		}
+	}, [isOpen]);
+
+	return (
+		<Modal
+			isOpen={ isOpen }
+			contentLabel="Add a New Collection"
+			className="modal-touch modal-form modal-centered"
+			onRequestClose={ handleCancel }
+			closeTimeoutMS={ 200 }
+			overlayClassName={ "modal-slide" }
+		>
+			<div className="modal-content" tabIndex={ -1 }>
+				<div className="modal-header">
+					<div className="modal-header-left">
+						<Button
+							className="btn-link"
+							onClick={ handleCancel }
+						>
+							Cancel
+						</Button>
 					</div>
-					<div className="modal-body">
-						<div className="form">
-							<div className="form-group">
-								<label htmlFor={ this.inputId }>
-									<Icon type="28/folder" width="28" height="28" />
-								</label>
-								<Input
-									autoFocus
-									id={ this.inputId }
-									onBlur={ this.handleInputBlur }
-									onChange={ this.handleChange }
-									onCommit={ this.handleCollectionUpdate }
-									value={ name }
-									tabIndex={ 0 }
-								/>
-							</div>
+					<div className="modal-header-center">
+						<h4 className="modal-title truncate">
+							{
+								parentCollection ?
+									`Add a new Subcollection to ${parentCollection.name}` :
+									'Add a new Collection'
+							}
+						</h4>
+					</div>
+					<div className="modal-header-right">
+						<Button
+							className="btn-link"
+							disabled={ name.length === 0 }
+							onClick={ handleCollectionUpdate }
+						>
+							Confirm
+						</Button>
+					</div>
+				</div>
+				<div className="modal-body">
+					<div className="form">
+						<div className="form-group">
+							<label htmlFor={ inputId.current }>
+								<Icon type="28/folder" width="28" height="28" />
+							</label>
+							<Input
+								autoFocus
+								id={ inputId.current }
+								onBlur={ handleInputBlur }
+								onChange={ handleChange }
+								onCommit={ handleCollectionUpdate }
+								value={ name }
+								tabIndex={ 0 }
+							/>
 						</div>
 					</div>
 				</div>
-			</Modal>
-		);
-	}
-
-	static propTypes = {
-		parentCollection: PropTypes.object,
-		isOpen: PropTypes.bool,
-		libraryKey: PropTypes.string,
-		toggleModal: PropTypes.func.isRequired,
-		createCollection: PropTypes.func.isRequired
-	}
+			</div>
+		</Modal>
+	)
 }
 
-export default CollectionAddModal;
+NewCollectionModal.whyDidYouRender = true;
+
+export default memo(NewCollectionModal);
