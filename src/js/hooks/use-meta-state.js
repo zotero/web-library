@@ -1,16 +1,10 @@
 import { useSelector } from 'react-redux';
+import { get } from '../utils';
 
 const useMetaState = () => {
-	const itemKey = useSelector(state => state.current.itemKey);
-	const libraryKey = useSelector(state => state.current.libraryKey);
-
-	if(!libraryKey || !itemKey) {
-		return {
-			isMetaAvailable: false,
-			isMetaFetching: false
-		}
-	}
-	const { itemType } = useSelector(state => state.libraries[libraryKey].items[itemKey]);
+	const { itemType } = useSelector(state =>
+		get(state, ['libraries', state.current.libraryKey, 'items', state.current.itemKey], {})
+	);
 
 	const isMetaAvailable = useSelector(state => (
 		itemType in state.meta.itemTypeCreatorTypes &&
