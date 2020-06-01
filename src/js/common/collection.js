@@ -1,5 +1,3 @@
-'use strict';
-
 import memoize from 'memoize-one';
 import deepEqual from 'deep-equal';
 

@@ -1,88 +1,40 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
 import deepEqual from 'deep-equal';
+import PropTypes from 'prop-types';
+import React, { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { makeChildMap } from '../../common/collection';
+import Button from '../ui/button';
+import Icon from '../ui/icon';
 import Libraries from '../../component/libraries';
 import Modal from '../ui/modal';
-import Button from '../ui/button';
 import Spinner from '../ui/spinner';
 import TouchHeader from '../touch-header.jsx';
-import { COLLECTION_SELECT } from '../../constants/modals';
 import { chunkedCopyToLibrary, chunkedAddToCollection, toggleModal, triggerSelectMode } from '../../actions';
-import { get } from '../../utils';
-import Icon from '../ui/icon';
+import { COLLECTION_SELECT } from '../../constants/modals';
+import { useNavigationState } from '../../hooks';
 
 const AddItemsToCollectionsModal = () => {
 	const dispatch = useDispatch();
 
-	const device = useSelector(state => state.device);
 	const libraryKey = useSelector(state => state.current.libraryKey);
-	const libraries = useSelector(state => state.config.libraries.filter(l => !l.isReadOnly));
 	const isOpen = useSelector(state => state.modal.id === COLLECTION_SELECT);
 	const sourceItemKeys = useSelector(state => state.modal.items);
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
-	const collections = useSelector(state => libraries.reduce((aggr, library) => {
-		aggr[library.key] = Object.values(
-			get(state, ['libraries', library.key, 'collections', 'data'], {})
-		);
-		return aggr;
-	}, {}));
+	const isSingleColumn = useSelector(state => state.device.isSingleColumn);
+	const {navState, touchHeaderPath, handleNavigation, resetNavState} = useNavigationState();
 
+	// @TODO: to prevent re-renders we memoize as much of a "device" as TouchHeader requires.
+	// 		  remove this once TouchHeader is rewritten to use useSelector instead
+	const device = useMemo(() => ({ isTouchOrSmall, isSingleColumn }), [isTouchOrSmall, isSingleColumn]);
 	const [isBusy, setBusy] = useState(false);
-	const [view, setView] = useState('libraries');
-	const [pickedLibraryKey, setPickedLibraryKey] = useState('');
-	const [pickedCollectionKey, setPickedCollectionKey] = useState('');
-	const [path, setPath] = useState([]);
 	const [picked, setPicked] = useState([]);
 
-	const collectionsSource = collections[pickedLibraryKey];
-
 	useEffect(() => {
-		setView('libraries');
-		setPickedLibraryKey('');
-		setPath([]);
-		setPicked([]);
-	}, [isOpen]);
-
-	// @TODO: merge functions navigateLocal* below (renamed from legacy functions) into a single "navigateLocal"
-	const navigateLocalFromCollectionTree = ({ library = null, collection = null } = {}) => {
-		if(library) {
-			if(collection) {
-				const childMap = library in collections ? makeChildMap(collections[library]) : {};
-				const hasChildren = collection in childMap;
-				const newPath = [...path];
-				if(hasChildren) {
-					newPath.push(collection);
-				}
-				setView('collection');
-				setPickedLibraryKey(library);
-				setPickedCollectionKey(collection);
-				setPath(newPath);
-			} else {
-				setView('library');
-				setPickedLibraryKey(library);
-				setPickedCollectionKey(null);
-			}
+		if(!isOpen) {
+			resetNavState();
+			setPicked([]);
 		}
-	}
-
-	const navigateLocalFromTouchHeader = navigationData => {
-		if('collection' in navigationData) {
-			const targetIndex = path.indexOf(navigationData.collection);
-			setPickedCollectionKey(navigationData.collection);
-			setPath(path.slice(0, targetIndex + 1));
-		} else if(navigationData.view === 'library') {
-			setPickedCollectionKey(null);
-			setPath([]);
-		} else if(navigationData.view === 'libraries') {
-			setPickedCollectionKey(null);
-			setPickedLibraryKey(null);
-			setPath([]);
-			setView('libraries');
-		}
-	}
+	}, [resetNavState, isOpen]);
 
 	const pickerPick = newPicked => {
 		if(deepEqual(picked, newPicked)) {
@@ -113,37 +65,11 @@ const AddItemsToCollectionsModal = () => {
 		setBusy(false);
 		dispatch(toggleModal(null, false));
 		dispatch(triggerSelectMode(false, true));
-	}, [sourceItemKeys, libraryKey, picked]);
+	}, [dispatch, sourceItemKeys, libraryKey, picked]);
 
 	const handleCancel = useCallback(() => {
 		dispatch(toggleModal(null, false));
 	}, [dispatch]);
-
-
-
-	const touchHeaderPath = path.map(key => ({
-		key,
-		type: 'collection',
-		label: collectionsSource.find(c => c.key === key).name,
-		path: { library: pickedLibraryKey, collection: key },
-	}));
-
-	if(view !== 'libraries') {
-		const libraryConfig = libraries.find(l => l.key === pickedLibraryKey) || {};
-		touchHeaderPath.unshift({
-			key: libraryKey,
-			type: 'library',
-			path: { library: pickedLibraryKey, view: 'library' },
-			label: libraryConfig.name
-		});
-	}
-
-	touchHeaderPath.unshift({
-		key: 'root',
-		type: 'root',
-		path: { view: 'libraries' },
-		label: 'Libraries'
-	});
 
 	return (
 		<Modal
@@ -164,7 +90,7 @@ const AddItemsToCollectionsModal = () => {
 									className="darker"
 									device={ device }
 									path={ touchHeaderPath }
-									navigate={ navigateLocalFromTouchHeader }
+									navigate={ handleNavigation }
 								/>
 							) : (
 								<React.Fragment>
@@ -186,8 +112,8 @@ const AddItemsToCollectionsModal = () => {
 								isPickerMode={ true }
 								pickerPick={ pickerPick }
 								picked={ picked }
-								pickerNavigate={ navigateLocalFromCollectionTree }
-								pickerState= { { view, libraryKey: pickedLibraryKey, collectionKey: pickedCollectionKey, path, picked } }
+								pickerNavigate={ handleNavigation }
+								pickerState= { { ...navState, picked } }
 							/>
 							</React.Fragment>
 						)
@@ -246,4 +172,4 @@ AddItemsToCollectionsModal.propTypes = {
 	items: PropTypes.array,
 }
 
-export default AddItemsToCollectionsModal;
+export default memo(AddItemsToCollectionsModal);
