@@ -19,7 +19,7 @@ import ItemsSortModal from '../component/modal/items-sort';
 import Libraries from '../component/libraries';
 import Messages from '../component/messages';
 import MobileNav from './ui/mobile-nav';
-import MoveCollectionsModalContainer from '../container/modal/move-collections';
+import MoveCollectionsModal from '../component/modal/move-collections';
 import Navbar from './ui/navbar';
 import NewCollectionModal from '../component/modal/new-collection';
 import NewFileModalContainer from '../container/modal/new-file';
@@ -204,7 +204,7 @@ const Library = props => {
 				<BibliographyModalContainer />
 				<ExportModal />
 				<ItemsSortModal />
-				<MoveCollectionsModalContainer />
+				<MoveCollectionsModal />
 				<NewCollectionModal />
 				<NewItemModal />
 				<RenameCollectionModal />

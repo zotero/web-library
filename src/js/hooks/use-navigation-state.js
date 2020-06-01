@@ -18,7 +18,6 @@ const useNavigationState = () => {
 	);
 
 	const handleNavigation = useCallback(({ library = null, collection = null, view = null } = {}) => {
-		console.log('handleNavigation', { library, collection, view });
 		if(view === 'library') {
 			setNavState({
 				path: [],
@@ -36,7 +35,6 @@ const useNavigationState = () => {
 		} else if(library) {
 			if(collection) {
 				const targetIndex = navState.path.indexOf(collection);
-				console.log({ curPath: navState.path, collection, targetIndex });
 				var newPath;
 				if(targetIndex !== -1) {
 					// target collection already in path so trim the path

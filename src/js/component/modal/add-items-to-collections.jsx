@@ -36,13 +36,13 @@ const AddItemsToCollectionsModal = () => {
 		}
 	}, [resetNavState, isOpen]);
 
-	const pickerPick = newPicked => {
+	const pickerPick = useCallback(newPicked => {
 		if(deepEqual(picked, newPicked)) {
 			setPicked([]);
 		} else {
 			setPicked([newPicked]);
 		}
-	}
+	}, [picked]);
 
 	const handleAddItems = useCallback(async () => {
 		if(picked.length === 0) {
