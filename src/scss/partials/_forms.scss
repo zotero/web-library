@@ -327,7 +327,8 @@ textarea {
 }
 
 .checkboxes,
-.radios {
+.radios,
+.files {
 	@include touch-or-bp-down(sm) {
 		@include hairline-disabled(top);
 		@include hairline-disabled(bottom);
@@ -337,7 +338,8 @@ textarea {
 }
 
 .checkbox,
-.radio {
+.radio,
+.file {
 	@include touch-or-bp-down(sm) {
 		display: flex;
 		align-items: center;
@@ -354,13 +356,15 @@ textarea {
 			padding-bottom: 0;
 		}
 
-		label {
+		label,
+		&.file span {
 			flex: 1 1 auto;
 			order: -1;
 			color: $text-color;
 		}
 
-		input {
+		input,
+		&.file button {
 			margin: 0 $input-btn-padding-x-touch;
 		}
 	}

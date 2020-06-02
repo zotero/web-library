@@ -1,22 +1,64 @@
-'use strict';
-
-import React, { useState, useEffect } from 'react';
-import PropTypes from 'prop-types';
+import React, { useCallback, useEffect, useState, memo } from 'react';
+import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import cx from 'classnames';
 
 import Modal from '../ui/modal';
 import Button from '../ui/button';
 import Spinner from '../ui/spinner';
 import Icon from '../ui/icon';
-import { getUniqueId } from '../../utils';
+import { get, getUniqueId } from '../../utils';
 import { getFilesData } from '../../common/event';
+import { NEW_FILE } from '../../constants/modals';
+import { toggleModal, createAttachments, navigate } from '../../actions';
+
 var fileCounter = 0;
 
-const NewFileModal = props => {
-	const { createAttachments, files, collection, isOpen, libraryKey, toggleModal, navigate } = props;
+const NewFileModal = () => {
+	const dispatch = useDispatch();
+	const isOpen = useSelector(state => state.modal.id === NEW_FILE);
+	const libraryKey = useSelector(state => state.current.libraryKey);
+	const collectionKey = useSelector(state => state.current.collectionKey);
+	const collection = useSelector(state => get(state, ['libraries', libraryKey, 'collections', 'data', collectionKey]));
+	const files = useSelector(state => state.modal.files, shallowEqual);
+
 	const inputId = getUniqueId();
 	const [isBusy, setBusy] = useState(false);
 	const [filesData, setFilesData] = useState([]);
+
+	const closeModal = useCallback(() => {
+		dispatch(toggleModal(NEW_FILE, false));
+		setFilesData([]);
+	}, [dispatch]);
+
+	const handleCreateFileClick = useCallback(async () => {
+		setBusy(true);
+		const createdItems = await dispatch(createAttachments(
+			filesData, { collection: collection ? collection.key : null }
+		));
+		dispatch(toggleModal(NEW_FILE, false));
+		setBusy(false);
+		setFilesData([]);
+		dispatch(navigate({
+			library: libraryKey,
+			collection: collection ? collection.key : null,
+			items: createdItems.map(c => c.key)
+		}, true));
+	}, [dispatch, collection, filesData, libraryKey]);
+
+	const handleFileSelected = useCallback(async ev => {
+		const input = ev.currentTarget;
+		const newFilesData = await getFilesData(Array.from(ev.currentTarget.files));
+		input.value = null;
+		setFilesData([
+			...filesData,
+			...newFilesData.map(fd => ({ ...fd, key: ++fileCounter}))
+		]);
+	}, [filesData]);
+
+	const handleRemoveFileClick = useCallback(ev => {
+		const key = parseInt(ev.currentTarget.dataset.key, 10);
+		setFilesData(filesData.filter(f => f.key !== key));
+	}, [filesData]);
 
 	useEffect(() => {
 		(async () => {
@@ -28,43 +70,7 @@ const NewFileModal = props => {
 				]);
 			}
 		})();
-	}, [files]);
-
-
-	const closeModal = () => {
-		toggleModal(null, false);
-		setFilesData([]);
-	}
-
-	const handleCreateFileClick = async () => {
-		setBusy(true);
-		const createdItems = await createAttachments(
-			filesData, { collection: collection ? collection.key : null }
-		);
-		toggleModal(null, false)
-		setBusy(false);
-		setFilesData([]);
-		navigate({
-			library: libraryKey,
-			collection: collection ? collection.key : null,
-			items: createdItems.map(c => c.key)
-		}, true);
-	}
-
-	const handleFileSelected = async ev => {
-		const input = ev.currentTarget;
-		const newFilesData = await getFilesData(Array.from(ev.currentTarget.files));
-		input.value = null;
-		setFilesData([
-			...filesData,
-			...newFilesData.map(fd => ({ ...fd, key: ++fileCounter}))
-		]);
-	}
-
-	const handleRemoveFileClick = ev => {
-		const key = parseInt(ev.currentTarget.dataset.key, 10);
-		setFilesData(filesData.filter(f => f.key !== key));
-	}
+	}, [files, filesData]);
 
 	return (
 		<Modal
@@ -111,10 +117,10 @@ const NewFileModal = props => {
 					<div className="modal-body">
 						{ isBusy ? <Spinner /> : (
 							<div className="form">
-								<ul>
+								<ul className="form-group files">
 									{ filesData.map(fd => (
-										<li key={ fd.key }>
-											{ fd.fileName }
+										<li className="file" key={ fd.key }>
+											<span>{ fd.fileName }</span>
 											<Button
 												icon
 												data-key={ fd.key }
@@ -140,14 +146,4 @@ const NewFileModal = props => {
 	)
 }
 
-NewFileModal.propTypes = {
-	collection: PropTypes.object,
-	createAttachments: PropTypes.func,
-	files: PropTypes.array,
-	isOpen: PropTypes.bool,
-	libraryKey: PropTypes.string,
-	navigate: PropTypes.func,
-	toggleModal: PropTypes.func,
-}
-
-export default NewFileModal;
+export default memo(NewFileModal);

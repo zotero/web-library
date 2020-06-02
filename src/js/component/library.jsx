@@ -22,7 +22,7 @@ import MobileNav from './ui/mobile-nav';
 import MoveCollectionsModal from '../component/modal/move-collections';
 import Navbar from './ui/navbar';
 import NewCollectionModal from '../component/modal/new-collection';
-import NewFileModalContainer from '../container/modal/new-file';
+import NewFileModal from '../component/modal/new-file';
 import NewItemModal from '../component/modal/new-item';
 import Ongoing from './ongoing';
 import RenameCollectionModal from '../component/modal/rename-collection';
@@ -210,7 +210,7 @@ const Library = props => {
 				<RenameCollectionModal />
 				<StyleInstallerModal />
 				<AddByIdentifierModal />
-				<NewFileModalContainer />
+				<NewFileModal />
 				<Messages />
 				<AddLinkedUrlTouchModal />
 			</div>
