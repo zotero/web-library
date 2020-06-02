@@ -27,7 +27,7 @@ import NewItemModal from '../component/modal/new-item';
 import Ongoing from './ongoing';
 import RenameCollectionModal from '../component/modal/rename-collection';
 import SearchBackdrop from './search-backdrop';
-import StyleInstallerModalContainer from '../container/modal/style-installer';
+import StyleInstallerModal from '../component/modal/style-installer';
 import TagSelector from '../component/tag-selector';
 import TouchHeaderContainer from '../container/touch-header';
 import TouchNote from '../component/touch-note';
@@ -208,7 +208,7 @@ const Library = props => {
 				<NewCollectionModal />
 				<NewItemModal />
 				<RenameCollectionModal />
-				<StyleInstallerModalContainer />
+				<StyleInstallerModal />
 				<AddByIdentifierModal />
 				<NewFileModalContainer />
 				<Messages />

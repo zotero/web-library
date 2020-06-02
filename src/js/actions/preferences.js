@@ -1,4 +1,5 @@
 import { JSONTryParse } from '../utils';
+import { pick } from '../common/immutable';
 import { PREFERENCES_LOAD, PREFERENCE_CHANGE } from '../constants/actions';
 import { preferences as defaultPreferences, version } from '../constants/defaults';
 
@@ -90,8 +91,34 @@ const restoreColumnsOrder = () => {
 	}
 }
 
+const addCitationStyle = ({ name, title} = {}) => {
+	return async (dispatch, getState) => {
+
+
+		const newInstalledCitationStyles = [
+			...(getState().preferences.installedCitationStyles || []),
+			{ name, title }
+		];
+
+		return await dispatch(preferenceChange('installedCitationStyles', newInstalledCitationStyles));
+	}
+}
+
+const deleteCitationStyle = styleName => {
+	return async (dispatch, getState) => {
+
+		const newInstalledCitationStyles = (getState().preferences.installedCitationStyles || []).filter(
+			c => c.name !== styleName
+		);
+
+		return await dispatch(preferenceChange('installedCitationStyles', newInstalledCitationStyles));
+	}
+}
+
 export {
-	preferencesLoad,
+	addCitationStyle,
+	deleteCitationStyle,
 	preferenceChange,
+	preferencesLoad,
 	restoreColumnsOrder,
 };
