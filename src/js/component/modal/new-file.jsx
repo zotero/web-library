@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState, memo } from 'react';
+import React, { useCallback, useEffect, useRef, useState, memo } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import cx from 'classnames';
 
@@ -21,7 +21,7 @@ const NewFileModal = () => {
 	const collection = useSelector(state => get(state, ['libraries', libraryKey, 'collections', 'data', collectionKey]));
 	const files = useSelector(state => state.modal.files, shallowEqual);
 
-	const inputId = getUniqueId();
+	const inputId = useRef(getUniqueId());
 	const [isBusy, setBusy] = useState(false);
 	const [filesData, setFilesData] = useState([]);
 
@@ -75,7 +75,7 @@ const NewFileModal = () => {
 	return (
 		<Modal
 			isOpen={ isOpen }
-			contentLabel="Create a New Item"
+			contentLabel="Upload files"
 			className={ cx('modal-touch', 'modal-centered', {
 				loading: isBusy
 			}) }
@@ -99,8 +99,8 @@ const NewFileModal = () => {
 							<h4 className="modal-title truncate">
 								{
 									collection ?
-										`Store copy of a file in ${collection.name}` :
-										'Store copy of a file'
+										`Upload files to ${collection.name}` :
+										'Upload files'
 								}
 							</h4>
 						</div>
@@ -110,7 +110,7 @@ const NewFileModal = () => {
 								disabled={ isBusy }
 								onClick={ handleCreateFileClick }
 							>
-								Create
+								Upload
 							</Button>
 						</div>
 					</div>
@@ -131,11 +131,23 @@ const NewFileModal = () => {
 										</li>
 									)) }
 								</ul>
-								<div className="form-group">
-									<label htmlFor={ inputId }>
-										Or Select file
-									</label>
-									<input onChange={ handleFileSelected } type="file" multiple="multiple" />
+								<div className="flex-row justify-center">
+									<div className="btn-file">
+										<input
+											className="add-attachment toolbar-focusable"
+											id={ inputId.current }
+											multiple="multiple"
+											onChange={ handleFileSelected }
+											tabIndex={ 0 }
+											type="file"
+										/>
+										<Button
+											className="btn-default"
+											tabIndex={ -1 }
+										>
+											Select Files
+										</Button>
+									</div>
 								</div>
 							</div>
 						)}
