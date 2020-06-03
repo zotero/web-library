@@ -10,7 +10,7 @@ import { CSSTransition } from 'react-transition-group';
 
 import AddByIdentifierModal from '../component/modal/add-by-identifier';
 import AddItemsToCollectionsModal from '../component/modal/add-items-to-collections';
-import BibliographyModalContainer from '../container/modal/bibliography';
+import BibliographyModal from '../component/modal/bibliography';
 import CustomDragLayer from '../component/drag-layer';
 import ExportModal from '../component/modal/export';
 import ItemDetails from '../component/item/details';
@@ -201,7 +201,7 @@ const Library = props => {
 					/>
 				</div>
 				<AddItemsToCollectionsModal />
-				<BibliographyModalContainer />
+				<BibliographyModal />
 				<ExportModal />
 				<ItemsSortModal />
 				<MoveCollectionsModal />

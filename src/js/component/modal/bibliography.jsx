@@ -1,116 +1,188 @@
-'use strict';
-
-import React from 'react';
-import PropTypes from 'prop-types';
+import copy from 'copy-to-clipboard';
+import cx from 'classnames';
+import React, { useCallback, useEffect, useRef, useState, memo } from 'react';
 import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap/lib';
-import Spinner from '../ui/spinner';
+import { useDispatch, useSelector, shallowEqual } from 'react-redux';
+
 import Button from '../ui/button';
 import Icon from '../ui/icon';
+import LocaleSelector from '../locale-selector';
 import Modal from '../ui/modal';
 import RadioSet from '../form/radio-set';
+import Spinner from '../ui/spinner';
 import StyleSelector from '../style-selector';
-import LocaleSelector from '../locale-selector';
-import { noop } from '../../utils';
-import { pick } from '../../common/immutable';
-import { getUniqueId } from '../../utils';
 import { BIBLIOGRAPHY, STYLE_INSTALLER } from '../../constants/modals';
-import cx from 'classnames';
+import { coreCitationStyles } from '../../../../data/citation-styles-data.json';
+import { getUniqueId } from '../../utils';
+import { stripTagsUsingDOM } from '../../common/format';
+import { toggleModal, bibliographyFromCollection, bibliographyFromItems, preferenceChange, triggerSelectMode } from '../../actions';
+import { usePrevious } from '../../hooks';
 
+const BibliographyModal = () => {
+	const dispatch = useDispatch();
+	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
+	const isOpen = useSelector(state => state.modal.id === BIBLIOGRAPHY);
+	const citationStyle = useSelector(state => state.preferences.citationStyle);
+	const citationLocale = useSelector(state => state.preferences.citationLocale);
+	const installedCitationStyles = useSelector(state => state.preferences.installedCitationStyles, shallowEqual);
+	const collectionKey = useSelector(state => state.modal.collectionKey);
+	const itemKeys = useSelector(state => state.modal.itemKeys);
+	const libraryKey = useSelector(state => state.modal.libraryKey);
 
-class BibliographyModal extends React.PureComponent {
-	state = {
-		requestedAction: 'clipboard',
-		isClipboardCopied: false,
-		isHtmlCopied: false,
-	}
-	styleSelectorId = getUniqueId();
-	localeSelectorId = getUniqueId();
+	const prevCitationStyle = usePrevious(citationStyle);
+	const prevCitationLocale = usePrevious(citationLocale);
 
-	handleCancel = () => {
-		this.props.onCancel();
-	}
+	const citationStyles = [...coreCitationStyles, ...installedCitationStyles];
+
+	const [requestedAction, setRequestedAction] = useState('clipboard');
+	const [isClipboardCopied, setIsClipboardCopied] = useState(false);
+	const [isHtmlCopied, setIsHtmlCopied] = useState(false);
+	const [bibliography, setBibliography] = useState(null);
+	const [isUpdating, setIsUpdating] = useState(false);
+	const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
+	const styleSelectorId = useRef(getUniqueId());
+	const localeSelectorId = useRef(getUniqueId());
+	const copyDataInclude = useRef(null);
+	const dropdownTimer = useRef(null);
+
+	const getBibliography = useCallback(async () => {
+		try {
+			setIsUpdating(true);
+			var bibliography;
+			if(collectionKey) {
+				bibliography = await dispatch(bibliographyFromCollection(
+					collectionKey, libraryKey, citationStyle, citationLocale
+				));
+			} else {
+				bibliography = await dispatch(bibliographyFromItems(
+					itemKeys, libraryKey, citationStyle, citationLocale
+				));
+			}
+			setBibliography(bibliography);
+		} finally {
+			setIsUpdating(false);
+		}
+	}, [citationLocale, citationStyle, collectionKey, dispatch, itemKeys, libraryKey]);
+
+	const copyToClipboard = useCallback(bibliographyToCopy => {
+		const bibliographyText = stripTagsUsingDOM(bibliographyToCopy);
+
+		copyDataInclude.current = [
+			{ mime: 'text/plain', data: bibliographyText },
+			{ mime: 'text/html', data: bibliographyToCopy },
+		];
+		copy(bibliographyText);
+	}, []);
+
+	const handleCopy = useCallback(ev => {
+		if(copyDataInclude.current) {
+			copyDataInclude.current.forEach(copyDataFormat => {
+				ev.clipboardData.setData(copyDataFormat.mime, copyDataFormat.data);
+			});
+			ev.preventDefault();
+			copyDataInclude.current = null;
+		}
+	}, []);
 
 	//@NOTE: handles both click and keydown explicitely because "click" is
 	//		 also handled in containing element (Dropdown)  where
 	//		 `preventDefault` is called on this event, hence stopping
 	//		 the browser from triggering synthetic click on relevant keydowns
-	handleCopyToClipboardInteraction = ev => {
+	const handleCopyToClipboardInteraction = useCallback(ev => {
 		if(ev.type !== 'keydown' || (ev.key === 'Enter' || ev.key === ' ')) {
-			this.props.onCopyToClipboardClick();
-			this.setState({ isClipboardCopied: true });
-			setTimeout(() => {
-				this.setState({ isClipboardCopied: false });
-			}, 1000);
+			copyToClipboard(bibliography);
+			setIsClipboardCopied(true);
+			setTimeout(() => { setIsClipboardCopied(false); }, 1000);
 		}
-	}
+	}, [copyToClipboard, bibliography]);
 
-	handleCopyHtmlClick = () => {
-		this.props.onCopyHtmlClick();
-		this.setState({ isHtmlCopied: true });
-		setTimeout(() => {
-			this.setState({ isHtmlCopied: false });
-		}, 1000);
-	}
+	const handleCopyHtmlClick = useCallback(() => {
+		copy(bibliography);
+		setIsHtmlCopied(true);
+		setTimeout(() => { setIsHtmlCopied(false); }, 1000);
+	}, [bibliography]);
 
-	handleDropdownToggle = ev => {
+	const handleDropdownToggle = useCallback(ev => {
 		const isFromCopyTrigger = ev.target && ev.target.closest('.clipboard-trigger');
-		if(this.state.isDropdownOpen && isFromCopyTrigger) {
-			this.dropdownTimer = setTimeout(() => {
-				this.setState({ isDropdownOpen: false });
+		if(isDropdownOpen && isFromCopyTrigger) {
+			dropdownTimer.current = setTimeout(() => {
+				setIsDropdownOpen(false);
 			}, 950);
 			return false;
 		}
-		clearTimeout(this.dropdownTimer);
-		this.setState({ isDropdownOpen: !this.state.isDropdownOpen });
-	}
+		clearTimeout(dropdownTimer.current);
+		setIsDropdownOpen(!isDropdownOpen);
+	}, [isDropdownOpen]);
 
-	handleRequestedActionChange = newValue => this.setState({ requestedAction: newValue });
+	const handleRequestedActionChange = useCallback(newValue => setRequestedAction(newValue), []);
 
-	handleCreateClick = () => {
-		const { onSelectModeToggle, onCopyHtmlClick,
-			onCopyToClipboardClick, toggleModal } = this.props;
-		if(this.state.requestedAction === 'html') {
-			onCopyHtmlClick();
+	const handleCreateClick = useCallback(() => {
+		if(requestedAction === 'html') {
+			copy(bibliography);
 		} else {
-			onCopyToClipboardClick();
+			copyToClipboard(bibliography);
 		}
-		toggleModal(BIBLIOGRAPHY, false);
-		onSelectModeToggle(false);
-	}
+		dispatch(toggleModal(BIBLIOGRAPHY, false));
+		dispatch(triggerSelectMode(false, true));
+	}, [bibliography, copyToClipboard, dispatch, requestedAction]);
 
-	handleStyleChange = async citationStyle => {
-		const { toggleModal, preferenceChange } = this.props;
+	const handleStyleChange = useCallback(async citationStyle => {
 		if(citationStyle === 'install') {
-			await toggleModal(BIBLIOGRAPHY, false);
-			await toggleModal(STYLE_INSTALLER, true);
+			dispatch(toggleModal(BIBLIOGRAPHY, false));
+			dispatch(toggleModal(STYLE_INSTALLER, true));
 		} else {
-			preferenceChange('citationStyle', citationStyle);
+			dispatch(preferenceChange('citationStyle', citationStyle));
 		}
-	}
+	}, [dispatch]);
 
-	handleLocaleChange = locale => {
-		const { preferenceChange } = this.props;
-		preferenceChange('citationLocale', locale);
-	}
+	const handleLocaleChange = useCallback(locale => {
+		dispatch(preferenceChange('citationLocale', locale));
+	}, [dispatch]);
 
-	handleCancel = async () => {
-		const { toggleModal } = this.props;
-		await toggleModal(BIBLIOGRAPHY, false);
-	}
+	const handleCancel = useCallback(async () => {
+		dispatch(toggleModal(BIBLIOGRAPHY, false));
+		setBibliography('');
+	}, [dispatch]);
 
-	renderModalContent() {
-		const { device, bibliography, isUpdating } = this.props;
-		const { isClipboardCopied, isDropdownOpen, isHtmlCopied } = this.state;
-		return (
+	useEffect(() => {
+		document.addEventListener('copy', handleCopy, true);
+		return () => {
+			document.removeEventListener('copy', handleCopy, true);
+		}
+	}, [handleCopy]);
+
+	useEffect(() => {
+		if(isOpen && (citationStyle !== prevCitationStyle || citationLocale !== prevCitationStyle)) {
+			getBibliography()
+		}
+	}, [getBibliography, citationLocale, citationStyle, isOpen, prevCitationLocale, prevCitationStyle]);
+
+	const className = cx({
+		'bibliography-modal': true,
+		'modal-centered': isTouchOrSmall,
+		'modal-xl modal-scrollable': !isTouchOrSmall,
+		'modal-touch modal-form': isTouchOrSmall,
+	});
+
+	return (
+		<Modal
+			isOpen={ isOpen }
+			contentLabel="Bibliography"
+			className={ className }
+			onRequestClose={ handleCancel }
+			closeTimeoutMS={ isTouchOrSmall ? 200 : null }
+			overlayClassName={ isTouchOrSmall ? "modal-slide" : null }
+		>
 			<div className="modal-content" tabIndex={ -1 }>
 				<div className="modal-header">
 					{
-						device.isTouchOrSmall ? (
+						isTouchOrSmall ? (
 							<React.Fragment>
 								<div className="modal-header-left">
 									<Button
 										className="btn-link"
-										onClick={ this.handleCancel }
+										onClick={ handleCancel }
 									>
 										Cancel
 									</Button>
@@ -124,7 +196,7 @@ class BibliographyModal extends React.PureComponent {
 									<Button
 										disabled={ isUpdating }
 										className="btn-link"
-										onClick={ this.handleCreateClick }
+										onClick={ handleCreateClick }
 									>
 										Create
 									</Button>
@@ -138,7 +210,7 @@ class BibliographyModal extends React.PureComponent {
 								<Button
 									icon
 									className="close"
-									onClick={ this.handleCancel }
+									onClick={ handleCancel }
 								>
 									<Icon type={ '16/close' } width="16" height="16" />
 								</Button>
@@ -149,9 +221,9 @@ class BibliographyModal extends React.PureComponent {
 				<div
 					className={ cx(
 						'modal-body',
-						{ loading: !device.isTouchOrSmall && isUpdating }
+						{ loading: !isTouchOrSmall && isUpdating }
 					)}
-					tabIndex={ !device.isTouchOrSmall ? 0 : null }
+					tabIndex={ !isTouchOrSmall ? 0 : null }
 				>
 					<div className="form">
 						<div className="citation-options">
@@ -159,51 +231,51 @@ class BibliographyModal extends React.PureComponent {
 								<div className="col-9">
 									<div className="form-group form-row style-selector-container">
 										<label
-											htmlFor={ this.styleSelectorId }
+											htmlFor={ styleSelectorId.current }
 											className="col-form-label"
 										>
 											Citation Style
 										</label>
 										<div className="col">
 											<StyleSelector
-												id={ this.styleSelectorId }
-												onStyleChange={ this.handleStyleChange }
-												{ ...pick(this.props,
-													['citationStyle', 'citationStyles']
-											)} />
+												id={ styleSelectorId.current }
+												onStyleChange={ handleStyleChange }
+												citationStyle={ citationStyle }
+												citationStyles={ citationStyles }
+											/>
 										</div>
 									</div>
 								</div>
 								<div className="col-3">
 									<div className="form-group form-row language-selector-container">
 										<label
-											htmlFor={ this.localeSelectorId }
+											htmlFor={ localeSelectorId.current }
 											className="col-form-label"
 										>
 											Language
 										</label>
 										<div className="col">
 											<LocaleSelector
-												id={ this.localeSelectorId }
-												onLocaleChange={ this.handleLocaleChange }
-												{ ...pick(this.props, ['citationLocale'] )}
+												id={ localeSelectorId.current }
+												onLocaleChange={ handleLocaleChange }
+												citationLocale={ citationLocale }
 											/>
 										</div>
 									</div>
 								</div>
 							</div>
 						</div>
-						{ device.isTouchOrSmall && (
+						{ isTouchOrSmall && (
 							<RadioSet
-								onChange={ this.handleRequestedActionChange }
+								onChange={ handleRequestedActionChange }
 								options={[
 									{ value: 'clipboard', label: 'Copy to Clipboard' },
 									{ value: 'html', label: 'Copy HTML' },
 								]}
-								value={ this.state.requestedAction }
+								value={ requestedAction }
 							/>
 						)}
-						{ !device.isTouchOrSmall && (
+						{ !isTouchOrSmall && (
 							<div className="bibliography-container">
 								{ isUpdating ? (
 									<Spinner className="large" />
@@ -217,19 +289,19 @@ class BibliographyModal extends React.PureComponent {
 						)}
 					</div>
 				</div>
-				{ !device.isTouchOrSmall && (
+				{ !isTouchOrSmall && (
 					<div className="modal-footer justify-content-end">
 						<Dropdown
 							isOpen={ isDropdownOpen }
-							toggle={ this.handleDropdownToggle }
+							toggle={ handleDropdownToggle }
 							className={ cx('btn-group', { 'success': isClipboardCopied}) }
 						>
 							<Button
 								type="button"
 								disabled={ isUpdating }
 								className='btn btn-lg btn-secondary copy-to-clipboard'
-								onClick={ this.handleCopyToClipboardInteraction }
-								onKeyDown={ this.handleCopyToClipboardInteraction }
+								onClick={ handleCopyToClipboardInteraction }
+								onKeyDown={handleCopyToClipboardInteraction }
 							>
 								<span className={ cx('inline-feedback', { 'active': isClipboardCopied }) }>
 									<span className="default-text" aria-hidden={ !isClipboardCopied }>
@@ -249,7 +321,7 @@ class BibliographyModal extends React.PureComponent {
 							</DropdownToggle>
 							<DropdownMenu className="dropdown-menu">
 								<DropdownItem
-									onClick={ this.handleCopyHtmlClick }
+									onClick={ handleCopyHtmlClick }
 									className="btn clipboard-trigger"
 								>
 									<span className={ cx('inline-feedback', { 'active': isHtmlCopied }) }>
@@ -266,49 +338,8 @@ class BibliographyModal extends React.PureComponent {
 					</div>
 				)}
 			</div>
-		);
-	}
-
-	render() {
-		const { device, isOpen } = this.props;
-		const className = cx({
-			'bibliography-modal': true,
-			'modal-centered': device.isTouchOrSmall,
-			'modal-xl modal-scrollable': !device.isTouchOrSmall,
-			'modal-touch modal-form': device.isTouchOrSmall,
-		});
-		return (
-			<Modal
-				isOpen={ isOpen }
-				contentLabel="Bibliography"
-				className={ className }
-				onRequestClose={ this.handleCancel }
-				closeTimeoutMS={ device.isTouchOrSmall ? 200 : null }
-				overlayClassName={ device.isTouchOrSmall ? "modal-slide" : null }
-			>
-				{ this.renderModalContent() }
-			</Modal>
-		);
-	}
-
-	static propTypes = {
-		bibliography: PropTypes.string.isRequired,
-		device: PropTypes.object,
-		isOpen: PropTypes.bool,
-		isUpdating: PropTypes.bool,
-		onCancel: PropTypes.func,
-		onCopyHtmlClick: PropTypes.func.isRequired,
-		onCopyToClipboardClick: PropTypes.func.isRequired,
-		onSelectModeToggle: PropTypes.func.isRequired,
-		preferenceChange: PropTypes.func.isRequired,
-		toggleModal: PropTypes.func.isRequired,
-	}
-
-	static defaultProps = {
-		onCancel: noop,
-		bibliography: ''
-	}
+		</Modal>
+	);
 }
 
-
-export default BibliographyModal;
+export default memo(BibliographyModal);
