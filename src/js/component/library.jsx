@@ -28,7 +28,6 @@ import { getSerializedQuery } from '../common/state';
 import { pick } from '../common/immutable';
 import ZoteroConnectorNotifier from './zotero-connector-notifier';
 import TitleUpdater from './title-updater';
-import AddLinkedUrlTouchModal from './modal/add-linked-url-touch';
 import ZoteroStreamingClient from './zotero-streaming-client';
 import ModalManager from './modal-manager';
 
@@ -192,7 +191,6 @@ const Library = props => {
 				</div>
 				<ModalManager />
 				<Messages />
-				<AddLinkedUrlTouchModal />
 			</div>
 			</DndProvider>
 			<ZoteroConnectorNotifier />

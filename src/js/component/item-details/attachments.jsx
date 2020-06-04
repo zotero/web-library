@@ -349,7 +349,7 @@ const Attachments = props => {
 			ev.target.click();
 			ev.preventDefault();
 		}
-	});
+	}, [handleBySelector, handleNext, handleDrillDownNext, handleDrillDownPrev, handlePrevious]);
 
 	const handleFileInputKeyDown = useCallback(ev => {
 		if(ev.key === 'ArrowLeft' || ev.key === 'ArrowRight') {
@@ -363,19 +363,19 @@ const Attachments = props => {
 			handleBySelector('.attachment:last-child');
 			ev.preventDefault();
 		}
-	});
+	}, [handleBySelector]);
 
 	const handleAddLinkedUrlTouchClick = useCallback(ev => {
 		dispatch(toggleModal(ADD_LINKED_URL_TOUCH, true));
-	});
+	}, [dispatch]);
 
 	const handleLinkedFileClick = useCallback(ev => {
 		setIsAddingLinkedUrl(true);
-	});
+	}, []);
 
 	const handleLinkedFileCancel = useCallback(ev => {
 		setIsAddingLinkedUrl(false);
-	});
+	}, []);
 
 	return (
 		<TabPane

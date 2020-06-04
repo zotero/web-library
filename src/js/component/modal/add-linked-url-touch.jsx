@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from 'react';
+import React, { memo, useCallback, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import cx from 'classnames';
 
@@ -17,7 +17,7 @@ const AddLinkedUrlTouchModal = () => {
 
 	const handleClose = useCallback(() => {
 		dispatch(toggleModal(null, false));
-	});
+	}, [dispatch]);
 
 	const handleCreateClick = useCallback(async () => {
 		setIsBusy(true);
@@ -28,7 +28,7 @@ const AddLinkedUrlTouchModal = () => {
 		} else {
 			setIsBusy(false);
 		}
-	});
+	}, [dispatch]);
 
 	return (
 		<Modal
@@ -79,4 +79,4 @@ const AddLinkedUrlTouchModal = () => {
 	)
 }
 
-export default AddLinkedUrlTouchModal;
+export default memo(AddLinkedUrlTouchModal);

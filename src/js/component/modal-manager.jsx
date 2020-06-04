@@ -13,13 +13,14 @@ import NewFileModal from './modal/new-file';
 import NewItemModal from './modal/new-item';
 import RenameCollectionModal from './modal/rename-collection';
 import StyleInstallerModal from './modal/style-installer';
+import AddLinkedUrlTouchModal from './modal/add-linked-url-touch';
 
-
-import { BIBLIOGRAPHY, COLLECTION_ADD, COLLECTION_RENAME, COLLECTION_SELECT, EXPORT,
-MOVE_COLLECTION, NEW_ITEM, SORT_ITEMS, STYLE_INSTALLER, ADD_BY_IDENTIFIER, NEW_FILE } from
+import { ADD_LINKED_URL_TOUCH, BIBLIOGRAPHY, COLLECTION_ADD, COLLECTION_RENAME, COLLECTION_SELECT,
+EXPORT, MOVE_COLLECTION, NEW_ITEM, SORT_ITEMS, STYLE_INSTALLER, ADD_BY_IDENTIFIER, NEW_FILE } from
 '../constants/modals';
 
 const lookup = {
+	[ADD_LINKED_URL_TOUCH]: AddLinkedUrlTouchModal,
 	[COLLECTION_SELECT]: AddItemsToCollectionsModal,
 	[BIBLIOGRAPHY]: BibliographyModal,
 	[EXPORT]: ExportModal,
