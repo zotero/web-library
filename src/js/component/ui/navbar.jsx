@@ -5,7 +5,7 @@ import { Nav } from 'reactstrap/lib';
 
 import Button from './button';
 import Icon from './icon';
-import SearchContainer from './../../container/search';
+import Search from './../../component/search';
 import MenuEntry from './menu-entry';
 import { isTriggerEvent } from '../../common/event';
 import { navigate, toggleNavbar, triggerSearchMode, toggleTouchTagSelector } from '../../actions';
@@ -83,7 +83,7 @@ const Navbar = memo(props => {
 					)) }
 				</Nav>
 			</nav>
-			<SearchContainer
+			<Search
 				autoFocus
 				onFocusNext={ handleNext }
 				onFocusPrev={ handlePrevious }

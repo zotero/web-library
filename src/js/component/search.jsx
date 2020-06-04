@@ -1,63 +1,76 @@
-'use strict';
-
-import React from 'react';
-import PropTypes from 'prop-types';
+import React, { memo, useCallback, useRef, useState } from 'react';
 import { UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap/lib';
-import { noop } from '../utils';
+import { useDebouncedCallback } from 'use-debounce';
+import { useDispatch, useSelector } from 'react-redux';
+
 import Button from './ui/button';
 import Icon from './ui/icon';
+import { navigate, triggerSearchMode } from '../actions';
+import { noop } from '../utils';
+
+const SEARCH_INPUT_DEBOUNCE_DELAY = 300; //ms
 const modes = {
 	titleCreatorYear: "Title, Creator, Year",
 	everything: "Everything"
 };
 
-class Search extends React.PureComponent {
-	state = {
-		searchValue: this.props.search,
-		qmode: this.props.qmode || 'titleCreatorYear'
-	}
+const Search = props => {
+	const { onFocusNext = noop, onFocusPrev = noop, autoFocus, registerAutoFocus = noop } = props;
+	const dispatch = useDispatch();
+	const search = useSelector(state => state.current.search);
+	const searchState = useSelector(state => state.current.searchState);
+	const qmode = useSelector(state => state.current.qmode);
 
-	componentDidUpdate({ itemsSource: prevItemsSource }, { qmode: prevQmode }) {
-		const { itemsSource } = this.props;
-		const { qmode, searchValue } = this.state;
+	const inputRef = useRef(null);
 
-		if(searchValue && qmode !== prevQmode) {
-			this.props.onSearch(searchValue, qmode);
+	const [searchValue, setSearchValue] = useState(search);
+	const [qmodeValue, setQmodeValue] = useState(qmode || 'titleCreatorYear');
+
+	const [performSearch, cancelPerformSearch] = useDebouncedCallback((newSearchValue, newQmodeValue) => {
+		var view, items;
+
+		if(!newSearchValue) {
+			// if search is not empty, go back to the view that triggered the search
+			view = searchState.triggerView ?
+				searchState.triggerView === 'item-details' ?
+					searchState.triggerItem ? 'item-details' : 'item-list'
+					: searchState.triggerView
+				: view
+			items = searchState.triggerView === 'item-details' && searchState.triggerItem ?
+				searchState.triggerItem : null;
+
+			dispatch(triggerSearchMode(false));
 		}
-		if(itemsSource !== prevItemsSource && itemsSource !== 'query') {
-			this.setState({ searchValue: '' });
-		}
-	}
+		dispatch(navigate(({ view, items, search: newSearchValue, qmode: newQmodeValue })));
+	}, SEARCH_INPUT_DEBOUNCE_DELAY);
 
-	handleSearchChange = ev => {
+	const handleSearchChange = useCallback(ev => {
 		const newValue = ev.currentTarget.value;
-		this.setState({ searchValue: newValue });
-		clearTimeout(this.timeout);
-		this.timeout = setTimeout(() => {
-			this.props.onSearch(newValue, newValue ? this.state.qmode : null);
-		}, 300);
-	}
+		setSearchValue(newValue);
+		performSearch(newValue, qmodeValue);
+	}, [performSearch, qmodeValue]);
 
-	handleSearchClear = () => {
-		clearTimeout(this.timeout);
-		this.setState({ searchValue: '' });
-		this.props.onSearch();
-		this.inputRef.focus();
-	}
+	const handleSearchClear = useCallback(() => {
+		cancelPerformSearch();
+		setSearchValue('');
+		performSearch('', qmodeValue);
+		inputRef.current.focus();
+	}, [cancelPerformSearch, performSearch, qmodeValue]);
 
-	handleSelectMode = ev => {
-		const qmode = ev.currentTarget.dataset.qmode;
-		this.setState({ qmode });
-	}
+	const handleSelectMode = useCallback(ev => {
+		setQmodeValue(ev.currentTarget.dataset.qmode);
+		if(searchValue.length > 0) {
+			performSearch(searchValue, ev.currentTarget.dataset.qmode);
+		}
+	}, [performSearch, searchValue]);
 
-	handleKeyDown = ev => {
-		const { onFocusNext, onFocusPrev } = this.props;
+	const handleKeyDown = useCallback(ev => {
 		if(ev.target !== ev.currentTarget) {
 			return;
 		}
 
 		if(ev.key === 'ArrowRight') {
-			if(ev.target === this.inputRef) {
+			if(ev.target === inputRef.current) {
 				const { selectionStart, selectionEnd, value } = ev.target;
 				if(selectionStart === selectionEnd && selectionStart === value.length) {
 					onFocusNext(ev);
@@ -66,7 +79,7 @@ class Search extends React.PureComponent {
 				onFocusNext(ev);
 			}
 		} else if(ev.key === 'ArrowLeft') {
-			if(ev.target === this.inputRef) {
+			if(ev.target === inputRef.current) {
 				const { selectionStart, selectionEnd } = ev.target;
 				if(selectionStart === selectionEnd && selectionStart === 0) {
 					onFocusPrev(ev);
@@ -75,78 +88,60 @@ class Search extends React.PureComponent {
 				onFocusPrev(ev);
 			}
 		}
-	}
+	}, [onFocusNext, onFocusPrev]);
 
-	render() {
-		const { autoFocus, registerAutoFocus } = this.props;
-		return (
-			<div className="search input-group">
-				<UncontrolledDropdown
-					className="dropdown"
-				>
-					<DropdownToggle
-						color={ null }
-						className="btn-icon dropdown-toggle"
-						tabIndex={ -2 }
-						onKeyDown={ this.handleKeyDown }
-					>
-						<Icon type={ '24/search-options' } width="24" height="24" />
-					</DropdownToggle>
-					<DropdownMenu>
-						<DropdownItem
-							data-qmode="titleCreatorYear"
-							onClick={ this.handleSelectMode }
-						>
-							{ modes['titleCreatorYear'] }
-						</DropdownItem>
-						<DropdownItem
-							data-qmode="everything"
-							onClick={ this.handleSelectMode }
-						>
-							{ modes['everything'] }
-						</DropdownItem>
-					</DropdownMenu>
-				</UncontrolledDropdown>
-				<input
-					autoFocus={ autoFocus }
-					className="form-control search-input"
-					onChange={ this.handleSearchChange }
-					onKeyDown={ this.handleKeyDown }
-					placeholder={ modes[this.state.qmode] }
-					ref={ ref => { autoFocus && registerAutoFocus(ref); this.inputRef = ref } }
-					type="search"
-					value={ this.state.searchValue }
+	return (
+		<div className="search input-group">
+			<UncontrolledDropdown
+				className="dropdown"
+			>
+				<DropdownToggle
+					color={ null }
+					className="btn-icon dropdown-toggle"
 					tabIndex={ -2 }
-				/>
-				{ this.state.searchValue.length > 0 && (
-					<Button
-						icon
-						className="clear"
-						onClick={ this.handleSearchClear }
-						tabIndex={ -2 }
-						onKeyDown={ this.handleKeyDown }
+					onKeyDown={ handleKeyDown }
+				>
+					<Icon type={ '24/search-options' } width="24" height="24" />
+				</DropdownToggle>
+				<DropdownMenu>
+					<DropdownItem
+						data-qmode="titleCreatorYear"
+						onClick={ handleSelectMode }
 					>
-						<Icon type={ '10/x' } width="10" height="10" />
-					</Button>
-				)}
-			</div>
-		);
-	}
-
-	static propTypes = {
-		autoFocus: PropTypes.bool,
-		itemsSource: PropTypes.string,
-		onSearch: PropTypes.func,
-		qmode: PropTypes.oneOf(['titleCreatorYear', 'everything']),
-		registerAutoFocus: PropTypes.func,
-		search: PropTypes.string,
-	};
-
-	static defaultProps = {
-		onSearch: noop,
-		registerAutoFocus: noop,
-		search: '',
-	};
+						{ modes['titleCreatorYear'] }
+					</DropdownItem>
+					<DropdownItem
+						data-qmode="everything"
+						onClick={ handleSelectMode }
+					>
+						{ modes['everything'] }
+					</DropdownItem>
+				</DropdownMenu>
+			</UncontrolledDropdown>
+			<input
+				autoFocus={ autoFocus }
+				className="form-control search-input"
+				onChange={ handleSearchChange }
+				onKeyDown={ handleKeyDown }
+				placeholder={ modes[qmodeValue] }
+				ref={ ref => { autoFocus && registerAutoFocus(ref); inputRef.current = ref } }
+				type="search"
+				value={ searchValue }
+				tabIndex={ -2 }
+			/>
+			{ searchValue.length > 0 && (
+				<Button
+					icon
+					className="clear"
+					onClick={ handleSearchClear }
+					tabIndex={ -2 }
+					onKeyDown={ handleKeyDown }
+				>
+					<Icon type={ '10/x' } width="10" height="10" />
+				</Button>
+			)}
+		</div>
+	);
 }
 
-export default Search;
+export default memo(Search);

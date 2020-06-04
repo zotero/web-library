@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { CSSTransition } from 'react-transition-group';
 
-import SearchContainer from '../../container/search';
+import Search from '../../component/search';
 import Button from '../ui/button';
 
 class SearchBar extends React.PureComponent {
@@ -37,7 +37,7 @@ class SearchBar extends React.PureComponent {
 				unmountOnExit
 			>
 				<div className="searchbar">
-					<SearchContainer autoFocus />
+					<Search autoFocus />
 					<Button onClick={ this.handleCancelSearchClick } className="btn-link">
 						Cancel
 					</Button>
