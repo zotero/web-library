@@ -8,26 +8,15 @@ import PropTypes from 'prop-types';
 import React, { useCallback, useEffect, useState, useRef } from 'react';
 import { CSSTransition } from 'react-transition-group';
 
-import AddByIdentifierModal from '../component/modal/add-by-identifier';
-import AddItemsToCollectionsModal from '../component/modal/add-items-to-collections';
-import BibliographyModal from '../component/modal/bibliography';
 import CustomDragLayer from '../component/drag-layer';
-import ExportModal from '../component/modal/export';
 import ItemDetails from '../component/item/details';
 import Items from '../component/item/items';
-import ItemsSortModal from '../component/modal/items-sort';
 import Libraries from '../component/libraries';
 import Messages from '../component/messages';
 import MobileNav from './ui/mobile-nav';
-import MoveCollectionsModal from '../component/modal/move-collections';
 import Navbar from './ui/navbar';
-import NewCollectionModal from '../component/modal/new-collection';
-import NewFileModal from '../component/modal/new-file';
-import NewItemModal from '../component/modal/new-item';
 import Ongoing from './ongoing';
-import RenameCollectionModal from '../component/modal/rename-collection';
 import SearchBackdrop from './search-backdrop';
-import StyleInstallerModal from '../component/modal/style-installer';
 import TagSelector from '../component/tag-selector';
 import TouchHeaderContainer from '../container/touch-header';
 import TouchNote from '../component/touch-note';
@@ -41,6 +30,7 @@ import ZoteroConnectorNotifier from './zotero-connector-notifier';
 import TitleUpdater from './title-updater';
 import AddLinkedUrlTouchModal from './modal/add-linked-url-touch';
 import ZoteroStreamingClient from './zotero-streaming-client';
+import ModalManager from './modal-manager';
 
 
 const Library = props => {
@@ -200,17 +190,7 @@ const Library = props => {
 						onClick={ handleNavbarToggle }
 					/>
 				</div>
-				<AddItemsToCollectionsModal />
-				<BibliographyModal />
-				<ExportModal />
-				<ItemsSortModal />
-				<MoveCollectionsModal />
-				<NewCollectionModal />
-				<NewItemModal />
-				<RenameCollectionModal />
-				<StyleInstallerModal />
-				<AddByIdentifierModal />
-				<NewFileModal />
+				<ModalManager />
 				<Messages />
 				<AddLinkedUrlTouchModal />
 			</div>
