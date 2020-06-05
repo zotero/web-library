@@ -238,5 +238,5 @@ const bibliographyFromCollection = (collectionKey, libraryKey, style = 'chicago-
 };
 
 
-export { bibliographyFromCollection, bibliographyFromItems, exportCollection,
-	exportItems, citeItems };
+export { bibliographyFromCollection, bibliographyFromItems, exportCollection, exportItems, citeItems
+	};

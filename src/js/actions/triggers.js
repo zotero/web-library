@@ -28,14 +28,13 @@ const triggerEditingItem = (itemKey, toggleValue) => {
 	}
 };
 
-const triggerSelectMode = (isSelectMode, shouldNavigate = false) => {
+const triggerSelectMode = (isSelectMode, shouldNavigate = false, items = []) => {
 	return async (dispatch, getState) => {
 		const { collectionKey, itemsSource, libraryKey, search, tags, view } = getState().current;
 
 		if(shouldNavigate) {
 			const trash = itemsSource === 'trash';
 			const publications = itemsSource === 'publications';
-			const items = [];
 			dispatch(
 				navigate({ library: libraryKey, search, tags, trash, publications, collection: collectionKey, items, view }, true)
 			);
@@ -48,6 +47,10 @@ const triggerSelectMode = (isSelectMode, shouldNavigate = false) => {
 		});
 	}
 };
+
+const toggleSelectMode = () => {
+	return async (dispatch, getState) => await dispatch(triggerSelectMode(!getState().current.isSelectMode))
+}
 
 const triggerSearchMode = isSearchMode => ({
 	type: TRIGGER_SEARCH_MODE,
@@ -101,6 +104,7 @@ export {
 	dismissError,
 	toggleModal,
 	toggleNavbar,
+	toggleSelectMode,
 	toggleTagSelector,
 	toggleTouchTagSelector,
 	toggleTransitions,

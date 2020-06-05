@@ -7,7 +7,7 @@ import ItemsTableToolbar from './items/toolbar';
 import ItemsTable from './items/table';
 import ItemsList from './items/list';
 import TouchHeaderContainer from '../../container/touch-header';
-import TouchFooterContainer from '../../container/touch-footer';
+import TouchFooter from '../../component/touch-footer';
 import { useSourceData } from '../../hooks';
 
 const Items = memo(({ isSearchModeTransitioning }) => {
@@ -24,7 +24,7 @@ const Items = memo(({ isSearchModeTransitioning }) => {
 							variant={ TouchHeaderContainer.variants.SOURCE }
 						/>
 						<ItemsList isSearchModeTransitioning={ isSearchModeTransitioning } />
-						<TouchFooterContainer />
+						<TouchFooter />
 				</React.Fragment> :
 				<React.Fragment>
 					<ItemsTableToolbar />

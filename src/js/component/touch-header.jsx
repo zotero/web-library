@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import Button from './ui/button';
 import CollectionActions from './touch-header/collection-actions';
 import EditToggleButton from './edit-toggle-button';
-import ItemsActionsContainer from '../container/items-actions';
+import ItemsActions from './item/actions';
 import Searchbar from './touch-header/searchbar';
 import TouchNavigation from './touch-header/touch-navigation';
 import { pick } from '../common/immutable';
@@ -69,7 +69,7 @@ class TouchHeader extends React.PureComponent {
 						shouldIncludeItemListOptions && (
 							<div className="toolbar-right">
 								<ToolGroup>
-									<ItemsActionsContainer />
+									<ItemsActions />
 								</ToolGroup>
 							</div>
 						)

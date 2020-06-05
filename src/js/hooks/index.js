@@ -5,3 +5,4 @@ export * from './use-force-update';
 export * from './use-meta-state';
 export * from './use-navigation-state';
 export * from './state';
+export * from './use-item-action-handlers';

@@ -1,48 +1,43 @@
 import PropTypes from 'prop-types';
-import React, { useCallback, useRef, useState } from 'react';
+import React, { memo, useCallback, useRef, useState } from 'react';
 import { Popover, PopoverHeader, PopoverBody } from 'reactstrap';
 import { useDispatch, useSelector } from 'react-redux';
 
 import Button from '../../ui/button';
 import Icon from '../../ui/icon';
 import Input from '../../form/input';
-import withDevice from '../../../enhancers/with-device';
 import { createItem, searchIdentifier, navigate, resetIdentifier } from '../../../actions';
 import { getUniqueId } from '../../../utils';
 
 const AddByIdentifier = props => {
-	const { device, onAddByIdentifierModalOpen, onKeyDown } = props;
+	const { onKeyDown } = props;
+	const dispatch = useDispatch();
+	const collectionKey = useSelector(state => state.current.collectionKey);
+	const itemsSource = useSelector(state => state.current.itemsSource);
+	const libraryKey = useSelector(state => state.current.libraryKey);
+
 	const [isOpen, setIsOpen] = useState(false);
 	const [isBusy, setIsBusy] = useState(false);
 	const [identifier, setIdentifier] = useState('');
+
 	const inputEl = useRef(null);
 	const id = useRef(getUniqueId());
-	const dispatch = useDispatch();
-	const { collectionKey, itemsSource, libraryKey } = useSelector(state => state.current);
 
-	const handleClick = useCallback(ev => {
-		if(device.isTouchOrSmall) {
-			onAddByIdentifierModalOpen(ev);
-		} else {
-			setIsOpen(!isOpen);
-		}
-	});
+	const handleClick = useCallback(() => {
+		setIsOpen(!isOpen);
+	}, [isOpen]);
 
 	const handleInputChange = useCallback(newIdentifier => {
 		setIdentifier(newIdentifier);
-	});
+	}, []);
 
-	const handleInputCommit = useCallback(newIdentifier => {
-		addItem(newIdentifier);
-	});
-
-	const handleInputBlur = useCallback(() => true);
+	const handleInputBlur = useCallback(() => true, []);
 
 	const toggleOpen = useCallback(() => {
 		setIdentifier('');
 		dispatch(resetIdentifier());
 		setIsOpen(!isOpen);
-	});
+	}, [dispatch, isOpen]);
 
 	const addItem = useCallback(async itemIdentifier => {
 		if(itemIdentifier) {
@@ -60,7 +55,7 @@ const AddByIdentifier = props => {
 					library: libraryKey,
 					collection: collectionKey,
 					items: [item.key],
-					view: 'item-list'
+					view: 'item-details'
 				}, true));
 			} catch(_) {
 				setIsBusy(false);
@@ -69,7 +64,11 @@ const AddByIdentifier = props => {
 				return;
 			}
 		}
-	});
+	}, [collectionKey, dispatch, itemsSource, libraryKey]);
+
+	const handleInputCommit = useCallback(newIdentifier => {
+		addItem(newIdentifier);
+	}, [addItem]);
 
 	return (
 		<React.Fragment>
@@ -118,10 +117,7 @@ const AddByIdentifier = props => {
 }
 
 AddByIdentifier.propTypes = {
-	device: PropTypes.object,
-	onAddByIdentifierModalOpen: PropTypes.func,
 	onKeyDown: PropTypes.func,
 }
 
-
-export default withDevice(AddByIdentifier);
+export default memo(AddByIdentifier);

@@ -1162,6 +1162,19 @@ const createLinkedUrlAttachments = (linkedUrlItems, { collection = null, parentI
 	}
 }
 
+const createItemOfType = (itemType, { collection = null } = {}) => {
+	return async (dispatch, getState) => {
+		const state = getState();
+		const { libraryKey } = state.current;
+		const template = await dispatch(fetchItemTemplate(itemType));
+		const newItem = {
+			...template,
+			collections: collection ? [collection] : [],
+		};
+		return await dispatch(createItem(newItem, libraryKey));
+	}
+}
+
 export {
 	addToCollection,
 	chunkedAddToCollection,
@@ -1176,6 +1189,7 @@ export {
 	createAttachmentsFromDropped,
 	createItem,
 	createItems,
+	createItemOfType,
 	createLinkedUrlAttachments,
 	deleteItem,
 	deleteItems,

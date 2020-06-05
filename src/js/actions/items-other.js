@@ -18,6 +18,15 @@ const updateItemsSorting = (sortBy, sortDirection) => {
 	}
 };
 
+const toggleItemsSortingDirection = () => {
+	return (dispatch, getState) => {
+		const { columns } = getState().preferences;
+		const sortColumn = columns.find(c => c.sort);
+		return dispatch(updateItemsSorting(sortColumn.field, sortColumn.sort === 'desc' ? 'asc' : 'desc'));
+	}
+}
+
 export {
-	updateItemsSorting
+	toggleItemsSortingDirection,
+	updateItemsSorting,
 }

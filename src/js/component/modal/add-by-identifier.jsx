@@ -55,7 +55,7 @@ const AddByIdentifierModal = () => {
 				library: libraryKey,
 				collection: collectionKey,
 				items: [item.key],
-				view: 'item-list'
+				view: 'item-details'
 			}, true))
 		} catch(_) {
 			setIsBusy(false);
