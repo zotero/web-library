@@ -1,15 +1,15 @@
-import { useEffect, useCallback, useRef, useState } from 'react';
+import { useCallback, useMemo, useRef } from 'react';
 
 const isModifierKey = ev => ev.getModifierState("Meta") || ev.getModifierState("Alt") ||
 		ev.getModifierState("Control") || ev.getModifierState("OS");
 
 
-const useFocusManager = (ref, { overrideFocusRef = null, initialFocusPickerRef = {}, isCarousel = true, isDrillDownCarousel = false } = {}) => {
-	const [isFocused, setIsFocused] = useState(false);
+const useFocusManager = (ref, initialQuerySelector = null, isCarousel = true, isDrillDownCarousel = false) => {
+	const isFocused = useRef(false);
 	const lastFocused = useRef(null);
 	const originalTabIndex = useRef(null);
 
-	const handleNext = useCallback((ev, { useCurrentTarget = true, targetEnd = null, offset = 1 } = {}) => {
+	const focusNext = useCallback((ev, { useCurrentTarget = true, targetEnd = null, offset = 1 } = {}) => {
 		const tabbables = Array.from(
 			ref.current.querySelectorAll('[tabIndex="-2"]:not([disabled]):not(.offscreen)')
 		).filter(t => t.offsetParent);
@@ -36,9 +36,9 @@ const useFocusManager = (ref, { overrideFocusRef = null, initialFocusPickerRef =
 			tabbables[tabbables.length - 1].focus();
 			lastFocused.current = tabbables[tabbables.length - 1];
 		}
-	}, [isCarousel]);
+	}, [ref, isCarousel]);
 
-	const handlePrevious = useCallback((ev, { useCurrentTarget = true, targetEnd = null, offset = 1 } = {}) => {
+	const focusPrev = useCallback((ev, { useCurrentTarget = true, targetEnd = null, offset = 1 } = {}) => {
 		const tabbables = Array.from(
 			ref.current.querySelectorAll('[tabIndex="-2"]:not([disabled]):not(.offscreen)')
 		).filter(t => t.offsetParent);
@@ -65,9 +65,9 @@ const useFocusManager = (ref, { overrideFocusRef = null, initialFocusPickerRef =
 			tabbables[0].focus();
 			lastFocused.current = tabbables[0];
 		}
-	}, [isCarousel]);
+	}, [ref, isCarousel]);
 
-	const handleDrillDownNext = useCallback((ev, offset = 1) => {
+	const focusDrillDownNext = useCallback((ev, offset = 1) => {
 		const drillables = Array.from(
 			ev.currentTarget.querySelectorAll('[tabIndex="-3"]:not([disabled])')
 		).filter(t => t.offsetParent);
@@ -86,7 +86,7 @@ const useFocusManager = (ref, { overrideFocusRef = null, initialFocusPickerRef =
 		}
 	}, [isDrillDownCarousel]);
 
-	const handleDrillDownPrev = useCallback((ev, offset = 1) => {
+	const focusDrillDownPrev = useCallback((ev, offset = 1) => {
 		const drillables = Array.from(
 			ev.currentTarget.querySelectorAll('[tabIndex="-3"]:not([disabled])')
 		).filter(t => t.offsetParent);
@@ -105,32 +105,34 @@ const useFocusManager = (ref, { overrideFocusRef = null, initialFocusPickerRef =
 		}
 	}, [isDrillDownCarousel]);
 
-	const handleBySelector = useCallback(selector => {
+	const focusBySelector = useCallback(selector => {
 		const nextEl = ref.current.querySelector(selector);
 
 		if(nextEl) {
 			lastFocused.current = nextEl;
 			nextEl.focus();
 		}
-	}, []);
+	}, [ref]);
 
-	const focusOnLast  = useCallback(() => {
-		if(lastFocused.current) {
-			lastFocused.current.focus();
-		}
-	}, []);
+	// const focusOnLast  = useCallback(() => {
+	// 	if(lastFocused.current) {
+	// 		lastFocused.current.focus();
+	// 	}
+	// }, []);
 
 	const resetLastFocused = useCallback(() => {
 		lastFocused.current = null;
 	}, []);
 
-	const handleFocus = useCallback((ev, isBounced = false) => {
-		if(isFocused) {
+	const receiveFocus = useCallback((ev, isBounced = false) => {
+		// if(isFocused) {
+		if(isFocused.current) {
 			return false;
 		}
 
 		if(ref.current === null && !isBounced) {
-			setTimeout(() => handleFocus(ev, true));
+			ev.persist();
+			setTimeout(() => receiveFocus(ev, true));
 			return;
 		}
 
@@ -144,14 +146,22 @@ const useFocusManager = (ref, { overrideFocusRef = null, initialFocusPickerRef =
 			originalTabIndex.current = originalTabIndex.current === null ? ref.current.tabIndex : originalTabIndex.current;
 		}
 
-		setIsFocused(true);
+		isFocused.current = true;
 		ref.current.tabIndex = -1;
 
-
-		if(initialFocusPickerRef.current) {
-			const selectedCandidate = initialFocusPickerRef.current(ev);
-			if(selectedCandidate) {
-				selectedCandidate.focus();
+		if(lastFocused.current === null && initialQuerySelector !== null) {
+			if(typeof(initialQuerySelector) === 'object' && initialQuerySelector.current && 'focus' in initialQuerySelector.current) {
+				// pased as a ref
+				lastFocused.current = initialQuerySelector.current;
+			} else if(typeof(initialQuerySelector) === 'string') {
+				//passed as a string
+				const candidate = ref.current.querySelector(initialQuerySelector);
+				if(candidate) {
+					lastFocused.current = ref.current.querySelector(initialQuerySelector);
+				}
+			}
+			if(lastFocused.current) {
+				lastFocused.current.focus();
 				return true;
 			}
 		}
@@ -159,26 +169,27 @@ const useFocusManager = (ref, { overrideFocusRef = null, initialFocusPickerRef =
 		const candidates = Array.from(ref.current.querySelectorAll('[tabIndex="-2"]:not([disabled])'));
 		if(lastFocused.current !== null && candidates.includes(lastFocused.current)) {
 			lastFocused.current.focus();
+			return true;
 		} else if(ev.target !== ev.currentTarget && candidates.includes(ev.target)) {
 			// keep the focus on the candidate pressed
-			return false;
+			return true;
 		} else if(ev.target === ev.currentTarget && candidates.length > 0) {
 			candidates[0].focus();
 			return true;
 		}
-	}, [isFocused]);
+	}, [ref, initialQuerySelector]);
 
-	const handleBlur = useCallback(ev => {
+	const receiveBlur = useCallback(ev => {
 		if(ev.relatedTarget &&
 			(ev.relatedTarget === ref.current || (
 			!ev.relatedTarget.dataFocusRoot && ev.relatedTarget.closest('[data-focus-root]') === ref.current))
 		) {
 			return false;
 		}
-		setIsFocused(false);
+		isFocused.current = false;
 		ev.currentTarget.tabIndex = originalTabIndex.current;
 		return true;
-	}, []);
+	}, [ref]);
 
 	const registerAutoFocus = useCallback(ref => {
 		if(ref === null) {
@@ -190,25 +201,12 @@ const useFocusManager = (ref, { overrideFocusRef = null, initialFocusPickerRef =
 		}
 	}, []);
 
-	useEffect(() => {
-		if(overrideFocusRef !== null) {
-			lastFocused.current = overrideFocusRef.current;
-		}
-	}, [overrideFocusRef && overrideFocusRef.current])
+	const focusManagerFunctions = useMemo(() => (
+		{ receiveFocus, receiveBlur, focusNext, focusPrev, focusBySelector, focusDrillDownNext, focusDrillDownPrev, resetLastFocused, registerAutoFocus }),
+		[receiveFocus, receiveBlur, focusNext, focusPrev, focusBySelector, focusDrillDownNext, focusDrillDownPrev, resetLastFocused, registerAutoFocus]
+	);
 
-	//@TODO: migrate to new function names
-
-	const focusNext = handleNext;
-	const focusPrev = handlePrevious;
-	const focusDrillDownNext = handleDrillDownNext;
-	const focusDrillDownPrev = handleDrillDownPrev;
-	const focusBySelector = handleBySelector;
-	const receiveFocus = handleFocus;
-	const receiveBlur = handleBlur;
-
-	return { focusNext, focusPrev, focusDrillDownNext, focusDrillDownPrev, focusBySelector,
-		handleNext, handlePrevious, handleDrillDownNext, handleDrillDownPrev, handleFocus, handleBlur,
-		handleBySelector, focusOnLast, receiveFocus, receiveBlur, registerAutoFocus, resetLastFocused };
+	return focusManagerFunctions;
 };
 
 export { useFocusManager };

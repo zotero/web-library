@@ -81,8 +81,8 @@ RelatedItem.propTypes = {
 const Related = ({ device, fetchRelatedItems, itemKey, isFetched, isFetching, relatedItems, ...props }) => {
 	const [sortedRelatedItems, setSortedRelatedItems] = useState([]);
 	const scrollContainerRef = useRef(null);
-	const { handleBlur, handleDrillDownPrev, handleDrillDownNext, handleFocus, handleNext,
-		handlePrevious } = useFocusManager(scrollContainerRef, { isCarousel: false });
+	const { receiveBlur, focusDrillDownPrev, focusDrillDownNext, receiveFocus, focusNext,
+		focusPrev } = useFocusManager(scrollContainerRef, null, false);
 
 	useEffect(() => {
 		if(!isFetching && !isFetched) {
@@ -98,28 +98,28 @@ const Related = ({ device, fetchRelatedItems, itemKey, isFetched, isFetching, re
 
 	const handleKeyDown = useCallback(ev => {
 		if(ev.key === "ArrowLeft") {
-			handleDrillDownPrev(ev);
+			focusDrillDownPrev(ev);
 		} else if(ev.key === "ArrowRight") {
-			handleDrillDownNext(ev);
+			focusDrillDownNext(ev);
 		} else if(ev.key === 'ArrowDown') {
-			ev.target === ev.currentTarget && handleNext(ev);
+			ev.target === ev.currentTarget && focusNext(ev);
 		} else if(ev.key === 'ArrowUp') {
-			ev.target === ev.currentTarget && handlePrevious(ev);
+			ev.target === ev.currentTarget && focusPrev(ev);
 		} else if(ev.key === 'Home' && scrollContainerRef.current) {
-			handlePrevious(ev, { offset: Infinity });
+			focusPrev(ev, { offset: Infinity });
 			ev.preventDefault();
 		} else if(ev.key === 'End' && scrollContainerRef.current) {
-			handleNext(ev, { offset: Infinity });
+			focusNext(ev, { offset: Infinity });
 			ev.preventDefault();
 		} else if(ev.key === 'PageDown' && scrollContainerRef.current) {
 			const containerEl = scrollContainerRef.current;
 			const itemEl = containerEl.querySelector('.related');
-			handleNext(ev, { offset: getScrollContainerPageCount(itemEl, containerEl) });
+			focusNext(ev, { offset: getScrollContainerPageCount(itemEl, containerEl) });
 			ev.preventDefault();
 		} else if(ev.key === 'PageUp' && scrollContainerRef.current) {
 			const containerEl = scrollContainerRef.current;
 			const itemEl = containerEl.querySelector('.related');
-			handlePrevious(ev, { offset: getScrollContainerPageCount(itemEl, containerEl) });
+			focusPrev(ev, { offset: getScrollContainerPageCount(itemEl, containerEl) });
 			ev.preventDefault();
 		} else if(isTriggerEvent(ev)) {
 			ev.target.querySelector('a').click();
@@ -132,8 +132,8 @@ const Related = ({ device, fetchRelatedItems, itemKey, isFetched, isFetching, re
 			<h5 className="h2 tab-pane-heading hidden-mouse">Related</h5>
 			<div
 				className="scroll-container-mouse"
-				onBlur={ handleBlur }
-				onFocus={ handleFocus }
+				onBlur={ receiveBlur }
+				onFocus={ receiveFocus }
 				ref={ scrollContainerRef }
 				tabIndex={ 0 }
 			>

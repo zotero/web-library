@@ -247,9 +247,9 @@ const Attachments = props => {
 	const dispatch = useDispatch();
 	const scrollContainerRef = useRef(null);
 	const selectedAttachmentRef = useRef(null);
-	const { handleNext, handlePrevious, handleDrillDownNext, handleDrillDownPrev, handleFocus,
-		handleBlur, handleBySelector } = useFocusManager(
-			scrollContainerRef, { overrideFocusRef: selectedAttachmentRef, isCarousel: false }
+	const { focusNext, focusPrev, focusDrillDownNext, focusDrillDownPrev, receiveFocus,
+		receiveBlur, focusBySelector } = useFocusManager(
+			scrollContainerRef, selectedAttachmentRef, false
 		);
 
 	const fileInput = useRef(null);
@@ -316,40 +316,40 @@ const Attachments = props => {
 
 	const handleKeyDown = useCallback(ev => {
 		if(ev.key === "ArrowLeft") {
-			handleDrillDownPrev(ev);
+			focusDrillDownPrev(ev);
 		} else if(ev.key === "ArrowRight") {
-			handleDrillDownNext(ev);
+			focusDrillDownNext(ev);
 		} else if(ev.key === 'ArrowDown') {
-			ev.target === ev.currentTarget && handleNext(ev);
+			ev.target === ev.currentTarget && focusNext(ev);
 		} else if(ev.key === 'ArrowUp') {
-			ev.target === ev.currentTarget && handlePrevious(ev, { targetEnd: fileInput.current });
+			ev.target === ev.currentTarget && focusPrev(ev, { targetEnd: fileInput.current });
 		} else if(ev.key === 'Home') {
 			fileInput.current.focus();
 			ev.preventDefault();
 		} else if(ev.key === 'End') {
-			handleBySelector('.attachment:last-child');
+			focusBySelector('.attachment:last-child');
 			ev.preventDefault();
 		} else if(ev.key === 'PageDown' && scrollContainerRef.current) {
 			const containerEl = scrollContainerRef.current;
 			const itemEl = containerEl.querySelector('.attachment');
-			handleNext(ev, { offset: getScrollContainerPageCount(itemEl, containerEl) });
+			focusNext(ev, { offset: getScrollContainerPageCount(itemEl, containerEl) });
 			ev.preventDefault();
 		} else if(ev.key === 'PageUp' && scrollContainerRef.current) {
 			const containerEl = scrollContainerRef.current;
 			const itemEl = containerEl.querySelector('.attachment');
-			handlePrevious(ev, { offset: getScrollContainerPageCount(itemEl, containerEl) });
+			focusPrev(ev, { offset: getScrollContainerPageCount(itemEl, containerEl) });
 			ev.preventDefault();
 		} else if(ev.key === 'Tab') {
 			const isFileInput = ev.currentTarget === fileInput.current;
 			const isShift = ev.getModifierState('Shift');
 			if(isFileInput && !isShift) {
-				ev.target === ev.currentTarget && handleNext(ev);
+				ev.target === ev.currentTarget && focusNext(ev);
 			}
 		} else if(isTriggerEvent(ev)) {
 			ev.target.click();
 			ev.preventDefault();
 		}
-	}, [handleBySelector, handleNext, handleDrillDownNext, handleDrillDownPrev, handlePrevious]);
+	}, [focusBySelector, focusNext, focusDrillDownNext, focusDrillDownPrev, focusPrev]);
 
 	const handleFileInputKeyDown = useCallback(ev => {
 		if(ev.key === 'ArrowLeft' || ev.key === 'ArrowRight') {
@@ -360,10 +360,10 @@ const Attachments = props => {
 			scrollContainerRef.current.focus();
 			ev.preventDefault();
 		} else if(ev.key === 'End') {
-			handleBySelector('.attachment:last-child');
+			focusBySelector('.attachment:last-child');
 			ev.preventDefault();
 		}
-	}, [handleBySelector]);
+	}, [focusBySelector]);
 
 	const handleAddLinkedUrlTouchClick = useCallback(ev => {
 		dispatch(toggleModal(ADD_LINKED_URL_TOUCH, true));
@@ -440,8 +440,8 @@ const Attachments = props => {
 			<div
 				aria-label="attachments list"
 				className="scroll-container-mouse"
-				onBlur={ handleBlur }
-				onFocus={ handleFocus }
+				onBlur={ receiveBlur }
+				onFocus={ receiveFocus }
 				ref={ scrollContainerRef }
 				role="list"
 				tabIndex={ 0 }

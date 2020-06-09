@@ -1,6 +1,7 @@
 import { omit } from '../common/immutable';
-import { exportItems, chunkedDeleteItems, chunkedMoveToTrash, chunkedRecoverFromTrash,
-chunkedRemoveFromCollection, createItem, createItemOfType, toggleModal } from '.';
+import { exportItems, chunkedTrashOrDelete, chunkedDeleteItems, chunkedMoveToTrash,
+chunkedRecoverFromTrash, chunkedRemoveFromCollection, createItem, createItemOfType, toggleModal }
+from '.';
 import { BIBLIOGRAPHY, COLLECTION_SELECT, EXPORT, NEW_FILE, NEW_ITEM } from '../constants/modals';
 
 const currentDuplicateItem = () => {
@@ -77,6 +78,14 @@ const currentRecoverTrashItems = () => {
 	}
 }
 
+const currentTrashOrDelete = () => {
+	return async (dispatch, getState) => {
+		const state = getState();
+		const { itemKeys } = state.current;
+		return await dispatch(chunkedTrashOrDelete(itemKeys));
+	}
+}
+
 const currentDeleteItems = () => {
 	return async (dispatch, getState) => {
 		const state = getState();
@@ -114,4 +123,5 @@ export {
 	currentRecoverTrashItems,
 	currentRemoveItemFromCollection,
 	currentTrashItems,
+	currentTrashOrDelete,
 }

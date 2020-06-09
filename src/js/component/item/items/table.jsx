@@ -12,11 +12,12 @@ import HeaderRow from './table-header-row';
 import Spinner from '../../ui/spinner';
 import TableBody from './table-body';
 import TableRow from './table-row';
-import { applyChangesToVisibleColumns, clamp, resizeVisibleColumns } from '../../../utils';
+import { applyChangesToVisibleColumns, resizeVisibleColumns } from '../../../utils';
 import { ATTACHMENT } from '../../../constants/dnd';
-import { chunkedTrashOrDelete, createAttachmentsFromDropped, fetchSource, navigate,
-	preferenceChange, triggerFocus } from '../../../actions';
-import { useFocusManager, useSourceData } from '../../../hooks';
+import { currentTrashOrDelete, createAttachmentsFromDropped, fetchSource, navigate,
+selectItems,selectFirstItem, selectLastItem, preferenceChange, triggerFocus, } from
+'../../../actions';
+import { useFocusManager, usePrevious, useSourceData } from '../../../hooks';
 
 const ROWHEIGHT = 26;
 
@@ -26,7 +27,51 @@ const getColumnCssVars = (columns, width, scrollbarWidth) =>
 		i === columns.length - 1 ? `${c.fraction * width - scrollbarWidth}px` : `${c.fraction * width}px`
 	]));
 
-const Table = memo(() => {
+// @NOTE: TableFocus and TableScroll are two effect-only components that have been extracted from Table
+// 		  to avoid re-rendering the entire Table whenever selectedItemKeys/isItemsTableFocused changes.
+const TableFocus = memo(({ focusBySelector, resetLastFocused }) => {
+	const dispatch = useDispatch();
+	const selectedItemKeysLength = useSelector(state => state.current.itemKeys.length);
+	const isItemsTableFocused = useSelector(state => state.current.isItemsTableFocused);
+	const wasItemsTableFocused = usePrevious(isItemsTableFocused);
+
+	useEffect(() => {
+		if(!wasItemsTableFocused && isItemsTableFocused && selectedItemKeysLength === 0) {
+			(async () => {
+				const index = await dispatch(selectFirstItem(true));
+				if(index !== null) {
+					focusBySelector('[data-index="0"]');
+				}
+			})();
+		}
+		if(wasItemsTableFocused && !isItemsTableFocused) {
+			resetLastFocused();
+		}
+	}, [dispatch, focusBySelector, isItemsTableFocused, selectedItemKeysLength, resetLastFocused, wasItemsTableFocused]);
+
+	return null;
+});
+
+TableFocus.displayName = "TableFocus";
+
+const TableScroll = memo(({ listRef }) => {
+	const selectedItemKeys = useSelector(state => state.current.itemKeys);
+	const { keys } = useSourceData();
+	const previousSelectedItemKeys = usePrevious(selectedItemKeys);
+	const isItemsTableFocused = useSelector(state => state.current.isItemsTableFocused);
+
+	useEffect(() => {
+		if(listRef.current && selectedItemKeys.length > 0 && !shallowEqual(selectedItemKeys, previousSelectedItemKeys)) {
+			const itemKey = selectedItemKeys[selectedItemKeys.length - 1];
+			const itemKeyIndex = keys.findIndex(k => k === itemKey);
+			listRef.current.scrollToItem(itemKeyIndex);
+		}
+	}, [selectedItemKeys, isItemsTableFocused, keys, listRef, previousSelectedItemKeys]);
+});
+
+TableScroll.displayName = "TableScroll";
+
+const Table = () => {
 	const containerDom = useRef(null);
 	const headerRef = useRef(null);
 	const tableRef = useRef(null);
@@ -41,7 +86,7 @@ const Table = memo(() => {
 	const [isReordering, setIsReordering] = useState(false);
 	const [reorderTarget, setReorderTarget] = useState(null);
 	const [isHoveringBetweenRows, setIsHoveringBetweenRows] = useState(false);
-	const { hasChecked, isFetching, keys, requests, totalResults } = useSourceData();
+	const { isFetching, keys, hasChecked, totalResults, requests } = useSourceData();
 	const collectionKey = useSelector(state => state.current.collectionKey);
 	const libraryKey = useSelector(state => state.current.libraryKey);
 	const isFileUploadAllowed = useSelector(
@@ -50,7 +95,6 @@ const Table = memo(() => {
 		) || {}).isFileUploadAllowed
 	);
 	const columnsData = useSelector(state => state.preferences.columns, shallowEqual);
-	const selectedItemKeys = useSelector(state => state.current.itemKeys, shallowEqual);
 	const isMyLibrary = useSelector(state =>
 		(state.config.libraries.find(l => l.key === state.current.libraryKey) || {}).isMyLibrary
 	);
@@ -75,40 +119,8 @@ const Table = memo(() => {
 		[columnsData]
 	);
 
-	// focusOnSelected is used to pick which rows should focused on when table receives focus
-	// we also use it to auto-select first item if none is selected
-	// it needs to be passed to focus manager as a ref, otherwise it will use outdated closure
-	const focusOnSelected = useCallback(() => {
-		if(tableRef.current) {
-			const cursorEl = tableRef.current.querySelector('[aria-selected="true"]');
-			if(cursorEl) {
-				return cursorEl;
-			} else {
-				if(selectedItemKeys && keys && selectedItemKeys.length === 0 && keys.length > 0) {
-					// auto-select first key
-					dispatch(navigate({ items: [keys[0]] }));
-					const cursorEl = tableRef.current.querySelector(`[data-index="0"]`);
-					if(cursorEl) {
-						return cursorEl;
-					}
-				} else {
-					return tableRef.current;
-				}
-			}
-		} else {
-			return null;
-		}
-	}, [keys, selectedItemKeys, tableRef]);
-
-	const initialFocusPickerRef = useRef(focusOnSelected);
-
-	useEffect(() => {
-		initialFocusPickerRef.current = focusOnSelected;
-	}, [focusOnSelected]);
-
-	const { handleFocus, handleBlur, handleBySelector, handleDrillDownNext, handleDrillDownPrev } = useFocusManager(tableRef,
-		{ isCarousel: false, isDrillDownCarousel: true, initialFocusPickerRef }
-	);
+	const { receiveFocus, receiveBlur, focusBySelector, focusDrillDownNext,
+		focusDrillDownPrev, resetLastFocused } = useFocusManager(tableRef, '[aria-selected="true"], [data-index="0"]');
 
 	const dispatch = useDispatch();
 
@@ -141,11 +153,11 @@ const Table = memo(() => {
 			return true; // loaded
 		}
 		return requests.some(r => index >= r[0] && index < r[1]); // loading
-	});
+	}, [keys, requests]);
 
 	const handleLoadMore = useCallback((startIndex, stopIndex) => {
 		dispatch(fetchSource(startIndex, stopIndex))
-	});
+	}, [dispatch]);
 
 	const handleResize = useCallback(ev => {
 		const columnDom = ev.target.closest(['[data-colindex]']);
@@ -153,7 +165,7 @@ const Table = memo(() => {
 		const { width } = containerDom.current.getBoundingClientRect();
 		setIsResizing(true);
 		resizing.current = { origin: ev.clientX, index, width };
-	});
+	}, []);
 
 	const handleReorder = useCallback(ev => {
 		const columnDom = ev.target.closest(['[data-colindex]']);
@@ -161,7 +173,7 @@ const Table = memo(() => {
 		const { left, width } = containerDom.current.getBoundingClientRect();
 		setIsReordering(true);
 		reordering.current = { index, left, width };
-	});
+	}, []);
 
 	const handleMouseMove = useCallback(ev => {
 		if(resizing.current !== null) {
@@ -213,19 +225,22 @@ const Table = memo(() => {
 
 			if(targetIndex === index) {
 				setReorderTarget(null);
+				reordering.current.targetIndex = null;
 			} else {
+				reordering.current.targetIndex = targetIndex;
 				setReorderTarget({ index: targetIndex , isMovingRight, isMovingLeft });
 			}
 		}
-	});
+	}, [columns, scrollbarWidth]);
+
 	const handleMouseUp = useCallback(ev => {
-		if(isResizing) {
+		if(resizing.current !== null) {
 			ev.preventDefault();
 			const newColumns = columnsData.map(c => ({ ...c }));
 			dispatch(preferenceChange('columns', applyChangesToVisibleColumns(resizing.current.newColumns, newColumns)));
-		} else if(isReordering && reorderTarget && typeof(reorderTarget.index) === 'number' && reordering.current && typeof(reordering.current.index) === 'number') {
+		} else if(reordering.current !== null && reordering.current && typeof(reordering.current.targetIndex) === 'number' && typeof(reordering.current.index) === 'number') {
 			const fieldFrom = columns[reordering.current.index].field;
-			const fieldTo = columns[reorderTarget.index].field;
+			const fieldTo = columns[reordering.current.targetIndex].field;
 			const indexFrom = columnsData.findIndex(c => c.field === fieldFrom);
 			const indexTo = columnsData.findIndex(c => c.field === fieldTo);
 
@@ -240,7 +255,7 @@ const Table = memo(() => {
 		reordering.current = null;
 
 		mouseUpTimeout.current = setTimeout(() => { setIsResizing(false); setIsReordering(false); setReorderTarget(null) });
-	});
+	}, [columns, columnsData, dispatch]);
 
 	const handleMouseLeave = useCallback(() => {
 		setIsReordering(false);
@@ -248,30 +263,26 @@ const Table = memo(() => {
 		setReorderTarget(null);
 		resizing.current = null;
 		reordering.current = null;
-	});
+	}, []);
 
 	const handleFileHoverOnRow = useCallback((isOverRow, dropZone) => {
 		setIsHoveringBetweenRows(isOverRow && dropZone !== null);
-	});
+	}, []);
 
-	const handleKeyDown = useCallback(ev => {
+	const handleKeyDown = useCallback(async ev => {
 		var direction, magnitude = 1;
 		if(ev.key === 'ArrowUp') {
 			direction = -1;
 		} else if(ev.key === 'ArrowDown') {
 			direction = 1;
 		} else if(ev.key === 'Backspace') {
-			dispatch(chunkedTrashOrDelete(selectedItemKeys));
+			dispatch(currentTrashOrDelete());
 			dispatch(navigate({ items: [] }));
 			return;
-		} else if(ev.key === 'Home' && keys) {
-			if(keys[0]) {
-				dispatch(navigate({ items: [keys[0]] }));
-			}
+		} else if(ev.key === 'Home') {
+			dispatch(selectFirstItem());
 		} else if(ev.key === 'End') {
-			if(keys[keys.length - 1]) {
-				dispatch(navigate({ items: [keys[keys.length - 1]] }));
-			}
+			dispatch(selectLastItem());
 		} else if(ev.key === 'PageUp' && outerRef.current) {
 			direction = -1;
 			magnitude = Math.floor(outerRef.current.getBoundingClientRect().height / ROWHEIGHT)
@@ -290,98 +301,34 @@ const Table = memo(() => {
 
 		ev.preventDefault();
 
-		const vector = direction * magnitude;
-		const lastItemKey = selectedItemKeys[selectedItemKeys.length - 1];
-		const index = keys.findIndex(key => key && key === lastItemKey);
+		const cursorIndex = await dispatch(selectItems(direction, magnitude, ev.getModifierState('Shift')));
 
-		var nextKeys;
-		var cursorIndex;
-
-		if(direction === -1 && magnitude === 1 && index + vector < 0 && !ev.getModifierState('Shift')) {
-			nextKeys = [];
-			cursorIndex = -1;
-		} else {
-			const nextIndex = clamp(index + vector, 0, keys.length -1);
-			cursorIndex = nextIndex;
-			if(ev.getModifierState('Shift')) {
-				let counter = 1;
-				let alreadySelectedCounter = 0;
-				let newKeys = [];
-
-				while(index + counter * direction !== nextIndex + direction) {
-					const nextKey = keys[index + counter * direction];
-					newKeys.push(nextKey);
-					if(selectedItemKeys.includes(nextKey)) {
-						alreadySelectedCounter++;
-					}
-					counter++;
-				}
-
-				const shouldUnselect = alreadySelectedCounter === magnitude;
-
-				if(shouldUnselect) {
-					nextKeys = selectedItemKeys.filter(k => k === keys[nextIndex] || (!newKeys.includes(k) && k !== keys[index]));
-				} else {
-					var invertedDirection = direction * -1;
-					var consecutiveSelectedItemKeys = [];
-					var reverseCounter = 0;
-					var boundry = invertedDirection > 0 ? keys.length - 1 : 0;
-
-					while(index + reverseCounter * invertedDirection !== boundry) {
-						const nextKey = keys[index + reverseCounter * invertedDirection];
-						if(selectedItemKeys.includes(nextKey)) {
-							consecutiveSelectedItemKeys.push(nextKey);
-							reverseCounter++;
-						} else {
-							break;
-						}
-					}
-					consecutiveSelectedItemKeys.reverse();
-					nextKeys = [...consecutiveSelectedItemKeys, ...newKeys];
-				}
-
-				if(nextKeys.length === 0) {
-					nextKeys = [keys[nextIndex]];
-				}
-			} else {
-				nextKeys = [keys[nextIndex]];
-				cursorIndex = nextIndex;
-			}
-		}
-
-		if(typeof nextKeys === 'undefined') {
-			return;
-		}
-
-		dispatch(navigate({ items: nextKeys }));
 		if(cursorIndex === -1) {
-			handleBySelector('.items-table-head');
+			focusBySelector('.items-table-head');
 		} else {
-			handleBySelector(`[data-index="${cursorIndex}"]`);
+			focusBySelector(`[data-index="${cursorIndex}"]`);
 		}
-	});
+	}, [dispatch, focusBySelector]);
 
 	const handleTableFocus = useCallback(ev => {
-		const hasChangedFocused = handleFocus(ev);
+		const hasChangedFocused = receiveFocus(ev);
 		if(hasChangedFocused) {
 			dispatch(triggerFocus('items-table', true));
 		}
-
-	});
+	}, [dispatch, receiveFocus]);
 
 	const handleTableBlur = useCallback(ev => {
-		const hasChangedFocused = handleBlur(ev);
+		const hasChangedFocused = receiveBlur(ev);
 		if(hasChangedFocused) {
 			dispatch(triggerFocus('items-table', false));
 		}
-
-	});
+	}, [dispatch, receiveBlur]);
 
 	useEffect(() => {
 		if(!hasChecked && !isFetching) {
 			dispatch(fetchSource(0, 50));
 		}
-	}, [hasChecked]);
+	}, [dispatch, isFetching, hasChecked]);
 
 	useEffect(() => {
 		return () => {
@@ -390,7 +337,7 @@ const Table = memo(() => {
 			}
 			dispatch(triggerFocus('items-table', false));
 		}
-	}, []);
+	}, [dispatch]);
 
 	useEffect(() => {
 		if(loader.current) {
@@ -399,26 +346,25 @@ const Table = memo(() => {
 	}, [sortBy, sortDirection, totalResults]);
 
 	useEffect(() => {
-		// register global mouse events so that dragging outside of table doesn't break resizing/reordering
 		document.addEventListener('mouseup', handleMouseUp);
-		document.addEventListener('mousemove', handleMouseMove);
-		document.addEventListener('mouseleave', handleMouseLeave);
 		return () => {
 			document.removeEventListener('mouseup', handleMouseUp)
-			document.removeEventListener('mousemove', handleMouseMove);
-			document.removeEventListener('mouseleave', handleMouseLeave);
 		}
-		// new event handlers need to be installed every time any of these changes
-		// otherwise it will have access to old values
-	}, [isResizing, isReordering, columns, reorderTarget && reorderTarget.index]);
+	}, [handleMouseUp]);
 
 	useEffect(() => {
-		if(listRef.current && selectedItemKeys.length && keys) {
-			const itemKey = selectedItemKeys[selectedItemKeys.length - 1];
-			const itemKeyIndex = keys.findIndex(k => k === itemKey);
-			listRef.current.scrollToItem(itemKeyIndex);
+		document.addEventListener('mousemove', handleMouseMove);
+		return () => {
+			document.removeEventListener('mousemove', handleMouseMove)
 		}
-	}, [selectedItemKeys]);
+	}, [handleMouseMove]);
+
+	useEffect(() => {
+		document.addEventListener('mouseleave', handleMouseLeave);
+		return () => {
+			document.removeEventListener('mouseleave', handleMouseLeave)
+		}
+	}, [handleMouseLeave]);
 
 	return drop(
 		<div
@@ -429,6 +375,8 @@ const Table = memo(() => {
 				'dnd-target': (isOver && canDrop) || isHoveringBetweenRows
 			}) }
 		>
+			<TableFocus focusBySelector={ focusBySelector } resetLastFocused={ resetLastFocused } />
+			<TableScroll listRef={ listRef } />
 			<AutoSizer>
 			{({ height, width }) => (
 				<InfiniteLoader
@@ -463,8 +411,8 @@ const Table = memo(() => {
 								isResizing={ isResizing }
 								isReordering={ isReordering }
 								reorderTarget= { reorderTarget }
-								handleFocusNext={ handleDrillDownNext }
-								handleFocusPrev={ handleDrillDownPrev }
+								handleFocusNext={ focusDrillDownNext }
+								handleFocusPrev={ focusDrillDownPrev }
 							/>
 							<List
 								outerElementType={ TableBody }
@@ -489,6 +437,6 @@ const Table = memo(() => {
 			{ !hasChecked && <Spinner className="large" /> }
 		</div>
 	);
-});
+};
 
-export default Table;
+export default memo(Table);

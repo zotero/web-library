@@ -21,9 +21,7 @@ const TagSelector = () => {
 	const [isBusy] = useDebounce(isFetching, 100);
 	const id = useRef(getUniqueId('tag-selector-'));
 	const filterToolbarRef = useRef(null);
-	const { receiveBlur, receiveFocus, focusNext, focusPrev } = useFocusManager(
-		filterToolbarRef, { isCarousel: true }
-	);
+	const { receiveBlur, receiveFocus, focusNext, focusPrev } = useFocusManager(filterToolbarRef);
 
 	const handleKeyDown = useCallback(ev => {
 		if(ev.target !== ev.currentTarget) {

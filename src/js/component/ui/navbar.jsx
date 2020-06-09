@@ -17,7 +17,7 @@ const Navbar = memo(props => {
 	const dispatch = useDispatch();
 	const { entries } = props;
 
-	const { handleFocus, handleBlur, handleNext, handlePrevious, registerAutoFocus } = useFocusManager(ref);
+	const { receiveFocus, receiveBlur, focusNext, focusPrev, registerAutoFocus } = useFocusManager(ref);
 	const view = useSelector(state => state.current.view);
 	const itemsSource = useSelector(state => state.current.itemsSource);
 
@@ -44,9 +44,9 @@ const Navbar = memo(props => {
 				document.querySelector('.nav-sidebar').focus();
 			}, 200);
 		} else if(ev.key === 'ArrowRight') {
-			handleNext(ev);
+			focusNext(ev);
 		} else if(ev.key === 'ArrowLeft') {
-			handlePrevious(ev);
+			focusPrev(ev);
 		}
 	});
 
@@ -57,8 +57,8 @@ const Navbar = memo(props => {
 	return (
 		<header
 			className="navbar"
-			onBlur={ handleBlur }
-			onFocus={ handleFocus }
+			onBlur={ receiveBlur }
+			onFocus={ receiveFocus }
 			ref={ ref }
 			tabIndex={ 0 }
 		>
@@ -85,8 +85,8 @@ const Navbar = memo(props => {
 			</nav>
 			<Search
 				autoFocus
-				onFocusNext={ handleNext }
-				onFocusPrev={ handlePrevious }
+				onFocusNext={ focusNext }
+				onFocusPrev={ focusPrev }
 				registerAutoFocus={ registerAutoFocus }
 			/>
 			{ view !== 'libraries' && (

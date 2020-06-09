@@ -135,7 +135,7 @@ const current = (state = stateDefault, action, { config = {}, device = {} } = {}
 				isSelectMode,
 				isTrash,
 				itemKey,
-				itemKeys,
+				itemKeys: shallowEqual(itemKeys, state.itemKeys) ? state.itemKeys : itemKeys,
 				itemsSource,
 				libraryKey,
 				noteKey,

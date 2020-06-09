@@ -149,9 +149,8 @@ const Notes = props => {
 	const hasScrolledIntoViewRef = useRef(false);
 	const noteKeyToAutoDelete = useRef(null);
 
-	const { handleNext, handlePrevious, handleDrillDownNext, handleDrillDownPrev, handleFocus,
-		handleBlur, handleBySelector } = useFocusManager(notesEl, { overrideFocusRef:
-		selectedNoteRef, isCarousel: false });
+	const { focusNext, focusPrev, focusDrillDownNext, focusDrillDownPrev, receiveFocus,
+		receiveBlur, focusBySelector } = useFocusManager(notesEl, selectedNoteRef, false);
 
 	const [notes, setNotes] = useState([]);
 
@@ -242,34 +241,34 @@ const Notes = props => {
 
 	const handleKeyDown = useCallback(ev => {
 		if(ev.key === "ArrowLeft") {
-			handleDrillDownPrev(ev);
+			focusDrillDownPrev(ev);
 		} else if(ev.key === "ArrowRight") {
-			handleDrillDownNext(ev);
+			focusDrillDownNext(ev);
 		} else if(ev.key === 'ArrowDown') {
-			ev.target === ev.currentTarget && handleNext(ev);
+			ev.target === ev.currentTarget && focusNext(ev);
 		} else if(ev.key === 'ArrowUp') {
-			ev.target === ev.currentTarget && handlePrevious(ev, { targetEnd: addNoteRef.current });
+			ev.target === ev.currentTarget && focusPrev(ev, { targetEnd: addNoteRef.current });
 		} else if(ev.key === 'Home') {
 			addNoteRef.current.focus();
 			ev.preventDefault();
 		} else if(ev.key === 'End') {
-			handleBySelector('.note:last-child');
+			focusBySelector('.note:last-child');
 			ev.preventDefault();
 		} else if(ev.key === 'PageDown' && notesEl.current) {
 			const containerEl = notesEl.current;
 			const itemEl = containerEl.querySelector('.note');
-			handleNext(ev, { offset: getScrollContainerPageCount(itemEl, containerEl) });
+			focusNext(ev, { offset: getScrollContainerPageCount(itemEl, containerEl) });
 			ev.preventDefault();
 		} else if(ev.key === 'PageUp' && notesEl.current) {
 			const containerEl = notesEl.current;
 			const itemEl = containerEl.querySelector('.note');
-			handlePrevious(ev, { offset: getScrollContainerPageCount(itemEl, containerEl) });
+			focusPrev(ev, { offset: getScrollContainerPageCount(itemEl, containerEl) });
 			ev.preventDefault();
 		} else if(ev.key === 'Tab') {
 			const isFileInput = ev.currentTarget === addNoteRef.current;
 			const isShift = ev.getModifierState('Shift');
 			if(isFileInput && !isShift) {
-				ev.target === ev.currentTarget && handleNext(ev);
+				ev.target === ev.currentTarget && focusNext(ev);
 			}
 		} else if(isTriggerEvent(ev)) {
 			ev.target.click();
@@ -282,7 +281,7 @@ const Notes = props => {
 			notesEl.current.focus();
 			ev.preventDefault();
 		} else if(ev.key === 'End') {
-			handleBySelector('.note:last-child');
+			focusBySelector('.note:last-child');
 			ev.preventDefault();
 		}
 	});
@@ -319,8 +318,8 @@ const Notes = props => {
 			)}
 			<div
 				className="scroll-container-mouse"
-				onBlur={ handleBlur }
-				onFocus={ handleFocus }
+				onBlur={ receiveBlur }
+				onFocus={ receiveFocus }
 				ref={ notesEl }
 				tabIndex={ 0 }
 			>

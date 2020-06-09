@@ -14,9 +14,7 @@ const TagList = () => {
 	const tagColors = useSelector(state => state.libraries[state.current.libraryKey].tagColors, shallowEqual);
 	const dispatch = useDispatch();
 	const tagContainerRef = useRef(null);
-	const { receiveBlur, receiveFocus, focusNext, focusPrev } = useFocusManager(
-		tagContainerRef, { isCarousel: false }
-	);
+	const { receiveBlur, receiveFocus, focusNext, focusPrev } = useFocusManager(tagContainerRef, null, false);
 
 	const containerRef = useRef(null);
 	const listRef = useRef(null);

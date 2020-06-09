@@ -113,7 +113,8 @@ const RichEditor = React.memo(React.forwardRef((props, ref) => {
 	const isSingleColumn = useSelector(state => state.device.isSingleColumn);
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
 	const [currentFormatBlock, currentFormatBlockLabel] = queryFormatBlock(editor.current);
-	const { handleFocus, handleBlur, handleNext, handlePrevious, handleDrillDownPrev, handleDrillDownNext } = useFocusManager(toolbarRef);
+	const { receiveFocus, receiveBlur, focusNext, focusPrev, focusDrillDownPrev,
+	focusDrillDownNext } = useFocusManager(toolbarRef);
 
 	useImperativeHandle(ref, () => ({
 		focus: () => {
@@ -219,9 +220,9 @@ const RichEditor = React.memo(React.forwardRef((props, ref) => {
 		}
 
 		if(ev.key === 'ArrowRight') {
-			handleNext(ev);
+			focusNext(ev);
 		} else if(ev.key === 'ArrowLeft') {
-			handlePrevious(ev);
+			focusPrev(ev);
 		} else if(ev.key === 'Escape') {
 			setDropdowns(defaultDropdowns);
 			ev.stopPropagation();
@@ -237,8 +238,8 @@ const RichEditor = React.memo(React.forwardRef((props, ref) => {
 			{ isSingleColumn || !isReadOnly && (
 				<div
 					className="toolbar-container"
-					onBlur={ handleBlur }
-					onFocus={ handleFocus }
+					onBlur={ receiveBlur }
+					onFocus={ receiveFocus }
 					ref={ toolbarRef }
 					tabIndex={ 0 }
 				>
@@ -368,8 +369,8 @@ const RichEditor = React.memo(React.forwardRef((props, ref) => {
 									</DropdownToggle>
 									<ColorPicker
 										onColorPicked={ handleForeColorPicked }
-										onDrillDownPrev={ handleDrillDownPrev }
-										onDrillDownNext={ handleDrillDownNext }
+										onDrillDownPrev={ focusDrillDownPrev }
+										onDrillDownNext={ focusDrillDownNext }
 									/>
 								</Dropdown>
 								<Dropdown
@@ -413,8 +414,8 @@ const RichEditor = React.memo(React.forwardRef((props, ref) => {
 									</DropdownToggle>
 									<ColorPicker
 										onColorPicked={ handleHiLiteColorPicked }
-										onDrillDownPrev={ handleDrillDownPrev }
-										onDrillDownNext={ handleDrillDownNext }
+										onDrillDownPrev={ focusDrillDownPrev }
+										onDrillDownNext={ focusDrillDownNext }
 									/>
 								</Dropdown>
 							</ToolGroup>

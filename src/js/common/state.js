@@ -26,6 +26,20 @@ const getCollectionsPath = state => {
 	return path.reverse();
 };
 
+const getItemKeysPath = ({ itemsSource, libraryKey, collectionKey }) => {
+	switch(itemsSource) {
+		case 'query':
+			return ['query'];
+		case 'top':
+			return ['libraries', libraryKey, 'itemsTop'];
+		case 'trash':
+			return ['libraries', libraryKey, 'itemsTrash'];
+		case 'publications':
+			return ['itemsPublications'];
+		case 'collection':
+			return ['libraries', libraryKey, 'itemsByCollection', collectionKey];
+	}
+}
 
 const getSerializedQuery = ({ collection = null, tag = [], q = null, qmode = null } = {}) => {
 	return `${collection}-${tag.join('-')}-${q}-${qmode}`;
@@ -54,4 +68,4 @@ const getParamsFromRoute = memoize(state => {
 }, deepEqual);
 
 
-export { getCollectionsPath, getSerializedQuery, getParamsFromRoute };
+export { getCollectionsPath, getItemKeysPath, getSerializedQuery, getParamsFromRoute };

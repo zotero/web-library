@@ -27,8 +27,9 @@ const Tags = props => {
 	const requestId = useRef(1);
 	const addTagRef = useRef(null);
 	const scrollContainerRef = useRef(null);
-	const { handleBlur, handleDrillDownPrev, handleDrillDownNext, handleFocus, handleNext,
-		handlePrevious, handleBySelector, focusOnLast, resetLastFocused } = useFocusManager(scrollContainerRef, { isCarousel: false });
+	const { receiveBlur, focusDrillDownPrev, focusDrillDownNext, receiveFocus, focusNext, focusPrev,
+		focusBySelector, focusOnLast, resetLastFocused } = useFocusManager(scrollContainerRef, null,
+		false);
 
 
 	const handleCommit = async (newTagValue, hasChanged, ev) => {
@@ -121,13 +122,13 @@ const Tags = props => {
 			return;
 		}
 		if(ev.key === "ArrowLeft") {
-			handleDrillDownPrev(ev);
+			focusDrillDownPrev(ev);
 		} else if(ev.key === "ArrowRight") {
-			handleDrillDownNext(ev);
+			focusDrillDownNext(ev);
 		} else if(ev.key === 'ArrowDown') {
-			ev.target === ev.currentTarget && handleNext(ev);
+			ev.target === ev.currentTarget && focusNext(ev);
 		} else if(ev.key === 'ArrowUp') {
-			ev.target === ev.currentTarget && handlePrevious(ev, { targetEnd: addTagRef.current });
+			ev.target === ev.currentTarget && focusPrev(ev, { targetEnd: addTagRef.current });
 		} else if(isTriggerEvent(ev)) {
 			const isAddButton = ev.currentTarget === addTagRef.current;
 			if(!isAddButton && ev.currentTarget === ev.target && ev.target.dataset.tag) {
@@ -138,23 +139,23 @@ const Tags = props => {
 			addTagRef.current.focus();
 			ev.preventDefault();
 		} else if(ev.key === 'End') {
-			handleBySelector('.tag:last-child');
+			focusBySelector('.tag:last-child');
 			ev.preventDefault();
 		} else if(ev.key === 'PageDown' && scrollContainerRef.current) {
 			const containerEl = scrollContainerRef.current;
 			const itemEl = containerEl.querySelector('.tag');
-			handleNext(ev, { offset: getScrollContainerPageCount(itemEl, containerEl) });
+			focusNext(ev, { offset: getScrollContainerPageCount(itemEl, containerEl) });
 			ev.preventDefault();
 		} else if(ev.key === 'PageUp' && scrollContainerRef.current) {
 			const containerEl = scrollContainerRef.current;
 			const itemEl = containerEl.querySelector('.tag');
-			handlePrevious(ev, { offset: getScrollContainerPageCount(itemEl, containerEl) });
+			focusPrev(ev, { offset: getScrollContainerPageCount(itemEl, containerEl) });
 			ev.preventDefault();
 		} else if(ev.key === 'Tab') {
 			const isAddButton = ev.currentTarget === addTagRef.current;
 			const isShift = ev.getModifierState('Shift');
 			if(isAddButton && !isShift) {
-				ev.target === ev.currentTarget && handleNext(ev);
+				ev.target === ev.currentTarget && focusNext(ev);
 			}
 		}
 	});
@@ -163,7 +164,7 @@ const Tags = props => {
 		if(ev.target.nodeName === 'INPUT') {
 			return;
 		}
-		handleFocus(ev);
+		receiveFocus(ev);
 	});
 
 	return (
@@ -197,7 +198,7 @@ const Tags = props => {
 				) }
 			<div
 				className="scroll-container-mouse"
-				onBlur={ handleBlur }
+				onBlur={ receiveBlur }
 				onFocus={ handleFocusOnContainer }
 				ref={ scrollContainerRef }
 				tabIndex={ 0 }

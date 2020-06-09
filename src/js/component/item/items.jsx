@@ -10,7 +10,7 @@ import TouchHeaderContainer from '../../container/touch-header';
 import TouchFooter from '../../component/touch-footer';
 import { useSourceData } from '../../hooks';
 
-const Items = memo(({ isSearchModeTransitioning }) => {
+const Items = ({ isSearchModeTransitioning }) => {
 	const { isFetching, hasChecked } = useSourceData();
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
 	return (
@@ -33,12 +33,10 @@ const Items = memo(({ isSearchModeTransitioning }) => {
 			}
 		</div>
 	);
-});
-
-Items.displayName = 'Items';
+};
 
 Items.propTypes = {
 	isSearchModeTransitioning: PropTypes.bool,
 }
 
-export default Items;
+export default memo(Items);

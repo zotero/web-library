@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { useSelector, shallowEqual } from 'react-redux';
 import { get, sortByKey } from '../utils';
+import { getItemKeysPath } from '../common/state';
 
 const useFetchingState = path => {
 	const { isFetching, keys, pointer, totalResults, requests = [] } = useSelector(state => get(state, path, {}), shallowEqual);
@@ -15,25 +16,7 @@ const useSourceData = () => {
 	const collectionKey = useSelector(state => state.current.collectionKey);
 	const itemsSource = useSelector(state => state.current.itemsSource);
 	const libraryKey = useSelector(state => state.current.libraryKey);
-	var path;
-
-	switch(itemsSource) {
-		case 'query':
-			path = ['query'];
-		break;
-		case 'top':
-			path = ['libraries', libraryKey, 'itemsTop'];
-		break;
-		case 'trash':
-			path = ['libraries', libraryKey, 'itemsTrash'];
-		break;
-		case 'publications':
-			path = ['itemsPublications'];
-		break;
-		case 'collection':
-			path = ['libraries', libraryKey, 'itemsByCollection', collectionKey];
-		break;
-	}
+	const path = getItemKeysPath({ itemsSource, libraryKey, collectionKey });
 
 	return useFetchingState(path);
 };
