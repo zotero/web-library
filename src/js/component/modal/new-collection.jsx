@@ -104,6 +104,4 @@ const NewCollectionModal = () => {
 	)
 }
 
-NewCollectionModal.whyDidYouRender = true;
-
 export default memo(NewCollectionModal);

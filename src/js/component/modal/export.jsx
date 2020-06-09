@@ -151,6 +151,4 @@ const ExportModal = () => {
 	);
 }
 
-ExportModal.whyDidYouRender = true;
-
 export default memo(ExportModal);

@@ -289,6 +289,4 @@ const StyleInstallerModal = () => {
 	);
 }
 
-StyleInstallerModal.whyDidYouRender = true;
-
 export default memo(StyleInstallerModal);
