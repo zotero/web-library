@@ -5,6 +5,11 @@ import { connect } from 'react-redux';
 import hoistNonReactStatic from 'hoist-non-react-statics';
 import { triggerEditingItem } from '../actions';
 
+//@TODO: remove legacy enhancer
+// const isEditing = useSelector(
+// 		state => state.current.itemKey && state.current.editingItemKey === state.current.itemKey
+// 	);
+
 var withEditMode = Component => {
 	class EnhancedComponent extends React.PureComponent {
 		onEditModeToggle(isEditing) {

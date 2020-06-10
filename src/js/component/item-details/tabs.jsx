@@ -5,7 +5,7 @@ import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 
 import AttachmentsContainer from '../../container/item-details/attachments';
 import EditToggleButton from '../edit-toggle-button';
-import InfoContainer from '../../container/item-details/info';
+import Info from '../../component/item-details/info';
 import NotesContainer from '../../container/item-details/notes';
 import Panel from '../ui/panel';
 import RelatedContainer from '../../container/item-details/related';
@@ -267,7 +267,7 @@ const ItemDetailsTabs = () => {
 						{
 							!['attachment', 'note'].includes(item.itemType) && (
 								<React.Fragment>
-									<InfoContainer
+									<Info
 										key={ 'info-' + item.key }
 										isActive={ activeTab === 'info' }
 										isReadOnly={ isReadOnly }

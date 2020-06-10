@@ -1,19 +1,28 @@
-'use strict';
-
 import cx from 'classnames';
 import PropTypes from 'prop-types';
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { memo, useCallback, useMemo, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 import Editable from '../editable';
 import TextAreaInput from '../form/text-area';
-import withDevice from '../../enhancers/with-device';
+import { get } from '../../utils';
+import { updateItemWithMapping } from '../../actions';
 
-const Abstract = props => {
-	const { device, item, isEditing, isReadOnly, pendingChanges } = props;
-	const { updateItemWithMapping } = props;
+const Abstract = ({ isReadOnly }) => {
+	const dispatch = useDispatch();
+	const shouldUseEditMode = useSelector(state => state.device.shouldUseEditMode);
+	const isEditing = useSelector(
+		state => state.current.itemKey && state.current.editingItemKey === state.current.itemKey
+	);
+	const item = useSelector(state =>
+		get(state, ['libraries', state.current.libraryKey, 'items', state.current.itemKey], {})
+	);
+	const pendingChanges = useSelector(state =>
+		get(state, ['libraries', state.current.libraryKey, 'updating', 'items', state.current.itemKey], [])
+	);
 	const [isActive, setIsActive] = useState(false);
 
-	const placeholder = !device.shouldUseEditMode || (device.shouldUseEditMode && isEditing) ?
+	const placeholder = !shouldUseEditMode || (shouldUseEditMode && isEditing) ?
 		'Add abstract…' : '';
 
 	const itemWithPendingChanges = useMemo(() => {
@@ -23,48 +32,46 @@ const Abstract = props => {
 		return { ...item, ...aggregatedPatch};
 	}, [item, pendingChanges]);
 
-	const isBusy = useMemo(() => {
-		pendingChanges.some(({ patch }) => 'abstractNote' in patch);
-	});
+	const isBusy = pendingChanges.some(({ patch }) => 'abstractNote' in patch);
 
 	const handleMakeActive = useCallback(() => {
 		if(!isReadOnly) {
 			setIsActive(true);
 		}
-	});
+	}, [isReadOnly]);
 
 	const handleCommit = useCallback((newValue, hasChanged) => {
 		if(hasChanged) {
-			updateItemWithMapping(item, 'abstractNote', newValue);
+			dispatch(updateItemWithMapping(item, 'abstractNote', newValue));
 		}
 		setIsActive(false);
-	});
+	}, [dispatch, item]);
 
 	const handleCancel = useCallback(() => {
 		setIsActive(false);
-	});
+	}, []);
 
 	const input = (
 		<TextAreaInput
-			autoFocus={ !(device.shouldUseEditMode && isEditing) }
+			autoFocus={ !(shouldUseEditMode && isEditing) }
 			isBusy={ isBusy }
 			isReadOnly={ isReadOnly }
 			onCancel={ handleCancel }
 			onCommit={ handleCommit }
 			placeholder={ placeholder }
 			resize='vertical'
-			selectOnFocus={ !(device.shouldUseEditMode && isEditing) }
-			tabIndex={ (device.shouldUseEditMode && isEditing) ? 0 : null }
+			selectOnFocus={ !(shouldUseEditMode && isEditing) }
+			tabIndex={ (shouldUseEditMode && isEditing) ? 0 : null }
 			value={ itemWithPendingChanges.abstractNote || '' }
 			className={ cx({
-				'form-control': device.shouldUseEditMode && isEditing,
-				'form-control-sm': device.shouldUseEditMode && isEditing,
-				'editable-control': !(device.shouldUseEditMode && isEditing),
+				'form-control': shouldUseEditMode && isEditing,
+				'form-control-sm': shouldUseEditMode && isEditing,
+				'editable-control': !(shouldUseEditMode && isEditing),
 			}) }
 		/>
 	);
 
-	return (device.shouldUseEditMode && isEditing) ? input : (
+	return (shouldUseEditMode && isEditing) ? input : (
 		<Editable
 			input={ input }
 			isActive={ isActive }
@@ -77,17 +84,7 @@ const Abstract = props => {
 }
 
 Abstract.propTypes = {
-	device: PropTypes.object,
-	isEditing: PropTypes.bool,
-	isForm: PropTypes.bool,
 	isReadOnly: PropTypes.bool,
-	item: PropTypes.object,
-	pendingChanges: PropTypes.array,
-	updateItemWithMapping: PropTypes.func,
 };
 
-Abstract.defaultProps = {
-	pendingChanges: []
-};
-
-export default withDevice(Abstract);
+export default memo(Abstract);

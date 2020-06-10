@@ -1,16 +1,15 @@
-'use strict';
-
-import React, { useCallback, useMemo, useState } from 'react';
 import baseMappings from 'zotero-base-mappings';
-import PropTypes from 'prop-types';
 import cx from 'classnames';
+import PropTypes from 'prop-types';
+import React, { memo, useCallback, useMemo, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 import BoxField from './boxfield';
 import Creators from '../form/creators';
-import withDevice from '../../enhancers/with-device';
-import withEditMode from '../../enhancers/with-edit-mode';
+import { get } from '../../utils';
 import { getFieldDisplayValue } from '../../common/item';
 import { hideFields, noEditFields, extraFields } from '../../constants/item';
+import { updateItemWithMapping } from '../../actions';
 
 const makeFields = (item, pendingChanges, itemTypes, itemTypeFields, isReadOnly) => {
 	const titleField = item.itemType in baseMappings && baseMappings[item.itemType]['title'] || 'title';
@@ -37,24 +36,34 @@ const makeFields = (item, pendingChanges, itemTypes, itemTypeFields, isReadOnly)
 	}));
 }
 
-const ItemBox = props => {
-	const { creatorTypes, device, isEditing, isReadOnly, item, itemTypeFields, itemTypes,
-		pendingChanges, updateItemWithMapping, } = props;
+const ItemBox = ({ isReadOnly }) => {
+	const dispatch = useDispatch();
+	const shouldUseEditMode = useSelector(state => state.device.shouldUseEditMode);
+	const isEditing = useSelector(
+		state => state.current.itemKey && state.current.editingItemKey === state.current.itemKey
+	);
+	const item = useSelector(state =>
+		get(state, ['libraries', state.current.libraryKey, 'items', state.current.itemKey], {})
+	);
+	const creatorTypes = useSelector(state=> state.meta.itemTypeCreatorTypes[item.itemType]);
+	const itemTypeFields = useSelector(state=> state.meta.itemTypeFields);
+	const itemTypes = useSelector(state => state.meta.itemTypes);
+	const pendingChanges = useSelector(state =>
+		get(state, ['libraries', state.current.libraryKey, 'updating', 'items', state.current.itemKey], [])
+	);
 
-	const isForm = !!(device.shouldUseEditMode && isEditing && item);
+	const isForm = !!(shouldUseEditMode && isEditing && item);
 
 	//@TODO: mapping should be handled by <Creators />
 	//@TODO: even better, we should store this mapped already
 	const creatorTypeOptions = useMemo(() => creatorTypes.map(ct => ({
 		value: ct.creatorType,
 		label: ct.localized
-	})));
+	})), [creatorTypes]);
 	const itemTypeOptions = useMemo(() => itemTypes.map(it => ({
-			value: it.itemType,
-			label: it.localized
-		}))
-		.filter(it => it.value !== 'note')
-	);
+		value: it.itemType,
+		label: it.localized
+	})).filter(it => it.value !== 'note'), [itemTypes]);
 
 	const fields = useMemo(
 		() => makeFields(item, pendingChanges, itemTypeOptions, itemTypeFields, isReadOnly),
@@ -71,7 +80,7 @@ const ItemBox = props => {
 			return;
 		}
 		setActiveEntry(key);
-	});
+	}, [fields, isForm]);
 
 	const handleFieldFocus = useCallback(ev => {
 		const key = ev.currentTarget.closest('[data-key]').dataset.key;
@@ -81,23 +90,23 @@ const ItemBox = props => {
 			return;
 		}
 		setActiveEntry(key);
-	});
+	}, [fields, isForm]);
 
 	const handleFieldBlur = useCallback(() => {
 		setActiveEntry(null);
-	});
+	}, []);
 
 	const handleCancel = useCallback((isChanged, ev) => {
 		const key = ev.currentTarget.closest('[data-key]').dataset.key;
 		if(key === activeEntry) {
 			setActiveEntry(null);
 		}
-	});
+	}, [activeEntry]);
 
 	const handleCommit = useCallback((newValue, isChanged, ev) => {
 		const key = ev.currentTarget.closest('[data-key]').dataset.key;
 		if(isChanged) {
-			updateItemWithMapping(item, key, newValue);
+			dispatch(updateItemWithMapping(item, key, newValue));
 		}
 
 		if(key === activeEntry) {
@@ -109,17 +118,15 @@ const ItemBox = props => {
 				ev.target.blur();
 			}
 		}
-	});
+	}, [dispatch, activeEntry, isForm, item]);
 
 	const handleSaveCreators = useCallback((newValue, isChanged) => {
 		if(isChanged) {
-			updateItemWithMapping(item, 'creators', newValue);
+			dispatch(updateItemWithMapping(item, 'creators', newValue));
 		}
-	});
+	}, [dispatch, item]);
 
-	const handleDragStatusChange = useCallback(
-		isDragging => setIsDragging(isDragging)
-	);
+	const handleDragStatusChange = useCallback(isDragging => setIsDragging(isDragging), []);
 
 	return (
 		<ol className={ cx('metadata-list', {
@@ -156,14 +163,7 @@ const ItemBox = props => {
 }
 
 ItemBox.propTypes = {
-	creatorTypes: PropTypes.array,
-	isForm: PropTypes.bool,
 	isReadOnly: PropTypes.bool,
-	item: PropTypes.object,
-	itemTypeFields: PropTypes.object,
-	itemTypes: PropTypes.array,
-	pendingChanges: PropTypes.array,
-	updateItemWithMapping: PropTypes.func,
 };
 
-export default withDevice(withEditMode(ItemBox));
+export default memo(ItemBox);

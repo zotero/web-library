@@ -1,6 +1,5 @@
-'use strict';
-
-import React, { useEffect } from 'react';
+import React, { memo, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import cx from 'classnames';
 
@@ -8,25 +7,48 @@ import ItemBox from './box';
 import Abstract from './abstract';
 import { getBaseMappedValue } from '../../common/item';
 import { TabPane } from '../ui/tabs';
-import withEditMode from '../../enhancers/with-edit-mode.js';
+import { fetchItemTypeCreatorTypes, fetchItemTypeFields } from '../../actions';
+import { get } from '../../utils';
+import { usePrevious } from '../../hooks';
 
-const Info = props => {
-	const { fetchItemTypeCreatorTypes, fetchItemTypeFields, isActive, isEditing, isLibraryReadOnly,
-		isLoadingMeta, item, shouldFetchMeta } = props;
-	const title = getBaseMappedValue(item, 'title') || '';
+const Info = ({ isActive, isReadOnly }) => {
+	const dispatch = useDispatch();
+	const isLibraryReadOnly = useSelector(
+		state => (state.config.libraries.find(l => l.key === state.current.libraryKey) || {}).isReadOnly
+	);
+	const itemType = useSelector(state =>
+		get(state, ['libraries', state.current.libraryKey, 'items', state.current.itemKey, 'itemType'])
+	);
+	const abstractNote = useSelector(state =>
+		get(state, ['libraries', state.current.libraryKey, 'items', state.current.itemKey, 'abstractNote'])
+	);
+	const title = useSelector(state =>
+		getBaseMappedValue(get(state, ['libraries', state.current.libraryKey, 'items', state.current.itemKey], {}), 'title')
+	);
+	const isMetaAvailable = useSelector(
+		state => itemType && itemType in state.meta.itemTypeCreatorTypes && itemType in state.meta.itemTypeFields
+	);
+	const isEditing = useSelector(
+		state => state.current.itemKey && state.current.editingItemKey === state.current.itemKey
+	);
+	const shouldFetchMeta = useSelector(state => !isMetaAvailable
+		&& !state.fetching.itemTypeCreatorTypes.includes(itemType)
+		&& !state.fetching.itemTypeFields.includes(itemType)
+	);
+	const prevShouldFetchMeta = usePrevious(shouldFetchMeta);
 
 	useEffect(() => {
-		if(shouldFetchMeta) {
-			fetchItemTypeCreatorTypes(item.itemType);
-			fetchItemTypeFields(item.itemType);
+		if(shouldFetchMeta && !prevShouldFetchMeta) {
+			dispatch(fetchItemTypeCreatorTypes(itemType));
+			dispatch(fetchItemTypeFields(itemType));
 		}
-	}, [shouldFetchMeta]);
+	}, [dispatch, itemType, prevShouldFetchMeta, shouldFetchMeta]);
 
 	return (
 		<TabPane
 			className="info"
 			isActive={ isActive }
-			isLoading={ isLoadingMeta }
+			isLoading={ !isMetaAvailable }
 		>
 			<div className="scroll-container-mouse">
 				<div className="row">
@@ -42,14 +64,15 @@ const Info = props => {
 							)
 						}
 						<ItemBox
-							{ ...props }
+							isActive={ isActive }
+							isReadOnly={ isReadOnly }
 							hiddenFields={ [ 'abstractNote' ] }
 						/>
 					</div>
-					{ (!isLibraryReadOnly || item.abstractNote) && (
+					{ (!isLibraryReadOnly || abstractNote) && (
 						<div className="col">
 							<section className={ cx({
-								'empty-abstract': !item.abstractNote,
+								'empty-abstract': !abstractNote,
 								abstract: true,
 								editing: isEditing,
 							}) }>
@@ -57,7 +80,7 @@ const Info = props => {
 									Abstract
 								</h6>
 								<div className="abstract-body">
-									<Abstract { ...props } />
+									<Abstract isReadOnly={ isReadOnly } />
 								</div>
 							</section>
 						</div>
@@ -70,11 +93,8 @@ const Info = props => {
 
 Info.propTypes = {
 	isActive: PropTypes.bool,
-	isEditing: PropTypes.bool,
-	isLoadingMeta: PropTypes.bool,
-	item: PropTypes.object,
+	isReadOnly: PropTypes.bool,
 }
 
-
-export default withEditMode(Info);
+export default memo(Info);
 
