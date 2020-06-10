@@ -29,7 +29,7 @@ const navigate = (path, isAbsolute = false) => {
 	}
 };
 
-const selectItems = (direction, magnitude, isMultiSelect) => {
+const selectItemsKeyboard = (direction, magnitude, isMultiSelect) => {
 	return async (dispatch, getState) => {
 		const state = getState();
 		const { collectionKey, libraryKey, itemKeys: selectedItemKeys, itemsSource } = state.current;
@@ -139,5 +139,40 @@ const selectLastItem = () => {
 	}
 }
 
+const selectItemsMouse = (targetItemKey, isShiftModifer, isCtrlModifer) => {
+	return async (dispatch, getState) => {
+		const state = getState();
+		const { collectionKey, libraryKey, itemKeys: selectedItemKeys, itemsSource } = state.current;
+		const path = [...getItemKeysPath({ itemsSource, libraryKey, collectionKey }), 'keys'];
+		const keys = get(state, path, []);
+		var newKeys;
 
-export { navigate, selectItems, selectFirstItem, selectLastItem };
+		if(isShiftModifer) {
+			let startIndex = selectedItemKeys.length ? keys.findIndex(key => key && key === selectedItemKeys[0]) : 0;
+			let endIndex = keys.findIndex(key => key && key === targetItemKey);
+			let isFlipped = false;
+			if(startIndex > endIndex) {
+				[startIndex, endIndex] = [endIndex, startIndex];
+				isFlipped = true;
+			}
+
+			endIndex++;
+			newKeys = keys.slice(startIndex, endIndex);
+			if(isFlipped) {
+				newKeys.reverse();
+			}
+		} else if(isCtrlModifer) {
+			if(selectedItemKeys.includes(targetItemKey)) {
+				newKeys = selectedItemKeys.filter(key => key !== targetItemKey);
+			} else {
+				newKeys = [...(new Set([...selectedItemKeys, targetItemKey]))];
+			}
+		} else {
+			newKeys = [targetItemKey];
+		}
+		dispatch(navigate({ items: newKeys, noteKey: null, attachmentKey: null }));
+	}
+}
+
+
+export { navigate, selectFirstItem, selectItemsKeyboard, selectItemsMouse, selectLastItem };

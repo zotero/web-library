@@ -15,7 +15,7 @@ import TableRow from './table-row';
 import { applyChangesToVisibleColumns, resizeVisibleColumns } from '../../../utils';
 import { ATTACHMENT } from '../../../constants/dnd';
 import { currentTrashOrDelete, createAttachmentsFromDropped, fetchSource, navigate,
-selectItems,selectFirstItem, selectLastItem, preferenceChange, triggerFocus, } from
+selectItemsKeyboard, selectFirstItem, selectLastItem, preferenceChange, triggerFocus, } from
 '../../../actions';
 import { useFocusManager, usePrevious, useSourceData } from '../../../hooks';
 
@@ -301,7 +301,7 @@ const Table = () => {
 
 		ev.preventDefault();
 
-		const cursorIndex = await dispatch(selectItems(direction, magnitude, ev.getModifierState('Shift')));
+		const cursorIndex = await dispatch(selectItemsKeyboard(direction, magnitude, ev.getModifierState('Shift')));
 
 		if(cursorIndex === -1) {
 			focusBySelector('.items-table-head');
@@ -366,6 +366,8 @@ const Table = () => {
 		}
 	}, [handleMouseLeave]);
 
+	const rowData = useMemo(() => ({ onFileHoverOnRow: handleFileHoverOnRow, columns }), [columns, handleFileHoverOnRow]);
+
 	return drop(
 		<div
 			ref={ containerDom }
@@ -419,7 +421,7 @@ const Table = () => {
 								className="items-table-body"
 								height={ height - ROWHEIGHT } // add margin for HeaderRow
 								itemCount={ hasChecked ? totalResults : 0 }
-								itemData={ { onFileHoverOnRow: handleFileHoverOnRow, columns, keys } }
+								itemData={ rowData }
 								itemSize={ ROWHEIGHT }
 								onItemsRendered={ onItemsRendered }
 								ref={ r => { ref(r); listRef.current = r } }

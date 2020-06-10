@@ -12,14 +12,23 @@ const useFetchingState = path => {
 	return { isFetching, isFetched, keys, hasChecked, hasMoreItems, pointer, totalResults, requests };
 };
 
-const useSourceData = () => {
+const useSourcePath = () => {
 	const collectionKey = useSelector(state => state.current.collectionKey);
 	const itemsSource = useSelector(state => state.current.itemsSource);
 	const libraryKey = useSelector(state => state.current.libraryKey);
-	const path = getItemKeysPath({ itemsSource, libraryKey, collectionKey });
+	return getItemKeysPath({ itemsSource, libraryKey, collectionKey });
+}
 
-	return useFetchingState(path);
+const useSourceData = () => {
+	return useFetchingState(useSourcePath());
 };
+
+const useSourceKeys = () => {
+	const path = useSourcePath();
+	const keys = useSelector(state => get(state, [...path, 'keys'], []), shallowEqual);
+
+	return keys;
+}
 
 const useTags = (shouldSkipDisabledAndSelected = false) => {
 	const collectionKey = useSelector(state => state.current.collectionKey);
@@ -146,4 +155,4 @@ const useSourceSignature = () => {
 	}
 }
 
-export { useFetchingState, useSourceSignature, useSourceData, useTags };
+export { useFetchingState, useSourceSignature, useSourceData, useSourceKeys, useTags };

@@ -48,6 +48,7 @@ const getApi = ({ config, libraryKey }, requestType, queryConfig) => {
 				.library(libraryKey)
 				.items()
 				.top();
+		case 'FETCH_ITEM_DETAILS':
 		case 'FETCH_ITEMS':
 		case 'RELATED_ITEMS':
 			return api(config.apiKey, config.apiConfig)
@@ -128,6 +129,14 @@ const fetchChildItems = (itemKey, queryOptions, overrides) => {
 const fetchItemsByKeys = (itemKeys, queryOptions, overrides) => {
 	return fetchItems(
 		'FETCH_ITEMS', {}, { ...queryOptions, itemKey: itemKeys.join(','), }, overrides
+	);
+}
+
+// @NOTE: same as fetch items but limited to one item and ignored when considering membership
+// 		  (collection, trash etc.).
+const fetchItemDetails = (itemKey, queryOptions, overrides) => {
+	return fetchItems(
+		'FETCH_ITEM_DETAILS', {}, { ...queryOptions, itemKey }, overrides
 	);
 }
 
@@ -274,6 +283,7 @@ const fetchSource = (startIndex, stopIndex) => {
 export {
 	fetchAllItemsSince,
 	fetchChildItems,
+	fetchItemDetails,
 	fetchItemsByKeys,
 	fetchItemsInCollection,
 	fetchItemsQuery,

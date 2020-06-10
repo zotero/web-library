@@ -75,11 +75,11 @@ class CustomDragLayer extends React.PureComponent {
 				}
 			case ITEM:
 				// for items dragging we always use custom preview
-				var { isDraggingSelected, selectedItemKeys, itemData } = itemProps;
+				var { selectedItemKeysLength, itemData } = itemProps;
 				var { iconName, title } = itemData;
 				var dvp = window.devicePixelRatio >= 2 ? 2 : 1;
 
-				if(isDraggingSelected && selectedItemKeys.length > 1) {
+				if(selectedItemKeysLength > 1) {
 					return (
 						<div className="items-drag-indicator multiple">
 							<Icon
@@ -88,7 +88,7 @@ class CustomDragLayer extends React.PureComponent {
 								width="16"
 								height="16"
 							/>
-							<span>{ selectedItemKeys.length } Items</span>
+							<span>{ selectedItemKeysLength } Items</span>
 						</div>
 					);
 				} else {

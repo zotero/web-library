@@ -2,51 +2,27 @@ import cx from 'classnames';
 import PropTypes from 'prop-types';
 import React, { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { getEmptyImage, NativeTypes } from 'react-dnd-html5-backend';
-import { useDispatch, useSelector, shallowEqual } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useDrag, useDrop } from 'react-dnd'
 
 import Cell from './table-cell';
 import Icon from '../../ui/icon';
 import { ATTACHMENT, ITEM } from '../../../constants/dnd';
 import colorNames from '../../../constants/color-names';
-import { createAttachmentsFromDropped, chunkedCopyToLibrary, chunkedAddToCollection, navigate,
-openAttachment, openBestAttachment, openBestAttachmentFallback } from '../../../actions';
+import { currentAddToCollection, createAttachmentsFromDropped, currentCopyToLibrary, openAttachment,
+openBestAttachment, openBestAttachmentFallback, selectItemsMouse } from '../../../actions';
+import { useSourceKeys } from '../../../hooks';
 
 const DROP_MARGIN_EDGE = 5; // how many pixels from top/bottom of the row triggers "in-between" drop
 
-const selectItem = (itemKey, ev, keys, selectedItemKeys, dispatch) => {
+const selectItem = (itemKey, ev, dispatch) => {
 	const isCtrlModifier = ev.getModifierState('Control') || ev.getModifierState('Meta');
 	const isShiftModifier = ev.getModifierState('Shift');
-	var newKeys;
-
-	if(isShiftModifier) {
-		let startIndex = selectedItemKeys.length ? keys.findIndex(key => key && key === selectedItemKeys[0]) : 0;
-		let endIndex = keys.findIndex(key => key && key === itemKey);
-		let isFlipped = false;
-		if(startIndex > endIndex) {
-			[startIndex, endIndex] = [endIndex, startIndex];
-			isFlipped = true;
-		}
-
-		endIndex++;
-		newKeys = keys.slice(startIndex, endIndex);
-		if(isFlipped) {
-			newKeys.reverse();
-		}
-	} else if(isCtrlModifier) {
-		if(selectedItemKeys.includes(itemKey)) {
-			newKeys = selectedItemKeys.filter(key => key !== itemKey);
-		} else {
-			newKeys = [...(new Set([...selectedItemKeys, itemKey]))];
-		}
-	} else {
-		newKeys = [itemKey];
-	}
-	dispatch(navigate({ items: newKeys, noteKey: null, attachmentKey: null }));
+	dispatch(selectItemsMouse(itemKey, isShiftModifier, isCtrlModifier));
 }
 
-const DataCell = props => {
-	const { columnName, colIndex, width, isFocused, isActive, itemData } = props;
+const TitleCell = memo(props => {
+	const { columnName, colIndex, width, isFocused, isSelected, itemData } = props;
 	const dvp = window.devicePixelRatio >= 2 ? 2 : 1;
 
 	return (
@@ -55,52 +31,87 @@ const DataCell = props => {
 			columnName={ columnName }
 			index={ colIndex }
 		>
-			{ columnName === 'title' && (
-				<Icon
-					label={ `${itemData.itemType} icon` }
-					type={ `16/item-types/light/${dvp}x/${itemData.iconName}` }
-					symbol={ isFocused && isActive ? `${itemData.iconName}-white` : itemData.iconName }
-					width="16"
-					height="16"
-				/>
-			)}
+			<Icon
+				label={ `${itemData.itemType} icon` }
+				type={ `16/item-types/light/${dvp}x/${itemData.iconName}` }
+				symbol={ isFocused && isSelected ? `${itemData.iconName}-white` : itemData.iconName }
+				width="16"
+				height="16"
+			/>
 			<div className="truncate">
 				{ itemData[columnName] }
 			</div>
-			{ columnName === 'title' && (
-				<div className="tag-colors">
-					{ itemData.colors.map((color, index) => (
-						<Icon
-							label={ `${colorNames[color] || ''} circle icon` }
-							key={ color }
-							type={ index === 0 ? '10/circle' : '10/crescent-circle' }
-							symbol={ index === 0 ?
-								(isFocused && isActive ? 'circle-focus' : 'circle') :
-								(isFocused && isActive ? 'crescent-circle-focus' : 'crescent-circle')
-							}
-							width={ index === 0 ? 10 : 7 }
-							height="10"
-							style={ { color } }
-						/>
-					)) }
-				</div>
-			) }
-			{ columnName === 'attachment' && itemData.attachmentIconName && (
+			<div className="tag-colors">
+				{ itemData.colors.map((color, index) => (
+					<Icon
+						label={ `${colorNames[color] || ''} circle icon` }
+						key={ color }
+						type={ index === 0 ? '10/circle' : '10/crescent-circle' }
+						symbol={ index === 0 ?
+							(isFocused && isSelected ? 'circle-focus' : 'circle') :
+							(isFocused && isSelected ? 'crescent-circle-focus' : 'crescent-circle')
+						}
+						width={ index === 0 ? 10 : 7 }
+						height="10"
+						style={ { color } }
+					/>
+				)) }
+			</div>
+		</Cell>
+	);
+});
+
+TitleCell.displayName = 'TitleCell';
+
+const AttachmentCell = memo(props => {
+	const { columnName, colIndex, width, isFocused, isSelected, itemData } = props;
+	const dvp = window.devicePixelRatio >= 2 ? 2 : 1;
+
+	return (
+		<Cell
+			width={ width }
+			columnName={ columnName }
+			index={ colIndex }
+		>
+			<div className="truncate">
+				{ itemData[columnName] }
+			</div>
+			{ itemData.attachmentIconName && (
 				<Icon
 					type={ `16/item-types/light/${dvp}x/${itemData.attachmentIconName}` }
-					symbol={ isFocused && isActive ? `${itemData.attachmentIconName}-white` : itemData.attachmentIconName }
+					symbol={ isFocused && isSelected ? `${itemData.attachmentIconName}-white` : itemData.attachmentIconName }
 					width="16"
 					height="16"
 				/>
 			) }
 		</Cell>
 	);
-};
+})
 
-DataCell.propTypes = {
+AttachmentCell.displayName = 'AttachmentCell';
+
+const GenericDataCell = memo(props => {
+	const { columnName, colIndex, width, itemData } = props;
+
+	return (
+		<Cell
+			width={ width }
+			columnName={ columnName }
+			index={ colIndex }
+		>
+			<div className="truncate">
+				{ itemData[columnName] }
+			</div>
+		</Cell>
+	);
+});
+
+GenericDataCell.displayName = 'GenericDataCell';
+
+GenericDataCell.propTypes = {
 	colIndex: PropTypes.number,
 	columnName: PropTypes.string,
-	isActive: PropTypes.bool,
+	isSelected: PropTypes.bool,
 	isFocused: PropTypes.bool,
 	itemData: PropTypes.object,
 	width: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
@@ -127,13 +138,14 @@ PlaceholderCell.propTypes = {
 	width: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
 };
 
-const TableRow = memo(props => {
+const TableRow = props => {
 	const dispatch = useDispatch();
 	const ref = useRef();
 	const ignoreClicks = useRef({});
 	const [dropZone, setDropZone] = useState(null);
 	const { data, index, style } = props;
-	const { onFileHoverOnRow, keys, columns } = data;
+	const { onFileHoverOnRow, columns } = data;
+	const keys = useSourceKeys();
 	const itemKey = keys && keys[index] ? keys[index] : null;
 	const libraryKey = useSelector(state => state.current.libraryKey);
 	const isFileUploadAllowed = useSelector(
@@ -142,17 +154,17 @@ const TableRow = memo(props => {
 		) || {}).isFileUploadAllowed
 	);
 	const collectionKey = useSelector(state => state.current.collectionKey);
-	const isFocused = useSelector(state => state.current.isItemsTableFocused);
+
 	const itemData = useSelector(
 		state => itemKey ?
 			state.libraries[state.current.libraryKey].items[itemKey][Symbol.for('derived')]
 			: null
 	);
-	const selectedItemKeys = useSelector(state => state.current.itemKey ?
-		[state.current.itemKey] : state.current.itemKeys,
-		shallowEqual
-	);
-	const isActive = itemKey && selectedItemKeys.includes(itemKey);
+	const selectedItemKeysLength = useSelector(state => state.current.itemKeys.length);
+	const isSelected = useSelector(state => itemKey && state.current.itemKeys.includes(itemKey));
+
+	//@NOTE: to avoid re-rendering unselected rows on focus change, we only check isFocused if isSelected
+	const isFocusedAndSelected = useSelector(state => isSelected && state.current.isItemsTableFocused);
 
 	const [_, drag, preview] = useDrag({ // eslint-disable-line no-unused-vars
 		item: { type: ITEM },
@@ -160,20 +172,17 @@ const TableRow = memo(props => {
 			dropEffect: 'copy'
 		},
 		begin: () => {
-			const isDraggingSelected = selectedItemKeys.includes(itemKey);
-			return { itemKey, selectedItemKeys, itemData, isDraggingSelected, libraryKey }
+			return { itemKey, selectedItemKeysLength, itemData, libraryKey }
 		},
 		end: (item, monitor) => {
-			const isDraggingSelected = selectedItemKeys.includes(itemKey);
-			const sourceItemKeys = isDraggingSelected ? selectedItemKeys : [itemKey];
 			const dropResult = monitor.getDropResult();
 
 			if(dropResult) {
 				const { targetType, collectionKey: targetCollectionKey, libraryKey: targetLibraryKey } = dropResult;
 				if(targetLibraryKey && targetLibraryKey !== libraryKey) {
-					dispatch(chunkedCopyToLibrary(sourceItemKeys, libraryKey, targetLibraryKey, targetType === 'collection' ? targetCollectionKey : null));
+					dispatch(currentCopyToLibrary(targetLibraryKey, targetType === 'collection' ? targetCollectionKey : null));
 				} else {
-					dispatch(chunkedAddToCollection(sourceItemKeys, targetCollectionKey));
+					dispatch(currentAddToCollection(targetCollectionKey));
 				}
 			}
 		}
@@ -223,8 +232,8 @@ const TableRow = memo(props => {
 		odd: (index + 1) % 2 === 1,
 		'nth-4n-1': (index + 2) % 4 === 0,
 		'nth-4n': (index + 1) % 4 === 0,
-		active: isActive,
-		focused: isFocused,
+		active: isSelected,
+		focused: isFocusedAndSelected,
 		'dnd-target': canDrop && itemData && !(['attachment', 'note'].includes(itemData.itemTypeRaw)) && isOver && dropZone === null,
 		'dnd-target-top': canDrop && isOver && dropZone === 'top',
 		'dnd-target-bottom': canDrop && isOver && dropZone === 'bottom',
@@ -235,16 +244,13 @@ const TableRow = memo(props => {
 	//		 Click events are discarded unless "mousedown" could
 	//		 have been triggered as a drag event in which case "mousedown"
 	//		 is ignored and "click" is used instead, if occurs.
-	const handleMouseEvent = event => {
+	const handleMouseEvent = useCallback(event => {
 		if(itemData) {
-			const isSelected = selectedItemKeys.includes(itemKey);
-			if(selectedItemKeys.length > 1 &&
-				isSelected && event.type === 'mousedown') {
+			if(selectedItemKeysLength > 1 && isSelected && event.type === 'mousedown') {
 				// ignore a "mousedown" when user might want to drag items
 				return;
 			} else {
-				if(selectedItemKeys.length > 1 && isSelected &&
-					event.type === 'click') {
+				if(selectedItemKeysLength > 1 && isSelected && event.type === 'click') {
 					const isFollowUp = itemKey in ignoreClicks.current &&
 						Date.now() - ignoreClicks.current[itemKey] < 500;
 
@@ -254,7 +260,7 @@ const TableRow = memo(props => {
 					} else {
 						// handle a "click" event that has been missed by "mousedown" handler
 						// in anticipation of potential drag that has never happened
-						selectItem(itemKey, event, keys, selectedItemKeys, dispatch);
+						selectItem(itemKey, event,  dispatch);
 						delete ignoreClicks.current[itemKey];
 						return
 					}
@@ -263,7 +269,7 @@ const TableRow = memo(props => {
 			if(event.type === 'mousedown') {
 				// finally handle mousedowns as select events
 				ignoreClicks.current[itemKey] = Date.now();
-				selectItem(itemKey, event, keys, selectedItemKeys, dispatch);
+				selectItem(itemKey, event, dispatch);
 			}
 			if(event.type === 'dblclick' && itemData.itemTypeRaw !== 'note') {
 				if(itemData.itemTypeRaw === 'attachment') {
@@ -275,15 +281,15 @@ const TableRow = memo(props => {
 				}
 			}
 		}
-	}
+	}, [dispatch, isSelected, itemData, itemKey, selectedItemKeysLength]);
 
 	useEffect(() => {
 		preview(getEmptyImage(), { captureDraggingState: true })
-	}, []);
+	}, [preview]);
 
 	useEffect(() => {
 		isFileUploadAllowed && onFileHoverOnRow(isOver, dropZone);
-	}, [isOver, dropZone, isFileUploadAllowed]);
+	}, [isOver, dropZone, isFileUploadAllowed, onFileHoverOnRow]);
 
 	const attach = useCallback((domElement) => {
 		drag(domElement);
@@ -293,7 +299,7 @@ const TableRow = memo(props => {
 
 	return (
 		<div
-			aria-selected={ isActive }
+			aria-selected={ isSelected }
 			aria-rowindex={ index + 1 }
 			className={ className }
 			style={ style }
@@ -307,15 +313,35 @@ const TableRow = memo(props => {
 			tabIndex={ -2 }
 		>
 			{ columns.map((c, colIndex) => itemData ? (
-				<DataCell
-					key={ c.field }
-					colIndex={ colIndex }
-					columnName={ c.field }
-					isActive={ isActive }
-					isFocused={ isFocused }
-					itemData={ itemData }
-					width={ `var(--col-${colIndex}-width)` }
-				/>
+				c.field === 'title' ? (
+					<TitleCell
+						key={ c.field }
+						colIndex={ colIndex }
+						columnName={ c.field }
+						isSelected={ isSelected }
+						isFocused={ isFocusedAndSelected }
+						itemData={ itemData }
+						width={ `var(--col-${colIndex}-width)` }
+					/>
+				) : c.field === 'attachment' ? (
+					<AttachmentCell
+						key={ c.field }
+						colIndex={ colIndex }
+						columnName={ c.field }
+						isSelected={ isSelected }
+						isFocused={ isFocusedAndSelected }
+						itemData={ itemData }
+						width={ `var(--col-${colIndex}-width)` }
+					/>
+				) : (
+					<GenericDataCell
+						key={ c.field }
+						colIndex={ colIndex }
+						columnName={ c.field }
+						itemData={ itemData }
+						width={ `var(--col-${colIndex}-width)` }
+					/>
+				)
 			) : <PlaceholderCell
 				key={ c.field }
 				width={ `var(--col-${colIndex}-width)` }
@@ -324,17 +350,15 @@ const TableRow = memo(props => {
 			/> ) }
 		</div>
 	);
-});
+};
 
 TableRow.propTypes = {
 	data: PropTypes.shape({
 		onFileHoverOnRow: PropTypes.func,
-		isFocused: PropTypes.bool,
-		keys: PropTypes.array,
 		columns: PropTypes.array,
 	}),
 	index: PropTypes.number,
 	style: PropTypes.object,
 };
 
-export default TableRow;
+export default memo(TableRow);

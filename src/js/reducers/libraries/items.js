@@ -1,5 +1,3 @@
-'use strict';
-
 import {
     RECEIVE_ADD_ITEMS_TO_COLLECTION,
     RECEIVE_CHILD_ITEMS,
@@ -7,6 +5,7 @@ import {
     RECEIVE_CREATE_ITEMS,
     RECEIVE_DELETE_ITEM,
     RECEIVE_DELETE_ITEMS,
+    RECEIVE_FETCH_ITEM_DETAILS,
     RECEIVE_FETCH_ITEMS,
     RECEIVE_ITEMS_BY_QUERY,
     RECEIVE_ITEMS_IN_COLLECTION,
@@ -71,6 +70,7 @@ const items = (state = {}, action, metaAndTags) => {
 				...indexByKey(calculateDerivedData(action.items, metaAndTags), 'key')
 			};
 		case RECEIVE_CREATE_ITEMS:
+		case RECEIVE_FETCH_ITEM_DETAILS:
 		case RECEIVE_FETCH_ITEMS:
 		case RECEIVE_ITEMS_BY_QUERY:
 		case RECEIVE_ITEMS_IN_COLLECTION:

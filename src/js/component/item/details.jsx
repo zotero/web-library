@@ -7,7 +7,7 @@ import ItemDetailsInfoView from '../item-details/info-view';
 import ItemDetailsTabs from '../item-details/tabs';
 import TouchHeaderContainer from '../../container/touch-header';
 import withDevice from '../../enhancers/with-device';
-import { navigate, fetchItemsByKeys } from '../../actions';
+import { navigate, fetchItemDetails } from '../../actions';
 import { get } from '../../utils';
 
 const ItemDetails = props => {
@@ -21,7 +21,7 @@ const ItemDetails = props => {
 
 	useEffect(() => {
 		if(itemKey && !item) {
-			dispatch(fetchItemsByKeys([itemKey]));
+			dispatch(fetchItemDetails(itemKey));
 		}
 	}, [item, itemKey]);
 

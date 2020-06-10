@@ -1,7 +1,8 @@
 import { omit } from '../common/immutable';
-import { exportItems, chunkedTrashOrDelete, chunkedDeleteItems, chunkedMoveToTrash,
-chunkedRecoverFromTrash, chunkedRemoveFromCollection, createItem, createItemOfType, toggleModal }
-from '.';
+import { exportItems, chunkedAddToCollection, chunkedCopyToLibrary, chunkedTrashOrDelete,
+chunkedDeleteItems, chunkedMoveToTrash, chunkedRecoverFromTrash, chunkedRemoveFromCollection,
+createItem, createItemOfType, toggleModal } from '.';
+
 import { BIBLIOGRAPHY, COLLECTION_SELECT, EXPORT, NEW_FILE, NEW_ITEM } from '../constants/modals';
 
 const currentDuplicateItem = () => {
@@ -43,6 +44,22 @@ const currentCreateItemOfType = (itemType) => {
 		const state = getState();
 		const { collectionKey } = state.current;
 		return await dispatch(createItemOfType(itemType, { collection: collectionKey }));
+	}
+}
+
+const currentAddToCollection = targetCollectionKey => {
+	return async (dispatch, getState) => {
+		const state = getState();
+		const { itemKeys } = state.current;
+		return await dispatch(chunkedAddToCollection(itemKeys, targetCollectionKey));
+	}
+}
+
+const currentCopyToLibrary = (targetLibraryKey, targetCollectionKey = null) => {
+	return async (dispatch, getState) => {
+		const state = getState();
+		const { itemKeys, libraryKey } = state.current;
+		return await dispatch(chunkedCopyToLibrary(itemKeys, libraryKey, targetLibraryKey, targetCollectionKey));
 	}
 }
 
@@ -111,8 +128,10 @@ const currentExportItemsModal = () => {
 }
 
 export {
+	currentAddToCollection,
 	currentAddToCollectionModal,
 	currentBibliographyModal,
+	currentCopyToLibrary,
 	currentCreateItemOfType,
 	currentDeleteItems,
 	currentDuplicateItem,
