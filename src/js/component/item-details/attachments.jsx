@@ -1,52 +1,55 @@
 import cx from 'classnames';
 import PropTypes from 'prop-types';
-import React, { forwardRef, useCallback, useEffect, useRef, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { NativeTypes } from 'react-dnd-html5-backend';
-import { useDrag, useDrop } from 'react-dnd';
+import React, { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { CSSTransition } from 'react-transition-group';
+import { NativeTypes } from 'react-dnd-html5-backend';
+import { useDispatch, useSelector } from 'react-redux';
+import { useDrag, useDrop } from 'react-dnd';
 
+import AddLinkedUrlForm from './add-linked-url-form';
+import AttachmentDetails from './attachment-details';
 import Button from '../ui/button';
 import Icon from '../ui/icon';
 import Spinner from '../ui/spinner';
-import withDevice from '../../enhancers/with-device';
-import withEditMode from '../../enhancers/with-edit-mode';
+import { ADD_LINKED_URL_TOUCH } from '../../constants/modals';
 import { ATTACHMENT } from '../../constants/dnd';
+import { createAttachmentsFromDropped, createItem, moveToTrash, uploadAttachment, fetchItemTemplate,
+fetchChildItems, navigate, sourceFile, openAttachment, toggleModal, updateItem } from
+'../../actions';
+import { get, getScrollContainerPageCount, getUniqueId, stopPropagation, sortByKey } from '../../utils';
 import { getFileData } from '../../common/event';
 import { isTriggerEvent } from '../../common/event';
-import { getScrollContainerPageCount, getUniqueId, stopPropagation, sortByKey } from '../../utils';
-import { pick } from '../../common/immutable';
+import { pluralize } from '../../common/format';
 import { TabPane } from '../ui/tabs';
 import { Toolbar, ToolGroup } from '../ui/toolbars';
-import { navigate, sourceFile, openAttachment, toggleModal, updateItem } from '../../actions';
-import { pluralize } from '../../common/format';
-import AttachmentDetails from './attachment-details';
-import { useFocusManager } from '../../hooks';
-import AddLinkedUrlForm from './add-linked-url-form';
-import { ADD_LINKED_URL_TOUCH } from '../../constants/modals';
+import { useFetchingState, useFocusManager } from '../../hooks';
 
-const AttachmentIcon = ({ device, isActive, item, size }) => {
+
+const AttachmentIcon = memo(({ isActive, item, size }) => {
+	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
 	const { iconName } = item[Symbol.for('derived')];
-	const suffix = device.isTouchOrSmall ? 'active' : 'white';
+	const suffix = isTouchOrSmall ? 'active' : 'white';
 	const symbol = isActive ? `${iconName}-${suffix}` : iconName;
 	const dvp = window.devicePixelRatio >= 2 ? 2 : 1;
-	const path = device.isTouchOrSmall ?
+	const path = isTouchOrSmall ?
 		`28/item-types/light/${iconName}` : `16/item-types/light/${dvp}x/${iconName}`;
 
 	return <Icon type={ path } symbol={ symbol} width={ size } height={ size } />
-};
+});
+
+AttachmentIcon.displayName = 'AttachmentIcon';
 
 AttachmentIcon.propTypes = {
-	device: PropTypes.object.isRequired,
 	isActive: PropTypes.bool,
 	item: PropTypes.object.isRequired,
 	size: PropTypes.string.isRequired,
 };
 
-const AttachmentDownloadIcon = props => {
-	const { attachment, device, isUploading } = props;
+const AttachmentDownloadIcon = memo(props => {
+	const { attachment, isUploading } = props;
 	const dispatch = useDispatch();
-	const iconSize = device.isTouchOrSmall ? '24' : '16';
+	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
+	const iconSize = isTouchOrSmall ? '24' : '16';
 
 	const handleLinkInteraction = useCallback(ev => {
 		const { key } = ev.currentTarget.closest('[data-key]').dataset;
@@ -55,7 +58,7 @@ const AttachmentDownloadIcon = props => {
 			ev.preventDefault();
 			dispatch(openAttachment(key));
 		}
-	});
+	}, [dispatch]);
 
 	return (
 		attachment.linkMode.startsWith('imported') && attachment[Symbol.for('links')].enclosure && !isUploading ? (
@@ -85,20 +88,23 @@ const AttachmentDownloadIcon = props => {
 			</a>
 		) : null
 	);
-};
+});
+
+AttachmentDownloadIcon.displayName = 'AttachmentDownloadIcon';
 
 AttachmentDownloadIcon.propTypes = {
 	attachment: PropTypes.object,
-	device: PropTypes.object.isRequired,
-	getAttachmentUrl: PropTypes.func.isRequired,
 	isUploading: PropTypes.bool,
 };
 
-const Attachment = forwardRef((props, ref) => {
-	const { attachment, device, moveToTrash, itemKey, isReadOnly, isUploading, libraryKey,
-		getAttachmentUrl, onKeyDown } = props;
-	const attachmentKey = useSelector(state => state.current.attachmentKey);
+const Attachment = memo(props => {
+	const { attachment, focusBySelector, itemKey, isReadOnly, isUploading, onKeyDown } = props;
 	const dispatch = useDispatch();
+
+	const libraryKey = useSelector(state => state.current.libraryKey);
+	const attachmentKey = useSelector(state => state.current.attachmentKey);
+	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
+
 	const [isFocused, setIsFocused] = useState(false);
 	const [_, drag] = useDrag({ // eslint-disable-line no-unused-vars
 		item: { type: ATTACHMENT, itemKey, libraryKey },
@@ -114,7 +120,7 @@ const Attachment = forwardRef((props, ref) => {
 		}
 	});
 	const id = useRef(getUniqueId('attachment-'));
-	const iconSize = device.isTouchOrSmall ? '28' : '16';
+	const iconSize = isTouchOrSmall ? '28' : '16';
 	const isSelected = attachmentKey === attachment.key;
 	const isFile = attachment.linkMode.startsWith('imported') &&
 		attachment[Symbol.for('links')].enclosure;
@@ -123,14 +129,15 @@ const Attachment = forwardRef((props, ref) => {
 
 	const handleDelete = useCallback(ev => {
 		ev.stopPropagation();
-		moveToTrash([attachment.key]);
-	});
+		dispatch(moveToTrash([attachment.key]));
+	}, [dispatch, attachment]);
 
-	const handleKeyDown = useCallback(ev => onKeyDown(ev));
+	const handleKeyDown = useCallback(ev => onKeyDown(ev), [onKeyDown]);
 
 	const handleAttachmentSelect = useCallback(() => {
+		focusBySelector(`[data-key="${attachment.key}"]`);
 		dispatch(navigate({ attachmentKey: attachment.key }));
-	});
+	}, [dispatch, focusBySelector, attachment]);
 
 	const handleFocus = useCallback(ev => {
 		if(ev.target !== ev.currentTarget) {
@@ -139,15 +146,13 @@ const Attachment = forwardRef((props, ref) => {
 
 		dispatch(navigate({ attachmentKey: attachment.key }));
 		setIsFocused(true);
-	});
+	}, [dispatch, attachment]);
 
 	const handleBlur = useCallback(() => {
 		setIsFocused(false);
-	});
+	}, []);
 
-	drag(ref);
-
-	return (
+	return drag(
 		<li
 			aria-labelledby={ id.current }
 			className={ cx('attachment', { 'selected': isSelected, 'no-link': !hasLink }) }
@@ -156,11 +161,10 @@ const Attachment = forwardRef((props, ref) => {
 			onClick={ handleAttachmentSelect }
 			onFocus={ handleFocus }
 			onKeyDown={ handleKeyDown }
-			ref={ ref }
 			role="listitem"
 			tabIndex={ -2 }
 		>
-			{ (device.isTouchOrSmall && !isReadOnly) && (
+			{ (isTouchOrSmall && !isReadOnly) && (
 				<Button
 					aria-label="delete attachment"
 					className="btn-circle btn-primary"
@@ -174,7 +178,6 @@ const Attachment = forwardRef((props, ref) => {
 			<AttachmentIcon
 				item={ attachment }
 				size={ iconSize }
-				device={ device }
 				isActive={ isFocused && isSelected }
 			/>
 			<div className="truncate" id={ id.current }>
@@ -185,12 +188,10 @@ const Attachment = forwardRef((props, ref) => {
 			{ isUploading && <Spinner className="small" /> }
 			<AttachmentDownloadIcon
 				attachment={ attachment }
-				device={ device }
 				isUploading={ isUploading }
-				getAttachmentUrl={ getAttachmentUrl }
 			/>
 
-			{ (!device.isTouchOrSmall && !isReadOnly) && (
+			{ (!isTouchOrSmall && !isReadOnly) && (
 				<Button
 					aria-label="delete attachment"
 					icon
@@ -206,17 +207,16 @@ const Attachment = forwardRef((props, ref) => {
 
 Attachment.propTypes = {
 	attachment: PropTypes.object,
-	device: PropTypes.object.isRequired,
-	getAttachmentUrl: PropTypes.func.isRequired,
+	focusBySelector: PropTypes.func.isRequired,
 	isReadOnly: PropTypes.bool,
 	isUploading: PropTypes.bool,
 	itemKey: PropTypes.string,
-	libraryKey: PropTypes.string,
-	moveToTrash: PropTypes.func,
 	onKeyDown: PropTypes.func.isRequired,
 };
 
-const AttachmentDetailsWrap = ({ isReadOnly }) => {
+Attachment.displayName = 'Attachment';
+
+const AttachmentDetailsWrap = memo(({ isReadOnly }) => {
 	const attachmentKey = useSelector(state => state.current.attachmentKey);
 
 	if(attachmentKey) {
@@ -235,31 +235,44 @@ const AttachmentDetailsWrap = ({ isReadOnly }) => {
 			</div>
 		);
 	}
-};
+});
+
+AttachmentDetailsWrap.displayName = 'AttachmentDetailsWrap';
 
 const PAGE_SIZE = 100;
 
-//@TODO: migrate to non-container component
-const Attachments = props => {
-	const { childItems, createAttachmentsFromDropped, device, isFetched, isFetching, isReadOnly,
-	itemKey, createItem, uploadAttachment, fetchChildItems, fetchItemTemplate, uploads, isActive,
-	libraryKey, pointer, ...rest } = props;
+const Attachments = ({ isActive, isReadOnly }) => {
 	const dispatch = useDispatch();
+
+	const libraryKey = useSelector(state => state.current.libraryKey);
+	const itemKey = useSelector(state => state.current.itemKey);
+	const { isFetching, isFetched, pointer, keys } = useFetchingState(
+		['libraries', libraryKey, 'itemsByParent', itemKey]
+	);
+
+	const allItems = useSelector(state => state.libraries[libraryKey].items);
+	const uploads = useSelector(state => get(state, ['libraries', libraryKey, 'updating', 'uploads'], []));
+	const shouldUseTabs = useSelector(state => state.device.shouldUseTabs);
+	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
+	const isTinymceFetching = useSelector(state => state.sources.fetching.includes('tinymce'));
+	const isTinymceFetched = useSelector(state => state.sources.fetched.includes('tinymce'));
+
+	const attachments = (keys || [])
+		.map(childItemKey => allItems[childItemKey])
+		.filter(item => !item.deleted && item.itemType === 'attachment');
+
+	sortByKey(attachments, a => a.title || a.fileName)
+
 	const scrollContainerRef = useRef(null);
-	const selectedAttachmentRef = useRef(null);
 	const { focusNext, focusPrev, focusDrillDownNext, focusDrillDownPrev, receiveFocus,
 		receiveBlur, focusBySelector } = useFocusManager(
-			scrollContainerRef, selectedAttachmentRef, false
+			scrollContainerRef, null, false
 		);
 
 	const fileInput = useRef(null);
 	const addLinkedUrlButtonRef = useRef(null);
-	const [attachments, setAttachments] = useState([]);
 	const [isAddingLinkedUrl, setIsAddingLinkedUrl] = useState(false);
 
-	const isTinymceFetching = useSelector(state => state.sources.fetching.includes('tinymce'));
-	const isTinymceFetched = useSelector(state => state.sources.fetched.includes('tinymce'));
-	const selectedAttachmentKey = useSelector(state => state.current.attachmentKey);
 
 	const [{ isOver, canDrop }, drop] = useDrop({
 		accept: NativeTypes.FILE,
@@ -269,36 +282,16 @@ const Attachments = props => {
 		}),
 		drop: async item => {
 			if(item.files && item.files.length) {
-				createAttachmentsFromDropped(item.files, { parentItem: itemKey });
+				dispatch(createAttachmentsFromDropped(item.files, { parentItem: itemKey }));
 			}
 		},
 	});
 
-	useEffect(() => {
-		if(isActive && !isFetching && !isFetched) {
-			const start = pointer || 0;
-			const limit = PAGE_SIZE;
-			fetchChildItems(itemKey, { start, limit });
-		}
-	}, [isActive, isFetching, isFetched, childItems]);
-
-	useEffect(() => {
-		const attachments = childItems.filter(i => i.itemType === 'attachment');
-		sortByKey(attachments, a => a.title || a.fileName)
-		setAttachments(attachments);
-	}, [childItems]);
-
-	useEffect(() => {
-		if(!isTinymceFetched && !isTinymceFetching) {
-			dispatch(sourceFile('tinymce'));
-		}
-	}, []);
-
 	const handleFileInputChange = useCallback(async ev => {
 		const fileDataPromise = getFileData(ev.currentTarget.files[0]);
-		const attachmentTemplatePromise = fetchItemTemplate(
+		const attachmentTemplatePromise = dispatch(fetchItemTemplate(
 			'attachment', { linkMode: 'imported_file' }
-		);
+		));
 		const [fileData, attachmentTemplate] = await Promise.all(
 			[fileDataPromise, attachmentTemplatePromise]
 		);
@@ -310,9 +303,9 @@ const Attachments = props => {
 			title: fileData.fileName,
 			contentType: fileData.contentType
 		};
-		const item = await createItem(attachment, libraryKey);
-		await uploadAttachment(item.key, fileData, libraryKey);
-	});
+		const item = await dispatch(createItem(attachment, libraryKey));
+		await dispatch(uploadAttachment(item.key, fileData, libraryKey));
+	}, [dispatch, itemKey, libraryKey]);
 
 	const handleKeyDown = useCallback(ev => {
 		if(ev.key === "ArrowLeft") {
@@ -377,18 +370,32 @@ const Attachments = props => {
 		setIsAddingLinkedUrl(false);
 	}, []);
 
+	useEffect(() => {
+		if(isActive && !isFetching && !isFetched) {
+			const start = pointer || 0;
+			const limit = PAGE_SIZE;
+			dispatch(fetchChildItems(itemKey, { start, limit }));
+		}
+	}, [dispatch, itemKey, isActive, isFetching, isFetched, pointer]);
+
+	useEffect(() => {
+		if(!isTinymceFetched && !isTinymceFetching) {
+			dispatch(sourceFile('tinymce'));
+		}
+	}, [dispatch, isTinymceFetching, isTinymceFetched]);
+
 	return (
 		<TabPane
 			className={ cx("attachments", { 'dnd-target': canDrop && isOver }) }
 			isActive={ isActive }
-			isLoading={ device.shouldUseTabs && !(isFetched && isTinymceFetched) }
+			isLoading={ shouldUseTabs && !(isFetched && isTinymceFetched) }
 			ref={ drop }
 		>
 			<CSSTransition
 				classNames="slide-down"
-				enter={ !device.isTouchOrSmall }
-				exit={ !device.isTouchOrSmall }
-				in={ !device.isTouchOrSmall && isAddingLinkedUrl }
+				enter={ !isTouchOrSmall }
+				exit={ !isTouchOrSmall }
+				in={ !isTouchOrSmall && isAddingLinkedUrl }
 				mountOnEnter
 				timeout={ 500 }
 				unmountOnExit
@@ -396,7 +403,7 @@ const Attachments = props => {
 				<AddLinkedUrlForm onClose={ handleLinkedFileCancel } />
 			</CSSTransition>
 			<h5 className="h2 tab-pane-heading hidden-mouse">Attachments</h5>
-			{ !device.isTouchOrSmall && (
+			{ !isTouchOrSmall && (
 				<Toolbar>
 					<div className="toolbar-left">
 						<div className="counter">
@@ -454,22 +461,20 @@ const Attachments = props => {
 									const isUploading = uploads.includes(attachment.key);
 									return <Attachment
 										attachment={ attachment }
-										device={ device }
 										isReadOnly={ isReadOnly }
 										isUploading={ isUploading }
 										itemKey={ attachment.key }
 										key={ attachment.key }
 										libraryKey={ libraryKey }
 										onKeyDown={ handleKeyDown }
-										ref={ selectedAttachmentKey === attachment.key ? selectedAttachmentRef : null }
-										{ ...pick(rest, ['moveToTrash', 'getAttachmentUrl']) }
+										focusBySelector={ focusBySelector }
 									/>
 								})
 							}
 						</ul>
 					</nav>
 				) }
-				{ device.isTouchOrSmall && !isReadOnly && (
+				{ isTouchOrSmall && !isReadOnly && (
 					<React.Fragment>
 						<div className="btn-file">
 							<input
@@ -497,7 +502,7 @@ const Attachments = props => {
 				)}
 			</div>
 			{
-				(!device.isTouchOrSmall && attachments.length > 0) && (
+				(!isTouchOrSmall && attachments.length > 0) && (
 					<AttachmentDetailsWrap isReadOnly={ isReadOnly } />
 				)
 			}
@@ -506,28 +511,10 @@ const Attachments = props => {
 };
 
 Attachments.propTypes = {
-	childItems: PropTypes.array,
-	createAttachmentsFromDropped: PropTypes.func,
-	createItem: PropTypes.func,
-	device: PropTypes.object,
-	fetchChildItems: PropTypes.func,
-	fetchItemTemplate: PropTypes.func,
-	isActive: PropTypes.bool,
-	isFetched: PropTypes.bool,
-	isFetching: PropTypes.bool,
 	isReadOnly: PropTypes.bool,
-	itemKey: PropTypes.string,
-	libraryKey: PropTypes.string,
-	onBlur: PropTypes.func,
-	onDrillDownNext: PropTypes.func,
-	onDrillDownPrev: PropTypes.func,
-	onFocus: PropTypes.func,
-	onFocusNext: PropTypes.func,
-	onFocusPrev: PropTypes.func,
-	pointer: PropTypes.number,
-	registerFocusRoot: PropTypes.func,
-	uploadAttachment: PropTypes.func,
-	uploads: PropTypes.array,
+	isActive: PropTypes.bool,
 };
 
-export default withDevice(withEditMode(Attachments));
+Attachments.whyDidYouRender = true;
+
+export default memo(Attachments);

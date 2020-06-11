@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { useSelector, shallowEqual } from 'react-redux';
-import { get, sortByKey } from '../utils';
+import { get } from '../utils';
 import { getItemKeysPath } from '../common/state';
 
 const useFetchingState = path => {
@@ -9,7 +9,11 @@ const useFetchingState = path => {
 	const hasChecked = typeof(totalResults) !== 'undefined';
 	const isFetched = hasChecked && !isFetching && !hasMoreItems;
 
-	return { isFetching, isFetched, keys, hasChecked, hasMoreItems, pointer, totalResults, requests };
+	const fetchingState = useMemo(() =>
+		({ isFetching, isFetched, keys, hasChecked, hasMoreItems, pointer, totalResults, requests }),
+		[isFetching, isFetched, keys, hasChecked, hasMoreItems, pointer, totalResults, requests]);
+
+	return fetchingState;
 };
 
 const useSourcePath = () => {

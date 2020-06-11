@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 
-import AttachmentsContainer from '../../container/item-details/attachments';
+import Attachments from '../../component/item-details/attachments';
 import EditToggleButton from '../edit-toggle-button';
 import Info from '../../component/item-details/info';
 import NotesContainer from '../../container/item-details/notes';
@@ -310,7 +310,7 @@ const ItemDetailsTabs = () => {
 						) }
 						{
 							shouldShowAttachmentsTab && !['attachment', 'note'].includes(item.itemType) && (
-								<AttachmentsContainer
+								<Attachments
 									key={ 'attachments-' + item.key }
 									isActive={ activeTab === 'attachments' }
 									isReadOnly={ isReadOnly }
