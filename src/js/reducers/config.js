@@ -66,7 +66,7 @@ const config = (state = defaultState, action) => {
 			return {
 				...state,
 				...pick(action, ['apiConfig', 'apiKey', 'menus', 'stylesSourceUrl',
-					'streamingApiUrl', 'translateUrl', 'userId', 'userSlug', 'tinymceRoot']),
+					'streamingApiUrl', 'translateUrl', 'userId', 'userSlug', 'websiteUrl', 'tinymceRoot']),
 				defaultLibraryKey: determineDefaultLibraryKey(action),
 				includeMyLibrary: action.libraries.includeMyLibrary,
 				includeUserGroups: action.libraries.includeUserGroups,

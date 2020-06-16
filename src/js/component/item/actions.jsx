@@ -10,6 +10,7 @@ import columnProperties from '../../constants/column-properties';
 import AddByIdentifier from './actions/add-by-identifier';
 import { useItemActionHandlers } from '../../hooks';
 import { toggleSelectMode } from '../../actions';
+import MoreActions from './actions/more-actions';
 
 const ItemActionsTouch = memo(() => {
 	const dispatch = useDispatch();
@@ -241,6 +242,14 @@ const ItemActionsDesktop = memo(props => {
 				>
 					<Icon type="16/bibliography" width="16" height="16" />
 				</Button>
+			</ToolGroup>
+			<ToolGroup>
+				<MoreActions
+					onFocusNext={ onFocusNext }
+					onFocusPrev={ onFocusPrev }
+					onNewItemCreate={ handleNewItemCreate }
+					tabIndex={ -2 }
+				/>
 			</ToolGroup>
 		</React.Fragment>
 	);

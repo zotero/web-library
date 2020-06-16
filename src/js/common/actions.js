@@ -1,4 +1,4 @@
-'use strict';
+import api from 'zotero-api-client';
 
 const extractItems = response => {
 	return response.getData().map((item, index) => ({
@@ -18,4 +18,55 @@ const sequentialChunkedAcion = async (action, itemKeys, extraArgs = []) => {
 	} while (itemKeys.length > 0);
 }
 
-export { extractItems, sequentialChunkedAcion };
+const getApiForItems = ({ config, libraryKey }, requestType, queryConfig) => {
+	switch(requestType) {
+		case 'ITEMS_IN_COLLECTION':
+			return api(config.apiKey, config.apiConfig)
+				.library(libraryKey)
+				.collections(queryConfig.collectionKey)
+				.items()
+				.top();
+		case 'CHILD_ITEMS':
+			return api(config.apiKey, config.apiConfig)
+				.library(libraryKey)
+				.items(queryConfig.itemKey)
+				.children();
+		case 'TRASH_ITEMS':
+			return api(config.apiKey, config.apiConfig)
+				.library(libraryKey)
+				.items()
+				.trash()
+		case 'PUBLICATIONS_ITEMS':
+			return api(config.apiKey, config.apiConfig)
+				.library(libraryKey)
+				.items()
+				.publications()
+		case 'ITEMS_BY_QUERY':
+			var configuredApi = api(config.apiKey, config.apiConfig)
+				.library(libraryKey)
+				.items()
+			if(queryConfig.collectionKey) {
+				configuredApi = configuredApi.collections(queryConfig.collectionKey).top()
+			} else if(queryConfig.isMyPublications) {
+				configuredApi = configuredApi.publications();
+			} else if(queryConfig.isTrash) {
+				configuredApi = configuredApi.trash();
+			} else {
+				configuredApi = configuredApi.top();
+			}
+			return configuredApi;
+		case 'TOP_ITEMS':
+			return api(config.apiKey, config.apiConfig)
+				.library(libraryKey)
+				.items()
+				.top();
+		case 'FETCH_ITEM_DETAILS':
+		case 'FETCH_ITEMS':
+		case 'RELATED_ITEMS':
+			return api(config.apiKey, config.apiConfig)
+				.library(libraryKey)
+				.items()
+	}
+}
+
+export { extractItems, getApiForItems, sequentialChunkedAcion };

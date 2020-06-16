@@ -1,61 +1,8 @@
-'use strict';
-
 import { SORT_ITEMS, REQUEST_ATTACHMENT_URL, RECEIVE_ATTACHMENT_URL, ERROR_ATTACHMENT_URL } from '../constants/actions';
 import api from 'zotero-api-client';
-import { extractItems } from '../common/actions';
+import { extractItems, getApiForItems } from '../common/actions';
 import { mapRelationsToItemKeys } from '../utils';
 import columnProperties from '../constants/column-properties';
-
-const getApi = ({ config, libraryKey }, requestType, queryConfig) => {
-	switch(requestType) {
-		case 'ITEMS_IN_COLLECTION':
-			return api(config.apiKey, config.apiConfig)
-				.library(libraryKey)
-				.collections(queryConfig.collectionKey)
-				.items()
-				.top();
-		case 'CHILD_ITEMS':
-			return api(config.apiKey, config.apiConfig)
-				.library(libraryKey)
-				.items(queryConfig.itemKey)
-				.children();
-		case 'TRASH_ITEMS':
-			return api(config.apiKey, config.apiConfig)
-				.library(libraryKey)
-				.items()
-				.trash()
-		case 'PUBLICATIONS_ITEMS':
-			return api(config.apiKey, config.apiConfig)
-				.library(libraryKey)
-				.items()
-				.publications()
-		case 'ITEMS_BY_QUERY':
-			var configuredApi = api(config.apiKey, config.apiConfig)
-				.library(libraryKey)
-				.items()
-			if(queryConfig.collectionKey) {
-				configuredApi = configuredApi.collections(queryConfig.collectionKey).top()
-			} else if(queryConfig.isMyPublications) {
-				configuredApi = configuredApi.publications();
-			} else if(queryConfig.isTrash) {
-				configuredApi = configuredApi.trash();
-			} else {
-				configuredApi = configuredApi.top();
-			}
-			return configuredApi;
-		case 'TOP_ITEMS':
-			return api(config.apiKey, config.apiConfig)
-				.library(libraryKey)
-				.items()
-				.top();
-		case 'FETCH_ITEM_DETAILS':
-		case 'FETCH_ITEMS':
-		case 'RELATED_ITEMS':
-			return api(config.apiKey, config.apiConfig)
-				.library(libraryKey)
-				.items()
-	}
-}
 
 const fetchItems = (
 	type,
@@ -67,7 +14,7 @@ const fetchItems = (
 		const state = getState();
 		const config = 'config' in overrides ? overrides.config : state.config;
 		const { libraryKey } = 'current' in overrides ? overrides.current : state.current;
-		const api = getApi({ config, libraryKey }, type, queryConfig);
+		const api = getApiForItems({ config, libraryKey }, type, queryConfig);
 
 		dispatch({
 			type: `REQUEST_${type}`,

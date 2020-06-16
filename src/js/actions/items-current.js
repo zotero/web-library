@@ -1,7 +1,9 @@
 import { omit } from '../common/immutable';
+import { getApiForItems } from '../common/actions';
 import { exportItems, chunkedAddToCollection, chunkedCopyToLibrary, chunkedTrashOrDelete,
 chunkedDeleteItems, chunkedMoveToTrash, chunkedRecoverFromTrash, chunkedRemoveFromCollection,
 createItem, createItemOfType, toggleModal } from '.';
+import columnProperties from '../constants/column-properties';
 
 import { BIBLIOGRAPHY, COLLECTION_SELECT, EXPORT, NEW_FILE, NEW_ITEM } from '../constants/modals';
 
@@ -127,6 +129,74 @@ const currentExportItemsModal = () => {
 	}
 }
 
+// @TODO: reduce overlap with fetchSource in items-read.js
+const currentGoToSubscribeUrl = () => {
+	return async (dispatch, getState) => {
+		const state = getState();
+		const config = state.config;
+		const websiteUrl = state.config.websiteUrl;
+		const { itemsSource, collectionKey, isMyPublications, isTrash, libraryKey, q, tag, qmode } = state.current;
+		const { id: libraryId, isGroupLibrary } = state.config.libraries.find(l => l.key === libraryKey);
+
+		const { field: sortBy, sort: sortDirection } = state.preferences.columns.find(
+			column => 'sort' in column) || { field: 'title', sort: 'asc' };
+
+		const direction = sortDirection.toLowerCase();
+		const sort = (sortBy in columnProperties && columnProperties[sortBy].sortKey) || 'title';
+		const sortAndDirection = { sort, direction };
+		var pretendedResponse;
+
+		switch(itemsSource) {
+			case 'query':
+				pretendedResponse = await getApiForItems(
+					{ config, libraryKey }, 'ITEMS_BY_QUERY', { collectionKey, isTrash, isMyPublications }
+				).pretend('get', null, { q, tag, qmode, ...sortAndDirection, format: 'atom' });
+			break;
+			case 'top':
+				pretendedResponse = await getApiForItems(
+					{ config, libraryKey }, 'TOP_ITEMS', {}
+				).pretend('get', null, { ...sortAndDirection, format: 'atom' });
+				break;
+			case 'trash':
+				pretendedResponse = await getApiForItems(
+					{ config, libraryKey }, 'TRASH_ITEMS', {}
+				).pretend('get', null, { ...sortAndDirection, format: 'atom' });
+				break;
+			case 'publications':
+				pretendedResponse = await getApiForItems(
+					{ config, libraryKey }, 'PUBLICATIONS_ITEMS', {}
+				).pretend('get', null, { ...sortAndDirection, format: 'atom' });
+				break;
+			case 'collection':
+				pretendedResponse = await getApiForItems(
+					{ config, libraryKey }, 'ITEMS_IN_COLLECTION', { collectionKey }
+				).pretend('get', null, { ...sortAndDirection, format: 'atom' });
+				break;
+		}
+
+		const redirectUrl = pretendedResponse.getData().url;
+
+		const apiKeyBase = websiteUrl + '/settings/keys/new';
+		const qparams = { 'name': 'Private Feed' };
+		if(isGroupLibrary){
+			qparams['library_access'] = 0;
+			qparams['group_' + libraryId] = 'read';
+			qparams['redirect'] = redirectUrl;
+		}
+		else {
+			qparams['library_access'] = 1;
+			qparams['notes_access'] = 1;
+			qparams['redirect'] = redirectUrl;
+		}
+
+		const queryParamsArray = Object.entries(qparams).map(([key, value]) => encodeURIComponent(key) + '=' + encodeURIComponent(value));
+		const queryString = '?' + queryParamsArray.join('&');
+
+		const url = apiKeyBase + queryString;
+		window.open(url);
+	}
+}
+
 export {
 	currentAddToCollection,
 	currentAddToCollectionModal,
@@ -137,6 +207,7 @@ export {
 	currentDuplicateItem,
 	currentExportItems,
 	currentExportItemsModal,
+	currentGoToSubscribeUrl,
 	currentNewFileModal,
 	currentNewItemModal,
 	currentRecoverTrashItems,

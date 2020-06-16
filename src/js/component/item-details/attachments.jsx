@@ -515,6 +515,4 @@ Attachments.propTypes = {
 	isActive: PropTypes.bool,
 };
 
-Attachments.whyDidYouRender = true;
-
 export default memo(Attachments);

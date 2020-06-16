@@ -5,6 +5,7 @@ export const apiConfig = {
 	apiAuthorityPart: 'api.zotero.org',
 	retry: 2,
 };
+export const websiteUrl = 'https://www.zotero.org/';
 export const stylesSourceUrl = 'https://www.zotero.org/styles-files/styles.json';
 export const streamingApiUrl = 'wss://stream.zotero.org/';
 export const translateUrl = 'location' in window ? window.location.origin : '';
