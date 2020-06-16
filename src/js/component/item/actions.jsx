@@ -9,7 +9,7 @@ import ExportActions from './actions/export';
 import columnProperties from '../../constants/column-properties';
 import AddByIdentifier from './actions/add-by-identifier';
 import { useItemActionHandlers } from '../../hooks';
-import { toggleSelectMode } from '../../actions';
+import { currentGoToSubscribeUrl, toggleSelectMode } from '../../actions';
 import MoreActions from './actions/more-actions';
 
 const ItemActionsTouch = memo(() => {
@@ -37,6 +37,10 @@ const ItemActionsTouch = memo(() => {
 
 	const handleSelectModeToggle = useCallback(() => {
 		dispatch(toggleSelectMode());
+	}, [dispatch]);
+
+	const handleSubscribeClick = useCallback(() => {
+		dispatch(currentGoToSubscribeUrl());
 	}, [dispatch]);
 
 	return (
@@ -83,6 +87,10 @@ const ItemActionsTouch = memo(() => {
 						</DropdownItem>
 					</React.Fragment>
 				)}
+				<DropdownItem divider />
+				<DropdownItem onClick={ handleSubscribeClick }>
+					Subscribe to this feed
+				</DropdownItem>
 			</DropdownMenu>
 		</Dropdown>
 	);
