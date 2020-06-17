@@ -102,7 +102,7 @@ const LibraryNode = props => {
 					<Icon type="16/library" className="mouse" width="16" height="16" />
 				</React.Fragment>
 			) }
-			<div className="truncate" id={ id.current }>{ name }</div>
+			<div className="truncate" id={ id.current } title={ name }>{ name }</div>
 			{ isPickerMode && pickerIncludeLibraries && !shouldShowSpinner && (
 				<input
 					type="checkbox"

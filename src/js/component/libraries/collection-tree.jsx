@@ -91,6 +91,7 @@ const ItemsNode = props => {
 	const id = useRef(getUniqueId());
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
 	const isSingleColumn = useSelector(state => state.device.isSingleColumn);
+	const label = parentCollectionKey ? 'Items' : 'All Items';
 
 	const isSelected = !isSingleColumn && !['trash', 'publications', 'query'].includes(itemsSource) && (
 		parentCollectionKey === selectedCollectionKey || (!parentCollectionKey && !selectedCollectionKey)
@@ -117,8 +118,12 @@ const ItemsNode = props => {
 		>
 			<Icon type="28/document" className="touch" width="28" height="28" />
 			<Icon type="16/document" className="mouse" width="16" height="16" />
-			<div className="truncate" id={ id.current }>
-				{ parentCollectionKey ? 'Items' : 'All Items' }
+			<div
+				className="truncate"
+				title={ label }
+				id={ id.current }
+			>
+				{ label }
 			</div>
 		</Node>
 	);
@@ -183,7 +188,13 @@ const PublicationsNode = ({ isMyLibrary, isPickerMode, isSelected, shouldBeTabba
 		>
 			<Icon type="28/document" className="touch" width="28" height="28" />
 			<Icon type="16/document" className="mouse" width="16" height="16" />
-			<div className="truncate" id={ id.current }>My Publications</div>
+			<div
+				className="truncate"
+				id={ id.current }
+				title="My Publications"
+			>
+				My Publications
+			</div>
 		</Node>
 	);
 }
@@ -212,7 +223,7 @@ const TrashNode = ({ isPickerMode, isReadOnly, isSelected, shouldBeTabbable, par
 		>
 			<Icon type="28/trash" className="touch" width="28" height="28" />
 			<Icon type="16/trash" className="mouse" width="16" height="16" />
-			<div className="truncate" id={ id.current } >Trash</div>
+			<div className="truncate" titel="Trash" id={ id.current } >Trash</div>
 		</Node>
 	);
 }
@@ -517,7 +528,13 @@ const CollectionNode = props => {
 					value={ collectionName }
 				/> ) : (
 					<React.Fragment>
-						<div className="truncate" id={ id.current }>{ collectionName }</div>
+						<div
+							className="truncate"
+							id={ id.current }
+							title={ collectionName }
+						>
+							{ collectionName }
+						</div>
 						{ isPickerMode ? (
 							<PickerCheckbox
 								collectionKey = { collection.key }
