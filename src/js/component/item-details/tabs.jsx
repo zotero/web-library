@@ -6,7 +6,7 @@ import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import Attachments from '../../component/item-details/attachments';
 import EditToggleButton from '../edit-toggle-button';
 import Info from '../../component/item-details/info';
-import NotesContainer from '../../container/item-details/notes';
+import Notes from '../../component/item-details/notes';
 import Panel from '../ui/panel';
 import RelatedContainer from '../../container/item-details/related';
 import Spinner from '../ui/spinner';
@@ -272,7 +272,7 @@ const ItemDetailsTabs = () => {
 										isActive={ activeTab === 'info' }
 										isReadOnly={ isReadOnly }
 									/>
-									{ shouldShowNotesTab && ( <NotesContainer
+									{ shouldShowNotesTab && ( <Notes
 										key={ 'notes-' + item.key }
 										isActive={ activeTab === 'notes' }
 										isReadOnly={ isReadOnly }

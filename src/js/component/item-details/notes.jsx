@@ -4,14 +4,12 @@ import DropdownItem from 'reactstrap/lib/DropdownItem';
 import DropdownMenu from 'reactstrap/lib/DropdownMenu';
 import DropdownToggle from 'reactstrap/lib/DropdownToggle';
 import PropTypes from 'prop-types';
-import React, { forwardRef, useCallback, useEffect, useMemo, useState, useRef } from 'react';
+import React, { memo, forwardRef, useCallback, useEffect, useState, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import Button from '../ui/button';
 import Icon from '../ui/icon';
 import RichEditor from '../../component/rich-editor';
-import withDevice from '../../enhancers/with-device';
-import withEditMode from '../../enhancers/with-edit-mode';
 
 import { get, scrollIntoViewIfNeeded } from '../../utils';
 import { isTriggerEvent } from '../../common/event';
@@ -19,44 +17,46 @@ import { noteAsTitle, pluralize } from '../../common/format';
 import { getScrollContainerPageCount, sortByKey, stopPropagation } from '../../utils';
 import { TabPane } from '../ui/tabs';
 import { Toolbar, ToolGroup } from '../ui/toolbars';
-import { useFocusManager } from '../../hooks';
-import { navigate } from '../../actions';
+import { useFetchingState, useFocusManager, usePrevious } from '../../hooks';
+import { deleteItem, createItem, updateItem, fetchChildItems, fetchItemTemplate, moveToTrash,
+navigate, sourceFile } from '../../actions';
 
 const PAGE_SIZE = 100;
 
 //@TODO: convert to useDispatch hook
-const Note = forwardRef((props, ref) => {
-	const { device, isReadOnly, noteKey, onDelete, onDuplicate, onSelect, onKeyDown } = props;
+const Note = memo(forwardRef((props, ref) => {
 	const dispatch = useDispatch();
+	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
+	const { isReadOnly, noteKey, onDelete, onDuplicate, onSelect, onKeyDown } = props;
 	const [isDropdownOpen, setDropdownOpen] = useState(false);
-
-	const { note, isUpdating, isSelected } = useSelector(state => ({
-		note: get(state, ['libraries', state.current.libraryKey, 'items', noteKey], {}),
-		isUpdating: noteKey in get(state, ['libraries', state.current.libraryKey, 'updating', 'items'], {}),
-		isSelected: noteKey === state.current.noteKey
-	}));
+	const note = useSelector(state => get(state, ['libraries', state.current.libraryKey, 'items', noteKey], {}));
+	const isSelected = useSelector(state => noteKey === state.current.noteKey);
+	const isUpdating = useSelector(state => noteKey in get(state, ['libraries', state.current.libraryKey, 'updating', 'items'], {}));
+	const wasSelected = usePrevious(isSelected);
 
 	useEffect(() => {
-		if(!isSelected && !isUpdating && note.note === '') {
+		if(!isSelected && wasSelected && !isUpdating && note.note === '') {
 			onDelete(note, true);
 		}
-	}, [isSelected]);
+	}, [isSelected, wasSelected, isUpdating, note, onDelete]);
 
-	const handleToggleDropdown = useCallback(() => setDropdownOpen(!isDropdownOpen));
+	const handleToggleDropdown = useCallback(
+		() => setDropdownOpen(!isDropdownOpen), [isDropdownOpen]
+	);
 
 	const handleSelect = useCallback(ev => {
 		if(isTriggerEvent(ev)) { onSelect(note) }
-	});
+	}, [note, onSelect]);
 
 	const handleDelete = useCallback(ev => {
 		onDelete(note);
 		ev.stopPropagation();
-	});
+	}, [note, onDelete]);
 
 	const handleDuplicate = useCallback(ev => {
 		onDuplicate(note);
 		ev.stopPropagation();
-	});
+	}, [note, onDuplicate]);
 
 	const handleFocus = useCallback(ev => {
 		if(ev.target !== ev.currentTarget) {
@@ -64,7 +64,7 @@ const Note = forwardRef((props, ref) => {
 		}
 
 		dispatch(navigate({ noteKey: note.key }));
-	});
+	}, [dispatch, note]);
 
 	const handleKeyDown = useCallback(ev => {
 		if(ev.key === 'Escape' && isDropdownOpen) {
@@ -72,7 +72,7 @@ const Note = forwardRef((props, ref) => {
 			ev.stopPropagation();
 		}
 		onKeyDown(ev);
-	});
+	}, [isDropdownOpen, onKeyDown]);
 
 	return (
 		<li
@@ -98,8 +98,8 @@ const Note = forwardRef((props, ref) => {
 						tabIndex={ -3 }
 						onClick={ stopPropagation }
 						className={ cx('dropdown-toggle', {
-							'btn-circle btn-secondary': device.isTouchOrSmall,
-							'btn-icon': !device.isTouchOrSmall,
+							'btn-circle btn-secondary': isTouchOrSmall,
+							'btn-icon': !isTouchOrSmall,
 						})}
 					>
 						<Icon
@@ -123,24 +123,41 @@ const Note = forwardRef((props, ref) => {
 			<Icon type={ '16/chevron-13' } width="16" height="16" className="hidden-mouse" />
 		</li>
 	);
-});
+}));
 
 Note.displayName = 'Note';
 
 Note.propTypes = {
-	device: PropTypes.object,
 	isReadOnly: PropTypes.bool,
 	isSelected: PropTypes.bool,
 	noteKey: PropTypes.string,
 	onDelete: PropTypes.func,
 	onDuplicate: PropTypes.func,
+	onKeyDown: PropTypes.func,
 	onSelect: PropTypes.func,
 }
 
-const Notes = props => {
-	const { deleteItem, device, childItems, isActive, isFetching, isFetched, updateItem, navigate,
-	fetchItemTemplate, isReadOnly, isTinymceFetched, isTinymceFetching, itemKey, moveToTrash,
-	noteKey, createItem, libraryKey, pointer, sourceFile, fetchChildItems } = props;
+const Notes = ({ isActive, isReadOnly }) => {
+	const dispatch = useDispatch();
+	const libraryKey = useSelector(state => state.current.libraryKey);
+	const noteKey = useSelector(state => state.current.noteKey);
+	const prevNoteKey = usePrevious(noteKey);
+	const itemKey = useSelector(state => state.current.itemKey);
+	const { isFetching, isFetched, pointer, keys } = useFetchingState(
+		['libraries', libraryKey, 'itemsByParent', itemKey]
+	);
+
+	const allItems = useSelector(state => state.libraries[libraryKey].items);
+	const shouldUseTabs = useSelector(state => state.device.shouldUseTabs);
+	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
+	const isTinymceFetching = useSelector(state => state.sources.fetching.includes('tinymce'));
+	const isTinymceFetched = useSelector(state => state.sources.fetched.includes('tinymce'));
+	const notes = (keys || [])
+		.map(childItemKey => allItems[childItemKey])
+		.filter(item => !item.deleted && item.itemType === 'note');
+
+	sortByKey(notes, n => noteAsTitle(n.note));
+
 	const editorRef = useRef();
 	const addedNoteKey = useRef();
 	const notesEl = useRef(null);
@@ -150,94 +167,50 @@ const Notes = props => {
 	const noteKeyToAutoDelete = useRef(null);
 
 	const { focusNext, focusPrev, focusDrillDownNext, focusDrillDownPrev, receiveFocus,
-		receiveBlur, focusBySelector } = useFocusManager(notesEl, selectedNoteRef, false);
+		receiveBlur, resetLastFocused,focusBySelector } = useFocusManager(notesEl, '.note.selected', false);
 
-	const [notes, setNotes] = useState([]);
-
-	const selectedNote = useMemo(
-		() => childItems.find(n => n && n.key === noteKey),
-		[childItems, noteKey]
-	);
-
-	useEffect(() => {
-		if(!isTinymceFetched && !isTinymceFetching) {
-			sourceFile('tinymce');
-		}
-	}, []);
-
-	useEffect(() => {
-		if(isActive && !isFetching && !isFetched) {
-			const start = pointer || 0;
-			const limit = PAGE_SIZE;
-			fetchChildItems(itemKey, { start, limit });
-		}
-	}, [isActive, isFetching, isFetched, childItems]);
-
-	useEffect(() => {
-		const notes = childItems.filter(i => i.itemType === 'note');
-		sortByKey(notes, n => noteAsTitle(n.note));
-		setNotes(notes);
-	}, [childItems]);
-
-	useEffect(() => {
-		if(isActive && noteKey && editorRef.current && addedNoteKey.current === noteKey) {
-			editorRef.current.focus();
-			addedNoteKey.current = null;
-		}
-	}, [childItems]);
-
-	// Scroll selected note into view when it's first ready.
-	useEffect(() => {
-		setTimeout(() => {
-			if(!notesEl.current || !selectedNote) {
-				return;
-			}
-
-			const selectedNoteEl = notesEl.current.querySelector(`[data-key="${selectedNote.key}"]`);
-
-			if(selectedNoteEl && !hasScrolledIntoViewRef.current) {
-				scrollIntoViewIfNeeded(selectedNoteEl, notesEl.current);
-				hasScrolledIntoViewRef.current = true;
-			}
-		}, 0);
-	}, [selectedNote]);
+	const selectedNote = notes.find(n => n && n.key === noteKey);
 
 	const handleChangeNote = useCallback(newContent => {
 		noteKeyToAutoDelete.current = null;
-		updateItem(noteKey, { note: newContent });
-	});
+		dispatch(updateItem(noteKey, { note: newContent }));
+	}, [dispatch, noteKey]);
 
 	const handleSelect = useCallback(note => {
 		hasScrolledIntoViewRef.current = true;
-		navigate({ noteKey: note.key });
-	});
+		focusBySelector(`[data-key="${note.key}"]`);
+		dispatch(navigate({ noteKey: note.key }));
+	}, [dispatch, focusBySelector]);
 
 	const handleDelete = useCallback((note, isAutoDelete = false) => {
+		console.log('handleDelete', { note, isAutoDelete });
 		if(isAutoDelete && noteKeyToAutoDelete.current === note.key) {
-			deleteItem(note);
+			dispatch(deleteItem(note));
 			noteKeyToAutoDelete.current = null;
 		} else if(!isAutoDelete) {
-			moveToTrash([note.key]);
-			navigate({ note: null });
+			dispatch(moveToTrash([note.key]));
+			if(note.key === noteKey) {
+				dispatch(navigate({ noteKey: null }));
+			}
 		}
-	});
+	}, [dispatch, noteKey]);
 
 	const handleDuplicate = useCallback(async note => {
-		const noteTemplate = await fetchItemTemplate('note');
+		const noteTemplate = await dispatch(fetchItemTemplate('note'));
 		const item = { ...noteTemplate, parentItem: itemKey, note: note.note };
-		const createdItem = await createItem(item, libraryKey);
+		const createdItem = await dispatch(createItem(item, libraryKey));
 		addedNoteKey.current = createdItem.key;
-		navigate({ noteKey: createdItem.key });
-	});
+		dispatch(navigate({ noteKey: createdItem.key }));
+	}, [dispatch, itemKey, libraryKey]);
 
 	const handleAddNote = useCallback(async () => {
-		const noteTemplate = await fetchItemTemplate('note');
+		const noteTemplate = await dispatch(fetchItemTemplate('note'));
 		const item = { ...noteTemplate, parentItem: itemKey, note: '' };
-		const createdItem = await createItem(item, libraryKey);
+		const createdItem = await dispatch(createItem(item, libraryKey));
 		addedNoteKey.current = createdItem.key;
 		noteKeyToAutoDelete.current = createdItem.key;
-		navigate({ noteKey: createdItem.key });
-	});
+		dispatch(navigate({ noteKey: createdItem.key }));
+	}, [dispatch, itemKey, libraryKey]);
 
 	const handleKeyDown = useCallback(ev => {
 		if(ev.key === "ArrowLeft") {
@@ -274,7 +247,7 @@ const Notes = props => {
 			ev.target.click();
 			ev.preventDefault();
 		}
-	});
+	}, [focusBySelector, focusDrillDownNext, focusDrillDownPrev, focusNext, focusPrev]);
 
 	const handleButtonKeyDown = useCallback(ev => {
 		if(ev.key === 'ArrowDown') {
@@ -284,16 +257,66 @@ const Notes = props => {
 			focusBySelector('.note:last-child');
 			ev.preventDefault();
 		}
-	});
+	}, [focusBySelector]);
+
+	useEffect(() => {
+		if(!isTinymceFetched && !isTinymceFetching) {
+			dispatch(sourceFile('tinymce'));
+		}
+	}, [dispatch, isTinymceFetching, isTinymceFetched]);
+
+	useEffect(() => {
+		if(isActive && !isFetching && !isFetched) {
+			const start = pointer || 0;
+			const limit = PAGE_SIZE;
+			dispatch(fetchChildItems(itemKey, { start, limit }));
+		}
+	}, [dispatch, itemKey, isActive, isFetching, isFetched, pointer]);
+
+	useEffect(() => {
+		if(isActive && noteKey && editorRef.current && addedNoteKey.current === noteKey) {
+			console.log('focus effect', noteKey);
+			editorRef.current.focus();
+			focusBySelector(`[data-key="${noteKey}"]`);
+			addedNoteKey.current = null;
+		}
+	}, [focusBySelector, isActive, noteKey, notes]);
+
+	useEffect(() => {
+		if(prevNoteKey !== noteKey && noteKey === null) {
+			resetLastFocused();
+			if(notesEl && notesEl.current) {
+				// When note has been deleted, keep focus within the the list by focusing on either
+				// first or second note (if first is being deleted) in the list
+				focusBySelector(`.note:first-child:not([data-key="${prevNoteKey}"]), .note:nth-child(2)`);
+			}
+		}
+	}, [focusBySelector, noteKey, resetLastFocused, prevNoteKey, receiveBlur]);
+
+	// Scroll selected note into view when it's first ready.
+	useEffect(() => {
+		setTimeout(() => {
+			if(!notesEl.current || !selectedNote) {
+				return;
+			}
+
+			const selectedNoteEl = notesEl.current.querySelector(`[data-key="${selectedNote.key}"]`);
+
+			if(selectedNoteEl && !hasScrolledIntoViewRef.current) {
+				scrollIntoViewIfNeeded(selectedNoteEl, notesEl.current);
+				hasScrolledIntoViewRef.current = true;
+			}
+		}, 0);
+	}, [selectedNote]);
 
 	return (
 		<TabPane
 			className="notes"
 			isActive={ isActive }
-			isLoading={ device.shouldUseTabs && !isFetched }
+			isLoading={ shouldUseTabs && !isFetched }
 		>
 			<h5 className="h2 tab-pane-heading hidden-mouse">Notes</h5>
-			{ !device.isTouchOrSmall && (
+			{ !isTouchOrSmall && (
 				<Toolbar>
 					<div className="toolbar-left">
 						<div className="counter">
@@ -330,7 +353,6 @@ const Notes = props => {
 								notes.map(note => {
 									return (
 										<Note
-											device={ device }
 											isReadOnly={ isReadOnly }
 											key={ note.key }
 											noteKey={ note.key }
@@ -347,7 +369,7 @@ const Notes = props => {
 					</nav>
 				) }
 			</div>
-			{ device.isTouchOrSmall && !isReadOnly && (
+			{ isTouchOrSmall && !isReadOnly && (
 				<Button
 					onClick={ handleAddNote }
 					className="btn-block text-left hairline-top hairline-start-icon-28 btn-transparent-secondary"
@@ -357,7 +379,7 @@ const Notes = props => {
 				</Button>
 			)}
 
-			{ !device.isTouchOrSmall && selectedNote && (
+			{ !isTouchOrSmall && selectedNote && (
 				<RichEditor
 					id={ noteKey }
 					isReadOnly={ isReadOnly }
@@ -366,7 +388,7 @@ const Notes = props => {
 					value={ selectedNote.note }
 				/>
 			) }
-			{ !device.isTouchOrSmall && !selectedNote && notes.length > 0 && (
+			{ !isTouchOrSmall && !selectedNote && notes.length > 0 && (
 				<div className="no-selection-placeholder">
 					No note selected
 				</div>
@@ -376,25 +398,8 @@ const Notes = props => {
 }
 
 Notes.propTypes = {
-	childItems: PropTypes.array,
-	createItem: PropTypes.func,
-	deleteItem: PropTypes.func,
-	device: PropTypes.object,
-	fetchChildItems: PropTypes.func,
-	fetchItemTemplate: PropTypes.func,
 	isActive: PropTypes.bool,
-	isFetched: PropTypes.bool,
-	isFetching: PropTypes.bool,
 	isReadOnly: PropTypes.bool,
-	isTinymceFetched: PropTypes.bool,
-	isTinymceFetching: PropTypes.bool,
-	itemKey: PropTypes.string,
-	libraryKey: PropTypes.string,
-	navigate: PropTypes.func,
-	noteKey: PropTypes.string,
-	pointer: PropTypes.number,
-	sourceFile: PropTypes.func,
-	updateItem: PropTypes.func,
 }
 
-export default withDevice(withEditMode(Notes));
+export default memo(Notes);
