@@ -22,7 +22,7 @@ import { isTriggerEvent } from '../../common/event';
 import { pluralize } from '../../common/format';
 import { TabPane } from '../ui/tabs';
 import { Toolbar, ToolGroup } from '../ui/toolbars';
-import { useFetchingState, useFocusManager } from '../../hooks';
+import { useFetchingState, useFocusManager, usePrevious } from '../../hooks';
 
 
 const AttachmentIcon = memo(({ isActive, item, size }) => {
@@ -130,7 +130,10 @@ const Attachment = memo(props => {
 	const handleDelete = useCallback(ev => {
 		ev.stopPropagation();
 		dispatch(moveToTrash([attachment.key]));
-	}, [dispatch, attachment]);
+		if(attachmentKey === attachment.key) {
+			dispatch(navigate({ attachmentKey: null }));
+		}
+	}, [dispatch, attachment, attachmentKey]);
 
 	const handleKeyDown = useCallback(ev => onKeyDown(ev), [onKeyDown]);
 
@@ -249,6 +252,8 @@ const Attachments = ({ isActive, isReadOnly }) => {
 	const { isFetching, isFetched, pointer, keys } = useFetchingState(
 		['libraries', libraryKey, 'itemsByParent', itemKey]
 	);
+	const attachmentKey = useSelector(state => state.current.attachmentKey);
+	const prevAttachmentKey = usePrevious(attachmentKey);
 
 	const allItems = useSelector(state => state.libraries[libraryKey].items);
 	const uploads = useSelector(state => get(state, ['libraries', libraryKey, 'updating', 'uploads'], []));
@@ -265,8 +270,8 @@ const Attachments = ({ isActive, isReadOnly }) => {
 
 	const scrollContainerRef = useRef(null);
 	const { focusNext, focusPrev, focusDrillDownNext, focusDrillDownPrev, receiveFocus,
-		receiveBlur, focusBySelector } = useFocusManager(
-			scrollContainerRef, null, false
+		receiveBlur, resetLastFocused, focusBySelector } = useFocusManager(
+			scrollContainerRef, '.attachment.selected', false
 		);
 
 	const fileInput = useRef(null);
@@ -383,6 +388,17 @@ const Attachments = ({ isActive, isReadOnly }) => {
 			dispatch(sourceFile('tinymce'));
 		}
 	}, [dispatch, isTinymceFetching, isTinymceFetched]);
+
+	useEffect(() => {
+		if(prevAttachmentKey !== attachmentKey && attachmentKey === null) {
+			resetLastFocused();
+			if(scrollContainerRef && scrollContainerRef.current) {
+				// When attachment has been deleted, keep focus within the the list by focusing on either
+				// first or second note (if first is being deleted) in the list
+				focusBySelector(`.attachment:first-child:not([data-key="${prevAttachmentKey}"]), .attachment:nth-child(2)`);
+			}
+		}
+	}, [focusBySelector, attachmentKey, resetLastFocused, prevAttachmentKey, receiveBlur]);
 
 	return (
 		<TabPane
