@@ -11,7 +11,7 @@ import { noop } from '../utils';
 const SEARCH_INPUT_DEBOUNCE_DELAY = 300; //ms
 const modes = {
 	titleCreatorYear: "Title, Creator, Year",
-	everything: "Everything"
+	everything: "Title, Creator, Year + Full-Text Content"
 };
 
 const Search = props => {
