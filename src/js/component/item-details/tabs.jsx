@@ -12,7 +12,7 @@ import RelatedContainer from '../../container/item-details/related';
 import Spinner from '../ui/spinner';
 import StandaloneAttachmentTabPane from '../../component/item-details/standalone-attachment';
 import StandaloneNote from '../../component/item-details/standalone-note';
-import TagsContainer from '../../container/item-details/tags';
+import Tags from '../../component/item-details/tags';
 import { Tab, Tabs } from '../ui/tabs';
 import { useEditMode, useFetchingState, useMetaState } from '../../hooks';
 import { get, mapRelationsToItemKeys } from '../../utils';
@@ -302,7 +302,7 @@ const ItemDetailsTabs = () => {
 						}
 
 						{ shouldShowTagsTab && (
-								<TagsContainer
+							<Tags
 								key={ item.key }
 								isActive={ activeTab === 'tags' }
 								isReadOnly={ isReadOnly }

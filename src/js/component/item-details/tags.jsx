@@ -1,14 +1,12 @@
 import PropTypes from 'prop-types';
-import React, { useCallback, useRef, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import React, { memo, useCallback, useRef, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 import Button from '../ui/button';
 import Editable from '../editable';
 import Icon from '../ui/icon';
-import withDevice from '../../enhancers/with-device';
-import withEditMode from '../../enhancers/with-edit-mode';
-import { deduplicateByKey, getScrollContainerPageCount, sortByKey } from '../../utils';
-import { fetchTagSuggestions } from '../../actions';
+import { deduplicateByKey, get, getScrollContainerPageCount, sortByKey } from '../../utils';
+import { fetchTagSuggestions, updateItem } from '../../actions';
 import { pick } from '../../common/immutable';
 import { TabPane } from '../ui/tabs';
 import { Toolbar, ToolGroup } from '../ui/toolbars';
@@ -19,11 +17,16 @@ import { isTriggerEvent } from '../../common/event';
 var nextId = 0;
 
 const Tags = props => {
-	const { device, tagColors, itemKey, tags: initalTags, isActive, isReadOnly, updateItem } = props;
+	const { isActive, isReadOnly } = props;
+	const dispatch = useDispatch();
+	const libraryKey = useSelector(state => state.current.libraryKey);
+	const itemKey = useSelector(state => state.current.itemKey);
+	const initalTags = useSelector(state => get(state, ['libraries', libraryKey, 'items', itemKey, 'tags'], []));
+	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
+	const tagColors = useSelector(state => get(state, ['libraries', libraryKey, 'tagColors']));
 	const [tags, setTags] = useState(initalTags.map(t => ({ ...t, id: ++nextId })));
 	const [tagRedacted, setTagRedacted] = useState(null);
 	const [suggestions, setSuggestions] = useState([]);
-	const dispatch = useDispatch();
 	const requestId = useRef(1);
 	const addTagRef = useRef(null);
 	const scrollContainerRef = useRef(null);
@@ -32,7 +35,7 @@ const Tags = props => {
 		false);
 
 
-	const handleCommit = async (newTagValue, hasChanged, ev) => {
+	const handleCommit = useCallback(async (newTagValue, hasChanged, ev) => {
 		const tag = (ev.currentTarget || ev.target).closest('[data-tag]').dataset.tag;
 		setTagRedacted(null);
 		setSuggestions([]);
@@ -60,9 +63,9 @@ const Tags = props => {
 		}
 
 		setTags(updatedTags);
-	}
+	}, [itemKey, tags]);
 
-	const handleCancel = (_, ev) => {
+	const handleCancel = useCallback((_, ev) => {
 		setTagRedacted(null);
 		setSuggestions([]);
 		requestId.current += 1;
@@ -75,9 +78,9 @@ const Tags = props => {
 		} else {
 			setTimeout(() => { focusOnLast(); });
 		}
-	}
+	}, [focusOnLast, tagRedacted, tags]);
 
-	const handleEdit = ev => {
+	const handleEdit = useCallback(ev => {
 		// if(ev.target !== ev.currentTarget) {
 		// 	return;
 		// }
@@ -86,21 +89,21 @@ const Tags = props => {
 		}
 		const tag = ev.currentTarget.closest('[data-tag]').dataset.tag;
 		setTagRedacted(tag);
-	}
+	}, [isReadOnly]);
 
-	const handleDelete = ev => {
+	const handleDelete = useCallback(ev => {
 		const tag = ev.currentTarget.closest('[data-tag]').dataset.tag;
 		const updatedTags = tags.filter(t => t.tag !== tag);
 		setTags(updatedTags);
 		updateItem(itemKey, { tags: updatedTags.map(t => pick(t, ['tag'])) });
-	}
+	}, [itemKey, tags]);
 
-	const handleAddTag = ev => {
+	const handleAddTag = useCallback(ev => {
 		setTags([...tags.filter(t => t.tag !== ''), { tag: '', id: ++nextId }]);
 		setTagRedacted('');
-	}
+	}, [tags]);
 
-	const handleChange = async newValue => {
+	const handleChange = useCallback(async newValue => {
 		requestId.current += 1;
 		const currentRequest = requestId.current;
 		if(newValue.length > 0) {
@@ -115,7 +118,7 @@ const Tags = props => {
 		} else {
 			setSuggestions([]);
 		}
-	}
+	}, [dispatch, tags]);
 
 	const handleKeyDown = useCallback(ev => {
 		if(ev.target.nodeName === 'INPUT') {
@@ -158,14 +161,14 @@ const Tags = props => {
 				ev.target === ev.currentTarget && focusNext(ev);
 			}
 		}
-	});
+	}, [focusBySelector, focusDrillDownNext, focusDrillDownPrev, focusNext, focusPrev, resetLastFocused]);
 
 	const handleFocusOnContainer = useCallback(ev => {
 		if(ev.target.nodeName === 'INPUT') {
 			return;
 		}
 		receiveFocus(ev);
-	});
+	}, [receiveFocus]);
 
 	return (
 		<TabPane
@@ -173,7 +176,7 @@ const Tags = props => {
 			isActive={ isActive }
 		>
 			<h5 className="h2 tab-pane-heading hidden-mouse">Tags</h5>
-			{ !device.isTouchOrSmall && (
+			{ !isTouchOrSmall && (
 					<Toolbar>
 						<div className="toolbar-left">
 							<div className="counter">
@@ -254,7 +257,7 @@ const Tags = props => {
 						</ul>
 					</nav>
 				) }
-				{ device.isTouchOrSmall && !isReadOnly && (
+				{ isTouchOrSmall && !isReadOnly && (
 					<Button
 						onClick={ handleAddTag }
 						className="btn-block text-left hairline-top hairline-start-icon-28 btn-transparent-secondary"
@@ -269,13 +272,8 @@ const Tags = props => {
 }
 
 Tags.propTypes = {
-	device: PropTypes.object,
 	isActive: PropTypes.bool,
 	isReadOnly: PropTypes.bool,
-	itemKey: PropTypes.string,
-	tagColors: PropTypes.object,
-	tags: PropTypes.array,
-	updateItem: PropTypes.func.isRequired,
 }
 
-export default withDevice(withEditMode(Tags));
+export default memo(Tags);

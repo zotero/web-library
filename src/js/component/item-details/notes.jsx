@@ -183,7 +183,6 @@ const Notes = ({ isActive, isReadOnly }) => {
 	}, [dispatch, focusBySelector]);
 
 	const handleDelete = useCallback((note, isAutoDelete = false) => {
-		console.log('handleDelete', { note, isAutoDelete });
 		if(isAutoDelete && noteKeyToAutoDelete.current === note.key) {
 			dispatch(deleteItem(note));
 			noteKeyToAutoDelete.current = null;
@@ -275,7 +274,6 @@ const Notes = ({ isActive, isReadOnly }) => {
 
 	useEffect(() => {
 		if(isActive && noteKey && editorRef.current && addedNoteKey.current === noteKey) {
-			console.log('focus effect', noteKey);
 			editorRef.current.focus();
 			focusBySelector(`[data-key="${noteKey}"]`);
 			addedNoteKey.current = null;
