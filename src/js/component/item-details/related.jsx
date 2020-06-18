@@ -1,42 +1,43 @@
-'use strict';
-
 import PropTypes from 'prop-types';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { memo, useCallback, useEffect, useRef } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 import Button from '../ui/button';
 import Icon from '../ui/icon';
-import withDevice from '../../enhancers/with-device';
+import { fetchRelatedItems, navigate, removeRelatedItem } from '../../actions';
 import { getItemTitle } from '../../common/item';
-import { getUniqueId } from '../../utils';
-import { isTriggerEvent } from '../../common/event';
-import { pick } from '../../common/immutable';
 import { getScrollContainerPageCount, sortItemsByKey } from '../../utils';
+import { getUniqueId, get, mapRelationsToItemKeys } from '../../utils';
+import { isTriggerEvent } from '../../common/event';
 import { TabPane } from '../ui/tabs';
 import { useFocusManager } from '../../hooks';
 
 
-const RelatedItem = props => {
-	const { device, parentItemKey, relatedItem, libraryKey, removeRelatedItem, navigate, onKeyDown } = props;
-	const iconSize = device.isTouchOrSmall ? '28' : '16';
+const RelatedItem = memo(props => {
+	const { parentItemKey, relatedItem, onKeyDown } = props;
+	const dispatch = useDispatch();
+	const libraryKey = useSelector(state => state.current.libraryKey);
+	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
+	const iconSize = isTouchOrSmall ? '28' : '16';
 	const id = useRef(getUniqueId());
 
 	const handleSelect = useCallback(ev => {
 		const relatedItemKey = ev.currentTarget.closest('[data-key]').dataset.key;
-		navigate({
+		dispatch(navigate({
 			library: libraryKey,
 			items: relatedItemKey
-		}, true);
-	});
+		}, true));
+	}, [dispatch, libraryKey]);
 
 	const handleDelete = useCallback(ev => {
 		const relatedItemKey = ev.currentTarget.closest('[data-key]').dataset.key;
-		removeRelatedItem(parentItemKey, relatedItemKey);
-	});
+		dispatch(removeRelatedItem(parentItemKey, relatedItemKey));
+	}, [dispatch, parentItemKey]);
 
 	const getItemIcon = item => {
 		const { iconName } = item[Symbol.for('derived')];
 		const dvp = window.devicePixelRatio >= 2 ? 2 : 1;
-		return device.isTouchOrSmall ?
+		return isTouchOrSmall ?
 			`28/item-types/light/${iconName}` : `16/item-types/light/${dvp}x/${iconName}`;
 	}
 
@@ -67,34 +68,37 @@ const RelatedItem = props => {
 				</Button>
 			</li>
 		)
-}
+});
+
+RelatedItem.displayName = 'RelatedItem';
 
 RelatedItem.propTypes = {
-	device: PropTypes.object.isRequired,
-	libraryKey: PropTypes.string,
-	navigate: PropTypes.func.isRequired,
 	parentItemKey: PropTypes.string,
 	relatedItem: PropTypes.object,
-	removeRelatedItem: PropTypes.func.isRequired,
+	onKeyDown: PropTypes.func,
 }
 
-const Related = ({ device, fetchRelatedItems, itemKey, isFetched, isFetching, relatedItems, ...props }) => {
-	const [sortedRelatedItems, setSortedRelatedItems] = useState([]);
+const Related = ({ isActive }) => {
+	const dispatch = useDispatch();
+	const shouldUseTabs = useSelector(state => state.device.shouldUseTabs);
+	const libraryKey = useSelector(state => state.current.libraryKey);
+	const itemKey = useSelector(state => state.current.itemKey);
+	const item = useSelector(state => get(state, ['libraries', libraryKey, 'items', itemKey], {}));
+	const relations = item.relations;
+	const relatedKeys = mapRelationsToItemKeys(relations || {}, libraryKey);
+	const isFetching = useSelector(state => get(state, ['libraries', libraryKey, 'itemsRelated', itemKey, 'isFetching'], false));
+	const isFetched = useSelector(state => get(state, ['libraries', libraryKey, 'itemsRelated', itemKey, 'isFetched'], false));
+	const allItems = useSelector(state => state.libraries[libraryKey].items);
+	const relatedItems = (relatedKeys || [])
+		.map(relatedKey => allItems[relatedKey])
+		.filter(Boolean);
+
+	const sortedRelatedItems = [...relatedItems];
+	sortItemsByKey(sortedRelatedItems, 'title');
+
 	const scrollContainerRef = useRef(null);
 	const { receiveBlur, focusDrillDownPrev, focusDrillDownNext, receiveFocus, focusNext,
 		focusPrev } = useFocusManager(scrollContainerRef, null, false);
-
-	useEffect(() => {
-		if(!isFetching && !isFetched) {
-			fetchRelatedItems(itemKey);
-		}
-	}, []);
-
-	useEffect(() => {
-		const sortedRelatedItems = [...relatedItems];
-		sortItemsByKey(sortedRelatedItems, 'title');
-		setSortedRelatedItems(sortedRelatedItems);
-	}, [relatedItems])
 
 	const handleKeyDown = useCallback(ev => {
 		if(ev.key === "ArrowLeft") {
@@ -125,10 +129,16 @@ const Related = ({ device, fetchRelatedItems, itemKey, isFetched, isFetching, re
 			ev.target.querySelector('a').click();
 			ev.preventDefault();
 		}
-	});
+	}, [focusDrillDownNext, focusDrillDownPrev, focusNext, focusPrev]);
+
+		useEffect(() => {
+		if(!isFetching && !isFetched) {
+			dispatch(fetchRelatedItems(itemKey));
+		}
+	}, [dispatch, isFetching, isFetched, itemKey]);
 
 	return (
-		<TabPane { ...pick(props, ['isActive']) } isLoading={ device.shouldUseTabs && !isFetched }>
+		<TabPane isActive={ isActive } isLoading={ shouldUseTabs && !isFetched }>
 			<h5 className="h2 tab-pane-heading hidden-mouse">Related</h5>
 			<div
 				className="scroll-container-mouse"
@@ -143,12 +153,10 @@ const Related = ({ device, fetchRelatedItems, itemKey, isFetched, isFetching, re
 							{
 								sortedRelatedItems.map(relatedItem => (
 									<RelatedItem
-										device={ device }
 										key={ relatedItem.key }
 										parentItemKey={ itemKey }
 										relatedItem={ relatedItem }
 										onKeyDown={ handleKeyDown }
-										{ ...pick(props, ['libraryKey', 'navigate', 'removeRelatedItem']) }
 									/>
 								))
 							}
@@ -161,12 +169,9 @@ const Related = ({ device, fetchRelatedItems, itemKey, isFetched, isFetching, re
 }
 
 Related.propTypes = {
-	device: PropTypes.object,
-	fetchRelatedItems: PropTypes.func.isRequired,
-	isFetched: PropTypes.bool,
-	isFetching: PropTypes.bool,
-	itemKey: PropTypes.string,
-	relatedItems: PropTypes.array,
+	isActive: PropTypes.bool
 }
 
-export default withDevice(Related);
+Related.whyDidYouRender = true;
+
+export default memo(Related);

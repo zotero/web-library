@@ -8,7 +8,7 @@ import EditToggleButton from '../edit-toggle-button';
 import Info from '../../component/item-details/info';
 import Notes from '../../component/item-details/notes';
 import Panel from '../ui/panel';
-import RelatedContainer from '../../container/item-details/related';
+import Related from '../../component/item-details/related';
 import Spinner from '../ui/spinner';
 import StandaloneAttachmentTabPane from '../../component/item-details/standalone-attachment';
 import StandaloneNote from '../../component/item-details/standalone-note';
@@ -318,7 +318,7 @@ const ItemDetailsTabs = () => {
 							)
 						}
 						{ shouldShowRelatedTab && (
-							<RelatedContainer
+							<Related
 								key={ 'related-' + item.key }
 								isActive={ activeTab === 'related' }
 							/>

@@ -1,18 +1,18 @@
 import cx from 'classnames';
 import PropTypes from 'prop-types';
-import React, { useEffect } from 'react';
+import React, { memo, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import ItemDetailsInfoView from '../item-details/info-view';
 import ItemDetailsTabs from '../item-details/tabs';
 import TouchHeaderContainer from '../../container/touch-header';
-import withDevice from '../../enhancers/with-device';
 import { navigate, fetchItemDetails } from '../../actions';
 import { get } from '../../utils';
 
 const ItemDetails = props => {
-	const { active, device } = props;
+	const { active } = props;
 	const dispatch = useDispatch();
+	const isTouchOrSmall = useSelector(state => state.current.isTouchOrSmall);
 	const itemKey = useSelector(state => state.current.itemKey);
 	const libraryKey = useSelector(state => state.current.libraryKey);
 	const item = useSelector(state => get(state, ['libraries', libraryKey, 'items', itemKey], null));
@@ -23,7 +23,7 @@ const ItemDetails = props => {
 		if(itemKey && !item) {
 			dispatch(fetchItemDetails(itemKey));
 		}
-	}, [item, itemKey]);
+	}, [dispatch, item, itemKey]);
 
 	useEffect(() => {
 		if(shouldRedirectToParentItem) {
@@ -32,18 +32,18 @@ const ItemDetails = props => {
 				[item.itemType === 'note' ? 'noteKey' : 'attachmentKey']: item.key,
 			}));
 		}
-	}, [shouldRedirectToParentItem]);
+	}, [dispatch, shouldRedirectToParentItem, item]);
 
 	return (
 		<section className={ cx('item-details', { 'active': active }) }>
-			{ device.isTouchOrSmall && (
+			{ isTouchOrSmall && (
 				<TouchHeaderContainer
 					className="hidden-mouse hidden-md-down darker"
 					variant={ TouchHeaderContainer.variants.ITEM }
 				/>
 			) }
 			{
-				(!device.isTouchOrSmall || (device.isTouchOrSmall && !isSelectMode))
+				(!isTouchOrSmall || (isTouchOrSmall && !isSelectMode))
 				&& item && !shouldRedirectToParentItem ? (
 					<ItemDetailsTabs />
 				) : (
@@ -63,4 +63,4 @@ ItemDetails.propTypes = {
 	device: PropTypes.object,
 };
 
-export default withDevice(ItemDetails);
+export default memo(ItemDetails);
