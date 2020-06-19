@@ -1,9 +1,9 @@
-import React, { memo, useEffect, useState, useRef } from 'react';
+import React, { memo, useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
-import { usePrevious } from '../hooks';
 
 import AddByIdentifierModal from './modal/add-by-identifier';
 import AddItemsToCollectionsModal from './modal/add-items-to-collections';
+import AddLinkedUrlTouchModal from './modal/add-linked-url-touch';
 import BibliographyModal from './modal/bibliography';
 import ExportModal from './modal/export';
 import ItemsSortModal from './modal/items-sort';
@@ -13,7 +13,7 @@ import NewFileModal from './modal/new-file';
 import NewItemModal from './modal/new-item';
 import RenameCollectionModal from './modal/rename-collection';
 import StyleInstallerModal from './modal/style-installer';
-import AddLinkedUrlTouchModal from './modal/add-linked-url-touch';
+import { useForceUpdate, usePrevious } from '../hooks';
 
 import { ADD_LINKED_URL_TOUCH, BIBLIOGRAPHY, COLLECTION_ADD, COLLECTION_RENAME, COLLECTION_SELECT,
 EXPORT, MOVE_COLLECTION, NEW_ITEM, SORT_ITEMS, STYLE_INSTALLER, ADD_BY_IDENTIFIER, NEW_FILE } from
@@ -37,10 +37,11 @@ const lookup = {
 const UNMOUNT_DELAY = 500; // to allow outro animatons (delay in ms)
 
 const ModalManager = () => {
-	const [mountedModals, setMountedModals] = useState([]);
+	const mountedModals = useRef([]);
 	const unmountTimeouts = useRef({});
 	const modalId = useSelector(state => state.modal.id);
 	const prevModalId = usePrevious(modalId);
+	const forceUpdate = useForceUpdate();
 
 	useEffect(() => {
 		if(modalId !== prevModalId) {
@@ -52,20 +53,22 @@ const ModalManager = () => {
 			if(prevModalId) {
 				// start timer to unmount modal that just has been closed
 				unmountTimeouts.current[prevModalId] = setTimeout(() => {
-					setMountedModals(mountedModals.filter(mId => mId !== prevModalId));
+					mountedModals.current = mountedModals.current.filter(mId => mId !== prevModalId);
 					delete unmountTimeouts.current[prevModalId];
+					forceUpdate();
 				}, UNMOUNT_DELAY);
 			}
-			if(modalId && !mountedModals.includes(modalId)) {
+			if(modalId && !mountedModals.current.includes(modalId)) {
 				// mount new modal
-				setMountedModals([...mountedModals, modalId]);
+				mountedModals.current.push(modalId);
+				forceUpdate();
 			}
 		}
-	}, [modalId, prevModalId, mountedModals]);
+	}, [modalId, prevModalId, forceUpdate]);
 
 	return (
 		<React.Fragment>
-			{ mountedModals.map(mId => {
+			{ mountedModals.current.map(mId => {
 				const ModalComponent = lookup[mId];
 				return <ModalComponent key={ mId } />
 			}) }
