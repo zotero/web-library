@@ -11,7 +11,11 @@ class SearchBar extends React.PureComponent {
 			collectionKey, isMyPublications, isTrash, libraryKey, navigate, searchState,
 			triggerSearchMode, view, itemKey
 		} = this.props;
-		triggerSearchMode(false);
+
+		if(triggerSearchMode) {
+			// in modals, triggerSearchMode is null
+			triggerSearchMode(false);
+		}
 
 		navigate({
 			library: view === 'libraries' ? null : libraryKey,
@@ -56,7 +60,7 @@ class SearchBar extends React.PureComponent {
 		libraryKey: PropTypes.string,
 		navigate: PropTypes.func,
 		searchState: PropTypes.object,
-		triggerSearchMode: PropTypes.func.isRequired,
+		triggerSearchMode: PropTypes.func,
 		view: PropTypes.string,
 	}
 }
