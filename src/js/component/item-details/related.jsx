@@ -172,6 +172,4 @@ Related.propTypes = {
 	isActive: PropTypes.bool
 }
 
-Related.whyDidYouRender = true;
-
 export default memo(Related);
