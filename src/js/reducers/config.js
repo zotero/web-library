@@ -79,6 +79,7 @@ const config = (state = defaultState, action) => {
 						isFileUploadAllowed: true,
 						name: 'My Library',
 						isExternal: false,
+						isPublic: false,
 						slug: action.userSlug
 					},
 					...(action.libraries.include || []).map(include => ({
@@ -88,6 +89,7 @@ const config = (state = defaultState, action) => {
 						isGroupLibrary: false,
 						id: include.key.slice(1),
 						isExternal: true,
+						isPublic: true,
 						...include,
 					}))
 				].filter(Boolean),
@@ -104,6 +106,7 @@ const config = (state = defaultState, action) => {
 					isReadOnly: !determineIfGroupIsWriteable(group, state.userId),
 					isFileUploadAllowed: determineIfGroupAllowsUploads(group, state.userId),
 					isExternal: false,
+					isPublic: group.type && group.type.toLowerCase().startsWith('public')
 				}))
 			];
 			sortByKey(libraries, 'name');

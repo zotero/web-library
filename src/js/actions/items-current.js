@@ -136,7 +136,7 @@ const currentGoToSubscribeUrl = () => {
 		const config = state.config;
 		const websiteUrl = state.config.websiteUrl;
 		const { itemsSource, collectionKey, isMyPublications, isTrash, libraryKey, q, tag, qmode } = state.current;
-		const { id: libraryId, isGroupLibrary } = state.config.libraries.find(l => l.key === libraryKey);
+		const { id: libraryId, isGroupLibrary, isPublic } = state.config.libraries.find(l => l.key === libraryKey);
 
 		const { field: sortBy, sort: sortDirection } = state.preferences.columns.find(
 			column => 'sort' in column) || { field: 'title', sort: 'asc' };
@@ -175,6 +175,11 @@ const currentGoToSubscribeUrl = () => {
 		}
 
 		const redirectUrl = pretendedResponse.getData().url;
+
+		if(isPublic) {
+			window.open(redirectUrl);
+			return;
+		}
 
 		const apiKeyBase = websiteUrl + '/settings/keys/new';
 		const qparams = { 'name': 'Private Feed' };
