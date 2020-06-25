@@ -47,7 +47,7 @@ const MoreActions = props => {
 			</DropdownToggle>
 			<DropdownMenu>
 				<DropdownItem onClick={ handleSubscribeClick }>
-					Subscribe to this feed
+					Subscribe to Feed
 				</DropdownItem>
 			</DropdownMenu>
 		</Dropdown>

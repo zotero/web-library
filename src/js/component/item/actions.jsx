@@ -89,7 +89,7 @@ const ItemActionsTouch = memo(() => {
 				)}
 				<DropdownItem divider />
 				<DropdownItem onClick={ handleSubscribeClick }>
-					Subscribe to this feed
+					Subscribe to Feed
 				</DropdownItem>
 			</DropdownMenu>
 		</Dropdown>
