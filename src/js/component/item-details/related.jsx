@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import Button from '../ui/button';
 import Icon from '../ui/icon';
-import { fetchRelatedItems, navigate, removeRelatedItem } from '../../actions';
+import { fetchRelatedItems, navigate, noop, removeRelatedItem } from '../../actions';
 import { getItemTitle } from '../../common/item';
 import { getScrollContainerPageCount, sortItemsByKey } from '../../utils';
 import { getUniqueId, get, mapRelationsToItemKeys } from '../../utils';
@@ -89,6 +89,7 @@ const Related = ({ isActive }) => {
 	const isFetching = useSelector(state => get(state, ['libraries', libraryKey, 'itemsRelated', itemKey, 'isFetching'], false));
 	const isFetched = useSelector(state => get(state, ['libraries', libraryKey, 'itemsRelated', itemKey, 'isFetched'], false));
 	const allItems = useSelector(state => state.libraries[libraryKey].items);
+	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
 	const relatedItems = (relatedKeys || [])
 		.map(relatedKey => allItems[relatedKey])
 		.filter(Boolean);
@@ -142,8 +143,8 @@ const Related = ({ isActive }) => {
 			<h5 className="h2 tab-pane-heading hidden-mouse">Related</h5>
 			<div
 				className="scroll-container-mouse"
-				onBlur={ receiveBlur }
-				onFocus={ receiveFocus }
+				onBlur={ isTouchOrSmall ? noop : receiveBlur }
+				onFocus={ isTouchOrSmall ? noop : receiveFocus }
 				ref={ scrollContainerRef }
 				tabIndex={ 0 }
 			>

@@ -16,7 +16,7 @@ import { ATTACHMENT } from '../../constants/dnd';
 import { createAttachmentsFromDropped, createItem, moveToTrash, uploadAttachment, fetchItemTemplate,
 fetchChildItems, navigate, sourceFile, openAttachment, toggleModal, updateItem } from
 '../../actions';
-import { get, getScrollContainerPageCount, getUniqueId, stopPropagation, sortByKey } from '../../utils';
+import { get, getScrollContainerPageCount, getUniqueId, stopPropagation, sortByKey, noop } from '../../utils';
 import { getFileData } from '../../common/event';
 import { isTriggerEvent } from '../../common/event';
 import { pluralize } from '../../common/format';
@@ -146,14 +146,20 @@ const Attachment = memo(props => {
 		if(ev.target !== ev.currentTarget) {
 			return;
 		}
+		if(isTouchOrSmall) {
+			return;
+		}
 
 		dispatch(navigate({ attachmentKey: attachment.key }));
 		setIsFocused(true);
-	}, [dispatch, attachment]);
+	}, [dispatch, attachment, isTouchOrSmall]);
 
 	const handleBlur = useCallback(() => {
+		if(isTouchOrSmall) {
+			return;
+		}
 		setIsFocused(false);
-	}, []);
+	}, [isTouchOrSmall]);
 
 	return drag(
 		<li
@@ -390,7 +396,7 @@ const Attachments = ({ isActive, isReadOnly }) => {
 	}, [dispatch, isTinymceFetching, isTinymceFetched]);
 
 	useEffect(() => {
-		if(prevAttachmentKey !== attachmentKey && attachmentKey === null) {
+		if(!isTouchOrSmall && prevAttachmentKey !== attachmentKey && attachmentKey === null) {
 			resetLastFocused();
 			if(scrollContainerRef && scrollContainerRef.current) {
 				// When attachment has been deleted, keep focus within the the list by focusing on either
@@ -398,7 +404,7 @@ const Attachments = ({ isActive, isReadOnly }) => {
 				focusBySelector(`.attachment:first-child:not([data-key="${prevAttachmentKey}"]), .attachment:nth-child(2)`);
 			}
 		}
-	}, [focusBySelector, attachmentKey, resetLastFocused, prevAttachmentKey, receiveBlur]);
+	}, [focusBySelector, attachmentKey, resetLastFocused, prevAttachmentKey, receiveBlur, isTouchOrSmall]);
 
 	return (
 		<TabPane
@@ -463,8 +469,8 @@ const Attachments = ({ isActive, isReadOnly }) => {
 			<div
 				aria-label="attachments list"
 				className="scroll-container-mouse"
-				onBlur={ receiveBlur }
-				onFocus={ receiveFocus }
+				onBlur={ isTouchOrSmall ? noop : receiveBlur }
+				onFocus={ isTouchOrSmall ? noop : receiveFocus }
 				ref={ scrollContainerRef }
 				role="list"
 				tabIndex={ 0 }

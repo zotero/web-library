@@ -14,7 +14,7 @@ import RichEditor from '../../component/rich-editor';
 import { get, scrollIntoViewIfNeeded } from '../../utils';
 import { isTriggerEvent } from '../../common/event';
 import { noteAsTitle, pluralize } from '../../common/format';
-import { getScrollContainerPageCount, sortByKey, stopPropagation } from '../../utils';
+import { getScrollContainerPageCount, noop, sortByKey, stopPropagation } from '../../utils';
 import { TabPane } from '../ui/tabs';
 import { Toolbar, ToolGroup } from '../ui/toolbars';
 import { useFetchingState, useFocusManager, usePrevious } from '../../hooks';
@@ -23,7 +23,6 @@ navigate, sourceFile } from '../../actions';
 
 const PAGE_SIZE = 100;
 
-//@TODO: convert to useDispatch hook
 const Note = memo(forwardRef((props, ref) => {
 	const dispatch = useDispatch();
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
@@ -62,9 +61,12 @@ const Note = memo(forwardRef((props, ref) => {
 		if(ev.target !== ev.currentTarget) {
 			return;
 		}
+		if(isTouchOrSmall) {
+			return;
+		}
 
 		dispatch(navigate({ noteKey: note.key }));
-	}, [dispatch, note]);
+	}, [dispatch, isTouchOrSmall, note]);
 
 	const handleKeyDown = useCallback(ev => {
 		if(ev.key === 'Escape' && isDropdownOpen) {
@@ -273,15 +275,15 @@ const Notes = ({ isActive, isReadOnly }) => {
 	}, [dispatch, itemKey, isActive, isFetching, isFetched, pointer]);
 
 	useEffect(() => {
-		if(isActive && noteKey && editorRef.current && addedNoteKey.current === noteKey) {
+		if(!isTouchOrSmall && isActive && noteKey && editorRef.current && addedNoteKey.current === noteKey) {
 			editorRef.current.focus();
 			focusBySelector(`[data-key="${noteKey}"]`);
 			addedNoteKey.current = null;
 		}
-	}, [focusBySelector, isActive, noteKey, notes]);
+	}, [focusBySelector, isActive, isTouchOrSmall, noteKey, notes]);
 
 	useEffect(() => {
-		if(prevNoteKey !== noteKey && noteKey === null) {
+		if(!isTouchOrSmall && prevNoteKey !== noteKey && noteKey === null) {
 			resetLastFocused();
 			if(notesEl && notesEl.current) {
 				// When note has been deleted, keep focus within the the list by focusing on either
@@ -289,7 +291,7 @@ const Notes = ({ isActive, isReadOnly }) => {
 				focusBySelector(`.note:first-child:not([data-key="${prevNoteKey}"]), .note:nth-child(2)`);
 			}
 		}
-	}, [focusBySelector, noteKey, resetLastFocused, prevNoteKey, receiveBlur]);
+	}, [focusBySelector, noteKey, isTouchOrSmall, resetLastFocused, prevNoteKey, receiveBlur]);
 
 	// Scroll selected note into view when it's first ready.
 	useEffect(() => {
@@ -339,8 +341,8 @@ const Notes = ({ isActive, isReadOnly }) => {
 			)}
 			<div
 				className="scroll-container-mouse"
-				onBlur={ receiveBlur }
-				onFocus={ receiveFocus }
+				onBlur={ isTouchOrSmall ? noop : receiveBlur }
+				onFocus={ isTouchOrSmall ? noop : receiveFocus }
 				ref={ notesEl }
 				tabIndex={ 0 }
 			>

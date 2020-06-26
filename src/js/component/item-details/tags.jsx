@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import Button from '../ui/button';
 import Editable from '../editable';
 import Icon from '../ui/icon';
-import { deduplicateByKey, get, getScrollContainerPageCount, sortByKey } from '../../utils';
+import { deduplicateByKey, get, getScrollContainerPageCount, noop, sortByKey } from '../../utils';
 import { fetchTagSuggestions, updateItem } from '../../actions';
 import { pick } from '../../common/immutable';
 import { TabPane } from '../ui/tabs';
@@ -164,11 +164,11 @@ const Tags = props => {
 	}, [focusBySelector, focusDrillDownNext, focusDrillDownPrev, focusNext, focusPrev, resetLastFocused]);
 
 	const handleFocusOnContainer = useCallback(ev => {
-		if(ev.target.nodeName === 'INPUT') {
+		if(ev.target.nodeName === 'INPUT' || isTouchOrSmall) {
 			return;
 		}
 		receiveFocus(ev);
-	}, [receiveFocus]);
+	}, [receiveFocus, isTouchOrSmall]);
 
 	return (
 		<TabPane
@@ -201,7 +201,7 @@ const Tags = props => {
 				) }
 			<div
 				className="scroll-container-mouse"
-				onBlur={ receiveBlur }
+				onBlur={ isTouchOrSmall ? noop : receiveBlur }
 				onFocus={ handleFocusOnContainer }
 				ref={ scrollContainerRef }
 				tabIndex={ 0 }
