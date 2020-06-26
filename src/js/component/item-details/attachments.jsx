@@ -131,7 +131,7 @@ const Attachment = memo(props => {
 		ev.stopPropagation();
 		dispatch(moveToTrash([attachment.key]));
 		if(attachmentKey === attachment.key) {
-			dispatch(navigate({ attachmentKey: null }));
+			dispatch(navigate({ attachmentKey: null, noteKey: null }));
 		}
 	}, [dispatch, attachment, attachmentKey]);
 
@@ -139,7 +139,7 @@ const Attachment = memo(props => {
 
 	const handleAttachmentSelect = useCallback(() => {
 		focusBySelector(`[data-key="${attachment.key}"]`);
-		dispatch(navigate({ attachmentKey: attachment.key }));
+		dispatch(navigate({ attachmentKey: attachment.key, noteKey: null }));
 	}, [dispatch, focusBySelector, attachment]);
 
 	const handleFocus = useCallback(ev => {
@@ -150,7 +150,7 @@ const Attachment = memo(props => {
 			return;
 		}
 
-		dispatch(navigate({ attachmentKey: attachment.key }));
+		dispatch(navigate({ attachmentKey: attachment.key, noteKey: null }));
 		setIsFocused(true);
 	}, [dispatch, attachment, isTouchOrSmall]);
 

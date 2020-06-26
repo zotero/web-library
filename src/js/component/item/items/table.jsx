@@ -277,7 +277,7 @@ const Table = () => {
 			direction = 1;
 		} else if(ev.key === 'Backspace') {
 			dispatch(currentTrashOrDelete());
-			dispatch(navigate({ items: [] }));
+			dispatch(navigate({ items: [], noteKey: null, attachmentKey: null }));
 			return;
 		} else if(ev.key === 'Home') {
 			dispatch(selectFirstItem());

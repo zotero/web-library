@@ -65,7 +65,7 @@ const Note = memo(forwardRef((props, ref) => {
 			return;
 		}
 
-		dispatch(navigate({ noteKey: note.key }));
+		dispatch(navigate({ noteKey: note.key, attachmentKey: null }));
 	}, [dispatch, isTouchOrSmall, note]);
 
 	const handleKeyDown = useCallback(ev => {
@@ -181,7 +181,7 @@ const Notes = ({ isActive, isReadOnly }) => {
 	const handleSelect = useCallback(note => {
 		hasScrolledIntoViewRef.current = true;
 		focusBySelector(`[data-key="${note.key}"]`);
-		dispatch(navigate({ noteKey: note.key }));
+		dispatch(navigate({ noteKey: note.key, attachmentKey: null }));
 	}, [dispatch, focusBySelector]);
 
 	const handleDelete = useCallback((note, isAutoDelete = false) => {
@@ -191,7 +191,7 @@ const Notes = ({ isActive, isReadOnly }) => {
 		} else if(!isAutoDelete) {
 			dispatch(moveToTrash([note.key]));
 			if(note.key === noteKey) {
-				dispatch(navigate({ noteKey: null }));
+				dispatch(navigate({ noteKey: null, attachmentKey: null }));
 			}
 		}
 	}, [dispatch, noteKey]);
@@ -201,7 +201,7 @@ const Notes = ({ isActive, isReadOnly }) => {
 		const item = { ...noteTemplate, parentItem: itemKey, note: note.note };
 		const createdItem = await dispatch(createItem(item, libraryKey));
 		addedNoteKey.current = createdItem.key;
-		dispatch(navigate({ noteKey: createdItem.key }));
+		dispatch(navigate({ noteKey: createdItem.key, attachmentKey: null }));
 	}, [dispatch, itemKey, libraryKey]);
 
 	const handleAddNote = useCallback(async () => {
@@ -210,7 +210,7 @@ const Notes = ({ isActive, isReadOnly }) => {
 		const createdItem = await dispatch(createItem(item, libraryKey));
 		addedNoteKey.current = createdItem.key;
 		noteKeyToAutoDelete.current = createdItem.key;
-		dispatch(navigate({ noteKey: createdItem.key }));
+		dispatch(navigate({ noteKey: createdItem.key, attachmentKey: null }));
 	}, [dispatch, itemKey, libraryKey]);
 
 	const handleKeyDown = useCallback(ev => {

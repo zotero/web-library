@@ -100,7 +100,7 @@ const selectItemsKeyboard = (direction, magnitude, isMultiSelect) => {
 			return cursorIndex;
 		}
 
-		dispatch(navigate({ items: nextKeys }));
+		dispatch(navigate({ items: nextKeys, noteKey: null, attachmentKey: null }));
 		return cursorIndex;
 	}
 }
@@ -117,7 +117,7 @@ const selectFirstItem = (onlyIfNoneSelected = false) => {
 
 		const keys = get(state, path, []);
 		if(keys.length > 0) {
-			dispatch(navigate({ items: [keys[0]] }));
+			dispatch(navigate({ items: [keys[0]], noteKey: null, attachmentKey: null }));
 			return 0;
 		}
 		return null;
@@ -132,7 +132,7 @@ const selectLastItem = () => {
 
 		const keys = get(state, path, []);
 		if(keys.length > 0) {
-			dispatch(navigate({ items: [keys[keys.length - 1]] }));
+			dispatch(navigate({ items: [keys[keys.length - 1]], noteKey: null, attachmentKey: null }));
 			return keys.length - 1;
 		}
 		return null;

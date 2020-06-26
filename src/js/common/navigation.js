@@ -57,9 +57,7 @@ const makePath = (config, { library = null, collection = null,
 
 	if(noteKey) {
 		path.push('note', noteKey);
-	}
-
-	if(attachmentKey) {
+	} else if(attachmentKey) {
 		path.push('attachment', attachmentKey);
 	}
 
