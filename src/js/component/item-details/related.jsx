@@ -4,10 +4,10 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import Button from '../ui/button';
 import Icon from '../ui/icon';
-import { fetchRelatedItems, navigate, noop, removeRelatedItem } from '../../actions';
+import { fetchRelatedItems, navigate, removeRelatedItem } from '../../actions';
 import { getItemTitle } from '../../common/item';
-import { getScrollContainerPageCount, sortItemsByKey } from '../../utils';
-import { getUniqueId, get, mapRelationsToItemKeys } from '../../utils';
+import { get, getScrollContainerPageCount, getUniqueId, mapRelationsToItemKeys, noop,
+sortItemsByKey, } from '../../utils';
 import { isTriggerEvent } from '../../common/event';
 import { TabPane } from '../ui/tabs';
 import { useFocusManager } from '../../hooks';
