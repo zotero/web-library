@@ -54,7 +54,7 @@ const Tags = props => {
 		);
 
 		sortByKey(updatedTags, 'tag');
-		updateItem(itemKey, { tags: updatedTags.map(t => pick(t, ['tag'])) });
+		dispatch(updateItem(itemKey, { tags: updatedTags.map(t => pick(t, ['tag'])) }));
 
 		if(tag === '') {
 			// if adding a new tag, automatically create input for another one
@@ -63,7 +63,7 @@ const Tags = props => {
 		}
 
 		setTags(updatedTags);
-	}, [itemKey, tags]);
+	}, [dispatch, itemKey, tags]);
 
 	const handleCancel = useCallback((_, ev) => {
 		setTagRedacted(null);
@@ -95,8 +95,8 @@ const Tags = props => {
 		const tag = ev.currentTarget.closest('[data-tag]').dataset.tag;
 		const updatedTags = tags.filter(t => t.tag !== tag);
 		setTags(updatedTags);
-		updateItem(itemKey, { tags: updatedTags.map(t => pick(t, ['tag'])) });
-	}, [itemKey, tags]);
+		dispatch(updateItem(itemKey, { tags: updatedTags.map(t => pick(t, ['tag'])) }));
+	}, [dispatch, itemKey, tags]);
 
 	const handleAddTag = useCallback(ev => {
 		setTags([...tags.filter(t => t.tag !== ''), { tag: '', id: ++nextId }]);
