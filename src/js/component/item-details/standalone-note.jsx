@@ -20,11 +20,11 @@ const StandaloneNote = ({ isActive, isReadOnly }) => {
 		if(!isTinymceFetched && !isTinymceFetching) {
 			dispatch(sourceFile('tinymce'));
 		}
-	}, []);
+	}, [dispatch, isTinymceFetched, isTinymceFetching]);
 
-	const handleNoteChange = useCallback(newContent => {
-		dispatch(updateItem(item.key, { note: newContent }));
-	});
+	const handleNoteChange = useCallback((newContent, key) => {
+		dispatch(updateItem(key, { note: newContent }));
+	}, [dispatch]);
 
 	return (
 		<TabPane

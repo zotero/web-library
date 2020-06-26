@@ -14,9 +14,9 @@ const TouchNote = () => {
 	], null));
 	const [isEditing, ] = useEditMode();
 
-	const handleNoteChange = useCallback(content => {
-		dispatch(updateItem(note.key, { note: content }));
-	});
+	const handleNoteChange = useCallback((content, key) => {
+		dispatch(updateItem(key, { note: content }));
+	}, [dispatch]);
 
 	const className = cx({
 		'editing': isEditing,

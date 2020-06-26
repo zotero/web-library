@@ -173,10 +173,14 @@ const Notes = ({ isActive, isReadOnly }) => {
 
 	const selectedNote = notes.find(n => n && n.key === noteKey);
 
-	const handleChangeNote = useCallback(newContent => {
+	const handleEditNote = useCallback(() => {
 		noteKeyToAutoDelete.current = null;
-		dispatch(updateItem(noteKey, { note: newContent }));
-	}, [dispatch, noteKey]);
+	}, []);
+
+	const handleChangeNote = useCallback((newContent, key) => {
+		noteKeyToAutoDelete.current = null;
+		dispatch(updateItem(key, { note: newContent }));
+	}, [dispatch]);
 
 	const handleSelect = useCallback(note => {
 		hasScrolledIntoViewRef.current = true;
@@ -388,6 +392,7 @@ const Notes = ({ isActive, isReadOnly }) => {
 					id={ noteKey }
 					isReadOnly={ isReadOnly }
 					onChange={ handleChangeNote }
+					onEdit={ handleEditNote }
 					ref={ editorRef }
 					value={ selectedNote.note }
 				/>

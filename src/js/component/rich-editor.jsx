@@ -15,6 +15,7 @@ import ColorPicker from './ui/color-picker';
 import Spinner from './ui/spinner';
 import { sourceFile } from '../actions';
 import { useFocusManager, useForceUpdate } from '../hooks';
+import { noop } from '../utils';
 
 const formatBlocks = [
 	{ value: 'p', Tag: 'p', label: 'Paragraph' },
@@ -96,7 +97,7 @@ const queryFormatBlock = (editorRef) => {
 }
 
 const RichEditor = React.memo(React.forwardRef((props, ref) => {
-	const { autoresize, id, isReadOnly, onChange, value } = props;
+	const { autoresize, id, isReadOnly, onChange, onEdit = noop, value } = props;
 	const [hilitecolor, setHilitecolor] = useState(null);
 	const [content, setContent] = useState(value);
 	const [forecolor, setForecolor] = useState(null);
@@ -155,12 +156,13 @@ const RichEditor = React.memo(React.forwardRef((props, ref) => {
 		}
 
 		setContent(newContent);
+		onEdit(newContent, id);
 
 		clearTimeout(timer.current);
 		timer.current = setTimeout(() => {
-			onChange(newContent);
+			onChange(newContent, id);
 		}, 500);
-	});
+	}, [content, id, onChange, onEdit]);
 
 	const handleButtonClick = useCallback(ev => {
 		if(!editor.current) { return; }

@@ -17,12 +17,12 @@ const AttachmentDetails = ({ attachmentKey, isReadOnly }) => {
 
 	const handleLinkInteraction = useCallback(ev => {
 		ev.preventDefault();
-		dispatch(openAttachment(item.key));
-	});
+		dispatch(openAttachment(attachmentKey));
+	}, [dispatch, attachmentKey]);
 
-	const handleChangeNote = useCallback(newContent => {
-		dispatch(updateItem(attachmentKey, { note: newContent }));
-	});
+	const handleChangeNote = useCallback((newContent, key) => {
+		dispatch(updateItem(key, { note: newContent }));
+	}, [dispatch]);
 
 	return (
 		<React.Fragment>
