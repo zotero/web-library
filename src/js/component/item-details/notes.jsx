@@ -185,6 +185,10 @@ const Notes = ({ isActive, isReadOnly }) => {
 	}, [dispatch, focusBySelector]);
 
 	const handleDelete = useCallback((note, isAutoDelete = false) => {
+		if(note.key === noteKeyToAutoDelete.current && !isAutoDelete) {
+			// prevent deletion from happening twice
+			noteKeyToAutoDelete.current = null;
+		}
 		if(isAutoDelete && noteKeyToAutoDelete.current === note.key) {
 			dispatch(deleteItem(note));
 			noteKeyToAutoDelete.current = null;
