@@ -13,6 +13,11 @@ const getErrorMessage = error => {
 		return `Unable to communicate with Zotero server. Please check your connection.`;
 	}
 	if(typeof error === 'object' && 'getResponseType' in error && error.getResponseType() === 'ErrorResponse') {
+		if('options' in error && 'resource' in error.options && error.options.resource.fileUrl === null) {
+			// special case for attachment url requests failing with 404
+			return 'Requested file is not available. It might not have been synced yet.';
+		}
+
 		return error.reason ?
 			`Received error from Zotero server: ${error.reason}.` :
 			'Received error from Zotero server.'
