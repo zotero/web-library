@@ -125,13 +125,21 @@ const openFirstLink = itemKey => {
 }
 
 const openAttachment = attachmentItemKey => {
-	return async dispatch => {
+	return async (dispatch, getState) => {
+		const state = getState();
+		const item = get(state, ['libraries', state.current.libraryKey, 'items', attachmentItemKey], null);
 		const isChrome = /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor);
 
-		dispatch(isChrome ?
-			openAttachmentSimple(attachmentItemKey) :
-			openAttachmentBlockerWorkaround(attachmentItemKey)
-		);
+		const isFile = item.linkMode.startsWith('imported') && item[Symbol.for('links')].enclosure;
+		const isLink = item.linkMode === 'linked_url';
+		const hasLink = isFile || isLink;
+
+		if(hasLink) {
+			dispatch(isChrome ?
+				openAttachmentSimple(attachmentItemKey) :
+				openAttachmentBlockerWorkaround(attachmentItemKey)
+			);
+		}
 	}
 }
 
