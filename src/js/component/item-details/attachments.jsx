@@ -63,7 +63,7 @@ const AttachmentDownloadIcon = memo(props => {
 	return (
 		attachment.linkMode.startsWith('imported') && attachment[Symbol.for('links')].enclosure && !isUploading ? (
 			<a
-				aria-label="download attachment"
+				title="Download attachment"
 				className="btn btn-icon"
 				onClick={ handleLinkInteraction }
 				onKeyDown={ handleLinkInteraction }
@@ -75,7 +75,7 @@ const AttachmentDownloadIcon = memo(props => {
 			</a>
 		) : attachment.linkMode === 'linked_url' ? (
 			<a
-				aria-label="download attachment"
+				title="Download attachment"
 				className="btn btn-icon"
 				href={ attachment.url }
 				onClick={ stopPropagation }
@@ -175,7 +175,7 @@ const Attachment = memo(props => {
 		>
 			{ (isTouchOrSmall && !isReadOnly) && (
 				<Button
-					aria-label="delete attachment"
+					title="Delete attachment"
 					className="btn-circle btn-primary"
 					onClick={ handleDelete }
 					tabIndex={ -1 }
