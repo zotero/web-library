@@ -61,11 +61,13 @@ class BoxField extends React.PureComponent {
 			return (
 				<Editable { ...props }>
 					<a
-						target="_blank"
-						rel="nofollow noopener noreferrer"
 						href={ url }
+						rel="nofollow noopener noreferrer"
+						target="_blank"
 					>
-						{ field.value }
+						<div className="editable-content">
+							{ field.value }
+						</div>
 					</a>
 				</Editable>
 			)
