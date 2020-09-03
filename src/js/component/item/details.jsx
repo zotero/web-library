@@ -17,7 +17,8 @@ const ItemDetails = props => {
 	const libraryKey = useSelector(state => state.current.libraryKey);
 	const item = useSelector(state => get(state, ['libraries', libraryKey, 'items', itemKey], null));
 	const isSelectMode = useSelector(state => state.current.isSelectMode);
-	const shouldRedirectToParentItem = itemKey && item && item.parentItem;
+	const itemsSource = useSelector(state => state.current.itemsSource);
+	const shouldRedirectToParentItem = itemsSource !== 'trash' && itemKey && item && item.parentItem;
 
 	useEffect(() => {
 		if(itemKey && !item) {
