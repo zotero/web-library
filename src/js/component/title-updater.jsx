@@ -48,7 +48,7 @@ const TitleUpdater = () => {
 		document.title = title.join(' | ');
 	}, 50);
 
-	useEffect(debouncedNotify, [libraryName, itemsSource, item, selectedItemsKeys]);
+	useEffect(() => { debouncedNotify(); } , [debouncedNotify, libraryName, itemsSource, item, selectedItemsKeys]);
 
 	return null;
 }

@@ -49,7 +49,7 @@ const ZoteroConnectorNotifier = () => {
 		}));
 	}, 250);
 
-	useEffect(debouncedNotify, [collectionKey, itemTitles, libraryKey, tags]);
+	useEffect(() => { debouncedNotify(); }, [collectionKey, debouncedNotify, itemTitles, libraryKey, tags]);
 
 	return (
 		<React.Fragment>
