@@ -61,7 +61,7 @@ const TableScroll = memo(({ listRef }) => {
 	const isItemsTableFocused = useSelector(state => state.current.isItemsTableFocused);
 
 	useEffect(() => {
-		if(listRef.current && selectedItemKeys.length > 0 && !shallowEqual(selectedItemKeys, previousSelectedItemKeys)) {
+		if(listRef.current && keys && selectedItemKeys.length > 0 && !shallowEqual(selectedItemKeys, previousSelectedItemKeys)) {
 			const itemKey = selectedItemKeys[selectedItemKeys.length - 1];
 			const itemKeyIndex = keys.findIndex(k => k === itemKey);
 			listRef.current.scrollToItem(itemKeyIndex);
