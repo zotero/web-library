@@ -10,6 +10,7 @@ import {
 	TOGGLE_TRANSITIONS,
 	TRIGGER_EDITING_ITEM,
 	TRIGGER_FOCUS,
+	TRIGGER_HIGHLIGHTED_COLLECTIONS,
 	TRIGGER_SEARCH_MODE,
 	TRIGGER_SELECT_MODE,
 	TRIGGER_USER_TYPE_CHANGE,
@@ -38,6 +39,7 @@ const stateDefault = {
 	userLibraryKey: null,
 	useTransitions: false,
 	view: 'library',
+	highlightedCollections: [],
 };
 
 const getLibraryKey = (params, config) => {
@@ -201,6 +203,11 @@ const current = (state = stateDefault, action, { config = {}, device = {} } = {}
 			return {
 				...state,
 				isItemsTableFocused: action.section === 'items-table' && action.isOn
+			}
+		case TRIGGER_HIGHLIGHTED_COLLECTIONS:
+			return {
+				...state,
+				highlightedCollections: action.collections
 			}
 		default:
 			return state;

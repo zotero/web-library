@@ -15,8 +15,8 @@ import TableRow from './table-row';
 import { applyChangesToVisibleColumns, resizeVisibleColumns } from '../../../utils';
 import { ATTACHMENT } from '../../../constants/dnd';
 import { currentTrashOrDelete, createAttachmentsFromDropped, fetchSource, navigate,
-selectItemsKeyboard, selectFirstItem, selectLastItem, preferenceChange, triggerFocus, } from
-'../../../actions';
+selectItemsKeyboard, selectFirstItem, selectLastItem, preferenceChange, triggerFocus,
+triggerHighlightedCollections } from '../../../actions';
 import { useFocusManager, usePrevious, useSourceData } from '../../../hooks';
 
 const ROWHEIGHT = 26;
@@ -269,6 +269,12 @@ const Table = () => {
 		setIsHoveringBetweenRows(isOverRow && dropZone !== null);
 	}, []);
 
+	const handleKeyUp = useCallback(ev => {
+		if(!ev.getModifierState('Alt')) {
+			dispatch(triggerHighlightedCollections(false));
+		}
+	}, [dispatch]);
+
 	const handleKeyDown = useCallback(async ev => {
 		var direction, magnitude = 1;
 		if(ev.key === 'ArrowUp') {
@@ -292,6 +298,9 @@ const Table = () => {
 			magnitude = Math.floor(outerRef.current.getBoundingClientRect().height / ROWHEIGHT);
 			ev.preventDefault();
 		} else {
+			if(ev.getModifierState('Alt')) {
+				dispatch(triggerHighlightedCollections(true));
+			}
 			return;
 		}
 
@@ -365,6 +374,13 @@ const Table = () => {
 			document.removeEventListener('mouseleave', handleMouseLeave)
 		}
 	}, [handleMouseLeave]);
+
+	useEffect(() => {
+		document.addEventListener('keyup', handleKeyUp);
+		return () => {
+			document.removeEventListener('keyup', handleKeyUp)
+		}
+	}, [handleKeyUp]);
 
 	const rowData = useMemo(() => ({ onFileHoverOnRow: handleFileHoverOnRow, columns }), [columns, handleFileHoverOnRow]);
 

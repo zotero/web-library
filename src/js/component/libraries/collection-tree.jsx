@@ -381,6 +381,8 @@ const CollectionNode = props => {
 	const updating = useSelector(state => parentLibraryKey in state.libraries ? state.libraries[parentLibraryKey].updating.collections : {});
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
 	const isSingleColumn = useSelector(state => state.device.isSingleColumn);
+	const highlightedCollections = useSelector(state => state.current.highlightedCollections);
+	const isHighlighted = highlightedCollections.includes(collection.key);
 
 	const handleClick = useCallback(() => {
 		const { selectNode } = rest;
@@ -514,7 +516,13 @@ const CollectionNode = props => {
 			) : null }
 		>
 			<Icon type={ hasSubCollections ? '28/folders' : '28/folder' } className="touch" width="28" height="28" />
-			<Icon type={ '16/folder' } className="mouse" width="16" height="16" />
+			<Icon
+				type={ '16/folder' }
+				symbol={ isHighlighted ? 'folder-block' : 'folder' }
+				className="mouse"
+				width="16"
+				height="16"
+			/>
 			{ renaming === collection.key ? (
 				<Editable
 					autoFocus

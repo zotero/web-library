@@ -1,3 +1,5 @@
+import { shallowEqual } from 'react-redux';
+
 import {
 	DISMISS_ERROR,
 	TOGGLE_MODAL,
@@ -7,6 +9,7 @@ import {
 	TOGGLE_TRANSITIONS,
 	TRIGGER_EDITING_ITEM,
 	TRIGGER_FOCUS,
+	TRIGGER_HIGHLIGHTED_COLLECTIONS,
 	TRIGGER_RESIZE_VIEWPORT,
 	TRIGGER_SEARCH_MODE,
 	TRIGGER_SELECT_MODE,
@@ -14,6 +17,7 @@ import {
 } from '../constants/actions';
 
 import { navigate } from './';
+import { get } from '../utils';
 
 const triggerEditingItem = (itemKey, toggleValue) => {
 	return async (dispatch, getState) => {
@@ -100,6 +104,23 @@ const triggerFocus = (section, isOn) => {
 	return { type: TRIGGER_FOCUS, section, isOn }	;
 }
 
+const triggerHighlightedCollections = isOn => {
+	return async (dispatch, getState) => {
+		const state = getState();
+		const { highlightedCollections, itemKeys, libraryKey } = state.current;
+		if(isOn) {
+			const items = itemKeys.map(ik => get(state, ['libraries', libraryKey, 'items', ik], {}));
+			const collections = items.reduce((acc, i) => [...acc, ...i.collections], []);
+			if(!shallowEqual(collections, highlightedCollections)) {
+				dispatch({ type: TRIGGER_HIGHLIGHTED_COLLECTIONS, collections });
+			}
+		} else if(highlightedCollections.length !== 0) {
+			// skip dispatching if no collection has been highlighted previously
+			dispatch({ type: TRIGGER_HIGHLIGHTED_COLLECTIONS, collections: [] });
+		}
+	}
+}
+
 export {
 	dismissError,
 	toggleModal,
@@ -110,6 +131,7 @@ export {
 	toggleTransitions,
 	triggerEditingItem,
 	triggerFocus,
+	triggerHighlightedCollections,
 	triggerResizeViewport,
 	triggerSearchMode,
 	triggerSelectMode,
