@@ -1,6 +1,6 @@
 import cx from 'classnames';
-import React, { useMemo, useState, useCallback, useRef } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { useMemo, useState, useCallback, useRef, useEffect } from 'react';
+import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap/lib';
 
 import Editable from '../editable';
@@ -10,6 +10,7 @@ import Spinner from '../../component/ui/spinner';
 import { BIBLIOGRAPHY, COLLECTION_RENAME, COLLECTION_ADD, EXPORT, MOVE_COLLECTION } from '../../constants/modals';
 import { pick } from '../../common/immutable';
 import { stopPropagation, getUniqueId } from '../../utils.js';
+import { usePrevious } from '../../hooks/';
 import { createAttachmentsFromDropped, deleteCollection, toggleModal, updateCollection, navigate } from '../../actions';
 
 const makeDerivedData = (collections, path = [], opened, isTouchOrSmall) => {
@@ -617,6 +618,9 @@ const CollectionTree = props => {
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
 	const isSingleColumn = useSelector(state => state.device.isSingleColumn);
 
+	const highlightedCollections = useSelector(state => state.current.highlightedCollections);
+	const prevHighlightedCollections = usePrevious(highlightedCollections);
+
 	const handleOpenToggle = useCallback((ev, shouldOpen = null) => {
 		const collectionKey = ev.currentTarget.closest('[data-collection-key]').dataset.collectionKey;
 		toggleOpen(collectionKey, shouldOpen);
@@ -666,6 +670,24 @@ const CollectionTree = props => {
 	const shouldBeTabbable = shouldBeTabbableOnTouch || !isTouchOrSmall;
 
 	const { isReadOnly, isMyLibrary } = libraries.find(l => l.key === parentLibraryKey);
+
+	useEffect(() => {
+		if(!shallowEqual(highlightedCollections, prevHighlightedCollections)) {
+			const parentsOfHighlighted = highlightedCollections.reduce((acc, cKey) => {
+				do {
+					cKey = cKey in collections ? collections[cKey].parentCollection : null;
+					if(cKey) {
+						acc.push(cKey);
+					}
+				} while(cKey);
+				return acc;
+			}, []);
+
+			if(parentsOfHighlighted.length > 0) {
+				setOpened([...opened,  ...parentsOfHighlighted]);
+			}
+		}
+	}, [collections, highlightedCollections, opened, prevHighlightedCollections]);
 
 	if(isFetchingAllCollections) {
 		// while fetching collections:
