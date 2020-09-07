@@ -1,8 +1,13 @@
-import React, { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { remoteLibraryUpdate } from '../actions';
 import { getLibraryKeyFromTopic } from '../utils';
+
+// Streaming client configures WS connection once, based on config
+// that never changes. There is no need to recreate handle* or connect
+// methods at any point therefore exhaustive-deps rule can be disabled
+/* eslint-disable react-hooks/exhaustive-deps */
 
 const ZoteroStreamingClient = () => {
 	const dispatch = useDispatch();
@@ -39,15 +44,15 @@ const ZoteroStreamingClient = () => {
 			// console.error(c);
 			//
 		}
-	}, [dispatch])
+	}, [])
 
-	const handleClose = useCallback(ev => {
+	const handleClose = useCallback(() => {
 		if(!isTearDown.current) {
 			connect();
 		}
 	}, []);
 
-	const handleError = useCallback(ev => {
+	const handleError = useCallback(() => {
 	}, []);
 
 	const connect = useCallback(() => {
@@ -59,13 +64,15 @@ const ZoteroStreamingClient = () => {
 		} catch(e) {
 			console.error('Failed to estabilish connection to the streaming API.');
 		}
-	}, []);
+	}, [handleClose, handleError, handleMessage, streamingApiUrl]);
 
 	useEffect(() => {
-		connect();
-		return () => {
-			isTearDown.current = true;
-			ws.current.close();
+		if(ws.current === null) {
+			connect();
+			return () => {
+				isTearDown.current = true;
+				ws.current.close();
+			}
 		}
 	}, []);
 	return null;
