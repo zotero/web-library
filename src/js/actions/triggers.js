@@ -108,9 +108,17 @@ const triggerHighlightedCollections = isOn => {
 	return async (dispatch, getState) => {
 		const state = getState();
 		const { highlightedCollections, itemKeys, libraryKey } = state.current;
-		if(isOn) {
+		if(isOn && itemKeys.length > 0) {
 			const items = itemKeys.map(ik => get(state, ['libraries', libraryKey, 'items', ik], {}));
-			const collections = items.reduce((acc, i) => [...acc, ...i.collections], []);
+			var collections = new Set([...items[0].collections]);
+			if(items.length > 1) {
+				for(var i = 1; i < items.length; i++) {
+					collections = new Set([...items[i].collections]
+						.filter(x => collections.has(x)));
+				}
+			}
+			collections = [...collections]
+
 			if(!shallowEqual(collections, highlightedCollections)) {
 				dispatch({ type: TRIGGER_HIGHLIGHTED_COLLECTIONS, collections });
 			}
