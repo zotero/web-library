@@ -15,15 +15,18 @@ const ZoteroStreamingClient = () => {
 	const handleMessage = useCallback(ev => {
 		try {
 			const message = JSON.parse(ev.data);
-
 			if(message.event === 'connected') {
-				ws.current.send(JSON.stringify({
-					'action': 'createSubscriptions',
-					'subscriptions': [
-						{ apiKey },
-						{ topics: externalLibraries.map(l => `/${l.isGroupLibrary ? 'groups' : 'users'}/${l.id}`) }
-					],
-				}));
+				const subscriptions = [];
+				if(apiKey) {
+					subscriptions.push({ apiKey});
+				}
+
+				if(externalLibraries.length > 0) {
+					subscriptions.push({
+						topics: externalLibraries.map(l => `/${l.isGroupLibrary ? 'groups' : 'users'}/${l.id}`)
+					});
+				}
+				ws.current.send(JSON.stringify({'action': 'createSubscriptions', subscriptions }));
 			} else if(message.event === 'subscriptionsCreated') {
 				//
 			} else if(message.event === 'topicUpdated') {
