@@ -18,6 +18,7 @@ import { currentTrashOrDelete, createAttachmentsFromDropped, fetchSource, naviga
 selectItemsKeyboard, selectFirstItem, selectLastItem, preferenceChange, triggerFocus,
 triggerHighlightedCollections } from '../../../actions';
 import { useFocusManager, usePrevious, useSourceData } from '../../../hooks';
+import { isHighlightKeyDown } from '../../../common/event';
 
 const ROWHEIGHT = 26;
 
@@ -270,7 +271,7 @@ const Table = () => {
 	}, []);
 
 	const handleKeyUp = useCallback(ev => {
-		if(!ev.getModifierState('Alt')) {
+		if(!isHighlightKeyDown(ev)) {
 			dispatch(triggerHighlightedCollections(false));
 		}
 	}, [dispatch]);
@@ -298,7 +299,7 @@ const Table = () => {
 			magnitude = Math.floor(outerRef.current.getBoundingClientRect().height / ROWHEIGHT);
 			ev.preventDefault();
 		} else {
-			if(ev.getModifierState('Alt')) {
+			if(isHighlightKeyDown(ev)) {
 				dispatch(triggerHighlightedCollections(true));
 			}
 			return;
