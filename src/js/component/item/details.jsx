@@ -12,7 +12,8 @@ import { get } from '../../utils';
 const ItemDetails = props => {
 	const { active } = props;
 	const dispatch = useDispatch();
-	const isTouchOrSmall = useSelector(state => state.current.isTouchOrSmall);
+	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
+	const isTouchUser = useSelector(state => state.device.isTouchUser);
 	const itemKey = useSelector(state => state.current.itemKey);
 	const libraryKey = useSelector(state => state.current.libraryKey);
 	const item = useSelector(state => get(state, ['libraries', libraryKey, 'items', itemKey], null));
@@ -37,7 +38,7 @@ const ItemDetails = props => {
 
 	return (
 		<section className={ cx('item-details', { 'active': active }) }>
-			{ isTouchOrSmall && (
+			{ isTouchUser && (
 				<TouchHeaderContainer
 					className="hidden-mouse hidden-md-down darker"
 					variant={ TouchHeaderContainer.variants.ITEM }
