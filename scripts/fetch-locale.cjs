@@ -1,7 +1,5 @@
-'use strict';
-
 const argv = require('minimist')(process.argv.slice(2));
-const fetch = require('isomorphic-fetch');
+const fetch = require('node-fetch');
 const fs = require('fs-extra');
 const path = require('path');
 
