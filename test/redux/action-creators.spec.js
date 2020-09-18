@@ -108,7 +108,7 @@ describe('action creators', () => {
 	beforeEach(() => {
 		window.localStorage.clear();
 	});
-	afterEach(fetchMock.restore);
+	afterEach(() => fetchMock.restore());
 
 	it('initialize', async () => {
 		fetchMock.mock(/https:\/\/api\.zotero\.org\/itemTypes\??.*/, ['a']);
