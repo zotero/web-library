@@ -67,7 +67,7 @@ const BoxFieldInputEditable = memo(props => {
 	const isDisabled = (shouldUseEditMode && !isEditing) || isPseudoEditable || field.isReadOnly;
 	const input = <BoxFieldInput field={ field } />;
 	const editableProps = { display: field.display, isActive, input, isBusy: field.processing ||
-	false, isDisabled, onBlur, onClick, onFocus, title: field.title };
+	false, isDisabled, onBlur, onClick, onFocus, title: field.title, value: field.value };
 
 	var url = null;
 
