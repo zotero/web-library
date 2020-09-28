@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import cx from 'classnames';
 import { noop } from '../../utils';
 import Spinner from '../ui/spinner';
-import Select from 'react-select';
+import Select from '../ui/select';
 import withDevice from '../../enhancers/with-device';
 
 class SelectInput extends React.PureComponent {
@@ -40,13 +40,14 @@ class SelectInput extends React.PureComponent {
 	handleChange(value, ev) {
 		value = value !== null || (value === null && this.props.clearable) ?
 			value : this.props.value;
+
 		this.setState({ value });
 
 		if(this.props.onChange(value) || this.forceCommitOnNextChange) {
 			if(!ev) {
 				//@NOTE: this is using undocumeneted feature of react-selct v1, but see #131
-				const source = typeof this.input.input.getInput === 'function' ?
-					this.input.input.getInput() : this.input.input;
+				const source = typeof this.input.getElement === 'function' ?
+					this.input.getElement() : this.input.input;
 				ev = {
 					type: 'change',
 					currentTarget: source,

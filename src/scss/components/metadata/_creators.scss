@@ -88,7 +88,7 @@
 				max-width: 100%;
 			}
 
-			.Select {
+			.select {
 				padding: 0;
 				border: none;
 				background-color: transparent;
@@ -96,62 +96,62 @@
 				color: $key-color;
 				user-select: none; // Reset
 
-				.Select-control {
+				.select-control {
 					justify-content: flex-end;
 					background-color: transparent;
 					border: none;
 					padding: 0;
 					box-shadow: none;
 
-					@include state(".Select:hover", ".Select.is-focused") {
-						@include state(".Select:not(.is-disabled)") {
+					@include state(".select:hover", ".select.is-focused") {
+						@include state(".select:not(.is-disabled)") {
 							cursor: pointer;
 							color: $link-color;
 						}
 					}
 				}
 
-				.Select-multi-value-wrapper {
+				.select-multi-value-wrapper {
 					flex: 0 0 auto;
 					max-width: 100%;
 				}
 
-				.Select-value {
+				.select-value {
 					flex: 0 0 auto;
 					position: static;
 					padding: 0;
 					max-width: 100%;
 				}
 
-				.Select-input {
+				.select-input {
 					position: absolute;
 				}
 
-				.Select-arrow-zone {
+				.select-arrow-zone {
 					order: -1;
 				}
 
-				.Select-arrow {
+				.select-arrow {
 					background-image: image-url("icons/chevron-7-777.svg");
 					display: none;
 
 					@include state(".creators-entry:hover") {
-						@include state(".Select:not(.is-disabled)") {
+						@include state(".select:not(.is-disabled)") {
 							display: block;
 						}
 					}
 
-					@include state(".Select:hover") {
+					@include state(".select:hover") {
 						background-image: image-url("icons/chevron-7-secondary.svg");
 					}
 
-					@include state(".Select.is-focused") {
+					@include state(".select.is-focused") {
 						display: block;
 						background-image: image-url("icons/chevron-7-secondary.svg");
 					}
 				}
 
-				.Select-menu-outer {
+				.select-menu-outer {
 					text-align: left;
 					width: auto;
 					white-space: nowrap;

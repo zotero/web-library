@@ -2,12 +2,12 @@
 // React select
 // --------------------------------------------------
 
-.Select {
+.select {
 	position: relative;
 	flex: 1 1 0;
 	min-width: 0; // Prevent overflow
 
-	.Select-control {
+	.select-control {
 		display: flex;
 		align-items: center;
 		border-radius: $input-border-radius;
@@ -15,10 +15,10 @@
 		cursor: default;
 		border: $input-border-width solid $input-border-color;
 		background-color: $input-bg;
-		padding: $input-btn-padding-y ($input-btn-padding-x - 4px) $input-btn-padding-y $input-btn-padding-x; // Todo: just default, handle padding with .form-control and modifier classes on .Select.
+		padding: $input-btn-padding-y ($input-btn-padding-x - 4px) $input-btn-padding-y $input-btn-padding-x; // Todo: just default, handle padding with .form-control and modifier classes on .select.
 		position: relative;
 
-		@include state(".Select.is-focused") {
+		@include state(".select.is-focused") {
 			border: $input-border-width solid $input-focus-color;
 			box-shadow: 0 0 0 2px $input-focus-color;
 			outline: none;
@@ -26,25 +26,25 @@
 	}
 
 	&.is-searchable.is-open {
-		.Select-control {
+		.select-control {
 			cursor: text;
 		}
 	}
 
-	.Select-multi-value-wrapper {
+	.select-multi-value-wrapper {
 		flex: 1 1 0;
 		display: flex;
 		align-items: center;
 		min-width: 0; // Prevent overflow
 	}
 
-	&.Select--single {
-		.Select-value-label {
+	&.single {
+		.select-value-label {
 			@include text-truncate;
 		}
 
 		&.has-value {
-			.Select-value {
+			.select-value {
 				@include mouse-and-bp-up(md) {
 					padding-right:
 						($input-btn-padding-x - 4px)
@@ -64,7 +64,7 @@
 		}
 	}
 
-	.Select-value {
+	.select-value {
 		display: flex;
 		align-items: center;
 		position: absolute;
@@ -75,7 +75,7 @@
 		padding: 0 $input-btn-padding-x;
 	}
 
-	.Select-input {
+	.select-input {
 		outline: none;
 		max-width: 100%;
 		overflow: hidden;
@@ -97,18 +97,18 @@
 		}
 	}
 
-	.Select-arrow-zone {
+	.select-arrow-container {
 		flex: 0 0 auto;
 	}
 
-	.Select-arrow {
+	.select-arrow {
 		display: block;
 		width: $space-md;
 		height: $space-md;
 		background: image-url("icons/chevron-7.svg") no-repeat 0 0;
 	}
 
-	.Select-menu-outer {
+	.select-menu-outer {
 		position: absolute;
 		left: $input-border-width;
 		top: calc(100% + #{$space-min + $input-border-width});
@@ -121,23 +121,32 @@
 		background-clip: padding-box;
 	}
 
-	.Select-menu {
+	.select-menu {
 		max-height: 10 * $line-height-large;
 		overflow-y: auto;
 	}
 
-	.Select-option,
-	.Select-noresults {
+	.select-option,
+	.select-noresults {
 		padding: 0 $input-btn-padding-x;
 		line-height: $line-height-large;
 	}
 
-	.Select-option {
+	.select-option {
 		cursor: pointer;
 		color: $text-color;
 
+		// is-mouse and is-keyboard are mutex in .select
+		&:hover {
+			@include state(".select.is-mouse") {
+				background-color: $menu-item-hover-bg;
+			}
+		}
+
 		&.is-focused {
-			background-color: $menu-item-hover-bg;
+			@include state(".select.is-keyboard") {
+				background-color: $menu-item-hover-bg;
+			}
 		}
 
 		&.is-selected {
@@ -145,7 +154,7 @@
 		}
 	}
 
-	.Select-noresults {
+	.select-noresults {
 		color: $menu-no-results-color;
 	}
 }

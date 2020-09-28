@@ -169,7 +169,7 @@
 	@include mouse-and-bp-up(md) {
 		line-height: normal;
 
-		.Select-control {
+		.select-control {
 			padding: $editable-padding;
 			border: $input-border-width solid transparent;
 			width: calc(100% + #{2 * $editable-border-width});
@@ -191,13 +191,13 @@
 			}
 		}
 
-		.Select-value {
+		.select-value {
 			padding: 0 $editable-padding;
 		}
 
-		&.Select--single {
+		&.select--single {
 			&.has-value {
-				.Select-value {
+				.select-value {
 					padding-right: $space-md;
 
 					@include state(".busy .pseudo-editable") {
@@ -207,18 +207,18 @@
 			}
 		}
 
-		.Select-arrow {
+		.select-arrow {
 			display: none;
 		}
 
 		&.is-focused {
-			.Select-control {
+			.select-control {
 				border-color: $input-focus-color;
 				background-color: $input-bg;
 				border-radius: 1px;
 			}
 
-			.Select-arrow {
+			.select-arrow {
 				display: block;
 
 				@include state(".busy .pseudo-editable") {
@@ -227,7 +227,7 @@
 			}
 		}
 
-		.Select-menu-outer {
+		.select-menu-outer {
 			left: -$editable-padding;
 			top: calc(100% + #{$space-min + $input-border-width + $editable-padding + $input-border-width});
 			right: -$editable-padding;
