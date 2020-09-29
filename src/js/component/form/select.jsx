@@ -89,6 +89,7 @@ class SelectInput extends React.PureComponent {
 		return {
 			simpleValue: true,
 			clearable: false,
+			searchable: true,
 		};
 	}
 

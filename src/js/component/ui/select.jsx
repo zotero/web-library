@@ -16,11 +16,14 @@ const Select = forwardRef((props, ref) => {
 	const [isFocused, setIsFocused] = useState(false);
 	const [highlighted, setHighlighted] = useState(valueIndex === -1 ? null : options[valueIndex].value);
 	const [keyboard, setKeyboard] = useState(false);
+	const [filter, setFilter] = useState('');
+	const [filteredOptions, setFilteredOptions] = useState(options);
 
 	const wasOpen = usePrevious(isOpen);
 	const prevHighlighted = usePrevious(highlighted);
 
 	const selectRef = useRef(null);
+	const inputRef = useRef(null);
 
 	useImperativeHandle(ref, () => ({
 		getElement: () => {
@@ -28,28 +31,34 @@ const Select = forwardRef((props, ref) => {
 		},
 		focus: () => {
 			selectRef.current.focus();
-			console.log('focus!');
 		}
 	}));
 
-	// const handleToggle = useCallback(() => {
-	// 	console.log('handletoggle');
-	// 	setIsOpen(!isOpen);
-	// }, [isOpen]);
-
 	const handleFocus = useCallback(() => {
 		setIsFocused(true);
-	}, []);
+		if(searchable) {
+			inputRef.current.focus();
+		}
+	}, [inputRef, searchable]);
 
-	const handleBlur = useCallback(() => {
+	const handleBlur = useCallback(ev => {
+		if(ev.relatedTarget && ev.relatedTarget.closest('.select') == selectRef.current) {
+			return;
+		}
+
 		setIsOpen(false);
 		setIsFocused(false);
 	}, []);
 
-	const handleClick = useCallback(() => {
+	const handleClick = useCallback(ev => {
+		if(ev.target.closest('.select-option')) {
+			return;
+		}
 		setIsOpen(true);
 		setIsFocused(true);
-	}, []);
+		setFilter('');
+		setFilteredOptions(options);
+	}, [options]);
 
 	const handleItemClick = useCallback(ev => {
 		setIsOpen(false);
@@ -63,18 +72,18 @@ const Select = forwardRef((props, ref) => {
 	}, [onChange, value]);
 
 	const getNextIndex = useCallback(direction => {
-		const currentIndex = options.findIndex(o => o.value === highlighted);
+		const currentIndex = filteredOptions.findIndex(o => o.value === highlighted);
 		if(currentIndex === -1) {
 			return 0;
 		}
 		let nextIndex = currentIndex + direction;
-		if(nextIndex > options.length - 1) {
+		if(nextIndex > filteredOptions.length - 1) {
 			nextIndex = 0;
 		} else if(nextIndex === -1) {
-			nextIndex = options.length - 1;
+			nextIndex = filteredOptions.length - 1;
 		}
 		return nextIndex;
-	}, [highlighted, options]);
+	}, [highlighted, filteredOptions]);
 
 	const handleKeyDown = useCallback(ev => {
 		if(ev.target !== ev.currentTarget) {
@@ -89,29 +98,50 @@ const Select = forwardRef((props, ref) => {
 			ev.stopPropagation();
 		} else if(isOpen && ev.key === 'ArrowDown') {
 			setKeyboard(true);
-			setHighlighted(options[getNextIndex(1)].value);
+			setHighlighted(filteredOptions[getNextIndex(1)].value);
 			ev.preventDefault();
 		} else if(isOpen && ev.key === 'ArrowUp') {
 			setKeyboard(true);
-			setHighlighted(options[getNextIndex(-1)].value);
+			setHighlighted(filteredOptions[getNextIndex(-1)].value);
 			ev.preventDefault();
 		} else if(isOpen && (ev.key === 'Enter' || ev.key === ' ')) {
 			setIsOpen(false);
 			setIsFocused(false);
+			setFilter('');
+			setFilteredOptions(options);
+
 			if(onChange && highlighted && highlighted !== value) {
 				onChange(highlighted);
 			}
 			ev.preventDefault();
 		}
-	}, [highlighted, isOpen, options, getNextIndex, onChange, value]);
+	}, [highlighted, isOpen, filteredOptions, getNextIndex, onChange, value, options]);
 
 	const handleMouseMove = useCallback(ev => {
 		setKeyboard(false);
 	}, []);
 
+	const handleSearchInput = useCallback(ev => {
+		const newFilter = ev.currentTarget.value;
+		if(newFilter !== filter) {
+			const newOptions = options.filter(o => o.label.toLowerCase().includes(newFilter.toLowerCase()));
+			setFilter(newFilter);
+			setFilteredOptions(newOptions);
+			if(newOptions.length && !newOptions.some(o => o.value === highlighted)) {
+				setHighlighted(newOptions[0].value);
+			}
+		}
+		setIsOpen(true);
+	}, [filter, options, highlighted]);
+
 	useEffect(() => {
 		if(!isOpen && wasOpen) {
 			setHighlighted(valueIndex === -1 ? null : options[valueIndex].value);
+			setFilter('');
+			setFilteredOptions(options);
+			if(document.activeElement === inputRef.current) {
+				inputRef.current.blur();
+			}
 		}
 		if(!wasOpen && isOpen && highlighted) {
 			const highlightedEl = selectRef.current && selectRef.current.querySelector(`[data-option-value=${highlighted}]`);
@@ -138,7 +168,7 @@ const Select = forwardRef((props, ref) => {
 			onClick={ handleClick }
 			onFocus={ handleFocus }
 			onBlur={ handleBlur }
-			onKeyDown={ handleKeyDown }
+			onKeyDown={ searchable ? null : handleKeyDown }
 			onMouseMove={ handleMouseMove }
 			tabIndex={ 0 }
 			ref={ selectRef }
@@ -146,12 +176,21 @@ const Select = forwardRef((props, ref) => {
 			<div className="select-control">
 				<div className="select-multi-value-wrapper">
 					<div className="select-value">
+					{ (!searchable || !filter.length) && (
 						<span className="select-value-label" role="option">
 							{ valueLabel }
 						</span>
+					) }
 					</div>
 					<div className="select-input">
-						<input tabIndex={ -2 } />
+						<input
+							disabled={ !searchable }
+							onChange={ handleSearchInput }
+							onKeyDown={ searchable ? handleKeyDown : null }
+							ref={ inputRef }
+							tabIndex={ -2 }
+							value={ filter }
+						/>
 					</div>
 				</div>
 				<div className="select-arrow-container">
@@ -161,7 +200,7 @@ const Select = forwardRef((props, ref) => {
 			{ (isFocused && isOpen) && (
 				<div className="select-menu-outer">
 					<div className="select-menu" role="list">
-						{ options.map(option =>
+						{ filteredOptions.map(option =>
 							<div
 								className={ cx("select-option", {
 									'is-focused': highlighted === option.value,
@@ -175,7 +214,7 @@ const Select = forwardRef((props, ref) => {
 							>
 								{ option.label }
 							</div>
-						)}
+						) }
 					</div>
 				</div>
 			) }
