@@ -58,7 +58,8 @@ const Select = forwardRef((props, ref) => {
 		setIsFocused(true);
 		setFilter('');
 		setFilteredOptions(options);
-	}, [options]);
+		setHighlighted(valueIndex === -1 ? null : options[valueIndex].value);
+	}, [options, valueIndex]);
 
 	const handleItemClick = useCallback(ev => {
 		setIsOpen(false);
@@ -92,6 +93,9 @@ const Select = forwardRef((props, ref) => {
 
 		if(!isOpen && (ev.key === 'Enter' || ev.key === ' ' || ev.key === 'ArrowDown')) {
 			setIsOpen(true);
+			setFilter('');
+			setFilteredOptions(options);
+			setHighlighted(valueIndex === -1 ? null : options[valueIndex].value);
 			ev.preventDefault();
 		} else if(isOpen && ev.key === 'Escape') {
 			setIsOpen(false);
@@ -128,22 +132,27 @@ const Select = forwardRef((props, ref) => {
 			setFilter(newFilter);
 			setFilteredOptions(newOptions);
 			if(newOptions.length && !newOptions.some(o => o.value === highlighted)) {
+				console.log('after filtering setting highlighted to', newOptions[0].value);
 				setHighlighted(newOptions[0].value);
 			}
 		}
-		setIsOpen(true);
-	}, [filter, options, highlighted]);
+		if(!isOpen) {
+			setIsOpen(true);
+			setFilteredOptions(options);
+			setHighlighted(valueIndex === -1 ? null : options[valueIndex].value);
+		}
+	}, [filter, isOpen, options, highlighted, valueIndex]);
 
 	useEffect(() => {
 		if(!isOpen && wasOpen) {
-			setHighlighted(valueIndex === -1 ? null : options[valueIndex].value);
 			setFilter('');
 			setFilteredOptions(options);
+			setHighlighted(null);
 			if(document.activeElement === inputRef.current) {
 				inputRef.current.blur();
 			}
 		}
-		if(!wasOpen && isOpen && highlighted) {
+		if(!wasOpen && isOpen) {
 			const highlightedEl = selectRef.current && selectRef.current.querySelector(`[data-option-value=${highlighted}]`);
 			if(highlightedEl) {
 				highlightedEl.scrollIntoView(false);
