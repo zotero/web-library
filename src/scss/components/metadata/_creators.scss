@@ -95,6 +95,7 @@
 				line-height: normal;
 				color: $key-color;
 				user-select: none; // Reset
+				box-shadow: none;
 
 				.select-control {
 					justify-content: flex-end;
