@@ -65,7 +65,7 @@ const BoxFieldInputEditable = memo(props => {
 	const isSelect = pickInputComponent(field) === SelectInput;
 	const isPseudoEditable = !isForm && isSelect;
 	const isDisabled = (shouldUseEditMode && !isEditing) || isPseudoEditable || field.isReadOnly;
-	const input = <BoxFieldInput field={ field } />;
+	const input = <BoxFieldInput { ...props } field={ field } />;
 	const editableProps = { display: field.display, isActive, input, isBusy: field.processing ||
 	false, isDisabled, onBlur, onClick, onFocus, title: field.title, value: field.value };
 
