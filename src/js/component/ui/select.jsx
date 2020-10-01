@@ -24,6 +24,7 @@ const Select = forwardRef((props, ref) => {
 
 	const selectRef = useRef(null);
 	const inputRef = useRef(null);
+	const selectMenuRef = useRef(null);
 
 	useImperativeHandle(ref, () => ({
 		getElement: () => {
@@ -119,7 +120,7 @@ const Select = forwardRef((props, ref) => {
 			}
 			ev.preventDefault();
 		}
-	}, [highlighted, isOpen, filteredOptions, getNextIndex, onChange, value, options]);
+	}, [highlighted, isOpen, filteredOptions, getNextIndex, onChange, value, valueIndex, options]);
 
 	const handleMouseMove = useCallback(ev => {
 		setKeyboard(false);
@@ -132,7 +133,6 @@ const Select = forwardRef((props, ref) => {
 			setFilter(newFilter);
 			setFilteredOptions(newOptions);
 			if(newOptions.length && !newOptions.some(o => o.value === highlighted)) {
-				console.log('after filtering setting highlighted to', newOptions[0].value);
 				setHighlighted(newOptions[0].value);
 			}
 		}
@@ -155,7 +155,7 @@ const Select = forwardRef((props, ref) => {
 		if(!wasOpen && isOpen) {
 			const highlightedEl = selectRef.current && selectRef.current.querySelector(`[data-option-value=${highlighted}]`);
 			if(highlightedEl) {
-				highlightedEl.scrollIntoView(false);
+				scrollIntoViewIfNeeded(highlightedEl, selectMenuRef.current, false);
 			}
 		}
 	}, [highlighted, isOpen, wasOpen, options, valueIndex, ref]);
@@ -164,7 +164,7 @@ const Select = forwardRef((props, ref) => {
 		if(isOpen && highlighted !== prevHighlighted) {
 			const highlightedEl = selectRef.current && selectRef.current.querySelector(`[data-option-value=${highlighted}]`);
 			if(highlightedEl) {
-				scrollIntoViewIfNeeded(highlightedEl, selectRef.current, false);
+				scrollIntoViewIfNeeded(highlightedEl, selectMenuRef.current, false);
 			}
 		}
 	}, [highlighted, prevHighlighted, isOpen]);
@@ -208,7 +208,7 @@ const Select = forwardRef((props, ref) => {
 			</div>
 			{ (isFocused && isOpen) && (
 				<div className="select-menu-outer">
-					<div className="select-menu" role="list">
+					<div className="select-menu" role="list" ref={ selectMenuRef }>
 						{ filteredOptions.map(option =>
 							<div
 								className={ cx("select-option", {
