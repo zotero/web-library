@@ -2,7 +2,7 @@
 // React select
 // --------------------------------------------------
 
-.select {
+.select-component {
 	position: relative;
 	flex: 1 1 0;
 	min-width: 0; // Prevent overflow
@@ -18,7 +18,7 @@
 		padding: $input-btn-padding-y ($input-btn-padding-x - 4px) $input-btn-padding-y $input-btn-padding-x; // Todo: just default, handle padding with .form-control and modifier classes on .select.
 		position: relative;
 
-		@include state(".select.is-focused") {
+		@include state(".select-component.is-focused") {
 			border: $input-border-width solid $input-focus-color;
 			box-shadow: 0 0 0 2px $input-focus-color;
 			outline: none;
@@ -136,15 +136,15 @@
 		cursor: pointer;
 		color: $text-color;
 
-		// is-mouse and is-keyboard are mutex in .select
+		// is-mouse and is-keyboard are mutex in .select-component
 		&:hover {
-			@include state(".select.is-mouse") {
+			@include state(".select-component.is-mouse") {
 				background-color: $menu-item-hover-bg;
 			}
 		}
 
 		&.is-focused {
-			@include state(".select.is-keyboard") {
+			@include state(".select-component.is-keyboard") {
 				background-color: $menu-item-hover-bg;
 			}
 		}

@@ -195,7 +195,7 @@
 			padding: 0 $editable-padding;
 		}
 
-		&.select--single {
+		&.select-component.single {
 			&.has-value {
 				.select-value {
 					padding-right: $space-md;

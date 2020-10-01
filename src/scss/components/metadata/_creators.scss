@@ -88,7 +88,7 @@
 				max-width: 100%;
 			}
 
-			.select {
+			.select-component {
 				padding: 0;
 				border: none;
 				background-color: transparent;
@@ -104,8 +104,8 @@
 					padding: 0;
 					box-shadow: none;
 
-					@include state(".select:hover", ".select.is-focused") {
-						@include state(".select:not(.is-disabled)") {
+					@include state(".select-component:hover", ".select-component.is-focused") {
+						@include state(".select-component:not(.is-disabled)") {
 							cursor: pointer;
 							color: $link-color;
 						}
@@ -137,16 +137,16 @@
 					display: none;
 
 					@include state(".creators-entry:hover") {
-						@include state(".select:not(.is-disabled)") {
+						@include state(".select-component:not(.is-disabled)") {
 							display: block;
 						}
 					}
 
-					@include state(".select:hover") {
+					@include state(".select-component:hover") {
 						background-image: image-url("icons/chevron-7-secondary.svg");
 					}
 
-					@include state(".select.is-focused") {
+					@include state(".select-component.is-focused") {
 						display: block;
 						background-image: image-url("icons/chevron-7-secondary.svg");
 					}

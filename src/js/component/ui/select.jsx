@@ -35,32 +35,43 @@ const Select = forwardRef((props, ref) => {
 		}
 	}));
 
-	const handleFocus = useCallback(() => {
-		setIsFocused(true);
-		if(searchable) {
-			inputRef.current.focus();
+	const handleFocus = useCallback(ev => {
+		if(!disabled) {
+			setIsFocused(true);
+			if(searchable) {
+				inputRef.current.focus();
+			}
 		}
-	}, [inputRef, searchable]);
+
+		if(onFocus) {
+			onFocus(ev);
+		}
+	}, [disabled, inputRef, searchable, onFocus]);
 
 	const handleBlur = useCallback(ev => {
 		if(ev.relatedTarget && ev.relatedTarget.closest('.select') == selectRef.current) {
 			return;
 		}
+		if(onBlur) {
+			onBlur(ev)
+		}
 
 		setIsOpen(false);
 		setIsFocused(false);
-	}, []);
+	}, [onBlur]);
 
 	const handleClick = useCallback(ev => {
 		if(ev.target.closest('.select-option')) {
 			return;
 		}
-		setIsOpen(true);
-		setIsFocused(true);
-		setFilter('');
-		setFilteredOptions(options);
-		setHighlighted(valueIndex === -1 ? null : options[valueIndex].value);
-	}, [options, valueIndex]);
+		if(!disabled) {
+			setIsOpen(true);
+			setIsFocused(true);
+			setFilter('');
+			setFilteredOptions(options);
+			setHighlighted(valueIndex === -1 ? null : options[valueIndex].value);
+		}
+	}, [disabled, options, valueIndex]);
 
 	const handleItemClick = useCallback(ev => {
 		setIsOpen(false);
@@ -92,6 +103,10 @@ const Select = forwardRef((props, ref) => {
 			return;
 		}
 
+		if(disabled) {
+			return;
+		}
+
 		if(!isOpen && (ev.key === 'Enter' || ev.key === ' ' || ev.key === 'ArrowDown')) {
 			setIsOpen(true);
 			setFilter('');
@@ -120,7 +135,7 @@ const Select = forwardRef((props, ref) => {
 			}
 			ev.preventDefault();
 		}
-	}, [highlighted, isOpen, filteredOptions, getNextIndex, onChange, value, valueIndex, options]);
+	}, [disabled, highlighted, isOpen, filteredOptions, getNextIndex, onChange, value, valueIndex, options]);
 
 	const handleMouseMove = useCallback(ev => {
 		setKeyboard(false);
@@ -171,16 +186,19 @@ const Select = forwardRef((props, ref) => {
 
 	return (
 		<div
-			className={ cx('select', className, 'single', {
-				'is-searchable': searchable, 'is-focused': isFocused, 'has-value': !!value, 'is-keyboard': keyboard, 'is-mouse': !keyboard
+			className={ cx('select-component', className, 'single', {
+				'is-searchable': searchable, 'is-focused': isFocused, 'has-value': !!value,
+				'is-keyboard': keyboard, 'is-mouse': !keyboard, 'is-disabled': disabled
 			}) }
+			id={ id }
+			onBlur={ handleBlur }
 			onClick={ handleClick }
 			onFocus={ handleFocus }
-			onBlur={ handleBlur }
 			onKeyDown={ searchable ? null : handleKeyDown }
 			onMouseMove={ handleMouseMove }
-			tabIndex={ 0 }
 			ref={ selectRef }
+			tabIndex={ disabled ? null : 0 }
+			aria-disabled={ disabled }
 		>
 			<div className="select-control">
 				<div className="select-multi-value-wrapper">
@@ -232,5 +250,20 @@ const Select = forwardRef((props, ref) => {
 });
 
 Select.displayName = 'Select';
+
+Select.propTypes = {
+	className: PropTypes.string,
+	disabled: PropTypes.bool,
+	id: PropTypes.string,
+	onBlur: PropTypes.func,
+	onChange: PropTypes.func,
+	onFocus: PropTypes.func,
+	options: PropTypes.array,
+	readOnly: PropTypes.bool,
+	required: PropTypes.bool,
+	searchable: PropTypes.bool,
+	tabIndex: PropTypes.number,
+	value: PropTypes.string,
+};
 
 export default memo(Select);
