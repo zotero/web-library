@@ -36,7 +36,7 @@ const Select = forwardRef((props, ref) => {
 	}));
 
 	const handleFocus = useCallback(ev => {
-		if(!disabled) {
+		if(!disabled && !readOnly) {
 			setIsFocused(true);
 			if(searchable) {
 				inputRef.current.focus();
@@ -46,10 +46,10 @@ const Select = forwardRef((props, ref) => {
 		if(onFocus) {
 			onFocus(ev);
 		}
-	}, [disabled, inputRef, searchable, onFocus]);
+	}, [disabled, inputRef, searchable, onFocus, readOnly]);
 
 	const handleBlur = useCallback(ev => {
-		if(ev.relatedTarget && ev.relatedTarget.closest('.select') == selectRef.current) {
+		if(ev.relatedTarget && ev.relatedTarget.closest('.select-component') == selectRef.current) {
 			return;
 		}
 		if(onBlur) {
@@ -64,14 +64,14 @@ const Select = forwardRef((props, ref) => {
 		if(ev.target.closest('.select-option')) {
 			return;
 		}
-		if(!disabled) {
+		if(!disabled && !readOnly) {
 			setIsOpen(true);
 			setIsFocused(true);
 			setFilter('');
 			setFilteredOptions(options);
 			setHighlighted(valueIndex === -1 ? null : options[valueIndex].value);
 		}
-	}, [disabled, options, valueIndex]);
+	}, [disabled, options, valueIndex, readOnly]);
 
 	const handleItemClick = useCallback(ev => {
 		setIsOpen(false);
@@ -103,7 +103,7 @@ const Select = forwardRef((props, ref) => {
 			return;
 		}
 
-		if(disabled) {
+		if(disabled || readOnly) {
 			return;
 		}
 
@@ -135,7 +135,7 @@ const Select = forwardRef((props, ref) => {
 			}
 			ev.preventDefault();
 		}
-	}, [disabled, highlighted, isOpen, filteredOptions, getNextIndex, onChange, value, valueIndex, options]);
+	}, [disabled, highlighted, isOpen, filteredOptions, getNextIndex, onChange, value, valueIndex, options, readOnly]);
 
 	const handleMouseMove = useCallback(ev => {
 		setKeyboard(false);
@@ -188,7 +188,7 @@ const Select = forwardRef((props, ref) => {
 		<div
 			className={ cx('select-component', className, 'single', {
 				'is-searchable': searchable, 'is-focused': isFocused, 'has-value': !!value,
-				'is-keyboard': keyboard, 'is-mouse': !keyboard, 'is-disabled': disabled
+				'is-keyboard': keyboard, 'is-mouse': !keyboard, 'is-disabled': disabled, 'is-readonly': readOnly
 			}) }
 			id={ id }
 			onBlur={ handleBlur }
@@ -199,6 +199,7 @@ const Select = forwardRef((props, ref) => {
 			ref={ selectRef }
 			tabIndex={ disabled ? null : 0 }
 			aria-disabled={ disabled }
+			aria-readonly={ readOnly }
 		>
 			<div className="select-control">
 				<div className="select-multi-value-wrapper">
