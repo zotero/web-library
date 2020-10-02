@@ -1,5 +1,5 @@
 //
-// React select
+// Select component
 // --------------------------------------------------
 
 .select-component {
@@ -143,7 +143,7 @@
 			}
 		}
 
-		&.is-focused {
+		&.is-focused:not(.is-selected) {
 			@include state(".select-component.is-keyboard") {
 				background-color: $menu-item-hover-bg;
 			}
