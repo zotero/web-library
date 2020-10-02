@@ -240,7 +240,7 @@ label {
 		}
 	}
 
-	&.select {
+	&.select-component {
 		@include mouse-and-bp-up(md) {
 			padding: 0;
 			border: none;
