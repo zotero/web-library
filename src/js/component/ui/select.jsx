@@ -6,8 +6,8 @@ import { usePrevious } from '../../hooks';
 import { scrollIntoViewIfNeeded } from '../../utils';
 
 const Select = forwardRef((props, ref) => {
-	const { className, disabled, id, onBlur, onChange, onFocus, options, readOnly,
-	required, searchable, tabIndex = 0, value } = props;
+	const { className, disabled, id, onBlur, onChange, onFocus, options, readOnly, searchable,
+	tabIndex = 0, value } = props;
 
 	const valueLabel = (options.find(o => o.value === value) || options[0] || {}).label;
 	const valueIndex = options.findIndex(o => o.value === value);
@@ -138,7 +138,7 @@ const Select = forwardRef((props, ref) => {
 		}
 	}, [disabled, highlighted, isOpen, filteredOptions, getNextIndex, onChange, value, valueIndex, options, readOnly]);
 
-	const handleMouseMove = useCallback(ev => {
+	const handleMouseMove = useCallback(() => {
 		setKeyboard(false);
 	}, []);
 
@@ -242,6 +242,11 @@ const Select = forwardRef((props, ref) => {
 								aria-selected={ value === option.value }
 							>
 								{ option.label }
+							</div>
+						) }
+						{ filteredOptions.length === 0 && (
+							<div className="select-noresults">
+								No results found
 							</div>
 						) }
 					</div>
