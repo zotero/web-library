@@ -7,7 +7,7 @@ import { scrollIntoViewIfNeeded } from '../../utils';
 
 const Select = forwardRef((props, ref) => {
 	const { className, disabled, id, onBlur, onChange, onFocus, options, readOnly,
-	required, searchable, simpleValue, tabIndex, value } = props;
+	required, searchable, tabIndex = 0, value } = props;
 
 	const valueLabel = (options.find(o => o.value === value) || options[0] || {}).label;
 	const valueIndex = options.findIndex(o => o.value === value);
@@ -39,6 +39,7 @@ const Select = forwardRef((props, ref) => {
 		if(!disabled && !readOnly) {
 			setIsFocused(true);
 			if(searchable) {
+				selectRef.current.tabIndex = -2;
 				inputRef.current.focus();
 			}
 		}
@@ -49,16 +50,14 @@ const Select = forwardRef((props, ref) => {
 	}, [disabled, inputRef, searchable, onFocus, readOnly]);
 
 	const handleBlur = useCallback(ev => {
-		if(ev.relatedTarget && ev.relatedTarget.closest('.select-component') == selectRef.current) {
-			return;
-		}
+		selectRef.current.tabIndex = tabIndex;
 		if(onBlur) {
 			onBlur(ev)
 		}
 
 		setIsOpen(false);
 		setIsFocused(false);
-	}, [onBlur]);
+	}, [onBlur, tabIndex]);
 
 	const handleClick = useCallback(ev => {
 		if(ev.target.closest('.select-option')) {
@@ -73,7 +72,9 @@ const Select = forwardRef((props, ref) => {
 		}
 	}, [disabled, options, valueIndex, readOnly]);
 
-	const handleItemClick = useCallback(ev => {
+
+	// using mouse down to prevent blur firing first
+	const handleItemMouseDown = useCallback(ev => {
 		setIsOpen(false);
 		setIsFocused(false);
 		ev.stopPropagation();
@@ -197,7 +198,7 @@ const Select = forwardRef((props, ref) => {
 			onKeyDown={ searchable ? null : handleKeyDown }
 			onMouseMove={ handleMouseMove }
 			ref={ selectRef }
-			tabIndex={ disabled ? null : 0 }
+			tabIndex={ disabled ? null : tabIndex }
 			aria-disabled={ disabled }
 			aria-readonly={ readOnly }
 		>
@@ -235,7 +236,7 @@ const Select = forwardRef((props, ref) => {
 									'is-selected': value === option.value
 								}) }
 								key={ option.value }
-								onClick={ handleItemClick }
+								onMouseDown={ handleItemMouseDown }
 								data-option-value={ option.value }
 								role="option"
 								aria-selected={ value === option.value }
