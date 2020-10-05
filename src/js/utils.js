@@ -17,7 +17,7 @@ const splice = (array, at, count = 0, ...items) => {
 };
 
 const get = (src, path, fallback) => {
-	if(src === null) {
+	if(typeof(src) === 'undefined' || src === null) {
 		return fallback;
 	}
 	if(!path || !path.length) {
