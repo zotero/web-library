@@ -72,7 +72,7 @@ const selectItemsKeyboard = (direction, magnitude, isMultiSelect) => {
 					var invertedDirection = direction * -1;
 					var consecutiveSelectedItemKeys = [];
 					var reverseCounter = 0;
-					var boundry = invertedDirection > 0 ? keys.length - 1 : 0;
+					var boundry = invertedDirection > 0 ? keys.length : -1;
 
 					while(index + reverseCounter * invertedDirection !== boundry) {
 						const nextKey = keys[index + reverseCounter * invertedDirection];
