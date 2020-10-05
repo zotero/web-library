@@ -610,6 +610,8 @@ const CollectionTree = props => {
 		state => parentLibraryKey in state.libraries ? state.libraries[parentLibraryKey].collections.isFetchingAll : false
 	);
 	const itemsSource = useSelector(state => state.current.itemsSource);
+	const isTrash = useSelector(state => state.current.isTrash);
+	const isMyPublications = useSelector(state => state.current.isMyPublications);
 	const stateSelectedCollectionKey = useSelector(state => state.current.collectionKey);
 	const selectedCollectionKey = isPickerMode ? pickerState.collectionKey : stateSelectedCollectionKey;
 	const stateSelectedLibraryKey = useSelector(state => state.current.libraryKey);
@@ -732,7 +734,7 @@ const CollectionTree = props => {
 			<PublicationsNode
 				isMyLibrary = { isMyLibrary }
 				isPickerMode={ isPickerMode }
-				isSelected = { isCurrentLibrary && itemsSource === 'publications' }
+				isSelected = { isCurrentLibrary && isMyPublications }
 				parentLibraryKey = { parentLibraryKey }
 				selectNode = { selectNode }
 				shouldBeTabbable = { shouldBeTabbable }
@@ -742,7 +744,7 @@ const CollectionTree = props => {
 			<TrashNode
 				isPickerMode={ isPickerMode }
 				isReadOnly = { isReadOnly }
-				isSelected = { isCurrentLibrary && itemsSource === 'trash' }
+				isSelected = { isCurrentLibrary && isTrash }
 				parentLibraryKey = { parentLibraryKey }
 				selectNode = { selectNode }
 				shouldBeTabbable = { shouldBeTabbable }
