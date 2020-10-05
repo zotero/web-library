@@ -1,8 +1,6 @@
-'use strict';
-
 import deepEqual from 'deep-equal';
 import { shallowEqual } from 'react-redux';
-import { LOCATION_CHANGE } from 'connected-react-router';
+import { LOCATION_CHANGE } from 'connected-react-router'
 
 import {
 	ERROR_ITEMS_BY_QUERY,
@@ -14,11 +12,16 @@ import {
 	REQUEST_ITEMS_BY_QUERY,
 	REQUEST_TAGS_IN_ITEMS_BY_QUERY,
 	SORT_ITEMS,
+	RECEIVE_DELETE_ITEM,
+	RECEIVE_DELETE_ITEMS,
+	RECEIVE_MOVE_ITEMS_TRASH,
+	RECEIVE_RECOVER_ITEMS_TRASH,
 } from '../constants/actions.js';
 
 import { getParamsFromRoute } from '../common/state';
 import { getQueryFromParams } from '../common/navigation';
-import { populateTags, populateItemKeys, sortItemKeysOrClear, updateFetchingState } from '../common/reducers';
+import { filterItemKeys, populateTags, populateItemKeys, sortItemKeysOrClear, updateFetchingState } from '../common/reducers';
+import { get } from '../utils';
 
 const isMatchingQuery = (action, state) => {
 	const { q = '', qmode, tag = [] } = action.queryOptions;
@@ -37,7 +40,8 @@ const defaultState = {
 	totalResults: null,
 };
 
-const query = (state = defaultState, action) => {
+const query = (state = defaultState, action, otherState) => {
+	const isTrash = get(otherState, 'current.isTrash');
 	switch(action.type) {
 		case LOCATION_CHANGE:
 			var params = getParamsFromRoute({ router: { ...action.payload } });
@@ -106,6 +110,14 @@ const query = (state = defaultState, action) => {
 			};
 		case RECEIVE_UPDATE_ITEM:
 			return 'tags' in action.patch ? { ...state, tags: {} } : state;
+		case RECEIVE_DELETE_ITEM:
+			return filterItemKeys(state, action.item.key);
+		case RECEIVE_DELETE_ITEMS:
+			return filterItemKeys(state, action.itemKeys);
+		case RECEIVE_MOVE_ITEMS_TRASH:
+			return isTrash ? state : filterItemKeys(state, action.itemKeys);
+		case RECEIVE_RECOVER_ITEMS_TRASH:
+			return isTrash ? filterItemKeys(state, action.itemKeys) : state;
 		default:
 			return state;
 	}
