@@ -10,6 +10,7 @@ const TouchFooter = () => {
 	const itemsSource = useSelector(state => state.current.itemsSource);
 	const selectedItemsCount = useSelector(state => state.current.itemKeys.length);
 	const isTrash = useSelector(state => state.current.isTrash);
+	const collectionKey = useSelector(state => state.current.collectionKey);
 
 	const { handleAddToCollectionModalOpen, handleRemoveFromCollection, handleTrash,
 	handlePermanentlyDelete, handleUndelete, handleBibliographyModalOpen, handleDuplicate,
@@ -29,7 +30,7 @@ const TouchFooter = () => {
 									</Button>
 								)}
 								{
-									itemsSource === 'collection' && (
+									(itemsSource === 'collection' || (itemsSource === 'query' && collectionKey)) && (
 										<Button icon onClick={ handleRemoveFromCollection } disabled={ selectedItemsCount === 0 }>
 											<Icon type={ '32/remove-from-collection' } width="32" height="32" />
 										</Button>

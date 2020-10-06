@@ -104,6 +104,7 @@ const ItemActionsDesktop = memo(props => {
 	const selectedItemsCount = useSelector(state => state.current.itemKeys.length);
 	const isReadOnly = useSelector(state => (state.config.libraries.find(l => l.key === state.current.libraryKey) || {}).isReadOnly);
 	const isTrash = useSelector(state => state.current.isTrash);
+	const collectionKey = useSelector(state => state.current.collectionKey);
 
 	const { handleNewItemCreate,  handleNewStandaloneNote,  handleDuplicate,
 	handleAddToCollectionModalOpen,  handleRemoveFromCollection,  handleTrash,
@@ -180,7 +181,7 @@ const ItemActionsDesktop = memo(props => {
 						>
 							<Icon type="20/add-collection" width="20" height="20" />
 						</Button>
-						{ itemsSource === 'collection' && (
+						{ (itemsSource === 'collection' || (itemsSource === 'query' && collectionKey)) && (
 							<Button
 								disabled={ selectedItemsCount === 0 }
 								icon
