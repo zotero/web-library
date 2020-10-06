@@ -96,12 +96,18 @@ const Search = props => {
 	}, [onFocusNext, onFocusPrev]);
 
 	useEffect(() => {
+		if(!prevItemsSource) {
+			return;
+		}
 		if(itemsSource !== prevItemsSource && itemsSource !== 'query') {
 			setSearchValue('');
 		}
 	}, [itemsSource, prevItemsSource]);
 
 	useEffect(() => {
+		if(!prevCollection) {
+			return;
+		}
 		if(collection !== prevCollection) {
 			setSearchValue('');
 		}
