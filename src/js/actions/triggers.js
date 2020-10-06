@@ -34,11 +34,11 @@ const triggerEditingItem = (itemKey, toggleValue) => {
 
 const triggerSelectMode = (isSelectMode, shouldNavigate = false, items = []) => {
 	return async (dispatch, getState) => {
-		const { collectionKey, itemsSource, libraryKey, search, tags, view } = getState().current;
+		const { collectionKey, libraryKey, search, tags, view, isTrash, isMyPublications } = getState().current;
 
 		if(shouldNavigate) {
-			const trash = itemsSource === 'trash';
-			const publications = itemsSource === 'publications';
+			const trash = isTrash;
+			const publications = isMyPublications;
 			dispatch(
 				navigate({ library: libraryKey, search, tags, trash, publications, collection: collectionKey, items, view }, true)
 			);

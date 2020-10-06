@@ -103,6 +103,8 @@ const ItemActionsDesktop = memo(props => {
 	const itemsSource = useSelector(state => state.current.itemsSource);
 	const selectedItemsCount = useSelector(state => state.current.itemKeys.length);
 	const isReadOnly = useSelector(state => (state.config.libraries.find(l => l.key === state.current.libraryKey) || {}).isReadOnly);
+	const isTrash = useSelector(state => state.current.isTrash);
+
 	const { handleNewItemCreate,  handleNewStandaloneNote,  handleDuplicate,
 	handleAddToCollectionModalOpen,  handleRemoveFromCollection,  handleTrash,
 	handlePermanentlyDelete,  handleUndelete,  handleBibliographyModalOpen, } =
@@ -166,7 +168,7 @@ const ItemActionsDesktop = memo(props => {
 					)}
 				</ToolGroup>
 				<ToolGroup>
-				{ itemsSource !== 'trash' && (
+				{ !isTrash && (
 					<React.Fragment>
 						<Button
 							disabled={ selectedItemsCount === 0 }
@@ -202,7 +204,7 @@ const ItemActionsDesktop = memo(props => {
 						</Button>
 					</React.Fragment>
 				)}
-				{ itemsSource === 'trash' && (
+				{ isTrash && (
 					<React.Fragment>
 						<Button
 							disabled={ selectedItemsCount === 0 }

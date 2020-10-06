@@ -9,6 +9,7 @@ const TouchFooter = () => {
 	const isReadOnly = useSelector(state => (state.config.libraries.find(l => l.key === state.current.libraryKey) || {}).isReadOnly);
 	const itemsSource = useSelector(state => state.current.itemsSource);
 	const selectedItemsCount = useSelector(state => state.current.itemKeys.length);
+	const isTrash = useSelector(state => state.current.isTrash);
 
 	const { handleAddToCollectionModalOpen, handleRemoveFromCollection, handleTrash,
 	handlePermanentlyDelete, handleUndelete, handleBibliographyModalOpen, handleDuplicate,
@@ -22,7 +23,7 @@ const TouchFooter = () => {
 						{ !isReadOnly && (
 							<React.Fragment>
 								{
-									itemsSource !== 'trash' && (
+									!isTrash && (
 									<Button icon onClick={ handleAddToCollectionModalOpen } disabled={ selectedItemsCount === 0 }>
 										<Icon type={ '32/add-to-collection' } width="32" height="32" />
 									</Button>
@@ -34,19 +35,19 @@ const TouchFooter = () => {
 										</Button>
 								)}
 								{
-									itemsSource !== 'trash' && (
+									!isTrash && (
 										<Button icon onClick={ handleTrash } disabled={ selectedItemsCount === 0 } >
 											<Icon type={ '24/trash' } width="24" height="24" />
 										</Button>
 								)}
 								{
-									itemsSource === 'trash' && (
+									isTrash && (
 										<Button icon onClick={ handleUndelete } disabled={ selectedItemsCount === 0 } >
 											<Icon type={ '24/restore' } width="24" height="24" />
 										</Button>
 								)}
 								{
-									itemsSource === 'trash' && (
+									isTrash && (
 										<Button icon onClick={ handlePermanentlyDelete } disabled={ selectedItemsCount === 0 } >
 											<Icon type={ '24/empty-trash' } width="24" height="24" />
 										</Button>
