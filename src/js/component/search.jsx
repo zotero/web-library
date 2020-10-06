@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useRef, useState } from 'react';
+import React, { memo, useEffect, useCallback, useRef, useState } from 'react';
 import { UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap/lib';
 import { useDebouncedCallback } from 'use-debounce';
 import { useDispatch, useSelector } from 'react-redux';
@@ -7,6 +7,7 @@ import Button from './ui/button';
 import Icon from './ui/icon';
 import { navigate, triggerSearchMode } from '../actions';
 import { noop } from '../utils';
+import { usePrevious } from '../hooks';
 
 const SEARCH_INPUT_DEBOUNCE_DELAY = 300; //ms
 const modes = {
@@ -20,6 +21,10 @@ const Search = props => {
 	const search = useSelector(state => state.current.search);
 	const searchState = useSelector(state => state.current.searchState);
 	const qmode = useSelector(state => state.current.qmode);
+	const itemsSource = useSelector(state => state.current.itemsSource);
+	const prevItemsSource = usePrevious(itemsSource);
+	const collection = useSelector(state => state.current.collectionKey)
+	const prevCollection = usePrevious(collection);
 
 	const inputRef = useRef(null);
 
@@ -89,6 +94,18 @@ const Search = props => {
 			}
 		}
 	}, [onFocusNext, onFocusPrev]);
+
+	useEffect(() => {
+		if(itemsSource !== prevItemsSource && itemsSource !== 'query') {
+			setSearchValue('');
+		}
+	}, [itemsSource, prevItemsSource]);
+
+	useEffect(() => {
+		if(collection !== prevCollection) {
+			setSearchValue('');
+		}
+	}, [collection, prevCollection]);
 
 	return (
 		<div className="search input-group">
