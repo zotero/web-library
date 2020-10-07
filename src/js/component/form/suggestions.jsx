@@ -1,6 +1,6 @@
 import cx from 'classnames';
 import PropTypes from 'prop-types';
-import React, { forwardRef, useCallback, useState, useImperativeHandle } from 'react';
+import React, { memo, forwardRef, useCallback, useState, useImperativeHandle } from 'react';
 import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap/lib';
 
 import { omit } from '../../common/immutable';
@@ -21,7 +21,7 @@ DropChildren.propTypes = {
 };
 
 const Suggestions = forwardRef((props, ref) => {
-	const { children, inputProps, suggestions, onSelect } = props;
+	const { inputProps, suggestions, onSelect } = props;
 	const [isOpen, setIsOpen] = useState(false);
 	const [highlighted, setHighlighted] = useState(null);
 
@@ -31,34 +31,43 @@ const Suggestions = forwardRef((props, ref) => {
 
 	const handleToggle = useCallback(() => {
 		setIsOpen(!isOpen);
-	});
+	}, [isOpen]);
 
-	const getCurrentIndex = indexIfNotFound => {
+	const getNextIndex = useCallback(direction => {
 		const currentIndex = suggestions.findIndex(s => s === highlighted);
-		return currentIndex === -1 ? indexIfNotFound : currentIndex;
-	}
+		if(currentIndex === -1) {
+			return 0;
+		}
+		let nextIndex = currentIndex + direction;
+		if(nextIndex > suggestions.length - 1) {
+			nextIndex = 0;
+		} else if(nextIndex === -1) {
+			nextIndex = suggestions.length - 1;
+		}
+		return nextIndex;
+	}, [highlighted, suggestions]);
 
 	const handleKeyDown = useCallback(event => {
 		if(suggestions.length > 0) {
 			switch (event.key) {
 				case 'ArrowDown':
-					setHighlighted(suggestions[getCurrentIndex(-1) + 1]);
+					setHighlighted(suggestions[getNextIndex(1)]);
 				break;
 				case 'ArrowUp':
-					setHighlighted(suggestions[getCurrentIndex(suggestions.length) - 1]);
+					setHighlighted(suggestions[getNextIndex(-1)]);
 				break;
 			}
 		}
 		if(inputProps.onKeyDown) {
 			inputProps.onKeyDown(event);
 		}
-	});
+	}, [getNextIndex, inputProps, suggestions]);
 
 	const handleClick = useCallback(ev => {
 		ev.stopPropagation();
 		ev.preventDefault();
 		onSelect(ev.currentTarget.dataset.suggestion, ev);
-	});
+	}, [onSelect]);
 
 	return (
 		<Dropdown
@@ -95,9 +104,10 @@ const Suggestions = forwardRef((props, ref) => {
 });
 
 Suggestions.propTypes = {
-	suggestions: PropTypes.array,
 	children: PropTypes.element,
+	inputProps: PropTypes.object,
 	onSelect: PropTypes.func.isRequired,
+	suggestions: PropTypes.array,
 }
 
 Suggestions.defaultProps = {
@@ -106,4 +116,4 @@ Suggestions.defaultProps = {
 
 Suggestions.displayName = "Suggestions";
 
-export default Suggestions;
+export default memo(Suggestions);
