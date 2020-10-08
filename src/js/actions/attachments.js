@@ -124,17 +124,22 @@ const openFirstLink = itemKey => {
 	}
 }
 
-const openAttachment = attachmentItemKey => {
+// openAttachment may be called for top-level attachments that are missing/unsynced so it needs to
+// do additional checks before attempting to open the file to avoid erroring. openBestAttachment()
+// skips extra checks because it depends on parent item's 'attachment' link which will be empty if
+// best attachment is missing. We need to skip checks to in the latter case to avoid erroring if
+// item attachments haven't been fetched yet. #402, #410
+const openAttachment = (attachmentItemKey, skipChecks = false) => {
 	return async (dispatch, getState) => {
 		const state = getState();
 		const item = get(state, ['libraries', state.current.libraryKey, 'items', attachmentItemKey], null);
 		const isChrome = /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor);
 
-		const isFile = item.linkMode.startsWith('imported') && item[Symbol.for('links')].enclosure;
-		const isLink = item.linkMode === 'linked_url';
+		const isFile = item && item.linkMode && item.linkMode.startsWith('imported') && item[Symbol.for('links')].enclosure;
+		const isLink = item && item.linkMode && item.linkMode === 'linked_url';
 		const hasLink = isFile || isLink;
 
-		if(hasLink) {
+		if(skipChecks || hasLink) {
 			dispatch(isChrome ?
 				openAttachmentSimple(attachmentItemKey) :
 				openAttachmentBlockerWorkaround(attachmentItemKey)
@@ -149,7 +154,7 @@ const openBestAttachment = itemKey => {
 		const item = get(state, ['libraries', state.current.libraryKey, 'items', itemKey], null);
 		const attachment = get(item, [Symbol.for('links'), 'attachment'], null);
 		const attachmentItemKey = extractItemKey(attachment.href);
-		dispatch(openAttachment(attachmentItemKey));
+		dispatch(openAttachment(attachmentItemKey, true));
 	}
 };
 
