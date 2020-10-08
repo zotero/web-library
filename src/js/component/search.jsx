@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import Button from './ui/button';
 import Icon from './ui/icon';
-import { navigate, triggerSearchMode } from '../actions';
+import { navigate, resetQuery, triggerSearchMode } from '../actions';
 import { noop } from '../utils';
 import { usePrevious } from '../hooks';
 
@@ -25,8 +25,13 @@ const Search = props => {
 	const prevItemsSource = usePrevious(itemsSource);
 	const collection = useSelector(state => state.current.collectionKey)
 	const prevCollection = usePrevious(collection);
+	const isSingleColumn = useSelector(state => state.device.isSingleColumn);
 
 	const inputRef = useRef(null);
+
+	// on single-column devices allow re-querying after initial mount because search input is being
+	// unmounted when navigating into an item and remounted back when on the list
+	const hasBlurredSinceLastSearch = useRef(isSingleColumn);
 
 	const [searchValue, setSearchValue] = useState(search);
 	const [qmodeValue, setQmodeValue] = useState(qmode || 'titleCreatorYear');
@@ -56,6 +61,7 @@ const Search = props => {
 		const newValue = ev.currentTarget.value;
 		setSearchValue(newValue);
 		performSearchDebounce.callback(newValue, qmodeValue);
+		hasBlurredSinceLastSearch.current = false;
 	}, [performSearchDebounce, qmodeValue]);
 
 	const handleSearchClear = useCallback(() => {
@@ -95,8 +101,24 @@ const Search = props => {
 			} else {
 				onFocusPrev(ev);
 			}
+		} else if(ev.key === "Enter") {
+			// In certain cases user might want to force search again, with the same query,
+			// see https://github.com/zotero/web-library/issues/408#issuecomment-704819064
+			// we allow this, but only if search input has been blurred since last search
+			if(ev.target === inputRef.current && hasBlurredSinceLastSearch.current) {
+				if(performSearchDebounce.pending()) {
+					performSearchDebounce.flush();
+				}
+				dispatch(resetQuery());
+				performSearch(searchValue, qmodeValue);
+				hasBlurredSinceLastSearch.current = false;
+			}
 		}
 	}, [dispatch, onFocusNext, onFocusPrev, performSearch, performSearchDebounce, searchValue, qmodeValue]);
+
+	const handleBlur = useCallback(() => {
+		hasBlurredSinceLastSearch.current = true;
+	}, []);
 
 	useEffect(() => {
 		if(!prevItemsSource) {
@@ -147,13 +169,14 @@ const Search = props => {
 			<input
 				autoFocus={ autoFocus }
 				className="form-control search-input"
+				onBlur={ handleBlur }
 				onChange={ handleSearchChange }
 				onKeyDown={ handleKeyDown }
 				placeholder={ modes[qmodeValue] }
 				ref={ ref => { autoFocus && registerAutoFocus(ref); inputRef.current = ref } }
+				tabIndex={ -2 }
 				type="search"
 				value={ searchValue }
-				tabIndex={ -2 }
 			/>
 			{ searchValue.length > 0 && (
 				<Button

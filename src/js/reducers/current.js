@@ -14,6 +14,7 @@ import {
 	TRIGGER_SEARCH_MODE,
 	TRIGGER_SELECT_MODE,
 	TRIGGER_USER_TYPE_CHANGE,
+	RESET_QUERY,
 } from '../constants/actions';
 
 import { tagsFromUrlPart } from '../common/navigation';
@@ -208,6 +209,12 @@ const current = (state = stateDefault, action, { config = {}, device = {} } = {}
 			return {
 				...state,
 				highlightedCollections: action.collections
+			}
+		case RESET_QUERY:
+			return {
+				...state,
+				itemKey: null,
+				itemKeys: [],
 			}
 		default:
 			return state;

@@ -14,6 +14,7 @@ import {
 	TRIGGER_SEARCH_MODE,
 	TRIGGER_SELECT_MODE,
 	TRIGGER_USER_TYPE_CHANGE,
+	RESET_QUERY,
 } from '../constants/actions';
 
 import { navigate } from './';
@@ -129,8 +130,11 @@ const triggerHighlightedCollections = isOn => {
 	}
 }
 
+const resetQuery = () => ({ type: RESET_QUERY });
+
 export {
 	dismissError,
+	resetQuery,
 	toggleModal,
 	toggleNavbar,
 	toggleSelectMode,
