@@ -45,17 +45,17 @@ const ItemsList = memo(props => {
 			return true; // loaded
 		}
 		return requests.some(r => index >= r[0] && index < r[1]); // loading
-	});
+	}, [keys, requests]);
 
 	const handleLoadMore = useCallback((startIndex, stopIndex) => {
 		dispatch(fetchSource(startIndex, stopIndex))
-	});
+	}, [dispatch]);
 
 	useEffect(() => {
 		if(!hasChecked && !isFetching) {
 			dispatch(fetchSource(0, 50));
 		}
-	}, []);
+	}, [dispatch, isFetching, hasChecked]);
 
 	useEffect(() => {
 		if(loader.current) {
@@ -69,7 +69,7 @@ const ItemsList = memo(props => {
 			const itemKeyIndex = keys.findIndex(k => k === itemKey);
 			listRef.current.scrollToItem(itemKeyIndex);
 		}
-	}, [selectedItemKeys]);
+	}, [keys, selectedItemKeys]);
 
 	return (
 		<div className="items-list-wrap">
@@ -112,4 +112,4 @@ ItemsList.propTypes = {
 	isSearchModeTransitioning: PropTypes.bool,
 }
 
-export default ItemsList;
+export default memo(ItemsList);
