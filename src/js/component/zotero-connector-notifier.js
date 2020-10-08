@@ -42,7 +42,7 @@ const ZoteroConnectorNotifier = () => {
 		return {};
 	});
 
-	const [debouncedNotify] = useDebouncedCallback(() => {
+	const { callback: debouncedNotify } = useDebouncedCallback(() => {
 		document.dispatchEvent(new Event('ZoteroItemUpdated', {
 			bubbles: true,
 			cancelable: true

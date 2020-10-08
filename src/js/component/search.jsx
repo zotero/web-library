@@ -31,7 +31,7 @@ const Search = props => {
 	const [searchValue, setSearchValue] = useState(search);
 	const [qmodeValue, setQmodeValue] = useState(qmode || 'titleCreatorYear');
 
-	const [performSearch, cancelPerformSearch] = useDebouncedCallback((newSearchValue, newQmodeValue) => {
+	const performSearch = useCallback((newSearchValue, newQmodeValue) => {
 		var view, items;
 
 		if(!newSearchValue) {
@@ -47,27 +47,30 @@ const Search = props => {
 			dispatch(triggerSearchMode(false));
 		}
 		dispatch(navigate(({ view, items, search: newSearchValue, qmode: newQmodeValue })));
-	}, SEARCH_INPUT_DEBOUNCE_DELAY);
+	}, [dispatch, searchState]);
+
+	const performSearchDebounce =
+		useDebouncedCallback(performSearch, SEARCH_INPUT_DEBOUNCE_DELAY);
 
 	const handleSearchChange = useCallback(ev => {
 		const newValue = ev.currentTarget.value;
 		setSearchValue(newValue);
-		performSearch(newValue, qmodeValue);
-	}, [performSearch, qmodeValue]);
+		performSearchDebounce.callback(newValue, qmodeValue);
+	}, [performSearchDebounce, qmodeValue]);
 
 	const handleSearchClear = useCallback(() => {
-		cancelPerformSearch();
+		performSearchDebounce.cancel();
 		setSearchValue('');
-		performSearch('', qmodeValue);
+		performSearchDebounce.callback('', qmodeValue);
 		inputRef.current.focus();
-	}, [cancelPerformSearch, performSearch, qmodeValue]);
+	}, [performSearchDebounce, qmodeValue]);
 
 	const handleSelectMode = useCallback(ev => {
 		setQmodeValue(ev.currentTarget.dataset.qmode);
 		if(searchValue.length > 0) {
-			performSearch(searchValue, ev.currentTarget.dataset.qmode);
+			performSearchDebounce.callback(searchValue, ev.currentTarget.dataset.qmode);
 		}
-	}, [performSearch, searchValue]);
+	}, [performSearchDebounce, searchValue]);
 
 	const handleKeyDown = useCallback(ev => {
 		if(ev.target !== ev.currentTarget) {
@@ -93,7 +96,7 @@ const Search = props => {
 				onFocusPrev(ev);
 			}
 		}
-	}, [onFocusNext, onFocusPrev]);
+	}, [dispatch, onFocusNext, onFocusPrev, performSearch, performSearchDebounce, searchValue, qmodeValue]);
 
 	useEffect(() => {
 		if(!prevItemsSource) {
