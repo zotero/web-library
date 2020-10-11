@@ -161,6 +161,7 @@ const BoxFieldInput = memo(props => {
 		inputProps['onChange'] = () => true; //commit on change
 		// select inputs render without Editable and need to be tabbable
 		inputProps['tabIndex'] = 0;
+		inputProps['searchable'] = true;
 	}
 
 	if(InputComponent !== SelectInput) {

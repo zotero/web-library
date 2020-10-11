@@ -86,7 +86,7 @@ class SelectInput extends React.PureComponent {
 	}
 
 	get defaultSelectProps() {
-		return { searchable: true };
+		return { searchable: false };
 	}
 
 	renderInput(device) {
