@@ -154,6 +154,10 @@
 		}
 	}
 
+	.select-divider {
+		border-top: $input-border-width solid $menu-devider;
+	}
+
 	.select-noresults {
 		color: $menu-no-results-color;
 	}

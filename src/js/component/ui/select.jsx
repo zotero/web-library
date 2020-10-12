@@ -1,12 +1,44 @@
-import React, { forwardRef, memo, useCallback, useImperativeHandle, useRef, useState, useEffect } from 'react';
+import React, { forwardRef, memo, useCallback, useImperativeHandle, useRef, useState, useEffect, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import cx from 'classnames';
 
 import { usePrevious } from '../../hooks';
 import { scrollIntoViewIfNeeded } from '../../utils';
+import { flattenChildren, mapChildren } from '../../common/react';
+
+const SelectOption = memo(({ option, value, highlighted, onMouseDown }) => {
+	return (
+		<div
+			className={ cx('select-option', {
+				'is-focused': highlighted === option.value,
+				'is-selected': value === option.value
+			}) }
+			key={ option.value }
+			onMouseDown={ onMouseDown }
+			data-option-value={ option.value }
+			role="option"
+			aria-selected={ value === option.value }
+		>
+			{ option.label }
+		</div>
+	)
+});
+
+SelectOption.displayName = 'SelectOption';
+
+SelectOption.propTypes = {
+	highlighted: PropTypes.string,
+	onMouseDown: PropTypes.func,
+	option: PropTypes.object,
+	value: PropTypes.string,
+};
+
+const SelectDivider = memo(() => <div className="select-option select-divider" />);
+
+SelectDivider.displayName = 'SelectDivider';
 
 const Select = forwardRef((props, ref) => {
-	const { className, disabled, id, onBlur, onChange, onFocus, options, readOnly, searchable,
+	const { children, className, disabled, id, onBlur, onChange, onFocus, options, readOnly, searchable,
 	tabIndex = 0, value } = props;
 
 	const valueLabel = (options.find(o => o.value === value) || options[0] || {}).label;
@@ -25,6 +57,13 @@ const Select = forwardRef((props, ref) => {
 	const selectRef = useRef(null);
 	const inputRef = useRef(null);
 	const selectMenuRef = useRef(null);
+
+	const mergedOptions = useMemo(() => {
+		const childrenOptions = flattenChildren(children)
+			.filter(c => c.type === SelectOption)
+			.map(c => ({ ...c.props.option, component: c }));
+		return [...filteredOptions, ...childrenOptions];
+	}, [children, filteredOptions]);
 
 	useImperativeHandle(ref, () => ({
 		getElement: () => {
@@ -86,18 +125,18 @@ const Select = forwardRef((props, ref) => {
 	}, [onChange, value]);
 
 	const getNextIndex = useCallback(direction => {
-		const currentIndex = filteredOptions.findIndex(o => o.value === highlighted);
+		const currentIndex = mergedOptions.findIndex(o => o.value === highlighted);
 		if(currentIndex === -1) {
 			return 0;
 		}
 		let nextIndex = currentIndex + direction;
-		if(nextIndex > filteredOptions.length - 1) {
+		if(nextIndex > mergedOptions.length - 1) {
 			nextIndex = 0;
 		} else if(nextIndex === -1) {
-			nextIndex = filteredOptions.length - 1;
+			nextIndex = mergedOptions.length - 1;
 		}
 		return nextIndex;
-	}, [highlighted, filteredOptions]);
+	}, [mergedOptions, highlighted]);
 
 	const handleKeyDown = useCallback(ev => {
 		if(ev.target !== ev.currentTarget) {
@@ -119,11 +158,11 @@ const Select = forwardRef((props, ref) => {
 			ev.stopPropagation();
 		} else if(isOpen && ev.key === 'ArrowDown') {
 			setKeyboard(true);
-			setHighlighted(filteredOptions[getNextIndex(1)].value);
+			setHighlighted(mergedOptions[getNextIndex(1)].value);
 			ev.preventDefault();
 		} else if(isOpen && ev.key === 'ArrowUp') {
 			setKeyboard(true);
-			setHighlighted(filteredOptions[getNextIndex(-1)].value);
+			setHighlighted(mergedOptions[getNextIndex(-1)].value);
 			ev.preventDefault();
 		} else if(isOpen && (ev.key === 'Enter' || ev.key === ' ')) {
 			setIsOpen(false);
@@ -131,12 +170,15 @@ const Select = forwardRef((props, ref) => {
 			setFilter('');
 			setFilteredOptions(options);
 
-			if(onChange && highlighted && highlighted !== value) {
+			const targetOption = mergedOptions.find(mo => mo.value === highlighted);
+			if(targetOption && targetOption.component && targetOption.component.props.onKeyDown) {
+				targetOption.component.props.onKeyDown(ev);
+			} else if(!targetOption.component && onChange && highlighted && highlighted !== value) {
 				onChange(highlighted);
 			}
 			ev.preventDefault();
 		}
-	}, [disabled, highlighted, isOpen, filteredOptions, getNextIndex, onChange, value, valueIndex, options, readOnly]);
+	}, [disabled, highlighted, isOpen, mergedOptions, getNextIndex, onChange, value, valueIndex, options, readOnly]);
 
 	const handleMouseMove = useCallback(() => {
 		setKeyboard(false);
@@ -230,24 +272,23 @@ const Select = forwardRef((props, ref) => {
 				<div className="select-menu-outer">
 					<div className="select-menu" role="list" ref={ selectMenuRef }>
 						{ filteredOptions.map(option =>
-							<div
-								className={ cx("select-option", {
-									'is-focused': highlighted === option.value,
-									'is-selected': value === option.value
-								}) }
+							<SelectOption
 								key={ option.value }
+								highlighted={ highlighted }
 								onMouseDown={ handleItemMouseDown }
-								data-option-value={ option.value }
-								role="option"
-								aria-selected={ value === option.value }
-							>
-								{ option.label }
-							</div>
+								option={ option }
+								value={ value }
+							/>
 						) }
 						{ filteredOptions.length === 0 && (
 							<div className="select-noresults">
 								No results found
 							</div>
+						) }
+						{ mapChildren(children, child =>
+							child && child.type === SelectOption ?
+								React.cloneElement(child, { highlighted, value }) :
+								child
 						) }
 					</div>
 				</div>
@@ -273,4 +314,5 @@ Select.propTypes = {
 	value: PropTypes.string,
 };
 
+export { SelectDivider, SelectOption };
 export default memo(Select);

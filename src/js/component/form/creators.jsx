@@ -124,10 +124,13 @@ class Creators extends React.PureComponent {
 		this.handleSaveCreators(creators);
 	}
 
-	handleReorder(fromIndex, toIndex) {
+	handleReorder(fromIndex, toIndex, commit = false) {
 		const creators = [ ...this.state.creators ];
 		creators.splice(toIndex, 0, creators.splice(fromIndex, 1)[0]);
 		this.setState({ creators });
+		if(commit) {
+			this.handleSaveCreators(creators);
+		}
 	}
 
 	handleReorderCommit() {
@@ -158,6 +161,7 @@ class Creators extends React.PureComponent {
 			creator,
 			creatorTypes: this.props.creatorTypes,
 			index,
+			creatorsCount: this.state.creators.length,
 			isCreateAllowed: !this.hasVirtual,
 			isDeleteAllowed: !isVirtual || this.state.creators.length > 1,
 			isForm: this.props.isForm,

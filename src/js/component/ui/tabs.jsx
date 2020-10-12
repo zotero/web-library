@@ -6,6 +6,7 @@ import cx from 'classnames';
 import withFocusManager from '../../enhancers/with-focus-manager';
 import Spinner from '../ui/spinner';
 import { pick } from '../../common/immutable';
+import { mapChildren } from '../../common/react';
 
 const Tab = props => {
 	const { children, isActive, isDisabled, onActivate, onFocusNext, onFocusPrev, ...rest } = props;
@@ -58,18 +59,6 @@ Tab.propTypes = {
 	onActivate: PropTypes.func.isRequired
 };
 
-
-const mapChildren = (children, mapFunc, out = []) => {
-	React.Children.toArray(children).reduce((out, child) => {
-		if(child.type === React.Fragment) {
-			mapChildren(child.props.children, mapFunc, out);
-		} else {
-			out.push(mapFunc(child));
-		}
-		return out;
-	}, out);
-	return out;
-}
 
 const Tabs = withFocusManager(({ children, justified, compact, onFocus, onBlur,
 	registerFocusRoot, onFocusNext, onFocusPrev }) => (

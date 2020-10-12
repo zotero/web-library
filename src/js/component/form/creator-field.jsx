@@ -1,6 +1,6 @@
 'use strict';
 
-import React from 'react';
+import React, { memo, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import cx from 'classnames';
 import Field from './field';
@@ -10,7 +10,84 @@ import Icon from '../ui/icon';
 import Input from './input';
 import SelectInput from './select';
 import { creator as formatCreator } from '../../common/format';
+import { SelectDivider, SelectOption } from '../ui/select';
 import Modal from '../ui/modal';
+import { isTriggerEvent } from '../../common/event';
+
+const CreatorTypeSelector = memo(props => {
+	const { creatorsCount, index, isActive, isDisabled, onCancel, onClick, onCommit, onFocus,
+	onReorder, options, ref, value } = props;
+
+	const isFirst = index === 0;
+	const isLast = index === creatorsCount - 1;
+
+	const handleMoveTop = useCallback(ev => {
+		if(ev.type === 'mousedown' || isTriggerEvent(ev)) {
+			onReorder(index, 0, true);
+			onCancel();
+			ev.stopPropagation();
+		}
+	}, [index, onCancel, onReorder]);
+
+	const handleMoveUp = useCallback(ev => {
+		if(ev.type === 'mousedown' || isTriggerEvent(ev)) {
+			onReorder(index, index -1, true);
+			onCancel();
+			ev.stopPropagation();
+		}
+	}, [index, onCancel, onReorder]);
+
+	const handleMoveDown = useCallback(ev => {
+		if(ev.type === 'mousedown' || isTriggerEvent(ev)) {
+			onReorder(index, index +1, true);
+			onCancel();
+			ev.stopPropagation();
+		}
+	}, [index, onCancel, onReorder]);
+
+	return (
+		<SelectInput
+			className="form-control form-control-sm"
+			isActive={ isActive }
+			onCancel={ onCancel }
+			onChange={ () => true }
+			onCommit={ onCommit }
+			onClick={ onClick }
+			onFocus={ onFocus }
+			options={ options }
+			ref={ ref }
+			isDisabled = { isDisabled }
+			value={ value }
+		>
+			{ creatorsCount > 1 && (
+				<React.Fragment>
+					<SelectDivider />
+					{ (index > 1) && (
+						<SelectOption
+						onMouseDown={ handleMoveTop }
+						onKeyDown={ handleMoveTop }
+						option={ { label: 'Move to Top', value: '_top' } }
+					/> ) }
+					{ !isFirst && (
+						<SelectOption
+						onMouseDown={ handleMoveUp }
+						onKeyDown={ handleMoveUp }
+						option={ { label: 'Move Up', value: '_up' } }
+					/> ) }
+					{ !isLast && (
+						<SelectOption
+						onMouseDown={ handleMoveDown }
+						onKeyDown={ handleMoveDown }
+						option={ { label: 'Move Down', value: '_down' } }
+					/> ) }
+				</React.Fragment>
+			) }
+		</SelectInput>
+	);
+});
+
+CreatorTypeSelector.displayName = 'CreatorTypeSelector';
+
 
 class CreatorField extends React.PureComponent {
 	constructor(props) {
@@ -169,22 +246,22 @@ class CreatorField extends React.PureComponent {
 	}
 
 	renderCreatorTypeSelector() {
-		const { creator, creatorTypes } = this.props;
-		return <SelectInput
+		const { creator, creatorTypes, creatorsCount, index } = this.props;
+		return <CreatorTypeSelector
 			className="form-control form-control-sm"
+			index={ index }
 			inputComponent={ SelectInput }
 			isActive={ this.state.active === 'creatorType' }
+			isDisabled = { this.props.isReadOnly }
 			onCancel={ this.handleCancel.bind(this) }
-			onChange={ () => true }
-			onCommit={ this.handleEditableCommit.bind(this, 'creatorType') }
 			onClick={ this.handleFieldClick.bind(this, 'creatorType') }
+			onCommit={ this.handleEditableCommit.bind(this, 'creatorType') }
 			onFocus={ this.handleFieldFocus.bind(this, 'creatorType') }
+			onReorder={ this.props.onReorder }
 			options={ creatorTypes }
 			ref={ component => this.fieldComponents['creatorType'] = component }
-			searchable={ false }
-			tabIndex = { 0 }
-			isDisabled = { this.props.isReadOnly }
 			value={ creator.creatorType }
+			creatorsCount = { creatorsCount }
 		/>
 	}
 
@@ -385,11 +462,13 @@ class CreatorField extends React.PureComponent {
 	static propTypes = {
 		className: PropTypes.string,
 		creator: PropTypes.object.isRequired,
+		creatorsCount: PropTypes.number,
 		creatorTypes: PropTypes.array.isRequired,
 		index: PropTypes.number.isRequired,
 		isCreateAllowed: PropTypes.bool,
 		isDeleteAllowed: PropTypes.bool,
 		isForm: PropTypes.bool,
+		isReadOnly: PropTypes.bool,
 		isSingle: PropTypes.bool,
 		onChange: PropTypes.func.isRequired,
 		onCreatorAdd: PropTypes.func.isRequired,
@@ -399,7 +478,6 @@ class CreatorField extends React.PureComponent {
 		onReorder: PropTypes.func,
 		onReorderCancel: PropTypes.func,
 		onReorderCommit: PropTypes.func,
-		isReadOnly: PropTypes.bool,
 	};
 }
 
