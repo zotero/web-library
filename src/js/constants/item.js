@@ -20,10 +20,17 @@ export const hideFields = [
 ];
 
 export const noEditFields = [
-	'modified',
-	'filename',
+	'createdByUser',
 	'dateAdded',
-	'dateModified'
+	'dateModified',
+	'filename',
+	'lastModifiedByUser',
+	'modified',
+];
+
+export const hideIfEmptyFields = [
+	'createdByUser',
+	'lastModifiedByUser',
 ];
 
 // fields that are not included in itemTypeFields responses, but should be
@@ -31,4 +38,6 @@ export const noEditFields = [
 export const extraFields = [
 	{ field: 'dateAdded', localized: 'Date Added' },
 	{ field: 'dateModified', localized: 'Date Modified' },
+	{ field: 'createdByUser', path: [Symbol.for('meta'), 'createdByUser', 'username'], localized: 'Added By' },
+	{ field: 'lastModifiedByUser', path: [Symbol.for('meta'), 'lastModifiedByUser', 'username'], localized: 'Modified By' },
 ];

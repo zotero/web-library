@@ -8,7 +8,7 @@ import BoxField from './boxfield';
 import Creators from '../form/creators';
 import { get } from '../../utils';
 import { getFieldDisplayValue } from '../../common/item';
-import { hideFields, noEditFields, extraFields } from '../../constants/item';
+import { hideFields, hideIfEmptyFields, noEditFields, extraFields } from '../../constants/item';
 import { updateItemWithMapping } from '../../actions';
 
 const makeFields = (item, pendingChanges, itemTypes, itemTypeFields, isReadOnly) => {
@@ -16,7 +16,7 @@ const makeFields = (item, pendingChanges, itemTypes, itemTypeFields, isReadOnly)
 	const aggregatedPatch = pendingChanges.reduce(
 		(aggr, { patch }) => ({...aggr, ...patch}), {}
 	);
-	const itemWithPendingChnages = { ...item, ...aggregatedPatch };
+	const itemWithPendingChanges = { ...item, ...aggregatedPatch };
 
 	return [
 		{ field: 'itemType', localized: 'Item Type' },
@@ -30,10 +30,10 @@ const makeFields = (item, pendingChanges, itemTypes, itemTypeFields, isReadOnly)
 		label: f.localized,
 		isReadOnly: isReadOnly ? true : noEditFields.includes(f.field),
 		processing: pendingChanges.some(({ patch }) => f.field in patch),
-		display: getFieldDisplayValue(itemWithPendingChnages, f.field),
-		value: itemWithPendingChnages[f.field] || null,
-		title: f.field === 'url' ? itemWithPendingChnages[f.field] || null : null
-	}));
+		display: getFieldDisplayValue(itemWithPendingChanges, f.field),
+		value: get(itemWithPendingChanges, 'path' in f ? f.path : f.field, null),
+		title: f.field === 'url' ? itemWithPendingChanges[f.field] || null : null
+	})).filter(f => !(f.value === null && hideIfEmptyFields.includes(f.key)))
 }
 
 const ItemBox = ({ isReadOnly }) => {
