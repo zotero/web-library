@@ -1,6 +1,6 @@
 'use strict';
 
-import React, { memo, useCallback } from 'react';
+import React, { forwardRef, memo, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import cx from 'classnames';
 import Field from './field';
@@ -14,9 +14,9 @@ import { SelectDivider, SelectOption } from '../ui/select';
 import Modal from '../ui/modal';
 import { isTriggerEvent } from '../../common/event';
 
-const CreatorTypeSelector = memo(props => {
+const CreatorTypeSelector = memo(forwardRef((props, ref) => {
 	const { creatorsCount, index, isActive, isDisabled, onCancel, onClick, onCommit, onFocus,
-	onReorder, options, ref, value } = props;
+	onReorder, options, value } = props;
 
 	const isFirst = index === 0;
 	const isLast = index === creatorsCount - 1;
@@ -78,7 +78,7 @@ const CreatorTypeSelector = memo(props => {
 			) }
 		</SelectInput>
 	);
-});
+}));
 
 CreatorTypeSelector.displayName = 'CreatorTypeSelector';
 
