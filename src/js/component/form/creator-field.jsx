@@ -24,26 +24,23 @@ const CreatorTypeSelector = memo(props => {
 	const handleMoveTop = useCallback(ev => {
 		if(ev.type === 'mousedown' || isTriggerEvent(ev)) {
 			onReorder(index, 0, true);
-			onCancel();
 			ev.stopPropagation();
 		}
-	}, [index, onCancel, onReorder]);
+	}, [index, onReorder]);
 
 	const handleMoveUp = useCallback(ev => {
 		if(ev.type === 'mousedown' || isTriggerEvent(ev)) {
 			onReorder(index, index -1, true);
-			onCancel();
 			ev.stopPropagation();
 		}
-	}, [index, onCancel, onReorder]);
+	}, [index, onReorder]);
 
 	const handleMoveDown = useCallback(ev => {
 		if(ev.type === 'mousedown' || isTriggerEvent(ev)) {
 			onReorder(index, index +1, true);
-			onCancel();
 			ev.stopPropagation();
 		}
-	}, [index, onCancel, onReorder]);
+	}, [index, onReorder]);
 
 	return (
 		<SelectInput
@@ -64,20 +61,17 @@ const CreatorTypeSelector = memo(props => {
 					<SelectDivider />
 					{ (index > 1) && (
 						<SelectOption
-						onMouseDown={ handleMoveTop }
-						onKeyDown={ handleMoveTop }
+						onTrigger={ handleMoveTop }
 						option={ { label: 'Move to Top', value: '_top' } }
 					/> ) }
 					{ !isFirst && (
 						<SelectOption
-						onMouseDown={ handleMoveUp }
-						onKeyDown={ handleMoveUp }
+						onTrigger={ handleMoveUp }
 						option={ { label: 'Move Up', value: '_up' } }
 					/> ) }
 					{ !isLast && (
 						<SelectOption
-						onMouseDown={ handleMoveDown }
-						onKeyDown={ handleMoveDown }
+						onTrigger={ handleMoveDown }
 						option={ { label: 'Move Down', value: '_down' } }
 					/> ) }
 				</React.Fragment>

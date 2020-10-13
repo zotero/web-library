@@ -118,11 +118,13 @@ const Select = forwardRef((props, ref) => {
 		setIsFocused(false);
 		ev.stopPropagation();
 		const newValue = ev.currentTarget.dataset.optionValue;
-
-		if(onChange && newValue !== value) {
+		const targetOption = mergedOptions.find(mo => mo.value === newValue);
+		if(targetOption && targetOption.component && targetOption.component.props.onTrigger) {
+			targetOption.component.props.onTrigger(ev);
+		} else if(!targetOption.component && onChange && newValue !== value) {
 			onChange(newValue);
 		}
-	}, [onChange, value]);
+	}, [mergedOptions, onChange, value]);
 
 	const getNextIndex = useCallback(direction => {
 		const currentIndex = mergedOptions.findIndex(o => o.value === highlighted);
@@ -171,8 +173,8 @@ const Select = forwardRef((props, ref) => {
 			setFilteredOptions(options);
 
 			const targetOption = mergedOptions.find(mo => mo.value === highlighted);
-			if(targetOption && targetOption.component && targetOption.component.props.onKeyDown) {
-				targetOption.component.props.onKeyDown(ev);
+			if(targetOption && targetOption.component && targetOption.component.props.onTrigger) {
+				targetOption.component.props.onTrigger(ev);
 			} else if(!targetOption.component && onChange && highlighted && highlighted !== value) {
 				onChange(highlighted);
 			}
@@ -287,7 +289,7 @@ const Select = forwardRef((props, ref) => {
 						) }
 						{ mapChildren(children, child =>
 							child && child.type === SelectOption ?
-								React.cloneElement(child, { highlighted, value }) :
+								React.cloneElement(child, { highlighted, value, onMouseDown: handleItemMouseDown }) :
 								child
 						) }
 					</div>
