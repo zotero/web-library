@@ -168,7 +168,6 @@ class SelectInput extends React.PureComponent {
 		onCommit: noop,
 		onFocus: noop,
 		options: [],
-		tabIndex: -1,
 		value: '',
 	};
 
