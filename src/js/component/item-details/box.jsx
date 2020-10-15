@@ -12,24 +12,24 @@ import { hideFields, hideIfEmptyFields, noEditFields, extraFields } from '../../
 import { updateItemWithMapping } from '../../actions';
 
 const makeFields = (item, pendingChanges, itemTypes, itemTypeFields, isReadOnly) => {
-	const titleField = item.itemType in baseMappings && baseMappings[item.itemType]['title'] || 'title';
-	const aggregatedPatch = pendingChanges.reduce(
+	const titleField = (item || {}).itemType in baseMappings && baseMappings[item.itemType]['title'] || 'title';
+	const aggregatedPatch = (pendingChanges || []).reduce(
 		(aggr, { patch }) => ({...aggr, ...patch}), {}
 	);
-	const itemWithPendingChanges = { ...item, ...aggregatedPatch };
+	const itemWithPendingChanges = { ...(item || {}), ...aggregatedPatch };
 
 	return [
 		{ field: 'itemType', localized: 'Item Type' },
-		itemTypeFields[item.itemType].find(itf => itf.field === titleField),
+		itemTypeFields[(item || {}).itemType].find(itf => itf.field === titleField),
 		{ field: 'creators', localized: 'Creators' },
-		...itemTypeFields[item.itemType].filter(itf => itf.field !== titleField && !hideFields.includes(itf.field)),
+		...itemTypeFields[(item || {}).itemType].filter(itf => itf.field !== titleField && !hideFields.includes(itf.field)),
 		...extraFields
 	].map(f => ({
 		options: f.field === 'itemType' ? itemTypes : null,
 		key: f.field,
 		label: f.localized,
 		isReadOnly: isReadOnly ? true : noEditFields.includes(f.field),
-		processing: pendingChanges.some(({ patch }) => f.field in patch),
+		processing: (pendingChanges || []).some(({ patch }) => f.field in patch),
 		display: getFieldDisplayValue(itemWithPendingChanges, f.field),
 		value: get(itemWithPendingChanges, 'path' in f ? f.path : f.field, null),
 		title: f.field === 'url' ? itemWithPendingChanges[f.field] || null : null
@@ -43,13 +43,13 @@ const ItemBox = ({ isReadOnly }) => {
 		state => state.current.itemKey && state.current.editingItemKey === state.current.itemKey
 	);
 	const item = useSelector(state =>
-		get(state, ['libraries', state.current.libraryKey, 'items', state.current.itemKey], {})
+		get(state, ['libraries', state.current.libraryKey, 'items', state.current.itemKey])
 	);
 	const creatorTypes = useSelector(state=> state.meta.itemTypeCreatorTypes[item.itemType]);
 	const itemTypeFields = useSelector(state=> state.meta.itemTypeFields);
 	const itemTypes = useSelector(state => state.meta.itemTypes);
 	const pendingChanges = useSelector(state =>
-		get(state, ['libraries', state.current.libraryKey, 'updating', 'items', state.current.itemKey], [])
+		get(state, ['libraries', state.current.libraryKey, 'updating', 'items', state.current.itemKey])
 	);
 
 	const isForm = !!(shouldUseEditMode && isEditing && item);
