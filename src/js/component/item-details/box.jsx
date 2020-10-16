@@ -106,7 +106,8 @@ const ItemBox = ({ isReadOnly }) => {
 	const handleCommit = useCallback((newValue, isChanged, ev) => {
 		const key = ev.currentTarget.closest('[data-key]').dataset.key;
 		if(isChanged) {
-			dispatch(updateItemWithMapping(item, key, newValue));
+			// trim & normalize value, similar to https://github.com/zotero/zotero/blob/e9afd153e9a368e71a29f22982578750e6983ae9/chrome/content/zotero/xpcom/data/item.js#L619
+			dispatch(updateItemWithMapping(item, key, newValue.trim().normalize()));
 		}
 
 		if(key === activeEntry) {
