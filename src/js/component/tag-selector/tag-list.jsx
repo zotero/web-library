@@ -1,17 +1,19 @@
 import cx from 'classnames';
-import React, { useCallback, useEffect, useRef } from 'react';
+import React, { memo, useCallback, useEffect, useRef } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 
 import { checkColoredTags, fetchTags, navigate } from '../../actions';
 import { isTriggerEvent } from '../../common/event';
-import { useFocusManager, useSourceSignature, useTags } from '../../hooks';
+import { useFocusManager, useSourceSignature, usePrevious, useTags } from '../../hooks';
+import { get } from '../../utils';
 
 const PAGE_SIZE = 100;
 
 const TagList = () => {
 	const tagsSearchString = useSelector(state => state.current.tagsSearchString);
 	const selectedTags = useSelector(state => state.current.tags, shallowEqual);
-	const tagColors = useSelector(state => state.libraries[state.current.libraryKey].tagColors, shallowEqual);
+	const tagColors = useSelector(state => get(state, ['libraries', state.current.libraryKey, 'tagColors']), shallowEqual);
+	const prevTagColors = usePrevious(tagColors);
 	const dispatch = useDispatch();
 	const tagContainerRef = useRef(null);
 	const { receiveBlur, receiveFocus, focusNext, focusPrev } = useFocusManager(tagContainerRef, null, false);
@@ -31,7 +33,7 @@ const TagList = () => {
 		if(pointer && scrollProgress > 0.5 && !isFetching && ((totalResults > pointer) || (totalResults === null))) {
 			dispatch(fetchTags(pointer, pointer + PAGE_SIZE - 1));
 		}
-	});
+	}, [dispatch, isFetching, pointer, totalResults]);
 
 	const maybeCheckColoredTags = useCallback(async (force = false) => {
 		if(force || !isCheckingColoredTags.current) {
@@ -39,7 +41,7 @@ const TagList = () => {
 			await dispatch(checkColoredTags());
 			isCheckingColoredTags.current = false;
 		}
-	}, []);
+	}, [dispatch]);
 
 	const toggleTag = useCallback(tagName => {
 		const index = selectedTags.indexOf(tagName);
@@ -50,7 +52,7 @@ const TagList = () => {
 		}
 
 		dispatch(navigate({ tags: selectedTags, items: null }));
-	});
+	}, [dispatch, selectedTags]);
 
 	const handleKeyDown = useCallback(ev => {
 		if(ev.target !== ev.currentTarget) {
@@ -64,7 +66,7 @@ const TagList = () => {
 		} else if(isTriggerEvent(ev)) {
 			handleClick(ev);
 		}
-	});
+	}, [focusNext, focusPrev, handleClick]);
 
 	const handleClick = useCallback(ev => {
 		const tag = ev.currentTarget.dataset.tag;
@@ -73,28 +75,30 @@ const TagList = () => {
 		// See #372
 		ev.currentTarget.blur();
 		toggleTag(tag);
-	});
+	}, [toggleTag]);
 
 	useEffect(() => {
 		if(totalResults === null) {
 			dispatch(fetchTags(0, PAGE_SIZE - 1));
 		}
-	}, [totalResults]);
+	}, [dispatch, totalResults]);
 
 	useEffect(() => {
 		if(!hasChecked && !isFetching) {
 			dispatch(fetchTags(0, PAGE_SIZE - 1));
 			maybeCheckColoredTags(true);
 		}
-	}, [sourceSignature, hasChecked]);
+	}, [dispatch, maybeCheckColoredTags, sourceSignature, hasChecked, isFetching]);
 
 	useEffect(() => {
-		maybeCheckColoredTags();
-	}, [tagColors])
+		if(!shallowEqual(tagColors, prevTagColors)) {
+			maybeCheckColoredTags();
+		}
+	}, [maybeCheckColoredTags, prevTagColors, tagColors])
 
 	useEffect(() => {
 		setTimeout(maybeLoadMore, 0);
-	}, [tagsSearchString, pointer]);
+	}, [maybeLoadMore, tagsSearchString, pointer]);
 
 	return (
 		<div
@@ -139,4 +143,4 @@ const TagList = () => {
 	);
 }
 
-export default React.memo(TagList);
+export default memo(TagList);
