@@ -177,7 +177,7 @@ const selectItemsMouse = (targetItemKey, isShiftModifer, isCtrlModifer) => {
 const navigateExitSearch = () => {
 	return async (dispatch, getState) => {
 		const state = getState();
-		const { collectionKey, isMyPublications, isTrash, libraryKey, searchState, view, itemKey } =
+		const { collectionKey, isMyPublications, isTrash, libraryKey, searchState, view, itemKey, tags } =
 		state.current;
 
 		dispatch(navigate({
@@ -185,6 +185,7 @@ const navigateExitSearch = () => {
 			collection: collectionKey,
 			items: searchState.triggerView === 'item-details' && searchState.triggerItem ? searchState.triggerItem : itemKey,
 			trash: isTrash,
+			tags: tags,
 			publications: isMyPublications,
 			view: searchState.triggerView ?
 				searchState.triggerView === 'item-details' ?
