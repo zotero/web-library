@@ -8,7 +8,7 @@ import Icon from './icon';
 import Search from './../../component/search';
 import MenuEntry from './menu-entry';
 import { isTriggerEvent } from '../../common/event';
-import { navigate, toggleNavbar, triggerSearchMode, toggleTouchTagSelector } from '../../actions';
+import { navigate, toggleNavbar, triggerSearchMode, navigateExitSearch, toggleTouchTagSelector } from '../../actions';
 import { useFocusManager } from '../../hooks';
 
 
@@ -20,18 +20,24 @@ const Navbar = memo(props => {
 	const { receiveFocus, receiveBlur, focusNext, focusPrev, registerAutoFocus } = useFocusManager(ref);
 	const view = useSelector(state => state.current.view);
 	const itemsSource = useSelector(state => state.current.itemsSource);
+	const isSearchMode = useSelector(state => state.current.isSearchMode);
 
 	const handleSearchButtonClick = useCallback(() => {
-		dispatch(triggerSearchMode(true));
+		if(isSearchMode) {
+			dispatch(triggerSearchMode(false));
+			dispatch(navigateExitSearch());
+		} else {
+			dispatch(triggerSearchMode(true));
 
-		if(itemsSource === 'query' && view === 'item-details') {
-			dispatch(navigate({ view: 'item-list' }));
+			if(itemsSource === 'query' && view === 'item-details') {
+				dispatch(navigate({ view: 'item-list' }));
+			}
 		}
-	});
+	}, [dispatch, itemsSource, isSearchMode, view]);
 
 	const handleTagSelectorClick = useCallback(() => {
 		dispatch(toggleTouchTagSelector());
-	});
+	}, [dispatch]);
 
 	const handleKeyDown = useCallback(ev => {
 
@@ -48,11 +54,11 @@ const Navbar = memo(props => {
 		} else if(ev.key === 'ArrowLeft') {
 			focusPrev(ev);
 		}
-	});
+	}, [focusNext, focusPrev]);
 
 	const handleNavbarToggle = useCallback(() => {
 		dispatch(toggleNavbar(null));
-	});
+	}, [dispatch]);
 
 	return (
 		<header

@@ -174,5 +174,26 @@ const selectItemsMouse = (targetItemKey, isShiftModifer, isCtrlModifer) => {
 	}
 }
 
+const navigateExitSearch = () => {
+	return async (dispatch, getState) => {
+		const state = getState();
+		const { collectionKey, isMyPublications, isTrash, libraryKey, searchState, view, itemKey } =
+		state.current;
 
-export { navigate, selectFirstItem, selectItemsKeyboard, selectItemsMouse, selectLastItem };
+		dispatch(navigate({
+			library: view === 'libraries' ? null : libraryKey,
+			collection: collectionKey,
+			items: searchState.triggerView === 'item-details' && searchState.triggerItem ? searchState.triggerItem : itemKey,
+			trash: isTrash,
+			publications: isMyPublications,
+			view: searchState.triggerView ?
+				searchState.triggerView === 'item-details' ?
+					searchState.triggerItem ? 'item-details' : 'item-list'
+					: searchState.triggerView
+				: view
+		}, true));
+	}
+}
+
+
+export { navigate, navigateExitSearch, selectFirstItem, selectItemsKeyboard, selectItemsMouse, selectLastItem };

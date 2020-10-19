@@ -89,6 +89,7 @@ const MoveCollectionsModal = () => {
 						isBusy ? <Spinner className="large" /> : (
 							<React.Fragment>
 							<TouchHeader
+								isModal={ true }
 								className="darker"
 								device={ device }
 								path={ touchHeaderPath }

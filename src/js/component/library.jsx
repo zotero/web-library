@@ -109,7 +109,7 @@ const Library = props => {
 			<div className={ cx('library-container', {
 					'navbar-nav-opened': isNavBarOpen,
 					'no-transitions': !useTransitions || hasUserTypeChanged,
-					'search-active': (isSearchMode || (!isSearchMode && isSearchModeTransitioning)) && (itemsSource !== 'query' && prevItemsSource.current !== 'query'),
+					'search-active': (isSearchMode || (!isSearchMode && isSearchModeTransitioning)) && itemsSource !== 'query',
 					'search-cancel': isSearchModeTransitioning && !isSearchMode,
 					'search-init': (isSearchMode && !searchState.hasViewedResult) || (isSearchModeTransitioning && !isSearchMode),
 					'search-results': (isSearchMode || (!isSearchMode && isSearchModeTransitioning)) && (itemsSource === 'query' || prevItemsSource.current === 'query'),
@@ -178,7 +178,7 @@ const Library = props => {
 										classNames="fade"
 										unmountOnExit
 									>
-										<SearchBackdrop { ...pick(props, ['triggerSearchMode']) } />
+										<SearchBackdrop />
 									</CSSTransition>
 								</section>
 							</CSSTransition>

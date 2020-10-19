@@ -1,17 +1,15 @@
-'use strict';
+import React, { memo, useCallback } from 'react';
+import { useDispatch } from 'react-redux';
+import { triggerSearchMode } from '../actions';
 
-import React from 'react';
-import PropTypes from 'prop-types';
+const SearchBackdrop = () => {
+	const dispatch = useDispatch();
 
-const SearchBackdrop = ({ triggerSearchMode }) => {
-	const handleClick = () => {
-		triggerSearchMode(false);
-	}
+	const handleClick = useCallback(() => {
+		dispatch(triggerSearchMode(false));
+	}, [dispatch]);
+
 	return <div onClick={ handleClick } className="search-backdrop" />;
 }
 
-SearchBackdrop.propTypes = {
-	triggerSearchMode: PropTypes.func
-};
-
-export default SearchBackdrop;
+export default memo(SearchBackdrop);

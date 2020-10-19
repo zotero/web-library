@@ -1,68 +1,37 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React, { memo, useCallback } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { CSSTransition } from 'react-transition-group';
 
 import Search from '../../component/search';
 import Button from '../ui/button';
+import { navigateExitSearch, triggerSearchMode, } from '../../actions';
 
-class SearchBar extends React.PureComponent {
-	handleCancelSearchClick = () => {
-		const {
-			collectionKey, isMyPublications, isTrash, libraryKey, navigate, searchState,
-			triggerSearchMode, view, itemKey
-		} = this.props;
+const SearchBar = () => {
+	const dispatch = useDispatch();
+	const isSearchMode = useSelector(state => state.current.isSearchMode);
+	const view = useSelector(state => state.current.view);
+	const itemsSource = useSelector(state => state.current.itemsSource);
 
-		if(triggerSearchMode) {
-			// in modals, triggerSearchMode is null
-			triggerSearchMode(false);
-		}
+	const handleCancelSearchClick = useCallback(() => {
+		dispatch(triggerSearchMode(false));
+		dispatch(navigateExitSearch());
+	}, [dispatch])
 
-		navigate({
-			library: view === 'libraries' ? null : libraryKey,
-			collection: collectionKey,
-			items: searchState.triggerView === 'item-details' && searchState.triggerItem ? searchState.triggerItem : itemKey,
-			trash: isTrash,
-			publications: isMyPublications,
-			view: searchState.triggerView ?
-				searchState.triggerView === 'item-details' ?
-					searchState.triggerItem ? 'item-details' : 'item-list'
-					: searchState.triggerView
-				: view
-		}, true);
-	}
-
-	render() {
-		const { isSearchMode, view, itemsSource } = this.props;
-		return (
-			<CSSTransition
-				in={ isSearchMode && ((view === 'item-details' && itemsSource !== 'query') || view !== 'item-details') }
-				timeout={ 250 }
-				classNames="fade"
-				unmountOnExit
-			>
-				<div className="searchbar">
-					<Search autoFocus />
-					<Button onClick={ this.handleCancelSearchClick } className="btn-link">
-						Cancel
-					</Button>
-				</div>
-			</CSSTransition>
-		);
-	}
-
-	static propTypes = {
-		collectionKey: PropTypes.string,
-		isMyPublications: PropTypes.bool,
-		isSearchMode: PropTypes.bool,
-		isTrash: PropTypes.bool,
-		itemKey: PropTypes.string,
-		itemsSource: PropTypes.string,
-		libraryKey: PropTypes.string,
-		navigate: PropTypes.func,
-		searchState: PropTypes.object,
-		triggerSearchMode: PropTypes.func,
-		view: PropTypes.string,
-	}
+	return (
+		<CSSTransition
+			in={ isSearchMode && ((view === 'item-details' && itemsSource !== 'query') || view !== 'item-details') }
+			timeout={ 250 }
+			classNames="fade"
+			unmountOnExit
+		>
+			<div className="searchbar">
+				<Search autoFocus />
+				<Button onClick={ handleCancelSearchClick } className="btn-link">
+					Cancel
+				</Button>
+			</div>
+		</CSSTransition>
+	);
 }
 
-export default SearchBar;
+export default memo(SearchBar);

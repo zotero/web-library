@@ -87,6 +87,7 @@ const AddItemsToCollectionsModal = () => {
 							<React.Fragment>
 							{ isTouchOrSmall ? (
 								<TouchHeader
+									isModal={ true }
 									className="darker"
 									device={ device }
 									path={ touchHeaderPath }

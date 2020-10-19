@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import Button from './ui/button';
 import Icon from './ui/icon';
-import { navigate, resetQuery, triggerSearchMode } from '../actions';
+import { navigate, resetQuery } from '../actions';
 import { noop } from '../utils';
 import { usePrevious } from '../hooks';
 
@@ -48,8 +48,6 @@ const Search = props => {
 				: view
 			items = searchState.triggerView === 'item-details' && searchState.triggerItem ?
 				searchState.triggerItem : null;
-
-			dispatch(triggerSearchMode(false));
 		}
 		dispatch(navigate(({ view, items, search: newSearchValue, qmode: newQmodeValue })));
 	}, [dispatch, searchState]);
