@@ -8,7 +8,8 @@ import Icon from './icon';
 import Search from './../../component/search';
 import MenuEntry from './menu-entry';
 import { isTriggerEvent } from '../../common/event';
-import { navigate, toggleNavbar, triggerSearchMode, navigateExitSearch, toggleTouchTagSelector } from '../../actions';
+import { navigate, toggleNavbar, triggerSearchMode, triggerSelectMode, navigateExitSearch,
+	toggleTouchTagSelector } from '../../actions';
 import { useFocusManager } from '../../hooks';
 
 
@@ -25,9 +26,11 @@ const Navbar = memo(props => {
 	const handleSearchButtonClick = useCallback(() => {
 		if(isSearchMode) {
 			dispatch(triggerSearchMode(false));
+			dispatch(triggerSelectMode(false));
 			dispatch(navigateExitSearch());
 		} else {
 			dispatch(triggerSearchMode(true));
+			dispatch(triggerSelectMode(false));
 
 			if(itemsSource === 'query' && view === 'item-details') {
 				dispatch(navigate({ view: 'item-list' }));

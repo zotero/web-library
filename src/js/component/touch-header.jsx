@@ -37,7 +37,7 @@ class TouchHeader extends React.PureComponent {
 		return (
 			<header className={ cx('touch-header', className) }>
 				<Toolbar>
-					{ device.isSingleColumn && !isModal && (
+					{ device.isSingleColumn && !isModal && !isSelectMode && (
 						<Searchbar />
 					)}
 					{
