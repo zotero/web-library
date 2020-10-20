@@ -24,10 +24,14 @@
 	.form-control {
 		@include touch-or-bp-down(sm) {
 			min-height: auto; // Reset
-			padding: 4px 25px 4px $input-btn-padding-x-touch;
+			padding: 4px 0px 4px $input-btn-padding-x-touch;
 			border: $input-border-width solid $input-border-color; // …
 			background-color: $input-bg; // …
 			border-radius: $input-btn-border-radius;
+
+			&:not(:empty) {
+				padding-right: 25px;
+			}
 		}
 
 		@include touch-keyboard-or-bp-down(sm) {
