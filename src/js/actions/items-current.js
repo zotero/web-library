@@ -135,7 +135,7 @@ const currentGoToSubscribeUrl = () => {
 		const state = getState();
 		const config = state.config;
 		const websiteUrl = state.config.websiteUrl;
-		const { itemsSource, collectionKey, isMyPublications, isTrash, libraryKey, q, tag, qmode } = state.current;
+		const { itemsSource, collectionKey, isMyPublications, isTrash, libraryKey, search: q, tags: tag = [], qmode } = state.current;
 		const { id: libraryId, isGroupLibrary, isPublic } = state.config.libraries.find(l => l.key === libraryKey);
 
 		const { field: sortBy, sort: sortDirection } = state.preferences.columns.find(
