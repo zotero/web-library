@@ -26,5 +26,17 @@
 			}
 		}
 	}
+
+	.item-actions-touch {
+		visibility: hidden;
+
+		@include bp-down-normalized(xs) {
+			padding-left: $default-padding-x-touch;
+		}
+
+		.search-results:not(.search-active) & {
+			visibility: visible;
+		}
+	}
 }
 

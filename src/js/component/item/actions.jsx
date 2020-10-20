@@ -18,6 +18,8 @@ const ItemActionsTouch = memo(() => {
 	const isSelectMode = useSelector(state => state.current.isSelectMode);
 	const columns = useSelector(state => state.preferences.columns);
 	const isReadOnly = useSelector(state => (state.config.libraries.find(l => l.key === state.current.libraryKey) || {}).isReadOnly);
+	const isSearchMode = useSelector(state => state.current.isSearchMode);
+	const isSingleColumn = useSelector(state => state.device.isSingleColumn);
 
 	const [isOpen, setIsOpen] = useState(false);
 
@@ -29,7 +31,9 @@ const ItemActionsTouch = memo(() => {
 	const sortColumnLabel = sortColumn.field in columnProperties ?
 			columnProperties[sortColumn.field].name : sortColumn.field;
 	const sortColumnOrder = sortColumn.sort === 'desc' ? "Descending" : "Ascending"
-	const isNewItemAllowed = !isReadOnly && (itemsSource === 'top' || itemsSource === 'collection');
+	const isNewItemAllowed = !isReadOnly &&
+		(itemsSource === 'top' || itemsSource === 'collection') &&
+		!(isSearchMode && isSingleColumn);
 
 	const handleDropdownToggle = useCallback(() => {
 		setIsOpen(!isOpen);
@@ -50,7 +54,7 @@ const ItemActionsTouch = memo(() => {
 		>
 			<DropdownToggle
 				color={ null }
-				className="btn-link btn-icon dropdown-toggle"
+				className="btn-link btn-icon dropdown-toggle item-actions-touch"
 			>
 				<Icon
 					type="24/options"
@@ -277,4 +281,5 @@ const ItemsActions = ({ onFocusNext, onFocusPrev }) => {
 	);
 }
 
+export { ItemActionsTouch, ItemActionsDesktop };
 export default memo(ItemsActions);
