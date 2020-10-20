@@ -20,6 +20,9 @@ const ItemActionsTouch = memo(() => {
 	const isReadOnly = useSelector(state => (state.config.libraries.find(l => l.key === state.current.libraryKey) || {}).isReadOnly);
 	const isSearchMode = useSelector(state => state.current.isSearchMode);
 	const isSingleColumn = useSelector(state => state.device.isSingleColumn);
+	const search = useSelector(state => state.current.search);
+	const isResults = search && search.length > 0;
+	const isActionsDisabled = isSearchMode && isSingleColumn && !isResults;
 
 	const [isOpen, setIsOpen] = useState(false);
 
@@ -51,12 +54,14 @@ const ItemActionsTouch = memo(() => {
 		<Dropdown
 			isOpen={ isOpen }
 			toggle={ handleDropdownToggle }
+			disabled={ isActionsDisabled }
 		>
 			<DropdownToggle
 				color={ null }
 				className="btn-link btn-icon dropdown-toggle item-actions-touch"
 			>
 				<Icon
+					color={ isActionsDisabled ? '#555555' : null }
 					type="24/options"
 					symbol={ isOpen ? 'options-block' : 'options' }
 					width="24"
