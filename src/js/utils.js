@@ -375,6 +375,18 @@ const getLibraryKeyFromTopic = topic => {
 	return null;
 }
 
+const getFieldNameFromSortKey = sortKey => {
+	const matchingKeyValuePair = Object.entries(columnProperties)
+		.find(([_, properties]) => properties.sortKey === sortKey);
+
+	if(matchingKeyValuePair) {
+		return matchingKeyValuePair[0];
+	} else {
+		console.warn(`Unrecognized sort key ${sortKey}. Using title instead.`);
+		return 'title';
+	}
+}
+
 export {
 	applyChangesToVisibleColumns,
 	clamp,
@@ -388,6 +400,7 @@ export {
 	enumerateObjects,
 	get,
 	getDOIURL,
+	getFieldNameFromSortKey,
 	getItemCanonicalUrl,
 	getLibraryKeyFromTopic,
 	getScrollbarWidth,

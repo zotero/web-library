@@ -1,7 +1,7 @@
 import { sortItemsByKey, compareItem } from '../utils';
 import { omit } from '../common/immutable';
 import { shallowEqual } from 'react-redux';
-import { get } from '../utils';
+import { get, getFieldNameFromSortKey } from '../utils';
 
 const replaceDuplicates = (entries, comparer = null, useSplice = false) => {
 	const seen = [];
@@ -134,7 +134,7 @@ const populate = (state, newItems, action, keyName, comparer = null) => {
 		...state,
 		[keyName]: replaceDuplicates(items, comparer),
 		totalResults,
-		sortBy: sort,
+		sortBy: getFieldNameFromSortKey(sort),
 		sortDirection: direction,
 		isFetching: false,
 		isError: false,

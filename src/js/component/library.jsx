@@ -44,6 +44,7 @@ const Library = props => {
 	const wasSearchMode = useRef(isSearchMode);
 	const prevItemsSource = useRef(itemsSource);
 	const wasSynced = useRef(isSynced);
+	const isSearchQuery = search && search.length > 0;
 
 	useEffect(() => {
 		if(device.userType !== prevUserType.current) {
@@ -109,10 +110,10 @@ const Library = props => {
 			<div className={ cx('library-container', {
 					'navbar-nav-opened': isNavBarOpen,
 					'no-transitions': !useTransitions || hasUserTypeChanged,
-					'search-active': (isSearchMode || (!isSearchMode && isSearchModeTransitioning)) && itemsSource !== 'query',
+					'search-active': (isSearchMode || (!isSearchMode && isSearchModeTransitioning)),
 					'search-cancel': isSearchModeTransitioning && !isSearchMode,
 					'search-init': (isSearchMode && !searchState.hasViewedResult) || (isSearchModeTransitioning && !isSearchMode),
-					'search-results': (isSearchMode || (!isSearchMode && isSearchModeTransitioning)) && (itemsSource === 'query' || prevItemsSource.current === 'query'),
+					'search-results': (isSearchMode || (!isSearchMode && isSearchModeTransitioning)) && itemsSource === 'query' && isSearchQuery,
 					'touch-tag-selector-active': tags.length > 0,
 					'view-note-active': noteKey,
 					'view-attachment-active': attachmentKey,
