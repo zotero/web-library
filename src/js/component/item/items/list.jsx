@@ -102,6 +102,11 @@ const ItemsList = memo(props => {
 			)}
 			</AutoSizer>
 			{ !hasChecked && !isSearchModeHack && <Spinner className="large" /> }
+			{ hasChecked && totalResults === 0 && (
+				<div className="item-list-empty">
+					No items in this view
+				</div>
+			) }
 		</div>
 	);
 });
