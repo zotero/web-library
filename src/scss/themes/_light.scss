@@ -286,13 +286,14 @@ $error:      $red;
 $info:       $blue;
 
 // Tag selector
-$tag-selector-border-color: $shade-3;
-$tag-selector-color:        $shade-8;
-$tag-hover-bg:              $shade-2;
-$tag-selected-color:        $shade-0;
-$tag-selected-bg:           $shade-6;
-$tag-selected-active-bg:    $shade-7;
-$tag-selector-grip-color:   $shade-4;
+$tag-selector-border-color: 		$shade-3;
+$tag-selector-color:        		$shade-8;
+$tag-hover-bg:              		$shade-2;
+$tag-selected-color:        		$shade-0;
+$tag-selected-bg:           		$shade-6;
+$tag-selected-active-bg:    		$shade-7;
+$tag-selector-grip-color:   		$shade-4;
+$tag-selector-grip-color-active: 	$blue;
 
 // Touch tag selector
 $touch-tag-selector-pane-bg:      $shade-0;

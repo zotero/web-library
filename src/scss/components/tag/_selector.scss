@@ -34,6 +34,10 @@
 				vertical-align: top;
 				color: $tag-selector-grip-color;
 			}
+
+			&:focus .icon {
+				color: $tag-selector-grip-color-active;
+			}
 		}
 
 		.tag-selector-container {
