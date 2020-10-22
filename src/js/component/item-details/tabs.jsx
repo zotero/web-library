@@ -141,8 +141,8 @@ const ItemDetailsTabs = () => {
 		}
 	});
 
-	const handleSelectTab = ev => {
-		setActiveTab(ev.currentTarget.dataset.tabName);
+	const handleSelectTab = element => {
+		setActiveTab(element.dataset.tabName);
 	}
 
 	useEffect(() => {
@@ -174,7 +174,7 @@ const ItemDetailsTabs = () => {
 				<h4 className="offscreen">
 					{ item.title }
 				</h4>
-				<Tabs compact>
+				<Tabs compact activateOnFocus>
 					{
 						item.itemType === 'note' && (
 							<Tab

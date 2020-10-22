@@ -1,15 +1,17 @@
-'use strict';
-
-import React, { useCallback } from 'react';
+import React, { forwardRef, memo, useCallback, useRef } from 'react';
+import { useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import cx from 'classnames';
-import withFocusManager from '../../enhancers/with-focus-manager';
+
 import Spinner from '../ui/spinner';
 import { pick } from '../../common/immutable';
 import { mapChildren } from '../../common/react';
+import { useFocusManager } from '../../hooks';
+import { noop } from '../../utils';
 
-const Tab = props => {
-	const { children, isActive, isDisabled, onActivate, onFocusNext, onFocusPrev, ...rest } = props;
+const Tab = memo(props => {
+	const { activateOnFocus, children, isActive, isDisabled, onActivate, focusNext, focusPrev,
+	resetLastFocused, ...rest } = props;
 
 	const handleKeyDown = useCallback(ev => {
 		if(ev.target !== ev.currentTarget) {
@@ -17,19 +19,26 @@ const Tab = props => {
 		}
 
 		if(ev.key === 'ArrowRight') {
-			onFocusNext(ev);
+			const focused = focusNext(ev);
+			if(activateOnFocus) {
+				onActivate(focused);
+			}
 		} else if(ev.key === 'ArrowLeft') {
-			onFocusPrev(ev);
+			const focused = focusPrev(ev);
+			if(activateOnFocus) {
+				onActivate(focused);
+			}
 		}
-	});
+	}, [activateOnFocus, focusNext, focusPrev, onActivate]);
 
 	const handleClick = useCallback(ev => {
 		ev.preventDefault();
 		if(isDisabled) {
 			return;
 		}
-		onActivate(ev);
-	});
+		resetLastFocused();
+		onActivate(ev.currentTarget);
+	}, [resetLastFocused, isDisabled, onActivate]);
 
 	return (
 		<li
@@ -50,44 +59,61 @@ const Tab = props => {
 			</a>
 		</li>
 	);
-}
+});
+
+Tab.displayName = 'Tab';
 
 Tab.propTypes = {
+	activateOnFocus: PropTypes.bool,
 	children: PropTypes.node,
+	focusNext: PropTypes.func,
+	focusPrev: PropTypes.func,
 	isActive: PropTypes.bool,
 	isDisabled: PropTypes.bool,
-	onActivate: PropTypes.func.isRequired
+	onActivate: PropTypes.func.isRequired,
+	resetLastFocused: PropTypes.func,
 };
 
 
-const Tabs = withFocusManager(({ children, justified, compact, onFocus, onBlur,
-	registerFocusRoot, onFocusNext, onFocusPrev }) => (
-	<nav>
-		<ul
-			className={ cx('nav', 'tabs', { justified, compact }) }
-			onBlur={ onBlur }
-			onFocus={ onFocus }
-			ref={ ref => registerFocusRoot(ref) }
-			role="tablist"
-			tabIndex={ 0 }
-		>
-			{
-				mapChildren(children, child =>
-					child && child.type === Tab ? React.cloneElement(child, { onFocusNext, onFocusPrev }) : child
-				)
-			}
-		</ul>
-	</nav>
-));
+const Tabs = memo(({ children, justified, compact, activateOnFocus }) => {
+	const ref = useRef(null);
+	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
+	const { focusNext, focusPrev, receiveFocus, receiveBlur, resetLastFocused } =
+	useFocusManager(ref, '.tab.active > a');
+
+	return (
+		<nav>
+			<ul
+				className={ cx('nav', 'tabs', { justified, compact, 'activate-on-focus': activateOnFocus  }) }
+				onBlur={ isTouchOrSmall ? noop : receiveBlur }
+				onFocus={ isTouchOrSmall ? noop : receiveFocus }
+				ref={ ref }
+				role="tablist"
+				tabIndex={ isTouchOrSmall ? -1 : 0 }
+			>
+				{
+					mapChildren(children, child =>
+						child && child.type === Tab ?
+							React.cloneElement(child, { activateOnFocus, focusNext, focusPrev, resetLastFocused }) :
+							child
+					)
+				}
+			</ul>
+		</nav>
+	);
+});
+
+Tabs.displayName = 'Tabs';
 
 Tabs.propTypes = {
 	children: PropTypes.node,
 	className: PropTypes.string,
 	compact: PropTypes.bool,
-	justified: PropTypes.bool
+	justified: PropTypes.bool,
+	activateOnFocus: PropTypes.bool,
 };
 
-const TabPane = React.forwardRef(({ children, isActive, isLoading, className, ...rest }, ref) => (
+const TabPane = memo(forwardRef(({ children, isActive, isLoading, className, ...rest }, ref) => (
 	<div ref={ ref } className={ cx(className, {
 		'tab-pane': true,
 		'active': isActive,
@@ -95,7 +121,7 @@ const TabPane = React.forwardRef(({ children, isActive, isLoading, className, ..
 	}) } { ...rest }>
 		{ isLoading ? <Spinner /> : children  }
 	</div>
-));
+)));
 
 TabPane.displayName = 'TabPane';
 

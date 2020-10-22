@@ -36,6 +36,7 @@ const useFocusManager = (ref, initialQuerySelector = null, isCarousel = true, is
 			tabbables[tabbables.length - 1].focus();
 			lastFocused.current = tabbables[tabbables.length - 1];
 		}
+		return lastFocused.current;
 	}, [ref, isCarousel]);
 
 	const focusPrev = useCallback((ev, { useCurrentTarget = true, targetEnd = null, offset = 1 } = {}) => {
@@ -65,6 +66,7 @@ const useFocusManager = (ref, initialQuerySelector = null, isCarousel = true, is
 			tabbables[0].focus();
 			lastFocused.current = tabbables[0];
 		}
+		return lastFocused.current;
 	}, [ref, isCarousel]);
 
 	const focusDrillDownNext = useCallback((ev, offset = 1) => {
