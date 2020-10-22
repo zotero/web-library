@@ -134,7 +134,7 @@ const populate = (state, newItems, action, keyName, comparer = null) => {
 		...state,
 		[keyName]: replaceDuplicates(items, comparer),
 		totalResults,
-		sortBy: getFieldNameFromSortKey(sort),
+		sortBy: sort ? getFieldNameFromSortKey(sort) : null,
 		sortDirection: direction,
 		isFetching: false,
 		isError: false,
