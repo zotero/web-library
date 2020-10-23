@@ -58,10 +58,10 @@ const ItemActionsTouch = memo(() => {
 		>
 			<DropdownToggle
 				color={ null }
+				disabled={ isActionsDisabled }
 				className="btn-link btn-icon dropdown-toggle item-actions-touch"
 			>
 				<Icon
-					color={ isActionsDisabled ? '#555555' : null }
 					type="24/options"
 					symbol={ isOpen ? 'options-block' : 'options' }
 					width="24"
