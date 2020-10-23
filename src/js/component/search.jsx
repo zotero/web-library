@@ -37,10 +37,10 @@ const Search = props => {
 	const [qmodeValue, setQmodeValue] = useState(qmode || 'titleCreatorYear');
 
 	const performSearch = useCallback((newSearchValue, newQmodeValue) => {
-		var view, items;
+		var view, items, attachmentKey, noteKey;
 
-		if(!newSearchValue) {
-			// if search is not empty, go back to the view that triggered the search
+		if(!newSearchValue && isSingleColumn) {
+			// if search is empty, on mobiles, go back to the view that triggered the search
 			view = searchState.triggerView ?
 				searchState.triggerView === 'item-details' ?
 					searchState.triggerItem ? 'item-details' : 'item-list'
@@ -48,9 +48,11 @@ const Search = props => {
 				: view
 			items = searchState.triggerView === 'item-details' && searchState.triggerItem ?
 				searchState.triggerItem : null;
+			attachmentKey = searchState.attachmentKey || null;
+			noteKey = searchState.noteKey || null;
 		}
-		dispatch(navigate(({ view, items, search: newSearchValue, qmode: newQmodeValue })));
-	}, [dispatch, searchState]);
+		dispatch(navigate(({ attachmentKey, view, noteKey, items, search: newSearchValue, qmode: newQmodeValue })));
+	}, [dispatch, isSingleColumn, searchState]);
 
 	const performSearchDebounce =
 		useDebouncedCallback(performSearch, SEARCH_INPUT_DEBOUNCE_DELAY);

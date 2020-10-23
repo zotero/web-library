@@ -187,6 +187,8 @@ const navigateExitSearch = () => {
 			items: searchState.triggerView === 'item-details' && searchState.triggerItem ? searchState.triggerItem : itemKey,
 			trash: isTrash,
 			tags: tags,
+			attachmentKey: searchState.attachmentKey || null,
+			noteKey: searchState.noteKey || null,
 			publications: isMyPublications,
 			view: searchState.triggerView ?
 				searchState.triggerView === 'item-details' ?

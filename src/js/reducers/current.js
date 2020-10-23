@@ -114,7 +114,9 @@ const current = (state = stateDefault, action, { config = {}, device = {} } = {}
 			if(!state.isSearchMode && itemsSource === 'query') {
 				// record searchState on devices with no explicit "search mode" button
 				searchState = {
+					attachmentKey: state.attachmentKey,
 					hasViewedResult: false,
+					noteKey: state.noteKey,
 					triggerItem: state.itemKey,
 					triggerView: state.view,
 				}
@@ -169,7 +171,9 @@ const current = (state = stateDefault, action, { config = {}, device = {} } = {}
 				...state,
 				isSearchMode: action.isSearchMode,
 				searchState: action.isSearchMode ? {
+					attachmentKey: state.attachmentKey,
 					hasViewedResult: false,
+					noteKey: state.noteKey,
 					triggerItem: state.itemKey,
 					triggerView: state.view,
 				} : state.searchState
