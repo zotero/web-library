@@ -10,7 +10,7 @@ import columnProperties from '../../constants/column-properties';
 import AddByIdentifier from './actions/add-by-identifier';
 import { useItemActionHandlers } from '../../hooks';
 import { currentGoToSubscribeUrl, toggleSelectMode } from '../../actions';
-import MoreActionsDropdown, { MoreActionsItems } from './actions/more-actions';
+import { MoreActionsDropdownDesktop } from './actions/more-actions';
 
 const ItemActionsTouch = memo(() => {
 	const dispatch = useDispatch();
@@ -250,10 +250,9 @@ const ItemActionsDesktop = memo(props => {
 				</Button>
 			</ToolGroup>
 			<ToolGroup>
-				<MoreActionsDropdown
+				<MoreActionsDropdownDesktop
 					onFocusNext={ onFocusNext }
 					onFocusPrev={ onFocusPrev }
-					onNewItemCreate={ handleNewItemCreate }
 					tabIndex={ -2 }
 				/>
 			</ToolGroup>

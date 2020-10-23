@@ -1,8 +1,11 @@
-import React, { memo } from 'react';
+import React, { memo, useCallback, useState } from 'react';
 import { useSelector } from 'react-redux';
+import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap/lib';
+
 import { Toolbar, ToolGroup } from './ui/toolbars';
 import Icon from './ui/icon';
 import Button from './ui/button';
+import { MoreActionsDropdownTouch } from './item/actions/more-actions';
 import { useItemActionHandlers } from '../hooks';
 
 const TouchFooter = () => {
@@ -53,12 +56,6 @@ const TouchFooter = () => {
 											<Icon type={ '24/empty-trash' } width="24" height="24" />
 										</Button>
 								)}
-								{
-									(itemsSource === 'collection' || itemsSource === 'top') && (
-										<Button icon onClick={ handleDuplicate } disabled={ selectedItemsCount !== 1 }>
-											<Icon type={ '24/duplicate' } width="24" height="24" />
-										</Button>
-								)}
 							</React.Fragment>
 						) }
 						<Button icon onClick={ handleExportModalOpen } disabled={ selectedItemsCount === 0 || selectedItemsCount > 100 }>
@@ -72,6 +69,7 @@ const TouchFooter = () => {
 						<Button icon onClick={ handleBibliographyModalOpen } disabled={ selectedItemsCount === 0 || selectedItemsCount > 100 }>
 							<Icon type={ '24/bibliography' } width="24" height="24" />
 						</Button>
+						<MoreActionsDropdownTouch />
 					</ToolGroup>
 				</div>
 			</Toolbar>
