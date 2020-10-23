@@ -5,16 +5,21 @@ import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap
 import Icon from '../../ui/icon';
 import { currentGoToSubscribeUrl, openBestAttachment } from '../../../actions';
 import { cleanDOI, cleanURL, get, getDOIURL } from '../../../utils';
+import { useItemActionHandlers } from '../../../hooks';
 
 
 const MoreActionsMenu = () => {
 	const dispatch = useDispatch();
 	const item = useSelector(state => get(state, ['libraries', state.current.libraryKey, 'items', state.current.itemKey]));
+	const itemsSource = useSelector(state => state.current.itemsSource);
+	const { handleDuplicate } = useItemActionHandlers();
+
 	const attachment = get(item, [Symbol.for('links'), 'attachment'], null);
 	const isViewFile = attachment !== null;
 	const url = item && item.url ? cleanURL(item.url, true) : null;
 	const doi = item && item.DOI ? cleanDOI(item.DOI) : null;
 	const isViewOnline = !isViewFile && (url || doi);
+	const canDuplicate = item && (itemsSource === 'collection' || itemsSource === 'top');
 
 	const handleViewFileClick = useCallback(() => {
 		dispatch(openBestAttachment(item.key));
@@ -44,6 +49,12 @@ const MoreActionsMenu = () => {
 				View Online
 			</DropdownItem>
 			) }
+			{ canDuplicate && (
+			<DropdownItem onClick={ handleDuplicate }>
+				Duplicate Item
+			</DropdownItem>
+			) }
+			{ (canDuplicate || isViewFile || isViewOnline) && <DropdownItem divider/> }
 			<DropdownItem onClick={ handleSubscribeClick }>
 				Subscribe to Feed
 			</DropdownItem>

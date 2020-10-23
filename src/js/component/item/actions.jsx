@@ -115,10 +115,9 @@ const ItemActionsDesktop = memo(props => {
 	const isTrash = useSelector(state => state.current.isTrash);
 	const collectionKey = useSelector(state => state.current.collectionKey);
 
-	const { handleNewItemCreate,  handleNewStandaloneNote,  handleDuplicate,
-	handleAddToCollectionModalOpen,  handleRemoveFromCollection,  handleTrash,
-	handlePermanentlyDelete,  handleUndelete,  handleBibliographyModalOpen, } =
-	useItemActionHandlers();
+	const { handleNewItemCreate,  handleNewStandaloneNote, handleAddToCollectionModalOpen,
+	handleRemoveFromCollection,  handleTrash, handlePermanentlyDelete,  handleUndelete,
+	handleBibliographyModalOpen, } = useItemActionHandlers();
 
 	const handleKeyDown = useCallback(ev => {
 		if(ev.target !== ev.currentTarget) {
@@ -161,19 +160,6 @@ const ItemActionsDesktop = memo(props => {
 							title="New Standalone Note"
 						>
 							<Icon type="16/note" width="16" height="16" />
-						</Button>
-					)}
-					{
-						(itemsSource === 'collection' || itemsSource === 'top') && (
-						<Button
-							disabled={ selectedItemsCount !== 1 || itemsSource === 'trash' }
-							icon
-							onClick={ handleDuplicate }
-							onKeyDown={ handleKeyDown }
-							tabIndex={ -2 }
-							title="Duplicate Item"
-						>
-							<Icon type="16/duplicate" width="16" height="16" />
 						</Button>
 					)}
 				</ToolGroup>
