@@ -11,6 +11,7 @@ const navigate = (path, isAbsolute = false) => {
 			dispatch(push(configuredPath));
 		} else {
 			const updatedPath = {
+				attachmentKey: current.attachmentKey,
 				collection: current.collectionKey,
 				items: current.itemKeys,
 				library: current.libraryKey,
