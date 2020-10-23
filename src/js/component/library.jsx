@@ -30,6 +30,7 @@ import ZoteroConnectorNotifier from './zotero-connector-notifier';
 import TitleUpdater from './title-updater';
 import ZoteroStreamingClient from './zotero-streaming-client';
 import ModalManager from './modal-manager';
+import { usePrevious } from '../hooks/';
 
 
 const Library = props => {
@@ -39,9 +40,9 @@ const Library = props => {
 
 	const [hasUserTypeChanged, setHasUserTypeChanged] = useState(false);
 	const [isSearchModeTransitioning, setIsSearchModeTransitioning] = useState(false);
+	const wasSearchMode = usePrevious(isSearchMode);
 	const prevUserType = useRef(device.userType);
 	const prevShouldUseSidebar = useRef(device.shouldUseSidebar);
-	const wasSearchMode = useRef(isSearchMode);
 	const prevItemsSource = useRef(itemsSource);
 	const wasSynced = useRef(isSynced);
 	const isSearchQuery = search && search.length > 0;
@@ -65,12 +66,11 @@ const Library = props => {
 	}, [device]);
 
 	useEffect(() => {
-		if(isSearchMode && !wasSearchMode.current) {
+		if((isSearchMode && !wasSearchMode) || (!isSearchMode && wasSearchMode)) {
 			setIsSearchModeTransitioning(true);
 			setTimeout(() => setIsSearchModeTransitioning(false), 250);
 		}
-		wasSearchMode.current = isSearchMode;
-	}, [isSearchMode]);
+	}, [isSearchMode, wasSearchMode]);
 
 	useEffect(() => {
 		prevItemsSource.current = itemsSource;
