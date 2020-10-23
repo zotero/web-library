@@ -1,5 +1,3 @@
-'use strict';
-
 import {
     REQUEST_ITEM_TYPE_CREATOR_TYPES,
     RECEIVE_ITEM_TYPE_CREATOR_TYPES,
@@ -12,8 +10,7 @@ import {
     ERROR_ITEM_TEMPLATE,
 } from '../constants/actions';
 import apiBase from 'zotero-api-client';
-import cache from 'zotero-api-client-cache';
-const api = apiBase().use(cache()).api;
+const api = apiBase().api;
 
 const fetchItemTypeCreatorTypes = itemType => {
 	return async (dispatch, getState) => {
