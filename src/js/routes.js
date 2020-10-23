@@ -27,12 +27,11 @@ const getVariants = prefix => {
 
 export const routes = [
 	'/:view(libraries)',
-	...getVariants(`/groups/:groupid/:groupslug/collections/:collection(${singleIdRe})`),
-	...getVariants('/groups/:groupid/:groupslug/trash'),
+	...getVariants(`/groups/:groupid/:groupslug/:source(collections)/:collection(${singleIdRe})`),
+	...getVariants('/groups/:groupid/:groupslug/:source(trash)'),
 	...getVariants('/groups/:groupid/:groupslug'),
-	...getVariants(`/:userslug/collections/:collection(${singleIdRe})`),
-	...getVariants('/:userslug/trash'),
-	...getVariants('/:userslug/publications'),
+	...getVariants(`/:userslug/:source(collections)/:collection(${singleIdRe})`),
+	...getVariants('/:userslug/:source(trash|publications)'),
 	...getVariants('/:userslug'),
 ];
 

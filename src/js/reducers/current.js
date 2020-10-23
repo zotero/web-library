@@ -76,8 +76,8 @@ const current = (state = stateDefault, action, { config = {}, device = {} } = {}
 			var isValidItemsKey = !(params.items && params.items.match(/^(?:[a-zA-Z0-9]{8},?)+$/) === null);
 			var search = params.search ? decodeURIComponent(params.search) : '';
 			var qmode = params.qmode || 'titleCreatorYear';
-			var isTrash = action.payload.location.pathname.includes('/trash');
-			var isMyPublications = action.payload.location.pathname.includes('/publications');
+			var isTrash = params.source === 'trash';
+			var isMyPublications = params.source === 'publications';
 			var collectionKey = params.collection || null;
 			var itemKeys = params.items && isValidItemsKey ? params.items.split(',') : [];
 			var noteKey = params.note || null;
