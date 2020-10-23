@@ -29,4 +29,23 @@
 			transform: translate3d(25%, 0, 0);
 		}
 	}
+
+	@each $drilldown in note, attachment {
+		&.touch-#{$drilldown} {
+			@include bp-down(xs) {
+
+				// Start searching in note drilldown
+
+				// Init
+
+				.search-active.view-#{$drilldown}-active & {
+					transform: translate3d(0, 0, 0);
+					transition: none;
+				}
+
+				// Search results
+				// => No styles needed
+			}
+		}
+	}
 }
