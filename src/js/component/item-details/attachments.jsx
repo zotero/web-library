@@ -267,6 +267,11 @@ const Attachments = ({ isActive, isReadOnly }) => {
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
 	const isTinymceFetching = useSelector(state => state.sources.fetching.includes('tinymce'));
 	const isTinymceFetched = useSelector(state => state.sources.fetched.includes('tinymce'));
+	const isFileUploadAllowed = useSelector(
+		state => (state.config.libraries.find(
+			l => l.key === state.current.libraryKey
+		) || {}).isFileUploadAllowed
+	);
 
 	const attachments = (keys || [])
 		.map(childItemKey => allItems[childItemKey])
@@ -314,6 +319,7 @@ const Attachments = ({ isActive, isReadOnly }) => {
 			title: fileData.fileName,
 			contentType: fileData.contentType
 		};
+
 		const item = await dispatch(createItem(attachment, libraryKey));
 		await dispatch(uploadAttachment(item.key, fileData, libraryKey));
 	}, [dispatch, itemKey, libraryKey]);
@@ -435,7 +441,7 @@ const Attachments = ({ isActive, isReadOnly }) => {
 						<ToolGroup tabIndex>
 							<div className="btn-file">
 								<input
-									disabled={ isReadOnly || isAddingLinkedUrl }
+									disabled={ isReadOnly || isAddingLinkedUrl || !isFileUploadAllowed }
 									className="add-attachment toolbar-focusable"
 									onChange={ handleFileInputChange }
 									onKeyDown={ handleFileInputKeyDown }
@@ -444,7 +450,7 @@ const Attachments = ({ isActive, isReadOnly }) => {
 									type="file"
 								/>
 								<Button
-									disabled={ isReadOnly || isAddingLinkedUrl }
+									disabled={ isReadOnly || isAddingLinkedUrl || !isFileUploadAllowed }
 									className="btn-default"
 									tabIndex={ -1 }
 								>
@@ -498,10 +504,10 @@ const Attachments = ({ isActive, isReadOnly }) => {
 				) }
 				{ isTouchOrSmall && !isReadOnly && (
 					<React.Fragment>
+						{ isFileUploadAllowed && (
 						<div className="btn-file">
 							<input
 								onChange={ handleFileInputChange }
-								onKeyDown={ handleKeyDown }
 								type="file"
 							/>
 							<Button
@@ -512,6 +518,7 @@ const Attachments = ({ isActive, isReadOnly }) => {
 								Add File Attachment
 							</Button>
 						</div>
+						)}
 						<Button
 							onClick={ handleAddLinkedUrlTouchClick }
 							className="btn-block text-left hairline-top hairline-start-icon-28 btn-transparent-secondary"
