@@ -1,5 +1,3 @@
-'use strict';
-
 import { CONFIGURE, SORT_ITEMS, RECEIVE_GROUPS } from '../constants/actions.js';
 import { sortByKey } from '../utils';
 import { pick } from '../common/immutable';
@@ -16,15 +14,18 @@ const defaultState = {
 };
 
 const determineIfWriteable = (userId, ownerId, writeability, admins) => {
+	if(writeability === 'none') {
+		return false;
+	}
 	if(userId === ownerId) {
 		//owner always has access, but is not in members/admins arrays
 		return true;
 	}
-	if(writeability === "members") {
+	if(writeability === 'members') {
 		// you must be at least a member to have a group library listed
 		return true;
 	}
-	if(writeability === "admins") {
+	if(writeability === 'admins') {
 		// else check if admin
 		return admins.includes(userId);
 	}
