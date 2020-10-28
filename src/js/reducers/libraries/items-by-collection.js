@@ -3,6 +3,7 @@ import { mapObject } from '../../common/immutable';
 import { populateItemKeys, filterItemKeys, sortItemKeysOrClear, injectExtraItemKeys, updateFetchingState } from '../../common/reducers';
 
 import {
+    DROP_ITEMS_IN_COLLECTION,
     ERROR_ITEMS_IN_COLLECTION,
     RECEIVE_ADD_ITEMS_TO_COLLECTION,
     RECEIVE_COLLECTIONS_IN_LIBRARY,
@@ -145,6 +146,7 @@ const itemsByCollection = (state = {}, action, { items }) => {
 				}
 			};
 		case ERROR_ITEMS_IN_COLLECTION:
+		case DROP_ITEMS_IN_COLLECTION:
 			return {
 				...state,
 				[action.collectionKey]: {

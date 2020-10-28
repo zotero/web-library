@@ -20,9 +20,9 @@ const TagList = () => {
 
 	const containerRef = useRef(null);
 	const listRef = useRef(null);
-	const isCheckingColoredTags = useRef(false);
 
-	const { isFetching, pointer, tags, totalResults, hasChecked } = useTags();
+	const { isFetching, isFetchingColoredTags, pointer, tags, totalResults, hasChecked,
+	hasCheckedColoredTags } = useTags();
 	const sourceSignature = useSourceSignature();
 
 	const maybeLoadMore = useCallback(() => {
@@ -34,14 +34,6 @@ const TagList = () => {
 			dispatch(fetchTags(pointer, pointer + PAGE_SIZE - 1));
 		}
 	}, [dispatch, isFetching, pointer, totalResults]);
-
-	const maybeCheckColoredTags = useCallback(async (force = false) => {
-		if(force || !isCheckingColoredTags.current) {
-			isCheckingColoredTags.current = true;
-			await dispatch(checkColoredTags());
-			isCheckingColoredTags.current = false;
-		}
-	}, [dispatch]);
 
 	const toggleTag = useCallback(tagName => {
 		const index = selectedTags.indexOf(tagName);
@@ -86,15 +78,20 @@ const TagList = () => {
 	useEffect(() => {
 		if(!hasChecked && !isFetching) {
 			dispatch(fetchTags(0, PAGE_SIZE - 1));
-			maybeCheckColoredTags(true);
 		}
-	}, [dispatch, maybeCheckColoredTags, sourceSignature, hasChecked, isFetching]);
+	}, [dispatch, sourceSignature, hasChecked, isFetching]);
 
 	useEffect(() => {
-		if(!shallowEqual(tagColors, prevTagColors)) {
-			maybeCheckColoredTags();
+		if(!hasCheckedColoredTags && !isFetchingColoredTags && Object.keys(tagColors).length) {
+			dispatch(checkColoredTags());
 		}
-	}, [maybeCheckColoredTags, prevTagColors, tagColors])
+	}, [dispatch, sourceSignature, tagColors, hasCheckedColoredTags, isFetchingColoredTags]);
+
+	useEffect(() => {
+		if(!isFetchingColoredTags && !shallowEqual(tagColors, prevTagColors)) {
+			dispatch(checkColoredTags())
+		}
+	}, [dispatch, isFetchingColoredTags, prevTagColors, tagColors])
 
 	useEffect(() => {
 		setTimeout(maybeLoadMore, 0);

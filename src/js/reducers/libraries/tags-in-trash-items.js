@@ -1,5 +1,8 @@
 import deepEqual from 'deep-equal';
 import {
+	DROP_COLORED_TAGS_IN_TRASH_ITEMS,
+	DROP_TAGS_IN_TRASH_ITEMS,
+	ERROR_COLORED_TAGS_IN_TRASH_ITEMS,
 	ERROR_TAGS_IN_TRASH_ITEMS,
 	RECEIVE_COLORED_TAGS_IN_TRASH_ITEMS,
 	RECEIVE_DELETE_ITEMS,
@@ -8,6 +11,7 @@ import {
 	RECEIVE_RECOVER_ITEMS_TRASH,
 	RECEIVE_TAGS_IN_TRASH_ITEMS,
 	RECEIVE_UPDATE_ITEM,
+	REQUEST_COLORED_TAGS_IN_TRASH_ITEMS,
 	REQUEST_TAGS_IN_TRASH_ITEMS,
 } from '../../constants/actions';
 import { detectIfItemsChanged, populateTags, updateFetchingState } from '../../common/reducers';
@@ -25,15 +29,28 @@ const tagsInTrashItems = (state = {}, action, { items } = {}) => {
 				...populateTags(state, action.tags, action),
 				...updateFetchingState(state, action),
 			}
-		case RECEIVE_COLORED_TAGS_IN_TRASH_ITEMS:
-			return {
-				...state,
-				coloredTags: action.tags.map(t => t.tag)
-			}
 		case ERROR_TAGS_IN_TRASH_ITEMS:
+		case DROP_TAGS_IN_TRASH_ITEMS:
 			return {
 				...state,
 				...updateFetchingState(state, action),
+			}
+		case REQUEST_COLORED_TAGS_IN_TRASH_ITEMS:
+			return {
+				...state,
+				isFetchingColoredTags: true,
+			}
+		case RECEIVE_COLORED_TAGS_IN_TRASH_ITEMS:
+			return {
+				...state,
+				coloredTags: action.tags.map(t => t.tag),
+				isFetchingColoredTags: false,
+			}
+		case ERROR_COLORED_TAGS_IN_TRASH_ITEMS:
+		case DROP_COLORED_TAGS_IN_TRASH_ITEMS:
+			return {
+				...state,
+				isFetchingColoredTags: false,
 			}
 		case RECEIVE_DELETE_ITEMS:
 		case RECEIVE_MOVE_ITEMS_TRASH:

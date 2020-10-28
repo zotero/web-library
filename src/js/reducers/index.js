@@ -17,8 +17,9 @@ import preferences from './preferences';
 import query from './query';
 import sources from './sources'
 import styles from './styles';
+import traffic from './traffic';
 
 
 export default history => combineSectionReducers({ config, current, device, errors, fetching,
 	groups, identifier, itemsPublications, libraries, meta, modal, ongoing, preferences, query,
-	router: connectRouter(history), sources, styles, });
+	router: connectRouter(history), sources, styles, traffic });

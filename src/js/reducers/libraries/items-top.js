@@ -2,6 +2,7 @@ import { indexByKey } from '../../utils';
 import { injectExtraItemKeys, filterItemKeys, populateItemKeys, sortItemKeysOrClear, updateFetchingState } from '../../common/reducers';
 
 import {
+	DROP_TOP_ITEMS,
 	ERROR_TOP_ITEMS,
 	RECEIVE_CREATE_ITEM,
 	RECEIVE_CREATE_ITEMS,
@@ -86,6 +87,7 @@ const itemsTop = (state = {}, action, { items }) => {
 				...updateFetchingState(state, action),
 			}
 		case ERROR_TOP_ITEMS:
+		case DROP_TOP_ITEMS:
 			return {
 				...state,
 				...updateFetchingState(state, action),

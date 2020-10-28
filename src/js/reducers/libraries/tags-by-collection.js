@@ -1,5 +1,8 @@
 import deepEqual from 'deep-equal';
 import {
+	DROP_COLORED_TAGS_IN_COLLECTION,
+	DROP_TAGS_IN_COLLECTION,
+	ERROR_COLORED_TAGS_IN_COLLECTION,
 	ERROR_TAGS_IN_COLLECTION,
 	RECEIVE_ADD_ITEMS_TO_COLLECTION,
 	RECEIVE_COLORED_TAGS_IN_COLLECTION,
@@ -9,6 +12,7 @@ import {
 	RECEIVE_REMOVE_ITEMS_FROM_COLLECTION,
 	RECEIVE_TAGS_IN_COLLECTION,
 	RECEIVE_UPDATE_ITEM,
+	REQUEST_COLORED_TAGS_IN_COLLECTION,
 	REQUEST_TAGS_IN_COLLECTION,
 } from '../../constants/actions';
 import { get } from '../../utils';
@@ -62,20 +66,39 @@ const tags = (state = {}, action, { items } = {}) => {
 					...updateFetchingState(state[action.collectionKey], action),
 				}
 			}
-		case RECEIVE_COLORED_TAGS_IN_COLLECTION:
-			return {
-				...state,
-				[action.collectionKey]: {
-					...state[action.collectionKey],
-					coloredTags: action.tags.map(t => t.tag)
-				}
-			}
 		case ERROR_TAGS_IN_COLLECTION:
+		case DROP_TAGS_IN_COLLECTION:
 			return {
 				...state,
 				[action.collectionKey]: {
 					...(state[action.collectionKey] || {}),
 					...updateFetchingState(state[action.collectionKey], action),
+				}
+			}
+		case REQUEST_COLORED_TAGS_IN_COLLECTION:
+			return {
+				...state,
+				[action.collectionKey]: {
+					...state[action.collectionKey],
+					isFetchingColoredTags: true,
+				}
+			}
+		case RECEIVE_COLORED_TAGS_IN_COLLECTION:
+			return {
+				...state,
+				[action.collectionKey]: {
+					...state[action.collectionKey],
+					coloredTags: action.tags.map(t => t.tag),
+					isFetchingColoredTags: false,
+				}
+			}
+		case ERROR_COLORED_TAGS_IN_COLLECTION:
+		case DROP_COLORED_TAGS_IN_COLLECTION:
+			return {
+				...state,
+				[action.collectionKey]: {
+					...state[action.collectionKey],
+					isFetchingColoredTags: false,
 				}
 			}
 		case RECEIVE_ADD_ITEMS_TO_COLLECTION:

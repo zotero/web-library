@@ -5,6 +5,7 @@ import { mapObject } from '../../common/immutable';
 
 import {
 	RECEIVE_RECOVER_ITEMS_TRASH,
+    DROP_CHILD_ITEMS,
     ERROR_CHILD_ITEMS,
     RECEIVE_CHILD_ITEMS,
     RECEIVE_CREATE_ITEM,
@@ -112,6 +113,7 @@ const itemsByParent = (state = {}, action, { items }) => {
 				}
 			};
 		case ERROR_CHILD_ITEMS:
+		case DROP_CHILD_ITEMS:
 			return {
 				...state,
 				[action.itemKey]: {

@@ -5,8 +5,10 @@ import { LOCATION_CHANGE } from 'connected-react-router'
 import { ERROR_ITEMS_BY_QUERY, ERROR_TAGS_IN_ITEMS_BY_QUERY, RECEIVE_COLORED_TAGS_IN_ITEMS_BY_QUERY,
 RECEIVE_DELETE_ITEM, RECEIVE_DELETE_ITEMS, RECEIVE_ITEMS_BY_QUERY, RECEIVE_MOVE_ITEMS_TRASH,
 RECEIVE_RECOVER_ITEMS_TRASH, RECEIVE_REMOVE_ITEMS_FROM_COLLECTION, RECEIVE_TAGS_IN_ITEMS_BY_QUERY,
-RECEIVE_UPDATE_ITEM, REQUEST_ITEMS_BY_QUERY, REQUEST_TAGS_IN_ITEMS_BY_QUERY, SORT_ITEMS, RESET_QUERY
-} from '../constants/actions.js';
+RECEIVE_UPDATE_ITEM, REQUEST_ITEMS_BY_QUERY, REQUEST_TAGS_IN_ITEMS_BY_QUERY, SORT_ITEMS,
+RESET_QUERY, DROP_TAGS_IN_ITEMS_BY_QUERY, DROP_ITEMS_BY_QUERY,
+REQUEST_COLORED_TAGS_IN_ITEMS_BY_QUERY, ERROR_COLORED_TAGS_IN_ITEMS_BY_QUERY,
+DROP_COLORED_TAGS_IN_ITEMS_BY_QUERY, } from '../constants/actions.js';
 
 import { getParamsFromRoute } from '../common/state';
 import { getQueryFromParams } from '../common/navigation';
@@ -57,6 +59,7 @@ const query = (state = defaultState, action, otherState) => {
 				...updateFetchingState(state, action)
 			}
 		case ERROR_ITEMS_BY_QUERY:
+		case DROP_ITEMS_BY_QUERY:
 			return {
 				...state,
 				...updateFetchingState(state, action),
@@ -83,20 +86,39 @@ const query = (state = defaultState, action, otherState) => {
 					...updateFetchingState(state.tags, action),
 				}
 			};
-		case RECEIVE_COLORED_TAGS_IN_ITEMS_BY_QUERY:
-			return {
-				...state,
-				tags: {
-					...state.tags,
-					coloredTags: action.tags.map(t => t.tag)
-				}
-			};
 		case ERROR_TAGS_IN_ITEMS_BY_QUERY:
+		case DROP_TAGS_IN_ITEMS_BY_QUERY:
 			return {
 				...state,
 				tags: {
 					...state.tags,
 					...updateFetchingState(state.tags, action),
+				}
+			};
+		case REQUEST_COLORED_TAGS_IN_ITEMS_BY_QUERY:
+			return {
+				...state,
+				tags: {
+					...state.tags,
+					isFetchingColoredTags: true,
+				}
+			};
+		case RECEIVE_COLORED_TAGS_IN_ITEMS_BY_QUERY:
+			return {
+				...state,
+				tags: {
+					...state.tags,
+					coloredTags: action.tags.map(t => t.tag),
+					isFetchingColoredTags: false,
+				}
+			};
+		case ERROR_COLORED_TAGS_IN_ITEMS_BY_QUERY:
+		case DROP_COLORED_TAGS_IN_ITEMS_BY_QUERY:
+			return {
+				...state,
+				tags: {
+					...state.tags,
+					isFetchingColoredTags: false,
 				}
 			};
 		case RECEIVE_UPDATE_ITEM:

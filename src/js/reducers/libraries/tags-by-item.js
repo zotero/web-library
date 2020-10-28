@@ -1,10 +1,7 @@
-'use strict';
 
-import {
-	REQUEST_TAGS_FOR_ITEM, RECEIVE_TAGS_FOR_ITEM, ERROR_TAGS_FOR_ITEM,
-	RECEIVE_FETCH_ITEMS, RECEIVE_ITEMS_IN_COLLECTION, RECEIVE_TOP_ITEMS,
-	RECEIVE_TRASH_ITEMS
-} from '../../constants/actions';
+import { REQUEST_TAGS_FOR_ITEM, RECEIVE_TAGS_FOR_ITEM, ERROR_TAGS_FOR_ITEM, RECEIVE_FETCH_ITEMS,
+	RECEIVE_ITEMS_IN_COLLECTION, RECEIVE_TOP_ITEMS, RECEIVE_TRASH_ITEMS, DROP_TAGS_FOR_ITEM } from
+	'../../constants/actions';
 import { indexByKey } from '../../utils';
 import { deduplicate } from '../../utils';
 
@@ -42,6 +39,7 @@ const tags = (state = {}, action) => {
 				}
 			}
 		case ERROR_TAGS_FOR_ITEM:
+		case DROP_TAGS_FOR_ITEM:
 			return {
 				...state,
 				[action.itemKey]: {

@@ -60,9 +60,11 @@ const useTags = (shouldSkipDisabledAndSelected = false) => {
 	}
 
 	const data = useSelector(selectorFn);
-	const { coloredTags = [], isFetching = false, tags: sourceTags = [], pointer = 0, requests, totalResults, duplicatesCount } = (data || {});
+	const { coloredTags = [], isFetching = false, isFetchingColoredTags = false, tags: sourceTags =
+	[], pointer = 0, requests, totalResults, duplicatesCount } = (data || {});
 	const hasMoreItems = totalResults > 0 && (typeof(pointer) === 'undefined' || pointer < totalResults);
 	const hasChecked = typeof(totalResults) !== 'undefined';
+	const hasCheckedColoredTags = 'coloredTags' in data;
 	const isFetched = hasChecked && !isFetching && !hasMoreItems;
 	const tagsSearchString = useSelector(state => state.current.tagsSearchString);
 	const tagColors = useSelector(state =>  get(state, ['libraries', state.current.libraryKey, 'tagColors'], {}), shallowEqual);
@@ -137,9 +139,10 @@ const useTags = (shouldSkipDisabledAndSelected = false) => {
 		}
 
 		return tags;
-	}, [coloredTags, shouldSkipDisabledAndSelected, sourceTags, tagColors, tagsSearchString]);
+	}, [coloredTags, isFiltering, selectedTagNames, shouldSkipDisabledAndSelected, sourceTags, tagColors, tagsSearchString]);
 
-	return { isFetched, duplicatesCount, tags, isFetching, pointer, requests, totalResults, hasChecked, hasMoreItems, selectedTags, tagsSearchString };
+	return { isFetched, duplicatesCount, tags, isFetching, isFetchingColoredTags, pointer, requests,
+	totalResults, hasChecked, hasCheckedColoredTags, hasMoreItems, selectedTags, tagsSearchString };
 }
 
 const useSourceSignature = () => {

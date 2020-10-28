@@ -1,7 +1,6 @@
-'use strict';
-
 import api from 'zotero-api-client';
 import { FILTER_TAGS } from '../constants/actions';
+import { requestWithBackoff } from '.';
 
 const getApi = ({ config, libraryKey }, requestType, queryConfig) => {
 	switch(requestType) {
@@ -75,29 +74,17 @@ const fetchTagsBase = (type, queryConfig, queryOptions = {}) => {
 			libraryKey, ...queryConfig, queryOptions
 		});
 
-		try {
+		const makeRequest = async () => {
 			const response = await api.get(queryOptions);
 			const tags = response.getData().map((tagData, index) => ({
 				tag: tagData.tag,
 				type: response.getMeta()[index]['type']
 			}));
 			const totalResults = parseInt(response.response.headers.get('Total-Results'), 10);
-
-			dispatch({
-				type: `RECEIVE_${type}`,
-				libraryKey, tags, response, totalResults,
-				...queryConfig, queryOptions
-			});
-
-			return tags;
-		} catch(error) {
-			dispatch({
-				type: `ERROR_${type}`,
-				libraryKey, error, ...queryConfig, queryOptions
-			});
-
-			throw error;
+			return { tags, response, totalResults };
 		}
+		const payload = { libraryKey, ...queryConfig, queryOptions };
+		dispatch(requestWithBackoff(makeRequest, { type, payload }));
 	}
 }
 

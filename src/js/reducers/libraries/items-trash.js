@@ -1,9 +1,8 @@
-'use strict';
-
 import { indexByKey } from '../../utils';
 import { filterItemKeys, injectExtraItemKeys, populateItemKeys, sortItemKeysOrClear, updateFetchingState } from '../../common/reducers';
 
 import {
+    DROP_TRASH_ITEMS,
     ERROR_TRASH_ITEMS,
     RECEIVE_DELETE_ITEM,
     RECEIVE_DELETE_ITEMS,
@@ -71,6 +70,7 @@ const itemsTrash = (state = {}, action, { items }) => {
 				...updateFetchingState(state, action),
 			}
 		case ERROR_TRASH_ITEMS:
+		case DROP_TRASH_ITEMS:
 			return {
 				...state,
 				...updateFetchingState(state, action),

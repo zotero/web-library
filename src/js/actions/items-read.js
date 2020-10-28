@@ -3,6 +3,7 @@ import api from 'zotero-api-client';
 import { extractItems, getApiForItems } from '../common/actions';
 import { mapRelationsToItemKeys } from '../utils';
 import columnProperties from '../constants/column-properties';
+import { requestWithBackoff } from '.';
 
 const fetchItems = (
 	type,
@@ -21,26 +22,15 @@ const fetchItems = (
 			libraryKey, ...queryConfig, queryOptions
 		});
 
-		try {
+		const makeRequest = async () => {
 			const response = await api.get(queryOptions);
 			const items = extractItems(response, state);
 			const totalResults = parseInt(response.response.headers.get('Total-Results'), 10);
-
-			dispatch({
-				type: `RECEIVE_${type}`,
-				libraryKey, items, response, totalResults,
-				...queryConfig, queryOptions
-			});
-
-			return items;
-		} catch(error) {
-			dispatch({
-				type: `ERROR_${type}`,
-				libraryKey, error, ...queryConfig, queryOptions
-			});
-
-			throw error;
+			return { items, response, totalResults };
 		}
+
+		const payload = { libraryKey, ...queryConfig, queryOptions };
+		return dispatch(requestWithBackoff(makeRequest, { type, payload }));
 	}
 }
 
