@@ -1,7 +1,6 @@
 import { sortItemsByKey, compareItem } from '../utils';
 import { omit } from '../common/immutable';
-import { shallowEqual } from 'react-redux';
-import { get, getFieldNameFromSortKey } from '../utils';
+import { getFieldNameFromSortKey } from '../utils';
 
 const replaceDuplicates = (entries, comparer = null, useSplice = false) => {
 	const seen = [];

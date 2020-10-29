@@ -12,7 +12,7 @@ import HeaderRow from './table-header-row';
 import Spinner from '../../ui/spinner';
 import TableBody from './table-body';
 import TableRow from './table-row';
-import { applyChangesToVisibleColumns, resizeVisibleColumns } from '../../../utils';
+import { get, applyChangesToVisibleColumns, resizeVisibleColumns } from '../../../utils';
 import { ATTACHMENT } from '../../../constants/dnd';
 import { currentTrashOrDelete, createAttachmentsFromDropped, fetchSource, navigate,
 selectItemsKeyboard, selectFirstItem, selectLastItem, preferenceChange, triggerFocus,
@@ -83,6 +83,7 @@ const Table = () => {
 	const resizing = useRef(null);
 	const reordering = useRef(null);
 	const mouseUpTimeout = useRef(null);
+	const lastRequest = useRef({});
 	const [isResizing, setIsResizing] = useState(false);
 	const [isReordering, setIsReordering] = useState(false);
 	const [reorderTarget, setReorderTarget] = useState(null);
@@ -90,6 +91,16 @@ const Table = () => {
 	const { isFetching, keys, hasChecked, totalResults, requests } = useSourceData();
 	const collectionKey = useSelector(state => state.current.collectionKey);
 	const libraryKey = useSelector(state => state.current.libraryKey);
+	const errorCount = useSelector(state => {
+		switch(state.current.itemsSource) {
+			case 'query': return get(state, ['traffic', 'ITEMS_BY_QUERY', 'errorCount'], 0);
+			case 'trash': return get(state, ['traffic', 'TRASH_ITEMS', 'errorCount'], 0);
+			case 'publications': return get(state, ['traffic', 'PUBLICATIONS_ITEMS', 'errorCount'], 0);
+			case 'collection': return get(state, ['traffic', 'ITEMS_IN_COLLECTION', 'errorCount'], 0);
+			case 'top': return get(state, ['traffic', 'TOP_ITEMS', 'errorCount'], 0);
+		}
+	});
+	const prevErrorCount = usePrevious(errorCount);
 	const isFileUploadAllowed = useSelector(
 		state => (state.config.libraries.find(
 			l => l.key === state.current.libraryKey
@@ -158,6 +169,7 @@ const Table = () => {
 
 	const handleLoadMore = useCallback((startIndex, stopIndex) => {
 		dispatch(fetchSource(startIndex, stopIndex))
+		lastRequest.current = { startIndex, stopIndex };
 	}, [dispatch]);
 
 	const handleResize = useCallback(ev => {
@@ -382,6 +394,15 @@ const Table = () => {
 			document.removeEventListener('keyup', handleKeyUp)
 		}
 	}, [handleKeyUp]);
+
+	useEffect(() => {
+		if(errorCount > 0 && errorCount > prevErrorCount) {
+			const { startIndex, stopIndex } = lastRequest.current;
+			if(typeof(startIndex) === 'number' && typeof(stopIndex) === 'number') {
+				dispatch(fetchSource(startIndex, stopIndex));
+			}
+		}
+	}, [dispatch, errorCount, prevErrorCount]);
 
 	const rowData = useMemo(() => ({ onFileHoverOnRow: handleFileHoverOnRow, columns }), [columns, handleFileHoverOnRow]);
 
