@@ -2,7 +2,7 @@ import cx from 'classnames';
 import React, { memo, useCallback, useEffect, useRef } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 
-import { checkColoredTags, fetchTags, navigate } from '../../actions';
+import { connectionIssues, checkColoredTags, fetchTags, navigate } from '../../actions';
 import { isTriggerEvent } from '../../common/event';
 import { useFocusManager, useSourceSignature, usePrevious, useTags } from '../../hooks';
 import { get } from '../../utils';
@@ -17,13 +17,21 @@ const TagList = () => {
 	const dispatch = useDispatch();
 	const tagContainerRef = useRef(null);
 	const { receiveBlur, receiveFocus, focusNext, focusPrev } = useFocusManager(tagContainerRef, null, false);
-
 	const containerRef = useRef(null);
 	const listRef = useRef(null);
-
 	const { isFetching, isFetchingColoredTags, pointer, tags, totalResults, hasChecked,
 	hasCheckedColoredTags } = useTags();
 	const sourceSignature = useSourceSignature();
+	const errorCount = useSelector(state => {
+		switch(state.current.itemsSource) {
+			case 'query': return get(state, ['traffic', 'TAGS_IN_ITEMS_BY_QUERY', 'errorCount'], 0);
+			case 'trash': return get(state, ['traffic', 'TAGS_IN_TRASH_ITEMS', 'errorCount'], 0);
+			case 'publications': return get(state, ['traffic', 'TAGS_IN_PUBLICATIONS_ITEMS', 'errorCount'], 0);
+			case 'collection': return get(state, ['traffic', 'TAGS_IN_COLLECTION', 'errorCount'], 0);
+			case 'top': return get(state, ['traffic', 'TAGS_IN_TOP_ITEMS', 'errorCount'], 0);
+		}
+	});
+	const prevErrorCount = usePrevious(errorCount);
 
 	const maybeLoadMore = useCallback(() => {
 		const containerHeight = containerRef.current.getBoundingClientRect().height;
@@ -96,6 +104,14 @@ const TagList = () => {
 	useEffect(() => {
 		setTimeout(maybeLoadMore, 0);
 	}, [maybeLoadMore, tagsSearchString, pointer]);
+
+	useEffect(() => {
+		if(errorCount > 3 && prevErrorCount === 3) {
+			dispatch(connectionIssues());
+		} else if(errorCount === 0 && prevErrorCount > 0) {
+			dispatch(connectionIssues(true));
+		}
+	}, [dispatch, errorCount, prevErrorCount]);
 
 	return (
 		<div
