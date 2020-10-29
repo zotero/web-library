@@ -14,8 +14,8 @@ import TableBody from './table-body';
 import TableRow from './table-row';
 import { get, applyChangesToVisibleColumns, resizeVisibleColumns } from '../../../utils';
 import { ATTACHMENT } from '../../../constants/dnd';
-import { currentTrashOrDelete, createAttachmentsFromDropped, fetchSource, navigate,
-selectItemsKeyboard, selectFirstItem, selectLastItem, preferenceChange, triggerFocus,
+import { currentTrashOrDelete, createAttachmentsFromDropped, connectionIssues, fetchSource,
+navigate, selectItemsKeyboard, selectFirstItem, selectLastItem, preferenceChange, triggerFocus,
 triggerHighlightedCollections } from '../../../actions';
 import { useFocusManager, usePrevious, useSourceData } from '../../../hooks';
 import { isHighlightKeyDown } from '../../../common/event';
@@ -401,6 +401,11 @@ const Table = () => {
 			if(typeof(startIndex) === 'number' && typeof(stopIndex) === 'number') {
 				dispatch(fetchSource(startIndex, stopIndex));
 			}
+		}
+		if(errorCount > 3 && prevErrorCount === 3) {
+			dispatch(connectionIssues());
+		} else if(errorCount === 0 && prevErrorCount > 0) {
+			dispatch(connectionIssues(true));
 		}
 	}, [dispatch, errorCount, prevErrorCount]);
 

@@ -1,4 +1,5 @@
 import { get } from '../utils';
+import { CONNECTION_ISSUES } from '../constants/actions';
 
 const requestsWaiting = {};
 const requestSchedule = [2, 5, 10, 20, 30, 40, 50, 60];
@@ -15,6 +16,7 @@ const runRequest = async (dispatch, request, { requestType, payload }) => {
 		dispatch({
 			type: `ERROR_${requestType}`,
 			...payload,
+			silent: true,
 			error
 		});
 	}
@@ -90,4 +92,12 @@ const requestWithBackoff = (request, { type: requestType, payload }) => {
 	}
 }
 
-export { requestWithBackoff }
+const connectionIssues = (resolved = false) => {
+	if(resolved) {
+		return { type: CONNECTION_ISSUES, resolved };
+	} else {
+		return { type: CONNECTION_ISSUES, resolved };
+	}
+}
+
+export { connectionIssues, requestWithBackoff };

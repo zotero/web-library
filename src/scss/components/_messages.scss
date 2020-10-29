@@ -40,6 +40,10 @@
 			border-left-color: $info;
 		}
 
+		&.warning {
+			border-left-color: $warning;
+		}
+
 		@include bp-up(sm) {
 			width: $error-width;
 		}

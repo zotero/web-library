@@ -8,6 +8,7 @@
 
 $red:           #db2c3a; // 355° 80 86
 $blue:          #4072e6; // 222° 72 90
+$yellow:		#dbb842;
 $asphalt:       #7a8799;
 $asphalt-light: #dadee3;
 
@@ -284,6 +285,7 @@ $tool-group-separator-color: $shade-2;
 $message-bg: $body-bg;
 $error:      $red;
 $info:       $blue;
+$warning:	 $yellow;
 
 // Tag selector
 $tag-selector-border-color: 		$shade-3;

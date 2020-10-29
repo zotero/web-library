@@ -1,6 +1,4 @@
-'use strict';
-
-import { RESET_LIBRARY, DISMISS_ERROR } from '../constants/actions';
+import { CONNECTION_ISSUES, RESET_LIBRARY, DISMISS_ERROR } from '../constants/actions';
 const ERRORS_STORED_COUNT = 10; //how many errors are stored before oldest are discarded
 var errorCounter = 0;
 
@@ -44,8 +42,10 @@ const processError = ({ error, errorType }) => ({
 const errors = (state = [], action) => {
 	if(action.type === DISMISS_ERROR) {
 		return state.filter(error => error.id !== action.errorId);
-	}
-	if(action.type && action.type.startsWith('ERROR_')) {
+	} else if(action.type && action.type.startsWith('ERROR_')) {
+		if(action.silent) {
+			return state;
+		}
 		if(action.error && action.error.response && action.error.response.status === 412) {
 			// discard 412, these will trigger RESET_LIBRARY which is handled below
 			return state;
@@ -63,12 +63,11 @@ const errors = (state = [], action) => {
 			processedError,
 			...state.slice(0, ERRORS_STORED_COUNT - 1)
 		];
-	}
-	if(action.type === RESET_LIBRARY) {
+	} else if(action.type === RESET_LIBRARY) {
 		return [{
 				id: ++errorCounter,
 				isDismissed: false,
-				message: "Current library has been modified outside of Web Library and had to be reset to remote state to allow editing.",
+				message: 'Current library has been modified outside of Web Library and had to be reset to remote state to allow editing.',
 				raw: {},
 				timesOccurred: 1,
 				timestamp: Date.now(),
@@ -76,6 +75,22 @@ const errors = (state = [], action) => {
 			},
 			...state.slice(0, ERRORS_STORED_COUNT - 1)
 		];
+	} else if(action.type === CONNECTION_ISSUES) {
+		if(action.resolved) {
+			return state.filter(e => e.raw !== CONNECTION_ISSUES);
+		} else {
+			return [{
+					id: ++errorCounter,
+					isDismissed: false,
+					message: 'Encountered connectivity issues. Some data might be missing temporarily.',
+					raw: CONNECTION_ISSUES,
+					timesOccurred: 1,
+					timestamp: Date.now(),
+					type: 'warning',
+				},
+				...state.filter(e => e.raw !== CONNECTION_ISSUES).slice(0, ERRORS_STORED_COUNT - 1)
+			];
+		}
 	}
 	return state;
 }
