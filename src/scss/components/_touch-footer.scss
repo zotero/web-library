@@ -13,4 +13,8 @@
 	&.darker {
 		background-color: $touch-footer-darker-bg;
 	}
+
+	.dropdown .btn-icon {
+		height: 100%;
+	}
 }
