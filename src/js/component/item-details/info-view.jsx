@@ -11,7 +11,7 @@ const ItemDetailsInfoView = () => {
 		const { collectionKey, libraryKey, itemsSource } = state.current;
 		switch(itemsSource) {
 			case 'query':
-				return state.query.totalResults;
+				return state.query.totalResults || null;
 			case 'top':
 				return get(state, ['libraries', libraryKey, 'itemsTop', 'totalResults'], null);
 			case 'trash':
@@ -38,7 +38,7 @@ const ItemDetailsInfoView = () => {
 		} else {
 			setLabel('');
 		}
-	}, [itemsCount, itemKeys]);
+	}, [itemsCount, itemKey, itemKeys]);
 
 	return <div className="info-view">{ label }</div>;
 }
