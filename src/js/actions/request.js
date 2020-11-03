@@ -1,33 +1,46 @@
 import { get } from '../utils';
-import { CONNECTION_ISSUES } from '../constants/actions';
+import { ABORT_REQUEST, CONNECTION_ISSUES } from '../constants/actions';
 
 const requestsWaiting = {};
 const requestSchedule = [2, 5, 10, 20, 30, 40, 50, 60];
+var requestTracker = { id: 1 };
 
-const runRequest = async (dispatch, request, { requestType, payload }) => {
+const runRequest = async (dispatch, request, { id, requestType, payload }) => {
 	try {
 		const outcome = await request();
 		dispatch({
 			type: `RECEIVE_${requestType}`,
-			...payload,
+			...payload, id,
 			...outcome
 		});
 	} catch(error) {
-		dispatch({
-			type: `ERROR_${requestType}`,
-			...payload,
-			silent: true,
-			error
-		});
+		if(error && error.name === 'AbortError') {
+			dispatch({
+				type: `DROP_${requestType}`,
+				...payload, id,
+				reason: 'abort',
+				error
+			});
+		} else {
+			dispatch({
+				type: `ERROR_${requestType}`,
+				...payload, id,
+				silent: true,
+				error
+			});
+		}
+	} finally {
+		delete requestTracker[id];
 	}
 }
 
 const dropRequest = (dispatch, requestType) => {
-	const { payload, timeout } = requestsWaiting[requestType];
+	const { id, payload, timeout } = requestsWaiting[requestType];
 
 	dispatch({
 		type: `DROP_${requestType}`,
-		...payload
+		reason: 'backoff',
+		...payload, id
 	});
 	clearTimeout(timeout);
 	delete requestsWaiting[requestType];
@@ -44,9 +57,9 @@ const runRequestWaiting = requestType => {
 		const timeSinceLastError = Date.now() - lastError;
 		if(requestType in requestsWaiting && timeSinceLastError >= nextRequestDelay) {
 			// if there is a request waiting and ready, run it
-			const { payload, request, timeout } = requestsWaiting[requestType];
+			const { id, payload, request, timeout } = requestsWaiting[requestType];
 			clearTimeout(timeout);
-			runRequest(dispatch, request, { requestType, payload });
+			runRequest(dispatch, request, { id, requestType, payload });
 			delete requestsWaiting[requestType];
 		} else if(requestType in requestsWaiting) {
 			// if request is not ready, reschedule
@@ -59,7 +72,7 @@ const runRequestWaiting = requestType => {
 	}
 }
 
-const requestWithBackoff = (request, { type: requestType, payload }) => {
+const requestWithBackoff = (request, { id, type: requestType, payload }) => {
 	return async (dispatch, getState) => {
 		const state = getState();
 		const lastError = get(state, ['traffic', requestType, 'lastError']);
@@ -76,7 +89,7 @@ const requestWithBackoff = (request, { type: requestType, payload }) => {
 					dropRequest(dispatch, requestType);
 				}
 				requestsWaiting[requestType] = {
-					request, payload,
+					id, request, payload,
 					timeout: setTimeout(() => { dispatch(runRequestWaiting(requestType)) }, nextCheck)
 				};
 			} else {
@@ -84,10 +97,10 @@ const requestWithBackoff = (request, { type: requestType, payload }) => {
 				if(requestType in requestsWaiting) {
 					dropRequest(dispatch, requestType);
 				}
-				runRequest(dispatch, request, { requestType, payload });
+				runRequest(dispatch, request, { id, requestType, payload });
 			}
 		} else {
-			runRequest(dispatch, request, { requestType, payload });
+			runRequest(dispatch, request, { id, requestType, payload });
 		}
 	}
 }
@@ -100,4 +113,21 @@ const connectionIssues = (resolved = false) => {
 	}
 }
 
-export { connectionIssues, requestWithBackoff };
+const abortRequest = id => {
+	if(id in requestTracker && typeof(requestTracker[id].abort) === 'function') {
+		requestTracker[id].abort();
+	}
+	return { type: ABORT_REQUEST, id }
+}
+
+const abortAllRequests = requestType => {
+	return async (dispatch, getState) => {
+		const state = getState();
+		const ongoing = get(state, ['traffic', requestType, 'ongoing']);
+		if(ongoing !== null) {
+			ongoing.forEach(id => { dispatch(abortRequest(id)); });
+		}
+	}
+}
+
+export { abortAllRequests, abortRequest, connectionIssues, requestTracker, requestWithBackoff };

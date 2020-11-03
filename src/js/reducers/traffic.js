@@ -1,8 +1,3 @@
-// allow maximum of 10 requests of the same type within 5 seconds rolling window
-// const requestOfTypeTrackCount = 10;
-// const requestOfTypeDuration =  5 * 1000; //in ms
-
-
 const traffic = (state = {}, action) => {
 	if(action.type && action.type.startsWith('REQUEST_')) {
 		const requestName = action.type.slice(8);
@@ -11,7 +6,8 @@ const traffic = (state = {}, action) => {
 			...state,
 			[requestName]: {
 				...(state[requestName] || {}),
-				lastRequest: Date.now()
+				lastRequest: Date.now(),
+				ongoing: [...(((state[requestName] || {}).ongoing || [])), action.id].filter(Boolean)
 			}
 		}
 	} else if(action.type && action.type.startsWith('ERROR_')) {
@@ -21,7 +17,8 @@ const traffic = (state = {}, action) => {
 			[requestName]: {
 				...(state[requestName] || {}),
 				lastError: Date.now(),
-				errorCount: ((state[requestName] || {}).errorCount || 0) + 1
+				errorCount: ((state[requestName] || {}).errorCount || 0) + 1,
+				ongoing: (((state[requestName] || {}).ongoing || [])).filter(id => id !== action.id)
 			}
 		}
 	} else if(action.type && action.type.startsWith('RECEIVE_')) {
@@ -31,7 +28,18 @@ const traffic = (state = {}, action) => {
 			[requestName]: {
 				...(state[requestName] || {}),
 				lastSuccess: Date.now(),
-				errorCount: 0
+				errorCount: 0,
+				ongoing: (((state[requestName] || {}).ongoing || [])).filter(id => id !== action.id)
+			}
+		}
+	} else if(action.type && action.type.startsWith('DROP_')) {
+		const requestName = action.type.slice(5);
+		return {
+			...state,
+			[requestName]: {
+				...(state[requestName] || {}),
+				lastDrop: Date.now(),
+				ongoing: (((state[requestName] || {}).ongoing || [])).filter(id => id !== action.id)
 			}
 		}
 	}

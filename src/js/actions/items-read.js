@@ -1,9 +1,9 @@
 import { SORT_ITEMS, REQUEST_ATTACHMENT_URL, RECEIVE_ATTACHMENT_URL, ERROR_ATTACHMENT_URL } from '../constants/actions';
 import api from 'zotero-api-client';
 import { extractItems, getApiForItems } from '../common/actions';
-import { mapRelationsToItemKeys } from '../utils';
+import { getAbortController, mapRelationsToItemKeys } from '../utils';
 import columnProperties from '../constants/column-properties';
-import { requestWithBackoff } from '.';
+import { requestTracker, requestWithBackoff } from '.';
 
 const fetchItems = (
 	type,
@@ -16,11 +16,18 @@ const fetchItems = (
 		const config = 'config' in overrides ? overrides.config : state.config;
 		const { libraryKey } = 'current' in overrides ? overrides.current : state.current;
 		const api = getApiForItems({ config, libraryKey }, type, queryConfig);
+		const id = requestTracker.id++;
+		const abortController = getAbortController();
 
 		dispatch({
-			type: `REQUEST_${type}`,
+			type: `REQUEST_${type}`, id,
 			libraryKey, ...queryConfig, queryOptions
 		});
+
+		if(abortController) {
+			queryOptions['signal'] = abortController.signal;
+			requestTracker[id] = abortController;
+		}
 
 		const makeRequest = async () => {
 			const response = await api.get(queryOptions);
@@ -30,7 +37,7 @@ const fetchItems = (
 		}
 
 		const payload = { libraryKey, ...queryConfig, queryOptions };
-		return dispatch(requestWithBackoff(makeRequest, { type, payload }));
+		return dispatch(requestWithBackoff(makeRequest, { id, type, payload }));
 	}
 }
 

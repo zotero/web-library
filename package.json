@@ -101,7 +101,7 @@
     "tinymce": "5.5.1",
     "use-debounce": "^5.0.1",
     "webworkify": "^1.5.0",
-    "zotero-api-client": "0.32.1",
+    "zotero-api-client": "^0.33.0",
     "zotero-base-mappings": "0.0.2"
   },
   "devDependencies": {

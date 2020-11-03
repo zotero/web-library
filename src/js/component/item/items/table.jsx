@@ -14,7 +14,7 @@ import TableBody from './table-body';
 import TableRow from './table-row';
 import { get, applyChangesToVisibleColumns, resizeVisibleColumns } from '../../../utils';
 import { ATTACHMENT } from '../../../constants/dnd';
-import { currentTrashOrDelete, createAttachmentsFromDropped, connectionIssues, fetchSource,
+import { abortAllRequests, currentTrashOrDelete, createAttachmentsFromDropped, connectionIssues, fetchSource,
 navigate, selectItemsKeyboard, selectFirstItem, selectLastItem, preferenceChange, triggerFocus,
 triggerHighlightedCollections } from '../../../actions';
 import { useFocusManager, usePrevious, useSourceData } from '../../../hooks';
@@ -27,6 +27,16 @@ const getColumnCssVars = (columns, width, scrollbarWidth) =>
 		`--col-${i}-width`,
 		i === columns.length - 1 ? `${c.fraction * width - scrollbarWidth}px` : `${c.fraction * width}px`
 	]));
+
+const getRequestTypeFromItemsSource = itemsSource => {
+	switch(itemsSource) {
+		case 'query': return 'ITEMS_BY_QUERY';
+		case 'trash': return 'TRASH_ITEMS';
+		case 'publications': return 'PUBLICATIONS_ITEMS';
+		case 'collection': return 'ITEMS_IN_COLLECTION';
+		default: case 'top': return 'TOP_ITEMS';
+	}
+}
 
 // @NOTE: TableFocus and TableScroll are two effect-only components that have been extracted from Table
 // 		  to avoid re-rendering the entire Table whenever selectedItemKeys/isItemsTableFocused changes.
@@ -91,15 +101,9 @@ const Table = () => {
 	const { isFetching, keys, hasChecked, totalResults, requests } = useSourceData();
 	const collectionKey = useSelector(state => state.current.collectionKey);
 	const libraryKey = useSelector(state => state.current.libraryKey);
-	const errorCount = useSelector(state => {
-		switch(state.current.itemsSource) {
-			case 'query': return get(state, ['traffic', 'ITEMS_BY_QUERY', 'errorCount'], 0);
-			case 'trash': return get(state, ['traffic', 'TRASH_ITEMS', 'errorCount'], 0);
-			case 'publications': return get(state, ['traffic', 'PUBLICATIONS_ITEMS', 'errorCount'], 0);
-			case 'collection': return get(state, ['traffic', 'ITEMS_IN_COLLECTION', 'errorCount'], 0);
-			case 'top': return get(state, ['traffic', 'TOP_ITEMS', 'errorCount'], 0);
-		}
-	});
+	const itemsSource = useSelector(state => state.current.itemsSource);
+	const requestType = getRequestTypeFromItemsSource(itemsSource);
+	const errorCount = useSelector(state => get(state, ['traffic', requestType, 'errorCount'], 0));
 	const prevErrorCount = usePrevious(errorCount);
 	const isFileUploadAllowed = useSelector(
 		state => (state.config.libraries.find(
@@ -126,10 +130,14 @@ const Table = () => {
 		}
 		return columns;
 	}, [columnsData, isMyLibrary]);
+
 	const { field: sortBy, sort: sortDirection } = useMemo(() =>
 		columnsData.find(column => 'sort' in column) || { field: 'title', sort: 'asc' },
 		[columnsData]
 	);
+
+	const prevSortBy = usePrevious(sortBy);
+	const prevSortDirection = usePrevious(sortDirection);
 
 	const { receiveFocus, receiveBlur, focusBySelector, focusDrillDownNext,
 		focusDrillDownPrev, resetLastFocused } = useFocusManager(tableRef, '[aria-selected="true"], [data-index="0"]');
@@ -362,10 +370,24 @@ const Table = () => {
 	}, [dispatch]);
 
 	useEffect(() => {
+		if(prevSortBy === sortBy && prevSortDirection === sortDirection) {
+			return;
+		}
+
 		if(loader.current) {
 			loader.current.resetloadMoreItemsCache(true);
 		}
-	}, [sortBy, sortDirection, totalResults]);
+
+		if(isFetching) {
+			dispatch(abortAllRequests(requestType));
+			setTimeout(() => {
+				const { startIndex, stopIndex } = lastRequest.current;
+				if(typeof(startIndex) === 'number' && typeof(stopIndex) === 'number') {
+					dispatch(fetchSource(startIndex, stopIndex));
+				}
+			}, 0)
+		}
+	}, [dispatch, isFetching, prevSortBy, prevSortDirection, requestType, sortBy, sortDirection, totalResults]);
 
 	useEffect(() => {
 		document.addEventListener('mouseup', handleMouseUp);

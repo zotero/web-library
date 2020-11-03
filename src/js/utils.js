@@ -387,6 +387,8 @@ const getFieldNameFromSortKey = sortKey => {
 	}
 }
 
+const getAbortController = () => typeof(AbortController) === 'function' ? new AbortController() : null;
+
 export {
 	applyChangesToVisibleColumns,
 	clamp,
@@ -399,6 +401,7 @@ export {
 	deduplicateByKey,
 	enumerateObjects,
 	get,
+	getAbortController,
 	getDOIURL,
 	getFieldNameFromSortKey,
 	getItemCanonicalUrl,
