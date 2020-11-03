@@ -1,14 +1,16 @@
-import React, { useCallback } from 'react';
+import React, { memo, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import PropTypes from 'prop-types';
-import RichEditor from '../component/rich-editor';
+
+import AttachmentDetails from '../component/item-details/attachment-details';
 import cx from 'classnames';
+import RichEditor from '../component/rich-editor';
 import { get } from '../utils';
 import { updateItem } from '../actions';
 import { useEditMode } from '../hooks';
 
-const TouchNote = () => {
+const TouchDrilldown = memo(() => {
 	const dispatch = useDispatch();
+	const attachmentKey = useSelector(state => state.current.attachmentKey);
 	const note = useSelector(state => get(state, [
 		'libraries', state.current.libraryKey, 'items', state.current.noteKey
 	], null));
@@ -21,22 +23,29 @@ const TouchNote = () => {
 	const className = cx({
 		'editing': isEditing,
 		'hidden-mouse': true,
+		'touch-attachment': attachmentKey !== null,
+		'touch-note': note !== null,
 		'touch-details-drilldown': true,
-		'touch-note': true,
 	});
 
 	return (
 		<section className={ className }>
-			{ note && (
+			{ attachmentKey ? (
+				<AttachmentDetails
+					isReadOnly={ !isEditing }
+					attachmentKey={ attachmentKey }
+				/>
+			) : note && (
 				<RichEditor
 					id={ note.key }
 					isReadOnly={ !isEditing }
 					onChange={ handleNoteChange }
 					value={ note.note }
 				/>
-			)}
+			) }
 		</section>
 	);
-}
+});
 
-export default TouchNote;
+
+export default TouchDrilldown;

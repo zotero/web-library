@@ -19,8 +19,7 @@ import Ongoing from './ongoing';
 import SearchBackdrop from './search-backdrop';
 import TagSelector from '../component/tag-selector';
 import TouchHeaderContainer from '../container/touch-header';
-import TouchNote from '../component/touch-note';
-import TouchAttachment from '../component/touch-attachment';
+import TouchDrilldown from '../component/touch-drilldown';
 import TouchTagSelector from '../component/touch-tag-selector';
 import TouchSideFooter from '../component/touch-side-footer';
 import withDevice from '../enhancers/with-device';
@@ -171,8 +170,7 @@ const Library = props => {
 									) }
 									<Items key={ key } isSearchModeTransitioning={ isSearchModeTransitioning } />
 									<ItemDetails active={ view === 'item-details' } />
-									{ device.isTouchOrSmall && <TouchNote /> }
-									{ device.isTouchOrSmall && <TouchAttachment /> }
+									{ device.isTouchOrSmall && <TouchDrilldown /> }
 									<CSSTransition
 										in={ device.isSingleColumn && isSearchMode && itemsSource !== 'query' }
 										timeout={ 250 }
