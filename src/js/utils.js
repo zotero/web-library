@@ -389,6 +389,16 @@ const getFieldNameFromSortKey = sortKey => {
 
 const getAbortController = () => typeof(AbortController) === 'function' ? new AbortController() : null;
 
+const getRequestTypeFromItemsSource = itemsSource => {
+	switch(itemsSource) {
+		case 'query': return 'ITEMS_BY_QUERY';
+		case 'trash': return 'TRASH_ITEMS';
+		case 'publications': return 'PUBLICATIONS_ITEMS';
+		case 'collection': return 'ITEMS_IN_COLLECTION';
+		default: case 'top': return 'TOP_ITEMS';
+	}
+}
+
 export {
 	applyChangesToVisibleColumns,
 	clamp,
@@ -406,6 +416,7 @@ export {
 	getFieldNameFromSortKey,
 	getItemCanonicalUrl,
 	getLibraryKeyFromTopic,
+	getRequestTypeFromItemsSource,
 	getScrollbarWidth,
 	getScrollContainerPageCount,
 	getSortKeyValue,

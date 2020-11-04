@@ -12,7 +12,7 @@ import HeaderRow from './table-header-row';
 import Spinner from '../../ui/spinner';
 import TableBody from './table-body';
 import TableRow from './table-row';
-import { get, applyChangesToVisibleColumns, resizeVisibleColumns } from '../../../utils';
+import { get, applyChangesToVisibleColumns, getRequestTypeFromItemsSource, resizeVisibleColumns } from '../../../utils';
 import { ATTACHMENT } from '../../../constants/dnd';
 import { abortAllRequests, currentTrashOrDelete, createAttachmentsFromDropped, connectionIssues, fetchSource,
 navigate, selectItemsKeyboard, selectFirstItem, selectLastItem, preferenceChange, triggerFocus,
@@ -27,16 +27,6 @@ const getColumnCssVars = (columns, width, scrollbarWidth) =>
 		`--col-${i}-width`,
 		i === columns.length - 1 ? `${c.fraction * width - scrollbarWidth}px` : `${c.fraction * width}px`
 	]));
-
-const getRequestTypeFromItemsSource = itemsSource => {
-	switch(itemsSource) {
-		case 'query': return 'ITEMS_BY_QUERY';
-		case 'trash': return 'TRASH_ITEMS';
-		case 'publications': return 'PUBLICATIONS_ITEMS';
-		case 'collection': return 'ITEMS_IN_COLLECTION';
-		default: case 'top': return 'TOP_ITEMS';
-	}
-}
 
 // @NOTE: TableFocus and TableScroll are two effect-only components that have been extracted from Table
 // 		  to avoid re-rendering the entire Table whenever selectedItemKeys/isItemsTableFocused changes.
@@ -357,6 +347,7 @@ const Table = () => {
 	useEffect(() => {
 		if(!hasChecked && !isFetching) {
 			dispatch(fetchSource(0, 50));
+			lastRequest.current = { startIndex: 0, stopIndex: 50 };
 		}
 	}, [dispatch, isFetching, hasChecked]);
 
