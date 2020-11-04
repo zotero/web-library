@@ -14,7 +14,7 @@ const runRequest = async (dispatch, request, { id, requestType, payload }) => {
 			...outcome
 		});
 	} catch(error) {
-		if(error && error.name === 'AbortError') {
+		if(error && (error.name === 'AbortError' || error.message === 'aborted')) {
 			dispatch({
 				type: `DROP_${requestType}`,
 				...payload, id,
