@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React, { useCallback, useState } from 'react';
+import React, { memo, useCallback, useState } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 
 import columnProperties from '../../../constants/column-properties';
@@ -40,11 +40,11 @@ const ColumnSelector = props => {
 		const visibleColumns = newColumns.filter(c => c.isVisible);
 		resizeVisibleColumns(visibleColumns, fractionBias);
 		return dispatch(preferenceChange('columns', applyChangesToVisibleColumns(visibleColumns, newColumns)));
-	});
+	}, [dispatch, columns]);
 
 	const handleToggleDropdown = useCallback(() => {
 		setIsOpen(!isOpen);
-	});
+	}, [isOpen]);
 
 	const handleKeyDown = useCallback(ev => {
 		if(ev.target !== ev.currentTarget) {
@@ -56,7 +56,7 @@ const ColumnSelector = props => {
 		} else if(ev.key === 'ArrowLeft') {
 			onFocusPrev(ev);
 		}
-	});
+	}, [onFocusNext, onFocusPrev]);
 
 	const handleRestoreClick = useCallback(() => {
 		dispatch(restoreColumnsOrder())
@@ -69,11 +69,12 @@ const ColumnSelector = props => {
 			className="column-selector"
 		>
 			<DropdownToggle
-				aria-label="column selector"
+				aria-label="Column Selector"
 				className="btn-icon dropdown-toggle"
 				color={ null }
 				onKeyDown={ handleKeyDown }
 				tabIndex={ tabIndex }
+				title="Column Selector"
 			>
 				<Icon type={ '16/columns' } width="16" height="16" />
 			</DropdownToggle>
@@ -107,4 +108,4 @@ ColumnSelector.propTypes = {
 	tabIndex: PropTypes.number,
 }
 
-export default ColumnSelector;
+export default memo(ColumnSelector);
