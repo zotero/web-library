@@ -115,7 +115,7 @@ const ItemActionsDesktop = memo(props => {
 	const isTrash = useSelector(state => state.current.isTrash);
 	const collectionKey = useSelector(state => state.current.collectionKey);
 
-	const { handleNewItemCreate,  handleNewStandaloneNote, handleAddToCollectionModalOpen,
+	const { handleCiteModalOpen, handleNewItemCreate,  handleNewStandaloneNote, handleAddToCollectionModalOpen,
 	handleRemoveFromCollection,  handleTrash, handlePermanentlyDelete,  handleUndelete,
 	handleBibliographyModalOpen, } = useItemActionHandlers();
 
@@ -229,15 +229,16 @@ const ItemActionsDesktop = memo(props => {
 			) }
 			<ToolGroup>
 				<ExportActions tabIndex={ -2 } onFocusNext={ onFocusNext } onFocusPrev={ onFocusPrev } />
-				{/*
 				<Button
+					disabled={ selectedItemsCount === 0 || selectedItemsCount > 100 }
 					icon
-					disabled={ selectedItemsCount === 0 }
-					title="Create Citation"
+					onClick={ handleCiteModalOpen }
+					onKeyDown={ handleKeyDown }
+					tabIndex={ -2 }
+					title="Create Citations"
 				>
 					<Icon type="16/cite" width="16" height="16" />
 				</Button>
-				*/}
 				<Button
 					disabled={ selectedItemsCount === 0 || selectedItemsCount > 100 }
 					icon

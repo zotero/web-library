@@ -77,7 +77,15 @@ const currentBibliographyModal = () => {
 	return async (dispatch, getState) => {
 		const state = getState();
 		const { itemKeys, libraryKey } = state.current;
-		dispatch(toggleModal(BIBLIOGRAPHY, true, { itemKeys, libraryKey }));
+		dispatch(toggleModal(BIBLIOGRAPHY, true, { itemKeys, libraryKey, outputMode: 'bibliography' }));
+	}
+}
+
+const currentCiteModal = () => {
+	return async (dispatch, getState) => {
+		const state = getState();
+		const { itemKeys, libraryKey } = state.current;
+		dispatch(toggleModal(BIBLIOGRAPHY, true, { itemKeys, libraryKey, outputMode: 'cite' }));
 	}
 }
 
@@ -206,6 +214,7 @@ export {
 	currentAddToCollection,
 	currentAddToCollectionModal,
 	currentBibliographyModal,
+	currentCiteModal,
 	currentCopyToLibrary,
 	currentCreateItemOfType,
 	currentDeleteItems,

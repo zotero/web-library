@@ -100,11 +100,10 @@ const exportCollection = (collectionKey, libraryKey, format) => {
 	};
 };
 
-const citeItems = (itemKeys, style = 'chicago-note-bibliography', locale = 'en-US') => {
+const citeItems = (itemKeys, libraryKey, style = 'chicago-note-bibliography', locale = 'en-US') => {
 	return async (dispatch, getState) => {
 		const state = getState();
 		const config = state.config;
-		const { libraryKey } = state.current;
 
 		dispatch({
 			type: REQUEST_CITE_ITEMS,

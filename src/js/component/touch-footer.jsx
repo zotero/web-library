@@ -15,8 +15,8 @@ const TouchFooter = () => {
 	const isTrash = useSelector(state => state.current.isTrash);
 	const collectionKey = useSelector(state => state.current.collectionKey);
 
-	const { handleAddToCollectionModalOpen, handleRemoveFromCollection, handleTrash,
-	handlePermanentlyDelete, handleUndelete, handleBibliographyModalOpen, handleDuplicate,
+	const { handleAddToCollectionModalOpen, handleCiteModalOpen, handleRemoveFromCollection,
+	handleTrash, handlePermanentlyDelete, handleUndelete, handleBibliographyModalOpen,
 	handleExportModalOpen } = useItemActionHandlers();
 
 	return (
@@ -61,11 +61,9 @@ const TouchFooter = () => {
 						<Button icon onClick={ handleExportModalOpen } disabled={ selectedItemsCount === 0 || selectedItemsCount > 100 }>
 							<Icon type={ '24/export' } width="24" height="24" />
 						</Button>
-						{/*
-						<Button icon disabled={ itemKeys.length === 0 }>
+						<Button icon onClick={ handleCiteModalOpen } disabled={ selectedItemsCount === 0 || selectedItemsCount > 100 }>
 							<Icon type={ '24/cite' } width="24" height="24" />
 						</Button>
-						*/}
 						<Button icon onClick={ handleBibliographyModalOpen } disabled={ selectedItemsCount === 0 || selectedItemsCount > 100 }>
 							<Icon type={ '24/bibliography' } width="24" height="24" />
 						</Button>

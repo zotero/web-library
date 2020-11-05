@@ -1,9 +1,9 @@
 import { useCallback } from 'react';
 import { useDispatch} from 'react-redux';
-import { currentAddToCollectionModal, currentRemoveItemFromCollection, currentTrashItems,
-currentDeleteItems, currentRecoverTrashItems, triggerSelectMode, currentBibliographyModal,
-currentDuplicateItem, currentExportItemsModal, currentCreateItemOfType, navigate,
-triggerEditingItem, toggleModal, toggleItemsSortingDirection, currentNewItemModal,
+import { currentAddToCollectionModal, currentCiteModal, currentRemoveItemFromCollection,
+currentTrashItems, currentDeleteItems, currentRecoverTrashItems, triggerSelectMode,
+currentBibliographyModal, currentDuplicateItem, currentExportItemsModal, currentCreateItemOfType,
+navigate, triggerEditingItem, toggleModal, toggleItemsSortingDirection, currentNewItemModal,
 currentNewFileModal, } from '../actions';
 import { SORT_ITEMS, ADD_BY_IDENTIFIER } from '../constants/modals';
 
@@ -35,6 +35,10 @@ const useItemActionHandlers = () => {
 
 	const handleBibliographyModalOpen = useCallback(() => {
 		dispatch(currentBibliographyModal());
+	}, [dispatch]);
+
+	const handleCiteModalOpen = useCallback(() => {
+		dispatch(currentCiteModal());
 	}, [dispatch]);
 
 	const handleDuplicate = useCallback(async () => {
@@ -78,8 +82,8 @@ const useItemActionHandlers = () => {
 		dispatch(toggleModal(ADD_BY_IDENTIFIER, true));
 	}, [dispatch]);
 
-	return { handleAddByIdentifierModalOpen, handleAddToCollectionModalOpen, handleNewFileModalOpen,
-	handleNewItemCreate, handleNewItemModalOpen, handleNewStandaloneNote,
+	return { handleAddByIdentifierModalOpen, handleAddToCollectionModalOpen, handleCiteModalOpen,
+	handleNewFileModalOpen, handleNewItemCreate, handleNewItemModalOpen, handleNewStandaloneNote,
 	handleRemoveFromCollection, handleTrash, handlePermanentlyDelete, handleSortModalOpen,
 	handleSortOrderToggle, handleUndelete, handleBibliographyModalOpen, handleDuplicate,
 	handleExportModalOpen, }

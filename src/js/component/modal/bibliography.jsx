@@ -15,13 +15,15 @@ import { BIBLIOGRAPHY, STYLE_INSTALLER } from '../../constants/modals';
 import { coreCitationStyles } from '../../../../data/citation-styles-data.json';
 import { getUniqueId } from '../../utils';
 import { stripTagsUsingDOM } from '../../common/format';
-import { toggleModal, bibliographyFromCollection, bibliographyFromItems, preferenceChange, triggerSelectMode } from '../../actions';
+import { toggleModal, bibliographyFromCollection, bibliographyFromItems, citeItems, preferenceChange, triggerSelectMode } from '../../actions';
 import { usePrevious } from '../../hooks';
+
 
 const BibliographyModal = () => {
 	const dispatch = useDispatch();
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
 	const isOpen = useSelector(state => state.modal.id === BIBLIOGRAPHY);
+	const outputMode = useSelector(state => state.modal.outputMode || 'bibliography');
 	const citationStyle = useSelector(state => state.preferences.citationStyle);
 	const citationLocale = useSelector(state => state.preferences.citationLocale);
 	const installedCitationStyles = useSelector(state => state.preferences.installedCitationStyles, shallowEqual);
@@ -37,7 +39,7 @@ const BibliographyModal = () => {
 	const [requestedAction, setRequestedAction] = useState('clipboard');
 	const [isClipboardCopied, setIsClipboardCopied] = useState(false);
 	const [isHtmlCopied, setIsHtmlCopied] = useState(false);
-	const [bibliography, setBibliography] = useState(null);
+	const [output, setOutput] = useState(null);
 	const [isUpdating, setIsUpdating] = useState(false);
 	const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
@@ -46,24 +48,30 @@ const BibliographyModal = () => {
 	const copyDataInclude = useRef(null);
 	const dropdownTimer = useRef(null);
 
-	const getBibliography = useCallback(async () => {
+	const makeOutput = useCallback(async () => {
 		try {
 			setIsUpdating(true);
-			var bibliography;
-			if(collectionKey) {
-				bibliography = await dispatch(bibliographyFromCollection(
-					collectionKey, libraryKey, citationStyle, citationLocale
-				));
-			} else {
-				bibliography = await dispatch(bibliographyFromItems(
+			var nextOutput;
+			if(outputMode === 'cite') {
+				nextOutput = await dispatch(citeItems(
 					itemKeys, libraryKey, citationStyle, citationLocale
 				));
+			} else {
+				if(collectionKey) {
+					nextOutput = await dispatch(bibliographyFromCollection(
+						collectionKey, libraryKey, citationStyle, citationLocale
+					));
+				} else {
+					nextOutput = await dispatch(bibliographyFromItems(
+						itemKeys, libraryKey, citationStyle, citationLocale
+					));
+				}
 			}
-			setBibliography(bibliography);
+			setOutput(nextOutput);
 		} finally {
 			setIsUpdating(false);
 		}
-	}, [citationLocale, citationStyle, collectionKey, dispatch, itemKeys, libraryKey]);
+	}, [citationLocale, citationStyle, collectionKey, dispatch, itemKeys, libraryKey, outputMode]);
 
 	const copyToClipboard = useCallback(bibliographyToCopy => {
 		const bibliographyText = stripTagsUsingDOM(bibliographyToCopy);
@@ -91,17 +99,17 @@ const BibliographyModal = () => {
 	//		 the browser from triggering synthetic click on relevant keydowns
 	const handleCopyToClipboardInteraction = useCallback(ev => {
 		if(ev.type !== 'keydown' || (ev.key === 'Enter' || ev.key === ' ')) {
-			copyToClipboard(bibliography);
+			copyToClipboard(output);
 			setIsClipboardCopied(true);
 			setTimeout(() => { setIsClipboardCopied(false); }, 1000);
 		}
-	}, [copyToClipboard, bibliography]);
+	}, [copyToClipboard, output]);
 
 	const handleCopyHtmlClick = useCallback(() => {
-		copy(bibliography);
+		copy(output);
 		setIsHtmlCopied(true);
 		setTimeout(() => { setIsHtmlCopied(false); }, 1000);
-	}, [bibliography]);
+	}, [output]);
 
 	const handleDropdownToggle = useCallback(ev => {
 		const isFromCopyTrigger = ev.target && ev.target.closest('.clipboard-trigger');
@@ -119,13 +127,13 @@ const BibliographyModal = () => {
 
 	const handleCreateClick = useCallback(() => {
 		if(requestedAction === 'html') {
-			copy(bibliography);
+			copy(output);
 		} else {
-			copyToClipboard(bibliography);
+			copyToClipboard(output);
 		}
 		dispatch(toggleModal(BIBLIOGRAPHY, false));
 		dispatch(triggerSelectMode(false, true));
-	}, [bibliography, copyToClipboard, dispatch, requestedAction]);
+	}, [output, copyToClipboard, dispatch, requestedAction]);
 
 	const handleStyleChange = useCallback(async citationStyle => {
 		if(citationStyle === 'install') {
@@ -142,7 +150,7 @@ const BibliographyModal = () => {
 
 	const handleCancel = useCallback(async () => {
 		dispatch(toggleModal(BIBLIOGRAPHY, false));
-		setBibliography('');
+		setOutput('');
 	}, [dispatch]);
 
 	useEffect(() => {
@@ -154,9 +162,9 @@ const BibliographyModal = () => {
 
 	useEffect(() => {
 		if(isOpen && (citationStyle !== prevCitationStyle || citationLocale !== prevCitationStyle)) {
-			getBibliography()
+			makeOutput();
 		}
-	}, [getBibliography, citationLocale, citationStyle, isOpen, prevCitationLocale, prevCitationStyle]);
+	}, [citationLocale, citationStyle, isOpen, makeOutput, prevCitationLocale, prevCitationStyle]);
 
 	const className = cx({
 		'bibliography-modal': true,
@@ -189,7 +197,7 @@ const BibliographyModal = () => {
 								</div>
 								<div className="modal-header-center">
 									<h4 className="modal-title truncate">
-										Bibliography
+										{ outputMode === 'cite' ? 'Citations' : 'Bibliography'}
 									</h4>
 								</div>
 								<div className="modal-header-right">
@@ -205,7 +213,7 @@ const BibliographyModal = () => {
 						) : (
 							<React.Fragment>
 								<h4 className="modal-title truncate">
-									Bibliography
+									{ outputMode === 'cite' ? 'Citations' : 'Bibliography'}
 								</h4>
 								<Button
 									icon
@@ -281,7 +289,7 @@ const BibliographyModal = () => {
 									<Spinner className="large" />
 									) : (
 										<div className="bibliography read-only"
-											dangerouslySetInnerHTML={ { __html: bibliography } }
+											dangerouslySetInnerHTML={ { __html: output } }
 										/>
 									)
 								}
