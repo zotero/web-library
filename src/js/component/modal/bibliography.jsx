@@ -161,7 +161,7 @@ const BibliographyModal = () => {
 	}, [handleCopy]);
 
 	useEffect(() => {
-		if(isOpen && (citationStyle !== prevCitationStyle || citationLocale !== prevCitationStyle)) {
+		if(isOpen && (citationStyle !== prevCitationStyle || citationLocale !== prevCitationLocale)) {
 			makeOutput();
 		}
 	}, [citationLocale, citationStyle, isOpen, makeOutput, prevCitationLocale, prevCitationStyle]);
