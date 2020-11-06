@@ -90,16 +90,12 @@ const TagList = () => {
 	}, [dispatch, sourceSignature, hasChecked, isFetching]);
 
 	useEffect(() => {
-		if(!hasCheckedColoredTags && !isFetchingColoredTags && Object.keys(tagColors).length) {
+		if(!isFetchingColoredTags && typeof(prevTagColors) !== 'undefined' && !shallowEqual(tagColors, prevTagColors)) {
+			dispatch(checkColoredTags());
+		} else if(!hasCheckedColoredTags && !isFetchingColoredTags && Object.keys(tagColors).length) {
 			dispatch(checkColoredTags());
 		}
-	}, [dispatch, sourceSignature, tagColors, hasCheckedColoredTags, isFetchingColoredTags]);
-
-	useEffect(() => {
-		if(!isFetchingColoredTags && !shallowEqual(tagColors, prevTagColors)) {
-			dispatch(checkColoredTags())
-		}
-	}, [dispatch, isFetchingColoredTags, prevTagColors, tagColors])
+	}, [dispatch, sourceSignature, prevTagColors, tagColors, hasCheckedColoredTags, isFetchingColoredTags]);
 
 	useEffect(() => {
 		setTimeout(maybeLoadMore, 0);
