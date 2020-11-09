@@ -94,6 +94,10 @@
 			font-size: inherit;
 			font-weight: inherit;
 			outline: none;
+
+			@include state(".select-component:not(.is-searchable)") {
+				pointer-events: none;
+			}
 		}
 	}
 
