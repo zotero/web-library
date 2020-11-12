@@ -108,7 +108,7 @@ const NewItemSelector = props => {
 							styles: {
 								...data.styles,
 								overflow: 'auto',
-								maxHeight: 300,
+								maxHeight: 330,
 							},
 						};
 					},

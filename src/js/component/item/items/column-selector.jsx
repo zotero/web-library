@@ -15,6 +15,7 @@ const ColumnSelector = props => {
 	const { tabIndex } = props;
 	const { onFocusNext, onFocusPrev } = props;
 	const [isOpen, setIsOpen] = useState(false);
+	const [isMoreColumnsVisible, setIsMoreColumnsVisible] = useState(false);
 	const dispatch = useDispatch();
 	const columns = useSelector(state => state.preferences.columns, shallowEqual);
 	const isMyLibrary = useSelector(state =>
@@ -42,8 +43,12 @@ const ColumnSelector = props => {
 		return dispatch(preferenceChange('columns', applyChangesToVisibleColumns(visibleColumns, newColumns)));
 	}, [dispatch, columns]);
 
-	const handleToggleDropdown = useCallback(() => {
+	const handleToggleDropdown = useCallback(ev => {
+		if(ev.target && ev.target.dataset.noToggle) {
+			return;
+		}
 		setIsOpen(!isOpen);
+		setIsMoreColumnsVisible(false);
 	}, [isOpen]);
 
 	const handleKeyDown = useCallback(ev => {
@@ -62,6 +67,11 @@ const ColumnSelector = props => {
 		dispatch(restoreColumnsOrder())
 	}, [dispatch]);
 
+	const handleToggleMore = useCallback(ev => {
+		setIsMoreColumnsVisible(true);
+		ev.preventDefault();
+	}, []);
+
 	return (
 		<Dropdown
 			isOpen={ isOpen }
@@ -78,10 +88,27 @@ const ColumnSelector = props => {
 			>
 				<Icon type={ '16/columns' } width="16" height="16" />
 			</DropdownToggle>
-			<DropdownMenu right>
+			<DropdownMenu right modifiers={{
+				setMaxHeight: {
+					enabled: true,
+					order: 890,
+					fn: (data) => {
+						return {
+							...data,
+							styles: {
+								...data.styles,
+								overflow: 'auto',
+								maxHeight: 330,
+							},
+						};
+					},
+				},
+			}}
+			>
 				{ columns
 					.filter(c => c.field !== 'title')
 					.filter(c => !isMyLibrary || (isMyLibrary && !(c.field in columnProperties && columnProperties[c.field].excludeInMyLibrary)))
+					.filter(c => !(c.field in columnProperties && columnProperties[c.field].isUnderMoreColumns) || c.isVisible)
 					.map(column => (
 						<DropdownItem
 							data-field={ column.field }
@@ -93,6 +120,24 @@ const ColumnSelector = props => {
 						</DropdownItem>
 					))
 				}
+				{ !isMoreColumnsVisible && <DropdownItem divider /> }
+					{ isMoreColumnsVisible ?
+						columns
+						.filter(c => (c.field in columnProperties && columnProperties[c.field].isUnderMoreColumns) && !c.isVisible)
+						.map(column => (
+							<DropdownItem
+							data-field={ column.field }
+							key={ column.field }
+							onClick={ handleSelect }
+						>
+							<span className="tick">{ column.isVisible ? "✓" : "" }</span>
+								{ column.field in columnProperties ? columnProperties[column.field].name : column.field }
+							</DropdownItem>
+						)) :
+						<DropdownItem data-no-toggle onClick={ handleToggleMore }>
+							More
+						</DropdownItem>
+					}
 				<DropdownItem divider />
 				<DropdownItem onClick={ handleRestoreClick }>
 					Restore Column Order

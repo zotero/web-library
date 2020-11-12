@@ -68,6 +68,36 @@ export const preferences = {
 			minFraction: 0.05,
 		},
 		{
+			field: 'journalAbbreviation',
+			fraction: .2,
+			isVisible: false,
+			minFraction: .05
+		},
+		{
+			field: 'language',
+			fraction: .2,
+			isVisible: false,
+			minFraction: .05
+		},
+		{
+			field: 'libraryCatalog',
+			fraction: .2,
+			isVisible: false,
+			minFraction: .05,
+		},
+		{
+			field: 'callNumber',
+			fraction: .2,
+			isVisible: false,
+			minFraction: .05,
+		},
+		{
+			field: 'rights',
+			fraction: .2,
+			isVisible: false,
+			minFraction: .05,
+		},
+		{
 			field: 'dateAdded',
 			fraction: 0.1,
 			isVisible: false,

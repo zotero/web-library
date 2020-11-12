@@ -48,4 +48,29 @@ export default Object.freeze({
 		name: 'Year',
 		sortKey: 'date',
 	},
+	callNumber: {
+		name: 'Call Number',
+		sortKey: 'callNumber',
+		isUnderMoreColumns: true,
+	},
+	journalAbbreviation: {
+		name: 'Journal Abbreviation',
+		sortKey: 'journalAbbreviation',
+		isUnderMoreColumns: true,
+	},
+	language: {
+		name: 'Language',
+		sortKey: 'language',
+		isUnderMoreColumns: true,
+	},
+	libraryCatalog: {
+		name: 'Library Catalog',
+		sortKey: 'libraryCatalog',
+		isUnderMoreColumns: true,
+	},
+	rights: {
+		name: 'Rights',
+		sortKey: 'rights',
+		isUnderMoreColumns: true,
+	}
 });

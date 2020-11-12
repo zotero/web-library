@@ -36,7 +36,8 @@ const getAttachmentIcon = ({ linkMode, contentType }) => {
 }
 
 const getDerivedData = (item, itemTypes, tagColors) => {
-	const { itemType, dateAdded, dateModified, extra } = item;
+	const { itemType, dateAdded, dateModified, extra, journalAbbreviation, language, libraryCatalog,
+	callNumber, rights } = item;
 	const title = getItemTitle(item);
 	const creator = item[Symbol.for('meta')] && item[Symbol.for('meta')].creatorSummary ?
 		item[Symbol.for('meta')].creatorSummary :
@@ -81,6 +82,11 @@ const getDerivedData = (item, itemTypes, tagColors) => {
 		publisher: getBaseMappedValue(item, 'publisher'),
 		title,
 		year,
+		journalAbbreviation,
+		language,
+		libraryCatalog,
+		callNumber,
+		rights,
 	}
 };
 

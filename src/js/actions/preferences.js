@@ -1,43 +1,29 @@
 import { JSONTryParse } from '../utils';
-import { pick } from '../common/immutable';
 import { PREFERENCES_LOAD, PREFERENCE_CHANGE } from '../constants/actions';
 import { preferences as defaultPreferences, version } from '../constants/defaults';
 
-
-// Prior to 0.11.13 we stored sorting order in uppercase, afterwards it's inline with Zotero API
-const fixUpperCaseSort = oldPreferences => ({
-	...oldPreferences,
-	columns: oldPreferences.columns.map(column => {
-		if('sort' in column) {
-			return { ...column, sort: column.sort.toLowerCase() }
-		} else {
-			return column;
-		}
-	})
-});
-
-// Add missing "Added By" column, introduced in 0.12.0
-const addAddedByColumn = oldPreferences => ({
-	...oldPreferences,
-	columns: [
-		...oldPreferences.columns.slice(0, 9),
-		defaultPreferences.columns[10],
-		...oldPreferences.columns.slice(9)
-	]
-});
+const getRestoredColumns = (userColumns, defaultColumns) => defaultColumns.map(defaultColumn => ({
+	...defaultColumn,
+	fraction: (userColumns.find(uc => uc.field === defaultColumn.field) || defaultColumn).fraction,
+	isVisible: (userColumns.find(uc => uc.field === defaultColumn.field) || defaultColumn).isVisible,
+}));
 
 const preferencesLoad = () => {
 	var userPreferences = JSONTryParse(localStorage.getItem('zotero-web-library-prefs'));
 	var preferences;
 	try {
 		if(userPreferences && userPreferences.version !== version) {
-			if(
-				!('version' in userPreferences) && // we didn't store version in localStorage prior to 0.12.0
-				userPreferences.columns.length === 11 && // ensure that columns are as expected
-				typeof(userPreferences.columns.find(c => c.field === 'createdByUser')) === 'undefined'
-			)  {
+			if(!('version' in userPreferences)) {
+				throw new Error('Detected pre 1.0 preferences, resetting');
+			}
+			const [major, minor, patchRelease] = userPreferences.version.split('.');
+			const [patch, release] = patchRelease.split('-'); // eslint-disable-line no-unused-vars
+
+			// before 1.0.9 we did not have 'more' columns
+			if(parseInt(major) === 1 && parseInt(minor) === 0 && parseInt(patch) < 9) {
 				userPreferences = {
-					...addAddedByColumn(fixUpperCaseSort(userPreferences)),
+					...userPreferences,
+					columns: getRestoredColumns(userPreferences.columns, defaultPreferences.columns),
 					version
 				}
 			}
@@ -81,12 +67,7 @@ const preferenceChange = (name, value) => {
 const restoreColumnsOrder = () => {
 	return async (dispatch, getState) => {
 		const userColumns = getState().preferences.columns;
-		const columns = defaultPreferences.columns.map(defaultColumn => ({
-			...defaultColumn,
-			fraction: (userColumns.find(uc => uc.field === defaultColumn.field) || defaultColumn).fraction,
-			isVisible: (userColumns.find(uc => uc.field === defaultColumn.field) || defaultColumn).isVisible,
-		}));
-
+		const columns = getRestoredColumns(userColumns, defaultPreferences.columns);
 		await dispatch(preferenceChange('columns', columns));
 	}
 }
