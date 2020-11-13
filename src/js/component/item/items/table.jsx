@@ -111,12 +111,25 @@ const Table = () => {
 		.filter(c => !isMyLibrary || (isMyLibrary && !(c.field in columnProperties && columnProperties[c.field].excludeInMyLibrary)));
 
 		var sumOfFractions = columns.reduce((aggr, c) => aggr + c.fraction, 0);
-		if(sumOfFractions > 1) {
-			const reduceBy = (sumOfFractions - 1) / columns.length;
-			columns.forEach(c => c.fraction -= reduceBy);
-		} else if (sumOfFractions < 1) {
-			const increaseBy = (1 - sumOfFractions) / columns.length;
-			columns.forEach(c => c.fraction += increaseBy);
+		if(sumOfFractions != 1) {
+			let difference = sumOfFractions - 1; // overflow if positive, underflow if negative
+			let adjustEachBy = difference / columns.length;
+			let counter = 1;
+			do {
+				for(var i = 0; i < columns.length; i++) {
+					const available = columns[i].fraction - columns[i].minFraction;
+					// avoid dealing with very small numbers
+					if((Math.abs(difference) < 0.001 || counter > 10) && available > difference) {
+						columns[i].fraction -= difference;
+						difference = 0;
+						break;
+					}
+					const reduceThisBy = Math.min(available, adjustEachBy);
+					difference -= reduceThisBy;
+					columns[i].fraction -= reduceThisBy;
+				}
+				adjustEachBy = difference / columns.length;
+			} while(difference !== 0);
 		}
 		return columns;
 	}, [columnsData, isMyLibrary]);

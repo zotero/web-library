@@ -23,6 +23,7 @@ export const preferences = {
 	citationStyle: coreCitationStyles.find(cs => cs.isDefault).name,
 	citationLocale: 'en-US',
 	installedCitationStyles: [],
+	//@NOTE: sum of all minFractions must be < 1.0
 	columns: [
 		{
 			field: 'title',
