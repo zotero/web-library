@@ -1,235 +1,224 @@
-/* eslint-disable react/no-deprecated */
-'use strict';
-
-import React from 'react';
 import cx from 'classnames';
-import PropTypes from 'prop-types';
 import deepEqual from 'deep-equal';
-import { splice } from '../../utils';
-import { removeKeys } from '../../common/immutable';
-import CreatorField from './creator-field';
+import PropTypes from 'prop-types';
+import React, { memo, useCallback, useEffect, useRef, useState } from 'react';
+import { useSelector } from 'react-redux';
+
 import Button from '../ui/button';
+import CreatorField from './creator-field';
 import Icon from '../ui/icon';
 import { enumerateObjects } from '../../utils';
-import withDevice from '../../enhancers/with-device';
-import withEditMode from '../../enhancers/with-edit-mode';
+import { removeKeys } from '../../common/immutable';
+import { splice } from '../../utils';
+import { useEditMode, usePrevious } from '../../hooks';
 
-class Creators extends React.PureComponent {
-	constructor(props) {
-		super(props);
-		this.state = {
-			isCreatorTypeEditing: false,
-			creators: enumerateObjects(
-				props.value.length ? props.value : [this.newCreator]
-			)
+const Creators = props => {
+	const { creatorTypes, onSave, name, value, isForm, onDragStatusChange, isReadOnly } = props;
+
+	const getNewCreator = useCallback(() => {
+		return {
+			creatorType: creatorTypes[0].value,
+			firstName: '',
+			lastName: '',
+			[Symbol.for('isVirtual')]: true
 		};
-		this.fields = {};
-		this.openOnNextRender = null;
-	}
+	}, [creatorTypes]);
 
-	UNSAFE_componentWillReceiveProps(props) {
-		let creators = this.state.creators;
-		if(!deepEqual(this.props.value, props.value)) {
-			creators = props.value.length ? props.value : [this.newCreator];
-		}
-		if(!deepEqual(this.props.creatorTypes, props.creatorTypes)) {
-			const validCreatorTypes = props.creatorTypes.map(ct => ct.value);
-			creators = creators.map(creator => ({
-					...creator,
-					creatorType: validCreatorTypes.includes(creator.creatorType) ? creator.creatorType : validCreatorTypes[0]
-				}));
-		}
-		this.setState({ creators: enumerateObjects(creators) });
-	}
+	const [creators, setCreators] = useState(
+		enumerateObjects(value.length ? value : [getNewCreator()])
+	);
 
-	componentDidUpdate(props, state) {
-		if(this.state.creators.length > state.creators.length) {
-			let virtualEntryIndex = this.state.creators.findIndex(c => c[Symbol.for('isVirtual')]);
-			if(virtualEntryIndex > -1) {
-				this.fields[virtualEntryIndex].focus();
-			}
-		}
-	}
+	const openOnNextRender = useRef(null);
+	const fields = useRef({});
+	const prevValue = usePrevious(value);
+	const prevCreators = usePrevious(creators);
+	const prevCreatorTypes = usePrevious(creatorTypes);
+	const shouldUseEditMode = useSelector(state => state.device.shouldUseEditMode);
+	const shouldUseModalCreatorField = useSelector(state => state.device.shouldUseModalCreatorField);
+	const [isEditing, ] = useEditMode();
 
-	handleSaveCreators(creators) {
-		this.setState({ creators: enumerateObjects(creators) });
+	const getHasVirtual = useCallback(() => {
+		return !!creators.find(creator => creator[Symbol.for('isVirtual')]);
+	}, [creators]);
+
+	const handleSaveCreators = useCallback((creators) => {
 		const newValue = creators
 			.filter(creator => !creator[Symbol.for('isVirtual')]
 				&& (creator.lastName || creator.firstName || creator.name)
 			).map(creator => removeKeys(creator, 'id'));
-		const hasChanged = !deepEqual(newValue, this.props.value);
-		this.props.onSave(newValue, hasChanged);
-	}
 
-	handleValueChanged(index, key, value) {
-		const creators = [...this.state.creators];
-		creators[index] = {
-			...creators[index],
-			[key]: value
-		};
-		if((creators[index].lastName || creators[index].firstName || creators[index].name)
-			&& creators[index][Symbol.for('isVirtual')]) {
-			delete creators[index][Symbol.for('isVirtual')];
+		const hasChanged = !deepEqual(newValue, value);
+		setCreators(enumerateObjects(creators));
+		onSave(newValue, hasChanged);
+	}, [onSave, value]);
+
+	const handleValueChanged = useCallback((index, key, value) => {
+		const newCreators = [...creators];
+		newCreators[index] = {...creators[index], [key]: value };
+		if((newCreators[index].lastName || newCreators[index].firstName || newCreators[index].name)
+			&& newCreators[index][Symbol.for('isVirtual')]) {
+			delete newCreators[index][Symbol.for('isVirtual')];
 		}
-		this.handleSaveCreators(creators);
-	}
+		handleSaveCreators(newCreators);
+	}, [creators, handleSaveCreators]);
 
-	handleCreatorAdd({ id, creatorType }) {
-		let insertAfterIndex = this.state.creators.findIndex(c => c.id === id);
-		let newCreator = {
+	const handleCreatorAdd = useCallback(({ id, creatorType }) => {
+		const insertAfterIndex = creators.findIndex(c => c.id === id);
+		const newCreator = {
 			creatorType,
 			firstName: '',
 			lastName: '',
 			[Symbol.for('isVirtual')]: true
 		};
 
-		this.openOnNextRender = insertAfterIndex + 1;
-
-		this.setState({
-			creators: enumerateObjects([
-				...this.state.creators.slice(0, insertAfterIndex + 1),
+		openOnNextRender.current = insertAfterIndex + 1;
+		setCreators(
+			enumerateObjects([
+				...creators.slice(0, insertAfterIndex + 1),
 				newCreator,
-				...this.state.creators.slice(insertAfterIndex + 1, this.state.creators.length),
+				...creators.slice(insertAfterIndex + 1, creators.length),
 			])
-		});
-	}
+		);
+	}, [creators]);
 
-	handleCreatorRemove(index) {
-		if(this.state.creators.length > 1) {
-			this.handleSaveCreators(splice(this.state.creators, index, 1));
+	const handleCreatorAppend = useCallback(() => {
+		const { id, creatorType } = creators[creators.length - 1];
+		handleCreatorAdd({ id, creatorType });
+	}, [creators, handleCreatorAdd]);
+
+	const handleCreatorRemove = useCallback(index => {
+		if(creators.length > 1) {
+			handleSaveCreators(splice(creators, index, 1));
 		} else {
-			this.handleSaveCreators([this.newCreator]);
+			handleSaveCreators([getNewCreator()]);
 		}
-	}
+	}, [creators, getNewCreator, handleSaveCreators]);
 
-	handleCreatorTypeSwitch(index) {
-		const creators = [...this.state.creators];
+	const handleCreatorTypeSwitch = useCallback(index => {
+		const newCreators = [...creators];
 
-		if('name' in creators[index]) {
-			let creator = creators[index].name.split(' ');
-			creators[index] = {
+		if('name' in newCreators[index]) {
+			let creator = newCreators[index].name.split(' ');
+			newCreators[index] = {
 				lastName: creator.length > 0 ? creator[creator.length - 1] : '',
 				firstName: creator.slice(0, creator.length - 1).join(' '),
-				creatorType: creators[index].creatorType,
+				creatorType: newCreators[index].creatorType,
 				[Symbol.for('isVirtual')]: creators[index][Symbol.for('isVirtual')]
 			};
-		} else if('lastName' in creators[index]) {
-			creators[index] = {
-				name: `${creators[index].firstName} ${creators[index].lastName}`.trim(),
-				creatorType: creators[index].creatorType,
-				[Symbol.for('isVirtual')]: creators[index][Symbol.for('isVirtual')]
+		} else if('lastName' in newCreators[index]) {
+			newCreators[index] = {
+				name: `${newCreators[index].firstName} ${newCreators[index].lastName}`.trim(),
+				creatorType: newCreators[index].creatorType,
+				[Symbol.for('isVirtual')]: newCreators[index][Symbol.for('isVirtual')]
 			};
 		}
 
-		this.handleSaveCreators(creators);
-	}
+		handleSaveCreators(newCreators);
+	}, [creators, handleSaveCreators]);
 
-	handleReorder(fromIndex, toIndex, commit = false) {
-		const creators = [ ...this.state.creators ];
-		creators.splice(toIndex, 0, creators.splice(fromIndex, 1)[0]);
-		this.setState({ creators });
+	const handleReorder = useCallback((fromIndex, toIndex, commit = false) => {
+		const newCreators = [ ...creators ];
+		newCreators.splice(toIndex, 0, newCreators.splice(fromIndex, 1)[0]);
+		setCreators(newCreators);
 		if(commit) {
-			this.handleSaveCreators(creators);
+			handleSaveCreators(newCreators);
 		}
+	}, [creators, handleSaveCreators]);
+
+	const handleReorderCommit = useCallback(() => {
+		handleSaveCreators(creators);
+	}, [creators, handleSaveCreators]);
+
+	const handleReorderCancel = useCallback(() => {
+		setCreators(enumerateObjects(value));
+	}, [value]);
+
+	useEffect(() => {
+		if(!deepEqual(value, prevValue)) {
+			setCreators(enumerateObjects(value.length ? value : [getNewCreator()]))
+		}
+	}, [getNewCreator, value, prevValue]);
+
+	useEffect(() => {
+		if(!deepEqual(creatorTypes, prevCreatorTypes)) {
+			const validCreatorTypes = creatorTypes.map(ct => ct.value);
+			setCreators(enumerateObjects(creators.map(creator => ({
+				...creator,
+				creatorType: validCreatorTypes.includes(creator.creatorType) ? creator.creatorType : validCreatorTypes[0]
+			}))));
+		}
+	}, [creators, creatorTypes, prevCreatorTypes]);
+
+	useEffect(() => {
+		if(creators && prevCreators && creators.length > prevCreators.length) {
+			const virtualEntryIndex = creators.findIndex(c => c[Symbol.for('isVirtual')]);
+			if(virtualEntryIndex > -1) {
+				fields.current[virtualEntryIndex].focus();
+			}
+		}
+	}, [creators, prevCreators]);
+
+
+	// reset openOnNextRender on every render
+	var openOnThisRender = null;
+	if(openOnNextRender.current) {
+		openOnThisRender = openOnNextRender.current;
+		openOnNextRender.current = 	null;
 	}
 
-	handleReorderCommit() {
-		this.handleSaveCreators(this.state.creators);
-	}
-
-	handleReorderCancel() {
-		this.setState({ creators: enumerateObjects(this.props.value) });
-	}
-
-	get newCreator() {
-		return {
-			creatorType: this.props.creatorTypes[0].value,
-			firstName: '',
-			lastName: '',
-			[Symbol.for('isVirtual')]: true
-		};
-	}
-
-	get hasVirtual() {
-		return !!this.state.creators.find(creator => creator[Symbol.for('isVirtual')]);
-	}
-
-	renderField(creator, index) {
-		const isVirtual = creator[Symbol.for('isVirtual')] || false;
-		const props = {
-			...this.props,
-			creator,
-			creatorTypes: this.props.creatorTypes,
-			index,
-			creatorsCount: this.state.creators.length,
-			isCreateAllowed: !this.hasVirtual,
-			isDeleteAllowed: !isVirtual || this.state.creators.length > 1,
-			isForm: this.props.isForm,
-			isVirtual,
-			isSingle: this.state.creators.length === 1,
-			onChange: this.handleValueChanged.bind(this),
-			onCreatorAdd: this.handleCreatorAdd.bind(this),
-			onCreatorRemove: this.handleCreatorRemove.bind(this),
-			onCreatorTypeSwitch: this.handleCreatorTypeSwitch.bind(this),
-			onDragStatusChange: this.props.onDragStatusChange,
-			onReorder: this.handleReorder.bind(this),
-			onReorderCancel: this.handleReorderCancel.bind(this),
-			onReorderCommit: this.handleReorderCommit.bind(this),
-			isReadOnly: this.props.isReadOnly,
-			isEditing: this.props.isEditing,
-			className: cx({
-				'touch-separated': this.hasVirtual && this.props.isEditing &&
-					index === this.state.creators.length - 1
-			}),
-			ref: ref => this.fields[index] = ref,
-			shouldPreOpenModal: this.openOnNextRender === index,
-		};
-
-
-		return <CreatorField key={ creator.id } { ...props } />;
-	}
-
-	render() {
-		const { device, isEditing } = this.props;
-		const { creators } = this.state;
-		const creatorsFields = creators.map(this.renderField.bind(this));
-
-		// reset openOnNextRender
-		this.openOnNextRender = null;
-
-		return (
-			<React.Fragment>
-				{ creatorsFields }
-				{ device.shouldUseEditMode && isEditing && !this.hasVirtual && (
-					<li className="metadata touch-separated has-btn-icon">
-						<Button
-							icon
-							className="btn-plus"
-							onClick={ this.handleCreatorAdd.bind(
-								this, creators[creators.length - 1])
-							}
-						>
-							<Icon type={ '24/plus-circle-strong' } width="24" height="24" />
-							Add Creator …
-						</Button>
-					</li>
-				)}
-			</React.Fragment>
-		);
-	}
-	static defaultProps = {
-		value: []
-	};
-
-	static propTypes = {
-		creatorTypes: PropTypes.array.isRequired,
-		isForm: PropTypes.bool,
-		name: PropTypes.string,
-		onDragStatusChange: PropTypes.func,
-		onSave: PropTypes.func,
-		isReadOnly: PropTypes.bool,
-		value: PropTypes.array,
-	};
+	return (
+		<React.Fragment>
+			{ creators.map((creator, index) => <CreatorField
+				className={ cx({ 'touch-separated': getHasVirtual() && isEditing && index === creators.length - 1 }) }
+				creator={ creator }
+				creatorsCount={ creators.length }
+				creatorTypes={ creatorTypes }
+				device={ { shouldUseEditMode, shouldUseModalCreatorField } } //@TODO: convert to use selector
+				index={ index }
+				isCreateAllowed={ !getHasVirtual() }
+				isDeleteAllowed={ !getHasVirtual() || creators.length > 1 }
+				isEditing={ isEditing }
+				isForm={ isForm }
+				isReadOnly={ isReadOnly }
+				isSingle={ creators.length === 1 }
+				isVirtual={ creator[Symbol.for('isVirtual')] || false }
+				key={ creator.id }
+				name={ name }
+				onChange={ handleValueChanged }
+				onCreatorAdd={ handleCreatorAdd }
+				onCreatorRemove={ handleCreatorRemove }
+				onCreatorTypeSwitch={ handleCreatorTypeSwitch }
+				onDragStatusChange={ onDragStatusChange }
+				onReorder={ handleReorder }
+				onReorderCancel={ handleReorderCancel }
+				onReorderCommit={ handleReorderCommit }
+				ref={ ref => fields.current[index] = ref }
+				shouldPreOpenModal={ openOnThisRender === index }
+			/> )}
+			{ shouldUseEditMode && isEditing && !getHasVirtual() && (
+				<li className="metadata touch-separated has-btn-icon">
+					<Button
+						icon
+						className="btn-plus"
+						onClick={ handleCreatorAppend }
+					>
+						<Icon type={ '24/plus-circle-strong' } width="24" height="24" />
+						Add Creator …
+					</Button>
+				</li>
+			) }
+		</React.Fragment>
+	);
 }
 
-export default withDevice(withEditMode(Creators));
+Creators.propTypes = {
+	creatorTypes: PropTypes.array.isRequired,
+	isForm: PropTypes.bool,
+	isReadOnly: PropTypes.bool,
+	name: PropTypes.string,
+	onDragStatusChange: PropTypes.func,
+	onSave: PropTypes.func,
+	value: PropTypes.array,
+}
+
+export default memo(Creators);
