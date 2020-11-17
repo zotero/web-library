@@ -36,6 +36,11 @@ const dndSpec = {
 	},
 	canDrop({ dndTarget = {} }, monitor) {
 		const itemType = monitor.getItemType();
+
+		if(!monitor.isOver({ shallow: true })) {
+			return false;
+		}
+
 		if(itemType === ITEM) {
 			const { libraryKey: sourceLibraryKey } = monitor.getItem();
 			if(dndTarget.targetType === 'library' && dndTarget.libraryKey !== sourceLibraryKey) {
@@ -72,12 +77,13 @@ const dndSpec = {
 			}
 			return true;
 		}
+		return false;
 	}
 }
 
 const dndCollect = (connect, monitor) => ({
 	connectDropTarget: connect.dropTarget(),
-	isOver: monitor.isOver({ shallow: true }),
+	// isOver: monitor.isOver({ shallow: true }),
 	canDrop: monitor.canDrop(),
 });
 
@@ -178,7 +184,7 @@ class Node extends React.PureComponent {
 
 	render() {
 		const { canDrop, children, className, connectDragSource, connectDropTarget, dndTarget,
-			showTwisty, isOpen, isOver, onDrag, onDrop, subtree, } = this.props;
+			showTwisty, isOpen, onDrag, onDrop, subtree, } = this.props;
 		const { isFocused } = this.state;
 
 		const twistyButton = (
@@ -192,15 +198,13 @@ class Node extends React.PureComponent {
 			</button>
 		);
 
-		const isActive = canDrop && isOver;
-
 		let node = (
 			<li
 				className={ cx(className, { focus: isFocused }) }
 				>
 				<div
 					{ ...pick(this.props, propName => propName.startsWith('data-') || propName.startsWith('aria-') || propName === 'tabIndex') }
-					className={ cx('item-container', { 'dnd-target': isActive }) }
+					className={ cx('item-container', { 'dnd-target': canDrop }) }
 					role="treeitem button"
 					aria-expanded={ (subtree || showTwisty) ? isOpen : null }
 					onMouseDown={ this.handleMouseDown }

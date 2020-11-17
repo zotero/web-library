@@ -18,42 +18,42 @@ const dndCollect = monitor => ({
 });
 
 const getNextToCursorStyles = ({ clientOffset }) => {
-		if (!clientOffset) {
-			return {
-				display: 'none'
-			};
-		}
-
-		const x = Math.round(clientOffset.x);
-		const y = Math.round(clientOffset.y);
-
-		const transform = `translate(${x}px, ${y}px)`;
+	if (!clientOffset) {
 		return {
-			transform: transform,
-			WebkitTransform: transform
+			display: 'none'
 		};
+	}
+
+	const x = Math.round(clientOffset.x);
+	const y = Math.round(clientOffset.y);
+
+	const transform = `translate(${x}px, ${y}px)`;
+	return {
+		transform: transform,
+		WebkitTransform: transform
+	};
 }
 
 const getRelativeToOriginalStyles = ({ differenceFromInitialOffset }, sourceRect) => {
-		if (!differenceFromInitialOffset) {
-			return {
-				display: 'none'
-			};
-		}
-
-		const x = Math.round(sourceRect.x + differenceFromInitialOffset.x);
-		const y = Math.round(sourceRect.y + differenceFromInitialOffset.y);
-
-		const transform = `translate(${x}px, ${y}px)`;
+	if (!differenceFromInitialOffset) {
 		return {
-			width: sourceRect.width,
-			height: sourceRect.height,
-			transform: transform,
-			WebkitTransform: transform
+			display: 'none'
 		};
+	}
+
+	const x = Math.round(sourceRect.x + differenceFromInitialOffset.x);
+	const y = Math.round(sourceRect.y + differenceFromInitialOffset.y);
+
+	const transform = `translate(${x}px, ${y}px)`;
+	return {
+		width: sourceRect.width,
+		height: sourceRect.height,
+		transform: transform,
+		WebkitTransform: transform
+	};
 }
 
-const CreatorDragPreview = ({ creator }) => {
+const CreatorDragPreview = memo(({ creator }) => {
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
 	return isTouchOrSmall ? (
 		<div className="metadata creators creator-drag-preview">
@@ -63,13 +63,15 @@ const CreatorDragPreview = ({ creator }) => {
 			</div>
 		</div>
 	) : null; // on desktops we use html5 backend
-};
+});
+
+CreatorDragPreview.displayName = 'CreatorDragPreview';
 
 CreatorDragPreview.propTypes = {
 	creator: PropTypes.object,
 };
 
-const SingleItemDragPreview = ({ itemData }) => {
+const SingleItemDragPreview = memo(({ itemData }) => {
 	var dvp = window.devicePixelRatio >= 2 ? 2 : 1;
 
 	return (
@@ -83,13 +85,17 @@ const SingleItemDragPreview = ({ itemData }) => {
 			<span>{ itemData.title }</span>
 		</div>
 	);
-};
+});
+
+SingleItemDragPreview.displayName = 'SingleItemDragPreview';
+
+SingleItemDragPreview.whyDidYouRender = true;
 
 SingleItemDragPreview.propTypes = {
 	itemData: PropTypes.object,
 };
 
-const MultiItemsDragPreview = ({ selectedItemKeysLength }) => {
+const MultiItemsDragPreview = memo(({ selectedItemKeysLength }) => {
 	var dvp = window.devicePixelRatio >= 2 ? 2 : 1;
 
 	return (
@@ -103,7 +109,9 @@ const MultiItemsDragPreview = ({ selectedItemKeysLength }) => {
 			<span>{ selectedItemKeysLength } Items</span>
 		</div>
 	);
-};
+});
+
+MultiItemsDragPreview.displayName = 'MultiItemsDragPreview';
 
 MultiItemsDragPreview.propTypes = {
 	selectedItemKeysLength: PropTypes.number
@@ -122,6 +130,7 @@ const CustomDragLayer = () => {
 		break;
 	}
 
+	// @NOTE: re-renders constantly during drag operation due to offsets changing
 	return isDragging ? (
 		<div className="drag-layer">
 			<div style={ style }>
