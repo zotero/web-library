@@ -1,10 +1,10 @@
-'use strict';
+import PropTypes from 'prop-types';
+import React, { memo } from 'react';
+import { useSelector } from 'react-redux';
 
-import React from 'react';
 import Icon from './ui/icon';
-import { DragLayer } from 'react-dnd';
 import { ITEM, CREATOR } from '../constants/dnd';
-import withDevice from '../enhancers/with-device';
+import { useDragLayer } from 'react-dnd';
 
 const dndCollect = monitor => ({
 	clientOffset: monitor.getClientOffset(),
@@ -53,85 +53,88 @@ const getRelativeToOriginalStyles = ({ differenceFromInitialOffset }, sourceRect
 		};
 }
 
-class CustomDragLayer extends React.PureComponent {
-	renderItem(type, itemProps) {
-		const { device } = this.props;
-
-		switch (type) {
-			case CREATOR:
-				var { raw } = itemProps;
-				if(device.isTouchOrSmall) {
-					return (
-						<div className="metadata creators creator-drag-preview">
-							<div className="creator-type truncate">{ raw.creatorType }</div>
-							<div className="name truncate">
-								{ 'name' in raw ? raw.name : raw.lastName + ', ' + raw.firstName }
-							</div>
-						</div>
-					);
-				} else {
-					// on desktops we use html5 backend
-					return null;
-				}
-			case ITEM:
-				// for items dragging we always use custom preview
-				var { selectedItemKeysLength, itemData } = itemProps;
-				var { iconName, title } = itemData;
-				var dvp = window.devicePixelRatio >= 2 ? 2 : 1;
-
-				if(selectedItemKeysLength > 1) {
-					return (
-						<div className="items-drag-indicator multiple">
-							<Icon
-								type={`16/item-types/light/${dvp}x/document`}
-								symbol="document-white"
-								width="16"
-								height="16"
-							/>
-							<span>{ selectedItemKeysLength } Items</span>
-						</div>
-					);
-				} else {
-					return (
-						<div className="items-drag-indicator single">
-							<Icon
-								type={ `16/item-types/light/${dvp}x/${iconName}` }
-								symbol={ `${iconName}-white` }
-								width="16"
-								height="16"
-							/>
-							<span>{ title }</span>
-						</div>
-					);
-				}
-			}
-		}
-
-	render() {
-		const { item, itemType, isDragging } = this.props;
-		var style;
-
-		if (!isDragging) {
-			return null;
-		}
-
-		switch(itemType) {
-			case CREATOR:
-				style = getRelativeToOriginalStyles(this.props, item.sourceRect);
-			break
-			case ITEM:
-				style = getNextToCursorStyles(this.props);
-			break;
-		}
-
-		return (
-			<div className="drag-layer">
-				<div style={ style }>
-					{ this.renderItem(itemType, item) }
-				</div>
+const CreatorDragPreview = ({ creator }) => {
+	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
+	return isTouchOrSmall ? (
+		<div className="metadata creators creator-drag-preview">
+			<div className="creator-type truncate">{ creator.creatorType }</div>
+			<div className="name truncate">
+				{ 'name' in creator ? creator.name : creator.lastName + ', ' + creator.firstName }
 			</div>
-		);
+		</div>
+	) : null; // on desktops we use html5 backend
+};
+
+CreatorDragPreview.propTypes = {
+	creator: PropTypes.object,
+};
+
+const SingleItemDragPreview = ({ itemData }) => {
+	var dvp = window.devicePixelRatio >= 2 ? 2 : 1;
+
+	return (
+		<div className="items-drag-indicator single">
+			<Icon
+				type={ `16/item-types/light/${dvp}x/${itemData.iconName}` }
+				symbol={ `${itemData.iconName}-white` }
+				width="16"
+				height="16"
+			/>
+			<span>{ itemData.title }</span>
+		</div>
+	);
+};
+
+SingleItemDragPreview.propTypes = {
+	itemData: PropTypes.object,
+};
+
+const MultiItemsDragPreview = ({ selectedItemKeysLength }) => {
+	var dvp = window.devicePixelRatio >= 2 ? 2 : 1;
+
+	return (
+		<div className="items-drag-indicator multiple">
+			<Icon
+				type={`16/item-types/light/${dvp}x/document`}
+				symbol="document-white"
+				width="16"
+				height="16"
+			/>
+			<span>{ selectedItemKeysLength } Items</span>
+		</div>
+	);
+};
+
+MultiItemsDragPreview.propTypes = {
+	selectedItemKeysLength: PropTypes.number
+};
+
+const CustomDragLayer = () => {
+	const { isDragging, itemType, item: draggedObject, ...offsets } = useDragLayer(dndCollect);
+	var style;
+
+	switch(itemType) {
+		case CREATOR:
+			style = getRelativeToOriginalStyles(offsets, draggedObject.sourceRect);
+		break
+		case ITEM:
+			style = getNextToCursorStyles(offsets);
+		break;
 	}
+
+	return isDragging ? (
+		<div className="drag-layer">
+			<div style={ style }>
+				{ itemType === CREATOR && <CreatorDragPreview creator={ draggedObject.raw } />  }
+				{ itemType === ITEM && draggedObject.selectedItemKeysLength === 1 &&
+					<SingleItemDragPreview itemData={ draggedObject.itemData } />
+				}
+				{ itemType === ITEM && draggedObject.selectedItemKeysLength > 1 &&
+					<MultiItemsDragPreview selectedItemKeysLength={ draggedObject.selectedItemKeysLength } />
+				}
+			</div>
+		</div>
+	) : null;
 }
 
-export default withDevice(DragLayer(dndCollect)(CustomDragLayer));
+export default memo(CustomDragLayer);
