@@ -89,8 +89,6 @@ const SingleItemDragPreview = memo(({ itemData }) => {
 
 SingleItemDragPreview.displayName = 'SingleItemDragPreview';
 
-SingleItemDragPreview.whyDidYouRender = true;
-
 SingleItemDragPreview.propTypes = {
 	itemData: PropTypes.object,
 };
