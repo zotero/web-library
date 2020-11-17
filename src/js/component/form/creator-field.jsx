@@ -143,6 +143,7 @@ class CreatorField extends React.PureComponent {
 	handleCreatorRemove(ev) {
 		this.props.onCreatorRemove(this.props.index);
 		ev && ev.stopPropagation();
+		this.setState({ isModalVisible: false })
 	}
 
 	handleCreatorAdd() {
