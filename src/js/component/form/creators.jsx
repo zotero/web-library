@@ -34,7 +34,6 @@ const Creators = props => {
 	const prevCreators = usePrevious(creators);
 	const prevCreatorTypes = usePrevious(creatorTypes);
 	const shouldUseEditMode = useSelector(state => state.device.shouldUseEditMode);
-	const shouldUseModalCreatorField = useSelector(state => state.device.shouldUseModalCreatorField);
 	const [isEditing, ] = useEditMode();
 
 	const getHasVirtual = useCallback(() => {
@@ -173,11 +172,9 @@ const Creators = props => {
 				creator={ creator }
 				creatorsCount={ creators.length }
 				creatorTypes={ creatorTypes }
-				device={ { shouldUseEditMode, shouldUseModalCreatorField } } //@TODO: convert to use selector
 				index={ index }
 				isCreateAllowed={ !getHasVirtual() }
 				isDeleteAllowed={ !getHasVirtual() || creators.length > 1 }
-				isEditing={ isEditing }
 				isForm={ isForm }
 				isReadOnly={ isReadOnly }
 				isSingle={ creators.length === 1 }

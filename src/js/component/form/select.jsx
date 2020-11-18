@@ -6,11 +6,12 @@ import { useSelector } from 'react-redux';
 import Select from '../ui/select';
 import Spinner from '../ui/spinner';
 import { usePrevious } from '../../hooks';
+import { pick } from '../../common/immutable';
 
 const SelectInput = forwardRef((props, ref) => {
 	const { autoFocus, className, clearable, isDisabled, isReadOnly, isRequired, id, placeholder, tabIndex,
 		inputGroupClassName, isBusy, value: initialValue, options, onBlur, onCancel, onCommit, onChange,
-		onFocus } = props;
+		onFocus, ...rest } = props;
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
 	const [value, setValue]  = useState(initialValue);
 	const prevInitialValue = usePrevious(initialValue);
@@ -86,6 +87,7 @@ const SelectInput = forwardRef((props, ref) => {
 						onKeyDown={ handleKeyDown }
 						onChange={ handleNativeChange }
 						ref={ input }
+						{ ... pick(rest, p => p.startsWith('data-')) }
 					>
 						{ options.map(({ value, label }) => (
 							<option key={ value } value={ value }>{ label }</option>)
@@ -102,6 +104,7 @@ const SelectInput = forwardRef((props, ref) => {
 					onInputKeyDown={ handleKeyDown }
 					onChange={ handleChange }
 					ref={ input }
+					{ ... pick(rest, p => p.startsWith('data-')) }
 				/>
 			) }
 			{ isBusy ? <Spinner className="small" /> : null }

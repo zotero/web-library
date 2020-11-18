@@ -8,6 +8,7 @@ import Input from './form/input';
 import TextAreaInput from './form/text-area';
 import SelectInput from './form/select';
 import { noop } from '../utils';
+import { pick } from '../common/immutable';
 
 class Editable extends React.PureComponent {
 	get isActive() {
@@ -55,13 +56,14 @@ class Editable extends React.PureComponent {
 	}
 
 	render() {
-		const { isDisabled, tabIndex } = this.props;
+		const { isDisabled, tabIndex, ...rest } = this.props;
 		return (
 			<div
 				tabIndex={ isDisabled ? null : this.isActive ? null : tabIndex }
 				onClick={ event => this.props.onClick(event) }
 				onFocus={ event => this.props.onFocus(event) }
 				className={ cx(this.className, { 'disabled': isDisabled }) }
+				{ ...pick(rest, p => p.startsWith('data-')) }
 			>
 				{ this.isActive ? this.renderControls() : this.renderContent() }
 			</div>

@@ -2,9 +2,10 @@ import React, { forwardRef, memo, useCallback, useImperativeHandle, useRef, useS
 import PropTypes from 'prop-types';
 import cx from 'classnames';
 
-import { usePrevious } from '../../hooks';
-import { scrollIntoViewIfNeeded } from '../../utils';
 import { flattenChildren, mapChildren } from '../../common/react';
+import { pick } from '../../common/immutable';
+import { scrollIntoViewIfNeeded } from '../../utils';
+import { usePrevious } from '../../hooks';
 
 const SelectOption = memo(({ option, value, highlighted, onMouseDown }) => {
 	return (
@@ -39,7 +40,7 @@ SelectDivider.displayName = 'SelectDivider';
 
 const Select = forwardRef((props, ref) => {
 	const { children, className, disabled, id, onBlur, onChange, onFocus, options, readOnly, searchable,
-	tabIndex = 0, value } = props;
+	tabIndex = 0, value, ...rest } = props;
 
 	const valueLabel = (options.find(o => o.value === value) || options[0] || {}).label;
 	const valueIndex = options.findIndex(o => o.value === value);
@@ -245,6 +246,7 @@ const Select = forwardRef((props, ref) => {
 			tabIndex={ disabled ? null : tabIndex }
 			aria-disabled={ disabled }
 			aria-readonly={ readOnly }
+			{ ... pick(rest, p => p.startsWith('data-')) }
 		>
 			<div className="select-control">
 				<div className="select-multi-value-wrapper">
