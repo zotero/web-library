@@ -258,7 +258,7 @@ const mapStateToProps = state => {
 };
 
 const TouchHeaderWrapped = withDevice(withSelectMode(withEditMode(
-	connect(mapStateToProps, { toggleModal, triggerSearchMode, navigate })(TouchHeaderContainer)
+	connect(mapStateToProps, { toggleModal, triggerSearchMode, onNavigate: navigate })(TouchHeaderContainer)
 )));
 
 export default TouchHeaderWrapped;

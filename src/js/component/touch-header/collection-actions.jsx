@@ -1,75 +1,64 @@
-'use strict';
-
-import React from 'react';
 import PropTypes from 'prop-types';
-import { noop } from '../../utils';
-import Icon from '../../component/ui/icon';
+import React, { memo, useCallback, useState } from 'react';
+import { useDispatch } from 'react-redux';
+
 import Dropdown from 'reactstrap/lib/Dropdown';
-import DropdownToggle from 'reactstrap/lib/DropdownToggle';
-import DropdownMenu from 'reactstrap/lib/DropdownMenu';
 import DropdownItem from 'reactstrap/lib/DropdownItem';
+import DropdownMenu from 'reactstrap/lib/DropdownMenu';
+import DropdownToggle from 'reactstrap/lib/DropdownToggle';
+import Icon from '../../component/ui/icon';
 import { COLLECTION_ADD } from '../../constants/modals';
+import { toggleModal } from '../../actions';
 
-class CollectionActions extends React.PureComponent {
-	state = {
-		isOpen: false,
-	}
+const CollectionActions = props => {
+	const { collectionKey, collectionHasChildren } = props;
+	const dispatch = useDispatch();
+	const [isOpen, setIsOpen] = useState(false);
 
-	handleToggleDropdown = () => {
-		this.setState({ isOpen: !this.state.isOpen });
-	}
+	const handleToggleDropdown = useCallback(() => {
+		setIsOpen(!isOpen);
+	}, [isOpen]);
 
-	handleNewCollectionClick = () => {
-		const { toggleModal, collectionKey, collectionHasChildren } = this.props;
+	const handleNewCollectionClick = useCallback(() => {
 		const opts = {};
 
 		if(collectionKey && collectionHasChildren) {
 			opts['parentCollectionKey'] = collectionKey
 		}
 
-		toggleModal(COLLECTION_ADD, true, opts);
-	}
+		dispatch(toggleModal(COLLECTION_ADD, true, opts));
+	}, [dispatch, collectionHasChildren, collectionKey]);
 
-
-	render() {
-		const { collectionKey, collectionHasChildren } = this.props;
-		const { isOpen } = this.state;
-		return (
-			<Dropdown
-				isOpen={ isOpen }
-				toggle={ this.handleToggleDropdown }
-				className="new-item-selector"
+	return (
+		<Dropdown
+			isOpen={ isOpen }
+			toggle={ handleToggleDropdown }
+			className="new-item-selector"
+		>
+			<DropdownToggle
+				color={ null }
+				className="btn-link btn-icon dropdown-toggle"
 			>
-				<DropdownToggle
-					color={ null }
-					className="btn-link btn-icon dropdown-toggle"
-				>
-					<Icon
-						type="24/options"
-						symbol={ isOpen ? 'options-block' : 'options' }
-						width="24"
-						height="24"
-					/>
-				</DropdownToggle>
-				<DropdownMenu right>
-					<DropdownItem onClick={ this.handleNewCollectionClick }>
-						{ collectionKey && collectionHasChildren ?
-							"Add Subcollection" : "New Collection" }
-					</DropdownItem>
-				</DropdownMenu>
-			</Dropdown>
-		);
-	}
-
-	static defaultProps = {
-		toggleModal: noop
-	}
-
-	static propTypes = {
-		collectionHasChildren: PropTypes.bool,
-		collectionKey: PropTypes.string,
-		toggleModal: PropTypes.func.isRequired,
-	}
+				<Icon
+					type="24/options"
+					symbol={ isOpen ? 'options-block' : 'options' }
+					width="24"
+					height="24"
+				/>
+			</DropdownToggle>
+			<DropdownMenu right>
+				<DropdownItem onClick={ handleNewCollectionClick }>
+					{ collectionKey && collectionHasChildren ?
+						"Add Subcollection" : "New Collection" }
+				</DropdownItem>
+			</DropdownMenu>
+		</Dropdown>
+	);
 }
 
-export default CollectionActions;
+CollectionActions.propTypes = {
+	collectionHasChildren: PropTypes.bool,
+	collectionKey: PropTypes.string,
+}
+
+export default memo(CollectionActions);

@@ -91,7 +91,7 @@ const AddItemsToCollectionsModal = () => {
 									className="darker"
 									device={ device }
 									path={ touchHeaderPath }
-									navigate={ handleNavigation }
+									onNavigate={ handleNavigation }
 								/>
 							) : (
 								<React.Fragment>

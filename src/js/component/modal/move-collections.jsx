@@ -93,7 +93,7 @@ const MoveCollectionsModal = () => {
 								className="darker"
 								device={ device }
 								path={ touchHeaderPath }
-								navigate={ handleNavigation }
+								onNavigate={ handleNavigation }
 							/>
 							<Libraries
 								pickerIncludeLibraries={ true }

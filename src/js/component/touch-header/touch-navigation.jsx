@@ -1,13 +1,13 @@
-'use strict';
-
-import React from 'react';
 import PropTypes from 'prop-types';
+import React, { memo, useCallback, useEffect, useState } from 'react';
 import { CSSTransition } from 'react-transition-group';
-import { noop } from '../../utils';
+
 import Icon from '../ui/icon';
+import { noop } from '../../utils';
+import { usePrevious } from '../../hooks';
 
 const slots = ['next', 'current', 'previous', 'before-last'];
-const empty = {
+const EMPTY = {
 	key: null,
 	label: ''
 };
@@ -29,111 +29,106 @@ const isPathChanged = (oldPath, newPath) => {
 	return !pathUnchanged;
 };
 
-class TouchNavigation extends React.PureComponent {
-	constructor(props) {
-		super(props);
-		this.state = {
-			headers: this.mapPathToHeaders(props.path, empty)
+const mapPathToHeaders = (path, previous) => {
+	let headers = [ ...path ];
+
+	// add previous node at the end.
+	// This is last "current" node when going up the tree, empty otherwise
+	headers.push({
+		key: previous.key,
+		label: previous.label
+	});
+
+	// add two empty nodes to cover for root being current
+	headers.unshift(EMPTY);
+	headers.unshift(EMPTY);
+
+	// assign slots and ids
+	headers = headers.map((h, i) => {
+		return {
+			id: i,
+			slot: getSlot(i, headers.length),
+			...h
 		};
-	}
+	});
 
-	mapPathToHeaders(path, previous) {
-		let headers = [ ...path ];
+	return headers;
+}
 
-		// add previous node at the end.
-		// This is last "current" node when going up the tree, empty otherwise
-		headers.push({
-			key: previous.key,
-			label: previous.label
-		});
+const TouchNavigation = props => {
+	const { onNavigate = noop, path } = props;
+	const prevPath = usePrevious(path);
+	const [headers, setHeaders] = useState(mapPathToHeaders(path, EMPTY));
+	const hasPrevious = headers.some(h => h.slot === 'previous' && h.key != null);
 
-		// add two empty nodes to cover for root being current
-		headers.unshift(empty);
-		headers.unshift(empty);
-
-		// assign slots and ids
-		headers = headers.map((h, i) => {
-			return {
-				id: i,
-				slot: getSlot(i, headers.length),
-				...h
-			};
-		});
-
-		return headers;
-	}
-
-	componentDidUpdate({ path: previousPath }) {
-		const { path } = this.props;
-		if(isPathChanged(path, previousPath)) {
-			let previous;
-			if(previousPath.length < path.length) {
-				previous = this.state.headers[this.state.headers.length - 2];
-			} else {
-				previous = empty;
-			}
-			const headers = this.mapPathToHeaders(path, previous);
-			this.setState({ headers });
-		}
-	}
-
-	handleNavigation(path, ev) {
+	const handleNavigation = useCallback(ev => {
+		const path = headers[ev.currentTarget.dataset.headerId].path;
 		ev.preventDefault();
 		if(ev.type === 'click' ||
 			(ev.type === 'keypress' && (ev.key === 'Enter' || ev.key === ' '))) {
-			this.props.navigate(path, true);
+			onNavigate(path, true);
 		}
-	}
+	}, [headers, onNavigate]);
 
-	render() {
-		const hasPrevious = this.state.headers.some(h => h.slot === 'previous' && h.key != null);
-		return (
-			<nav className="touch-nav">
-				<CSSTransition
-					in={ hasPrevious }
-					timeout={ 250 }
-					classNames="fade"
-					unmountOnExit
-				>
-					<Icon type={ '16/caret-16' } width="16" height="16" className="icon-previous" />
-				</CSSTransition>
-				<ul>
-					{ this.state.headers.map(header => {
-						if(header.slot) {
-							return (
-								<li data-id={ header.id} className={ header.slot } key={ header.id }>
-									<div className="center-axis">
+	useEffect(() => {
+		if(!prevPath) {
+			return;
+		}
+		if(isPathChanged(path, prevPath)) {
+			let previous;
+			if(prevPath.length < path.length) {
+				previous = headers[headers.length - 2];
+			} else {
+				previous = EMPTY;
+			}
+			const newHeaders = mapPathToHeaders(path, previous);
+			setHeaders(newHeaders);
+		}
+	}, [headers, path, prevPath]);
+
+	return (
+		<nav className="touch-nav">
+			<CSSTransition
+				in={ hasPrevious }
+				timeout={ 250 }
+				classNames="fade"
+				unmountOnExit
+			>
+				<Icon type={ '16/caret-16' } width="16" height="16" className="icon-previous" />
+			</CSSTransition>
+			<ul>
+				{ headers.map((header, index) => {
+					if(header.slot) {
+						return (
+							<li data-id={ header.id} className={ header.slot } key={ header.id }>
+								<div className="center-axis">
+									<div
+										data-header-id={ index }
+										className="inner"
+										onClick={ handleNavigation }
+										onKeyPress={ handleNavigation }
+									>
 										<div
-											className="inner"
-											onClick={ ev => this.handleNavigation(header.path, ev) }
-											onKeyPress={ ev => this.handleNavigation(header.path, ev) }
-										>
-											<div
-												className="truncate"
-												tabIndex={ header.label && header.slot === 'previous' ? 0 : null }>
-												{ header.label }
-											</div>
+											className="truncate"
+											tabIndex={ header.label && header.slot === 'previous' ? 0 : null }>
+											{ header.label }
 										</div>
 									</div>
-								</li>
-							);
-						} else {
-							return null;
-						}
-					}) }
-				</ul>
-			</nav>
-		);
-	}
-
-	static propTypes = {
-		navigate: PropTypes.func,
-		path: PropTypes.array,
-	}
-
-	static defaultProps = {
-		navigate: noop,
-		path: [],
-	}
+								</div>
+							</li>
+						);
+					} else {
+						return null;
+					}
+				}) }
+			</ul>
+		</nav>
+	)
 }
-export default TouchNavigation;
+
+TouchNavigation.propTypes = {
+	onNavigate: PropTypes.func,
+	path: PropTypes.array,
+}
+
+export default memo(TouchNavigation);
