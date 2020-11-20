@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import ItemDetailsInfoView from '../item-details/info-view';
 import ItemDetailsTabs from '../item-details/tabs';
-import TouchHeaderContainer from '../../container/touch-header';
+import TouchHeaderWrap from '../../component/touch-header-wrap';
 import { navigate, fetchItemDetails } from '../../actions';
 import { get } from '../../utils';
 
@@ -39,9 +39,9 @@ const ItemDetails = props => {
 	return (
 		<section className={ cx('item-details', { 'active': active }) }>
 			{ isTouchUser && (
-				<TouchHeaderContainer
+				<TouchHeaderWrap
 					className="hidden-mouse hidden-md-down darker"
-					variant={ TouchHeaderContainer.variants.ITEM }
+					variant={ TouchHeaderWrap.variants.ITEM }
 				/>
 			) }
 			{

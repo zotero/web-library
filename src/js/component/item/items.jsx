@@ -6,7 +6,7 @@ import { useSelector } from 'react-redux';
 import ItemsTableToolbar from './items/toolbar';
 import ItemsTable from './items/table';
 import ItemsList from './items/list';
-import TouchHeaderContainer from '../../container/touch-header';
+import TouchHeaderWrap from '../../component/touch-header-wrap';
 import TouchFooter from '../../component/touch-footer';
 import { useSourceData } from '../../hooks';
 
@@ -19,9 +19,9 @@ const Items = ({ isSearchModeTransitioning }) => {
 		}>
 			{ isTouchOrSmall ?
 				<React.Fragment>
-					<TouchHeaderContainer
+					<TouchHeaderWrap
 							className="hidden-mouse hidden-md-down"
-							variant={ TouchHeaderContainer.variants.SOURCE }
+							variant={ TouchHeaderWrap.variants.SOURCE }
 						/>
 						<ItemsList isSearchModeTransitioning={ isSearchModeTransitioning } />
 						<TouchFooter />

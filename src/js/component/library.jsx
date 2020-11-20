@@ -14,21 +14,21 @@ import Items from '../component/item/items';
 import Libraries from '../component/libraries';
 import Messages from '../component/messages';
 import MobileNav from './ui/mobile-nav';
+import ModalManager from './modal-manager';
 import Navbar from './ui/navbar';
 import Ongoing from './ongoing';
 import SearchBackdrop from './search-backdrop';
 import TagSelector from '../component/tag-selector';
-import TouchHeaderContainer from '../container/touch-header';
+import TitleUpdater from './title-updater';
 import TouchDrilldown from '../component/touch-drilldown';
-import TouchTagSelector from '../component/touch-tag-selector';
+import TouchHeaderWrap from '../component/touch-header-wrap';
 import TouchSideFooter from '../component/touch-side-footer';
+import TouchTagSelector from '../component/touch-tag-selector';
 import withDevice from '../enhancers/with-device';
+import ZoteroConnectorNotifier from './zotero-connector-notifier';
+import ZoteroStreamingClient from './zotero-streaming-client';
 import { getSerializedQuery } from '../common/state';
 import { pick } from '../common/immutable';
-import ZoteroConnectorNotifier from './zotero-connector-notifier';
-import TitleUpdater from './title-updater';
-import ZoteroStreamingClient from './zotero-streaming-client';
-import ModalManager from './modal-manager';
 import { usePrevious } from '../hooks/';
 
 
@@ -127,16 +127,16 @@ const Library = props => {
 					<main>
 						<section className={ `library ${ view === 'library' ? 'active' : '' }` }>
 							{ device.isTouchOrSmall && (
-								<TouchHeaderContainer
+								<TouchHeaderWrap
 									className="hidden-sm-up darker"
-									variant={ TouchHeaderContainer.variants.MOBILE }
+									variant={ TouchHeaderWrap.variants.MOBILE }
 								/>
 							) }
 							<header className="sidebar">
 								<h2 className="offscreen">Web library</h2>
 								{ device.isTouchOrSmall && (
-									<TouchHeaderContainer
-										variant={ TouchHeaderContainer.variants.NAVIGATION }
+									<TouchHeaderWrap
+										variant={ TouchHeaderWrap.variants.NAVIGATION }
 										className="hidden-xs-down hidden-mouse-md-up darker"
 									/>
 								) }
@@ -163,9 +163,9 @@ const Library = props => {
 								})}>
 									{/* Tablet TouchHeader */}
 									{ device.isTouchOrSmall && (
-										<TouchHeaderContainer
+										<TouchHeaderWrap
 											className="hidden-xs-down hidden-lg-up hidden-mouse darker"
-											variant={ TouchHeaderContainer.variants.SOURCE_AND_ITEM }
+											variant={ TouchHeaderWrap.variants.SOURCE_AND_ITEM }
 										/>
 									) }
 									<Items key={ key } isSearchModeTransitioning={ isSearchModeTransitioning } />

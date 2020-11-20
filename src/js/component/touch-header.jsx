@@ -18,7 +18,7 @@ const TouchHeader = props => {
 		shouldIncludeItemListOptions, shouldIncludeCollectionOptions, shouldHandleSelectMode,
 		selectedItemsCount } = props;
 
-	const { isSingleColumn } = useSelector(state => state.device.isSingleColumn);
+	const isSingleColumn = useSelector(state => state.device.isSingleColumn);
 
 	const shouldHideNav = (shouldIncludeEditButton && isEditing) ||
 			(shouldHandleSelectMode && isSelectMode);
