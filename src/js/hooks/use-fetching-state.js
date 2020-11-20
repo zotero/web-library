@@ -59,9 +59,9 @@ const useTags = (shouldSkipDisabledAndSelected = false) => {
 		break;
 	}
 
-	const data = useSelector(selectorFn);
+	const data = (useSelector(selectorFn) || {});
 	const { coloredTags = [], isFetching = false, isFetchingColoredTags = false, tags: sourceTags =
-	[], pointer = 0, requests, totalResults, duplicatesCount } = (data || {});
+	[], pointer = 0, requests, totalResults, duplicatesCount } = data;
 	const hasMoreItems = totalResults > 0 && (typeof(pointer) === 'undefined' || pointer < totalResults);
 	const hasChecked = typeof(totalResults) !== 'undefined';
 	const hasCheckedColoredTags = 'coloredTags' in data;
