@@ -1,12 +1,10 @@
-'use strict';
-
 import cx from 'classnames';
-import { DndProvider } from 'react-dnd';
 import HTML5toTouch from 'react-dnd-multi-backend/dist/cjs/HTML5toTouch';
 import MultiBackend from 'react-dnd-multi-backend';
-import PropTypes from 'prop-types';
-import React, { useCallback, useEffect, useState, useRef } from 'react';
+import React, { memo, useCallback, useEffect, useState } from 'react';
 import { CSSTransition } from 'react-transition-group';
+import { DndProvider } from 'react-dnd';
+import { useDispatch, useSelector } from 'react-redux';
 
 import CustomDragLayer from '../component/drag-layer';
 import ItemDetails from '../component/item/details';
@@ -24,45 +22,71 @@ import TouchDrilldown from '../component/touch-drilldown';
 import TouchHeaderWrap from '../component/touch-header-wrap';
 import TouchSideFooter from '../component/touch-side-footer';
 import TouchTagSelector from '../component/touch-tag-selector';
-import withDevice from '../enhancers/with-device';
 import ZoteroConnectorNotifier from './zotero-connector-notifier';
 import ZoteroStreamingClient from './zotero-streaming-client';
 import { getSerializedQuery } from '../common/state';
-import { pick } from '../common/immutable';
+import { get } from '../utils';
 import { usePrevious } from '../hooks/';
+import{ toggleNavbar, resetLibrary, fetchLibrarySettings } from '../actions';
 
 
-const Library = props => {
-	const { attachmentKey, collectionKey, config, device, fetchLibrarySettings, isLibraryReadOnly,
-	isNavBarOpen, isSearchMode, isSelectMode, isSynced, itemsSource, libraryKey, noteKey,
-	resetLibrary, search, searchState, tags, toggleNavbar, useTransitions, qmode, view } = props;
+const Library = () => {
+	const dispatch = useDispatch();
+	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
+	const isSingleColumn = useSelector(state => state.device.isSingleColumn);
+	const shouldUseSidebar = useSelector(state => state.device.shouldUseSidebar);
+	const userType = useSelector(state => state.device.userType);
+	const isKeyboardUser = useSelector(state => state.device.isKeyboardUser);
+	const isMouseUser = useSelector(state => state.device.isMouseUser);
+	const isTouchUser = useSelector(state => state.device.isTouchUser);
+	const scrollbarWidth = useSelector(state => state.device.scrollbarWidth);
+	const attachmentKey = useSelector(state => state.current.attachmentKey);
+	const collectionKey = useSelector(state => state.current.collectionKey);
+	const isNavBarOpen = useSelector(state => state.current.isNavBarOpen);
+	const isSearchMode = useSelector(state => state.current.isSearchMode);
+	const isSelectMode = useSelector(state => state.current.isSelectMode);
+	const itemsSource = useSelector(state => state.current.itemsSource);
+	const libraryKey = useSelector(state => state.current.libraryKey);
+	const noteKey = useSelector(state => state.current.noteKey);
+	const qmode = useSelector(state => state.current.qmode);
+	const search = useSelector(state => state.current.search);
+	const searchState = useSelector(state => state.current.searchState);
+	const tags = useSelector(state => state.current.tags);
+	const useTransitions = useSelector(state => state.current.useTransitions);
+	const view = useSelector(state => state.current.view);
+	const isSynced = useSelector(state => get(state, ['libraries', libraryKey, 'sync', 'isSynced'], true));
+	const menus = useSelector(state => state.config.menus);
+	const isLibraryReadOnly = useSelector(state =>
+		(state.config.libraries.find(l => l.key === state.current.libraryKey) || {}).isReadOnly
+	);
+
+	const wasSynced = usePrevious(isSynced);
+	const prevUserType = usePrevious(userType);
+	const prevShouldUseSidebar= usePrevious(shouldUseSidebar);
+	const wasSearchMode = usePrevious(isSearchMode);
+	// const prevItemsSource = usePrevious(itemsSource);
 
 	const [hasUserTypeChanged, setHasUserTypeChanged] = useState(false);
 	const [isSearchModeTransitioning, setIsSearchModeTransitioning] = useState(false);
-	const wasSearchMode = usePrevious(isSearchMode);
-	const prevUserType = useRef(device.userType);
-	const prevShouldUseSidebar = useRef(device.shouldUseSidebar);
-	const prevItemsSource = useRef(itemsSource);
-	const wasSynced = useRef(isSynced);
+
 	const isSearchQuery = search && search.length > 0;
 
 	useEffect(() => {
-		if(device.userType !== prevUserType.current) {
+		if(userType !== prevUserType) {
 			setHasUserTypeChanged(true);
 			setTimeout(() => setHasUserTypeChanged(false), 0);
 		}
 
-		if(isNavBarOpen && !device.shouldUseSidebar && prevShouldUseSidebar.current) {
-			toggleNavbar(false);
+		if(isNavBarOpen && !shouldUseSidebar && prevShouldUseSidebar) {
+			dispatch(toggleNavbar(false));
 		}
 
-		document.documentElement.classList.toggle('keyboard', !!device.isKeyboardUser);
-		document.documentElement.classList.toggle('mouse', !!device.isMouseUser);
-		document.documentElement.classList.toggle('touch', !!device.isTouchUser);
-		document.documentElement.classList.toggle('scrollbar-style-permanent', device.scrollbarWidth > 0);
+		document.documentElement.classList.toggle('keyboard', !!isKeyboardUser);
+		document.documentElement.classList.toggle('mouse', !!isMouseUser);
+		document.documentElement.classList.toggle('touch', !!isTouchUser);
+		document.documentElement.classList.toggle('scrollbar-style-permanent', scrollbarWidth > 0);
 
-		prevUserType.current = device.userType;
-	}, [device]);
+	}, [dispatch, isKeyboardUser, isMouseUser, isNavBarOpen, isTouchUser, prevShouldUseSidebar, prevUserType, scrollbarWidth, shouldUseSidebar, userType]);
 
 	useEffect(() => {
 		if((isSearchMode && !wasSearchMode) || (!isSearchMode && wasSearchMode)) {
@@ -71,24 +95,18 @@ const Library = props => {
 		}
 	}, [isSearchMode, wasSearchMode]);
 
-	useEffect(() => {
-		prevItemsSource.current = itemsSource;
-	}, [itemsSource]);
 
 	useEffect(() => {
-		if(isSynced === false && wasSynced.current === true) {
+		if(!isSynced && wasSynced) {
 			setTimeout(() => {
-				resetLibrary(libraryKey);
-				setTimeout(() => fetchLibrarySettings(libraryKey), 0);
+				dispatch(resetLibrary(libraryKey));
+				setTimeout(() => dispatch(fetchLibrarySettings(libraryKey), 0));
 			}, 0);
 		}
-		wasSynced.current = isSynced;
-	}, [isSynced])
+	}, [dispatch, libraryKey, isSynced, wasSynced])
 
 
-	const handleNavbarToggle = useCallback(
-		() => toggleNavbar(null)
-	);
+	const handleNavbarToggle = useCallback(() => dispatch(toggleNavbar()), [dispatch]);
 
 	//@TODO: use `useSourceSignature` hook inside components instead
 	var key;
@@ -119,14 +137,14 @@ const Library = props => {
 					[`view-${view}-active`]: true,
 				}) }>
 				<MobileNav
-					entries={ config.menus.mobile }
-					{...pick(props, ['toggleNavbar']) }
+					entries={ menus.mobile }
+					toggleNavbar={ handleNavbarToggle }
 				/>
 				<div className="site-wrapper">
-					<Navbar entries={ config.menus.desktop } />
+					<Navbar entries={ menus.desktop } />
 					<main>
 						<section className={ `library ${ view === 'library' ? 'active' : '' }` }>
-							{ device.isTouchOrSmall && (
+							{ isTouchOrSmall && (
 								<TouchHeaderWrap
 									className="hidden-sm-up darker"
 									variant={ TouchHeaderWrap.variants.MOBILE }
@@ -134,14 +152,14 @@ const Library = props => {
 							) }
 							<header className="sidebar">
 								<h2 className="offscreen">Web library</h2>
-								{ device.isTouchOrSmall && (
+								{ isTouchOrSmall && (
 									<TouchHeaderWrap
 										variant={ TouchHeaderWrap.variants.NAVIGATION }
 										className="hidden-xs-down hidden-mouse-md-up darker"
 									/>
 								) }
 								<Libraries />
-								{ device.isTouchOrSmall ? (
+								{ isTouchOrSmall ? (
 									<React.Fragment>
 										<TouchTagSelector />
 										<TouchSideFooter />
@@ -150,19 +168,19 @@ const Library = props => {
 								<Ongoing />
 							</header>
 							<CSSTransition
-								in={ (device.isSingleColumn && isSearchMode) || !device.isSingleColumn }
+								in={ (isSingleColumn && isSearchMode) || !isSingleColumn }
 								timeout={ 250 }
 								classNames="fade"
-								enter={ device.isSingleColumn && (view !== 'item-list' && view !== 'item-details') }
-								exit={ device.isSingleColumn && (view !== 'item-list' && view !== 'item-details') }
+								enter={ isSingleColumn && (view !== 'item-list' && view !== 'item-details') }
+								exit={ isSingleColumn && (view !== 'item-list' && view !== 'item-details') }
 							>
 								<section className={ cx('items', {
 									'active': view === 'item-list',
-									'select-mode': device.isTouchOrSmall && isSelectMode,
+									'select-mode': isTouchOrSmall && isSelectMode,
 									'read-only': isLibraryReadOnly,
 								})}>
 									{/* Tablet TouchHeader */}
-									{ device.isTouchOrSmall && (
+									{ isTouchOrSmall && (
 										<TouchHeaderWrap
 											className="hidden-xs-down hidden-lg-up hidden-mouse darker"
 											variant={ TouchHeaderWrap.variants.SOURCE_AND_ITEM }
@@ -170,9 +188,9 @@ const Library = props => {
 									) }
 									<Items key={ key } isSearchModeTransitioning={ isSearchModeTransitioning } />
 									<ItemDetails active={ view === 'item-details' } />
-									{ device.isTouchOrSmall && <TouchDrilldown /> }
+									{ isTouchOrSmall && <TouchDrilldown /> }
 									<CSSTransition
-										in={ device.isSingleColumn && isSearchMode && itemsSource !== 'query' }
+										in={ isSingleColumn && isSearchMode && itemsSource !== 'query' }
 										timeout={ 250 }
 										classNames="fade"
 										unmountOnExit
@@ -199,27 +217,4 @@ const Library = props => {
 	);
 }
 
-Library.propTypes = {
-	collectionKey: PropTypes.string,
-	config: PropTypes.object.isRequired,
-	device: PropTypes.object,
-	isLibraryReadOnly: PropTypes.bool,
-	isNavBarOpen: PropTypes.bool,
-	isSearchMode: PropTypes.bool,
-	isSelectMode: PropTypes.bool,
-	isSynced: PropTypes.bool,
-	itemsSource: PropTypes.string,
-	libraryKey: PropTypes.string,
-	noteKey: PropTypes.string,
-	qmode: PropTypes.string,
-	resetLibrary: PropTypes.func,
-	search: PropTypes.string,
-	searchState: PropTypes.object,
-	tags: PropTypes.array,
-	toggleModal: PropTypes.func,
-	toggleNavbar: PropTypes.func,
-	useTransitions: PropTypes.bool,
-	view: PropTypes.string,
-};
-
-export default withDevice(Library);
+export default memo(Library);

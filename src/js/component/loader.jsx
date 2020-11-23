@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import Icon from './ui/icon';
-import LibraryContainer from '../container/library';
+import Library from '../component/library';
 import { preferencesLoad, initialize, fetchLibrarySettings, fetchAllCollections, fetchAllGroups,
 toggleTransitions, triggerResizeViewport } from '../actions';
 import { get } from '../utils';
@@ -54,7 +54,7 @@ const Loader = () => {
 		}
 	}, []);
 
-	return isReady ? <LibraryContainer /> : <LoadingCover />;
+	return isReady ? <Library /> : <LoadingCover />;
 }
 
 export default Loader;
