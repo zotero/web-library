@@ -136,10 +136,7 @@ const Library = () => {
 					'view-attachment-active': attachmentKey,
 					[`view-${view}-active`]: true,
 				}) }>
-				<MobileNav
-					entries={ menus.mobile }
-					toggleNavbar={ handleNavbarToggle }
-				/>
+				<MobileNav />
 				<div className="site-wrapper">
 					<Navbar entries={ menus.desktop } />
 					<main>
