@@ -1,17 +1,17 @@
-import React, { useCallback, useState, useEffect, useMemo, useRef } from 'react';
+import React, { memo, useCallback, useState, useEffect, useMemo, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
+
 import Button from './ui/button';
 import CollectionTree from '../component/libraries/collection-tree';
 import cx from 'classnames';
 import Icon from './ui/icon';
 import Node from './libraries/node';
 import Spinner from './ui/spinner';
+import { createCollection, fetchAllCollections, fetchLibrarySettings, navigate } from '../actions';
 import { get, stopPropagation, getUniqueId } from '../utils';
 import { pick } from '../common/immutable';
-import withFocusManager from '../enhancers/with-focus-manager';
-import { createCollection, fetchAllCollections, fetchLibrarySettings, navigate } from '../actions';
-
+import { useFocusManager, usePrevious } from '../hooks/';
 
 const LibraryNode = props => {
 	const {
@@ -39,19 +39,19 @@ const LibraryNode = props => {
 		} else {
 			dispatch(navigate({ library: libraryKey, view: 'library' }, true));
 		}
-	});
+	}, [dispatch, isPickerMode, libraryKey, pickerNavigate]);
 
 	const handlePickerPick = useCallback(() => {
 		pickerPick({ libraryKey });
-	});
+	}, [libraryKey, pickerPick]);
 
 	const handleAddVirtualClick = useCallback(() => {
 		addVirtual(libraryKey);
-	});
+	}, [addVirtual, libraryKey]);
 
 	const handleOpenToggle = useCallback((ev, shouldOpen = null) => {
 		toggleOpen(libraryKey, shouldOpen);
-	});
+	}, [libraryKey, toggleOpen]);
 
 	useEffect(() => {
 		//@NOTE: this should only trigger when library is reset. Otherwise collections are fetched
@@ -59,7 +59,7 @@ const LibraryNode = props => {
 		if(isCurrent && !hasChecked && !isFetchingAll) {
 			dispatch(fetchAllCollections(libraryKey));
 		}
-	}, [isCurrent, hasChecked, libraryKey, isFetchingAll]);
+	}, [dispatch, isCurrent, hasChecked, libraryKey, isFetchingAll]);
 
 	const getTreeProps = () => {
 		const parentLibraryKey = libraryKey;
@@ -148,7 +148,7 @@ LibraryNode.propTypes = {
 };
 
 const Libraries = props => {
-	const { onBlur, onFocus, registerFocusRoot, isPickerMode, pickerState } = props;
+	const { isPickerMode, pickerState } = props;
 	const dispatch = useDispatch();
 	const libraries = useSelector(state => state.config.libraries);
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
@@ -157,6 +157,10 @@ const Libraries = props => {
 	const stateView = useSelector(state => state.current.view);
 	const view = isPickerMode ? pickerState.view : stateView;
 	const itemsSource = useSelector(state => state.current.itemsSource);
+	const treeRef = useRef();
+	const prevSelectedLibraryKey = usePrevious(selectedLibraryKey);
+	const { focusNext, focusPrev, focusDrillDownNext, focusDrillDownPrev, receiveBlur, receiveFocus
+	} = useFocusManager(treeRef);
 
 	const myLibraries = useMemo(
 		() => libraries.filter(l => l.isMyLibrary),
@@ -176,33 +180,7 @@ const Libraries = props => {
 
 	const isRootActive = view === 'libraries';
 
-	useEffect(() => {
-		if(selectedLibraryKey) {
-			toggleOpen(selectedLibraryKey, true);
-			//@TODO: Minor opitimisation: only fetch library settings if needed
-			dispatch(fetchLibrarySettings(selectedLibraryKey));
-		}
-	}, [selectedLibraryKey]);
-
-	const cancelAdd = () => {
-		setVirtual(null);
-	}
-
-	const commitAdd = async (libraryKey, parentCollection, name) => {
-		if(name === '') {
-			setVirtual(null);
-			return;
-		}
-
-		setVirtual({ ...virtual, isBusy: true });
-		try {
-			await dispatch(createCollection({ name, parentCollection }, libraryKey));
-		} finally {
-			setVirtual(null);
-		}
-	}
-
-	const toggleOpen = (libraryKey, shouldOpen = null) => {
+	const toggleOpen = useCallback((libraryKey, shouldOpen = null) => {
 		const isOpened = opened.includes(libraryKey);
 
 		if(shouldOpen !== null && shouldOpen === isOpened) {
@@ -215,14 +193,40 @@ const Libraries = props => {
 		if(!isOpened) {
 			dispatch(fetchAllCollections(libraryKey));
 		}
-	}
+	}, [dispatch, opened]);
 
-	const addVirtual = (libraryKey, collectionKey) => {
+	const cancelAdd = useCallback(() => {
+		setVirtual(null);
+	}, []);
+
+	const commitAdd = useCallback(async (libraryKey, parentCollection, name) => {
+		if(name === '') {
+			setVirtual(null);
+			return;
+		}
+
+		setVirtual({ ...virtual, isBusy: true });
+		try {
+			await dispatch(createCollection({ name, parentCollection }, libraryKey));
+		} finally {
+			setVirtual(null);
+		}
+	}, [dispatch, virtual]);
+
+	const addVirtual = useCallback((libraryKey, collectionKey) => {
 		if(!opened.includes(libraryKey)) {
 			toggleOpen(libraryKey);
 		}
 		window.setTimeout(() => setVirtual({ libraryKey, collectionKey }));
-	}
+	}, [opened, toggleOpen]);
+
+	useEffect(() => {
+		if(selectedLibraryKey && selectedLibraryKey !== prevSelectedLibraryKey) {
+			toggleOpen(selectedLibraryKey, true);
+			//@TODO: Minor opitimisation: only fetch library settings if needed
+			dispatch(fetchLibrarySettings(selectedLibraryKey));
+		}
+	}, [dispatch, prevSelectedLibraryKey, selectedLibraryKey, toggleOpen]);
 
 	const getNodeProps = libraryData => {
 		const { key, ...rest } = libraryData;
@@ -236,9 +240,12 @@ const Libraries = props => {
 			libraryKey: key, shouldBeTabbableOnTouch, shouldBeTabbable, isOpen, isSelected,
 			addVirtual, commitAdd, cancelAdd, toggleOpen, virtual,
 			...rest,
-			...pick(props, ['picked', 'pickerIncludeLibraries', 'onDrillDownNext',
-				'onDrillDownPrev', 'onFocusNext', 'onFocusPrev', 'isPickerMode',
-				'selectedCollectionKey', 'pickerNavigate', 'pickerPick', 'pickerState' ])
+			onDrillDownNext: focusDrillDownNext,
+			onDrillDownPrev: focusDrillDownPrev,
+			onFocusNext: focusNext,
+			onFocusPrev: focusPrev,
+			...pick(props, ['picked', 'pickerIncludeLibraries', 'isPickerMode',
+			'selectedCollectionKey', 'pickerNavigate', 'pickerPick', 'pickerState' ])
 		}
 	}
 
@@ -246,10 +253,10 @@ const Libraries = props => {
 		<nav
 			aria-label="collection tree"
 			className="collection-tree"
-			onFocus={ onFocus }
-			onBlur={ onBlur }
+			onFocus={ receiveFocus }
+			onBlur={ receiveBlur }
 			tabIndex={ 0 }
-			ref={ ref => registerFocusRoot(ref) }
+			ref={ treeRef }
 		>
 			<div className={ `level-root ${isRootActive ? 'active' : ''}` }>
 				<div className="scroll-container-touch" role="tree">
@@ -296,10 +303,7 @@ const Libraries = props => {
 
 Libraries.propTypes = {
 	isPickerMode: PropTypes.bool,
-	onBlur: PropTypes.func,
-	onFocus: PropTypes.func,
 	pickerState: PropTypes.object,
-	registerFocusRoot: PropTypes.func,
 }
 
-export default React.memo(withFocusManager(Libraries));
+export default memo(Libraries);
