@@ -80,7 +80,7 @@ class Editable extends React.PureComponent {
 		tabIndex: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
 		children: PropTypes.oneOfType([PropTypes.element, PropTypes.array]),
 		input: PropTypes.element,
-		inputComponent: PropTypes.func,
+		inputComponent: PropTypes.elementType,
 		isActive: PropTypes.bool,
 		isBusy: PropTypes.bool,
 		isDisabled: PropTypes.bool,

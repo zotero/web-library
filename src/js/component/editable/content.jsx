@@ -55,7 +55,7 @@ class EditableContent extends React.PureComponent {
 	static propTypes = {
 		display: PropTypes.string,
 		input: PropTypes.element,
-		inputComponent: PropTypes.func,
+		inputComponent: PropTypes.elementType,
 		options: PropTypes.array,
 		placeholder: PropTypes.string,
 		value: PropTypes.oneOfType([
