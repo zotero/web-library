@@ -15,10 +15,10 @@ const Abstract = ({ isReadOnly }) => {
 		state => state.current.itemKey && state.current.editingItemKey === state.current.itemKey
 	);
 	const item = useSelector(state =>
-		get(state, ['libraries', state.current.libraryKey, 'items', state.current.itemKey], {})
+		get(state, ['libraries', state.current.libraryKey, 'items', state.current.itemKey])
 	);
 	const pendingChanges = useSelector(state =>
-		get(state, ['libraries', state.current.libraryKey, 'updating', 'items', state.current.itemKey], [])
+		get(state, ['libraries', state.current.libraryKey, 'updating', 'items', state.current.itemKey])
 	);
 	const [isActive, setIsActive] = useState(false);
 
@@ -26,13 +26,13 @@ const Abstract = ({ isReadOnly }) => {
 		'Add abstract…' : '';
 
 	const itemWithPendingChanges = useMemo(() => {
-		const aggregatedPatch = pendingChanges.reduce(
+		const aggregatedPatch = (pendingChanges || []).reduce(
 			(aggr, { patch }) => ({...aggr, ...patch}), {}
 		);
-		return { ...item, ...aggregatedPatch};
+		return { ...(item || {}), ...aggregatedPatch};
 	}, [item, pendingChanges]);
 
-	const isBusy = pendingChanges.some(({ patch }) => 'abstractNote' in patch);
+	const isBusy = pendingChanges && pendingChanges.some(({ patch }) => 'abstractNote' in patch);
 
 	const handleMakeActive = useCallback(() => {
 		if(!isReadOnly) {
@@ -41,7 +41,7 @@ const Abstract = ({ isReadOnly }) => {
 	}, [isReadOnly]);
 
 	const handleCommit = useCallback((newValue, hasChanged) => {
-		if(hasChanged) {
+		if(item && hasChanged) {
 			dispatch(updateItemWithMapping(item, 'abstractNote', newValue));
 		}
 		setIsActive(false);
