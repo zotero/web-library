@@ -394,7 +394,7 @@ const CreatorField = forwardRef((props, ref) => {
 		'virtual': isVirtual
 	}, className);
 
-	// raw formatted data for use in drag-n-drop indicator
+	// raw formatted data for use in drag-n-drop indicator on touch. See CreatorDragPreview in drag-layer.jsx
 	const raw = { ...creator, creatorType: creatorLabel };
 	const inputProps = { active, creator, isForm, isReadOnly, label: creatorLabel, name, onCancel:
 	handleCancel, onEditableCommit: handleEditableCommit, onFieldClick: handleFieldClick,

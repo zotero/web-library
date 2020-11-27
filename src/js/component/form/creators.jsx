@@ -1,7 +1,7 @@
 import cx from 'classnames';
 import deepEqual from 'deep-equal';
 import PropTypes from 'prop-types';
-import React, { memo, useCallback, useEffect, useRef, useState } from 'react';
+import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 
 import Button from '../ui/button';
@@ -13,20 +13,21 @@ import { splice } from '../../utils';
 import { useEditMode, usePrevious } from '../../hooks';
 
 const Creators = props => {
-	const { creatorTypes, onSave, name, value, isForm, onDragStatusChange, isReadOnly } = props;
+	const { creatorTypes, onSave, name, value = [], isForm, onDragStatusChange, isReadOnly } = props;
 
-	const getNewCreator = useCallback(() => {
-		return {
-			creatorType: creatorTypes[0].value,
-			firstName: '',
-			lastName: '',
-			[Symbol.for('isVirtual')]: true
-		};
-	}, [creatorTypes]);
+	const virtualCreators = useMemo(() => [{
+		id: 0,
+		creatorType: creatorTypes[0].value,
+		firstName: '',
+		lastName: '',
+		[Symbol.for('isVirtual')]: true
+	}], [creatorTypes]);
 
 	const [creators, setCreators] = useState(
-		enumerateObjects(value.length ? value : [getNewCreator()])
+		value.length ? enumerateObjects(value) : virtualCreators
 	);
+
+	const hasVirtual = useMemo(() => !!creators.find(creator => creator[Symbol.for('isVirtual')]), [creators]);
 
 	const openOnNextRender = useRef(null);
 	const fields = useRef({});
@@ -35,10 +36,6 @@ const Creators = props => {
 	const prevCreatorTypes = usePrevious(creatorTypes);
 	const shouldUseEditMode = useSelector(state => state.device.shouldUseEditMode);
 	const [isEditing, ] = useEditMode();
-
-	const getHasVirtual = useCallback(() => {
-		return !!creators.find(creator => creator[Symbol.for('isVirtual')]);
-	}, [creators]);
 
 	const handleSaveCreators = useCallback((creators) => {
 		const newValue = creators
@@ -89,9 +86,9 @@ const Creators = props => {
 		if(creators.length > 1) {
 			handleSaveCreators(splice(creators, index, 1));
 		} else {
-			handleSaveCreators([getNewCreator()]);
+			handleSaveCreators(virtualCreators);
 		}
-	}, [creators, getNewCreator, handleSaveCreators]);
+	}, [creators, handleSaveCreators, virtualCreators]);
 
 	const handleCreatorTypeSwitch = useCallback(index => {
 		const newCreators = [...creators];
@@ -133,13 +130,13 @@ const Creators = props => {
 	}, [value]);
 
 	useEffect(() => {
-		if(!deepEqual(value, prevValue)) {
-			setCreators(enumerateObjects(value.length ? value : [getNewCreator()]))
+		if(typeof(prevValue) !== 'undefined' && !deepEqual(value, prevValue)) {
+			setCreators(value.length ? enumerateObjects(value) : virtualCreators)
 		}
-	}, [getNewCreator, value, prevValue]);
+	}, [value, virtualCreators, prevValue]);
 
 	useEffect(() => {
-		if(!deepEqual(creatorTypes, prevCreatorTypes)) {
+		if(typeof(prevCreatorTypes) !== 'undefined' && !deepEqual(creatorTypes, prevCreatorTypes)) {
 			const validCreatorTypes = creatorTypes.map(ct => ct.value);
 			setCreators(enumerateObjects(creators.map(creator => ({
 				...creator,
@@ -168,13 +165,13 @@ const Creators = props => {
 	return (
 		<React.Fragment>
 			{ creators.map((creator, index) => <CreatorField
-				className={ cx({ 'touch-separated': getHasVirtual() && isEditing && index === creators.length - 1 }) }
+				className={ cx({ 'touch-separated': hasVirtual && isEditing && index === creators.length - 1 }) }
 				creator={ creator }
 				creatorsCount={ creators.length }
 				creatorTypes={ creatorTypes }
 				index={ index }
-				isCreateAllowed={ !getHasVirtual() }
-				isDeleteAllowed={ !getHasVirtual() || creators.length > 1 }
+				isCreateAllowed={ !hasVirtual }
+				isDeleteAllowed={ !hasVirtual || creators.length > 1 }
 				isForm={ isForm }
 				isReadOnly={ isReadOnly }
 				isSingle={ creators.length === 1 }
@@ -192,7 +189,7 @@ const Creators = props => {
 				ref={ ref => fields.current[index] = ref }
 				shouldPreOpenModal={ openOnThisRender === index }
 			/> )}
-			{ shouldUseEditMode && isEditing && !getHasVirtual() && (
+			{ shouldUseEditMode && isEditing && !hasVirtual && (
 				<li className="metadata touch-separated has-btn-icon">
 					<Button
 						icon
@@ -216,6 +213,6 @@ Creators.propTypes = {
 	onDragStatusChange: PropTypes.func,
 	onSave: PropTypes.func,
 	value: PropTypes.array,
-}
+};
 
 export default memo(Creators);
