@@ -1,29 +1,21 @@
-import React, { useEffect } from 'react';
-import { useSelector, shallowEqual } from 'react-redux';
+import React, { memo, useEffect, useMemo } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
-import { useSourceData } from '../hooks';
+import { useSelector, shallowEqual } from 'react-redux';
+
 import { get } from '../utils';
+import { useSourceData } from '../hooks';
 
-
-const mapItemKeysToTitles = (keys, selectedItemsKeys = [], state) => {
-	const libraryKey = state.current.libraryKey;
-
-	if(!(libraryKey in state.libraries)) {
-		return {};
-	}
-
-	return keys.reduce((acc, ik) => {
-		if(!(ik in state.libraries[libraryKey].items)) {
+const mapItemKeysToTitles = (keys, selectedItemsKeys = [], items) =>
+	keys.reduce((acc, ik) => {
+		if(!(ik in items)) {
 			return acc;
 		}
-		const title = state.libraries[libraryKey].items[ik][Symbol.for('derived')].title;
+		const title = items[ik][Symbol.for('derived')].title;
 		const checked = selectedItemsKeys.includes(ik);
 		acc[ik] = { title, checked };
 
 		return acc;
 	}, {});
-}
-
 
 const ZoteroConnectorNotifier = () => {
 	const libraryKey = useSelector(state => state.current.libraryKey);
@@ -33,14 +25,11 @@ const ZoteroConnectorNotifier = () => {
 	const tags = useSelector(state => state.current.tags, shallowEqual);
 	const { keys: itemKeysCurrentSource } = useSourceData();
 	const item = useSelector(state => get(state, ['libraries', libraryKey, 'items', selectedItemKey], null));
-	const itemTitles = useSelector(state => {
-
-		if(itemKeysCurrentSource) {
-			return mapItemKeysToTitles(itemKeysCurrentSource, selectedItemsKeys, state);
-		}
-
-		return {};
-	});
+	const items = useSelector(state => state.libraries[libraryKey].items, shallowEqual);
+	const itemTitles = useMemo(
+		() => mapItemKeysToTitles((itemKeysCurrentSource || []), selectedItemsKeys, items),
+		[itemKeysCurrentSource, items, selectedItemsKeys]
+	);
 
 	const { callback: debouncedNotify } = useDebouncedCallback(() => {
 		document.dispatchEvent(new Event('ZoteroItemUpdated', {
@@ -65,4 +54,4 @@ const ZoteroConnectorNotifier = () => {
 	);
 }
 
-export default ZoteroConnectorNotifier;
+export default memo(ZoteroConnectorNotifier);
