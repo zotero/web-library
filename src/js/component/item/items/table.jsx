@@ -68,6 +68,8 @@ const TableScroll = memo(({ listRef }) => {
 			listRef.current.scrollToItem(itemKeyIndex);
 		}
 	}, [selectedItemKeys, isItemsTableFocused, keys, listRef, previousSelectedItemKeys]);
+
+	return null;
 });
 
 TableScroll.displayName = "TableScroll";
