@@ -114,7 +114,7 @@ const TextAreaInput = memo(forwardRef((props, ref) => {
 				>
 					{ textarea }
 				</AutoResizer>
-			) : textarea };
+			) : textarea }
 			{ isBusy && <Spinner /> }
 		</div>
 	);
