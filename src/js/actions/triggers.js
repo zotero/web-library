@@ -2,6 +2,7 @@ import { shallowEqual } from 'react-redux';
 
 import {
 	DISMISS_ERROR,
+	TOGGLE_ADVANCED_SEARCH,
 	TOGGLE_MODAL,
 	TOGGLE_NAVBAR,
 	TOGGLE_TAG_SELECTOR,
@@ -77,6 +78,10 @@ const triggerUserTypeChange = userType => {
 	}
 }
 
+const toggleAdvancedSearch = isAdvancedSearch => ({
+	type: TOGGLE_ADVANCED_SEARCH, isAdvancedSearch
+});
+
 const toggleModal = (id, shouldOpen, config) => {
 	return { type: TOGGLE_MODAL, id, shouldOpen, ...config }
 }
@@ -132,9 +137,12 @@ const triggerHighlightedCollections = isOn => {
 
 const resetQuery = () => ({ type: RESET_QUERY });
 
+
+
 export {
 	dismissError,
 	resetQuery,
+	toggleAdvancedSearch,
 	toggleModal,
 	toggleNavbar,
 	toggleSelectMode,

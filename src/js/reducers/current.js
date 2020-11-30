@@ -4,6 +4,8 @@ import { shallowEqual } from 'react-redux';
 import {
 	CONFIGURE,
 	FILTER_TAGS,
+	RESET_QUERY,
+	TOGGLE_ADVANCED_SEARCH,
 	TOGGLE_NAVBAR,
 	TOGGLE_TAG_SELECTOR,
 	TOGGLE_TOUCH_TAG_SELECTOR,
@@ -14,7 +16,6 @@ import {
 	TRIGGER_SEARCH_MODE,
 	TRIGGER_SELECT_MODE,
 	TRIGGER_USER_TYPE_CHANGE,
-	RESET_QUERY,
 } from '../constants/actions';
 
 import { tagsFromUrlPart } from '../common/navigation';
@@ -23,6 +24,7 @@ import { getParamsFromRoute } from '../common/state';
 const stateDefault = {
 	collectionKey: null,
 	editingItemKey: null,
+	isAdvancedSearch: false,
 	isNavBarOpen: false,
 	isSelectMode: false,
 	isSearchMode: false,
@@ -213,6 +215,11 @@ const current = (state = stateDefault, action, { config = {}, device = {} } = {}
 			return {
 				...state,
 				highlightedCollections: action.collections
+			}
+		case TOGGLE_ADVANCED_SEARCH:
+			return {
+				...state,
+				isAdvancedSearch: typeof(action.isAdvancedSearch) === 'boolean' ? action.isAdvancedSearch : !state.isAdvancedSearch
 			}
 		case RESET_QUERY:
 			return {

@@ -321,3 +321,16 @@
 		width: $space-md;
 	}
 }
+
+.table-cover {
+	align-items: center;
+	background: white;
+	display: flex;
+	height: 100%;
+	height: calc(100% - $item-table-row-height);
+	justify-content: center;
+	position: absolute;
+	width: 100%;
+	z-index: 100;
+    margin-top: $item-table-row-height;
+}

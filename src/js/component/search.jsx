@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import Button from './ui/button';
 import Icon from './ui/icon';
-import { navigate, resetQuery } from '../actions';
+import { navigate, resetQuery, toggleAdvancedSearch } from '../actions';
 import { noop } from '../utils';
 import { usePrevious } from '../hooks';
 
@@ -25,7 +25,9 @@ const Search = props => {
 	const prevItemsSource = usePrevious(itemsSource);
 	const collection = useSelector(state => state.current.collectionKey)
 	const prevCollection = usePrevious(collection);
+	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
 	const isSingleColumn = useSelector(state => state.device.isSingleColumn);
+	const isAdvancedSearch = useSelector(state => state.current.isAdvancedSearch);
 
 	const inputRef = useRef(null);
 
@@ -60,16 +62,26 @@ const Search = props => {
 	const handleSearchChange = useCallback(ev => {
 		const newValue = ev.currentTarget.value;
 		setSearchValue(newValue);
-		performSearchDebounce.callback(newValue, qmodeValue);
 		hasBlurredSinceLastSearch.current = false;
-	}, [performSearchDebounce, qmodeValue]);
+
+		if(newValue.includes('"') && !isAdvancedSearch && !isTouchOrSmall) {
+			dispatch(toggleAdvancedSearch(true));
+		} else if(isAdvancedSearch && newValue.length === 0) {
+			dispatch(toggleAdvancedSearch(false));
+		}
+
+		if(isTouchOrSmall || (!isAdvancedSearch && !newValue.includes('"'))) {
+			performSearchDebounce.callback(newValue, qmodeValue);
+		}
+	}, [dispatch, isTouchOrSmall, isAdvancedSearch, performSearchDebounce, qmodeValue]);
 
 	const handleSearchClear = useCallback(() => {
 		performSearchDebounce.cancel();
 		setSearchValue('');
+		dispatch(toggleAdvancedSearch(false));
 		performSearchDebounce.callback('', qmodeValue);
 		inputRef.current.focus();
-	}, [performSearchDebounce, qmodeValue]);
+	}, [dispatch, performSearchDebounce, qmodeValue]);
 
 	const handleSelectMode = useCallback(ev => {
 		setQmodeValue(ev.currentTarget.dataset.qmode);
@@ -105,16 +117,17 @@ const Search = props => {
 			// In certain cases user might want to force search again, with the same query,
 			// see https://github.com/zotero/web-library/issues/408#issuecomment-704819064
 			// we allow this, but only if search input has been blurred since last search
-			if(ev.target === inputRef.current && hasBlurredSinceLastSearch.current) {
+			if(ev.target === inputRef.current && (hasBlurredSinceLastSearch.current || isAdvancedSearch)) {
 				if(performSearchDebounce.pending()) {
 					performSearchDebounce.flush();
 				}
 				dispatch(resetQuery());
+				dispatch(toggleAdvancedSearch(false));
 				performSearch(searchValue, qmodeValue);
 				hasBlurredSinceLastSearch.current = false;
 			}
 		}
-	}, [dispatch, onFocusNext, onFocusPrev, performSearch, performSearchDebounce, searchValue, qmodeValue]);
+	}, [isAdvancedSearch, dispatch, onFocusNext, onFocusPrev, performSearch, performSearchDebounce, searchValue, qmodeValue]);
 
 	const handleBlur = useCallback(() => {
 		hasBlurredSinceLastSearch.current = true;

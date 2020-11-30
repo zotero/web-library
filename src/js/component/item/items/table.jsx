@@ -91,6 +91,7 @@ const Table = () => {
 	const [reorderTarget, setReorderTarget] = useState(null);
 	const [isHoveringBetweenRows, setIsHoveringBetweenRows] = useState(false);
 	const { isFetching, keys, hasChecked, totalResults, requests } = useSourceData();
+	const isAdvancedSearch = useSelector(state => state.current.isAdvancedSearch);
 	const collectionKey = useSelector(state => state.current.collectionKey);
 	const libraryKey = useSelector(state => state.current.libraryKey);
 	const itemsSource = useSelector(state => state.current.itemsSource);
@@ -508,6 +509,11 @@ const Table = () => {
 			)}
 			</AutoSizer>
 			{ !hasChecked && <Spinner className="large" /> }
+			{ isAdvancedSearch && (
+				<div className="table-cover">
+					Advanced search mode — press Enter to search.
+				</div>
+			) }
 		</div>
 	);
 };
