@@ -1,13 +1,58 @@
 import cx from 'classnames';
+import PropTypes from 'prop-types';
 import React, { memo, useCallback, useEffect, useRef } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
+import { useDrop } from 'react-dnd';
 
 import { connectionIssues, checkColoredTags, fetchTags, navigate } from '../../actions';
-import { isTriggerEvent } from '../../common/event';
-import { useFocusManager, useSourceSignature, usePrevious, useTags } from '../../hooks';
 import { get } from '../../utils';
+import { isTriggerEvent } from '../../common/event';
+import { ITEM } from '../../constants/dnd';
+import { useFocusManager, useSourceSignature, usePrevious, useTags } from '../../hooks';
 
 const PAGE_SIZE = 100;
+
+const Tag = memo(props => {
+	const { tag, onClick, onKeyDown } = props;
+	const [{ isOver, canDrop }, drop] = useDrop({
+		accept: [ITEM],
+		collect: monitor => ({
+			isOver: monitor.isOver({ shallow: true }),
+			canDrop: monitor.canDrop(),
+		}),
+		// updateItem is dispatched from within TableRow component
+		drop: () => ({ targetType: 'tag', tag: tag.tag })
+	});
+
+	return drop(
+		<li
+		className={ cx('tag', {
+			disabled: tag.disabled,
+			selected: tag.selected,
+			colored: tag.color,
+			placeholder: tag.isPlaceholder,
+			'dnd-target': isOver && canDrop
+		}) }
+		data-tag={ tag.tag }
+		key={ tag.tag }
+		onClick={ onClick }
+		onKeyDown={ onKeyDown }
+		role="button"
+		style={ tag.color && { color: tag.color} }
+		tabIndex={ tag.disabled ? null : -2 }
+		>
+			<span className="tag-label">{ tag.tag }</span>
+		</li>
+	);
+});
+
+Tag.displayName = 'Tag';
+
+Tag.propTypes = {
+	tag: PropTypes.object,
+	onClick: PropTypes.func,
+	onKeyDown: PropTypes.func,
+};
 
 const TagList = () => {
 	const tagsSearchString = useSelector(state => state.current.tagsSearchString);
@@ -128,23 +173,7 @@ const TagList = () => {
 					className="tag-selector-list"
 				>
 					{ tags.filter(t => !!t).map(tag => (
-						<li
-							className={ cx('tag', {
-								disabled: tag.disabled,
-								selected: tag.selected,
-								colored: tag.color,
-								placeholder: tag.isPlaceholder
-							}) }
-							data-tag={ tag.tag }
-							key={ tag.tag }
-							onClick={ handleClick }
-							onKeyDown={ handleKeyDown }
-							role="button"
-							style={ tag.color && { color: tag.color} }
-							tabIndex={ tag.disabled ? null : -2 }
-						>
-							<span className="tag-label">{ tag.tag }</span>
-						</li>
+						<Tag key={ tag.tag } tag={ tag } onClick={ handleClick } onKeyDown={ handleKeyDown } />
 					)) }
 				</ul>
 			</div>

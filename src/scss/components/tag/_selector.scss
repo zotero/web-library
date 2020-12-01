@@ -65,8 +65,8 @@
 			cursor: pointer;
 			min-width: 0;
 
-			&:hover {
-				background-color:$tag-hover-bg;
+			&:hover:not(.disabled) {
+				background-color: $tag-hover-bg;
 			}
 
 			&:active {
@@ -95,7 +95,10 @@
 			&.disabled {
 				opacity: 0.5;
 				cursor: auto;
-				pointer-events: none;
+			}
+
+			&.dnd-target {
+				background-color: $dnd-target-color;
 			}
 
 			.tag-label {
