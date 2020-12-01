@@ -31,7 +31,7 @@ const updating = (state = stateDefault, action) => {
 						...(action.itemKey in state.items ? state.items[action.itemKey] : []),
 						{
 							patch: action.patch,
-							queueId: action.queueId,
+							id: action.id,
 							isRequested: false
 						}
 					]
@@ -47,7 +47,7 @@ const updating = (state = stateDefault, action) => {
 								state.collections[action.collectionKey] : []),
 						{
 							patch: action.patch,
-							queueId: action.queueId,
+							id: action.id,
 							isRequested: false
 						}
 					]
@@ -59,7 +59,7 @@ const updating = (state = stateDefault, action) => {
 				items: {
 					...state.items,
 					[action.itemKey]: (state.items[action.itemKey] || []).map(queueItem => {
-						if(queueItem.queueId === action.queueId) {
+						if(queueItem.id === action.id) {
 							queueItem.isRequested = true;
 						}
 						return queueItem;
@@ -72,7 +72,7 @@ const updating = (state = stateDefault, action) => {
 				collections: {
 					...state.collections,
 					[action.collectionKey]: (state.collections[action.collectionKey] || []).map(queueItem => {
-						if(queueItem.queueId === action.queueId) {
+						if(queueItem.id === action.id) {
 							queueItem.isRequested = true;
 						}
 						return queueItem;
@@ -86,7 +86,7 @@ const updating = (state = stateDefault, action) => {
 				items: {
 					...state.items,
 					[action.itemKey]: (state.items[action.itemKey] || [])
-						.filter(queueItem => queueItem.queueId !== action.queueId)
+						.filter(queueItem => queueItem.id !== action.id)
 				}
 			};
 			if(Object.keys(newState.items[action.itemKey]).length === 0) {
@@ -100,7 +100,7 @@ const updating = (state = stateDefault, action) => {
 				collections: {
 					...state.collections,
 					[action.collectionKey]: (state.collections[action.collectionKey] || [])
-						.filter(queueItem => queueItem.queueId !== action.queueId)
+						.filter(queueItem => queueItem.id !== action.id)
 				}
 			};
 			if(Object.keys(newState.collections[action.collectionKey]).length === 0) {

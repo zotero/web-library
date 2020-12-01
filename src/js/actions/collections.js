@@ -20,7 +20,7 @@ import {
     COMPLETE_FETCH_ALL_COLLECTIONS,
 } from '../constants/actions';
 
-import queue from './queue';
+import { requestTracker } from '.';
 import { get } from '../utils';
 
 const fetchCollections = (libraryKey, { start = 0, limit = 50, sort = 'dateModified', direction = "desc", ...rest } = {}) => {
@@ -178,7 +178,7 @@ const createCollections = (localCollections, libraryKey) => {
 
 const updateCollection = (collectionKey, patch, libraryKey) => {
 	return async dispatch => {
-		const queueId = ++queue.counter;
+		const queueId = requestTracker.id++;
 
 		dispatch({
 			type: PRE_UPDATE_COLLECTION,

@@ -1,8 +1,5 @@
-'use strict';
-
 import api from 'zotero-api-client';
 import baseMappings from 'zotero-base-mappings';
-import queue from './queue';
 import { fetchItemTypeFields } from './meta';
 import { get, getItemCanonicalUrl, getUniqueId, removeRelationByItemKey, reverseMap } from '../utils';
 import { parseDescriptiveString } from '../common/format';
@@ -11,6 +8,7 @@ import { omit } from '../common/immutable';
 import { extractItems } from '../common/actions';
 import { fetchItemsByKeys, fetchChildItems, fetchItemTemplate, fetchItemTypeCreatorTypes } from '.';
 import { COMPLETE_ONGOING, BEGIN_ONGOING } from '../constants/actions';
+import { requestTracker } from '.';
 
 import {
 	ERROR_STORE_RELATIONS_IN_SOURCE,
@@ -277,23 +275,23 @@ const deleteItems = itemKeys => {
 const updateItem = (itemKey, patch) => {
 	return async (dispatch, getState) => {
 		const { libraryKey } = getState().current;
-		const queueId = ++queue.counter;
+		const id = requestTracker.id++;
 
 		dispatch({
 			type: PRE_UPDATE_ITEM,
 			itemKey,
 			libraryKey,
 			patch,
-			queueId
+			id
 		});
 
 		dispatch(
-			queueUpdateItem(itemKey, patch, libraryKey, queueId)
+			queueUpdateItem(itemKey, patch, libraryKey, id)
 		);
 	};
 }
 
-const queueUpdateItem = (itemKey, patch, libraryKey, queueId) => {
+const queueUpdateItem = (itemKey, patch, libraryKey, id) => {
 	return {
 		queue: libraryKey,
 		callback: async (next, dispatch, getState) => {
@@ -309,7 +307,7 @@ const queueUpdateItem = (itemKey, patch, libraryKey, queueId) => {
 				itemKey,
 				libraryKey,
 				patch,
-				queueId
+				id
 			});
 
 			try {
@@ -351,7 +349,7 @@ const queueUpdateItem = (itemKey, patch, libraryKey, queueId) => {
 					itemKey,
 					libraryKey,
 					patch,
-					queueId,
+					id,
 					response,
 					otherItems: state.libraries[libraryKey].items,
 				});
@@ -364,7 +362,7 @@ const queueUpdateItem = (itemKey, patch, libraryKey, queueId) => {
 					itemKey,
 					libraryKey,
 					patch,
-					queueId
+					id
 				});
 				throw error;
 			} finally {
@@ -416,22 +414,22 @@ const uploadAttachment = (itemKey, fileData, libraryKey) => {
 const moveToTrash = itemKeys => {
 	return async (dispatch, getState) => {
 		const { libraryKey } = getState().current;
-		const queueId = ++queue.counter;
+		const id = requestTracker.id++;
 
 		dispatch({
 			type: PRE_MOVE_ITEMS_TRASH,
 			itemKeys,
 			libraryKey,
-			queueId
+			id
 		});
 
 		dispatch(
-			queueMoveItemsToTrash(itemKeys, libraryKey, queueId)
+			queueMoveItemsToTrash(itemKeys, libraryKey, id)
 		);
 	};
 }
 
-const queueMoveItemsToTrash = (itemKeys, libraryKey, queueId) => {
+const queueMoveItemsToTrash = (itemKeys, libraryKey, id) => {
 	return {
 		queue: libraryKey,
 		callback: async (next, dispatch, getState) => {
@@ -442,7 +440,7 @@ const queueMoveItemsToTrash = (itemKeys, libraryKey, queueId) => {
 				type: REQUEST_MOVE_ITEMS_TRASH,
 				itemKeys,
 				libraryKey,
-				queueId
+				id
 			});
 
 			try {
@@ -456,7 +454,7 @@ const queueMoveItemsToTrash = (itemKeys, libraryKey, queueId) => {
 					type: RECEIVE_MOVE_ITEMS_TRASH,
 					libraryKey,
 					response,
-					queueId,
+					id,
 					itemKeys,
 					...itemsData,
 					otherItems: state.libraries[libraryKey].items,
@@ -472,7 +470,7 @@ const queueMoveItemsToTrash = (itemKeys, libraryKey, queueId) => {
 						itemKeys: itemKeys.filter(itemKey => !itemKeys.includes(itemKey)),
 						error: response.getErrors(),
 						libraryKey,
-						queueId
+						id
 					});
 				}
 
@@ -483,7 +481,7 @@ const queueMoveItemsToTrash = (itemKeys, libraryKey, queueId) => {
 					error,
 					itemKeys,
 					libraryKey,
-					queueId
+					id
 				});
 				throw error;
 			} finally {
@@ -496,22 +494,22 @@ const queueMoveItemsToTrash = (itemKeys, libraryKey, queueId) => {
 const recoverFromTrash = itemKeys => {
 	return async (dispatch, getState) => {
 		const { libraryKey } = getState().current;
-		const queueId = ++queue.counter;
+		const id = requestTracker.id++;
 
 		dispatch({
 			type: PRE_RECOVER_ITEMS_TRASH,
 			itemKeys,
 			libraryKey,
-			queueId
+			id
 		});
 
 		dispatch(
-			queueRecoverItemsFromTrash(itemKeys, libraryKey, queueId)
+			queueRecoverItemsFromTrash(itemKeys, libraryKey, id)
 		);
 	};
 }
 
-const queueRecoverItemsFromTrash = (itemKeys, libraryKey, queueId) => {
+const queueRecoverItemsFromTrash = (itemKeys, libraryKey, id) => {
 	return {
 		queue: libraryKey,
 		callback: async (next, dispatch, getState) => {
@@ -522,7 +520,7 @@ const queueRecoverItemsFromTrash = (itemKeys, libraryKey, queueId) => {
 				type: REQUEST_RECOVER_ITEMS_TRASH,
 				itemKeys,
 				libraryKey,
-				queueId
+				id
 			});
 
 			try {
@@ -536,7 +534,7 @@ const queueRecoverItemsFromTrash = (itemKeys, libraryKey, queueId) => {
 					type: RECEIVE_RECOVER_ITEMS_TRASH,
 					libraryKey,
 					response,
-					queueId,
+					id,
 					itemKeys,
 					...itemsData,
 					otherItems: state.libraries[libraryKey].items,
@@ -552,7 +550,7 @@ const queueRecoverItemsFromTrash = (itemKeys, libraryKey, queueId) => {
 						itemKeys: itemKeys.filter(itemKey => !itemKeys.includes(itemKey)),
 						error: response.getErrors(),
 						libraryKey,
-						queueId
+						id
 					});
 				}
 
@@ -563,7 +561,7 @@ const queueRecoverItemsFromTrash = (itemKeys, libraryKey, queueId) => {
 					error,
 					itemKeys,
 					libraryKey,
-					queueId
+					id
 				});
 				throw error;
 			} finally {
@@ -576,22 +574,22 @@ const queueRecoverItemsFromTrash = (itemKeys, libraryKey, queueId) => {
 const addToCollection = (itemKeys, collectionKey) => {
 	return async (dispatch, getState) => {
 		const { libraryKey } = getState().current;
-		const queueId = ++queue.counter;
+		const id = requestTracker.id++;
 
 		await dispatch({
 				type: PRE_ADD_ITEMS_TO_COLLECTION,
 				itemKeys,
 				collectionKey,
 				libraryKey,
-				queueId
+				id
 			});
 		await dispatch(
-			queueAddToCollection(itemKeys, collectionKey, libraryKey, queueId)
+			queueAddToCollection(itemKeys, collectionKey, libraryKey, id)
 		);
 	};
 }
 
-const queueAddToCollection = (itemKeys, collectionKey, libraryKey, queueId) => {
+const queueAddToCollection = (itemKeys, collectionKey, libraryKey, id) => {
 	return {
 		queue: libraryKey,
 		callback: async (next, dispatch, getState) => {
@@ -614,7 +612,7 @@ const queueAddToCollection = (itemKeys, collectionKey, libraryKey, queueId) => {
 				itemKeys,
 				collectionKey,
 				libraryKey,
-				queueId
+				id
 			});
 
 			try {
@@ -629,7 +627,7 @@ const queueAddToCollection = (itemKeys, collectionKey, libraryKey, queueId) => {
 					collectionKey,
 					items,
 					response,
-					queueId,
+					id,
 					otherItems: state.libraries[libraryKey].items,
 				});
 
@@ -640,7 +638,7 @@ const queueAddToCollection = (itemKeys, collectionKey, libraryKey, queueId) => {
 						error: response.getErrors(),
 						libraryKey,
 						collectionKey,
-						queueId
+						id
 					});
 				}
 
@@ -651,7 +649,7 @@ const queueAddToCollection = (itemKeys, collectionKey, libraryKey, queueId) => {
 					error,
 					itemKeys,
 					libraryKey,
-					queueId
+					id
 				});
 				throw error;
 			} finally {
@@ -818,23 +816,23 @@ const copyToLibrary = (itemKeys, sourceLibraryKey, targetLibraryKey, targetColle
 const removeFromCollection = (itemKeys, collectionKey) => {
 	return async (dispatch, getState) => {
 		const { libraryKey } = getState().current;
-		const queueId = ++queue.counter;
+		const id = requestTracker.id++;
 
 		dispatch({
 				type: PRE_REMOVE_ITEMS_FROM_COLLECTION,
 				itemKeys,
 				collectionKey,
 				libraryKey,
-				queueId
+				id
 			});
 
 		dispatch(
-			queueRemoveFromCollection(itemKeys, collectionKey, libraryKey, queueId)
+			queueRemoveFromCollection(itemKeys, collectionKey, libraryKey, id)
 		);
 	};
 }
 
-const queueRemoveFromCollection = (itemKeys, collectionKey, libraryKey, queueId) => {
+const queueRemoveFromCollection = (itemKeys, collectionKey, libraryKey, id) => {
 	return {
 		queue: libraryKey,
 		callback: async (next, dispatch, getState) => {
@@ -852,7 +850,7 @@ const queueRemoveFromCollection = (itemKeys, collectionKey, libraryKey, queueId)
 				itemKeys,
 				collectionKey,
 				libraryKey,
-				queueId
+				id
 			});
 
 			try {
@@ -867,7 +865,7 @@ const queueRemoveFromCollection = (itemKeys, collectionKey, libraryKey, queueId)
 					collectionKey,
 					items,
 					response,
-					queueId,
+					id,
 					otherItems: state.libraries[libraryKey].items,
 				});
 
@@ -878,7 +876,7 @@ const queueRemoveFromCollection = (itemKeys, collectionKey, libraryKey, queueId)
 						error: response.getErrors(),
 						libraryKey,
 						collectionKey,
-						queueId
+						id
 					});
 				}
 
@@ -889,7 +887,7 @@ const queueRemoveFromCollection = (itemKeys, collectionKey, libraryKey, queueId)
 					error,
 					itemKeys,
 					libraryKey,
-					queueId
+					id
 				});
 				throw error;
 			} finally {
@@ -1188,8 +1186,8 @@ export {
 	createAttachments,
 	createAttachmentsFromDropped,
 	createItem,
-	createItems,
 	createItemOfType,
+	createItems,
 	createLinkedUrlAttachments,
 	deleteItem,
 	deleteItems,
