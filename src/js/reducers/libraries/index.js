@@ -1,5 +1,3 @@
-'use strict';
-
 import collections from './collections';
 import deleting from './deleting';
 import items from './items';
@@ -11,7 +9,6 @@ import itemsTrash from './items-trash';
 import sync from './sync';
 import tagColors from './tag-colors';
 import tagsByCollection from './tags-by-collection';
-import tagsByItem from './tags-by-item';
 import tagsInPublicationsItems from './tags-in-publications-items';
 import tagsInTrashItems from './tags-in-trash-items';
 import tagsTop from './tags-top';
@@ -49,7 +46,6 @@ const libraries = (state = {}, action, { itemsPublications, meta } = {})  => {
 				tagsByCollection: tagsByCollection(get(state, [action.libraryKey, 'tagsByCollection']), action, {
 					items: (state[action.libraryKey] || {}).items
 				}),
-				tagsByItem: tagsByItem(get(state, [action.libraryKey, 'tagsByItem']), action),
 				tagsInPublicationsItems: tagsInPublicationsItems(get(state, [action.libraryKey, 'tagsInPublicationsItems']), action, {
 					itemsPublications, items: (state[action.libraryKey] || {}).items
 				}),
