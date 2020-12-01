@@ -1,8 +1,8 @@
 import { omit } from '../common/immutable';
 import { getApiForItems } from '../common/actions';
-import { exportItems, chunkedAddToCollection, chunkedCopyToLibrary, chunkedTrashOrDelete,
-chunkedDeleteItems, chunkedMoveToTrash, chunkedRecoverFromTrash, chunkedRemoveFromCollection,
-createItem, createItemOfType, toggleModal } from '.';
+import { exportItems, chunkedAddTagsToItems, chunkedAddToCollection, chunkedCopyToLibrary,
+chunkedTrashOrDelete, chunkedDeleteItems, chunkedMoveToTrash, chunkedRecoverFromTrash,
+chunkedRemoveFromCollection, createItem, createItemOfType, toggleModal } from '.';
 import columnProperties from '../constants/column-properties';
 
 import { BIBLIOGRAPHY, COLLECTION_SELECT, EXPORT, NEW_FILE, NEW_ITEM } from '../constants/modals';
@@ -137,6 +137,14 @@ const currentExportItemsModal = () => {
 	}
 }
 
+const currentAddTags = (newTags) => {
+	return async (dispatch, getState) => {
+		const state = getState();
+		const { itemKeys, libraryKey } = state.current;
+		dispatch(chunkedAddTagsToItems(itemKeys, libraryKey, newTags));
+	}
+}
+
 // @TODO: reduce overlap with fetchSource in items-read.js
 const currentGoToSubscribeUrl = () => {
 	return async (dispatch, getState) => {
@@ -211,6 +219,7 @@ const currentGoToSubscribeUrl = () => {
 }
 
 export {
+	currentAddTags,
 	currentAddToCollection,
 	currentAddToCollectionModal,
 	currentBibliographyModal,

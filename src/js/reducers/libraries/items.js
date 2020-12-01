@@ -19,6 +19,7 @@ import {
     RECEIVE_TRASH_ITEMS,
     RECEIVE_UPDATE_ITEM,
     RECEIVE_UPLOAD_ATTACHMENT,
+    RECEIVE_ADD_TAGS_TO_ITEMS,
 } from '../../constants/actions.js';
 
 import { get, indexByKey } from '../../utils';
@@ -57,6 +58,7 @@ const items = (state = {}, action, metaAndTags) => {
 		case RECEIVE_RECOVER_ITEMS_TRASH:
 		case RECEIVE_ADD_ITEMS_TO_COLLECTION:
 		case RECEIVE_REMOVE_ITEMS_FROM_COLLECTION:
+		case RECEIVE_ADD_TAGS_TO_ITEMS:
 			return {
 				...state,
 				...indexByKey(Object.values(action.items), 'key', item => (calculateDerivedData({

@@ -1,57 +1,63 @@
 import api from 'zotero-api-client';
 import baseMappings from 'zotero-base-mappings';
 import { fetchItemTypeFields } from './meta';
-import { get, getItemCanonicalUrl, getUniqueId, removeRelationByItemKey, reverseMap } from '../utils';
+import { deduplicateByKey, get, getItemCanonicalUrl, getUniqueId, removeRelationByItemKey,
+reverseMap } from '../utils';
 import { parseDescriptiveString } from '../common/format';
 import { getFilesData } from '../common/event';
 import { omit } from '../common/immutable';
 import { extractItems } from '../common/actions';
 import { fetchItemsByKeys, fetchChildItems, fetchItemTemplate, fetchItemTypeCreatorTypes } from '.';
-import { COMPLETE_ONGOING, BEGIN_ONGOING } from '../constants/actions';
 import { requestTracker } from '.';
 
 import {
-	ERROR_STORE_RELATIONS_IN_SOURCE,
-	RECEIVE_STORE_RELATIONS_IN_SOURCE,
+	BEGIN_ONGOING,
+	COMPLETE_ONGOING,
 	ERROR_ADD_ITEMS_TO_COLLECTION,
+	ERROR_ADD_TAGS_TO_ITEMS,
 	ERROR_CREATE_ITEM,
 	ERROR_CREATE_ITEMS,
 	ERROR_DELETE_ITEM,
 	ERROR_DELETE_ITEMS,
 	ERROR_MOVE_ITEMS_TRASH,
 	ERROR_RECOVER_ITEMS_TRASH,
+	ERROR_REGISTER_FILE_ATTACHMENTS,
 	ERROR_REMOVE_ITEMS_FROM_COLLECTION,
+	ERROR_STORE_RELATIONS_IN_SOURCE,
 	ERROR_UPDATE_ITEM,
 	ERROR_UPLOAD_ATTACHMENT,
 	PRE_ADD_ITEMS_TO_COLLECTION,
+	PRE_ADD_TAGS_TO_ITEMS,
 	PRE_MOVE_ITEMS_TRASH,
 	PRE_RECOVER_ITEMS_TRASH,
 	PRE_REMOVE_ITEMS_FROM_COLLECTION,
 	PRE_UPDATE_ITEM,
 	RECEIVE_ADD_ITEMS_TO_COLLECTION,
+	RECEIVE_ADD_TAGS_TO_ITEMS,
 	RECEIVE_CREATE_ITEM,
 	RECEIVE_CREATE_ITEMS,
 	RECEIVE_DELETE_ITEM,
 	RECEIVE_DELETE_ITEMS,
 	RECEIVE_MOVE_ITEMS_TRASH,
 	RECEIVE_RECOVER_ITEMS_TRASH,
+	RECEIVE_REGISTER_FILE_ATTACHMENTS,
 	RECEIVE_REMOVE_ITEMS_FROM_COLLECTION,
+	RECEIVE_STORE_RELATIONS_IN_SOURCE,
 	RECEIVE_UPDATE_ITEM,
 	RECEIVE_UPLOAD_ATTACHMENT,
 	REQUEST_ADD_ITEMS_TO_COLLECTION,
+	REQUEST_ADD_TAGS_TO_ITEMS,
 	REQUEST_CREATE_ITEM,
 	REQUEST_CREATE_ITEMS,
 	REQUEST_DELETE_ITEM,
 	REQUEST_DELETE_ITEMS,
 	REQUEST_MOVE_ITEMS_TRASH,
 	REQUEST_RECOVER_ITEMS_TRASH,
+	REQUEST_REGISTER_FILE_ATTACHMENTS,
 	REQUEST_REMOVE_ITEMS_FROM_COLLECTION,
 	REQUEST_STORE_RELATIONS_IN_SOURCE,
 	REQUEST_UPDATE_ITEM,
 	REQUEST_UPLOAD_ATTACHMENT,
-	REQUEST_REGISTER_FILE_ATTACHMENTS,
-	RECEIVE_REGISTER_FILE_ATTACHMENTS,
-	ERROR_REGISTER_FILE_ATTACHMENTS,
 } from '../constants/actions';
 
 const postItemsMultiPatch = async (state, multiPatch) => {
@@ -571,6 +577,90 @@ const queueRecoverItemsFromTrash = (itemKeys, libraryKey, id) => {
 	};
 }
 
+const addTagsToItems = (itemKeys, libraryKey, newTags) => {
+	return async dispatch => {
+		const id = requestTracker.id++;
+
+		dispatch({
+			type: PRE_ADD_TAGS_TO_ITEMS,
+			itemKeys,
+			libraryKey,
+			newTags,
+			id
+		});
+
+		dispatch(
+			queueAddTagToItems(itemKeys, libraryKey, newTags, id)
+		);
+	};
+}
+
+const queueAddTagToItems = (itemKeys, libraryKey, newTags, id) => {
+	return {
+		queue: libraryKey,
+		callback: async (next, dispatch, getState) => {
+			const state = getState();
+			const multiPatch = itemKeys.map(key => ({
+				key,
+				tags: deduplicateByKey(
+					[...state.libraries[libraryKey].items[key].tags, ...newTags.map(tag => ({ tag }))],
+					'tag'
+				)
+			}));
+
+			dispatch({
+				type: REQUEST_ADD_TAGS_TO_ITEMS,
+				itemKeys,
+				newTags,
+				libraryKey,
+				id
+			});
+
+			try {
+				const { response, itemKeys, items } = await postItemsMultiPatch(state, multiPatch);
+				const itemKeysChanged = Object.values(response.raw.success);
+
+				dispatch({
+					type: RECEIVE_ADD_TAGS_TO_ITEMS,
+					libraryKey,
+					itemKeys,
+					itemKeysChanged,
+					newTags,
+					items,
+					response,
+					id,
+					// otherItems: state.libraries[libraryKey].items,
+				});
+
+				if(!response.isSuccess()) {
+					dispatch({
+						type: ERROR_ADD_TAGS_TO_ITEMS,
+						itemKeys: itemKeys.filter(itemKey => !itemKeys.includes(itemKey)),
+						error: response.getErrors(),
+						libraryKey,
+						newTags,
+						id
+					});
+				}
+
+				return;
+			} catch(error) {
+				dispatch({
+					type: ERROR_ADD_TAGS_TO_ITEMS,
+					error,
+					itemKeys,
+					libraryKey,
+					newTags,
+					id
+				});
+				throw error;
+			} finally {
+				next();
+			}
+		}
+	};
+}
+
 const addToCollection = (itemKeys, collectionKey) => {
 	return async (dispatch, getState) => {
 		const { libraryKey } = getState().current;
@@ -952,6 +1042,10 @@ const chunkedAction = (action, itemKeys, ...args) => {
 	}
 }
 
+const chunkedAddToCollection = (itemKeys, ...args) => chunkedAction(addToCollection, itemKeys, ...args);
+
+const chunkedAddTagsToItems = (itemKeys, ...args) => chunkedAction(addTagsToItems, itemKeys, ...args);
+
 const chunkedDeleteItems = (itemKeys, ...args) => chunkedAction(deleteItems, itemKeys, ...args);
 
 const chunkedMoveToTrash = (itemKeys, ...args) => chunkedAction(moveToTrash, itemKeys, ...args);
@@ -997,8 +1091,6 @@ const chunkedCopyToLibrary = (itemKeys, sourceLibraryKey, ...args) => {
 		}
 	}
 }
-
-const chunkedAddToCollection = (itemKeys, ...args) => chunkedAction(addToCollection, itemKeys, ...args);
 
 const updateItemWithMapping = (item, fieldKey, newValue) => {
 	var patch = {
@@ -1174,7 +1266,9 @@ const createItemOfType = (itemType, { collection = null } = {}) => {
 }
 
 export {
+	addTagsToItems,
 	addToCollection,
+	chunkedAddTagsToItems,
 	chunkedAddToCollection,
 	chunkedCopyToLibrary,
 	chunkedDeleteItems,

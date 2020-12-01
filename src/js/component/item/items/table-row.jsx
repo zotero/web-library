@@ -9,8 +9,9 @@ import Cell from './table-cell';
 import Icon from '../../ui/icon';
 import { ATTACHMENT, ITEM } from '../../../constants/dnd';
 import colorNames from '../../../constants/color-names';
-import { currentAddToCollection, createAttachmentsFromDropped, currentCopyToLibrary, openAttachment,
-openBestAttachment, openBestAttachmentFallback, selectItemsMouse } from '../../../actions';
+import { currentAddTags, currentAddToCollection, createAttachmentsFromDropped, currentCopyToLibrary,
+openAttachment, openBestAttachment, openBestAttachmentFallback, selectItemsMouse } from
+'../../../actions';
 import { useSourceKeys } from '../../../hooks';
 
 const DROP_MARGIN_EDGE = 5; // how many pixels from top/bottom of the row triggers "in-between" drop
@@ -177,12 +178,16 @@ const TableRow = props => {
 		end: (item, monitor) => {
 			const dropResult = monitor.getDropResult();
 
-			if(dropResult) {
-				const { targetType, collectionKey: targetCollectionKey, libraryKey: targetLibraryKey } = dropResult;
-				if(targetLibraryKey && targetLibraryKey !== libraryKey) {
-					dispatch(currentCopyToLibrary(targetLibraryKey, targetType === 'collection' ? targetCollectionKey : null));
-				} else {
-					dispatch(currentAddToCollection(targetCollectionKey));
+			if(dropResult && dropResult.targetType) {
+				if(dropResult.targetType === 'tag') {
+					dispatch(currentAddTags([dropResult.tag]));
+				} else if(dropResult.targetType === 'library' || dropResult.targetType === 'collection') {
+					const { targetType, collectionKey: targetCollectionKey, libraryKey: targetLibraryKey } = dropResult;
+					if(targetLibraryKey && targetLibraryKey !== libraryKey) {
+						dispatch(currentCopyToLibrary(targetLibraryKey, targetType === 'collection' ? targetCollectionKey : null));
+					} else if(targetCollectionKey) {
+						dispatch(currentAddToCollection(targetCollectionKey));
+					}
 				}
 			}
 		}

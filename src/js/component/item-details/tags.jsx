@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
-import React, { memo, useCallback, useRef, useState } from 'react';
+import React, { memo, useEffect, useCallback, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import deepEqual from 'deep-equal';
 
 import Button from '../ui/button';
 import Editable from '../editable';
@@ -11,7 +12,7 @@ import { pick } from '../../common/immutable';
 import { TabPane } from '../ui/tabs';
 import { Toolbar, ToolGroup } from '../ui/toolbars';
 import { pluralize } from '../../common/format';
-import { useFocusManager } from '../../hooks';
+import { useFocusManager, usePrevious } from '../../hooks';
 import { isTriggerEvent } from '../../common/event';
 
 var nextId = 0;
@@ -21,10 +22,14 @@ const Tags = props => {
 	const dispatch = useDispatch();
 	const libraryKey = useSelector(state => state.current.libraryKey);
 	const itemKey = useSelector(state => state.current.itemKey);
-	const initalTags = useSelector(state => get(state, ['libraries', libraryKey, 'items', itemKey, 'tags'], []));
+	const initialTags = useSelector(state => get(state, ['libraries', libraryKey, 'items', itemKey, 'tags'], []));
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
 	const tagColors = useSelector(state => get(state, ['libraries', libraryKey, 'tagColors']));
-	const [tags, setTags] = useState(initalTags.map(t => ({ ...t, id: ++nextId })));
+	const [tags, setTags] = useState(initialTags.map(t => ({ ...t, id: ++nextId })));
+	const isPendingTagChanges = useSelector(state =>
+		(get(state, ['libraries', state.current.libraryKey, 'updating', 'items', state.current.itemKey]) || [])
+		.some(({ patch }) => 'tags' in patch)
+	);
 	const [tagRedacted, setTagRedacted] = useState(null);
 	const [suggestions, setSuggestions] = useState([]);
 	const requestId = useRef(1);
@@ -33,6 +38,7 @@ const Tags = props => {
 	const { receiveBlur, focusDrillDownPrev, focusDrillDownNext, receiveFocus, focusNext, focusPrev,
 		focusBySelector, focusOnLast, resetLastFocused } = useFocusManager(scrollContainerRef, null,
 		false);
+	const prevInitialTags = usePrevious(initialTags);
 
 
 	const handleCommit = useCallback(async (newTagValue, hasChanged, ev) => {
@@ -169,6 +175,17 @@ const Tags = props => {
 		}
 		receiveFocus(ev);
 	}, [receiveFocus, isTouchOrSmall]);
+
+	useEffect(() => {
+		if(isPendingTagChanges || tagRedacted !== null) {
+			// if currently editing or updating tags, discard any remote updates to keep editing smooth
+			// otherwise each intermediatry state will flash back when quickly adding or removing tags
+			return;
+		}
+		if(typeof(prevInitialTags) !== 'undefined' && !deepEqual(initialTags, prevInitialTags)) {
+			setTags(initialTags.map(t => ({ ...t, id: ++nextId })));
+		}
+	}, [isPendingTagChanges, tagRedacted, initialTags, prevInitialTags]);
 
 	return (
 		<TabPane
