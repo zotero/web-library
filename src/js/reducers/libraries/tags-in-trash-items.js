@@ -4,6 +4,7 @@ import {
 	DROP_TAGS_IN_TRASH_ITEMS,
 	ERROR_COLORED_TAGS_IN_TRASH_ITEMS,
 	ERROR_TAGS_IN_TRASH_ITEMS,
+	RECEIVE_ADD_TAGS_TO_ITEMS,
 	RECEIVE_COLORED_TAGS_IN_TRASH_ITEMS,
 	RECEIVE_DELETE_ITEMS,
 	RECEIVE_FETCH_ITEMS,
@@ -65,6 +66,8 @@ const tagsInTrashItems = (state = {}, action, { items } = {}) => {
 				(newItem, oldItem = {}) => (newItem.deleted || oldItem.deleted) &&
 					((newItem.deleted !== oldItem.deleted) || (!deepEqual(newItem.tags, oldItem.tags)))
 			) ? {} : state
+		case RECEIVE_ADD_TAGS_TO_ITEMS:
+			return action.itemKeys.some(itemKey => itemKey in items && items[itemKey].deleted) ? {} : state;
 		default:
 			return state;
 	}

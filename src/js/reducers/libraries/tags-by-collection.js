@@ -5,6 +5,7 @@ import {
 	ERROR_COLORED_TAGS_IN_COLLECTION,
 	ERROR_TAGS_IN_COLLECTION,
 	RECEIVE_ADD_ITEMS_TO_COLLECTION,
+	RECEIVE_ADD_TAGS_TO_ITEMS,
 	RECEIVE_COLORED_TAGS_IN_COLLECTION,
 	RECEIVE_CREATE_ITEM,
 	RECEIVE_CREATE_ITEMS,
@@ -132,6 +133,19 @@ const tags = (state = {}, action, { items } = {}) => {
 						return acc;
 					}, {}
 				) : {})
+			}
+		case RECEIVE_ADD_TAGS_TO_ITEMS:
+			return {
+				...state,
+				...(action.itemKeys.reduce(
+					(acc, itemKey) => {
+						if(itemKey in items && 'collections' in items[itemKey]) {
+							items[itemKey].collections.forEach(colKey => {
+								acc[colKey] = {};
+							});
+						}
+						return acc;
+					}, {}))
 			}
 		default:
 			return state;

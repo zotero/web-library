@@ -4,6 +4,7 @@ import {
 	DROP_TAGS_IN_PUBLICATIONS_ITEMS,
 	ERROR_COLORED_TAGS_IN_PUBLICATIONS_ITEMS,
 	ERROR_TAGS_IN_PUBLICATIONS_ITEMS,
+	RECEIVE_ADD_TAGS_TO_ITEMS,
 	RECEIVE_COLORED_TAGS_IN_PUBLICATIONS_ITEMS,
 	RECEIVE_FETCH_ITEMS,
 	RECEIVE_TAGS_IN_PUBLICATIONS_ITEMS,
@@ -57,6 +58,8 @@ const tagsInPublicationsItems = (state = {}, action, { items, itemsPublications 
 				action, items,
 				(newItem, oldItem = {}) => (('keys' in itemsPublications ? itemsPublications.keys : []).includes(newItem.key)) && (!deepEqual(newItem.tags, oldItem.tags))
 			) ? {} : state;
+		case RECEIVE_ADD_TAGS_TO_ITEMS:
+			return action.itemKeys.some(itemKey => itemsPublications && itemKey in itemsPublications.keys) ? {} : state;
 		default:
 			return state;
 	}

@@ -4,6 +4,7 @@ import {
 	DROP_TAGS_IN_TOP_ITEMS,
 	ERROR_COLORED_TAGS_IN_TOP_ITEMS,
 	ERROR_TAGS_IN_TOP_ITEMS,
+	RECEIVE_ADD_TAGS_TO_ITEMS,
 	RECEIVE_COLORED_TAGS_IN_TOP_ITEMS,
 	RECEIVE_CREATE_ITEM,
 	RECEIVE_CREATE_ITEMS,
@@ -63,6 +64,8 @@ const tagsTop = (state = {}, action, { items } = {}) => {
 				{} : state;
 		case RECEIVE_UPDATE_ITEM:
 			return 'tags' in action.patch ? {} : state;
+		case RECEIVE_ADD_TAGS_TO_ITEMS:
+			return {};
 		case RECEIVE_FETCH_ITEMS:
 			return detectIfItemsChanged(
 				action, items,
