@@ -24,12 +24,12 @@ const ZoteroConnectorNotifier = () => {
 	const selectedItemsKeys = useSelector(state => state.current.itemKeys, shallowEqual);
 	const tags = useSelector(state => state.current.tags, shallowEqual);
 	const { keys: itemKeysCurrentSource } = useSourceData();
-	const item = useSelector(state => get(state, ['libraries', libraryKey, 'items', selectedItemKey], null));
-	const items = useSelector(state => state.libraries[libraryKey].items, shallowEqual);
+	const items = useSelector(state => get(state, ['libraries', libraryKey, 'items'], null), shallowEqual);
 	const itemTitles = useMemo(
 		() => mapItemKeysToTitles((itemKeysCurrentSource || []), selectedItemsKeys, items),
 		[itemKeysCurrentSource, items, selectedItemsKeys]
 	);
+	const item = items && selectedItemKey in items ? items[selectedItemKey] : null;
 
 	const { callback: debouncedNotify } = useDebouncedCallback(() => {
 		document.dispatchEvent(new Event('ZoteroItemUpdated', {
