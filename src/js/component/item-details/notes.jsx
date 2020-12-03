@@ -197,12 +197,13 @@ const Notes = ({ isActive, isReadOnly }) => {
 			dispatch(deleteItem(note));
 			noteKeyToAutoDelete.current = null;
 		} else if(!isAutoDelete) {
+			focusBySelector(`.note:first-child:not([data-key="${note.key}"]), .note:nth-child(2)`);
 			dispatch(moveToTrash([note.key]));
 			if(note.key === noteKey) {
 				dispatch(navigate({ noteKey: null, attachmentKey: null }));
 			}
 		}
-	}, [dispatch, noteKey]);
+	}, [dispatch, focusBySelector, noteKey]);
 
 	const handleDuplicate = useCallback(async note => {
 		const noteTemplate = await dispatch(fetchItemTemplate('note'));
@@ -289,17 +290,6 @@ const Notes = ({ isActive, isReadOnly }) => {
 			addedNoteKey.current = null;
 		}
 	}, [focusBySelector, isActive, isTouchOrSmall, noteKey, notes]);
-
-	useEffect(() => {
-		if(!isTouchOrSmall && prevNoteKey !== noteKey && noteKey === null) {
-			resetLastFocused();
-			if(notesEl && notesEl.current) {
-				// When note has been deleted, keep focus within the the list by focusing on either
-				// first or second note (if first is being deleted) in the list
-				focusBySelector(`.note:first-child:not([data-key="${prevNoteKey}"]), .note:nth-child(2)`);
-			}
-		}
-	}, [focusBySelector, noteKey, isTouchOrSmall, resetLastFocused, prevNoteKey, receiveBlur]);
 
 	// Scroll selected note into view when it's first ready.
 	useEffect(() => {

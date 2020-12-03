@@ -133,7 +133,8 @@ const Attachment = memo(props => {
 		if(attachmentKey === attachment.key) {
 			dispatch(navigate({ attachmentKey: null, noteKey: null }));
 		}
-	}, [dispatch, attachment, attachmentKey]);
+		focusBySelector(`.attachment:first-child:not([data-key="${attachment.key}"]), .attachment:nth-child(2)`);
+	}, [attachment, attachmentKey, focusBySelector, dispatch]);
 
 	const handleKeyDown = useCallback(ev => onKeyDown(ev), [onKeyDown]);
 
@@ -149,7 +150,6 @@ const Attachment = memo(props => {
 		if(isTouchOrSmall) {
 			return;
 		}
-
 		dispatch(navigate({ attachmentKey: attachment.key, noteKey: null }));
 		setIsFocused(true);
 	}, [dispatch, attachment, isTouchOrSmall]);
@@ -400,17 +400,6 @@ const Attachments = ({ isActive, isReadOnly }) => {
 			dispatch(sourceFile('tinymce'));
 		}
 	}, [dispatch, isTinymceFetching, isTinymceFetched]);
-
-	useEffect(() => {
-		if(!isTouchOrSmall && prevAttachmentKey !== attachmentKey && attachmentKey === null) {
-			resetLastFocused();
-			if(scrollContainerRef && scrollContainerRef.current) {
-				// When attachment has been deleted, keep focus within the the list by focusing on either
-				// first or second note (if first is being deleted) in the list
-				focusBySelector(`.attachment:first-child:not([data-key="${prevAttachmentKey}"]), .attachment:nth-child(2)`);
-			}
-		}
-	}, [focusBySelector, attachmentKey, resetLastFocused, prevAttachmentKey, receiveBlur, isTouchOrSmall]);
 
 	return (
 		<TabPane
