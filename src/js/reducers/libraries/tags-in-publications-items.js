@@ -59,7 +59,7 @@ const tagsInPublicationsItems = (state = {}, action, { items, itemsPublications 
 				(newItem, oldItem = {}) => (('keys' in itemsPublications ? itemsPublications.keys : []).includes(newItem.key)) && (!deepEqual(newItem.tags, oldItem.tags))
 			) ? {} : state;
 		case RECEIVE_ADD_TAGS_TO_ITEMS:
-			return action.itemKeys.some(itemKey => itemsPublications && itemKey in itemsPublications.keys) ? {} : state;
+			return action.itemKeys.some(itemKey => 'keys' in itemsPublications && itemKey in itemsPublications.keys) ? {} : state;
 		default:
 			return state;
 	}
