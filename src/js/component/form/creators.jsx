@@ -31,6 +31,7 @@ const Creators = props => {
 
 	const openOnNextRender = useRef(null);
 	const fields = useRef({});
+	const focusOnNext = useRef(null);
 	const prevValue = usePrevious(value);
 	const prevCreators = usePrevious(creators);
 	const prevCreatorTypes = usePrevious(creatorTypes);
@@ -129,6 +130,14 @@ const Creators = props => {
 		setCreators(enumerateObjects(value));
 	}, [value]);
 
+	const handleAddMany = useCallback((additionalCreators, index) => {
+		const newCreators = [ ...creators ];
+		newCreators.splice(index, 1, ...additionalCreators);
+		setCreators(newCreators);
+		handleSaveCreators(newCreators);
+		focusOnNext.current = index + (additionalCreators.length - 1);
+	}, [creators, handleSaveCreators]);
+
 	useEffect(() => {
 		if(typeof(prevValue) !== 'undefined' && !deepEqual(value, prevValue)) {
 			setCreators(value.length ? enumerateObjects(value) : virtualCreators)
@@ -151,6 +160,11 @@ const Creators = props => {
 			if(virtualEntryIndex > -1) {
 				fields.current[virtualEntryIndex].focus();
 			}
+		}
+
+		if(focusOnNext.current !== null) {
+			fields.current[focusOnNext.current].focus();
+			focusOnNext.current = null;
 		}
 	}, [creators, prevCreators]);
 
@@ -183,6 +197,7 @@ const Creators = props => {
 				onCreatorRemove={ handleCreatorRemove }
 				onCreatorTypeSwitch={ handleCreatorTypeSwitch }
 				onDragStatusChange={ onDragStatusChange }
+				onAddMany={ handleAddMany }
 				onReorder={ handleReorder }
 				onReorderCancel={ handleReorderCancel }
 				onReorderCommit={ handleReorderCommit }

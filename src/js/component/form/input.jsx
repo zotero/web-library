@@ -135,7 +135,7 @@ const Input = memo(forwardRef((props, ref) => {
 		required: isRequired,
 		value,
 		...pick(rest, NATIVE_INPUT_PROPS),
-		...pick(rest, key => key.match(/^(aria-|data-).*/))
+		...pick(rest, key => key.match(/^(aria-|data-|on[A-Z]).*/))
 	};
 
 	var inputComponent = suggestions ? (

@@ -12,7 +12,7 @@ import Modal from '../ui/modal';
 import SelectInput from './select';
 import { creator as formatCreator } from '../../common/format';
 import { isTriggerEvent } from '../../common/event';
-import { pick } from '../../common/immutable';
+import { omit, pick } from '../../common/immutable';
 import { SelectDivider, SelectOption } from '../ui/select';
 import { useEditMode } from '../../hooks';
 
@@ -225,32 +225,39 @@ CreatorFieldModal.propTypes = {
 };
 
 
-// const CreatorFieldInput = memo(forwardRef((props, ref) => {
-// 	const { isForm, isReadOnly, creator, onFieldClick, onFieldFocus, onCancel, onEditableCommit, label, inModal,
-// 	name, } = props;
-// 	const shouldUseEditable = !isForm && !inModal;
-
-
-// }));
-
-// CreatorFieldInput.displayName = 'CreatorFieldInput';
-// CreatorFieldInput.propTypes = {
-// 	creator: PropTypes.object,
-// 	inModal: PropTypes.bool,
-// 	isForm: PropTypes.bool,
-// 	isReadOnly: PropTypes.bool,
-// 	label: PropTypes.string,
-// 	name: PropTypes.string,
-// 	onCancel: PropTypes.func,
-// 	onEditableCommit: PropTypes.func,
-// 	onFieldClick: PropTypes.func,
-// 	onFieldFocus: PropTypes.func,
-// };
-
 const CreatorFieldInputWrap = memo(forwardRef((props, ref) => {
-	const { active, creator, inModal, isForm, isReadOnly, label, name, onCancel, onEditableCommit,
-	onFieldClick, onFieldFocus, } = props;
+	const { active, creator, index, inModal, isForm, isReadOnly, label, name, onCancel, onAddMany,
+	onEditableCommit, onFieldClick, onFieldFocus, } = props;
 	const shouldUseEditable = !isForm && !inModal;
+
+	const handlePaste = useCallback(ev => {
+		const clipboardData = ev.clipboardData || window.clipboardData;
+		const pastedData = clipboardData.getData('Text');
+
+		if(!pastedData.includes('\n')) {
+			return;
+		}
+
+		ev.preventDefault();
+		const entries = pastedData.split('\n');
+		const additionalCreators = entries
+			.slice(0, -1)
+			.map(entry => entry.split(' '))
+			.map(entry => entry.length > 1 ? ({
+					lastName: entry.length > 0 ? entry[entry.length - 1] : '',
+					firstName: entry.slice(0, entry.length - 1).join(' '),
+					creatorType: creator.creatorType
+				}) : ({
+					name: entry[0], creatorType: creator.creatorType
+			}));
+		const { selectionStart = 0, selectionEnd = 0 } = ev.currentTarget;
+		const lastCreator = {
+			...omit(creator, ['id']),
+			[name]: creator[name].slice(0, selectionStart) + entries[entries.length - 1] + creator[name].slice(selectionEnd)
+		};
+
+		onAddMany([...additionalCreators, lastCreator], index);
+	}, [creator, index, name, onAddMany]);
 
 	const formField = <Input
 		aria-label={ label }
@@ -268,6 +275,7 @@ const CreatorFieldInputWrap = memo(forwardRef((props, ref) => {
 		selectOnFocus={ shouldUseEditable }
 		tabIndex={ 0 }
 		value={ creator[name] }
+		onPaste={ handlePaste }
 	/>;
 
 	return shouldUseEditable ?
@@ -286,11 +294,13 @@ CreatorFieldInputWrap.displayName = 'CreatorFieldInputWrap';
 CreatorFieldInputWrap.propTypes = {
 	active: PropTypes.string,
 	creator: PropTypes.object,
+	index: PropTypes.number,
 	inModal: PropTypes.bool,
 	isForm: PropTypes.bool,
 	isReadOnly: PropTypes.bool,
 	label: PropTypes.string,
 	name: PropTypes.string,
+	onAddMany: PropTypes.func,
 	onCancel: PropTypes.func,
 	onEditableCommit: PropTypes.func,
 	onFieldClick: PropTypes.func,
@@ -299,9 +309,9 @@ CreatorFieldInputWrap.propTypes = {
 
 const CreatorField = forwardRef((props, ref) => {
 	const { className, creator, creatorsCount, creatorTypes, index, isCreateAllowed,
-		isDeleteAllowed, isForm, isReadOnly, isSingle, isVirtual, onChange, onCreatorAdd,
-		onCreatorRemove, onCreatorTypeSwitch, onDragStatusChange, onReorder, onReorderCancel,
-		onReorderCommit, shouldPreOpenModal } = props;
+		isDeleteAllowed, isForm, isReadOnly, isSingle, isVirtual, onAddMany, onChange,
+		onCreatorAdd, onCreatorRemove, onCreatorTypeSwitch, onDragStatusChange, onReorder,
+		onReorderCancel, onReorderCommit, shouldPreOpenModal } = props;
 
 	const shouldUseEditMode = useSelector(state => state.device.shouldUseEditMode);
 	const shouldUseModalCreatorField = useSelector(state => state.device.shouldUseModalCreatorField);
@@ -396,9 +406,9 @@ const CreatorField = forwardRef((props, ref) => {
 
 	// raw formatted data for use in drag-n-drop indicator on touch. See CreatorDragPreview in drag-layer.jsx
 	const raw = { ...creator, creatorType: creatorLabel };
-	const inputProps = { active, creator, isForm, isReadOnly, label: creatorLabel, name, onCancel:
+	const inputProps = { active, creator, index, isForm, isReadOnly, label: creatorLabel, name, onCancel:
 	handleCancel, onEditableCommit: handleEditableCommit, onFieldClick: handleFieldClick,
-	onFieldFocus: handleFieldFocus, };
+	onFieldFocus: handleFieldFocus, onAddMany };
 
 	return (
 		<React.Fragment>
