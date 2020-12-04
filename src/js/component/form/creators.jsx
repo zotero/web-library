@@ -2,6 +2,7 @@ import cx from 'classnames';
 import deepEqual from 'deep-equal';
 import PropTypes from 'prop-types';
 import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { CSSTransition } from 'react-transition-group';
 import { useSelector } from 'react-redux';
 
 import Button from '../ui/button';
@@ -10,7 +11,7 @@ import Icon from '../ui/icon';
 import { enumerateObjects } from '../../utils';
 import { removeKeys } from '../../common/immutable';
 import { splice } from '../../utils';
-import { useEditMode, usePrevious } from '../../hooks';
+import { useEditMode, useForceUpdate, usePrevious } from '../../hooks';
 
 const Creators = props => {
 	const { creatorTypes, onSave, name, value = [], isForm, onDragStatusChange, isReadOnly } = props;
@@ -28,10 +29,10 @@ const Creators = props => {
 	);
 
 	const hasVirtual = useMemo(() => !!creators.find(creator => creator[Symbol.for('isVirtual')]), [creators]);
-
 	const openOnNextRender = useRef(null);
 	const fields = useRef({});
 	const focusOnNext = useRef(null);
+	const animateAppearOnNextRender = useRef(null);
 	const prevValue = usePrevious(value);
 	const prevCreators = usePrevious(creators);
 	const prevCreatorTypes = usePrevious(creatorTypes);
@@ -133,7 +134,12 @@ const Creators = props => {
 	const handleAddMany = useCallback((additionalCreators, index) => {
 		const newCreators = [ ...creators ];
 		newCreators.splice(index, 1, ...additionalCreators);
-		setCreators(newCreators);
+
+		animateAppearOnNextRender.current = Array.from(
+			{ length: additionalCreators.length }, (_, i) => i + index
+		);
+
+		setCreators(enumerateObjects(newCreators));
 		handleSaveCreators(newCreators);
 		focusOnNext.current = index + (additionalCreators.length - 1);
 	}, [creators, handleSaveCreators]);
@@ -176,34 +182,51 @@ const Creators = props => {
 		openOnNextRender.current = 	null;
 	}
 
+	var animateThisRender = [];
+	if(animateAppearOnNextRender.current !== null) {
+		animateThisRender = [...animateAppearOnNextRender.current];
+		animateAppearOnNextRender.current = null;
+	}
+
 	return (
 		<React.Fragment>
-			{ creators.map((creator, index) => <CreatorField
-				className={ cx({ 'touch-separated': hasVirtual && isEditing && index === creators.length - 1 }) }
-				creator={ creator }
-				creatorsCount={ creators.length }
-				creatorTypes={ creatorTypes }
-				index={ index }
-				isCreateAllowed={ !hasVirtual }
-				isDeleteAllowed={ !hasVirtual || creators.length > 1 }
-				isForm={ isForm }
-				isReadOnly={ isReadOnly }
-				isSingle={ creators.length === 1 }
-				isVirtual={ creator[Symbol.for('isVirtual')] || false }
-				key={ creator.id }
-				name={ name }
-				onChange={ handleValueChanged }
-				onCreatorAdd={ handleCreatorAdd }
-				onCreatorRemove={ handleCreatorRemove }
-				onCreatorTypeSwitch={ handleCreatorTypeSwitch }
-				onDragStatusChange={ onDragStatusChange }
-				onAddMany={ handleAddMany }
-				onReorder={ handleReorder }
-				onReorderCancel={ handleReorderCancel }
-				onReorderCommit={ handleReorderCommit }
-				ref={ ref => fields.current[index] = ref }
-				shouldPreOpenModal={ openOnThisRender === index }
-			/> )}
+			{ creators.map((creator, index) => (
+				<CSSTransition
+					key={ creator.id }
+					classNames="color"
+					in={ animateThisRender.includes(index) }
+					enter={ false }
+					timeout={ 600 }
+				>
+					<CreatorField
+					className={ cx({
+						'touch-separated': hasVirtual && isEditing && index === creators.length - 1,
+					}) }
+					creator={ creator }
+					creatorsCount={ creators.length }
+					creatorTypes={ creatorTypes }
+					index={ index }
+					isCreateAllowed={ !hasVirtual }
+					isDeleteAllowed={ !hasVirtual || creators.length > 1 }
+					isForm={ isForm }
+					isReadOnly={ isReadOnly }
+					isSingle={ creators.length === 1 }
+					isVirtual={ creator[Symbol.for('isVirtual')] || false }
+					name={ name }
+					onChange={ handleValueChanged }
+					onCreatorAdd={ handleCreatorAdd }
+					onCreatorRemove={ handleCreatorRemove }
+					onCreatorTypeSwitch={ handleCreatorTypeSwitch }
+					onDragStatusChange={ onDragStatusChange }
+					onAddMany={ handleAddMany }
+					onReorder={ handleReorder }
+					onReorderCancel={ handleReorderCancel }
+					onReorderCommit={ handleReorderCommit }
+					ref={ ref => fields.current[index] = ref }
+					shouldPreOpenModal={ openOnThisRender === index }
+				/>
+				</CSSTransition>
+			))}
 			{ shouldUseEditMode && isEditing && !hasVirtual && (
 				<li className="metadata touch-separated has-btn-icon">
 					<Button

@@ -6,6 +6,17 @@
 .creators-entry {
 	position: relative;
 
+	&.color-exit, &.color-exit .select-value {
+		color: $blue;
+	}
+
+	&.color-exit-active, &.color-exit-active .select-value {
+		color: inherit;
+		transition: color $creator-color-transition;
+		transition-delay: $creator-color-transition-delay;
+	}
+
+
 	@include state(".panel.editing .creators-entry") {
 		@include touch-or-bp-down(sm) {
 			$handle-width: 2 * $default-padding-x-touch + $space-lg + $input-border-width;
