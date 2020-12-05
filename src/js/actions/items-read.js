@@ -1,22 +1,23 @@
 import { SORT_ITEMS, REQUEST_ATTACHMENT_URL, RECEIVE_ATTACHMENT_URL, ERROR_ATTACHMENT_URL } from '../constants/actions';
 import api from 'zotero-api-client';
 import { extractItems, getApiForItems } from '../common/actions';
-import { getAbortController, mapRelationsToItemKeys } from '../utils';
+import { get, getAbortController, mapRelationsToItemKeys } from '../utils';
 import columnProperties from '../constants/column-properties';
-import { requestTracker, requestWithBackoff } from '.';
+import { connectionIssues, requestTracker, requestWithBackoff } from '.';
 
 const fetchItems = (
 	type,
 	queryConfig,
 	queryOptions = {},
-	overrides = {}
+	overrides = {},
+	requestId = null
 ) => {
 	return async (dispatch, getState) => {
 		const state = getState();
 		const config = 'config' in overrides ? overrides.config : state.config;
 		const { libraryKey } = 'current' in overrides ? overrides.current : state.current;
 		const api = getApiForItems({ config, libraryKey }, type, queryConfig);
-		const id = requestTracker.id++;
+		const id = requestId || requestTracker.id++;
 		const abortController = getAbortController();
 
 		dispatch({
@@ -90,18 +91,70 @@ const fetchItemDetails = (itemKey, queryOptions, overrides) => {
 }
 
 const fetchAllItemsSince = (version, queryOptions, overrides) => {
-	return async dispatch => {
+	return async (dispatch, getState) => {
 		var pointer = 0;
 		const limit = 100;
 		var hasMore = false;
 
-		do {
-			const { totalResults } = await dispatch(
-				fetchItems('FETCH_ITEMS', {}, { ...queryOptions, start: pointer, limit, since: version }, overrides )
-			);
-			hasMore = totalResults > pointer + limit;
-			pointer += limit;
-		} while(hasMore === true)
+		const state = getState();
+
+		if('FETCH_ITEMS' in state.traffic &&
+			Array.isArray(state.traffic['FETCH_ITEMS'].ongoing) &&
+			state.traffic['FETCH_ITEMS'].ongoing.length > 0) {
+				setTimeout(() => dispatch(fetchAllItemsSince(version, queryOptions, overrides), 1000));
+				return;
+		}
+
+		const checkForNextBatch = (requestId) => {
+			return async (dispatch, getState) => {
+				const state = getState();
+				const { totalResults } = get(state, ['traffic', 'FETCH_ITEMS', 'last'], {});
+
+				if(typeof(totalResults) === 'undefined') {
+					if('FETCH_ITEMS' in state.traffic &&
+						Array.isArray(state.traffic['FETCH_ITEMS'].ongoing) &&
+						state.traffic['FETCH_ITEMS'].ongoing.includes(requestId)
+					) {
+						// request was delayed, recheck later
+						setTimeout(() => dispatch(checkForNextBatch(requestId)), 1000);
+						return;
+					}
+
+					if('FETCH_ITEMS' in state.traffic &&
+						state.traffic['FETCH_ITEMS'].errorCount > 0 &&
+						state.traffic['FETCH_ITEMS'].errorCount < 3) {
+						// request errored, rerun up to 3 times
+						const requestId = requestTracker.id++;
+						await dispatch(
+							fetchItems('FETCH_ITEMS', {}, { ...queryOptions, start: pointer, limit, since: version }, overrides, requestId )
+						);
+						dispatch(checkForNextBatch(requestId));
+						return;
+					}
+
+					// request was dropped, report connection issues, clean up, give up
+					dispatch(connectionIssues());
+					return;
+				}
+
+
+				hasMore = totalResults > pointer + limit;
+				pointer += limit;
+
+				if(hasMore) {
+					const requestId = requestTracker.id++;
+					await dispatch(
+						fetchItems('FETCH_ITEMS', {}, { ...queryOptions, start: pointer, limit, since: version }, overrides, requestId )
+					);
+					dispatch(checkForNextBatch(requestId));
+				}
+			}
+		}
+		const requestId = requestTracker.id++;
+		await dispatch(
+			fetchItems('FETCH_ITEMS', {}, { ...queryOptions, start: pointer, limit, since: version }, overrides, requestId )
+		);
+		dispatch(checkForNextBatch(requestId));
 	}
 }
 

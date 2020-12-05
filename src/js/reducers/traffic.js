@@ -7,7 +7,8 @@ const traffic = (state = {}, action) => {
 			[requestName]: {
 				...(state[requestName] || {}),
 				lastRequest: Date.now(),
-				ongoing: [...(((state[requestName] || {}).ongoing || [])), action.id].filter(Boolean)
+				ongoing: [...(((state[requestName] || {}).ongoing || [])), action.id].filter(Boolean),
+				last: action
 			}
 		}
 	} else if(action.type && action.type.startsWith('ERROR_')) {
@@ -18,7 +19,8 @@ const traffic = (state = {}, action) => {
 				...(state[requestName] || {}),
 				lastError: Date.now(),
 				errorCount: ((state[requestName] || {}).errorCount || 0) + 1,
-				ongoing: (((state[requestName] || {}).ongoing || [])).filter(id => id !== action.id)
+				ongoing: (((state[requestName] || {}).ongoing || [])).filter(id => id !== action.id),
+				last: action
 			}
 		}
 	} else if(action.type && action.type.startsWith('RECEIVE_')) {
@@ -29,7 +31,8 @@ const traffic = (state = {}, action) => {
 				...(state[requestName] || {}),
 				lastSuccess: Date.now(),
 				errorCount: 0,
-				ongoing: (((state[requestName] || {}).ongoing || [])).filter(id => id !== action.id)
+				ongoing: (((state[requestName] || {}).ongoing || [])).filter(id => id !== action.id),
+				last: action
 			}
 		}
 	} else if(action.type && action.type.startsWith('DROP_')) {
@@ -39,7 +42,8 @@ const traffic = (state = {}, action) => {
 			[requestName]: {
 				...(state[requestName] || {}),
 				lastDrop: Date.now(),
-				ongoing: (((state[requestName] || {}).ongoing || [])).filter(id => id !== action.id)
+				ongoing: (((state[requestName] || {}).ongoing || [])).filter(id => id !== action.id),
+				last: action
 			}
 		}
 	}

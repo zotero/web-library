@@ -72,6 +72,7 @@ const runRequestWaiting = requestType => {
 	}
 }
 
+//NOTE: if requests is backing off, this function resolves with undefined before the request actually executes
 const requestWithBackoff = (request, { id, type: requestType, payload }) => {
 	return async (dispatch, getState) => {
 		const state = getState();
@@ -97,10 +98,10 @@ const requestWithBackoff = (request, { id, type: requestType, payload }) => {
 				if(requestType in requestsWaiting) {
 					dropRequest(dispatch, requestType);
 				}
-				runRequest(dispatch, request, { id, requestType, payload });
+				return await runRequest(dispatch, request, { id, requestType, payload });
 			}
 		} else {
-			runRequest(dispatch, request, { id, requestType, payload });
+			return await runRequest(dispatch, request, { id, requestType, payload });
 		}
 	}
 }
@@ -123,7 +124,7 @@ const abortRequest = id => {
 const abortAllRequests = requestType => {
 	return async (dispatch, getState) => {
 		const state = getState();
-		const ongoing = get(state, ['traffic', requestType, 'ongoing']);
+		const ongoing = get(state, ['traffic', requestType, 'ongoing'], null);
 		if(ongoing !== null) {
 			ongoing.forEach(id => { dispatch(abortRequest(id)); });
 		}
