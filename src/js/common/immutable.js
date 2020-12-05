@@ -1,9 +1,9 @@
-'use strict';
-
 const removeKeys = (object, deleteKeys) => {
 	if(!Array.isArray(deleteKeys)) {
 		deleteKeys = [deleteKeys];
 	}
+
+	deleteKeys = deleteKeys.map(dk => typeof(dk) !== 'string' ? dk.toString() : dk);
 
 	return Object.entries(object)
 		.reduce((aggr, [key, value]) => {
