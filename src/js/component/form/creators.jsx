@@ -11,7 +11,7 @@ import Icon from '../ui/icon';
 import { enumerateObjects } from '../../utils';
 import { removeKeys } from '../../common/immutable';
 import { splice } from '../../utils';
-import { useEditMode, useForceUpdate, usePrevious } from '../../hooks';
+import { useEditMode, usePrevious } from '../../hooks';
 
 const Creators = props => {
 	const { creatorTypes, onSave, name, value = [], isForm, onDragStatusChange, isReadOnly } = props;

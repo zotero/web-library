@@ -234,7 +234,7 @@ const CreatorFieldInputWrap = memo(forwardRef((props, ref) => {
 		const clipboardData = ev.clipboardData || window.clipboardData;
 		const pastedData = clipboardData.getData('Text');
 
-		if(!pastedData.includes('\n')) {
+		if(inModal || !pastedData.includes('\n')) {
 			return;
 		}
 
@@ -257,7 +257,7 @@ const CreatorFieldInputWrap = memo(forwardRef((props, ref) => {
 		};
 
 		onAddMany([...additionalCreators, lastCreator], index);
-	}, [creator, index, name, onAddMany]);
+	}, [creator, index, inModal, name, onAddMany]);
 
 	const formField = <Input
 		aria-label={ label }
