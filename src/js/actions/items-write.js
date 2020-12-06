@@ -888,8 +888,8 @@ const copyToLibrary = (itemKeys, sourceLibraryKey, targetLibraryKey, targetColle
 			if(!canHaveChildItems) {
 				return [];
 			}
-			const childItems = await dispatch(fetchChildItems(ik, { start: 0, limit: 100 }, { current: { libraryKey: sourceLibraryKey }}));
-			const childItemsKeys = childItems.map(c => c.key);
+			await dispatch(fetchChildItems(ik, { start: 0, limit: 100 }, { current: { libraryKey: sourceLibraryKey }}));
+			const childItemsKeys = get(getState(), ['libraries', sourceLibraryKey, 'itemsByParent', ik, 'keys'], []);
 			const patch = { parentItem: newItem.key };
 			if(childItemsKeys && childItemsKeys.length) {
 				return await dispatch(chunkedAction(copyToLibrary, childItemsKeys, sourceLibraryKey, targetLibraryKey, [], patch));
