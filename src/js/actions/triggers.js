@@ -18,7 +18,7 @@ import {
 	RESET_QUERY,
 } from '../constants/actions';
 
-import { navigate } from './';
+import { navigate, navigateExitSearch } from './';
 import { get } from '../utils';
 
 const triggerEditingItem = (itemKey, toggleValue) => {
@@ -137,9 +137,27 @@ const triggerHighlightedCollections = isOn => {
 
 const resetQuery = () => ({ type: RESET_QUERY });
 
+const currentTriggerSearchMode = () => {
+	return async (dispatch, getState) => {
+		const { isSearchMode, itemsSource, view } = getState().current;
 
+		if(isSearchMode) {
+			dispatch(triggerSearchMode(false));
+			dispatch(triggerSelectMode(false));
+			dispatch(navigateExitSearch());
+		} else {
+			dispatch(triggerSearchMode(true));
+			dispatch(triggerSelectMode(false));
+
+			if(itemsSource === 'query' && view === 'item-details') {
+				dispatch(navigate({ view: 'item-list' }));
+			}
+		}
+	}
+}
 
 export {
+	currentTriggerSearchMode,
 	dismissError,
 	resetQuery,
 	toggleAdvancedSearch,

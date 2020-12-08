@@ -1,42 +1,26 @@
-import React, { memo, useCallback, useRef } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
+import React, { memo, useCallback, useRef } from 'react';
 import { Nav } from 'reactstrap/lib';
+import { useDispatch, useSelector } from 'react-redux';
 
 import Button from './button';
 import Icon from './icon';
-import Search from './../../component/search';
 import MenuEntry from './menu-entry';
+import Search from './../../component/search';
+import { currentTriggerSearchMode, toggleNavbar, toggleTouchTagSelector } from '../../actions';
 import { isTriggerEvent } from '../../common/event';
-import { navigate, toggleNavbar, triggerSearchMode, triggerSelectMode, navigateExitSearch,
-	toggleTouchTagSelector } from '../../actions';
 import { useFocusManager } from '../../hooks';
 
-
-const Navbar = memo(props => {
+const Navbar = memo(({ entries = [] }) => {
 	const ref = useRef(null);
 	const dispatch = useDispatch();
-	const { entries } = props;
 
 	const { receiveFocus, receiveBlur, focusNext, focusPrev, registerAutoFocus } = useFocusManager(ref);
-	const view = useSelector(state => state.current.view);
-	const itemsSource = useSelector(state => state.current.itemsSource);
-	const isSearchMode = useSelector(state => state.current.isSearchMode);
+	const isLibrariesView = useSelector(state => state.current.view === 'libraries');
 
 	const handleSearchButtonClick = useCallback(() => {
-		if(isSearchMode) {
-			dispatch(triggerSearchMode(false));
-			dispatch(triggerSelectMode(false));
-			dispatch(navigateExitSearch());
-		} else {
-			dispatch(triggerSearchMode(true));
-			dispatch(triggerSelectMode(false));
-
-			if(itemsSource === 'query' && view === 'item-details') {
-				dispatch(navigate({ view: 'item-list' }));
-			}
-		}
-	}, [dispatch, itemsSource, isSearchMode, view]);
+		dispatch(currentTriggerSearchMode());
+	}, [dispatch]);
 
 	const handleTagSelectorClick = useCallback(() => {
 		dispatch(toggleTouchTagSelector());
@@ -98,7 +82,7 @@ const Navbar = memo(props => {
 				onFocusPrev={ focusPrev }
 				registerAutoFocus={ registerAutoFocus }
 			/>
-			{ view !== 'libraries' && (
+			{ !isLibrariesView && (
 				<React.Fragment>
 					<Button
 						onClick={ handleSearchButtonClick }
@@ -146,10 +130,6 @@ Navbar.displayName = 'Navbar';
 
 Navbar.propTypes = {
 	entries: PropTypes.array,
-}
-
-Navbar.defaultProps = {
-	entries: []
 }
 
 export default Navbar;
