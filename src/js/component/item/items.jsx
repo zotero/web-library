@@ -13,24 +13,28 @@ import { useSourceData } from '../../hooks';
 const Items = ({ isSearchModeTransitioning }) => {
 	const { isFetching, hasChecked } = useSourceData();
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
+	const isSingleColumn = useSelector(state => state.device.isSingleColumn);
+
 	return (
 		<div className={
 			cx('items-container', { loading: isFetching && !hasChecked })
 		}>
-			{ isTouchOrSmall ?
+			{ isTouchOrSmall ? (
 				<React.Fragment>
-					<TouchHeaderWrap
+
+						{ !isSingleColumn && <TouchHeaderWrap
 							className="hidden-mouse hidden-md-down"
 							variant={ TouchHeaderWrap.variants.SOURCE }
-						/>
+						/> }
 						<ItemsList isSearchModeTransitioning={ isSearchModeTransitioning } />
 						<TouchFooter />
-				</React.Fragment> :
+				</React.Fragment>
+			) : (
 				<React.Fragment>
 					<ItemsTableToolbar />
 					<ItemsTable />
 				</React.Fragment>
-			}
+			)}
 		</div>
 	);
 };

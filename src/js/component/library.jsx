@@ -141,7 +141,7 @@ const Library = () => {
 					<Navbar entries={ menus.desktop } />
 					<main>
 						<section className={ `library ${ view === 'library' ? 'active' : '' }` }>
-							{ isTouchOrSmall && (
+							{ (isTouchOrSmall && isSingleColumn) && (
 								<TouchHeaderWrap
 									className="hidden-sm-up darker"
 									variant={ TouchHeaderWrap.variants.MOBILE }
@@ -149,7 +149,7 @@ const Library = () => {
 							) }
 							<header className="sidebar">
 								<h2 className="offscreen">Web library</h2>
-								{ isTouchOrSmall && (
+								{ (isTouchOrSmall && !isSingleColumn) && (
 									<TouchHeaderWrap
 										variant={ TouchHeaderWrap.variants.NAVIGATION }
 										className="hidden-xs-down hidden-mouse-md-up darker"
@@ -177,7 +177,7 @@ const Library = () => {
 									'read-only': isLibraryReadOnly,
 								})}>
 									{/* Tablet TouchHeader */}
-									{ isTouchOrSmall && (
+									{ (isTouchOrSmall && !isSingleColumn) && (
 										<TouchHeaderWrap
 											className="hidden-xs-down hidden-lg-up hidden-mouse darker"
 											variant={ TouchHeaderWrap.variants.SOURCE_AND_ITEM }
