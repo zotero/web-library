@@ -1,28 +1,46 @@
 .crash-handler {
 	align-items: center;
+	color: $shade-9;
 	display: flex;
 	flex-direction: column;
 	height: 100%;
-	justify-content: center;
 	margin: 0 auto;
-	max-width: 640px;
 	text-align: center;
 	width: 100%;
-	color: $shade-9;
+
+	@include mouse-and-bp-up(md) {
+		justify-content: center;
+		max-width: 640px;
+		padding: 2em 1em;
+	}
 
 	h1 {
 		font-size: $font-size-h1;
+		flex: 0 0 auto;
+
+		@include touch-or-bp-down(sm) {
+			background: $asphalt;
+			color: $shade-1;
+			display: block;
+			width: 100%;
+			padding: 1em;
+		}
 	}
 
 	p {
-		margin-top: 1em;
+		flex: 0 0 auto;
+		margin: 2em 1em 1em;
 	}
 
 	textarea {
 		border: 1px solid $shade-3;
 		color: $shade-9;
-		padding: 1em;
-		resize: none;
+		flex: 1 1 auto;
 		max-width: calc(100% - 2em);
+		resize: none;
+
+		@include touch-or-bp-down(sm) {
+			margin: 1em auto;
+		}
 	}
 }

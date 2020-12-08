@@ -36,6 +36,8 @@ const init = (element, config = {}) => {
 	if(process.env.NODE_ENV === 'development') {
 		// only in development, expose redux store
 		window.WebLibStore = store;
+		window.WebLibCrash = () =>
+			window.WebLibStore.dispatch({ type: 'CONFIGURE', ...defaults, ...config, apiConfig, libraries, menus: null });
 	}
 
 	ReactDOM.render(<Main store={ store } history={ history } />, element);
