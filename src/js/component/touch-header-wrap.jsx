@@ -20,11 +20,11 @@ const ROOT_NODE = {
 const TouchHeaderWrap = memo(({ className, variant }) => {
 	const dispatch = useDispatch();
 	const collections = useSelector(state => get(
-		state, ['libraries', state.current.libraryKey, 'collections', 'data'], {}
+		state, ['libraries', state.current.libraryKey, 'collections', 'data'],
 	));
 	const item = useSelector(state => get(
-		state, ['libraries', state.current.libraryKey, 'items', state.current.itemKey]), {}
-	);
+		state, ['libraries', state.current.libraryKey, 'items', state.current.itemKey]
+	));
 	const attachmentKey = useSelector(state => state.current.attachmentKey);
 	const collectionKey = useSelector(state => state.current.collectionKey);
 	const isMyPublications = useSelector(state => state.current.isMyPublications);
@@ -40,12 +40,12 @@ const TouchHeaderWrap = memo(({ className, variant }) => {
 	const libraryConfig = useSelector(state => state.config.libraries.find(l => l.key === libraryKey) || {});
 	const itemKeys = useSelector(state => state.current.itemKeys);
 	const { isReadOnly } = libraryConfig;
-	const childMap = useMemo(() => makeChildMap(collections.length ? Object.values(collections) : []), [collections]);
+	const childMap = useMemo(() => makeChildMap(Object.values(collections || {})), [collections]);
 	const [isEditing, ] = useEditMode();
 
-	const path = useSelector(state => getCollectionsPath(state).map(
+	const collectionsPath = useMemo(() => getCollectionsPath(libraryKey, collectionKey, collections).map(
 		key => {
-			const { name } = collections[key]
+			const { name } = collections[key];
 			return {
 				key,
 				type: 'collection',
@@ -53,7 +53,8 @@ const TouchHeaderWrap = memo(({ className, variant }) => {
 				path: { library: libraryKey, collection: key },
 			};
 		}
-	));
+	), [collectionKey, collections, libraryKey]);
+	const path = [...collectionsPath];
 
 	if(libraryKey && view !== 'libraries') {
 		path.unshift({

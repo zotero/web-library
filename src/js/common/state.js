@@ -3,17 +3,15 @@
 import memoize from 'memoize-one';
 import deepEqual from 'deep-equal';
 import { createMatchSelector } from 'connected-react-router';
-import { get } from '../utils';
 import { routes, redirects } from '../routes';
 
-const getCollectionsPath = state => {
-	const { libraryKey, collectionKey } = state.current;
+const getCollectionsPath = ({ libraryKey, collectionKey, collectionsData = {} }) => {
 	const path = [];
 	if(libraryKey) {
 		var nextKey = collectionKey;
 
 		while(nextKey) {
-			const collection = get(state, ['libraries', libraryKey, 'collections', 'data', nextKey]);
+			const collection = collectionsData[nextKey];
 			if(collection) {
 				path.push(collection.key);
 				nextKey = collection.parentCollection;
