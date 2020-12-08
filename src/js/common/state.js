@@ -1,11 +1,9 @@
-'use strict';
-
 import memoize from 'memoize-one';
 import deepEqual from 'deep-equal';
 import { createMatchSelector } from 'connected-react-router';
 import { routes, redirects } from '../routes';
 
-const getCollectionsPath = ({ libraryKey, collectionKey, collectionsData = {} }) => {
+const getCollectionsPath = (libraryKey, collectionKey, collectionsData = {}) => {
 	const path = [];
 	if(libraryKey) {
 		var nextKey = collectionKey;
