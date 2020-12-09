@@ -1,17 +1,18 @@
 import cx from 'classnames';
-import React, { useMemo, useState, useCallback, useRef, useEffect } from 'react';
-import { useDispatch, useSelector, shallowEqual } from 'react-redux';
+import PropTypes from 'prop-types';
+import React, { memo, useMemo, useState, useCallback, useRef, useEffect } from 'react';
 import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap/lib';
+import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 
 import Editable from '../editable';
 import Icon from '../ui/icon';
 import Node from './node';
 import Spinner from '../../component/ui/spinner';
-import { BIBLIOGRAPHY, COLLECTION_RENAME, COLLECTION_ADD, EXPORT, MOVE_COLLECTION } from '../../constants/modals';
-import { pick } from '../../common/immutable';
+import { COLLECTION_RENAME, COLLECTION_ADD, MOVE_COLLECTION } from '../../constants/modals';
+import { createAttachmentsFromDropped, deleteCollection, toggleModal, updateCollection, navigate } from '../../actions';
+import { omit, pick } from '../../common/immutable';
 import { stopPropagation, getUniqueId } from '../../utils.js';
 import { usePrevious } from '../../hooks/';
-import { createAttachmentsFromDropped, deleteCollection, toggleModal, updateCollection, navigate } from '../../actions';
 
 const makeDerivedData = (collections, path = [], opened, isTouchOrSmall) => {
 	const selectedParentKey = path[path.length - 2];
@@ -86,7 +87,7 @@ const makeCollectionsPath = (collectionKey, allCollections, isCurrentLibrary) =>
 	return path.reverse();
 }
 
-const ItemsNode = props => {
+const ItemsNode = memo(props => {
 	const { isPickerMode, parentCollectionKey, selectedCollectionKey, itemsSource,
 		selectNode, shouldBeTabbable, ...rest } = props;
 	const id = useRef(getUniqueId());
@@ -103,7 +104,7 @@ const ItemsNode = props => {
 			view: 'item-list',
 			collection: parentCollectionKey
 		});
-	}, []);
+	}, [parentCollectionKey, selectNode]);
 
 	if(isPickerMode || !isTouchOrSmall) {
 		return null;
@@ -128,16 +129,28 @@ const ItemsNode = props => {
 			</div>
 		</Node>
 	);
-};
+});
+
+ItemsNode.propTypes = {
+	isPickerMode: PropTypes.bool,
+	itemsSource: PropTypes.string,
+	parentCollectionKey: PropTypes.string,
+	selectedCollectionKey: PropTypes.string,
+	selectNode: PropTypes.func,
+	shouldBeTabbable: PropTypes.bool,
+}
+
+ItemsNode.displayName = 'ItemsNode';
 
 
-const VirtualCollectionNode = props => {
-	const { isPickerMode, virtual, cancelAdd, commitAdd, parentLibraryKey,
-			parentCollectionKey } = props;
+const VirtualCollectionNode = memo(props => {
+	const {  cancelAdd, commitAdd, isPickerMode, parentCollectionKey, parentLibraryKey, virtual, } = props;
 
 	const handleEditableCommit = useCallback(newValue => {
 		commitAdd(parentLibraryKey, parentCollectionKey, newValue);
-	});
+	}, [commitAdd, parentCollectionKey, parentLibraryKey]);
+
+	const handleBlur = useCallback(() => false, []);
 
 	if(isPickerMode || !virtual) {
 		return null;
@@ -148,28 +161,38 @@ const VirtualCollectionNode = props => {
 	}
 
 	return (
-		<Node
-			className={ cx({ 'new-collection': true })}
-		>
+		<Node className={ cx({ 'new-collection': true })}>
 			<Icon type="28/folder" className="touch" width="28" height="28" />
 			<Icon type="16/folder" className="mouse" width="16" height="16" />
 			<Editable
 				autoFocus
-				isBusy={ virtual.isBusy }
 				isActive={ true }
-				onCommit={ handleEditableCommit }
+				isBusy={ virtual.isBusy }
+				onBlur={ handleBlur }
 				onCancel={ cancelAdd }
-				onBlur={ () => false /* commit on blur */ }
+				onCommit={ handleEditableCommit }
 			/>
 		</Node>
 	);
-}
+});
 
-const PublicationsNode = ({ isMyLibrary, isPickerMode, isSelected, shouldBeTabbable, parentLibraryKey, selectNode, ...rest }) => {
+VirtualCollectionNode.propTypes = {
+	cancelAdd: PropTypes.func,
+	commitAdd: PropTypes.func,
+	isPickerMode: PropTypes.bool,
+	parentCollectionKey: PropTypes.string,
+	parentLibraryKey: PropTypes.string,
+	virtual: PropTypes.object,
+};
+
+VirtualCollectionNode.displayName = 'VirtualCollectionNode';
+
+const PublicationsNode = memo(({ isMyLibrary, isPickerMode, isSelected, shouldBeTabbable, parentLibraryKey, selectNode, ...rest }) => {
 	const id = useRef(getUniqueId());
+
 	const handleClick = useCallback(() => {
 		selectNode({ publications: true });
-	}, []);
+	}, [selectNode]);
 
 	if(!isMyLibrary || isPickerMode) {
 		return null;
@@ -198,13 +221,25 @@ const PublicationsNode = ({ isMyLibrary, isPickerMode, isSelected, shouldBeTabba
 			</div>
 		</Node>
 	);
-}
+});
 
-const TrashNode = ({ isPickerMode, isReadOnly, isSelected, shouldBeTabbable, parentLibraryKey, selectNode, ...rest }) => {
+PublicationsNode.propTypes = {
+	isMyLibrary: PropTypes.bool,
+	isPickerMode: PropTypes.bool,
+	isSelected: PropTypes.bool,
+	parentLibraryKey: PropTypes.string,
+	selectNode: PropTypes.func,
+	shouldBeTabbable: PropTypes.bool,
+};
+
+PublicationsNode.displayName = 'PublicationsNode';
+
+const TrashNode = memo(({ isPickerMode, isReadOnly, isSelected, shouldBeTabbable, parentLibraryKey, selectNode, ...rest }) => {
 	const id = useRef(getUniqueId());
+
 	const handleClick = useCallback(() => {
 		selectNode({ trash: true });
-	}, []);
+	}, [selectNode]);
 
 	if(isReadOnly || isPickerMode) {
 		return null;
@@ -227,7 +262,18 @@ const TrashNode = ({ isPickerMode, isReadOnly, isSelected, shouldBeTabbable, par
 			<div className="truncate" titel="Trash" id={ id.current } >Trash</div>
 		</Node>
 	);
-}
+});
+
+TrashNode.propTypes = {
+	isPickerMode: PropTypes.bool,
+	isReadOnly: PropTypes.bool,
+	isSelected: PropTypes.bool,
+	parentLibraryKey: PropTypes.string,
+	selectNode: PropTypes.func,
+	shouldBeTabbable: PropTypes.bool,
+};
+
+TrashNode.displayName = 'TrashNode';
 
 const LevelWrapper = ({ children, level, hasOpen, isLastLevel }) => {
 	return (
@@ -241,8 +287,15 @@ const LevelWrapper = ({ children, level, hasOpen, isLastLevel }) => {
 	);
 }
 
+LevelWrapper.propTypes = {
+	children: PropTypes.oneOfType([PropTypes.element, PropTypes.array]),
+	hasOpen: PropTypes.bool,
+	isLastLevel: PropTypes.bool,
+	level: PropTypes.number,
+};
 
-const DotMenu = props => {
+
+const DotMenu = memo(props => {
 	const { collection, dotMenuFor, isReadOnly, opened,
 		parentLibraryKey, setDotMenuFor, setOpened, setRenaming, addVirtual } = props;
 	const dispatch = useDispatch();
@@ -257,7 +310,7 @@ const DotMenu = props => {
 		if(ev.type === 'click') {
 			ev.stopPropagation();
 		}
-	});
+	}, [collection, isOpen, setDotMenuFor]);
 
 	const handleRenameClick = useCallback(() => {
 		if(isTouchOrSmall) {
@@ -265,7 +318,7 @@ const DotMenu = props => {
 		} else {
 			setRenaming(collection.key);
 		}
-	});
+	}, [collection, dispatch, isTouchOrSmall, setRenaming]);
 
 	const handleDeleteClick = useCallback(() => {
 		dispatch(deleteCollection(collection, parentLibraryKey));
@@ -278,7 +331,7 @@ const DotMenu = props => {
 			}
 		}
 
-	}, [collection, parentLibraryKey, currentLibraryKey, currentCollectionKey]);
+	}, [dispatch, collection, parentLibraryKey, currentLibraryKey, currentCollectionKey]);
 
 	const handleSubcollectionClick = useCallback(ev => {
 		ev.stopPropagation();
@@ -288,11 +341,11 @@ const DotMenu = props => {
 			setOpened([...opened, collection.key ]);
 			addVirtual(parentLibraryKey, collection.key);
 		}
-	});
+	}, [addVirtual, collection, dispatch, isTouchOrSmall, opened, parentLibraryKey, setOpened]);
 
 	const handleMoveCollectionClick = useCallback(() => {
 		dispatch(toggleModal( MOVE_COLLECTION, true, { collectionKey: collection.key, libraryKey: parentLibraryKey } ));
-	});
+	}, [collection, dispatch, parentLibraryKey]);
 
 	// disabled, because of 100 items limit https://github.com/zotero/web-library/issues/367
 	// const handleExportClick = useCallback(() => {
@@ -350,16 +403,30 @@ const DotMenu = props => {
 			</DropdownMenu>
 		</Dropdown>
 	);
+});
+
+DotMenu.propTypes = {
+	collection: PropTypes.object,
+	dotMenuFor: PropTypes.string,
+	isReadOnly: PropTypes.bool,
+	opened: PropTypes.array,
+	parentLibraryKey: PropTypes.string,
+	setDotMenuFor: PropTypes.func,
+	setOpened: PropTypes.func,
+	setRenaming: PropTypes.func,
+	addVirtual: PropTypes.func,
 };
 
-const PickerCheckbox = ({ collectionKey, pickerPick, picked, parentLibraryKey }) => {
+DotMenu.displayName = 'DotMenu';
+
+const PickerCheckbox = memo(({ collectionKey, pickerPick, picked, parentLibraryKey }) => {
 	const handleChange = useCallback(() => {
 		pickerPick({ collectionKey, libraryKey: parentLibraryKey });
-	});
+	}, [collectionKey, parentLibraryKey, pickerPick]);
 
 	const isChecked = useMemo(() =>
 		picked.some(({ collectionKey: c, libraryKey: l }) => l === parentLibraryKey && c === collectionKey),
-		[picked, parentLibraryKey]
+		[collectionKey, picked, parentLibraryKey]
 	);
 
 	return (
@@ -371,11 +438,20 @@ const PickerCheckbox = ({ collectionKey, pickerPick, picked, parentLibraryKey })
 			type="checkbox"
 		/>
 	);
-}
+});
 
-const CollectionNode = props => {
+PickerCheckbox.propTypes = {
+	collectionKey: PropTypes.string,
+	parentLibraryKey: PropTypes.string,
+	picked: PropTypes.array,
+	pickerPick: PropTypes.func,
+};
+
+PickerCheckbox.displayName = 'PickerCheckbox';
+
+const CollectionNode = memo(props => {
 	const { allCollections, derivedData, collection, level, selectedCollectionKey, isCurrentLibrary,
-		parentLibraryKey, renaming, setRenaming, virtual, isPickerMode, shouldBeTabbable,
+		parentLibraryKey, renaming, selectNode, setRenaming, virtual, isPickerMode, shouldBeTabbable,
 		pickerPick, ...rest }  = props;
 	const dispatch = useDispatch();
 	const id = useRef(getUniqueId('tree-node-'));
@@ -386,20 +462,19 @@ const CollectionNode = props => {
 	const isHighlighted = highlightedCollections.includes(collection.key);
 
 	const handleClick = useCallback(() => {
-		const { selectNode } = rest;
 		selectNode({ collection: collection.key });
-	});
+	}, [collection, selectNode]);
 
 	const handleRenameTrigger = useCallback(() => {
 		if(isTouchOrSmall) {
 			return;
 		}
 		setRenaming(collection.key);
-	});
+	}, [collection, isTouchOrSmall, setRenaming]);
 
 	const handleRenameCancel = useCallback(() => {
 		setRenaming(null);
-	});
+	}, [setRenaming]);
 
 	const handleRenameCommit = useCallback(newValue => {
 		if(newValue === '') {
@@ -412,11 +487,11 @@ const CollectionNode = props => {
 		} finally {
 			setRenaming(null);
 		}
-	});
+	}, [collection, dispatch, parentLibraryKey, setRenaming]);
 
 	const handleRenameKeyDown = useCallback(ev => {
 		ev.stopPropagation();
-	});
+	}, []);
 
 	const handleDrag = useCallback((src, target) => {
 		const patch = {
@@ -427,18 +502,18 @@ const CollectionNode = props => {
 		} else {
 			//@TODO: Support for moving collections across libraries #227
 		}
-	});
+	}, [dispatch]);
 
 	const handleDrop = useCallback(async droppedFiles => {
 		await dispatch(createAttachmentsFromDropped(droppedFiles, { collection: collection.key }));
-	});
+	}, [collection, dispatch]);
 
 	const handleNodeKeyDown = useCallback(ev => {
 		if(isPickerMode && ev.type === 'keydown' && (ev.key === 'Enter' || ev.key === ' ')) {
 			pickerPick({ collectionKey: collection.key, libraryKey: parentLibraryKey });
 			ev.preventDefault();
 		}
-	}, [pickerPick, isPickerMode, parentLibraryKey]);
+	}, [collection, pickerPick, isPickerMode, parentLibraryKey]);
 
 	const collections = allCollections.filter(c => c.parentCollection === collection.key );
 	const hasSubCollections = (isSingleColumn || collections.length > 0);
@@ -496,22 +571,11 @@ const CollectionNode = props => {
 			subtree={ (shouldRenderSubtree && (hasSubCollections || hasVirtual)) ? (
 				<LevelWrapper hasOpen={ hasOpen } level={ level } isLastLevel={ isLastLevel }>
 					<CollectionsNodeList
-						{ ...rest }
-						allCollections={ allCollections }
+						{ ...omit(props, ['level', 'collection', 'shouldBeTabbable']) }
 						collections = { collections }
-						derivedData={ derivedData }
-						isCurrentLibrary = { isCurrentLibrary }
-						isPickerMode={ isPickerMode }
 						level={ level + 1 }
 						parentCollectionKey={ collection.key }
-						parentLibraryKey={ parentLibraryKey }
-						renaming = { renaming }
-						selectedCollectionKey={ selectedCollectionKey }
-						setRenaming = { setRenaming }
 						shouldBeTabbable = { shouldSubtreeNodesBeTabbable }
-						updating = { updating }
-						virtual = { virtual }
-						pickerPick= { pickerPick }
 					/>
 				</LevelWrapper>
 			) : null }
@@ -566,26 +630,54 @@ const CollectionNode = props => {
 			}
 		</Node>
 	);
+});
+
+CollectionNode.propTypes = {
+	allCollections: PropTypes.array,
+	collection: PropTypes.object,
+	derivedData: PropTypes.object,
+	isCurrentLibrary: PropTypes.bool,
+	isPickerMode: PropTypes.bool,
+	level: PropTypes.number,
+	parentLibraryKey: PropTypes.string,
+	pickerPick: PropTypes.func,
+	renaming: PropTypes.string,
+	selectedCollectionKey: PropTypes.string,
+	selectNode: PropTypes.func,
+	setRenaming: PropTypes.func,
+	shouldBeTabbable: PropTypes.bool,
+	virtual: PropTypes.object,
 };
 
-const CollectionsNodeList = ({ collections, parentCollectionKey, ...rest }) => {
+CollectionNode.displayName = 'CollectionNode';
+
+const CollectionsNodeList = memo(({ collections, parentCollectionKey, ...rest }) => {
 	const sortedCollections = useMemo(() => {
 		const copiedCollections = [ ...collections ];
 		copiedCollections.sort((c1, c2) =>
 			c1.name.toUpperCase().localeCompare(c2.name.toUpperCase())
 		);
 		return copiedCollections;
-	});
+	}, [collections]);
 
 	return (
 		<React.Fragment>
-			<ItemsNode parentCollectionKey={ parentCollectionKey } { ...rest } />
+			<ItemsNode
+				parentCollectionKey={ parentCollectionKey }
+				{  ...pick(rest, ['isPickerMode', 'itemsSource', 'onFocusNext', 'onFocusPrev',
+				'parentCollectionKey', 'selectedCollectionKey', 'selectNode', 'shouldBeTabbable']) }
+			/>
 			{ sortedCollections.map(c =>
 				<CollectionNode
 					key={ c.key }
 					collection={ c }
 					parentCollectionKey={ parentCollectionKey }
-					{ ...rest }
+					{ ...pick(rest, [ 'addVirtual', 'allCollections', 'cancelAdd', 'collection',
+					'commitAdd', 'derivedData', 'dotMenuFor', 'isCurrentLibrary', 'isPickerMode',
+					'isReadOnly', 'level', 'onDrillDownNext', 'onDrillDownPrev', 'onFocusNext',
+					'onFocusPrev', 'onOpen', 'opened', 'parentLibraryKey', 'picked', 'pickerPick',
+					'renaming', 'selectedCollectionKey', 'selectNode', 'setDotMenuFor', 'setOpened',
+					'setRenaming', 'shouldBeTabbable', 'virtual',])}
 				/>
 			) }
 			<VirtualCollectionNode
@@ -594,7 +686,14 @@ const CollectionsNodeList = ({ collections, parentCollectionKey, ...rest }) => {
 			/>
 		</React.Fragment>
 	)
-}
+});
+
+CollectionsNodeList.propTypes = {
+	collections: PropTypes.array,
+	parentCollectionKey: PropTypes.string,
+};
+
+CollectionsNodeList.displayName = 'CollectionsNodeList';
 
 const CollectionTree = props => {
 	const { parentLibraryKey, isPickerMode, pickerNavigate, pickerState, ...rest } = props;
@@ -603,9 +702,6 @@ const CollectionTree = props => {
 		state => parentLibraryKey in state.libraries ? state.libraries[parentLibraryKey].collections.data : {}
 	);
 	const libraries = useSelector(state => state.config.libraries);
-	const collectionsTotalCount = useSelector(
-		state => parentLibraryKey in state.libraries ? state.libraries[parentLibraryKey].collections.totalResults : null
-	);
 	const isFetchingAllCollections = useSelector(
 		state => parentLibraryKey in state.libraries ? state.libraries[parentLibraryKey].collections.isFetchingAll : false
 	);
@@ -623,10 +719,17 @@ const CollectionTree = props => {
 	const highlightedCollections = useSelector(state => state.current.highlightedCollections);
 	const prevHighlightedCollections = usePrevious(highlightedCollections);
 
-	const handleOpenToggle = useCallback((ev, shouldOpen = null) => {
-		const collectionKey = ev.currentTarget.closest('[data-collection-key]').dataset.collectionKey;
-		toggleOpen(collectionKey, shouldOpen);
-	});
+	const isCurrentLibrary = parentLibraryKey === selectedLibraryKey;
+	const allCollections = useMemo(() => Object.values(collections), [collections]);
+
+	const path = useMemo(
+		() => makeCollectionsPath(selectedCollectionKey, collections, isCurrentLibrary),
+		[collections, isCurrentLibrary, selectedCollectionKey]
+	);
+
+	const [opened, setOpened] = useState(path.slice(0, -1));
+	const [renaming, setRenaming] = useState(null);
+	const [dotMenuFor, setDotMenuFor] = useState(null);
 
 	const toggleOpen = useCallback((collectionKey, shouldOpen = null) => {
 		if(shouldOpen === null) {
@@ -636,29 +739,22 @@ const CollectionTree = props => {
 		shouldOpen ?
 			setOpened([...opened, collectionKey ]) :
 			setOpened(opened.filter(k => k !== collectionKey));
-	})
+	}, [opened]);
+
+	const handleOpenToggle = useCallback((ev) => {
+		const collectionKey = ev.currentTarget.closest('[data-collection-key]').dataset.collectionKey;
+		toggleOpen(collectionKey);
+	}, [toggleOpen]);
 
 	const selectNode = useCallback(partialPath => {
 		const path = { ...partialPath, library: parentLibraryKey }
 		isPickerMode ? pickerNavigate(path) : dispatch(navigate(path, true));
-	});
+	}, [dispatch, isPickerMode, parentLibraryKey, pickerNavigate]);
 
-	const isCurrentLibrary = parentLibraryKey === selectedLibraryKey;
-
-	const allCollections = (Object.values(collections) || []);
-
-	const path = useMemo(() => makeCollectionsPath(
-		selectedCollectionKey, collections, isCurrentLibrary),
-		[allCollections, selectedCollectionKey, isCurrentLibrary]
-	);
-
-	const [opened, setOpened] = useState(path.slice(0, -1));
-	const [renaming, setRenaming] = useState(null);
-	const [dotMenuFor, setDotMenuFor] = useState(null);
 
 	const derivedData = useMemo(
 		() => makeDerivedData(collections, path, opened, isTouchOrSmall, isCurrentLibrary),
-		[collections, path, opened, isTouchOrSmall]
+		[collections, isCurrentLibrary, isTouchOrSmall, opened, path]
 	);
 
 	const selectedDepth = path.length;
@@ -755,4 +851,11 @@ const CollectionTree = props => {
 	);
 };
 
-export default React.memo(CollectionTree);
+CollectionTree.propTypes = {
+	isPickerMode: PropTypes.bool,
+	parentLibraryKey: PropTypes.string,
+	pickerNavigate: PropTypes.func,
+	pickerState: PropTypes.object
+};
+
+export default memo(CollectionTree);
