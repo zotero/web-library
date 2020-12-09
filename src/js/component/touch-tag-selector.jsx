@@ -142,6 +142,4 @@ const TouchTagSelector = () => {
 	);
 }
 
-TouchTagSelector.whyDidYouRender = true;
-
 export default memo(TouchTagSelector);
