@@ -221,10 +221,12 @@ const Libraries = props => {
 	}, [opened, toggleOpen]);
 
 	useEffect(() => {
-		if(selectedLibraryKey && typeof(prevSelectedLibraryKey) !== 'undefined' && selectedLibraryKey !== prevSelectedLibraryKey) {
+		if(selectedLibraryKey && selectedLibraryKey !== prevSelectedLibraryKey) {
 			toggleOpen(selectedLibraryKey, true);
-			//@TODO: Minor opitimisation: only fetch library settings if needed
-			dispatch(fetchLibrarySettings(selectedLibraryKey));
+			if(typeof(prevSelectedLibraryKey) !== 'undefined') {
+				//@TODO: Minor opitimisation: only fetch library settings if needed
+				dispatch(fetchLibrarySettings(selectedLibraryKey));
+			}
 		}
 	}, [dispatch, prevSelectedLibraryKey, selectedLibraryKey, toggleOpen]);
 
