@@ -38,42 +38,42 @@ const useTags = (shouldSkipDisabledAndSelected = false) => {
 	const collectionKey = useSelector(state => state.current.collectionKey);
 	const itemsSource = useSelector(state => state.current.itemsSource);
 	const libraryKey = useSelector(state => state.current.libraryKey);
+	const tagsSearchString = useSelector(state => state.current.tagsSearchString);
+	const tagColors = useSelector(state => get(state, ['libraries', state.current.libraryKey, 'tagColors']), shallowEqual);
+	const selectedTagNames = useSelector(state => state.current.tags, shallowEqual)
 	var selectorFn;
 
 	switch(itemsSource) {
 		case 'query':
-			selectorFn = state => state.query.tags || {}, shallowEqual;
+			selectorFn = state => state.query.tags || {};
 		break;
 		case 'trash':
-			selectorFn = state => get(state, ['libraries', libraryKey, 'tagsInTrashItems'], {}), shallowEqual;
+			selectorFn = state => get(state, ['libraries', libraryKey, 'tagsInTrashItems']);
 		break;
 		case 'publications':
-			selectorFn = state => get(state, ['libraries', libraryKey, 'tagsInPublicationsItems'], {}), shallowEqual;
+			selectorFn = state => get(state, ['libraries', libraryKey, 'tagsInPublicationsItems']);
 		break;
 		case 'collection':
-			selectorFn = state => get(state, ['libraries', libraryKey, 'tagsByCollection', collectionKey], {}), shallowEqual;
+			selectorFn = state => get(state, ['libraries', libraryKey, 'tagsByCollection', collectionKey]);
 		break;
 		case 'top':
 		default:
-			selectorFn = state => get(state, ['libraries', libraryKey, 'tagsTop'], {}), shallowEqual;
+			selectorFn = state => get(state, ['libraries', libraryKey, 'tagsTop']);
 		break;
 	}
 
-	const data = (useSelector(selectorFn) || {});
+	const data = (useSelector(selectorFn, shallowEqual) || {});
 	const { coloredTags = [], isFetching = false, isFetchingColoredTags = false, tags: sourceTags =
 	[], pointer = 0, requests, totalResults, duplicatesCount } = data;
 	const hasMoreItems = totalResults > 0 && (typeof(pointer) === 'undefined' || pointer < totalResults);
 	const hasChecked = typeof(totalResults) !== 'undefined';
 	const hasCheckedColoredTags = 'coloredTags' in data;
 	const isFetched = hasChecked && !isFetching && !hasMoreItems;
-	const tagsSearchString = useSelector(state => state.current.tagsSearchString);
-	const tagColors = useSelector(state =>  get(state, ['libraries', state.current.libraryKey, 'tagColors'], {}), shallowEqual);
-	const selectedTagNames = useSelector(state => state.current.tags, shallowEqual)
 	const isFiltering = tagsSearchString !== '';
 	const selectedTags = useMemo(() => {
 		const tags = selectedTagNames.map(tagName => ({
 			tag: tagName,
-			color: tagColors[tagName] || null,
+			color: (tagColors || {})[tagName] || null,
 			selected: true,
 			disabled: !coloredTags.includes(tagName)
 		}));
@@ -89,7 +89,7 @@ const useTags = (shouldSkipDisabledAndSelected = false) => {
 		const tagsSearchStringLC = tagsSearchString.toLowerCase();
 		const tags = [];
 
-		for(let [tag, color] of Object.entries(tagColors)) {
+		for(let [tag, color] of Object.entries(tagColors || {})) {
 			const isDisabled = !coloredTags.includes(tag);
 			const isSelected = selectedTagNames.includes(tag);
 
@@ -122,7 +122,7 @@ const useTags = (shouldSkipDisabledAndSelected = false) => {
 				continue;
 			}
 
-			if(tag in tagColors) {
+			if(tag in (tagColors || {})) {
 				// skip colored tags
 				continue;
 			}
