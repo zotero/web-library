@@ -221,7 +221,7 @@ const Libraries = props => {
 	}, [opened, toggleOpen]);
 
 	useEffect(() => {
-		if(selectedLibraryKey && selectedLibraryKey !== prevSelectedLibraryKey) {
+		if(selectedLibraryKey && typeof(prevSelectedLibraryKey) !== 'undefined' && selectedLibraryKey !== prevSelectedLibraryKey) {
 			toggleOpen(selectedLibraryKey, true);
 			//@TODO: Minor opitimisation: only fetch library settings if needed
 			dispatch(fetchLibrarySettings(selectedLibraryKey));
