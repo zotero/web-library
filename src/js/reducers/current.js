@@ -81,10 +81,10 @@ const current = (state = stateDefault, action, { config = {}, device = {} } = {}
 			var isTrash = params.source === 'trash';
 			var isMyPublications = params.source === 'publications';
 			var collectionKey = params.collection || null;
-			var itemKeys = params.items && isValidItemsKey ? params.items.split(',') : stateDefault.itemKeys;
+			var itemKeys = params.items && isValidItemsKey ? params.items.split(',') : [];
 			var noteKey = params.note || null;
 			var attachmentKey = params.attachment || null;
-			var tags = tagsFromUrlPart(params.tags) || stateDefault.tags;
+			var tags = tagsFromUrlPart(params.tags) || [];
 			var isSelectMode = itemKeys.length > 1 ? true : state.isSelectMode;
 			var view = params.view;
 			var libraryKey = getLibraryKey(params, config);
