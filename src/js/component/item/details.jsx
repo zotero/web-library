@@ -14,7 +14,7 @@ const ItemDetails = props => {
 	const dispatch = useDispatch();
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
 	const isTouchUser = useSelector(state => state.device.isTouchUser);
-	const isSingleColumn = useSelector(state => state.device.isSingleColumn);
+	const isLarge = useSelector(state => state.device.lg);
 	const itemKey = useSelector(state => state.current.itemKey);
 	const libraryKey = useSelector(state => state.current.libraryKey);
 	const item = useSelector(state => get(state, ['libraries', libraryKey, 'items', itemKey], null));
@@ -39,7 +39,7 @@ const ItemDetails = props => {
 
 	return (
 		<section className={ cx('item-details', { 'active': active }) }>
-			{ (isTouchUser && !isSingleColumn) && (
+			{ (isTouchUser && isLarge) && (
 				<TouchHeaderWrap
 					className="hidden-mouse hidden-md-down darker"
 					variant={ TouchHeaderWrap.variants.ITEM }

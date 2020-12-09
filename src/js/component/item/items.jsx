@@ -13,7 +13,7 @@ import { useSourceData } from '../../hooks';
 const Items = ({ isSearchModeTransitioning }) => {
 	const { isFetching, hasChecked } = useSourceData();
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
-	const isSingleColumn = useSelector(state => state.device.isSingleColumn);
+	const isLarge = useSelector(state => state.device.lg);
 
 	return (
 		<div className={
@@ -21,8 +21,7 @@ const Items = ({ isSearchModeTransitioning }) => {
 		}>
 			{ isTouchOrSmall ? (
 				<React.Fragment>
-
-						{ !isSingleColumn && <TouchHeaderWrap
+						{ isLarge && <TouchHeaderWrap
 							className="hidden-mouse hidden-md-down"
 							variant={ TouchHeaderWrap.variants.SOURCE }
 						/> }
