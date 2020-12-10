@@ -29,10 +29,12 @@
 
 	p {
 		flex: 0 0 auto;
-		margin: 2em 1em 1em;
+		font-size: $font-size-lg;
+		margin: 1.5em 1em 2.5em;
 	}
 
 	textarea {
+		font-size: $font-size-small;
 		border: 1px solid $shade-3;
 		color: $shade-9;
 		flex: 1 1 auto;
