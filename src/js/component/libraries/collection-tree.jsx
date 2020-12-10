@@ -171,6 +171,7 @@ const VirtualCollectionNode = memo(props => {
 				onBlur={ handleBlur }
 				onCancel={ cancelAdd }
 				onCommit={ handleEditableCommit }
+				value=""
 			/>
 		</Node>
 	);
@@ -753,8 +754,8 @@ const CollectionTree = props => {
 
 
 	const derivedData = useMemo(
-		() => makeDerivedData(collections, path, opened, isTouchOrSmall, isCurrentLibrary),
-		[collections, isCurrentLibrary, isTouchOrSmall, opened, path]
+		() => makeDerivedData(collections, path, opened, isTouchOrSmall),
+		[collections, isTouchOrSmall, opened, path]
 	);
 
 	const selectedDepth = path.length;
