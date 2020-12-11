@@ -5,10 +5,12 @@ const oldWebLibraryUrl = 'https://www.zotero.org/mylibrary?usenewlibrary=0';
 
 const CrashHandler = ({ error = {}, info = {} }) => (
 	<div className="crash-handler">
-		<h1>The Zotero web interface has encountered an error</h1>
-		<p>
-		Please try reloading this page. If the error persists, you can try temporarily using an <a href={ oldWebLibraryUrl }>older version</a> of the web viewer. Bugs should be reported on <a href={ forumsUrl }>Zotero Forums</a>; please mention <em>web library</em> in the title and include the details printed below.
-		</p>
+		<h1>An error has occurred</h1>
+		
+		<p>Please try reloading this page. If the error persists, you can try temporarily using an <a href={ oldWebLibraryUrl }>older version</a> of the web library.</p>
+		
+		<p>If you encounter a persistent problem, please let us know in the <a href={ forumsUrl }>Zotero Forums</a>. Be sure to mention the <em>web library</em> in the thread title, and include the details below in your post.</p>
+		
 		<textarea
 			onClick={ ev => ev.currentTarget.select() }
 			rows={ 10 }
