@@ -214,7 +214,7 @@ const Select = forwardRef((props, ref) => {
 			}
 		}
 		if(!wasOpen && isOpen) {
-			const highlightedEl = selectRef.current && selectRef.current.querySelector(`[data-option-value=${highlighted}]`);
+			const highlightedEl = selectRef.current && selectRef.current.querySelector(`[data-option-value="${highlighted}"]`);
 			if(highlightedEl) {
 				scrollIntoViewIfNeeded(highlightedEl, selectMenuRef.current, false);
 			}
@@ -223,7 +223,7 @@ const Select = forwardRef((props, ref) => {
 
 	useEffect(() => {
 		if(isOpen && highlighted !== prevHighlighted) {
-			const highlightedEl = selectRef.current && selectRef.current.querySelector(`[data-option-value=${highlighted}]`);
+			const highlightedEl = selectRef.current && selectRef.current.querySelector(`[data-option-value="${highlighted}"]`);
 			if(highlightedEl) {
 				scrollIntoViewIfNeeded(highlightedEl, selectMenuRef.current, false);
 			}
