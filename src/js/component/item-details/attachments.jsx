@@ -13,9 +13,8 @@ import Icon from '../ui/icon';
 import Spinner from '../ui/spinner';
 import { ADD_LINKED_URL_TOUCH } from '../../constants/modals';
 import { ATTACHMENT } from '../../constants/dnd';
-import { createAttachmentsFromDropped, createItem, moveToTrash, uploadAttachment, fetchItemTemplate,
-fetchChildItems, navigate, sourceFile, openAttachment, toggleModal, updateItem } from
-'../../actions';
+import { createAttachments, createAttachmentsFromDropped, moveToTrash, fetchChildItems, navigate,
+sourceFile, openAttachment, toggleModal, updateItem } from '../../actions';
 import { get, getScrollContainerPageCount, getUniqueId, stopPropagation, sortByKey, noop } from '../../utils';
 import { getFileData } from '../../common/event';
 import { isTriggerEvent } from '../../common/event';
@@ -304,25 +303,9 @@ const Attachments = ({ isActive, isReadOnly }) => {
 	});
 
 	const handleFileInputChange = useCallback(async ev => {
-		const fileDataPromise = getFileData(ev.currentTarget.files[0]);
-		const attachmentTemplatePromise = dispatch(fetchItemTemplate(
-			'attachment', { linkMode: 'imported_file' }
-		));
-		const [fileData, attachmentTemplate] = await Promise.all(
-			[fileDataPromise, attachmentTemplatePromise]
-		);
-
-		const attachment = {
-			...attachmentTemplate,
-			parentItem: itemKey,
-			filename: fileData.fileName,
-			title: fileData.fileName,
-			contentType: fileData.contentType
-		};
-
-		const item = await dispatch(createItem(attachment, libraryKey));
-		await dispatch(uploadAttachment(item.key, fileData, libraryKey));
-	}, [dispatch, itemKey, libraryKey]);
+		const fileData = await getFileData(ev.currentTarget.files[0]);
+		dispatch(createAttachments([fileData], { parentItem: itemKey }));
+	}, [dispatch, itemKey]);
 
 	const handleKeyDown = useCallback(ev => {
 		if(ev.key === "ArrowLeft") {
