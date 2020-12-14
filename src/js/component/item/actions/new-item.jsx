@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React, { useCallback, useMemo, useRef, useState } from 'react';
+import React, { memo, useCallback, useMemo, useRef, useState } from 'react';
 import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap/lib';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -16,7 +16,7 @@ const DropdownItemType = props => {
 
 	const handleSelect = useCallback(() => {
 		onNewItemCreate(itemType);
-	});
+	}, [itemType, onNewItemCreate]);
 
 	return (
 		<DropdownItem onClick={ handleSelect }>
@@ -26,7 +26,7 @@ const DropdownItemType = props => {
 }
 
 const NewItemSelector = props => {
-	const { disabled, onNewItemCreate, tabIndex } = props;
+	const { disabled, onFocusNext, onFocusPrev, onNewItemCreate, tabIndex } = props;
 	const [isOpen, setIsOpen] = useState(false);
 	const [isSecondaryVisible, setIsSecondaryVisible] = useState(false);
 	const fileInputRef = useRef(null);
@@ -48,15 +48,14 @@ const NewItemSelector = props => {
 
 		setIsOpen(!isOpen);
 		setIsSecondaryVisible(false);
-	});
+	}, [disabled, isOpen]);
 
 	const handleToggleMore = useCallback(ev => {
 		setIsSecondaryVisible(true);
 		ev.preventDefault();
-	});
+	}, []);
 
 	const handleKeyDown = useCallback(ev => {
-		const { onFocusNext, onFocusPrev } = props;
 		if(ev.target !== ev.currentTarget) {
 			return;
 		}
@@ -66,21 +65,21 @@ const NewItemSelector = props => {
 		} else if(ev.key === 'ArrowLeft') {
 			onFocusPrev(ev);
 		}
-	});
+	}, [onFocusNext, onFocusPrev]);
 
 	const handleFileInputChange = useCallback(async ev => {
 		const filesData = await getFilesData(Array.from(ev.currentTarget.files));
 		dispatch(createAttachments(filesData, { collection: collectionKey }));
 		setIsOpen(!isOpen);
 		setIsSecondaryVisible(false);
-	});
+	}, [collectionKey, dispatch, isOpen]);
 
 	const handleClick = useCallback(ev => {
 		if(ev.currentTarget === ev.target) {
 			fileInputRef.current.click();
 		}
 		ev.stopPropagation();
-	});
+	}, []);
 
 	return (
 		<Dropdown
@@ -181,4 +180,4 @@ NewItemSelector.propTypes = {
 	tabIndex: PropTypes.number,
 };
 
-export default NewItemSelector;
+export default memo(NewItemSelector);
