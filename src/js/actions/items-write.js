@@ -9,6 +9,7 @@ import { omit } from '../common/immutable';
 import { extractItems } from '../common/actions';
 import { fetchItemsByKeys, fetchChildItems, fetchItemTemplate, fetchItemTypeCreatorTypes } from '.';
 import { requestTracker } from '.';
+import { sniffForMIMEType } from '../common/mime';
 
 import {
 	BEGIN_ONGOING,
@@ -1183,7 +1184,7 @@ const createAttachments = (filesData, { collection = null, parentItem = null } =
 			const attachmentItems = filesData.map(fd => ({
 				...attachmentTemplate,
 				collections: collection ? [collection] : [],
-				contentType: fd.contentType,
+				contentType: sniffForMIMEType(fd.file) || fd.contentType,
 				filename: fd.fileName,
 				parentItem: parentItem || false,
 				title: fd.fileName,
