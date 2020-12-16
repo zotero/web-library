@@ -67,6 +67,7 @@
 			@include state(".editable:hover") {
 				@include mouse-and-bp-up(md) {
 					background-color: $editable-hover-bg;
+					z-index: 1; // render one layer up to cover spinner in textarea #423
 				}
 			}
 		}
