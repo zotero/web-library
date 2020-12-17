@@ -1,17 +1,15 @@
-import React, { useCallback, useEffect, useState, memo } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { CSSTransition } from 'react-transition-group';
-import { useDebouncedCallback } from 'use-debounce';
 import cx from 'classnames';
+import React, { useCallback, useEffect, useState, memo } from 'react';
+import { useDebouncedCallback } from 'use-debounce';
+import { useDispatch, useSelector } from 'react-redux';
 
-import Modal from '../ui/modal';
 import Button from '../ui/button';
 import Icon from '../ui/icon';
 import Input from '../form/input';
-import Spinner from '../ui/spinner';
-import { coreCitationStyles } from '../../../../data/citation-styles-data.json';
+import Modal from '../ui/modal';
 import SearchWorkerFactory from 'webworkify';
 import { addCitationStyle, deleteCitationStyle, toggleModal, fetchStyles } from '../../actions';
+import { coreCitationStyles } from '../../../../data/citation-styles-data.json';
 import { STYLE_INSTALLER } from '../../constants/modals';
 
 const SEARCH_INPUT_DEBOUNCE_DELAY = 300; //ms
@@ -193,98 +191,85 @@ const StyleInstallerModal = () => {
 
 	return (
 		<Modal
-			isOpen={ isOpen }
-			contentLabel="Citation Style Installer"
 			className={ className }
+			contentLabel="Citation Style Installer"
+			isBusy={ !isReady }
+			isOpen={ isOpen }
 			onRequestClose={ handleClose }
-			closeTimeoutMS={ 200 }
 		>
-			<CSSTransition
-				in={ isReady }
-				timeout={ 200 }
-				classNames="slide"
-				mountOnEnter
-				unmountOnExit
-				exit={ false }
-			>
-				<div className="modal-content" tabIndex={ -1 }>
-					<div className="modal-header">
-						{
-							isTouchOrSmall ? (
-								<React.Fragment>
-									<div className="modal-header-left" />
-									<div className="modal-header-center">
-										<h4 className="modal-title truncate">
-											Citation Styles
-										</h4>
-									</div>
-									<div className="modal-header-right">
-										<Button
-											className="btn-link"
-											onClick={ handleClose }
-										>
-											Close
-										</Button>
-									</div>
-								</React.Fragment>
-							) : (
-								<React.Fragment>
-									<h4 className="modal-title truncate">
-										Citation Styles
-									</h4>
-									<Button
-										icon
-										className="close"
-										onClick={ handleClose }
-									>
-										<Icon type={ '16/close' } width="16" height="16" />
-									</Button>
-								</React.Fragment>
-							)
-						}
-					</div>
-					<div className="modal-body" tabIndex={ 0 }>
-						<div className="style-search">
-							<Input
-								autoFocus
-								className="form-control form-control-lg search-input"
-								isBusy={ isSearching }
-								onChange={ handleFilterInputChange }
-								placeholder="Search"
-								tabIndex={ 0 }
-								type="text"
-								value={ filterInputValue }
-							/>
-						</div>
-						<ul className="style-list">
-							{
-								(hasResults ? matchedCitationStyles : localCitationStyles).map(
-								style => {
-									const styleData = localCitationStyles.find(cs => cs.name === style.name);
-									const isInstalled = typeof styleData !== 'undefined';
-									const isCore = isInstalled && styleData.isCore || false;
-									const isActive = style.name === currentCitationStyle;
-									const isSelected = matchedCitationStyles[selectedIndex] ?
-										matchedCitationStyles[selectedIndex].name === style.name : false;
-
-									return <StyleItem
-										isActive={ isActive }
-										isCore={ isCore }
-										isInstalled={ isInstalled }
-										isSelected={ isSelected }
-										key={ style.name }
-										onDelete={ handleDelete }
-										onInstall={ handleInstall }
-										style={ style }
-									/>;
-								}
-		)
-							}
-						</ul>
-					</div>
+			<div className="modal-header">
+				{
+					isTouchOrSmall ? (
+						<React.Fragment>
+							<div className="modal-header-left" />
+							<div className="modal-header-center">
+								<h4 className="modal-title truncate">
+									Citation Styles
+								</h4>
+							</div>
+							<div className="modal-header-right">
+								<Button
+									className="btn-link"
+									onClick={ handleClose }
+								>
+									Close
+								</Button>
+							</div>
+						</React.Fragment>
+					) : (
+						<React.Fragment>
+							<h4 className="modal-title truncate">
+								Citation Styles
+							</h4>
+							<Button
+								icon
+								className="close"
+								onClick={ handleClose }
+							>
+								<Icon type={ '16/close' } width="16" height="16" />
+							</Button>
+						</React.Fragment>
+					)
+				}
+			</div>
+			<div className="modal-body" tabIndex={ 0 }>
+				<div className="style-search">
+					<Input
+						autoFocus
+						className="form-control form-control-lg search-input"
+						isBusy={ isSearching }
+						onChange={ handleFilterInputChange }
+						placeholder="Search"
+						tabIndex={ 0 }
+						type="text"
+						value={ filterInputValue }
+					/>
 				</div>
-			</CSSTransition>
-			{ !isReady && <Spinner className="large" /> }
+				<ul className="style-list">
+					{
+						(hasResults ? matchedCitationStyles : localCitationStyles).map(
+						style => {
+							const styleData = localCitationStyles.find(cs => cs.name === style.name);
+							const isInstalled = typeof styleData !== 'undefined';
+							const isCore = isInstalled && styleData.isCore || false;
+							const isActive = style.name === currentCitationStyle;
+							const isSelected = matchedCitationStyles[selectedIndex] ?
+								matchedCitationStyles[selectedIndex].name === style.name : false;
+
+							return <StyleItem
+								isActive={ isActive }
+								isCore={ isCore }
+								isInstalled={ isInstalled }
+								isSelected={ isSelected }
+								key={ style.name }
+								onDelete={ handleDelete }
+								onInstall={ handleInstall }
+								style={ style }
+							/>;
+						})
+					}
+				</ul>
+			</div>
 		</Modal>
 	);
 }

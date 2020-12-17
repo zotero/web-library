@@ -8,7 +8,6 @@ import exportFormats from '../../constants/export-formats';
 import Icon from '../ui/icon';
 import Modal from '../ui/modal';
 import Select from '../form/select';
-import Spinner from '../ui/spinner';
 import { EXPORT } from '../../constants/modals';
 import { exportCollection, exportItems, toggleModal, triggerSelectMode } from '../../actions';
 import { getUniqueId } from '../../utils';
@@ -59,94 +58,90 @@ const ExportModal = () => {
 	const className = cx({
 		'loading': isBusy,
 		'export-modal': true,
-		'modal-touch modal-centered modal-form': isTouchOrSmall,
+		'modal-touch modal-form': isTouchOrSmall,
 	});
 
 	return (
 		<Modal
-			isOpen={ isOpen }
-			contentLabel="Export Items"
 			className={ className }
+			contentLabel="Export Items"
+			isBusy={ isBusy }
+			isOpen={ isOpen }
 			onRequestClose={ handleCancel }
-			closeTimeoutMS={ 200 }
-			overlayClassName={ "modal-slide" }
+			overlayClassName={ cx({ 'modal-slide modal-centered': isTouchOrSmall }) }
 		>
-		{ isBusy ? <Spinner className="large" /> : (
-			<div className="modal-content" tabIndex={ -1 }>
-				<div className="modal-header">
-					{
-						isTouchOrSmall ? (
-							<React.Fragment>
-							<div className="modal-header-left">
-								<Button
-									className="btn-link"
-									onClick={ handleCancel }
-								>
-									Cancel
-								</Button>
-							</div>
-							<div className="modal-header-center">
-								<h4 className="modal-title truncate">
-									Export { itemKeys.length > 1 ? 'Items' : 'Item' }
-								</h4>
-							</div>
-							<div className="modal-header-right">
-								<Button
-									className="btn-link"
-									onClick={ handleExport }
-								>
-									Export
-								</Button>
-							</div>
-							</React.Fragment>
-					) : (
-					<React.Fragment>
-						<h4 className="modal-title truncate">
-							Export
-						</h4>
-						<Button
-							icon
-							className="close"
-							onClick={ handleCancel }
-						>
-							<Icon type={ '16/close' } width="16" height="16" />
-						</Button>
-					</React.Fragment>
-				)}
-				</div>
-				<div className="modal-body">
-					<div className="form">
-						<div className="form-group">
-							<label htmlFor={ inputId.current }>
-								Export Format
-							</label>
-							<Select
-								id={ inputId.current }
-								className="form-control form-control-sm"
-								onChange={ handleChange }
-								onCommit={ handleSelect }
-								options={ exportFormats.map(({ key, label }) => (
-									{ value: key, label }
-								)) }
-								value={ format }
-								searchable={ true }
-							/>
+			<div className="modal-header">
+				{
+					isTouchOrSmall ? (
+						<React.Fragment>
+						<div className="modal-header-left">
+							<Button
+								className="btn-link"
+								onClick={ handleCancel }
+							>
+								Cancel
+							</Button>
 						</div>
+						<div className="modal-header-center">
+							<h4 className="modal-title truncate">
+								Export { itemKeys.length > 1 ? 'Items' : 'Item' }
+							</h4>
+						</div>
+						<div className="modal-header-right">
+							<Button
+								className="btn-link"
+								onClick={ handleExport }
+							>
+								Export
+							</Button>
+						</div>
+						</React.Fragment>
+				) : (
+				<React.Fragment>
+					<h4 className="modal-title truncate">
+						Export
+					</h4>
+					<Button
+						icon
+						className="close"
+						onClick={ handleCancel }
+					>
+						<Icon type={ '16/close' } width="16" height="16" />
+					</Button>
+				</React.Fragment>
+			)}
+			</div>
+			<div className="modal-body">
+				<div className="form">
+					<div className="form-group">
+						<label htmlFor={ inputId.current }>
+							Export Format
+						</label>
+						<Select
+							id={ inputId.current }
+							className="form-control form-control-sm"
+							onChange={ handleChange }
+							onCommit={ handleSelect }
+							options={ exportFormats.map(({ key, label }) => (
+								{ value: key, label }
+							)) }
+							value={ format }
+							searchable={ true }
+						/>
 					</div>
 				</div>
-				{ !isTouchOrSmall && (
-					<div className="modal-footer justify-content-end">
-						<Button
-							type="button"
-							className='btn btn-lg btn-secondary'
-							onClick={ handleExport }
-						>
-							Export
-						</Button>
-					</div>
-				)}
 			</div>
-		)}
+			{ !isTouchOrSmall && (
+				<div className="modal-footer justify-content-end">
+					<Button
+						type="button"
+						className='btn btn-lg btn-secondary'
+						onClick={ handleExport }
+					>
+						Export
+					</Button>
+				</div>
+			)}
 		</Modal>
 	);
 }

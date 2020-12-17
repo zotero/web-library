@@ -1,71 +1,73 @@
-'use strict';
-
-import React from 'react';
-import PropTypes from 'prop-types';
-import ReactModal from 'react-modal';
 import cx from 'classnames';
+import PropTypes from 'prop-types';
+import React, { memo, useCallback, useEffect, useRef } from 'react';
+import ReactModal from 'react-modal';
+import { useSelector } from 'react-redux';
+
+import Spinner from '../ui/spinner';
 import { getScrollbarWidth } from '../../utils';
+import { pick } from '../../common/immutable'
+import { usePrevious } from '../../hooks';
+
 var initialPadding;
 
-class Modal extends React.PureComponent {
-	componentDidUpdate({ isOpen: wasOpen }) {
-		const { isOpen } = this.props;
-		if(wasOpen != isOpen && isOpen === true) {
-			this.setScrollbar();
+const Modal = props => {
+	const { children, className, isBusy, isOpen, onAfterOpen, overlayClassName, ...rest } = props;
+	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
+	const wasOpen = usePrevious(isOpen);
+	const contentRef = useRef(null);
+
+	if(typeof initialPadding === 'undefined') {
+		initialPadding = parseFloat(document.body.style.paddingRight);
+		initialPadding = Number.isNaN(initialPadding) ? 0 : initialPadding;
+	}
+
+	const handleModalAfterOpen = useCallback(ev => {
+		if(onAfterOpen) {
+			onAfterOpen(ev);
 		}
-		if(wasOpen != isOpen && isOpen === false) {
-			this.resetScrollbar();
+	}, [onAfterOpen]);
+
+	const setContentRef = useCallback(newRef => {
+		contentRef.current = newRef;
+	}, []);
+
+	useEffect(() => { // correct for scrollbars
+		if(typeof(wasOpen) === 'undefined') {
+			return;
 		}
-	}
-
-	checkScrollbar() {
-		const rect = document.body.getBoundingClientRect();
-		return rect.left + rect.right < window.innerWidth;
-	}
-
-	setScrollbar() {
-		const calculatedPadding = this.initialPadding + getScrollbarWidth();
-		document.body.style.paddingRight = `${calculatedPadding}px`;
-	}
-
-	resetScrollbar() {
-		document.body.style.paddingRight = `${this.initialPadding}px`;
-	}
-
-	handleModalOpen() {
-		// remove maxHeight hack that prevents scroll on focus
-		this.contentRef.style.maxHeight = null;
-		this.contentRef.style.overflowY = null;
-	}
-
-	get initialPadding() {
-		if(typeof initialPadding === 'undefined') {
-			initialPadding = parseFloat(document.body.style.paddingRight);
-			initialPadding = Number.isNaN(initialPadding) ? 0 : initialPadding;
+		if(wasOpen !== isOpen && isOpen) {
+			const calculatedPadding = initialPadding + getScrollbarWidth();
+			document.body.style.paddingRight = `${calculatedPadding}px`;
+		} else if(wasOpen !== isOpen && !isOpen) {
+			document.body.style.paddingRight = `${initialPadding}px`;
 		}
-		return initialPadding;
-	}
+	}, [isOpen, wasOpen]);
 
-	render() {
-		const { className, overlayClassName, isOpen, ...props } = this.props;
-		const modalProps = {
-			role: 'dialog',
-			style: { content: { maxHeight: 'calc(100% - 32px)', overflowY: 'hidden' } },
-			onAfterOpen: this.handleModalOpen.bind(this),
-			contentRef: contentRef => { this.contentRef = contentRef; },
-			appElement: document.querySelector('.library-container'),
-			className: cx('modal', className),
-			overlayClassName: cx('modal-backdrop', overlayClassName),
-			isOpen: isOpen,
-			...props
-		};
-
-		return <ReactModal { ...modalProps } />;
-	}
-
-	static propTypes = {
-		isOpen: PropTypes.bool
-	}
+	return (
+		<ReactModal
+			role="dialog"
+			onAfterOpen={ handleModalAfterOpen }
+			contentRef= { setContentRef }
+			appElement= { document.querySelector('.library-container') }
+			className= { cx('modal modal-content', className) }
+			overlayClassName={ cx({ 'loading': isBusy }, 'modal-backdrop', overlayClassName) }
+			isOpen={ isOpen }
+			closeTimeoutMS={ isTouchOrSmall ? 200 : null }
+			{ ...pick(rest, ['contentLabel', 'onRequestClose', 'shouldFocusAfterRender', 'shouldCloseOnOverlayClick', 'shouldCloseOnEsc', 'shouldReturnFocusAfterClose']) }
+		>
+			{ isBusy ? <Spinner className="large" /> : children }
+		</ReactModal>
+	);
 }
 
-export default Modal;
+Modal.propTypes = {
+	children: PropTypes.oneOfType([PropTypes.element, PropTypes.array]),
+	className: PropTypes.string,
+	isBusy: PropTypes.bool,
+	isOpen: PropTypes.bool,
+	onAfterOpen: PropTypes.func,
+	overlayClassName: PropTypes.string,
+};
+
+export default memo(Modal);

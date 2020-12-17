@@ -20,55 +20,52 @@
 	@include bp-down(xs) {
 		overflow-y: hidden;
 	}
-}
-
-.modal {
-	width: auto;
-
-	@include bp-down(xs) {
-		height: 100%;
-	}
-
-	@include bp-up(sm) {
-		max-width: $modal-md;
-		margin: $space-xl auto;
-	}
 
 	&.loading {
 		display: flex;
 		justify-content: center;
 		align-items: center;
-		height: calc(100% - 2 * #{$space-xs});
 
-		@include bp-up(md) {
-			height: calc(100% - 2 * #{$space-xl});
+		.modal {
+			display: flex;
+			align-items: center;
+			justify-content: center;
 		}
 
 		.icon-spin {
 			color: $modal-icon-spin-color;
 		}
 	}
+}
+
+.modal {
+	@include bp-up(sm) {
+		width: $modal-md;
+		margin: $space-xl auto;
+	}
 
 	&-lg {
 		@include bp-up(sm) {
 			width: $modal-lg;
-			max-width: calc(100% - 2 * #{$space-xl});
+			width: calc(100% - 2 * #{$space-xl});
 		}
 	}
 
 	&-xl {
 		@include bp-up(sm) {
 			width: $modal-xl;
-			max-width: calc(100% - 2 * #{$space-xl});
+			width: calc(100% - 2 * #{$space-xl});
 		}
 	}
 }
 
 .modal-content {
-	width: 100%;
+	display: flex;
+	flex-direction: column;
 
 	@include bp-down(xs) {
 		height: 100%;
+		width: 100%;
 	}
 
 	@include bp-up(sm) {
@@ -208,10 +205,13 @@
 .modal-centered {
 	display: flex;
 	align-items: center;
-	min-height: 100%;
+}
+
+.modal-full-height .modal-content {
+	min-height: 100vh;
 
 	@include bp-up(sm) {
-		min-height: calc(100% - #{2 * $space-xl});
+		min-height: calc(100vh - #{2 * $space-xl});
 	}
 }
 

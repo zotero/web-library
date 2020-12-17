@@ -111,12 +111,10 @@ const CreatorFieldModal = memo(props => {
 		<Modal
 			isOpen={ isModalVisible }
 			contentLabel="Edit Creator"
-			className="modal-touch modal-centered modal-form"
-			overlayClassName={ "modal-slide" }
-			closeTimeoutMS={ 600 }
+			className="modal-touch modal-form"
+			overlayClassName="modal-centered modal-slide"
 			onRequestClose={ onClose }
 		>
-		<div className="modal-content" tabIndex={ -1 }>
 			<div className="modal-header">
 				<div className="modal-header-left" />
 				<div className="modal-header-center">
@@ -196,8 +194,6 @@ const CreatorFieldModal = memo(props => {
 					</li>
 				</ol>
 			</div>
-		</div>
-
 		</Modal>
 	);
 });

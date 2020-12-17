@@ -1,11 +1,9 @@
 import React, { memo, useCallback, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import cx from 'classnames';
 
 import AddLinkedUrlForm from '../item-details/add-linked-url-form';
 import Button from '../ui/button';
 import Modal from '../ui/modal';
-import Spinner from '../ui/spinner';
 import { ADD_LINKED_URL_TOUCH } from '../../constants/modals';
 import { toggleModal } from '../../actions';
 
@@ -32,48 +30,43 @@ const AddLinkedUrlTouchModal = () => {
 
 	return (
 		<Modal
-			isOpen={ isOpen }
+			className="modal-touch"
 			contentLabel="Add Linked URL Attachment"
-			className={ cx('modal-touch', 'modal-centered', {
-				loading: isBusy
-			}) }
+			isBusy={ isBusy }
+			isOpen={ isOpen }
 			onRequestClose={ handleClose }
-			closeTimeoutMS={ 200 }
-			overlayClassName={ "modal-slide" }
+			overlayClassName="modal-slide modal-centered"
 		>
-			{ isBusy && <Spinner className="large" /> }
-			<div className={ cx('modal-content', { hidden: isBusy }) } tabIndex={ -1 }>
-				<div className="modal-header">
-					<div className="modal-header-left">
-						<Button
-							className="btn-link"
-							onClick={ handleClose }
-							disabled={ isBusy }
-						>
-							Cancel
-						</Button>
-					</div>
-					<div className="modal-header-center">
-						<h4 className="modal-title truncate">
-							Add Linked URL Attachment
-						</h4>
-					</div>
-					<div className="modal-header-right">
-						<Button
-							className="btn-link"
-							disabled={ isBusy }
-							onClick={ handleCreateClick }
-						>
-							Add
-						</Button>
-					</div>
+			<div className="modal-header">
+				<div className="modal-header-left">
+					<Button
+						className="btn-link"
+						onClick={ handleClose }
+						disabled={ isBusy }
+					>
+						Cancel
+					</Button>
 				</div>
-				<div className="modal-body">
-					<AddLinkedUrlForm
-						onClose={ handleClose }
-						ref={ formRef }
-					/>
+				<div className="modal-header-center">
+					<h4 className="modal-title truncate">
+						Add Linked URL Attachment
+					</h4>
 				</div>
+				<div className="modal-header-right">
+					<Button
+						className="btn-link"
+						disabled={ isBusy }
+						onClick={ handleCreateClick }
+					>
+						Add
+					</Button>
+				</div>
+			</div>
+			<div className="modal-body">
+				<AddLinkedUrlForm
+					onClose={ handleClose }
+					ref={ formRef }
+				/>
 			</div>
 		</Modal>
 	)

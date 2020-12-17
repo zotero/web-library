@@ -1,11 +1,9 @@
-import cx from 'classnames';
 import React, { memo, useCallback, useRef, useState } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 
 import Button from '../ui/button';
 import Modal from '../ui/modal';
 import Select from '../form/select';
-import Spinner from '../ui/spinner';
 import { get } from '../../utils';
 import { getUniqueId } from '../../utils';
 import { NEW_ITEM } from '../../constants/modals';
@@ -50,68 +48,60 @@ const NewItemModal = () => {
 
 	return (
 		<Modal
-			isOpen={ isOpen }
+			className="modal-touch"
 			contentLabel="Create a New Item"
-			className={ cx('modal-touch', 'modal-centered', {
-				loading: isBusy
-			}) }
+			isBusy={ isBusy }
+			isOpen={ isOpen }
 			onRequestClose={ handleCancel }
-			closeTimeoutMS={ 200 }
-			overlayClassName={ "modal-slide" }
+			overlayClassName="modal-centered modal-slide"
 		>
-			{ isBusy ? <Spinner className="large" /> : (
-				<div className="modal-content" tabIndex={ -1 }>
-					<div className="modal-header">
-						<div className="modal-header-left">
-							<Button
-								className="btn-link"
-								onClick={ handleCancel }
-							>
-								Cancel
-							</Button>
-						</div>
-						<div className="modal-header-center">
-							<h4 className="modal-title truncate">
-								{
-									collection ?
-										`Create a New Item in ${collection.name}` :
-										'Create a New Item'
-								}
-							</h4>
-						</div>
-						<div className="modal-header-right">
-							<Button
-								className="btn-link"
-								onClick={ handleNewItemCreate }
-							>
-								Create
-							</Button>
-						</div>
-					</div>
-					<div className="modal-body">
-						{ isBusy ? <Spinner /> : (
-							<div className="form">
-								<div className="form-group">
-									<label htmlFor={ inputId.current }>
-										Item Type
-									</label>
-									<Select
-										id={ inputId.current }
-										className="form-control form-control-sm"
-										onChange={ handleChange }
-										onCommit={ handleSelect }
-										options={ itemTypes.map(({ itemType, localized }) => (
-											{ value: itemType, label: localized }
-										)) }
-										value={ itemType }
-										searchable={ true }
-									/>
-								</div>
-							</div>
-						)}
+			<div className="modal-header">
+				<div className="modal-header-left">
+					<Button
+						className="btn-link"
+						onClick={ handleCancel }
+					>
+						Cancel
+					</Button>
+				</div>
+				<div className="modal-header-center">
+					<h4 className="modal-title truncate">
+						{
+							collection ?
+								`Create a New Item in ${collection.name}` :
+								'Create a New Item'
+						}
+					</h4>
+				</div>
+				<div className="modal-header-right">
+					<Button
+						className="btn-link"
+						onClick={ handleNewItemCreate }
+					>
+						Create
+					</Button>
+				</div>
+			</div>
+			<div className="modal-body">
+				<div className="form">
+					<div className="form-group">
+						<label htmlFor={ inputId.current }>
+							Item Type
+						</label>
+						<Select
+							id={ inputId.current }
+							className="form-control form-control-sm"
+							onChange={ handleChange }
+							onCommit={ handleSelect }
+							options={ itemTypes.map(({ itemType, localized }) => (
+								{ value: itemType, label: localized }
+							)) }
+							value={ itemType }
+							searchable={ true }
+						/>
 					</div>
 				</div>
-			)}
+			</div>
 		</Modal>
 	);
 }

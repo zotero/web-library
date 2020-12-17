@@ -1,10 +1,10 @@
 import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import Modal from '../ui/modal';
 import Button from '../ui/button';
-import RadioSet from '../form/radio-set';
 import columnProperties from '../../constants/column-properties';
+import Modal from '../ui/modal';
+import RadioSet from '../form/radio-set';
 import { SORT_ITEMS } from '../../constants/modals';
 import { toggleModal, updateItemsSorting } from '../../actions';
 
@@ -44,49 +44,46 @@ const ItemsSortModal = () => {
 
 	return (
 		<Modal
-			isOpen={ isOpen }
+			className="modal-touch modal-form"
 			contentLabel="Collection Editor"
-			className="modal-touch modal-form modal-centered"
+			isOpen={ isOpen }
 			onRequestClose={ handleCancel }
-			closeTimeoutMS={ 200 }
-			overlayClassName={ "modal-slide" }
+			overlayClassName="modal-centered modal-slide"
 		>
-			<div className="modal-content" tabIndex={ -1 }>
-				<div className="modal-header">
-					<div className="modal-header-left">
-						<Button
-							className="btn-link"
-							onClick={ handleCancel }
-						>
-							Cancel
-						</Button>
-					</div>
-					<div className="modal-header-center">
-						<h4 className="modal-title truncate">
-							Sort By
-						</h4>
-					</div>
-					<div className="modal-header-right">
-						{
-							isKeyboardUser && (
-								<Button
-									className="btn-link"
-									onClick={ handleConfirmChange }
-								>
-									Confirm
-								</Button>
-							)
-						}
-					</div>
+			<div className="modal-header">
+				<div className="modal-header-left">
+					<Button
+						className="btn-link"
+						onClick={ handleCancel }
+					>
+						Cancel
+					</Button>
 				</div>
-				<div className="modal-body">
-					<div className="form">
-						<RadioSet
-							onChange={ handleSortChange }
-							options={ radioSetOptions }
-							value={ selectedSortField }
-						/>
-					</div>
+				<div className="modal-header-center">
+					<h4 className="modal-title truncate">
+						Sort By
+					</h4>
+				</div>
+				<div className="modal-header-right">
+					{
+						isKeyboardUser && (
+							<Button
+								className="btn-link"
+								onClick={ handleConfirmChange }
+							>
+								Confirm
+							</Button>
+						)
+					}
+				</div>
+			</div>
+			<div className="modal-body">
+				<div className="form">
+					<RadioSet
+						onChange={ handleSortChange }
+						options={ radioSetOptions }
+						value={ selectedSortField }
+					/>
 				</div>
 			</div>
 		</Modal>

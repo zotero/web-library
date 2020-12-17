@@ -45,58 +45,55 @@ const NewCollectionModal = () => {
 
 	return (
 		<Modal
-			isOpen={ isOpen }
+			className="modal-touch modal-form"
 			contentLabel="Add a New Collection"
-			className="modal-touch modal-form modal-centered"
+			isOpen={ isOpen }
 			onRequestClose={ handleCancel }
-			closeTimeoutMS={ 200 }
-			overlayClassName={ "modal-slide" }
+			overlayClassName="modal-centered modal-slide"
 		>
-			<div className="modal-content" tabIndex={ -1 }>
-				<div className="modal-header">
-					<div className="modal-header-left">
-						<Button
-							className="btn-link"
-							onClick={ handleCancel }
-						>
-							Cancel
-						</Button>
-					</div>
-					<div className="modal-header-center">
-						<h4 className="modal-title truncate">
-							{
-								parentCollection ?
-									`Add a new Subcollection to ${parentCollection.name}` :
-									'Add a new Collection'
-							}
-						</h4>
-					</div>
-					<div className="modal-header-right">
-						<Button
-							className="btn-link"
-							disabled={ name.length === 0 }
-							onClick={ handleCollectionUpdate }
-						>
-							Confirm
-						</Button>
-					</div>
+			<div className="modal-header">
+				<div className="modal-header-left">
+					<Button
+						className="btn-link"
+						onClick={ handleCancel }
+					>
+						Cancel
+					</Button>
 				</div>
-				<div className="modal-body">
-					<div className="form">
-						<div className="form-group">
-							<label htmlFor={ inputId.current }>
-								<Icon type="28/folder" width="28" height="28" />
-							</label>
-							<Input
-								autoFocus
-								id={ inputId.current }
-								onBlur={ handleInputBlur }
-								onChange={ handleChange }
-								onCommit={ handleCollectionUpdate }
-								value={ name }
-								tabIndex={ 0 }
-							/>
-						</div>
+				<div className="modal-header-center">
+					<h4 className="modal-title truncate">
+						{
+							parentCollection ?
+								`Add a new Subcollection to ${parentCollection.name}` :
+								'Add a new Collection'
+						}
+					</h4>
+				</div>
+				<div className="modal-header-right">
+					<Button
+						className="btn-link"
+						disabled={ name.length === 0 }
+						onClick={ handleCollectionUpdate }
+					>
+						Confirm
+					</Button>
+				</div>
+			</div>
+			<div className="modal-body">
+				<div className="form">
+					<div className="form-group">
+						<label htmlFor={ inputId.current }>
+							<Icon type="28/folder" width="28" height="28" />
+						</label>
+						<Input
+							autoFocus
+							id={ inputId.current }
+							onBlur={ handleInputBlur }
+							onChange={ handleChange }
+							onCommit={ handleCollectionUpdate }
+							value={ name }
+							tabIndex={ 0 }
+						/>
 					</div>
 				</div>
 			</div>

@@ -5,12 +5,11 @@ import Button from '../ui/button';
 import deepEqual from 'deep-equal';
 import Libraries from '../libraries';
 import Modal from '../ui/modal';
-import Spinner from '../ui/spinner';
 import TouchHeader from '../touch-header.jsx';
+import { get } from '../../utils';
 import { MOVE_COLLECTION } from '../../constants/modals';
 import { toggleModal, updateCollection } from '../../actions';
 import { useNavigationState } from '../../hooks';
-import { get } from '../../utils';
 
 const MoveCollectionsModal = () => {
 	const dispatch = useDispatch();
@@ -76,62 +75,54 @@ const MoveCollectionsModal = () => {
 
 	return (
 		<Modal
-			isOpen={ isOpen }
+			className="modal-touch modal-full-height collection-select-modal"
 			contentLabel="Select Collection"
-			className="modal-touch modal-centered collection-select-modal"
+			isBusy={ isBusy }
+			isOpen={ isOpen }
 			onRequestClose={ handleCancel }
-			closeTimeoutMS={ 200 }
-			overlayClassName={ "modal-slide" }
+			overlayClassName="modal-centered modal-full-height modal-slide"
 		>
-			<div className="modal-content" tabIndex={ -1 }>
-				<div className="modal-body">
-					{
-						isBusy ? <Spinner className="large" /> : (
-							<React.Fragment>
-							<TouchHeader
-								isModal={ true }
-								className="darker"
-								device={ device }
-								path={ touchHeaderPath }
-								onNavigate={ handleNavigation }
-							/>
-							<Libraries
-								pickerIncludeLibraries={ true }
-								isPickerMode={ true }
-								pickerPick={ handlePick }
-								picked={ picked }
-								pickerNavigate={ handleNavigation }
-								pickerState= { navState }
-							/>
-							</React.Fragment>
-						)
-					}
+			<div className="modal-body">
+				<TouchHeader
+					isModal={ true }
+					className="darker"
+					device={ device }
+					path={ touchHeaderPath }
+					onNavigate={ handleNavigation }
+				/>
+				<Libraries
+					pickerIncludeLibraries={ true }
+					isPickerMode={ true }
+					pickerPick={ handlePick }
+					picked={ picked }
+					pickerNavigate={ handleNavigation }
+					pickerState= { navState }
+				/>
+			</div>
+			<div className="modal-footer">
+				<div className="modal-footer-left">
+					<Button
+						className="btn-link"
+						onClick={ handleCancel }
+					>
+						Cancel
+					</Button>
 				</div>
-				<div className="modal-footer">
-					<div className="modal-footer-left">
-						<Button
-							className="btn-link"
-							onClick={ handleCancel }
-						>
-							Cancel
-						</Button>
-					</div>
-					<div className="modal-footer-center">
-						<h4 className="modal-title truncate">
-							{
-								picked.length === 0 ? 'Select a Collection' : 'Confirm Move?'
-							}
-						</h4>
-					</div>
-					<div className="modal-footer-right">
-						<Button
-							disabled={ picked.length === 0 }
-							className="btn-link"
-							onClick={ handleMove }
-						>
-							Move
-						</Button>
-					</div>
+				<div className="modal-footer-center">
+					<h4 className="modal-title truncate">
+						{
+							picked.length === 0 ? 'Select a Collection' : 'Confirm Move?'
+						}
+					</h4>
+				</div>
+				<div className="modal-footer-right">
+					<Button
+						disabled={ picked.length === 0 }
+						className="btn-link"
+						onClick={ handleMove }
+					>
+						Move
+					</Button>
 				</div>
 			</div>
 		</Modal>

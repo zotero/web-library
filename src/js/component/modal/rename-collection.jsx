@@ -1,13 +1,14 @@
 import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
-import { makeChildMap } from '../../common/collection';
-import Modal from '../ui/modal';
+
 import Button from '../ui/button';
-import Input from '../form/input';
 import Icon from '../ui/icon';
-import { get, getUniqueId } from '../../utils';
-import { toggleModal, updateCollection } from '../../actions';
+import Input from '../form/input';
+import Modal from '../ui/modal';
 import { COLLECTION_RENAME } from '../../constants/modals';
+import { get, getUniqueId } from '../../utils';
+import { makeChildMap } from '../../common/collection';
+import { toggleModal, updateCollection } from '../../actions';
 
 const RenameCollectionModal = () => {
 	const dispatch = useDispatch();
@@ -57,54 +58,51 @@ const RenameCollectionModal = () => {
 
 	return (
 		<Modal
-			isOpen={ isOpen }
+			className="modal-touch"
 			contentLabel="Collection Editor"
-			className="modal-touch modal-centered"
+			isOpen={ isOpen }
 			onRequestClose={ handleCancel }
-			closeTimeoutMS={ 200 }
-			overlayClassName={ "modal-slide" }
+			overlayClassName="modal-centered modal-slide"
 		>
-			<div className="modal-content" tabIndex={ -1 }>
-				<div className="modal-header">
-					<div className="modal-header-left">
-						<Button
-							className="btn-link"
-							onClick={ handleCancel }
-						>
-							Cancel
-						</Button>
-					</div>
-					<div className="modal-header-center">
-						<h4 className="modal-title truncate">
-							Rename Collection
-						</h4>
-					</div>
-					<div className="modal-header-right">
-						<Button
-							className="btn-link"
-							disabled={ !isValid }
-							onClick={ handleCollectionUpdate }
-						>
-							Rename
-						</Button>
-					</div>
+			<div className="modal-header">
+				<div className="modal-header-left">
+					<Button
+						className="btn-link"
+						onClick={ handleCancel }
+					>
+						Cancel
+					</Button>
 				</div>
-				<div className="modal-body">
-					<div className="form">
-						<div className="form-group">
-							<label htmlFor={ inputId.current }>
-								<Icon type={ hasSubCollections ? '28/folders' : '28/folder' } width="28" height="28" />
-							</label>
-							<Input
-								autoFocus
-								id={ inputId.current }
-								onBlur={ handleInputBlur }
-								onChange={ handleChange }
-								onCommit={ handleCollectionUpdate }
-								tabIndex={ 0 }
-								value={ name }
-							/>
-						</div>
+				<div className="modal-header-center">
+					<h4 className="modal-title truncate">
+						Rename Collection
+					</h4>
+				</div>
+				<div className="modal-header-right">
+					<Button
+						className="btn-link"
+						disabled={ !isValid }
+						onClick={ handleCollectionUpdate }
+					>
+						Rename
+					</Button>
+				</div>
+			</div>
+			<div className="modal-body">
+				<div className="form">
+					<div className="form-group">
+						<label htmlFor={ inputId.current }>
+							<Icon type={ hasSubCollections ? '28/folders' : '28/folder' } width="28" height="28" />
+						</label>
+						<Input
+							autoFocus
+							id={ inputId.current }
+							onBlur={ handleInputBlur }
+							onChange={ handleChange }
+							onCommit={ handleCollectionUpdate }
+							tabIndex={ 0 }
+							value={ name }
+						/>
 					</div>
 				</div>
 			</div>

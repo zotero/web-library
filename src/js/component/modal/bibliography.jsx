@@ -168,184 +168,180 @@ const BibliographyModal = () => {
 
 	const className = cx({
 		'bibliography-modal': true,
-		'modal-centered': isTouchOrSmall,
 		'modal-xl modal-scrollable': !isTouchOrSmall,
 		'modal-touch modal-form': isTouchOrSmall,
 	});
 
 	return (
 		<Modal
-			isOpen={ isOpen }
-			contentLabel="Bibliography"
 			className={ className }
+			contentLabel="Bibliography"
+			isOpen={ isOpen }
 			onRequestClose={ handleCancel }
-			closeTimeoutMS={ isTouchOrSmall ? 200 : null }
-			overlayClassName={ isTouchOrSmall ? "modal-slide" : null }
+			overlayClassName={ cx({ 'modal-centered modal-slide': isTouchOrSmall, 'modal-full-height': !isTouchOrSmall }) }
 		>
-			<div className="modal-content" tabIndex={ -1 }>
-				<div className="modal-header">
-					{
-						isTouchOrSmall ? (
-							<React.Fragment>
-								<div className="modal-header-left">
-									<Button
-										className="btn-link"
-										onClick={ handleCancel }
-									>
-										Cancel
-									</Button>
-								</div>
-								<div className="modal-header-center">
-									<h4 className="modal-title truncate">
-										{ outputMode === 'cite' ? 'Citations' : 'Bibliography'}
-									</h4>
-								</div>
-								<div className="modal-header-right">
-									<Button
-										disabled={ isUpdating }
-										className="btn-link"
-										onClick={ handleCreateClick }
-									>
-										Create
-									</Button>
-								</div>
-							</React.Fragment>
-						) : (
-							<React.Fragment>
+			<div className="modal-header">
+				{
+					isTouchOrSmall ? (
+						<React.Fragment>
+							<div className="modal-header-left">
+								<Button
+									className="btn-link"
+									onClick={ handleCancel }
+								>
+									Cancel
+								</Button>
+							</div>
+							<div className="modal-header-center">
 								<h4 className="modal-title truncate">
 									{ outputMode === 'cite' ? 'Citations' : 'Bibliography'}
 								</h4>
+							</div>
+							<div className="modal-header-right">
 								<Button
-									icon
-									className="close"
-									onClick={ handleCancel }
+									disabled={ isUpdating }
+									className="btn-link"
+									onClick={ handleCreateClick }
 								>
-									<Icon type={ '16/close' } width="16" height="16" />
+									Create
 								</Button>
-							</React.Fragment>
-						)
-					}
-				</div>
-				<div
-					className={ cx(
-						'modal-body',
-						{ loading: !isTouchOrSmall && isUpdating }
-					)}
-					tabIndex={ !isTouchOrSmall ? 0 : null }
-				>
-					<div className="form">
-						<div className="citation-options">
-							<div className="form-row">
-								<div className="col-9">
-									<div className="form-group form-row style-selector-container">
-										<label
-											htmlFor={ styleSelectorId.current }
-											className="col-form-label"
-										>
-											Citation Style
-										</label>
-										<div className="col">
-											<StyleSelector
-												id={ styleSelectorId.current }
-												onStyleChange={ handleStyleChange }
-												citationStyle={ citationStyle }
-												citationStyles={ citationStyles }
-											/>
-										</div>
+							</div>
+						</React.Fragment>
+					) : (
+						<React.Fragment>
+							<h4 className="modal-title truncate">
+								{ outputMode === 'cite' ? 'Citations' : 'Bibliography'}
+							</h4>
+							<Button
+								icon
+								className="close"
+								onClick={ handleCancel }
+							>
+								<Icon type={ '16/close' } width="16" height="16" />
+							</Button>
+						</React.Fragment>
+					)
+				}
+			</div>
+			<div
+				className={ cx(
+					'modal-body',
+					{ loading: !isTouchOrSmall && isUpdating }
+				)}
+				tabIndex={ !isTouchOrSmall ? 0 : null }
+			>
+				<div className="form">
+					<div className="citation-options">
+						<div className="form-row">
+							<div className="col-9">
+								<div className="form-group form-row style-selector-container">
+									<label
+										htmlFor={ styleSelectorId.current }
+										className="col-form-label"
+									>
+										Citation Style
+									</label>
+									<div className="col">
+										<StyleSelector
+											id={ styleSelectorId.current }
+											onStyleChange={ handleStyleChange }
+											citationStyle={ citationStyle }
+											citationStyles={ citationStyles }
+										/>
 									</div>
 								</div>
-								<div className="col-3">
-									<div className="form-group form-row language-selector-container">
-										<label
-											htmlFor={ localeSelectorId.current }
-											className="col-form-label"
-										>
-											Language
-										</label>
-										<div className="col">
-											<LocaleSelector
-												id={ localeSelectorId.current }
-												onLocaleChange={ handleLocaleChange }
-												citationLocale={ citationLocale }
-											/>
-										</div>
+							</div>
+							<div className="col-3">
+								<div className="form-group form-row language-selector-container">
+									<label
+										htmlFor={ localeSelectorId.current }
+										className="col-form-label"
+									>
+										Language
+									</label>
+									<div className="col">
+										<LocaleSelector
+											id={ localeSelectorId.current }
+											onLocaleChange={ handleLocaleChange }
+											citationLocale={ citationLocale }
+										/>
 									</div>
 								</div>
 							</div>
 						</div>
-						{ isTouchOrSmall && (
-							<RadioSet
-								onChange={ handleRequestedActionChange }
-								options={[
-									{ value: 'clipboard', label: 'Copy to Clipboard' },
-									{ value: 'html', label: 'Copy HTML' },
-								]}
-								value={ requestedAction }
-							/>
-						)}
-						{ !isTouchOrSmall && (
-							<div className="bibliography-container">
-								{ isUpdating ? (
-									<Spinner className="large" />
-									) : (
-										<div className="bibliography read-only"
-											dangerouslySetInnerHTML={ { __html: output } }
-										/>
-									)
-								}
-							</div>
-						)}
 					</div>
+					{ isTouchOrSmall && (
+						<RadioSet
+							onChange={ handleRequestedActionChange }
+							options={[
+								{ value: 'clipboard', label: 'Copy to Clipboard' },
+								{ value: 'html', label: 'Copy HTML' },
+							]}
+							value={ requestedAction }
+						/>
+					)}
+					{ !isTouchOrSmall && (
+						<div className="bibliography-container">
+							{ isUpdating ? (
+								<Spinner className="large" />
+								) : (
+									<div className="bibliography read-only"
+										dangerouslySetInnerHTML={ { __html: output } }
+									/>
+								)
+							}
+						</div>
+					)}
 				</div>
-				{ !isTouchOrSmall && (
-					<div className="modal-footer justify-content-end">
-						<Dropdown
-							isOpen={ isDropdownOpen }
-							toggle={ handleDropdownToggle }
-							className={ cx('btn-group', { 'success': isClipboardCopied}) }
+			</div>
+			{ !isTouchOrSmall && (
+				<div className="modal-footer justify-content-end">
+					<Dropdown
+						isOpen={ isDropdownOpen }
+						toggle={ handleDropdownToggle }
+						className={ cx('btn-group', { 'success': isClipboardCopied}) }
+					>
+						<Button
+							type="button"
+							disabled={ isUpdating }
+							className='btn btn-lg btn-secondary copy-to-clipboard'
+							onClick={ handleCopyToClipboardInteraction }
+							onKeyDown={handleCopyToClipboardInteraction }
 						>
-							<Button
-								type="button"
-								disabled={ isUpdating }
-								className='btn btn-lg btn-secondary copy-to-clipboard'
-								onClick={ handleCopyToClipboardInteraction }
-								onKeyDown={handleCopyToClipboardInteraction }
+							<span className={ cx('inline-feedback', { 'active': isClipboardCopied }) }>
+								<span className="default-text" aria-hidden={ !isClipboardCopied }>
+									Copy to Clipboard
+								</span>
+								<span className="shorter feedback" aria-hidden={ isClipboardCopied }>
+									Copied!
+								</span>
+							</span>
+						</Button>
+						<DropdownToggle
+							color={ null }
+							disabled={ isUpdating }
+							className="btn-lg btn-secondary dropdown-toggle"
+						>
+							<Icon type={ '16/chevron-9' } width="16" height="16" />
+						</DropdownToggle>
+						<DropdownMenu className="dropdown-menu">
+							<DropdownItem
+								onClick={ handleCopyHtmlClick }
+								className="btn clipboard-trigger"
 							>
-								<span className={ cx('inline-feedback', { 'active': isClipboardCopied }) }>
-									<span className="default-text" aria-hidden={ !isClipboardCopied }>
-										Copy to Clipboard
+								<span className={ cx('inline-feedback', { 'active': isHtmlCopied }) }>
+									<span className="default-text" aria-hidden={ !isHtmlCopied }>
+										Copy HTML
 									</span>
-									<span className="shorter feedback" aria-hidden={ isClipboardCopied }>
+									<span className="shorter feedback" aria-hidden={ isHtmlCopied }>
 										Copied!
 									</span>
 								</span>
-							</Button>
-							<DropdownToggle
-								color={ null }
-								disabled={ isUpdating }
-								className="btn-lg btn-secondary dropdown-toggle"
-							>
-								<Icon type={ '16/chevron-9' } width="16" height="16" />
-							</DropdownToggle>
-							<DropdownMenu className="dropdown-menu">
-								<DropdownItem
-									onClick={ handleCopyHtmlClick }
-									className="btn clipboard-trigger"
-								>
-									<span className={ cx('inline-feedback', { 'active': isHtmlCopied }) }>
-										<span className="default-text" aria-hidden={ !isHtmlCopied }>
-											Copy HTML
-										</span>
-										<span className="shorter feedback" aria-hidden={ isHtmlCopied }>
-											Copied!
-										</span>
-									</span>
-								</DropdownItem>
-							</DropdownMenu>
-						</Dropdown>
-					</div>
-				)}
-			</div>
+							</DropdownItem>
+						</DropdownMenu>
+					</Dropdown>
+				</div>
+			)}
 		</Modal>
 	);
 }

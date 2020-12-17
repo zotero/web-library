@@ -1,11 +1,9 @@
 import React, { useCallback, useEffect, useRef, useState, memo } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
-import cx from 'classnames';
 
-import Modal from '../ui/modal';
 import Button from '../ui/button';
-import Spinner from '../ui/spinner';
 import Icon from '../ui/icon';
+import Modal from '../ui/modal';
 import { get, getUniqueId } from '../../utils';
 import { getFilesData } from '../../common/event';
 import { NEW_FILE } from '../../constants/modals';
@@ -74,86 +72,78 @@ const NewFileModal = () => {
 
 	return (
 		<Modal
-			isOpen={ isOpen }
+			className="modal-touch"
 			contentLabel="Upload files"
-			className={ cx('modal-touch', 'modal-centered', {
-				loading: isBusy
-			}) }
+			isBusy={ isBusy }
+			isOpen={ isOpen }
 			onRequestClose={ closeModal }
-			closeTimeoutMS={ 200 }
-			overlayClassName={ "modal-slide" }
+			overlayClassName="modal-centered modal-slide"
 		>
-			{ isBusy ? <Spinner className="large" /> : (
-				<div className="modal-content" tabIndex={ -1 }>
-					<div className="modal-header">
-						<div className="modal-header-left">
+			<div className="modal-header">
+				<div className="modal-header-left">
+					<Button
+						className="btn-link"
+						disabled={ isBusy }
+						onClick={ closeModal }
+					>
+						Cancel
+					</Button>
+				</div>
+				<div className="modal-header-center">
+					<h4 className="modal-title truncate">
+						{
+							collection ?
+								`Upload files to ${collection.name}` :
+								'Upload files'
+						}
+					</h4>
+				</div>
+				<div className="modal-header-right">
+					<Button
+						className="btn-link"
+						disabled={ isBusy || filesData.length === 0 }
+						onClick={ handleCreateFileClick }
+					>
+						Upload
+					</Button>
+				</div>
+			</div>
+			<div className="modal-body">
+				<div className="form">
+					<ul className="form-group files">
+						{ filesData.map(fd => (
+							<li className="file" key={ fd.key }>
+								<span>{ fd.fileName }</span>
+								<Button
+									icon
+									data-key={ fd.key }
+									onClick={ handleRemoveFileClick }
+								>
+									<Icon type={ '16/trash' } width="16" height="16" />
+								</Button>
+							</li>
+						)) }
+					</ul>
+					<div className="flex-row justify-center">
+						<div className="btn-file">
+							<input
+								className="add-attachment toolbar-focusable"
+								id={ inputId.current }
+								multiple="multiple"
+								onChange={ handleFileSelected }
+								tabIndex={ 0 }
+								type="file"
+							/>
 							<Button
-								className="btn-link"
-								disabled={ isBusy }
-								onClick={ closeModal }
+								className="btn-default"
+								tabIndex={ -1 }
 							>
-								Cancel
+								Select Files
 							</Button>
 						</div>
-						<div className="modal-header-center">
-							<h4 className="modal-title truncate">
-								{
-									collection ?
-										`Upload files to ${collection.name}` :
-										'Upload files'
-								}
-							</h4>
-						</div>
-						<div className="modal-header-right">
-							<Button
-								className="btn-link"
-								disabled={ isBusy }
-								onClick={ handleCreateFileClick }
-							>
-								Upload
-							</Button>
-						</div>
-					</div>
-					<div className="modal-body">
-						{ isBusy ? <Spinner /> : (
-							<div className="form">
-								<ul className="form-group files">
-									{ filesData.map(fd => (
-										<li className="file" key={ fd.key }>
-											<span>{ fd.fileName }</span>
-											<Button
-												icon
-												data-key={ fd.key }
-												onClick={ handleRemoveFileClick }
-											>
-												<Icon type={ '16/trash' } width="16" height="16" />
-											</Button>
-										</li>
-									)) }
-								</ul>
-								<div className="flex-row justify-center">
-									<div className="btn-file">
-										<input
-											className="add-attachment toolbar-focusable"
-											id={ inputId.current }
-											multiple="multiple"
-											onChange={ handleFileSelected }
-											tabIndex={ 0 }
-											type="file"
-										/>
-										<Button
-											className="btn-default"
-											tabIndex={ -1 }
-										>
-											Select Files
-										</Button>
-									</div>
-								</div>
-							</div>
-						)}
 					</div>
 				</div>
-			)}
+			</div>
 		</Modal>
 	)
 }
