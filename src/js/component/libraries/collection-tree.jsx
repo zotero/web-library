@@ -516,8 +516,10 @@ const CollectionNode = memo(props => {
 		}
 	}, [collection, pickerPick, isPickerMode, parentLibraryKey]);
 
+	const usesItemsNode = isSingleColumn && !isPickerMode;
+
 	const collections = allCollections.filter(c => c.parentCollection === collection.key );
-	const hasSubCollections = (isSingleColumn || collections.length > 0);
+	const hasSubCollections = (usesItemsNode || collections.length > 0);
 	const { selectedDepth } = derivedData[collection.key];
 
 	const selectedHasChildren = isCurrentLibrary && selectedCollectionKey && (derivedData[selectedCollectionKey] || {}).hasChildren;
@@ -525,13 +527,14 @@ const CollectionNode = memo(props => {
 	// if isSelected is a nested child, hasOpen is true
 	// if isSelected is a direct child, hasOpen is only true if
 	// either selected is not a leaf node or we're in singleColumn mode (where there is always estra "Items" node)
-	const hasOpen = selectedDepth > 0 && !(selectedDepth === 1 && (!selectedHasChildren && !isSingleColumn));
+	const hasOpen = selectedDepth > 0 && !(selectedDepth === 1 && (!selectedHasChildren && !usesItemsNode));
 
 	// at least one collection contains subcollections
 	const hasNested = !!collections.find(c => derivedData[c.key].hasChildren);
 
-	// on mobiles, there is extra level that only contains "items"
-	const isLastLevel = isSingleColumn ? collections.length === 0 : !hasNested;
+	// on mobiles, there is extra level that only contains "items" (but not in picker mode)
+	const isLastLevel = usesItemsNode ? collections.length === 0 : !hasNested;
+
 
 	// subtree nodes are tabbable if
 	const shouldSubtreeNodesBeTabbableOnTouch = isCurrentLibrary && derivedData[collection.key].isSelected ||
@@ -721,6 +724,7 @@ const CollectionTree = props => {
 	const prevHighlightedCollections = usePrevious(highlightedCollections);
 
 	const isCurrentLibrary = parentLibraryKey === selectedLibraryKey;
+	const usesItemsNode = isSingleColumn && !isPickerMode;
 	const allCollections = useMemo(() => Object.values(collections), [collections]);
 
 	const path = useMemo(
@@ -760,10 +764,10 @@ const CollectionTree = props => {
 
 	const selectedDepth = path.length;
 	const selectedHasChildren = isCurrentLibrary && selectedCollectionKey && (derivedData[selectedCollectionKey] || {}).hasChildren;
-	const hasOpen = (selectedDepth > 0 && (selectedHasChildren || isSingleColumn)) || selectedDepth > 1;
+	const hasOpen = (selectedDepth > 0 && (selectedHasChildren || usesItemsNode)) || selectedDepth > 1;
 
 	const topLevelCollections = allCollections.filter(c => c.parentCollection === false );
-	const isLastLevel = isSingleColumn ? false : collections.length === 0;
+	const isLastLevel = usesItemsNode ? false : collections.length === 0;
 
 	const shouldBeTabbableOnTouch = isCurrentLibrary && !selectedCollectionKey;
 	const shouldBeTabbable = shouldBeTabbableOnTouch || !isTouchOrSmall;
