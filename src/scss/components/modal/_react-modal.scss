@@ -77,7 +77,7 @@
 		@include bp-up(sm) {
 			display: flex;
 			flex-direction: column;
-			max-height: calc(100vh - 2 * #{$space-xl});
+			max-height: calc(100% - 2 * #{$space-xl});
 		}
 	}
 }
@@ -208,10 +208,10 @@
 }
 
 .modal-full-height .modal-content {
-	min-height: 100vh;
+	min-height: 100%;
 
 	@include bp-up(sm) {
-		min-height: calc(100vh - #{2 * $space-xl});
+		min-height: calc(100% - #{2 * $space-xl});
 	}
 }
 
