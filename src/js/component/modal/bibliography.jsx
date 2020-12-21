@@ -31,6 +31,7 @@ const BibliographyModal = () => {
 	const itemKeys = useSelector(state => state.modal.itemKeys);
 	const libraryKey = useSelector(state => state.modal.libraryKey);
 
+	const wasOpen = usePrevious(isOpen);
 	const prevCitationStyle = usePrevious(citationStyle);
 	const prevCitationLocale = usePrevious(citationLocale);
 
@@ -161,7 +162,7 @@ const BibliographyModal = () => {
 	}, [handleCopy]);
 
 	useEffect(() => {
-		if(isOpen && (citationStyle !== prevCitationStyle || citationLocale !== prevCitationLocale)) {
+		if(isOpen && (!wasOpen || citationStyle !== prevCitationStyle || citationLocale !== prevCitationLocale)) {
 			makeOutput();
 		}
 	}, [citationLocale, citationStyle, isOpen, makeOutput, prevCitationLocale, prevCitationStyle]);
