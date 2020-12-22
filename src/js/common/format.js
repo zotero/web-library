@@ -23,7 +23,7 @@ const itemTypeLocalized = (item, itemTypes) => {
 	const { itemType } = item;
 	if(itemType === 'note') { return "Note" }
 	if(itemType === 'attachment') { return "Attachment" }
-	return (itemTypes.find(it => it.itemType === itemType) || {}).localized;
+	return (itemTypes.find(it => it.itemType === itemType) || {}).localized || itemType;
 }
 const dateLocalized = date => (date instanceof Date && !isNaN(date)) ?
 	date.toLocaleString(navigator.language || navigator.userLanguage) : '';
