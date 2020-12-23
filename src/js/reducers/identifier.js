@@ -4,6 +4,9 @@ import { ERROR_ADD_BY_IDENTIFIER, REQUEST_ADD_BY_IDENTIFIER,
 const defaultState = {
 	isError: false,
 	isSearching: false,
+	isNoResults: false,
+	item: null,
+	items: null,
 }
 
 const identifier = (state = defaultState, action) => {
@@ -13,18 +16,27 @@ const identifier = (state = defaultState, action) => {
 				...state,
 				isError: false,
 				isSearching: true,
+				isNoResults: false,
+				item: null,
+				items: null,
 			};
 		case RECEIVE_ADD_BY_IDENTIFIER:
 			return {
 				...state,
 				isError: false,
 				isSearching: null,
+				isNoResults: action.isNoResults,
+				item: action.item || null,
+				items: action.items || null,
 			};
 		case ERROR_ADD_BY_IDENTIFIER:
 			return {
 				...state,
 				isError: true,
 				isSearching: null,
+				isNoResults: false,
+				item: null,
+				items: null,
 			};
 		case RESET_ADD_BY_IDENTIFIER:
 			return defaultState;

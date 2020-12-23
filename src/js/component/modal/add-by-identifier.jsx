@@ -1,22 +1,43 @@
-import React, { useCallback, useRef, useState, memo } from 'react';
+import React, { useCallback, useEffect, useRef, useState, memo } from 'react';
+import { useDebounce } from 'use-debounce';
 import { useDispatch, useSelector } from 'react-redux';
 
 import Button from '../ui/button';
 import Input from '../form/input';
 import Modal from '../ui/modal';
 import { ADD_BY_IDENTIFIER } from '../../constants/modals';
-import { createItem, navigate, toggleModal, resetIdentifier, searchIdentifier } from '../../actions';
+import { currentAddTranslatedItem, reportIdentifierNoResults, resetIdentifier, searchIdentifier, toggleModal } from '../../actions';
+import { usePrevious } from '../../hooks';
 
 const AddByIdentifierModal = () => {
 	const dispatch = useDispatch();
-	const libraryKey = useSelector(state => state.current.libraryKey);
-	const collectionKey = useSelector(state => state.current.collectionKey);
-	const itemsSource = useSelector(state => state.current.itemsSource);
 	const isSearching = useSelector(state => state.identifier.isSearching);
+	const isNoResults = useSelector(state => state.identifier.isNoResults);
+	const item = useSelector(state => state.identifier.item);
+	const items = useSelector(state => state.identifier.items);
+	const prevItem = usePrevious(item);
+	const prevItems = usePrevious(items);
+	const wasSearching = usePrevious(isSearching);
+
 	const isOpen = useSelector(state => state.modal.id === ADD_BY_IDENTIFIER);
 	const [identifier, setIdentifier] = useState('');
 	const [isBusy, setIsBusy] = useState(false);
+	const [isBusyOrSearching] = useDebounce(isBusy || isSearching, 100); //avoid flickering
 	const inputEl = useRef(null);
+
+	const addItem = useCallback(async item => {
+		const translatedItem = { ...item };
+		try {
+			setIsBusy(true);
+			await dispatch(currentAddTranslatedItem(translatedItem));
+			setIsBusy(false);
+			dispatch(toggleModal(ADD_BY_IDENTIFIER, false));
+		} catch(_) {
+			setIsBusy(false);
+			setIdentifier('');
+			inputEl.current.focus();
+		}
+	}, [dispatch]);
 
 	const handleCancel = useCallback(() => {
 		setIdentifier('');
@@ -41,39 +62,38 @@ const AddByIdentifierModal = () => {
 		}, 200);
 	}, []);
 
-	const handleAddClick = useCallback(async () => {
-		try {
-			setIsBusy(true);
-			const reviewItem = await dispatch(searchIdentifier(identifier));
+	const handleInputCommit = useCallback(newIdentifier => {
+		dispatch(searchIdentifier(newIdentifier));
+	}, [dispatch]);
 
-			if(itemsSource === 'collection' && collectionKey) {
-				reviewItem.collections = [collectionKey];
-			}
+	const handleAddClick = useCallback(() => {
+		dispatch(searchIdentifier(identifier));
+	}, [dispatch, identifier]);
 
-			const item = await dispatch(createItem(reviewItem, libraryKey));
-
-			setIsBusy(false);
-			setIdentifier('');
-			dispatch(toggleModal(ADD_BY_IDENTIFIER, false));
-			dispatch(resetIdentifier());
-			dispatch(navigate({
-				library: libraryKey,
-				collection: collectionKey,
-				items: [item.key],
-				view: 'item-details'
-			}, true))
-		} catch(_) {
-			setIsBusy(false);
-			setIdentifier('');
-			inputEl.current.focus();
+	useEffect(() => {
+		if(isOpen && item && prevItem === null) {
+			addItem({ ...item });
 		}
-	}, [identifier, collectionKey, dispatch, libraryKey, itemsSource]);
+	}, [addItem, isOpen, item, prevItem]);
+
+	useEffect(() => {
+		if(isOpen && items && prevItems === null) {
+			console.log({ items });
+		}
+	}, [isOpen, items, prevItems]);
+
+	useEffect(() => {
+		if(!isSearching && wasSearching && isNoResults) {
+			setIdentifier('');
+			dispatch(reportIdentifierNoResults());
+		}
+	}, [dispatch, isSearching, wasSearching, isNoResults])
 
 	return (
 		<Modal
 			className="modal-touch"
 			contentLabel="Add By Identifier"
-			isBusy={ isBusy }
+			isBusy={ isBusyOrSearching }
 			isOpen={ isOpen }
 			onAfterOpen={ handleModalAfterOpen }
 			onRequestClose={ handleCancel }
@@ -107,10 +127,9 @@ const AddByIdentifierModal = () => {
 				<div className="form">
 					<div className="form-group">
 						<Input
-							isBusy={ isSearching }
 							onBlur={ handleInputBlur }
 							onChange={ handleInputChange }
-							onCommit={ handleAddClick }
+							onCommit={ handleInputCommit }
 							placeholder="URL, ISBN, DOI, PMID, or arXiv ID"
 							ref={ inputEl }
 							tabIndex={ 0 }

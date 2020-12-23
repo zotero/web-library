@@ -1,27 +1,49 @@
 import PropTypes from 'prop-types';
-import React, { memo, useCallback, useRef, useState } from 'react';
+import React, { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { Popover, PopoverHeader, PopoverBody } from 'reactstrap';
+import { useDebounce } from 'use-debounce';
 import { useDispatch, useSelector } from 'react-redux';
 
 import Button from '../../ui/button';
 import Icon from '../../ui/icon';
 import Input from '../../form/input';
-import { createItem, searchIdentifier, navigate, resetIdentifier } from '../../../actions';
+import { currentAddTranslatedItem, searchIdentifier, reportIdentifierNoResults, resetIdentifier } from '../../../actions';
 import { getUniqueId } from '../../../utils';
+import { usePrevious } from '../../../hooks';
 
 const AddByIdentifier = props => {
 	const { onKeyDown } = props;
 	const dispatch = useDispatch();
-	const collectionKey = useSelector(state => state.current.collectionKey);
-	const itemsSource = useSelector(state => state.current.itemsSource);
-	const libraryKey = useSelector(state => state.current.libraryKey);
+
+	const isSearching = useSelector(state => state.identifier.isSearching);
+	const isNoResults = useSelector(state => state.identifier.isNoResults);
+	const item = useSelector(state => state.identifier.item);
+	const items = useSelector(state => state.identifier.items);
+	const prevItem = usePrevious(item);
+	const prevItems = usePrevious(items);
+	const wasSearching = usePrevious(isSearching);
 
 	const [isOpen, setIsOpen] = useState(false);
 	const [isBusy, setIsBusy] = useState(false);
 	const [identifier, setIdentifier] = useState('');
+	const [isBusyOrSearching] = useDebounce(isBusy || isSearching, 100); //avoid flickering
 
 	const inputEl = useRef(null);
 	const id = useRef(getUniqueId());
+
+	const addItem = useCallback(async item => {
+	const translatedItem = { ...item };
+		try {
+			setIsBusy(true);
+			await dispatch(currentAddTranslatedItem(translatedItem));
+			setIsBusy(false);
+			setIsOpen(false);
+		} catch(_) {
+			setIsBusy(false);
+			setIdentifier('');
+			inputEl.current.focus();
+		}
+	}, [dispatch]);
 
 	const handleClick = useCallback(() => {
 		setIsOpen(!isOpen);
@@ -39,36 +61,29 @@ const AddByIdentifier = props => {
 		setIsOpen(!isOpen);
 	}, [dispatch, isOpen]);
 
-	const addItem = useCallback(async itemIdentifier => {
-		if(itemIdentifier) {
-			setIsBusy(true);
-			try {
-				const reviewItem = await dispatch(searchIdentifier(itemIdentifier));
-				if(itemsSource === 'collection' && collectionKey) {
-					reviewItem.collections = [collectionKey];
-				}
-				const item = await dispatch(createItem(reviewItem, libraryKey));
-				setIsBusy(false);
-				setIsOpen(false);
-				dispatch(resetIdentifier());
-				dispatch(navigate({
-					library: libraryKey,
-					collection: collectionKey,
-					items: [item.key],
-					view: 'item-details'
-				}, true));
-			} catch(_) {
-				setIsBusy(false);
-				setIdentifier('');
-				inputEl.current.focus();
-				return;
-			}
-		}
-	}, [collectionKey, dispatch, itemsSource, libraryKey]);
-
 	const handleInputCommit = useCallback(newIdentifier => {
-		addItem(newIdentifier);
-	}, [addItem]);
+		dispatch(searchIdentifier(newIdentifier));
+	}, [dispatch]);
+
+	useEffect(() => {
+		if(isOpen && item && prevItem === null) {
+			addItem({ ...item });
+		}
+	}, [addItem, isOpen, item, prevItem]);
+
+	useEffect(() => {
+		if(isOpen && items && prevItems === null) {
+			console.log({ items });
+		}
+	}, [isOpen, items, prevItems]);
+
+	useEffect(() => {
+		if(!isSearching && wasSearching && isNoResults) {
+			setIdentifier('');
+			dispatch(reportIdentifierNoResults());
+		}
+	}, [dispatch, isSearching, wasSearching, isNoResults])
+
 
 	return (
 		<React.Fragment>
@@ -100,8 +115,8 @@ const AddByIdentifier = props => {
 						<Input
 							autoFocus
 							id={ `${id.current}-input` }
-							isBusy={ isBusy }
-							isDisabled={ isBusy }
+							isBusy={ isBusyOrSearching }
+							isDisabled={ isBusyOrSearching }
 							onBlur={ handleInputBlur }
 							onChange={ handleInputChange }
 							onCommit={ handleInputCommit }
