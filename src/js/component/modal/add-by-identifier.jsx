@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import Button from '../ui/button';
 import Input from '../form/input';
 import Modal from '../ui/modal';
-import { ADD_BY_IDENTIFIER } from '../../constants/modals';
+import { ADD_BY_IDENTIFIER, IDENTIFIER_PICKER } from '../../constants/modals';
 import { currentAddTranslatedItem, reportIdentifierNoResults, resetIdentifier, searchIdentifier, toggleModal } from '../../actions';
 import { usePrevious } from '../../hooks';
 
@@ -78,9 +78,10 @@ const AddByIdentifierModal = () => {
 
 	useEffect(() => {
 		if(isOpen && items && prevItems === null) {
-			console.log({ items });
+			dispatch(toggleModal(ADD_BY_IDENTIFIER, false));
+			dispatch(toggleModal(IDENTIFIER_PICKER, true));
 		}
-	}, [isOpen, items, prevItems]);
+	}, [dispatch, isOpen, items, prevItems]);
 
 	useEffect(() => {
 		if(!isSearching && wasSearching && isNoResults) {

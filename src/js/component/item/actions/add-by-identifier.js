@@ -4,10 +4,11 @@ import { Popover, PopoverHeader, PopoverBody } from 'reactstrap';
 import { useDebounce } from 'use-debounce';
 import { useDispatch, useSelector } from 'react-redux';
 
+import { ADD_BY_IDENTIFIER, IDENTIFIER_PICKER } from '../../../constants/modals';
 import Button from '../../ui/button';
 import Icon from '../../ui/icon';
 import Input from '../../form/input';
-import { currentAddTranslatedItem, searchIdentifier, reportIdentifierNoResults, resetIdentifier } from '../../../actions';
+import { currentAddTranslatedItem, searchIdentifier, toggleModal, reportIdentifierNoResults, resetIdentifier } from '../../../actions';
 import { getUniqueId } from '../../../utils';
 import { usePrevious } from '../../../hooks';
 
@@ -73,9 +74,10 @@ const AddByIdentifier = props => {
 
 	useEffect(() => {
 		if(isOpen && items && prevItems === null) {
-			console.log({ items });
+			dispatch(toggleModal(ADD_BY_IDENTIFIER, false));
+			dispatch(toggleModal(IDENTIFIER_PICKER, true));
 		}
-	}, [isOpen, items, prevItems]);
+	}, [dispatch, isOpen, items, prevItems]);
 
 	useEffect(() => {
 		if(!isSearching && wasSearching && isNoResults) {

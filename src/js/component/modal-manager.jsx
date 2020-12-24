@@ -13,11 +13,12 @@ import NewFileModal from './modal/new-file';
 import NewItemModal from './modal/new-item';
 import RenameCollectionModal from './modal/rename-collection';
 import StyleInstallerModal from './modal/style-installer';
+import IdentifierPicker from './modal/identifier-picker';
 import { useForceUpdate, usePrevious } from '../hooks';
 
 import { ADD_LINKED_URL_TOUCH, BIBLIOGRAPHY, COLLECTION_ADD, COLLECTION_RENAME, COLLECTION_SELECT,
-EXPORT, MOVE_COLLECTION, NEW_ITEM, SORT_ITEMS, STYLE_INSTALLER, ADD_BY_IDENTIFIER, NEW_FILE } from
-'../constants/modals';
+EXPORT, IDENTIFIER_PICKER, MOVE_COLLECTION, NEW_ITEM, SORT_ITEMS, STYLE_INSTALLER,
+ADD_BY_IDENTIFIER, NEW_FILE } from '../constants/modals';
 
 const lookup = {
 	[ADD_LINKED_URL_TOUCH]: AddLinkedUrlTouchModal,
@@ -32,6 +33,7 @@ const lookup = {
 	[STYLE_INSTALLER]: StyleInstallerModal,
 	[ADD_BY_IDENTIFIER]: AddByIdentifierModal,
 	[NEW_FILE]: NewFileModal,
+	[IDENTIFIER_PICKER]: IdentifierPicker
 };
 
 const UNMOUNT_DELAY = 500; // to allow outro animatons (delay in ms)

@@ -399,6 +399,14 @@ const getRequestTypeFromItemsSource = itemsSource => {
 	}
 }
 
+const processIdentifierMultipleItems = (items, itemTypes, isUrl = false) => Object.entries(items).map(([key, value]) => ({
+	key,
+	source: isUrl ? 'url' : 'identifier',
+	title: typeof value === 'string' ? value : value.title,
+	description: value.description,
+	itemType: value.itemType ? ((itemTypes.find(it => it.itemType == value.itemType) || {}).localized || value.itemType) : null
+}));
+
 export {
 	applyChangesToVisibleColumns,
 	clamp,
@@ -428,6 +436,7 @@ export {
 	loadJs,
 	mapRelationsToItemKeys,
 	noop,
+	processIdentifierMultipleItems,
 	removeRelationByItemKey,
 	resizeVisibleColumns,
 	reverseMap,
