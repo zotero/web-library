@@ -1,7 +1,8 @@
 import { isLikeURL } from '../utils';
-import { ERROR_IDENTIFIER_NO_RESULT, ERROR_ADD_BY_IDENTIFIER, REQUEST_ADD_BY_IDENTIFIER,
+import { BEGIN_SEARCH_MULTIPLE_IDENTIFIERS, COMPLETE_SEARCH_MULTIPLE_IDENTIFIERS,
+	ERROR_IDENTIFIER_NO_RESULT, ERROR_ADD_BY_IDENTIFIER, REQUEST_ADD_BY_IDENTIFIER,
 	RECEIVE_ADD_BY_IDENTIFIER, RESET_ADD_BY_IDENTIFIER } from '../constants/actions';
-import { createItem, navigate } from '.';
+import { createItem, createItems, navigate } from '.';
 
 const searchIdentifier = identifier => {
 	return async (dispatch, getState) => {
@@ -32,6 +33,7 @@ const searchIdentifier = identifier => {
 					items,
 					response
 				});
+				return items;
 			} else if(response.status !== 200) {
 				const message = 'Unexpected response from the server.';
 				dispatch({ type: RECEIVE_ADD_BY_IDENTIFIER, identifier, isNoResults: true, message });
@@ -54,11 +56,57 @@ const searchIdentifier = identifier => {
 						identifier,
 						response
 					});
+					return item;
 				}
 			}
 		} catch(error) {
 			dispatch({ type: ERROR_ADD_BY_IDENTIFIER, error, identifier });
 		}
+	}
+}
+
+const currentAddMultipleTranslatedItems = identifiers => {
+	return async(dispatch, getState) => {
+		const state = getState();
+		const { config } = state;
+		const { collectionKey, itemsSource, libraryKey } = state.current;
+		const { translateUrl } = config;
+
+		dispatch({
+			type: BEGIN_SEARCH_MULTIPLE_IDENTIFIERS,
+			identifiers
+		});
+		const url = `${translateUrl}/search`;
+
+		const promises = identifiers.map(identifier => fetch(url, {
+			method: 'post',
+			mode: 'cors',
+			headers: { 'content-type': 'text/plain' },
+			body: identifier
+		}).then(async r => (await r.json())[0]));
+
+		const items = await Promise.all(promises);
+
+		if(itemsSource === 'collection' && collectionKey) {
+			items.forEach(i => i.collections = [collectionKey]);
+		}
+		const data = await dispatch(createItems(items, libraryKey));
+		const keys = data.map(d => d.key);
+
+		dispatch(resetIdentifier());
+
+		dispatch(navigate({
+			library: libraryKey,
+			collection: collectionKey,
+			items: keys,
+			view: 'item-list'
+		}, true));
+
+		dispatch({
+			type: COMPLETE_SEARCH_MULTIPLE_IDENTIFIERS,
+			identifiers,
+			items,
+		});
 	}
 }
 
@@ -89,4 +137,4 @@ const reportIdentifierNoResults = () => ({
 	errorType: 'info',
 });
 
-export { currentAddTranslatedItem, resetIdentifier, searchIdentifier, reportIdentifierNoResults };
+export { currentAddTranslatedItem, currentAddMultipleTranslatedItems, resetIdentifier, searchIdentifier, reportIdentifierNoResults };

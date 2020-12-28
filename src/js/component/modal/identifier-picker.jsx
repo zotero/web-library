@@ -1,14 +1,14 @@
-import React, { useCallback, memo } from 'react';
+import React, { useCallback, useEffect, memo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import Button from '../ui/button';
 import Modal from '../ui/modal';
 import { IDENTIFIER_PICKER } from '../../constants/modals';
-import { toggleModal } from '../../actions';
+import { currentAddMultipleTranslatedItems, toggleModal } from '../../actions';
 import { usePrevious } from '../../hooks';
 import { processIdentifierMultipleItems } from '../../utils';
 
-const Item = memo(({ item }) => {
+const Item = memo(({ onChange, isPicked, item }) => {
 	const { key, description, title, itemType, source } = item;
 	let badge = null;
 	if(source === 'url') {
@@ -32,7 +32,7 @@ const Item = memo(({ item }) => {
 	return (
 			<li
 				className="result"
-				key={ item.key }
+				data-key={ item.key }
 			>
 				{ badge && <span key={badge} className="badge badge-light d-sm-none">{ badge }</span> }
 				<h5 className="title">
@@ -46,6 +46,11 @@ const Item = memo(({ item }) => {
 						{ description }
 					</p>
 				)}
+				<input
+					type="checkbox"
+					checked={ isPicked }
+					onChange={ onChange }
+				/>
 			</li>
 		)
 });
@@ -57,17 +62,38 @@ const IdentifierPicker = () => {
 	const isOpen = useSelector(state => state.modal.id === IDENTIFIER_PICKER);
 	const itemTypes = useSelector(state => state.meta.itemTypes);
 	const items = useSelector(state => state.identifier.items);
+	const isSearchingMultiple = useSelector(state => state.identifier.isSearchingMultiple);
+	const wasSearchingMultiple = usePrevious(isSearchingMultiple);
 	const processedItems = items && processIdentifierMultipleItems(items, itemTypes, false);  //@TODO: isUrl source should be stored in redux
+	const [selectedKeys, setSelectedKeys] = useState([]);
 
 	const handleCancel = useCallback(() => {
 		dispatch(toggleModal(IDENTIFIER_PICKER, false));
 	}, [dispatch]);
 
-		return (
+	const handleItemChange = useCallback(ev => {
+		try {
+			const key = ev.currentTarget.closest('[data-key]').dataset.key;
+			setSelectedKeys(selectedKeys.includes(key) ? selectedKeys.filter(k => k !== key) : [...selectedKeys, key]);
+		} catch(e) {}
+	}, [selectedKeys]);
+
+	const handleAddSelected = useCallback(ev => {
+		dispatch(currentAddMultipleTranslatedItems(selectedKeys));
+	}, [dispatch, selectedKeys]);
+
+	useEffect(() => {
+		if(wasSearchingMultiple && !isSearchingMultiple) {
+			dispatch(toggleModal(IDENTIFIER_PICKER, false));
+		}
+	}, [dispatch, isSearchingMultiple, wasSearchingMultiple]);
+
+	return (
 		<Modal
 			className="modal-touch"
 			contentLabel="Add By Identifier"
 			isOpen={ isOpen }
+			isBusy={ !wasSearchingMultiple && isSearchingMultiple }
 			onRequestClose={ handleCancel }
 			overlayClassName="modal-centered modal-slide"
 		>
@@ -87,6 +113,7 @@ const IdentifierPicker = () => {
 				</div>
 				<div className="modal-header-right">
 					<Button
+						onClick={ handleAddSelected }
 						className="btn-link"
 					>
 						Add Selected
@@ -94,7 +121,14 @@ const IdentifierPicker = () => {
 				</div>
 			</div>
 			<div className="modal-body">
-				{ Array.isArray(processedItems) && processedItems.map(item => <Item key={ item.key } item={ item } />) }
+				{ Array.isArray(processedItems) && processedItems
+					.map(item => <Item
+						key={ item.key }
+						item={ item }
+						isPicked={ selectedKeys.includes(item.key) }
+						onChange={ handleItemChange }
+					/>)
+				}
 			</div>
 		</Modal>
 	);

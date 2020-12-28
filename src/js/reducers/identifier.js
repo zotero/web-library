@@ -1,5 +1,6 @@
-import { ERROR_ADD_BY_IDENTIFIER, REQUEST_ADD_BY_IDENTIFIER,
-	RECEIVE_ADD_BY_IDENTIFIER, RESET_ADD_BY_IDENTIFIER } from '../constants/actions';
+import { BEGIN_SEARCH_MULTIPLE_IDENTIFIERS, COMPLETE_SEARCH_MULTIPLE_IDENTIFIERS,
+	ERROR_ADD_BY_IDENTIFIER, REQUEST_ADD_BY_IDENTIFIER, RECEIVE_ADD_BY_IDENTIFIER,
+	RESET_ADD_BY_IDENTIFIER } from '../constants/actions';
 
 const defaultState = {
 	isError: false,
@@ -11,6 +12,10 @@ const defaultState = {
 
 const identifier = (state = defaultState, action) => {
 	switch (action.type) {
+		case BEGIN_SEARCH_MULTIPLE_IDENTIFIERS:
+			return { ...state, isSearchingMultiple: true }
+		case COMPLETE_SEARCH_MULTIPLE_IDENTIFIERS:
+			return { ...state, isSearchingMultiple: false, translatedItems: action.items }
 		case REQUEST_ADD_BY_IDENTIFIER:
 			return {
 				...state,
