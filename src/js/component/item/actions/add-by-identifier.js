@@ -4,11 +4,12 @@ import { Popover, PopoverHeader, PopoverBody } from 'reactstrap';
 import { useDebounce } from 'use-debounce';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { ADD_BY_IDENTIFIER, IDENTIFIER_PICKER } from '../../../constants/modals';
 import Button from '../../ui/button';
 import Icon from '../../ui/icon';
 import Input from '../../form/input';
+import { ADD_BY_IDENTIFIER, IDENTIFIER_PICKER } from '../../../constants/modals';
 import { currentAddTranslatedItem, searchIdentifier, toggleModal, reportIdentifierNoResults, resetIdentifier } from '../../../actions';
+import { EMPTY } from '../../../constants/identifier-result-types';
 import { getUniqueId } from '../../../utils';
 import { usePrevious } from '../../../hooks';
 
@@ -17,7 +18,7 @@ const AddByIdentifier = props => {
 	const dispatch = useDispatch();
 
 	const isSearching = useSelector(state => state.identifier.isSearching);
-	const isNoResults = useSelector(state => state.identifier.isNoResults);
+	const result = useSelector(state => state.identifier.result);
 	const item = useSelector(state => state.identifier.item);
 	const items = useSelector(state => state.identifier.items);
 	const prevItem = usePrevious(item);
@@ -82,11 +83,11 @@ const AddByIdentifier = props => {
 	}, [dispatch, isOpen, items, prevItems]);
 
 	useEffect(() => {
-		if(!isSearching && wasSearching && isNoResults) {
+		if(!isSearching && wasSearching && result === EMPTY) {
 			setIdentifier('');
 			dispatch(reportIdentifierNoResults());
 		}
-	}, [dispatch, isSearching, wasSearching, isNoResults])
+	}, [dispatch, isSearching, wasSearching, result]);
 
 
 	return (

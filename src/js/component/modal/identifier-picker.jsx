@@ -7,11 +7,15 @@ import { IDENTIFIER_PICKER } from '../../constants/modals';
 import { currentAddMultipleTranslatedItems, toggleModal } from '../../actions';
 import { usePrevious } from '../../hooks';
 import { processIdentifierMultipleItems } from '../../utils';
+import { getBaseMappedValue } from '../../common/item';
 
-const Item = memo(({ onChange, isPicked, item }) => {
-	const { key, description, title, itemType, source } = item;
-	let badge = null;
-	if(source === 'url') {
+const Item = memo(({ onChange, identifierIsUrl, isPicked, item }) => {
+	const { key, description, source } = item;
+	let badge = null, title = '';
+	if('itemType' in item) {
+		title = getBaseMappedValue(item, 'title');
+		badge = item.itemType;
+	} else if(identifierIsUrl) {
 		let badges = [];
 		let matches = title.match(/^\[([A-Z]*)\]/);
 		while(matches) {
@@ -23,11 +27,10 @@ const Item = memo(({ onChange, isPicked, item }) => {
 			matches = title.substring(matches[0].length).match(/^\[([A-Z]*)\]/);
 		}
 		badges = [ ...new Set(badges) ].filter(b => b.length > 1);
+
 		if(badges.length) {
 			badge = badges[0];
 		}
-	} else if(itemType) {
-		badge = itemType;
 	}
 	return (
 			<li
@@ -63,6 +66,7 @@ const IdentifierPicker = () => {
 	const itemTypes = useSelector(state => state.meta.itemTypes);
 	const items = useSelector(state => state.identifier.items);
 	const isSearchingMultiple = useSelector(state => state.identifier.isSearchingMultiple);
+	const identifierIsUrl = useSelector(state => state.identifier.identifierIsUrl);
 	const wasSearchingMultiple = usePrevious(isSearchingMultiple);
 	const processedItems = items && processIdentifierMultipleItems(items, itemTypes, false);  //@TODO: isUrl source should be stored in redux
 	const [selectedKeys, setSelectedKeys] = useState([]);
@@ -123,6 +127,7 @@ const IdentifierPicker = () => {
 			<div className="modal-body">
 				{ Array.isArray(processedItems) && processedItems
 					.map(item => <Item
+						identifierIsUrl={ identifierIsUrl }
 						key={ item.key }
 						item={ item }
 						isPicked={ selectedKeys.includes(item.key) }

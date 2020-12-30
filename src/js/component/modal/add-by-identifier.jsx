@@ -6,13 +6,14 @@ import Button from '../ui/button';
 import Input from '../form/input';
 import Modal from '../ui/modal';
 import { ADD_BY_IDENTIFIER, IDENTIFIER_PICKER } from '../../constants/modals';
+import { EMPTY, SINGLE, CHOICE, MULTIPLE } from '../../constants/identifier-result-types';
 import { currentAddTranslatedItem, reportIdentifierNoResults, resetIdentifier, searchIdentifier, toggleModal } from '../../actions';
 import { usePrevious } from '../../hooks';
 
 const AddByIdentifierModal = () => {
 	const dispatch = useDispatch();
 	const isSearching = useSelector(state => state.identifier.isSearching);
-	const isNoResults = useSelector(state => state.identifier.isNoResults);
+	const result = useSelector(state => state.identifier.result);
 	const item = useSelector(state => state.identifier.item);
 	const items = useSelector(state => state.identifier.items);
 	const prevItem = usePrevious(item);
@@ -77,18 +78,18 @@ const AddByIdentifierModal = () => {
 	}, [addItem, isOpen, item, prevItem]);
 
 	useEffect(() => {
-		if(isOpen && items && prevItems === null) {
+		if(isOpen && items && prevItems === null && [CHOICE, MULTIPLE].includes(result) ) {
 			dispatch(toggleModal(ADD_BY_IDENTIFIER, false));
 			dispatch(toggleModal(IDENTIFIER_PICKER, true));
 		}
-	}, [dispatch, isOpen, items, prevItems]);
+	}, [dispatch, isOpen, items, prevItems, result]);
 
 	useEffect(() => {
-		if(!isSearching && wasSearching && isNoResults) {
+		if(!isSearching && wasSearching && result === EMPTY) {
 			setIdentifier('');
 			dispatch(reportIdentifierNoResults());
 		}
-	}, [dispatch, isSearching, wasSearching, isNoResults])
+	}, [dispatch, isSearching, wasSearching, result])
 
 	return (
 		<Modal

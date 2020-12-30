@@ -3,6 +3,8 @@ import { BEGIN_SEARCH_MULTIPLE_IDENTIFIERS, COMPLETE_SEARCH_MULTIPLE_IDENTIFIERS
 	ERROR_IDENTIFIER_NO_RESULT, ERROR_ADD_BY_IDENTIFIER, REQUEST_ADD_BY_IDENTIFIER,
 	RECEIVE_ADD_BY_IDENTIFIER, RESET_ADD_BY_IDENTIFIER } from '../constants/actions';
 import { createItem, createItems, navigate } from '.';
+import { omit } from '../common/immutable';
+import { EMPTY, SINGLE, CHOICE , MULTIPLE } from '../constants/identifier-result-types';
 
 const searchIdentifier = identifier => {
 	return async (dispatch, getState) => {
@@ -10,8 +12,9 @@ const searchIdentifier = identifier => {
 
 		const { config } = getState();
 		const { translateUrl } = config;
-		const url = `${translateUrl}/${((isLikeURL(identifier) ? 'web' : 'search'))}`;
-		dispatch({ type: REQUEST_ADD_BY_IDENTIFIER, identifier });
+		const identifierIsUrl = isLikeURL(identifier);
+		const url = `${translateUrl}/${((identifierIsUrl ? 'web' : 'search'))}`;
+		dispatch({ type: REQUEST_ADD_BY_IDENTIFIER, identifierIsUrl });
 
 		try {
 			const response = await fetch(url, {
@@ -23,12 +26,14 @@ const searchIdentifier = identifier => {
 
 			if (response.status === 501 || response.status === 400) {
 				const message = 'Zotero could not find any identifiers in your input. Please verify your input and try again.';
-				dispatch({ type: RECEIVE_ADD_BY_IDENTIFIER, identifier, isNoResults: true, message });
+				dispatch({ type: RECEIVE_ADD_BY_IDENTIFIER, identifier, identifierIsUrl, result: EMPTY, message });
 			} else if (response.status === 300) {
 				const data = await response.json();
 				const items = 'items' in data && 'session' in data ? data.items : data;
 				dispatch({
 					type: RECEIVE_ADD_BY_IDENTIFIER,
+					result: CHOICE,
+					identifierIsUrl,
 					identifier,
 					items,
 					response
@@ -36,27 +41,43 @@ const searchIdentifier = identifier => {
 				return items;
 			} else if(response.status !== 200) {
 				const message = 'Unexpected response from the server.';
-				dispatch({ type: RECEIVE_ADD_BY_IDENTIFIER, identifier, isNoResults: true, message });
+				dispatch({ type: RECEIVE_ADD_BY_IDENTIFIER, identifier, identifierIsUrl, result: EMPTY, message });
 			} else if (!response.headers.get('content-type').startsWith('application/json')) {
 				const message = 'Unexpected response from the server.';
-				dispatch({ type: RECEIVE_ADD_BY_IDENTIFIER, identifier, isNoResults: true, message });
+				dispatch({ type: RECEIVE_ADD_BY_IDENTIFIER, identifier, identifierIsUrl, result: EMPTY, message });
 			} else {
 				const json = await response.json();
 				if (!json.length) {
 					const message = 'Zotero could not find any identifiers in your input. Please verify your input and try again.';
-					dispatch({ type: RECEIVE_ADD_BY_IDENTIFIER, identifier, isNoResults: true, message });
+					dispatch({ type: RECEIVE_ADD_BY_IDENTIFIER, identifier, identifierIsUrl, result: EMPTY, message });
 				} else {
-					const item = json[0];
-					delete item.key;
-					delete item.version;
+					const rootItems = json.filter(item => !item.parentItem);
 
-					dispatch({
-						type: RECEIVE_ADD_BY_IDENTIFIER,
-						item,
-						identifier,
-						response
-					});
-					return item;
+					if(rootItems.length > 1) {
+						dispatch({
+							type: RECEIVE_ADD_BY_IDENTIFIER,
+							result: MULTIPLE,
+							items: rootItems.map(ri => omit(ri, ['key', 'version'])),
+							identifierIsUrl,
+							identifier,
+							response
+						});
+						return rootItems;
+					} else {
+						const item = json[0];
+						delete item.key;
+						delete item.version;
+
+						dispatch({
+							type: RECEIVE_ADD_BY_IDENTIFIER,
+							result: SINGLE,
+							item,
+							identifier,
+							identifierIsUrl,
+							response
+						});
+						return item;
+					}
 				}
 			}
 		} catch(error) {

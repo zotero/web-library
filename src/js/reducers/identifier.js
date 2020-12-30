@@ -5,9 +5,10 @@ import { BEGIN_SEARCH_MULTIPLE_IDENTIFIERS, COMPLETE_SEARCH_MULTIPLE_IDENTIFIERS
 const defaultState = {
 	isError: false,
 	isSearching: false,
-	isNoResults: false,
+	result: null,
 	item: null,
 	items: null,
+	identifierIsUrl: null,
 }
 
 const identifier = (state = defaultState, action) => {
@@ -21,7 +22,8 @@ const identifier = (state = defaultState, action) => {
 				...state,
 				isError: false,
 				isSearching: true,
-				isNoResults: false,
+				identifierIsUrl: action.identifierIsUrl,
+				result: null,
 				item: null,
 				items: null,
 			};
@@ -30,7 +32,8 @@ const identifier = (state = defaultState, action) => {
 				...state,
 				isError: false,
 				isSearching: null,
-				isNoResults: action.isNoResults,
+				identifierIsUrl: action.identifierIsUrl,
+				result: action.result,
 				item: action.item || null,
 				items: action.items || null,
 			};
@@ -39,9 +42,10 @@ const identifier = (state = defaultState, action) => {
 				...state,
 				isError: true,
 				isSearching: null,
-				isNoResults: false,
+				result: null,
 				item: null,
 				items: null,
+				identifierIsUrl: null,
 			};
 		case RESET_ADD_BY_IDENTIFIER:
 			return defaultState;
