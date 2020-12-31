@@ -4,10 +4,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import Button from '../ui/button';
 import Modal from '../ui/modal';
 import { IDENTIFIER_PICKER } from '../../constants/modals';
-import { currentAddMultipleTranslatedItems, toggleModal } from '../../actions';
+import { currentAddMultipleTranslatedItems, searchIdentifierMore, toggleModal } from '../../actions';
 import { usePrevious } from '../../hooks';
 import { processIdentifierMultipleItems } from '../../utils';
 import { getBaseMappedValue } from '../../common/item';
+import { CHOICE } from '../../constants/identifier-result-types';
 
 const Item = memo(({ onChange, identifierIsUrl, isPicked, item }) => {
 	const { key, description, source } = item;
@@ -67,6 +68,7 @@ const IdentifierPicker = () => {
 	const items = useSelector(state => state.identifier.items);
 	const isSearchingMultiple = useSelector(state => state.identifier.isSearchingMultiple);
 	const identifierIsUrl = useSelector(state => state.identifier.identifierIsUrl);
+	const identifierResult = useSelector(state => state.identifier.result);
 	const wasSearchingMultiple = usePrevious(isSearchingMultiple);
 	const processedItems = items && processIdentifierMultipleItems(items, itemTypes, false);  //@TODO: isUrl source should be stored in redux
 	const [selectedKeys, setSelectedKeys] = useState([]);
@@ -85,6 +87,10 @@ const IdentifierPicker = () => {
 	const handleAddSelected = useCallback(ev => {
 		dispatch(currentAddMultipleTranslatedItems(selectedKeys));
 	}, [dispatch, selectedKeys]);
+
+	const handleSearchMore = useCallback(() => {
+		dispatch(searchIdentifierMore());
+	}, [dispatch]);
 
 	useEffect(() => {
 		if(wasSearchingMultiple && !isSearchingMultiple) {
@@ -134,6 +140,13 @@ const IdentifierPicker = () => {
 						onChange={ handleItemChange }
 					/>)
 				}
+				{ identifierResult === CHOICE && (
+					<Button
+						onClick={ handleSearchMore }
+					>
+						More
+					</Button>
+				)}
 			</div>
 		</Modal>
 	);

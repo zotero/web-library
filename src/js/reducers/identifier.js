@@ -1,6 +1,7 @@
 import { BEGIN_SEARCH_MULTIPLE_IDENTIFIERS, COMPLETE_SEARCH_MULTIPLE_IDENTIFIERS,
 	ERROR_ADD_BY_IDENTIFIER, REQUEST_ADD_BY_IDENTIFIER, RECEIVE_ADD_BY_IDENTIFIER,
-	RESET_ADD_BY_IDENTIFIER } from '../constants/actions';
+	RESET_ADD_BY_IDENTIFIER, REQUEST_IDENTIFIER_MORE, RECEIVE_IDENTIFIER_MORE, ERROR_IDENTIFIER_MORE
+	} from '../constants/actions';
 
 const defaultState = {
 	isError: false,
@@ -8,7 +9,9 @@ const defaultState = {
 	result: null,
 	item: null,
 	items: null,
+	identifier: null,
 	identifierIsUrl: null,
+	next: null,
 }
 
 const identifier = (state = defaultState, action) => {
@@ -22,31 +25,60 @@ const identifier = (state = defaultState, action) => {
 				...state,
 				isError: false,
 				isSearching: true,
+				identifier: action.identifier,
 				identifierIsUrl: action.identifierIsUrl,
 				result: null,
 				item: null,
 				items: null,
+				next: null,
 			};
 		case RECEIVE_ADD_BY_IDENTIFIER:
 			return {
 				...state,
 				isError: false,
-				isSearching: null,
+				isSearching: false,
 				identifierIsUrl: action.identifierIsUrl,
 				result: action.result,
 				item: action.item || null,
 				items: action.items || null,
+				next: action.next,
 			};
 		case ERROR_ADD_BY_IDENTIFIER:
 			return {
 				...state,
 				isError: true,
-				isSearching: null,
+				isSearching: false,
 				result: null,
 				item: null,
 				items: null,
 				identifierIsUrl: null,
+				next: null,
 			};
+		case REQUEST_IDENTIFIER_MORE:
+			return {
+				...state,
+				isSearching: true,
+				next: null,
+			}
+		case RECEIVE_IDENTIFIER_MORE:
+			return {
+				...state,
+				isSearching: false,
+				result: action.result,
+				items: {...(state.items || []), ...(action.items || [])},
+				next: action.next,
+			}
+		case ERROR_IDENTIFIER_MORE:
+			return {
+				...state,
+				isError: true,
+				isSearching: false,
+				result: null,
+				item: null,
+				items: null,
+				identifierIsUrl: null,
+				next: null
+			}
 		case RESET_ADD_BY_IDENTIFIER:
 			return defaultState;
 		default:

@@ -1,10 +1,24 @@
 import { isLikeURL } from '../utils';
 import { BEGIN_SEARCH_MULTIPLE_IDENTIFIERS, COMPLETE_SEARCH_MULTIPLE_IDENTIFIERS,
 	ERROR_IDENTIFIER_NO_RESULT, ERROR_ADD_BY_IDENTIFIER, REQUEST_ADD_BY_IDENTIFIER,
-	RECEIVE_ADD_BY_IDENTIFIER, RESET_ADD_BY_IDENTIFIER } from '../constants/actions';
+	RECEIVE_ADD_BY_IDENTIFIER, RESET_ADD_BY_IDENTIFIER, REQUEST_IDENTIFIER_MORE,
+	RECEIVE_IDENTIFIER_MORE, ERROR_IDENTIFIER_MORE } from '../constants/actions';
 import { createItem, createItems, navigate } from '.';
 import { omit } from '../common/immutable';
-import { EMPTY, SINGLE, CHOICE , MULTIPLE } from '../constants/identifier-result-types';
+import { EMPTY, SINGLE, CHOICE , CHOICE_EXHAUSTED, MULTIPLE } from '../constants/identifier-result-types';
+
+const getNextLinkFromResponse = response => {
+	let next = null;
+	if(response.headers.has('link')) {
+		const links = response.headers.get('link');
+		const matches = links.match(/<(.*?)>;\s+rel="next"/i);
+
+		if(matches && matches.length > 1) {
+			next = matches[1];
+		}
+	}
+	return next;
+}
 
 const searchIdentifier = identifier => {
 	return async (dispatch, getState) => {
@@ -14,7 +28,7 @@ const searchIdentifier = identifier => {
 		const { translateUrl } = config;
 		const identifierIsUrl = isLikeURL(identifier);
 		const url = `${translateUrl}/${((identifierIsUrl ? 'web' : 'search'))}`;
-		dispatch({ type: REQUEST_ADD_BY_IDENTIFIER, identifierIsUrl });
+		dispatch({ type: REQUEST_ADD_BY_IDENTIFIER, identifier, identifierIsUrl });
 
 		try {
 			const response = await fetch(url, {
@@ -30,9 +44,12 @@ const searchIdentifier = identifier => {
 			} else if (response.status === 300) {
 				const data = await response.json();
 				const items = 'items' in data && 'session' in data ? data.items : data;
+				const next = getNextLinkFromResponse(response);
+
 				dispatch({
 					type: RECEIVE_ADD_BY_IDENTIFIER,
-					result: CHOICE,
+					result: next ? CHOICE : CHOICE_EXHAUSTED,
+					next,
 					identifierIsUrl,
 					identifier,
 					items,
@@ -152,10 +169,55 @@ const currentAddTranslatedItem = translatedItem => {
 	}
 }
 
+const searchIdentifierMore = () => {
+	return async (dispatch, getState) => {
+		const state = getState();
+		const { config } = state
+		const { translateUrl } = config;
+		const { identifier, identifierIsUrl, next, result } = state.identifier;
+		if(!identifier || result !== CHOICE) {
+			return;
+		}
+
+		dispatch({ type: REQUEST_IDENTIFIER_MORE, identifier });
+
+		try {
+			const response = await fetch(next, {
+				method: 'post',
+				mode: 'cors',
+				headers: { 'content-type': 'text/plain' },
+				body: identifier
+			});
+
+			if (response.status === 300) {
+				const data = await response.json();
+				const items = 'items' in data && 'session' in data ? data.items : data;
+				const next = getNextLinkFromResponse(response)
+				dispatch({
+					type: RECEIVE_IDENTIFIER_MORE,
+					result: next ? CHOICE : CHOICE_EXHAUSTED,
+					next,
+					identifier,
+					items,
+					response
+				});
+			} else {
+				dispatch({
+					type: RECEIVE_IDENTIFIER_MORE,
+					result: CHOICE_EXHAUSTED
+				});
+			}
+		} catch(error) {
+			dispatch({ type: ERROR_IDENTIFIER_MORE, error, identifier });
+			throw error;
+		}
+	}
+}
+
 const reportIdentifierNoResults = () => ({
 	type: ERROR_IDENTIFIER_NO_RESULT,
 	error: 'Zotero could not find any identifiers in your input. Please verify your input and try again.',
 	errorType: 'info',
 });
 
-export { currentAddTranslatedItem, currentAddMultipleTranslatedItems, resetIdentifier, searchIdentifier, reportIdentifierNoResults };
+export { currentAddTranslatedItem, currentAddMultipleTranslatedItems, resetIdentifier, searchIdentifier, searchIdentifierMore, reportIdentifierNoResults };
