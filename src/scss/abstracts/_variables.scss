@@ -33,6 +33,7 @@ $font-size-lg: 16px;
 
 $font-size-h1: 20px;
 $font-size-h2: 16px;
+$font-size-h3: 14px;
 
 $line-height-base:            1.539;
 $line-height-computed:        round($font-size-base * $line-height-base);
@@ -431,3 +432,11 @@ $badge-pill-border-radius: 10rem;
 // --------------------------------------------------
 
 $scrollbar-size: $space-sm;
+
+
+// Identifier picker
+// --------------------------------------------------
+
+$result-padding:      $space-md;
+
+

@@ -1,17 +1,20 @@
-import React, { useCallback, useEffect, memo, useState } from 'react';
+import React, { useCallback, useEffect, memo, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import cx from 'classnames';
 
 import Button from '../ui/button';
 import Modal from '../ui/modal';
 import { IDENTIFIER_PICKER } from '../../constants/modals';
 import { currentAddMultipleTranslatedItems, searchIdentifierMore, toggleModal } from '../../actions';
 import { usePrevious } from '../../hooks';
-import { processIdentifierMultipleItems } from '../../utils';
+import { getUniqueId, processIdentifierMultipleItems } from '../../utils';
 import { getBaseMappedValue } from '../../common/item';
 import { CHOICE } from '../../constants/identifier-result-types';
 
 const Item = memo(({ onChange, identifierIsUrl, isPicked, item }) => {
 	const { key, description, source } = item;
+	const inputId = useRef(getUniqueId());
+
 	let badge = null, title = '';
 	if('itemType' in item) {
 		title = getBaseMappedValue(item, 'title');
@@ -38,23 +41,27 @@ const Item = memo(({ onChange, identifierIsUrl, isPicked, item }) => {
 				className="result"
 				data-key={ item.key }
 			>
-				{ badge && <span key={badge} className="badge badge-light d-sm-none">{ badge }</span> }
-				<h5 className="title">
-					<span className="title-container">
-						{ title }
-					</span>
-					{ badge && <span key={badge} className="badge badge-light d-xs-none d-sm-inline-block">{ badge }</span> }
-				</h5>
-				{ description && (
-					<p className="description">
-						{ description }
-					</p>
-				)}
-				<input
-					type="checkbox"
-					checked={ isPicked }
-					onChange={ onChange }
-				/>
+				<label className="label" htmlFor={ inputId.current }>
+					<h5 className="title">
+						<span className="title-container">
+							{ title }
+						</span>
+						{ badge && <span key={badge} className="badge badge-light d-xs-none d-sm-inline-block">{ badge }</span> }
+					</h5>
+					{ description && (
+						<p className="description">
+							{ description }
+						</p>
+					)}
+				</label>
+				<div className="checkbox-wrap">
+					<input
+						id={ inputId.current }
+						type="checkbox"
+						checked={ isPicked }
+						onChange={ onChange }
+					/>
+				</div>
 			</li>
 		)
 });
@@ -69,6 +76,7 @@ const IdentifierPicker = () => {
 	const isSearchingMultiple = useSelector(state => state.identifier.isSearchingMultiple);
 	const identifierIsUrl = useSelector(state => state.identifier.identifierIsUrl);
 	const identifierResult = useSelector(state => state.identifier.result);
+	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
 	const wasSearchingMultiple = usePrevious(isSearchingMultiple);
 	const processedItems = items && processIdentifierMultipleItems(items, itemTypes, false);  //@TODO: isUrl source should be stored in redux
 	const [selectedKeys, setSelectedKeys] = useState([]);
@@ -98,14 +106,18 @@ const IdentifierPicker = () => {
 		}
 	}, [dispatch, isSearchingMultiple, wasSearchingMultiple]);
 
+	const className = cx({
+		'identifier-picker-modal modal-scrollable modal-lg': true,
+		'modal-touch': isTouchOrSmall
+	});
+
 	return (
 		<Modal
-			className="modal-touch"
+			className={ className }
 			contentLabel="Add By Identifier"
 			isOpen={ isOpen }
 			isBusy={ !wasSearchingMultiple && isSearchingMultiple }
 			onRequestClose={ handleCancel }
-			overlayClassName="modal-centered modal-slide"
 		>
 			<div className="modal-header">
 				<div className="modal-header-left">
@@ -118,7 +130,7 @@ const IdentifierPicker = () => {
 				</div>
 				<div className="modal-header-center">
 					<h4 className="modal-title truncate">
-						Add Item
+						Select Items
 					</h4>
 				</div>
 				<div className="modal-header-right">
@@ -126,22 +138,25 @@ const IdentifierPicker = () => {
 						onClick={ handleAddSelected }
 						className="btn-link"
 					>
-						Add Selected
+						Add
 					</Button>
 				</div>
 			</div>
 			<div className="modal-body">
-				{ Array.isArray(processedItems) && processedItems
-					.map(item => <Item
-						identifierIsUrl={ identifierIsUrl }
-						key={ item.key }
-						item={ item }
-						isPicked={ selectedKeys.includes(item.key) }
-						onChange={ handleItemChange }
-					/>)
-				}
+				<div className="results">
+					{ Array.isArray(processedItems) && processedItems
+						.map(item => <Item
+							identifierIsUrl={ identifierIsUrl }
+							key={ item.key }
+							item={ item }
+							isPicked={ selectedKeys.includes(item.key) }
+							onChange={ handleItemChange }
+						/>)
+					}
+				</div>
 				{ identifierResult === CHOICE && (
 					<Button
+						className="more-items-action"
 						onClick={ handleSearchMore }
 					>
 						More
