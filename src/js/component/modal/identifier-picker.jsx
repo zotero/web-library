@@ -10,6 +10,7 @@ import { usePrevious } from '../../hooks';
 import { getUniqueId, processIdentifierMultipleItems } from '../../utils';
 import { getBaseMappedValue } from '../../common/item';
 import { CHOICE } from '../../constants/identifier-result-types';
+import Spinner from '../ui/spinner';
 
 const Item = memo(({ onChange, identifierIsUrl, isPicked, item }) => {
 	const { key, description, source } = item;
@@ -76,6 +77,7 @@ const IdentifierPicker = () => {
 	const isSearchingMultiple = useSelector(state => state.identifier.isSearchingMultiple);
 	const identifierIsUrl = useSelector(state => state.identifier.identifierIsUrl);
 	const identifierResult = useSelector(state => state.identifier.result);
+	const isSearching = useSelector(state => state.identifier.isSearching);
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
 	const wasSearchingMultiple = usePrevious(isSearchingMultiple);
 	const processedItems = items && processIdentifierMultipleItems(items, itemTypes, false);  //@TODO: isUrl source should be stored in redux
@@ -155,12 +157,16 @@ const IdentifierPicker = () => {
 					}
 				</div>
 				{ identifierResult === CHOICE && (
-					<Button
-						className="more-items-action"
-						onClick={ handleSearchMore }
-					>
-						More
-					</Button>
+					<div className="more-button-wrap">
+						{ isSearching ? <Spinner /> : (
+						<Button
+							className="btn btn btn-lg btn-secondary more-button"
+							onClick={ handleSearchMore }
+						>
+							More
+						</Button>
+						) }
+					</div>
 				)}
 			</div>
 		</Modal>
