@@ -78,7 +78,7 @@ const AddByIdentifierModal = () => {
 	}, [addItem, isOpen, item, prevItem]);
 
 	useEffect(() => {
-		if(isOpen && items && prevItems === null && [CHOICE, MULTIPLE].includes(result) ) {
+		if(isOpen && items && prevItems === null && [CHOICE, MULTIPLE].includes(result)) {
 			dispatch(toggleModal(ADD_BY_IDENTIFIER, false));
 			dispatch(toggleModal(IDENTIFIER_PICKER, true));
 		}
