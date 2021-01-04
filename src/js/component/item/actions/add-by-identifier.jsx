@@ -7,9 +7,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import Button from '../../ui/button';
 import Icon from '../../ui/icon';
 import Input from '../../form/input';
-import { ADD_BY_IDENTIFIER, IDENTIFIER_PICKER } from '../../../constants/modals';
+import { IDENTIFIER_PICKER } from '../../../constants/modals';
 import { currentAddTranslatedItem, searchIdentifier, toggleModal, reportIdentifierNoResults, resetIdentifier } from '../../../actions';
-import { EMPTY, SINGLE, CHOICE, MULTIPLE } from '../../constants/identifier-result-types';
+import { EMPTY, CHOICE, MULTIPLE } from '../../../constants/identifier-result-types';
 import { getUniqueId } from '../../../utils';
 import { usePrevious } from '../../../hooks';
 
@@ -57,7 +57,7 @@ const AddByIdentifier = props => {
 
 	const handleInputBlur = useCallback(() => true, []);
 
-	const toggleOpen = useCallback((ev) => {
+	const toggleOpen = useCallback(() => {
 		if(!isOpen) {
 			dispatch(resetIdentifier());
 		}

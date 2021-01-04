@@ -6,7 +6,7 @@ import Button from '../ui/button';
 import Input from '../form/input';
 import Modal from '../ui/modal';
 import { ADD_BY_IDENTIFIER, IDENTIFIER_PICKER } from '../../constants/modals';
-import { EMPTY, SINGLE, CHOICE, MULTIPLE } from '../../constants/identifier-result-types';
+import { EMPTY, CHOICE, MULTIPLE } from '../../constants/identifier-result-types';
 import { currentAddTranslatedItem, reportIdentifierNoResults, resetIdentifier, searchIdentifier, toggleModal } from '../../actions';
 import { usePrevious } from '../../hooks';
 
