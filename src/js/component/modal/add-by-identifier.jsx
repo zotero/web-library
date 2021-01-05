@@ -6,7 +6,7 @@ import Button from '../ui/button';
 import Input from '../form/input';
 import Modal from '../ui/modal';
 import { ADD_BY_IDENTIFIER, IDENTIFIER_PICKER } from '../../constants/modals';
-import { EMPTY, CHOICE, MULTIPLE } from '../../constants/identifier-result-types';
+import { EMPTY, CHOICE, CHOICE_EXHAUSTED, MULTIPLE } from '../../constants/identifier-result-types';
 import { currentAddTranslatedItem, reportIdentifierNoResults, resetIdentifier, searchIdentifier, toggleModal } from '../../actions';
 import { usePrevious } from '../../hooks';
 
@@ -78,7 +78,7 @@ const AddByIdentifierModal = () => {
 	}, [addItem, isOpen, item, prevItem]);
 
 	useEffect(() => {
-		if(isOpen && items && prevItems === null && [CHOICE, MULTIPLE].includes(result)) {
+		if(isOpen && items && prevItems === null && [CHOICE, CHOICE_EXHAUSTED, MULTIPLE].includes(result)) {
 			dispatch(toggleModal(ADD_BY_IDENTIFIER, false));
 			dispatch(toggleModal(IDENTIFIER_PICKER, true));
 		}

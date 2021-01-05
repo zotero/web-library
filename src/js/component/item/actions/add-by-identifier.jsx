@@ -9,7 +9,7 @@ import Icon from '../../ui/icon';
 import Input from '../../form/input';
 import { IDENTIFIER_PICKER } from '../../../constants/modals';
 import { currentAddTranslatedItem, searchIdentifier, toggleModal, reportIdentifierNoResults, resetIdentifier } from '../../../actions';
-import { EMPTY, CHOICE, MULTIPLE } from '../../../constants/identifier-result-types';
+import { EMPTY, CHOICE, CHOICE_EXHAUSTED, MULTIPLE } from '../../../constants/identifier-result-types';
 import { getUniqueId } from '../../../utils';
 import { usePrevious } from '../../../hooks';
 
@@ -76,7 +76,7 @@ const AddByIdentifier = props => {
 	}, [addItem, isOpen, item, prevItem]);
 
 	useEffect(() => {
-		if(isOpen && items && prevItems === null && [CHOICE, MULTIPLE].includes(result)) {
+		if(isOpen && items && prevItems === null && [CHOICE, CHOICE_EXHAUSTED, MULTIPLE].includes(result)) {
 			setIsOpen(!isOpen);
 			dispatch(toggleModal(IDENTIFIER_PICKER, true));
 		}

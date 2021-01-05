@@ -4,7 +4,7 @@ import { BEGIN_SEARCH_MULTIPLE_IDENTIFIERS, COMPLETE_SEARCH_MULTIPLE_IDENTIFIERS
 	RECEIVE_ADD_BY_IDENTIFIER, RESET_ADD_BY_IDENTIFIER, REQUEST_IDENTIFIER_MORE,
 	RECEIVE_IDENTIFIER_MORE, ERROR_IDENTIFIER_MORE } from '../constants/actions';
 import { createItem, createItems, navigate } from '.';
-import { omit } from '../common/immutable';
+import { omit, pick } from '../common/immutable';
 import { EMPTY, SINGLE, CHOICE , CHOICE_EXHAUSTED, MULTIPLE } from '../constants/identifier-result-types';
 
 const getNextLinkFromResponse = response => {
@@ -49,6 +49,7 @@ const searchIdentifier = identifier => {
 				dispatch({
 					type: RECEIVE_ADD_BY_IDENTIFIER,
 					result: next ? CHOICE : CHOICE_EXHAUSTED,
+					session: data.session,
 					next,
 					identifierIsUrl,
 					identifier,
@@ -108,42 +109,63 @@ const currentAddMultipleTranslatedItems = identifiers => {
 		const state = getState();
 		const { config } = state;
 		const { collectionKey, itemsSource, libraryKey } = state.current;
+		const { session, items, identifierIsUrl } = state.identifier;
 		const { translateUrl } = config;
+		var translatedItems;
 
 		dispatch({
 			type: BEGIN_SEARCH_MULTIPLE_IDENTIFIERS,
 			identifiers
 		});
-		const url = `${translateUrl}/search`;
 
-		const promises = identifiers.map(identifier => fetch(url, {
-			method: 'post',
-			mode: 'cors',
-			headers: { 'content-type': 'text/plain' },
-			body: identifier
-		}).then(async r => (await r.json())[0]));
+		if(identifierIsUrl && session) {
+			const url = `${translateUrl}/web`;
+			const selectedItems = pick(items, identifiers);
+			const response = await fetch(url, {
+				method: 'post',
+				mode: 'cors',
+				headers: { 'content-type': 'application/json' },
+				body: JSON.stringify({
+					items: selectedItems,
+					url: state.identifier.identifier,
+					session,
+				})
+			});
+			const data = await response.json();
+			translatedItems = data.filter(item => !item.parentItem);
+		} else if(!identifierIsUrl) {
+			const url = `${translateUrl}/search`;
+			const promises = identifiers.map(identifier => fetch(url, {
+				method: 'post',
+				mode: 'cors',
+				headers: { 'content-type': 'text/plain' },
+				body: identifier
+			}).then(async r => (await r.json())[0]));
 
-		const items = await Promise.all(promises);
-
-		if(itemsSource === 'collection' && collectionKey) {
-			items.forEach(i => i.collections = [collectionKey]);
+			translatedItems = await Promise.all(promises);
 		}
-		const data = await dispatch(createItems(items, libraryKey));
-		const keys = data.map(d => d.key);
+
+		if(translatedItems && translatedItems.length) {
+			if(itemsSource === 'collection' && collectionKey) {
+				translatedItems.forEach(i => i.collections = [collectionKey]);
+			}
+			const data = await dispatch(createItems(translatedItems, libraryKey));
+			const keys = data.map(d => d.key);
+
+			dispatch(navigate({
+				library: libraryKey,
+				collection: collectionKey,
+				items: keys,
+				view: 'item-list'
+			}, true));
+		}
 
 		dispatch(resetIdentifier());
-
-		dispatch(navigate({
-			library: libraryKey,
-			collection: collectionKey,
-			items: keys,
-			view: 'item-list'
-		}, true));
 
 		dispatch({
 			type: COMPLETE_SEARCH_MULTIPLE_IDENTIFIERS,
 			identifiers,
-			items,
+			items: translatedItems,
 		});
 	}
 }
