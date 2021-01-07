@@ -133,7 +133,7 @@ const AddByIdentifierModal = () => {
 							onBlur={ handleInputBlur }
 							onChange={ handleInputChange }
 							onCommit={ handleInputCommit }
-							placeholder="URL, ISBN, DOI, PMID, or arXiv ID"
+							placeholder="URL, ISBNs, DOIs, PMIDs, or arXiv IDs"
 							ref={ inputEl }
 							tabIndex={ 0 }
 							value={ identifier }

@@ -116,7 +116,7 @@ const AddByIdentifier = props => {
 			>
 				<PopoverHeader>
 					<label htmlFor={ `${id.current}-input` }>
-						Enter a URL, ISBN, DOI, PMID, or arXiv ID
+						Enter a URL, ISBNs, DOIs, PMIDs, or arXiv IDs
 					</label>
 				</PopoverHeader>
 				<PopoverBody>
