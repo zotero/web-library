@@ -173,12 +173,12 @@ const currentAddMultipleTranslatedItems = identifiers => {
 				}, true));
 			}
 		} finally {
-			dispatch(resetIdentifier());
 			dispatch({
 				type: COMPLETE_SEARCH_MULTIPLE_IDENTIFIERS,
 				identifiers,
 				items: translatedItems,
 			});
+			dispatch(resetIdentifier());
 		}
 	}
 }

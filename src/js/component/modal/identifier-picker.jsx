@@ -6,7 +6,7 @@ import Button from '../ui/button';
 import Modal from '../ui/modal';
 import { IDENTIFIER_PICKER } from '../../constants/modals';
 import { currentAddMultipleTranslatedItems, searchIdentifierMore, toggleModal } from '../../actions';
-import { usePrevious } from '../../hooks';
+import { useBufferGate, usePrevious } from '../../hooks';
 import { getUniqueId, processIdentifierMultipleItems } from '../../utils';
 import { getBaseMappedValue } from '../../common/item';
 import { CHOICE } from '../../constants/identifier-result-types';
@@ -91,6 +91,7 @@ const IdentifierPicker = () => {
 	const wasSearchingMultiple = usePrevious(isSearchingMultiple);
 	const processedItems = items && processIdentifierMultipleItems(items, itemTypes, false);  //@TODO: isUrl source should be stored in redux
 	const [selectedKeys, setSelectedKeys] = useState([]);
+	const isBusy = useBufferGate(!wasSearchingMultiple && isSearchingMultiple, 200);
 
 	const handleCancel = useCallback(() => {
 		dispatch(toggleModal(IDENTIFIER_PICKER, false));
@@ -100,10 +101,10 @@ const IdentifierPicker = () => {
 		try {
 			const key = ev.currentTarget.closest('[data-key]').dataset.key;
 			setSelectedKeys(selectedKeys.includes(key) ? selectedKeys.filter(k => k !== key) : [...selectedKeys, key]);
-		} catch(e) {}
+		} catch(e) {} // eslint-disable-line no-empty
 	}, [selectedKeys]);
 
-	const handleAddSelected = useCallback(ev => {
+	const handleAddSelected = useCallback(() => {
 		dispatch(currentAddMultipleTranslatedItems(selectedKeys));
 	}, [dispatch, selectedKeys]);
 
@@ -127,7 +128,7 @@ const IdentifierPicker = () => {
 			className={ className }
 			contentLabel="Add By Identifier"
 			isOpen={ isOpen }
-			isBusy={ !wasSearchingMultiple && isSearchingMultiple }
+			isBusy={ isBusy }
 			onRequestClose={ handleCancel }
 		>
 			<div className="modal-header">
