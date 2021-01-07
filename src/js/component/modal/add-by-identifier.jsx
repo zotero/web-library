@@ -78,18 +78,19 @@ const AddByIdentifierModal = () => {
 	}, [addItem, isOpen, item, prevItem]);
 
 	useEffect(() => {
-		if(isOpen && items && prevItems === null && [CHOICE, CHOICE_EXHAUSTED, MULTIPLE].includes(result)) {
-			dispatch(toggleModal(ADD_BY_IDENTIFIER, false));
-			dispatch(toggleModal(IDENTIFIER_PICKER, true));
-		}
-	}, [dispatch, isOpen, items, prevItems, result]);
-
-	useEffect(() => {
-		if(!isSearching && wasSearching && result === EMPTY) {
+		if(isOpen && wasSearching && !isSearching) {
 			setIdentifier('');
-			dispatch(reportIdentifierNoResults());
+			if(result === EMPTY) {
+				dispatch(reportIdentifierNoResults());
+			} else {
+				dispatch(toggleModal(ADD_BY_IDENTIFIER, false));
+				if(items && prevItems === null && [CHOICE, CHOICE_EXHAUSTED, MULTIPLE].includes(result)) {
+					dispatch(toggleModal(IDENTIFIER_PICKER, true));
+				}
+			}
+
 		}
-	}, [dispatch, isSearching, wasSearching, result])
+	}, [dispatch, isOpen, isSearching, items, prevItems, result, wasSearching]);
 
 	return (
 		<Modal
