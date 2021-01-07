@@ -5,6 +5,7 @@ import { BEGIN_SEARCH_MULTIPLE_IDENTIFIERS, COMPLETE_SEARCH_MULTIPLE_IDENTIFIERS
 	RECEIVE_IDENTIFIER_MORE, ERROR_IDENTIFIER_MORE } from '../constants/actions';
 import { createItem, createItems, navigate } from '.';
 import { omit, pick } from '../common/immutable';
+import { extractIdentifiers } from '../common/identifiers';
 import { EMPTY, SINGLE, CHOICE , CHOICE_EXHAUSTED, MULTIPLE } from '../constants/identifier-result-types';
 
 const getNextLinkFromResponse = response => {
@@ -20,13 +21,22 @@ const getNextLinkFromResponse = response => {
 	return next;
 }
 
+
 const searchIdentifier = identifier => {
 	return async (dispatch, getState) => {
 		identifier = identifier.trim();
-
 		const { config } = getState();
 		const { translateUrl } = config;
 		const identifierIsUrl = isLikeURL(identifier);
+		if(!identifierIsUrl) {
+			const identifierObjects = extractIdentifiers(identifier);
+			if(identifierObjects.length === 0) {
+				// invalid identifier, if we don't return, it will run search for a generic term like zbib
+				return;
+			} else {
+				return dispatch(currentAddMultipleTranslatedItems(identifierObjects.map(io => Object.values(io)[0])));
+			}
+		}
 		const url = `${translateUrl}/${((identifierIsUrl ? 'web' : 'search'))}`;
 		dispatch({ type: REQUEST_ADD_BY_IDENTIFIER, identifier, identifierIsUrl });
 
@@ -109,7 +119,7 @@ const currentAddMultipleTranslatedItems = identifiers => {
 		const state = getState();
 		const { config } = state;
 		const { collectionKey, itemsSource, libraryKey } = state.current;
-		const { session, items, identifierIsUrl } = state.identifier;
+		const { result, session, items, identifierIsUrl } = state.identifier;
 		const { translateUrl } = config;
 		var translatedItems;
 
@@ -118,55 +128,58 @@ const currentAddMultipleTranslatedItems = identifiers => {
 			identifiers
 		});
 
-		if(identifierIsUrl && session) {
-			const url = `${translateUrl}/web`;
-			const selectedItems = pick(items, identifiers);
-			const response = await fetch(url, {
-				method: 'post',
-				mode: 'cors',
-				headers: { 'content-type': 'application/json' },
-				body: JSON.stringify({
-					items: selectedItems,
-					url: state.identifier.identifier,
-					session,
-				})
-			});
-			const data = await response.json();
-			translatedItems = data.filter(item => !item.parentItem);
-		} else if(!identifierIsUrl) {
-			const url = `${translateUrl}/search`;
-			const promises = identifiers.map(identifier => fetch(url, {
-				method: 'post',
-				mode: 'cors',
-				headers: { 'content-type': 'text/plain' },
-				body: identifier
-			}).then(async r => (await r.json())[0]));
+		try {
+			if(result === MULTIPLE) {
+				translatedItems = identifiers.map(identifierId => items[parseInt(identifierId)]);
+			} else if(identifierIsUrl && session) {
+				const url = `${translateUrl}/web`;
+				const selectedItems = pick(items, identifiers);
+				const response = await fetch(url, {
+					method: 'post',
+					mode: 'cors',
+					headers: { 'content-type': 'application/json' },
+					body: JSON.stringify({
+						items: selectedItems,
+						url: state.identifier.identifier,
+						session,
+					})
+				});
+				const data = await response.json();
+				translatedItems = data.filter(item => !item.parentItem);
+			} else if(!identifierIsUrl) {
+				const url = `${translateUrl}/search`;
+				const promises = identifiers.map(identifier => fetch(url, {
+					method: 'post',
+					mode: 'cors',
+					headers: { 'content-type': 'text/plain' },
+					body: identifier
+				}).then(async r => (await r.json())[0]).catch(() => null));
 
-			translatedItems = await Promise.all(promises);
-		}
-
-		if(translatedItems && translatedItems.length) {
-			if(itemsSource === 'collection' && collectionKey) {
-				translatedItems.forEach(i => i.collections = [collectionKey]);
+				translatedItems = (await Promise.all(promises)).filter(Boolean);
 			}
-			const data = await dispatch(createItems(translatedItems, libraryKey));
-			const keys = data.map(d => d.key);
 
-			dispatch(navigate({
-				library: libraryKey,
-				collection: collectionKey,
-				items: keys,
-				view: 'item-list'
-			}, true));
+			if(translatedItems && translatedItems.length) {
+				if(itemsSource === 'collection' && collectionKey) {
+					translatedItems.forEach(i => i.collections = [collectionKey]);
+				}
+				const data = await dispatch(createItems(translatedItems, libraryKey));
+				const keys = data.map(d => d.key);
+
+				dispatch(navigate({
+					library: libraryKey,
+					collection: collectionKey,
+					items: keys,
+					view: 'item-list'
+				}, true));
+			}
+		} finally {
+			dispatch(resetIdentifier());
+			dispatch({
+				type: COMPLETE_SEARCH_MULTIPLE_IDENTIFIERS,
+				identifiers,
+				items: translatedItems,
+			});
 		}
-
-		dispatch(resetIdentifier());
-
-		dispatch({
-			type: COMPLETE_SEARCH_MULTIPLE_IDENTIFIERS,
-			identifiers,
-			items: translatedItems,
-		});
 	}
 }
 

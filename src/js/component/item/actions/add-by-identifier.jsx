@@ -17,7 +17,7 @@ const AddByIdentifier = props => {
 	const { onKeyDown } = props;
 	const dispatch = useDispatch();
 
-	const isSearching = useSelector(state => state.identifier.isSearching);
+	const isSearching = useSelector(state => state.identifier.isSearching || state.identifier.isSearchingMultiple);
 	const result = useSelector(state => state.identifier.result);
 	const item = useSelector(state => state.identifier.item);
 	const items = useSelector(state => state.identifier.items);
@@ -83,9 +83,13 @@ const AddByIdentifier = props => {
 	}, [dispatch, isOpen, items, prevItems, result]);
 
 	useEffect(() => {
-		if(!isSearching && wasSearching && result === EMPTY) {
+		if(!isSearching && wasSearching) {
 			setIdentifier('');
-			dispatch(reportIdentifierNoResults());
+			if(result === EMPTY) {
+				dispatch(reportIdentifierNoResults());
+			} else {
+				setIsOpen(false);
+			}
 		}
 	}, [dispatch, isSearching, wasSearching, result]);
 

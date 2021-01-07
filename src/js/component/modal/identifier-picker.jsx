@@ -37,9 +37,18 @@ const Item = memo(({ onChange, identifierIsUrl, isPicked, item }) => {
 			badge = badges[0];
 		}
 	}
+
+	const handleClick = useCallback(ev => {
+		if(ev.currentTarget === ev.target) {
+			ev.preventDefault();
+			onChange(ev);
+		}
+	}, [onChange]);
+
 	return (
 			<li
 				className="result"
+				onClick={ handleClick }
 				data-key={ item.key }
 			>
 				<label className="label" htmlFor={ inputId.current }>

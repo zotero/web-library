@@ -12,7 +12,7 @@ import { usePrevious } from '../../hooks';
 
 const AddByIdentifierModal = () => {
 	const dispatch = useDispatch();
-	const isSearching = useSelector(state => state.identifier.isSearching);
+	const isSearching = useSelector(state => state.identifier.isSearching || state.identifier.isSearchingMultiple);
 	const result = useSelector(state => state.identifier.result);
 	const item = useSelector(state => state.identifier.item);
 	const items = useSelector(state => state.identifier.items);
