@@ -32,6 +32,7 @@ const searchIdentifier = identifier => {
 			const identifierObjects = extractIdentifiers(identifier);
 			if(identifierObjects.length === 0) {
 				// invalid identifier, if we don't return, it will run search for a generic term like zbib
+				dispatch(reportIdentifierNoResults());
 				return;
 			} else {
 				return dispatch(currentAddMultipleTranslatedItems(identifierObjects.map(io => Object.values(io)[0])));
