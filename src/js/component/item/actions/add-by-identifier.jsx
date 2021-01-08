@@ -56,6 +56,7 @@ const AddByIdentifier = props => {
 	}, []);
 
 	const handleInputBlur = useCallback(() => true, []);
+	const handleInputFocus = useCallback(ev => ev.stopPropagation(), []);
 
 	const toggleOpen = useCallback(() => {
 		if(!isOpen) {
@@ -126,6 +127,7 @@ const AddByIdentifier = props => {
 							id={ `${id.current}-input` }
 							isBusy={ isBusyOrSearching }
 							isDisabled={ isBusyOrSearching }
+							onFocus={ handleInputFocus }
 							onBlur={ handleInputBlur }
 							onChange={ handleInputChange }
 							onCommit={ handleInputCommit }
