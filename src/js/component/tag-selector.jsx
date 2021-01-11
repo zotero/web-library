@@ -8,7 +8,7 @@ import Button from './ui/button';
 import Icon from './ui/icon';
 import Input from './form/input';
 import TagList from './tag-selector/tag-list';
-import { filterTags, navigate, toggleTagSelector } from '../actions';
+import { filterTags, navigate, toggleHideAutomaticTags, toggleTagSelector } from '../actions';
 import { useTags, useFocusManager } from '../hooks';
 import { getUniqueId } from '../utils';
 
@@ -16,6 +16,7 @@ const TagSelector = () => {
 	const { isFetching } = useTags();
 	const tagsSearchString = useSelector(state => state.current.tagsSearchString);
 	const isTagSelectorOpen = useSelector(state => state.current.isTagSelectorOpen);
+	const tagsHideAutomatic = useSelector(state => state.current.tagsHideAutomatic);
 	const selectedTags = useSelector(state => state.current.tags, shallowEqual);
 	const dispatch = useDispatch();
 	const [isBusy] = useDebounce(isFetching, 100);
@@ -46,6 +47,10 @@ const TagSelector = () => {
 	const handleSearchChange = useCallback(newValue => {
 		dispatch(filterTags(newValue))
 	}, [dispatch]);
+
+	const handleToggleTagsHideAutomatic = useCallback(() => {
+		dispatch(toggleHideAutomaticTags());
+	}, [dispatch])
 
 	return (
 		<div
@@ -94,6 +99,11 @@ const TagSelector = () => {
 							</DropdownItem>
 							<DropdownItem onClick={ handleDeselectClick } >
 								Deselect All
+							</DropdownItem>
+							<DropdownItem divider />
+							<DropdownItem onClick={ handleToggleTagsHideAutomatic } >
+								<span className="tick">{ !tagsHideAutomatic ? "✓" : "" }</span>
+								Show Automatic
 							</DropdownItem>
 						</DropdownMenu>
 				</UncontrolledDropdown>

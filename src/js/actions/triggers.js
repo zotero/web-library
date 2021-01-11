@@ -1,23 +1,10 @@
 import { shallowEqual } from 'react-redux';
 
-import {
-	DISMISS_ERROR,
-	TOGGLE_ADVANCED_SEARCH,
-	TOGGLE_MODAL,
-	TOGGLE_NAVBAR,
-	TOGGLE_TAG_SELECTOR,
-	TOGGLE_TOUCH_TAG_SELECTOR,
-	TOGGLE_TRANSITIONS,
-	TRIGGER_EDITING_ITEM,
-	TRIGGER_FOCUS,
-	TRIGGER_HIGHLIGHTED_COLLECTIONS,
-	TRIGGER_RESIZE_VIEWPORT,
-	TRIGGER_SEARCH_MODE,
-	TRIGGER_SELECT_MODE,
-	TRIGGER_USER_TYPE_CHANGE,
-	RESET_QUERY,
-} from '../constants/actions';
-
+import { DISMISS_ERROR, RESET_QUERY, TOGGLE_ADVANCED_SEARCH, TOGGLE_HIDE_AUTOMATIC_TAGS,
+	TOGGLE_MODAL, TOGGLE_NAVBAR, TOGGLE_TAG_SELECTOR, TOGGLE_TOUCH_TAG_SELECTOR, TOGGLE_TRANSITIONS,
+	TRIGGER_EDITING_ITEM, TRIGGER_FOCUS, TRIGGER_HIGHLIGHTED_COLLECTIONS, TRIGGER_RESIZE_VIEWPORT,
+	TRIGGER_SEARCH_MODE, TRIGGER_SELECT_MODE, TRIGGER_USER_TYPE_CHANGE, } from
+	'../constants/actions';
 import { navigate, navigateExitSearch } from './';
 import { get } from '../utils';
 
@@ -102,6 +89,10 @@ const toggleTransitions = useTransitions => {
 	return { type: TOGGLE_TRANSITIONS, useTransitions };
 }
 
+const toggleHideAutomaticTags = shouldHide => {
+	return { type: TOGGLE_HIDE_AUTOMATIC_TAGS, shouldHide };
+}
+
 const dismissError = errorId => {
 	return { type: DISMISS_ERROR, errorId };
 }
@@ -156,22 +147,8 @@ const currentTriggerSearchMode = () => {
 	}
 }
 
-export {
-	currentTriggerSearchMode,
-	dismissError,
-	resetQuery,
-	toggleAdvancedSearch,
-	toggleModal,
-	toggleNavbar,
-	toggleSelectMode,
-	toggleTagSelector,
-	toggleTouchTagSelector,
-	toggleTransitions,
-	triggerEditingItem,
-	triggerFocus,
-	triggerHighlightedCollections,
-	triggerResizeViewport,
-	triggerSearchMode,
-	triggerSelectMode,
-	triggerUserTypeChange,
-};
+export { currentTriggerSearchMode, dismissError, resetQuery, toggleAdvancedSearch,
+	toggleHideAutomaticTags, toggleModal, toggleNavbar, toggleSelectMode, toggleTagSelector,
+	toggleTouchTagSelector, toggleTransitions, triggerEditingItem, triggerFocus,
+	triggerHighlightedCollections, triggerResizeViewport, triggerSearchMode, triggerSelectMode,
+	triggerUserTypeChange, };

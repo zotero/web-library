@@ -39,6 +39,7 @@ const useTags = (shouldSkipDisabledAndSelected = false) => {
 	const itemsSource = useSelector(state => state.current.itemsSource);
 	const libraryKey = useSelector(state => state.current.libraryKey);
 	const tagsSearchString = useSelector(state => state.current.tagsSearchString);
+	const tagsHideAutomatic = useSelector(state => state.current.tagsHideAutomatic);
 	const tagColors = useSelector(state => get(state, ['libraries', state.current.libraryKey, 'tagColors']), shallowEqual);
 	const selectedTagNames = useSelector(state => state.current.tags, shallowEqual)
 	var selectorFn;
@@ -64,7 +65,7 @@ const useTags = (shouldSkipDisabledAndSelected = false) => {
 
 	const data = (useSelector(selectorFn, shallowEqual) || {});
 	const { coloredTags = [], isFetching = false, isFetchingColoredTags = false, tags: sourceTags =
-	[], pointer = 0, requests, totalResults, duplicatesCount } = data;
+	[], pointer = 0, requests, tagTypeLookup, totalResults, duplicatesCount } = data;
 	const hasMoreItems = totalResults > 0 && (typeof(pointer) === 'undefined' || pointer < totalResults);
 	const hasChecked = typeof(totalResults) !== 'undefined';
 	const hasCheckedColoredTags = 'coloredTags' in data;
@@ -84,6 +85,7 @@ const useTags = (shouldSkipDisabledAndSelected = false) => {
 		});
 		return tags;
 	}, [selectedTagNames, tagColors, coloredTags]);
+
 
 	const tags = useMemo(() => {
 		const tagsSearchStringLC = tagsSearchString.toLowerCase();
@@ -122,6 +124,11 @@ const useTags = (shouldSkipDisabledAndSelected = false) => {
 				continue;
 			}
 
+			if(tagsHideAutomatic && tagTypeLookup[tag] === 1) {
+				// type: 1 automatic, 0 manual
+				continue;
+			}
+
 			if(tag in (tagColors || {})) {
 				// skip colored tags
 				continue;
@@ -139,7 +146,7 @@ const useTags = (shouldSkipDisabledAndSelected = false) => {
 		}
 
 		return tags;
-	}, [coloredTags, isFiltering, selectedTagNames, shouldSkipDisabledAndSelected, sourceTags, tagColors, tagsSearchString]);
+	}, [coloredTags, isFiltering, selectedTagNames, shouldSkipDisabledAndSelected, sourceTags, tagColors, tagTypeLookup, tagsHideAutomatic, tagsSearchString]);
 
 	return { isFetched, duplicatesCount, tags, isFetching, isFetchingColoredTags, pointer, requests,
 	totalResults, hasChecked, hasCheckedColoredTags, hasMoreItems, selectedTags, tagsSearchString };

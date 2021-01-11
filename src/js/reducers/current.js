@@ -1,21 +1,10 @@
 import { LOCATION_CHANGE } from 'connected-react-router';
 import { shallowEqual } from 'react-redux';
 
-import {
-	CONFIGURE,
-	FILTER_TAGS,
-	RESET_QUERY,
-	TOGGLE_ADVANCED_SEARCH,
-	TOGGLE_NAVBAR,
-	TOGGLE_TAG_SELECTOR,
-	TOGGLE_TOUCH_TAG_SELECTOR,
-	TOGGLE_TRANSITIONS,
-	TRIGGER_EDITING_ITEM,
-	TRIGGER_FOCUS,
-	TRIGGER_HIGHLIGHTED_COLLECTIONS,
-	TRIGGER_SEARCH_MODE,
-	TRIGGER_SELECT_MODE,
-	TRIGGER_USER_TYPE_CHANGE,
+import { CONFIGURE, FILTER_TAGS, RESET_QUERY, TOGGLE_ADVANCED_SEARCH, TOGGLE_HIDE_AUTOMATIC_TAGS,
+	TOGGLE_NAVBAR, TOGGLE_TAG_SELECTOR, TOGGLE_TOUCH_TAG_SELECTOR, TOGGLE_TRANSITIONS,
+	TRIGGER_EDITING_ITEM, TRIGGER_FOCUS, TRIGGER_HIGHLIGHTED_COLLECTIONS, TRIGGER_SEARCH_MODE,
+	TRIGGER_SELECT_MODE, TRIGGER_USER_TYPE_CHANGE,
 } from '../constants/actions';
 
 import { tagsFromUrlPart } from '../common/navigation';
@@ -39,6 +28,7 @@ const stateDefault = {
 	searchState: {},
 	tags: [],
 	tagsSearchString: '',
+	tagsHideAutomatic: false,
 	userLibraryKey: null,
 	useTransitions: false,
 	view: 'library',
@@ -220,6 +210,11 @@ const current = (state = stateDefault, action, { config = {}, device = {} } = {}
 			return {
 				...state,
 				isAdvancedSearch: typeof(action.isAdvancedSearch) === 'boolean' ? action.isAdvancedSearch : !state.isAdvancedSearch
+			}
+		case TOGGLE_HIDE_AUTOMATIC_TAGS:
+			return {
+				...state,
+				tagsHideAutomatic: typeof(action.shouldHide) === 'boolean' ? action.shouldHide : !state.tagsHideAutomatic
 			}
 		case RESET_QUERY:
 			return {

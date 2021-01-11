@@ -157,12 +157,18 @@ const populateTags = (state, newTags, action) => {
 		data.pointer : state.pointer;
 	const totalResults = action.queryOptions.tag ? state.totalResults : action.totalResults;
 
+	const tagTypeLookup = newTags.reduce((acc, rawTag) => {
+		acc[rawTag.tag] = rawTag.type;
+		return acc;
+	}, (state.tagTypeLookup || {}));
+
 	return {
 		...data,
-		tags,
 		duplicatesCount,
 		pointer,
-		totalResults
+		tags,
+		tagTypeLookup,
+		totalResults,
 	};
 }
 

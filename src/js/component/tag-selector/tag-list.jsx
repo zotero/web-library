@@ -56,6 +56,7 @@ Tag.propTypes = {
 
 const TagList = () => {
 	const tagsSearchString = useSelector(state => state.current.tagsSearchString);
+	const tagsHideAutomatic = useSelector(state => state.current.tagsHideAutomatic);
 	const selectedTags = useSelector(state => state.current.tags, shallowEqual);
 	const tagColors = useSelector(state => get(state, ['libraries', state.current.libraryKey, 'tagColors']), shallowEqual);
 	const prevTagColors = usePrevious(tagColors);
@@ -144,7 +145,7 @@ const TagList = () => {
 
 	useEffect(() => {
 		setTimeout(maybeLoadMore, 0);
-	}, [maybeLoadMore, tagsSearchString, pointer]);
+	}, [maybeLoadMore, tagsHideAutomatic, tagsSearchString, pointer]);
 
 	useEffect(() => {
 		if(errorCount > 3 && prevErrorCount === 3) {
