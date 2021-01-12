@@ -1,19 +1,20 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import AutoSizer from 'react-virtualized-auto-sizer';
-import InfiniteLoader from "react-window-infinite-loader";
-import { FixedSizeList as List } from 'react-window';
 import cx from 'classnames';
+import InfiniteLoader from "react-window-infinite-loader";
+import PropTypes from 'prop-types';
+import React, { useCallback, useEffect, useRef, memo } from 'react';
+import { FixedSizeList as List } from 'react-window';
 import { useDebounce } from "use-debounce";
+import { useDispatch, useSelector } from 'react-redux';
 
-import { useSourceSignature, useTags } from '../../hooks';
+import { usePrevious, useTags } from '../../hooks';
 import { checkColoredTags, fetchTags } from '../../actions';
 import Spinner from '../ui/spinner';
 
 const ROWHEIGHT = 43;
 const PAGESIZE = 100;
 
-const TouchTagListRow = props => {
+const TouchTagListRow = memo(props => {
 	const { data, index, style } = props;
 	const { tags, toggleTag } = data;
 	const tag = tags[index];
@@ -24,7 +25,7 @@ const TouchTagListRow = props => {
 		placeholder: !tag
 	});
 
-	const handleClick =  useCallback(() => toggleTag(tag.tag));
+	const handleClick =  useCallback(() => toggleTag(tag.tag), [tag, toggleTag]);
 
 	return (
 		<li
@@ -36,44 +37,61 @@ const TouchTagListRow = props => {
 			<div className="truncate">{ tag && tag.tag }</div>
 		</li>
 	);
-}
+});
 
-const TouchTagList = props => {
-	const { toggleTag } = props;
+TouchTagListRow.displayName = 'TouchTagListRow';
+
+TouchTagListRow.propTypes = {
+	data: PropTypes.object,
+	index: PropTypes.number,
+	style: PropTypes.object,
+};
+
+const TouchTagList = ({ toggleTag }) => {
 	const dispatch = useDispatch();
 	const loader = useRef(null);
 
 	const { duplicatesCount, hasMoreItems, isFetching, pointer, requests, tags, totalResults, selectedTags, hasChecked } = useTags(true);
 	const tagsSearchString = useSelector(state => state.current.tagsSearchString);
-	const isFiltering = tagsSearchString !== '';
+	const tagsHideAutomatic = useSelector(state => state.current.tagsHideAutomatic);
+	const isFilteringOrHideAutomatic = (tagsSearchString !== '' || tagsHideAutomatic);
 	const selectedTagsCount = selectedTags.length;
-	const sourceSignature = useSourceSignature();
+	const prevHasChecked = usePrevious(hasChecked);
 
-	const [isBusy] = useDebounce(!hasChecked || (isFetching && isFiltering), 100);
+	const [isBusy] = useDebounce(!hasChecked || (isFetching && isFilteringOrHideAutomatic), 100);
 
 	const handleIsItemLoaded = useCallback(index => {
 		if(tags && !!tags[index]) {
 			return true; // loaded
 		}
 		return requests.some(r => index >= r[0] && index < r[1]); // loading
-	});
+	}, [requests, tags]);
 
 	const handleLoadMore = useCallback((startIndex, stopIndex) => {
+		// pagination only happens if filtering disabled
 		dispatch(fetchTags(startIndex, stopIndex));
-	});
+	}, [dispatch]);
 
 	useEffect(() => {
-		if(!hasChecked && !isFetching) {
+		if(hasChecked || isFetching) {
+			return;
+		}
+
+		// runs on first mount (prevHasChecked is undefined) and whenever `hasChecked` becomes false
+		// usually because tags have been discarded after edit or source has changed
+		if(!hasChecked && (prevHasChecked === true || typeof(prevHasChecked) === 'undefined')) {
 			dispatch(fetchTags(0, PAGESIZE - 1));
 			dispatch(checkColoredTags());
 		}
-	}, [sourceSignature]);
+	}, [dispatch, hasChecked, prevHasChecked, isFetching]);
 
 	useEffect(() => {
-		if(isFiltering && !isFetching && hasMoreItems) {
+		// if we're filtering, we need to prefetch all matching tags under spinner
+		// this is because filtering happens locally and we don't know the number of total results
+		if(isFilteringOrHideAutomatic && !isFetching && hasMoreItems) {
 			dispatch(fetchTags(pointer, pointer + PAGESIZE - 1));
 		}
-	}, [isFiltering, isFetching, hasMoreItems]);
+	}, [dispatch, isFilteringOrHideAutomatic, isFetching, hasMoreItems, pointer]);
 
 	return (
 		<div className="scroll-container">
@@ -83,14 +101,14 @@ const TouchTagList = props => {
 					<InfiniteLoader
 						ref={ loader }
 						isItemLoaded={ handleIsItemLoaded }
-						itemCount={ isFiltering ? tags.length : totalResults }
+						itemCount={ isFilteringOrHideAutomatic ? tags.length : totalResults }
 						loadMoreItems={ handleLoadMore }
 					>
 						{({ onItemsRendered, ref }) => (
 							<List
 								className="tag-selector-list"
 								height={ height }
-								itemCount={ isFiltering ? tags.length : hasChecked ? totalResults - duplicatesCount - selectedTagsCount : 0 }
+								itemCount={ isFilteringOrHideAutomatic ? tags.length : hasChecked ? totalResults - duplicatesCount - selectedTagsCount : 0 }
 								itemData={ { tags, toggleTag } }
 								itemSize={ ROWHEIGHT }
 								onItemsRendered={ onItemsRendered }
@@ -108,6 +126,10 @@ const TouchTagList = props => {
 			) }
 		</div>
 	);
+};
+
+TouchTagList.propTypes = {
+	toggleTag: PropTypes.func,
 }
 
-export default TouchTagList;
+export default memo(TouchTagList);

@@ -1,15 +1,16 @@
 import PropTypes from 'prop-types';
-import React, { memo, useCallback, useRef } from 'react';
+import React, { memo, useCallback, useRef, useState } from 'react';
 import { CSSTransition } from 'react-transition-group';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 
 import Button from './ui/button';
-import { Toolbar } from './ui/toolbars';
 import Icon from './ui/icon';
 import TouchTagList from './tag-selector/touch-tag-list';
-import { filterTags, navigate, toggleTouchTagSelector } from '../actions';
-import { useTags } from '../hooks';
+import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap/lib';
+import { filterTags, navigate, toggleHideAutomaticTags, toggleTouchTagSelector } from '../actions';
 import { pluralize } from '../common/format';
+import { Toolbar } from './ui/toolbars';
+import { useTags } from '../hooks';
 
 const SelectedTagRow = ({ tag, toggleTag }) => {
 	const handleClick = useCallback(() => toggleTag(tag.tag), [tag, toggleTag]);
@@ -32,6 +33,49 @@ SelectedTagRow.propTypes = {
 	tag: PropTypes.object,
 	toggleTag: PropTypes.func,
 }
+
+const TouchTagselectorActions = memo(() => {
+	const dispatch = useDispatch();
+	const tagsHideAutomatic = useSelector(state => state.current.tagsHideAutomatic);
+	const [isOpen, setIsOpen] = useState(false);
+
+	const handleToggleDropdown = useCallback(() => {
+		setIsOpen(!isOpen);
+	}, [isOpen]);
+
+	const handleToggleTagsHideAutomatic = useCallback(() => {
+		dispatch(toggleHideAutomaticTags());
+	}, [dispatch])
+
+	return (
+		<Dropdown
+			isOpen={ isOpen }
+			toggle={ handleToggleDropdown }
+			className="new-item-selector"
+		>
+			<DropdownToggle
+				color={ null }
+				className="btn-link btn-icon dropdown-toggle"
+			>
+				<Icon
+					type="24/options"
+					symbol={ isOpen ? 'options-block' : 'options' }
+					width="24"
+					height="24"
+				/>
+			</DropdownToggle>
+			<DropdownMenu right>
+				<DropdownItem onClick={ handleToggleTagsHideAutomatic } >
+						<span className="tick">{ !tagsHideAutomatic ? "✓" : "" }</span>
+						Show Automatic
+					</DropdownItem>
+			</DropdownMenu>
+		</Dropdown>
+	);
+});
+
+TouchTagselectorActions.displayName = 'TouchTagselectorActions';
+
 
 const TouchTagSelector = () => {
 	const dispatch = useDispatch();
@@ -83,7 +127,9 @@ const TouchTagSelector = () => {
 			<div className="touch-tag-selector">
 				<header className="touch-header">
 					<Toolbar>
-						<div className="toolbar-left" />
+						<div className="toolbar-left">
+							<TouchTagselectorActions />
+						</div>
 						<div className="toolbar-center">
 							{ selectedTagNames.length == 0 ?
 								'Tags' :
