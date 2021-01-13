@@ -1,21 +1,23 @@
-import { memo, useCallback, useEffect } from 'react';
+import { memo, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
+import { useThrottledCallback } from 'use-debounce';
 
 import { triggerResizeViewport } from '../actions';
 
 const ViewportDetector = () => {
 	const dispatch = useDispatch();
-	const windowResizeHandler = useCallback(() => {
+
+	const { callback: throttledWindowResizeHandler } = useThrottledCallback(() => {
 		dispatch(triggerResizeViewport(window.innerWidth, window.innerHeight));
-	}, [dispatch]);
+	}, 250, { leading: false });
 
 	useEffect(() => {
-		window.addEventListener('resize', windowResizeHandler);
+		window.addEventListener('resize', throttledWindowResizeHandler);
 
 		return () => {
-			window.removeEventListener('resize', windowResizeHandler);
+			window.removeEventListener('resize', throttledWindowResizeHandler);
 		}
-	}, [windowResizeHandler]);
+	}, [throttledWindowResizeHandler]);
 
 	return null;
 }
