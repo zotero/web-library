@@ -297,8 +297,8 @@ LevelWrapper.propTypes = {
 
 
 const DotMenu = memo(props => {
-	const { collection, dotMenuFor, isReadOnly, opened,
-		parentLibraryKey, setDotMenuFor, setOpened, setRenaming, addVirtual } = props;
+	const { collection, dotMenuFor, opened, parentLibraryKey, setDotMenuFor, setOpened, setRenaming,
+		addVirtual } = props;
 	const dispatch = useDispatch();
 	const currentLibraryKey = useSelector(state => state.current.libraryKey);
 	const currentCollectionKey = useSelector(state => state.current.collectionKey);
@@ -373,34 +373,30 @@ const DotMenu = memo(props => {
 				<Icon type={ '16/options' } width="16" height="16" className="mouse" />
 			</DropdownToggle>
 			<DropdownMenu right>
-				{
-					!isReadOnly && (
-						<React.Fragment>
-						<DropdownItem
-							onClick={ handleRenameClick }
-						>
-							Rename
-						</DropdownItem>
-						<DropdownItem
-							onClick={ handleDeleteClick }
-						>
-							Delete
-						</DropdownItem>
-						<DropdownItem
-							onClick={ handleSubcollectionClick }
-						>
-							New Subcollection
-						</DropdownItem>
-						{ isTouchOrSmall && (
-							<DropdownItem
-								onClick={ handleMoveCollectionClick }
-							>
-								Move Collection
-							</DropdownItem>
-						)}
-						</React.Fragment>
-					)
-				}
+				<React.Fragment>
+				<DropdownItem
+					onClick={ handleRenameClick }
+				>
+					Rename
+				</DropdownItem>
+				<DropdownItem
+					onClick={ handleDeleteClick }
+				>
+					Delete
+				</DropdownItem>
+				<DropdownItem
+					onClick={ handleSubcollectionClick }
+				>
+					New Subcollection
+				</DropdownItem>
+				{ isTouchOrSmall && (
+					<DropdownItem
+						onClick={ handleMoveCollectionClick }
+					>
+						Move Collection
+					</DropdownItem>
+				)}
+				</React.Fragment>
 			</DropdownMenu>
 		</Dropdown>
 	);
@@ -452,8 +448,8 @@ PickerCheckbox.displayName = 'PickerCheckbox';
 
 const CollectionNode = memo(props => {
 	const { allCollections, derivedData, collection, level, selectedCollectionKey, isCurrentLibrary,
-		parentLibraryKey, renaming, selectNode, setRenaming, virtual, isPickerMode, shouldBeTabbable,
-		pickerPick, ...rest }  = props;
+		parentLibraryKey, renaming, selectNode, setRenaming, virtual, isPickerMode, isReadOnly,
+		shouldBeTabbable, pickerPick, ...rest }  = props;
 	const dispatch = useDispatch();
 	const id = useRef(getUniqueId('tree-node-'));
 	const updating = useSelector(state => parentLibraryKey in state.libraries ? state.libraries[parentLibraryKey].updating.collections : {});
@@ -619,16 +615,15 @@ const CollectionNode = memo(props => {
 								pickerPick = { pickerPick }
 								{ ...pick(rest, ['picked']) }
 							/>
-						) : (
+						) : !isReadOnly ? (
 							<DotMenu
 								collection = { collection }
 								setRenaming = { setRenaming }
 								parentLibraryKey = { parentLibraryKey }
 								{ ...pick(rest, ['addVirtual', 'commitAdd', 'cancelAdd',
-								'dotMenuFor', 'isReadOnly',
-								'opened', 'setDotMenuFor', 'setOpened']) }
+								'dotMenuFor', 'opened', 'setDotMenuFor', 'setOpened']) }
 							/>
-						) }
+						) : null }
 					</React.Fragment>
 				)
 			}
