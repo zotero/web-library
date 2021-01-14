@@ -8,6 +8,7 @@ import {
 	RECEIVE_COLORED_TAGS_IN_TOP_ITEMS,
 	RECEIVE_CREATE_ITEM,
 	RECEIVE_CREATE_ITEMS,
+	RECEIVE_DELETE_TAGS,
 	RECEIVE_FETCH_ITEMS,
 	RECEIVE_MOVE_ITEMS_TRASH,
 	RECEIVE_RECOVER_ITEMS_TRASH,
@@ -64,6 +65,7 @@ const tagsTop = (state = {}, action, { items } = {}) => {
 				{} : state;
 		case RECEIVE_UPDATE_ITEM:
 			return 'tags' in action.patch ? {} : state;
+		case RECEIVE_DELETE_TAGS:
 		case RECEIVE_ADD_TAGS_TO_ITEMS:
 			return {};
 		case RECEIVE_FETCH_ITEMS:

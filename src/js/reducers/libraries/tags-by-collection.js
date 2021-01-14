@@ -9,6 +9,7 @@ import {
 	RECEIVE_COLORED_TAGS_IN_COLLECTION,
 	RECEIVE_CREATE_ITEM,
 	RECEIVE_CREATE_ITEMS,
+	RECEIVE_DELETE_TAGS,
 	RECEIVE_FETCH_ITEMS,
 	RECEIVE_REMOVE_ITEMS_FROM_COLLECTION,
 	RECEIVE_TAGS_IN_COLLECTION,
@@ -147,6 +148,8 @@ const tags = (state = {}, action, { items } = {}) => {
 						return acc;
 					}, {}))
 			}
+		case RECEIVE_DELETE_TAGS:
+			return {};
 		default:
 			return state;
 	}

@@ -7,6 +7,7 @@ import {
 	RECEIVE_ADD_TAGS_TO_ITEMS,
 	RECEIVE_COLORED_TAGS_IN_TRASH_ITEMS,
 	RECEIVE_DELETE_ITEMS,
+	RECEIVE_DELETE_TAGS,
 	RECEIVE_FETCH_ITEMS,
 	RECEIVE_MOVE_ITEMS_TRASH,
 	RECEIVE_RECOVER_ITEMS_TRASH,
@@ -68,6 +69,8 @@ const tagsInTrashItems = (state = {}, action, { items } = {}) => {
 			) ? {} : state
 		case RECEIVE_ADD_TAGS_TO_ITEMS:
 			return action.itemKeys.some(itemKey => itemKey in items && items[itemKey].deleted) ? {} : state;
+		case RECEIVE_DELETE_TAGS:
+			return {};
 		default:
 			return state;
 	}

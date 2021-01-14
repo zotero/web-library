@@ -1,5 +1,5 @@
 import api from 'zotero-api-client';
-import { FILTER_TAGS } from '../constants/actions';
+import { REQUEST_DELETE_TAGS, RECEIVE_DELETE_TAGS,  ERROR_DELETE_TAGS, FILTER_TAGS } from '../constants/actions';
 import { requestWithBackoff } from '.';
 
 const getApi = ({ config, libraryKey }, requestType, queryConfig) => {
@@ -196,10 +196,48 @@ const filterTags = tagsSearchString => {
 	}
 }
 
+const deleteTags = (tags) => {
+	return async(dispatch, getState) => {
+		const state = getState();
+		const config = state.config;
+		const { libraryKey } = state.current;
+		const version = state.libraries[libraryKey].sync.version;
+
+		dispatch({
+			type: REQUEST_DELETE_TAGS,
+			libraryKey,
+			tags
+		});
+
+		try {
+			await api(config.apiKey, config.apiConfig)
+				.library(libraryKey)
+				.version(version)
+				.tags()
+				.delete(tags);
+
+				dispatch({
+					type: RECEIVE_DELETE_TAGS,
+					libraryKey,
+					tags
+				});
+		} catch(error) {
+			dispatch({
+				type: ERROR_DELETE_TAGS,
+				libraryKey,
+				tags,
+				error,
+			});
+			throw error;
+		}
+	}
+}
+
 export {
-	checkColoredTags,
-	fetchTags,
 	// fetchTagsForItem,
+	checkColoredTags,
+	deleteTags,
+	fetchTags,
 	fetchTagsForItemsByQuery,
 	fetchTagsForPublicationsItems,
 	fetchTagsForTopItems,

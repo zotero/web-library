@@ -6,6 +6,7 @@ import {
 	ERROR_TAGS_IN_PUBLICATIONS_ITEMS,
 	RECEIVE_ADD_TAGS_TO_ITEMS,
 	RECEIVE_COLORED_TAGS_IN_PUBLICATIONS_ITEMS,
+	RECEIVE_DELETE_TAGS,
 	RECEIVE_FETCH_ITEMS,
 	RECEIVE_TAGS_IN_PUBLICATIONS_ITEMS,
 	RECEIVE_UPDATE_ITEM,
@@ -60,6 +61,8 @@ const tagsInPublicationsItems = (state = {}, action, { items, itemsPublications 
 			) ? {} : state;
 		case RECEIVE_ADD_TAGS_TO_ITEMS:
 			return action.itemKeys.some(itemKey => 'keys' in itemsPublications && itemKey in itemsPublications.keys) ? {} : state;
+		case RECEIVE_DELETE_TAGS:
+			return {};
 		default:
 			return state;
 	}

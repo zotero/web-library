@@ -20,6 +20,7 @@ import {
     RECEIVE_UPDATE_ITEM,
     RECEIVE_UPLOAD_ATTACHMENT,
     RECEIVE_ADD_TAGS_TO_ITEMS,
+    RECEIVE_DELETE_TAGS,
 } from '../../constants/actions.js';
 
 import { get, indexByKey } from '../../utils';
@@ -103,6 +104,8 @@ const items = (state = {}, action, metaAndTags) => {
 					meta: metaAndTags.meta,
 					tagColors: indexByKey(get(action, 'settings.tagColors.value', []), 'name', ({ color }) => color)
 			})])
+		case RECEIVE_DELETE_TAGS:
+			return mapObject(state, (itemKey, item) => [itemKey, { ...item, tags: item.tags.filter(t => !action.tags.includes(t.tag)) }]);
 		default:
 			return state;
 	}
