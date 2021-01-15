@@ -210,7 +210,7 @@ const deleteTags = (tags) => {
 		});
 
 		try {
-			await api(config.apiKey, config.apiConfig)
+			const response = await api(config.apiKey, config.apiConfig)
 				.library(libraryKey)
 				.version(version)
 				.tags()
@@ -219,7 +219,8 @@ const deleteTags = (tags) => {
 				dispatch({
 					type: RECEIVE_DELETE_TAGS,
 					libraryKey,
-					tags
+					tags,
+					response,
 				});
 		} catch(error) {
 			dispatch({

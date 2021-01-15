@@ -16,7 +16,7 @@ import {
 	REQUEST_COLORED_TAGS_IN_TRASH_ITEMS,
 	REQUEST_TAGS_IN_TRASH_ITEMS,
 } from '../../constants/actions';
-import { detectIfItemsChanged, populateTags, updateFetchingState } from '../../common/reducers';
+import { detectIfItemsChanged, filterTags, populateTags, updateFetchingState } from '../../common/reducers';
 
 const tagsInTrashItems = (state = {}, action, { items } = {}) => {
 	switch(action.type) {
@@ -70,7 +70,7 @@ const tagsInTrashItems = (state = {}, action, { items } = {}) => {
 		case RECEIVE_ADD_TAGS_TO_ITEMS:
 			return action.itemKeys.some(itemKey => itemKey in items && items[itemKey].deleted) ? {} : state;
 		case RECEIVE_DELETE_TAGS:
-			return {};
+			return filterTags(state, action.tags);
 		default:
 			return state;
 	}

@@ -17,7 +17,7 @@ import {
 	REQUEST_COLORED_TAGS_IN_TOP_ITEMS,
 	REQUEST_TAGS_IN_TOP_ITEMS,
 } from '../../constants/actions';
-import { detectIfItemsChanged, populateTags, updateFetchingState } from '../../common/reducers';
+import { detectIfItemsChanged, filterTags, populateTags, updateFetchingState } from '../../common/reducers';
 
 const tagsTop = (state = {}, action, { items } = {}) => {
 	switch(action.type) {
@@ -66,6 +66,7 @@ const tagsTop = (state = {}, action, { items } = {}) => {
 		case RECEIVE_UPDATE_ITEM:
 			return 'tags' in action.patch ? {} : state;
 		case RECEIVE_DELETE_TAGS:
+			return filterTags(state, action.tags);
 		case RECEIVE_ADD_TAGS_TO_ITEMS:
 			return {};
 		case RECEIVE_FETCH_ITEMS:

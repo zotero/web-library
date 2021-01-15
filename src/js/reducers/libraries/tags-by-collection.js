@@ -18,7 +18,8 @@ import {
 	REQUEST_TAGS_IN_COLLECTION,
 } from '../../constants/actions';
 import { get } from '../../utils';
-import { detectItemsChanged, populateTags, updateFetchingState } from '../../common/reducers';
+import { mapObject } from '../../common/immutable'
+import { detectItemsChanged, filterTags, populateTags, updateFetchingState } from '../../common/reducers';
 
 
 const getResetTagCollections = (action, isCreateItems = false, items) => {
@@ -149,7 +150,7 @@ const tags = (state = {}, action, { items } = {}) => {
 					}, {}))
 			}
 		case RECEIVE_DELETE_TAGS:
-			return {};
+			return mapObject(state, (colKey, tagsData) => [colKey, filterTags(tagsData, action.tags)]);
 		default:
 			return state;
 	}

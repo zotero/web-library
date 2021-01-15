@@ -117,6 +117,31 @@ const filterItemKeys = (state, removedKeys) => {
 	}
 }
 
+const filterTags = (state, removedTags) => {
+	if(!Array.isArray(removedTags)) {
+		removedTags = [removedTags];
+	}
+
+	if(!('totalResults' in state)) {
+		// panic, force refetch tags
+		return omit(state, ['pointer', 'totalTags', 'rawTags', 'tags', 'duplicatesCount', 'tagTypeLookup']);
+	}
+
+	const newRawTags = state.rawTags.filter(rt => rt ? !removedTags.includes(rt.tag) : true);
+	const removedCount = state.rawTags.length - newRawTags.length;
+	const tags = replaceDuplicates(newRawTags.map(t => typeof(t) === 'undefined' ? undefined : t.tag), null, true);
+
+	return {
+		...state,
+		pointer: state.pointer - removedCount,
+		totalResults: state.totalResults - removedCount,
+		rawTags: newRawTags,
+		tags,
+		duplicatesCount: newRawTags.length - tags.length,
+		tagTypeLookup: omit(state.tagTypeLookup, removedTags)
+	}
+}
+
 const populate = (state, newItems, action, keyName, comparer = null) => {
 	const { [keyName]: prevItems = [] } = state;
 	const { queryOptions, totalResults } = action;
@@ -235,6 +260,7 @@ export {
 	detectIfItemsChanged,
 	detectItemsChanged,
 	filterItemKeys,
+	filterTags,
 	injectExtraItemKeys,
 	populateGroups,
 	populateItemKeys,

@@ -13,7 +13,7 @@ ERROR_COLORED_TAGS_IN_ITEMS_BY_QUERY, DROP_COLORED_TAGS_IN_ITEMS_BY_QUERY, } fro
 
 import { getParamsFromRoute } from '../common/state';
 import { getQueryFromParams } from '../common/navigation';
-import { filterItemKeys, populateTags, populateItemKeys, sortItemKeysOrClear, updateFetchingState } from '../common/reducers';
+import { filterItemKeys, filterTags, populateTags, populateItemKeys, sortItemKeysOrClear, updateFetchingState } from '../common/reducers';
 import { get } from '../utils';
 
 const isMatchingQuery = (action, state) => {
@@ -138,7 +138,7 @@ const query = (state = defaultState, action, otherState) => {
 		case RECEIVE_ADD_TAGS_TO_ITEMS:
 			return state.keys.some(key => action.itemKeys.includes(key)) ? { ...state, tags: {} } : state;
 		case RECEIVE_DELETE_TAGS:
-			return { ...state, tags: {} }
+			return { ...state, tags: filterTags(state.tags, action.tags) }
 		case RESET_QUERY:
 			return defaultState;
 		default:

@@ -13,7 +13,7 @@ import {
 	REQUEST_COLORED_TAGS_IN_PUBLICATIONS_ITEMS,
 	REQUEST_TAGS_IN_PUBLICATIONS_ITEMS,
 } from '../../constants/actions';
-import { detectIfItemsChanged, populateTags, updateFetchingState } from '../../common/reducers';
+import { detectIfItemsChanged, filterTags, populateTags, updateFetchingState } from '../../common/reducers';
 
 
 const tagsInPublicationsItems = (state = {}, action, { items, itemsPublications } = {}) => {
@@ -62,7 +62,7 @@ const tagsInPublicationsItems = (state = {}, action, { items, itemsPublications 
 		case RECEIVE_ADD_TAGS_TO_ITEMS:
 			return action.itemKeys.some(itemKey => 'keys' in itemsPublications && itemKey in itemsPublications.keys) ? {} : state;
 		case RECEIVE_DELETE_TAGS:
-			return {};
+			return filterTags(state, action.tags);
 		default:
 			return state;
 	}
