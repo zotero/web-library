@@ -2,17 +2,88 @@ import AutoSizer from 'react-virtualized-auto-sizer';
 import cx from 'classnames';
 import InfiniteLoader from "react-window-infinite-loader";
 import PropTypes from 'prop-types';
-import React, { useCallback, useEffect, useRef, memo } from 'react';
+import React, { useCallback, useEffect, useRef, useState, memo } from 'react';
 import { FixedSizeList as List } from 'react-window';
 import { useDebounce } from "use-debounce";
 import { useDispatch, useSelector } from 'react-redux';
+import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap/lib';
+import Icon from '../ui/icon';
 
 import { usePrevious, useTags } from '../../hooks';
-import { checkColoredTags, fetchTags } from '../../actions';
+import { checkColoredTags, deleteTags, fetchTags } from '../../actions';
 import Spinner from '../ui/spinner';
 
 const ROWHEIGHT = 43;
 const PAGESIZE = 100;
+
+const TagDotMenu = memo(({ tag }) => {
+	const [isOpen, setIsOpen] = useState(false);
+	const dispatch = useDispatch()
+
+	const handleToggle = useCallback(ev => {
+		ev.stopPropagation();
+		setIsOpen(!isOpen);
+	}, [isOpen]);
+
+	// const handleAssignColourClick = useCallback(() => {
+
+	// }, []);
+
+	const handleDeleteTagClick = useCallback(() => {
+		dispatch(deleteTags([tag]));
+	}, [dispatch, tag]);
+
+
+	return (
+		<Dropdown
+			isOpen={ isOpen }
+			toggle={ handleToggle }
+		>
+			<DropdownToggle
+				tabIndex={ -3 }
+				className="btn-icon dropdown-toggle"
+				color={ null }
+				title="More"
+				onClick={ handleToggle }
+			>
+				<Icon type={ '24/options-sm' } width="24" height="24" className="touch" />
+				<Icon type={ '16/options' } width="16" height="16" className="mouse" />
+			</DropdownToggle>
+			<DropdownMenu right>
+				{
+					<React.Fragment>
+					{/*
+					<DropdownItem
+						onClick={ handleAssignColourClick }
+					>
+						Assign Colour
+					</DropdownItem>
+					*/}
+					<DropdownItem
+						onClick={ handleDeleteTagClick }
+					>
+						Delete Tag
+					</DropdownItem>
+					</React.Fragment>
+				}
+			</DropdownMenu>
+		</Dropdown>
+	);
+});
+
+TagDotMenu.propTypes = {
+	collection: PropTypes.object,
+	dotMenuFor: PropTypes.string,
+	isReadOnly: PropTypes.bool,
+	opened: PropTypes.array,
+	parentLibraryKey: PropTypes.string,
+	setDotMenuFor: PropTypes.func,
+	setOpened: PropTypes.func,
+	setRenaming: PropTypes.func,
+	addVirtual: PropTypes.func,
+};
+
+TagDotMenu.displayName = 'TagDotMenu';
 
 const TouchTagListRow = memo(props => {
 	const { data, index, style } = props;
@@ -35,6 +106,7 @@ const TouchTagListRow = memo(props => {
 		>
 			<div className="tag-color" style={ tag && (tag.color && { color: tag.color }) } />
 			<div className="truncate">{ tag && tag.tag }</div>
+			{ tag && <TagDotMenu tag={ tag.tag } /> }
 		</li>
 	);
 });

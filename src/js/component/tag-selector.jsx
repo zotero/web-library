@@ -8,15 +8,18 @@ import Button from './ui/button';
 import Icon from './ui/icon';
 import Input from './form/input';
 import TagList from './tag-selector/tag-list';
-import { filterTags, navigate, toggleHideAutomaticTags, toggleTagSelector } from '../actions';
+import { filterTags, navigate, toggleModal, toggleHideAutomaticTags, toggleTagSelector } from '../actions';
 import { useTags, useFocusManager } from '../hooks';
 import { getUniqueId } from '../utils';
+import { MANAGE_TAGS } from '../constants/modals';
+
 
 const TagSelector = () => {
 	const { isFetching } = useTags();
 	const tagsSearchString = useSelector(state => state.current.tagsSearchString);
 	const isTagSelectorOpen = useSelector(state => state.current.isTagSelectorOpen);
 	const tagsHideAutomatic = useSelector(state => state.current.tagsHideAutomatic);
+	const isManaging = useSelector(state => state.modal.id === MANAGE_TAGS);
 	const selectedTags = useSelector(state => state.current.tags, shallowEqual);
 	const dispatch = useDispatch();
 	const [isBusy] = useDebounce(isFetching, 100);
@@ -52,6 +55,10 @@ const TagSelector = () => {
 		dispatch(toggleHideAutomaticTags());
 	}, [dispatch])
 
+	const handleManageTagsClick = useCallback(() => {
+		dispatch(toggleModal(MANAGE_TAGS, true))
+	}, [dispatch]);
+
 	return (
 		<div
 			id={ id.current }
@@ -66,7 +73,7 @@ const TagSelector = () => {
 			>
 				<Icon type="16/grip" width="16" height="2" />
 			</Button>
-			<TagList />
+			{ isManaging ? <div className="tag-manager-open-info"><span>Tag Manager is Open</span></div> : <TagList /> }
 			<div
 				className="tag-selector-filter-container"
 				onBlur={ receiveBlur }
@@ -80,8 +87,8 @@ const TagSelector = () => {
 					onKeyDown={ handleKeyDown }
 					tabIndex={ -2 }
 					type="search"
-					value={ tagsSearchString }
-					isBusy={ isBusy }
+					value={ isManaging ? "" : tagsSearchString }
+					isBusy={ isBusy && !isManaging }
 					placeholder="Filter Tags"
 				/>
 				<UncontrolledDropdown className="dropdown">
@@ -104,6 +111,10 @@ const TagSelector = () => {
 							<DropdownItem onClick={ handleToggleTagsHideAutomatic } >
 								<span className="tick">{ !tagsHideAutomatic ? "✓" : "" }</span>
 								Show Automatic
+							</DropdownItem>
+							<DropdownItem divider />
+							<DropdownItem  onClick={ handleManageTagsClick } >
+								Manage Tags
 							</DropdownItem>
 						</DropdownMenu>
 				</UncontrolledDropdown>

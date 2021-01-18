@@ -75,7 +75,7 @@ const MoveCollectionsModal = () => {
 
 	return (
 		<Modal
-			className="modal-touch modal-full-height collection-select-modal"
+			className="modal-touch collection-select-modal"
 			contentLabel="Select Collection"
 			isBusy={ isBusy }
 			isOpen={ isOpen }

@@ -14,26 +14,28 @@ import NewItemModal from './modal/new-item';
 import RenameCollectionModal from './modal/rename-collection';
 import StyleInstallerModal from './modal/style-installer';
 import IdentifierPicker from './modal/identifier-picker';
+import ManageTagsModal from './modal/manage-tags';
 import { useForceUpdate, usePrevious } from '../hooks';
 
 import { ADD_LINKED_URL_TOUCH, BIBLIOGRAPHY, COLLECTION_ADD, COLLECTION_RENAME, COLLECTION_SELECT,
-EXPORT, IDENTIFIER_PICKER, MOVE_COLLECTION, NEW_ITEM, SORT_ITEMS, STYLE_INSTALLER,
+EXPORT, IDENTIFIER_PICKER, MANAGE_TAGS, MOVE_COLLECTION, NEW_ITEM, SORT_ITEMS, STYLE_INSTALLER,
 ADD_BY_IDENTIFIER, NEW_FILE } from '../constants/modals';
 
 const lookup = {
-	[ADD_LINKED_URL_TOUCH]: AddLinkedUrlTouchModal,
-	[COLLECTION_SELECT]: AddItemsToCollectionsModal,
-	[BIBLIOGRAPHY]: BibliographyModal,
-	[EXPORT]: ExportModal,
-	[SORT_ITEMS]: ItemsSortModal,
-	[MOVE_COLLECTION]: MoveCollectionsModal,
-	[COLLECTION_ADD]: NewCollectionModal,
-	[NEW_ITEM]: NewItemModal,
-	[COLLECTION_RENAME]: RenameCollectionModal,
-	[STYLE_INSTALLER]: StyleInstallerModal,
 	[ADD_BY_IDENTIFIER]: AddByIdentifierModal,
+	[ADD_LINKED_URL_TOUCH]: AddLinkedUrlTouchModal,
+	[BIBLIOGRAPHY]: BibliographyModal,
+	[COLLECTION_ADD]: NewCollectionModal,
+	[COLLECTION_RENAME]: RenameCollectionModal,
+	[COLLECTION_SELECT]: AddItemsToCollectionsModal,
+	[EXPORT]: ExportModal,
+	[IDENTIFIER_PICKER]: IdentifierPicker,
+	[MANAGE_TAGS]: ManageTagsModal,
+	[MOVE_COLLECTION]: MoveCollectionsModal,
 	[NEW_FILE]: NewFileModal,
-	[IDENTIFIER_PICKER]: IdentifierPicker
+	[NEW_ITEM]: NewItemModal,
+	[SORT_ITEMS]: ItemsSortModal,
+	[STYLE_INSTALLER]: StyleInstallerModal,
 };
 
 const UNMOUNT_DELAY = 500; // to allow outro animatons (delay in ms)

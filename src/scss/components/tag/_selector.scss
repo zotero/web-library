@@ -161,4 +161,12 @@
 			margin-right: -$space-min - 2px;
 		}
 	}
+
+	.tag-manager-open-info {
+		align-items: center;
+		color: $info-view-color;
+		display: flex;
+		flex: 1 1 auto;
+		justify-content: center;
+	}
 }

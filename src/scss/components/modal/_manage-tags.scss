@@ -1,0 +1,12 @@
+.manage-tags.modal {
+	.modal-body {
+		flex: 1 1 auto;
+		display: flex;
+	}
+
+	.tag-manager-list-container {
+		flex-direction: column;
+		display: flex;
+		flex: 1 1 auto;
+	}
+}

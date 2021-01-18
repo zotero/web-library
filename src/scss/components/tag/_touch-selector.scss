@@ -19,6 +19,9 @@
 		top: -$touch-header-height - $navbar-height-xs;
 	}
 
+}
+
+.touch-tag-selector, .tag-manager-list-container {
 	.touch-header {
 		@include bp-down(xs) {
 			@include hairline-disabled(top);
