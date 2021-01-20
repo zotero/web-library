@@ -23,7 +23,7 @@ const Loader = () => {
 	const itemFields = useSelector(state => state.meta.itemFields);
 	const creatorFields = useSelector(state => state.meta.creatorFields);
 
-	const tagColors = useSelector(state => get(state, ['libraries', libraryKey, 'tagColors'], null));
+	const tagColors = useSelector(state => get(state, ['libraries', libraryKey, 'tagColors', 'lookup'], null));
 	const isFetchingGroups = useSelector(state => state.fetching.allGroups);
 	const isFetchingAllCollections = useSelector(
 		state => get(state, ['libraries', libraryKey, 'collections', 'isFetchingAll'], null)

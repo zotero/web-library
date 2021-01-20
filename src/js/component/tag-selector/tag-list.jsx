@@ -58,7 +58,7 @@ const TagList = () => {
 	const tagsSearchString = useSelector(state => state.current.tagsSearchString);
 	const tagsHideAutomatic = useSelector(state => state.current.tagsHideAutomatic);
 	const selectedTags = useSelector(state => state.current.tags, shallowEqual);
-	const tagColors = useSelector(state => get(state, ['libraries', state.current.libraryKey, 'tagColors']), shallowEqual);
+	const tagColors = useSelector(state => get(state, ['libraries', state.current.libraryKey, 'tagColors', 'lookup']), shallowEqual);
 	const prevTagColors = usePrevious(tagColors);
 	const dispatch = useDispatch();
 	const tagContainerRef = useRef(null);

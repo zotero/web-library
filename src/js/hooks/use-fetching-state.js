@@ -40,7 +40,7 @@ const useTags = (shouldSkipDisabledAndSelected = false) => {
 	const libraryKey = useSelector(state => state.current.libraryKey);
 	const tagsSearchString = useSelector(state => state.current.tagsSearchString);
 	const tagsHideAutomatic = useSelector(state => state.current.tagsHideAutomatic);
-	const tagColors = useSelector(state => get(state, ['libraries', state.current.libraryKey, 'tagColors']), shallowEqual);
+	const tagColors = useSelector(state => get(state, ['libraries', state.current.libraryKey, 'tagColors', 'lookup']), shallowEqual);
 	const selectedTagNames = useSelector(state => state.current.tags, shallowEqual)
 	var selectorFn;
 
