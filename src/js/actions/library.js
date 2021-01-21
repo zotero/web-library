@@ -39,29 +39,32 @@ const fetchLibrarySettings = libraryKey => {
 	};
 }
 
-const updateLibrarySettings = (newSettings, libraryKey) => {
+const updateLibrarySettings = (settings, libraryKey) => {
 	return async (dispatch, getState) => {
 		const state = getState();
 		const config = state.config;
 
 		dispatch({
 			type: REQUEST_UPDATE_LIBRARY_SETTINGS,
+			settings,
 			libraryKey
 		});
 		try {
 			const response = await api(config.apiKey, config.apiConfig)
 				.library(libraryKey)
 				.settings()
-				.post(newSettings);
+				.post(settings);
 
 			dispatch({
 				type: RECEIVE_UPDATE_LIBRARY_SETTINGS,
+				settings,
 				libraryKey,
 				response
 			});
 		} catch(error) {
 			dispatch({
 				type: ERROR_UPDATE_LIBRARY_SETTINGS,
+				settings,
 				libraryKey,
 				error
 			});

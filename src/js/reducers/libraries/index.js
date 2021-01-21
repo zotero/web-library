@@ -6,6 +6,7 @@ import itemsByParent from './items-by-parent';
 import itemsRelated from './items-related';
 import itemsTop from './items-top';
 import itemsTrash from './items-trash';
+import settings from './settings';
 import sync from './sync';
 import tagColors from './tag-colors';
 import tagsByCollection from './tags-by-collection';
@@ -41,6 +42,7 @@ const libraries = (state = {}, action, { itemsPublications, meta } = {})  => {
 				itemsTrash: itemsTrash(get(state, [action.libraryKey, 'itemsTrash']), action, {
 					items: (state[action.libraryKey] || {}).items
 				}),
+				settings: settings(get(state, [action.libraryKey, 'settings']), action),
 				sync: sync(get(state, [action.libraryKey, 'sync']), action),
 				tagColors: tagColors(get(state, [action.libraryKey, 'tagColors']), action),
 				tagsByCollection: tagsByCollection(get(state, [action.libraryKey, 'tagsByCollection']), action, {

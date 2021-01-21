@@ -1,24 +1,17 @@
 import cx from 'classnames';
 import PropTypes from 'prop-types';
-import React, { useCallback } from 'react';
+import React, { memo, useCallback } from 'react';
 import { DropdownMenu } from 'reactstrap';
 import { noop } from '../../utils';
 
-const colors = [
-"#111111", "#993300", "#333300", "#003300", "#003366", "#000080", "#333399", "#333333",
-"#800000", "#ff6600", "#808000", "#008000", "#008080", "#0000ff", "#666699", "#808080",
-"#ff0000", "#ff9900", "#99cc00", "#339966", "#33cccc", "#3366ff", "#800080", "#999999",
-"#ff00ff", "#ffcc00", "#ffff00", "#00ff00", "#00ffff", "#00ccff", "#993366", "#ffffff",
-"#ff99cc", "#ffcc99", "#ffff99", "#ccffcc", "#ccffff", "#99ccff", "#cc99ff", null];
-
 const ColorPicker = props => {
-	const { onColorPicked } = props;
+	const { colors, onColorPicked } = props;
 	const { onDrillDownNext, onDrillDownPrev } = props; // focusManager
 
 	const handleClick = useCallback(ev => {
 		const color = ev.currentTarget.dataset.color;
 		onColorPicked(color);
-	});
+	}, [onColorPicked]);
 
 	const handleKeyDown = useCallback(ev => {
 		if(ev.key === 'ArrowRight') {
@@ -34,7 +27,7 @@ const ColorPicker = props => {
 			onDrillDownPrev(ev, 8);
 			ev.stopPropagation();
 		}
-	});
+	}, [onDrillDownNext, onDrillDownPrev]);
 
 	return (
 		<DropdownMenu className="color-picker" onKeyDown={ handleKeyDown }>
@@ -58,6 +51,7 @@ const ColorPicker = props => {
 }
 
 ColorPicker.propTypes = {
+	colors: PropTypes.array,
 	onColorPicked: PropTypes.func.isRequired,
 	onDrillDownNext: PropTypes.func.isRequired,
 	onDrillDownPrev: PropTypes.func.isRequired,
@@ -67,4 +61,4 @@ ColorPicker.defaultProps = {
 	onColorPicked: noop
 };
 
-export default ColorPicker;
+export default memo(ColorPicker);

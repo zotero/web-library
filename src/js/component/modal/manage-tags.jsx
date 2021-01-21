@@ -1,11 +1,12 @@
 import PropTypes from 'prop-types';
-import React, { memo, useCallback, useEffect, useRef } from 'react';
+import React, { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { CSSTransition } from 'react-transition-group';
 
 import Button from '../ui/button';
 import Icon from '../ui/icon';
 import Modal from '../ui/modal';
-import TouchTagList from '../tag-selector/touch-tag-list';
+import TouchTagList, { TagColorManager } from '../tag-selector/touch-tag-list';
 import { MANAGE_TAGS } from '../../constants/modals';
 import { filterTags, toggleModal } from '../../actions';
 import { usePrevious } from '../../hooks';
@@ -19,6 +20,7 @@ const ManageTagsModal = () => {
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
 	const wasOpen = usePrevious(isOpen);
 	const inputRef = useRef(null);
+	const [tagBeingManaged, setTagBeingManaged] = useState(null);
 
 	const handleSearchChange = useCallback(ev => {
 		const newValue = ev.currentTarget.value;
@@ -41,6 +43,14 @@ const ManageTagsModal = () => {
 		resetTagSearch();
 		dispatch(toggleModal(null, false));
 	}, [dispatch, resetTagSearch]);
+
+	const handleToggleTagManager = useCallback((tag) => {
+		setTagBeingManaged(tag);
+	}, []);
+
+	const handleTagManagerCancel = useCallback(() => {
+		setTagBeingManaged(null);
+	}, []);
 
 	useEffect(() => {
 		if(isOpen && !wasOpen) {
@@ -66,6 +76,24 @@ const ManageTagsModal = () => {
 			onRequestClose={ handleCancel }
 			overlayClassName="modal-full-height"
 		>
+			<CSSTransition
+				in={ tagBeingManaged !== null }
+				mountOnEnter
+				unmountOnExit
+				timeout={ 250 }
+				classNames="fade"
+			>
+				<div onClick={ handleTagManagerCancel } className="fade-overlay"></div>
+			</CSSTransition>
+			<CSSTransition
+				classNames="slide-down"
+				mountOnEnter
+				unmountOnExit
+				in={ tagBeingManaged !== null }
+				timeout={ 500 }
+			>
+				<TagColorManager onToggleTagManager={ handleToggleTagManager } tag={ tagBeingManaged } />
+			</CSSTransition>
 			<div className="modal-header">
 				<h4 className="modal-title truncate">
 					Tag Manager
@@ -101,7 +129,7 @@ const ManageTagsModal = () => {
 							)}
 						</div>
 					</div>
-					<TouchTagList />
+					<TouchTagList onToggleTagManager={ handleToggleTagManager } />
 				</div>
 			</div>
 		</Modal>

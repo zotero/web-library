@@ -79,6 +79,13 @@ const validElements = '@[id|class|style|title|dir<ltr?rtl|lang|xml::lang],'
 
 const invalidElements = 'iframe';
 
+const colors = [
+"#111111", "#993300", "#333300", "#003300", "#003366", "#000080", "#333399", "#333333",
+"#800000", "#ff6600", "#808000", "#008000", "#008080", "#0000ff", "#666699", "#808080",
+"#ff0000", "#ff9900", "#99cc00", "#339966", "#33cccc", "#3366ff", "#800080", "#999999",
+"#ff00ff", "#ffcc00", "#ffff00", "#00ff00", "#00ffff", "#00ccff", "#993366", "#ffffff",
+"#ff99cc", "#ffcc99", "#ffff99", "#ccffcc", "#ccffff", "#99ccff", "#cc99ff", null];
+
 const setColor = (editorRef, which, color) => {
 	if(!color) {
 		editorRef.editorCommands.execCommand('mceRemoveTextcolor', which);
@@ -370,6 +377,7 @@ const RichEditor = React.memo(React.forwardRef((props, ref) => {
 										<Icon type="16/chevron-7" className="mouse" width="16" height="16" />
 									</DropdownToggle>
 									<ColorPicker
+										colors={ colors }
 										onColorPicked={ handleForeColorPicked }
 										onDrillDownPrev={ focusDrillDownPrev }
 										onDrillDownNext={ focusDrillDownNext }
@@ -415,6 +423,7 @@ const RichEditor = React.memo(React.forwardRef((props, ref) => {
 										<Icon type="16/chevron-7" className="mouse" width="16" height="16" />
 									</DropdownToggle>
 									<ColorPicker
+										colors={ colors }
 										onColorPicked={ handleHiLiteColorPicked }
 										onDrillDownPrev={ focusDrillDownPrev }
 										onDrillDownNext={ focusDrillDownNext }

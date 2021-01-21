@@ -18,6 +18,20 @@
 			padding: $space-min;
 		}
 
+		@include state(".tag-color-manager") {
+			@include touch-or-bp-down(sm) {
+				grid-template-columns: repeat(3, $space-thumb);
+				grid-template-rows: repeat(3, $space-thumb);
+				padding: $space-min;
+			}
+
+			@include mouse-and-bp-up(md) {
+				grid-template-columns: repeat(3, $space-md);
+				grid-template-rows: repeat(3, $space-md);
+				padding: $space-min;
+			}
+		}
+
 		@include state(".dropdown.show") {
 			display: grid;
 		}

@@ -1,6 +1,6 @@
 import api from 'zotero-api-client';
 import { REQUEST_DELETE_TAGS, RECEIVE_DELETE_TAGS,  ERROR_DELETE_TAGS, FILTER_TAGS } from '../constants/actions';
-import { requestWithBackoff } from '.';
+import { requestWithBackoff, updateLibrarySettings } from '.';
 
 const getApi = ({ config, libraryKey }, requestType, queryConfig) => {
 	switch(requestType) {
@@ -165,7 +165,7 @@ const checkColoredTags = queryOptions => {
 	return async (dispatch, getState) => {
 		const state = getState();
 		const { libraryKey } = state.current;
-		const coloredTags = Object.keys(state.libraries[libraryKey].tagColors);
+		const coloredTags = Object.keys(state.libraries[libraryKey].tagColors.lookup);
 		if(coloredTags.length === 0) { return; }
 		const tagQuery = coloredTags.join(' || ');
 		return await dispatch(fetchCurrentTags({ ...queryOptions, tag: tagQuery }, 'COLORED_TAGS'));
@@ -234,6 +234,17 @@ const deleteTags = (tags) => {
 	}
 }
 
+const updateTagColors = newTagColors => {
+	return async(dispatch, getState) => {
+		const state = getState();
+		const libraryKey = state.current.libraryKey;
+		const newSettings = { ...state.libraries[libraryKey].settings };
+		newSettings.tagColors.value = newTagColors;
+		delete newSettings.tagColors.version;
+		return await dispatch(updateLibrarySettings(newSettings, libraryKey));
+	}
+}
+
 export {
 	// fetchTagsForItem,
 	checkColoredTags,
@@ -247,4 +258,5 @@ export {
 	fetchTagsInLibrary,
 	fetchTagSuggestions,
 	filterTags,
+	updateTagColors,
 };
