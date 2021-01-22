@@ -21,7 +21,9 @@ const ManageTagsModal = () => {
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
 	const wasOpen = usePrevious(isOpen);
 	const inputRef = useRef(null);
+	const modalRef = useRef(null);
 	const [tagBeingManaged, setTagBeingManaged] = useState(null);
+	const prevTagBeingManaged = usePrevious(tagBeingManaged);
 
 	const handleSearchChange = useCallback(ev => {
 		const newValue = ev.currentTarget.value;
@@ -69,6 +71,14 @@ const ManageTagsModal = () => {
 		}
 	}, [dispatch, isTouchOrSmall]);
 
+	useEffect(() => {
+		if(tagBeingManaged === null && prevTagBeingManaged) {
+			if(modalRef.current) {
+				modalRef.current.focus();
+			}
+		}
+	}, [prevTagBeingManaged, tagBeingManaged]);
+
 	return (
 		<Modal
 			className="manage-tags"
@@ -76,6 +86,7 @@ const ManageTagsModal = () => {
 			isOpen={ isOpen }
 			onRequestClose={ handleCancel }
 			overlayClassName="modal-full-height"
+			ref={ modalRef }
 		>
 			<CSSTransition
 				in={ tagBeingManaged !== null }

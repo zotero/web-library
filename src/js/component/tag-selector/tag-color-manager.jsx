@@ -1,5 +1,5 @@
 import cx from 'classnames';
-import React, { useCallback, useRef, useState, memo } from 'react';
+import React, { useCallback, useEffect, useRef, useState, memo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Dropdown, DropdownToggle } from 'reactstrap/lib';
 
@@ -70,11 +70,25 @@ const TagColorManager = ({ onToggleTagManager, tag }) => {
 		onToggleTagManager(null);
 	}, [dispatch, indexInTagColors, onToggleTagManager, tagColors]);
 
+	const handleKeyDown = ev => {
+		if(ev.key === 'Escape') {
+			onToggleTagManager(null);
+			ev.preventDefault();
+			ev.stopPropagation();
+		}
+	}
+
+	useEffect(() => {
+		ref.current.focus();
+	}, []);
+
 	return (
 		<div
 			ref={ ref }
 			onBlur={ receiveBlur }
 			onFocus={ receiveFocus }
+			onKeyDown={ handleKeyDown }
+			tabIndex="0"
 			className="tag-color-manager form"
 		>
 			<div className="form-group form-row">
