@@ -13,7 +13,7 @@ import { usePrevious, useTags } from '../../hooks';
 import { checkColoredTags, deleteTags, fetchTags } from '../../actions';
 import Spinner from '../ui/spinner';
 import { pick } from '../../common/immutable';
-import { get } from '../../utils';
+import { get, noop } from '../../utils';
 import { maxColoredTags } from '../../constants/defaults';
 
 const ROWHEIGHT = 43;
@@ -56,23 +56,17 @@ const TagDotMenu = memo(({ onToggleTagManager }) => {
 				<Icon type={ '16/options' } width="16" height="16" className="mouse" />
 			</DropdownToggle>
 			<DropdownMenu right>
-				{
-					<React.Fragment>
-					{
-					<DropdownItem
-						disabled={ tagColorsLength >= maxColoredTags }
-						onClick={ handleAssignColourClick }
-					>
-						Assign Colour
-					</DropdownItem>
-					}
-					<DropdownItem
-						onClick={ handleDeleteTagClick }
-					>
-						Delete Tag
-					</DropdownItem>
-					</React.Fragment>
-				}
+				<DropdownItem
+					disabled={ tagColorsLength >= maxColoredTags }
+					onClick={ handleAssignColourClick }
+				>
+					Assign Colour
+				</DropdownItem>
+				<DropdownItem
+					onClick={ handleDeleteTagClick }
+				>
+					Delete Tag
+				</DropdownItem>
 			</DropdownMenu>
 		</Dropdown>
 	);
@@ -127,7 +121,7 @@ TouchTagListRow.propTypes = {
 	style: PropTypes.object,
 };
 
-const TouchTagList = ({ toggleTag, ...rest }) => {
+const TouchTagList = ({ toggleTag = noop, ...rest }) => {
 	const dispatch = useDispatch();
 	const loader = useRef(null);
 
