@@ -1,6 +1,6 @@
 import cx from 'classnames';
 import PropTypes from 'prop-types';
-import React, { memo, useCallback, useEffect, useRef } from 'react';
+import React, { forwardRef, memo, useCallback, useEffect, useImperativeHandle, useRef } from 'react';
 import ReactModal from 'react-modal';
 import { useSelector } from 'react-redux';
 
@@ -11,7 +11,7 @@ import { usePrevious } from '../../hooks';
 
 var initialPadding;
 
-const Modal = props => {
+const Modal = forwardRef((props, ref) => {
 	const { children, className, isBusy, isOpen, onAfterOpen, overlayClassName, ...rest } = props;
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
 	const wasOpen = usePrevious(isOpen);
@@ -21,6 +21,14 @@ const Modal = props => {
 		initialPadding = parseFloat(document.body.style.paddingRight);
 		initialPadding = Number.isNaN(initialPadding) ? 0 : initialPadding;
 	}
+
+	useImperativeHandle(ref, () => ({
+		focus: () => {
+			if(contentRef.current) {
+				contentRef.current.focus();
+			}
+		}
+	}));
 
 	const handleModalAfterOpen = useCallback(ev => {
 		if(onAfterOpen) {
@@ -59,7 +67,7 @@ const Modal = props => {
 			{ isBusy ? <Spinner className="large" /> : children }
 		</ReactModal>
 	);
-}
+});
 
 Modal.propTypes = {
 	children: PropTypes.oneOfType([PropTypes.element, PropTypes.array]),
@@ -69,5 +77,7 @@ Modal.propTypes = {
 	onAfterOpen: PropTypes.func,
 	overlayClassName: PropTypes.string,
 };
+
+Modal.displayName = 'Modal';
 
 export default memo(Modal);
