@@ -27,23 +27,7 @@
 		top: 0;
 		left: 0;
 		right: 0;
-		min-height: 300px;
 		background-color: $modal-content-bg;
 		z-index: $z-index-modal + 2;
 	}
-}
-
-.tag-color-manager {
-	display: flex;
-	padding: $space-lg;
-	flex-direction: column;
-
-	.color-swatch {
-		width: $space-md;
-		height: $space-md;
-		margin-top: 4px;
-		margin-left: 4px;
-		margin-right: -4px;
-	}
-
 }

@@ -10,6 +10,7 @@ export const stylesSourceUrl = 'https://www.zotero.org/styles-files/styles.json'
 export const streamingApiUrl = 'wss://stream.zotero.org/';
 export const translateUrl = 'location' in window ? window.location.origin : '';
 export const tinymceRoot = '/static/other/tinymce/';
+export const maxColoredTags = 9;
 export const libraries = {
 	includeMyLibrary: true,
 	includeUserGroups: true,

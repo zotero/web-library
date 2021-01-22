@@ -1,0 +1,37 @@
+.tag-color-manager {
+	display: flex;
+	padding: $space-lg;
+	flex-direction: column;
+
+	.info {
+		flex: 0 0 auto;
+		margin: 1em 0;
+
+		& + .info {
+			margin: 0 0 1em 0;
+		}
+	}
+
+	.buttons-wrap {
+		display: flex;
+
+		.right {
+			flex: 1 0 auto;
+			display: flex;
+			justify-content: flex-end;
+
+			.btn + .btn {
+				margin-left: $space-sm;
+			}
+		}
+	}
+
+	.color-swatch {
+		width: $space-md;
+		height: $space-md;
+		margin-top: 4px;
+		margin-left: 4px;
+		margin-right: -4px;
+	}
+
+}
