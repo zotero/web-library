@@ -60,6 +60,16 @@ const TagColorManager = ({ onToggleTagManager, tag }) => {
 		onToggleTagManager(null);
 	}, [dispatch, indexInTagColors, onToggleTagManager, position, tag, tagColor, tagColors]);
 
+	const handleRemoveColorClick = useCallback(() => {
+		if(indexInTagColors === -1) {
+			return;
+		}
+		const newTagColors = [...tagColors];
+		newTagColors.splice(indexInTagColors, 1);
+		dispatch(updateTagColors(newTagColors));
+		onToggleTagManager(null);
+	}, [dispatch, indexInTagColors, onToggleTagManager, tagColors]);
+
 	return (
 		<div
 			ref={ ref }
@@ -121,9 +131,11 @@ const TagColorManager = ({ onToggleTagManager, tag }) => {
 			</p>
 			<div className="buttons-wrap">
 				<div className="left">
-					<Button className="btn-default">
+					{ indexInTagColors !== -1 && (
+					<Button className="btn-default" onClick={ handleRemoveColorClick } >
 						Remove Color
 					</Button>
+					)}
 				</div>
 				<div className="right">
 					<Button className="btn-default" onClick={ handleCancelClick } >
