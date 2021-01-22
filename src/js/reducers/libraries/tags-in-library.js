@@ -1,18 +1,16 @@
 import deepEqual from 'deep-equal';
 import {
-	DROP_COLORED_TAGS_IN_LIBRARY,
 	DROP_TAGS_IN_LIBRARY,
-	ERROR_COLORED_TAGS_IN_LIBRARY,
 	ERROR_TAGS_IN_LIBRARY,
 	RECEIVE_ADD_TAGS_TO_ITEMS,
-	RECEIVE_COLORED_TAGS_IN_LIBRARY,
 	RECEIVE_CREATE_ITEM,
 	RECEIVE_DELETE_TAGS,
 	RECEIVE_FETCH_ITEMS,
+	RECEIVE_LIBRARY_SETTINGS,
 	RECEIVE_TAGS_IN_LIBRARY,
 	RECEIVE_UPDATE_ITEM,
-	REQUEST_COLORED_TAGS_IN_LIBRARY,
 	REQUEST_TAGS_IN_LIBRARY,
+RECEIVE_UPDATE_LIBRARY_SETTINGS,
 } from '../../constants/actions';
 import { detectIfItemsChanged, filterTags, populateTags, updateFetchingState } from '../../common/reducers';
 
@@ -35,22 +33,11 @@ const tagsInLibrary = (state = {}, action, { items } = {}) => {
 				...state,
 				...updateFetchingState(state, action),
 			};
-		case REQUEST_COLORED_TAGS_IN_LIBRARY:
+		case RECEIVE_LIBRARY_SETTINGS:
+		case RECEIVE_UPDATE_LIBRARY_SETTINGS:
 			return {
 				...state,
-				isFetchingColoredTags: true,
-			}
-		case RECEIVE_COLORED_TAGS_IN_LIBRARY:
-			return {
-				...state,
-				coloredTags: action.tags.map(t => t.tag),
-				isFetchingColoredTags: false,
-			}
-		case ERROR_COLORED_TAGS_IN_LIBRARY:
-		case DROP_COLORED_TAGS_IN_LIBRARY:
-			return {
-				...state,
-				isFetchingColoredTags: false,
+				coloredTags: action.settings.tagColors.value.map(t => t.name),
 			}
 		case RECEIVE_CREATE_ITEM:
 			return 'tags' in action.item && action.item.tags.length > 0 ?

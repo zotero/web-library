@@ -172,7 +172,10 @@ const checkColoredTags = queryOptions => {
 		const state = getState();
 		const { libraryKey } = state.current;
 		const coloredTags = Object.keys(state.libraries[libraryKey].tagColors.lookup);
-		if(coloredTags.length === 0) { return; }
+		const isManagingTags = state.modal.id === MANAGE_TAGS;
+		if(isManagingTags || coloredTags.length === 0) {
+			return;
+		}
 		const tagQuery = coloredTags.join(' || ');
 		return await dispatch(fetchCurrentTags({ ...queryOptions, tag: tagQuery }, 'COLORED_TAGS'));
 	}
