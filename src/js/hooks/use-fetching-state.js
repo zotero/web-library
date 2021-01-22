@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { useSelector, shallowEqual } from 'react-redux';
 import { get } from '../utils';
 import { getItemKeysPath } from '../common/state';
+import { MANAGE_TAGS } from '../constants/modals';
 
 const useFetchingState = path => {
 	const { isFetching, keys, pointer, totalResults, requests = [] } = useSelector(state => get(state, path, {}), shallowEqual);
@@ -42,25 +43,30 @@ const useTags = (shouldSkipDisabledAndSelected = false) => {
 	const tagsHideAutomatic = useSelector(state => state.current.tagsHideAutomatic);
 	const tagColors = useSelector(state => get(state, ['libraries', state.current.libraryKey, 'tagColors', 'lookup']), shallowEqual);
 	const selectedTagNames = useSelector(state => state.current.tags, shallowEqual)
+	const isManagingTags = useSelector(state => state.modal.id === MANAGE_TAGS);
 	var selectorFn;
 
-	switch(itemsSource) {
-		case 'query':
-			selectorFn = state => state.query.tags || {};
-		break;
-		case 'trash':
-			selectorFn = state => get(state, ['libraries', libraryKey, 'tagsInTrashItems']);
-		break;
-		case 'publications':
-			selectorFn = state => get(state, ['libraries', libraryKey, 'tagsInPublicationsItems']);
-		break;
-		case 'collection':
-			selectorFn = state => get(state, ['libraries', libraryKey, 'tagsByCollection', collectionKey]);
-		break;
-		case 'top':
-		default:
-			selectorFn = state => get(state, ['libraries', libraryKey, 'tagsTop']);
-		break;
+	if(isManagingTags) {
+		selectorFn = state => get(state, ['libraries', libraryKey, 'tagsInLibrary']);
+	} else {
+		switch(itemsSource) {
+			case 'query':
+				selectorFn = state => state.query.tags || {};
+			break;
+			case 'trash':
+				selectorFn = state => get(state, ['libraries', libraryKey, 'tagsInTrashItems']);
+			break;
+			case 'publications':
+				selectorFn = state => get(state, ['libraries', libraryKey, 'tagsInPublicationsItems']);
+			break;
+			case 'collection':
+				selectorFn = state => get(state, ['libraries', libraryKey, 'tagsByCollection', collectionKey]);
+			break;
+			case 'top':
+			default:
+				selectorFn = state => get(state, ['libraries', libraryKey, 'tagsTop']);
+			break;
+		}
 	}
 
 	const data = (useSelector(selectorFn, shallowEqual) || {});

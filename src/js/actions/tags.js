@@ -1,5 +1,6 @@
 import api from 'zotero-api-client';
 import { REQUEST_DELETE_TAGS, RECEIVE_DELETE_TAGS,  ERROR_DELETE_TAGS, FILTER_TAGS } from '../constants/actions';
+import { MANAGE_TAGS } from '../constants/modals';
 import { requestWithBackoff, updateLibrarySettings } from '.';
 
 const getApi = ({ config, libraryKey }, requestType, queryConfig) => {
@@ -109,7 +110,7 @@ const fetchTagsForPublicationsItems = (queryOptions, prefix = 'TAGS') => {
 };
 
 const fetchTagsForTopItems = (queryOptions, prefix = 'TAGS') => {
-	return fetchTagsBase(`${prefix}_IN_TOP_ITEMS`, { }, queryOptions);
+	return fetchTagsBase(`${prefix}_IN_TOP_ITEMS`, {}, queryOptions);
 };
 
 const fetchTagsForItemsByQuery = (query, queryOptions, prefix = 'TAGS') => {
@@ -131,25 +132,30 @@ const fetchCurrentTags = (queryOptions, prefix) => {
 		const state = getState();
 		const { collectionKey, tags, itemsSource, search, isMyPublications,
 			isTrash, qmode, } = state.current;
+		const isManagingTags = state.modal.id === MANAGE_TAGS;
 
-		switch(itemsSource) {
-			case 'top':
-				return await dispatch(fetchTagsForTopItems(queryOptions, prefix));
-			case 'trash':
-				return await dispatch(fetchTagsForTrashItems(queryOptions, prefix));
-			case 'publications':
-				return await dispatch(fetchTagsForPublicationsItems(queryOptions, prefix));
-			case 'collection':
-				return await dispatch(fetchTagsInCollection(collectionKey, queryOptions, prefix));
-			case 'query':
-				return await dispatch(fetchTagsForItemsByQuery({
-					isTrash,
-					isMyPublications,
-					collectionKey,
-					itemQ: search,
-					itemQMode: qmode,
-					itemTag: tags
-				}, queryOptions, prefix));
+		if(isManagingTags) {
+			return await dispatch(fetchTagsInLibrary(queryOptions, prefix));
+		} else {
+			switch(itemsSource) {
+				case 'top':
+					return await dispatch(fetchTagsForTopItems(queryOptions, prefix));
+				case 'trash':
+					return await dispatch(fetchTagsForTrashItems(queryOptions, prefix));
+				case 'publications':
+					return await dispatch(fetchTagsForPublicationsItems(queryOptions, prefix));
+				case 'collection':
+					return await dispatch(fetchTagsInCollection(collectionKey, queryOptions, prefix));
+				case 'query':
+					return await dispatch(fetchTagsForItemsByQuery({
+						isTrash,
+						isMyPublications,
+						collectionKey,
+						itemQ: search,
+						itemQMode: qmode,
+						itemTag: tags
+					}, queryOptions, prefix));
+			}
 		}
 	}
 }

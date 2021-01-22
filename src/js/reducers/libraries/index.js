@@ -10,6 +10,7 @@ import settings from './settings';
 import sync from './sync';
 import tagColors from './tag-colors';
 import tagsByCollection from './tags-by-collection';
+import tagsInLibrary from './tags-in-library';
 import tagsInPublicationsItems from './tags-in-publications-items';
 import tagsInTrashItems from './tags-in-trash-items';
 import tagsTop from './tags-top';
@@ -55,6 +56,9 @@ const libraries = (state = {}, action, { itemsPublications, meta } = {})  => {
 					items: (state[action.libraryKey] || {}).items
 				}),
 				tagsTop: tagsTop(get(state, [action.libraryKey, 'tagsTop']), action, {
+					items: (state[action.libraryKey] || {}).items
+				}),
+				tagsInLibrary: tagsInLibrary(get(state, [action.libraryKey, 'tagsInLibrary']), action, {
 					items: (state[action.libraryKey] || {}).items
 				}),
 				updating: updating(get(state, [action.libraryKey, 'updating']), action),
