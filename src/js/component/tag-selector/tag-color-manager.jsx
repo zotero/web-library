@@ -89,75 +89,77 @@ const TagColorManager = ({ onToggleTagManager, tag }) => {
 			onFocus={ receiveFocus }
 			onKeyDown={ handleKeyDown }
 			tabIndex="0"
-			className="tag-color-manager form"
+			className="tag-color-manager"
 		>
-			<div className="form-group form-row">
-				<label className="col-form-label">Color:</label>
-				<div className="col">
-					<Dropdown
-						isOpen={ isColorPickerOpen }
-						toggle={ handleToggleColorPicker }
-						className="btn-group"
-					>
-						<div onClick={ handleToggleColorPicker }
-							onKeyDown={ handleToggleColorPicker }
-							tabIndex={ -2 }
-							className="color-swatch"
-							style={ { backgroundColor: tagColor } }
+			<div className="form">
+				<div className="form-group form-row">
+					<label className="col-form-label">Color:</label>
+					<div className="col">
+						<Dropdown
+							isOpen={ isColorPickerOpen }
+							toggle={ handleToggleColorPicker }
+							className="btn-group"
 						>
-						</div>
-						<DropdownToggle
-							color={ null }
-							className="btn-icon dropdown-toggle"
-							onKeyDown={ handleToggleColorPicker }
-							tabIndex={ -2 }
-						>
-							<Icon type="16/chevron-9" className="touch" width="16" height="16" />
-							<Icon type="16/chevron-7" className="mouse" width="16" height="16" />
-						</DropdownToggle>
-						<ColorPicker
-							colors={ colors }
-							onColorPicked={ handleColorPicked }
-							onDrillDownPrev={ focusDrillDownPrev }
-							onDrillDownNext={ focusDrillDownNext }
+							<div onClick={ handleToggleColorPicker }
+								onKeyDown={ handleToggleColorPicker }
+								tabIndex={ -2 }
+								className="color-swatch"
+								style={ { backgroundColor: tagColor } }
+							>
+							</div>
+							<DropdownToggle
+								color={ null }
+								className="btn-icon dropdown-toggle"
+								onKeyDown={ handleToggleColorPicker }
+								tabIndex={ -2 }
+							>
+								<Icon type="16/chevron-9" className="touch" width="16" height="16" />
+								<Icon type="16/chevron-7" className="mouse" width="16" height="16" />
+							</DropdownToggle>
+							<ColorPicker
+								colors={ colors }
+								onColorPicked={ handleColorPicked }
+								onDrillDownPrev={ focusDrillDownPrev }
+								onDrillDownNext={ focusDrillDownNext }
+							/>
+						</Dropdown>
+					</div>
+					<label className="col-form-label">Position:</label>
+					<div className="col">
+						<Select
+							inputGroupClassName={ cx('position-selector') }
+							clearable={ false }
+							searchable={ false }
+							value={ position }
+							tabIndex={ 0 }
+							options={ options }
+							onChange={ () => true /* commit on change */ }
+							onCommit={ handlePositionChange }
 						/>
-					</Dropdown>
+					</div>
 				</div>
-				<label className="col-form-label">Position:</label>
-				<div className="col">
-					<Select
-						inputGroupClassName={ cx('position-selector') }
-						clearable={ false }
-						searchable={ false }
-						value={ position }
-						tabIndex={ 0 }
-						options={ options }
-						onChange={ () => true /* commit on change */ }
-						onCommit={ handlePositionChange }
-					/>
-				</div>
-			</div>
-			<p className="info">
-				You can add this tag to selected items by pressing the {position} key on the keyboard.
-			</p>
-			<p className="info">
-				Up to {maxColoredTags} tags in each library can have colors assigned.
-			</p>
-			<div className="buttons-wrap">
-				<div className="left">
-					{ indexInTagColors !== -1 && (
-					<Button className="btn-default" onClick={ handleRemoveColorClick } >
-						Remove Color
-					</Button>
-					)}
-				</div>
-				<div className="right">
-					<Button className="btn-default" onClick={ handleCancelClick } >
-						Cancel
-					</Button>
-					<Button className="btn-default" onClick={ handleSetColor } >
-						Set Color
-					</Button>
+				<p className="info">
+					You can add this tag to selected items by pressing the {position} key on the keyboard.
+				</p>
+				<p className="info">
+					Up to {maxColoredTags} tags in each library can have colors assigned.
+				</p>
+				<div className="buttons-wrap">
+					<div className="left">
+						{ indexInTagColors !== -1 && (
+						<Button className="btn-default" onClick={ handleRemoveColorClick } >
+							Remove Color
+						</Button>
+						)}
+					</div>
+					<div className="right">
+						<Button className="btn-default" onClick={ handleCancelClick } >
+							Cancel
+						</Button>
+						<Button className="btn-default" onClick={ handleSetColor } >
+							Set Color
+						</Button>
+					</div>
 				</div>
 			</div>
 		</div>

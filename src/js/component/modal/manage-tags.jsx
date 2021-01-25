@@ -107,16 +107,22 @@ const ManageTagsModal = () => {
 				<TagColorManager onToggleTagManager={ handleToggleTagManager } tag={ tagBeingManaged } />
 			</CSSTransition>
 			<div className="modal-header">
-				<h4 className="modal-title truncate">
-					Tag Manager
-				</h4>
-				<Button
-					icon
-					className="close"
-					onClick={ handleCancel }
-				>
-					<Icon type={ '16/close' } width="16" height="16" />
-				</Button>
+				<div className="modal-header-left">
+					<Button
+						className="btn-link"
+						onClick={ handleCancel }
+					>
+						Close
+					</Button>
+				</div>
+				<div className="modal-header-center">
+					<h4 className="modal-title truncate">
+						Tag Manager
+					</h4>
+				</div>
+				<div className="modal-header-right">
+
+				</div>
 			</div>
 			<div className="modal-body">
 				<div className="tag-manager-list-container">

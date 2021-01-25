@@ -2,6 +2,19 @@
 	display: flex;
 	padding: $space-lg;
 	flex-direction: column;
+	background-color: $panel-bg;
+
+	@include touch-or-bp-down(sm) {
+		padding: 0;
+
+		.form {
+			margin: 0;
+		}
+	}
+
+	.col {
+		display: flex;
+	}
 
 	.info {
 		flex: 0 0 auto;
@@ -9,6 +22,10 @@
 
 		& + .info {
 			margin: 0 0 1em 0;
+		}
+
+		@include touch-or-bp-down(sm) {
+			padding: 0 $space-md;
 		}
 	}
 
@@ -24,6 +41,10 @@
 				margin-left: $space-sm;
 			}
 		}
+
+		@include touch-or-bp-down(sm) {
+			padding: 0 $space-md;
+		}
 	}
 
 	.color-swatch {
@@ -32,6 +53,11 @@
 		margin-top: 4px;
 		margin-left: 4px;
 		margin-right: -4px;
-	}
 
+		@include touch-or-bp-down(sm) {
+			width: $space-lg;
+			height: $space-lg;
+			margin-top: 8px;
+		}
+	}
 }
