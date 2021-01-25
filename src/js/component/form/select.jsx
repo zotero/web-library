@@ -21,7 +21,7 @@ const SelectInput = forwardRef((props, ref) => {
 		'busy': isBusy,
 		'input-group': true,
 		'select': true,
-		[inputGroupClassName]: true
+		[inputGroupClassName]: !!inputGroupClassName
 	});
 
 	useImperativeHandle(ref, () => ({
