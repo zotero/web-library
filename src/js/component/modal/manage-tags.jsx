@@ -18,7 +18,7 @@ const ManageTagsModal = () => {
 	const searchStringWhenOpening = useRef('');
 	const isOpen = useSelector(state => state.modal.id === MANAGE_TAGS);
 	const tagsSearchString = useSelector(state => state.current.tagsSearchString);
-	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
+	// const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
 	const wasOpen = usePrevious(isOpen);
 	const inputRef = useRef(null);
 	const modalRef = useRef(null);
@@ -65,11 +65,11 @@ const ManageTagsModal = () => {
 		}
 	}, [isOpen, wasOpen, dispatch, resetTagSearch, tagsSearchString]);
 
-	useEffect(() => {
-		if(isTouchOrSmall) {
-			dispatch(toggleModal(MANAGE_TAGS, false));
-		}
-	}, [dispatch, isTouchOrSmall]);
+	// useEffect(() => {
+	// 	if(isTouchOrSmall) {
+	// 		dispatch(toggleModal(MANAGE_TAGS, false));
+	// 	}
+	// }, [dispatch, isTouchOrSmall]);
 
 	useEffect(() => {
 		if(tagBeingManaged === null && prevTagBeingManaged) {

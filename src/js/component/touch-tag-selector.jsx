@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React, { memo, useCallback, useRef, useState } from 'react';
+import React, { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { CSSTransition } from 'react-transition-group';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 
@@ -7,10 +7,11 @@ import Button from './ui/button';
 import Icon from './ui/icon';
 import TouchTagList from './tag-selector/touch-tag-list';
 import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap/lib';
-import { filterTags, navigate, toggleHideAutomaticTags, toggleTouchTagSelector } from '../actions';
+import { filterTags, navigate, toggleHideAutomaticTags, toggleModal, toggleTouchTagSelector } from '../actions';
 import { pluralize } from '../common/format';
 import { Toolbar } from './ui/toolbars';
-import { useTags } from '../hooks';
+import { usePrevious, useTags } from '../hooks';
+import { MANAGE_TAGS } from '../constants/modals';
 
 const SelectedTagRow = ({ tag, toggleTag }) => {
 	const handleClick = useCallback(() => toggleTag(tag.tag), [tag, toggleTag]);
@@ -47,6 +48,10 @@ const TouchTagselectorActions = memo(() => {
 		dispatch(toggleHideAutomaticTags());
 	}, [dispatch])
 
+	const handleManageTagsClick = useCallback(() => {
+		dispatch(toggleModal(MANAGE_TAGS, true))
+	}, [dispatch]);
+
 	return (
 		<Dropdown
 			isOpen={ isOpen }
@@ -66,9 +71,13 @@ const TouchTagselectorActions = memo(() => {
 			</DropdownToggle>
 			<DropdownMenu right>
 				<DropdownItem onClick={ handleToggleTagsHideAutomatic } >
-						<span className="tick">{ !tagsHideAutomatic ? "✓" : "" }</span>
-						Show Automatic
-					</DropdownItem>
+					<span className="tick">{ !tagsHideAutomatic ? "✓" : "" }</span>
+					Show Automatic
+				</DropdownItem>
+				<DropdownItem divider />
+				<DropdownItem  onClick={ handleManageTagsClick } >
+					Manage Tags
+				</DropdownItem>
 			</DropdownMenu>
 		</Dropdown>
 	);
@@ -83,6 +92,7 @@ const TouchTagSelector = () => {
 	const isOpen = useSelector(state => state.current.isTouchTagSelectorOpen);
 	const tagsSearchString = useSelector(state => state.current.tagsSearchString);
 	const selectedTagNames = useSelector(state => state.current.tags, shallowEqual);
+	const isManaging = useSelector(state => state.modal.id === MANAGE_TAGS);
 	const { selectedTags } = useTags();
 
 	const handleClick = useCallback(() => {
@@ -115,6 +125,12 @@ const TouchTagSelector = () => {
 
 		dispatch(navigate({ tags: selectedTagNames, items: null, view: 'item-list' }));
 	}, [dispatch, selectedTagNames]);
+
+	useEffect(() => {
+		if(isManaging) {
+			dispatch(toggleTouchTagSelector(false));
+		}
+	}, [dispatch, isManaging]);
 
 	return (
 		<CSSTransition
@@ -162,14 +178,18 @@ const TouchTagSelector = () => {
 						)}
 					</div>
 				</div>
-				<ul className="selected-tags">
-					{ selectedTags.map(tag => <SelectedTagRow
-						key={ tag.tag }
-						tag={ tag }
-						toggleTag={ toggleTag }
-					/>) }
-				</ul>
-				<TouchTagList toggleTag={ toggleTag } />
+				{ !isManaging && (
+						<React.Fragment>
+							<ul className="selected-tags">
+							{ selectedTags.map(tag => <SelectedTagRow
+								key={ tag.tag }
+								tag={ tag }
+								toggleTag={ toggleTag }
+							/>) }
+							</ul>
+							<TouchTagList toggleTag={ toggleTag } />
+						</React.Fragment>
+				) }
 				<footer className="touch-footer">
 					<Toolbar>
 						<div className="toolbar-center">
