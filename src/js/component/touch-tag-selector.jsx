@@ -5,12 +5,12 @@ import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 
 import Button from './ui/button';
 import Icon from './ui/icon';
-import TouchTagList from './tag-selector/touch-tag-list';
+import TagList from './tag-selector/tag-list';
 import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap/lib';
 import { filterTags, navigate, toggleHideAutomaticTags, toggleModal, toggleTouchTagSelector } from '../actions';
 import { pluralize } from '../common/format';
 import { Toolbar } from './ui/toolbars';
-import { usePrevious, useTags } from '../hooks';
+import { useTags } from '../hooks';
 import { MANAGE_TAGS } from '../constants/modals';
 
 const SelectedTagRow = ({ tag, toggleTag }) => {
@@ -187,7 +187,7 @@ const TouchTagSelector = () => {
 								toggleTag={ toggleTag }
 							/>) }
 							</ul>
-							<TouchTagList toggleTag={ toggleTag } />
+							<TagList toggleTag={ toggleTag } />
 						</React.Fragment>
 				) }
 				<footer className="touch-footer">

@@ -6,7 +6,7 @@ import { CSSTransition } from 'react-transition-group';
 import Button from '../ui/button';
 import Icon from '../ui/icon';
 import Modal from '../ui/modal';
-import TouchTagList from '../tag-selector/touch-tag-list';
+import TagList from '../tag-selector/tag-list';
 import TagColorManager from '../tag-selector/tag-color-manager';
 import { MANAGE_TAGS } from '../../constants/modals';
 import { filterTags, toggleModal } from '../../actions';
@@ -18,7 +18,7 @@ const ManageTagsModal = () => {
 	const searchStringWhenOpening = useRef('');
 	const isOpen = useSelector(state => state.modal.id === MANAGE_TAGS);
 	const tagsSearchString = useSelector(state => state.current.tagsSearchString);
-	// const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
+	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
 	const wasOpen = usePrevious(isOpen);
 	const inputRef = useRef(null);
 	const modalRef = useRef(null);
@@ -65,12 +65,6 @@ const ManageTagsModal = () => {
 		}
 	}, [isOpen, wasOpen, dispatch, resetTagSearch, tagsSearchString]);
 
-	// useEffect(() => {
-	// 	if(isTouchOrSmall) {
-	// 		dispatch(toggleModal(MANAGE_TAGS, false));
-	// 	}
-	// }, [dispatch, isTouchOrSmall]);
-
 	useEffect(() => {
 		if(tagBeingManaged === null && prevTagBeingManaged) {
 			if(modalRef.current) {
@@ -108,12 +102,14 @@ const ManageTagsModal = () => {
 			</CSSTransition>
 			<div className="modal-header">
 				<div className="modal-header-left">
+				{ isTouchOrSmall && (
 					<Button
 						className="btn-link"
 						onClick={ handleCancel }
 					>
 						Close
 					</Button>
+				) }
 				</div>
 				<div className="modal-header-center">
 					<h4 className="modal-title truncate">
@@ -121,7 +117,15 @@ const ManageTagsModal = () => {
 					</h4>
 				</div>
 				<div className="modal-header-right">
-
+				{ !isTouchOrSmall && (
+					<Button
+						icon
+						className="close"
+						onClick={ handleCancel }
+					>
+						<Icon type={ '16/close' } width="16" height="16" />
+					</Button>
+				) }
 				</div>
 			</div>
 			<div className="modal-body">
@@ -147,7 +151,7 @@ const ManageTagsModal = () => {
 							)}
 						</div>
 					</div>
-					<TouchTagList onToggleTagManager={ handleToggleTagManager } />
+					<TagList isManager={ true } onToggleTagManager={ handleToggleTagManager } />
 				</div>
 			</div>
 		</Modal>

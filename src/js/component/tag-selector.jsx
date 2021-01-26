@@ -7,7 +7,7 @@ import { useDebounce } from "use-debounce";
 import Button from './ui/button';
 import Icon from './ui/icon';
 import Input from './form/input';
-import TagList from './tag-selector/tag-list';
+import TagSelectorItems from './tag-selector/tag-selector-items';
 import { filterTags, navigate, toggleModal, toggleHideAutomaticTags, toggleTagSelector } from '../actions';
 import { useTags, useFocusManager } from '../hooks';
 import { getUniqueId } from '../utils';
@@ -73,7 +73,7 @@ const TagSelector = () => {
 			>
 				<Icon type="16/grip" width="16" height="2" />
 			</Button>
-			{ isManaging ? <div className="tag-manager-open-info"><span>Tag Manager is Open</span></div> : <TagList /> }
+			{ isManaging ? <div className="tag-manager-open-info"><span>Tag Manager is Open</span></div> : <TagSelectorItems /> }
 			<div
 				className="tag-selector-filter-container"
 				onBlur={ receiveBlur }

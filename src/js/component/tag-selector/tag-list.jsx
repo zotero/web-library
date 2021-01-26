@@ -1,185 +1,218 @@
+import AutoSizer from 'react-virtualized-auto-sizer';
 import cx from 'classnames';
+import InfiniteLoader from "react-window-infinite-loader";
 import PropTypes from 'prop-types';
-import React, { memo, useCallback, useEffect, useRef } from 'react';
-import { useDispatch, useSelector, shallowEqual } from 'react-redux';
-import { useDrop } from 'react-dnd';
+import React, { useCallback, useEffect, useRef, useState, memo } from 'react';
+import { FixedSizeList as List } from 'react-window';
+import { useDebounce } from "use-debounce";
+import { useDispatch, useSelector } from 'react-redux';
+import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap/lib';
 
-import { connectionIssues, checkColoredTags, fetchTags, navigate } from '../../actions';
-import { get } from '../../utils';
-import { isTriggerEvent } from '../../common/event';
-import { ITEM } from '../../constants/dnd';
-import { useFocusManager, useSourceSignature, usePrevious, useTags } from '../../hooks';
+import Icon from '../ui/icon';
+import { usePrevious, useTags } from '../../hooks';
+import { checkColoredTags, deleteTags, fetchTags } from '../../actions';
+import Spinner from '../ui/spinner';
+import { pick } from '../../common/immutable';
+import { get, noop } from '../../utils';
+import { maxColoredTags } from '../../constants/defaults';
 
-const PAGE_SIZE = 100;
+const ROWHEIGHT = 43;
+const PAGESIZE = 100;
 
-const Tag = memo(props => {
-	const { tag, onClick, onKeyDown } = props;
-	const [{ isOver, canDrop }, drop] = useDrop({
-		accept: [ITEM],
-		collect: monitor => ({
-			isOver: monitor.isOver({ shallow: true }),
-			canDrop: monitor.canDrop(),
-		}),
-		// updateItem is dispatched from within TableRow component
-		drop: () => ({ targetType: 'tag', tag: tag.tag })
+const TagDotMenu = memo(({ onToggleTagManager }) => {
+	const [isOpen, setIsOpen] = useState(false);
+	const dispatch = useDispatch()
+	const tagColorsLength = useSelector(state => get(state, ['libraries', state.current.libraryKey, 'tagColors', 'value', 'length'], 0));
+
+	const handleToggle = useCallback(ev => {
+		ev.stopPropagation();
+		setIsOpen(!isOpen);
+	}, [isOpen]);
+
+	const handleAssignColourClick = useCallback(ev => {
+		const tag = ev.currentTarget.closest('[data-tag]').dataset.tag;
+		onToggleTagManager(tag);
+	}, [onToggleTagManager]);
+
+	const handleDeleteTagClick = useCallback(ev => {
+		const tag = ev.currentTarget.closest('[data-tag]').dataset.tag;
+		dispatch(deleteTags([tag]));
+	}, [dispatch]);
+
+
+	return (
+		<Dropdown
+			isOpen={ isOpen }
+			toggle={ handleToggle }
+		>
+			<DropdownToggle
+				tabIndex={ -3 }
+				className="btn-icon dropdown-toggle"
+				color={ null }
+				title="More"
+				onClick={ handleToggle }
+			>
+				<Icon type={ '24/options-sm' } width="24" height="24" className="touch" />
+				<Icon type={ '16/options' } width="16" height="16" className="mouse" />
+			</DropdownToggle>
+			<DropdownMenu right>
+				<DropdownItem
+					disabled={ tagColorsLength >= maxColoredTags }
+					onClick={ handleAssignColourClick }
+				>
+					Assign Colour
+				</DropdownItem>
+				<DropdownItem
+					onClick={ handleDeleteTagClick }
+				>
+					Delete Tag
+				</DropdownItem>
+			</DropdownMenu>
+		</Dropdown>
+	);
+});
+
+TagDotMenu.propTypes = {
+	collection: PropTypes.object,
+	dotMenuFor: PropTypes.string,
+	isReadOnly: PropTypes.bool,
+	opened: PropTypes.array,
+	parentLibraryKey: PropTypes.string,
+	setDotMenuFor: PropTypes.func,
+	setOpened: PropTypes.func,
+	setRenaming: PropTypes.func,
+	addVirtual: PropTypes.func,
+};
+
+TagDotMenu.displayName = 'TagDotMenu';
+
+const TagListRow = memo(props => {
+	const { data, index, style } = props;
+	const { tags, toggleTag, isManager, ...rest } = data;
+	const tag = tags[index];
+
+	const className = cx({
+		tag: true,
+		odd: (index + 1) % 2 === 1,
+		placeholder: !tag
 	});
 
-	return drop(
+	const handleClick =  useCallback(() => toggleTag(tag.tag), [tag, toggleTag]);
+
+	return (
 		<li
-		className={ cx('tag', {
-			disabled: tag.disabled,
-			selected: tag.selected,
-			colored: tag.color,
-			placeholder: tag.isPlaceholder,
-			'dnd-target': isOver && canDrop
-		}) }
-		data-tag={ tag.tag }
-		key={ tag.tag }
-		onClick={ onClick }
-		onKeyDown={ onKeyDown }
-		role="button"
-		style={ tag.color && { color: tag.color} }
-		tabIndex={ tag.disabled ? null : -2 }
+			data-tag={ tag ? tag.tag : null }
+			style={ style }
+			className={ className }
+			onClick={ tag && handleClick }
 		>
-			<span className="tag-label">{ tag.tag }</span>
+			<div className="tag-color" style={ tag && (tag.color && { color: tag.color }) } />
+			<div className="truncate">{ tag && tag.tag }</div>
+			{ isManager && tag && <TagDotMenu { ...pick(rest, ['onToggleTagManager']) } /> }
 		</li>
 	);
 });
 
-Tag.displayName = 'Tag';
+TagListRow.displayName = 'TagListRow';
 
-Tag.propTypes = {
-	tag: PropTypes.object,
-	onClick: PropTypes.func,
-	onKeyDown: PropTypes.func,
+TagListRow.propTypes = {
+	data: PropTypes.object,
+	index: PropTypes.number,
+	style: PropTypes.object,
 };
 
-const TagList = () => {
+// TagList is used in the ManageTags modal and in TouchTagSelector
+const TagList = ({ toggleTag = noop, isManager = false, ...rest }) => {
+	const dispatch = useDispatch();
+	const loader = useRef(null);
+
+	const { duplicatesCount, hasMoreItems, isFetchingColoredTags, isFetching, pointer, requests,
+		tags, totalResults, selectedTags, hasChecked, hasCheckedColoredTags } = useTags(!isManager);
+
 	const tagsSearchString = useSelector(state => state.current.tagsSearchString);
 	const tagsHideAutomatic = useSelector(state => state.current.tagsHideAutomatic);
-	const selectedTags = useSelector(state => state.current.tags, shallowEqual);
-	const tagColors = useSelector(state => get(state, ['libraries', state.current.libraryKey, 'tagColors', 'lookup']), shallowEqual);
-	const prevTagColors = usePrevious(tagColors);
-	const dispatch = useDispatch();
-	const tagContainerRef = useRef(null);
-	const { receiveBlur, receiveFocus, focusNext, focusPrev } = useFocusManager(tagContainerRef, null, false);
-	const containerRef = useRef(null);
-	const listRef = useRef(null);
-	const { isFetching, isFetchingColoredTags, pointer, tags, totalResults, hasChecked,
-	hasCheckedColoredTags } = useTags();
-	const sourceSignature = useSourceSignature();
-	const errorCount = useSelector(state => {
-		switch(state.current.itemsSource) {
-			case 'query': return get(state, ['traffic', 'TAGS_IN_ITEMS_BY_QUERY', 'errorCount'], 0);
-			case 'trash': return get(state, ['traffic', 'TAGS_IN_TRASH_ITEMS', 'errorCount'], 0);
-			case 'publications': return get(state, ['traffic', 'TAGS_IN_PUBLICATIONS_ITEMS', 'errorCount'], 0);
-			case 'collection': return get(state, ['traffic', 'TAGS_IN_COLLECTION', 'errorCount'], 0);
-			case 'top': return get(state, ['traffic', 'TAGS_IN_TOP_ITEMS', 'errorCount'], 0);
+	const isFilteringOrHideAutomatic = (tagsSearchString !== '' || tagsHideAutomatic);
+	const selectedTagsCount = selectedTags.length;
+	const prevHasChecked = usePrevious(hasChecked);
+
+	const [isBusy] = useDebounce(!hasChecked || (isFetching && isFilteringOrHideAutomatic), 100);
+
+	const handleIsItemLoaded = useCallback(index => {
+		if(tags && !!tags[index]) {
+			return true; // loaded
 		}
-	});
-	const prevErrorCount = usePrevious(errorCount);
+		return requests.some(r => index >= r[0] && index < r[1]); // loading
+	}, [requests, tags]);
 
-	const maybeLoadMore = useCallback(() => {
-		const containerHeight = containerRef.current.getBoundingClientRect().height;
-		const totalHeight = listRef.current.getBoundingClientRect().height;
-		const scrollProgress = (containerRef.current.scrollTop + containerHeight) / totalHeight;
+	const handleLoadMore = useCallback((startIndex, stopIndex) => {
+		// pagination only happens if filtering disabled
+		dispatch(fetchTags(startIndex, stopIndex));
+	}, [dispatch]);
 
-		if(pointer && scrollProgress > 0.5 && !isFetching && ((totalResults > pointer) || (totalResults === null))) {
-			dispatch(fetchTags(pointer, pointer + PAGE_SIZE - 1));
-		}
-	}, [dispatch, isFetching, pointer, totalResults]);
-
-	const toggleTag = useCallback(tagName => {
-		const index = selectedTags.indexOf(tagName);
-		if(index > -1) {
-			selectedTags.splice(index, 1);
-		} else {
-			selectedTags.push(tagName);
-		}
-
-		dispatch(navigate({ tags: selectedTags, items: null }));
-	}, [dispatch, selectedTags]);
-
-	const handleKeyDown = useCallback(ev => {
-		if(ev.target !== ev.currentTarget) {
+	useEffect(() => {
+		if(hasChecked || isFetching) {
 			return;
 		}
 
-		if(ev.key === 'ArrowRight' || ev.key === 'ArrowDown') {
-			focusNext(ev);
-		} else if(ev.key === 'ArrowLeft' || ev.key === 'ArrowUp') {
-			focusPrev(ev);
-		} else if(isTriggerEvent(ev)) {
-			handleClick(ev);
+		// runs on first mount (prevHasChecked is undefined) and whenever `hasChecked` becomes false
+		// usually because tags have been discarded after edit or source has changed
+		if(!hasChecked && (prevHasChecked === true || typeof(prevHasChecked) === 'undefined')) {
+			dispatch(fetchTags(0, PAGESIZE - 1));
 		}
-	}, [focusNext, focusPrev, handleClick]);
-
-	const handleClick = useCallback(ev => {
-		const tag = ev.currentTarget.dataset.tag;
-		// @NOTE: the <li> element in this event will be removed while new tags are fetched as a
-		// result of toggleTag(). Need to trigger blur() so that container can accept focus again.
-		// See #372
-		ev.currentTarget.blur();
-		toggleTag(tag);
-	}, [toggleTag]);
+	}, [dispatch, hasChecked, prevHasChecked, isFetching]);
 
 	useEffect(() => {
-		if(totalResults === null) {
-			dispatch(fetchTags(0, PAGE_SIZE - 1));
+		// if we're filtering, we need to prefetch all matching tags under spinner
+		// this is because filtering happens locally and we don't know the number of total results
+		if(isFilteringOrHideAutomatic && !isFetching && hasMoreItems) {
+			dispatch(fetchTags(pointer, pointer + PAGESIZE - 1));
 		}
-	}, [dispatch, totalResults]);
+	}, [dispatch, isFilteringOrHideAutomatic, isFetching, hasMoreItems, pointer]);
 
 	useEffect(() => {
-		if(!hasChecked && !isFetching) {
-			dispatch(fetchTags(0, PAGE_SIZE - 1));
-		}
-	}, [dispatch, sourceSignature, hasChecked, isFetching]);
-
-	useEffect(() => {
-		if(!isFetchingColoredTags && typeof(prevTagColors) !== 'undefined' && !shallowEqual(tagColors, prevTagColors)) {
-			dispatch(checkColoredTags());
-		} else if(!hasCheckedColoredTags && !isFetchingColoredTags && tagColors && Object.keys(tagColors).length) {
+		if(!hasCheckedColoredTags && !isFetchingColoredTags) {
 			dispatch(checkColoredTags());
 		}
-	}, [dispatch, sourceSignature, prevTagColors, tagColors, hasCheckedColoredTags, isFetchingColoredTags]);
-
-	useEffect(() => {
-		setTimeout(maybeLoadMore, 0);
-	}, [maybeLoadMore, tagsHideAutomatic, tagsSearchString, pointer]);
-
-	useEffect(() => {
-		if(errorCount > 3 && prevErrorCount === 3) {
-			dispatch(connectionIssues());
-		} else if(errorCount === 0 && prevErrorCount > 0) {
-			dispatch(connectionIssues(true));
-		}
-	}, [dispatch, errorCount, prevErrorCount]);
+	}, [dispatch, hasCheckedColoredTags, isFetchingColoredTags]);
 
 	return (
-		<div
-			className="scroll-container"
-			onScroll={ maybeLoadMore }
-			ref={ containerRef }
-		>
-			<div
-				className="tag-selector-container"
-				onBlur={ receiveBlur }
-				onFocus={ receiveFocus }
-				ref={ tagContainerRef }
-				tabIndex={ 0 }
-				aria-label="tag selector"
-			>
-				<ul
-					ref={ listRef }
-					className="tag-selector-list"
-				>
-					{ tags.filter(t => !!t).map(tag => (
-						<Tag key={ tag.tag } tag={ tag } onClick={ handleClick } onKeyDown={ handleKeyDown } />
-					)) }
-				</ul>
-			</div>
+		<div className="scroll-container">
+			{ !isBusy ? (
+				<AutoSizer>
+				{({ height, width }) => (
+					<InfiniteLoader
+						ref={ loader }
+						isItemLoaded={ handleIsItemLoaded }
+						itemCount={ isFilteringOrHideAutomatic ? tags.length : totalResults }
+						loadMoreItems={ handleLoadMore }
+					>
+						{({ onItemsRendered, ref }) => (
+							<List
+								className="tag-selector-list"
+								height={ height }
+								itemCount={ isFilteringOrHideAutomatic ? tags.length : hasChecked ? totalResults - duplicatesCount - selectedTagsCount : 0 }
+								itemData={ { tags, toggleTag, isManager, ...pick(rest, ['onToggleTagManager']) } }
+								itemSize={ ROWHEIGHT }
+								onItemsRendered={ onItemsRendered }
+								ref={ ref }
+								width={ width }
+							>
+								{ TagListRow }
+							</List>
+						)}
+					</InfiniteLoader>
+				)}
+				</AutoSizer>
+			) : (
+				<Spinner className="large centered" />
+			) }
 		</div>
 	);
+};
+
+TagList.propTypes = {
+	isManager: PropTypes.bool,
+	toggleTag: PropTypes.func,
 }
 
 export default memo(TagList);
