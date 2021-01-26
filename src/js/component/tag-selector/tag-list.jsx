@@ -138,7 +138,7 @@ const TagList = () => {
 	useEffect(() => {
 		if(!isFetchingColoredTags && typeof(prevTagColors) !== 'undefined' && !shallowEqual(tagColors, prevTagColors)) {
 			dispatch(checkColoredTags());
-		} else if(!hasCheckedColoredTags && !isFetchingColoredTags && Object.keys(tagColors).length) {
+		} else if(!hasCheckedColoredTags && !isFetchingColoredTags && tagColors && Object.keys(tagColors).length) {
 			dispatch(checkColoredTags());
 		}
 	}, [dispatch, sourceSignature, prevTagColors, tagColors, hasCheckedColoredTags, isFetchingColoredTags]);
