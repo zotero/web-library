@@ -11,14 +11,16 @@ import {
 	RECEIVE_CREATE_ITEMS,
 	RECEIVE_DELETE_TAGS,
 	RECEIVE_FETCH_ITEMS,
+	RECEIVE_LIBRARY_SETTINGS,
 	RECEIVE_REMOVE_ITEMS_FROM_COLLECTION,
 	RECEIVE_TAGS_IN_COLLECTION,
 	RECEIVE_UPDATE_ITEM,
+	RECEIVE_UPDATE_LIBRARY_SETTINGS,
 	REQUEST_COLORED_TAGS_IN_COLLECTION,
 	REQUEST_TAGS_IN_COLLECTION,
 } from '../../constants/actions';
 import { get } from '../../utils';
-import { mapObject } from '../../common/immutable'
+import { mapObject, omit } from '../../common/immutable'
 import { detectItemsChanged, filterTags, populateTags, updateFetchingState } from '../../common/reducers';
 
 
@@ -151,6 +153,9 @@ const tags = (state = {}, action, { items } = {}) => {
 			}
 		case RECEIVE_DELETE_TAGS:
 			return mapObject(state, (colKey, tagsData) => [colKey, filterTags(tagsData, action.tags)]);
+		case RECEIVE_LIBRARY_SETTINGS:
+		case RECEIVE_UPDATE_LIBRARY_SETTINGS:
+			return mapObject(state, (colKey, tagsData) => [colKey, omit(tagsData, 'coloredTags')]);
 		default:
 			return state;
 	}

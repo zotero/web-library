@@ -16,8 +16,11 @@ import {
 	RECEIVE_UPDATE_ITEM,
 	REQUEST_COLORED_TAGS_IN_TOP_ITEMS,
 	REQUEST_TAGS_IN_TOP_ITEMS,
+	RECEIVE_LIBRARY_SETTINGS,
+	RECEIVE_UPDATE_LIBRARY_SETTINGS,
 } from '../../constants/actions';
 import { detectIfItemsChanged, filterTags, populateTags, updateFetchingState } from '../../common/reducers';
+import { omit } from '../../common/immutable';
 
 const tagsTop = (state = {}, action, { items } = {}) => {
 	switch(action.type) {
@@ -74,6 +77,9 @@ const tagsTop = (state = {}, action, { items } = {}) => {
 				action, items,
 				(newItem, oldItem = {}) => (!newItem.deleted && !oldItem.deleted) && (!deepEqual(newItem.tags, oldItem.tags))
 			) ? {} : state
+		case RECEIVE_LIBRARY_SETTINGS:
+		case RECEIVE_UPDATE_LIBRARY_SETTINGS:
+			return omit(state, 'coloredTags');
 		default:
 			return state;
 	}

@@ -10,7 +10,7 @@ import {
 	RECEIVE_TAGS_IN_LIBRARY,
 	RECEIVE_UPDATE_ITEM,
 	REQUEST_TAGS_IN_LIBRARY,
-RECEIVE_UPDATE_LIBRARY_SETTINGS,
+	RECEIVE_UPDATE_LIBRARY_SETTINGS,
 } from '../../constants/actions';
 import { detectIfItemsChanged, filterTags, populateTags, updateFetchingState } from '../../common/reducers';
 

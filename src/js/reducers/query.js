@@ -8,12 +8,13 @@ RECEIVE_DELETE_TAGS, RECEIVE_ITEMS_BY_QUERY, RECEIVE_MOVE_ITEMS_TRASH, RECEIVE_R
 RECEIVE_REMOVE_ITEMS_FROM_COLLECTION, RECEIVE_TAGS_IN_ITEMS_BY_QUERY, RECEIVE_UPDATE_ITEM,
 REQUEST_ITEMS_BY_QUERY, REQUEST_TAGS_IN_ITEMS_BY_QUERY, SORT_ITEMS, RESET_QUERY,
 DROP_TAGS_IN_ITEMS_BY_QUERY, DROP_ITEMS_BY_QUERY, REQUEST_COLORED_TAGS_IN_ITEMS_BY_QUERY,
-ERROR_COLORED_TAGS_IN_ITEMS_BY_QUERY, DROP_COLORED_TAGS_IN_ITEMS_BY_QUERY, } from
-'../constants/actions.js';
+ERROR_COLORED_TAGS_IN_ITEMS_BY_QUERY, DROP_COLORED_TAGS_IN_ITEMS_BY_QUERY, RECEIVE_LIBRARY_SETTINGS,
+RECEIVE_UPDATE_LIBRARY_SETTINGS, } from '../constants/actions.js';
 
 import { getParamsFromRoute } from '../common/state';
 import { getQueryFromParams } from '../common/navigation';
 import { filterItemKeys, filterTags, populateTags, populateItemKeys, sortItemKeysOrClear, updateFetchingState } from '../common/reducers';
+import { omit } from '../common/immutable';
 import { get } from '../utils';
 
 const isMatchingQuery = (action, state) => {
@@ -141,6 +142,12 @@ const query = (state = defaultState, action, otherState) => {
 			return { ...state, tags: filterTags(state.tags, action.tags) }
 		case RESET_QUERY:
 			return defaultState;
+		case RECEIVE_LIBRARY_SETTINGS:
+		case RECEIVE_UPDATE_LIBRARY_SETTINGS:
+			return {
+				...state,
+				tags: omit(state.tags, 'coloredTags')
+			}
 		default:
 			return state;
 	}

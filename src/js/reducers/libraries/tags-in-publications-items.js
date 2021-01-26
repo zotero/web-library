@@ -8,12 +8,15 @@ import {
 	RECEIVE_COLORED_TAGS_IN_PUBLICATIONS_ITEMS,
 	RECEIVE_DELETE_TAGS,
 	RECEIVE_FETCH_ITEMS,
+	RECEIVE_LIBRARY_SETTINGS,
 	RECEIVE_TAGS_IN_PUBLICATIONS_ITEMS,
 	RECEIVE_UPDATE_ITEM,
+	RECEIVE_UPDATE_LIBRARY_SETTINGS,
 	REQUEST_COLORED_TAGS_IN_PUBLICATIONS_ITEMS,
 	REQUEST_TAGS_IN_PUBLICATIONS_ITEMS,
 } from '../../constants/actions';
 import { detectIfItemsChanged, filterTags, populateTags, updateFetchingState } from '../../common/reducers';
+import { omit } from '../../common/immutable';
 
 
 const tagsInPublicationsItems = (state = {}, action, { items, itemsPublications } = {}) => {
@@ -63,6 +66,9 @@ const tagsInPublicationsItems = (state = {}, action, { items, itemsPublications 
 			return action.itemKeys.some(itemKey => 'keys' in itemsPublications && itemKey in itemsPublications.keys) ? {} : state;
 		case RECEIVE_DELETE_TAGS:
 			return filterTags(state, action.tags);
+		case RECEIVE_LIBRARY_SETTINGS:
+		case RECEIVE_UPDATE_LIBRARY_SETTINGS:
+			return omit(state, 'coloredTags');
 		default:
 			return state;
 	}
