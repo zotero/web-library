@@ -10,6 +10,7 @@ import ColorPicker from '../ui/color-picker';
 import Button from '../ui/button';
 import Select from '../form/select';
 import { maxColoredTags } from '../../constants/defaults';
+import { isTriggerEvent } from '../../common/event';
 
 
 const colors = ['#FF6666', '#FF8C19', '#999999', '#5FB236', '#009980', '#2EA8E5', '#576DD9', '#A28AE5', '#A6507B' ];
@@ -42,8 +43,10 @@ const TagColorManager = ({ onToggleTagManager, tag }) => {
 		onToggleTagManager(null)
 	}, [onToggleTagManager]);
 
-	const handleToggleColorPicker = useCallback(() => {
-		setIsColorPickerOpen(!isColorPickerOpen);
+	const handleToggleColorPicker = useCallback(ev => {
+		if(isTriggerEvent(ev) || (ev.keydown && ev.key === 'ArrowDown')) {
+			setIsColorPickerOpen(!isColorPickerOpen);
+		}
 	}, [isColorPickerOpen]);
 
 	const handlePositionChange = useCallback(newPosition => {
@@ -78,6 +81,22 @@ const TagColorManager = ({ onToggleTagManager, tag }) => {
 		}
 	}
 
+	const handleBlur = useCallback((ev) => {
+		receiveBlur(ev);
+
+		// trap focus inside the tag color manager
+		if(ev.relatedTarget && !ev.relatedTarget.closest('.tag-color-manager')) {
+			ref.current.querySelector('[tabIndex="0"]').focus();
+		}
+	}, [receiveBlur])
+
+	const handleToggleBlur = useCallback(ev => {
+		if(ev.relatedTarget && !ev.relatedTarget.closest('.color-picker')) {
+			setIsColorPickerOpen(false);
+		}
+	}, []);
+
+
 	useEffect(() => {
 		ref.current.focus();
 	}, []);
@@ -85,7 +104,7 @@ const TagColorManager = ({ onToggleTagManager, tag }) => {
 	return (
 		<div
 			ref={ ref }
-			onBlur={ receiveBlur }
+			onBlur={ handleBlur }
 			onFocus={ receiveFocus }
 			onKeyDown={ handleKeyDown }
 			tabIndex="0"
@@ -101,8 +120,6 @@ const TagColorManager = ({ onToggleTagManager, tag }) => {
 							className="btn-group"
 						>
 							<div onClick={ handleToggleColorPicker }
-								onKeyDown={ handleToggleColorPicker }
-								tabIndex={ -2 }
 								className="color-swatch"
 								style={ { backgroundColor: tagColor } }
 							>
@@ -111,12 +128,14 @@ const TagColorManager = ({ onToggleTagManager, tag }) => {
 								color={ null }
 								className="btn-icon dropdown-toggle"
 								onKeyDown={ handleToggleColorPicker }
-								tabIndex={ -2 }
+								tabIndex={ 0 }
+								onBlur={ handleToggleBlur }
 							>
 								<Icon type="16/chevron-9" className="touch" width="16" height="16" />
 								<Icon type="16/chevron-7" className="mouse" width="16" height="16" />
 							</DropdownToggle>
 							<ColorPicker
+								gridCols={ 3 }
 								colors={ colors }
 								onColorPicked={ handleColorPicked }
 								onDrillDownPrev={ focusDrillDownPrev }
@@ -156,7 +175,10 @@ const TagColorManager = ({ onToggleTagManager, tag }) => {
 						<Button className="btn-default" onClick={ handleCancelClick } >
 							Cancel
 						</Button>
-						<Button className="btn-default" onClick={ handleSetColor } >
+						<Button
+							className="btn-default"
+							onClick={ handleSetColor }
+						>
 							Set Color
 						</Button>
 					</div>
