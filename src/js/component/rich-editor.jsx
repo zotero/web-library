@@ -378,9 +378,10 @@ const RichEditor = React.memo(React.forwardRef((props, ref) => {
 									</DropdownToggle>
 									<ColorPicker
 										colors={ colors }
+										gridCols={ 8 }
 										onColorPicked={ handleForeColorPicked }
-										onDrillDownPrev={ focusDrillDownPrev }
 										onDrillDownNext={ focusDrillDownNext }
+										onDrillDownPrev={ focusDrillDownPrev }
 									/>
 								</Dropdown>
 								<Dropdown
@@ -424,9 +425,10 @@ const RichEditor = React.memo(React.forwardRef((props, ref) => {
 									</DropdownToggle>
 									<ColorPicker
 										colors={ colors }
+										gridCols={ 8 }
 										onColorPicked={ handleHiLiteColorPicked }
-										onDrillDownPrev={ focusDrillDownPrev }
 										onDrillDownNext={ focusDrillDownNext }
+										onDrillDownPrev={ focusDrillDownPrev }
 									/>
 								</Dropdown>
 							</ToolGroup>

@@ -5,7 +5,7 @@ import { DropdownMenu } from 'reactstrap';
 import { noop } from '../../utils';
 
 const ColorPicker = props => {
-	const { colors, onColorPicked } = props;
+	const { colors, onColorPicked = noop, gridCols } = props;
 	const { onDrillDownNext, onDrillDownPrev } = props; // focusManager
 
 	const handleClick = useCallback(ev => {
@@ -21,13 +21,13 @@ const ColorPicker = props => {
 			onDrillDownPrev(ev);
 			ev.stopPropagation();
 		} else if(ev.key === 'ArrowDown') {
-			onDrillDownNext(ev, 8);
+			onDrillDownNext(ev, gridCols);
 			ev.stopPropagation();
 		} else if(ev.key === 'ArrowUp') {
-			onDrillDownPrev(ev, 8);
+			onDrillDownPrev(ev, gridCols);
 			ev.stopPropagation();
 		}
-	}, [onDrillDownNext, onDrillDownPrev]);
+	}, [onDrillDownNext, onDrillDownPrev, gridCols]);
 
 	return (
 		<DropdownMenu className="color-picker" onKeyDown={ handleKeyDown }>
@@ -51,14 +51,11 @@ const ColorPicker = props => {
 }
 
 ColorPicker.propTypes = {
+	gridCols: PropTypes.number,
 	colors: PropTypes.array,
 	onColorPicked: PropTypes.func.isRequired,
 	onDrillDownNext: PropTypes.func.isRequired,
 	onDrillDownPrev: PropTypes.func.isRequired,
-};
-
-ColorPicker.defaultProps = {
-	onColorPicked: noop
 };
 
 export default memo(ColorPicker);
