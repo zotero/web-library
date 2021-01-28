@@ -1,7 +1,7 @@
 import api from 'zotero-api-client';
 import baseMappings from 'zotero-base-mappings';
 import { fetchItemTypeFields } from './meta';
-import { deduplicateByKey, get, getItemCanonicalUrl, getUniqueId, removeRelationByItemKey,
+import { deduplicate, get, getItemCanonicalUrl, getUniqueId, removeRelationByItemKey,
 reverseMap } from '../utils';
 import { parseDescriptiveString } from '../common/format';
 import { getFilesData } from '../common/event';
@@ -60,6 +60,18 @@ import {
 	REQUEST_UPDATE_ITEM,
 	REQUEST_UPLOAD_ATTACHMENT,
 } from '../constants/actions';
+
+const getToggledTags = (existingTags, tagsToToggle) => {
+	tagsToToggle.forEach(tagToToggle => {
+		if(existingTags.includes(tagToToggle)) {
+			existingTags = existingTags.filter(t => t !== tagToToggle);
+		} else {
+			existingTags.push(tagToToggle);
+		}
+	});
+
+	return deduplicate(existingTags);
+}
 
 const postItemsMultiPatch = async (state, multiPatch) => {
 	const config = state.config;
@@ -578,7 +590,7 @@ const queueRecoverItemsFromTrash = (itemKeys, libraryKey, id) => {
 	};
 }
 
-const addTagsToItems = (itemKeys, libraryKey, newTags) => {
+const toggleTagsOnItems = (itemKeys, libraryKey, tagsToToggle) => {
 	return async dispatch => {
 		const id = requestTracker.id++;
 
@@ -586,33 +598,31 @@ const addTagsToItems = (itemKeys, libraryKey, newTags) => {
 			type: PRE_ADD_TAGS_TO_ITEMS,
 			itemKeys,
 			libraryKey,
-			newTags,
+			tagsToToggle,
 			id
 		});
 
 		dispatch(
-			queueAddTagToItems(itemKeys, libraryKey, newTags, id)
+			queueToggleTagOnItems(itemKeys, libraryKey, tagsToToggle, id)
 		);
 	};
 }
 
-const queueAddTagToItems = (itemKeys, libraryKey, newTags, id) => {
+const queueToggleTagOnItems = (itemKeys, libraryKey, tagsToToggle, id) => {
 	return {
 		queue: libraryKey,
 		callback: async (next, dispatch, getState) => {
 			const state = getState();
 			const multiPatch = itemKeys.map(key => ({
 				key,
-				tags: deduplicateByKey(
-					[...state.libraries[libraryKey].items[key].tags, ...newTags.map(tag => ({ tag }))],
-					'tag'
-				)
+				tags: getToggledTags(state.libraries[libraryKey].items[key].tags.map(t => t.tag), tagsToToggle)
+					.map(tag => ({ tag }))
 			}));
 
 			dispatch({
 				type: REQUEST_ADD_TAGS_TO_ITEMS,
 				itemKeys,
-				newTags,
+				tagsToToggle,
 				libraryKey,
 				id
 			});
@@ -626,7 +636,7 @@ const queueAddTagToItems = (itemKeys, libraryKey, newTags, id) => {
 					libraryKey,
 					itemKeys,
 					itemKeysChanged,
-					newTags,
+					tagsToToggle,
 					items,
 					response,
 					id,
@@ -639,7 +649,7 @@ const queueAddTagToItems = (itemKeys, libraryKey, newTags, id) => {
 						itemKeys: itemKeys.filter(itemKey => !itemKeys.includes(itemKey)),
 						error: response.getErrors(),
 						libraryKey,
-						newTags,
+						tagsToToggle,
 						id
 					});
 				}
@@ -651,7 +661,7 @@ const queueAddTagToItems = (itemKeys, libraryKey, newTags, id) => {
 					error,
 					itemKeys,
 					libraryKey,
-					newTags,
+					tagsToToggle,
 					id
 				});
 				throw error;
@@ -1045,7 +1055,7 @@ const chunkedAction = (action, itemKeys, ...args) => {
 
 const chunkedAddToCollection = (itemKeys, ...args) => chunkedAction(addToCollection, itemKeys, ...args);
 
-const chunkedAddTagsToItems = (itemKeys, ...args) => chunkedAction(addTagsToItems, itemKeys, ...args);
+const chunkedToggleTagsOnItems = (itemKeys, ...args) => chunkedAction(toggleTagsOnItems, itemKeys, ...args);
 
 const chunkedDeleteItems = (itemKeys, ...args) => chunkedAction(deleteItems, itemKeys, ...args);
 
@@ -1267,15 +1277,14 @@ const createItemOfType = (itemType, { collection = null } = {}) => {
 }
 
 export {
-	addTagsToItems,
 	addToCollection,
-	chunkedAddTagsToItems,
 	chunkedAddToCollection,
 	chunkedCopyToLibrary,
 	chunkedDeleteItems,
 	chunkedMoveToTrash,
 	chunkedRecoverFromTrash,
 	chunkedRemoveFromCollection,
+	chunkedToggleTagsOnItems,
 	chunkedTrashOrDelete,
 	copyToLibrary,
 	createAttachments,
@@ -1290,6 +1299,7 @@ export {
 	recoverFromTrash,
 	removeFromCollection,
 	removeRelatedItem,
+	toggleTagsOnItems,
 	updateItem,
 	updateItemWithMapping,
 	uploadAttachment,

@@ -171,12 +171,12 @@ const checkColoredTags = queryOptions => {
 	return async (dispatch, getState) => {
 		const state = getState();
 		const { libraryKey } = state.current;
-		const coloredTags = Object.keys(state.libraries[libraryKey].tagColors.lookup);
+		const coloredTags = state.libraries[libraryKey]?.tagColors.value;
 		const isManagingTags = state.modal.id === MANAGE_TAGS;
-		if(isManagingTags || coloredTags.length === 0) {
+		if(isManagingTags || !coloredTags || coloredTags.length === 0) {
 			return;
 		}
-		const tagQuery = coloredTags.join(' || ');
+		const tagQuery = coloredTags.map(ct => ct.name).join(' || ');
 		return await dispatch(fetchCurrentTags({ ...queryOptions, tag: tagQuery }, 'COLORED_TAGS'));
 	}
 }
@@ -262,6 +262,8 @@ const removeTagColor = tag => {
 		return await dispatch(updateTagColors(newTagColors));
 	}
 }
+
+
 
 export {
 	// fetchTagsForItem,

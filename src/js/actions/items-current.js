@@ -1,6 +1,6 @@
 import { omit } from '../common/immutable';
 import { getApiForItems } from '../common/actions';
-import { exportItems, chunkedAddTagsToItems, chunkedAddToCollection, chunkedCopyToLibrary,
+import { exportItems, chunkedToggleTagsOnItems, chunkedAddToCollection, chunkedCopyToLibrary,
 chunkedTrashOrDelete, chunkedDeleteItems, chunkedMoveToTrash, chunkedRecoverFromTrash,
 chunkedRemoveFromCollection, createItem, createItemOfType, toggleModal } from '.';
 import columnProperties from '../constants/column-properties';
@@ -141,7 +141,21 @@ const currentAddTags = (newTags) => {
 	return async (dispatch, getState) => {
 		const state = getState();
 		const { itemKeys, libraryKey } = state.current;
-		dispatch(chunkedAddTagsToItems(itemKeys, libraryKey, newTags));
+		dispatch(chunkedToggleTagsOnItems(itemKeys, libraryKey, newTags));
+	}
+}
+
+const currentToggleTagByIndex = (tagPosition) => {
+	return async (dispatch, getState) => {
+		const state = getState();
+		const { libraryKey, itemKeys } = state.current;
+		const tagColors = state.libraries[libraryKey].tagColors?.value;
+		if(!tagColors[tagPosition]) {
+			return;
+		}
+		const tagToToggle = tagColors[tagPosition].name;
+
+		dispatch(chunkedToggleTagsOnItems(itemKeys, libraryKey, [tagToToggle]));
 	}
 }
 
@@ -235,6 +249,7 @@ export {
 	currentNewItemModal,
 	currentRecoverTrashItems,
 	currentRemoveItemFromCollection,
+	currentToggleTagByIndex,
 	currentTrashItems,
 	currentTrashOrDelete,
 }
